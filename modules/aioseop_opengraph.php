@@ -383,8 +383,7 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					}
 					if ( isset( $this->options["aiosp_opengraph_defcard"] ) ) {
 						$settings[$prefix . 'setcard']['default'] = $this->options["aiosp_opengraph_defcard"];
-					}
-					
+					}					
 					global $aiosp;
 					$info = $aiosp->get_page_snippet_info();
 					extract( $info );
