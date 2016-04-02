@@ -13,7 +13,7 @@ class WPSEO_Import_AIOSEO_Hooks extends WPSEO_Import_Hooks {
 
 	
 		$yoasturl = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'wpseo-import' ) ), admin_url( 'admin.php?page=wpseo_tools&tool=import-export&import=1&importaioseo=1#top#import-seo' ) );
-		$aiourl = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'aiosp-import' ) ), admin_url( 'tools.php?page=seoimport' ) );
+		$aiourl = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'aiosp-import' ) ), admin_url( 'tools.php?page=aiosp_import' ) );
 
 
 		$aioseop_yst_detected_notice_dismissed = get_user_meta( get_current_user_id(), 'aioseop_yst_detected_notice_dismissed', true );
@@ -47,7 +47,7 @@ function aiosp_seometa_settings_init() {
 	global $_aiosp_seometa_admin_pagehook;
 	
 	// Add submenu page link
-	$_aiosp_seometa_admin_pagehook = add_submenu_page('tools.php', __('Import SEO Data','all-in-one-seo-pack'), __('SEO Data Import','all-in-one-seo-pack'), 'manage_options', 'seoimport', 'aiosp_seometa_admin');
+	$_aiosp_seometa_admin_pagehook = add_submenu_page('tools.php', __('Import SEO Data','all-in-one-seo-pack'), __('SEO Data Import','all-in-one-seo-pack'), 'manage_options', 'aiosp_import', 'aiosp_seometa_admin');
 }
 
 /**
@@ -141,7 +141,7 @@ function aiosp_seometa_admin() {
 
 
 		
-	<form action="<?php echo admin_url('tools.php?page=seoimport'); ?>" method="post">
+	<form action="<?php echo admin_url('tools.php?page=aiosp_import'); ?>" method="post">
 	<?php
 		wp_nonce_field('aiosp_nonce');
 	
