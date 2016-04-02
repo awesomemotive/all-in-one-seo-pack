@@ -42,19 +42,19 @@ class WPSEO_Import_AIOSEO_Hooks extends WPSEO_Import_Hooks {
 /**
  * Register the admin menu page
  */
-add_action('admin_menu', 'seodt_settings_init');
-function seodt_settings_init() {
-	global $_seodt_admin_pagehook;
+add_action('admin_menu', 'aiosp_seometa_settings_init');
+function aiosp_seometa_settings_init() {
+	global $_aiosp_seometa_admin_pagehook;
 	
 	// Add submenu page link
-	$_seodt_admin_pagehook = add_submenu_page('tools.php', __('Import SEO Data','all-in-one-seo-pack'), __('SEO Data Import','all-in-one-seo-pack'), 'manage_options', 'seoimport', 'seodt_admin');
+	$_aiosp_seometa_admin_pagehook = add_submenu_page('tools.php', __('Import SEO Data','all-in-one-seo-pack'), __('SEO Data Import','all-in-one-seo-pack'), 'manage_options', 'seoimport', 'aiosp_seometa_admin');
 }
 
 /**
  * This function intercepts POST data from the form submission, and uses that
  * data to convert values in the postmeta table from one platform to another.
  */
-function seodt_action() {
+function aiosp_seometa_action() {
 	
 	//print_r($_REQUEST);
 	
@@ -77,7 +77,7 @@ function seodt_action() {
 		
 		printf( '<h3>%s</h3>', __('Analysis Results', 'all-in-one-seo-pack') );
 		
-		$response = seodt_post_meta_analyze( $_REQUEST['platform_old'], 'All in One SEO Pack' );
+		$response = aiosp_seometa_post_meta_analyze( $_REQUEST['platform_old'], 'All in One SEO Pack' );
 		if ( is_wp_error( $response ) ) {
 			printf( '<div class="error"><p>%s</p></div>', __('Sorry, something went wrong. Please try again') );
 			return;
@@ -99,7 +99,7 @@ function seodt_action() {
 	
 	printf( '<h3>%s</h3>', __('Conversion Results', 'all-in-one-seo-pack') );
 	
-	$result = seodt_post_meta_convert( stripslashes($_REQUEST['platform_old']), 'All in One SEO Pack' );
+	$result = aiosp_seometa_post_meta_convert( stripslashes($_REQUEST['platform_old']), 'All in One SEO Pack' );
 	if ( is_wp_error( $result ) ) {
 		printf( '<p>%s</p>', __('Sorry, something went wrong. Please try again') );
 		return;
@@ -120,8 +120,8 @@ function seodt_action() {
 /**
  * The admin page output
  */
-function seodt_admin() {
-	global $_seodt_themes, $_seodt_plugins, $_seodt_platforms;
+function aiosp_seometa_admin() {
+	global $_aiosp_seometa_themes, $_aiosp_seometa_plugins, $_aiosp_seometa_platforms;
 ?>
 
 	<div class="wrap">
@@ -152,13 +152,13 @@ function seodt_admin() {
 		printf( '<option value="">%s</option>', __('Choose platform:', 'all-in-one-seo-pack') );
 		
 		printf( '<optgroup label="%s">', __('Plugins', 'all-in-one-seo-pack') );
-		foreach ( $_seodt_plugins as $platform => $data ) {
+		foreach ( $_aiosp_seometa_plugins as $platform => $data ) {
 			if($platform != "All in One SEO Pack") printf( '<option value="%s" %s>%s</option>', $platform, selected($platform, $platform_old, 0), $platform );
 		}
 		printf( '</optgroup>' );
 		
 		printf( '<optgroup label="%s">', __('Themes', 'all-in-one-seo-pack') );
-		foreach ( $_seodt_themes as $platform => $data ) {
+		foreach ( $_aiosp_seometa_themes as $platform => $data ) {
 			printf( '<option value="%s" %s>%s</option>', $platform, selected($platform, $platform_old, 0), $platform );
 		}
 		printf( '</optgroup>' );
@@ -174,7 +174,7 @@ function seodt_admin() {
 	
 	</form>
 	
-	<?php seodt_action(); ?>
+	<?php aiosp_seometa_action(); ?>
 	
 	</div>
 
@@ -198,9 +198,9 @@ function seodt_admin() {
 	 *
 	 * The function returns an object for error detection, and the number of affected rows.
 	 */
-	function seodt_meta_key_convert( $old = '', $new = '', $delete_old = false ) {
+	function aiosp_seometa_meta_key_convert( $old = '', $new = '', $delete_old = false ) {
 
-		do_action( 'pre_seodt_meta_key_convert_before', $old, $new, $delete_old );
+		do_action( 'pre_aiosp_seometa_meta_key_convert_before', $old, $new, $delete_old );
 
 		global $wpdb;
 
@@ -236,7 +236,7 @@ function seodt_admin() {
 
 		}
 
-		do_action( 'seodt_meta_key_convert', $output, $old, $new, $delete_old );
+		do_action( 'aiosp_seometa_meta_key_convert', $output, $old, $new, $delete_old );
 
 		return $output;
 
@@ -244,22 +244,22 @@ function seodt_admin() {
 
 	/**
 	 * This function cycles through all compatible SEO entries of two platforms,
-	 * performs a seodt_meta_key_convert() conversion for each key, and returns
+	 * performs a aiosp_seometa_meta_key_convert() conversion for each key, and returns
 	 * the results as an object.
 	 * 
 	 * It first checks for compatible entries between the two platforms. When it
 	 * finds compatible entries, it loops through them and preforms the conversion
 	 * on each entry.
 	 */
-	function seodt_post_meta_convert( $old_platform = '', $new_platform = 'All in One SEO Pack', $delete_old = false ) {
+	function aiosp_seometa_post_meta_convert( $old_platform = '', $new_platform = 'All in One SEO Pack', $delete_old = false ) {
 
-		do_action( 'pre_seodt_post_meta_convert', $old_platform, $new_platform, $delete_old );
+		do_action( 'pre_aiosp_seometa_post_meta_convert', $old_platform, $new_platform, $delete_old );
 
-		global $_seodt_platforms;
+		global $_aiosp_seometa_platforms;
 
 		$output = new stdClass;
 
-		if ( empty( $_seodt_platforms[$old_platform] ) || empty( $_seodt_platforms[$new_platform] ) ) {
+		if ( empty( $_aiosp_seometa_platforms[$old_platform] ) || empty( $_aiosp_seometa_platforms[$new_platform] ) ) {
 			$output->WP_Error = 1;
 			return $output;
 		}
@@ -268,18 +268,18 @@ function seodt_admin() {
 		$output->deleted = 0;
 		$output->ignored = 0;
 
-		foreach ( (array)$_seodt_platforms[$old_platform] as $label => $meta_key ) {
+		foreach ( (array)$_aiosp_seometa_platforms[$old_platform] as $label => $meta_key ) {
 
 			// skip iterations where no $new analog exists
-			if ( empty( $_seodt_platforms[$new_platform][$label] ) )
+			if ( empty( $_aiosp_seometa_platforms[$new_platform][$label] ) )
 				continue;
 
 			// set $old and $new meta_key values
-			$old = $_seodt_platforms[$old_platform][$label];
-			$new = $_seodt_platforms[$new_platform][$label];
+			$old = $_aiosp_seometa_platforms[$old_platform][$label];
+			$new = $_aiosp_seometa_platforms[$new_platform][$label];
 
 			// convert
-			$result = seodt_meta_key_convert( $old, $new, $delete_old );
+			$result = aiosp_seometa_meta_key_convert( $old, $new, $delete_old );
 
 			// error check
 			if ( is_wp_error( $result ) )
@@ -291,7 +291,7 @@ function seodt_admin() {
 
 		}
 
-		do_action( 'seodt_post_meta_convert', $output, $old_platform, $new_platform, $delete_old );
+		do_action( 'aiosp_seometa_post_meta_convert', $output, $old_platform, $new_platform, $delete_old );
 
 		return $output;
 
@@ -301,15 +301,15 @@ function seodt_admin() {
 	 * This function analyzes two platforms to see what Compatible elements they share,
 	 * what data can be converted from one to the other, and which elements to ignore (future).
 	 */
-	function seodt_post_meta_analyze( $old_platform = '', $new_platform = 'All in One SEO Pack' ) {
+	function aiosp_seometa_post_meta_analyze( $old_platform = '', $new_platform = 'All in One SEO Pack' ) {
 
-		do_action( 'pre_seodt_post_meta_analyze', $old_platform, $new_platform );
+		do_action( 'pre_aiosp_seometa_post_meta_analyze', $old_platform, $new_platform );
 
-		global $wpdb, $_seodt_platforms;
+		global $wpdb, $_aiosp_seometa_platforms;
 
 		$output = new stdClass;
 
-		if ( empty( $_seodt_platforms[$old_platform] ) || empty( $_seodt_platforms[$new_platform] ) ) {
+		if ( empty( $_aiosp_seometa_platforms[$old_platform] ) || empty( $_aiosp_seometa_platforms[$new_platform] ) ) {
 			$output->WP_Error = 1;
 			return $output;
 		}
@@ -318,10 +318,10 @@ function seodt_admin() {
 		$output->ignore = 0;
 		$output->elements = '';
 
-		foreach ( (array)$_seodt_platforms[$old_platform] as $label => $meta_key ) {
+		foreach ( (array)$_aiosp_seometa_platforms[$old_platform] as $label => $meta_key ) {
 
 			// skip iterations where no $new analog exists
-			if ( empty( $_seodt_platforms[$new_platform][$label] ) )
+			if ( empty( $_aiosp_seometa_platforms[$new_platform][$label] ) )
 				continue;
 
 			$elements[] = $label;
@@ -348,7 +348,7 @@ function seodt_admin() {
 
 		$output->elements = $elements;
 
-		do_action( 'seodt_post_meta_analyze', $output, $old_platform, $new_platform );
+		do_action( 'aiosp_seometa_post_meta_analyze', $output, $old_platform, $new_platform );
 
 		return $output;
 
@@ -359,20 +359,20 @@ function seodt_admin() {
 ////////////PLUGIN/////////
 
 
-//	define('SEODT_PLUGIN_DIR', dirname(__FILE__));
+//	define('aiosp_seometa_PLUGIN_DIR', dirname(__FILE__));
 
-	//add_action( 'plugins_loaded', 'seodt_init' );
+	//add_action( 'plugins_loaded', 'aiosp_seometa_import' );
 	/**
 	 * Initialize the SEO Data Transporter plugin
 	 */
-	function seodt_init() {
+	function aiosp_seometa_import() {
 
-		global $_seodt_themes, $_seodt_plugins, $_seodt_platforms;
+		global $_aiosp_seometa_themes, $_aiosp_seometa_plugins, $_aiosp_seometa_platforms;
 
 		/**
 		 * The associative array of supported themes.
 		 */
-		$_seodt_themes = array(
+		$_aiosp_seometa_themes = array(
 			// alphabatized
 			'Builder' => array(
 				'Custom Doctitle' => '_builder_seo_title',
@@ -442,7 +442,7 @@ function seodt_admin() {
 		/**
 		 * The associative array of supported plugins.
 		 */
-		$_seodt_plugins = array(
+		$_aiosp_seometa_plugins = array(
 			// alphabatized
 			'Add Meta Tags' => array(
 				'META Description' => 'description',
@@ -507,13 +507,13 @@ function seodt_admin() {
 		/**
 		 * The combined array of supported platforms.
 		 */
-		$_seodt_platforms = array_merge( $_seodt_themes, $_seodt_plugins );
+		$_aiosp_seometa_platforms = array_merge( $_aiosp_seometa_themes, $_aiosp_seometa_plugins );
 
 		/**
 		 * Include the other elements of the plugin.
 		 */
-	//	require_once( SEODT_PLUGIN_DIR . '/admin.php' );
-//		require_once( SEODT_PLUGIN_DIR . '/functions.php' );
+	//	require_once( aiosp_seometa_PLUGIN_DIR . '/admin.php' );
+//		require_once( aiosp_seometa_PLUGIN_DIR . '/functions.php' );
 
 		/**
 		 * Init hook.
@@ -523,7 +523,7 @@ function seodt_admin() {
 		 * @since 0.9.10
 		 *
 		 */
-		do_action( 'seodt_init' );
+		do_action( 'aiosp_seometa_import' );
 
 	}
 
@@ -531,13 +531,13 @@ function seodt_admin() {
 	 * Activation Hook
 	 * @since 0.9.4
 	 */
-	register_activation_hook( __FILE__, 'seodt_activation_hook' );
-	function seodt_activation_hook() {
+	register_activation_hook( __FILE__, 'aiosp_seometa_activation_hook' );
+	function aiosp_seometa_activation_hook() {
 
-	//	require_once( SEODT_PLUGIN_DIR . '/functions.php' );
+	//	require_once( aiosp_seometa_PLUGIN_DIR . '/functions.php' );
 
-		seodt_meta_key_convert( '_yoast_seo_title', 'yoast_wpseo_title', true );
-		seodt_meta_key_convert( '_yoast_seo_metadesc', 'yoast_wpseo_metadesc', true );	
+		aiosp_seometa_meta_key_convert( '_yoast_seo_title', 'yoast_wpseo_title', true );
+		aiosp_seometa_meta_key_convert( '_yoast_seo_metadesc', 'yoast_wpseo_metadesc', true );	
 
 	}
 
@@ -545,23 +545,23 @@ function seodt_admin() {
 	 * Manual conversion test
 	 */
 	/*
-	$seodt_convert = seodt_post_meta_convert( 'All in One SEO Pack', 'Genesis', false );
-	printf( '%d records were updated', $seodt_convert->updated );
+	$aiosp_seometa_convert = aiosp_seometa_post_meta_convert( 'All in One SEO Pack', 'Genesis', false );
+	printf( '%d records were updated', $aiosp_seometa_convert->updated );
 	/**/
 
 	/**
 	 * Manual analysis test
 	 */
 	/*
-	$seodt_analyze = seodt_post_meta_analyze( 'All in One SEO Pack', 'Genesis' );
-	printf( '<p><b>%d</b> Compatible Records were identified</p>', $seodt_analyze->update );
+	$aiosp_seometa_analyze = aiosp_seometa_post_meta_analyze( 'All in One SEO Pack', 'Genesis' );
+	printf( '<p><b>%d</b> Compatible Records were identified</p>', $aiosp_seometa_analyze->update );
 	/**/
 
 	/**
 	 * Delete all SEO data, from every platform
 	 */
 	/*
-	foreach ( $_seodt_platforms as $platform => $data ) {
+	foreach ( $_aiosp_seometa_platforms as $platform => $data ) {
 
 		foreach ( $data as $field ) {
 			$deleted = $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->postmeta WHERE meta_key = %s", $field ) );
