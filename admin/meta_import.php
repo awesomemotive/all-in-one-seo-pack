@@ -71,7 +71,7 @@ function aiosp_seometa_action() {
 		return;
 	}
 		
-	check_admin_referer('seodt'); // Verify nonce
+	check_admin_referer('aiosp_nonce'); // Verify nonce
 	
 	if ( !empty( $_REQUEST['analyze'] ) ) {
 		
@@ -143,7 +143,7 @@ function aiosp_seometa_admin() {
 		
 	<form action="<?php echo admin_url('tools.php?page=seoimport'); ?>" method="post">
 	<?php
-		wp_nonce_field('seodt');
+		wp_nonce_field('aiosp_nonce');
 	
 		$platform_old = (!isset($_POST['platform_old'])) ? '' : $_POST['platform_old'];
 	

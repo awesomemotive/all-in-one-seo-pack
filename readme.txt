@@ -110,6 +110,14 @@ Please visit our complete **[Documentation](http://semperplugins.com/documentati
 
 == Upgrade Notice ==
 
+= 2.3 =
+
+-Various under the hood improvements
+-Increased WooCommerce support, especially in pro version
+-New SEO data importer
+-New custom roles and capabilities for multi-user sites
+-API improvements
+
 = 2.2.7.6.2 =
 
 -Additional WooCommerce support
