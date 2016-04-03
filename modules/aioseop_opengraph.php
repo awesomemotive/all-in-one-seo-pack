@@ -710,8 +710,16 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			if ( !empty( $this->options['aiosp_opengraph_twitter_domain'] ) )
 				$domain = $this->options['aiosp_opengraph_twitter_domain'];
 			
-			if ( !empty( $post ) && isset( $post->post_author ) && !empty( $this->options['aiosp_opengraph_twitter_creator'] ) )
-				$creator = get_the_author_meta( 'twitter', $post->post_author );
+			if ( !empty( $post ) && isset( $post->post_author ) && !empty( $this->options['aiosp_opengraph_twitter_creator'] ) ) {
+                $creator = get_the_author_meta( 'twitter', $post->post_author );
+                if (filter_var($creator, FILTER_VALIDATE_URL)) {
+                    $parsed = parse_url($creator);
+                    $path = $parsed['path'];
+                    $path_parts = explode('/', $path);
+                    $creator = $path_parts[1];        
+                }
+            }
+				
 
 			if ( !empty( $site ) && $site[0] != '@' ) $site = '@' . $site;
 
