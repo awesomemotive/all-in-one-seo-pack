@@ -124,14 +124,8 @@ A couple of notes:
 
 #### PHP style guide
 
-Most of our PHP code follows [**PSR-2**](http://www.php-fig.org/psr/psr-2/), *not* WordPress coding standards. This is deliberate, see [#698](https://github.com/versionpress/versionpress/issues/698). Basically, it's mainly because most of VersionPress is a relatively separate, object oriented system developed recently, where anything but PSR-2 doesn't feel right.
+All PHP code must follow the WordPress coding standards - https://make.wordpress.org/core/handbook/best-practices/coding-standards/php/.
 
-There are a couple of cases where some parts of our code do not adhere to PSR-2 strictly:
-
-- **Code interacting with WordPress** (hooking into it, providing global functions etc.) follows some of WP conventions. For example, global functions are called like `vp_register_hooks()`, not `registerHooks()`.
-- **WP-CLI commands** use filenames similar to the built-in commands, so for instance `VPCommand` lives in a `vp.php` file, not `VPCommand.php`.
-
-Generally, try to follow what's already in place. The project ships with PhpStorm settings, `.editorconfig` etc. so if you use PhpStorm as recommended, it should serve as a good guidance. 
 
 #### JavaScript style guide
 
