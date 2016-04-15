@@ -62,12 +62,12 @@ function aiosp_seometa_action() {
 		return;
 	
 	if ( empty( $_REQUEST['platform_old'] ) ) {
-		printf( '<div class="error"><p>%s</p></div>', __('Sorry, you can\'t do that. Please choose a platform platforms.') );
+		printf( '<div class="error"><p>%s</p></div>', __('Sorry, you can\'t do that. Please choose a platform and then click Analyze or Convert.') );
 		return;
 	}
 		
 	if ( $_REQUEST['platform_old'] == 'All in One SEO Pack' ) {
-		printf( '<div class="error"><p>%s</p></div>', __('Sorry, you can\'t do that. Please choose two different platforms.') );
+		printf( '<div class="error"><p>%s</p></div>', __('Sorry, you can\'t do that. Please choose a platform and then click Analyze or Convert.') );
 		return;
 	}
 		
