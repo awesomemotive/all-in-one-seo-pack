@@ -146,7 +146,7 @@ if ( !empty( $aioseop_mem_limit ) ) {
 }
 
 $aiosp_activation = false;
-$aioseop_module_list = Array( 'sitemap', 'opengraph', 'robots', 'file_editor', 'importer_exporter', 'bad_robots', 'performance' ); // list all available modules here
+$aioseop_module_list = Array( 'image_seo' , 'sitemap', 'opengraph', 'robots', 'file_editor', 'importer_exporter', 'bad_robots', 'performance' ); // list all available modules here
 
 if (AIOSEOPPRO){
 	$aioseop_module_list[] = 'video_sitemap';

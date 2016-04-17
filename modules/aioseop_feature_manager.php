@@ -18,6 +18,8 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 			$this->module_info = Array(
 				'sitemap'		=> Array( 'name'		=> __( 'XML Sitemaps', 'all-in-one-seo-pack' ),
 										'description'	=> __( 'Create and manage your XML Sitemaps using this feature and submit your XML Sitemap to Google, Bing/Yahoo and Ask.com.', 'all-in-one-seo-pack' ) ),
+				'image_seo'		=> Array( 'name'		=> __( 'Image SEO', 'all-in-one-seo-pack' ),
+										'description'	=> __( 'Trick out your images' ) ),
 				'opengraph'		=> Array( 'name'		=> __( 'Social Meta', 'all-in-one-seo-pack' ),
 										'description'	=> __( 'Activate this feature to add Social Meta data to your site to deliver closer integration between your website/blog and Facebook, Twitter, and Google+.', 'all-in-one-seo-pack' ) ),
 				'robots'		=> Array( 'name' 		=> __( 'Robots.txt', 'all-in-one-seo-pack' ),

@@ -1229,6 +1229,9 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		
 		/**
 		 * Load scripts and styles for metaboxes.
+		 * 
+		 * edit-tags exists only for pre 4.5 support... remove when we drop 4.5 support.
+		 * Also, that check and others should be pulled out into their own functions
 		 */
 		function enqueue_metabox_scripts( ) {
 			$screen = '';
