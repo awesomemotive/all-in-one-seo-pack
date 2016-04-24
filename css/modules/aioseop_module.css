@@ -1118,3 +1118,29 @@ div.sfwd_debug_error {
 margin-left: 20px !important;
 margin-bottom: 10px !important;
 }
+/**
+* #.# General setting form
+*
+* Hide google place profiel setting field
+*/
+#aiosp_google_disable_profile_wrapper{
+    display:none;
+}
+/**
+* #.# Social Meta
+*
+* Show Facebook Author on Articles
+*/
+#aiosp_opengraph_facebook_author_wrapper
+{
+    display:none;
+}
+/**
+* #.# General setting form
+*
+* Media query.
+*/
+#aiosp_opengraph_twitter_creator_wrapper
+{
+     display:none;
+}
