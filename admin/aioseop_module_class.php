@@ -1504,141 +1504,223 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				return $image[0];
 		}
 
+		/**
+		 * Gets the image by attachment.
+		 * @since 1.0.0
+		 * @param String $p.
+		 * @return array.
+		 */
 		function get_the_image_by_attachment( $p = null ) {
-
-			if ( $p === null ) {
+			if ( $p === null )	{
 				global $post;
 			} else {
 				$post = $p;
 			}
-
-			$attachments = get_children( Array( 'post_parent' 		=> $post->ID,
-												'post_status' 		=> 'inherit',
-												'post_type' 		=> 'attachment',
-												'post_mime_type'	=> 'image',
-												'order' 			=> 'ASC',
-												'orderby' 			=> 'menu_order ID' ) );
-
+			$attachments = get_children( Array(
+					'post_parent' 		=> $post->ID,
+					'post_status' 		=> 'inherit',
+					'post_type' 		=> 'attachment',
+					'post_mime_type'	=> 'image',
+					'order' 			=> 'ASC',
+					'orderby' 			=> 'menu_order ID'
+				)
+			);
 			if ( empty( $attachments ) ) {
 				if ( 'attachment' == get_post_type( $post->ID ) ) {
 					$image = wp_get_attachment_image_src( $post->ID, 'large' );
 				}
 			}
-
-			/* If no attachments or image is found, return false. */
 			if ( empty( $attachments ) && empty( $image ) )
 				return false;
-
-			/* Set the default iterator to 0. */
 			$i = 0;
-
-			/* Loop through each attachment. Once the $order_of_image (default is '1') is reached, break the loop. */
-			foreach ( $attachments as $id => $attachment ) {
-				if ( ++$i == 1 ) {
+			foreach ( $attachments as $id => $attachment )	{
+				if ( ++$i == 1 )	{
 					$image = wp_get_attachment_image_src( $id, 'large' );
-					$alt = trim( strip_tags( get_post_field( 'post_excerpt', $id ) ) );
+					$alt = trim(
+						strip_tags(
+							get_post_field(
+								'post_excerpt',
+								$id
+							)
+						)
+					);
 					break;
 				}
 			}
-
-			/* Return the image URL. */
 			return $image[0];
-
 		}
 
+		/**
+		 * Gets the image by scan.
+		 * @since 1.0.0
+		 * @param String $p.
+		 * @return array.
+		 */
 		function get_the_image_by_scan( $p = null ) {
-
-			if ( $p === null ) {
+			if ( $p === null )	{
 				global $post;
 			} else {
 				$post = $p;
 			}
-
-			/* Search the post's content for the <img /> tag and get its URL. */
-			preg_match_all( '|<img.*?src=[\'"](.*?)[\'"].*?>|i', get_post_field( 'post_content', $post->ID ), $matches );
-
-			/* If there is a match for the image, return its URL. */
+			preg_match_all(
+				'|<img.*?src=[\'"](.*?)[\'"].*?>|i',
+				get_post_field( 'post_content', $post->ID ),
+				$matches
+			);
 			if ( isset( $matches ) && !empty( $matches[1][0] ) )
 				return $matches[1][0];
-
 			return false;
 		}
 
-		/** crude approximization of whether current user is an admin */
+		/**
+		 * crude approximization of whether current user is an admin
+		 * @since 1.0.0
+		 * @param String $p.
+		 * @return String.
+		 */
 		function is_admin() {
 			return current_user_can( 'level_8' );
 		}
 
+		/**
+		 * crude approximization of whether current user is an admin
+		 * @since 1.0.0
+		 * @param String $default_options, array $options, String $help_link.
+		 */
 		function help_text_helper( &$default_options, $options, $help_link = '' ) {
-			foreach( $options as $o ) {
+			foreach( $options as $o )	{
 				$ht = '';
 				if ( !empty( $this->help_text[$o] ) )
 					$ht = $this->help_text[$o];
 				elseif ( !empty( $default_options[$o]["help_text"] ) )
 					$ht = $default_options[$o]["help_text"];
-				if ( $ht && !is_array( $ht ) ) {
+				if ( $ht && !is_array( $ht ) )	{
 					$ha = '';
 					$hl = $help_link;
-					if ( strpos( $o, 'ga_' ) === 0 ) { // special case -- pdb
+
+					// special case -- pdb
+					if ( strpos( $o, 'ga_' ) === 0 ) {
 						$hl = 'http://semperplugins.com/documentation/advanced-google-analytics-settings/';
 					}
-					if ( !empty( $this->help_anchors[$o] ) ) $ha = $this->help_anchors[$o];
-					if ( ( !empty( $ha ) && ( $pos = strrpos( $hl, '#' ) ) ) ) {
+					if ( !empty( $this->help_anchors[$o] ) )
+						$ha = $this->help_anchors[$o];
+					if ( ( !empty( $ha )
+						&& ( $pos = strrpos( $hl, '#' ) ) ) ) {
 						$hl = substr( $hl, 0, $pos );
 					}
-					if ( ( !empty( $ha ) && ( $ha[0] == 'h' ) ) ) $hl = '';
-					if ( !empty( $ha ) || !isset( $this->help_anchors[$o] ) ) {
-						$ht .= "<br /><a href='" . $hl . $ha . "' target='_blank'>" . __( "Click here for documentation on this setting", 'all-in-one-seo-pack' ) . "</a>";
+					if ( ( !empty( $ha ) && ( $ha[0] == 'h' ) ) )
+						$hl = '';
+					if ( !empty( $ha )
+						|| ! isset( $this->help_anchors[$o] ) )	{
+						$ht .= "<br />
+									<a
+										href='" . $hl . $ha . "'
+										target='_blank'>" .
+										__(
+											"Click here for documentation on this setting",
+											'all-in-one-seo-pack'
+											) .
+									"</a>";
 					}
 					$default_options[$o]['help_text'] = $ht;
 				}
 			}
 		}
 
+		/**
+		 * Adds help text links
+		 * @since 1.0.0
+		 * @return.
+		 */
 		function add_help_text_links() {
 			if ( !empty( $this->help_text ) ) {
 				foreach( $this->layout as $k => $v ) {
-					$this->help_text_helper( $this->default_options, $v['options'], $v['help_link'] );
+					$this->help_text_helper(
+						$this->default_options,
+						$v['options'],
+						$v['help_link']
+					);
 				}
 				if ( !empty( $this->locations ) )
-					foreach( $this->locations as $k => $v ) {
-						if ( !empty( $v['default_options'] ) && !empty( $v['options'] ) ) {
-							$this->help_text_helper( $this->locations[$k]['default_options'], $v['options'], $v['help_link'] );
+					foreach( $this->locations as $k => $v )
+					{
+						if ( !empty( $v['default_options'] )
+							&& !empty( $v['options'] ) ) {
+							$this->help_text_helper(
+								$this->locations[$k]['default_options'],
+								$v['options'],
+								$v['help_link']
+							);
 						}
 					}
 			}
 		}
 
 		/**
-		 * Load scripts and styles for metaboxes.
-		 *
-		 * edit-tags exists only for pre 4.5 support... remove when we drop 4.5 support.
-		 * Also, that check and others should be pulled out into their own functions
+		 * Loads scripts and styles for metaboxes.
+		 * @since 1.0.0
 		 */
-		function enqueue_metabox_scripts( ) {
+		function enqueue_metabox_scripts() {
 			$screen = '';
 			if ( function_exists( 'get_current_screen' ) )
 				$screen = get_current_screen();
 			$bail = false;
-			if ( empty( $screen ) ) $bail = true;
-			if ( ( $screen->base != 'post' ) && ( $screen->base != 'term' ) && ( $screen->base != 'edit-tags' ) && ( $screen->base != 'toplevel_page_shopp-products' ) ) $bail = true;
+			if ( empty( $screen ) )
+				$bail = true;
+			if ( ( $screen->base != 'post' )
+				&& ( $screen->base != 'edit-tags' )
+				&& ( $screen->base != 'toplevel_page_shopp-products' ) )
+					$bail = true;
 			$prefix = $this->get_prefix();
-			$bail = apply_filters( $prefix . 'bail_on_enqueue', $bail, $screen );
-			if ( $bail ) return;
+			$bail = apply_filters(
+				$prefix . 'bail_on_enqueue',
+				$bail,
+				$screen
+			);
+			if ( $bail )
+				return;
 			$this->form = 'post';
-			if ( $screen->base == 'term' || $screen->base == 'edit-tags' ) $this->form = 'edittag';
-			if ( $screen->base == 'toplevel_page_shopp-products' ) $this->form = 'product';
-			$this->form = apply_filters( $prefix . 'set_form_on_enqueue', $this->form, $screen );
-			foreach( $this->locations as $k => $v ) {
-				if ( $v['type'] === 'metabox' ) {
-					if ( isset( $v['display'] ) && !empty( $v['display'] ) ) {
+			if ( $screen->base == 'edit-tags' )
+				$this->form = 'edittag';
+			if ( $screen->base == 'toplevel_page_shopp-products' )
+				$this->form = 'product';
+			$this->form = apply_filters(
+				$prefix . 'set_form_on_enqueue',
+				$this->form,
+				$screen
+			);
+			foreach( $this->locations as $k => $v )	{
+				if ( $v['type'] === 'metabox' )	{
+					if ( isset( $v['display'] )
+						&& !empty( $v['display'] ) ) {
 						$enqueue_scripts = false;
-						$enqueue_scripts = ( ( ( $screen->base == 'toplevel_page_shopp-products' ) && in_array( 'shopp_product', $v['display'] ) ) ) || in_array( $screen->post_type, $v['display'] );
-						$enqueue_scripts = apply_filters( $prefix . 'enqueue_metabox_scripts', $enqueue_scripts, $screen, $v );
-						if ( $enqueue_scripts ) {
-							add_filter( 'aioseop_localize_script_data', Array( $this, 'localize_script_data' ) );
-							add_action( "admin_print_scripts", Array( $this, 'enqueue_scripts' ), 20 );
-							add_action( "admin_print_scripts", Array( $this, 'enqueue_styles' ), 20 );
+						$enqueue_scripts = (
+							( ( $screen->base == 'toplevel_page_shopp-products' )
+							&& in_array( 'shopp_product', $v['display'] )
+							)
+						)
+							|| in_array( $screen->post_type, $v['display'] );
+						$enqueue_scripts = apply_filters(
+							$prefix . 'enqueue_metabox_scripts',
+							$enqueue_scripts,
+							$screen,
+							$v
+						);
+						if ( $enqueue_scripts )	{
+							add_filter(
+								'aioseop_localize_script_data',
+								Array( $this, 'localize_script_data' )
+							);
+							add_action(
+								"admin_print_scripts",
+								Array( $this, 'enqueue_scripts' ),
+								20
+							);
+							add_action(
+								"admin_print_scripts",
+								Array( $this, 'enqueue_styles' ),
+								20
+							);
 						}
 					}
 				}
@@ -1646,20 +1728,30 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
-		 * Load styles for module.
+		 * Loads styles for module.
+		 * @since 1.0.0
 		 */
-		function enqueue_styles( ) {
+		function enqueue_styles() {
 			wp_enqueue_style( 'thickbox' );
-			if ( !empty( $this->pointers ) ) wp_enqueue_style( 'wp-pointer' );
-			wp_enqueue_style(  'aioseop-module-style',  AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module.css' );
+			if ( !empty( $this->pointers ) )
+				wp_enqueue_style( 'wp-pointer' );
+			wp_enqueue_style(
+				'aioseop-module-style',
+				AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module.css'
+			);
 			if ( function_exists( 'is_rtl' ) && is_rtl() )
-				wp_enqueue_style(  'aioseop-module-style-rtl',  AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module-rtl.css', array('aioseop-module-style') );
+				wp_enqueue_style(
+					'aioseop-module-style-rtl',
+					AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module-rtl.css',
+					array('aioseop-module-style')
+				);
 		}
 
 		/**
-		 * Load scripts for module, can pass data to module script.
+		 * Loads scripts for module, can pass data to module script.
+		 * @since 1.0.0
 		 */
-		function enqueue_scripts( ) {
+		function enqueue_scripts() {
 			wp_enqueue_script( 'sack' );
 			wp_enqueue_script( 'jquery' );
 			wp_enqueue_script( 'media-upload' );
@@ -1667,26 +1759,47 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			wp_enqueue_script( 'common' );
 			wp_enqueue_script( 'wp-lists' );
 			wp_enqueue_script( 'postbox' );
-			if ( !empty( $this->pointers ) ) {
-				wp_enqueue_script( 'wp-pointer', false, array( 'jquery' ) );
+			if ( !empty( $this->pointers ) )	{
+				wp_enqueue_script(
+					'wp-pointer',
+					false,
+					array( 'jquery' )
+				);
 			}
-			wp_enqueue_script( 'aioseop-module-script', AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_module.js', Array(), AIOSEOP_VERSION );
-			if ( !empty( $this->script_data ) ) {
+			wp_enqueue_script(
+				'aioseop-module-script',
+				AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_module.js',
+				Array(),
+				AIOSEOP_VERSION
+			);
+			if ( !empty( $this->script_data ) )	{
 				aioseop_localize_script_data();
 			}
 		}
 
+		/**
+		 * Localizes Script data.
+		 * @since 1.0.0
+		 * @param array $data.
+		 * @return array.
+		 */
 		function localize_script_data( $data ) {
-			if ( !is_array( $data ) ) {
+			if ( ! is_array( $data ) )	{
 				$data = Array( 0 => $data );
 			}
-			if ( empty( $this->script_data ) ) $this->script_data = Array();
+			if ( empty( $this->script_data ) )
+				$this->script_data = Array();
 			if ( !empty( $this->pointers ) )
 				$this->script_data['pointers'] = $this->pointers;
-			if ( empty( $data[0]['condshow'] ) ) $data[0]['condshow'] = Array();
-			if ( empty( $this->script_data['condshow'] ) ) $this->script_data['condshow'] = Array();
+			if ( empty( $data[0]['condshow'] ) )
+				$data[0]['condshow'] = Array();
+			if ( empty( $this->script_data['condshow'] ) )
+				$this->script_data['condshow'] = Array();
 			$condshow = $this->script_data['condshow'];
-			$data[0]['condshow'] = array_merge( $data[0]['condshow'], $condshow );
+			$data[0]['condshow'] = array_merge(
+				$data[0]['condshow'],
+				$condshow
+			);
 			unset( $this->script_data['condshow'] );
 			$data[0] = array_merge( $this->script_data, $data[0] );
 			$this->script_data['condshow'] = $condshow;
@@ -1694,18 +1807,27 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
-		 * Override this to run code at the beginning of the settings page.
+		 * Overrides this to run code at the beginning of the settings page.
+		 * @since 1.0.0
 		 */
 		function settings_page_init() {
 
 		}
 
 		/**
-		 * Filter out admin pointers that have already been clicked.
+		 * Filters out admin pointers that have already been clicked.
+		 * @since 1.0.0
 		 */
 		function filter_pointers() {
-			if ( !empty( $this->pointers ) ) {
-				$dismissed = explode( ',', (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
+			if ( !empty( $this->pointers ) )	{
+				$dismissed = explode(
+					',',
+					(string) get_user_meta(
+						get_current_user_id(),
+						'dismissed_wp_pointers',
+						true
+						)
+					);
 				foreach( $dismissed as $d )
 					if ( isset( $this->pointers[$d] ) )
 						unset( $this->pointers[$d] );
@@ -1713,46 +1835,97 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
-		 * Add basic hooks when on the module's page.
+		 * Adds basic hooks when on the module's page.
+		 * @since 1.0.0
 		 */
 		function add_page_hooks() {
 			$hookname = current_filter();
 			if ( $this->strpos( $hookname, 'load-' ) === 0 )
 				$this->pagehook = $this->substr( $hookname, 5 );
-			add_action( "admin_print_scripts", Array( $this, 'enqueue_scripts' ) );
-			add_action( "admin_print_styles", Array( $this, 'enqueue_styles' ) );
-			add_filter( 'aioseop_localize_script_data', Array( $this, 'localize_script_data' ) );
-			add_action( $this->prefix . 'settings_header', Array( $this, 'display_tabs' ) );
+			add_action(
+				"admin_print_scripts",
+				Array( $this, 'enqueue_scripts' )
+			);
+			add_action(
+				"admin_print_styles",
+				Array( $this, 'enqueue_styles' )
+			);
+			add_filter(
+				'aioseop_localize_script_data',
+				Array( $this, 'localize_script_data' )
+			);
+			add_action(
+				$this->prefix . 'settings_header',
+				Array( $this, 'display_tabs' )
+			);
 		}
 
+		/**
+		 * Gets administratos' links.
+		 * @since 1.0.0
+		 * @return array.
+		 */
 		function get_admin_links() {
 			if ( !empty( $this->menu_name ) )
 				$name = $this->menu_name;
 			else
 				$name = $this->name;
-
 			$hookname = plugin_basename( $this->file );
-
 			$links = Array();
 			$url = '';
-            if ( function_exists( 'menu_page_url' ) )
-                    $url = menu_page_url( $hookname, 0 );
-            if ( empty( $url ) )
-                    $url = esc_url( admin_url( 'admin.php?page=' . $hookname ) );
-
+			if ( function_exists( 'menu_page_url' ) )
+				$url = menu_page_url( $hookname, 0 );
+			if ( empty( $url ) )
+				$url = esc_url(
+					admin_url(
+						'admin.php?page=' . $hookname
+					)
+				);
 			if ( $this->locations === null )
-				array_unshift( $links, array( 'parent' => AIOSEOP_PLUGIN_DIRNAME, 'title' => $name, 'id' => $hookname, 'href' => $url, 'order' => $this->menu_order() ) );
+				array_unshift(
+					$links,
+					array(
+						'parent' 	=> AIOSEOP_PLUGIN_DIRNAME,
+						'title' 	=> $name,
+						'id' 		=> $hookname,
+						'href' 		=> $url,
+						'order' 	=> $this->menu_order()
+					)
+				);
 			else {
-				foreach( $this->locations as $k => $v ) {
+				foreach( $this->locations as $k => $v )	{
 					if ( $v['type'] === 'settings' ) {
-						if ( $k === 'default' ) {
-							array_unshift( $links, array( 'parent' => AIOSEOP_PLUGIN_DIRNAME, 'title' => $name, 'id' => $hookname, 'href' => $url, 'order' => $this->menu_order() ) );
+						if ( $k === 'default' )	{
+							array_unshift(
+								$links,
+								array(
+									'parent' 	=> AIOSEOP_PLUGIN_DIRNAME,
+									'title' 	=> $name,
+									'id' 		=> $hookname,
+									'href' 		=> $url,
+									'order' 	=> $this->menu_order()
+								)
+							);
 						} else {
 							if ( !empty( $v['menu_name'] ) )
 								$name = $v['menu_name'];
 							else
 								$name = $v['name'];
-							array_unshift( $links, array( 'parent' => AIOSEOP_PLUGIN_DIRNAME, 'title' => $name, 'id' => $this->get_prefix( $k ) . $k, 'href' => esc_url( admin_url( 'admin.php?page=' . $this->get_prefix( $k ) . $k ) ), 'order' => $this->menu_order() ) );
+							array_unshift(
+								$links,
+								array(
+									'parent' 	=> AIOSEOP_PLUGIN_DIRNAME,
+									'title' 	=> $name,
+									'id' 		=> $this->get_prefix( $k ) . $k,
+									'href' 		=> esc_url(
+										admin_url(
+											'admin.php?page=' .
+											$this->get_prefix( $k ) .
+											$k
+										)
+									),
+									'order' 	=> $this->menu_order() )
+								);
 						}
 					}
 				}
@@ -1760,10 +1933,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			return $links;
 		}
 
+		/**
+		 * Adds administrator's bar submenu.
+		 * @since 1.0.0
+		 */
 		function add_admin_bar_submenu() {
 			global $aioseop_admin_menu, $wp_admin_bar;
-
-			if ( $aioseop_admin_menu ) {
+			if ( $aioseop_admin_menu )	{
 				$links = $this->get_admin_links();
 				if ( !empty( $links ) )
 					foreach( $links as $l )
@@ -1772,65 +1948,155 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
-		 * Collect metabox data together for tabbed metaboxes.
+		 * Collects metabox data together for tabbed metaboxes.
+		 * @since 1.0.0
+		 * @param array $args
+		 * @return array.
 		 */
 		function filter_return_metaboxes( $args ) {
 			return array_merge( $args, $this->post_metaboxes );
 		}
 
-		/** Add submenu for module, call page hooks, set up metaboxes. */
+		/**
+		 * Adds submenu for module, call page hooks, set up metaboxes.
+		 * @since 1.0.0
+		 * @param String $parent_slug.
+		 * @return Mixed.
+		 */
 		function add_menu( $parent_slug ) {
 			if ( !empty( $this->menu_name ) )
 				$name = $this->menu_name;
 			else
 				$name = $this->name;
 			if ( $this->locations === null ) {
-				$hookname = add_submenu_page( $parent_slug, $name, $name, apply_filters( 'manage_aiosp', 'aiosp_manage_seo' ), plugin_basename( $this->file ), Array( $this, 'display_settings_page' ) );
+				$hookname = add_submenu_page(
+					$parent_slug,
+					$name,
+					$name,
+					apply_filters( 'manage_aiosp', 'aiosp_manage_seo' ),
+					plugin_basename( $this->file ),
+					Array( $this, 'display_settings_page' )
+				);
 				add_action( "load-{$hookname}", Array( $this, 'add_page_hooks' ) );
 				return true;
 			}
-			foreach( $this->locations as $k => $v ) {
-				if ( $v['type'] === 'settings' ) {
-					if ( $k === 'default' ) {
+			foreach( $this->locations as $k => $v )	{
+				if ( $v['type'] === 'settings' )	{
+					if ( $k === 'default' )
+					{
 						if ( !empty( $this->menu_name ) )
 							$name = $this->menu_name;
 						else
 							$name = $this->name;
-						$hookname = add_submenu_page( $parent_slug, $name, $name, apply_filters( 'manage_aiosp', 'aiosp_manage_seo' ), plugin_basename( $this->file ), Array( $this, 'display_settings_page' ) );
+						$hookname = add_submenu_page(
+							$parent_slug,
+							$name,
+							$name,
+							apply_filters(
+								'manage_aiosp',
+								'aiosp_manage_seo'
+							),
+							plugin_basename( $this->file ),
+							Array( $this, 'display_settings_page' )
+						);
 					} else {
 						if ( !empty( $v['menu_name'] ) )
 							$name = $v['menu_name'];
 						else
 							$name = $v['name'];
-						$hookname = add_submenu_page( $parent_slug, $name, $name, apply_filters( 'manage_aiosp', 'aiosp_manage_seo' ), $this->get_prefix( $k ) . $k, Array( $this, "display_settings_page_$k" ) );
+						$hookname = add_submenu_page(
+							$parent_slug,
+							$name,
+							$name,
+							apply_filters(
+								'manage_aiosp',
+								'aiosp_manage_seo'
+							),
+							$this->get_prefix( $k ) . $k,
+							Array( $this, "display_settings_page_$k" )
+						);
 					}
-					add_action( "load-{$hookname}", Array( $this, 'add_page_hooks' ) );
-				} elseif ( $v['type'] === 'metabox' ) {
+					add_action(
+						"load-{$hookname}",
+						Array( $this, 'add_page_hooks' )
+					);
+				} elseif ( $v['type'] === 'metabox' )	{
 					$this->setting_options( $k ); // hack -- make sure this runs anyhow, for now -- pdb
-					add_action( 'edit_post',		array( $this, 'save_post_data' ) );
-					add_action( 'publish_post',		array( $this, 'save_post_data' ) );
-					add_action( 'add_attachment',	array( $this, 'save_post_data' ) );
-					add_action( 'edit_attachment',	array( $this, 'save_post_data' ) );
-					add_action( 'save_post',		array( $this, 'save_post_data' ) );
-					add_action( 'edit_page_form',	array( $this, 'save_post_data' ) );
-					if ( isset( $v['display'] ) && !empty( $v['display'] ) ) {
-						add_action( "admin_print_scripts", Array( $this, 'enqueue_metabox_scripts' ), 5 );
+					add_action(
+						'edit_post',
+						array( $this, 'save_post_data' )
+					);
+					add_action(
+						'publish_post',
+						array( $this, 'save_post_data' )
+					);
+					add_action(
+						'add_attachment',
+						array( $this, 'save_post_data' )
+					);
+					add_action(
+						'edit_attachment',
+						array( $this, 'save_post_data' )
+					);
+					add_action(
+						'save_post',
+						array( $this, 'save_post_data' )
+					);
+					add_action(
+						'edit_page_form',
+						array( $this, 'save_post_data' )
+					);
+					if ( isset( $v['display'] )
+						&& !empty( $v['display'] ) ) {
+						add_action(
+							"admin_print_scripts",
+							Array( $this, 'enqueue_metabox_scripts' ),
+							5
+						);
 						if ( $this->tabbed_metaboxes )
-							add_filter( 'aioseop_add_post_metabox', Array( $this, 'filter_return_metaboxes' ) );
-						foreach ( $v['display'] as $posttype ) {
+							add_filter(
+								'aioseop_add_post_metabox',
+								Array( $this, 'filter_return_metaboxes' )
+							);
+						foreach ( $v['display'] as $posttype )
+						{
 							$v['location'] = $k;
 							$v['posttype'] = $posttype;
-							if ( !isset($v['context']  ) ) $v['context']  = 'advanced';
-							if ( !isset($v['priority'] ) ) $v['priority'] = 'default';
+							if ( ! isset($v['context']  ) )
+								$v['context']  = 'advanced';
+							if ( ! isset($v['priority'] ) )
+								$v['priority'] = 'default';
 							if ( $this->tabbed_metaboxes ) {
-								$this->post_metaboxes[] = Array( 'id' => $v['prefix'] . $k, 'title' => $v['name'], 'callback' => Array( $this, 'display_metabox' ),
-																 'post_type' => $posttype, 'context' => $v['context'], 'priority' => $v['priority'], 'callback_args' => $v );
+								$this->post_metaboxes[] = Array(
+									'id' 				=> $v['prefix'] . $k,
+									'title' 			=> $v['name'],
+									'callback' 			=> Array( $this, 'display_metabox' ),
+									'post_type' 		=> $posttype,
+									'context' 			=> $v['context'],
+									'priority' 			=> $v['priority'],
+									'callback_args' 	=> $v
+								);
 							} else {
 								$title = $v['name'];
-								if ( $title != $this->plugin_name ) $title = $this->plugin_name . ' - ' . $title;
+								if ( $title != $this->plugin_name )
+									$title = $this->plugin_name . ' - ' . $title;
 								if ( !empty( $v['help_link'] ) )
-									$title .= "<a class='aioseop_help_text_link aioseop_meta_box_help' target='_blank' href='" . $lopts['help_link'] . "'><span>" . __( 'Help', 'all-in-one-seo-pack' ) . "</span></a>";
-								add_meta_box( $v['prefix'] . $k, $title, Array( $this, 'display_metabox' ), $posttype, $v['context'], $v['priority'], $v );
+									$title .= "<a
+													class='aioseop_help_text_link aioseop_meta_box_help'
+													target='_blank'
+													href='" . $lopts['help_link'] . "'
+												>
+														<span>" . __( 'Help', 'all-in-one-seo-pack' ) . "</span>
+												</a>";
+								add_meta_box(
+									$v['prefix'] . $k,
+									$title,
+									Array( $this, 'display_metabox' ),
+									$posttype,
+									$v['context'],
+									$v['priority'],
+									$v
+								);
 							}
 						}
 					}
