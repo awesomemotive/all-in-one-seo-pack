@@ -1083,21 +1083,20 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 	function add_page_hooks() {
 
-		global $aioseop_options;
+global $aioseop_options;
 
 		$post_objs = get_post_types( '', 'objects' );
 		$pt = array_keys( $post_objs );
 		$rempost = array( 'revision', 'nav_menu_item' );
 		$pt = array_diff( $pt, $rempost );
 		$post_types = Array();
-		$default_posttypes = Array('Posts','Pages','Media');
 
 		$aiosp_enablecpost = '';
 		if (isset($_REQUEST['aiosp_enablecpost'])) $aiosp_enablecpost = $_REQUEST['aiosp_enablecpost'];
 
 		foreach ( $pt as $p ) {
 			if ( !empty( $post_objs[$p]->label ) ){
-				if (in_array($post_objs[$p]->label,$default_posttypes) && empty( $aioseop_options['aiosp_enablecpost'] )){
+				if ( $post_objs[$p]->_builtin && empty( $aioseop_options['aiosp_enablecpost'] )){
 				$post_types[$p] = $post_objs[$p]->label;
 			}elseif (!empty( $aioseop_options['aiosp_enablecpost'] )  || $aiosp_enablecpost == 'on' ) {
 				$post_types[$p] = $post_objs[$p]->label;
@@ -1107,6 +1106,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$post_types[$p] = $p;
 			}
 		}
+		
+		foreach ($pt as $p){
+			if ( !empty( $post_objs[$p]->label)){
+				$all_post_types[$p] = $post_objs[$p]->label;
+			}
+		}
+		
 		$taxes = get_taxonomies( '', 'objects' );
 		$tx = array_keys( $taxes );
 		$remtax = array( 'nav_menu', 'link_category', 'post_format' );
@@ -1118,7 +1124,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			else
 				$taxes[$t] = $t;
 		$this->default_options["posttypecolumns"]['initial_options'] = $post_types;
-		$this->default_options["cpostactive"]['initial_options'] = $post_types;
+		$this->default_options["cpostactive"]['initial_options'] = $all_post_types;
 		$this->default_options["cpostnoindex"]['initial_options'] = $post_types;
 		$this->default_options["cpostnofollow"]['initial_options'] = $post_types;
 		$this->default_options["cpostnoodp"]['initial_options'] = $post_types;
@@ -2167,7 +2173,7 @@ function aiosp_google_analytics() {
 	if ( !empty( $aioseop_options['aiosp_ga_advanced_options'] ) && !empty( $aioseop_options['aiosp_ga_exclude_users'] ) ) {
 		if ( is_user_logged_in() ) {
 			global $current_user;
-			if ( empty( $current_user ) ) get_currentuserinfo();
+			if ( empty( $current_user ) ) wp_get_current_user();
 			if ( !empty( $current_user ) ) {
 				$intersect = array_intersect( $aioseop_options['aiosp_ga_exclude_users'], $current_user->roles );
 				if ( !empty( $intersect ) ) return;
@@ -3422,7 +3428,7 @@ EOF;
 
 		if ( $custom_menu_order ) {
 			add_filter( 'custom_menu_order', '__return_true' );
-			add_filter( 'menu_order', array( $this, 'set_menu_order' ) );
+			add_filter( 'menu_order', array( $this, 'set_menu_order' ), 11 );
 		}
 
 		if ( $donated ) {
@@ -3463,10 +3469,8 @@ EOF;
 			$this->locations['aiosp']['display'] = Array( 'post', 'page' );
 		}
 
-		if ( $custom_menu_order )
+
 			add_menu_page( $menu_name, $menu_name, apply_filters( 'manage_aiosp', 'aiosp_manage_seo' ) , $file, Array( $this, 'display_settings_page' ) );
-		else
-			add_utility_page( $menu_name, $menu_name, apply_filters( 'manage_aiosp', 'aiosp_manage_seo' ), $file, Array( $this, 'display_settings_page' ) );
 
 		add_meta_box('aioseop-list', __( "Join Our Mailing List", 'all-in-one-seo-pack' ), array( 'aiosp_metaboxes', 'display_extra_metaboxes'), 'aioseop_metaboxes', 'normal', 'core');
 		if ( AIOSEOPPRO ){

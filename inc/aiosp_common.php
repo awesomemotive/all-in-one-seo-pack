@@ -45,7 +45,7 @@ class aiosp_common {
 		$hyperlink = '<a ';
 		if( $target ) $hyperlink .= "target=\"$target\" ";
 		if( $title ) $hyperlink .= "title=\"$title\" ";
-		$hyperlink .= "href=\"$url\">$title</a>";
+		$hyperlink .= "href=\"$url\">$anchor</a>";
 
 		return $hyperlink;
 	}

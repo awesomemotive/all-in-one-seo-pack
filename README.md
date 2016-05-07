@@ -12,10 +12,14 @@ Typically the one-click installer... run bleeding edge coming soon
 
 ## Contributing
 
-1. Create your feature branch: `git checkout -b my-new-feature`
-2. Commit your changes: `git commit -am 'Add some feature'`
-3. Push to the branch: `git push origin my-new-feature`
-4. Submit a pull request :D
+There are many ways to contribute:
+
+- Developers, we'd love [your help](./CONTRIBUTING.md).
+- Suggest a [new feature](https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues).
+- Found a bug? [File an issue](https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues).
+- Beta testers
+
+
 
 ## Supercharge!
 
@@ -23,6 +27,6 @@ Typically the one-click installer... run bleeding edge coming soon
 
 ## Acknowledgements
 
-* Coffee
-* Bacon
-* Coffee
+- [x] Coffee
+- [x] Bacon
+- [ ] More Coffee

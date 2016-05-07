@@ -1,0 +1,86 @@
+filter:
+    excluded_paths: [vendor/*, tests/*, .tx/*, languages/*, includes/libraries/*, bin/*, assets/*, templates/* ]
+
+tools:
+    php_code_sniffer:
+        config:
+            # https://scrutinizer-ci.com/docs/tools/php/code-sniffer/standards
+            standard: WordPress
+
+tools:
+    php_code_sniffer: true
+    sensiolabs_security_checker: true
+    php_pdepend: true
+    php_loc:
+        enabled: true
+        
+
+
+
+checks:
+    php:
+        psr2_switch_declaration: false
+        psr2_control_structure_declaration: false
+        psr2_class_declaration: false
+        one_class_per_file: true
+        avoid_superglobals: false
+        require_php_tag_first: true
+        code_rating: true
+        duplication: true
+        useless_calls: true
+        use_statement_alias_conflict: true
+        unused_variables: true
+        unused_properties: true
+        unused_parameters: true
+        unreachable_code: true
+        sql_injection_vulnerabilities: true
+        security_vulnerabilities: true
+        precedence_mistakes: true
+        precedence_in_conditions: true
+        parameter_non_unique: true
+        no_property_on_interface: true
+        no_non_implemented_abstract_methods: true
+        deprecated_code_usage: true
+        closure_use_not_conflicting: true
+        closure_use_modifiable: true
+        avoid_useless_overridden_methods: true
+        avoid_conflicting_incrementers: true
+        assignment_of_null_return: true
+        unused_methods: true
+        too_many_arguments: true
+        no_debug_code: true
+        missing_arguments: true
+        fix_php_opening_tag: true
+        remove_php_closing_tag: false
+        side_effects_or_types: false
+        no_mixed_inline_html: false
+        require_braces_around_control_structures: false
+        php5_style_constructor: false
+        no_global_keyword: false
+        avoid_usage_of_logical_operators: false
+        psr2_class_declaration: false
+        no_underscore_prefix_in_properties: false
+        no_underscore_prefix_in_methods: false
+        blank_line_after_namespace_declaration: false
+        single_namespace_per_use: false
+        code_rating: true
+        remove_extra_empty_lines: true
+        remove_php_closing_tag: true
+        remove_trailing_whitespace: true
+        fix_use_statements:
+            remove_unused: true
+            preserve_multiple: false
+            preserve_blanklines: true
+            order_alphabetically: true
+        fix_php_opening_tag: true
+        fix_linefeed: true
+        fix_line_ending: true
+        fix_identation_4spaces: true
+        fix_doc_comments: true
+        security_vulnerabilities: true
+        no_exit: false
+
+build: true
+
+
+        

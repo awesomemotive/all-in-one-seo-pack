@@ -508,7 +508,6 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				"wsr-agent",
 				"WWW-Collector-E",
 				"Xenu",
-				"yandex",
 				"Zao",
 				"Zeus",
 				"ZyBORG",
@@ -1229,6 +1228,9 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		
 		/**
 		 * Load scripts and styles for metaboxes.
+		 * 
+		 * edit-tags exists only for pre 4.5 support... remove when we drop 4.5 support.
+		 * Also, that check and others should be pulled out into their own functions
 		 */
 		function enqueue_metabox_scripts( ) {
 			$screen = '';
@@ -1236,12 +1238,12 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				$screen = get_current_screen();
 			$bail = false;
 			if ( empty( $screen ) ) $bail = true;
-			if ( ( $screen->base != 'post' ) && ( $screen->base != 'edit-tags' ) && ( $screen->base != 'toplevel_page_shopp-products' ) ) $bail = true;
+			if ( ( $screen->base != 'post' ) && ( $screen->base != 'term' ) && ( $screen->base != 'edit-tags' ) && ( $screen->base != 'toplevel_page_shopp-products' ) ) $bail = true;
 			$prefix = $this->get_prefix();
 			$bail = apply_filters( $prefix . 'bail_on_enqueue', $bail, $screen );
 			if ( $bail ) return;
 			$this->form = 'post';
-			if ( $screen->base == 'edit-tags' ) $this->form = 'edittag';
+			if ( $screen->base == 'term' || $screen->base == 'edit-tags' ) $this->form = 'edittag';
 			if ( $screen->base == 'toplevel_page_shopp-products' ) $this->form = 'product';
 			$this->form = apply_filters( $prefix . 'set_form_on_enqueue', $this->form, $screen );
 			foreach( $this->locations as $k => $v ) {

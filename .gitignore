@@ -7,6 +7,10 @@
 .travis.yml
 .svn
 
+# IDE #
+#######
+.idea/
+.idea/vcs.xml
 
 # OS #
 ######

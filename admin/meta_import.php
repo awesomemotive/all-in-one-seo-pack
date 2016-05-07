@@ -36,6 +36,10 @@ class WPSEO_Import_AIOSEO_Hooks extends WPSEO_Import_Hooks {
 	}
 }
 }else{
+	add_action( 'init', 'mi_aioseop_yst_detected_notice_dismissed' );
+}
+
+function mi_aioseop_yst_detected_notice_dismissed(){
 	delete_user_meta( get_current_user_id(), 'aioseop_yst_detected_notice_dismissed' );
 }
 
@@ -62,12 +66,12 @@ function aiosp_seometa_action() {
 		return;
 	
 	if ( empty( $_REQUEST['platform_old'] ) ) {
-		printf( '<div class="error"><p>%s</p></div>', __('Sorry, you can\'t do that. Please choose a platform platforms.') );
+		printf( '<div class="error"><p>%s</p></div>', __('Sorry, you can\'t do that. Please choose a platform and then click Analyze or Convert.') );
 		return;
 	}
 		
 	if ( $_REQUEST['platform_old'] == 'All in One SEO Pack' ) {
-		printf( '<div class="error"><p>%s</p></div>', __('Sorry, you can\'t do that. Please choose two different platforms.') );
+		printf( '<div class="error"><p>%s</p></div>', __('Sorry, you can\'t do that. Please choose a platform and then click Analyze or Convert.') );
 		return;
 	}
 		

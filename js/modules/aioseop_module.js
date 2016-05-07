@@ -338,8 +338,8 @@ jQuery(document).ready(function() {
             var stringref = jQuery(this).attr("href").split('#')[1];
             jQuery('.aioseop_tab:not(#'+stringref+')').hide('slow');
             jQuery('.aioseop_tab#' + stringref).show('slow');
-            jQuery('.aioseop_header_tab[href!=#'+stringref+']').removeClass('active');
-            jQuery('.aioseop_header_tab[href=#' + stringref+']').addClass('active');
+            jQuery('.aioseop_header_tab[href!="#'+stringref+'"]').removeClass('active');
+            jQuery('.aioseop_header_tab[href="#' + stringref+'"]').addClass('active');
             return false;
     });    
 });
