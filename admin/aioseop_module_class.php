@@ -116,6 +116,7 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 
 		/**
 		 * Convenience function to see if an option is set.
+		 * @param string $option
 		 */
 		function option_isset( $option, $location = null ) {
 			$prefix = $this->get_prefix( $location );
@@ -207,6 +208,7 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		
 		/**
 		 * Wrapper for strpos() - uses mb_strpos() if possible.
+		 * @param string $needle
 		 */
 		function strpos( $haystack, $needle, $offset = 0 ) {
 			if ( function_exists( 'mb_strpos' ) )
@@ -216,6 +218,7 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		
 		/**
 		 * Wrapper for strrpos() - uses mb_strrpos() if possible.
+		 * @param string $needle
 		 */
 		function strrpos( $haystack, $needle, $offset = 0 ) {
 			if ( function_exists( 'mb_strrpos' ) )
@@ -252,6 +255,9 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		  }
 		}
 
+		/**
+		 * @param DOMElement $node
+		 */
 		function domnode_to_array( $node ) {
 		  switch ( $node->nodeType ) {
 		    case XML_CDATA_SECTION_NODE:
@@ -800,6 +806,7 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		
 		/**
 		 * See if a file exists using WP Filesystem.
+		 * @param string $filename
 		 */
 		function file_exists( $filename ) {
 			$wpfs = $this->get_filesystem_object();
@@ -856,6 +863,7 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		
 		/**
 		 * Save a file through WP Filesystem.
+		 * @param string $filename
 		 */
 		function save_file( $filename, $contents ) {
 			$failed_str = __( sprintf( "Failed to write file %s!\n", $filename ), 'all-in-one-seo-pack' );
@@ -873,6 +881,7 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		
 		/**
 		 * Delete a file through WP Filesystem.
+		 * @param string $filename
 		 */
 		function delete_file( $filename ) {
 			$wpfs = $this->get_filesystem_object();
@@ -889,6 +898,8 @@ if ( !class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		
 		/**
 		 * Rename a file through WP Filesystem.
+		 * @param string $filename
+		 * @param string $newname
 		 */
 		function rename_file( $filename, $newname ) {
 			$wpfs = $this->get_filesystem_object();
