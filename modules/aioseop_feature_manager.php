@@ -16,6 +16,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 			$this->file   = __FILE__;                                    // the current file
 			parent::__construct();
 			$this->module_info = Array(
+				'image_seo'           => Array(
+					'name'        => __( 'Image SEO', 'all-in-one-seo-pack' ),
+					'description' => __( 'Trick out your Image\'s SEO game.' , 'all-in-one-seo-pack' ),
+				),
 				'sitemap'           => Array(
 					'name'        => __( 'XML Sitemaps', 'all-in-one-seo-pack' ),
 					'description' => __( 'Create and manage your XML Sitemaps using this feature and submit your XML Sitemap to Google, Bing/Yahoo and Ask.com.', 'all-in-one-seo-pack' )
@@ -46,8 +50,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 					'default'     => 'on'
 				)
 			);
-
-
 			if ( AIOSEOPPRO ) {
 
 				$this->module_info['coming_soon']   = Array(

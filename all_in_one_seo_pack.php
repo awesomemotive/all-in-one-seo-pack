@@ -177,6 +177,7 @@ if ( ! empty( $aioseop_mem_limit ) ) {
 
 $aiosp_activation    = false;
 $aioseop_module_list = array(
+	'image_seo',
 	'sitemap',
 	'opengraph',
 	'robots',
