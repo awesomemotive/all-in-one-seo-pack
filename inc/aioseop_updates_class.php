@@ -38,8 +38,10 @@ class aioseop_updates {
 		}
 
 		// Last known running plugin version
-		$last_active_version = isset( $aioseop_options['last_active_version'] )
-			? $aioseop_options['last_active_version'] : '0.0';
+		$last_active_version = '0.0';
+		if( isset( $aioseop_options['last_active_version'] ) ){
+			$last_active_version = $aioseop_options['last_active_version'] ;
+		}
 
 		// Compares version to see which one is the newer.
 		if ( version_compare( $last_active_version, AIOSEOP_VERSION, '<' ) ) {

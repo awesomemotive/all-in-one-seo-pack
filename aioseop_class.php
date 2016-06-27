@@ -2586,7 +2586,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			if ( empty( $aioseop_options['aiosp_skip_excerpt'] ) ) {
 				$description = $this->trim_excerpt_without_filters_full_length( $this->internationalize( $post->post_excerpt ) );
 			}
-			if ( ! $description && $aioseop_options['aiosp_generate_descriptions'] ) {
+			if ( ! $description && isset( $aioseop_options['aiosp_generate_descriptions'] ) && $aioseop_options['aiosp_generate_descriptions'] ) {
 				$content = $post->post_content;
 				if ( ! empty( $aioseop_options['aiosp_run_shortcodes'] ) ) {
 					$content = do_shortcode( $content );
@@ -2868,7 +2868,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						}
 					}
 
-					if ( $aioseop_options['aiosp_use_categories'] && ! is_page() ) {
+					if ( isset( $aioseop_options['aiosp_use_categories'] ) && $aioseop_options['aiosp_use_categories'] && ! is_page() ) {
 						$keywords = array_merge( $keywords, $this->get_all_categories( $id ) );
 					}
 				}
@@ -3613,10 +3613,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	function add_hooks() {
 		global $aioseop_options, $aioseop_update_checker;
 
-		$role = get_role( 'administrator' );
-		if ( is_object( $role ) ) {
-			$role->add_cap( 'aiosp_manage_seo' );
-		}
+		// MOVED TO MAIN PLUGIN FILE IN ORDER TO FIRE SOONS
+		//$role = get_role( 'administrator' );
+		//if ( is_object( $role ) ) {
+		//	$role->add_cap( 'aiosp_manage_seo' );
+		//}
 
 		aioseop_update_settings_check();
 		add_filter( 'user_contactmethods', 'aioseop_add_contactmethods' );
@@ -4286,6 +4287,10 @@ EOF;
 		// TODO we should check for the site setting in the case of auto.
 
 		global $aioseop_options;
+
+		if( ! isset( $aioseop_options['aiosp_can_set_protocol'] ) ){
+			return $url; // Just send the url back if there's nothing there.
+		}
 
 		if ( $aioseop_options['aiosp_can_set_protocol'] == 'http' ) {
 			$url = preg_replace( '/^https:/i', 'http:', $url );

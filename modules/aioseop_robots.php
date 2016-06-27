@@ -223,7 +223,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				}
 				$access = ( get_option( 'blog_public' ) ) ? 'allow' : 'block';
 				if ( $access ) {
-					$allow_rule = "Sitemap: \n\n# global\nUser-agent: *\nDisallow: /xmlrpc.php\n\n";
+					global $aioseop_options;
+					$sitemapurl = trailingslashit( get_home_url() ) . $aioseop_options[ 'modules' ][ 'aiosp_sitemap_options' ][ 'aiosp_sitemap_filename' ] . '.xml';
+					$allow_rule = "Sitemap: $sitemapurl \n\n# global\nUser-agent: *\nDisallow: /xmlrpc.php\n\n";
 					$block_rule = "# global\nUser-agent: *\nDisallow: /\n\n";
 					if ( empty( $options[ $prefix . 'robotgen' ] ) ) {
 						$options[ $prefix . 'robotgen' ] = '';
