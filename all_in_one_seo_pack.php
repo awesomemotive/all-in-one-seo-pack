@@ -9,7 +9,7 @@ Author URI: http://michaeltorbert.com
 Text Domain: all-in-one-seo-pack
 Domain Path: /i18n/
 */
-
+//testing pull request
 /*
 Copyright (C) 2007-2016 Michael Torbert, https://semperfiwebdesign.com
 
