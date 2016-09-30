@@ -16,22 +16,22 @@
 	</li>
 </ul>
 
-<h3 class="wp-people-group"><?php printf( esc_html__( 'Core Team', 'all-in-one-seo-pack' ) ); ?></h3>
+<h3 class="wp-people-group"><?php printf( _e( 'Core Team', 'all-in-one-seo-pack' ) ); ?></h3>
 <ul class="wp-people-group " id="wp-people-group-contributors">
 	<li class="wp-person" id="wp-person-arnaudbroes">
 		<a class="web" target="_blank" href="https://profiles.wordpress.org/arnaudbroes"><img alt="" class="gravatar" src="https://www.gravatar.com/avatar/0ce0d554c2b0bd61d326e15c8dcde756?s=60">
 			Arnaud Broes</a>
-		<span class="title"><?php _e( 'Development Team', 'buddypress' ); ?></span>
+		<span class="title"><?php _e( 'Development Team', 'all-in-one-seo-pack' ); ?></span>
 	</li>
 	<li class="wp-person" id="wp-person-yuqianliu">
 		<a class="web" target="_blank" href="https://profiles.wordpress.org/yuqianl"><img alt="" class="gravatar" src="https://www.gravatar.com/avatar/8f971bea2b6c483fd1099e558013a7d0?s=60">
 			Yuqian Liu</a>
-		<span class="title"><?php _e( 'Development Team', 'buddypress' ); ?></span>
+		<span class="title"><?php _e( 'Development Team', 'all-in-one-seo-pack' ); ?></span>
 	</li>
 	<li class="wp-person" id="wp-person-aaronbrodney">
 		<a class="web" target="_blank" href="https://github.com/theycalledmetaz"><img alt="" class="gravatar" src="https://avatars3.githubusercontent.com/u/8225725?v=3&s=60">
 			Aaron Brodney</a>
-		<span class="title"><?php _e( 'Development Team', 'buddypress' ); ?></span>
+		<span class="title"><?php _e( 'Development Team', 'all-in-one-seo-pack' ); ?></span>
 	</li>
 </ul>
 
@@ -58,7 +58,7 @@
 	</li>
 </ul>
 
-<h3 class="wp-people-group dashicons-before dashicons-translation"><?php printf( esc_html__( 'Translators Contributors and Translation Editors', 'all-in-one-seo-pack' ), '1.2' ); ?></h3>
+<h3 class="wp-people-group dashicons-before dashicons-translation"><?php printf( _e( 'Translation contributors and translation editors', 'all-in-one-seo-pack' ), '1.2' ); ?></h3>
 <p class="wp-credits-list">
 	<a href="https://profiles.wordpress.org/pierrelannoy/" target="_blank">Pierre Lannoy</a>,
 	<a href="https://profiles.wordpress.org/sonjanyc/" target="_blank">Sonja Leix</a>,

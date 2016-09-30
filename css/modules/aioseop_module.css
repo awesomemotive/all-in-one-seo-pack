@@ -252,12 +252,6 @@ div.aioseop_tip_icon:before {
     width: 423px;
 }
 
-.headwaythemes {
-    background-color: #FFFFFF;
-    padding-bottom: 110px;
-    height: 125px;
-}
-
 .aioseop_nopad {
     padding-left: 0;
     padding-top: 0;
@@ -1204,16 +1198,16 @@ div.aioseop_notice a.aioseop_dismiss_link {
 }
 
 /* Fix for Chrome */
-@media screen and (-webkit-min-device-pixel-ratio:0) { 
-    
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+
     .aioseop_header_tabs li a.aioseop_header_tab {
 		padding-bottom: 0;
     }
 }
 
 /* Fix for Safari */
-_:-webkit-full-screen:not(:root:root), .aioseop_header_tabs li a.aioseop_header_tab { 
-	padding-bottom: 2px; 
+_:-webkit-full-screen:not(:root:root), .aioseop_header_tabs li a.aioseop_header_tab {
+	padding-bottom: 2px;
 }
 
 .aioseop_header_tabs li:first-child a.aioseop_header_tab {
