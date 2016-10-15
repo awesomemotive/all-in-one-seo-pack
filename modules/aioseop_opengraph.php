@@ -114,7 +114,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				"customimg_twitter"      => __( "This option lets you upload an image to use as the Twitter image for this Page or Post.", 'all-in-one-seo-pack' ),
 				"gen_tags"               => __( "Automatically generate article tags for Facebook type article when not provided.", 'all-in-one-seo-pack' ),
 				"gen_keywords"           => __( "Use keywords in generated article tags.", 'all-in-one-seo-pack' ),
-				"gen_categories"         => __( "Use catergories in generated article tags.", 'all-in-one-seo-pack' ),
+				"gen_categories"         => __( "Use categories in generated article tags.", 'all-in-one-seo-pack' ),
 				"gen_post_tags"          => __( "Use post tags in generated article tags.", 'all-in-one-seo-pack' ),
 				"types"                  => __( "Select which Post Types you want to use All in One SEO Pack to set Open Graph meta values for.", 'all-in-one-seo-pack' ),
 				"title"                  => __( "This is the Open Graph title of this Page or Post.", 'all-in-one-seo-pack' ),
