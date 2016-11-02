@@ -4,7 +4,7 @@
  * AIOSEOP Updates class.
  * @author Michael Torbert.
  * @author Semper Fi Web Design.
- * @copyright http://semperplugins.com
+ * @copyright https://semperplugins.com
  * @version 1.0.0
  */
 if ( typeof aiosp_data != 'undefined' ) {
@@ -272,7 +272,7 @@ jQuery( document ).ready(function() {
  *
  * props to commentluv for this fix
  * @author commentluv.
- * @link http://core.trac.wordpress.org/ticket/16972
+ * @link https://core.trac.wordpress.org/ticket/16972
  * @since 1.0.0
  */
 jQuery( document ).ready(function() {

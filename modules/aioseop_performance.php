@@ -73,7 +73,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			$this->layout = array(
 				'default' => array(
 					'name'      => $this->name,
-					'help_link' => 'http://semperplugins.com/documentation/performance-settings/',
+					'help_link' => 'https://semperplugins.com/documentation/performance-settings/',
 					'options'   => array_keys( $this->default_options ),
 				),
 			);
@@ -84,7 +84,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 
 			$this->layout['system_status'] = array(
 				'name'      => __( 'System Status', 'all-in-one-seo-pack' ),
-				'help_link' => 'http://semperplugins.com/documentation/performance-settings/',
+				'help_link' => 'https://semperplugins.com/documentation/performance-settings/',
 				'options'   => array_keys( $system_status ),
 			);
 

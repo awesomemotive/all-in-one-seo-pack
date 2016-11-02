@@ -44,7 +44,7 @@ function aioseop_ajax_edit_meta_form( post_id, meta, nonce ) {
 	input += '<img src="' + aioseopadmin.imgUrl+'delete.png" border="0" alt="" title="'+meta+'" /></a>';
 	input += '</label>';
 	uform.html( input );
-	uform.attr( "class", "aioseop_mpc_admin_meta_options editing" );
+	uform.attr( "class", "aioseop_mpc_admin_meta_options aio_editing" );
 	jQuery('#aioseop_'+meta+'_cancel_' + post_id).click(function() {
 		uform.html( element );
 		uform.attr( "class", "aioseop_mpc_admin_meta_options" );

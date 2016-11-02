@@ -360,7 +360,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				<li>' . __( 'The yellow indicator means that a non-standard extension was recognized; not all crawlers may recognize it or interpret it the same way. The Allow and Sitemap directives are commonly used by Google and Yahoo.', 'all-in-one-seo-pack' ) . '</li>
 				<li>' . __( 'The red indicator means that the syntax is invalid for a robots.txt file.', 'all-in-one-seo-pack' ) . '</li>
 				</ul>
-				<a target="_blank" rel="nofollow" href="http://wikipedia.org/wiki/Robots_exclusion_standard#Nonstandard_extensions">' . __( 'More Information', 'all-in-one-seo-pack' ) . '</a>
+				<a target="_blank" rel="nofollow" href="https://wikipedia.org/wiki/Robots_exclusion_standard#Nonstandard_extensions">' . __( 'More Information', 'all-in-one-seo-pack' ) . '</a>
 				</div>';
 				}
 			} else {

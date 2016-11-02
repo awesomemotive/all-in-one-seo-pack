@@ -93,3 +93,37 @@ li#wp-admin-bar-aioseop-pro-upgrade a.ab-item {
     font-size: 110%;
 }
 
+/* Dashicons in sidebar */
+
+.aiosp-di .dashicons {
+    margin:1px;
+    line-height: 1;
+    width: 42px;
+    height:36px;
+    color:#fff;
+    padding:3px;
+    vertical-align:middle;
+}
+.aiosp-di .dashicons:before {
+    -webkit-font-smoothing:antialiased;
+    font:400 30px/1 dashicons;
+    line-height: 38px;
+}
+.aiosp-di .dashicons.di-facebook {
+    margin:0;
+}
+.aiosp-di .dashicons.di-facebook:before {
+    content:"\f304";
+    font-size:52px;
+}
+.aiosp-di .dashicons.di-twitter:before {
+    content:"\f301"
+}
+.aiosp-di .dashicons.di-facebook {
+    color: #3B5998;
+}
+.aiosp-di .dashicons.di-twitter {
+	width: 36px;
+    background-color:#00aced;
+    border-radius:2px;
+}

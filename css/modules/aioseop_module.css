@@ -395,6 +395,11 @@ div.aioseop_tip_icon:before {
     border: 1px solid #DDD;
 }
 
+#aioseop-about .aioseop_metabox_text ul {
+	list-style-type: disc;
+	padding-left: 15px;
+}
+
 .aioseop input[readonly] {
     background-color: #EEE;
     margin: 5px 0 5px 0 !important;
@@ -1000,6 +1005,14 @@ table.aioseop_table td, table.aioseop_table th {
     width: 92%;
     max-width: 100%;
     margin: 0 23px 0 13px;
+}
+
+#aiosp_sitemap_status_metabox .handlediv.button-link {
+	display: none;
+}
+
+#aiosp_sitemap_status_metabox.closed .inside {
+	display: block;
 }
 
 .aioseop_top_label {
