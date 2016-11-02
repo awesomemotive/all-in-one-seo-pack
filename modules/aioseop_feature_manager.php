@@ -117,7 +117,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 			$this->layout = array(
 				'default' => array(
 					'name'      => $this->name,
-					'help_link' => 'http://semperplugins.com/documentation/feature-manager/',
+					'help_link' => 'https://semperplugins.com/documentation/feature-manager/',
 					'options'   => array_keys( $this->default_options ),
 				),
 			);

@@ -13,7 +13,6 @@ class aiosp_metaboxes {
 
 	}
 
-
 	/**
 	 * @param $add
 	 * @param $meta
@@ -25,8 +24,7 @@ class aiosp_metaboxes {
 				?>
 				<div class="aioseop_metabox_text">
 					<p><h2
-						style="display:inline;"><?php echo AIOSEOP_PLUGIN_NAME; ?></h2><?php sprintf( __( 'by %s of %s.', 'all-in-one-seo-pack' ), 'Michael Torbert', '<a target="_blank" title="Semper Fi Web Design"
-							href="https://semperfiwebdesign.com/">Semper Fi Web Design</a>' ); ?>.</p>
+						style="display:inline;"><?php echo AIOSEOP_PLUGIN_NAME; ?></h2></p>
 					<?php
 					global $current_user;
 					$user_id = $current_user->ID;
@@ -41,7 +39,7 @@ class aiosp_metaboxes {
 					if ( ! AIOSEOPPRO ) {
 						?>
 						<p>
-							<strong><?php echo aiosp_common::get_upgrade_hyperlink( 'side', __( 'Pro Version', 'all-in-one-seo-pack' ), __( 'UPGRADE TO PRO VERSION', 'all-in-one-seo-pack' ), '_blank' ); ?></strong>
+							<strong><?php echo aiosp_common::get_upgrade_hyperlink( 'side', __( 'Pro Version', 'all-in-one-seo-pack' ), __( 'CLICK HERE', 'all-in-one-seo-pack' ), '_blank' ); ?> to upgrade to Pro Version and get:</strong>
 						</p>
 					<?php } ?>
 				</div>
@@ -52,37 +50,20 @@ class aiosp_metaboxes {
 
 					<?php if ( ! AIOSEOPPRO ) { ?>
 						<div class="aioseop_metabox_text">
-							<p>If you like this plugin and find it useful, help keep this plugin free and actively
-								developed by clicking the <a
-									href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mrtorbert%40gmail%2ecom&item_name=All%20In%20One%20SEO%20Pack&item_number=Support%20Open%20Source&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8"
-									target="_blank"><strong>donate</strong></a> button or send me a gift from my <a
-									href="https://www.amazon.com/wishlist/1NFQ133FNCOOA/ref=wl_web" target="_blank">
-									<strong>Amazon wishlist</strong></a>. Also, don't forget to follow me on <a
-									href="https://twitter.com/michaeltorbert/"
-									target="_blank"><strong>Twitter</strong></a>.
+							<p>
+								<?php self::pro_meta_content(); ?>
 							</p>
 						</div>
 					<?php } ?>
 
 					<div class="aioseop_metabox_feature">
 
-						<?php if ( ! AIOSEOPPRO ) { ?>
-							<a target="_blank" title="<?php _e( 'Donate', 'all-in-one-seo-pack' ); ?>"
-							   href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mrtorbert%40gmail%2ecom&item_name=All%20In%20One%20SEO%20Pack&item_number=Support%20Open%20Source&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8">
-								<img src="<?php echo AIOSEOP_PLUGIN_URL; ?>images/donate.jpg"
-								     alt="<?php _e( 'Donate with Paypal', 'all-in-one-seo-pack' ); ?>"/> </a>
-							<a target="_blank" title="Amazon Wish List"
-							   href="https://www.amazon.com/wishlist/1NFQ133FNCOOA/ref=wl_web">
-								<img src="<?php echo AIOSEOP_PLUGIN_URL; ?>images/amazon.jpg"
-								     alt="<?php _e( 'My Amazon Wish List', 'all-in-one-seo-pack' ); ?>"/> </a>
-						<?php } ?>
+						<div class="aiosp-di">
+							<a class="dashicons di-twitter" target="_blank" href="https://twitter.com/aioseopack" title="Follow me on Twitter"></a>
 
-						<a target="_blank" title="<?php _e( 'Follow us on Facebook', 'all-in-one-seo-pack' ); ?>"
-						   href="https://www.facebook.com/aioseopack/"><span
-								class="aioseop_follow_button aioseop_facebook_follow"></span></a>
-						<a target="_blank" title="<?php _e( 'Follow us on Twitter', 'all-in-one-seo-pack' ); ?>"
-						   href="https://twitter.com/aioseopack"><span
-								class="aioseop_follow_button aioseop_twitter_follow"></span></a>
+							<a class="dashicons di-facebook" target="_blank" href="https://www.facebook.com/aioseopack" title="Follow me on Facebook"></a>
+						</div>
+
 					</div><?php
 
 					$aiosp_trans = new AIOSEOP_Translations();
@@ -164,5 +145,24 @@ class aiosp_metaboxes {
 		echo '</div>';
 	}
 
+	static function pro_meta_content() {
+
+		echo '<ul>';
+
+		if ( class_exists( 'WooCommerce' ) ) {
+			echo '<li>Advanced support for WooCommerce</li>';
+		}else{
+			echo '<li>Advanced support for e-commerce</li>';
+		}
+
+		echo '<li>Video SEO Module</li>';
+		echo '<li>SEO for Categories, Tags and Custom Taxonomies</li>';
+		echo '<li>Access to Video Screencasts</li>';
+		echo '<li>Access to Premium Support Forums</li>';
+		echo '<li>Access to Knowledge Center</li>';
+
+		echo '</ul>';
+
+	}
 
 }
