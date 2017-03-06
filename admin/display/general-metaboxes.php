@@ -150,16 +150,16 @@ class aiosp_metaboxes {
 		echo '<ul>';
 
 		if ( class_exists( 'WooCommerce' ) ) {
-			echo '<li>Advanced support for WooCommerce</li>';
+			echo '<li>__( 'Advanced support for WooCommerce', 'all-in-one-seo-pack' )</li>';
 		}else{
-			echo '<li>Advanced support for e-commerce</li>';
+			echo '<li>__( 'Advanced support for e-commerce', 'all-in-one-seo-pack' )</li>';
 		}
 
-		echo '<li>Video SEO Module</li>';
-		echo '<li>SEO for Categories, Tags and Custom Taxonomies</li>';
-		echo '<li>Access to Video Screencasts</li>';
-		echo '<li>Access to Premium Support Forums</li>';
-		echo '<li>Access to Knowledge Center</li>';
+		echo '<li>__( 'Video SEO Module', 'all-in-one-seo-pack' )</li>';
+		echo '<li>__( 'SEO for Categories, Tags and Custom Taxonomies', 'all-in-one-seo-pack' )</li>';
+		echo '<li>__( 'Access to Video Screencasts', 'all-in-one-seo-pack' )</li>';
+		echo '<li>__( 'Access to Premium Support Forums', 'all-in-one-seo-pack' )</li>';
+		echo '<li>__( 'Access to Knowledge Center', 'all-in-one-seo-pack' )</li>';
 
 		echo '</ul>';
 
