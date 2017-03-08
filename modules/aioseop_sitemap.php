@@ -163,7 +163,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$this->prio     = array_merge( $arr_no, $prio );
 
 			$freq = array();
-			foreach ( array( 'always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never' ) as $f ) {
+			foreach ( array( 
+				
+					'always'	=> __( 'always', 'all-in-one-seo-pack' ),
+					'hourly'	=> __( 'hourly', 'all-in-one-seo-pack' ),
+					'daily'		=> __( 'daily', 'all-in-one-seo-pack' ),
+					'weekly'	=> __( 'weekly', 'all-in-one-seo-pack' ),	
+					'monthly'	=> __( 'monthly', 'all-in-one-seo-pack' ),	
+					'yearly'	=> __( 'yearly', 'all-in-one-seo-pack' ),
+					'never'		=> __( 'never', 'all-in-one-seo-pack' ), 
+				) as $f ) {
 				$freq[ $f ] = $f;
 			}
 			$this->freq_sel = array_merge( $arr_no, $arr_sel, $freq );
