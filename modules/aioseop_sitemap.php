@@ -477,8 +477,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$this->default_options['excl_categories']['initial_options'] = $this->get_category_titles();
 			$prio_help                                                   = __( 'Manually set the priority for the ', 'all-in-one-seo-pack' );
 			$freq_help                                                   = __( 'Manually set the frequency for the ', 'all-in-one-seo-pack' );
-			$post_name                                                   = __( ' Post Type', 'all-in-one-seo-pack' );
-			$tax_name                                                    = __( ' Taxonomy', 'all-in-one-seo-pack' );
+			$post_name                                                   = __( '&nbsp;Post Type', 'all-in-one-seo-pack' );
+			$tax_name                                                    = __( '&nbsp;Taxonomy', 'all-in-one-seo-pack' );
 			foreach ( $post_type_titles as $k => $v ) {
 				$key                                      = 'prio_post_' . $k;
 				$this->default_options                    = aioseop_array_insert_after( $this->default_options, 'prio_post', array(
