@@ -1,6 +1,6 @@
 # All in One SEO Pack
 
-Most Downloaded WordPress plugin... almost 30 million downloads
+One of the most downloaded plugins for WordPress... more than 30 million downloads!
 
 ## Help
 

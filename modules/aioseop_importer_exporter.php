@@ -43,8 +43,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 					'name'            => __( 'Export Settings', 'all-in-one-seo-pack' ),
 					'type'            => 'multicheckbox',
 					'initial_options' => Array(
-						1 => 'General Settings',
-						2 => 'Post Data',
+						1 => __( 'General Settings', 'all-in-one-seo-pack' ),
+						2 => __( 'Post Data', 'all-in-one-seo-pack' ),
 					),
 				),
 				'export_post_types'  => Array(

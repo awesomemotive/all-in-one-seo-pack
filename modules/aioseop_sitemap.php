@@ -163,7 +163,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$this->prio     = array_merge( $arr_no, $prio );
 
 			$freq = array();
-			foreach ( array( 'always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never' ) as $f ) {
+			foreach ( array( 
+				
+					'always'	=> __( 'always', 'all-in-one-seo-pack' ),
+					'hourly'	=> __( 'hourly', 'all-in-one-seo-pack' ),
+					'daily'		=> __( 'daily', 'all-in-one-seo-pack' ),
+					'weekly'	=> __( 'weekly', 'all-in-one-seo-pack' ),	
+					'monthly'	=> __( 'monthly', 'all-in-one-seo-pack' ),	
+					'yearly'	=> __( 'yearly', 'all-in-one-seo-pack' ),
+					'never'		=> __( 'never', 'all-in-one-seo-pack' ), 
+				) as $f ) {
 				$freq[ $f ] = $f;
 			}
 			$this->freq_sel = array_merge( $arr_no, $arr_sel, $freq );
@@ -477,8 +486,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$this->default_options['excl_categories']['initial_options'] = $this->get_category_titles();
 			$prio_help                                                   = __( 'Manually set the priority for the ', 'all-in-one-seo-pack' );
 			$freq_help                                                   = __( 'Manually set the frequency for the ', 'all-in-one-seo-pack' );
-			$post_name                                                   = __( ' Post Type', 'all-in-one-seo-pack' );
-			$tax_name                                                    = __( ' Taxonomy', 'all-in-one-seo-pack' );
+			$post_name                                                   = __( '&nbsp;Post Type', 'all-in-one-seo-pack' );
+			$tax_name                                                    = __( '&nbsp;Taxonomy', 'all-in-one-seo-pack' );
 			foreach ( $post_type_titles as $k => $v ) {
 				$key                                      = 'prio_post_' . $k;
 				$this->default_options                    = aioseop_array_insert_after( $this->default_options, 'prio_post', array(
@@ -617,9 +626,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$url                               = trailingslashit( get_home_url() ) . $options[ $this->prefix . 'filename' ] . '.xml';
 
 			$options[ $this->prefix . 'link' ] = sprintf( __( 'Click here to %s.', 'all-in-one-seo-pack' ), '<a href="' . esc_url( $url ) . '" target="_blank">' . __( 'view your sitemap', 'all-in-one-seo-pack' ) . '</a>' );
-			$options[ $this->prefix . 'link' ] .= __( ' Your sitemap has been created', 'all-in-one-seo-pack' );
+			$options[ $this->prefix . 'link' ] .= __( '&nbsp;Your sitemap has been created', 'all-in-one-seo-pack' );
 			if ( '0' !== get_option( 'blog_public' ) ){
-				$options[ $this->prefix . 'link' ] .= __( ' and changes are automatically submitted to search engines', 'all-in-one-seo-pack' );
+				$options[ $this->prefix . 'link' ] .= __( '&nbsp;and changes are automatically submitted to search engines.', 'all-in-one-seo-pack' );
 			}
 			$options[ $this->prefix . 'link' ] .= '.';
 

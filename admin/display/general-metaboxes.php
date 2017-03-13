@@ -39,7 +39,7 @@ class aiosp_metaboxes {
 					if ( ! AIOSEOPPRO ) {
 						?>
 						<p>
-							<strong><?php echo aiosp_common::get_upgrade_hyperlink( 'side', __( 'Pro Version', 'all-in-one-seo-pack' ), __( 'CLICK HERE', 'all-in-one-seo-pack' ), '_blank' ); ?> to upgrade to Pro Version and get:</strong>
+							<strong><?php echo aiosp_common::get_upgrade_hyperlink( 'side', __( 'Pro Version', 'all-in-one-seo-pack' ), __( 'CLICK HERE', 'all-in-one-seo-pack' ), '_blank' ); ?><?php echo '__( '&nbsp;to upgrade to Pro Version and get:', 'all-in-one-seo-pack' )'?></strong>
 						</p>
 					<?php } ?>
 				</div>
@@ -108,8 +108,8 @@ class aiosp_metaboxes {
 							<i><?php _e( 'Sign up today and receive a free copy of the e-book 5 SEO Tips for WordPress ($39 value).', 'all-in-one-seo-pack' ); ?></i>
 						</p>
 						<p><input type="text" value="" name="EMAIL" class="required email" id="mce-EMAIL"
-						          placeholder="Email Address">
-							<input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe"
+						          placeholder="<?php __( 'Email Address', 'all-in-one-seo-pack' )?>">
+							<input type="submit" value="<?php __( 'Subscribe', 'all-in-one-seo-pack' )?>" name="subscribe" id="mc-embedded-subscribe"
 							       class="btn"></p>
 					</form>
 				</div>
@@ -155,16 +155,16 @@ class aiosp_metaboxes {
 		echo '<ul>';
 
 		if ( class_exists( 'WooCommerce' ) ) {
-			echo '<li>Advanced support for WooCommerce</li>';
+			echo '<li>__( 'Advanced support for WooCommerce', 'all-in-one-seo-pack' )</li>';
 		}else{
-			echo '<li>Advanced support for e-commerce</li>';
+			echo '<li>__( 'Advanced support for e-commerce', 'all-in-one-seo-pack' )</li>';
 		}
 
-		echo '<li>Video SEO Module</li>';
-		echo '<li>SEO for Categories, Tags and Custom Taxonomies</li>';
-		echo '<li>Access to Video Screencasts</li>';
-		echo '<li>Access to Premium Support Forums</li>';
-		echo '<li>Access to Knowledge Center</li>';
+		echo '<li>__( 'Video SEO Module', 'all-in-one-seo-pack' )</li>';
+		echo '<li>__( 'SEO for Categories, Tags and Custom Taxonomies', 'all-in-one-seo-pack' )</li>';
+		echo '<li>__( 'Access to Video Screencasts', 'all-in-one-seo-pack' )</li>';
+		echo '<li>__( 'Access to Premium Support Forums', 'all-in-one-seo-pack' )</li>';
+		echo '<li>__( 'Access to Knowledge Center', 'all-in-one-seo-pack' )</li>';
 
 		echo '</ul>';
 

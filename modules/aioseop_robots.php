@@ -32,7 +32,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					'name'            => __( 'Rule Type', 'all-in-one-seo-pack' ),
 					'save'            => false,
 					'type'            => 'select',
-					'initial_options' => Array( 'allow' => 'Allow', 'block' => 'Block' ),
+					'initial_options' => Array( 
+						'allow' => __( 'Allow', 'all-in-one-seo-pack' ), 
+						'block' => __( 'Block', 'all-in-one-seo-pack' ), 
+						),
 				),
 				'useragent'          => Array(
 					'name' => __( 'User Agent', 'all-in-one-seo-pack' ),
