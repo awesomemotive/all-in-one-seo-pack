@@ -3495,7 +3495,7 @@ msgstr ""
 msgid ""
 "Out-of-the-box SEO for your WordPress blog. Features like XML Sitemaps, SEO "
 "for custom post types, SEO for blogs or business sites, SEO for ecommerce "
-"sites, and much more. Almost 30 million downloads since 2007."
+"sites, and much more. More than 30 million downloads since 2007.""
 msgstr ""
 
 #. Author of the plugin/theme
