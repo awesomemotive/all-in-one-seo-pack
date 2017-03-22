@@ -369,6 +369,11 @@ if ( ! function_exists( 'aiosp_action_links' ) ) {
 }
 
 if ( ! function_exists( 'aioseop_init_class' ) ) {
+	/**
+	 * Inits All-in-One-Seo plugin class.
+	 *
+	 * @since 2.3.13 Loads third party compatibility class.
+	 */
 	function aioseop_init_class() {
 		global $aiosp;
 		load_plugin_textdomain( 'all-in-one-seo-pack', false, dirname( plugin_basename( __FILE__ ) ) . '/i18n/' );
@@ -382,6 +387,7 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/meta_import.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'inc/translations.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'public/opengraph.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/abstract/aiosep_compatible.php');
 		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/compat-init.php');
 		require_once( AIOSEOP_PLUGIN_DIR . 'public/front.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'public/google-analytics.php' );
