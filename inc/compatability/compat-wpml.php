@@ -28,6 +28,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Wpml' ) ) {
          */
         public function hooks() {
             add_filter( 'aioseop_home_url', array( &$this, 'aioseop_home_url' ) );
+            add_filter( 'aioseop_sitemap_xsl_url', array( &$this, 'aioseop_sitemap_xsl_url' ) );
         }
 
         /**
@@ -42,7 +43,30 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Wpml' ) ) {
          * @param string filtered url.
          */
         public function aioseop_home_url( $path ) {
-            return apply_filters( 'wpml_home_url', home_url( '/' ) ) . preg_replace( '/\//', '', $path, 1);
+            $url = apply_filters( 'wpml_home_url', home_url( '/' ) );
+            // Remove query string
+            preg_match_all( '/\?[\s\S]+/', $url, $matches );
+            // Get base
+            $url = preg_replace( '/\?[\s\S]+/', '', $url);
+            $url = trailingslashit( $url );
+            $url .= preg_replace( '/\//', '', $path, 1);
+            // Add query string
+            if ( count( $matches ) > 0 && count( $matches[0] ) > 0 )
+                $url .= $matches[0][0];
+            return $url;
+        }
+        /**
+         * Returns XSL url without query string.
+         *
+         * @since 2.3.13
+         *
+         * @param string $url XSL url.
+         *
+         * @param string filtered url.
+         */
+        public function aioseop_sitemap_xsl_url( $url )
+        {
+            return preg_replace( '/\?[\s\S]+/', '', $url);
         }
     }
 }
