@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mrtor
 Tags: seo, all in one seo, google, twitter, page, image seo, social, search engine optimization, sitemap, WordPress SEO, meta, meta description, xml sitemap, google sitemap, sitemaps, robots meta, yahoo, bing, news sitemaps, multisite, canonical, nofollow, noindex, keywords, description, webmaster tools, google webmaster tools, google analytics
 Requires at least: 4.0
 Tested up to: 4.7
-Stable tag: 2.3.12.1
+Stable tag: 2.3.12.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,44 +48,6 @@ https://www.youtube.com/watch?v=46MR4FboMaA
 = Tags =
 seo, SEO, All in One, google, meta, meta description, search engine optimization, xml sitemap, xml sitemaps, google sitemap, sitemap, sitemaps, robots meta, rss, rss footer, yahoo, bing, widget, Post, plugin, admin, posts, shortcode, sidebar, twitter, page, images, comments, image, news sitemaps, XML News Sitemaps, WordPress SEO, multisite, canonical, nofollow, noindex, keywords, meta keywords, description, webmaster tools, google webmaster tools, seo pack, schema.org, search engines, custom post types, custom taxonomies, canonical
 
-== Installation ==
-
-You can use the built in installer and upgrader, or you can install the plugin
-manually.
-
-= From your WordPress dashboard =
-
-1. Visit 'Plugins > Add New'
-2. Search for 'All in One SEO'
-3. Activate All in One SEO Pack from your Plugins page.
-
-= From WordPress.org =
-
-1. Download All in One SEO Pack.
-2. Upload the 'All in One SEO Pack' directory to your '/wp-content/plugins/' directory, using your favorite method (ftp, sftp, scp, etc...)
-3. Activate All in One SEO Pack from your Plugins page.
-
-= Once Activated =
-
-1. Visit your SEO options (*All in One SEO - General Settings*)
-2. Configure any options as desired.
-3. Enjoy higher SEO rankings in the search engines!
-4. Relax.
-
-
-==General Settings==
-https://www.youtube.com/watch?v=uGt6CVbA5bI
-
-==XML Sitemaps==
-https://www.youtube.com/watch?v=zvNU92Low8A
-
-==Social Meta==
-https://www.youtube.com/watch?v=Dfe49FiiAog
-
-==Performance==
-https://www.youtube.com/watch?v=A0VKinM5s00
-
-
 == Changelog ==
 
 All in One SEO Pack [Changelog](http://semperfiwebdesign.com/documentation/all-in-one-seo-pack/all-in-one-seo-pack-release-history/)
@@ -96,6 +58,18 @@ Please visit our complete **[Documentation](http://semperplugins.com/documentati
 **[All in One SEO Pack Support Forum](http://semperplugins.com/support/)**
 
 [Translations](http://semperfiwebdesign.com/documentation/all-in-one-seo-pack/translations-for-all-in-one-seo-pack/)
+
+= General Settings =
+https://www.youtube.com/watch?v=uGt6CVbA5bI
+
+= XML Sitemaps =
+https://www.youtube.com/watch?v=zvNU92Low8A
+
+= Social Meta =
+https://www.youtube.com/watch?v=Dfe49FiiAog
+
+= Performance =
+https://www.youtube.com/watch?v=A0VKinM5s00
 
 
 == Screenshots ==
