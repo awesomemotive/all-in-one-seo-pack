@@ -288,7 +288,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 						echo "<div class='sfwd_debug_error'>" . __( 'Form submission error: verification check failed.', 'all-in-one-seo-pack' ) . '</div>';
 						break;
 					}
-					if ( $_REQUEST['sfwd_update_check'] ) {
+					if ( ! empty( $_REQUEST['sfwd_update_check'] ) ) {
 						global $aioseop_update_checker;
 						$aioseop_update_checker->checkForUpdates();
 						echo "<div class='sfwd_debug_mail_sent'>" . sprintf( __( '%s has checked for updates.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) . '</div>';
