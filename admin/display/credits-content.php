@@ -37,8 +37,8 @@
 
 <h3 class="wp-people-group">&#x1f31f;<?php _e( 'Recent Rockstar Contributors', 'all-in-one-seo-pack' ); ?>&#x1f31f;</h3>
 	<ul class="wp-people-group " id="wp-people-group-rockstars">
-		<li><?php printf( __('Want to see your name and picture here as a community developer? Open a new issue on Github to report a bug or request a feature or find an issue and submit code!', 'all-in-one-seo-pack')); ?>
-			<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack" target="_blank">Click here to go to Github</a>
+		<li><?php printf( __('Want to see your name and picture here as a community developer? %1$sClick here%2$s to open an issue on GitHub to report a bug, request a feature or find an issue and submit code!', 'all-in-one-seo-pack'), 
+				 '<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack" target="_blank">', '</a>'); ?>
 		</li>
 	<li class="wp-person" id="wp-person-dougalcampbell">
 		<a class="web" target="_blank" href="https://profiles.wordpress.org/dougal/"><img alt="" class="gravatar" src="https://www.gravatar.com/avatar/81717a172b6918071fbea1a52483294b?s=60">
