@@ -3416,7 +3416,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$force_rewrites = $aioseop_options['aiosp_force_rewrites'];
 			}
 			if ( $force_rewrites ) {
-				ob_start( array( $this, 'output_callback_for_title' ) );
+				ob_start( 'All_in_One_SEO_Pack::output_callback_for_title' );
 			} else {
 				add_filter( 'wp_title', array( $this, 'wp_title' ), 20 );
 			}
