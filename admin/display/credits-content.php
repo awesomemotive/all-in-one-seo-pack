@@ -34,11 +34,11 @@
 		<span class="title"><?php _e( 'Development Team', 'all-in-one-seo-pack' ); ?></span>
 	</li>
 </ul>
-
-<?php /* translators: '%1$s' and '%2$s' are used as placeholders and turn the text in between into a clickable link */ ?>
+	
 <h3 class="wp-people-group">&#x1f31f;<?php _e( 'Recent Rockstar Contributors', 'all-in-one-seo-pack' ); ?>&#x1f31f;</h3>
 	<ul class="wp-people-group " id="wp-people-group-rockstars">
-		<li><?php printf( __('Want to see your name and picture here as a community developer? %1$sClick here%2$s to open an issue on GitHub to report a bug, request a feature or find an issue and submit code!', 'all-in-one-seo-pack'), 
+		<li><?php /* translators: '%1$s' and '%2$s' are used as placeholders and turn the text in between into a clickable link */
+			printf( __('Want to see your name and picture here as a community developer? %1$sClick here%2$s to open an issue on GitHub to report a bug, request a feature or find an issue and submit code!', 'all-in-one-seo-pack'), 
 				 '<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack" target="_blank">', '</a>'); ?>
 		</li>
 	<li class="wp-person" id="wp-person-dougalcampbell">
