@@ -503,11 +503,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			$regex = '';
 			$cont  = 0;
 			foreach ( $list as $l ) {
-				if ( $cont && ! empty( $l ) ) {
-					$regex .= '|';
+				if ( ! empty( $l ) ) {
+					if ( $cont ) {
+						$regex .= '|';
+					}
+					$cont = 1;
+					$regex .= preg_quote( trim( $l ), $quote );
 				}
-				$cont = 1;
-				$regex .= preg_quote( trim( $l ), $quote );
 			}
 
 			return $regex;
