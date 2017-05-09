@@ -299,7 +299,32 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 						$email = sanitize_email( $_REQUEST['sfwd_debug_send_email'] );
 					}
 					if ( $email ) {
-						if ( wp_mail( $email, sprintf( __( 'SFWD Debug Mail From Site %s.', 'all-in-one-seo-pack' ), $siteurl ), $mail_text ) ) {
+						$attachments = array();
+						$upload_dir = wp_upload_dir();
+						$dir = $upload_dir['basedir'] . '/aiosp-log/';
+						if ( wp_mkdir_p( $dir ) ) {
+							$file_path = $dir . 'settings_aioseop-' . date( 'Y-m-d' ) . '-' . time() . '.ini';
+							if ( ! file_exists( $file_path ) ) {
+								if ( $file_handle = @fopen( $file_path, 'w' ) ) {
+									global $aiosp;
+									$buf = '; ' . __(
+											'Settings export file for All in One SEO Pack', 'all-in-one-seo-pack'
+										) . "\n";
+
+									// Adds all settings and posts data to settings file
+									add_filter( 'aioseop_export_settings_exporter_post_types', array( $this, 'get_exporter_post_types' ) );
+									add_filter( 'aioseop_export_settings_exporter_choices', array( $this, 'get_exporter_choices' ) );
+
+									$buf = $aiosp->settings_export( $buf );
+									$buf = apply_filters( 'aioseop_export_settings', $buf );
+									fwrite( $file_handle, $buf );
+									fclose( $file_handle );
+									$attachments[] = $file_path;
+								}
+							}
+						}
+
+						if ( wp_mail( $email, sprintf( __( 'SFWD Debug Mail From Site %s.', 'all-in-one-seo-pack' ), $siteurl ), $mail_text, '', $attachments ) ) {
 							echo "<div class='sfwd_debug_mail_sent'>" . sprintf( __( 'Sent to %s.', 'all-in-one-seo-pack' ), $email ) . '</div>';
 						} else {
 							echo "<div class='sfwd_debug_error'>" . sprintf( __( 'Failed to send to %s.', 'all-in-one-seo-pack' ), $email ) . '</div>';
@@ -319,6 +344,26 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			}
 
 			return $buf;
+		}
+
+		function get_exporter_choices() {
+			return array( 1, 2 );
+		}
+
+		function get_exporter_post_types() {
+			$post_types = $this->get_post_type_titles();
+			$rempost    = array(
+				'customize_changeset' => 1,
+				'custom_css'          => 1,
+				'revision'            => 1,
+				'nav_menu_item'       => 1,
+			);
+			$post_types = array_diff_key(
+				$post_types,
+				$rempost
+			);
+
+			return array_keys( $post_types );
 		}
 	}
 }

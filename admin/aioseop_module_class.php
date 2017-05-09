@@ -932,10 +932,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 */
 		function settings_export( $buf ) {
 			global $aiosp;
-			$post_types       = null;
+			$post_types       = apply_filters( 'aioseop_export_settings_exporter_post_types', null );
 			$has_data         = null;
 			$general_settings = null;
-			$exporter_choices = '';
+			$exporter_choices = apply_filters( 'aioseop_export_settings_exporter_choices', '' );
 			if ( ! empty( $_REQUEST['aiosp_importer_exporter_export_choices'] ) ) {
 				$exporter_choices = $_REQUEST['aiosp_importer_exporter_export_choices'];
 			}
