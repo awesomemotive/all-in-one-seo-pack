@@ -4522,14 +4522,30 @@ EOF;
 				if ( ! empty( $blog_page ) ) {
 					$post = $blog_page;
 				}
+							// Don't show if we're on the home page and the home page is the latest posts.
 				if ( ! is_home() || ( ! is_front_page() && ! is_home() ) ) {
-					// Don't show if we're on the home page and the home page is the latest posts.
-					$wp_admin_bar->add_menu( array(
-						'id'     => 'aiosp_edit_' . $post->ID,
-						'parent' => AIOSEOP_PLUGIN_DIRNAME,
-						'title'  => __( 'Edit SEO', 'all-in-one-seo-pack' ),
-						'href'   => get_edit_post_link( $post->ID ) . '#aiosp',
-					) );
+					global $wp_the_query;
+					$current_object = $wp_the_query->get_queried_object();
+
+					if ( ! empty( $current_object ) && ! empty( $current_object->post_type ) ){
+						// Try the main query.
+						$edit_post_link = get_edit_post_link( $current_object->ID );
+						echo $edit_post_link;
+						$wp_admin_bar->add_menu( array(
+							'id'     => 'aiosp_edit_' . $current_object->ID,
+							'parent' => AIOSEOP_PLUGIN_DIRNAME,
+							'title' => 'Edit SEO11',
+							'href' => $edit_post_link . '#aiosp'
+						) );
+					}else{
+						// Try the post object.
+						$wp_admin_bar->add_menu( array(
+							'id'     => 'aiosp_edit_' . $post->ID,
+							'parent' => AIOSEOP_PLUGIN_DIRNAME,
+							'title'  => __( 'Edit SEO2', 'all-in-one-seo-pack' ),
+							'href'   => get_edit_post_link( $post->ID ) . '#aiosp',
+						) );
+					}
 				}
 			}
 		}
