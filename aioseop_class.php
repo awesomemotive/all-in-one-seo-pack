@@ -4534,7 +4534,7 @@ EOF;
 						$wp_admin_bar->add_menu( array(
 							'id'     => 'aiosp_edit_' . $current_object->ID,
 							'parent' => AIOSEOP_PLUGIN_DIRNAME,
-							'title' => 'Edit SEO11',
+							'title' => 'Edit SEO',
 							'href' => $edit_post_link . '#aiosp'
 						) );
 					}else{
@@ -4542,7 +4542,7 @@ EOF;
 						$wp_admin_bar->add_menu( array(
 							'id'     => 'aiosp_edit_' . $post->ID,
 							'parent' => AIOSEOP_PLUGIN_DIRNAME,
-							'title'  => __( 'Edit SEO2', 'all-in-one-seo-pack' ),
+							'title'  => __( 'Edit SEO', 'all-in-one-seo-pack' ),
 							'href'   => get_edit_post_link( $post->ID ) . '#aiosp',
 						) );
 					}
