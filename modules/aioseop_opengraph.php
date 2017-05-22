@@ -729,6 +729,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		}
 
 		function filter_settings( $settings, $location, $current ) {
+            global $aiosp, $post;
 			if ( $location == 'opengraph' || $location == 'settings' ) {
 				$prefix = $this->get_prefix( $location ) . $location . '_';
 				if ( $location == 'opengraph' ) {
@@ -756,9 +757,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					if ( isset( $this->options["aiosp_opengraph_defcard"] ) ) {
 						$settings[ $prefix . 'setcard' ]['default'] = $this->options["aiosp_opengraph_defcard"];
 					}
-					global $aiosp;
 					$info = $aiosp->get_page_snippet_info();
 					extract( $info );
+                    // Description options
+					if ( is_object( $post ) )
+                    	// Always show excerpt
+                    	$description = empty( $this->options['aiosp_opengraph_generate_descriptions'] )
+                    		? $aiosp->trim_excerpt_without_filters(
+	                            $aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_excerpt ) ),
+	                            1000
+	                        )
+                    		: $aiosp->trim_excerpt_without_filters(
+	                            $aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_content ) ),
+	                            1000
+	                        );
 					$settings["{$prefix}title"]['placeholder'] = $title;
 					$settings["{$prefix}desc"]['placeholder']  = $description;
 				}
