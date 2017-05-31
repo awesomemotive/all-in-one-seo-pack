@@ -4,10 +4,14 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 
 	/**
 	 * Class aioseop_welcome
+	 *
+	 * @since 2.3.9.2
 	 */
 	class aioseop_welcome {
 		/**
 		 * Constructor to add the actions.
+		 *
+		 * @since 2.3.9.2
 		 */
 		function __construct() {
 
@@ -24,6 +28,8 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 		/**
 		 * Enqueues style and script.
 		 *
+		 * @since 2.3.9.2
+		 *
 		 * @param $hook
 		 */
 		function welcome_screen_assets( $hook ) {
@@ -37,8 +43,9 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 
 		/**
 		 * Removes unneeded pages.
-         *
-         * @since 2.3.12 Called via admin_menu action instead of admin_head.
+		 *
+		 * @since 2.3.9.2
+		 * @since 2.3.11.2 Called via admin_menu action instead of admin_head.
 		 */
 		function remove_pages() {
 			remove_submenu_page( 'index.php', 'aioseop-about' );
@@ -47,6 +54,8 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 
 		/**
 		 * Adds (hidden) menu.
+		 *
+		 * @since 2.3.9.2
 		 */
 		function add_menus() {
 			add_dashboard_page(
@@ -61,6 +70,8 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 
 		/**
 		 * Initial stuff.
+		 *
+		 * @since 2.3.9.2
 		 *
 		 * @param bool $activate
 		 */
@@ -78,10 +89,10 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return;
 			}
-			
+
 			wp_cache_flush();
 			aiosp_common::clear_wpe_cache();
-			
+
 			delete_transient( '_aioseop_activation_redirect' );
 
 			$seen = 0;
@@ -92,7 +103,7 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 			if ( AIOSEOPPRO ) {
 				return;
 			}
-			
+
 			if ( ( AIOSEOP_VERSION === $seen ) || ( true !== $activate ) ) {
 				return;
 			}
@@ -103,6 +114,8 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 
 		/**
 		 * Outputs the about screen.
+		 *
+		 * @since 2.3.9.2
 		 */
 		function about_screen() {
 			aiosp_common::clear_wpe_cache();
@@ -112,6 +125,7 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 
 			<div class="wrap about-wrap">
 				<h1><?php printf( esc_html__( 'Welcome to All in One SEO Pack %s', 'all-in-one-seo-pack' ), $version ); ?></h1>
+
 				<div
 					class="about-text"><?php printf( esc_html__( 'All in One SEO Pack %s contains new features, bug fixes, increased security, and tons of under the hood performance improvements.', 'all-in-one-seo-pack' ), $version ); ?></div>
 
