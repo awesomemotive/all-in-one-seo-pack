@@ -25,6 +25,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 		 *
 		 * Initialize module list.
 		 *
+		 * @since 2.0
+		 *
 		 * @param $mod Modules.
 		 */
 		function __construct( $mod ) {
@@ -59,6 +61,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 		/**
 		 * Return module.
 		 *
+		 * @since 2.0
+		 *
 		 * @param $class
 		 *
 		 * @return $this|bool|mixed
@@ -81,6 +85,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 		}
 
 		/**
+		 * @since 2.0.3
+		 *
 		 * @return array
 		 */
 		function get_loaded_module_list() {
@@ -97,6 +103,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 		}
 
 		/**
+		 * @since 2.0
+		 *
 		 * @param $mod Module.
 		 * @param null $args
 		 *
@@ -139,6 +147,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 		}
 
 		/**
+		 * @since 2.0
+		 *
 		 * @param $mod
 		 *
 		 * @return bool
@@ -197,6 +207,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 			return false;
 		}
 
+		/**
+		 * @since 2.0
+		 */
 		function load_modules() {
 			if ( is_array( $this->modules ) ) {
 				foreach ( $this->modules as $k => $v ) {
