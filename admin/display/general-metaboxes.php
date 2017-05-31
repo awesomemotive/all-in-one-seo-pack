@@ -2,11 +2,15 @@
 
 /**
  * @package All-in-One-SEO-Pack
+ *
+ * @since 2.3.3
  */
 class aiosp_metaboxes {
 
 	/**
 	 * aiosp_metaboxes constructor.
+	 *
+	 * @since 2.3.3
 	 */
 	function __construct() {
 		//construct
@@ -14,6 +18,8 @@ class aiosp_metaboxes {
 	}
 
 	/**
+	 * @since 2.3.3
+	 *
 	 * @param $add
 	 * @param $meta
 	 */
@@ -23,7 +29,9 @@ class aiosp_metaboxes {
 			case 'aioseop-about':
 				?>
 				<div class="aioseop_metabox_text">
-					<p><h2
+					<p>
+
+					<h2
 						style="display:inline;"><?php echo AIOSEOP_PLUGIN_NAME; ?></h2></p>
 					<?php
 					global $current_user;
@@ -40,9 +48,9 @@ class aiosp_metaboxes {
 						?>
 						<p>
 							<strong>
-                                <?php
-                                echo aiosp_common::get_upgrade_hyperlink( 'side', __( 'Pro Version', 'all-in-one-seo-pack' ), __( 'CLICK HERE', 'all-in-one-seo-pack' ), '_blank' );
-                                echo __( ' to upgrade to Pro Version and get:', 'all-in-one-seo-pack' ); ?></strong>
+								<?php
+								echo aiosp_common::get_upgrade_hyperlink( 'side', __( 'Pro Version', 'all-in-one-seo-pack' ), __( 'CLICK HERE', 'all-in-one-seo-pack' ), '_blank' );
+								echo __( ' to upgrade to Pro Version and get:', 'all-in-one-seo-pack' ); ?></strong>
 						</p>
 					<?php } ?>
 				</div>
@@ -62,9 +70,11 @@ class aiosp_metaboxes {
 					<div class="aioseop_metabox_feature">
 
 						<div class="aiosp-di">
-							<a class="dashicons di-twitter" target="_blank" href="https://twitter.com/aioseopack" title="Follow me on Twitter"></a>
+							<a class="dashicons di-twitter" target="_blank" href="https://twitter.com/aioseopack"
+							   title="Follow me on Twitter"></a>
 
-							<a class="dashicons di-facebook" target="_blank" href="https://www.facebook.com/aioseopack" title="Follow me on Facebook"></a>
+							<a class="dashicons di-facebook" target="_blank" href="https://www.facebook.com/aioseopack"
+							   title="Follow me on Facebook"></a>
 						</div>
 
 					</div><?php
@@ -73,7 +83,7 @@ class aiosp_metaboxes {
 					// Eventually if nothing is returned we should just remove this section.
 
 					if ( get_locale() != 'en_US' ) { ?>
-						<div><strong>
+						<div class="aioseop_translations"><strong>
 								<?php
 
 								if ( $aiosp_trans->percent_translated < 100 ) {
@@ -107,12 +117,15 @@ class aiosp_metaboxes {
 						method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
 						target="_blank">
 						<h2><?php _e( 'Join our mailing list for tips, tricks, and WordPress secrets.', 'all-in-one-seo-pack' ); ?></h2>
+
 						<p>
 							<i><?php _e( 'Sign up today and receive a free copy of the e-book 5 SEO Tips for WordPress ($39 value).', 'all-in-one-seo-pack' ); ?></i>
 						</p>
+
 						<p><input type="text" value="" name="EMAIL" class="required email" id="mce-EMAIL"
 						          placeholder="<?php __( 'Email Address', 'all-in-one-seo-pack' ); ?>">
-							<input type="submit" value="<?php __( 'Subscribe', 'all-in-one-seo-pack' ); ?>" name="subscribe" id="mc-embedded-subscribe"
+							<input type="submit" value="<?php __( 'Subscribe', 'all-in-one-seo-pack' ); ?>"
+							       name="subscribe" id="mc-embedded-subscribe"
 							       class="btn"></p>
 					</form>
 				</div>
@@ -122,27 +135,33 @@ class aiosp_metaboxes {
 				?>
 				<div class="aioseop_metabox_text">
 					<p>
+
 					<div class="aioseop_icon aioseop_file_icon"></div>
 					<a target="_blank"
 					   href="https://semperplugins.com/documentation/"><?php _e( 'Read the All in One SEO Pack user guide', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
+
 					<div class="aioseop_icon aioseop_support_icon"></div>
 					<a target="_blank"
 					   title="<?php _e( 'All in One SEO Pro Plugin Support Forum', 'all-in-one-seo-pack' ); ?>"
 					   href="https://semperplugins.com/support/"><?php _e( 'Access our Premium Support Forums', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
+
 					<div class="aioseop_icon aioseop_cog_icon"></div>
-					<a target="_blank" title="<?php _e( 'All in One SEO Pro Plugin Changelog', 'all-in-one-seo-pack' ); ?>"
+					<a target="_blank"
+					   title="<?php _e( 'All in One SEO Pro Plugin Changelog', 'all-in-one-seo-pack' ); ?>"
 					   href="<?php if ( AIOSEOPPRO ) {
 						   echo 'https://semperplugins.com/documentation/all-in-one-seo-pack-pro-changelog/';
 					   } else {
 						   echo 'https://semperfiwebdesign.com/blog/all-in-one-seo-pack/all-in-one-seo-pack-release-history/';
 					   } ?>"><?php _e( 'View the Changelog', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
+
 					<div class="aioseop_icon aioseop_youtube_icon"></div>
 					<a target="_blank"
 					   href="https://semperplugins.com/doc-type/video/"><?php _e( 'Watch video tutorials', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
+
 					<div class="aioseop_icon aioseop_book_icon"></div>
 					<a target="_blank"
 					   href="https://semperplugins.com/documentation/quick-start-guide/"><?php _e( 'Getting started? Read the Beginners Guide', 'all-in-one-seo-pack' ); ?></a></p>
@@ -153,13 +172,16 @@ class aiosp_metaboxes {
 		echo '</div>';
 	}
 
+	/*
+	 * @since 2.3.11
+	 */
 	static function pro_meta_content() {
 
 		echo '<ul>';
 
 		if ( class_exists( 'WooCommerce' ) ) {
 			echo '<li>' . __( 'Advanced support for WooCommerce', 'all-in-one-seo-pack' ) . '</li>';
-		}else{
+		} else {
 			echo '<li>' . __( 'Advanced support for e-commerce', 'all-in-one-seo-pack' ) . '</li>';
 		}
 
