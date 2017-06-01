@@ -5,6 +5,8 @@ if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 	/**
 	 * Class WPSEO_Import_AIOSEO_Hooks
 	 *
+	 * @since 2.3.3
+	 *
 	 * @TODO Move this elsewhere.
 	 */
 	class WPSEO_Import_AIOSEO_Hooks extends WPSEO_Import_Hooks {
@@ -15,6 +17,8 @@ if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 
 		/**
 		 * Show notice the old plugin is installed and offer to import its data.
+		 *
+		 * @since 2.3.3
 		 */
 		public function show_import_settings_notice() {
 
@@ -33,12 +37,15 @@ if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 
 		}
 
+		/**
+		 * @since 2.3.3
+		 */
 		public function show_deactivate_notice() {
 			echo '<div class="updated"><p>', esc_html__( 'All in One SEO has been deactivated', 'all-in-one-seo-pack' ), '</p></div>';
 		}
 	}
 } else {
-	if(is_admin()) {
+	if ( is_admin() ) {
 		add_action( 'init', 'mi_aioseop_yst_detected_notice_dismissed' );
 	}
 }
@@ -47,6 +54,8 @@ if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
  * Deletes the stored dismissal of the notice.
  *
  * This should only happen after reactivating after being deactivated.
+ *
+ * @since 2.3.5
  */
 function mi_aioseop_yst_detected_notice_dismissed() {
 	delete_user_meta( get_current_user_id(), 'aioseop_yst_detected_notice_dismissed' );
@@ -56,6 +65,8 @@ function mi_aioseop_yst_detected_notice_dismissed() {
  * Init for settings import class.
  *
  * At the moment we just register the admin menu page.
+ *
+ * @since 2.3.3.2
  */
 function aiosp_seometa_settings_init() {
 	global $_aiosp_seometa_admin_pagehook;
@@ -63,6 +74,7 @@ function aiosp_seometa_settings_init() {
 	// TODO Put this in with the rest of the import/export stuff.
 	$_aiosp_seometa_admin_pagehook = add_submenu_page( 'tools.php', __( 'Import SEO Data', 'all-in-one-seo-pack' ), __( 'SEO Data Import', 'all-in-one-seo-pack' ), 'manage_options', 'aiosp_import', 'aiosp_seometa_admin' );
 }
+
 add_action( 'admin_menu', 'aiosp_seometa_settings_init' );
 
 
@@ -70,6 +82,8 @@ add_action( 'admin_menu', 'aiosp_seometa_settings_init' );
  * Intercept POST data from the form submission.
  *
  * Use the intercepted data to convert values in the postmeta table from one platform to another.
+ *
+ * @since 2.3.3.2
  */
 function aiosp_seometa_action() {
 
@@ -136,7 +150,9 @@ function aiosp_seometa_action() {
  */
 
 /**
- * The admin page output
+ * The admin page output.
+ *
+ * @since 2.3.3.2
  */
 function aiosp_seometa_admin() {
 	global $_aiosp_seometa_themes, $_aiosp_seometa_plugins, $_aiosp_seometa_platforms;
@@ -215,6 +231,7 @@ function aiosp_seometa_admin() {
  * First check to see what records for $new already exist, storing the corresponding post_id values in an array.
  * When the conversion happens, ignore rows that contain a post_id, to avoid duplicate entries.
  *
+ * @since 2.3.3.2
  *
  * @param string $old Old meta_key entries.
  * @param string $new New meta_key entries.
@@ -270,6 +287,8 @@ function aiosp_seometa_meta_key_convert( $old = '', $new = '', $delete_old = fal
  * Convert old to new postmeta.
  *
  * Cycle through all compatible SEO entries of two platforms and aiosp_seometa_meta_key_convert conversion for each key.
+ *
+ * @since 2.3.3.2
  *
  * @param string $old_platform
  * @param string $new_platform
@@ -331,6 +350,8 @@ function aiosp_seometa_post_meta_convert( $old_platform = '', $new_platform = 'A
  *
  * See what data can be converted from one to the other.
  *
+ * @since 2.3.3.2
+ *
  * @param string $old_platform
  * @param string $new_platform
  *
@@ -391,20 +412,20 @@ function aiosp_seometa_post_meta_analyze( $old_platform = '', $new_platform = 'A
 
 }
 
+// define('aiosp_seometa_PLUGIN_DIR', dirname(__FILE__));
 
-//	define('aiosp_seometa_PLUGIN_DIR', dirname(__FILE__));
+// add_action( 'plugins_loaded', 'aiosp_seometa_import' );
 
-//add_action( 'plugins_loaded', 'aiosp_seometa_import' );
 /**
- * Initialize the SEO Data Transporter plugin
+ * Initialize the SEO Data Transporter plugin.
+ *
+ * @since 2.3.3.2
  */
 function aiosp_seometa_import() {
 
 	global $_aiosp_seometa_themes, $_aiosp_seometa_plugins, $_aiosp_seometa_platforms;
 
-	/**
-	 * The associative array of supported themes.
-	 */
+	/** The associative array of supported themes. */
 	$_aiosp_seometa_themes = array(
 		// alphabatized
 		'Builder'      => array(
@@ -472,12 +493,10 @@ function aiosp_seometa_import() {
 		),
 	);
 
-	/**
-	 * The associative array of supported plugins.
-	 */
+	/** The associative array of supported plugins. */
 	$_aiosp_seometa_plugins = array(
 		// alphabatized
-		'Add Meta Tags' => array(
+		'Add Meta Tags'                => array(
 			'Custom Doctitle'  => '_amt_title',
 			'META Description' => '_amt_description',
 			'META Keywords'    => '_amt_keywords',
@@ -508,7 +527,7 @@ function aiosp_seometa_import() {
 			'Canonical URI'    => '_wds_canonical',
 			'Redirect URI'     => '_wds_redirect',
 		),
-		'Jetpack'                => array(
+		'Jetpack'                      => array(
 			'META Description' => 'advanced_seo_description',
 		),
 		'Meta SEO Pack'                => array(
@@ -520,7 +539,7 @@ function aiosp_seometa_import() {
 			'META Description' => 'description',
 			'META Keywords'    => 'keywords',
 		),
-		'SEOpressor'                 => array(
+		'SEOpressor'                   => array(
 			'Custom Doctitle'  => '_seopressor_meta_title',
 			'META Description' => '_seopressor_meta_description',
 		),
@@ -546,31 +565,30 @@ function aiosp_seometa_import() {
 		),
 	);
 
-	/**
-	 * The combined array of supported platforms.
-	 */
+	/** The combined array of supported platforms. */
 	$_aiosp_seometa_platforms = array_merge( $_aiosp_seometa_themes, $_aiosp_seometa_plugins );
 
 	/**
 	 * Include the other elements of the plugin.
 	 */
-	//	require_once( aiosp_seometa_PLUGIN_DIR . '/admin.php' );
+
+	// require_once( aiosp_seometa_PLUGIN_DIR . '/admin.php' );
 	// require_once( aiosp_seometa_PLUGIN_DIR . '/functions.php' );
 
 	/**
-	 * Init hook.
+	 * Initialisation hook.
 	 *
 	 * Hook fires after plugin functions are loaded.
 	 *
 	 * @since 0.9.10
-	 *
 	 */
 	do_action( 'aiosp_seometa_import' );
 
 }
 
 /**
- * Activation Hook
+ * Activation hook.
+ *
  * @since 0.9.4
  */
 register_activation_hook( __FILE__, 'aiosp_seometa_activation_hook' );
@@ -584,24 +602,27 @@ function aiosp_seometa_activation_hook() {
 }
 
 /**
- * Manual conversion test
+ * Manual conversion test.
  */
+
 /*
 $aiosp_seometa_convert = aiosp_seometa_post_meta_convert( 'All in One SEO Pack', 'Genesis', false );
 printf( '%d records were updated', $aiosp_seometa_convert->updated );
 /**/
 
 /**
- * Manual analysis test
+ * Manual analysis test.
  */
+
 /*
 $aiosp_seometa_analyze = aiosp_seometa_post_meta_analyze( 'All in One SEO Pack', 'Genesis' );
 printf( '<p><b>%d</b> Compatible Records were identified</p>', $aiosp_seometa_analyze->update );
 /**/
 
 /**
- * Delete all SEO data, from every platform
+ * Delete all SEO data, from every platform.
  */
+
 /*
 foreach ( $_aiosp_seometa_platforms as $platform => $data ) {
 
@@ -609,12 +630,11 @@ foreach ( $_aiosp_seometa_platforms as $platform => $data ) {
 		$deleted = $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->postmeta WHERE meta_key = %s", $field ) );
 		printf( '%d %s records deleted<br />', $deleted, $field );
 	}
-
 }
 /**/
 
 /**
- * Query all SEO data to find the number of records to change
+ * Query all SEO data to find the number of records to change.
  */
 
 

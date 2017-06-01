@@ -11,6 +11,8 @@ if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 
 		/**
 		 * Add the action to the constructor.
+		 *
+		 * @since 2.3.10
 		 */
 		function __construct() {
 			add_action( "wp_dashboard_setup", array( $this, 'aioseop_add_dashboard_widget' ) );
@@ -100,6 +102,7 @@ if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 							<?php echo esc_html( $item['title'] ); ?>
 						</a>
 						<span class="aioseop-rss-date"><?php echo $item['date']; ?></span>
+
 						<div class="aioseop_news">
 							<?php echo strip_tags( $item['content'] ) . "..."; ?>
 						</div>
