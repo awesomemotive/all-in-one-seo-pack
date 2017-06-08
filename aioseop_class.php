@@ -4848,7 +4848,7 @@ EOF;
 	 */
 	public function filter_title( $value ) {
 		// Decode entities
-		$value = html_entity_decode( $value );
+		$value = $this->html_entity_decode( $value );
 		// Encode to valid SEO html entities
 		return $this->seo_entity_encode( $value );
 	}
@@ -4872,7 +4872,7 @@ EOF;
 	 */
 	public function filter_description( $value ) {
 		// Decode entities
-		$value = html_entity_decode( $value );
+		$value = $this->html_entity_decode( $value );
 		$value = preg_replace(
 			array(
 				'@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?)?)@',// Remove URLs
@@ -4893,6 +4893,31 @@ EOF;
 	}
 
 	/**
+ 	 * Returns string with decoded html entities.
+ 	 * - Custom html_entity_decode supported on PHP 5.2
+ 	 *
+ 	 * @since 2.3.14
+ 	 *
+ 	 * @param string $value Value to decode.
+ 	 *
+ 	 * @return string
+ 	 */
+ 	private function html_entity_decode( $value ) {
+ 		// Special conversions
+ 		$value = preg_replace(
+ 			array(
+ 				'/\“|\”|&#[xX]00022;|&#34;|&[lLrRbB](dquo|DQUO);|&#[xX]0201[dDeE];'
+ 					.'|&[OoCc](pen|lose)[Cc]urly[Dd]ouble[Qq]uote;|&#822[02];/', // Double quotes
+ 			),
+ 			array(
+ 				'"', // Double quotes
+ 			),
+ 			$value
+ 		);
+ 		return html_entity_decode( $value );
+ 	}
+
+	/**
 	 * Returns SEO ready string with encoded HTML entitites.
 	 *
 	 * @since 2.3.14
@@ -4904,7 +4929,7 @@ EOF;
 	private function seo_entity_encode( $value ) {
 		return preg_replace(
 			array(
-				'/\"|\“|\”/', // Double quotes
+				'/\"|\“|\”|\„/', // Double quotes
 				'/\'/',	// Apostrophes
 			),
 			array(
