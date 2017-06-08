@@ -4848,7 +4848,7 @@ EOF;
 	 */
 	public function filter_title( $value ) {
 		// Decode entities
-		$value = $this->html_entity_decode( $value );
+		$value = html_entity_decode( $value );
 		// Encode to valid SEO html entities
 		return $this->seo_entity_encode( $value );
 	}
@@ -4872,7 +4872,7 @@ EOF;
 	 */
 	public function filter_description( $value ) {
 		// Decode entities
-		$value = $this->html_entity_decode( $value );
+		$value = html_entity_decode( $value );
 		$value = preg_replace(
 			array(
 				'@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?)?)@',// Remove URLs
@@ -4890,30 +4890,6 @@ EOF;
 		$value = preg_replace( '/\s\s+/u', ' ', $value );
 		// External trim.
 		return trim( $value );
-	}
-
-	/**
-	 * Returns string with decoded html entities.
-	 *
-	 * @since 2.3.14
-	 *
-	 * @param string $value Value to decode.
-	 *
-	 * @return string
-	 */
-	private function html_entity_decode( $value ) {
-		// Special conversions
-		$value = preg_replace(
-			array(
-				'/\“|\”|&#x00022;|&#34;|&ldquo;|&opencurlydoublequote;|&#8220;|&rdquo;'
-					.'|&rdquor;|&closecurlydoublequote;|&#x0201d;|&#8222;/', // Double quotes
-			),
-			array(
-				'"', // Double quotes
-			),
-			strtolower( $value )
-		);
-		return html_entity_decode( $value );
 	}
 
 	/**
