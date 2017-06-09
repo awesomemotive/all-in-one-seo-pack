@@ -54,6 +54,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 	/**
 	 * All_in_One_SEO_Pack constructor.
+	 *
+	 * @since 2.3.14 #921 More google analytics options added.
 	 */
 	function __construct() {
 		global $aioseop_options;
@@ -201,6 +203,15 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'ga_display_advertising'      => __( 'This enables support for the Display Advertiser Features in Google Analytics.', 'all-in-one-seo-pack' ),
 			'ga_exclude_users'            => __( 'Exclude logged-in users from Google Analytics tracking by role.', 'all-in-one-seo-pack' ),
 			'ga_track_outbound_links'     => __( 'Check this if you want to track outbound links with Google Analytics.', 'all-in-one-seo-pack' ),
+			'ga_track_outbound_forms'     => __( 'Check this if you want to track outbound forms with Google Analytics.', 'all-in-one-seo-pack' ),
+			'ga_track_events'             => __( 'Check this if you want to track events with Google Analytics.', 'all-in-one-seo-pack' ),
+			'ga_track_url_changes'        => __( 'Check this if you want to track url changes for single pages with Google Analytics.', 'all-in-one-seo-pack' ),
+			'ga_track_visibility'         => __( 'Check this if you want to track how long pages are in visible state with Google Analytics.', 'all-in-one-seo-pack' ),
+			'ga_track_media_query'        => __( 'Check this if you want to track media query matching and queries with Google Analytics.', 'all-in-one-seo-pack' ),
+			'ga_track_impressions'        => __( 'Check this if you want to track when elements are visible within the viewport with Google Analytics.', 'all-in-one-seo-pack' ),
+			'ga_track_clean_url'          => __( 'Check this if you want to ensure consistency in URL paths reported to Google Analytics.', 'all-in-one-seo-pack' ),
+			'ga_track_scroller'           => __( 'Check this if you want to track how far down a user scrolls a page with Google Analytics.', 'all-in-one-seo-pack' ),
+			'ga_track_social'             => __( 'Check this if you want to track interactions with the official Facebook and Twitter widgets with Google Analytics.', 'all-in-one-seo-pack' ),
 			'ga_link_attribution'         => __( 'This enables support for the Enhanced Link Attribution in Google Analytics.', 'all-in-one-seo-pack' ),
 			'ga_enhanced_ecommerce'       => __( 'This enables support for the Enhanced Ecommerce in Google Analytics.', 'all-in-one-seo-pack' ),
 			'cpostnoindex'                => __( 'Set the default NOINDEX setting for each Post Type.', 'all-in-one-seo-pack' ),
@@ -285,6 +296,15 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'ga_display_advertising'      => '#display-advertiser-tracking',
 			'ga_exclude_users'            => '#exclude-users-from-tracking',
 			'ga_track_outbound_links'     => '#track-outbound-links',
+			'ga_track_outbound_forms'     => '#track-outbound-forms',
+			'ga_track_events'             => '#track-events',
+			'ga_track_url_changes'        => '#track-url-changes',
+			'ga_track_visibility'         => '#track-visibility',
+			'ga_track_media_query'        => '#track-media-query',
+			'ga_track_impressions'        => '#track-impressions',
+			'ga_track_clean_url'          => '#track-clean-url',
+			'ga_track_scroller'           => '#track-scroller',
+			'ga_track_social'             => '#track-social',
 			'ga_link_attribution'         => '#enhanced-link-attribution',
 			'ga_enhanced_ecommerce'       => '#enhanced-ecommerce',
 			'cpostnoindex'                => '#noindex',
@@ -727,6 +747,114 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'aiosp_ga_advanced_options' => 'on',
 				),
 			),
+			'ga_track_outbound_forms'     => array(
+				'name'     => __( 'Track Outbound Forms:', 'all-in-one-seo-pack' ),
+				'default'  => 0,
+				'condshow' => array(
+					'aiosp_google_analytics_id' => array(
+						'lhs' => 'aiosp_google_analytics_id',
+						'op'  => '!=',
+						'rhs' => '',
+					),
+					'aiosp_ga_advanced_options' => 'on',
+				),
+			),
+			'ga_track_events'     		  => array(
+				'name'     => __( 'Track Events:', 'all-in-one-seo-pack' ),
+				'default'  => 0,
+				'condshow' => array(
+					'aiosp_google_analytics_id' => array(
+						'lhs' => 'aiosp_google_analytics_id',
+						'op'  => '!=',
+						'rhs' => '',
+					),
+					'aiosp_ga_advanced_options' => 'on',
+				),
+			),
+			'ga_track_url_changes'        => array(
+				'name'     => __( 'Track Url Changes:', 'all-in-one-seo-pack' ),
+				'default'  => 0,
+				'condshow' => array(
+					'aiosp_google_analytics_id' => array(
+						'lhs' => 'aiosp_google_analytics_id',
+						'op'  => '!=',
+						'rhs' => '',
+					),
+					'aiosp_ga_advanced_options' => 'on',
+				),
+			),
+			'ga_track_visibility'         => array(
+				'name'     => __( 'Track Page Visibility:', 'all-in-one-seo-pack' ),
+				'default'  => 0,
+				'condshow' => array(
+					'aiosp_google_analytics_id' => array(
+						'lhs' => 'aiosp_google_analytics_id',
+						'op'  => '!=',
+						'rhs' => '',
+					),
+					'aiosp_ga_advanced_options' => 'on',
+				),
+			),
+			'ga_track_media_query'        => array(
+				'name'     => __( 'Track Media Query:', 'all-in-one-seo-pack' ),
+				'default'  => 0,
+				'condshow' => array(
+					'aiosp_google_analytics_id' => array(
+						'lhs' => 'aiosp_google_analytics_id',
+						'op'  => '!=',
+						'rhs' => '',
+					),
+					'aiosp_ga_advanced_options' => 'on',
+				),
+			),
+			'ga_track_impressions'        => array(
+				'name'     => __( 'Track Elements Visibility:', 'all-in-one-seo-pack' ),
+				'default'  => 0,
+				'condshow' => array(
+					'aiosp_google_analytics_id' => array(
+						'lhs' => 'aiosp_google_analytics_id',
+						'op'  => '!=',
+						'rhs' => '',
+					),
+					'aiosp_ga_advanced_options' => 'on',
+				),
+			),
+			'ga_track_scroller'           => array(
+				'name'     => __( 'Track Page Scrolling:', 'all-in-one-seo-pack' ),
+				'default'  => 0,
+				'condshow' => array(
+					'aiosp_google_analytics_id' => array(
+						'lhs' => 'aiosp_google_analytics_id',
+						'op'  => '!=',
+						'rhs' => '',
+					),
+					'aiosp_ga_advanced_options' => 'on',
+				),
+			),
+			'ga_track_social'             => array(
+				'name'     => __( 'Track Facebook and Twitter:', 'all-in-one-seo-pack' ),
+				'default'  => 0,
+				'condshow' => array(
+					'aiosp_google_analytics_id' => array(
+						'lhs' => 'aiosp_google_analytics_id',
+						'op'  => '!=',
+						'rhs' => '',
+					),
+					'aiosp_ga_advanced_options' => 'on',
+				),
+			),
+			'ga_track_clean_url'         => array(
+				'name'     => __( 'Ensure URL Consistency:', 'all-in-one-seo-pack' ),
+				'default'  => 0,
+				'condshow' => array(
+					'aiosp_google_analytics_id' => array(
+						'lhs' => 'aiosp_google_analytics_id',
+						'op'  => '!=',
+						'rhs' => '',
+					),
+					'aiosp_ga_advanced_options' => 'on',
+				),
+			),
 			'ga_link_attribution'         => array(
 				'name'     => __( 'Enhanced Link Attribution:', 'all-in-one-seo-pack' ),
 				'default'  => 0,
@@ -1059,6 +1187,15 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'ga_display_advertising',
 					'ga_exclude_users',
 					'ga_track_outbound_links',
+					'ga_track_outbound_forms',
+					'ga_track_events',
+					'ga_track_url_changes',
+					'ga_track_visibility',
+					'ga_track_media_query',
+					'ga_track_impressions',
+					'ga_track_clean_url',
+					'ga_track_scroller',
+					'ga_track_social',
 					'ga_link_attribution',
 					'ga_enhanced_ecommerce',
 				),
