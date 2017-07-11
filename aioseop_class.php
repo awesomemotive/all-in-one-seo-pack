@@ -3579,6 +3579,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * Adds wordpress hooks.
 	 *
 	 * @since 2.3.13 #899 Adds filter:aioseop_description.
+	 * @since 2.3.14 #593 Adds filter:aioseop_title.
 	 */
 	function add_hooks() {
 		global $aioseop_options, $aioseop_update_checker;
@@ -3622,6 +3623,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			add_action( 'template_redirect', array( $this, 'template_redirect' ), 0 );
 		}
 		add_filter( 'aioseop_description', array( &$this, 'filter_description' ) );
+		add_filter( 'aioseop_title', array( &$this, 'filter_title' ) );
 	}
 
 	function visibility_warning() {
@@ -4833,38 +4835,112 @@ EOF;
 	}
 
 	/**
-	 * Filters meta value and applies generic cleanup.
+	 * Filters title and meta titles and applies cleanup.
 	 * - Decode HTML entities.
-	 * - Removal of urls.
-	 * - Internal trim.
-	 * - External trim.
-	 * - Strips HTML.
+	 * - Encodes to SEO ready HTML entities.
 	 * Returns cleaned value.
 	 *
-	 * @since 2.3.13
+	 * @since 2.3.14
 	 *
 	 * @param string $value Value to filter.
 	 *
 	 * @return string
 	 */
-	public function filter_description( $value) {
+	public function filter_title( $value ) {
 		// Decode entities
-		$value = html_entity_decode( $value );
+		$value = $this->html_entity_decode( $value );
+		// Encode to valid SEO html entities
+		return $this->seo_entity_encode( $value );
+	}
+
+	/**
+	 * Filters meta value and applies generic cleanup.
+	 * - Decode HTML entities.
+	 * - Removal of urls.
+	 * - Internal trim.
+	 * - External trim.
+	 * - Strips HTML except anchor texts.
+	 * - Returns cleaned value.
+	 *
+	 * @since 2.3.13
+	 * @since 2.3.14 Strips excerpt anchor texts.
+	 * @since 2.3.14 Encodes to SEO ready HTML entities.
+	 * @since 2.3.14 #593 encode/decode refactored.
+	 *
+	 * @param string $value Value to filter.
+	 *
+	 * @return string
+	 */
+	public function filter_description( $value ) {
+		// Decode entities
+		$value = $this->html_entity_decode( $value );
 		$value = preg_replace(
 			array(
+				'#<a.*?>([^>]*)</a>#i', // Remove link but keep anchor text
 				'@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?)?)@',// Remove URLs
 			),
 			array(
+				'$1', // Replacement link's anchor text.
 				'', // Replacement URLs
 			),
 			$value
 		);
 		// Strip html
 		$value = wp_strip_all_tags( $value );
+		// Encode to valid SEO html entities
+		$value = $this->seo_entity_encode( $value );
 		// Internal whitespace trim.
 		$value = preg_replace( '/\s\s+/u', ' ', $value );
 		// External trim.
 		return trim( $value );
+	}
+
+	/**
+ 	 * Returns string with decoded html entities.
+ 	 * - Custom html_entity_decode supported on PHP 5.2
+ 	 *
+ 	 * @since 2.3.14
+ 	 *
+ 	 * @param string $value Value to decode.
+ 	 *
+ 	 * @return string
+ 	 */
+ 	private function html_entity_decode( $value ) {
+ 		// Special conversions
+ 		$value = preg_replace(
+ 			array(
+ 				'/\“|\”|&#[xX]00022;|&#34;|&[lLrRbB](dquo|DQUO)(?:[rR])?;|&#[xX]0201[dDeE];'
+ 					.'|&[OoCc](pen|lose)[Cc]urly[Dd]ouble[Qq]uote;|&#822[012];|&#[xX]27;|&#039;/', // Double quotes
+ 			),
+ 			array(
+ 				'"', // Double quotes
+ 			),
+ 			$value
+ 		);
+ 		return html_entity_decode( $value );
+ 	}
+
+	/**
+	 * Returns SEO ready string with encoded HTML entitites.
+	 *
+	 * @since 2.3.14
+	 *
+	 * @param string $value Value to encode.
+	 *
+	 * @return string
+	 */
+	private function seo_entity_encode( $value ) {
+		return preg_replace(
+			array(
+				'/\"|\“|\”|\„/', // Double quotes
+				'/\'/',	// Apostrophes
+			),
+			array(
+				'&quot;', // Double quotes
+				'&apos;', // Apostrophes
+			),
+			$value
+		);
 	}
 
 	function display_right_sidebar() {
