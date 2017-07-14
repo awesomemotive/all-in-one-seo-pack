@@ -4900,6 +4900,7 @@ EOF;
  	 * - Custom html_entity_decode supported on PHP 5.2
  	 *
  	 * @since 2.3.14
+ 	 * @since 2.3.14.1 Hot fix on apostrophes.
  	 *
  	 * @param string $value Value to decode.
  	 *
@@ -4910,10 +4911,12 @@ EOF;
  		$value = preg_replace(
  			array(
  				'/\“|\”|&#[xX]00022;|&#34;|&[lLrRbB](dquo|DQUO)(?:[rR])?;|&#[xX]0201[dDeE];'
- 					.'|&[OoCc](pen|lose)[Cc]urly[Dd]ouble[Qq]uote;|&#822[012];|&#[xX]27;|&#039;/', // Double quotes
+ 					.'|&[OoCc](pen|lose)[Cc]urly[Dd]ouble[Qq]uote;|&#822[012];|&#[xX]27;/', // Double quotes
+ 				'/&#039;/', // Apostrophes
  			),
  			array(
  				'"', // Double quotes
+ 				'\'', // Apostrophes
  			),
  			$value
  		);
