@@ -10,6 +10,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		var $fb_object_types;
 		var $type;
 
+		/**
+		 * Module constructor.
+		 *
+		 * @since 2.4.14 Added display filter. 
+		 */
 		function __construct() {
 			add_action( 'admin_enqueue_scripts', array( $this, 'og_admin_enqueue_scripts' ) );
 
@@ -391,10 +396,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'condshow' => Array( 'aiosp_opengraph_gen_tags' => 'on' ),
 				),
 				'types'                  => Array(
-					'name'            => __( 'Enable Facebook Meta for', 'all-in-one-seo-pack' ),
+					'name'            => __( 'Enable Facebook Meta for Post Types', 'all-in-one-seo-pack' ),
 					'type'            => 'multicheckbox',
 					'initial_options' => $this->get_post_type_titles( Array( '_builtin' => false ) ),
-					'default'         => Array( 'post' => 'post', 'page' => 'page' ),
+					'default'         => Array( 'post' => 'Post', 'page' => 'Page' ),
 				),
 				'title'                  => Array(
 					'name'       => __( 'Title', 'all-in-one-seo-pack' ),
@@ -549,7 +554,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						'setcard',
 						'customimg_twitter',
 					),
-					'display'   => $display,
+					'display'   => apply_filters( 'aioseop_opengraph_display', $display ),
 					'prefix'    => 'aioseop_opengraph_',
 				),
 			);

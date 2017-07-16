@@ -111,8 +111,8 @@ class aiosp_metaboxes {
 							<i><?php _e( 'Sign up today and receive a free copy of the e-book 5 SEO Tips for WordPress ($39 value).', 'all-in-one-seo-pack' ); ?></i>
 						</p>
 						<p><input type="text" value="" name="EMAIL" class="required email" id="mce-EMAIL"
-						          placeholder="<?php __( 'Email Address', 'all-in-one-seo-pack' ); ?>">
-							<input type="submit" value="<?php __( 'Subscribe', 'all-in-one-seo-pack' ); ?>" name="subscribe" id="mc-embedded-subscribe"
+						          placeholder="<?php _e( 'Email Address', 'all-in-one-seo-pack' ); ?>">
+							<input type="submit" value="<?php _e( 'Subscribe', 'all-in-one-seo-pack' ); ?>" name="subscribe" id="mc-embedded-subscribe"
 							       class="btn"></p>
 					</form>
 				</div>
