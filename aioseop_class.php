@@ -4944,7 +4944,7 @@ EOF;
 		return preg_replace(
 			array(
 				'/\"|\“|\”|\„/', // Double quotes
-				'/\'|\’/',	// Apostrophes
+				'/\'|\’|\‘/',	// Apostrophes
 			),
 			array(
 				'&quot;', // Double quotes
