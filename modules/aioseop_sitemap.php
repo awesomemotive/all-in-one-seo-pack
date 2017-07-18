@@ -2630,7 +2630,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( $total > 0 ) {
 				$dom	= new domDocument;
 				$dom->loadHTML( $content );
+                // @codingStandardsIgnoreStart
 				$dom->preserveWhiteSpace = false;
+                // @codingStandardsIgnoreEnd
 				$matches = $dom->getElementsByTagName( 'img' );
 				foreach	( $matches as $match ) {
 					$images[]	= array(
