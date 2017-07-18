@@ -2601,8 +2601,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 					$pr_info = array(
 						'loc' => $url,
-						'image:image' => $this->get_images_from_post( $post	),
-					) +	$pr_info; // Prepend loc to	the	array.
+						'image:image' => $this->get_images_from_post( $post ),
+					) + $pr_info; // Prepend loc to	the	array.
 					if ( is_float( $pr_info['priority'] ) ) {
 						$pr_info['priority'] = sprintf( '%0.1F', $pr_info['priority'] );
 					}
@@ -2625,8 +2625,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		function get_images_from_post( $post ) {
 			$images		= array();
-			$content	= apply_filters( 'the_content',	$post->post_content );
-			$total		= substr_count( $content, '<img	' )	+ substr_count( $content, '<IMG	' );
+            $content    = apply_filters( 'the_content', $post->post_content );
+            $total      = substr_count( $content, '<img ' ) + substr_count( $content, '<IMG ' );
 			if ( $total > 0 ) {
 				$dom	= new domDocument;
 				$dom->loadHTML( $content );
@@ -2634,9 +2634,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$dom->preserveWhiteSpace = false;
                 // @codingStandardsIgnoreEnd
 				$matches = $dom->getElementsByTagName( 'img' );
-				foreach	( $matches as $match ) {
+                foreach ( $matches as $match ) {
 					$images[]	= array(
-                        'image:loc' => $match->getAttribute( 'src' ),
+						'image:loc' => $match->getAttribute( 'src' ),
                     );
 				}
 			}
