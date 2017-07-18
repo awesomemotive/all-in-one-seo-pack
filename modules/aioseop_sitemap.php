@@ -1949,7 +1949,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$xml_header = '<?xml-stylesheet type="text/xsl" href="' . $xsl_url . '"?>' . "\r\n"
 			              . '<urlset ';
-			$namespaces = apply_filters( $this->prefix . 'xml_namespace', array( 'xmlns' => 'http://www.sitemaps.org/schemas/sitemap/0.9' ) );
+			$namespaces = apply_filters( $this->prefix . 'xml_namespace', array( 'xmlns' => 'http://www.sitemaps.org/schemas/sitemap/0.9', 'xmlns:image' => 'http://www.google.com/schemas/sitemap-image/1.1' ) );
 			if ( ! empty( $namespaces ) ) {
 				$ns = array();
 				foreach ( $namespaces as $k => $v ) {
@@ -2596,7 +2596,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 							$pr_info['changefreq'] = $this->options[ $this->prefix . 'freq_post_' . $post->post_type ];
 						}
 					}
-					$pr_info = array( 'loc' => $url ) + $pr_info; // Prepend loc to the array.
+					$pr_info = array( 'loc' => $url, 'image:image' => $this->get_images_from_post( $post ) ) + $pr_info; // Prepend loc to the array 
 					if ( is_float( $pr_info['priority'] ) ) {
 						$pr_info['priority'] = sprintf( '%0.1F', $pr_info['priority'] );
 					}
@@ -2609,6 +2609,30 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			return $prio;
 		}
+
+		/**
+		 * Return the images from the post
+		 *
+		 * @param WP_Post $post
+		 *
+		 * @return array
+		 */
+        function get_images_from_post( $post ) {
+            $images     = array();
+            $content    = apply_filters( 'the_content', $post->post_content );
+            $total      = substr_count( $content, '<img ' ) + substr_count( $content, '<IMG ' );
+            if ( $total > 0 ) {
+                $dom    = new domDocument;
+                $dom->loadHTML( $content );
+                $dom->preserveWhiteSpace = false;
+                $matches = $dom->getElementsByTagName('img');
+                foreach ( $matches as $match ) {
+                    $images[]   = array( 'image:loc' => $match->getAttribute('src') );
+                }
+            }
+            return $images;
+        }
+
 
 		/**
 		 * Return excluded categories for taxonomy queries.

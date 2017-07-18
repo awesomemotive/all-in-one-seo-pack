@@ -136,9 +136,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 			<thead>
 			<tr>
 				<th width="50%">URL</th>
+				<th>Images</th>
 				<th>Priority</th>
 				<th>Change Frequency</th>
-				<th>LastChange</th>
+				<th>Last Change</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -165,6 +166,9 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 						<xsl:if test="$thumbURL != ''">
 							<a href="{$playURL}"><img src="{$thumbURL}" style="max-width:60px;float:right;"/></a>
 						</xsl:if>
+					</td>
+					<td>
+                        <xsl:value-of select="count(image:image)"/>
 					</td>
 					<td>
 						<xsl:if test="string(number(sitemap:priority))!='NaN'">
