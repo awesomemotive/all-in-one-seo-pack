@@ -250,10 +250,15 @@ if ( ! function_exists( 'aioseop_activate' ) ) {
 		}
 		$aiosp_activation = true;
 
+		// Timestamp.
+		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/notice.php' );
+		$admin_notice = new AIOSEOP_Notice();
+		$admin_notice->set_activation_timestamp();
+
 		// These checks might be duplicated in the function being called.
 		if( ! is_network_admin() || !isset( $_GET['activate-multi'] ) ) {
 			set_transient( '_aioseop_activation_redirect', true, 30 ); // Sets 30 second transient for welcome screen redirect on activation.
-			}
+		}
 
 		delete_user_meta( get_current_user_id(), 'aioseop_yst_detected_notice_dismissed' );
 
@@ -396,6 +401,8 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/welcome.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/dashboard_widget.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/menu.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/notice.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/footer.php' );
 
 		$aioseop_welcome = new aioseop_welcome(); // TODO move this to updates file.
 
