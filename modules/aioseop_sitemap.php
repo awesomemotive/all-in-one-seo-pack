@@ -1999,7 +1999,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 							} else {
 								echo "\t\t<$k>$v</$k>\r\n";
 							}
-						}
+						} else if ( 'image:image' === $k && is_array( $v ) ) {
+                            // add the image:image tag even if it is empty, so that we can differentiate between archive and non-archive pages
+                            echo "\t\t<$k></$k>\r\n";
+                        }
 					}
 				} else {
 					echo "\t\t<loc>" . esc_url( $url ) . "</loc>\r\n";
