@@ -23,7 +23,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 *
 		 * @since 2.3.15
 		 */
-		function __construct() {
+		public function __construct() {
 			// Initial options.
 			$this->set_init_timestamp();
 
@@ -43,10 +43,11 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 * Get Notice Options
 		 *
 		 * @since 2.3.15
+		 * @access private
 		 *
 		 * @return array
 		 */
-		function get_notice_options() {
+		private function get_notice_options() {
 			$defaults = array(
 				'review_dismiss'         => false,
 				'review_sched'           => 0,
@@ -65,11 +66,12 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 * Update Notice Options
 		 *
 		 * @since 2.3.15
+		 * @access private
 		 *
 		 * @param array $notice_options New Notice Options.
 		 * @return boolean False if failed saving.
 		 */
-		function update_notice_options( $notice_options ) {
+		private function update_notice_options( $notice_options ) {
 			$old_notice_options = $this->get_notice_options();
 			$notice_options = wp_parse_args( $notice_options, $old_notice_options );
 
@@ -87,7 +89,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 *
 		 * @return void
 		 */
-		function set_init_timestamp() {
+		public function set_init_timestamp() {
 			$notice_options = $this->get_notice_options();
 
 			if ( empty( $notice_options['time_init'] ) ) {
@@ -107,7 +109,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 *
 		 * @return void
 		 */
-		function set_activation_timestamp() {
+		public function set_activation_timestamp() {
 			$notice_options = $this->get_notice_options();
 
 			// If within initial activation. 30 seconds til times out.
@@ -130,7 +132,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 *
 		 * @return void
 		 */
-		function review() {
+		public function review() {
 			if ( AIOSEOPPRO ) {
 				return;
 			}
@@ -154,8 +156,6 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 				// Display review notice if schedule (10 days) is after current time.
 				// Scheduled time is set during initial activation & AJAX reschedule.
 				if ( ! empty( $notice_options['review_sched'] ) && false === $notice_options['review_dismiss'] ) {
-					$a01 = time();
-					$a02 = $notice_options['review_sched'];
 					if ( time() > $notice_options['review_sched'] ) {
 						$this->display_review();
 					}
@@ -169,10 +169,11 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 * HTML content for Review Admin Notice.
 		 *
 		 * @since 2.3.15
+		 * @access private
 		 *
 		 * @return void
 		 */
-		function display_review() {
+		private function display_review() {
 			?>
 			<div class="notice notice-info is-dismissible aioseop-review-notice">
 				<p><?php esc_html_e( 'Looks like you\'ve been using All in One SEO Plugin for awhile now, and that\'s awesome! We are an open source community built from other contributors within WordPress. By helping us with a 5-star review, it also helps us to reach out to more people.', 'all-in-one-seo-pack' ); ?></p>
@@ -217,7 +218,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 *
 		 * @return void
 		 */
-		function review_dismiss() {
+		public function review_dismiss() {
 			check_ajax_referer( 'aioseop_review_dismiss' );
 
 			$notice_options = $this->get_notice_options();
@@ -227,7 +228,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 
 			$this->update_notice_options( $notice_options );
 
-			die();
+			wp_die();
 		}
 
 		/**
@@ -237,7 +238,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 *
 		 * @since 2.3.15
 		 */
-		function review_later() {
+		public function review_later() {
 			check_ajax_referer( 'aioseop_review_later' );
 
 			$notice_options = $this->get_notice_options();
@@ -246,7 +247,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 
 			$this->update_notice_options( $notice_options );
 
-			die();
+			wp_die();
 		}
 	}
 
