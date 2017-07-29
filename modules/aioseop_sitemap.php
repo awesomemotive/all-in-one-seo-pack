@@ -2557,12 +2557,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 			if ( is_array( $posts ) ) {
 				foreach ( $posts as $post ) {
+					// this will determine if we check the post for images or not
+					$is_single		= true;
 					$url          = '';
 					$post->filter = 'sample';
 					if ( 'get_permalink' === $linkfunc ) {
 						$url = $this->get_permalink( $post );
 					} else {
 						$url = call_user_func( $linkfunc, $post );
+						$is_single	= false;
 					}
 					$date = $post->post_modified;
 					if ( '0000-00-00 00:00:00' === $date ) {
@@ -2604,7 +2607,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 					$pr_info = array(
 						'loc' => $url,
-						'image:image' => $this->get_images_from_post( $post ),
+						'image:image' => $is_single ? $this->get_images_from_post( $post ) : null,
 					) + $pr_info; // Prepend loc to	the	array.
 					if ( is_float( $pr_info['priority'] ) ) {
 						$pr_info['priority'] = sprintf( '%0.1F', $pr_info['priority'] );
