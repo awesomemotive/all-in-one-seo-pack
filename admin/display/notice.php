@@ -29,14 +29,12 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 
 			// Admin Notices.
 			if ( is_admin() ) {
-				// Free Version.
 				if ( ! AIOSEOPPRO ) {
 					add_action( 'all_admin_notices', array( $this, 'review' ) );
 					add_action( 'wp_ajax_aioseop_review_dismiss', array( $this, 'review_dismiss' ) );
 					add_action( 'wp_ajax_aioseop_review_later', array( $this, 'review_later' ) );
 				}
 			}
-
 		}
 
 		/**
@@ -117,7 +115,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 				$notice_options['review_sched'] = time() + 864000;
 			}
 
-			// Remove? This was used to later calculate if a notice is displayed.
+			// Initially used to calculate if a notice appears. Possible future use.
 			$notice_options['time_activated'] = time();
 
 			$this->update_notice_options( $notice_options );
@@ -252,4 +250,4 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 	}
 
 	new AIOSEOP_Notice();
-}// End if().
+}

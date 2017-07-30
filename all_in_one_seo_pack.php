@@ -250,7 +250,7 @@ if ( ! function_exists( 'aioseop_activate' ) ) {
 		}
 		$aiosp_activation = true;
 
-		// Timestamp.
+		// Timestamp & Schedule a Notice. Which is later used by AIOSEOP_Notice::review().
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/notice.php' );
 		$admin_notice = new AIOSEOP_Notice();
 		$admin_notice->set_activation_timestamp();
