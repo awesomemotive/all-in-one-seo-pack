@@ -238,9 +238,9 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 				} else {
 					$js_options = '';
 				}
-				$analytics_id = esc_js( $aioseop_options['aiosp_google_analytics_id'] );
-				$attributes = apply_filters('aioseop_ga_attributes','');
-				$open_script_line = preg_replace('/\s+/', ' ',"<script $attributes type=\"text/javascript\">"); // This is just to get the number of spaces right.
+				$analytics_id     = esc_js( $aioseop_options['aiosp_google_analytics_id'] );
+				$attributes       = apply_filters( 'aioseop_ga_attributes', '' );
+				$open_script_line = preg_replace( '/\s+/', ' ', "<script $attributes type=\"text/javascript\">" ); // This is just to get the number of spaces right.
 				$analytics    = <<<EOF
 					
 			$open_script_line
