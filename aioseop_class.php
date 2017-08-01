@@ -2284,8 +2284,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @param $tax
 	 *
-	 * As of 2.3.10, we've removed the option for capitalize categories. We still respect the option,
+	 * @since 2.3.10 Remove option for capitalize categories. We still respect the option,
 	 * and the default (true) or a legacy option in the db can be overridden with the new filter hook aioseop_capitalize_categories
+     * @since 2.3.15 Remove category capitalization completely
 	 *
 	 * @return mixed|void
 	 */
@@ -2301,25 +2302,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		if ( empty( $name ) ) {
 			$name = single_term_title( '', false );
-		}
-
-		$cap_cats = true; // Default to uppercase category/taxonomy titles.
-		if ( isset( $aioseop_options['aiosp_cap_cats'] ) && ! empty( $aioseop_options['aiosp_cap_cats'] ) ) {
-			// Legacy option is checked.
-			$cap_cats = true;
-
-		}
-
-		if ( isset( $aioseop_options['aiosp_cap_cats'] ) && empty( $aioseop_options['aiosp_cap_cats'] ) ) {
-			// Legacy option is unchecked.
-			$cap_cats = false;
-		}
-
-		$cap_cats = apply_filters( 'aioseop_capitalize_categories', $cap_cats ); // This will override any legacy settings.
-
-		// Apparently we're already ucwordsing this elsewhere, and doing it a second time messes it up... why aren't we just doing this at the end?
-		if ( ( $tax == 'category' ) && $cap_cats == true ) {
-			$name = $this->ucwords( $name );
 		}
 
 		return $this->internationalize( $name );
