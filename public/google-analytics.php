@@ -157,6 +157,13 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 
 		}
 
+		/*
+		 * Handle Universal Analytics.
+		 *
+		 * @since ?
+		 * @since 2.3.15 Added aioseop_ga_attributes filter hook for attributes.
+		 *
+		 */
 		function universal_analytics() {
 			global $aioseop_options;
 			$analytics = '';
@@ -232,8 +239,11 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 					$js_options = '';
 				}
 				$analytics_id = esc_js( $aioseop_options['aiosp_google_analytics_id'] );
+				$attributes = apply_filters('aioseop_ga_attributes','');
+				$open_script_line = preg_replace('/\s+/', ' ',"<script $attributes type=\"text/javascript\">"); // This is just to get the number of spaces right.
 				$analytics    = <<<EOF
-			<script>
+					
+			$open_script_line
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
