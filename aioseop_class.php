@@ -91,7 +91,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'use_tags_as_keywords'        => __( 'Check this if you want your tags for a given post used as the Meta Keywords for this post (in addition to any keywords you specify on the Edit Post screen).', 'all-in-one-seo-pack' ),
 			'dynamic_postspage_keywords'  => __( 'Check this if you want your keywords on your Posts page (set in WordPress under Settings, Reading, Front Page Displays) and your archive pages to be dynamically generated from the keywords of the posts showing on that page.  If unchecked, it will use the keywords set in the edit page screen for the posts page.', 'all-in-one-seo-pack' ),
 			'rewrite_titles'              => __( "Note that this is all about the title tag. This is what you see in your browser's window title bar. This is NOT visible on a page, only in the title bar and in the source code. If enabled, all page, post, category, search and archive page titles get rewritten. You can specify the format for most of them. For example: Using the default post title format below, Rewrite Titles will write all post titles as 'Post Title | Blog Name'. If you have manually defined a title using All in One SEO Pack, this will become the title of your post in the format string.", 'all-in-one-seo-pack' ),
-			'cap_titles'                  => __( 'Check this and Search Page Titles and Tag Page Titles will have the first letter of each word capitalized.', 'all-in-one-seo-pack' ),
 			'home_page_title_format'      =>
 				__( 'This controls the format of the title tag for your Home Page.<br />The following macros are supported:', 'all-in-one-seo-pack' )
 				. '<ul><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
@@ -247,7 +246,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'use_tags_as_keywords'        => '#use-tags-for-meta-keywords',
 			'dynamic_postspage_keywords'  => '#dynamically-generate-keywords-for-posts-page',
 			'rewrite_titles'              => '#rewrite-titles',
-			'cap_titles'                  => '#capitalize-titles',
 			'home_page_title_format'      => '#title-format-fields',
 			'page_title_format'           => '#title-format-fields',
 			'post_title_format'           => '#title-format-fields',
@@ -416,10 +414,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					1 => __( 'Enabled', 'all-in-one-seo-pack' ),
 					0 => __( 'Disabled', 'all-in-one-seo-pack' ),
 				),
-			),
-			'cap_titles'                  => array(
-				'name'    => __( 'Capitalize Tag and Search Titles:', 'all-in-one-seo-pack' ),
-				'default' => 1,
 			),
 			'home_page_title_format'      => array(
 				'name'     => __( 'Home Page Title Format:', 'all-in-one-seo-pack' ),
@@ -1006,7 +1000,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'options'   => array(
 					'rewrite_titles',
 					'force_rewrites',
-					'cap_titles',
 					'home_page_title_format',
 					'page_title_format',
 					'post_title_format',
@@ -1537,11 +1530,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title = $this->get_original_title();
 		}
 
-		// If we're going to have this here, which seems logical, we should probably take it out of other places... do all titles pass through here?
-		// The following lines have been commented out to fix an error with Capitalize Titles as reported in the WP forums
-		// if ( !empty( $aioseop_options['aiosp_cap_titles'] ) )
-		//	$title = $this->capitalize( $title );
-
 		return apply_filters( 'aioseop_title', $title );
 	}
 
@@ -1713,9 +1701,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			return apply_filters( 'aioseop_title_single', $title );
 		} else if ( is_search() && isset( $s ) && ! empty( $s ) ) {
 			$search = esc_attr( stripslashes( $s ) );
-			if ( ! empty( $aioseop_options['aiosp_cap_titles'] ) ) {
-				$search = $this->capitalize( $search );
-			}
 			$title_format = $aioseop_options['aiosp_search_title_format'];
 			$title        = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
 			if ( strpos( $title, '%blog_description%' ) !== false ) {
@@ -1758,9 +1743,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$tag_description = $this->internationalize( $tag_description );
 			}
 			if ( $tag ) {
-				if ( ! empty( $aioseop_options['aiosp_cap_titles'] ) ) {
-					$tag = $this->capitalize( $tag );
-				}
 				$title_format = $aioseop_options['aiosp_tag_title_format'];
 				$title        = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
 				if ( strpos( $title, '%blog_description%' ) !== false ) {
@@ -1786,9 +1768,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		} else if ( isset( $STagging ) && $STagging->is_tag_view() ) { // Simple tagging support.
 			$tag = $STagging->search_tag;
 			if ( $tag ) {
-				if ( ! empty( $aioseop_options['aiosp_cap_titles'] ) ) {
-					$tag = $this->capitalize( $tag );
-				}
 				$title_format = $aioseop_options['aiosp_tag_title_format'];
 				$title        = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
 				if ( strpos( $title, '%blog_description%' ) !== false ) {
@@ -1907,9 +1886,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title = $this->internationalize( single_post_title( '', false ) );
 		} else if ( is_search() && isset( $s ) && ! empty( $s ) ) {
 			$search = esc_attr( stripslashes( $s ) );
-			if ( ! empty( $aioseop_options['aiosp_cap_titles'] ) ) {
-				$search = $this->capitalize( $search );
-			}
 			$title = $search;
 		} else if ( ( is_tax() || is_category() ) && ! is_feed() ) {
 			$category_name = $this->ucwords( $this->internationalize( single_cat_title( '', false ) ) );
@@ -1962,23 +1938,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		return trim( $title );
-	}
-
-	/**
-	 * @param $s
-	 *
-	 * @return string
-	 */
-	function capitalize( $s ) {
-		$s      = trim( $s );
-		$tokens = explode( ' ', $s );
-		while ( list( $key, $val ) = each( $tokens ) ) {
-			$tokens[ $key ] = trim( $tokens[ $key ] );
-			$tokens[ $key ] = $this->strtoupper( $this->substr( $tokens[ $key ], 0, 1 ) ) . $this->substr( $tokens[ $key ], 1 );
-		}
-		$s = implode( ' ', $tokens );
-
-		return $s;
 	}
 
 	/**
