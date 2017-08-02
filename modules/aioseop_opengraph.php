@@ -1488,9 +1488,9 @@ END;
 
 		/**
 		 * Set up types.
-         *
-         * @since ?
-         * @since 2.3.15 Change to website for homepage and blog post index page, default to object.
+		 *
+		 * @since ?
+		 * @since 2.3.15 Change to website for homepage and blog post index page, default to object.
 		 */
 		function type_setup() {
 			global $aiosp, $wp_query;
