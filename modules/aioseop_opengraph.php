@@ -167,7 +167,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				'facebook_author'       => '#show-facebook-author-on-articles',
 				'types'                 => '#enable-facebook-meta-for',
 				'defcard'               => '#default-twitter-card',
-				'setcard'               => '#default-twitter-card',
 				'twitter_site'          => '#twitter-site',
 				'twitter_creator'       => '#show-twitter-author',
 				'twitter_domain'        => '#twitter-domain',
