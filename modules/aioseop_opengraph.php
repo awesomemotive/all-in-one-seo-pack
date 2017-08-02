@@ -981,6 +981,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @since 2.3.11.5 Support for multiple fb_admins.
 		 * @since 2.3.13   Adds filter:aioseop_description on description.
 		 * @since 2.4.14   Fixes for aioseop-pro #67.
+		 * @since 2.3.15   Always do_shortcode on descriptions, removed for titles.
 		 *
 		 * @global object $post            Current WP_Post object.
 		 * @global object $aiosp           All in one seo plugin object.
@@ -1223,15 +1224,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				}
 			}
 
-			if ( ! empty( $this->options['aiosp_opengraph_title_shortcodes'] ) ) {
-				$title = do_shortcode( $title );
-			}
-
 			if ( ! empty( $description ) ) {
 				$description = $aiosp->internationalize( preg_replace( '/\s+/', ' ', $description ) );
-				if ( ! empty( $this->options['aiosp_opengraph_description_shortcodes'] ) ) {
-					$description = do_shortcode( $description );
-				}
+				$description = do_shortcode( $description );
 				$description = $aiosp->trim_excerpt_without_filters( $description, 1000 );
 			}
 
