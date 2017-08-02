@@ -34,60 +34,61 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 				echo $analytics;
 
 				if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && $aioseop_options['aiosp_ga_track_outbound_links'] ) { ?>
-					<script type="text/javascript">
-						function recordOutboundLink(link, category, action) {
-							ga('send', 'event', category, action);
-							if (link.target == '_blank') return true;
-							setTimeout('document.location = "' + link.href + '"', 100);
-							return false;
-						}
-						/* use regular Javascript for this */
-						function getAttr(ele, attr) {
-							var result = (ele.getAttribute && ele.getAttribute(attr)) || null;
-							if (!result) {
-								var attrs = ele.attributes;
-								var length = attrs.length;
-								for (var i = 0; i < length; i++)
-									if (attr[i].nodeName === attr) result = attr[i].nodeValue;
-							}
-							return result;
-						}
+                    <script type="text/javascript">
+                        function recordOutboundLink(link, category, action) {
+                            ga('send', 'event', category, action);
+                            if (link.target == '_blank') return true;
+                            setTimeout('document.location = "' + link.href + '"', 100);
+                            return false;
+                        }
 
-						function aiosp_addLoadEvent(func) {
-							var oldonload = window.onload;
-							if (typeof window.onload != 'function') {
-								window.onload = func;
-							} else {
-								window.onload = function () {
-									if (oldonload) {
-										oldonload();
-									}
-									func();
-								}
-							}
-						}
+                        /* use regular Javascript for this */
+                        function getAttr(ele, attr) {
+                            var result = (ele.getAttribute && ele.getAttribute(attr)) || null;
+                            if (!result) {
+                                var attrs = ele.attributes;
+                                var length = attrs.length;
+                                for (var i = 0; i < length; i++)
+                                    if (attr[i].nodeName === attr) result = attr[i].nodeValue;
+                            }
+                            return result;
+                        }
 
-						function aiosp_addEvent(element, evnt, funct) {
-							if (element.attachEvent)
-								return element.attachEvent('on' + evnt, funct);
-							else
-								return element.addEventListener(evnt, funct, false);
-						}
+                        function aiosp_addLoadEvent(func) {
+                            var oldonload = window.onload;
+                            if (typeof window.onload != 'function') {
+                                window.onload = func;
+                            } else {
+                                window.onload = function () {
+                                    if (oldonload) {
+                                        oldonload();
+                                    }
+                                    func();
+                                }
+                            }
+                        }
 
-						aiosp_addLoadEvent(function () {
-							var links = document.getElementsByTagName('a');
-							for (var x = 0; x < links.length; x++) {
-								if (typeof links[x] == 'undefined') continue;
-								aiosp_addEvent(links[x], 'onclick', function () {
-									var mydomain = new RegExp(document.domain, 'i');
-									href = getAttr(this, 'href');
-									if (href && href.toLowerCase().indexOf('http') === 0 && !mydomain.test(href)) {
-										recordOutboundLink(this, 'Outbound Links', href);
-									}
-								});
-							}
-						});
-					</script>
+                        function aiosp_addEvent(element, evnt, funct) {
+                            if (element.attachEvent)
+                                return element.attachEvent('on' + evnt, funct);
+                            else
+                                return element.addEventListener(evnt, funct, false);
+                        }
+
+                        aiosp_addLoadEvent(function () {
+                            var links = document.getElementsByTagName('a');
+                            for (var x = 0; x < links.length; x++) {
+                                if (typeof links[x] == 'undefined') continue;
+                                aiosp_addEvent(links[x], 'onclick', function () {
+                                    var mydomain = new RegExp(document.domain, 'i');
+                                    href = getAttr(this, 'href');
+                                    if (href && href.toLowerCase().indexOf('http') === 0 && !mydomain.test(href)) {
+                                        recordOutboundLink(this, 'Outbound Links', href);
+                                    }
+                                });
+                            }
+                        });
+                    </script>
 					<?php
 				}
 				$analytics = ob_get_clean();
@@ -106,81 +107,81 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 		 */
 		function universal_analytics() {
 			global $aioseop_options;
-			$analytics = '';
-				$allow_linker = $cookie_domain = $domain = $addl_domains = $domain_list = '';
-				if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) ) {
-					$cookie_domain = $this->get_analytics_domain();
-				}
-				if ( ! empty( $cookie_domain ) ) {
-					$cookie_domain = esc_js( $cookie_domain );
-					$cookie_domain = "'cookieDomain': '{$cookie_domain}'";
-				}
-				if ( empty( $cookie_domain ) ) {
-					$domain = ", 'auto'";
-				}
-				if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_multi_domain'] ) ) {
-					$allow_linker = "'allowLinker': true";
-					if ( ! empty( $aioseop_options['aiosp_ga_addl_domains'] ) ) {
-						$addl_domains = trim( $aioseop_options['aiosp_ga_addl_domains'] );
-						$addl_domains = preg_split( '/[\s,]+/', $addl_domains );
-						if ( ! empty( $addl_domains ) ) {
-							foreach ( $addl_domains as $d ) {
-								$d = $this->sanitize_domain( $d );
-								if ( ! empty( $d ) ) {
-									if ( ! empty( $domain_list ) ) {
-										$domain_list .= ', ';
-									}
-									$domain_list .= "'" . $d . "'";
+			$analytics    = '';
+			$allow_linker = $cookie_domain = $domain = $addl_domains = $domain_list = '';
+			if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) ) {
+				$cookie_domain = $this->get_analytics_domain();
+			}
+			if ( ! empty( $cookie_domain ) ) {
+				$cookie_domain = esc_js( $cookie_domain );
+				$cookie_domain = "'cookieDomain': '{$cookie_domain}'";
+			}
+			if ( empty( $cookie_domain ) ) {
+				$domain = ", 'auto'";
+			}
+			if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_multi_domain'] ) ) {
+				$allow_linker = "'allowLinker': true";
+				if ( ! empty( $aioseop_options['aiosp_ga_addl_domains'] ) ) {
+					$addl_domains = trim( $aioseop_options['aiosp_ga_addl_domains'] );
+					$addl_domains = preg_split( '/[\s,]+/', $addl_domains );
+					if ( ! empty( $addl_domains ) ) {
+						foreach ( $addl_domains as $d ) {
+							$d = $this->sanitize_domain( $d );
+							if ( ! empty( $d ) ) {
+								if ( ! empty( $domain_list ) ) {
+									$domain_list .= ', ';
 								}
+								$domain_list .= "'" . $d . "'";
 							}
 						}
 					}
 				}
-				$extra_options = '';
-				if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_display_advertising'] ) ) {
-					$extra_options .= "ga('require', 'displayfeatures');";
+			}
+			$extra_options = '';
+			if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_display_advertising'] ) ) {
+				$extra_options .= "ga('require', 'displayfeatures');";
+			}
+			if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_enhanced_ecommerce'] ) ) {
+				if ( ! empty( $extra_options ) ) {
+					$extra_options .= "\n\t\t\t";
 				}
-				if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_enhanced_ecommerce'] ) ) {
-					if ( ! empty( $extra_options ) ) {
-						$extra_options .= "\n\t\t\t";
-					}
-					$extra_options .= "ga('require', 'ec');";
+				$extra_options .= "ga('require', 'ec');";
+			}
+			if ( ! empty( $domain_list ) ) {
+				if ( ! empty( $extra_options ) ) {
+					$extra_options .= "\n\t\t\t";
 				}
-				if ( ! empty( $domain_list ) ) {
-					if ( ! empty( $extra_options ) ) {
-						$extra_options .= "\n\t\t\t";
-					}
-					$extra_options .= "ga('require', 'linker');\n\t\t\tga('linker:autoLink', [{$domain_list}] );";
+				$extra_options .= "ga('require', 'linker');\n\t\t\tga('linker:autoLink', [{$domain_list}] );";
+			}
+			if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_link_attribution'] ) ) {
+				if ( ! empty( $extra_options ) ) {
+					$extra_options .= "\n\t\t\t";
 				}
-				if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_link_attribution'] ) ) {
-					if ( ! empty( $extra_options ) ) {
-						$extra_options .= "\n\t\t\t";
-					}
-					$extra_options .= "ga('require', 'linkid', 'linkid.js');";
-				}
+				$extra_options .= "ga('require', 'linkid', 'linkid.js');";
+			}
 
-				if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_anonymize_ip'] ) ) {
-					if ( ! empty( $extra_options ) ) {
-						$extra_options .= "\n\t\t\t";
-					}
-					$extra_options .= "ga('set', 'anonymizeIp', true);";
+			if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_anonymize_ip'] ) ) {
+				if ( ! empty( $extra_options ) ) {
+					$extra_options .= "\n\t\t\t";
 				}
-				$js_options = array();
-				foreach ( array( 'cookie_domain', 'allow_linker' ) as $opts ) {
-					if ( ! empty( $$opts ) ) {
-						$js_options[] = $$opts;
-					}
+				$extra_options .= "ga('set', 'anonymizeIp', true);";
+			}
+			$js_options = array();
+			foreach ( array( 'cookie_domain', 'allow_linker' ) as $opts ) {
+				if ( ! empty( $$opts ) ) {
+					$js_options[] = $$opts;
 				}
-				if ( ! empty( $js_options ) ) {
-					$js_options = implode( ',', $js_options );
-					$js_options = ', { ' . $js_options . ' } ';
-				} else {
-					$js_options = '';
-				}
-				$analytics_id     = esc_js( $aioseop_options['aiosp_google_analytics_id'] );
-				$attributes       = apply_filters( 'aioseop_ga_attributes', '' );
-				$open_script_line = preg_replace( '/\s+/', ' ', "<script $attributes type=\"text/javascript\">" ); // This is just to get the number of spaces right.
-				$analytics    = <<<EOF
+			}
+			if ( ! empty( $js_options ) ) {
+				$js_options = implode( ',', $js_options );
+				$js_options = ', { ' . $js_options . ' } ';
+			} else {
+				$js_options = '';
+			}
+			$analytics_id     = esc_js( $aioseop_options['aiosp_google_analytics_id'] );
+			$attributes       = apply_filters( 'aioseop_ga_attributes', '' );
+			$open_script_line = preg_replace( '/\s+/', ' ', "<script $attributes type=\"text/javascript\">" ); // This is just to get the number of spaces right.
+			$analytics        = <<<EOF
 					
 			$open_script_line
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -194,7 +195,8 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 			</script>
 
 EOF;
-            return $analytics;
+
+			return $analytics;
 		}
 
 		/**
