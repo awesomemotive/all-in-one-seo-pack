@@ -1489,15 +1489,14 @@ END;
 		 * Set up types.
          *
          * @since ?
-         * @since 2.3.15 Change to website for homepage, default to object.
+         * @since 2.3.15 Change to website for homepage and blog post index page, default to object.
 		 */
 		function type_setup() {
 			global $aiosp, $wp_query;
-			$this->type = 'object';
-			if ( $aiosp->is_static_front_page() ) {
-				if ( ! empty( $this->options ) && ! empty( $this->options['aiosp_opengraph_categories'] ) ) {
-					$this->type = $this->options['aiosp_opengraph_categories'];
-				}
+			$this->type = 'object'; // Default to type object if we don't have some other rule.
+
+			if ( is_home() || is_front_page() ) {
+				$this->type = 'website'; // Home page and blog page should be website.
 			} elseif ( is_singular() && $this->option_isset( 'types' ) ) {
 				$metabox           = $this->get_current_options( Array(), 'settings' );
 				$current_post_type = get_post_type();
