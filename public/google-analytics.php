@@ -7,19 +7,10 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 	class aioseop_google_analytics extends All_in_One_SEO_Pack_Module {
 		// TODO Rather than extending the module base class, we should find a better way for the shared functions like moving them to our common functions class.
 
-		private $aiosp_ga_use_universal_analytics = true;
-
 		function __construct() {
-
-			$this->filter_universal();
 
 			$this->google_analytics();
 
-		}
-
-		function filter_universal() {
-			$aiosp_ga_use_universal_analytics       = $this->aiosp_ga_use_universal_analytics;
-			$this->aiosp_ga_use_universal_analytics = apply_filters( 'aiosp_universal_analytics', $aiosp_ga_use_universal_analytics );
 		}
 
 		function google_analytics() {
