@@ -1151,6 +1151,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$video       = $metabox['aioseop_opengraph_settings_video'];
 				$title       = $metabox['aioseop_opengraph_settings_title'];
 				$description = $metabox['aioseop_opengraph_settings_desc'];
+
+				if ( empty( $description ) ) {
+					$description = trim( strip_tags( get_post_meta( get_option( 'page_for_posts' ), '_aioseop_description', true ) ) );
+				}
 				if ( empty( $title ) ) {
 					$title = $aiosp->wp_title();
 				}
