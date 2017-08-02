@@ -1494,7 +1494,7 @@ END;
 		 */
 		function type_setup() {
 			global $aiosp, $wp_query;
-			$this->type = '';
+			$this->type = 'object';
 			if ( $aiosp->is_static_front_page() ) {
 				if ( ! empty( $this->options ) && ! empty( $this->options['aiosp_opengraph_categories'] ) ) {
 					$this->type = $this->options['aiosp_opengraph_categories'];
