@@ -13,7 +13,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		/**
 		 * Module constructor.
 		 *
-		 * @since 2.4.14 Added display filter. 
+		 * @since 2.4.14 Added display filter.
 		 */
 		function __construct() {
 			add_action( 'admin_enqueue_scripts', array( $this, 'og_admin_enqueue_scripts' ) );
@@ -210,7 +210,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 
 		/**
          * Hook called after wordpress has been loaded.
-         * @since 2.4.14 
+         * @since 2.4.14
          */
         public function init() {
             // Prepare re-usable variables
@@ -1505,7 +1505,7 @@ END;
 
 		/**
          * Inits hooks and others for admin init.
-         * action:admin_init. 
+         * action:admin_init.
          *
          * @since 2.3.11
          * @since 2.4.14 Refactored function name, and new filter added for defaults and missing term metabox.
@@ -1699,7 +1699,7 @@ END;
          * Returns facebook debug script and link.
          * @since 2.4.14
          *
-         * @return string 
+         * @return string
          */
         private function get_facebook_debug() {
             ob_start();
