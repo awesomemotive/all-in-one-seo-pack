@@ -1143,6 +1143,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( empty( $type ) ) {
 					$type = 'website';
 				}
+			} else if ( is_home() && ! is_front_page() ) {
+				// This is the blog page but not the homepage.
+				global $aiosp;
+				if ( empty( $title ) ) {
+					$title = $aiosp->wp_title();
+				}
 			} else {
 				return;
 			}
