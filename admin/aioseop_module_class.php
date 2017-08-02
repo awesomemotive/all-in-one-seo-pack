@@ -2849,6 +2849,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$get_opts = get_post_meta( $post->ID, '_' . $prefix . $location, true );
 				}
 			}
+
+			if ( is_home() && ! is_front_page() ) {
+			    // If we're on the non-front page blog page, WP doesn't really know its post meta data so we need to get that manually for social meta.
+				$get_opts = get_post_meta( get_option( 'page_for_posts' ), '_' . $prefix . $location, true );
+			}
+
 			$defs = $this->default_options( $location, $defaults );
 			if ( empty( $get_opts ) ) {
 				$get_opts = $defs;
