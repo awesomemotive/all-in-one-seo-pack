@@ -1485,6 +1485,12 @@ END;
 			}
 		}
 
+		/**
+		 * Set up types.
+         *
+         * @since ?
+         * @since 2.3.15 Change to website for homepage, default to object.
+		 */
 		function type_setup() {
 			global $aiosp, $wp_query;
 			$this->type = '';
