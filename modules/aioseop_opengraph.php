@@ -1493,7 +1493,6 @@ END;
 		 * @since 2.3.15 Change to website for homepage and blog post index page, default to object.
 		 */
 		function type_setup() {
-			global $aiosp, $wp_query;
 			$this->type = 'object'; // Default to type object if we don't have some other rule.
 
 			if ( is_home() || is_front_page() ) {
