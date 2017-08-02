@@ -81,12 +81,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			);
 			parent::__construct();
 
-			$categories = Array(
-				'blog'    => __( 'Blog', 'all-in-one-seo-pack' ),
-				'website' => __( 'Website', 'all-in-one-seo-pack' ),
-				'article' => __( 'Article', 'all-in-one-seo-pack' ),
-			);
-
 			$this->help_text = Array(
 				"setmeta"                => __( "Checking this box will use the Home Title and Home Description set in All in One SEO Pack, General Settings as the Open Graph title and description for your home page.", 'all-in-one-seo-pack' ),
 				"key"                    => __( "Enter your Facebook Admin ID here. You can enter multiple IDs separated by a comma. You can look up your Facebook ID using this tool http://findmyfbid.com/", 'all-in-one-seo-pack' ),
@@ -105,7 +99,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				"dimgwidth"              => __( "This option lets you set a default width for your images, where unspecified.", 'all-in-one-seo-pack' ),
 				"dimgheight"             => __( "This option lets you set a default height for your images, where unspecified.", 'all-in-one-seo-pack' ),
 				"meta_key"               => __( "Enter the name of a custom field (or multiple field names separated by commas) to use that field to specify the Open Graph image on Pages or Posts.", 'all-in-one-seo-pack' ),
-				"categories"             => __( "Set the Open Graph type for your website as either a blog or a website.", 'all-in-one-seo-pack' ),
 				"image"                  => __( "This option lets you select the Open Graph image that will be used for this Page or Post, overriding the default settings.", 'all-in-one-seo-pack' ),
 				"customimg"              => __( "This option lets you upload an image to use as the Open Graph image for this Page or Post.", 'all-in-one-seo-pack' ),
 				"imagewidth"             => __( "Enter the width for your Open Graph image in pixels (i.e. 600).", 'all-in-one-seo-pack' ),
@@ -158,7 +151,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				'social_name'			=> '#social-profile-links',
 				'key'                   => '#facebook-admin-id',
 				'appid'                 => '#facebook-app-id',
-				'categories'            => '#facebook-object-type',
 				'gen_tags'				=> '#automatically-generate-article-tags',
 				'gen_keywords'			=> '#use-keywords-in-article-tags',
 				'gen_categories'		=> '#use-categories-in-article-tags',
@@ -214,12 +206,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
          * @since 2.4.14
          */
         public function init() {
-            // Prepare re-usable variables
-            $categories = array(
-                'blog'      => __( 'Blog', 'all-in-one-seo-pack' ),
-                'website'   => __( 'Website', 'all-in-one-seo-pack' ),
-                'article'   => __( 'Article', 'all-in-one-seo-pack' ),
-            );
             $count_desc = __( ' characters. Open Graph allows up to a maximum of %s chars for the %s.', 'all-in-one-seo-pack' );
             // Create default options
             $this->default_options = array(
@@ -329,12 +315,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
                     'name'          => __( 'Use Custom Field For Image', 'all-in-one-seo-pack' ),
                     'type'          => 'text',
                     'default'       => '',
-                ),
-                'categories'    => array(
-                    'name'          => __( 'Facebook Object Type', 'all-in-one-seo-pack' ),
-                    'type'          => 'radio',
-                    'default'       => 'blog',
-                    'initial_options' => $categories,
                 ),
                 'image'         => array(
                     'name'            => __( 'Image', 'all-in-one-seo-pack' ),
@@ -549,7 +529,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						'dimgwidth',
 						'dimgheight',
 						'meta_key',
-						'categories',
 						'defcard',
 						'profile_links',
 						'person_or_org',
@@ -618,7 +597,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						'gen_keywords',
 						'gen_categories',
 						'gen_post_tags',
-						'categories',
 						'facebook_publisher',
 						'facebook_author',
 					),
@@ -706,20 +684,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 
 		function settings_page_init() {
 			add_filter( 'aiosp_output_option', Array( $this, 'display_custom_options' ), 10, 2 );
-			$cat = $this->options["{$this->prefix}categories"];
-			if ( ! empty( $cat ) ) {
-				if ( $cat == 'blog' ) {
-					$show_on_front = get_option( 'show_on_front' );
-					if ( ( $show_on_front == 'page' ) && ( get_option( 'page_on_front' ) ) ) {
-						$this->output_error( '<p>' . __( "Static front page detected, suggested Facebook Object Type is 'website'.", 'all-in-one-seo-pack' ) . '</p>' );
-					}
-				} elseif ( $cat == 'website' ) {
-					$show_on_front = get_option( 'show_on_front' );
-					if ( ( $show_on_front == 'posts' ) ) {
-						$this->output_error( '<p>' . __( "Blog on front page detected, suggested Facebook Object Type is 'blog'.", 'all-in-one-seo-pack' ) . '</p>' );
-					}
-				}
-			}
 		}
 
 		function filter_options( $options, $location ) {
