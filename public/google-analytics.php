@@ -32,62 +32,11 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 				ob_start();
 				$analytics = $this->universal_analytics();
 				echo $analytics;
-				if ( empty( $analytics ) ) {
-					?>
-					<script type="text/javascript">
-						var _gaq = _gaq || [];
-						<?php if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_link_attribution'] ) ) {
-						?>        var pluginUrl =
-							'//www.google-analytics.com/plugins/ga/inpage_linkid.js';
-						_gaq.push(['_require', 'inpage_linkid', pluginUrl]);
-						<?php
-						}
-						?>          _gaq.push(['_setAccount', '<?php
-							echo $aioseop_options['aiosp_google_analytics_id'];
-							?>']);
-						<?php if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_anonymize_ip'] ) ) {
-						?>          _gaq.push(['_gat._anonymizeIp']);
-						<?php
-						}
-						?>
-						<?php if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_multi_domain'] ) ) {
-						?>          _gaq.push(['_setAllowLinker', true]);
-						<?php
-						}
-						?>
-						<?php if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_domain'] ) ) {
-						$domain = $this->get_analytics_domain();
-						?>          _gaq.push(['_setDomainName', '<?php echo $domain; ?>']);
-						<?php
-						}
-						?>          _gaq.push(['_trackPageview']);
-						(function () {
-							var ga = document.createElement('script');
-							ga.type = 'text/javascript';
-							ga.async = true;
-							<?php
-							if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_display_advertising'] ) ) {
-							?>            ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
-							<?php
-							} else {
-							?>            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-							<?php
-							}
-							?>            var s = document.getElementsByTagName('script')[0];
-							s.parentNode.insertBefore(ga, s);
-						})();
-					</script>
-					<?php
-				}
+
 				if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && $aioseop_options['aiosp_ga_track_outbound_links'] ) { ?>
 					<script type="text/javascript">
 						function recordOutboundLink(link, category, action) {
-							<?php if ( $this->aiosp_ga_use_universal_analytics ) { ?>
 							ga('send', 'event', category, action);
-							<?php }
-							if ( ! $this->aiosp_ga_use_universal_analytics ) {    ?>
-							_gat._getTrackerByName()._trackEvent(category, action);
-							<?php } ?>
 							if (link.target == '_blank') return true;
 							setTimeout('document.location = "' + link.href + '"', 100);
 							return false;
@@ -158,7 +107,6 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 		function universal_analytics() {
 			global $aioseop_options;
 			$analytics = '';
-			if ( $this->aiosp_ga_use_universal_analytics ) {
 				$allow_linker = $cookie_domain = $domain = $addl_domains = $domain_list = '';
 				if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) ) {
 					$cookie_domain = $this->get_analytics_domain();
@@ -246,9 +194,7 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 			</script>
 
 EOF;
-			}
-
-			return $analytics;
+            return $analytics;
 		}
 
 		/**
