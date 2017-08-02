@@ -1153,6 +1153,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$description = $metabox['aioseop_opengraph_settings_desc'];
 
 				if ( empty( $description ) ) {
+				    // If there's not social description, fall back to the SEO description.
 					$description = trim( strip_tags( get_post_meta( get_option( 'page_for_posts' ), '_aioseop_description', true ) ) );
 				}
 				if ( empty( $title ) ) {
