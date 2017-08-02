@@ -1146,6 +1146,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			} else if ( is_home() && ! is_front_page() ) {
 				// This is the blog page but not the homepage.
 				global $aiosp;
+				$image       = $metabox['aioseop_opengraph_settings_image'];
+				$video       = $metabox['aioseop_opengraph_settings_video'];
+				$title       = $metabox['aioseop_opengraph_settings_title'];
+				$description = $metabox['aioseop_opengraph_settings_desc'];
 				if ( empty( $title ) ) {
 					$title = $aiosp->wp_title();
 				}
