@@ -119,7 +119,7 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 				$domain = ", 'auto'";
 			}
 			if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && ! empty( $aioseop_options['aiosp_ga_multi_domain'] ) ) {
-				$allow_linker = "'allowLinker': true";
+				$allow_linker = "'allowLinker': true"; // This is put into $js_options later.
 				if ( ! empty( $aioseop_options['aiosp_ga_addl_domains'] ) ) {
 					$addl_domains = trim( $aioseop_options['aiosp_ga_addl_domains'] );
 					$addl_domains = preg_split( '/[\s,]+/', $addl_domains );
