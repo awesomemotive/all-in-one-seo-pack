@@ -1182,6 +1182,15 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			if ( strpos( $title_format, '%current_date%' ) !== false ) {
 				$title_format = str_replace( '%current_date%', date_i18n( get_option( 'date_format' ) ), $title_format );
 			}
+			if ( strpos( $title_format, "%post_date%" ) !== false ){
+				$title_format = str_replace( '%post_date%', get_the_date(), $title_format );
+			}
+			if ( strpos( $title_format, "%post_year%" ) !== false ){
+				$title_format = str_replace( '%post_year%', get_the_date( 'Y' ), $title_format );
+			}
+			if ( strpos( $title_format, "%post_month%" ) !== false ){
+				$title_format = str_replace( '%post_month%', get_the_date( 'F' ), $title_format );
+			}
 			if ( $w->is_category || $w->is_tag || $w->is_tax ) {
 				if ( AIOSEOPPRO && ! empty( $_GET ) && ! empty( $_GET['taxonomy'] ) && ! empty( $_GET['tag_ID'] ) && function_exists( 'wp_get_split_terms' ) ) {
 					$term_id   = intval( $_GET['tag_ID'] );
