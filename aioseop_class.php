@@ -3115,12 +3115,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						$this->help_text[ $field ] .= sprintf( __( "%%tax_%s%% - This post's associated %s taxonomy title", 'all-in-one-seo-pack' ), $n, $t->label ) . '</li><li>';
 					}
 				}
-				$this->help_text[ $field ] .=
+				$this->help_text[ $field ]        .=
 					__( "%post_author_login% - This post's author' login", 'all-in-one-seo-pack' ) . '</li><li>' .
 					__( "%post_author_nicename% - This post's author' nicename", 'all-in-one-seo-pack' ) . '</li><li>' .
 					__( "%post_author_firstname% - This post's author' first name (capitalized)", 'all-in-one-seo-pack' ) . '</li><li>' .
 					__( "%post_author_lastname% - This post's author' last name (capitalized)", 'all-in-one-seo-pack' ) . '</li>' .
-					__( "%current_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li></ul>' .
+					__( "%current_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+                    __( "%post_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+                    __( "%post_year% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+                    __( "%post_month% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li>' .
+                    '</ul>' .
 					'</ul>';
 				$this->help_anchors[ $field ]     = '#custom-titles';
 				$this->layout['cpt']['options'][] = $field;
