@@ -2220,8 +2220,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$buf .= "<textarea name='$name' $attr>$value</textarea>";
 					break;
 				case 'image':
-					$buf .= '<input class="aioseop_upload_image_checker" type="hidden" name="'.$name.'_checker" value="0">'.
-							"<input class='aioseop_upload_image_button button-primary' type='button' value='Upload Image' style='float:left;' />" .
+					$buf .= '<input class="aioseop_upload_image_checker" type="hidden" name="' . $name . '_checker" value="0">' .
+					        "<input class='aioseop_upload_image_button button-primary' type='button' value='";
+					$buf .= __( 'Upload Image', 'all-in-one-seo-pack' );
+					$buf .= "' style='float:left;' />" .
 					        "<input class='aioseop_upload_image_label' name='$name' type='text' $attr value='$value' size=57 style='float:left;clear:left;'>\n";
 					break;
 				case 'html':
@@ -2849,6 +2851,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$get_opts = get_post_meta( $post->ID, '_' . $prefix . $location, true );
 				}
 			}
+
+			if ( is_home() && ! is_front_page() ) {
+			    // If we're on the non-front page blog page, WP doesn't really know its post meta data so we need to get that manually for social meta.
+				$get_opts = get_post_meta( get_option( 'page_for_posts' ), '_' . $prefix . $location, true );
+			}
+
 			$defs = $this->default_options( $location, $defaults );
 			if ( empty( $get_opts ) ) {
 				$get_opts = $defs;
