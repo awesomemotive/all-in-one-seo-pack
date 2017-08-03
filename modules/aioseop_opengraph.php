@@ -705,6 +705,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
          *
          * @since 2.3.11
          * @since 2.4.14 Added filter for description and title placeholders.
+         * @since 2.3.15 do_shortcode on description.
          *
          * @see [plugin]\admin\aioseop_module_class.php > display_options()
          */
@@ -742,18 +743,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 
 					// Description options
 					if ( is_object( $post ) )
-					// Always show excerpt
-					$description = empty( $this->options['aiosp_opengraph_generate_descriptions'] )
-						? $aiosp->trim_excerpt_without_filters(
-							$aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_excerpt ) ),
-							1000
-						)
-						: $aiosp->trim_excerpt_without_filters(
-							$aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_content ) ),
-							1000
-						);
+						// Always show excerpt
+						$description = empty( $this->options['aiosp_opengraph_generate_descriptions'] )
+							? $aiosp->trim_excerpt_without_filters(
+								$aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_excerpt ) ),
+								1000
+							)
+							: $aiosp->trim_excerpt_without_filters(
+								$aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_content ) ),
+								1000
+							);
 
 					// Add filters
+					$description = do_shortcode( $description );
 					$description = apply_filters( 'aioseop_description', $description );
 					// Add placholders
 					$settings["{$prefix}title"]['placeholder'] = apply_filters( 'aioseop_opengraph_placeholder', $title );
