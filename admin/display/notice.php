@@ -124,7 +124,8 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		/**
 		 * Rate Plugin Notice
 		 *
-		 * Admin Notice for rating this plugin after X amount of days.
+		 * Admin Notice for rating the plugin after X amount of days has pass.
+		 * The notice is also scheduled beforehand within the activation hook.
 		 *
 		 * @since 2.3.15
 		 *
