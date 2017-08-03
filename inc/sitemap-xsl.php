@@ -18,6 +18,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 				xmlns:video="http://www.google.com/schemas/sitemap-video/1.1"
 				xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
 				xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9"
+				xmlns:aioseop="http://localhost:81/aioseop.xsd"
 				xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" version="1.0" encoding="UTF-8" indent="yes"/>
 	<xsl:template match="/">
@@ -168,12 +169,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 						</xsl:if>
 					</td>
 					<td>
-						<xsl:variable name="numImages">
-						    <xsl:value-of select="count(image:image)"/>
-						</xsl:variable>
-						<xsl:if test="$numImages != 0">
-                            <xsl:value-of select="count(image:image/image:loc)"/>
-						</xsl:if>
+						<xsl:value-of select="aioseop:numImages/text()"/>
 					</td>
 					<td>
 						<xsl:if test="string(number(sitemap:priority))!='NaN'">
