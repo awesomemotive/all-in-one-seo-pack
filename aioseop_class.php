@@ -4012,6 +4012,15 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( strpos( $description, '%current_date%' ) !== false ) {
 			$description = str_replace( '%current_date%', date_i18n( get_option( 'date_format' ) ), $description );
 		}
+		if ( strpos( $description, "%post_date%" ) !== false ){
+			$description = str_replace( '%post_date%', get_the_date(), $description );
+		}
+		if ( strpos( $description, "%post_year%" ) !== false ){
+			$description = str_replace( '%post_year%', get_the_date( 'Y' ), $description );
+		}
+		if ( strpos( $description, "%post_month%" ) !== false ){
+			$description = str_replace( '%post_month%', get_the_date( 'F' ), $description );
+		}
 
 		/*this was intended to make attachment descriptions unique if pulling from the parent... let's remove it and see if there are any problems
 		*on the roadmap is to have a better hierarchy for attachment description pulling
