@@ -1142,6 +1142,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	/**
 	 * Use custom callback for outputting snippet
 	 *
+	 * @since 2.3.16 Decodes HTML entities on title, description and title length count.
+	 *
 	 * @param $buf
 	 * @param $args
 	 *
@@ -1159,10 +1161,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( $this->strlen( $title ) > 70 ) {
-			$title = $this->trim_excerpt_without_filters( $title, 70 ) . '...';
+			$title = $this->trim_excerpt_without_filters(
+				$this->html_entity_decode( $title ),
+				70
+			) . '...';
 		}
 		if ( $this->strlen( $description ) > 156 ) {
-			$description = $this->trim_excerpt_without_filters( $description, 156 ) . '...';
+			$description = $this->trim_excerpt_without_filters(
+				$this->html_entity_decode( $description ),
+				156
+			) . '...';
 		}
 		$extra_title_len = 0;
 		if ( empty( $title_format ) ) {
@@ -1235,12 +1243,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 			$title_format    = preg_replace( '/%([^%]*?)%/', '', $title_format );
 			$title           = $title_format;
-			$extra_title_len = strlen( str_replace( $replace_title, '', $title_format ) );
+			$extra_title_len = strlen( $this->html_entity_decode( str_replace( $replace_title, '', $title_format ) ) );
 		}
 
 		$args['value']   = sprintf( $args['value'], $title, esc_url( $url ), esc_attr( $description ) );
-		$extra_title_len = (int) $extra_title_len;
-		$args['value'] .= "<script>var aiosp_title_extra = {$extra_title_len};</script>";
+		$args['value'] .= '<script>var aiosp_title_extra = '. (int) $extra_title_len . ';</script>';
 		$buf = $this->get_option_row( $args['name'], $args['options'], $args );
 
 		return $buf;
@@ -3233,6 +3240,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * @since 2.3.16 Forces HTML entity decode on placeholder values.
+	 *
 	 * @param $settings
 	 * @param $location
 	 * @param $current
@@ -3281,8 +3290,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				global $post;
 				$info = $this->get_page_snippet_info();
 				extract( $info );
-				$settings["{$prefix}title"]['placeholder']       = $title;
-				$settings["{$prefix}description"]['placeholder'] = $description;
+				$settings["{$prefix}title"]['placeholder']       = $this->html_entity_decode( $title );
+				$settings["{$prefix}description"]['placeholder'] = $this->html_entity_decode( $description );
 				$settings["{$prefix}keywords"]['placeholder']    = $keywords;
 			}
 
@@ -4849,6 +4858,7 @@ EOF;
  	 *
  	 * @since 2.3.14
  	 * @since 2.3.14.2 Hot fix on apostrophes.
+ 	 * @since 2.3.16   &#039; Added to the list of apostrophes.
  	 *
  	 * @param string $value Value to decode.
  	 *
@@ -4860,7 +4870,7 @@ EOF;
  			array(
  				'/\“|\”|&#[xX]00022;|&#34;|&[lLrRbB](dquo|DQUO)(?:[rR])?;|&#[xX]0201[dDeE];'
  					.'|&[OoCc](pen|lose)[Cc]urly[Dd]ouble[Qq]uote;|&#822[012];|&#[xX]27;/', // Double quotes
- 				'/&#8217;|&apos;/', // Apostrophes
+ 				'/&#039;|&#8217;|&apos;/', // Apostrophes
  			),
  			array(
  				'"', // Double quotes
