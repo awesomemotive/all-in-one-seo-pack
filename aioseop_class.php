@@ -1984,6 +1984,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+     * Replace title templates inside % symbol.
+     *
 	 * @param $title
 	 * @param $post
 	 * @param string $type
@@ -2043,6 +2045,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( strpos( $new_title, "%current_date%" ) !== false ){
 			$new_title = str_replace( '%current_date%', date_i18n( get_option( 'date_format' ) ), $new_title );
 		}
+		if ( strpos( $new_title, "%post_date%" ) !== false ){
+			$new_title = str_replace( '%post_date%', get_the_date(), $new_title );
+		}
+		if ( strpos( $new_title, "%post_year%" ) !== false ){
+			$new_title = str_replace( '%post_year%', get_the_date( 'Y' ), $new_title );
+		}
+		if ( strpos( $new_title, "%post_month%" ) !== false ){
+			$new_title = str_replace( '%post_month%', get_the_date( 'F' ), $new_title );
+		}
+
 		$title = trim( $new_title );
 
 		return $title;
