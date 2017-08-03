@@ -8,9 +8,7 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 		// TODO Rather than extending the module base class, we should find a better way for the shared functions like moving them to our common functions class.
 
 		function __construct() {
-
 			$this->google_analytics();
-
 		}
 
 		function google_analytics() {
@@ -98,12 +96,13 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 
 		}
 
-		/*
-		 * Handle Universal Analytics.
+		/**
+         * Handle Universal Analytics.
 		 *
 		 * @since ?
 		 * @since 2.3.15 Added aioseop_ga_attributes filter hook for attributes.
 		 *
+		 * @return string
 		 */
 		function universal_analytics() {
 			global $aioseop_options;
