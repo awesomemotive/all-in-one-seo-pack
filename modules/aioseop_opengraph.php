@@ -755,7 +755,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 							);
 
 					// Add filters
-					$description = do_shortcode( $description );
 					$description = apply_filters( 'aioseop_description', $description );
 					// Add placholders
 					$settings["{$prefix}title"]['placeholder'] = apply_filters( 'aioseop_opengraph_placeholder', $title );
@@ -1190,9 +1189,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				}
 			}
 
+			if ( ! empty( $this->options['aiosp_opengraph_title_shortcodes'] ) ) {
+				$title = do_shortcode( $title );
+			}
 			if ( ! empty( $description ) ) {
 				$description = $aiosp->internationalize( preg_replace( '/\s+/', ' ', $description ) );
-				$description = do_shortcode( $description );
+				if ( ! empty( $this->options['aiosp_opengraph_description_shortcodes'] ) ) {
+					$description = do_shortcode( $description );
+				}
 				$description = $aiosp->trim_excerpt_without_filters( $description, 1000 );
 			}
 
