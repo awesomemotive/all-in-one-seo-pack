@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mrtor
 Tags: seo, all in one seo, google, twitter, page, image seo, social, search engine optimization, sitemap, WordPress SEO, meta, meta description, xml sitemap, google sitemap, sitemaps, robots meta, yahoo, bing, news sitemaps, multisite, canonical, nofollow, noindex, keywords, description, webmaster tools, google webmaster tools, google analytics
 Requires at least: 4.0
 Tested up to: 4.8
-Stable tag: 2.3.15.1
+Stable tag: 2.3.15.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
