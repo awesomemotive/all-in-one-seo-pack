@@ -2534,7 +2534,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$description = $this->trim_excerpt_without_filters_full_length( $this->internationalize( $post->post_excerpt ) );
 			}
 			if ( ! $description && isset( $aioseop_options['aiosp_generate_descriptions'] ) && $aioseop_options['aiosp_generate_descriptions'] ) {
-				$content = do_shortcode( $post->post_content );
+				if ( ! empty( $aioseop_options['aiosp_run_shortcodes'] ) ) {
+					$content = do_shortcode( $content );
+				}
+				$content     = wp_strip_all_tags( $content );
 				$description = $this->trim_excerpt_without_filters( $this->internationalize( $content ) );
 			}
 		}
