@@ -2513,7 +2513,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @since 2.3.13 #899 Fixes non breacking space, applies filter "aioseop_description".
 	 * @since 2.3.14 #932 Removes filter "aioseop_description".
-	 * @since 2.3.15 Always do_shortcode.
 	 *
 	 * @param object $post Post object.
 	 *
@@ -2534,6 +2533,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$description = $this->trim_excerpt_without_filters_full_length( $this->internationalize( $post->post_excerpt ) );
 			}
 			if ( ! $description && isset( $aioseop_options['aiosp_generate_descriptions'] ) && $aioseop_options['aiosp_generate_descriptions'] ) {
+				$content = $post->post_content;
 				if ( ! empty( $aioseop_options['aiosp_run_shortcodes'] ) ) {
 					$content = do_shortcode( $content );
 				}
