@@ -111,9 +111,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				__( "%page_author_firstname% - This page's author' first name (capitalized)", 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( "%page_author_lastname% - This page's author' last name (capitalized)", 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( "%current_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>'.
-			    __( "%post_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-			    __( "%post_year% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-			    __( "%post_month% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li>' ,
+			    __( "%post_date% - The date the page was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+			    __( "%post_year% - The year the page was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+			    __( "%post_month% - The month the page was published (localized)", 'all-in-one-seo-pack' ) . '</li>' ,
 			'post_title_format'           =>
 				__( 'This controls the format of the title tag for Posts.<br />The following macros are supported:', 'all-in-one-seo-pack' )
 				. '<li><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
@@ -126,9 +126,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				__( "%post_author_firstname% - This post's author' first name (capitalized)", 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( "%post_author_lastname% - This post's author' last name (capitalized)", 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( "%current_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-				__( "%post_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-				__( "%post_year% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-				__( "%post_month% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li>' ,
+				__( "%post_date% - The date the post was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+				__( "%post_year% - The year the post was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+				__( "%post_month% - The month the post was published (localized)", 'all-in-one-seo-pack' ) . '</li>' ,
 			'category_title_format'       =>
 				__( 'This controls the format of the title tag for Category Archives.<br />The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
@@ -170,9 +170,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			                                 __( '%post_title% - The original title of the post', 'all-in-one-seo-pack' ) . '</li><li>' .
 			                                 __( '%wp_title% - The original WordPress title, e.g. post_title for posts', 'all-in-one-seo-pack' ) . '</li><li>' .
 			                                 __( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) . '</li><li>' .
-			                                 __( "%post_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-			                                 __( "%post_year% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-			                                 __( "%post_month% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li>' ,
+			                                 __( "%post_date% - The date the page/post was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+			                                 __( "%post_year% - The year the page/post was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+			                                 __( "%post_month% - The month the page/post was published (localized)", 'all-in-one-seo-pack' ) . '</li>' ,
 			'404_title_format'            => __( 'This controls the format of the title tag for the 404 page.<br />The following macros are supported:', 'all-in-one-seo-pack' ) .
 			                                 '<ul><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
 			                                 __( '%blog_description% - Your blog description', 'all-in-one-seo-pack' ) . '</li><li>' .
@@ -3133,9 +3133,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					__( "%post_author_firstname% - This post's author' first name (capitalized)", 'all-in-one-seo-pack' ) . '</li><li>' .
 					__( "%post_author_lastname% - This post's author' last name (capitalized)", 'all-in-one-seo-pack' ) . '</li>' .
 					__( "%current_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-                    __( "%post_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-                    __( "%post_year% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-                    __( "%post_month% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li>' .
+                    __( "%post_date% - The date the post was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+                    __( "%post_year% - The year the post was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+                    __( "%post_month% - The month the post was published (localized)", 'all-in-one-seo-pack' ) . '</li>' .
                     '</ul>' .
 					'</ul>';
 				$this->help_anchors[ $field ]     = '#custom-titles';
