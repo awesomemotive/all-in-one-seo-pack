@@ -317,6 +317,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'page_meta_tags'              => '#additional-page-headers',
 			'front_meta_tags'             => '#additional-front-page-headers',
 			'home_meta_tags'              => '#additional-blog-page-headers',
+			'snippet'					  => '#preview-snippet',
+			'title'						  => '#title',
+			'description'				  => '#description',
+			'keywords'					  => '#keywords',
+			'custom_link'				  => '#custom-canonical-url',
+			'noindex'					  => '#robots-meta-noindex',
+			'nofollow'					  => '#robots-meta-nofollow',
+			'sitemap_exclude'			  => '#exclude-from-sitemap',
+			'disable'					  => '#disable-on-this-post',
+			'disable_analytics'			  => '#disable-google-analytics',
 		);
 
 		$meta_help_text = array(
@@ -887,7 +897,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'            => $this->plugin_name,
 				'type'            => 'metabox',
 				'prefix'          => '',
-				'help_link'       => 'https://semperplugins.com/sections/postpage-settings/',
+				'help_link'       => 'https://semperplugins.com/documentation/post-settings/',
 				'options'         => array(
 					'edit',
 					'nonce-aioseop-edit',
