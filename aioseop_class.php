@@ -1489,12 +1489,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ) );
 					}
 				} else {
-					$field = "aiosp_$f";
-					$meta  = get_post_meta( $post_id, '_aioseop_' . $f, true );
-					if ( 'title' === $f || 'description' === $f ) {
-						$get_opts[ $field ] = htmlspecialchars( $meta );
-					} else {
-						$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ) );
+					if ( ! is_category() && ! is_tag() && ! is_tax() ) {
+						$field = "aiosp_$f";
+						$meta  = get_post_meta( $post_id, '_aioseop_' . $f, true );
+						if ( 'title' === $f || 'description' === $f ) {
+							$get_opts[ $field ] = htmlspecialchars( $meta );
+						} else {
+							$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ) );
+						}
 					}
 				}
 
