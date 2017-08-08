@@ -415,7 +415,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
                 'types'         => array(
                     'name'          => __( 'Enable Facebook Meta for Post Types', 'all-in-one-seo-pack' ),
                     'type'          => 'multicheckbox',
-                    'default'       => array( 'post' => 'Post', 'page' => 'Page' ),
+                    'default'       => array( 'post' => 'post', 'page' => 'page' ),
                     'initial_options' => $this->get_post_type_titles( array( '_builtin' => false ) ),
                 ),
                 'title'         => array(
