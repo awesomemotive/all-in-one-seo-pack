@@ -1030,6 +1030,11 @@ table.aioseop_table td, table.aioseop_table th {
     height: 0;
 }
 
+#aiosp_title_metabox #aiosp_force_rewrites_wrapper {
+    display: none;
+    height: 0;
+}
+
 .aioseop_module.error.below-h2 {
     padding: 5px 0;
     margin: 0 477px 15px 0 !important;
