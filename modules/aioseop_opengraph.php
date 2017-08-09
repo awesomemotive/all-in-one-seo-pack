@@ -491,7 +491,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
             // load initial options / set defaults
             $this->update_options();
             $display = Array();
-            if ( isset( $this->options['aiosp_opengraph_types'] ) ) {
+            if ( isset( $this->options['aiosp_opengraph_types'] ) && ! empty( $this->options['aiosp_opengraph_types'] ) ) {
                 $display = $this->options['aiosp_opengraph_types'];
             }
             $this->locations = array(
