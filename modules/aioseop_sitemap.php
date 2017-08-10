@@ -1999,9 +1999,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 							} else {
 								echo "\t\t<$k>$v</$k>\r\n";
 							}
-						} else if ( 'image:image' === $k && is_array( $v ) ) {
-                            // add the image:image tag even if it is empty, so that we can differentiate between archive and non-archive pages
-                            echo "\t\t<$k></$k>\r\n";
                         }
 					}
 				} else {
@@ -2111,6 +2108,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					} else {
 						$pr_info['changefreq'] = $def_freq;
 					}
+
+					$pr_info['image:image']	= $this->get_images_from_term( $term );
 					$prio[] = $pr_info;
 				}
 			}
@@ -2623,14 +2622,41 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
+		 * Return the images attached to the term
+		 *
+		 * @param WP_Term $term the term object.
+		 *
+		 * @return array
+		 */
+		private function get_images_from_term( $term ) {
+			$images			= array();
+			$thumbnail_id	= get_term_meta( $term->term_id, 'thumbnail_id', true );
+			if ( $thumbnail_id ) {
+				$image		= wp_get_attachment_url( $thumbnail_id );
+				if ( $image ) {
+					$images['image:image']	= $image;
+				}
+			}
+			return $images;
+		}
+
+		/**
 		 * Return the images from the post
 		 *
 		 * @param WP_Post $post the post object.
 		 *
 		 * @return array
 		 */
-		function get_images_from_post( $post ) {
-			$images		= array();
+		private function get_images_from_post( $post ) {
+			$images			= array();
+
+			// check featured image
+			$attached_url	= get_the_post_thumbnail_url( $post->ID );
+			if ( false !== $attached_url ) {
+				$images[]	= $attached_url;
+			}
+
+			// check images in the content
 			$content    = apply_filters( 'the_content', $post->post_content );
 			$total      = substr_count( $content, '<img ' ) + substr_count( $content, '<IMG ' );
 			if ( $total > 0 ) {
@@ -2644,11 +2670,24 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
                 // @codingStandardsIgnoreEnd
 				$matches = $dom->getElementsByTagName( 'img' );
 				foreach ( $matches as $match ) {
+					$images[]	= $match->getAttribute( 'src' );
+				}
+			}
+
+			if ( $images ) {
+				$tmp			= $images;
+				if ( 1 < count( $images ) ) {
+					// filter out duplicates
+					$tmp		= array_unique( $images );
+				}
+				$images		= array();
+				foreach ( $tmp as $image ) {
 					$images[]	= array(
-						'image:loc' => $match->getAttribute( 'src' ),
+						'image:loc' => $image
 					);
 				}
 			}
+
 			return $images;
 		}
 

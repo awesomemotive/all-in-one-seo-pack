@@ -168,12 +168,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 						</xsl:if>
 					</td>
 					<td>
-						<xsl:variable name="numImages">
-						    <xsl:value-of select="count(image:image)"/>
-						</xsl:variable>
-						<xsl:if test="$numImages != 0">
-                            <xsl:value-of select="count(image:image/image:loc)"/>
-						</xsl:if>
+						<xsl:value-of select="count(image:image)"/>
 					</td>
 					<td>
 						<xsl:if test="string(number(sitemap:priority))!='NaN'">
