@@ -1952,7 +1952,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$namespaces = apply_filters( $this->prefix . 'xml_namespace', array(
 				'xmlns'	=> 'http://www.sitemaps.org/schemas/sitemap/0.9',
 				'xmlns:image' => 'http://www.google.com/schemas/sitemap-image/1.1',
-				'xmlns:aioseop' => 'http://localhost:81/aioseop.xsd',
 			) );
 			if ( ! empty( $namespaces ) ) {
 				$ns = array();
@@ -2000,8 +1999,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 							} else {
 								echo "\t\t<$k>$v</$k>\r\n";
 							}
-						} else if ( 'aioseop:numImages' === $k && is_numeric( $v ) ) {
-                            echo "\t\t<$k>$v</$k>\r\n";
+						} else if ( 'image:image' === $k && is_array( $v ) ) {
+                            // add the image:image tag even if it is empty, so that we can differentiate between archive and non-archive pages
+                            echo "\t\t<$k></$k>\r\n";
                         }
 					}
 				} else {
@@ -2605,11 +2605,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 							$pr_info['changefreq'] = $this->options[ $this->prefix . 'freq_post_' . $post->post_type ];
 						}
 					}
-					$images	= $is_single ? $this->get_images_from_post( $post ) : null;
 					$pr_info = array(
 						'loc' => $url,
-						'image:image' => $images,
-						'aioseop:numImages' => is_null( $images ) ? '' : count( $images ),
+						'image:image' => $is_single ? $this->get_images_from_post( $post ) : null,
 					) + $pr_info; // Prepend loc to	the	array.
 					if ( is_float( $pr_info['priority'] ) ) {
 						$pr_info['priority'] = sprintf( '%0.1F', $pr_info['priority'] );
