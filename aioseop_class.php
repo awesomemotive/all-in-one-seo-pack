@@ -968,11 +968,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'size' => 60,
 					),
 					'noindex'           => array(
-						'name'    => __( 'Robots Meta NOINDEX', 'all-in-one-seo-pack' ),
+						'name'    => __( 'NOINDEX this page/post', 'all-in-one-seo-pack' ),
 						'default' => '',
 					),
 					'nofollow'          => array(
-						'name'    => __( 'Robots Meta NOFOLLOW', 'all-in-one-seo-pack' ),
+						'name'    => __( 'NOFOLLOW this page/post', 'all-in-one-seo-pack' ),
 						'default' => '',
 					),
 					'sitemap_exclude'   => array( 'name' => __( 'Exclude From Sitemap', 'all-in-one-seo-pack' ) ),
