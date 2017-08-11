@@ -1818,13 +1818,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 			$prio = $this->get_all_post_priority_data( $options["{$this->prefix}posttypes"] );
 
+			$posts   = $postspageid    = (int) get_option( 'page_for_posts' ); // It's 0 if posts are on homepage, otherwise it's the id of the posts page.
+
 			$home           = array(
 				'loc'        => aioseop_home_url(),
 				'priority'   => $this->get_default_priority( 'homepage' ),
 				'changefreq' => $this->get_default_frequency( 'homepage' ),
+				'image:image'=> $this->get_images_from_post( (int) get_option( 'page_on_front' ) ),
 			);
-
-			$posts   = $postspageid    = get_option( 'page_for_posts' ); // It's 0 if posts are on homepage, otherwise it's the id of the posts page.
 
 			$this->paginate = false;
 			if ( $posts ) {
@@ -2301,8 +2302,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'loc'        => aioseop_home_url(),
 				'priority'   => $this->get_default_priority( 'homepage' ),
 				'changefreq' => $this->get_default_frequency( 'homepage' ),
+				'image:image'=> $this->get_images_from_post( (int) get_option( 'page_on_front' ) ),
 			);
-			$posts = get_option( 'page_for_posts' );
+
+			$posts = (int) get_option( 'page_for_posts' );
 			if ( $posts ) {
 				$posts = $this->get_permalink( $posts );
 				if ( $posts == $home['loc'] ) {
@@ -2606,7 +2609,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 					$pr_info = array(
 						'loc' => $url,
-						'image:image' => $is_single ? $this->get_images_from_post( $post ) : null,
+						'image:image' => 'attachment' === $post->post_type ? 1 : ( $is_single ? $this->get_images_from_post( $post ) : null ),
 					) + $pr_info; // Prepend loc to	the	array.
 					if ( is_float( $pr_info['priority'] ) ) {
 						$pr_info['priority'] = sprintf( '%0.1F', $pr_info['priority'] );
@@ -2649,6 +2652,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		private function get_images_from_post( $post ) {
 			$images			= array();
+
+			if ( is_numeric( $post ) ) {
+				if ( 0 === $post ) {
+					return null;
+				}
+				$post		= get_post( $post );
+			}
 
 			// check featured image
 			$attached_url	= get_the_post_thumbnail_url( $post->ID );
