@@ -415,7 +415,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
                 'types'         => array(
                     'name'          => __( 'Enable Facebook Meta for Post Types', 'all-in-one-seo-pack' ),
                     'type'          => 'multicheckbox',
-                    'default'       => array( 'post' => 'Post', 'page' => 'Page' ),
+                    'default'       => array( 'post' => 'post', 'page' => 'page' ),
                     'initial_options' => $this->get_post_type_titles( array( '_builtin' => false ) ),
                 ),
                 'title'         => array(
@@ -491,7 +491,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
             // load initial options / set defaults
             $this->update_options();
             $display = Array();
-            if ( isset( $this->options['aiosp_opengraph_types'] ) ) {
+            if ( isset( $this->options['aiosp_opengraph_types'] ) && ! empty( $this->options['aiosp_opengraph_types'] ) ) {
                 $display = $this->options['aiosp_opengraph_types'];
             }
             $this->locations = array(
@@ -755,7 +755,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 							);
 
 					// Add filters
-					$description = do_shortcode( $description );
 					$description = apply_filters( 'aioseop_description', $description );
 					// Add placholders
 					$settings["{$prefix}title"]['placeholder'] = apply_filters( 'aioseop_opengraph_placeholder', $title );
@@ -1190,9 +1189,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				}
 			}
 
+			if ( ! empty( $this->options['aiosp_opengraph_title_shortcodes'] ) ) {
+				$title = do_shortcode( $title );
+			}
 			if ( ! empty( $description ) ) {
 				$description = $aiosp->internationalize( preg_replace( '/\s+/', ' ', $description ) );
-				$description = do_shortcode( $description );
+				if ( ! empty( $this->options['aiosp_opengraph_description_shortcodes'] ) ) {
+					$description = do_shortcode( $description );
+				}
 				$description = $aiosp->trim_excerpt_without_filters( $description, 1000 );
 			}
 

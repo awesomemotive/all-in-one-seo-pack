@@ -76,6 +76,13 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 					tr.stripe {
 						background-color: #f7f7f7;
 					}
+					table td a {
+						display: block;
+					}
+					table td a img {
+						max-height: 30px;
+						margin: 6px 3px;
+					}
 				</style>
 			</head>
 			<body>
