@@ -3,7 +3,7 @@
  * The Opengraph class.
  *
  * @package All-in-One-SEO-Pack
- * @version 2.4.14
+ * @version 2.3.16
  */
 if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 	class All_in_One_SEO_Pack_Opengraph extends All_in_One_SEO_Pack_Module {
@@ -13,7 +13,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		/**
 		 * Module constructor.
 		 *
-		 * @since 2.4.14 Added display filter.
+		 * @since 2.3.14 Added display filter.
+		 * @since 2.3.16 #1066 Force init on constructor.
 		 */
 		function __construct() {
 			add_action( 'admin_enqueue_scripts', array( $this, 'og_admin_enqueue_scripts' ) );
@@ -196,6 +197,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			add_action( 'edited_term', array( &$this, 'save_tax_data' ), 10, 3 );
 			// Adds special filters
 			add_filter( 'aioseop_opengraph_placeholder', array( &$this, 'filter_placeholder' ) );
+			// Call to init to generate menus
+			$this->init();
 		}
 
 		/**

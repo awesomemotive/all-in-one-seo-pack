@@ -4547,29 +4547,44 @@ EOF;
 				if ( ! empty( $blog_page ) ) {
 					$post = $blog_page;
 				}
-							// Don't show if we're on the home page and the home page is the latest posts.
+				// Don't show if we're on the home page and the home page is the latest posts.
 				if ( ! is_home() || ( ! is_front_page() && ! is_home() ) ) {
 					global $wp_the_query;
 					$current_object = $wp_the_query->get_queried_object();
 
-					if ( ! empty( $current_object ) && ! empty( $current_object->post_type ) ){
-						// Try the main query.
-						$edit_post_link = get_edit_post_link( $current_object->ID );
-						$wp_admin_bar->add_menu( array(
-							'id'     => 'aiosp_edit_' . $current_object->ID,
-							'parent' => AIOSEOP_PLUGIN_DIRNAME,
-							'title' => 'Edit SEO',
-							'href' => $edit_post_link . '#aiosp'
-						) );
-					}else{
-						// Try the post object.
+					if ( is_singular() ) {
+						if ( ! empty( $current_object ) && ! empty( $current_object->post_type ) ) {
+							// Try the main query.
+							$edit_post_link = get_edit_post_link( $current_object->ID );
+							$wp_admin_bar->add_menu( array(
+								'id'     => 'aiosp_edit_' . $current_object->ID,
+								'parent' => AIOSEOP_PLUGIN_DIRNAME,
+								'title'  => 'Edit SEO',
+								'href'   => $edit_post_link . '#aiosp',
+							) );
+						} else {
+							// Try the post object.
+							$wp_admin_bar->add_menu( array(
+								'id'     => 'aiosp_edit_' . $post->ID,
+								'parent' => AIOSEOP_PLUGIN_DIRNAME,
+								'title'  => __( 'Edit SEO', 'all-in-one-seo-pack' ),
+								'href'   => get_edit_post_link( $post->ID ) . '#aiosp',
+							) );
+						}
+					}
+
+					if ( AIOSEOPPRO && ( is_category() || is_tax() || is_tag() ) ) {
+						// SEO for taxonomies are only available in Pro version.
+						$edit_term_link = get_edit_term_link( $current_object->term_id, $current_object->taxonomy );
 						$wp_admin_bar->add_menu( array(
 							'id'     => 'aiosp_edit_' . $post->ID,
 							'parent' => AIOSEOP_PLUGIN_DIRNAME,
 							'title'  => __( 'Edit SEO', 'all-in-one-seo-pack' ),
-							'href'   => get_edit_post_link( $post->ID ) . '#aiosp',
+							'href'   => $edit_term_link . '#aiosp',
 						) );
 					}
+
+
 				}
 			}
 		}
@@ -4726,7 +4741,12 @@ EOF;
 
 		if ( ! empty( $this->options['aiosp_enablecpost'] ) && $this->options['aiosp_enablecpost'] ) {
 			if ( AIOSEOPPRO ) {
-				$this->locations['aiosp']['display'] = $this->options['aiosp_cpostactive'];
+				if( is_array( $this->options['aiosp_cpostactive'] ) ) {
+     				     $this->locations['aiosp']['display'] = $this->options['aiosp_cpostactive']; 
+				}else{
+					$this->locations['aiosp']['display'][] = $this->options['aiosp_cpostactive']; // Store as an array in case there are taxonomies to add also.	
+				}
+				
 				if ( ! empty( $this->options['aiosp_taxactive'] ) ) {
 					foreach ( $this->options['aiosp_taxactive'] as $tax ) {
 						$this->locations['aiosp']['display'][] = 'edit-' . $tax;

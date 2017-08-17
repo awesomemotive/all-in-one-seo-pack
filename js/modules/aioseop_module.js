@@ -242,6 +242,17 @@ jQuery( document ).ready(function() {
 			aioseop_do_condshow( aiosp_data.condshow );
 		}
 	}
+
+	/**
+     * Turns on image checker on custom url change.
+     * @since 2.3.16
+     */
+	jQuery( '.aioseop_upload_image_label' ).on( 'change', function() {
+		this.checker = jQuery( this ).parent().find( '.aioseop_upload_image_checker' );
+		if ( this.checker.length > 0 ) {
+			this.checker.val( 1 );
+		}
+	} );
 });
 
 /**
