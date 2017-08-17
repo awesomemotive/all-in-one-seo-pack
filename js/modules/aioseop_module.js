@@ -242,17 +242,36 @@ jQuery( document ).ready(function() {
 			aioseop_do_condshow( aiosp_data.condshow );
 		}
 	}
+
+	/**
+     * Turns on image checker on custom url change.
+     * @since 2.3.16
+     */
+	jQuery( '.aioseop_upload_image_label' ).on( 'change', function() {
+		this.checker = jQuery( this ).parent().find( '.aioseop_upload_image_checker' );
+		if ( this.checker.length > 0 ) {
+			this.checker.val( 1 );
+		}
+	} );
 });
 
 /**
  * @summary Custom jQuery plugin that enables image uploader in wordpress.
  * 
  * @since 2.3.13
+ * @since 2.4.14 Added success callback and options.
  * @see http://www.webmaster-source.com/2013/02/06/using-the-wordpress-3-5-media-uploader-in-your-plugin-or-theme/
+ *
+ * @param object options Plugin options.
  */
-jQuery.fn.aioseopImageUploader = function() {
+jQuery.fn.aioseopImageUploader = function( options ) {
     // Keep reference to this.
     var self = this;
+
+    // Options
+    self.options = jQuery.extend({
+        success: undefined,
+    }, options);
 
     // Set input target when to update image url value
     self.target = jQuery( self ).next();
@@ -271,10 +290,11 @@ jQuery.fn.aioseopImageUploader = function() {
      * Event handler that will be called when an image is selected from media uploader.
      */
     self.onSelect = function() {
+        var url = self.uploader.state().get( 'selection' ).first().toJSON().url;
         if ( self.target.length >= 0 )
-            jQuery( self.target ).val(
-                self.uploader.state().get( 'selection' ).first().toJSON().url
-            );
+            jQuery( self.target ).val( url );
+        if ( self.options.success !== undefined )
+            self.options.success( url, self );
     }
 
     /**
@@ -305,7 +325,13 @@ jQuery.fn.aioseopImageUploader = function() {
 jQuery(document).ready(function($){
 
     jQuery( '.aioseop_upload_image_button' ).each(function() {
-        jQuery( this ).aioseopImageUploader();
+        jQuery( this ).aioseopImageUploader({
+            success: function( url, el ) {
+                // Update checker
+                if ( jQuery( el ).prev().length > 0 )
+                    jQuery( el ).prev().val( 1 );
+            },
+        });
     });
 
 });

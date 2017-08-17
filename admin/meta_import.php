@@ -69,7 +69,8 @@ add_action( 'admin_menu', 'aiosp_seometa_settings_init' );
 /**
  * Intercept POST data from the form submission.
  *
- * Use the intercepted data to convert values in the postmeta table from one platform to another.
+ * Use the intercepted data to convert values in the postmeta table from one platform to another and display feedback to the user about compatible conversion
+ * elements and the conversion process.
  */
 function aiosp_seometa_action() {
 
@@ -129,11 +130,6 @@ function aiosp_seometa_action() {
 	printf( '<p><b>%d</b> Records were ignored</p>', isset( $result->ignored ) ? $result->ignored : 0 );
 
 }
-
-/**
- * This function displays feedback to the user about compatible conversion
- * elements and the conversion process via the admin_alert hook.
- */
 
 /**
  * The admin page output
