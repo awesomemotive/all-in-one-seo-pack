@@ -2018,14 +2018,17 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 							$v['posttype'] = $posttype;
 
 							if ( post_type_exists( $posttype ) ) {
+							    // Metabox priority/context on edit post screen.
 								$v['context']  = apply_filters( 'aioseop_post_metabox_context', 'normal' );
-								$v['priority'] = apply_filters( 'aioseop_post_metabox_context', 'high' );
+								$v['priority'] = apply_filters( 'aioseop_post_metabox_priority', 'high' );
 							}
 							if ( false !== strpos( $posttype, 'edit-' ) ) {
-								$v['context'] = apply_filters( 'aioseop_metabox_context', 'advanced' );
-
-								$v['priority'] = apply_filters( 'aioseop_metabox_context', 'default' );
+								// Metabox priority/context on edit taxonomy screen.
+								$v['context'] = 'advanced';
+								$v['priority'] = 'default';
 							}
+
+							// Metabox priority for everything else.
 							if ( ! isset( $v['context'] ) ) {
 								$v['context'] = 'advanced';
 							}
