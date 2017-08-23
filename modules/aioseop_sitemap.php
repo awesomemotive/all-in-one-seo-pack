@@ -2653,55 +2653,61 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		private function get_images_from_post( $post ) {
 			$images			= array();
 
-			if ( is_numeric( $post ) && $post > 0 ) {
+			if ( is_numeric( $post ) ) {
+				if ( 0 === $post ) {
+					return null;
+				}
 				$post		= get_post( $post );
 			}
 
-			if ( $post ) {
-				if ( 'attachment' === $post->post_type && strpos( $post->post_mime_type, 'image/' ) !== false ) {
+			if ( 'attachment' === $post->post_type ) {
+				if ( false === strpos( $post->post_mime_type, 'image/' ) ) {
 					// ignore all attachments except images
-					$attributes	= wp_get_attachment_image_src( $post->ID );
-					if ( $attributes ) {
-						$images[]	= array( 'image:loc' => $attributes[0] );
-					}
-				} else {
-					// check featured image
-					$attached_url	= get_the_post_thumbnail_url( $post->ID );
-					if ( false !== $attached_url ) {
-						$images[]	= $attached_url;
-					}
+					return null;
+				}
+				$attributes	= wp_get_attachment_image_src( $post->ID );
+				if ( $attributes ) {
+					$images[]	= array( 'image:loc' => $attributes[0] );
+				}
+				return $images;
+			}
 
-					// check images in the content
-					$content    = apply_filters( 'the_content', $post->post_content );
-					$total      = substr_count( $content, '<img ' ) + substr_count( $content, '<IMG ' );
-					if ( $total > 0 ) {
-						$dom	= new domDocument;
-						// non-compliant HTML might give errors, so ignore them
-						libxml_use_internal_errors( true );
-						$dom->loadHTML( $content );
-						libxml_clear_errors();
-						// @codingStandardsIgnoreStart
-						$dom->preserveWhiteSpace = false;
-						// @codingStandardsIgnoreEnd
-						$matches = $dom->getElementsByTagName( 'img' );
-						foreach ( $matches as $match ) {
-							$images[]	= $match->getAttribute( 'src' );
-						}
-					}
+			// check featured image
+			$attached_url	= get_the_post_thumbnail_url( $post->ID );
+			if ( false !== $attached_url ) {
+				$images[]	= $attached_url;
+			}
 
-					if ( $images ) {
-						$tmp			= $images;
-						if ( 1 < count( $images ) ) {
-							// filter out duplicates
-							$tmp		= array_unique( $images );
-						}
-						$images		= array();
-						foreach ( $tmp as $image ) {
-							$images[]	= array( 'image:loc' => $image );
-						}
-					}
+			// check images in the content
+			$content    = apply_filters( 'the_content', $post->post_content );
+			$total      = substr_count( $content, '<img ' ) + substr_count( $content, '<IMG ' );
+			if ( $total > 0 ) {
+				$dom	= new domDocument;
+                // non-compliant HTML might give errors, so ignore them
+                libxml_use_internal_errors( true );
+				$dom->loadHTML( $content );
+                libxml_clear_errors();
+                // @codingStandardsIgnoreStart
+				$dom->preserveWhiteSpace = false;
+                // @codingStandardsIgnoreEnd
+				$matches = $dom->getElementsByTagName( 'img' );
+				foreach ( $matches as $match ) {
+					$images[]	= $match->getAttribute( 'src' );
 				}
 			}
+
+			if ( $images ) {
+				$tmp			= $images;
+				if ( 1 < count( $images ) ) {
+					// filter out duplicates
+					$tmp		= array_unique( $images );
+				}
+				$images		= array();
+				foreach ( $tmp as $image ) {
+					$images[]	= array( 'image:loc' => $image );
+				}
+			}
+
 			return $images;
 		}
 
