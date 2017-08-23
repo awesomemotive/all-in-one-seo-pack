@@ -2574,6 +2574,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 	/**
 	 * @since 2.3.15 Brackets not longer replaced from filters.
+	 * @since 2.3.16 Enable "aiosp_dont_truncate_descriptions".
+	 *
+	 * @global array $aioseop_options Plugin options.
 	 *
 	 * @param $text
 	 * @param int $max
@@ -2581,40 +2584,45 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string
 	 */
 	function trim_excerpt_without_filters( $text, $max = 0 ) {
+		global $aioseop_options;
 		$text = str_replace( ']]>', ']]&gt;', $text );
 		$text = preg_replace( '|\[(.+?)\](.+?\[/\\1\])?|s', '', $text );
 		$text = wp_strip_all_tags( $text );
 		// Treat other common word-break characters like a space.
 		$text2 = preg_replace( '/[,._\-=+&!\?;:*]/s', ' ', $text );
-		if ( ! $max ) {
-			$max = $this->maximum_description_length;
-		}
-		$max_orig = $max;
-		$len      = $this->strlen( $text2 );
-		if ( $max < $len ) {
-			if ( function_exists( 'mb_strrpos' ) ) {
-				$pos = mb_strrpos( $text2, ' ', - ( $len - $max ) );
-				if ( false === $pos ) {
-					$pos = $max;
-				}
-				if ( $pos > $this->minimum_description_length ) {
-					$max = $pos;
+		// Truncate
+		if ( ! isset( $aioseop_options['aiosp_dont_truncate_descriptions'] )
+			|| empty( $aioseop_options['aiosp_dont_truncate_descriptions'] )
+		) {
+			if ( ! $max ) {
+				$max = $this->maximum_description_length;
+			}
+			$max_orig = $max;
+			$len      = $this->strlen( $text2 );
+			if ( $max < $len ) {
+				if ( function_exists( 'mb_strrpos' ) ) {
+					$pos = mb_strrpos( $text2, ' ', - ( $len - $max ) );
+					if ( false === $pos ) {
+						$pos = $max;
+					}
+					if ( $pos > $this->minimum_description_length ) {
+						$max = $pos;
+					} else {
+						$max = $this->minimum_description_length;
+					}
 				} else {
-					$max = $this->minimum_description_length;
+					while ( ' ' != $text2[ $max ] && $max > $this->minimum_description_length ) {
+						$max --;
+					}
 				}
-			} else {
-				while ( ' ' != $text2[ $max ] && $max > $this->minimum_description_length ) {
-					$max --;
-				}
-			}
 
-			// Probably no valid chars to break on?
-			if ( $len > $max_orig && $max < intval( $max_orig / 2 ) ) {
-				$max = $max_orig;
+				// Probably no valid chars to break on?
+				if ( $len > $max_orig && $max < intval( $max_orig / 2 ) ) {
+					$max = $max_orig;
+				}
 			}
+			$text = $this->substr( $text, 0, $max );
 		}
-		$text = $this->substr( $text, 0, $max );
-
 		return trim( $text );
 	}
 
