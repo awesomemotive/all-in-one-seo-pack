@@ -2609,7 +2609,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 					$pr_info = array(
 						'loc' => $url,
-						'image:image' => 'attachment' === $post->post_type ? 1 : ( $is_single ? $this->get_images_from_post( $post ) : null ),
+						'image:image' => $is_single ? $this->get_images_from_post( $post ) : null,
 					) + $pr_info; // Prepend loc to	the	array.
 					if ( is_float( $pr_info['priority'] ) ) {
 						$pr_info['priority'] = sprintf( '%0.1F', $pr_info['priority'] );
@@ -2637,7 +2637,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( $thumbnail_id ) {
 				$image		= wp_get_attachment_url( $thumbnail_id );
 				if ( $image ) {
-					$images['image:image']	= $image;
+					$images['image:image']	= array( 'image:loc' => $image );
 				}
 			}
 			return $images;
@@ -2658,6 +2658,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					return null;
 				}
 				$post		= get_post( $post );
+			}
+
+			if ( 'attachment' === $post->post_type ) {
+				if ( false === strpos( $post->post_mime_type, 'image/' ) ) {
+					// ignore all attachments except images
+					return null;
+				}
+				$attributes	= wp_get_attachment_image_src( $post->ID );
+				if ( $attributes ) {
+					$images[]	= array( 'image:loc' => $attributes[0] );
+				}
+				return $images;
 			}
 
 			// check featured image
@@ -2692,9 +2704,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 				$images		= array();
 				foreach ( $tmp as $image ) {
-					$images[]	= array(
-						'image:loc' => $image
-					);
+					$images[]	= array( 'image:loc' => $image );
 				}
 			}
 
