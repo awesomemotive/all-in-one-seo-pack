@@ -121,7 +121,6 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 								}
 								$domain_list .= '\'' . $d . '\'';
 							}
-							$domain_list .= "'" . $d . "'";
 						}
 					}
 				}
@@ -188,9 +187,7 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 			$analytics_id = esc_js( $aioseop_options['aiosp_google_analytics_id'] );
 			ob_start()
 			?>
-			<script type="text/javascript"
-				<?php echo preg_replace( '/\s+/', ' ', apply_filters( 'aioseop_ga_attributes', '' ) ) ?>
-			>
+			<script type="text/javascript" <?php echo preg_replace( '/\s+/', ' ', apply_filters( 'aioseop_ga_attributes', '' ) ) ?>>
 				window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
 				ga('create', '<?php echo $analytics_id ?>'<?php echo $domain ?><?php echo $js_options ?>);
 				// Plugins
