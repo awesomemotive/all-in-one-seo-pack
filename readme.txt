@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mrtor
 Tags: seo, all in one seo, google, twitter, page, image seo, social, search engine optimization, sitemap, WordPress SEO, meta, meta description, xml sitemap, google sitemap, sitemaps, robots meta, yahoo, bing, news sitemaps, multisite, canonical, nofollow, noindex, keywords, description, webmaster tools, google webmaster tools, google analytics
 Requires at least: 4.0
 Tested up to: 4.8
-Stable tag: 2.3.15.3
+Stable tag: 2.3.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,51 +86,8 @@ https://www.youtube.com/watch?v=A0VKinM5s00
 
 == Upgrade Notice ==
 
-= 2.3 =
-
--Various under the hood improvements
--Increased WooCommerce support, especially in pro version
--New SEO data importer
--New custom roles and capabilities for multi-user sites
--API improvements
-
-= 2.2.7.6.2 =
-
--Additional WooCommerce support
-
-= 2.2.7.6.1 =
-
--New Indonesian translation – Thanks to Rio Bermano
--Updated translations files (57 total languages!)
--Improved support for WooCommerce when the Home page is also set as the Shop page
--Social Meta Module – Update for Facebook’s Admin App ID
-
-= 2.2.7.6 -
-
--Social Meta Module – Added support for Facebook App ID
--Added a warning message when Search Engine Visibility is enabled in WordPress Reading Settings
--Various under-the-hood code improvements
--Changed when Noindex Settings are displayed in relation to Custom Post Type Settings
-
-= 2.2.7.5 =
--fixes:
--category capitalization fixes
-
-enhancements:
--futureproofing the performance function for PHP7,8
--futureproofing the open graph and social meta function for PHP7,8
--futureproofing the file editor function for PHP7,8
--futureproofing the import-export function for PHP7,8
-
-= 2.2.7.4 =
-
--Update for WordPress 4.4
--CSS fixes
--Important localization improvements
--Update for Social Meta Module - Photo Twitter Card
--Add support for the full set of Twitter meta tags (https://dev.twitter.com/cards/markup)
--Bugfix for issue with Nonindex options for post types
--Bugfix for schema.org OG markup
+= 2.3.16 =
+Various bugfixes, under the hood improvements, and new features.
 
 
 
