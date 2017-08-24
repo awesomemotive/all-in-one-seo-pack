@@ -57,19 +57,11 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 				ob_start();
 				$analytics = $this->universal_analytics();
 				echo $analytics;
-				if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] )
-					&& ($aioseop_options['aiosp_ga_track_outbound_links']
-						|| $aioseop_options['aiosp_ga_track_outbound_forms']
-						|| $aioseop_options['aiosp_ga_track_events']
-						|| $aioseop_options['aiosp_ga_track_url_changes']
-						|| $aioseop_options['aiosp_ga_track_visibility']
-						|| $aioseop_options['aiosp_ga_track_media_query']
-						|| $aioseop_options['aiosp_ga_track_impressions']
-						|| $aioseop_options['aiosp_ga_track_scroller']
-						|| $aioseop_options['aiosp_ga_track_social']
-						|| $aioseop_options['aiosp_ga_track_clean_url']
-					)
-				) {
+				if ( apply_filters(
+					'aioseop_ga_enable_autotrack',
+					! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && $aioseop_options['aiosp_ga_track_outbound_links'],
+					$aioseop_options
+				) ) {
 					$autotrack = apply_filters(
 						'aiosp_google_autotrack',
 						'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.0/autotrack.js'
@@ -146,34 +138,8 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 				if ( ! empty( $aioseop_options['aiosp_ga_track_outbound_links'] ) ) {
 					$extra_options[] = 'ga(\'require\', \'outboundLinkTracker\');';
 				}
-				if ( ! empty( $aioseop_options['aiosp_ga_track_outbound_forms'] ) ) {
-					$extra_options[] = 'ga(\'require\', \'outboundFormTracker\');';
-				}
-				if ( ! empty( $aioseop_options['aiosp_ga_track_events'] ) ) {
-					$extra_options[] = 'ga(\'require\', \'eventTracker\');';
-				}
-				if ( ! empty( $aioseop_options['aiosp_ga_track_url_changes'] ) ) {
-					$extra_options[] = 'ga(\'require\', \'urlChangeTracker\');';
-				}
-				if ( ! empty( $aioseop_options['aiosp_ga_track_visibility'] ) ) {
-					$extra_options[] = 'ga(\'require\', \'pageVisibilityTracker\');';
-				}
-				if ( ! empty( $aioseop_options['aiosp_ga_track_media_query'] ) ) {
-					$extra_options[] = 'ga(\'require\', \'mediaQueryTracker\');';
-				}
-				if ( ! empty( $aioseop_options['aiosp_ga_track_impressions'] ) ) {
-					$extra_options[] = 'ga(\'require\', \'impressionTracker\');';
-				}
-				if ( ! empty( $aioseop_options['aiosp_ga_track_scroller'] ) ) {
-					$extra_options[] = 'ga(\'require\', \'maxScrollTracker\');';
-				}
-				if ( ! empty( $aioseop_options['aiosp_ga_track_social'] ) ) {
-					$extra_options[] = 'ga(\'require\', \'socialWidgetTracker\');';
-				}
-				if ( ! empty( $aioseop_options['aiosp_ga_track_clean_url'] ) ) {
-					$extra_options[] = 'ga(\'require\', \'cleanUrlTracker\');';
-				}
 			}
+			$extra_options = apply_filters( 'aioseop_ga_extra_options', $extra_options, $aioseop_options );
 			$js_options = array();
 			foreach ( array( 'cookie_domain', 'allow_linker' ) as $opts ) {
 				if ( ! empty( $$opts ) ) {
