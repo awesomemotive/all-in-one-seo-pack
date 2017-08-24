@@ -15,6 +15,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 *
 		 * @since 2.3.14 Added display filter.
 		 * @since 2.3.16 #1066 Force init on constructor.
+		 * @since 2.3.17 #1013 og:type "blog" removed.
 		 */
 		function __construct() {
 			add_action( 'admin_enqueue_scripts', array( $this, 'og_admin_enqueue_scripts' ) );
@@ -76,7 +77,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				),
 				'Websites'                   => Array(
 					'article' => __( 'Article', 'all-in-one-seo-pack' ),
-					'blog'    => __( 'Blog', 'all-in-one-seo-pack' ),
 					'website' => __( 'Website', 'all-in-one-seo-pack' ),
 				),
 			);

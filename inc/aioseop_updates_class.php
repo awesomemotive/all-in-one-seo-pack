@@ -84,7 +84,9 @@ class AIOSEOP_Updates {
 	/**
 	 * Updates version.
 	 *
-	 * TODO: the compare here should be extracted into a function
+	 * @since 2.3.17 Version update.
+	 *
+	 * @todo the compare here should be extracted into a function
 	 *
 	 * @global       $aioseop_options .
 	 *
@@ -114,6 +116,12 @@ class AIOSEOP_Updates {
 			set_transient( '_aioseop_activation_redirect', true, 30 ); // Sets 30 second transient for welcome screen redirect on activation.
 		}
 
+		if (
+			( ! AIOSEOPPRO && version_compare( $old_version, '2.3.17', '<' ) ) ||
+			( AIOSEOPPRO && version_compare( $old_version, '2.4.17', '<' ) )
+		) {
+			$this->db_migrate_og_type_201708();
+		}
 	}
 
 	/**
@@ -214,5 +222,27 @@ class AIOSEOP_Updates {
 				apply_filters( 'aioseop_update_check_time', 3600 * 6 )
 			);
 		}
+	}
+
+	/**
+	 * Updates posts' og:type "blog" into "article".
+	 * Issue #1013: "Blog" not available anymore.
+	 *
+	 * @since 2.3.17
+	 *
+	 * @global object $wpdb Wordpress Database accesor.
+	 */
+	public function db_migrate_og_type_201708() {
+		global $wpdb;
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $wpdb->prepare(
+			'UPDATE ' . $wpdb->postmeta . '
+			SET meta_value = replace(meta_value,%s,%s)
+			WHERE meta_key = %s AND meta_value like %s;',
+			's:35:"aioseop_opengraph_settings_category";s:4:"blog";',
+			's:35:"aioseop_opengraph_settings_category";s:7:"article";',
+			'_aioseop_opengraph_settings',
+			'%s:35:"aioseop_opengraph_settings_category";s:4:"blog";%'
+		) );
 	}
 }
