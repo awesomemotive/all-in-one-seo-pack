@@ -6,6 +6,7 @@ Requires at least: 4.0
 Tested up to: 4.8
 Stable tag: 2.3.16
 License: GPLv2 or later
+Requires PHP: 5.2.4
 
 The original SEO plugin for WordPress, downloaded over 30,000,000 times since 2007.
 
