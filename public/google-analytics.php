@@ -66,7 +66,8 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 						'aiosp_google_autotrack',
 						'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.0/autotrack.js'
 					);
-					?><script async src="<?php echo $autotrack ?>"></script><?php
+					?><script async src="<?php echo $autotrack ?>"></script>
+<?php // Requested indent #921 
 				}
 				$analytics = ob_get_clean();
 			}
