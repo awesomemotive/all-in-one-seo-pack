@@ -54,24 +54,23 @@ class AIOSP_Common_Strings {
 		__( 'Manage Licenses', 'all-in-one-seo-pack' );
 		__( 'License Key is not set yet or invalid. ', 'all-in-one-seo-pack' );
 		__( ' Need a license key?', 'all-in-one-seo-pack' );
-		__('Track Outbound Forms:', 'all-in-one-seo-pack');
-		__('Track Events:', 'all-in-one-seo-pack');
-		__('Track URL Changes:', 'all-in-one-seo-pack');
-		__('Track Page Visibility:', 'all-in-one-seo-pack');
-		__('Track Media Query:', 'all-in-one-seo-pack');
-		__('Track Elements Visibility:', 'all-in-one-seo-pack');
-		__('Track Page Scrolling:', 'all-in-one-seo-pack');
-		__('Track Facebook and Twitter:', 'all-in-one-seo-pack');
-		__('Ensure URL Consistency:', 'all-in-one-seo-pack');
-		__('Check this if you want to track outbound forms with Google Analytics.', 'all-in-one-seo-pack');
-		__('Check this if you want to track events with Google Analytics.', 'all-in-one-seo-pack');
-		__('Check this if you want to track url changes for single pages with Google Analytics.', 'all-in-one-seo-pack');
-		__('Check this if you want to track how long pages are in visible state with Google Analytics.', 'all-in-one-seo-pack');
-		__('Check this if you want to track media query matching and queries with Google Analytics.', 'all-in-one-seo-pack');
-		__('Check this if you want to track when elements are visible within the viewport with Google Analytics.', 'all-in-one-seo-pack');
-		__('Check this if you want to ensure consistency in URL paths reported to Google Analytics.', 'all-in-one-seo-pack');
-		__('Check this if you want to track how far down a user scrolls a page with Google Analytics.', 'all-in-one-seo-pack');
-		__('Check this if you want to track interactions with the official Facebook and Twitter widgets with Google Analytics.', 'all-in-one-seo-pack');
-	
+		__( 'Track Outbound Forms:', 'all-in-one-seo-pack' );
+		__( 'Track Events:', 'all-in-one-seo-pack' );
+		__( 'Track URL Changes:', 'all-in-one-seo-pack' );
+		__( 'Track Page Visibility:', 'all-in-one-seo-pack' );
+		__( 'Track Media Query:', 'all-in-one-seo-pack' );
+		__( 'Track Elements Visibility:', 'all-in-one-seo-pack' );
+		__( 'Track Page Scrolling:', 'all-in-one-seo-pack' );
+		__( 'Track Facebook and Twitter:', 'all-in-one-seo-pack' );
+		__( 'Ensure URL Consistency:', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track outbound forms with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track events with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track url changes for single pages with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track how long pages are in visible state with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track media query matching and queries with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track when elements are visible within the viewport with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to ensure consistency in URL paths reported to Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track how far down a user scrolls a page with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track interactions with the official Facebook and Twitter widgets with Google Analytics.', 'all-in-one-seo-pack' );
 	}
 }
