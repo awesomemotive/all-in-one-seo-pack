@@ -1651,6 +1651,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				);
 			}
 
+			$files	= apply_filters( 'aioseop_sitemap_index_filenames', $files, $prefix, $suffix );
+
 			return $files;
 		}
 
