@@ -1340,7 +1340,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		/**
 		 * Returns available social seo images.
 		 *
-		 * @since 2.3.17 #1079 Fixes array_flip warning on opengraph module.
+		 * @since 2.4 #1079 Fixes array_flip warning on opengraph module.
 		 *
 		 * @param array  $options Plugin/module options.
 		 * @param object $p       Post.
