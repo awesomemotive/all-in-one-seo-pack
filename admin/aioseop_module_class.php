@@ -1338,8 +1338,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
-		 * @param null $options
-		 * @param null $p
+		 * Returns available social seo images.
+		 *
+		 * @since 2.4 #1079 Fixes array_flip warning on opengraph module.
+		 *
+		 * @param array  $options Plugin/module options.
+		 * @param object $p       Post.
 		 *
 		 * @return array
 		 */
@@ -1386,10 +1390,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					}
 
 					if ( ! empty( $meta_key ) && ! empty( $post ) ) {
-						$meta_key = explode( ',', $meta_key );
 						$image    = $this->get_the_image_by_meta_key( array(
 							'post_id'  => $post->ID,
-							'meta_key' => $meta_key,
+							'meta_key' => explode( ',', $meta_key ),
 						) );
 						if ( ! empty( $image ) ) {
 							$img[] = array( 'type' => 'meta_key', 'id' => $meta_key, 'link' => $image );
@@ -2016,12 +2019,26 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 						foreach ( $v['display'] as $posttype ) {
 							$v['location'] = $k;
 							$v['posttype'] = $posttype;
+
+							if ( post_type_exists( $posttype ) ) {
+							    // Metabox priority/context on edit post screen.
+								$v['context']  = apply_filters( 'aioseop_post_metabox_context', 'normal' );
+								$v['priority'] = apply_filters( 'aioseop_post_metabox_priority', 'high' );
+							}
+							if ( false !== strpos( $posttype, 'edit-' ) ) {
+								// Metabox priority/context on edit taxonomy screen.
+								$v['context'] = 'advanced';
+								$v['priority'] = 'default';
+							}
+
+							// Metabox priority for everything else.
 							if ( ! isset( $v['context'] ) ) {
 								$v['context'] = 'advanced';
 							}
 							if ( ! isset( $v['priority'] ) ) {
 								$v['priority'] = 'default';
 							}
+
 							if ( $this->tabbed_metaboxes ) {
 								$this->post_metaboxes[] = array(
 									'id'            => $v['prefix'] . $k,

@@ -3,7 +3,7 @@
  * The Opengraph class.
  *
  * @package All-in-One-SEO-Pack
- * @version 2.4.14
+ * @version 2.3.16
  */
 if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 	class All_in_One_SEO_Pack_Opengraph extends All_in_One_SEO_Pack_Module {
@@ -13,7 +13,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		/**
 		 * Module constructor.
 		 *
-		 * @since 2.4.14 Added display filter.
+		 * @since 2.3.14 Added display filter.
+		 * @since 2.3.16 #1066 Force init on constructor.
 		 */
 		function __construct() {
 			add_action( 'admin_enqueue_scripts', array( $this, 'og_admin_enqueue_scripts' ) );
@@ -105,8 +106,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				"video"                  => __( "This option lets you specify a link to the Open Graph video used on this Page or Post.", 'all-in-one-seo-pack' ),
 				"videowidth"             => __( "Enter the width for your Open Graph video in pixels (i.e. 600).", 'all-in-one-seo-pack' ),
 				"videoheight"            => __( "Enter the height for your Open Graph video in pixels (i.e. 600).", 'all-in-one-seo-pack' ),
-				"defcard"                => __( "Select the default type of Twitter card to display.", 'all-in-one-seo-pack' ),
-				"setcard"                => __( "Select the default type of Twitter card to display.", 'all-in-one-seo-pack' ),
+				"defcard"                => __( "Select the default type of Twitter Card to display.", 'all-in-one-seo-pack' ),
+				"setcard"                => __( "Select the Twitter Card type to use for this Page or Post, overriding the default setting.", 'all-in-one-seo-pack' ),
 				"twitter_site"           => __( "Enter the Twitter username associated with your website here.", 'all-in-one-seo-pack' ),
 				"twitter_creator"        => __( "Allows your authors to be identified by their Twitter usernames as content creators on the Twitter cards for their posts.", 'all-in-one-seo-pack' ),
 				"twitter_domain"         => __( "Enter the name of your website here.", 'all-in-one-seo-pack' ),
@@ -196,6 +197,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			add_action( 'edited_term', array( &$this, 'save_tax_data' ), 10, 3 );
 			// Adds special filters
 			add_filter( 'aioseop_opengraph_placeholder', array( &$this, 'filter_placeholder' ) );
+			// Call to init to generate menus
+			$this->init();
 		}
 
 		/**
@@ -415,7 +418,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
                 'types'         => array(
                     'name'          => __( 'Enable Facebook Meta for Post Types', 'all-in-one-seo-pack' ),
                     'type'          => 'multicheckbox',
-                    'default'       => array( 'post' => 'Post', 'page' => 'Page' ),
+                    'default'       => array( 'post' => 'post', 'page' => 'page' ),
                     'initial_options' => $this->get_post_type_titles( array( '_builtin' => false ) ),
                 ),
                 'title'         => array(
@@ -491,7 +494,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
             // load initial options / set defaults
             $this->update_options();
             $display = Array();
-            if ( isset( $this->options['aiosp_opengraph_types'] ) ) {
+            if ( isset( $this->options['aiosp_opengraph_types'] ) && ! empty( $this->options['aiosp_opengraph_types'] ) ) {
                 $display = $this->options['aiosp_opengraph_types'];
             }
             $this->locations = array(
@@ -755,7 +758,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 							);
 
 					// Add filters
-					$description = do_shortcode( $description );
 					$description = apply_filters( 'aioseop_description', $description );
 					// Add placholders
 					$settings["{$prefix}title"]['placeholder'] = apply_filters( 'aioseop_opengraph_placeholder', $title );
@@ -1190,9 +1192,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				}
 			}
 
+			if ( ! empty( $this->options['aiosp_opengraph_title_shortcodes'] ) ) {
+				$title = do_shortcode( $title );
+			}
 			if ( ! empty( $description ) ) {
 				$description = $aiosp->internationalize( preg_replace( '/\s+/', ' ', $description ) );
-				$description = do_shortcode( $description );
+				if ( ! empty( $this->options['aiosp_opengraph_description_shortcodes'] ) ) {
+					$description = do_shortcode( $description );
+				}
 				$description = $aiosp->trim_excerpt_without_filters( $description, 1000 );
 			}
 

@@ -76,6 +76,13 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 					tr.stripe {
 						background-color: #f7f7f7;
 					}
+					table td a {
+						display: block;
+					}
+					table td a img {
+						max-height: 30px;
+						margin: 6px 3px;
+					}
 				</style>
 			</head>
 			<body>
@@ -136,9 +143,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 			<thead>
 			<tr>
 				<th width="50%">URL</th>
+				<th>Images</th>
 				<th>Priority</th>
 				<th>Change Frequency</th>
-				<th>LastChange</th>
+				<th>Last Change</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -167,6 +175,9 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
                                 <a href="{$playURL}"><img src="{$thumbURL}" style="max-width:60px;float:right;"/></a>
                             </xsl:if>
                         </xsl:for-each>
+					</td>
+					<td>
+						<xsl:value-of select="count(image:image)"/>
 					</td>
 					<td>
 						<xsl:if test="string(number(sitemap:priority))!='NaN'">

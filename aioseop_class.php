@@ -54,6 +54,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 	/**
 	 * All_in_One_SEO_Pack constructor.
+	 *
+	 * @since 2.3.14 #921 More google analytics options added.
 	 */
 	function __construct() {
 		global $aioseop_options;
@@ -111,9 +113,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				__( "%page_author_firstname% - This page's author' first name (capitalized)", 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( "%page_author_lastname% - This page's author' last name (capitalized)", 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( "%current_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>'.
-			    __( "%post_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-			    __( "%post_year% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-			    __( "%post_month% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li>' ,
+			    __( "%post_date% - The date the page was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+			    __( "%post_year% - The year the page was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+			    __( "%post_month% - The month the page was published (localized)", 'all-in-one-seo-pack' ) . '</li>' ,
 			'post_title_format'           =>
 				__( 'This controls the format of the title tag for Posts.<br />The following macros are supported:', 'all-in-one-seo-pack' )
 				. '<li><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
@@ -126,9 +128,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				__( "%post_author_firstname% - This post's author' first name (capitalized)", 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( "%post_author_lastname% - This post's author' last name (capitalized)", 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( "%current_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-				__( "%post_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-				__( "%post_year% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-				__( "%post_month% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li>' ,
+				__( "%post_date% - The date the post was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+				__( "%post_year% - The year the post was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+				__( "%post_month% - The month the post was published (localized)", 'all-in-one-seo-pack' ) . '</li>' ,
 			'category_title_format'       =>
 				__( 'This controls the format of the title tag for Category Archives.<br />The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
@@ -170,9 +172,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			                                 __( '%post_title% - The original title of the post', 'all-in-one-seo-pack' ) . '</li><li>' .
 			                                 __( '%wp_title% - The original WordPress title, e.g. post_title for posts', 'all-in-one-seo-pack' ) . '</li><li>' .
 			                                 __( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) . '</li><li>' .
-			                                 __( "%post_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-			                                 __( "%post_year% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-			                                 __( "%post_month% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li>' ,
+			                                 __( "%post_date% - The date the page/post was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+			                                 __( "%post_year% - The year the page/post was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+			                                 __( "%post_month% - The month the page/post was published (localized)", 'all-in-one-seo-pack' ) . '</li>' ,
 			'404_title_format'            => __( 'This controls the format of the title tag for the 404 page.<br />The following macros are supported:', 'all-in-one-seo-pack' ) .
 			                                 '<ul><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
 			                                 __( '%blog_description% - Your blog description', 'all-in-one-seo-pack' ) . '</li><li>' .
@@ -317,6 +319,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'page_meta_tags'              => '#additional-page-headers',
 			'front_meta_tags'             => '#additional-front-page-headers',
 			'home_meta_tags'              => '#additional-blog-page-headers',
+			'snippet'					  => '#preview-snippet',
+			'title'						  => '#title',
+			'description'				  => '#description',
+			'keywords'					  => '#keywords',
+			'custom_link'				  => '#custom-canonical-url',
+			'noindex'					  => '#robots-meta-noindex',
+			'nofollow'					  => '#robots-meta-nofollow',
+			'sitemap_exclude'			  => '#exclude-from-sitemap',
+			'disable'					  => '#disable-on-this-post',
+			'disable_analytics'			  => '#disable-google-analytics',
 		);
 
 		$meta_help_text = array(
@@ -887,7 +899,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'            => $this->plugin_name,
 				'type'            => 'metabox',
 				'prefix'          => '',
-				'help_link'       => 'https://semperplugins.com/sections/postpage-settings/',
+				'help_link'       => 'https://semperplugins.com/documentation/post-settings/',
 				'options'         => array(
 					'edit',
 					'nonce-aioseop-edit',
@@ -968,11 +980,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'size' => 60,
 					),
 					'noindex'           => array(
-						'name'    => __( 'Robots Meta NOINDEX', 'all-in-one-seo-pack' ),
+						'name'    => __( 'NOINDEX this page/post', 'all-in-one-seo-pack' ),
 						'default' => '',
 					),
 					'nofollow'          => array(
-						'name'    => __( 'Robots Meta NOFOLLOW', 'all-in-one-seo-pack' ),
+						'name'    => __( 'NOFOLLOW this page/post', 'all-in-one-seo-pack' ),
 						'default' => '',
 					),
 					'sitemap_exclude'   => array( 'name' => __( 'Exclude From Sitemap', 'all-in-one-seo-pack' ) ),
@@ -1151,6 +1163,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	/**
 	 * Use custom callback for outputting snippet
 	 *
+	 * @since 2.3.16 Decodes HTML entities on title, description and title length count.
+	 *
 	 * @param $buf
 	 * @param $args
 	 *
@@ -1168,10 +1182,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( $this->strlen( $title ) > 70 ) {
-			$title = $this->trim_excerpt_without_filters( $title, 70 ) . '...';
+			$title = $this->trim_excerpt_without_filters(
+				$this->html_entity_decode( $title ),
+				70
+			) . '...';
 		}
 		if ( $this->strlen( $description ) > 156 ) {
-			$description = $this->trim_excerpt_without_filters( $description, 156 ) . '...';
+			$description = $this->trim_excerpt_without_filters(
+				$this->html_entity_decode( $description ),
+				156
+			) . '...';
 		}
 		$extra_title_len = 0;
 		if ( empty( $title_format ) ) {
@@ -1253,12 +1273,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 			$title_format    = preg_replace( '/%([^%]*?)%/', '', $title_format );
 			$title           = $title_format;
-			$extra_title_len = strlen( str_replace( $replace_title, '', $title_format ) );
+			$extra_title_len = strlen( $this->html_entity_decode( str_replace( $replace_title, '', $title_format ) ) );
 		}
 
 		$args['value']   = sprintf( $args['value'], $title, esc_url( $url ), esc_attr( $description ) );
-		$extra_title_len = (int) $extra_title_len;
-		$args['value'] .= "<script>var aiosp_title_extra = {$extra_title_len};</script>";
+		$args['value'] .= '<script>var aiosp_title_extra = '. (int) $extra_title_len . ';</script>';
 		$buf = $this->get_option_row( $args['name'], $args['options'], $args );
 
 		return $buf;
@@ -1489,12 +1508,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ) );
 					}
 				} else {
-					$field = "aiosp_$f";
-					$meta  = get_post_meta( $post_id, '_aioseop_' . $f, true );
-					if ( 'title' === $f || 'description' === $f ) {
-						$get_opts[ $field ] = htmlspecialchars( $meta );
-					} else {
-						$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ) );
+					if ( ! is_category() && ! is_tag() && ! is_tax() ) {
+						$field = "aiosp_$f";
+						$meta  = get_post_meta( $post_id, '_aioseop_' . $f, true );
+						if ( 'title' === $f || 'description' === $f ) {
+							$get_opts[ $field ] = htmlspecialchars( $meta );
+						} else {
+							$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ) );
+						}
 					}
 				}
 
@@ -2413,6 +2434,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 	/**
 	 * @since 2.3.14 #932 Adds filter "aioseop_description", removes extra filtering.
+	 * @since 2.4 #951 Trim/truncates occurs inside filter "aioseop_description".
 	 *
 	 * @param null $post
 	 *
@@ -2448,11 +2470,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 			$description = $this->internationalize( $description );
 		}
-		if ( empty( $aioseop_options['aiosp_dont_truncate_descriptions'] ) ) {
-			$description = $this->trim_excerpt_without_filters( $description );
-		}
 
-		return apply_filters( 'aioseop_description', $description );
+		return apply_filters(
+			'aioseop_description',
+			$description,
+			empty( $aioseop_options['aiosp_dont_truncate_descriptions'] )
+		);
 	}
 
 	/**
@@ -2513,7 +2536,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @since 2.3.13 #899 Fixes non breacking space, applies filter "aioseop_description".
 	 * @since 2.3.14 #932 Removes filter "aioseop_description".
-	 * @since 2.3.15 Always do_shortcode.
+	 * @since 2.4 #951 Removes "wp_strip_all_tags" and "trim_excerpt_without_filters", they are done later in filter.
 	 *
 	 * @param object $post Post object.
 	 *
@@ -2534,8 +2557,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$description = $this->trim_excerpt_without_filters_full_length( $this->internationalize( $post->post_excerpt ) );
 			}
 			if ( ! $description && isset( $aioseop_options['aiosp_generate_descriptions'] ) && $aioseop_options['aiosp_generate_descriptions'] ) {
-				$content = do_shortcode( $post->post_content );
-				$description = $this->trim_excerpt_without_filters( $this->internationalize( $content ) );
+				$content = $post->post_content;
+				if ( ! empty( $aioseop_options['aiosp_run_shortcodes'] ) ) {
+					$content = do_shortcode( $content );
+				}
+				$description =$this->internationalize( $content );
 			}
 		}
 
@@ -3128,9 +3154,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					__( "%post_author_firstname% - This post's author' first name (capitalized)", 'all-in-one-seo-pack' ) . '</li><li>' .
 					__( "%post_author_lastname% - This post's author' last name (capitalized)", 'all-in-one-seo-pack' ) . '</li>' .
 					__( "%current_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-                    __( "%post_date% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-                    __( "%post_year% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
-                    __( "%post_month% - The current date (localized)", 'all-in-one-seo-pack' ) . '</li>' .
+                    __( "%post_date% - The date the post was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+                    __( "%post_year% - The year the post was published (localized)", 'all-in-one-seo-pack' ) . '</li><li>' .
+                    __( "%post_month% - The month the post was published (localized)", 'all-in-one-seo-pack' ) . '</li>' .
                     '</ul>' .
 					'</ul>';
 				$this->help_anchors[ $field ]     = '#custom-titles';
@@ -3266,6 +3292,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * @since 2.3.16 Forces HTML entity decode on placeholder values.
+	 *
 	 * @param $settings
 	 * @param $location
 	 * @param $current
@@ -3314,8 +3342,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				global $post;
 				$info = $this->get_page_snippet_info();
 				extract( $info );
-				$settings["{$prefix}title"]['placeholder']       = $title;
-				$settings["{$prefix}description"]['placeholder'] = $description;
+				$settings["{$prefix}title"]['placeholder']       = $this->html_entity_decode( $title );
+				$settings["{$prefix}description"]['placeholder'] = $this->html_entity_decode( $description );
 				$settings["{$prefix}keywords"]['placeholder']    = $keywords;
 			}
 
@@ -3556,6 +3584,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @since 2.3.13 #899 Adds filter:aioseop_description.
 	 * @since 2.3.14 #593 Adds filter:aioseop_title.
+	 * @since 2.4 #951 Increases filter:aioseop_description arguments number.
 	 */
 	function add_hooks() {
 		global $aioseop_options, $aioseop_update_checker;
@@ -3598,7 +3627,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			add_action( 'amp_post_template_head', array( $this, 'amp_head' ), 11 );
 			add_action( 'template_redirect', array( $this, 'template_redirect' ), 0 );
 		}
-		add_filter( 'aioseop_description', array( &$this, 'filter_description' ) );
+		add_filter( 'aioseop_description', array( &$this, 'filter_description' ), 10, 2 );
 		add_filter( 'aioseop_title', array( &$this, 'filter_title' ) );
 	}
 
@@ -3898,7 +3927,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		if ( $aioseop_options['aiosp_can'] ) {
 			$url = '';
-			if ( ! empty( $aioseop_options['aiosp_customize_canonical_links'] ) && ! empty( $opts['aiosp_custom_link'] ) ) {
+			if ( ! empty( $aioseop_options['aiosp_customize_canonical_links'] ) && ! empty( $opts['aiosp_custom_link'] ) && ! is_home() ) {
 				$url = $opts['aiosp_custom_link'];
 			}
 			if ( empty( $url ) ) {
@@ -4521,29 +4550,44 @@ EOF;
 				if ( ! empty( $blog_page ) ) {
 					$post = $blog_page;
 				}
-							// Don't show if we're on the home page and the home page is the latest posts.
+				// Don't show if we're on the home page and the home page is the latest posts.
 				if ( ! is_home() || ( ! is_front_page() && ! is_home() ) ) {
 					global $wp_the_query;
 					$current_object = $wp_the_query->get_queried_object();
 
-					if ( ! empty( $current_object ) && ! empty( $current_object->post_type ) ){
-						// Try the main query.
-						$edit_post_link = get_edit_post_link( $current_object->ID );
-						$wp_admin_bar->add_menu( array(
-							'id'     => 'aiosp_edit_' . $current_object->ID,
-							'parent' => AIOSEOP_PLUGIN_DIRNAME,
-							'title' => 'Edit SEO',
-							'href' => $edit_post_link . '#aiosp'
-						) );
-					}else{
-						// Try the post object.
+					if ( is_singular() ) {
+						if ( ! empty( $current_object ) && ! empty( $current_object->post_type ) ) {
+							// Try the main query.
+							$edit_post_link = get_edit_post_link( $current_object->ID );
+							$wp_admin_bar->add_menu( array(
+								'id'     => 'aiosp_edit_' . $current_object->ID,
+								'parent' => AIOSEOP_PLUGIN_DIRNAME,
+								'title'  => 'Edit SEO',
+								'href'   => $edit_post_link . '#aiosp',
+							) );
+						} else {
+							// Try the post object.
+							$wp_admin_bar->add_menu( array(
+								'id'     => 'aiosp_edit_' . $post->ID,
+								'parent' => AIOSEOP_PLUGIN_DIRNAME,
+								'title'  => __( 'Edit SEO', 'all-in-one-seo-pack' ),
+								'href'   => get_edit_post_link( $post->ID ) . '#aiosp',
+							) );
+						}
+					}
+
+					if ( AIOSEOPPRO && ( is_category() || is_tax() || is_tag() ) ) {
+						// SEO for taxonomies are only available in Pro version.
+						$edit_term_link = get_edit_term_link( $current_object->term_id, $current_object->taxonomy );
 						$wp_admin_bar->add_menu( array(
 							'id'     => 'aiosp_edit_' . $post->ID,
 							'parent' => AIOSEOP_PLUGIN_DIRNAME,
 							'title'  => __( 'Edit SEO', 'all-in-one-seo-pack' ),
-							'href'   => get_edit_post_link( $post->ID ) . '#aiosp',
+							'href'   => $edit_term_link . '#aiosp',
 						) );
 					}
+
+
 				}
 			}
 		}
@@ -4700,7 +4744,12 @@ EOF;
 
 		if ( ! empty( $this->options['aiosp_enablecpost'] ) && $this->options['aiosp_enablecpost'] ) {
 			if ( AIOSEOPPRO ) {
-				$this->locations['aiosp']['display'] = $this->options['aiosp_cpostactive'];
+				if( is_array( $this->options['aiosp_cpostactive'] ) ) {
+     				     $this->locations['aiosp']['display'] = $this->options['aiosp_cpostactive'];
+				}else{
+					$this->locations['aiosp']['display'][] = $this->options['aiosp_cpostactive']; // Store as an array in case there are taxonomies to add also.
+				}
+
 				if ( ! empty( $this->options['aiosp_taxactive'] ) ) {
 					foreach ( $this->options['aiosp_taxactive'] as $tax ) {
 						$this->locations['aiosp']['display'][] = 'edit-' . $tax;
@@ -4854,12 +4903,14 @@ EOF;
 	 * @since 2.3.14 Strips excerpt anchor texts.
 	 * @since 2.3.14 Encodes to SEO ready HTML entities.
 	 * @since 2.3.14 #593 encode/decode refactored.
+	 * @since 2.4 #951 Reorders filters/encodings/decondings applied and adds additional param.
 	 *
-	 * @param string $value Value to filter.
+	 * @param string $value    Value to filter.
+	 * @param bool   $truncate Flag that indicates if value should be truncated/cropped.
 	 *
 	 * @return string
 	 */
-	public function filter_description( $value) {
+	public function filter_description( $value, $truncate = false ) {
 		if ( preg_match( '/5.2[\s\S]+/', PHP_VERSION ) )
 			$value = htmlspecialchars( wp_strip_all_tags( htmlspecialchars_decode( $value ) ) );
 		// Decode entities
@@ -4877,12 +4928,15 @@ EOF;
 		);
 		// Strip html
 		$value = wp_strip_all_tags( $value );
-		// Encode to valid SEO html entities
-		$value = $this->seo_entity_encode( $value );
+		// External trim
+		$value = trim( $value );
 		// Internal whitespace trim.
 		$value = preg_replace( '/\s\s+/u', ' ', $value );
-		// External trim.
-		return trim( $value );
+		// Truncate / crop
+		if ( ! empty( $truncate ) )
+			$value = $this->trim_excerpt_without_filters( $value );
+		// Encode to valid SEO html entities
+		return $this->seo_entity_encode( $value );
 	}
 
 	/**
@@ -4891,6 +4945,7 @@ EOF;
  	 *
  	 * @since 2.3.14
  	 * @since 2.3.14.2 Hot fix on apostrophes.
+ 	 * @since 2.3.16   &#039; Added to the list of apostrophes.
  	 *
  	 * @param string $value Value to decode.
  	 *
@@ -4902,7 +4957,7 @@ EOF;
  			array(
  				'/\“|\”|&#[xX]00022;|&#34;|&[lLrRbB](dquo|DQUO)(?:[rR])?;|&#[xX]0201[dDeE];'
  					.'|&[OoCc](pen|lose)[Cc]urly[Dd]ouble[Qq]uote;|&#822[012];|&#[xX]27;/', // Double quotes
- 				'/&#8217;|&apos;/', // Apostrophes
+ 				'/&#039;|&#8217;|&apos;/', // Apostrophes
  			),
  			array(
  				'"', // Double quotes

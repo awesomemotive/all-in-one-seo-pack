@@ -296,7 +296,7 @@ if ( ! function_exists( 'aioseop_output_notice' ) ) {
 			$class .= ' id="' . esc_attr( $id ) . '"';
 		}
 		$dismiss = ' ';
-		echo "<div{$class}>" . wp_kses_post( $message ) . '<br class=clear /></div>';
+		echo "<div{$class}>" . wp_kses_post( $message ) . '</div>';
 
 		return true;
 	}
