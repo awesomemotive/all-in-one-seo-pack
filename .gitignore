@@ -6,6 +6,7 @@
 #.eslintrc
 #.travis.yml
 .svn
+node_modules
 
 # IDE #
 #######

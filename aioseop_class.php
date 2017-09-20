@@ -54,6 +54,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 	/**
 	 * All_in_One_SEO_Pack constructor.
+	 *
+	 * @since 2.3.14 #921 More google analytics options added.
 	 */
 	function __construct() {
 		global $aioseop_options;
@@ -1161,6 +1163,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	/**
 	 * Use custom callback for outputting snippet
 	 *
+	 * @since 2.3.16 Decodes HTML entities on title, description and title length count.
+	 *
 	 * @param $buf
 	 * @param $args
 	 *
@@ -1178,10 +1182,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( $this->strlen( $title ) > 70 ) {
-			$title = $this->trim_excerpt_without_filters( $title, 70 ) . '...';
+			$title = $this->trim_excerpt_without_filters(
+				$this->html_entity_decode( $title ),
+				70
+			) . '...';
 		}
 		if ( $this->strlen( $description ) > 156 ) {
-			$description = $this->trim_excerpt_without_filters( $description, 156 ) . '...';
+			$description = $this->trim_excerpt_without_filters(
+				$this->html_entity_decode( $description ),
+				156
+			) . '...';
 		}
 		$extra_title_len = 0;
 		if ( empty( $title_format ) ) {
@@ -1263,12 +1273,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 			$title_format    = preg_replace( '/%([^%]*?)%/', '', $title_format );
 			$title           = $title_format;
-			$extra_title_len = strlen( str_replace( $replace_title, '', $title_format ) );
+			$extra_title_len = strlen( $this->html_entity_decode( str_replace( $replace_title, '', $title_format ) ) );
 		}
 
 		$args['value']   = sprintf( $args['value'], $title, esc_url( $url ), esc_attr( $description ) );
-		$extra_title_len = (int) $extra_title_len;
-		$args['value'] .= "<script>var aiosp_title_extra = {$extra_title_len};</script>";
+		$args['value'] .= '<script>var aiosp_title_extra = '. (int) $extra_title_len . ';</script>';
 		$buf = $this->get_option_row( $args['name'], $args['options'], $args );
 
 		return $buf;
@@ -2425,6 +2434,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 	/**
 	 * @since 2.3.14 #932 Adds filter "aioseop_description", removes extra filtering.
+	 * @since 2.4 #951 Trim/truncates occurs inside filter "aioseop_description".
 	 *
 	 * @param null $post
 	 *
@@ -2460,11 +2470,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 			$description = $this->internationalize( $description );
 		}
-		if ( empty( $aioseop_options['aiosp_dont_truncate_descriptions'] ) ) {
-			$description = $this->trim_excerpt_without_filters( $description );
-		}
 
-		return apply_filters( 'aioseop_description', $description );
+		return apply_filters(
+			'aioseop_description',
+			$description,
+			empty( $aioseop_options['aiosp_dont_truncate_descriptions'] )
+		);
 	}
 
 	/**
@@ -2525,6 +2536,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @since 2.3.13 #899 Fixes non breacking space, applies filter "aioseop_description".
 	 * @since 2.3.14 #932 Removes filter "aioseop_description".
+	 * @since 2.4 #951 Removes "wp_strip_all_tags" and "trim_excerpt_without_filters", they are done later in filter.
 	 *
 	 * @param object $post Post object.
 	 *
@@ -2549,8 +2561,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				if ( ! empty( $aioseop_options['aiosp_run_shortcodes'] ) ) {
 					$content = do_shortcode( $content );
 				}
-				$content     = wp_strip_all_tags( $content );
-				$description = $this->trim_excerpt_without_filters( $this->internationalize( $content ) );
+				$description =$this->internationalize( $content );
 			}
 		}
 
@@ -3283,6 +3294,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * @since 2.3.16 Forces HTML entity decode on placeholder values.
+	 *
 	 * @param $settings
 	 * @param $location
 	 * @param $current
@@ -3331,8 +3344,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				global $post;
 				$info = $this->get_page_snippet_info();
 				extract( $info );
-				$settings["{$prefix}title"]['placeholder']       = $title;
-				$settings["{$prefix}description"]['placeholder'] = $description;
+				$settings["{$prefix}title"]['placeholder']       = $this->html_entity_decode( $title );
+				$settings["{$prefix}description"]['placeholder'] = $this->html_entity_decode( $description );
 				$settings["{$prefix}keywords"]['placeholder']    = $keywords;
 			}
 
@@ -3573,6 +3586,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @since 2.3.13 #899 Adds filter:aioseop_description.
 	 * @since 2.3.14 #593 Adds filter:aioseop_title.
+	 * @since 2.4 #951 Increases filter:aioseop_description arguments number.
 	 */
 	function add_hooks() {
 		global $aioseop_options, $aioseop_update_checker;
@@ -3615,7 +3629,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			add_action( 'amp_post_template_head', array( $this, 'amp_head' ), 11 );
 			add_action( 'template_redirect', array( $this, 'template_redirect' ), 0 );
 		}
-		add_filter( 'aioseop_description', array( &$this, 'filter_description' ) );
+		add_filter( 'aioseop_description', array( &$this, 'filter_description' ), 10, 2 );
 		add_filter( 'aioseop_title', array( &$this, 'filter_title' ) );
 	}
 
@@ -4891,12 +4905,14 @@ EOF;
 	 * @since 2.3.14 Strips excerpt anchor texts.
 	 * @since 2.3.14 Encodes to SEO ready HTML entities.
 	 * @since 2.3.14 #593 encode/decode refactored.
+	 * @since 2.4 #951 Reorders filters/encodings/decondings applied and adds additional param.
 	 *
-	 * @param string $value Value to filter.
+	 * @param string $value    Value to filter.
+	 * @param bool   $truncate Flag that indicates if value should be truncated/cropped.
 	 *
 	 * @return string
 	 */
-	public function filter_description( $value) {
+	public function filter_description( $value, $truncate = false ) {
 		if ( preg_match( '/5.2[\s\S]+/', PHP_VERSION ) )
 			$value = htmlspecialchars( wp_strip_all_tags( htmlspecialchars_decode( $value ) ) );
 		// Decode entities
@@ -4914,12 +4930,15 @@ EOF;
 		);
 		// Strip html
 		$value = wp_strip_all_tags( $value );
-		// Encode to valid SEO html entities
-		$value = $this->seo_entity_encode( $value );
+		// External trim
+		$value = trim( $value );
 		// Internal whitespace trim.
 		$value = preg_replace( '/\s\s+/u', ' ', $value );
-		// External trim.
-		return trim( $value );
+		// Truncate / crop
+		if ( ! empty( $truncate ) )
+			$value = $this->trim_excerpt_without_filters( $value );
+		// Encode to valid SEO html entities
+		return $this->seo_entity_encode( $value );
 	}
 
 	/**
@@ -4928,6 +4947,7 @@ EOF;
  	 *
  	 * @since 2.3.14
  	 * @since 2.3.14.2 Hot fix on apostrophes.
+ 	 * @since 2.3.16   &#039; Added to the list of apostrophes.
  	 *
  	 * @param string $value Value to decode.
  	 *
@@ -4939,7 +4959,7 @@ EOF;
  			array(
  				'/\“|\”|&#[xX]00022;|&#34;|&[lLrRbB](dquo|DQUO)(?:[rR])?;|&#[xX]0201[dDeE];'
  					.'|&[OoCc](pen|lose)[Cc]urly[Dd]ouble[Qq]uote;|&#822[012];|&#[xX]27;/', // Double quotes
- 				'/&#8217;|&apos;/', // Apostrophes
+ 				'/&#039;|&#8217;|&apos;/', // Apostrophes
  			),
  			array(
  				'"', // Double quotes
