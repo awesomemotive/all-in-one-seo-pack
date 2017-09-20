@@ -12,11 +12,59 @@
 class AIOSEOP_Updates {
 
 	/**
+	 * Update notices.
+	 *
+	 * @since 2.4
+	 *
+	 * @var array
+	 */
+	protected $notices;
+
+	/**
 	 * Constructor
 	 *
+	 * @since 2.4 Init notices property.
 	 */
 	function __construct() {
+		$this->notices = array();
+	}
 
+	/**
+	 * Displays update notices.
+	 *
+	 * @since 2.4
+	 */
+	public function show_notices() {
+		ob_start();
+		?>
+		<!-- All In One SEO notices - BEGIN -->
+		<?php foreach ( $this->notices as $notice ) : ?>
+			<div class="notice
+				<?php if ( isset( $notice['success'] ) && $notice['success'] === false ) : ?>notice-error<?php else : ?>notice-success<?php endif ?>
+				is-dismissible"
+			>
+		        <p><?php echo isset( $notice['message'] ) ? $notice['message'] : $notice ?></p>
+		    </div>
+		<?php endforeach ?>
+		<!-- All In One SEO notices - END -->
+		<?php
+		echo ob_get_clean();
+	}
+
+	/**
+	 * Adds an update notice.
+	 *
+	 * @since 2.4
+	 *
+	 * @param string $message Notice message.
+	 * @param bool   $success Flag that indicates if notice is error or success.
+	 */
+	private function add_notice($message, $success = true)
+	{
+		$this->notices[] = array(
+			'message'	=> $message,
+			'success'	=> $success
+		);
 	}
 
 	/**
@@ -70,6 +118,8 @@ class AIOSEOP_Updates {
 		 * just the plugin version.
 		 */
 		$this->do_feature_updates();
+		// Call notices
+		add_action( 'admin_notices', array(  &$this, 'show_notices' ) );
 	}
 
 	function aioseop_welcome(){
@@ -84,7 +134,7 @@ class AIOSEOP_Updates {
 	/**
 	 * Updates version.
 	 *
-	 * @since 2.3.17 Version update.
+	 * @since 2.4 Version update.
 	 *
 	 * @todo the compare here should be extracted into a function
 	 *
@@ -117,7 +167,7 @@ class AIOSEOP_Updates {
 		}
 
 		if (
-			( ! AIOSEOPPRO && version_compare( $old_version, '2.3.17', '<' ) ) ||
+			( ! AIOSEOPPRO && version_compare( $old_version, '2.4', '<' ) ) ||
 			( AIOSEOPPRO && version_compare( $old_version, '2.4.17', '<' ) )
 		) {
 			$this->db_migrate_og_type_201708();
@@ -228,14 +278,13 @@ class AIOSEOP_Updates {
 	 * Updates posts' og:type "blog" into "article".
 	 * Issue #1013: "Blog" not available anymore.
 	 *
-	 * @since 2.3.17
+	 * @since 2.4
 	 *
 	 * @global object $wpdb Wordpress Database accesor.
 	 */
 	public function db_migrate_og_type_201708() {
 		global $wpdb;
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $wpdb->prepare(
+		$res = $wpdb->query( $wpdb->prepare(
 			'UPDATE ' . $wpdb->postmeta . '
 			SET meta_value = replace(meta_value,%s,%s)
 			WHERE meta_key = %s AND meta_value like %s;',
@@ -244,5 +293,10 @@ class AIOSEOP_Updates {
 			'_aioseop_opengraph_settings',
 			'%s:35:"aioseop_opengraph_settings_category";s:4:"blog";%'
 		) );
+		if ( $res === false ) {
+			$this->add_notice( '<strong>All In One SEO Plugin:</strong> failed to update <i>deprecated</i> <code>og:type</code>.', false );
+		} else {
+			$this->add_notice( '<strong>All In One SEO Plugin:</strong> updated <i>deprecated</i> <code>og:type</code> successfully.' );
+		}
 	}
 }
