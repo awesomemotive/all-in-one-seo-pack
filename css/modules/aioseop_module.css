@@ -157,6 +157,10 @@ div.aioseop_tip_icon:before {
     overflow-y: auto;
 }
 
+.postbox-container .aioseop_option_div {
+	width: 100%;
+}
+
 .aioseop_overflowed {
     border: 1px solid #e1e1e1;
 }
@@ -177,6 +181,12 @@ div.aioseop_tip_icon:before {
     line-height: 25px;
     width: 95%;
     max-width: 600px;
+}
+
+.postbox-container .aioseop_option_div input[type="text"],
+.postbox-container .aioseop_option_div textarea {
+	width: 99%;
+	max-width: 900px;
 }
 
 .aioseop_help_text_div {
@@ -373,6 +383,11 @@ div.aioseop_tip_icon:before {
     padding-top: 3px;
     padding-bottom: 3px;
     height: 67px !important; /*added for certain language support*/
+}
+
+.postbox-container .aioseop_option_label {
+	max-width: none;
+	height: auto !important;
 }
 
 .aioseop_metabox_text h2 {
@@ -795,9 +810,22 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
     margin: 18px 0 10px 0;
 }
 
+.postbox-container .aioseop_options {
+	margin: 0;
+}
+
+#aioseop_opengraph_settings .aioseop_options {
+	clear: both;
+	margin-top: 35px;
+}
+
 .aioseop_wrapper {
     width: 100%;
     padding-left: 5px;
+}
+
+.postbox-container .aioseop_wrapper {
+	padding: 0;
 }
 
 .aioseop_input {
@@ -807,6 +835,12 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
     display: inline;
 }
 
+.postbox-container .aioseop_input {
+	display: block;
+	margin-bottom: 10px;
+	padding: 0;
+}
+
 .aioseop_option_input {
     float: left;
     width: 61%;
@@ -814,6 +848,15 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
     padding-left: 1px;
     min-width: 160px;
     /*	max-width: 900px; */
+}
+
+.postbox-container .aioseop_option_input {
+	width: 63%;
+	padding: 0;
+}
+
+#aioseop_opengraph_settings .aioseop_option_input {
+	width: 70%;
 }
 
 #aiosp div.preview_snippet {
@@ -1010,6 +1053,30 @@ table.aioseop_table td, table.aioseop_table th {
     margin: 0 23px 0 13px;
 }
 
+.postbox-container div#aiosp_upgrade_wrapper {
+    float: none;
+    width: auto;
+    margin: 0;
+	padding: 0;
+}
+
+.postbox-container div#aiosp_upgrade_wrapper .aioseop_input {
+	display: block;
+	padding: 0;
+}
+
+.postbox-container div#aiosp_upgrade_wrapper .aioseop_input .aioseop_option_input {
+	float: none;
+	width: auto;
+	padding: 0;
+}
+
+.postbox-container div#aiosp_upgrade_wrapper .aioseop_input .aioseop_option_input .aioseop_option_div {
+	width: auto;
+	min-height: 0;
+	padding: 10px 0;
+}
+
 #aiosp_sitemap_status_metabox .handlediv.button-link {
 	display: none;
 }
@@ -1041,7 +1108,6 @@ table.aioseop_table td, table.aioseop_table th {
 
 #aioseop_opengraph_settings .inside {
     margin: 0;
-    padding: 0;
 }
 
 #aioseop_opengraph_settings_image_wrapper img {
@@ -1066,7 +1132,7 @@ table.aioseop_table td, table.aioseop_table th {
 }
 
 #aiosp {
-    width: 100%;
+    width: auto;
 }
 
 .aioseop_input.aioseop_top_label .aioseop_option_input {
@@ -1244,7 +1310,7 @@ _:-webkit-full-screen:not(:root:root), .aioseop_header_tabs li a.aioseop_header_
     border: solid 1px #CCC;
     background-color: rgb(255, 255, 255);
     background-color: rgba(255, 255, 255, 0.5);
-    padding-left: 5px;
+    padding: 10px;
 }
 
 .aioseop_loading {
