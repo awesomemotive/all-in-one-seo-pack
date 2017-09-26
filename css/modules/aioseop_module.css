@@ -1204,30 +1204,19 @@ div.aioseop_notice a.aioseop_dismiss_link {
 }
 
 .aioseop_header_tabs li a.aioseop_header_tab {
-    height: 18px;
-    font: 13px/18px Arial,
-    Helvetica,
-    sans-serif normal;
+    font-size: 14px;
+	line-height: 37px;
     text-decoration: none;
     margin: 5px 5px 0 0;
-    padding: 4px 5px 2px;
+    padding: 10px;
     cursor: pointer;
     -webkit-border-top-right-radius: 3px;
     -webkit-border-top-left-radius: 3px;
     border-top-right-radius: 3px;
     border-top-left-radius: 3px;
-    background-color: rgb(255, 255, 255);
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: #e5e5e5;
     border: 1px solid #ccc;
     color: #5F5F5F;
-}
-
-/* Fix for Chrome */
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-
-    .aioseop_header_tabs li a.aioseop_header_tab {
-		padding-bottom: 0;
-    }
 }
 
 /* Fix for Safari */
