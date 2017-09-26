@@ -2016,12 +2016,26 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 						foreach ( $v['display'] as $posttype ) {
 							$v['location'] = $k;
 							$v['posttype'] = $posttype;
+
+							if ( post_type_exists( $posttype ) ) {
+							    // Metabox priority/context on edit post screen.
+								$v['context']  = apply_filters( 'aioseop_post_metabox_context', 'normal' );
+								$v['priority'] = apply_filters( 'aioseop_post_metabox_priority', 'high' );
+							}
+							if ( false !== strpos( $posttype, 'edit-' ) ) {
+								// Metabox priority/context on edit taxonomy screen.
+								$v['context'] = 'advanced';
+								$v['priority'] = 'default';
+							}
+
+							// Metabox priority for everything else.
 							if ( ! isset( $v['context'] ) ) {
 								$v['context'] = 'advanced';
 							}
 							if ( ! isset( $v['priority'] ) ) {
 								$v['priority'] = 'default';
 							}
+
 							if ( $this->tabbed_metaboxes ) {
 								$this->post_metaboxes[] = array(
 									'id'            => $v['prefix'] . $k,
@@ -2220,8 +2234,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$buf .= "<textarea name='$name' $attr>$value</textarea>";
 					break;
 				case 'image':
-					$buf .= '<input class="aioseop_upload_image_checker" type="hidden" name="'.$name.'_checker" value="0">'.
-							"<input class='aioseop_upload_image_button button-primary' type='button' value='Upload Image' style='float:left;' />" .
+					$buf .= '<input class="aioseop_upload_image_checker" type="hidden" name="' . $name . '_checker" value="0">' .
+					        "<input class='aioseop_upload_image_button button-primary' type='button' value='";
+					$buf .= __( 'Upload Image', 'all-in-one-seo-pack' );
+					$buf .= "' style='float:left;' />" .
 					        "<input class='aioseop_upload_image_label' name='$name' type='text' $attr value='$value' size=57 style='float:left;clear:left;'>\n";
 					break;
 				case 'html':
@@ -2849,6 +2865,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$get_opts = get_post_meta( $post->ID, '_' . $prefix . $location, true );
 				}
 			}
+
+			if ( is_home() && ! is_front_page() ) {
+			    // If we're on the non-front page blog page, WP doesn't really know its post meta data so we need to get that manually for social meta.
+				$get_opts = get_post_meta( get_option( 'page_for_posts' ), '_' . $prefix . $location, true );
+			}
+
 			$defs = $this->default_options( $location, $defaults );
 			if ( empty( $get_opts ) ) {
 				$get_opts = $defs;

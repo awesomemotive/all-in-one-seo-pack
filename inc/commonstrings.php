@@ -45,5 +45,32 @@ class AIOSP_Common_Strings {
 		__( 'This displays an SEO News widget on the dashboard.', 'all-in-one-seo-pack' );
 		__( 'Check this to add All in One SEO Pack to the Admin Bar for easy access to your SEO settings.', 'all-in-one-seo-pack' );
 		__( 'Check this to move the All in One SEO Pack menu item to the top of your WordPress Dashboard menu.', 'all-in-one-seo-pack' );
+		__('%s is almost ready.', 'all-in-one-seo-pack' );
+		__('You must <a href="%s">enter a valid License Key</a> for it to work.', 'all-in-one-seo-pack' );
+		__( ' Need a license key?', 'all-in-one-seo-pack' );
+		__( 'Purchase one now', 'all-in-one-seo-pack' );
+		__( "There is a new version of %s available. Go to <a href='%s'>the plugins page</a> for details.", 'all-in-one-seo-pack' );
+		sprintf( __( 'Your license has expired. Please %1$s click here %2$s to purchase a new one.', 'all-in-one-seo-pack' ), '<a href="https://semperplugins.com/all-in-one-seo-pack-pro-version/" target="_blank">', '</a>' );
+		__( 'Manage Licenses', 'all-in-one-seo-pack' );
+		__( 'License Key is not set yet or invalid. ', 'all-in-one-seo-pack' );
+		__( ' Need a license key?', 'all-in-one-seo-pack' );
+		__( 'Track Outbound Forms:', 'all-in-one-seo-pack' );
+		__( 'Track Events:', 'all-in-one-seo-pack' );
+		__( 'Track URL Changes:', 'all-in-one-seo-pack' );
+		__( 'Track Page Visibility:', 'all-in-one-seo-pack' );
+		__( 'Track Media Query:', 'all-in-one-seo-pack' );
+		__( 'Track Elements Visibility:', 'all-in-one-seo-pack' );
+		__( 'Track Page Scrolling:', 'all-in-one-seo-pack' );
+		__( 'Track Facebook and Twitter:', 'all-in-one-seo-pack' );
+		__( 'Ensure URL Consistency:', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track outbound forms with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track events with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track url changes for single pages with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track how long pages are in visible state with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track media query matching and queries with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track when elements are visible within the viewport with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to ensure consistency in URL paths reported to Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track how far down a user scrolls a page with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track interactions with the official Facebook and Twitter widgets with Google Analytics.', 'all-in-one-seo-pack' );
 	}
 }
