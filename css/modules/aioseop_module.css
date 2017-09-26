@@ -816,51 +816,6 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
     /*	max-width: 900px; */
 }
 
-#aiosp div.preview_snippet {
-    border: 1px solid #ebebeb;
-    padding: 15px 15px 20px 7px;
-    background-color: #fff;
-}
-
-div#aioseop_snippet {
-    font-family: arial, sans-serif;
-    font-size: 13px;
-}
-
-div#aioseop_snippet > h3 {
-    font-size: 16px;
-    padding: 8px 0;
-    border: 0;
-    background: inherit;
-}
-
-div#aioseop_snippet > h3 > a {
-    color: #12c;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-div#aioseop_snippet > div {
-    color: #222;
-    max-width: 42em;
-}
-
-div#aioseop_snippet > div > div {
-    display: block;
-    margin-bottom: 1px;
-}
-
-div#aioseop_snippet > div > div > cite {
-    color: #093;
-    font-style: normal;
-}
-
-div#aioseop_snippet > div > span {
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
-
 #aiosp_sitemap_addl_pages,
 #aiosp_video_sitemap_addl_pages {
     clear: left;
@@ -1339,4 +1294,61 @@ div.sfwd_debug_error {
 .MRL {
     margin-left: 20px !important;
     margin-bottom: 10px !important;
+}
+
+/*** Preview Snippet ***/
+div#aiosp_snippet_wrapper {
+    border: 1px solid #888;
+    clear: both;
+    padding: 10px 10px 0;
+    max-width: 97%;
+    margin-bottom: 15px;
+}
+
+div#aiosp_snippet_wrapper .aioseop_option_label {
+	height: auto !important;
+}
+
+div#aiosp_snippet_wrapper .aioseop_input.aioseop_top_label .aioseop_option_input {
+	margin: 0;
+}
+
+div#aioseop_snippet {
+    font-family: arial, sans-serif;
+    font-size: 13px;
+}
+
+div#aioseop_snippet > h3 {
+	margin: 10px 0 5px;
+    font-size: 18px;
+    border: 0;
+    background: inherit;
+	font-weight: normal;
+}
+
+div#aioseop_snippet > h3 > a {
+    color: #12c;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+div#aioseop_snippet > div {
+    color: #545454;
+    max-width: 48em;
+}
+
+div#aioseop_snippet > div > div {
+    display: block;
+    margin-bottom: 1px;
+}
+
+div#aioseop_snippet > div > div > cite {
+    color: #093;
+    font-style: normal;
+}
+
+div#aioseop_snippet > div > span {
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
