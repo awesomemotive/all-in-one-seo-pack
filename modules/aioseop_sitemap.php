@@ -2690,7 +2690,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			// Check images in the content.
-			$content = apply_filters( 'the_content', $post->post_content );
+			$content = $post->post_content;
 			$total   = substr_count( $content, '<img ' ) + substr_count( $content, '<IMG ' );
 			if ( $total > 0 ) {
 				$dom = new domDocument();
