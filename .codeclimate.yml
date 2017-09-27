@@ -3,14 +3,17 @@ engines:
     enabled: true
     config:
       standard: "WordPress-Extra,WordPress-Docs"
+    checks:
+      Squiz PHP DisallowMultipleAssignments Found:
+        enabled: false
   csslint:
     enabled: true
-#  duplication:
-#    enabled: true
-#    config:
-#      languages:
-#      - javascript
-#      - php
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - javascript
+      - php
   eslint:
     enabled: true
   fixme:

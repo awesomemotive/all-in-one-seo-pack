@@ -2434,7 +2434,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 	/**
 	 * @since 2.3.14 #932 Adds filter "aioseop_description", removes extra filtering.
-	 * @since 2.3.17 #951 Trim/truncates occurs inside filter "aioseop_description".
+	 * @since 2.4 #951 Trim/truncates occurs inside filter "aioseop_description".
 	 *
 	 * @param null $post
 	 *
@@ -2536,7 +2536,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @since 2.3.13 #899 Fixes non breacking space, applies filter "aioseop_description".
 	 * @since 2.3.14 #932 Removes filter "aioseop_description".
-	 * @since 2.3.17 #951 Removes "wp_strip_all_tags" and "trim_excerpt_without_filters", they are done later in filter.
+	 * @since 2.4 #951 Removes "wp_strip_all_tags" and "trim_excerpt_without_filters", they are done later in filter.
 	 *
 	 * @param object $post Post object.
 	 *
@@ -3586,7 +3586,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @since 2.3.13 #899 Adds filter:aioseop_description.
 	 * @since 2.3.14 #593 Adds filter:aioseop_title.
-	 * @since 2.3.17 #951 Increases filter:aioseop_description arguments number.
+	 * @since 2.4 #951 Increases filter:aioseop_description arguments number.
 	 */
 	function add_hooks() {
 		global $aioseop_options, $aioseop_update_checker;
@@ -4905,7 +4905,7 @@ EOF;
 	 * @since 2.3.14 Strips excerpt anchor texts.
 	 * @since 2.3.14 Encodes to SEO ready HTML entities.
 	 * @since 2.3.14 #593 encode/decode refactored.
-	 * @since 2.3.17 #951 Reorders filters/encodings/decondings applied and adds additional param.
+	 * @since 2.4 #951 Reorders filters/encodings/decondings applied and adds additional param.
 	 *
 	 * @param string $value    Value to filter.
 	 * @param bool   $truncate Flag that indicates if value should be truncated/cropped.

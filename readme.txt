@@ -21,6 +21,7 @@ Use **All in One SEO Pack** to optimize your WordPress site for SEO. It's easy a
 First created in 2007, see why AIOSEO is one of the all time most downloaded plugins for WordPress.
 
 * XML Sitemap support - submit your sitemap to Google and Bing and improve your SEO
+* Image XML Sitemap submitted to Google and Bing to improve your Image SEO
 * Google AMP support (Accelerated Mobile Pages)
 * Google Analytics support
 * Support for SEO on Custom Post Types

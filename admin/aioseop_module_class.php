@@ -1338,8 +1338,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
-		 * @param null $options
-		 * @param null $p
+		 * Returns available social seo images.
+		 *
+		 * @since 2.4 #1079 Fixes array_flip warning on opengraph module.
+		 *
+		 * @param array  $options Plugin/module options.
+		 * @param object $p       Post.
 		 *
 		 * @return array
 		 */
@@ -1386,10 +1390,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					}
 
 					if ( ! empty( $meta_key ) && ! empty( $post ) ) {
-						$meta_key = explode( ',', $meta_key );
 						$image    = $this->get_the_image_by_meta_key( array(
 							'post_id'  => $post->ID,
-							'meta_key' => $meta_key,
+							'meta_key' => explode( ',', $meta_key ),
 						) );
 						if ( ! empty( $image ) ) {
 							$img[] = array( 'type' => 'meta_key', 'id' => $meta_key, 'link' => $image );

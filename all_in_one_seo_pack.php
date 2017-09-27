@@ -233,7 +233,7 @@ if ( AIOSEOPPRO ) {
 		$aioseop_update_checker->license_key = '';
 	}
 	$aioseop_update_checker->options_page = AIOSEOP_PLUGIN_DIRNAME . "/aioseop_class.php";
-	$aioseop_update_checker->renewal_page = 'https://semperplugins.com/all-in-one-seo-pack-pro-support-updates-renewal/';
+	$aioseop_update_checker->renewal_page = 'https://semperplugins.com/all-in-one-seo-pack-pro-version/';
 
 	$aioseop_update_checker->addQueryArgFilter( array( $aioseop_update_checker, 'add_secret_key' ) );
 }
