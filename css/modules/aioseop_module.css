@@ -148,7 +148,7 @@ div.aioseop_tip_icon:before {
 
 .aioseop_option_div {
     max-height: 360px;
-    min-height: 43px;
+    min-height: 37px;
     width: 95%;
     overflow-y: auto;
 }
@@ -179,7 +179,7 @@ div.aioseop_tip_icon:before {
 .aioseop_help_text_div {
     text-align: left;
     width: 100%;
-    margin: 10px 0 10px 0;
+    margin: 0;
 }
 
 .aioseop_help_text {
