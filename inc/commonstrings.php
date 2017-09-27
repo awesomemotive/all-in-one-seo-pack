@@ -48,15 +48,8 @@ class AIOSP_Common_Strings {
 		__( 'Check this to move the All in One SEO Pack menu item to the top of your WordPress Dashboard menu.', 'all-in-one-seo-pack' );
 		__('%s is almost ready.', 'all-in-one-seo-pack' );
 		__('You must <a href="%s">enter a valid License Key</a> for it to work.', 'all-in-one-seo-pack' );
-		/* translators: Please mind the space at the beginning of the string. */
-		__( ' Need a license key?', 'all-in-one-seo-pack' );
-		__( 'Purchase one now', 'all-in-one-seo-pack' );
 		__( "There is a new version of %s available. Go to <a href='%s'>the plugins page</a> for details.", 'all-in-one-seo-pack' );
 		sprintf( __( 'Your license has expired. Please %1$s click here %2$s to purchase a new one.', 'all-in-one-seo-pack' ), '<a href="https://semperplugins.com/all-in-one-seo-pack-pro-version/" target="_blank">', '</a>' );
-		__( 'Manage Licenses', 'all-in-one-seo-pack' );
-		__( 'License Key is not set yet or invalid. ', 'all-in-one-seo-pack' );
-		/* translators: Please mind the space at the beginning of the string. */
-		__( ' Need a license key?', 'all-in-one-seo-pack' );
 		__( 'Track Outbound Forms:', 'all-in-one-seo-pack' );
 		__( 'Track Events:', 'all-in-one-seo-pack' );
 		__( 'Track URL Changes:', 'all-in-one-seo-pack' );
