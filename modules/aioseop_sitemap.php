@@ -2660,7 +2660,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		private function get_images_from_post( $post ) {
 
-			if ( false === apply_filters( 'aioseo_include_images_in_sitemap' ), true ) {
+			if ( false === apply_filters( 'aioseo_include_images_in_sitemap', true ) ) {
 				return array();
 			}
 
