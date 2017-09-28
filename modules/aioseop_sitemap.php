@@ -2625,6 +2625,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			return $prio;
 		}
 
+		function show_images_in_sitemap(){
+			
+		}
+		
 		/**
 		 * Return the images attached to the term.
 		 *
@@ -2635,6 +2639,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array
 		 */
 		private function get_images_from_term( $term ) {
+			
+			if ( false === apply_filters( 'aioseo_include_images_in_sitemap', true ) ) {
+				return array();
+			}
+			
 			$images       = array();
 			$thumbnail_id = get_term_meta( $term->term_id, 'thumbnail_id', true );
 			if ( $thumbnail_id ) {
