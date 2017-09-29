@@ -2699,8 +2699,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$images[] = $attached_url;
 			}
 
-			// Check images in the content.
 			$content = $post->post_content;
+
+			// Check images galleries in the content. DO NOT run the_content filter here as it might cause issues with other shortcodes
+			if ( has_shortcode( $content, 'gallery' ) ) {
+				$galleries	= get_post_galleries( $post, false );
+				if ( $galleries ) {
+					foreach ( $galleries as $gallery ) {
+						$images	= array_merge( $images, $gallery['src'] );
+					}
+				}
+			}
+
 			$total   = substr_count( $content, '<img ' ) + substr_count( $content, '<IMG ' );
 			if ( $total > 0 ) {
 				$dom = new domDocument();
