@@ -3,7 +3,7 @@
 Plugin Name: All In One SEO Pack
 Plugin URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Description: Out-of-the-box SEO for your WordPress blog. Features like XML Sitemaps, SEO for custom post types, SEO for blogs or business sites, SEO for ecommerce sites, and much more. More than 30 million downloads since 2007.
-Version: 2.3.16
+Version: 2.4
 Author: Michael Torbert
 Author URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Text Domain: all-in-one-seo-pack
@@ -31,14 +31,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * The original WordPress SEO plugin.
  *
  * @package All-in-One-SEO-Pack
- * @version 2.3.16
+ * @version 2.4
  */
 
 if ( ! defined( 'AIOSEOPPRO' ) ) {
 	define( 'AIOSEOPPRO', false );
 }
 if ( ! defined( 'AIOSEOP_VERSION' ) ) {
-	define( 'AIOSEOP_VERSION', '2.3.16' );
+	define( 'AIOSEOP_VERSION', '2.4' );
 }
 global $aioseop_plugin_name;
 $aioseop_plugin_name = 'All in One SEO Pack';
@@ -233,7 +233,7 @@ if ( AIOSEOPPRO ) {
 		$aioseop_update_checker->license_key = '';
 	}
 	$aioseop_update_checker->options_page = AIOSEOP_PLUGIN_DIRNAME . "/aioseop_class.php";
-	$aioseop_update_checker->renewal_page = 'https://semperplugins.com/all-in-one-seo-pack-pro-support-updates-renewal/';
+	$aioseop_update_checker->renewal_page = 'https://semperplugins.com/all-in-one-seo-pack-pro-version/';
 
 	$aioseop_update_checker->addQueryArgFilter( array( $aioseop_update_checker, 'add_secret_key' ) );
 }

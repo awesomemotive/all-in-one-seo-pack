@@ -32,23 +32,18 @@
     padding-top: 2px;
     outline: none;
     color: #888;
-    border: 2px solid #888;
-    border-radius: 33px;
-    width: 22px;
-    height: 20px;
     font-family: sans-serif;
 }
 
 .aioseop_help_text_link span {
-    position: absolute;
-    left: 21px;
     font-size: 14px;
 }
 
 .aioseop_help_text_link:before {
-    content: '\a0?';
-    color: #888;
-    font-size: 19px;
+	content: "\f223";
+	font-size: 27px;
+	font-family: dashicons;
+	vertical-align: middle;
 }
 
 #aioseop-support .aioseop_metabox_text,
@@ -92,10 +87,6 @@
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAARVBMVEUAAAAAn+cAn+EAneAAnuABnuEAn+cAn98AneEAn98AnOIAnuAAnOIAneIAneIAnuEAnuEAneEAnuEBnuEAn+QAneAAneCXjc90AAAAF3RSTlMAIG+vz/8AEJ8AUO8AYACgAHCwADDw0E/SOHoAAAEBSURBVHgB7dbBjsIgGATgH+UvCAso3fL+j7rDYZMerGGZQ5NNv8TrREZLRy47F3O7Wx1m7zezAMjSOa9/5t2jkweEqBNi+ALBJ+mklHOWnINOC/0buKjTokMHRQnlKUYpRl5HBQ32KFXfW783HVDFHgWsrg0EWNEDK4z0+yEAEhuAIsgAFMEFQOECILEBKIIMQBFcABQuABIbgCLIABTBBUBhAzx5BEuWGM/9GT35V7bkwxTPfZw9eaVZ8lKN517rI8NHmr43cPyufXi5Rh1Q+dc7PTAWduI83abTNteHJjvz6KEJYeoU2+/UBVcm+tuNbTCv2nRYq2k/9ylXwL8I+AGj+lzlceKDYQAAAABJRU5ErkJggg==);
 }
 
-.aioseop_help_text_link.aioseop_meta_box_help:before {
-    font-size: 14px;
-}
-
 .aioseop_meta_box_help > label {
     position: absolute;
     margin-left: 8px;
@@ -136,11 +127,16 @@ div.aioseop_tip_icon:before {
     position: relative;
 }
 
+.aioseop_tabs .aioseop_meta_box_help,
+.aioseop_tabs .aioseop_meta_box_help:active {
+	margin-top: 4px;
+	margin-right: 45px;
+}
+
 .aioseop_label {
     color: #5F5F5F;
     font-weight: bold;
     line-height: 19px;
-    padding-left: 10px; /*changed from 20px to 10px for certain language support*/
     display: inline-block;
     text-align: left;
     position: absolute;
@@ -152,7 +148,7 @@ div.aioseop_tip_icon:before {
 
 .aioseop_option_div {
     max-height: 360px;
-    min-height: 43px;
+    min-height: 37px;
     width: 95%;
     overflow-y: auto;
 }
@@ -163,6 +159,7 @@ div.aioseop_tip_icon:before {
 
 .aioseop input[type="text"] {
     color: #515151;
+	height: 35px;
     padding: 10px 0 10px 10px;
     font-size: 14px;
     width: 95%;
@@ -182,7 +179,7 @@ div.aioseop_tip_icon:before {
 .aioseop_help_text_div {
     text-align: left;
     width: 100%;
-    margin: 10px 0 10px 0;
+    margin: 0;
 }
 
 .aioseop_help_text {
@@ -288,9 +285,6 @@ div.aioseop_tip_icon:before {
 .aioseop_content {
     min-width: 760px;
     clear: left;
-}
-
-.aioseop_options_wrapper {
 }
 
 .aioseop_options_wrapper .hndle {
@@ -816,51 +810,6 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
     /*	max-width: 900px; */
 }
 
-#aiosp div.preview_snippet {
-    border: 1px solid #ebebeb;
-    padding: 15px 15px 20px 7px;
-    background-color: #fff;
-}
-
-div#aioseop_snippet {
-    font-family: arial, sans-serif;
-    font-size: 13px;
-}
-
-div#aioseop_snippet > h3 {
-    font-size: 16px;
-    padding: 8px 0;
-    border: 0;
-    background: inherit;
-}
-
-div#aioseop_snippet > h3 > a {
-    color: #12c;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-div#aioseop_snippet > div {
-    color: #222;
-    max-width: 42em;
-}
-
-div#aioseop_snippet > div > div {
-    display: block;
-    margin-bottom: 1px;
-}
-
-div#aioseop_snippet > div > div > cite {
-    color: #093;
-    font-style: normal;
-}
-
-div#aioseop_snippet > div > span {
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
-
 #aiosp_sitemap_addl_pages,
 #aiosp_video_sitemap_addl_pages {
     clear: left;
@@ -1041,7 +990,6 @@ table.aioseop_table td, table.aioseop_table th {
 
 #aioseop_opengraph_settings .inside {
     margin: 0;
-    padding: 0;
 }
 
 #aioseop_opengraph_settings_image_wrapper img {
@@ -1066,7 +1014,7 @@ table.aioseop_table td, table.aioseop_table th {
 }
 
 #aiosp {
-    width: 100%;
+    width: auto;
 }
 
 .aioseop_input.aioseop_top_label .aioseop_option_input {
@@ -1204,35 +1152,19 @@ div.aioseop_notice a.aioseop_dismiss_link {
 }
 
 .aioseop_header_tabs li a.aioseop_header_tab {
-    height: 18px;
-    font: 13px/18px Arial,
-    Helvetica,
-    sans-serif normal;
+    font-size: 14px;
+	line-height: 37px;
     text-decoration: none;
     margin: 5px 5px 0 0;
-    padding: 4px 5px 2px;
+    padding: 10px;
     cursor: pointer;
     -webkit-border-top-right-radius: 3px;
     -webkit-border-top-left-radius: 3px;
     border-top-right-radius: 3px;
     border-top-left-radius: 3px;
-    background-color: rgb(255, 255, 255);
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: #e5e5e5;
     border: 1px solid #ccc;
     color: #5F5F5F;
-}
-
-/* Fix for Chrome */
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-
-    .aioseop_header_tabs li a.aioseop_header_tab {
-		padding-bottom: 0;
-    }
-}
-
-/* Fix for Safari */
-_:-webkit-full-screen:not(:root:root), .aioseop_header_tabs li a.aioseop_header_tab {
-	padding-bottom: 2px;
 }
 
 .aioseop_header_tabs li:first-child a.aioseop_header_tab {
@@ -1244,7 +1176,7 @@ _:-webkit-full-screen:not(:root:root), .aioseop_header_tabs li a.aioseop_header_
     border: solid 1px #CCC;
     background-color: rgb(255, 255, 255);
     background-color: rgba(255, 255, 255, 0.5);
-    padding-left: 5px;
+    padding: 10px;
 }
 
 .aioseop_loading {
@@ -1339,4 +1271,135 @@ div.sfwd_debug_error {
 .MRL {
     margin-left: 20px !important;
     margin-bottom: 10px !important;
+}
+
+/**
+* Edit Post screen specific styling 
+*
+*/
+.postbox-container .aioseop_option_div {
+	width: 100%;
+}
+
+.postbox-container .aioseop_option_div input[type="text"],
+.postbox-container .aioseop_option_div textarea {
+	width: 99%;
+	max-width: 900px;
+}
+
+.postbox-container .aioseop_option_label {
+	max-width: none;
+	height: auto !important;
+}
+
+.postbox-container .aioseop_wrapper {
+	padding: 0;
+}
+
+.postbox-container .aioseop_input {
+	display: block;
+	margin-bottom: 10px;
+	padding: 0;
+}
+
+.postbox-container .aioseop_option_input {
+	width: 63%;
+	padding: 0;
+}
+
+.postbox-container div#aiosp_upgrade_wrapper {
+    float: none;
+    width: auto;
+    margin: 0;
+	padding: 0;
+}
+
+.postbox-container div#aiosp_upgrade_wrapper .aioseop_input {
+	display: block;
+	padding: 0;
+}
+
+.postbox-container div#aiosp_upgrade_wrapper .aioseop_input .aioseop_option_input {
+	float: none;
+	width: auto;
+	padding: 0;
+}
+
+.postbox-container div#aiosp_upgrade_wrapper .aioseop_input .aioseop_option_input .aioseop_option_div {
+	width: auto;
+	min-height: 0;
+	padding: 10px 0;
+}
+
+.aioseop_tabs .aioseop_options {
+	margin: 0;
+}
+
+#aioseop_opengraph_settings .aioseop_options {
+	clear: both;
+	margin-top: 35px;
+}
+
+#aioseop_opengraph_settings .aioseop_option_input {
+	width: 70%;
+}
+
+/**
+* Preview Snippet styling
+*
+*/
+div#aiosp_snippet_wrapper {
+    border: 1px solid #888;
+    clear: both;
+    padding: 10px 10px 0;
+    max-width: 97%;
+    margin-bottom: 15px;
+}
+
+div#aiosp_snippet_wrapper .aioseop_option_label {
+	height: auto !important;
+}
+
+div#aiosp_snippet_wrapper .aioseop_input.aioseop_top_label .aioseop_option_input {
+	margin: 0;
+}
+
+div#aioseop_snippet {
+    font-family: arial, sans-serif;
+    font-size: 13px;
+}
+
+div#aioseop_snippet > h3 {
+	margin: 10px 0 5px;
+    font-size: 18px;
+    border: 0;
+    background: inherit;
+	font-weight: normal;
+}
+
+div#aioseop_snippet > h3 > a {
+    color: #12c;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+div#aioseop_snippet > div {
+    color: #545454;
+    max-width: 48em;
+}
+
+div#aioseop_snippet > div > div {
+    display: block;
+    margin-bottom: 1px;
+}
+
+div#aioseop_snippet > div > div > cite {
+    color: #093;
+    font-style: normal;
+}
+
+div#aioseop_snippet > div > span {
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
