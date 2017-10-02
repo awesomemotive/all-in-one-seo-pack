@@ -323,8 +323,55 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			add_action( 'init', array( $this, 'make_dynamic_xsl' ) );
 			add_action( 'transition_post_status', array( $this, 'update_sitemap_from_posts' ), 10, 3 );
 			add_action( 'after_doing_aioseop_updates', array( $this, 'scan_sitemaps' ) );
+			add_action( 'all_admin_notices', array( $this, 'sitemap_notices' ) );
 		}
 
+		/**
+		 * Sitemap notices.
+		 *
+		 * @since 2.4.1
+		 */
+		function sitemap_notices() {
+
+			$sitemap_max_url_notice_dismissed = get_user_meta( get_current_user_id(), 'aioseop_sitemap_max_url_notice_dismissed', true );
+			if ( ! empty( $sitemap_max_url_notice_dismissed ) ) {
+				return;
+			}
+
+			global $options;
+			$options = $this->options;
+
+			if ( ( 'on ' !== $options["{$this->prefix}indexes"] ||
+			       'on ' !== $options["{$this->prefix}paginate"] ) &&
+			     1001 < $options["{$this->prefix}max_posts"]
+			) {
+
+				$post_counts = $this->get_total_post_count( array(
+					'post_type'   => $options["{$this->prefix}posttypes"],
+					'post_status' => 'publish',
+				) );
+
+				$num_terms = array_sum( $this->get_all_term_counts( array( 'taxonomy' => $options["{$this->prefix}taxonomies"] ) ) );
+
+				$sitemap_urls = $post_counts + $num_terms;
+
+				if ( 1001 > $sitemap_urls ) {
+					return;
+				}
+
+				$aioseop_plugin_dirname = AIOSEOP_PLUGIN_DIRNAME;
+
+				printf( '
+			<div id="message" class="notice-warning notice is-dismissible aioseop-notice sitemap_max_urls_notice visibility-notice">
+				<p>
+					<strong>%1$s</strong><br />
+					%2$s
+				</p>
+			</div>',
+					__( 'Warning: Your website has a lot of URLs.', 'all-in-one-seo-pack' ),
+					sprintf( __( '%s Click here%s to enable Sitemap Indexes and then enable Paginate Sitemap Indexes, and set the Maximum Posts per Sitemap to 1000.', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( get_admin_url( null, "admin.php?page=$aioseop_plugin_dirname/modules/aioseop_sitemap.php" ) ) ), '</a>' ) );
+			}
+		}
 
 		/**
 		 * Update sitemap from posts.
@@ -2636,7 +2683,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			return $prio;
 		}
-		
+
 		/**
 		 * Return the images attached to the term.
 		 *
@@ -2647,11 +2694,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array
 		 */
 		private function get_images_from_term( $term ) {
-			
+
 			if ( false === apply_filters( 'aioseo_include_images_in_sitemap', true ) ) {
 				return array();
 			}
-			
+
 			$images       = array();
 			$thumbnail_id = get_term_meta( $term->term_id, 'thumbnail_id', true );
 			if ( $thumbnail_id ) {
