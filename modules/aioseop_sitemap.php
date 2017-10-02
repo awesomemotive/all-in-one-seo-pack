@@ -368,8 +368,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					%2$s
 				</p>
 			</div>',
-					__( 'Warning: Your website has a lot of URLs.', 'all-in-one-seo-pack' ),
-					sprintf( __( '%s Click here%s to enable Sitemap Indexes and then enable Paginate Sitemap Indexes, and set the Maximum Posts per Sitemap to 1000.', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( get_admin_url( null, "admin.php?page=$aioseop_plugin_dirname/modules/aioseop_sitemap.php" ) ) ), '</a>' ) );
+					__( 'Notice: To avoid problems with your XML Sitemap, we strongly recommend you enable Sitemap Indexes and set the Maximum Posts per Sitemap Page to 1000.', 'all-in-one-seo-pack' ),
+					sprintf( __( '%s Click here%s to make these recommended changes.', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( get_admin_url( null, "admin.php?page=$aioseop_plugin_dirname/modules/aioseop_sitemap.php" ) ) ), '</a>' ) );
 			}
 		}
 
