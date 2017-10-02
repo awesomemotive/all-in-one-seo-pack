@@ -120,7 +120,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					'condshow' => array( "{$this->prefix}indexes" => 'on' ),
 				),
 				'max_posts'  => array(
-					'name'     => __( 'Maximum Posts Per Sitemap', 'all-in-one-seo-pack' ),
+					'name'     => __( 'Maximum Posts Per Sitemap Page', 'all-in-one-seo-pack' ),
 					'type'     => 'text',
 					'default'  => 50000,
 					'condshow' => array( "{$this->prefix}indexes" => 'on', "{$this->prefix}paginate" => 'on' ),
