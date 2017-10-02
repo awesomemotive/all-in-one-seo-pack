@@ -20,7 +20,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		var $comment_string;
 		var $start_memory_usage = 0;
 		var $max_posts = 50000;
-		var $paginate = false;
 		var $prio;
 		var $prio_sel;
 		var $freq;
@@ -58,7 +57,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'filename'        => __( "Specifies the name of your sitemap file. This will default to 'sitemap'.", 'all-in-one-seo-pack' ),
 				'daily_cron'      => __( 'Notify search engines based on the selected schedule, and also update static sitemap daily if in use. (this uses WP-Cron, so make sure this is working properly on your server as well)', 'all-in-one-seo-pack' ),
 				'indexes'         => __( 'Organize sitemap entries into distinct files in your sitemap. Enable this only if your sitemap contains over 50,000 URLs or the file is over 5MB in size.', 'all-in-one-seo-pack' ),
-				'paginate'        => __( 'Split long sitemaps into separate files.', 'all-in-one-seo-pack' ),
 				'max_posts'       => __( 'Allows you to specify the maximum number of posts in a sitemap (up to 50,000).', 'all-in-one-seo-pack' ),
 				'posttypes'       => __( 'Select which Post Types appear in your sitemap.', 'all-in-one-seo-pack' ),
 				'taxonomies'      => __( 'Select which taxonomy archives appear in your sitemap', 'all-in-one-seo-pack' ),
@@ -79,7 +77,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'filename'        => '#filename-prefix',
 				'daily_cron'      => '#schedule-updates',
 				'indexes'         => '#enable-sitemap-indexes',
-				'paginate'        => '#enable-sitemap-indexes',
 				'max_posts'       => '#enable-sitemap-indexes',
 				'posttypes'       => '#post-types-and-taxonomies',
 				'taxonomies'      => '#post-types-and-taxonomies',
@@ -115,15 +112,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					'default'         => 0,
 				),
 				'indexes'    => array( 'name' => __( 'Enable Sitemap Indexes', 'all-in-one-seo-pack' ) ),
-				'paginate'   => array(
-					'name'     => __( 'Paginate Sitemap Indexes', 'all-in-one-seo-pack' ),
-					'condshow' => array( "{$this->prefix}indexes" => 'on' ),
-				),
 				'max_posts'  => array(
 					'name'     => __( 'Maximum Posts Per Sitemap', 'all-in-one-seo-pack' ),
 					'type'     => 'text',
 					'default'  => 50000,
-					'condshow' => array( "{$this->prefix}indexes" => 'on', "{$this->prefix}paginate" => 'on' ),
+					'condshow' => array( "{$this->prefix}indexes" => 'on', "{$this->prefix}indexes" => 'on' ),
 				),
 				'posttypes'  => array(
 					'name'    => __( 'Post Types', 'all-in-one-seo-pack' ),
@@ -341,10 +334,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			global $options;
 			$options = $this->options;
 
-			if ( ( 'on ' !== $options["{$this->prefix}indexes"] ||
-			       'on ' !== $options["{$this->prefix}paginate"] ) &&
-			     1001 < $options["{$this->prefix}max_posts"]
-			) {
+			if ( isset( $options["{$this->prefix}indexes"] ) && 'on ' !== $options["{$this->prefix}indexes"] &&
+			     1001 < $options["{$this->prefix}max_posts"] ) {
 
 				$post_counts = $this->get_total_post_count( array(
 					'post_type'   => $options["{$this->prefix}posttypes"],
@@ -457,8 +448,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		function load_sitemap_options() {
 			// Load initial options / set defaults.
 			$this->update_options();
-			if ( ! empty( $this->options["{$this->prefix}indexes"] ) && ! empty( $this->options["{$this->prefix}paginate"] ) ) {
-				$this->paginate = true;
+			if ( ! empty( $this->options["{$this->prefix}indexes"] ) ) {
 				if ( $this->options["{$this->prefix}max_posts"] && ( $this->options["{$this->prefix}max_posts"] > 0 ) && ( $this->options["{$this->prefix}max_posts"] < 50000 ) ) {
 					$this->max_posts = $this->options["{$this->prefix}max_posts"];
 				}
@@ -1180,7 +1170,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		function query_var_hook( $vars ) {
 			$vars[] = "{$this->prefix}path";
-			if ( $this->paginate ) {
+			if ( ! empty( $this->options["{$this->prefix}indexes"] ) ) {
 				$vars[] = "{$this->prefix}page";
 			}
 
@@ -1407,15 +1397,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @param string $message
 		 */
 		function do_sitemaps( $message = '' ) {
-			if ( ! empty( $this->options["{$this->prefix}indexes"] ) && ! empty( $this->options["{$this->prefix}paginate"] ) ) {
-				$this->paginate = true;
+			if ( ! empty( $this->options["{$this->prefix}indexes"] ) ) {
 				if ( $this->options["{$this->prefix}max_posts"] && ( $this->options["{$this->prefix}max_posts"] > 0 ) && ( $this->options["{$this->prefix}max_posts"] < 50000 ) ) {
 					$this->max_posts = $this->options["{$this->prefix}max_posts"];
 				} else {
 					$this->max_posts = 50000;
 				}
 			} else {
-				$this->paginate  = false;
 				$this->max_posts = 50000;
 			}
 			if ( ! $this->options["{$this->prefix}rewrite"] ) {
@@ -1629,7 +1617,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					if ( 0 == $post_counts[ $sm ] ) {
 						continue;
 					}
-					if ( $this->paginate ) {
+					if ( ! empty( $this->options["{$this->prefix}indexes"] ) ) {
 						if ( $post_counts[ $sm ] > $this->max_posts ) {
 							$count = 1;
 							for ( $post_count = 0; $post_count < $post_counts[ $sm ]; $post_count += $this->max_posts ) {
@@ -1674,7 +1662,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				foreach ( $options["{$this->prefix}taxonomies"] as $sm ) {
 					$term_count = wp_count_terms( $sm, array( 'hide_empty' => true ) );
 					if ( ! is_wp_error( $term_count ) && ( $term_count > 0 ) ) {
-						if ( $this->paginate ) {
+						if ( ! empty( $this->options["{$this->prefix}indexes"] ) ) {
 							if ( $term_count > $this->max_posts ) {
 								$count = 1;
 								for ( $tc = 0; $tc < $term_count; $tc += $this->max_posts ) {
@@ -1800,7 +1788,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					if ( 0 === $post_counts[ $posttype ] ) {
 						continue;
 					}
-					if ( $this->paginate && ( $post_counts[ $posttype ] > $this->max_posts ) ) {
+					if ( ! empty( $this->options["{$this->prefix}indexes"] ) && ( $post_counts[ $posttype ] > $this->max_posts ) ) {
 						$count = 1;
 						for ( $post_count = 0; $post_count < $post_counts[ $posttype ]; $post_count += $this->max_posts ) {
 							$this->do_write_sitemap( $posttype, $count - 1, $options["{$this->prefix}filename"] . "_{$posttype}_{$count}" );
@@ -1816,7 +1804,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				foreach ( $options["{$this->prefix}taxonomies"] as $taxonomy ) {
 					$term_count = wp_count_terms( $taxonomy, array( 'hide_empty' => true ) );
 					if ( ! is_wp_error( $term_count ) && ( $term_count > 0 ) ) {
-						if ( $this->paginate ) {
+						if ( ! empty( $this->options["{$this->prefix}indexes"] ) ) {
 							if ( $term_count > $this->max_posts ) {
 								$count = 1;
 								for ( $tc = 0; $tc < $term_count; $tc += $this->max_posts ) {
@@ -1887,7 +1875,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'image:image' => $this->get_images_from_post( (int) get_option( 'page_on_front' ) ),
 			);
 
-			$this->paginate = false;
 			if ( $posts ) {
 				$posts = $this->get_permalink( $posts );
 				if ( $posts == $home['loc'] ) {
@@ -2885,7 +2872,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( $this->option_isset( 'excl_categories' ) ) {
 				$args['exclude'] = $this->options[ $this->prefix . 'excl_categories' ];
 			}
-			if ( $this->paginate ) {
+			if ( ! empty( $this->options["{$this->prefix}indexes"] ) ) {
 				$args['number'] = $this->max_posts;
 				$args['offset'] = $page * $this->max_posts;
 
@@ -2953,7 +2940,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		function get_all_post_priority_data( $include = 'any', $status = 'publish', $page = 0 ) {
 			$posts = $page_query = array();
-			if ( $this->paginate ) {
+			if ( ! empty( $this->options["{$this->prefix}indexes"] ) ) {
 				$page_query = array( 'offset' => $page * $this->max_posts );
 			}
 			if ( ( 'publish' === $status ) && ( 'attachment' === $include ) ) {
