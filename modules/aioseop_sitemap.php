@@ -2737,7 +2737,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$attributes = wp_get_attachment_image_src( $post->ID );
 				if ( $attributes ) {
 					$images[] = array(
-						'image:loc' => $attributes[0],
+						'image:loc' => $this->clean_url( $attributes[0] ),
 					);
 				}
 
@@ -2779,7 +2779,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 			}
 
-      			$this->parse_content_for_images( $content, $images );
+			$this->parse_content_for_images( $content, $images );
 
 			if ( $images ) {
 				$tmp = $images;
@@ -2792,7 +2792,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$images = array();
 				foreach ( $tmp as $image ) {
 					$images[] = array(
-						'image:loc' => $image,
+						'image:loc' => $this->clean_url( $image ),
 					);
 				}
 			}
@@ -2800,6 +2800,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			return $images;
 		}
 
+		/**
+		 * Cleans the URL so that its acceptable in the sitemap.
+		 *
+		 * @param string $url The image url.
+		 *
+		 * @since 2.4.1
+		 *
+		 * @return string
+		 */
+		function clean_url( $url ) {
+			// remove the query string.
+			$url    = strtok( $url, '?' );
+			return apply_filters( 'aioseop_clean_url', $url );
+		}
 
 		/**
 		 * Validate the image.
