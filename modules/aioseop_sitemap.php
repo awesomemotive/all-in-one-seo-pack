@@ -331,7 +331,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return;
 			}
 
-			global $options;
 			$options = $this->options;
 
 			if ( isset( $options["{$this->prefix}indexes"] ) && 'on ' !== $options["{$this->prefix}indexes"] &&
