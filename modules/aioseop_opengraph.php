@@ -442,7 +442,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
                     'name'          => __( 'Facebook Object Type', 'all-in-one-seo-pack' ),
                     'type'          => 'select',
                     'style'         => '',
-                    'default'       => '',
+                    'default'       => 'article',
                     'initial_options' => $this->fb_object_types,
                 ),
                 'facebook_debug' => array(
