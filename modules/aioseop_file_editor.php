@@ -25,10 +25,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_File_Editor' ) ) {
 				$this->current_tab = $_REQUEST['tab'];
 			}
 
-			$help_text             = array(
-				'robotfile' => __( 'Robots.txt editor', 'all-in-one-seo-pack' ),
-				'htaccfile' => __( '.htaccess editor', 'all-in-one-seo-pack' ),
-			);
 			$this->default_options = array(
 				'robotfile' => array(
 					'name'    => __( 'Edit Robots.txt', 'all-in-one-seo-pack' ),
@@ -50,11 +46,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_File_Editor' ) ) {
 				),
 			);
 
-			if ( ! empty( $help_text ) ) {
-				foreach ( $help_text as $k => $v ) {
-					$this->default_options[ $k ]['help_text'] = $v;
-				}
-			}
 			$this->tabs = array(
 				'robots'   => array( 'name' => __( 'robots.txt' ) ),
 				'htaccess' => array( 'name' => __( '.htaccess' ) ),

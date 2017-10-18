@@ -19,8 +19,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		protected $options;
 		protected $option_name;
 		protected $default_options;
-		protected $help_text = array();
-		protected $help_anchors = array();
 		protected $locations = null;    // organize settings into settings pages with a menu items and/or metaboxes on post types edit screen; optional
 		protected $layout = null;        // organize settings on a settings page into multiple, separate metaboxes; optional
 		protected $tabs = null;            // organize layouts on a settings page into multiple, separate tabs; optional
@@ -1660,36 +1658,31 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
+		 * Help Text from Helper
+		 *
+		 * @since ?
+		 * @since 2.4.2 Added Helper Class for jQuery UI Tooltips.
+		 *
+		 * @uses AIOSEOP_Helper Class.
+		 *
 		 * @param        $default_options
-		 * @param        $options
-		 * @param string $help_link
+		 * @param        $options         Module/Class options.
+		 * @param string $help_link       Link to URL documentation.
 		 */
 		function help_text_helper( &$default_options, $options, $help_link = '' ) {
 			foreach ( $options as $o ) {
+				require_once( AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-helper.php' );
+				$helper = new AIOSEOP_Helper( get_class( $this ) );
 				$ht = '';
-				if ( ! empty( $this->help_text[ $o ] ) ) {
-					$ht = $this->help_text[ $o ];
+
+				$help_text = $helper->get_help_text( $this->prefix . $o );
+
+				if ( ! empty( $help_text ) ) {
+					$ht = $help_text;
 				} elseif ( ! empty( $default_options[ $o ]['help_text'] ) ) {
 					$ht = $default_options[ $o ]['help_text'];
 				}
 				if ( $ht && ! is_array( $ht ) ) {
-					$ha = '';
-					$hl = $help_link;
-					if ( strpos( $o, 'ga_' ) === 0 ) { // special case -- pdb
-						$hl = 'https://semperplugins.com/documentation/advanced-google-analytics-settings/';
-					}
-					if ( ! empty( $this->help_anchors[ $o ] ) ) {
-						$ha = $this->help_anchors[ $o ];
-					}
-					if ( ! empty( $ha ) && ( $pos = strrpos( $hl, '#' ) ) ) {
-						$hl = substr( $hl, 0, $pos );
-					}
-					if ( ! empty( $ha ) && ( $ha[0] == 'h' ) ) {
-						$hl = '';
-					}
-					if ( ! empty( $ha ) || ! isset( $this->help_anchors[ $o ] ) ) {
-						$ht .= "<br /><a href='" . $hl . $ha . "' target='_blank'>" . __( 'Click here for documentation on this setting', 'all-in-one-seo-pack' ) . '</a>';
-					}
 					$default_options[ $o ]['help_text'] = $ht;
 				}
 			}
@@ -1769,6 +1762,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 
 		/**
 		 * Load styles for module.
+		 *
+		 * @uses wp_scripts() Gets the Instance of WP Scripts.
+		 * @link https://developer.wordpress.org/reference/functions/wp_scripts/
+		 *
+		 * @since ?
+		 * @since 2.4.2 Added jQuery UI CSS missing from WP.
 		 */
 		function enqueue_styles() {
 			wp_enqueue_style( 'thickbox' );
@@ -1779,11 +1778,23 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			if ( function_exists( 'is_rtl' ) && is_rtl() ) {
 				wp_enqueue_style( 'aioseop-module-style-rtl', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module-rtl.css', array( 'aioseop-module-style' ), AIOSEOP_VERSION );
 			}
+
+			// Uses WP Scripts to load the current platform version of jQuery UI CSS .
+			$wp_scripts = wp_scripts();
+			wp_enqueue_style(
+				'aioseop-jquery-ui-css',
+				'https://ajax.googleapis.com/ajax/libs/jqueryui/' . $wp_scripts->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css',
+				false,
+				AIOSEOP_VERSION,
+				false
+			);
 		}
 
 		/**
 		 * Load scripts for module, can pass data to module script.
+		 *
 		 * @since 2.3.12.3 Add missing wp_enqueue_media.
+		 * @since 2.4.2 Add enqueue footer JS for jQuery UI Compatability.
 		 */
 		function enqueue_scripts() {
 			wp_enqueue_script( 'sack' );
@@ -1802,7 +1813,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			}else{
 				wp_enqueue_media();
             }
+			$footer_dep = array(
+				'jquery',
+				'jquery-ui-core',
+				'jquery-ui-widget',
+				'jquery-ui-position',
+				'jquery-ui-tooltip',
+			);
 			wp_enqueue_script( 'aioseop-module-script', AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_module.js', array(), AIOSEOP_VERSION );
+			wp_enqueue_script( 'aioseop-module-script-footer', AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_module_footer.js', $footer_dep, AIOSEOP_VERSION, true );
 			if ( ! empty( $this->script_data ) ) {
 				aioseop_localize_script_data();
 			}
@@ -2274,14 +2293,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			return $buf;
 		}
 
-		const DISPLAY_HELP_START = '<a class="aioseop_help_text_link" style="cursor:pointer;" title="%s" onclick="toggleVisibility(\'%s_tip\');"><label class="aioseop_label textinput">%s</label></a>';
-		const DISPLAY_HELP_END = '<div class="aioseop_help_text_div" style="display:none" id="%s_tip"><label class="aioseop_help_text">%s</label></div>';
-		const DISPLAY_LABEL_FORMAT = '<span class="aioseop_option_label" style="text-align:%s;vertical-align:top;">%s</span>';
-		const DISPLAY_TOP_LABEL = "</div>\n<div class='aioseop_input aioseop_top_label'>\n";
-		const DISPLAY_ROW_TEMPLATE = '<div class="aioseop_wrapper%s" id="%s_wrapper"><div class="aioseop_input">%s<span class="aioseop_option_input"><div class="aioseop_option_div" %s>%s</div>%s</span><p style="clear:left"></p></div></div>';
-
 		/**
 		 * Format a row for an option on a settings page.
+		 *
+		 * @since ?
+		 * @since 2.4.2 Added Helper Class for jQuery Tooltips.
 		 *
 		 * @param $name
 		 * @param $opts
@@ -2292,6 +2308,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		function get_option_row( $name, $opts, $args ) {
 			$label_text = $input_attr = $help_text_2 = $id_attr = '';
 
+			require_once( AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-helper.php' );
+			$info = new AIOSEOP_Helper( get_class( $this ) );
+
 			$align = 'right';
 			if ( $opts['label'] == 'top' ) {
 				$align = 'left';
@@ -2300,22 +2319,26 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				$id_attr .= " id=\"{$opts['id']}_div\" ";
 			}
 			if ( $opts['label'] != 'none' ) {
-				if ( isset( $opts['help_text'] ) ) {
-					$help_text   = sprintf( All_in_One_SEO_Pack_Module::DISPLAY_HELP_START, __( 'Click for Help!', 'all-in-one-seo-pack' ), $name, $opts['name'] );
-					$help_text_2 = sprintf( All_in_One_SEO_Pack_Module::DISPLAY_HELP_END, $name, $opts['help_text'] );
+				$tmp_help_text = $info->get_help_text( $name );
+				if ( isset( $tmp_help_text ) && ! empty( $tmp_help_text ) ) {
+					$display_help = '<a class="aioseop_help_text_link" style="cursor:pointer;" title="%s"></a><label class="aioseop_label textinput">%s</label>';
+					$help_text   = sprintf( $display_help, $info->get_help_text( $name ), $opts['name'] );
 				} else {
 					$help_text = $opts['name'];
 				}
-				$label_text = sprintf( All_in_One_SEO_Pack_Module::DISPLAY_LABEL_FORMAT, $align, $help_text );
+				
+				$display_label_format = '<span class="aioseop_option_label" style="text-align:%s;vertical-align:top;">%s</span>';
+				$label_text = sprintf( $display_label_format, $align, $help_text );
 			} else {
 				$input_attr .= ' aioseop_no_label ';
 			}
 			if ( $opts['label'] == 'top' ) {
-				$label_text .= All_in_One_SEO_Pack_Module::DISPLAY_TOP_LABEL;
+				$label_text .= "</div><div class='aioseop_input aioseop_top_label'>";
 			}
 			$input_attr .= " aioseop_{$opts['type']}_type";
 
-			return sprintf( All_in_One_SEO_Pack_Module::DISPLAY_ROW_TEMPLATE, $input_attr, $name, $label_text, $id_attr, $this->get_option_html( $args ), $help_text_2 );
+			$display_row_template = '<div class="aioseop_wrapper%s" id="%s_wrapper"><div class="aioseop_input">%s<span class="aioseop_option_input"><div class="aioseop_option_div" %s>%s</div></span><p style="clear:left"></p></div></div>';
+			return sprintf( $display_row_template, $input_attr, $name, $label_text, $id_attr, $this->get_option_html( $args ) );
 		}
 
 		/**
@@ -2644,9 +2667,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 										$title .= "<a class='aioseop_help_text_link aioseop_meta_box_help' target='_blank' href='" . $lopts['help_link'] . "'><span>" . __( 'Help', 'all-in-one-seo-pack' ) . '</span></a>';
 									}
 									add_meta_box( $this->get_prefix( $location ) . $l . '_metabox', $title, array(
-										$this,
-										'display_options',
-									),
+											$this,
+											'display_options',
+										),
 										"{$this->prefix}settings", 'advanced', 'default', $lopts );
 								}
 							}
