@@ -14,13 +14,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			$this->file   = __FILE__;                                    // the current file
 			parent::__construct();
 
-			$help_text = Array(
-				'additional' => __( 'Rule Type', 'all-in-one-seo-pack' ),
-				'useragent'  => __( 'User Agent', 'all-in-one-seo-pack' ),
-				'path'       => __( 'Directory Path', 'all-in-one-seo-pack' ),
-				'robotgen'   => __( 'Robots.txt editor', 'all-in-one-seo-pack' ),
-			);
-
 			$this->default_options = array(
 				'usage'              => Array(
 					'type'    => 'html',
@@ -98,12 +91,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				),
 			);
 
-			if ( ! empty( $help_text ) ) {
-				foreach ( $help_text as $k => $v ) {
-					$this->default_options[ $k ]['help_text'] = $v;
-				}
-			}
-
 			$this->locations = array(
 				'generator' => Array(
 					'name'    => "Robots.txt",
@@ -170,7 +157,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					if ( isset( $settings[ $prefix . 'robotgen' ] ) ) {
 						$settings[ $prefix . 'robotgen' ]['type']      = 'hidden';
 						$settings[ $prefix . 'robotgen' ]['label']     = 'none';
-						$settings[ $prefix . 'robotgen' ]['help_text'] = '';
 						$settings[ $prefix . 'robothtml' ]             = Array(
 							'name'    => __( 'Robots.txt', 'all-in-one-seo-pack' ),
 							'save'    => false,
