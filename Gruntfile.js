@@ -64,15 +64,6 @@ module.exports = function(grunt) {
             '<%= files_js %>'
         ]
     },
-    jshint: {
-        options: {
-            jshintrc:true,
-            reporterOutput:'logs/jslogs.log'
-        },
-        all: [
-            '<%= files_js %>'
-        ]
-    },
     uglify: {
         dev: {
           files: [{
