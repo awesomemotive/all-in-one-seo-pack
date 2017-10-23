@@ -37,7 +37,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 			$reset_all = ( isset( $_POST['Submit_All_Default'] ) && '' !== $_POST['Submit_All_Default'] );
 			$reset     = ( ( isset( $_POST['Submit_Default'] ) && '' !== $_POST['Submit_Default'] ) || $reset_all );
 			$update    = ( isset( $_POST['action'] ) && $_POST['action']
-			               && ( ( isset( $_POST['Submit'] ) && '' !== $_POST['Submit'] ) || $reset )
+						   && ( ( isset( $_POST['Submit'] ) && '' !== $_POST['Submit'] ) || $reset )
 			);
 			if ( $update ) {
 				if ( $reset ) {
@@ -98,7 +98,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 
 		/**
 		 * @param $mod Module.
-		 * @param null $args
+		 * @param null       $args
 		 *
 		 * @return bool
 		 */
@@ -109,7 +109,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 			// The name of the class - All_in_One_SEO_Pack_$Module.
 			// The global $aioseop_$module.
 			// $this->modules[$module].
-
 			$mod_path = apply_filters( "aioseop_include_$mod", AIOSEOP_PLUGIN_DIR . "modules/aioseop_$mod.php" );
 			if ( ! empty( $mod_path ) ) {
 				require_once( $mod_path );
@@ -121,16 +120,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 			$GLOBALS[ $ref ]       = $module_class;
 			$this->modules[ $mod ] = $module_class;
 			if ( is_user_logged_in() && is_admin_bar_showing() && current_user_can( 'aiosp_manage_seo' ) ) {
-				add_action( 'admin_bar_menu', array(
-					$module_class,
-					'add_admin_bar_submenu',
-				), 1001 + $module_class->menu_order() );
+				add_action(
+					'admin_bar_menu', array(
+						$module_class,
+						'add_admin_bar_submenu',
+					), 1001 + $module_class->menu_order()
+				);
 			}
 			if ( is_admin() ) {
-				add_action( 'aioseop_modules_add_menus', array(
-					$module_class,
-					'add_menu',
-				), $module_class->menu_order() );
+				add_action(
+					'aioseop_modules_add_menus', array(
+						$module_class,
+						'add_menu',
+					), $module_class->menu_order()
+				);
 				add_action( 'aiosoep_options_reset', array( $module_class, 'reset_options' ) );
 				add_filter( 'aioseop_export_settings', array( $module_class, 'settings_export' ) );
 			}
@@ -157,18 +160,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 				return false;
 			}
 			if ( ( 'file_editor' === $mod || 'robots' === $mod )
-			     && ( ( defined( 'DISALLOW_FILE_EDIT' ) && DISALLOW_FILE_EDIT )
-			          || ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS )
-			          || ! is_super_admin() )
+				 && ( ( defined( 'DISALLOW_FILE_EDIT' ) && DISALLOW_FILE_EDIT )
+					  || ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS )
+					  || ! is_super_admin() )
 			) {
 				return false;
 			}
 			$mod_enable = false;
 			$fm_page    = ( $this->module_settings_update && wp_verify_nonce( $_POST['nonce-aioseop'], 'aioseop-nonce' ) &&
-			                isset( $_REQUEST['page'] ) && trailingslashit( AIOSEOP_PLUGIN_DIRNAME ) . 'modules/aioseop_feature_manager.php' === $_REQUEST['page'] );
+							isset( $_REQUEST['page'] ) && trailingslashit( AIOSEOP_PLUGIN_DIRNAME ) . 'modules/aioseop_feature_manager.php' === $_REQUEST['page'] );
 			if ( $fm_page && ! $this->settings_reset ) {
-				if ( isset( $_POST["aiosp_feature_manager_enable_$mod"] ) ) {
-					$mod_enable = $_POST["aiosp_feature_manager_enable_$mod"];
+				if ( isset( $_POST[ "aiosp_feature_manager_enable_$mod" ] ) ) {
+					$mod_enable = $_POST[ "aiosp_feature_manager_enable_$mod" ];
 				} else {
 					$mod_enable = false;
 				}
@@ -186,8 +189,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 						$feature_options = $this->modules['feature_manager']->get_current_options();
 					}
 				}
-				if ( isset( $feature_options["{$feature_prefix}enable_$mod"] ) ) {
-					$mod_enable = $feature_options["{$feature_prefix}enable_$mod"];
+				if ( isset( $feature_options[ "{$feature_prefix}enable_$mod" ] ) ) {
+					$mod_enable = $feature_options[ "{$feature_prefix}enable_$mod" ];
 				}
 			}
 			if ( $mod_enable ) {
