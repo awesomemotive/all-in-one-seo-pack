@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<ruleset name="AIOSEOP">
+    <description>AIOSEOP rules for PHP_CodeSnifferr</description>
+
+    <file>.</file>
+
+    <exclude-pattern>node_modules/*</exclude-pattern>
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>lib/*</exclude-pattern>
+    <rule ref="WordPress-Core">
+        <exclude name="Squiz.Commenting.FileComment.SpacingAfterComment" />
+        <exclude name="Generic.Files.LowercasedFilename" />
+        <exclude name="Generic.NamingConventions.UpperCaseConstantName" />
+        <exclude name="Squiz.Commenting.FunctionComment.MissingParamTag" />
+        <exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
+        <exclude name="Squiz.Commenting.InlineComment.NotCapital" />
+        <exclude name="Squiz.Commenting.FileComment" />
+        <exclude name="WordPress.PHP.YodaConditions.NotYoda" />
+        <exclude name="Squiz.PHP.DisallowMultipleAssignments" />
+        <exclude name="WordPress.NamingConvention.ValidVariableName.StringNotSnakeCase" />
+        <exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCase" />
+        <exclude name="WordPress.PHP.YodaConditions.NotYoda" />
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+        <exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
+    </rule>
+    <rule ref="WordPress-Docs">
+
+    </rule>
+
+    <rule ref="Squiz.Commenting.FunctionComment.ScalarTypeHintMissing">
+        <severity>0</severity>
+    </rule>
+
+</ruleset>
