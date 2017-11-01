@@ -17,12 +17,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			$this->file   = __FILE__;                                    // The current file.
 			parent::__construct();
 
-			$this->help_text = array(
-				'memory_limit'   => __( 'This setting allows you to raise your PHP memory limit to a reasonable value. Note: WordPress core and other WordPress plugins may also change the value of the memory limit.', 'all-in-one-seo-pack' ),
-				'execution_time' => __( 'This setting allows you to raise your PHP execution time to a reasonable value.', 'all-in-one-seo-pack' ),
-				'force_rewrites' => __( 'Use output buffering to ensure that the title gets rewritten. Enable this option if you run into issues with the title tag being set by your theme or another plugin.', 'all-in-one-seo-pack' ),
-			);
-
 			$this->default_options = array(
 				'memory_limit'   => array(
 					'name'            => __( 'Raise memory limit', 'all-in-one-seo-pack' ),
@@ -49,12 +43,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 						0   => __( 'No limit', 'all-in-one-seo-pack' ),
 					),
 				),
-			);
-
-			$this->help_anchors = array(
-				'memory_limit'   => '#raise-memory-limit',
-				'execution_time' => '#raise-execution-time',
-				'force_rewrites' => '#force-rewrites',
 			);
 
 			global $aiosp, $aioseop_options;
@@ -90,8 +78,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			);
 
 			$this->default_options = array_merge( $this->default_options, $system_status );
-
-			$this->add_help_text_links();
 
 			add_filter( $this->prefix . 'display_options', array( $this, 'display_options_filter' ), 10, 2 );
 			add_filter( $this->prefix . 'update_options', array( $this, 'update_options_filter' ), 10, 2 );
