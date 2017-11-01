@@ -786,11 +786,8 @@ class AIOSEOP_Helper {
 	 */
 	public function get_help_text( $slug ) {
 		if ( isset( $this->help_text[ $slug ] ) ) {
-			$rtn_text = esc_html( $this->help_text[ $slug ] );
-		} else {
-			$rtn_text = 'DEV: Missing Help Text: ' . $slug;
+			return esc_html( $this->help_text[ $slug ] );
 		}
-
-		return $rtn_text;
+		return 'DEV: Missing Help Text: ' . $slug;
 	}
 }

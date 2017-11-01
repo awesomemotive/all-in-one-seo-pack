@@ -8,8 +8,6 @@
  */
 
 (function($) {
-	aioseop_tooltips();
-	
 	/**
 	 * jQuery UI Tooltips.
 	 *
@@ -20,17 +18,19 @@
 	 *
 	 * @link http://api.jqueryui.com/tooltip/
 	 */
-	function aioseop_tooltips() {
-		$( '.aioseop_help_text_link' ).tooltip({
-			open: function ( event, ui) {
+	function aioseopTooltips() {
+		$( ".aioseop_help_text_link" ).tooltip({
+			open( event, ui) {
 				ui.tooltip.css("min-width", "170px");
 				ui.tooltip.css("max-width", "256px");
 			},
-			content: function( callback ) {
-				callback( $( this ).prop( 'title' ) );
+			content( callback ) {
+				callback( $( this ).prop( "title" ) );
 			}
 		});
 	}
+
+	aioseopTooltips();
 })(jQuery);
 
 
