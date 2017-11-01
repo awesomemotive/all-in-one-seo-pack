@@ -134,16 +134,16 @@ div.aioseop_tip_icon:before {
 }
 
 .aioseop_label {
-	color: #5F5F5F;
-	font-weight: bold;
-	line-height: 19px;
-	display: inline-block;
-	text-align: left;
-	position: absolute;
-	font-family: 'Open Sans', sans-serif;
-	width: 26%;
-	min-width: 120px;
-	max-width: 230px;
+    color: #5F5F5F;
+    font-weight: bold;
+    line-height: 19px;
+    display: inline-block;
+	float: left;
+    text-align: left;
+    font-family: 'Open Sans', sans-serif;
+    width: 26%;
+    min-width: 120px;
+    max-width: 230px;
 }
 
 .aioseop_option_div {
