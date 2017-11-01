@@ -20,7 +20,7 @@
 	 */
 	function aioseopTooltips() {
 		$( ".aioseop_help_text_link" ).tooltip({
-			open( event, ui) {
+			open( event, ui ) {
 				ui.tooltip.css("min-width", "170px");
 				ui.tooltip.css("max-width", "256px");
 			},
