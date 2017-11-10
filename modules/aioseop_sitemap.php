@@ -2811,6 +2811,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @param string $image The image src.
 		 *
 		 * @since 2.4.1
+		 * @since 2.4.3 Compatibility with Pre v4.7 wp_parse_url().
 		 *
 		 * @return bool
 		 */
@@ -2820,10 +2821,21 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return false;
 			}
 
+			global $wp_version;
+			if ( version_compare( $wp_version, '4.7', '<' ) ) {
+				// Compatability for older WP version that don't have 4.7 changes.
+				// @link https://core.trac.wordpress.org/changeset/38726
+				$p_url = wp_parse_url( $image );
+				$url = $p_url['scheme'] . $p_url['host'] . $p_url['path'];
+			} else {
+				$component = PHP_URL_PATH;
+				$url = wp_parse_url( $image, $component );
+			}
+
 			// make the url absolute, if its relative.
 			$image	    = aiosp_common::absolutize_url( $image );
 
-			$extn       = pathinfo( wp_parse_url( $image, PHP_URL_PATH ), PATHINFO_EXTENSION );
+			$extn       = pathinfo( $url, PATHINFO_EXTENSION );
 			$allowed    = apply_filters( 'aioseop_allowed_image_extensions', self::$image_extensions );
 			// Bail if image does not refer to an image file otherwise google webmaster tools might reject the sitemap.
 			if ( ! in_array( $extn, $allowed, true ) ) {
