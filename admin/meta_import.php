@@ -17,20 +17,7 @@ if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 		 * Show notice the old plugin is installed and offer to import its data.
 		 */
 		public function show_import_settings_notice() {
-
-			$yoasturl = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'wpseo-import' ) ), admin_url( 'admin.php?page=wpseo_tools&tool=import-export&import=1&importaioseo=1#top#import-seo' ) );
-			$aiourl   = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'aiosp-import' ) ), admin_url( 'tools.php?page=aiosp_import' ) );
-
-			$aioseop_yst_detected_notice_dismissed = get_user_meta( get_current_user_id(), 'aioseop_yst_detected_notice_dismissed', true );
-
-			if ( empty( $aioseop_yst_detected_notice_dismissed ) ) {
-
-				echo '<div class="notice notice-warning row-title is-dismissible yst_notice"><p>', sprintf( esc_html__( 'The plugin Yoast SEO has been detected. Do you want to %simport its settings%s into All in One SEO Pack?', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( $aiourl ) ), '</a>' ), '</p></div>';
-
-			}
-
-			echo '<div class="error"><p>', sprintf( esc_html__( 'The plugin All-In-One-SEO has been detected. Do you want to %simport its settings%s?', 'wordpress-seo' ), sprintf( '<a href="%s">', esc_url( $yoasturl ) ), '</a>' ), '</p></div>';
-
+			aioseop_notice_set_yoast_detected();
 		}
 
 		public function show_deactivate_notice() {
@@ -39,7 +26,8 @@ if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 	}
 } else {
 	if(is_admin()) {
-		add_action( 'init', 'mi_aioseop_yst_detected_notice_dismissed' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php' );
+		aioseop_notice_disable_yoast_detected();
 	}
 }
 
