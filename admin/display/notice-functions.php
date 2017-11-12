@@ -67,7 +67,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 		);
 
 		if ( $aioseop_notices->insert_notice( $notice ) ) {
-			aioseop_footer_review();
+			aioseop_footer_set_review();
 		} elseif ( $update ) {
 			$aioseop_notices->update_notice( $notice );
 
