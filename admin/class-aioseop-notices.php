@@ -11,7 +11,7 @@
  * @since 2.4.2
  */
 
-if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
+if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 	/**
 	 * AIOSEOP Notice.
 	 *
@@ -28,7 +28,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 *
 		 * @var array $notices {
 		 *     @type array $slug {
-		 *         @type string $slug        Required and is a unique ID.
+		 *         @type string $slug        Required. Notice unique ID.
 		 *         @type int    $delay_time  Amount of time to begin showing message.
 		 *         @type string $message     Content message to display in the container.
 		 *         @type array  $delay_option {
@@ -41,13 +41,14 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 *                 @type boolean $dismiss Optional. Variable for AJAX to dismiss showing a notice.
 		 *             }
 		 *         }
-		 *         @type int    $time_start  The time the notice was added to the object.
+		 *         @type string $class       The class notice used by WP, or a custom CSS class.
+		 *                                   Ex. notice-error, notice-warning, notice-success, notice-info.
 		 *         @type string $target      Shows based on site-wide or user notice data.
-		 *         @type array  $screens     Which screens to exclusively display the notice on.
-		 *                                   An empty array() = all,
+		 *         @type array  $screens     Which screens to exclusively display the notice on. Default: array().
+		 *                                   array()          = all,
 		 *                                   array('aioseop') = $this->aioseop_screens,
-		 *                                   and array('CUSTOM') = specific screen(s).
-		 *                                   Default: array().
+		 *                                   array('CUSTOM')  = specific screen(s).
+		 *         @type int    $time_start  The time the notice was added to the object.
 		 *     }
 		 * }
 		 */
@@ -133,6 +134,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 * @since 2.4.2
 		 */
 		public function __construct() {
+			$this->_requires();
 			if ( is_admin() ) {
 				if ( ! AIOSEOPPRO ) {
 					$this->obj_load_options();
@@ -141,6 +143,18 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 					add_action( 'current_screen', array( $this, 'admin_screen' ) );
 				}
 			}
+		}
+
+		/**
+		 * _Requires
+		 *
+		 * Additional files required.
+		 *
+		 * @since 2.4.2
+		 */
+		private function _requires() {
+			require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/notice-functions.php' );
+			require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/footer-functions.php' );
 		}
 
 		/**
@@ -249,6 +263,8 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 *
 		 * @since 2.4.2
 		 *
+		 * @see self::notices Array variable that stores the collection of notices.
+		 *
 		 * @return array Notice variable in self::notices.
 		 */
 		public function notice_defaults() {
@@ -257,8 +273,9 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 				'delay_time'    => 0,
 				'message'       => '',
 				'delay_options' => array(),
+				'class'         => 'notice-info',
 				'target'        => 'site',
-				'screen'        => array(),
+				'screens'        => array(),
 				'time_start'    => time(),
 			);
 		}
@@ -349,38 +366,27 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 *
 		 * @uses self::activate_notice() Used to initialize a notice.
 		 *
-		 * @param type $slug          Notice unique slug.
-		 * @param type $delay_time    Time to begin displaying notice site-wide.
-		 * @param type $message       Message, or notice body, to display to user. HTML can be used.
-		 * @param type $delay_options See self::notices for more details. Contains the buttons/options to display to the user.
-		 * @param type $target        Target is either the site as a whole, or based on each user.
-		 * @param type $screens       Which screens to exclusively load the notice on. 'aioseop' = all aioseop screens. Default empty is all screens.
+		 * @param array $notice See self::notices for more info.
 		 * @return boolean True on success.
 		 */
-		public function insert_notice( $slug, $delay_time = 0, $message = '', $delay_options = array(), $target = 'site', $screens = array() ) {
-			if ( empty( $slug ) ) {
+		public function insert_notice( $notice = array() ) {
+			if ( empty( $notice['slug'] ) ) {
 				return false;
-			} elseif ( isset( $this->notices[ $slug ] ) ) {
+			} elseif ( isset( $this->notices[ $notice['slug'] ] ) ) {
 				return false;
 			}
 
-			$notice = array(
-				'slug'          => sanitize_key( $slug ),
-				'delay_time'    => intval( $delay_time ),
-				'message'       => $message,
-				'delay_options' => array(),
-				'target'        => $target,
-				'screens'       => array(),
-			);
+			$notice_default = $this->notice_defaults();
+			$new_notice = wp_parse_args( $notice, $notice_default );
 
-			$notice['delay_options'] = $this->set_delay_options( $delay_options );
-			if ( is_array( $screens ) ) {
-				$notice['screens'] = $screens;
+			$new_notice['delay_options'] = $this->set_delay_options( $new_notice['delay_options'] );
+			if ( is_array( $new_notice['screens'] ) ) {
+				$new_notice['screens'] = $new_notice['screens'];
 			}
 
-			$this->notices[ $slug ] = $notice;
+			$this->notices[ $notice['slug'] ] = $new_notice;
 			$this->obj_update_options();
-			$this->activate_notice( $slug );
+			$this->activate_notice( $notice['slug'] );
 
 			return true;
 		}
@@ -393,36 +399,25 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 *
 		 * @since 2.4.2
 		 *
-		 * @param type $slug          Notice unique slug.
-		 * @param type $delay_time    Time to begin displaying notice site-wide.
-		 * @param type $message       Message, or notice body, to display to user. HTML can be used.
-		 * @param type $delay_options See self::notices for more details. Contains the buttons/options to display to the user.
-		 * @param type $target        Target is either the site as a whole, or based on each user.
-		 * @param type $screens       Which screens to exclusively load the notice on. 'aioseop' = all aioseop screens. Default empty is all screens.
+		 * @param array $notice See self::notices for more info.
 		 * @return boolean True on success.
 		 */
-		public function update_notice( $slug, $delay_time = 0, $message = '', $delay_options = array(), $target = 'site', $screens = array() ) {
-			if ( empty( $slug ) ) {
+		public function update_notice( $notice = array() ) {
+			if ( empty( $notice['slug'] ) ) {
 				return false;
-			} elseif ( ! isset( $this->notices[ $slug ] ) ) {
+			} elseif ( ! isset( $this->notices[ $notice['slug'] ] ) ) {
 				return false;
 			}
 
-			$notice = array(
-				'slug'          => sanitize_key( $slug ),
-				'delay_time'    => intval( $delay_time ),
-				'message'       => $message,
-				'delay_options' => array(),
-				'target'        => $target,
-				'screens'       => array(),
-			);
+			$notice_default = $this->notice_defaults();
+			$new_notice = wp_parse_args( $notice, $notice_default );
 
-			$notice['delay_options'] = $this->set_delay_options( $delay_options );
-			if ( is_array( $screens ) ) {
-				$notice['screens'] = $screens;
+			$new_notice['delay_options'] = $this->set_delay_options( $new_notice['delay_options'] );
+			if ( is_array( $new_notice['screens'] ) ) {
+				$new_notice['screens'] = $new_notice['screens'];
 			}
 
-			$this->notices[ $slug ] = $notice;
+			$this->notices[ $notice['slug'] ] = $new_notice;
 			$this->obj_update_options();
 			// DO NOT use activate. This is intended to update pre-existing data.
 			//$this->activate_notice( $slug );
@@ -509,7 +504,6 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 				'action_options' => array(),
 				'layer_level'    => 10,
 				'screens'        => array(),
-
 				'time_start'     => time(),
 				'active'         => true,
 			);
@@ -522,33 +516,23 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 *
 		 * @since 2.4.2
 		 *
-		 * @param type $slug           Notice unique slug.
-		 * @param type $delay_time     Time to begin displaying notice site-wide.
-		 * @param type $html           HTML to display to user(s).
-		 * @param type $action_options See self::footers for more details. Contains the buttons/options to display to the user.
-		 * @param type $layer_level    Highest level is shown to the user(s).
-		 * @param type $screens        Which screens to exclusively load the notice on. 'aioseop' = all aioseop screens. Default empty is all screens.
+		 * @param array footer See self::footers for more info.
 		 * @return boolean True on success.
 		 */
-		public function insert_footer( $slug, $delay_time = 0, $html, $action_options, $layer_level = 10, $screens = array() ) {
-			if ( empty( $slug ) ) {
+		public function insert_footer( $footer ) {
+			if ( empty( $footer['slug'] ) ) {
 				return false;
-			} elseif ( isset( $this->footers[ $slug ] ) ) {
+			} elseif ( isset( $this->footers[ $footer['slug'] ] ) ) {
 				return false;
 			}
 
-			$new_footer = $this->footer_defaults();
+			$footer_default = $this->footer_defaults();
+			$new_footer = wp_parse_args( $footer, $footer_default );
 
-			$new_footer['slug']        = $slug;
-			$new_footer['delay_time']  = $delay_time;
-			$new_footer['html']        = $html;
-			$new_footer['layer_level'] = $layer_level;
-			$new_footer['screens']     = $screens;
-
-			$tmp_action_options           = $this->set_delay_options( $action_options );
+			$tmp_action_options           = $this->set_delay_options( $footer['action_options'] );
 			$new_footer['action_options'] = $tmp_action_options;
 
-			$this->footers[ $slug ] = $new_footer;
+			$this->footers[ $footer['slug'] ] = $new_footer;
 			$this->obj_update_options();
 
 			return true;
@@ -590,7 +574,8 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 * @see self::admin_screen()
 		 */
 		private function deregister_scripts() {
-			wp_deregister_script( 'aioseop-admin-notices' );
+			wp_deregister_script( 'aioseop-admin-notices-js' );
+			wp_deregister_style( 'aioseop-admin-notices-css' );
 		}
 
 		/**
@@ -604,13 +589,21 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 		 */
 		public function enqueue_scripts( $hook_suffix ) {
 			wp_register_script(
-				'aioseop-admin-notice',
+				'aioseop-admin-notice-js',
 				AIOSEOP_PLUGIN_URL . 'js/admin-notice.js',
 				array(),
 				AIOSEOP_VERSION,
 				true
 			);
-			wp_enqueue_script( 'aioseop-admin-notice' );
+			wp_enqueue_script( 'aioseop-admin-notice-js' );
+			
+			wp_enqueue_style(
+				'aioseop-admin-notice-css',
+				AIOSEOP_PLUGIN_URL . 'css/admin-notice.css',
+				false,
+				AIOSEOP_VERSION,
+				false
+			);
 
 			// JS Localization.
 			$notice_delays = array();
@@ -634,7 +627,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 				'footer_nonce'  => wp_create_nonce( 'aioseop_ajax_footer' ),
 				'footers'       => $footers,
 			);
-			wp_localize_script( 'aioseop-admin-notice', 'aioseop_notice_data', $admin_notice_localize );
+			wp_localize_script( 'aioseop-admin-notice-js', 'aioseop_notice_data', $admin_notice_localize );
 		}
 
 		/**
@@ -719,7 +712,7 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 					if ( ! $user_dismissed ) {
 						$a_notice_time_display = get_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $a_notice_slug, true );
 					} else {
-						$noticed_show = false;
+						$notice_show = false;
 					}
 				}
 				if ( time() > $a_notice_time_display && $notice_show ) {
@@ -816,16 +809,17 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 			if ( isset( $this->notices[ $notice_slug ]['delay_options'][ $delay_index ] ) ) {
 				$delay_options = $this->notices[ $notice_slug ]['delay_options'][ $delay_index ];
 			}
+
 			// User Notices or Sitewide.
 			if ( 'user' === $this->notices[ $notice_slug ]['target'] ) {
+				// Always sets the delay time, even if dismissed, so last timestamp is recorded.
 				$current_user_id = get_current_user_id();
 				if ( $delay_options['time'] ) {
 					$metadata = time() + $delay_options['time'];
-					add_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $notice_slug, $metadata );
+					update_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $notice_slug, $metadata );
 				}
 				if ( $delay_options['dismiss'] ) {
-
-					add_user_meta( $current_user_id, 'aioseop_notice_dismissed_' . $notice_slug, $delay_options['dismiss'] );
+					$success = update_user_meta( $current_user_id, 'aioseop_notice_dismissed_' . $notice_slug, $delay_options['dismiss'] );
 				}
 			} else {
 				if ( $delay_options['time'] ) {
@@ -897,121 +891,4 @@ if ( ! class_exists( 'AIOSEOP_Notice' ) ) {
 	// Should this be a singleton class instead of a global?
 	global $aioseop_notices;
 	$aioseop_notices = new AIOSEOP_Notices();
-
-	/***************************************************************************
-	 *** NON-CLASS FUNCTIONS ***************************************************
-	 ***************************************************************************/
-
-	/**
-	 * First concept. Primarily for Dev Purposes.
-	 *
-	 * @global AIOSEOP_Notices $aioseop_notices
-	 */
-	function aioseop_activation_review_plugin_set_notice() {
-		global $aioseop_notices;
-
-		$slug            = 'activation_review_plugin';
-		$delay_time      = 0;//864000;// 10 days. // CHANGE AFTER DEV TESTS.
-		$message         = __( 'Looks like you\'ve been using All in One SEO Plugin for awhile now, and that\'s awesome! We are an open source community built from other\'s contributions. By helping us with a 5-star review, it also helps us to reach out to more people.', 'all-in-one-seo-pack' );
-		$delay_options   = array();
-		$delay_options[] = array(
-			'time'    => 15,
-			'text'    => __( 'Yes, absolutely!', 'all-in-one-seo-pack' ),
-			'link'    => 'https://wordpress.org/support/plugin/all-in-one-seo-pack/reviews?rate=5#new-post',
-			'dismiss' => false,
-			'class'   => '',
-		);
-		$delay_options[] = array(
-			'text'    => 'Remind me in an Hour',
-			'time'    => 3600,
-			'dismiss' => false,
-			'class'   => '',
-		);
-		$delay_options[] = array(
-			'text'    => 'Maybe, give me a Week.',
-			'time'    => 432000,// 5 days.
-			'dismiss' => false,
-			'class'   => '',
-		);
-		$delay_options[] = array(
-			'time'    => 0,
-			'text'    => 'Already Rated. Thank You!',
-			'dismiss' => true,
-			'class'   => '',
-		);
-		$target          = 'user';
-		$screen          = array();
-
-		// Methods of adding Notices.
-		$update = true;
-		$reset  = true;
-		if ( $aioseop_notices->insert_notice( $slug, $delay_time, $message, $delay_options, $target, $screen ) ) {
-			aioseop_footer_review();
-		} elseif ( $update ) {
-			$aioseop_notices->update_notice( $slug, $delay_time, $message, $delay_options, $target, $screen );
-
-			if ( $reset ) {
-				$aioseop_notices->activate_notice( $slug );
-				aioseop_footer_review_remove();
-				aioseop_footer_review();
-			}
-		}
-	}
-
-	/**
-	 * Remove Footer Review Notice
-	 *
-	 * Concept for removing review footer.
-	 *
-	 * @see aioseop_activation_review_plugin_set_notice()
-	 *
-	 * @global AIOSEOP_Notices $aioseop_notices
-	 */
-	function aioseop_footer_review_remove() {
-		global $aioseop_notices;
-		$slug = 'activation_review';
-		$aioseop_notices->remove_footer( $slug );
-	}
-
-	/**
-	 * Footer Review Notices
-	 *
-	 * Concept for footer.
-	 *
-	 * @see aioseop_activation_review_plugin_set_notice()
-	 *
-	 * @global AIOSEOP_Notices $aioseop_notices
-	 */
-	function aioseop_footer_review() {
-		global $aioseop_notices;
-
-		$slug             = 'activation_review';
-		$delay_time       = 0;
-		$html             = __( 'Thank you for using All in One SEO Plugin for WordPress. If you enjoy your experience, feel free to give us a %1$s rating. %2$s / %3$s', 'all-in-one-seo-pack' );
-		$action_options   = array();
-		$action_options[] = array(
-			'time'    => 0,
-			'text'    => '&#9733;&#9733;&#9733;&#9733;&#9733;',
-			'link'    => 'https://wordpress.org/support/plugin/all-in-one-seo-pack/reviews?rate=5#new-post',
-			'dismiss' => false,
-			'class'   => 'aioseop-rating-link',
-		);
-		$action_options[] = array(
-			'time'    => 0,
-			'text'    => 'Review AIOSEOP',
-			'link'    => 'https://wordpress.org/support/plugin/all-in-one-seo-pack/reviews?rate=5#new-post',
-			'dismiss' => false,
-			'class'   => 'button-secondary',
-		);
-		$action_options[] = array(
-			'time'    => 0,
-			'text'    => 'Dismiss',
-			'dismiss' => true,
-			'class'   => '',
-		);
-		$layer_level      = 10;
-		$screens          = array( 'aioseop' );
-
-		$aioseop_notices->insert_footer( $slug, $delay_time, $html, $action_options, $layer_level, $screens );
-	}
 }

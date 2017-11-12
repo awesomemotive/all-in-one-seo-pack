@@ -24,7 +24,8 @@
 		var notice_nonce = aioseop_notice_data.notice_nonce;
 		var noticeDelayID = '#aioseop-notice-delay-' + notice_slug + '-' + delay_index;
 		$( noticeDelayID ).on( 'click', function( event ) {
-			if ( '#' === this.href || '' === this.href ) {
+			var elem_href = $( this ).attr( 'href' );
+			if ( '#' === elem_href || '' === elem_href ) {
 				// Stops automatic actions.
 				event.stopPropagation();
 				event.preventDefault();
