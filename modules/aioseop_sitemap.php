@@ -637,15 +637,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					$options[ $this->prefix . 'link' ] .= '<p>' . __( 'Dynamic sitemap generation does not appear to be using the correct rewrite rules; please disable any other sitemap plugins or functionality on your site and reset your permalinks.', 'all-in-one-seo-pack' ) . '</p>';
 				}
 			}
-			if ( ! get_option( 'blog_public' ) ) {
-				global $wp_version;
-				if ( version_compare( $wp_version, '3.5.0', '>=' ) || function_exists( 'set_url_scheme' ) ) {
-					$privacy_link = '<a href="options-reading.php">' . __( 'Reading Settings', 'all-in-one-seo-pack' ) . '</a>';
-				} else {
-					$privacy_link = '<a href="options-privacy.php">' . __( 'Privacy Settings', 'all-in-one-seo-pack' ) . '</a>';
-				}
-				$options[ $this->prefix . 'link' ] .= '<p class="aioseop_error_notice">' . sprintf( __( 'Warning: your privacy settings are configured to ask search engines to not index your site; you can change this under %s for your blog.', 'all-in-one-seo-pack' ), $privacy_link );
-			}
+
 			return $options;
 		}
 
