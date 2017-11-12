@@ -943,7 +943,7 @@ if ( ! function_exists( 'parse_ini_string' ) ) {
 	}
 }
 
-/*
+/**
  * @deprecated 2.4.2
  */
 function aioseop_update_user_visibilitynotice() {
@@ -951,7 +951,7 @@ function aioseop_update_user_visibilitynotice() {
 	update_user_meta( get_current_user_id(), 'aioseop_visibility_notice_dismissed', true );
 }
 
-/*
+/**
  * @deprecated 2.4.2
  */
 function aioseop_update_yst_detected_notice() {
@@ -959,7 +959,7 @@ function aioseop_update_yst_detected_notice() {
 	update_user_meta( get_current_user_id(), 'aioseop_yst_detected_notice_dismissed', true );
 }
 
-/*
+/**
  * @deprecated 2.4.2
  */
 function aioseop_woo_upgrade_notice_dismissed() {

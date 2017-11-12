@@ -516,7 +516,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *
 		 * @since 2.4.2
 		 *
-		 * @param array footer See self::footers for more info.
+		 * @param array $footer See self::footers for more info.
 		 * @return boolean True on success.
 		 */
 		public function insert_footer( $footer ) {
@@ -584,10 +584,8 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * Used to register, enqueue, and localize any JS data. Styles can later be added.
 		 *
 		 * @since 2.4.2
-		 *
-		 * @param string $hook_suffix The current Admin page.
 		 */
-		public function enqueue_scripts( $hook_suffix ) {
+		public function enqueue_scripts() {
 			wp_register_script(
 				'aioseop-admin-notice-js',
 				AIOSEOP_PLUGIN_URL . 'js/admin-notice.js',
@@ -596,7 +594,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				true
 			);
 			wp_enqueue_script( 'aioseop-admin-notice-js' );
-			
+
 			wp_enqueue_style(
 				'aioseop-admin-notice-css',
 				AIOSEOP_PLUGIN_URL . 'css/admin-notice.css',
@@ -666,7 +664,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 					if ( ! $user_dismissed ) {
 						$a_notice_time_display = get_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $a_notice_slug, true );
 					} else {
-						$noticed_show = false;
+						$notice_show = false;
 					}
 				}
 				if ( time() > $a_notice_time_display && $notice_show ) {
@@ -739,7 +737,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 
 			// Screens.
 			$tmp_footer = array();
-			foreach ( $this->footers as $footer_slug => $footer ) {
+			foreach ( $this->footers as $footer ) {
 				if ( ! empty( $footer['screens'] ) ) {
 					if ( ! in_array( 'aioseop', $footer['screens'], true ) ) {
 						if ( ! in_array( $current_screen->id, $footer['screens'], true ) ) {
@@ -819,7 +817,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 					update_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $notice_slug, $metadata );
 				}
 				if ( $delay_options['dismiss'] ) {
-					$success = update_user_meta( $current_user_id, 'aioseop_notice_dismissed_' . $notice_slug, $delay_options['dismiss'] );
+					update_user_meta( $current_user_id, 'aioseop_notice_dismissed_' . $notice_slug, $delay_options['dismiss'] );
 				}
 			} else {
 				if ( $delay_options['time'] ) {

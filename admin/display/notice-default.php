@@ -6,6 +6,7 @@
  *
  * @see AIOSEOP_Notice::display_notice_default();
  * @uses $notice in AIOSEOP_Notice::notices
+ * @package All-in-One-SEO-Pack
  * @subpackage AIOSEOP_Notices
  */
 
@@ -18,7 +19,7 @@ if ( isset( $notice['class'] ) && ! empty( $notice['class'] ) ) {
 ?>
 
 <div class="notice <?php echo esc_attr( $notice_class ); ?> is-dismissible aioseop-notice-container aioseop-notice-<?php echo esc_attr( $notice['slug'] ); ?>">
-	<p><?php echo $notice['message']; ?></p>
+	<p><?php echo esc_html( $notice['message'] ); ?></p>
 	<p>
 		<?php foreach ( $notice['delay_options'] as $key => $delay_option ) : ?>
 			<?php

@@ -3642,9 +3642,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @uses `admin/display/notice-functions.php` aioseop_notice_disable_blog_public_disabled()
 	 */
 	function visibility_warning() {
-		if ( '0' == get_option( 'blog_public' ) ) {
+		if ( '0' === get_option( 'blog_public' ) ) {
 			aioseop_notice_set_blog_public_disabled();
-		} elseif ( '1' == get_option( 'blog_public' ) ) {
+		} elseif ( '1' === get_option( 'blog_public' ) ) {
 			aioseop_notice_disable_blog_public_disabled();
 			delete_user_meta( get_current_user_id(), 'aioseop_visibility_notice_dismissed' );
 		}

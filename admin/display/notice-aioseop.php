@@ -1,15 +1,16 @@
 <?php
 /**
  * AIOSEOP Screen Notice Template.
- * 
+ *
  * @since 2.4.2
  *
  * @see AIOSEOP_Notice::display_notice_aioseop();
  * @uses $notice in AIOSEOP_Notice::notices
+ * @package All-in-One-SEO-Pack
  * @subpackage AIOSEOP_Notices
  */
 
-//var_dump( $notice 
+//var_dump( $notice );
 $notice_class = 'notice-info';
 if ( isset( $notice['class'] ) && ! empty( $notice['class'] ) ) {
 	$notice_class = $notice['class'];
