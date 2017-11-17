@@ -325,8 +325,9 @@ if ( ! function_exists( 'aiosp_add_action_links' ) ) {
 
 		);
 
-		unset( $actions['edit'] );
-
+		if( is_array( $actions ) ){
+			unset( $actions['edit'] );			
+		}
 		if ( ! AIOSEOPPRO ) {
 			$action_links['proupgrade'] =
 				array(
@@ -351,6 +352,9 @@ if ( ! function_exists( 'aiosp_action_links' ) ) {
 	 * @return array
 	 */
 	function aiosp_action_links( $actions, $plugin_file, $action_links = array(), $position = 'after' ) {
+		if( ! is_array( $actions ) ){
+			return $actions;
+		}
 		static $plugin;
 		if ( ! isset( $plugin ) ) {
 			$plugin = plugin_basename( __FILE__ );
