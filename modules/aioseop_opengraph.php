@@ -82,103 +82,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			);
 			parent::__construct();
 
-			$this->help_text = Array(
-				"setmeta"                => __( "Checking this box will use the Home Title and Home Description set in All in One SEO Pack, General Settings as the Open Graph title and description for your home page.", 'all-in-one-seo-pack' ),
-				"key"                    => __( "Enter your Facebook Admin ID here. You can enter multiple IDs separated by a comma. You can look up your Facebook ID using this tool http://findmyfbid.com/", 'all-in-one-seo-pack' ),
-				"appid"                  => __( "Enter your Facebook App ID here. Information about how to get your Facebook App ID can be found at https://developers.facebook.com/docs/apps/register", 'all-in-one-seo-pack' ),
-				"title_shortcodes"       => __( "Run shortcodes that appear in social title meta tags.", 'all-in-one-seo-pack' ),
-				"description_shortcodes" => __( "Run shortcodes that appear in social description meta tags.", 'all-in-one-seo-pack' ),
-				"sitename"               => __( "The Site Name is the name that is used to identify your website.", 'all-in-one-seo-pack' ),
-				"hometitle"              => __( "The Home Title is the Open Graph title for your home page.", 'all-in-one-seo-pack' ),
-				"description"            => __( "The Home Description is the Open Graph description for your home page.", 'all-in-one-seo-pack' ),
-				"homeimage"              => __( "The Home Image is the Open Graph image for your home page.", 'all-in-one-seo-pack' ),
-				"generate_descriptions"  => __( "This option will auto generate your Open Graph descriptions from your post content instead of your post excerpt. WooCommerce users should read the documentation regarding this setting.", 'all-in-one-seo-pack' ),
-				"defimg"                 => __( "This option lets you choose which image will be displayed by default for the Open Graph image. You may override this on individual posts.", 'all-in-one-seo-pack' ),
-				"fallback"               => __( "This option lets you fall back to the default image if no image could be found above.", 'all-in-one-seo-pack' ),
-				"dimg"                   => __( "This option sets a default image that can be used for the Open Graph image. You can upload an image, select an image from your Media Library or paste the URL of an image here.", 'all-in-one-seo-pack' ),
-				"dimgwidth"              => __( "This option lets you set a default width for your images, where unspecified.", 'all-in-one-seo-pack' ),
-				"dimgheight"             => __( "This option lets you set a default height for your images, where unspecified.", 'all-in-one-seo-pack' ),
-				"meta_key"               => __( "Enter the name of a custom field (or multiple field names separated by commas) to use that field to specify the Open Graph image on Pages or Posts.", 'all-in-one-seo-pack' ),
-				"image"                  => __( "This option lets you select the Open Graph image that will be used for this Page or Post, overriding the default settings.", 'all-in-one-seo-pack' ),
-				"customimg"              => __( "This option lets you upload an image to use as the Open Graph image for this Page or Post.", 'all-in-one-seo-pack' ),
-				"imagewidth"             => __( "Enter the width for your Open Graph image in pixels (i.e. 600).", 'all-in-one-seo-pack' ),
-				"imageheight"            => __( "Enter the height for your Open Graph image in pixels (i.e. 600).", 'all-in-one-seo-pack' ),
-				"video"                  => __( "This option lets you specify a link to the Open Graph video used on this Page or Post.", 'all-in-one-seo-pack' ),
-				"videowidth"             => __( "Enter the width for your Open Graph video in pixels (i.e. 600).", 'all-in-one-seo-pack' ),
-				"videoheight"            => __( "Enter the height for your Open Graph video in pixels (i.e. 600).", 'all-in-one-seo-pack' ),
-				"defcard"                => __( "Select the default type of Twitter Card to display.", 'all-in-one-seo-pack' ),
-				"setcard"                => __( "Select the Twitter Card type to use for this Page or Post, overriding the default setting.", 'all-in-one-seo-pack' ),
-				"twitter_site"           => __( "Enter the Twitter username associated with your website here.", 'all-in-one-seo-pack' ),
-				"twitter_creator"        => __( "Allows your authors to be identified by their Twitter usernames as content creators on the Twitter cards for their posts.", 'all-in-one-seo-pack' ),
-				"twitter_domain"         => __( "Enter the name of your website here.", 'all-in-one-seo-pack' ),
-				"customimg_twitter"      => __( "This option lets you upload an image to use as the Twitter image for this Page or Post.", 'all-in-one-seo-pack' ),
-				"gen_tags"               => __( "Automatically generate article tags for Facebook type article when not provided.", 'all-in-one-seo-pack' ),
-				"gen_keywords"           => __( "Use keywords in generated article tags.", 'all-in-one-seo-pack' ),
-				"gen_categories"         => __( "Use categories in generated article tags.", 'all-in-one-seo-pack' ),
-				"gen_post_tags"          => __( "Use post tags in generated article tags.", 'all-in-one-seo-pack' ),
-				"types"                  => __( "Select which Post Types you want to use All in One SEO Pack to set Open Graph meta values for.", 'all-in-one-seo-pack' ),
-				"title"                  => __( "This is the Open Graph title of this Page or Post.", 'all-in-one-seo-pack' ),
-				"desc"                   => __( "This is the Open Graph description of this Page or Post.", 'all-in-one-seo-pack' ),
-				"category"               => __( "Select the Open Graph type that best describes the content of this Page or Post.", 'all-in-one-seo-pack' ),
-				"facebook_debug"         => __( "Press this button to have Facebook re-fetch and debug this page.", 'all-in-one-seo-pack' ),
-				"section"                => __( "This Open Graph meta allows you to add a general section name that best describes this content.", 'all-in-one-seo-pack' ),
-				"tag"                    => __( "This Open Graph meta allows you to add a list of keywords that best describe this content.", 'all-in-one-seo-pack' ),
-				"facebook_publisher"     => __( "Link articles to the Facebook page associated with your website.", 'all-in-one-seo-pack' ),
-				"facebook_author"        => __( "Allows your authors to be identified by their Facebook pages as content authors on the Opengraph meta for their articles.", 'all-in-one-seo-pack' ),
-				"person_or_org"          => __( "Are the social profile links for your website for a person or an organization?", 'all-in-one-seo-pack' ),
-				"profile_links"          => __( "Add URLs for your website's social profiles here (Facebook, Twitter, Google+, Instagram, LinkedIn), one per line.", 'all-in-one-seo-pack' ),
-				"social_name"            => __( "Add the name of the person or organization who owns these profiles.", 'all-in-one-seo-pack' ),
-			);
-
-			$this->help_anchors = Array(
-				'title_shortcodes'		=> '#run-shortcodes-in-title',
-				'description_shortcodes' => '#run-shortcodes-in-description',
-				'generate_descriptions' => '#auto-generate-og-descriptions',
-				'setmeta'               => '#use-aioseo-title-and-description',
-				'sitename'              => '#site-name',
-				'hometitle'             => '#home-title-and-description',
-				'description'           => '#home-title-and-description',
-				'homeimage'             => '#home-image',
-				'defimg'                => '#select-og-image-source',
-				'fallback'              => '#use-default-if-no-image-found',
-				'dimg'                  => '#default-og-image',
-				'dimgwidth'				=> '#default-image-width',
-				'dimgheight'			=> '#default-image-height',
-				'meta_key'              => '#use-custom-field-for-image',
-				'profile_links'			=> '#social-profile-links',
-				'person_or_org'			=> '#social-profile-links',
-				'social_name'			=> '#social-profile-links',
-				'key'                   => '#facebook-admin-id',
-				'appid'                 => '#facebook-app-id',
-				'gen_tags'				=> '#automatically-generate-article-tags',
-				'gen_keywords'			=> '#use-keywords-in-article-tags',
-				'gen_categories'		=> '#use-categories-in-article-tags',
-				'gen_post_tags'			=> '#use-post-tags-in-article-tags',
-				'facebook_publisher'    => '#show-facebook-publisher-on-articles',
-				'facebook_author'       => '#show-facebook-author-on-articles',
-				'types'                 => '#enable-facebook-meta-for',
-				'defcard'               => '#default-twitter-card',
-				'twitter_site'          => '#twitter-site',
-				'twitter_creator'       => '#show-twitter-author',
-				'twitter_domain'        => '#twitter-domain',
-				'scan_header'           => '#scan-social-meta',
-				'title'					=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#title',
-				'desc'					=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#description',
-				'image'					=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#image',
-				'customimg'				=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#custom-image',
-				'imagewidth'			=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#specify-image-width-height',
-				'imageheight'			=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#specify-image-width-height',
-				'video'					=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#custom-video',
-				'videowidth'			=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#specify-video-width-height',
-				'videoheight'			=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#specify-video-width-height',
-				'category'				=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#facebook-object-type',
-				'facebook_debug'		=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#facebook-debug',
-				'section'				=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#article-section',
-				'tag'					=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#article-tags',
-				'setcard'				=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#twitter-card-type',
-				'customimg_twitter'		=> 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#custom-twitter-image',
-			);
-
 			if ( is_admin() ) {
 				add_action( 'admin_init', Array( $this, 'admin_init' ), 5 );
 			} else {
@@ -768,7 +671,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						if ( isset( $settings[ $prefix . $opt ] ) ) {
 							$settings[ $prefix . $opt ]['type']      = 'hidden';
 							$settings[ $prefix . $opt ]['label']     = 'none';
-							$settings[ $prefix . $opt ]['help_text'] = '';
 							unset( $settings[ $prefix . $opt ]['count'] );
 						}
 					}
@@ -1509,14 +1411,10 @@ END;
 					'default'         => 'article',
 					'condshow'        => Array( 'aiosp_opengraph_types\[\]' => $slug ),
 				);
-				$this->help_text[ $field ]                 = __( 'Choose a default value that best describes the content of your post type.', 'all-in-one-seo-pack' );
-				$this->help_anchors[ $field ]              = '#content-object-types';
 				$this->locations['opengraph']['options'][] = $field;
 				$this->layout['facebook']['options'][]     = $field;
 			}
 			$this->setting_options();
-			$this->add_help_text_links();
-
 		}
 
 		function get_all_images( $options = null, $p = null ) {
