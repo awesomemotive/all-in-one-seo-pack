@@ -2315,7 +2315,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			}
 			$input_attr .= " aioseop_{$opts['type']}_type";
 
-			return sprintf( All_in_One_SEO_Pack_Module::DISPLAY_ROW_TEMPLATE, $input_attr, $name, $label_text, $id_attr, $this->get_option_html( $args ), $help_text_2 );
+			$display_row_template = '<div class="aioseop_wrapper%s" id="%s_wrapper"><div class="aioseop_input">%s<span class="aioseop_option_input"><div class="aioseop_option_div" %s>%s</div></span></div></div>';
+			return sprintf( $display_row_template, $input_attr, $name, $label_text, $id_attr, $this->get_option_html( $args ) );
 		}
 
 		/**
