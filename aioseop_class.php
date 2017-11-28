@@ -3227,6 +3227,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		add_filter( "{$this->prefix}submit_options", array( $this, 'filter_submit' ) );
 	}
 
+	/**
+	 * Admin Enqueue Scripts
+	 *
+	 * @since 2.5
+	 *
+	 * @uses All_in_One_SEO_Pack_Module::admin_enqueue_scripts()
+	 */
+	function admin_enqueue_scripts() {
+		parent::admin_enqueue_scripts();
+	}
+
 	function enqueue_scripts() {
 		add_filter( "{$this->prefix}display_settings", array( $this, 'filter_settings' ), 10, 3 );
 		add_filter( "{$this->prefix}display_options", array( $this, 'filter_options' ), 10, 2 );
@@ -3606,6 +3617,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 			add_action( 'admin_head', array( $this, 'add_page_icon' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			add_action( 'admin_init', 'aioseop_addmycolumns', 1 );
 			add_action( 'admin_init', 'aioseop_handle_ignore_notice' );
 			if ( AIOSEOPPRO ) {

@@ -1765,6 +1765,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 
 		function admin_enqueue_scripts(){
 			wp_enqueue_media(); // WP 3.5+ Media upload.
+			wp_enqueue_style( 'aioseop_icons_admin_style', AIOSEOP_PLUGIN_URL . 'css/fonts/aioseop-icons.css', array(), AIOSEOP_VERSION );
 		}
 
 		/**
