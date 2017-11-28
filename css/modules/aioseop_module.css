@@ -23,29 +23,6 @@
 	padding: 10px 0 12px 9px;
 }
 
-.aioseop_help_text_link,
-.aioseop_help_text_link:active {
-	text-align: left;
-	float: left;
-	max-width: 300px;
-	min-width: 1px;
-	padding-top: 2px;
-	outline: none;
-	color: #888;
-	font-family: sans-serif;
-}
-
-.aioseop_help_text_link span {
-	font-size: 14px;
-}
-
-.aioseop_help_text_link:before {
-	content: "\f223";
-	font-size: 27px;
-	font-family: dashicons;
-	vertical-align: middle;
-}
-
 #aioseop-support .aioseop_metabox_text,
 #aioseop-support a {
 	font-size: 14px;
@@ -108,11 +85,6 @@ div.aioseop_tip_icon {
 
 div.aioseop_tip_icon:before {
 	content: '?';
-}
-
-.aioseop_help_text_link img {
-	width: 40px;
-	float: left;
 }
 
 .aioseop_meta_box_help,

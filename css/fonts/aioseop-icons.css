@@ -47,3 +47,35 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+/* HELP ICON */
+
+.aioseop_help_text_link,
+.aioseop_help_text_link:active {
+	text-align: left;
+	float: left;
+	max-width: 300px;
+	min-width: 1px;
+    padding-right: 3px;
+	outline: none;
+	color: #888;
+}
+
+.aioseop_help_text_link:before {
+	display: inline;
+    font-family: 'aioseop-font';
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    speak: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 1.5em;
+	line-height: 1.2;
+    vertical-align: middle;
+    content: "\68";
+}
+
+.aioseop_help_text_link span {
+	font-size: 14px;
+}
