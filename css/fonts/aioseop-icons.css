@@ -47,7 +47,48 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+/* SETTINGS TITLE ICON */
+
+.aioseop-icon-title:before {
+	/*background-image: url('../images/shield64.png') !important;*/
+	/*-webkit-background-size: 32px 32px !important;*/
+	/*-moz-background-size: 32px 32px !important;*/
+	/*background-size: 32px 32px !important;*/
+	content: url( ../../images/shield32.png );
+	/*display: inline;*/
+	/*content: "\79";*/
+	/*content: "\7a";*/
+}
+
+#aioseop_settings_header #message {
+    padding: 5px 0px 5px 50px;
+    background-image: url(../images/update32.png);
+    background-repeat: no-repeat;
+    background-position: 10px;
+    font-size: 14px;
+    min-height: 32px;
+    clear: none;
+}
+
+@media only screen and ( -webkit-min-device-pixel-ratio: 1.5 ), only screen and ( min--moz-device-pixel-ratio: 1.5 ), only screen and ( -o-min-device-pixel-ratio: 3/2 ), only screen and ( min-device-pixel-ratio: 1.5 ), only screen and ( min-resolution: 1.5dppx ) {
+    .aioseop-icon-title {
+        /*background-image: url('../images/shield64.png') !important;*/
+        /*-webkit-background-size: 32px 32px !important;*/
+        /*-moz-background-size: 32px 32px !important;*/
+        /*background-size: 32px 32px !important;*/
+		content: url('../images/shield64.png');
+    }
+
+    #aioseop_settings_header #message {
+        background-image: url(../images/update64.png) !important;
+        -webkit-background-size: 32px 32px !important;
+        -moz-background-size: 32px 32px !important;
+        background-size: 32px 32px !important;
+    }
+}
+
 /* TIP ICON ( Robots ) */
+
 div.aioseop_tip_icon {
     font-size: 14px;
     border: 1px solid #888;
