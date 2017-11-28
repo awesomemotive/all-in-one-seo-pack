@@ -47,6 +47,46 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+/* ABOUT METABOX */
+
+.aiosp-di .dashicons {
+	margin: 1px;
+	line-height: 1;
+	width: 42px;
+	height: 36px;
+	color: #fff;
+	padding: 3px;
+	vertical-align: middle;
+}
+
+.aiosp-di .dashicons:before {
+	-webkit-font-smoothing: antialiased;
+	font-family: 'dashicons';
+	font-weight: 400;
+	font-size: 1.5em;
+	line-height: 38px;
+}
+
+.aiosp-di .dashicons.di-facebook {
+	margin: 0;
+	color: #3B5998;
+}
+
+.aiosp-di .dashicons.di-facebook:before {
+	content: '\f304';
+	font-size: 2.7em;
+}
+
+.aiosp-di .dashicons.di-twitter {
+	width: 36px;
+	background-color: #00aced;
+	border-radius: 2px;
+}
+
+.aiosp-di .dashicons.di-twitter:before {
+	content: '\f301';
+}
+
 /* HELP ICON */
 
 .aioseop_help_text_link,
