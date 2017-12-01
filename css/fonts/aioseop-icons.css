@@ -87,6 +87,38 @@
     }
 }
 
+/* QUICKEDIT - AJAX Edit */
+
+.aioseop-icon-qedit {
+	margin: 0 3px;
+	line-height: 2;
+	font-size: 14px;
+}
+
+.aioseop-icon-qedit-accept {
+	color: #9dd490;
+}
+
+.aioseop-icon-qedit-accept:hover {
+	color: #97eb84;
+}
+
+.aioseop-icon-qedit-accept:before {
+	content: '\70';
+}
+
+.aioseop-icon-qedit-delete {
+	color: #ed8881;
+}
+
+.aioseop-icon-qedit-delete:hover {
+	color: #ffad9e;
+}
+
+.aioseop-icon-qedit-delete:before {
+	content: '\71';
+}
+
 /* TIP ICON ( Robots ) */
 
 div.aioseop_tip_icon {

@@ -198,11 +198,6 @@ if ( ! function_exists( 'aioseop_admin_head' ) ) {
 				position: absolute;
 			}
 
-			.aioseop_mpc_SEO_admin_options_edit img {
-				margin: 3px 2px;
-				opacity: 0.7;
-			}
-
 			.aioseop_mpc_admin_meta_options {
 				float: left;
 				display: block;
