@@ -47,3 +47,26 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+/* QUICKEDIT */
+
+.aioseop_edit_link {
+	display: inline-block;
+	position: absolute;
+}
+
+.aioseop-icon-cog-edit {
+	color: #72777c;
+}
+
+.aioseop-icon-cog-edit:hover {
+	color: #0073aa;
+}
+
+.aioseop-icon-cog-edit:before {
+	content: '\6e';
+}
+
+.aioseop-label-quickedit {
+	padding-left: 20px;
+}
+
