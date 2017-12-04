@@ -142,6 +142,43 @@
 	padding-left: 20px;
 }
 
+/* MENU ICON */
+
+#toplevel_page_all-in-one-seo-pack-aioseop_class div.wp-menu-image:before {
+	display: inline-block;
+	font-family: 'aioseop-font';
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	speak: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+#adminmenu #toplevel_page_all-in-one-seo-pack-aioseop_class .menu-icon-generic div.wp-menu-image:before {
+	content: '\79';
+}
+
+#adminmenu #toplevel_page_all-in-one-seo-pack-aioseop_class:hover .menu-icon-generic div.wp-menu-image:before,
+#adminmenu #toplevel_page_all-in-one-seo-pack-aioseop_class.wp-has-current-submenu .menu-icon-generic div.wp-menu-image:before {
+	content: '\79';
+	color: #60cced;
+}
+
+/* PRO MENU ICON */
+
+#adminmenu #toplevel_page_all-in-one-seo-pack-pro-aioseop_class .menu-icon-generic div.wp-menu-image:before {
+    content: '\79';
+}
+
+#adminmenu #toplevel_page_all-in-one-seo-pack-pro-aioseop_class:hover .menu-icon-generic div.wp-menu-image:before,
+#adminmenu #toplevel_page_all-in-one-seo-pack-pro-aioseop_class.wp-has-current-submenu .menu-icon-generic div.wp-menu-image:before {
+    content: '\79';
+    color: #60cced;
+}
+
 /* TIP ICON ( Robots ) */
 
 div.aioseop_tip_icon {
