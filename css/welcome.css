@@ -53,31 +53,14 @@ section:first-child {
 .welcome-panel-close {
     z-index: 2;
 }
-.welcome-panel .welcome-widgets-menus:before,
-.welcome-panel .welcome-comments:before,
-.welcome-panel .welcome-learn-more:before{
-    content: '';
-}
-.welcome-panel .welcome-widgets-menus {
-    background: url(/path/to/icon) 0 50% no-repeat;
-}
-.welcome-panel .welcome-comments {
-    background: url(/path/to/icon) 0 50% no-repeat;
-}
-.welcome-panel .welcome-learn-more {
-    background: url(/path/to/icon) 0 50% no-repeat;
-}
 
 
-/*
- * Welcome Panel
- */
-#welcome-panel > p {
+.welcome-panel > p {
 	margin-left: 15px;
 }
 
 .welcome-panel-column {
-    width: 30%;
+    width: 30% !important;
     margin-right: 3%;
     display: inline-block;
     vertical-align: top;
