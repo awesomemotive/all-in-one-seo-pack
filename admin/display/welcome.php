@@ -32,8 +32,8 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 
 			if ( 'dashboard_page_aioseop-about' === $hook ) {
 
-				wp_enqueue_style( 'aioseop_welcome_css', AIOSEOP_PLUGIN_URL . '/css/welcome.css', array(), AIOSEOP_VERSION );
-				wp_enqueue_script( 'aioseop_welcome_js', AIOSEOP_PLUGIN_URL . '/js/welcome.js', array( 'jquery' ), AIOSEOP_VERSION, true );
+				wp_enqueue_style( 'aioseop_welcome_css', AIOSEOP_PLUGIN_URL . 'css/welcome.css', array(), AIOSEOP_VERSION );
+				wp_enqueue_script( 'aioseop_welcome_js', AIOSEOP_PLUGIN_URL . 'js/welcome.js', array( 'jquery' ), AIOSEOP_VERSION, true );
 			}
 		}
 

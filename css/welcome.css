@@ -53,34 +53,24 @@ section:first-child {
 .welcome-panel-close {
 	z-index: 2;
 }
-.welcome-panel .welcome-widgets-menus:before,
-.welcome-panel .welcome-comments:before,
-.welcome-panel .welcome-learn-more:before{
-	content: '';
-}
-.welcome-panel .welcome-widgets-menus {
-	background: url(/path/to/icon) 0 50% no-repeat;
-}
-.welcome-panel .welcome-comments {
-	background: url(/path/to/icon) 0 50% no-repeat;
-}
-.welcome-panel .welcome-learn-more {
-	background: url(/path/to/icon) 0 50% no-repeat;
+
+.welcome-panel {
+    overflow-x: hidden;
 }
 
-
-/*
- * Welcome Panel
- */
-#welcome-panel > p {
+.welcome-panel > p {
 	margin-left: 15px;
 }
 
+.welcome-panel-content {
+    display: inline-block;
+}
+
 .welcome-panel-column {
-	width: 30%;
-	margin-right: 3%;
-	display: inline-block;
-	vertical-align: top;
+    width: 30% !important;
+    margin-right: 3%;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .welcome-panel-column:last-child {
@@ -113,11 +103,6 @@ section:first-child {
 
 .welcome-panel-column ul {
 	margin-left: 20px;
-}
-
-.welcome-panel-column ul li {
-	margin-bottom: 12px;
-	list-style-type: square;
 }
 
 #wp-people-group-rockstars li {
