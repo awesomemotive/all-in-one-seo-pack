@@ -2964,7 +2964,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		wp_enqueue_style( 'wp-pointer' );
 		//$this->add_admin_pointers();
 
-		wp_enqueue_style( 'aiosp_admin_style', AIOSEOP_PLUGIN_URL . 'css/aiosp_admin.css', array(), AIOSEOP_VERSION );
 		?>
 		<script>
 			function aioseop_show_pointer(handle, value) {
@@ -3225,6 +3224,18 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 	function settings_page_init() {
 		add_filter( "{$this->prefix}submit_options", array( $this, 'filter_submit' ) );
+	}
+
+	/**
+	 * Admin Enqueue Scripts
+	 *
+	 * @since 2.5.0
+	 *
+	 * @uses All_in_One_SEO_Pack_Module::admin_enqueue_scripts();
+	 */
+	function admin_enqueue_scripts() {
+		wp_enqueue_style( 'aiosp_admin_style', AIOSEOP_PLUGIN_URL . 'css/aiosp_admin.css', array(), AIOSEOP_VERSION );
+		parent::admin_enqueue_scripts();
 	}
 
 	function enqueue_scripts() {
@@ -3606,6 +3617,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 			add_action( 'admin_head', array( $this, 'add_page_icon' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			add_action( 'admin_init', 'aioseop_addmycolumns', 1 );
 			add_action( 'admin_init', 'aioseop_handle_ignore_notice' );
 			if ( AIOSEOPPRO ) {
