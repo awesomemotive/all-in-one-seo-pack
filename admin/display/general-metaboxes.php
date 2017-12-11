@@ -122,16 +122,16 @@ class aiosp_metaboxes {
 				?>
 				<div class="aioseop_metabox_text">
 					<p>
-					<div class="aioseop_icon aioseop_file_icon"></div>
+					<div class="aioseop_icon aioseop-icon-file"></div>
 					<a target="_blank"
 					   href="https://semperplugins.com/documentation/"><?php _e( 'Read the All in One SEO Pack user guide', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
-					<div class="aioseop_icon aioseop_support_icon"></div>
+					<div class="aioseop_icon aioseop-icon-support"></div>
 					<a target="_blank"
 					   title="<?php _e( 'All in One SEO Pro Plugin Support Forum', 'all-in-one-seo-pack' ); ?>"
 					   href="https://semperplugins.com/support/"><?php _e( 'Access our Premium Support Forums', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
-					<div class="aioseop_icon aioseop_cog_icon"></div>
+					<div class="aioseop_icon aioseop-icon-cog"></div>
 					<a target="_blank" title="<?php _e( 'All in One SEO Pro Plugin Changelog', 'all-in-one-seo-pack' ); ?>"
 					   href="<?php if ( AIOSEOPPRO ) {
 						   echo 'https://semperplugins.com/documentation/all-in-one-seo-pack-pro-changelog/';
@@ -139,11 +139,11 @@ class aiosp_metaboxes {
 						   echo 'https://semperfiwebdesign.com/blog/all-in-one-seo-pack/all-in-one-seo-pack-release-history/';
 					   } ?>"><?php _e( 'View the Changelog', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
-					<div class="aioseop_icon aioseop_youtube_icon"></div>
+					<div class="aioseop_icon aioseop-icon-youtube"></div>
 					<a target="_blank"
 					   href="https://semperplugins.com/doc-type/video/"><?php _e( 'Watch video tutorials', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
-					<div class="aioseop_icon aioseop_book_icon"></div>
+					<div class="aioseop_icon aioseop-icon-book"></div>
 					<a target="_blank"
 					   href="https://semperplugins.com/documentation/quick-start-guide/"><?php _e( 'Getting started? Read the Beginners Guide', 'all-in-one-seo-pack' ); ?></a></p>
 				</div>

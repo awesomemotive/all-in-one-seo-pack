@@ -1765,6 +1765,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 
 		function admin_enqueue_scripts(){
 			wp_enqueue_media(); // WP 3.5+ Media upload.
+			wp_enqueue_style( 'aioseop_icons_admin_style', AIOSEOP_PLUGIN_URL . 'css/fonts/aioseop-icons.css', array(), AIOSEOP_VERSION );
 		}
 
 		/**
@@ -2580,8 +2581,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					<?php if ( ! empty( $message ) && empty( $errors ) ) {
 						echo "<div id=\"message\" class=\"updated fade\"><p>$message</p></div>";
 					} ?>
-					<div id="icon-aioseop" class="icon32"><br></div>
-					<h2><?php echo $name; ?></h2>
+					<h2><a class="aioseop-icon-title"></a><?php echo $name; ?></h2>
 					<div id="dropmessage" class="updated" style="display:none;"></div>
 				</div>
 				<?php
