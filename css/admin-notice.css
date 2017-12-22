@@ -1,0 +1,12 @@
+/**
+ * AIOSEOP_Notices CSS
+ *
+ * @package All-in-One-SEO-Pack
+ * @subpackage AIOSEOP_Notices
+ * @since 2.4.2
+ */
+
+.aioseop-notice-delay {
+	display: inherit;
+	/* width: fit-content; */
+}
