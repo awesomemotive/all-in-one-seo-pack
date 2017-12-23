@@ -250,6 +250,9 @@ if ( ! function_exists( 'aioseop_activate' ) ) {
 		}
 		$aiosp_activation = true;
 
+		require_once( AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php' );
+		aioseop_notice_set_activation_review_plugin( false, true );
+
 		// These checks might be duplicated in the function being called.
 		if( ! is_network_admin() || !isset( $_GET['activate-multi'] ) ) {
 			set_transient( '_aioseop_activation_redirect', true, 30 ); // Sets 30 second transient for welcome screen redirect on activation.
@@ -399,6 +402,7 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/welcome.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/dashboard_widget.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/menu.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php' );
 
 		$aioseop_welcome = new aioseop_welcome(); // TODO move this to updates file.
 
@@ -424,6 +428,7 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 
 		add_action( 'init', array( $aiosp, 'add_hooks' ) );
 		add_action( 'admin_init', array( $aioseop_updates, 'version_updates' ), 11 );
+		aioseop_notice_set_activation_review_plugin();
 
 		if ( defined( 'DOING_AJAX' ) && ! empty( $_POST ) && ! empty( $_POST['action'] ) && 'aioseop_ajax_scan_header' === $_POST['action'] ) {
 			remove_action( 'init', array( $aiosp, 'add_hooks' ) );
