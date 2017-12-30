@@ -3,7 +3,7 @@
 Plugin Name: All In One SEO Pack
 Plugin URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Description: Out-of-the-box SEO for your WordPress blog. Features like XML Sitemaps, SEO for custom post types, SEO for blogs or business sites, SEO for ecommerce sites, and much more. More than 30 million downloads since 2007.
-Version: 2.4.2
+Version: 2.4.3
 Author: Michael Torbert
 Author URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Text Domain: all-in-one-seo-pack
@@ -31,14 +31,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * The original WordPress SEO plugin.
  *
  * @package All-in-One-SEO-Pack
- * @version 2.4.2
+ * @version 2.4.3
  */
 
 if ( ! defined( 'AIOSEOPPRO' ) ) {
 	define( 'AIOSEOPPRO', false );
 }
 if ( ! defined( 'AIOSEOP_VERSION' ) ) {
-	define( 'AIOSEOP_VERSION', '2.4.2' );
+	define( 'AIOSEOP_VERSION', '2.4.3' );
 }
 global $aioseop_plugin_name;
 $aioseop_plugin_name = 'All in One SEO Pack';
@@ -260,6 +260,9 @@ if ( ! function_exists( 'aioseop_activate' ) ) {
 		if ( AIOSEOPPRO ) {
 			$aioseop_update_checker->checkForUpdates();
 		}
+
+		// add an activation date that can be useful.
+		update_option( 'aioseop_activation_date', time() );
 	}
 }
 
@@ -304,6 +307,9 @@ if ( ! function_exists( 'aiosp_add_action_links' ) ) {
 	 * @return array
 	 */
 	function aiosp_add_action_links( $actions, $plugin_file ) {
+		if ( ! is_array( $actions ) ) {
+			return $actions;
+		}
 
 		$aioseop_plugin_dirname = AIOSEOP_PLUGIN_DIRNAME;
 		$action_links           = array();
@@ -396,6 +402,7 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/welcome.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/dashboard_widget.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/menu.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/class-aioseop-notification.php' );
 
 		$aioseop_welcome = new aioseop_welcome(); // TODO move this to updates file.
 

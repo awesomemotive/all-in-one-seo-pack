@@ -1,6 +1,10 @@
 # All in One SEO Pack
 
-One of the most downloaded plugins for WordPress... more than 30 million downloads!
+One of the most downloaded plugins, All in One SEO Pack is THE ORIGINAL WordPress SEO plugin!<br />
+![Plugin Version](https://img.shields.io/wordpress/plugin/v/all-in-one-seo-pack.svg?maxAge=2592000&style=flat-square) 
+![Total Downloads](https://img.shields.io/wordpress/plugin/dt/all-in-one-seo-pack.svg?maxAge=2592000&style=flat-square)
+![WordPress Compatibility](https://img.shields.io/wordpress/v/all-in-one-seo-pack.svg?maxAge=2592000&style=flat-square)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.2-8892BF.svg?style=flat-square)](https://php.net/)
 
 ## Help
 
