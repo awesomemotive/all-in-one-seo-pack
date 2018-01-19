@@ -2,7 +2,7 @@
 /**
  * Class SampleTest
  *
- * @package 
+ * @package
  */
 
 /**
@@ -18,12 +18,13 @@ class SampleTest extends WP_UnitTestCase {
 		$this->assertTrue( true );
 	}
 
-function test_sample_string() {
- 
-	$string = 'Unit tests are sweet';
- 
-	$this-&gt;assertEquals( 'Unit tests are sweet', $string );
-}
+	function test_sample_string() {
+
+		$string = 'Unit tests are sweet';
+
+		$this - & gt;
+		assertEquals( 'Unit tests are sweet', $string );
+	}
 
 }
 

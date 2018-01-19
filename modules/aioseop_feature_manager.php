@@ -85,7 +85,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 			// Default		- Default value of the field.
 			// Initial_options - Initial option list used for selects and multiselects.
 			// Other supported options: class, id, style -- allows you to set these HTML attributes on the field.
-
 			$this->default_options = array();
 			$this->module_info     = apply_filters( 'aioseop_module_info', $this->module_info );
 			$mod[]                 = 'coming_soon';
@@ -94,7 +93,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 				if ( 'performance' === $m && ! is_super_admin() ) {
 					continue;
 				}
-				$this->default_options["enable_$m"] = array(
+				$this->default_options[ "enable_$m" ] = array(
 					'name'      => $this->module_info[ $m ]['name'],
 					'help_text' => $this->module_info[ $m ]['description'],
 					'type'      => 'custom',
@@ -104,12 +103,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 				);
 
 				if ( ! empty( $this->module_info[ $m ]['image'] ) ) {
-					$this->default_options["enable_$m"]['image'] = $this->module_info[ $m ]['image'];
+					$this->default_options[ "enable_$m" ]['image'] = $this->module_info[ $m ]['image'];
 				}
 				if ( ! empty( $this->module_info[ $m ] ) ) {
 					foreach ( array( 'save', 'default' ) as $option ) {
 						if ( isset( $this->module_info[ $m ][ $option ] ) ) {
-							$this->default_options["enable_$m"][ $option ] = $this->module_info[ $m ][ $option ];
+							$this->default_options[ "enable_$m" ][ $option ] = $this->module_info[ $m ][ $option ];
 						}
 					}
 				}
