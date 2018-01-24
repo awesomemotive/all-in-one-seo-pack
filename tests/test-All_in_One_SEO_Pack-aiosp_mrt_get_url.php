@@ -7,7 +7,7 @@
  * Actual:    It is throwing a PHP Error. count(): `Parameter must be an array or an object that implements Countable`
  * Reproduce: Go to post edit screen.
  *
- * @since 2.4.4
+ * @since 2.4.4.1
  *
  * @ticket 1491 Warning: count(): Parameter must be an array or an object that implements Countable #1491
  * @link https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/1355
@@ -16,7 +16,6 @@
  * @group post_permalink
  * @group All_in_One_SEO_Pack
  * @group aiosp_mrt_get_url
- *
  *
  */
 
@@ -27,7 +26,7 @@
 namespace test\aioseop\sitemap\aiosp_mrt_get_url {
 
 	use WP_UnitTestCase;
-	use All_in_One_SEO_Pack_Sitemap;
+	use All_in_One_SEO_Pack;
 
 	/**
 	 * Contains the test case scenario.
@@ -48,10 +47,7 @@ namespace test\aioseop\sitemap\aiosp_mrt_get_url {
 		 */
 		public static function setUpBeforeClass() {
 			// Do Stuff...
-			$a = '';
 		}
-
-
 
 		/**
 		 * PHPUnit Fixture - setUp()
@@ -59,23 +55,25 @@ namespace test\aioseop\sitemap\aiosp_mrt_get_url {
 		 * Sets up the environment to test.
 		 * NOTE: Patent must be called first according to WP Handbook.
 		 *
+		 * @since 2.4.4.1
+		 *
 		 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 		 */
 		public function setUp() {
 			parent::setUp();
-			// Do Stuff...
-			$ids = $this->setup_posts( 10 );
-
-
-
-
-
-			//$aioseop_module_list = array();
-			//$module_manager = new All_in_One_SEO_Pack_Module_Manager($aioseop_module_list);
-
-			//$aioseop_sitemap = new All_in_One_SEO_Pack_Sitemap();
+			$this->setup_posts( 10 );
 		}
 
+		/**
+		 * Set up posts
+		 *
+		 * Set up post environment.
+		 *
+		 * @since 2.4.4.1
+		 *
+		 * @param int $how_many
+		 * @return int[]
+		 */
 		public function setup_posts( $how_many = 0 ) {
 			$args = array(
 				'post_type'    => 'post',
@@ -86,7 +84,7 @@ namespace test\aioseop\sitemap\aiosp_mrt_get_url {
 			$ids = $this->factory->post->create_many( $how_many, $args );
 
 			foreach ( $ids as $v1_id ) {
-				$image = str_replace( '\\', '/', AIOSEOP_TESTS_DIR ) . '/resources/images/footer-logo.png';
+				$image = str_replace( '\\', '/', __DIR__ ) . '/resources/images/footer-logo.png';
 				$attachment_id = $this->factory->attachment->create_upload_object( $image, $v1_id );
 				if ( 0 !== $v1_id ) {
 					update_post_meta( $v1_id, '_thumbnail_id', $attachment_id );
@@ -101,6 +99,8 @@ namespace test\aioseop\sitemap\aiosp_mrt_get_url {
 		 *
 		 * Sets up the environment to test.
 		 * NOTE: Patent must be called last according to WP Handbook.
+		 *
+		 * @since 2.4.4.1
 		 *
 		 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 		 */
@@ -117,30 +117,21 @@ namespace test\aioseop\sitemap\aiosp_mrt_get_url {
 		}
 
 		/**
-		 * PHPUnit Fixture - onNotSuccessfulTest()
-		 *
-		 * @param Exception $e
-		 */
-//		public function onNotSuccessfulTest( Throwable $e ) {
-//			// Do Stuff...
-//			throw $e;
-//			//parent::onNotSuccessfulTest( $e );
-//		}
-
-		/**
-		 *
-		 */
-		private function _set_attachment() {
-
-		}
-
-		/**
 		 * Test - AIOSEOP_Sitemap::is_image_valid()
 		 *
 		 * Issue #1491 Class Method to test.
 		 *
+		 * @since 2.4.4.1
+		 *
+		 * @ticket 1491 Warning: count(): Parameter must be an array or an object that implements Countable
+		 *
 		 * set_current_screen
 		 * @link https://codex.wordpress.org/Plugin_API/Admin_Screen_Reference
+		 *
+		 * @group url
+		 * @group post_permalink
+		 * @group All_in_One_SEO_Pack
+		 * @group aiosp_mrt_get_url
 		 *
 		 * @test
 		 * @expectedException count(): Parameter must be an array or an object that implements Countable
@@ -148,8 +139,7 @@ namespace test\aioseop\sitemap\aiosp_mrt_get_url {
 		 *
 		 */
 		public function test_aiosp_mrt_get_url() {
-
-			$aioseop_class = new \All_in_One_SEO_Pack();
+			$aioseop_class = new All_in_One_SEO_Pack();
 			// On post Edit Screen. ERROR.
 			set_current_screen( 'post.php?post=2&action=edit' );
 
@@ -157,8 +147,6 @@ namespace test\aioseop\sitemap\aiosp_mrt_get_url {
 			$post_permalink = get_permalink( 2 );
 			//ERROR
 			$this->assertSame( $post_permalink, $aioseop_class->aiosp_mrt_get_url( $wp_query, true ), 'All_in_One_SEO_Pack_Sitemap::aiosp_mrt_get_url() has failed. \tests\test-All_in_One_SEO_Pack_get_all_keywords.php' );
-
 		}
-
 	}
 }
