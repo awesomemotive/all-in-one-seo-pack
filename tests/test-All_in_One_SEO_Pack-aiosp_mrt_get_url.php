@@ -65,15 +65,6 @@ namespace test\aioseop\sitemap\aiosp_mrt_get_url {
 			parent::setUp();
 			// Do Stuff...
 			$ids = $this->setup_posts( 10 );
-
-
-
-
-
-			//$aioseop_module_list = array();
-			//$module_manager = new All_in_One_SEO_Pack_Module_Manager($aioseop_module_list);
-
-			//$aioseop_sitemap = new All_in_One_SEO_Pack_Sitemap();
 		}
 
 		public function setup_posts( $how_many = 0 ) {
@@ -86,7 +77,7 @@ namespace test\aioseop\sitemap\aiosp_mrt_get_url {
 			$ids = $this->factory->post->create_many( $how_many, $args );
 
 			foreach ( $ids as $v1_id ) {
-				$image = str_replace( '\\', '/', AIOSEOP_TESTS_DIR ) . '/resources/images/footer-logo.png';
+				$image = str_replace( '\\', '/', __DIR__ ) . '/resources/images/footer-logo.png';
 				$attachment_id = $this->factory->attachment->create_upload_object( $image, $v1_id );
 				if ( 0 !== $v1_id ) {
 					update_post_meta( $v1_id, '_thumbnail_id', $attachment_id );
@@ -141,6 +132,11 @@ namespace test\aioseop\sitemap\aiosp_mrt_get_url {
 		 *
 		 * set_current_screen
 		 * @link https://codex.wordpress.org/Plugin_API/Admin_Screen_Reference
+		 *
+		 * @group url
+		 * @group post_permalink
+		 * @group All_in_One_SEO_Pack
+		 * @group aiosp_mrt_get_url
 		 *
 		 * @test
 		 * @expectedException count(): Parameter must be an array or an object that implements Countable
