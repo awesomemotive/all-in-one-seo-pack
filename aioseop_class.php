@@ -2658,11 +2658,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			return false;
 		}
 		$link    = '';
-		$haspost = false;
-		if ( ! empty( $query->posts ) ) {
-			$haspost = count( $query->posts ) > 0;
-		}
-
+		$haspost = empty( $query->posts ) ? false : (boolean) count( $query->posts );
 		if ( get_query_var( 'm' ) ) {
 			$m = preg_replace( '/[^0-9]/', '', get_query_var( 'm' ) );
 			switch ( $this->strlen( $m ) ) {
