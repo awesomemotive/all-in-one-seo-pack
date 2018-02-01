@@ -332,6 +332,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$sitemap_max_url_notice_dismissed = get_user_meta( get_current_user_id(), 'aioseop_sitemap_max_url_notice_dismissed', true );
 			if ( ! empty( $sitemap_max_url_notice_dismissed ) ) {
 				return;
+			} elseif ( ! current_user_can( 'aiosp_manage_seo' ) ) {
+				return;
 			}
 
 			$options = $this->options;
