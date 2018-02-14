@@ -716,9 +716,11 @@ jQuery(document).ready( function() {
 });
 
 function initAll($){
-    if($('.aiseop-date').eq(0).prop('type').toLowerCase() === 'text'){
-        $('.aiseop-date').datepicker({
-            dateFormat: "yy-mm-dd"
-        });
-    }
+	if ( typeof $('.aiseop-date').eq(0).prop('type') !==  'undefined' ) {
+		if ($('.aiseop-date').eq(0).prop('type').toLowerCase() === 'text') {
+			$('.aiseop-date').datepicker({
+				dateFormat: "yy-mm-dd"
+			});
+		}
+	}
 }
