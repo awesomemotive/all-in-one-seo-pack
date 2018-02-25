@@ -1129,12 +1129,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$description = $metabox['aioseop_opengraph_settings_desc'];
 				/* Add AIOSEO variables if Site Title and Desc from AIOSEOP not selected */
 				global $aiosp;
+				$term_obj = get_queried_object();
 				if ( empty( $title ) ) {
 					$title = $aiosp->wp_title();
 				}
 				if ( empty( $description ) ) {
 					$term_id = isset( $_GET['tag_ID'] ) ? (int) $_GET['tag_ID'] : 0;
-					$term_id = $term_id ? $term_id : get_queried_object()->term_id;
+					if ( ! $term_id  && isset( $term_obj->term_id ) && ! empty( $term_obj->term_id ) ) {
+						$term_id = $term_obj->term_id;
+					}
 					$description = trim( strip_tags( get_term_meta( $term_id, '_aioseop_description', true ) ) );
 				}
 				// Add default title
@@ -1143,7 +1146,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				}
 				// Add default description.
 				if ( empty( $description ) && ! post_password_required( $post ) ) {
-					$description = get_queried_object()->description;
+					$description = $term_obj->description;
 				}
 				if ( empty( $type ) ) {
 					$type = 'website';
