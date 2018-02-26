@@ -14,7 +14,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			$this->file   = __FILE__;                                    // the current file
 			parent::__construct();
 
-			$help_text = array(
+			$help_text = Array(
 				'additional' => __( 'Rule Type', 'all-in-one-seo-pack' ),
 				'useragent'  => __( 'User Agent', 'all-in-one-seo-pack' ),
 				'path'       => __( 'Directory Path', 'all-in-one-seo-pack' ),
@@ -22,29 +22,29 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			);
 
 			$this->default_options = array(
-				'usage'              => array(
+				'usage'              => Array(
 					'type'    => 'html',
 					'label'   => 'none',
 					'default' => __( 'Use the rule builder below to add rules to create a new Robots.txt file.  If you already have a Robots.txt file you should use the File Editor feature in All in One SEO Pack to edit it or you can delete your current Robots.txt file and start a new one with the rule builder below.', 'all-in-one-seo-pack' ),
 					'save'    => false,
 				),
-				'additional'         => array(
+				'additional'         => Array(
 					'name'            => __( 'Rule Type', 'all-in-one-seo-pack' ),
 					'save'            => false,
 					'type'            => 'select',
-					'initial_options' => array( 'allow' => 'Allow', 'block' => 'Block' ),
+					'initial_options' => Array( 'allow' => 'Allow', 'block' => 'Block' ),
 				),
-				'useragent'          => array(
+				'useragent'          => Array(
 					'name' => __( 'User Agent', 'all-in-one-seo-pack' ),
 					'save' => false,
 					'type' => 'text',
 				),
-				'path'               => array(
+				'path'               => Array(
 					'name' => __( 'Directory Path', 'all-in-one-seo-pack' ),
 					'save' => false,
 					'type' => 'text',
 				),
-				'robotgen'           => array(
+				'robotgen'           => Array(
 					'name'     => __( 'Generate Robots.txt', 'all-in-one-seo-pack' ),
 					'save'     => false,
 					'default'  => '',
@@ -54,44 +54,44 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					'label'    => 'none',
 					'readonly' => 'readonly',
 				),
-				'Submit_Preview'     => array(
+				'Submit_Preview'     => Array(
 					'type'   => 'submit',
 					'class'  => 'button-primary MRL',
 					'name'   => __( 'Add Rule', 'all-in-one-seo-pack' ) . ' &raquo;',
 					'nowrap' => 1,
 				),
-				'Submit_Update'      => array(
+				'Submit_Update'      => Array(
 					'type'   => 'submit',
 					'class'  => 'button-primary',
 					'name'   => __( 'Save Robots.txt File', 'all-in-one-seo-pack' ) . ' &raquo;',
 					'nowrap' => 1,
 				),
-				'Submit_Delete'      => array(
+				'Submit_Delete'      => Array(
 					'type'   => 'submit',
 					'class'  => 'button-primary',
 					'name'   => __( 'Delete Robots.txt File', 'all-in-one-seo-pack' ) . ' &raquo;',
 					'nowrap' => 1,
 				),
-				'optusage'           => array(
+				'optusage'           => Array(
 					'type'    => 'html',
 					'label'   => 'none',
 					'default' => __( 'Click the Optimize button below and All in One SEO Pack will analyze your Robots.txt file to make sure it complies with the standards for Robots.txt files.  The results will be displayed in a table below.', 'all-in-one-seo-pack' ),
 					'save'    => false,
 				),
-				'Submit_Opt_Update'  => array(
+				'Submit_Opt_Update'  => Array(
 					'type'   => 'submit',
 					'class'  => 'button-primary',
 					'name'   => __( 'Update Robots.txt File', 'all-in-one-seo-pack' ) . ' &raquo;',
 					'nowrap' => 1,
 					'style'  => 'margin-left: 20px;',
 				),
-				'Submit_Opt_Preview' => array(
+				'Submit_Opt_Preview' => Array(
 					'type'   => 'submit',
 					'class'  => 'button-primary',
 					'name'   => __( 'Disregard Changes', 'all-in-one-seo-pack' ) . ' &raquo;',
 					'nowrap' => 1,
 				),
-				'Submit_Optimize'    => array(
+				'Submit_Optimize'    => Array(
 					'type'  => 'submit',
 					'class' => 'button-primary',
 					'name'  => __( 'Optimize', 'all-in-one-seo-pack' ) . ' &raquo;',
@@ -105,10 +105,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			}
 
 			$this->locations = array(
-				'generator' => array(
-					'name'    => 'Robots.txt',
+				'generator' => Array(
+					'name'    => "Robots.txt",
 					'type'    => 'settings',
-					'options' => array(
+					'options' => Array(
 						'usage',
 						'additional',
 						'useragent',
@@ -125,10 +125,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				),
 			);
 
-			$this->layout             = array(
-				'default' => array(
+			$this->layout             = Array(
+				'default' => Array(
 					'name'    => __( 'Create a Robots.txt File', 'all-in-one-seo-pack' ),
-					'options' => array(
+					'options' => Array(
 						'usage',
 						'additional',
 						'useragent',
@@ -137,30 +137,30 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 						'Submit_Update',
 						'Submit_Delete',
 						'robotgen',
-					), // this is set below, to the remaining options -- pdb
+					) // this is set below, to the remaining options -- pdb
 				),
 			);
-			$this->layout['optimize'] = array(
+			$this->layout['optimize'] = Array(
 				'name'    => __( 'Optimize your Robots.txt File', 'all-in-one-seo-pack' ),
-				'options' => array( 'optusage', 'Submit_Optimize' ),
+				'options' => Array( 'optusage', 'Submit_Optimize' ),
 			);
 			if ( isset( $_POST['Submit_Optimize'] ) ) {
-				$this->layout['optimize']['options']          = array(
+				$this->layout['optimize']['options']          = Array(
 					'optusage',
 					'Submit_Opt_Update',
 					'Submit_Opt_Preview',
 					'robothtml',
 				);
-				$this->default_options['optusage']['default'] = __( 'Your Robots.txt file has been optimized.  Here are the results and recommendations.  Click the Update Robots.txt File button below to write these changes to your Robots.txt file.  Click the Disregard Changes button to ignore these recommendations and keep your current Robots.txt file.', 'all-in-one-seo-pack' );
+				$this->default_options['optusage']['default'] = __( "Your Robots.txt file has been optimized.  Here are the results and recommendations.  Click the Update Robots.txt File button below to write these changes to your Robots.txt file.  Click the Disregard Changes button to ignore these recommendations and keep your current Robots.txt file.", 'all-in-one-seo-pack' );
 			}
 
 			// load initial options / set defaults
 			$this->update_options();
 
-			add_action( $this->prefix . 'settings_update', array( $this, 'do_robots' ), 10, 2 );
-			add_filter( $this->prefix . 'display_options', array( $this, 'filter_options' ), 10, 2 );
-			add_filter( $this->prefix . 'submit_options', array( $this, 'filter_submit' ), 10, 2 );
-			add_filter( $this->prefix . 'display_settings', array( $this, 'filter_settings' ), 10, 2 );
+			add_action( $this->prefix . 'settings_update', Array( $this, 'do_robots' ), 10, 2 );
+			add_filter( $this->prefix . 'display_options', Array( $this, 'filter_options' ), 10, 2 );
+			add_filter( $this->prefix . 'submit_options', Array( $this, 'filter_submit' ), 10, 2 );
+			add_filter( $this->prefix . 'display_settings', Array( $this, 'filter_settings' ), 10, 2 );
 		}
 
 		function filter_settings( $settings, $location ) {
@@ -171,7 +171,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 						$settings[ $prefix . 'robotgen' ]['type']      = 'hidden';
 						$settings[ $prefix . 'robotgen' ]['label']     = 'none';
 						$settings[ $prefix . 'robotgen' ]['help_text'] = '';
-						$settings[ $prefix . 'robothtml' ]             = array(
+						$settings[ $prefix . 'robothtml' ]             = Array(
 							'name'    => __( 'Robots.txt', 'all-in-one-seo-pack' ),
 							'save'    => false,
 							'default' => '',
@@ -239,7 +239,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 							$options[ $prefix . 'robotgen' ] = $robotgen;
 						}
 						if ( empty( $options[ $prefix . 'robotgen' ] ) ) {
-							$options = $this->load_files( $options, array( 'robotgen' => 'robots.txt' ), $prefix );
+							$options = $this->load_files( $options, Array( 'robotgen' => 'robots.txt' ), $prefix );
 						}
 					}
 				}
@@ -257,7 +257,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 						$options[ $prefix . 'robotgen' ] = '';
 					}
 					if ( isset( $_POST['Submit_Preview'] ) && ( ( $options[ $prefix . 'robotgen' ] == $allow_rule ) ||
-																( $options[ $prefix . 'robotgen' ] == $block_rule ) )
+					                                            ( $options[ $prefix . 'robotgen' ] == $block_rule ) )
 					) {
 						$options[ $prefix . 'robotgen' ] = '';
 					}
@@ -267,16 +267,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 						$options[ $prefix . 'robotgen' ] .= $allow_rule;
 					}
 				}
-				foreach ( array( 'ad' => 'additional', 'ua' => 'useragent', 'dp' => 'path' ) as $k => $v ) {
+				foreach ( Array( 'ad' => 'additional', 'ua' => 'useragent', 'dp' => 'path' ) as $k => $v ) {
 					if ( isset( $_POST[ $prefix . $v ] ) ) {
 						$$k = $_POST[ $prefix . $v ];
 					}
 				}
 				if ( ! empty( $ad ) && ! empty( $ua ) && ! empty( $dp ) ) {
 					if ( $ad === 'allow' ) {
-						$ad = 'Allow: ';
+						$ad = "Allow: ";
 					} else {
-						$ad = 'Disallow: ';
+						$ad = "Disallow: ";
 					}
 					$options[ $prefix . 'robotgen' ] .= "User-agent: $ua\n$ad $dp\n\n";
 				}
@@ -296,9 +296,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					}
 					$options[ $prefix . 'robotgen' ]  = $this->output_robots( $rules );
 					$file2                            = explode( "\n", $options[ $prefix . 'robotgen' ] );
-					$options[ $prefix . 'robothtml' ] = '<table width=100%><tr><td valign=top width=45%>' . $this->annotate_robots_html( $file, true, __( 'Current File', 'all-in-one-seo-pack' ) ) . '</td><td><span style="font-size: xx-large">&#8594;</span></td><td valign=top>' . $this->annotate_robots_html( $file2, true, __( 'Proposed Changes', 'all-in-one-seo-pack' ) ) . '</td></tr></table>';
+					$options[ $prefix . 'robothtml' ] = '<table width=100%><tr><td valign=top width=45%>' . $this->annotate_robots_html( $file, true, __( "Current File", 'all-in-one-seo-pack' ) ) . '</td><td><span style="font-size: xx-large">&#8594;</span></td><td valign=top>' . $this->annotate_robots_html( $file2, true, __( "Proposed Changes", 'all-in-one-seo-pack' ) ) . '</td></tr></table>';
 				} else {
-					$options[ $prefix . 'robothtml' ] = $this->annotate_robots_html( $file, true, __( 'Current File', 'all-in-one-seo-pack' ) );
+					$options[ $prefix . 'robothtml' ] = $this->annotate_robots_html( $file, true, __( "Current File", 'all-in-one-seo-pack' ) );
 				}
 			}
 
@@ -311,9 +311,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			}
 			if ( $location === 'generator' ) {
 				if ( isset( $_POST['Submit_Update'] ) || isset( $_POST['Submit_Opt_Update'] ) ) {
-					$this->save_files( array( 'robotgen' => 'robots.txt' ), $prefix );
+					$this->save_files( Array( 'robotgen' => 'robots.txt' ), $prefix );
 				} elseif ( isset( $_POST['Submit_Delete'] ) ) {
-					$this->delete_files( array( 'robotgen' => 'robots.txt' ) );
+					$this->delete_files( Array( 'robotgen' => 'robots.txt' ) );
 				}
 			}
 		}
@@ -323,29 +323,29 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			if ( ! empty( $robots ) ) {
 				$buf = '<table class="widefat" ><thead>';
 				if ( ! empty( $title ) ) {
-					$buf .= '<tr><th colspan=3>' . $title . '</th></tr>';
+					$buf .= "<tr><th colspan=3>" . $title . "</th></tr>";
 				}
 				$buf .= '<tr class="aioseop_optimize_thread">';
 				$buf .= '<th style="width:5%;"></th><th style="width:78%;"><span class="column_label" >Parameter</span></th>';
 				$buf .= '<th><span class="" >Status</span></th></tr></thead>';
-				$buf .= '<tbody>';
+				$buf .= "<tbody>";
 
 				foreach ( $robots as $r ) {
 					$class  = 'robots';
-					$status = '#9cf975';
+					$status = "#9cf975";
 					$help   = '';
 					if ( ! $r['valid'] || ! $r['strict'] ) {
 						if ( ! $r['strict'] ) {
 							$class .= ' quirks';
-							$status = 'yellow';
+							$status = "yellow";
 						}
 						if ( ! $r['valid'] ) {
 							$class .= ' invalid';
-							$status = '#f9534a';
+							$status = "#f9534a";
 						}
 						if ( $show_help ) {
 							$help = '<a style="cursor:pointer;" class="' . $class . '" title="Click for Help!" onclick="toggleVisibility(\'aiosp_robots_main_legend_tip\');" title="Click for Help">'
-									. '<div class="aioseop_tip_icon"></div></a>';
+							        . '<div class="aioseop_tip_icon"></div></a>';
 						}
 					}
 					$buf .= "<tr class='entry-row {$class}'><td>{$help}</td><td><span class='entry_label'>{$r['content']}</td><td><div style='background:{$status};'></div></td></tr>";
@@ -372,12 +372,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 
 		function annotate_robots( $robots ) {
 			$state = 0;
-			$rules = array();
+			$rules = Array();
 			foreach ( $robots as $l ) {
 				$l = trim( $l );
 				if ( empty( $l[0] ) ) {
 					if ( $state > 1 ) {
-						$rules[] = array(
+						$rules[] = Array(
 							'state'   => 0,
 							'type'    => 'blank',
 							'content' => $l,
@@ -390,7 +390,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					if ( $state < 1 ) {
 						$state = 1;
 					}
-					$rules[] = array(
+					$rules[] = Array(
 						'state'   => $state,
 						'type'    => 'comment',
 						'content' => $l,
@@ -399,7 +399,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					);
 				} elseif ( stripos( $l, 'sitemap' ) === 0 ) {
 					$state   = 2;
-					$rules[] = array(
+					$rules[] = Array(
 						'state'   => $state,
 						'type'    => 'sitemap',
 						'content' => $l,
@@ -408,7 +408,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					);
 				} elseif ( stripos( $l, 'crawl-delay' ) === 0 ) {
 					$state   = 3;
-					$rules[] = array(
+					$rules[] = Array(
 						'state'   => $state,
 						'type'    => 'crawl-delay',
 						'content' => $l,
@@ -417,7 +417,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					);
 				} elseif ( stripos( $l, 'user-agent' ) === 0 ) {
 					$state   = 3;
-					$rules[] = array(
+					$rules[] = Array(
 						'state'   => $state,
 						'type'    => 'user-agent',
 						'content' => $l,
@@ -426,7 +426,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					);
 				} elseif ( stripos( $l, 'useragent' ) === 0 ) {
 					$state   = 3;
-					$rules[] = array(
+					$rules[] = Array(
 						'state'   => $state,
 						'type'    => 'user-agent',
 						'content' => $l,
@@ -435,7 +435,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					);
 				} elseif ( stripos( $l, 'disallow' ) === 0 ) {
 					if ( $state < 3 ) {
-						$rules[] = array(
+						$rules[] = Array(
 							'state'   => $state,
 							'type'    => 'disallow',
 							'content' => $l,
@@ -445,7 +445,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 						continue;
 					}
 					$state   = 3;
-					$rules[] = array(
+					$rules[] = Array(
 						'state'   => $state,
 						'type'    => 'disallow',
 						'content' => $l,
@@ -454,7 +454,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					);
 				} elseif ( stripos( $l, 'allow' ) === 0 ) {
 					if ( $state < 3 ) {
-						$rules[] = array(
+						$rules[] = Array(
 							'state'   => $state,
 							'type'    => 'allow',
 							'content' => $l,
@@ -464,7 +464,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 						continue;
 					}
 					$state   = 3;
-					$rules[] = array(
+					$rules[] = Array(
 						'state'   => $state,
 						'type'    => 'allow',
 						'content' => $l,
@@ -472,7 +472,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 						'strict'  => false,
 					);
 				} else {
-					$rules[] = array(
+					$rules[] = Array(
 						'state'   => $state,
 						'type'    => 'unknown',
 						'content' => $l,
@@ -487,11 +487,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 
 		function parse_annotated_robots( $robots ) {
 			$state = 0;
-			$rules = array();
-			$opts  = array( 'sitemap', 'crawl-delay', 'user-agent', 'allow', 'disallow', 'comment' );
-			$rule  = array();
+			$rules = Array();
+			$opts  = Array( 'sitemap', 'crawl-delay', 'user-agent', 'allow', 'disallow', 'comment' );
+			$rule  = Array();
 			foreach ( $opts as $o ) {
-				$rule[ $o ] = array();
+				$rule[ $o ] = Array();
 			}
 			$blank_rule = $rule;
 			foreach ( $robots as $l ) {
@@ -499,7 +499,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					case 'blank':
 						if ( $state >= 1 ) {
 							if ( ( $state === 1 ) && ( empty( $rule['user-agent'] ) ) ) {
-								$rule['user-agent'] = array( null );
+								$rule['user-agent'] = Array( null );
 							}
 							$rules[] = $rule;
 							$rule    = $blank_rule;
@@ -540,7 +540,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				$state = $l['state'];
 			}
 			if ( ( $state === 1 ) && ( empty( $rule['user-agent'] ) ) ) {
-				$rule['user-agent'] = array( null );
+				$rule['user-agent'] = Array( null );
 			}
 			if ( $state >= 1 ) {
 				$rules[] = $rule;
@@ -554,15 +554,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 		}
 
 		function get_robot_user_agents( $rules ) {
-			$opts        = array( 'sitemap', 'crawl-delay', 'user-agent', 'allow', 'disallow', 'comment' );
-			$user_agents = array();
+			$opts        = Array( 'sitemap', 'crawl-delay', 'user-agent', 'allow', 'disallow', 'comment' );
+			$user_agents = Array();
 			foreach ( $rules as $r ) {
 				if ( ! empty( $r['sitemap'] ) && empty( $r['user-agent'] ) ) {
-					$r['user-agent'] = array( null );
+					$r['user-agent'] = Array( null );
 				}
 				foreach ( $r['user-agent'] as $ua ) {
 					if ( ! isset( $user_agents[ $ua ] ) ) {
-						$user_agents[ $ua ] = array();
+						$user_agents[ $ua ] = Array();
 					}
 					foreach ( $opts as $o ) {
 						if ( ! isset( $user_agents[ $ua ][ $o ] ) ) {
@@ -578,9 +578,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 		}
 
 		function flatten_user_agents( $user_agents ) {
-			$rules = array();
+			$rules = Array();
 			foreach ( $user_agents as $ua => $r ) {
-				$r['user-agent'] = array( $ua );
+				$r['user-agent'] = Array( $ua );
 				$rules[]         = $r;
 			}
 

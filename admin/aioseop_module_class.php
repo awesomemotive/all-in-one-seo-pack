@@ -1,9 +1,5 @@
 <?php
 /**
- * The abstract base class for each module.
- *
- * The abstract base class for each module.
- *
  * @package All-in-One-SEO-Pack
  * @version 2.3.12.2
  */
@@ -14,212 +10,37 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 	 * The module base class; handles settings, options, menus, metaboxes, etc.
 	 */
 	abstract class All_in_One_SEO_Pack_Module {
-
-		/**
-		 * The singleton instance.
-		 *
-		 * @access   public
-		 * @var      All_in_One_SEO_Pack_Module    $instance    The instance of the module.
-		 */
 		public static $instance = null;
-
-		/**
-		 * The singleton instance.
-		 *
-		 * @access   protected
-		 * @var      string    $plugin_name    The name of the plugin.
-		 */
 		protected $plugin_name;
-
-		/**
-		 * TODO.
-		 *
-		 * @access   protected
-		 * @var      string    $name    TODO.
-		 */
 		protected $name;
-
-		/**
-		 * The name of the menu.
-		 *
-		 * @access   protected
-		 * @var      string    $menu_name    The name of the menu.
-		 */
 		protected $menu_name;
-
-		/**
-		 * The prefix of this module.
-		 *
-		 * @access   protected
-		 * @var      string    $prefix    The prefix of this module.
-		 */
 		protected $prefix;
-
-		/**
-		 * The plugin base file.
-		 *
-		 * @access   protected
-		 * @var      string    $file    The plugin base file.
-		 */
 		protected $file;
-
-		/**
-		 * The options for this module.
-		 *
-		 * @access   protected
-		 * @var      string    $options    The options for this module.
-		 */
 		protected $options;
-
-		/**
-		 * The name under which the options for this module are stored.
-		 *
-		 * @access   protected
-		 * @var      string    $option_name    The name under which the options for this module are stored.
-		 */
 		protected $option_name;
-
-		/**
-		 * The default options for this module.
-		 *
-		 * @access   protected
-		 * @var      string    $default_options    The default options for this module.
-		 */
 		protected $default_options;
-
-		/**
-		 * The help text for this module.
-		 *
-		 * @access   protected
-		 * @var      array    $help_text    The help text for this module.
-		 */
 		protected $help_text = array();
-
-		/**
-		 * The help text links for this module.
-		 *
-		 * @access   protected
-		 * @var      array    $help_anchors    The help text links for this module.
-		 */
 		protected $help_anchors = array();
-
-		/**
-		 * Organize settings into settings pages with a menu items and/or metaboxes on post types edit screen; optional.
-		 *
-		 * @access   protected
-		 * @var      string    $locations
-		 */
-		protected $locations = null;
-
-		/**
-		 * Organize settings on a settings page into multiple, separate metaboxes; optional.
-		 *
-		 * @access   protected
-		 * @var      string    $layout
-		 */
-		protected $layout = null;
-
-		/**
-		 * Organize layouts on a settings page into multiple, separate tabs; optional.
-		 *
-		 * @access   protected
-		 * @var      string    $tabs
-		 */
-		protected $tabs = null;
-
-		/**
-		 * The current tab.
-		 *
-		 * @access   protected
-		 * @var      string    $current_tab
-		 */
-		protected $current_tab = null;
-
-		/**
-		 * The current page hook.
-		 *
-		 * @access   protected
-		 * @var      string    $pagehook    The name of the plugin.
-		 */
-		protected $pagehook = null;
-
-		/**
-		 * Whether to store the option or not.
-		 *
-		 * @access   protected
-		 * @var      string    $store_option
-		 */
+		protected $locations = null;    // organize settings into settings pages with a menu items and/or metaboxes on post types edit screen; optional
+		protected $layout = null;        // organize settings on a settings page into multiple, separate metaboxes; optional
+		protected $tabs = null;            // organize layouts on a settings page into multiple, separate tabs; optional
+		protected $current_tab = null;    // the current tab
+		protected $pagehook = null;        // the current page hook
 		protected $store_option = false;
-
-		/**
-		 * TODO.
-		 *
-		 * @access   protected
-		 * @var      string    $parent_option
-		 */
 		protected $parent_option = 'aioseop_options';
-
-		/**
-		 * TODO.
-		 *
-		 * @access   protected
-		 * @var      string    $post_metaboxes
-		 */
 		protected $post_metaboxes = array();
-
-		/**
-		 * The tabbed metaboxes to show.
-		 *
-		 * @access   protected
-		 * @var      string    $tabbed_metaboxes
-		 */
 		protected $tabbed_metaboxes = true;
-
-		/**
-		 * Used for WP Filesystem.
-		 *
-		 * @access   protected
-		 * @var      string    $credentials    The name of the plugin.
-		 */
-		protected $credentials = false;
-
-		/**
-		 * Used for passing data to JavaScript.
-		 *
-		 * @access   protected
-		 * @var      string    $script_data    The name of the plugin.
-		 */
-		protected $script_data = null;
-
-		/**
-		 * The paths relevant to the plugin.
-		 *
-		 * @access   protected
-		 * @var      array    $plugin_path
-		 */
+		protected $credentials = false; // used for WP Filesystem
+		protected $script_data = null;    // used for passing data to JavaScript
 		protected $plugin_path = null;
-
-		/**
-		 * The admin pointers.
-		 *
-		 * @access   protected
-		 * @var      array    $pointers
-		 */
 		protected $pointers = array();
-
-		/**
-		 * The name of the form.
-		 *
-		 * @access   protected
-		 * @var      string    $form
-		 */
 		protected $form = 'dofollow';
 
 		/**
 		 * Handles calls to display_settings_page_{$location}, does error checking.
 		 *
-		 * @param string $name
-		 * @param array $arguments
+		 * @param $name
+		 * @param $arguments
 		 *
 		 * @throws Exception
 		 */

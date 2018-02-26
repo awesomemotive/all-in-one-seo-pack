@@ -8,6 +8,7 @@ if ( ! class_exists( 'AIOSEOP_Opengraph_Public' ) ) {
 	 * Handles the public-facing duties of opengraph things
 	 *
 	 * @since 2.3.5
+	 *
 	 */
 	class AIOSEOP_Opengraph_Public {
 
@@ -25,8 +26,9 @@ if ( ! class_exists( 'AIOSEOP_Opengraph_Public' ) ) {
 		 */
 		public static function prepare_twitter_username( $twitter_profile ) {
 
-			// $twitter_profile = 'https://twitter.com/sdfsdfsf'; //testing purposes only, remove for release
-			// test for valid twitter username, with or without @
+			//$twitter_profile = 'https://twitter.com/sdfsdfsf'; //testing purposes only, remove for release
+
+			//test for valid twitter username, with or without @
 			if ( preg_match( '/^(\@)?[A-Za-z0-9_]+$/', $twitter_profile ) ) {
 
 				$twitter_profile = self::prepend_at_symbol( $twitter_profile );
@@ -34,7 +36,7 @@ if ( ! class_exists( 'AIOSEOP_Opengraph_Public' ) ) {
 				return $twitter_profile;
 			}
 
-			// check if it has twitter.com
+			//check if it has twitter.com
 			if ( strpos( $twitter_profile, 'twitter.com' ) ) {
 
 				$twitter_profile = esc_url( $twitter_profile );
@@ -49,7 +51,7 @@ if ( ! class_exists( 'AIOSEOP_Opengraph_Public' ) ) {
 				}
 			}
 
-			// if all else fails, just send it back
+			//if all else fails, just send it back
 			return $twitter_profile;
 
 		}
@@ -69,7 +71,8 @@ if ( ! class_exists( 'AIOSEOP_Opengraph_Public' ) ) {
 				return $twitter_profile;
 			}
 
-			// extract the twitter username from the url
+			//extract the twitter username from the url
+
 			$parsed_twitter_profile = wp_parse_url( $twitter_profile );
 
 			$path            = $parsed_twitter_profile['path'];
@@ -90,7 +93,7 @@ if ( ! class_exists( 'AIOSEOP_Opengraph_Public' ) ) {
 		 * TODO- this claims to just validate, but it's actually validating and adding the AT symbol as needed rather than returning true/false
 		 */
 		public static function validate_twitter_profile( $twitter_profile ) {
-			// test for valid twitter username, with or without @
+			//test for valid twitter username, with or without @
 			if ( preg_match( '/^(\@)?[A-Za-z0-9_]+$/', $twitter_profile ) ) {
 
 				$twitter_profile = self::prepend_at_symbol( $twitter_profile );
@@ -107,7 +110,7 @@ if ( ! class_exists( 'AIOSEOP_Opengraph_Public' ) ) {
 		 * @since 2.3.5
 		 */
 		public static function prepend_at_symbol( $twitter_profile ) {
-			// checks for @ in the beginning, if it's not there adds it
+			//checks for @ in the beginning, if it's not there adds it
 			if ( '@' !== $twitter_profile[0] ) {
 				$twitter_profile = '@' . $twitter_profile;
 			}
