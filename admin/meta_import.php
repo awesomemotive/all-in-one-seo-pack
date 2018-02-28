@@ -262,9 +262,11 @@ function aiosp_seometa_meta_key_convert( $old = '', $new = '', $delete_old = fal
 		}
 		$not_in = implode( ', ', (array) $not_in );
 
+		// @codingStandardsIgnoreStart
 		$output->updated = $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->postmeta SET meta_key = %s WHERE meta_key = %s AND post_id NOT IN ($not_in)", $new, $old ) );
 		$output->deleted = $delete_old ? $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->postmeta WHERE meta_key = %s", $old ) ) : 0;
 		$output->ignored = count( $exclude );
+		// @codingStandardsIgnoreEnd
 
 	}
 
@@ -460,6 +462,7 @@ function aiosp_seometa_import() {
 			'Custom Scripts'   => 'thesis_javascript_scripts',
 			'Redirect URI'     => 'thesis_redirect',
 		),
+
 		/*
 		'Thesis 2.x' => array(
 			'Custom Doctitle' => '_thesis_title_tag',
@@ -470,6 +473,7 @@ function aiosp_seometa_import() {
 			'Redirect URI' => '_thesis_redirect',
 		),
 		*/
+
 		'WooFramework' => array(
 			'Custom Doctitle'  => 'seo_title',
 			'META Description' => 'seo_description',
@@ -586,38 +590,6 @@ function aiosp_seometa_activation_hook() {
 
 }
 
-/**
- * Manual conversion test
- */
 /*
-$aiosp_seometa_convert = aiosp_seometa_post_meta_convert( 'All in One SEO Pack', 'Genesis', false );
-printf( '%d records were updated', $aiosp_seometa_convert->updated );
-
-
-/**
- * Manual analysis test
- */
-/*
-$aiosp_seometa_analyze = aiosp_seometa_post_meta_analyze( 'All in One SEO Pack', 'Genesis' );
-printf( '<p><b>%d</b> Compatible Records were identified</p>', $aiosp_seometa_analyze->update );
-
-
-/**
- * Delete all SEO data, from every platform
- */
-/*
-foreach ( $_aiosp_seometa_platforms as $platform => $data ) {
-
-	foreach ( $data as $field ) {
-		$deleted = $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->postmeta WHERE meta_key = %s", $field ) );
-		printf( '%d %s records deleted<br />', $deleted, $field );
-	}
-
-}
-
-
-/**
- * Query all SEO data to find the number of records to change
- */
-
-
+	Deleted a lot of block comments from here for #1003.
+*/

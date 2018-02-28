@@ -10,7 +10,9 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 	 *
 	 * @since 2.3.14 #921 Autotrack added and class refactored.
 	 */
+	// @codingStandardsIgnoreStart
 	class aioseop_google_analytics extends All_in_One_SEO_Pack_Module {
+	// @codingStandardsIgnoreEnd
 
 		/**
 		 * @todo Rather than extending the module base class,
@@ -66,8 +68,9 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 						'aiosp_google_autotrack',
 						'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.0/autotrack.js'
 					);
-					?><script async src="<?php echo $autotrack ?>"></script>
-<?php // Requested indent #921 
+					?><script async src="<?php echo $autotrack; ?>"></script>
+<?php
+// Requested indent #921
 				}
 				$analytics = ob_get_clean();
 			}
@@ -121,7 +124,7 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 			$extra_options = array();
 			if ( ! empty( $domain_list ) ) {
 				$extra_options[] = 'ga(\'require\', \'linker\');';
-				$extra_options[] = 'ga(\'linker:autoLink\', ['. $domain_list . '] );';
+				$extra_options[] = 'ga(\'linker:autoLink\', [' . $domain_list . '] );';
 			}
 			if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) ) {
 				if ( ! empty( $aioseop_options['aiosp_ga_display_advertising'] ) ) {
@@ -154,11 +157,14 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 			$analytics_id = esc_js( $aioseop_options['aiosp_google_analytics_id'] );
 			ob_start()
 			?>
-			<script type="text/javascript" <?php echo preg_replace( '/\s+/', ' ', apply_filters( 'aioseop_ga_attributes', '' ) ) ?>>
+			<script type="text/javascript" <?php echo preg_replace( '/\s+/', ' ', apply_filters( 'aioseop_ga_attributes', '' ) ); ?>>
 				window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-				ga('create', '<?php echo $analytics_id ?>'<?php echo $domain ?><?php echo $js_options ?>);
+				ga('create', '<?php echo $analytics_id; ?>'<?php echo $domain; ?><?php echo $js_options; ?>);
 				// Plugins
-				<?php foreach ( $extra_options as $option ) : ?><?php echo $option ?><?php endforeach ?>
+				<?php
+				foreach ( $extra_options as $option ) :
+?>
+<?php echo $option; ?><?php endforeach ?>
 
 				ga('send', 'pageview');
 			</script>

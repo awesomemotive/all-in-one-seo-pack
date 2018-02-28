@@ -1,11 +1,11 @@
 <?php
 
-if ( ! class_exists( 'aioseop_welcome' ) ) {
+if ( ! class_exists( 'AIOSEOP_welcome' ) ) {
 
 	/**
-	 * Class aioseop_welcome
+	 * Class AIOSEOP_welcome
 	 */
-	class aioseop_welcome {
+	class AIOSEOP_welcome {
 		/**
 		 * Constructor to add the actions.
 		 */

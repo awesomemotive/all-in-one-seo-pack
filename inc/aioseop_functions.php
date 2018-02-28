@@ -127,11 +127,10 @@ if ( ! function_exists( 'aioseop_option_isset' ) ) {
 if ( ! function_exists( 'aioseop_addmycolumns' ) ) {
 	/**
 	 * Adds posttype columns.
-	 *
 	 */
 	function aioseop_addmycolumns() {
 		global $aioseop_options, $pagenow;
-		$aiosp_posttypecolumns = Array();
+		$aiosp_posttypecolumns = array();
 		if ( ! empty( $aioseop_options ) && ! empty( $aioseop_options['aiosp_posttypecolumns'] ) ) {
 			$aiosp_posttypecolumns = $aioseop_options['aiosp_posttypecolumns'];
 		}
@@ -184,7 +183,7 @@ if ( ! function_exists( 'aioseop_mrt_pcolumns' ) ) {
 if ( ! function_exists( 'aioseop_admin_head' ) ) {
 
 	function aioseop_admin_head() {
-		wp_enqueue_script( 'aioseop_welcome_js', AIOSEOP_PLUGIN_URL . 'js/quickedit_functions.js', array( 'jquery' ), AIOSEOP_VERSION);
+		wp_enqueue_script( 'aioseop_welcome_js', AIOSEOP_PLUGIN_URL . 'js/quickedit_functions.js', array( 'jquery' ), AIOSEOP_VERSION );
 		?>
 		<style>
 			.aioseop_edit_button {
@@ -235,14 +234,15 @@ if ( ! function_exists( 'aioseop_admin_head' ) ) {
 				}
 			}
 		</style>
-		<?php wp_print_scripts( Array( 'sack' ) );
+		<?php
+		wp_print_scripts( array( 'sack' ) );
 		?>
 		<script type="text/javascript">
 			//<![CDATA[
 			var aioseopadmin = {
 				blogUrl: "<?php print get_bloginfo( 'url' ); ?>",
 				pluginUrl: "<?php print AIOSEOP_PLUGIN_URL; ?>",
-				requestUrl: "<?php print WP_ADMIN_URL . '/admin-ajax.php' ?>",
+				requestUrl: "<?php print WP_ADMIN_URL . '/admin-ajax.php'; ?>",
 				imgUrl: "<?php print AIOSEOP_PLUGIN_IMAGES_URL; ?>",
 				Edit: "<?php _e( 'Edit', 'all-in-one-seo-pack' ); ?>",
 				Post: "<?php _e( 'Post', 'all-in-one-seo-pack' ); ?>",
@@ -321,7 +321,7 @@ if ( ! function_exists( 'aioseop_output_dismissable_notice' ) ) {
 				return false;
 			}
 			global $wp;
-			$qa = Array();
+			$qa = array();
 			wp_parse_str( $_SERVER['QUERY_STRING'], $qa );
 			$qa['aioseop_ignore_notice'] = $msgid;
 			$url                         = '?' . build_query( $qa );
@@ -343,29 +343,33 @@ if ( ! function_exists( 'aioseop_ajax_save_meta' ) ) {
 		$target   = $_POST['target_meta'];
 		check_ajax_referer( 'aioseop_meta_' . $target . '_' . $post_id, '_nonce' );
 		$result = '';
-		if ( in_array( $target, Array(
+		if ( in_array(
+			$target, array(
 				'title',
 				'description',
 				'keywords',
-			) ) && current_user_can( 'edit_post', $post_id )
+			)
+		) && current_user_can( 'edit_post', $post_id )
 		) {
 			update_post_meta( $post_id, '_aioseop_' . $target, esc_attr( $new_meta ) );
 			$result = get_post_meta( $post_id, '_aioseop_' . $target, true );
 		} else {
 			die();
 		}
-		if ( $result != '' ):
+		if ( $result != '' ) :
 			$label = "<label id='aioseop_label_{$target}_{$post_id}'><span style='width: 20px;display: inline-block;'></span>" . $result . '</label>';
-		else:
+		else :
 			$label = "<label id='aioseop_label_{$target}_{$post_id}'></label><span style='width: 20px;display: inline-block;'></span><strong><i>" . __( 'No', 'all-in-one-seo-pack' ) . ' ' . $target . '</i></strong>';
 		endif;
 		$nonce  = wp_create_nonce( "aioseop_meta_{$target}_{$post_id}" );
 		$output = '<a id="' . $target . 'editlink' . $post_id . '" class="aioseop_edit_link" href="javascript:void(0);"'
-		          . 'onclick=\'aioseop_ajax_edit_meta_form(' . $post_id . ', "' . $target . '", "' . $nonce . '");return false;\' title="' . __( 'Edit' ) . '">'
-		          . '<img class="aioseop_edit_button" id="aioseop_edit_id" src="' . AIOSEOP_PLUGIN_IMAGES_URL . '/cog_edit.png" /></a> ' . $label;
-		die( "jQuery('div#aioseop_" . $target . '_' . $post_id . "').fadeOut('fast', function() { var my_label = " . json_encode( $output ) . ";
+				  . 'onclick=\'aioseop_ajax_edit_meta_form(' . $post_id . ', "' . $target . '", "' . $nonce . '");return false;\' title="' . __( 'Edit' ) . '">'
+				  . '<img class="aioseop_edit_button" id="aioseop_edit_id" src="' . AIOSEOP_PLUGIN_IMAGES_URL . '/cog_edit.png" /></a> ' . $label;
+		die(
+			"jQuery('div#aioseop_" . $target . '_' . $post_id . "').fadeOut('fast', function() { var my_label = " . json_encode( $output ) . ";
 			  jQuery('div#aioseop_" . $target . '_' . $post_id . "').html(my_label).fadeIn('fast');
-		});" );
+		});"
+		);
 	}
 }
 
@@ -407,7 +411,7 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 
 	function aioseop_ajax_save_url() {
 		aioseop_ajax_init();
-		$options = Array();
+		$options = array();
 		parse_str( $_POST['options'], $options );
 		foreach ( $options as $k => $v ) {
 			$_POST[ $k ] = $v;
@@ -429,14 +433,16 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 		$prefix = $module->get_prefix();
 		$_POST  = $module->get_current_options( $_POST, null );
 		$module->handle_settings_updates( null );
-		$options = $module->get_current_options( Array(), null );
-		$output  = $module->display_custom_options( '', Array(
-			'name'  => $prefix . 'addl_pages',
-			'type'  => 'custom',
-			'save'  => true,
-			'value' => $options[ $prefix . 'addl_pages' ],
-			'attr'  => '',
-		) );
+		$options = $module->get_current_options( array(), null );
+		$output  = $module->display_custom_options(
+			'', array(
+				'name'  => $prefix . 'addl_pages',
+				'type'  => 'custom',
+				'save'  => true,
+				'value' => $options[ $prefix . 'addl_pages' ],
+				'attr'  => '',
+			)
+		);
 		$output  = str_replace( "'", "\'", $output );
 		$output  = str_replace( "\n", '\n', $output );
 		die( sprintf( AIOSEOP_AJAX_MSG_TMPL, $output ) );
@@ -447,7 +453,7 @@ if ( ! function_exists( 'aioseop_ajax_delete_url' ) ) {
 
 	function aioseop_ajax_delete_url() {
 		aioseop_ajax_init();
-		$options         = Array();
+		$options         = array();
 		$options         = esc_attr( $_POST['options'] );
 		$_POST['action'] = 'aiosp_update_module';
 		global $aiosp, $aioseop_modules;
@@ -469,14 +475,16 @@ if ( ! function_exists( 'aioseop_ajax_delete_url' ) ) {
 				$_POST['aiosp_sitemap_addl_pages'] = json_encode( $_POST['aiosp_sitemap_addl_pages'] );
 			}
 			$module->handle_settings_updates( null );
-			$options = $module->get_current_options( Array(), null );
-			$output  = $module->display_custom_options( '', Array(
-				'name'  => 'aiosp_sitemap_addl_pages',
-				'type'  => 'custom',
-				'save'  => true,
-				'value' => $options['aiosp_sitemap_addl_pages'],
-				'attr'  => '',
-			) );
+			$options = $module->get_current_options( array(), null );
+			$output  = $module->display_custom_options(
+				'', array(
+					'name'  => 'aiosp_sitemap_addl_pages',
+					'type'  => 'custom',
+					'save'  => true,
+					'value' => $options['aiosp_sitemap_addl_pages'],
+					'attr'  => '',
+				)
+			);
 			$output  = str_replace( "'", "\'", $output );
 			$output  = str_replace( "\n", '\n', $output );
 		} else {
@@ -491,7 +499,7 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 	function aioseop_ajax_scan_header() {
 		$_POST['options'] = 'foo';
 		aioseop_ajax_init();
-		$options = Array();
+		$options = array();
 		parse_str( $_POST['options'], $options );
 		foreach ( $options as $k => $v ) {
 			$_POST[ $k ] = $v;
@@ -508,13 +516,13 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 		global $aiosp;
 		$output   = $aiosp->html_string_to_array( $output );
 		$meta     = '';
-		$metatags = Array(
-			'facebook' => Array( 'name' => 'property', 'value' => 'content' ),
-			'twitter'  => Array( 'name' => 'name', 'value' => 'value' ),
-			'google+'  => Array( 'name' => 'itemprop', 'value' => 'content' ),
+		$metatags = array(
+			'facebook' => array( 'name' => 'property', 'value' => 'content' ),
+			'twitter'  => array( 'name' => 'name', 'value' => 'value' ),
+			'google+'  => array( 'name' => 'itemprop', 'value' => 'content' ),
 		);
-		$metadata = Array(
-			'facebook' => Array(
+		$metadata = array(
+			'facebook' => array(
 				'title'       => 'og:title',
 				'type'        => 'og:type',
 				'url'         => 'og:url',
@@ -523,12 +531,12 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 				'key'         => 'fb:admins',
 				'description' => 'og:description',
 			),
-			'google+'  => Array(
+			'google+'  => array(
 				'thumbnail'   => 'image',
 				'title'       => 'name',
 				'description' => 'description',
 			),
-			'twitter'  => Array(
+			'twitter'  => array(
 				'card'        => 'twitter:card',
 				'url'         => 'twitter:url',
 				'title'       => 'twitter:title',
@@ -557,12 +565,12 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 		} else {
 			$meta = "<table cellspacing=0 cellpadding=0 width=80% class='aioseop_table'><tr class='aioseop_table_header'><th>Meta For Site</th><th>Kind of Meta</th><th>Element Name</th><th>Element Value</th></tr>" . $meta . '</table>';
 			$meta .= "<p><div class='aioseop_meta_info'><h3 style='padding:5px;margin-bottom:0px;'>" . __( 'What Does This Mean?', 'all-in-one-seo-pack' ) . "</h3><div style='padding:5px;padding-top:0px;'>"
-			         . '<p>' . __( 'All in One SEO Pack has detected that a plugin(s) or theme is also outputting social meta tags on your site. You can view this social meta in the source code of your site (check your browser help for instructions on how to view source code).', 'all-in-one-seo-pack' )
-			         . '</p><p>' . __( 'You may prefer to use the social meta tags that are being output by the other plugin(s) or theme. If so, then you should deactivate this Social Meta feature in All in One SEO Pack Feature Manager.', 'all-in-one-seo-pack' )
-			         . '</p><p>' . __( 'You should avoid duplicate social meta tags. You can use these free tools from Facebook and Twitter to validate your social meta and check for errors:', 'all-in-one-seo-pack' ) . '</p>';
+					 . '<p>' . __( 'All in One SEO Pack has detected that a plugin(s) or theme is also outputting social meta tags on your site. You can view this social meta in the source code of your site (check your browser help for instructions on how to view source code).', 'all-in-one-seo-pack' )
+					 . '</p><p>' . __( 'You may prefer to use the social meta tags that are being output by the other plugin(s) or theme. If so, then you should deactivate this Social Meta feature in All in One SEO Pack Feature Manager.', 'all-in-one-seo-pack' )
+					 . '</p><p>' . __( 'You should avoid duplicate social meta tags. You can use these free tools from Facebook and Twitter to validate your social meta and check for errors:', 'all-in-one-seo-pack' ) . '</p>';
 
 			foreach (
-				Array(
+				array(
 					'https://developers.facebook.com/tools/debug',
 					'https://dev.twitter.com/docs/cards/validation/validator',
 				) as $link
@@ -582,7 +590,7 @@ if ( ! function_exists( 'aioseop_ajax_save_settings' ) ) {
 
 	function aioseop_ajax_save_settings() {
 		aioseop_ajax_init();
-		$options = Array();
+		$options = array();
 		parse_str( $_POST['options'], $options );
 		$_POST           = $options;
 		$_POST['action'] = 'aiosp_update_module';
@@ -612,7 +620,7 @@ if ( ! function_exists( 'aioseop_ajax_get_menu_links' ) ) {
 
 	function aioseop_ajax_get_menu_links() {
 		aioseop_ajax_init();
-		$options = Array();
+		$options = array();
 		parse_str( $_POST['options'], $options );
 		$_POST           = $options;
 		$_POST['action'] = 'aiosp_update_module';
@@ -624,14 +632,14 @@ if ( ! function_exists( 'aioseop_ajax_get_menu_links' ) ) {
 		}
 		$_POST['Submit'] = 'ajax';
 		$modlist         = $aioseop_modules->get_loaded_module_list();
-		$links           = Array();
-		$link_list       = Array();
+		$links           = array();
+		$link_list       = array();
 		$link            = $aiosp->get_admin_links();
 		if ( ! empty( $link ) ) {
 			foreach ( $link as $l ) {
 				if ( ! empty( $l ) ) {
 					if ( empty( $link_list[ $l['order'] ] ) ) {
-						$link_list[ $l['order'] ] = Array();
+						$link_list[ $l['order'] ] = array();
 					}
 					$link_list[ $l['order'] ][ $l['title'] ] = $l['href'];
 				}
@@ -646,7 +654,7 @@ if ( ! function_exists( 'aioseop_ajax_get_menu_links' ) ) {
 					foreach ( $link as $l ) {
 						if ( ! empty( $l ) ) {
 							if ( empty( $link_list[ $l['order'] ] ) ) {
-								$link_list[ $l['order'] ] = Array();
+								$link_list[ $l['order'] ] = array();
 							}
 							$link_list[ $l['order'] ][ $l['title'] ] = $l['href'];
 						}
@@ -699,27 +707,30 @@ if ( ! function_exists( 'aioseop_mrt_pccolumn' ) ) {
 		if ( ! $target ) {
 			return;
 		}
-		if ( current_user_can( 'edit_post', $id ) ) { ?>
+		if ( current_user_can( 'edit_post', $id ) ) {
+		?>
 			<div class="aioseop_mpc_admin_meta_container">
 				<div class="aioseop_mpc_admin_meta_options"
-				     id="aioseop_<?php print $target; ?>_<?php echo $id; ?>"
-				     style="float:left;">
-					<?php $content = strip_tags( stripslashes( get_post_meta( $id, '_aioseop_' . $target, true ) ) );
-					if ( ! empty( $content ) ):
+					 id="aioseop_<?php print $target; ?>_<?php echo $id; ?>"
+					 style="float:left;">
+					<?php
+					$content = strip_tags( stripslashes( get_post_meta( $id, '_aioseop_' . $target, true ) ) );
+					if ( ! empty( $content ) ) :
 						$label = "<label id='aioseop_label_{$target}_{$id}'><span style='width: 20px;display: inline-block;'></span>" . $content . '</label>';
-					else:
+					else :
 						$label = "<label id='aioseop_label_{$target}_{$id}'></label><span style='width: 20px;display: inline-block;'></span><strong><i>" . __( 'No', 'all-in-one-seo-pack' ) . ' ' . $target . '</i></strong>';
 					endif;
 					$nonce = wp_create_nonce( "aioseop_meta_{$target}_{$id}" );
 					echo '<a id="' . $target . 'editlink' . $id . '" class="aioseop_edit_link" href="javascript:void(0);" onclick=\'aioseop_ajax_edit_meta_form(' .
-					     $id . ', "' . $target . '", "' . $nonce . '");return false;\' title="' . __( 'Edit' ) . '">'
-					     . "<img class='aioseop_edit_button'
+						 $id . ', "' . $target . '", "' . $nonce . '");return false;\' title="' . __( 'Edit' ) . '">'
+						 . "<img class='aioseop_edit_button'
 											id='aioseop_edit_id'
 											src='" . AIOSEOP_PLUGIN_IMAGES_URL . "cog_edit.png' /></a> " . $label;
 					?>
 				</div>
 			</div>
-		<?php }
+		<?php
+		}
 	}
 }
 
@@ -828,7 +839,7 @@ if ( ! function_exists( 'aioseop_localize_script_data' ) ) {
 	function aioseop_localize_script_data() {
 		static $loaded = 0;
 		if ( ! $loaded ) {
-			$data = apply_filters( 'aioseop_localize_script_data', Array() );
+			$data = apply_filters( 'aioseop_localize_script_data', array() );
 			wp_localize_script( 'aioseop-module-script', 'aiosp_data', $data );
 			$loaded = 1;
 		}
@@ -870,15 +881,19 @@ if ( ! function_exists( 'fnmatch' ) ) {
 	 * @return int
 	 */
 	function fnmatch( $pattern, $string ) {
-		return preg_match( '#^' . strtr( preg_quote( $pattern, '#' ), array(
-				'\*' => '.*',
-				'\?' => '.',
-			) ) . "$#i", $string );
+		return preg_match(
+			'#^' . strtr(
+				preg_quote( $pattern, '#' ), array(
+					'\*' => '.*',
+					'\?' => '.',
+				)
+			) . '$#i', $string
+		);
 	}
 }
 
-if ( ! function_exists('aiosp_log')) {
-	function aiosp_log ( $log )  {
+if ( ! function_exists( 'aiosp_log' ) ) {
+	function aiosp_log( $log ) {
 
 		global $aioseop_options;
 
@@ -911,7 +926,10 @@ if ( ! function_exists( 'parse_ini_string' ) ) {
 			 *
 			 * Define our filter class.
 			 */
+			// @codingStandardsIgnoreStart
 			class parse_ini_filter extends php_user_filter {
+			// @codingStandardsIgnoreEnd
+
 				static $buf = '';
 
 				/**
@@ -980,7 +998,7 @@ function aioseop_home_url( $path = '/' ) {
 }
 
 
-if ( ! function_exists('aiosp_include_images') ) {
+if ( ! function_exists( 'aiosp_include_images' ) ) {
 	function aiosp_include_images() {
 		if ( false === apply_filters( 'aioseo_include_images_in_sitemap', true ) ) {
 			return false;
@@ -988,14 +1006,14 @@ if ( ! function_exists('aiosp_include_images') ) {
 
 		global $aioseop_options;
 
-		if( 	isset( $aioseop_options['modules'] ) && 
-			isset( $aioseop_options['modules']['aiosp_sitemap_options'] ) && 
-			isset( $aioseop_options['modules']['aiosp_sitemap_options']['aiosp_sitemap_images'] ) && 
+		if ( isset( $aioseop_options['modules'] ) &&
+			isset( $aioseop_options['modules']['aiosp_sitemap_options'] ) &&
+			isset( $aioseop_options['modules']['aiosp_sitemap_options']['aiosp_sitemap_images'] ) &&
 			'on' === $aioseop_options['modules']['aiosp_sitemap_options']['aiosp_sitemap_images']
-		 ){
-			return false; 	
- 		}
+		 ) {
+			return false;
+		}
 
-		return true;	
+		return true;
 	}
 }

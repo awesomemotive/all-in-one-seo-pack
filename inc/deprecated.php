@@ -27,7 +27,7 @@ function oauth_init() {
 		}
 		$this->update_class_option( $preload );
 		$this->update_options();
-		//return;
+		// return;
 	}
 	foreach ( array( 'token', 'secret', 'access_token', 'ga_token', 'account_cache' ) as $v ) {
 		if ( ! empty( $preload[ "{$this->prefix}{$v}" ] ) ) {
@@ -82,7 +82,7 @@ function oauth_init() {
 						$results[] = $xml['entry'];
 					}
 					foreach ( $results as $r ) {
-						foreach ( $r as $k => $v )
+						foreach ( $r as $k => $v ) {
 							switch ( $k ) {
 								case 'id':
 									$rec['id'] = $v;
@@ -99,6 +99,7 @@ function oauth_init() {
 									}
 									break;
 							}
+						}
 						$ua[ $rec['title'] ]                  = array( $rec['ga:webPropertyId'] => $rec['ga:webPropertyId'] );
 						$profiles[ $rec['ga:webPropertyId'] ] = $rec['ga:profileId'];
 					}
@@ -106,12 +107,12 @@ function oauth_init() {
 				$this->account_cache                     = array();
 				$this->account_cache['ua']               = $ua;
 				$this->account_cache['profiles']         = $profiles;
-				$preload["{$this->prefix}account_cache"] = $this->account_cache;
+				$preload[ "{$this->prefix}account_cache" ] = $this->account_cache;
 			} else {
 				unset( $this->token );
 				unset( $this->secret );
 				unset( $this->ga_token );
-				unset( $preload["{$this->prefix}ga_token"] ); // error condition here -- pdb
+				unset( $preload[ "{$this->prefix}ga_token" ] ); // error condition here -- pdb
 				$response = wp_remote_retrieve_body( $data );
 				$xml      = $this->xml_string_to_array( $response );
 				if ( ! empty( $xml ) && ! empty( $xml['error'] ) ) {
@@ -136,7 +137,7 @@ function oauth_init() {
 		$this->default_options['google_connect']['save']                 = true;
 		$this->default_options['google_connect']['name']                 = __( 'Disconnect From Google Analytics', 'all-in-one-seo-pack' );
 		$this->default_options['google_connect']['default']              = "<input name='aiosp_google_connect' type=submit  class='button-primary' value='" . __( 'Remove Stored Credentials', 'all-in-one-seo-pack' ) . "'>";
-		add_filter( $this->prefix . 'override_options', Array( $this, 'override_options' ), 10, 3 );
+		add_filter( $this->prefix . 'override_options', array( $this, 'override_options' ), 10, 3 );
 	} else {
 		$this->default_options['google_connect']['type']    = 'html';
 		$this->default_options['google_connect']['nolabel'] = 1;
@@ -145,15 +146,15 @@ function oauth_init() {
 		$this->default_options['google_connect']['default'] = "<a href='{$url}' class='button-primary'>" . __( 'Connect With Google Analytics', 'all-in-one-seo-pack' ) . '</a>';
 		foreach ( array( 'token', 'secret', 'access_token', 'ga_token', 'account_cache' ) as $v ) {
 			if ( ! empty( $this->$v ) ) {
-				$preload["{$this->prefix}{$v}"] = $this->$v;
+				$preload[ "{$this->prefix}{$v}" ] = $this->$v;
 			}
 		}
 	}
 	$this->update_class_option( $preload );
 	$this->update_options();
 	// $url = $this->report_query();
-	if ( ! empty( $this->account_cache ) && ! empty( $this->options["{$this->prefix}google_analytics_id"] ) && ! empty( $this->account_cache['profiles'][ $this->options["{$this->prefix}google_analytics_id"] ] ) ) {
-		$this->profile_id = $this->account_cache['profiles'][ $this->options["{$this->prefix}google_analytics_id"] ];
+	if ( ! empty( $this->account_cache ) && ! empty( $this->options[ "{$this->prefix}google_analytics_id" ] ) && ! empty( $this->account_cache['profiles'][ $this->options[ "{$this->prefix}google_analytics_id" ] ] ) ) {
+		$this->profile_id = $this->account_cache['profiles'][ $this->options[ "{$this->prefix}google_analytics_id" ] ];
 	}
 }
 
@@ -168,9 +169,9 @@ function oauth_get_data( $oauth_url, $args = null ) {
 		require_once( AIOSEOP_PLUGIN_DIR . 'inc/extlib/OAuth.php' );
 	}
 	if ( $args === null ) {
-		$args = Array(
+		$args = array(
 			'scope'              => 'https://www.googleapis.com/auth/analytics.readonly',
-			'xoauth_displayname' => AIOSEOP_PLUGIN_NAME . ' ' . __( 'Google Analytics', 'all-in-one-seo-pack' )
+			'xoauth_displayname' => AIOSEOP_PLUGIN_NAME . ' ' . __( 'Google Analytics', 'all-in-one-seo-pack' ),
 		);
 	}
 	$req_token = new OAuthConsumer( $this->token, $this->secret );
@@ -217,7 +218,7 @@ function oauth_get_token( $oauth_verifier ) {
 	}
 	$args                   = array(
 		'scope'              => 'https://www.google.com/analytics/feeds/',
-		'xoauth_displayname' => AIOSEOP_PLUGIN_NAME . ' ' . __( 'Google Analytics', 'all-in-one-seo-pack' )
+		'xoauth_displayname' => AIOSEOP_PLUGIN_NAME . ' ' . __( 'Google Analytics', 'all-in-one-seo-pack' ),
 	);
 	$args['oauth_verifier'] = $oauth_verifier;
 	$oauth_access_token     = 'https://www.google.com/accounts/OAuthGetAccessToken';
@@ -258,7 +259,7 @@ function oauth_connect( $count = 0 ) {
 	}
 	$args = array(
 		'scope'              => 'https://www.google.com/analytics/feeds/',
-		'xoauth_displayname' => AIOSEOP_PLUGIN_NAME . ' ' . __( 'Google Analytics', 'all-in-one-seo-pack' )
+		'xoauth_displayname' => AIOSEOP_PLUGIN_NAME . ' ' . __( 'Google Analytics', 'all-in-one-seo-pack' ),
 	);
 	if ( AIOSEOPPRO ) {
 		$req_req = $this->oauth_get_creds( $oauth_request_token, null, $args, admin_url( 'admin.php?page=all-in-one-seo-pack-pro/aioseop_class.php' ) );

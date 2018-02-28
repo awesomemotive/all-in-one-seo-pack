@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/semperfiwebdesign/all-in-one-seo-pack#readme",
   "devDependencies": {
-    "grunt": "^1.0.1",
+    "grunt": "^1.0.2",
     "grunt-contrib-uglify": "^3.1.0",
     "grunt-mkdir": "^1.0.0",
     "grunt-phpcbf": "^0.1.1",

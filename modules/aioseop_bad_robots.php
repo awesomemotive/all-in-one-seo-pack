@@ -90,13 +90,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Bad_Robots' ) ) {
 					status_header( 503 );
 					$ip         = $this->validate_ip( $_SERVER['REMOTE_ADDR'] );
 					$user_agent = $_SERVER['HTTP_USER_AGENT'];
-					$this->blocked_message( sprintf( __( 'Blocked bot with IP %s -- matched user agent %s found in blocklist.', 'all-in-one-seo-pack' ), $ip, $user_agent ) );
+					$this->blocked_message( sprintf( __( 'Blocked bot with IP %1$s -- matched user agent %2$s found in blocklist.', 'all-in-one-seo-pack' ), $ip, $user_agent ) );
 					exit();
 				} elseif ( $this->option_isset( 'block_refer' ) && $this->is_bad_referer() ) {
 					status_header( 503 );
 					$ip      = $this->validate_ip( $_SERVER['REMOTE_ADDR'] );
 					$referer = $_SERVER['HTTP_REFERER'];
-					$this->blocked_message( sprintf( __( 'Blocked bot with IP %s -- matched referer %s found in blocklist.', 'all-in-one-seo-pack' ), $ip, $referer ) );
+					$this->blocked_message( sprintf( __( 'Blocked bot with IP %1$s -- matched referer %2$s found in blocklist.', 'all-in-one-seo-pack' ), $ip, $referer ) );
 				}
 			}
 		}
@@ -134,7 +134,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Bad_Robots' ) ) {
 		 */
 		function filter_bad_referlist( $referlist ) {
 			if ( $this->option_isset( 'edit_blocks' ) && $this->option_isset( 'block_refer' ) && $this->option_isset( 'referlist' ) ) {
-				$referlist = preg_split('/\r\n|[\r\n]/', $this->options["{$this->prefix}referlist"] );
+				$referlist = preg_split( '/\r\n|[\r\n]/', $this->options[ "{$this->prefix}referlist" ] );
 			}
 
 			return $referlist;
@@ -147,7 +147,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Bad_Robots' ) ) {
 		 */
 		function filter_bad_botlist( $botlist ) {
 			if ( $this->option_isset( 'edit_blocks' ) && $this->option_isset( 'blocklist' ) ) {
-				$botlist = preg_split('/\r\n|[\r\n]/', $this->options["{$this->prefix}blocklist"] );
+				$botlist = preg_split( '/\r\n|[\r\n]/', $this->options[ "{$this->prefix}blocklist" ] );
 			}
 
 			return $botlist;
@@ -165,16 +165,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Bad_Robots' ) ) {
 				return; // Only log if track blocks is checked.
 			}
 
-			if ( empty( $this->options["{$this->prefix}blocked_log"] ) ) {
-				$this->options["{$this->prefix}blocked_log"] = '';
+			if ( empty( $this->options[ "{$this->prefix}blocked_log" ] ) ) {
+				$this->options[ "{$this->prefix}blocked_log" ] = '';
 			}
-			$this->options["{$this->prefix}blocked_log"] = date( 'Y-m-d H:i:s' ) . " {$msg}\n" . $this->options["{$this->prefix}blocked_log"];
-			if ( $this->strlen( $this->options["{$this->prefix}blocked_log"] ) > 4096 ) {
-				$end = $this->strrpos( $this->options["{$this->prefix}blocked_log"], "\n" );
+			$this->options[ "{$this->prefix}blocked_log" ] = date( 'Y-m-d H:i:s' ) . " {$msg}\n" . $this->options[ "{$this->prefix}blocked_log" ];
+			if ( $this->strlen( $this->options[ "{$this->prefix}blocked_log" ] ) > 4096 ) {
+				$end = $this->strrpos( $this->options[ "{$this->prefix}blocked_log" ], "\n" );
 				if ( false === $end ) {
 					$end = 4096;
 				}
-				$this->options["{$this->prefix}blocked_log"] = $this->substr( $this->options["{$this->prefix}blocked_log"], 0, $end );
+				$this->options[ "{$this->prefix}blocked_log" ] = $this->substr( $this->options[ "{$this->prefix}blocked_log" ], 0, $end );
 			}
 			$this->update_class_option( $this->options );
 		}
@@ -192,8 +192,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Bad_Robots' ) ) {
 		function filter_display_options( $options ) {
 
 			if ( $this->option_isset( 'blocked_log' ) ) {
-				if ( preg_match( '/\<(\?php|script)/', $options["{$this->prefix}blocked_log"] ) ) {
-					$options["{$this->prefix}blocked_log"] = "Probable XSS attempt detected!\n" . $options["{$this->prefix}blocked_log"];
+				if ( preg_match( '/\<(\?php|script)/', $options[ "{$this->prefix}blocked_log" ] ) ) {
+					$options[ "{$this->prefix}blocked_log" ] = "Probable XSS attempt detected!\n" . $options[ "{$this->prefix}blocked_log" ];
 				}
 			}
 

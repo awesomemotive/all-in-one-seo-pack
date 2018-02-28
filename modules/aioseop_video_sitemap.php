@@ -3,7 +3,6 @@
  * Loads video sitemap class.
  *
  * @package All-in-One-SEO-Pack
- * 
  */
 
 if ( AIOSEOPPRO ) {

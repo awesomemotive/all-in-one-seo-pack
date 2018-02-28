@@ -1,3 +1,5 @@
 <?php
 
-// We will eventually put stuff here.
+/*
+	We will eventually put stuff here.
+*/

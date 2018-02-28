@@ -43,12 +43,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @param $arguments
 		 *
 		 * @throws Exception
+		 * @throws BadMethodCallException
 		 */
 		function __call( $name, $arguments ) {
 			if ( $this->strpos( $name, 'display_settings_page_' ) === 0 ) {
 				return $this->display_settings_page( $this->substr( $name, 22 ) );
 			}
-			$error = __( sprintf( "Method %s doesn't exist", $name ), 'all-in-one-seo-pack' );
+			$error = sprintf( __( "Method %s doesn't exist", 'all-in-one-seo-pack' ), $name );
 			if ( class_exists( 'BadMethodCallException' ) ) {
 				throw new BadMethodCallException( $error );
 			}
@@ -468,7 +469,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					return false;
 				}
 
+				// @codingStandardsIgnoreStart
 				return $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs} WHERE site_id = {$blog_id} AND site_id != blog_id" );
+				// @codingStandardsIgnoreEnd
 			}
 
 			return false;
@@ -1229,8 +1232,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @return bool
 		 */
 		function save_file( $filename, $contents ) {
-			$failed_str   = __( sprintf( "Failed to write file %s!\n", $filename ), 'all-in-one-seo-pack' );
-			$readonly_str = __( sprintf( "File %s isn't writable!\n", $filename ), 'all-in-one-seo-pack' );
+			$failed_str   = sprintf( __( "Failed to write file %s!\n", 'all-in-one-seo-pack' ), $filename );
+			$readonly_str = sprintf( __( "File %s isn't writable!\n", 'all-in-one-seo-pack' ), $filename );
 			$wpfs         = $this->get_filesystem_object();
 			if ( is_object( $wpfs ) ) {
 				$file_exists = $wpfs->exists( $filename );
@@ -1260,12 +1263,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			if ( is_object( $wpfs ) ) {
 				if ( $wpfs->exists( $filename ) ) {
 					if ( $wpfs->delete( $filename ) === false ) {
-						$this->output_error( __( sprintf( "Failed to delete file %s!\n", $filename ), 'all-in-one-seo-pack' ) );
+						$this->output_error( sprintf( __( "Failed to delete file %s!\n", 'all-in-one-seo-pack' ), $filename ) );
 					} else {
 						return true;
 					}
 				} else {
-					$this->output_error( __( sprintf( "File %s doesn't exist!\n", $filename ), 'all-in-one-seo-pack' ) );
+					$this->output_error( sprintf( __( "File %s doesn't exist!\n", 'all-in-one-seo-pack' ), $filename ) );
 				}
 			}
 
@@ -1287,15 +1290,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				$newfile_exists = $wpfs->exists( $newname );
 				if ( $file_exists && ! $newfile_exists ) {
 					if ( $wpfs->move( $filename, $newname ) === false ) {
-						$this->output_error( __( sprintf( "Failed to rename file %s!\n", $filename ), 'all-in-one-seo-pack' ) );
+						$this->output_error( sprintf( __( "Failed to rename file %s!\n", 'all-in-one-seo-pack' ), $filename ) );
 					} else {
 						return true;
 					}
 				} else {
 					if ( ! $file_exists ) {
-						$this->output_error( __( sprintf( "File %s doesn't exist!\n", $filename ), 'all-in-one-seo-pack' ) );
+						$this->output_error( sprintf( __( "File %s doesn't exist!\n", 'all-in-one-seo-pack' ), $filename ) );
 					} elseif ( $newfile_exists ) {
-						$this->output_error( __( sprintf( "File %s already exists!\n", $newname ), 'all-in-one-seo-pack' ) );
+						$this->output_error( sprintf( __( "File %s already exists!\n", 'all-in-one-seo-pack' ), $filename ) );
 					}
 				}
 			}
@@ -2178,7 +2181,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @return string
 		 */
 		function do_multi_input( $args ) {
+			// @codingStandardsIgnoreStart
 			extract( $args );
+			// @codingStandardsIgnoreEnd
 			$buf1 = '';
 			$type = $options['type'];
 
@@ -2257,7 +2262,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 */
 		function get_option_html( $args ) {
 			static $n = 0;
+			// @codingStandardsIgnoreStart
 			extract( $args );
+			// @codingStandardsIgnoreEnd
 			if ( $options['type'] == 'custom' ) {
 				return apply_filters( "{$prefix}output_option", '', $args );
 			}
@@ -2292,12 +2299,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$attr .= ' MULTIPLE';
 					$args['attr'] = $attr;
 					$args['name'] = $name = "{$name}[]";
+					// fallthrough.
 				case 'select':
 					$buf .= $this->do_multi_input( $args );
 					break;
 				case 'multicheckbox':
 					$args['name']            = $name = "{$name}[]";
 					$args['options']['type'] = $options['type'] = 'checkbox';
+					// fallthrough.
 				case 'radio':
 					$buf .= $this->do_multi_input( $args );
 					break;
@@ -2540,9 +2549,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 							break;
 						case 'text':
 							$this->options[ $k ] = wp_kses_post( $this->options[ $k ] );
+							// fallthrough.
 						case 'checkbox':
+							// fallthrough.
 						case 'radio':
+							// fallthrough.
 						case 'select':
+							// fallthrough.
 						default:
 							if ( ! is_array( $this->options[ $k ] ) ) {
 								$this->options[ $k ] = esc_attr( $this->options[ $k ] );

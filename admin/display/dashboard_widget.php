@@ -7,7 +7,9 @@ if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 	 *
 	 * @since 2.3.10
 	 */
+	// @codingStandardsIgnoreStart
 	class aioseop_dashboard_widget {
+	// @codingStandardsIgnoreEnd
 
 		/**
 		 * Add the action to the constructor.

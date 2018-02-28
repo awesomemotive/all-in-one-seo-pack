@@ -10,11 +10,12 @@
  * These are commonly used functions that can be pulled from anywhere.
  * (or in some cases they're functions waiting for a home)
  */
+// @codingStandardsIgnoreStart
 class aiosp_common {
+// @codingStandardsIgnoreEnd
 
 	/**
 	 * aiosp_common constructor.
-	 *
 	 */
 	function __construct() {
 
@@ -70,10 +71,10 @@ class aiosp_common {
 
 		$affiliate_id = '';
 
-		//call during plugins_loaded
+		// call during plugins_loaded
 		$affiliate_id = apply_filters( 'aiosp_aff_id', $affiliate_id );
 
-		//build URL
+		// build URL
 		$url = 'https://semperplugins.com/all-in-one-seo-pack-pro-version/';
 		if ( $location ) {
 			$url .= '?loc=' . $location;
@@ -82,7 +83,7 @@ class aiosp_common {
 			$url .= "?ap_id=$affiliate_id";
 		}
 
-		//build hyperlink
+		// build hyperlink
 		$hyperlink = '<a ';
 		if ( $target ) {
 			$hyperlink .= "target=\"$target\" ";
@@ -103,7 +104,7 @@ class aiosp_common {
 	 * Gets the upgrade to Pro version URL.
 	 */
 	static function get_upgrade_url() {
-		//put build URL stuff in here
+		// put build URL stuff in here
 	}
 
 	/**

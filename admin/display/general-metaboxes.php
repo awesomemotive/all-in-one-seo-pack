@@ -3,10 +3,10 @@
 /**
  * @package All-in-One-SEO-Pack
  */
-class aiosp_metaboxes {
+class AIOSEOP_metaboxes {
 
 	/**
-	 * aiosp_metaboxes constructor.
+	 * AIOSEOP_metaboxes constructor.
 	 */
 	function __construct() {
 		// construct
@@ -48,6 +48,7 @@ class aiosp_metaboxes {
 					<?php } ?>
 				</div>
 				<?php
+					// TODO: is this fall through valid?
 				case 'aioseop-donate':
 					?>
 					<div>
