@@ -13,7 +13,7 @@
 /**
  * Namespace for other tests that may relate/conflict, or may be part of a root test (general).
  */
-namespace test\aioseop\general\aiosp_mrt_get_url {
+namespace test\modules\general\aiosp_mrt_get_url {
 	require_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-test-base.php';
 
 	use WP_UnitTestCase;
@@ -64,6 +64,8 @@ namespace test\aioseop\general\aiosp_mrt_get_url {
 		 * Set up post environment.
 		 *
 		 * @since 2.4.4.1
+		 *
+		 * @requires PHPUnit 5.7
 		 *
 		 * @param int $how_many
 		 */
@@ -157,7 +159,7 @@ namespace test\aioseop\general\aiosp_mrt_get_url {
 			global $wp_query;
 			//ERROR
 			$t01 = $aioseop_class->aiosp_mrt_get_url( $wp_query, true );
-			$this->assertFalse( $t01, 'All_in_One_SEO_Pack_Sitemap::aiosp_mrt_get_url() has failed. \tests\test-All_in_One_SEO_Pack_test_aiosp_mrt_get_url.php' );
+			$this->assertFalse( $t01, 'All_in_One_SEO_Pack_Sitemap::aiosp_mrt_get_url() has failed. \tests\modules\general\test-All_in_One_SEO_Pack-aiospMrtGetUrl.php' );
 		}
 
 		/**
@@ -242,16 +244,16 @@ namespace test\aioseop\general\aiosp_mrt_get_url {
 			$aioseop_options['aiosp_customize_canonical_links'] = false;
 			$t01 = $aioseop_class->aiosp_mrt_get_url( $wp_query, true );
 			$t02 = $aioseop_class->aiosp_mrt_get_url( $wp_query, false );
-			$this->assertFalse( $t01, 'All_in_One_SEO_Pack_Sitemap::aiosp_mrt_get_url() has failed on Admin Post-Edit screen. \tests\test-All_in_One_SEO_Pack_test_aiosp_mrt_get_url.php' );
-			$this->assertFalse( $t02, 'All_in_One_SEO_Pack_Sitemap::aiosp_mrt_get_url() has failed on Admin Post-Edit screen. \tests\test-All_in_One_SEO_Pack_test_aiosp_mrt_get_url.php' );
+			$this->assertFalse( $t01, 'All_in_One_SEO_Pack_Sitemap::aiosp_mrt_get_url() has failed on Admin Post-Edit screen. \tests\modules\general\test-All_in_One_SEO_Pack-aiospMrtGetUrl.php' );
+			$this->assertFalse( $t02, 'All_in_One_SEO_Pack_Sitemap::aiosp_mrt_get_url() has failed on Admin Post-Edit screen. \tests\modules\general\test-All_in_One_SEO_Pack-aiospMrtGetUrl.php' );
 
 			global $aioseop_options;
 			$aioseop_options['aiosp_no_paged_canonical_links']  = true;
 			$aioseop_options['aiosp_customize_canonical_links'] = true;
 			$t03 = $aioseop_class->aiosp_mrt_get_url( $wp_query, true );
 			$t04 = $aioseop_class->aiosp_mrt_get_url( $wp_query, false );
-			$this->assertFalse( $t03, 'All_in_One_SEO_Pack_Sitemap::aiosp_mrt_get_url() has failed on Admin Post-Edit screen. \tests\test-All_in_One_SEO_Pack_test_aiosp_mrt_get_url.php' );
-			$this->assertFalse( $t04, 'All_in_One_SEO_Pack_Sitemap::aiosp_mrt_get_url() has failed on Admin Post-Edit screen. \tests\test-All_in_One_SEO_Pack_test_aiosp_mrt_get_url.php' );
+			$this->assertFalse( $t03, 'All_in_One_SEO_Pack_Sitemap::aiosp_mrt_get_url() has failed on Admin Post-Edit screen. \tests\modules\general\test-All_in_One_SEO_Pack-aiospMrtGetUrl.php' );
+			$this->assertFalse( $t04, 'All_in_One_SEO_Pack_Sitemap::aiosp_mrt_get_url() has failed on Admin Post-Edit screen. \tests\modules\general\test-All_in_One_SEO_Pack-aiospMrtGetUrl.php' );
 		}
 
 		/**
