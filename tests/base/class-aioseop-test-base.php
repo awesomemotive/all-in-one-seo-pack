@@ -332,6 +332,52 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * (Barebone) Setup Posts and return IDs
+	 *
+	 * @param int   $amount
+	 * @param array $args
+	 * @return array {
+	 *     @type int $post_ID ID of the post inserted.
+	 * }
+	 */
+	protected function setup_posts_return_IDs( $amount, $args = array() ) {
+		if ( 1 > $amount ) {
+			return array();
+		}
+		$default_args = array(
+			'post_type'    => 'post',
+			'post_title'   => 'Post Title',
+			'post_content' => 'Post Content - Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+		);
+
+		$args = wp_parse_args( $args, $default_args );
+
+		$ids = $this->factory->post->create_many( $amount, $args );
+
+		$posts = get_posts(
+			array(
+				'post_type'   => $args['post_type'],
+				'fields'      => 'OBJECT',
+				'numberposts' => -1,
+			)
+		);
+
+		$this->assertEquals( $amount, count( $posts ) );
+
+		foreach ( $posts as $v1_post ) {
+
+			foreach ( $args as $k2_args_index => $v2_args ) {
+				$this->assertNotNull( $v1_post->$k2_args_index );
+				if ( isset( $v1_post->$k2_args_index ) ) {
+					$this->assertSame( $v2_args, $v1_post->$k2_args_index );
+				}
+			}
+		}
+
+		return $ids;
+	}
+
 	/*
 	 * Generates the HTML source of the given link.
 	 */
