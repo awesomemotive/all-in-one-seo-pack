@@ -160,7 +160,7 @@ namespace test\aioseop\general\get_main_description {
 
 			$args = array(
 				'post_type'      => 'post',
-				'posts_per_page' => ( $this->post_count + $this->post_count_excerpt ),
+				'posts_per_page' => ( $this->post_amount + $this->post_amount_excerpt ),
 			);
 
 			$t_posts = get_posts( $args );
