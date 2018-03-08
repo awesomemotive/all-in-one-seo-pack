@@ -120,7 +120,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @since 2.4.2
 		 */
 		private function _requires() {
-			require_once( AIOSEOP_PLUGIN_DIR . 'admin/functions-notice.php' );
+			require_once AIOSEOP_PLUGIN_DIR . 'admin/functions-notice.php';
 		}
 
 		/**
@@ -230,19 +230,19 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 */
 		public function notice_defaults() {
 			return array(
-				'slug'          => '',
-				'delay_time'    => 0,
-				'message'       => '',
+				'slug'           => '',
+				'delay_time'     => 0,
+				'message'        => '',
 				'action_options' => array(),
-				'class'         => 'notice-info',
-				'target'        => 'site',
+				'class'          => 'notice-info',
+				'target'         => 'site',
 				'screens'        => array(),
-				'time_start'    => time(),
+				'time_start'     => time(),
 			);
 		}
 
 		/**
-		 * action Options Default Values
+		 * Action Options Default Values
 		 *
 		 * Returns the default value for action_options in self::notices[$slug]['action_options'].
 		 *
@@ -337,7 +337,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			}
 
 			$notice_default = $this->notice_defaults();
-			$new_notice = wp_parse_args( $notice, $notice_default );
+			$new_notice     = wp_parse_args( $notice, $notice_default );
 
 			$new_notice['action_options'] = $this->set_action_options( $new_notice['action_options'] );
 
@@ -367,14 +367,12 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			}
 
 			$notice_default = $this->notice_defaults();
-			$new_notice = wp_parse_args( $notice, $notice_default );
+			$new_notice     = wp_parse_args( $notice, $notice_default );
 
 			$new_notice['action_options'] = $this->set_action_options( $new_notice['action_options'] );
 
 			$this->notices[ $notice['slug'] ] = $new_notice;
 			$this->obj_update_options();
-			// DO NOT use activate. This is intended to update pre-existing data.
-			//$this->activate_notice( $slug );
 
 			return true;
 		}
@@ -415,7 +413,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			}
 
 			$display_time = time() + $this->notices[ $slug ]['delay_time'];
-			$display_time -= 1;
+			$display_time--;
 
 			if ( 'user' === $this->notices[ $slug ]['target'] ) {
 				$current_user_id = get_current_user_id();
@@ -499,7 +497,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			}
 
 			$admin_notice_localize = array(
-				'notice_nonce'  => wp_create_nonce( 'aioseop_ajax_notice' ),
+				'notice_nonce'   => wp_create_nonce( 'aioseop_ajax_notice' ),
 				'notice_actions' => $notice_actions,
 			);
 			wp_localize_script( 'aioseop-admin-notice-js', 'aioseop_notice_data', $admin_notice_localize );
@@ -532,14 +530,14 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		public function display_notice_default() {
 			if ( AIOSEOPPRO ) {
 				return;
-			}  elseif ( ! wp_script_is( 'aioseop-admin-notice-js', 'enqueued' ) || ! wp_style_is( 'aioseop-admin-notice-css', 'enqueued' ) ) {
+			} elseif ( ! wp_script_is( 'aioseop-admin-notice-js', 'enqueued' ) || ! wp_style_is( 'aioseop-admin-notice-css', 'enqueued' ) ) {
 				return;
 			}
 
-			$current_screen = get_current_screen();
+			$current_screen  = get_current_screen();
 			$current_user_id = get_current_user_id();
 			foreach ( $this->active_notices as $a_notice_slug => $a_notice_time_display ) {
-				$notice_show     = true;
+				$notice_show = true;
 
 				// Screen Restriction.
 				if ( ! empty( $this->notices[ $a_notice_slug ]['screens'] ) ) {
@@ -565,7 +563,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 
 				// Display/Render.
 				if ( time() > $a_notice_time_display && $notice_show ) {
-					include( AIOSEOP_PLUGIN_DIR . 'admin/display/notice-default.php' );
+					include AIOSEOP_PLUGIN_DIR . 'admin/display/notice-default.php';
 				}
 			}
 		}
@@ -590,10 +588,10 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				return;
 			}
 
-			$current_screen = get_current_screen();
+			$current_screen  = get_current_screen();
 			$current_user_id = get_current_user_id();
 			foreach ( $this->active_notices as $a_notice_slug => $a_notice_time_display ) {
-				$notice_show  = true;
+				$notice_show = true;
 
 				// Screen Restriction.
 				if ( ! empty( $this->notices[ $a_notice_slug ]['screens'] ) ) {
@@ -619,7 +617,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 
 				// Display/Render.
 				if ( time() > $a_notice_time_display && $notice_show ) {
-					include( AIOSEOP_PLUGIN_DIR . 'admin/display/notice-aioseop.php' );
+					include AIOSEOP_PLUGIN_DIR . 'admin/display/notice-aioseop.php';
 				}
 			}
 		}
@@ -637,7 +635,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		public function ajax_notice_action() {
 			check_ajax_referer( 'aioseop_ajax_notice' );
 			// Notice (Slug) => (Action_Options) Index.
-			$notice_slug = null;
+			$notice_slug  = null;
 			$action_index = null;
 			if ( isset( $_POST['notice_slug'] ) ) {
 				$notice_slug = filter_input( INPUT_POST, 'notice_slug', FILTER_SANITIZE_STRING );
@@ -650,7 +648,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			}
 
 			$action_options            = $this->action_options_defaults();
-			$action_options['time']    = $this->default_dismiss_action;
+			$action_options['time']    = $this->default_dismiss_delay;
 			$action_options['dismiss'] = false;
 
 			if ( isset( $this->notices[ $notice_slug ]['action_options'][ $action_index ] ) ) {
