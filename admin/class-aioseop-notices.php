@@ -102,13 +102,11 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 */
 		public function __construct() {
 			$this->_requires();
-			if ( is_admin() ) {
-				if ( ! AIOSEOPPRO ) {
-					$this->obj_load_options();
+			if ( current_user_can( 'aiosp_manage_seo' ) ) {
+				$this->obj_load_options();
 
-					add_action( 'admin_init', array( $this, 'init' ) );
-					add_action( 'current_screen', array( $this, 'admin_screen' ) );
-				}
+				add_action( 'admin_init', array( $this, 'init' ) );
+				add_action( 'current_screen', array( $this, 'admin_screen' ) );
 			}
 		}
 
