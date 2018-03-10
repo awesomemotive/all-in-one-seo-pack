@@ -525,6 +525,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		public function display_notice_default() {
 			if ( AIOSEOPPRO ) {
 				return;
+			}  elseif ( ! wp_script_is( 'aioseop-admin-notice-js', 'enqueued' ) || ! wp_style_is( 'aioseop-admin-notice-css', 'enqueued' ) ) {
+				return;
+			}
 
 			$current_screen = get_current_screen();
 			$current_user_id = get_current_user_id();
@@ -576,6 +579,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		public function display_notice_aioseop() {
 			if ( AIOSEOPPRO ) {
 				return;
+			} elseif ( ! wp_script_is( 'aioseop-admin-notice-js', 'enqueued' ) || ! wp_style_is( 'aioseop-admin-notice-css', 'enqueued' ) ) {
+				return;
+			}
 
 			$current_screen = get_current_screen();
 			$current_user_id = get_current_user_id();
