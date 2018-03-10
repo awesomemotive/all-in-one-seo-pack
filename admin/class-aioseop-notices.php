@@ -282,6 +282,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			foreach ( $action_options as $action_option ) {
 				$tmp_action_o = $this->action_options_defaults();
 
+				// For readability and tracking, refrane from using another Foreach loop with the array indexes.
 				// Button Delay Time.
 				$tmp_action_o['time'] = $this->default_dismiss_delay;
 				if ( isset( $action_option['time'] ) ) {
