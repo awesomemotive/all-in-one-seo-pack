@@ -407,8 +407,13 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @since 2.4.2
 		 *
 		 * @param string $slug Notice slug.
+		 * @return boolean
 		 */
 		public function activate_notice( $slug ) {
+			if ( ! isset( $this->notices[ $slug ] ) ) {
+				return false;
+			}
+
 			$display_time = time() + $this->notices[ $slug ]['delay_time'];
 			$display_time -= 1;
 
@@ -419,6 +424,8 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 
 			$this->active_notices[ $slug ] = $display_time;
 			$this->obj_update_options();
+
+			return true;
 		}
 
 		/**
