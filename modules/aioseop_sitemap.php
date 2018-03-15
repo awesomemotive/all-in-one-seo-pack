@@ -66,7 +66,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'gzipped'         => __( 'Create a compressed sitemap file in .xml.gz format.', 'all-in-one-seo-pack' ),
 				'robots'          => __( 'Places a link to your Sitemap.xml into your virtual Robots.txt file.', 'all-in-one-seo-pack' ),
 				'rewrite'         => __( 'Dynamically creates the XML sitemap instead of using a static file.', 'all-in-one-seo-pack' ),
-				'addl_url'        => __( 'URL to the page.', 'all-in-one-seo-pack' ),
+				'addl_url'        => __( 'URL to the page. This field accepts relative URLs or absolute URLs with the protocol specified.', 'all-in-one-seo-pack' ),
 				'addl_prio'       => __( 'The priority of the page.', 'all-in-one-seo-pack' ),
 				'addl_freq'       => __( 'The frequency of the page.', 'all-in-one-seo-pack' ),
 				'addl_mod'        => __( 'Last modified date of the page.', 'all-in-one-seo-pack' ),
