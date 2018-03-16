@@ -75,7 +75,12 @@ function countChars( field, cntfield ) {
 		cntfield.style.color = "#fff";
 		cntfield.style.backgroundColor = "#f00";
 	} else {
-		if ( cntfield.value > ( field_size - 91 ) ) {
+		if (field.name == 'aiosp_title') {
+			if ( cntfield.value > ( field_size - 6 ) ) {
+			cntfield.style.color = "#515151";
+			cntfield.style.backgroundColor = "#ff0";
+			}
+		} else if ( cntfield.value > ( field_size - 91 ) ) {
 			cntfield.style.color = "#515151";
 			cntfield.style.backgroundColor = "#ff0";
 		} else {
