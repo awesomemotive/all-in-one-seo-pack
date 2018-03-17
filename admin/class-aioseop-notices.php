@@ -466,8 +466,8 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @see self::admin_screen()
 		 */
 		private function deregister_scripts() {
-			wp_deregister_script( 'aioseop-admin-notices-js' );
-			wp_deregister_style( 'aioseop-admin-notices-css' );
+			wp_deregister_script( 'aioseop-admin-notice-js' );
+			wp_deregister_style( 'aioseop-admin-notice-css' );
 		}
 
 		/**
