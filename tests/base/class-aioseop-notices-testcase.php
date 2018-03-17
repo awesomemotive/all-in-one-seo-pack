@@ -8,6 +8,20 @@
 class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 
 	/**
+	 * Old AIOSEOP Notices
+	 *
+	 * @var null $old_aioseop_notices
+	 */
+	public $old_aioseop_notices = null;
+
+	/**
+	 * Old AIOSEOP Notices Options
+	 *
+	 * @var $old_aioseop_notices_options
+	 */
+	public $old_aioseop_notices_options;
+
+	/**
 	 * PHPUnit Fixture - setUp()
 	 *
 	 * @since 2.4.5.1
@@ -16,6 +30,14 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
+
+		wp_set_current_user( 1 );
+
+		global $aioseop_notices;
+		if ( isset( $aioseop_notices ) && ! empty( $aioseop_notices ) ) {
+			$this->old_sioseop_notices = $aioseop_notices;
+		}
+		$this->old_aioseop_notices_options = get_option( 'aioseop_notices' );
 
 		$this->clean_aioseop_notices();
 	}
@@ -29,6 +51,15 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 */
 	public function tearDown() {
 		$this->clean_aioseop_notices();
+
+		global $aioseop_notices;
+		if ( isset( $this->old_aioseop_notices ) && ! empty( $this->old_aioseop_notices ) ) {
+			$aioseop_notices            = $this->old_aioseop_notices;
+			$GLOBALS['aioseop_notices'] = $this->old_aioseop_notices;
+		}
+		if ( $this->old_aioseop_notices_options ) {
+			update_option( 'aioseop_notices', $this->old_aioseop_notices_options );
+		}
 
 		parent::tearDown();
 	}
@@ -59,11 +90,6 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 * @return boolean True if deleted.
 	 */
 	public function clean_aioseop_notice( $notice_slug ) {
-		$defaults = array(
-			'notices'        => array(),
-			'active_notices' => array(),
-		);
-
 		$notices_options = get_option( 'aioseop_notices' );
 		if ( false === $notices_options ) {
 			return false;
