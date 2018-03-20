@@ -17,6 +17,8 @@ require_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-test-base.php';
  *
  * Extending allows adding WP's Testing Unit; which extends to PHPUnit
  *
+ * @requires PHPUnit 5.7
+ *
  * @package WP_UnitTestCase
  */
 class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
