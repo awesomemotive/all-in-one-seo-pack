@@ -31,6 +31,8 @@ class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 	 *
 	 * @since 2.4.4.1
 	 *
+	 * @requires PHPUnit 5.7
+	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
 	public function setUp() {
@@ -104,6 +106,8 @@ class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 	 *
 	 * @since 2.4.4.1
 	 *
+	 * @requires PHPUnit 5.7
+	 *
 	 * @ticket 1491 Warning: count(): Parameter must be an array or an object that implements Countable #1491
 	 * @link https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/1355
 	 *
@@ -141,6 +145,8 @@ class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 	 * Test - All_in_One_SEO_Pack::aiosp_mrt_get_url() on Post Edit
 	 *
 	 * @since 2.4.4.1
+	 *
+	 * @requires PHPUnit 5.7
 	 *
 	 * @ticket 1491 Warning: count(): Parameter must be an array or an object that implements Countable
 	 *
