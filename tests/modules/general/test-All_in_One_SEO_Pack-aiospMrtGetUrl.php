@@ -22,17 +22,6 @@ require_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-test-base.php';
 class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 
 	private $post_ids = array();
-	/**
-	 * PHPUnit Fixture - setUpBeforeClass()
-	 *
-	 * The setUpBeforeClass() and tearDownAfterClass() template methods are called before the first test of the test
-	 * case class is run and after the last test of the test case class is run, respectively.
-	 *
-	 * @link https://phpunit.de/manual/current/en/fixtures.html
-	 */
-	public static function setUpBeforeClass() {
-		// Do Stuff...
-	}
 
 	/**
 	 * PHPUnit Fixture - setUp()
@@ -46,6 +35,9 @@ class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 	 */
 	public function setUp() {
 		parent::setUp();
+
+		wp_set_current_user( 1 );
+
 		$this->setup_posts_aiospMrtGetUrl( 3 );
 	}
 
@@ -98,13 +90,6 @@ class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 		$GLOBALS['wp_query']     = $GLOBALS['wp_the_query'];
 
 		parent::tearDown();
-	}
-
-	/**
-	 * PHPUnit Fixture - tearDownAfterClass()
-	 */
-	public static function tearDownAfterClass() {
-		// Do Stuff...
 	}
 
 	/**
@@ -193,7 +178,7 @@ class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 		//unset( $GLOBALS['wp_query'], $GLOBALS['wp_the_query'] );
 		//$GLOBALS['wp_the_query'] = new WP_Query();
 		//$GLOBALS['wp_query']     = $GLOBALS['wp_the_query'];
-		$this->go_to_edit_post2( site_url() . '/wp-admin/post.php?post=' . $this->post_ids[0] . '&action=edit' );
+		$this->go_to_edit_post( site_url() . '/wp-admin/post.php?post=' . $this->post_ids[0] . '&action=edit' );
 
 		/*
 		 * Unit Testcase go_to workaround.
@@ -249,76 +234,13 @@ class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 	/**
 	 * Override function for go_to edit-posts
 	 *
-	 * (Original) Sets the global state to as if a given URL has been requested.
-	 *
-	 * This sets:
-	 * - The super globals.
-	 * - The globals.
-	 * - The query variables.
-	 * - The main query.
-	 *
 	 * @since 2.4
 	 *
 	 * @see WP_UnitTestCase::go_to()
 	 *
 	 * @param string $url The URL for the request.
 	 */
-	public function go_to_edit_post1( $url ) {
-		// note: the WP and WP_Query classes like to silently fetch parameters
-		// from all over the place (globals, GET, etc), which makes it tricky
-		// to run them more than once without very carefully clearing everything.
-		$_GET = $_POST = array();
-		foreach ( array( 'query_string', 'id', 'postdata', 'authordata', 'day', 'currentmonth', 'page', 'pages', 'multipage', 'more', 'numpages', 'pagenow' ) as $v ) {
-			if ( isset( $GLOBALS[ $v ] ) ) {
-				unset( $GLOBALS[ $v ] );
-			}
-		}
-		$parts = parse_url( $url );
-		if ( isset( $parts['scheme'] ) ) {
-			$req = isset( $parts['path'] ) ? $parts['path'] : '';
-			if ( isset( $parts['query'] ) ) {
-				$req .= '?' . $parts['query'];
-				// parse the url query vars into $_GET
-				parse_str( $parts['query'], $_GET );
-			}
-		} else {
-			$req = $url;
-		}
-		if ( ! isset( $parts['query'] ) ) {
-			$parts['query'] = '';
-		}
-
-		$_SERVER['REQUEST_URI'] = $req;
-		unset( $_SERVER['PATH_INFO'] );
-
-		self::flush_cache();
-		unset( $GLOBALS['wp_query'], $GLOBALS['wp_the_query'] );
-		$GLOBALS['wp_the_query'] = new WP_Query();
-		$GLOBALS['wp_query']     = $GLOBALS['wp_the_query'];
-
-		$public_query_vars  = $GLOBALS['wp']->public_query_vars;
-		$private_query_vars = $GLOBALS['wp']->private_query_vars;
-
-		$GLOBALS['wp']                     = new WP();
-		$GLOBALS['wp']->public_query_vars  = $public_query_vars;
-		$GLOBALS['wp']->private_query_vars = $private_query_vars;
-
-		_cleanup_query_vars();
-
-		// This is what was preventing a proper test for Edit Post screen.
-		//$GLOBALS['wp']->main( $parts['query'] );
-	}
-
-	/**
-	 * Override function for go_to edit-posts
-	 *
-	 * @since 2.4
-	 *
-	 * @see WP_UnitTestCase::go_to()
-	 *
-	 * @param string $url The URL for the request.
-	 */
-	public function go_to_edit_post2( $url ) {
+	public function go_to_edit_post( $url ) {
 		parent::go_to( $url );
 		unset( $GLOBALS['wp_query'], $GLOBALS['wp_the_query'] );
 		$GLOBALS['wp_the_query'] = new WP_Query();
