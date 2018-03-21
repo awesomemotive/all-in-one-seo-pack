@@ -75,17 +75,24 @@ function countChars( field, cntfield ) {
 		cntfield.style.color = "#fff";
 		cntfield.style.backgroundColor = "#f00";
 	} else {
-		if (field.name == 'aiosp_title') {
+		if ('aiosp_title' === field.name) {
 			if ( cntfield.value > ( field_size - 6 ) ) {
 			cntfield.style.color = "#515151";
 			cntfield.style.backgroundColor = "#ff0";
 			}
-		} else if ( cntfield.value > ( field_size - 91 ) ) {
-			cntfield.style.color = "#515151";
-			cntfield.style.backgroundColor = "#ff0";
-		} else {
+			else {
 			cntfield.style.color = "#515151";
 			cntfield.style.backgroundColor = "#eee";
+			}
+		} else {
+			if ( cntfield.value > ( field_size - 91 ) ) {
+			cntfield.style.color = "#515151";
+			cntfield.style.backgroundColor = "#ff0";
+			}
+			else {
+			cntfield.style.color = "#515151";
+			cntfield.style.backgroundColor = "#eee";
+			}
 		}
 	}
 }
