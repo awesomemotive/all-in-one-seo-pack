@@ -104,9 +104,11 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 			}
 		}
 
-		// @codingStandardsIgnoreStart
+		$contents = file_get_contents( $file );
+    // @codingStandardsIgnoreStart
 		@unlink( $file );
-		// @codingStandardsIgnoreEnd
+    // @codingStandardsIgnoreEnd
+		return $contents;
 	}
 
 	/**
@@ -124,9 +126,9 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 			$map[ $string ] = substr_count( $contents, $string );
 		}
 
-		// @codingStandardsIgnoreStart
+    // @codingStandardsIgnoreStart
 		@unlink( $file );
-		// @codingStandardsIgnoreEnd
+    // @codingStandardsIgnoreEnd
 
 		return $map;
 	}

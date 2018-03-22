@@ -8,6 +8,9 @@
  * @version 2.3.13
  */
 
+
+require_once( AIOSEOP_PLUGIN_DIR . 'inc/aioseop-amp-functions.php' );
+
 if ( ! function_exists( 'aioseop_get_permalink' ) ) {
 	/**
 	 * Support UTF8 URLs.
