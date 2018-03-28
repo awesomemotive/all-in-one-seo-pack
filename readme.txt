@@ -8,7 +8,7 @@ Stable tag: 2.4.5
 License: GPLv2 or later
 Requires PHP: 5.2.4
 
-The original SEO plugin for WordPress, downloaded over 30,000,000 times since 2007.
+The original SEO plugin for WordPress, downloaded over 40,000,000 times since 2007.
 
 == Description ==
 
