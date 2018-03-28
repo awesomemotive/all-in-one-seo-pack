@@ -75,12 +75,19 @@ function countChars( field, cntfield ) {
     }
 	if ( cntfield.val() > field_size ) {
         cntfield.removeClass().addClass('aioseop_count_ugly');
-	} else {
-		if ( cntfield.val() > ( field_size - 6 ) ) {
+	} else if ('aiosp_title' === field.attr('name')) {
+        if ( cntfield.val() > ( field_size - 6 ) ) {
             cntfield.removeClass().addClass('aioseop_count_bad');
-		} else {
+        } else {
             cntfield.removeClass().addClass('aioseop_count_good');
-		}
+        }
+    }
+    else {
+        if ( cntfield.val() > ( field_size - 91 ) ) {
+            cntfield.removeClass().addClass('aioseop_count_bad');
+        } else {
+            cntfield.removeClass().addClass('aioseop_count_good');
+        }
 	}
 }
 
