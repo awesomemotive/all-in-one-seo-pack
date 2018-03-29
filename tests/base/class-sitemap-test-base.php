@@ -50,6 +50,10 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 		if ( $debug ) {
 			echo file_get_contents( $file );
 		}
+
+		// validate file according to schema.
+		$this->validate_sitemap_schema( $file, 'combined' );
+
 		$xml = simplexml_load_file( $file );
 		$ns = $xml->getNamespaces( true );
 
@@ -104,9 +108,55 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 			}
 		}
 
+		$contents = file_get_contents( $file );
 		// @codingStandardsIgnoreStart
 		@unlink( $file );
 		// @codingStandardsIgnoreEnd
+		return $contents;
+	}
+
+	/**
+	 * Check whether the sitemap index is valid.
+	 *
+	 * @param array $types All the types of sitemaps that should exist besides the regular one.
+	*/
+	protected final function validate_sitemap_index( $types = array(), $debug = false ) {
+		add_filter( 'aioseo_sitemap_ping', '__return_false' );
+		update_option( 'blog_public', 0 );
+
+		// sitemap will be created in the root of the folder.
+		do_action( 'aiosp_sitemap_settings_update' );
+
+		$types[] = '';
+		foreach ( $types as $type ) {
+			$schema = 'index';
+			if ( ! empty( $type ) ) {
+				$type = "_{$type}";
+				$schema = 'combined';
+			}
+			$file = ABSPATH . "/sitemap{$type}.xml";
+
+			$this->assertFileExists( $file );
+			if ( $debug ) {
+				echo file_get_contents($file);
+			}
+			$this->validate_sitemap_schema( $file, $schema );
+		}
+	}
+
+	/**
+	 * Check whether the sitemap is valid according to its schema.
+	 *
+	 * @param string $file The path of the file.
+	 * @param string $schema The schema type.
+	*/
+	protected final function validate_sitemap_schema( $file, $schema ) {
+		// validate file according to schema.
+		libxml_use_internal_errors(true);
+		$dom = new DOMDocument(); 
+		$dom->load( $file ); 
+
+		$this->assertTrue( $dom->schemaValidate( AIOSEOP_UNIT_TESTING_DIR . "/resources/xsd/{$schema}.xsd" ) );
 	}
 
 	/**

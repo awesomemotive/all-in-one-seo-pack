@@ -1403,3 +1403,17 @@ div#aioseop_snippet > div > span {
 	padding: 0;
 	border: 0;
 }
+
+/* the good, the bad and the ugly character counts */
+.aioseop_count_good {
+	color: #515151 !important;
+	background-color: #eee !important;
+}
+.aioseop_count_bad {
+	color: #515151 !important;
+	background-color: #ff0 !important;
+}
+.aioseop_count_ugly {
+	color: #fff !important;
+	background-color: #f00 !important;
+}

@@ -326,37 +326,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
-		 * convert xml string to php array - useful to get a serializable value
+		 * Convert html string to php array - useful to get a serializable value.
 		 *
 		 * @param string $xmlstr
 		 *
 		 * @return array
-		 *
-		 * @author Adrien aka Gaarf & contributors
-		 * @see    http://gaarf.info/2009/08/13/xml-string-to-php-array/
 		 */
-		function html_string_to_array( $xmlstr ) {
+		function html_string_to_array( $htmlstr ) {
 			if ( ! class_exists( 'DOMDocument' ) ) {
 				return array();
 			} else {
 				$doc = new DOMDocument();
-				$doc->loadHTML( $xmlstr );
-
-				return $this->domnode_to_array( $doc->documentElement );
-			}
-		}
-
-		/**
-		 * @param $xmlstr
-		 *
-		 * @return array|string
-		 */
-		function xml_string_to_array( $xmlstr ) {
-			if ( ! class_exists( 'DOMDocument' ) ) {
-				return array();
-			} else {
-				$doc = new DOMDocument();
-				$doc->loadXML( $xmlstr );
+				$doc->loadXML( $htmlstr );
 
 				return $this->domnode_to_array( $doc->documentElement );
 			}
@@ -443,9 +424,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 						if ( ! empty( $post ) ) {
 							$result = get_post_meta( $post->ID, $matches[1], true );
 						}
-					}
-					if ( empty( $result ) ) {
-						$result = $matches[0];
 					}
 				} else {
 					$result = $matches[0];
@@ -2256,8 +2234,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			$onload = '';
 			if ( ! empty( $options['count'] ) ) {
 				$n ++;
-				$attr .= " onKeyDown='if (typeof countChars == \"function\") countChars(document.{$this->form}.$name,document.{$this->form}.{$prefix}length$n)' onKeyUp='if (typeof countChars == \"function\") countChars(document.{$this->form}.$name,document.{$this->form}.{$prefix}length$n)'";
-				$onload = "if (typeof countChars == \"function\") countChars(document.{$this->form}.$name,document.{$this->form}.{$prefix}length$n);";
+				$classes = isset( $options['class'] ) ? $options['class'] : '';
+				$classes .= ' aioseop_count_chars';
+				$attr .= " class='{$classes}' data-length-field='{$prefix}length$n'";
 			}
 			if ( isset( $opts['id'] ) ) {
 				$attr .= " id=\"{$opts['id']}\" ";

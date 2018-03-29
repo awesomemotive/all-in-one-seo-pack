@@ -168,6 +168,72 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	}
 
 	/*
+	 * Generates the HTML source of the given link.
+	 */
+	protected final function get_page_source( $link ) {
+		$html = '<html>';
+		$this->go_to( $link );
+		ob_start();
+		do_action( 'wp_head' );
+		$html .= '<head>' . ob_get_clean() . '</head>';
+
+		ob_start();
+		do_action( 'wp_footer' );
+		$footer = ob_get_clean();
+		$html .= '<body>' . /* somehow get the body too */ $footer . '</body>';
+		return $html . '</html>';
+	}
+
+	/*
+	 * Parses the HTML of the given link and returns the nodes requested.
+	 */
+	protected final function parse_html( $link, $tags = array(), $debug = false ){
+		$html = $this->get_page_source( $link );
+		if ( $debug ) {
+			error_log( $html );
+		}
+
+		libxml_use_internal_errors(true);
+		$dom = new DOMDocument();
+		$dom->loadHTML( $html );
+
+		$array = array();
+		foreach ( $tags as $tag ) {
+			foreach ( $dom->getElementsByTagName( $tag ) as $node ) {
+				$array[] = $this->get_node_as_array($node);
+			}
+		}
+		return $array;
+	}
+
+	/*
+	 * Extracts the node from the HTML source.
+	 */
+	private function get_node_as_array($node) {
+		$array = false;
+
+		if ($node->hasAttributes()) {
+			foreach ($node->attributes as $attr) {
+				$array[$attr->nodeName] = $attr->nodeValue;
+			}
+		}
+
+		if ($node->hasChildNodes()) {
+			if ($node->childNodes->length == 1) {
+				$array[$node->firstChild->nodeName] = $node->firstChild->nodeValue;
+			} else {
+				foreach ($node->childNodes as $childNode) {
+					if ($childNode->nodeType != XML_TEXT_NODE) {
+						$array[$childNode->nodeName][] = $this->get_node_as_array($childNode);
+					}
+				}
+			}
+		}
+
+		return $array;
+	}
+
+	/*
 	 * An empty test is required otherwise tests won't run.
 	 */
 	public function test_dont_remove_this_method() {

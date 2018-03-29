@@ -52,37 +52,42 @@ function toggleVisibility( id ) {
  * @summary Counts characters.
  *
  * @since 1.0.0
- * @param String $field.
- * @param Int $cntfield.
+ * @param Object $field.
+ * @param Object $cntfield.
  * @return Mixed.
  */
 function countChars( field, cntfield ) {
 	var extra = 0;
 	var field_size;
-	if ( ( field.name == 'aiosp_title' ) && ( typeof aiosp_title_extra !== 'undefined' ) ) {
+	if ( ( field.attr('name') == 'aiosp_title' )
+		&& ( typeof aiosp_title_extra !== 'undefined' ) ) {
 		extra = aiosp_title_extra;
 	}
-	cntfield.value = field.value.length + extra;
-	if ( typeof field.size != 'undefined' ) {
-		field_size = field.size;
+	cntfield.val(field.val().length + extra);
+	if ( typeof field.attr('size') != 'undefined' ) {
+		field_size = field.attr('size');
 	} else {
-		field_size = field.rows * field.cols;
+		field_size = field.attr('rows') * field.attr('cols');
 	}
+    field_size = parseInt(field_size, 10);
 	if ( field_size < 10 ) {
 		return;
-	}
-	if ( cntfield.value > field_size ) {
-		cntfield.style.color = "#fff";
-		cntfield.style.backgroundColor = "#f00";
-	} else {
-		if ( cntfield.value > ( field_size - 91 ) ) {
-			cntfield.style.color = "#515151";
-			cntfield.style.backgroundColor = "#ff0";
-		} else {
-			cntfield.style.color = "#515151";
-			cntfield.style.backgroundColor = "#eee";
-		}
-	}
+    }
+	if ( cntfield.val() > field_size ) {
+        cntfield.removeClass().addClass('aioseop_count_ugly');
+	} else if ( ( 'aiosp_title' === field.attr('name' ) ) || ( 'aiosp_home_title' === field.attr('name') ) ) {
+        if ( cntfield.val() > ( field_size - 6 ) ) {
+            cntfield.removeClass().addClass('aioseop_count_bad');
+        } else {
+            cntfield.removeClass().addClass('aioseop_count_good');
+        }
+    } else {
+        if ( cntfield.val() > ( field_size - 91 ) ) {
+            cntfield.removeClass().addClass('aioseop_count_bad');
+        } else {
+            cntfield.removeClass().addClass('aioseop_count_good');
+        }
+    }
 }
 
 /**
@@ -803,6 +808,7 @@ jQuery( document ).ready(
 	function() {
 			// TODO: consider moving EVERYTHING that needs ready() to this function
 			initAll( jQuery );
+      initCounting( jQuery );
 	}
 );
 
@@ -815,3 +821,14 @@ function initAll($){
 		);
 	}
 }
+
+function initCounting($){
+    /* count them characters */
+    $( '.aioseop_count_chars' ).on('keyup keydown', function(){
+        countChars( $(this).eq(0), $(this).parent().find('[name="' + $(this).attr('data-length-field') + '"]').eq(0));
+    });
+    $( '.aioseop_count_chars' ).each(function(){
+        countChars( $(this).eq(0), $(this).parent().find('[name="' + $(this).attr('data-length-field') + '"]').eq(0));
+    });
+}
+

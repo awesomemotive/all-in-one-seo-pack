@@ -1211,10 +1211,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$title_format = str_replace( '%page_title%', $replace_title, $title_format );
 			}
 			if ( strpos( $title_format, '%current_date%' ) !== false ) {
-				$title_format = str_replace( '%current_date%', date_i18n( get_option( 'date_format' ) ), $title_format );
+				$title_format = str_replace( '%current_date%', aioseop_formatted_date(), $title_format );
 			}
-			if ( strpos( $title_format, '%post_date%' ) !== false ) {
-				$title_format = str_replace( '%post_date%', get_the_date(), $title_format );
+
+			if ( strpos( $title_format, "%post_date%" ) !== false ){
+				$title_format = str_replace( '%post_date%', aioseop_formatted_date( get_the_time( 'U' ) ), $title_format );
 			}
 			if ( strpos( $title_format, '%post_year%' ) !== false ) {
 				$title_format = str_replace( '%post_year%', get_the_date( 'Y' ), $title_format );
@@ -2082,11 +2083,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( strpos( $new_title, "%{$type}_author_lastname%" ) !== false ) {
 			$new_title = str_replace( "%{$type}_author_lastname%", $this->ucwords( $authordata->last_name ), $new_title );
 		}
-		if ( strpos( $new_title, '%current_date%' ) !== false ) {
-			$new_title = str_replace( '%current_date%', date_i18n( get_option( 'date_format' ) ), $new_title );
+
+		if ( strpos( $new_title, "%current_date%" ) !== false ){
+			$new_title = str_replace( '%current_date%', aioseop_formatted_date(), $new_title );
 		}
-		if ( strpos( $new_title, '%post_date%' ) !== false ) {
-			$new_title = str_replace( '%post_date%', get_the_date(), $new_title );
+		if ( strpos( $new_title, "%post_date%" ) !== false ){
+			$new_title = str_replace( '%post_date%', aioseop_formatted_date( get_the_date( 'U' ) ), $new_title );
 		}
 		if ( strpos( $new_title, '%post_year%' ) !== false ) {
 			$new_title = str_replace( '%post_year%', get_the_date( 'Y' ), $new_title );
@@ -2659,7 +2661,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			return false;
 		}
 		$link    = '';
-		$haspost = count( $query->posts ) > 0;
+		$haspost = false;
+		if ( ! empty( $query->posts ) ) {
+			$haspost = count( $query->posts ) > 0;
+		}
+
 		if ( get_query_var( 'm' ) ) {
 			$m = preg_replace( '/[^0-9]/', '', get_query_var( 'm' ) );
 			switch ( $this->strlen( $m ) ) {
@@ -3793,8 +3799,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		global $aioseop_update_checker, $wp_query, $aioseop_options, $posts;
 		static $aioseop_dup_counter = 0;
 		$aioseop_dup_counter ++;
-		if ( $aioseop_dup_counter > 1 ) {
-			echo "\n<!-- " . sprintf( __( 'Debug Warning: All in One SEO Pack meta data was included again from %1$s filter. Called %2$s times!', 'all-in-one-seo-pack' ), current_filter(), $aioseop_dup_counter ) . " -->\n";
+
+		if ( ! defined('AIOSEOP_UNIT_TESTING') && $aioseop_dup_counter > 1 ) {
+			echo "\n<!-- " . sprintf( __( 'Debug Warning: All in One SEO Pack meta data was included again from %s filter. Called %s times!', 'all-in-one-seo-pack' ), current_filter(), $aioseop_dup_counter ) . " -->\n";
 			if ( ! empty( $old_wp_query ) ) {
 				// Change the query back after we've finished.
 				$GLOBALS['wp_query'] = $old_wp_query;

@@ -1046,9 +1046,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						}
 					} else {
 						if ( $compressed ) {
-							$fn = 'compress.zlib://' . $fn;
+							$file_resource = gzopen( $fn, 'rb' );
+							$file = gzread( $file_resource, 4096 );
+							gzclose( $file_resource );
+						} else {
+							$file = file_get_contents( $fn, false, null, 0, 4096 );
 						}
-						$file = file_get_contents( $fn, false, null, - 1, 4096 );
 					}
 					if ( ! empty( $file ) ) {
 						$matches = array();
@@ -1071,6 +1074,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						$msg .= '<p>' . sprintf( __( 'Removed empty file %s.', 'all-in-one-seo-pack' ), $f ) . "</p>\n";
 						$problem_files[] = $f;
 
+						// This is causing all problem_files to be deleted automatically; which may be the intent.
+						// TODO Either create a seperate variable for this set of problem_files, or a final loop to clean problem_files before returning.
 						foreach ( $problem_files as $f => $file ) {
 							$files[ $f ] = realpath( $file );
 							$this->delete_file( realpath( $file ) );
@@ -1657,39 +1662,39 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 							$count = 1;
 							for ( $post_count = 0; $post_count < $post_counts[ $sm ]; $post_count += $this->max_posts ) {
 								$files[] = array(
-									'loc'        => aioseop_home_url( '/' . $prefix . '_' . $sm . '_' . ( $count ++ ) . $suffix ),
-									'priority'   => $prio,
+									'loc'        => aioseop_home_url ( '/' . $prefix . '_' . $sm . '_' . ( $count ++ ) . $suffix ),
 									'changefreq' => $freq,
+									'priority'   => $prio,
 								);
 							}
 						} else {
 							$files[] = array(
-								'loc'        => aioseop_home_url( '/' . $prefix . '_' . $sm . $suffix ),
-								'priority'   => $prio,
+								'loc'        => aioseop_home_url ( '/' . $prefix . '_' . $sm . $suffix ),
 								'changefreq' => $freq,
+								'priority'   => $prio,
 							);
 						}
 					} else {
 						$files[] = array(
-							'loc'        => aioseop_home_url( '/' . $prefix . '_' . $sm . $suffix ),
-							'priority'   => $prio,
+							'loc'        => aioseop_home_url ( '/' . $prefix . '_' . $sm . $suffix ),
 							'changefreq' => $freq,
+							'priority'   => $prio,
 						);
 					}
 				}
 			}
 			if ( $this->option_isset( 'archive' ) ) {
 				$files[] = array(
-					'loc'        => aioseop_home_url( '/' . $prefix . '_archive' . $suffix ),
-					'priority'   => $this->get_default_priority( 'archive' ),
+					'loc'        => aioseop_home_url ( '/' . $prefix . '_archive' . $suffix ),
 					'changefreq' => $this->get_default_frequency( 'archive' ),
+					'priority'   => $this->get_default_priority( 'archive' ),
 				);
 			}
 			if ( $this->option_isset( 'author' ) ) {
 				$files[] = array(
-					'loc'        => aioseop_home_url( '/' . $prefix . '_author' . $suffix ),
-					'priority'   => $this->get_default_priority( 'author' ),
+					'loc'        => aioseop_home_url ( '/' . $prefix . '_author' . $suffix ),
 					'changefreq' => $this->get_default_frequency( 'author' ),
+					'priority'   => $this->get_default_priority( 'author' ),
 				);
 			}
 
@@ -1702,23 +1707,23 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 								$count = 1;
 								for ( $tc = 0; $tc < $term_count; $tc += $this->max_posts ) {
 									$files[] = array(
-										'loc'        => aioseop_home_url( '/' . $prefix . '_' . $sm . '_' . ( $count ++ ) . $suffix ),
-										'priority'   => $this->get_default_priority( 'taxonomies' ),
+										'loc'        => aioseop_home_url ( '/' . $prefix . '_' . $sm . '_' . ( $count ++ ) . $suffix ),
 										'changefreq' => $this->get_default_frequency( 'taxonomies' ),
+										'priority'   => $this->get_default_priority( 'taxonomies' ),
 									);
 								}
 							} else {
 								$files[] = array(
-									'loc'        => aioseop_home_url( '/' . $prefix . '_' . $sm . $suffix ),
-									'priority'   => $this->get_default_priority( 'taxonomies' ),
+									'loc'        => aioseop_home_url ( '/' . $prefix . '_' . $sm . $suffix ),
 									'changefreq' => $this->get_default_frequency( 'taxonomies' ),
+									'priority'   => $this->get_default_priority( 'taxonomies' ),
 								);
 							}
 						} else {
 							$files[] = array(
-								'loc'        => aioseop_home_url( '/' . $prefix . '_' . $sm . $suffix ),
-								'priority'   => $this->get_default_priority( 'taxonomies' ),
+								'loc'        => aioseop_home_url ( '/' . $prefix . '_' . $sm . $suffix ),
 								'changefreq' => $this->get_default_frequency( 'taxonomies' ),
+								'priority'   => $this->get_default_priority( 'taxonomies' ),
 							);
 						}
 					}
@@ -1727,8 +1732,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			foreach ( $this->get_child_sitemap_urls() as $csm ) {
 				$files[] = array(
 					'loc'        => $csm,
-					'priority'   => $this->get_default_priority( 'sitemap' ),
 					'changefreq' => $this->get_default_frequency( 'sitemap' ),
+					'priority'   => $this->get_default_priority( 'sitemap' ),
 				);
 			}
 
@@ -1907,8 +1912,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$home = array(
 				'loc'         => aioseop_home_url(),
-				'priority'    => $this->get_default_priority( 'homepage' ),
 				'changefreq'  => $this->get_default_frequency( 'homepage' ),
+				'priority'    => $this->get_default_priority( 'homepage' ),
 				'image:image' => $this->get_images_from_post( (int) get_option( 'page_on_front' ) ),
 			);
 
@@ -1919,8 +1924,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				} else {
 					$posts = array(
 						'loc'        => $posts,
-						'priority'   => $this->get_default_priority( 'blog' ),
 						'changefreq' => $this->get_default_frequency( 'blog' ),
+						'priority'   => $this->get_default_priority( 'blog' ),
 					);
 				}
 			}
@@ -1941,8 +1946,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( ( null != $posts ) && isset( $posts['loc'] ) ) {
 				foreach ( $prio as $k => $p ) {
 					if ( $p['loc'] === $posts['loc'] ) {
-						$prio[ $k ]['priority']   = $this->get_default_priority( 'blog' );
 						$prio[ $k ]['changefreq'] = $this->get_default_frequency( 'blog' );
+						$prio[ $k ]['priority']   = $this->get_default_priority( 'blog' );
 						$posts                    = null;
 						break;
 					}
@@ -2185,15 +2190,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				foreach ( $terms as $term ) {
 					$pr_info        = array();
 					$pr_info['loc'] = $this->get_term_link( $term, $term->taxonomy );
-					if ( ( 'sel' === $this->options[ $this->prefix . 'prio_taxonomies' ] ) && isset( $this->options[ $this->prefix . 'prio_taxonomies_' . $term->taxonomy ] ) && ( 'no' != $this->options[ $this->prefix . 'prio_taxonomies_' . $term->taxonomy ] ) ) {
-						$pr_info['priority'] = $this->options[ $this->prefix . 'prio_taxonomies_' . $term->taxonomy ];
-					} else {
-						$pr_info['priority'] = $def_prio;
-					}
 					if ( ( 'sel' === $this->options[ $this->prefix . 'freq_taxonomies' ] ) && isset( $this->options[ $this->prefix . 'freq_taxonomies_' . $term->taxonomy ] ) && ( 'no' != $this->options[ $this->prefix . 'freq_taxonomies_' . $term->taxonomy ] ) ) {
 						$pr_info['changefreq'] = $this->options[ $this->prefix . 'freq_taxonomies_' . $term->taxonomy ];
 					} else {
 						$pr_info['changefreq'] = $def_freq;
+					}
+					if ( ( 'sel' === $this->options[ $this->prefix . 'prio_taxonomies' ] ) && isset( $this->options[ $this->prefix . 'prio_taxonomies_' . $term->taxonomy ] ) && ( 'no' != $this->options[ $this->prefix . 'prio_taxonomies_' . $term->taxonomy ] ) ) {
+						$pr_info['priority'] = $this->options[ $this->prefix . 'prio_taxonomies_' . $term->taxonomy ];
+					} else {
+						$pr_info['priority'] = $def_prio;
 					}
 
 					$pr_info['image:image'] = $this->get_images_from_term( $term );
@@ -2386,8 +2391,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$home  = array();
 			$home  = array(
 				'loc'         => aioseop_home_url(),
-				'priority'    => $this->get_default_priority( 'homepage' ),
 				'changefreq'  => $this->get_default_frequency( 'homepage' ),
+				'priority'    => $this->get_default_priority( 'homepage' ),
 				'image:image' => $this->get_images_from_post( (int) get_option( 'page_on_front' ) ),
 			);
 
@@ -2399,8 +2404,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				} else {
 					$posts = array(
 						'loc'        => $posts,
-						'priority'   => $this->get_default_priority( 'blog' ),
 						'changefreq' => $this->get_default_frequency( 'blog' ),
+						'priority'   => $this->get_default_priority( 'blog' ),
 					);
 				}
 			} else {
@@ -2681,11 +2686,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						}
 						$pr_info = $this->get_prio_calc( $date, $stat );
 					}
-					if ( $prio_override ) {
-						$pr_info['priority'] = $prio_override;
-					}
 					if ( $freq_override ) {
 						$pr_info['changefreq'] = $freq_override;
+					}
+					if ( $prio_override ) {
+						$pr_info['priority'] = $prio_override;
 					}
 					if ( ( 'sel' === $this->options[ $this->prefix . 'prio_post' ] ) && isset( $this->options[ $this->prefix . 'prio_post_' . $post->post_type ] ) ) {
 						if ( ( 'no' != $this->options[ $this->prefix . 'prio_post_' . $post->post_type ] ) && ( 'sel' !== $this->options[ $this->prefix . 'prio_post_' . $post->post_type ] ) ) {
@@ -2699,11 +2704,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 					$pr_info = array(
 						'loc' => $url,
-						'image:image' => $is_single ? $this->get_images_from_post( $post ) : null,
 					) + $pr_info; // Prepend loc to	the	array.
 					if ( is_float( $pr_info['priority'] ) ) {
 						$pr_info['priority'] = sprintf( '%0.1F', $pr_info['priority'] );
 					}
+					$pr_info['image:image'] = $is_single ? $this->get_images_from_post( $post ) : null;
 					$pr_info = apply_filters( $this->prefix . 'prio_item_filter', $pr_info, $post, $args );
 					if ( ! empty( $pr_info ) ) {
 						$prio[] = $pr_info;
@@ -2724,19 +2729,23 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array
 		 */
 		private function get_images_from_term( $term ) {
+			global $wp_version;
 
 			if ( ! aiosp_include_images() ) {
 				return array();
 			}
 
 			$images       = array();
-			$thumbnail_id = get_term_meta( $term->term_id, 'thumbnail_id', true );
-			if ( $thumbnail_id ) {
-				$image = wp_get_attachment_url( $thumbnail_id );
-				if ( $image ) {
-					$images['image:image'] = array(
-						'image:loc' => $image,
-					);
+			// the table term meta table is not defined for lower versions.
+			if ( version_compare( $wp_version, '4.4.0', '>=' ) ) {
+				$thumbnail_id = get_term_meta( $term->term_id, 'thumbnail_id', true );
+				if ( $thumbnail_id ) {
+					$image = wp_get_attachment_url( $thumbnail_id );
+					if ( $image ) {
+						$images['image:image'] = array(
+							'image:loc' => $image,
+						);
+					}
 				}
 			}
 
@@ -2852,6 +2861,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 		/**
 		 * Validate the image.
+		 * NOTE: We will use parse_url here instead of wp_parse_url as we will correct the URLs beforehand and 
+		 * this saves us the need to check PHP version support.
 		 *
 		 * @param string $image The image src.
 		 *
@@ -2861,13 +2872,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return bool
 		 */
 		function is_image_valid( $image ) {
+			global $wp_version;
+
 			// Bail if empty image.
 			if ( empty( $image ) ) {
 				return false;
 			}
 
 			global $wp_version;
-			if ( version_compare( $wp_version, '4.7', '<' ) ) {
+			if ( version_compare( $wp_version, '4.4', '<' ) ) {
+				$p_url = parse_url( $image );
+				$url = $p_url['scheme'] . $p_url['host'] . $p_url['path'];
+			} elseif ( version_compare( $wp_version, '4.7', '<' ) ) {
 				// Compatability for older WP version that don't have 4.7 changes.
 				// @link https://core.trac.wordpress.org/changeset/38726
 				$p_url = wp_parse_url( $image );
@@ -2880,20 +2896,32 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// make the url absolute, if its relative.
 			$image      = aiosp_common::absolutize_url( $image );
 
-			$extn       = pathinfo( $url, PATHINFO_EXTENSION );
+			$extn       = pathinfo( parse_url( $image, PHP_URL_PATH ), PATHINFO_EXTENSION );
 			$allowed    = apply_filters( 'aioseop_allowed_image_extensions', self::$image_extensions );
 			// Bail if image does not refer to an image file otherwise google webmaster tools might reject the sitemap.
 			if ( ! in_array( $extn, $allowed, true ) ) {
 				return false;
 			}
 
-			// Bail if image refers to an external URL.
-			$image_host = wp_parse_url( $image, PHP_URL_HOST );
-			$wp_host    = wp_parse_url( home_url(), PHP_URL_HOST );
-			if ( $image_host !== $wp_host ) {
-				return false;
-			}
+			$image_host = parse_url( $image, PHP_URL_HOST );
+			$host       = parse_url( home_url(), PHP_URL_HOST );
 
+			if ( $image_host !== $host ) {
+				// Allowed hosts will be provided in a wildcard format i.e. img.yahoo.* or *.akamai.*.
+				// And we will convert that into a regular expression for matching.
+				$whitelist  = apply_filters( 'aioseop_images_allowed_from_hosts', array() );
+				$allowed    = false;
+				if ( $whitelist ) {
+					foreach ( $whitelist as $pattern ) {
+						if ( preg_match( '/' . str_replace( '*', '.*', $pattern ) . '/', $image_host ) === 1 ) {
+							$allowed = true;
+							break;
+						}
+					}
+				}
+				return $allowed;
+
+			}
 			return true;
 		}
 
