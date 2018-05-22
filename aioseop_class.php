@@ -2482,7 +2482,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$aioseop_desc = get_post_meta( $post->ID, '_aioseop_description', true );
 		}
 
-		if ( empty( $aioseop_desc ) && 'on' === $aioseop_options['aiosp_generate_descriptions'] && empty( $aioseop_options['aiosp_dont_truncate_descriptions'] ) ) {
+		if ( empty( $aioseop_desc ) && isset( $aioseop_options['aiosp_generate_descriptions'] ) && 'on' === $aioseop_options['aiosp_generate_descriptions'] && empty( $aioseop_options['aiosp_dont_truncate_descriptions'] ) ) {
 			$truncate = true;
 		}
 
@@ -3965,8 +3965,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( ! empty( $aioseop_options['aiosp_no_paged_canonical_links'] ) ) {
 			$show_page = false;
 		}
-// remove this
-		if ( $aioseop_options['aiosp_can'] ) {
+
+		if ( isset( $aioseop_options['aiosp_can'] ) && $aioseop_options['aiosp_can'] ) {
 			$url = '';
 			if ( ! empty( $aioseop_options['aiosp_customize_canonical_links'] ) && ! empty( $opts['aiosp_custom_link'] ) && ! is_home() ) {
 				$url = $opts['aiosp_custom_link'];
