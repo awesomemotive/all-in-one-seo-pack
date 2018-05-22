@@ -146,7 +146,7 @@ class aiosp_metaboxes {
 						if ( AIOSEOPPRO ) {
 							echo 'https://semperplugins.com/documentation/all-in-one-seo-pack-pro-changelog/';
 						} else {
-							echo 'https://semperfiwebdesign.com/blog/all-in-one-seo-pack/all-in-one-seo-pack-release-history/';
+							echo 'https://semperfiwebdesign.com/all-in-one-seo-pack-release-history/';
 						}
 						?>
 					   "><?php _e( 'View the Changelog', 'all-in-one-seo-pack' ); ?></a></p>
