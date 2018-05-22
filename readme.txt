@@ -51,7 +51,7 @@ seo, SEO, All in One, google, meta, meta description, search engine optimization
 
 == Changelog ==
 
-All in One SEO Pack [Changelog](http://semperfiwebdesign.com/documentation/all-in-one-seo-pack/all-in-one-seo-pack-release-history/)
+All in One SEO Pack [Changelog](https://semperfiwebdesign.com/all-in-one-seo-pack-release-history/)
 
 == Frequently Asked Questions ==
 
