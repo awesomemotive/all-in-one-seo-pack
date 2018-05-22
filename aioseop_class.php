@@ -3965,7 +3965,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( ! empty( $aioseop_options['aiosp_no_paged_canonical_links'] ) ) {
 			$show_page = false;
 		}
-
+// remove this
 		if ( $aioseop_options['aiosp_can'] ) {
 			$url = '';
 			if ( ! empty( $aioseop_options['aiosp_customize_canonical_links'] ) && ! empty( $opts['aiosp_custom_link'] ) && ! is_home() ) {
