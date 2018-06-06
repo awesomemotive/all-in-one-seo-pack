@@ -2301,9 +2301,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				} elseif ( isset( $options['rows'] ) && isset( $options['cols'] ) ) {
 					$size = $options['rows'] * $options['cols'];
 				}
-				if ( 'Description' === $options['name'] && isset( $options['name'] ) ) {
-					$size = ( $size - 90 ) . '-' . $size;
-				}
 				if ( isset( $options['count_desc'] ) ) {
 					$count_desc = $options['count_desc'];
 				} else {
