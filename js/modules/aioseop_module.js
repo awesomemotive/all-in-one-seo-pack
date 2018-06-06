@@ -82,7 +82,7 @@ function countChars( field, cntfield ) {
             cntfield.removeClass().addClass('aioseop_count_good');
         }
     } else {
-        if ( cntfield.val() > ( field_size - 91 ) ) {
+        if ( cntfield.val() > ( field_size - 10 ) ) {
             cntfield.removeClass().addClass('aioseop_count_bad');
         } else {
             cntfield.removeClass().addClass('aioseop_count_good');
