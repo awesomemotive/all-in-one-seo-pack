@@ -71,6 +71,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			$this->plugin_path['url']         = plugin_dir_url( $this->file );
 			$this->plugin_path['images_url']  = $this->plugin_path['url'] . 'images';
 			$this->script_data['plugin_path'] = $this->plugin_path;
+			
+			
+				if ( is_multisite() ) {
+					//add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );
+				}
 		}
 
 		/**
@@ -1957,6 +1962,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			}
 		}
 
+		function network_admin_menu(){
+			
+			if ( ! empty( $this->menu_name ) ) {
+				$name = $this->menu_name;
+			} else {
+				$name = $this->name;
+			}
+			
+			if( is_multisite() && is_network_admin() && $name == 'Robots.txt' ){
+				//add_menu_page( '1Robots.txt Editor','1Robots.txt Editor','edit_themes',plugin_basename( $this->file ),array(	$this, 'display_settings_page',	));
+			}
+		}
+
 		/**
 		 * Collect metabox data together for tabbed metaboxes.
 		 *
@@ -1980,7 +1998,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			} else {
 				$name = $this->name;
 			}
+			
+			if( is_multisite() && is_network_admin() && $name == 'Robots.txt' ){
+				add_menu_page( 'Robots.txt Editor','Robots.txt Editor','edit_themes',plugin_basename( $this->file ),array(	$this, 'display_settings_page',	));
+			}
+			
 			if ( $this->locations === null ) {
+
 				$hookname = add_submenu_page(
 					$parent_slug, $name, $name, apply_filters( 'manage_aiosp', 'aiosp_manage_seo' ), plugin_basename( $this->file ), array(
 						$this,
