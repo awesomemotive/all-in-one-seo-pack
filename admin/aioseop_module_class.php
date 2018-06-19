@@ -1982,11 +1982,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			}
 			
 			if( is_multisite() && is_network_admin() && $name == 'Robots.txt' ){
+				// Add the robots.txt editor into the network admin menu.
 				add_menu_page( 'Robots.txt Editor','Robots.txt Editor','edit_themes',plugin_basename( $this->file ),array(	$this, 'display_settings_page',	));
 			}
 			
 			if ( $this->locations === null ) {
-
 				$hookname = add_submenu_page(
 					$parent_slug, $name, $name, apply_filters( 'manage_aiosp', 'aiosp_manage_seo' ), plugin_basename( $this->file ), array(
 						$this,
