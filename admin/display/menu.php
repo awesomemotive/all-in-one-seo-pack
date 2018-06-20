@@ -26,7 +26,7 @@ class AIOSEOPAdminMenus {
 	}
 
 	function remove_menus(){
-		remove_menu_page( 'all-in-one-seo-pack--1647/aioseop_class.php' ); // Remove AIOSEOP menu from the network admin.
+		remove_menu_page( AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class.php' ); // Remove AIOSEOP menu from the network admin.
 	}
 
 	/**
