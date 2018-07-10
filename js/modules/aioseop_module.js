@@ -847,7 +847,7 @@ function aioseop_overflow_border( el ) {
 	}
 }
 
-function aiospinitAll($){
+function aiospinitAll( jQuery ){
   if ( $( '.aiseop-date' ).length > 0 && $( '.aiseop-date' ).eq( 0 ).prop( 'type' ).toLowerCase() === 'text' ) {
 		$( '.aiseop-date' ).datepicker(
 			{
@@ -857,7 +857,7 @@ function aiospinitAll($){
 	}
 }
 
-function aiospinitCounting($){
+function aiospinitCounting( jQuery ){
     /* count them characters */
     $( '.aioseop_count_chars' ).on('keyup keydown', function(){
         countChars( $(this).eq(0), $(this).parent().find('[name="' + $(this).attr('data-length-field') + '"]').eq(0));
