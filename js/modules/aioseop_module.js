@@ -857,9 +857,9 @@ function aioseop_overflow_border( el ) {
 	}
 }
 
-function aiospinitAll( jQuery ){
-  if ( $( '.aiseop-date' ).length > 0 && $( '.aiseop-date' ).eq( 0 ).prop( 'type' ).toLowerCase() === 'text' ) {
-		$( '.aiseop-date' ).datepicker(
+function aiospinitAll(){
+  if ( jQuery( '.aiseop-date' ).length > 0 && jQuery( '.aiseop-date' ).eq( 0 ).prop( 'type' ).toLowerCase() === 'text' ) {
+	  jQuery( '.aiseop-date' ).datepicker(
 			{
 				dateFormat: "yy-mm-dd"
 			}
@@ -867,12 +867,12 @@ function aiospinitAll( jQuery ){
 	}
 }
 
-function aiospinitCounting( jQuery ){
+function aiospinitCounting(){
     /* count them characters */
-    $( '.aioseop_count_chars' ).on('keyup keydown', function(){
-        countChars( $(this).eq(0), $(this).parent().find('[name="' + $(this).attr('data-length-field') + '"]').eq(0));
+	jQuery( '.aioseop_count_chars' ).on('keyup keydown', function(){
+        countChars( jQuery(this).eq(0), jQuery(this).parent().find('[name="' + jQuery(this).attr('data-length-field') + '"]').eq(0));
     });
-    $( '.aioseop_count_chars' ).each(function(){
-        countChars( $(this).eq(0), $(this).parent().find('[name="' + $(this).attr('data-length-field') + '"]').eq(0));
+	jQuery( '.aioseop_count_chars' ).each(function(){
+        countChars( jQuery(this).eq(0), jQuery(this).parent().find('[name="' + jQuery(this).attr('data-length-field') + '"]').eq(0));
     });
 }
