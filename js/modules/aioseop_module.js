@@ -1,4 +1,3 @@
-(function($){
 /**
  * Controls all the styling of the plugin.
  *
@@ -292,22 +291,25 @@ jQuery( document ).ready(
          * @link https://core.trac.wordpress.org/ticket/16972
          * @since 1.0.0
          */
-		// listen for drag drop of metaboxes , bind mousedown to .hndle so it only fires when starting to drag
-		jQuery( '.hndle' ).mousedown(
-			function() {
+        jQuery(document).ready(
+            function () {
+                // listen for drag drop of metaboxes , bind mousedown to .hndle so it only fires when starting to drag
+                jQuery('.hndle').mousedown(
+                    function () {
 
-				// set live event listener for mouse up on the content .wrap and wait a tick to give the dragged div time to settle before firing the reclick function
-				jQuery( '.wrap' ).mouseup(
-					function() {
-						aiosp_store_radio();
-						setTimeout( function() {
-                            aiosp_reclick_radio();
-                        }, 50 );
-					}
-				);
-			}
-		);
-
+                        // set live event listener for mouse up on the content .wrap and wait a tick to give the dragged div time to settle before firing the reclick function
+                        jQuery('.wrap').mouseup(
+                            function () {
+                                aiosp_store_radio();
+                                setTimeout(function () {
+                                    aiosp_reclick_radio();
+                                }, 50);
+                            }
+                        );
+                    }
+                );
+            }
+        );
 
         /**
          * @summary Javascript for using WP media uploader. Indentifies which DOM should use custom uploader plugin.
@@ -318,45 +320,53 @@ jQuery( document ).ready(
          * @since 2.3.13 Fixed issue #[740](https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/740)
          *
          */
- 		jQuery( '.aioseop_upload_image_button' ).each(
-			function() {
-				jQuery( this ).aioseopImageUploader(
-					{
-						success: function( url, el ) {
-							// Update checker
-							if ( jQuery( el ).prev().length > 0 ) {
-								jQuery( el ).prev().val( 1 );
-							}
-						},
-					}
-				);
-			}
-		);
+        jQuery(document).ready(
+            function ($) {
+                jQuery('.aioseop_upload_image_button').each(
+                    function () {
+                        jQuery(this).aioseopImageUploader(
+                            {
+                                success: function (url, el) {
+                                    // Update checker
+                                    if (jQuery(el).prev().length > 0) {
+                                        jQuery(el).prev().val(1);
+                                    }
+                                },
+                            }
+                        );
+                    }
+                );
+            }
+        );
 
-		jQuery( "#poststuff .aioseop_radio_type input[type='radio']" ).on(
-			'click', function() {
-				var previousValue = jQuery( this ).attr( 'previousValue' );
-				var name = jQuery( this ).attr( 'name' );
-				if ( typeof previousValue == 'undefined' ) {
-					if ( jQuery( this ).prop( "checked" ) ) {
-						jQuery( this ).prop( 'checked', true );
-						jQuery( this ).attr( 'previousValue', 'checked' );
-					} else {
-						jQuery( this ).prop( 'checked', false );
-						jQuery( this ).attr( 'previousValue', false );
-					}
-					return;
-				}
-				if ( previousValue == 'checked' ) {
-					jQuery( this ).prop( 'checked', false );
-					jQuery( this ).attr( 'previousValue', false );
-				} else {
-					jQuery( "input[name=" + name + "]:radio" )
-					.attr( 'previousValue', false );
-					jQuery( this ).attr( 'previousValue', 'checked' );
-				}
-			}
-		);
+        jQuery(document).ready(
+            function () {
+                jQuery("#poststuff .aioseop_radio_type input[type='radio']").on(
+                    'click', function () {
+                        var previousValue = jQuery(this).attr('previousValue');
+                        var name = jQuery(this).attr('name');
+                        if (typeof previousValue == 'undefined') {
+                            if (jQuery(this).prop("checked")) {
+                                jQuery(this).prop('checked', true);
+                                jQuery(this).attr('previousValue', 'checked');
+                            } else {
+                                jQuery(this).prop('checked', false);
+                                jQuery(this).attr('previousValue', false);
+                            }
+                            return;
+                        }
+                        if (previousValue == 'checked') {
+                            jQuery(this).prop('checked', false);
+                            jQuery(this).attr('previousValue', false);
+                        } else {
+                            jQuery("input[name=" + name + "]:radio")
+                                .attr('previousValue', false);
+                            jQuery(this).attr('previousValue', 'checked');
+                        }
+                    }
+                );
+            }
+        );
 		if ( typeof aiosp_data.pointers != 'undefined' ) {
 
 			/**
@@ -847,7 +857,7 @@ function aioseop_overflow_border( el ) {
 	}
 }
 
-function aiospinitAll($){
+function aiospinitAll( jQuery ){
   if ( $( '.aiseop-date' ).length > 0 && $( '.aiseop-date' ).eq( 0 ).prop( 'type' ).toLowerCase() === 'text' ) {
 		$( '.aiseop-date' ).datepicker(
 			{
@@ -857,7 +867,7 @@ function aiospinitAll($){
 	}
 }
 
-function aiospinitCounting($){
+function aiospinitCounting( jQuery ){
     /* count them characters */
     $( '.aioseop_count_chars' ).on('keyup keydown', function(){
         countChars( $(this).eq(0), $(this).parent().find('[name="' + $(this).attr('data-length-field') + '"]').eq(0));
@@ -866,5 +876,3 @@ function aiospinitCounting($){
         countChars( $(this).eq(0), $(this).parent().find('[name="' + $(this).attr('data-length-field') + '"]').eq(0));
     });
 }
-
-})(jQuery);
