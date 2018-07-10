@@ -104,6 +104,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			$this->layout             = array(
 				'default' => array(
 					'name'    => __( 'Create a Robots.txt File', 'all-in-one-seo-pack' ),
+					'help_link' => 'https://semperplugins.com/documentation/robots-txt-module/',
 					'options' => array_merge( array( 'usage' ), array_keys( $this->rule_fields ) ),
 				),
 			);
