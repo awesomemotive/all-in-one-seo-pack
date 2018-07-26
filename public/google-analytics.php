@@ -15,6 +15,11 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 	// @codingStandardsIgnoreEnd
 
 		/**
+		 * The GA file URL.
+		 */
+		const GA_URL = 'https://www.google-analytics.com/analytics.js';
+
+		/**
 		 * @todo Rather than extending the module base class,
 		 * we should find a better way for the shared functions
 		 * like moving them to our common functions class.
@@ -24,7 +29,10 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 		 * Default module constructor.
 		 */
 		public function __construct() {
-			$this->google_analytics();
+			$this->add_hooks();
+			if ( ! is_admin() ) {
+				$this->google_analytics();
+			}
 		}
 
 		/**
@@ -168,7 +176,7 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 
 				ga('send', 'pageview');
 			</script>
-			<script async src="https://www.google-analytics.com/analytics.js"></script>
+			<script async src="<?php echo esc_url( $this->get_ga_url() ); ?>"></script>
 			<?php
 			return ob_get_clean();
 		}
@@ -182,6 +190,132 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 				return $this->sanitize_domain( $aioseop_options['aiosp_ga_domain'] );
 			}
 			return '';
+		}
+
+		/**
+		 * Add the hooks.
+		 */
+		private function add_hooks() {
+			if ( is_admin() ) {
+				register_activation_hook( AIOSEOP_PLUGIN_FILE, array( $this, 'init_download' ) );
+				register_deactivation_hook( AIOSEOP_PLUGIN_FILE, array( $this, 'deactivate' ) );
+				add_action( 'aioseop_ga_local', array( $this, 'start_download' ) );
+				// to handle the scenario where the GA code is added later.
+				add_action( 'admin_init', array( $this, 'init_download' ) );
+			}
+		}
+
+		/**
+		 * Initiate the download.
+		 */
+		public function init_download() {
+			if ( false === apply_filters( 'aioseop_ga_host_locally', true ) ) {
+				return;
+			}
+
+			if ( ! aioseop_option_isset( 'aiosp_google_analytics_id' ) ) {
+				return;
+			}
+
+			if ( ! wp_next_scheduled( 'aioseop_ga_local' ) ) {
+				wp_schedule_event( time(), 'twicedaily', 'aioseop_ga_local' );
+			}
+
+			if ( false === $this->get_download_status() ) {
+				$this->start_download();
+			}
+		}
+
+		/**
+		 * On plugin deactivation.
+		 */
+		public function deactivate() {
+			if ( wp_next_scheduled( 'aioseop_ga_local' ) ) {
+				wp_clear_scheduled_hook( 'aioseop_ga_local' );
+			}
+			delete_transient( 'aioseop_ga_local_status' );
+		}
+
+		/**
+		 * Set the download status in a transient.
+		 *
+		 * @param string $status The status to set.
+		 */
+		private function set_download_status( $status ) {
+			set_transient( 'aioseop_ga_local_status', $status, DAY_IN_SECONDS );
+		}
+
+		/**
+		 * Get the download status from the transient.
+		 */
+		private function get_download_status() {
+			return get_transient( 'aioseop_ga_local_status' );
+		}
+
+		/**
+		 * Actually download the file.
+		 */
+		private function start_download() {
+			$content = wp_remote_retrieve_body( wp_remote_get( self::GA_URL ) );
+			if ( empty( $content ) ) {
+				self::log( 'Unable to download ' . self::GA_URL );
+				$this->set_download_status( 'no' );
+				return;
+			}
+
+			WP_Filesystem();
+			global $wp_filesystem;
+			$dir = wp_upload_dir();
+
+			if ( ! $wp_filesystem->is_dir( $dir['basedir'] ) || ! $wp_filesystem->is_writable( $dir['basedir'] ) ) {
+				self::log( 'Unable to write to ' . $dir['basedir'] );
+				$this->set_download_status( 'no' );
+				return;
+			}
+
+			$aioseop_dir = $dir['basedir'] . '/' . sanitize_title( AIOSEOP_PLUGIN_NAME );
+
+			$wp_filesystem->mkdir( $aioseop_dir );
+
+			if ( ! $wp_filesystem->is_dir( $aioseop_dir ) || ! $wp_filesystem->is_writable( $aioseop_dir ) ) {
+				self::log( 'Unable to write to ' . $aioseop_dir );
+				$this->set_download_status( 'no' );
+				return;
+			}
+
+			$wp_filesystem->put_contents( $aioseop_dir . '/ga.js', $content, 0644 );
+
+			// let's verify if what we got is what we put.
+			$verify = $wp_filesystem->get_contents( $aioseop_dir . '/ga.js' );
+			if ( $verify !== $content ) {
+				self::log( 'Unable to verify if ' . self::GA_URL . ' has been written correctly to ' . $aioseop_dir . '/ga.js' );
+				$this->set_download_status( 'no' );
+				return;
+			}
+			$this->set_download_status( 'yes' );
+			do_action( 'aiosp_ga_download', $aioseop_dir . '/ga.js' );
+		}
+
+		/**
+		 * Return the file URL to use.
+		 */
+		private function get_ga_url() {
+			if ( false === apply_filters( 'aioseop_ga_host_locally', true ) || 'yes' !== $this->get_download_status() ) {
+				return 'https://www.google-analytics.com/analytics.js';
+			}
+
+			$dir = wp_upload_dir();
+			$url = $dir['baseurl'] . '/' . sanitize_title( AIOSEOP_PLUGIN_NAME ) . '/ga.js';
+			return apply_filters( 'aioseop_ga_local_url', $url );
+		}
+
+		/**
+		 * Log the message.
+		 *
+		 * @param string $msg The message to log.
+		 */
+		private static function log( $msg ) {
+			error_log( $msg );
 		}
 
 	}

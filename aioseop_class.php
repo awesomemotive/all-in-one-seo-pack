@@ -78,6 +78,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$blog_name          = esc_attr( get_bloginfo( 'name' ) );
 		parent::__construct();
 
+		$this->aiosp_google_analytics();
+
 		$this->help_text = array(
 			'license_key'                 => __( 'This will be the license key received when the product was purchased. This is used for automatic upgrades.', 'all-in-one-seo-pack' ),
 			'can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation.  This will help to prevent duplicate content penalties by Google', 'all-in-one-seo-pack' ),

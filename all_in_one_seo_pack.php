@@ -78,6 +78,10 @@ if ( ! defined( 'AIOSEOP_PLUGIN_NAME' ) ) {
 	define( 'AIOSEOP_PLUGIN_NAME', $aioseop_plugin_name );
 }
 
+if ( ! defined( 'AIOSEOP_PLUGIN_FILE' ) ) {
+	define( 'AIOSEOP_PLUGIN_FILE', __FILE__ );
+}
+
 if ( ! defined( 'AIOSEOP_PLUGIN_DIR' ) ) {
 	define( 'AIOSEOP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 } elseif ( AIOSEOP_PLUGIN_DIR !== plugin_dir_path( __FILE__ ) ) {
