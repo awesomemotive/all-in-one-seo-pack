@@ -527,44 +527,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @return void
 		 */
 		public function display_notice_default() {
-			if ( AIOSEOPPRO ) {
-				return;
-			} elseif ( ! wp_script_is( 'aioseop-admin-notice-js', 'enqueued' ) || ! wp_style_is( 'aioseop-admin-notice-css', 'enqueued' ) ) {
-				return;
-			}
-
-			$current_screen  = get_current_screen();
-			$current_user_id = get_current_user_id();
-			foreach ( $this->active_notices as $a_notice_slug => $a_notice_time_display ) {
-				$notice_show = true;
-
-				// Screen Restriction.
-				if ( ! empty( $this->notices[ $a_notice_slug ]['screens'] ) ) {
-					if ( ! in_array( 'aioseop', $this->notices[ $a_notice_slug ]['screens'], true ) ) {
-						if ( ! in_array( $current_screen->id, $this->notices[ $a_notice_slug ]['screens'], true ) ) {
-							continue;
-						}
-					}
-				}
-
-				// User Settings.
-				if ( 'user' === $this->notices[ $a_notice_slug ]['target'] ) {
-					$user_dismissed = get_user_meta( $current_user_id, 'aioseop_notice_dismissed_' . $a_notice_slug, true );
-					if ( ! $user_dismissed ) {
-						$user_notice_time_display = get_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $a_notice_slug, true );
-						if ( ! empty( $user_notice_time_display ) ) {
-							$a_notice_time_display = intval( $user_notice_time_display );
-						}
-					} else {
-						$notice_show = false;
-					}
-				}
-
-				// Display/Render.
-				if ( time() > $a_notice_time_display && $notice_show ) {
-					include AIOSEOP_PLUGIN_DIR . 'admin/display/notice-default.php';
-				}
-			}
+			$this->display_notice( 'default' );
 		}
 
 		/**
@@ -581,9 +544,15 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @return void
 		 */
 		public function display_notice_aioseop() {
+			$this->display_notice( 'aioseop' );
+		}
+
+		public function display_notice( $template ) {
 			if ( AIOSEOPPRO ) {
 				return;
 			} elseif ( ! wp_script_is( 'aioseop-admin-notice-js', 'enqueued' ) || ! wp_style_is( 'aioseop-admin-notice-css', 'enqueued' ) ) {
+				return;
+			} elseif ( 'default' !== $template && 'aioseop' !== $template ) {
 				return;
 			}
 
