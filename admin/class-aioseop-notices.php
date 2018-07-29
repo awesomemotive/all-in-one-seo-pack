@@ -584,8 +584,12 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				}
 
 				// Display/Render.
-				if ( time() > $a_notice_time_display && $notice_show ) {
-					include AIOSEOP_PLUGIN_DIR . 'admin/display/notice-aioseop.php';
+				if ( defined( 'DISABLE_NAG_NOTICES' ) && true === DISABLE_NAG_NOTICES && ( 'notice-error' !== $this->notices[ $a_notice_slug ]['class'] || 'notice-warning' !== $this->notices[ $a_notice_slug ]['class'] || 'notice-do-nag' !== $this->notices[ $a_notice_slug ]['class'] ) ) {
+					// Skip if `DISABLE_NAG_NOTICES` is implemented (as true).
+					// Important notices, WP's CSS `notice-error` & `notice-warning`, are still rendered.
+					continue;
+				} elseif ( time() > $a_notice_time_display && $notice_show ) {
+					include AIOSEOP_PLUGIN_DIR . 'admin/display/notice-' . $template . '.php';
 				}
 			}
 		}
