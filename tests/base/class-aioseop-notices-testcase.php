@@ -275,6 +275,42 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	/**
 	 * Add Notice
 	 *
+	 * Adds and validates the a (child test) notice being tested.
+	 *
+	 * @since 2.8.2
+	 *
+	 * @param array $notice Value from `$aioseop_notices`.
+	 */
+	protected function add_notice( $notice = array() ) {
+		global $aioseop_notices;
+		if ( null === $aioseop_notices ) {
+			$aioseop_notices = new AIOSEOP_Notices();
+		}
+		$this->validate_class_aioseop_notices( $aioseop_notices );
+		if ( empty( $notice ) ) {
+			$notice = $this->mock_notice();
+		}
+
+		// Insert Successful and activated.
+		$this->assertTrue( $aioseop_notices->insert_notice( $notice ) );
+		$this->assertTrue( in_array( $notice['slug'], $notice, true ) );
+
+		$this->assertTrue( isset( $aioseop_notices->active_notices[ $notice['slug'] ] ) );
+		$this->assertNotNull( $aioseop_notices->active_notices[ $notice['slug'] ] );
+
+		// Validates the global $aioseop_notices instance and variable types.
+		$this->validate_class_aioseop_notices( $aioseop_notices );
+	}
+
+	/**
+	 * Add Notice
+	 *
+	 * Function: Inserts, and Updates, a single notice into wp_options.
+	 * Expected: If no notice exists, it shouldn't be operational, and new notices should insert instead of update. Then
+	 *           should be able to update without effecting the active notices.
+	 * Actual: As expected; no current issue.
+	 * Result: Inserts and Updates successfully to the database (wp_options).
+	 *
 	 * @since 2.4.5.1
 	 *
 	 * @param array $notice Single notice to add to object/database.
