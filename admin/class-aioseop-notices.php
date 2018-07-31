@@ -611,9 +611,19 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			$action_index = null;
 			if ( isset( $_POST['notice_slug'] ) ) {
 				$notice_slug = filter_input( INPUT_POST, 'notice_slug', FILTER_SANITIZE_STRING );
+
+				// When PHPUnit is unable to use filter_input.
+				if ( defined( 'AIOSEOP_UNIT_TESTING' ) && null === $notice_slug && ! empty( $_POST['notice_slug'] ) ) {
+					$notice_slug = $_POST['notice_slug'];
+				}
 			}
 			if ( isset( $_POST['action_index'] ) ) {
 				$action_index = filter_input( INPUT_POST, 'action_index', FILTER_SANITIZE_STRING );
+
+				// When PHPUnit is unable to use filter_input.
+				if ( defined( 'AIOSEOP_UNIT_TESTING' ) && null === $action_index && ( ! empty( $_POST['action_index'] || 0 === $_POST['action_index'] ) ) ) {
+					$action_index = $_POST['action_index'];
+				}
 			}
 			if ( empty( $notice_slug ) ) {
 				wp_send_json_error( 'Missing values from `notice_slug`.' );
