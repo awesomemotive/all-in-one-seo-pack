@@ -49,6 +49,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *                                   array('aioseop') = $this->aioseop_screens,
 		 *                                   array('CUSTOM')  = specific screen(s).
 		 *         @type int    $time_start  The time the notice was added to the object.
+		 *         @type int    $time_set    Set when AJAX/Action_Option was last used to delay time. Primarily for PHPUnit tests.
 		 *     }
 		 * }
 		 */
@@ -56,6 +57,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 
 		/**
 		 * List of notice slugs that are currently active.
+		 * NOTE: Amount is reduced by 1 second in order to display at exactly X amount of time.
 		 *
 		 * @since 2.4.2
 		 * @access public
@@ -236,6 +238,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				'target'         => 'site',
 				'screens'        => array(),
 				'time_start'     => time(),
+				'time_set'       => time(),
 			);
 		}
 
@@ -411,6 +414,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				return false;
 			}
 
+			// Display at exactly X time, not (X + 1) time.
 			$display_time = time() + $this->notices[ $slug ]['delay_time'];
 			$display_time--;
 
@@ -644,7 +648,11 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				// Always sets the action time, even if dismissed, so last timestamp is recorded.
 				$current_user_id = get_current_user_id();
 				if ( $action_options['time'] ) {
-					$metadata = time() + $action_options['time'];
+					$time_set = time();
+					// Adds action_option delay time, reduced by 1 second to display at exact time.
+					$metadata = $time_set + $action_options['time'] - 1;
+
+					update_user_meta( $current_user_id, 'aioseop_notice_time_set_' . $notice_slug, $time_set );
 					update_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $notice_slug, $metadata );
 				}
 				if ( $action_options['dismiss'] ) {
@@ -652,7 +660,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				}
 			} else {
 				if ( $action_options['time'] ) {
-					$this->active_notices[ $notice_slug ] = time() + $action_options['time'];
+					$this->notices[ $notice_slug ]['time_set'] = time();
+					// Adds action_option delay time, reduced by 1 second to display at exact time.
+					$this->active_notices[ $notice_slug ] = $this->notices[ $notice_slug ]['time_set'] + $action_options['time'] - 1;
 				}
 
 				if ( $action_options['dismiss'] ) {
