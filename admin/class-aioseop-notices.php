@@ -615,8 +615,10 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			if ( isset( $_POST['action_index'] ) ) {
 				$action_index = filter_input( INPUT_POST, 'action_index', FILTER_SANITIZE_STRING );
 			}
-			if ( empty( $notice_slug ) || empty( $action_index ) ) {
-				wp_die();
+			if ( empty( $notice_slug ) ) {
+				wp_send_json_error( 'Missing values from `notice_slug`.' );
+			} elseif ( empty( $action_index ) && 0 !== $action_index ) {
+				wp_send_json_error( 'Missing values from `action_index`.' );
 			}
 
 			$action_options            = $this->action_options_defaults();
@@ -649,7 +651,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			}
 
 			$this->obj_update_options();
-			wp_die();
+			wp_send_json_success( 'Notice updated successfully.' );
 		}
 
 	}
