@@ -25,9 +25,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_File_Editor' ) ) {
 				$this->current_tab = $_REQUEST['tab'];
 			}
 
-			$help_text             = array(
-				'htaccfile' => __( '.htaccess editor', 'all-in-one-seo-pack' ),
-			);
 			$this->default_options = array(
 				'htaccfile' => array(
 					'name'    => __( 'Edit .htaccess', 'all-in-one-seo-pack' ),
@@ -40,11 +37,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_File_Editor' ) ) {
 				),
 			);
 
-			if ( ! empty( $help_text ) ) {
-				foreach ( $help_text as $k => $v ) {
-					$this->default_options[ $k ]['help_text'] = $v;
-				}
-			}
 			$this->tabs = array(
 				'htaccess' => array( 'name' => __( '.htaccess' ) ),
 			);
