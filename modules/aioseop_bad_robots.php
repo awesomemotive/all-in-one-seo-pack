@@ -19,16 +19,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Bad_Robots' ) ) {
 			$this->file   = __FILE__;                                    // The current file.
 			parent::__construct();
 
-			$help_text = array(
-				'block_bots'     => __( 'Block requests from user agents that are known to misbehave with 503.', 'all-in-one-seo-pack' ),
-				'block_refer'    => __( 'Block Referral Spam using HTTP.', 'all-in-one-seo-pack' ),
-				'track_blocks'   => __( 'Log and show recent requests from blocked bots.', 'all-in-one-seo-pack' ),
-				'edit_blocks'    => __( 'Check this to edit the list of disallowed user agents for blocking bad bots.', 'all-in-one-seo-pack' ),
-				'blocklist'      => __( 'This is the list of disallowed user agents used for blocking bad bots.', 'all-in-one-seo-pack' ),
-				'referlist'      => __( 'This is the list of disallowed referers used for blocking bad bots.', 'all-in-one-seo-pack' ),
-				'blocked_log'    => __( 'Shows log of most recent requests from blocked bots. Note: this will not track any bots that were already blocked at the web server / .htaccess level.', 'all-in-one-seo-pack' ),
-			);
-
 			$this->default_options = array(
 				'block_bots'     => array( 'name' => __( 'Block Bad Bots using HTTP', 'all-in-one-seo-pack' ) ),
 				'block_refer'    => array( 'name' => __( 'Block Referral Spam using HTTP', 'all-in-one-seo-pack' ) ),
@@ -66,12 +56,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Bad_Robots' ) ) {
 					'condshow' => array( "{$this->prefix}track_blocks" => 'on' ),
 				),
 			);
-
-			if ( ! empty( $help_text ) ) {
-				foreach ( $help_text as $k => $v ) {
-					$this->default_options[ $k ]['help_text'] = $v;
-				}
-			}
 
 			add_filter( $this->prefix . 'display_options', array( $this, 'filter_display_options' ) );
 
