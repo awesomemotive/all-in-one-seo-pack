@@ -7,7 +7,7 @@
  *
  * @link https://wordpress.org/plugins/all-in-one-seo-pack/
  *
- * @package All-in-One-SEO-Pack
+ * @package All_in_One_SEO_Pack
  * @since 2.4.2
  */
 
@@ -44,6 +44,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *         @type string $class       The class notice used by WP, or a custom CSS class.
 		 *                                   Ex. notice-error, notice-warning, notice-success, notice-info.
 		 *         @type string $target      Shows based on site-wide or user notice data.
+		 *         @todo string $perms       Displays based on user-role/permissions.
 		 *         @type array  $screens     Which screens to exclusively display the notice on. Default: array().
 		 *                                   array()          = all,
 		 *                                   array('aioseop') = $this->aioseop_screens,
@@ -551,6 +552,13 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			$this->display_notice( 'aioseop' );
 		}
 
+		/**
+		 * Display Notice
+		 *
+		 * @since 2.8
+		 *
+		 * @param string $template Slug name for template.
+		 */
 		public function display_notice( $template ) {
 			if ( AIOSEOPPRO ) {
 				return;

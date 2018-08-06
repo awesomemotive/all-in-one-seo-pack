@@ -1,4 +1,15 @@
 <?php
+/**
+ * AIOSEOP Notices Testcase
+ *
+ * @package All_in_One_SEO_Pack
+ * @subpackage AIOSEOP_Notices
+ * @since 2.4.5.1
+ *
+ * @group AIOSEOP_Notices
+ * @group Admin
+ * @group Notices
+ */
 
 /**
  * Class AIOSEOP_Notices_TestCase
@@ -82,7 +93,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 
 		global $aioseop_notices;
 		if ( isset( $aioseop_notices ) && ! empty( $aioseop_notices ) ) {
-			$this->old_sioseop_notices = $aioseop_notices;
+			$this->old_aioseop_notices = $aioseop_notices;
 		}
 		$this->old_aioseop_notices_options = get_option( 'aioseop_notices' );
 
@@ -277,7 +288,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 *
 	 * Adds and validates the a (child test) notice being tested.
 	 *
-	 * @since 2.8.2
+	 * @since 2.7.2
 	 *
 	 * @param array $notice Value from `$aioseop_notices`.
 	 */
@@ -368,6 +379,8 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 * * -notices with screen restrictions should be true only on set screens
 	 * * (Test Render) Should not display content if script doesn't enqueue; also should send a Debug notice.
 	 *
+	 * @since 2.4.5.1
+	 *
 	 * @dataProvider data_screens
 	 *
 	 * @param string $screen_id
@@ -420,6 +433,8 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 *
 	 * TODO Create a restricted screens array to test for false.
 	 *
+	 * @since 2.4.5.1
+	 *
 	 * @return array
 	 */
 	public function data_screens() {
@@ -447,6 +462,8 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 
 	/**
 	 * Data (Provider) for Default/WP Screens
+	 *
+	 * @since 2.4.5.1
 	 *
 	 * @return array
 	 */
@@ -655,6 +672,8 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 
 	/**
 	 * Data (Provider) for AIOSEOP Screens
+	 *
+	 * @since 2.4.5.1
 	 *
 	 * @return array
 	 */

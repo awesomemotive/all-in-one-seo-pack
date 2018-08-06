@@ -1,8 +1,20 @@
 <?php
 /**
+ * PHPUnit Testing AIOSEOP Notice AJAX
+ *
+ * @package All_in_One_SEO_Pack
+ * @subpackage AIOSEOP_Notices
+ * @since 2.7.2
+ *
+ * @group AIOSEOP_Notices
+ * @group Admin
+ * @group Notices
+ */
+
+/**
  * Class Test_AIOSEOP_Notices_AJAX
  *
- * @since 2.4.5.1
+ * @since 2.7.2
  */
 class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 
@@ -23,7 +35,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	/**
 	 * PHPUnit Fixture - setUp()
 	 *
-	 * @since 2.4.5.1
+	 * @since 2.7.2
 	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
@@ -34,7 +46,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 
 		global $aioseop_notices;
 		if ( isset( $aioseop_notices ) && ! empty( $aioseop_notices ) ) {
-			$this->old_sioseop_notices = $aioseop_notices;
+			$this->old_aioseop_notices = $aioseop_notices;
 		}
 		$this->old_aioseop_notices_options = get_option( 'aioseop_notices' );
 
@@ -44,7 +56,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	/**
 	 * PHPUnit Fixture - tearDown()
 	 *
-	 * @since 2.4.5.1
+	 * @since 2.7.2
 	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
@@ -66,7 +78,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	/**
 	 * Clean Options AIOSEOP Notices
 	 *
-	 * @since 2.4.5.1
+	 * @since 2.7.2
 	 *
 	 * @return boolean True if deleted, and false if it doesn't exist.
 	 */
@@ -83,14 +95,14 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	/**
 	 * Mock Single Notice
 	 *
-	 * @since 2.4.5.1
+	 * @since 2.7.2
 	 *
 	 * @return array
 	 */
 	protected function mock_notice() {
 		return array(
 			'slug'           => 'notice_delay_ajax',
-			'delay_time'     => 0, // 1 Hour.
+			'delay_time'     => 0,
 			'message'        => __( 'Admin Sample Message.', 'all-in-one-seo-pack' ),
 			'action_options' => array(
 				array(
@@ -161,7 +173,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 *
 	 * Adds and validates the a (child test) notice being tested.
 	 *
-	 * @since 2.8.2
+	 * @since 2.7.2
 	 *
 	 * @param array $notice Value from `$aioseop_notices`.
 	 */
@@ -191,11 +203,12 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 * Actual: Currently works as expected.
 	 * Reproduce: Dev hardcoded  an invalid/missing wp_nonce in `AIOSEOP_Notices::admin_enqueue_scripts()`.
 	 *
-	 * @since 2.8
+	 * @since 2.7.2
 	 */
 	public function test_notice_missing_wp_nonce_error() {
 		$this->add_notice();
 
+		$ex = null;
 		try {
 			$this->_handleAjax( 'aioseop_notice' );
 		} catch ( WPAjaxDieStopException $ex ) {
@@ -219,7 +232,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 * Actual: Currently works as expected.
 	 * Reproduce: Dev hardcoded the notice template with an invalid notice_slug in an element.
 	 *
-	 * @since 2.8
+	 * @since 2.7.2
 	 */
 	public function test_notice_missing_notice_slug_error() {
 		$this->add_notice();
@@ -227,6 +240,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 		// Create the nonce in the POST superglobal.
 		$_POST['_wpnonce'] = wp_create_nonce( 'aioseop_ajax_notice' );
 
+		$ex = null;
 		try {
 			$this->_handleAjax( 'aioseop_notice' );
 		} catch ( WPAjaxDieStopException $ex ) {
@@ -259,7 +273,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 * Actual: Currently works as expected.
 	 * Reproduce: Dev hardcoded the notice template with an invalid action_index in the element ID.
 	 *
-	 * @since 2.8
+	 * @since 2.7.2
 	 */
 	public function test_notice_missing_action_index_error() {
 		$notice = $this->mock_notice();
@@ -268,6 +282,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 		$_POST['_wpnonce']    = wp_create_nonce( 'aioseop_ajax_notice' );
 		$_POST['notice_slug'] = $notice['slug'];
 
+		$ex = null;
 		try {
 			$this->_handleAjax( 'aioseop_notice' );
 		} catch ( WPAjaxDieStopException $ex ) {
@@ -302,7 +317,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 * Reproduce: Have a notice added to the database and rendered (after set delay_time). Within the admin notice, there
 	 *            would be buttons/links (aka action_options). Clicking on any of them will initiate the AJAX event.
 	 *
-	 * @since 2.8
+	 * @since 2.7.2
 	 */
 	public function test_notice_action_delay_time() {
 		global $aioseop_notices;

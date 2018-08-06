@@ -1,5 +1,17 @@
 <?php
-
+/**
+ * PHPUnit Testing AIOSEOP Notice Delay Times;
+ *
+ * @package All_in_One_SEO_Pack
+ * @subpackage AIOSEOP_Notices
+ * @since 2.7.2
+ *
+ * @ticket 61
+ *
+ * @group AIOSEOP_Notices
+ * @group Admin
+ * @group Notices
+ */
 include_once AIOSEOP_UNIT_TESTING_DIR . '\base\class-aioseop-notices-testcase.php';
 
 /**
@@ -12,30 +24,20 @@ include_once AIOSEOP_UNIT_TESTING_DIR . '\base\class-aioseop-notices-testcase.ph
 class Test_AIOSEOP_Notices_Delay_Time extends \AIOSEOP_Notices_TestCase {
 
 	/**
-	 * Server Time
-	 *
-	 * @var string
-	 */
-	public $time = '';
-
-	/**
 	 * PHPUnit Fixture - setUp()
 	 *
-	 * @since 2.4.5.1
+	 * @since 2.7.2
 	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
 	public function setUp() {
 		parent::setUp();
-
-//		$this->time = time();
-		$this->time = new \DateTime();
 	}
 
 	/**
 	 * PHPUnit Fixture - tearDown()
 	 *
-	 * @since 2.4.5.1
+	 * @since 2.7.2
 	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
@@ -47,7 +49,7 @@ class Test_AIOSEOP_Notices_Delay_Time extends \AIOSEOP_Notices_TestCase {
 	/**
 	 * Mock Single Notice
 	 *
-	 * @since 2.4.5.1
+	 * @since 2.7.2
 	 *
 	 * @return array
 	 */
@@ -90,7 +92,7 @@ class Test_AIOSEOP_Notices_Delay_Time extends \AIOSEOP_Notices_TestCase {
 	 * Actual: Currently works as expected.
 	 * Reproduce: Have a notice inserted, and wait for X amount of time to pass.
 	 *
-	 * @since 2.8
+	 * @since 2.7.2
 	 */
 	public function test_notice_delay_time() {
 		global $aioseop_notices;
