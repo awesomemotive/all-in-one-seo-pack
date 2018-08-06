@@ -119,6 +119,44 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	}
 
 	/**
+	 * Mock Single Notice
+	 *
+	 * @since 2.7.2
+	 *
+	 * @return array
+	 */
+	protected function mock_notice_target_user() {
+		return array(
+			'slug'           => 'notice_slug_user',
+			'delay_time'     => 0,
+			'message'        => __( 'Admin Sample Message.', 'all-in-one-seo-pack' ),
+			'action_options' => array(
+				array(
+					'time'    => 0,
+					'text'    => __( 'Link and close', 'all-in-one-seo-pack' ),
+					'link'    => 'https://wordpress.org/support/plugin/all-in-one-seo-pack',
+					'dismiss' => false,
+					'class'   => '',
+				),
+				array(
+					'text'    => 'Delay',
+					'time'    => 2,
+					'dismiss' => false,
+					'class'   => '',
+				),
+				array(
+					'time'    => 0,
+					'text'    => 'Dismiss',
+					'dismiss' => true,
+					'class'   => '',
+				),
+			),
+			'target'         => 'user',
+			'screens'        => array(),
+		);
+	}
+
+	/**
 	 * Add Notice
 	 *
 	 * Adds and validates the a (child test) notice being tested.
@@ -372,5 +410,148 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 		$this->assertArrayHasKey( $notice['slug'], $aioseop_notices->notices, 'AJAX Notice should still be added.' );
 		$this->assertArrayNotHasKey( $notice['slug'], $aioseop_notices->active_notices, 'AJAX Notice should not be active still.' );
 		// No delay time to check.
+	}
+
+	/**
+	 * Test Dismiss Sitewide for All Users
+	 *
+	 * Function: Dismisses the notice for all admins/aiosp_manage_seo.
+	 * Expected: When dismissed, the notice should not display for the use dismissing and all other users.
+	 * Actual: Currently works as expected.
+	 * Reproduce: Dev create a notice without `target` being set. then navigate to wp-admin. Repeat with alternate user.
+	 *
+	 * @since 2.7.2
+	 */
+	public function test_dismiss_sitewide_all_users() {
+
+		global $aioseop_notices;
+		$notice = $this->mock_notice();
+		$this->add_notice( $notice );
+
+		// Create the nonce in the POST superglobal.
+		$_POST['_wpnonce']     = wp_create_nonce( 'aioseop_ajax_notice' );
+		$_POST['notice_slug']  = $notice['slug'];
+		$_POST['action_index'] = 2; // Within mock_notice, it's the action_option (index) that contains the dismissal.
+
+		set_current_screen( 'dashboard' );
+		$aioseop_notices->admin_enqueue_scripts();
+
+		ob_start();
+		$aioseop_notices->display_notice_default();
+		$buffer = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertNotEmpty( $buffer );
+
+		try {
+			$this->_handleAjax( 'aioseop_notice' );
+		} catch ( WPAjaxDieStopException $ex ) {
+			// We did not expected this, do nothing & check on assertion.
+		} catch ( WPAjaxDieContinueException $ex ) {
+			// We did not expected this, do nothing & check on assertion.
+		}
+
+		ob_start();
+		$aioseop_notices->display_notice_default();
+		$buffer = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertEmpty( $buffer );
+
+		// Switch user.
+		$user_id = $this->factory()->user->create(
+			array(
+				'user_login'    => 'user_ajax',
+				'user_nicename' => 'userajax',
+				'user_pass'     => 'password',
+				'first_name'    => 'John',
+				'last_name'     => 'Doe',
+				'display_name'  => 'John Doe',
+				'user_email'    => 'placeholder@email.com',
+				'user_url'      => 'http://semperplugins.com',
+				'role'          => 'administrator',
+				'nickname'      => 'Johnny',
+				'description'   => 'I am a WordPress user.',
+			)
+		);
+		wp_set_current_user( $user_id );
+
+		ob_start();
+		$aioseop_notices->display_notice_default();
+		$buffer = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertEmpty( $buffer );
+	}
+
+	/**
+	 * Test Dismiss Sitewide for All Users
+	 *
+	 * Function: Dismisses the notice for admin dismissing the notice, but other users the notice is able to display still.
+	 * Expected: When dismissed, the notice should not display for the use dismissing but doesn't effect other users.
+	 * Actual: Currently works as expected.
+	 * Reproduce: Dev create a notice with `target` being set to `user`. then navigate to wp-admin. Repeat with alternate user.
+	 *
+	 * @since 2.7.2
+	 */
+	public function test_dismiss_user_single_users() {
+		global $aioseop_notices;
+		$notice = $this->mock_notice_target_user();
+		$this->add_notice( $notice );
+
+		// Create the nonce in the POST superglobal.
+		$_POST['_wpnonce']     = wp_create_nonce( 'aioseop_ajax_notice' );
+		$_POST['notice_slug']  = $notice['slug'];
+		$_POST['action_index'] = 2; // Within mock_notice, it's the action_option (index) that contains the dismissal.
+
+		set_current_screen( 'dashboard' );
+		$aioseop_notices->admin_enqueue_scripts();
+
+		ob_start();
+		$aioseop_notices->display_notice_default();
+		$buffer = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertNotEmpty( $buffer );
+
+		try {
+			$this->_handleAjax( 'aioseop_notice' );
+		} catch ( WPAjaxDieStopException $ex ) {
+			// We did not expected this, do nothing & check on assertion.
+		} catch ( WPAjaxDieContinueException $ex ) {
+			// We did not expected this, do nothing & check on assertion.
+		}
+
+		ob_start();
+		$aioseop_notices->display_notice_default();
+		$buffer = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertEmpty( $buffer );
+
+		// Switch user.
+		$user_id = $this->factory()->user->create(
+			array(
+				'user_login'    => 'user_ajax',
+				'user_nicename' => 'userajax',
+				'user_pass'     => 'password',
+				'first_name'    => 'John',
+				'last_name'     => 'Doe',
+				'display_name'  => 'John Doe',
+				'user_email'    => 'placeholder@email.com',
+				'user_url'      => 'http://semperplugins.com',
+				'role'          => 'administrator',
+				'nickname'      => 'Johnny',
+				'description'   => 'I am a WordPress user.',
+			)
+		);
+		wp_set_current_user( $user_id );
+
+		ob_start();
+		$aioseop_notices->display_notice_default();
+		$buffer = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertNotEmpty( $buffer );
 	}
 }
