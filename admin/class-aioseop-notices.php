@@ -558,6 +558,8 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				return;
 			} elseif ( 'default' !== $template && 'aioseop' !== $template ) {
 				return;
+			} elseif ( ! current_user_can( 'aiosp_manage_seo' ) ) {
+				return;
 			}
 
 			$current_screen  = get_current_screen();
