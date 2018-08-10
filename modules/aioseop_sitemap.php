@@ -400,7 +400,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return;
 			}
 
-			$this->do_sitemaps();
+			if ( defined( 'AIOSEOP_UNIT_TESTING' ) ) {
+				$this->do_sitemaps();
+			} elseif ( ! has_action( 'shutdown', $callback = array( $this, 'do_sitemaps' ) ) ) {
+				/**
+				 * Defer do_sitemaps until after everything is done.
+				 * And run it only once regardless of posts updated.
+				 */
+				add_action( 'shutdown', $callback );
+			}
 		}
 
 		/**
