@@ -2818,10 +2818,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 				$post_thumbnails = $wpdb->get_results( "SELECT post_ID, meta_value FROM $wpdb->postmeta WHERE meta_key = '_thumbnail_id'", ARRAY_A );
 
-				$post_thumbnails = array_combine(
-					wp_list_pluck( $post_thumbnails, 'post_ID' ),
-					wp_list_pluck( $post_thumbnails, 'meta_value' )
-				);
+				if ( $post_thumbnails ) {
+					$post_thumbnails = array_combine(
+						wp_list_pluck( $post_thumbnails, 'post_ID' ),
+						wp_list_pluck( $post_thumbnails, 'meta_value' )
+					);
+				}
 			}
 
 			if ( isset( $post_thumbnails[ $post->ID ] ) ) {
