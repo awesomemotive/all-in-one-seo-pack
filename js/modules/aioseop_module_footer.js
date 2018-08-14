@@ -22,7 +22,7 @@
 		$( ".aioseop_help_text_link" ).tooltip({
 			open( event, ui ) {
 				ui.tooltip.css("min-width", "170px");
-				ui.tooltip.css("max-width", "256px");
+				ui.tooltip.css("max-width", "396px");
 
 				if (typeof(event.originalEvent) === 'undefined')
 				{
