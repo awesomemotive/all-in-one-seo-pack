@@ -79,6 +79,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 
 			add_filter( $this->prefix . 'submit_options', array( $this, 'submit_options'), 10, 2 );
 
+			$dirname = AIOSEOP_PLUGIN_DIRNAME;
+			$robots_admin_page = "all-in-one-seo_page_$dirname/modules/aioseop_robots";
+			add_action('load-'. $robots_admin_page, array( $this, 'physical_file_check' ) );
+
 			$this->default_options = array_merge( $this->default_options, $this->rule_fields );
 
 			if ( ! empty( $help_text ) ) {
@@ -109,11 +113,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 		function physical_file_check() {
 			if ( $this->has_physical_file() ) {
 				if ( ( is_multisite() && is_network_admin() ) || ( ! is_multisite() && current_user_can( 'manage_options') ) ) {
-					$this->default_options['usage']['default'] .= '<div id="aiosp_robots_physical_import_delete"><p>' . sprintf( __( 'A physical file exists. Do you want to %simport and delete%s it, %sdelete%s it or continue using it?', 'all-in-one-seo-pack' ), '<a href="#" class="aiosp_robots_physical aiosp_robots_import" data-action="import">', '</a>', '<a href="#" class="aiosp_robots_physical aiosp_robots_delete" data-action="delete">', '</a>' ) . '</p></div>';
+					$this->default_options['usage']['default'] .= '<p>' . sprintf( __( 'A physical file exists. Do you want to %simport and delete%s it, %sdelete%s it or continue using it?', 'all-in-one-seo-pack' ), '<a href="#" class="aiosp_robots_physical aiosp_robots_import" data-action="import">', '</a>', '<a href="#" class="aiosp_robots_physical aiosp_robots_delete" data-action="delete">', '</a>' ) . '</p>';
 				} else {
 					$this->default_options['usage']['default'] .= '<p>' . __( 'A physical file exists. This feature cannot be used.', 'all-in-one-seo-pack' ) . '</p>';
 				}
-
+				add_action( 'wp_ajax_aioseop_ajax_robots_physical', array( $this, 'ajax_action_physical_file' ) );
 				return;
 			} else {
 				add_action( 'admin_init', array( $this, 'import_default_robots' ) );
