@@ -89,6 +89,17 @@ class Test_AIOSEOP_Notices_Init extends AIOSEOP_Notices_TestCase {
 	}
 
 	/**
+	 * Test Enqueue Scripts on Screens
+	 *
+	 * Override and skip.
+	 *
+	 * @since 2.7.2
+	 */
+	public function test_enqueue_scripts_on_screens() {
+		$this->markTestSkipped('Skip');
+	}
+
+	/**
 	 * Test AIOSEOP_Notices' initial values.
 	 *
 	 * Statically called.
