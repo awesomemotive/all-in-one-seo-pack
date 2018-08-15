@@ -489,7 +489,9 @@ class AIOSEOP_Helper {
 
 		$post_types = get_post_types( $args, 'names' );
 		foreach ( $post_types as $pt ) {
-			$rtn_help_text[ 'aiosp_' . $pt . '_title_format' ] = $cpt_help_text['_title_format'];
+			if ( ! isset( $rtn_help_text[ 'aiosp_' . $pt . '_title_format' ] ) ) {
+				$rtn_help_text[ 'aiosp_' . $pt . '_title_format' ] = $cpt_help_text['_title_format'];
+			}
 		}
 
 		return $rtn_help_text;
