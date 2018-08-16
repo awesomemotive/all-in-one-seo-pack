@@ -266,12 +266,13 @@ if ( ! function_exists( 'aioseop_activate' ) ) {
 		}
 		$aiosp_activation = true;
 
+		require_once( AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php' );
+		aioseop_disable_notice_yoast_detected();
+
 		// These checks might be duplicated in the function being called.
 		if ( ! is_network_admin() || ! isset( $_GET['activate-multi'] ) ) {
 			set_transient( '_aioseop_activation_redirect', true, 30 ); // Sets 30 second transient for welcome screen redirect on activation.
 		}
-
-		delete_user_meta( get_current_user_id(), 'aioseop_yst_detected_notice_dismissed' );
 
 		if ( AIOSEOPPRO ) {
 			$aioseop_update_checker->checkForUpdates();
@@ -477,7 +478,6 @@ if ( is_admin() || defined( 'AIOSEOP_UNIT_TESTING' ) ) {
 	}
 	add_action( 'wp_ajax_aioseop_ajax_save_settings', 'aioseop_ajax_save_settings' );
 	add_action( 'wp_ajax_aioseop_ajax_get_menu_links', 'aioseop_ajax_get_menu_links' );
-	add_action( 'wp_ajax_aioseo_dismiss_yst_notice', 'aioseop_update_yst_detected_notice' );
 	add_action( 'wp_ajax_aioseo_dismiss_visibility_notice', 'aioseop_update_user_visibilitynotice' );
 	add_action( 'wp_ajax_aioseo_dismiss_woo_upgrade_notice', 'aioseop_woo_upgrade_notice_dismissed' );
 	add_action( 'wp_ajax_aioseo_dismiss_sitemap_max_url_notice', 'aioseop_sitemap_max_url_notice_dismissed' );
