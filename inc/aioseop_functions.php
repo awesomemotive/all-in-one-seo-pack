@@ -1017,6 +1017,9 @@ function aioseop_update_yst_detected_notice() {
 	update_user_meta( get_current_user_id(), 'aioseop_yst_detected_notice_dismissed', true );
 }
 
+/**
+ * @deprecated 2.4.2 Use AIOSEOP_Notices class.
+ */
 function aioseop_woo_upgrade_notice_dismissed() {
 
 	update_user_meta( get_current_user_id(), 'aioseop_woo_upgrade_notice_dismissed', true );
