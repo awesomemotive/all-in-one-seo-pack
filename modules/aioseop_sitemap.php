@@ -403,11 +403,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// TODO is this required for dynamic sitemap?
 			add_action( 'transition_post_status', array( $this, 'update_sitemap_from_posts' ), 10, 3 );
 			add_action( 'after_doing_aioseop_updates', array( $this, 'scan_sitemaps' ) );
-			add_action( 'all_admin_notices', array( $this, 'sitemap_notices' ) );
+			add_action( 'admin_init', array( $this, 'sitemap_notices' ) );
 		}
 
 		/**
 		 * Sitemap notices.
+		 *
+		 * @todo Move admin notice functions. Possibly to where it is first saved & loaded (`load_sitemap_options`).
 		 *
 		 * @since 2.4.1
 		 */
@@ -419,6 +421,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			} elseif ( ! current_user_can( 'aiosp_manage_seo' ) ) {
 				return;
 			}
+
+			delete_user_meta( get_current_user_id(), 'aioseop_sitemap_max_url_notice_dismissed' );
 
 			$options = $this->options;
 
@@ -443,31 +447,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$sitemap_urls = $post_counts + $num_terms;
 
 				if ( 1001 > $sitemap_urls ) {
+					aioseop_notice_disable_sitemap_indexes();
 					return;
 				}
 
-				$aioseop_plugin_dirname = AIOSEOP_PLUGIN_DIRNAME;
-
-				printf(
-					'<div id="message" class="notice-warning notice is-dismissible aioseop-notice sitemap_max_urls_notice visibility-notice">' .
-						'<p>' .
-							'<strong>%1$s</strong><br />' .
-							'%2$s' .
-						'</p>' .
-					'</div>',
-					// TODO Add esc_* or wp_kses function or _e().
-					__( 'Notice: To avoid problems with your XML Sitemap, we strongly recommend you enable Sitemap Indexes and set the Maximum Posts per Sitemap Page to 1000.', 'all-in-one-seo-pack' ),
-					sprintf(
-						// TODO Add esc_* or wp_kses function.
-						/* translators: Links to the current AIOSEOP Sitemap settings. */
-						__( '%1$sClick here%2$s to make these recommended changes.', 'all-in-one-seo-pack' ),
-						sprintf(
-							'<a href="%s">',
-							esc_url( get_admin_url( null, "admin.php?page=$aioseop_plugin_dirname/modules/aioseop_sitemap.php" ) )
-						),
-						'</a>'
-					)
-				);
+				aioseop_notice_activate_sitemap_indexes( false, true );
 			}
 		}
 
