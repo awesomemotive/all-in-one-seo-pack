@@ -635,7 +635,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				$action_index = filter_input( INPUT_POST, 'action_index', FILTER_SANITIZE_STRING );
 
 				// When PHPUnit is unable to use filter_input.
-				if ( defined( 'AIOSEOP_UNIT_TESTING' ) && null === $action_index && ( ! empty( $_POST['action_index'] || 0 === $_POST['action_index'] ) ) ) {
+				if ( defined( 'AIOSEOP_UNIT_TESTING' ) && null === $action_index && ( ! empty( $_POST['action_index'] ) || 0 === $_POST['action_index'] ) ) {
 					$action_index = $_POST['action_index'];
 				}
 			}
