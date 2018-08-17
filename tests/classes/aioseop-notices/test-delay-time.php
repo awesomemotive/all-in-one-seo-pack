@@ -12,7 +12,7 @@
  * @group Admin
  * @group Notices
  */
-include_once AIOSEOP_UNIT_TESTING_DIR . '\base\class-aioseop-notices-testcase.php';
+include_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-notices-testcase.php';
 
 /**
  * Class Test_AIOSEOP_Notices
