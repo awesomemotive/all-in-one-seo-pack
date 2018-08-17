@@ -40,7 +40,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 * @param array $data
 	 * @param string $dataName
 	 */
-	public function __construct( $name = null, array $data = [], $dataName = '' ) {
+	public function __construct( $name = null, array $data = array(), $dataName = '' ) {
 		if ( ! defined( 'WP_DEVELOP_DIR' ) ) {
 			$this->define_wp_develop_dir();
 		}
