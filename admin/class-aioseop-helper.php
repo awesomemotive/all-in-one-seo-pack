@@ -404,6 +404,7 @@ class AIOSEOP_Helper {
 			'aiosp_google_disable_profile'      => __( 'Check this to remove the Google Plus field from the user profile screen.', 'all-in-one-seo-pack' ),
 			'aiosp_google_sitelinks_search'     => __( 'Add markup to display the Google Sitelinks Search Box next to your search results in Google.', 'all-in-one-seo-pack' ),
 			'aiosp_google_set_site_name'        => __( 'Add markup to tell Google the preferred name for your website.', 'all-in-one-seo-pack' ),
+			'aiosp_google_specify_site_name'    => __( 'Add markup to tell Google the preferred name for your website.', 'all-in-one-seo-pack' ),
 			'aiosp_google_author_advanced'      => __( 'Enable this to display advanced options for controlling Google Plus authorship information on your website.', 'all-in-one-seo-pack' ),
 			'aiosp_google_author_location'      => __( 'This option allows you to control which types of pages you want to display rel="author" on for Google authorship. The options include the Front Page (the homepage of your site), Posts, Pages, and any Custom Post Types. The Everywhere Else option includes 404, search, categories, tags, custom taxonomies, date archives, author archives and any other page template.', 'all-in-one-seo-pack' ),
 			'aiosp_google_enable_publisher'     => __( 'This option allows you to control whether rel=&quot;publisher&quot; is displayed on the homepage of your site. Google recommends using this if the site is a business website.', 'all-in-one-seo-pack' ),
@@ -459,55 +460,42 @@ class AIOSEOP_Helper {
 			'aiosp_google_connect'              => __( 'Press the connect button to connect with Google Analytics; or if already connected, press the disconnect button to disable and remove any stored analytics credentials.', 'all-in-one-seo-pack' ),
 		);
 
-		$cpt_help_text = array(
-			'_title_format'  => __( 'The following macros are supported:', 'all-in-one-seo-pack' ) .
-								'<ul>' .
-									'<li>' .
-										__( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) .
-									'</li>' .
-									'<li>' .
-										__( '%blog_description% - Your blog description', 'all-in-one-seo-pack' ) .
-									'</li>' .
-									'<li>' .
-										__( '%page_title% - The original title of the page', 'all-in-one-seo-pack' ) .
-									'</li>' .
-									'<li>' .
-										__( '%page_author_login% - This page\'s author\' login', 'all-in-one-seo-pack' ) .
-									'</li>' .
-									'<li>' .
-										__( '%page_author_nicename% - This page\'s author\' nicename', 'all-in-one-seo-pack' ) .
-									'</li>' .
-									'<li>' .
-										__( '%page_author_firstname% - This page\'s author\' first name (capitalized)', 'all-in-one-seo-pack' ) .
-									'</li>' .
-									'<li>' .
-										__( '%page_author_lastname% - This page\'s author\' last name (capitalized)', 'all-in-one-seo-pack' ) .
-									'</li>' .
-									'<li>' .
-										__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) .
-									'</li>' .
-									'<li>' .
-										__( '%post_date% - The date the page was published (localized)', 'all-in-one-seo-pack' ) .
-									'</li>' .
-									'<li>' .
-										__( '%post_year% - The year the page was published (localized)', 'all-in-one-seo-pack' ) .
-									'</li>' .
-									'<li>' .
-										__( '%post_month% - The month the page was published (localized)', 'all-in-one-seo-pack' ) .
-									'</li>' .
-								'</ul>' .
-								'<br />' .
-								'<a href="https://semperplugins.com/documentation/custom-post-type-settings/#custom-titles" target="_blank">' . __( 'Click here for documentation on this setting', 'all-in-one-seo-pack' ) . '</a>',
-		);
-
-		$args = array(
-			'public' => true,
-		);
-
-		$post_types = get_post_types( $args, 'names' );
+		$post_types = get_post_types( '', 'names' );
 		foreach ( $post_types as $v1_pt ) {
 			if ( ! isset( $rtn_help_text[ 'aiosp_' . $v1_pt . '_title_format' ] ) ) {
-				$rtn_help_text[ 'aiosp_' . $v1_pt . '_title_format' ] = $cpt_help_text['_title_format'];
+				$help_text_fields = array();
+				array_push(
+					$help_text_fields,
+					__( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ),
+					__( '%blog_description% - Your blog description', 'all-in-one-seo-pack' ),
+					__( '%post_title% - The original title of the page', 'all-in-one-seo-pack' )
+				);
+				$pt_obj_taxes = get_object_taxonomies( $v1_pt, 'objects' );
+				foreach( $pt_obj_taxes as $k2_slug => $v2_tax_obj ) {
+					array_push(
+						$help_text_fields,
+						sprintf( __( "%%tax_%1\$s%% - This post's associated %2\$s taxonomy title", 'all-in-one-seo-pack' ), $k2_slug, $v2_tax_obj->label )
+					);
+				}
+				array_push(
+					$help_text_fields,
+					__( '%post_author_login% - This page\'s author\' login', 'all-in-one-seo-pack' ),
+					__( '%post_author_nicename% - This page\'s author\' nicename', 'all-in-one-seo-pack' ),
+					__( '%post_author_firstname% - This page\'s author\' first name (capitalized)', 'all-in-one-seo-pack' ),
+					__( '%post_author_lastname% - This page\'s author\' last name (capitalized)', 'all-in-one-seo-pack' ),
+					__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ),
+					__( '%post_date% - The date the page was published (localized)', 'all-in-one-seo-pack' ),
+					__( '%post_year% - The year the page was published (localized)', 'all-in-one-seo-pack' ),
+					__( '%post_month% - The month the page was published (localized)', 'all-in-one-seo-pack' )
+				);
+
+				$cpt_help_text = '<ul>';
+				foreach( $help_text_fields as $v2_field ) {
+					$cpt_help_text .= '<li>' . $v2_field . '</li>';
+				}
+				$cpt_help_text .= '</ul>';
+
+				$rtn_help_text[ 'aiosp_' . $v1_pt . '_title_format' ] = $cpt_help_text;
 			}
 		}
 
@@ -560,6 +548,7 @@ class AIOSEOP_Helper {
 			'aiosp_google_disable_profile'      => 'https://semperplugins.com/documentation/google-settings/#disable-google-plus-profile',
 			'aiosp_google_sitelinks_search'     => 'https://semperplugins.com/documentation/google-settings/#display-sitelinks-search-box',
 			'aiosp_google_set_site_name'        => 'https://semperplugins.com/documentation/google-settings/#set-preferred-site-name',
+			'aiosp_google_specify_site_name'    => 'https://semperplugins.com/documentation/google-settings/#set-preferred-site-name',
 			'aiosp_google_author_advanced'      => 'https://semperplugins.com/documentation/google-settings/#advanced-authorship-options',
 			'aiosp_google_author_location'      => 'https://semperplugins.com/documentation/google-settings/#display-google-authorship',
 			'aiosp_google_enable_publisher'     => 'https://semperplugins.com/documentation/google-settings/#display-publisher-meta-on-front-page',
