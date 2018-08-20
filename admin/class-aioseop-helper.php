@@ -490,12 +490,12 @@ class AIOSEOP_Helper {
 				);
 
 				$cpt_help_text = '<ul>';
-				foreach( $help_text_fields as $v2_field ) {
+				foreach ( $help_text_fields as $v2_field ) {
 					$cpt_help_text .= '<li>' . $v2_field . '</li>';
 				}
 				$cpt_help_text .= '</ul>';
 
-				$rtn_help_text[ 'aiosp_' . $v1_pt . '_title_format' ] = $cpt_help_text;
+				$rtn_help_text[ 'aiosp_' . $v1_pt . '_title_format' ] = __( 'The following macros are supported:', 'all-in-one-seo-pack' ) . $cpt_help_text . '<br /><a href="https://semperplugins.com/documentation/custom-post-type-settings/#custom-titles" target="_blank">' . __( 'Click here for documentation on this setting', 'all-in-one-seo-pack' ) . '</a>';
 			}
 		}
 
