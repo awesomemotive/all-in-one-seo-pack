@@ -21,12 +21,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			$this->file   = __FILE__;                                    // the current file
 			parent::__construct();
 
-			$help_text = array(
-				'type' => __( 'Rule Type', 'all-in-one-seo-pack' ),
-				'agent'  => __( 'User Agent', 'all-in-one-seo-pack' ),
-				'path'       => __( 'Directory Path', 'all-in-one-seo-pack' ),
-			);
-
 			$this->default_options = array(
 				'usage'              => array(
 					'type'    => 'html',
@@ -80,12 +74,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			add_filter( $this->prefix . 'submit_options', array( $this, 'submit_options'), 10, 2 );
 
 			$this->default_options = array_merge( $this->default_options, $this->rule_fields );
-
-			if ( ! empty( $help_text ) ) {
-				foreach ( $help_text as $k => $v ) {
-					$this->default_options[ $k ]['help_text'] = $v;
-				}
-			}
 
 			$this->layout             = array(
 				'default' => array(
