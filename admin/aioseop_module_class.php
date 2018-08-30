@@ -2922,7 +2922,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 
 				if ( ( isset( $_GET['taxonomy'] ) && isset( $_GET['tag_ID'] ) ) || is_category() || is_tag() || is_tax() ) {
 					$term_id = isset( $_GET['tag_ID'] ) ? (int) $_GET['tag_ID'] : 0;
-					$term_id = $term_id ? $term_id : get_queried_object()->term_id;
+					if ( ! $term_id ) {
+						$term_obj = get_queried_object();
+						if ( isset( $term_obj->term_id ) && ! empty( $term_obj->term_id ) ) {
+							$term_id = $term_obj->term_id;
+						}
+					}
 					if ( AIOSEOPPRO ) {
 						$get_opts = AIO_ProGeneral::getprotax( $get_opts );
 						$get_opts = get_term_meta( $term_id, '_' . $prefix . $location, true );
