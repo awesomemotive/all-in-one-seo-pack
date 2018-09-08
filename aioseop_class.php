@@ -3285,9 +3285,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @uses All_in_One_SEO_Pack_Module::admin_enqueue_scripts();
 	 */
-	function admin_enqueue_scripts() {
+	function admin_enqueue_scripts( $hook_suffix ) {
 		wp_enqueue_style( 'aiosp_admin_style', AIOSEOP_PLUGIN_URL . 'css/aiosp_admin.css', array(), AIOSEOP_VERSION );
-		parent::admin_enqueue_scripts();
+		parent::admin_enqueue_scripts( $hook_suffix );
 	}
 
 	function enqueue_scripts() {
