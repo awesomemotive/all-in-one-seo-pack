@@ -20,7 +20,7 @@
 	 */
 	function aioseopTooltips() {
 		$( ".aioseop_help_text_link" ).tooltip({
-			open( event, ui ) {
+			open: function( event, ui ) {
 				ui.tooltip.css("min-width", "170px");
 				ui.tooltip.css("max-width", "396px");
 
@@ -45,7 +45,7 @@
 						});
 					});
 			},
-			content( callback ) {
+			content: function( callback ) {
 				callback( $( this ).prop( "title" ) );
 			}
 		});
