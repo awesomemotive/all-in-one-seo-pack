@@ -138,8 +138,8 @@ div.aioseop_tip_icon:before {
 	font-weight: bold;
 	line-height: 19px;
 	display: inline-block;
+	float: left;
 	text-align: left;
-	position: absolute;
 	font-family: 'Open Sans', sans-serif;
 	width: 26%;
 	min-width: 120px;
