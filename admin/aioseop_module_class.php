@@ -71,6 +71,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			$this->plugin_path['url']         = plugin_dir_url( $this->file );
 			$this->plugin_path['images_url']  = $this->plugin_path['url'] . 'images';
 			$this->script_data['plugin_path'] = $this->plugin_path;
+
+			if ( is_admin() ) {
+				add_action( 'admin_enqueue_scripts', array( $this, 'admin_deregister_scripts' ), 9, 1 );
+				add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 10, 1 );
+				add_filter( 'aioseop_localize_script_data', array( $this, 'localize_script_data' ) );
+            }
 		}
 
 		/**
@@ -1767,12 +1773,138 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			}
 		}
 
-		function admin_enqueue_scripts() {
-			wp_enqueue_media(); // WP 3.5+ Media upload.
+		/**
+		 * ScreenIDs
+		 *
+		 * Screens used by AIOSEOP.
+		 *
+		 * @since 2.4.3
+		 *
+		 * @return array
+		 */
+		protected function screenids() {
+			return array(
+				'toplevel_page_all-in-one-seo-pack/aioseop_class',
+				'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_performance',
+				'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_sitemap',
+				'all-in-one-seo_page_aiosp_opengraph',
+				'all-in-one-seo_page_aiosp_robots_generator',
+				'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_file_editor',
+				'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_importer_exporter',
+				'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_bad_robots',
+				'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_feature_manager',
+
+				// Additional/Alternate Screens.
+				'post-new.php',
+				'post.php',
+			);
+		}
+
+		/**
+		 * Admin Deregister Scripts
+		 *
+		 * Deregisters scripts and styles when on different screens and subclasses that aren't currently the instance.
+		 *
+		 * @since 2.4.3
+		 *
+		 * @see 'admin_enqueue_scripts' hook
+		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+		 *
+		 * @param string $hook_suffix  The current screen id.
+		 */
+		public function admin_deregister_scripts( $hook_suffix ) {
+			$screenids = $this->screenids();
+
+			// Parent module.
+			if ( ! in_array( $hook_suffix, $screenids ) ) {
+				wp_deregister_script( 'aioseop-module-js' );
+				wp_deregister_style( 'aioseop-module-css' );
+			}
+		}
+
+		/**
+		 * Admin Enqueue Scripts & Styles
+		 *
+		 * @since 2.4.3
+		 *
+		 * @see 'admin_enqueue_scripts' hook
+		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+		 *
+		 * @param string $hook_suffix
+		 */
+		public function admin_enqueue_scripts( $hook_suffix ) {
+			$screenids = $this->screenids();
+
+			// Return if not the correct screen, or not the correct child class.
+			if ( ! in_array( $hook_suffix, $screenids ) ) {
+				return;
+			}
+
+			// REGISTER.
+			if ( ! wp_script_is( 'aioseop-module-js', 'registered' ) || ! wp_style_is( 'aioseop-module-css', 'registered' ) ) {
+				wp_register_script(
+					'aioseop-module-js',
+					AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_module.js',
+					array(),
+					AIOSEOP_VERSION,
+					true
+				);
+
+				wp_register_style(
+					'aioseop-module-css',
+					AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module.css',
+					array(),
+					AIOSEOP_VERSION,
+					'all'
+				);
+			}
+
+			// LOCALIZE & ENQUEUE.
+			if ( ! wp_script_is( 'aioseop-module-js', 'enqueued' ) || ! wp_style_is( 'aioseop-module-css', 'enqueued' ) ) {
+				// LOCALIZE.
+				$localize_data = array();
+
+				if ( ! empty( $this->script_data ) ) {
+					$localize_data = apply_filters( 'aioseop_localize_script_data', $localize_data );
+				}
+
+				// Todo Possibly change JS variable `aiosp_data`; to 'aioseop_module_data`, `aioseop_data`.
+				wp_localize_script( 'aioseop-module-js', 'aiosp_data', $localize_data );
+
+				// SCRIPT ENQUEUE.
+				global $post;
+				if( ! empty( $post->ID ) ) {
+					wp_enqueue_media( array( 'post' => $post->ID ) );
+				} else {
+					wp_enqueue_media();
+				}
+				wp_enqueue_script( 'sack' );
+				wp_enqueue_script( 'jquery' );
+				wp_enqueue_script( 'media-upload' );
+				wp_enqueue_script( 'thickbox' );
+				wp_enqueue_script( 'common' );
+				wp_enqueue_script( 'wp-lists' );
+				wp_enqueue_script( 'postbox' );
+
+				wp_enqueue_script( 'aioseop-module-js' );
+
+				// CSS ENQUEUE.
+				wp_enqueue_style( 'thickbox' );
+				if ( ! empty( $this->pointers ) ) {
+					wp_enqueue_style( 'wp-pointer' );
+				}
+
+				wp_enqueue_style( 'aioseop-module-css' );
+				if ( function_exists( 'is_rtl' ) && is_rtl() ) {
+					wp_enqueue_style( 'aioseop-module-style-rtl', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module-rtl.css', array( 'aioseop-module-style' ), AIOSEOP_VERSION );
+				}
+			}
 		}
 
 		/**
 		 * Load styles for module.
+         *
+         * @deprecated 2.4.3 Use admin_enqueue_scripts()
 		 */
 		function enqueue_styles() {
 			wp_enqueue_style( 'thickbox' );
@@ -1787,6 +1919,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 
 		/**
 		 * Load scripts for module, can pass data to module script.
+		 *
+		 * @deprecated 2.4.3 Use admin_enqueue_scripts()
+		 *
+		 * @see All_in_One_SEO_Pack_Module::enqueue_metabox_scripts()
+		 * @see All_in_One_SEO_Pack_Module::add_page_hooks()
+		 *
 		 * @since 2.3.12.3 Add missing wp_enqueue_media.
 		 */
 		function enqueue_scripts() {
@@ -1871,9 +2009,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			if ( $this->strpos( $hookname, 'load-' ) === 0 ) {
 				$this->pagehook = $this->substr( $hookname, 5 );
 			}
-			add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
-			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
-			add_filter( 'aioseop_localize_script_data', array( $this, 'localize_script_data' ) );
 			add_action( $this->prefix . 'settings_header', array( $this, 'display_tabs' ) );
 		}
 
@@ -2028,7 +2163,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					add_action( 'save_post', array( $this, 'save_post_data' ) );
 					add_action( 'edit_page_form', array( $this, 'save_post_data' ) );
 					if ( isset( $v['display'] ) && ! empty( $v['display'] ) ) {
-						add_action( 'admin_print_scripts', array( $this, 'enqueue_metabox_scripts' ), 5 );
 						if ( $this->tabbed_metaboxes ) {
 							add_filter( 'aioseop_add_post_metabox', array( $this, 'filter_return_metaboxes' ) );
 						}
