@@ -1,0 +1,84 @@
+/**
+ * GlyphIcons / Custom Icons.
+ *
+ * @author Michael Torbert.
+ * @author Semper Fi Web Design.
+ * @copyright http://semperplugins.com
+ * @package All-in-One-SEO-Pack.
+ */
+
+@charset "UTF-8";
+
+@font-face {
+	font-family: 'aioseop-font';
+	src: url('../fonts/aioseop.eot');
+	src: url('../fonts/aioseop.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/aioseop.woff') format('woff'),
+		 url('../fonts/aioseop.ttf') format('truetype'),
+		 url('../fonts/aioseop.svg#aioseop') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[data-icon]:before {
+	font-family: 'aioseop-font' !important;
+	content: attr(data-icon);
+	font-style: normal !important;
+	font-weight: normal !important;
+	font-variant: normal !important;
+	text-transform: none !important;
+	speak: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+[class^='aioseop-icon-']:before,
+[class*=' aioseop-icon-']:before {
+	display: inline-block;
+	font-family: 'aioseop-font';
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	speak: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* SUPPORT METABOX */
+
+.aioseop_icon {
+	display: inline;
+	margin-right: 10px;
+	color: #00a2e2;
+	font-size: 3em;
+	line-height: 1.2;
+	vertical-align: middle;
+}
+
+.aioseop-icon-file:before {
+	content: '\69';
+}
+
+.aioseop-icon-support:before {
+	content: '\6a';
+}
+
+.aioseop-icon-cog:before {
+	content: '\6b';
+}
+
+.aioseop-icon-youtube:before {
+	content: '\6c';
+}
+
+.aioseop-icon-book:before {
+	content: '\6d';
+}
+
+.aioseop_help_icon:before {
+	content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAflBMVEUAAAAAn98AnuIAn+EAneAAnuAAnuAAn+QAn+QAneEAnuAAnuAAn+EAnuAAnuEAneAAn+cAneAAnuAAn98AnOIAnuEAneIAn+MAnuEAnuEAn+EAneIAneEAneEAnuEAn+MAneAAneEAnuMAnOIAn+cAneEBnuEAneAAnuMBnuEoGewkAAAAKXRSTlMAEE9/r7/fADCPzwBv718AIPDAAFCwYEAAoAAAn4CQAOAAPwAAcADQAFP96WQAAAMNSURBVHhelZcNc5swDIatBghpoCGEj9Jij2XLMv3/P7glkoNtZJo+d+0lhBOveSXZUjHgZZOkGf4nS5PNC5wiKPFqvnvFgNddvpVQy0tQZCiSFfCEAtiUGKXcwFcB3kpcpXx791HetypFn2NdH9EnrX67KPdL46g/tl3PeqHvWidM2fxyUM7n3fzgof8R0A9zjN3PGTV/HB+6teg66EeIUQqQIGOiSQMGmeRgUQfGPn/Ktyv0k9UQKrCxWzitAq3V6dvYIDG8f8mAROO6ULF/3ecTaHazcvIgjTw/PxfFeVFErCHd31C3fx2v39cKGy6qLKyA1tGr/v8BLWDyb3OLqiw+XGCiq8DFxIvypMKIHqMXvaeLmmyEkn1xSTCAjWcMS7gruFD+eo/QuEC7AYCy+nJXkC1/r5A4Gq2NrQCvjMnL7OZCLggY3KoAI5jMEvKt2hohBYK3wiveuwx8i3qn/uvVf0O2Hh5MnLwOZMTrXgGt4OCi7RuyXNg1F1oDqEZIQh2K6oUALalSWqgiIwUIM4VVqZZvdlkE7QQFFLRVNS3l5NLZarMkgkx6ebWiNPqzSu9nEkM2KDZhjbykh+19KKri3+LkIxLhVlE/E4CaAjsd4AYo9zJkR9huGF7CtPYSX9FyXG4XFHe2UQIt9fIGa6NNJBErX2r35O0wp7KEbZYSNpVtMYngSpbZYoI1G9YClFzOp+vKS6jviLFJ+fWgDralfZO5peW2xX8LKB9NdTtxsQuc7/wV0OTv/YRyiUuIugCls7FwizffsXHgzcRurjEjYgH8zdVKyODZJUDGAuxZubNnt5BIgMQ7YNyowy2c0XfCqyNX6HzE2Ve8A28+nmDDHaJyD9sNChpkxvCYRxgkEjitAkl40AzPjxm7KdNnSAzLgaNFZhcVATtkBmliGaTJSJ6mBnnkMWgpx+XAMZZoMbGZqXEHm6Q4sxA4F4k7DEkjD1PVGJCmGFDLQ5elO+Iqx7B/q88A0FKI+DSlBLMuE4pMF3h6+DZXDLia6PAtA41u67uUqW51E02uf46zvXx+HY4YAAAAAElFTkSuQmCC);
+}
+
