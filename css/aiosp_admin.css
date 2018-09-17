@@ -30,20 +30,6 @@
 	background-position: 8px -26px !important;
 }
 
-#icon-aioseop.icon32 {
-	background: url(../images/shield32.png) no-repeat left top !important;
-}
-
-#aioseop_settings_header #message {
-	padding: 5px 0px 5px 50px;
-	background-image: url(../images/update32.png);
-	background-repeat: no-repeat;
-	background-position: 10px;
-	font-size: 14px;
-	min-height: 32px;
-	clear: none;
-}
-
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (   min--moz-device-pixel-ratio: 1.5), only screen and (     -o-min-device-pixel-ratio: 3/2), only screen and (        min-device-pixel-ratio: 1.5), only screen and (                min-resolution: 1.5dppx) {
 
 	#toplevel_page_all-in-one-seo-pack-pro-aioseop_class .wp-menu-image {
@@ -58,20 +44,6 @@
 		-webkit-background-size: 16px 48px !important;
 		-moz-background-size: 16px 48px !important;
 		background-size: 16px 48px !important;
-	}
-
-	#icon-aioseop.icon32 {
-		background-image: url('../images/shield64.png') !important;
-		-webkit-background-size: 32px 32px !important;
-		-moz-background-size: 32px 32px !important;
-		background-size: 32px 32px !important;
-	}
-
-	#aioseop_settings_header #message {
-		background-image: url(../images/update64.png) !important;
-		-webkit-background-size: 32px 32px !important;
-		-moz-background-size: 32px 32px !important;
-		background-size: 32px 32px !important;
 	}
 }
 
