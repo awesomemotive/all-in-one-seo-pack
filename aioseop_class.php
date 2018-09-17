@@ -1161,6 +1161,15 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 	}
 
+
+	/**
+	 * Initializes the behavior of the options that have been removed from the UI.
+	 */
+	public function init_removed_options_behavior() {
+		aioseop_set_removed_options_behavior( $this->prefix );
+	}
+
+
 	// good candidate for pro dir
 	/**
 	 * Use custom callback for outputting snippet
@@ -3679,6 +3688,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			add_action( 'admin_init', 'aioseop_addmycolumns', 1 );
 			add_action( 'admin_init', 'aioseop_handle_ignore_notice' );
+			add_action( 'admin_init', array( $this, 'init_removed_options_behavior' ) );
 			if ( AIOSEOPPRO ) {
 				if ( current_user_can( 'update_plugins' ) ) {
 					add_action( 'admin_notices', array( $aioseop_update_checker, 'key_warning' ) );

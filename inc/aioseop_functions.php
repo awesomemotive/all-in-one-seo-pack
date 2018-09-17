@@ -1083,3 +1083,47 @@ if ( ! function_exists( 'aioseop_formatted_date' ) ) {
 		return apply_filters( 'aioseop_format_date', $formatted_date, $date, $format );
 	}
 }
+
+if ( ! function_exists( 'aioseop_set_removed_options_behavior' ) ) {
+	/**
+	 * Sets the behavior expected for options (that have been removed from the UI) in the database taking into account if this option was previously enabled.
+	 *
+	 * @param string $prefix The prefix of the module.
+	 */
+	function aioseop_set_removed_options_behavior( $prefix ) {
+		aioseop_set_link_to_robots_behavior( $prefix );
+	}
+}
+
+if ( ! function_exists( 'aioseop_set_link_to_robots_behavior' ) ) {
+	/**
+	 * Sets the behavior expected for Link to Robots.txt in the database taking into account if this option was previously enabled.
+	 *
+	 * @param string $prefix The prefix of the module.
+	 */
+	function aioseop_set_link_to_robots_behavior( $prefix ) {
+		global $aioseop_options;
+
+		if ( empty( $aioseop_options ) ) {
+			return;
+		}
+
+		$link		= true;
+
+		if ( array_key_exists( "{$prefix}robots", $aioseop_options ) ) {
+			// user has seen this options before we removed it.
+			$link	= ! empty( $aioseop_options[ "{$prefix}robots" ] );
+		}
+
+		/**
+		 * Filters whether the sitemap corresponding to the sitemap module needs to be linked in the virtual robots.txt.
+		 * The filter is called either aiosp_sitemap_link_to_robots or aiosp_video_sitemap_link_to_robots
+		 *
+		 * @param bool	$link	Link or not.
+		 */
+		$link	= apply_filters( $prefix . 'link_to_robots', $link );
+
+		$aioseop_options[ "{$prefix}robots" ] = $link;
+		update_option( 'aioseop_options', $aioseop_options );
+	}
+}

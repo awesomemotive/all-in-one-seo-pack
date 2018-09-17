@@ -63,7 +63,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'author'          => __( 'Include Author Archives in your sitemap.', 'all-in-one-seo-pack' ),
 				'images'          => __( 'Exclude Images in your sitemap.', 'all-in-one-seo-pack' ),
 				'gzipped'         => __( 'Create a compressed sitemap file in .xml.gz format.', 'all-in-one-seo-pack' ),
-				'robots'          => __( 'Places a link to your Sitemap.xml into your virtual Robots.txt file.', 'all-in-one-seo-pack' ),
+				'robots'          => __( 'Indicates if a link to the Sitemap.xml has been placed in your virtual Robots.txt file.', 'all-in-one-seo-pack' ),
 				'rewrite'         => __( 'Dynamically creates the XML sitemap instead of using a static file.', 'all-in-one-seo-pack' ),
 				'addl_url'        => __( 'URL to the page. This field accepts relative URLs or absolute URLs with the protocol specified.', 'all-in-one-seo-pack' ),
 				'addl_prio'       => __( 'The priority of the page.', 'all-in-one-seo-pack' ),
@@ -130,8 +130,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					'default' => 'On',
 				),
 				'robots'     => array(
-					'name'    => __( 'Link From Virtual Robots.txt', 'all-in-one-seo-pack' ),
-					'default' => 'On',
+					'name'    => __( 'Added to Virtual Robots.txt', 'all-in-one-seo-pack' ),
+					'type'		=> 'status-button',
+					'value' => $this->has_option( 'robots' ) ? ( $this->option_isset( 'robots' ) ? 1 : 0 ) : 1,
 				),
 				'rewrite'    => array(
 					'name'    => __( 'Dynamically Generate Sitemap', 'all-in-one-seo-pack' ),
