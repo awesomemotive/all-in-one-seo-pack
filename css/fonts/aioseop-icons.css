@@ -1,0 +1,85 @@
+/**
+ * GlyphIcons / Custom Icons.
+ *
+ * @author Michael Torbert.
+ * @author Semper Fi Web Design.
+ * @copyright http://semperplugins.com
+ * @package All-in-One-SEO-Pack.
+ */
+
+@charset "UTF-8";
+
+@font-face {
+	font-family: 'aioseop-font';
+	src: url('../fonts/aioseop.eot');
+	src: url('../fonts/aioseop.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/aioseop.woff') format('woff'),
+		 url('../fonts/aioseop.ttf') format('truetype'),
+		 url('../fonts/aioseop.svg#aioseop') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[data-icon]:before {
+	font-family: 'aioseop-font' !important;
+	content: attr(data-icon);
+	font-style: normal !important;
+	font-weight: normal !important;
+	font-variant: normal !important;
+	text-transform: none !important;
+	speak: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+[class^='aioseop-icon-']:before,
+[class*=' aioseop-icon-']:before {
+	display: inline-block;
+	font-family: 'aioseop-font';
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	speak: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* MENU ICON */
+
+#toplevel_page_all-in-one-seo-pack-aioseop_class div.wp-menu-image:before {
+	display: inline-block;
+	font-family: 'aioseop-font';
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	speak: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+#adminmenu #toplevel_page_all-in-one-seo-pack-aioseop_class .menu-icon-generic div.wp-menu-image:before {
+	content: '\79';
+}
+
+#adminmenu #toplevel_page_all-in-one-seo-pack-aioseop_class:hover .menu-icon-generic div.wp-menu-image:before,
+#adminmenu #toplevel_page_all-in-one-seo-pack-aioseop_class.wp-has-current-submenu .menu-icon-generic div.wp-menu-image:before {
+	content: '\79';
+	color: #60cced;
+}
+
+/* PRO MENU ICON */
+
+#adminmenu #toplevel_page_all-in-one-seo-pack-pro-aioseop_class .menu-icon-generic div.wp-menu-image:before {
+    content: '\79';
+}
+
+#adminmenu #toplevel_page_all-in-one-seo-pack-pro-aioseop_class:hover .menu-icon-generic div.wp-menu-image:before,
+#adminmenu #toplevel_page_all-in-one-seo-pack-pro-aioseop_class.wp-has-current-submenu .menu-icon-generic div.wp-menu-image:before {
+    content: '\79';
+    color: #60cced;
+}
