@@ -2631,9 +2631,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					if ( ! empty( $message ) && empty( $errors ) ) {
 						echo "<div id=\"message\" class=\"updated fade\"><p>$message</p></div>";
 					}
-?>
-					<div id="icon-aioseop" class="icon32"><br></div>
-					<h2><?php echo $name; ?></h2>
+					?>
+					<h2><a class="aioseop-icon-title"></a><?php echo $name; ?></h2>
 					<div id="dropmessage" class="updated" style="display:none;"></div>
 				</div>
 				<?php
