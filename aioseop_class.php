@@ -3282,14 +3282,40 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * Admin Enqueue Scripts
 	 *
 	 * @since 2.5.0
+	 * @since 2.9 Refactor code to `admin_enqueue_scripts` hook, and move enqueue stylesheet to admin_enqueue_styles.
 	 *
 	 * @uses All_in_One_SEO_Pack_Module::admin_enqueue_scripts();
+	 *
+	 * @param string $hook_suffix
 	 */
-	function admin_enqueue_scripts() {
-		wp_enqueue_style( 'aiosp_admin_style', AIOSEOP_PLUGIN_URL . 'css/aiosp_admin.css', array(), AIOSEOP_VERSION );
-		parent::admin_enqueue_scripts();
+	public function admin_enqueue_scripts( $hook_suffix ) {
+		add_filter( "{$this->prefix}display_settings", array( $this, 'filter_settings' ), 10, 3 );
+		add_filter( "{$this->prefix}display_options", array( $this, 'filter_options' ), 10, 2 );
+
+		parent::admin_enqueue_scripts( $hook_suffix );
 	}
 
+	/**
+	 * Admin Enqueue Styles
+	 *
+	 * @since 2.9
+	 *
+	 * @param $hook_suffix
+	 */
+	public function admin_enqueue_styles( $hook_suffix ) {
+		wp_enqueue_style(
+			'aiosp_admin_style',
+			AIOSEOP_PLUGIN_URL . 'css/aiosp_admin.css',
+			array(),
+			AIOSEOP_VERSION
+		);
+
+		parent::admin_enqueue_styles( $hook_suffix );
+	}
+
+	/**
+	 * @deprecated 2.9 use All_in_One_SEO_Pack::enqueue_scripts().
+	 */
 	function enqueue_scripts() {
 		add_filter( "{$this->prefix}display_settings", array( $this, 'filter_settings' ), 10, 3 );
 		add_filter( "{$this->prefix}display_options", array( $this, 'filter_options' ), 10, 2 );
