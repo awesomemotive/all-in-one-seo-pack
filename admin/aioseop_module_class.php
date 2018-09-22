@@ -1719,6 +1719,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * edit-tags exists only for pre 4.5 support... remove when we drop 4.5 support.
 		 * Also, that check and others should be pulled out into their own functions.
 		 *
+		 * @todo is it possible to migrate this to \All_in_One_SEO_Pack_Module::add_page_hooks? Or refactor? Both function about the same.
+		 *
 		 * @since 2.4.14 Added term as screen base.
 		 */
 		function enqueue_metabox_scripts() {
@@ -1766,10 +1768,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			}
 		}
 
+
 		/**
 		 * Admin Enqueue Scripts
 		 *
 		 * Hook function to enqueue scripts and localize data to scripts.
+		 *
+		 * Add hook in \All_in_One_SEO_Pack_Module::enqueue_metabox_scripts - Bails adding hook if not on target valid screen.
+		 * Add hook in \All_in_One_SEO_Pack_Module::add_page_hooks - Function itself is hooked based on the screen_id/page.
 		 *
 		 * @since ?
 		 * @since 2.3.12.3 Add missing wp_enqueue_media.
@@ -1788,8 +1794,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				return;
 			}
 
-			global $post;
-
 			// SCRIPT ENQUEUE.
 			wp_enqueue_script( 'sack' );
 			wp_enqueue_script( 'jquery' );
@@ -1807,7 +1811,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				);
 			}
 
-			if( ! empty( $post->ID ) ) {
+			global $post;
+			if ( ! empty( $post->ID ) ) {
 				wp_enqueue_media( array( 'post' => $post->ID ) );
 			} else {
 				wp_enqueue_media();
@@ -1834,6 +1839,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		/**
 		 * Load styles for module.
 		 *
+		 * Add hook in \All_in_One_SEO_Pack_Module::enqueue_metabox_scripts - Bails adding hook if not on target valid screen.
+		 * Add hook in \All_in_One_SEO_Pack_Module::add_page_hooks - Function itself is hooked based on the screen_id/page.
+		 *
 		 * @since 2.9
 		 *
 		 * @see 'admin_enqueue_scripts' hook
@@ -1855,55 +1863,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			wp_enqueue_style( 'aioseop-module-style', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module.css', array(), AIOSEOP_VERSION );
 			if ( function_exists( 'is_rtl' ) && is_rtl() ) {
 				wp_enqueue_style( 'aioseop-module-style-rtl', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module-rtl.css', array( 'aioseop-module-style' ), AIOSEOP_VERSION );
-			}
-		}
-
-		/**
-		 * Load styles for module.
-         *
-         * @deprecated 2.9 Use admin_enqueue_styles() since styles are for admin, and (wp_)enqueue_styles is usually reserved for frontend.
-		 */
-		function enqueue_styles() {
-			wp_enqueue_style( 'thickbox' );
-			if ( ! empty( $this->pointers ) ) {
-				wp_enqueue_style( 'wp-pointer' );
-			}
-			wp_enqueue_style( 'aioseop-module-style', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module.css', array(), AIOSEOP_VERSION );
-			if ( function_exists( 'is_rtl' ) && is_rtl() ) {
-				wp_enqueue_style( 'aioseop-module-style-rtl', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module-rtl.css', array( 'aioseop-module-style' ), AIOSEOP_VERSION );
-			}
-		}
-
-		/**
-		 * Load scripts for module, can pass data to module script.
-		 *
-		 * @since 2.3.12.3 Add missing wp_enqueue_media.
-		 * @deprecated 2.9 Use admin_enqueue_scripts() since scripts are for admin, and (wp_)enqueue_scripts is usually used on frontend.
-		 *
-		 * @see All_in_One_SEO_Pack_Module::enqueue_metabox_scripts()
-		 * @see All_in_One_SEO_Pack_Module::add_page_hooks()
-		 *
-		 */
-		function enqueue_scripts() {
-			wp_enqueue_script( 'sack' );
-			wp_enqueue_script( 'jquery' );
-			wp_enqueue_script( 'media-upload' );
-			wp_enqueue_script( 'thickbox' );
-			wp_enqueue_script( 'common' );
-			wp_enqueue_script( 'wp-lists' );
-			wp_enqueue_script( 'postbox' );
-			if ( ! empty( $this->pointers ) ) {
-				wp_enqueue_script( 'wp-pointer', false, array( 'jquery' ) );
-			}
-			global $post;
-			if ( ! empty( $post->ID ) ) {
-				wp_enqueue_media( array( 'post' => $post->ID ) );
-			} else {
-				wp_enqueue_media();
-			}
-			wp_enqueue_script( 'aioseop-module-script', AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_module.js', array(), AIOSEOP_VERSION );
-			if ( ! empty( $this->script_data ) ) {
-				aioseop_localize_script_data();
 			}
 		}
 
