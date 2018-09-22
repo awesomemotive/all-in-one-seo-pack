@@ -1719,6 +1719,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * edit-tags exists only for pre 4.5 support... remove when we drop 4.5 support.
 		 * Also, that check and others should be pulled out into their own functions.
 		 *
+		 * @todo is it possible to migrate this to \All_in_One_SEO_Pack_Module::add_page_hooks? Or refactor? Both function about the same.
+		 *
 		 * @since 2.4.14 Added term as screen base.
 		 */
 		function enqueue_metabox_scripts() {
@@ -1759,37 +1761,40 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$enqueue_scripts = apply_filters( $prefix . 'enqueue_metabox_scripts', $enqueue_scripts, $screen, $v );
 					if ( $enqueue_scripts ) {
 						add_filter( 'aioseop_localize_script_data', array( $this, 'localize_script_data' ) );
-						add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ), 20 );
-						add_action( 'admin_print_scripts', array( $this, 'enqueue_styles' ), 20 );
 						add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 20 );
+						add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ), 20 );
 					}
 				}
 			}
 		}
 
-		function admin_enqueue_scripts() {
-			wp_enqueue_media(); // WP 3.5+ Media upload.
-		}
 
 		/**
-		 * Load styles for module.
-		 */
-		function enqueue_styles() {
-			wp_enqueue_style( 'thickbox' );
-			if ( ! empty( $this->pointers ) ) {
-				wp_enqueue_style( 'wp-pointer' );
-			}
-			wp_enqueue_style( 'aioseop-module-style', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module.css', array(), AIOSEOP_VERSION );
-			if ( function_exists( 'is_rtl' ) && is_rtl() ) {
-				wp_enqueue_style( 'aioseop-module-style-rtl', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module-rtl.css', array( 'aioseop-module-style' ), AIOSEOP_VERSION );
-			}
-		}
-
-		/**
-		 * Load scripts for module, can pass data to module script.
+		 * Admin Enqueue Scripts
+		 *
+		 * Hook function to enqueue scripts and localize data to scripts.
+		 *
+		 * Add hook in \All_in_One_SEO_Pack_Module::enqueue_metabox_scripts - Bails adding hook if not on target valid screen.
+		 * Add hook in \All_in_One_SEO_Pack_Module::add_page_hooks - Function itself is hooked based on the screen_id/page.
+		 *
+		 * @since ?
 		 * @since 2.3.12.3 Add missing wp_enqueue_media.
+		 * @since 2.9 Encapsulated/combined admin script enqueues into function.
+		 *
+		 * @see 'admin_enqueue_scripts' hook
+		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+		 * @see wp_script_is() Determines if script is already loaded.
+		 * @link https://developer.wordpress.org/reference/functions/wp_script_is/
+		 * @global WP_Post $post Used to set the post ID in wp_enqueue_media().
+		 *
+		 * @param string $hook_suffix
 		 */
-		function enqueue_scripts() {
+		public function admin_enqueue_scripts( $hook_suffix ) {
+			if ( wp_script_is( 'aioseop-module-script', 'enqueued' ) ) {
+				return;
+			}
+
+			// SCRIPT ENQUEUE.
 			wp_enqueue_script( 'sack' );
 			wp_enqueue_script( 'jquery' );
 			wp_enqueue_script( 'media-upload' );
@@ -1797,18 +1802,67 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			wp_enqueue_script( 'common' );
 			wp_enqueue_script( 'wp-lists' );
 			wp_enqueue_script( 'postbox' );
+
 			if ( ! empty( $this->pointers ) ) {
-				wp_enqueue_script( 'wp-pointer', false, array( 'jquery' ) );
+				wp_enqueue_script(
+					'wp-pointer',
+					false,
+					array( 'jquery' )
+				);
 			}
+
 			global $post;
 			if ( ! empty( $post->ID ) ) {
 				wp_enqueue_media( array( 'post' => $post->ID ) );
 			} else {
 				wp_enqueue_media();
 			}
-			wp_enqueue_script( 'aioseop-module-script', AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_module.js', array(), AIOSEOP_VERSION );
+
+			// AIOSEOP Script handling.
+			wp_enqueue_script(
+				'aioseop-module-script',
+				AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_module.js',
+				array(),
+				AIOSEOP_VERSION
+			);
+
+			// LOCALIZE.
+			$localize_data = array();
 			if ( ! empty( $this->script_data ) ) {
-				aioseop_localize_script_data();
+				$localize_data = apply_filters( 'aioseop_localize_script_data', $localize_data );
+			}
+
+			// Todo Possibly change JS variable `aiosp_data` to aioseop_*; to 'aioseop_module_data`, `aioseop_data`.
+			wp_localize_script( 'aioseop-module-script', 'aiosp_data', $localize_data );
+		}
+
+		/**
+		 * Load styles for module.
+		 *
+		 * Add hook in \All_in_One_SEO_Pack_Module::enqueue_metabox_scripts - Bails adding hook if not on target valid screen.
+		 * Add hook in \All_in_One_SEO_Pack_Module::add_page_hooks - Function itself is hooked based on the screen_id/page.
+		 *
+		 * @since 2.9
+		 *
+		 * @see 'admin_enqueue_scripts' hook
+		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+		 * @see wp_style_is() Determines if style is already loaded.
+		 * @link https://developer.wordpress.org/reference/functions/wp_style_is/
+		 *
+		 * @param string $hook_suffix
+		 */
+		function admin_enqueue_styles( $hook_suffix ) {
+			if ( wp_style_is( 'aioseop-module-style', 'enqueued' ) ) {
+				return;
+			}
+
+			wp_enqueue_style( 'thickbox' );
+			if ( ! empty( $this->pointers ) ) {
+				wp_enqueue_style( 'wp-pointer' );
+			}
+			wp_enqueue_style( 'aioseop-module-style', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module.css', array(), AIOSEOP_VERSION );
+			if ( function_exists( 'is_rtl' ) && is_rtl() ) {
+				wp_enqueue_style( 'aioseop-module-style-rtl', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module-rtl.css', array( 'aioseop-module-style' ), AIOSEOP_VERSION );
 			}
 		}
 
@@ -1871,8 +1925,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			if ( $this->strpos( $hookname, 'load-' ) === 0 ) {
 				$this->pagehook = $this->substr( $hookname, 5 );
 			}
-			add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
-			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ) );
 			add_filter( 'aioseop_localize_script_data', array( $this, 'localize_script_data' ) );
 			add_action( $this->prefix . 'settings_header', array( $this, 'display_tabs' ) );
 		}
@@ -2028,7 +2082,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					add_action( 'save_post', array( $this, 'save_post_data' ) );
 					add_action( 'edit_page_form', array( $this, 'save_post_data' ) );
 					if ( isset( $v['display'] ) && ! empty( $v['display'] ) ) {
-						add_action( 'admin_print_scripts', array( $this, 'enqueue_metabox_scripts' ), 5 );
+						add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_metabox_scripts' ), 5 );
 						if ( $this->tabbed_metaboxes ) {
 							add_filter( 'aioseop_add_post_metabox', array( $this, 'filter_return_metaboxes' ) );
 						}

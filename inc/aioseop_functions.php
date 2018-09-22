@@ -880,6 +880,16 @@ if ( ! function_exists( 'aioseop_add_contactmethods' ) ) {
 
 if ( ! function_exists( 'aioseop_localize_script_data' ) ) {
 
+	/**
+	 * AIOSEOP Localize Script Data
+     *
+     * Used by the module base class to localize data.
+     *
+     * @deprecated 2.9 use All_in_One_SEO_Pack_Modules::admin_enqueue_scripts() - Function saw only 1 use and changed
+	 * for encapsulation, and a static variable ( `$loaded` ) can be avoided with `wp_script_is()`.
+     *
+     * @since ?
+	 */
 	function aioseop_localize_script_data() {
 		static $loaded = 0;
 		if ( ! $loaded ) {
