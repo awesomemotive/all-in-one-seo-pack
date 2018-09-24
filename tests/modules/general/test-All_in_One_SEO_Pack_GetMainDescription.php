@@ -32,7 +32,7 @@ require_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-test-base.php';
  *
  * @package WP_UnitTestCase
  */
-class All_in_One_SEO_Pack_Test_GetMainDescription extends AIOSEOP_Test_Base	{
+class Tests_Modules_General_GetMainDescription extends AIOSEOP_Test_Base	{
 	/**
 	 * (Test) Config Variables
 	 */
@@ -213,7 +213,7 @@ class All_in_One_SEO_Pack_Test_GetMainDescription extends AIOSEOP_Test_Base	{
 	 *
 	 * @return array
 	 */
-	public function dataProvider_get_main_description() {
+	public function data_get_main_description() {
 		return array(
 			// 1st Iteration.
 			array(
