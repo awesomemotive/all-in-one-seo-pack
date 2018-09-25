@@ -431,11 +431,35 @@ class aiosp_common {
 		$attachment = $wpdb->get_col( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid='%s';", $url ) ); 
 		if ( $attachment && is_array( $attachment ) && is_numeric( $attachment[0] ) ) {
 			$attributes	= array(
-				'image:caption' => wp_get_attachment_caption( $attachment[0] ),
+				'image:caption' => self::get_image_caption( $attachment[0] ),
 				'image:title' => get_the_title( $attachment[0] ),
 			);
 		}
 		return $attributes;
+	}
+
+	/**
+	 * Wrapper around `wp_get_attachment_caption` because it was introduced only in WP 4.6.0.
+	 *
+	 * @param int $attachment_id The attachment ID.
+	 */
+	public static function get_image_caption( $attachment_id ) {
+		global $wp_version;
+		if ( version_compare( $wp_version, '4.6.0', '<' ) ) {
+			$post_id = (int) $attachment_id;
+			if ( ! $post = get_post( $post_id ) ) {
+				return false;
+			}
+		 
+			if ( 'attachment' !== $post->post_type ) {
+				return false;
+			}
+		 
+			$caption = $post->post_excerpt;
+			return apply_filters( 'wp_get_attachment_caption', $caption, $post->ID );
+		}
+
+		return wp_get_attachment_caption( $attachment_id );
 	}
 
 	/**
