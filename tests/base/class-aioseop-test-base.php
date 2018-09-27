@@ -262,14 +262,17 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	 * Set up posts of specific post type, without/without images. Use this when post attributes such as title, content etc. don't matter.
 	*/
 	protected final function setup_posts( $without_images = 0, $with_images = 0, $type = 'post' ) {
+		$ids = array();
 		if ( $without_images > 0 ) {
-			$this->factory->post->create_many( $without_images, array( 'post_type' => $type, 'post_content' => 'content without image', 'post_title' => 'title without image' ) );
+			$post_ids = $this->factory->post->create_many( $without_images, array( 'post_type' => $type, 'post_content' => 'content without image', 'post_title' => 'title without image' ) );
+			$ids['without'] = $post_ids;
 		}
 		if ( $with_images > 0 ) {
-			$ids	= $this->factory->post->create_many( $with_images, array( 'post_type' => $type, 'post_content' => 'content with image', 'post_title' => 'title with image' ) );
-			foreach ( $ids as $id ) {
+			$post_ids	= $this->factory->post->create_many( $with_images, array( 'post_type' => $type, 'post_content' => 'content with image', 'post_title' => 'title with image' ) );
+			foreach ( $post_ids as $id ) {
 				$this->upload_image_and_maybe_attach( str_replace( '\\', '/', AIOSEOP_UNIT_TESTING_DIR . '/resources/images/footer-logo.png' ), $id );
 			}
+			$ids['with'] = $post_ids;
 		}
 
 		$posts	= get_posts(
@@ -315,6 +318,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		return array(
 			'with'	=> $with,
 			'without'	=> $without,
+			'ids'	=> $ids,
 		);
 	}
 
@@ -392,5 +396,4 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	}
 
 }
-
 

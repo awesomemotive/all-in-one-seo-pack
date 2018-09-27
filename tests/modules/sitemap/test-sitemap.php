@@ -334,6 +334,44 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 	/**
 	 * @requires PHPUnit 5.7
+	 * Creates multiple posts with images and checks that the number of images are as expected.
+	 */
+	public function test_count_images() {
+		// create posts with featured images.
+		$posts = $this->setup_posts( 0, 10 );
+
+ 		// add content images to each post.
+		foreach( $posts['ids']['with'] as $id ) {
+			wp_update_post( array( 'ID' => $id, 'post_content' => 'local relative <img src="/image.jpg">' ) );
+		}
+
+		// create posts with local images in the content, both absolute and relative as well as external urls.
+		$local = array();
+		for( $x = 0; $x < 10; $x++ ) {
+			// local relative, local absolute and external urls.
+			$id = $this->factory->post->create( array( 'post_content' => 'local relative <img src="/image' . $x . '.jpg">, local absolute <img src="' . site_url( '/image' . $x . '.jpg' ) . '">, external <img src="http://www.somewhere.com/image' . $x . '.jpg">' ) );
+			$local[] = $id;
+		}
+
+ 		$custom_options = array();
+		$custom_options['aiosp_sitemap_indexes'] = '';
+		$custom_options['aiosp_sitemap_images'] = '';
+		$custom_options['aiosp_sitemap_gzipped'] = '';
+		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
+
+		$this->_setup_options( 'sitemap', $custom_options );
+ 		
+		// each post that has a featured image also contains an image in the content.
+		$featured_plus_content = count( $posts['with'] ) * 2;
+		// we are adding 3 images to each post's content but only 2 of them will be recognized because the external url will be filtered out.
+		$only_content = count( $local ) * 2;
+		$got = $this->count_sitemap_elements( array( '<image:loc>' ) );
+ 		
+		$this->assertEquals( $featured_plus_content + $only_content, $got['<image:loc>'] );
+	}
+
+	/**
+	 * @requires PHPUnit 5.7
 	 * Creates posts with schemeless images in the content and checks if they are being correctly included in the sitemap.
 	 */
 	public function test_schemeless_images() {

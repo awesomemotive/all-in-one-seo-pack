@@ -20,51 +20,36 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 		 * @param $mod Module.
 		 */
 		function __construct( $mod ) {
-			/* translators: the Feature Manager allows users to (de)activate other modules of the plugin. */
 			$this->name   = __( 'Feature Manager', 'all-in-one-seo-pack' );        // Human-readable name of the plugin.
 			$this->prefix = 'aiosp_feature_manager_';                        // Option prefix.
 			$this->file   = __FILE__;                                    // The current file.
 			parent::__construct();
 			$this->module_info = array(
 				'sitemap'           => array(
-					/* translators: the XML Sitemaps module allows users to generate a sitemap in .xml format for their website and
-					submit it to search engines such as Google, Bing and Yahoo. */
 					'name'        => __( 'XML Sitemaps', 'all-in-one-seo-pack' ),
 					'description' => __( 'Create and manage your XML Sitemaps using this feature and submit your XML Sitemap to Google, Bing/Yahoo and Ask.com.', 'all-in-one-seo-pack' ),
 				),
 				'opengraph'         => array(
-					/* translators: the Social Meta module allows users to add Open Graph (OG:) meta tags to their site's post/pages
-					to control the appearance of them when shared on social media networks like Facebook and Twitter. */
 					'name'        => __( 'Social Meta', 'all-in-one-seo-pack' ),
-					/* translators: Social Meta refers to Open Graph (OG:) meta tags, which can be used to control the appearance
-					of a site's posts/pages when shared on social media networks like Facebook and Twitter. */
 					'description' => __( 'Add Social Meta data to your site to deliver closer integration between your website/blog and social media.', 'all-in-one-seo-pack' ),
 				),
 				'robots'            => array(
-					/* translators: the Robots.txt module allows users to provide instructions to web robots, e.g. search engine crawlers. */
 					'name'        => __( 'Robots.txt', 'all-in-one-seo-pack' ),
 					'description' => __( 'Generate and validate your robots.txt file to guide search engines through your site.', 'all-in-one-seo-pack' ),
 				),
 				'file_editor'       => array(
-					/* translators: the File Editor module allows users to edit the robots.txt file or .htaccess file on their site. */
 					'name'        => __( 'File Editor', 'all-in-one-seo-pack' ),
 					'description' => __( 'Edit your .htaccess file to fine-tune your site.', 'all-in-one-seo-pack' ),
 				),
 				'importer_exporter' => array(
-					/* translators: the Importer & Exporter module allows users to import/export their All in One SEO Pack
-					settings for backup purposes or when migrating their site. */
 					'name'        => __( 'Importer & Exporter', 'all-in-one-seo-pack' ),
 					'description' => __( 'Exports and imports your All in One SEO Pack plugin settings.', 'all-in-one-seo-pack' ),
 				),
 				'bad_robots'        => array(
-					/* translators: the Bad Bot Blocker module allows users to block requests from user agents that are known to misbehave. */
 					'name'        => __( 'Bad Bot Blocker', 'all-in-one-seo-pack' ),
-					/* translators: 'bots' refers to user agents/web robots that misbehave. */
 					'description' => __( 'Stop badly behaving bots from slowing down your website.', 'all-in-one-seo-pack' ),
 				),
 				'performance'       => array(
-					/* translators: the Performance module allows users to set certain performance related settings and
-					check the status of their WordPress installation. */
 					'name'        => __( 'Performance', 'all-in-one-seo-pack' ),
 					'description' => __( 'Optimize performance related to SEO and check your system status.', 'all-in-one-seo-pack' ),
 					'default'     => 'on',
@@ -74,15 +59,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 			if ( AIOSEOPPRO ) {
 
 				$this->module_info['coming_soon']   = array(
-					/* translators: this refers to a feature that will be launched in the near future. */
 					'name'        => __( 'Coming Soon...', 'all-in-one-seo-pack' ),
-					/* translators: the Image SEO module allows users to optimize their images for search engines. */
 					'description' => __( 'Image SEO', 'all-in-one-seo-pack' ),
 					'save'        => false,
 				);
 				$this->module_info['video_sitemap'] = array(
-					/*translators: the Video Sitemap module allows users to generate a sitemap with video content in .xml format
-					for their website and submit it to search engines such as Google, Bing and Yahoo. */
 					'name'        => __( 'Video Sitemap', 'all-in-one-seo-pack' ),
 					'description' => __( 'Create and manage your Video Sitemap using this feature and submit your Video Sitemap to Google, Bing/Yahoo and Ask.com.', 'all-in-one-seo-pack' ),
 				);
@@ -91,7 +72,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 
 				$this->module_info['coming_soon'] = array(
 					'name'        => __( 'Video Sitemap', 'all-in-one-seo-pack' ),
-					/* translators: this refers to a module that is exclusively available in All in One SEO Pack Pro. */
 					'description' => __( 'Pro Version Only', 'all-in-one-seo-pack' ),
 					'save'        => false,
 				);
@@ -165,7 +145,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 		function filter_submit( $submit ) {
 			$submit['Submit']['value'] = __( 'Update Features', 'all-in-one-seo-pack' ) . ' &raquo;';
 			$submit['Submit']['class'] .= ' hidden';
-			/* translators: this button deactivates all active modules of the plugin. */
 			$submit['Submit_Default']['value'] = __( 'Reset Features', 'all-in-one-seo-pack' ) . ' &raquo;';
 
 			return $submit;

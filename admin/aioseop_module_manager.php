@@ -160,7 +160,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 			if ( 'performance' === $mod && ! is_super_admin() ) {
 				return false;
 			}
-			if ( ( 'file_editor' === $mod )
+			if ( ( 'file_editor' === $mod || 'robots' === $mod )
 				 && ( ( defined( 'DISALLOW_FILE_EDIT' ) && DISALLOW_FILE_EDIT )
 					  || ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS )
 					  || ! is_super_admin() )

@@ -2140,11 +2140,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @return string
 		 */
 		function do_multi_input( $args ) {
-			$options = $args['options'];
-			$value = $args['value'];
-			$name = $args['name'];
-			$attr = $args['attr'];
-
+			// @codingStandardsIgnoreStart
+			extract( $args );
+			// @codingStandardsIgnoreEnd
 			$buf1 = '';
 			$type = $options['type'];
 
@@ -2221,12 +2219,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 */
 		function get_option_html( $args ) {
 			static $n = 0;
-
-			$options = $args['options'];
-			$value = $args['value'];
-			$name = $args['name'];
-			$attr = $args['attr'];
-			$prefix = isset( $args['prefix'] ) ? $args['prefix'] : '';
+			// @codingStandardsIgnoreStart
+			extract( $args );
+			// @codingStandardsIgnoreEnd
 
 			if ( $options['type'] == 'custom' ) {
 				return apply_filters( "{$prefix}output_option", '', $args );
@@ -2314,12 +2309,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				} elseif ( isset( $options['rows'] ) && isset( $options['cols'] ) ) {
 					$size = $options['rows'] * $options['cols'];
 				}
+				if ( 'Description' === $options['name'] && isset( $options['name'] ) ) {
+					$size = ( $size - 90 ) . '-' . $size;
+				}
 				if ( isset( $options['count_desc'] ) ) {
 					$count_desc = $options['count_desc'];
 				} else {
 					$count_desc = __( ' characters. Most search engines use a maximum of %1$s chars for the %2$s.', 'all-in-one-seo-pack' );
 				}
-				$buf .= "<br /><input readonly tabindex='-1' type='text' name='{$prefix}length$n' size='3' maxlength='3' style='width:53px;height:23px;margin:0px;padding:0px 0px 0px 10px;' value='" . $this->strlen( $value ) . "' />"
+				$buf .= "<br /><input readonly type='text' name='{$prefix}length$n' size='3' maxlength='3' style='width:53px;height:23px;margin:0px;padding:0px 0px 0px 10px;' value='" . $this->strlen( $value ) . "' />"
 						. sprintf( $count_desc, $size, trim( $this->strtolower( $options['name'] ), ':' ) );
 				if ( ! empty( $onload ) ) {
 					$buf .= "<script>jQuery( document ).ready(function() { {$onload} });</script>";
