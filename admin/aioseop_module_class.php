@@ -1768,7 +1768,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		function admin_enqueue_scripts() {
-			wp_enqueue_media(); // WP 3.5+ Media upload.
+			global $post;
+			$args = array();
+			if ( $post ) {
+				$args = array( 'post' => $post->ID );
+			}
+			wp_enqueue_media( $args );
 		}
 
 		/**
