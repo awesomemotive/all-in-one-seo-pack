@@ -182,7 +182,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 											 __( '%blog_description% - Your blog description', 'all-in-one-seo-pack' ) . '</li><li>' .
 											 __( '%request_url% - The original URL path, like "/url-that-does-not-exist/"', 'all-in-one-seo-pack' ) . '</li><li>' .
 											 __( '%request_words% - The URL path in human readable form, like "Url That Does Not Exist"', 'all-in-one-seo-pack' ) . '</li><li>' .
-											 __( '%404_title% - Additional 404 title input"', 'all-in-one-seo-pack' ) . '</li></ul>',
+											 __( '%404_title% - Additional 404 title input', 'all-in-one-seo-pack' ) . '</li></ul>',
 			'paged_format'                => __( 'This string gets appended/prepended to titles of paged index pages (like home or archive pages).', 'all-in-one-seo-pack' )
 											 . __( 'The following macros are supported:', 'all-in-one-seo-pack' )
 											 . '<ul><li>' . __( '%page% - The page number', 'all-in-one-seo-pack' ) . '</li></ul>',
