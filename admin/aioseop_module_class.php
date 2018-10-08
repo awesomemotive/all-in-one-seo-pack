@@ -672,7 +672,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				'Incutio',
 				'lmspider',
 				'memoryBot',
-				'SemrushBot',
 				'serf',
 				'Unknown',
 				'uptime files',
