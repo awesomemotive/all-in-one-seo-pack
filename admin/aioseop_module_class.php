@@ -622,7 +622,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				'Python-urllib',
 				'QueryN Metasearch',
 				'RepoMonkey',
-				'SemrushBot',
 				'SISTRIX',
 				'sitecheck.Internetseer.com',
 				'SiteSnagger',
