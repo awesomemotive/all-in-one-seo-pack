@@ -3544,6 +3544,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				}
 			} else {
 				$cp_noindex_active = false;
+				// Make sure noindex works even of SEO is turned off for that post type.
 				if ( ! empty( $aioseop_options['aiosp_cpostnoindex'] ) && is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
 					$cp_noindex_active = in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] );
 				}
