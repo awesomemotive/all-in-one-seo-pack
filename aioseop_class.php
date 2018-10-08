@@ -120,7 +120,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				__( '%post_month% - The month the page was published (localized)', 'all-in-one-seo-pack' ) . '</li>',
 			'post_title_format'           =>
 				__( 'This controls the format of the title tag for Posts.<br />The following macros are supported:', 'all-in-one-seo-pack' )
-				. '<li><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
+				. '<ul><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( '%blog_description% - Your blog description', 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( '%post_title% - The original title of the post', 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( '%category_title% - The (main) category of the post', 'all-in-one-seo-pack' ) . '</li><li>' .
