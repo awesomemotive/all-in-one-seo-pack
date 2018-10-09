@@ -35,14 +35,17 @@ class AIOSEOPAdminMenus {
 	 * @since 2.3.11.5
 	 */
 	function add_pro_submenu() {
-		global $submenu;
-		$url = 'https://semperplugins.com/all-in-one-seo-pack-pro-version/?loc=aio_menu';
-		$upgrade_text = __( 'Upgrade to Pro', 'all-in-one-seo-pack' );
-		$submenu['all-in-one-seo-pack/aioseop_class.php'][] = array(
-			"<span class='upgrade_menu_link'>$upgrade_text</span>",
-			'manage_options',
-			$url,
-		);
+		$open_basedir = ini_get( 'open_basedir' );
+		if ( empty( $open_basedir ) ) {
+			global $submenu;
+			$url = 'https://semperplugins.com/all-in-one-seo-pack-pro-version/?loc=aio_menu';
+			$upgrade_text = __('Upgrade to Pro', 'all-in-one-seo-pack');
+			$submenu['all-in-one-seo-pack/aioseop_class.php'][] = array(
+				"<span class='upgrade_menu_link'>$upgrade_text</span>",
+				'manage_options',
+				$url,
+			);
+		}
 	}
 }
 
