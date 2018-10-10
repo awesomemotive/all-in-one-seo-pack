@@ -48,7 +48,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 				'file_editor'       => array(
 					/* translators: the File Editor module allows users to edit the robots.txt file or .htaccess file on their site. */
 					'name'        => __( 'File Editor', 'all-in-one-seo-pack' ),
-					'description' => __( 'Edit your your .htaccess file to fine-tune your site.', 'all-in-one-seo-pack' ),
+					'description' => __( 'Edit your .htaccess file to fine-tune your site.', 'all-in-one-seo-pack' ),
 				),
 				'importer_exporter' => array(
 					/* translators: the Importer & Exporter module allows users to import/export their All in One SEO Pack

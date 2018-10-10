@@ -55,13 +55,17 @@
 			Alejandro Mostajo</a>
 	</li>
 	<li class="wp-person" id="rozroz">
-		<a class="web" target="_blank" href="https://profiles.wordpress.org/rozroz/"><img alt="" class="gravatar" src="https://secure.gravatar.com/avatar/5a4758faa5ba6fc1322bdfb0f6ebcf56c?s=60">
+		<a class="web" target="_blank" href="https://github.com/contactashish13"><img alt="" class="gravatar" src="https://avatars2.githubusercontent.com/u/12953439?s=60">
 			Ashish Ravi</a>
 	</li>
 	<li class="wp-person" id="rozroz">
 		<a class="web" target="_blank" href="https://profiles.wordpress.org/yummy-wp/"><img alt="" class="gravatar" src="https://avatars0.githubusercontent.com/u/22232968?v=3&s=460">
 			Stanislav Samoilenko</a>
 	</li>
+	<li class="wp-person" id="shoheitanaka">
+		<a class="web" target="_blank" href="https://profiles.wordpress.org/shoheitanaka"><img alt="" class="gravatar" src="https://secure.gravatar.com/avatar/677e512c803c40c0180d4514f876a21f?s=200&d=mm&r=g">
+			Shohei Tanaka</a>
+	</li>		
 	<li class="wp-person" id="EkoJR">
 	<a class="web" target="_blank" href="https://profiles.wordpress.org/EkoJR/"><img alt="" class="gravatar" src="https://secure.gravatar.com/avatar/bb4c78fe944b58bd5f127d836500c30a?s=200&d=mm&r=g">
 			Stanislav Samoilenko</a>

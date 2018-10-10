@@ -638,7 +638,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				'Python-urllib',
 				'QueryN Metasearch',
 				'RepoMonkey',
-				'SemrushBot',
 				'SISTRIX',
 				'sitecheck.Internetseer.com',
 				'SiteSnagger',
@@ -689,7 +688,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				'Incutio',
 				'lmspider',
 				'memoryBot',
-				'SemrushBot',
 				'serf',
 				'Unknown',
 				'uptime files',
@@ -2037,12 +2035,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					add_action( "load-{$hookname}", array( $this, 'add_page_hooks' ) );
 				} elseif ( $v['type'] === 'metabox' ) {
 					$this->setting_options( $k ); // hack -- make sure this runs anyhow, for now -- pdb
-					add_action( 'edit_post', array( $this, 'save_post_data' ) );
-					add_action( 'publish_post', array( $this, 'save_post_data' ) );
-					add_action( 'add_attachment', array( $this, 'save_post_data' ) );
-					add_action( 'edit_attachment', array( $this, 'save_post_data' ) );
-					add_action( 'save_post', array( $this, 'save_post_data' ) );
-					add_action( 'edit_page_form', array( $this, 'save_post_data' ) );
+					$this->toggle_save_post_hooks( true );
 					if ( isset( $v['display'] ) && ! empty( $v['display'] ) ) {
 						add_action( 'admin_print_scripts', array( $this, 'enqueue_metabox_scripts' ), 5 );
 						if ( $this->tabbed_metaboxes ) {
@@ -2103,36 +2096,54 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
+		 * Adds or removes hooks that could be called while editing a post.
+		 *
+		 * TODO: Review if all these hooks are really required (save_post should be enough vs. edit_post and publish_post).
+		 */
+		private function toggle_save_post_hooks( $add ) {
+			if ( $add ) {
+				add_action( 'edit_post', array( $this, 'save_post_data' ) );
+				add_action( 'publish_post', array( $this, 'save_post_data' ) );
+				add_action( 'add_attachment', array( $this, 'save_post_data' ) );
+				add_action( 'edit_attachment', array( $this, 'save_post_data' ) );
+				add_action( 'save_post', array( $this, 'save_post_data' ) );
+				add_action( 'edit_page_form', array( $this, 'save_post_data' ) );
+			} else {
+				remove_action( 'edit_post', array( $this, 'save_post_data' ) );
+				remove_action( 'publish_post', array( $this, 'save_post_data' ) );
+				remove_action( 'add_attachment', array( $this, 'save_post_data' ) );
+				remove_action( 'edit_attachment', array( $this, 'save_post_data' ) );
+				remove_action( 'save_post', array( $this, 'save_post_data' ) );
+				remove_action( 'edit_page_form', array( $this, 'save_post_data' ) );
+			}
+		}
+
+		/**
 		 * Update postmeta for metabox.
 		 *
 		 * @param $post_id
 		 */
 		function save_post_data( $post_id ) {
-			static $update = false;
-			if ( $update ) {
-				return;
-			}
+			$this->toggle_save_post_hooks( false );
 			if ( $this->locations !== null ) {
 				foreach ( $this->locations as $k => $v ) {
 					if ( isset( $v['type'] ) && ( $v['type'] === 'metabox' ) ) {
 						$opts    = $this->default_options( $k );
 						$options = array();
-						$update  = false;
 						foreach ( $opts as $l => $o ) {
 							if ( isset( $_POST[ $l ] ) ) {
 								$options[ $l ] = stripslashes_deep( $_POST[ $l ] );
 								$options[ $l ] = esc_attr( $options[ $l ] );
-								$update        = true;
 							}
 						}
-						if ( $update ) {
-							$prefix  = $this->get_prefix( $k );
-							$options = apply_filters( $prefix . 'filter_metabox_options', $options, $k, $post_id );
-							update_post_meta( $post_id, '_' . $prefix . $k, $options );
-						}
+						$prefix  = $this->get_prefix( $k );
+						$options = apply_filters( $prefix . 'filter_metabox_options', $options, $k, $post_id );
+						update_post_meta( $post_id, '_' . $prefix . $k, $options );
 					}
 				}
 			}
+
+			$this->toggle_save_post_hooks( true );
 		}
 
 		/**

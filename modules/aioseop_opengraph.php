@@ -941,8 +941,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 
 			$attributes = apply_filters(
 				$this->prefix . 'attributes', array(
-					'itemscope',
-					'itemtype="http://schema.org/' . ucfirst( $type ) . '"',
 					'prefix="og: http://ogp.me/ns#"',
 				)
 			);

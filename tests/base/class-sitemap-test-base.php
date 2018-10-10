@@ -59,13 +59,27 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 
 		$sitemap = array();
 		foreach ( $xml->url as $url ) {
+			// this array will contain an array of arrays, each element corresponding to one "image:*".
+			// Each item will have its corresponding array of values.
 			$element = array();
 			if ( array_key_exists( 'image', $ns ) && count( $url->children( $ns['image'] ) ) > 0 ) {
 				$images = array();
 				foreach ( $url->children( $ns['image'] ) as $image ) {
-					$images[] = (string) $image->loc;
+					$images['loc'][] = (string) $image->loc;
+					if ( property_exists( $image, 'title' ) ) {
+						$images['title'][] = (string) $image->title;
+					}
+					if ( property_exists( $image, 'caption' ) ) {
+						$images['caption'][] = (string) $image->caption;
+					}
 				}
-				$element['image'] = $images;
+				$element['image'] = $images['loc'];
+				if ( array_key_exists( 'title', $images ) ) {
+					$element['image:title'] = $images['title'];
+				}
+				if ( array_key_exists( 'caption', $images ) ) {
+					$element['image:caption'] = $images['caption'];
+				}
 			}
 			$sitemap[ (string) $url->loc ] = $element;
 		}

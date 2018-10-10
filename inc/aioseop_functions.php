@@ -420,10 +420,6 @@ function aioseop_embed_handler_html( $return, $url, $attr ) {
 	return AIO_ProGeneral::aioseop_embed_handler_html();
 }
 
-function aioseop_ajax_update_oembed() {
-	AIO_ProGeneral::aioseop_ajax_update_oembed();
-}
-
 if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 
 	function aioseop_ajax_save_url() {
