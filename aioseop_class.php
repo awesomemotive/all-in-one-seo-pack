@@ -3544,18 +3544,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				}
 			} else {
 
-				// Make sure noindex works even of SEO is turned off for that post type.
-				$cp_noindex_active = false;
-				if ( ! empty( $aioseop_options['aiosp_cpostnoindex'] ) && is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
-					$cp_noindex_active = in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] );
-				}
-				// Make sure nofollow works even of SEO is turned off for that post type.
-				$cp_nofollow_active = false;
-				if ( ! empty( $aioseop_options['aiosp_cpostnofollow'] ) && is_array( $aioseop_options['aiosp_cpostnofollow'] ) ) {
-					$cp_nofollow_active = in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] );
-				}
-
-				if ( is_singular() && ! in_array( $post_type, $wp_post_types ) && ! is_front_page() && ! $cp_noindex_active && ! $cp_nofollow_active ) {
+				if ( is_singular() && ! in_array( $post_type, $wp_post_types ) && ! is_front_page() ) {
 					return false;
 				}
 				if ( is_post_type_archive() && ! is_post_type_archive( $wp_post_types ) ) {
@@ -3837,6 +3826,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( ! $this->is_page_included() ) {
+			// Handle noindex, nofollow - robots meta.
+			$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
+			if ( ! empty( $robots_meta ) ) {
+				// Should plugin & version details be added here as well?
+				echo '<meta name="robots" content="' . esc_attr( $robots_meta ) . '" />' . "\n";
+			}
+
 			if ( ! empty( $old_wp_query ) ) {
 				// Change the query back after we've finished.
 				$GLOBALS['wp_query'] = $old_wp_query;
