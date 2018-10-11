@@ -32,7 +32,7 @@ require_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-test-base.php';
  *
  * @package WP_UnitTestCase
  */
-class Tests_Modules_General_GetMainDescription extends AIOSEOP_Test_Base	{
+class Test_GetMainDescription extends AIOSEOP_Test_Base	{
 	/**
 	 * (Test) Config Variables
 	 */
