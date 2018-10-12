@@ -91,4 +91,87 @@ class Test_Robots_Multisite extends Test_Robots {
 			),
 		);
 	}
+
+	/**
+	 * Test modification of rules.
+	 *
+	 * @dataProvider modifyRulesProvider
+	 */
+	public function test_modify_rules( $existing_rules, $rule_to_modify, $new_rule, $error_message = '' ) {
+		$this->_setRole( 'administrator' );
+
+		delete_transient( 'aiosp_robots_errors' . get_current_user_id() );
+
+		$this->_setup_options( 'robots', array() );
+
+		global $aioseop_options;
+
+		foreach ( $existing_rules as $rule ) {
+			$_POST      = array(
+				'aiosp_robots_path'     => $rule['path'],
+				'aiosp_robots_type'     => $rule['type'],
+				'aiosp_robots_agent'    => $rule['agent'],
+			);
+
+			$options    = apply_filters( 'aiosp_robots_update_options', array() );
+
+			$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
+			update_option( 'aioseop_options', $aioseop_options );
+		}
+
+		// get the rule_to_modify.
+		$rule_modified	= null;
+		foreach( $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] as $rule ) {
+			if ( $rule_to_modify === $rule['path'] ) {
+				$rule_modified	= $rule;
+				break;
+			}
+		}
+
+		$_POST      = array(
+			'aiosp_robots_id'		=> $rule_modified['id'],
+			'aiosp_robots_path'     => $new_rule['path'],
+			'aiosp_robots_type'     => $new_rule['type'],
+			'aiosp_robots_agent'    => $new_rule['agent'],
+		);
+
+		$options    = apply_filters( 'aiosp_robots_update_options', array() );
+
+		$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
+		update_option( 'aioseop_options', $aioseop_options );
+
+		$errors     = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
+		$paths		= wp_list_pluck( $options['aiosp_robots_rules'], 'path' );
+		if ( $error_message ) {
+			$this->assertGreaterThan( 0, count( $errors ), 'Error not logged!' );
+			$this->assertContains( $error_message, $errors[0], 'Error message not found!' );
+			$this->assertContains( $rule_modified['path'], $paths, 'Rule modified!' );
+			$this->assertNotContains( $new_rule['path'], $paths, 'Rule modified!' );
+		} else {
+			$this->assertNotContains( $rule_modified['path'], $paths, 'Rule not modified' );
+			$this->assertContains( $new_rule['path'], $paths, 'Rule not modified' );
+		}
+	}
+
+	public function modifyRulesProvider() {
+		return array(
+			array(
+				array(
+					array( 'path' => '/test.txt', 'type' => 'disallow', 'agent' => '*' ),
+					array( 'path' => '/wp-admin', 'type' => 'disallow', 'agent' => '*' ),
+				),
+				'/test.txt',
+				array( 'path' => '/testttt.txt', 'type' => 'disallow', 'agent' => '*' ),
+			),
+			array(
+				array(
+					array( 'path' => '/test.txt', 'type' => 'disallow', 'agent' => '*' ),
+					array( 'path' => '/wp-admin', 'type' => 'disallow', 'agent' => '*' ),
+				),
+				'/test.txt',
+				array( 'path' => '/wp-admin', 'type' => 'disallow', 'agent' => '*' ),
+				'Identical rule exists',
+			),
+		);
+	}
 }

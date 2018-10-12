@@ -1733,6 +1733,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * edit-tags exists only for pre 4.5 support... remove when we drop 4.5 support.
 		 * Also, that check and others should be pulled out into their own functions.
 		 *
+		 * @todo is it possible to migrate this to \All_in_One_SEO_Pack_Module::add_page_hooks? Or refactor? Both function about the same.
+		 *
 		 * @since 2.4.14 Added term as screen base.
 		 */
 		function enqueue_metabox_scripts() {
@@ -1773,22 +1775,27 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$enqueue_scripts = apply_filters( $prefix . 'enqueue_metabox_scripts', $enqueue_scripts, $screen, $v );
 					if ( $enqueue_scripts ) {
 						add_filter( 'aioseop_localize_script_data', array( $this, 'localize_script_data' ) );
-						add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ), 20 );
-						add_action( 'admin_print_scripts', array( $this, 'enqueue_styles' ), 20 );
 						add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 20 );
+						add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ), 20 );
 					}
 				}
 			}
 		}
 
-		function admin_enqueue_scripts() {
-			wp_enqueue_media(); // WP 3.5+ Media upload.
-		}
-
 		/**
 		 * Load styles for module.
+		 *
+		 * Add hook in \All_in_One_SEO_Pack_Module::enqueue_metabox_scripts - Bails adding hook if not on target valid screen.
+		 * Add hook in \All_in_One_SEO_Pack_Module::add_page_hooks - Function itself is hooked based on the screen_id/page.
+		 *
+		 * @since 2.9
+		 *
+		 * @see 'admin_enqueue_scripts' hook
+		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+		 *
+		 * @param string $hook_suffix
 		 */
-		function enqueue_styles() {
+		function admin_enqueue_styles( $hook_suffix ) {
 			wp_enqueue_style( 'thickbox' );
 			if ( ! empty( $this->pointers ) ) {
 				wp_enqueue_style( 'wp-pointer' );
@@ -1800,10 +1807,24 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
-		 * Load scripts for module, can pass data to module script.
+		 * Admin Enqueue Scripts
+		 *
+		 * Hook function to enqueue scripts and localize data to scripts.
+		 *
+		 * Add hook in \All_in_One_SEO_Pack_Module::enqueue_metabox_scripts - Bails adding hook if not on target valid screen.
+		 * Add hook in \All_in_One_SEO_Pack_Module::add_page_hooks - Function itself is hooked based on the screen_id/page.
+		 *
+		 * @since ?
 		 * @since 2.3.12.3 Add missing wp_enqueue_media.
+		 * @since 2.9 Switch to admin_enqueue_scripts; both the hook and function name.
+		 *
+		 * @see 'admin_enqueue_scripts' hook
+		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+		 * @global WP_Post $post Used to set the post ID in wp_enqueue_media().
+		 *
+		 * @param string $hook_suffix
 		 */
-		function enqueue_scripts() {
+		public function admin_enqueue_scripts( $hook_suffix ) {
 			wp_enqueue_script( 'sack' );
 			wp_enqueue_script( 'jquery' );
 			wp_enqueue_script( 'media-upload' );
@@ -1811,16 +1832,31 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			wp_enqueue_script( 'common' );
 			wp_enqueue_script( 'wp-lists' );
 			wp_enqueue_script( 'postbox' );
+
 			if ( ! empty( $this->pointers ) ) {
-				wp_enqueue_script( 'wp-pointer', false, array( 'jquery' ) );
+				wp_enqueue_script(
+					'wp-pointer',
+					false,
+					array( 'jquery' )
+				);
 			}
+
 			global $post;
 			if ( ! empty( $post->ID ) ) {
 				wp_enqueue_media( array( 'post' => $post->ID ) );
 			} else {
 				wp_enqueue_media();
 			}
-			wp_enqueue_script( 'aioseop-module-script', AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_module.js', array(), AIOSEOP_VERSION );
+
+			// AIOSEOP Script enqueue.
+			wp_enqueue_script(
+				'aioseop-module-script',
+				AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_module.js',
+				array(),
+				AIOSEOP_VERSION
+			);
+
+			// Localize aiosp_data in JS.
 			if ( ! empty( $this->script_data ) ) {
 				aioseop_localize_script_data();
 			}
@@ -1885,8 +1921,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			if ( $this->strpos( $hookname, 'load-' ) === 0 ) {
 				$this->pagehook = $this->substr( $hookname, 5 );
 			}
-			add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
-			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ) );
 			add_filter( 'aioseop_localize_script_data', array( $this, 'localize_script_data' ) );
 			add_action( $this->prefix . 'settings_header', array( $this, 'display_tabs' ) );
 		}
@@ -2037,7 +2073,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$this->setting_options( $k ); // hack -- make sure this runs anyhow, for now -- pdb
 					$this->toggle_save_post_hooks( true );
 					if ( isset( $v['display'] ) && ! empty( $v['display'] ) ) {
-						add_action( 'admin_print_scripts', array( $this, 'enqueue_metabox_scripts' ), 5 );
+						add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_metabox_scripts' ), 5 );
 						if ( $this->tabbed_metaboxes ) {
 							add_filter( 'aioseop_add_post_metabox', array( $this, 'filter_return_metaboxes' ) );
 						}
@@ -2300,6 +2336,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$buf .= "<input name='$name' type='{$options['type']}' $attr>\n";
 					break;
 				case 'textarea':
+					// #1363: prevent characters like ampersand in title and description (in social meta module) from getting changed to &amp;
+					if ( in_array( $name, array( 'aiosp_opengraph_hometitle', 'aiosp_opengraph_description' ), true ) ) {
+						$value	= htmlspecialchars_decode( $value, ENT_QUOTES );
+					}
 					$buf .= "<textarea name='$name' $attr>$value</textarea>";
 					break;
 				case 'image':
@@ -2540,7 +2580,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 							$this->options[ $k ] = urlencode_deep( $this->options[ $k ] );
 							break;
 						case 'textarea':
-							$this->options[ $k ] = wp_kses_post( $this->options[ $k ] );
+							// #1363: prevent characters like ampersand in title and description (in social meta module) from getting changed to &amp;
+							if ( ! ( 'opengraph' === $location && in_array( $k, array( 'aiosp_opengraph_hometitle', 'aiosp_opengraph_description' ), true ) ) ) {
+								$this->options[ $k ] = wp_kses_post( $this->options[ $k ] );
+							}
 							$this->options[ $k ] = htmlspecialchars( $this->options[ $k ], ENT_QUOTES );
 							break;
 						case 'filename':

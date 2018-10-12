@@ -1246,7 +1246,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( empty( $this->options['aiosp_opengraph_defimg'] ) ) {
 					$thumbnail = $this->options['aiosp_opengraph_dimg'];
 				} else {
-					switch ( $this->options['aiosp_opengraph_defimg'] ) {
+					$img_type = $this->options['aiosp_opengraph_defimg'];
+					if ( ! empty( $post ) ) {
+						// Customize the type of image per post/post_type.
+						$img_type = apply_filters( $this->prefix . 'default_image_type', $img_type, $post, $type );
+					}
+					switch ( $img_type ) {
 						case 'featured':
 							$thumbnail = $this->get_the_image_by_post_thumbnail();
 							break;
@@ -1280,8 +1285,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				}
 			}
 
-			if ( ( empty( $thumbnail ) && ! empty( $this->options['aiosp_opengraph_fallback'] ) ) ) {
+			if ( empty( $thumbnail ) && ! empty( $this->options['aiosp_opengraph_fallback'] ) ) {
 				$thumbnail = $this->options['aiosp_opengraph_dimg'];
+				if ( ! empty( $post ) ) {
+					// Customize the default image per post/post_type.
+					$thumbnail = apply_filters( $this->prefix . 'default_image', $thumbnail, $post, $type );
+				}
 			}
 
 			if ( ! empty( $thumbnail ) ) {
@@ -1424,7 +1433,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						} else {
 							// For everything else.
 							foreach ( $filtered_value as $f ) {
-								echo '<meta ' . $tags[ $t ]['name'] . '="' . $v . '" ' . $tags[ $t ]['value'] . '="' . $f . '" />' . "\n";
+								// #1363: use esc_attr( $f ) instead of htmlspecialchars_decode( $f, ENT_QUOTES )
+								echo '<meta ' . $tags[ $t ]['name'] . '="' . $v . '" ' . $tags[ $t ]['value'] . '="' . esc_attr( $f ) . '" />' . "\n";
 							}
 						}
 					}
