@@ -1126,7 +1126,7 @@ if ( ! function_exists( 'aioseop_set_link_to_robots_behavior' ) ) {
 		 */
 		$link	= apply_filters( $prefix . 'link_to_robots', $link );
 
-		$aioseop_options['modules'][ "{$prefix}options" ][ "{$prefix}robots" ] = $link;
+		$aioseop_options['modules'][ "{$prefix}options" ][ "{$prefix}robots" ] = $link ? 'on' : '';
 		update_option( 'aioseop_options', $aioseop_options );
 	}
 }

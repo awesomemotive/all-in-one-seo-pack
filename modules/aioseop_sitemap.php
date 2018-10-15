@@ -306,6 +306,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			add_action( 'after_doing_aioseop_updates', array( $this, 'scan_sitemaps' ) );
 			add_action( 'all_admin_notices', array( $this, 'sitemap_notices' ) );
 			add_action( 'admin_init', array( $this, 'init_removed_options_behavior' ) );
+
+			// We want to define this because calling admin init in the unit tests causes an error and does not call this method.
+			if ( defined( 'AIOSEOP_UNIT_TESTING' ) ) {
+				add_action( "aioseop_ut_{$this->prefix}admin_init", array( $this, 'init_removed_options_behavior' ) );
+			}
 		}
 
 		/**
