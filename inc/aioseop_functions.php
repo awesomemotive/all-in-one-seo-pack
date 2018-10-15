@@ -1106,9 +1106,9 @@ if ( ! function_exists( 'aioseop_set_link_to_robots_behavior' ) ) {
 
 		$link		= true;
 
-		if ( array_key_exists( "{$prefix}robots", $aioseop_options ) ) {
+		if ( array_key_exists( "{$prefix}robots", $aioseop_options['modules'][ "{$prefix}options" ] ) ) {
 			// user has seen this options before we removed it.
-			$link	= ! empty( $aioseop_options[ "{$prefix}robots" ] );
+			$link	= ! empty( $aioseop_options['modules'][ "{$prefix}options" ][ "{$prefix}robots" ] );
 		}
 
 		/**
@@ -1119,7 +1119,9 @@ if ( ! function_exists( 'aioseop_set_link_to_robots_behavior' ) ) {
 		 */
 		$link	= apply_filters( $prefix . 'link_to_robots', $link );
 
-		$aioseop_options[ "{$prefix}robots" ] = $link;
+		$aioseop_options['modules'][ "{$prefix}options" ][ "{$prefix}robots" ] = $link;
 		update_option( 'aioseop_options', $aioseop_options );
 	}
 }
+
+

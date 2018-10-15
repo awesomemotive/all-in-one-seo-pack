@@ -121,6 +121,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					'name'    => __( 'Added to Virtual Robots.txt', 'all-in-one-seo-pack' ),
 					'type'		=> 'status-button',
 					'value' => $this->has_option( 'robots' ) ? ( $this->option_isset( 'robots' ) ? 1 : 0 ) : 1,
+					'save'    => false,
 				),
 				'rewrite'    => array(
 					'name'    => __( 'Dynamically Generate Sitemap', 'all-in-one-seo-pack' ),
@@ -304,6 +305,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			add_action( 'transition_post_status', array( $this, 'update_sitemap_from_posts' ), 10, 3 );
 			add_action( 'after_doing_aioseop_updates', array( $this, 'scan_sitemaps' ) );
 			add_action( 'all_admin_notices', array( $this, 'sitemap_notices' ) );
+			add_action( 'admin_init', array( $this, 'init_removed_options_behavior' ) );
+		}
+
+		/**
+		 * Initializes the behavior of the options that have been removed from the UI.
+		 */
+		public function init_removed_options_behavior() {
+			aioseop_set_removed_options_behavior( $this->prefix );
 		}
 
 		/**
