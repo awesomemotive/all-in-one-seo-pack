@@ -1107,7 +1107,7 @@ if ( ! function_exists( 'aioseop_set_link_to_robots_behavior' ) ) {
 	function aioseop_set_link_to_robots_behavior( $prefix ) {
 		global $aioseop_options;
 
-		if ( empty( $aioseop_options ) ) {
+		if ( empty( $aioseop_options ) || ! array_key_exists( "{$prefix}options", $aioseop_options['modules'] ) ) {
 			return;
 		}
 
