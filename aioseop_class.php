@@ -1161,6 +1161,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 	}
 
+
 	// good candidate for pro dir
 	/**
 	 * Use custom callback for outputting snippet

@@ -888,5 +888,59 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			),
 		);
 	}
+
+	/**
+	 * Checks whether the sitemap is automatically added to the robots.txt or not.
+	 *
+	 * @dataProvider linkToRobotsProvider
+	 */
+	public function test_sitemap_link_in_robots( $linked ) {
+		if ( is_multisite() ) {
+			$this->markTestSkipped( 'Only for single site' );
+		}
+
+		$custom_options = array();
+		$custom_options['aiosp_sitemap_indexes'] = '';
+		$custom_options['aiosp_sitemap_images'] = '';
+		$custom_options['aiosp_sitemap_gzipped'] = 'on';
+
+		$this->_setup_options( 'sitemap', $custom_options );
+ 
+		if ( ! $linked ) {
+			add_filter( 'aiosp_sitemap_link_to_robots', '__return_false' );
+		}
+
+		do_action('aioseop_ut_aiosp_sitemap_admin_init');
+		$aioseop_options = get_option( 'aioseop_options' );
+
+		if ( $linked ) {
+			$this->assertEquals( 'on', $aioseop_options['modules'][ "aiosp_sitemap_options" ][ "aiosp_sitemap_robots" ] );
+		} else {
+			$this->assertEquals( '', $aioseop_options['modules'][ "aiosp_sitemap_options" ][ "aiosp_sitemap_robots" ] );
+		}
+
+		do_action('init');
+
+		error_reporting(0);
+		ob_start();
+		do_action( 'do_robots' );
+		$robots = ob_get_clean();
+
+		if ( $linked ) {
+			$this->assertContains( 'sitemap.xml.gz', $robots );
+		} else {
+			$this->assertNotContains( 'sitemap.xml.gz', $robots );
+		}
+	}
+
+	/**
+	 * Provides whether to link sitemap to robots or not.
+	 */
+	public function linkToRobotsProvider() {
+		return array(
+			array( true ),
+			array( false ),
+		);
+	}
 }
 

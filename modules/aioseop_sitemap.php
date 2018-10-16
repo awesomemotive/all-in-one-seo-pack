@@ -51,7 +51,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'author'          => __( 'Include Author Archives in your sitemap.', 'all-in-one-seo-pack' ),
 				'images'          => __( 'Exclude Images in your sitemap.', 'all-in-one-seo-pack' ),
 				'gzipped'         => __( 'Create a compressed sitemap file in .xml.gz format.', 'all-in-one-seo-pack' ),
-				'robots'          => __( 'Places a link to your Sitemap.xml into your virtual Robots.txt file.', 'all-in-one-seo-pack' ),
+				'robots'          => __( 'Indicates if a link to the Sitemap.xml has been placed in your virtual Robots.txt file.', 'all-in-one-seo-pack' ),
 				'rewrite'         => __( 'Dynamically creates the XML sitemap instead of using a static file.', 'all-in-one-seo-pack' ),
 				'addl_url'        => __( 'URL to the page. This field accepts relative URLs or absolute URLs with the protocol specified.', 'all-in-one-seo-pack' ),
 				'addl_prio'       => __( 'The priority of the page.', 'all-in-one-seo-pack' ),
@@ -118,8 +118,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					'default' => 'On',
 				),
 				'robots'     => array(
-					'name'    => __( 'Link From Virtual Robots.txt', 'all-in-one-seo-pack' ),
-					'default' => 'On',
+					'name'    => __( 'Added to Virtual Robots.txt', 'all-in-one-seo-pack' ),
+					'type'		=> 'status-button',
+					'value' => $this->has_option( 'robots' ) ? ( $this->option_isset( 'robots' ) ? 1 : 0 ) : 1,
+					'save'    => false,
 				),
 				'rewrite'    => array(
 					'name'    => __( 'Dynamically Generate Sitemap', 'all-in-one-seo-pack' ),
@@ -303,6 +305,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			add_action( 'transition_post_status', array( $this, 'update_sitemap_from_posts' ), 10, 3 );
 			add_action( 'after_doing_aioseop_updates', array( $this, 'scan_sitemaps' ) );
 			add_action( 'all_admin_notices', array( $this, 'sitemap_notices' ) );
+			add_action( 'admin_init', array( $this, 'init_removed_options_behavior' ) );
+
+			// We want to define this because calling admin init in the unit tests causes an error and does not call this method.
+			if ( defined( 'AIOSEOP_UNIT_TESTING' ) ) {
+				add_action( "aioseop_ut_{$this->prefix}admin_init", array( $this, 'init_removed_options_behavior' ) );
+			}
+		}
+
+		/**
+		 * Initializes the behavior of the options that have been removed from the UI.
+		 */
+		public function init_removed_options_behavior() {
+			aioseop_set_removed_options_behavior( $this->prefix );
 		}
 
 		/**
