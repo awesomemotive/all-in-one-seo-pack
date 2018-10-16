@@ -1433,7 +1433,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						} else {
 							// For everything else.
 							foreach ( $filtered_value as $f ) {
-								echo '<meta ' . $tags[ $t ]['name'] . '="' . $v . '" ' . $tags[ $t ]['value'] . '="' . $f . '" />' . "\n";
+								// #1363: use esc_attr( $f ) instead of htmlspecialchars_decode( $f, ENT_QUOTES )
+								echo '<meta ' . $tags[ $t ]['name'] . '="' . $v . '" ' . $tags[ $t ]['value'] . '="' . esc_attr( $f ) . '" />' . "\n";
 							}
 						}
 					}

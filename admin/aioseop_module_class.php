@@ -2319,6 +2319,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$buf .= "<input name='$name' type='{$options['type']}' $attr>\n";
 					break;
 				case 'textarea':
+					// #1363: prevent characters like ampersand in title and description (in social meta module) from getting changed to &amp;
+					if ( in_array( $name, array( 'aiosp_opengraph_hometitle', 'aiosp_opengraph_description' ), true ) ) {
+						$value	= htmlspecialchars_decode( $value, ENT_QUOTES );
+					}
 					$buf .= "<textarea name='$name' $attr>$value</textarea>";
 					break;
 				case 'image':
@@ -2548,7 +2552,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 							$this->options[ $k ] = urlencode_deep( $this->options[ $k ] );
 							break;
 						case 'textarea':
-							$this->options[ $k ] = wp_kses_post( $this->options[ $k ] );
+							// #1363: prevent characters like ampersand in title and description (in social meta module) from getting changed to &amp;
+							if ( ! ( 'opengraph' === $location && in_array( $k, array( 'aiosp_opengraph_hometitle', 'aiosp_opengraph_description' ), true ) ) ) {
+								$this->options[ $k ] = wp_kses_post( $this->options[ $k ] );
+							}
 							$this->options[ $k ] = htmlspecialchars( $this->options[ $k ], ENT_QUOTES );
 							break;
 						case 'filename':

@@ -1732,7 +1732,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title = apply_filters( 'aioseop_title_page', $title );
 
 			return $title;
-		} elseif ( is_single() ) {
+		} elseif ( is_single() || $this->check_singular() ) {
 			// We're not in the loop :(.
 			if ( null === $post ) {
 				return false;
@@ -2482,7 +2482,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 		} elseif ( is_front_page() ) {
 			$description = $this->get_aioseop_description( $post );
-		} elseif ( is_single() || is_page() || is_attachment() || is_home() || $this->is_static_posts_page() ) {
+		} elseif ( is_single() || is_page() || is_attachment() || is_home() || $this->is_static_posts_page() || $this->check_singular() ) {
 			$description = $this->get_aioseop_description( $post );
 		} elseif ( ( is_category() || is_tag() || is_tax() ) && $this->show_page_description() ) {
 			if ( ! empty( $opts ) && AIOSEOPPRO ) {
@@ -2537,6 +2537,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return mixed
 	 */
 	function get_page_number() {
+		global $post;
+		if ( is_singular() && false === strpos( $post->post_content, '<!--nextpage-->' ) ) {
+			return null;
+		}
 		$page = get_query_var( 'page' );
 		if ( empty( $page ) ) {
 			$page = get_query_var( 'paged' );
@@ -2621,7 +2625,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function trim_text_without_filters_full_length( $text ) {
 		$text = str_replace( ']]>', ']]&gt;', $text );
-		$text = preg_replace( '|\[(.+?)\](.+?\[/\\1\])?|s', '', $text );
 		$text = wp_strip_all_tags( $text );
 
 		return trim( $text );
@@ -2637,7 +2640,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function trim_excerpt_without_filters( $text, $max = 0 ) {
 		$text = str_replace( ']]>', ']]&gt;', $text );
-		$text = preg_replace( '|\[(.+?)\](.+?\[/\\1\])?|s', '', $text );
 		$text = wp_strip_all_tags( $text );
 		// Treat other common word-break characters like a space.
 		$text2 = preg_replace( '/[,._\-=+&!\?;:*]/s', ' ', $text );
@@ -2684,6 +2686,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			return false;
 		}
 		$link    = '';
+		// this boolean will determine if any additional parameters will be added to the final link or not.
+		// this is especially useful in issues such as #491.
+		$add_query_params = false;
 		$haspost = false;
 		if ( ! empty( $query->posts ) ) {
 			$haspost = count( $query->posts ) > 0;
@@ -2704,6 +2709,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				default:
 					return false;
 			}
+			$add_query_params = true;
 		} elseif ( $query->is_home && ( get_option( 'show_on_front' ) == 'page' ) && ( $pageid = get_option( 'page_for_posts' ) ) ) {
 			$link = aioseop_get_permalink( $pageid );
 		} elseif ( is_front_page() || ( $query->is_home && ( get_option( 'show_on_front' ) != 'page' || ! get_option( 'page_for_posts' ) ) ) ) {
@@ -2729,18 +2735,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$link = get_tag_link( $tag->term_id );
 			}
 		} elseif ( $query->is_day && $haspost ) {
-			$link = get_day_link(
-				get_query_var( 'year' ),
-				get_query_var( 'monthnum' ),
-				get_query_var( 'day' )
-			);
+			$link = get_day_link( get_query_var( 'year' ), get_query_var( 'monthnum' ), get_query_var( 'day' ) );
+			$add_query_params = true;
 		} elseif ( $query->is_month && $haspost ) {
-			$link = get_month_link(
-				get_query_var( 'year' ),
-				get_query_var( 'monthnum' )
-			);
+			$link = get_month_link( get_query_var( 'year' ), get_query_var( 'monthnum' ) );
+			$add_query_params = true;
 		} elseif ( $query->is_year && $haspost ) {
 			$link = get_year_link( get_query_var( 'year' ) );
+			$add_query_params = true;
 		} elseif ( $query->is_tax && $haspost ) {
 			$taxonomy = get_query_var( 'taxonomy' );
 			$term     = get_query_var( 'term' );
@@ -2762,6 +2764,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$link = $this->get_paged( $link );
 		}
 
+		if ( $add_query_params ) {
+			$post_type = get_query_var( 'post_type' );
+			if ( ! empty( $post_type ) ) {
+				$link = add_query_arg( 'post_type', $post_type, $link );
+			}
+		}
+
 		return $link;
 	}
 
@@ -2779,9 +2788,19 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		if ( ! empty( $page ) && $page > 1 ) {
 			if ( $page == get_query_var( 'page' ) ) {
-				$link = trailingslashit( $link ) . "$page";
+				if ( get_query_var( 'p' ) ) {
+					// non-pretty urls.
+					$link = add_query_arg( 'page', $page, $link );
+				} else {
+					$link = trailingslashit( $link ) . "$page";
+				}
 			} else {
-				$link = trailingslashit( $link ) . trailingslashit( $page_name ) . $page;
+				if ( get_query_var( 'p' ) ) {
+					// non-pretty urls.
+					$link = add_query_arg( 'page', $page, trailingslashit( $link ) . $page_name );
+				} else {
+					$link = trailingslashit( $link ) . trailingslashit( $page_name ) . $page;
+				}
 			}
 			$link = user_trailingslashit( $link, 'paged' );
 		}
@@ -2826,7 +2845,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			return null;
 		}
 		// If we are on synthetic pages.
-		if ( ! is_home() && ! is_page() && ! is_single() && ! $this->is_static_front_page() && ! $this->is_static_posts_page() && ! is_archive() && ! is_post_type_archive() && ! is_category() && ! is_tag() && ! is_tax() ) {
+		if ( ! is_home() && ! is_page() && ! is_single() && ! $this->is_static_front_page() && ! $this->is_static_posts_page() && ! is_archive() && ! is_post_type_archive() && ! is_category() && ! is_tag() && ! is_tax() && ! $this->check_singular() ) {
 			return null;
 		}
 		$keywords = array();
@@ -3565,25 +3584,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				}
 			} else {
 
-				// Make sure noindex works even of SEO is turned off for that post type.
-				$cp_noindex_active = false;
-				if ( ! empty( $aioseop_options['aiosp_cpostnoindex'] ) && is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
-					$cp_noindex_active = in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] );
-				}
-
-				if ( is_singular() && ! in_array( $post_type, $wp_post_types ) && ! is_front_page() && ! $cp_noindex_active ) {
-					return false;
-				}
-				if ( is_post_type_archive() && ! is_post_type_archive( $wp_post_types ) ) {
-					return false;
-				}
-			
-				// Make sure nofollow works even of SEO is turned off for that post type.
-				$cp_nofollow_active = false;
-				if ( ! empty( $aioseop_options['aiosp_cpostnofollow'] ) && is_array( $aioseop_options['aiosp_cpostnofollow'] ) ) {
-					$cp_nofollow_active = in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] );
-				}
-				if ( is_singular() && ! in_array( $post_type, $wp_post_types ) && ! is_front_page() && ! $cp_nofollow_active ) {
+				if ( is_singular() && ! in_array( $post_type, $wp_post_types ) && ! is_front_page() ) {
 					return false;
 				}
 				if ( is_post_type_archive() && ! is_post_type_archive( $wp_post_types ) ) {
@@ -3881,6 +3882,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( ! $this->is_page_included() ) {
+			// Handle noindex, nofollow - robots meta.
+			$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
+			if ( ! empty( $robots_meta ) ) {
+				// Should plugin & version details be added here as well?
+				echo '<meta name="robots" content="' . esc_attr( $robots_meta ) . '" />' . "\n";
+			}
+
 			if ( ! empty( $old_wp_query ) ) {
 				// Change the query back after we've finished.
 				$GLOBALS['wp_query'] = $old_wp_query;
@@ -3893,6 +3901,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		global $aioseop_update_checker, $wp_query, $aioseop_options, $posts;
 		static $aioseop_dup_counter = 0;
 		$aioseop_dup_counter ++;
+    
 		if ( ! defined( 'AIOSEOP_UNIT_TESTING' ) && $aioseop_dup_counter > 1 ) {
 			echo "\n<!-- " . sprintf( __( 'Debug Warning: All in One SEO Pack meta data was included again from %1$s filter. Called %2$s times!', 'all-in-one-seo-pack' ), current_filter(), $aioseop_dup_counter ) . " -->\n";
 			if ( ! empty( $old_wp_query ) ) {
@@ -4067,6 +4076,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$url = '';
 			if ( ! empty( $aioseop_options['aiosp_customize_canonical_links'] ) && ! empty( $opts['aiosp_custom_link'] ) && ! is_home() ) {
 				$url = $opts['aiosp_custom_link'];
+				if ( apply_filters( 'aioseop_canonical_url_pagination', $show_page ) ) {
+					$url = $this->get_paged( $url );
+				}
 			}
 			if ( empty( $url ) ) {
 				$url = $this->aiosp_mrt_get_url( $wp_query, $show_page );
@@ -4239,7 +4251,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$nofollow = 'nofollow';
 			}
 			// #322: duplicating this code so that we don't step on some other entities' toes.
-		} elseif ( is_single() || is_page() || $this->is_static_posts_page() || is_attachment() || is_category() || is_tag() || is_tax() || ( $page > 1 ) ) {
+		} elseif ( is_single() || is_page() || $this->is_static_posts_page() || is_attachment() || is_category() || is_tag() || is_tax() || ( $page > 1 ) || $this->check_singular() ) {
 			$post_type = get_post_type();
 			if ( $aiosp_noindex || $aiosp_nofollow || ! empty( $aioseop_options['aiosp_cpostnoindex'] )
 				 || ! empty( $aioseop_options['aiosp_cpostnofollow'] ) || ! empty( $aioseop_options['aiosp_paginated_noindex'] ) || ! empty( $aioseop_options['aiosp_paginated_nofollow'] )
@@ -4271,8 +4283,28 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Determine if post is password protected.
-	 * @since 2.3.11.5
+	 * Determine if the post is 'like' singular. In some specific instances, such as when the Reply post type of bbpress is loaded in its own page,
+	 * it reflects as singular intead of single
+	 *
+	 * @since 2.4.2
+	 *
+	 * @return bool
+	 */
+	private function check_singular() {
+		global $wp_query, $post;
+		$is_singular    = false;
+		if ( is_singular() ) {
+			// #1297 - support for bbpress 'reply' post type.
+			if ( $post && 'reply' === $post->post_type ) {
+				$is_singular    = true;
+			}
+		}
+		return $is_singular;
+	}
+
+	/**
+   * Determine if post is password protected.
+   * @since 2.3.11.5
 	 * @return bool
 	 */
 	function is_password_protected() {
@@ -4449,6 +4481,8 @@ EOF;
 				if ( $numpages > 1 ) {
 					$multipage = 1;
 				}
+			} else {
+				$page = null;
 			}
 			if ( ! empty( $page ) ) {
 				if ( $page > 1 ) {
