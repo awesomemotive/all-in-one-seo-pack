@@ -126,7 +126,7 @@ class Test_GetMainDescription extends AIOSEOP_Test_Base	{
 	 * set_current_screen
 	 * @link https://codex.wordpress.org/Plugin_API/Admin_Screen_Reference
 	 *
-	 * @dataProvider dataProvider_get_main_description
+	 * @dataProvider data_get_main_description
 	 *
 	 * @since 2.4.4.1
 	 *
