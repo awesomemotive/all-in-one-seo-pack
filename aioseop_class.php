@@ -2605,12 +2605,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$description = $this->trim_text_without_filters_full_length( $this->internationalize( $post->post_excerpt ) );
 			}
 			if ( ! $description && isset( $aioseop_options['aiosp_generate_descriptions'] ) && $aioseop_options['aiosp_generate_descriptions'] ) {
-				$content = $post->post_content;
-				if ( ! empty( $aioseop_options['aiosp_run_shortcodes'] ) ) {
-					$content = do_shortcode( $content );
-				}
-				$description = $this->trim_text_without_filters_full_length( $this->internationalize( $content ) );
+				$description = $this->trim_text_without_filters_full_length( $this->internationalize( $post->post_content ) );
 			}
+		}
+
+		if ( ! empty( $aioseop_options['aiosp_run_shortcodes'] ) ) {
+			$description = do_shortcode( $description );
 		}
 
 		return $description;
