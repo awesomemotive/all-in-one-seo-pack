@@ -20,6 +20,7 @@ module.exports = function(grunt) {
 			'!.git/**',
 			'!vendor/**',
 			'!js/vendor/*.js',
+            '!public/js/vendor/*.js',
 			'!node_modules/**',
 			'!logs/**'
 			],
