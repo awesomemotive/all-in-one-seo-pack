@@ -3870,9 +3870,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @since 2.3.14 #932 Removes filter "aioseop_description".
 	 */
 	function wp_head() {
-		if ( ! $this->is_seo_enabled_for_cpt() ) {
-			return;
-		}
 		// Check if we're in the main query to support bad themes and plugins.
 		global $wp_query;
 		$old_wp_query = null;
@@ -3897,6 +3894,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 			return;
 		}
+
+		if ( ! $this->is_seo_enabled_for_cpt() ) {
+			return;
+		}
+
 		$opts = $this->meta_opts;
 		global $aioseop_update_checker, $wp_query, $aioseop_options, $posts;
 		static $aioseop_dup_counter = 0;
