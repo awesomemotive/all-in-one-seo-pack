@@ -1503,3 +1503,7 @@ textarea.robots-text {
 	width: 100%;
 	height: 100%;
 }
+
+div#aiosp_sitemap_status_metabox .toggle-indicator {
+    display:none;
+}

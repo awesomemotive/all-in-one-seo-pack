@@ -117,10 +117,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( '%post_date% - The date the page was published (localized)', 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( '%post_year% - The year the page was published (localized)', 'all-in-one-seo-pack' ) . '</li><li>' .
-				__( '%post_month% - The month the page was published (localized)', 'all-in-one-seo-pack' ) . '</li>',
+				__( '%post_month% - The month the page was published (localized)', 'all-in-one-seo-pack' ) . '</li></ul>',
 			'post_title_format'           =>
 				__( 'This controls the format of the title tag for Posts.<br />The following macros are supported:', 'all-in-one-seo-pack' )
-				. '<li><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
+				. '<ul><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( '%blog_description% - Your blog description', 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( '%post_title% - The original title of the post', 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( '%category_title% - The (main) category of the post', 'all-in-one-seo-pack' ) . '</li><li>' .
@@ -132,7 +132,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( '%post_date% - The date the post was published (localized)', 'all-in-one-seo-pack' ) . '</li><li>' .
 				__( '%post_year% - The year the post was published (localized)', 'all-in-one-seo-pack' ) . '</li><li>' .
-				__( '%post_month% - The month the post was published (localized)', 'all-in-one-seo-pack' ) . '</li>',
+				__( '%post_month% - The month the post was published (localized)', 'all-in-one-seo-pack' ) . '</li></ul>',
 			'category_title_format'       =>
 				__( 'This controls the format of the title tag for Category Archives.<br />The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
@@ -176,13 +176,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 											 __( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) . '</li><li>' .
 											 __( '%post_date% - The date the page/post was published (localized)', 'all-in-one-seo-pack' ) . '</li><li>' .
 											 __( '%post_year% - The year the page/post was published (localized)', 'all-in-one-seo-pack' ) . '</li><li>' .
-											 __( '%post_month% - The month the page/post was published (localized)', 'all-in-one-seo-pack' ) . '</li>',
+											 __( '%post_month% - The month the page/post was published (localized)', 'all-in-one-seo-pack' ) . '</li></ul>',
 			'404_title_format'            => __( 'This controls the format of the title tag for the 404 page.<br />The following macros are supported:', 'all-in-one-seo-pack' ) .
 											 '<ul><li>' . __( '%blog_title% - Your blog title', 'all-in-one-seo-pack' ) . '</li><li>' .
 											 __( '%blog_description% - Your blog description', 'all-in-one-seo-pack' ) . '</li><li>' .
 											 __( '%request_url% - The original URL path, like "/url-that-does-not-exist/"', 'all-in-one-seo-pack' ) . '</li><li>' .
 											 __( '%request_words% - The URL path in human readable form, like "Url That Does Not Exist"', 'all-in-one-seo-pack' ) . '</li><li>' .
-											 __( '%404_title% - Additional 404 title input"', 'all-in-one-seo-pack' ) . '</li></ul>',
+											 __( '%404_title% - Additional 404 title input', 'all-in-one-seo-pack' ) . '</li></ul>',
 			'paged_format'                => __( 'This string gets appended/prepended to titles of paged index pages (like home or archive pages).', 'all-in-one-seo-pack' )
 											 . __( 'The following macros are supported:', 'all-in-one-seo-pack' )
 											 . '<ul><li>' . __( '%page% - The page number', 'all-in-one-seo-pack' ) . '</li></ul>',
@@ -1571,6 +1571,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 	/*** Used to filter wp_title(), get our title. ***/
 	function wp_title() {
+		if ( ! $this->is_seo_enabled_for_cpt() ) {
+			return;
+		}
+
 		global $aioseop_options;
 		$title = false;
 		$post  = $this->get_queried_object();
@@ -1728,7 +1732,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title = apply_filters( 'aioseop_title_page', $title );
 
 			return $title;
-		} elseif ( is_single() ) {
+		} elseif ( is_single() || $this->check_singular() ) {
 			// We're not in the loop :(.
 			if ( null === $post ) {
 				return false;
@@ -2478,7 +2482,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 		} elseif ( is_front_page() ) {
 			$description = $this->get_aioseop_description( $post );
-		} elseif ( is_single() || is_page() || is_attachment() || is_home() || $this->is_static_posts_page() ) {
+		} elseif ( is_single() || is_page() || is_attachment() || is_home() || $this->is_static_posts_page() || $this->check_singular() ) {
 			$description = $this->get_aioseop_description( $post );
 		} elseif ( ( is_category() || is_tag() || is_tax() ) && $this->show_page_description() ) {
 			if ( ! empty( $opts ) && AIOSEOPPRO ) {
@@ -2533,6 +2537,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return mixed
 	 */
 	function get_page_number() {
+		global $post;
+		if ( is_singular() && false === strpos( $post->post_content, '<!--nextpage-->' ) ) {
+			return null;
+		}
 		$page = get_query_var( 'page' );
 		if ( empty( $page ) ) {
 			$page = get_query_var( 'paged' );
@@ -2617,7 +2625,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function trim_text_without_filters_full_length( $text ) {
 		$text = str_replace( ']]>', ']]&gt;', $text );
-		$text = preg_replace( '|\[(.+?)\](.+?\[/\\1\])?|s', '', $text );
 		$text = wp_strip_all_tags( $text );
 
 		return trim( $text );
@@ -2633,7 +2640,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function trim_excerpt_without_filters( $text, $max = 0 ) {
 		$text = str_replace( ']]>', ']]&gt;', $text );
-		$text = preg_replace( '|\[(.+?)\](.+?\[/\\1\])?|s', '', $text );
 		$text = wp_strip_all_tags( $text );
 		// Treat other common word-break characters like a space.
 		$text2 = preg_replace( '/[,._\-=+&!\?;:*]/s', ' ', $text );
@@ -2680,6 +2686,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			return false;
 		}
 		$link    = '';
+		// this boolean will determine if any additional parameters will be added to the final link or not.
+		// this is especially useful in issues such as #491.
+		$add_query_params = false;
 		$haspost = false;
 		if ( ! empty( $query->posts ) ) {
 			$haspost = count( $query->posts ) > 0;
@@ -2700,6 +2709,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				default:
 					return false;
 			}
+			$add_query_params = true;
 		} elseif ( $query->is_home && ( get_option( 'show_on_front' ) == 'page' ) && ( $pageid = get_option( 'page_for_posts' ) ) ) {
 			$link = aioseop_get_permalink( $pageid );
 		} elseif ( is_front_page() || ( $query->is_home && ( get_option( 'show_on_front' ) != 'page' || ! get_option( 'page_for_posts' ) ) ) ) {
@@ -2725,18 +2735,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$link = get_tag_link( $tag->term_id );
 			}
 		} elseif ( $query->is_day && $haspost ) {
-			$link = get_day_link(
-				get_query_var( 'year' ),
-				get_query_var( 'monthnum' ),
-				get_query_var( 'day' )
-			);
+			$link = get_day_link( get_query_var( 'year' ), get_query_var( 'monthnum' ), get_query_var( 'day' ) );
+			$add_query_params = true;
 		} elseif ( $query->is_month && $haspost ) {
-			$link = get_month_link(
-				get_query_var( 'year' ),
-				get_query_var( 'monthnum' )
-			);
+			$link = get_month_link( get_query_var( 'year' ), get_query_var( 'monthnum' ) );
+			$add_query_params = true;
 		} elseif ( $query->is_year && $haspost ) {
 			$link = get_year_link( get_query_var( 'year' ) );
+			$add_query_params = true;
 		} elseif ( $query->is_tax && $haspost ) {
 			$taxonomy = get_query_var( 'taxonomy' );
 			$term     = get_query_var( 'term' );
@@ -2758,6 +2764,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$link = $this->get_paged( $link );
 		}
 
+		if ( $add_query_params ) {
+			$post_type = get_query_var( 'post_type' );
+			if ( ! empty( $post_type ) ) {
+				$link = add_query_arg( 'post_type', $post_type, $link );
+			}
+		}
+
 		return $link;
 	}
 
@@ -2775,9 +2788,19 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		if ( ! empty( $page ) && $page > 1 ) {
 			if ( $page == get_query_var( 'page' ) ) {
-				$link = trailingslashit( $link ) . "$page";
+				if ( get_query_var( 'p' ) ) {
+					// non-pretty urls.
+					$link = add_query_arg( 'page', $page, $link );
+				} else {
+					$link = trailingslashit( $link ) . "$page";
+				}
 			} else {
-				$link = trailingslashit( $link ) . trailingslashit( $page_name ) . $page;
+				if ( get_query_var( 'p' ) ) {
+					// non-pretty urls.
+					$link = add_query_arg( 'page', $page, trailingslashit( $link ) . $page_name );
+				} else {
+					$link = trailingslashit( $link ) . trailingslashit( $page_name ) . $page;
+				}
 			}
 			$link = user_trailingslashit( $link, 'paged' );
 		}
@@ -2822,7 +2845,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			return null;
 		}
 		// If we are on synthetic pages.
-		if ( ! is_home() && ! is_page() && ! is_single() && ! $this->is_static_front_page() && ! $this->is_static_posts_page() && ! is_archive() && ! is_post_type_archive() && ! is_category() && ! is_tag() && ! is_tax() ) {
+		if ( ! is_home() && ! is_page() && ! is_single() && ! $this->is_static_front_page() && ! $this->is_static_posts_page() && ! is_archive() && ! is_post_type_archive() && ! is_category() && ! is_tag() && ! is_tax() && ! $this->check_singular() ) {
 			return null;
 		}
 		$keywords = array();
@@ -3279,21 +3302,38 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Admin Enqueue Styles All (Screens)
+	 *
+	 * Enqueue style on all admin screens.
+	 *
+	 * @since 2.9
+	 *
+	 * @param $hook_suffix
+	 */
+	public function admin_enqueue_styles_all( $hook_suffix ) {
+		wp_enqueue_style(
+			'aiosp_admin_style',
+			AIOSEOP_PLUGIN_URL . 'css/aiosp_admin.css',
+			array(),
+			AIOSEOP_VERSION
+		);
+	}
+
+	/**
 	 * Admin Enqueue Scripts
 	 *
 	 * @since 2.5.0
+	 * @since 2.9 Refactor code to `admin_enqueue_scripts` hook, and move enqueue stylesheet to \All_in_One_SEO_Pack::admin_enqueue_styles_all().
 	 *
 	 * @uses All_in_One_SEO_Pack_Module::admin_enqueue_scripts();
+	 *
+	 * @param string $hook_suffix
 	 */
-	function admin_enqueue_scripts() {
-		wp_enqueue_style( 'aiosp_admin_style', AIOSEOP_PLUGIN_URL . 'css/aiosp_admin.css', array(), AIOSEOP_VERSION );
-		parent::admin_enqueue_scripts();
-	}
-
-	function enqueue_scripts() {
+	public function admin_enqueue_scripts( $hook_suffix ) {
 		add_filter( "{$this->prefix}display_settings", array( $this, 'filter_settings' ), 10, 3 );
 		add_filter( "{$this->prefix}display_options", array( $this, 'filter_options' ), 10, 2 );
-		parent::enqueue_scripts();
+
+		parent::admin_enqueue_scripts( $hook_suffix );
 	}
 
 	/**
@@ -3544,25 +3584,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				}
 			} else {
 
-				// Make sure noindex works even of SEO is turned off for that post type.
-				$cp_noindex_active = false;
-				if ( ! empty( $aioseop_options['aiosp_cpostnoindex'] ) && is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
-					$cp_noindex_active = in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] );
-				}
-
-				if ( is_singular() && ! in_array( $post_type, $wp_post_types ) && ! is_front_page() && ! $cp_noindex_active ) {
-					return false;
-				}
-				if ( is_post_type_archive() && ! is_post_type_archive( $wp_post_types ) ) {
-					return false;
-				}
-			
-				// Make sure nofollow works even of SEO is turned off for that post type.
-				$cp_nofollow_active = false;
-				if ( ! empty( $aioseop_options['aiosp_cpostnofollow'] ) && is_array( $aioseop_options['aiosp_cpostnofollow'] ) ) {
-					$cp_nofollow_active = in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] );
-				}
-				if ( is_singular() && ! in_array( $post_type, $wp_post_types ) && ! is_front_page() && ! $cp_nofollow_active ) {
+				if ( is_singular() && ! in_array( $post_type, $wp_post_types ) && ! is_front_page() ) {
 					return false;
 				}
 				if ( is_post_type_archive() && ! is_post_type_archive( $wp_post_types ) ) {
@@ -3695,7 +3717,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 
 			add_action( 'admin_head', array( $this, 'add_page_icon' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles_all' ) );
 			add_action( 'admin_init', 'aioseop_addmycolumns', 1 );
 			add_action( 'admin_init', 'aioseop_handle_ignore_notice' );
 			if ( AIOSEOPPRO ) {
@@ -3802,6 +3824,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @since 2.3.11.5
 	 */
 	function amp_head() {
+		if ( ! $this->is_seo_enabled_for_cpt() ) {
+			return;
+		}
+
 		$post = $this->get_queried_object();
 		$description = apply_filters( 'aioseop_amp_description', $this->get_main_description( $post ) );    // Get the description.
 
@@ -3809,6 +3835,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( isset( $description ) && false == $description ) {
 			return;
 		}
+
+		global $aioseop_options;
 
 		// Handle the description format.
 		if ( isset( $description ) && ( $this->strlen( $description ) > $this->minimum_description_length ) && ! ( is_front_page() && is_paged() ) ) {
@@ -3831,10 +3859,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Checks whether the current CPT should show the SEO tags.
+	 */
+	private function is_seo_enabled_for_cpt() {
+		global $aioseop_options;
+		return 'on' === $aioseop_options['aiosp_enablecpost'] && in_array( get_post_type(), $aioseop_options['aiosp_cpostactive'], true );
+	}
+
+	/**
 	 * @since 2.3.14 #932 Removes filter "aioseop_description".
 	 */
 	function wp_head() {
-
 		// Check if we're in the main query to support bad themes and plugins.
 		global $wp_query;
 		$old_wp_query = null;
@@ -3844,6 +3879,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( ! $this->is_page_included() ) {
+			// Handle noindex, nofollow - robots meta.
+			$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
+			if ( ! empty( $robots_meta ) ) {
+				// Should plugin & version details be added here as well?
+				echo '<meta name="robots" content="' . esc_attr( $robots_meta ) . '" />' . "\n";
+			}
+
 			if ( ! empty( $old_wp_query ) ) {
 				// Change the query back after we've finished.
 				$GLOBALS['wp_query'] = $old_wp_query;
@@ -3852,10 +3894,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 			return;
 		}
+
+		if ( ! $this->is_seo_enabled_for_cpt() ) {
+			return;
+		}
+
 		$opts = $this->meta_opts;
 		global $aioseop_update_checker, $wp_query, $aioseop_options, $posts;
 		static $aioseop_dup_counter = 0;
 		$aioseop_dup_counter ++;
+    
 		if ( ! defined( 'AIOSEOP_UNIT_TESTING' ) && $aioseop_dup_counter > 1 ) {
 			echo "\n<!-- " . sprintf( __( 'Debug Warning: All in One SEO Pack meta data was included again from %1$s filter. Called %2$s times!', 'all-in-one-seo-pack' ), current_filter(), $aioseop_dup_counter ) . " -->\n";
 			if ( ! empty( $old_wp_query ) ) {
@@ -3954,7 +4002,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				) as $k => $v
 			) {
 				if ( ! empty( $aioseop_options[ "aiosp_{$k}_verify" ] ) ) {
-					$meta_string .= '<meta name="' . $v . '" content="' . trim( strip_tags( $aioseop_options[ "aiosp_{$k}_verify" ] ) ) . '" />' . "\n";
+					$meta_string .= '<meta name="' . $v . '" content="' . trim( strip_tags( $aioseop_options["aiosp_{$k}_verify"] ) ) . '" />' . "\n";
 				}
 			}
 
@@ -4030,6 +4078,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$url = '';
 			if ( ! empty( $aioseop_options['aiosp_customize_canonical_links'] ) && ! empty( $opts['aiosp_custom_link'] ) && ! is_home() ) {
 				$url = $opts['aiosp_custom_link'];
+				if ( apply_filters( 'aioseop_canonical_url_pagination', $show_page ) ) {
+					$url = $this->get_paged( $url );
+				}
 			}
 			if ( empty( $url ) ) {
 				$url = $this->aiosp_mrt_get_url( $wp_query, $show_page );
@@ -4202,7 +4253,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$nofollow = 'nofollow';
 			}
 			// #322: duplicating this code so that we don't step on some other entities' toes.
-		} elseif ( is_single() || is_page() || $this->is_static_posts_page() || is_attachment() || is_category() || is_tag() || is_tax() || ( $page > 1 ) ) {
+		} elseif ( is_single() || is_page() || $this->is_static_posts_page() || is_attachment() || is_category() || is_tag() || is_tax() || ( $page > 1 ) || $this->check_singular() ) {
 			$post_type = get_post_type();
 			if ( $aiosp_noindex || $aiosp_nofollow || ! empty( $aioseop_options['aiosp_cpostnoindex'] )
 				 || ! empty( $aioseop_options['aiosp_cpostnofollow'] ) || ! empty( $aioseop_options['aiosp_paginated_noindex'] ) || ! empty( $aioseop_options['aiosp_paginated_nofollow'] )
@@ -4234,8 +4285,28 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Determine if post is password protected.
-	 * @since 2.3.11.5
+	 * Determine if the post is 'like' singular. In some specific instances, such as when the Reply post type of bbpress is loaded in its own page,
+	 * it reflects as singular intead of single
+	 *
+	 * @since 2.4.2
+	 *
+	 * @return bool
+	 */
+	private function check_singular() {
+		global $wp_query, $post;
+		$is_singular    = false;
+		if ( is_singular() ) {
+			// #1297 - support for bbpress 'reply' post type.
+			if ( $post && 'reply' === $post->post_type ) {
+				$is_singular    = true;
+			}
+		}
+		return $is_singular;
+	}
+
+	/**
+   * Determine if post is password protected.
+   * @since 2.3.11.5
 	 * @return bool
 	 */
 	function is_password_protected() {
@@ -4412,6 +4483,8 @@ EOF;
 				if ( $numpages > 1 ) {
 					$multipage = 1;
 				}
+			} else {
+				$page = null;
 			}
 			if ( ! empty( $page ) ) {
 				if ( $page > 1 ) {
@@ -4803,6 +4876,7 @@ EOF;
 	}
 
 	function admin_menu() {
+		$this->check_recently_activated_modules( $_POST );
 		$file      = plugin_basename( __FILE__ );
 		$menu_name = __( 'All in One SEO', 'all-in-one-seo-pack' );
 
@@ -4972,6 +5046,32 @@ EOF;
 						$title .= "<a class='aioseop_help_text_link aioseop_meta_box_help' target='_blank' href='" . $m['help_link'] . "'><span>" . __( 'Help', 'all-in-one-seo-pack' ) . '</span></a>';
 					}
 					add_meta_box( $m['id'], $title, $m['callback'], $m['post_type'], $m['context'], $m['priority'], $m['callback_args'] );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Checks which module(s) have been (de)activated just now and fires a corresponding action.
+	 *
+	 * @param array $post Duplicate of $_POST.
+	 */
+	private function check_recently_activated_modules( $post ) {
+		global $aioseop_options;
+		$modules	= array();
+		if ( array_key_exists( 'modules', $aioseop_options ) && array_key_exists( 'aiosp_feature_manager_options', $aioseop_options['modules'] ) ) {
+			$modules = array_keys( $aioseop_options['modules']['aiosp_feature_manager_options'] );
+		}
+
+ 		if ( $modules ) {
+			foreach ( $modules as $module ) {
+				$name = str_replace( 'aiosp_feature_manager_enable_', '', $module );
+				if ( empty( $aioseop_options['modules']['aiosp_feature_manager_options'][ $module ] ) && ! empty( $post[ $module ] ) ) {
+					// this module was activated.
+					do_action( $this->prefix . 'activate_' . $name );
+				} else if ( ! empty( $aioseop_options['modules']['aiosp_feature_manager_options'][ $module ] ) && ! isset( $post[ $module ] ) ) {
+					// this module was deactivated. This action should be registered NOT in the specific module but elsewhere because that module is not going to be loaded.
+					do_action( $this->prefix . 'deactivate_' . $name );
 				}
 			}
 		}

@@ -420,10 +420,6 @@ function aioseop_embed_handler_html( $return, $url, $attr ) {
 	return AIO_ProGeneral::aioseop_embed_handler_html();
 }
 
-function aioseop_ajax_update_oembed() {
-	AIO_ProGeneral::aioseop_ajax_update_oembed();
-}
-
 if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 
 	function aioseop_ajax_save_url() {
@@ -880,6 +876,13 @@ if ( ! function_exists( 'aioseop_add_contactmethods' ) ) {
 
 if ( ! function_exists( 'aioseop_localize_script_data' ) ) {
 
+	/**
+	 * AIOSEOP Localize Script Data
+     *
+     * Used by the module base class script enqueue to localize data.
+     *
+     * @since ?
+	 */
 	function aioseop_localize_script_data() {
 		static $loaded = 0;
 		if ( ! $loaded ) {

@@ -4,7 +4,7 @@
 Plugin Name: All In One SEO Pack
 Plugin URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Description: Out-of-the-box SEO for your WordPress blog. Features like XML Sitemaps, SEO for custom post types, SEO for blogs or business sites, SEO for ecommerce sites, and much more. More than 30 million downloads since 2007.
-Version: 2.8
+Version: 2.9
 Author: Michael Torbert
 Author URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Text Domain: all-in-one-seo-pack
@@ -32,14 +32,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * The original WordPress SEO plugin.
  *
  * @package All-in-One-SEO-Pack
- * @version 2.8
+ * @version 2.9
  */
 
 if ( ! defined( 'AIOSEOPPRO' ) ) {
 	define( 'AIOSEOPPRO', false );
 }
 if ( ! defined( 'AIOSEOP_VERSION' ) ) {
-	define( 'AIOSEOP_VERSION', '2.8' );
+	define( 'AIOSEOP_VERSION', '2.9' );
 }
 global $aioseop_plugin_name;
 $aioseop_plugin_name = 'All in One SEO Pack';
@@ -480,9 +480,6 @@ if ( is_admin() || defined( 'AIOSEOP_UNIT_TESTING' ) ) {
 	add_action( 'wp_ajax_aioseo_dismiss_visibility_notice', 'aioseop_update_user_visibilitynotice' );
 	add_action( 'wp_ajax_aioseo_dismiss_woo_upgrade_notice', 'aioseop_woo_upgrade_notice_dismissed' );
 	add_action( 'wp_ajax_aioseo_dismiss_sitemap_max_url_notice', 'aioseop_sitemap_max_url_notice_dismissed' );
-	if ( AIOSEOPPRO ) {
-		add_action( 'wp_ajax_aioseop_ajax_update_oembed', 'aioseop_ajax_update_oembed' );
-	}
 }
 
 if ( ! function_exists( 'aioseop_scan_post_header' ) ) {

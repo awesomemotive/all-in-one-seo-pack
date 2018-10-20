@@ -601,6 +601,19 @@ jQuery( document ).ready(
 			}
 		);
 
+    jQuery( "div#aiosp_robots_default_metabox" )
+		.delegate(
+			"a.aiosp_robots_edit_rule", "click", function( e ) {
+				e.preventDefault();
+                jQuery('input[name="aiosp_robots_agent"]').val(jQuery(this).attr('data-agent'));
+                jQuery('select[name="aiosp_robots_type"]').val(jQuery(this).attr('data-type'));
+                jQuery('input[name="aiosp_robots_path"]').val(jQuery(this).attr('data-path'));
+                jQuery('input.add-edit-rule').val(jQuery('.aioseop_table').attr('data-edit-label'));
+                jQuery('input.edit-rule-id').val(jQuery(this).attr('data-id'));
+				return false;
+			}
+		);
+    
 		jQuery( "a.aiosp_robots_physical" ).on( 'click', function( e ) {
 			e.preventDefault();
 			aioseop_handle_post_url(

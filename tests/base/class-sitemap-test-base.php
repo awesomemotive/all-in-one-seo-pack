@@ -127,6 +127,7 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 		// @codingStandardsIgnoreStart
 		@unlink( $file );
 		// @codingStandardsIgnoreEnd
+
 		return $contents;
 	}
 
