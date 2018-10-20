@@ -68,7 +68,7 @@
 	</li>		
 	<li class="wp-person" id="EkoJR">
 	<a class="web" target="_blank" href="https://profiles.wordpress.org/EkoJR/"><img alt="" class="gravatar" src="https://secure.gravatar.com/avatar/bb4c78fe944b58bd5f127d836500c30a?s=200&d=mm&r=g">
-			Stanislav Samoilenko</a>
+			Ben Reames</a>
 	</li>
     <li class="wp-person" id="webaware">
     <a class="web" target="_blank" href="https://profiles.wordpress.org/webaware/"><img alt="" class="gravatar" src="https://secure.gravatar.com/avatar/aee800bc3644d9ebfa33c1ed9df5d958?s=200&d=mm&r=g">
