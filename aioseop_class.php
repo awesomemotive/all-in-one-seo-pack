@@ -2625,6 +2625,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function trim_text_without_filters_full_length( $text ) {
 		$text = str_replace( ']]>', ']]&gt;', $text );
+		$text = strip_shortcodes( $text );
 		$text = wp_strip_all_tags( $text );
 
 		return trim( $text );
@@ -2640,6 +2641,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function trim_excerpt_without_filters( $text, $max = 0 ) {
 		$text = str_replace( ']]>', ']]&gt;', $text );
+		$text = strip_shortcodes( $text );
 		$text = wp_strip_all_tags( $text );
 		// Treat other common word-break characters like a space.
 		$text2 = preg_replace( '/[,._\-=+&!\?;:*]/s', ' ', $text );
