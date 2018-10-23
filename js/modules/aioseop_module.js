@@ -52,11 +52,13 @@ function toggleVisibility( id ) {
  * @summary Counts characters.
  *
  * @since 1.0.0
+ * @since 2.9.1 Fix JS conflict with LearnDash and function name.
+ *
  * @param Object $field.
  * @param Object $cntfield.
  * @return Mixed.
  */
-function countChars( field, cntfield ) {
+function aioseopCountChars( field, cntfield ) {
 	var extra = 0;
 	var field_size;
 	if ( ( field.attr('name') == 'aiosp_title' )
@@ -864,9 +866,9 @@ function aiospinitSocialMetaInPosts($) {
 function aiospinitCounting(){
     /* count them characters */
 	jQuery( '.aioseop_count_chars' ).on('keyup keydown', function(){
-        countChars( jQuery(this).eq(0), jQuery(this).parent().find('[name="' + jQuery(this).attr('data-length-field') + '"]').eq(0));
+        aioseopCountChars( jQuery(this).eq(0), jQuery(this).parent().find('[name="' + jQuery(this).attr('data-length-field') + '"]').eq(0));
     });
 	jQuery( '.aioseop_count_chars' ).each(function(){
-        countChars( jQuery(this).eq(0), jQuery(this).parent().find('[name="' + jQuery(this).attr('data-length-field') + '"]').eq(0));
+        aioseopCountChars( jQuery(this).eq(0), jQuery(this).parent().find('[name="' + jQuery(this).attr('data-length-field') + '"]').eq(0));
     });
 }
