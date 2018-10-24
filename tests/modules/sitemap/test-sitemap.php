@@ -184,10 +184,6 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	 * @ticket 1423 XML Sitemap - Don't include content from trashed pages.
 	 */
 	public function test_exclude_trashed_pages() {
-		if ( is_multisite() ) {
-			$this->markTestSkipped( 'Only for single site' );
-		}
-
 		$posts = $this->factory->post->create_many( 2 );
 		wp_trash_post( $posts[0] );
 	
@@ -224,10 +220,6 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	 * @dataProvider post_type_archive_pages_provider
 	 */
 	public function test_post_type_archive_pages( $post_types, $has_archive, $exclude ) {
-		if ( is_multisite() ) {
-			$this->markTestSkipped( 'Only for single site' );
-		}
-
 		$tests = array();
 
 		foreach( $post_types as $post_type ) {
@@ -291,10 +283,6 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	 * @ticket 366 Add WooCommerce product gallery images to XML sitemap
 	 */
 	public function test_woocommerce_gallery() {
-		if ( is_multisite() ) {
-			$this->markTestSkipped( 'Only for single site' );
-		}
-
 		$woo = 'woocommerce/woocommerce.php';
 		$file = dirname( dirname( AIOSEOP_UNIT_TESTING_DIR ) ) . '/';
 		
@@ -473,10 +461,6 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	 * @ticket 1230 XML Sitemap - Add support for images in JetPack and NextGen galleries
 	 */
 	public function test_jetpack_gallery() {
-		if ( is_multisite() ) {
-			$this->markTestSkipped( 'Only for single site' );
-		}
-
 		$this->markTestSkipped( 'Skipping this till actual use case is determined.' );
 		
 		$jetpack = 'jetpack/jetpack.php';
@@ -528,10 +512,6 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	 * @ticket 1230 XML Sitemap - Add support for images in JetPack and NextGen galleries
 	 */
 	public function test_nextgen_gallery() {
-		if ( is_multisite() ) {
-			$this->markTestSkipped( 'Only for single site' );
-		}
-
 		wp_set_current_user( 1 );
 		$nextgen = 'nextgen-gallery/nggallery.php';
 		$file = dirname( dirname( AIOSEOP_UNIT_TESTING_DIR ) ) . '/';
@@ -733,63 +713,11 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	}
 
 	/**
-	 * Attaches images to posts and checks that the image included in the sitemap is the full size image.
-	 *
-	 * @dataProvider fullSizeImageProvider
-	 */
-	public function test_images_are_full_size( $type ) {
-		if ( is_multisite() ) {
-			$this->markTestSkipped( 'Only for single site' );
-		}
-
-		$url = null;
-
-		$image_to_use	= 'large-square.png';
-
-		switch ( $type ) {
-			case 'featured':
-				$posts	= $this->setup_posts( 0, 1, 'post', $image_to_use );
-				$url	= $posts['with'][0];
-				break;
-			case 'content':
-				$array		= $this->setup_posts( 1 );
-				$url		= $array['without'][0];
-				$attachment_id	= $this->upload_image_and_maybe_attach( str_replace( '\\', '/', AIOSEOP_UNIT_TESTING_DIR . "/resources/images/$image_to_use" ) );
-				$image_url	= wp_get_attachment_url( $attachment_id );
-				wp_update_post( array( 'ID' => $array['ids']['without'][0], 'post_content' => "blah <img src='$image_url'/>" ) );
-				break;
-		}
-
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = '';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
-		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
-
-		$this->_setup_options( 'sitemap', $custom_options );
-
-		$xml	= $this->validate_sitemap(
-			array(
-				$url => array(
-					'image' => true,
-				),
-			)
-		);
-
-		// the sitemap will contain something like large-square-54.png.
-		$this->assertRegExp( '/large\-square(\-\d+)?\.png/', $xml );
-	}
-
-	/**
 	 * Add invalid external URLs to the sitemap and see if they are shown as valid in the sitemap.
 	 *
 	 * @dataProvider invalidExternalPagesProvider
 	 */
 	public function test_make_external_urls_valid( $urls ) {
-		if ( is_multisite() ) {
-			$this->markTestSkipped( 'Only for single site' );
-		}
-
 		$posts = $this->setup_posts( 2 );
 
 		$pages	= array();
@@ -835,16 +763,6 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		);
 
 		// so all urls 
-	}
-
-	/**
-	 * Provides arguments to test test_images_are_full_size.
-	 */
-	public function fullSizeImageProvider() {
-		return array(
-			array( 'featured' ),
-			array( 'content' ),
-		);
 	}
 
 	/**
