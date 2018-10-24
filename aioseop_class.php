@@ -511,7 +511,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'enablecpost'                 => array(
-				'name'            => __( 'SEO for Custom Post Types:', 'all-in-one-seo-pack' ),
+				'name'            => __( 'SEO for Content Types:', 'all-in-one-seo-pack' ),
 				'default'         => 'on',
 				'type'            => 'radio',
 				'initial_options' => array(
