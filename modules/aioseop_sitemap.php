@@ -3120,24 +3120,126 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			return $images;
 		}
 
+		/**
+		 * Fetch images from WP, Jetpack and WooCommerce galleries.
+		 *
+		 * @param string $post The post.
+		 * @param array  $images the array of images.
+		 *
+		 * @since 2.4.2
+		 */
+		private function get_gallery_images( $post, &$images ) {
+			if ( false === apply_filters( 'aioseo_include_images_in_wp_gallery', true ) ) {
+				return;
+			}
+
+			// Check images galleries in the content. DO NOT run the_content filter here as it might cause issues with other shortcodes.
+			if ( has_shortcode( $post->post_content, 'gallery' ) ) {
+				// Get the jetpack gallery images.
+				if ( class_exists( 'Jetpack_PostImages' ) ) {
+					$jetpack    = Jetpack_PostImages::get_images( $post->ID );
+					if ( $jetpack ) {
+						foreach ( $jetpack as $jetpack_image ) {
+							$images[]   = $jetpack_image['src'];
+						}
+					}
+				}
+
+				// Get the default WP gallery images.
+				$galleries = get_post_galleries( $post, false );
+				if ( $galleries ) {
+					foreach ( $galleries as $gallery ) {
+						$images = array_merge( $images, $gallery['src'] );
+					}
+				}
+			}
+
+			// Check WooCommerce product gallery.
+			if ( class_exists( 'WooCommerce' ) ) {
+				$woo_images = get_post_meta( $post->ID, '_product_image_gallery', true );
+				if ( ! empty( $woo_images ) ) {
+					$woo_images = array_filter( explode( ',', $woo_images ) );
+					if ( is_array( $woo_images ) ) {
+						foreach ( $woo_images as $id ) {
+							$images[] = wp_get_attachment_url( $id );
+						}
+					}
+				}
+			}
+
+			$images = array_unique( $images );
+		}
 
 		/**
-		 * Cleans the URL so that its acceptable in the sitemap.
+		 * Parses the content to find out if specified images galleries exist and if they do, parse them for images.
+		 * Supports NextGen.
 		 *
-		 * @param string $url The image url.
+		 * @param string $content The post content.
 		 *
-		 * @since 2.4.1
+		 * @since 2.4.2
 		 *
 		 * @return string
 		 */
-		function clean_url( $url ) {
-			// remove the query string.
-			$url    = strtok( $url, '?' );
-			// make the url XML-safe.
-			$url    = htmlspecialchars( $url );
-			// Make the url absolute, if its relative.
-			$url    = aiosp_common::absolutize_url( $url );
-			return apply_filters( 'aioseop_clean_url', $url );
+		private function get_content_from_galleries( $content ) {
+			// Support for NextGen Gallery.
+			static $gallery_types   = array( 'ngg_images' );
+			$types                  = apply_filters( 'aioseop_gallery_shortcodes', $gallery_types );
+
+			$gallery_content    = '';
+
+			if ( ! $types ) {
+				return $gallery_content;
+			}
+
+			$found  = array();
+			if ( $types ) {
+				foreach ( $types as $type ) {
+					if ( has_shortcode( $content, $type ) ) {
+						$found[] = $type;
+					}
+				}
+			}
+
+			// If none of the shortcodes-of-interest are found, bail.
+			if ( empty( $found ) ) {
+				return $gallery_content;
+			}
+
+			$galleries = array();
+
+			if ( ! preg_match_all( '/' . get_shortcode_regex() . '/s', $content, $matches, PREG_SET_ORDER ) ) {
+				return $gallery_content;
+			}
+
+			// Collect the shortcodes and their attributes.
+			foreach ( $found as $type ) {
+				foreach ( $matches as $shortcode ) {
+					if ( $type === $shortcode[2] ) {
+
+						$attributes = shortcode_parse_atts( $shortcode[3] );
+
+						if ( '' === $attributes ) { // Valid shortcode without any attributes.
+							$attributes = array();
+						}
+
+						$galleries[ $shortcode[2] ] = $attributes;
+					}
+				}
+			}
+
+			// Recreate the shortcodes and then render them to get the HTML content.
+			if ( $galleries ) {
+				foreach ( $galleries as $shortcode => $attributes ) {
+					$code   = '[' . $shortcode;
+					foreach ( $attributes as $key => $value ) {
+						$code   .= " $key=$value";
+					}
+					$code .= ']';
+					$gallery_content .= do_shortcode( $code );
+				}
+			}
+
+			return $gallery_content;
 		}
 
 		/**

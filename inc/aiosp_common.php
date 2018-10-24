@@ -201,7 +201,6 @@ class aiosp_common {
 		$attachment_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attachment_metadata' AND meta_value LIKE %s", '%' . basename( $path ) . '%' ) );
 
 		if ( $attachment_id ) {
-			$size  = apply_filters( 'aioseop_attachment_size', apply_filters( 'aioseop_thumbnail_size', apply_filters( 'post_thumbnail_size', $size ) ) );
 			// if this is a valid attachment, get the correct size.
 			$image = wp_get_attachment_image_src( $attachment_id, $size );
 			if ( $image ) {
