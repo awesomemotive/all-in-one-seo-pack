@@ -3027,8 +3027,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					if ( $image ) {
 						$images['image:image'] = array(
 							'image:loc'     => $image,
-							'image:caption' => wp_get_attachment_caption( $thumbnail_id ),
-							'image:title'   => get_the_title( $thumbnail_id ),
 						);
 					}
 				}
@@ -3071,8 +3069,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				if ( $attributes ) {
 					$images[] = array(
 						'image:loc'     => $this->clean_url( $attributes[0] ),
-						'image:caption' => wp_get_attachment_caption( $post->ID ),
-						'image:title'   => get_the_title( $post->ID ),
 					);
 				}
 
@@ -3124,35 +3120,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$tmp = array_filter( $images, array( $this, 'is_image_valid' ) );
 				$images = array();
 				foreach ( $tmp as $image ) {
-					$image_attributes	= $this->get_image_attributes( $image );
-					$images[] = array_merge(
-							array(
-								'image:loc' => $this->clean_url( $image ),
-							),
-							$image_attributes
+					$images[] = array(
+						'image:loc' => $this->clean_url( $image ),
 					);
 				}
 			}
 
 			return $images;
-		}
-
-		/**
-		 * Fetch image attributes such as title and caption given the image URL.
-		 *
-		 * @param string $url The image URL.
-		 */
-		private function get_image_attributes( $url ) {
-			$attributes	= array();
-			global $wpdb;
-			$attachment = $wpdb->get_col( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid='%s';", $url ) );
-			if ( $attachment && is_array( $attachment ) && is_numeric( $attachment[0] ) ) {
-				$attributes	= array(
-					'image:caption' => wp_get_attachment_caption( $attachment[0] ),
-					'image:title' => get_the_title( $attachment[0] ),
-				);
-			}
-			return $attributes;
 		}
 
 		/**

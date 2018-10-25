@@ -84,13 +84,9 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			array(
 				$with[0] => array(
 					'image' => true,
-					'image:title' => true,
-					'image:caption' => true,
 				),
 				$with[1] => array(
 					'image' => true,
-					'image:title' => true,
-					'image:caption' => true,
 				),
 				$without[0] => array(
 					'image' => false,
