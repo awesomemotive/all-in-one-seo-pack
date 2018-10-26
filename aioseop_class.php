@@ -3347,13 +3347,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		add_filter( "{$this->prefix}display_settings", array( $this, 'filter_settings' ), 10, 3 );
 		add_filter( "{$this->prefix}display_options", array( $this, 'filter_options' ), 10, 2 );
 
-
+		// This ensures different JS files are enqueued only at the intended screens. Preventing unnecessary processes.
 		switch ( $hook_suffix ) {
+			case 'toplevel_page_all-in-one-seo-pack/aioseop_class' :
 			case 'post.php' :
-				//
 				wp_enqueue_script(
 					'aioseop-post-edit-script',
-					AIOSEOP_PLUGIN_URL . 'js/post-edit.js',
+					AIOSEOP_PLUGIN_URL . 'js/count-chars.js',
 					array(),
 					AIOSEOP_VERSION
 				);
@@ -3364,7 +3364,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 				$extra_title_len = 0;
 				if ( ! empty( $title_format ) ) {
-					$replace_title = '<span id="aiosp_snippet_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title ) ) ) . '</span>';
+					$replace_title   = '<span id="aiosp_snippet_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title ) ) ) . '</span>';
 					$extra_title_len = strlen( $this->html_entity_decode( str_replace( $replace_title, '', $title_format ) ) );
 				}
 
