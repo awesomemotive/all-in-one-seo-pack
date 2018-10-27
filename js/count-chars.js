@@ -1,14 +1,16 @@
 /**
- * Script for Post Edit screen.
+ * Script for Counting Characters
  *
- * AIOSEOP Updates class.
+ * @summary Binds input elements and counts characters for Title and Description on Post Edit, Post New,
+ *          & AIOSEOP General Settings screens.
+ *
  * @author Michael Torbert.
  * @author Semper Fi Web Design.
  * @copyright https://semperplugins.com
  * @version 2.9.2
  */
 
-var aiosp_title_extra = parseInt( aioseop_post_edit.aiosp_title_extra );
+var aiosp_title_extra = parseInt( aioseop_count_chars.aiosp_title_extra );
 
 jQuery( document ).ready( function() {
 	aioseopInitCounting();

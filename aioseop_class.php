@@ -3350,8 +3350,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		// This ensures different JS files are enqueued only at the intended screens. Preventing unnecessary processes.
 		$extra_title_len = 0;
 		switch ( $hook_suffix ) {
-			// Screens `post.php` & `./aioseop_class.php` share the same `count-char.js`.
+			// Screens `post.php`, `post-new.php`, & `../aioseop_class.php` share the same `count-char.js`.
 			case 'post.php' :
+			case 'post-new.php' :
 				$info         = $this->get_page_snippet_info();
 				$title        = $info['title'];
 				$title_format = $this->get_title_format( array( 'name' => 'aiosp_snippet' ) );
@@ -3360,6 +3361,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					$replace_title   = '<span id="aiosp_snippet_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title ) ) ) . '</span>';
 					$extra_title_len = strlen( $this->html_entity_decode( str_replace( $replace_title, '', $title_format ) ) );
 				}
+			// Fall through.
 			case 'toplevel_page_all-in-one-seo-pack/aioseop_class' :
 				wp_enqueue_script(
 					'aioseop-post-edit-script',
@@ -3371,7 +3373,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$localize_post_edit = array(
 					'aiosp_title_extra' => (int) $extra_title_len,
 				);
-				wp_localize_script( 'aioseop-post-edit-script', 'aioseop_post_edit', $localize_post_edit );
+				wp_localize_script( 'aioseop-post-edit-script', 'aioseop_count_chars', $localize_post_edit );
 				break;
 		}
 
