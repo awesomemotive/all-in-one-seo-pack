@@ -569,7 +569,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'condshow' => array( 'aiosp_enablecpost' => 'on' ),
 			),
 			'google_verify'               => array(
-				'name'    => __( 'Google Webmaster Tools:', 'all-in-one-seo-pack' ),
+				'name'    => __( 'Google Search Console:', 'all-in-one-seo-pack' ),
 				'default' => '',
 				'type'    => 'text',
 			),
