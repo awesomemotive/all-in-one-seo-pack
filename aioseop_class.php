@@ -574,7 +574,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'type'    => 'text',
 			),
 			'bing_verify'                 => array(
-				'name'    => __( 'Bing Webmaster Center:', 'all-in-one-seo-pack' ),
+				'name'    => __( 'Bing Webmaster Tools:', 'all-in-one-seo-pack' ),
 				'default' => '',
 				'type'    => 'text',
 			),
