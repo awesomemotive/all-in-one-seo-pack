@@ -3141,15 +3141,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * Fetch image attributes such as title and caption given the image URL.
 		 *
 		 * @param string $url The image URL.
+		 * @return array
 		 */
 		private function get_image_attributes( $url ) {
 			$attributes	= array();
-			global $wpdb;
-			$attachment = $wpdb->get_col( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid='%s';", $url ) );
-			if ( $attachment && is_array( $attachment ) && is_numeric( $attachment[0] ) ) {
+			$attachment_id = aiosp_common::attachment_url_to_postid( $url );
+			if ( $attachment_id ) {
 				$attributes	= array(
-					'image:caption' => wp_get_attachment_caption( $attachment[0] ),
-					'image:title' => get_the_title( $attachment[0] ),
+					'image:caption' => wp_get_attachment_caption( $attachment_id ),
+					'image:title' => get_the_title( $attachment_id ),
 				);
 			}
 			return $attributes;
