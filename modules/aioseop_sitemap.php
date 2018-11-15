@@ -1418,8 +1418,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			$notify_url = array(
-				'google' => 'https://www.google.com/webmasters/sitemaps/ping?sitemap=',
-				'bing'   => 'https://www.bing.com/webmaster/ping.aspx?siteMap=',
+				'google' => 'https://www.google.com/ping?sitemap=',
+				'bing'   => 'https://www.bing.com/ping?sitemap=',
 			);
 
 			$notify_url = apply_filters( 'aioseo_sitemap_ping_urls', $notify_url );
