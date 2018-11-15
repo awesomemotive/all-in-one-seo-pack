@@ -3411,7 +3411,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		private function get_image_attributes( $url ) {
 			global $wpdb;
-			$attributes = null;
+			$attributes = array();
 
 			$attachment = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid='%s';", $url ) );
 			if ( $attachment && is_array( $attachment ) && is_numeric( $attachment[0] ) ) {
