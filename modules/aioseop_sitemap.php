@@ -4061,7 +4061,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$exclude = preg_split( '/[\s,]+/', trim( $args['exclude'] ) );
 				if ( ! empty( $exclude ) ) {
 					foreach ( $exclude as $k => $v ) {
-						if ( ! is_numeric( $v ) || ( $v !== (int) $v ) ) {
+						if ( ! is_numeric( $v ) ) {
 							$exclude_slugs[] = $v;
 							unset( $exclude[ $k ] );
 						}
