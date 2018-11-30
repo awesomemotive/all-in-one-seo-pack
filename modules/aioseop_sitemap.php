@@ -142,6 +142,24 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		);
 
 		/**
+		 * @var array $this->post_parents_images {
+		 * Multidimensional array for 'attachment post parent' => 'images/attachments'.
+		 *     @type array $post_id {
+		 *     TODO Attachment post objects contain attachments in the same manner.
+		 *     The (parent) post object containing images.
+		 *         @type string $post_modified Stores last post modified time to compare later if a change has occurred.
+		 *         @type array  $attachment_id {
+		 *         The ID for an attachment post type.
+		 *             @type int    $id
+		 *             @type string $url
+		 *             @type string $url_content
+		 *         }
+		 *     }
+		 * }
+		 */
+		public $post_parents_images;
+
+		/**
 		 * All_in_One_SEO_Pack_Sitemap constructor.
 		 */
 		public function __construct() {
@@ -3339,19 +3357,36 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		/**
 		 * Return the images from the post.
 		 *
-		 * @param WP_Post|int $post the post object.
-		 *
 		 * @since 2.4
 		 *
+		 * @param WP_Post $post the post object.
 		 * @return array
 		 */
 		private function get_images_from_post( $post ) {
+			//
+			/**
+			 * @var array $this->post_parents_images {
+			 * Multidimensional array for 'attachment post parent' => 'images/attachments'.
+			 *     @type array $post_id {
+			 *     TODO Attachment post objects contain attachments in the same manner.
+			 *     The (parent) post object containing images.
+			 *         @type string $post_modified Stores last post modified time to compare later if a change has occurred.
+			 *         @type array  $attachment_id {
+			 *         The ID for an attachment post type.
+			 *             @type int    $id
+			 *             @type string $url
+			 *             @type string $url_content
+			 *         }
+			 *     }
+			 * }
+			 */
+			$images = array();
+
 			if ( ! aiosp_include_images() ) {
 				return array();
 			}
 
-			$images = array();
-
+			// Get WP_Post if ID was passed in `$post`.
 			if ( is_numeric( $post ) ) {
 				if ( 0 === $post ) {
 					return null;
@@ -3359,6 +3394,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$post = get_post( $post );
 			}
 
+			// TODO Refactor into other code.
+			// Attachment for WP_Post.
 			if ( 'attachment' === $post->post_type ) {
 				if ( false === strpos( $post->post_mime_type, 'image/' ) ) {
 					// Ignore all attachments except images.
@@ -3376,89 +3413,298 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return $images;
 			}
 
+			$current_sitemap = sanitize_key( $_SERVER['REQUEST_URI'] );
+			// POST_PARENTS IMAGES.
+			if ( is_null( $this->post_parents_images ) ) {
+				if ( is_multisite() ) {
+					$this->post_parents_images = get_site_transient( 'multisite_aioseop_posts_images_' . $current_sitemap );
+				} else {
+					$this->post_parents_images = get_transient( 'aioseop_posts_images_' . $current_sitemap );
+				}
+
+				// If no transient data, set as empty array.
+				if ( false === $this->post_parents_images ) {
+					$this->post_parents_images = array();
+				}
+			}
+
+			// QUERY STEP.
+			static $query_step;
+			if ( is_null( $query_step ) ) {
+				if ( is_multisite() ) {
+					$query_step = get_site_transient( 'multisite_aioseop_posts_images_query_step_' . $current_sitemap );
+				} else {
+					$query_step = get_transient( 'aioseop_posts_images_query_step_' . $current_sitemap );
+				}
+
+				// If no transient data, set as initial step.
+				if ( false === $query_step ) {
+					$query_step = 0;
+				}
+
+				$query_step = intval( $query_step );
+
+				// Save next step for next loop.
+				if ( 3 > $query_step ) {
+					if ( is_multisite() ) {
+						set_site_transient( 'multisite_aioseop_posts_images_query_step_' . $current_sitemap, ( $query_step + 1 ), 24 * HOUR_IN_SECONDS );
+					} else {
+						set_transient( 'aioseop_posts_images_query_step_' . $current_sitemap, ( $query_step + 1 ), 24 * HOUR_IN_SECONDS );
+					}
+				}
+			}
+
+
+			if ( ! isset( $this->post_parents_images[ $post->ID ] ) ) {
+				$this->post_parents_images[ $post->ID ] = array();
+			}
+
+			// Check Post Modified.
+			if ( ! isset( $this->post_parents_images[ $post->ID ]['last_modified'] ) ) {
+				$this->post_parents_images[ $post->ID ]['last_modified'] = $post->post_modified;
+			} elseif ( $post->post_modified !== $this->post_parents_images[ $post->ID ]['last_modified'] ) {
+				// Update has occurred, so the post_parent_images & query_step will need to be reset.
+				$this->post_parents_images[ $post->ID ]['last_modified'] = $post->post_modified;
+				$this->post_parents_images[ $post->ID ]['images']        = array();
+
+				$query_step = 0;
+				if ( is_multisite() ) {
+					set_site_transient( 'multisite_aioseop_posts_images_query_step_' . $current_sitemap, ( $query_step + 1 ), 24 * HOUR_IN_SECONDS );
+				} else {
+					set_transient( 'aioseop_posts_images_query_step_' . $current_sitemap, ( $query_step + 1 ), 24 * HOUR_IN_SECONDS );
+				}
+			}
+
+			if ( ! isset( $this->post_parents_images[ $post->ID ]['images'] ) ) {
+				$this->post_parents_images[ $post->ID ]['images'] = array();
+			}
+
 			/**
-			 * Static attachment cache, 1 query vs. n posts.
+			 * Query Step Filter
 			 *
-			 * Concepts like this should be followed; although this could possibly be improved (maybe as a wrapped function) but is still good code.
+			 * @since 2.9.2
+			 *
+			 * @param int $query_step Determines which query to use to gather images.
 			 */
-			static $post_thumbnails;
+			$query_step = apply_filters( 'aioseop_post_images_query_step', $query_step );
 
-			if ( is_null( $post_thumbnails ) || defined( 'AIOSEOP_UNIT_TESTING' ) ) {
-				global $wpdb;
+			// DO QUERY STEP.
+			$step_images = array();
+			if ( is_array( $query_step ) ) {
+				foreach ( $query_step as $step ) {
+					$step_images_tmp = $this->query_post_images_step( $step, $post, $this->post_parents_images[ $post->ID ]['images'] );
 
-				$post_thumbnails = $wpdb->get_results( "SELECT post_ID, meta_value FROM $wpdb->postmeta WHERE meta_key = '_thumbnail_id'", ARRAY_A );
+					foreach( $step_images_tmp as $image ) {
+						$step_images[ $image['id'] ] = $image;
+					}
+				}
 
-				if ( $post_thumbnails ) {
-					$post_thumbnails = array_combine(
-						wp_list_pluck( $post_thumbnails, 'post_ID' ),
-						wp_list_pluck( $post_thumbnails, 'meta_value' )
+			} else {
+				$step_images = $this->query_post_images_step( $query_step, $post, $this->post_parents_images[ $post->ID ]['images'] );
+			}
+
+			foreach ( $step_images as $image ) {
+				$this->post_parents_images[ $post->ID ]['images'][ $image['id'] ] = $image;
+			}
+
+			// RETURN SITEMAP IMAGE DATA.
+			$rtn_images = array();
+			if ( isset( $this->post_parents_images[ $post->ID ]['images'] ) ) {
+				foreach ( $this->post_parents_images[ $post->ID ]['images'] as $v1_image ) {
+					$rtn_images[] = array(
+						'image:loc'     => $this->clean_url( $v1_image['url'] ),
+						'image:caption' => wp_get_attachment_caption( $v1_image['id'] ),
+						'image:title'   => get_the_title( $v1_image['id'] ),
 					);
 				}
-			}
-
-			if ( isset( $post_thumbnails[ $post->ID ] ) ) {
-				$attachment_url = wp_get_attachment_image_url( $post_thumbnails[ $post->ID ], 'post-thumbnail' );
-				if ( $attachment_url ) {
-					$images[] = $attachment_url;
+			} else {
+				// Reset if new post is found.
+				$query_step = 0;
+				if ( is_multisite() ) {
+					set_site_transient( 'multisite_aioseop_posts_images_query_step_' . $current_sitemap, ( $query_step + 1 ), 24 * HOUR_IN_SECONDS );
+				} else {
+					set_transient( 'aioseop_posts_images_query_step_' . $current_sitemap, ( $query_step + 1 ), 24 * HOUR_IN_SECONDS );
 				}
 			}
 
-			$content = $post->post_content;
-
-			$this->get_gallery_images( $post, $images );
-
-			$content .= $this->get_content_from_galleries( $content );
-			$this->parse_content_for_images( $content, $images );
-
-			if ( $images ) {
-				$tmp = $images;
-				if ( 1 < count( $images ) ) {
-					// Filter out duplicates.
-					$tmp = array_unique( $images );
-				}
-
-				// remove any invalid/empty images.
-				$tmp = array_filter( $images, array( $this, 'is_image_valid' ) );
-
-				$images = array();
-				foreach ( $tmp as $image ) {
-					$image_attributes = $this->get_image_attributes( $image );
-
-					$images[] = array_merge(
-						array(
-							'image:loc' => $this->clean_url( $image ),
-						),
-						$image_attributes
-					);
-				}
-			}
-
-			return $images;
+			return $rtn_images;
 		}
 
 		/**
-		 * Fetch image attributes such as title and caption given the image URL.
+		 * Set Transient Post Parent Images
 		 *
-		 * @param string $url The image URL.
+		 * @since 2.9.2
+		 */
+		public function set_transient_post_parents_images() {
+			$current_sitemap = sanitize_key( $_SERVER['REQUEST_URI'] );
+			if ( is_multisite() ) {
+				set_site_transient( 'multisite_aioseop_posts_images_' . $current_sitemap, $this->post_parents_images, 24 * HOUR_IN_SECONDS );
+			} else {
+				set_transient( 'aioseop_posts_images_' . $current_sitemap, $this->post_parents_images, 24 * HOUR_IN_SECONDS );
+			}
+		}
+
+		/**
+		 * Query Post Images Step
+		 *
+		 * This performs 3 different queries depending on the current series of instances it may be on since it was
+		 * initially set with transient data; data expires in 24 hours.
+		 *
+		 * 1. Uses optimal and essential functions.
+		 * 2. Fallback with simular functionality which step 1 may have missed.
+		 * 3. Heavy functionality for deeper scans; most of which converts url to id and should be avoided if possible.
+		 *
+		 * @param int     $query_step
+		 * @param WP_Post $post
+		 * @param array   $current_images
 		 * @return array
 		 */
-		private function get_image_attributes( $url ) {
-			$attributes	= array();
-			$attachment_id = aiosp_common::attachment_url_to_postid( $url );
-			if ( $attachment_id ) {
-				$attributes	= array(
-						'image:caption' => wp_get_attachment_caption( $attachment_id ),
-						'image:title' => get_the_title( $attachment_id ),
-				);
+		public function query_post_images_step( $query_step, $post, $current_images = array() ) {
+			$rtn_images = array();
+			$query_step = intval( $query_step );
+
+			switch( $query_step ) {
+				case 0:
+					// GET BUILT-IN ATTACHMENT OBJECTS.
+					// Query_Step 0 may include Post Thumbnails, but there are a few objects that could be miss.
+					$args = array(
+						'post_type'   => 'attachment',
+						'numberposts' => 1000, //-1, // It's unlikely there will be over 1000 image on a single page.
+						'post_status' => null,
+						'post_parent' => $post->ID,
+					);
+					$attachments = get_posts( $args );
+
+					if ( $attachments ) {
+
+						foreach ( $attachments as $attachment ) {
+							if ( isset( $current_images[ $attachment->ID ] ) && ! empty( $current_images[ $attachment->ID ] ) ) {
+								$rtn_images[ $attachment->ID ] = $current_images[ $attachment->ID ];
+							} else {
+								$rtn_images[ $attachment->ID ] = array(
+									'id'          => $attachment->ID,
+									'url'         => wp_get_attachment_url( $attachment->ID ),
+									'url_content' => '',
+								);
+							}
+
+
+						}
+					}
+					wp_reset_postdata();
+
+					add_action( 'shutdown', array( $this, 'set_transient_post_parents_images' ) );
+
+					break;
+				case 1:
+					//// GET THUMBNAIL/FEATURED QUERY
+					static $post_thumbnails;
+
+					if ( is_null( $post_thumbnails ) || defined( 'AIOSEOP_UNIT_TESTING' ) ) {
+						global $wpdb;
+
+						$post_thumbnails = $wpdb->get_results( "SELECT post_ID, meta_value FROM $wpdb->postmeta WHERE meta_key = '_thumbnail_id'", ARRAY_A );
+
+						if ( $post_thumbnails ) {
+							$post_thumbnails = array_combine(
+								wp_list_pluck( $post_thumbnails, 'post_ID' ),
+								wp_list_pluck( $post_thumbnails, 'meta_value' )
+							);
+						}
+					}
+
+					if ( isset( $post_thumbnails[ $post->ID ] ) ) {
+						// Skip if we already have thumbnail data in `$this->post_parents_images`.
+						if ( isset( $current_images[ ( $post_thumbnails[ $post->ID ] ) ] ) && ! empty( $current_images[ ( $post_thumbnails[ $post->ID ] ) ] ) ) {
+							$rtn_images[ ( $post_thumbnails[ $post->ID ] ) ] = $current_images[ ( $post_thumbnails[ $post->ID ] ) ];
+						} else {
+							$rtn_images[ $post_thumbnails[ $post->ID ] ] = array(
+								'id'          => intval( $post_thumbnails[ $post->ID ] ),
+								'url'         => wp_get_attachment_url( $post_thumbnails[ $post->ID ] ),
+								'url_content' => '',
+							);
+						}
+					}
+
+					add_action( 'shutdown', array( $this, 'set_transient_post_parents_images' ) );
+
+					break;
+				case 2:
+					//// GET URL IMAGES FROM CONTENT.
+					$image_urls = array();
+					$content = $post->post_content;
+
+					// Gets WP Gallery, Jetpack, and WooCommerce galleries.
+					// `$images` param is modified.
+					$this->get_gallery_images( $post, $image_urls );
+
+					$content .= $this->get_content_from_galleries( $content );
+					// `$images` param is modified.
+					$this->parse_content_for_images( $content, $image_urls );
+
+					// Check for any remaining URLs that may match. Sized image URLs won't match up, but the ID will match; if not,
+					// then get post data to add to `$this->post_parents_images`.
+					if ( $image_urls ) {
+						if ( 1 < count( $image_urls ) ) {
+							// Filter out duplicates.
+							$image_urls = array_unique( $image_urls );
+						}
+						// remove any invalid/empty images.
+						$image_urls = array_filter( $image_urls, array( $this, 'is_image_valid' ) );
+
+						foreach ( $image_urls as $k1_index => $v1_image_url ) {
+							// If already set, add current data, and unset to skip.
+							$url_md5 = md5( $v1_image_url );
+							if ( isset( $current_images ) ) {
+								foreach ( $current_images as $v2_attachment ) {
+									if ( $v1_image_url === $v2_attachment['url'] || $url_md5 === $v2_attachment['url_content'] ) {
+										$rtn_images[ $v2_attachment['id'] ]                = $v2_attachment;
+										$rtn_images[ $v2_attachment['id'] ]['url_content'] = $url_md5;
+
+										unset( $image_urls[ $k1_index ] );
+
+										// Go to next `$v1_image_url`.
+										continue 2;
+									}
+								}
+							}
+
+							// Get Post ID through URL.
+							$attachment_id = aiosp_common::attachment_url_to_postid( $v1_image_url );
+
+							if ( 0 !== $attachment_id ) {
+								if ( isset( $current_images[ $attachment_id ] ) && ! empty( $current_images[ $attachment_id ] ) ) {
+									$rtn_images[ $attachment_id ]                = $current_images[ $attachment_id ];
+									$rtn_images[ $attachment_id ]['url_content'] = $url_md5;
+								} else {
+									$rtn_images[ $attachment_id ] = array(
+										'id'          => $attachment_id,
+										'url'         => wp_get_attachment_url( $attachment_id ),
+										'url_content' => $url_md5,
+									);
+								}
+							}
+						}
+					}
+
+					add_action( 'shutdown', array( $this, 'set_transient_post_parents_images' ) );
+
+					break;
+				default:
+					// Do nothing.
+					break;
 			}
-			return $attributes;
+
+			return $rtn_images;
 		}
 
 		/**
 		 * Fetch images from WP, Jetpack and WooCommerce galleries.
 		 *
-		 * @param WP_Post $post The post.
-		 * @param array   $images the array of images.
+		 * @todo Change $image to be a variable and return images; it isn't used to set anything, and adds confusion.
+		 *
+		 * @param string $post The post.
+		 * @param array  $images the array of images.
 		 *
 		 * @since 2.4.2
 		 */
@@ -3668,6 +3914,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 		/**
 		 * Parse the post for images.
+		 *
+		 * @todo Change $images to be a variable and return images; it isn't used to set anything, and adds confusion.
 		 *
 		 * @param string $content the post content.
 		 * @param array  $images the array of images.
