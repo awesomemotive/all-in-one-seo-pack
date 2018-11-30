@@ -3593,6 +3593,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 					wp_reset_postdata();
 
+					$gallery_image_ids = $this->get_gallery_image_ids( $post );
+					foreach ( $gallery_image_ids as $gallery_image_id ) {
+						if ( isset( $current_images[ $gallery_image_id ] ) && ! empty( $current_images[ $gallery_image_id ] ) ) {
+							$rtn_images[ $gallery_image_id ] = $current_images[ $gallery_image_id ];
+						} else {
+							$rtn_images[ $gallery_image_id ] = array(
+								'id'          => $gallery_image_id,
+								'url'         => wp_get_attachment_url( $gallery_image_id ),
+								'url_content' => '',
+							);
+						}
+					}
+
 					add_action( 'shutdown', array( $this, 'set_transient_post_parents_images' ) );
 
 					break;
@@ -3634,7 +3647,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					$image_urls = array();
 					$content = $post->post_content;
 
-					// Gets WP Gallery, Jetpack, and WooCommerce galleries.
+					// Gets Jetpack galleries.
 					// `$images` param is modified.
 					$this->get_gallery_images( $post, $image_urls );
 
@@ -3703,6 +3716,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @todo Change $image to be a variable and return images; it isn't used to set anything, and adds confusion.
 		 *
+		 * @uses get_post_galleries()
+		 * @link https://developer.wordpress.org/reference/functions/get_post_galleries/
+		 *
 		 * @param string $post The post.
 		 * @param array  $images the array of images.
 		 *
@@ -3716,32 +3732,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// Check images galleries in the content. DO NOT run the_content filter here as it might cause issues with other shortcodes.
 			if ( has_shortcode( $post->post_content, 'gallery' ) ) {
 				// Get the jetpack gallery images.
+				// TODO Investigate other alternatives to retrieve ID instead. Specifically Jetpack data.
+				/*
+				 * Is this even necessary? Jetpack uses many of the WP functions, some of which may already be in use.
+				 * This is also limited to 1 source, and doesn't check other sources once a value is obtained.
+				 *
+				 * @link https://hayashikejinan.com/wp-content/uploads/jetpack_api/classes/Jetpack_PostImages.html
+				 */
 				if ( class_exists( 'Jetpack_PostImages' ) ) {
 					$jetpack = Jetpack_PostImages::get_images( $post->ID );
 					if ( $jetpack ) {
 						foreach ( $jetpack as $jetpack_image ) {
 							$images[] = $jetpack_image['src'];
-						}
-					}
-				}
-
-				// Get the default WP gallery images.
-				$galleries = get_post_galleries( $post, false );
-				if ( $galleries ) {
-					foreach ( $galleries as $gallery ) {
-						$images = array_merge( $images, $gallery['src'] );
-					}
-				}
-			}
-
-			// Check WooCommerce product gallery.
-			if ( class_exists( 'WooCommerce' ) ) {
-				$woo_images = get_post_meta( $post->ID, '_product_image_gallery', true );
-				if ( ! empty( $woo_images ) ) {
-					$woo_images = array_filter( explode( ',', $woo_images ) );
-					if ( is_array( $woo_images ) ) {
-						foreach ( $woo_images as $id ) {
-							$images[] = wp_get_attachment_url( $id );
 						}
 					}
 				}
@@ -3751,8 +3753,67 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
-		 * Parses the content to find out if specified images galleries exist and if they do, parse them for images.
-		 * Supports NextGen.
+		 * Get Gallery Image IDs
+		 *
+		 * @uses get_post_galleries()
+		 * @link https://developer.wordpress.org/reference/functions/get_post_galleries/
+		 *
+		 * @since 2.9.2
+		 *
+		 * @param WP_Post $post
+		 * @return array|void
+		 */
+		private function get_gallery_image_ids( $post ) {
+			if ( false === apply_filters( 'aioseo_include_images_in_wp_gallery', true ) ) {
+				return;
+			}
+
+			$rtn_image_ids = array();
+
+			// Check images galleries in the content. DO NOT run the_content filter here as it might cause issues with other shortcodes.
+			if ( has_shortcode( $post->post_content, 'gallery' ) ) {
+				// Get the default WP gallery images.
+				$galleries = get_post_galleries( $post, false );
+				if ( ! empty( $galleries ) ) {
+					foreach ( $galleries as $gallery ) {
+						$gallery_ids = explode( ',', $gallery['ids'] );
+
+						if ( ! empty( $gallery_ids ) ) {
+							foreach ( $gallery_ids as $image_id ) {
+								// Skip if invalid id.
+								if ( ! is_numeric( $image_id ) ) {
+									continue;
+								}
+								$image_id = intval( $image_id );
+
+								array_push( $rtn_image_ids, $image_id );
+							}
+						}
+					}
+				}
+			}
+
+			// Check WooCommerce product gallery.
+			if ( class_exists( 'WooCommerce' ) ) {
+				$wc_image_ids = get_post_meta( $post->ID, '_product_image_gallery', true );
+				if ( ! empty( $woo_images ) ) {
+					$wc_image_ids = array_filter( explode( ',', $wc_image_ids ) );
+					foreach ( $wc_image_ids as $image_id ) {
+						if ( is_numeric( $image_id ) ) {
+							$image_id = intval( $image_id );
+
+							array_push( $rtn_image_ids, $image_id );
+						}
+					}
+				}
+			}
+
+			return array_unique( $rtn_image_ids );
+		}
+
+		/**
+		 * Get gallery images from content shortcodes. Parses the content to find out if specified images galleries
+		 * exist and if they do, parse them for images. Supports NextGen.
 		 *
 		 * @param string $content The post content.
 		 *
