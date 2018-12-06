@@ -459,7 +459,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'on ' !== $options[ "{$this->prefix}indexes" ] &&
 				1001 < $options[ "{$this->prefix}max_posts" ]
 			) {
-
+				$num_terms   = 0;
 				$post_counts = $this->get_total_post_count(
 					array(
 						'post_type'   => $options[ "{$this->prefix}posttypes" ],
@@ -472,7 +472,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					$num_terms = array_sum( $term_counts );
 				}
 
-				// TODO Fix undefined variable.
 				$sitemap_urls = $post_counts + $num_terms;
 
 				if ( 1001 > $sitemap_urls ) {
