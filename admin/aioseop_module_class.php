@@ -566,7 +566,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				'EmailSiphon',
 				'EmailWolf',
 				'EroCrawler',
-				'Exabot',
 				'ExtractorPro',
 				'Fasterfox',
 				'FeedBooster',
