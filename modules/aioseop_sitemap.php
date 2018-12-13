@@ -3363,23 +3363,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array
 		 */
 		private function get_images_from_post( $post ) {
-			//
-			/**
-			 * @var array $this->post_parents_images {
-			 * Multidimensional array for 'attachment post parent' => 'images/attachments'.
-			 *     @type array $post_id {
-			 *     TODO Attachment post objects contain attachments in the same manner.
-			 *     The (parent) post object containing images.
-			 *         @type string $post_modified Stores last post modified time to compare later if a change has occurred.
-			 *         @type array  $attachment_id {
-			 *         The ID for an attachment post type.
-			 *             @type int    $id
-			 *             @type string $url
-			 *             @type string $url_content
-			 *         }
-			 *     }
-			 * }
-			 */
 			$images = array();
 
 			if ( ! aiosp_include_images() ) {
@@ -3494,11 +3477,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				foreach ( $query_step as $step ) {
 					$step_images_tmp = $this->query_post_images_step( $step, $post, $this->post_parents_images[ $post->ID ]['images'] );
 
-					foreach( $step_images_tmp as $image ) {
+					foreach ( $step_images_tmp as $image ) {
 						$step_images[ $image['id'] ] = $image;
 					}
 				}
-
 			} else {
 				$step_images = $this->query_post_images_step( $query_step, $post, $this->post_parents_images[ $post->ID ]['images'] );
 			}
@@ -3563,7 +3545,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$rtn_images = array();
 			$query_step = intval( $query_step );
 
-			switch( $query_step ) {
+			switch ( $query_step ) {
 				case 0:
 					// GET BUILT-IN ATTACHMENT OBJECTS.
 					// Query_Step 0 may include Post Thumbnails, but there are a few objects that could be miss.
@@ -3573,6 +3555,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						'post_status' => null,
 						'post_parent' => $post->ID,
 					);
+
 					$attachments = get_posts( $args );
 
 					if ( $attachments ) {
@@ -3587,8 +3570,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 									'url_content' => '',
 								);
 							}
-
-
 						}
 					}
 					wp_reset_postdata();
@@ -3645,7 +3626,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				case 2:
 					//// GET URL IMAGES FROM CONTENT.
 					$image_urls = array();
-					$content = $post->post_content;
+					$content    = $post->post_content;
 
 					// Gets Jetpack galleries.
 					// `$images` param is modified.
