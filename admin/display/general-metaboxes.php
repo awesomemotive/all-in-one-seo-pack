@@ -42,8 +42,11 @@ class aiosp_metaboxes {
 						<p>
 							<strong>
 								<?php
-								echo aiosp_common::get_upgrade_hyperlink( 'side', __( 'Pro Version', 'all-in-one-seo-pack' ), __( 'CLICK HERE', 'all-in-one-seo-pack' ), '_blank' );
-								echo __( ' to upgrade to Pro Version and get:', 'all-in-one-seo-pack' );
+								printf(
+									/* Translators: %s: click here */
+									__( '%s to upgrade to Pro Version and get:', 'all-in-one-seo-pack' ),
+									aiosp_common::get_upgrade_hyperlink( 'side', __( 'Pro Version', 'all-in-one-seo-pack' ), __( 'CLICK HERE', 'all-in-one-seo-pack' ), '_blank' )
+								);
 								?>
 								</strong>
 						</p>
