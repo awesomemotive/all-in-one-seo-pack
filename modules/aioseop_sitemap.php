@@ -862,14 +862,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 			$url = aioseop_home_url( '/' . $this->get_filename() . '.xml' );
 
-			/* translators: Link to documentation. */
-			$options[ $this->prefix . 'link' ]  = sprintf( __( 'Click here to %s.', 'all-in-one-seo-pack' ), '<a href="' . esc_url( $url ) . '" target="_blank">' . __( 'view your XML sitemap', 'all-in-one-seo-pack' ) . '</a>' );
-			$options[ $this->prefix . 'link' ] .= __( ' Your sitemap has been created with content and images.', 'all-in-one-seo-pack' );
+			/* Translators: %s: Click here */
+			$options[ $this->prefix . 'link' ]  = sprintf(
+				__( '%s to view your XML sitemap. Your sitemap has been created with content and images.', 'all-in-one-seo-pack' ),
+				'<a href="' . esc_url( $url ) . '" target="_blank">' . __( 'Click here', 'all-in-one-seo-pack' ) . '</a>'
+			 );
 
 			if ( $options[ "{$this->prefix}rss_sitemap" ] ) {
 				$url_rss = aioseop_home_url( '/' . $this->get_filename() . '.rss' );
-				/* translators: Link to sitemap within current site. */
-				$options[ $this->prefix . 'link' ] .= '<p>' . sprintf( __( 'Click here to %1$sview your RSS sitemap%2$s.', 'all-in-one-seo-pack' ), '<a href="' . esc_url( $url_rss ) . '" target="_blank">', '</a>' ) . '</p>';
+				/* Translators: %s: Click here */
+				$options[ $this->prefix . 'link' ] .= '<p>' . sprintf(
+					__( '%s to view your RSS sitemap.', 'all-in-one-seo-pack' ),
+					'<a href="' . esc_url( $url_rss ) . '" target="_blank">' . __( 'Click here', 'all-in-one-seo-pack' ) . '</a>'
+				) . '</p>';
 			}
 
 			if ( '0' !== get_option( 'blog_public' ) ) {
