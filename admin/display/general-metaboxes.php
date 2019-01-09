@@ -186,8 +186,11 @@ class aiosp_metaboxes {
 
 		echo '</ul>';
 
-		echo '<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/new" />Click here</a> to file a feature request/bug report.';
-
+		printf(
+			/* Translators: %s: Click here */
+			__( '%s to file a feature request/bug report.', 'all-in-one-seo-pack' ),
+			'<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/new" />' . __( 'Click here', 'all-in-one-seo-pack' ) . '</a>'
+		);
 	}
 
 }
