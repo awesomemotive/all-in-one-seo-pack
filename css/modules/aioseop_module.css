@@ -118,9 +118,7 @@ div.aioseop_tip_icon:before {
 .aioseop_meta_box_help,
 .aioseop_meta_box_help:active {
 	float: right;
-	padding-left: 0;
-	width: 16px;
-	margin-right: 32px;
+	text-align: right;
 	text-decoration: none;
 	height: 15px;
 	padding-top: 1px;
