@@ -3350,7 +3350,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return array();
 			}
 
-			$images = array();
+			$rtn_image_attributes = array();
+			$post_image_ids = array();
 
 			if ( is_numeric( $post ) ) {
 				if ( 0 === $post ) {
@@ -3366,14 +3367,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 				$attributes = wp_get_attachment_image_src( $post->ID );
 				if ( $attributes ) {
-					$images[] = array(
+					$rtn_image_attributes[] = array(
 						'image:loc'     => $this->clean_url( $attributes[0] ),
 						'image:caption' => wp_get_attachment_caption( $post->ID ),
 						'image:title'   => get_the_title( $post->ID ),
 					);
 				}
 
-				return $images;
+				return $rtn_image_attributes;
 			}
 
 			/**
@@ -3396,62 +3397,45 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 			}
 
+			$post_image_urls = array();
+
 			if ( isset( $post_thumbnails[ $post->ID ] ) ) {
-				$attachment_url = wp_get_attachment_image_url( $post_thumbnails[ $post->ID ], 'post-thumbnail' );
-				if ( $attachment_url ) {
-					$images[] = $attachment_url;
+				$post_image_ids[] = intval( $post_thumbnails[ $post->ID ] );
+			}
+
+
+			$this->get_gallery_images( $post, $post_image_urls );
+
+			$content  = $post->post_content;
+			$content .= $this->get_content_from_galleries( $content );
+			$this->parse_content_for_images( $content, $post_image_urls );
+
+			if ( ! empty( $post_image_urls ) ) {
+				foreach ( $post_image_urls as $v1_image_url ) {
+					array_push( $post_image_ids, aiosp_common::attachment_url_to_postid( $v1_image_url ) );
 				}
 			}
 
-			$content = $post->post_content;
 
-			$this->get_gallery_images( $post, $images );
 
-			$content .= $this->get_content_from_galleries( $content );
-			$this->parse_content_for_images( $content, $images );
 
-			if ( $images ) {
-				$tmp = $images;
-				if ( 1 < count( $images ) ) {
-					// Filter out duplicates.
-					$tmp = array_unique( $images );
-				}
+			if ( $post_image_ids ) {
+				// Filter out duplicates.
+				$post_image_ids = array_unique( $post_image_ids );
 
-				// remove any invalid/empty images.
-				$tmp = array_filter( $images, array( $this, 'is_image_valid' ) );
+				// Remove any invalid/empty images.
+				$post_image_ids = array_filter( $post_image_ids, array( $this, 'is_image_valid' ) );
 
-				$images = array();
-				foreach ( $tmp as $image ) {
-					$image_attributes = $this->get_image_attributes( $image );
-
-					$images[] = array_merge(
-						array(
-							'image:loc' => $this->clean_url( $image ),
-						),
-						$image_attributes
+				foreach ( $post_image_ids as $v1_image_id ) {
+					$rtn_image_attributes[] = array(
+						'image:loc'     => $this->clean_url( wp_get_attachment_url( $v1_image_id ) ),
+						'image:caption' => wp_get_attachment_caption( $v1_image_id ),
+						'image:title'   => get_the_title( $v1_image_id ),
 					);
 				}
 			}
 
-			return $images;
-		}
-
-		/**
-		 * Fetch image attributes such as title and caption given the image URL.
-		 *
-		 * @param string $url The image URL.
-		 * @return array
-		 */
-		private function get_image_attributes( $url ) {
-			$attributes	= array();
-			$attachment_id = aiosp_common::attachment_url_to_postid( $url );
-			if ( $attachment_id ) {
-				$attributes	= array(
-						'image:caption' => wp_get_attachment_caption( $attachment_id ),
-						'image:title' => get_the_title( $attachment_id ),
-				);
-			}
-			return $attributes;
+			return $rtn_image_attributes;
 		}
 
 		/**
