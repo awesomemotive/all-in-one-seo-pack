@@ -3403,6 +3403,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$post_image_ids[] = intval( $post_thumbnails[ $post->ID ] );
 			}
 
+			$post_image_ids = array_merge( $post_image_ids, $this->get_gallery_image_ids( $post ) );
 
 			$this->get_gallery_images( $post, $post_image_urls );
 
@@ -3441,10 +3442,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		/**
 		 * Fetch images from WP, Jetpack and WooCommerce galleries.
 		 *
+		 * @since 2.4.2
+		 * @since 2.11 Optimization - Reduce the need to convert url to id.
+		 *
 		 * @param WP_Post $post The post.
 		 * @param array   $images the array of images.
-		 *
-		 * @since 2.4.2
 		 */
 		private function get_gallery_images( $post, &$images ) {
 			if ( false === apply_filters( 'aioseo_include_images_in_wp_gallery', true ) ) {
@@ -3454,6 +3456,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// Check images galleries in the content. DO NOT run the_content filter here as it might cause issues with other shortcodes.
 			if ( has_shortcode( $post->post_content, 'gallery' ) ) {
 				// Get the jetpack gallery images.
+				// TODO Investigate other alternatives to retrieve ID instead. Specifically Jetpack data.
+				/*
+				 * Is this even necessary? Jetpack uses many of the WP functions, some of which may already be in use.
+				 * This is also limited to 1 source, and doesn't check other sources once a value is obtained.
+				 *
+				 * @link https://hayashikejinan.com/wp-content/uploads/jetpack_api/classes/Jetpack_PostImages.html
+				 */
 				if ( class_exists( 'Jetpack_PostImages' ) ) {
 					$jetpack = Jetpack_PostImages::get_images( $post->ID );
 					if ( $jetpack ) {
@@ -3462,30 +3471,67 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						}
 					}
 				}
+			}
 
+			$images = array_unique( $images );
+		}
+
+		/**
+		 * Get Gallery Image IDs
+		 *
+		 * @uses get_post_galleries()
+		 * @link https://developer.wordpress.org/reference/functions/get_post_galleries/
+		 *
+		 * @since 2.11
+		 *
+		 * @param WP_Post $post
+		 * @return array
+		 */
+		private function get_gallery_image_ids( $post ) {
+			$rtn_image_ids = array();
+			if ( false === apply_filters( 'aioseo_include_images_in_wp_gallery', true ) ) {
+				return $rtn_image_ids;
+			}
+
+			// Check images galleries in the content. DO NOT run the_content filter here as it might cause issues with other shortcodes.
+			if ( has_shortcode( $post->post_content, 'gallery' ) ) {
 				// Get the default WP gallery images.
 				$galleries = get_post_galleries( $post, false );
-				if ( $galleries ) {
+				if ( ! empty( $galleries ) ) {
 					foreach ( $galleries as $gallery ) {
-						$images = array_merge( $images, $gallery['src'] );
+						$gallery_ids = explode( ',', $gallery['ids'] );
+
+						if ( ! empty( $gallery_ids ) ) {
+							foreach ( $gallery_ids as $image_id ) {
+								// Skip if invalid id.
+								if ( ! is_numeric( $image_id ) ) {
+									continue;
+								}
+								$image_id = intval( $image_id );
+
+								array_push( $rtn_image_ids, $image_id );
+							}
+						}
 					}
 				}
 			}
 
 			// Check WooCommerce product gallery.
 			if ( class_exists( 'WooCommerce' ) ) {
-				$woo_images = get_post_meta( $post->ID, '_product_image_gallery', true );
+				$wc_image_ids = get_post_meta( $post->ID, '_product_image_gallery', true );
 				if ( ! empty( $woo_images ) ) {
-					$woo_images = array_filter( explode( ',', $woo_images ) );
-					if ( is_array( $woo_images ) ) {
-						foreach ( $woo_images as $id ) {
-							$images[] = wp_get_attachment_url( $id );
+					$wc_image_ids = array_filter( explode( ',', $wc_image_ids ) );
+					foreach ( $wc_image_ids as $image_id ) {
+						if ( is_numeric( $image_id ) ) {
+							$image_id = intval( $image_id );
+
+							array_push( $rtn_image_ids, $image_id );
 						}
 					}
 				}
 			}
 
-			$images = array_unique( $images );
+			return array_unique( $rtn_image_ids );
 		}
 
 		/**
