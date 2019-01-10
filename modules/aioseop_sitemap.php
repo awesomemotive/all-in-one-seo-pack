@@ -142,6 +142,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		);
 
 		/**
+		 * Image IDs => URLs
+		 *
+		 * @since 2.11
+		 *
+		 * @var null|array $image_ids_urls {
+		 *     @type string $base_url The URL for the original sized image.
+		 *     @type string ${$id}    Contains the URLs associated to the IDs.
+		 * }
+		 */
+		private $image_ids_urls = null;
+
+		/**
 		 * All_in_One_SEO_Pack_Sitemap constructor.
 		 */
 		public function __construct() {
@@ -3339,10 +3351,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		/**
 		 * Return the images from the post.
 		 *
-		 * @param WP_Post|int $post the post object.
-		 *
 		 * @since 2.4
+		 * @since 2.11 Optimization - Reduce the need to convert url to id.
 		 *
+		 * @param WP_Post|int $post the post object.
 		 * @return array
 		 */
 		private function get_images_from_post( $post ) {
@@ -3352,6 +3364,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$rtn_image_attributes = array();
 			$post_image_ids = array();
+			$transient_update = false;
 
 			if ( is_numeric( $post ) ) {
 				if ( 0 === $post ) {
@@ -3375,6 +3388,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 
 				return $rtn_image_attributes;
+			}
+
+			// Set Image IDs w/ URLs.
+			if ( is_null( $this->image_ids_urls ) ) {
+				if ( is_multisite() ) {
+					$this->image_ids_urls = get_site_transient( 'aioseop_multisite_image_ids_urls' );
+				} else {
+					$this->image_ids_urls = get_transient( 'aioseop_image_ids_urls' );
+				}
+
+				if ( false === $this->image_ids_urls ) {
+					$this->image_ids_urls = array();
+				}
 			}
 
 			/**
@@ -3413,7 +3439,22 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			if ( ! empty( $post_image_urls ) ) {
 				foreach ( $post_image_urls as $v1_image_url ) {
-					array_push( $post_image_ids, aiosp_common::attachment_url_to_postid( $v1_image_url ) );
+					$attachment_id = aiosp_common::attachment_url_to_postid( $v1_image_url );
+
+					if ( ! isset( $this->image_ids_urls[ $attachment_id ] ) ) {
+						$this->image_ids_urls[ $attachment_id ] = array( $v1_image_url );
+
+						$transient_update = true;
+					} else {
+						if ( ! in_array( $v1_image_url, $this->image_ids_urls[ $attachment_id ], true ) ) {
+							$this->image_ids_urls[ $attachment_id ][] = $v1_image_url;
+
+							$transient_update = true;
+						}
+					}
+
+
+					array_push( $post_image_ids, $attachment_id );
 				}
 			}
 
@@ -3428,15 +3469,47 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$post_image_ids = array_filter( $post_image_ids, array( $this, 'is_image_valid' ) );
 
 				foreach ( $post_image_ids as $v1_image_id ) {
+					if ( ! isset( $this->image_ids_urls[ $v1_image_id ] ) ) {
+						$this->image_ids_urls[ $v1_image_id ] = array(
+							'base_url' => $this->clean_url( wp_get_attachment_url( $v1_image_id ) ),
+						);
+
+						$transient_update = true;
+					} else {
+						if ( empty( $this->image_ids_urls[ $v1_image_id ]['base_url'] ) ) {
+							$this->image_ids_urls[ $v1_image_id ]['base_url'] = $this->clean_url( wp_get_attachment_url( $v1_image_id ) );
+
+							$transient_update = true;
+						}
+					}
+
 					$rtn_image_attributes[] = array(
-						'image:loc'     => $this->clean_url( wp_get_attachment_url( $v1_image_id ) ),
+						'image:loc'     => $this->image_ids_urls[ $v1_image_id ]['base_url'],
 						'image:caption' => wp_get_attachment_caption( $v1_image_id ),
 						'image:title'   => get_the_title( $v1_image_id ),
 					);
 				}
 			}
 
+			if ( $transient_update ) {
+				add_action( 'shutdown', array( $this, 'set_transient_image_ids_urls' ) );
+			}
+
+
 			return $rtn_image_attributes;
+		}
+
+		/**
+		 * Set Transient for Image IDs => URLs
+		 *
+		 * @since 2.11
+		 */
+		public function set_transient_image_ids_urls() {
+			if ( is_multisite() ) {
+				set_site_transient( 'aioseop_multisite_image_ids_urls', $this->image_ids_urls, DAY_IN_SECONDS );
+			} else {
+				set_transient( 'aioseop_image_ids_urls', $this->image_ids_urls, DAY_IN_SECONDS );
+			}
 		}
 
 		/**
