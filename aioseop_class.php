@@ -2168,7 +2168,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		$title_format = $this->get_post_title_format( 'post', $post );
 
-		return $this->title_placeholder_helper( $title, $post, 'post', $title_format, $category );
+		return $this->title_placeholder_helper( $title, $post, $post->post_type, $title_format, $category );
 	}
 
 	/**
