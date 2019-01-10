@@ -230,7 +230,7 @@ class aiosp_common {
 		// If static variable is still empty, load transient data.
 		if ( is_null( self::$attachment_url_postids ) ) {
 			if ( is_multisite() ) {
-				self::$attachment_url_postids = get_site_transient( 'multisite_aioseop_attachment_url_postids' );
+				self::$attachment_url_postids = get_site_transient( 'aioseop_multisite_attachment_url_postids' );
 			} else {
 				self::$attachment_url_postids = get_transient( 'aioseop_attachment_url_postids' );
 			}
@@ -298,7 +298,7 @@ class aiosp_common {
 	 */
 	public static function set_transient_url_postids() {
 		if ( is_multisite() ) {
-			set_site_transient( 'multisite_aioseop_attachment_url_postids', self::$attachment_url_postids, 24 * HOUR_IN_SECONDS );
+			set_site_transient( 'aioseop_multisite_attachment_url_postids', self::$attachment_url_postids, 24 * HOUR_IN_SECONDS );
 		} else {
 			set_transient( 'aioseop_attachment_url_postids', self::$attachment_url_postids, 24 * HOUR_IN_SECONDS );
 		}
