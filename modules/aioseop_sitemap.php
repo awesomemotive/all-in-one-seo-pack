@@ -3352,7 +3352,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * Return the images from the post.
 		 *
 		 * @since 2.4
-		 * @since 2.11 Optimization - Reduce the need to convert url to id.
+		 * @since 2.11 Optimization #2008 - Reduce the need to convert url to id.
 		 *
 		 * @param WP_Post|int $post the post object.
 		 * @return array
@@ -3363,8 +3363,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			$rtn_image_attributes = array();
-			$post_image_ids = array();
-			$transient_update = false;
+			$post_image_ids       = array();
+			$post_image_urls      = array();
+			$transient_update     = false;
 
 			if ( is_numeric( $post ) ) {
 				if ( 0 === $post ) {
@@ -3423,8 +3424,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 			}
 
-			$post_image_urls = array();
-
 			if ( isset( $post_thumbnails[ $post->ID ] ) ) {
 				$post_image_ids[] = intval( $post_thumbnails[ $post->ID ] );
 			}
@@ -3438,35 +3437,36 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$this->parse_content_for_images( $content, $post_image_urls );
 
 			if ( ! empty( $post_image_urls ) ) {
-				foreach ( $post_image_urls as $v1_image_url ) {
+				// Remove any invalid/empty images.
+				$post_image_urls = array_filter( $post_image_urls, array( $this, 'is_image_url_valid' ) );
+
+				foreach ( $post_image_urls as $k1_index => &$v1_image_url ) {
+					$v1_image_url  = aiosp_common::absolutize_url( $v1_image_url );
 					$attachment_id = aiosp_common::attachment_url_to_postid( $v1_image_url );
 
-					if ( ! isset( $this->image_ids_urls[ $attachment_id ] ) ) {
-						$this->image_ids_urls[ $attachment_id ] = array( $v1_image_url );
-
-						$transient_update = true;
-					} else {
-						if ( ! in_array( $v1_image_url, $this->image_ids_urls[ $attachment_id ], true ) ) {
-							$this->image_ids_urls[ $attachment_id ][] = $v1_image_url;
+					if ( $attachment_id ) {
+						if ( ! isset( $this->image_ids_urls[ $attachment_id ] ) ) {
+							$this->image_ids_urls[ $attachment_id ] = array( $v1_image_url );
 
 							$transient_update = true;
+						} else {
+							if ( ! in_array( $v1_image_url, $this->image_ids_urls[ $attachment_id ], true ) ) {
+								$this->image_ids_urls[ $attachment_id ][] = $v1_image_url;
+
+								$transient_update = true;
+							}
 						}
+
+						array_push( $post_image_ids, $attachment_id );
+						unset( $post_image_urls[ $k1_index ] );
 					}
-
-
-					array_push( $post_image_ids, $attachment_id );
 				}
 			}
 
-
-
-
+			// Site's Images.
 			if ( $post_image_ids ) {
 				// Filter out duplicates.
 				$post_image_ids = array_unique( $post_image_ids );
-
-				// Remove any invalid/empty images.
-				$post_image_ids = array_filter( $post_image_ids, array( $this, 'is_image_valid' ) );
 
 				foreach ( $post_image_ids as $v1_image_id ) {
 					if ( ! isset( $this->image_ids_urls[ $v1_image_id ] ) ) {
@@ -3491,10 +3491,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 			}
 
+			// External/Custom images remaining.
+			if ( ! empty( $post_image_urls ) ) {
+				foreach ( $post_image_urls as $v1_image_url ) {
+					$rtn_image_attributes[] = array(
+						'image:loc'     => $v1_image_url,
+					);
+				}
+			}
+
 			if ( $transient_update ) {
 				add_action( 'shutdown', array( $this, 'set_transient_image_ids_urls' ) );
 			}
-
 
 			return $rtn_image_attributes;
 		}
@@ -3516,7 +3524,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * Fetch images from WP, Jetpack and WooCommerce galleries.
 		 *
 		 * @since 2.4.2
-		 * @since 2.11 Optimization - Reduce the need to convert url to id.
+		 * @since 2.11 Optimization #2008 - Reduce the need to convert url to id.
 		 *
 		 * @param WP_Post $post The post.
 		 * @param array   $images the array of images.
@@ -3710,10 +3718,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @since 2.4.1
 		 * @since 2.4.3 Compatibility with Pre v4.7 wp_parse_url().
+		 * @since 2.11 Sitemap Optimization #2008 - Changed to a more appropriate name.
 		 *
 		 * @return bool
 		 */
-		public function is_image_valid( $image ) {
+		public function is_image_url_valid( $image ) {
 			global $wp_version;
 
 			// Bail if empty image.
