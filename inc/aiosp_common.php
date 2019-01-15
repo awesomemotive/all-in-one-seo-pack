@@ -282,7 +282,7 @@ class aiosp_common {
 			 *
 			 * @see aiosp_common::set_transient_url_postids()
 			 */
-			add_action( 'shutdown', 'aiosp_common::set_transient_url_postids' );
+			add_action( 'shutdown', array( 'aiosp_common', 'set_transient_url_postids' ) );
 		}
 
 		return $id;
