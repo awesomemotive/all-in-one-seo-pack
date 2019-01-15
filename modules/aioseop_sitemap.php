@@ -3394,9 +3394,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// Set Image IDs w/ URLs.
 			if ( is_null( $this->image_ids_urls ) ) {
 				if ( is_multisite() ) {
-					$this->image_ids_urls = get_site_transient( 'aioseop_multisite_image_ids_urls' );
+					$this->image_ids_urls = get_site_transient( 'aioseop_multisite_attachment_ids_urls' );
 				} else {
-					$this->image_ids_urls = get_transient( 'aioseop_image_ids_urls' );
+					$this->image_ids_urls = get_transient( 'aioseop_attachment_ids_urls' );
 				}
 
 				if ( false === $this->image_ids_urls ) {
@@ -3501,7 +3501,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			if ( $transient_update ) {
-				add_action( 'shutdown', array( $this, 'set_transient_image_ids_urls' ) );
+				add_action( 'shutdown', array( $this, 'set_transient_attachment_ids_urls' ) );
 			}
 
 			return $rtn_image_attributes;
@@ -3512,11 +3512,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @since 2.11
 		 */
-		public function set_transient_image_ids_urls() {
+		public function set_transient_attachment_ids_urls() {
 			if ( is_multisite() ) {
-				set_site_transient( 'aioseop_multisite_image_ids_urls', $this->image_ids_urls, DAY_IN_SECONDS );
+				set_site_transient( 'aioseop_multisite_attachment_ids_urls', $this->image_ids_urls, DAY_IN_SECONDS );
 			} else {
-				set_transient( 'aioseop_image_ids_urls', $this->image_ids_urls, DAY_IN_SECONDS );
+				set_transient( 'aioseop_attachment_ids_urls', $this->image_ids_urls, DAY_IN_SECONDS );
 			}
 		}
 
