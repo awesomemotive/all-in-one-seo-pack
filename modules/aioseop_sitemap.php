@@ -3351,6 +3351,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		/**
 		 * Return the images from the post.
 		 *
+		 * @todo Add ~`get_attachment_postid_to_url()` function.
+		 * @todo Benchmark `wp_get_attachment_image_src()` & `wp_get_attachment_url()`.
+		 *
 		 * @since 2.4
 		 * @since 2.11 Optimization #2008 - Reduce the need to convert url to id.
 		 *
@@ -3393,12 +3396,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			// Set Image IDs w/ URLs.
 			if ( is_null( $this->image_ids_urls ) ) {
+				// Get Transient/Cache data.
 				if ( is_multisite() ) {
 					$this->image_ids_urls = get_site_transient( 'aioseop_multisite_attachment_ids_urls' );
 				} else {
 					$this->image_ids_urls = get_transient( 'aioseop_attachment_ids_urls' );
 				}
 
+				// Set default if no data exists.
 				if ( false === $this->image_ids_urls ) {
 					$this->image_ids_urls = array();
 				}
@@ -3432,6 +3437,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$this->get_gallery_images( $post, $post_image_urls );
 
+			// Get image URLs from content.
 			$content  = $post->post_content;
 			$content .= $this->get_content_from_galleries( $content );
 			$this->parse_content_for_images( $content, $post_image_urls );
@@ -3440,16 +3446,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				// Remove any invalid/empty images.
 				$post_image_urls = array_filter( $post_image_urls, array( $this, 'is_image_url_valid' ) );
 
+				// If possible, get ID from URL, and store the post's attachment ID => URL value.
+				// This is to base the attachment query on the ID instead of the URL; which is less SQL intense.
 				foreach ( $post_image_urls as $k1_index => &$v1_image_url ) {
 					$v1_image_url  = aiosp_common::absolutize_url( $v1_image_url );
 					$attachment_id = aiosp_common::attachment_url_to_postid( $v1_image_url );
 
 					if ( $attachment_id ) {
 						if ( ! isset( $this->image_ids_urls[ $attachment_id ] ) ) {
+							// Use transient/cache data.
 							$this->image_ids_urls[ $attachment_id ] = array( $v1_image_url );
 
 							$transient_update = true;
 						} else {
+							// If transient/cache data is already set, and URL is not already stored.
 							if ( ! in_array( $v1_image_url, $this->image_ids_urls[ $attachment_id ], true ) ) {
 								$this->image_ids_urls[ $attachment_id ][] = $v1_image_url;
 
@@ -3457,6 +3467,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 							}
 						}
 
+						// Store and use ID instead.
 						array_push( $post_image_ids, $attachment_id );
 						unset( $post_image_urls[ $k1_index ] );
 					}
@@ -3469,7 +3480,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$post_image_ids = array_unique( $post_image_ids );
 
 				foreach ( $post_image_ids as $v1_image_id ) {
+					// Set base URL to display later in this instance, or later (transient/cache) instances.
+					// Converting ID from URL can also be heavy on memory & time.
 					if ( ! isset( $this->image_ids_urls[ $v1_image_id ] ) ) {
+						// Sets any remaining post image IDs that weren't converted from URL.
 						$this->image_ids_urls[ $v1_image_id ] = array(
 							'base_url' => $this->clean_url( wp_get_attachment_url( $v1_image_id ) ),
 						);
@@ -3483,6 +3497,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						}
 					}
 
+					// Set return variable for image data/attributes.
 					$rtn_image_attributes[] = array(
 						'image:loc'     => $this->image_ids_urls[ $v1_image_id ]['base_url'],
 						'image:caption' => wp_get_attachment_caption( $v1_image_id ),

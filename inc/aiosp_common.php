@@ -419,6 +419,7 @@ class aiosp_common {
 	 * Error Hand Images
 	 *
 	 * Unused/Conceptual function potentually used in `aiosp_common::attachment_url_to_post_id_query_2()`.
+	 * This is to handle errors where a normal try/catch wouldn't have the exception needed to catch.
 	 *
 	 * @see aiosp_common::attachment_url_to_post_id_query_2()
 	 *
@@ -430,7 +431,7 @@ class aiosp_common {
 	 * @throws ErrorException
 	 */
 	public static function error_handle_images( $errno, $errstr, $errfile, $errline ) {
-		// Possibly handle know issues differently.
+		// Possibly handle known issues differently.
 		// Handles unserialize() warning notice.
 		if ( 8 === $errno || strpos( $errstr , 'unserialize():' ) ) {
 			throw new ErrorException( $errstr, $errno, 0, $errfile, $errline );
