@@ -174,22 +174,26 @@ class aiosp_common {
 	 * Renders the value XML safe.
 	 */
 	public static function make_xml_safe( $tag, $value ) {
-		// some tags are already sanitized or they contain an array of values.
-		if ( in_array( $tag, array( 'image:title' ) ) || is_array( $value ) ) {
+		// some tags contain an array of values.
+		if ( is_array( $value ) ) {
 			return $value;
 		}
+
 		// sanitize the other tags.
 		if ( in_array( $tag, array( 'guid', 'link', 'loc', 'image:loc' ) ) ) {
 			$value = esc_url( $value );
 		} else {
-			// use the WP core functions if they exist.
-			if ( function_exists( 'convert_chars' ) && function_exists( 'wptexturize' ) ) {
-				$value = convert_chars( wptexturize( $value ) );
-			} else {
-				$value = htmlspecialchars( $value, ENT_QUOTES );
+			// some tags contain sanitized to some extent.
+			if ( ! in_array( $tag, array( 'image:title' ) ) ) {
+				// use the WP core functions if they exist.
+				if ( function_exists( 'convert_chars' ) && function_exists( 'wptexturize' ) ) {
+					$value = convert_chars( wptexturize( $value ) );
+				} else {
+					$value = htmlspecialchars( $value, ENT_QUOTES );
+				}
 			}
 		}
-		return $value;
+		return strip_tags( $value );
 	}
 
 }
