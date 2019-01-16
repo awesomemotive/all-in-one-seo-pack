@@ -76,9 +76,17 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 				$element['image'] = $images['loc'];
 				if ( array_key_exists( 'title', $images ) ) {
 					$element['image:title'] = $images['title'];
+					if ( is_array( $images['title'] ) ) {
+						// TODO: this does not work because wptexturize mangles the single and double quotes into the typewriter equivalents ' to ‘ or ’ and " to “ or ”.
+						//$this->assertContains( strip_tags( $this->_spl_chars ), $images['title'][0] );
+					}
 				}
 				if ( array_key_exists( 'caption', $images ) ) {
 					$element['image:caption'] = $images['caption'];
+					if ( is_array( $images['caption'] ) ) {
+						// TODO: this does not work because wptexturize mangles the single and double quotes into the typewriter equivalents ' to ‘ or ’ and " to “ or ”.
+						//$this->assertContains( strip_tags( $this->_spl_chars ), $images['caption'][0] );
+					}
 				}
 			}
 			$sitemap[ (string) $url->loc ] = $element;

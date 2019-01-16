@@ -46,6 +46,12 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		'wp-remove-post-lock', 'dismiss-wp-pointer', 'nopriv_autosave',
 	);
 
+	/**
+	 * A sentence that contains the list of special characters that can be used.
+	 * @var type
+	 */
+	protected $_spl_chars = '<tom> - tom&jerry \'cause today\'s effort makes it worth tomorrow\'s "holiday"';
+
 	public function ajaxSetUp() {
 		parent::setUp();
 		// Register the core actions
@@ -167,7 +173,8 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 
 		// add an image caption and title with special characters.
 		kses_remove_filters();
-		wp_update_post( array( 'ID' => $attachment_id, 'post_title' => wp_generate_password( 12, true, true ) . '<tom>&jerry"\'', 'post_excerpt' => wp_generate_password( 12, true, true ) . '<tom>&jerry"\'' ) );
+		$spl = wp_generate_password( 12, true, true ) . $this->_spl_chars;
+		wp_update_post( array( 'ID' => $attachment_id, 'post_title' => $spl, 'post_excerpt' => $spl ) );
 		kses_init_filters();
 
 		if ( 0 !== $id ) {
