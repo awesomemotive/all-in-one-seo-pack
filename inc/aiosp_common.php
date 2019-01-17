@@ -183,7 +183,7 @@ class aiosp_common {
 		if ( in_array( $tag, array( 'guid', 'link', 'loc', 'image:loc' ) ) ) {
 			$value = esc_url( $value );
 		} else {
-			// some tags contain sanitized to some extent.
+			// some tags contain sanitized to some extent but they do not encode < and >.
 			if ( ! in_array( $tag, array( 'image:title' ) ) ) {
 				// use the WP core functions if they exist.
 				if ( function_exists( 'convert_chars' ) && function_exists( 'wptexturize' ) ) {
@@ -193,7 +193,7 @@ class aiosp_common {
 				}
 			}
 		}
-		return strip_tags( $value );
+		return esc_html( $value );
 	}
 
 }
