@@ -180,11 +180,11 @@ class aiosp_common {
 		}
 
 		// sanitize the other tags.
-		if ( in_array( $tag, array( 'guid', 'link', 'loc', 'image:loc' ) ) ) {
+		if ( in_array( $tag, array( 'guid', 'link', 'loc', 'image:loc' ), true ) ) {
 			$value = esc_url( $value );
 		} else {
 			// some tags contain sanitized to some extent but they do not encode < and >.
-			if ( ! in_array( $tag, array( 'image:title' ) ) ) {
+			if ( ! in_array( $tag, array( 'image:title' ), true ) ) {
 				// use the WP core functions if they exist.
 				if ( function_exists( 'convert_chars' ) && function_exists( 'wptexturize' ) ) {
 					$value = convert_chars( wptexturize( $value ) );
