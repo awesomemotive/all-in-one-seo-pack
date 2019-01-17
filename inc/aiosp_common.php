@@ -367,7 +367,7 @@ class aiosp_common {
 		if ( $results_2 ) {
 			for ( $i = 0; $i < count( $results_2 ); $i++ ) {
 				// TODO Investigate potentual memory leak(s); currently with unserialize.
-				$meta_value = unserialize( $results_2[ $i ]['meta_value'] );
+				$meta_value = maybe_unserialize( $results_2[ $i ]['meta_value'] );
 
 				// TODO Needs Discussion: Should this be added? To handle errors better instead of suspecting aioseop is at fault and lessen support threads.
 				/**
