@@ -1729,7 +1729,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$title = $post->post_title;
 			}
 			if ( ! empty( $title ) && $use_original_title_format ) {
-				$title = $this->apply_post_title_format( $title, $category, $post );
+				if ( is_post_type_hierarchical( $post->post_type ) ) {
+					$title = $this->apply_page_title_format( $title, $post );
+				} else {
+					$title = $this->apply_post_title_format( $title, $category, $post );
+				}
 			}
 			$title = $this->paged_title( $title );
 
