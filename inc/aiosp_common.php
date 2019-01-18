@@ -400,7 +400,8 @@ class aiosp_common {
 
 				// Set the URL => PostIDs.
 				$uploads_dir = wp_upload_dir();
-				$custom_img_base_url = $uploads_dir['baseurl'] . '/' . str_replace( basename( $meta_value['file'] ), '', $meta_value['file'] );
+				$uploads_dir2 = wp_get_upload_dir();
+				$custom_img_base_url = $uploads_dir['baseurl'] . '/' . str_replace( wp_basename( $meta_value['file'] ), '', $meta_value['file'] );
 				foreach ( $meta_value['sizes'] as $image_size_arr ) {
 					$tmp_arr[ md5( ( $custom_img_base_url . $image_size_arr['file'] ) ) ] = $results_2[ $i ]['post_id'];
 				}
