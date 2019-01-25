@@ -968,7 +968,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 								$options[ $prefix . 'category' ] =
 									$aioseop_options['modules']['aiosp_opengraph_options'][ 'aiosp_opengraph_' . $type . '_fb_object_type' ];
 							}
-							continue;
 						}
 						break;
 				}
