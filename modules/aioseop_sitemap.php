@@ -3474,6 +3474,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			// Site's Images.
+			global $wp_version;
 			if ( $post_image_ids ) {
 				// Filter out duplicates.
 				$post_image_ids = array_unique( $post_image_ids );
@@ -3496,10 +3497,21 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						}
 					}
 
+					$attachment_caption = '';
+					if ( version_compare( $wp_version, '4.6', '>=' ) ) {
+						$attachment_caption = wp_get_attachment_caption( $v1_image_id );
+					} else {
+						$attachment_obj = get_post( $v1_image_id );
+
+						if ( ! $attachment_obj || 'attachment' === $attachment_obj->post_type ) {
+							$attachment_caption = $attachment_obj->post_excerpt;
+						}
+					}
+
 					// Set return variable for image data/attributes.
 					$rtn_image_attributes[] = array(
 						'image:loc'     => $this->image_ids_urls[ $v1_image_id ]['base_url'],
-						'image:caption' => wp_get_attachment_caption( $v1_image_id ),
+						'image:caption' => $attachment_caption,
 						'image:title'   => get_the_title( $v1_image_id ),
 					);
 				}
