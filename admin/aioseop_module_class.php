@@ -2245,10 +2245,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
+		 * Get Option HTML
+		 *
 		 * Outputs a setting item for settings pages and metaboxes.
 		 *
-		 * @param $args
+		 * @since ?
+		 * @since 2.12 Add 'input' to allowed tags with 'html'. #2157
 		 *
+		 * @param $args
 		 * @return string
 		 */
 		function get_option_html( $args ) {
@@ -2331,7 +2335,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 							"<input class='aioseop_upload_image_label' name='" . esc_attr( $name ) . "' type='text' " . esc_html( $attr ) . " value='" . esc_attr( $value ) . "' size=57 style='float:left;clear:left;'>\n";
 					break;
 				case 'html':
-					$buf .= wp_kses( $value, wp_kses_allowed_html( 'post' ) );
+					$allowed_tags          = wp_kses_allowed_html( 'post' );
+					$allowed_tags['input'] = array(
+						'name'        => true,
+						'type'        => true,
+						'value'       => true,
+						'class'       => true,
+						'placeholder' => true,
+					);
+					$buf .= wp_kses( $value, $allowed_tags );
 					break;
 				case 'esc_html':
 					$buf .= '<pre>' . esc_html( $value ) . "</pre>\n";
