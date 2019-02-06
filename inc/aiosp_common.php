@@ -156,10 +156,10 @@ class aiosp_common {
 				// for /resource type urls.
 				$url = home_url( $url );
 			}
-		} else if ( strpos( $url, 'http://' ) === false ) {
+		} elseif ( strpos( $url, 'http://' ) === false ) {
 			if ( 0 === strpos( $url, 'http:/' ) ) {
 				$url    = $scheme . '://' . str_replace( 'http:/', '', $url );
-			} else if ( 0 === strpos( $url, 'http:' ) ) {
+			} elseif ( 0 === strpos( $url, 'http:' ) ) {
 				$url    = $scheme . '://' . str_replace( 'http:', '', $url );
 			}
 		}

@@ -110,6 +110,10 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	 * <code>
 	 * $this->setExpectedException( 'WPAjaxDieContinueException', 'something contained in $message' );
 	 * </code>
+	 *
+	 * @throws WPAjaxDieStopException
+	 * @throws WPAjaxDieContinueException
+	 *
 	 * @param string $message
 	 */
 	public function dieHandler( $message ) {

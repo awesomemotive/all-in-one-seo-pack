@@ -241,9 +241,8 @@ function aiosp_seometa_meta_key_convert( $old = '', $new = '', $delete_old = fal
 		$output->deleted = $delete_old ? $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->postmeta WHERE meta_key = %s", $old ) ) : 0;
 		$output->ignored = 0;
 
-	} // Else, do a more complex UPDATE and DELETE.
-	else {
-
+	} else {
+		// Else, do a more complex UPDATE and DELETE.
 		foreach ( (array) $exclude as $key => $value ) {
 			$not_in[] = $value->post_id;
 		}
