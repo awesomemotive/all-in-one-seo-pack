@@ -374,10 +374,12 @@ class aiosp_common {
 		global $wpdb;
 
 		$tmp_arr = array();
+		// @codingStandardsIgnoreStart WordPress.WP.PreparedSQL.NotPrepared
 		$results_2 = $wpdb->get_results(
 			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE `meta_key` = '_wp_attachment_metadata' AND `meta_value` != '" . serialize( array() ) . "';",
 			ARRAY_A
 		);
+		// @codingStandardsIgnoreStop WordPress.WP.PreparedSQL.NotPrepared
 		if ( $results_2 ) {
 			for ( $i = 0; $i < count( $results_2 ); $i++ ) {
 				// TODO Investigate potentual memory leak(s); currently with unserialize.

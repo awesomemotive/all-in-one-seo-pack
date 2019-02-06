@@ -79,6 +79,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$blog_name          = esc_attr( get_bloginfo( 'name' ) );
 		parent::__construct();
 
+		/*
+		 * Consider changing the construction of the macros.
+		 *
+		 * The name of the macro should NOT be inside _e() or __() because it does not make sense as it
+		 * won't change with the language.
+		 *
+		 * Moreover, it will confuse WPCS and it will try to replace %c (as in %category%) to %$1c.
+		 * Placeholder %s (%something) has been bug fixed.
+		 * @link https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/issues/698
+		 */
+		// @codingStandardsIgnoreStart
 		$this->help_text = array(
 			'license_key'                 => __( 'This will be the license key received when the product was purchased. This is used for automatic upgrades.', 'all-in-one-seo-pack' ),
 			'can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation.  This will help to prevent duplicate content penalties by Google', 'all-in-one-seo-pack' ),
@@ -242,6 +253,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'front_meta_tags'             => __( 'What you enter here will be copied verbatim to the header of the front page if you have set a static page in Settings, Reading, Front Page Displays. You can enter whatever additional headers you want here, even references to stylesheets. This will fall back to using Additional Page Headers if you have them set and nothing is entered here.', 'all-in-one-seo-pack' ),
 			'home_meta_tags'              => __( 'What you enter here will be copied verbatim to the header of the home page if you have Front page displays your latest posts selected in Settings, Reading.  It will also be copied verbatim to the header on the Posts page if you have one set in Settings, Reading. You can enter whatever additional headers you want here, even references to stylesheets.', 'all-in-one-seo-pack' ),
 		);
+		// @codingStandardsIgnoreStop
 
 		$this->help_anchors = array(
 			'license_key'                 => '#license-key',
@@ -3011,8 +3023,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	function add_page_icon() {
 		wp_enqueue_script( 'wp-pointer', false, array( 'jquery' ) );
 		wp_enqueue_style( 'wp-pointer' );
-		//$this->add_admin_pointers();
+		// $this->add_admin_pointers();
 
+		// TODO Enqueue script as a JS file.
 		?>
 		<script>
 			function aioseop_show_pointer(handle, value) {

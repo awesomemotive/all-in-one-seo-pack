@@ -10,7 +10,7 @@
  * @version 2.9.2
  */
 
-var aiosp_title_extra = parseInt( aioseop_count_chars.aiosp_title_extra );
+var aiosp_title_extra = parseInt( aioseop_count_chars.aiosp_title_extra ); // jshint ignore:line
 
 jQuery( document ).ready( function() {
 	aioseopInitCounting();

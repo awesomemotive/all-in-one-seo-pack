@@ -30,7 +30,7 @@ if ( typeof aiosp_data != 'undefined' ) {
 			}
 		}
 	);
-	aiosp_data = aiosp_data[0];
+	aiosp_data = aiosp_data[0]; // jshint ignore:line
 }
 
 /**
@@ -307,8 +307,13 @@ jQuery( document ).ready(
 		 */
 			jQuery.each(
 				aiosp_data.pointers, function( index, value ) {
-					if ( value != 'undefined' && value.pointer_text != '' ) {
-						aioseop_show_pointer( index, value );
+					if ( value !== 'undefined' && value.pointer_text != '' ) {
+						/*
+						 * The function is located in a PHP function where it is rendered/printed.
+						 *
+						 * @see \All_in_One_SEO_Pack::add_page_icon()
+						 */
+						aioseop_show_pointer( index, value ); // jshint ignore:line
 					}
 				}
 			);
@@ -580,7 +585,10 @@ jQuery( document ).ready(
 				jQuery( this ).attr( "data-action" ),
 				function( data ) {
 					if ( data.data && data.data.message ) {
+						// TODO Add alert function. Check example of correct code. https://eslint.org/docs/rules/no-alert
+						/* eslint-disable no-alert */
 						alert( data.data.message );
+						/* eslint-enable no-alert */
 					}
 					window.location.reload();
 				},
@@ -685,11 +693,16 @@ function aiosp_reclick_radio() {
 	var radios = jQuery( document ).data( 'radioshack' );
 
 	// steps thru each object element and trigger a click on it's corresponding radio button
+	// TODO Change for loop. (This also appears to be an unused/deprecated function)
+	// https://stackoverflow.com/questions/1963102/what-does-the-jslint-error-body-of-a-for-in-should-be-wrapped-in-an-if-statemen
+	/* eslint-disable guard-for-in */
 	for ( var key in radios ) {
 		jQuery( 'input[name="' + key + '"]' )
 			.filter( '[value="' + radios[ key ] + '"]' )
 			.trigger( 'click' );
 	}
+	/* eslint-enable guard-for-in */
+
 	// unbinds the event listener on .wrap  (prevents clicks on inputs from triggering function)
 	jQuery( '.wrap' ).unbind( 'mouseup' );
 }
@@ -722,7 +735,10 @@ function aioseop_handle_ajax_call( action, settings, options, success ) {
 		jQuery( 'input[name="nonce-aioseop-edit"]' ).val()
 	);
 	aioseop_sack.onError = function() {
+		// TODO Add alert function. Check example of correct code. https://eslint.org/docs/rules/no-alert
+		/* eslint-disable no-alert */
 		alert( 'Ajax error on saving.' );
+		/* eslint-enable no-alert */
 	};
 	aioseop_sack.runAJAX();
 }
