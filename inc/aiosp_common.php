@@ -158,9 +158,9 @@ class aiosp_common {
 			}
 		} else if ( strpos( $url, 'http://' ) === false ) {
 			if ( 0 === strpos( $url, 'http:/' ) ) {
-				$url	= $scheme . '://' .  str_replace( 'http:/', '', $url );
+				$url    = $scheme . '://' . str_replace( 'http:/', '', $url );
 			} else if ( 0 === strpos( $url, 'http:' ) ) {
-				$url	= $scheme . '://' . str_replace( 'http:', '', $url );
+				$url    = $scheme . '://' . str_replace( 'http:', '', $url );
 			}
 		}
 		return $url;
@@ -275,18 +275,18 @@ class aiosp_common {
 				// TODO Add setting to enable; this is TOO MEMORY INTENSE which could result in 1 or more crashes,
 				// TODO however some may still need custom image URLs.
 				// TODO NOTE: Transient data does prevent continual crashes.
-//				else {
-//					// Results_2 query looks for the URL that is cropped and edited. This searches JSON strings
-//					// and returns the original attachment ID (there is no custom attachment IDs).
-//
-//					if ( is_null( $results_2 ) ) {
-//						$results_2 = aiosp_common::attachment_url_to_postid_query_2();
-//					}
-//
-//					if ( isset( $results_2[ $url_md5 ] ) ) {
-//						$id = intval( $results_2[ $url_md5 ] );
-//					}
-//				}
+				// else {
+				// Results_2 query looks for the URL that is cropped and edited. This searches JSON strings
+				// and returns the original attachment ID (there is no custom attachment IDs).
+				//
+				// if ( is_null( $results_2 ) ) {
+				// $results_2 = aiosp_common::attachment_url_to_postid_query_2();
+				// }
+				//
+				// if ( isset( $results_2[ $url_md5 ] ) ) {
+				// $id = intval( $results_2[ $url_md5 ] );
+				// }
+				// }
 			}
 
 			self::$attachment_url_postids[ $url_md5 ] = $id;

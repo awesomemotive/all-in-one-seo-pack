@@ -78,14 +78,14 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 					$element['image:title'] = $images['title'];
 					if ( is_array( $images['title'] ) ) {
 						// TODO: this does not work because wptexturize mangles the single and double quotes into the typewriter equivalents ' to ‘ or ’ and " to “ or ”.
-						//$this->assertContains( strip_tags( $this->_spl_chars ), $images['title'][0] );
+						// $this->assertContains( strip_tags( $this->_spl_chars ), $images['title'][0] );
 					}
 				}
 				if ( array_key_exists( 'caption', $images ) ) {
 					$element['image:caption'] = $images['caption'];
 					if ( is_array( $images['caption'] ) ) {
 						// TODO: this does not work because wptexturize mangles the single and double quotes into the typewriter equivalents ' to ‘ or ’ and " to “ or ”.
-						//$this->assertContains( strip_tags( $this->_spl_chars ), $images['caption'][0] );
+						// $this->assertContains( strip_tags( $this->_spl_chars ), $images['caption'][0] );
 					}
 				}
 			}
@@ -143,7 +143,7 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 	 * Check whether the sitemap index is valid.
 	 *
 	 * @param array $types All the types of sitemaps that should exist besides the regular one.
-	*/
+	 */
 	protected final function validate_sitemap_index( $types = array(), $debug = false ) {
 		add_filter( 'aioseo_sitemap_ping', '__return_false' );
 		update_option( 'blog_public', 0 );
@@ -162,7 +162,7 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 
 			$this->assertFileExists( $file );
 			if ( $debug ) {
-				echo file_get_contents($file);
+				echo file_get_contents( $file );
 			}
 			$this->validate_sitemap_schema( $file, $schema );
 		}
@@ -173,12 +173,12 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 	 *
 	 * @param string $file The path of the file.
 	 * @param string $schema The schema type.
-	*/
+	 */
 	protected final function validate_sitemap_schema( $file, $schema ) {
 		// validate file according to schema.
-		libxml_use_internal_errors(true);
-		$dom = new DOMDocument(); 
-		$dom->load( $file ); 
+		libxml_use_internal_errors( true );
+		$dom = new DOMDocument();
+		$dom->load( $file );
 
 		$this->assertTrue( $dom->schemaValidate( AIOSEOP_UNIT_TESTING_DIR . "/resources/xsd/{$schema}.xsd" ) );
 	}

@@ -2319,7 +2319,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				case 'textarea':
 					// #1363: prevent characters like ampersand in title and description (in social meta module) from getting changed to &amp;
 					if ( in_array( $name, array( 'aiosp_opengraph_hometitle', 'aiosp_opengraph_description' ), true ) ) {
-						$value	= htmlspecialchars_decode( $value, ENT_QUOTES );
+						$value  = htmlspecialchars_decode( $value, ENT_QUOTES );
 					}
 					$buf .= "<textarea name='$name' $attr>$value</textarea>";
 					break;
@@ -2682,7 +2682,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					if ( ! empty( $message ) && empty( $errors ) ) {
 						echo "<div id=\"message\" class=\"updated fade\"><p>$message</p></div>";
 					}
-?>
+					?>
 					<div id="icon-aioseop" class="icon32"><br></div>
 					<h2><?php echo $name; ?></h2>
 					<div id="dropmessage" class="updated" style="display:none;"></div>

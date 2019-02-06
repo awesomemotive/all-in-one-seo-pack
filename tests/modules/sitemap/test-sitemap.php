@@ -140,7 +140,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			)
 		);
 	}
-  
+
 	/**
 	 * Test the generated RSS file for the sitemap.
 	 *
@@ -148,7 +148,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	 */
 	public function test_rss() {
 		$posts = $this->setup_posts( 2 );
-	
+
 		$custom_options = array();
 		$custom_options['aiosp_sitemap_indexes'] = '';
 		$custom_options['aiosp_sitemap_images'] = 'on';
@@ -158,28 +158,28 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 		$this->_setup_options( 'sitemap', $custom_options );
 
-		$this->validate_sitemap( 
+		$this->validate_sitemap(
 			array(
-					$posts['without'][0] => true,
-					$posts['without'][1] => true,
+				$posts['without'][0] => true,
+				$posts['without'][1] => true,
 			)
 		);
 
 		$rss = ABSPATH . '/sitemap.rss';
 		$this->assertFileExists( $rss );
 
-		libxml_use_internal_errors(true);
-		$dom = new DOMDocument(); 
-		$dom->load( $rss ); 
+		libxml_use_internal_errors( true );
+		$dom = new DOMDocument();
+		$dom->load( $rss );
 		$content = file_get_contents( $rss );
 
 		$this->assertTrue( $dom->schemaValidate( AIOSEOP_UNIT_TESTING_DIR . '/resources/xsd/rss.xsd' ) );
 		$this->assertContains( $posts['without'][0], $content );
 		$this->assertContains( $posts['without'][1], $content );
 	}
-  
 
-  	/**
+
+	/**
 	 * Don't include content from trashed pages.
 	 *
 	 * @ticket 1423 XML Sitemap - Don't include content from trashed pages.
@@ -187,7 +187,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	public function test_exclude_trashed_pages() {
 		$posts = $this->factory->post->create_many( 2 );
 		wp_trash_post( $posts[0] );
-	
+
 		$custom_options = array();
 		$custom_options['aiosp_sitemap_indexes'] = '';
 		$custom_options['aiosp_sitemap_images'] = 'on';
@@ -197,20 +197,20 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		$this->_setup_options( 'sitemap', $custom_options );
 
 		$urls = array();
-		foreach( $posts as $id ) {
+		foreach ( $posts as $id ) {
 			$urls[] = get_permalink( $id );
 		}
 		$xml = $this->validate_sitemap(
 			array(
-					$urls[0] => false,
-					$urls[1] => true,
+				$urls[0] => false,
+				$urls[1] => true,
 			)
 		);
 
 		// check that the file does not contain the string __trashed because that's how trashed pages are included.
 		$this->assertNotContains( $xml, '__trashed' );
 	}
-  
+
 
 	/**
 	 * Testing post type archive pages.
@@ -223,13 +223,13 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	public function test_post_type_archive_pages( $post_types, $has_archive, $exclude ) {
 		$tests = array();
 
-		foreach( $post_types as $post_type ) {
-			$ids		= array();
+		foreach ( $post_types as $post_type ) {
+			$ids        = array();
 			if ( ! in_array( $post_type, array( 'post', 'page' ) ) ) {
 				register_post_type( $post_type, array( 'has_archive' => $has_archive ) );
 			}
 
-			$ids	= $this->factory->post->create_many( 2, array( 'post_type' => $post_type ) );
+			$ids    = $this->factory->post->create_many( 2, array( 'post_type' => $post_type ) );
 			foreach ( $ids as $id ) {
 				$tests[ get_permalink( $id ) ] = true;
 			}
@@ -262,7 +262,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 	/**
 	 * Provide the post types for testing test_post_type_archive_pages.
-	 * 
+	 *
 	 * This will enable us to test these cases:
 	 * 1) When a CPT post type is selected that DOES NOT support archives => only CPT in the sitemap.
 	 * 2) When a CPT post type is selected that DOES support archives => CPT and CPT archives in the sitemap.
@@ -277,7 +277,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			array( array( 'xxxx' ), true, true ),
 		);
 	}
-  
+
 	/**
 	 * Add WooCommerce product gallery images to XML sitemap.
 	 *
@@ -286,13 +286,13 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	public function test_woocommerce_gallery() {
 		$woo = 'woocommerce/woocommerce.php';
 		$file = dirname( dirname( AIOSEOP_UNIT_TESTING_DIR ) ) . '/';
-		
+
 		if ( ! file_exists( $file . $woo ) ) {
 			$this->markTestSkipped( 'WooCommerce not installed. Skipping.' );
 		}
 
 		$this->plugin_to_load = $file . $woo;
-		tests_add_filter( 'muplugins_loaded', array( $this, 'filter_muplugins_loaded' ) ) ;
+		tests_add_filter( 'muplugins_loaded', array( $this, 'filter_muplugins_loaded' ) );
 
 		activate_plugin( $woo );
 
@@ -315,12 +315,12 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		$custom_options['aiosp_sitemap_images'] = '';
 		$custom_options['aiosp_sitemap_gzipped'] = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'product' );
- 		$this->_setup_options( 'sitemap', $custom_options );
- 		$this->validate_sitemap(
+		$this->_setup_options( 'sitemap', $custom_options );
+		$this->validate_sitemap(
 			array(
-					$url => array(
-						'image'	=> true,
-					),
+				$url => array(
+					'image' => true,
+				),
 			)
 		);
 	}
@@ -355,10 +355,10 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		// in the sitemap, test3 should not appear as no posts have been assigned to it.
 		$this->validate_sitemap(
 			array(
-					get_category_link( $test1 ) => true,
-					get_category_link( $test2 ) => true,
-					get_category_link( $test3 ) => false,
-					get_category_link( 1 ) => true,
+				get_category_link( $test1 ) => true,
+				get_category_link( $test2 ) => true,
+				get_category_link( $test3 ) => false,
+				get_category_link( 1 ) => true,
 			)
 		);
 	}
@@ -394,19 +394,19 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 		$this->validate_sitemap(
 			array(
-					$urls[0] => array(
-						'image'	=> true,
-					),
-					$urls[1] => array(
-						'image'	=> true,
-					),
-					$urls[2] => array(
-						'image'	=> true,
-					),
+				$urls[0] => array(
+					'image' => true,
+				),
+				$urls[1] => array(
+					'image' => true,
+				),
+				$urls[2] => array(
+					'image' => true,
+				),
 			)
 		);
 	}
-  
+
 	/**
 	 * Creates different types of posts, enables indexes and pagination and checks if the posts are being paginated correctly without additional/blank sitemaps.
 	 * @requires PHPUnit 5.7
@@ -463,50 +463,50 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	 */
 	public function test_jetpack_gallery() {
 		$this->markTestSkipped( 'Skipping this till actual use case is determined.' );
-		
+
 		$jetpack = 'jetpack/jetpack.php';
 		$file = dirname( dirname( AIOSEOP_UNIT_TESTING_DIR ) ) . '/';
- 		if ( ! file_exists( $file . $jetpack ) ) {
+		if ( ! file_exists( $file . $jetpack ) ) {
 			$this->markTestSkipped( 'JetPack not installed. Skipping.' );
 		}
- 		$this->plugin_to_load = $file . $jetpack;
+		$this->plugin_to_load = $file . $jetpack;
 		tests_add_filter( 'muplugins_loaded', array( $this, 'filter_muplugins_loaded' ) );
- 		activate_plugin( $jetpack );
- 		if ( ! is_plugin_active( $jetpack ) ) {
+		activate_plugin( $jetpack );
+		if ( ! is_plugin_active( $jetpack ) ) {
 			$this->markTestSkipped( 'JetPack not activated. Skipping.' );
 		}
- 		$posts = $this->setup_posts( 1, 1 );
- 		// create 4 attachments.
+		$posts = $this->setup_posts( 1, 1 );
+		// create 4 attachments.
 		$attachments = array();
 		for ( $x = 0; $x < 4; $x++ ) {
 			$attachments[] = $this->upload_image_and_maybe_attach( str_replace( '\\', '/', AIOSEOP_UNIT_TESTING_DIR . '/resources/images/footer-logo.png' ) );
 		}
- 		$id = $this->factory->post->create( array( 'post_type' => 'post', 'post_content' => '[gallery size="medium" link="file" columns="5" type="slideshow" ids="' . implode( ',', $attachments ) . '"]', 'post_title' => 'jetpack' ) );
+		$id = $this->factory->post->create( array( 'post_type' => 'post', 'post_content' => '[gallery size="medium" link="file" columns="5" type="slideshow" ids="' . implode( ',', $attachments ) . '"]', 'post_title' => 'jetpack' ) );
 		$posts['with'][] = get_permalink( $id );
- 		$custom_options = array();
+		$custom_options = array();
 		$custom_options['aiosp_sitemap_indexes'] = '';
 		$custom_options['aiosp_sitemap_images'] = '';
 		$custom_options['aiosp_sitemap_gzipped'] = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
- 		$this->_setup_options( 'sitemap', $custom_options );
- 		$with = $posts['with'];
+		$this->_setup_options( 'sitemap', $custom_options );
+		$with = $posts['with'];
 		$without = $posts['without'];
 		$this->validate_sitemap(
 			array(
-					$with[0] => array(
-						'image'	=> true,
-					),
-					$with[1] => array(
-						'image'	=> true,
-					),
-					$without[0] => array(
-						'image'	=> false,
-					),
+				$with[0] => array(
+					'image' => true,
+				),
+				$with[1] => array(
+					'image' => true,
+				),
+				$without[0] => array(
+					'image' => false,
+				),
 			)
 		);
 	}
 
- 	/**
+	/**
 	 * @requires PHPUnit 5.7
 	 * Tests posts with and without images with dependency on nextgen gallery.
 	 *
@@ -516,44 +516,44 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		wp_set_current_user( 1 );
 		$nextgen = 'nextgen-gallery/nggallery.php';
 		$file = dirname( dirname( AIOSEOP_UNIT_TESTING_DIR ) ) . '/';
-		
+
 		if ( ! file_exists( $file . $nextgen ) ) {
 			$this->markTestSkipped( 'NextGen Gallery not installed. Skipping.' );
 		}
- 		$this->plugin_to_load = $file . $nextgen;
+		$this->plugin_to_load = $file . $nextgen;
 		tests_add_filter( 'muplugins_loaded', array( $this, 'filter_muplugins_loaded' ) );
- 		activate_plugin( $nextgen );
- 		if ( ! is_plugin_active( $nextgen ) ) {
+		activate_plugin( $nextgen );
+		if ( ! is_plugin_active( $nextgen ) ) {
 			$this->markTestSkipped( 'NextGen Gallery not activated. Skipping.' );
 		}
- 		do_action( 'init' );
- 		// nextgen shortcode does not work without creating a gallery or images. So we will have to create a gallery to do this.
-		$nggdb		= new nggdb();
+		do_action( 'init' );
+		// nextgen shortcode does not work without creating a gallery or images. So we will have to create a gallery to do this.
+		$nggdb      = new nggdb();
 		$gallery_id = nggdb::add_gallery();
-		$images	= array(
-			$nggdb->add_image( $gallery_id, 'x.png', 'x', 'x', 'eyJiYWNrdXAiOnsiZmlsZW5hbWUiOiJzYW1wbGUucG5nIiwid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZ2VuZXJhdGVkIjoiMC4wMjM3MzMwMCAxNTA3MDk1MTcwIn0sImFwZXJ0dXJlIjpmYWxzZSwiY3JlZGl0IjpmYWxzZSwiY2FtZXJhIjpmYWxzZSwiY2FwdGlvbiI6ZmFsc2UsImNyZWF0ZWRfdGltZXN0YW1wIjpmYWxzZSwiY29weXJpZ2h0IjpmYWxzZSwiZm9jYWxfbGVuZ3RoIjpmYWxzZSwiaXNvIjpmYWxzZSwic2h1dHRlcl9zcGVlZCI6ZmFsc2UsImZsYXNoIjpmYWxzZSwidGl0bGUiOmZhbHNlLCJrZXl3b3JkcyI6ZmFsc2UsIndpZHRoIjoyNDgsImhlaWdodCI6OTgsInNhdmVkIjp0cnVlLCJtZDUiOiI3ZWUyMjVjOTNkZmNhMTMyYjQzMTc5ZjJiMGYwZTc2NiIsImZ1bGwiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwibWQ1IjoiN2VlMjI1YzkzZGZjYTEzMmI0MzE3OWYyYjBmMGU3NjYifSwidGh1bWJuYWlsIjp7IndpZHRoIjoyNDAsImhlaWdodCI6OTgsImZpbGVuYW1lIjoidGh1bWJzX3NhbXBsZS5wbmciLCJnZW5lcmF0ZWQiOiIwLjMwNDUzNDAwIDE1MDcwOTUxNzAifSwibmdnMGR5bi0weDB4MTAwLTAwZjB3MDEwYzAxMHIxMTBmMTEwcjAxMHQwMTAiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZmlsZW5hbWUiOiJzYW1wbGUucG5nLW5nZ2lkMDE3LW5nZzBkeW4tMHgweDEwMC0wMGYwdzAxMGMwMTByMTEwZjExMHIwMTB0MDEwLnBuZyIsImdlbmVyYXRlZCI6IjAuMTgwMzI0MDAgMTUyMTAxMTI1NCJ9fQ=='),
-			$nggdb->add_image( $gallery_id, 'x.png', 'x', 'x', 'eyJiYWNrdXAiOnsiZmlsZW5hbWUiOiJzYW1wbGUucG5nIiwid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZ2VuZXJhdGVkIjoiMC4wMjM3MzMwMCAxNTA3MDk1MTcwIn0sImFwZXJ0dXJlIjpmYWxzZSwiY3JlZGl0IjpmYWxzZSwiY2FtZXJhIjpmYWxzZSwiY2FwdGlvbiI6ZmFsc2UsImNyZWF0ZWRfdGltZXN0YW1wIjpmYWxzZSwiY29weXJpZ2h0IjpmYWxzZSwiZm9jYWxfbGVuZ3RoIjpmYWxzZSwiaXNvIjpmYWxzZSwic2h1dHRlcl9zcGVlZCI6ZmFsc2UsImZsYXNoIjpmYWxzZSwidGl0bGUiOmZhbHNlLCJrZXl3b3JkcyI6ZmFsc2UsIndpZHRoIjoyNDgsImhlaWdodCI6OTgsInNhdmVkIjp0cnVlLCJtZDUiOiI3ZWUyMjVjOTNkZmNhMTMyYjQzMTc5ZjJiMGYwZTc2NiIsImZ1bGwiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwibWQ1IjoiN2VlMjI1YzkzZGZjYTEzMmI0MzE3OWYyYjBmMGU3NjYifSwidGh1bWJuYWlsIjp7IndpZHRoIjoyNDAsImhlaWdodCI6OTgsImZpbGVuYW1lIjoidGh1bWJzX3NhbXBsZS5wbmciLCJnZW5lcmF0ZWQiOiIwLjMwNDUzNDAwIDE1MDcwOTUxNzAifSwibmdnMGR5bi0weDB4MTAwLTAwZjB3MDEwYzAxMHIxMTBmMTEwcjAxMHQwMTAiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZmlsZW5hbWUiOiJzYW1wbGUucG5nLW5nZ2lkMDE3LW5nZzBkeW4tMHgweDEwMC0wMGYwdzAxMGMwMTByMTEwZjExMHIwMTB0MDEwLnBuZyIsImdlbmVyYXRlZCI6IjAuMTgwMzI0MDAgMTUyMTAxMTI1NCJ9fQ=='),
+		$images = array(
+			$nggdb->add_image( $gallery_id, 'x.png', 'x', 'x', 'eyJiYWNrdXAiOnsiZmlsZW5hbWUiOiJzYW1wbGUucG5nIiwid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZ2VuZXJhdGVkIjoiMC4wMjM3MzMwMCAxNTA3MDk1MTcwIn0sImFwZXJ0dXJlIjpmYWxzZSwiY3JlZGl0IjpmYWxzZSwiY2FtZXJhIjpmYWxzZSwiY2FwdGlvbiI6ZmFsc2UsImNyZWF0ZWRfdGltZXN0YW1wIjpmYWxzZSwiY29weXJpZ2h0IjpmYWxzZSwiZm9jYWxfbGVuZ3RoIjpmYWxzZSwiaXNvIjpmYWxzZSwic2h1dHRlcl9zcGVlZCI6ZmFsc2UsImZsYXNoIjpmYWxzZSwidGl0bGUiOmZhbHNlLCJrZXl3b3JkcyI6ZmFsc2UsIndpZHRoIjoyNDgsImhlaWdodCI6OTgsInNhdmVkIjp0cnVlLCJtZDUiOiI3ZWUyMjVjOTNkZmNhMTMyYjQzMTc5ZjJiMGYwZTc2NiIsImZ1bGwiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwibWQ1IjoiN2VlMjI1YzkzZGZjYTEzMmI0MzE3OWYyYjBmMGU3NjYifSwidGh1bWJuYWlsIjp7IndpZHRoIjoyNDAsImhlaWdodCI6OTgsImZpbGVuYW1lIjoidGh1bWJzX3NhbXBsZS5wbmciLCJnZW5lcmF0ZWQiOiIwLjMwNDUzNDAwIDE1MDcwOTUxNzAifSwibmdnMGR5bi0weDB4MTAwLTAwZjB3MDEwYzAxMHIxMTBmMTEwcjAxMHQwMTAiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZmlsZW5hbWUiOiJzYW1wbGUucG5nLW5nZ2lkMDE3LW5nZzBkeW4tMHgweDEwMC0wMGYwdzAxMGMwMTByMTEwZjExMHIwMTB0MDEwLnBuZyIsImdlbmVyYXRlZCI6IjAuMTgwMzI0MDAgMTUyMTAxMTI1NCJ9fQ==' ),
+			$nggdb->add_image( $gallery_id, 'x.png', 'x', 'x', 'eyJiYWNrdXAiOnsiZmlsZW5hbWUiOiJzYW1wbGUucG5nIiwid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZ2VuZXJhdGVkIjoiMC4wMjM3MzMwMCAxNTA3MDk1MTcwIn0sImFwZXJ0dXJlIjpmYWxzZSwiY3JlZGl0IjpmYWxzZSwiY2FtZXJhIjpmYWxzZSwiY2FwdGlvbiI6ZmFsc2UsImNyZWF0ZWRfdGltZXN0YW1wIjpmYWxzZSwiY29weXJpZ2h0IjpmYWxzZSwiZm9jYWxfbGVuZ3RoIjpmYWxzZSwiaXNvIjpmYWxzZSwic2h1dHRlcl9zcGVlZCI6ZmFsc2UsImZsYXNoIjpmYWxzZSwidGl0bGUiOmZhbHNlLCJrZXl3b3JkcyI6ZmFsc2UsIndpZHRoIjoyNDgsImhlaWdodCI6OTgsInNhdmVkIjp0cnVlLCJtZDUiOiI3ZWUyMjVjOTNkZmNhMTMyYjQzMTc5ZjJiMGYwZTc2NiIsImZ1bGwiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwibWQ1IjoiN2VlMjI1YzkzZGZjYTEzMmI0MzE3OWYyYjBmMGU3NjYifSwidGh1bWJuYWlsIjp7IndpZHRoIjoyNDAsImhlaWdodCI6OTgsImZpbGVuYW1lIjoidGh1bWJzX3NhbXBsZS5wbmciLCJnZW5lcmF0ZWQiOiIwLjMwNDUzNDAwIDE1MDcwOTUxNzAifSwibmdnMGR5bi0weDB4MTAwLTAwZjB3MDEwYzAxMHIxMTBmMTEwcjAxMHQwMTAiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZmlsZW5hbWUiOiJzYW1wbGUucG5nLW5nZ2lkMDE3LW5nZzBkeW4tMHgweDEwMC0wMGYwdzAxMGMwMTByMTEwZjExMHIwMTB0MDEwLnBuZyIsImdlbmVyYXRlZCI6IjAuMTgwMzI0MDAgMTUyMTAxMTI1NCJ9fQ==' ),
 		);
- 		$shortcode = '[ngg_images display_type="photocrati-nextgen_basic_thumbnails" image_ids="'. implode( ',', $images ) . '"]';
+		$shortcode = '[ngg_images display_type="photocrati-nextgen_basic_thumbnails" image_ids="' . implode( ',', $images ) . '"]';
 		$content = do_shortcode( $shortcode );
- 		if ( 'We cannot display this gallery' === $content ) {
+		if ( 'We cannot display this gallery' === $content ) {
 			$this->markTestSkipped( 'NextGen Gallery not working properly. Skipping.' );
 		}
- 		// $content will output div and img tags but the img tags have an empty src.
+		// $content will output div and img tags but the img tags have an empty src.
 		$this->markTestIncomplete( 'We cannot add images in such a way that the shortcode displays the "src" attribute in the image tags. Skipping.' );
- 		$id = $this->factory->post->create( array( 'post_type' => 'post', 'post_content' => $shortcode, 'post_title' => 'nextgen' ) );
+		$id = $this->factory->post->create( array( 'post_type' => 'post', 'post_content' => $shortcode, 'post_title' => 'nextgen' ) );
 		$url = get_permalink( $id );
- 		$custom_options = array();
+		$custom_options = array();
 		$custom_options['aiosp_sitemap_indexes'] = '';
 		$custom_options['aiosp_sitemap_images'] = '';
 		$custom_options['aiosp_sitemap_gzipped'] = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
- 		$this->_setup_options( 'sitemap', $custom_options );
- 		$this->validate_sitemap(
+		$this->_setup_options( 'sitemap', $custom_options );
+		$this->validate_sitemap(
 			array(
-					$url => array(
-						'image'	=> true,
-					)
+				$url => array(
+					'image' => true,
+				),
 			)
 		);
 	}
@@ -645,7 +645,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			),
 		);
 	}
-  
+
 	/**
 	 * Creates posts with external images and uses the filter 'aioseop_images_allowed_from_hosts' to allow only a particular host's images to be included in the sitemap.
 	 */
@@ -675,18 +675,18 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		$without = $posts['without'];
 		$this->validate_sitemap(
 			array(
-					$with[0] => array(
-						'image'	=> true,
-					),
-					$with[1] => array(
-						'image'	=> false,
-					),
-					$without[0] => array(
-						'image'	=> false,
-					),
-					$without[1] => array(
-						'image'	=> false,
-					),
+				$with[0] => array(
+					'image' => true,
+				),
+				$with[1] => array(
+					'image' => false,
+				),
+				$without[0] => array(
+					'image' => false,
+				),
+				$without[1] => array(
+					'image' => false,
+				),
 			)
 		);
 	}
@@ -721,12 +721,12 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	public function test_make_external_urls_valid( $urls ) {
 		$posts = $this->setup_posts( 2 );
 
-		$pages	= array();
+		$pages  = array();
 		foreach ( $urls as $url ) {
 			$pages[ $url['loc'] ] = array(
-				'prio'		=> $url['priority'],
-				'freq'		=> $url['changefreq'],
-				'mod'		=> $url['lastmod'],
+				'prio'      => $url['priority'],
+				'freq'      => $url['changefreq'],
+				'mod'       => $url['lastmod'],
 			);
 		}
 
@@ -739,7 +739,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 		$this->_setup_options( 'sitemap', $custom_options );
 
-		$validate_urls	= array();
+		$validate_urls  = array();
 		foreach ( $urls as $url ) {
 			// the ones with http should be present and the ones without http should not be present.
 			$validate_urls[ $url['loc'] ] = strpos( $url['loc'], 'http' ) !== false;
@@ -763,7 +763,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			)
 		);
 
-		// so all urls 
+		// so all urls
 	}
 
 	/**

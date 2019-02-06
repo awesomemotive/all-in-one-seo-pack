@@ -20,9 +20,9 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	public function test_home_page( $title_meta, $desc_meta ) {
 		$this->markTestIncomplete( 'Cannot seem to get any meta tag when accessing the home page. Have set home page as static page as well as showing latest posts. Nothing works.' );
 
-		$id = $this->factory->post->create(array('post_type' => 'page'));
-		$home_url = get_site_url();//trailingslashit( get_site_url() ) . 'house';
-		//update_option( 'home', $home_url );
+		$id = $this->factory->post->create( array('post_type' => 'page') );
+		$home_url = get_site_url();// trailingslashit( get_site_url() ) . 'house';
+		// update_option( 'home', $home_url );
 
 		update_option( 'show_on_front', 'page' );
 		update_option( 'page_on_front', $id );
@@ -36,7 +36,7 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 		do_action( 'init' );
 		$meta = $this->parse_html( $home_url, array( 'meta' ) );
 
-		print_r($meta);
+		print_r( $meta );
 
 		// should have atleast one meta tag.
 		$this->assertGreaterThan( 1, count( $meta ) );

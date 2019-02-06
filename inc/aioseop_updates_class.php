@@ -206,7 +206,7 @@ class AIOSEOP_Updates {
 	 * @since 2.9
 	 * @global @aiosp, @aioseop_options
 	 */
-	function bad_bots_remove_semrush_201810(){
+	function bad_bots_remove_semrush_201810() {
 		global $aiosp, $aioseop_options;
 
 		// Remove 'SemrushBot' from bad bots list to avoid false positives.

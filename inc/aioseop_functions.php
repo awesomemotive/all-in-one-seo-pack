@@ -424,7 +424,7 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 
 	function aioseop_ajax_save_url() {
 		$valid   = true;
-		$invalid_msg	= null;
+		$invalid_msg    = null;
 		aioseop_ajax_init();
 		$options = array();
 		parse_str( $_POST['options'], $options );
@@ -436,7 +436,7 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 					$valid    = false;
 				} elseif ( 'aiosp_sitemap_addl_url' === $k && ! aiosp_common::is_url_valid( $v ) ) {
 					$valid    = false;
-					$invalid_msg	= __( 'Please provide absolute URLs (including http or https).', 'all-in-one-seo-pack' );
+					$invalid_msg    = __( 'Please provide absolute URLs (including http or https).', 'all-in-one-seo-pack' );
 				}
 				if ( ! $valid ) {
 					break;
@@ -476,7 +476,7 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 			$output  = str_replace( "\n", '\n', $output );
 		} else {
 			if ( $invalid_msg ) {
-				$output	= $invalid_msg;
+				$output = $invalid_msg;
 			} else {
 				$output   = __( 'All values are mandatory.', 'all-in-one-seo-pack' );
 			}
@@ -499,9 +499,9 @@ if ( ! function_exists( 'aioseop_ajax_delete_url' ) ) {
 		$_POST['location'] = null;
 		$_POST['Submit']   = 'ajax';
 		$module->add_page_hooks();
-		$_POST = (Array) $module->get_current_options( $_POST, null );
+		$_POST = (array) $module->get_current_options( $_POST, null );
 		if ( ! empty( $_POST['aiosp_sitemap_addl_pages'] ) && is_object( $_POST['aiosp_sitemap_addl_pages'] ) ) {
-			$_POST['aiosp_sitemap_addl_pages'] = (Array) $_POST['aiosp_sitemap_addl_pages'];
+			$_POST['aiosp_sitemap_addl_pages'] = (array) $_POST['aiosp_sitemap_addl_pages'];
 		}
 		if ( ! empty( $_POST['aiosp_sitemap_addl_pages'] ) && ( ! empty( $_POST['aiosp_sitemap_addl_pages'][ $options ] ) ) ) {
 			unset( $_POST['aiosp_sitemap_addl_pages'][ $options ] );
@@ -748,7 +748,7 @@ if ( ! function_exists( 'aioseop_mrt_pccolumn' ) ) {
 			return;
 		}
 		if ( current_user_can( 'edit_post', $id ) ) {
-		?>
+			?>
 			<div class="aioseop_mpc_admin_meta_container">
 				<div class="aioseop_mpc_admin_meta_options"
 					 id="aioseop_<?php print $target; ?>_<?php echo $id; ?>"
@@ -769,7 +769,7 @@ if ( ! function_exists( 'aioseop_mrt_pccolumn' ) ) {
 					?>
 				</div>
 			</div>
-		<?php
+			<?php
 		}
 	}
 }
@@ -878,10 +878,10 @@ if ( ! function_exists( 'aioseop_localize_script_data' ) ) {
 
 	/**
 	 * AIOSEOP Localize Script Data
-     *
-     * Used by the module base class script enqueue to localize data.
-     *
-     * @since ?
+	 *
+	 * Used by the module base class script enqueue to localize data.
+	 *
+	 * @since ?
 	 */
 	function aioseop_localize_script_data() {
 		static $loaded = 0;

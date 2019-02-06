@@ -63,7 +63,7 @@ function aioseopCountChars( field, cntfield ) {
 		extra = aiosp_title_extra;
 	}
 	cntfield.val( field.val().length + extra );
-	if ( typeof field.attr('size') != 'undefined' ) {
+	if ( typeof field.attr('size') !== 'undefined' ) {
 		field_size = field.attr('size');
 	} else {
 		field_size = field.attr('rows') * field.attr('cols');

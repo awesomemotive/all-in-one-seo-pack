@@ -57,7 +57,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @since 2.3.14 #921 More google analytics options added.
 	 * @since 2.4.0 #1395 Longer Meta Descriptions.
-     * @since 2.6.1 #1694 Back to shorter meta descriptions.
+	 * @since 2.6.1 #1694 Back to shorter meta descriptions.
 	 */
 	function __construct() {
 		global $aioseop_options;
@@ -3053,7 +3053,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 			<?php
 			if ( ! empty( $this->pointers ) ) {
-			?>
+				?>
 			if (typeof( jQuery ) != 'undefined') {
 				jQuery(document).ready(function () {
 					var admin_pointer;
@@ -3061,7 +3061,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					<?php
 					foreach ( $this->pointers as $k => $p ) {
 						if ( ! empty( $p['pointer_scope'] ) && ( 'global' === $p['pointer_scope'] ) ) {
-												?>
+							?>
 												admin_index = "<?php echo esc_attr( $k ); ?>";
 											admin_pointer = <?php echo json_encode( $p ); ?>;
 											aioseop_show_pointer(admin_index, admin_pointer);
@@ -3313,8 +3313,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$extra_title_len = 0;
 		switch ( $hook_suffix ) {
 			// Screens `post.php`, `post-new.php`, & `../aioseop_class.php` share the same `count-char.js`.
-			case 'post.php' :
-			case 'post-new.php' :
+			case 'post.php':
+			case 'post-new.php':
 				$info         = $this->get_page_snippet_info();
 				$title        = $info['title'];
 				$title_format = $this->get_title_format( array( 'name' => 'aiosp_snippet' ) );
@@ -3323,8 +3323,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					$replace_title   = '<span id="aiosp_snippet_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title ) ) ) . '</span>';
 					$extra_title_len = strlen( $this->html_entity_decode( str_replace( $replace_title, '', $title_format ) ) );
 				}
-			// Fall through.
-			case 'toplevel_page_all-in-one-seo-pack/aioseop_class' :
+				// Fall through.
+			case 'toplevel_page_all-in-one-seo-pack/aioseop_class':
 				wp_enqueue_script(
 					'aioseop-post-edit-script',
 					AIOSEOP_PLUGIN_URL . 'js/count-chars.js',
@@ -3453,14 +3453,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				global $post;
 				$info = $this->get_page_snippet_info();
 
-
 				$title = $info['title'];
 				$description = $info['description'];
 				$keywords = $info['keywords'];
 
-				$settings["{$prefix}title"]['placeholder']       = $this->html_entity_decode( $title );
-				$settings["{$prefix}description"]['placeholder'] = $this->html_entity_decode( $description );
-				$settings["{$prefix}keywords"]['placeholder']    = $keywords;
+				$settings[ "{$prefix}title" ]['placeholder']       = $this->html_entity_decode( $title );
+				$settings[ "{$prefix}description" ]['placeholder'] = $this->html_entity_decode( $description );
+				$settings[ "{$prefix}keywords" ]['placeholder']    = $keywords;
 			}
 
 			if ( ! AIOSEOPPRO ) {
@@ -4000,7 +3999,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				) as $k => $v
 			) {
 				if ( ! empty( $aioseop_options[ "aiosp_{$k}_verify" ] ) ) {
-					$meta_string .= '<meta name="' . $v . '" content="' . trim( strip_tags( $aioseop_options["aiosp_{$k}_verify"] ) ) . '" />' . "\n";
+					$meta_string .= '<meta name="' . $v . '" content="' . trim( strip_tags( $aioseop_options[ "aiosp_{$k}_verify" ] ) ) . '" />' . "\n";
 				}
 			}
 
@@ -4258,7 +4257,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			) {
 
 				if ( ( 'on' === $aiosp_noindex ) || ( ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) ) && $page > 1 ) ||
-				     ( ( '' === $aiosp_noindex ) && ( ! empty( $aioseop_options['aiosp_cpostnoindex'] ) ) && in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] ) )
+					 ( ( '' === $aiosp_noindex ) && ( ! empty( $aioseop_options['aiosp_cpostnoindex'] ) ) && in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] ) )
 
 				) {
 					$noindex = 'noindex';
@@ -4303,8 +4302,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-   * Determine if post is password protected.
-   * @since 2.3.11.5
+	 * Determine if post is password protected.
+	 * @since 2.3.11.5
 	 * @return bool
 	 */
 	function is_password_protected() {
@@ -5254,17 +5253,17 @@ EOF;
 	function check_recently_activated_modules() {
 		global $aioseop_options;
 		$options = get_option( 'aioseop_options' );
-		$modules_before	= array();
-		$modules_now	= array();
+		$modules_before = array();
+		$modules_now    = array();
 		if ( array_key_exists( 'modules', $aioseop_options ) && array_key_exists( 'aiosp_feature_manager_options', $aioseop_options['modules'] ) ) {
-			foreach( $aioseop_options['modules']['aiosp_feature_manager_options'] as $module => $state ) {
+			foreach ( $aioseop_options['modules']['aiosp_feature_manager_options'] as $module => $state ) {
 				if ( ! empty( $state ) ) {
 					$modules_before[] = $module;
 				}
 			}
 		}
 		if ( array_key_exists( 'modules', $options ) && array_key_exists( 'aiosp_feature_manager_options', $options['modules'] ) ) {
-			foreach( $options['modules']['aiosp_feature_manager_options'] as $module => $state ) {
+			foreach ( $options['modules']['aiosp_feature_manager_options'] as $module => $state ) {
 				if ( ! empty( $state ) ) {
 					$modules_now[] = $module;
 				}
@@ -5278,7 +5277,7 @@ EOF;
 			$diff = array_diff( $modules_now, $modules_before );
 		}
 
- 		if ( $diff ) {
+		if ( $diff ) {
 			foreach ( $diff as $module ) {
 				$name = str_replace( 'aiosp_feature_manager_enable_', '', $module );
 				do_action( $this->prefix . $action . '_' . $name );

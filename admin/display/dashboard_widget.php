@@ -23,10 +23,12 @@ if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 		 */
 		function add_dashboard_widget() {
 			if ( current_user_can( 'install_plugins' ) && false !== $this->show_widget() ) {
-				wp_add_dashboard_widget( 'semperplugins-rss-feed', __( 'SEO News', 'all-in-one-seo-pack' ), array(
-					$this,
-					'display_rss_dashboard_widget',
-				) );
+				wp_add_dashboard_widget(
+					'semperplugins-rss-feed', __( 'SEO News', 'all-in-one-seo-pack' ), array(
+						$this,
+						'display_rss_dashboard_widget',
+					)
+				);
 			}
 
 		}

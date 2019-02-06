@@ -652,7 +652,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					$buf .= "<table class='aioseop_table' cellpadding=0 cellspacing=0>\n";
 					foreach ( $args['value'] as $k => $v ) {
 						if ( is_object( $v ) ) {
-							$v = (Array) $v;
+							$v = (array) $v;
 						}
 						$buf .= "\t<tr><td><a href='#' title='$k' class='dashicons dashicons-trash aiosp_delete_url'></a> {$k}</td><td>{$v['prio']}</td><td>{$v['freq']}</td><td>{$v['mod']}</td></tr>\n";
 					}
@@ -942,7 +942,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					$decoded = maybe_unserialize( $options[ $this->prefix . 'addl_pages' ] );
 				}
 				if ( ! is_array( $decoded ) ) {
-					$decoded = (Array) $decoded;
+					$decoded = (array) $decoded;
 				}
 				if ( null === $decoded ) {
 					$decoded = $options[ $this->prefix . 'addl_pages' ];
@@ -952,7 +952,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( is_array( $options[ $this->prefix . 'addl_pages' ] ) ) {
 				foreach ( $options[ $this->prefix . 'addl_pages' ] as $k => $v ) {
 					if ( is_object( $v ) ) {
-						$options[ $this->prefix . 'addl_pages' ][ $k ] = (Array) $v;
+						$options[ $this->prefix . 'addl_pages' ][ $k ] = (array) $v;
 					}
 				}
 			}

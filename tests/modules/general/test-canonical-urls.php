@@ -2,7 +2,7 @@
 /**
  * Class Test_Canonical_Urls
  *
- * @package 
+ * @package
  */
 /**
  * Canonnical URLs test cases.
@@ -16,19 +16,19 @@ class Test_Canonical_Urls extends AIOSEOP_Test_Base {
 
 	public function test_pagination() {
 		wp_set_current_user( 1 );
- 		global $aioseop_options;
+		global $aioseop_options;
 		$aioseop_options['aiosp_can'] = 1;
 		update_option( 'aioseop_options', $aioseop_options );
- 		$id = $this->factory->post->create( array( 'post_type' => 'post', 'post_content' => 'one <!--nextpage--> two <!--nextpage--> three <!--nextpage-->' ) );
+		$id = $this->factory->post->create( array( 'post_type' => 'post', 'post_content' => 'one <!--nextpage--> two <!--nextpage--> three <!--nextpage-->' ) );
 		$link_page = get_permalink( $id );
 		$pages[] = $link_page;
 		$pages[] = add_query_arg( 'page', 2, $link_page );
 		$pages[] = add_query_arg( 'page', 3, $link_page );
- 		foreach ( $pages as $page ) {
+		foreach ( $pages as $page ) {
 			$links = $this->parse_html( $page, array( 'link' ) );
-			$names	= wp_list_pluck( $links, 'rel' );
+			$names  = wp_list_pluck( $links, 'rel' );
 			$this->assertContains( 'canonical', $names );
- 			$canonical_url = null;
+			$canonical_url = null;
 			foreach ( $links as $link ) {
 				if ( 'canonical' === $link['rel'] ) {
 					$canonical_url = $link['href'];
@@ -38,7 +38,7 @@ class Test_Canonical_Urls extends AIOSEOP_Test_Base {
 			$this->assertEquals( $page, $canonical_url );
 		}
 	}
-		
+
 	/**
 	 * Checks if a non-paginated post specifies the same URL on every page even with "No Pagination for Canonical URLs" unchecked.
 	 * Checks if a paginated taxonomy archive DOES NOT specify the same URL on every page.
@@ -55,7 +55,7 @@ class Test_Canonical_Urls extends AIOSEOP_Test_Base {
 		$pages[] = add_query_arg( 'page', 3, $link_page );
 		foreach ( $pages as $page ) {
 			$links = $this->parse_html( $page, array( 'link' ) );
-			//error_log("getting $page " . print_r($links,true));
+			// error_log("getting $page " . print_r($links,true));
 			$canonical_url = null;
 			foreach ( $links as $link ) {
 				if ( 'canonical' === $link['rel'] ) {
@@ -86,28 +86,28 @@ class Test_Canonical_Urls extends AIOSEOP_Test_Base {
 		// all canonical urls should be different.
 		$this->assertEquals( count( $canonical_urls ), count( array_unique( $canonical_urls ) ) );
 	}
-	
+
 	/**
-		 * Canonical URLs on all post type (except post) archive pages should include the &post_type parameter.
-		 *
-		 * @ticket 491 Canonical urls on custom post type archive pages don't include the required URL variable.
-		 */
-		public function test_post_type_archive_pages() {
-			global $aioseop_options;
-			$aioseop_options['aiosp_can'] = 1;
-			update_option( 'aioseop_options', $aioseop_options );
-	 		$id = $this->factory->post->create( array( 'post_type' => 'page' ) );
-			$link = get_month_link( get_the_time( 'Y', $id ), get_the_time( 'm', $id ) );
-			$link_page = add_query_arg( 'post_type', 'page', $link );
-			$links = $this->parse_html( $link_page, array( 'link' ) );
-		
-			$names	 = wp_list_pluck( $links, 'rel' );
-			$this->assertContains( 'canonical', $names );
-	 		foreach ( $links as $link ) {
-				if ( 'canonical' === $link['rel'] ) {
-					$this->assertEquals( $link['href'], $link_page );
-				}
+	 * Canonical URLs on all post type (except post) archive pages should include the &post_type parameter.
+	 *
+	 * @ticket 491 Canonical urls on custom post type archive pages don't include the required URL variable.
+	 */
+	public function test_post_type_archive_pages() {
+		global $aioseop_options;
+		$aioseop_options['aiosp_can'] = 1;
+		update_option( 'aioseop_options', $aioseop_options );
+		$id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$link = get_month_link( get_the_time( 'Y', $id ), get_the_time( 'm', $id ) );
+		$link_page = add_query_arg( 'post_type', 'page', $link );
+		$links = $this->parse_html( $link_page, array( 'link' ) );
+
+		$names   = wp_list_pluck( $links, 'rel' );
+		$this->assertContains( 'canonical', $names );
+		foreach ( $links as $link ) {
+			if ( 'canonical' === $link['rel'] ) {
+				$this->assertEquals( $link['href'], $link_page );
 			}
 		}
-	
+	}
+
 }

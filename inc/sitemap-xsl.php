@@ -155,20 +155,21 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 				<th width="50%">URL</th>
 				<?php
 				if ( aiosp_include_images() ) {
-				?>
+					?>
 				<th>Images</th>
-				<?php
+					<?php
 				}
 				?>
 				<?php
-					if ( AIOSEOPPRO ) {
-				?>				
+				if ( AIOSEOPPRO ) {
+					?>
+								
 				<xsl:if test="$sitemapType='video'">
 					<th>Videos</th>
 					<th>Video Thumbnails</th>
 				</xsl:if>
-				<?php
-					}
+					<?php
+				}
 				?>
 				<th>Priority</th>
 				<th>Change Frequency</th>
@@ -193,16 +194,16 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 					</td>
 					<?php
 					if ( aiosp_include_images() ) {
-					?>
+						?>
 					<td>
 					<xsl:value-of select="count(image:image)"/>
 					</td>
-					<?php
+						<?php
 					}
 					?>
 					<?php
-						if ( AIOSEOPPRO ) {
-					?>
+					if ( AIOSEOPPRO ) {
+						?>
 					<xsl:if test="$sitemapType='video'">
 						<td>
 							<xsl:value-of select="count(video:video)"/>
@@ -225,8 +226,8 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 							</xsl:if>
 						</td>
 					</xsl:if>
-					<?php
-						}
+						<?php
+					}
 					?>
 					<td>
 						<xsl:if test="string(number(sitemap:priority))!='NaN'">

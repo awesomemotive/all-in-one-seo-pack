@@ -11,13 +11,13 @@ class AIOSEOPAdminMenus {
 	 * Constructor to add the actions.
 	 */
 	function __construct() {
-		
+
 		add_action( 'network_admin_menu', array( $this, 'remove_menus' ), 15 );
-		
-		if ( is_multisite()){
+
+		if ( is_multisite() ) {
 			return;
 		}
-		
+
 		if ( current_user_can( 'manage_options' ) || current_user_can( 'aiosp_manage_seo' ) ) {
 			add_action( 'admin_menu', array( $this, 'add_pro_submenu' ), 11 );
 		} else {
@@ -25,7 +25,7 @@ class AIOSEOPAdminMenus {
 		}
 	}
 
-	function remove_menus(){
+	function remove_menus() {
 		remove_menu_page( AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class.php' ); // Remove AIOSEOP menu from the network admin.
 	}
 
