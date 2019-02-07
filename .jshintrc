@@ -3,8 +3,10 @@
 	"curly": true,
 	"eqeqeq": true,
 	"eqnull": true,
+	"esversion": 5,
 	"expr": true,
 	"immed": true,
+	"jquery": true,
 	"noarg": true,
 	"nonbsp": true,
 	"onevar": true,
@@ -21,5 +23,13 @@
 		"wp": false,
 		"alert": false,
 		"ajaxurl": false
-  }
+	},
+	"predef": [
+		"jQuery",
+		"sack",
+		"ajaxurl",
+		"wp",
+		"aiosp_data",
+		"aioseopadmin"
+	]
 }

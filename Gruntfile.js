@@ -54,7 +54,7 @@ module.exports = function(grunt) {
 			},
 			phplint: {
 				options: {
-					standard: 'phpcs.xml',
+					standard: 'phpcs.xml'
 				},
 				src: [
 				'<%= files_php %>'
