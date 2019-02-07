@@ -10,7 +10,7 @@
  * @version 2.9.2
  */
 
-var aiosp_title_extra = parseInt( aioseop_count_chars.aiosp_title_extra ); // jshint ignore:line
+var aiosp_title_extra = parseInt( aioseop_count_chars.aiosp_title_extra, 10 ); // jshint ignore:line
 
 jQuery( document ).ready( function() {
 	aioseopInitCounting();
@@ -59,7 +59,7 @@ function aioseopInitCounting(){
 function aioseopCountChars( field, cntfield ) {
 	var extra = 0;
 	var field_size;
-	if ( ( field.attr('name') == 'aiosp_title' ) && ( typeof aiosp_title_extra !== 'undefined' ) ) {
+	if ( ( field.attr('name') === 'aiosp_title' ) && ( typeof aiosp_title_extra !== 'undefined' ) ) {
 		extra = aiosp_title_extra;
 	}
 	cntfield.val( field.val().length + extra );

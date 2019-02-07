@@ -6,7 +6,7 @@
 			$( 'section' ).eq( $( this ).index() ).show();
 
 			// alert($('section'));
-			if ($( this ).attr( 'className' ) == 'nav-tab-active') {
+			if ($( this ).attr( 'className' ) === 'nav-tab-active') {
 				// $(this).removeClass('nav-tab-active');
 				// $(this).addClass('nav-tab-active');
 			} else {
@@ -29,4 +29,4 @@
 		}
 	);
 
-})( jQuery );
+}( jQuery ));

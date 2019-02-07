@@ -3024,7 +3024,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		wp_enqueue_script( 'wp-pointer', false, array( 'jquery' ) );
 		wp_enqueue_style( 'wp-pointer' );
 		// $this->add_admin_pointers();
-
 		// TODO Enqueue script as a JS file.
 		?>
 		<script>
