@@ -104,6 +104,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks( 'grunt-eslint' );
 
 	// Default task(s).
-	grunt.registerTask( 'default', ['mkdir', 'phpcbf', 'phpcs', 'phplint', 'jshint', 'uglify', 'eslint'] );
+	grunt.registerTask( 'default', ['mkdir', 'phpcbf', 'phpcs', 'phplint', 'jshint', 'eslint', 'uglify'] );
 
 };
