@@ -4480,10 +4480,12 @@ EOF;
 				}
 			}
 			if ( ! empty( $prev ) ) {
-				$prev = $this->substr( $prev, 9, - 2 );
+				$tmp_str = $this->substr( $prev, ( $this->strpos( $prev, 'href="' ) + 6 ) );
+				$prev    = $this->substr( $tmp_str, 0, ( $this->strpos( $tmp_str, '"' ) -  $this->strlen( $tmp_str ) ) );
 			}
 			if ( ! empty( $next ) ) {
-				$next = $this->substr( $next, 9, - 2 );
+				$tmp_str = $this->substr( $next, ( $this->strpos( $next, 'href="' ) + 6 ) );
+				$next    = $this->substr( $tmp_str, 0, ( $this->strpos( $tmp_str, '"' ) -  $this->strlen( $tmp_str ) ) );
 			}
 		}
 
