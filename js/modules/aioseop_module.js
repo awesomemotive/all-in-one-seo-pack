@@ -795,7 +795,7 @@ function aioseop_handle_post_url( action, settings, options, success_function, u
                             }
                         });
                     }else{
-					    aioseop_handle_ajax_call( action, settings, options, success_function );
+						aioseop_handle_ajax_call( action, settings, options, success_function );
                     }
 				}
 			);
@@ -836,7 +836,7 @@ function aiospinitAll(){
 
 function aiospinitCalendar(){
     if ( jQuery( '.aiseop-date' ).length > 0 && jQuery( '.aiseop-date' ).eq( 0 ).prop( 'type' ).toLowerCase() === 'text' ) {
-	  jQuery( '.aiseop-date' ).datepicker(
+		jQuery( '.aiseop-date' ).datepicker(
 			{
 				dateFormat: "yy-mm-dd"
 			}
