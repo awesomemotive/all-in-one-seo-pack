@@ -163,7 +163,24 @@ function aioseop_do_condshow_match( index, value ) {
 						}
 					} else {
 						cur = aioseop_get_field_value( subopt );
-						if ( cur !== setting ) {
+						/*
+						 * TODO Improve values of aioseop settings & default settings (in PHP files). By reducing mixed values & casetypes.
+						 *
+						 * There are too many mixed values to do a strict comparison.
+						 *
+						 * For an int value, an element.val() will return a string. Plus, there is also a mixture of
+						 * int/booleans and string "on||off". This can be improved with using consistancy in the values
+						 * being used, and then JSHint & ESLint can be re-enabled.
+						 *
+						 * Current values occuring...
+						 * "1" : 1
+						 * "0" : "on"
+						 * 0 : "off"
+						 * undefined : "on"
+						 */
+						/* eslint-disable eqeqeq */
+						if ( cur != setting ) { // jshint ignore:line
+							/* eslint-enable eqeqeq */
 							matches = false;
 						}
 					}
