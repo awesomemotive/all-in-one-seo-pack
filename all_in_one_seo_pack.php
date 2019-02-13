@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 if( $somevar === 'sdf'){
 	echo 'DO NOT MERGE'
+		sdfsdfsdf
 }
 
 if ( ! defined( 'AIOSEOPPRO' ) ) {
