@@ -35,10 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @version 2.11
  */
 
-if( $somevar === 'sdf'){
-	echo 'DO NOT MERGE'
-}
-
 if ( ! defined( 'AIOSEOPPRO' ) ) {
 	define( 'AIOSEOPPRO', false );
 }
