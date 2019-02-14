@@ -3311,7 +3311,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					$extra_title_len = strlen( $this->html_entity_decode( str_replace( $replace_title, '', $title_format ) ) );
 				}
 			// Fall through.
-			case 'toplevel_page_all-in-one-seo-pack/aioseop_class' :
+			case 'toplevel_page_' . AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class' :
 				wp_enqueue_script(
 					'aioseop-post-edit-script',
 					AIOSEOP_PLUGIN_URL . 'js/count-chars.js',
