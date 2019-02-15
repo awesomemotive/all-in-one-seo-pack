@@ -4479,17 +4479,22 @@ EOF;
 					$next = _wp_link_page( $page + 1 );
 				}
 			}
+
+			$prev_link = '';
+			$next_link = '';
 			if ( ! empty( $prev ) ) {
-				$tmp_str = $this->substr( $prev, ( $this->strpos( $prev, 'href="' ) + 6 ) );
-				$prev    = $this->substr( $tmp_str, 0, ( $this->strpos( $tmp_str, '"' ) -  $this->strlen( $tmp_str ) ) );
+				$dom = new DOMDocument();
+				$dom->loadHTML( $prev );
+				$prev_link = $dom->getElementsByTagName( 'a' )->item(0)->getAttribute( 'href' );
 			}
 			if ( ! empty( $next ) ) {
-				$tmp_str = $this->substr( $next, ( $this->strpos( $next, 'href="' ) + 6 ) );
-				$next    = $this->substr( $tmp_str, 0, ( $this->strpos( $tmp_str, '"' ) -  $this->strlen( $tmp_str ) ) );
+				$dom = new DOMDocument();
+				$dom->loadHTML( $next );
+				$next_link = $dom->getElementsByTagName( 'a' )->item(0)->getAttribute( 'href' );
 			}
 		}
 
-		return array( 'prev' => $prev, 'next' => $next );
+		return array( 'prev' => $prev_link, 'next' => $next_link );
 	}
 
 	/**
