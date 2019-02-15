@@ -4480,21 +4480,19 @@ EOF;
 				}
 			}
 
-			$prev_link = '';
-			$next_link = '';
 			if ( ! empty( $prev ) ) {
 				$dom = new DOMDocument();
 				$dom->loadHTML( $prev );
-				$prev_link = $dom->getElementsByTagName( 'a' )->item(0)->getAttribute( 'href' );
+				$prev = $dom->getElementsByTagName( 'a' )->item(0)->getAttribute( 'href' );
 			}
 			if ( ! empty( $next ) ) {
 				$dom = new DOMDocument();
 				$dom->loadHTML( $next );
-				$next_link = $dom->getElementsByTagName( 'a' )->item(0)->getAttribute( 'href' );
+				$next = $dom->getElementsByTagName( 'a' )->item(0)->getAttribute( 'href' );
 			}
 		}
 
-		return array( 'prev' => $prev_link, 'next' => $next_link );
+		return array( 'prev' => $prev, 'next' => $next );
 	}
 
 	/**
