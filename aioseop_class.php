@@ -4473,9 +4473,13 @@ EOF;
 			}
 			if ( ! empty( $page ) ) {
 				if ( $page > 1 ) {
+					// Cannot use `wp_link_page()` since it is for rendering purposes and has no control over the page number.
+					// TODO Investigate alternate wp concept. If none is found, keep private function in case of any future WP changes.
 					$prev = _wp_link_page( $page - 1 );
 				}
 				if ( $page + 1 <= $numpages ) {
+					// Cannot use `wp_link_page()` since it is for rendering purposes and has no control over the page number.
+					// TODO Investigate alternate wp concept. If none is found, keep private function in case of any future WP changes.
 					$next = _wp_link_page( $page + 1 );
 				}
 			}
