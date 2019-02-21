@@ -120,7 +120,13 @@ class AIOSEOP_Updates {
 		) {
 			$this->bad_bots_remove_semrush_201810();
 		}
-
+		
+		if (
+			( ! AIOSEOPPRO && version_compare( $old_version, '2.12', '<' ) ) ||
+			( AIOSEOPPRO && version_compare( $old_version, '3.0', '<' ) )
+		) {
+			$this->bad_bots_remove_exabot_201902();
+		}
 	}
 
 	/**
@@ -216,6 +222,29 @@ class AIOSEOP_Updates {
 				array(
 					"SemrushBot\r\n",
 					"SemrushBot\n",
+				), '', $list
+			);
+			$aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] = $list;
+			update_option( 'aioseop_options', $aioseop_options );
+			$aiosp->update_class_option( $aioseop_options );
+		}
+	}
+	
+	/**
+	 * Removes Exabot from bad bot blocker to allow Alexabot. (#2105)
+	 *
+	 * @since 3.0
+	 * @global @aiosp, @aioseop_options
+	 */
+	function bad_bots_remove_exabot_201902(){
+		global $aiosp, $aioseop_options;
+
+		if ( isset( $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] ) ) {
+			$list                                                                                 = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
+			$list                                                                                 = str_replace(
+				array(
+					"Exabot\r\n",
+					"Exabot\n",
 				), '', $list
 			);
 			$aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] = $list;
