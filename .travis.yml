@@ -46,7 +46,7 @@ install:
 
 before_script:
   - npm install -g grunt-cli
-  - npm install grunt
+  - npm install grunt grunt-mkdir grunt-phpcs grunt-phpcbf grunt-phplint grunt-contrib-jsh int grunt-contrib-uglify
   - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
 script: 
