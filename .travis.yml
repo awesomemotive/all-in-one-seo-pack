@@ -1,49 +1,45 @@
 language: php
 
+matrix:
+  fast_finish: true
+  global:
+    - env: PHPUNIT=global
+  include:
+    - php: 7.2
+      env: PHPUNIT=local
+    - php: 7.1
+      env: PHPUNIT=local
+    - php: 7.0
+    - php: 5.6
+    - php: 5.5
+    - php: 5.4
+    - php: 5.3
+      dist: precise
+    - php: 5.2
+      dist: precise
+    - env: WP_VERSION=latest
+    - env: WP_VERSION=4.5
+    - env: WP_MULTISITE=1
+  allow_failures:
+    - env: WP_MULTISITE=1
+    - php: 5.3
+      dist: precise
+    - php: 5.2
+      dist: precise
+
 notifications:
   email:
     on_success: never
     on_failure: change
 
 branches:
-  only:
-    - development
+  except:
+  - "/^*-v[0-9]/"
 
-php:
-  - 5.3
-  - 5.6
-
-env:
-  - WP_VERSION=latest WP_MULTISITE=0
-  - WP_VERSION=3.3 WP_MULTISITE=0
-  - WP_VERSION=4.5 WP_MULTISITE=0
-
-matrix:
-  include:
-    - php: 7.0
-      env: WP_VERSION=master WP_MULTISITE=1 PHPLINT=1 PHPCS=1 CHECKJS=1 COVERAGE=1
-    - php: 5.2
-      env: WP_VERSION=4.5 WP_MULTISITE=1 PHPLINT=1
-    - php: 7.0
-      env: WP_VERSION=4.5
-    - php: 7.0
-      env: WP_VERSION=4.4
-    - php: 7.0
-      env: WP_VERSION=4.3
-    - php: 5.6
-      env: WP_VERSION=4.2
-    - php: 5.6
-      env: WP_VERSION=4.5
-    - php: 5.5
-      env: WP_VERSION=4.5
-    - php: 5.4
-      env: WP_VERSION=4.5
-    - php: 5.3
-      env: WP_VERSION=4.5
-    - php: hhvm
-      env: WP_VERSION=4.5
+install:
+  - if [[ $PHPUNIT = "local" ]]; then composer install; fi
 
 before_script:
   - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
-script: phpunit
+script: if [[ $PHPUNIT = "local" ]]; then ./vendor/bin/phpunit; else phpunit; fi

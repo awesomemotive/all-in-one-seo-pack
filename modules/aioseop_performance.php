@@ -163,7 +163,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			global $wpdb;
 			global $wp_version;
 
-			$sqlversion = $wpdb->get_var( "SELECT VERSION() AS version" );
+			$sqlversion = $wpdb->get_var( 'SELECT VERSION() AS version' );
 			$mysqlinfo  = $wpdb->get_results( "SHOW VARIABLES LIKE 'sql_mode'" );
 			if ( is_array( $mysqlinfo ) ) {
 				$sql_mode = $mysqlinfo[0]->Value;
@@ -225,7 +225,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 				} else {
 					$ms = __( 'No', 'all-in-one-seo-pack' );
 				}
-
 			} else {
 				$ms = __( 'N/A', 'all-in-one-seo-pack' );
 			}
@@ -241,31 +240,31 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			$perm_struct    = get_option( 'permalink_structure' );
 
 			$debug_info                   = array(
-				__( 'Operating System', 'all-in-one-seo-pack' )            => PHP_OS,
+				__( 'Operating System', 'all-in-one-seo-pack' ) => PHP_OS,
 				__( 'Server', 'all-in-one-seo-pack' )                      => $_SERVER['SERVER_SOFTWARE'],
-				__( 'Memory usage', 'all-in-one-seo-pack' )                => $memory_usage,
-				__( 'MYSQL Version', 'all-in-one-seo-pack' )               => $sqlversion,
+				__( 'Memory usage', 'all-in-one-seo-pack' ) => $memory_usage,
+				__( 'MYSQL Version', 'all-in-one-seo-pack' ) => $sqlversion,
 				__( 'SQL Mode', 'all-in-one-seo-pack' )                    => $sql_mode,
 				__( 'PHP Version', 'all-in-one-seo-pack' )                 => PHP_VERSION,
-				__( 'PHP Allow URL fopen', 'all-in-one-seo-pack' )         => $allow_url_fopen,
-				__( 'PHP Memory Limit', 'all-in-one-seo-pack' )            => $memory_limit,
-				__( 'PHP Max Upload Size', 'all-in-one-seo-pack' )         => $upload_max,
-				__( 'PHP Max Post Size', 'all-in-one-seo-pack' )           => $post_max,
+				__( 'PHP Allow URL fopen', 'all-in-one-seo-pack' ) => $allow_url_fopen,
+				__( 'PHP Memory Limit', 'all-in-one-seo-pack' ) => $memory_limit,
+				__( 'PHP Max Upload Size', 'all-in-one-seo-pack' ) => $upload_max,
+				__( 'PHP Max Post Size', 'all-in-one-seo-pack' ) => $post_max,
 				__( 'PHP Max Script Execute Time', 'all-in-one-seo-pack' ) => $max_execute,
-				__( 'PHP Exif support', 'all-in-one-seo-pack' )            => $exif,
-				__( 'PHP IPTC support', 'all-in-one-seo-pack' )            => $iptc,
-				__( 'PHP XML support', 'all-in-one-seo-pack' )             => $xml,
+				__( 'PHP Exif support', 'all-in-one-seo-pack' ) => $exif,
+				__( 'PHP IPTC support', 'all-in-one-seo-pack' ) => $iptc,
+				__( 'PHP XML support', 'all-in-one-seo-pack' ) => $xml,
 				__( 'Site URL', 'all-in-one-seo-pack' )                    => $siteurl,
 				__( 'Home URL', 'all-in-one-seo-pack' )                    => $homeurl,
-				__( 'WordPress Version', 'all-in-one-seo-pack' )           => $wp_version,
-				__( 'WordPress DB Version', 'all-in-one-seo-pack' )        => $db_version,
+				__( 'WordPress Version', 'all-in-one-seo-pack' ) => $wp_version,
+				__( 'WordPress DB Version', 'all-in-one-seo-pack' ) => $db_version,
 				__( 'Multisite', 'all-in-one-seo-pack' )                   => $ms,
-				__( 'Active Theme', 'all-in-one-seo-pack' )                => $theme['Name'] . ' ' . $theme['Version'],
+				__( 'Active Theme', 'all-in-one-seo-pack' ) => $theme['Name'] . ' ' . $theme['Version'],
 				__( 'Site Title', 'all-in-one-seo-pack' )                  => $site_title,
-				__( 'Site Language', 'all-in-one-seo-pack' )               => $language,
-				__( 'Front Page Displays', 'all-in-one-seo-pack' )         => $front_displays === 'page' ? $front_displays . ' [ID = ' . $page_on_front . ']' : $front_displays,
-				__( 'Search Engine Visibility', 'all-in-one-seo-pack' )    => $blog_public,
-				__( 'Permalink Setting', 'all-in-one-seo-pack' )           => $perm_struct,
+				__( 'Site Language', 'all-in-one-seo-pack' ) => $language,
+				__( 'Front Page Displays', 'all-in-one-seo-pack' ) => $front_displays === 'page' ? $front_displays . ' [ID = ' . $page_on_front . ']' : $front_displays,
+				__( 'Search Engine Visibility', 'all-in-one-seo-pack' ) => $blog_public,
+				__( 'Permalink Setting', 'all-in-one-seo-pack' ) => $perm_struct,
 			);
 			$debug_info['Active Plugins'] = null;
 			$active_plugins               = $inactive_plugins = array();
@@ -312,11 +311,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 						if ( wp_mkdir_p( $dir ) ) {
 							$file_path = $dir . 'settings_aioseop-' . date( 'Y-m-d' ) . '-' . time() . '.ini';
 							if ( ! file_exists( $file_path ) ) {
+								// @codingStandardsIgnoreStart
 								if ( $file_handle = @fopen( $file_path, 'w' ) ) {
+								// @codingStandardsIgnoreEnd
 									global $aiosp;
 									$buf = '; ' . __(
-											'Settings export file for All in One SEO Pack', 'all-in-one-seo-pack'
-										) . "\n";
+										'Settings export file for All in One SEO Pack', 'all-in-one-seo-pack'
+									) . "\n";
 
 									// Adds all settings and posts data to settings file
 									add_filter( 'aioseop_export_settings_exporter_post_types', array( $this, 'get_exporter_post_types' ) );
@@ -349,7 +350,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 		function get_email_input() {
 			$nonce = wp_create_nonce( 'sfwd-debug-nonce' );
 			$buf   = '<input name="sfwd_debug_send_email" type="text" value="" placeholder="' . __( 'E-mail debug information', 'all-in-one-seo-pack' ) . '"><input name="sfwd_debug_nonce" type="hidden" value="' .
-			         $nonce . '"><input name="sfwd_debug_submit" type="submit" value="' . __( 'Submit', 'all-in-one-seo-pack' ) . '" class="button-primary">';
+					 $nonce . '"><input name="sfwd_debug_submit" type="submit" value="' . __( 'Submit', 'all-in-one-seo-pack' ) . '" class="button-primary">';
 			return $buf;
 		}
 

@@ -48,10 +48,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Compatibility' ) ) {
 			// We'll use this until we set up our classes.
 			if ( class_exists( 'jetpack' ) ) {
 				add_filter( 'jetpack_get_available_modules', array( $this, 'remove_jetpack_sitemap' ) );
-				add_filter( 'jetpack_site_verification_output', array(
-					$this,
-					'filter_jetpack_site_verification_output',
-				), 10, 1 );
+				add_filter(
+					'jetpack_site_verification_output', array(
+						$this,
+						'filter_jetpack_site_verification_output',
+					), 10, 1
+				);
 			}
 
 			// Remove Twitter plugin's meta if our Social Module is on.
@@ -141,8 +143,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Compatibility' ) ) {
 			require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/compat-wpml.php' ); // Load classes.
 			// Evaluate classes and push them into array
 			$target = new All_in_One_SEO_Pack_Wpml;
-			if ( $target->exists() )
+			if ( $target->exists() ) {
 				$this->classes[] = $target;
+			}
 			// Eventually we'll load our other classes from here.
 			$this->load_compatibility_hooks();
 		}

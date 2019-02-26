@@ -1,16 +1,17 @@
 === All in One SEO Pack ===
-Contributors: hallsofmontezuma, semperplugins, wpsmort, arnaudbroes, dougal, pbaylies
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mrtorbert%40gmail%2ecom&item_name=All%20In%20One%20SEO%20Pack&item_number=Support%20Open%20Source&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8
-Tags: SEO, all in one seo, WordPress SEO, Google Search Console, XML Sitemap, image seo
-Requires at least: 4.0
-Tested up to: 4.8
-Stable tag: 2.4.2
+Contributors: hallsofmontezuma, semperplugins, wpsmort, arnaudbroes
+Tags: SEO, Google Search Console, XML Sitemap, meta description, meta title, noindex
+Requires at least: 4.6
+Tested up to: 5.1
+Stable tag: 2.12
 License: GPLv2 or later
 Requires PHP: 5.2.4
 
-The original SEO plugin for WordPress, downloaded over 30,000,000 times since 2007.
+The original WordPress SEO plugin, downloaded over 50,000,000 times since 2007.
 
 == Description ==
+
+###The original WordPress SEO plugin, downloaded over 50,000,000 times since 2007.
 
 Use **All in One SEO Pack** to optimize your WordPress site for SEO. It's easy and works out of the box for beginners, and has advanced features and an API for developers.
 
@@ -46,12 +47,9 @@ Torbert](http://twitter.com/michaeltorbert/)
 
 https://www.youtube.com/watch?v=46MR4FboMaA
 
-= Tags =
-seo, SEO, All in One, google, meta, meta description, search engine optimization, xml sitemap, xml sitemaps, google sitemap, sitemap, sitemaps, robots meta, rss, rss footer, yahoo, bing, widget, Post, plugin, admin, posts, shortcode, sidebar, twitter, page, images, comments, image, news sitemaps, XML News Sitemaps, WordPress SEO, multisite, canonical, nofollow, noindex, keywords, meta keywords, description, webmaster tools, google webmaster tools, seo pack, schema.org, search engines, custom post types, custom taxonomies, canonical
-
 == Changelog ==
 
-All in One SEO Pack [Changelog](http://semperfiwebdesign.com/documentation/all-in-one-seo-pack/all-in-one-seo-pack-release-history/)
+All in One SEO Pack [Changelog](https://semperfiwebdesign.com/all-in-one-seo-pack-release-history/)
 
 == Frequently Asked Questions ==
 
@@ -81,12 +79,9 @@ https://www.youtube.com/watch?v=A0VKinM5s00
 6. **Additional Pages for XML Sitemap** You can easily configure any additional pages to be added to the sitemap in addition to the dynamically generated WordPress pages. This ensures that search engines like Google will see ALL of your website's content.
 7. **Quick-Edit** Quickly edit your WordPress SEO data without having to go back and forth between different screens.
 8. **SEO Menu** All in One offers an extensive array of premium SEO features for free. Perfect for the novice or advanced user.
-
+9. **Google XML Sitemap** Automatically sent to Google and other search engines. Include images in your sitemap!
 
 == Upgrade Notice ==
 
-= 2.3.16 =
+= 2.4.4 =
 Various bugfixes, under the hood improvements, and new features.
-
-
-

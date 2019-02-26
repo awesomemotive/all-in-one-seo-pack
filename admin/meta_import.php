@@ -25,11 +25,11 @@ if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 
 			if ( empty( $aioseop_yst_detected_notice_dismissed ) ) {
 
-				echo '<div class="notice notice-warning row-title is-dismissible yst_notice"><p>', sprintf( esc_html__( 'The plugin Yoast SEO has been detected. Do you want to %simport its settings%s into All in One SEO Pack?', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( $aiourl ) ), '</a>' ), '</p></div>';
+				echo '<div class="notice notice-warning row-title is-dismissible yst_notice"><p>', sprintf( esc_html__( 'The plugin Yoast SEO has been detected. Do you want to %1$simport its settings%2$s into All in One SEO Pack?', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( $aiourl ) ), '</a>' ), '</p></div>';
 
 			}
 
-			echo '<div class="error"><p>', sprintf( esc_html__( 'The plugin All-In-One-SEO has been detected. Do you want to %simport its settings%s?', 'wordpress-seo' ), sprintf( '<a href="%s">', esc_url( $yoasturl ) ), '</a>' ), '</p></div>';
+			echo '<div class="error"><p>', sprintf( esc_html__( 'The plugin All-In-One-SEO has been detected. Do you want to %1$simport its settings%2$s?', 'wordpress-seo' ), sprintf( '<a href="%s">', esc_url( $yoasturl ) ), '</a>' ), '</p></div>';
 
 		}
 
@@ -38,7 +38,7 @@ if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 		}
 	}
 } else {
-	if(is_admin()) {
+	if ( is_admin() ) {
 		add_action( 'init', 'mi_aioseop_yst_detected_notice_dismissed' );
 	}
 }
@@ -103,10 +103,9 @@ function aiosp_seometa_action() {
 			return;
 		}
 
-		printf( __( '<p>Analyzing records in a %s to %s conversion&hellip;', 'all-in-one-seo-pack' ), esc_html( $_POST['platform_old'] ), 'All in One SEO Pack' );
+		printf( __( '<p>Analyzing records in a %1$s to %2$s conversion&hellip;', 'all-in-one-seo-pack' ), esc_html( $_POST['platform_old'] ), 'All in One SEO Pack' );
 		printf( '<p><b>%d</b> Compatible Records were identified</p>', $response->update );
-		//	printf( '<p>%d Compatible Records will be ignored</p>', $response->ignore );
-
+		// printf( '<p>%d Compatible Records will be ignored</p>', $response->ignore );
 		printf( '<p><b>%s</b></p>', __( 'Compatible data:', 'all-in-one-seo-pack' ) );
 		echo '<ol>';
 		foreach ( (array) $response->elements as $element ) {
@@ -160,7 +159,7 @@ function aiosp_seometa_admin() {
 		</p>
 
 		<p><span
-				class="row-title"><?php printf( esc_html__( 'Before performing an import, we strongly recommend that you make a backup of your site. We use and recommend %s BackupBuddy %s for backups.', 'all-in-one-seo-pack' ), sprintf( '<a target="_blank" href="%s">', esc_url( 'https://semperfiwebdesign.com/backupbuddy/' ) ), '</a>' ); ?></span>
+				class="row-title"><?php printf( esc_html__( 'Before performing an import, we strongly recommend that you make a backup of your site. We use and recommend %1$s BackupBuddy %2$s for backups.', 'all-in-one-seo-pack' ), sprintf( '<a target="_blank" href="%s">', esc_url( 'https://semperfiwebdesign.com/backupbuddy/' ) ), '</a>' ); ?></span>
 		</p>
 
 
@@ -193,8 +192,8 @@ function aiosp_seometa_admin() {
 			?>
 
 			<input type="submit" class="button-highlighted" name="analyze"
-			       value="<?php _e( 'Analyze', 'genesis' ); ?>"/>
-			<input type="submit" class="button-primary" value="<?php _e( 'Convert', 'genesis' ) ?>"/>
+				   value="<?php _e( 'Analyze', 'genesis' ); ?>"/>
+			<input type="submit" class="button-primary" value="<?php _e( 'Convert', 'genesis' ); ?>"/>
 
 		</form>
 
@@ -232,26 +231,27 @@ function aiosp_seometa_meta_key_convert( $old = '', $new = '', $delete_old = fal
 		return $output;
 	}
 
-	// 	See which records we need to ignore, if any.
+	// See which records we need to ignore, if any.
 	$exclude = $wpdb->get_results( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s", $new ) );
 
-	//	If no records to ignore, we'll do a basic UPDATE and DELETE.
+	// If no records to ignore, we'll do a basic UPDATE and DELETE.
 	if ( ! $exclude ) {
 
 		$output->updated = $wpdb->update( $wpdb->postmeta, array( 'meta_key' => $new ), array( 'meta_key' => $old ) );
 		$output->deleted = $delete_old ? $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->postmeta WHERE meta_key = %s", $old ) ) : 0;
 		$output->ignored = 0;
 
-	} // Else, do a more complex UPDATE and DELETE.
-	else {
-
+	} else {
+		// Else, do a more complex UPDATE and DELETE.
 		foreach ( (array) $exclude as $key => $value ) {
 			$not_in[] = $value->post_id;
 		}
 		$not_in = implode( ', ', (array) $not_in );
 
+		// @codingStandardsIgnoreStart
 		$output->updated = $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->postmeta SET meta_key = %s WHERE meta_key = %s AND post_id NOT IN ($not_in)", $new, $old ) );
 		$output->deleted = $delete_old ? $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->postmeta WHERE meta_key = %s", $old ) ) : 0;
+		// @codingStandardsIgnoreEnd
 		$output->ignored = count( $exclude );
 
 	}
@@ -361,8 +361,7 @@ function aiosp_seometa_post_meta_analyze( $old_platform = '', $new_platform = 'A
 
 		// See which records to ignore, if any.
 		$ignore = 0;
-		//	$ignore = $wpdb->get_results( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s", $meta_key ) );
-
+		// $ignore = $wpdb->get_results( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s", $meta_key ) );
 		// See which records to update, if any.
 		$update = $wpdb->get_results( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s", $meta_key ) );
 
@@ -372,7 +371,6 @@ function aiosp_seometa_post_meta_analyze( $old_platform = '', $new_platform = 'A
 
 		// Calculate update/ignore by comparison.
 		// $update = ( (int)$update > (int)$ignore ) ? ( (int)$update - (int)$ignore ) : 0;
-
 		// update output numbers
 		$output->update += (int) $update;
 		$output->ignore += (int) $ignore;
@@ -388,9 +386,8 @@ function aiosp_seometa_post_meta_analyze( $old_platform = '', $new_platform = 'A
 }
 
 
-//	define('aiosp_seometa_PLUGIN_DIR', dirname(__FILE__));
-
-//add_action( 'plugins_loaded', 'aiosp_seometa_import' );
+// define('aiosp_seometa_PLUGIN_DIR', dirname(__FILE__));
+// add_action( 'plugins_loaded', 'aiosp_seometa_import' );
 /**
  * Initialize the SEO Data Transporter plugin
  */
@@ -451,6 +448,7 @@ function aiosp_seometa_import() {
 			'Custom Scripts'   => 'thesis_javascript_scripts',
 			'Redirect URI'     => 'thesis_redirect',
 		),
+
 		/*
 		'Thesis 2.x' => array(
 			'Custom Doctitle' => '_thesis_title_tag',
@@ -461,6 +459,7 @@ function aiosp_seometa_import() {
 			'Redirect URI' => '_thesis_redirect',
 		),
 		*/
+
 		'WooFramework' => array(
 			'Custom Doctitle'  => 'seo_title',
 			'META Description' => 'seo_description',
@@ -550,9 +549,8 @@ function aiosp_seometa_import() {
 	/**
 	 * Include the other elements of the plugin.
 	 */
-	//	require_once( aiosp_seometa_PLUGIN_DIR . '/admin.php' );
+	// require_once( aiosp_seometa_PLUGIN_DIR . '/admin.php' );
 	// require_once( aiosp_seometa_PLUGIN_DIR . '/functions.php' );
-
 	/**
 	 * Init hook.
 	 *
@@ -572,45 +570,8 @@ function aiosp_seometa_import() {
 register_activation_hook( __FILE__, 'aiosp_seometa_activation_hook' );
 function aiosp_seometa_activation_hook() {
 
-	//	require_once( aiosp_seometa_PLUGIN_DIR . '/functions.php' );
-
+	// require_once( aiosp_seometa_PLUGIN_DIR . '/functions.php' );
 	aiosp_seometa_meta_key_convert( '_yoast_seo_title', 'yoast_wpseo_title', true );
 	aiosp_seometa_meta_key_convert( '_yoast_seo_metadesc', 'yoast_wpseo_metadesc', true );
 
 }
-
-/**
- * Manual conversion test
- */
-/*
-$aiosp_seometa_convert = aiosp_seometa_post_meta_convert( 'All in One SEO Pack', 'Genesis', false );
-printf( '%d records were updated', $aiosp_seometa_convert->updated );
-/**/
-
-/**
- * Manual analysis test
- */
-/*
-$aiosp_seometa_analyze = aiosp_seometa_post_meta_analyze( 'All in One SEO Pack', 'Genesis' );
-printf( '<p><b>%d</b> Compatible Records were identified</p>', $aiosp_seometa_analyze->update );
-/**/
-
-/**
- * Delete all SEO data, from every platform
- */
-/*
-foreach ( $_aiosp_seometa_platforms as $platform => $data ) {
-
-	foreach ( $data as $field ) {
-		$deleted = $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->postmeta WHERE meta_key = %s", $field ) );
-		printf( '%d %s records deleted<br />', $deleted, $field );
-	}
-
-}
-/**/
-
-/**
- * Query all SEO data to find the number of records to change
- */
-
-

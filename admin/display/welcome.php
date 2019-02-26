@@ -5,7 +5,9 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 	/**
 	 * Class aioseop_welcome
 	 */
+	// @codingStandardsIgnoreStart
 	class aioseop_welcome {
+	// @codingStandardsIgnoreEnd
 		/**
 		 * Constructor to add the actions.
 		 */
@@ -30,15 +32,15 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 
 			if ( 'dashboard_page_aioseop-about' === $hook ) {
 
-				wp_enqueue_style( 'aioseop_welcome_css', AIOSEOP_PLUGIN_URL . '/css/welcome.css', array(), AIOSEOP_VERSION );
-				wp_enqueue_script( 'aioseop_welcome_js', AIOSEOP_PLUGIN_URL . '/js/welcome.js', array( 'jquery' ), AIOSEOP_VERSION, true );
+				wp_enqueue_style( 'aioseop_welcome_css', AIOSEOP_PLUGIN_URL . 'css/welcome.css', array(), AIOSEOP_VERSION );
+				wp_enqueue_script( 'aioseop_welcome_js', AIOSEOP_PLUGIN_URL . 'js/welcome.js', array( 'jquery' ), AIOSEOP_VERSION, true );
 			}
 		}
 
 		/**
 		 * Removes unneeded pages.
-         *
-         * @since 2.3.12 Called via admin_menu action instead of admin_head.
+		 *
+		 * @since 2.3.12 Called via admin_menu action instead of admin_head.
 		 */
 		function remove_pages() {
 			remove_submenu_page( 'index.php', 'aioseop-about' );
@@ -78,10 +80,10 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return;
 			}
-			
+
 			wp_cache_flush();
 			aiosp_common::clear_wpe_cache();
-			
+
 			delete_transient( '_aioseop_activation_redirect' );
 
 			$seen = 0;
@@ -92,7 +94,7 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 			if ( AIOSEOPPRO ) {
 				return;
 			}
-			
+
 			if ( ( AIOSEOP_VERSION === $seen ) || ( true !== $activate ) ) {
 				return;
 			}

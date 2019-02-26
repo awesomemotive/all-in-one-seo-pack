@@ -1,0 +1,24 @@
+{
+  "name": "semperfiwebdesign/all-in-one-seo-pack",
+  "description": "All in One SEO Pack plugin for WordPress SEO ",
+  "keywords": [
+    "wordpress",
+    "seo"
+  ],
+  "license": "GPL-2.0+",
+  "authors": [
+    {
+      "name": "Michael Torbert",
+      "homepage": "https://semperplugins.com/all-in-one-seo-pack-pro-version/"
+    }
+  ],
+  "type": "wordpress-plugin",
+  "support": {
+    "issues": "https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues",
+    "source": "https://github.com/semperfiwebdesign/all-in-one-seo-pack"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.7"
+  },
+  "prefer-stable": true
+}

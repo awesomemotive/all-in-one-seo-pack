@@ -1,0 +1,34 @@
+{
+  "name": "all-in-one-seo-pack",
+  "version": "1.0.0",
+  "description": "One of the most downloaded plugins for WordPress... more than 30 million downloads!",
+  "main": "all_in_one_seo_pack.php",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/semperfiwebdesign/all-in-one-seo-pack.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues"
+  },
+  "homepage": "https://github.com/semperfiwebdesign/all-in-one-seo-pack#readme",
+  "devDependencies": {
+    "grunt": "^1.0.2",
+    "grunt-contrib-uglify": "^3.1.0",
+    "grunt-eslint": "^21.0.0",
+    "grunt-mkdir": "^1.0.0",
+    "grunt-phpcbf": "^0.1.1",
+    "grunt-phpcs": "^0.4.0",
+    "grunt-phplint": "^0.1.0"
+  },
+  "dependencies": {
+    "grunt-contrib-jshint": "^1.1.0"
+  }
+}

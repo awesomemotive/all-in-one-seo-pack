@@ -44,7 +44,7 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 
 			$this->current_locale = get_locale();
 
-			if( $this->current_locale === 'en_US'){
+			if ( $this->current_locale === 'en_US' ) {
 				return;
 			}
 
@@ -80,7 +80,6 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 		private function set_current_locale_data( $locales ) {
 
 			// Some locales are missing the locale code (wp_locale) so we need to check for that.
-
 			foreach ( $locales as $locale ) {
 
 				$wplocale = '';

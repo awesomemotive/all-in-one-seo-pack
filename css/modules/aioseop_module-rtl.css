@@ -1,135 +1,135 @@
 * {
-    direction: rtl !important
+	direction: rtl !important
 }
 
 .form-table.aioseop {
-    clear: none
+	clear: none
 }
 
 .form-table.aioseop th {
-    padding: 10px 9px 12px 0;
-    direction: rtl
+	padding: 10px 9px 12px 0;
+	direction: rtl
 }
 
 .aioseop_help_text_link,
 .aioseop_help_text_link:active {
-    text-align: right;
-    float: right
+	text-align: right;
+	float: right
 }
 
 .aioseop_help_text_link span {
-    left: -60px;
+	left: -60px;
 }
 
 .aioseop_meta_box_help > label {
-    margin-left: 0;
-    margin-right: 8px
+	margin-left: 0;
+	margin-right: 8px
 }
 
 .aioseop_help_text_link img {
-    float: left
+	float: left
 }
 
 .aioseop_meta_box_help,
 .aioseop_meta_box_help:active {
-    float: left;
-    padding-left: 0;
-    margin-right: 0;
-    margin-left: 64px
+	float: left;
+	padding-left: 0;
+	margin-right: 0;
+	margin-left: 64px
 }
 
 .aioseop_label {
-    padding-left: 0;
-    padding-right: 20px;
-    text-align: right;
-    direction: rtl
+	padding-left: 0;
+	padding-right: 20px;
+	text-align: right;
+	direction: rtl
 }
 
 .aioseop input[type="text"] {
-    padding: 2px 10px 2px 0
+	padding: 2px 10px 2px 0
 }
 
 .aioseop textarea {
-    padding: 10px 10px 0 0
+	padding: 10px 10px 0 0
 }
 
 .aioseop_help_text_div {
-    text-align: right;
-    margin: 8px 0 10px 0
+	text-align: right;
+	margin: 8px 0 10px 0
 }
 
 .aioseop_help_text {
-    float: right;
-    clear: right
+	float: right;
+	clear: right
 }
 
 .aioseop_head_nav {
-    float: right
+	float: right
 }
 
 .aioseop_head_nav_tab {
-    margin: 0 15px 0 0;
-    float: right
+	margin: 0 15px 0 0;
+	float: right
 }
 
 .aioseop_head_nav_tab:first-child {
-    margin-right: 0
+	margin-right: 0
 }
 
 .aioseop_header {
-    float: right;
-    clear: right
+	float: right;
+	clear: right
 }
 
 .aioseop_nopad {
-    padding-right: 0
+	padding-right: 0
 }
 
 .aioseop_adverts {
-    float: left
+	float: left
 }
 
 .aioseop_content {
-    clear: right
+	clear: right
 }
 
 #aiosp_feature_manager_metabox.postbox {
-    float: right
+	float: right
 }
 
 .aioseop_sidebar {
-    margin-left: 0;
-    margin-right: 10px
+	margin-left: 0;
+	margin-right: 10px
 }
 
 .aioseop_option_label {
-    float: right !important;
-    clear: right !important;
+	float: right !important;
+	clear: right !important;
 }
 
 .aioseop_settings_left {
-    float: right;
+	float: right;
 }
 
 .aioseop_option_input {
-    float: left; /*clear: right !important;*/
-    padding-left: 0;
-    padding-right: 1px;
-    margin-bottom: 20px;
-    width: 60%;
-    min-width: 160px;
+	float: left; /*clear: right !important;*/
+	padding-left: 0;
+	padding-right: 1px;
+	margin-bottom: 20px;
+	width: 60%;
+	min-width: 160px;
 }
 
 .aioseop_top {
-    margin: 10px 0 0 10px
+	margin: 10px 0 0 10px
 }
 
 .aioseop_right_sidebar {
-    float: left
+	float: left
 }
 
 div.aioseop_feature {
-    float: right
+	float: right
 }
 
 .aioseop_feature #free-flag {
@@ -147,100 +147,100 @@ div.aioseop_feature {
 }
 
 .aioseop_feature .feature_button {
-    float: left;
-    margin-right: 0;
-    margin-left: 10px
+	float: left;
+	margin-right: 0;
+	margin-left: 10px
 }
 
 .aioseop_follow_button {
-    margin-right: 0;
-    margin-left: 5px
+	margin-right: 0;
+	margin-left: 5px
 }
 
 .aioseop_wrapper {
-    padding-left: 0;
-    padding-right: 5px;
-    direction: rtl
+	padding-left: 0;
+	padding-right: 5px;
+	direction: rtl
 }
 
 .aioseop_input {
-    clear: left
+	clear: left
 }
 
 #aiosp div.preview_snippet {
-    padding: 15px 7px 20px 15px
+	padding: 15px 7px 20px 15px
 }
 
 #aiosp_sitemap_addl_pages,
 #aiosp_video_sitemap_addl_pages {
-    clear: right;
-    margin-left: 0;
-    margin-right: 20px
+	clear: right;
+	margin-left: 0;
+	margin-right: 20px
 }
 
 .All_in_One_SEO_Pack_Opengraph table.aioseop_table {
-    border-left: 0 solid #dfdfdf;
-    border-right: 1px solid #dfdfdf
+	border-left: 0 solid #dfdfdf;
+	border-right: 1px solid #dfdfdf
 }
 
 .All_in_One_SEO_Pack_Opengraph table.aioseop_table th {
-    border-right: 0 solid #dfdfdf;
-    border-left: 1px solid #dfdfdf
+	border-right: 0 solid #dfdfdf;
+	border-left: 1px solid #dfdfdf
 }
 
 .All_in_One_SEO_Pack_Opengraph table.aioseop_table td {
-    border-right: 0 solid #dfdfdf;
-    border-left: 1px solid #dfdfdf
+	border-right: 0 solid #dfdfdf;
+	border-left: 1px solid #dfdfdf
 }
 
 #aiosp_sitemap_addl_pages_metabox table.aioseop_table td,
 #aiosp_video_sitemap_addl_pages_metabox table.aioseop_table td {
-    padding-left: 0;
-    padding-right: 5%
+	padding-left: 0;
+	padding-right: 5%
 }
 
 .aioseop_settings_left .postbox {
-    float: right
+	float: right
 }
 
 .aioseop_option_setting_label {
-    padding-left: 0;
-    padding-right: 1px
+	padding-left: 0;
+	padding-right: 1px
 }
 
 .aioseop_settings_left .postbox .inside {
-    clear: left
+	clear: left
 }
 
 .postbox h2 .Taha {
-    float: left !important;
+	float: left !important;
 }
 
 #aiosp_settings_form .aioseop_no_label,
 .aioseop_no_label {
-    float: right;
-    margin: 0 13px 0 23px
+	float: right;
+	margin: 0 13px 0 23px
 }
 
 .aioseop_module.error.below-h2 {
-    margin: 0 0 15px 477px !important
+	margin: 0 0 15px 477px !important
 }
 
 .robots img {
-    margin: 0 2px 0 0
+	margin: 0 2px 0 0
 }
 
 /* Robots.txt styling */
 #aiosp_robots_generator_robotgen_wrapper .aioseop_option_div,
 #aiosp_robots_generator_robothtml_wrapper .aioseop_option_div {
-    margin-top: 10px;
+	margin-top: 10px;
 }
 
 div.aioseop_notice a.aioseop_dismiss_link {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    text-align: left;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	text-align: left;
 }
 
 /*
@@ -248,72 +248,72 @@ div.aioseop_notice a.aioseop_dismiss_link {
 	border: 1px solid red !important;
 	float: left;
 	clear: right;
-	
+
 }*/
 .aioseop_help_text ul {
-    margin: 15px 20px 0 0
+	margin: 15px 20px 0 0
 }
 
 .aioseop_header_tabs li a.aioseop_header_tab {
-    margin: 5px 0 0 5px
+	margin: 5px 0 0 5px
 }
 
 .aioseop_header_tabs li:first-child a.aioseop_header_tab {
-    border-left: solid 0 #CCC;
-    border-right: solid 1px #CCC;
-    margin-left: 0;
-    margin-right: 5px
+	border-left: solid 0 #CCC;
+	border-right: solid 1px #CCC;
+	margin-left: 0;
+	margin-right: 5px
 }
 
 .aioseop_tab {
-    padding-left: 0;
-    padding-right: 5px
+	padding-left: 0;
+	padding-right: 5px
 }
 
 form#aiosp_settings_form,
 .aioseop_tabs_div {
-    padding-right: 0;
-    padding-left: 477px
+	padding-right: 0;
+	padding-left: 477px
 }
 
 #aiosp_settings_form ul.sfwd_debug_settings li strong {
-    float: right;
-    text-align: left;
-    margin-right: 0;
-    margin-left: 8px;
-    padding-right: 0;
-    padding-left: 8px
+	float: right;
+	text-align: left;
+	margin-right: 0;
+	margin-left: 8px;
+	padding-right: 0;
+	padding-left: 8px
 }
 
 #aiosp_settings_form ul.sfwd_debug_settings li {
-    clear: right
+	clear: right
 }
 
 .aioseop_advert {
-    direction: rtl;
-    float: right;
-    z-index: 999999
+	direction: rtl;
+	float: right;
+	z-index: 999999
 }
 
 .aioseop_advert form input {
-    float: left
+	float: left
 }
 
 .MRL {
-    margin-left: 0 !important;
-    margin-right: 20px !important;
+	margin-left: 0 !important;
+	margin-right: 20px !important;
 }
 
 .aioseop_upload_image_label {
-    clear: right !important;
-    float: none !important;
+	clear: right !important;
+	float: none !important;
 }
 
 .aioseop_upload_image_button {
-    float: right !important;
-    margin-bottom: 5px !important;
+	float: right !important;
+	margin-bottom: 5px !important;
 }
 
 #aioseop-about .aioseop_metabox_text ul {
-    padding-right: 15px;
+	padding-right: 15px;
 }
