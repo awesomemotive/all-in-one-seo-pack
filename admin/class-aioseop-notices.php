@@ -339,12 +339,8 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				return false;
 			}
 
-			$notice_default = $this->notice_defaults();
-			$new_notice     = wp_parse_args( $notice, $notice_default );
+			$this->notices[ $notice['slug'] ] = $this->prepare_notice( $notice );
 
-			$new_notice['action_options'] = $this->set_action_options( $new_notice['action_options'] );
-
-			$this->notices[ $notice['slug'] ] = $new_notice;
 			$this->obj_update_options();
 			$this->activate_notice( $notice['slug'] );
 
@@ -369,15 +365,28 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				return false;
 			}
 
+			$this->notices[ $notice['slug'] ] = $this->prepare_notice( $notice );
+
+			$this->obj_update_options();
+
+			return true;
+		}
+
+		/**
+		 * Prepare Insert/Undate Notice
+		 *
+		 * @since 3.0
+		 *
+		 * @param array $notice The notice to prepare with the database.
+		 * @return bool
+		 */
+		public function prepare_notice( $notice = array() ) {
 			$notice_default = $this->notice_defaults();
 			$new_notice     = wp_parse_args( $notice, $notice_default );
 
 			$new_notice['action_options'] = $this->set_action_options( $new_notice['action_options'] );
 
-			$this->notices[ $notice['slug'] ] = $new_notice;
-			$this->obj_update_options();
-
-			return true;
+			return $new_notice;
 		}
 
 		/**

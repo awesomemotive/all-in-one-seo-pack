@@ -11,7 +11,6 @@
  */
 
 $notice = $this->notices[ $a_notice_slug ];
-//var_dump( $notice );
 $notice_class = 'notice-info';
 if ( isset( $notice['class'] ) && ! empty( $notice['class'] ) ) {
 	$notice_class = $notice['class'];
