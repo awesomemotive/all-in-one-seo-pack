@@ -122,7 +122,7 @@ class AIOSEOP_Updates {
 		}
 		
 		if (
-			( ! AIOSEOPPRO && version_compare( $old_version, '2.12', '<' ) ) ||
+			( ! AIOSEOPPRO && version_compare( $old_version, '3.0', '<' ) ) ||
 			( AIOSEOPPRO && version_compare( $old_version, '3.0', '<' ) )
 		) {
 			$this->bad_bots_remove_exabot_201902();
