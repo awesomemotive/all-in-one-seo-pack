@@ -2381,7 +2381,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function get_post_description( $post ) {
 		global $aioseop_options;
-		$description = '';
 		if ( ! $this->show_page_description() ) {
 			return '';
 		}
