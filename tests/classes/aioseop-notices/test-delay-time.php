@@ -4,7 +4,7 @@
  *
  * @package All_in_One_SEO_Pack
  * @subpackage AIOSEOP_Notices
- * @since 2.7.2
+ * @since 3.0
  *
  * @ticket 61
  *
@@ -17,7 +17,7 @@ include_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-notices-testcase.ph
 /**
  * Class Test_AIOSEOP_Notices
  *
- * @since 2.4.5.1
+ * @since 3.0
  *
  * @package tests\classes
  */
@@ -26,7 +26,7 @@ class Test_AIOSEOP_Notices_Delay_Time extends \AIOSEOP_Notices_TestCase {
 	/**
 	 * PHPUnit Fixture - setUp()
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
@@ -37,7 +37,7 @@ class Test_AIOSEOP_Notices_Delay_Time extends \AIOSEOP_Notices_TestCase {
 	/**
 	 * PHPUnit Fixture - tearDown()
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
@@ -49,7 +49,7 @@ class Test_AIOSEOP_Notices_Delay_Time extends \AIOSEOP_Notices_TestCase {
 	/**
 	 * Mock Single Notice
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 *
 	 * @return array
 	 */
@@ -89,7 +89,7 @@ class Test_AIOSEOP_Notices_Delay_Time extends \AIOSEOP_Notices_TestCase {
 	 *
 	 * Override and skip.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 */
 	public function test_enqueue_scripts_on_screens() {
 		$this->markTestSkipped('Skip');
@@ -103,7 +103,7 @@ class Test_AIOSEOP_Notices_Delay_Time extends \AIOSEOP_Notices_TestCase {
 	 * Actual: Currently works as expected.
 	 * Reproduce: Have a notice inserted, and wait for X amount of time to pass.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 */
 	public function test_notice_delay_time() {
 		global $aioseop_notices;

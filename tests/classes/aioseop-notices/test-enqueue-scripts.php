@@ -4,7 +4,7 @@
  *
  * @package All_in_One_SEO_Pack
  * @subpackage AIOSEOP_Notices
- * @since 2.7.2
+ * @since 3.0
  *
  * @group AIOSEOP_Notices
  * @group Admin
@@ -16,7 +16,7 @@ include_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-notices-testcase.ph
 /**
  * Class Test_AIOSEOP_Notices_AdminEnqueueScripts
  *
- * @since 2.7.2
+ * @since 3.0
  */
 class Test_AIOSEOP_Notices_AdminEnqueueScripts extends AIOSEOP_Notices_TestCase {
 
@@ -38,7 +38,7 @@ class Test_AIOSEOP_Notices_AdminEnqueueScripts extends AIOSEOP_Notices_TestCase 
 	/**
 	 * Mock Notice
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 *
 	 * @return array
 	 */
@@ -60,7 +60,7 @@ class Test_AIOSEOP_Notices_AdminEnqueueScripts extends AIOSEOP_Notices_TestCase 
 	 * * -notices with screen restrictions should be true only on set screens
 	 * * (Test Render) Should not display content if script doesn't enqueue; also should send a Debug notice.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 *
 	 * @dataProvider data_screens
 	 *

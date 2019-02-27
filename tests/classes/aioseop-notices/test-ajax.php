@@ -4,7 +4,7 @@
  *
  * @package All_in_One_SEO_Pack
  * @subpackage AIOSEOP_Notices
- * @since 2.7.2
+ * @since 3.0
  *
  * @group AIOSEOP_Notices
  * @group Admin
@@ -14,7 +14,7 @@
 /**
  * Class Test_AIOSEOP_Notices_AJAX
  *
- * @since 2.7.2
+ * @since 3.0
  */
 class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 
@@ -35,7 +35,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	/**
 	 * PHPUnit Fixture - setUp()
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
@@ -56,7 +56,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	/**
 	 * PHPUnit Fixture - tearDown()
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
@@ -78,7 +78,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	/**
 	 * Clean Options AIOSEOP Notices
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 *
 	 * @return boolean True if deleted, and false if it doesn't exist.
 	 */
@@ -95,7 +95,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	/**
 	 * Mock Single Notice
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 *
 	 * @return array
 	 */
@@ -133,7 +133,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	/**
 	 * Mock Single Notice
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 *
 	 * @return array
 	 */
@@ -173,7 +173,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 *
 	 * Adds and validates the a (child test) notice being tested.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 *
 	 * @param array $notice Value from `$aioseop_notices`.
 	 */
@@ -203,7 +203,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 * Actual: Currently works as expected.
 	 * Reproduce: Dev hardcoded  an invalid/missing wp_nonce in `AIOSEOP_Notices::admin_enqueue_scripts()`.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 */
 	public function test_notice_missing_wp_nonce_error() {
 		$this->add_notice();
@@ -232,7 +232,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 * Actual: Currently works as expected.
 	 * Reproduce: Dev hardcoded the notice template with an invalid notice_slug in an element.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 */
 	public function test_notice_missing_notice_slug_error() {
 		$this->add_notice();
@@ -273,7 +273,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 * Actual: Currently works as expected.
 	 * Reproduce: Dev hardcoded the notice template with an invalid action_index in the element ID.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 */
 	public function test_notice_missing_action_index_error() {
 		$notice = $this->mock_notice();
@@ -317,7 +317,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 * Reproduce: Have a notice added to the database and rendered (after set delay_time). Within the admin notice, there
 	 *            would be buttons/links (aka action_options). Clicking on any of them will initiate the AJAX event.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 */
 	public function test_notice_action_delay_time() {
 		global $aioseop_notices;
@@ -435,7 +435,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 * Actual: Currently works as expected.
 	 * Reproduce: Dev create a notice without `target` being set. then navigate to wp-admin. Repeat with alternate user.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 */
 	public function test_dismiss_sitewide_all_users() {
 
@@ -507,7 +507,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 * Actual: Currently works as expected.
 	 * Reproduce: Dev create a notice with `target` being set to `user`. then navigate to wp-admin. Repeat with alternate user.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 */
 	public function test_dismiss_user_single_users() {
 		global $aioseop_notices;

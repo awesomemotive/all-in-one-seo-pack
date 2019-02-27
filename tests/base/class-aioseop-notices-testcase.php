@@ -4,7 +4,7 @@
  *
  * @package All_in_One_SEO_Pack
  * @subpackage AIOSEOP_Notices
- * @since 2.4.5.1
+ * @since 3.0
  *
  * @group AIOSEOP_Notices
  * @group Admin
@@ -14,7 +14,7 @@
 /**
  * Class AIOSEOP_Notices_TestCase
  *
- * @since 2.4.5.1
+ * @since 3.0
  */
 class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 
@@ -35,7 +35,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	/**
 	 * AIOSEOP_Notices_TestCase constructor.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 * @param null $name
 	 * @param array $data
 	 * @param string $dataName
@@ -51,7 +51,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	/**
 	 * Define WP_DEVELOP_DIR
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 */
 	public function define_wp_develop_dir() {
 		if ( defined( 'WP_DEVELOP_DIR' ) ) {
@@ -82,7 +82,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	/**
 	 * PHPUnit Fixture - setUp()
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
@@ -103,7 +103,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	/**
 	 * PHPUnit Fixture - tearDown()
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
@@ -125,7 +125,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	/**
 	 * Clean Options AIOSEOP Notices
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @return boolean True if deleted, and false if it doesn't exist.
 	 */
@@ -142,7 +142,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	/**
 	 * Clean AIOSEOP Notices
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @param string $notice_slug Target notice to delete.
 	 * @return boolean True if deleted.
@@ -164,7 +164,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	/**
 	 * Validate Global AIOSEOP_Notices object.
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @param AIOSEOP_Notices $aioseop_notices The current object to test for.
 	 */
@@ -193,7 +193,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 *
 	 * Checks to see if variables are correctly set.
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @param array $notices Class variable `AIOSEOP_Notices::notices`.
 	 */
@@ -208,7 +208,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 *
 	 * Checks to see if the array variables are correctly set.
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @param array $notice Class variable `AIOSEOP_Notices::notices`.
 	 */
@@ -248,7 +248,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	/**
 	 * Mock Single Notice
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @return array
 	 */
@@ -288,7 +288,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 *
 	 * Adds and validates the a (child test) notice being tested.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 *
 	 * @param array $notice Value from `$aioseop_notices`.
 	 */
@@ -322,7 +322,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 * Actual: As expected; no current issue.
 	 * Result: Inserts and Updates successfully to the database (wp_options).
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @param array $notice Single notice to add to object/database.
 	 */
@@ -379,7 +379,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 * * -notices with screen restrictions should be true only on set screens
 	 * * (Test Render) Should not display content if script doesn't enqueue; also should send a Debug notice.
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @dataProvider data_screens
 	 *
@@ -433,7 +433,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 *
 	 * TODO Create a restricted screens array to test for false.
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @return array
 	 */
@@ -463,7 +463,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	/**
 	 * Data (Provider) for Default/WP Screens
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @return array
 	 */
@@ -673,7 +673,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	/**
 	 * Data (Provider) for AIOSEOP Screens
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @return array
 	 */

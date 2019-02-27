@@ -4,7 +4,7 @@
  *
  * @package All_in_One_SEO_Pack
  * @subpackage AIOSEOP_Notices
- * @since 2.4.4.1
+ * @since 3.0
  *
  * @ticket 61
  *
@@ -18,7 +18,7 @@ include_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-notices-testcase.ph
 /**
  * Class Test_AIOSEOP_Notices
  *
- * @since 2.4.5.1
+ * @since 3.0
  *
  * @package tests\classes
  */
@@ -27,7 +27,7 @@ class Test_AIOSEOP_Notices_Init extends AIOSEOP_Notices_TestCase {
 	/**
 	 * PHPUnit Fixture - setUp()
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
@@ -40,7 +40,7 @@ class Test_AIOSEOP_Notices_Init extends AIOSEOP_Notices_TestCase {
 	/**
 	 * PHPUnit Fixture - tearDown()
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @link https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-setup-between-related-tests
 	 */
@@ -53,7 +53,7 @@ class Test_AIOSEOP_Notices_Init extends AIOSEOP_Notices_TestCase {
 	/**
 	 * Mock Single Notice
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @return array
 	 */
@@ -93,7 +93,7 @@ class Test_AIOSEOP_Notices_Init extends AIOSEOP_Notices_TestCase {
 	 *
 	 * Override and skip.
 	 *
-	 * @since 2.7.2
+	 * @since 3.0
 	 */
 	public function test_enqueue_scripts_on_screens() {
 		$this->markTestSkipped('Skip');
@@ -111,7 +111,7 @@ class Test_AIOSEOP_Notices_Init extends AIOSEOP_Notices_TestCase {
 	 *
 	 * TODO Rename: _static_new_*
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 */
 	public function test_static_construct() {
 
@@ -135,7 +135,7 @@ class Test_AIOSEOP_Notices_Init extends AIOSEOP_Notices_TestCase {
 	 * Actual: As expected; no current issue.
 	 * Result: Inserts and Updates successfully to the database (wp_options).
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @param array $notice Notice to test.
 	 */
