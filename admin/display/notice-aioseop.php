@@ -2,7 +2,7 @@
 /**
  * AIOSEOP Screen Notice Template.
  *
- * @since 2.4.2
+ * @since 3.0
  *
  * @see AIOSEOP_Notice::display_notice_aioseop();
  * @uses $notice in AIOSEOP_Notice::notices

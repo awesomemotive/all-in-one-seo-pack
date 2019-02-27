@@ -8,7 +8,7 @@
  * @link https://wordpress.org/plugins/all-in-one-seo-pack/
  *
  * @package All_in_One_SEO_Pack
- * @since 2.4.2
+ * @since 3.0
  */
 
 if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
@@ -17,13 +17,13 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 	 *
 	 * Admin notices for AIOSEOP.
 	 *
-	 * @since 2.4.2
+	 * @since 3.0
 	 */
 	class AIOSEOP_Notices {
 		/**
 		 * Collection of notices to display.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 * @access public
 		 *
 		 * @var array $notices {
@@ -60,11 +60,11 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * List of notice slugs that are currently active.
 		 * NOTE: Amount is reduced by 1 second in order to display at exactly X amount of time.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 * @access public
 		 *
 		 * @var array $active_notices {
-		 *     @type string/int $slug => $display_time Contains the current active notices
+		 *     @type string|int $slug => $display_time Contains the current active notices
 		 *                                             that are scheduled to be displayed.
 		 * }
 		 */
@@ -80,7 +80,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		/**
 		 * List of Screens used in AIOSEOP.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 *
 		 * @var array $aioseop_screens {
 		 *     @type string Screen ID.
@@ -101,7 +101,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		/**
 		 * __constructor.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 */
 		public function __construct() {
 			$this->_requires();
@@ -118,7 +118,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *
 		 * Additional files required.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 */
 		private function _requires() {
 			require_once AIOSEOP_PLUGIN_DIR . 'admin/functions-notice.php';
@@ -129,7 +129,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *
 		 * AJAX requires being added early before screens have been loaded.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 */
 		public function init() {
 			add_action( 'wp_ajax_aioseop_notice', array( $this, 'ajax_notice_action' ) );
@@ -142,7 +142,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * The AIOSEOP and Other Screens have separate methods that are used, and
 		 * additional screens can be made exclusive/unique.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 *
 		 * @param WP_Screen $current_screen The current screen object being loaded.
 		 */
@@ -164,7 +164,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *
 		 * Gets the options for AIOSEOP_Notice to set its variables to.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 * @access private
 		 *
 		 * @see self::notices
@@ -180,7 +180,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		/**
 		 * Get AIOSEOP_Notice Options
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 * @access private
 		 *
 		 * @return array
@@ -202,7 +202,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		/**
 		 * Update Notice Options
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 * @access private
 		 *
 		 * @return boolean True if successful, using update_option() return value.
@@ -223,7 +223,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *
 		 * Returns the default value for a variable to be used in self::notices[].
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 *
 		 * @see self::notices Array variable that stores the collection of notices.
 		 *
@@ -248,7 +248,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *
 		 * Returns the default value for action_options in self::notices[$slug]['action_options'].
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 *
 		 * @return array Action_Options variable in self::notices[$slug]['action_options'].
 		 */
@@ -267,7 +267,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *
 		 * Sets the Action Options in a Notice.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 * @access private
 		 *
 		 * @see self::insert_notice()
@@ -325,7 +325,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * Initial insert for a Notice and Activates it. Used strictly for adding notices
 		 * when no updating or modifications is intended.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 *
 		 * @uses self::activate_notice() Used to initialize a notice.
 		 *
@@ -353,7 +353,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * Updates an existing Notice without resetting it. Used when modifying
 		 * any existing notices without disturbing its set environment/timeline.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 *
 		 * @param array $notice See self::notices for more info.
 		 * @return boolean True on success.
@@ -393,7 +393,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * Used strictly for any notices that are deprecated/obsolete. To stop notices,
 		 * use notice_deactivate().
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 *
 		 * @param string $slug Unique notice slug.
 		 * @return boolean True if successfully removed.
@@ -414,7 +414,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * Activates a notice, or Re-activates with a new display time. Used after
 		 * updating a notice that requires a hard reset.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 *
 		 * @param string $slug Notice slug.
 		 * @return boolean
@@ -446,7 +446,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * list of active notices. Used to prevent conflicting notices that may be
 		 * active at any given point in time.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 *
 		 * @param string $slug Notice slug.
 		 * @return boolean
@@ -471,10 +471,10 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *
 		 * Initial Admin Screen action to remove aioseop script(s) from all screens;
 		 * which will be registered if executed on screen.
-		 * NOTE: As of 2.4.2, most of it is default layout, styling, & scripting
+		 * NOTE: As of 3.0, most of it is default layout, styling, & scripting
 		 * that is loaded on all pages. Which can later be different.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 * @access private
 		 *
 		 * @see self::admin_screen()
@@ -489,7 +489,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *
 		 * Used to register, enqueue, and localize any JS data. Styles can later be added.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 */
 		public function admin_enqueue_scripts() {
 			// Register.
@@ -531,10 +531,10 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * Display Notice as Default
 		 *
 		 * Method for default WP Admin notices.
-		 * NOTE: As of 2.4.2, display_notice_default() & display_notice_aioseop()
+		 * NOTE: As of 3.0, display_notice_default() & display_notice_aioseop()
 		 * have the same functionality, but serves as a future development concept.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 *
 		 * @uses AIOSEOP_PLUGIN_DIR . 'admin/display/notice-default.php' Template for default notices.
 		 *
@@ -548,10 +548,10 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * Display Notice as AIOSEOP Screens
 		 *
 		 * Method for Admin notices exclusive to AIOSEOP screens.
-		 * NOTE: As of 2.4.2, display_notice_default() & display_notice_aioseop()
+		 * NOTE: As of 3.0, display_notice_default() & display_notice_aioseop()
 		 * have the same functionality, but serves as a future development concept.
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 *
 		 * @uses AIOSEOP_PLUGIN_DIR . 'admin/display/notice-aioseop.php' Template for notices.
 		 *
@@ -621,7 +621,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * Fires when a Action_Option is clicked and sent via AJAX. Also includes
 		 * WP Default Dismiss (rendered as a clickable button on upper-right).
 		 *
-		 * @since 2.4.2
+		 * @since 3.0
 		 *
 		 * @see AIOSEOP_PLUGIN_DIR . 'js/admin-notice.js'
 		 */

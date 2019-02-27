@@ -2,7 +2,7 @@
 /**
  * Notice Functions for AIOSEOP_Notices
  *
- * @since 2.4.2
+ * @since 3.0
  * @package All-in-One-SEO-Pack
  * @subpackage AIOSEOP_Notices
  */
