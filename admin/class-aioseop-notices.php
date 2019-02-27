@@ -586,6 +586,14 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 
 				// Screen Restriction.
 				if ( ! empty( $this->notices[ $a_notice_slug ]['screens'] ) ) {
+					// Checks if on aioseop screen.
+					if ( in_array( 'aioseop', $this->notices[ $a_notice_slug ]['screens'], true ) ) {
+						if ( ! in_array( $current_screen->id, $this->aioseop_screens, true ) ) {
+							continue;
+						}
+					}
+
+					// Checks the other screen restrictions by slug/id.
 					if ( ! in_array( 'aioseop', $this->notices[ $a_notice_slug ]['screens'], true ) ) {
 						if ( ! in_array( $current_screen->id, $this->notices[ $a_notice_slug ]['screens'], true ) ) {
 							continue;
