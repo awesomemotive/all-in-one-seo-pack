@@ -560,9 +560,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @param string $template Slug name for template.
 		 */
 		public function display_notice( $template ) {
-			if ( AIOSEOPPRO ) {
-				return;
-			} elseif ( ! wp_script_is( 'aioseop-admin-notice-js', 'enqueued' ) || ! wp_style_is( 'aioseop-admin-notice-css', 'enqueued' ) ) {
+			if ( ! wp_script_is( 'aioseop-admin-notice-js', 'enqueued' ) || ! wp_style_is( 'aioseop-admin-notice-css', 'enqueued' ) ) {
 				return;
 			} elseif ( 'default' !== $template && 'aioseop' !== $template ) {
 				return;
