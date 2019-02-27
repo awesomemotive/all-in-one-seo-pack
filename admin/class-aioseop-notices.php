@@ -430,6 +430,8 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 
 			if ( 'user' === $this->notices[ $slug ]['target'] ) {
 				$current_user_id = get_current_user_id();
+
+				update_user_meta( $current_user_id, 'aioseop_notice_dismissed_' . $slug, false );
 				update_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $slug, $display_time );
 			}
 
