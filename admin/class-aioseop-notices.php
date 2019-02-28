@@ -150,7 +150,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 */
 		public function admin_screen( $current_screen ) {
 			$this->deregister_scripts();
-			if ( in_array( $current_screen->id, $this->aioseop_screens, true ) && isset( $current_screen->id ) ) {
+			if ( isset( $current_screen->id ) && in_array( $current_screen->id, $this->aioseop_screens, true ) ) {
 				// AIOSEO Notice Content.
 				add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 				add_action( 'all_admin_notices', array( $this, 'display_notice_aioseop' ) );
@@ -280,7 +280,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 */
 		private function set_action_options( $action_options ) {
 			$rtn_action_options = array();
-			if ( empty( $action_options ) && ! is_array( $action_options ) ) {
+			// This helps prevent invalid notices, and empty arrays need to skip this operation when
+			// there is no actions intended for notice.
+			if ( ! is_array( $action_options ) ) {
 				$rtn_action_options[] = $this->action_options_defaults();
 				return $rtn_action_options;
 			}
@@ -659,9 +661,10 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				}
 			}
 			if ( empty( $notice_slug ) ) {
-				wp_send_json_error( 'Missing values from `notice_slug`.' );
+				/* Translators: Displays the hordcoded slug that missing. */
+				wp_send_json_error( sprintf( __( 'Missing values from `%s`.', 'all-in-one-seo-pack' ), 'notice_slug' ) );
 			} elseif ( empty( $action_index ) && 0 !== $action_index ) {
-				wp_send_json_error( 'Missing values from `action_index`.' );
+				wp_send_json_error( sprintf( __( 'Missing values from `%s`.', 'all-in-one-seo-pack' ), 'action_index' ) );
 			}
 
 			$action_options            = $this->action_options_defaults();
@@ -700,7 +703,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			}
 
 			$this->obj_update_options();
-			wp_send_json_success( 'Notice updated successfully.' );
+			wp_send_json_success( __( 'Notice updated successfully.', 'all-in-one-seo-pack' ) );
 		}
 
 	}
