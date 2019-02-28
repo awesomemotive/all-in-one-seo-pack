@@ -92,6 +92,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_sitemap',
 			'all-in-one-seo_page_aiosp_opengraph',
 			'all-in-one-seo_page_aiosp_robots_generator',
+			'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_robots',
 			'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_file_editor',
 			'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_importer_exporter',
 			'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_bad_robots',
