@@ -87,16 +87,16 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * }
 		 */
 		private $aioseop_screens = array(
-			'toplevel_page_all-in-one-seo-pack/aioseop_class',
-			'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_performance',
-			'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_sitemap',
+			'toplevel_page_' . AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class',
+			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_performance',
+			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_sitemap',
 			'all-in-one-seo_page_aiosp_opengraph',
 			'all-in-one-seo_page_aiosp_robots_generator',
-			'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_robots',
-			'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_file_editor',
-			'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_importer_exporter',
-			'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_bad_robots',
-			'all-in-one-seo_page_all-in-one-seo-pack/modules/aioseop_feature_manager',
+			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_robots',
+			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_file_editor',
+			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_importer_exporter',
+			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_bad_robots',
+			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_feature_manager',
 		);
 
 		/**
