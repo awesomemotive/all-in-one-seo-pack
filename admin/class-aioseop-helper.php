@@ -436,6 +436,7 @@ class AIOSEOP_Helper {
 			'aiosp_google_disable_profile'      => __( 'Check this to remove the Google Plus field from the user profile screen.', 'all-in-one-seo-pack' ),
 			'aiosp_google_sitelinks_search'     => __( 'Add markup to display the Google Sitelinks Search Box next to your search results in Google.', 'all-in-one-seo-pack' ),
 			'aiosp_google_set_site_name'        => __( 'Add markup to tell Google the preferred name for your website.', 'all-in-one-seo-pack' ),
+			'aiosp_google_specify_site_name'    => __( 'Enter your site name.', 'all-in-one-seo-pack'),
 			'aiosp_google_author_advanced'      => __( 'Enable this to display advanced options for controlling Google Plus authorship information on your website.', 'all-in-one-seo-pack' ),
 			'aiosp_google_author_location'      => __( 'This option allows you to control which types of pages you want to display rel=\"author\" on for Google authorship. The options include the Front Page (the homepage of your site), Posts, Pages, and any Custom Post Types. The Everywhere Else option includes 404, search, categories, tags, custom taxonomies, date archives, author archives and any other page template.', 'all-in-one-seo-pack' ),
 			'aiosp_google_enable_publisher'     => __( 'This option allows you to control whether rel=\"publisher\" is displayed on the homepage of your site. Google recommends using this if the site is a business website.', 'all-in-one-seo-pack' ),
@@ -578,6 +579,8 @@ class AIOSEOP_Helper {
 			'aiosp_google_disable_profile'      => 'https://semperplugins.com/documentation/google-settings/#disable-google-plus-profile',
 			'aiosp_google_sitelinks_search'     => 'https://semperplugins.com/documentation/google-settings/#display-sitelinks-search-box',
 			'aiosp_google_set_site_name'        => 'https://semperplugins.com/documentation/google-settings/#set-preferred-site-name',
+			// Missing documentation link.
+			//'aiosp_google_specify_site_name'    => 'https://semperplugins.com/documentation/google-settings/#set-preferred-site-name',
 			'aiosp_google_author_advanced'      => 'https://semperplugins.com/documentation/google-settings/#advanced-authorship-options',
 			'aiosp_google_author_location'      => 'https://semperplugins.com/documentation/google-settings/#display-google-authorship',
 			'aiosp_google_enable_publisher'     => 'https://semperplugins.com/documentation/google-settings/#display-publisher-meta-on-front-page',
