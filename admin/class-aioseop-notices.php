@@ -86,18 +86,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *     @type string Screen ID.
 		 * }
 		 */
-		private $aioseop_screens = array(
-			'toplevel_page_' . AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class',
-			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_performance',
-			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_sitemap',
-			'all-in-one-seo_page_aiosp_opengraph',
-			'all-in-one-seo_page_aiosp_robots_generator',
-			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_robots',
-			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_file_editor',
-			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_importer_exporter',
-			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_bad_robots',
-			'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_feature_manager',
-		);
+		private $aioseop_screens = array();
 
 		/**
 		 * __constructor.
@@ -107,6 +96,18 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		public function __construct() {
 			$this->_requires();
 			if ( current_user_can( 'aiosp_manage_seo' ) ) {
+
+				$this->aioseop_screens[] = 'toplevel_page_' . AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class';
+				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_performance';
+				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_sitemap';
+				$this->aioseop_screens[] = 'all-in-one-seo_page_aiosp_opengraph';
+				$this->aioseop_screens[] = 'all-in-one-seo_page_aiosp_robots_generator';
+				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_robots';
+				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_file_editor';
+				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_importer_exporter';
+				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_bad_robots';
+				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_feature_manager';
+
 				$this->obj_load_options();
 
 				add_action( 'admin_init', array( $this, 'init' ) );
