@@ -426,9 +426,9 @@ class AIOSEOP_Helper {
 			'aiosp_posttypecolumns'             => __( 'This lets you select which screens display the SEO Title, SEO Keywords and SEO Description columns.', 'all-in-one-seo-pack' ),
 
 			// Webmaster Verification.
-			'aiosp_google_verify'               => __( "Enter your verification code here to verify your site with Google Search Console.<br /><a href='https://semperplugins.com/documentation/google-search-console-verification/' target='_blank'>Click here for documentation on this setting</a>", 'all-in-one-seo-pack' ),
-			'aiosp_bing_verify'                 => __( "Enter your verification code here to verify your site with Bing Webmaster Tools.<br /><a href='https://semperplugins.com/documentation/bing-webmaster-verification/' target='_blank'>Click here for documentation on this setting</a>", 'all-in-one-seo-pack' ),
-			'aiosp_pinterest_verify'            => __( "Enter your verification code here to verify your site with Pinterest.<br /><a href='https://semperplugins.com/documentation/pinterest-site-verification/' target='_blank'>Click here for documentation on this setting</a>", 'all-in-one-seo-pack' ),
+			'aiosp_google_verify'               => __( "Enter your verification code here to verify your site with Google Search Console.", 'all-in-one-seo-pack' ),
+			'aiosp_bing_verify'                 => __( "Enter your verification code here to verify your site with Bing Webmaster Tools.", 'all-in-one-seo-pack' ),
+			'aiosp_pinterest_verify'            => __( "Enter your verification code here to verify your site with Pinterest.", 'all-in-one-seo-pack' ),
 
 
 			// Google Settings.
@@ -569,7 +569,7 @@ class AIOSEOP_Helper {
 			'aiosp_posttypecolumns'             => 'https://semperplugins.com/documentation/display-settings/#show-column-labels-for-custom-post-types',
 
 			// Webmaster Verification.
-			'aiosp_google_verify'               => 'https://semperplugins.com/documentation/google-webmaster-tools-verification/',
+			'aiosp_google_verify'               => 'https://semperplugins.com/documentation/google-search-console-verification/',
 			'aiosp_bing_verify'                 => 'https://semperplugins.com/documentation/bing-webmaster-verification/',
 			'aiosp_pinterest_verify'            => 'https://semperplugins.com/documentation/pinterest-site-verification/',
 
