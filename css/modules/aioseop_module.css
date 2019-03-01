@@ -142,6 +142,7 @@ div.aioseop_tip_icon:before {
 	width: 26%;
 	min-width: 120px;
 	max-width: 230px;
+	cursor: default;
 }
 
 .aioseop_option_div {
