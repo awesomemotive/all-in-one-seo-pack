@@ -174,6 +174,7 @@ if ( ! function_exists( 'aioseop_addmycolumns' ) ) {
 			} else {
 				add_action( 'manage_posts_custom_column', 'aioseop_mrt_pccolumn', 10, 2 );
 			}
+			add_filter( 'manage_edit-'.$post_type.'_sortable_columns', 'aioseop_mrt_sortable_pcolumns' );
 		}
 	}
 }
@@ -196,6 +197,83 @@ if ( ! function_exists( 'aioseop_mrt_pcolumns' ) ) {
 		return $aioseopc;
 	}
 }
+
+if ( ! function_exists( 'aioseop_mrt_sortable_pcolumns' ) ) {
+
+	/**
+	 * @param $columns
+	 *
+	 * @return array
+	 */
+	function aioseop_mrt_sortable_pcolumns( $columns ) {
+		$columns['seotitle'] = array( 'seotitle', false );
+		$columns['seodesc'] = array( 'seodesc', false );
+		return $columns;
+	}
+}
+
+if ( ! function_exists( 'aioseop_mrt_sort_post_list_by_sortable_columns' ) ) {
+
+	/**
+	 * @param $vars
+	 *
+	 * @return array
+	 */
+	function aioseop_mrt_sort_post_list_by_sortable_columns( $vars ) {
+		
+		global $aioseop_options, $pagenow;
+		
+		if( ! is_admin() ) {
+        	return $vars;
+    	}
+    	if ( empty( $pagenow ) || ( $pagenow !== 'upload.php' && $pagenow !== 'edit.php' ) ) {
+    		return $vars;
+    	}
+    	if( ! isset( $vars['post_type'] ) || ! isset( $vars['orderby'] ) ) {
+    		return $vars;
+    	}
+
+		$aiosp_posttypecolumns = array();
+		if ( ! empty( $aioseop_options ) && ! empty( $aioseop_options['aiosp_posttypecolumns'] ) ) {
+			$aiosp_posttypecolumns = $aioseop_options['aiosp_posttypecolumns'];
+		}
+		if ( is_array( $aiosp_posttypecolumns ) && in_array( $vars['post_type'], $aiosp_posttypecolumns ) ) {
+
+			if( 'seotitle' == $vars['orderby'] ) {
+				$vars['meta_query'] = array(
+					'relation' => 'OR',
+					array(
+						'key'     => '_aioseop_title',
+						'compare' => 'RLIKE',
+					),
+					array(
+						'key'     => '_aioseop_title',
+						'compare' => 'NOT EXISTS',
+					)
+				);
+				$vars[ 'orderby' ] = 'meta_value';
+			}
+			elseif( 'seodesc' == $vars['orderby'] ) {
+				$vars['meta_query'] = array(
+					'relation' => 'OR',
+					array(
+						'key'     => '_aioseop_desc',
+						'compare' => 'RLIKE',
+					),
+					array(
+						'key'     => '_aioseop_desc',
+						'compare' => 'NOT EXISTS',
+					)
+				);
+				$vars[ 'orderby' ] = 'meta_value';
+			}
+		}
+		
+		return $vars;
+	
+	}
+}
+
 
 if ( ! function_exists( 'aioseop_admin_head' ) ) {
 
