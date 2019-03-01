@@ -664,6 +664,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				/* Translators: Displays the hordcoded slug that missing. */
 				wp_send_json_error( sprintf( __( 'Missing values from `%s`.', 'all-in-one-seo-pack' ), 'notice_slug' ) );
 			} elseif ( empty( $action_index ) && 0 !== $action_index ) {
+				/* Translators: Displays the hordcoded slug that missing. */
 				wp_send_json_error( sprintf( __( 'Missing values from `%s`.', 'all-in-one-seo-pack' ), 'action_index' ) );
 			}
 
