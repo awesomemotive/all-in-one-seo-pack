@@ -337,9 +337,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @return boolean True on success.
 		 */
 		public function insert_notice( $notice = array() ) {
-			if ( empty( $notice['slug'] ) ) {
-				return false;
-			} elseif ( isset( $this->notices[ $notice['slug'] ] ) ) {
+			if ( empty( $notice['slug'] ) || isset( $this->notices[ $notice['slug'] ] ) ) {
 				return false;
 			}
 
@@ -363,9 +361,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @return boolean True on success.
 		 */
 		public function update_notice( $notice = array() ) {
-			if ( empty( $notice['slug'] ) ) {
-				return false;
-			} elseif ( ! isset( $this->notices[ $notice['slug'] ] ) ) {
+			if ( empty( $notice['slug'] ) || ! isset( $this->notices[ $notice['slug'] ] ) ) {
 				return false;
 			}
 
@@ -424,7 +420,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @return boolean
 		 */
 		public function activate_notice( $slug ) {
-			if ( ! isset( $this->notices[ $slug ] ) ) {
+			if ( empty( $slug ) || ! isset( $this->notices[ $slug ] ) ) {
 				return false;
 			}
 
@@ -502,7 +498,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			wp_register_script(
 				'aioseop-admin-notice-js',
 				AIOSEOP_PLUGIN_URL . 'js/admin-notice.js',
-				array(),
+				array( 'jquery' ),
 				AIOSEOP_VERSION,
 				true
 			);
@@ -619,7 +615,12 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				}
 
 				// Display/Render.
-				if ( defined( 'DISABLE_NAG_NOTICES' ) && true === DISABLE_NAG_NOTICES && ( 'notice-error' !== $this->notices[ $a_notice_slug ]['class'] || 'notice-warning' !== $this->notices[ $a_notice_slug ]['class'] || 'notice-do-nag' !== $this->notices[ $a_notice_slug ]['class'] ) ) {
+				$important_admin_notices = array(
+					'notice-error',
+					'notice-warning',
+					'notice-do-nag',
+				);
+				if ( defined( 'DISABLE_NAG_NOTICES' ) && true === DISABLE_NAG_NOTICES && ( ! in_array( $this->notices[ $a_notice_slug ]['class'], $important_admin_notices, true ) ) ) {
 					// Skip if `DISABLE_NAG_NOTICES` is implemented (as true).
 					// Important notices, WP's CSS `notice-error` & `notice-warning`, are still rendered.
 					continue;
@@ -641,6 +642,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 */
 		public function ajax_notice_action() {
 			check_ajax_referer( 'aioseop_ajax_notice' );
+			if ( ! current_user_can( 'aiosp_manage_seo' ) ) {
+				wp_send_json_error( __( 'User doesn\' have `aiosp_manage_seo` capabilities.', 'all-in-one-seo-pack' ) );
+			}
 			// Notice (Slug) => (Action_Options) Index.
 			$notice_slug  = null;
 			$action_index = null;
