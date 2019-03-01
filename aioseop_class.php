@@ -3714,7 +3714,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			add_action( 'admin_head', array( $this, 'add_page_icon' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles_all' ) );
 			add_action( 'admin_init', 'aioseop_addmycolumns', 1 );
-			add_filter( 'request', 'aioseop_mrt_sort_post_list_by_sortable_columns' );
+			add_action( 'pre_get_posts', 'aioseop_mrt_sort_post_list_by_sortable_columns' );
 			add_action( 'admin_init', 'aioseop_handle_ignore_notice' );
 			add_action( 'shutdown', array( $this, 'check_recently_activated_modules' ), 99 );
 			if ( AIOSEOPPRO ) {

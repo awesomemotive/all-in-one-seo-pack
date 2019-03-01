@@ -201,6 +201,8 @@ if ( ! function_exists( 'aioseop_mrt_pcolumns' ) ) {
 if ( ! function_exists( 'aioseop_mrt_sortable_pcolumns' ) ) {
 
 	/**
+	 * Add sortable columns to post list table.
+	 *
 	 * @param $columns
 	 *
 	 * @return array
@@ -215,32 +217,36 @@ if ( ! function_exists( 'aioseop_mrt_sortable_pcolumns' ) ) {
 if ( ! function_exists( 'aioseop_mrt_sort_post_list_by_sortable_columns' ) ) {
 
 	/**
-	 * @param $vars
+	 * Modify the main WP_Query object in post list page  
+	 * Set meta_query and orderby to sort result by meta fields of shortable columns.
 	 *
-	 * @return array
+	 * @param $query
+	 *
+	 * @return void
 	 */
-	function aioseop_mrt_sort_post_list_by_sortable_columns( $vars ) {
+	function aioseop_mrt_sort_post_list_by_sortable_columns( $query ) {
 		
 		global $aioseop_options, $pagenow;
 		
-		if( ! is_admin() ) {
-        	return $vars;
-    	}
+		if ( ! is_admin() || ! $query->is_main_query() ) {
+			return;
+		}
     	if ( empty( $pagenow ) || ( $pagenow !== 'upload.php' && $pagenow !== 'edit.php' ) ) {
-    		return $vars;
+    		return;
     	}
-    	if( ! isset( $vars['post_type'] ) || ! isset( $vars['orderby'] ) ) {
-    		return $vars;
-    	}
-
+    	
+    	$post_type = $query->get( 'post_type' );
+		$orderby = $query->get( 'orderby' );
+    	
 		$aiosp_posttypecolumns = array();
 		if ( ! empty( $aioseop_options ) && ! empty( $aioseop_options['aiosp_posttypecolumns'] ) ) {
 			$aiosp_posttypecolumns = $aioseop_options['aiosp_posttypecolumns'];
 		}
-		if ( is_array( $aiosp_posttypecolumns ) && in_array( $vars['post_type'], $aiosp_posttypecolumns ) ) {
+		
+		if ( is_array( $aiosp_posttypecolumns ) && in_array( $post_type, $aiosp_posttypecolumns ) ) {
 
-			if( 'seotitle' == $vars['orderby'] ) {
-				$vars['meta_query'] = array(
+			if ( 'seotitle' == $orderby ) {
+				$query->set( 'meta_query', array(
 					'relation' => 'OR',
 					array(
 						'key'     => '_aioseop_title',
@@ -250,11 +256,11 @@ if ( ! function_exists( 'aioseop_mrt_sort_post_list_by_sortable_columns' ) ) {
 						'key'     => '_aioseop_title',
 						'compare' => 'NOT EXISTS',
 					)
-				);
-				$vars[ 'orderby' ] = 'meta_value';
+				) );
+				$query->set( 'orderby', 'meta_value' );
 			}
-			elseif( 'seodesc' == $vars['orderby'] ) {
-				$vars['meta_query'] = array(
+			elseif ( 'seodesc' == $orderby ) {
+				$query->set( 'meta_query', array(
 					'relation' => 'OR',
 					array(
 						'key'     => '_aioseop_desc',
@@ -264,12 +270,10 @@ if ( ! function_exists( 'aioseop_mrt_sort_post_list_by_sortable_columns' ) ) {
 						'key'     => '_aioseop_desc',
 						'compare' => 'NOT EXISTS',
 					)
-				);
-				$vars[ 'orderby' ] = 'meta_value';
+				) );
+				$query->set( 'orderby', 'meta_value' );
 			}
 		}
-		
-		return $vars;
 	
 	}
 }
