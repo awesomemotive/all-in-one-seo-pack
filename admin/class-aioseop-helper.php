@@ -80,15 +80,18 @@ class AIOSEOP_Helper {
 				$this->help_text = $this->help_text_bad_robots();
 				break;
 			default:
-				$this->help_text = array_merge( $this->help_text, $this->help_text_general() );
-				$this->help_text = array_merge( $this->help_text, $this->help_text_performance() );
-				$this->help_text = array_merge( $this->help_text, $this->help_text_sitemap() );
-				$this->help_text = array_merge( $this->help_text, $this->help_text_opengraph() );
-				$this->help_text = array_merge( $this->help_text, $this->help_text_robots_generator() );
-				$this->help_text = array_merge( $this->help_text, $this->help_text_file_editor() );
-				$this->help_text = array_merge( $this->help_text, $this->help_text_importer_exporter() );
-				$this->help_text = array_merge( $this->help_text, $this->help_text_bad_robots() );
-				$this->help_text = array_merge( $this->help_text, $this->help_text_post_meta() );
+				$this->help_text = array_merge(
+					$this->help_text,
+					$this->help_text_general(),
+					$this->help_text_performance(),
+					$this->help_text_sitemap(),
+					$this->help_text_opengraph(),
+					$this->help_text_robots_generator(),
+					$this->help_text_file_editor(),
+					$this->help_text_importer_exporter(),
+					$this->help_text_bad_robots(),
+					$this->help_text_post_meta()
+				);
 				break;
 		}
 
@@ -123,6 +126,8 @@ class AIOSEOP_Helper {
 		 * Placeholder %s (%something) has been bug fixed.
 		 * @link https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/issues/698
 		 */
+		// phpcs:disable WordPress.WP.I18n.MissingTranslatorsComment
+		// phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText
 		$rtn_help_text = array(
 			// General Settings.
 			'aiosp_can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation.  This will help to prevent duplicate content penalties by Google', 'all-in-one-seo-pack' ),
@@ -418,6 +423,7 @@ class AIOSEOP_Helper {
 						__( '%page% - The page number', 'all-in-one-seo-pack' ) .
 					'</li>' .
 				'</ul>',
+			//phpcs:enable
 
 			// Custom Post Type Settings.
 			'aiosp_cpostactive'                 => __( 'Use these checkboxes to select which Content Types you want to use All in One SEO Pack with.', 'all-in-one-seo-pack' ),
@@ -426,9 +432,9 @@ class AIOSEOP_Helper {
 			'aiosp_posttypecolumns'             => __( 'This lets you select which screens display the SEO Title, SEO Keywords and SEO Description columns.', 'all-in-one-seo-pack' ),
 
 			// Webmaster Verification.
-			'aiosp_google_verify'               => __( "Enter your verification code here to verify your site with Google Search Console.", 'all-in-one-seo-pack' ),
-			'aiosp_bing_verify'                 => __( "Enter your verification code here to verify your site with Bing Webmaster Tools.", 'all-in-one-seo-pack' ),
-			'aiosp_pinterest_verify'            => __( "Enter your verification code here to verify your site with Pinterest.", 'all-in-one-seo-pack' ),
+			'aiosp_google_verify'               => __( 'Enter your verification code here to verify your site with Google Search Console.', 'all-in-one-seo-pack' ),
+			'aiosp_bing_verify'                 => __( 'Enter your verification code here to verify your site with Bing Webmaster Tools.', 'all-in-one-seo-pack' ),
+			'aiosp_pinterest_verify'            => __( 'Enter your verification code here to verify your site with Pinterest.', 'all-in-one-seo-pack' ),
 
 
 			// Google Settings.
@@ -436,7 +442,7 @@ class AIOSEOP_Helper {
 			'aiosp_google_disable_profile'      => __( 'Check this to remove the Google Plus field from the user profile screen.', 'all-in-one-seo-pack' ),
 			'aiosp_google_sitelinks_search'     => __( 'Add markup to display the Google Sitelinks Search Box next to your search results in Google.', 'all-in-one-seo-pack' ),
 			'aiosp_google_set_site_name'        => __( 'Add markup to tell Google the preferred name for your website.', 'all-in-one-seo-pack' ),
-			'aiosp_google_specify_site_name'    => __( 'Enter your site name.', 'all-in-one-seo-pack'),
+			'aiosp_google_specify_site_name'    => __( 'Enter your site name.', 'all-in-one-seo-pack' ),
 			'aiosp_google_author_advanced'      => __( 'Enable this to display advanced options for controlling Google Plus authorship information on your website.', 'all-in-one-seo-pack' ),
 			'aiosp_google_author_location'      => __( 'This option allows you to control which types of pages you want to display rel=\"author\" on for Google authorship. The options include the Front Page (the homepage of your site), Posts, Pages, and any Custom Post Types. The Everywhere Else option includes 404, search, categories, tags, custom taxonomies, date archives, author archives and any other page template.', 'all-in-one-seo-pack' ),
 			'aiosp_google_enable_publisher'     => __( 'This option allows you to control whether rel=\"publisher\" is displayed on the homepage of your site. Google recommends using this if the site is a business website.', 'all-in-one-seo-pack' ),
@@ -494,6 +500,7 @@ class AIOSEOP_Helper {
 
 		);
 
+		// phpcs:disable WordPress.WP.I18n.MissingTranslatorsComment
 		$post_types = get_post_types( '', 'names' );
 		foreach ( $post_types as $v1_pt ) {
 			if ( ! isset( $rtn_help_text[ 'aiosp_' . $v1_pt . '_title_format' ] ) ) {
@@ -505,7 +512,7 @@ class AIOSEOP_Helper {
 					__( '%post_title% - The original title of the page', 'all-in-one-seo-pack' )
 				);
 				$pt_obj_taxes = get_object_taxonomies( $v1_pt, 'objects' );
-				foreach( $pt_obj_taxes as $k2_slug => $v2_tax_obj ) {
+				foreach ( $pt_obj_taxes as $k2_slug => $v2_tax_obj ) {
 					array_push(
 						$help_text_fields,
 						sprintf( __( "%%tax_%1\$s%% - This post's associated %2\$s taxonomy title", 'all-in-one-seo-pack' ), $k2_slug, $v2_tax_obj->label )
@@ -532,6 +539,7 @@ class AIOSEOP_Helper {
 				$rtn_help_text[ 'aiosp_' . $v1_pt . '_title_format' ] = __( 'The following macros are supported:', 'all-in-one-seo-pack' ) . $cpt_help_text . '<br /><a href="https://semperplugins.com/documentation/custom-post-type-settings/#custom-titles" target="_blank">' . __( 'Click here for documentation on this setting', 'all-in-one-seo-pack' ) . '</a>';
 			}
 		}
+		// phpcs:enable
 
 		$help_doc_link = array(
 			// General Settings.
