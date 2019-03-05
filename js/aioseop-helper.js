@@ -6,9 +6,6 @@
  *
  * @since     2.4.2
  */
-// phpcs:disable PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket
-// phpcs:disable PEAR.Functions.FunctionCallSignature.MultipleArguments
-// phpcs:disable PEAR.Functions.FunctionCallSignature.CloseBracketLine
 (function($) {
 	/**
 	 * jQuery UI Tooltips
@@ -57,4 +54,3 @@
 
 	aioseopTooltips();
 }(jQuery));
-//phpcs:enable
