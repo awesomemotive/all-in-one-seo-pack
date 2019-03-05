@@ -3451,7 +3451,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				</p>
 			</div>',
 				__( 'Warning: You\'re blocking access to search engines.', 'all-in-one-seo-pack' ),
-				sprintf( __( 'You can %1$s click here%2$s to go to your reading settings and toggle your blog visibility.', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( admin_url( 'options-reading.php' ) ) ), '</a>' )
+				sprintf( __( 'You can %1$sclick here%2$s to go to your reading settings and toggle your blog visibility.', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( admin_url( 'options-reading.php' ) ) ), '</a>' )
 			);
 
 		} elseif ( '1' == get_option( 'blog_public' ) && ! empty( $aioseop_visibility_notice_dismissed ) ) {
@@ -3475,7 +3475,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				</p>
 			</div>',
 				__( 'We\'ve detected you\'re running WooCommerce.', 'all-in-one-seo-pack' ),
-				sprintf( __( '%1$s Upgrade%2$s to All in One SEO Pack Pro for increased SEO compatibility for your products.', 'all-in-one-seo-pack' ), sprintf( '<a target="_blank" href="%s">', esc_url( 'https://semperplugins.com/plugins/all-in-one-seo-pack-pro-version/?loc=woo' ) ), '</a>' )
+				sprintf( __( '%1$sUpgrade%2$s to All in One SEO Pack Pro for increased SEO compatibility for your products.', 'all-in-one-seo-pack' ), sprintf( '<a target="_blank" href="%s">', esc_url( 'https://semperplugins.com/plugins/all-in-one-seo-pack-pro-version/?loc=woo' ) ), '</a>' )
 			);
 
 		} elseif ( ! class_exists( 'WooCommerce' ) && ! empty( $aioseop_woo_upgrade_notice_dismissed ) ) {
