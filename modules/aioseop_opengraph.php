@@ -873,7 +873,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						}
 						$settings[ $prefix . 'category' ]['initial_options'] = array_merge(
 							array(
-								$this->options[ "aiosp_opengraph_{$current_post_type}_fb_object_type" ] => __( 'Default ', 'all-in-one-seo-pack' ) . ' - '
+								$this->options[ "" ] => __( 'Default ', 'all-in-one-seo-pack' ) . ' - '
 																										 . $flat_type_list[ $this->options[ "aiosp_opengraph_{$current_post_type}_fb_object_type" ] ],
 							),
 							$settings[ $prefix . 'category' ]['initial_options']
