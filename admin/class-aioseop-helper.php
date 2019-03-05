@@ -436,7 +436,6 @@ class AIOSEOP_Helper {
 			'aiosp_bing_verify'                 => __( 'Enter your verification code here to verify your site with Bing Webmaster Tools.', 'all-in-one-seo-pack' ),
 			'aiosp_pinterest_verify'            => __( 'Enter your verification code here to verify your site with Pinterest.', 'all-in-one-seo-pack' ),
 
-
 			// Google Settings.
 			'aiosp_google_publisher'            => __( 'Enter your Google+ Profile URL here to add the rel=“author” tag to your site for Google authorship. It is recommended that the URL you enter here should be your personal Google+ profile.  Use the Advanced Authorship Options below if you want greater control over the use of authorship.', 'all-in-one-seo-pack' ),
 			'aiosp_google_disable_profile'      => __( 'Check this to remove the Google Plus field from the user profile screen.', 'all-in-one-seo-pack' ),
@@ -458,7 +457,6 @@ class AIOSEOP_Helper {
 			'aiosp_ga_track_outbound_links'     => __( 'Check this if you want to track outbound links with Google Analytics.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_link_attribution'         => __( 'This enables support for the Enhanced Link Attribution in Google Analytics.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_enhanced_ecommerce'       => __( 'This enables support for the Enhanced Ecommerce in Google Analytics.', 'all-in-one-seo-pack' ),
-
 
 			// Noindex Settings.
 			'aiosp_cpostnoindex'                => __( 'Set the default NOINDEX setting for each Post Type.', 'all-in-one-seo-pack' ),
@@ -588,7 +586,7 @@ class AIOSEOP_Helper {
 			'aiosp_google_sitelinks_search'     => 'https://semperplugins.com/documentation/google-settings/#display-sitelinks-search-box',
 			'aiosp_google_set_site_name'        => 'https://semperplugins.com/documentation/google-settings/#set-preferred-site-name',
 			// Missing documentation link.
-			//'aiosp_google_specify_site_name'    => 'https://semperplugins.com/documentation/google-settings/#set-preferred-site-name',
+			// 'aiosp_google_specify_site_name'    => 'https://semperplugins.com/documentation/google-settings/#set-preferred-site-name',
 			'aiosp_google_author_advanced'      => 'https://semperplugins.com/documentation/google-settings/#advanced-authorship-options',
 			'aiosp_google_author_location'      => 'https://semperplugins.com/documentation/google-settings/#display-google-authorship',
 			'aiosp_google_enable_publisher'     => 'https://semperplugins.com/documentation/google-settings/#display-publisher-meta-on-front-page',
@@ -639,9 +637,9 @@ class AIOSEOP_Helper {
 			'aiosp_dynamic_postspage_keywords'  => 'https://semperplugins.com/documentation/keyword-settings/#dynamically-generate-keywords-for-posts-page',
 
 			// Unknown/Pro?
-//			'aiosp_license_key'                 => '',
-//			'aiosp_taxactive'                   => '',
-//			'aiosp_google_connect'              => '',
+		// 'aiosp_license_key'                 => '',
+		// 'aiosp_taxactive'                   => '',
+		// 'aiosp_google_connect'              => '',
 		);
 
 		foreach ( $help_doc_link as $k1_slug => $v1_url ) {
