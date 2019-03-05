@@ -956,23 +956,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			}
 			foreach ( $options as $k => $v ) {
 				switch ( $k ) {
-					case $prefix . 'category':
-						if ( empty( $v ) ) {
-							// Get post type
-							$type = isset( get_current_screen()->post_type )
-								? get_current_screen()->post_type
-								: null;
-							// Assign default from plugin options
-							if ( ! empty( $type )
-								&& isset( $aioseop_options['modules'] )
-								&& isset( $aioseop_options['modules']['aiosp_opengraph_options'] )
-								&& isset( $aioseop_options['modules']['aiosp_opengraph_options'][ 'aiosp_opengraph_' . $type . '_fb_object_type' ] )
-							) {
-								$options[ $prefix . 'category' ] =
-									$aioseop_options['modules']['aiosp_opengraph_options'][ 'aiosp_opengraph_' . $type . '_fb_object_type' ];
-							}
-						}
+					/*
+					case $prefix . 'example':
+						//override value if needed
 						break;
+					*/
 				}
 				if ( $v === null ) {
 					unset( $options[ $k ] );
