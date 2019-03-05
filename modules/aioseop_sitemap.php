@@ -504,7 +504,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					sprintf(
 						// TODO Add esc_* or wp_kses function.
 						/* translators: Links to the current AIOSEOP Sitemap settings. */
-						__( '%1$s Click here%2$s to make these recommended changes.', 'all-in-one-seo-pack' ),
+						__( '%1$sClick here%2$s to make these recommended changes.', 'all-in-one-seo-pack' ),
 						sprintf(
 							'<a href="%s">',
 							esc_url( get_admin_url( null, "admin.php?page=$aioseop_plugin_dirname/modules/aioseop_sitemap.php" ) )
