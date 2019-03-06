@@ -118,9 +118,7 @@ div.aioseop_tip_icon:before {
 .aioseop_meta_box_help,
 .aioseop_meta_box_help:active {
 	float: right;
-	padding-left: 0;
-	width: 16px;
-	margin-right: 32px;
+	text-align: right;
 	text-decoration: none;
 	height: 15px;
 	padding-top: 1px;
@@ -138,13 +136,14 @@ div.aioseop_tip_icon:before {
 	font-weight: bold;
 	line-height: 19px;
 	display: inline-block;
+	float: left;
 	text-align: left;
-	position: absolute;
 	font-family: 'Open Sans', sans-serif;
 	padding: 2px 0;
 	width: 81%;
 	min-width: 120px;
-	max-width: 250px;
+	max-width: 230px;
+	cursor: default;
 }
 
 .aioseop_option_div {
@@ -158,7 +157,7 @@ div.aioseop_tip_icon:before {
 	border: 1px solid #e1e1e1;
 }
 
-.aioseop input[type="text"] {
+.aioseop input[type="text"], .aioseop input[type="url"]  {
 	color: #515151;
 	height: 35px;
 	padding: 10px 0 10px 10px;
@@ -1200,10 +1199,6 @@ div.aioseop_notice a.aioseop_dismiss_link {
 	width: 98%;
 }
 
-#aioseop_opengraph_settings .aioseop_option_label {
-	width: 30%;
-}
-
 .aioseop_tabs {
 	padding-top: 6px;
 }
@@ -1421,10 +1416,6 @@ div.sfwd_debug_error {
 	margin-top: 35px;
 }
 
-#aioseop_opengraph_settings .aioseop_option_input {
-	width: 70%;
-}
-
 /**
 * Preview Snippet styling
 *
@@ -1512,4 +1503,8 @@ textarea.robots-text {
 	background-color: #eee;
 	width: 100%;
 	height: 100%;
+}
+
+div#aiosp_sitemap_status_metabox .toggle-indicator {
+    display:none;
 }

@@ -21,12 +21,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			$this->file   = __FILE__;                                    // the current file
 			parent::__construct();
 
-			$help_text = array(
-				'type' => __( 'Rule Type', 'all-in-one-seo-pack' ),
-				'agent'  => __( 'User Agent', 'all-in-one-seo-pack' ),
-				'path'       => __( 'Directory Path', 'all-in-one-seo-pack' ),
-			);
-
 			$this->default_options = array(
 				'usage'              => array(
 					'type'    => 'html',
@@ -36,7 +30,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				),
 			);
 
-			$this->rule_fields		= array(
+			$this->rule_fields      = array(
 				'agent'         => array(
 					'name'            => __( 'User Agent', 'all-in-one-seo-pack' ),
 					'type'            => 'text',
@@ -46,7 +40,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				'type'          => array(
 					'name'  => __( 'Rule', 'all-in-one-seo-pack' ),
 					'type'  => 'select',
-					'initial_options' => array( 'allow' => __( 'Allow', 'all-in-one-seo-pack' ), 'disallow' => __( 'Block', 'all-in-one-seo-pack' ) ),
+					'initial_options' => array( 'allow' => __( 'Allow', 'all-in-one-seo-pack' ), 'disallow' => __( 'Disallow', 'all-in-one-seo-pack' ) ),
 					'label' => 'top',
 					'save'  => false,
 				),
@@ -58,12 +52,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				),
 				'Submit'            => array(
 					'type'  => 'submit',
-					'class' => 'button-primary',
+					'class' => 'button-primary add-edit-rule',
 					'name'  => __( 'Add Rule', 'all-in-one-seo-pack' ) . ' &raquo;',
 					'style' => 'margin-left: 20px;',
 					'label' => 'none',
 					'save'  => false,
 					'value' => 1,
+				),
+				"{$this->prefix}id"            => array(
+					'type'  => 'hidden',
+					'class' => 'edit-rule-id',
+					'save'  => false,
+					'value' => '',
 				),
 				'rules'        => array(
 					'name' => __( 'Configured Rules', 'all-in-one-seo-pack' ),
@@ -80,12 +80,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			add_filter( $this->prefix . 'submit_options', array( $this, 'submit_options'), 10, 2 );
 
 			$this->default_options = array_merge( $this->default_options, $this->rule_fields );
-
-			if ( ! empty( $help_text ) ) {
-				foreach ( $help_text as $k => $v ) {
-					$this->default_options[ $k ]['help_text'] = $v;
-				}
-			}
 
 			$this->layout             = array(
 				'default' => array(
@@ -104,12 +98,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			add_action( 'wp_ajax_aioseop_ajax_delete_rule', array( $this, 'ajax_delete_rule' ) );
 			add_action( 'wp_ajax_aioseop_ajax_robots_physical', array( $this, 'ajax_action_physical_file' ) );
 			add_filter( 'robots_txt', array( $this, 'robots_txt' ), 10, 2 );
+
+			// We want to define this because calling admin init in the unit tests causes an error and does not call this method.
+			if ( defined( 'AIOSEOP_UNIT_TESTING' ) ) {
+				add_action( "aioseop_ut_{$this->prefix}admin_init", array( $this, 'import_default_robots' ) );
+			}
 		}
 
 		function physical_file_check() {
 			if ( $this->has_physical_file() ) {
-				if ( ( is_multisite() && is_network_admin() ) || ( ! is_multisite() && current_user_can( 'manage_options') ) ) {
+				if ( ( is_multisite() && is_network_admin() ) || ( ! is_multisite() && current_user_can( 'manage_options' ) ) ) {
+					// @codingStandardsIgnoreStart
 					$this->default_options['usage']['default'] .= '<div id="aiosp_robots_physical_import_delete"><p>' . sprintf( __( 'A physical file exists. Do you want to %simport and delete%s it, %sdelete%s it or continue using it?', 'all-in-one-seo-pack' ), '<a href="#" class="aiosp_robots_physical aiosp_robots_import" data-action="import">', '</a>', '<a href="#" class="aiosp_robots_physical aiosp_robots_delete" data-action="delete">', '</a>' ) . '</p></div>';
+					// @codingStandardsIgnoreStop
 				} else {
 					$this->default_options['usage']['default'] .= '<p>' . __( 'A physical file exists. This feature cannot be used.', 'all-in-one-seo-pack' ) . '</p>';
 				}
@@ -324,21 +325,27 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			aioseop_ajax_init();
 			$id = $_POST['options'];
 
+			$this->delete_rule( $id );
+		}
+
+		private function delete_rule( $id ) {
 			global $aioseop_options;
 
+			$deleted_rule	= null;
 			// first check the defined rules.
 			$blog_rules	= $this->get_all_rules();
 			$rules = array();
 			foreach ( $blog_rules as $rule ) {
 				if ( $id === $rule['id'] ) {
+					$deleted_rule	= $rule;
 					continue;
 				}
 				$rules[] = $rule;
 			}
 			$aioseop_options['modules']["{$this->prefix}options"]["{$this->prefix}rules"] = $rules;
 			update_option( 'aioseop_options', $aioseop_options );
+			return $deleted_rule;
 		}
-
 
 		private function add_error( $error ) {
 			$errors = get_transient( "{$this->prefix}errors" . get_current_user_id() );
@@ -357,8 +364,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 		 *
 		 * @return mixed
 		 */
-		function filter_options( $options ) {
+		function filter_options( $options ) {	
+			$modify		= isset( $_POST[ "{$this->prefix}id" ] ) && ! empty( $_POST[ "{$this->prefix}id" ] );
+			$deleted_rule = null;
+			if ( $modify ) {
+				// let's first delete the original rule and save it temporarily so that we can add it back in case of an error with the new rule.
+				$deleted_rule	= $this->delete_rule( $_POST[ "{$this->prefix}id" ] );
+			}
+			
 			$blog_rules = $this->get_all_rules();
+
 			if ( ! empty( $_POST[ "{$this->prefix}path" ] ) ) {
 				foreach ( array_keys( $this->rule_fields ) as $field ) {
 					$post_field	= $this->prefix . "" . $field;
@@ -376,6 +391,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				$rule	= $this->validate_rule( $blog_rules, $new_rule );
 				if ( is_wp_error( $rule ) ) {
 					$this->add_error( $rule );
+					if ( $deleted_rule ) {
+						$blog_rules[] = $deleted_rule;
+					}
 				} else {
 					$blog_rules[] = $rule;
 				}
@@ -502,10 +520,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			$buf = '';
 			if ( ! empty( $rules ) ) {
 				$rules = $this->reorder_rules( $rules );
-				$buf = "<table class='aioseop_table' cellpadding=0 cellspacing=0>\n";
-				$row = "\t<tr><td><a href='#' class='aiosp_delete aiosp_robots_delete_rule' data-id='%s'></a></td><td>%s</td><td>%s</td><td>%s</td></tr>\n";
+				$buf = sprintf( "<table class='aioseop_table' cellpadding=0 cellspacing=0 data-edit-label='%s'>\n", __( 'Modify Rule', 'all-in-one-seo-pack' ) . ' &raquo;' );
+				$row = "\t
+					<tr>
+						<td>
+							<a href='#' class='dashicons dashicons-trash aiosp_robots_delete_rule' data-id='%s'></a>
+							<a href='#' class='dashicons dashicons-edit aiosp_robots_edit_rule' data-id='%s' data-agent='%s' data-type='%s' data-path='%s'></a>
+						</td>
+						<td>%s</td>
+						<td>%s</td>
+						<td>%s</td>
+					</tr>\n";
 				foreach ( $rules as $v ) {
-					$buf .= sprintf( $row, $v['id'], $v['agent'], $v['type'], $v['path'] );
+					$buf .= sprintf( $row, $v['id'], $v['id'], esc_attr( $v['agent'] ), esc_attr( strtolower( $v['type'] ) ), esc_attr( $v['path'] ), $v['agent'], $v['type'], $v['path'] );
 				}
 				$buf .= "</table>\n";
 			}

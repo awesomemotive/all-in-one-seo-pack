@@ -15,6 +15,13 @@ class aiosp_common {
 // @codingStandardsIgnoreEnd
 
 	/**
+	 * @var null|array
+	 *
+	 * @since 2.9.2
+	 */
+	public static $attachment_url_postids = null;
+
+	/**
 	 * aiosp_common constructor.
 	 *
 	 */
@@ -129,4 +136,320 @@ class aiosp_common {
 		return $url;
 	}
 
+	/**
+	 * Check whether a url is relative (does not contain a . before the first /) or absolute and makes it a valid url.
+	 *
+	 * @param string $url URL to check.
+	 *
+	 * @return string
+	 */
+	static function make_url_valid_smartly( $url ) {
+		$scheme = parse_url( home_url(), PHP_URL_SCHEME );
+		if ( 0 !== strpos( $url, 'http' ) ) {
+			if ( 0 === strpos( $url, '//' ) ) {
+				// for //<host>/resource type urls.
+				$url    = $scheme . ':' . $url;
+			} elseif ( strpos( $url, '.' ) !== false && strpos( $url, '/' ) !== false && strpos( $url, '.' ) < strpos( $url, '/' ) ) {
+				// if the . comes before the first / then this is absolute.
+				$url    = $scheme . '://' . $url;
+			} else {
+				// for /resource type urls.
+				$url = home_url( $url );
+			}
+		} elseif ( strpos( $url, 'http://' ) === false ) {
+			if ( 0 === strpos( $url, 'http:/' ) ) {
+				$url    = $scheme . '://' . str_replace( 'http:/', '', $url );
+			} elseif ( 0 === strpos( $url, 'http:' ) ) {
+				$url    = $scheme . '://' . str_replace( 'http:', '', $url );
+			}
+		}
+		return $url;
+	}
+
+	/**
+	 * Check whether a url is valid.
+	 *
+	 * @param string $url URL to check.
+	 *
+	 * @return bool
+	 */
+	public static function is_url_valid( $url ) {
+		return filter_var( filter_var( $url, FILTER_SANITIZE_URL ), FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED | FILTER_FLAG_HOST_REQUIRED ) !== false;
+	}
+
+	/**
+	 * Renders the value XML safe.
+	 */
+	public static function make_xml_safe( $tag, $value ) {
+		// some tags contain an array of values.
+		if ( is_array( $value ) ) {
+			return $value;
+		}
+
+		// sanitize the other tags.
+		if ( in_array( $tag, array( 'guid', 'link', 'loc', 'image:loc' ), true ) ) {
+			$value = esc_url( $value );
+		} else {
+			// some tags contain sanitized to some extent but they do not encode < and >.
+			if ( ! in_array( $tag, array( 'image:title' ), true ) ) {
+				$value = convert_chars( wptexturize( $value ) );
+			}
+		}
+		return ent2ncr( esc_html( $value ) );
+	}
+
+	/**
+	 * Attachment URL to Post ID
+	 *
+	 * Returns the (original) post/attachment ID from the URL param given. The function checks if URL is
+	 * within, chacks for original attachment URLs, and then custom attachment URLs. The main intent for this function
+	 * is to avoid having to query if possible (if cache was set prior), and if not, there is only 1 query per instance
+	 * rather than multiple queries per instance.
+	 * NOTE: Attempting to paginate the query actually caused the memory to peak higher.
+	 * NOTE: The weakest point in this function is multiple calls to Result_2's SQL query for custom attachment URLs.
+	 *
+	 * This is intended to work much the same way as WP's `attachment_url_to_postid()`.
+	 *
+	 * @link https://developer.wordpress.org/reference/functions/attachment_url_to_postid/
+	 *
+	 * @see aiosp_common::set_transient_url_postids()
+	 * @see get_transient()
+	 * @link https://developer.wordpress.org/reference/functions/get_transient/
+	 * @see wpdb::get_results()
+	 * @link https://developer.wordpress.org/reference/classes/wpdb/get_results/
+	 * @see wp_list_pluck()
+	 * @link https://developer.wordpress.org/reference/functions/wp_list_pluck/
+	 * @see wp_upload_dir()
+	 * @link https://developer.wordpress.org/reference/functions/wp_upload_dir/
+	 *
+	 * @since 2.9.2
+	 *
+	 * @param string $url Full image URL.
+	 * @return int
+	 */
+	public static function attachment_url_to_postid( $url ) {
+		global $wpdb;
+		static $results_1;
+		static $results_2;
+
+		$id = 0;
+		$url_md5 = md5( $url );
+
+		// Gets the URL => PostIDs array.
+		// If static variable is still empty, load transient data.
+		if ( is_null( self::$attachment_url_postids ) ) {
+			if ( is_multisite() ) {
+				self::$attachment_url_postids = get_site_transient( 'aioseop_multisite_attachment_url_postids' );
+			} else {
+				self::$attachment_url_postids = get_transient( 'aioseop_attachment_url_postids' );
+			}
+
+			// If no transient data, set as (default) empty array.
+			if ( false === self::$attachment_url_postids ) {
+				self::$attachment_url_postids = array();
+			}
+		}
+
+		// Search for URL and get ID.
+		if ( isset( self::$attachment_url_postids[ $url_md5 ] ) ) {
+			// If static is already loaded and has URL, then return the URL's Post ID.
+			$id = intval( self::$attachment_url_postids[ $url_md5 ] );
+		} else {
+			// Check to make sure Image URL is not outside the website.
+			$uploads_dir = wp_upload_dir();
+			if ( false !== strpos( $url, $uploads_dir['baseurl'] . '/' ) ) {
+				// Results_1 query looks for URLs with the original guid that is uncropped and unedited.
+				if ( is_null( $results_1 ) ) {
+					$results_1 = aiosp_common::attachment_url_to_postid_query_1();
+				}
+
+				if ( isset( $results_1[ $url_md5 ] ) ) {
+					$id = intval( $results_1[ $url_md5 ] );
+				}
+
+				// TODO Add setting to enable; this is TOO MEMORY INTENSE which could result in 1 or more crashes,
+				// TODO however some may still need custom image URLs.
+				// TODO NOTE: Transient data does prevent continual crashes.
+				// else {
+				// Results_2 query looks for the URL that is cropped and edited. This searches JSON strings
+				// and returns the original attachment ID (there is no custom attachment IDs).
+				//
+				// if ( is_null( $results_2 ) ) {
+				// $results_2 = aiosp_common::attachment_url_to_postid_query_2();
+				// }
+				//
+				// if ( isset( $results_2[ $url_md5 ] ) ) {
+				// $id = intval( $results_2[ $url_md5 ] );
+				// }
+				// }
+			}
+
+			self::$attachment_url_postids[ $url_md5 ] = $id;
+
+			/**
+			 * Sets the transient data at the last hook instead at every call.
+			 *
+			 * @see aiosp_common::set_transient_url_postids()
+			 */
+			add_action( 'shutdown', array( 'aiosp_common', 'set_transient_url_postids' ) );
+		}
+
+		return $id;
+	}
+
+	/**
+	 * Sets the transient data at the last hook instead at every call.
+	 *
+	 * @see set_transient()
+	 * @link https://developer.wordpress.org/reference/functions/set_transient/
+	 *
+	 * @since 2.9.2
+	 */
+	public static function set_transient_url_postids() {
+		if ( is_multisite() ) {
+			set_site_transient( 'aioseop_multisite_attachment_url_postids', self::$attachment_url_postids, 24 * HOUR_IN_SECONDS );
+		} else {
+			set_transient( 'aioseop_attachment_url_postids', self::$attachment_url_postids, 24 * HOUR_IN_SECONDS );
+		}
+
+	}
+
+	/**
+	 * Attachment URL to Post ID - Query 1
+	 *
+	 * This is intended to work solely with `aiosp_common::attachment_url_to_post_id()`. Calling this multiple times
+	 * is memory intense.
+	 *
+	 * @see wpdb::get_results()
+	 * @link https://developer.wordpress.org/reference/classes/wpdb/get_results/
+	 *
+	 * @return array
+	 */
+	public static function attachment_url_to_postid_query_1() {
+		global $wpdb;
+
+		$results_1 = $wpdb->get_results(
+			"SELECT ID, MD5(guid) AS guid FROM $wpdb->posts WHERE post_type='attachment' AND post_status='inherit' AND post_mime_type LIKE 'image/%';",
+			ARRAY_A
+		);
+
+		if ( $results_1 ) {
+			$results_1 = array_combine(
+				wp_list_pluck( $results_1, 'guid' ),
+				wp_list_pluck( $results_1, 'ID' )
+			);
+		} else {
+			$results_1 = array();
+		}
+
+		return $results_1;
+	}
+
+	/**
+	 * Attachment URL to Post ID - Query 2
+	 *
+	 * Unused/Conceptual function. This is intended to work solely with `aiosp_common::attachment_url_to_post_id()`.
+	 * Calling this multiple times is memory intense. It's intended to query for custom images, and data for those types
+	 * of images only exists in the postmeta database table
+	 *
+	 * @todo Investigate unserialize() memory consumption/leak.
+	 * @link https://www.evonide.com/breaking-phps-garbage-collection-and-unserialize/
+	 *
+	 * @see aiosp_common::attachment_url_to_postid()
+	 * @see unserialize()
+	 * @link http://php.net/manual/en/function.unserialize.php
+	 * @see wpdb::get_results()
+	 * @link https://developer.wordpress.org/reference/classes/wpdb/get_results/
+	 * @see wp_upload_dir()
+	 * @link https://developer.wordpress.org/reference/functions/wp_upload_dir/
+	 *
+	 * @return array
+	 */
+	public static function attachment_url_to_postid_query_2() {
+		global $wpdb;
+
+		$tmp_arr = array();
+		// @codingStandardsIgnoreStart WordPress.WP.PreparedSQL.NotPrepared
+		$results_2 = $wpdb->get_results(
+			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE `meta_key` = '_wp_attachment_metadata' AND `meta_value` != '" . serialize( array() ) . "';",
+			ARRAY_A
+		);
+		// @codingStandardsIgnoreStop WordPress.WP.PreparedSQL.NotPrepared
+		if ( $results_2 ) {
+			for ( $i = 0; $i < count( $results_2 ); $i++ ) {
+				// TODO Investigate potentual memory leak(s); currently with unserialize.
+				$meta_value = maybe_unserialize( $results_2[ $i ]['meta_value'] );
+
+				// TODO Needs Discussion: Should this be added? To handle errors better instead of suspecting aioseop is at fault and lessen support threads.
+				/**
+				 * This currently handles "warning" notices with unserialize which normally can't be handled with a try/catch.
+				 * However, this notice should be identified and corrected; which is seperate from the plugin, but
+				 * can also triggered by the plugin.
+				 *
+				 * @see aiosp_common::error_handle_images()
+				 * @see set_error_handler()
+				 * @link http://php.net/manual/en/function.set-error-handler.php
+				 * @see restore_error_handler()
+				 * @link http://php.net/manual/en/function.restore-error-handler.php
+				 */
+				/*
+				set_error_handler( 'aiosp_common::error_handle_images' );
+				try {
+					$meta_value = unserialize( $results_2[ $i ]['meta_value'] );
+				} catch ( Exception $e ) {
+					unset( $meta_value );
+					restore_error_handler();
+					continue;
+				}
+				restore_error_handler();
+				*/
+
+				// Images and Videos use different variable structures.
+				if ( false === $meta_value || ! isset( $meta_value['file'] ) && ! isset( $meta_value['sizes'] ) ) {
+					continue;
+				}
+
+				// Set the URL => PostIDs.
+				$uploads_dir = wp_upload_dir();
+				$custom_img_base_url = $uploads_dir['baseurl'] . '/' . str_replace( wp_basename( $meta_value['file'] ), '', $meta_value['file'] );
+				foreach ( $meta_value['sizes'] as $image_size_arr ) {
+					$tmp_arr[ md5( ( $custom_img_base_url . $image_size_arr['file'] ) ) ] = $results_2[ $i ]['post_id'];
+				}
+
+				unset( $meta_value );
+			}
+		}
+
+		$results_2 = $tmp_arr;
+		unset( $tmp_arr );
+
+		return $results_2;
+	}
+
+	/**
+	 * Error Hand Images
+	 *
+	 * Unused/Conceptual function potentually used in `aiosp_common::attachment_url_to_post_id_query_2()`.
+	 * This is to handle errors where a normal try/catch wouldn't have the exception needed to catch.
+	 *
+	 * @see aiosp_common::attachment_url_to_post_id_query_2()
+	 *
+	 * @param $errno
+	 * @param $errstr
+	 * @param $errfile
+	 * @param $errline
+	 * @return bool
+	 * @throws ErrorException
+	 */
+	public static function error_handle_images( $errno, $errstr, $errfile, $errline ) {
+		// Possibly handle known issues differently.
+		// Handles unserialize() warning notice.
+		if ( 8 === $errno || strpos( $errstr , 'unserialize():' ) ) {
+			throw new ErrorException( $errstr, $errno, 0, $errfile, $errline );
+		} else {
+			throw new ErrorException( $errstr, $errno, 0, $errfile, $errline );
+		}
+
+		return false;
+	}
 }

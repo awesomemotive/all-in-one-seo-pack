@@ -58,7 +58,7 @@ class AIOSEOP_Updates {
 
 			if ( ! is_network_admin() || ! isset( $_GET['activate-multi'] ) ) {
 				// Replace this to reactivate update welcome screen.
-				// set_transient( '_aioseop_activation_redirect', true, 30 ); // Sets 30 second transient for welcome screen redirect on activation.
+				set_transient( '_aioseop_activation_redirect', true, 30 ); // Sets 30 second transient for welcome screen redirect on activation.
 			}
 			delete_transient( 'aioseop_feed' );
 			add_action( 'admin_init', array( $this, 'aioseop_welcome' ) );
@@ -75,8 +75,8 @@ class AIOSEOP_Updates {
 	function aioseop_welcome() {
 		if ( get_transient( '_aioseop_activation_redirect' ) ) {
 			delete_transient( '_aioseop_activation_redirect' );
-			// $aioseop_welcome = new aioseop_welcome();
-			// $aioseop_welcome->init( TRUE );
+			$aioseop_welcome = new aioseop_welcome();
+			$aioseop_welcome->init( TRUE );
 		}
 
 	}
@@ -114,6 +114,18 @@ class AIOSEOP_Updates {
 			set_transient( '_aioseop_activation_redirect', true, 30 ); // Sets 30 second transient for welcome screen redirect on activation.
 		}
 
+		if (
+			( ! AIOSEOPPRO && version_compare( $old_version, '2.9', '<' ) ) ||
+			( AIOSEOPPRO && version_compare( $old_version, '2.10', '<' ) )
+		) {
+			$this->bad_bots_remove_semrush_201810();
+		}
+		
+		if (
+			version_compare( $old_version, '3.0', '<' )
+		) {
+			$this->bad_bots_remove_exabot_201902();
+		}
 	}
 
 	/**
@@ -185,6 +197,53 @@ class AIOSEOP_Updates {
 				array(
 					"SeznamBot\r\n",
 					"SeznamBot\n",
+				), '', $list
+			);
+			$aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] = $list;
+			update_option( 'aioseop_options', $aioseop_options );
+			$aiosp->update_class_option( $aioseop_options );
+		}
+	}
+
+	/**
+	 * Removes semrush from bad bot blocker.
+	 *
+	 * @since 2.9
+	 * @global @aiosp, @aioseop_options
+	 */
+	function bad_bots_remove_semrush_201810() {
+		global $aiosp, $aioseop_options;
+
+		// Remove 'SemrushBot' from bad bots list to avoid false positives.
+		if ( isset( $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] ) ) {
+			$list                                                                                 = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
+			$list                                                                                 = str_replace(
+				array(
+					"SemrushBot\r\n",
+					"SemrushBot\n",
+				), '', $list
+			);
+			$aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] = $list;
+			update_option( 'aioseop_options', $aioseop_options );
+			$aiosp->update_class_option( $aioseop_options );
+		}
+	}
+	
+	/**
+	 * Removes Exabot from bad bot blocker to allow Alexabot. (#2105)
+	 *
+	 * @since 3.0
+	 * @global @aiosp, @aioseop_options
+	 */
+	function bad_bots_remove_exabot_201902(){
+		global $aiosp, $aioseop_options;
+
+		if ( isset( $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] ) ) {
+			$list                                                                                 = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
+			$list                                                                                 = str_replace(
+				array(
+					"Exabot\r\n",
+					"Exabot\n",
 				), '', $list
 			);
 			$aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] = $list;

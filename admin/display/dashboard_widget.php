@@ -15,19 +15,18 @@ if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 		 * Add the action to the constructor.
 		 */
 		function __construct() {
-			add_action( 'wp_dashboard_setup', array( $this, 'aioseop_add_dashboard_widget' ) );
+			add_action( 'wp_dashboard_setup', array( $this, 'add_dashboard_widget' ) );
 		}
 
 		/**
 		 * @since 2.3.10
 		 */
-		function aioseop_add_dashboard_widget() {
-
+		function add_dashboard_widget() {
 			if ( current_user_can( 'install_plugins' ) && false !== $this->show_widget() ) {
 				wp_add_dashboard_widget(
 					'semperplugins-rss-feed', __( 'SEO News', 'all-in-one-seo-pack' ), array(
 						$this,
-						'aioseop_display_rss_dashboard_widget',
+						'display_rss_dashboard_widget',
 					)
 				);
 			}
@@ -58,7 +57,13 @@ if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 		/**
 		 * @since 2.3.10
 		 */
-		function aioseop_display_rss_dashboard_widget() {
+		function display_rss_dashboard_widget() {
+			// check if the user has chosen not to display this widget through screen options.
+			$current_screen = get_current_screen();
+			$hidden_widgets = get_user_meta( get_current_user_id(), 'metaboxhidden_' . $current_screen->id );
+			if ( $hidden_widgets && count( $hidden_widgets ) > 0 && is_array( $hidden_widgets[0] ) && in_array( 'semperplugins-rss-feed', $hidden_widgets[0], true ) ) {
+				return;
+			}
 
 			include_once( ABSPATH . WPINC . '/feed.php' );
 

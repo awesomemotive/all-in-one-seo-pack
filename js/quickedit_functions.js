@@ -82,7 +82,10 @@ function handle_post_meta( p, t, m, n ) {
 			aioseop_sack.setVar( "target_meta", m );
 			aioseop_sack.setVar( "_inline_edit", jQuery('input#_inline_edit').val() );
 			aioseop_sack.setVar( "_nonce", n );
+			// TODO Add alert function. Check example of correct code. https://eslint.org/docs/rules/no-alert
+			/* eslint-disable no-alert */
 			aioseop_sack.onError = function() {alert('Ajax error on saving title'); };
+			/* eslint-enable no-alert */
 			aioseop_sack.runAJAX();
 		});
 		jQuery("div#aioseop_"+m+"_"+p).html(loading);

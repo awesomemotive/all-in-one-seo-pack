@@ -4,15 +4,183 @@
  */
 class AIOSEOP_Test_Base extends WP_UnitTestCase {
 
+	public function _setUp() {
+		parent::setUp();
+
+		// avoids error - readfile(/src/wp-includes/js/wp-emoji-loader.js): failed to open stream: No such file or directory
+		remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+
+		// reset global options.
+		delete_option( 'aioseop_options' );
+		aioseop_initialize_options();
+	}
+
+	/**
+	 * Last AJAX response.  This is set via echo -or- wp_die.
+	 * @var type
+	 */
+	protected $_last_response = '';
+	/**
+	 * List of ajax actions called via POST
+	 * @var type
+	 */
+	protected $_core_actions_get = array( 'fetch-list', 'ajax-tag-search', 'wp-compression-test', 'imgedit-preview', 'oembed_cache' );
+	/**
+	 * Saved error reporting level
+	 * @var int
+	 */
+	protected $_error_level = 0;
+	/**
+	 * List of ajax actions called via GET
+	 * @var type
+	 */
+	protected $_core_actions_post = array(
+		'oembed_cache', 'image-editor', 'delete-comment', 'delete-tag', 'delete-link',
+		'delete-meta', 'delete-post', 'trash-post', 'untrash-post', 'delete-page', 'dim-comment',
+		'add-link-category', 'add-tag', 'get-tagcloud', 'get-comments', 'replyto-comment',
+		'edit-comment', 'add-menu-item', 'add-meta', 'add-user', 'autosave', 'closed-postboxes',
+		'hidden-columns', 'update-welcome-panel', 'menu-get-metabox', 'wp-link-ajax',
+		'menu-locations-save', 'menu-quick-search', 'meta-box-order', 'get-permalink',
+		'sample-permalink', 'inline-save', 'inline-save-tax', 'find_posts', 'widgets-order',
+		'save-widget', 'set-post-thumbnail', 'date_format', 'time_format', 'wp-fullscreen-save-post',
+		'wp-remove-post-lock', 'dismiss-wp-pointer', 'nopriv_autosave',
+	);
+
+	/**
+	 * A sentence that contains the list of special characters that can be used.
+	 * @var type
+	 */
+	protected $_spl_chars = '<tom> - tom&jerry \'cause today\'s effort makes it worth tomorrow\'s "holiday" &raquo; &laquo; &rsaquo; &lsaquo; &rdquo; &ldquo; &rsquo; &lsquo; > <';
+
+	public function ajaxSetUp() {
+		parent::setUp();
+		// Register the core actions
+		foreach ( array_merge( $this->_core_actions_get, $this->_core_actions_post ) as $action ) {
+			if ( function_exists( 'wp_ajax_' . str_replace( '-', '_', $action ) ) ) {
+				add_action( 'wp_ajax_' . $action, 'wp_ajax_' . str_replace( '-', '_', $action ), 1 );
+			}
+		}
+		add_filter( 'wp_die_ajax_handler', array( $this, 'getDieHandler' ), 1, 1 );
+		if ( ! defined( 'DOING_AJAX' ) ) {
+			define( 'DOING_AJAX', true );
+		}
+		set_current_screen( 'ajax' );
+		// Clear logout cookies
+		add_action( 'clear_auth_cookie', array( $this, 'logout' ) );
+		// Suppress warnings from "Cannot modify header information - headers already sent by"
+		$this->_error_level = error_reporting();
+		error_reporting( $this->_error_level & ~E_WARNING );
+	}
+
+	/**
+	 * Tear down the test fixture.
+	 * Reset $_POST, remove the wp_die() override, restore error reporting
+	 */
+	public function ajaxTearDown() {
+		parent::tearDown();
+		$_POST = array();
+		$_GET = array();
+		unset( $GLOBALS['post'] );
+		unset( $GLOBALS['comment'] );
+		remove_filter( 'wp_die_ajax_handler', array( $this, 'getDieHandler' ), 1, 1 );
+		remove_action( 'clear_auth_cookie', array( $this, 'logout' ) );
+		error_reporting( $this->_error_level );
+		set_current_screen( 'front' );
+	}
+
+	/**
+	 * Return our callback handler
+	 * @return callback
+	 */
+	public function getDieHandler() {
+		return array( $this, 'dieHandler' );
+	}
+
+
+	/**
+	 * Handler for wp_die()
+	 * Save the output for analysis, stop execution by throwing an exception.
+	 * Error conditions (no output, just die) will throw <code>WPAjaxDieStopException( $message )</code>
+	 * You can test for this with:
+	 * <code>
+	 * $this->setExpectedException( 'WPAjaxDieStopException', 'something contained in $message' );
+	 * </code>
+	 * Normal program termination (wp_die called at then end of output) will throw <code>WPAjaxDieContinueException( $message )</code>
+	 * You can test for this with:
+	 * <code>
+	 * $this->setExpectedException( 'WPAjaxDieContinueException', 'something contained in $message' );
+	 * </code>
+	 *
+	 * @throws WPAjaxDieStopException
+	 * @throws WPAjaxDieContinueException
+	 *
+	 * @param string $message
+	 */
+	public function dieHandler( $message ) {
+		$this->_last_response .= ob_get_clean();
+		ob_end_clean();
+		if ( '' === $this->_last_response ) {
+			if ( is_scalar( $message ) ) {
+				throw new WPAjaxDieStopException( (string) $message );
+			} else {
+				throw new WPAjaxDieStopException( '0' );
+			}
+		} else {
+			throw new WPAjaxDieContinueException( $message );
+		}
+	}
+
+	/**
+	 * Mimic the ajax handling of admin-ajax.php
+	 * Capture the output via output buffering, and if there is any, store
+	 * it in $this->_last_message.
+	 * @param string $action
+	 */
+	protected function _handleAjax( $action ) {
+		// Start output buffering
+		ini_set( 'implicit_flush', false );
+		ob_start();
+		// Build the request
+		$_POST['action'] = $action;
+		$_GET['action']  = $action;
+		$_REQUEST        = array_merge( $_POST, $_GET );
+		// Call the hooks
+		// do_action( 'admin_init' );
+		do_action( 'wp_ajax_' . $_REQUEST['action'], null );
+		// Save the output
+		$buffer = ob_get_clean();
+		if ( ! empty( $buffer ) ) {
+			$this->_last_response = $buffer;
+		}
+	}
+
+	/**
+	 * Switch between user roles
+	 * E.g. administrator, editor, author, contributor, subscriber
+	 * @param string $role
+	 */
+	protected function _setRole( $role ) {
+		$post = $_POST;
+		$user_id = $this->factory->user->create( array( 'role' => $role ) );
+		wp_set_current_user( $user_id );
+		$_POST = array_merge( $_POST, $post );
+	}
+
 	/**
 	 * Upload an image and, optionally, attach to the post.
 	 */
 	protected final function upload_image_and_maybe_attach( $image, $id = 0 ) {
-		/*
-		 This factory method has a bug so we have to be a little clever.
+		/* this factory method has a bug so we have to be a little clever.
 		$this->factory->attachment->create( array( 'file' => $image, 'post_parent' => $id ) );
 		*/
 		$attachment_id = $this->factory->attachment->create_upload_object( $image, $id );
+
+		// add an image caption and title with special characters.
+		kses_remove_filters();
+		$spl = wp_generate_password( 12, true, true ) . $this->_spl_chars;
+		wp_update_post( array( 'ID' => $attachment_id, 'post_title' => $spl, 'post_excerpt' => $spl ) );
+		kses_init_filters();
+
 		if ( 0 !== $id ) {
 			update_post_meta( $id, '_thumbnail_id', $attachment_id );
 		}
@@ -31,8 +199,11 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		return $ids;
 	}
 
-	protected final function init() {
+	protected final function init( $call_setup = false ) {
 		$this->clean();
+		if ( $call_setup ) {
+			$this->_setUp();
+		}
 	}
 
 	/**
@@ -89,7 +260,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		// this action will also try to regenerate the sitemap, but we will not let that bother us.
 		do_action( 'wp_ajax_aioseop_ajax_save_settings' );
 
-		$this->go_to( admin_url( 'admin.php?page=all-in-one-seo-pack%2Fmodules%2Faioseop_sitemap.php' ) );
+		$this->go_to( admin_url( 'admin.php?page=all-in-one-seo-pack%2Fmodules%2Faioseop_' . $module . '.php' ) );
 		do_action( 'admin_menu' );
 
 		$aioseop_options = get_option( 'aioseop_options' );
@@ -106,9 +277,17 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Set up posts of specific post type, without/without images. Use this when post attributes such as title, content etc. don't matter.
+	 * Setup Posts
+	 *
+	 * Set up posts of specific post type, without/without images. Use this when post attributes such as title,
+	 * content etc. don't matter.
+	 *
+	 * @param int    $without_images
+	 * @param int    $with_images
+	 * @param string $type
+	 * @return array
 	 */
-	protected final function setup_posts( $without_images = 0, $with_images = 0, $type = 'post' ) {
+	final protected function setup_posts( $without_images = 0, $with_images = 0, $type = 'post' ) {
 		if ( $without_images > 0 ) {
 			$this->factory->post->create_many( $without_images, array( 'post_type' => $type, 'post_content' => 'content without image', 'post_title' => 'title without image' ) );
 		}
@@ -145,7 +324,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		// 2 attachments created?
 		$this->assertEquals( $with_images, count( $attachments ) );
 
-		$with = array();
+		$with    = array();
 		$without = array();
 
 		$featured   = 0;
@@ -162,9 +341,55 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		$this->assertEquals( $with_images, $featured );
 
 		return array(
-			'with'  => $with,
-			'without'   => $without,
+			'with'    => $with,
+			'without' => $without,
 		);
+	}
+
+	/**
+	 * (Barebone) Setup Posts and return IDs
+	 *
+	 * @param int   $amount
+	 * @param array $args
+	 * @return array {
+	 *     @type int $post_ID ID of the post inserted.
+	 * }
+	 */
+	protected function setup_posts_return_IDs( $amount, $args = array() ) {
+		if ( 1 > $amount ) {
+			return array();
+		}
+		$default_args = array(
+			'post_type'    => 'post',
+			'post_title'   => 'Post Title',
+			'post_content' => 'Post Content - Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+		);
+
+		$args = wp_parse_args( $args, $default_args );
+
+		$ids = $this->factory->post->create_many( $amount, $args );
+
+		$posts = get_posts(
+			array(
+				'post_type'   => $args['post_type'],
+				'fields'      => 'OBJECT',
+				'numberposts' => -1,
+			)
+		);
+
+		$this->assertEquals( $amount, count( $posts ) );
+
+		foreach ( $posts as $v1_post ) {
+
+			foreach ( $args as $k2_args_index => $v2_args ) {
+				$this->assertNotNull( $v1_post->$k2_args_index );
+				if ( isset( $v1_post->$k2_args_index ) ) {
+					$this->assertSame( $v2_args, $v1_post->$k2_args_index );
+				}
+			}
+		}
+
+		return $ids;
 	}
 
 	/*
@@ -187,20 +412,20 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	/*
 	 * Parses the HTML of the given link and returns the nodes requested.
 	 */
-	protected final function parse_html( $link, $tags = array(), $debug = false ){
+	protected final function parse_html( $link, $tags = array(), $debug = false ) {
 		$html = $this->get_page_source( $link );
 		if ( $debug ) {
-			error_log( $html );
+			error_log( "$link === $html" );
 		}
 
-		libxml_use_internal_errors(true);
+		libxml_use_internal_errors( true );
 		$dom = new DOMDocument();
 		$dom->loadHTML( $html );
 
 		$array = array();
 		foreach ( $tags as $tag ) {
 			foreach ( $dom->getElementsByTagName( $tag ) as $node ) {
-				$array[] = $this->get_node_as_array($node);
+				$array[] = $this->get_node_as_array( $node );
 			}
 		}
 		return $array;
@@ -209,22 +434,22 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	/*
 	 * Extracts the node from the HTML source.
 	 */
-	private function get_node_as_array($node) {
+	private function get_node_as_array( $node ) {
 		$array = false;
 
-		if ($node->hasAttributes()) {
-			foreach ($node->attributes as $attr) {
-				$array[$attr->nodeName] = $attr->nodeValue;
+		if ( $node->hasAttributes() ) {
+			foreach ( $node->attributes as $attr ) {
+				$array[ $attr->nodeName ] = $attr->nodeValue;
 			}
 		}
 
-		if ($node->hasChildNodes()) {
-			if ($node->childNodes->length == 1) {
-				$array[$node->firstChild->nodeName] = $node->firstChild->nodeValue;
+		if ( $node->hasChildNodes() ) {
+			if ( $node->childNodes->length == 1 ) {
+				$array[ $node->firstChild->nodeName ] = $node->firstChild->nodeValue;
 			} else {
-				foreach ($node->childNodes as $childNode) {
-					if ($childNode->nodeType != XML_TEXT_NODE) {
-						$array[$childNode->nodeName][] = $this->get_node_as_array($childNode);
+				foreach ( $node->childNodes as $childNode ) {
+					if ( $childNode->nodeType != XML_TEXT_NODE ) {
+						$array[ $childNode->nodeName ][] = $this->get_node_as_array( $childNode );
 					}
 				}
 			}
@@ -241,5 +466,4 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	}
 
 }
-
 

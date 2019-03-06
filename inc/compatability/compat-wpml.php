@@ -29,6 +29,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Wpml' ) ) {
 		public function hooks() {
 			add_filter( 'aioseop_home_url', array( &$this, 'aioseop_home_url' ) );
 			add_filter( 'aioseop_sitemap_xsl_url', array( &$this, 'aioseop_sitemap_xsl_url' ) );
+			add_action( 'init', 'aioseop_get_options' ); // #1761 Options are otherwise called too early to work with WPML.
 		}
 
 		/**

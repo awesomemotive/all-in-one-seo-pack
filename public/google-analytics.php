@@ -69,8 +69,8 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 						AIOSEOP_PLUGIN_URL . 'public/js/vendor/autotrack.js'
 					);
 					?><script async src="<?php echo $autotrack; ?>"></script>
-<?php
-// Requested indent #921
+					<?php
+					// Requested indent #921
 				}
 				$analytics = ob_get_clean();
 			}
@@ -163,7 +163,7 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 				// Plugins
 				<?php
 				foreach ( $extra_options as $option ) :
-?>
+					?>
 <?php echo $option; ?><?php endforeach ?>
 
 				ga('send', 'pageview');

@@ -17,20 +17,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 			$this->prefix = 'aiosp_importer_exporter_'; // option prefix
 			$this->file   = __FILE__;
 			parent::__construct();
-			$help_text             = array(
-				'import_submit'     => __(
-					"Select a valid All in One SEO Pack ini file and click 'Import' to import options from a previous state or install of All in One SEO Pack.<br /><a href='https://semperplugins.com/documentation/importer-exporter-module/' target='_blank'>Click here for documentation on this setting</a>",
-					'all-in-one-seo-pack'
-				),
-				'export_choices'    => __(
-					"You may choose to export settings from active modules, and content from post data.<br /><a href='https://semperplugins.com/documentation/importer-exporter-module/' target='_blank'>Click here for documentation on this setting</a>",
-					'all-in-one-seo-pack'
-				),
-				'export_post_types' => __(
-					"Select which Post Types you want to export your All in One SEO Pack meta data for.<br /><a href='https://semperplugins.com/documentation/importer-exporter-module/' target='_blank'>Click here for documentation on this setting</a>",
-					'all-in-one-seo-pack'
-				),
-			);
 			$this->warnings        = array();
 			$this->default_options = array(
 				'import_submit'      => array(
@@ -70,11 +56,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 					) . '<br />',
 				),
 			);
-			if ( ! empty( $help_text ) ) {
-				foreach ( $help_text as $k => $v ) {
-					$this->default_options[ $k ]['help_text'] = $v;
-				}
-			}
 			$this->layout = array(
 				'default' => array(
 					'name'      => $this->name,
@@ -146,18 +127,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 					$this->default_options['import_export_help']['default'] .= "\n</ul>\n";
 				} else {
 					$this->default_options['import_export_help']['default'] .= '<br />'
-																			   . __(
-																				   'There are no other modules currently loaded!',
-																				   'all-in-one-seo-pack'
-																			   );
+																			. __(
+																				'There are no other modules currently loaded!',
+																				'all-in-one-seo-pack'
+																			);
 				}
 			}
 			$this->default_options['import_export_help']['default'] .= '<br />'
-																	   . __(
-																		   'You may change this by activating or deactivating
+																	. __(
+																		'You may change this by activating or deactivating
 						modules in the Feature Manager.',
-																		   'all-in-one-seo-pack'
-																	   );
+																		'all-in-one-seo-pack'
+																	);
 			$this->update_options();
 			if ( ! empty( $_REQUEST['export_submit'] ) ) {
 				$this->do_importer_exporter();

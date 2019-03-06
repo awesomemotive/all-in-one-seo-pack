@@ -22,7 +22,8 @@ module.exports = function(grunt) {
 			'!js/vendor/*.js',
 			'!public/js/vendor/*.js',
 			'!node_modules/**',
-			'!logs/**'
+			'!logs/**',
+			'!Gruntfile.js'
 			],
 			mkdir: {
 				logs: {
@@ -44,6 +45,8 @@ module.exports = function(grunt) {
 			phpcbf: {
 				options: {
 					standard: 'phpcs.xml',
+					noPatch:false,
+					extensions: 'php'
 				},
 				src: [
 				'<%= files_php %>'
@@ -51,7 +54,7 @@ module.exports = function(grunt) {
 			},
 			phplint: {
 				options: {
-					standard: 'phpcs.xml',
+					standard: 'phpcs.xml'
 				},
 				src: [
 				'<%= files_php %>'
@@ -79,6 +82,14 @@ module.exports = function(grunt) {
 						}
 					}]
 				}
+			},
+			eslint: {
+				options: {
+					outputFile:'logs/eslint.log'
+				},
+				target: [
+					'<%= files_js %>'
+				]
 			}
 		}
 	);
@@ -90,8 +101,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks( 'grunt-phplint' );
 	grunt.loadNpmTasks( 'grunt-contrib-jshint' );
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
+	grunt.loadNpmTasks( 'grunt-eslint' );
 
 	// Default task(s).
-	grunt.registerTask( 'default', ['mkdir', 'phpcbf', 'phpcs', 'phplint', 'jshint', 'uglify'] );
+	grunt.registerTask( 'default', ['mkdir', 'phpcbf', 'phpcs', 'phplint', 'jshint', 'eslint', 'uglify'] );
 
 };

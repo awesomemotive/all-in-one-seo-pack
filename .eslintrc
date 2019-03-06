@@ -51,13 +51,12 @@ rules:
   dot-location: 0
   dot-notation: 0
   eqeqeq: 2
-  guard-for-in: 2
-  no-alert: 2
+  guard-for-in: 'warn'
+  no-alert: 'warn'
   no-caller: 2
   no-case-declarations: 2
   no-div-regex: 2
   no-else-return: 0
-  no-empty-label: 2
   no-empty-pattern: 2
   no-eq-null: 2
   no-eval: 2
@@ -69,7 +68,7 @@ rules:
   no-implied-eval: 2
   no-invalid-this: 0
   no-iterator: 2
-  no-labels: 0
+  no-labels: 'error'
   no-lone-blocks: 2
   no-loop-func: 2
   no-magic-number: 0
@@ -96,7 +95,7 @@ rules:
   no-with: 2
   radix: 2
   vars-on-top: 0
-  wrap-iife: 2
+  wrap-iife: ['error', 'any']
   yoda: 0
 
   # Strict
@@ -158,7 +157,8 @@ rules:
   no-continue: 0
   no-inline-comments: 0
   no-lonely-if: 0
-  no-mixed-spaces-and-tabs: 0
+  no-mixed-spaces-and-tabs: 2
+  no-tabs: 0
   no-multiple-empty-lines: 0
   no-negated-condition: 0
   no-nested-ternary: 0

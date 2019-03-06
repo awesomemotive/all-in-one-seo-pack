@@ -77,7 +77,7 @@ class aiosp_metaboxes {
 					$aiosp_trans = new AIOSEOP_Translations();
 					// Eventually if nothing is returned we should just remove this section.
 					if ( get_locale() != 'en_US' ) {
-					?>
+						?>
 						<div class="aioseop_translations"><strong>
 								<?php
 
