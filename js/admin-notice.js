@@ -27,7 +27,9 @@
 	 * @param string delayIndex
 	 */
 	function aioseop_notice_delay_ajax_action( noticeSlug, delayIndex ) {
-		var noticeNonce   = aioseop_notice_data.notice_nonce;
+		// JSHint: 'aioseop_notice_data' is not defined. (W117)
+		// WP defines the variable through wp_localize_script().
+		var noticeNonce   = aioseop_notice_data.notice_nonce; // jshint ignore:line
 		var noticeDelayID = "#aioseop-notice-delay-" + noticeSlug + "-" + delayIndex;
 		$( noticeDelayID ).on( "click", function( event ) {
 			var elem_href = $( this ).attr( "href" );
@@ -74,7 +76,9 @@
 	 * @param string noticeSlug
 	 */
 	function aioseop_notice_delay_wp_default_dismiss_ajax_action( noticeSlug ) {
-		var noticeNonce     = aioseop_notice_data.notice_nonce;
+		// JSHint: 'aioseop_notice_data' is not defined. (W117)
+		// WP defines the variable through wp_localize_script().
+		var noticeNonce     = aioseop_notice_data.notice_nonce; // jshint ignore:line
 		var noticeContainer = ".aioseop-notice-" + noticeSlug;
 		$( noticeContainer ).on( "click", "button.notice-dismiss ", function( event ) {
 			// Prevents any unwanted actions.
@@ -104,7 +108,9 @@
 	 *
 	 * Constructs the actions the user may perform.
 	 */
-	var noticeDelays = aioseop_notice_data.notice_actions;
+	// JSHint: 'aioseop_notice_data' is not defined. (W117)
+	// WP defines the variable through wp_localize_script().
+	var noticeDelays = aioseop_notice_data.notice_actions; // jshint ignore:line
 
 	$.each( noticeDelays, function ( k1NoticeSlug, v1DelayArr ) {
 		$.each( v1DelayArr, function ( k2I, v2DelayIndex ) {
