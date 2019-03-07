@@ -27,8 +27,8 @@
 .aioseop_help_text_link:active {
 	text-align: left;
 	float: left;
-	max-width: 300px;
-	min-width: 1px;
+	max-width: 30px;
+	min-width: 20px;
 	padding-top: 2px;
 	outline: none;
 	color: #888;
@@ -119,6 +119,7 @@ div.aioseop_tip_icon:before {
 .aioseop_meta_box_help:active {
 	float: right;
 	text-align: right;
+	margin-right: 27px;
 	text-decoration: none;
 	height: 15px;
 	padding-top: 1px;
@@ -139,9 +140,10 @@ div.aioseop_tip_icon:before {
 	float: left;
 	text-align: left;
 	font-family: 'Open Sans', sans-serif;
+	padding: 2px 0;
 	width: 81%;
 	min-width: 120px;
-	max-width: 230px;
+	max-width: 250px;
 	cursor: default;
 }
 
@@ -173,6 +175,7 @@ div.aioseop_tip_icon:before {
 	line-height: 25px;
 	width: 95%;
 	max-width: 600px;
+	min-height: 36px;
 }
 
 .aioseop_help_text_div {
@@ -294,6 +297,7 @@ div.aioseop_tip_icon:before {
 	Times,
 	serif;
 	font-weight: normal;
+	min-height: 18px;
 	padding: 7px 10px;
 	margin: 0;
 	line-height: 1;
@@ -360,12 +364,12 @@ div.aioseop_tip_icon:before {
 .aioseop_option_label {
 	float: left;
 	margin: 0;
-	min-width: 150px;
-	width: 37%;
-	max-width: 270px;
 	padding-top: 3px;
 	padding-bottom: 3px;
-	height: 67px !important; /*added for certain language support*/
+	width: 37%;
+	min-width: 150px;
+	max-width: 360px;
+	min-height: 30px;
 }
 
 .aioseop_metabox_text h2 {
@@ -1372,7 +1376,6 @@ div.sfwd_debug_error {
 }
 
 .postbox-container .aioseop_input {
-	display: block;
 	margin-bottom: 10px;
 	padding: 0;
 }
@@ -1427,8 +1430,17 @@ div#aiosp_snippet_wrapper {
 	margin-bottom: 15px;
 }
 
+#aiosp_snippet_wrapper > .aioseop_input:first-child {
+	margin-bottom: 0px;
+}
+
 div#aiosp_snippet_wrapper .aioseop_option_label {
 	height: auto !important;
+}
+
+#aiosp_snippet_wrapper > .aioseop_input:first-child .aioseop_option_label {
+	padding: 0;
+	min-height: inherit;
 }
 
 div#aiosp_snippet_wrapper .aioseop_input.aioseop_top_label .aioseop_option_input {
