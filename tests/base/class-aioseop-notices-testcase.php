@@ -68,7 +68,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 			$wp_develop_dir = $_tests_dir;
 			$wp_develop_dir = str_replace( '/test/phpunit', '', $wp_develop_dir );
 			$wp_develop_dir = str_replace( '\test\phpunit', '', $wp_develop_dir );
-		} else if ( ! empty( $config_file_path ) ) {
+		} elseif ( ! empty( $config_file_path ) ) {
 			$wp_develop_dir = $config_file_path;
 			$wp_develop_dir = str_replace( '/wp-tests-config.php', '', $wp_develop_dir );
 			$wp_develop_dir = str_replace( '\wp-tests-config.php', '', $wp_develop_dir );
