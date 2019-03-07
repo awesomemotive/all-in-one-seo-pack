@@ -28,7 +28,7 @@ if ( isset( $notice['class'] ) && ! empty( $notice['class'] ) ) {
 			$class .= 'aioseop-delay-' . $key;
 			$class .= ' ' . $action_option['class'];
 			?>
-		    <a href="<?php echo esc_url( $link ); ?>" id="<?php echo esc_attr( $id ); ?>" class="aioseop-notice-delay <?php echo esc_attr( $class ); ?>" target="_blank" rel="noopener"><?php echo esc_textarea( $action_option['text'] ); ?></a>
+			<a href="<?php echo esc_url( $link ); ?>" id="<?php echo esc_attr( $id ); ?>" class="aioseop-notice-delay <?php echo esc_attr( $class ); ?>" target="_blank" rel="noopener"><?php echo esc_textarea( $action_option['text'] ); ?></a>
 		<?php endforeach; ?>
 	</p>
 </div>
