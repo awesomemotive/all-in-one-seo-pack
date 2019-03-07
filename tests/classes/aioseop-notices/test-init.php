@@ -94,6 +94,8 @@ class Test_AIOSEOP_Notices_Init extends AIOSEOP_Notices_TestCase {
 	 * Override and skip.
 	 *
 	 * @since 3.0
+	 *
+	 * @dataProvider data_screens
 	 */
 	public function test_enqueue_scripts_on_screens( $screen_id, $url, $dir ) {
 		$this->markTestSkipped('Skip');
