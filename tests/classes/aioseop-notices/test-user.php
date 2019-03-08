@@ -102,7 +102,7 @@ class Test_AIOSEOP_Notices_User extends AIOSEOP_Notices_TestCase {
 	 * @dataProvider data_screens
 	 */
 	public function test_enqueue_scripts_on_screens( $screen_id, $url, $dir ) {
-		$this->markTestSkipped( 'Skip' );
+		$this->markTestIncomplete( 'Skip' );
 	}
 
 	/**

@@ -9,7 +9,7 @@
 // phpcs:disable PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket
 // phpcs:disable PEAR.Functions.FunctionCallSignature.MultipleArguments
 // phpcs:disable PEAR.Functions.FunctionCallSignature.CloseBracketLine
-
+/* global aioseop_notice_data */
 (function($) {
 
 	/**
@@ -27,9 +27,7 @@
 	 * @param string delayIndex
 	 */
 	function aioseop_notice_delay_ajax_action( noticeSlug, delayIndex ) {
-		// JSHint: 'aioseop_notice_data' is not defined. (W117)
-		// WP defines the variable through wp_localize_script().
-		var noticeNonce   = aioseop_notice_data.notice_nonce; // jshint ignore:line
+		var noticeNonce   = aioseop_notice_data.notice_nonce;
 		var noticeDelayID = "#aioseop-notice-delay-" + noticeSlug + "-" + delayIndex;
 		$( noticeDelayID ).on( "click", function( event ) {
 			var elem_href = $( this ).attr( "href" );
@@ -76,9 +74,7 @@
 	 * @param string noticeSlug
 	 */
 	function aioseop_notice_delay_wp_default_dismiss_ajax_action( noticeSlug ) {
-		// JSHint: 'aioseop_notice_data' is not defined. (W117)
-		// WP defines the variable through wp_localize_script().
-		var noticeNonce     = aioseop_notice_data.notice_nonce; // jshint ignore:line
+		var noticeNonce     = aioseop_notice_data.notice_nonce;
 		var noticeContainer = ".aioseop-notice-" + noticeSlug;
 		$( noticeContainer ).on( "click", "button.notice-dismiss ", function( event ) {
 			// Prevents any unwanted actions.
@@ -108,9 +104,7 @@
 	 *
 	 * Constructs the actions the user may perform.
 	 */
-	// JSHint: 'aioseop_notice_data' is not defined. (W117)
-	// WP defines the variable through wp_localize_script().
-	var noticeDelays = aioseop_notice_data.notice_actions; // jshint ignore:line
+	var noticeDelays = aioseop_notice_data.notice_actions;
 
 	$.each( noticeDelays, function ( k1NoticeSlug, v1DelayArr ) {
 		$.each( v1DelayArr, function ( k2I, v2DelayIndex ) {
