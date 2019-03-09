@@ -1181,7 +1181,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						} else {
 							$description = $post->post_excerpt;
 						}
-					}	
+					}
 				}
 				if ( empty( $type ) ) {
 					$type = 'article';

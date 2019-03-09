@@ -936,7 +936,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title_format = str_replace( '%current_date%', aioseop_formatted_date(), $title_format );
 		}
 
-		if ( strpos( $title_format, "%post_date%" ) !== false ){
+		if ( strpos( $title_format, '%post_date%' ) !== false ) {
 			$title_format = str_replace( '%post_date%', aioseop_formatted_date( get_the_time( 'U' ) ), $title_format );
 		}
 		if ( strpos( $title_format, '%post_year%' ) !== false ) {
@@ -1805,10 +1805,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$new_title = str_replace( "%{$type}_author_lastname%", $this->ucwords( $authordata->last_name ), $new_title );
 		}
 
-		if ( strpos( $new_title, "%current_date%" ) !== false ){
+		if ( strpos( $new_title, '%current_date%' ) !== false ) {
 			$new_title = str_replace( '%current_date%', aioseop_formatted_date(), $new_title );
 		}
-		if ( strpos( $new_title, "%post_date%" ) !== false ){
+		if ( strpos( $new_title, '%post_date%' ) !== false ) {
 			$new_title = str_replace( '%post_date%', aioseop_formatted_date( get_the_date( 'U' ) ), $new_title );
 		}
 		if ( strpos( $new_title, '%post_year%' ) !== false ) {
@@ -4192,12 +4192,12 @@ EOF;
 			if ( ! empty( $prev ) ) {
 				$dom = new DOMDocument();
 				$dom->loadHTML( $prev );
-				$prev = $dom->getElementsByTagName( 'a' )->item(0)->getAttribute( 'href' );
+				$prev = $dom->getElementsByTagName( 'a' )->item( 0 )->getAttribute( 'href' );
 			}
 			if ( ! empty( $next ) ) {
 				$dom = new DOMDocument();
 				$dom->loadHTML( $next );
-				$next = $dom->getElementsByTagName( 'a' )->item(0)->getAttribute( 'href' );
+				$next = $dom->getElementsByTagName( 'a' )->item( 0 )->getAttribute( 'href' );
 			}
 		}
 
