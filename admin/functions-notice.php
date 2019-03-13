@@ -132,7 +132,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 			'target'         => 'user',
 			'screens'        => array(),
 			'class'          => 'notice-info',
-			'message'        => __( 'Looks like you\'ve been using All in One SEO Plugin for awhile now, and that\'s awesome! We are an open source community built from other\'s contributions. By helping us with a 5-star review, it also helps us to reach out to more people.', 'all-in-one-seo-pack' ),
+			'message'        => __( 'You have been using All in One SEO Plugin for awhile now. That is awesome! If you like our plugin please leave us a 5-star rating. Huge thanks in advance!', 'all-in-one-seo-pack' ),
 			'action_options' => array(
 				array(
 					'time'    => 0,
