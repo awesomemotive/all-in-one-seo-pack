@@ -46,13 +46,13 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	 */
 	function aioseop_notice_pro_promo_woocommerce() {
 		return array(
-			'slug'          => 'woocommerce_detected',
-			'delay_time'    => 0,
-			'message'       => __( 'We\'ve detected you\'re running WooCommerce. Upgrade to All in One SEO Pack Pro for increased SEO compatibility for your products.', 'all-in-one-seo-pack' ),
+			'slug'           => 'woocommerce_detected',
+			'delay_time'     => 0,
+			'message'        => __( 'We\'ve detected you\'re running WooCommerce. Upgrade to All in One SEO Pack Pro for increased SEO compatibility for your products.', 'all-in-one-seo-pack' ),
 
-			'class'         => 'notice-info',
-			'target'        => 'user',
-			'screens'       => array(),
+			'class'          => 'notice-info',
+			'target'         => 'user',
+			'screens'        => array(),
 			'action_options' => array(
 				array(
 					'time'    => 0,
