@@ -139,7 +139,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 				array(
 					'time'    => 0,
 					'text'    => $text,
-					'link'    => ( version_compare( $wp_version, '3.5.0', '>=' ) || function_exists( 'set_url_scheme' ) ) ? admin_url( 'options-reading.php' )              : admin_url( 'options-privacy.php' ),
+					'link'    => ( version_compare( $wp_version, '3.5.0', '>=' ) || function_exists( 'set_url_scheme' ) ) ? admin_url( 'options-reading.php' ) : admin_url( 'options-privacy.php' ),
 					'dismiss' => false,
 					'class'   => 'button-secondary',
 				),
