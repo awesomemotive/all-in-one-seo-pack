@@ -136,20 +136,20 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 			'action_options' => array(
 				array(
 					'time'    => 0,
-					'text'    => __( 'Yes, absolutely!', 'all-in-one-seo-pack' ),
+					'text'    => __( 'Add a review', 'all-in-one-seo-pack' ),
 					'link'    => 'https://wordpress.org/support/plugin/all-in-one-seo-pack/reviews?rate=5#new-post',
 					'dismiss' => false,
 					'class'   => '',
 				),
 				array(
-					'text'    => 'Maybe, give me a Week.',
+					'text'    => __( 'Remind me later.', 'all-in-one-seo-pack' ),
 					'time'    => 432000,
 					'dismiss' => false,
 					'class'   => '',
 				),
 				array(
 					'time'    => 0,
-					'text'    => 'Already Rated. Thank You!',
+					'text'    => __( 'No, Thanks.', 'all-in-one-seo-pack' ),
 					'dismiss' => true,
 					'class'   => '',
 				),
