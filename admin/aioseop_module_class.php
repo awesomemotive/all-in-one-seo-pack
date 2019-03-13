@@ -2409,6 +2409,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$help_text = $opts['name'];
 				}
 
+				// TODO Possible remove text align.
+				// Currently aligns to the right when everything is being aligned to the left; which is usually a workaround.
 				$display_label_format = '<span class="aioseop_option_label" style="text-align:%s;vertical-align:top;">%s</span>';
 				$label_text           = sprintf( $display_label_format, $align, $help_text );
 			} else {
