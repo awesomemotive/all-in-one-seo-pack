@@ -108,14 +108,14 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 		$notice = aioseop_notice_review_plugin();
 
 		if ( $aioseop_notices->insert_notice( $notice ) ) {
-			//aioseop_footer_set_review();
+			// aioseop_footer_set_review();
 		} elseif ( $update ) {
 			$aioseop_notices->update_notice( $notice );
 
 			if ( $reset ) {
 				$aioseop_notices->activate_notice( $notice['slug'] );
-				//aioseop_footer_remove_review();
-				//aioseop_footer_set_review();
+				// aioseop_footer_remove_review();
+				// aioseop_footer_set_review();
 			}
 		}
 	}
