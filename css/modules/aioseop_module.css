@@ -795,9 +795,9 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
 
 .aioseop_input {
 	clear: left;
-	width: 100%;
-	padding: 5px;
-	display: inline;
+	width: 98%;
+	padding: 5px 1%;
+	display: inline-block;
 }
 
 .aioseop_option_input {
