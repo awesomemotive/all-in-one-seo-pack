@@ -11,7 +11,7 @@
  * @group Notices
  */
 
-include_once AIOSEOP_UNIT_TESTING_DIR . '\base\class-aioseop-notices-testcase.php';
+include_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-notices-testcase.php';
 
 /**
  * Class Test Notice - Blog Visibility
