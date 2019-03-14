@@ -15,7 +15,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	 * When WC is detected on Non-Pros, and message is displayed to upgrade to
 	 * AIOSEOP Pro. "No Thanks" delays for 30 days.
 	 *
-	 * @since 2.4.2
+	 * @since 3.0
 	 *
 	 * @global AIOSEOP_Notices $aioseop_notices
 	 *
@@ -40,7 +40,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	/**
 	 * Notice - Pro Promotion for WooCommerce
 	 *
-	 * @since 2.4.2
+	 * @since 3.0
 	 *
 	 * @return array
 	 */
@@ -77,7 +77,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	 *
 	 * @todo Add to Pro version to disable message set by Non-Pro.
 	 *
-	 * @since 2.4.2
+	 * @since 3.0
 	 *
 	 * @global AIOSEOP_Notices $aioseop_notices
 	 */
