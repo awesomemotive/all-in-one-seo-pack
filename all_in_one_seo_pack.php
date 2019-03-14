@@ -266,8 +266,8 @@ if ( ! function_exists( 'aioseop_activate' ) ) {
 		}
 		$aiosp_activation = true;
 
-		require_once( AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php' );
-		aioseop_disable_notice_yoast_detected();
+		require_once AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php';
+		aioseop_notice_disable_yoast_detected();
 
 		// These checks might be duplicated in the function being called.
 		if ( ! is_network_admin() || ! isset( $_GET['activate-multi'] ) ) {
