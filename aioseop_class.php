@@ -3463,7 +3463,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @since ?
 	 * @since 3.0 Changed to AIOSEOP Notices.
 	 */
-	function woo_upgrade_notice() {
+	public function woo_upgrade_notice() {
 		if ( class_exists( 'WooCommerce' ) && current_user_can( 'manage_options' ) && ! AIOSEOPPRO ) {
 			aioseop_notice_activate_pro_promo_woocommerce();
 		} else {
