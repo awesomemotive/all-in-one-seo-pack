@@ -91,7 +91,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	 *
 	 * When there's 1000+ URLs with indexing enabled.
 	 *
-	 * @since 2.4.2
+	 * @since 3.0
 	 *
 	 * @global AIOSEOP_Notices $aioseop_notices
 	 *
@@ -116,7 +116,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	/**
 	 * Notice - Sitemap Indexes
 	 *
-	 * @since 2.4.2
+	 * @since 3.0
 	 *
 	 * @return array
 	 */

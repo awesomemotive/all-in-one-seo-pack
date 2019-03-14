@@ -18,7 +18,7 @@ include_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-notices-testcase.ph
  *
  * Displays when sitemap index is over 1000 and is being indexed.
  *
- * @since 2.4.5.1
+ * @since 3.0
  *
  * @package classes\AIOSEOP_Notices\notices
  */
@@ -27,7 +27,7 @@ class Test_Notice_SitemapIndexes extends AIOSEOP_Notices_TestCase {
 	/**
 	 * Mock Single Notice
 	 *
-	 * @since 2.4.5.1
+	 * @since 3.0
 	 *
 	 * @return array
 	 */
