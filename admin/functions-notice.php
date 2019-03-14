@@ -48,7 +48,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 		return array(
 			'slug'           => 'woocommerce_detected',
 			'delay_time'     => 0,
-			'message'        => __( 'We\'ve detected you\'re running WooCommerce. Upgrade to All in One SEO Pack Pro for increased SEO compatibility for your products.', 'all-in-one-seo-pack' ),
+			'message'        => __( 'We have detected you are running WooCommerce. Upgrade to All in One SEO Pack Pro to unlock our advanced e-commerce features, including SEO for Product Categories and more.', 'all-in-one-seo-pack' ),
 
 			'class'          => 'notice-info',
 			'target'         => 'user',
