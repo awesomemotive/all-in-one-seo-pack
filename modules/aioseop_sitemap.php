@@ -414,15 +414,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @since 2.4.1
 		 */
 		public function sitemap_notices() {
-
-			$sitemap_max_url_notice_dismissed = get_user_meta( get_current_user_id(), 'aioseop_sitemap_max_url_notice_dismissed', true );
-			if ( ! empty( $sitemap_max_url_notice_dismissed ) ) {
-				return;
-			} elseif ( ! current_user_can( 'aiosp_manage_seo' ) ) {
+			if ( ! current_user_can( 'aiosp_manage_seo' ) ) {
 				return;
 			}
-
-			delete_user_meta( get_current_user_id(), 'aioseop_sitemap_max_url_notice_dismissed' );
 
 			$options = $this->options;
 
@@ -448,10 +442,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 				if ( 1001 > $sitemap_urls ) {
 					aioseop_notice_disable_sitemap_indexes();
-					return;
+				} else {
+					aioseop_notice_activate_sitemap_indexes( false, true );
 				}
-
-				aioseop_notice_activate_sitemap_indexes( false, true );
 			}
 		}
 
