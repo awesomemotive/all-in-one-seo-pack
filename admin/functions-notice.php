@@ -124,28 +124,21 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	 * @return array
 	 */
 	function aioseop_notice_blog_visibility() {
-		global $wp_version;
-		$text = ( version_compare( $wp_version, '3.5.0', '>=' ) || function_exists( 'set_url_scheme' ) ) ? __( 'Reading Settings', 'all-in-one-seo-pack' ) : __( 'Privacy Settings', 'all-in-one-seo-pack' );
+		$text_link = '<a href="' . admin_url( 'options-reading.php' ) . '">' . __( 'Reading Settings', 'all-in-one-seo-pack' ) . '</a>';
 
 		return array(
 			'slug'           => 'blog_public_disabled',
 			'delay_time'     => 0,
-			'message'        => sprintf( __( 'Warning: You\'re blocking access to search engines. You can change this in %1$s to toggle your blog visibility.', 'all-in-one-seo-pack' ), $text ),
+			/* Translators: A link containing text. Which is handled with $text_link. */
+			'message'        => sprintf( __( 'Warning: All in One SEO Pack has detected that you are blocking access to search engines. You can change this in %1$s if this was unintended', 'all-in-one-seo-pack' ), $text_link ),
 			'delay_options'  => array(),
 			'class'          => 'notice-error',
 			'target'         => 'site',
 			'screens'        => array(),
 			'action_options' => array(
 				array(
-					'time'    => 0,
-					'text'    => $text,
-					'link'    => ( version_compare( $wp_version, '3.5.0', '>=' ) || function_exists( 'set_url_scheme' ) ) ? admin_url( 'options-reading.php' ) : admin_url( 'options-privacy.php' ),
-					'dismiss' => false,
-					'class'   => 'button-secondary',
-				),
-				array(
 					'time'    => 604800,
-					'text'    => __( 'Delay notice for a week.', 'all-in-one-seo-pack' ),
+					'text'    => __( 'Remind me later.', 'all-in-one-seo-pack' ),
 					'link'    => '',
 					'dismiss' => false,
 					'class'   => '',
