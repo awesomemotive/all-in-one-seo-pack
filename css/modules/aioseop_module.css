@@ -120,6 +120,7 @@ div.aioseop_tip_icon:before {
 	float: right;
 	text-align: right;
 	min-width: 56px;
+	max-width: 90px;
 	text-decoration: none;
 	height: 15px;
 	padding-top: 1px;
