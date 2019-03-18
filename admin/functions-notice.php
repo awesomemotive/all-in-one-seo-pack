@@ -124,7 +124,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 		return array(
 			'slug'           => 'sitemap_max_warning',
 			'delay_time'     => 0,
-			'message'        => __( 'Notice: To avoid problems with your XML sitemap, we strongly recommend you set the Maximum Posts per Sitemap Page to 1,000.', 'all-in-one-seo-pack' ),
+			'message'        => __( 'Notice: To avoid problems with your XML Sitemap, we strongly recommend you set the Maximum Posts per Sitemap Page to 1,000.', 'all-in-one-seo-pack' ),
 			'class'          => 'notice-warning',
 			'target'         => 'user',
 			'screens'        => array(),
