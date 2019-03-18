@@ -132,7 +132,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 			'target'         => 'user',
 			'screens'        => array(),
 			'class'          => 'notice-info',
-			'message'        => __( 'You have been using All in One SEO Plugin for awhile now. That is awesome! If you like All in One SEO Pack please leave us a 5-star rating. Huge thanks in advance!', 'all-in-one-seo-pack' ),
+			'message'        => __( 'You have been using All in One SEO Pack for awhile now. That is awesome! If you like All in One SEO Pack, then please leave us a 5-star rating. Huge thanks in advance!', 'all-in-one-seo-pack' ),
 			'action_options' => array(
 				array(
 					'time'    => 0,
@@ -142,14 +142,14 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 					'class'   => '',
 				),
 				array(
-					'text'    => __( 'Remind me later.', 'all-in-one-seo-pack' ),
+					'text'    => __( 'Remind me later', 'all-in-one-seo-pack' ),
 					'time'    => 432000,
 					'dismiss' => false,
 					'class'   => '',
 				),
 				array(
 					'time'    => 0,
-					'text'    => __( 'No, Thanks.', 'all-in-one-seo-pack' ),
+					'text'    => __( 'No, thanks', 'all-in-one-seo-pack' ),
 					'dismiss' => true,
 					'class'   => '',
 				),
