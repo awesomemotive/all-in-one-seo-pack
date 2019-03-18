@@ -130,12 +130,19 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 			'slug'           => 'blog_public_disabled',
 			'delay_time'     => 0,
 			/* Translators: A link containing text. Which is handled with $text_link. */
-			'message'        => sprintf( __( 'Warning: All in One SEO Pack has detected that you are blocking access to search engines. You can change this in %1$s if this was unintended', 'all-in-one-seo-pack' ), $text_link ),
+			'message'        => __( 'Warning: All in One SEO Pack has detected that you are blocking access to search engines. You can change this in Settings > Reading if this was unintended.', 'all-in-one-seo-pack' ),
 			'delay_options'  => array(),
 			'class'          => 'notice-error',
 			'target'         => 'site',
 			'screens'        => array(),
 			'action_options' => array(
+				array(
+					'time'    => 0,
+					'text'    => __( 'Settings > Reading', 'all-in-one-seo-pack' ),
+					'link'    => admin_url( 'options-reading.php' ),
+					'dismiss' => false,
+					'class'   => '',
+				),
 				array(
 					'time'    => 604800,
 					'text'    => __( 'Remind me later.', 'all-in-one-seo-pack' ),
