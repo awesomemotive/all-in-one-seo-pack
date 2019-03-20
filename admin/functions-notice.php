@@ -131,14 +131,14 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 			'action_options' => array(
 				array(
 					'time'    => 0,
-					'text'    => __( 'Sitemap Settings', 'all-in-one-seo-pack' ),
+					'text'    => __( 'XML Sitemap', 'all-in-one-seo-pack' ),
 					'link'    => esc_url( get_admin_url( null, 'admin.php?page=' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_sitemap.php' ) ),
 					'dismiss' => false,
 					'class'   => 'button-primary',
 				),
 				array(
 					'time'    => 86400, // 24 hours.
-					'text'    => __( 'Delay', 'all-in-one-seo-pack' ),
+					'text'    => __( 'Remind me later', 'all-in-one-seo-pack' ),
 					'link'    => '',
 					'dismiss' => false,
 					'class'   => 'button-secondary',
