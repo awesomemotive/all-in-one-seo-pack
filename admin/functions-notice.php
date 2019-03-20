@@ -141,14 +141,14 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 					'text'    => __( 'Settings > Reading', 'all-in-one-seo-pack' ),
 					'link'    => admin_url( 'options-reading.php' ),
 					'dismiss' => false,
-					'class'   => '',
+					'class'   => 'button-primary',
 				),
 				array(
 					'time'    => 604800,
 					'text'    => __( 'Remind me later.', 'all-in-one-seo-pack' ),
 					'link'    => '',
 					'dismiss' => false,
-					'class'   => '',
+					'class'   => 'button-secondary',
 				),
 			),
 		);
