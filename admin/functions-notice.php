@@ -92,7 +92,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	 * Admin Notice when "Discourage search engines from indexing this site" is
 	 * enabled in Settings > Reading.
 	 *
-	 * @since 2.4.2
+	 * @since 3.0
 	 *
 	 * @global AIOSEOP_Notices $aioseop_notices
 	 *
@@ -119,9 +119,9 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	 *
 	 * Displays when blog disables search engines from indexing.
 	 *
-	 * @since 2.4.2
+	 * @since 3.0
 	 *
-	 * @return array
+	 * @return array Notice configuration.
 	 */
 	function aioseop_notice_blog_visibility() {
 		$text_link = '<a href="' . admin_url( 'options-reading.php' ) . '">' . __( 'Reading Settings', 'all-in-one-seo-pack' ) . '</a>';
@@ -157,7 +157,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	/**
 	 * Disable Notice for Disabled Public Blog
 	 *
-	 * @since 2.4.2
+	 * @since 3.0
 	 *
 	 * @global AIOSEOP_Notices $aioseop_notices
 	 */
