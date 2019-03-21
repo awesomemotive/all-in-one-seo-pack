@@ -93,7 +93,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	 * to later display a review/rate AIOSEOP plugin. Delay time: 12 days.
 	 * Delay "...give me a week." 5 days
 	 *
-	 * @since 2.4.2
+	 * @since 3.0
 	 *
 	 * @global AIOSEOP_Notices $aioseop_notices
 	 *
@@ -123,7 +123,9 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	/**
 	 * Notice - Review Plugin
 	 *
-	 * @return array
+	 * @since 3.0
+	 *
+	 * @return array Notice configuration.
 	 */
 	function aioseop_notice_review_plugin() {
 		return array(
@@ -132,7 +134,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 			'target'         => 'user',
 			'screens'        => array(),
 			'class'          => 'notice-info',
-			'message'        => __( 'You have been using All in One SEO Pack for awhile now. That is awesome! If you like All in One SEO Pack, then please leave us a 5-star rating. Huge thanks in advance!', 'all-in-one-seo-pack' ),
+			'message'        => __( 'You have been using All in One SEO Pack for a while now. That is awesome! If you like All in One SEO Pack, then please leave us a 5-star rating. Huge thanks in advance!', 'all-in-one-seo-pack' ),
 			'action_options' => array(
 				array(
 					'time'    => 0,
