@@ -151,7 +151,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 	/**
 	 * Disable Notice for Sitemap
 	 *
-	 * @since 2.4.2
+	 * @since 3.0
 	 *
 	 * @global AIOSEOP_Notices $aioseop_notices
 	 */
