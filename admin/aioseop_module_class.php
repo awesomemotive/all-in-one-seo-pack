@@ -1738,8 +1738,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			}
 
 			// Uses WP Scripts to load the current platform version of jQuery UI CSS.
-			// Loads only if it is not already loaded in order to not cause a conflict with a generic version.
-			if ( ! wp_style_is( 'aioseop-jquery-ui', 'registered' ) && ! wp_style_is( 'aioseop-jquery-ui', 'enqueued' ) ) {
 				$wp_scripts = wp_scripts();
 				wp_enqueue_style(
 					'aioseop-jquery-ui',
@@ -1748,7 +1746,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					AIOSEOP_VERSION,
 					false
 				);
-			}
 		}
 
 		/**
