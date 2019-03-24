@@ -9,6 +9,8 @@
 
 if ( class_exists( 'AIOSEOP_Notices' ) ) {
 
+	include_once AIOSEOP_PLUGIN_DIR . 'admin/display/notices/sitemap-indexes.php';
+
 	/**
 	 * Set Notice with WooCommerce Detected on Non-Pro AIOSEOP
 	 *

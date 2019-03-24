@@ -1008,11 +1008,6 @@ function aioseop_update_yst_detected_notice() {
 	update_user_meta( get_current_user_id(), 'aioseop_yst_detected_notice_dismissed', true );
 }
 
-function aioseop_sitemap_max_url_notice_dismissed() {
-
-	update_user_meta( get_current_user_id(), 'aioseop_sitemap_max_url_notice_dismissed', true );
-}
-
 /**
  * Returns home_url() value compatible for any use.
  * Thought for compatibility purposes.
