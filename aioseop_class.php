@@ -3452,27 +3452,23 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		add_filter( 'aioseop_title', array( &$this, 'filter_title' ) );
 	}
 
+	/**
+	 * Visibility Warning
+	 *
+	 * Checks if 'Search Engine Visibility' is enabled in Settings > Reading.
+	 *
+	 * @since ?
+	 * @since 2.4.2 Changed to `admin/functions-notice.php` with class AIOSEOP_Notices.
+	 *
+	 * @see `self::constructor()` with 'all_admin_notices' Filter Hook
+	 * @uses `admin/functions-notice.php` aioseop_notice_set_blog_public_disabled()
+	 * @uses `admin/functions-notice.php` aioseop_notice_disable_blog_public_disabled()
+	 */
 	function visibility_warning() {
-
-		$aioseop_visibility_notice_dismissed = get_user_meta( get_current_user_id(), 'aioseop_visibility_notice_dismissed', true );
-
-		if ( '0' == get_option( 'blog_public' ) && empty( $aioseop_visibility_notice_dismissed ) ) {
-
-			printf(
-				'
-			<div id="message" class="error notice is-dismissible aioseop-notice visibility-notice">
-				<p>
-					<strong>%1$s</strong>
-					%2$s
-
-				</p>
-			</div>',
-				__( 'Warning: You\'re blocking access to search engines.', 'all-in-one-seo-pack' ),
-				sprintf( __( 'You can %1$sclick here%2$s to go to your reading settings and toggle your site visibility.', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( admin_url( 'options-reading.php' ) ) ), '</a>' )
-			);
-
-		} elseif ( '1' == get_option( 'blog_public' ) && ! empty( $aioseop_visibility_notice_dismissed ) ) {
-			delete_user_meta( get_current_user_id(), 'aioseop_visibility_notice_dismissed' );
+		if ( '0' === get_option( 'blog_public' ) ) {
+			aioseop_notice_set_blog_public_disabled();
+		} elseif ( '1' === get_option( 'blog_public' ) ) {
+			aioseop_notice_disable_blog_public_disabled();
 		}
 	}
 
