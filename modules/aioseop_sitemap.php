@@ -3863,7 +3863,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$args['category'] = implode( ',', $cats );
 			}
 			if ( $this->option_isset( 'excl_pages' ) ) {
-				// TODO Change/fix to exclude correctly. There is no arg['exclude'].
 				$args['exclude'] = $this->options[ $this->prefix . 'excl_pages' ];
 			}
 
