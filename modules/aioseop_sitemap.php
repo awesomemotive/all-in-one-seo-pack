@@ -1860,6 +1860,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array
 		 */
 		public function get_sitemap_index_filenames() {
+			global $aioseop_options;
 			$files   = array();
 			$options = $this->options;
 			$prefix  = $this->get_filename();
@@ -1879,17 +1880,26 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$files[] = array( 'loc' => aioseop_home_url( '/' . $prefix . '_addl' . $suffix ) );
 
-			if ( ! empty( $options[ "{$this->prefix}posttypes" ] ) ) {
+			$post_types = $options[ "{$this->prefix}posttypes" ];
+			if ( is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
+				foreach ( $post_types as $index => $post_type ) {
+					if ( in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'], true ) ) {
+						unset( $post_types[ $index ] );
+					}
+				}
+			}
+
+			if ( ! empty( $post_types ) ) {
 				$prio        = $this->get_default_priority( 'post' );
 				$freq        = $this->get_default_frequency( 'post' );
 				$post_counts = $this->get_all_post_counts(
 					array(
-						'post_type'   => $options[ "{$this->prefix}posttypes" ],
+						'post_type'   => $post_types,
 						'post_status' => 'publish',
 					)
 				);
 
-				foreach ( $options[ "{$this->prefix}posttypes" ] as $sm ) {
+				foreach ( $post_types as $sm ) {
 					if ( 0 === intval( $post_counts[ $sm ] ) ) {
 						continue;
 					}
@@ -3853,6 +3863,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$args['category'] = implode( ',', $cats );
 			}
 			if ( $this->option_isset( 'excl_pages' ) ) {
+				// TODO Change/fix to exclude correctly. There is no arg['exclude'].
 				$args['exclude'] = $this->options[ $this->prefix . 'excl_pages' ];
 			}
 
@@ -4210,9 +4221,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			$ex_args                   = $args;
-			$ex_args['meta_key']       = '_aioseop_sitemap_exclude';
-			$ex_args['meta_value']     = 'on';
-			$ex_args['meta_compare']   = '=';
+			$ex_args['meta_query']     = array(
+				'relation' => 'OR',
+
+				array(
+					'key'     => '_aioseop_sitemap_exclude',
+					'value'   => 'on',
+					'compare' => '=',
+				),
+				array(
+					'key'     => '_aioseop_noindex',
+					'value'   => 'on',
+					'compare' => '=',
+				),
+			);
 			$ex_args['fields']         = 'ids';
 			$ex_args['posts_per_page'] = - 1;
 			$q                         = new WP_Query( $ex_args );
