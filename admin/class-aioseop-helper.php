@@ -46,7 +46,7 @@ class AIOSEOP_Helper {
 	 * no class name in $module, then this Help Text will add all module help texts.
 	 *
 	 * @ignore
-	 * @since 2.4.2
+	 * @since 3.0
 	 * @access private
 	 *
 	 * @param string $module All_in_One_SEO_Pack module.
@@ -79,21 +79,17 @@ class AIOSEOP_Helper {
 			case 'All_in_One_SEO_Pack_Bad_Robots':
 				$this->help_text = $this->help_text_bad_robots();
 				break;
-			default:
-				$this->help_text = array_merge(
-					$this->help_text,
-					$this->help_text_general(),
-					$this->help_text_performance(),
-					$this->help_text_sitemap(),
-					$this->help_text_opengraph(),
-					$this->help_text_robots_generator(),
-					$this->help_text_file_editor(),
-					$this->help_text_importer_exporter(),
-					$this->help_text_bad_robots(),
-					$this->help_text_post_meta()
-				);
-				break;
 		}
+
+		/**
+		 * Set Help Text
+		 *
+		 * @since 3.0
+		 *
+		 * @param array  $this->help_text Contains an array of help text for each setting.
+		 * @param string $module          Shows which class module is using the function.
+		 */
+		$this->help_text = apply_filters( 'aioseop_helper_set_help_text', $this->help_text, $module );
 
 		if ( AIOSEOPPRO ) {
 			$help_text = aioseop_add_pro_help( $this->help_text );
@@ -492,8 +488,6 @@ class AIOSEOP_Helper {
 			'aiosp_dynamic_postspage_keywords'  => __( 'Check this if you want your keywords on your Posts page (set in WordPress under Settings, Reading, Front Page Displays) and your archive pages to be dynamically generated from the keywords of the posts showing on that page.  If unchecked, it will use the keywords set in the edit page screen for the posts page.', 'all-in-one-seo-pack' ),
 
 			// Unknown Location.
-			'aiosp_license_key'                 => __( 'This will be the license key received when the product was purchased. This is used for automatic upgrades.', 'all-in-one-seo-pack' ),
-			'aiosp_taxactive'                   => __( 'Use these checkboxes to select which Taxonomies you want to use All in One SEO Pack with.', 'all-in-one-seo-pack' ),
 			'aiosp_google_connect'              => __( 'Press the connect button to connect with Google Analytics; or if already connected, press the disconnect button to disable and remove any stored analytics credentials.', 'all-in-one-seo-pack' ),
 
 		);
@@ -637,9 +631,7 @@ class AIOSEOP_Helper {
 			'aiosp_dynamic_postspage_keywords'  => 'https://semperplugins.com/documentation/keyword-settings/#dynamically-generate-keywords-for-posts-page',
 
 			// Unknown/Pro?
-		// 'aiosp_license_key'                 => '',
-		// 'aiosp_taxactive'                   => '',
-		// 'aiosp_google_connect'              => '',
+			// 'aiosp_google_connect'              => '',
 		);
 
 		foreach ( $help_doc_link as $k1_slug => $v1_url ) {
@@ -905,11 +897,14 @@ class AIOSEOP_Helper {
 			'aioseop_opengraph_settings_customimg_twitter' => __( 'This option lets you upload an image to use as the Twitter image for this Page or Post.', 'all-in-one-seo-pack' ),
 		);
 
-		$args = array(
+		$args_1 = array(
 			'public' => true,
 		);
+		$args_2 = array(
+			'public' => false,
+		);
 
-		$post_types = get_post_types( $args, 'names' );
+		$post_types = array_merge( get_post_types( $args_1, 'names' ), get_post_types( $args_2, 'names' ) );
 		foreach ( $post_types as $pt ) {
 			$rtn_help_text[ 'aiosp_opengraph_' . $pt . '_fb_object_type' ]  = __( 'Choose a default value that best describes the content of your post type.', 'all-in-one-seo-pack' );
 			$rtn_help_text[ 'aiosp_opengraph_' . $pt . '_fb_object_type' ] .= '<br /><br /><a href="https://semperplugins.com/documentation/social-meta-module/#content-object-types" target="_blank">' . __( 'Click here for documentation on this setting.', 'all-in-one-seo-pack' ) . '</a>';
