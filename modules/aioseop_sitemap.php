@@ -4171,6 +4171,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array|mixed
 		 */
 		public function get_all_post_type_data( $args ) {
+			global $aioseop_options;
 			$defaults = array(
 				'numberposts'   => $this->max_posts,
 				'offset'        => 0,
@@ -4244,6 +4245,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$args['exclude'] = array_merge( $args['exclude'], $q->posts );
 			}
 			$this->excludes = array_merge( $args['exclude'], $exclude_slugs ); // Add excluded slugs and IDs to class var.
+
+			$post_types = $this->options[ "{$this->prefix}posttypes" ];
+			if ( is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
+				foreach ( $post_types as $index => $post_type ) {
+					if ( in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'], true ) ) {
+						unset( $post_types[ $index ] );
+					}
+				}
+			}
+			$args['post_type'] = $post_types;
 
 			// TODO: consider using WP_Query instead of get_posts to improve efficiency.
 			$posts = get_posts( apply_filters( $this->prefix . 'post_query', $args ) );
