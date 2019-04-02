@@ -1856,6 +1856,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @since 2.3.6
 		 * @since 2.3.12.3 Refactored to use aioseop_home_url() for compatibility purposes.
+		 * @since 3.0 Changed to exclude noindex post types. #1382
 		 *
 		 * @return array
 		 */
@@ -4166,8 +4167,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		/**
 		 * Return post data using get_posts().
 		 *
-		 * @param $args
+		 * @since ?
+		 * @since 3.0 Changed to exclude noindex post types & posts. #1382
 		 *
+		 * @global array $aioseop_options
+		 *
+		 * @param array $args Query Arguments.
 		 * @return array|mixed
 		 */
 		public function get_all_post_type_data( $args ) {
