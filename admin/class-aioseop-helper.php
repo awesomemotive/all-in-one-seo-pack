@@ -90,16 +90,6 @@ class AIOSEOP_Helper {
 		 * @param string $module          Shows which class module is using the function.
 		 */
 		$this->help_text = apply_filters( 'aioseop_helper_set_help_text', $this->help_text, $module );
-
-		if ( AIOSEOPPRO ) {
-			$help_text = aioseop_add_pro_help( $this->help_text );
-
-			// TODO - Get Prefix from PRO Version.
-			foreach ( $help_text as $key => $text ) {
-				$this->help_text[ $key ] = $text;
-			}
-		}
-
 	}
 
 	/**
