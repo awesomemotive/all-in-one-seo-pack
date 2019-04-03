@@ -4251,22 +4251,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 			$this->excludes = array_merge( $args['exclude'], $exclude_slugs ); // Add excluded slugs and IDs to class var.
 
-			$post_types = $args['post_type'];
 			if ( is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
-				if ( is_array( $post_types ) ) {
-					foreach ( $post_types as $index => $post_type ) {
+				if ( is_array( $args['post_type'] ) ) {
+					foreach ( $args['post_type'] as $index => $post_type ) {
 						if ( in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'], true ) ) {
-							unset( $post_types[ $index ] );
+							unset( $args['post_type'][ $index ] );
 						}
 					}
 				} else {
-					if ( in_array( $post_types, $aioseop_options['aiosp_cpostnoindex'], true ) ) {
+					if ( in_array( $args['post_type'], $aioseop_options['aiosp_cpostnoindex'], true ) ) {
 						return array();
 					}
 				}
-
 			}
-			$args['post_type'] = $post_types;
 
 			// TODO: consider using WP_Query instead of get_posts to improve efficiency.
 			$posts = get_posts( apply_filters( $this->prefix . 'post_query', $args ) );
