@@ -4251,13 +4251,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 			$this->excludes = array_merge( $args['exclude'], $exclude_slugs ); // Add excluded slugs and IDs to class var.
 
-			$post_types = $this->options[ "{$this->prefix}posttypes" ];
+			$post_types = $args['post_type'];
 			if ( is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
-				foreach ( $post_types as $index => $post_type ) {
-					if ( in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'], true ) ) {
-						unset( $post_types[ $index ] );
+				if ( is_array( $post_types ) ) {
+					foreach ( $post_types as $index => $post_type ) {
+						if ( in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'], true ) ) {
+							unset( $post_types[ $index ] );
+						}
+					}
+				} else {
+					if ( in_array( $post_types, $aioseop_options['aiosp_cpostnoindex'], true ) ) {
+						return array();
 					}
 				}
+
 			}
 			$args['post_type'] = $post_types;
 
