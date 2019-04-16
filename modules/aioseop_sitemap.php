@@ -1881,6 +1881,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$files[] = array( 'loc' => aioseop_home_url( '/' . $prefix . '_addl' . $suffix ) );
 
+			// Get post types selected, and prevent NoIndex post types.
 			$post_types = $options[ "{$this->prefix}posttypes" ];
 			if ( is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
 				foreach ( $post_types as $index => $post_type ) {
