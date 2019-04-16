@@ -3507,18 +3507,19 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * Checks if 'Search Engine Visibility' is enabled in Settings > Reading.
 	 *
+	 * @todo Change to earlier hook. Before `admin_enqueue` if possible.
+	 *
 	 * @since ?
-	 * @since 2.4.2 Changed to `admin/functions-notice.php` with class AIOSEOP_Notices.
+	 * @since 3.0 Changed to AIOSEOP_Notices class.
 	 *
 	 * @see `self::constructor()` with 'all_admin_notices' Filter Hook
-	 * @uses `admin/functions-notice.php` aioseop_notice_set_blog_public_disabled()
-	 * @uses `admin/functions-notice.php` aioseop_notice_disable_blog_public_disabled()
 	 */
 	function visibility_warning() {
+		global $aioseop_notices;
 		if ( '0' === get_option( 'blog_public' ) ) {
-			aioseop_notice_set_blog_public_disabled();
+			$aioseop_notices->activate_notice( 'blog_public_disabled' );
 		} elseif ( '1' === get_option( 'blog_public' ) ) {
-			aioseop_notice_disable_blog_public_disabled();
+			$aioseop_notices->deactivate_notice( 'blog_public_disabled' );
 		}
 	}
 
@@ -3529,10 +3530,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @since 3.0 Changed to AIOSEOP Notices.
 	 */
 	public function woo_upgrade_notice() {
+		global $aioseop_notices;
 		if ( class_exists( 'WooCommerce' ) && current_user_can( 'manage_options' ) && ! AIOSEOPPRO ) {
-			aioseop_notice_activate_pro_promo_woocommerce();
+			$aioseop_notices->activate_notice( 'woocommerce_detected' );
 		} else {
-			aioseop_notice_disable_woocommerce_detected_on_nonpro();
+			global $aioseop_notices;
+			$aioseop_notices->deactivate_notice( 'woocommerce_detected' );
 		}
 	}
 

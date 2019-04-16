@@ -439,10 +439,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 				$sitemap_urls = $post_counts + $num_terms;
 
+				global $aioseop_notices;
 				if ( 1001 > $sitemap_urls ) {
-					aioseop_notice_disable_sitemap_indexes();
+					$aioseop_notices->deactivate_notice( 'sitemap_max_warning' );
 				} else {
-					aioseop_notice_activate_sitemap_indexes( false, true );
+					$aioseop_notices->activate_notice( 'sitemap_max_warning' );
 				}
 			}
 		}

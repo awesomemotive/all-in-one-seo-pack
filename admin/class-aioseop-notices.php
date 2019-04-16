@@ -28,7 +28,12 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *
 		 * @var array $notices {
 		 *     @type array $slug {
+		 *         -- Server Variables --
 		 *         @type string $slug        Required. Notice unique ID.
+		 *         @type int    $time_start  The time the notice was added to the object.
+		 *         @type int    $time_set    Set when AJAX/Action_Option was last used to delay time. Primarily for PHPUnit tests.
+		 *
+		 *         -- Filter Function Variables --
 		 *         @type int    $delay_time  Amount of time to begin showing message.
 		 *         @type string $message     Content message to display in the container.
 		 *         @type array  $action_option {
@@ -49,8 +54,6 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *                                   array()          = all,
 		 *                                   array('aioseop') = $this->aioseop_screens,
 		 *                                   array('CUSTOM')  = specific screen(s).
-		 *         @type int    $time_start  The time the notice was added to the object.
-		 *         @type int    $time_set    Set when AJAX/Action_Option was last used to delay time. Primarily for PHPUnit tests.
 		 *     }
 		 * }
 		 */
@@ -118,12 +121,36 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		/**
 		 * _Requires
 		 *
-		 * Additional files required.
+		 * Internal use only. Additional files required.
 		 *
 		 * @since 3.0
 		 */
 		private function _requires() {
-			require_once AIOSEOP_PLUGIN_DIR . 'admin/functions-notice.php';
+			$this->autoload_notice_files();
+		}
+
+		/**
+		 * Autoload Notice Files
+		 *
+		 * @since 3.0
+		 *
+		 * @see DirectoryIterator class
+		 * @link https://php.net/manual/en/class.directoryiterator.php
+		 * @see StackOverflow for getting all filenamess in a directory.
+		 * @link https://stackoverflow.com/a/25988433/1376780
+		 */
+		private function autoload_notice_files() {
+			foreach ( new DirectoryIterator( AIOSEOP_PLUGIN_DIR . 'admin/display/notices/' ) as $file ) {
+				if ( $file->isFile() && 'php' === $file->getExtension() ) {
+					$filename = $file->getFilename();
+
+					// Qualified file pattern; "*-notice.php".
+					// Prevents any malicious files that may have spreaded.
+					if ( array_search( 'notice', explode( '-', str_replace( '.php', '', $filename ) ), true ) ) {
+						include_once AIOSEOP_PLUGIN_DIR . 'admin/display/notices/' . $filename;
+					}
+				}
+			}
 		}
 
 		/**
@@ -193,6 +220,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				'active_notices' => array(),
 			);
 
+			// Prevent old data from being loaded instead.
+			// Some notices are instant notifications.
+			wp_cache_delete( 'aioseop_notices', 'options' );
 			$notices_options = get_option( 'aioseop_notices' );
 			if ( false === $notices_options ) {
 				return $defaults;
@@ -217,7 +247,10 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			$old_notices_options = $this->obj_get_options();
 			$notices_options     = wp_parse_args( $notices_options, $old_notices_options );
 
-			return update_option( 'aioseop_notices', $notices_options );
+			// Prevent old data from being loaded instead.
+			// Some notices are instant notifications.
+			wp_cache_delete( 'aioseop_notices', 'options' );
+			return update_option( 'aioseop_notices', $notices_options, false );
 		}
 
 		/**
@@ -227,11 +260,40 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 *
 		 * @since 3.0
 		 *
-		 * @see self::notices Array variable that stores the collection of notices.
+		 * @see AIOSEOP_Notices::notices Array variable that stores the collection of notices.
 		 *
 		 * @return array Notice variable in self::notices.
 		 */
 		public function notice_defaults() {
+			return array_merge(
+				$this->notice_defaults_server(),
+				$this->notice_defaults_file()
+			);
+		}
+
+		/**
+		 * Notice Defaults Server
+		 *
+		 * @since 3.0
+		 *
+		 * @return array
+		 */
+		public function notice_defaults_server() {
+			return array(
+				'slug'       => '',
+				'time_start' => time(),
+				'time_set'   => time(),
+			);
+		}
+
+		/**
+		 * Notice Defaults File
+		 *
+		 * @since 3.0
+		 *
+		 * @return array
+		 */
+		public function notice_defaults_file() {
 			return array(
 				'slug'           => '',
 				'delay_time'     => 0,
@@ -240,8 +302,6 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				'class'          => 'notice-info',
 				'target'         => 'site',
 				'screens'        => array(),
-				'time_start'     => time(),
-				'time_set'       => time(),
 			);
 		}
 
@@ -324,50 +384,21 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		}
 
 		/**
-		 * Insert Notice
+		 * Add Notice
 		 *
-		 * Initial insert for a Notice and Activates it. Used strictly for adding notices
-		 * when no updating or modifications is intended.
+		 * Takes notice and adds it to object and saves to database.
 		 *
 		 * @since 3.0
-		 *
-		 * @uses self::activate_notice() Used to initialize a notice.
 		 *
 		 * @param array $notice See self::notices for more info.
 		 * @return boolean True on success.
 		 */
-		public function insert_notice( $notice = array() ) {
+		public function add_notice( $notice = array() ) {
 			if ( empty( $notice['slug'] ) || isset( $this->notices[ $notice['slug'] ] ) ) {
 				return false;
 			}
 
 			$this->notices[ $notice['slug'] ] = $this->prepare_notice( $notice );
-
-			$this->obj_update_options();
-			$this->activate_notice( $notice['slug'] );
-
-			return true;
-		}
-
-		/**
-		 * Update Notice
-		 *
-		 * Updates an existing Notice without resetting it. Used when modifying
-		 * any existing notices without disturbing its set environment/timeline.
-		 *
-		 * @since 3.0
-		 *
-		 * @param array $notice See self::notices for more info.
-		 * @return boolean True on success.
-		 */
-		public function update_notice( $notice = array() ) {
-			if ( empty( $notice['slug'] ) || ! isset( $this->notices[ $notice['slug'] ] ) ) {
-				return false;
-			}
-
-			$this->notices[ $notice['slug'] ] = $this->prepare_notice( $notice );
-
-			$this->obj_update_options();
 
 			return true;
 		}
@@ -378,13 +409,16 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @since 3.0
 		 *
 		 * @param array $notice The notice to prepare with the database.
-		 * @return bool
+		 * @return array
 		 */
 		public function prepare_notice( $notice = array() ) {
-			$notice_default = $this->notice_defaults();
-			$new_notice     = wp_parse_args( $notice, $notice_default );
+			$notice_default = $this->notice_defaults_server();
+			$notice         = wp_parse_args( $notice, $notice_default );
 
-			$new_notice['action_options'] = $this->set_action_options( $new_notice['action_options'] );
+			$new_notice = array();
+			foreach ( $notice_default as $key => $value ) {
+				$new_notice[ $key ] = $notice[ $key ];
+			}
 
 			return $new_notice;
 		}
@@ -420,22 +454,22 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @return boolean
 		 */
 		public function activate_notice( $slug ) {
-			if ( empty( $slug ) || ! isset( $this->notices[ $slug ] ) ) {
+			if ( empty( $slug ) ) {
 				return false;
 			}
-
-			// Display at exactly X time, not (X + 1) time.
-			$display_time = time() + $this->notices[ $slug ]['delay_time'];
-			$display_time--;
-
-			if ( 'user' === $this->notices[ $slug ]['target'] ) {
-				$current_user_id = get_current_user_id();
-
-				update_user_meta( $current_user_id, 'aioseop_notice_dismissed_' . $slug, false );
-				update_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $slug, $display_time );
+			$notice = $this->get_notice( $slug );
+			if ( 'site' === $notice['target'] && isset( $this->active_notices[ $slug ] ) ) {
+				return true;
+			} elseif ( 'user' === $notice['target'] && get_user_meta( get_current_user_id(), 'aioseop_notice_display_time_' . $slug, true ) ) {
+				return true;
 			}
 
-			$this->active_notices[ $slug ] = $display_time;
+			if ( ! isset( $this->notices[ $slug ] ) ) {
+				$this->add_notice( $notice );
+			}
+
+			$this->set_notice_delay( $slug, $notice['delay_time'] );
+
 			$this->obj_update_options();
 
 			return true;
@@ -460,11 +494,102 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				return false;
 			}
 
-			$this->notices[ $slug ]['active'] = false;
 			unset( $this->active_notices[ $slug ] );
 			$this->obj_update_options();
 
 			return true;
+		}
+
+		/**
+		 * Reset Notice
+		 *
+		 * @since 3.0
+		 *
+		 * @param string $slug The notice's slug.
+		 * @return bool
+		 */
+		public function reset_notice( $slug ) {
+			if ( empty( $slug ) || ! isset( $this->notices[ $slug ] ) ) {
+				return false;
+			}
+
+			$notice = $this->get_notice( $slug );
+			$this->set_notice_delay( $slug, $notice['delay_time'] );
+
+			$this->obj_update_options();
+
+			return true;
+		}
+
+		/**
+		 * Set Notice Delay
+		 *
+		 * @param string $slug       The notice's slug.
+		 * @param int    $delay_time Amount of time to delay.
+		 */
+		public function set_notice_delay( $slug, $delay_time ) {
+			$time_set = time();
+
+			// Display at exactly X time, not (X + 1) time.
+			$display_time = $time_set + $delay_time - 1;
+			$notice       = $this->get_notice( $slug );
+			if ( 'user' === $notice['target'] ) {
+				$current_user_id = get_current_user_id();
+
+				update_user_meta( $current_user_id, 'aioseop_notice_time_set_' . $slug, $time_set );
+				update_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $slug, $display_time );
+			}
+
+			$this->notices[ $slug ]['time_set'] = $time_set;
+			$this->active_notices[ $slug ]      = $display_time;
+		}
+
+		/**
+		 * Set Notice Dismiss
+		 *
+		 * @param string  $slug    The notice's slug.
+		 * @param boolean $dismiss Sets to dismiss a notice.
+		 */
+		public function set_notice_dismiss( $slug, $dismiss ) {
+			$notice = $this->get_notice( $slug );
+			if ( 'user' === $notice['target'] ) {
+				$current_user_id = get_current_user_id();
+
+				update_user_meta( $current_user_id, 'aioseop_notice_dismissed_' . $slug, $dismiss );
+			}
+
+			if ( $dismiss ) {
+				$this->deactivate_notice( $slug );
+			}
+		}
+
+		/**
+		 * Get Notice
+		 *
+		 * @param string $slug The notice's slug.
+		 * @return array
+		 */
+		public function get_notice( $slug ) {
+			// Set defaults for notice.
+			$rtn_notice = $this->notice_defaults();
+
+			if ( isset( $this->notices[ $slug ] ) ) {
+				// Get minimized (database) data.
+				$rtn_notice = array_merge( $rtn_notice, $this->notices[ $slug ] );
+			}
+
+			// TODO Discuss: PHPCS needs underscores, but this is an individualized slug-based filter.
+			$notice_data = apply_filters( 'aioseop_admin_notice-' . $slug, array() );
+			if ( ! empty( $notice_data ) ) {
+				$rtn_notice = array_merge( $rtn_notice, $notice_data );
+
+				foreach ( $rtn_notice['action_options'] as &$action_option ) {
+					// Set defaults for `$notice['action_options']`.
+					$action_option = array_merge( $this->action_options_defaults(), $action_option );
+				}
+			}
+
+			return $rtn_notice;
 		}
 
 		/*** DISPLAY Methods **************************************************/
@@ -506,7 +631,8 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			// Localization.
 			$notice_actions = array();
 			foreach ( $this->active_notices as $notice_slug => $notice_display_time ) {
-				foreach ( $this->notices[ $notice_slug ]['action_options'] as $action_index => $action_arr ) {
+				$notice = $this->get_notice( $notice_slug );
+				foreach ( $notice['action_options'] as $action_index => $action_arr ) {
 					$notice_actions[ $notice_slug ][] = $action_index;
 				}
 			}
@@ -583,26 +709,27 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			$current_user_id = get_current_user_id();
 			foreach ( $this->active_notices as $a_notice_slug => $a_notice_time_display ) {
 				$notice_show = true;
+				$notice      = $this->get_notice( $a_notice_slug );
 
 				// Screen Restriction.
-				if ( ! empty( $this->notices[ $a_notice_slug ]['screens'] ) ) {
+				if ( ! empty( $notice['screens'] ) ) {
 					// Checks if on aioseop screen.
-					if ( in_array( 'aioseop', $this->notices[ $a_notice_slug ]['screens'], true ) ) {
+					if ( in_array( 'aioseop', $notice['screens'], true ) ) {
 						if ( ! in_array( $current_screen->id, $this->aioseop_screens, true ) ) {
 							continue;
 						}
 					}
 
 					// Checks the other screen restrictions by slug/id.
-					if ( ! in_array( 'aioseop', $this->notices[ $a_notice_slug ]['screens'], true ) ) {
-						if ( ! in_array( $current_screen->id, $this->notices[ $a_notice_slug ]['screens'], true ) ) {
+					if ( ! in_array( 'aioseop', $notice['screens'], true ) ) {
+						if ( ! in_array( $current_screen->id, $notice['screens'], true ) ) {
 							continue;
 						}
 					}
 				}
 
 				// User Settings.
-				if ( 'user' === $this->notices[ $a_notice_slug ]['target'] ) {
+				if ( 'user' === $notice['target'] ) {
 					$user_dismissed = get_user_meta( $current_user_id, 'aioseop_notice_dismissed_' . $a_notice_slug, true );
 					if ( ! $user_dismissed ) {
 						$user_notice_time_display = get_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $a_notice_slug, true );
@@ -620,7 +747,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 					'notice-warning',
 					'notice-do-nag',
 				);
-				if ( defined( 'DISABLE_NAG_NOTICES' ) && true === DISABLE_NAG_NOTICES && ( ! in_array( $this->notices[ $a_notice_slug ]['class'], $important_admin_notices, true ) ) ) {
+				if ( defined( 'DISABLE_NAG_NOTICES' ) && true === DISABLE_NAG_NOTICES && ( ! in_array( $notice['class'], $important_admin_notices, true ) ) ) {
 					// Skip if `DISABLE_NAG_NOTICES` is implemented (as true).
 					// Important notices, WP's CSS `notice-error` & `notice-warning`, are still rendered.
 					continue;
@@ -676,35 +803,17 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			$action_options['time']    = $this->default_dismiss_delay;
 			$action_options['dismiss'] = false;
 
-			if ( isset( $this->notices[ $notice_slug ]['action_options'][ $action_index ] ) ) {
-				$action_options = $this->notices[ $notice_slug ]['action_options'][ $action_index ];
+			$notice = $this->get_notice( $notice_slug );
+
+			if ( isset( $notice['action_options'][ $action_index ] ) ) {
+				$action_options = array_merge( $action_options, $notice['action_options'][ $action_index ] );
 			}
 
-			// User Notices or Sitewide.
-			if ( 'user' === $this->notices[ $notice_slug ]['target'] ) {
-				// Always sets the action time, even if dismissed, so last timestamp is recorded.
-				$current_user_id = get_current_user_id();
-				if ( $action_options['time'] ) {
-					$time_set = time();
-					// Adds action_option delay time, reduced by 1 second to display at exact time.
-					$metadata = $time_set + $action_options['time'] - 1;
-
-					update_user_meta( $current_user_id, 'aioseop_notice_time_set_' . $notice_slug, $time_set );
-					update_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $notice_slug, $metadata );
-				}
-				if ( $action_options['dismiss'] ) {
-					update_user_meta( $current_user_id, 'aioseop_notice_dismissed_' . $notice_slug, $action_options['dismiss'] );
-				}
-			} else {
-				if ( $action_options['time'] ) {
-					$this->notices[ $notice_slug ]['time_set'] = time();
-					// Adds action_option delay time, reduced by 1 second to display at exact time.
-					$this->active_notices[ $notice_slug ] = $this->notices[ $notice_slug ]['time_set'] + $action_options['time'] - 1;
-				}
-
-				if ( $action_options['dismiss'] ) {
-					$this->deactivate_notice( $notice_slug );
-				}
+			if ( $action_options['time'] ) {
+				$this->set_notice_delay( $notice_slug, $action_options['time'] );
+			}
+			if ( $action_options['dismiss'] ) {
+				$this->set_notice_dismiss( $notice_slug, $action_options['dismiss'] );
 			}
 
 			$this->obj_update_options();
