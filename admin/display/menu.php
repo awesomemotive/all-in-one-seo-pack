@@ -24,7 +24,7 @@ class AIOSEOPAdminMenus {
 			return;
 		}
 
-        add_action( 'admin_head', array( $this, 'pro_submenu_new_tab' ) );
+        wp_enqueue_script( 'aioseop_menu_js', AIOSEOP_PLUGIN_URL . 'js/menu.js', array( 'jquery' ), AIOSEOP_VERSION, true );
 	}
 
 	function remove_menus() {
@@ -46,21 +46,6 @@ class AIOSEOPAdminMenus {
 			$url,
 		);
 	}
-
-	/*
-	 * Opens Upgrade link in our menu as a new tab.
-	 *
-	 * @since 3.0
-	 */
-    function pro_submenu_new_tab() {
-        ?>
-        <script type="text/javascript">
-            jQuery(document).ready( function($) {
-                $('#toplevel_page_all-in-one-seo-pack-aioseop_class ul li').last().find('a').attr('target','_blank');
-            });
-        </script>
-        <?php
-    }
 }
 
 	new AIOSEOPAdminMenus();
