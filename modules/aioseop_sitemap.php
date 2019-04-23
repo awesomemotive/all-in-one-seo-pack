@@ -1881,12 +1881,28 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$files[] = array( 'loc' => aioseop_home_url( '/' . $prefix . '_addl' . $suffix ) );
 
-			// Get post types selected, and prevent NoIndex post types.
+			// Get post types selected, and NoIndex post types & Index posts.
 			$post_types = $options[ "{$this->prefix}posttypes" ];
 			if ( is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
 				foreach ( $post_types as $index => $post_type ) {
 					if ( in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'], true ) ) {
-						unset( $post_types[ $index ] );
+						$args = array(
+							'post_type'   => $post_type,
+							'meta_query'     => array(
+								'relation'   => 'OR',
+								array(
+									'key'     => '_aioseop_noindex',
+									'value'   => 'off',
+									'compare' => '=',
+								),
+							),
+							'fields'         => 'ids',
+							'posts_per_page' => 1,
+						);
+						$q = new WP_Query( $args );
+						if ( ! $q->post_count ) {
+							unset( $post_types[ $index ] );
+						}
 					}
 				}
 			}
@@ -4187,10 +4203,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'include'       => array(),
 				'exclude'       => array(),
 				'post_type'     => 'any',
-				'meta_key'      => '',
-				'meta_value'    => '',
-				'meta_compare'  => '',
-				'meta_query'    => '',
+				'meta_query'    => array(),
 				'cache_results' => false,
 				'no_found_rows' => true,
 			);
@@ -4225,6 +4238,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 				}
 			}
+			if ( ! is_array( $args['exclude'] ) ) {
+				$args['exclude'] = explode( ',', $args['exclude'] );
+			}
 
 			$ex_args                   = $args;
 			$ex_args['meta_query']     = array(
@@ -4243,31 +4259,75 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			);
 			$ex_args['fields']         = 'ids';
 			$ex_args['posts_per_page'] = - 1;
-			$q                         = new WP_Query( $ex_args );
-			if ( ! is_array( $args['exclude'] ) ) {
-				$args['exclude'] = explode( ',', $args['exclude'] );
-			}
-			if ( ! empty( $q->posts ) ) {
-				$args['exclude'] = array_merge( $args['exclude'], $q->posts );
+			$q_exclude                 = new WP_Query( $ex_args );
+			if ( ! empty( $q_exclude->posts ) ) {
+				$args['exclude'] = array_merge( $args['exclude'], $q_exclude->posts );
 			}
 			$this->excludes = array_merge( $args['exclude'], $exclude_slugs ); // Add excluded slugs and IDs to class var.
 
+			// Include query args for including posts that may have been excluded;
+			// for example, exclude post type, but include certain posts.
+			// NOTE: Do NOT use this for basic including. It's best to avoid an additional query.
+			$args_include = array(
+				'post_type'  => array(),
+				'meta_query' => array(
+					'relation' => 'OR',
+					array(
+						'key'     => '_aioseop_noindex',
+						'value'   => 'off',
+						'compare' => '=',
+					),
+
+				),
+				'posts_per_page' => $this->max_posts,
+			);
+
+			// Exclude from main query, and check if a Query Include is needed.
 			if ( is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
 				if ( is_array( $args['post_type'] ) ) {
 					foreach ( $args['post_type'] as $index => $post_type ) {
 						if ( in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'], true ) ) {
+							$args_include['post_type'][] = $post_type;
 							unset( $args['post_type'][ $index ] );
 						}
 					}
 				} else {
 					if ( in_array( $args['post_type'], $aioseop_options['aiosp_cpostnoindex'], true ) ) {
-						return array();
+						$args_include['post_type'][] = $args['post_type'];
+
+						$q_include = new WP_Query( $args_include );
+						return $q_include->posts;
 					}
 				}
 			}
 
+			$posts_include = array();
+			if ( ! empty( $args_include['post_type'] ) ) {
+				$q_include = new WP_Query( $args_include );
+				if ( ! empty( $q_include->posts ) ) {
+					$posts_include = $q_include->posts;
+				}
+			}
+
 			// TODO: consider using WP_Query instead of get_posts to improve efficiency.
+			/**
+			 * {$module_prefix}post_query
+			 *
+			 * Arguments to use on get_posts().
+			 *
+			 * @since ?
+			 *
+			 * @param array $args {
+			 *     Arguments/params for get_posts.
+			 *     @see get_posts()
+			 *     @link https://developer.wordpress.org/reference/functions/get_posts/
+			 * }
+			 *
+			 */
 			$posts = get_posts( apply_filters( $this->prefix . 'post_query', $args ) );
+
+			// TODO Possibly change to exclude with post__not_in.
+			// Hardcoded exclude concept.
 			if ( ! empty( $exclude_slugs ) ) {
 				foreach ( $posts as $k => $v ) {
 					// TODO Add `true` in 3rd argument with in_array(); which changes it to a strict comparison.
@@ -4276,6 +4336,30 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 				}
 			}
+			// Hardcoded include concept.
+			foreach ( $posts_include as $k1_post_id => $v1_post ) {
+				$posts[ $k1_post_id ] = $v1_post;
+			}
+
+			/**
+			 * {$module_prefix}post_filter
+			 *
+			 * Posts from finalized query for sitemap data.
+			 *
+			 * @since ?
+			 *
+			 * @param array $posts {
+			 *     @type WP_Post ${$post_id} {
+			 *         @see WP_Post object for more information.
+			 *         @link https://codex.wordpress.org/Class_Reference/WP_Post
+			 *     }
+			 * }
+			 * @param array $args {
+			 *     Arguments/params for get_posts.
+			 *     @see get_posts()
+			 *     @link https://developer.wordpress.org/reference/functions/get_posts/
+			 * }
+			 */
 			$posts = apply_filters( $this->prefix . 'post_filter', $posts, $args );
 
 			return $posts;
