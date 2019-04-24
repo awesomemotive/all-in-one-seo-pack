@@ -23,7 +23,8 @@ class AIOSEOPAdminMenus {
 		} else {
 			return;
 		}
-
+		
+		//enqueued here because All_in_One_SEO_Pack_Module::admin_enqueue_scripts does not work
 		add_action( 'admin_enqueue_scripts', array($this, 'upgrade_link_aioseop_menu_new_tab' ) );
 		add_action( 'admin_enqueue_scripts', array($this, 'upgrade_link_plugins_menu_new_tab' ) );
 	}
@@ -48,10 +49,20 @@ class AIOSEOPAdminMenus {
 		);
 	}
 
+	/*
+	 * Opens Upgrade link in menu as new tab.
+	 *
+	 * @since 3.0
+	 */
 	function upgrade_link_aioseop_menu_new_tab() {
 		wp_enqueue_script( 'aioseop_menu_js', AIOSEOP_PLUGIN_URL . 'js/menu.js', array( 'jquery' ), AIOSEOP_VERSION, true );
 	}
 
+	/*
+	 * Opens Upgrade link in plugins menu as new tab.
+	 *
+	 * @since 3.0
+	 */
 	function upgrade_link_plugins_menu_new_tab( $hook ) {
 		if ( 'plugins.php' != $hook ) {
 			return;
