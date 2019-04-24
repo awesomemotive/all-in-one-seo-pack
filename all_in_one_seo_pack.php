@@ -302,7 +302,7 @@ if ( ! function_exists( 'aiosp_plugin_row_meta' ) ) {
 
 			);
 
-		return aiosp_action_links( $actions, $plugin_file, $action_links, 'after' );
+			return aiosp_action_links( $actions, $plugin_file, $action_links, 'after' );
 	}
 }
 
