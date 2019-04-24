@@ -1900,7 +1900,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 							'posts_per_page' => 1,
 						);
 						$q = new WP_Query( $args );
-						if ( ! $q->post_count ) {
+						if ( 0 === $q->post_count ) {
 							unset( $post_types[ $index ] );
 						}
 					}
