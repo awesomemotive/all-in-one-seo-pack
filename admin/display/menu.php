@@ -24,9 +24,7 @@ class AIOSEOPAdminMenus {
 			return;
 		}
 
-		if (is_admin()) {
-            wp_enqueue_script( 'aioseop_menu_js', AIOSEOP_PLUGIN_URL . 'js/menu.js', array( 'jquery' ), AIOSEOP_VERSION, true );
-        }
+        add_action( 'admin_enqueue_scripts', array($this, 'upgrade_link_aioseop_menu_new_tab' ) );
 }
 
 	function remove_menus() {
@@ -48,6 +46,10 @@ class AIOSEOPAdminMenus {
 			$url,
 		);
 	}
+
+	function upgrade_link_aioseop_menu_new_tab() {
+        wp_enqueue_script( 'aioseop_menu_js', AIOSEOP_PLUGIN_URL . 'js/menu.js', array( 'jquery' ), AIOSEOP_VERSION, true );
+    }
 }
 
 	new AIOSEOPAdminMenus();
