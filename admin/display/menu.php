@@ -24,7 +24,7 @@ class AIOSEOPAdminMenus {
 			return;
 		}
 
-		// enqueued here because All_in_One_SEO_Pack_Module::admin_enqueue_scripts does not work
+		//enqueued here because All_in_One_SEO_Pack_Module::admin_enqueue_scripts does not work
 		add_action( 'admin_enqueue_scripts', array($this, 'upgrade_link_aioseop_menu_new_tab' ) );
 		add_action( 'admin_enqueue_scripts', array($this, 'upgrade_link_plugins_menu_new_tab' ) );
 	}
