@@ -4564,7 +4564,7 @@ EOF;
 
 	function admin_menu() {
 		$file      = plugin_basename( __FILE__ );
-		$menu_name = __( 'All in One SEO', 'all-in-one-seo-pack' );
+		$menu_name = AIOSEOP_PLUGIN_NAME;
 
 		$this->locations['aiosp']['default_options']['nonce-aioseop-edit']['default'] = wp_create_nonce( 'edit-aioseop-nonce' );
 
