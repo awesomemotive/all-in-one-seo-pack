@@ -4283,7 +4283,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			);
 
 			// Exclude from main query, and check if a Query Include is needed.
+			// Check for NoIndex Post Types.
 			if ( is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
+				// Check if wp_query_args post_type is an array or string.
 				if ( is_array( $args['post_type'] ) ) {
 					foreach ( $args['post_type'] as $index => $post_type ) {
 						if ( in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'], true ) ) {
