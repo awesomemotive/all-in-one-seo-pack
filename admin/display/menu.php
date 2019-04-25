@@ -40,7 +40,7 @@ class AIOSEOPAdminMenus {
 		global $submenu;
 		$url = 'https://semperplugins.com/all-in-one-seo-pack-pro-version/?loc=aio_menu';
 		$upgrade_text = __( 'Upgrade to Pro', 'all-in-one-seo-pack' );
-		$submenu['all-in-one-seo-pack/aioseop_class.php'][] = array(
+		$submenu[ AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class.php' ][] = array(
 			"<span class='upgrade_menu_link'>$upgrade_text</span>",
 			'manage_options',
 			$url,
