@@ -87,13 +87,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				add_action( 'wp', array( $this, 'type_setup' ) );
 			}
 
-			if ( ! is_admin() || defined( 'DOING_AJAX' ) ) {
+			if ( ! is_admin() || defined( 'DOING_AJAX' ) || defined( 'AIOSEOP_UNIT_TESTING' ) ) {
 				$this->do_opengraph();
 			}
 			// Set variables after WordPress load.
 			add_action( 'init', array( &$this, 'init' ), 999999 );
 			add_filter( 'jetpack_enable_open_graph', '__return_false' ); // Avoid having duplicate meta tags
-			add_filter( $this->prefix . 'meta', array( $this, 'handle_meta_tag' ), 10, 3 );
+			add_filter( $this->prefix . 'meta', array( $this, 'handle_meta_tag' ), 10, 5 );
 			// Force refresh of Facebook cache.
 			add_action( 'post_updated', array( &$this, 'force_fb_refresh_update' ), 10, 3 );
 			add_action( 'transition_post_status', array( &$this, 'force_fb_refresh_transition' ), 10, 3 );
@@ -107,21 +107,66 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		}
 
 		/**
-		 * Handle specific meta tags.
+		 * Process meta tags for specific idiosyncrasies.
 		 *
 		 * @since 3.0
 		 *
-		 * @param string $value The value of the meta tag.
-		 * @param string $t     The type of network.
-		 * @param string $k     The name of the meta tag.
-		 * @return string
+		 * @param string $value The value that is proposed to be shown in the tag.
+		 * @param string $network The social network.
+		 * @param string $meta_tag The meta tag without the network name prefixed.
+		 * @param string $network_meta_tag The meta tag with the network name prefixed. This is not always $network:$meta_tag.
+		 * @param array $extra_params Extra parameters that might be required to process the meta tag.
+		 *
+		 * @return string The final value that will be shown.
 		 */
-		function handle_meta_tag( $value, $t, $k ) {
-			switch ( $k ) {
+		function handle_meta_tag( $value, $network, $meta_tag, $network_meta_tag, $extra_params ) {
+			switch ( $meta_tag ) {
 				case 'type':
 					// https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/1013
 					if ( 'blog' === $value ) {
 						$value = 'website';
+					}
+					break;
+			}
+
+			/**
+			 * Disables truncation of meta tags. Return true to shortcircuit and disable truncation.
+			 *
+			 * @since 3.0
+			 *
+			 * @issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/808
+			 * @issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/2296
+			 *
+			 * @param bool The value that is proposed to be shown in the tag.
+			 * @param string $network The social network.
+			 * @param string $meta_tag The meta tag without the network name prefixed.
+			 * @param string $network_meta_tag The meta tag with the network name prefixed. This is not always $network:$meta_tag.
+			 * @param array $extra_params Extra parameters that might be required to process the meta tag.
+			 */
+			if ( true === apply_filters( $this->prefix . 'disable_meta_tag_truncation', false, $network, $meta_tag, $network_meta_tag ) ) {
+				return $value;
+			}
+
+			switch ( $network_meta_tag ) {
+				case 'og:description':
+					if ( isset( $extra_params['auto_generate_desc'] ) && $extra_params['auto_generate_desc'] ) {
+						// max 200, but respect full words.
+						if ( $this->strlen( $value ) > 200 ) {
+							$pos = $this->strpos( $value, ' ', 200 );
+							$value = trim( $this->substr( $value, 0, $pos ) );
+						}
+					}
+					break;
+				case 'twitter:description':
+					if ( isset( $extra_params['auto_generate_desc'] ) && $extra_params['auto_generate_desc'] ) {
+						// https://developer.twitter.com/en/docs/tweets/optimize-with-cards/overview/markup.html
+						$value = trim( $this->substr( $value, 0, 200 ) );
+					}
+					break;
+				case 'twitter:title':
+					if ( isset( $extra_params['auto_generate_title'] ) && $extra_params['auto_generate_title'] ) {
+						// https://developer.twitter.com/en/docs/tweets/optimize-with-cards/overview/markup.html
+						$value = trim( $this->substr( $value, 0, 70 ) );
 					}
 					break;
 			}
@@ -1044,6 +1089,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			$type              = $this->type;
 			$sitename          = $this->options['aiosp_opengraph_sitename'];
 
+			// for some reason, options is not populated correctly during unit tests.
+			if ( defined( 'AIOSEOP_UNIT_TESTING' ) ) {
+				$this->options = $aioseop_options['modules'][ $this->prefix . 'options' ];
+			}
+
 			$appid = isset( $this->options['aiosp_opengraph_appid'] ) ? $this->options['aiosp_opengraph_appid'] : '';
 
 			if ( ! empty( $aioseop_options['aiosp_hide_paginated_descriptions'] ) ) {
@@ -1056,6 +1106,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			}
 			$url = $aiosp->aiosp_mrt_get_url( $wp_query );
 			$url = apply_filters( 'aioseop_canonical_url', $url );
+
+			// this will collect the extra values that are required outside the below IF block.
+			$extra_params = array();
 
 			$setmeta      = $this->options['aiosp_opengraph_setmeta'];
 			$social_links = '';
@@ -1155,6 +1208,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$video       = $metabox['aioseop_opengraph_settings_video'];
 				$title       = $metabox['aioseop_opengraph_settings_title'];
 				$description = $metabox['aioseop_opengraph_settings_desc'];
+
+				// Let's make a note of manually provided descriptions/titles as they might need special handling.
+				// @issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/808
+				// @issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/2296
+				$title_from_main_settings = trim( strip_tags( get_post_meta( $post->ID, '_aioseop_title', true ) ) );
+				$desc_from_main_settings  = trim( strip_tags( get_post_meta( $post->ID, '_aioseop_description', true ) ) );
+				if ( empty( $title ) && empty( $title_from_main_settings ) ) {
+					$extra_params['auto_generate_title'] = true;
+				}
+				if ( empty( $description ) && empty( $desc_from_main_settings ) ) {
+					$extra_params['auto_generate_desc'] = true;
+				}
 
 				/* Add AIOSEO variables if Site Title and Desc from AIOSEOP not selected */
 				global $aiosp;
@@ -1485,6 +1550,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$meta['google+'] = array( 'thumbnail' => 'image' );
 			}
 
+			// https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/1848
+			if ( is_ssl() ) {
+				$meta['facebook'] += array( 'thumbnail_1' => 'og:image:secure_url' );
+				$thumbnail_1 = $thumbnail;
+			}
+
 			$tags = array(
 				'facebook' => array( 'name' => 'property', 'value' => 'content' ),
 				'twitter'  => array( 'name' => 'name', 'value' => 'content' ),
@@ -1497,7 +1568,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						$$k = '';
 					}
 					$filtered_value = $$k;
-					$filtered_value = apply_filters( $this->prefix . 'meta', $filtered_value, $t, $k );
+
+					/**
+					 * Process meta tags for their idiosyncracies.
+					 *
+					 * @since 3.0
+					 *
+					 * @param string $filtered_value The value that is proposed to be shown in the tag.
+					 * @param string $t The social network.
+					 * @param string $k The meta tag without the network name prefixed.
+					 * @param string $v The meta tag with the network name prefixed. This is not always $network:$meta_tag.
+					 * @param array $extra_params Extra parameters that might be required to process the meta tag.
+					 */
+					$filtered_value = apply_filters( $this->prefix . 'meta', $filtered_value, $t, $k, $v, $extra_params );
 					if ( ! empty( $filtered_value ) ) {
 						if ( ! is_array( $filtered_value ) ) {
 							$filtered_value = array( $filtered_value );

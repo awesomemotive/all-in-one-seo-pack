@@ -4,7 +4,7 @@
 Plugin Name: All In One SEO Pack
 Plugin URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Description: Out-of-the-box SEO for your WordPress blog. Features like XML Sitemaps, SEO for custom post types, SEO for blogs or business sites, SEO for ecommerce sites, and much more. More than 50 million downloads since 2007.
-Version: 2.12
+Version: 3.0-dev
 Author: Michael Torbert
 Author URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Text Domain: all-in-one-seo-pack
@@ -32,14 +32,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * The original WordPress SEO plugin.
  *
  * @package All-in-One-SEO-Pack
- * @version 2.12
+ * @version 3.0-dev
  */
 
 if ( ! defined( 'AIOSEOPPRO' ) ) {
 	define( 'AIOSEOPPRO', false );
 }
 if ( ! defined( 'AIOSEOP_VERSION' ) ) {
-	define( 'AIOSEOP_VERSION', '2.12' );
+	define( 'AIOSEOP_VERSION', '3.0-dev' );
 }
 global $aioseop_plugin_name;
 $aioseop_plugin_name = 'All in One SEO Pack';
@@ -266,6 +266,9 @@ if ( ! function_exists( 'aioseop_activate' ) ) {
 		}
 		$aiosp_activation = true;
 
+		require_once( AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php' );
+		aioseop_notice_set_activation_review_plugin( false, true );
+
 		// These checks might be duplicated in the function being called.
 		if ( ! is_network_admin() || ! isset( $_GET['activate-multi'] ) ) {
 			set_transient( '_aioseop_activation_redirect', true, 30 ); // Sets 30 second transient for welcome screen redirect on activation.
@@ -302,7 +305,7 @@ if ( ! function_exists( 'aiosp_plugin_row_meta' ) ) {
 
 			);
 
-		return aiosp_action_links( $actions, $plugin_file, $action_links, 'after' );
+			return aiosp_action_links( $actions, $plugin_file, $action_links, 'after' );
 	}
 }
 
@@ -438,6 +441,7 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 
 		add_action( 'init', array( $aiosp, 'add_hooks' ) );
 		add_action( 'admin_init', array( $aioseop_updates, 'version_updates' ), 11 );
+		aioseop_notice_set_activation_review_plugin();
 
 		if ( defined( 'DOING_AJAX' ) && ! empty( $_POST ) && ! empty( $_POST['action'] ) && 'aioseop_ajax_scan_header' === $_POST['action'] ) {
 			remove_action( 'init', array( $aiosp, 'add_hooks' ) );

@@ -1737,15 +1737,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				wp_enqueue_style( 'aioseop-module-style-rtl', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module-rtl.css', array( 'aioseop-module-style' ), AIOSEOP_VERSION );
 			}
 
-			// Uses WP Scripts to load the current platform version of jQuery UI CSS .
-			$wp_scripts = wp_scripts();
-			wp_enqueue_style(
-				'aioseop-jquery-ui-css',
-				'https://ajax.googleapis.com/ajax/libs/jqueryui/' . $wp_scripts->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.min.css',
-				false,
-				AIOSEOP_VERSION,
-				false
-			);
+			// Uses WP Scripts to load the current platform version of jQuery UI CSS.
+				$wp_scripts = wp_scripts();
+				wp_enqueue_style(
+					'aioseop-jquery-ui',
+					'//ajax.googleapis.com/ajax/libs/jqueryui/' . $wp_scripts->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.min.css',
+					false,
+					AIOSEOP_VERSION,
+					false
+				);
 		}
 
 		/**
@@ -1770,6 +1770,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		public function admin_enqueue_scripts( $hook_suffix ) {
 			wp_enqueue_script( 'sack' );
 			wp_enqueue_script( 'jquery' );
+			wp_enqueue_script( 'jquery-ui-tabs' );
 			wp_enqueue_script( 'media-upload' );
 			wp_enqueue_script( 'thickbox' );
 			wp_enqueue_script( 'common' );
