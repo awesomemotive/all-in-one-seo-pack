@@ -24,9 +24,7 @@ class AIOSEOPAdminMenus {
 			return;
 		}
 
-		// enqueued here because All_in_One_SEO_Pack_Module::admin_enqueue_scripts does not work
-		add_action( 'admin_enqueue_scripts', array($this, 'upgrade_link_aioseop_menu_new_tab' ) );
-		add_action( 'admin_enqueue_scripts', array($this, 'upgrade_link_plugins_menu_new_tab' ) );
+		add_action( 'admin_enqueue_scripts', array($this, 'admin_enqueue_scripts' ) );
 	}
 
 	function remove_menus() {
@@ -50,24 +48,20 @@ class AIOSEOPAdminMenus {
 	}
 
 	/*
-	 * Opens Upgrade link in menu as new tab.
+	 * Opens Upgrade to Pro links in WP Admin as new tab.
+	 *
+	 * Enqueued here because All_in_One_SEO_Pack_Module::admin_enqueue_scripts does not work.
+	 *
+	 * @param string $hook
 	 *
 	 * @since 3.0
 	 */
-	function upgrade_link_aioseop_menu_new_tab() {
+	function admin_enqueue_scripts( $hook ) {
 		wp_enqueue_script( 'aioseop_menu_js', AIOSEOP_PLUGIN_URL . 'js/aioseop-menu.js', array( 'jquery' ), AIOSEOP_VERSION, true );
-	}
 
-	/*
-	 * Opens Upgrade link in plugins menu as new tab.
-	 *
-	 * @since 3.0
-	 */
-	function upgrade_link_plugins_menu_new_tab( $hook ) {
-		if ( 'plugins.php' != $hook ) {
-			return;
+		if ( 'plugins.php' === $hook ) {
+			wp_enqueue_script( 'aioseop_plugins_menu_js', AIOSEOP_PLUGIN_URL . 'js/plugins-menu.js', array( 'jquery' ), AIOSEOP_VERSION, true );
 		}
-		wp_enqueue_script( 'aioseop_plugins_menu_js', AIOSEOP_PLUGIN_URL . 'js/plugins-menu.js', array( 'jquery' ), AIOSEOP_VERSION, true );
 	}
 }
 
