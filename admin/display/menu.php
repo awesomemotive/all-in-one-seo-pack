@@ -24,7 +24,7 @@ class AIOSEOPAdminMenus {
 			return;
 		}
 
-		add_action( 'admin_enqueue_scripts', array($this, 'admin_enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 	}
 
 	function remove_menus() {
