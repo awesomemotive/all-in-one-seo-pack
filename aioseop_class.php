@@ -3737,10 +3737,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$prev      = apply_filters( 'aioseop_prev_link', $prev_next['prev'] );
 		$next      = apply_filters( 'aioseop_next_link', $prev_next['next'] );
 		if ( ! empty( $prev ) ) {
-			$meta_string .= "<link rel='prev' href='" . esc_url( $prev ) . "' />\n";
+			$meta_string .= '<link rel="prev" href="' . esc_url( $prev ) . '" />' . "\n";
 		}
 		if ( ! empty( $next ) ) {
-			$meta_string .= "<link rel='next' href='" . esc_url( $next ) . "' />\n";
+			$meta_string .= '<link rel="next" href="' . esc_url( $next ) . '" />' . "\n";
 		}
 		if ( $meta_string != null ) {
 			echo "$meta_string\n";
