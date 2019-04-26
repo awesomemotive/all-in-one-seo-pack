@@ -180,49 +180,49 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'page_title_format'           => array(
 				'name'     => __( 'Page Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
-				'default'  => '%page_title% | %blog_title%',
+				'default'  => '%page_title% | %site_title%',
 				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'post_title_format'           => array(
 				'name'     => __( 'Post Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
-				'default'  => '%post_title% | %blog_title%',
+				'default'  => '%post_title% | %site_title%',
 				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'category_title_format'       => array(
 				'name'     => __( 'Category Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
-				'default'  => '%category_title% | %blog_title%',
+				'default'  => '%category_title% | %site_title%',
 				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'archive_title_format'        => array(
 				'name'     => __( 'Archive Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
-				'default'  => '%archive_title% | %blog_title%',
+				'default'  => '%archive_title% | %site_title%',
 				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'date_title_format'           => array(
 				'name'     => __( 'Date Archive Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
-				'default'  => '%date% | %blog_title%',
+				'default'  => '%date% | %site_title%',
 				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'author_title_format'         => array(
 				'name'     => __( 'Author Archive Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
-				'default'  => '%author% | %blog_title%',
+				'default'  => '%author% | %site_title%',
 				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'tag_title_format'            => array(
 				'name'     => __( 'Tag Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
-				'default'  => '%tag% | %blog_title%',
+				'default'  => '%tag% | %site_title%',
 				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'search_title_format'         => array(
 				'name'     => __( 'Search Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
-				'default'  => '%search% | %blog_title%',
+				'default'  => '%search% | %site_title%',
 				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'description_format'          => array(
@@ -919,6 +919,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$w            = $info['w'];
 		$p            = $info['p'];
 
+		if ( strpos( $title_format, '%site_title%' ) !== false ) {
+			$title_format = str_replace( '%site_title%', get_bloginfo( 'name' ), $title_format );
+		}
 		if ( strpos( $title_format, '%blog_title%' ) !== false ) {
 			$title_format = str_replace( '%blog_title%', get_bloginfo( 'name' ), $title_format );
 		}
@@ -1462,7 +1465,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		} elseif ( is_search() && isset( $s ) && ! empty( $s ) ) {
 			$search = esc_attr( stripslashes( $s ) );
 			$title_format = $aioseop_options['aiosp_search_title_format'];
-			$title        = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
+			$title        = str_replace( '%site_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
+			if ( strpos( $title, '%blog_title%' ) !== false ) {
+				$title = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title );
+			}
+			if ( strpos( $title, '%site_description%' ) !== false ) {
+				$title = str_replace( '%site_description%', $this->internationalize( get_bloginfo( 'description' ) ), $title );
+			}
 			if ( strpos( $title, '%blog_description%' ) !== false ) {
 				$title = str_replace( '%blog_description%', $this->internationalize( get_bloginfo( 'description' ) ), $title );
 			}
@@ -1504,7 +1513,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 			if ( $tag ) {
 				$title_format = $aioseop_options['aiosp_tag_title_format'];
-				$title        = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
+				$title        = str_replace( '%site_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
+				if ( strpos( $title, '%blog_title%' ) !== false ) {
+					$title = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title );
+				}
+				if ( strpos( $title, '%site_description%' ) !== false ) {
+					$title = str_replace( '%site_description%', $this->internationalize( get_bloginfo( 'description' ) ), $title );
+				}
 				if ( strpos( $title, '%blog_description%' ) !== false ) {
 					$title = str_replace( '%blog_description%', $this->internationalize( get_bloginfo( 'description' ) ), $title );
 				}
@@ -1529,7 +1544,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$tag = $STagging->search_tag;
 			if ( $tag ) {
 				$title_format = $aioseop_options['aiosp_tag_title_format'];
-				$title        = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
+				$title        = str_replace( '%site_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
+				if ( strpos( $title, '%blog_title%' ) !== false ) {
+					$title = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title );
+				}
+				if ( strpos( $title, '%site_description%' ) !== false ) {
+					$title = str_replace( '%site_description%', $this->internationalize( get_bloginfo( 'description' ) ), $title );
+				}
 				if ( strpos( $title, '%blog_description%' ) !== false ) {
 					$title = str_replace( '%blog_description%', $this->internationalize( get_bloginfo( 'description' ) ), $title );
 				}
@@ -1577,7 +1598,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			} else {
 				return false;
 			}
-			$new_title = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $new_title );
+			$new_title = str_replace( '%site_title%', $this->internationalize( get_bloginfo( 'name' ) ), $new_title );
+			if ( strpos( $new_title, '%blog_title%' ) !== false ) {
+				$new_title = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $new_title );
+			}
+			if ( strpos( $new_title, '%site_description%' ) !== false ) {
+				$new_title = str_replace( '%site_description%', $this->internationalize( get_bloginfo( 'description' ) ), $new_title );
+			}
 			if ( strpos( $new_title, '%blog_description%' ) !== false ) {
 				$new_title = str_replace( '%blog_description%', $this->internationalize( get_bloginfo( 'description' ) ), $new_title );
 			}
@@ -1587,7 +1614,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			return $title;
 		} elseif ( is_404() ) {
 			$title_format = $aioseop_options['aiosp_404_title_format'];
-			$new_title    = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
+			$new_title    = str_replace( '%site_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
+			if ( strpos( $new_title, '%blog_title%' ) !== false ) {
+				$new_title = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $new_title );
+			}
+			if ( strpos( $new_title, '%site_description%' ) !== false ) {
+				$new_title = str_replace( '%site_description%', $this->internationalize( get_bloginfo( 'description' ) ), $new_title );
+			}
 			if ( strpos( $new_title, '%blog_description%' ) !== false ) {
 				$new_title = str_replace( '%blog_description%', $this->internationalize( get_bloginfo( 'description' ) ), $new_title );
 			}
@@ -1684,7 +1717,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title = $this->internationalize( post_type_archive_title( '', false ) );
 		} elseif ( is_404() ) {
 			$title_format = $aioseop_options['aiosp_404_title_format'];
-			$new_title    = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
+			$new_title    = str_replace( '%site_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
+			if ( strpos( $new_title, '%blog_title%' ) !== false ) {
+				$new_title = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $new_title );
+			}
+			if ( strpos( $new_title, '%site_description%' ) !== false ) {
+				$new_title = str_replace( '%site_description%', $this->internationalize( get_bloginfo( 'description' ) ), $new_title );
+			}
 			if ( strpos( $new_title, '%blog_description%' ) !== false ) {
 				$new_title = str_replace( '%blog_description%', $this->internationalize( get_bloginfo( 'description' ) ), $new_title );
 			}
@@ -1760,7 +1799,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		} else {
 			$authordata = new WP_User();
 		}
-		$new_title = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
+		$new_title = str_replace( '%site_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
+		if ( strpos( $new_title, '%blog_title%' ) !== false ) {
+			$new_title = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $new_title );
+		}
+		if ( strpos( $new_title, '%site_description%' ) !== false ) {
+			$new_title = str_replace( '%site_description%', $this->internationalize( get_bloginfo( 'description' ) ), $new_title );
+		}
 		if ( strpos( $new_title, '%blog_description%' ) !== false ) {
 			$new_title = str_replace( '%blog_description%', $this->internationalize( get_bloginfo( 'description' ) ), $new_title );
 		}
@@ -1907,7 +1952,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( ( $title_type != 'post' ) && ( $title_type != 'archive' ) ) {
 			return false;
 		}
-		$title_format = "%{$title_type}_title% | %blog_title%";
+		$title_format = "%{$title_type}_title% | %site_title%";
 		if ( isset( $aioseop_options[ "aiosp_{$title_type}_title_format" ] ) ) {
 			$title_format = $aioseop_options[ "aiosp_{$title_type}_title_format" ];
 		}
@@ -2083,8 +2128,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( strpos( $title, '%category_description%' ) !== false ) {
 			$title = str_replace( '%category_description%', $category_description, $title );
 		}
+		if ( strpos( $title, '%site_title%' ) !== false ) {
+			$title = str_replace( '%site_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title );
+		}
 		if ( strpos( $title, '%blog_title%' ) !== false ) {
 			$title = str_replace( '%blog_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title );
+		}
+		if ( strpos( $title, '%site_description%' ) !== false ) {
+			$title = str_replace( '%site_description%', $this->internationalize( get_bloginfo( 'description' ) ), $title );
 		}
 		if ( strpos( $title, '%blog_description%' ) !== false ) {
 			$title = str_replace( '%blog_description%', $this->internationalize( get_bloginfo( 'description' ) ), $title );
@@ -2102,7 +2153,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	function get_tax_title_format( $tax = '' ) {
 		global $aioseop_options;
 		if ( AIOSEOPPRO ) {
-			$title_format = '%taxonomy_title% | %blog_title%';
+			$title_format = '%taxonomy_title% | %site_title%';
 			if ( is_category() ) {
 				$title_format = $aioseop_options['aiosp_category_title_format'];
 			} else {
@@ -2115,10 +2166,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				}
 			}
 			if ( empty( $title_format ) ) {
-				$title_format = '%category_title% | %blog_title%';
+				$title_format = '%category_title% | %site_title%';
 			}
 		} else {
-			$title_format = '%category_title% | %blog_title%';
+			$title_format = '%category_title% | %site_title%';
 			if ( ! empty( $aioseop_options['aiosp_category_title_format'] ) ) {
 				$title_format = $aioseop_options['aiosp_category_title_format'];
 			}
@@ -2137,7 +2188,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function apply_archive_title_format( $title, $category = '' ) {
 		$title_format = $this->get_archive_title_format();
-		$r_title      = array( '%blog_title%', '%blog_description%', '%archive_title%' );
+		$r_title      = array( '%site_title%', '%site_description%', '%archive_title%' );
 		$d_title      = array(
 			$this->internationalize( get_bloginfo( 'name' ) ),
 			$this->internationalize( get_bloginfo( 'description' ) ),
@@ -2903,7 +2954,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$this->default_options[ $field ] = array(
 					'name'     => "$name " . __( 'Title Format:', 'all-in-one-seo-pack' ) . "<br />($p)",
 					'type'     => 'text',
-					'default'  => '%post_title% | %blog_title%',
+					'default'  => '%post_title% | %site_title%',
 					'condshow' => array(
 						'aiosp_rewrite_titles'  => 1,
 						'aiosp_cpostactive\[\]' => $p,
@@ -2935,7 +2986,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					$this->default_options[ $field ]  = array(
 						'name'     => "$name " . __( 'Taxonomy Title Format:', 'all-in-one-seo-pack' ),
 						'type'     => 'text',
-						'default'  => '%taxonomy_title% | %blog_title%',
+						'default'  => '%taxonomy_title% | %site_title%',
 						'condshow' => array(
 							'aiosp_rewrite_titles' => 1,
 							'aiosp_taxactive\[\]'  => $p,
@@ -3854,8 +3905,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$description_format = '%description%';
 		}
 		$description = str_replace( '%description%', apply_filters( 'aioseop_description_override', $description ), $description_format );
+		if ( strpos( $description, '%site_title%' ) !== false ) {
+			$description = str_replace( '%site_title%', get_bloginfo( 'name' ), $description );
+		}
 		if ( strpos( $description, '%blog_title%' ) !== false ) {
 			$description = str_replace( '%blog_title%', get_bloginfo( 'name' ), $description );
+		}
+		if ( strpos( $description, '%site_description%' ) !== false ) {
+			$description = str_replace( '%site_description%', get_bloginfo( 'description' ), $description );
 		}
 		if ( strpos( $description, '%blog_description%' ) !== false ) {
 			$description = str_replace( '%blog_description%', get_bloginfo( 'description' ), $description );

@@ -169,7 +169,7 @@ class Test_Meta extends AIOSEOP_Test_Base {
 	public function metaDescProvider() {
 		return array(
 			array( 'heyhey', 'heyhey', '%post_title%' ),
-			array( 'heyhey', 'heyhey' . get_option( 'blogname' ), '%post_title%%blog_title%' ),
+			array( 'heyhey', 'heyhey' . get_option( 'blogname' ), '%post_title%%site_title%' ),
 		);
 	}
 
