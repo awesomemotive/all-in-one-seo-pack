@@ -108,6 +108,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Compatibility' ) ) {
 				return '';
 			}
 
+			if ( isset( $aioseop_options['aiosp_yandex_verify'] ) && ! empty( $aioseop_options['aiosp_yandex_verify'] ) && strpos( $ver_tag, 'yandex-verification' ) ) {
+				return '';
+			}
+
 			return $ver_tag;
 
 		}
