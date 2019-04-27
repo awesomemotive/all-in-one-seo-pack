@@ -112,6 +112,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Compatibility' ) ) {
 				return '';
 			}
 
+			if ( isset( $aioseop_options['aiosp_baidu_verify'] ) && ! empty( $aioseop_options['aiosp_baidu_verify'] ) && strpos( $ver_tag, 'baidu-site-verification' ) ) {
+				return '';
+			}
+
 			return $ver_tag;
 
 		}
