@@ -334,7 +334,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				'hometitle'              => array(
 					'name'     => __( 'Home Title', 'all-in-one-seo-pack' ),
 					'default'  => '',
-					'type'     => 'textarea',
+					'type'     => 'text',
 					'condshow' => array(
 						'aiosp_opengraph_setmeta' => array(
 							'lhs' => 'aiosp_opengraph_setmeta',
