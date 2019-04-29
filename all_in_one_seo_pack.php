@@ -38,11 +38,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 if ( ! defined( 'AIOSEOPPRO' ) ) {
 	define( 'AIOSEOPPRO', false );
 }
+if ( ! defined( 'AIOSEOP_PLUGIN_NAME' ) ) {
+	define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack' );
+}
 if ( ! defined( 'AIOSEOP_VERSION' ) ) {
 	define( 'AIOSEOP_VERSION', '3.0-dev' );
 }
-global $aioseop_plugin_name;
-$aioseop_plugin_name = 'All in One SEO Pack';
 
 /*
  * DO NOT EDIT BELOW THIS LINE.
@@ -73,10 +74,6 @@ if ( ! function_exists( 'aiosp_add_cap' ) ) {
 	}
 }
 add_action( 'plugins_loaded', 'aiosp_add_cap' );
-
-if ( ! defined( 'AIOSEOP_PLUGIN_NAME' ) ) {
-	define( 'AIOSEOP_PLUGIN_NAME', $aioseop_plugin_name );
-}
 
 if ( ! defined( 'AIOSEOP_PLUGIN_DIR' ) ) {
 	define( 'AIOSEOP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );

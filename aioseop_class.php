@@ -283,6 +283,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default' => '',
 				'type'    => 'text',
 			),
+			'yandex_verify'            => array(
+				'name'    => __( 'Yandex Webmaster Tools:', 'all-in-one-seo-pack' ),
+				'default' => '',
+				'type'    => 'text',
+			),
+			'baidu_verify'            => array(
+				'name'    => __( 'Baidu Webmaster Tools:', 'all-in-one-seo-pack' ),
+				'default' => '',
+				'type'    => 'text',
+			),
 			'google_publisher'            => array(
 				'name'    => __( 'Google Plus Default Profile:', 'all-in-one-seo-pack' ),
 				'default' => '',
@@ -733,7 +743,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'webmaster' => array(
 				'name'      => __( 'Webmaster Verification', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/sections/webmaster-verification/',
-				'options'   => array( 'google_verify', 'bing_verify', 'pinterest_verify' ),
+				'options'   => array( 'google_verify', 'bing_verify', 'pinterest_verify', 'yandex_verify', 'baidu_verify' ),
 			),
 			'google'    => array(
 				'name'      => __( 'Google Settings', 'all-in-one-seo-pack' ),
@@ -3675,6 +3685,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'google'    => 'google-site-verification',
 					'bing'      => 'msvalidate.01',
 					'pinterest' => 'p:domain_verify',
+					'yandex'    => 'yandex-verification',
+					'baidu'    => 'baidu-site-verification',
 				) as $k => $v
 			) {
 				if ( ! empty( $aioseop_options[ "aiosp_{$k}_verify" ] ) ) {
@@ -3737,10 +3749,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$prev      = apply_filters( 'aioseop_prev_link', $prev_next['prev'] );
 		$next      = apply_filters( 'aioseop_next_link', $prev_next['next'] );
 		if ( ! empty( $prev ) ) {
-			$meta_string .= "<link rel='prev' href='" . esc_url( $prev ) . "' />\n";
+			$meta_string .= '<link rel="prev" href="' . esc_url( $prev ) . "\" />\n";
 		}
 		if ( ! empty( $next ) ) {
-			$meta_string .= "<link rel='next' href='" . esc_url( $next ) . "' />\n";
+			$meta_string .= '<link rel="next" href="' . esc_url( $next ) . "\" />\n";
 		}
 		if ( $meta_string != null ) {
 			echo "$meta_string\n";

@@ -421,6 +421,8 @@ class AIOSEOP_Helper {
 			'aiosp_google_verify'               => __( 'Enter your verification code here to verify your site with Google Search Console.', 'all-in-one-seo-pack' ),
 			'aiosp_bing_verify'                 => __( 'Enter your verification code here to verify your site with Bing Webmaster Tools.', 'all-in-one-seo-pack' ),
 			'aiosp_pinterest_verify'            => __( 'Enter your verification code here to verify your site with Pinterest.', 'all-in-one-seo-pack' ),
+			'aiosp_yandex_verify'               => __( 'Enter your verification code here to verify your site with Yandex Webmaster Tools.', 'all-in-one-seo-pack' ),
+			'aiosp_baidu_verify'                => __( 'Enter your verification code here to verify your site with Baidu Webmaster Tools.', 'all-in-one-seo-pack' ),
 
 			// Google Settings.
 			'aiosp_google_publisher'            => __( 'Enter your Google+ Profile URL here to add the rel=“author” tag to your site for Google authorship. It is recommended that the URL you enter here should be your personal Google+ profile.  Use the Advanced Authorship Options below if you want greater control over the use of authorship.', 'all-in-one-seo-pack' ),
@@ -563,6 +565,8 @@ class AIOSEOP_Helper {
 			'aiosp_google_verify'               => 'https://semperplugins.com/documentation/google-search-console-verification/',
 			'aiosp_bing_verify'                 => 'https://semperplugins.com/documentation/bing-webmaster-verification/',
 			'aiosp_pinterest_verify'            => 'https://semperplugins.com/documentation/pinterest-site-verification/',
+			'aiosp_yandex_verify'               => 'https://semperplugins.com/documentation/yandex-webmaster-verification/',
+			'aiosp_baidu_verify'                => 'https://semperplugins.com/documentation/baidu-webmaster-verification/',
 
 			// Google Settings.
 			'aiosp_google_publisher'            => 'https://semperplugins.com/documentation/google-settings/#google-plus-default-profile',
