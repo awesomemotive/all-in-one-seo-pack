@@ -111,11 +111,11 @@ class aiosp_metaboxes {
 				?>
 				<div class="aioseop_metabox_text">
 					<form
-						<?php if ( ! AIOSEOPPRO ) : ?>
-							action="https://semperplugins.us1.list-manage.com/subscribe/post?u=794674d3d54fdd912f961ef14&amp;id=af0a96d3d9"
-						<?php else : ?>
+						<?php if ( AIOSEOPPRO ) { ?>
 							action="https://semperplugins.us1.list-manage.com/subscribe/post?u=794674d3d54fdd912f961ef14&amp;id=b786958a9a"
-						<?php endif; ?>
+						<?php } else { ?>
+							action="https://semperplugins.us1.list-manage.com/subscribe/post?u=794674d3d54fdd912f961ef14&amp;id=af0a96d3d9"
+						<?php } ?>
 							method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
 						target="_blank">
 						<h2><?php _e( 'Join our mailing list for tips, tricks, and WordPress secrets.', 'all-in-one-seo-pack' ); ?></h2>
