@@ -4242,6 +4242,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$args['exclude'] = explode( ',', $args['exclude'] );
 			}
 
+			// Exclude (method) query args.
 			$ex_args                   = $args;
 			$ex_args['meta_query']     = array(
 				'relation' => 'OR',
@@ -4259,13 +4260,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			);
 			$ex_args['fields']         = 'ids';
 			$ex_args['posts_per_page'] = - 1;
+
+			// Exclude (method) query.
 			$q_exclude                 = new WP_Query( $ex_args );
 			if ( ! empty( $q_exclude->posts ) ) {
 				$args['exclude'] = array_merge( $args['exclude'], $q_exclude->posts );
 			}
 			$this->excludes = array_merge( $args['exclude'], $exclude_slugs ); // Add excluded slugs and IDs to class var.
 
-			// Include query args for including posts that may have been excluded;
+			// Avoid if possible.
+			// Include (method) query args for including posts that may have been excluded;
 			// for example, exclude post type, but include certain posts.
 			// NOTE: Do NOT use this for basic including. It's best to avoid an additional query.
 			$args_include = array(
@@ -4283,7 +4287,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			);
 
 			// Exclude from main query, and check if a Query Include is needed.
-			// Check for NoIndex Post Types.
+			// Check for NoIndex Post Types, BUT also check for Index on NoIdex Post Type.
 			if ( is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
 				// Check if wp_query_args post_type is an array or string.
 				if ( is_array( $args['post_type'] ) ) {
@@ -4298,14 +4302,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						$args_include['post_type'][] = $args['post_type'];
 
 						$q_include = new WP_Query( $args_include );
+						// Return posts on single post type query, since no additional query is needed.
 						return $q_include->posts;
 					}
 				}
 			}
 
+			// Avoid if possible.
+			// Include (method) query.
+			// NOTE: Do NOT use this for basic including. It's best to avoid an additional query.
 			$posts_include = array();
 			if ( ! empty( $args_include['post_type'] ) ) {
 				$q_include = new WP_Query( $args_include );
+				// When posts exists from the include method, add to $posts_include to add to final query.
 				if ( ! empty( $q_include->posts ) ) {
 					$posts_include = $q_include->posts;
 				}
