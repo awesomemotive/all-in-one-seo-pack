@@ -136,10 +136,10 @@ class AIOSEOP_Helper {
 				__( 'The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul>' .
 					'<li>' .
-						__( '%site_title% - Your site title (%blog_title% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_title% - Your site title', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
-						__( '%site_description% - Your site description (%blog_description% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_description% - Your site description', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%page_title% - The original title of the page', 'all-in-one-seo-pack' ) .
@@ -168,10 +168,10 @@ class AIOSEOP_Helper {
 				__( 'The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul>' .
 					'<li>' .
-						__( '%site_title% - Your site title (%blog_title% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_title% - Your site title', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
-						__( '%site_description% - Your site description (%blog_description% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_description% - Your site description', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%page_title% - The original title of the page', 'all-in-one-seo-pack' ) .
@@ -209,10 +209,10 @@ class AIOSEOP_Helper {
 				__( 'The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul>' .
 					'<li>' .
-						__( '%site_title% - Your site title (%blog_title% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_title% - Your site title', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
-						__( '%site_description% - Your site description (%blog_description% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_description% - Your site description', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%post_title% - The original title of the post', 'all-in-one-seo-pack' ) .
@@ -256,10 +256,10 @@ class AIOSEOP_Helper {
 				__( 'The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul>' .
 					'<li>' .
-						__( '%site_title% - Your site title (%blog_title% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_title% - Your site title', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
-						__( '%site_description% - Your site description (%blog_description% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_description% - Your site description', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%category_title% - The original title of the category', 'all-in-one-seo-pack' ) .
@@ -273,10 +273,10 @@ class AIOSEOP_Helper {
 				__( 'The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul>' .
 					'<li>' .
-						__( '%site_title% - Your site title (%blog_title% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_title% - Your site title', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
-						__( '%site_description% - Your site description (%blog_description% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_description% - Your site description', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%archive_title - The original archive title given by wordpress', 'all-in-one-seo-pack' ) .
@@ -287,10 +287,10 @@ class AIOSEOP_Helper {
 				__( 'The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul>' .
 					'<li>' .
-						__( '%site_title% - Your site title (%blog_title% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_title% - Your site title', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
-						__( '%site_description% - Your site description (%blog_description% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_description% - Your site description', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%date% - The original archive title given by wordpress, e.g. "2007" or "2007 August"', 'all-in-one-seo-pack' ) .
@@ -310,10 +310,10 @@ class AIOSEOP_Helper {
 				__( 'The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul>' .
 					'<li>' .
-						__( '%site_title% - Your site title (%blog_title% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_title% - Your site title', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
-						__( '%site_description% - Your site description (%blog_description% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_description% - Your site description', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%author% - The original archive title given by wordpress, e.g. "Steve" or "John Smith"', 'all-in-one-seo-pack' ) .
@@ -324,10 +324,10 @@ class AIOSEOP_Helper {
 				__( 'The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul>' .
 					'<li>' .
-						__( '%site_title% - Your site title (%blog_title% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_title% - Your site title', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
-						__( '%site_description% - Your site description (%blog_description% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_description% - Your site description', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%tag% - The name of the tag', 'all-in-one-seo-pack' ) .
@@ -338,10 +338,10 @@ class AIOSEOP_Helper {
 				__( 'The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul>' .
 					'<li>' .
-						__( '%site_title% - Your site title (%blog_title% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_title% - Your site title', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
-						__( '%site_description% - Your site description (%blog_description% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_description% - Your site description', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%search% - What was searched for', 'all-in-one-seo-pack' ) .
@@ -351,10 +351,10 @@ class AIOSEOP_Helper {
 				__( 'This controls the format of Meta Descriptions.The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul>' .
 					'<li>' .
-						__( '%site_title% - Your site title (%blog_title% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_title% - Your site title', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
-						__( '%site_description% - Your site description (%blog_description% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_description% - Your site description', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%description% - This outputs the description you write for each page/post or the autogenerated description, if you have that option enabled. Auto-generated descriptions are generated from the Post Excerpt, or the first 160 characters of the post content if there is no Post Excerpt.', 'all-in-one-seo-pack' ) .
@@ -386,10 +386,10 @@ class AIOSEOP_Helper {
 				__( 'The following macros are supported:', 'all-in-one-seo-pack' ) .
 				'<ul>' .
 					'<li>' .
-						__( '%site_title% - Your site title (%blog_title% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_title% - Your site title', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
-						__( '%site_description% - Your site description (%blog_description% is deprecated)', 'all-in-one-seo-pack' ) .
+						__( '%site_description% - Your site description', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%request_url% - The original URL path, like "/url-that-does-not-exist/"', 'all-in-one-seo-pack' ) .
@@ -489,8 +489,8 @@ class AIOSEOP_Helper {
 				$help_text_fields = array();
 				array_push(
 					$help_text_fields,
-					__( '%1$site_title% - Your site title (%2$blog_title% is deprecated)', 'all-in-one-seo-pack' ),
-					__( '%1$site_description% - Your site description (%2$blog_description% is deprecated)', 'all-in-one-seo-pack' ),
+					__( '%site_title% - Your site title', 'all-in-one-seo-pack' ),
+					__( '%site_description% - Your site description', 'all-in-one-seo-pack' ),
 					__( '%post_title% - The original title of the page', 'all-in-one-seo-pack' )
 				);
 				$pt_obj_taxes = get_object_taxonomies( $v1_pt, 'objects' );
