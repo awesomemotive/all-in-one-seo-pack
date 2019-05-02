@@ -33,6 +33,7 @@
 	outline: none;
 	color: #888;
 	font-family: sans-serif;
+	line-height: 1.4em;
 }
 
 .aioseop_help_text_link span {
@@ -123,6 +124,10 @@ div.aioseop_tip_icon:before {
 	height: 15px;
 	padding-top: 1px;
 	position: relative;
+}
+
+.aioseop_meta_box_help span {
+	vertical-align: middle;
 }
 
 .aioseop_tabs .aioseop_meta_box_help,
