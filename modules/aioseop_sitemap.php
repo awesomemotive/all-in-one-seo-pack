@@ -4259,7 +4259,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				),
 			);
 			$ex_args['fields']         = 'ids';
-			$ex_args['posts_per_page'] = - 1;
+			$ex_args['posts_per_page'] = $this->max_posts;
 
 			// Exclude (method) query.
 			$q_exclude                 = new WP_Query( $ex_args );
