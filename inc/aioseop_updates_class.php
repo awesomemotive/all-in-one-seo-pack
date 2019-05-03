@@ -125,6 +125,7 @@ class AIOSEOP_Updates {
 			version_compare( $old_version, '3.0', '<' )
 		) {
 			$this->bad_bots_remove_exabot_201902();
+			$this->sitemap_excl_terms_201905();
 		}
 	}
 
@@ -209,7 +210,7 @@ class AIOSEOP_Updates {
 	 * Removes semrush from bad bot blocker.
 	 *
 	 * @since 2.9
-	 * @global @aiosp, @aioseop_options
+	 * @global $aiosp, $aioseop_options
 	 */
 	function bad_bots_remove_semrush_201810() {
 		global $aiosp, $aioseop_options;
@@ -233,7 +234,7 @@ class AIOSEOP_Updates {
 	 * Removes Exabot from bad bot blocker to allow Alexabot. (#2105)
 	 *
 	 * @since 3.0
-	 * @global @aiosp, @aioseop_options
+	 * @global $aiosp, $aioseop_options
 	 */
 	function bad_bots_remove_exabot_201902() {
 		global $aiosp, $aioseop_options;
@@ -248,6 +249,26 @@ class AIOSEOP_Updates {
 			);
 			$aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] = $list;
 			update_option( 'aioseop_options', $aioseop_options );
+			$aiosp->update_class_option( $aioseop_options );
+		}
+	}
+
+	/**
+	 * Converts excl_categories to excl_terms
+	 *
+	 * @since 3.0
+	 * @global $aiosp, $aioseop_options
+	 */
+	function sitemap_excl_terms_201905() {
+		global $aiosp, $aioseop_options;
+		$aioseop_options = aioseop_get_options();
+		$options         = $aioseop_options['modules']['aiosp_sitemap_options'];
+
+		if ( ! empty( $options['aiosp_sitemap_excl_categories'] ) ) {
+			$options['aiosp_sitemap_excl_terms'] = $options['aiosp_sitemap_excl_categories'];
+			unset( $options['aiosp_sitemap_excl_categories'] );
+			$aioseop_options['modules']['aiosp_sitemap_options'] = $options;
+
 			$aiosp->update_class_option( $aioseop_options );
 		}
 	}

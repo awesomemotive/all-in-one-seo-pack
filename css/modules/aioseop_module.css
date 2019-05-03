@@ -894,6 +894,12 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
 	margin: 5px 5px 10px;
 }
 
+/*** Sitemap Exclude Items section ***/
+.selectize-control .aioseop-exclude-terms {
+	position: static;
+	width: 95%;
+}
+
 table.aioseop_table tr:nth-child(odd) {
 	background-color: #EEE;
 }

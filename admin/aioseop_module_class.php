@@ -851,12 +851,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
-		 * @param array $args
+		 * Gets the category titles.
 		 *
+		 * @since 3.0 Changed function name from `get_category_titles` to `get_term_titles`. (#240)
+		 * @since 3.0 Changed `get_categories()` to `get_terms()` to fetch all (custom) terms. (#240)
+		 *
+		 * @see WP_Term_Query::__constructor()
+		 * @link https://developer.wordpress.org/reference/classes/wp_term_query/__construct/
+		 *
+		 * @param array $args An array for arguments to query by. See WP_Term_Query::__constructor() for more info.
 		 * @return array
 		 */
-		function get_category_titles( $args = array() ) {
-			return $this->get_term_labels( get_categories( $args ) );
+		function get_term_titles( $args = array() ) {
+			return $this->get_term_labels( get_terms( $args ) );
 		}
 
 		/**

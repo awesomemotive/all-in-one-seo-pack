@@ -345,10 +345,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			);
 
 			$excl_options = array(
-				'excl_categories' => array(
-					'name'            => __( 'Excluded Categories', 'all-in-one-seo-pack' ),
-					'type'            => 'multicheckbox',
-					'initial_options' => '',
+				'excl_terms' => array(
+					'name'  => __( 'Excluded Terms', 'all-in-one-seo-pack' ),
+					'type'  => 'multiselect',
+					'class' => 'aioseop-exclude-terms',
 				),
 				'excl_pages'      => array(
 					'name' => __( 'Excluded Pages', 'all-in-one-seo-pack' ),
@@ -562,6 +562,72 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
+		 * Admin Enqueue Scripts
+		 *
+		 * Hook function to enqueue scripts and localize data to scripts.
+		 *
+		 * @since 3.0
+		 *
+		 * @see 'admin_enqueue_scripts' hook
+		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+		 *
+		 * @param string $hook_suffix The current admin page.
+		 */
+		public function admin_enqueue_scripts( $hook_suffix ) {
+			parent::admin_enqueue_scripts( $hook_suffix );
+			if ( $this->pagehook !== $hook_suffix ) {
+				return;
+			}
+
+			wp_enqueue_script(
+				'aioseop-selectize',
+				AIOSEOP_PLUGIN_URL . 'js/selectize/selectize.js',
+				array( 'jquery' ),
+				AIOSEOP_VERSION
+			);
+
+			wp_enqueue_script(
+				'aioseop-search-terms',
+				AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_sitemap.js',
+				array( 'jquery' ),
+				AIOSEOP_VERSION,
+				true
+			);
+		}
+
+		/**
+		 * Load styles for module.
+		 *
+		 * @since 3.0
+		 *
+		 * @see 'admin_enqueue_scripts' hook
+		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+		 *
+		 * @param string $hook_suffix The current admin page.
+		 */
+		public function admin_enqueue_styles( $hook_suffix ) {
+			parent::admin_enqueue_styles( $hook_suffix );
+			if ( $this->pagehook !== $hook_suffix ) {
+				return;
+			}
+
+			wp_enqueue_style(
+				'aioseop-selectize',
+				AIOSEOP_PLUGIN_URL . 'css/selectize/selectize.css',
+				false,
+				AIOSEOP_VERSION,
+				false
+			);
+			wp_enqueue_style(
+				'aioseop-selectize',
+				AIOSEOP_PLUGIN_URL . 'css/selectize/selectize.default.css',
+				false,
+				AIOSEOP_VERSION,
+				false
+			);
+		}
+
+		/**
 		 * Initialize options, after constructor.
 		 */
 		public function load_sitemap_options() {
@@ -636,6 +702,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 		/**
 		 * Add post type details for settings once post types have been registered.
+		 *
+		 * @todo This function is being used to set up option values. This could possibly be refactored to something better suited.
+		 *
+		 * @since 3.0 Add custom taxonomy support for Excluding Terms setting. (#240)
 		 */
 		public function add_post_types() {
 			$post_type_titles = $this->get_post_type_titles( array( 'public' => true ) );
@@ -643,11 +713,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( isset( $post_type_titles['attachment'] ) ) {
 				$post_type_titles['attachment'] = __( 'Media / Attachments', 'all-in-one-seo-pack' );
 			}
-			$this->default_options['posttypes']['initial_options']       = array_merge( array( 'all' => __( 'All Post Types', 'all-in-one-seo-pack' ) ), $post_type_titles );
-			$this->default_options['taxonomies']['initial_options']      = array_merge( array( 'all' => __( 'All Taxonomies', 'all-in-one-seo-pack' ) ), $taxonomy_titles );
-			$this->default_options['posttypes']['default']               = array_keys( $this->default_options['posttypes']['initial_options'] );
-			$this->default_options['taxonomies']['default']              = array_keys( $this->default_options['taxonomies']['initial_options'] );
-			$this->default_options['excl_categories']['initial_options'] = $this->get_category_titles();
+			$this->default_options['posttypes']['initial_options']  = array_merge( array( 'all' => __( 'All Post Types', 'all-in-one-seo-pack' ) ), $post_type_titles );
+			$this->default_options['taxonomies']['initial_options'] = array_merge( array( 'all' => __( 'All Taxonomies', 'all-in-one-seo-pack' ) ), $taxonomy_titles );
+			$this->default_options['posttypes']['default']          = array_keys( $this->default_options['posttypes']['initial_options'] );
+			$this->default_options['taxonomies']['default']         = array_keys( $this->default_options['taxonomies']['initial_options'] );
+
+			$args_terms        = array(
+				'taxonomy' => $this->options['aiosp_sitemap_taxonomies'],
+			);
+			$args_taxonomy_key = array_search( 'all', $args_terms['taxonomy'], true );
+			if ( false !== $args_taxonomy_key ) {
+				unset( $args_terms['taxonomy'][ $args_taxonomy_key ] );
+			}
+
+			$this->default_options['excl_terms']['initial_options'] = $this->get_term_titles( $args_terms );
 
 			$post_name = __( ' Post Type', 'all-in-one-seo-pack' );
 			$tax_name  = __( ' Taxonomy', 'all-in-one-seo-pack' );
@@ -3869,8 +3948,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		public function get_tax_args( $taxonomy, $page = 0 ) {
 			$args = array();
-			if ( $this->option_isset( 'excl_categories' ) ) {
-				$args['exclude'] = $this->options[ $this->prefix . 'excl_categories' ];
+			if ( $this->option_isset( 'excl_terms' ) ) {
+				$args['exclude'] = $this->options[ $this->prefix . 'excl_terms' ];
 			}
 			if ( ! empty( $this->options[ "{$this->prefix}indexes" ] ) ) {
 				$args['number'] = $this->max_posts;
@@ -3891,9 +3970,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return mixed
 		 */
 		public function set_post_args( $args ) {
-			if ( $this->option_isset( 'excl_categories' ) ) {
+			if ( $this->option_isset( 'excl_terms' ) ) {
 				$cats = array();
-				foreach ( $this->options[ $this->prefix . 'excl_categories' ] as $c ) {
+				foreach ( $this->options[ $this->prefix . 'excl_terms' ] as $c ) {
 					$cats[] = - $c;
 				}
 				$args['category'] = implode( ',', $cats );
