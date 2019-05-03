@@ -718,8 +718,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$this->default_options['posttypes']['default']          = array_keys( $this->default_options['posttypes']['initial_options'] );
 			$this->default_options['taxonomies']['default']         = array_keys( $this->default_options['taxonomies']['initial_options'] );
 
+			$taxonomies = array();
+			if ( is_array( $this->options['aiosp_sitemap_taxonomies'] ) ) {
+				$taxonomies = $this->options['aiosp_sitemap_taxonomies'];
+			} elseif ( ! empty( $this->options['aiosp_sitemap_taxonomies'] ) ) {
+				$taxonomies = array( $this->options['aiosp_sitemap_taxonomies'] );
+			}
 			$args_terms        = array(
-				'taxonomy' => $this->options['aiosp_sitemap_taxonomies'],
+				'taxonomy'   => $taxonomies,
 			);
 			$args_taxonomy_key = array_search( 'all', $args_terms['taxonomy'], true );
 			if ( false !== $args_taxonomy_key ) {
