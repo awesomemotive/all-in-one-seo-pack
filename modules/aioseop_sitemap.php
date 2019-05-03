@@ -726,6 +726,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 			$args_terms        = array(
 				'taxonomy'   => $taxonomies,
+				'hide_empty' => false,
 			);
 			$args_taxonomy_key = array_search( 'all', $args_terms['taxonomy'], true );
 			if ( false !== $args_taxonomy_key ) {
