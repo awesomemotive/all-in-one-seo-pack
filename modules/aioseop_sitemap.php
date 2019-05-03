@@ -581,7 +581,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			wp_enqueue_script(
 				'aioseop-selectize',
-				AIOSEOP_PLUGIN_URL . 'js/selectize/selectize.js',
+				'https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js',
 				array( 'jquery' ),
 				AIOSEOP_VERSION
 			);
@@ -613,14 +613,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			wp_enqueue_style(
 				'aioseop-selectize',
-				AIOSEOP_PLUGIN_URL . 'css/selectize/selectize.css',
+				'https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css',
 				false,
 				AIOSEOP_VERSION,
 				false
 			);
 			wp_enqueue_style(
-				'aioseop-selectize',
-				AIOSEOP_PLUGIN_URL . 'css/selectize/selectize.default.css',
+				'aioseop-selectize-default',
+				'https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.default.min.css',
 				false,
 				AIOSEOP_VERSION,
 				false

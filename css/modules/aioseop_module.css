@@ -895,7 +895,7 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
 }
 
 /*** Sitemap Exclude Items section ***/
-.selectize-control .aioseop-exclude-terms {
+.selectize-control.aioseop-exclude-terms {
 	position: static;
 	width: 95%;
 }
