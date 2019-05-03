@@ -898,6 +898,7 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
 .selectize-control.aioseop-exclude-terms {
 	position: static;
 	width: 95%;
+	max-width: 600px;
 }
 
 table.aioseop_table tr:nth-child(odd) {
