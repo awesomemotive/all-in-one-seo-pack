@@ -1910,10 +1910,23 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( ! empty( $post_types ) ) {
 				$prio        = $this->get_default_priority( 'post' );
 				$freq        = $this->get_default_frequency( 'post' );
+				// Get post counts from posts type. Exclude if NoIndex is on.
 				$post_counts = $this->get_all_post_counts(
 					array(
 						'post_type'   => $post_types,
 						'post_status' => 'publish',
+						'meta_query'     => array(
+							'relation'   => 'OR',
+							array(
+								'key'     => '_aioseop_noindex',
+								'value'   => 'on',
+								'compare' => '!=',
+							),
+							array(
+								'key'     => '_aioseop_noindex',
+								'compare' => 'NOT EXISTS',
+							),
+						),
 					)
 				);
 
