@@ -74,8 +74,8 @@ if ( ! function_exists( 'aioseop_update_settings_check' ) ) {
 				unset( $aioseop_options['aiosp_archive_title_format'] );
 				$update_options = true;
 			}
-			if ( ! empty( $aioseop_options['aiosp_archive_title_format'] ) && ( $aioseop_options['aiosp_archive_title_format'] === '%date% | %blog_title%' ) ) {
-				$aioseop_options['aiosp_archive_title_format'] = '%archive_title% | %blog_title%';
+			if ( ! empty( $aioseop_options['aiosp_archive_title_format'] ) && ( $aioseop_options['aiosp_archive_title_format'] === '%date% | %site_title%' ) ) {
+				$aioseop_options['aiosp_archive_title_format'] = '%archive_title% | %site_title%';
 				$update_options                                = true;
 			}
 			if ( $update_options ) {

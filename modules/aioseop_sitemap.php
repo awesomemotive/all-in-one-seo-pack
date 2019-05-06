@@ -1856,10 +1856,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @since 2.3.6
 		 * @since 2.3.12.3 Refactored to use aioseop_home_url() for compatibility purposes.
+		 * @since 3.0 Changed to exclude noindex post types. #1382
 		 *
 		 * @return array
 		 */
 		public function get_sitemap_index_filenames() {
+			global $aioseop_options;
 			$files   = array();
 			$options = $this->options;
 			$prefix  = $this->get_filename();
@@ -1879,17 +1881,56 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$files[] = array( 'loc' => aioseop_home_url( '/' . $prefix . '_addl' . $suffix ) );
 
-			if ( ! empty( $options[ "{$this->prefix}posttypes" ] ) ) {
+			// Get post types selected, and NoIndex post types & Index posts.
+			$post_types = $options[ "{$this->prefix}posttypes" ];
+			if ( is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
+				foreach ( $post_types as $index => $post_type ) {
+					if ( in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'], true ) ) {
+						$args = array(
+							'post_type'   => $post_type,
+							'meta_query'     => array(
+								'relation'   => 'OR',
+								array(
+									'key'     => '_aioseop_noindex',
+									'value'   => 'off',
+									'compare' => '=',
+								),
+							),
+							'fields'         => 'ids',
+							'posts_per_page' => 1,
+						);
+						$q = new WP_Query( $args );
+						if ( 0 === $q->post_count ) {
+							unset( $post_types[ $index ] );
+						}
+					}
+				}
+			}
+
+			if ( ! empty( $post_types ) ) {
 				$prio        = $this->get_default_priority( 'post' );
 				$freq        = $this->get_default_frequency( 'post' );
+				// Get post counts from posts type. Exclude if NoIndex is on.
 				$post_counts = $this->get_all_post_counts(
 					array(
-						'post_type'   => $options[ "{$this->prefix}posttypes" ],
+						'post_type'   => $post_types,
 						'post_status' => 'publish',
+						'meta_query'     => array(
+							'relation'   => 'OR',
+							array(
+								'key'     => '_aioseop_noindex',
+								'value'   => 'on',
+								'compare' => '!=',
+							),
+							array(
+								'key'     => '_aioseop_noindex',
+								'compare' => 'NOT EXISTS',
+							),
+						),
 					)
 				);
 
-				foreach ( $options[ "{$this->prefix}posttypes" ] as $sm ) {
+				foreach ( $post_types as $sm ) {
 					if ( 0 === intval( $post_counts[ $sm ] ) ) {
 						continue;
 					}
@@ -4181,11 +4222,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		/**
 		 * Return post data using get_posts().
 		 *
-		 * @param $args
+		 * @since ?
+		 * @since 3.0 Changed to exclude noindex post types & posts. #1382
 		 *
+		 * @global array $aioseop_options
+		 *
+		 * @param array $args Query Arguments.
 		 * @return array|mixed
 		 */
 		public function get_all_post_type_data( $args ) {
+			global $aioseop_options;
 			$defaults = array(
 				'numberposts'   => $this->max_posts,
 				'offset'        => 0,
@@ -4195,10 +4241,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'include'       => array(),
 				'exclude'       => array(),
 				'post_type'     => 'any',
-				'meta_key'      => '',
-				'meta_value'    => '',
-				'meta_compare'  => '',
-				'meta_query'    => '',
+				'meta_query'    => array(),
 				'cache_results' => false,
 				'no_found_rows' => true,
 			);
@@ -4233,24 +4276,107 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 				}
 			}
-
-			$ex_args                   = $args;
-			$ex_args['meta_key']       = '_aioseop_sitemap_exclude';
-			$ex_args['meta_value']     = 'on';
-			$ex_args['meta_compare']   = '=';
-			$ex_args['fields']         = 'ids';
-			$ex_args['posts_per_page'] = - 1;
-			$q                         = new WP_Query( $ex_args );
 			if ( ! is_array( $args['exclude'] ) ) {
 				$args['exclude'] = explode( ',', $args['exclude'] );
 			}
-			if ( ! empty( $q->posts ) ) {
-				$args['exclude'] = array_merge( $args['exclude'], $q->posts );
+
+			// Exclude (method) query args.
+			$ex_args                   = $args;
+			$ex_args['meta_query']     = array(
+				'relation' => 'OR',
+
+				array(
+					'key'     => '_aioseop_sitemap_exclude',
+					'value'   => 'on',
+					'compare' => '=',
+				),
+				array(
+					'key'     => '_aioseop_noindex',
+					'value'   => 'on',
+					'compare' => '=',
+				),
+			);
+			$ex_args['fields']         = 'ids';
+			$ex_args['posts_per_page'] = $this->max_posts;
+
+			// Exclude (method) query.
+			$q_exclude                 = new WP_Query( $ex_args );
+			if ( ! empty( $q_exclude->posts ) ) {
+				$args['exclude'] = array_merge( $args['exclude'], $q_exclude->posts );
 			}
 			$this->excludes = array_merge( $args['exclude'], $exclude_slugs ); // Add excluded slugs and IDs to class var.
 
+			// Avoid if possible.
+			// Include (method) query args for including posts that may have been excluded;
+			// for example, exclude post type, but include certain posts.
+			// NOTE: Do NOT use this for basic including. It's best to avoid an additional query.
+			$args_include = array(
+				'post_type'  => array(),
+				'meta_query' => array(
+					'relation' => 'OR',
+					array(
+						'key'     => '_aioseop_noindex',
+						'value'   => 'off',
+						'compare' => '=',
+					),
+
+				),
+				'posts_per_page' => $this->max_posts,
+			);
+
+			// Exclude from main query, and check if a Query Include is needed.
+			// Check for NoIndex Post Types, BUT also check for Index on NoIdex Post Type.
+			if ( is_array( $aioseop_options['aiosp_cpostnoindex'] ) ) {
+				// Check if wp_query_args post_type is an array or string.
+				if ( is_array( $args['post_type'] ) ) {
+					foreach ( $args['post_type'] as $index => $post_type ) {
+						if ( in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'], true ) ) {
+							$args_include['post_type'][] = $post_type;
+							unset( $args['post_type'][ $index ] );
+						}
+					}
+				} else {
+					if ( in_array( $args['post_type'], $aioseop_options['aiosp_cpostnoindex'], true ) ) {
+						$args_include['post_type'][] = $args['post_type'];
+
+						$q_include = new WP_Query( $args_include );
+						// Return posts on single post type query, since no additional query is needed.
+						return $q_include->posts;
+					}
+				}
+			}
+
+			// Avoid if possible.
+			// Include (method) query.
+			// NOTE: Do NOT use this for basic including. It's best to avoid an additional query.
+			$posts_include = array();
+			if ( ! empty( $args_include['post_type'] ) ) {
+				$q_include = new WP_Query( $args_include );
+				// When posts exists from the include method, add to $posts_include to add to final query.
+				if ( ! empty( $q_include->posts ) ) {
+					$posts_include = $q_include->posts;
+				}
+			}
+
 			// TODO: consider using WP_Query instead of get_posts to improve efficiency.
+			/**
+			 * {$module_prefix}post_query
+			 *
+			 * Arguments to use on get_posts().
+			 *
+			 * @since ?
+			 *
+			 * @param array $args {
+			 *     Arguments/params for get_posts.
+			 *     @see get_posts()
+			 *     @link https://developer.wordpress.org/reference/functions/get_posts/
+			 * }
+			 *
+			 */
 			$posts = get_posts( apply_filters( $this->prefix . 'post_query', $args ) );
+
+			// TODO Possibly change to exclude with post__not_in.
+			// Hardcoded exclude concept.
 			if ( ! empty( $exclude_slugs ) ) {
 				foreach ( $posts as $k => $v ) {
 					// TODO Add `true` in 3rd argument with in_array(); which changes it to a strict comparison.
@@ -4259,6 +4385,30 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 				}
 			}
+			// Hardcoded include concept.
+			foreach ( $posts_include as $k1_post_id => $v1_post ) {
+				$posts[ $k1_post_id ] = $v1_post;
+			}
+
+			/**
+			 * {$module_prefix}post_filter
+			 *
+			 * Posts from finalized query for sitemap data.
+			 *
+			 * @since ?
+			 *
+			 * @param array $posts {
+			 *     @type WP_Post ${$post_id} {
+			 *         @see WP_Post object for more information.
+			 *         @link https://codex.wordpress.org/Class_Reference/WP_Post
+			 *     }
+			 * }
+			 * @param array $args {
+			 *     Arguments/params for get_posts.
+			 *     @see get_posts()
+			 *     @link https://developer.wordpress.org/reference/functions/get_posts/
+			 * }
+			 */
 			$posts = apply_filters( $this->prefix . 'post_filter', $posts, $args );
 
 			return $posts;

@@ -111,8 +111,12 @@ class aiosp_metaboxes {
 				?>
 				<div class="aioseop_metabox_text">
 					<form
-						action="https://semperfiwebdesign.us1.list-manage.com/subscribe/post?u=794674d3d54fdd912f961ef14&amp;id=af0a96d3d9"
-						method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
+						<?php if ( AIOSEOPPRO ) : ?>
+							action="https://semperplugins.us1.list-manage.com/subscribe/post?u=794674d3d54fdd912f961ef14&amp;id=b786958a9a"
+						<?php else : ?>
+							action="https://semperplugins.us1.list-manage.com/subscribe/post?u=794674d3d54fdd912f961ef14&amp;id=af0a96d3d9"
+						<?php endif; ?>
+							method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
 						target="_blank">
 						<h2><?php _e( 'Join our mailing list for tips, tricks, and WordPress secrets.', 'all-in-one-seo-pack' ); ?></h2>
 						<p>
