@@ -160,6 +160,9 @@ class AIOSEOP_Helper {
 						__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
+						__( '%current_year% - The current year', 'all-in-one-seo-pack' ) .
+					'</li>' .
+					'<li>' .
 						__( '%cf_fieldname% - Custom field name', 'all-in-one-seo-pack' ) .
 					'</li>' .
 				'</ul>',
@@ -190,6 +193,9 @@ class AIOSEOP_Helper {
 					'</li>' .
 					'<li>' .
 						__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) .
+					'</li>' .
+					'<li>' .
+						__( '%current_year% - The current year', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%post_date% - The date the page was published (localized)', 'all-in-one-seo-pack' ) .
@@ -239,6 +245,9 @@ class AIOSEOP_Helper {
 						__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
+						__( '%current_year% - The current year', 'all-in-one-seo-pack' ) .
+					'</li>' .
+					'<li>' .
 						__( '%post_date% - The date the post was published (localized)', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
@@ -266,6 +275,9 @@ class AIOSEOP_Helper {
 					'</li>' .
 					'<li>' .
 						__( '%category_description% - The description of the category', 'all-in-one-seo-pack' ) .
+					'</li>' .
+					'<li>' .
+						__( '%current_year% - The current year', 'all-in-one-seo-pack' ) .
 					'</li>' .
 				'</ul>',
 			'aiosp_archive_title_format'        =>
@@ -367,6 +379,9 @@ class AIOSEOP_Helper {
 					'</li>' .
 					'<li>' .
 						__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) .
+					'</li>' .
+					'<li>' .
+						__( '%current_year% - The current year', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%post_date% - The date the page/post was published (localized)', 'all-in-one-seo-pack' ) .
@@ -509,6 +524,7 @@ class AIOSEOP_Helper {
 					__( '%post_author_firstname% - This page\'s author\' first name (capitalized)', 'all-in-one-seo-pack' ),
 					__( '%post_author_lastname% - This page\'s author\' last name (capitalized)', 'all-in-one-seo-pack' ),
 					__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ),
+					__( '%current_year% - The current year', 'all-in-one-seo-pack' ),
 					__( '%post_date% - The date the page was published (localized)', 'all-in-one-seo-pack' ),
 					__( '%post_year% - The year the page was published (localized)', 'all-in-one-seo-pack' ),
 					__( '%post_month% - The month the page was published (localized)', 'all-in-one-seo-pack' )
