@@ -912,6 +912,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @since 2.3.6
 		 * @since 2.3.12.3 Refactored to use aioseop_home_url() for compatibility purposes.
+		 * @since 3.0 Change 'excl_terms' to include taxonomy slugs with term id. (Pro #240)
 		 *
 		 * @param $options
 		 *
@@ -958,6 +959,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				/* translators: Link to settings to disable "Discourage search engines from indexing this site". */
 				$options[ $this->prefix . 'link' ] .= '<p class="aioseop_error_notice">' . sprintf( __( 'Warning: your privacy settings are configured to ask search engines to not index your site; you can change this under %s for your blog.', 'all-in-one-seo-pack' ), $privacy_link );
 			}
+
+			$excl_terms = array();
+			foreach ( $options[ $this->prefix . 'excl_terms'] as $k1_taxonomy => $v1_tax_terms ) {
+				foreach ( $v1_tax_terms['terms'] as $v2_term ) {
+					$excl_terms[] = $k1_taxonomy . '-' . $v2_term;
+				}
+			}
+			$options[ $this->prefix . 'excl_terms'] = $excl_terms;
+
 			return $options;
 		}
 
@@ -967,6 +977,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * Handle 'all' option for post types / taxonomies, further sanitization of filename, rewrites on for multisite, setting up addl pages option.
 		 *
 		 * @todo This needs nonce support.
+		 *
+		 * @since ?
+		 * @since 3.0 Change saving 'excl_terms' to database with tax_query format for custom taxonomy support. (Pro #240)
 		 *
 		 * @param $options
 		 *
@@ -1035,6 +1048,30 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						'mod'  => $_POST[ $this->prefix . 'addl_mod' ],
 					);
 				}
+			}
+
+			if ( ! empty( $_POST[ $this->prefix . 'excl_terms' ] ) ) {
+				$raw_excl_terms = filter_input( INPUT_POST, $this->prefix . 'excl_terms',  FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+
+				// Parse taxonomy terms {$taxonomy_slug}-{$term_id}
+				$excl_terms = array();
+				foreach ( $raw_excl_terms as $v1_tax_term ) {
+					$term_id = explode( '-', $v1_tax_term );
+					$term_id = intval( end( $term_id ) );
+					$taxonomy_slug = sanitize_text_field( str_replace( '-' . $term_id, '', $v1_tax_term ) );
+
+					// Initialize taxonomy => terms array if not yet set.
+					if ( ! isset( $excl_terms[ $taxonomy_slug ] ) ) {
+						$excl_terms[ $taxonomy_slug ] = array(
+							'terms' => array(),
+						);
+					}
+
+					$excl_terms[ $taxonomy_slug ]['taxonomy'] = $taxonomy_slug;
+					$excl_terms[ $taxonomy_slug ]['terms'][]  = $term_id;
+				}
+
+				$options[ $this->prefix . 'excl_terms' ] = $excl_terms;
 			}
 
 			return $options;
@@ -2008,25 +2045,38 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( ! empty( $post_types ) ) {
 				$prio        = $this->get_default_priority( 'post' );
 				$freq        = $this->get_default_frequency( 'post' );
-				// Get post counts from posts type. Exclude if NoIndex is on.
-				$post_counts = $this->get_all_post_counts(
-					array(
-						'post_type'   => $post_types,
-						'post_status' => 'publish',
-						'meta_query'     => array(
-							'relation'   => 'OR',
-							array(
-								'key'     => '_aioseop_noindex',
-								'value'   => 'on',
-								'compare' => '!=',
-							),
-							array(
-								'key'     => '_aioseop_noindex',
-								'compare' => 'NOT EXISTS',
-							),
+
+				// Get post counts from posts type. Exclude if NoIndex is on, and does not contain excluded terms.
+				$args = array(
+					'post_type'   => $post_types,
+					'post_status' => 'publish',
+					'meta_query'     => array(
+						'relation'   => 'OR',
+						array(
+							'key'     => '_aioseop_noindex',
+							'value'   => 'on',
+							'compare' => '!=',
 						),
-					)
+						array(
+							'key'     => '_aioseop_noindex',
+							'compare' => 'NOT EXISTS',
+						),
+					),
 				);
+				if ( $this->option_isset( 'excl_terms' ) ) {
+					// Adds excluded terms to exclude from query.
+					foreach ( $this->options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
+						if ( ! isset( $args['tax_query'] ) ) {
+							$args['tax_query'] = array();
+						}
+						$args['tax_query'][] = array(
+							'taxonomy' => $k1_taxonomy,
+							'terms'    => $v1_tax_terms['terms'],
+							'operator' => 'NOT IN',
+						);
+					}
+				}
+				$post_counts = $this->get_all_post_counts( $args );
 
 				foreach ( $post_types as $sm ) {
 					if ( 0 === intval( $post_counts[ $sm ] ) ) {
@@ -3955,20 +4005,31 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
+		 * Set Taxonomy Args
+		 *
 		 * Return excluded categories for taxonomy queries.
 		 *
 		 * @since ?
 		 * @since 3.0.0 Added $taxonomy parameter.
+		 * @since 3.0 Change 'excl_terms' to tax_query format. (Pro #240)
 		 *
 		 * @param array $taxonomy The array of taxonomy slugs.
 		 * @param int $page The page number.
-		 *
 		 * @return array
 		 */
 		public function get_tax_args( $taxonomy, $page = 0 ) {
 			$args = array();
 			if ( $this->option_isset( 'excl_terms' ) ) {
-				$args['exclude'] = $this->options[ $this->prefix . 'excl_terms' ];
+				foreach ( $this->options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
+					if ( ! isset( $args['tax_query'] ) ) {
+						$args['tax_query'] = array();
+					}
+					$args['tax_query'][] = array(
+						'taxonomy' => $k1_taxonomy,
+						'terms'    => $v1_tax_terms['terms'],
+						'operator' => 'NOT IN',
+					);
+				}
 			}
 			if ( ! empty( $this->options[ "{$this->prefix}indexes" ] ) ) {
 				$args['number'] = $this->max_posts;
@@ -3982,19 +4043,28 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
+		 * Set Post Args
+		 *
 		 * Return excluded categories and pages for post queries.
 		 *
-		 * @param $args
+		 * @since ?
+		 * @since 3.0 Change 'excl_terms' to tax_query format. (Pro #240)
 		 *
+		 * @param $args
 		 * @return mixed
 		 */
 		public function set_post_args( $args ) {
 			if ( $this->option_isset( 'excl_terms' ) ) {
-				$cats = array();
-				foreach ( $this->options[ $this->prefix . 'excl_terms' ] as $c ) {
-					$cats[] = - $c;
+				foreach ( $this->options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
+					if ( ! isset( $args['tax_query'] ) ) {
+						$args['tax_query'] = array();
+					}
+					$args['tax_query'][] = array(
+						'taxonomy' => $k1_taxonomy,
+						'terms'    => $v1_tax_terms['terms'],
+						'operator' => 'NOT IN',
+					);
 				}
-				$args['category'] = implode( ',', $cats );
 			}
 			if ( $this->option_isset( 'excl_pages' ) ) {
 				$args['exclude'] = $this->options[ $this->prefix . 'excl_pages' ];
