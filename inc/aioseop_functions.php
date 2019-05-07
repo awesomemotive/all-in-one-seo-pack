@@ -555,7 +555,6 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 		$metatags = array(
 			'facebook' => array( 'name' => 'property', 'value' => 'content' ),
 			'twitter'  => array( 'name' => 'name', 'value' => 'value' ),
-			'google+'  => array( 'name' => 'itemprop', 'value' => 'content' ),
 		);
 		$metadata = array(
 			'facebook' => array(
@@ -566,11 +565,6 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 				'sitename'    => 'og:site_name',
 				'key'         => 'fb:admins',
 				'description' => 'og:description',
-			),
-			'google+'  => array(
-				'thumbnail'   => 'image',
-				'title'       => 'name',
-				'description' => 'description',
 			),
 			'twitter'  => array(
 				'card'        => 'twitter:card',
@@ -855,9 +849,6 @@ if ( ! function_exists( 'aioseop_add_contactmethods' ) ) {
 	 */
 	function aioseop_add_contactmethods( $contactmethods ) {
 		global $aioseop_options, $aioseop_modules;
-		if ( empty( $aioseop_options['aiosp_google_disable_profile'] ) ) {
-			$contactmethods['googleplus'] = __( 'Google+', 'all-in-one-seo-pack' );
-		}
 		if ( ! empty( $aioseop_modules ) && is_object( $aioseop_modules ) ) {
 			$m = $aioseop_modules->return_module( 'All_in_One_SEO_Pack_Opengraph' );
 			if ( ( $m !== false ) && is_object( $m ) ) {

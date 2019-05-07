@@ -293,16 +293,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default' => '',
 				'type'    => 'text',
 			),
-			'google_publisher'            => array(
-				'name'    => __( 'Google Plus Default Profile:', 'all-in-one-seo-pack' ),
-				'default' => '',
-				'type'    => 'text',
-			),
-			'google_disable_profile'      => array(
-				'name'    => __( 'Disable Google Plus Profile:', 'all-in-one-seo-pack' ),
-				'default' => 0,
-				'type'    => 'checkbox',
-			),
 			'google_sitelinks_search'     => array(
 				'name' => __( 'Display Sitelinks Search Box:', 'all-in-one-seo-pack' ),
 			),
@@ -314,37 +304,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'type'        => 'text',
 				'placeholder' => $blog_name,
 				'condshow'    => array( 'aiosp_google_set_site_name' => 'on' ),
-			),
-			'google_author_advanced'      => array(
-				'name'            => __( 'Advanced Authorship Options:', 'all-in-one-seo-pack' ),
-				'default'         => 0,
-				'type'            => 'radio',
-				'initial_options' => array(
-					'on' => __( 'Enabled', 'all-in-one-seo-pack' ),
-					0    => __( 'Disabled', 'all-in-one-seo-pack' ),
-				),
-				'label'           => null,
-			),
-			'google_author_location'      => array(
-				'name'     => __( 'Display Google Authorship:', 'all-in-one-seo-pack' ),
-				'default'  => array( 'all' ),
-				'type'     => 'multicheckbox',
-				'condshow' => array( 'aiosp_google_author_advanced' => 'on' ),
-			),
-			'google_enable_publisher'     => array(
-				'name'            => __( 'Display Publisher Meta on Front Page:', 'all-in-one-seo-pack' ),
-				'default'         => 'on',
-				'type'            => 'radio',
-				'initial_options' => array(
-					'on' => __( 'Enabled', 'all-in-one-seo-pack' ),
-					0    => __( 'Disabled', 'all-in-one-seo-pack' ),
-				),
-				'condshow'        => array( 'aiosp_google_author_advanced' => 'on' ),
-			),
-			'google_specify_publisher'    => array(
-				'name'     => __( 'Specify Publisher URL:', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'condshow' => array( 'aiosp_google_author_advanced' => 'on', 'aiosp_google_enable_publisher' => 'on' ),
 			),
 			// "google_connect"=>array( 'name' => __( 'Connect With Google Analytics', 'all-in-one-seo-pack' ), ),
 			'google_analytics_id'         => array(
@@ -749,15 +708,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'      => __( 'Google Settings', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/documentation/google-settings/',
 				'options'   => array(
-					'google_publisher',
-					'google_disable_profile',
 					'google_sitelinks_search',
 					'google_set_site_name',
 					'google_specify_site_name',
-					'google_author_advanced',
-					'google_author_location',
-					'google_enable_publisher',
-					'google_specify_publisher',
 					// "google_connect",
 					'google_analytics_id',
 					'ga_advanced_options',
@@ -2954,9 +2907,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( AIOSEOPPRO ) {
 			$this->default_options['taxactive']['initial_options'] = $tax_types;
 		}
-		$this->default_options['google_author_location']['initial_options'] = $post_types;
-		$this->default_options['google_author_location']['initial_options'] = array_merge( array( 'front' => __( 'Front Page', 'all-in-one-seo-pack' ) ), $post_types, array( 'all' => __( 'Everywhere Else', 'all-in-one-seo-pack' ) ) );
-		$this->default_options['google_author_location']['default']         = array_keys( $this->default_options['google_author_location']['initial_options'] );
 
 		foreach ( $all_post_types as $p => $pt ) {
 			$field = $p . '_title_format';
@@ -3773,16 +3723,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 			$meta_string .= $post_meta;
 		}
-		// Handle authorship.
-		$authorship = $this->get_google_authorship( $post );
-		$publisher  = apply_filters( 'aioseop_google_publisher', $authorship['publisher'] );
-		if ( ! empty( $publisher ) ) {
-			$meta_string = '<link rel="publisher" href="' . esc_url( $publisher ) . '" />' . "\n" . $meta_string;
-		}
-		$author = apply_filters( 'aioseop_google_author', $authorship['author'] );
-		if ( ! empty( $author ) ) {
-			$meta_string = '<link rel="author" href="' . esc_url( $author ) . '" />' . "\n" . $meta_string;
-		}
 
 		if ( is_front_page() && ! empty( $front_meta ) ) {
 			if ( isset( $meta_string ) ) {
@@ -4116,66 +4056,6 @@ EOF;
 EOF;
 
 		return apply_filters( 'aiosp_sitelinks_search_box', $search_box );
-	}
-
-	/**
-	 * @param $post
-	 *
-	 * @return array
-	 */
-	function get_google_authorship( $post ) {
-		global $aioseop_options;
-		$page = $this->get_page_number();
-		// Handle authorship.
-		$googleplus = $publisher = $author = '';
-
-		if ( ! empty( $post ) && isset( $post->post_author ) && empty( $aioseop_options['aiosp_google_disable_profile'] ) ) {
-			$googleplus = get_the_author_meta( 'googleplus', $post->post_author );
-		}
-
-		if ( empty( $googleplus ) && ! empty( $aioseop_options['aiosp_google_publisher'] ) ) {
-			$googleplus = $aioseop_options['aiosp_google_publisher'];
-		}
-
-		if ( is_front_page() && ( $page < 2 ) ) {
-			if ( ! empty( $aioseop_options['aiosp_google_publisher'] ) ) {
-				$publisher = $aioseop_options['aiosp_google_publisher'];
-			}
-
-			if ( ! empty( $aioseop_options['aiosp_google_author_advanced'] ) ) {
-				if ( empty( $aioseop_options['aiosp_google_enable_publisher'] ) ) {
-					$publisher = '';
-				} elseif ( ! empty( $aioseop_options['aiosp_google_specify_publisher'] ) ) {
-					$publisher = $aioseop_options['aiosp_google_specify_publisher'];
-				}
-			}
-		}
-		if ( is_singular() && ( ! empty( $googleplus ) ) ) {
-			$author = $googleplus;
-		} elseif ( ! empty( $aioseop_options['aiosp_google_publisher'] ) ) {
-			$author = $aioseop_options['aiosp_google_publisher'];
-		}
-
-		if ( ! empty( $aioseop_options['aiosp_google_author_advanced'] ) && isset( $aioseop_options['aiosp_google_author_location'] ) ) {
-			if ( empty( $aioseop_options['aiosp_google_author_location'] ) ) {
-				$aioseop_options['aiosp_google_author_location'] = array();
-			}
-			if ( is_front_page() && ! in_array( 'front', $aioseop_options['aiosp_google_author_location'] ) ) {
-				$author = '';
-			} else {
-				if ( in_array( 'all', $aioseop_options['aiosp_google_author_location'] ) ) {
-					if ( is_singular() && ! is_singular( $aioseop_options['aiosp_google_author_location'] ) ) {
-						$author = '';
-					}
-				} else {
-					if ( ! is_singular( $aioseop_options['aiosp_google_author_location'] ) ) {
-						$author = '';
-					}
-				}
-			}
-		}
-
-		return array( 'publisher' => $publisher, 'author' => $author );
 	}
 
 	/**
