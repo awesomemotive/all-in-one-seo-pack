@@ -1554,7 +1554,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			$tags = array(
 				'facebook' => array( 'name' => 'property', 'value' => 'content' ),
 				'twitter'  => array( 'name' => 'name', 'value' => 'content' ),
-				'google+'  => array( 'name' => 'itemprop', 'value' => 'content' ),
 			);
 
 			foreach ( $meta as $t => $data ) {
