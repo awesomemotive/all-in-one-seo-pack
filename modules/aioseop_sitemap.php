@@ -718,22 +718,34 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$this->default_options['posttypes']['default']          = array_keys( $this->default_options['posttypes']['initial_options'] );
 			$this->default_options['taxonomies']['default']         = array_keys( $this->default_options['taxonomies']['initial_options'] );
 
-			$taxonomies = array();
+			// Exclude Terms element items.
+			$this->default_options['excl_terms']['initial_options'] = array();
+			$taxonomies_active = array();
 			if ( is_array( $this->options['aiosp_sitemap_taxonomies'] ) ) {
-				$taxonomies = $this->options['aiosp_sitemap_taxonomies'];
+				$taxonomies_active = $this->options['aiosp_sitemap_taxonomies'];
 			} elseif ( ! empty( $this->options['aiosp_sitemap_taxonomies'] ) ) {
-				$taxonomies = array( $this->options['aiosp_sitemap_taxonomies'] );
-			}
-			$args_terms        = array(
-				'taxonomy'   => $taxonomies,
-				'hide_empty' => false,
-			);
-			$args_taxonomy_key = array_search( 'all', $args_terms['taxonomy'], true );
-			if ( false !== $args_taxonomy_key ) {
-				unset( $args_terms['taxonomy'][ $args_taxonomy_key ] );
+				$taxonomies_active = array( $this->options['aiosp_sitemap_taxonomies'] );
 			}
 
-			$this->default_options['excl_terms']['initial_options'] = $this->get_term_titles( $args_terms );
+			$args_taxonomy_key = array_search( 'all', $taxonomies_active, true );
+			if ( false !== $args_taxonomy_key ) {
+				// Remove 'all' as an invalid post_type. Use registered post_types selected instead.
+				unset( $taxonomies_active[ $args_taxonomy_key ] );
+			}
+
+			$excl_terms_init_opts = array();
+			foreach ( $taxonomies_active as $v1_taxonomy ) {
+				$args_terms        = array(
+					'taxonomy'   => $v1_taxonomy,
+					'hide_empty' => false,
+				);
+
+				$taxonomy_terms_tmp = $this->get_term_titles( $args_terms );
+				foreach ( $taxonomy_terms_tmp as $k2_id => $v2_term ) {
+					$excl_terms_init_opts[ $v1_taxonomy . '-' . $k2_id ] = $v2_term . ' (' . $v1_taxonomy . ')';
+				}
+			}
+			$this->default_options['excl_terms']['initial_options'] = $excl_terms_init_opts;
 
 			$post_name = __( ' Post Type', 'all-in-one-seo-pack' );
 			$tax_name  = __( ' Taxonomy', 'all-in-one-seo-pack' );
