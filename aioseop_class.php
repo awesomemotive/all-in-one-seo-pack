@@ -240,7 +240,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'paged_format'                => array(
 				'name'     => __( 'Paged Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
-				'default'  => ' - Part %page%',
+				'default'  => __( 'Part %page%' ),
 				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'cpostactive'                 => array(
@@ -3662,9 +3662,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		// Logging - rewrite handler check for output buffering.
 		$this->check_rewrite_handler();
 		if ( AIOSEOPPRO ) {
-			echo "\n<!-- All in One SEO Pack Pro $this->version by Michael Torbert of Semper Fi Web Design";
+			echo "\n<!-- All in One SEO Pack Pro $this->version" .
+				/* translators: do not translate Michael Torbert nor Semper Fi Web Design */
+				__( 'by Michael Torbert of Semper Fi Web Design' );
 		} else {
-			echo "\n<!-- All in One SEO Pack $this->version by Michael Torbert of Semper Fi Web Design";
+			echo "\n<!-- All in One SEO Pack $this->version" .
+				/* translators: do not translate Michael Torbert nor Semper Fi Web Design */
+				__( 'by Michael Torbert of Semper Fi Web Design' );
 		}
 		if ( $this->ob_start_detected ) {
 			echo 'ob_start_detected ';

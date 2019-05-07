@@ -251,7 +251,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$this->prio     = array_merge( $arr_no, $prio );
 
 			$freq = array();
-			foreach ( array( 'always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never' ) as $f ) {
+			foreach ( array( __( 'always' ), __( 'hourly' ), __( 'daily' ), __( 'weekly' ), __( 'monthly' ), __( 'yearly' ), __( 'never' ) ) as $f ) {
 				$freq[ $f ] = $f;
 			}
 			$this->freq_sel = array_merge( $arr_no, $arr_sel, $freq );
