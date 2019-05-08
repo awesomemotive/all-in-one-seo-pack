@@ -961,12 +961,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			$excl_terms = array();
-			foreach ( $options[ $this->prefix . 'excl_terms'] as $k1_taxonomy => $v1_tax_terms ) {
+			foreach ( $options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
 				foreach ( $v1_tax_terms['terms'] as $v2_term ) {
 					$excl_terms[] = $k1_taxonomy . '-' . $v2_term;
 				}
 			}
-			$options[ $this->prefix . 'excl_terms'] = $excl_terms;
+			$options[ $this->prefix . 'excl_terms' ] = $excl_terms;
 
 			return $options;
 		}
@@ -1051,7 +1051,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			if ( ! empty( $_POST[ $this->prefix . 'excl_terms' ] ) ) {
-				$raw_excl_terms = filter_input( INPUT_POST, $this->prefix . 'excl_terms',  FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+				$raw_excl_terms = filter_input( INPUT_POST, $this->prefix . 'excl_terms', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 
 				// Parse taxonomy terms {$taxonomy_slug}-{$term_id}
 				$excl_terms = array();
