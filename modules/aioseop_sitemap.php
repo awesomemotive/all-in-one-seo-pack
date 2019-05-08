@@ -1681,7 +1681,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					$sitemap_data = $this->get_all_post_priority_data( $sitemap_type, 'publish', $page );
 				} elseif ( in_array( $sitemap_type, $taxonomies ) ) {
 					// TODO Add `true` in 3rd argument with in_array(); which changes it to a strict comparison.
-					$sitemap_data = $this->get_term_priority_data( get_terms( $this->get_tax_args( $sitemap_type, $page ) ) );
+					$sitemap_data = $this->get_term_priority_data( get_terms( $this->get_tax_args( (array) $sitemap_type, $page ) ) );
 				} else {
 					// TODO Add `true` in 3rd argument with in_array(); which changes it to a strict comparison.
 					if ( is_array( $this->extra_sitemaps ) && in_array( $sitemap_type, $this->extra_sitemaps ) ) {
@@ -2067,7 +2067,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					// Adds excluded terms to exclude from query.
 					foreach ( $this->options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
 						if ( ! isset( $args['tax_query'] ) ) {
-							$args['tax_query'] = array();
+							$args['tax_query'] = array(
+								'relation' => 'AND',
+							);
 						}
 						$args['tax_query'][] = array(
 							'taxonomy' => $k1_taxonomy,
@@ -2124,29 +2126,32 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			if ( ! empty( $options[ "{$this->prefix}taxonomies" ] ) ) {
-				foreach ( $options[ "{$this->prefix}taxonomies" ] as $sm ) {
-					$term_count = wp_count_terms( $sm, array( 'hide_empty' => true ) );
+				foreach ( $options[ "{$this->prefix}taxonomies" ] as $v1_taxonomy ) {
+					$tax_args           = $this->get_tax_args( array( $v1_taxonomy ) );
+					$tax_args['fields'] = 'count';
+
+					$term_count = get_terms( $tax_args );
 					if ( ! is_wp_error( $term_count ) && ( $term_count > 0 ) ) {
 						if ( ! empty( $this->options[ "{$this->prefix}indexes" ] ) ) {
 							if ( $term_count > $this->max_posts ) {
 								$count = 1;
 								for ( $tc = 0; $tc < $term_count; $tc += $this->max_posts ) {
 									$files[] = array(
-										'loc'        => aioseop_home_url( '/' . $prefix . '_' . $sm . '_' . ( $count ++ ) . $suffix ),
+										'loc'        => aioseop_home_url( '/' . $prefix . '_' . $v1_taxonomy . '_' . ( $count ++ ) . $suffix ),
 										'changefreq' => $this->get_default_frequency( 'taxonomies' ),
 										'priority'   => $this->get_default_priority( 'taxonomies' ),
 									);
 								}
 							} else {
 								$files[] = array(
-									'loc'        => aioseop_home_url( '/' . $prefix . '_' . $sm . $suffix ),
+									'loc'        => aioseop_home_url( '/' . $prefix . '_' . $v1_taxonomy . $suffix ),
 									'changefreq' => $this->get_default_frequency( 'taxonomies' ),
 									'priority'   => $this->get_default_priority( 'taxonomies' ),
 								);
 							}
 						} else {
 							$files[] = array(
-								'loc'        => aioseop_home_url( '/' . $prefix . '_' . $sm . $suffix ),
+								'loc'        => aioseop_home_url( '/' . $prefix . '_' . $v1_taxonomy . $suffix ),
 								'changefreq' => $this->get_default_frequency( 'taxonomies' ),
 								'priority'   => $this->get_default_priority( 'taxonomies' ),
 							);
@@ -4010,32 +4015,31 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * Return excluded categories for taxonomy queries.
 		 *
 		 * @since ?
-		 * @since 3.0.0 Added $taxonomy parameter.
-		 * @since 3.0 Change 'excl_terms' to tax_query format. (Pro #240)
+		 * @since 3.0.0 Added $taxonomies parameter.
+		 * @since 3.0 Change 'exclude' to support excluding custom taxonomy terms. (Pro #240)
 		 *
-		 * @param array $taxonomy The array of taxonomy slugs.
-		 * @param int $page The page number.
+		 * @param array $taxonomies The array of taxonomy slugs.
+		 * @param int   $page       The page number.
 		 * @return array
 		 */
-		public function get_tax_args( $taxonomy, $page = 0 ) {
+		public function get_tax_args( $taxonomies, $page = 0 ) {
 			$args = array();
-			if ( $this->option_isset( 'excl_terms' ) ) {
-				foreach ( $this->options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
-					if ( ! isset( $args['tax_query'] ) ) {
-						$args['tax_query'] = array();
-					}
-					$args['tax_query'][] = array(
-						'taxonomy' => $k1_taxonomy,
-						'terms'    => $v1_tax_terms['terms'],
-						'operator' => 'NOT IN',
-					);
-				}
-			}
+
 			if ( ! empty( $this->options[ "{$this->prefix}indexes" ] ) ) {
 				$args['number'] = $this->max_posts;
 				$args['offset'] = $page * $this->max_posts;
 			}
-			$args['taxonomy'] = $this->show_or_hide_taxonomy( $taxonomy );
+
+			$args['taxonomy'] = $this->show_or_hide_taxonomy( $taxonomies );
+
+			if ( $this->option_isset( 'excl_terms' ) ) {
+				$args['exclude'] = array();
+				foreach ( $taxonomies as $v1_taxonomy ) {
+					if ( isset( $this->options[ $this->prefix . 'excl_terms' ][ $v1_taxonomy ] ) ) {
+						$args['exclude'] = array_merge( $args['exclude'], $this->options[ $this->prefix . 'excl_terms' ][ $v1_taxonomy ]['terms'] );
+					}
+				}
+			}
 
 			$args = apply_filters( $this->prefix . 'tax_args', $args, $page, $this->options );
 
@@ -4057,7 +4061,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( $this->option_isset( 'excl_terms' ) ) {
 				foreach ( $this->options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
 					if ( ! isset( $args['tax_query'] ) ) {
-						$args['tax_query'] = array();
+						$args['tax_query'] = array(
+							'relation' => 'AND',
+						);
 					}
 					$args['tax_query'][] = array(
 						'taxonomy' => $k1_taxonomy,
