@@ -588,7 +588,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'sanitize' => 'default',
 			),
 			'home_meta_tags'              => array(
-				'name'     => __( 'Additional Blog Page Headers:', 'all-in-one-seo-pack' ),
+				'name'     => __( 'Additional Posts Page Headers:', 'all-in-one-seo-pack' ),
 				'type'     => 'textarea',
 				'default'  => '',
 				'sanitize' => 'default',
@@ -3511,7 +3511,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				</p>
 			</div>',
 				__( 'Warning: You\'re blocking access to search engines.', 'all-in-one-seo-pack' ),
-				sprintf( __( 'You can %1$sclick here%2$s to go to your reading settings and toggle your blog visibility.', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( admin_url( 'options-reading.php' ) ) ), '</a>' )
+				sprintf( __( 'You can %1$sclick here%2$s to go to your reading settings and toggle your site visibility.', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( admin_url( 'options-reading.php' ) ) ), '</a>' )
 			);
 
 		} elseif ( '1' == get_option( 'blog_public' ) && ! empty( $aioseop_visibility_notice_dismissed ) ) {
