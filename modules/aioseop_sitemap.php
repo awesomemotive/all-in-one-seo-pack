@@ -649,7 +649,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$this->default_options['taxonomies']['default']              = array_keys( $this->default_options['taxonomies']['initial_options'] );
 			$this->default_options['excl_categories']['initial_options'] = $this->get_category_titles();
 
-			// space removed from string to prevent translation mistakes
 			$post_name = ' ' . __( 'Post Type', 'all-in-one-seo-pack' );
 			$tax_name  = ' ' . __( 'Taxonomy', 'all-in-one-seo-pack' );
 
@@ -831,7 +830,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			/* translators: Link to documentation. */
 			$options[ $this->prefix . 'link' ]  = sprintf( __( 'Click here to %s.', 'all-in-one-seo-pack' ), '<a href="' . esc_url( $url ) . '" target="_blank">' . __( 'view your XML sitemap', 'all-in-one-seo-pack' ) . '</a>' );
-			// space removed from string to prevent translation mistakes
 			$options[ $this->prefix . 'link' ] .= ' ' . __( 'Your sitemap has been created with content and images.', 'all-in-one-seo-pack' );
 
 			if ( $options[ "{$this->prefix}rss_sitemap" ] ) {

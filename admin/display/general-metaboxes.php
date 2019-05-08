@@ -43,7 +43,7 @@ class aiosp_metaboxes {
 							<strong>
 								<?php
 								echo aiosp_common::get_upgrade_hyperlink( 'side', __( 'Pro Version', 'all-in-one-seo-pack' ), __( 'CLICK HERE', 'all-in-one-seo-pack' ), '_blank' );
-								// space removed from string to prevent translation mistakes
+								/* translators: after this string comes a list of exclusive features that are not included in the free version of the plugin */
 								echo ' ' . __( 'to upgrade to Pro Version and get:', 'all-in-one-seo-pack' );
 								?>
 								</strong>
