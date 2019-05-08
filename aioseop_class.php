@@ -240,7 +240,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'paged_format'                => array(
 				'name'     => __( 'Paged Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
-				'default'  => __( 'Part %page%' ),
+				'default'  => __( 'Part %page%', 'all-in-one-seo-pack' ),
 				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'cpostactive'                 => array(
@@ -3663,8 +3663,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$this->check_rewrite_handler();
 
 		echo "\n";
-		print
-            f( '<!-- %1$s %2$s %3$s Michael Torbert %4$s Semper Fi Web Design', AIOSEOP_PLUGIN_NAME, $this->version, __( 'by' ), __( 'of' ) );
+		printf( '<!-- %1$s %2$s %3$s Michael Torbert %4$s Semper Fi Web Design', AIOSEOP_PLUGIN_NAME, $this->version, __( 'by', 'all-in-one-seo-pack' ), __( 'of', 'all-in-one-seo-pack' ) );
 
 		if ( $this->ob_start_detected ) {
 			echo 'ob_start_detected ';
