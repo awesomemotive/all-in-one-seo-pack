@@ -265,8 +265,10 @@ class AIOSEOP_Updates {
 		$options         = $aioseop_options['modules']['aiosp_sitemap_options'];
 
 		if ( ! empty( $options['aiosp_sitemap_excl_categories'] ) ) {
-			$options['aiosp_sitemap_excl_terms'] = $options['aiosp_sitemap_excl_categories'];
+			$options['aiosp_sitemap_excl_terms']['category']['taxonomy'] = 'category';
+			$options['aiosp_sitemap_excl_terms']['category']['terms']    = $options['aiosp_sitemap_excl_categories'];
 			unset( $options['aiosp_sitemap_excl_categories'] );
+
 			$aioseop_options['modules']['aiosp_sitemap_options'] = $options;
 
 			$aiosp->update_class_option( $aioseop_options );
