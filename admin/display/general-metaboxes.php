@@ -187,7 +187,7 @@ class aiosp_metaboxes {
 
 		echo '</ul>';
 
-		echo __( '<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/new" />Click here</a> to file a feature request/bug report.', 'all-in-one-seo-pack' );
+		echo sprintf( __( '%1$sClick here%2$s to file a feature request/bug report.', 'all-in-one-seo-pack' ), '<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/new" />', '</a>' );
 
 	}
 

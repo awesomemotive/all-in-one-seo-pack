@@ -110,8 +110,8 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 		<table cellpadding="3">
 			<thead>
 			<tr>
-				<th width="50%"><?php echo __( 'URL', 'all-in-one-seo-pack' ); ?></th>
-				<th><?php echo __( 'Last Change', 'all-in-one-seo-pack' ); ?></th>
+				<th width="50%">URL</th>
+				<th>Last Change</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -152,11 +152,11 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 		<table cellpadding="3">
 			<thead>
 			<tr>
-				<th width="50%"><?php echo __( 'URL', 'all-in-one-seo-pack' ); ?></th>
+				<th width="50%">URL</th>
 				<?php
 				if ( aiosp_include_images() ) {
 					?>
-				<th><?php echo __( 'Images', 'all-in-one-seo-pack' ); ?></th>
+				<th>Images</th>
 					<?php
 				}
 				?>
@@ -165,15 +165,15 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 					?>
 								
 				<xsl:if test="$sitemapType='video'">
-					<th><?php echo __( 'Videos', 'all-in-one-seo-pack' ); ?></th>
-					<th><?php echo __( 'Video Thumbnails', 'all-in-one-seo-pack' ); ?></th>
+					<th>Videos</th>
+					<th>Video Thumbnails</th>
 				</xsl:if>
 					<?php
 				}
 				?>
-				<th><?php echo __( 'Priority', 'all-in-one-seo-pack' ); ?></th>
-				<th><?php echo __( 'Change Frequency', 'all-in-one-seo-pack' ); ?></th>
-				<th><?php echo __( 'Last Change', 'all-in-one-seo-pack' ); ?></th>
+				<th>Priority</th>
+				<th>Change Frequency</th>
+				<th>Last Change</th>
 			</tr>
 			</thead>
 			<tbody>
