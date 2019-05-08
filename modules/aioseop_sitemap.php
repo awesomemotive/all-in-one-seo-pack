@@ -649,8 +649,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$this->default_options['taxonomies']['default']              = array_keys( $this->default_options['taxonomies']['initial_options'] );
 			$this->default_options['excl_categories']['initial_options'] = $this->get_category_titles();
 
-			$post_name = __( ' Post Type', 'all-in-one-seo-pack' );
-			$tax_name  = __( ' Taxonomy', 'all-in-one-seo-pack' );
+			$post_name = sprintf( ' %1$s', __( 'Post Type', 'all-in-one-seo-pack' ) );
+			$tax_name  = sprintf( ' %1$s', __( 'Taxonomy', 'all-in-one-seo-pack' ) );
 
 			foreach ( $post_type_titles as $k => $v ) {
 				$key                                      = 'prio_post_' . $k;
@@ -830,7 +830,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			/* translators: Link to documentation. */
 			$options[ $this->prefix . 'link' ]  = sprintf( __( 'Click here to %s.', 'all-in-one-seo-pack' ), '<a href="' . esc_url( $url ) . '" target="_blank">' . __( 'view your XML sitemap', 'all-in-one-seo-pack' ) . '</a>' );
-			$options[ $this->prefix . 'link' ] .= __( ' Your sitemap has been created with content and images.', 'all-in-one-seo-pack' );
+			$options[ $this->prefix . 'link' ] .= sprintf( ' %1$s', __( 'Your sitemap has been created with content and images.', 'all-in-one-seo-pack' ) );
 
 			if ( $options[ "{$this->prefix}rss_sitemap" ] ) {
 				$url_rss = aioseop_home_url( '/' . $this->get_filename() . '.rss' );
