@@ -3661,15 +3661,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$description = '';
 		// Logging - rewrite handler check for output buffering.
 		$this->check_rewrite_handler();
-		if ( AIOSEOPPRO ) {
-			echo "\n<!-- All in One SEO Pack Pro $this->version" .
-				/* translators: do not translate Michael Torbert nor Semper Fi Web Design */
-				__( 'by Michael Torbert of Semper Fi Web Design' );
-		} else {
-			echo "\n<!-- All in One SEO Pack $this->version" .
-				/* translators: do not translate Michael Torbert nor Semper Fi Web Design */
-				__( 'by Michael Torbert of Semper Fi Web Design' );
-		}
+
+		echo "\n";
+		print
+            f( '<!-- %1$s %2$s %3$s Michael Torbert %4$s Semper Fi Web Design', AIOSEOP_PLUGIN_NAME, $this->version, __( 'by' ), __( 'of' ) );
+
 		if ( $this->ob_start_detected ) {
 			echo 'ob_start_detected ';
 		}

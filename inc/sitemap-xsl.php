@@ -93,7 +93,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 							<?php echo __( 'You can find more information about XML sitemaps at <a href="http://sitemaps.org">sitemaps.org</a>' ); ?>.</p>
 						<p><xsl:choose>
 								<xsl:when test="$fileType='Sitemap'">
-									<?php echo __( 'This sitemap contains' ); ?> <xsl:value-of select="count(sitemap:urlset/sitemap:url)"></xsl:value-of> <?php __( 'URLs' ); ?>.</xsl:when>
+									<?php echo __( 'This sitemap contains' ); ?> <xsl:value-of select="count(sitemap:urlset/sitemap:url)"></xsl:value-of> <?php echo __( 'URLs' ); ?>.</xsl:when>
 								<xsl:otherwise><?php echo __( 'This sitemap index contains' ); ?> <xsl:value-of select="count(sitemap:sitemapindex/sitemap:sitemap)"></xsl:value-of> <?php echo __( 'sitemaps' ); ?>.</xsl:otherwise>
 							</xsl:choose></p>
 					</div>
