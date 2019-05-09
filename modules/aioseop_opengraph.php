@@ -529,7 +529,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'name'       => __( 'Description', 'all-in-one-seo-pack' ),
 					'default'    => '',
 					'type'       => 'textarea',
-					'cols'       => 250,
+					'cols'       => 50,
 					'rows'       => 4,
 					'count'      => 1,
 					'count_desc' => $count_desc,
@@ -870,11 +870,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						$description = empty( $this->options['aiosp_opengraph_generate_descriptions'] )
 							? $aiosp->trim_excerpt_without_filters(
 								$aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_excerpt ) ),
-								1000
+								200
 							)
 							: $aiosp->trim_excerpt_without_filters(
 								$aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_content ) ),
-								1000
+								200
 							);
 					}
 
@@ -1145,10 +1145,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( empty( $description ) && $first_page && ! empty( $post ) && ! post_password_required( $post ) ) {
 
 					if ( ! empty( $post->post_content ) || ! empty( $post->post_excerpt ) ) {
-						$description = $aiosp->trim_excerpt_without_filters( $aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_excerpt ) ), 1000 );
+						$description = $aiosp->trim_excerpt_without_filters( $aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_excerpt ) ), 200 );
 
 						if ( ! empty( $this->options['aiosp_opengraph_generate_descriptions'] ) ) {
-							$description = $aiosp->trim_excerpt_without_filters( $aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_content ) ), 1000 );
+							$description = $aiosp->trim_excerpt_without_filters( $aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_content ) ), 200 );
 						}
 					}
 				}
@@ -1373,7 +1373,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( ! empty( $this->options['aiosp_opengraph_description_shortcodes'] ) ) {
 					$description = do_shortcode( $description );
 				}
-				$description = $aiosp->trim_excerpt_without_filters( $description, 1000 );
+				$description = $aiosp->trim_excerpt_without_filters( $description, 200 );
 			}
 
 			$title       = $this->apply_cf_fields( $title );
