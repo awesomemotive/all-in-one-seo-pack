@@ -259,10 +259,14 @@ class AIOSEOP_Updates {
 	 * @since 3.0
 	 * @global $aiosp, $aioseop_options
 	 */
-	function sitemap_excl_terms_201905() {
+	public function sitemap_excl_terms_201905() {
 		global $aiosp, $aioseop_options;
 		$aioseop_options = aioseop_get_options();
-		$options         = $aioseop_options['modules']['aiosp_sitemap_options'];
+		if ( ! isset( $aioseop_options['modules'] ) && ! isset( $aioseop_options['modules']['aiosp_sitemap_options'] ) ) {
+			return;
+		}
+
+		$options = $aioseop_options['modules']['aiosp_sitemap_options'];
 
 		if ( ! empty( $options['aiosp_sitemap_excl_categories'] ) ) {
 			$options['aiosp_sitemap_excl_terms']['category']['taxonomy'] = 'category';
