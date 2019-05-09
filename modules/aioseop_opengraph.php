@@ -298,7 +298,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @since 2.4.14
 		 */
 		public function init() {
-			$count_desc = __( ' characters. Open Graph allows up to a maximum of %1$s chars for the %2$s.', 'all-in-one-seo-pack' );
+			$count_desc = __( ' characters. We recommend a maximum of %1$s chars for the %2$s.', 'all-in-one-seo-pack' );
 			// Create default options
 			$this->default_options = array(
 				'scan_header'            => array(
@@ -335,6 +335,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'name'     => __( 'Home Title', 'all-in-one-seo-pack' ),
 					'default'  => '',
 					'type'     => 'text',
+					'class'    => 'aioseop_count_chars',
+					'count'    => true,
+					'count_desc' => $count_desc,
+					'size'     => 95,
 					'condshow' => array(
 						'aiosp_opengraph_setmeta' => array(
 							'lhs' => 'aiosp_opengraph_setmeta',
@@ -347,6 +351,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'name'     => __( 'Home Description', 'all-in-one-seo-pack' ),
 					'default'  => '',
 					'type'     => 'textarea',
+					'class'    => 'aioseop_count_chars',
+					'count'    => true,
+					'count_desc' => $count_desc,
+					'size'     => 200,
 					'condshow' => array(
 						'aiosp_opengraph_setmeta' => array(
 							'lhs' => 'aiosp_opengraph_setmeta',
@@ -1827,6 +1835,18 @@ END;
 				array(),
 				AIOSEOP_VERSION
 			);
+
+			wp_enqueue_script(
+				'aioseop-post-edit-script',
+				AIOSEOP_PLUGIN_URL . 'js/count-chars.js',
+				array(),
+				AIOSEOP_VERSION
+			);
+
+			$localize_post_edit = array(
+				'aiosp_title_extra' => 0,
+			);
+			wp_localize_script( 'aioseop-post-edit-script', 'aioseop_count_chars', $localize_post_edit );
 
 			// Dev note: If certain JS files need to be restricted to select screens, then follow concept
 			// used in `All_in_One_SEO_Pack::admin_enqueue_scripts()` (v2.9.1); which uses the `$hook_suffix`
