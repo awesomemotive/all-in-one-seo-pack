@@ -1094,8 +1094,8 @@ if ( ! function_exists( 'aioseop_formatted_date' ) ) {
 if ( ! function_exists( 'aioseop_get_menu_icon' ) ) {
 
 	function aioseop_get_menu_icon() {
-		$svg = '<svg version="1.1" id="Layer_1_xA0_Image_1_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-	    x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+		$svg = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+	   width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
     <g>
 	    <g>
 		    <path fill="#a0a5aa" d="M6.6356587,16.0348835c-0.0206718,0-0.0413432,0-0.0620155,0
