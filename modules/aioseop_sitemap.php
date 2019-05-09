@@ -3414,7 +3414,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						$timestamp      = mysql2date( 'U', $post->post_modified_gmt );
 						$pr_info['rss'] = array(
 							'title'       => $title,
-							'description' => $this->get_the_excerpt( $post ),
+							'description' => get_the_excerpt( $post ),
 							'pubDate'     => date( 'r', $timestamp ),
 							'timestamp  ' => $timestamp,
 							'post_type'   => $post->post_type,
@@ -3431,31 +3431,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			return $prio;
-		}
-
-		/**
-		 * Return the excerpt of the given post.
-		 *
-		 * @param WP_Post $post The post object.
-		 *
-		 * @return string
-		 */
-		private function get_the_excerpt( $post ) {
-			global $wp_version;
-			if ( has_excerpt( $post->ID ) ) {
-				if ( version_compare( $wp_version, '4.5.0', '>=' ) ) {
-					return get_the_excerpt( $post );
-				}
-
-				$text = strip_shortcodes( $post->post_content );
-				$text = apply_filters( 'the_content', $text );
-				$text = str_replace( ']]>', ']]&gt;', $text );
-
-				$excerpt_length = apply_filters( 'excerpt_length', 55 );
-				$excerpt_more   = apply_filters( 'excerpt_more', '[&hellip;]' );
-				return wp_trim_words( $text, $excerpt_length, $excerpt_more );
-			}
-			return '';
 		}
 
 		/**
