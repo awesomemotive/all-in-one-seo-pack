@@ -60,14 +60,14 @@ function aioseop_notice_blog_visibility() {
 		'action_options' => array(
 			array(
 				'time'    => 0,
-				'text'    => __( 'Settings > Reading', 'all-in-one-seo-pack' ),
+				'text'    => __( 'Update Reading Settings', 'all-in-one-seo-pack' ),
 				'link'    => admin_url( 'options-reading.php' ),
 				'dismiss' => false,
 				'class'   => 'button-primary',
 			),
 			array(
 				'time'    => 604800,
-				'text'    => __( 'Remind me later.', 'all-in-one-seo-pack' ),
+				'text'    => __( 'Remind me later', 'all-in-one-seo-pack' ),
 				'link'    => '',
 				'dismiss' => false,
 				'class'   => 'button-secondary',

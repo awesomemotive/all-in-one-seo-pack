@@ -52,7 +52,7 @@ function aioseop_notice_sitemap_indexes() {
 		'action_options' => array(
 			array(
 				'time'    => 0,
-				'text'    => __( 'XML Sitemap', 'all-in-one-seo-pack' ),
+				'text'    => __( 'Update Sitemap Settings', 'all-in-one-seo-pack' ),
 				'link'    => esc_url( get_admin_url( null, 'admin.php?page=' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_sitemap.php' ) ),
 				'dismiss' => false,
 				'class'   => 'button-primary',
