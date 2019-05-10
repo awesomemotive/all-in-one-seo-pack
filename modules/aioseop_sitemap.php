@@ -890,6 +890,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @since 2.3.6
 		 * @since 2.3.12.3 Refactored to use aioseop_home_url() for compatibility purposes.
 		 * @since 3.0 Change 'excl_terms' to include taxonomy slugs with term id. (Pro #240)
+		 * @since 3.0 Remove WP < 3.5 old Privacy Settings link
 		 *
 		 * @param $options
 		 *
