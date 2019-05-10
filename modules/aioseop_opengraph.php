@@ -332,14 +332,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'type'    => 'text',
 				),
 				'hometitle'              => array(
-					'name'     => __( 'Home Title', 'all-in-one-seo-pack' ),
-					'default'  => '',
-					'type'     => 'text',
-					'class'    => 'aioseop_count_chars',
-					'count'    => true,
+					'name'       => __( 'Home Title', 'all-in-one-seo-pack' ),
+					'default'    => '',
+					'type'       => 'text',
+					'class'      => 'aioseop_count_chars',
+					'count'      => true,
 					'count_desc' => $count_desc,
-					'size'     => 95,
-					'condshow' => array(
+					'size'       => 95,
+					'condshow'   => array(
 						'aiosp_opengraph_setmeta' => array(
 							'lhs' => 'aiosp_opengraph_setmeta',
 							'op'  => '!=',
@@ -348,14 +348,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					),
 				),
 				'description'            => array(
-					'name'     => __( 'Home Description', 'all-in-one-seo-pack' ),
-					'default'  => '',
-					'type'     => 'textarea',
-					'class'    => 'aioseop_count_chars',
-					'count'    => true,
+					'name'       => __( 'Home Description', 'all-in-one-seo-pack' ),
+					'default'    => '',
+					'type'       => 'textarea',
+					'class'      => 'aioseop_count_chars',
+					'count'      => true,
 					'count_desc' => $count_desc,
-					'size'     => 200,
-					'condshow' => array(
+					'size'       => 200,
+					'condshow'   => array(
 						'aiosp_opengraph_setmeta' => array(
 							'lhs' => 'aiosp_opengraph_setmeta',
 							'op'  => '!=',
