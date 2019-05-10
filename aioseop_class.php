@@ -4714,10 +4714,11 @@ EOF;
 		}
 
 		add_menu_page(
-			$menu_name, $menu_name, apply_filters( 'manage_aiosp', 'aiosp_manage_seo' ), $file, array(
-				$this,
-				'display_settings_page',
-			),
+			$menu_name,
+			$menu_name,
+			apply_filters( 'manage_aiosp', 'aiosp_manage_seo' ),
+			$file,
+			array( $this, 'display_settings_page' ),
 			aioseop_get_menu_icon()
 		);
 
