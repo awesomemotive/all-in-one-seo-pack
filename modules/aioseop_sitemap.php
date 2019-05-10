@@ -903,8 +903,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( is_multisite() ) {
 				$options[ $this->prefix . 'rewrite' ] = 'On';
 			}
-			if ( isset( $options[ $this->prefix . 'max_posts' ] ) && ( ( $options[ $this->prefix . 'max_posts' ] <= 0 ) || ( $options[ $this->prefix . 'max_posts' ] >= 1000 ) ) ) {
-				$options[ $this->prefix . 'max_posts' ] = 1000;
+			if ( isset( $options[ $this->prefix . 'max_posts' ] ) && ( ( $options[ $this->prefix . 'max_posts' ] <= 0 ) || ( $options[ $this->prefix . 'max_posts' ] >= 50000 ) ) ) {
+				$options[ $this->prefix . 'max_posts' ] = 50000;
 			}
 			$url = aioseop_home_url( '/' . $this->get_filename() . '.xml' );
 
