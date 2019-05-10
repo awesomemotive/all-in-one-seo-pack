@@ -63,7 +63,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @since ?
 		 * @var int
 		 */
-		public $max_posts = 50000;
+		public $max_posts = 1000;
 
 		/**
 		 * Priority
@@ -188,7 +188,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'max_posts'   => array(
 					'name'     => __( 'Maximum Posts Per Sitemap Page', 'all-in-one-seo-pack' ),
 					'type'     => 'text',
-					'default'  => 50000,
+					'default'  => 1000,
 					'condshow' => array(
 						"{$this->prefix}indexes" => 'on',
 						"{$this->prefix}indexes" => 'on',
@@ -614,7 +614,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// Load initial options / set defaults.
 			$this->update_options();
 			if ( ! empty( $this->options[ "{$this->prefix}indexes" ] ) ) {
-				if ( $this->options[ "{$this->prefix}max_posts" ] && ( $this->options[ "{$this->prefix}max_posts" ] > 0 ) && ( $this->options[ "{$this->prefix}max_posts" ] < 50000 ) ) {
+				if ( $this->options[ "{$this->prefix}max_posts" ] && ( $this->options[ "{$this->prefix}max_posts" ] > 0 ) && ( $this->options[ "{$this->prefix}max_posts" ] < 1000 ) ) {
 					$this->max_posts = $this->options[ "{$this->prefix}max_posts" ];
 				}
 			}
@@ -903,8 +903,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( is_multisite() ) {
 				$options[ $this->prefix . 'rewrite' ] = 'On';
 			}
-			if ( isset( $options[ $this->prefix . 'max_posts' ] ) && ( ( $options[ $this->prefix . 'max_posts' ] <= 0 ) || ( $options[ $this->prefix . 'max_posts' ] >= 50000 ) ) ) {
-				$options[ $this->prefix . 'max_posts' ] = 50000;
+			if ( isset( $options[ $this->prefix . 'max_posts' ] ) && ( ( $options[ $this->prefix . 'max_posts' ] <= 0 ) || ( $options[ $this->prefix . 'max_posts' ] >= 1000 ) ) ) {
+				$options[ $this->prefix . 'max_posts' ] = 1000;
 			}
 			$url = aioseop_home_url( '/' . $this->get_filename() . '.xml' );
 
@@ -1775,13 +1775,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			if ( ! empty( $this->options[ "{$this->prefix}indexes" ] ) ) {
-				if ( $this->options[ "{$this->prefix}max_posts" ] && ( $this->options[ "{$this->prefix}max_posts" ] > 0 ) && ( $this->options[ "{$this->prefix}max_posts" ] < 50000 ) ) {
+				if ( $this->options[ "{$this->prefix}max_posts" ] && ( $this->options[ "{$this->prefix}max_posts" ] > 0 ) && ( $this->options[ "{$this->prefix}max_posts" ] < 1000 ) ) {
 					$this->max_posts = $this->options[ "{$this->prefix}max_posts" ];
 				} else {
-					$this->max_posts = 50000;
+					$this->max_posts = 1000;
 				}
 			} else {
-				$this->max_posts = 50000;
+				$this->max_posts = 1000;
 			}
 			if ( ! $this->options[ "{$this->prefix}rewrite" ] ) {
 				if ( $this->options[ "{$this->prefix}indexes" ] ) {
@@ -2530,7 +2530,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return;
 			}
 
-			$max_items = 50000;
+			$max_items = 1000;
 			if ( ! is_array( $urls ) ) {
 				return null;
 			}
@@ -2647,7 +2647,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return null
 		 */
 		public function output_sitemap_index( $urls, $comment = '' ) {
-			$max_items = 50000;
+			$max_items = 1000;
 			if ( ! is_array( $urls ) ) {
 				return null;
 			}
@@ -4022,7 +4022,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		public function get_date_archive_prio_data() {
 			$args  = array(
-				'numberposts' => 50000,
+				'numberposts' => 1000,
 				'post_type'   => 'post',
 			);
 			$args  = $this->set_post_args( $args );
@@ -4038,7 +4038,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		public function get_author_prio_data() {
 			$args  = array(
-				'numberposts' => 50000,
+				'numberposts' => 1000,
 				'post_type'   => 'post',
 			);
 			$args  = $this->set_post_args( $args );
