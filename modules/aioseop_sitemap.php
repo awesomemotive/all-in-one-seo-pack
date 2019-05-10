@@ -63,7 +63,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @since ?
 		 * @var int
 		 */
-		public $max_posts = 1000;
+		public $max_posts = 50000;
 
 		/**
 		 * Priority
