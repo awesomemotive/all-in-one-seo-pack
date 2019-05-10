@@ -1235,8 +1235,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 							do {
 								$ren_to = $ren_file . '._' . sprintf( '%03d', $count ) . '.old';
 								$count ++;
-							} while ( $this->file_exists( $ren_to ) && ( $count < 50000 ) );
-							if ( $count >= 50000 ) {
+							} while ( $this->file_exists( $ren_to ) && ( $count < 1000 ) );
+							if ( $count >= 1000 ) {
 								/* translators: Shows which sitemap files couldn't be renamed. */
 								$msg .= '<p>' . sprintf( __( "Couldn't rename file %s!", 'all-in-one-seo-pack' ), $ren_file ) . '</p>';
 							} else {
@@ -2530,7 +2530,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return;
 			}
 
-			$max_items = 5000;
+			$max_items = 50000;
 			if ( ! is_array( $urls ) ) {
 				return null;
 			}
