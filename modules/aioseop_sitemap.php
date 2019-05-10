@@ -3858,29 +3858,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return bool
 		 */
 		public function is_image_url_valid( $image ) {
-			global $wp_version;
-
 			// Bail if empty image.
 			if ( empty( $image ) ) {
 				return false;
 			}
 
-			global $wp_version;
-			if ( version_compare( $wp_version, '4.4', '<' ) ) {
-				// TODO Change to wp_parse_url().
-				$p_url = parse_url( $image );
-				$url   = $p_url['scheme'] . $p_url['host'] . $p_url['path'];
-			} elseif ( version_compare( $wp_version, '4.7', '<' ) ) {
-				// Compatability for older WP version that don't have 4.7 changes.
-				// @link https://core.trac.wordpress.org/changeset/38726
-				$p_url = wp_parse_url( $image );
-				$url   = $p_url['scheme'] . $p_url['host'] . $p_url['path'];
-			} else {
-				$component = PHP_URL_PATH;
-				$url       = wp_parse_url( $image, $component );
-			}
+			$component = PHP_URL_PATH;
+			$url       = wp_parse_url( $image, $component );
 
-			// make the url absolute, if its relative.
+			// Make the url absolute, if its relative.
 			$image   = aiosp_common::absolutize_url( $image );
 			// TODO Change to wp_parse_url().
 			$extn    = pathinfo( parse_url( $image, PHP_URL_PATH ), PATHINFO_EXTENSION );
