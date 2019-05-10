@@ -3445,8 +3445,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array
 		 */
 		private function get_images_from_term( $term ) {
-			global $wp_version;
-
 			if ( ! aiosp_include_images() ) {
 				return array();
 			}
@@ -3854,6 +3852,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @since 2.4.1
 		 * @since 2.4.3 Compatibility with Pre v4.7 wp_parse_url().
 		 * @since 2.11 Sitemap Optimization #2008 - Changed to a more appropriate name.
+		 * @since 3.0 remove checks for old WP versions
 		 *
 		 * @return bool
 		 */
