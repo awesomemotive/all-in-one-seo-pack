@@ -614,7 +614,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// Load initial options / set defaults.
 			$this->update_options();
 			if ( ! empty( $this->options[ "{$this->prefix}indexes" ] ) ) {
-				if ( $this->options[ "{$this->prefix}max_posts" ] && ( $this->options[ "{$this->prefix}max_posts" ] > 0 ) && ( $this->options[ "{$this->prefix}max_posts" ] < 1000 ) ) {
+				if ( $this->options[ "{$this->prefix}max_posts" ] && ( $this->options[ "{$this->prefix}max_posts" ] > 0 ) && ( $this->options[ "{$this->prefix}max_posts" ] < 50000 ) ) {
 					$this->max_posts = $this->options[ "{$this->prefix}max_posts" ];
 				}
 			}
@@ -1235,8 +1235,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 							do {
 								$ren_to = $ren_file . '._' . sprintf( '%03d', $count ) . '.old';
 								$count ++;
-							} while ( $this->file_exists( $ren_to ) && ( $count < 1000 ) );
-							if ( $count >= 1000 ) {
+							} while ( $this->file_exists( $ren_to ) && ( $count < 50000 ) );
+							if ( $count >= 50000 ) {
 								/* translators: Shows which sitemap files couldn't be renamed. */
 								$msg .= '<p>' . sprintf( __( "Couldn't rename file %s!", 'all-in-one-seo-pack' ), $ren_file ) . '</p>';
 							} else {
@@ -1775,13 +1775,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			if ( ! empty( $this->options[ "{$this->prefix}indexes" ] ) ) {
-				if ( $this->options[ "{$this->prefix}max_posts" ] && ( $this->options[ "{$this->prefix}max_posts" ] > 0 ) && ( $this->options[ "{$this->prefix}max_posts" ] < 1000 ) ) {
+				if ( $this->options[ "{$this->prefix}max_posts" ] && ( $this->options[ "{$this->prefix}max_posts" ] > 0 ) && ( $this->options[ "{$this->prefix}max_posts" ] < 50000 ) ) {
 					$this->max_posts = $this->options[ "{$this->prefix}max_posts" ];
 				} else {
-					$this->max_posts = 1000;
+					$this->max_posts = 50000;
 				}
 			} else {
-				$this->max_posts = 1000;
+				$this->max_posts = 50000;
 			}
 			if ( ! $this->options[ "{$this->prefix}rewrite" ] ) {
 				if ( $this->options[ "{$this->prefix}indexes" ] ) {
@@ -2530,7 +2530,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return;
 			}
 
-			$max_items = 1000;
+			$max_items = 5000;
 			if ( ! is_array( $urls ) ) {
 				return null;
 			}
@@ -2647,7 +2647,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return null
 		 */
 		public function output_sitemap_index( $urls, $comment = '' ) {
-			$max_items = 1000;
+			$max_items = 50000;
 			if ( ! is_array( $urls ) ) {
 				return null;
 			}
@@ -4022,7 +4022,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		public function get_date_archive_prio_data() {
 			$args  = array(
-				'numberposts' => 1000,
+				'numberposts' => 50000,
 				'post_type'   => 'post',
 			);
 			$args  = $this->set_post_args( $args );
@@ -4038,7 +4038,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		public function get_author_prio_data() {
 			$args  = array(
-				'numberposts' => 1000,
+				'numberposts' => 50000,
 				'post_type'   => 'post',
 			);
 			$args  = $this->set_post_args( $args );
