@@ -118,7 +118,6 @@ class AIOSEOP_Helper {
 			// General Settings.
 			'aiosp_can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation.  This will help to prevent duplicate content penalties by Google', 'all-in-one-seo-pack' ),
 			'aiosp_no_paged_canonical_links'    => __( 'Checking this option will set the Canonical URL for all paginated content to the first page.', 'all-in-one-seo-pack' ),
-			'aiosp_customize_canonical_links'   => __( 'Checking this option will allow you to customize Canonical URLs for specific posts.', 'all-in-one-seo-pack' ),
 			'aiosp_use_original_title'          => __( 'Use wp_title to get the title used by the theme; this is disabled by default. If you use this option, set your title formats appropriately, as your theme might try to do its own title SEO as well.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_markup'               => __( 'Check this to support Schema.org markup, i.e., itemprop on supported metadata.', 'all-in-one-seo-pack' ),
 			'aiosp_do_log'                      => __( 'Check this and All in One SEO Pack will create a log of important events (all-in-one-seo-pack.log) in its plugin directory which might help debugging. Make sure this directory is writable.', 'all-in-one-seo-pack' ),
@@ -539,7 +538,6 @@ class AIOSEOP_Helper {
 			// General Settings.
 			'aiosp_can'                         => 'https://semperplugins.com/documentation/general-settings/#canonical-urls',
 			'aiosp_no_paged_canonical_links'    => 'https://semperplugins.com/documentation/general-settings/#no-pagination-for-canonical-urls',
-			'aiosp_customize_canonical_links'   => 'https://semperplugins.com/documentation/general-settings/#enable-custom-canonical-urls',
 			'aiosp_use_original_title'          => 'https://semperplugins.com/documentation/general-settings/#use-original-title',
 			'aiosp_schema_markup'               => 'https://semperplugins.com/documentation/general-settings/#use-schema-markup',
 			'aiosp_do_log'                      => 'https://semperplugins.com/documentation/general-settings/#log-important-events',
