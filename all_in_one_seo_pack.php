@@ -45,6 +45,8 @@ if ( ! defined( 'AIOSEOP_VERSION' ) ) {
 	define( 'AIOSEOP_VERSION', '3.0-dev' );
 }
 
+$test = array (' blablabla',
+	'blablabla', );
 /*
  * DO NOT EDIT BELOW THIS LINE.
  */
