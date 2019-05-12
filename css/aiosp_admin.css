@@ -75,3 +75,12 @@ li#wp-admin-bar-aioseop-pro-upgrade a.ab-item {
 	color: #d54e21;
 	font-size: 105%;
 }
+
+label[for=aioseop_title]
+{
+	font-size: 1.3em;
+}
+
+#aioseop_title {
+	display: none;
+}

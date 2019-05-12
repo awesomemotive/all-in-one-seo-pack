@@ -849,9 +849,15 @@ if ( ! function_exists( 'aioseop_add_contactmethods' ) ) {
 	 */
 	function aioseop_add_contactmethods( $contactmethods ) {
 		global $aioseop_options, $aioseop_modules;
+
 		if ( ! empty( $aioseop_modules ) && is_object( $aioseop_modules ) ) {
 			$m = $aioseop_modules->return_module( 'All_in_One_SEO_Pack_Opengraph' );
 			if ( ( $m !== false ) && is_object( $m ) ) {
+
+				if ( $m->option_isset( 'twitter_creator' ) || $m->option_isset( 'facebook_author' ) ) {
+					$contactmethods['aioseop_title'] = __( 'All in One SEO Pack', 'all-in-one-seo-pack' );
+				}
+
 				if ( $m->option_isset( 'twitter_creator' ) ) {
 					$contactmethods['twitter'] = __( 'Twitter', 'all-in-one-seo-pack' );
 				}
@@ -860,7 +866,6 @@ if ( ! function_exists( 'aioseop_add_contactmethods' ) ) {
 				}
 			}
 		}
-
 		return $contactmethods;
 	}
 }
