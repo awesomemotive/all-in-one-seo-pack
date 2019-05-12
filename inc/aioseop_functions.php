@@ -855,7 +855,7 @@ if ( ! function_exists( 'aioseop_add_contactmethods' ) ) {
 			if ( ( $m !== false ) && is_object( $m ) ) {
 
 				if ( $m->option_isset( 'twitter_creator' ) || $m->option_isset( 'facebook_author' ) ) {
-					$contactmethods['aioseop_title'] = __( 'All in One SEO Pack', 'all-in-one-seo-pack' );
+					$contactmethods['aioseop_edit_profile_header'] = __( 'All in One SEO Pack', 'all-in-one-seo-pack' );
 				}
 
 				if ( $m->option_isset( 'twitter_creator' ) ) {

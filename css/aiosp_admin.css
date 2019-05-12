@@ -76,11 +76,11 @@ li#wp-admin-bar-aioseop-pro-upgrade a.ab-item {
 	font-size: 105%;
 }
 
-label[for=aioseop_title]
+label[for=aioseop_edit_profile_header]
 {
 	font-size: 1.3em;
 }
 
-#aioseop_title {
+#aioseop_edit_profile_header {
 	display: none;
 }
