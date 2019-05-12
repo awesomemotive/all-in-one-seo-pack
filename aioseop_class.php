@@ -7,7 +7,13 @@
  * @package All-in-One-SEO-Pack
  */
 
-require_once( AIOSEOP_PLUGIN_DIR . 'admin/aioseop_module_class.php' ); // Include the module base class.
+require_once(AIOSEOP_PLUGIN_DIR . 'admin/aioseop_module_class.php' ); // Include the module base class.
+
+function something($sdfsdf){//nothing
+//     nothing else
+
+
+}
 
 /**
  * Class All_in_One_SEO_Pack
