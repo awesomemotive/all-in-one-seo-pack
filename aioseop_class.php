@@ -2934,6 +2934,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 		}
 
+		if ( isset( $post_types['attachment'] ) ) {
+			$post_types['attachment'] = __( 'Media / Attachments', 'all-in-one-seo-pack' );
+		}
+		if ( isset( $all_post_types['attachment'] ) ) {
+			$all_post_types['attachment'] = __( 'Media / Attachments', 'all-in-one-seo-pack' );
+		}
+
 		$taxes     = get_taxonomies( '', 'objects' );
 		$tx        = array_keys( $taxes );
 		$remtax    = array( 'nav_menu', 'link_category', 'post_format' );

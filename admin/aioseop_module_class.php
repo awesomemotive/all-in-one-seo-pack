@@ -838,7 +838,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @return array
 		 */
 		function get_post_type_titles( $args = array() ) {
-			return $this->get_object_labels( get_post_types( $args, 'objects' ) );
+			$object_labels = $this->get_object_labels( get_post_types( $args, 'objects' ) );
+			if ( isset( $object_labels['attachment'] ) ) {
+				$object_labels['attachment'] = __( 'Media / Attachments', 'all-in-one-seo-pack' );
+			}
+			return $object_labels;
 		}
 
 		/**
