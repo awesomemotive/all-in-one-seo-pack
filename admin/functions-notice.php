@@ -59,7 +59,7 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 					'text'    => __( 'Upgrade', 'all-in-one-seo-pack' ),
 					'link'    => 'https://semperplugins.com/plugins/all-in-one-seo-pack-pro-version/?loc=woo',
 					'dismiss' => false,
-					'class'   => 'button-primary',
+					'class'   => 'button-primary button-orange',
 				),
 				array(
 					'time'    => 2592000, // 30 days.
