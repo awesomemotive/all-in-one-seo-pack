@@ -1496,6 +1496,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @param string $sitemap_type
 		 * @param bool   $dynamic
+		 *
+		 * @since 3.0 Removed $compressed in issue #534
 		 */
 		public function log_stats( $sitemap_type = 'static', $dynamic = true ) {
 			$time                 = timer_stop();
@@ -1775,6 +1777,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @param $filename
 		 * @param $contents
+		 *
+		 * @since 3.0 Removed $gzip in issue #534
 		 */
 		public function write_sitemaps( $filename, $contents, $extn = '.xml' ) {
 			$this->write_sitemap( $filename . $extn, $contents );
