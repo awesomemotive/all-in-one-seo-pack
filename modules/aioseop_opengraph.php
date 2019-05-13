@@ -1375,8 +1375,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( ! empty( $this->options['aiosp_opengraph_description_shortcodes'] ) ) {
 					$description = do_shortcode( $description );
 				}
-				// User input still needs to be trimmed since the OG:description has a maximum of 1.000 characters.
-				$description = $aiosp->trim_excerpt_without_filters( $description, 1000 );
 			}
 
 			$title       = $this->apply_cf_fields( $title );
