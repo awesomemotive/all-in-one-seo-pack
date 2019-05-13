@@ -152,6 +152,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					if ( isset( $extra_params['auto_generate_desc'] ) && $extra_params['auto_generate_desc'] ) {
 						// max 200, but respect full words.
 						if ( $this->strlen( $value ) > 200 ) {
+							$aioseop_class = new All_in_One_SEO_Pack();
+							$aioseop_class->filter_description( $value );
 							$pos = $this->strpos( $value, ' ', 200 );
 							$value = trim( $this->substr( $value, 0, $pos ) );
 						}
