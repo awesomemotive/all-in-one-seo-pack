@@ -147,30 +147,17 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				return $value;
 			}
 
-			switch ( $network_meta_tag ) {
-				case 'og:description':
-					if ( isset( $extra_params['auto_generate_desc'] ) && $extra_params['auto_generate_desc'] ) {
-						// max 200, but respect full words.
-						if ( $this->strlen( $value ) > 200 ) {
-							$aioseop_class = new All_in_One_SEO_Pack();
-							$aioseop_class->filter_description( $value );
-							$pos = $this->strpos( $value, ' ', 200 );
-							$value = trim( $this->substr( $value, 0, $pos ) );
-						}
-					}
-					break;
-				case 'twitter:description':
-					if ( isset( $extra_params['auto_generate_desc'] ) && $extra_params['auto_generate_desc'] ) {
-						// https://developer.twitter.com/en/docs/tweets/optimize-with-cards/overview/markup.html
-						$value = trim( $this->substr( $value, 0, 200 ) );
-					}
-					break;
-				case 'twitter:title':
-					if ( isset( $extra_params['auto_generate_title'] ) && $extra_params['auto_generate_title'] ) {
+			if ( isset( $extra_params['auto_generate_desc'] ) && $extra_params['auto_generate_desc'] ) {
+				switch ( $network_meta_tag ) {
+					case 'twitter:title':
 						// https://developer.twitter.com/en/docs/tweets/optimize-with-cards/overview/markup.html
 						$value = trim( $this->substr( $value, 0, 70 ) );
-					}
-					break;
+						break;
+					case 'og:description':
+					case 'twitter:description':
+						$value = trim( $this->substr( $value, 0, 200 ) );
+						break;
+				}
 			}
 			return $value;
 		}
