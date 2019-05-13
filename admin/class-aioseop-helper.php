@@ -709,7 +709,6 @@ class AIOSEOP_Helper {
 			'aiosp_sitemap_archive'         => __( 'Include Date Archives in your sitemap.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_author'          => __( 'Include Author Archives in your sitemap.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_images'          => __( 'Exclude Images in your sitemap.', 'all-in-one-seo-pack' ),
-			'aiosp_sitemap_gzipped'         => __( 'Create a compressed sitemap file in .xml.gz format.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_robots'          => __( 'Places a link to your Sitemap.xml into your virtual Robots.txt file.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_rewrite'         => __( 'Dynamically creates the XML sitemap instead of using a static file.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_addl_url'        => __( 'URL to the page. This field accepts relative URLs or absolute URLs with the protocol specified.', 'all-in-one-seo-pack' ),
@@ -771,7 +770,6 @@ class AIOSEOP_Helper {
 			'aiosp_sitemap_archive'         => 'https://semperplugins.com/documentation/xml-sitemaps-module/#include-archive-pages',
 			'aiosp_sitemap_author'          => 'https://semperplugins.com/documentation/xml-sitemaps-module/#include-archive-pages',
 			'aiosp_sitemap_images'          => 'https://semperplugins.com/documentation/xml-sitemaps-module/#exclude-images',
-			'aiosp_sitemap_gzipped'         => 'https://semperplugins.com/documentation/xml-sitemaps-module/#create-compressed-sitemap',
 			'aiosp_sitemap_robots'          => 'https://semperplugins.com/documentation/xml-sitemaps-module/#link-from-virtual-robots',
 			'aiosp_sitemap_rewrite'         => 'https://semperplugins.com/documentation/xml-sitemaps-module/#dynamically-generate-sitemap',
 
