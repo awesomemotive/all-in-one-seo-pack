@@ -1342,6 +1342,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 
 			if ( $type === 'article' && ! empty( $post ) && is_singular() ) {
 				if ( ! empty( $this->options['aiosp_opengraph_gen_tags'] ) ) {
+					$tag = '';
 					if ( ! empty( $this->options['aiosp_opengraph_gen_keywords'] ) ) {
 						$keywords = $aiosp->get_main_keywords();
 						$keywords = $this->apply_cf_fields( $keywords );
