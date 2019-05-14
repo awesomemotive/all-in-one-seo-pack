@@ -440,8 +440,6 @@ class AIOSEOP_Helper {
 
 			// Google Settings.
 			'aiosp_google_sitelinks_search'     => __( 'Add markup to display the Google Sitelinks Search Box next to your search results in Google.', 'all-in-one-seo-pack' ),
-			'aiosp_google_set_site_name'        => __( 'Add markup to tell Google the preferred name for your website.', 'all-in-one-seo-pack' ),
-			'aiosp_google_specify_site_name'    => __( 'Enter your site name.', 'all-in-one-seo-pack' ),
 			'aiosp_google_analytics_id'         => __( 'Enter your Google Analytics ID here to track visitor behavior on your site using Google Analytics.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_advanced_options'         => __( 'Check to use advanced Google Analytics options.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_domain'                   => __( 'Enter your domain name without the http:// to set your cookie domain.', 'all-in-one-seo-pack' ),
@@ -578,9 +576,6 @@ class AIOSEOP_Helper {
 
 			// Google Settings.
 			'aiosp_google_sitelinks_search'     => 'https://semperplugins.com/documentation/google-settings/#display-sitelinks-search-box',
-			'aiosp_google_set_site_name'        => 'https://semperplugins.com/documentation/google-settings/#set-preferred-site-name',
-			// Missing documentation link.
-			// 'aiosp_google_specify_site_name'    => 'https://semperplugins.com/documentation/google-settings/#set-preferred-site-name',
 			'aiosp_google_analytics_id'         => 'https://semperplugins.com/documentation/setting-up-google-analytics/',
 			'aiosp_ga_advanced_options'         => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/',
 			'aiosp_ga_domain'                   => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#tracking-domain',

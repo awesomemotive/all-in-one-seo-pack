@@ -291,15 +291,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'google_sitelinks_search'     => array(
 				'name' => __( 'Display Sitelinks Search Box:', 'all-in-one-seo-pack' ),
 			),
-			'google_set_site_name'        => array(
-				'name' => __( 'Set Preferred Site Name:', 'all-in-one-seo-pack' ),
-			),
-			'google_specify_site_name'    => array(
-				'name'        => __( 'Specify A Preferred Name:', 'all-in-one-seo-pack' ),
-				'type'        => 'text',
-				'placeholder' => $blog_name,
-				'condshow'    => array( 'aiosp_google_set_site_name' => 'on' ),
-			),
 			// "google_connect"=>array( 'name' => __( 'Connect With Google Analytics', 'all-in-one-seo-pack' ), ),
 			'google_analytics_id'         => array(
 				'name'        => __( 'Google Analytics ID:', 'all-in-one-seo-pack' ),
@@ -704,8 +695,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'help_link' => 'https://semperplugins.com/documentation/google-settings/',
 				'options'   => array(
 					'google_sitelinks_search',
-					'google_set_site_name',
-					'google_specify_site_name',
 					// "google_connect",
 					'google_analytics_id',
 					'ga_advanced_options',
@@ -3701,9 +3690,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 
 			// Sitelinks search. Only show if "use schema.org markup is checked".
-			if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && (
-					! empty( $aioseop_options['aiosp_google_sitelinks_search'] ) || ! empty( $aioseop_options['aiosp_google_set_site_name'] ) )
-			) {
+			if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && ! empty( $aioseop_options['aiosp_google_sitelinks_search'] ) ) {
 				$meta_string .= $this->sitelinks_search_box() . "\n";
 			}
 		}
@@ -4016,23 +4003,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Sitelinks Search Box
+	 *
+	 * @since ?
+	 *
 	 * @return mixed|void
 	 */
 	function sitelinks_search_box() {
 		global $aioseop_options;
-		$home_url   = esc_url( get_home_url() );
-		$name_block = $search_block = '';
-		if ( ! empty( $aioseop_options['aiosp_google_set_site_name'] ) ) {
-			if ( ! empty( $aioseop_options['aiosp_google_specify_site_name'] ) ) {
-				$blog_name = $aioseop_options['aiosp_google_specify_site_name'];
-			} else {
-				$blog_name = get_bloginfo( 'name' );
-			}
-			$blog_name  = esc_attr( $blog_name );
-			$name_block = <<<EOF
-		  "name": "{$blog_name}",
-EOF;
-		}
+		$home_url     = esc_url( get_home_url() );
+		$search_block = '';
 
 		if ( ! empty( $aioseop_options['aiosp_google_sitelinks_search'] ) ) {
 			$search_block = <<<EOF
@@ -4050,9 +4030,6 @@ EOF;
           "@context": "http://schema.org",
           "@type": "WebSite",
 EOF;
-		if ( ! empty( $name_block ) ) {
-			$search_box .= $name_block;
-		}
 		if ( ! empty( $search_block ) ) {
 			$search_box .= $search_block;
 		}
