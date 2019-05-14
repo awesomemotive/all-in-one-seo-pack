@@ -118,7 +118,6 @@ class AIOSEOP_Helper {
 			// General Settings.
 			'aiosp_can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation.  This will help to prevent duplicate content penalties by Google', 'all-in-one-seo-pack' ),
 			'aiosp_no_paged_canonical_links'    => __( 'Checking this option will set the Canonical URL for all paginated content to the first page.', 'all-in-one-seo-pack' ),
-			'aiosp_customize_canonical_links'   => __( 'Checking this option will allow you to customize Canonical URLs for specific posts.', 'all-in-one-seo-pack' ),
 			'aiosp_use_original_title'          => __( 'Use wp_title to get the title used by the theme; this is disabled by default. If you use this option, set your title formats appropriately, as your theme might try to do its own title SEO as well.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_markup'               => __( 'Check this to support Schema.org markup, i.e., itemprop on supported metadata.', 'all-in-one-seo-pack' ),
 			'aiosp_do_log'                      => __( 'Check this and All in One SEO Pack will create a log of important events (all-in-one-seo-pack.log) in its plugin directory which might help debugging. Make sure this directory is writable.', 'all-in-one-seo-pack' ),
@@ -130,7 +129,7 @@ class AIOSEOP_Helper {
 			'aiosp_use_static_home_info'        => __( 'Checking this option uses the title, description, and keywords set on your static Front Page.', 'all-in-one-seo-pack' ),
 
 			// Title Settings.
-			'aiosp_rewrite_titles'              => __( "Note that this is all about the title tag. This is what you see in your browser's window title bar. This is NOT visible on a page, only in the title bar and in the source code. If enabled, all page, post, category, search and archive page titles get rewritten. You can specify the format for most of them. For example: Using the default post title format below, Rewrite Titles will write all post titles as 'Post Title | Blog Name'. If you have manually defined a title using All in One SEO Pack, this will become the title of your post in the format string.", 'all-in-one-seo-pack' ),
+			'aiosp_rewrite_titles'              => __( "Note that this is all about the title tag. This is what you see in your browser's window title bar. This is NOT visible on a page, only in the title bar and in the source code. If enabled, all page, post, category, search and archive page titles get rewritten. You can specify the format for most of them. For example: Using the default post title format below, Rewrite Titles will write all post titles as 'Post Title | Site Name'. If you have manually defined a title using All in One SEO Pack, this will become the title of your post in the format string.", 'all-in-one-seo-pack' ),
 			'aiosp_home_page_title_format'      =>
 				__( 'This controls the format of the title tag for your Home Page.', 'all-in-one-seo-pack' ) . '<br />' .
 				__( 'The following macros are supported:', 'all-in-one-seo-pack' ) .
@@ -158,6 +157,9 @@ class AIOSEOP_Helper {
 					'</li>' .
 					'<li>' .
 						__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) .
+					'</li>' .
+					'<li>' .
+						__( '%current_year% - The current year', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%cf_fieldname% - Custom field name', 'all-in-one-seo-pack' ) .
@@ -190,6 +192,9 @@ class AIOSEOP_Helper {
 					'</li>' .
 					'<li>' .
 						__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) .
+					'</li>' .
+					'<li>' .
+						__( '%current_year% - The current year', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
 						__( '%post_date% - The date the page was published (localized)', 'all-in-one-seo-pack' ) .
@@ -239,6 +244,9 @@ class AIOSEOP_Helper {
 						__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
+						__( '%current_year% - The current year', 'all-in-one-seo-pack' ) .
+					'</li>' .
+					'<li>' .
 						__( '%post_date% - The date the post was published (localized)', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
@@ -266,6 +274,9 @@ class AIOSEOP_Helper {
 					'</li>' .
 					'<li>' .
 						__( '%category_description% - The description of the category', 'all-in-one-seo-pack' ) .
+					'</li>' .
+					'<li>' .
+						__( '%current_year% - The current year', 'all-in-one-seo-pack' ) .
 					'</li>' .
 				'</ul>',
 			'aiosp_archive_title_format'        =>
@@ -369,6 +380,9 @@ class AIOSEOP_Helper {
 						__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
+						__( '%current_year% - The current year', 'all-in-one-seo-pack' ) .
+					'</li>' .
+					'<li>' .
 						__( '%post_date% - The date the page/post was published (localized)', 'all-in-one-seo-pack' ) .
 					'</li>' .
 					'<li>' .
@@ -425,15 +439,9 @@ class AIOSEOP_Helper {
 			'aiosp_baidu_verify'                => __( 'Enter your verification code here to verify your site with Baidu Webmaster Tools.', 'all-in-one-seo-pack' ),
 
 			// Google Settings.
-			'aiosp_google_publisher'            => __( 'Enter your Google+ Profile URL here to add the rel=“author” tag to your site for Google authorship. It is recommended that the URL you enter here should be your personal Google+ profile.  Use the Advanced Authorship Options below if you want greater control over the use of authorship.', 'all-in-one-seo-pack' ),
-			'aiosp_google_disable_profile'      => __( 'Check this to remove the Google Plus field from the user profile screen.', 'all-in-one-seo-pack' ),
 			'aiosp_google_sitelinks_search'     => __( 'Add markup to display the Google Sitelinks Search Box next to your search results in Google.', 'all-in-one-seo-pack' ),
 			'aiosp_google_set_site_name'        => __( 'Add markup to tell Google the preferred name for your website.', 'all-in-one-seo-pack' ),
 			'aiosp_google_specify_site_name'    => __( 'Enter your site name.', 'all-in-one-seo-pack' ),
-			'aiosp_google_author_advanced'      => __( 'Enable this to display advanced options for controlling Google Plus authorship information on your website.', 'all-in-one-seo-pack' ),
-			'aiosp_google_author_location'      => __( 'This option allows you to control which types of pages you want to display rel=\"author\" on for Google authorship. The options include the Front Page (the homepage of your site), Posts, Pages, and any Custom Post Types. The Everywhere Else option includes 404, search, categories, tags, custom taxonomies, date archives, author archives and any other page template.', 'all-in-one-seo-pack' ),
-			'aiosp_google_enable_publisher'     => __( 'This option allows you to control whether rel=\"publisher\" is displayed on the homepage of your site. Google recommends using this if the site is a business website.', 'all-in-one-seo-pack' ),
-			'aiosp_google_specify_publisher'    => __( 'The Google+ profile you enter here will appear on your homepage only as the rel=\"publisher\" tag. It is recommended that the URL you enter here should be the Google+ profile for your business.', 'all-in-one-seo-pack' ),
 			'aiosp_google_analytics_id'         => __( 'Enter your Google Analytics ID here to track visitor behavior on your site using Google Analytics.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_advanced_options'         => __( 'Check to use advanced Google Analytics options.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_domain'                   => __( 'Enter your domain name without the http:// to set your cookie domain.', 'all-in-one-seo-pack' ),
@@ -467,7 +475,7 @@ class AIOSEOP_Helper {
 			'aiosp_dont_truncate_descriptions'  => __( 'Check this to prevent your Description from being truncated regardless of its length.', 'all-in-one-seo-pack' ),
 			'aiosp_unprotect_meta'              => __( "Check this to unprotect internal postmeta fields for use with XMLRPC. If you don't know what that is, leave it unchecked.", 'all-in-one-seo-pack' ),
 			'aiosp_redirect_attachement_parent' => __( 'Redirect attachment pages to post parent.', 'all-in-one-seo-pack' ),
-			'aiosp_ex_pages'                    => __( 'Enter a comma separated list of pages here to be excluded by All in One SEO Pack.  This is helpful when using plugins which generate their own non-WordPress dynamic pages.  Ex: <em>/forum/, /contact/</em>  For instance, if you want to exclude the virtual pages generated by a forum plugin, all you have to do is add forum or /forum or /forum/ or and any URL with the word \"forum\" in it, such as http://mysite.com/forum or http://mysite.com/forum/someforumpage here and it will be excluded from All in One SEO Pack.', 'all-in-one-seo-pack' ),
+			'aiosp_ex_pages'                    => __( 'Enter a comma separated list of pages here to be excluded by All in One SEO Pack.  This is helpful when using plugins which generate their own non-WordPress dynamic pages.  Ex: <em>/forum/, /contact/</em><br />For instance, if you want to exclude the virtual pages generated by a forum plugin, all you have to do is add "forum" or "/forum" or "/forum/" or any URL with the word "forum" in it here, such as "http://mysite.com/forum" or "http://mysite.com/forum/someforumpage", and it will be excluded from All in One SEO Pack.', 'all-in-one-seo-pack' ),
 			'aiosp_post_meta_tags'              => __( 'What you enter here will be copied verbatim to the header of all Posts. You can enter whatever additional headers you want here, even references to stylesheets.', 'all-in-one-seo-pack' ),
 			'aiosp_page_meta_tags'              => __( 'What you enter here will be copied verbatim to the header of all Pages. You can enter whatever additional headers you want here, even references to stylesheets.', 'all-in-one-seo-pack' ),
 			'aiosp_front_meta_tags'             => __( 'What you enter here will be copied verbatim to the header of the front page if you have set a static page in Settings, Reading, Front Page Displays. You can enter whatever additional headers you want here, even references to stylesheets. This will fall back to using Additional Page Headers if you have them set and nothing is entered here.', 'all-in-one-seo-pack' ),
@@ -509,6 +517,7 @@ class AIOSEOP_Helper {
 					__( '%post_author_firstname% - This page\'s author\' first name (capitalized)', 'all-in-one-seo-pack' ),
 					__( '%post_author_lastname% - This page\'s author\' last name (capitalized)', 'all-in-one-seo-pack' ),
 					__( '%current_date% - The current date (localized)', 'all-in-one-seo-pack' ),
+					__( '%current_year% - The current year', 'all-in-one-seo-pack' ),
 					__( '%post_date% - The date the page was published (localized)', 'all-in-one-seo-pack' ),
 					__( '%post_year% - The year the page was published (localized)', 'all-in-one-seo-pack' ),
 					__( '%post_month% - The month the page was published (localized)', 'all-in-one-seo-pack' )
@@ -529,7 +538,6 @@ class AIOSEOP_Helper {
 			// General Settings.
 			'aiosp_can'                         => 'https://semperplugins.com/documentation/general-settings/#canonical-urls',
 			'aiosp_no_paged_canonical_links'    => 'https://semperplugins.com/documentation/general-settings/#no-pagination-for-canonical-urls',
-			'aiosp_customize_canonical_links'   => 'https://semperplugins.com/documentation/general-settings/#enable-custom-canonical-urls',
 			'aiosp_use_original_title'          => 'https://semperplugins.com/documentation/general-settings/#use-original-title',
 			'aiosp_schema_markup'               => 'https://semperplugins.com/documentation/general-settings/#use-schema-markup',
 			'aiosp_do_log'                      => 'https://semperplugins.com/documentation/general-settings/#log-important-events',
@@ -569,16 +577,10 @@ class AIOSEOP_Helper {
 			'aiosp_baidu_verify'                => 'https://semperplugins.com/documentation/baidu-webmaster-verification/',
 
 			// Google Settings.
-			'aiosp_google_publisher'            => 'https://semperplugins.com/documentation/google-settings/#google-plus-default-profile',
-			'aiosp_google_disable_profile'      => 'https://semperplugins.com/documentation/google-settings/#disable-google-plus-profile',
 			'aiosp_google_sitelinks_search'     => 'https://semperplugins.com/documentation/google-settings/#display-sitelinks-search-box',
 			'aiosp_google_set_site_name'        => 'https://semperplugins.com/documentation/google-settings/#set-preferred-site-name',
 			// Missing documentation link.
 			// 'aiosp_google_specify_site_name'    => 'https://semperplugins.com/documentation/google-settings/#set-preferred-site-name',
-			'aiosp_google_author_advanced'      => 'https://semperplugins.com/documentation/google-settings/#advanced-authorship-options',
-			'aiosp_google_author_location'      => 'https://semperplugins.com/documentation/google-settings/#display-google-authorship',
-			'aiosp_google_enable_publisher'     => 'https://semperplugins.com/documentation/google-settings/#display-publisher-meta-on-front-page',
-			'aiosp_google_specify_publisher'    => 'https://semperplugins.com/documentation/google-settings/#specify-publisher-url',
 			'aiosp_google_analytics_id'         => 'https://semperplugins.com/documentation/setting-up-google-analytics/',
 			'aiosp_ga_advanced_options'         => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/',
 			'aiosp_ga_domain'                   => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#tracking-domain',
@@ -705,14 +707,13 @@ class AIOSEOP_Helper {
 			'aiosp_sitemap_archive'         => __( 'Include Date Archives in your sitemap.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_author'          => __( 'Include Author Archives in your sitemap.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_images'          => __( 'Exclude Images in your sitemap.', 'all-in-one-seo-pack' ),
-			'aiosp_sitemap_gzipped'         => __( 'Create a compressed sitemap file in .xml.gz format.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_robots'          => __( 'Places a link to your Sitemap.xml into your virtual Robots.txt file.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_rewrite'         => __( 'Dynamically creates the XML sitemap instead of using a static file.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_addl_url'        => __( 'URL to the page. This field accepts relative URLs or absolute URLs with the protocol specified.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_addl_prio'       => __( 'The priority of the page.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_addl_freq'       => __( 'The frequency of the page.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_addl_mod'        => __( 'Last modified date of the page.', 'all-in-one-seo-pack' ),
-			'aiosp_sitemap_excl_categories' => __( 'Entries from these categories will be excluded from the sitemap.', 'all-in-one-seo-pack' ),
+			'aiosp_sitemap_excl_terms' => __( 'Entries from these categories will be excluded from the sitemap.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_excl_pages'      => __( 'Use page slugs or page IDs, seperated by commas, to exclude pages from the sitemap.', 'all-in-one-seo-pack' ),
 		);
 
@@ -767,7 +768,6 @@ class AIOSEOP_Helper {
 			'aiosp_sitemap_archive'         => 'https://semperplugins.com/documentation/xml-sitemaps-module/#include-archive-pages',
 			'aiosp_sitemap_author'          => 'https://semperplugins.com/documentation/xml-sitemaps-module/#include-archive-pages',
 			'aiosp_sitemap_images'          => 'https://semperplugins.com/documentation/xml-sitemaps-module/#exclude-images',
-			'aiosp_sitemap_gzipped'         => 'https://semperplugins.com/documentation/xml-sitemaps-module/#create-compressed-sitemap',
 			'aiosp_sitemap_robots'          => 'https://semperplugins.com/documentation/xml-sitemaps-module/#link-from-virtual-robots',
 			'aiosp_sitemap_rewrite'         => 'https://semperplugins.com/documentation/xml-sitemaps-module/#dynamically-generate-sitemap',
 
@@ -778,7 +778,7 @@ class AIOSEOP_Helper {
 			'aiosp_sitemap_addl_mod'        => 'https://semperplugins.com/documentation/xml-sitemaps-module/#additional-pages',
 
 			// Exclude Items.
-			'aiosp_sitemap_excl_categories' => 'https://semperplugins.com/documentation/xml-sitemaps-module/#excluded-items',
+			'aiosp_sitemap_excl_terms' => 'https://semperplugins.com/documentation/xml-sitemaps-module/#excluded-items',
 			'aiosp_sitemap_excl_pages'      => 'https://semperplugins.com/documentation/xml-sitemaps-module/#excluded-items',
 
 			// Priorities.

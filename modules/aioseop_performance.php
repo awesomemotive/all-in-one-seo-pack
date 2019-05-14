@@ -252,7 +252,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 				__( 'Search Engine Visibility', 'all-in-one-seo-pack' ) => $blog_public,
 				__( 'Permalink Setting', 'all-in-one-seo-pack' ) => $perm_struct,
 			);
-			$debug_info['Active Plugins'] = null;
+			$debug_info[ __( 'Active Plugins', 'all-in-one-seo-pack' ) ] = null;
 			$active_plugins               = $inactive_plugins = array();
 			$plugins                      = get_plugins();
 			foreach ( $plugins as $path => $plugin ) {
@@ -262,7 +262,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 					$inactive_plugins[ $plugin['Name'] ] = $plugin['Version'];
 				}
 			}
-			$debug_info['Inactive Plugins'] = null;
+			$debug_info[ __( 'Inactive Plugins', 'all-in-one-seo-pack' ) ] = null;
 			$debug_info                     = array_merge( $debug_info, (array) $inactive_plugins );
 
 			$mail_text = __( 'All in One SEO Pack Pro Debug Info', 'all-in-one-seo-pack' ) . "\r\n------------------\r\n\r\n";

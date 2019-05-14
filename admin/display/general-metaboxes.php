@@ -43,7 +43,8 @@ class aiosp_metaboxes {
 							<strong>
 								<?php
 								echo aiosp_common::get_upgrade_hyperlink( 'side', __( 'Pro Version', 'all-in-one-seo-pack' ), __( 'CLICK HERE', 'all-in-one-seo-pack' ), '_blank' );
-								echo __( ' to upgrade to Pro Version and get:', 'all-in-one-seo-pack' );
+								/* translators: after this string comes a list of exclusive features that are not included in the free version of the plugin */
+								echo ' ' . __( 'to upgrade to Pro Version and get:', 'all-in-one-seo-pack' );
 								?>
 								</strong>
 						</p>
@@ -187,7 +188,7 @@ class aiosp_metaboxes {
 
 		echo '</ul>';
 
-		echo '<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/new" />Click here</a> to file a feature request/bug report.';
+		echo sprintf( __( '%1$sClick here%2$s to file a feature request/bug report.', 'all-in-one-seo-pack' ), '<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/new" />', '</a>' );
 
 	}
 

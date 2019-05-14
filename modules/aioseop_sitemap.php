@@ -181,11 +181,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					),
 					'default'         => 0,
 				),
-				'indexes'     => array( 'name' => __( 'Enable Sitemap Indexes', 'all-in-one-seo-pack' ) ),
+				'indexes'     => array(
+					'name' => __( 'Enable Sitemap Indexes', 'all-in-one-seo-pack' ),
+					'default' => 'on',
+				),
 				'max_posts'   => array(
 					'name'     => __( 'Maximum Posts Per Sitemap Page', 'all-in-one-seo-pack' ),
 					'type'     => 'text',
-					'default'  => 50000,
+					'default'  => 1000,
 					'condshow' => array(
 						"{$this->prefix}indexes" => 'on',
 						"{$this->prefix}indexes" => 'on',
@@ -204,10 +207,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'archive'     => array( 'name' => __( 'Include Date Archive Pages', 'all-in-one-seo-pack' ) ),
 				'author'      => array( 'name' => __( 'Include Author Pages', 'all-in-one-seo-pack' ) ),
 				'images'      => array( 'name' => __( 'Exclude Images', 'all-in-one-seo-pack' ) ),
-				'gzipped'     => array(
-					'name'    => __( 'Create Compressed Sitemap', 'all-in-one-seo-pack' ),
-					'default' => 'On',
-				),
 				'robots'      => array(
 					'name'    => __( 'Link From Virtual Robots.txt', 'all-in-one-seo-pack' ),
 					'default' => 'On',
@@ -345,10 +344,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			);
 
 			$excl_options = array(
-				'excl_categories' => array(
-					'name'            => __( 'Excluded Categories', 'all-in-one-seo-pack' ),
-					'type'            => 'multicheckbox',
-					'initial_options' => '',
+				'excl_terms' => array(
+					'name'  => __( 'Excluded Terms', 'all-in-one-seo-pack' ),
+					'type'  => 'multiselect',
+					'class' => 'aioseop-exclude-terms',
 				),
 				'excl_pages'      => array(
 					'name' => __( 'Excluded Pages', 'all-in-one-seo-pack' ),
@@ -409,14 +408,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		/**
 		 * Sitemap notices.
 		 *
+		 * @todo Move admin notice functions. Possibly to where it is first saved & loaded (`load_sitemap_options`).
+		 *
 		 * @since 2.4.1
 		 */
 		public function sitemap_notices() {
-
-			$sitemap_max_url_notice_dismissed = get_user_meta( get_current_user_id(), 'aioseop_sitemap_max_url_notice_dismissed', true );
-			if ( ! empty( $sitemap_max_url_notice_dismissed ) ) {
-				return;
-			} elseif ( ! current_user_can( 'aiosp_manage_seo' ) ) {
+			if ( ! current_user_can( 'aiosp_manage_seo' ) ) {
 				return;
 			}
 
@@ -443,31 +440,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$sitemap_urls = $post_counts + $num_terms;
 
 				if ( 1001 > $sitemap_urls ) {
-					return;
+					aioseop_notice_disable_sitemap_indexes();
+				} else {
+					aioseop_notice_activate_sitemap_indexes( false, true );
 				}
-
-				$aioseop_plugin_dirname = AIOSEOP_PLUGIN_DIRNAME;
-
-				printf(
-					'<div id="message" class="notice-warning notice is-dismissible aioseop-notice sitemap_max_urls_notice visibility-notice">' .
-						'<p>' .
-							'<strong>%1$s</strong><br />' .
-							'%2$s' .
-						'</p>' .
-					'</div>',
-					// TODO Add esc_* or wp_kses function or _e().
-					__( 'Notice: To avoid problems with your XML Sitemap, we strongly recommend you enable Sitemap Indexes and set the Maximum Posts per Sitemap Page to 1000.', 'all-in-one-seo-pack' ),
-					sprintf(
-						// TODO Add esc_* or wp_kses function.
-						/* translators: Links to the current AIOSEOP Sitemap settings. */
-						__( '%1$sClick here%2$s to make these recommended changes.', 'all-in-one-seo-pack' ),
-						sprintf(
-							'<a href="%s">',
-							esc_url( get_admin_url( null, "admin.php?page=$aioseop_plugin_dirname/modules/aioseop_sitemap.php" ) )
-						),
-						'</a>'
-					)
-				);
 			}
 		}
 
@@ -562,6 +538,72 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
+		 * Admin Enqueue Scripts
+		 *
+		 * Hook function to enqueue scripts and localize data to scripts.
+		 *
+		 * @since 3.0
+		 *
+		 * @see 'admin_enqueue_scripts' hook
+		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+		 *
+		 * @param string $hook_suffix The current admin page.
+		 */
+		public function admin_enqueue_scripts( $hook_suffix ) {
+			parent::admin_enqueue_scripts( $hook_suffix );
+			if ( $this->pagehook !== $hook_suffix ) {
+				return;
+			}
+
+			wp_enqueue_script(
+				'aioseop-selectize',
+				'https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js',
+				array( 'jquery' ),
+				AIOSEOP_VERSION
+			);
+
+			wp_enqueue_script(
+				'aioseop-search-terms',
+				AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_sitemap.js',
+				array( 'jquery' ),
+				AIOSEOP_VERSION,
+				true
+			);
+		}
+
+		/**
+		 * Load styles for module.
+		 *
+		 * @since 3.0
+		 *
+		 * @see 'admin_enqueue_scripts' hook
+		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+		 *
+		 * @param string $hook_suffix The current admin page.
+		 */
+		public function admin_enqueue_styles( $hook_suffix ) {
+			parent::admin_enqueue_styles( $hook_suffix );
+			if ( $this->pagehook !== $hook_suffix ) {
+				return;
+			}
+
+			wp_enqueue_style(
+				'aioseop-selectize',
+				'https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.css',
+				false,
+				AIOSEOP_VERSION,
+				false
+			);
+			wp_enqueue_style(
+				'aioseop-selectize-default',
+				'https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.default.min.css',
+				false,
+				AIOSEOP_VERSION,
+				false
+			);
+		}
+
+		/**
 		 * Initialize options, after constructor.
 		 */
 		public function load_sitemap_options() {
@@ -636,6 +678,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 		/**
 		 * Add post type details for settings once post types have been registered.
+		 *
+		 * @todo This function is being used to set up option values. This could possibly be refactored to something better suited.
+		 *
+		 * @since 3.0 Add custom taxonomy support for Excluding Terms setting. (#240)
 		 */
 		public function add_post_types() {
 			$post_type_titles = $this->get_post_type_titles( array( 'public' => true ) );
@@ -643,14 +689,42 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( isset( $post_type_titles['attachment'] ) ) {
 				$post_type_titles['attachment'] = __( 'Media / Attachments', 'all-in-one-seo-pack' );
 			}
-			$this->default_options['posttypes']['initial_options']       = array_merge( array( 'all' => __( 'All Post Types', 'all-in-one-seo-pack' ) ), $post_type_titles );
-			$this->default_options['taxonomies']['initial_options']      = array_merge( array( 'all' => __( 'All Taxonomies', 'all-in-one-seo-pack' ) ), $taxonomy_titles );
-			$this->default_options['posttypes']['default']               = array_keys( $this->default_options['posttypes']['initial_options'] );
-			$this->default_options['taxonomies']['default']              = array_keys( $this->default_options['taxonomies']['initial_options'] );
-			$this->default_options['excl_categories']['initial_options'] = $this->get_category_titles();
+			$this->default_options['posttypes']['initial_options']  = array_merge( array( 'all' => __( 'All Post Types', 'all-in-one-seo-pack' ) ), $post_type_titles );
+			$this->default_options['taxonomies']['initial_options'] = array_merge( array( 'all' => __( 'All Taxonomies', 'all-in-one-seo-pack' ) ), $taxonomy_titles );
+			$this->default_options['posttypes']['default']          = array_keys( $this->default_options['posttypes']['initial_options'] );
+			$this->default_options['taxonomies']['default']         = array_keys( $this->default_options['taxonomies']['initial_options'] );
 
-			$post_name = __( ' Post Type', 'all-in-one-seo-pack' );
-			$tax_name  = __( ' Taxonomy', 'all-in-one-seo-pack' );
+			// Exclude Terms element items.
+			$this->default_options['excl_terms']['initial_options'] = array();
+			$taxonomies_active = array();
+			if ( is_array( $this->options['aiosp_sitemap_taxonomies'] ) ) {
+				$taxonomies_active = $this->options['aiosp_sitemap_taxonomies'];
+			} elseif ( ! empty( $this->options['aiosp_sitemap_taxonomies'] ) ) {
+				$taxonomies_active = array( $this->options['aiosp_sitemap_taxonomies'] );
+			}
+
+			$args_taxonomy_key = array_search( 'all', $taxonomies_active, true );
+			if ( false !== $args_taxonomy_key ) {
+				// Remove 'all' as an invalid post_type. Use registered post_types selected instead.
+				unset( $taxonomies_active[ $args_taxonomy_key ] );
+			}
+
+			$excl_terms_init_opts = array();
+			foreach ( $taxonomies_active as $v1_taxonomy ) {
+				$args_terms        = array(
+					'taxonomy'   => $v1_taxonomy,
+					'hide_empty' => false,
+				);
+
+				$taxonomy_terms_tmp = $this->get_term_titles( $args_terms );
+				foreach ( $taxonomy_terms_tmp as $k2_id => $v2_term ) {
+					$excl_terms_init_opts[ $v1_taxonomy . '-' . $k2_id ] = $v2_term . ' (' . $v1_taxonomy . ')';
+				}
+			}
+			$this->default_options['excl_terms']['initial_options'] = $excl_terms_init_opts;
+
+			$post_name = ' ' . __( 'Post Type', 'all-in-one-seo-pack' );
+			$tax_name  = ' ' . __( 'Taxonomy', 'all-in-one-seo-pack' );
 
 			foreach ( $post_type_titles as $k => $v ) {
 				$key                                      = 'prio_post_' . $k;
@@ -814,6 +888,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @since 2.3.6
 		 * @since 2.3.12.3 Refactored to use aioseop_home_url() for compatibility purposes.
+		 * @since 3.0 Change 'excl_terms' to include taxonomy slugs with term id. (Pro #240)
+		 * @since 3.0 Remove WP < 3.5 old Privacy Settings link
 		 *
 		 * @param $options
 		 *
@@ -830,7 +906,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			/* translators: Link to documentation. */
 			$options[ $this->prefix . 'link' ]  = sprintf( __( 'Click here to %s.', 'all-in-one-seo-pack' ), '<a href="' . esc_url( $url ) . '" target="_blank">' . __( 'view your XML sitemap', 'all-in-one-seo-pack' ) . '</a>' );
-			$options[ $this->prefix . 'link' ] .= __( ' Your sitemap has been created with content and images.', 'all-in-one-seo-pack' );
+			$options[ $this->prefix . 'link' ] .= ' ' . __( 'Your sitemap has been created with content and images.', 'all-in-one-seo-pack' );
 
 			if ( $options[ "{$this->prefix}rss_sitemap" ] ) {
 				$url_rss = aioseop_home_url( '/' . $this->get_filename() . '.rss' );
@@ -851,15 +927,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 			}
 			if ( ! get_option( 'blog_public' ) ) {
-				global $wp_version;
-				if ( version_compare( $wp_version, '3.5.0', '>=' ) || function_exists( 'set_url_scheme' ) ) {
-					$privacy_link = '<a href="options-reading.php">' . __( 'Reading Settings', 'all-in-one-seo-pack' ) . '</a>';
-				} else {
-					$privacy_link = '<a href="options-privacy.php">' . __( 'Privacy Settings', 'all-in-one-seo-pack' ) . '</a>';
-				}
+				$privacy_link = '<a href="options-reading.php">' . __( 'Reading Settings', 'all-in-one-seo-pack' ) . '</a>';
 				/* translators: Link to settings to disable "Discourage search engines from indexing this site". */
-				$options[ $this->prefix . 'link' ] .= '<p class="aioseop_error_notice">' . sprintf( __( 'Warning: your privacy settings are configured to ask search engines to not index your site; you can change this under %s for your blog.', 'all-in-one-seo-pack' ), $privacy_link );
+				$options[ $this->prefix . 'link' ] .= '<p class="aioseop_error_notice">' . sprintf( __( 'Warning: your privacy settings are configured to ask search engines to not index your site; you can change this under %s for your site.', 'all-in-one-seo-pack' ), $privacy_link );
 			}
+
+			$excl_terms = array();
+			foreach ( $options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
+				foreach ( $v1_tax_terms['terms'] as $v2_term ) {
+					$excl_terms[] = $k1_taxonomy . '-' . $v2_term;
+				}
+			}
+			$options[ $this->prefix . 'excl_terms' ] = $excl_terms;
+
 			return $options;
 		}
 
@@ -869,6 +949,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * Handle 'all' option for post types / taxonomies, further sanitization of filename, rewrites on for multisite, setting up addl pages option.
 		 *
 		 * @todo This needs nonce support.
+		 *
+		 * @since ?
+		 * @since 3.0 Change saving 'excl_terms' to database with tax_query format for custom taxonomy support. (Pro #240)
 		 *
 		 * @param $options
 		 *
@@ -939,6 +1022,30 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 			}
 
+			if ( ! empty( $_POST[ $this->prefix . 'excl_terms' ] ) ) {
+				$raw_excl_terms = filter_input( INPUT_POST, $this->prefix . 'excl_terms', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+
+				// Parse taxonomy terms {$taxonomy_slug}-{$term_id}
+				$excl_terms = array();
+				foreach ( $raw_excl_terms as $v1_tax_term ) {
+					$term_id = explode( '-', $v1_tax_term );
+					$term_id = intval( end( $term_id ) );
+					$taxonomy_slug = sanitize_text_field( str_replace( '-' . $term_id, '', $v1_tax_term ) );
+
+					// Initialize taxonomy => terms array if not yet set.
+					if ( ! isset( $excl_terms[ $taxonomy_slug ] ) ) {
+						$excl_terms[ $taxonomy_slug ] = array(
+							'terms' => array(),
+						);
+					}
+
+					$excl_terms[ $taxonomy_slug ]['taxonomy'] = $taxonomy_slug;
+					$excl_terms[ $taxonomy_slug ]['terms'][]  = $term_id;
+				}
+
+				$options[ $this->prefix . 'excl_terms' ] = $excl_terms;
+			}
+
 			return $options;
 		}
 
@@ -981,9 +1088,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 								$siteurl = get_home_url( $blog_id );
 							}
 							$url = $siteurl . '/' . $this->get_filename() . '.xml';
-							if ( $sitemap_options[ "{$this->prefix}gzipped" ] ) {
-								$url .= '.gz';
-							}
 							$siteurls[] = $url;
 						}
 					}
@@ -1052,17 +1156,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		public function scan_match_files() {
 			$scan1 = '';
-			$scan2 = '';
 			$files = array();
 
 			$filename = $this->get_filename();
 			if ( ! empty( $filename ) ) {
 				$scan1 = get_home_path() . $filename . '*.xml';
-				if ( ! empty( $this->options[ "{$this->prefix}gzipped" ] ) ) {
-					$scan2 .= get_home_path() . $filename . '*.xml.gz';
-				}
 
-				if ( empty( $scan1 ) && empty( $scan2 ) ) {
+				if ( empty( $scan1 ) ) {
 					return $files;
 				}
 				$home_path = get_home_path();
@@ -1075,12 +1175,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 							$files[] = $home_path . $f;
 							continue;
 						}
-						if ( ! empty( $scan2 ) && fnmatch( $scan2, $home_path . $f ) ) {
-							$files[] = $home_path . $f;
-						}
 					}
 				}
-
 				return $files;
 			}
 		}
@@ -1319,34 +1415,23 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array
 		 */
 		public function get_rewrite_rules( $prefix_removed_rules_with = null ) {
-			$sitemap_rules_gzipped = array();
-			$sitemap_rules_normal  = array(
+			$sitemap_rules  = array(
 				$this->get_filename() . '.xml'            => 'index.php?' . $this->prefix . 'path=root',
 				$this->get_filename() . '_(.+)_(\d+).xml' => 'index.php?' . $this->prefix . 'path=$matches[1]&' . $this->prefix . 'page=$matches[2]',
 				$this->get_filename() . '_(.+).xml'       => 'index.php?' . $this->prefix . 'path=$matches[1]',
 			);
 
 			if ( isset( $this->options[ "{$this->prefix}rss_sitemap" ] ) && $this->options[ "{$this->prefix}rss_sitemap" ] ) {
-				$sitemap_rules_normal += array(
+				$sitemap_rules += array(
 					$this->get_filename() . '.rss'       => 'index.php?' . $this->prefix . 'path=rss',
 					$this->get_filename() . 'latest.rss' => 'index.php?' . $this->prefix . 'path=rss_latest',
 				);
 			} elseif ( ! empty( $prefix_removed_rules_with ) ) {
-				$sitemap_rules_normal += array(
+				$sitemap_rules += array(
 					$prefix_removed_rules_with . $this->get_filename() . '.rss'            => 'index.php?' . $this->prefix . 'path=rss',
 					$prefix_removed_rules_with . $this->get_filename() . 'latest.rss'      => 'index.php?' . $this->prefix . 'path=rss_latest',
 				);
 			}
-
-			if ( $this->options[ "{$this->prefix}gzipped" ] ) {
-				$sitemap_rules_gzipped = array(
-					$this->get_filename() . '.xml.gz'            => 'index.php?' . $this->prefix . 'gzipped=1&' . $this->prefix . 'path=root.gz',
-					$this->get_filename() . '_(.+)_(\d+).xml.gz' => 'index.php?' . $this->prefix . 'path=$matches[1].gz&' . $this->prefix . 'page=$matches[2]',
-					$this->get_filename() . '_(.+).xml.gz'       => 'index.php?' . $this->prefix . 'path=$matches[1].gz',
-				);
-			}
-			$sitemap_rules = $sitemap_rules_gzipped + $sitemap_rules_normal;
-
 			return $sitemap_rules;
 		}
 
@@ -1412,20 +1497,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		/**
 		 * Stop timing and log memory usage for debug info.
 		 *
+		 * @since ?
+		 * @since 3.0 Removed $compressed in issue #534
+		 *
 		 * @param string $sitemap_type
-		 * @param bool   $compressed
 		 * @param bool   $dynamic
 		 */
-		public function log_stats( $sitemap_type = 'static', $compressed = false, $dynamic = true ) {
+		public function log_stats( $sitemap_type = 'static', $dynamic = true ) {
 			$time                 = timer_stop();
 			$end_memory_usage     = memory_get_peak_usage();
 			$sitemap_memory_usage = $end_memory_usage - $this->start_memory_usage;
 			$end_memory_usage     = $end_memory_usage / 1024.0 / 1024.0;
 			$sitemap_memory_usage = $sitemap_memory_usage / 1024.0 / 1024.0;
 			$sitemap_type         = __( 'static', 'all-in-one-seo-pack ' );
-			if ( $compressed ) {
-				$sitemap_type = __( 'compressed', 'all-in-one-seo-pack' );
-			}
 			if ( $dynamic ) {
 				$sitemap_type = __( 'dynamic', 'all-in-one-seo-pack ' );
 			}
@@ -1451,27 +1535,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$this->start_memory_usage = memory_get_peak_usage();
 				$sitemap_type             = $query->query_vars[ "{$this->prefix}path" ];
 
-				$gzipped                  = false;
-				if ( $this->substr( $sitemap_type, - 3 ) === '.gz' ) {
-					$gzipped      = true;
-					$sitemap_type = $this->substr( $sitemap_type, 0, - 3 );
-				}
 				$blog_charset = get_option( 'blog_charset' );
-				if ( $this->options[ "{$this->prefix}gzipped" ] && $gzipped ) {
-					header( "Content-Type: application/x-gzip; charset=$blog_charset", true );
-				} else {
-					$gzipped = false;
-					header( "Content-Type: text/xml; charset=$blog_charset", true );
-				}
+				header( "Content-Type: text/xml; charset=$blog_charset", true );
 
 				// Always follow and noindex the sitemap.
 				header( 'X-Robots-Tag: noindex, follow', true );
 
 				do_action( $this->prefix . 'add_headers', $query, $this->options );
-
-				if ( $gzipped ) {
-					ob_start();
-				}
 
 				$content = $this->do_rewrite_sitemap( $sitemap_type, $page );
 
@@ -1488,11 +1558,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 				echo $content;
 
-				if ( $gzipped ) {
-					// TODO Add esc_* function.
-					echo gzencode( ob_get_clean() );
-				}
-				$this->log_stats( $sitemap_type, $gzipped );
+				$this->log_stats( $sitemap_type );
 				exit();
 
 			}
@@ -1546,7 +1612,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					$sitemap_data = $this->get_all_post_priority_data( $sitemap_type, 'publish', $page );
 				} elseif ( in_array( $sitemap_type, $taxonomies ) ) {
 					// TODO Add `true` in 3rd argument with in_array(); which changes it to a strict comparison.
-					$sitemap_data = $this->get_term_priority_data( get_terms( $this->get_tax_args( $sitemap_type, $page ) ) );
+					$sitemap_data = $this->get_term_priority_data( get_terms( $this->get_tax_args( (array) $sitemap_type, $page ) ) );
 				} else {
 					// TODO Add `true` in 3rd argument with in_array(); which changes it to a strict comparison.
 					if ( is_array( $this->extra_sitemaps ) && in_array( $sitemap_type, $this->extra_sitemaps ) ) {
@@ -1589,12 +1655,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		public function get_sitemap_url() {
 
-			$gz = '';
-			if ( $this->options[ "{$this->prefix}gzipped" ] ) {
-				$gz .= '.gz';
-			}
-
-			$url = aioseop_home_url( '/' . $this->get_filename() . ".xml$gz" );
+			$url = aioseop_home_url( '/' . $this->get_filename() . '.xml' );
 
 			return $url;
 		}
@@ -1687,7 +1748,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						$this->write_sitemaps( $this->get_filename(), $rss, '.rss' );
 					}
 
-					$this->log_stats( 'root', $this->options[ "{$this->prefix}gzipped" ], false );
+					$this->log_stats( 'root', false );
 				}
 			} else {
 				delete_transient( "{$this->prefix}rules_flushed" );
@@ -1716,33 +1777,29 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		/**
 		 * Write multiple sitemaps.
 		 *
-		 * Write sitemaps (compressed or otherwise) to the filesystem.
+		 * Write sitemaps to the filesystem.
 		 *
 		 * @param $filename
 		 * @param $contents
 		 */
 		public function write_sitemaps( $filename, $contents, $extn = '.xml' ) {
 			$this->write_sitemap( $filename . $extn, $contents );
-			if ( $this->options[ "{$this->prefix}gzipped" ] ) {
-				$this->write_sitemap( $filename . $extn . '.gz', $contents, true );
-			}
 		}
 
 		/**
 		 * Write single sitemap.
 		 *
-		 * Write a single sitemap to the filesystem, handle compression.
+		 * Write a single sitemap to the filesystem.
+		 *
+		 * @since ?
+		 * @since 3.0 Removed $gzip in issue #534
 		 *
 		 * @param      $filename
 		 * @param      $contents
-		 * @param bool $gzip
 		 *
 		 * @return bool
 		 */
-		public function write_sitemap( $filename, $contents, $gzip = false ) {
-			if ( $gzip ) {
-				$contents = gzencode( $contents );
-			}
+		public function write_sitemap( $filename, $contents ) {
 			add_filter( 'upload_mimes', array( $this, 'add_xml_mime_type' ) );
 			$filename = $this->get_home_path() . sanitize_file_name( $filename );
 			remove_filter( 'upload_mimes', array( $this, 'add_xml_mime_type' ) );
@@ -1867,9 +1924,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$prefix  = $this->get_filename();
 			$suffix  = '.xml';
 
-			if ( $options[ "{$this->prefix}gzipped" ] ) {
-				$suffix .= '.gz';
-			}
 			if ( empty( $options[ "{$this->prefix}posttypes" ] ) ) {
 				$options[ "{$this->prefix}posttypes" ] = array();
 			}
@@ -1910,25 +1964,40 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( ! empty( $post_types ) ) {
 				$prio        = $this->get_default_priority( 'post' );
 				$freq        = $this->get_default_frequency( 'post' );
-				// Get post counts from posts type. Exclude if NoIndex is on.
-				$post_counts = $this->get_all_post_counts(
-					array(
-						'post_type'   => $post_types,
-						'post_status' => 'publish',
-						'meta_query'     => array(
-							'relation'   => 'OR',
-							array(
-								'key'     => '_aioseop_noindex',
-								'value'   => 'on',
-								'compare' => '!=',
-							),
-							array(
-								'key'     => '_aioseop_noindex',
-								'compare' => 'NOT EXISTS',
-							),
+
+				// Get post counts from posts type. Exclude if NoIndex is on, and does not contain excluded terms.
+				$args = array(
+					'post_type'   => $post_types,
+					'post_status' => 'publish',
+					'meta_query'     => array(
+						'relation'   => 'OR',
+						array(
+							'key'     => '_aioseop_noindex',
+							'value'   => 'on',
+							'compare' => '!=',
 						),
-					)
+						array(
+							'key'     => '_aioseop_noindex',
+							'compare' => 'NOT EXISTS',
+						),
+					),
 				);
+				if ( $this->option_isset( 'excl_terms' ) ) {
+					// Adds excluded terms to exclude from query.
+					foreach ( $this->options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
+						if ( ! isset( $args['tax_query'] ) ) {
+							$args['tax_query'] = array(
+								'relation' => 'AND',
+							);
+						}
+						$args['tax_query'][] = array(
+							'taxonomy' => $k1_taxonomy,
+							'terms'    => $v1_tax_terms['terms'],
+							'operator' => 'NOT IN',
+						);
+					}
+				}
+				$post_counts = $this->get_all_post_counts( $args );
 
 				foreach ( $post_types as $sm ) {
 					if ( 0 === intval( $post_counts[ $sm ] ) ) {
@@ -1976,29 +2045,32 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			if ( ! empty( $options[ "{$this->prefix}taxonomies" ] ) ) {
-				foreach ( $options[ "{$this->prefix}taxonomies" ] as $sm ) {
-					$term_count = wp_count_terms( $sm, array( 'hide_empty' => true ) );
+				foreach ( $options[ "{$this->prefix}taxonomies" ] as $v1_taxonomy ) {
+					$tax_args           = $this->get_tax_args( array( $v1_taxonomy ) );
+					$tax_args['fields'] = 'count';
+
+					$term_count = get_terms( $tax_args );
 					if ( ! is_wp_error( $term_count ) && ( $term_count > 0 ) ) {
 						if ( ! empty( $this->options[ "{$this->prefix}indexes" ] ) ) {
 							if ( $term_count > $this->max_posts ) {
 								$count = 1;
 								for ( $tc = 0; $tc < $term_count; $tc += $this->max_posts ) {
 									$files[] = array(
-										'loc'        => aioseop_home_url( '/' . $prefix . '_' . $sm . '_' . ( $count ++ ) . $suffix ),
+										'loc'        => aioseop_home_url( '/' . $prefix . '_' . $v1_taxonomy . '_' . ( $count ++ ) . $suffix ),
 										'changefreq' => $this->get_default_frequency( 'taxonomies' ),
 										'priority'   => $this->get_default_priority( 'taxonomies' ),
 									);
 								}
 							} else {
 								$files[] = array(
-									'loc'        => aioseop_home_url( '/' . $prefix . '_' . $sm . $suffix ),
+									'loc'        => aioseop_home_url( '/' . $prefix . '_' . $v1_taxonomy . $suffix ),
 									'changefreq' => $this->get_default_frequency( 'taxonomies' ),
 									'priority'   => $this->get_default_priority( 'taxonomies' ),
 								);
 							}
 						} else {
 							$files[] = array(
-								'loc'        => aioseop_home_url( '/' . $prefix . '_' . $sm . $suffix ),
+								'loc'        => aioseop_home_url( '/' . $prefix . '_' . $v1_taxonomy . $suffix ),
 								'changefreq' => $this->get_default_frequency( 'taxonomies' ),
 								'priority'   => $this->get_default_priority( 'taxonomies' ),
 							);
@@ -2149,7 +2221,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 				}
 			}
-			$this->log_stats( 'indexed', $options[ "{$this->prefix}gzipped" ], false );
+			$this->log_stats( 'indexed', false );
 		}
 
 		public function remove_posts_page( $postspageid ) {
@@ -3289,7 +3361,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						$timestamp      = mysql2date( 'U', $post->post_modified_gmt );
 						$pr_info['rss'] = array(
 							'title'       => $title,
-							'description' => $this->get_the_excerpt( $post ),
+							'description' => get_the_excerpt( $post ),
 							'pubDate'     => date( 'r', $timestamp ),
 							'timestamp  ' => $timestamp,
 							'post_type'   => $post->post_type,
@@ -3309,59 +3381,31 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
-		 * Return the excerpt of the given post.
-		 *
-		 * @param WP_Post $post The post object.
-		 *
-		 * @return string
-		 */
-		private function get_the_excerpt( $post ) {
-			global $wp_version;
-			if ( has_excerpt( $post->ID ) ) {
-				if ( version_compare( $wp_version, '4.5.0', '>=' ) ) {
-					return get_the_excerpt( $post );
-				}
-
-				$text = strip_shortcodes( $post->post_content );
-				$text = apply_filters( 'the_content', $text );
-				$text = str_replace( ']]>', ']]&gt;', $text );
-
-				$excerpt_length = apply_filters( 'excerpt_length', 55 );
-				$excerpt_more   = apply_filters( 'excerpt_more', '[&hellip;]' );
-				return wp_trim_words( $text, $excerpt_length, $excerpt_more );
-			}
-			return '';
-		}
-
-		/**
 		 * Return the images attached to the term.
 		 *
 		 * @param WP_Term $term the term object.
 		 *
 		 * @since 2.4
+		 * @since 3.0 remove check for WP 4.4
 		 *
 		 * @return array
 		 */
 		private function get_images_from_term( $term ) {
-			global $wp_version;
-
 			if ( ! aiosp_include_images() ) {
 				return array();
 			}
 
 			$images = array();
-			// the table term meta table is not defined for lower versions.
-			if ( version_compare( $wp_version, '4.4.0', '>=' ) ) {
-				$thumbnail_id = get_term_meta( $term->term_id, 'thumbnail_id', true );
-				if ( $thumbnail_id ) {
-					$image = wp_get_attachment_url( $thumbnail_id );
-					if ( $image ) {
-						$images['image:image'] = array(
-							'image:loc'     => $image,
-							'image:caption' => wp_get_attachment_caption( $thumbnail_id ),
-							'image:title'   => get_the_title( $thumbnail_id ),
-						);
-					}
+
+			$thumbnail_id = get_term_meta( $term->term_id, 'thumbnail_id', true );
+			if ( $thumbnail_id ) {
+				$image = wp_get_attachment_url( $thumbnail_id );
+				if ( $image ) {
+					$images['image:image'] = array(
+						'image:loc'     => $image,
+						'image:caption' => wp_get_attachment_caption( $thumbnail_id ),
+						'image:title'   => get_the_title( $thumbnail_id ),
+					);
 				}
 			}
 
@@ -3373,6 +3417,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @todo Add ~`get_attachment_postid_to_url()` function.
 		 * @todo Benchmark `wp_get_attachment_image_src()` & `wp_get_attachment_url()`.
+		 * @todo Look into using 'wp_get_attachment_image_url()'.
 		 *
 		 * @since 2.4
 		 * @since 2.11 Optimization #2008 - Reduce the need to convert url to id.
@@ -3754,33 +3799,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @since 2.4.1
 		 * @since 2.4.3 Compatibility with Pre v4.7 wp_parse_url().
 		 * @since 2.11 Sitemap Optimization #2008 - Changed to a more appropriate name.
+		 * @since 3.0 remove checks for old WP versions
 		 *
 		 * @return bool
 		 */
 		public function is_image_url_valid( $image ) {
-			global $wp_version;
-
 			// Bail if empty image.
 			if ( empty( $image ) ) {
 				return false;
 			}
 
-			global $wp_version;
-			if ( version_compare( $wp_version, '4.4', '<' ) ) {
-				// TODO Change to wp_parse_url().
-				$p_url = parse_url( $image );
-				$url   = $p_url['scheme'] . $p_url['host'] . $p_url['path'];
-			} elseif ( version_compare( $wp_version, '4.7', '<' ) ) {
-				// Compatability for older WP version that don't have 4.7 changes.
-				// @link https://core.trac.wordpress.org/changeset/38726
-				$p_url = wp_parse_url( $image );
-				$url   = $p_url['scheme'] . $p_url['host'] . $p_url['path'];
-			} else {
-				$component = PHP_URL_PATH;
-				$url       = wp_parse_url( $image, $component );
-			}
+			$component = PHP_URL_PATH;
+			$url       = wp_parse_url( $image, $component );
 
-			// make the url absolute, if its relative.
+			// Make the url absolute, if its relative.
 			$image   = aiosp_common::absolutize_url( $image );
 			// TODO Change to wp_parse_url().
 			$extn    = pathinfo( parse_url( $image, PHP_URL_PATH ), PATHINFO_EXTENSION );
@@ -3857,26 +3889,36 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
+		 * Set Taxonomy Args
+		 *
 		 * Return excluded categories for taxonomy queries.
 		 *
 		 * @since ?
-		 * @since 3.0.0 Added $taxonomy parameter.
+		 * @since 3.0.0 Added $taxonomies parameter.
+		 * @since 3.0 Change 'exclude' to support excluding custom taxonomy terms. (Pro #240)
 		 *
-		 * @param array $taxonomy The array of taxonomy slugs.
-		 * @param int $page The page number.
-		 *
+		 * @param array $taxonomies The array of taxonomy slugs.
+		 * @param int   $page       The page number.
 		 * @return array
 		 */
-		public function get_tax_args( $taxonomy, $page = 0 ) {
+		public function get_tax_args( $taxonomies, $page = 0 ) {
 			$args = array();
-			if ( $this->option_isset( 'excl_categories' ) ) {
-				$args['exclude'] = $this->options[ $this->prefix . 'excl_categories' ];
-			}
+
 			if ( ! empty( $this->options[ "{$this->prefix}indexes" ] ) ) {
 				$args['number'] = $this->max_posts;
 				$args['offset'] = $page * $this->max_posts;
 			}
-			$args['taxonomy'] = $this->show_or_hide_taxonomy( $taxonomy );
+
+			$args['taxonomy'] = $this->show_or_hide_taxonomy( $taxonomies );
+
+			if ( $this->option_isset( 'excl_terms' ) ) {
+				$args['exclude'] = array();
+				foreach ( $taxonomies as $v1_taxonomy ) {
+					if ( isset( $this->options[ $this->prefix . 'excl_terms' ][ $v1_taxonomy ] ) ) {
+						$args['exclude'] = array_merge( $args['exclude'], $this->options[ $this->prefix . 'excl_terms' ][ $v1_taxonomy ]['terms'] );
+					}
+				}
+			}
 
 			$args = apply_filters( $this->prefix . 'tax_args', $args, $page, $this->options );
 
@@ -3884,19 +3926,30 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
+		 * Set Post Args
+		 *
 		 * Return excluded categories and pages for post queries.
 		 *
-		 * @param $args
+		 * @since ?
+		 * @since 3.0 Change 'excl_terms' to tax_query format. (Pro #240)
 		 *
+		 * @param $args
 		 * @return mixed
 		 */
 		public function set_post_args( $args ) {
-			if ( $this->option_isset( 'excl_categories' ) ) {
-				$cats = array();
-				foreach ( $this->options[ $this->prefix . 'excl_categories' ] as $c ) {
-					$cats[] = - $c;
+			if ( $this->option_isset( 'excl_terms' ) ) {
+				foreach ( $this->options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
+					if ( ! isset( $args['tax_query'] ) ) {
+						$args['tax_query'] = array(
+							'relation' => 'AND',
+						);
+					}
+					$args['tax_query'][] = array(
+						'taxonomy' => $k1_taxonomy,
+						'terms'    => $v1_tax_terms['terms'],
+						'operator' => 'NOT IN',
+					);
 				}
-				$args['category'] = implode( ',', $cats );
 			}
 			if ( $this->option_isset( 'excl_pages' ) ) {
 				$args['exclude'] = $this->options[ $this->prefix . 'excl_pages' ];

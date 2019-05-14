@@ -298,7 +298,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @since 2.4.14
 		 */
 		public function init() {
-			$count_desc = __( ' characters. Open Graph allows up to a maximum of %1$s chars for the %2$s.', 'all-in-one-seo-pack' );
+			$count_desc = __( ' characters. We recommend a maximum of %1$s chars for the %2$s.', 'all-in-one-seo-pack' );
 			// Create default options
 			$this->default_options = array(
 				'scan_header'            => array(
@@ -332,10 +332,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'type'    => 'text',
 				),
 				'hometitle'              => array(
-					'name'     => __( 'Home Title', 'all-in-one-seo-pack' ),
-					'default'  => '',
-					'type'     => 'text',
-					'condshow' => array(
+					'name'       => __( 'Home Title', 'all-in-one-seo-pack' ),
+					'default'    => '',
+					'type'       => 'text',
+					'class'      => 'aioseop_count_chars',
+					'count'      => true,
+					'count_desc' => $count_desc,
+					'size'       => 95,
+					'condshow'   => array(
 						'aiosp_opengraph_setmeta' => array(
 							'lhs' => 'aiosp_opengraph_setmeta',
 							'op'  => '!=',
@@ -344,10 +348,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					),
 				),
 				'description'            => array(
-					'name'     => __( 'Home Description', 'all-in-one-seo-pack' ),
-					'default'  => '',
-					'type'     => 'textarea',
-					'condshow' => array(
+					'name'       => __( 'Home Description', 'all-in-one-seo-pack' ),
+					'default'    => '',
+					'type'       => 'textarea',
+					'class'      => 'aioseop_count_chars',
+					'count'      => true,
+					'count_desc' => $count_desc,
+					'size'       => 200,
+					'condshow'   => array(
 						'aiosp_opengraph_setmeta' => array(
 							'lhs' => 'aiosp_opengraph_setmeta',
 							'op'  => '!=',
@@ -1088,6 +1096,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			$title             = $description = $image = $video = '';
 			$type              = $this->type;
 			$sitename          = $this->options['aiosp_opengraph_sitename'];
+			$tag               = '';
 
 			// for some reason, options is not populated correctly during unit tests.
 			if ( defined( 'AIOSEOP_UNIT_TESTING' ) ) {
@@ -1545,11 +1554,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				),
 			);
 
-			// Only show if "use schema.org markup is checked".
-			if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) ) {
-				$meta['google+'] = array( 'thumbnail' => 'image' );
-			}
-
 			// https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/1848
 			if ( is_ssl() ) {
 				$meta['facebook'] += array( 'thumbnail_1' => 'og:image:secure_url' );
@@ -1559,7 +1563,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			$tags = array(
 				'facebook' => array( 'name' => 'property', 'value' => 'content' ),
 				'twitter'  => array( 'name' => 'name', 'value' => 'content' ),
-				'google+'  => array( 'name' => 'itemprop', 'value' => 'content' ),
 			);
 
 			foreach ( $meta as $t => $data ) {
@@ -1827,6 +1830,18 @@ END;
 				array(),
 				AIOSEOP_VERSION
 			);
+
+			wp_enqueue_script(
+				'aioseop-post-edit-script',
+				AIOSEOP_PLUGIN_URL . 'js/count-chars.js',
+				array(),
+				AIOSEOP_VERSION
+			);
+
+			$localize_post_edit = array(
+				'aiosp_title_extra' => 0,
+			);
+			wp_localize_script( 'aioseop-post-edit-script', 'aioseop_count_chars', $localize_post_edit );
 
 			// Dev note: If certain JS files need to be restricted to select screens, then follow concept
 			// used in `All_in_One_SEO_Pack::admin_enqueue_scripts()` (v2.9.1); which uses the `$hook_suffix`
