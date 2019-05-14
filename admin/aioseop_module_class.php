@@ -1752,7 +1752,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				$wp_scripts = wp_scripts();
 				wp_enqueue_style(
 					'aioseop-jquery-ui',
-					'//ajax.googleapis.com/ajax/libs/jqueryui/' . $wp_scripts->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.min.css',
+					'//ajax.googleapis.com/ajax/libs/jqueryui/' . $wp_scripts->registered['jquery-ui-core']->ver . '/themes/start/jquery-ui.min.css',
 					false,
 					AIOSEOP_VERSION,
 					false

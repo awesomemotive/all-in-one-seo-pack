@@ -84,3 +84,15 @@ label[for=aioseop_edit_profile_header]
 #aioseop_edit_profile_header {
 	display: none;
 }
+
+.ui-tooltip.ui-widget.ui-corner-all.ui-widget-content {
+	font-family: 'Open Sans', sans-serif;
+	-webkit-box-shadow: 0 0 0px #00A0D2;
+	box-shadow: 0 0 0px #00A0D2;
+	border-radius: 0px;
+}
+
+.ui-tooltip.ui-widget.ui-corner-all.ui-widget-content a {
+	color: #0073AA;
+	text-decoration: none;
+}
