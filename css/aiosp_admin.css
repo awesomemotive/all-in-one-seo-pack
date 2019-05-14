@@ -87,8 +87,9 @@ label[for=aioseop_edit_profile_header]
 
 .ui-tooltip.ui-widget.ui-corner-all.ui-widget-content {
 	font-family: 'Open Sans', sans-serif;
-	-webkit-box-shadow: 0 0 0px #00A0D2;
-	box-shadow: 0 0 0px #00A0D2;
+	-webkit-box-shadow: 0 0 2px #0073AA;
+	box-shadow: 0 0 2px #0073AA;
+	border: 0px;
 	border-radius: 0px;
 }
 
