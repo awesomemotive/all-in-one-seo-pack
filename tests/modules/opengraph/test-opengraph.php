@@ -85,11 +85,11 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	 *
 	 * @since 3.0
 	 */
-	public function test_meta_tag_truncation_with_manual_og_title( $title, $content, $og_desc_limit ) {
+	public function test_meta_tag_truncation_with_manual_og_title( $title, $content ) {
 		$tag_limits  = array(
-			'og:description'    => $og_desc_limit,  // limit to 200 but respect full words
-			'twitter:description'   => 200, // hard limit to 200
-			'twitter:title' => array( 70 ), // no limit
+			'og:description'    => 200,
+			'twitter:description'   => 200,
+			'twitter:title' => 70,
 		);
 
 		wp_set_current_user( 1 );
@@ -120,11 +120,7 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 				continue;
 			}
 			if ( array_key_exists( $tag, $tag_limits ) ) {
-				if ( is_array( $tag_limits[ $tag ] ) ) {
-					$this->assertGreaterThan( $tag_limits[ $tag ][0], strlen( $m['content'] ) );
-				} else {
-					$this->assertLessThanOrEqual( $tag_limits[ $tag ], strlen( $m['content'] ) );
-				}
+				$this->assertLessThanOrEqual( $tag_limits[ $tag ], strlen( $m['content'] ) );
 			}
 		}
 	}
@@ -141,11 +137,11 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	 *
 	 * @since 3.0
 	 */
-	public function test_meta_tag_truncation_with_manual_main_title( $title, $content, $og_desc_limit ) {
+	public function test_meta_tag_truncation_with_manual_main_title( $title, $content ) {
 		$tag_limits  = array(
-			'og:description'    => $og_desc_limit,  // limit to 200 but respect full words
-			'twitter:description'   => 200, // hard limit to 200
-			'twitter:title' => array( 70 ), // no limit
+			'og:description'    => 200,
+			'twitter:description'   => 200,
+			'twitter:title' => 70,
 		);
 
 		wp_set_current_user( 1 );
@@ -174,11 +170,7 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 				continue;
 			}
 			if ( array_key_exists( $tag, $tag_limits ) ) {
-				if ( is_array( $tag_limits[ $tag ] ) ) {
-					$this->assertGreaterThan( $tag_limits[ $tag ][0], strlen( $m['content'] ) );
-				} else {
-					$this->assertLessThanOrEqual( $tag_limits[ $tag ], strlen( $m['content'] ) );
-				}
+				$this->assertLessThanOrEqual( $tag_limits[ $tag ], strlen( $m['content'] ) );
 			}
 		}
 	}
@@ -195,10 +187,10 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	 *
 	 * @since 3.0
 	 */
-	public function test_meta_tag_truncation_filter( $title, $content, $og_desc_limit ) {
+	public function test_meta_tag_truncation_filter( $title, $content ) {
 		$tag_limits  = array(
-			'og:description'    => $og_desc_limit,  // limit to 200 but respect full words
-			'twitter:description'   => 200, // hard limit to 200
+			'og:description'    => 200,
+			'twitter:description'   => 200,
 			'twitter:title' => array( 70 ), // no limit
 		);
 
