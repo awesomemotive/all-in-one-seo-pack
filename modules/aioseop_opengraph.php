@@ -1623,7 +1623,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$social_links       = join( '","', $social_links );
 				$social_link_schema = <<<END
 <script type="application/ld+json">
-{ "@context" : "http://schema.org",
+{ "@context" : "https://schema.org",
   "@type" : "{$social_type}",
   "name" : "{$social_name}",
   "url" : "{$home_url}",

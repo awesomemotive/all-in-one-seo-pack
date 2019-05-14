@@ -4047,7 +4047,7 @@ EOF;
 		$search_box = <<<EOF
 <script type="application/ld+json">
         {
-          "@context": "http://schema.org",
+          "@context": "https://schema.org",
           "@type": "WebSite",
 EOF;
 		if ( ! empty( $name_block ) ) {
