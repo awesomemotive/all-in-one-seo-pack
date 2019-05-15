@@ -99,6 +99,6 @@ label[for=aioseop_edit_profile_header]
 	text-decoration: none;
 }
 
-.ui-tooltip.ui-widget.ui-corner-all.ui-widget-content dt {
+.ui-tooltip.ui-widget.ui-corner-all.ui-widget-content.aioseop-ui-tooltip dt {
 	font-weight: bold;
 }
