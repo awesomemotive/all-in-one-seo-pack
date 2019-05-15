@@ -1362,7 +1362,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( ! empty( $this->options['aiosp_opengraph_description_shortcodes'] ) ) {
 					$description = do_shortcode( $description );
 				}
-				$description = $aiosp->trim_excerpt_without_filters( $description );
+				if ( ! empty( $this->options['aiosp_opengraph_generate_descriptions'] ) && $this->options['aiosp_opengraph_generate_descriptions'] ) {
+					$description = $aiosp->trim_excerpt_without_filters( $description, 200 );
+				} else {
+					// User input still needs to be run through this function to strip tags.
+					$description = $aiosp->trim_excerpt_without_filters( $description, 99999 );
+				}
 			}
 
 			$title       = $this->apply_cf_fields( $title );
