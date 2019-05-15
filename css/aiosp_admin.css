@@ -85,7 +85,7 @@ label[for=aioseop_edit_profile_header]
 	display: none;
 }
 
-.ui-tooltip.ui-widget.ui-corner-all.ui-widget-content {
+.ui-tooltip.ui-widget.ui-corner-all.ui-widget-content.aioseop-ui-tooltip {
 	font-family: 'Open Sans', sans-serif;
 	-webkit-box-shadow: 0px 1px 6px -2px #0073AA;
 	box-shadow: 0px 1px 6px -2px #0073AA;
@@ -94,7 +94,7 @@ label[for=aioseop_edit_profile_header]
 	background: #FEFEFE;
 }
 
-.ui-tooltip.ui-widget.ui-corner-all.ui-widget-content a {
+.ui-tooltip.ui-widget.ui-corner-all.ui-widget-content.aioseop-ui-tooltip a {
 	color: #0073AA;
 	text-decoration: none;
 }
