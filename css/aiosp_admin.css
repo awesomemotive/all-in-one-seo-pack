@@ -98,3 +98,7 @@ label[for=aioseop_edit_profile_header]
 	color: #0073AA;
 	text-decoration: none;
 }
+
+.ui-tooltip.ui-widget.ui-corner-all.ui-widget-content dt {
+	font-weight: bold;
+}
