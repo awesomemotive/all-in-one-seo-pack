@@ -141,13 +141,13 @@ class AIOSEOP_Helper {
 					'<dt>%page_title%</dt>' .
 					'<dd>' . __( 'The original title of the page', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%page_author_login%</dt>' .
-					'<dd>' . __( "This page's author' login", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The username of the author of this page', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%page_author_nicename%</dt>' .
-					'<dd>' . __( "This page's author' nicename", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The nicename of the author of this page', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%page_author_firstname%</dt>' .
-					'<dd>' . __( "This page's author' first name (capitalized)", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The first name of the author of this page (capitalized)', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%page_author_lastname%</dt>' .
-					'<dd>' . __( "This page's author' last name (capitalized)", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The last name of the author of this page (capitalized)', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%current_date%</dt>' .
 					'<dd>' . __( 'The current date (localized)', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
@@ -166,13 +166,13 @@ class AIOSEOP_Helper {
 					'<dt>%page_title%</dt>' .
 					'<dd>' . __( 'The original title of the page', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%page_author_login%</dt>' .
-					'<dd>' . __( "This page's author' login", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The username of the author of this page', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%page_author_nicename%</dt>' .
-					'<dd>' . __( "This page's author' nicename", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The nicename of the author of this page', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%page_author_firstname%</dt>' .
-					'<dd>' . __( "This page's author' first name (capitalized)", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The first name of the author of this page (capitalized)', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%page_author_lastname%</dt>' .
-					'<dd>' . __( "This page's author' last name (capitalized)", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The last name of the author of this page (capitalized)', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%current_date%</dt>' .
 					'<dd>' . __( 'The current date (localized)', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
@@ -199,13 +199,13 @@ class AIOSEOP_Helper {
 					'<dt>%category_title%</dt>' .
 					'<dd>' . __( 'The (main) category of the post', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%post_author_login%</dt>' .
-					'<dd>' . __( "This post's author' login", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The username of the author of this page', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%post_author_nicename%</dt>' .
-					'<dd>' . __( "This post's author' nicename", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The nicename of the author of this page', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%post_author_firstname%</dt>' .
-					'<dd>' . __( "This post's author' first name (capitalized)", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The first name of the author of this page (capitalized)', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%post_author_lastname%</dt>' .
-					'<dd>' . __( "This post's author' last name (capitalized)", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The last name of the author of this page (capitalized)', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%current_date%</dt>' .
 					'<dd>' . __( 'The current date (localized)', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
@@ -430,13 +430,13 @@ class AIOSEOP_Helper {
 
 				$help_text_macros .=
 					'<dt>%post_author_login%</dt>' .
-					'<dd>' . __( "This post's author' login", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The username of the author of this page', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%post_author_nicename%</dt>' .
-					'<dd>' . __( "This post's author' nicename", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The nicename of the author of this page', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%post_author_firstname%</dt>' .
-					'<dd>' . __( "This post's author' first name (capitalized)", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The first name of the author of this page (capitalized)', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%post_author_lastname%</dt>' .
-					'<dd>' . __( "This post's author' last name (capitalized)", 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . __( 'The last name of the author of this page (capitalized)', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%current_date%</dt>' .
 					'<dd>' . __( 'The current date (localized)', 'all-in-one-seo-pack' ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
