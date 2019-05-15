@@ -866,6 +866,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$w            = $info['w'];
 		$p            = $info['p'];
 
+		do_action( 'aioseop_before_get_title_format' );
+
 		if ( false !== strpos( $title_format, '%site_title%', 0 ) ) {
 			$title_format = str_replace( '%site_title%', get_bloginfo( 'name' ), $title_format );
 		}
@@ -947,7 +949,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title_format = str_replace( '%taxonomy_description%', $description, $title_format );
 		}
 
+		$title_format = apply_filters( 'aioseop_title_format', $title_format, 10, 1 );
+
 		$title_format    = preg_replace( '/%([^%]*?)%/', '', $title_format );
+
+		do_action( 'aioseop_after_format_title' );
 
 		return $title_format;
 	}
@@ -1744,6 +1750,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string
 	 */
 	function title_placeholder_helper( $title, $post, $type = 'post', $title_format = '', $category = '' ) {
+
+	    do_action ( 'aioseop_before_title_placeholder_helper' );
+
 		if ( ! empty( $post ) ) {
 			$authordata = get_userdata( $post->post_author );
 		} else {
@@ -1812,6 +1821,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( false !== strpos( $new_title, '%post_month%', 0 ) ) {
 			$new_title = str_replace( '%post_month%', get_the_date( 'F' ), $new_title );
 		}
+
+		$new_title = apply_filters( 'aioseop_title_format', $new_title, 10, 1 );
+
+		do_action ( 'aioseop_after_title_placeholder_helper' );
 
 		$title = trim( $new_title );
 
@@ -1989,6 +2002,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string
 	 */
 	function get_tax_title( $tax = '' ) {
+
 		if ( AIOSEOPPRO ) {
 			if ( empty( $this->meta_opts ) ) {
 				$this->meta_opts = $this->get_current_options( array(), 'aiosp' );
@@ -2066,6 +2080,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string
 	 */
 	function apply_tax_title_format( $category_name, $category_description, $tax = '' ) {
+
+		do_action( 'aioseop_before_tax_title_format');
+
 		if ( empty( $tax ) ) {
 			$tax = get_query_var( 'taxonomy' );
 		}
@@ -2095,7 +2112,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( false !== strpos( $title, '%current_year%', 0 ) ) {
 			$title = str_replace( '%current_year%', date( 'Y' ), $title );
 		}
+
+		$title = apply_filters( 'aioseop_title_format', $title, 10, 1 );
+
 		$title = wp_strip_all_tags( $title );
+
+		do_action( 'aioseop_after_tax_title_format');
 
 		return $this->paged_title( $title );
 	}
@@ -3843,6 +3865,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return mixed
 	 */
 	function apply_description_format( $description, $post = null ) {
+
+	    do_action( 'aioseop_before_apply_description_format' );
+
 		global $aioseop_options;
 		$description_format = $aioseop_options['aiosp_description_format'];
 		if ( ! isset( $description_format ) || empty( $description_format ) ) {
@@ -3889,6 +3914,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		* if ($aioseop_options['aiosp_can']) $description = $this->make_unique_att_desc($description);
 		*/
 		$description = $this->apply_cf_fields( $description );
+
+		do_action( 'aioseop_after_apply_description_format' );
+
 		return $description;
 	}
 
