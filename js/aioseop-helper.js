@@ -13,12 +13,21 @@
 	 * Initiates the jQuery UI Tooltips on the admin pages with the class and
 	 * title attributes set properly.
 	 *
+	 * @see StackOverflow - Specify jQuery UI Tooltip CSS styles
+	 * @link https://stackoverflow.com/questions/14445785/specify-jquery-ui-tooltip-css-styles
+	 *
 	 * @since 2.4.1.1
 	 *
 	 * @link http://api.jqueryui.com/tooltip/
 	 */
 	function aioseopTooltips() {
 		$( ".aioseop_help_text_link" ).tooltip({
+			// Documentation recommends using classes, as tooltipClass is marked as deprecated.
+			// However, tooltipClass is the only working method. So, both methods are included.
+			classes: {
+				"ui-tooltip": "ui-corner-all ui-widget-content aioseop-ui-tooltip"
+			},
+			tooltipClass: "aioseop-ui-tooltip",
 			open: function( event, ui ) {
 				ui.tooltip.css( "min-width", "170px" );
 				ui.tooltip.css( "max-width", "396px" );
