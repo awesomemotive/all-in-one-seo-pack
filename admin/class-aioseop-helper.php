@@ -433,7 +433,7 @@ class AIOSEOP_Helper {
 		$post_types = get_post_types( '', 'names' );
 		foreach ( $post_types as $v1_pt ) {
 			if ( ! isset( $rtn_help_text[ 'aiosp_' . $v1_pt . '_title_format' ] ) ) {
-				$name = ucwords( preg_replace( '/-|\_/', ' ', $v1_pt ) );
+				$name = ucwords( preg_replace( '/-|\_/', ' ', get_post_type_object( $v1_pt )->labels->singular_name ) );
 
 				$help_text_macros =
 					'<dt>%site_title%</dt>' .
