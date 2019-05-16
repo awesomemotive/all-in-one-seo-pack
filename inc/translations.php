@@ -80,15 +80,13 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 
 			$current_locale = $this->current_locale;
 
-
-			if ( strpos( $current_locale, '_formal') ){
+			if ( strpos( $current_locale, '_formal') ) {
 				$formal = $this->formal = 'formal';
 				$short_locale = $this->short_locale = str_replace( '_formal', '', $current_locale);
-			}else{
+			} else {
 				$short_locale = $current_locale;
 				$formal = $this->formal = 'default';
 			}
-
 
 			// Some locales are missing the locale code (wp_locale) so we need to check for that.
 			foreach ( $locales as $locale ) {
@@ -100,11 +98,11 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 					$wplocale = $locale->wp_locale;
 				}
 
-				if ( $short_locale !== $wplocale ){
+				if ( $short_locale !== $wplocale ) {
 					continue;
 				}
 
-				if( $formal !== $slug ){
+				if ( $formal !== $slug ) {
 					continue;
 				}
 
@@ -123,8 +121,6 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 				$this->wplocale           = $wplocale;
 				$this->percent_translated = $percent_translated;
 				$this->slug               = $locale->locale;
-
-
 			}
 
 		}
