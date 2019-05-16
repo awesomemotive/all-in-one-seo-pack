@@ -156,7 +156,7 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 
 			if ( null !== $this->wplocale ) {
 
-				$url = "https://translate.wordpress.org/projects/wp-plugins/all-in-one-seo-pack/dev/$this->slug/default";
+				$url = "https://translate.wordpress.org/projects/wp-plugins/all-in-one-seo-pack/dev/$this->slug/$this->formal/?filters%5Bstatus%5D=untranslated&sort%5Bby%5D=priority&sort%5Bhow%5D=desc";
 
 				$this->translation_url = $url;
 			}
