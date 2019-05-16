@@ -1750,8 +1750,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string
 	 */
 	function title_placeholder_helper( $title, $post, $type = 'post', $title_format = '', $category = '' ) {
-
-	    do_action ( 'aioseop_before_title_placeholder_helper' );
+		
+		do_action( 'aioseop_before_title_placeholder_helper' );
 
 		if ( ! empty( $post ) ) {
 			$authordata = get_userdata( $post->post_author );
@@ -1824,7 +1824,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		$new_title = apply_filters( 'aioseop_title_format', $new_title, 10, 1 );
 
-		do_action ( 'aioseop_after_title_placeholder_helper' );
+		do_action( 'aioseop_after_title_placeholder_helper' );
 
 		$title = trim( $new_title );
 
@@ -2081,7 +2081,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function apply_tax_title_format( $category_name, $category_description, $tax = '' ) {
 
-		do_action( 'aioseop_before_tax_title_format');
+		do_action( 'aioseop_before_tax_title_format' );
 
 		if ( empty( $tax ) ) {
 			$tax = get_query_var( 'taxonomy' );
@@ -2117,7 +2117,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		$title = wp_strip_all_tags( $title );
 
-		do_action( 'aioseop_after_tax_title_format');
+		do_action( 'aioseop_after_tax_title_format' );
 
 		return $this->paged_title( $title );
 	}
@@ -3866,7 +3866,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function apply_description_format( $description, $post = null ) {
 
-	    do_action( 'aioseop_before_apply_description_format' );
+		do_action( 'aioseop_before_apply_description_format' );
 
 		global $aioseop_options;
 		$description_format = $aioseop_options['aiosp_description_format'];
