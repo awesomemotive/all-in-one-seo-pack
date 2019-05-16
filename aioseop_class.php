@@ -1750,7 +1750,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string
 	 */
 	function title_placeholder_helper( $title, $post, $type = 'post', $title_format = '', $category = '' ) {
-		
 		do_action( 'aioseop_before_title_placeholder_helper' );
 
 		if ( ! empty( $post ) ) {
