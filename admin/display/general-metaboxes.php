@@ -81,7 +81,6 @@ class aiosp_metaboxes {
 						?>
 						<div class="aioseop_translations"><strong>
 								<?php
-
 								if ( $aiosp_trans->percent_translated < 100 ) {
 									if ( ! empty( $aiosp_trans->native_name ) ) {
 										$maybe_native_name = $aiosp_trans->native_name;
