@@ -81,11 +81,13 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 			$current_locale = $this->current_locale;
 
 			if ( strpos( $current_locale, '_formal' ) ) {
-				$formal = $this->formal = 'formal';
+				$this->formal = 'formal';
+				$formal = 'formal';
 				$short_locale = $this->short_locale = str_replace( '_formal', '', $current_locale );
 			} else {
 				$short_locale = $current_locale;
-				$formal = $this->formal = 'default';
+				$this->formal = 'default';
+				$formal = 'default';
 			}
 
 			// Some locales are missing the locale code (wp_locale) so we need to check for that.
