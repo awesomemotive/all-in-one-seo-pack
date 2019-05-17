@@ -70,7 +70,7 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 		 * @since 2.3.5
 		 *
 		 * @param array $locales All locale info for AIOSEOP from translate.wordpress.org.
-		 * @var array $locale Individual locale info for AIOSEOP from translate.wordpress.org.
+		 * @var object $locale Individual locale info for AIOSEOP from translate.wordpress.org.
 		 * @var string $wp_locale Locale name from translate.wordpress.org (does not include formal designation).
 		 * @var string $formal Indication of whether currently active locale is formal.
 		 * @var string $slug Indication of whether locale from translate.wordpress.org is formal.
@@ -82,12 +82,12 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 
 			if ( strpos( $current_locale, '_formal' ) ) {
 				$this->formal = 'formal';
-				$formal = 'formal';
+				$formal       = 'formal';
 				$short_locale = $this->short_locale = str_replace( '_formal', '', $current_locale );
 			} else {
 				$short_locale = $current_locale;
 				$this->formal = 'default';
-				$formal = 'default';
+				$formal       = 'default';
 			}
 
 			// Some locales are missing the locale code (wp_locale) so we need to check for that.
