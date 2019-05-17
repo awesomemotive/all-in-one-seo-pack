@@ -868,9 +868,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		/**
 		 * Runs before we start applying the formatting for the snippet preview title.
-         *
-         * @since 3.0
-         *
+		 *
+		 * @since 3.0
+		 *
 		 */
 		do_action( 'aioseop_before_get_title_format' );
 
