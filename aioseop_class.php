@@ -846,9 +846,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Get Title Format
+	 * Get Title Format for snippet preview.
 	 *
-	 * Get the title formatted according to AIOSEOP %shortcodes%.
+	 * Get the title formatted according to AIOSEOP %shortcodes% specifically for the snippet preview..
 	 *
 	 * @since 2.4.9
 	 *
@@ -866,6 +866,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$w            = $info['w'];
 		$p            = $info['p'];
 
+		/**
+		 * Runs before we start applying the formatting for the snippet preview title.
+         *
+         * @since 3.0
+         *
+		 */
 		do_action( 'aioseop_before_get_title_format' );
 
 		if ( false !== strpos( $title_format, '%site_title%', 0 ) ) {
@@ -949,10 +955,24 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title_format = str_replace( '%taxonomy_description%', $description, $title_format );
 		}
 
+		/**
+		 * Filters document title after applying the formatting.
+		 *
+		 * @since 3.0
+		 *
+		 * @param string $title_format Document title to be filtered.
+		 *
+		 */
 		$title_format = apply_filters( 'aioseop_title_format', $title_format, 10, 1 );
 
 		$title_format    = preg_replace( '/%([^%]*?)%/', '', $title_format );
 
+		/**
+		 * Runs after applying the formatting for the snippet preview title.
+		 *
+		 * @since 3.0
+		 *
+		 */
 		do_action( 'aioseop_after_format_title' );
 
 		return $title_format;
@@ -1739,7 +1759,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Replace title templates inside % symbol.
+	 * Replace doc title templates inside % symbol on the frontend.
 	 *
 	 * @param $title
 	 * @param $post
@@ -1750,6 +1770,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string
 	 */
 	function title_placeholder_helper( $title, $post, $type = 'post', $title_format = '', $category = '' ) {
+
+		/**
+		 * Runs before applying the formatting for the doc title on the frontend.
+		 *
+		 * @since 3.0
+		 *
+		 */
 		do_action( 'aioseop_before_title_placeholder_helper' );
 
 		if ( ! empty( $post ) ) {
@@ -1821,8 +1848,22 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$new_title = str_replace( '%post_month%', get_the_date( 'F' ), $new_title );
 		}
 
+		/**
+		 * Filters document title after applying the formatting.
+		 *
+		 * @since 3.0
+		 *
+		 * @param string $new_title Document title to be filtered.
+		 *
+		 */
 		$new_title = apply_filters( 'aioseop_title_format', $new_title, 10, 1 );
 
+		/**
+		 * Runs after applying the formatting for the doc title on the frontend.
+		 *
+		 * @since 3.0
+		 *
+		 */
 		do_action( 'aioseop_after_title_placeholder_helper' );
 
 		$title = trim( $new_title );
@@ -2080,6 +2121,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function apply_tax_title_format( $category_name, $category_description, $tax = '' ) {
 
+		/**
+		 * Runs before applying the formatting for the taxonomy title.
+		 *
+		 * @since 3.0
+		 *
+		 */
 		do_action( 'aioseop_before_tax_title_format' );
 
 		if ( empty( $tax ) ) {
@@ -2112,10 +2159,24 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title = str_replace( '%current_year%', date( 'Y' ), $title );
 		}
 
+		/**
+		 * Filters document title after applying the formatting.
+		 *
+		 * @since 3.0
+		 *
+		 * @param string $title Document title to be filtered.
+		 *
+		 */
 		$title = apply_filters( 'aioseop_title_format', $title, 10, 1 );
 
 		$title = wp_strip_all_tags( $title );
 
+		/**
+		 * Runs after applying the formatting for the taxonomy title.
+		 *
+		 * @since 3.0
+		 *
+		 */
 		do_action( 'aioseop_after_tax_title_format' );
 
 		return $this->paged_title( $title );
