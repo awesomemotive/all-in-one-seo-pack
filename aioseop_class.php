@@ -2937,6 +2937,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			unset( $this->default_options['tax_noindex'] );
 		}
 
+		$tax_types = apply_filters( 'aioseop_pre_tax_types_setting', $tax_types );
+
 		if ( AIOSEOPPRO ) {
 			foreach ( $tax_types as $p => $pt ) {
 				$field = $p . '_tax_title_format';
