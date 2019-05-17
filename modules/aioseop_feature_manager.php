@@ -26,6 +26,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 			$this->file   = __FILE__;                                    // The current file.
 			parent::__construct();
 			$this->module_info = array(
+				'image_seo'           => array(
+					'name'        => __( 'Image SEO', 'all-in-one-seo-pack' ),
+					'description' => __( 'Trick out your Image\'s SEO game.' , 'all-in-one-seo-pack' ),
+				),
 				'sitemap'           => array(
 					/* translators: the XML Sitemaps module allows users to generate a sitemap in .xml format for their website and
 					submit it to search engines such as Google, Bing and Yahoo. */

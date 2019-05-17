@@ -807,6 +807,47 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
+		 * Extract images from post.
+		 *
+		 * @param $post
+		 *
+		 * @return array
+		 */
+		function extract_post_images( $post ) {
+			//Grab hero image
+			$hero_image = get_the_post_thumbnail_url( $post->ID );
+			if  ( ! empty( $hero_image ) ) {
+					$images[] = get_the_post_thumbnail_url( $post->ID );
+			}
+			//Grab inline images
+			$posttext = $post->post_content;
+			$regular_expression = '/<img[^>]+>/i';
+			preg_match_all( $regular_expression, $posttext, $allpics );
+			foreach ( $allpics as $pic ) {
+				foreach ( $pic as $singlepic ) {
+					preg_match_all( '/(src|class)="([^"]*)"/i', $singlepic, $matches );
+					$ret = array();
+					foreach($matches[1] as $i => $v) {
+						$ret[$v] = $matches[2][$i];
+					}
+					//Make sure it's a WordPress image
+					if ( strpos( $ret['class'], 'wp-' ) === false ) {
+						return;
+					} else {
+						$images[] = $ret['src'];
+					}		 
+				}
+			}
+			$image_urls = array();
+			if ( ! empty( $images ) ) {
+				foreach ( $images as $image ) {
+					$image_urls[]["image:loc"] = $image;
+				}
+			}
+			return $image_urls;
+		}
+
+		/**
 		 * Get sitemap urls of child blogs, if any.
 		 *
 		 * @return mixed|void
@@ -2155,6 +2196,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$xsl_url = $this->get_sitemap_xsl();
 
 			$xml_header = '<?xml-stylesheet type="text/xsl" href="' . $xsl_url . '"?>' . "\r\n"
+<<<<<<< HEAD
 						  . '<urlset ';
 			$namespaces = apply_filters(
 				$this->prefix . 'xml_namespace', array(
@@ -2162,6 +2204,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					'xmlns:image' => 'http://www.google.com/schemas/sitemap-image/1.1',
 				)
 			);
+=======
+			              . '<urlset ';
+			$namespaces = apply_filters( $this->prefix . 'xml_namespace', array( 'xmlns' => 'http://www.sitemaps.org/schemas/sitemap/0.9' , 'xmlns:image' => 'http://www.google.com/schemas/sitemap-image/1.1'  ) );
+>>>>>>> origin/image-module
 			if ( ! empty( $namespaces ) ) {
 				$ns = array();
 				foreach ( $namespaces as $k => $v ) {
@@ -2896,7 +2942,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						$date = 0;
 					}
 					if ( $prio_override && $freq_override ) {
-						$pr_info = array( 'lastmod' => $date, 'changefreq' => null, 'priority' => null );
+						$pr_info = array( 'lastmod' => $date, 'changefreq' => null, 'priority' => null, 'image:image' => null );
 					} else {
 						if ( empty( $post->comment_count ) ) {
 							$stat = 0;
@@ -2924,9 +2970,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 							$pr_info['changefreq'] = $this->options[ $this->prefix . 'freq_post_' . $post->post_type ];
 						}
 					}
+<<<<<<< HEAD
 					$pr_info = array(
 						'loc' => $url,
 					) + $pr_info; // Prepend loc to	the	array.
+=======
+					$images = $this->extract_post_images( $post );
+					foreach ( $images as $image ) {
+						$pr_info["image:image"][] = $image;
+					}
+					$pr_info = array( 'loc' => $url ) + $pr_info; 
+					// Prepend loc to the array.
+>>>>>>> origin/image-module
 					if ( is_float( $pr_info['priority'] ) ) {
 						$pr_info['priority'] = sprintf( '%0.1F', $pr_info['priority'] );
 					}
@@ -2962,7 +3017,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 				}
 			}
-
 			return $prio;
 		}
 
