@@ -3926,6 +3926,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function apply_description_format( $description, $post = null ) {
 
+		/**
+		 * Runs before applying the formatting for the meta description.
+		 *
+		 * @since 3.0
+		 *
+		 */
 		do_action( 'aioseop_before_apply_description_format' );
 
 		global $aioseop_options;
@@ -3975,6 +3981,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		*/
 		$description = $this->apply_cf_fields( $description );
 
+		/**
+		 * Runs after applying the formatting for the meta description.
+		 *
+		 * @since 3.0
+		 *
+		 */
 		do_action( 'aioseop_after_apply_description_format' );
 
 		return $description;
