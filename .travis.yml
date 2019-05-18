@@ -22,7 +22,7 @@ matrix:
     - env: WP_MULTISITE=1
     - language: node_js
       node_js:
-       - "8.11.3"
+       - "node"
       env: GRUNT=yes
   allow_failures:
     - env: WP_MULTISITE=1
