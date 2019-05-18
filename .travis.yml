@@ -63,5 +63,5 @@ after_failure:
 
 after_success:
   - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git add --all; fi
-  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git commit 'Grunt Patch'; fi
+  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git commit -m "Grunt Patch"; fi
   - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git push; fi
