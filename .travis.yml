@@ -23,7 +23,7 @@ matrix:
     - env: WP_VERSION=latest PHPUNIT=local
     - env: WP_VERSION=4.6 PHPUNIT=local
     - env: WP_MULTISITE=1
-    - php: 7.2
+    - php: 5.6
       language: node_js
       node_js:
 #       - "node"
