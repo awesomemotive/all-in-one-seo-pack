@@ -32,6 +32,7 @@ module.exports = function(grunt) {
 					}
 				}
 			},
+			// https://www.npmjs.com/package/grunt-phpcs#php-code-sniffer-task
 			phpcs: {
 				options: {
 					standard: 'phpcs.xml',
@@ -43,10 +44,12 @@ module.exports = function(grunt) {
 				'<%= files_php %>'
 				]
 			},
+			// https://www.npmjs.com/package/grunt-phpcbf#the-phpcbf-task
 			phpcbf: {
 				options: {
 					standard: 'phpcs.xml',
-					noPatch:false,
+					// noPatch: false,
+					noPatch: true,
 					extensions: 'php'
 				},
 				src: [
@@ -105,7 +108,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks( 'grunt-eslint' );
 
 	// Default task(s).
-	grunt.registerTask( 'default', ['mkdir', 'phpcs', 'phplint', 'jshint', 'eslint', 'uglify'] );
+	grunt.registerTask( 'default', ['mkdir', 'phpcs', 'phpcbf', 'phplint', 'jshint', 'eslint', 'uglify'] );
 	grunt.registerTask( 'dev', ['mkdir', 'phpcbf', 'phpcs', 'phplint', 'jshint', 'eslint', 'uglify'] );
 
 };
