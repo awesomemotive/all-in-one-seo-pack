@@ -7,7 +7,7 @@
 #.travis.yml
 .svn
 node_modules
-vender
+vendor
 
 # IDE #
 #######
