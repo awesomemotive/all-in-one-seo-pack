@@ -3,7 +3,7 @@
 npm install
 npm install grunt -g
 npm install grunt-cli -g
-npm install grunt-mkdir grunt-phpcs grunt-phplint grunt-contrib-jshint grunt-contrib-uglify grunt-eslint
+npm install grunt-mkdir grunt-phpcs grunt-phpcbf grunt-phplint grunt-contrib-jshint grunt-contrib-uglify grunt-eslint
 
 composer install --no-interaction --ignore-platform-reqs
 
