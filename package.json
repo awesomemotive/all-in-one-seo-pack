@@ -24,7 +24,6 @@
     "grunt-contrib-uglify": "^3.1.0",
     "grunt-eslint": "^21.0.0",
     "grunt-mkdir": "^1.0.0",
-    "grunt-phpcbf": "^0.1.1",
     "grunt-phpcs": "^0.4.0",
     "grunt-phplint": "^0.1.0"
   },
