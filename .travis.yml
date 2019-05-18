@@ -23,9 +23,12 @@ matrix:
     - env: WP_VERSION=latest PHPUNIT=local
     - env: WP_VERSION=4.6 PHPUNIT=local
     - env: WP_MULTISITE=1
-    - language: node_js
+    - php: 7.2
+      language: node_js
       node_js:
-       - "node"
+#       - "node"
+       - "10"
+#       - "8.11.3"
       env: GRUNT=yes
   allow_failures:
     - env: WP_MULTISITE=1
