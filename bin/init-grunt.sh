@@ -13,6 +13,6 @@ composer self-update
 
 composer global require "squizlabs/php_codesniffer=*"
 
-git clone -b master https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git "tmp/wpcs"
+git clone -b master --depth 1 https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git "tmp/wpcs"
 phpcs --config-set installed_paths "tmp/wpcs"
 phpenv rehash

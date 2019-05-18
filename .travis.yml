@@ -27,8 +27,8 @@ matrix:
       language: node_js
       node_js:
 #       - "node"
-       - "10"
-#       - "8.11.3"
+#       - "10"
+       - "8.11.3"
       env: GRUNT=yes
   allow_failures:
     - env: WP_MULTISITE=1
