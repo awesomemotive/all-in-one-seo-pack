@@ -185,7 +185,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				add_action( 'wp', array( $this, 'type_setup' ) );
 			}
 
-			if ( ! is_admin() || defined( 'DOING_AJAX' ) || ( defined( 'AIOSEOP_UNIT_TESTING' ) && AIOSEOP_UNIT_TESTING ) ) {
+			if ( ! is_admin() || defined( 'DOING_AJAX' ) ) {
 				$this->do_opengraph();
 			}
 			// Set variables after WordPress load.
@@ -971,12 +971,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		function add_meta() {
 			global $post, $aiosp, $aioseop_options, $wp_query;
 			$metabox           = $this->get_current_options( array(), 'settings' );
-
-			// we have to introduce this because, for some reason, $this->options is not being populated at all while testing.
-			if ( defined( 'AIOSEOP_UNIT_TESTING' ) && AIOSEOP_UNIT_TESTING ) {
-				$this->options	= $aioseop_options['modules']['aiosp_opengraph_options'];
-			}
-
+			$key               = $this->options['aiosp_opengraph_key'];
 			$key               = $this->options['aiosp_opengraph_key'];
 			$dimg              = $this->options['aiosp_opengraph_dimg'];
 			$current_post_type = get_post_type();

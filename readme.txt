@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=mrtor
 Tags: SEO, all in one seo, WordPress SEO, Google Search Console, XML Sitemap, image seo
 Requires at least: 4.4
 Tested up to: 4.9
-Stable tag: 2.9
+Stable tag: 2.9.1
 License: GPLv2 or later
 Requires PHP: 5.2.4
 
