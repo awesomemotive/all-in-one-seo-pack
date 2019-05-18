@@ -55,7 +55,17 @@ before_script:
 
 script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
-  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, TRAVIS_PR_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH, TRAVIS_PULL_REQUEST_SLUG=$TRAVIS_PULL_REQUEST_SLUG, PR=$PR, BRANCH=$BRANCH"
+  - echo "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST"
+  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH"
+  - echo "TRAVIS_PULL_REQUEST_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH"
+  - echo "TRAVIS_PULL_REQUEST_SLUG=$TRAVIS_PULL_REQUEST_SLUG"
+  - echo "PR=$PR"
+  - echo "BRANCH=$BRANCH"
+  - echo "TRAVIS_COMMIT=$TRAVIS_COMMIT"
+  - echo "TRAVIS_COMMIT_RANGE=$TRAVIS_COMMIT_RANGE"
+  - echo "TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG"
+  - echo "HOME=$HOME"
+  - echo "TRAVIS_ALLOW_FAILURE=$TRAVIS_ALLOW_FAILURE"
   - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then grunt; fi
   - if [[ $PHPUNIT = "local" ]]; then ./vendor/bin/phpunit; else phpunit; fi
 
@@ -64,8 +74,8 @@ after_failure:
 - cat "logs/jslogs.log"
 
 after_success:
-  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git fetch $TRAVIS_PULL_REQUEST_BRANCH; fi
-  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git checkout $TRAVIS_PULL_REQUEST_BRANCH $BRANCH; fi
+  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git fetch $TRAVIS_PULL_REQUEST_SLUG; fi
+  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git checkout $TRAVIS_PULL_REQUEST_SLUG $BRANCH; fi
   - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git add --all; fi
   - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git commit -m "Grunt Patch"; fi
   - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git push; fi
