@@ -25,6 +25,7 @@ module.exports = function(grunt) {
 			'!logs/**',
 			'!Gruntfile.js'
 			],
+			// https://www.npmjs.com/package/grunt-mkdir#the-mkdir-task
 			mkdir: {
 				logs: {
 					options: {
@@ -48,12 +49,11 @@ module.exports = function(grunt) {
 			phpcbf: {
 				options: {
 					standard: 'phpcs.xml',
-					// noPatch: false,
-					noPatch: true,
+					noPatch: false,
 					extensions: 'php'
 				},
 				src: [
-				'<%= files_php %>'
+					'<%= files_php %>'
 				]
 			},
 			phplint: {
