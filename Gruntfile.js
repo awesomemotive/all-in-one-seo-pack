@@ -38,8 +38,8 @@ module.exports = function(grunt) {
 				options: {
 					standard: 'phpcs.xml',
 					reportFile: 'logs/phpcs.log',
-					extensions: 'php',
-					severity: 1
+					extensions: 'php'
+					// severity: 1
 				},
 				src: [
 				'<%= files_php %>'
@@ -49,8 +49,11 @@ module.exports = function(grunt) {
 			phpcbf: {
 				options: {
 					standard: 'phpcs.xml',
-					noPatch: false,
-					extensions: 'php'
+					noPatch: true,
+					extensions: 'php',
+					// severity: 0,
+					warningSeverity: 0
+
 				},
 				src: [
 					'<%= files_php %>'

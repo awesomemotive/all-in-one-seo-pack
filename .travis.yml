@@ -74,7 +74,8 @@ after_failure:
 - cat "logs/jslogs.log"
 
 after_success:
-  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then chmod +x bin/init-grunt.sh; . bin/push.sh; fi
+#  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then chmod +x bin/init-grunt.sh; . bin/push.sh; fi
+
 #  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git fetch $TRAVIS_PULL_REQUEST_SLUG; fi
 #  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git checkout $TRAVIS_PULL_REQUEST_SLUG $BRANCH; fi
 #  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then git add --all; fi
