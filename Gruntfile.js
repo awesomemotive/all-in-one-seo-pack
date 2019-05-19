@@ -37,7 +37,6 @@ module.exports = function(grunt) {
 			phpcs: {
 				options: {
 					standard: 'phpcs.xml',
-					report: true,
 					reportFile: 'logs/phpcs.log',
 					extensions: 'php',
 					severity: 0
