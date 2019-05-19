@@ -49,7 +49,7 @@ module.exports = function(grunt) {
 			phpcbf: {
 				options: {
 					standard: 'phpcs.xml',
-					noPatch: true,
+					// noPatch: true,
 					extensions: 'php',
 					// severity: 0,
 					warningSeverity: 0
