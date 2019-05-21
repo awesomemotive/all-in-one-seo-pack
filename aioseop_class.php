@@ -2898,6 +2898,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 		}
 
+		/**
+		 * Allows users to filter the taxonomies that are shown in the General Settings menu.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param array $tax_types All registered taxonomies.
+		 */
 		$tax_types = apply_filters( 'aioseop_pre_tax_types_setting', $tax_types );
 
 		$this->default_options['posttypecolumns']['initial_options'] = $post_types;
