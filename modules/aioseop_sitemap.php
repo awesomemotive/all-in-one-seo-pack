@@ -701,12 +701,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$taxonomies_active = $this->options['aiosp_sitemap_taxonomies'];
 			} elseif ( ! empty( $this->options['aiosp_sitemap_taxonomies'] ) ) {
 				$taxonomies_active = array( $this->options['aiosp_sitemap_taxonomies'] );
+			} else {
+				$taxonomies_active = get_taxonomies();
 			}
 
 			$args_taxonomy_key = array_search( 'all', $taxonomies_active, true );
 			if ( false !== $args_taxonomy_key ) {
 				// Remove 'all' as an invalid post_type. Use registered post_types selected instead.
 				unset( $taxonomies_active[ $args_taxonomy_key ] );
+				// Adds all the taxonomies regardless if other taxonomies are selected; ensures all taxonomies are added.
+				$taxonomies_active = array_merge( $taxonomies_active, get_taxonomies() );
 			}
 
 			$excl_terms_init_opts = array();
