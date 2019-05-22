@@ -933,11 +933,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			$excl_terms = array();
-			foreach ( $options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
-				foreach ( $v1_tax_terms['terms'] as $v2_term ) {
-					$excl_terms[] = $k1_taxonomy . '-' . $v2_term;
+			if ( isset( $options[ $this->prefix . 'excl_terms' ] ) && is_array( $options[ $this->prefix . 'excl_terms' ] ) ) {
+				foreach ( $options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
+					foreach ( $v1_tax_terms['terms'] as $v2_term ) {
+						$excl_terms[] = $k1_taxonomy . '-' . $v2_term;
+					}
 				}
 			}
+
 			$options[ $this->prefix . 'excl_terms' ] = $excl_terms;
 
 			return $options;
