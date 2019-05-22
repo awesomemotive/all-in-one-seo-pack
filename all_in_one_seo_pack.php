@@ -62,6 +62,9 @@ if ( AIOSEOPPRO ) {
 if ( ! function_exists( 'aiosp_add_cap' ) ) {
 
 	function aiosp_add_cap() {
+		
+		wp_shrink_dimensions();
+		
 		/*
 		 TODO we should put this into an install script. We just need to make sure it runs soon enough and we need to make
 		 sure people updating from previous versions have access to it.
