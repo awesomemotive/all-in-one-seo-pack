@@ -1152,3 +1152,23 @@ if ( ! function_exists( 'aioseop_get_menu_icon' ) ) {
 			return 'data:image/svg+xml;base64,' . base64_encode( $svg );
 	}
 }
+
+/*
+ * Checks if content contains shortcodes that are known to conflict with AIOSEOP.
+ *
+ * @since 3.0.0
+ *
+ * @param string $content
+ * @return boolean
+ */
+function aioseop_contains_conflicting_shortcodes( $content ) {
+	$conflicting_shortcodes = array(
+		'WooCommerce Login' => '[woocommerce_my_account]',
+	);
+	foreach ( $conflicting_shortcodes as $shortcode ) {
+		if ( strpos( $content, $shortcode, 0 ) ) {
+			return true;
+		}
+	}
+	return false;
+}
