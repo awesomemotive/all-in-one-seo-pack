@@ -52,7 +52,7 @@ function aioseop_notice_blog_visibility() {
 		'slug'           => 'blog_public_disabled',
 		'delay_time'     => 0,
 		/* Translators: A link containing text. Which is handled with $text_link. */
-		'message'        => __( 'Warning: All in One SEO Pack has detected that you are blocking access to search engines. You can change this in Settings > Reading if this was unintended.', 'all-in-one-seo-pack' ),
+		'message'        => sprintf( __( 'Warning: %s has detected that you are blocking access to search engines. You can change this in Settings > Reading if this was unintended.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
 		'delay_options'  => array(),
 		'class'          => 'notice-error',
 		'target'         => 'site',

@@ -54,7 +54,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 					/* translators: the Importer & Exporter module allows users to import/export their All in One SEO Pack
 					settings for backup purposes or when migrating their site. */
 					'name'        => __( 'Importer & Exporter', 'all-in-one-seo-pack' ),
-					'description' => __( 'Exports and imports your All in One SEO Pack plugin settings.', 'all-in-one-seo-pack' ),
+					'description' => sprintf( __( 'Exports and imports your %s plugin settings.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
 				),
 				'bad_robots'        => array(
 					/* translators: the Bad Bot Blocker module allows users to block requests from user agents that are known to misbehave. */

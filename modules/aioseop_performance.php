@@ -265,7 +265,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			$debug_info[ __( 'Inactive Plugins', 'all-in-one-seo-pack' ) ] = null;
 			$debug_info                     = array_merge( $debug_info, (array) $inactive_plugins );
 
-			$mail_text = __( 'All in One SEO Pack Pro Debug Info', 'all-in-one-seo-pack' ) . "\r\n------------------\r\n\r\n";
+			$mail_text = sprintf( __( '%s Debug Info', 'all-in-one-seo-pack' ), 'All in One SEO Pack Pro' ) . "\r\n------------------\r\n\r\n";
 			$page_text = '';
 			if ( ! empty( $debug_info ) ) {
 				foreach ( $debug_info as $name => $value ) {
@@ -301,8 +301,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 								if ( $file_handle = @fopen( $file_path, 'w' ) ) {
 								// @codingStandardsIgnoreEnd
 									global $aiosp;
-									$buf = '; ' . __(
-										'Settings export file for All in One SEO Pack', 'all-in-one-seo-pack'
+									$buf = '; ' . sprintf(
+										__(
+											'Settings export file for %s', 'all-in-one-seo-pack'
+										), AIOSEOP_PLUGIN_NAME
 									) . "\n";
 
 									// Adds all settings and posts data to settings file

@@ -25,7 +25,7 @@ if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 
 			if ( empty( $aioseop_yst_detected_notice_dismissed ) ) {
 
-				echo '<div class="notice notice-warning row-title is-dismissible yst_notice"><p>', sprintf( esc_html__( 'The plugin Yoast SEO has been detected. Do you want to %1$simport its settings%2$s into All in One SEO Pack?', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( $aiourl ) ), '</a>' ), '</p></div>';
+				echo '<div class="notice notice-warning row-title is-dismissible yst_notice"><p>', sprintf( esc_html__( 'The plugin Yoast SEO has been detected. Do you want to %1$simport its settings%2$s into %3$s', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( $aiourl ) ), '</a>', AIOSEOP_PLUGIN_NAME ), '</p></div>';
 
 			}
 
@@ -147,11 +147,11 @@ function aiosp_seometa_admin() {
 		</p>
 
 		<p><span
-				class="description"><?php printf( __( 'Click "Analyze" for a list of SEO data that can be imported into All in One SEO Pack, along with the number of records that will be imported.', 'all-in-one-seo-pack' ) ); ?></span>
+				class="description"><?php printf( sprintf( __( 'Click "Analyze" for a list of SEO data that can be imported into %s, along with the number of records that will be imported.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) ); ?></span>
 		</p>
 
 		<p><span
-				class="description"><strong><?php printf( __( 'Please Note: ' ) ); ?></strong><?php printf( __( 'Some plugins and themes do not share similar data, or they store data in a non-standard way. If we cannot import this data, it will remain unchanged in your database. Any compatible SEO data will be displayed for you to review. If a post or page already has SEO data in All in One SEO Pack, we will not import data from another plugin/theme.', 'all-in-one-seo-pack' ) ); ?></span>
+				class="description"><strong><?php printf( __( 'Please Note: ' ) ); ?></strong><?php printf( sprintf( __( 'Some plugins and themes do not share similar data, or they store data in a non-standard way. If we cannot import this data, it will remain unchanged in your database. Any compatible SEO data will be displayed for you to review. If a post or page already has SEO data in %s, we will not import data from another plugin/theme.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) ); ?></span>
 		</p>
 
 		<p><span

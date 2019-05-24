@@ -587,7 +587,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'upgrade'            => array(
 						'type'    => 'html',
 						'label'   => 'none',
-						'default' => aiosp_common::get_upgrade_hyperlink( 'meta', __( 'Upgrade to All in One SEO Pack Pro Version', 'all-in-one-seo-pack' ), __( 'UPGRADE TO PRO VERSION', 'all-in-one-seo-pack' ), '_blank' ),
+						'default' => aiosp_common::get_upgrade_hyperlink( 'meta', sprintf( '%1$s %2$s Pro', __( 'Upgrade to', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ), __( 'UPGRADE TO PRO VERSION', 'all-in-one-seo-pack' ), '_blank' ),
 					),
 					'support'            => array(
 						'type'    => 'html',
@@ -2892,7 +2892,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$this->pointers['aioseop_menu_2640'] = array(
 			'pointer_target' => "#toplevel_page_all-in-one-seo-pack$pro-aioseop_class",
 			'pointer_text'   => '<h3>' . __( 'Review Your Settings', 'all-in-one-seo-pack' )
-								. '</h3><p>' . sprintf( __( 'Welcome to version %s. Thank you for running the latest and greatest All in One SEO Pack Pro ever! Please review your settings, as we\'re always adding new features for you!', 'all-in-one-seo-pack' ), AIOSEOP_VERSION ) . '</p>',
+								. '</h3><p>' . sprintf( __( 'Welcome to version %1$s. Thank you for running the latest and greatest %2$s ever! Please review your settings, as we\'re always adding new features for you!', 'all-in-one-seo-pack' ), AIOSEOP_VERSION, AIOSEOP_PLUGIN_NAME ) . '</p>',
 			'pointer_edge'   => 'top',
 			'pointer_align'  => 'left',
 			'pointer_scope'  => 'global',
@@ -2901,7 +2901,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$this->pointers['aioseop_menu_2361']   = array(
 			'pointer_target' => '#aioseop_top_button',
 			'pointer_text'   => '<h3>' . sprintf( __( 'Welcome to Version %s!', 'all-in-one-seo-pack' ), AIOSEOP_VERSION )
-								. '</h3><p>' . __( 'Thank you for running the latest and greatest All in One SEO Pack Pro ever! Please review your settings, as we\'re always adding new features for you!', 'all-in-one-seo-pack' ) . '</p>',
+								. '</h3><p>' . sprintf( __( 'Thank you for running the latest and greatest %s ever! Please review your settings, as we\'re always adding new features for you!', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) . '</p>',
 			'pointer_edge'   => 'top',
 			'pointer_align'  => 'left',
 			'pointer_scope'  => 'global',
@@ -2919,7 +2919,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$this->pointers['aioseop_menu_2205']      = array(
 			'pointer_target' => '#toplevel_page_all-in-one-seo-pack-aioseop_class',
 			'pointer_text'   => '<h3>' . sprintf( __( 'Welcome to Version %s!', 'all-in-one-seo-pack' ), AIOSEOP_VERSION )
-								. '</h3><p>' . __( 'Thank you for running the latest and greatest All in One SEO Pack ever! Please review your settings, as we\'re always adding new features for you!', 'all-in-one-seo-pack' ) . '</p>',
+								. '</h3><p>' . sprintf( __( 'Thank you for running the latest and greatest %s ever! Please review your settings, as we\'re always adding new features for you!', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) . '</p>',
 			'pointer_edge'   => 'top',
 			'pointer_align'  => 'left',
 			'pointer_scope'  => 'global',
@@ -2927,7 +2927,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$this->pointers['aioseop_welcome_220534'] = array(
 			'pointer_target' => '#aioseop_top_button',
 			'pointer_text'   => '<h3>' . sprintf( __( 'Review Your Settings', 'all-in-one-seo-pack' ), AIOSEOP_VERSION )
-								. '</h3><p>' . __( 'Thank you for running the latest and greatest All in One SEO Pack ever! New since 2.2: Control who accesses your site with the new Robots.txt Editor and File Editor modules!  Enable them from the Feature Manager.  Remember to review your settings, we have added some new ones!', 'all-in-one-seo-pack' ) . '</p>',
+								. '</h3><p>' . sprintf( __( 'Thank you for running the latest and greatest %s ever! New since 2.2: Control who accesses your site with the new Robots.txt Editor and File Editor modules!  Enable them from the Feature Manager.  Remember to review your settings, we have added some new ones!', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) . '</p>',
 			'pointer_edge'   => 'bottom',
 			'pointer_align'  => 'left',
 			'pointer_scope'  => 'local',
@@ -3678,7 +3678,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$aioseop_dup_counter ++;
 
 		if ( ! defined( 'AIOSEOP_UNIT_TESTING' ) && $aioseop_dup_counter > 1 ) {
-			echo "\n<!-- " . sprintf( __( 'Debug Warning: All in One SEO Pack meta data was included again from %1$s filter. Called %2$s times!', 'all-in-one-seo-pack' ), current_filter(), $aioseop_dup_counter ) . " -->\n";
+			echo "\n<!-- " . sprintf( __( 'Debug Warning: %1$s meta data was included again from %2$s filter. Called %3$s times!', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME, current_filter(), $aioseop_dup_counter ) . " -->\n";
 			if ( ! empty( $old_wp_query ) ) {
 				// Change the query back after we've finished.
 				$GLOBALS['wp_query'] = $old_wp_query;
@@ -3858,11 +3858,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 		}
 		do_action( 'aioseop_modules_wp_head' );
-		if ( AIOSEOPPRO ) {
-			echo "<!-- /all in one seo pack pro -->\n";
-		} else {
-			echo "<!-- /all in one seo pack -->\n";
-		}
+		echo sprintf( "<!-- %s -->\n", AIOSEOP_PLUGIN_NAME );
 
 		if ( ! empty( $old_wp_query ) ) {
 			// Change the query back after we've finished.

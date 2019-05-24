@@ -37,8 +37,8 @@ class AIOSP_Common_Strings {
 		__( 'Display Menu In Admin Bar:', 'all-in-one-seo-pack' );
 		__( 'Display Menu At The Top:', 'all-in-one-seo-pack' );
 		__( 'This displays an SEO News widget on the dashboard.', 'all-in-one-seo-pack' );
-		__( 'Check this to add All in One SEO Pack to the Admin Bar for easy access to your SEO settings.', 'all-in-one-seo-pack' );
-		__( 'Check this to move the All in One SEO Pack menu item to the top of your WordPress Dashboard menu.', 'all-in-one-seo-pack' );
+		sprintf( __( 'Check this to add %s to the Admin Bar for easy access to your SEO settings.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
+		sprintf( __( 'Check this to move the %s menu item to the top of your WordPress Dashboard menu.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
 		__( '%s is almost ready.', 'all-in-one-seo-pack' );
 		__( 'You must <a href="%s">enter a valid License Key</a> for it to work.', 'all-in-one-seo-pack' );
 		__( "There is a new version of %1\$s available. Go to <a href='%2\$s'>the plugins page</a> for details.", 'all-in-one-seo-pack' );

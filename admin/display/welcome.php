@@ -51,9 +51,10 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 		 * Adds (hidden) menu.
 		 */
 		function add_menus() {
+			$welcome_text = sprintf( __( 'Welcome to %s', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
 			add_dashboard_page(
-				__( 'Welcome to All in One SEO Pack', 'all-in-one-seo-pack' ),
-				__( 'Welcome to All in One SEO Pack', 'all-in-one-seo-pack' ),
+				$welcome_text,
+				$welcome_text,
 				'manage_options',
 				'aioseop-about',
 				array( $this, 'about_screen' )
@@ -113,9 +114,9 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 			?>
 
 			<div class="wrap about-wrap">
-				<h1><?php printf( esc_html__( 'Welcome to All in One SEO Pack %s', 'all-in-one-seo-pack' ), $version ); ?></h1>
+				<h1><?php printf( esc_html__( 'Welcome to %1$s %2$s', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME, $version ); ?></h1>
 				<div
-					class="about-text"><?php printf( esc_html__( 'All in One SEO Pack %s contains new features, bug fixes, increased security, and tons of under the hood performance improvements.', 'all-in-one-seo-pack' ), $version ); ?></div>
+					class="about-text"><?php printf( esc_html__( '%1$s %2$s contains new features, bug fixes, increased security, and tons of under the hood performance improvements.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME, $version ); ?></div>
 
 				<h2 class="nav-tab-wrapper">
 					<a class="nav-tab nav-tab-active" id="aioseop-about"

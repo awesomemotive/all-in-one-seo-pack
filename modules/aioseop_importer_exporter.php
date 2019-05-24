@@ -496,9 +496,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 					case 'Export':
 						// Creates Files Contents
 						$settings_file = 'settings_aioseop.ini';
-						$buf           = '; ' . __(
-							'Settings export file for All in One SEO Pack', '
+						$buf           = '; ' . sprintf(
+							__(
+								'Settings export file for %s', '
 							all-in-one-seo-pack'
+							),
+							AIOSEOP_PLUGIN_NAME
 						) . "\n";
 
 						// Adds all settings to settings file
