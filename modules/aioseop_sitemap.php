@@ -3453,7 +3453,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$attributes = wp_get_attachment_image_src( $post->ID );
 				if ( $attributes ) {
 					$rtn_image_attributes[] = array(
-						'image:loc'     => $this->clean_url( $attributes[0] ),
+						'image:loc'     => $this->aioseop_clean_url( $attributes[0] ),
 						'image:caption' => wp_get_attachment_caption( $post->ID ),
 						'image:title'   => get_the_title( $post->ID ),
 					);
@@ -3553,13 +3553,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					if ( ! isset( $this->image_ids_urls[ $v1_image_id ] ) ) {
 						// Sets any remaining post image IDs that weren't converted from URL.
 						$this->image_ids_urls[ $v1_image_id ] = array(
-							'base_url' => $this->clean_url( wp_get_attachment_url( $v1_image_id ) ),
+							'base_url' => $this->aioseop_clean_url( wp_get_attachment_url( $v1_image_id ) ),
 						);
 
 						$transient_update = true;
 					} else {
 						if ( empty( $this->image_ids_urls[ $v1_image_id ]['base_url'] ) ) {
-							$this->image_ids_urls[ $v1_image_id ]['base_url'] = $this->clean_url( wp_get_attachment_url( $v1_image_id ) );
+							$this->image_ids_urls[ $v1_image_id ]['base_url'] = $this->aioseop_clean_url( wp_get_attachment_url( $v1_image_id ) );
 
 							$transient_update = true;
 						}
@@ -3782,7 +3782,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @return string
 		 */
-		public function clean_url( $url ) {
+		public function aioseop_clean_url( $url ) {
 			// remove the query string.
 			$url = strtok( $url, '?' );
 			// make the url XML-safe.
