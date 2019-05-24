@@ -701,8 +701,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$taxonomies_active = $this->options['aiosp_sitemap_taxonomies'];
 			} elseif ( ! empty( $this->options['aiosp_sitemap_taxonomies'] ) ) {
 				$taxonomies_active = array( $this->options['aiosp_sitemap_taxonomies'] );
-			} else {
-				$taxonomies_active = get_taxonomies();
 			}
 
 			$args_taxonomy_key = array_search( 'all', $taxonomies_active, true );
