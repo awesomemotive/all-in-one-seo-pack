@@ -963,7 +963,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * @param string $title_format Document title to be filtered.
 		 *
 		 */
-		$title_format = apply_filters( 'aioseop_title_format', $title_format, 10, 1 );
+		$title_format = apply_filters( 'aioseop_title_format', $title_format );
 
 		$title_format    = preg_replace( '/%([^%]*?)%/', '', $title_format );
 
@@ -1856,7 +1856,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * @param string $new_title Document title to be filtered.
 		 *
 		 */
-		$new_title = apply_filters( 'aioseop_title_format', $new_title, 10, 1 );
+		$new_title = apply_filters( 'aioseop_title_format', $new_title );
 
 		/**
 		 * Runs after applying the formatting for the doc title on the frontend.
@@ -2167,7 +2167,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * @param string $title Document title to be filtered.
 		 *
 		 */
-		$title = apply_filters( 'aioseop_title_format', $title, 10, 1 );
+		$title = apply_filters( 'aioseop_title_format', $title );
 
 		$title = wp_strip_all_tags( $title );
 
