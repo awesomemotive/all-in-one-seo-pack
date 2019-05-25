@@ -3763,7 +3763,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 					$code .= ']';
 
-					$gallery_content .= do_shortcode( $code );
+					if ( ! aioseop_contains_conflicting_shortcodes( $code ) ) {
+						$gallery_content .= do_shortcode( $code );
+					}
 				}
 			}
 
