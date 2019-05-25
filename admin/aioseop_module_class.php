@@ -1759,15 +1759,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					false
 				);
 			}
-
-			if ( ! wp_style_is( 'aioseop-font-icons', 'registered' ) && ! wp_style_is( 'aioseop-font-icons', 'enqueued' ) ) {
-				wp_enqueue_style(
-					'aioseop-font-icons',
-					AIOSEOP_PLUGIN_URL . 'css/aioseop-font-icons.css',
-					array(),
-					AIOSEOP_VERSION
-				);
-			}
 		}
 
 		/**
