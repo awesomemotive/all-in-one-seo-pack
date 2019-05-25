@@ -707,6 +707,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( false !== $args_taxonomy_key ) {
 				// Remove 'all' as an invalid post_type. Use registered post_types selected instead.
 				unset( $taxonomies_active[ $args_taxonomy_key ] );
+				// Adds all the taxonomies regardless if other taxonomies are selected; ensures all taxonomies are added.
+				$taxonomies_active = array_merge( $taxonomies_active, get_taxonomies() );
 			}
 
 			$excl_terms_init_opts = array();
@@ -933,11 +935,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			$excl_terms = array();
-			foreach ( $options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
-				foreach ( $v1_tax_terms['terms'] as $v2_term ) {
-					$excl_terms[] = $k1_taxonomy . '-' . $v2_term;
+			if ( isset( $options[ $this->prefix . 'excl_terms' ] ) && is_array( $options[ $this->prefix . 'excl_terms' ] ) ) {
+				foreach ( $options[ $this->prefix . 'excl_terms' ] as $k1_taxonomy => $v1_tax_terms ) {
+					foreach ( $v1_tax_terms['terms'] as $v2_term ) {
+						$excl_terms[] = $k1_taxonomy . '-' . $v2_term;
+					}
 				}
 			}
+
 			$options[ $this->prefix . 'excl_terms' ] = $excl_terms;
 
 			return $options;
@@ -3450,7 +3455,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$attributes = wp_get_attachment_image_src( $post->ID );
 				if ( $attributes ) {
 					$rtn_image_attributes[] = array(
-						'image:loc'     => $this->clean_url( $attributes[0] ),
+						'image:loc'     => $this->aioseop_clean_url( $attributes[0] ),
 						'image:caption' => wp_get_attachment_caption( $post->ID ),
 						'image:title'   => get_the_title( $post->ID ),
 					);
@@ -3550,13 +3555,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					if ( ! isset( $this->image_ids_urls[ $v1_image_id ] ) ) {
 						// Sets any remaining post image IDs that weren't converted from URL.
 						$this->image_ids_urls[ $v1_image_id ] = array(
-							'base_url' => $this->clean_url( wp_get_attachment_url( $v1_image_id ) ),
+							'base_url' => $this->aioseop_clean_url( wp_get_attachment_url( $v1_image_id ) ),
 						);
 
 						$transient_update = true;
 					} else {
 						if ( empty( $this->image_ids_urls[ $v1_image_id ]['base_url'] ) ) {
-							$this->image_ids_urls[ $v1_image_id ]['base_url'] = $this->clean_url( wp_get_attachment_url( $v1_image_id ) );
+							$this->image_ids_urls[ $v1_image_id ]['base_url'] = $this->aioseop_clean_url( wp_get_attachment_url( $v1_image_id ) );
 
 							$transient_update = true;
 						}
@@ -3779,7 +3784,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @return string
 		 */
-		public function clean_url( $url ) {
+		public function aioseop_clean_url( $url ) {
 			// remove the query string.
 			$url = strtok( $url, '?' );
 			// make the url XML-safe.
