@@ -636,6 +636,7 @@ class AIOSEOP_Helper {
 	 */
 	private function help_text_sitemap() {
 		$rtn_help_text = array(
+			// XML Sitemap.
 			'aiosp_sitemap_rss_sitemap'     => __( 'Generate an RSS sitemap in addition to the regular XML Sitemap.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_daily_cron'      => __( 'Notify search engines based on the selected schedule, and also update static sitemap daily if in use. (this uses WP-Cron, so make sure this is working properly on your server as well)', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_indexes'         => __( 'Organize sitemap entries into distinct files in your sitemap. Enable this only if your sitemap contains over 50,000 URLs or the file is over 5MB in size.', 'all-in-one-seo-pack' ),
@@ -647,52 +648,50 @@ class AIOSEOP_Helper {
 			'aiosp_sitemap_images'          => __( 'Exclude Images in your sitemap.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_robots'          => __( 'Places a link to your Sitemap.xml into your virtual Robots.txt file.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_rewrite'         => __( 'Dynamically creates the XML sitemap instead of using a static file.', 'all-in-one-seo-pack' ),
+
+			// Additional Pages.
 			'aiosp_sitemap_addl_url'        => __( 'URL to the page. This field accepts relative URLs or absolute URLs with the protocol specified.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_addl_prio'       => __( 'The priority of the page.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_addl_freq'       => __( 'The frequency of the page.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_addl_mod'        => __( 'Last modified date of the page.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_excl_terms' => __( 'Entries from these categories will be excluded from the sitemap.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_excl_pages'      => __( 'Use page slugs or page IDs, seperated by commas, to exclude pages from the sitemap.', 'all-in-one-seo-pack' ),
-		);
 
-		$parent_prio_help = __( 'Manually set the priority of your ', 'all-in-one-seo-pack' );
-		$parent_freq_help = __( 'Manually set the frequency of your ', 'all-in-one-seo-pack' );
-		$prio_help        = __( 'Manually set the priority for the ', 'all-in-one-seo-pack' );
-		$freq_help        = __( 'Manually set the frequency for the ', 'all-in-one-seo-pack' );
-		$post_name        = __( ' Post Type', 'all-in-one-seo-pack' );
-		$tax_name         = __( ' Taxonomy', 'all-in-one-seo-pack' );
+			// Priorities.
+			'aiosp_sitemap_prio_homepage'       => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Homepage', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_prio_post'           => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Post', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_prio_taxonomies'     => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Taxonomies', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_prio_archive'        => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Archive Pages', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_prio_author'         => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Author Pages', 'all-in-one-seo-pack' ) ),
+
+			// Frequencies.
+			'aiosp_sitemap_freq_homepage'       => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Homepage', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_freq_post'           => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Post', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_freq_taxonomies'     => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Taxonomies', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_freq_archive'        => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Archive Pages', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_freq_author'         => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Author Pages', 'all-in-one-seo-pack' ) ),
+
+		);
 
 		$args = array(
 			'public' => true,
 		);
-
-		$rtn_help_text['aiosp_sitemap_prio_homepage']   = $parent_prio_help . __( 'Homepage.', 'all-in-one-seo-pack' );
-		$rtn_help_text['aiosp_sitemap_prio_post']       = $parent_prio_help . __( 'posts.', 'all-in-one-seo-pack' );
-		$rtn_help_text['aiosp_sitemap_prio_taxonomies'] = $parent_prio_help . __( 'taxonomies.', 'all-in-one-seo-pack' );
-		$rtn_help_text['aiosp_sitemap_prio_archive']    = $parent_prio_help . __( 'archive pages.', 'all-in-one-seo-pack' );
-		$rtn_help_text['aiosp_sitemap_prio_author']     = $parent_prio_help . __( 'author pages.', 'all-in-one-seo-pack' );
 
 		$post_types = get_post_types( $args, 'names' );
 		foreach ( $post_types as $pt ) {
 			$pt_obj = get_post_type_object( $pt );
-			$rtn_help_text[ 'aiosp_sitemap_prio_post_' . $pt ] = $prio_help . $pt_obj->label . $post_name;
-			$rtn_help_text[ 'aiosp_sitemap_freq_post_' . $pt ] = $freq_help . $pt_obj->label . $post_name;
+			$rtn_help_text[ 'aiosp_sitemap_prio_post_' . $pt ] = sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), ucwords( $pt_obj->label ) );
+			$rtn_help_text[ 'aiosp_sitemap_freq_post_' . $pt ] = sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), ucwords( $pt_obj->label ) );
+			$help_doc_link[ 'aiosp_sitemap_prio_post_' . $pt ] = 'https://semperplugins.com/documentation/xml-sitemaps-module/#priorities-and-frequencies';
+			$help_doc_link[ 'aiosp_sitemap_freq_post_' . $pt ] = 'https://semperplugins.com/documentation/xml-sitemaps-module/#priorities-and-frequencies';
 		}
-
-		$args = array(
-			'public' => true,
-		);
-
-		$rtn_help_text['aiosp_sitemap_freq_homepage']   = $parent_freq_help . __( 'Homepage.', 'all-in-one-seo-pack' );
-		$rtn_help_text['aiosp_sitemap_freq_post']       = $parent_freq_help . __( 'posts.', 'all-in-one-seo-pack' );
-		$rtn_help_text['aiosp_sitemap_freq_taxonomies'] = $parent_freq_help . __( 'taxonomies.', 'all-in-one-seo-pack' );
-		$rtn_help_text['aiosp_sitemap_freq_archive']    = $parent_freq_help . __( 'archive pages.', 'all-in-one-seo-pack' );
-		$rtn_help_text['aiosp_sitemap_freq_author']     = $parent_freq_help . __( 'author pages.', 'all-in-one-seo-pack' );
 
 		$taxonomies = get_taxonomies( $args, 'object' );
 		foreach ( $taxonomies as $tax ) {
-			$rtn_help_text[ 'aiosp_sitemap_prio_taxonomies_' . $tax->name ] = $prio_help . $tax->label . $tax_name;
-			$rtn_help_text[ 'aiosp_sitemap_freq_taxonomies_' . $tax->name ] = $freq_help . $tax->label . $tax_name;
+			$rtn_help_text[ 'aiosp_sitemap_prio_taxonomies_' . $tax->name ] = sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), ucwords( $tax->label ) );
+			$rtn_help_text[ 'aiosp_sitemap_freq_taxonomies_' . $tax->name ] = sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), ucwords( $tax->label ) );
+			$help_doc_link[ 'aiosp_sitemap_prio_taxonomies_' . $tax->name ] = 'https://semperplugins.com/documentation/xml-sitemaps-module/#priorities-and-frequencies';
+			$help_doc_link[ 'aiosp_sitemap_freq_taxonomies_' . $tax->name ] = 'https://semperplugins.com/documentation/xml-sitemaps-module/#priorities-and-frequencies';
 		}
 
 		$help_doc_link = array(
