@@ -1214,8 +1214,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @return bool
 		 */
 		function save_file( $filename, $contents ) {
-			$failed_str   = sprintf( __( "Failed to write file %s!", 'all-in-one-seo-pack' . "\n" ), $filename );
-			$readonly_str = sprintf( __( "File %s isn't writable!", 'all-in-one-seo-pack' . "\n" ), $filename );
+			$failed_str   = sprintf( __( "Failed to write file %s!", 'all-in-one-seo-pack' ) . "\n", $filename );
+			$readonly_str = sprintf( __( "File %s isn't writable!", 'all-in-one-seo-pack' ) . "\n", $filename );
 			$wpfs         = $this->get_filesystem_object();
 			if ( is_object( $wpfs ) ) {
 				$file_exists = $wpfs->exists( $filename );
@@ -1245,12 +1245,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			if ( is_object( $wpfs ) ) {
 				if ( $wpfs->exists( $filename ) ) {
 					if ( $wpfs->delete( $filename ) === false ) {
-						$this->output_error( sprintf( __( "Failed to delete file %s!", 'all-in-one-seo-pack' ), $filename . "\n" ) );
+						$this->output_error( sprintf( __( "Failed to delete file %s!", 'all-in-one-seo-pack' ) . "\n", $filename ) );
 					} else {
 						return true;
 					}
 				} else {
-					$this->output_error( sprintf( __( "File %s doesn't exist!", 'all-in-one-seo-pack' ), $filename . "\n" ) );
+					$this->output_error( sprintf( __( "File %s doesn't exist!", 'all-in-one-seo-pack' ) . "\n" , $filename ) );
 				}
 			}
 
@@ -1272,15 +1272,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				$newfile_exists = $wpfs->exists( $newname );
 				if ( $file_exists && ! $newfile_exists ) {
 					if ( $wpfs->move( $filename, $newname ) === false ) {
-						$this->output_error( sprintf( __( "Failed to rename file %s!", 'all-in-one-seo-pack' . "\n" ), $filename ) );
+						$this->output_error( sprintf( __( "Failed to rename file %s!", 'all-in-one-seo-pack' ) . "\n", $filename ) );
 					} else {
 						return true;
 					}
 				} else {
 					if ( ! $file_exists ) {
-						$this->output_error( sprintf( __( "File %s doesn't exist!", 'all-in-one-seo-pack' . "\n" ), $filename ) );
+						$this->output_error( sprintf( __( "File %s doesn't exist!", 'all-in-one-seo-pack' ) . "\n", $filename ) );
 					} elseif ( $newfile_exists ) {
-						$this->output_error( sprintf( __( "File %s already exists!", 'all-in-one-seo-pack' . "\n" ), $newname ) );
+						$this->output_error( sprintf( __( "File %s already exists!", 'all-in-one-seo-pack' ) . "\n", $newname ) );
 					}
 				}
 			}
