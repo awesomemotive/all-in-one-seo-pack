@@ -1305,13 +1305,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					$description = get_queried_object()->description;
 				}
 				if ( empty( $type ) ) {
-					// https://github.com/semperfiwebdesign/aioseop-pro/issues/321
 					if ( AIOSEOPPRO && ( is_category() || is_tag() || is_tax() ) ) {
-						$og_options        = $aioseop_options['modules'][ $this->prefix . 'options' ];
+						// Check if the post type's object type is set.
 						$current_post_type = get_post_type();
-						// check if the post type's object type is set.
-						if ( isset( $og_options[ "aiosp_opengraph_{$current_post_type}_fb_object_type" ] ) ) {
-							$type = $og_options[ "aiosp_opengraph_{$current_post_type}_fb_object_type" ];
+
+						if ( isset( $this->options[ "aiosp_opengraph_{$current_post_type}_fb_object_type" ] ) ) {
+							$type = $this->options[ "aiosp_opengraph_{$current_post_type}_fb_object_type" ];
 						} elseif ( in_array( $current_post_type, array( 'post', 'page' ) ) ) {
 							$type = 'article';
 						}
