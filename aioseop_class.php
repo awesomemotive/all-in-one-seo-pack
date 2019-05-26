@@ -2882,6 +2882,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		<?php
 	}
 
+	/*
+	 * Admin Pointer function.
+	 * Not in use at the moment. Below is an example of we can implement them.
+	 *
 	function add_admin_pointers() {
 
 		$pro = '';
@@ -2897,44 +2901,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'pointer_align'  => 'left',
 			'pointer_scope'  => 'global',
 		);
-
-		$this->pointers['aioseop_menu_2361']   = array(
-			'pointer_target' => '#aioseop_top_button',
-			'pointer_text'   => '<h3>' . sprintf( __( 'Welcome to Version %s!', 'all-in-one-seo-pack' ), AIOSEOP_VERSION )
-								. '</h3><p>' . sprintf( __( 'Thank you for running the latest and greatest %s ever! Please review your settings, as we\'re always adding new features for you!', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) . '</p>',
-			'pointer_edge'   => 'top',
-			'pointer_align'  => 'left',
-			'pointer_scope'  => 'global',
-		);
-		$this->pointers['aioseop_welcome_230'] = array(
-			'pointer_target' => '#aioseop_top_button',
-			'pointer_text'   => '<h3>' . sprintf( __( 'Review Your Settings', 'all-in-one-seo-pack' ), AIOSEOP_VERSION )
-								. '</h3><p>' . __( 'New in 2.4: Improved support for taxonomies, Woocommerce and massive performance improvements under the hood! Please review your settings on each options page!', 'all-in-one-seo-pack' ) . '</p>',
-			'pointer_edge'   => 'bottom',
-			'pointer_align'  => 'left',
-			'pointer_scope'  => 'local',
-		);
 		$this->filter_pointers();
-
-		$this->pointers['aioseop_menu_2205']      = array(
-			'pointer_target' => '#toplevel_page_all-in-one-seo-pack-aioseop_class',
-			'pointer_text'   => '<h3>' . sprintf( __( 'Welcome to Version %s!', 'all-in-one-seo-pack' ), AIOSEOP_VERSION )
-								. '</h3><p>' . sprintf( __( 'Thank you for running the latest and greatest %s ever! Please review your settings, as we\'re always adding new features for you!', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) . '</p>',
-			'pointer_edge'   => 'top',
-			'pointer_align'  => 'left',
-			'pointer_scope'  => 'global',
-		);
-		$this->pointers['aioseop_welcome_220534'] = array(
-			'pointer_target' => '#aioseop_top_button',
-			'pointer_text'   => '<h3>' . sprintf( __( 'Review Your Settings', 'all-in-one-seo-pack' ), AIOSEOP_VERSION )
-								. '</h3><p>' . sprintf( __( 'Thank you for running the latest and greatest %s ever! New since 2.2: Control who accesses your site with the new Robots.txt Editor and File Editor modules!  Enable them from the Feature Manager.  Remember to review your settings, we have added some new ones!', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) . '</p>',
-			'pointer_edge'   => 'bottom',
-			'pointer_align'  => 'left',
-			'pointer_scope'  => 'local',
-		);
-		$this->filter_pointers();
-
 	}
+	*/
 
 	function add_page_hooks() {
 
