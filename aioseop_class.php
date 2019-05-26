@@ -3798,6 +3798,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			if ( aioseop_option_isset( 'aiosp_google_analytics_id' ) ) {
 				add_action( 'aioseop_modules_wp_head', array( $this, 'aiosp_google_analytics' ) );
 			}
+			remove_action( 'wp_head', 'noindex', 1 );
 			add_action( 'wp_head', array( $this, 'wp_head' ), apply_filters( 'aioseop_wp_head_priority', 1 ) );
 			add_action( 'amp_post_template_head', array( $this, 'amp_head' ), 11 );
 			add_action( 'template_redirect', array( $this, 'template_redirect' ), 0 );
@@ -4312,7 +4313,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		global $aioseop_options;
 		$opts        = $this->meta_opts;
 		$page        = $this->get_page_number();
-		$robots_meta = $tax_noindex = '';
+		$robots_meta = '';
+		$tax_noindex = '';
 		if ( isset( $aioseop_options['aiosp_tax_noindex'] ) ) {
 			$tax_noindex = $aioseop_options['aiosp_tax_noindex'];
 		}
@@ -4321,79 +4323,54 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$tax_noindex = array();
 		}
 
-		$aiosp_noindex = $aiosp_nofollow = '';
-		$noindex       = 'index';
-		$nofollow      = 'follow';
+		$aiosp_noindex  = '';
+		$aiosp_nofollow = '';
+		$noindex        = 'index';
+		$nofollow       = 'follow';
 
 		if ( ! empty( $opts ) ) {
 			$aiosp_noindex  = htmlspecialchars( stripslashes( $opts['aiosp_noindex'] ) );
 			$aiosp_nofollow = htmlspecialchars( stripslashes( $opts['aiosp_nofollow'] ) );
 		}
 
-		if (
-				(
-					is_category() &&
-					! empty( $aioseop_options['aiosp_category_noindex'] )
-				) ||
-				(
-					! is_category() &&
-					is_archive() &&
-					! is_tag() &&
-					! is_tax() &&
-					(
-						(
-							is_date() &&
-							! empty( $aioseop_options['aiosp_archive_date_noindex'] )
-						) ||
-						(
-							is_author() &&
-							! empty( $aioseop_options['aiosp_archive_author_noindex'] )
-						)
-					)
-				) ||
-				(
-					is_tag() &&
-					! empty( $aioseop_options['aiosp_tags_noindex'] )
-				) ||
-				(
-					is_search() &&
-					! empty( $aioseop_options['aiosp_search_noindex'] )
-				) ||
-				(
-					is_404() &&
-					! empty( $aioseop_options['aiosp_404_noindex'] )
-				) ||
-				(
-					is_tax() &&
-					in_array( get_query_var( 'taxonomy' ), $tax_noindex )
-				)
-		) {
-			$noindex = 'noindex';
-
-			// #322: duplicating this code so that we don't step on some other entities' toes.
-			if (
-					( 'on' === $aiosp_nofollow ) ||
-					(
-						( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) ) &&
-						$page > 1
-					) ||
-					(
-							( '' === $aiosp_nofollow ) &&
-							( ! empty( $aioseop_options['aiosp_cpostnofollow'] ) ) &&
-							in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
-					)
-			) {
+		// TODO Settings UI & Database need to be refactored in order to reduce the `is_category()` & `is_tag()` operations.
+		// Settings `aiosp_category_noindex` & `aiosp_tags_noindex` would need to be merged with taxonomy settings.
+		if ( is_category() ) {
+			if ( ! empty( $aioseop_options['aiosp_category_noindex'] ) ) {
+				$noindex = 'noindex';
+			}
+			if ( 'on' === $aiosp_nofollow ) {
 				$nofollow = 'nofollow';
 			}
-			// #322: duplicating this code so that we don't step on some other entities' toes.
+		} elseif ( is_tag() ) {
+			if ( ! empty( $aioseop_options['aiosp_tags_noindex'] ) ) {
+				$noindex = 'noindex';
+			}
+			if ( 'on' === $aiosp_nofollow ) {
+				$nofollow = 'nofollow';
+			}
+		} elseif ( is_tax() ) {
+			if ( in_array( get_query_var( 'taxonomy' ), $tax_noindex ) ) {
+				$noindex = 'noindex';
+			}
+			if ( 'on' === $aiosp_nofollow ) {
+				$nofollow = 'nofollow';
+			}
+		} elseif ( is_archive() ) {
+			if (
+				( is_date() && ! empty( $aioseop_options['aiosp_archive_date_noindex'] ) ) ||
+				( is_author() && ! empty( $aioseop_options['aiosp_archive_author_noindex'] ) )
+			) {
+				$noindex = 'noindex';
+			}
+			if ( 'on' === $aiosp_nofollow ) {
+				$nofollow = 'nofollow';
+			}
 		} elseif (
 				is_single() ||
 				is_page() ||
-				$this->is_static_posts_page() ||
 				is_attachment() ||
-				is_category() ||
-				is_tag() ||
-				is_tax() ||
+				$this->is_static_posts_page() ||
 				( $page > 1 ) ||
 				$this->check_singular()
 		) {
@@ -4406,12 +4383,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					! empty( $aioseop_options['aiosp_paginated_noindex'] ) ||
 					! empty( $aioseop_options['aiosp_paginated_nofollow'] )
 			) {
-
 				if (
 						( 'on' === $aiosp_noindex ) ||
 						(
-							( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) )
-							&& $page > 1
+								( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) ) &&
+								$page > 1
 						) ||
 						(
 							( '' === $aiosp_noindex ) &&
@@ -4443,9 +4419,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		$robots_meta = $noindex . ',' . $nofollow;
-		if ( $robots_meta == 'index,follow' ) {
-			$robots_meta = '';
-		}
 
 		return $robots_meta;
 	}
