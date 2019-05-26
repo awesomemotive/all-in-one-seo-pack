@@ -88,7 +88,7 @@ class aiosp_metaboxes {
 										$maybe_native_name = $aiosp_trans->name;
 									}
 
-									/* translators: %1$s expands to the number of languages All in One SEO Pack has been translated into. $2%s to the percentage translated of the current language, $3%s to the language name, %4$s and %5$s to anchor tags with link to translation page at translate.wordpress.org  */
+									/* translators: %1$s, %2$s, etc. are placeholders and shouldn't be translated. %1$s expands to the number of languages All in One SEO Pack has been translated into, %2$s to the name of the plugin, $3%s to the percentage translated of the current language, $4%s to the language name, %5$s and %6$s to anchor tags with link to the translation page at translate.wordpress.org  */
 									printf(
 										__(
 											'%1$s has been translated into %2$s languages, but currently the %3$s translation is only %4$s percent complete. %5$sClick here%6$s to help get it to 100 percent.', 'all-in-one-seo-pack'
@@ -137,7 +137,12 @@ class aiosp_metaboxes {
 					<p>
 					<div class="aioseop_icon aioseop_file_icon"></div>
 					<a target="_blank"
-					   href="https://semperplugins.com/documentation/"><?php printf( __( 'Read the %s user guide', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ); ?></a></p>
+					   href="https://semperplugins.com/documentation/">
+					   <?php
+						/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+						printf( __( 'Read the %s user guide', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
+						?>
+						</a></p>
 					<p>
 					<div class="aioseop_icon aioseop_support_icon"></div>
 					<a target="_blank"

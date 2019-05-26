@@ -54,6 +54,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 					/* translators: the Importer & Exporter module allows users to import/export their All in One SEO Pack
 					settings for backup purposes or when migrating their site. */
 					'name'        => __( 'Importer & Exporter', 'all-in-one-seo-pack' ),
+					/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
 					'description' => sprintf( __( 'Exports and imports your %s plugin settings.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
 				),
 				'bad_robots'        => array(

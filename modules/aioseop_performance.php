@@ -265,6 +265,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			$debug_info[ __( 'Inactive Plugins', 'all-in-one-seo-pack' ) ] = null;
 			$debug_info                     = array_merge( $debug_info, (array) $inactive_plugins );
 
+			/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the premium version of the plugin, All in One SEO Pack Pro. */
 			$mail_text = sprintf( __( '%s Debug Info', 'all-in-one-seo-pack' ), 'All in One SEO Pack Pro' ) . "\r\n------------------\r\n\r\n";
 			$page_text = '';
 			if ( ! empty( $debug_info ) ) {
@@ -301,6 +302,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 								if ( $file_handle = @fopen( $file_path, 'w' ) ) {
 								// @codingStandardsIgnoreEnd
 									global $aiosp;
+									/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
 									$buf = '; ' . sprintf(
 										__(
 											'Settings export file for %s', 'all-in-one-seo-pack'

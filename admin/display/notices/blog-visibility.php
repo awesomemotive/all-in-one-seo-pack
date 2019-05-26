@@ -51,7 +51,7 @@ function aioseop_notice_blog_visibility() {
 	return array(
 		'slug'           => 'blog_public_disabled',
 		'delay_time'     => 0,
-		/* Translators: A link containing text. Which is handled with $text_link. */
+		/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. "Settings > Reading" refers to the "Reading" submenu in WordPress Core. */
 		'message'        => sprintf( __( 'Warning: %s has detected that you are blocking access to search engines. You can change this in Settings > Reading if this was unintended.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
 		'delay_options'  => array(),
 		'class'          => 'notice-error',
