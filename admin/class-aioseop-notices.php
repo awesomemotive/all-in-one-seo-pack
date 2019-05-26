@@ -643,7 +643,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		public function ajax_notice_action() {
 			check_ajax_referer( 'aioseop_ajax_notice' );
 			if ( ! current_user_can( 'aiosp_manage_seo' ) ) {
-				wp_send_json_error( __( 'User doesn\' have `aiosp_manage_seo` capabilities.', 'all-in-one-seo-pack' ) );
+				wp_send_json_error( __( "User doesn't have `aiosp_manage_seo` capabilities.", 'all-in-one-seo-pack' ) );
 			}
 			// Notice (Slug) => (Action_Options) Index.
 			$notice_slug  = null;
