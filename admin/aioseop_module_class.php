@@ -1278,7 +1278,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					}
 				} else {
 					if ( ! $file_exists ) {
-						$this->output_error( sprintf( __( 'File %s doesn\'t exist!'", 'all-in-one-seo-pack' ) . "\n", $filename ) );
+						$this->output_error( sprintf( __( 'File %s doesn\'t exist!', 'all-in-one-seo-pack' ) . "\n", $filename ) );
 					} elseif ( $newfile_exists ) {
 						$this->output_error( sprintf( __( 'File %s already exists!', 'all-in-one-seo-pack' ) . "\n", $newname ) );
 					}
