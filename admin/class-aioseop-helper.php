@@ -647,7 +647,7 @@ class AIOSEOP_Helper {
 			'aiosp_sitemap_images'          => __( 'Exclude Images in your sitemap.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_robots'          => __( 'Places a link to your Sitemap.xml into your virtual Robots.txt file.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_rewrite'         => __( 'Dynamically creates the XML sitemap instead of using a static file.', 'all-in-one-seo-pack' ),
-			'aiosp_sitemap_addl_url'        => __( 'URL to the page. This field accepts relative URLs or absolute URLs with the protocol specified.', 'all-in-one-seo-pack' ),
+			'aiosp_sitemap_addl_url'        => __( 'URL to the page. This field only accepts absolute URLs with the protocol specified.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_addl_prio'       => __( 'The priority of the page.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_addl_freq'       => __( 'The frequency of the page.', 'all-in-one-seo-pack' ),
 			'aiosp_sitemap_addl_mod'        => __( 'Last modified date of the page.', 'all-in-one-seo-pack' ),

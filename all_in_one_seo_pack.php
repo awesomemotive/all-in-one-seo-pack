@@ -453,7 +453,34 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 	}
 }
 
-
+if ( ! function_exists( 'aioseop_admin_enqueue_styles' ) ) {
+	/**
+	 * Admin Enqueue Styles
+	 *
+	 * Styles used in various parts of WordPress admin, and not just AIOSEOP's screens.
+	 * Note: If styles are specific to a given module, then use that module's admin_enqueue_styles() method, or parent method.
+	 *
+	 * @todo Refactor this into a core file.
+	 *
+	 * @since 3.0
+	 *
+	 * @see 'admin_enqueue_scripts' hook
+	 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+	 *
+	 * @param string $hook_suffix
+	 */
+	function aioseop_admin_enqueue_styles( $hook_suffix ) {
+		// Font Icons.
+		if ( ! wp_style_is( 'aioseop-font-icons', 'registered' ) && ! wp_style_is( 'aioseop-font-icons', 'enqueued' ) ) {
+			wp_enqueue_style(
+				'aioseop-font-icons',
+				AIOSEOP_PLUGIN_URL . 'css/aioseop-font-icons.css',
+				array(),
+				AIOSEOP_VERSION
+			);
+		}
+	}
+}
 
 if ( ! function_exists( 'aioseop_welcome' ) ) {
 	function aioseop_welcome() {
@@ -481,6 +508,8 @@ if ( is_admin() || defined( 'AIOSEOP_UNIT_TESTING' ) ) {
 	add_action( 'wp_ajax_aioseo_dismiss_yst_notice', 'aioseop_update_yst_detected_notice' );
 	add_action( 'wp_ajax_aioseo_dismiss_visibility_notice', 'aioseop_update_user_visibilitynotice' );
 	add_action( 'wp_ajax_aioseo_dismiss_woo_upgrade_notice', 'aioseop_woo_upgrade_notice_dismissed' );
+
+	add_action( 'admin_enqueue_scripts', 'aioseop_admin_enqueue_styles' );
 }
 
 if ( ! function_exists( 'aioseop_scan_post_header' ) ) {
