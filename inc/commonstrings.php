@@ -33,6 +33,7 @@ class AIOSP_Common_Strings {
 		__( 'Manage Licenses', 'all-in-one-seo-pack' );
 
 		// These are Pro option strings.
+		sprintf( __( 'Use these checkboxes to select which Taxonomies you want to use %s with.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
 		__( 'Show SEO News', 'all-in-one-seo-pack' );
 		__( 'Display Menu In Admin Bar:', 'all-in-one-seo-pack' );
 		__( 'Display Menu At The Top:', 'all-in-one-seo-pack' );
