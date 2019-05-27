@@ -135,6 +135,37 @@
 	min-height: 36px;
 }
 
+.aioseop input, textarea {
+    border-radius: 4px;
+    border: 1px solid #8d96a0;
+    margin: 1px;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif !important;
+}
+
+.aioseop input:focus, textarea:focus {
+    box-shadow: 0 0 0 1px #007cba;
+}
+
+.aioseop textarea::-webkit-scrollbar,
+.aioseop select::-webkit-scrollbar {
+    width: 5px;
+}
+
+.aioseop textarea::-webkit-scrollbar-track
+.aioseop select::-webkit-scrollbar {
+    background: #f1f1f1;
+}
+
+.aioseop textarea::-webkit-scrollbar-thumb
+.aioseop select::-webkit-scrollbar {
+    background: #aeaeae;
+}
+
+.aioseop textarea::-webkit-scrollbar-thumb:hover
+.aioseop select::-webkit-scrollbar {
+    background: #888;
+}
+
 .aioseop_help_text_div {
 	text-align: left;
 	width: 100%;
@@ -1057,6 +1088,20 @@ table.aioseop_table td, table.aioseop_table th {
 	margin-top: 8px;
 }
 
+.aioseop_input input[type="checkbox"]:before {
+    margin: -3px 0 0 -5px;
+    color: white;
+}
+
+.aioseop_input input[type="radio"]:before {
+    content: none !important;
+}
+
+.aioseop_input input[type="radio"]:checked,
+.aioseop_input input[type="checkbox"]:checked {
+    background: #11a0d2;
+}
+
 #aiosp_importer_exporter_import_export_help_wrapper .aioseop_option_div {
 	max-height: initial;
 }
@@ -1392,11 +1437,12 @@ div.sfwd_debug_error {
 *
 */
 div#aiosp_snippet_wrapper {
-	border: 1px solid #888;
-	clear: both;
-	padding: 10px 10px 0;
-	max-width: 97%;
-	margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid #8d96a0;
+    clear: both;
+    padding: 10px 10px 0;
+    max-width: 97%;
+    margin-bottom: 15px;
 }
 
 #aiosp_snippet_wrapper > .aioseop_input:first-child {
@@ -1478,60 +1524,6 @@ textarea.robots-text {
 
 div#aiosp_sitemap_status_metabox .toggle-indicator {
     display:none;
-}
-
-div#aiosp_snippet_wrapper {
-	border-radius: 4px;
-	border: 1px solid #8d96a0;
-	clear: both;
-	padding: 10px 10px 0;
-	max-width: 97%;
-	margin-bottom: 15px;
-}
-
-.aioseop input, textarea {
-	border-radius: 4px;
-	border: 1px solid #8d96a0;
-	margin: 1px;
-	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif !important;
-}
-
-.aioseop input:focus, textarea:focus {
-	box-shadow: 0 0 0 1px #007cba;
-}
-
-.aioseop_input input[type="checkbox"]:before {
-	margin: -3px 0 0 -5px;
-	color: white;
-}
-
-.aioseop_input input[type="radio"]:before {
-	content: none !important;
-}
-
-.aioseop_input input[type="radio"]:checked,
-.aioseop_input input[type="checkbox"]:checked {
-	background: #11a0d2;
-}
-
-.aioseop textarea::-webkit-scrollbar,
-.aioseop select::-webkit-scrollbar {
-	width: 5px;
-}
-
-.aioseop textarea::-webkit-scrollbar-track
-.aioseop select::-webkit-scrollbar {
-	background: #f1f1f1;
-}
-
-.aioseop textarea::-webkit-scrollbar-thumb
-.aioseop select::-webkit-scrollbar {
-	background: #aeaeae;
-}
-
-.aioseop textarea::-webkit-scrollbar-thumb:hover
-.aioseop select::-webkit-scrollbar {
-	background: #888;
 }
 
 .required.email {
