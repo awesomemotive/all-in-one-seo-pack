@@ -2341,7 +2341,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$buf .= '<input class="aioseop_upload_image_checker" type="hidden" name="' . $name . '_checker" value="0">' .
 							"<input class='aioseop_upload_image_button button-primary' type='button' value='";
 					$buf .= __( 'Upload Image', 'all-in-one-seo-pack' );
-					$buf .= "' style='float:left;' />" .
+					$buf .= "' style='float:left;margin:0 0 5px 0;' />" .
 							"<input class='aioseop_upload_image_label' name='" . esc_attr( $name ) . "' type='text' " . esc_html( $attr ) . " value='" . esc_attr( $value ) . "' size=57 style='float:left;clear:left;'>\n";
 					break;
 				case 'html':
