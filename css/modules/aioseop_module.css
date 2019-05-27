@@ -823,15 +823,6 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
 	padding: 0;
 }
 
-#aiosp_sitemap_addl_pages_metabox .aioseop_wrapper .aioseop_input,
-#aiosp_video_sitemap_addl_pages_metabox .aioseop_wrapper .aioseop_input {
-	display: inline-block;
-	vertical-align: middle;
-	width: 25%;
-	min-width: 120px;
-	height: 70px;
-}
-
 #aiosp_sitemap_addl_pages_metabox .aioseop_wrapper .aioseop_top_label,
 #aiosp_video_sitemap_addl_pages_metabox .aioseop_wrapper .aioseop_top_label {
 	width: 70%;

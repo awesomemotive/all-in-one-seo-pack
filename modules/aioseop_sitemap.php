@@ -303,27 +303,23 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'addl_url'          => array(
 					'name'  => __( 'Page URL', 'all-in-one-seo-pack' ),
 					'type'  => 'url',
-					'label' => 'top',
 					'save'  => false,
 				),
 				'addl_prio'         => array(
 					'name'            => __( 'Page Priority', 'all-in-one-seo-pack' ),
 					'type'            => 'select',
 					'initial_options' => $prio,
-					'label'           => 'top',
 					'save'            => false,
 				),
 				'addl_freq'         => array(
 					'name'            => __( 'Page Frequency', 'all-in-one-seo-pack' ),
 					'type'            => 'select',
 					'initial_options' => $freq,
-					'label'           => 'top',
 					'save'            => false,
 				),
 				'addl_mod'          => array(
 					'name'  => __( 'Last Modified', 'all-in-one-seo-pack' ),
 					'type'  => 'date',
-					'label' => 'top',
 					'save'  => false,
 					'class' => 'aiseop-date',
 				),
