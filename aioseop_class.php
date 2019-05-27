@@ -3526,6 +3526,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			if ( aioseop_option_isset( 'aiosp_google_analytics_id' ) ) {
 				add_action( 'aioseop_modules_wp_head', array( $this, 'aiosp_google_analytics' ) );
 			}
+			remove_action( 'wp_head', 'noindex', 1 );
 			add_action( 'wp_head', array( $this, 'wp_head' ), apply_filters( 'aioseop_wp_head_priority', 1 ) );
 			add_action( 'amp_post_template_head', array( $this, 'amp_head' ), 11 );
 			add_action( 'template_redirect', array( $this, 'template_redirect' ), 0 );
@@ -4110,9 +4111,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		$robots_meta = $noindex . ',' . $nofollow;
-		if ( $robots_meta == 'index,follow' ) {
-			$robots_meta = '';
-		}
 
 		return $robots_meta;
 	}
