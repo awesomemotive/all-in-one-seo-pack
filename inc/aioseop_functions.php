@@ -203,22 +203,6 @@ if ( ! function_exists( 'aioseop_admin_head' ) ) {
 		wp_enqueue_script( 'aioseop_welcome_js', AIOSEOP_PLUGIN_URL . 'js/quickedit_functions.js', array( 'jquery' ), AIOSEOP_VERSION );
 		?>
 		<style>
-			.aioseop_edit_button {
-				margin: 0 0 0 5px;
-				opacity: 0.6;
-				width: 12px;
-			}
-
-			.aioseop_edit_link {
-				display: inline-block;
-				position: absolute;
-			}
-
-			.aioseop_mpc_SEO_admin_options_edit img {
-				margin: 3px 2px;
-				opacity: 0.7;
-			}
-
 			.aioseop_mpc_admin_meta_options {
 				float: left;
 				display: block;
@@ -374,18 +358,22 @@ if ( ! function_exists( 'aioseop_ajax_save_meta' ) ) {
 			die();
 		}
 		if ( $result != '' ) :
-			$label = "<label id='aioseop_label_{$target}_{$post_id}'><span style='width: 20px;display: inline-block;'></span>" . $result . '</label>';
+			$label = "<label id='aioseop_label_{$target}_{$post_id}' class='aioseop-label-quickedit' for='{$target}editlink{$id}'>" . $result . '</label>';
 		else :
-			$label = "<label id='aioseop_label_{$target}_{$post_id}'></label><span style='width: 20px;display: inline-block;'></span><strong><i>" . __( 'No', 'all-in-one-seo-pack' ) . ' ' . $target . '</i></strong>';
+			$label = "<label id='aioseop_label_{$target}_{$post_id}' class='aioseop-label-quickedit' for='{$target}editlink{$id}'></label><strong><i>" . __( 'No', 'all-in-one-seo-pack' ) . ' ' . $target . '</i></strong>';
 		endif;
 		$nonce  = wp_create_nonce( "aioseop_meta_{$target}_{$post_id}" );
-		$output = '<a id="' . $target . 'editlink' . $post_id . '" class="aioseop_edit_link" href="javascript:void(0);"'
-				  . 'onclick=\'aioseop_ajax_edit_meta_form(' . $post_id . ', "' . $target . '", "' . $nonce . '");return false;\' title="' . __( 'Edit' ) . '">'
-				  . '<img class="aioseop_edit_button" id="aioseop_edit_id" src="' . AIOSEOP_PLUGIN_IMAGES_URL . '/cog_edit.png" /></a> ' . $label;
+		$output = '<a id="' . $target . 'editlink' . $post_id . '" '
+			. 'class="aioseop_edit_link aioseop-icon-cog-edit" '
+			. 'href="javascript:void(0);" '
+			. 'onclick=\'aioseop_ajax_edit_meta_form(' . $post_id . ', "' . $target . '", "' . $nonce . '");return false;\' '
+			. 'title="' . __( 'Edit' ) . '"></a>';
+		$output .= $label;
 		die(
-			"jQuery('div#aioseop_" . $target . '_' . $post_id . "').fadeOut('fast', function() { var my_label = " . json_encode( $output ) . ";
-			  jQuery('div#aioseop_" . $target . '_' . $post_id . "').html(my_label).fadeIn('fast');
-		});"
+			"jQuery('div#aioseop_" . $target . '_' . $post_id . "').fadeOut('fast', function() {
+				 var my_label = " . json_encode( $output ) . ";
+				 jQuery('div#aioseop_" . $target . '_' . $post_id . "').html(my_label).fadeIn('fast');
+			});"
 		);
 	}
 }
@@ -750,16 +738,17 @@ if ( ! function_exists( 'aioseop_mrt_pccolumn' ) ) {
 					<?php
 					$content = strip_tags( stripslashes( get_post_meta( $id, '_aioseop_' . $target, true ) ) );
 					if ( ! empty( $content ) ) :
-						$label = "<label id='aioseop_label_{$target}_{$id}'><span style='width: 20px;display: inline-block;'></span>" . $content . '</label>';
+						$label = "<label id='aioseop_label_{$target}_{$id}' class='aioseop-label-quickedit'>" . $content . '</label>';
 					else :
-						$label = "<label id='aioseop_label_{$target}_{$id}'></label><span style='width: 20px;display: inline-block;'></span><strong><i>" . __( 'No', 'all-in-one-seo-pack' ) . ' ' . $target . '</i></strong>';
+						$label = "<label id='aioseop_label_{$target}_{$id}' class='aioseop-label-quickedit'></label><strong><i>" . __( 'No', 'all-in-one-seo-pack' ) . ' ' . $target . '</i></strong>';
 					endif;
 					$nonce = wp_create_nonce( "aioseop_meta_{$target}_{$id}" );
-					echo '<a id="' . $target . 'editlink' . $id . '" class="aioseop_edit_link" href="javascript:void(0);" onclick=\'aioseop_ajax_edit_meta_form(' .
-						 $id . ', "' . $target . '", "' . $nonce . '");return false;\' title="' . __( 'Edit' ) . '">'
-						 . "<img class='aioseop_edit_button'
-											id='aioseop_edit_id'
-											src='" . AIOSEOP_PLUGIN_IMAGES_URL . "cog_edit.png' /></a> " . $label;
+					echo '<a id="' . $target . 'editlink' . $id . '" '
+						. 'class="aioseop_edit_link aioseop-icon-cog-edit" '
+						. 'href="javascript:void(0);" '
+						. 'onclick=\'aioseop_ajax_edit_meta_form(' . $id . ', "' . $target . '", "' . $nonce . '");return false;\' '
+						. 'title="' . __( 'Edit' ) . '"></a>';
+					echo $label;
 					?>
 				</div>
 			</div>
