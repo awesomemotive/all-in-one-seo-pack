@@ -42,9 +42,10 @@
 
 .aioseop_help_text_link:before {
 	content: "\f223";
-	font-size: 27px;
+	font-size: 22px;
 	font-family: dashicons;
 	vertical-align: middle;
+	margin-right: 4px;
 }
 
 #aioseop-support .aioseop_metabox_text,
@@ -104,19 +105,34 @@ div.aioseop_tip_icon:before {
 	margin-right: 45px;
 }
 
+.required.email {
+	border-radius: 4px;
+	border: 1px solid #8d96a0;
+	margin: 1px;
+	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif !important;
+}
+
+.ui-sortable-handle span {
+	font-size: 16px;
+	font-weight: 600;
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
+	color: #5F5F5F;
+}
+
 .aioseop_label {
 	color: #5F5F5F;
-	font-weight: bold;
+	font-weight: 600;
 	line-height: 19px;
 	display: inline-block;
 	float: left;
 	text-align: left;
-	font-family: 'Open Sans', sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
 	padding: 2px 0;
 	width: 81%;
 	min-width: 120px;
 	max-width: 250px;
 	cursor: default;
+	font-size: 13.5px;
 }
 
 .aioseop_option_div {
@@ -128,6 +144,17 @@ div.aioseop_tip_icon:before {
 
 .aioseop_overflowed {
 	border: 1px solid #e1e1e1;
+}
+
+.aioseop input, textarea {
+	border-radius: 4px;
+	border: 1px solid #8d96a0;
+	margin: 1px;
+	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif !important;
+}
+
+.aioseop input:focus, textarea:focus {
+	box-shadow: 0 0 0 1px #007cba;
 }
 
 .aioseop input[type="text"], .aioseop input[type="url"]  {
@@ -142,12 +169,32 @@ div.aioseop_tip_icon:before {
 .aioseop textarea {
 	color: #515151;
 	padding: 10px 0 0 10px;
-	margin: 0;
+	margin: 1px;
 	font-size: 14px;
 	line-height: 25px;
 	width: 95%;
 	max-width: 600px;
 	min-height: 36px;
+}
+
+.aioseop textarea::-webkit-scrollbar,
+.aioseop select::-webkit-scrollbar {
+	width: 5px;
+}
+
+.aioseop textarea::-webkit-scrollbar-track
+.aioseop select::-webkit-scrollbar {
+	background: #f1f1f1;
+}
+
+.aioseop textarea::-webkit-scrollbar-thumb
+.aioseop select::-webkit-scrollbar {
+	background: #aeaeae;
+}
+
+.aioseop textarea::-webkit-scrollbar-thumb:hover
+.aioseop select::-webkit-scrollbar {
+	background: #888;
 }
 
 .aioseop_help_text_div {
@@ -345,7 +392,7 @@ div.aioseop_tip_icon:before {
 }
 
 .aioseop_metabox_text h2 {
-	font-size: 14px;
+	font-size: 30px;
 	padding: 0;
 	font-weight: bold;
 	line-height: 29px;
@@ -374,7 +421,7 @@ div.aioseop_tip_icon:before {
 
 .aioseop input[readonly] {
 	background-color: #EEE;
-	margin: 5px 0 5px 0 !important;
+	margin: 5px 1px 5px 1px !important;
 }
 
 .aioseop_settings_left {
@@ -1066,9 +1113,24 @@ table.aioseop_table td, table.aioseop_table th {
 }
 
 .aioseop_input input[type="checkbox"],
-.aioseop_input input[type="radio"] {
-	vertical-align: text-bottom;
-	margin-top: 8px;
+ .aioseop_input input[type="radio"] {
+	 border: 1.25px solid #6c7781;
+	 vertical-align: text-bottom;
+	 margin-top: 8px;
+ }
+
+.aioseop_input input[type="checkbox"]:before {
+	margin: -3px 0 0 -5px;
+	color: white;
+}
+
+.aioseop_input input[type="radio"]:before {
+	content: none !important;
+}
+
+.aioseop_input input[type="radio"]:checked,
+.aioseop_input input[type="checkbox"]:checked {
+	background: #11a0d2;
 }
 
 #aiosp_importer_exporter_import_export_help_wrapper .aioseop_option_div {
@@ -1164,7 +1226,7 @@ div.aioseop_notice a.aioseop_dismiss_link {
 }
 
 .aioseop_input select {
-	margin: 7px 0;
+	border: 1px solid #8d96a0;
 }
 
 .aioseop_help_text ul {
@@ -1192,6 +1254,7 @@ div.aioseop_notice a.aioseop_dismiss_link {
 	border-bottom: none !important;
 	padding: 0em 0.5em !important;
 	color: #5F5F5F;
+	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif !important;
 }
 
 .aioseop_tab {
@@ -1405,7 +1468,8 @@ div.sfwd_debug_error {
 *
 */
 div#aiosp_snippet_wrapper {
-	border: 1px solid #888;
+	border-radius: 4px;
+	border: 1px solid #8d96a0;
 	clear: both;
 	padding: 10px 10px 0;
 	max-width: 97%;
