@@ -146,23 +146,19 @@
     box-shadow: 0 0 0 1px #007cba;
 }
 
-.aioseop textarea::-webkit-scrollbar,
-.aioseop select::-webkit-scrollbar {
+.aioseop textarea::-webkit-scrollbar {
     width: 5px;
 }
 
-.aioseop textarea::-webkit-scrollbar-track
-.aioseop select::-webkit-scrollbar {
+.aioseop textarea::-webkit-scrollbar-track {
     background: #f1f1f1;
 }
 
-.aioseop textarea::-webkit-scrollbar-thumb
-.aioseop select::-webkit-scrollbar {
+.aioseop textarea::-webkit-scrollbar-thumb {
     background: #aeaeae;
 }
 
-.aioseop textarea::-webkit-scrollbar-thumb:hover
-.aioseop select::-webkit-scrollbar {
+.aioseop textarea::-webkit-scrollbar-thumb:hover {
     background: #888;
 }
 
@@ -1195,6 +1191,7 @@ div.aioseop_notice a.aioseop_dismiss_link {
 }
 
 .aioseop_input select {
+	border-radius: 4px;
 	border: 1px solid #8d96a0;
 }
 
@@ -1538,4 +1535,8 @@ div#aiosp_sitemap_status_metabox .toggle-indicator {
 	font-weight: 600;
 	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
 	color: #5F5F5F;
+}
+
+.aioseop_file_upload {
+	border: none !important;
 }
