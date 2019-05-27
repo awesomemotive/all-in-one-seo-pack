@@ -1380,8 +1380,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					$msg .= "<input type='hidden' name='aioseop_sitemap_conflict[]' value='" . esc_attr( basename( realpath( $p ) ) ) . "'>\n";
 				}
 				$msg .= "<input type='hidden' name='nonce-aioseop' value='" . wp_create_nonce( 'aioseop-nonce' ) . "'>\n";
-				$msg .= "<input type='submit' name='aioseop_sitemap_delete_files' class='button-primary' style='margin: 0 5px 10px 0;' value='" . __( 'Delete Conflicting Files', 'all-in-one-seo-pack' ) . " aria-label='" . __( 'Delete Conflicting Files', 'all-in-one-seo-pack' ) . "'>";
-				$msg .= "<input type='submit' name='aioseop_sitemap_rename_files' class='button-secondary' style='margin: 0 0 10px 0;' value='" . __( 'Rename Conflicting Files', 'all-in-one-seo-pack' ) . " aria-label='" . __( 'Rename Conflicting Files', 'all-in-one-seo-pack' ) . "'> ";
+				$msg .= "<input type='submit' name='aioseop_sitemap_delete_files' class='button-primary' style='margin: 0 5px 10px 0;' value='" . __( 'Delete Conflicting Files', 'all-in-one-seo-pack' ) . "' aria-label='" . __( 'Delete Conflicting Files', 'all-in-one-seo-pack' ) . "'>";
+				$msg .= "<input type='submit' name='aioseop_sitemap_rename_files' class='button-secondary' style='margin: 0 0 10px 0;' value='" . __( 'Rename Conflicting Files', 'all-in-one-seo-pack' ) . "' aria-label='" . __( 'Rename Conflicting Files', 'all-in-one-seo-pack' ) . "'> ";
 
 				$msg = '<form action="" method="post">' . $msg . '</form>';
 			}
