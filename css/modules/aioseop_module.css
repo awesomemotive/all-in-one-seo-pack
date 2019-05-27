@@ -879,6 +879,11 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
 	max-width: 600px;
 }
 
+.selectize-input {
+	padding: 10px 0 10px 10px !important;
+	border: 1px solid #8d96a0 !important;
+}
+
 table.aioseop_table tr:nth-child(odd) {
 	background-color: #EEE;
 }
