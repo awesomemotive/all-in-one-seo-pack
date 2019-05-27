@@ -125,7 +125,7 @@ class aiosp_metaboxes {
 						<p><input type="text" value="" name="EMAIL" class="required email" id="mce-EMAIL"
 								  placeholder="<?php _e( 'Email Address', 'all-in-one-seo-pack' ); ?>">
 							<input type="submit" value="<?php _e( 'Subscribe', 'all-in-one-seo-pack' ); ?>" name="subscribe" id="mc-embedded-subscribe"
-								   class="button-primary"></p>
+								   class="button-primary" aria-label="<?php _e( 'Subscribe', 'all-in-one-seo-pack' ); ?>></p>
 					</form>
 				</div>
 				<?php
