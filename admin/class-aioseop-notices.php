@@ -325,65 +325,6 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		}
 
 		/**
-		 * Set Notice Action Options
-		 *
-		 * Sets the Action Options in a Notice.
-		 *
-		 * @since 3.0
-		 * @access private
-		 *
-		 * @see self::insert_notice()
-		 * @see self::update_notice()
-		 *
-		 * @param array $action_options New action options to be added/updated.
-		 * @return array Action Options with new values added to old.
-		 */
-		private function set_action_options( $action_options ) {
-			$rtn_action_options = array();
-			// This helps prevent invalid notices, and empty arrays need to skip this operation when
-			// there is no actions intended for notice.
-			if ( ! is_array( $action_options ) ) {
-				$rtn_action_options[] = $this->action_options_defaults();
-				return $rtn_action_options;
-			}
-
-			foreach ( $action_options as $action_option ) {
-				$tmp_action_o = $this->action_options_defaults();
-
-				// For readability and tracking, refrane from using another Foreach loop with the array indexes.
-				// Button Delay Time.
-				$tmp_action_o['time'] = $this->default_dismiss_delay;
-				if ( isset( $action_option['time'] ) ) {
-					$tmp_action_o['time'] = $action_option['time'];
-				}
-
-				// Button Text.
-				if ( isset( $action_option['text'] ) && ! empty( $action_option['text'] ) ) {
-					$tmp_action_o['text'] = $action_option['text'];
-				}
-
-				// Link.
-				if ( isset( $action_option['link'] ) && ! empty( $action_option['link'] ) ) {
-					$tmp_action_o['link'] = $action_option['link'];
-				}
-
-				// Dismiss.
-				if ( isset( $action_option['dismiss'] ) ) {
-					$tmp_action_o['dismiss'] = $action_option['dismiss'];
-				}
-
-				// Class.
-				if ( isset( $action_option['class'] ) && ! empty( $action_option['class'] ) ) {
-					$tmp_action_o['class'] = $action_option['class'];
-				}
-
-				$rtn_action_options[] = $tmp_action_o;
-			}
-
-			return $rtn_action_options;
-		}
-
-		/**
 		 * Add Notice
 		 *
 		 * Takes notice and adds it to object and saves to database.
@@ -434,6 +375,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 */
 		public function remove_notice( $slug ) {
 			if ( isset( $this->notices[ $slug ] ) ) {
+				$this->deactivate_notice( $slug );
 				unset( $this->notices[ $slug ] );
 				$this->obj_update_options();
 				return true;
@@ -494,6 +436,13 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				return false;
 			}
 
+			delete_metadata(
+				'user',
+				0,
+				'aioseop_notice_display_time_' . $slug,
+				'',
+				true
+			);
 			unset( $this->active_notices[ $slug ] );
 			$this->obj_update_options();
 
@@ -514,6 +463,27 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			}
 
 			$notice = $this->get_notice( $slug );
+			delete_metadata(
+				'user',
+				0,
+				'aioseop_notice_time_set_' . $slug,
+				'',
+				true
+			);
+			delete_metadata(
+				'user',
+				0,
+				'aioseop_notice_display_time_' . $slug,
+				'',
+				true
+			);
+			delete_metadata(
+				'user',
+				0,
+				'aioseop_notice_dismissed_' . $slug,
+				'',
+				true
+			);
 			$this->set_notice_delay( $slug, $notice['delay_time'] );
 
 			$this->obj_update_options();
@@ -524,10 +494,15 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		/**
 		 * Set Notice Delay
 		 *
+		 * @since 3.0
+		 *
 		 * @param string $slug       The notice's slug.
 		 * @param int    $delay_time Amount of time to delay.
 		 */
 		public function set_notice_delay( $slug, $delay_time ) {
+			if ( empty( $slug ) ) {
+				return false;
+			}
 			$time_set = time();
 
 			// Display at exactly X time, not (X + 1) time.
@@ -547,24 +522,28 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		/**
 		 * Set Notice Dismiss
 		 *
+		 * @todo Add site dismiss values; possible bug with notices being reactivated after dismissing.
+		 *
+		 * @since 3.0
+		 *
 		 * @param string  $slug    The notice's slug.
 		 * @param boolean $dismiss Sets to dismiss a notice.
 		 */
 		public function set_notice_dismiss( $slug, $dismiss ) {
-			$notice = $this->get_notice( $slug );
-			if ( 'user' === $notice['target'] ) {
+			$notice   = $this->get_notice( $slug );
+			if ( 'site' === $notice['target'] ) {
+				$this->deactivate_notice( $slug );
+			} elseif ( 'user' === $notice['target'] ) {
 				$current_user_id = get_current_user_id();
 
 				update_user_meta( $current_user_id, 'aioseop_notice_dismissed_' . $slug, $dismiss );
-			}
-
-			if ( $dismiss ) {
-				$this->deactivate_notice( $slug );
 			}
 		}
 
 		/**
 		 * Get Notice
+		 *
+		 * @since 3.0
 		 *
 		 * @param string $slug The notice's slug.
 		 * @return array
