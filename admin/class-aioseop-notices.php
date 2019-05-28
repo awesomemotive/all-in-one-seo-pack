@@ -578,8 +578,18 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				$rtn_notice = array_merge( $rtn_notice, $this->notices[ $slug ] );
 			}
 
-			// TODO Discuss: PHPCS needs underscores, but this is an individualized slug-based filter.
-			$notice_data = apply_filters( 'aioseop_admin_notice-' . $slug, array() );
+			/**
+			 * Admin Notice {$slug}
+			 *
+			 * Applies the notice data values for a given notice slug.
+			 * `aioseop_admin_notice-{$slug}` with the slug being the individual notice.
+			 *
+			 * @since 3.0
+			 *
+			 * @params array $notice_data See `\AIOSEOP_Notices::$notices` for structural documentation.
+			 */
+			$notice_data = apply_filters( 'aioseop_admin_notice-' . $slug, array() ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
+
 			if ( ! empty( $notice_data ) ) {
 				$rtn_notice = array_merge( $rtn_notice, $notice_data );
 
