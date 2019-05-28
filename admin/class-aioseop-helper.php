@@ -664,7 +664,7 @@ class AIOSEOP_Helper {
 
 			// Frequencies.
 			'aiosp_sitemap_freq_homepage'       => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Homepage', 'all-in-one-seo-pack' ) ),
-			'aiosp_sitemap_freq_post'           => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Post', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_freq_post'           => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Posts', 'all-in-one-seo-pack' ) ),
 			'aiosp_sitemap_freq_taxonomies'     => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Taxonomies', 'all-in-one-seo-pack' ) ),
 			'aiosp_sitemap_freq_archive'        => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Archive Pages', 'all-in-one-seo-pack' ) ),
 			'aiosp_sitemap_freq_author'         => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Author Pages', 'all-in-one-seo-pack' ) ),
