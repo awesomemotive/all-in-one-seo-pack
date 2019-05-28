@@ -42,7 +42,7 @@ class Test_AIOSEOP_Notices_AdminEnqueueScripts extends AIOSEOP_Notices_TestCase 
 	 *
 	 * @return array
 	 */
-	protected function mock_notice() {
+	public function mock_notice() {
 		$rtn_notice               = parent::mock_notice();
 		$rtn_notice['delay_time'] = 0;
 		return $rtn_notice;
@@ -82,7 +82,8 @@ class Test_AIOSEOP_Notices_AdminEnqueueScripts extends AIOSEOP_Notices_TestCase 
 		$notice = $this->mock_notice();
 
 		// Insert Successful and activated.
-		$this->assertTrue( $aioseop_notices->insert_notice( $notice ) );
+		add_filter( 'aioseop_admin_notice-' . $notice['slug'], array( $this, 'mock_notice' ) );
+		$this->assertTrue( $aioseop_notices->activate_notice( $notice['slug'] ) );
 		$this->assertTrue( in_array( $notice['slug'], $notice, true ) );
 
 		$this->assertTrue( isset( $aioseop_notices->active_notices[ $notice['slug'] ] ) );
