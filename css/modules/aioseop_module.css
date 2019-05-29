@@ -1517,6 +1517,7 @@ textarea.robots-text {
 	background-color: #eee;
 	width: 100%;
 	height: 100%;
+	margin: 0 0 0 10px;
 }
 
 div#aiosp_sitemap_status_metabox .toggle-indicator {
