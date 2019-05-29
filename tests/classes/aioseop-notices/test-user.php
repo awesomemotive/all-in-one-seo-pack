@@ -61,7 +61,7 @@ class Test_AIOSEOP_Notices_User extends AIOSEOP_Notices_TestCase {
 	 *
 	 * @return array
 	 */
-	protected function mock_notice() {
+	public function mock_notice() {
 		return array(
 			'slug'           => 'notice_slug_user',
 			'delay_time'     => 0, // 1 Hour.

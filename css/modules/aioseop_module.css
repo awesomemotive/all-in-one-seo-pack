@@ -46,7 +46,6 @@
 	font-family: dashicons;
 	vertical-align: middle;
 	margin-right: 4px;
-}
 
 #aioseop-support .aioseop_metabox_text,
 #aioseop-support a {
@@ -86,7 +85,6 @@
 	margin-top: 4px;
 	margin-right: 45px;
 }
-
 
 .aioseop_label {
 	color: #5F5F5F;
@@ -1456,7 +1454,7 @@ div#aiosp_snippet_wrapper .aioseop_option_label {
 
 div#aiosp_snippet_wrapper .aioseop_input.aioseop_top_label .aioseop_option_input {
 	margin: 0;
-    width: 99%;
+  width: 99%;
 }
 
 div#aioseop_snippet {

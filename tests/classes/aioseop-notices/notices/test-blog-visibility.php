@@ -29,7 +29,7 @@ class Test_Notice_BlogVisibility extends AIOSEOP_Notices_TestCase {
 	 *
 	 * @return array
 	 */
-	protected function mock_notice() {
+	public function mock_notice() {
 		return aioseop_notice_blog_visibility();
 	}
 }

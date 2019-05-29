@@ -46,17 +46,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			);
 
 			global $aiosp, $aioseop_options;
-			if ( aioseop_option_isset( 'aiosp_rewrite_titles' ) && $aioseop_options['aiosp_rewrite_titles'] ) {
-				$this->default_options['force_rewrites'] = array(
-					'name'            => __( 'Force Rewrites:', 'all-in-one-seo-pack' ),
-					'default'         => 1,
-					'type'            => 'radio',
-					'initial_options' => array(
-						1 => __( 'Enabled', 'all-in-one-seo-pack' ),
-						0 => __( 'Disabled', 'all-in-one-seo-pack' ),
-					),
-				);
-			}
+			$this->default_options['force_rewrites'] = array(
+				'name'            => __( 'Force Rewrites:', 'all-in-one-seo-pack' ),
+				'default'         => 1,
+				'type'            => 'radio',
+				'initial_options' => array(
+					1 => __( 'Enabled', 'all-in-one-seo-pack' ),
+					0 => __( 'Disabled', 'all-in-one-seo-pack' ),
+				),
+			);
 
 			$this->layout = array(
 				'default' => array(
@@ -96,12 +94,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			if ( $location == null ) {
 				$options[ $this->prefix . 'force_rewrites' ] = 1;
 				global $aiosp;
-				if ( aioseop_option_isset( 'aiosp_rewrite_titles' ) ) {
-					$opts                                        = $aiosp->get_current_options( array(), null );
-					$options[ $this->prefix . 'force_rewrites' ] = $opts['aiosp_force_rewrites'];
-				}
+				$opts                                        = $aiosp->get_current_options( array(), null );
+				$options[ $this->prefix . 'force_rewrites' ] = $opts['aiosp_force_rewrites'];
 			}
-
 			return $options;
 		}
 

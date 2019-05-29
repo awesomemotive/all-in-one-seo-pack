@@ -99,7 +99,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 *
 	 * @return array
 	 */
-	protected function mock_notice() {
+	public function mock_notice() {
 		return array(
 			'slug'           => 'notice_delay_ajax',
 			'delay_time'     => 0,
@@ -137,7 +137,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 	 *
 	 * @return array
 	 */
-	protected function mock_notice_target_user() {
+	public function mock_notice_target_user() {
 		return array(
 			'slug'           => 'notice_slug_user',
 			'delay_time'     => 0,
@@ -188,7 +188,9 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 		}
 
 		// Insert Successful and activated.
-		$this->assertTrue( $aioseop_notices->insert_notice( $notice ) );
+		add_filter( 'aioseop_admin_notice-notice_delay_ajax', array( $this, 'mock_notice' ) );
+		add_filter( 'aioseop_admin_notice-notice_slug_user', array( $this, 'mock_notice_target_user' ) );
+		$this->assertTrue( $aioseop_notices->activate_notice( $notice['slug'] ) );
 		$this->assertTrue( in_array( $notice['slug'], $notice, true ) );
 
 		$this->assertTrue( isset( $aioseop_notices->active_notices[ $notice['slug'] ] ) );
@@ -323,6 +325,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 		global $aioseop_notices;
 		$notice = $this->mock_notice();
 		$this->add_notice();
+		$notice = $aioseop_notices->get_notice( $notice['slug'] );
 
 		/*
 		 * Action_Options 0 - No delay, no dismiss.
@@ -356,7 +359,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 		$this->assertArrayHasKey( $notice['slug'], $aioseop_notices->notices, 'AJAX Notice should still be added.' );
 		$this->assertArrayHasKey( $notice['slug'], $aioseop_notices->active_notices, 'AJAX Notice should still be active.' );
 		// Check delay time.
-		$expected_time = $aioseop_notices->notices[ $notice['slug'] ]['time_set'] + $aioseop_notices->notices[ $notice['slug'] ]['action_options']['0']['time'];
+		$expected_time = $aioseop_notices->notices[ $notice['slug'] ]['time_set'] + $notice['action_options']['0']['time'];
 		// Add 1 to compensate for exact time display.
 		$actual_time = $aioseop_notices->active_notices[ $notice['slug'] ] + 1;
 
@@ -391,7 +394,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 		$this->assertArrayHasKey( $notice['slug'], $aioseop_notices->active_notices, 'AJAX Notice should still be active.' );
 
 		// Check delay time.
-		$expected_time = $aioseop_notices->notices[ $notice['slug'] ]['time_set'] + $aioseop_notices->notices[ $notice['slug'] ]['action_options']['1']['time'];
+		$expected_time = $aioseop_notices->notices[ $notice['slug'] ]['time_set'] + $notice['action_options']['1']['time'];
 		// Add 1 to compensate for exact time display.
 		$actual_time = $aioseop_notices->active_notices[ $notice['slug'] ] + 1;
 
@@ -423,7 +426,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 
 		// Check if notice is still active.
 		$this->assertArrayHasKey( $notice['slug'], $aioseop_notices->notices, 'AJAX Notice should still be added.' );
-		$this->assertArrayNotHasKey( $notice['slug'], $aioseop_notices->active_notices, 'AJAX Notice should not be active still.' );
+		$this->assertArrayHasKey( $notice['slug'], $aioseop_notices->dismissed, 'AJAX Notice should not be active still.' );
 		// No delay time to check.
 	}
 

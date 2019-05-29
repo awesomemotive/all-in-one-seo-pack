@@ -31,7 +31,7 @@ class Test_Notice_ProPromoWooCommerce extends AIOSEOP_Notices_TestCase {
 	 *
 	 * @return array
 	 */
-	protected function mock_notice() {
+	public function mock_notice() {
 		return aioseop_notice_pro_promo_woocommerce();
 	}
 }

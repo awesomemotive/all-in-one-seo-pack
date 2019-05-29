@@ -9,34 +9,6 @@
 
 
 /**
- * Set Notice for Disabled Public Blog
- *
- * Admin Notice when "Discourage search engines from indexing this site" is
- * enabled in Settings > Reading.
- *
- * @since 3.0
- *
- * @global AIOSEOP_Notices $aioseop_notices
- *
- * @param boolean $update Updates the notice with new content and configurations.
- * @param boolean $reset  Notice are re-initiated.
- */
-function aioseop_notice_set_blog_public_disabled( $update = false, $reset = false ) {
-	global $aioseop_notices;
-
-	$notice = aioseop_notice_blog_visibility();
-
-	if ( ! $aioseop_notices->insert_notice( $notice ) ) {
-		if ( $update ) {
-			$aioseop_notices->update_notice( $notice );
-		}
-		if ( $reset || ! isset( $aioseop_notices->active_notices[ $notice['slug'] ] ) ) {
-			$aioseop_notices->activate_notice( $notice['slug'] );
-		}
-	}
-}
-
-/**
  * Notice - Blog Visibility
  *
  * Displays when blog disables search engines from indexing.
@@ -53,7 +25,6 @@ function aioseop_notice_blog_visibility() {
 		'delay_time'     => 0,
 		/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. "Settings > Reading" refers to the "Reading" submenu in WordPress Core. */
 		'message'        => sprintf( __( 'Warning: %s has detected that you are blocking access to search engines. You can change this in Settings > Reading if this was unintended.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
-		'delay_options'  => array(),
 		'class'          => 'notice-error',
 		'target'         => 'site',
 		'screens'        => array(),
@@ -75,15 +46,4 @@ function aioseop_notice_blog_visibility() {
 		),
 	);
 }
-
-/**
- * Disable Notice for Disabled Public Blog
- *
- * @since 3.0
- *
- * @global AIOSEOP_Notices $aioseop_notices
- */
-function aioseop_notice_disable_blog_public_disabled() {
-	global $aioseop_notices;
-	$aioseop_notices->deactivate_notice( 'blog_public_disabled' );
-}
+add_filter( 'aioseop_admin_notice-blog_public_disabled', 'aioseop_notice_blog_visibility' );
