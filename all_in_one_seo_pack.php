@@ -442,8 +442,7 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 		add_action( 'init', array( $aiosp, 'add_hooks' ) );
 		add_action( 'admin_init', array( $aioseop_updates, 'version_updates' ), 11 );
 
-		global $aioseop_notices;
-		$aioseop_notices->activate_notice( 'review_plugin' );
+		add_action( 'admin_init', 'aioseop_review_plugin_notice' );
 
 		if ( defined( 'DOING_AJAX' ) && ! empty( $_POST ) && ! empty( $_POST['action'] ) && 'aioseop_ajax_scan_header' === $_POST['action'] ) {
 			remove_action( 'init', array( $aiosp, 'add_hooks' ) );
@@ -455,6 +454,22 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 				$current_screen = WP_Screen::get( 'front' );
 			}
 		}
+	}
+}
+
+if ( ! function_exists( 'aioseop_review_plugin_notice' ) ) {
+	/**
+	 * Review Plugin Notice
+	 *
+	 * Activates the review notice.
+	 * Note: This couldn't be used directly in `aioseop_init_class()` since ajax instances was causing
+	 * the database options to reset.
+	 *
+	 * @since 3.0
+	 */
+	function aioseop_review_plugin_notice() {
+		global $aioseop_notices;
+		$aioseop_notices->activate_notice( 'review_plugin' );
 	}
 }
 
