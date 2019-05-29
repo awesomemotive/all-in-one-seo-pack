@@ -1166,7 +1166,8 @@ function aioseop_contains_conflicting_shortcodes( $content ) {
 		'WooCommerce Login' => '[woocommerce_my_account]',
 	);
 	foreach ( $conflicting_shortcodes as $shortcode ) {
-		if ( strpos( $content, $shortcode, 0 ) ) {
+		// Second check is needed for shortcodes in Gutenberg Classic blocks.
+		if ( stripos( $content, $shortcode, 0 ) || 0 === stripos( $content, $shortcode, 0 ) ) {
 			return true;
 		}
 	}
