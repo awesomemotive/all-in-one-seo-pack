@@ -479,6 +479,16 @@ if ( ! function_exists( 'aioseop_admin_enqueue_styles' ) ) {
 				AIOSEOP_VERSION
 			);
 		}
+		if ( function_exists( 'is_rtl' ) && is_rtl() ) {
+			if ( ! wp_style_is( 'aioseop-font-icons-rtl', 'registered' ) && ! wp_style_is( 'aioseop-font-icons-rtl', 'enqueued' ) ) {
+				wp_enqueue_style(
+					'aioseop-font-icons-rtl',
+					AIOSEOP_PLUGIN_URL . 'css/aioseop-font-icons-rtl.css',
+					array(),
+					AIOSEOP_VERSION
+				);
+			}
+		}
 	}
 }
 

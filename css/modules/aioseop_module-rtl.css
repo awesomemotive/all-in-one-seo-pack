@@ -318,3 +318,32 @@ form#aiosp_settings_form,
 #aioseop-about .aioseop_metabox_text ul {
 	padding-right: 15px;
 }
+
+.aioseop input[readonly] {
+	text-align: center;
+}
+
+.aioseop_input input[type="checkbox"]:before {
+	margin: -4px -4px 0 0;
+}
+
+.aioseop_header_tabs li:first-child a.aioseop_header_tab {
+	border: none;
+}
+
+.aioseop_feature h3 {
+	text-align: left;
+}
+
+.aioseop_feature .flag:before {
+	border-width: 13.5px 4px 15px 10px;
+}
+
+#aioseop_coming_soon, #aioseop_coming_soon2 p.aioseop_desc {
+	text-align: right;
+}
+
+#aioseop_coming_soon .flag.pro {
+	height: 17.5px;
+	font-size: 13.5px;
+}
