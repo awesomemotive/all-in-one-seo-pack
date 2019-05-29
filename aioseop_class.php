@@ -3106,10 +3106,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return mixed
 	 */
 	function filter_submit( $submit ) {
-		$submit['Submit_Default']['value'] = __( 'Reset General Settings to Defaults', 'all-in-one-seo-pack' ) . ' &raquo;';
+		$submit['Submit_Default'] = array(
+			'type'  => 'submit',
+			'class' => 'aioseop_reset_settings_button button-secondary',
+			'value' => __( 'Reset General Settings to Defaults', 'all-in-one-seo-pack' ) . ' &raquo;',
+		);
 		$submit['Submit_All_Default']      = array(
 			'type'  => 'submit',
-			'class' => 'button-secondary',
+			'class' => 'aioseop_reset_settings_button button-secondary',
 			'value' => __( 'Reset ALL Settings to Defaults', 'all-in-one-seo-pack' ) . ' &raquo;',
 		);
 

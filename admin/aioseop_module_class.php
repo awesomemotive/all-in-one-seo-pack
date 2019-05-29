@@ -2737,7 +2737,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 							'page_options'   => array( 'type' => 'hidden', 'value' => 'aiosp_home_description' ),
 							'Submit'         => array(
 								'type'  => 'submit',
-								'class' => 'button-primary',
+								'class' => 'aioseop_update_options_button button-primary',
 								'value' => __( 'Update Options', 'all-in-one-seo-pack' ) . ' &raquo;',
 							),
 							'Submit_Default' => array(

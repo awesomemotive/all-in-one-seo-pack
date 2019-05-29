@@ -963,7 +963,7 @@ table.aioseop_table td, table.aioseop_table th {
 }
 
 #aiosp_settings_form .postbox {
-	margin: 0 0 20px 0;
+	margin: 20px 0 0 0;
 }
 
 .aioseop_settings_left .postbox {
@@ -1543,17 +1543,19 @@ div#aiosp_sitemap_status_metabox .toggle-indicator {
 }
 
 .aioseop_upload_image_button {
-	float:left;
-	margin:0 0 5px 0 !important;
+	float: left;
+	margin: 0 0 5px 0 !important;
 }
 
 .aioseop_delete_files_button {
-	margin:0 5px 10px 0 !important;
+	margin: 0 5px 10px 0 !important;
 }
 
 .aioseop_rename_files_button {
-	margin:0 0 10px 0 !important;
+	margin: 0 0 10px 0 !important;
 }
 
-
-
+.aioseop_update_options_button,
+.aioseop_reset_settings_button {
+	margin: 10px 0 0 0 !important;
+}
