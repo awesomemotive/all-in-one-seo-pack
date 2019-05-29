@@ -207,10 +207,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'archive'     => array( 'name' => __( 'Include Date Archive Pages', 'all-in-one-seo-pack' ) ),
 				'author'      => array( 'name' => __( 'Include Author Pages', 'all-in-one-seo-pack' ) ),
 				'images'      => array( 'name' => __( 'Exclude Images', 'all-in-one-seo-pack' ) ),
-				'robots'      => array(
-					'name'    => __( 'Link From Virtual Robots.txt', 'all-in-one-seo-pack' ),
-					'default' => 'On',
-				),
 				'rewrite'     => array(
 					'name'    => __( 'Dynamically Generate Sitemap', 'all-in-one-seo-pack' ),
 					'default' => 'On',
@@ -439,10 +435,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 				$sitemap_urls = $post_counts + $num_terms;
 
+				global $aioseop_notices;
 				if ( 1001 > $sitemap_urls ) {
-					aioseop_notice_disable_sitemap_indexes();
+					$aioseop_notices->deactivate_notice( 'sitemap_max_warning' );
 				} else {
-					aioseop_notice_activate_sitemap_indexes( false, true );
+					$aioseop_notices->activate_notice( 'sitemap_max_warning' );
 				}
 			}
 		}
@@ -623,7 +620,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$this->setup_rewrites();
 			}
 
-			if ( $this->option_isset( 'robots' ) ) {
+			/**
+			 * Filters whether to display the URL to the XML Sitemap on our virtual robots.txt file.
+			 *
+			 * Defaults to true. Return __return_false in order to not display the URL.
+			 *
+			 * @since 3.0
+			 *
+			 * @param boolean Defaults to true.
+			 */
+			if ( apply_filters( 'aioseop_robotstxt_sitemap_url', true ) ) {
 				add_action( 'do_robots', array( $this, 'do_robots' ), 100 );
 			}
 

@@ -138,15 +138,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default'  => 0,
 				'condshow' => array( 'aiosp_can' => 'on' ),
 			),
-			'rewrite_titles'              => array(
-				'name'            => __( 'Rewrite Titles:', 'all-in-one-seo-pack' ),
-				'default'         => 1,
-				'type'            => 'radio',
-				'initial_options' => array(
-					1 => __( 'Enabled', 'all-in-one-seo-pack' ),
-					0 => __( 'Disabled', 'all-in-one-seo-pack' ),
-				),
-			),
 			'force_rewrites'              => array(
 				'name'            => __( 'Force Rewrites:', 'all-in-one-seo-pack' ),
 				'default'         => 1,
@@ -170,73 +161,61 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'     => __( 'Home Page Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => '%page_title%',
-				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'page_title_format'           => array(
 				'name'     => __( 'Page Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => '%page_title% | %site_title%',
-				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'post_title_format'           => array(
 				'name'     => __( 'Post Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => '%post_title% | %site_title%',
-				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'category_title_format'       => array(
 				'name'     => __( 'Category Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => '%category_title% | %site_title%',
-				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'archive_title_format'        => array(
 				'name'     => __( 'Archive Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => '%archive_title% | %site_title%',
-				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'date_title_format'           => array(
 				'name'     => __( 'Date Archive Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => '%date% | %site_title%',
-				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'author_title_format'         => array(
 				'name'     => __( 'Author Archive Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => '%author% | %site_title%',
-				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'tag_title_format'            => array(
 				'name'     => __( 'Tag Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => '%tag% | %site_title%',
-				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'search_title_format'         => array(
 				'name'     => __( 'Search Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => '%search% | %site_title%',
-				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'description_format'          => array(
 				'name'     => __( 'Description Format', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => '%description%',
-				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'404_title_format'            => array(
 				'name'     => __( '404 Title Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => __( 'Nothing found for %request_words%', 'all-in-one-seo-pack' ),
-				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'paged_format'                => array(
 				'name'     => __( 'Paged Format:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => sprintf( ' - %s %%page%%', __( 'Part', 'all-in-one-seo-pack' ) ),
-				'condshow' => array( 'aiosp_rewrite_titles' => 1 ),
 			),
 			'cpostactive'                 => array(
 				'name'     => __( 'SEO on only these Content Types:', 'all-in-one-seo-pack' ),
@@ -659,7 +638,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'      => __( 'Title Settings', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/documentation/title-settings/',
 				'options'   => array(
-					'rewrite_titles',
 					'force_rewrites',
 					'home_page_title_format',
 					'page_title_format',
@@ -1258,10 +1236,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		global $aioseop_options;
 		$title = false;
 		$post  = $this->get_queried_object();
-		if ( ! empty( $aioseop_options['aiosp_rewrite_titles'] ) ) {
-			$title = $this->get_aioseop_title( $post );
-			$title = $this->apply_cf_fields( $title );
-		}
+		$title = $this->get_aioseop_title( $post );
+		$title = $this->apply_cf_fields( $title );
 
 		if ( false === $title ) {
 			$title = $this->get_original_title();
@@ -2974,7 +2950,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'type'     => 'text',
 					'default'  => '%post_title% | %site_title%',
 					'condshow' => array(
-						'aiosp_rewrite_titles'  => 1,
 						'aiosp_cpostactive\[\]' => $p,
 					),
 				);
@@ -3006,7 +2981,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'type'     => 'text',
 						'default'  => '%taxonomy_title% | %site_title%',
 						'condshow' => array(
-							'aiosp_rewrite_titles' => 1,
 							'aiosp_taxactive\[\]'  => $p,
 						),
 					);
@@ -3267,36 +3241,31 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		if ( $location == null ) {
 			$prefix = $this->prefix;
-			if ( isset( $options[ "{$prefix}rewrite_titles" ] ) && ( ! empty( $options[ "{$prefix}rewrite_titles" ] ) ) ) {
-				$options[ "{$prefix}rewrite_titles" ] = 1;
-			}
 			if ( isset( $options[ "{$prefix}use_original_title" ] ) && ( $options[ "{$prefix}use_original_title" ] === '' ) ) {
 				$options[ "{$prefix}use_original_title" ] = 0;
 			}
 		}
 
 		return $options;
-	}
-
+	}	
+	
 	function template_redirect() {
 		global $aioseop_options;
 
 		$post = $this->get_queried_object();
 
 		if ( ! $this->is_page_included() ) {
-			return;
+				return;
 		}
 
-		if ( ! empty( $aioseop_options['aiosp_rewrite_titles'] ) ) {
-			$force_rewrites = 1;
-			if ( isset( $aioseop_options['aiosp_force_rewrites'] ) ) {
-				$force_rewrites = $aioseop_options['aiosp_force_rewrites'];
-			}
-			if ( $force_rewrites ) {
-				ob_start( array( $this, 'output_callback_for_title' ) );
-			} else {
-				add_filter( 'wp_title', array( $this, 'wp_title' ), 20 );
-			}
+		$force_rewrites = 1;
+		if ( isset( $aioseop_options['aiosp_force_rewrites'] ) ) {
+			$force_rewrites = $aioseop_options['aiosp_force_rewrites'];
+		}
+		if ( $force_rewrites ) {
+			ob_start( array( $this, 'output_callback_for_title' ) );
+		} else {
+			add_filter( 'wp_title', array( $this, 'wp_title' ), 20 );
 		}
 	}
 
@@ -3507,18 +3476,19 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * Checks if 'Search Engine Visibility' is enabled in Settings > Reading.
 	 *
+	 * @todo Change to earlier hook. Before `admin_enqueue` if possible.
+	 *
 	 * @since ?
-	 * @since 2.4.2 Changed to `admin/functions-notice.php` with class AIOSEOP_Notices.
+	 * @since 3.0 Changed to AIOSEOP_Notices class.
 	 *
 	 * @see `self::constructor()` with 'all_admin_notices' Filter Hook
-	 * @uses `admin/functions-notice.php` aioseop_notice_set_blog_public_disabled()
-	 * @uses `admin/functions-notice.php` aioseop_notice_disable_blog_public_disabled()
 	 */
 	function visibility_warning() {
+		global $aioseop_notices;
 		if ( '0' === get_option( 'blog_public' ) ) {
-			aioseop_notice_set_blog_public_disabled();
+			$aioseop_notices->activate_notice( 'blog_public_disabled' );
 		} elseif ( '1' === get_option( 'blog_public' ) ) {
-			aioseop_notice_disable_blog_public_disabled();
+			$aioseop_notices->deactivate_notice( 'blog_public_disabled' );
 		}
 	}
 
@@ -3529,10 +3499,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @since 3.0 Changed to AIOSEOP Notices.
 	 */
 	public function woo_upgrade_notice() {
+		global $aioseop_notices;
 		if ( class_exists( 'WooCommerce' ) && current_user_can( 'manage_options' ) && ! AIOSEOPPRO ) {
-			aioseop_notice_activate_pro_promo_woocommerce();
+			$aioseop_notices->activate_notice( 'woocommerce_detected' );
 		} else {
-			aioseop_notice_disable_woocommerce_detected_on_nonpro();
+			global $aioseop_notices;
+			$aioseop_notices->deactivate_notice( 'woocommerce_detected' );
 		}
 	}
 
@@ -3849,7 +3821,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$force_rewrites = $aioseop_options['aiosp_force_rewrites'];
 		}
 
-		if ( ! empty( $aioseop_options['aiosp_rewrite_titles'] ) && $force_rewrites ) {
+		if ( $force_rewrites ) {
 			// Make the title rewrite as short as possible.
 			if ( function_exists( 'ob_list_handlers' ) ) {
 				$active_handlers = ob_list_handlers();
@@ -3865,11 +3837,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$this->log( 'another plugin interfering?' );
 				// If we get here there *could* be trouble with another plugin :(.
 				$this->ob_start_detected = true;
-				if ( $this->option_isset( 'rewrite_titles' ) ) { // Try alternate method -- pdb.
-					$aioseop_options['aiosp_rewrite_titles'] = 0;
-					$force_rewrites                          = 0;
-					add_filter( 'wp_title', array( $this, 'wp_title' ), 20 );
-				}
+
+				// Try alternate method -- pdb.
+				add_filter( 'wp_title', array( $this, 'wp_title' ), 20 );
+
 				if ( function_exists( 'ob_list_handlers' ) ) {
 					foreach ( ob_list_handlers() as $handler ) {
 						$this->log( "detected output handler $handler" );
