@@ -63,6 +63,8 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * List of notice slugs that are currently active.
 		 * NOTE: Amount is reduced by 1 second in order to display at exactly X amount of time.
 		 *
+		 * @todo Change name to $display_times for consistancy both conceptually and with usermeta structure.
+		 *
 		 * @since 3.0
 		 * @access public
 		 *
@@ -72,6 +74,19 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * }
 		 */
 		public $active_notices = array();
+
+		/**
+		 * Dismissed Notices
+		 *
+		 * Stores notices that have been dismissed sitewide. Users are stored in usermeta data 'aioseop_notice_dismissed_{$slug}'.
+		 *
+		 * @since 3.0
+		 *
+		 * @var array $dismissed {
+		 *     @type boolean $notice_slug => $is_dismissed True if dismissed.
+		 * }
+		 */
+		public $dismissed = array();
 
 		/**
 		 * The default dismiss time. An anti-nag setting.
@@ -463,6 +478,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			}
 
 			$notice = $this->get_notice( $slug );
+
+			unset( $this->active_notices[ $slug ] );
+			unset( $this->dismissed[ $slug ] );
 			delete_metadata(
 				'user',
 				0,
@@ -484,6 +502,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				'',
 				true
 			);
+
 			$this->set_notice_delay( $slug, $notice['delay_time'] );
 
 			$this->obj_update_options();
@@ -522,8 +541,6 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		/**
 		 * Set Notice Dismiss
 		 *
-		 * @todo Add site dismiss values; possible bug with notices being reactivated after dismissing.
-		 *
 		 * @since 3.0
 		 *
 		 * @param string  $slug    The notice's slug.
@@ -532,7 +549,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		public function set_notice_dismiss( $slug, $dismiss ) {
 			$notice   = $this->get_notice( $slug );
 			if ( 'site' === $notice['target'] ) {
-				$this->deactivate_notice( $slug );
+				$this->dismissed[ $slug ] = $dismiss;
 			} elseif ( 'user' === $notice['target'] ) {
 				$current_user_id = get_current_user_id();
 
@@ -715,6 +732,10 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 							continue;
 						}
 					}
+				}
+
+				if ( isset( $this->dismissed[ $a_notice_slug ] ) && $this->dismissed[ $a_notice_slug ] ) {
+					$notice_show = false;
 				}
 
 				// User Settings.
