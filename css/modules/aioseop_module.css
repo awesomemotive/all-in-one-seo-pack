@@ -1456,6 +1456,7 @@ div#aiosp_snippet_wrapper .aioseop_option_label {
 
 div#aiosp_snippet_wrapper .aioseop_input.aioseop_top_label .aioseop_option_input {
 	margin: 0;
+    width: 99%;
 }
 
 div#aioseop_snippet {
