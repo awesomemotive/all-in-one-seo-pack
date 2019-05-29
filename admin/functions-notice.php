@@ -51,7 +51,8 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 		return array(
 			'slug'           => 'woocommerce_detected',
 			'delay_time'     => 0,
-			'message'        => __( 'We have detected you are running WooCommerce. Upgrade to All in One SEO Pack Pro to unlock our advanced e-commerce features, including SEO for Product Categories and more.', 'all-in-one-seo-pack' ),
+			/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the premium version of the plugin, All in One SEO Pack Pro. */
+			'message'        => sprintf( __( 'We have detected you are running WooCommerce. Upgrade to %s to unlock our advanced e-commerce features, including SEO for Product Categories and more.', 'all-in-one-seo-pack' ), 'All in One SEO Pack Pro' ),
 
 			'class'          => 'notice-info',
 			'target'         => 'user',
@@ -137,7 +138,8 @@ if ( class_exists( 'AIOSEOP_Notices' ) ) {
 			'target'         => 'user',
 			'screens'        => array(),
 			'class'          => 'notice-info',
-			'message'        => __( 'You have been using All in One SEO Pack for a while now. That is awesome! If you like All in One SEO Pack, then please leave us a 5-star rating. Huge thanks in advance!', 'all-in-one-seo-pack' ),
+			/* translators: %1$s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+			'message'        => sprintf( __( 'You have been using %1$s for a while now. That is awesome! If you like %1$s, then please leave us a 5-star rating. Huge thanks in advance!', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
 			'action_options' => array(
 				array(
 					'time'    => 0,
