@@ -624,7 +624,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			 *
 			 * Defaults to true. Return __return_false in order to not display the URL.
 			 *
-			 * Since 3.0
+			 * @since 3.0
 			 *
 			 * @param boolean Defaults to true.
 			 */
