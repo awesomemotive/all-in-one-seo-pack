@@ -1085,6 +1085,10 @@ table.aioseop_table td, table.aioseop_table th {
     color: white;
 }
 
+.aioseop_input input[type="radio"] {
+	border-radius: 8px;
+}
+
 .aioseop_input input[type="radio"]:before {
     content: none !important;
 }
