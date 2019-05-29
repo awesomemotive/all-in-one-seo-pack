@@ -1026,7 +1026,6 @@ table.aioseop_table td, table.aioseop_table th {
 	float: left;
 	width: 92%;
 	max-width: 100%;
-	margin: 0 23px 0 13px;
 }
 
 #aiosp_sitemap_status_metabox .handlediv.button-link {
@@ -1514,6 +1513,7 @@ div#aioseop_snippet > div > span {
 }
 
 textarea.robots-text {
+	color: black;
 	background-color: #eee;
 	width: 100%;
 	height: 100%;
@@ -1558,4 +1558,12 @@ div#aiosp_sitemap_status_metabox .toggle-indicator {
 .aioseop_update_options_button,
 .aioseop_reset_settings_button {
 	margin: 10px 0 0 0 !important;
+}
+
+#aiosp_robots_default_metabox .aioseop_option_label {
+    margin-left: 10px;
+}
+
+#aiosp_robots_default_metabox .add-edit-rule {
+    margin-left: 5px;
 }
