@@ -202,9 +202,9 @@ function aiosp_seometa_admin() {
 
 			?>
 
-			<input type="submit" class="button-highlighted" name="analyze"
-				   value="<?php _e( 'Analyze', 'genesis' ); ?>"/>
-			<input type="submit" class="button-primary" value="<?php _e( 'Convert', 'genesis' ); ?>"/>
+			<input type="submit" class="button-secondary" name="analyze"
+				   value="<?php _e( 'Analyze', 'all-in-one-seo-pack' ); ?>"/>
+			<input type="submit" class="button-primary" value="<?php _e( 'Convert', 'all-in-one-seo-pack' ); ?>"/>
 
 		</form>
 
