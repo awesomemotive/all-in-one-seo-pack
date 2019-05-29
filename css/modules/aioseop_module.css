@@ -1536,3 +1536,19 @@ div#aiosp_sitemap_status_metabox .toggle-indicator {
 .aioseop_file_upload {
 	border: none !important;
 }
+
+.aioseop_upload_image_button {
+	float:left;
+	margin:0 0 5px 0 !important;
+}
+
+.aioseop_delete_files_button {
+	margin:0 5px 10px 0 !important;
+}
+
+.aioseop_rename_files_button {
+	margin:0 0 10px 0 !important;
+}
+
+
+
