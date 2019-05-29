@@ -81,7 +81,6 @@ class aiosp_metaboxes {
 						?>
 						<div class="aioseop_translations"><strong>
 								<?php
-
 								if ( $aiosp_trans->percent_translated < 100 ) {
 									if ( ! empty( $aiosp_trans->native_name ) ) {
 										$maybe_native_name = $aiosp_trans->native_name;
@@ -89,14 +88,15 @@ class aiosp_metaboxes {
 										$maybe_native_name = $aiosp_trans->name;
 									}
 
-									/* translators: %1$s expands to the number of languages All in One SEO Pack has been translated into. $2%s to the percentage translated of the current language, $3%s to the language name, %4$s and %5$s to anchor tags with link to translation page at translate.wordpress.org  */
+									/* translators: %1$s, %2$s, etc. are placeholders and shouldn't be translated. %1$s expands to the number of languages All in One SEO Pack has been translated into, %2$s to the name of the plugin, $3%s to the percentage translated of the current language, $4%s to the language name, %5$s and %6$s to anchor tags with link to the translation page at translate.wordpress.org  */
 									printf(
 										__(
-											'All in One SEO Pack has been translated into %1$s languages, but currently the %3$s translation is only %2$s percent complete. %4$sClick here%5$s to help get it to 100 percent.', 'all-in-one-seo-pack'
+											'%1$s has been translated into %2$s languages, but currently the %3$s translation is only %4$s percent complete. %5$sClick here%6$s to help get it to 100 percent.', 'all-in-one-seo-pack'
 										),
+										AIOSEOP_PLUGIN_NAME,
 										$aiosp_trans->translated_count,
-										$aiosp_trans->percent_translated,
 										$maybe_native_name,
+										$aiosp_trans->percent_translated,
 										"<a href=\"$aiosp_trans->translation_url\" target=\"_BLANK\">",
 										'</a>'
 									);
@@ -135,16 +135,21 @@ class aiosp_metaboxes {
 				?>
 				<div class="aioseop_metabox_text">
 					<p>
-					<div class="aioseop_icon aioseop_file_icon"></div>
+					<div class="aioseop_icon aioseop-icon-file"></div>
 					<a target="_blank"
-					   href="https://semperplugins.com/documentation/"><?php _e( 'Read the All in One SEO Pack user guide', 'all-in-one-seo-pack' ); ?></a></p>
+					   href="https://semperplugins.com/documentation/">
+					   <?php
+						/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+						printf( __( 'Read the %s user guide', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
+						?>
+						</a></p>
 					<p>
-					<div class="aioseop_icon aioseop_support_icon"></div>
+					<div class="aioseop_icon aioseop-icon-support"></div>
 					<a target="_blank"
 					   title="<?php _e( 'All in One SEO Pro Plugin Support Forum', 'all-in-one-seo-pack' ); ?>"
 					   href="https://semperplugins.com/support/"><?php _e( 'Access our Premium Support Forums', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
-					<div class="aioseop_icon aioseop_cog_icon"></div>
+					<div class="aioseop_icon aioseop-icon-cog"></div>
 					<a target="_blank" title="<?php _e( 'All in One SEO Pro Plugin Changelog', 'all-in-one-seo-pack' ); ?>"
 					   href="
 						<?php
@@ -156,11 +161,11 @@ class aiosp_metaboxes {
 						?>
 					   "><?php _e( 'View the Changelog', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
-					<div class="aioseop_icon aioseop_youtube_icon"></div>
+					<div class="aioseop_icon aioseop-icon-youtube"></div>
 					<a target="_blank"
 					   href="https://semperplugins.com/doc-type/video/"><?php _e( 'Watch video tutorials', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
-					<div class="aioseop_icon aioseop_book_icon"></div>
+					<div class="aioseop_icon aioseop-icon-book"></div>
 					<a target="_blank"
 					   href="https://semperplugins.com/documentation/quick-start-guide/"><?php _e( 'Getting started? Read the Beginners Guide', 'all-in-one-seo-pack' ); ?></a></p>
 				</div>

@@ -28,18 +28,21 @@ class AIOSP_Common_Strings {
 		// Update checker strings (incomplete... need to separate out html).
 		__( 'Purchase one now', 'all-in-one-seo-pack' );
 		__( 'License Key is not set yet or invalid. ', 'all-in-one-seo-pack' );
-		/* translators: Please mind the space at the beginning of the string. */
-		__( ' Need a license key?', 'all-in-one-seo-pack' );
+		__( 'Need a license key?', 'all-in-one-seo-pack' );
 		__( 'Notice: ', 'all-in-one-seo-pack' );
 		__( 'Manage Licenses', 'all-in-one-seo-pack' );
 
 		// These are Pro option strings.
+		/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+		sprintf( __( 'Use these checkboxes to select which Taxonomies you want to use %s with.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
 		__( 'Show SEO News', 'all-in-one-seo-pack' );
 		__( 'Display Menu In Admin Bar:', 'all-in-one-seo-pack' );
 		__( 'Display Menu At The Top:', 'all-in-one-seo-pack' );
 		__( 'This displays an SEO News widget on the dashboard.', 'all-in-one-seo-pack' );
-		__( 'Check this to add All in One SEO Pack to the Admin Bar for easy access to your SEO settings.', 'all-in-one-seo-pack' );
-		__( 'Check this to move the All in One SEO Pack menu item to the top of your WordPress Dashboard menu.', 'all-in-one-seo-pack' );
+		/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+		sprintf( __( 'Check this to add %s to the Admin Bar for easy access to your SEO settings.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
+		/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+		sprintf( __( 'Check this to move the %s menu item to the top of your WordPress Dashboard menu.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
 		__( '%s is almost ready.', 'all-in-one-seo-pack' );
 		__( 'You must <a href="%s">enter a valid License Key</a> for it to work.', 'all-in-one-seo-pack' );
 		__( "There is a new version of %1\$s available. Go to <a href='%2\$s'>the plugins page</a> for details.", 'all-in-one-seo-pack' );
