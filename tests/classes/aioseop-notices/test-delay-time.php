@@ -53,7 +53,7 @@ class Test_AIOSEOP_Notices_Delay_Time extends \AIOSEOP_Notices_TestCase {
 	 *
 	 * @return array
 	 */
-	protected function mock_notice() {
+	public function mock_notice() {
 		return array(
 			'slug'           => 'notice_delay_delay_time',
 			'delay_time'     => 2, // 1 Hour.

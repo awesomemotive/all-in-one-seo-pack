@@ -57,7 +57,7 @@ class Test_AIOSEOP_Notices_Init extends AIOSEOP_Notices_TestCase {
 	 *
 	 * @return array
 	 */
-	protected function mock_notice() {
+	public function mock_notice() {
 		return array(
 			'slug'           => 'notice_slug_1',
 			'delay_time'     => 3600, // 1 Hour.
