@@ -10,7 +10,7 @@
  * @subpackage AIOSEOP_Notices
  */
 
-//$notice       = $this->get_notice[ $a_notice_slug ];
+// $notice       = $this->get_notice[ $a_notice_slug ];
 $notice_class = 'notice-info';
 if ( isset( $notice['class'] ) && ! empty( $notice['class'] ) ) {
 	$notice_class = $notice['class'];

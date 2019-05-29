@@ -214,17 +214,10 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 */
 	protected function validate_attr_notice( $notice ) {
 		$notices_attrs = array(
-			'slug'           => 'string',
-//			'delay_time'     => 'int',
-//			'message'        => 'string',
-//			'action_options' => 'array',
-//			'class'          => 'string',
-//			'target'         => 'string',
-//			'screens'        => 'array',
-			'time_set'       => 'int',
-			'time_start'     => 'int',
+			'slug'       => 'string',
+			'time_set'   => 'int',
+			'time_start' => 'int',
 		);
-
 
 		foreach ( $notices_attrs as $attr_name => $attr_type ) {
 			$this->assertArrayHasKey( $attr_name, $notice, 'Index/Key not found in Notice Array.' );
@@ -250,7 +243,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 			'class'          => 'string',
 			'target'         => 'string',
 			'screens'        => 'array',
-			'time_set'     => 'int',
+			'time_set'       => 'int',
 			'time_start'     => 'int',
 		);
 
@@ -371,26 +364,16 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 		$this->assertFalse( empty( $notice['slug'] ) );
 
 		// Shouldn't exist yet.
-//		$this->assertFalse( $aioseop_notices->activate_notice( $notice['slug'] ) );
 		$this->assertFalse( $aioseop_notices->deactivate_notice( $notice['slug'] ) );
 		$this->assertFalse( $aioseop_notices->reset_notice( $notice['slug'] ) );
-
-		// Cannot update before insert.
-//		$this->assertFalse( $aioseop_notices->update_notice( $notice ) );
 
 		// Expexted fail - Cannot load notice.
 		$this->assertFalse( $aioseop_notices->activate_notice( '' ) );
 
 		// Insert Successful and activated.
-//		$this->assertTrue( $aioseop_notices->insert_notice( $notice ) );
-
 		add_filter( 'aioseop_admin_notice-' . $notice['slug'], array( $this, 'mock_notice' ) );
 		$this->assertTrue( $aioseop_notices->activate_notice( $notice['slug'] ) );
 		$this->assertTrue( isset( $aioseop_notices->active_notices[ $notice['slug'] ] ) );
-//		$this->assertTrue( in_array( $notice['slug'], $notice, true ) );
-
-		// Re-Insert Failed.
-//		$this->assertFalse( $aioseop_notices->insert_notice( $notice ) );
 
 		// Deactivate.
 		$this->assertTrue( $aioseop_notices->deactivate_notice( $notice['slug'] ) );
@@ -407,18 +390,6 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 
 		// Remove.
 		$this->assertTrue( $aioseop_notices->remove_notice( $notice['slug'] ) );
-
-		// Update success, but notice is not active.
-//		$this->assertTrue( $aioseop_notices->update_notice( $notice ) );
-//		$this->assertFalse( isset( $aioseop_notices->active_notices[ $notice['slug'] ] ) );
-//
-//		// Activate.
-//		$this->assertTrue( $aioseop_notices->activate_notice( $notice['slug'] ) );
-//		$this->assertTrue( isset( $aioseop_notices->active_notices[ $notice['slug'] ] ) );
-//		$this->assertNotNull( $aioseop_notices->active_notices[ $notice['slug'] ] );
-//
-//		// Update Successful.
-//		$this->assertTrue( $aioseop_notices->update_notice( $notice ) );
 	}
 
 	/**
@@ -455,7 +426,6 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 		$notice = $this->mock_notice();
 
 		// Insert Successful and activated.
-//		$this->assertTrue( $aioseop_notices->insert_notice( $notice ) );
 		add_filter( 'aioseop_admin_notice-notice_slug_1', array( $this, 'mock_notice' ) );
 		$this->assertTrue( $aioseop_notices->activate_notice( $notice['slug'] ) );
 		$this->assertTrue( in_array( $notice['slug'], $notice, true ) );
