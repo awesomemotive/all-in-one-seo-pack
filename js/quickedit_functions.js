@@ -49,10 +49,8 @@ function aioseop_ajax_edit_meta_form( post_id, meta, nonce ) {
 	var element = uform.html(); var input;
 	input = '<textarea id="aioseop_new_'+meta+'_' + post_id + '" style="font-size:13px;width:100%;float:left;position:relative;z-index:1;" rows=4 cols=32>'  + post_title + '</textarea>';
 	input += '<label style="float:left">';
-	input += '<a class="aioseop_mpc_SEO_admin_options_edit" href="javascript:void(0);" id="aioseop_'+meta+'_save_' + post_id + '" >';
-	input += '<img src="' + aioseopadmin.imgUrl+'accept.png" border="0" alt="" title="'+meta+'" /></a>';
-	input += '<a class="aioseop_mpc_SEO_admin_options_edit" href="javascript:void(0);" id="aioseop_'+meta+'_cancel_' + post_id + '" >';
-	input += '<img src="' + aioseopadmin.imgUrl+'delete.png" border="0" alt="" title="'+meta+'" /></a>';
+	input += '<a class="aioseop-icon-qedit aioseop-icon-qedit-accept" href="javascript:void(0);" id="aioseop_' + meta + '_save_' + post_id + '" title="Accept" >';
+	input += '<a class="aioseop-icon-qedit aioseop-icon-qedit-delete" href="javascript:void(0);" id="aioseop_' + meta + '_cancel_' + post_id + '" title="Decline" >';
 	input += '</label>';
 	uform.html( input );
 	uform.attr( "class", "aioseop_mpc_admin_meta_options aio_editing" );

@@ -59,24 +59,6 @@
 	margin-left: 8px;
 }
 
-div.aioseop_tip_icon {
-	font-size: 14px;
-	border: 1px solid #888;
-	width: 1em;
-	text-align: center;
-	padding: 0 4px;
-	-webkit-border-radius: 12px;
-	-moz-border-radius: 12px;
-	-webkit-box-shadow: 1px 1px 1px #888;
-	-moz-box-shadow: 1px 1px 1px #888;
-	box-shadow: 1px 1px 1px #888;
-	border-radius: 12px;
-}
-
-div.aioseop_tip_icon:before {
-	content: '?';
-}
-
 .aioseop_help_text_link img {
 	width: 40px;
 	float: left;
