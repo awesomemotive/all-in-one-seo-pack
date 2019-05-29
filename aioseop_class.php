@@ -3273,15 +3273,15 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( $location == null ) {
 			$prefix = $this->prefix;
 			if ( isset( $options[ "{$prefix}use_original_title" ] ) && ( $options[ "{$prefix}use_original_title" ] === '' ) ) {
-				$options["{$prefix}use_original_title"] = 0;
+				$options[ "{$prefix}use_original_title" ] = 0;
 			}
 		}
 
 		return $options;
 	}
-
-    function template_redirect() {
-        global $aioseop_options;
+	
+	function template_redirect() {
+		global $aioseop_options;
 
 		$post = $this->get_queried_object();
 
