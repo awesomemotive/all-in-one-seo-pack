@@ -426,7 +426,7 @@ class Test_AIOSEOP_Notices_AJAX extends WP_Ajax_UnitTestCase {
 
 		// Check if notice is still active.
 		$this->assertArrayHasKey( $notice['slug'], $aioseop_notices->notices, 'AJAX Notice should still be added.' );
-		$this->assertArrayNotHasKey( $notice['slug'], $aioseop_notices->active_notices, 'AJAX Notice should not be active still.' );
+		$this->assertArrayHasKey( $notice['slug'], $aioseop_notices->dismissed, 'AJAX Notice should not be active still.' );
 		// No delay time to check.
 	}
 
