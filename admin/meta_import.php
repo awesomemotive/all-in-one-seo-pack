@@ -518,7 +518,6 @@ function aiosp_seometa_import() {
 		'Rank Math'			=> array(
 			'Custom Doctitle'  => 'rank_math_title',
 			'META Description' => 'rank_math_description',
-			'META Keywords'    => 'rank_math_focus_keyword',
 			'Canonical URI'    => 'rank_math_canonical_url',
 		),
 		'SEOpressor'                 => array(
