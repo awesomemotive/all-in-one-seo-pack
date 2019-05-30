@@ -18,7 +18,7 @@ class AIOSP_Common_Strings {
 	private function __construct() {
 
 		// From aioseop-helper-filters.php.
-		__( 'This will be the license key received when the product was purchased. This is used for automatic upgrades.', 'all-in-one-seo-pack');
+		__( 'This will be the license key received when the product was purchased. This is used for automatic upgrades.', 'all-in-one-seo-pack' );
 		/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
 		__( 'Use these checkboxes to select which Taxonomies you want to use %s with.', 'all-in-one-seo-pack' );
 		__( 'This displays an SEO News widget on the dashboard.', 'all-in-one-seo-pack' );
@@ -97,11 +97,11 @@ class AIOSP_Common_Strings {
 		__( 'Ensure URL Consistency:', 'all-in-one-seo-pack' );
 
 		// From sfwd_update_checker.php.
-		__('%s is almost ready.', 'all-in-one-seo-pack' );
+		__( '%s is almost ready.', 'all-in-one-seo-pack' );
 		/* translators: leave all the code inside the brackets < and > unchanged.*/
-		__('You must <a href="%s">enter a valid License Key</a> for it to work.', 'all-in-one-seo-pack' );
+		__( 'You must <a href="%s">enter a valid License Key</a> for it to work.', 'all-in-one-seo-pack' );
 		__( 'Need a license key?', 'all-in-one-seo-pack' );
-		__( 'Purchase one now', 'all-in-one-seo-pack';
+		__( 'Purchase one now', 'all-in-one-seo-pack' );
 		/* translators: leave all the code inside the brackets < and > unchanged.*/
 		__( "There is a new version of %s available. Go to <a href='%s'>the plugins page</a> for details.", 'all-in-one-seo-pack' );
 		/* translators: %1$s and %2$s are placeholders, which means that it should not be translated. They will be replaced with nouns in the application. */
@@ -109,7 +109,7 @@ class AIOSP_Common_Strings {
 		__( 'Manage Licenses', 'all-in-one-seo-pack' );
 		__( 'License Key is not set yet or invalid. ', 'all-in-one-seo-pack' );
 		/* transalators: Following this alert is the text of the notice. For example... "Notice: you have not entered a valid license key". */
-		__("Notice: ", 'all-in-one-seo-pack' );
+		__( 'Notice: ', 'all-in-one-seo-pack' );
 
 		// From video_sitemap.php.
 		__( 'Video Sitemap', 'all-in-one-seo-pack' );
