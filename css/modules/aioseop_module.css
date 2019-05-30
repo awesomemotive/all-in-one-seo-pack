@@ -117,7 +117,7 @@
 .aioseop input[type="text"], .aioseop input[type="url"]  {
 	color: #515151;
 	min-height: 35px;
-	padding: 10px 0 10px 10px;
+	padding: 10px;
 	font-size: 14px;
 	width: 95%;
 	max-width: 600px;
@@ -125,7 +125,7 @@
 
 .aioseop textarea {
 	color: #515151;
-	padding: 10px 0 0 10px;
+	padding: 10px;
 	margin: 1px;
 	font-size: 14px;
 	line-height: 25px;
@@ -191,6 +191,7 @@
 	sans-serif;
 	border-bottom: 1px solid #CCC;
 	width: 100%;
+    margin: 8px 0 0 0;
 }
 
 .aioseop_head_nav_tab {
@@ -428,7 +429,7 @@ body.all-in-one-seo_page_all-in-one-seo-pack-pro-aioseop_feature_manager .aioseo
 
 .aioseop_right_sidebar {
 	float: right;
-	margin-top: 35px;
+	margin-top: 55px;
 }
 
 #aiosp_settings_form .button-primary.hidden {
@@ -567,8 +568,9 @@ div.aioseop_feature {
 
 .aioseop_feature .feature_button {
 	float: right;
-	margin-bottom: 10px;
-	margin-right: 10px;
+	display: inline-block;
+	position: relative;
+	margin: 0 10px 10px 0;
 	min-width: 80px;
 	text-align: center;
 }
@@ -1515,7 +1517,6 @@ div#aioseop_snippet > div > span {
 textarea.robots-text {
 	color: black;
 	background-color: #eee;
-	width: 100%;
 	height: 100%;
 	margin: 0 0 0 10px;
 }
@@ -1566,4 +1567,8 @@ div#aiosp_sitemap_status_metabox .toggle-indicator {
 
 #aiosp_robots_default_metabox .add-edit-rule {
     margin-left: 5px;
+}
+
+#aiosp_file_editor_htaccess_metabox {
+    margin: 0 !important;
 }

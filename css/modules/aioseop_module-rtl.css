@@ -45,14 +45,6 @@
 	direction: rtl
 }
 
-.aioseop input[type="text"] {
-	padding: 2px 10px 2px 0
-}
-
-.aioseop textarea {
-	padding: 10px 10px 0 0
-}
-
 .aioseop_help_text_div {
 	text-align: right;
 	margin: 8px 0 10px 0
@@ -338,11 +330,27 @@ form#aiosp_settings_form,
 	border-width: 13.5px 4px 15px 10px;
 }
 
-#aioseop_coming_soon, #aioseop_coming_soon2 p.aioseop_desc {
+#aioseop_coming_soon, #aioseop_coming_soon2 b {
+	text-align: center;
+}
+
+.aioseop_feature p.aioseop_desc {
 	text-align: right;
 }
 
 #aioseop_coming_soon .flag.pro {
 	height: 17.5px;
 	font-size: 13.5px;
+}
+
+#aiosp_robots_default_metabox table.aioseop_table {
+	margin: 5px 10px 10px 0;
+}
+
+textarea.robots-text {
+	margin: 0 10px 0 10px;
+}
+
+.All_in_One_SEO_Pack_Feature_Manager > .aioseop_right_sidebar.aioseop_options_wrapper  {
+	margin: 30px 0 0 0;
 }

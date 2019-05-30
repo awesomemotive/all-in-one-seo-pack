@@ -3251,8 +3251,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		return $options;
-	}	
-	
+	}
+
 	function template_redirect() {
 		global $aioseop_options;
 

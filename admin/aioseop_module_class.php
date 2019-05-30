@@ -2742,7 +2742,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 							),
 							'Submit_Default' => array(
 								'type'  => 'submit',
-								'class' => 'button-secondary',
+								'class' => 'aioseop_reset_settings_button button-secondary',
 								'value' => sprintf( __( 'Reset %s Settings to Defaults', 'all-in-one-seo-pack' ), $name ) . ' &raquo;',
 							),
 						);
