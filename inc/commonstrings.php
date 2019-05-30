@@ -105,7 +105,7 @@ class AIOSP_Common_Strings {
 		/* translators: leave all the code inside the brackets < and > unchanged.*/
 		__( "There is a new version of %1$s available. Go to <a href='%2$s'>the plugins page</a> for details.", 'all-in-one-seo-pack' );
 		/* translators: %1$s and %2$s are placeholders, which means that it should not be translated. They will be replaced with nouns in the application. */
-		__( 'Your license has expired. Please %1$s click here %2$s to purchase a new one.', 'all-in-one-seo-pack' );
+		__( 'Your license has expired. Please %1\$s click here %2\$s to purchase a new one.', 'all-in-one-seo-pack' );
 		__( 'Manage Licenses', 'all-in-one-seo-pack' );
 		__( 'License Key is not set yet or invalid. ', 'all-in-one-seo-pack' );
 		/* transalators: Following this alert is the text of the notice. For example... "Notice: you have not entered a valid license key". */
