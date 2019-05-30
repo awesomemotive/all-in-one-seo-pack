@@ -43,7 +43,7 @@ class AIOSP_Common_Strings {
 		/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with a noun. */
 		__( 'The original title of the %s', 'all-in-one-seo-pack' );
 		/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with a noun. */
-		__( 'The description of the %s', 'all-in-one-seo-pack' ) );
+		__( 'The description of the %s', 'all-in-one-seo-pack' );
 		__( 'Taxonomy', 'all-in-one-seo-pack' );
 		__( 'The following macros are supported:', 'all-in-one-seo-pack' );
 		__( 'Click here for documentation on this setting', 'all-in-one-seo-pack' );
@@ -75,7 +75,7 @@ class AIOSP_Common_Strings {
 		__( 'Post', 'all-in-one-seo-pack' );
 		__( 'Taxonomies', 'all-in-one-seo-pack' );
 		__( 'Archive Pages', 'all-in-one-seo-pack' );
-		__( 'Author Pages', 'all-in-one-seo-pack' ) ;
+		__( 'Author Pages', 'all-in-one-seo-pack' );
 
 		// From aioseop_taxonomy_functions.php.
 		__( 'SEO Title', 'all-in-one-seo-pack' );
