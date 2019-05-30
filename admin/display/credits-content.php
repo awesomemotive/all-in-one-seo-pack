@@ -87,8 +87,16 @@
 	<a class="web" target="_blank" href="https://profiles.wordpress.org/webaware/"><img alt="" class="gravatar" src="https://secure.gravatar.com/avatar/aee800bc3644d9ebfa33c1ed9df5d958?s=200&d=mm&r=g">
 		Ross McKay</a>
 	</li>
-		<li class="wp-person" id="adamsilverstein">
-			<a class="web" target="_blank" href="https://profiles.wordpress.org/adamsilverstein/"><img alt=""
+    <li class="wp-person" id="webaware">
+        <a class="web" target="_blank" href="https://github.com/jWright-Freelance/"><img alt="" class="gravatar" src="https://avatars1.githubusercontent.com/u/11382307?s=200&v=4">
+            John Wright</a>
+    </li>
+    <li class="wp-person" id="webaware">
+        <a class="web" target="_blank" href="https://wordpress.org/support/users/onetarek/"><img alt="" class="gravatar" src="https://secure.gravatar.com/avatar/dc4d0f0561009cc18c8d1cdfc760b2f1?s=200&d=retro&r=g">
+            Md Jahidul Islam</a>
+    </li>
+    <li class="wp-person" id="adamsilverstein">
+        <a class="web" target="_blank" href="https://profiles.wordpress.org/adamsilverstein/"><img alt=""
 																									   class="gravatar"
 																									   src="https://secure.gravatar.com/avatar/fddbd6c3e1c3d971aa732b9346aeb433?s=200&d=mm&r=g">
 				Adam Silverstein</a>
