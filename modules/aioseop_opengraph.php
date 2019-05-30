@@ -1364,16 +1364,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			}
 
 			if ( ! empty( $this->options['aiosp_opengraph_title_shortcodes'] ) ) {
-				if ( ! aioseop_contains_conflicting_shortcodes( $title ) ) {
-					$title = do_shortcode( $title );
-				}
+				$title = aioseop_do_shortcodes( $title );
 			}
 			if ( ! empty( $description ) ) {
 				$description = $aiosp->internationalize( preg_replace( '/\s+/', ' ', $description ) );
 				if ( ! empty( $this->options['aiosp_opengraph_description_shortcodes'] ) ) {
-					if ( ! aioseop_contains_conflicting_shortcodes( $description ) ) {
-						$description = do_shortcode( $description );
-					}
+					$description = aioseop_do_shortcodes( $description );
 				}
 				if ( ! empty( $this->options['aiosp_opengraph_generate_descriptions'] ) && $this->options['aiosp_opengraph_generate_descriptions'] ) {
 					$description = $aiosp->trim_excerpt_without_filters( $description, 200 );

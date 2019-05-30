@@ -550,9 +550,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			$nggdb->add_image( $gallery_id, 'x.png', 'x', 'x', 'eyJiYWNrdXAiOnsiZmlsZW5hbWUiOiJzYW1wbGUucG5nIiwid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZ2VuZXJhdGVkIjoiMC4wMjM3MzMwMCAxNTA3MDk1MTcwIn0sImFwZXJ0dXJlIjpmYWxzZSwiY3JlZGl0IjpmYWxzZSwiY2FtZXJhIjpmYWxzZSwiY2FwdGlvbiI6ZmFsc2UsImNyZWF0ZWRfdGltZXN0YW1wIjpmYWxzZSwiY29weXJpZ2h0IjpmYWxzZSwiZm9jYWxfbGVuZ3RoIjpmYWxzZSwiaXNvIjpmYWxzZSwic2h1dHRlcl9zcGVlZCI6ZmFsc2UsImZsYXNoIjpmYWxzZSwidGl0bGUiOmZhbHNlLCJrZXl3b3JkcyI6ZmFsc2UsIndpZHRoIjoyNDgsImhlaWdodCI6OTgsInNhdmVkIjp0cnVlLCJtZDUiOiI3ZWUyMjVjOTNkZmNhMTMyYjQzMTc5ZjJiMGYwZTc2NiIsImZ1bGwiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwibWQ1IjoiN2VlMjI1YzkzZGZjYTEzMmI0MzE3OWYyYjBmMGU3NjYifSwidGh1bWJuYWlsIjp7IndpZHRoIjoyNDAsImhlaWdodCI6OTgsImZpbGVuYW1lIjoidGh1bWJzX3NhbXBsZS5wbmciLCJnZW5lcmF0ZWQiOiIwLjMwNDUzNDAwIDE1MDcwOTUxNzAifSwibmdnMGR5bi0weDB4MTAwLTAwZjB3MDEwYzAxMHIxMTBmMTEwcjAxMHQwMTAiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZmlsZW5hbWUiOiJzYW1wbGUucG5nLW5nZ2lkMDE3LW5nZzBkeW4tMHgweDEwMC0wMGYwdzAxMGMwMTByMTEwZjExMHIwMTB0MDEwLnBuZyIsImdlbmVyYXRlZCI6IjAuMTgwMzI0MDAgMTUyMTAxMTI1NCJ9fQ==' ),
 		);
 		$shortcode = '[ngg_images display_type="photocrati-nextgen_basic_thumbnails" image_ids="' . implode( ',', $images ) . '"]';
-		if ( ! aioseop_contains_conflicting_shortcodes( $shortcode ) ) {
-			$content = do_shortcode( $shortcode );
-		}
+		$content = aioseop_do_shortcodes( $shortcode );
 		if ( 'We cannot display this gallery' === $content ) {
 			$this->markTestSkipped( 'NextGen Gallery not working properly. Skipping.' );
 		}

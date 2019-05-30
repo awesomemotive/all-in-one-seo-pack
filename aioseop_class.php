@@ -2397,9 +2397,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				if ( ! AIOSEOPPRO || ( AIOSEOPPRO && apply_filters( $this->prefix . 'generate_descriptions_from_content', true, $post ) ) ) {
 					$content = $post->post_content;
 					if ( ! empty( $aioseop_options['aiosp_run_shortcodes'] ) ) {
-						if ( ! aioseop_contains_conflicting_shortcodes( $content ) ) {
-							$content = do_shortcode( $content );
-						}
+						$content = aioseop_do_shortcodes( $content );
 					}
 					$description = $content;
 				} else {
