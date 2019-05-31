@@ -8,7 +8,7 @@
 				<h3>
 					<?php
 					/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
-					echo esc_html( sprintf( __( 'Support %s', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) ); 
+					echo esc_html( sprintf( __( 'Support %s', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) );
 					?>
 				</h3>
 				<p class="message welcome-icon welcome-edit-page">
