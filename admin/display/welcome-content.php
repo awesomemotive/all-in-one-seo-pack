@@ -1,13 +1,16 @@
 <div class="welcome-panel">
 	<div class="welcome-panel-content">
 		<div class="welcome-panel-column-container">
-            <div>
-                <h3><a href="https://semperplugins.com/all-in-one-seo-pack-3-0/" target="_blank"><?php echo esc_html( sprintf( __("Check out what's new in our %s release post!", 'all_in_one_seo_pack' ), 'Version 3' ) ); ?></a></h3>
-            </div>
+			<div>
+				<h3><a href="https://semperplugins.com/all-in-one-seo-pack-3-0/" target="_blank"><?php echo esc_html( sprintf( __( "Check out what's new in our %s release post!", 'all_in_one_seo_pack' ), 'Version 3' ) ); ?></a></h3>
+			</div>
 			<div class="welcome-panel-column">
-				<h3><?php
+				<h3>
+					<?php
 					/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
-					echo esc_html( sprintf( __( 'Support %s', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) ); ?></h3>
+					echo esc_html( sprintf( __( 'Support %s', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) ); 
+					?>
+				</h3>
 				<p class="message welcome-icon welcome-edit-page">
 				<?php
 					/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
@@ -98,7 +101,7 @@
 			</div>
 		</div>
 	</div>
-    <p>
+	<p>
 		<a href=" <?php echo get_admin_url( null, 'admin.php?page=' . AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class.php' ); ?>  "><?php _e( 'Continue to the General Settings', 'all-in-one-seo-pack' ); ?></a> &raquo;
 	</p>
 </div>
