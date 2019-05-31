@@ -440,7 +440,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 				$sitemap_urls = $post_counts + $num_terms;
 
-
 				if ( 1000 < $sitemap_urls ) {
 					$aioseop_notices->activate_notice( 'sitemap_max_warning' );
 				} else {
