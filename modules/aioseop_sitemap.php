@@ -402,6 +402,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @todo Move admin notice functions. Possibly to where it is first saved & loaded (`load_sitemap_options`).
 		 *
+		 * @global AIOSEOP_Notices $aioseop_notices
+		 *
 		 * @since 2.4.1
 		 */
 		public function sitemap_notices() {
@@ -409,12 +411,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return;
 			}
 
+			global $aioseop_notices;
 			$options = $this->options;
 
 			if (
-				isset( $options[ "{$this->prefix}indexes" ] ) &&
-				'on ' !== $options[ "{$this->prefix}indexes" ] &&
-				1001 < $options[ "{$this->prefix}max_posts" ]
+					(
+							isset( $options[ "{$this->prefix}indexes" ] ) &&
+							'on' !== $options[ "{$this->prefix}indexes" ]
+					) ||
+					(
+							isset( $options[ "{$this->prefix}indexes" ] ) &&
+							'on' === $options[ "{$this->prefix}indexes" ] &&
+							1000 < $options[ "{$this->prefix}max_posts" ]
+					)
 			) {
 				$num_terms   = 0;
 				$post_counts = $this->get_total_post_count(
@@ -431,12 +440,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 				$sitemap_urls = $post_counts + $num_terms;
 
-				global $aioseop_notices;
-				if ( 1001 > $sitemap_urls ) {
-					$aioseop_notices->deactivate_notice( 'sitemap_max_warning' );
-				} else {
+
+				if ( 1000 < $sitemap_urls ) {
 					$aioseop_notices->activate_notice( 'sitemap_max_warning' );
+				} else {
+					$aioseop_notices->deactivate_notice( 'sitemap_max_warning' );
 				}
+			} else {
+				$aioseop_notices->deactivate_notice( 'sitemap_max_warning' );
 			}
 		}
 
