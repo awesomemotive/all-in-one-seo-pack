@@ -84,41 +84,33 @@
 			Shohei Tanaka</a>
 	</li>
 	<li class="wp-person" id="webaware">
-	<a class="web" target="_blank" href="https://profiles.wordpress.org/webaware/"><img alt="" class="gravatar" src="https://secure.gravatar.com/avatar/aee800bc3644d9ebfa33c1ed9df5d958?s=200&d=mm&r=g">
-		Ross McKay</a>
+		<a class="web" target="_blank" href="https://profiles.wordpress.org/webaware/"><img alt="" class="gravatar" src="https://secure.gravatar.com/avatar/aee800bc3644d9ebfa33c1ed9df5d958?s=200&d=mm&r=g">
+			Ross McKay</a>
 	</li>
-    <li class="wp-person" id="webaware">
-        <a class="web" target="_blank" href="https://github.com/jWright-Freelance/"><img alt="" class="gravatar" src="https://avatars1.githubusercontent.com/u/11382307?s=200&v=4">
-            John Wright</a>
-    </li>
-    <li class="wp-person" id="webaware">
-        <a class="web" target="_blank" href="https://wordpress.org/support/users/onetarek/"><img alt="" class="gravatar" src="https://secure.gravatar.com/avatar/dc4d0f0561009cc18c8d1cdfc760b2f1?s=200&d=retro&r=g">
-            Md Jahidul Islam</a>
-    </li>
-    <li class="wp-person" id="adamsilverstein">
-        <a class="web" target="_blank" href="https://profiles.wordpress.org/adamsilverstein/"><img alt=""
-																									   class="gravatar"
-																									   src="https://secure.gravatar.com/avatar/fddbd6c3e1c3d971aa732b9346aeb433?s=200&d=mm&r=g">
-				Adam Silverstein</a>
-		</li>
-		<li class="wp-person" id="vschettino">
-			<a class="web" target="_blank" href="https://github.com/vschettino/"><img alt=""
-																									   class="gravatar"
-																									   src="https://avatars2.githubusercontent.com/u/7289698?s=460&v=4">
-				Vinicius Schettino</a>
-		</li>
-		<li class="wp-person" id="vschettino">
-			<a class="web" target="_blank" href="https://github.com/srdjan-jcc"><img alt=""
-																					  class="gravatar"
-																					  src="https://avatars2.githubusercontent.com/u/3109112?s=460&v=4">
-				Srdjan Jocic</a>
-		</li>
-		<li class="wp-person" id="vschettino">
-			<a class="web" target="_blank" href="https://profiles.wordpress.org/soulseekah/"><img alt=""
-																					  class="gravatar"
-																					  src="https://avatars0.githubusercontent.com/u/685880?s=460&v=4">
-				Gennady Kovshenin</a>
-		</li>
+	<li class="wp-person" id="webaware">
+		<a class="web" target="_blank" href="https://github.com/jWright-Freelance/"><img alt="" class="gravatar" src="https://avatars1.githubusercontent.com/u/11382307?s=200&v=4">
+			John Wright</a>
+	</li>
+	<li class="wp-person" id="webaware">
+		<a class="web" target="_blank" href="https://wordpress.org/support/users/onetarek/"><img alt="" class="gravatar" src="https://secure.gravatar.com/avatar/dc4d0f0561009cc18c8d1cdfc760b2f1?s=200&d=retro&r=g">
+			Md Jahidul Islam</a>
+	</li>
+	<li class="wp-person" id="adamsilverstein">
+		<a class="web" target="_blank" href="https://profiles.wordpress.org/adamsilverstein/"><img alt=""class="gravatar" src="https://secure.gravatar.com/avatar/fddbd6c3e1c3d971aa732b9346aeb433?s=200&d=mm&r=g">
+			Adam Silverstein</a>
+	</li>
+	<li class="wp-person" id="vschettino">
+		<a class="web" target="_blank" href="https://github.com/vschettino/"><img alt="" class="gravatar" src="https://avatars2.githubusercontent.com/u/7289698?s=460&v=4">
+			Vinicius Schettino</a>
+	</li>
+	<li class="wp-person" id="vschettino">
+		<a class="web" target="_blank" href="https://github.com/srdjan-jcc"><img alt="" class="gravatar" src="https://avatars2.githubusercontent.com/u/3109112?s=460&v=4">
+			Srdjan Jocic</a>
+	</li>
+	<li class="wp-person" id="vschettino">
+		<a class="web" target="_blank" href="https://profiles.wordpress.org/soulseekah/"><img alt="" class="gravatar" src="https://avatars0.githubusercontent.com/u/685880?s=460&v=4">
+			Gennady Kovshenin</a>
+	</li>
 </ul>
 
 <h3 class="wp-people-group dashicons-before dashicons-translation"><?php printf( _e( 'Translation contributors and translation editors', 'all-in-one-seo-pack' ), '1.2' ); ?></h3>
