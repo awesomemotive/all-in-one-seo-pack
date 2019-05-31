@@ -467,7 +467,14 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @return bool
 		 */
 		public function reset_notice( $slug ) {
-			if ( empty( $slug ) || ! isset( $this->notices[ $slug ] ) ) {
+			if (
+					empty( $slug ) ||
+					(
+							! isset( $this->notices[ $slug ] ) &&
+							! get_user_meta( get_current_user_id(), 'aioseop_notice_display_time_' . $slug, true ) &&
+							! get_user_meta( get_current_user_id(), 'aioseop_notice_dismissed_' . $slug, true )
+					)
+			) {
 				return false;
 			}
 
