@@ -3380,7 +3380,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						$timestamp      = mysql2date( 'U', $post->post_modified_gmt );
 						$pr_info['rss'] = array(
 							'title'       => $title,
-							'description' => get_the_excerpt( $post ),
+							'description' => get_post_field( 'post_excerpt', $post->ID ),
 							'pubDate'     => date( 'r', $timestamp ),
 							'timestamp  ' => $timestamp,
 							'post_type'   => $post->post_type,
