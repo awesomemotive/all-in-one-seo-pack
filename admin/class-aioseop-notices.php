@@ -235,6 +235,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				'active_notices' => array(),
 			);
 
+			// Prevent old data from being loaded instead.
+			// Some notices are instant notifications.
+			wp_cache_delete( 'aioseop_notices', 'options' );
 			$notices_options = get_option( 'aioseop_notices' );
 			if ( false === $notices_options ) {
 				return $defaults;
@@ -259,6 +262,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			$old_notices_options = $this->obj_get_options();
 			$notices_options     = wp_parse_args( $notices_options, $old_notices_options );
 
+			// Prevent old data from being loaded instead.
+			// Some notices are instant notifications.
+			wp_cache_delete( 'aioseop_notices', 'options' );
 			return update_option( 'aioseop_notices', $notices_options, false );
 		}
 
