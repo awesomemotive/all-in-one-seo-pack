@@ -709,10 +709,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// Exclude Terms element items.
 			$this->default_options['excl_terms']['initial_options'] = array();
 			$taxonomies_active = array();
-			if ( is_array( $this->options['aiosp_sitemap_taxonomies'] ) ) {
-				$taxonomies_active = $this->options['aiosp_sitemap_taxonomies'];
-			} elseif ( ! empty( $this->options['aiosp_sitemap_taxonomies'] ) ) {
-				$taxonomies_active = array( $this->options['aiosp_sitemap_taxonomies'] );
+			if ( is_array( $this->options[ $this->prefix . 'taxonomies' ] ) ) {
+				$taxonomies_active = $this->options[ $this->prefix . 'taxonomies' ];
+			} elseif ( ! empty( $this->options[ $this->prefix . 'taxonomies' ] ) ) {
+				$taxonomies_active = array( $this->options[ $this->prefix . 'taxonomies' ] );
 			}
 
 			$args_taxonomy_key = array_search( 'all', $taxonomies_active, true );
