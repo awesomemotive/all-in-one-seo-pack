@@ -114,7 +114,8 @@
 	border: 1px solid #e1e1e1;
 }
 
-.aioseop input[type="text"], .aioseop input[type="url"]  {
+.aioseop input[type="text"], 
+.aioseop input[type="url"]  {
 	color: #515151;
 	min-height: 35px;
 	padding: 10px;
@@ -134,14 +135,16 @@
 	min-height: 36px;
 }
 
-.aioseop input, .aioseop textarea {
+.aioseop input, 
+.aioseop textarea {
     border-radius: 4px;
     border: 1px solid #8d96a0;
     margin: 1px;
     font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif !important;
 }
 
-.aioseop input:focus, .aioseop textarea:focus {
+.aioseop input:focus, 
+.aioseop textarea:focus {
     box-shadow: 0 0 0 1px #007cba;
 }
 
@@ -623,11 +626,13 @@ div.aioseop_feature#aioseop_opengraph .aioseop_featured_image.active {
 	background-image: url(../../modules/images/SocialMeta-Color-Standard.png);
 }
 
-div.aioseop_feature#aioseop_robots .aioseop_featured_image, div.aioseop_feature#aioseop_bad_robots .aioseop_featured_image {
+div.aioseop_feature#aioseop_robots .aioseop_featured_image, 
+div.aioseop_feature#aioseop_bad_robots .aioseop_featured_image {
 	background-image: url(../../modules/images/Robots-BW-Standard.png);
 }
 
-div.aioseop_feature#aioseop_robots .aioseop_featured_image.active, div.aioseop_feature#aioseop_bad_robots .aioseop_featured_image.active {
+div.aioseop_feature#aioseop_robots .aioseop_featured_image.active, 
+div.aioseop_feature#aioseop_bad_robots .aioseop_featured_image.active {
 	background-image: url(../../modules/images/Robots-Color-Standard.png);
 }
 
@@ -723,11 +728,13 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
 		background-image: url(../../modules/images/SocialMeta-Color-Retina.png);
 	}
 
-	div.aioseop_feature#aioseop_robots .aioseop_featured_image, div.aioseop_feature#aioseop_bad_robots .aioseop_featured_image {
+	div.aioseop_feature#aioseop_robots .aioseop_featured_image, 
+	div.aioseop_feature#aioseop_bad_robots .aioseop_featured_image {
 		background-image: url(../../modules/images/Robots-BW-Retina.png);
 	}
 
-	div.aioseop_feature#aioseop_robots .aioseop_featured_image.active, div.aioseop_feature#aioseop_bad_robots .aioseop_featured_image.active {
+	div.aioseop_feature#aioseop_robots .aioseop_featured_image.active, 
+	div.aioseop_feature#aioseop_bad_robots .aioseop_featured_image.active {
 		background-image: url(../../modules/images/Robots-Color-Retina.png);
 	}
 
@@ -954,7 +961,8 @@ table.aioseop_table td {
 	padding-left: 2%;
 }
 
-table.aioseop_table td, table.aioseop_table th {
+table.aioseop_table td, 
+table.aioseop_table th {
 	padding: 3px;
 }
 
@@ -1023,7 +1031,8 @@ table.aioseop_table td, table.aioseop_table th {
 	padding-left: 5%;
 }
 
-#aiosp_settings_form .aioseop_no_label, .aioseop_no_label {
+#aiosp_settings_form .aioseop_no_label, 
+.aioseop_no_label {
 	float: left;
 	width: 92%;
 	max-width: 100%;
@@ -1351,7 +1360,8 @@ div.sfwd_debug_error {
 	max-height: 420px;
 }
 
-#aioseop_coming_soon, #aioseop_coming_soon2 {
+#aioseop_coming_soon, 
+#aioseop_coming_soon2 {
 	padding-top: 40px;
 	text-align: center;
 	height: 258px;
