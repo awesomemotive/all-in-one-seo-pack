@@ -755,8 +755,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			add_action( 'aioseop_global_settings_header', array( $this, 'display_right_sidebar' ) );
 			add_action( 'aioseop_global_settings_footer', array( $this, 'display_settings_footer' ) );
 			add_action( 'output_option', array( $this, 'custom_output_option' ), 10, 2 );
-			add_action( 'all_admin_notices', array( $this, 'visibility_warning' ) );
-			add_action( 'all_admin_notices', array( $this, 'woo_upgrade_notice' ) );
+			add_action( 'admin_init', array( $this, 'visibility_warning' ) );
+			add_action( 'admin_init', array( $this, 'woo_upgrade_notice' ) );
 
 		}
 		if ( AIOSEOPPRO ) {
