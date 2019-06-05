@@ -394,7 +394,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// TODO is this required for dynamic sitemap?
 			add_action( 'transition_post_status', array( $this, 'update_sitemap_from_posts' ), 10, 3 );
 			add_action( 'after_doing_aioseop_updates', array( $this, 'scan_sitemaps' ) );
-			add_action( 'all_admin_notices', array( $this, 'sitemap_notices' ) );
+			add_action( 'admin_init', array( $this, 'sitemap_notices' ) );
 		}
 
 		/**
