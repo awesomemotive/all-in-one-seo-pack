@@ -1217,6 +1217,11 @@ div.aioseop_notice a.aioseop_dismiss_link {
 	width: 98%;
 }
 
+.aioseop_tabs.hide,
+.aioseop_header_tabs.hide {
+	display: block !important;
+}
+
 .aioseop_header_tabs li a.aioseop_header_tab {
 	font-size: 14px;
 	line-height: 37px;
