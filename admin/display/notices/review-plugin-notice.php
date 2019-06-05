@@ -18,7 +18,7 @@ function aioseop_notice_review_plugin() {
 		'slug'           => 'review_plugin',
 		'delay_time'     => 1036800,
 		'target'         => 'user',
-		'screens'        => array(),
+		'screens'        => array( 'aioseop' ),
 		'class'          => 'notice-info',
 		/* translators: %1$s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
 		'message'        => sprintf( __( 'You have been using %1$s for a while now. That is awesome! If you like %1$s, then please leave us a 5-star rating. Huge thanks in advance!', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
