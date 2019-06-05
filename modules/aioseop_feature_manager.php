@@ -38,7 +38,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 					'name'        => __( 'Social Meta', 'all-in-one-seo-pack' ),
 					/* translators: Social Meta refers to Open Graph (OG:) meta tags, which can be used to control the appearance
 					of a site's posts/pages when shared on social media networks like Facebook and Twitter. */
-					'description' => __( 'Add Social Meta data to your site to deliver closer integration between your website/blog and social media.', 'all-in-one-seo-pack' ),
+					'description' => __( 'Add Social Meta data to your site to deliver closer integration between your website and social media.', 'all-in-one-seo-pack' ),
 				),
 				'robots'            => array(
 					/* translators: the Robots.txt module allows users to provide instructions to web robots, e.g. search engine crawlers. */
@@ -54,7 +54,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 					/* translators: the Importer & Exporter module allows users to import/export their All in One SEO Pack
 					settings for backup purposes or when migrating their site. */
 					'name'        => __( 'Importer & Exporter', 'all-in-one-seo-pack' ),
-					'description' => __( 'Exports and imports your All in One SEO Pack plugin settings.', 'all-in-one-seo-pack' ),
+					/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+					'description' => sprintf( __( 'Exports and imports your %s plugin settings.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
 				),
 				'bad_robots'        => array(
 					/* translators: the Bad Bot Blocker module allows users to block requests from user agents that are known to misbehave. */

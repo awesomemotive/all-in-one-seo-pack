@@ -23,6 +23,8 @@ class AIOSEOPAdminMenus {
 		} else {
 			return;
 		}
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 	}
 
 	function remove_menus() {
@@ -38,11 +40,28 @@ class AIOSEOPAdminMenus {
 		global $submenu;
 		$url = 'https://semperplugins.com/all-in-one-seo-pack-pro-version/?loc=aio_menu';
 		$upgrade_text = __( 'Upgrade to Pro', 'all-in-one-seo-pack' );
-		$submenu['all-in-one-seo-pack/aioseop_class.php'][] = array(
+		$submenu[ AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class.php' ][] = array(
 			"<span class='upgrade_menu_link'>$upgrade_text</span>",
 			'manage_options',
 			$url,
 		);
+	}
+
+	/*
+	 * Opens Upgrade to Pro links in WP Admin as new tab.
+	 *
+	 * Enqueued here because All_in_One_SEO_Pack_Module::admin_enqueue_scripts does not work.
+	 *
+	 * @param string $hook
+	 *
+	 * @since 3.0
+	 */
+	function admin_enqueue_scripts( $hook ) {
+		wp_enqueue_script( 'aioseop_menu_js', AIOSEOP_PLUGIN_URL . 'js/aioseop-menu.js', array( 'jquery' ), AIOSEOP_VERSION, true );
+
+		if ( 'plugins.php' === $hook ) {
+			wp_enqueue_script( 'aioseop_plugins_menu_js', AIOSEOP_PLUGIN_URL . 'js/plugins-menu.js', array( 'jquery' ), AIOSEOP_VERSION, true );
+		}
 	}
 }
 

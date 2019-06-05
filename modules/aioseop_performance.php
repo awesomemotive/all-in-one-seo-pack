@@ -17,12 +17,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			$this->file   = __FILE__;                                    // The current file.
 			parent::__construct();
 
-			$this->help_text = array(
-				'memory_limit'   => __( 'This setting allows you to raise your PHP memory limit to a reasonable value. Note: WordPress core and other WordPress plugins may also change the value of the memory limit.', 'all-in-one-seo-pack' ),
-				'execution_time' => __( 'This setting allows you to raise your PHP execution time to a reasonable value.', 'all-in-one-seo-pack' ),
-				'force_rewrites' => __( 'Use output buffering to ensure that the title gets rewritten. Enable this option if you run into issues with the title tag being set by your theme or another plugin.', 'all-in-one-seo-pack' ),
-			);
-
 			$this->default_options = array(
 				'memory_limit'   => array(
 					'name'            => __( 'Raise memory limit', 'all-in-one-seo-pack' ),
@@ -51,24 +45,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 				),
 			);
 
-			$this->help_anchors = array(
-				'memory_limit'   => '#raise-memory-limit',
-				'execution_time' => '#raise-execution-time',
-				'force_rewrites' => '#force-rewrites',
-			);
-
 			global $aiosp, $aioseop_options;
-			if ( aioseop_option_isset( 'aiosp_rewrite_titles' ) && $aioseop_options['aiosp_rewrite_titles'] ) {
-				$this->default_options['force_rewrites'] = array(
-					'name'            => __( 'Force Rewrites:', 'all-in-one-seo-pack' ),
-					'default'         => 1,
-					'type'            => 'radio',
-					'initial_options' => array(
-						1 => __( 'Enabled', 'all-in-one-seo-pack' ),
-						0 => __( 'Disabled', 'all-in-one-seo-pack' ),
-					),
-				);
-			}
+			$this->default_options['force_rewrites'] = array(
+				'name'            => __( 'Force Rewrites:', 'all-in-one-seo-pack' ),
+				'default'         => 1,
+				'type'            => 'radio',
+				'initial_options' => array(
+					1 => __( 'Enabled', 'all-in-one-seo-pack' ),
+					0 => __( 'Disabled', 'all-in-one-seo-pack' ),
+				),
+			);
 
 			$this->layout = array(
 				'default' => array(
@@ -91,8 +77,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 
 			$this->default_options = array_merge( $this->default_options, $system_status );
 
-			$this->add_help_text_links();
-
 			add_filter( $this->prefix . 'display_options', array( $this, 'display_options_filter' ), 10, 2 );
 			add_filter( $this->prefix . 'update_options', array( $this, 'update_options_filter' ), 10, 2 );
 			add_action( $this->prefix . 'settings_update', array( $this, 'settings_update_action' ), 10, 2 );
@@ -110,12 +94,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			if ( $location == null ) {
 				$options[ $this->prefix . 'force_rewrites' ] = 1;
 				global $aiosp;
-				if ( aioseop_option_isset( 'aiosp_rewrite_titles' ) ) {
-					$opts                                        = $aiosp->get_current_options( array(), null );
-					$options[ $this->prefix . 'force_rewrites' ] = $opts['aiosp_force_rewrites'];
-				}
+				$opts                                        = $aiosp->get_current_options( array(), null );
+				$options[ $this->prefix . 'force_rewrites' ] = $opts['aiosp_force_rewrites'];
 			}
-
 			return $options;
 		}
 
@@ -266,7 +247,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 				__( 'Search Engine Visibility', 'all-in-one-seo-pack' ) => $blog_public,
 				__( 'Permalink Setting', 'all-in-one-seo-pack' ) => $perm_struct,
 			);
-			$debug_info['Active Plugins'] = null;
+			$debug_info[ __( 'Active Plugins', 'all-in-one-seo-pack' ) ] = null;
 			$active_plugins               = $inactive_plugins = array();
 			$plugins                      = get_plugins();
 			foreach ( $plugins as $path => $plugin ) {
@@ -276,10 +257,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 					$inactive_plugins[ $plugin['Name'] ] = $plugin['Version'];
 				}
 			}
-			$debug_info['Inactive Plugins'] = null;
+			$debug_info[ __( 'Inactive Plugins', 'all-in-one-seo-pack' ) ] = null;
 			$debug_info                     = array_merge( $debug_info, (array) $inactive_plugins );
 
-			$mail_text = __( 'All in One SEO Pack Pro Debug Info', 'all-in-one-seo-pack' ) . "\r\n------------------\r\n\r\n";
+			/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the premium version of the plugin, All in One SEO Pack Pro. */
+			$mail_text = sprintf( __( '%s Debug Info', 'all-in-one-seo-pack' ), 'All in One SEO Pack Pro' ) . "\r\n------------------\r\n\r\n";
 			$page_text = '';
 			if ( ! empty( $debug_info ) ) {
 				foreach ( $debug_info as $name => $value ) {
@@ -315,8 +297,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 								if ( $file_handle = @fopen( $file_path, 'w' ) ) {
 								// @codingStandardsIgnoreEnd
 									global $aiosp;
-									$buf = '; ' . __(
-										'Settings export file for All in One SEO Pack', 'all-in-one-seo-pack'
+									/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+									$buf = '; ' . sprintf(
+										__(
+											'Settings export file for %s', 'all-in-one-seo-pack'
+										), AIOSEOP_PLUGIN_NAME
 									) . "\n";
 
 									// Adds all settings and posts data to settings file

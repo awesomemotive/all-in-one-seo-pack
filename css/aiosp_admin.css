@@ -1,39 +1,3 @@
-#toplevel_page_all-in-one-seo-pack-pro-aioseop_class .wp-menu-image {
-	background: url(../images/shield-sprite-16.png) no-repeat 8px 6px !important;
-}
-
-#toplevel_page_all-in-one-seo-pack-aioseop_class .wp-menu-image {
-	background: url(../images/shield-sprite-16.png) no-repeat 8px 6px !important;
-}
-
-#toplevel_page_all-in-one-seo-pack-pro-aioseop_class .wp-menu-image img {
-	display: none;
-}
-
-#toplevel_page_all-in-one-seo-pack-aioseop_class .wp-menu-image img {
-	display: none;
-}
-
-#adminmenu #toplevel_page_all-in-one-seo-pack-pro-aioseop_class .wp-menu-image:before {
-	content: '';
-}
-
-#toplevel_page_all-in-one-seo-pack-aioseop_class .wp-menu-image:before {
-	content: '' !important;
-}
-
-#toplevel_page_all-in-one-seo-pack-pro-aioseop_class:hover .wp-menu-image, #toplevel_page_all-in-one-seo-pack-pro-aioseop_class.wp-has-current-submenu .wp-menu-image {
-	background-position: 8px -26px !important;
-}
-
-#toplevel_page_all-in-one-seo-pack-aioseop_class:hover .wp-menu-image, #toplevel_page_all-in-one-seo-pack-aioseop_class.wp-has-current-submenu .wp-menu-image {
-	background-position: 8px -26px !important;
-}
-
-#icon-aioseop.icon32 {
-	background: url(../images/shield32.png) no-repeat left top !important;
-}
-
 #aioseop_settings_header #message {
 	padding: 5px 0px 5px 50px;
 	background-image: url(../images/update32.png);
@@ -45,27 +9,6 @@
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (   min--moz-device-pixel-ratio: 1.5), only screen and (     -o-min-device-pixel-ratio: 3/2), only screen and (        min-device-pixel-ratio: 1.5), only screen and (                min-resolution: 1.5dppx) {
-
-	#toplevel_page_all-in-one-seo-pack-pro-aioseop_class .wp-menu-image {
-		background-image: url('../images/shield-sprite-32.png') !important;
-		-webkit-background-size: 16px 48px !important;
-		-moz-background-size: 16px 48px !important;
-		background-size: 16px 48px !important;
-	}
-
-	#toplevel_page_all-in-one-seo-pack-aioseop_class .wp-menu-image {
-		background-image: url('../images/shield-sprite-32.png') !important;
-		-webkit-background-size: 16px 48px !important;
-		-moz-background-size: 16px 48px !important;
-		background-size: 16px 48px !important;
-	}
-
-	#icon-aioseop.icon32 {
-		background-image: url('../images/shield64.png') !important;
-		-webkit-background-size: 32px 32px !important;
-		-moz-background-size: 32px 32px !important;
-		background-size: 32px 32px !important;
-	}
 
 	#aioseop_settings_header #message {
 		background-image: url(../images/update64.png) !important;
@@ -93,42 +36,35 @@ li#wp-admin-bar-aioseop-pro-upgrade a.ab-item {
 	font-size: 110%;
 }
 
-/* Dashicons in sidebar */
-
-.aiosp-di .dashicons {
-	margin:1px;
-	line-height: 1;
-	width: 42px;
-	height:36px;
-	color:#fff;
-	padding:3px;
-	vertical-align:middle;
-}
-.aiosp-di .dashicons:before {
-	-webkit-font-smoothing:antialiased;
-	font:400 30px/1 dashicons;
-	line-height: 38px;
-}
-.aiosp-di .dashicons.di-facebook {
-	margin:0;
-}
-.aiosp-di .dashicons.di-facebook:before {
-	content:"\f304";
-	font-size:52px;
-}
-.aiosp-di .dashicons.di-twitter:before {
-	content:"\f301"
-}
-.aiosp-di .dashicons.di-facebook {
-	color: #3B5998;
-}
-.aiosp-di .dashicons.di-twitter {
-	width: 36px;
-	background-color:#00aced;
-	border-radius:2px;
-}
 .upgrade_menu_link {
 	font-weight: 900;
 	color: #d54e21;
 	font-size: 105%;
+}
+
+label[for=aioseop_edit_profile_header]
+{
+	font-size: 1.3em;
+}
+
+#aioseop_edit_profile_header {
+	display: none;
+}
+
+.ui-tooltip.ui-widget.ui-corner-all.ui-widget-content.aioseop-ui-tooltip {
+	font-family: 'Open Sans', sans-serif;
+	-webkit-box-shadow: 0px 1px 6px -2px #0073AA;
+	box-shadow: 0px 1px 6px -2px #0073AA;
+	border: 0px;
+	border-radius: 0px;
+	background: #FEFEFE;
+}
+
+.ui-tooltip.ui-widget.ui-corner-all.ui-widget-content.aioseop-ui-tooltip a {
+	color: #0073AA;
+	text-decoration: none;
+}
+
+.ui-tooltip.ui-widget.ui-corner-all.ui-widget-content.aioseop-ui-tooltip dt {
+	font-weight: bold;
 }

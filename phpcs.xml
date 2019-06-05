@@ -48,6 +48,13 @@
         <exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
         <exclude name="Squiz.Commenting.InlineComment.NotCapital" />
 
+        <!-- these can be removed once #2335 is closed -->
+        <exclude name="WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition" />
+        <exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
+        <exclude name="WordPress.PHP.StrictComparisons.LooseComparison" />
+        <exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict" />
+
+
     </rule>
     <rule ref="WordPress-Docs">
     </rule>

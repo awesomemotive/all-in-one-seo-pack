@@ -540,31 +540,10 @@ jQuery( document ).ready(
 			}
 		);
 
-		/**
-	 * @since 1.0.0
-	 */
-		jQuery( ".aioseop_tab:not(:first)" ).hide();
-
-		/**
-	 * @since 1.0.0
-	 */
-		jQuery( ".aioseop_tab:first" ).show();
-
-		/**
-	 * @since 1.0.0
-	 * @return boolean.
-	 */
-		jQuery( "a.aioseop_header_tab" ).click(
-			function() {
-				var stringref = jQuery( this ).attr( "href" ).split( '#' )[1];
-				jQuery( '.aioseop_tab:not(#' + stringref + ')' ).hide( 'slow' );
-				jQuery( '.aioseop_tab#' + stringref ).show( 'slow' );
-				jQuery( '.aioseop_header_tab[href!="#' + stringref + '"]' ).removeClass( 'active' );
-				jQuery( '.aioseop_header_tab[href="#' + stringref + '"]' ).addClass( 'active' );
-				return false;
-			}
-		);
-
+        jQuery('.aioseop_tabs').tabs({
+            hide: true,
+            show: true
+        });
 
 		jQuery( "div#aiosp_robots_default_metabox" )
 		.delegate(

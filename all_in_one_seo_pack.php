@@ -3,8 +3,8 @@
 /*
 Plugin Name: All In One SEO Pack
 Plugin URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
-Description: Out-of-the-box SEO for your WordPress blog. Features like XML Sitemaps, SEO for custom post types, SEO for blogs or business sites, SEO for ecommerce sites, and much more. More than 50 million downloads since 2007.
-Version: 2.12.1
+Description: Out-of-the-box SEO for WordPress. Features like XML Sitemaps, SEO for custom post types, SEO for blogs or business sites, SEO for ecommerce sites, and much more. More than 50 million downloads since 2007.
+Version: 3.0.1
 Author: Michael Torbert
 Author URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Text Domain: all-in-one-seo-pack
@@ -32,17 +32,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * The original WordPress SEO plugin.
  *
  * @package All-in-One-SEO-Pack
- * @version 2.12.1
+ * @version 3.0.1
  */
 
 if ( ! defined( 'AIOSEOPPRO' ) ) {
 	define( 'AIOSEOPPRO', false );
 }
-if ( ! defined( 'AIOSEOP_VERSION' ) ) {
-	define( 'AIOSEOP_VERSION', '2.12.1' );
+if ( ! defined( 'AIOSEOP_PLUGIN_NAME' ) ) {
+	define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack' );
 }
-global $aioseop_plugin_name;
-$aioseop_plugin_name = 'All in One SEO Pack';
+if ( ! defined( 'AIOSEOP_VERSION' ) ) {
+	define( 'AIOSEOP_VERSION', '3.0.1' );
+}
 
 /*
  * DO NOT EDIT BELOW THIS LINE.
@@ -73,10 +74,6 @@ if ( ! function_exists( 'aiosp_add_cap' ) ) {
 	}
 }
 add_action( 'plugins_loaded', 'aiosp_add_cap' );
-
-if ( ! defined( 'AIOSEOP_PLUGIN_NAME' ) ) {
-	define( 'AIOSEOP_PLUGIN_NAME', $aioseop_plugin_name );
-}
 
 if ( ! defined( 'AIOSEOP_PLUGIN_DIR' ) ) {
 	define( 'AIOSEOP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -266,6 +263,10 @@ if ( ! function_exists( 'aioseop_activate' ) ) {
 		}
 		$aiosp_activation = true;
 
+		require_once AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php';
+		global $aioseop_notices;
+		$aioseop_notices->reset_notice( 'review_plugin' );
+
 		// These checks might be duplicated in the function being called.
 		if ( ! is_network_admin() || ! isset( $_GET['activate-multi'] ) ) {
 			set_transient( '_aioseop_activation_redirect', true, 30 ); // Sets 30 second transient for welcome screen redirect on activation.
@@ -302,7 +303,7 @@ if ( ! function_exists( 'aiosp_plugin_row_meta' ) ) {
 
 			);
 
-		return aiosp_action_links( $actions, $plugin_file, $action_links, 'after' );
+			return aiosp_action_links( $actions, $plugin_file, $action_links, 'after' );
 	}
 }
 
@@ -390,6 +391,8 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 	/**
 	 * Inits All-in-One-Seo plugin class.
 	 *
+	 * @global AIOSEOP_Notices $aioseop_notices
+	 *
 	 * @since ?? // When was this added?
 	 * @since 2.3.12.3 Loads third party compatibility class.
 	 */
@@ -412,6 +415,7 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/welcome.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/dashboard_widget.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/menu.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php' );
 
 		$aioseop_welcome = new aioseop_welcome(); // TODO move this to updates file.
 
@@ -438,6 +442,8 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 		add_action( 'init', array( $aiosp, 'add_hooks' ) );
 		add_action( 'admin_init', array( $aioseop_updates, 'version_updates' ), 11 );
 
+		add_action( 'admin_init', 'aioseop_review_plugin_notice' );
+
 		if ( defined( 'DOING_AJAX' ) && ! empty( $_POST ) && ! empty( $_POST['action'] ) && 'aioseop_ajax_scan_header' === $_POST['action'] ) {
 			remove_action( 'init', array( $aiosp, 'add_hooks' ) );
 			add_action( 'admin_init', 'aioseop_scan_post_header' );
@@ -451,7 +457,60 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 	}
 }
 
+if ( ! function_exists( 'aioseop_review_plugin_notice' ) ) {
+	/**
+	 * Review Plugin Notice
+	 *
+	 * Activates the review notice.
+	 * Note: This couldn't be used directly in `aioseop_init_class()` since ajax instances was causing
+	 * the database options to reset.
+	 *
+	 * @since 3.0
+	 */
+	function aioseop_review_plugin_notice() {
+		global $aioseop_notices;
+		$aioseop_notices->activate_notice( 'review_plugin' );
+	}
+}
 
+if ( ! function_exists( 'aioseop_admin_enqueue_styles' ) ) {
+	/**
+	 * Admin Enqueue Styles
+	 *
+	 * Styles used in various parts of WordPress admin, and not just AIOSEOP's screens.
+	 * Note: If styles are specific to a given module, then use that module's admin_enqueue_styles() method, or parent method.
+	 *
+	 * @todo Refactor this into a core file.
+	 *
+	 * @since 3.0
+	 *
+	 * @see 'admin_enqueue_scripts' hook
+	 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+	 *
+	 * @param string $hook_suffix
+	 */
+	function aioseop_admin_enqueue_styles( $hook_suffix ) {
+		// Font Icons.
+		if ( ! wp_style_is( 'aioseop-font-icons', 'registered' ) && ! wp_style_is( 'aioseop-font-icons', 'enqueued' ) ) {
+			wp_enqueue_style(
+				'aioseop-font-icons',
+				AIOSEOP_PLUGIN_URL . 'css/aioseop-font-icons.css',
+				array(),
+				AIOSEOP_VERSION
+			);
+		}
+		if ( function_exists( 'is_rtl' ) && is_rtl() ) {
+			if ( ! wp_style_is( 'aioseop-font-icons-rtl', 'registered' ) && ! wp_style_is( 'aioseop-font-icons-rtl', 'enqueued' ) ) {
+				wp_enqueue_style(
+					'aioseop-font-icons-rtl',
+					AIOSEOP_PLUGIN_URL . 'css/aioseop-font-icons-rtl.css',
+					array(),
+					AIOSEOP_VERSION
+				);
+			}
+		}
+	}
+}
 
 if ( ! function_exists( 'aioseop_welcome' ) ) {
 	function aioseop_welcome() {
@@ -479,7 +538,8 @@ if ( is_admin() || defined( 'AIOSEOP_UNIT_TESTING' ) ) {
 	add_action( 'wp_ajax_aioseo_dismiss_yst_notice', 'aioseop_update_yst_detected_notice' );
 	add_action( 'wp_ajax_aioseo_dismiss_visibility_notice', 'aioseop_update_user_visibilitynotice' );
 	add_action( 'wp_ajax_aioseo_dismiss_woo_upgrade_notice', 'aioseop_woo_upgrade_notice_dismissed' );
-	add_action( 'wp_ajax_aioseo_dismiss_sitemap_max_url_notice', 'aioseop_sitemap_max_url_notice_dismissed' );
+
+	add_action( 'admin_enqueue_scripts', 'aioseop_admin_enqueue_styles' );
 }
 
 if ( ! function_exists( 'aioseop_scan_post_header' ) ) {

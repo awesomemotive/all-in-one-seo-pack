@@ -39,6 +39,12 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		$posts = $this->setup_posts( 2 );
 		$pages = $this->setup_posts( 2, 0, 'page' );
 
+		// create a new page with a delay so that we can test if the sitemap is created in ASCENDING order.
+		// @issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/2217
+		sleep( 1 );
+		$new_page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$new_page = get_permalink( $new_page_id );
+
 		$custom_options = array();
 		$custom_options['aiosp_sitemap_indexes'] = '';
 		$custom_options['aiosp_sitemap_images'] = '';
@@ -47,14 +53,23 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 		$this->_setup_options( 'sitemap', $custom_options );
 
-		$this->validate_sitemap(
+		$file = $this->validate_sitemap(
 			array(
 				$pages['without'][0] => true,
 				$pages['without'][1] => true,
 				$posts['without'][0] => false,
 				$posts['without'][1] => false,
+				$new_page => true,
 			)
 		);
+
+		// in an ASCENDING order, the index of the urls will always lie in ascending order.
+		$index1 = strpos( $file, $pages['without'][0] );
+		$index2 = strpos( $file, $pages['without'][1] );
+		$index3 = strpos( $file, $new_page );
+
+		$this->assertGreaterThan( $index1, $index3, 'Sitemap is not in ascending order' );
+		$this->assertGreaterThan( $index2, $index3, 'Sitemap is not in ascending order' );
 	}
 
 	/**
@@ -535,7 +550,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			$nggdb->add_image( $gallery_id, 'x.png', 'x', 'x', 'eyJiYWNrdXAiOnsiZmlsZW5hbWUiOiJzYW1wbGUucG5nIiwid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZ2VuZXJhdGVkIjoiMC4wMjM3MzMwMCAxNTA3MDk1MTcwIn0sImFwZXJ0dXJlIjpmYWxzZSwiY3JlZGl0IjpmYWxzZSwiY2FtZXJhIjpmYWxzZSwiY2FwdGlvbiI6ZmFsc2UsImNyZWF0ZWRfdGltZXN0YW1wIjpmYWxzZSwiY29weXJpZ2h0IjpmYWxzZSwiZm9jYWxfbGVuZ3RoIjpmYWxzZSwiaXNvIjpmYWxzZSwic2h1dHRlcl9zcGVlZCI6ZmFsc2UsImZsYXNoIjpmYWxzZSwidGl0bGUiOmZhbHNlLCJrZXl3b3JkcyI6ZmFsc2UsIndpZHRoIjoyNDgsImhlaWdodCI6OTgsInNhdmVkIjp0cnVlLCJtZDUiOiI3ZWUyMjVjOTNkZmNhMTMyYjQzMTc5ZjJiMGYwZTc2NiIsImZ1bGwiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwibWQ1IjoiN2VlMjI1YzkzZGZjYTEzMmI0MzE3OWYyYjBmMGU3NjYifSwidGh1bWJuYWlsIjp7IndpZHRoIjoyNDAsImhlaWdodCI6OTgsImZpbGVuYW1lIjoidGh1bWJzX3NhbXBsZS5wbmciLCJnZW5lcmF0ZWQiOiIwLjMwNDUzNDAwIDE1MDcwOTUxNzAifSwibmdnMGR5bi0weDB4MTAwLTAwZjB3MDEwYzAxMHIxMTBmMTEwcjAxMHQwMTAiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZmlsZW5hbWUiOiJzYW1wbGUucG5nLW5nZ2lkMDE3LW5nZzBkeW4tMHgweDEwMC0wMGYwdzAxMGMwMTByMTEwZjExMHIwMTB0MDEwLnBuZyIsImdlbmVyYXRlZCI6IjAuMTgwMzI0MDAgMTUyMTAxMTI1NCJ9fQ==' ),
 		);
 		$shortcode = '[ngg_images display_type="photocrati-nextgen_basic_thumbnails" image_ids="' . implode( ',', $images ) . '"]';
-		$content = do_shortcode( $shortcode );
+		$content = aioseop_do_shortcodes( $shortcode );
 		if ( 'We cannot display this gallery' === $content ) {
 			$this->markTestSkipped( 'NextGen Gallery not working properly. Skipping.' );
 		}

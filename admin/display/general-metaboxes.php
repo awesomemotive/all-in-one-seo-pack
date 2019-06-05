@@ -43,7 +43,8 @@ class aiosp_metaboxes {
 							<strong>
 								<?php
 								echo aiosp_common::get_upgrade_hyperlink( 'side', __( 'Pro Version', 'all-in-one-seo-pack' ), __( 'CLICK HERE', 'all-in-one-seo-pack' ), '_blank' );
-								echo __( ' to upgrade to Pro Version and get:', 'all-in-one-seo-pack' );
+								/* translators: after this string comes a list of exclusive features that are not included in the free version of the plugin */
+								echo ' ' . __( 'to upgrade to Pro Version and get:', 'all-in-one-seo-pack' );
 								?>
 								</strong>
 						</p>
@@ -51,11 +52,11 @@ class aiosp_metaboxes {
 				</div>
 				<?php
 					// Is this fall through deliberate?
-				case 'aioseop-donate':
-					?>
+			case 'aioseop-donate':
+				?>
 					<div>
 
-					<?php if ( ! AIOSEOPPRO ) { ?>
+				<?php if ( ! AIOSEOPPRO ) { ?>
 						<div class="aioseop_metabox_text">
 							<p>
 								<?php self::pro_meta_content(); ?>
@@ -80,7 +81,6 @@ class aiosp_metaboxes {
 						?>
 						<div class="aioseop_translations"><strong>
 								<?php
-
 								if ( $aiosp_trans->percent_translated < 100 ) {
 									if ( ! empty( $aiosp_trans->native_name ) ) {
 										$maybe_native_name = $aiosp_trans->native_name;
@@ -88,14 +88,15 @@ class aiosp_metaboxes {
 										$maybe_native_name = $aiosp_trans->name;
 									}
 
-									/* translators: %1$s expands to the number of languages All in One SEO Pack has been translated into. $2%s to the percentage translated of the current language, $3%s to the language name, %4$s and %5$s to anchor tags with link to translation page at translate.wordpress.org  */
+									/* translators: %1$s, %2$s, etc. are placeholders and shouldn't be translated. %1$s expands to the number of languages All in One SEO Pack has been translated into, %2$s to the name of the plugin, $3%s to the percentage translated of the current language, $4%s to the language name, %5$s and %6$s to anchor tags with link to the translation page at translate.wordpress.org  */
 									printf(
 										__(
-											'All in One SEO Pack has been translated into %1$s languages, but currently the %3$s translation is only %2$s percent complete. %4$s Click here %5$s to help get it to 100 percent.', 'all-in-one-seo-pack'
+											'%1$s has been translated into %2$s languages, but currently the %3$s translation is only %4$s percent complete. %5$sClick here%6$s to help get it to 100 percent.', 'all-in-one-seo-pack'
 										),
+										AIOSEOP_PLUGIN_NAME,
 										$aiosp_trans->translated_count,
-										$aiosp_trans->percent_translated,
 										$maybe_native_name,
+										$aiosp_trans->percent_translated,
 										"<a href=\"$aiosp_trans->translation_url\" target=\"_BLANK\">",
 										'</a>'
 									);
@@ -111,8 +112,12 @@ class aiosp_metaboxes {
 				?>
 				<div class="aioseop_metabox_text">
 					<form
-						action="https://semperfiwebdesign.us1.list-manage.com/subscribe/post?u=794674d3d54fdd912f961ef14&amp;id=af0a96d3d9"
-						method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
+						<?php if ( AIOSEOPPRO ) : ?>
+							action="https://semperplugins.us1.list-manage.com/subscribe/post?u=794674d3d54fdd912f961ef14&amp;id=b786958a9a"
+						<?php else : ?>
+							action="https://semperplugins.us1.list-manage.com/subscribe/post?u=794674d3d54fdd912f961ef14&amp;id=af0a96d3d9"
+						<?php endif; ?>
+							method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
 						target="_blank">
 						<h2><?php _e( 'Join our mailing list for tips, tricks, and WordPress secrets.', 'all-in-one-seo-pack' ); ?></h2>
 						<p>
@@ -121,7 +126,7 @@ class aiosp_metaboxes {
 						<p><input type="text" value="" name="EMAIL" class="required email" id="mce-EMAIL"
 								  placeholder="<?php _e( 'Email Address', 'all-in-one-seo-pack' ); ?>">
 							<input type="submit" value="<?php _e( 'Subscribe', 'all-in-one-seo-pack' ); ?>" name="subscribe" id="mc-embedded-subscribe"
-								   class="btn"></p>
+								   class="button-primary" aria-label="<?php _e( 'Subscribe', 'all-in-one-seo-pack' ); ?>"></p>
 					</form>
 				</div>
 				<?php
@@ -130,16 +135,21 @@ class aiosp_metaboxes {
 				?>
 				<div class="aioseop_metabox_text">
 					<p>
-					<div class="aioseop_icon aioseop_file_icon"></div>
+					<div class="aioseop_icon aioseop-icon-file"></div>
 					<a target="_blank"
-					   href="https://semperplugins.com/documentation/"><?php _e( 'Read the All in One SEO Pack user guide', 'all-in-one-seo-pack' ); ?></a></p>
+					   href="https://semperplugins.com/documentation/">
+					   <?php
+						/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+						printf( __( 'Read the %s user guide', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
+						?>
+						</a></p>
 					<p>
-					<div class="aioseop_icon aioseop_support_icon"></div>
+					<div class="aioseop_icon aioseop-icon-support"></div>
 					<a target="_blank"
 					   title="<?php _e( 'All in One SEO Pro Plugin Support Forum', 'all-in-one-seo-pack' ); ?>"
 					   href="https://semperplugins.com/support/"><?php _e( 'Access our Premium Support Forums', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
-					<div class="aioseop_icon aioseop_cog_icon"></div>
+					<div class="aioseop_icon aioseop-icon-cog"></div>
 					<a target="_blank" title="<?php _e( 'All in One SEO Pro Plugin Changelog', 'all-in-one-seo-pack' ); ?>"
 					   href="
 						<?php
@@ -151,11 +161,11 @@ class aiosp_metaboxes {
 						?>
 					   "><?php _e( 'View the Changelog', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
-					<div class="aioseop_icon aioseop_youtube_icon"></div>
+					<div class="aioseop_icon aioseop-icon-youtube"></div>
 					<a target="_blank"
 					   href="https://semperplugins.com/doc-type/video/"><?php _e( 'Watch video tutorials', 'all-in-one-seo-pack' ); ?></a></p>
 					<p>
-					<div class="aioseop_icon aioseop_book_icon"></div>
+					<div class="aioseop_icon aioseop-icon-book"></div>
 					<a target="_blank"
 					   href="https://semperplugins.com/documentation/quick-start-guide/"><?php _e( 'Getting started? Read the Beginners Guide', 'all-in-one-seo-pack' ); ?></a></p>
 				</div>
@@ -183,7 +193,7 @@ class aiosp_metaboxes {
 
 		echo '</ul>';
 
-		echo '<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/new" />Click here</a> to file a feature request/bug report.';
+		echo sprintf( __( '%1$sClick here%2$s to file a feature request/bug report.', 'all-in-one-seo-pack' ), '<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/new" />', '</a>' );
 
 	}
 

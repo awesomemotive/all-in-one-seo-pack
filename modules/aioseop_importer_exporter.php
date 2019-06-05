@@ -17,26 +17,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 			$this->prefix = 'aiosp_importer_exporter_'; // option prefix
 			$this->file   = __FILE__;
 			parent::__construct();
-			$help_text             = array(
-				'import_submit'     => __(
-					"Select a valid All in One SEO Pack ini file and click 'Import' to import options from a previous state or install of All in One SEO Pack.<br /><a href='https://semperplugins.com/documentation/importer-exporter-module/' target='_blank'>Click here for documentation on this setting</a>",
-					'all-in-one-seo-pack'
-				),
-				'export_choices'    => __(
-					"You may choose to export settings from active modules, and content from post data.<br /><a href='https://semperplugins.com/documentation/importer-exporter-module/' target='_blank'>Click here for documentation on this setting</a>",
-					'all-in-one-seo-pack'
-				),
-				'export_post_types' => __(
-					"Select which Post Types you want to export your All in One SEO Pack meta data for.<br /><a href='https://semperplugins.com/documentation/importer-exporter-module/' target='_blank'>Click here for documentation on this setting</a>",
-					'all-in-one-seo-pack'
-				),
-			);
 			$this->warnings        = array();
 			$this->default_options = array(
 				'import_submit'      => array(
 					'name'    => __( 'Import', 'all-in-one-seo-pack' ),
 					'default' => '',
 					'type'    => 'file',
+					'class'   => 'aioseop_file_upload',
 					'save'    => false,
 				),
 				'export_choices'     => array(
@@ -70,11 +57,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 					) . '<br />',
 				),
 			);
-			if ( ! empty( $help_text ) ) {
-				foreach ( $help_text as $k => $v ) {
-					$this->default_options[ $k ]['help_text'] = $v;
-				}
-			}
 			$this->layout = array(
 				'default' => array(
 					'name'      => $this->name,
@@ -515,9 +497,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 					case 'Export':
 						// Creates Files Contents
 						$settings_file = 'settings_aioseop.ini';
-						$buf           = '; ' . __(
-							'Settings export file for All in One SEO Pack', '
+						/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+						$buf           = '; ' . sprintf(
+							__(
+								'Settings export file for %s', '
 							all-in-one-seo-pack'
+							),
+							AIOSEOP_PLUGIN_NAME
 						) . "\n";
 
 						// Adds all settings to settings file

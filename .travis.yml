@@ -3,7 +3,7 @@ language: php
 matrix:
   fast_finish: true
   global:
-    - env: PHPUNIT=global
+    - env: PHPUNIT=global GRUNT=no
   include:
     - php: 7.2
       env: PHPUNIT=local
@@ -17,9 +17,13 @@ matrix:
       dist: precise
     - php: 5.2
       dist: precise
-    - env: WP_VERSION=latest
-    - env: WP_VERSION=4.5
+    - env: WP_VERSION=latest PHPUNIT=local
+    - env: WP_VERSION=4.6 PHPUNIT=local
     - env: WP_MULTISITE=1
+    - language: node_js
+      node_js:
+       - "8.11.3"
+      env: GRUNT=yes
   allow_failures:
     - env: WP_MULTISITE=1
     - php: 5.3
@@ -38,8 +42,15 @@ branches:
 
 install:
   - if [[ $PHPUNIT = "local" ]]; then composer install; fi
+  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then chmod +x bin/init-grunt.sh; . bin/init-grunt.sh; fi
 
 before_script:
   - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
-script: if [[ $PHPUNIT = "local" ]]; then ./vendor/bin/phpunit; else phpunit; fi
+script: 
+  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then grunt; fi
+  - if [[ $PHPUNIT = "local" ]]; then ./vendor/bin/phpunit; else phpunit; fi
+
+after_failure:
+- cat "logs/phpcs.log"
+- cat "logs/jslogs.log"

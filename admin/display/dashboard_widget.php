@@ -71,7 +71,7 @@ if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 
 				$rss = fetch_feed( 'https://www.semperplugins.com/feed/' );
 				if ( is_wp_error( $rss ) ) {
-					echo '{Temporarily unable to load feed.}';
+					echo __( '{Temporarily unable to load feed.}', 'all-in-one-seo-pack' );
 
 					return;
 				}
