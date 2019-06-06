@@ -129,7 +129,7 @@ class AIOSEOP_Updates {
 		}
 
 		if (
-			version_compare( $old_version, '3.0.2', '<' )
+			version_compare( $old_version, '3.0.3', '<' )
 		) {
 			$this->reset_review_notice_201906();
 		}
