@@ -467,9 +467,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 		$notice = $this->mock_notice();
 
 		$screens = array();
-		if ( empty( $notice['screens'] ) ) {
-			$screens = array_merge( $this->data_screens_wp(), $this->data_screens_aioseop() );
-		} elseif ( 'aioseop' === $notice['screens'] ) {
+		if ( in_array( 'aioseop', $notice['screens'] ) ) {
 			$screens = $this->data_screens_aioseop();
 		} elseif ( ! empty( $notice['screens'] ) ) {
 			$all_screens = array_merge( $this->data_screens_wp(), $this->data_screens_aioseop() );
@@ -481,6 +479,10 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 					}
 				}
 			}
+		}
+
+		if ( empty( $screens ) ) {
+			$screens = array_merge( $this->data_screens_wp(), $this->data_screens_aioseop() );
 		}
 
 		return $screens;
