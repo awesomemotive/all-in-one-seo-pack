@@ -45,4 +45,5 @@ function aioseop_notice_review_plugin() {
 		),
 	);
 }
-add_filter( 'aioseop_admin_notice-review_plugin', 'aioseop_notice_review_plugin' );
+//add_filter( 'aioseop_admin_notice-review_plugin', 'aioseop_notice_review_plugin' );
+

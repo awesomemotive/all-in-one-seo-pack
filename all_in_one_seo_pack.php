@@ -265,7 +265,7 @@ if ( ! function_exists( 'aioseop_activate' ) ) {
 
 		require_once AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php';
 		global $aioseop_notices;
-		$aioseop_notices->reset_notice( 'review_plugin' );
+		//$aioseop_notices->reset_notice( 'review_plugin' );
 
 		// These checks might be duplicated in the function being called.
 		if ( ! is_network_admin() || ! isset( $_GET['activate-multi'] ) ) {
@@ -442,7 +442,7 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 		add_action( 'init', array( $aiosp, 'add_hooks' ) );
 		add_action( 'admin_init', array( $aioseop_updates, 'version_updates' ), 11 );
 
-		add_action( 'admin_init', 'aioseop_review_plugin_notice' );
+		//add_action( 'admin_init', 'aioseop_review_plugin_notice' );
 
 		if ( defined( 'DOING_AJAX' ) && ! empty( $_POST ) && ! empty( $_POST['action'] ) && 'aioseop_ajax_scan_header' === $_POST['action'] ) {
 			remove_action( 'init', array( $aiosp, 'add_hooks' ) );
@@ -469,7 +469,7 @@ if ( ! function_exists( 'aioseop_review_plugin_notice' ) ) {
 	 */
 	function aioseop_review_plugin_notice() {
 		global $aioseop_notices;
-		$aioseop_notices->activate_notice( 'review_plugin' );
+		//$aioseop_notices->activate_notice( 'review_plugin' );
 	}
 }
 

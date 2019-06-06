@@ -127,6 +127,12 @@ class AIOSEOP_Updates {
 			$this->bad_bots_remove_exabot_201902();
 			$this->sitemap_excl_terms_201905();
 		}
+
+		if (
+			version_compare( $old_version, '3.0.2', '<' )
+		) {
+			$this->reset_review_notice_201906();
+		}
 	}
 
 	/**
@@ -306,5 +312,16 @@ class AIOSEOP_Updates {
 				apply_filters( 'aioseop_update_check_time', 3600 * 6 )
 			);
 		}
+	}
+
+	/**
+	 * Removes Review Plugin Notice
+	 *
+	 * @since 3.0.3
+	 */
+	public function reset_review_notice_201906() {
+		global $aioseop_notices;
+
+		$aioseop_notices->reset_notice( 'review_plugin' );
 	}
 }
