@@ -72,13 +72,18 @@ class AIOSEOP_Updates {
 		$this->do_feature_updates();
 	}
 
+	/**
+	 * Calls the Welcome Screen.
+	 *
+	 * since 2.3.9.2
+	 * since 3.0 Don't fire if we're doing Ajax or not in the admin.
+	 */
 	function aioseop_welcome() {
-		if ( get_transient( '_aioseop_activation_redirect' ) ) {
+		if ( ( ! DOING_AJAX || ! defined( 'DOING_AJAX' ) ) && is_admin() && get_transient( '_aioseop_activation_redirect' ) ) {
 			delete_transient( '_aioseop_activation_redirect' );
 			$aioseop_welcome = new aioseop_welcome();
 			$aioseop_welcome->init( true );
 		}
-
 	}
 
 	/**
