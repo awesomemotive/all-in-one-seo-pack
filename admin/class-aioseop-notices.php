@@ -730,6 +730,11 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			$current_screen  = get_current_screen();
 			$current_user_id = get_current_user_id();
 			foreach ( $this->active_notices as $a_notice_slug => $a_notice_time_display ) {
+				// vvv TEMP Avoid review notice.
+				if ( 'review_plugin' === $a_notice_slug ) {
+					continue;
+				}
+				// ^^^ TEMP Avoid review notice.
 				$notice_show = true;
 				$notice      = $this->get_notice( $a_notice_slug );
 
