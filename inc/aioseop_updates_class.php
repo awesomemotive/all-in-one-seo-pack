@@ -323,5 +323,6 @@ class AIOSEOP_Updates {
 		global $aioseop_notices;
 
 		$aioseop_notices->reset_notice( 'review_plugin' );
+		$aioseop_notices->remove_notice( 'review_plugin' );
 	}
 }
