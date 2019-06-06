@@ -23,7 +23,7 @@ function aioseop_notice_pro_promo_woocommerce() {
 
 		'class'          => 'notice-info',
 		'target'         => 'site',
-		'screens'        => array(),
+		'screens'        => array( 'aioseop' ),
 		'action_options' => array(
 			array(
 				'time'    => 0,
