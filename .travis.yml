@@ -5,22 +5,36 @@ matrix:
   global:
     - env: PHPUNIT=global GRUNT=no
   include:
-    - php: 7.2
+    - name: "PHP 7.2 Test"
+      php: 7.2
       env: PHPUNIT=local
-    - php: 7.1
+    - name: "PHP 7.1 Test"
+      php: 7.1
       env: PHPUNIT=local
-    - php: 7.0
-    - php: 5.6
-    - php: 5.5
-    - php: 5.4
-    - php: 5.3
+    - name: "PHP 7.0 Test"
+      php: 7.0
+    - name: "PHP 5.6 Test"
+      php: 5.6
+    - name: "PHP 5.5 Test (WP 5.2 dropped support)"
+      php: 5.5
+      env: WP_VERSION=5.1
+    - name: "PHP 5.4 Test (WP 5.2 dropped support)"
+      php: 5.4
+      env: WP_VERSION=5.1
+    - name: "PHP 5.3 Test"
+      php: 5.3
       dist: precise
-    - php: 5.2
+    - name: "PHP 5.2 Test"
+      php: 5.2
       dist: precise
-    - env: WP_VERSION=latest PHPUNIT=local
-    - env: WP_VERSION=4.6 PHPUNIT=local
-    - env: WP_MULTISITE=1
-    - language: node_js
+    - name: "Latest WP version"
+      env: WP_VERSION=latest PHPUNIT=local
+    - name: "Minimum WP version"
+      env: WP_VERSION=4.7 PHPUNIT=local
+    - name: "WP Multisite"
+      env: WP_MULTISITE=1
+    - name: "Grunt Tasks"
+      language: node_js
       node_js:
        - "8.11.3"
       env: GRUNT=yes
