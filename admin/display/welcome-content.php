@@ -2,7 +2,7 @@
 	<div class="welcome-panel-content">
 		<div class="welcome-panel-column-container">
 			<div>
-				<h3><a href="https://semperplugins.com/all-in-one-seo-pack-3-0/" target="_blank"><?php echo esc_html( sprintf( __( "Check out what's new in our %s release post!", 'all_in_one_seo_pack' ), 'Version 3' ) ); ?></a></h3>
+				<h3><a href="https://semperplugins.com/all-in-one-seo-pack-3-0/" target="_blank"><?php echo esc_html( sprintf( __( "Check out what's new in our %s release post!", 'all-in-one-seo-pack' ), __( 'Version 3', 'all-in-one-seo-pack' ) ) ); ?></a></h3>
 			</div>
 			<div class="welcome-panel-column">
 				<h3>
