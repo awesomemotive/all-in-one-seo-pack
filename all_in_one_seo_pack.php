@@ -4,7 +4,7 @@
 Plugin Name: All In One SEO Pack
 Plugin URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Description: Out-of-the-box SEO for WordPress. Features like XML Sitemaps, SEO for custom post types, SEO for blogs or business sites, SEO for ecommerce sites, and much more. More than 50 million downloads since 2007.
-Version: 3.0-dev
+Version: 3.0
 Author: Michael Torbert
 Author URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Text Domain: all-in-one-seo-pack
@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * The original WordPress SEO plugin.
  *
  * @package All-in-One-SEO-Pack
- * @version 3.0-dev
+ * @version 3.0
  */
 
 if ( ! defined( 'AIOSEOPPRO' ) ) {
@@ -42,7 +42,7 @@ if ( ! defined( 'AIOSEOP_PLUGIN_NAME' ) ) {
 	define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack' );
 }
 if ( ! defined( 'AIOSEOP_VERSION' ) ) {
-	define( 'AIOSEOP_VERSION', '3.0-dev' );
+	define( 'AIOSEOP_VERSION', '3.0' );
 }
 
 /*
@@ -263,8 +263,9 @@ if ( ! function_exists( 'aioseop_activate' ) ) {
 		}
 		$aiosp_activation = true;
 
-		require_once( AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php' );
-		aioseop_notice_set_activation_review_plugin( false, true );
+		require_once AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php';
+		global $aioseop_notices;
+		$aioseop_notices->reset_notice( 'review_plugin' );
 
 		// These checks might be duplicated in the function being called.
 		if ( ! is_network_admin() || ! isset( $_GET['activate-multi'] ) ) {
@@ -390,6 +391,8 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 	/**
 	 * Inits All-in-One-Seo plugin class.
 	 *
+	 * @global AIOSEOP_Notices $aioseop_notices
+	 *
 	 * @since ?? // When was this added?
 	 * @since 2.3.12.3 Loads third party compatibility class.
 	 */
@@ -438,7 +441,8 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 
 		add_action( 'init', array( $aiosp, 'add_hooks' ) );
 		add_action( 'admin_init', array( $aioseop_updates, 'version_updates' ), 11 );
-		aioseop_notice_set_activation_review_plugin();
+
+		add_action( 'admin_init', 'aioseop_review_plugin_notice' );
 
 		if ( defined( 'DOING_AJAX' ) && ! empty( $_POST ) && ! empty( $_POST['action'] ) && 'aioseop_ajax_scan_header' === $_POST['action'] ) {
 			remove_action( 'init', array( $aiosp, 'add_hooks' ) );
@@ -450,6 +454,22 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 				$current_screen = WP_Screen::get( 'front' );
 			}
 		}
+	}
+}
+
+if ( ! function_exists( 'aioseop_review_plugin_notice' ) ) {
+	/**
+	 * Review Plugin Notice
+	 *
+	 * Activates the review notice.
+	 * Note: This couldn't be used directly in `aioseop_init_class()` since ajax instances was causing
+	 * the database options to reset.
+	 *
+	 * @since 3.0
+	 */
+	function aioseop_review_plugin_notice() {
+		global $aioseop_notices;
+		$aioseop_notices->activate_notice( 'review_plugin' );
 	}
 }
 
@@ -478,6 +498,16 @@ if ( ! function_exists( 'aioseop_admin_enqueue_styles' ) ) {
 				array(),
 				AIOSEOP_VERSION
 			);
+		}
+		if ( function_exists( 'is_rtl' ) && is_rtl() ) {
+			if ( ! wp_style_is( 'aioseop-font-icons-rtl', 'registered' ) && ! wp_style_is( 'aioseop-font-icons-rtl', 'enqueued' ) ) {
+				wp_enqueue_style(
+					'aioseop-font-icons-rtl',
+					AIOSEOP_PLUGIN_URL . 'css/aioseop-font-icons-rtl.css',
+					array(),
+					AIOSEOP_VERSION
+				);
+			}
 		}
 	}
 }

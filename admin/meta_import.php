@@ -202,9 +202,10 @@ function aiosp_seometa_admin() {
 
 			?>
 
-			<input type="submit" class="button-highlighted" name="analyze"
-				   value="<?php _e( 'Analyze', 'genesis' ); ?>"/>
-			<input type="submit" class="button-primary" value="<?php _e( 'Convert', 'genesis' ); ?>"/>
+			<input type="submit" class="button-secondary" name="analyze"
+				   value="<?php _e( 'Analyze', 'all-in-one-seo-pack' ); ?>" aria-label="Analyze"/>
+			<input type="submit" class="button-primary"
+				   value="<?php _e( 'Convert', 'all-in-one-seo-pack' ); ?>" aria-label="Convert"/>
 
 		</form>
 
@@ -525,6 +526,11 @@ function aiosp_seometa_import() {
 			'Custom Doctitle'  => 'title',
 			'META Description' => 'description',
 			'META Keywords'    => 'keywords',
+		),
+		'Rank Math'                    => array(
+			'Custom Doctitle'  => 'rank_math_title',
+			'META Description' => 'rank_math_description',
+			'Canonical URI'    => 'rank_math_canonical_url',
 		),
 		'SEOpressor'                 => array(
 			'Custom Doctitle'  => '_seopressor_meta_title',

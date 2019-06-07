@@ -54,7 +54,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					'type'  => 'submit',
 					'class' => 'button-primary add-edit-rule',
 					'name'  => __( 'Add Rule', 'all-in-one-seo-pack' ) . ' &raquo;',
-					'style' => 'margin-left: 20px;',
 					'label' => 'none',
 					'save'  => false,
 					'value' => 1,

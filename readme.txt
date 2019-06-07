@@ -3,7 +3,7 @@ Contributors: hallsofmontezuma, semperplugins, wpsmort, arnaudbroes
 Tags: SEO, Google Search Console, XML Sitemap, meta description, meta title, noindex
 Requires at least: 4.7
 Tested up to: 5.2
-Stable tag: 3.0-dev
+Stable tag: 3.0
 License: GPLv2 or later
 Requires PHP: 5.2.4
 
@@ -49,7 +49,7 @@ https://www.youtube.com/watch?v=46MR4FboMaA
 
 == Changelog ==
 
-All in One SEO Pack [Changelog](https://semperfiwebdesign.com/all-in-one-seo-pack-release-history/)
+All in One SEO Pack [Changelog](https://semperplugins.com/all-in-one-seo-pack-changelog/)
 
 == Frequently Asked Questions ==
 

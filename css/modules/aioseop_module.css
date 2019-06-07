@@ -42,9 +42,10 @@
 
 .aioseop_help_text_link:before {
 	content: "\f223";
-	font-size: 27px;
+	font-size: 22px;
 	font-family: dashicons;
 	vertical-align: middle;
+	margin-right: 4px;
 }
 
 #aioseop-support .aioseop_metabox_text,
@@ -88,17 +89,18 @@
 
 .aioseop_label {
 	color: #5F5F5F;
-	font-weight: bold;
+	font-weight: 600;
 	line-height: 19px;
 	display: inline-block;
 	float: left;
 	text-align: left;
-	font-family: 'Open Sans', sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
 	padding: 2px 0;
 	width: 81%;
 	min-width: 120px;
 	max-width: 250px;
 	cursor: default;
+	font-size: 13.5px;
 }
 
 .aioseop_option_div {
@@ -115,7 +117,7 @@
 .aioseop input[type="text"], .aioseop input[type="url"]  {
 	color: #515151;
 	min-height: 35px;
-	padding: 10px 0 10px 10px;
+	padding: 10px;
 	font-size: 14px;
 	width: 95%;
 	max-width: 600px;
@@ -123,13 +125,40 @@
 
 .aioseop textarea {
 	color: #515151;
-	padding: 10px 0 0 10px;
-	margin: 0;
+	padding: 10px;
+	margin: 1px;
 	font-size: 14px;
 	line-height: 25px;
 	width: 95%;
 	max-width: 600px;
 	min-height: 36px;
+}
+
+.aioseop input, textarea {
+    border-radius: 4px;
+    border: 1px solid #8d96a0;
+    margin: 1px;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif !important;
+}
+
+.aioseop input:focus, textarea:focus {
+    box-shadow: 0 0 0 1px #007cba;
+}
+
+.aioseop textarea::-webkit-scrollbar {
+    width: 12px;
+}
+
+.aioseop textarea::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.aioseop textarea::-webkit-scrollbar-thumb {
+    background: #aeaeae;
+}
+
+.aioseop textarea::-webkit-scrollbar-thumb:hover {
+    background: #888;
 }
 
 .aioseop_help_text_div {
@@ -162,6 +191,7 @@
 	sans-serif;
 	border-bottom: 1px solid #CCC;
 	width: 100%;
+    margin: 8px 0 0 0;
 }
 
 .aioseop_head_nav_tab {
@@ -327,7 +357,7 @@
 }
 
 .aioseop_metabox_text h2 {
-	font-size: 14px;
+	font-size: 30px;
 	padding: 0;
 	font-weight: bold;
 	line-height: 29px;
@@ -356,7 +386,7 @@
 
 .aioseop input[readonly] {
 	background-color: #EEE;
-	margin: 5px 0 5px 0 !important;
+	margin: 5px 1px 5px 1px !important;
 }
 
 .aioseop_settings_left {
@@ -399,7 +429,7 @@ body.all-in-one-seo_page_all-in-one-seo-pack-pro-aioseop_feature_manager .aioseo
 
 .aioseop_right_sidebar {
 	float: right;
-	margin-top: 35px;
+	margin-top: 55px;
 }
 
 #aiosp_settings_form .button-primary.hidden {
@@ -424,7 +454,7 @@ form#edittag div#aiosp_sitemap_exclude_wrapper {
 }
 
 .All_in_One_SEO_Pack_Feature_Manager > .aioseop_right_sidebar.aioseop_options_wrapper {
-	margin-top: 10px;
+	margin-top: 30px;
 }
 
 div#aiosp_feature_manager_metabox .inside {
@@ -444,7 +474,7 @@ div.aioseop_feature {
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	background: white;
-	padding: 10px 0 0;
+	padding: 10px 0;
 	-webkit-box-shadow: inset 0 1px 0 #fff,
 	inset 0 0 20px rgba(0, 0, 0, 0.05),
 	0 1px 2px rgba(0, 0, 0, 0.1);
@@ -538,8 +568,9 @@ div.aioseop_feature {
 
 .aioseop_feature .feature_button {
 	float: right;
-	margin-bottom: 10px;
-	margin-right: 10px;
+	display: inline-block;
+	position: relative;
+	margin: 0 10px 10px 0;
 	min-width: 80px;
 	text-align: center;
 }
@@ -793,15 +824,6 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
 	padding: 0;
 }
 
-#aiosp_sitemap_addl_pages_metabox .aioseop_wrapper .aioseop_input,
-#aiosp_video_sitemap_addl_pages_metabox .aioseop_wrapper .aioseop_input {
-	display: inline-block;
-	vertical-align: middle;
-	width: 25%;
-	min-width: 120px;
-	height: 70px;
-}
-
 #aiosp_sitemap_addl_pages_metabox .aioseop_wrapper .aioseop_top_label,
 #aiosp_video_sitemap_addl_pages_metabox .aioseop_wrapper .aioseop_top_label {
 	width: 70%;
@@ -847,6 +869,11 @@ div.aioseop_feature#aioseop_coming_soon2 .aioseop_featured_image {
 	position: static;
 	width: 95%;
 	max-width: 600px;
+}
+
+.selectize-input {
+	padding: 10px 0 10px 10px !important;
+	border: 1px solid #8d96a0 !important;
 }
 
 table.aioseop_table tr:nth-child(odd) {
@@ -937,7 +964,7 @@ table.aioseop_table td, table.aioseop_table th {
 }
 
 #aiosp_settings_form .postbox {
-	margin: 0 0 20px 0;
+	margin: 20px 0 0 0;
 }
 
 .aioseop_settings_left .postbox {
@@ -1000,7 +1027,6 @@ table.aioseop_table td, table.aioseop_table th {
 	float: left;
 	width: 92%;
 	max-width: 100%;
-	margin: 0 23px 0 13px;
 }
 
 #aiosp_sitemap_status_metabox .handlediv.button-link {
@@ -1049,8 +1075,27 @@ table.aioseop_table td, table.aioseop_table th {
 
 .aioseop_input input[type="checkbox"],
 .aioseop_input input[type="radio"] {
+	border: 1.25px solid #6c7781;
 	vertical-align: text-bottom;
 	margin-top: 8px;
+}
+
+.aioseop_input input[type="checkbox"]:before {
+    margin: -3px 0 0 -5px;
+    color: white;
+}
+
+.aioseop_input input[type="radio"] {
+	border-radius: 8px;
+}
+
+.aioseop_input input[type="radio"]:before {
+    content: none !important;
+}
+
+.aioseop_input input[type="radio"]:checked,
+.aioseop_input input[type="checkbox"]:checked {
+    background: #11a0d2;
 }
 
 #aiosp_importer_exporter_import_export_help_wrapper .aioseop_option_div {
@@ -1146,7 +1191,8 @@ div.aioseop_notice a.aioseop_dismiss_link {
 }
 
 .aioseop_input select {
-	margin: 7px 0;
+	border-radius: 4px;
+	border: 1px solid #8d96a0;
 }
 
 .aioseop_help_text ul {
@@ -1174,6 +1220,7 @@ div.aioseop_notice a.aioseop_dismiss_link {
 	border-bottom: none !important;
 	padding: 0em 0.5em !important;
 	color: #5F5F5F;
+	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif !important;
 }
 
 .aioseop_tab {
@@ -1387,11 +1434,12 @@ div.sfwd_debug_error {
 *
 */
 div#aiosp_snippet_wrapper {
-	border: 1px solid #888;
-	clear: both;
-	padding: 10px 10px 0;
-	max-width: 97%;
-	margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid #8d96a0;
+    clear: both;
+    padding: 10px 10px 0;
+    max-width: 97%;
+    margin-bottom: 15px;
 }
 
 #aiosp_snippet_wrapper > .aioseop_input:first-child {
@@ -1409,6 +1457,7 @@ div#aiosp_snippet_wrapper .aioseop_option_label {
 
 div#aiosp_snippet_wrapper .aioseop_input.aioseop_top_label .aioseop_option_input {
 	margin: 0;
+  width: 99%;
 }
 
 div#aioseop_snippet {
@@ -1466,11 +1515,60 @@ div#aioseop_snippet > div > span {
 }
 
 textarea.robots-text {
+	color: black;
 	background-color: #eee;
-	width: 100%;
 	height: 100%;
+	margin: 0 0 0 10px;
 }
 
 div#aiosp_sitemap_status_metabox .toggle-indicator {
     display:none;
+}
+
+.required.email {
+	border-radius: 4px;
+	border: 1px solid #8d96a0;
+	margin: 1px;
+	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif !important;
+}
+
+.ui-sortable-handle span {
+	font-size: 16px;
+	font-weight: 600;
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
+	color: black;
+}
+
+.aioseop_file_upload {
+	border: none !important;
+}
+
+.aioseop_upload_image_button {
+	float: left;
+	margin: 0 0 5px 0 !important;
+}
+
+.aioseop_delete_files_button {
+	margin: 0 5px 10px 0 !important;
+}
+
+.aioseop_rename_files_button {
+	margin: 0 0 10px 0 !important;
+}
+
+.aioseop_update_options_button,
+.aioseop_reset_settings_button {
+	margin: 10px 0 0 0 !important;
+}
+
+#aiosp_robots_default_metabox .aioseop_option_label {
+    margin-left: 10px;
+}
+
+#aiosp_robots_default_metabox .add-edit-rule {
+    margin-left: 5px;
+}
+
+#aiosp_file_editor_htaccess_metabox {
+    margin: 0 !important;
 }

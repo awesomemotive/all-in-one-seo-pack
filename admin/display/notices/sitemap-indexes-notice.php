@@ -8,33 +8,6 @@
  */
 
 /**
- * Set Notice with Sitemap Index +1000
- *
- * When there's 1000+ URLs with indexing enabled.
- *
- * @since 3.0
- *
- * @global AIOSEOP_Notices $aioseop_notices
- *
- * @param boolean $update Updates the notice with new content and configurations.
- * @param boolean $reset  Notice are re-initiated.
- */
-function aioseop_notice_activate_sitemap_indexes( $update = false, $reset = false ) {
-	global $aioseop_notices;
-
-	$notice = aioseop_notice_sitemap_indexes();
-
-	if ( ! $aioseop_notices->insert_notice( $notice ) ) {
-		if ( $update ) {
-			$aioseop_notices->update_notice( $notice );
-		}
-		if ( $reset || ! isset( $aioseop_notices->active_notices[ $notice['slug'] ] ) ) {
-			$aioseop_notices->activate_notice( $notice['slug'] );
-		}
-	}
-}
-
-/**
  * Notice - Sitemap Indexes
  *
  * @since 3.0
@@ -68,15 +41,4 @@ function aioseop_notice_sitemap_indexes() {
 		),
 	);
 }
-
-/**
- * Disable Notice for Sitemap
- *
- * @since 3.0
- *
- * @global AIOSEOP_Notices $aioseop_notices
- */
-function aioseop_notice_disable_sitemap_indexes() {
-	global $aioseop_notices;
-	$aioseop_notices->deactivate_notice( 'woocommerce_detected' );
-}
+add_filter( 'aioseop_admin_notice-sitemap_max_warning', 'aioseop_notice_sitemap_indexes' );

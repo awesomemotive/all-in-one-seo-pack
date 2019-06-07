@@ -2341,7 +2341,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$buf .= '<input class="aioseop_upload_image_checker" type="hidden" name="' . $name . '_checker" value="0">' .
 							"<input class='aioseop_upload_image_button button-primary' type='button' value='";
 					$buf .= __( 'Upload Image', 'all-in-one-seo-pack' );
-					$buf .= "' style='float:left;' />" .
+					$buf .= "' />" .
 							"<input class='aioseop_upload_image_label' name='" . esc_attr( $name ) . "' type='text' " . esc_html( $attr ) . " value='" . esc_attr( $value ) . "' size=57 style='float:left;clear:left;'>\n";
 					break;
 				case 'html':
@@ -2737,12 +2737,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 							'page_options'   => array( 'type' => 'hidden', 'value' => 'aiosp_home_description' ),
 							'Submit'         => array(
 								'type'  => 'submit',
-								'class' => 'button-primary',
+								'class' => 'aioseop_update_options_button button-primary',
 								'value' => __( 'Update Options', 'all-in-one-seo-pack' ) . ' &raquo;',
 							),
 							'Submit_Default' => array(
 								'type'  => 'submit',
-								'class' => 'button-secondary',
+								'class' => 'aioseop_reset_settings_button button-secondary',
 								'value' => sprintf( __( 'Reset %s Settings to Defaults', 'all-in-one-seo-pack' ), $name ) . ' &raquo;',
 							),
 						);

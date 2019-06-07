@@ -23,6 +23,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 					'name'    => __( 'Import', 'all-in-one-seo-pack' ),
 					'default' => '',
 					'type'    => 'file',
+					'class'   => 'aioseop_file_upload',
 					'save'    => false,
 				),
 				'export_choices'     => array(

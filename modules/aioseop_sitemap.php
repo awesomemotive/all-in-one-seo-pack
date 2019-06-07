@@ -207,10 +207,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'archive'     => array( 'name' => __( 'Include Date Archive Pages', 'all-in-one-seo-pack' ) ),
 				'author'      => array( 'name' => __( 'Include Author Pages', 'all-in-one-seo-pack' ) ),
 				'images'      => array( 'name' => __( 'Exclude Images', 'all-in-one-seo-pack' ) ),
-				'robots'      => array(
-					'name'    => __( 'Link From Virtual Robots.txt', 'all-in-one-seo-pack' ),
-					'default' => 'On',
-				),
 				'rewrite'     => array(
 					'name'    => __( 'Dynamically Generate Sitemap', 'all-in-one-seo-pack' ),
 					'default' => 'On',
@@ -303,27 +299,23 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				'addl_url'          => array(
 					'name'  => __( 'Page URL', 'all-in-one-seo-pack' ),
 					'type'  => 'url',
-					'label' => 'top',
 					'save'  => false,
 				),
 				'addl_prio'         => array(
 					'name'            => __( 'Page Priority', 'all-in-one-seo-pack' ),
 					'type'            => 'select',
 					'initial_options' => $prio,
-					'label'           => 'top',
 					'save'            => false,
 				),
 				'addl_freq'         => array(
 					'name'            => __( 'Page Frequency', 'all-in-one-seo-pack' ),
 					'type'            => 'select',
 					'initial_options' => $freq,
-					'label'           => 'top',
 					'save'            => false,
 				),
 				'addl_mod'          => array(
 					'name'  => __( 'Last Modified', 'all-in-one-seo-pack' ),
 					'type'  => 'date',
-					'label' => 'top',
 					'save'  => false,
 					'class' => 'aiseop-date',
 				),
@@ -410,6 +402,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @todo Move admin notice functions. Possibly to where it is first saved & loaded (`load_sitemap_options`).
 		 *
+		 * @global AIOSEOP_Notices $aioseop_notices
+		 *
 		 * @since 2.4.1
 		 */
 		public function sitemap_notices() {
@@ -417,12 +411,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return;
 			}
 
+			global $aioseop_notices;
 			$options = $this->options;
 
 			if (
-				isset( $options[ "{$this->prefix}indexes" ] ) &&
-				'on ' !== $options[ "{$this->prefix}indexes" ] &&
-				1001 < $options[ "{$this->prefix}max_posts" ]
+					(
+							isset( $options[ "{$this->prefix}indexes" ] ) &&
+							'on' !== $options[ "{$this->prefix}indexes" ]
+					) ||
+					(
+							isset( $options[ "{$this->prefix}indexes" ] ) &&
+							'on' === $options[ "{$this->prefix}indexes" ] &&
+							1000 < $options[ "{$this->prefix}max_posts" ]
+					)
 			) {
 				$num_terms   = 0;
 				$post_counts = $this->get_total_post_count(
@@ -439,11 +440,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 				$sitemap_urls = $post_counts + $num_terms;
 
-				if ( 1001 > $sitemap_urls ) {
-					aioseop_notice_disable_sitemap_indexes();
+				if ( 1000 < $sitemap_urls ) {
+					$aioseop_notices->activate_notice( 'sitemap_max_warning' );
 				} else {
-					aioseop_notice_activate_sitemap_indexes( false, true );
+					$aioseop_notices->deactivate_notice( 'sitemap_max_warning' );
 				}
+			} else {
+				$aioseop_notices->deactivate_notice( 'sitemap_max_warning' );
 			}
 		}
 
@@ -623,7 +626,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$this->setup_rewrites();
 			}
 
-			if ( $this->option_isset( 'robots' ) ) {
+			/**
+			 * Filters whether to display the URL to the XML Sitemap on our virtual robots.txt file.
+			 *
+			 * Defaults to true. Return __return_false in order to not display the URL.
+			 *
+			 * @since 3.0
+			 *
+			 * @param boolean Defaults to true.
+			 */
+			if ( apply_filters( 'aioseop_robotstxt_sitemap_url', true ) ) {
 				add_action( 'do_robots', array( $this, 'do_robots' ), 100 );
 			}
 
@@ -1348,7 +1360,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						$problem_files[] = $f;
 
 						// This is causing all problem_files to be deleted automatically; which may be the intent.
-						// TODO Either create a seperate variable for this set of problem_files, or a final loop to clean problem_files before returning.
+						// TODO Either create a separate variable for this set of problem_files, or a final loop to clean problem_files before returning.
 						foreach ( $problem_files as $f => $file ) {
 							$files[ $f ] = realpath( $file );
 							$this->delete_file( realpath( $file ) );
@@ -1382,8 +1394,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					$msg .= "<input type='hidden' name='aioseop_sitemap_conflict[]' value='" . esc_attr( basename( realpath( $p ) ) ) . "'>\n";
 				}
 				$msg .= "<input type='hidden' name='nonce-aioseop' value='" . wp_create_nonce( 'aioseop-nonce' ) . "'>\n";
-				$msg .= "<input type='submit' name='aioseop_sitemap_rename_files' value='" . __( 'Rename Conflicting Files', 'all-in-one-seo-pack' ) . "'> ";
-				$msg .= "<input type='submit' name='aioseop_sitemap_delete_files' value='" . __( 'Delete Conflicting Files', 'all-in-one-seo-pack' ) . "'>";
+				$msg .= "<input type='submit' name='aioseop_sitemap_delete_files' class='aioseop_delete_files_button button-primary' value='" . __( 'Delete Conflicting Files', 'all-in-one-seo-pack' ) . "' aria-label='" . __( 'Delete Conflicting Files', 'all-in-one-seo-pack' ) . "'>";
+				$msg .= "<input type='submit' name='aioseop_sitemap_rename_files' class='aioseop_rename_files_button button-secondary' value='" . __( 'Rename Conflicting Files', 'all-in-one-seo-pack' ) . "' aria-label='" . __( 'Rename Conflicting Files', 'all-in-one-seo-pack' ) . "'> ";
 
 				$msg = '<form action="" method="post">' . $msg . '</form>';
 			}
@@ -3770,7 +3782,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 					$code .= ']';
 
-					$gallery_content .= do_shortcode( $code );
+					$gallery_content .= aioseop_do_shortcodes( $code );
 				}
 			}
 
