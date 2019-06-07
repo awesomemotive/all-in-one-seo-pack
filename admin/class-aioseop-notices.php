@@ -117,10 +117,11 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			if ( version_compare( phpversion(), '5.3.6', '<' ) ) {
 			    return false;
 			}
-			
-			$this->_requires();
-			if ( current_user_can( 'aiosp_manage_seo' ) ) {
 
+			$this->_requires();
+			$this->obj_load_options();
+
+			if ( current_user_can( 'aiosp_manage_seo' ) ) {
 				$this->aioseop_screens[] = 'toplevel_page_' . AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class';
 				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_performance';
 				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_sitemap';
@@ -131,8 +132,6 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_importer_exporter';
 				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_bad_robots';
 				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_feature_manager';
-
-				$this->obj_load_options();
 
 				add_action( 'admin_init', array( $this, 'init' ) );
 				add_action( 'current_screen', array( $this, 'admin_screen' ) );
@@ -549,6 +548,7 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			}
 
 			$this->notices[ $slug ]['time_set'] = $time_set;
+			$this->notices[ $slug ]['time_start'] = $display_time;
 			$this->active_notices[ $slug ]      = $display_time;
 
 			return true;
