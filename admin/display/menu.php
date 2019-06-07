@@ -18,7 +18,7 @@ class AIOSEOPAdminMenus {
 			return;
 		}
 
-		if ( current_user_can( 'manage_options' ) || current_user_can( 'aiosp_manage_seo' ) ) {
+		if ( ! AIOSEOPPRO && ( current_user_can( 'manage_options' ) || current_user_can( 'aiosp_manage_seo' ) ) ) {
 			add_action( 'admin_menu', array( $this, 'add_pro_submenu' ), 11 );
 		} else {
 			return;
