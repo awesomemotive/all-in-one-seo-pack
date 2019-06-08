@@ -4,9 +4,15 @@
  *
  * This is just for Pro strings to be translated.
  *
- * @package All-in-One-SEO-Pack
+ * @package All_in_One_SEO_Pack
+ * @since ?
  */
 
+/**
+ * Class AIOSP_Common_Strings
+ *
+ * @since ?
+ */
 class AIOSP_Common_Strings {
 
 	/**
@@ -14,7 +20,6 @@ class AIOSP_Common_Strings {
 	 *
 	 * We'll just put all the strings in the contruct for lack of a better place.
 	 */
-
 	private function __construct() {
 
 		// From aioseop-helper-filters.php.

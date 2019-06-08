@@ -2,15 +2,20 @@
 /**
  * Class Test_Sitemap
  *
- * @package
+ * @package All_in_One_SEO_Pack
+ * @since ?
  */
 
 /**
  * Sitemap test case.
  */
-
 require_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-test-base.php';
 
+/**
+ * Class Sitemap_Test_Base
+ *
+ * @since 2.4.3.1
+ */
 class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 
 	/**
@@ -42,7 +47,6 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 	 * 3) an array - each element of the array will be the name of the XML node. The value, again, can be
 	 *      i) a boolean - true will check if the node exists, false if the node does not exist.
 	 *      ii) a string - the value of the node should be the same as this value.
-	 *
 	 */
 	protected final function validate_sitemap( $elements, $debug = false ) {
 		$file = $this->create_sitemap();
@@ -77,14 +81,16 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 				if ( array_key_exists( 'title', $images ) ) {
 					$element['image:title'] = $images['title'];
 					if ( is_array( $images['title'] ) ) {
-						// TODO: this does not work because wptexturize mangles the single and double quotes into the typewriter equivalents ' to ‘ or ’ and " to “ or ”.
+						// TODO: this does not work because wptexturize mangles the single and double quotes into the typewriter equivalents ' to ï¿½ or ï¿½ and " to ï¿½ or ï¿½.
+						// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 						// $this->assertContains( strip_tags( $this->_spl_chars ), $images['title'][0] );
 					}
 				}
 				if ( array_key_exists( 'caption', $images ) ) {
 					$element['image:caption'] = $images['caption'];
 					if ( is_array( $images['caption'] ) ) {
-						// TODO: this does not work because wptexturize mangles the single and double quotes into the typewriter equivalents ' to ‘ or ’ and " to “ or ”.
+						// TODO: this does not work because wptexturize mangles the single and double quotes into the typewriter equivalents ' to ï¿½ or ï¿½ and " to ï¿½ or ï¿½.
+						// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 						// $this->assertContains( strip_tags( $this->_spl_chars ), $images['caption'][0] );
 					}
 				}

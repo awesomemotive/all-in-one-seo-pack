@@ -36,16 +36,17 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 * AIOSEOP_Notices_TestCase constructor.
 	 *
 	 * @since 3.0
+	 *
 	 * @param null $name
 	 * @param array $data
-	 * @param string $dataName
+	 * @param string $data_name
 	 */
-	public function __construct( $name = null, array $data = array(), $dataName = '' ) {
+	public function __construct( $name = null, array $data = array(), $data_name = '' ) {
 		if ( ! defined( 'WP_DEVELOP_DIR' ) ) {
 			$this->define_wp_develop_dir();
 		}
 
-		parent::__construct( $name, $data, $dataName );
+		parent::__construct( $name, $data, $data_name );
 	}
 
 	/**
@@ -496,6 +497,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 	 * @return array
 	 */
 	protected function data_screens_wp() {
+		// phpcs:disable Squiz.Commenting.BlockComment
 		return array(
 			array(
 				'screen_id' => 'dashboard',
@@ -518,31 +520,37 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 				'url'       => site_url() . '/wp-admin/post-new.php',
 				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/post-new.php',
 			),
-			// array(
-			// 'screen_id' => 'post',
-			// 'url'       => site_url() . '/wp-admin/post.php?post=###&action=edit',
-			// 'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/post.php?post=###&action=edit',
-			// ),
+			/*
+			array(
+				'screen_id' => 'post',
+				'url'       => site_url() . '/wp-admin/post.php?post=###&action=edit',
+				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/post.php?post=###&action=edit',
+			),
+			*/
 			array(
 				'screen_id' => 'edit-category',
 				'url'       => site_url() . '/wp-admin/edit-tags.php?taxonomy=category',
 				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/edit-tags.php?taxonomy=category',
 			),
-			// array(
-			// 'screen_id' => 'edit-category',
-			// 'url'       => site_url() . '/wp-admin/edit-tags.php?action=edit&taxonomy=category&tag_ID=###&post_type=post',
-			// 'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/edit-tags.php?action=edit&taxonomy=category&tag_ID=###&post_type=post',
-			// ),
+			/*
+			array(
+				'screen_id' => 'edit-category',
+				'url'       => site_url() . '/wp-admin/edit-tags.php?action=edit&taxonomy=category&tag_ID=###&post_type=post',
+				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/edit-tags.php?action=edit&taxonomy=category&tag_ID=###&post_type=post',
+			),
+			*/
 			array(
 				'screen_id' => 'edit-post_tag',
 				'url'       => site_url() . '/wp-admin/edit-tags.php?taxonomy=post_tag',
 				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/edit-tags.php?taxonomy=post_tag',
 			),
-			// array(
-			// 'screen_id' => 'edit-post_tag',
-			// 'url'       => site_url() . '/wp-admin/edit-tags.php?action=edit&taxonomy=post_tag&tag_ID=###&post_type=post',
-			// 'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/edit-tags.php?action=edit&taxonomy=post_tag&tag_ID=###&post_type=post',
-			// ),
+			/*
+			array(
+				'screen_id' => 'edit-post_tag',
+				'url'       => site_url() . '/wp-admin/edit-tags.php?action=edit&taxonomy=post_tag&tag_ID=###&post_type=post',
+				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/edit-tags.php?action=edit&taxonomy=post_tag&tag_ID=###&post_type=post',
+			),
+			*/
 			// Custom Post Types.
 			// Custom Taxonomies.
 			array(
@@ -555,11 +563,13 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 				'url'       => site_url() . '/wp-admin/media-new.php',
 				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/media-new.php',
 			),
-			// array(
-			// 'screen_id' => 'attachment',
-			// 'url'       => site_url() . '/wp-admin/post.php?post=###&action=edit',
-			// 'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/post.php?post=###&action=edit',
-			// ),
+			/*
+			array(
+				'screen_id' => 'attachment',
+				'url'       => site_url() . '/wp-admin/post.php?post=###&action=edit',
+				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/post.php?post=###&action=edit',
+			),
+			*/
 			array(
 				'screen_id' => 'edit-page',
 				'url'       => site_url() . '/wp-admin/edit.php?post_type=page',
@@ -570,21 +580,25 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 				'url'       => site_url() . '/wp-admin/post-new.php?post_type=page',
 				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/post-new.php?post_type=page',
 			),
-			// array(
-			// 'screen_id' => 'page',
-			// 'url'       => site_url() . '/wp-admin/post.php?post=###&action=edit',
-			// 'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/post.php?post=###&action=edit',
-			// ),
+			/*
+			array(
+				'screen_id' => 'page',
+				'url'       => site_url() . '/wp-admin/post.php?post=###&action=edit',
+				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/post.php?post=###&action=edit',
+			),
+			*/
 			array(
 				'screen_id' => 'edit-comments',
 				'url'       => site_url() . '/wp-admin/edit-comments.php',
 				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/edit-comments.php',
 			),
-			// array(
-			// 'screen_id' => 'comment',
-			// 'url'       => site_url() . '/wp-admin/comment.php?action=editcomment&c=###',
-			// 'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/comment.php?action=editcomment&c=###',
-			// ),
+			/*
+			array(
+				'screen_id' => 'comment',
+				'url'       => site_url() . '/wp-admin/comment.php?action=editcomment&c=###',
+				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/comment.php?action=editcomment&c=###',
+			),
+			*/
 			array(
 				'screen_id' => 'themes',
 				'url'       => site_url() . '/wp-admin/themes.php',
@@ -605,11 +619,13 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 				'url'       => site_url() . '/wp-admin/theme-editor.php',
 				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/theme-editor.php',
 			),
-			// array(
-			// 'screen_id' => 'appearance_page_{page}',
-			// 'url'       => site_url() . '/wp-admin/themes.php?page={page}',
-			// 'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/themes.php?page={page}',
-			// ),
+			/*
+			array(
+				'screen_id' => 'appearance_page_{page}',
+				'url'       => site_url() . '/wp-admin/themes.php?page={page}',
+				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/themes.php?page={page}',
+			),
+			*/
 			array(
 				'screen_id' => 'plugins',
 				'url'       => site_url() . '/wp-admin/plugins.php',
@@ -636,11 +652,13 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 				'url'       => site_url() . '/wp-admin/user-new.php',
 				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/user-new.php',
 			),
-			// array(
-			// 'screen_id' => 'user-edit',
-			// 'url'       => site_url() . '/wp-admin/user-edit.php?user_id=###',
-			// 'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/user-edit.php?user_id=###',
-			// ),
+			/*
+			array(
+				'screen_id' => 'user-edit',
+				'url'       => site_url() . '/wp-admin/user-edit.php?user_id=###',
+				'dir'       => WP_DEVELOP_DIR . '/src/wp-admin/user-edit.php?user_id=###',
+			),
+			*/
 			array(
 				'screen_id' => 'profile',
 				'url'       => site_url() . '/wp-admin/profile.php',
@@ -695,6 +713,7 @@ class AIOSEOP_Notices_TestCase extends WP_UnitTestCase {
 			),
 
 		);
+		// phpcs:enable
 	}
 
 	/**

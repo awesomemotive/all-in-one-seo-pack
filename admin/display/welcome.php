@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Welcome
+ *
+ * @package All_in_One_SEO_Pack
+ * @since ?
+ */
 if ( ! class_exists( 'aioseop_welcome' ) ) {
 
 	/**
@@ -74,7 +79,7 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 				return;
 			}
 
-			// Bail if activating from network, or bulk
+			// Bail if activating from network, or bulk.
 			if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) {
 				return;
 			}
@@ -130,12 +135,14 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 					</div>
 
 				<h2 class="nav-tab-wrapper">
-					<a class="nav-tab nav-tab-active" id="aioseop-about"
-					   href="<?php echo esc_url( admin_url( add_query_arg( array( 'page' => 'aioseop-about' ), 'index.php' ) ) ); ?>">
+					<a
+						class="nav-tab nav-tab-active" id="aioseop-about"
+						href="<?php echo esc_url( admin_url( add_query_arg( array( 'page' => 'aioseop-about' ), 'index.php' ) ) ); ?>">
 						<?php esc_html_e( 'What&#8217;s New', 'all-in-one-seo-pack' ); ?>
 					</a>
-					<a class="nav-tab" id="aioseop-credits"
-					   href="<?php echo esc_url( admin_url( add_query_arg( array( 'page' => 'aioseop-credits' ), 'index.php' ) ) ); ?>">
+					<a
+						class="nav-tab" id="aioseop-credits"
+						href="<?php echo esc_url( admin_url( add_query_arg( array( 'page' => 'aioseop-credits' ), 'index.php' ) ) ); ?>">
 						<?php esc_html_e( 'Credits', 'all-in-one-seo-pack' ); ?>
 					</a>
 				</h2>

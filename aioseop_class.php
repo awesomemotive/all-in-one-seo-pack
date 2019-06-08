@@ -1,12 +1,16 @@
 <?php
 /**
- * All in One SEO Pack Main Class file.
+ * All in One SEO Pack Main Class file
  *
  * Main class file, to be broken up later.
  *
- * @package All-in-One-SEO-Pack
+ * @package All_in_One_SEO_Pack
+ * @since ?
  */
 
+/**
+ * Module Base Class
+ */
 require_once( AIOSEOP_PLUGIN_DIR . 'admin/aioseop_module_class.php' ); // Include the module base class.
 
 /**
@@ -16,45 +20,189 @@ require_once( AIOSEOP_PLUGIN_DIR . 'admin/aioseop_module_class.php' ); // Includ
  */
 class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
-	// Current version of the plugin.
+	/**
+	 * Plugin Version
+	 *
+	 * Current version of the plugin.
+	 *
+	 * @since ?
+	 *
+	 * @var string $version
+	 */
 	var $version = AIOSEOP_VERSION;
 
-	// Max numbers of chars in auto-generated description.
+	/**
+	 * Max Description Length
+	 *
+	 * Max numbers of chars in auto-generated description.
+	 *
+	 * @since ?
+	 *
+	 * @var int $maximum_description_length
+	 */
 	var $maximum_description_length = 160;
 
-	// Minimum number of chars an excerpt should be so that it can be used as description.
+	/**
+	 * Min Description Length
+	 *
+	 * Minimum number of chars an excerpt should be so that it can be used as description.
+	 *
+	 * @since ?
+	 *
+	 * @var int $minimum_description_length
+	 */
 	var $minimum_description_length = 1;
 
-	// Whether output buffering is already being used during forced title rewrites.
+	/**
+	 * OB Start Detected
+	 *
+	 * Whether output buffering is already being used during forced title rewrites.
+	 *
+	 * @since ?
+	 *
+	 * @var bool $ob_start_detected
+	 */
 	var $ob_start_detected = false;
 
-	// The start of the title text in the head section for forced title rewrites.
+	/**
+	 * Title Start
+	 *
+	 * The start of the title text in the head section for forced title rewrites.
+	 *
+	 * @since ?
+	 *
+	 * @var int $title_start
+	 */
 	var $title_start = - 1;
 
-	// The end of the title text in the head section for forced title rewrites.
+	/**
+	 * Title End
+	 *
+	 * The end of the title text in the head section for forced title rewrites.
+	 *
+	 * @since ?
+	 *
+	 * @var int $title_end
+	 */
 	var $title_end = - 1;
 
-	// The title before rewriting.
+	/**
+	 * Original Title
+	 *
+	 * The title before rewriting.
+	 *
+	 * @since ?
+	 *
+	 * @var string $orig_title
+	 */
 	var $orig_title = '';
 
-	// Filename of log file.
+	/**
+	 * Log File
+	 *
+	 * Filename of log file.
+	 *
+	 * @since ?
+	 *
+	 * @var string $log_file
+	 */
 	var $log_file;
 
-	// Flag whether there should be logging.
+	/**
+	 * Do Log
+	 *
+	 * Flag whether there should be logging.
+	 *
+	 * @since ?
+	 *
+	 * @var bool $do_log
+	 */
 	var $do_log;
 
+	/**
+	 * Token
+	 *
+	 * @since ?
+	 * @deprecated
+	 *
+	 * @var null $token
+	 */
 	var $token;
+
+	/**
+	 * Secret
+	 *
+	 * @since ?
+	 * @deprecated
+	 *
+	 * @var null $secret
+	 */
 	var $secret;
+
+	/**
+	 * Access Token
+	 *
+	 * @since ?
+	 * @deprecated
+	 *
+	 * @var null $access_token
+	 */
 	var $access_token;
+
+	/**
+	 * GA Token
+	 *
+	 * @since ?
+	 * @deprecated
+	 *
+	 * @var null $ga_token
+	 */
 	var $ga_token;
+
+	/**
+	 * Account Cache
+	 *
+	 * @since ?
+	 * @deprecated
+	 *
+	 * @var null $account_cache
+	 */
 	var $account_cache;
+
+	/**
+	 * Profile ID
+	 *
+	 * @since ?
+	 * @deprecated
+	 *
+	 * @var null $profile_id
+	 */
 	var $profile_id;
+
+	/**
+	 * Meta Opts
+	 *
+	 * @since ?
+	 *
+	 * @var bool $meta_opts
+	 */
 	var $meta_opts = false;
+
+	/**
+	 * Is Front Page
+	 *
+	 * @since ?
+	 *
+	 * @var bool|null $is_front_page
+	 */
 	var $is_front_page = null;
 
 	/**
+	 * Constructor
+	 *
 	 * All_in_One_SEO_Pack constructor.
 	 *
+	 * @since ?
 	 * @since 2.3.14 #921 More google analytics options added.
 	 * @since 2.4.0 #1395 Longer Meta Descriptions.
 	 * @since 2.6.1 #1694 Back to shorter meta descriptions.
@@ -118,7 +266,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default'  => null,
 				'type'     => 'textarea',
 				'sanitize' => 'text',
-				'condshow' => array( 'aiosp_togglekeywords' => 0, 'aiosp_use_static_home_info' => 0 ),
+				'condshow' => array(
+					'aiosp_togglekeywords'       => 0,
+					'aiosp_use_static_home_info' => 0,
+				),
 			),
 			'use_static_home_info'        => array(
 				'name'            => __( 'Use Static Front Page Instead', 'all-in-one-seo-pack' ),
@@ -158,74 +309,74 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'home_page_title_format'      => array(
-				'name'     => __( 'Home Page Title Format:', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'default'  => '%page_title%',
+				'name'    => __( 'Home Page Title Format:', 'all-in-one-seo-pack' ),
+				'type'    => 'text',
+				'default' => '%page_title%',
 			),
 			'page_title_format'           => array(
-				'name'     => __( 'Page Title Format:', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'default'  => '%page_title% | %site_title%',
+				'name'    => __( 'Page Title Format:', 'all-in-one-seo-pack' ),
+				'type'    => 'text',
+				'default' => '%page_title% | %site_title%',
 			),
 			'post_title_format'           => array(
-				'name'     => __( 'Post Title Format:', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'default'  => '%post_title% | %site_title%',
+				'name'    => __( 'Post Title Format:', 'all-in-one-seo-pack' ),
+				'type'    => 'text',
+				'default' => '%post_title% | %site_title%',
 			),
 			'category_title_format'       => array(
-				'name'     => __( 'Category Title Format:', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'default'  => '%category_title% | %site_title%',
+				'name'    => __( 'Category Title Format:', 'all-in-one-seo-pack' ),
+				'type'    => 'text',
+				'default' => '%category_title% | %site_title%',
 			),
 			'archive_title_format'        => array(
-				'name'     => __( 'Archive Title Format:', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'default'  => '%archive_title% | %site_title%',
+				'name'    => __( 'Archive Title Format:', 'all-in-one-seo-pack' ),
+				'type'    => 'text',
+				'default' => '%archive_title% | %site_title%',
 			),
 			'date_title_format'           => array(
-				'name'     => __( 'Date Archive Title Format:', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'default'  => '%date% | %site_title%',
+				'name'    => __( 'Date Archive Title Format:', 'all-in-one-seo-pack' ),
+				'type'    => 'text',
+				'default' => '%date% | %site_title%',
 			),
 			'author_title_format'         => array(
-				'name'     => __( 'Author Archive Title Format:', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'default'  => '%author% | %site_title%',
+				'name'    => __( 'Author Archive Title Format:', 'all-in-one-seo-pack' ),
+				'type'    => 'text',
+				'default' => '%author% | %site_title%',
 			),
 			'tag_title_format'            => array(
-				'name'     => __( 'Tag Title Format:', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'default'  => '%tag% | %site_title%',
+				'name'    => __( 'Tag Title Format:', 'all-in-one-seo-pack' ),
+				'type'    => 'text',
+				'default' => '%tag% | %site_title%',
 			),
 			'search_title_format'         => array(
-				'name'     => __( 'Search Title Format:', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'default'  => '%search% | %site_title%',
+				'name'    => __( 'Search Title Format:', 'all-in-one-seo-pack' ),
+				'type'    => 'text',
+				'default' => '%search% | %site_title%',
 			),
 			'description_format'          => array(
-				'name'     => __( 'Description Format', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'default'  => '%description%',
+				'name'    => __( 'Description Format', 'all-in-one-seo-pack' ),
+				'type'    => 'text',
+				'default' => '%description%',
 			),
 			'404_title_format'            => array(
-				'name'     => __( '404 Title Format:', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'default'  => __( 'Nothing found for %request_words%', 'all-in-one-seo-pack' ),
+				'name'    => __( '404 Title Format:', 'all-in-one-seo-pack' ),
+				'type'    => 'text',
+				'default' => __( 'Nothing found for %request_words%', 'all-in-one-seo-pack' ),
 			),
 			'paged_format'                => array(
-				'name'     => __( 'Paged Format:', 'all-in-one-seo-pack' ),
-				'type'     => 'text',
-				'default'  => sprintf( ' - %s %%page%%', __( 'Part', 'all-in-one-seo-pack' ) ),
+				'name'    => __( 'Paged Format:', 'all-in-one-seo-pack' ),
+				'type'    => 'text',
+				'default' => sprintf( ' - %s %%page%%', __( 'Part', 'all-in-one-seo-pack' ) ),
 			),
 			'cpostactive'                 => array(
-				'name'     => __( 'SEO on only these Content Types:', 'all-in-one-seo-pack' ),
-				'type'     => 'multicheckbox',
-				'default'  => array( 'post', 'page' ),
+				'name'    => __( 'SEO on only these Content Types:', 'all-in-one-seo-pack' ),
+				'type'    => 'multicheckbox',
+				'default' => array( 'post', 'page' ),
 			),
 			'taxactive'                   => array(
-				'name'     => __( 'SEO on only these taxonomies:', 'all-in-one-seo-pack' ),
-				'type'     => 'multicheckbox',
-				'default'  => array( 'category', 'post_tag' ),
+				'name'    => __( 'SEO on only these taxonomies:', 'all-in-one-seo-pack' ),
+				'type'    => 'multicheckbox',
+				'default' => array( 'category', 'post_tag' ),
 			),
 			'cpostnoindex'                => array(
 				'name'    => __( 'Default to NOINDEX:', 'all-in-one-seo-pack' ),
@@ -237,10 +388,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'type'    => 'multicheckbox',
 				'default' => array(),
 			),
-			'posttypecolumns' => array(
-				'name'     => __( 'Show Column Labels for Custom Post Types:', 'all-in-one-seo-pack' ),
-				'type'     => 'multicheckbox',
-				'default'  => array( 'post', 'page' ),
+			'posttypecolumns'             => array(
+				'name'    => __( 'Show Column Labels for Custom Post Types:', 'all-in-one-seo-pack' ),
+				'type'    => 'multicheckbox',
+				'default' => array( 'post', 'page' ),
 			),
 			'google_verify'               => array(
 				'name'    => __( 'Google Search Console:', 'all-in-one-seo-pack' ),
@@ -257,12 +408,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default' => '',
 				'type'    => 'text',
 			),
-			'yandex_verify'            => array(
+			'yandex_verify'               => array(
 				'name'    => __( 'Yandex Webmaster Tools:', 'all-in-one-seo-pack' ),
 				'default' => '',
 				'type'    => 'text',
 			),
-			'baidu_verify'            => array(
+			'baidu_verify'                => array(
 				'name'    => __( 'Baidu Webmaster Tools:', 'all-in-one-seo-pack' ),
 				'default' => '',
 				'type'    => 'text',
@@ -394,12 +545,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'     => __( 'Enhanced Ecommerce:', 'all-in-one-seo-pack' ),
 				'default'  => 0,
 				'condshow' => array(
-					'aiosp_google_analytics_id'        => array(
+					'aiosp_google_analytics_id' => array(
 						'lhs' => 'aiosp_google_analytics_id',
 						'op'  => '!=',
 						'rhs' => '',
 					),
-					'aiosp_ga_advanced_options'        => 'on',
+					'aiosp_ga_advanced_options' => 'on',
 				),
 			),
 			'use_categories'              => array(
@@ -442,9 +593,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default' => 0,
 			),
 			'tax_noindex'                 => array(
-				'name'     => __( 'Use noindex for Taxonomy Archives:', 'all-in-one-seo-pack' ),
-				'type'     => 'multicheckbox',
-				'default'  => array(),
+				'name'    => __( 'Use noindex for Taxonomy Archives:', 'all-in-one-seo-pack' ),
+				'type'    => 'multicheckbox',
+				'default' => array(),
 			),
 			'paginated_noindex'           => array(
 				'name'    => __( 'Use noindex for paginated pages/posts:', 'all-in-one-seo-pack' ),
@@ -459,8 +610,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default' => 0,
 			),
 			'skip_excerpt'                => array(
-				'name'    => __( 'Use Content For Autogenerated Descriptions:', 'all-in-one-seo-pack' ),
-				'default' => 0,
+				'name'     => __( 'Use Content For Autogenerated Descriptions:', 'all-in-one-seo-pack' ),
+				'default'  => 0,
 				'condshow' => array( 'aiosp_generate_descriptions' => 'on' ),
 			),
 			'run_shortcodes'              => array(
@@ -529,7 +680,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		$this->locations = array(
-			'default' => array( 'name' => $this->name, 'prefix' => 'aiosp_', 'type' => 'settings', 'options' => null ),
+			'default' => array(
+				'name'    => $this->name,
+				'prefix'  => 'aiosp_',
+				'type'    => 'settings',
+				'options' => null,
+			),
 			'aiosp'   => array(
 				'name'            => $this->plugin_name,
 				'type'            => 'metabox',
@@ -571,8 +727,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'support'            => array(
 						'type'    => 'html',
 						'label'   => 'none',
-						'default' => '<a target="_blank" href="https://semperplugins.com/support/">'
-									 . __( 'Support Forum', 'all-in-one-seo-pack' ) . '</a>',
+						'default' => '<a target="_blank" href="https://semperplugins.com/support/">' . __( 'Support Forum', 'all-in-one-seo-pack' ) . '</a>',
 					),
 					'snippet'            => array(
 						'name'    => __( 'Preview Snippet', 'all-in-one-seo-pack' ),
@@ -594,26 +749,26 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'rows'  => 2,
 					),
 
-					'keywords'          => array(
+					'keywords'           => array(
 						'name' => __( 'Keywords (comma separated)', 'all-in-one-seo-pack' ),
 						'type' => 'text',
 					),
-					'custom_link'       => array(
+					'custom_link'        => array(
 						'name' => __( 'Custom Canonical URL', 'all-in-one-seo-pack' ),
 						'type' => 'text',
 						'size' => 60,
 					),
-					'noindex'           => array(
+					'noindex'            => array(
 						'name'    => __( 'NOINDEX this page/post', 'all-in-one-seo-pack' ),
 						'default' => '',
 					),
-					'nofollow'          => array(
+					'nofollow'           => array(
 						'name'    => __( 'NOFOLLOW this page/post', 'all-in-one-seo-pack' ),
 						'default' => '',
 					),
-					'sitemap_exclude'   => array( 'name' => __( 'Exclude From Sitemap', 'all-in-one-seo-pack' ) ),
-					'disable'           => array( 'name' => __( 'Disable on this page/post', 'all-in-one-seo-pack' ) ),
-					'disable_analytics' => array(
+					'sitemap_exclude'    => array( 'name' => __( 'Exclude From Sitemap', 'all-in-one-seo-pack' ) ),
+					'disable'            => array( 'name' => __( 'Disable on this page/post', 'all-in-one-seo-pack' ) ),
+					'disable_analytics'  => array(
 						'name'     => __( 'Disable Google Analytics', 'all-in-one-seo-pack' ),
 						'condshow' => array( 'aiosp_disable' => 'on' ),
 					),
@@ -764,15 +919,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 	}
 
-	// good candidate for pro dir
+	// good candidate for pro dir.
 	/**
+	 * Custom Output Option
+	 *
 	 * Use custom callback for outputting snippet
 	 *
+	 * @since ?
 	 * @since 2.3.16 Decodes HTML entities on title, description and title length count.
 	 *
 	 * @param $buf
 	 * @param $args
-	 *
 	 * @return string
 	 */
 	function custom_output_option( $buf, $args ) {
@@ -824,8 +981,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Get Title Format for snippet preview.
+	 * Get Title Format
 	 *
+	 * Get Title Format for snippet preview.
 	 * Get the title formatted according to AIOSEOP %shortcodes% specifically for the snippet preview..
 	 *
 	 * @since 2.4.9
@@ -848,7 +1006,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * Runs before we start applying the formatting for the snippet preview title.
 		 *
 		 * @since 3.0
-		 *
 		 */
 		do_action( 'aioseop_before_get_title_format' );
 
@@ -939,7 +1096,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * @since 3.0
 		 *
 		 * @param string $title_format Document title to be filtered.
-		 *
 		 */
 		$title_format = apply_filters( 'aioseop_title_format', $title_format );
 
@@ -949,15 +1105,19 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * Runs after applying the formatting for the snippet preview title.
 		 *
 		 * @since 3.0
-		 *
 		 */
 		do_action( 'aioseop_after_format_title' );
 
 		return $title_format;
 	}
 
-	// good candidate for pro dir
 	/**
+	 * Get Page Snippet Info
+	 *
+	 * Good candidate for pro dir.
+	 *
+	 * @since ?
+	 *
 	 * @return array
 	 */
 	function get_page_snippet_info() {
@@ -982,7 +1142,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$opts    = $this->meta_opts;
 			$post_id = $p->ID;
 			if ( empty( $post->post_modified_gmt ) ) {
-				$wp_query = new WP_Query( array( 'p' => $post_id, 'post_type' => $post->post_type ) );
+				$wp_query = new WP_Query(
+					array(
+						'p'         => $post_id,
+						'post_type' => $post->post_type,
+					)
+				);
 			}
 			if ( 'page' === $post->post_type ) {
 				$wp_query->is_page = true;
@@ -1014,7 +1179,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 			$description = $this->get_main_description( $post );
 
-			// All this needs to be in it's own function (class really)
+			// All this needs to be in it's own function (class really).
 			if ( empty( $title_format ) ) {
 				if ( is_page() ) {
 					$title_format = $aioseop_options['aiosp_page_title_format'];
@@ -1106,6 +1271,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Get Queried Object
+	 *
+	 * @since ?
+	 *
 	 * @return null|object|WP_Post
 	 */
 	function get_queried_object() {
@@ -1127,11 +1296,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Get Current Option
+	 *
+	 * @since ?
+	 *
 	 * @param array $opts
 	 * @param null $location
 	 * @param null $defaults
 	 * @param null $post
-	 *
 	 * @return array
 	 */
 	function get_current_options( $opts = array(), $location = null, $defaults = null, $post = null ) {
@@ -1203,8 +1375,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $in
+	 * Internationalize
 	 *
+	 * @since ?
+	 *
+	 * @param $in
 	 * @return mixed|void
 	 */
 	function internationalize( $in ) {
@@ -1227,7 +1402,15 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		return apply_filters( 'localization', $in );
 	}
 
-	/*** Used to filter wp_title(), get our title. ***/
+	/**
+	 * WP Title
+	 *
+	 * Used to filter wp_title(), get our title.
+	 *
+	 * @since ?
+	 *
+	 * @return mixed|void
+	 */
 	function wp_title() {
 		if ( ! $this->is_seo_enabled_for_cpt() ) {
 			return;
@@ -1247,18 +1430,19 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Get AIOSEOP Title
+	 *
 	 * Gets the title that will be used by AIOSEOP for title rewrites or returns false.
 	 *
 	 * @param WP_Post $post the post object
 	 * @param bool $use_original_title_format should the original title format be used viz. post_title | blog_title. This parameter was introduced
 	 * to resolve issue#986
-	 *
 	 * @return bool|string
 	 */
 	function get_aioseop_title( $post, $use_original_title_format = true ) {
 		global $aioseop_options;
 		// the_search_query() is not suitable, it cannot just return.
-		global $s, $STagging;
+		global $s, $STagging; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 		$opts = $this->meta_opts;
 		if ( is_front_page() ) {
 			if ( ! empty( $aioseop_options['aiosp_use_static_home_info'] ) ) {
@@ -1315,7 +1499,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 			}
 
-			return $this->paged_title( $title ); // this is returned for woo
+			// this is returned for woo.
+			return $this->paged_title( $title );
 		} elseif ( is_attachment() ) {
 			if ( null === $post ) {
 				return false;
@@ -1492,8 +1677,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 		} elseif ( ( is_tax() || is_category() ) && ! is_feed() ) {
 			return $this->get_tax_title();
-		} elseif ( isset( $STagging ) && $STagging->is_tag_view() ) { // Simple tagging support.
-			$tag = $STagging->search_tag;
+
+		} elseif ( isset( $STagging ) && $STagging->is_tag_view() ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
+			// Simple tagging support.
+			$tag = $STagging->search_tag; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 			if ( $tag ) {
 				$title_format = $aioseop_options['aiosp_tag_title_format'];
 				$title        = str_replace( '%site_title%', $this->internationalize( get_bloginfo( 'name' ) ), $title_format );
@@ -1593,11 +1780,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Get Original Title
+	 *
+	 * @since ?
+	 *
 	 * @param string $sep
 	 * @param bool $echo
 	 * @param string $seplocation
-	 *
-	 * @return The original title as delivered by WP (well, in most cases).
+	 * @return string The original title as delivered by WP (well, in most cases).
 	 */
 	function get_original_title( $sep = '|', $echo = false, $seplocation = '' ) {
 		global $aioseop_options;
@@ -1692,9 +1882,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $request
+	 * Request as Words
 	 *
-	 * @return User -readable nice words for a given request.
+	 * @since ?
+	 *
+	 * @param $request
+	 * @return string User -readable nice words for a given request.
 	 */
 	function request_as_words( $request ) {
 		$request     = htmlspecialchars( $request );
@@ -1714,10 +1907,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Apply Page Title Format
+	 *
+	 * @since ?
+	 *
 	 * @param $title
 	 * @param null $p
 	 * @param string $title_format
-	 *
 	 * @return string
 	 */
 	function apply_page_title_format( $title, $p = null, $title_format = '' ) {
@@ -1735,14 +1931,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Title Placeholder Helper
+	 *
 	 * Replace doc title templates inside % symbol on the frontend.
+	 *
+	 * @since ?
 	 *
 	 * @param $title
 	 * @param $post
 	 * @param string $type
 	 * @param string $title_format
 	 * @param string $category
-	 *
 	 * @return string
 	 */
 	function title_placeholder_helper( $title, $post, $type = 'post', $title_format = '', $category = '' ) {
@@ -1751,7 +1950,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * Runs before applying the formatting for the doc title on the frontend.
 		 *
 		 * @since 3.0
-		 *
 		 */
 		do_action( 'aioseop_before_title_placeholder_helper' );
 
@@ -1830,7 +2028,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * @since 3.0
 		 *
 		 * @param string $new_title Document title to be filtered.
-		 *
 		 */
 		$new_title = apply_filters( 'aioseop_title_format', $new_title );
 
@@ -1838,7 +2035,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * Runs after applying the formatting for the doc title on the frontend.
 		 *
 		 * @since 3.0
-		 *
 		 */
 		do_action( 'aioseop_after_title_placeholder_helper' );
 
@@ -1848,9 +2044,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Get All Terms
+	 *
+	 * @since ?
+	 *
 	 * @param $id
 	 * @param $taxonomy
-	 *
 	 * @return array
 	 */
 	function get_all_terms( $id, $taxonomy ) {
@@ -1866,14 +2065,18 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $title
+	 * Paged Title
 	 *
+	 * @since ?
+	 *
+	 * @param $title
 	 * @return string
 	 */
 	function paged_title( $title ) {
 		// The page number if paged.
 		global $paged;
 		global $aioseop_options;
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 		// Simple tagging support.
 		global $STagging;
 		$page = get_query_var( 'page' );
@@ -1889,11 +2092,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$title .= $part;
 			}
 		}
+		// phpcs:enable
 
 		return $title;
 	}
 
 	/**
+	 * Log
+	 *
+	 * @since ?
+	 *
 	 * @param $message
 	 */
 	function log( $message ) {
@@ -1905,10 +2113,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Apply Post Title Format
+	 *
+	 * @since ?
+	 *
 	 * @param $title
 	 * @param string $category
 	 * @param null $p
-	 *
 	 * @return string
 	 */
 	function apply_post_title_format( $title, $category = '', $p = null ) {
@@ -1923,9 +2134,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Get Post Title Format
+	 *
+	 * @since ?
+	 *
 	 * @param string $title_type
 	 * @param null $p
-	 *
 	 * @return bool|string
 	 */
 	function get_post_title_format( $title_type = 'post', $p = null ) {
@@ -1940,8 +2154,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		if ( ! empty( $aioseop_options['aiosp_cpostactive'] ) ) {
 			$wp_post_types = $aioseop_options['aiosp_cpostactive'];
-			if ( ( ( $title_type == 'archive' ) && is_post_type_archive( $wp_post_types ) && $prefix = "aiosp_{$title_type}_" ) ||
-				 ( ( $title_type == 'post' ) && $this->is_singular( $wp_post_types, $p ) && $prefix = 'aiosp_' )
+			if (
+					(
+						( $title_type == 'archive' ) &&
+						is_post_type_archive( $wp_post_types ) &&
+						$prefix = "aiosp_{$title_type}_"
+					) ||
+					(
+						( $title_type == 'post' ) &&
+						$this->is_singular( $wp_post_types, $p ) &&
+						$prefix = 'aiosp_'
+					)
 			) {
 				$post_type = get_post_type( $p );
 
@@ -1955,9 +2178,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Is Singular
+	 *
+	 * @since ?
+	 *
 	 * @param array $post_types
 	 * @param null $post
-	 *
 	 * @return bool
 	 */
 	function is_singular( $post_types = array(), $post = null ) {
@@ -1969,6 +2195,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Is Static Posts Page
+	 *
+	 * @since ?
+	 *
 	 * @return bool|null
 	 */
 	function is_static_posts_page() {
@@ -1983,6 +2213,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Is Static Front Page
+	 *
+	 * @since ?
+	 *
 	 * @return bool|null
 	 */
 	function is_static_front_page() {
@@ -1996,8 +2230,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param int $id
+	 * Get All Categories
 	 *
+	 * @since ?
+	 *
+	 * @param int $id
 	 * @return array
 	 */
 	function get_all_categories( $id = 0 ) {
@@ -2013,8 +2250,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param string $tax
+	 * Get Taxonomy Title
 	 *
+	 * @since ?
+	 *
+	 * @param string $tax
 	 * @return string
 	 */
 	function get_tax_title( $tax = '' ) {
@@ -2037,13 +2277,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		return $this->apply_tax_title_format( $name, $desc, $tax );
 	}
 
-	// Handle prev / next links.
 	/**
-	 *
-	 * Gets taxonomy name.
+	 * Gets Taxonomy Name
 	 *
 	 * @param $tax
 	 *
+	 * @since ?
 	 * @since 2.3.10 Remove option for capitalize categories. We still respect the option,
 	 * and the default (true) or a legacy option in the db can be overridden with the new filter hook aioseop_capitalize_categories
 	 * @since 2.3.15 Remove category capitalization completely
@@ -2068,8 +2307,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $tax
+	 * Get Taxonomy Description
 	 *
+	 * @since ?
+	 *
+	 * @param $tax
 	 * @return mixed|void
 	 */
 	function get_tax_desc( $tax ) {
@@ -2089,10 +2331,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Apply Taxonomy Title Format
+	 *
+	 * @since ?
+	 *
 	 * @param $category_name
 	 * @param $category_description
 	 * @param string $tax
-	 *
 	 * @return string
 	 */
 	function apply_tax_title_format( $category_name, $category_description, $tax = '' ) {
@@ -2101,7 +2346,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * Runs before applying the formatting for the taxonomy title.
 		 *
 		 * @since 3.0
-		 *
 		 */
 		do_action( 'aioseop_before_tax_title_format' );
 
@@ -2141,7 +2385,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * @since 3.0
 		 *
 		 * @param string $title Document title to be filtered.
-		 *
 		 */
 		$title = apply_filters( 'aioseop_title_format', $title );
 
@@ -2151,7 +2394,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * Runs after applying the formatting for the taxonomy title.
 		 *
 		 * @since 3.0
-		 *
 		 */
 		do_action( 'aioseop_after_tax_title_format' );
 
@@ -2159,8 +2401,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param string $tax
+	 * Get Taxonomy Title Format
 	 *
+	 * @since ?
+	 *
+	 * @param string $tax
 	 * @return string
 	 */
 	function get_tax_title_format( $tax = '' ) {
@@ -2194,9 +2439,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Apply Archive Title Format
+	 *
+	 * @since ?
+	 *
 	 * @param $title
 	 * @param string $category
-	 *
 	 * @return string
 	 */
 	function apply_archive_title_format( $title, $category = '' ) {
@@ -2213,6 +2461,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Get Archive Title Format
+	 *
+	 * @since ?
+	 *
 	 * @return bool|string
 	 */
 	function get_archive_title_format() {
@@ -2220,12 +2472,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Get Main Description
+	 *
+	 * @since ?
 	 * @since 2.3.14 #932 Adds filter "aioseop_description", removes extra filtering.
 	 * @since 2.4 #951 Trim/truncates occurs inside filter "aioseop_description".
 	 * @since 2.4.4.1 #1395 Longer Meta Descriptions & don't trim manual Descriptions.
 	 *
 	 * @param null $post
-	 *
 	 * @return mixed|string|void
 	 */
 	function get_main_description( $post = null ) {
@@ -2284,6 +2538,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Show Page Description
+	 *
+	 * @since ?
+	 *
 	 * @return bool
 	 */
 	function show_page_description() {
@@ -2299,6 +2557,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Get Page Number
+	 *
+	 * @since ?
+	 *
 	 * @return mixed
 	 */
 	function get_page_number() {
@@ -2315,6 +2577,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Get AIOSEOP Description
+	 *
 	 * @since ?
 	 * @since 2.4 #1395 Longer Meta Descriptions & don't trim manual Descriptions.
 	 *
@@ -2343,7 +2607,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Gets post description.
+	 * Gets Post Description
+	 *
 	 * Auto-generates description if settings are ON.
 	 *
 	 * @since 2.3.13 #899 Fixes non breacking space, applies filter "aioseop_description".
@@ -2352,7 +2617,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @since 2.4 #1395 Longer Meta Descriptions & don't trim manual Descriptions.
 	 *
 	 * @param object $post Post object.
-	 *
 	 * @return mixed|string
 	 */
 	function get_post_description( $post ) {
@@ -2387,10 +2651,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Trim Text without Filter Full Length
+	 *
+	 * @since ?
 	 * @since 2.3.15 Brackets not longer replaced from filters.
 	 *
 	 * @param $text
-	 *
 	 * @return string
 	 */
 	function trim_text_without_filters_full_length( $text ) {
@@ -2402,11 +2668,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Trim Excerpt without Filters
+	 *
+	 * @since ?
 	 * @since 2.3.15 Brackets not longer replaced from filters.
 	 *
 	 * @param $text
 	 * @param int $max
-	 *
 	 * @return string
 	 */
 	function trim_excerpt_without_filters( $text, $max = 0 ) {
@@ -2448,9 +2716,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * AIOSEOP Get URL
+	 *
+	 * @since ?
+	 *
+	 * @todo Change name to `*_get_url`.
+	 *
 	 * @param $query
 	 * @param bool $show_page
-	 *
 	 * @return bool|false|string
 	 */
 	function aiosp_mrt_get_url( $query, $show_page = true ) {
@@ -2547,8 +2820,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $link
+	 * Get Paged
 	 *
+	 * @since ?
+	 *
+	 * @param $link
 	 * @return string
 	 */
 	function get_paged( $link ) {
@@ -2581,6 +2857,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Get Main Keywords
+	 *
+	 * @since ?
+	 *
 	 * @return comma|string
 	 */
 	function get_main_keywords() {
@@ -2608,7 +2888,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @return comma-separated list of unique keywords
+	 * Get All Keywords
+	 *
+	 * @since ?
+	 *
+	 * @return string|null comma-separated list of unique keywords
 	 */
 	function get_all_keywords() {
 		global $posts;
@@ -2682,8 +2966,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $keywords
+	 * Keyword String to List
 	 *
+	 * @since ?
+	 *
+	 * @param $keywords
 	 * @return array
 	 */
 	function keyword_string_to_list( $keywords ) {
@@ -2697,8 +2984,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param int $id
+	 * Get All Tags
 	 *
+	 * @since ?
+	 *
+	 * @param int $id
 	 * @return array
 	 */
 	function get_all_tags( $id = 0 ) {
@@ -2728,8 +3018,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $keywords
+	 * Get Unique Keywords
 	 *
+	 * @since ?
+	 *
+	 * @param $keywords
 	 * @return string
 	 */
 	function get_unique_keywords( $keywords ) {
@@ -2737,8 +3030,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $keywords
+	 * Clean Keyword List
 	 *
+	 * @since ?
+	 *
+	 * @param $keywords
 	 * @return array
 	 */
 	function clean_keyword_list( $keywords ) {
@@ -2756,6 +3052,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Split Share Term
+	 *
+	 * @since ?
+	 *
 	 * @param $term_id
 	 * @param $new_term_id
 	 * @param string $term_taxonomy_id
@@ -2775,8 +3075,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $term_id
+	 * Get All Term Data
 	 *
+	 * @since ?
+	 *
+	 * @param $term_id
 	 * @return array
 	 */
 	function get_all_term_data( $term_id ) {
@@ -2880,6 +3183,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 	*/
 
+	/**
+	 * Add Page Hooks
+	 *
+	 * @since ?
+	 */
 	function add_page_hooks() {
 
 		global $aioseop_options;
@@ -2981,7 +3289,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'type'     => 'text',
 						'default'  => '%taxonomy_title% | %site_title%',
 						'condshow' => array(
-							'aiosp_taxactive\[\]'  => $p,
+							'aiosp_taxactive\[\]' => $p,
 						),
 					);
 					$this->layout['cpt']['options'][] = $field;
@@ -2992,12 +3300,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		if ( AIOSEOPPRO ) {
 			global $aioseop_update_checker;
-			add_action(
-				"{$this->prefix}update_options", array(
-					$aioseop_update_checker,
-					'license_change_check',
-				), 10, 2
-			);
+			add_action( "{$this->prefix}update_options", array( $aioseop_update_checker, 'license_change_check' ), 10, 2 );
 			add_action( "{$this->prefix}settings_update", array( $aioseop_update_checker, 'update_check' ), 10, 2 );
 		}
 
@@ -3075,8 +3378,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $submit
+	 * Filter Submit
 	 *
+	 * @since ?
+	 *
+	 * @param $submit
 	 * @return mixed
 	 */
 	function filter_submit( $submit ) {
@@ -3095,7 +3401,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Reset Options
+	 *
 	 * Handle resetting options to defaults, but preserve the license key if pro.
+	 *
+	 * @since ?
 	 *
 	 * @param null $location
 	 * @param bool $delete
@@ -3139,12 +3449,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Filter Settings
+	 *
+	 * @since ?
 	 * @since 2.3.16 Forces HTML entity decode on placeholder values.
 	 *
 	 * @param $settings
 	 * @param $location
 	 * @param $current
-	 *
 	 * @return mixed
 	 */
 	function filter_settings( $settings, $location, $current ) {
@@ -3223,9 +3535,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Filter Options
+	 *
+	 * @since ?
+	 *
 	 * @param $options
 	 * @param $location
-	 *
 	 * @return mixed
 	 */
 	function filter_options( $options, $location ) {
@@ -3253,6 +3568,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		return $options;
 	}
 
+	/**
+	 * Template Redirect
+	 *
+	 * @since ?
+	 */
 	function template_redirect() {
 		global $aioseop_options;
 
@@ -3274,6 +3594,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Is Page Included
+	 *
+	 * @since ?
+	 *
 	 * @return bool
 	 */
 	function is_page_included() {
@@ -3354,8 +3678,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $content
+	 * Output Callback for Title
 	 *
+	 * @since ?
+	 *
+	 * @param $content
 	 * @return mixed|string
 	 */
 	function output_callback_for_title( $content ) {
@@ -3363,10 +3690,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Rewrite Title
+	 *
 	 * Used for forcing title rewrites.
 	 *
-	 * @param $header
+	 * @since ?
 	 *
+	 * @param $header
 	 * @return mixed|string
 	 */
 	function rewrite_title( $header ) {
@@ -3398,9 +3728,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Replace Title
+	 *
+	 * @since ?
+	 *
 	 * @param $content
 	 * @param $title
-	 *
 	 * @return mixed
 	 */
 	function replace_title( $content, $title ) {
@@ -3418,8 +3751,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Add Hooks
+	 *
 	 * Adds WordPress hooks.
 	 *
+	 * @since ?
 	 * @since 2.3.13 #899 Adds filter:aioseop_description.
 	 * @since 2.3.14 #593 Adds filter:aioseop_title.
 	 * @since 2.4 #951 Increases filter:aioseop_description arguments number.
@@ -3452,12 +3788,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				if ( current_user_can( 'update_plugins' ) ) {
 					add_action( 'admin_notices', array( $aioseop_update_checker, 'key_warning' ) );
 				}
-				add_action(
-					'after_plugin_row_' . AIOSEOP_PLUGIN_BASENAME, array(
-						$aioseop_update_checker,
-						'add_plugin_row',
-					)
-				);
+				add_action( 'after_plugin_row_' . AIOSEOP_PLUGIN_BASENAME, array( $aioseop_update_checker, 'add_plugin_row' ) );
 			}
 		} else {
 			if ( $aioseop_options['aiosp_can'] == '1' || $aioseop_options['aiosp_can'] == 'on' ) {
@@ -3513,8 +3844,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $description
+	 * Make Unique Attachment Description
 	 *
+	 * @since ?
+	 *
+	 * @param $description
 	 * @return string
 	 */
 	function make_unique_att_desc( $description ) {
@@ -3522,23 +3856,30 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( is_attachment() ) {
 
 			$url = $this->aiosp_mrt_get_url( $wp_query );
+			$unique_desc = '';
 			if ( $url ) {
 				$matches = array();
 				preg_match_all( '/(\d+)/', $url, $matches );
 				if ( is_array( $matches ) ) {
-					$uniqueDesc = join( '', $matches[0] );
+					$unique_desc = join( '', $matches[0] );
 				}
 			}
-			$description .= ' ' . $uniqueDesc;
+			$description .= ' ' . $unique_desc;
 		}
 
 		return $description;
 	}
 
 	/**
+	 * AMP Head
+	 *
 	 * Adds meta description to AMP pages.
 	 *
+	 * @todo Change void returns to empty string returns.
+	 *
 	 * @since 2.3.11.5
+	 *
+	 * @return string|void
 	 */
 	function amp_head() {
 		if ( ! $this->is_seo_enabled_for_cpt() ) {
@@ -3576,7 +3917,15 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Is SEO Enabled for CPT
+	 *
 	 * Checks whether the current CPT should show the SEO tags.
+	 *
+	 * @since 2.9
+	 *
+	 * @todo Remove this as it is only a simple boolean check.
+	 *
+	 * @return bool
 	 */
 	private function is_seo_enabled_for_cpt() {
 		global $aioseop_options;
@@ -3584,6 +3933,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * WP Head
+	 *
+	 * @since ?
 	 * @since 2.3.14 #932 Removes filter "aioseop_description".
 	 */
 	function wp_head() {
@@ -3718,7 +4070,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'bing'      => 'msvalidate.01',
 					'pinterest' => 'p:domain_verify',
 					'yandex'    => 'yandex-verification',
-					'baidu'    => 'baidu-site-verification',
+					'baidu'     => 'baidu-site-verification',
 				) as $k => $v
 			) {
 				if ( ! empty( $aioseop_options[ "aiosp_{$k}_verify" ] ) ) {
@@ -3815,7 +4167,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Check rewrite handler.
+	 * Check Rewrite Handler
+	 *
+	 * @since ?
 	 */
 	function check_rewrite_handler() {
 		global $aioseop_options;
@@ -3832,9 +4186,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			} else {
 				$active_handlers = array();
 			}
-			if ( sizeof( $active_handlers ) > 0 &&
-				 $this->strtolower( $active_handlers[ sizeof( $active_handlers ) - 1 ] ) ==
-				 $this->strtolower( 'All_in_One_SEO_Pack::output_callback_for_title' )
+			if (
+					sizeof( $active_handlers ) > 0 &&
+					$this->strtolower( $active_handlers[ sizeof( $active_handlers ) - 1 ] ) == $this->strtolower( 'All_in_One_SEO_Pack::output_callback_for_title' )
 			) {
 				ob_end_flush();
 			} else {
@@ -3855,8 +4209,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @param $description
+	 * Trim Description
 	 *
+	 * @since ?
+	 *
+	 * @param $description
 	 * @return mixed|string
 	 */
 	function trim_description( $description ) {
@@ -3869,9 +4226,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Apply Description Format
+	 *
+	 * @since ?
+	 *
 	 * @param $description
 	 * @param null $post
-	 *
 	 * @return mixed
 	 */
 	function apply_description_format( $description, $post = null ) {
@@ -3880,7 +4240,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 * Runs before applying the formatting for the meta description.
 		 *
 		 * @since 3.0
-		 *
 		 */
 		do_action( 'aioseop_before_apply_description_format' );
 
@@ -3925,17 +4284,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		/*
-		 This was intended to make attachment descriptions unique if pulling from the parent... let's remove it and see if there are any problems
-		*on the roadmap is to have a better hierarchy for attachment description pulling
-		* if ($aioseop_options['aiosp_can']) $description = $this->make_unique_att_desc($description);
-		*/
+		 * This was intended to make attachment descriptions unique if pulling from the parent... let's remove it and see if there are any problems
+		 * on the roadmap is to have a better hierarchy for attachment description pulling
+		 * if ($aioseop_options['aiosp_can']) $description = $this->make_unique_att_desc($description);
+		 */
 		$description = $this->apply_cf_fields( $description );
 
 		/**
 		 * Runs after applying the formatting for the meta description.
 		 *
 		 * @since 3.0
-		 *
 		 */
 		do_action( 'aioseop_after_apply_description_format' );
 
@@ -3943,9 +4301,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * @return string
-	 * @since 0.0
+	 * Get Robots Meta
+	 *
+	 * @since 2.3.5
 	 * @since 2.3.11.5 Added no index API filter hook for password protected posts.
+	 *
+	 * @return string
 	 */
 	function get_robots_meta() {
 		global $aioseop_options;
@@ -3969,36 +4330,109 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$aiosp_nofollow = htmlspecialchars( stripslashes( $opts['aiosp_nofollow'] ) );
 		}
 
-		if ( ( is_category() && ! empty( $aioseop_options['aiosp_category_noindex'] ) ) || ( ! is_category() && is_archive() && ! is_tag() && ! is_tax()
-																							 && ( ( is_date() && ! empty( $aioseop_options['aiosp_archive_date_noindex'] ) ) || ( is_author() && ! empty( $aioseop_options['aiosp_archive_author_noindex'] ) ) ) )
-			 || ( is_tag() && ! empty( $aioseop_options['aiosp_tags_noindex'] ) )
-			 || ( is_search() && ! empty( $aioseop_options['aiosp_search_noindex'] ) )
-			 || ( is_404() && ! empty( $aioseop_options['aiosp_404_noindex'] ) )
-			 || ( is_tax() && in_array( get_query_var( 'taxonomy' ), $tax_noindex ) )
+		if (
+				(
+					is_category() &&
+					! empty( $aioseop_options['aiosp_category_noindex'] )
+				) ||
+				(
+					! is_category() &&
+					is_archive() &&
+					! is_tag() &&
+					! is_tax() &&
+					(
+						(
+							is_date() &&
+							! empty( $aioseop_options['aiosp_archive_date_noindex'] )
+						) ||
+						(
+							is_author() &&
+							! empty( $aioseop_options['aiosp_archive_author_noindex'] )
+						)
+					)
+				) ||
+				(
+					is_tag() &&
+					! empty( $aioseop_options['aiosp_tags_noindex'] )
+				) ||
+				(
+					is_search() &&
+					! empty( $aioseop_options['aiosp_search_noindex'] )
+				) ||
+				(
+					is_404() &&
+					! empty( $aioseop_options['aiosp_404_noindex'] )
+				) ||
+				(
+					is_tax() &&
+					in_array( get_query_var( 'taxonomy' ), $tax_noindex )
+				)
 		) {
 			$noindex = 'noindex';
 
 			// #322: duplicating this code so that we don't step on some other entities' toes.
-			if ( ( 'on' === $aiosp_nofollow ) || ( ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) ) && $page > 1 ) ||
-				 ( ( '' === $aiosp_nofollow ) && ( ! empty( $aioseop_options['aiosp_cpostnofollow'] ) ) && in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] ) )
+			if (
+					( 'on' === $aiosp_nofollow ) ||
+					(
+						( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) ) &&
+						$page > 1
+					) ||
+					(
+							( '' === $aiosp_nofollow ) &&
+							( ! empty( $aioseop_options['aiosp_cpostnofollow'] ) ) &&
+							in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
+					)
 			) {
 				$nofollow = 'nofollow';
 			}
 			// #322: duplicating this code so that we don't step on some other entities' toes.
-		} elseif ( is_single() || is_page() || $this->is_static_posts_page() || is_attachment() || is_category() || is_tag() || is_tax() || ( $page > 1 ) || $this->check_singular() ) {
+		} elseif (
+				is_single() ||
+				is_page() ||
+				$this->is_static_posts_page() ||
+				is_attachment() ||
+				is_category() ||
+				is_tag() ||
+				is_tax() ||
+				( $page > 1 ) ||
+				$this->check_singular()
+		) {
 			$post_type = get_post_type();
-			if ( $aiosp_noindex || $aiosp_nofollow || ! empty( $aioseop_options['aiosp_cpostnoindex'] )
-				 || ! empty( $aioseop_options['aiosp_cpostnofollow'] ) || ! empty( $aioseop_options['aiosp_paginated_noindex'] ) || ! empty( $aioseop_options['aiosp_paginated_nofollow'] )
+			if (
+					$aiosp_noindex ||
+					$aiosp_nofollow ||
+					! empty( $aioseop_options['aiosp_cpostnoindex'] ) ||
+					! empty( $aioseop_options['aiosp_cpostnofollow'] ) ||
+					! empty( $aioseop_options['aiosp_paginated_noindex'] ) ||
+					! empty( $aioseop_options['aiosp_paginated_nofollow'] )
 			) {
 
-				if ( ( 'on' === $aiosp_noindex ) || ( ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) ) && $page > 1 ) ||
-					 ( ( '' === $aiosp_noindex ) && ( ! empty( $aioseop_options['aiosp_cpostnoindex'] ) ) && in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] ) )
+				if (
+						( 'on' === $aiosp_noindex ) ||
+						(
+							( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) )
+							&& $page > 1
+						) ||
+						(
+							( '' === $aiosp_noindex ) &&
+							( ! empty( $aioseop_options['aiosp_cpostnoindex'] ) ) &&
+							in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
+						)
 
 				) {
 					$noindex = 'noindex';
 				}
-				if ( ( $aiosp_nofollow == 'on' ) || ( ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) ) && $page > 1 ) ||
-					 ( ( $aiosp_nofollow == '' ) && ( ! empty( $aioseop_options['aiosp_cpostnofollow'] ) ) && in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] ) )
+				if (
+						( $aiosp_nofollow == 'on' ) ||
+						(
+							( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) ) &&
+							$page > 1
+						) ||
+						(
+							( $aiosp_nofollow == '' ) &&
+							( ! empty( $aioseop_options['aiosp_cpostnofollow'] ) ) &&
+							in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
+						)
 				) {
 					$nofollow = 'nofollow';
 				}
@@ -4017,6 +4451,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Check Singular
+	 *
 	 * Determine if the post is 'like' singular. In some specific instances, such as when the Reply post type of bbpress is loaded in its own page,
 	 * it reflects as singular intead of single
 	 *
@@ -4037,8 +4473,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * Is Password Protected
+	 *
 	 * Determine if post is password protected.
+	 *
 	 * @since 2.3.11.5
+	 *
 	 * @return bool
 	 */
 	function is_password_protected() {
@@ -4093,8 +4533,11 @@ EOF;
 	}
 
 	/**
-	 * @param null $post
+	 * Get Previous/Next Links
 	 *
+	 * @since ?
+	 *
+	 * @param null $post
 	 * @return array
 	 */
 	function get_prev_next_links( $post = null ) {
@@ -4173,21 +4616,24 @@ EOF;
 			}
 		}
 
-		return array( 'prev' => $prev, 'next' => $next );
+		return array(
+			'prev' => $prev,
+			'next' => $next,
+		);
 	}
 
 	/**
+	 * Validate URL Scheme
 	 *
 	 * Validates whether the url should be https or http.
 	 *
 	 * Mainly we're just using this for canonical URLS, but eventually it may be useful for other things
 	 *
-	 * @param $url
-	 *
-	 * @return string $url
-	 *
 	 * @since 2.3.5
 	 * @since 2.3.11 Removed check for legacy protocol setting. Added filter.
+	 *
+	 * @param $url
+	 * @return string $url
 	 */
 	function validate_url_scheme( $url ) {
 
@@ -4207,10 +4653,13 @@ EOF;
 	}
 
 	/**
+	 * Override Options
+	 *
+	 * @since ?
+	 *
 	 * @param $options
 	 * @param $location
 	 * @param $settings
-	 *
 	 * @return mixed
 	 */
 	function override_options( $options, $location, $settings ) {
@@ -4226,8 +4675,11 @@ EOF;
 	}
 
 	/**
-	 * @param $id
+	 * Save Post Data
 	 *
+	 * @since ?
+	 *
+	 * @param $id
 	 * @return bool
 	 */
 	function save_post_data( $id ) {
@@ -4304,6 +4756,10 @@ EOF;
 	}
 
 	/**
+	 * Display Tabbed Metabox
+	 *
+	 * @since ?
+	 *
 	 * @param $post
 	 * @param $metabox
 	 */
@@ -4326,6 +4782,10 @@ EOF;
 	}
 
 	/**
+	 * Get Metabox Header
+	 *
+	 * @since ?
+	 *
 	 * @param $tabs
 	 *
 	 * @return string
@@ -4347,6 +4807,11 @@ EOF;
 		return $header;
 	}
 
+	/**
+	 * Admin Bar Menu
+	 *
+	 * @since ?
+	 */
 	function admin_bar_menu() {
 
 		if ( apply_filters( 'aioseo_show_in_admin_bar', true ) === false ) {
@@ -4399,6 +4864,7 @@ EOF;
 						'meta'   => array( 'target' => '_blank' ),
 					)
 				);
+				// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 				// add_action( 'admin_bar_menu', array( $this, 'admin_bar_upgrade_menu' ), 1101 );
 			}
 
@@ -4457,6 +4923,10 @@ EOF;
 	}
 
 	/**
+	 * Menu Order
+	 *
+	 * @since ?
+	 *
 	 * Order for adding the menus for the aioseop_modules_add_menus hook.
 	 */
 	function menu_order() {
@@ -4464,6 +4934,10 @@ EOF;
 	}
 
 	/**
+	 * Display Category Metaboxes
+	 *
+	 * @since ?
+	 *
 	 * @param $tax
 	 */
 	function display_category_metaboxes( $tax ) {
@@ -4476,6 +4950,10 @@ EOF;
 	}
 
 	/**
+	 * Save Category Metaboxes
+	 *
+	 * @since ?
+	 *
 	 * @param $id
 	 */
 	function save_category_metaboxes( $id ) {
@@ -4546,6 +5024,11 @@ EOF;
 		}
 	}
 
+	/**
+	 * Admin Menu
+	 *
+	 * @since ?
+	 */
 	function admin_menu() {
 		$file      = plugin_basename( __FILE__ );
 		$menu_name = __( 'All in One SEO', 'all-in-one-seo-pack' );
@@ -4607,7 +5090,7 @@ EOF;
 
 		if ( AIOSEOPPRO ) {
 			if ( is_array( $this->options['aiosp_cpostactive'] ) ) {
-					  $this->locations['aiosp']['display'] = $this->options['aiosp_cpostactive'];
+				$this->locations['aiosp']['display'] = $this->options['aiosp_cpostactive'];
 			} else {
 				$this->locations['aiosp']['display'][] = $this->options['aiosp_cpostactive']; // Store as an array in case there are taxonomies to add also.
 			}
@@ -4637,31 +5120,39 @@ EOF;
 		);
 
 		add_meta_box(
-			'aioseop-list', __( 'Join Our Mailing List', 'all-in-one-seo-pack' ), array(
-				'aiosp_metaboxes',
-				'display_extra_metaboxes',
-			), 'aioseop_metaboxes', 'normal', 'core'
+			'aioseop-list',
+			__( 'Join Our Mailing List', 'all-in-one-seo-pack' ),
+			array( 'aiosp_metaboxes', 'display_extra_metaboxes' ),
+			'aioseop_metaboxes',
+			'normal',
+			'core'
 		);
 		if ( AIOSEOPPRO ) {
 			add_meta_box(
-				'aioseop-about', __( 'About', 'all-in-one-seo-pack' ), array(
-					'aiosp_metaboxes',
-					'display_extra_metaboxes',
-				), 'aioseop_metaboxes', 'side', 'core'
+				'aioseop-about',
+				__( 'About', 'all-in-one-seo-pack' ),
+				array( 'aiosp_metaboxes', 'display_extra_metaboxes' ),
+				'aioseop_metaboxes',
+				'side',
+				'core'
 			);
 		} else {
 			add_meta_box(
-				'aioseop-about', __( 'About', 'all-in-one-seo-pack' ) . "<span class='Taha' style='float:right;'>" . __( 'Version', 'all-in-one-seo-pack' ) . ' <b>' . AIOSEOP_VERSION . '</b></span>', array(
-					'aiosp_metaboxes',
-					'display_extra_metaboxes',
-				), 'aioseop_metaboxes', 'side', 'core'
+				'aioseop-about',
+				__( 'About', 'all-in-one-seo-pack' ) . "<span class='Taha' style='float:right;'>" . __( 'Version', 'all-in-one-seo-pack' ) . ' <b>' . AIOSEOP_VERSION . '</b></span>',
+				array( 'aiosp_metaboxes', 'display_extra_metaboxes' ),
+				'aioseop_metaboxes',
+				'side',
+				'core'
 			);
 		}
 		add_meta_box(
-			'aioseop-support', __( 'Support', 'all-in-one-seo-pack' ) . " <span  class='Taha' style='float:right;'>" . __( 'Version', 'all-in-one-seo-pack' ) . ' <b>' . AIOSEOP_VERSION . '</b></span>', array(
-				'aiosp_metaboxes',
-				'display_extra_metaboxes',
-			), 'aioseop_metaboxes', 'side', 'core'
+			'aioseop-support',
+			__( 'Support', 'all-in-one-seo-pack' ) . " <span  class='Taha' style='float:right;'>" . __( 'Version', 'all-in-one-seo-pack' ) . ' <b>' . AIOSEOP_VERSION . '</b></span>',
+			array( 'aiosp_metaboxes', 'display_extra_metaboxes' ),
+			'aioseop_metaboxes',
+			'side',
+			'core'
 		);
 
 		add_action( 'aioseop_modules_add_menus', array( $this, 'add_menu' ), 5 );
@@ -4694,10 +5185,13 @@ EOF;
 							add_meta_box( $m[0]['id'], $title, $m[0]['callback'], $m[0]['post_type'], $m[0]['context'], $m[0]['priority'], $m[0]['callback_args'] );
 						} elseif ( $tab_num > 1 ) {
 							add_meta_box(
-								$m[0]['id'] . '_tabbed', $title, array(
-									$this,
-									'display_tabbed_metabox',
-								), $m[0]['post_type'], $m[0]['context'], $m[0]['priority'], $m
+								$m[0]['id'] . '_tabbed',
+								$title,
+								array( $this, 'display_tabbed_metabox' ),
+								$m[0]['post_type'],
+								$m[0]['context'],
+								$m[0]['priority'],
+								$m
 							);
 						}
 					}
@@ -4718,8 +5212,11 @@ EOF;
 	}
 
 	/**
-	 * @param $menu_order
+	 * Set Menu Order
 	 *
+	 * @since ?
+	 *
+	 * @param $menu_order
 	 * @return array
 	 */
 	function set_menu_order( $menu_order ) {
@@ -4756,9 +5253,9 @@ EOF;
 	 * @return string
 	 */
 	public function filter_title( $value ) {
-		// Decode entities
+		// Decode entities.
 		$value = $this->html_entity_decode( $value );
-		// Encode to valid SEO html entities
+		// Encode to valid SEO html entities.
 		return $this->seo_entity_encode( $value );
 	}
 
@@ -4788,30 +5285,30 @@ EOF;
 		if ( $ignore_php_version || preg_match( '/5.2[\s\S]+/', PHP_VERSION ) ) {
 			$value = htmlspecialchars( wp_strip_all_tags( htmlspecialchars_decode( $value ) ) );
 		}
-		// Decode entities
+		// Decode entities.
 		$value = $this->html_entity_decode( $value );
 		$value = preg_replace(
 			array(
-				'#<a.*?>([^>]*)</a>#i', // Remove link but keep anchor text
-				'@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?)?)@', // Remove URLs
+				'#<a.*?>([^>]*)</a>#i', // Remove link but keep anchor text.
+				'@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?)?)@', // Remove URLs.
 			),
 			array(
 				'$1', // Replacement link's anchor text.
-				'', // Replacement URLs
+				'', // Replacement URLs.
 			),
 			$value
 		);
-		// Strip html
+		// Strip html.
 		$value = wp_strip_all_tags( $value );
-		// External trim
+		// External trim.
 		$value = trim( $value );
 		// Internal whitespace trim.
 		$value = preg_replace( '/\s\s+/u', ' ', $value );
-		// Truncate / crop
+		// Truncate / crop.
 		if ( ! empty( $truncate ) && $truncate ) {
 			$value = $this->trim_excerpt_without_filters( $value );
 		}
-		// Encode to valid SEO html entities
+		// Encode to valid SEO html entities.
 		return $this->seo_entity_encode( $value );
 	}
 
@@ -4828,16 +5325,20 @@ EOF;
 	 * @return string
 	 */
 	private function html_entity_decode( $value ) {
-		// Special conversions
+		// Special conversions.
 		$value = preg_replace(
 			array(
+				// Double quotes.
 				'/\“|\”|&#[xX]00022;|&#34;|&[lLrRbB](dquo|DQUO)(?:[rR])?;|&#[xX]0201[dDeE];'
-					. '|&[OoCc](pen|lose)[Cc]urly[Dd]ouble[Qq]uote;|&#822[012];|&#[xX]27;/', // Double quotes
-				'/&#039;|&#8217;|&apos;/', // Apostrophes
+					. '|&[OoCc](pen|lose)[Cc]urly[Dd]ouble[Qq]uote;|&#822[012];|&#[xX]27;/',
+				// Apostrophes.
+				'/&#039;|&#8217;|&apos;/',
 			),
 			array(
-				'"', // Double quotes
-				'\'', // Apostrophes
+				// Double quotes.
+				'"',
+				// Apostrophes.
+				'\'',
 			),
 			$value
 		);
@@ -4857,12 +5358,12 @@ EOF;
 	private function seo_entity_encode( $value ) {
 		return preg_replace(
 			array(
-				'/\"|\“|\”|\„/', // Double quotes
-				'/\'|\’|\‘/',   // Apostrophes
+				'/\"|\“|\”|\„/', // Double quotes.
+				'/\'|\’|\‘/',   // Apostrophes.
 			),
 			array(
-				'&quot;', // Double quotes
-				'&#039;', // Apostrophes
+				'&quot;', // Double quotes.
+				'&#039;', // Apostrophes.
 			),
 			esc_html( $value )
 		);
@@ -4911,8 +5412,9 @@ EOF;
 				<?php if ( ! AIOSEOPPRO ) { ?>
 					<div class="aioseop_advert aioseop_nopad_all">
 						<?php $adid = mt_rand( 21, 22 ); ?>
-							<a href="https://www.wincher.com/?referer=all-in-one-seo-pack&adreferer=banner<?php echo $adid; ?>"
-							   target="_blank">
+							<a
+								href="https://www.wincher.com/?referer=all-in-one-seo-pack&adreferer=banner<?php echo $adid; ?>"
+								target="_blank">
 								<div class=wincherad id=wincher<?php echo $adid; ?>>
 								</div>
 							</a>

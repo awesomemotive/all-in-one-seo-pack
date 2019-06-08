@@ -2,7 +2,8 @@
 /**
  * PHPUnit bootstrap file
  *
- * @package all-in-one-seo-pack
+ * @package All_in_One_SEO_Pack
+ * @since 2.3.5
  */
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
@@ -10,11 +11,9 @@ if ( ! $_tests_dir ) {
 	$_tests_dir = '/tmp/wordpress-tests-lib';
 }
 
-/**
-
-*********** contactashish13 test environment */
+/************* Contactashish13 test environment */
 // $_tests_dir = 'E:\work\apps\wordpress-dev\tests\phpunit';
-/************* contactashish13 test environment *************/
+/************* Contactashish13 test environment ************ */
 
 define( 'WP_USE_THEMES', false );
 define( 'WP_TESTS_FORCE_KNOWN_BUGS', true );
@@ -39,4 +38,10 @@ activate_plugin( 'all-in-one-seo-pack/all_in_one_seo_pack.php' );
 global $current_user;
 $current_user = new WP_User( 1 );
 $current_user->set_role( 'administrator' );
-wp_update_user( array( 'ID' => 1, 'first_name' => 'Admin', 'last_name' => 'User' ) );
+wp_update_user(
+	array(
+		'ID'         => 1,
+		'first_name' => 'Admin',
+		'last_name'  => 'User',
+	)
+);

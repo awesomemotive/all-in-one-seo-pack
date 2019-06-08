@@ -7,7 +7,10 @@
     <exclude-pattern>node_modules/*</exclude-pattern>
     <exclude-pattern>vendor/*</exclude-pattern>
     <exclude-pattern>lib/*</exclude-pattern>
+    <exclude-pattern>*/index.php</exclude-pattern>
     <rule ref="WordPress-Core">
+
+
         <exclude name="Squiz.Commenting.FileComment.SpacingAfterComment" />
         <exclude name="Generic.Files.LowercasedFilename" />
         <exclude name="Generic.NamingConventions.UpperCaseConstantName" />
@@ -15,44 +18,28 @@
         <exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
         <exclude name="WordPress.PHP.YodaConditions.NotYoda" />
         <exclude name="Squiz.PHP.DisallowMultipleAssignments" />
-        <exclude name="WordPress.NamingConvention.ValidVariableName.StringNotSnakeCase" />
-        <exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCase" />
-        <exclude name="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid" />
-        <exclude name="WordPress.NamingConventions.ValidVariableName.MemberNotSnakeCase" />
-        <exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar" />
-        <exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned" />
+
+        <!-- TODO (Maybe) Change class filenames with "class-" prepended. -->
         <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+        
+        <!-- TODO Change plugin filenames to use Hyphens instead of Underscores. -->
         <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
-        <exclude name="WordPress.Arrays.ArrayDeclarationSpacing" />
-        <exclude name="WordPress.WhiteSpace.PrecisionAlignment.Found" />
+
+        <!-- TODO Clean ( OR disable/ignore ) commented out code. -->
         <exclude name="Squiz.PHP.CommentedOutCode" />
+
+        <!-- TODO Add `// translators: *` comments to `__()`. -->
         <exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
+
+        <!-- TODO Change ( OR disable/ignore ) classname naming convention. -->
         <exclude name="PEAR.NamingConventions.ValidClassName.Invalid" />
-        <exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
-        <exclude name="Generic.Files.LineEndings.InvalidEOLChar" />
-        <exclude name="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase" />
-        <exclude name="WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase" />
-        <exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase" />
-        <exclude name="Squiz.Commenting.BlockComment" />
-        <exclude name="Generic.Commenting.DocComment.LongNotCapital" />
-        <exclude name="Squiz.Commenting.BlockComment.CloserSameLine" />
-        <exclude name="Squiz.Commenting.InlineComment.NotCapital" />
 
         <!-- these can be removed once the initial part of #1003 is closed -->
-        <exclude name="Generic.Commenting.DocComment" />
+
+        <!-- TODO Fix missing param comments in phpDoc. -->
         <exclude name="Squiz.Commenting.FunctionComment" />
-        <exclude name="Squiz.Commenting.FileComment" />
-        <exclude name="Squiz.Commenting.ClassComment" />
-        <exclude name="Squiz.Commenting.VariableComment" />
-        <exclude name="Squiz.Commenting.FunctionComment.MissingParamTag" />
-        <exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
-        <exclude name="Squiz.Commenting.InlineComment.NotCapital" />
 
         <!-- these can be removed once #2335 is closed -->
-        <exclude name="WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition" />
-        <exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
-        <exclude name="WordPress.PHP.StrictComparisons.LooseComparison" />
-        <exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict" />
 
 
     </rule>
@@ -63,4 +50,9 @@
         <severity>0</severity>
     </rule>
 
+    <rule ref="Squiz.Commenting.FileComment">
+        <!-- Prevents File Header documentation -->
+        <exclude-pattern>*/index.php</exclude-pattern>
+        <exclude-pattern>/all_in_one_seo_pack.php</exclude-pattern>
+    </rule>
 </ruleset>

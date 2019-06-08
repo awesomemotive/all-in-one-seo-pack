@@ -45,5 +45,6 @@ function aioseop_notice_review_plugin() {
 		),
 	);
 }
+// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 // add_filter( 'aioseop_admin_notice-review_plugin', 'aioseop_notice_review_plugin' );
 

@@ -10,7 +10,11 @@
 
 if ( ! function_exists( 'aioseop_get_permalink' ) ) {
 	/**
+	 * AIOSEOP Get Permalink
+	 *
 	 * Support UTF8 URLs.
+	 *
+	 * @since ?
 	 *
 	 * @param int|object|null $post_id The post.
 	 */
@@ -26,7 +30,11 @@ if ( ! function_exists( 'aioseop_get_permalink' ) ) {
 
 if ( ! function_exists( 'aioseop_load_modules' ) ) {
 	/**
+	 * AIOSEOP Load Modules
+	 *
 	 * Load the module manager.
+	 *
+	 * @since ?
 	 */
 	function aioseop_load_modules() {
 		global $aioseop_modules, $aioseop_module_list;
@@ -38,6 +46,10 @@ if ( ! function_exists( 'aioseop_load_modules' ) ) {
 
 if ( ! function_exists( 'aioseop_get_options' ) ) {
 	/**
+	 * AIOSEOP Get Option
+	 *
+	 * @since ?
+	 *
 	 * @return mixed|void
 	 */
 	function aioseop_get_options() {
@@ -51,9 +63,13 @@ if ( ! function_exists( 'aioseop_get_options' ) ) {
 
 if ( ! function_exists( 'aioseop_update_settings_check' ) ) {
 	/**
+	 * AIOSEOP Update Settings Check
+	 *
 	 * Check if settings need to be updated / migrated from old version.
 	 *
 	 * @TODO See when this is from and if we can move it elsewhere... our new db updates/upgrades class? This is called every single time a page is loaded both on the front-end or backend.
+	 *
+	 * @since ?
 	 */
 	function aioseop_update_settings_check() {
 		global $aioseop_options;
@@ -87,9 +103,13 @@ if ( ! function_exists( 'aioseop_update_settings_check' ) ) {
 
 if ( ! function_exists( 'aioseop_initialize_options' ) ) {
 	/**
+	 * AIOSEOP Initialize Options
+	 *
 	 * Initialize settings to defaults. Changed name from the abstruse 'aioseop_mrt_mkarry' to 'aioseop_initialize_options'.
 	 *
 	 * @TODO Should also move.
+	 *
+	 * @since ?
 	 */
 	function aioseop_initialize_options() {
 		global $aiosp;
@@ -113,10 +133,14 @@ if ( ! function_exists( 'aioseop_initialize_options' ) ) {
 }
 
 if ( ! function_exists( 'aioseop_get_version' ) ) {
+
 	/**
-	 * Returns the version.
+	 * AIOSEOP Get Version
 	 *
+	 * Returns the version.
 	 * I'm not sure why we have BOTH a function and a constant for this. -mrt
+	 *
+	 * @since ?
 	 *
 	 * @return string
 	 */
@@ -126,11 +150,15 @@ if ( ! function_exists( 'aioseop_get_version' ) ) {
 }
 
 if ( ! function_exists( 'aioseop_option_isset' ) ) {
+
 	/**
+	 * AIOSEOP Option Isset
+	 *
 	 * Checks if an option isset.
 	 *
-	 * @param $option
+	 * @since ?
 	 *
+	 * @param $option
 	 * @return bool
 	 */
 	function aioseop_option_isset( $option ) {
@@ -141,9 +169,13 @@ if ( ! function_exists( 'aioseop_option_isset' ) ) {
 }
 
 if ( ! function_exists( 'aioseop_addmycolumns' ) ) {
+
 	/**
+	 * AIOSEOP Add My Columns
+	 *
 	 * Adds posttype columns.
 	 *
+	 * @since ?
 	 */
 	function aioseop_addmycolumns() {
 		global $aioseop_options, $pagenow;
@@ -181,8 +213,11 @@ if ( ! function_exists( 'aioseop_addmycolumns' ) ) {
 if ( ! function_exists( 'aioseop_mrt_pcolumns' ) ) {
 
 	/**
-	 * @param $aioseopc
+	 * AIOSEOP (MRT) P Columns
 	 *
+	 * @since ?
+	 *
+	 * @param $aioseopc
 	 * @return mixed
 	 */
 	function aioseop_mrt_pcolumns( $aioseopc ) {
@@ -199,6 +234,11 @@ if ( ! function_exists( 'aioseop_mrt_pcolumns' ) ) {
 
 if ( ! function_exists( 'aioseop_admin_head' ) ) {
 
+	/**
+	 * AIOSEOP Admin Head
+	 *
+	 * @since ?
+	 */
 	function aioseop_admin_head() {
 		wp_enqueue_script( 'aioseop_welcome_js', AIOSEOP_PLUGIN_URL . 'js/quickedit_functions.js', array( 'jquery' ), AIOSEOP_VERSION );
 		?>
@@ -263,6 +303,11 @@ if ( ! function_exists( 'aioseop_admin_head' ) ) {
 
 if ( ! function_exists( 'aioseop_handle_ignore_notice' ) ) {
 
+	/**
+	 * AIOSEOP Handle Ignore Notice
+	 *
+	 * @since ?
+	 */
 	function aioseop_handle_ignore_notice() {
 
 		if ( ! empty( $_GET ) ) {
@@ -282,10 +327,13 @@ if ( ! function_exists( 'aioseop_handle_ignore_notice' ) ) {
 if ( ! function_exists( 'aioseop_output_notice' ) ) {
 
 	/**
+	 * AIOSEOP Output Notice
+	 *
+	 * @since ?
+	 *
 	 * @param $message
 	 * @param string $id
 	 * @param string $class
-	 *
 	 * @return bool
 	 */
 	function aioseop_output_notice( $message, $id = '', $class = 'updated fade' ) {
@@ -306,10 +354,13 @@ if ( ! function_exists( 'aioseop_output_notice' ) ) {
 if ( ! function_exists( 'aioseop_output_dismissable_notice' ) ) {
 
 	/**
+	 * AIOSEOP Output Dismissable Notice
+	 *
+	 * @since ?
+	 *
 	 * @param $message
 	 * @param string $id
 	 * @param string $class
-	 *
 	 * @return bool
 	 */
 	function aioseop_output_dismissable_notice( $message, $id = '', $class = 'updated fade' ) {
@@ -335,6 +386,9 @@ if ( ! function_exists( 'aioseop_output_dismissable_notice' ) ) {
 
 if ( ! function_exists( 'aioseop_ajax_save_meta' ) ) {
 
+	/**
+	 * AIOSEOP AJAX Save Meta
+	 */
 	function aioseop_ajax_save_meta() {
 		if ( ! empty( $_POST['_inline_edit'] ) && ( $_POST['_inline_edit'] !== 'undefined' ) ) {
 			check_ajax_referer( 'inlineeditnonce', '_inline_edit' );
@@ -345,7 +399,8 @@ if ( ! function_exists( 'aioseop_ajax_save_meta' ) ) {
 		check_ajax_referer( 'aioseop_meta_' . $target . '_' . $post_id, '_nonce' );
 		$result = '';
 		if ( in_array(
-			$target, array(
+			$target,
+			array(
 				'title',
 				'description',
 				'keywords',
@@ -380,6 +435,11 @@ if ( ! function_exists( 'aioseop_ajax_save_meta' ) ) {
 
 if ( ! function_exists( 'aioseop_ajax_init' ) ) {
 
+	/**
+	 * AIOSEOP AJAX Init
+	 *
+	 * @since ?
+	 */
 	function aioseop_ajax_init() {
 		if ( ! empty( $_POST ) && ! empty( $_POST['settings'] ) && ( ! empty( $_POST['nonce-aioseop'] ) || ( ! empty( $_POST['nonce-aioseop-edit'] ) ) ) && ! empty( $_POST['options'] ) ) {
 			$_POST    = stripslashes_deep( $_POST );
@@ -398,10 +458,13 @@ if ( ! function_exists( 'aioseop_ajax_init' ) ) {
 }
 
 /**
+ * AIOSEOP Embed Handler HTML
+ *
+ * @since 2.3a
+ *
  * @param $return
  * @param $url
  * @param $attr
- *
  * @return mixed
  */
 function aioseop_embed_handler_html( $return, $url, $attr ) {
@@ -410,6 +473,11 @@ function aioseop_embed_handler_html( $return, $url, $attr ) {
 
 if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 
+	/**
+	 * AIOSEOP AJAX Save URL
+	 *
+	 * @since ?
+	 */
 	function aioseop_ajax_save_url() {
 		$valid   = true;
 		$invalid_msg    = null;
@@ -452,7 +520,8 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 			$module->handle_settings_updates( null );
 			$options = $module->get_current_options( array(), null );
 			$output  = $module->display_custom_options(
-				'', array(
+				'',
+				array(
 					'name'  => $prefix . 'addl_pages',
 					'type'  => 'custom',
 					'save'  => true,
@@ -475,6 +544,11 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 
 if ( ! function_exists( 'aioseop_ajax_delete_url' ) ) {
 
+	/**
+	 * AIOSEOP AJAX Delete URL
+	 *
+	 * @since ?
+	 */
 	function aioseop_ajax_delete_url() {
 		aioseop_ajax_init();
 		$options         = array();
@@ -501,7 +575,8 @@ if ( ! function_exists( 'aioseop_ajax_delete_url' ) ) {
 			$module->handle_settings_updates( null );
 			$options = $module->get_current_options( array(), null );
 			$output  = $module->display_custom_options(
-				'', array(
+				'',
+				array(
 					'name'  => 'aiosp_sitemap_addl_pages',
 					'type'  => 'custom',
 					'save'  => true,
@@ -520,6 +595,11 @@ if ( ! function_exists( 'aioseop_ajax_delete_url' ) ) {
 
 if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 
+	/**
+	 * AIOSEOP AJAX Scan Header
+	 *
+	 * @since ?
+	 */
 	function aioseop_ajax_scan_header() {
 		$_POST['options'] = 'foo';
 		aioseop_ajax_init();
@@ -541,8 +621,14 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 		$output   = $aiosp->html_string_to_array( $output );
 		$meta     = '';
 		$metatags = array(
-			'facebook' => array( 'name' => 'property', 'value' => 'content' ),
-			'twitter'  => array( 'name' => 'name', 'value' => 'value' ),
+			'facebook' => array(
+				'name'  => 'property',
+				'value' => 'content',
+			),
+			'twitter'  => array(
+				'name'  => 'name',
+				'value' => 'value',
+			),
 		);
 		$metadata = array(
 			'facebook' => array(
@@ -582,11 +668,12 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 			$meta = '<span style="color:green;">' . __( 'No duplicate meta tags found.', 'all-in-one-seo-pack' ) . '</span>';
 		} else {
 			$meta = "<table cellspacing=0 cellpadding=0 width=80% class='aioseop_table'><tr class='aioseop_table_header'><th>Meta For Site</th><th>Kind of Meta</th><th>Element Name</th><th>Element Value</th></tr>" . $meta . '</table>';
-			$meta .= "<p><div class='aioseop_meta_info'><h3 style='padding:5px;margin-bottom:0px;'>" . __( 'What Does This Mean?', 'all-in-one-seo-pack' ) . "</h3><div style='padding:5px;padding-top:0px;'>"
-					 /* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
-					 . '<p>' . sprintf( __( '%s has detected that a plugin(s) or theme is also outputting social meta tags on your site. You can view this social meta in the source code of your site (check your browser help for instructions on how to view source code).', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME )
-					 . '</p><p>' . __( 'You may prefer to use the social meta tags that are being output by the other plugin(s) or theme. If so, then you should deactivate this Social Meta feature in the Feature Manager.', 'all-in-one-seo-pack' )
-					 . '</p><p>' . __( 'You should avoid duplicate social meta tags. You can use these free tools from Facebook and Twitter to validate your social meta and check for errors:', 'all-in-one-seo-pack' ) . '</p>';
+			$meta .=
+				"<p><div class='aioseop_meta_info'><h3 style='padding:5px;margin-bottom:0px;'>" . __( 'What Does This Mean?', 'all-in-one-seo-pack' ) . "</h3><div style='padding:5px;padding-top:0px;'>"
+				/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+				. '<p>' . sprintf( __( '%s has detected that a plugin(s) or theme is also outputting social meta tags on your site. You can view this social meta in the source code of your site (check your browser help for instructions on how to view source code).', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME )
+				. '</p><p>' . __( 'You may prefer to use the social meta tags that are being output by the other plugin(s) or theme. If so, then you should deactivate this Social Meta feature in the Feature Manager.', 'all-in-one-seo-pack' )
+				. '</p><p>' . __( 'You should avoid duplicate social meta tags. You can use these free tools from Facebook and Twitter to validate your social meta and check for errors:', 'all-in-one-seo-pack' ) . '</p>';
 
 			foreach (
 				array(
@@ -607,6 +694,11 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 
 if ( ! function_exists( 'aioseop_ajax_save_settings' ) ) {
 
+	/**
+	 * AIOSEOP AJAX Save Settings
+	 *
+	 * @since ?
+	 */
 	function aioseop_ajax_save_settings() {
 		aioseop_ajax_init();
 		$options = array();
@@ -641,6 +733,11 @@ if ( ! function_exists( 'aioseop_ajax_save_settings' ) ) {
 
 if ( ! function_exists( 'aioseop_ajax_get_menu_links' ) ) {
 
+	/**
+	 * AIOSEOP AJAX Get Menu Links
+	 *
+	 * @since ?
+	 */
 	function aioseop_ajax_get_menu_links() {
 		aioseop_ajax_init();
 		$options = array();
@@ -712,6 +809,10 @@ if ( ! function_exists( 'aioseop_ajax_get_menu_links' ) ) {
 if ( ! function_exists( 'aioseop_mrt_pccolumn' ) ) {
 
 	/**
+	 * AIOSEOP (MRT) Column
+	 *
+	 * @since ?
+	 *
 	 * @param $aioseopcn
 	 * @param $aioseoppi
 	 */
@@ -733,9 +834,10 @@ if ( ! function_exists( 'aioseop_mrt_pccolumn' ) ) {
 		if ( current_user_can( 'edit_post', $id ) ) {
 			?>
 			<div class="aioseop_mpc_admin_meta_container">
-				<div class="aioseop_mpc_admin_meta_options"
-					 id="aioseop_<?php print $target; ?>_<?php echo $id; ?>"
-					 style="float:left;">
+				<div
+					class="aioseop_mpc_admin_meta_options"
+					id="aioseop_<?php print $target; ?>_<?php echo $id; ?>"
+					style="float:left;">
 					<?php
 					$content = strip_tags( stripslashes( get_post_meta( $id, '_aioseop_' . $target, true ) ) );
 					if ( ! empty( $content ) ) :
@@ -761,6 +863,10 @@ if ( ! function_exists( 'aioseop_mrt_pccolumn' ) ) {
 if ( ! function_exists( 'aioseop_unprotect_meta' ) ) {
 
 	/**
+	 * AIOSEOP Unprotect Meta
+	 *
+	 * @since ?
+	 *
 	 * @param $protected
 	 * @param $meta_key
 	 * @param $meta_type
@@ -779,8 +885,11 @@ if ( ! function_exists( 'aioseop_unprotect_meta' ) ) {
 if ( ! function_exists( 'aioseop_mrt_exclude_this_page' ) ) {
 
 	/**
-	 * @param null $url
+	 * AIOSEOP (MRT) Exclude this Page
 	 *
+	 * @since ?
+	 *
+	 * @param null $url
 	 * @return bool
 	 */
 	function aioseop_mrt_exclude_this_page( $url = null ) {
@@ -833,8 +942,11 @@ if ( ! function_exists( 'aioseop_mrt_exclude_this_page' ) ) {
 if ( ! function_exists( 'aioseop_add_contactmethods' ) ) {
 
 	/**
-	 * @param $contactmethods
+	 * AIOSEOP Add Contact Methods
 	 *
+	 * @since ?
+	 *
+	 * @param $contactmethods
 	 * @return mixed
 	 */
 	function aioseop_add_contactmethods( $contactmethods ) {
@@ -881,21 +993,24 @@ if ( ! function_exists( 'aioseop_localize_script_data' ) ) {
 
 if ( ! function_exists( 'aioseop_array_insert_after' ) ) {
 	/**
+	 * AIOSEOP Array Insert After
+	 *
 	 * Utility function for inserting elements into associative arrays by key.
 	 *
-	 * @param $arr
-	 * @param $insertKey
-	 * @param $newValues
+	 * @since ?
 	 *
+	 * @param $arr
+	 * @param $insert_key
+	 * @param $new_values
 	 * @return array
 	 */
-	function aioseop_array_insert_after( $arr, $insertKey, $newValues ) {
-		$keys        = array_keys( $arr );
-		$vals        = array_values( $arr );
-		$insertAfter = array_search( $insertKey, $keys ) + 1;
-		$keys2       = array_splice( $keys, $insertAfter );
-		$vals2       = array_splice( $vals, $insertAfter );
-		foreach ( $newValues as $k => $v ) {
+	function aioseop_array_insert_after( $arr, $insert_key, $new_values ) {
+		$keys         = array_keys( $arr );
+		$vals         = array_values( $arr );
+		$insert_after = array_search( $insert_key, $keys ) + 1;
+		$keys2        = array_splice( $keys, $insert_after );
+		$vals2        = array_splice( $vals, $insert_after );
+		foreach ( $new_values as $k => $v ) {
 			$keys[] = $k;
 			$vals[] = $v;
 		}
@@ -905,27 +1020,41 @@ if ( ! function_exists( 'aioseop_array_insert_after' ) ) {
 }
 
 if ( ! function_exists( 'fnmatch' ) ) {
+
 	/**
+	 * Filename Match
+	 *
 	 * Support for fnmatch() doesn't exist on Windows pre PHP 5.3.
+	 *
+	 * @since ?
 	 *
 	 * @param $pattern
 	 * @param $string
-	 *
 	 * @return int
 	 */
 	function fnmatch( $pattern, $string ) {
 		return preg_match(
 			'#^' . strtr(
-				preg_quote( $pattern, '#' ), array(
+				preg_quote( $pattern, '#' ),
+				array(
 					'\*' => '.*',
 					'\?' => '.',
 				)
-			) . '$#i', $string
+			) . '$#i',
+			$string
 		);
 	}
 }
 
 if ( ! function_exists( 'aiosp_log' ) ) {
+	/**
+	 * AIOSEOP Log
+	 *
+	 * @since 2.4.10
+	 *
+	 * @param      $log
+	 * @param bool $force
+	 */
 	function aiosp_log( $log, $force = false ) {
 
 		global $aioseop_options;
@@ -943,11 +1072,14 @@ if ( ! function_exists( 'aiosp_log' ) ) {
 
 if ( ! function_exists( 'parse_ini_string' ) ) {
 	/**
+	 * Parse INI String
+	 *
 	 * Parse_ini_string() doesn't exist pre PHP 5.3.
+	 *
+	 * @since ?
 	 *
 	 * @param $string
 	 * @param $process_sections
-	 *
 	 * @return array|bool
 	 */
 	function parse_ini_string( $string, $process_sections ) {
@@ -962,6 +1094,13 @@ if ( ! function_exists( 'parse_ini_string' ) ) {
 			// @codingStandardsIgnoreStart
 			class parse_ini_filter extends php_user_filter {
 			// @codingStandardsIgnoreEnd
+				/**
+				 * Buffer
+				 *
+				 * @since ?
+				 *
+				 * @var string $buf
+				 */
 				static $buf = '';
 
 				/**
@@ -994,13 +1133,22 @@ if ( ! function_exists( 'parse_ini_string' ) ) {
 }
 
 /**
- * @deprecated 2.4.2
+ * AIOSEOP Update User Visibility Notice
+ *
+ * @since ?
+ * @deprecated 3.0
  */
 function aioseop_update_user_visibilitynotice() {
 
 	update_user_meta( get_current_user_id(), 'aioseop_visibility_notice_dismissed', true );
 }
 
+/**
+ * AIOSEOP Update Yoast Detected Notice
+ *
+ * @since ?
+ * @deprecated 3.0
+ */
 function aioseop_update_yst_detected_notice() {
 
 	update_user_meta( get_current_user_id(), 'aioseop_yst_detected_notice_dismissed', true );
@@ -1024,6 +1172,13 @@ function aioseop_home_url( $path = '/' ) {
 
 
 if ( ! function_exists( 'aiosp_include_images' ) ) {
+	/**
+	 * AIOSEOP Include Images
+	 *
+	 * @since 2.4.2
+	 *
+	 * @return bool
+	 */
 	function aiosp_include_images() {
 		if ( false === apply_filters( 'aioseo_include_images_in_sitemap', true ) ) {
 			return false;
@@ -1035,7 +1190,7 @@ if ( ! function_exists( 'aiosp_include_images' ) ) {
 			isset( $aioseop_options['modules']['aiosp_sitemap_options'] ) &&
 			isset( $aioseop_options['modules']['aiosp_sitemap_options']['aiosp_sitemap_images'] ) &&
 			'on' === $aioseop_options['modules']['aiosp_sitemap_options']['aiosp_sitemap_images']
-		 ) {
+		) {
 			return false;
 		}
 
@@ -1046,9 +1201,13 @@ if ( ! function_exists( 'aiosp_include_images' ) ) {
 
 if ( ! function_exists( 'aioseop_formatted_date' ) ) {
 	/**
+	 * AIOSEOP Formatted Date
+	 *
 	 * Get formatted date. For custom formatting, the user has 2 options:
 	 * 1. provide the native date_i18n filter.
 	 * 2. provide a custom aioseop_format_date filter.
+	 *
+	 * @since 2.5
 	 *
 	 * @param int    $date Date in UNIX timestamp format.
 	 * @param string $format Require date format.
@@ -1067,8 +1226,9 @@ if ( ! function_exists( 'aioseop_formatted_date' ) ) {
 }
 
 /**
- * SVG menu icon function.
+ * AIOSEOP Get Menu Icon
  *
+ * SVG menu icon function.
  * Returns a base64 data URI for the SVG icon in the menu.
  *
  * @since 3.0
@@ -1144,6 +1304,8 @@ if ( ! function_exists( 'aioseop_get_menu_icon' ) ) {
 }
 
 /**
+ * AIOSEOP Do Shortcodes
+ *
  * Runs shortcodes in autogenerated titles & descriptions.
  *
  * @since 3.0.0
@@ -1162,7 +1324,7 @@ function aioseop_do_shortcodes( $content ) {
 		// Second check is needed for shortcodes in Gutenberg Classic blocks.
 		if ( stripos( $content, $shortcode, 0 ) || 0 === stripos( $content, $shortcode, 0 ) ) {
 			global $shortcode_tags;
-			$shortcode_tag = str_replace( array('[', ']'), '', $shortcode );
+			$shortcode_tag = str_replace( array( '[', ']' ), '', $shortcode );
 			if ( array_key_exists( $shortcode_tag, $shortcode_tags ) ) {
 				$rtn_conflict_shortcodes[ $shortcode_tag ] = $shortcode_tags[ $shortcode_tag ];
 			}
@@ -1177,6 +1339,8 @@ function aioseop_do_shortcodes( $content ) {
 }
 
 /**
+ * AIOSEOP Do Shortcode Helper
+ *
  * Ignores shortcodes that are known to conflict.
  * Acts as a helper function for aioseop_do_shortcodes().
  *

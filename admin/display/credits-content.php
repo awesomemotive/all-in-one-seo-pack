@@ -1,8 +1,23 @@
+<?php
+/**
+ * Credits Content
+ *
+ * Displays AIOSEOP's team and additional individuals who have contributed.
+ *
+ * @link https://wordpress.org/plugins/all-in-one-seo-pack/
+ *
+ * @package All_in_One_SEO_Pack
+ * @since ?
+ */
+?>
 <div class="wrap credits-wrap">
 
-<p class="about-description"><?php
+<p class="about-description">
+<?php
 	/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
-	printf( __( '%s is created by a worldwide network of friendly folks like these.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ); ?></p>
+	printf( __( '%s is created by a worldwide network of friendly folks like these.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
+?>
+	</p>
 
 <h3 class="wp-people-group"><?php _e( 'Project Leaders', 'all-in-one-seo-pack' ); ?></h3>
 <ul class="wp-people-group " id="wp-people-group-project-leaders">
@@ -51,7 +66,8 @@
 		/* translators: '%1$s' and '%2$s' are used as placeholders and turn the text in between into a clickable link */
 			printf(
 				__( 'Want to see your name and picture here as a community developer? %1$sClick here%2$s to open an issue on GitHub to report a bug, request a feature or find an issue and submit code!', 'all-in-one-seo-pack' ),
-				'<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack" target="_blank">', '</a>'
+				'<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack" target="_blank">',
+				'</a>'
 			);
 			?>
 		</li>

@@ -2,7 +2,7 @@
 /**
  * Class for public facing code
  *
- * @package All-in-One-SEO-Pack
+ * @package All_in_One_SEO_Pack
  * @since   2.3.6
  */
 
@@ -17,6 +17,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Front' ) ) {
 
 		/**
 		 * All_in_One_SEO_Pack_Front constructor.
+		 *
+		 * @since 2.3.6
 		 */
 		public function __construct() {
 
@@ -26,6 +28,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Front' ) ) {
 		}
 
 		/**
+		 * NoIndex & Follow RSS
+		 *
 		 * Noindex and follow RSS feeds.
 		 *
 		 * @Since 2.3.6
@@ -37,6 +41,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Front' ) ) {
 		}
 
 		/**
+		 * Redirect Attachment
+		 *
 		 * Redirect attachment to parent post.
 		 *
 		 * @since 2.3.9

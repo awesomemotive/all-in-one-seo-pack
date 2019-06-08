@@ -1,4 +1,10 @@
 <?php
+/**
+ * Menu
+ *
+ * @package All_in_One_SEO_Pack
+ * @since ?
+ */
 
 /**
  * Class AIOSEOPAdminMenus

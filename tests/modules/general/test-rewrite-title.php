@@ -1,5 +1,14 @@
 <?php
+/**
+ * Test Rewrite Title
+ *
+ * @package All_in_One_SEO_Pack
+ * @since 3.0
+ */
 
+/**
+ * AIOSEOP test base
+ */
 require_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-test-base.php';
 
 /**
@@ -19,7 +28,7 @@ class Test_Rewrite_Title extends AIOSEOP_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		// required, otherwise unit tests below fail
+		// required, otherwise unit tests below fail.
 		remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 		remove_action( 'wp_print_styles', 'print_emoji_styles' );
 	}
@@ -51,7 +60,10 @@ class Test_Rewrite_Title extends AIOSEOP_Test_Base {
 		$id = 0;
 		switch ( $type ) {
 			case 'post':
-				$args = array( 'post_type' => 'post', 'post_title' => 'Example Title' );
+				$args = array(
+					'post_type'  => 'post',
+					'post_title' => 'Example Title',
+				);
 				$id = $this->factory->post->create( $args );
 				break;
 			case 'category':
@@ -61,7 +73,7 @@ class Test_Rewrite_Title extends AIOSEOP_Test_Base {
 		}
 
 		$link = get_permalink( $id );
-		$title = $this->parse_html( $link, array ('title') );
+		$title = $this->parse_html( $link, array( 'title' ) );
 
 		$this->assertEquals( 1, count( $title ) );
 		$this->assertContains( $blog_name, $title[0]['#text'] );
@@ -96,10 +108,10 @@ class Test_Rewrite_Title extends AIOSEOP_Test_Base {
 	 */
 	public function macroProvider() {
 		return [
-			'%site_title% & post' => ['%site_title', 'post' ],
-			'%site_title% & category' => ['%site_title', 'category' ],
-			'%blog_title% & post' => ['%blog_title', 'post' ],
-			'%blog_title% & category' => ['%blog_title', 'category' ],
+			'%site_title% & post'     => [ '%site_title', 'post' ],
+			'%site_title% & category' => [ '%site_title', 'category' ],
+			'%blog_title% & post'     => [ '%blog_title', 'post' ],
+			'%blog_title% & category' => [ '%blog_title', 'category' ],
 		];
 	}
 }
