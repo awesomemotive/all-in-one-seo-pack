@@ -331,13 +331,15 @@ class AIOSEOP_Updates {
 		$aioseop_notices->reset_notice( 'review_plugin' );
 		$aioseop_notices->remove_notice( 'review_plugin' );
 	}
-}
 
 	/**
-    * Flushes rewrite rules for XML Sitemap URL changes
+	 * Flushes rewrite rules for XML Sitemap URL changes
 	 *
 	 * @since 3.1
-    */
-	public function reset_flush_rewrite_rules_201906(){
+	 */
+	public function reset_flush_rewrite_rules_201906() {
 		add_action( 'shutdown', 'flush_rewrite_rules');
 	}
+}
+
+
