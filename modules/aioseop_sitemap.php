@@ -1953,7 +1953,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$options[ "{$this->prefix}posttypes" ]  = array_diff( $options[ "{$this->prefix}posttypes" ], array( 'all' ) );
 			$options[ "{$this->prefix}taxonomies" ] = $this->show_or_hide_taxonomy( array_diff( $options[ "{$this->prefix}taxonomies" ], array( 'all' ) ) );
 
-			$files[] = array( 'loc' => aioseop_home_url( '/' . $prefix . '_addl' . $suffix ) );
+			$files[] = array( 'loc' => aioseop_home_url( '/addl-' . $prefix . $suffix ) );
 
 			// Get post types selected, and NoIndex post types & Index posts.
 			$post_types = $options[ "{$this->prefix}posttypes" ];
