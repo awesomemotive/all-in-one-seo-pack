@@ -1438,7 +1438,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$sitemap_rules  = array(
 				$this->get_filename() . '.xml'           => 'index.php?' . $this->prefix . 'path=root',
 				'(.+)-' . $this->get_filename() . '(\d+).xml' => 'index.php?' . $this->prefix . 'path=$matches[1]&' . $this->prefix . 'page=$matches[2]',
-				'_(.+)' . $this->get_filename() . '.xml'      => 'index.php?' . $this->prefix . 'path=$matches[1]',
+				'(.+)-' . $this->get_filename() . '.xml'      => 'index.php?' . $this->prefix . 'path=$matches[1]',
 			);
 
 			if ( isset( $this->options[ "{$this->prefix}rss_sitemap" ] ) && $this->options[ "{$this->prefix}rss_sitemap" ] ) {
