@@ -62,10 +62,10 @@ class aiosp_metaboxes {
 				</div>
 				<?php
 				// Fall-through.
-				case 'aioseop-donate':
-					?>
+			case 'aioseop-donate':
+				?>
 				<div>
-					<?php if ( ! AIOSEOPPRO ) : ?>
+				<?php if ( ! AIOSEOPPRO ) : ?>
 						<div class="aioseop_metabox_text">
 							<p>
 								<?php self::pro_meta_content(); ?>
