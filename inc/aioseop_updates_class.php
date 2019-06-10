@@ -135,7 +135,7 @@ class AIOSEOP_Updates {
 		}
 
 		if (
-		version_compare( $old_version, '3.1', '<' )
+				version_compare( $old_version, '3.1', '<' )
 		) {
 			$this->reset_flush_rewrite_rules_201906();
 		}
@@ -338,7 +338,7 @@ class AIOSEOP_Updates {
 	 * @since 3.1
 	 */
 	public function reset_flush_rewrite_rules_201906() {
-		add_action( 'shutdown', 'flush_rewrite_rules');
+		add_action( 'shutdown', 'flush_rewrite_rules' );
 	}
 }
 
