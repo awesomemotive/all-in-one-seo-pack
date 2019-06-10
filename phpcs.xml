@@ -40,6 +40,9 @@
         <exclude name="Squiz.Commenting.FunctionComment" />
 
         <!-- these can be removed once #2335 is closed -->
+        <exclude name="WordPress.PHP.StrictComparisons.LooseComparison" />
+        <exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
+        <exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict" />
 
 
     </rule>
