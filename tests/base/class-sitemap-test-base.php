@@ -82,7 +82,7 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 					$element['image:title'] = $images['title'];
 					if ( is_array( $images['title'] ) ) {
 						// TODO: this does not work because wptexturize mangles the single and double quotes into the typewriter equivalents ' to ‘ or ’ and " to “ or ”.
-            // phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
+						// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 						// $this->assertContains( strip_tags( $this->_spl_chars ), $images['title'][0] );
 					}
 				}
@@ -90,7 +90,7 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 					$element['image:caption'] = $images['caption'];
 					if ( is_array( $images['caption'] ) ) {
 						// TODO: this does not work because wptexturize mangles the single and double quotes into the typewriter equivalents ' to ‘ or ’ and " to “ or ”.
- 						// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
+						// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 						// $this->assertContains( strip_tags( $this->_spl_chars ), $images['caption'][0] );
 					}
 				}
