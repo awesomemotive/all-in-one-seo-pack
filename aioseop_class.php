@@ -1471,8 +1471,15 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$title = $this->internationalize( get_option( 'blogname' ) ) . ' | ' . $this->internationalize( get_bloginfo( 'description' ) );
 			}
 
+			// #1616 - Avoid trying to get property of non-object when no posts are present on the homepage
 			global $post;
-			$post_id = $post->ID;
+			$frontpage_id = get_option( 'page_on_front' );
+
+			if ( $post === null ) {
+				$post_id = $frontpage_id;
+			} else {
+				$post_id = $post->ID;
+			}
 
 			if ( is_post_type_archive() && is_post_type_archive( 'product' ) && $post_id = wc_get_page_id( 'shop' ) && $post = get_post( $post_id ) ) {
 				$frontpage_id = get_option( 'page_on_front' );
