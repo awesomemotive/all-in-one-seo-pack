@@ -161,6 +161,9 @@ class AIOSEOP_Helper {
 					'<dt>%current_year%</dt>' .
 					/* translators: %s is replaced with a time related term such as Date, Year, Month, etc. */
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month%</dt>' .
+					/* translators: %s is replaced with a time related term such as Date, Year, Month, etc. */
+					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%cf_fieldname%</dt>' .
 					'<dd>' . __( 'The name of a custom field', 'all-in-one-seo-pack' ) . '</dd>' .
 				'</dl>',
@@ -187,6 +190,8 @@ class AIOSEOP_Helper {
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_date%</dt>' .
 					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ), __( 'Page', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_year%</dt>' .
@@ -221,6 +226,8 @@ class AIOSEOP_Helper {
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_date%</dt>' .
 					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ), __( 'Post', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_year%</dt>' .
@@ -244,7 +251,9 @@ class AIOSEOP_Helper {
 					/* translators: %s is replaced with a content type such as Post, Page, etc. */
 					'<dd>' . sprintf( __( 'The description of the %s', 'all-in-one-seo-pack' ), __( 'Category', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
-					'<dd>' . __( 'The current year', 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 				'</dl>',
 			'aiosp_archive_title_format'        =>
 				__( 'This controls the format of the title tag for Custom Post Archives.', 'all-in-one-seo-pack' ) . '<br />' .
@@ -328,6 +337,8 @@ class AIOSEOP_Helper {
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_date%</dt>' .
 					'<dd>' . sprintf(
 						__( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ),
@@ -467,6 +478,8 @@ class AIOSEOP_Helper {
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_date%</dt>' .
 					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ), $name ) . '</dd>' .
 					'<dt>%post_year%</dt>' .
