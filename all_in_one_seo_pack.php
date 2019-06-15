@@ -105,7 +105,7 @@ if ( ! defined( 'AIOSEOP_PLUGIN_IMAGES_URL' ) ) {
 	define( 'AIOSEOP_PLUGIN_IMAGES_URL', AIOSEOP_PLUGIN_URL . 'images/' );
 }
 if ( ! defined( 'AIOSEOP_BASELINE_MEM_LIMIT' ) ) {
-	define( 'AIOSEOP_BASELINE_MEM_LIMIT', 268435456 );
+	define( 'AIOSEOP_BASELINE_MEM_LIMIT', '256M' );
 } // 256MB
 if ( ! defined( 'WP_CONTENT_URL' ) ) {
 	define( 'WP_CONTENT_URL', site_url() . '/wp-content' );
