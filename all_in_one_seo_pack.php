@@ -39,7 +39,12 @@ if ( ! defined( 'AIOSEOPPRO' ) ) {
 	define( 'AIOSEOPPRO', false );
 }
 if ( ! defined( 'AIOSEOP_PLUGIN_NAME' ) ) {
-	define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack' );
+	if ( !AIOSEOPPRO ) {
+		define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack' );
+	}
+	else {
+		define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack Pro' );
+	}
 }
 if ( ! defined( 'AIOSEOP_VERSION' ) ) {
 	define( 'AIOSEOP_VERSION', '3.1' );
