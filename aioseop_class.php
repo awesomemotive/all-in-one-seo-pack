@@ -1473,10 +1473,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 			// #1616 - Avoid trying to get property of non-object when no posts are present on the homepage
 			global $post;
-			$frontpage_id = get_option( 'page_on_front' );
 
 			if ( $post === null ) {
-				$post_id = $frontpage_id;
+				$post_id = get_option( 'page_on_front' );
 			} else {
 				$post_id = $post->ID;
 			}
@@ -1488,7 +1487,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				}
 				// $title = $this->internationalize( $aioseop_options['aiosp_home_title'] );
 				if ( ! $title ) {
-					$title = $this->internationalize( get_post_meta( $frontpage_id, '_aioseop_title', true ) );
+					$title = $this->internationalize( get_post_meta( $post_id, '_aioseop_title', true ) );
 				} // This is/was causing the first product to come through.
 				if ( ! $title ) {
 					$title = $this->internationalize( $post->post_title );
