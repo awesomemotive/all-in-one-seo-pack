@@ -62,7 +62,6 @@ class AIOSP_Common_Strings {
 		__( 'Include Date Archives in your sitemap.', 'all-in-one-seo-pack' );
 		__( 'Include Author Archives in your sitemap.', 'all-in-one-seo-pack' );
 		__( 'Exclude Images in your sitemap.', 'all-in-one-seo-pack' );
-		__( 'Create a compressed sitemap file in .xml.gz format.', 'all-in-one-seo-pack' );
 		__( 'Places a link to your Sitemap.xml into your virtual Robots.txt file.', 'all-in-one-seo-pack' );
 		__( 'Dynamically creates the XML sitemap instead of using a static file.', 'all-in-one-seo-pack' );
 		__( 'If checked, only posts that have videos in them will be displayed on the sitemap.', 'all-in-one-seo-pack' );
