@@ -4313,6 +4313,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$opts        = $this->meta_opts;
 		$page        = $this->get_page_number();
 		$robots_meta = $tax_noindex = '';
+		$post_type = get_post_type();
+
 		if ( isset( $aioseop_options['aiosp_tax_noindex'] ) ) {
 			$tax_noindex = $aioseop_options['aiosp_tax_noindex'];
 		}
