@@ -4163,7 +4163,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 			}
 
-			$args = apply_filters( $this->prefix . 'tax_args', $args, $page, $this->options );
+			$args = apply_filters( 'aioseop_sitemap_exclude_tax_terms', $args );
 
 			return $args;
 		}
