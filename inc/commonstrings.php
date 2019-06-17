@@ -33,7 +33,7 @@ class AIOSP_Common_Strings {
 		__( 'Check this to move the %s menu item to the top of your WordPress Dashboard menu.', 'all-in-one-seo-pack' );
 		__( 'Check this if you want to track outbound forms with Google Analytics.', 'all-in-one-seo-pack' );
 		__( 'Check this if you want to track events with Google Analytics.', 'all-in-one-seo-pack' );
-		__( 'Check this if you want to track url changes for single pages with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track URL changes for single pages with Google Analytics.', 'all-in-one-seo-pack' );
 		__( 'Check this if you want to track how long pages are in visible state with Google Analytics.', 'all-in-one-seo-pack' );
 		/* translators: 'This option allows users to track media queries, allowing them to find out if users are viewing a responsive layout or not and which layout changes have been applied if the browser window has been resized by the user, see https://github.com/googleanalytics/autotrack/blob/master/docs/plugins/media-query-tracker.md. */
 		__( 'Check this if you want to track media query matching and queries with Google Analytics.', 'all-in-one-seo-pack' );
@@ -93,7 +93,7 @@ class AIOSP_Common_Strings {
 		__( 'Display Menu At The Top:', 'all-in-one-seo-pack' );
 		__( 'Track Outbound Forms:', 'all-in-one-seo-pack' );
 		__( 'Track Events:', 'all-in-one-seo-pack' );
-		__( 'Track Url Changes:', 'all-in-one-seo-pack' );
+		__( 'Track URL Changes:', 'all-in-one-seo-pack' );
 		__( 'Track Page Visibility:', 'all-in-one-seo-pack' );
 		__( 'Track Media Query:', 'all-in-one-seo-pack' );
 		__( 'Track Elements Visibility:', 'all-in-one-seo-pack' );
