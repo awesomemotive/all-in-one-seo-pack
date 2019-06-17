@@ -319,6 +319,7 @@ if ( ! function_exists( 'aiosp_plugin_row_meta' ) ) {
 			$action_links = array(
 
 				'settings' => array(
+					/* translators: This is an action link users can click to open a feature request/bug report on GitHub. */
 					'label' => __( 'Feature Request/Bug Report', 'all-in-one-seo-pack' ),
 					'url'   => 'https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/new',
 				),
@@ -352,16 +353,19 @@ if ( ! function_exists( 'aiosp_add_action_links' ) ) {
 		$action_links           = array();
 		$action_links           = array(
 			'settings' => array(
+				/* translators: This is an action link users can click to open the General Settings menu. */
 				'label' => __( 'SEO Settings', 'all-in-one-seo-pack' ),
 				'url'   => get_admin_url( null, "admin.php?page=$aioseop_plugin_dirname/aioseop_class.php" ),
 			),
 
 			'forum'    => array(
+				/* translators: This is an action link users can click to open our premium support forum. */
 				'label' => __( 'Support Forum', 'all-in-one-seo-pack' ),
 				'url'   => 'https://semperplugins.com/support/',
 			),
 
 			'docs'     => array(
+				/* translators: This is an action link users can click to open our general documentation page. */
 				'label' => __( 'Documentation', 'all-in-one-seo-pack' ),
 				'url'   => 'https://semperplugins.com/documentation/',
 			),
@@ -373,6 +377,7 @@ if ( ! function_exists( 'aiosp_add_action_links' ) ) {
 		if ( ! AIOSEOPPRO ) {
 			$action_links['proupgrade'] =
 				array(
+					/* translators: This is an action link users can click to purchase a license for All in One SEO Pack Pro. */
 					'label' => __( 'Upgrade to Pro', 'all-in-one-seo-pack' ),
 					'url'   => 'https://semperplugins.com/plugins/all-in-one-seo-pack-pro-version/?loc=plugins',
 
