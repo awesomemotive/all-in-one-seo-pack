@@ -4163,6 +4163,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 			}
 
+			/**
+			 * The aioseop_sitemap_exclude_tax_terms filter hook.
+			 *
+			 * Allows users to exclude (or include) taxonomy terms from the sitemap.
+			 *
+			 * @since 3.2.0
+			 *
+			 * @param array $args {
+			 *     @type array $taxonomy Name of the taxonomy that is being included in the sitemap.
+			 *     @type array $exclude IDs of taxonomy terms of the relevant taxonomy that need to be excluded.
+			 * }
+			 */
 			$args = apply_filters( 'aioseop_sitemap_exclude_tax_terms', $args );
 
 			return $args;
