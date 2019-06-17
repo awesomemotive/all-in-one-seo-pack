@@ -116,7 +116,7 @@ class AIOSEOP_Helper {
 		// phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText
 		$rtn_help_text = array(
 			// General Settings.
-			'aiosp_can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation.  This will help to prevent duplicate content penalties by Google.', 'all-in-one-seo-pack' ),
+			'aiosp_can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation. This will help to prevent duplicate content penalties by Google.', 'all-in-one-seo-pack' ),
 			'aiosp_no_paged_canonical_links'    => __( 'Checking this option will set the Canonical URL for all paginated content to the first page.', 'all-in-one-seo-pack' ),
 			'aiosp_use_original_title'          => __( 'Use wp_title to get the title used by the theme; this is disabled by default. If you use this option, set your title formats appropriately, as your theme might try to do its own title SEO as well.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_markup'               => __( 'Check this to support Schema.org markup, i.e., itemprop on supported metadata.', 'all-in-one-seo-pack' ),
