@@ -86,6 +86,11 @@
 	margin-top: 10px;
 }
 
+.aioseop_tabs #aioseop_opengraph_settings .aioseop_meta_box_help,
+.aioseop_tabs #aioseop_opengraph_settings .aioseop_meta_box_help:active {
+	margin-bottom: 20px;
+}
+
 .aioseop_label {
 	color: #5F5F5F;
 	font-weight: 600;
