@@ -208,6 +208,10 @@ div.aioseop_feature {
 	float: left !important;
 }
 
+.postbox-container div#aiosp_upgrade_wrapper {
+	float: right;
+}
+
 #aiosp_settings_form .aioseop_no_label,
 .aioseop_no_label {
 	float: right;
