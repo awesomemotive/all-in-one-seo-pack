@@ -1401,6 +1401,7 @@ div.sfwd_debug_error {
 }
 
 .postbox-container .aioseop_input {
+	width: 100%;
 	margin-bottom: 10px;
 	padding: 0;
 }
@@ -1453,7 +1454,7 @@ div#aiosp_snippet_wrapper {
     clear: both;
     padding: 10px 10px 0;
     width: auto;
-    margin-bottom: 15px;
+    margin: 0 1px 15px;
 }
 
 #aiosp_snippet_wrapper > .aioseop_input:first-child {
