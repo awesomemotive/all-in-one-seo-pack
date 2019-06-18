@@ -1452,7 +1452,7 @@ div#aiosp_snippet_wrapper {
     border: 1px solid #8d96a0;
     clear: both;
     padding: 10px 10px 0;
-    max-width: 97%;
+    width: auto;
     margin-bottom: 15px;
 }
 
