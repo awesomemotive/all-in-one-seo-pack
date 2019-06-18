@@ -798,6 +798,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					$buf .= '</div>';
 					break;
 				case "{$this->prefix}robots.txt":
+					$buf .= "<h2>Here's how your robots.txt looks:</h2>";
 					$buf .= "<textarea disabled id='{$this->prefix}robot-txt' class='large-text robots-text' rows='15'>";
 					$buf .= $this->do_robots();
 					$buf .= "</textarea>";
