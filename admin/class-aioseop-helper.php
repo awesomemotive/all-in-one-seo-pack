@@ -923,9 +923,9 @@ class AIOSEOP_Helper {
 	 */
 	private function help_text_robots_generator() {
 		$rtn_help_text = array(
-			'aiosp_robots_type'  => __( 'Rule Type', 'all-in-one-seo-pack' ),
-			'aiosp_robots_agent' => __( 'User Agent', 'all-in-one-seo-pack' ),
-			'aiosp_robots_path'  => __( 'Directory Path', 'all-in-one-seo-pack' ),
+			'aiosp_robots_type'  => __( 'Use the dropdown to select whether you want to allow or block access to the specified directory or file.', 'all-in-one-seo-pack' ),
+			'aiosp_robots_agent' => __( 'Enter the name of a User Agent here.  You can use the wildcard * to allow or block all robots. A list of User Agents can be found <a target="_blank" rel="noopener noreferrer" href="http://www.robotstxt.org/db.html">here</a>.', 'all-in-one-seo-pack' ),
+			'aiosp_robots_path'  => __( 'Enter a valid path to a directory or file, for example: /wp-admin/ or /wp-admin/admin-ajax.php', 'all-in-one-seo-pack' ),
 		);
 
 		return $rtn_help_text;
