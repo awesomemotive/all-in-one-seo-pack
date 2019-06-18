@@ -458,7 +458,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				/*  translators: This is a setting users can enable to add the basic markup code to their source code that is needed for Google to generate a Sitelinks Search Box - https://developers.google.com/search/docs/data-types/sitelinks-searchbox.*/
 				'name' => __( 'Display Sitelinks Search Box:', 'all-in-one-seo-pack' ),
 			),
-			// "google_connect"=>array( 'name' => __( 'Connect With Google Analytics', 'all-in-one-seo-pack' ), ),
 			'google_analytics_id'         => array(
 				/* translators: This is a setting where users can add their Google Analytics verification code. Leave this in English if there is no translation for "Google Analytics". */
 				'name'        => __( 'Google Analytics ID:', 'all-in-one-seo-pack' ),
@@ -871,7 +870,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'help_link' => 'https://semperplugins.com/documentation/google-settings/',
 				'options'   => array(
 					'google_sitelinks_search',
-					// "google_connect",
 					'google_analytics_id',
 					'ga_advanced_options',
 					'ga_domain',
@@ -3510,9 +3508,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				unset( $settings[ "{$prefix}$opt" ] );
 			}
 
-			if ( ! class_exists( 'DOMDocument' ) ) {
-				unset( $settings['{prefix}google_connect'] );
-			}
 			if ( AIOSEOPPRO ) {
 				if ( ! empty( $this->options['aiosp_license_key'] ) ) {
 					$settings['aiosp_license_key']['type'] = 'password';
@@ -4696,7 +4691,7 @@ EOF;
 	}
 
 	/**
-	 * Override Options
+	 * Google Analytics
 	 *
 	 * @since ?
 	 *
@@ -4705,14 +4700,6 @@ EOF;
 	 * @param $settings
 	 * @return mixed
 	 */
-	function override_options( $options, $location, $settings ) {
-		if ( class_exists( 'DOMDocument' ) ) {
-			$options['aiosp_google_connect'] = $settings['aiosp_google_connect']['default'];
-		}
-
-		return $options;
-	}
-
 	function aiosp_google_analytics() {
 		new aioseop_google_analytics;
 	}
