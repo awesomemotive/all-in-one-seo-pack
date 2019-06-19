@@ -28,19 +28,19 @@ function aioseop_notice_review_plugin() {
 				'text'    => __( 'Add a review', 'all-in-one-seo-pack' ),
 				'link'    => 'https://wordpress.org/support/plugin/all-in-one-seo-pack/reviews?rate=5#new-post',
 				'dismiss' => false,
-				'class'   => '',
+				'class'   => 'button-primary button-orange',
 			),
 			array(
 				'text'    => __( 'Remind me later', 'all-in-one-seo-pack' ),
 				'time'    => 432000,
 				'dismiss' => false,
-				'class'   => '',
+				'class'   => 'button-secondary',
 			),
 			array(
 				'time'    => 0,
 				'text'    => __( 'No, thanks', 'all-in-one-seo-pack' ),
 				'dismiss' => true,
-				'class'   => '',
+				'class'   => 'button-secondary',
 			),
 		),
 	);
