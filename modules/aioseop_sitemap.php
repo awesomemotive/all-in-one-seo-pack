@@ -4154,8 +4154,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$args['taxonomy'] = $this->show_or_hide_taxonomy( $taxonomies );
 
+			$args['exclude'] = array();
 			if ( $this->option_isset( 'excl_terms' ) ) {
-				$args['exclude'] = array();
 				foreach ( $taxonomies as $v1_taxonomy ) {
 					if ( isset( $this->options[ $this->prefix . 'excl_terms' ][ $v1_taxonomy ] ) ) {
 						$args['exclude'] = array_merge( $args['exclude'], $this->options[ $this->prefix . 'excl_terms' ][ $v1_taxonomy ]['terms'] );
