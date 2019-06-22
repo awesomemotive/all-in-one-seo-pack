@@ -1031,7 +1031,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title_format = str_replace( '%current_year%', date( 'Y' ), $title_format );
 		}
 		if ( false !== strpos( $title_format, '%current_month%', 0 ) ) {
-			$title_format = str_replace( '%current_month%', date_i18n( 'M' ), $title_format );
+			$title_format = str_replace( '%current_month%', date( 'M' ), $title_format );
+		}
+		if ( false !== strpos( $title_format, '%current_month_i18n%', 0 ) ) {
+			$title_format = str_replace( '%current_month_i18n%', date_i18n( 'M' ), $title_format );
 		}
 		if ( false !== strpos( $title_format, '%post_date%', 0 ) ) {
 			$title_format = str_replace( '%post_date%', aioseop_formatted_date( get_the_time( 'U' ) ), $title_format );
@@ -2016,7 +2019,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$new_title = str_replace( '%current_year%', date( 'Y' ), $new_title );
 		}
 		if ( false !== strpos( $new_title, '%current_month%', 0 ) ) {
-			$new_title = str_replace( '%current_month%', date_i18n( 'M' ), $new_title );
+			$new_title = str_replace( '%current_month%', date( 'M' ), $new_title );
+		}
+		if ( false !== strpos( $new_title, '%current_month_i18n%', 0 ) ) {
+			$new_title = str_replace( '%current_month_i18n%', date_i18n( 'M' ), $new_title );
 		}
 		if ( false !== strpos( $new_title, '%post_date%', 0 ) ) {
 			$new_title = str_replace( '%post_date%', aioseop_formatted_date( get_the_date( 'U' ) ), $new_title );
@@ -2385,7 +2391,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title = str_replace( '%current_year%', date( 'Y' ), $title );
 		}
 		if ( false !== strpos( $title, '%current_month%', 0 ) ) {
-			$title = str_replace( '%current_month%', date_i18n( 'M' ), $title );
+			$title = str_replace( '%current_month%', date( 'M' ), $title );
+		}
+		if ( false !== strpos( $title, '%current_month_i18n%', 0 ) ) {
+			$title = str_replace( '%current_month_i18n%', date_i18n( 'M' ), $title );
 		}
 
 		/**
@@ -4283,7 +4292,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$description = str_replace( '%current_year%', date( 'Y' ), $description );
 		}
 		if ( false !== strpos( $description, '%current_month%', 0 ) ) {
-			$description = str_replace( '%current_month%', date_i18n( 'M' ), $description );
+			$description = str_replace( '%current_month%', date( 'M' ), $description );
+		}
+		if ( false !== strpos( $description, '%current_month_i18n%', 0 ) ) {
+			$description = str_replace( '%current_month_i18n%', date_i18n( 'M' ), $description );
 		}
 		if ( false !== strpos( $description, '%post_date%', 0 ) ) {
 			$description = str_replace( '%post_date%', get_the_date(), $description );

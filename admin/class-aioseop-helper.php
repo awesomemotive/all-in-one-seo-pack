@@ -162,6 +162,8 @@ class AIOSEOP_Helper {
 					/* translators: %s is replaced with a time related term such as Date, Year, Month, etc. */
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month_i18n%</dt>' .
 					/* translators: %s is replaced with a time related term such as Date, Year, Month, etc. */
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%cf_fieldname%</dt>' .
@@ -191,6 +193,8 @@ class AIOSEOP_Helper {
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month_i18n%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_date%</dt>' .
 					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ), __( 'Page', 'all-in-one-seo-pack' ) ) . '</dd>' .
@@ -227,6 +231,8 @@ class AIOSEOP_Helper {
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month_i18n%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_date%</dt>' .
 					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ), __( 'Post', 'all-in-one-seo-pack' ) ) . '</dd>' .
@@ -253,6 +259,8 @@ class AIOSEOP_Helper {
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month_i18n%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 				'</dl>',
 			'aiosp_archive_title_format'        =>
@@ -338,6 +346,8 @@ class AIOSEOP_Helper {
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month_i18n%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_date%</dt>' .
 					'<dd>' . sprintf(
@@ -479,6 +489,8 @@ class AIOSEOP_Helper {
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month_i18n%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_date%</dt>' .
 					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ), $name ) . '</dd>' .
