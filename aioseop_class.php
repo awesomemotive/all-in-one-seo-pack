@@ -4303,10 +4303,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Get Robots Meta
+	 * Gets the robots meta tag string.
 	 *
 	 * @since 2.3.5
-	 * @since 2.3.11.5 Added no index API filter hook for password protected posts.
+	 * @since 2.3.11.5 Added noindex API filter hook for password protected posts.
 	 * @since 3.2.0 Refactored function to fix various bugs.
 	 *
 	 * @return string
@@ -4422,7 +4422,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Creates robots meta tag string.
+	 * Helper function for get_robots_meta().
 	 *
 	 * @since 3.2.0
 	 *
