@@ -4333,17 +4333,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$tax_noindex = array();
 		}
 
-		if ( 'on' === $aiosp_noindex || 'on' === $aiosp_nofollow ) {
-			if ( 'on' === $aiosp_noindex && 'on' === $aiosp_nofollow ) {
-				// if both are enabled, there is no need to continue subsequent checks.
-				return $this->get_robots_meta_string( true, true );
-			}
-			if ( 'on' === $aiosp_noindex ) {
-				$noindex = true;
-			}
-			if ( 'on' === $aiosp_nofollow ) {
-				$nofollow = true;
-			}
+		if ( 'on' === $aiosp_noindex || ( ! empty( $aioseop_options['aiosp_paginated_noindex'] && $page > 1 ) ) ) {
+			$noindex = true;
+		}
+		if ( 'on' === $aiosp_nofollow || ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] && $page > 1 ) ) ) {
+			$nofollow = true;
 		}
 
 		if ( is_singular() && $this->is_password_protected()
@@ -4351,69 +4345,47 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$noindex = true;
 		}
 
-		if ( ! $noindex ) {
-			if (
-				is_category() ||
-				(
-					is_archive() &&
-					( is_date() || is_author() )
-				) ||
-				is_tag() ||
-				is_search() ||
-				is_404() ||
-				is_tax()
-				) {
-				if (
-					! empty( $aioseop_options['aiosp_category_noindex'] ) ||
-					! empty( $aioseop_options['aiosp_archive_date_noindex'] ) ||
-					! empty( $aioseop_options['aiosp_archive_author_noindex'] ) ||
-					! empty( $aioseop_options['aiosp_tags_noindex'] ) ||
-					! empty( $aioseop_options['aiosp_search_noindex'] ) ||
-					! empty( $aioseop_options['aiosp_404_noindex'] ) ||
-					in_array( get_query_var( 'taxonomy' ), $tax_noindex )
+		if ( $noindex && $nofollow ) {
+			// Not needed to run subsequent checks if both are true.
+			return $this->get_robots_meta_string( $noindex, nofollow );
+		}
+
+		if (
+				( is_category() && ! empty( $aioseop_options['aiosp_category_noindex'] ) ) ||
+				( is_date() && ! empty( $aioseop_options['aiosp_archive_date_noindex'] ) ) ||
+				( is_author() && ! empty( $aioseop_options['aiosp_archive_author_noindex'] ) ) ||
+				( is_tag() && ! empty( $aioseop_options['aiosp_tags_noindex'] ) ) ||
+				( is_search() && ! empty( $aioseop_options['aiosp_search_noindex'] ) ) ||
+				( is_404() && ! empty( $aioseop_options['aiosp_404_noindex'] ) ) ||
+				( is_tax() && in_array( get_query_var( 'taxonomy' ), $tax_noindex ) )
+		) {
+			$noindex = true;
+		}
+
+		if (
+			is_single() ||
+			is_page() ||
+			$this->is_static_posts_page() ||
+			is_attachment() ||
+			( $page > 1 ) ||
+			$this->check_singular()
+		) {
+			if ( ! $noindex ) {
+				if ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page > 1 ||
+					(
+						'' === $aiosp_noindex &&
+						! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
+						in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
+					)
 				) {
 					$noindex = true;
 				}
-				if ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page > 1 ) {
-					$nofollow = true;
-				}
 			}
-		}
-
-		if ( ! $nofollow ) {
-			if (
-				is_single() ||
-				is_page() ||
-				$this->is_static_posts_page() ||
-				is_attachment() ||
-				( $page > 1 ) ||
-				$this->check_singular()
-			) {
-				if (
-					! empty( $aioseop_options['aiosp_cpostnoindex'] ) ||
-					! empty( $aioseop_options['aiosp_cpostnofollow'] ) ||
-					! empty( $aioseop_options['aiosp_paginated_noindex'] ) ||
-					! empty( $aioseop_options['aiosp_paginated_nofollow'] )
-				) {
-					if ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page > 1 ||
-						(
-							( '' === $aiosp_noindex ) &&
-							( ! empty( $aioseop_options['aiosp_cpostnoindex'] ) ) &&
-							in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
-						)
-					) {
-						$noindex = true;
-					}
-					if (
-						! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page > 1 ||
-						(
-							( '' === $aiosp_nofollow ) &&
-							( ! empty( $aioseop_options['aiosp_cpostnofollow'] ) ) &&
-							in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
-						)
-					) {
-						$nofollow = true;
-					}
+			if ( ! $nofollow ) {
+				if ( '' === $aiosp_nofollow &&
+					! empty( $aioseop_options['aiosp_cpostnofollow'] )
+					&& in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] ) ) {
+					$nofollow = true;
 				}
 			}
 		}
