@@ -4353,7 +4353,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		if ( $noindex && $nofollow ) {
 			// Not needed to run subsequent checks if both are true.
-			return $this->get_robots_meta_string( $noindex, nofollow );
+			return $this->get_robots_meta_string( $noindex, $nofollow );
 		}
 
 		if (
