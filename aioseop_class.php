@@ -3594,7 +3594,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Is Page Included
+	 * is_page_included() function.
+	 *
+	 * Checks whether All in One SEO Pack is enabled for this page.
 	 *
 	 * @since ?
 	 *
@@ -4321,7 +4323,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$robots_meta = $tax_noindex = '';
 		$aiosp_noindex = $aiosp_nofollow = '';
 
-		if ( ! empty( $opts ) ) {
+		if ( ! empty( $opts ) &&
+			! is_date() &&
+			! is_author() &&
+			! is_search()
+			) {
 			$aiosp_noindex  = htmlspecialchars( stripslashes( $opts['aiosp_noindex'] ) );
 			$aiosp_nofollow = htmlspecialchars( stripslashes( $opts['aiosp_nofollow'] ) );
 		}
