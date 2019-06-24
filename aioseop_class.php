@@ -3594,7 +3594,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * is_page_included() function.
+	 * The is_page_included() function.
 	 *
 	 * Checks whether All in One SEO Pack is enabled for this page.
 	 *
