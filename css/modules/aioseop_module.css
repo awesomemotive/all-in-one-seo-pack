@@ -83,8 +83,12 @@
 
 .aioseop_tabs .aioseop_meta_box_help,
 .aioseop_tabs .aioseop_meta_box_help:active {
-	margin-top: 4px;
-	margin-right: 45px;
+	margin-top: 10px;
+}
+
+.aioseop_tabs #aioseop_opengraph_settings .aioseop_meta_box_help,
+.aioseop_tabs #aioseop_opengraph_settings .aioseop_meta_box_help:active {
+	margin-bottom: 20px;
 }
 
 .aioseop_label {
@@ -1031,6 +1035,10 @@ table.aioseop_table th {
 	padding-left: 5%;
 }
 
+.aioseop.aioseop_options.aiosp_robots_settings h3 {
+	margin: 1.5em 0.6em 0.3em;
+}
+
 #aiosp_settings_form .aioseop_no_label, 
 .aioseop_no_label {
 	float: left;
@@ -1402,6 +1410,7 @@ div.sfwd_debug_error {
 }
 
 .postbox-container .aioseop_input {
+	width: 100%;
 	margin-bottom: 10px;
 	padding: 0;
 }
@@ -1453,8 +1462,8 @@ div#aiosp_snippet_wrapper {
     border: 1px solid #8d96a0;
     clear: both;
     padding: 10px 10px 0;
-    max-width: 97%;
-    margin-bottom: 15px;
+    width: auto;
+    margin: 0 1px 15px;
 }
 
 #aiosp_snippet_wrapper > .aioseop_input:first-child {

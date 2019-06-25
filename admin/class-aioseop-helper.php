@@ -116,12 +116,12 @@ class AIOSEOP_Helper {
 		// phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText
 		$rtn_help_text = array(
 			// General Settings.
-			'aiosp_can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation.  This will help to prevent duplicate content penalties by Google.', 'all-in-one-seo-pack' ),
+			'aiosp_can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation. This will help to prevent duplicate content penalties by Google.', 'all-in-one-seo-pack' ),
 			'aiosp_no_paged_canonical_links'    => __( 'Checking this option will set the Canonical URL for all paginated content to the first page.', 'all-in-one-seo-pack' ),
 			'aiosp_use_original_title'          => __( 'Use wp_title to get the title used by the theme; this is disabled by default. If you use this option, set your title formats appropriately, as your theme might try to do its own title SEO as well.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_markup'               => __( 'Check this to support Schema.org markup, i.e., itemprop on supported metadata.', 'all-in-one-seo-pack' ),
 			/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
-			'aiosp_do_log'                      => sprintf( __( 'Check this and %s will create a log of important events (all-in-one-seo-pack.log) in its plugin directory which might help debugging. Make sure this directory is writable.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
+			'aiosp_do_log'                      => sprintf( __( 'Check this and %s will create a log of important events (all-in-one-seo-pack.log) in the wp-content directory which might help debugging. Make sure this directory is writable.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
 
 			// Home Page Settings.
 			'aiosp_home_title'                  => __( 'As the name implies, this will be the Meta Title of your homepage. This is independent of any other option. If not set, the default Site Title (found in WordPress under Settings, General, Site Title) will be used.', 'all-in-one-seo-pack' ),
@@ -923,9 +923,9 @@ class AIOSEOP_Helper {
 	 */
 	private function help_text_robots_generator() {
 		$rtn_help_text = array(
-			'aiosp_robots_type'  => __( 'Rule Type', 'all-in-one-seo-pack' ),
-			'aiosp_robots_agent' => __( 'User Agent', 'all-in-one-seo-pack' ),
-			'aiosp_robots_path'  => __( 'Directory Path', 'all-in-one-seo-pack' ),
+			'aiosp_robots_type'  => __( 'Use the dropdown to select whether you want to allow or block access to the specified directory or file.', 'all-in-one-seo-pack' ),
+			'aiosp_robots_agent' => __( 'Enter the name of a User Agent here.  You can use the wildcard * to allow or block all robots. A list of User Agents can be found <a target="_blank" rel="noopener noreferrer" href="http://www.robotstxt.org/db.html">here</a>.', 'all-in-one-seo-pack' ),
+			'aiosp_robots_path'  => __( 'Enter a valid path to a directory or file, for example: /wp-admin/ or /wp-admin/admin-ajax.php', 'all-in-one-seo-pack' ),
 		);
 
 		return $rtn_help_text;
@@ -959,7 +959,7 @@ class AIOSEOP_Helper {
 		$rtn_help_text = array(
 			// Possible HTML link concept IF links become usable inside jQuery UI Tooltips.
 			/* translators: %1$s and 12$s are placeholders, which means these should not be translated. These will be replaced with the name of the plugin, All in One SEO Pack. */
-			'aiosp_importer_exporter_import_submit'     => sprintf( __( 'Choose a valid %1$s .ini file and click &quot;Import&quot; to import options from a previous state or install of %1$s.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
+			'aiosp_importer_exporter_import_submit'     => sprintf( __( 'Choose a valid %1$s .ini file and click &quot;Import&quot; to import options from a previous state or install of %2$s.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME, AIOSEOP_PLUGIN_NAME ),
 			'aiosp_importer_exporter_export_choices'    => __( 'You may choose to export settings from active modules, and content from post data.', 'all-in-one-seo-pack' ),
 			/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
 			'aiosp_importer_exporter_export_post_types' => sprintf( __( 'Select which Post Types you want to export your %s meta data for.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),

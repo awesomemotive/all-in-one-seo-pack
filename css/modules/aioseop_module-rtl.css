@@ -208,6 +208,10 @@ div.aioseop_feature {
 	float: left !important;
 }
 
+.postbox-container div#aiosp_upgrade_wrapper {
+	float: right;
+}
+
 #aiosp_settings_form .aioseop_no_label,
 .aioseop_no_label {
 	float: right;
@@ -255,11 +259,6 @@ div.aioseop_notice a.aioseop_dismiss_link {
 	border-right: solid 1px #CCC;
 	margin-left: 0;
 	margin-right: 5px
-}
-
-.aioseop_tab {
-	padding-left: 0;
-	padding-right: 5px
 }
 
 form#aiosp_settings_form,
