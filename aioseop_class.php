@@ -4378,19 +4378,18 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		) {
 			if ( ! $noindex ) {
 				if ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page > 1 ||
-					(
-						'' === $aiosp_noindex &&
-						! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
-						in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
-					)
+					'' === $aiosp_noindex &&
+					! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
+					in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
 				) {
 					$noindex = true;
 				}
 			}
 			if ( ! $nofollow ) {
 				if ( '' === $aiosp_nofollow &&
-					! empty( $aioseop_options['aiosp_cpostnofollow'] )
-					&& in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] ) ) {
+					! empty( $aioseop_options['aiosp_cpostnofollow'] ) &&
+					in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
+				) {
 					$nofollow = true;
 				}
 			}
