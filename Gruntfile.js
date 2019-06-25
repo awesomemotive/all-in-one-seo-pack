@@ -97,6 +97,41 @@ module.exports = function(grunt) {
 				target: [
 					'<%= files_js %>'
 				]
+			},
+			cssmin: {
+				dev: {
+					files: [{
+						expand: true,
+						src: ['css/*.css', 'css/!*.min.css', 'css/**/*.css', '!css/**/*.min.css'],
+						dest: '.',
+						cwd: '.',
+						ext: '.min.css'
+					}]
+				}
+			},
+			csslint: {
+				options : {
+					"order-alphabetical" : false,
+					"ids" : false,
+					"important" : false,
+					"adjoining-classes" : false,
+					"duplicate-properties" : false,
+					"universal-selector" : false,
+					"floats" : false,
+					"unique-headings" : false,
+					"font-sizes" : false,
+					"overqualified-elements" : false,
+					"box-model" : false,
+					"qualified-headings" : false,
+					"zero-units" : false,
+					"fallback-colors" : false,
+					"duplicate-background-images" : false,
+					"display-property-grouping" : false,
+					"regex-selectors" : false,
+					"unqualified-attributes" : false,
+					"outline-none" : false
+				},
+				src: ['css/*.css', 'css/*.min.css', 'css/**/*.css', 'css/**/*.min.css']
 			}
 		}
 	);
@@ -109,8 +144,11 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks( 'grunt-contrib-jshint' );
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-eslint' );
+	grunt.loadNpmTasks( 'grunt-contrib-cssmin' );
+	grunt.loadNpmTasks( 'grunt-contrib-csslint' );
 
 	// Default task(s).
-	grunt.registerTask( 'default', ['mkdir', 'phpcbf', 'phpcs', 'phplint', 'jshint', 'eslint', 'uglify'] );
+	grunt.registerTask( 'default', ['mkdir', 'phpcbf', 'phpcs', 'phplint', 
+	'jshint', 'eslint', 'uglify', 'cssmin', 'csslint'] );
 
 };
