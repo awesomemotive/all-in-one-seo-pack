@@ -919,7 +919,7 @@ if ( ! function_exists( 'aioseop_mrt_exclude_this_page' ) ) {
 			if ( $url === null ) {
 				$url = $_SERVER['REQUEST_URI'];
 			} else {
-				$url = parse_url( $url );
+				$url = wp_parse_url( $url );
 				if ( ! empty( $url['path'] ) ) {
 					$url = $url['path'];
 				} else {

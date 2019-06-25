@@ -885,8 +885,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		public function get_rewrite_url( $url ) {
 			global $wp_rewrite;
-			// TODO Change to wp_parse_url.
-			$url = parse_url( esc_url( $url ), PHP_URL_PATH );
+			$url = wp_parse_url( esc_url( $url ), PHP_URL_PATH );
 			$url = ltrim( $url, '/' );
 			if ( ! empty( $wp_rewrite ) ) {
 				$rewrite_rules = $wp_rewrite->rewrite_rules();
@@ -2648,8 +2647,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// TODO Add esc_* function.
 			echo '<!-- ' . sprintf( $this->comment_string, $comment, AIOSEOP_VERSION, date( 'D, d M Y H:i:s e' ) ) . " -->\r\n";
 			$plugin_path  = $this->plugin_path['url'];
-			// TODO Change to wp_parse_url().
-			$plugin_url   = parse_url( $plugin_path );
+			$plugin_url   = wp_parse_url( $plugin_path );
 			$current_host = $_SERVER['HTTP_HOST'];
 			if ( empty( $current_host ) ) {
 				$current_host = $_SERVER['SERVER_NAME'];
@@ -3066,12 +3064,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		public function get_addl_pages_only() {
 			$pages = array();
 			if ( ! empty( $this->options[ $this->prefix . 'addl_pages' ] ) ) {
-				// TODO Change to wp_parse_url().
-				$siteurl = parse_url( aioseop_home_url() );
+				$siteurl = wp_parse_url( aioseop_home_url() );
 				foreach ( $this->options[ $this->prefix . 'addl_pages' ] as $k => $v ) {
 					$k   = aiosp_common::make_url_valid_smartly( $k );
-					// TODO Change to wp_parse_url().
-					$url = parse_url( $k );
+					$url = wp_parse_url( $k );
 					if ( empty( $url['host'] ) ) {
 						$url['host'] = $siteurl['host'];
 					}
@@ -4052,17 +4048,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			// Make the url absolute, if its relative.
 			$image   = aiosp_common::absolutize_url( $image );
-			// TODO Change to wp_parse_url().
-			$extn    = pathinfo( parse_url( $image, PHP_URL_PATH ), PATHINFO_EXTENSION );
+			$extn    = pathinfo( wp_parse_url( $image, PHP_URL_PATH ), PATHINFO_EXTENSION );
 			$allowed = apply_filters( 'aioseop_allowed_image_extensions', self::$image_extensions );
 			// Bail if image does not refer to an image file otherwise Google Search Console might reject the sitemap.
 			if ( ! in_array( $extn, $allowed, true ) ) {
 				return false;
 			}
 
-			// TODO Change to wp_parse_url().
-			$image_host = parse_url( $image, PHP_URL_HOST );
-			$host       = parse_url( home_url(), PHP_URL_HOST );
+			$image_host = wp_parse_url( $image, PHP_URL_HOST );
+			$host       = wp_parse_url( home_url(), PHP_URL_HOST );
 
 			if ( $image_host !== $host ) {
 				// Allowed hosts will be provided in a wildcard format i.e. img.yahoo.* or *.akamai.*.
