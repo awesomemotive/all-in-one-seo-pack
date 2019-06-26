@@ -149,6 +149,6 @@ module.exports = function(grunt) {
 
 	// Default task(s).
 	grunt.registerTask( 'default', ['mkdir', 'phpcbf', 'phpcs', 'phplint', 
-	'jshint', 'eslint', 'uglify', 'cssmin', 'csslint'] );
+	'jshint', 'eslint', 'uglify', 'csslint', 'cssmin'] );
 
 };
