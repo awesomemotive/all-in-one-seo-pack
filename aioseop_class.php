@@ -4326,7 +4326,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( ! empty( $opts ) &&
 			! is_date() &&
 			! is_author() &&
-			! is_search()
+			! is_search() &&
+			! is_home()
 			) {
 			$aiosp_noindex  = htmlspecialchars( stripslashes( $opts['aiosp_noindex'] ) );
 			$aiosp_nofollow = htmlspecialchars( stripslashes( $opts['aiosp_nofollow'] ) );
@@ -4373,7 +4374,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			is_page() ||
 			$this->is_static_posts_page() ||
 			is_attachment() ||
-			( $page > 1 ) ||
 			$this->check_singular()
 		) {
 			if ( ! $noindex ) {
