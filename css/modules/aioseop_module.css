@@ -1268,7 +1268,7 @@ div.aioseop_notice a.aioseop_dismiss_link {
 }
 
 .aioseop_tab.ui-widget-content a.aioseop_help_text_link {
-	color: #888 !important;
+	color: #757575 !important;
 }
 
 .aioseop_tabs.ui-widget {
@@ -1514,7 +1514,7 @@ div#aioseop_snippet > div > div {
 }
 
 div#aioseop_snippet > div > div > cite {
-	color: #093;
+	color: #00852B;
 	font-style: normal;
 }
 
