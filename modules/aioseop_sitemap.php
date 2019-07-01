@@ -4168,7 +4168,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			 *
 			 * Allows users to exclude (or include) taxonomy terms from the sitemap.
 			 *
-			 * @since 3.2.0
+			 * @since 2.9
+			 * @since 3.2.0 Rename filter hook & remove redundant params.
 			 *
 			 * @param array $args {
 			 *     @type array $taxonomy Name of the taxonomy that is being included in the sitemap.
