@@ -196,7 +196,6 @@
 	"Helvetica Neue Light",
 	"Helvetica Neue",
 	sans-serif;
-	border-bottom: 1px solid #CCC;
 	width: 100%;
     margin: 8px 0 0 0;
 }
@@ -204,12 +203,13 @@
 .aioseop_head_nav_tab {
 	padding: 10px 15px 10px 15px;
 	margin: 0 0 0 15px;
+	background-color: #fff;
 	border-radius: 4px 4px 0 0;
 	border: 1px solid #CCC;
 	border-bottom: 0 white;
 	float: left;
-	opacity: 0.5;
 	color: black;
+	font-weight: bold;
 	text-shadow: white 0 1px 0;
 	text-decoration: none;
 }
