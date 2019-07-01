@@ -5473,7 +5473,7 @@ EOF;
 						<?php $adid = mt_rand( 21, 22 ); ?>
 							<a
 								href="https://www.wincher.com/?referer=all-in-one-seo-pack&adreferer=banner<?php echo $adid; ?>"
-								target="_blank">
+								target="_blank" aria-label="<?php _e( 'Banner advert for free Wincher rank checker plugin', 'all-in-one-seo-pack' ); ?>">
 								<div class=wincherad id=wincher<?php echo $adid; ?>>
 								</div>
 							</a>
