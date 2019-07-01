@@ -3071,7 +3071,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					}
 					?>
 					<div id="icon-aioseop" class="icon32"><br></div>
-					<h2><?php echo $name; ?></h2>
+					<h1><?php echo $name; ?></h1>
 					<div id="dropmessage" class="updated" style="display:none;"></div>
 				</div>
 				<?php

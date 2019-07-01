@@ -161,7 +161,7 @@ function aiosp_seometa_admin() {
 	<div class="wrap">
 
 
-		<h2><?php _e( 'Import SEO Settings', 'all-in-one-seo-pack' ); ?></h2>
+		<h1><?php _e( 'Import SEO Settings', 'all-in-one-seo-pack' ); ?></h1>
 
 		<p><span
 				class="description"><?php printf( __( 'Use the drop down below to choose which plugin or theme you wish to import SEO data from.', 'all-in-one-seo-pack' ) ); ?></span>
