@@ -744,8 +744,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				$row = "\t
 					<tr>
 						<td>
-							<a href='#' class='dashicons dashicons-trash aiosp_robots_delete_rule' data-id='%s'></a>
-							<a href='#' class='dashicons dashicons-edit aiosp_robots_edit_rule' data-id='%s' data-agent='%s' data-type='%s' data-path='%s'></a>
+							<a href='#' class='dashicons dashicons-trash aiosp_robots_delete_rule' data-id='%s' aria-label='" . __('Delete this rule', 'all-in-one-seo-pack') . "'></a>
+							<a href='#' class='dashicons dashicons-edit aiosp_robots_edit_rule' data-id='%s' data-agent='%s' data-type='%s' data-path='%s' aria-label='" . __('Edit this rule', 'all-in-one-seo-pack') . "'></a>
 						</td>
 						<td>%s</td>
 						<td>%s</td>
