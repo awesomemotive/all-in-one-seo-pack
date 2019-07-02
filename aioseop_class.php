@@ -4340,10 +4340,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$tax_noindex = array();
 		}
 
-		if ( 'on' === $aiosp_noindex || ( ! empty( $aioseop_options['aiosp_paginated_noindex'] && $page > 1 ) ) ) {
+		if ( 'on' === $aiosp_noindex || ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page > 1 ) ) {
 			$noindex = true;
 		}
-		if ( 'on' === $aiosp_nofollow || ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] && $page > 1 ) ) ) {
+		if ( 'on' === $aiosp_nofollow || ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page > 1 ) ) {
 			$nofollow = true;
 		}
 
