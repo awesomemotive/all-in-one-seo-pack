@@ -4042,6 +4042,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return false;
 			}
 
+			$image   = aiosp_common::absolutize_url( $image );
 			$extn    = pathinfo( $image, PATHINFO_EXTENSION );
 			$allowed = apply_filters( 'aioseop_allowed_image_extensions', self::$image_extensions );
 			// Bail if image does not refer to an image file otherwise Google Search Console might reject the sitemap.
