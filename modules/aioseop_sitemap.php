@@ -4023,16 +4023,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
-		 * Is Image URL Valid
+		 * The is_image_url_valid() function.
 		 *
-		 * Validate the image.
-		 * NOTE: We will use parse_url here instead of wp_parse_url as we will correct the URLs beforehand and
-		 * this saves us the need to check PHP version support.
+		 * Checks whether the image URL is valid.
 		 *
 		 * @since 2.4.1
 		 * @since 2.4.3 Compatibility with Pre v4.7 wp_parse_url().
-		 * @since 2.11 Sitemap Optimization #2008 - Changed to a more appropriate name.
-		 * @since 3.0 remove checks for old WP versions
+		 * @since 2.11.0 Sitemap Optimization #2008 - Changed to a more appropriate name.
+		 * @since 3.0.0 Remove checks for old WP versions.
+		 * @since 3.2.0 Remove redundant code.
 		 *
 		 * @param string $image The image src.
 		 * @return bool
@@ -4043,12 +4042,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return false;
 			}
 
-			$component = PHP_URL_PATH;
-			$url       = wp_parse_url( $image, $component );
-
-			// Make the url absolute, if its relative.
-			$image   = aiosp_common::absolutize_url( $image );
-			$extn    = pathinfo( wp_parse_url( $image, PHP_URL_PATH ), PATHINFO_EXTENSION );
+			$extn    = pathinfo( $image, PATHINFO_EXTENSION );
 			$allowed = apply_filters( 'aioseop_allowed_image_extensions', self::$image_extensions );
 			// Bail if image does not refer to an image file otherwise Google Search Console might reject the sitemap.
 			if ( ! in_array( $extn, $allowed, true ) ) {
