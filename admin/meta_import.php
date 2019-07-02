@@ -207,7 +207,7 @@ function aiosp_seometa_admin() {
 			$platform_old = ( ! isset( $_POST['platform_old'] ) ) ? '' : $_POST['platform_old'];
 
 			_e( 'Import SEO data from:', 'all-in-one-seo-pack' );
-			echo '<select name="platform_old" aria-label="' . __('Choose the platform you want to import SEO data from', 'all-in-one-seo-pack') . '">';
+			echo '<select name="platform_old" aria-label="' . __( 'Choose the platform you want to import SEO data from', 'all-in-one-seo-pack' ) . '">';
 			printf( '<option value="">%s</option>', __( 'Choose platform:', 'all-in-one-seo-pack' ) );
 
 			printf( '<optgroup label="%s">', __( 'Plugins', 'all-in-one-seo-pack' ) );
