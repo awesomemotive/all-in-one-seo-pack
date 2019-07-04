@@ -1027,7 +1027,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * Processes the title format for the snippet preview on the Edit screen.
 	 *
 	 * @since 2.4.9
-	 * @since 3.2.0 Refactored to fix various bugs and renamed function.
+	 * @since 3.2.0 Fix #1408 & #2526.
 	 *
 	 * @param array $args
 	 * @return mixed
