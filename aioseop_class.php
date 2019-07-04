@@ -458,7 +458,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				/*  translators: This is a setting users can enable to add the basic markup code to their source code that is needed for Google to generate a Sitelinks Search Box - https://developers.google.com/search/docs/data-types/sitelinks-searchbox.*/
 				'name' => __( 'Display Sitelinks Search Box:', 'all-in-one-seo-pack' ),
 			),
-			// "google_connect"=>array( 'name' => __( 'Connect With Google Analytics', 'all-in-one-seo-pack' ), ),
 			'google_analytics_id'         => array(
 				/* translators: This is a setting where users can add their Google Analytics verification code. Leave this in English if there is no translation for "Google Analytics". */
 				'name'        => __( 'Google Analytics ID:', 'all-in-one-seo-pack' ),
@@ -871,7 +870,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'help_link' => 'https://semperplugins.com/documentation/google-settings/',
 				'options'   => array(
 					'google_sitelinks_search',
-					// "google_connect",
 					'google_analytics_id',
 					'ga_advanced_options',
 					'ga_domain',
@@ -1072,6 +1070,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		if ( false !== strpos( $title_format, '%current_year%', 0 ) ) {
 			$title_format = str_replace( '%current_year%', date( 'Y' ), $title_format );
+		}
+		if ( false !== strpos( $title_format, '%current_month%', 0 ) ) {
+			$title_format = str_replace( '%current_month%', date( 'M' ), $title_format );
+		}
+		if ( false !== strpos( $title_format, '%current_month_i18n%', 0 ) ) {
+			$title_format = str_replace( '%current_month_i18n%', date_i18n( 'M' ), $title_format );
 		}
 		if ( false !== strpos( $title_format, '%post_date%', 0 ) ) {
 			$title_format = str_replace( '%post_date%', aioseop_formatted_date( get_the_time( 'U' ) ), $title_format );
@@ -2060,6 +2064,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( false !== strpos( $new_title, '%current_year%', 0 ) ) {
 			$new_title = str_replace( '%current_year%', date( 'Y' ), $new_title );
 		}
+		if ( false !== strpos( $new_title, '%current_month%', 0 ) ) {
+			$new_title = str_replace( '%current_month%', date( 'M' ), $new_title );
+		}
+		if ( false !== strpos( $new_title, '%current_month_i18n%', 0 ) ) {
+			$new_title = str_replace( '%current_month_i18n%', date_i18n( 'M' ), $new_title );
+		}
 		if ( false !== strpos( $new_title, '%post_date%', 0 ) ) {
 			$new_title = str_replace( '%post_date%', aioseop_formatted_date( get_the_date( 'U' ) ), $new_title );
 		}
@@ -2425,6 +2435,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		if ( false !== strpos( $title, '%current_year%', 0 ) ) {
 			$title = str_replace( '%current_year%', date( 'Y' ), $title );
+		}
+		if ( false !== strpos( $title, '%current_month%', 0 ) ) {
+			$title = str_replace( '%current_month%', date( 'M' ), $title );
+		}
+		if ( false !== strpos( $title, '%current_month_i18n%', 0 ) ) {
+			$title = str_replace( '%current_month_i18n%', date_i18n( 'M' ), $title );
 		}
 
 		/**
@@ -3515,9 +3531,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				unset( $settings[ "{$prefix}$opt" ] );
 			}
 
-			if ( ! class_exists( 'DOMDocument' ) ) {
-				unset( $settings['{prefix}google_connect'] );
-			}
 			if ( AIOSEOPPRO ) {
 				if ( ! empty( $this->options['aiosp_license_key'] ) ) {
 					$settings['aiosp_license_key']['type'] = 'password';
@@ -4321,6 +4334,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( false !== strpos( $description, '%current_year%', 0 ) ) {
 			$description = str_replace( '%current_year%', date( 'Y' ), $description );
 		}
+		if ( false !== strpos( $description, '%current_month%', 0 ) ) {
+			$description = str_replace( '%current_month%', date( 'M' ), $description );
+		}
+		if ( false !== strpos( $description, '%current_month_i18n%', 0 ) ) {
+			$description = str_replace( '%current_month_i18n%', date_i18n( 'M' ), $description );
+		}
 		if ( false !== strpos( $description, '%post_date%', 0 ) ) {
 			$description = str_replace( '%post_date%', get_the_date(), $description );
 		}
@@ -4701,7 +4720,7 @@ EOF;
 	}
 
 	/**
-	 * Override Options
+	 * Google Analytics
 	 *
 	 * @since ?
 	 *
@@ -4710,14 +4729,6 @@ EOF;
 	 * @param $settings
 	 * @return mixed
 	 */
-	function override_options( $options, $location, $settings ) {
-		if ( class_exists( 'DOMDocument' ) ) {
-			$options['aiosp_google_connect'] = $settings['aiosp_google_connect']['default'];
-		}
-
-		return $options;
-	}
-
 	function aiosp_google_analytics() {
 		new aioseop_google_analytics;
 	}
