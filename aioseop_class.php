@@ -1011,7 +1011,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( empty( $title_format ) ) {
 			$title = '<span id="' . $args['name'] . '_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title ) ) ) . '</span>';
 		} else {
-			$title_format    = $this->get_title_format( $args );
+			$title_format    = $this->get_preview_snippet_title();
 			$title           = $title_format;
 		}
 
@@ -1022,17 +1022,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Get Title Format
+	 * The get_preview_snippet_title() function.
 	 *
-	 * Get Title Format for snippet preview.
-	 * Get the title formatted according to AIOSEOP %shortcodes% specifically for the snippet preview..
+	 * Processes the title format for the snippet preview on the Edit screen.
 	 *
 	 * @since 2.4.9
+	 * @since 3.2.0 Refactored to fix various bugs and renamed function.
 	 *
 	 * @param array $args
 	 * @return mixed
 	 */
-	public function get_title_format( $args ) {
+	public function get_preview_snippet_title() {
 		$info         = $this->get_page_snippet_info();
 		$title        = $info['title'];
 		$description  = $info['description'];
@@ -1040,30 +1040,36 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$url          = $info['url'];
 		$title_format = $info['title_format'];
 		$category     = $info['category'];
-		$w            = $info['w'];
-		$p            = $info['p'];
+		$wp_query     = $info['w'];
+		$post         = $info['p'];
+
+		// Posts page title doesn't need to be processed because get_aioseop_title() does this.
+		if ( is_home() ) {
+			return $this->get_preview_snippet_title_helper( $title );
+		}
 
 		/**
-		 * Runs before we start applying the formatting for the snippet preview title.
+		 * The aioseop_before_get_title_format action hook.
 		 *
-		 * @since 3.0
+		 * Runs before we process the title format for the snippet preview is.
+		 *
+		 * @since 3.0.0
 		 */
 		do_action( 'aioseop_before_get_title_format' );
 
 		if ( false !== strpos( $title_format, '%site_title%', 0 ) ) {
 			$title_format = str_replace( '%site_title%', get_bloginfo( 'name' ), $title_format );
 		}
-		// %blog_title% is deprecated.
+		// %blog_title% macro is deprecated.
 		if ( false !== strpos( $title_format, '%blog_title%', 0 ) ) {
 			$title_format = str_replace( '%blog_title%', get_bloginfo( 'name' ), $title_format );
 		}
 		$title_format  = $this->apply_cf_fields( $title_format );
-		$replace_title = '<span id="' . $args['name'] . '_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title ) ) ) . '</span>';
 		if ( false !== strpos( $title_format, '%post_title%', 0 ) ) {
-			$title_format = str_replace( '%post_title%', $replace_title, $title_format );
+			$title_format = str_replace( '%post_title%', $title, $title_format );
 		}
 		if ( false !== strpos( $title_format, '%page_title%', 0 ) ) {
-			$title_format = str_replace( '%page_title%', $replace_title, $title_format );
+			$title_format = str_replace( '%page_title%', $title, $title_format );
 		}
 		if ( false !== strpos( $title_format, '%current_date%', 0 ) ) {
 			$title_format = str_replace( '%current_date%', aioseop_formatted_date(), $title_format );
@@ -1086,7 +1092,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( false !== strpos( $title_format, '%post_month%', 0 ) ) {
 			$title_format = str_replace( '%post_month%', get_the_date( 'F' ), $title_format );
 		}
-		if ( $w->is_category || $w->is_tag || $w->is_tax ) {
+		if ( $wp_query->is_category || $wp_query->is_tag || $wp_query->is_tax ) {
 			if ( AIOSEOPPRO && ! empty( $_GET ) && ! empty( $_GET['taxonomy'] ) && ! empty( $_GET['tag_ID'] ) && function_exists( 'wp_get_split_terms' ) ) {
 				$term_id   = intval( $_GET['tag_ID'] );
 				$was_split = get_term_meta( $term_id, '_aioseop_term_was_split', true );
@@ -1137,31 +1143,39 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title_format = str_replace( '%taxonomy_description%', $description, $title_format );
 		}
 
+		$title_format = $this->get_preview_snippet_title_helper( $title_format );
+
 		/**
-		 * Filters document title after applying the formatting.
+		 * The aioseop_title_format filter hook.
 		 *
-		 * @since 3.0
+		 * Filter the title for the preview snippet after replacing all macros.
 		 *
-		 * @param string $title_format Document title to be filtered.
+		 * @since 3.0.0
+		 *
+		 * @param string $title_format Title format to be filtered.
 		 */
 		$title_format = apply_filters( 'aioseop_title_format', $title_format );
 
-		$title_format    = preg_replace( '/%([^%]*?)%/', '', $title_format );
-
 		/**
-		 * Runs after applying the formatting for the snippet preview title.
+		 * The aioseop_after_format_title action hook.
 		 *
-		 * @since 3.0
+		 * Runs after we have processed the title format for the snippet preview is.
+		 *
+		 * @since 3.0.0
 		 */
 		do_action( 'aioseop_after_format_title' );
 
 		return $title_format;
 	}
 
+	function get_preview_snippet_title_helper( $title_format ) {
+		return '<span id="aiosp_snippet_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title_format ) ) ) . '</span>';
+	}
+
 	/**
-	 * Get Page Snippet Info
+	 * The get_page_snippet_info() function.
 	 *
-	 * Good candidate for pro dir.
+	 * Gets data that is needed to determine the preview snippet.
 	 *
 	 * @since ?
 	 *
@@ -3414,14 +3428,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			// Screens `post.php`, `post-new.php`, & `../aioseop_class.php` share the same `count-char.js`.
 			case 'post.php':
 			case 'post-new.php':
-				$info         = $this->get_page_snippet_info();
-				$title        = $info['title'];
-				$title_format = $this->get_title_format( array( 'name' => 'aiosp_snippet' ) );
-
-				if ( ! empty( $title_format ) ) {
-					$replace_title   = '<span id="aiosp_snippet_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title ) ) ) . '</span>';
-					$extra_title_len = strlen( $this->html_entity_decode( str_replace( $replace_title, '', $title_format ) ) );
-				}
 				// Fall through.
 			case 'toplevel_page_' . AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class':
 				wp_enqueue_script(
