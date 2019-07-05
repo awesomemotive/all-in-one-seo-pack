@@ -425,14 +425,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default' => array( 'post', 'page' ),
 			),
 			'google_verify'               => array(
-				/* translators: This is a setting where users can add their Google Search Console verification code. Leave this in English if there is no translation for "Google Search Console". */
-				'name'    => __( 'Google Search Console:', 'all-in-one-seo-pack' ),
+				'name'    => 'Google Search Console:',
 				'default' => '',
 				'type'    => 'text',
 			),
 			'bing_verify'                 => array(
-				/* translators: This is a setting where users can add their Bing Webmaster Tools verification code. Leave this in English if there is no translation for "Bing Webmaster Tools". */
-				'name'    => __( 'Bing Webmaster Tools:', 'all-in-one-seo-pack' ),
+				'name'    => 'Bing Webmaster Tools:',
 				'default' => '',
 				'type'    => 'text',
 			),
@@ -443,14 +441,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'type'    => 'text',
 			),
 			'yandex_verify'               => array(
-				/* translators: This is a setting where users can add their Yandex Webmaster Tools verification code. Leave this in English if there is no translation for "Yandex Webmaster Tools". */
-				'name'    => __( 'Yandex Webmaster Tools:', 'all-in-one-seo-pack' ),
+				'name'    => 'Yandex Webmaster Tools:',
 				'default' => '',
 				'type'    => 'text',
 			),
 			'baidu_verify'                => array(
-				/* translators: This is a setting where users can add their Baidu Webmaster Tools verification code. Leave this in English if there is no translation for "Baidu Webmaster Tools". */
-				'name'    => __( 'Baidu Webmaster Tools:', 'all-in-one-seo-pack' ),
+				'name'    => 'Baidu Webmaster Tools:',
 				'default' => '',
 				'type'    => 'text',
 			),
