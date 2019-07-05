@@ -28,15 +28,28 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Front' ) ) {
 		}
 
 		/**
-		 * NoIndex & Follow RSS
+		 * The noindex_follow_rss() function.
 		 *
-		 * Noindex and follow RSS feeds.
+		 * Adds "noindex,follow" as HTTP header for RSS feeds.
 		 *
-		 * @Since 2.3.6
+		 * @since 2.3.6
+		 * @since 3.2.0 Added noindex_rss filter hook.
 		 */
 		public function noindex_follow_rss() {
 			if ( is_feed() && headers_sent() === false ) {
-				header( 'X-Robots-Tag: noindex, follow', true );
+				/**
+				 * The aioseop_noindex_rss filter hook.
+				 *
+				 * Filter whether RSS feeds should or shouldn't have HTTP noindex header.
+				 *
+				 * @since 3.2.0
+				 *
+				 * @param bool
+				 */
+				$noindex = apply_filters( 'aioseop_noindex_rss', true );
+				if ( $noindex ) {
+					header( 'X-Robots-Tag: noindex, follow', true );
+				}
 			}
 		}
 
