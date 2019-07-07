@@ -230,12 +230,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		$this->default_options = array(
 			'license_key'                 => array(
-				/* translators: This is the name of a setting where users can enter their license code for All in One SEO Pack Pro. */
+				/* translators: This is a setting where users can enter their license code for All in One SEO Pack Pro. */
 				'name' => __( 'License Key:', 'all-in-one-seo-pack' ),
 				'type' => 'text',
 			),
 			'home_title'                  => array(
-				/* translators: This is the name of a setting where users can enter the title for their homepage. */
+				/* translators: This is a setting where users can enter the title for their homepage. */
 				'name'     => __( 'Home Title:', 'all-in-one-seo-pack' ),
 				'default'  => null,
 				'type'     => 'text',
@@ -246,7 +246,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'condshow' => array( 'aiosp_use_static_home_info' => 0 ),
 			),
 			'home_description'            => array(
-				/* translators: This is the name of a setting where users can enter the description for their homepage. */
+				/* translators: This is a setting where users can enter the description for their homepage. */
 				'name'     => __( 'Home Description:', 'all-in-one-seo-pack' ),
 				'default'  => '',
 				'type'     => 'textarea',
@@ -257,7 +257,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'condshow' => array( 'aiosp_use_static_home_info' => 0 ),
 			),
 			'togglekeywords'              => array(
-				/* translators: This is the name of a setting where users can enable the use of meta keywords for their website. */
+				/* translators: This is a setting where users can enable the use of meta keywords for their website. */
 				'name'            => __( 'Use Keywords:', 'all-in-one-seo-pack' ),
 				'default'         => 1,
 				'type'            => 'radio',
@@ -269,7 +269,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'home_keywords'               => array(
-				/* translators: This is the name of a setting where users can enter meta keywords for their homepage. */
+				/* translators: This is a setting where users can enter meta keywords for their homepage. */
 				'name'     => __( 'Home Keywords (comma separated):', 'all-in-one-seo-pack' ),
 				'default'  => null,
 				'type'     => 'textarea',
@@ -280,7 +280,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'use_static_home_info'        => array(
-				/* translators: This is the name of a setting where users can indicate that their using a static page for their homepage. */
+				/* translators: This is a setting where users can indicate that their using a static page for their homepage. */
 				'name'            => __( 'Use Static Front Page Instead', 'all-in-one-seo-pack' ),
 				'default'         => 0,
 				'type'            => 'radio',
@@ -536,6 +536,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'ga_display_advertising'      => array(
+				/* translators: This is a setting that enables a collection of Google Analytics features so you can, for example, create segments based on demographic and interest data. */
 				'name'     => __( 'Display Advertiser Tracking:', 'all-in-one-seo-pack' ),
 				'type'     => 'checkbox',
 				'condshow' => array(
@@ -548,6 +549,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'ga_exclude_users'            => array(
+				/* translators: This is a setting that allows you to exclude certain WordPress user roles, e.g. Administrators, from Google Analytics tracking. */
 				'name'     => __( 'Exclude Users From Tracking:', 'all-in-one-seo-pack' ),
 				'type'     => 'multicheckbox',
 				'condshow' => array(
@@ -560,6 +562,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'ga_track_outbound_links'     => array(
+				/* translators: This is a setting that enables tracking of outbound/external links by Google Analytics. */
 				'name'     => __( 'Track Outbound Links:', 'all-in-one-seo-pack' ),
 				'default'  => 0,
 				'condshow' => array(
@@ -572,6 +575,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'ga_link_attribution'         => array(
+				/* translators: This is a setting for Google Analytics that allows you to tag your pages to implement enhanced link-tracking. */
 				'name'     => __( 'Enhanced Link Attribution:', 'all-in-one-seo-pack' ),
 				'default'  => 0,
 				'condshow' => array(
@@ -584,6 +588,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'ga_enhanced_ecommerce'       => array(
+				/* translators: This is a setting which tells Google Analytics to track your customers' path to purchase on your e-commerce website. */
 				'name'     => __( 'Enhanced Ecommerce:', 'all-in-one-seo-pack' ),
 				'default'  => 0,
 				'condshow' => array(
@@ -596,121 +601,147 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'use_categories'              => array(
+				/* translators: This is the name of a setting. By enabling it, the plugin will use the categories of the relevant post as meta keywords in addition to any user-specified keywords. */
 				'name'     => __( 'Use Categories for META keywords:', 'all-in-one-seo-pack' ),
 				'default'  => 0,
 				'condshow' => array( 'aiosp_togglekeywords' => 0 ),
 			),
 			'use_tags_as_keywords'        => array(
+				/* translators: This is the name of a setting. By enabling it, the plugin will use the tags of the relevant post as meta keywords in addition to any user-specified keywords. */
 				'name'     => __( 'Use Tags for META keywords:', 'all-in-one-seo-pack' ),
 				'default'  => 1,
 				'condshow' => array( 'aiosp_togglekeywords' => 0 ),
 			),
 			'dynamic_postspage_keywords'  => array(
+				/* translators: This a setting that allows you to dynamically output meta keywords on archive pages based on the keywords from the posts that are displayed by the archive page. */
 				'name'     => __( 'Dynamically Generate Keywords for Posts Page/Archives:', 'all-in-one-seo-pack' ),
 				'default'  => 1,
 				'condshow' => array( 'aiosp_togglekeywords' => 0 ),
 			),
 			'category_noindex'            => array(
+				/* translators: This is a global setting that allows you to NOINDEX all your categories. */
 				'name'    => __( 'Use noindex for Categories:', 'all-in-one-seo-pack' ),
 				'default' => 1,
 			),
 			'archive_date_noindex'        => array(
+				/* translators: This is a global setting that allows you to NOINDEX all your data archive pages. */
 				'name'    => __( 'Use noindex for Date Archives:', 'all-in-one-seo-pack' ),
 				'default' => 1,
 			),
 			'archive_author_noindex'      => array(
+				/* translators: This is a global setting that allows you to NOINDEX all your author archive pages. */
 				'name'    => __( 'Use noindex for Author Archives:', 'all-in-one-seo-pack' ),
 				'default' => 1,
 			),
 			'tags_noindex'                => array(
+				/* translators: This is a global setting that allows you to NOINDEX all your tag archive pages. */
 				'name'    => __( 'Use noindex for Tag Archives:', 'all-in-one-seo-pack' ),
 				'default' => 0,
 			),
 			'search_noindex'              => array(
+				/* translators: This is a setting that allows you to NOINDEX your search results page. */
 				'name'    => __( 'Use noindex for the Search page:', 'all-in-one-seo-pack' ),
 				'default' => 0,
 			),
 			'404_noindex'                 => array(
+				/* translators: This is a setting that allows you to NOINDEX your 404 Not Found page. */
 				'name'    => __( 'Use noindex for the 404 page:', 'all-in-one-seo-pack' ),
 				'default' => 0,
 			),
 			'tax_noindex'                 => array(
+				/* translators: This is a global setting that allows you to NOINDEX all your taxonomies. */
 				'name'    => __( 'Use noindex for Taxonomy Archives:', 'all-in-one-seo-pack' ),
 				'type'    => 'multicheckbox',
 				'default' => array(),
 			),
 			'paginated_noindex'           => array(
+				/* translators: This is a global setting that allows you to NOINDEX all your paginated content (page 2 and higher). */
 				'name'    => __( 'Use noindex for paginated pages/posts:', 'all-in-one-seo-pack' ),
 				'default' => 0,
 			),
 			'paginated_nofollow'          => array(
+				/* translators: This is a global setting that allows you to NOFOLLOW all your paginated content. */
 				'name'    => __( 'Use nofollow for paginated pages/posts:', 'all-in-one-seo-pack' ),
 				'default' => 0,
 			),
 			'generate_descriptions'       => array(
+				/* translators: This is a setting that allows the plugin to automatically populate the meta description tag based on the excerpt or content of the post/page.*/
 				'name'    => __( 'Autogenerate Descriptions:', 'all-in-one-seo-pack' ),
 				'default' => 0,
 			),
 			'skip_excerpt'                => array(
+				/* translators: This is the name of a setting. By enabling it, the plugin will use the content of the post/page to automatically populate the meta description tag, instead of the excerpt. */
 				'name'     => __( 'Use Content For Autogenerated Descriptions:', 'all-in-one-seo-pack' ),
 				'default'  => 0,
 				'condshow' => array( 'aiosp_generate_descriptions' => 'on' ),
 			),
 			'run_shortcodes'              => array(
+				/* translators: This is a setting that enables the plugin to execute shortcodes in the autogenerated descriptions. Shortcodes allow people to execute code inside WordPress posts, pages, and widgets without writing any code directly. */
 				'name'     => __( 'Run Shortcodes In Autogenerated Descriptions:', 'all-in-one-seo-pack' ),
 				'default'  => 0,
 				'condshow' => array( 'aiosp_generate_descriptions' => 'on' ),
 			),
 			'hide_paginated_descriptions' => array(
+				/* translators: This is a setting that, if enabled, removes the meta description for paginated content (page 2 and higher). */
 				'name'    => __( 'Remove Descriptions For Paginated Pages:', 'all-in-one-seo-pack' ),
 				'default' => 0,
 			),
 			'dont_truncate_descriptions'  => array(
+				/* translators: This is a setting that makes sure the plugin does not truncate the meta description tag if it is longer than what All in One SEO Pack recommends. */
 				'name'    => __( 'Never Shorten Long Descriptions:', 'all-in-one-seo-pack' ),
 				'default' => 0,
 			),
 			'schema_markup'               => array(
+				/* translators: This is a setting that outputs basic Schema.org markup, also known as structured data, into the source code of each page. */
 				'name'    => __( 'Use Schema.org Markup', 'all-in-one-seo-pack' ),
 				'default' => 1,
 			),
 			'unprotect_meta'              => array(
+				/* translators: This is a setting that allows users to unprotect internal postmeta fields for use with XML-RPC. */
 				'name'    => __( 'Unprotect Post Meta Fields:', 'all-in-one-seo-pack' ),
 				'default' => 0,
 			),
 			'redirect_attachement_parent' => array(
+				/* translators: This is the name of a setting. By enabling it, the plugin will redirect attachment page requests to the post parent, or in other words, the post/page where the media is embedded. */
 				'name'    => __( 'Redirect Attachments to Post Parent:', 'all-in-one-seo-pack' ),
 				'default' => 0,
 			),
 			'ex_pages'                    => array(
+				/* translators: This is a textarea setting where users can enter a list of pages that All in One SEO Pack should not affect. */
 				'name'    => __( 'Exclude Pages:', 'all-in-one-seo-pack' ),
 				'type'    => 'textarea',
 				'default' => '',
 			),
 			'post_meta_tags'              => array(
+				/* translators: This is a setting that allows users to ouput additional code, such as references to stylesheets or JavaScript libraries, into the HEAD section of each post. */
 				'name'     => __( 'Additional Post Headers:', 'all-in-one-seo-pack' ),
 				'type'     => 'textarea',
 				'default'  => '',
 				'sanitize' => 'default',
 			),
 			'page_meta_tags'              => array(
+				/* translators: This is a setting that allows users to ouput additional HTML tags, such as references to stylesheets or JavaScript libraries, into the HEAD section of each page. */
 				'name'     => __( 'Additional Page Headers:', 'all-in-one-seo-pack' ),
 				'type'     => 'textarea',
 				'default'  => '',
 				'sanitize' => 'default',
 			),
 			'front_meta_tags'             => array(
+				/* translators: This is a setting that allows users to ouput additional HTML tags, such as references to stylesheets or JavaScript libraries, into the HEAD section of the frontpage/homepage. */
 				'name'     => __( 'Additional Front Page Headers:', 'all-in-one-seo-pack' ),
 				'type'     => 'textarea',
 				'default'  => '',
 				'sanitize' => 'default',
 			),
 			'home_meta_tags'              => array(
+				/* translators: This is a setting that allows users to ouput additional HTML tags, such as references to stylesheets or JavaScript libraries, into the HEAD section of the static Posts page (see Settings > Reading). */
 				'name'     => __( 'Additional Posts Page Headers:', 'all-in-one-seo-pack' ),
 				'type'     => 'textarea',
 				'default'  => '',
 				'sanitize' => 'default',
 			),
 			'do_log'                      => array(
+				/* translators: This is a setting that enables All in One SEO Pack to log important events to help with debugging. */
 				'name'    => __( 'Log important events:', 'all-in-one-seo-pack' ),
 				'default' => null,
 			),
