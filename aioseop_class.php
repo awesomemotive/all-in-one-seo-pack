@@ -280,7 +280,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'use_static_home_info'        => array(
-				/* translators: This is a setting where users can indicate that their using a static page for their homepage. */
+				/* translators: This is a setting where users can indicate that they are using a static page for their homepage. */
 				'name'            => __( 'Use Static Front Page Instead', 'all-in-one-seo-pack' ),
 				'default'         => 0,
 				'type'            => 'radio',
@@ -624,7 +624,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default' => 1,
 			),
 			'archive_date_noindex'        => array(
-				/* translators: This is a global setting that allows you to NOINDEX all your data archive pages. */
+				/* translators: This is a global setting that allows you to NOINDEX all your date archive pages. */
 				'name'    => __( 'Use noindex for Date Archives:', 'all-in-one-seo-pack' ),
 				'default' => 1,
 			),
@@ -649,7 +649,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default' => 0,
 			),
 			'tax_noindex'                 => array(
-				/* translators: This is a global setting that allows you to NOINDEX all your taxonomies. */
+				/* translators: This is a global setting that allows you to NOINDEX specific taxonomies. */
 				'name'    => __( 'Use noindex for Taxonomy Archives:', 'all-in-one-seo-pack' ),
 				'type'    => 'multicheckbox',
 				'default' => array(),
