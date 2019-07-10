@@ -450,10 +450,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default' => '',
 				'type'    => 'text',
 			),
-			'google_sitelinks_search'     => array(
-				/*  translators: This is a setting users can enable to add the basic markup code to their source code that is needed for Google to generate a Sitelinks Search Box - https://developers.google.com/search/docs/data-types/sitelinks-searchbox.*/
-				'name' => __( 'Display Sitelinks Search Box:', 'all-in-one-seo-pack' ),
-			),
 			'google_analytics_id'         => array(
 				/* translators: This is a setting where users can add their Google Analytics verification code. Leave this in English if there is no translation for "Google Analytics". */
 				'name'        => __( 'Google Analytics ID:', 'all-in-one-seo-pack' ),
@@ -594,6 +590,69 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'rhs' => '',
 					),
 					'aiosp_ga_advanced_options' => 'on',
+				),
+			),
+			'google_sitelinks_search'     => array(
+				/*  translators: This is a setting users can enable to add the basic markup code to their source code that is needed for Google to generate a Sitelinks Search Box - https://developers.google.com/search/docs/data-types/sitelinks-searchbox.*/
+				'name' => __( 'Display Sitelinks Search Box:', 'all-in-one-seo-pack' ),
+			),
+			'social_profile_links'        => array(
+				'name' => __( 'Social Profile Links:', 'all-in-one-seo-pack' ),
+				'type' => 'textarea',
+			),
+			'site_represents'             => array(
+				'name'            => __( 'Person or Organization:', 'all-in-one-seo-pack' ),
+				'type'            => 'radio',
+				'default'         => 'organization',
+				'initial_options' => array(
+					'organization' => __( 'Organization', 'all-in-one-seo-pack' ),
+					'person'       => __( 'Person', 'all-in-one-seo-pack' ),
+				),
+			),
+			'organization_name'           => array(
+				'name'     => __( 'Organization Name:', 'all-in-one-seo-pack' ),
+				'type'     => 'text',
+				'condshow' => array(
+					'aiosp_site_represents' => 'organization',
+				),
+			),
+			'organization_logo'           => array(
+				'name'     => __( 'Organization Logo:', 'all-in-one-seo-pack' ),
+				'type'     => 'image',
+				'condshow' => array(
+					'aiosp_site_represents' => 'organization',
+				),
+			),
+
+			'person_user'                 => array(
+				'name'     => __( 'Person\'s Username:', 'all-in-one-seo-pack' ),
+				'type'     => 'select',
+				'default'  => 1,
+				'condshow' => array(
+					'aiosp_site_represents' => 'person',
+				),
+				// Add initial options below.
+			),
+			'phone_number'                => array(
+				'name' => __( 'Phone Number:', 'all-in-one-seo-pack' ),
+				'type' => 'text',
+			),
+			'contact_type'                => array(
+				'name'            => __( 'Type of Contact:', 'all-in-one-seo-pack' ),
+				'type'            => 'select',
+				'initial_options' => array(
+					'none'                => __( '-- Select --', 'all-in-one-seo-pack' ),
+					'customer support'    => __( 'Customer Support', 'all-in-one-seo-pack' ),
+					'tech support'        => __( 'Technical Support', 'all-in-one-seo-pack' ),
+					'billing support'     => __( 'Billing Support', 'all-in-one-seo-pack' ),
+					'bill payment'        => __( 'Bill Payment', 'all-in-one-seo-pack' ),
+					'sales'               => __( 'Sales', 'all-in-one-seo-pack' ),
+					'reservations'        => __( 'Reservations', 'all-in-one-seo-pack' ),
+					'credit card support' => __( 'Credit Card Support', 'all-in-one-seo-pack' ),
+					'emergency'           => __( 'Emergency', 'all-in-one-seo-pack' ),
+					'baggage tracking'    => __( 'Baggage Tracking', 'all-in-one-seo-pack' ),
+					'roadside assistance' => __( 'Roadside Assistance', 'all-in-one-seo-pack' ),
+					'package tracking'    => __( 'Package Tracking', 'all-in-one-seo-pack' ),
 				),
 			),
 			'use_categories'              => array(
@@ -741,6 +800,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'    => __( 'Log important events:', 'all-in-one-seo-pack' ),
 				'default' => null,
 			),
+
 		);
 
 		if ( ! AIOSEOPPRO ) {
@@ -896,7 +956,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'      => __( 'Google Settings', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/documentation/google-settings/',
 				'options'   => array(
-					'google_sitelinks_search',
 					'google_analytics_id',
 					'ga_advanced_options',
 					'ga_domain',
@@ -908,6 +967,20 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'ga_track_outbound_links',
 					'ga_link_attribution',
 					'ga_enhanced_ecommerce',
+				),
+			),
+			'schema'    => array(
+				'name'      => __( 'Schema Settings', 'all-in-one-seo-pack' ),
+				'help_link' => 'https://semperplugins.com/documentation/noindex-settings/',
+				'options'   => array(
+					'google_sitelinks_search',
+					'social_profile_links',
+					'site_represents',
+					'organization_name',
+					'organization_logo',
+					'person_user',
+					'phone_number',
+					'contact_type',
 				),
 			),
 			'noindex'   => array(
@@ -956,6 +1029,21 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 		);
+
+		$user_args = array(
+			'role__in' => array(
+				'administrator',
+				'editor',
+				'author',
+			),
+			'orderby'  => 'nicename',
+		);
+		$users = get_users( $user_args );
+
+		$this->default_options['person_user']['initial_options'] = array();
+		foreach ( $users as $user ) {
+			$this->default_options['person_user']['initial_options'][ $user->ID ] = $user->data->user_nicename . ' (' . $user->data->display_name . ')';
+		}
 
 		if ( AIOSEOPPRO ) {
 			// Add Pro options.
@@ -4217,6 +4305,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( $meta_string != null ) {
 			echo "$meta_string\n";
 		}
+
+		// Handle Schema.
+		$aioseop_schema = new AIOSEOP_Schema_Builder();
+		$aioseop_schema->display_json_ld_head_script();
 
 		// Handle canonical links.
 		$show_page = true;
