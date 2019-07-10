@@ -1029,7 +1029,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @since 2.4.9
 	 * @since 3.2.0 Fix #1408 & #2526.
 	 *
-	 * @param array $args
 	 * @return mixed
 	 */
 	public function get_preview_snippet_title() {
@@ -1106,10 +1105,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				}
 			}
 			if ( false !== strpos( $title_format, '%category_title%', 0 ) ) {
-				$title_format = str_replace( '%category_title%', $replace_title, $title_format );
+				$title_format = str_replace( '%category_title%', $title, $title_format );
 			}
 			if ( false !== strpos( $title_format, '%taxonomy_title%', 0 ) ) {
-				$title_format = str_replace( '%taxonomy_title%', $replace_title, $title_format );
+				$title_format = str_replace( '%taxonomy_title%', $title, $title_format );
 			}
 		} else {
 			if ( false !== strpos( $title_format, '%category%', 0 ) ) {
@@ -1122,7 +1121,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$title_format = str_replace( '%taxonomy_title%', $category, $title_format );
 			}
 			if ( AIOSEOPPRO ) {
-				if ( strpos( $title_format, '%tax_', 0 ) && ! empty( $p ) ) {
+				if ( strpos( $title_format, '%tax_', 0 ) && ! empty( $post ) ) {
 					$taxes = get_object_taxonomies( $p, 'objects' );
 					if ( ! empty( $taxes ) ) {
 						foreach ( $taxes as $t ) {
@@ -1177,7 +1176,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @param string $title_format
 	 * @return string
 	 */
-	function get_preview_snippet_title_helper( $title_format ) {
+	private function get_preview_snippet_title_helper( $title_format ) {
 		return '<span id="aiosp_snippet_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title_format ) ) ) . '</span>';
 	}
 
