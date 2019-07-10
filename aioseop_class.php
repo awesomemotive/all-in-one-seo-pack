@@ -1168,6 +1168,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		return $title_format;
 	}
 
+	/**
+	 * The get_preview_snippet_title_helper() function.
+	 *
+	 * Wraps the preview snippet title in its HTML span element.
+	 * Helper function for the get_preview_snippet_title() function.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param string $title_format
+	 * @return string
+	 */
 	function get_preview_snippet_title_helper( $title_format ) {
 		return '<span id="aiosp_snippet_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title_format ) ) ) . '</span>';
 	}
