@@ -196,7 +196,6 @@
 	"Helvetica Neue Light",
 	"Helvetica Neue",
 	sans-serif;
-	border-bottom: 1px solid #CCC;
 	width: 100%;
     margin: 8px 0 0 0;
 }
@@ -204,12 +203,13 @@
 .aioseop_head_nav_tab {
 	padding: 10px 15px 10px 15px;
 	margin: 0 0 0 15px;
+	background-color: #fff;
 	border-radius: 4px 4px 0 0;
 	border: 1px solid #CCC;
 	border-bottom: 0 white;
 	float: left;
-	opacity: 0.5;
 	color: black;
+	font-weight: bold;
 	text-shadow: white 0 1px 0;
 	text-decoration: none;
 }
@@ -1268,7 +1268,7 @@ div.aioseop_notice a.aioseop_dismiss_link {
 }
 
 .aioseop_tab.ui-widget-content a.aioseop_help_text_link {
-	color: #888 !important;
+	color: #757575 !important;
 }
 
 .aioseop_tabs.ui-widget {
@@ -1514,7 +1514,7 @@ div#aioseop_snippet > div > div {
 }
 
 div#aioseop_snippet > div > div > cite {
-	color: #093;
+	color: #00852B;
 	font-style: normal;
 }
 
@@ -1595,4 +1595,9 @@ div#aiosp_sitemap_status_metabox .toggle-indicator {
 
 #aiosp_file_editor_htaccess_metabox {
     margin: 0 !important;
+}
+
+.aioseop_options .aioseop-exclude-terms.selectize-control.multi .selectize-input [data-value] {
+	background-color: #0E7BBE;
+	background-image: none;
 }

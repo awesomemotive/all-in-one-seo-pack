@@ -39,10 +39,9 @@ if ( ! defined( 'AIOSEOPPRO' ) ) {
 	define( 'AIOSEOPPRO', false );
 }
 if ( ! defined( 'AIOSEOP_PLUGIN_NAME' ) ) {
-	if ( !AIOSEOPPRO ) {
+	if ( ! AIOSEOPPRO ) {
 		define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack' );
-	}
-	else {
+	} else {
 		define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack Pro' );
 	}
 }

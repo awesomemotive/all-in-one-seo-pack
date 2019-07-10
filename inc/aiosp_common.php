@@ -148,7 +148,7 @@ class aiosp_common {
 		if ( 0 !== strpos( $url, 'http' ) && '/' !== $url ) {
 			if ( 0 === strpos( $url, '//' ) ) {
 				// for //<host>/resource type urls.
-				$scheme = parse_url( home_url(), PHP_URL_SCHEME );
+				$scheme = wp_parse_url( home_url(), PHP_URL_SCHEME );
 				$url    = $scheme . ':' . $url;
 			} else {
 				// for /resource type urls.
@@ -169,7 +169,7 @@ class aiosp_common {
 	 * @return string
 	 */
 	static function make_url_valid_smartly( $url ) {
-		$scheme = parse_url( home_url(), PHP_URL_SCHEME );
+		$scheme = wp_parse_url( home_url(), PHP_URL_SCHEME );
 		if ( 0 !== strpos( $url, 'http' ) ) {
 			if ( 0 === strpos( $url, '//' ) ) {
 				// for //<host>/resource type urls.

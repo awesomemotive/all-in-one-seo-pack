@@ -684,7 +684,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						if ( is_object( $v ) ) {
 							$v = (array) $v;
 						}
-						$buf .= "\t<tr><td><a href='#' title='$k' class='dashicons dashicons-trash aiosp_delete_url'></a> {$k}</td><td>{$v['prio']}</td><td>{$v['freq']}</td><td>{$v['mod']}</td></tr>\n";
+						$buf .= "\t<tr><td><a href='#' title='$k' class='dashicons dashicons-trash aiosp_delete_url' aria-label='" . __( 'Delete this additional URL', 'all-in-one-seo-pack' ) . "'></a> {$k}</td><td>{$v['prio']}</td><td>{$v['freq']}</td><td>{$v['mod']}</td></tr>\n";
 					}
 					$buf .= "</table>\n";
 				}
@@ -885,8 +885,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		public function get_rewrite_url( $url ) {
 			global $wp_rewrite;
-			// TODO Change to wp_parse_url.
-			$url = parse_url( esc_url( $url ), PHP_URL_PATH );
+			$url = wp_parse_url( esc_url( $url ), PHP_URL_PATH );
 			$url = ltrim( $url, '/' );
 			if ( ! empty( $wp_rewrite ) ) {
 				$rewrite_rules = $wp_rewrite->rewrite_rules();
@@ -2648,8 +2647,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// TODO Add esc_* function.
 			echo '<!-- ' . sprintf( $this->comment_string, $comment, AIOSEOP_VERSION, date( 'D, d M Y H:i:s e' ) ) . " -->\r\n";
 			$plugin_path  = $this->plugin_path['url'];
-			// TODO Change to wp_parse_url().
-			$plugin_url   = parse_url( $plugin_path );
+			$plugin_url   = wp_parse_url( $plugin_path );
 			$current_host = $_SERVER['HTTP_HOST'];
 			if ( empty( $current_host ) ) {
 				$current_host = $_SERVER['SERVER_NAME'];
@@ -3066,12 +3064,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		public function get_addl_pages_only() {
 			$pages = array();
 			if ( ! empty( $this->options[ $this->prefix . 'addl_pages' ] ) ) {
-				// TODO Change to wp_parse_url().
-				$siteurl = parse_url( aioseop_home_url() );
+				$siteurl = wp_parse_url( aioseop_home_url() );
 				foreach ( $this->options[ $this->prefix . 'addl_pages' ] as $k => $v ) {
 					$k   = aiosp_common::make_url_valid_smartly( $k );
-					// TODO Change to wp_parse_url().
-					$url = parse_url( $k );
+					$url = wp_parse_url( $k );
 					if ( empty( $url['host'] ) ) {
 						$url['host'] = $siteurl['host'];
 					}
@@ -4027,16 +4023,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
-		 * Is Image URL Valid
+		 * The is_image_url_valid() function.
 		 *
-		 * Validate the image.
-		 * NOTE: We will use parse_url here instead of wp_parse_url as we will correct the URLs beforehand and
-		 * this saves us the need to check PHP version support.
+		 * Checks whether the image URL is valid.
 		 *
 		 * @since 2.4.1
 		 * @since 2.4.3 Compatibility with Pre v4.7 wp_parse_url().
-		 * @since 2.11 Sitemap Optimization #2008 - Changed to a more appropriate name.
-		 * @since 3.0 remove checks for old WP versions
+		 * @since 2.11.0 Sitemap Optimization #2008 - Changed to a more appropriate name.
+		 * @since 3.0.0 Remove checks for old WP versions.
+		 * @since 3.2.0 Remove redundant code.
 		 *
 		 * @param string $image The image src.
 		 * @return bool
@@ -4047,22 +4042,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return false;
 			}
 
-			$component = PHP_URL_PATH;
-			$url       = wp_parse_url( $image, $component );
-
-			// Make the url absolute, if its relative.
 			$image   = aiosp_common::absolutize_url( $image );
-			// TODO Change to wp_parse_url().
-			$extn    = pathinfo( parse_url( $image, PHP_URL_PATH ), PATHINFO_EXTENSION );
+			$extn    = pathinfo( $image, PATHINFO_EXTENSION );
 			$allowed = apply_filters( 'aioseop_allowed_image_extensions', self::$image_extensions );
 			// Bail if image does not refer to an image file otherwise Google Search Console might reject the sitemap.
 			if ( ! in_array( $extn, $allowed, true ) ) {
 				return false;
 			}
 
-			// TODO Change to wp_parse_url().
-			$image_host = parse_url( $image, PHP_URL_HOST );
-			$host       = parse_url( home_url(), PHP_URL_HOST );
+			$image_host = wp_parse_url( $image, PHP_URL_HOST );
+			$host       = wp_parse_url( home_url(), PHP_URL_HOST );
 
 			if ( $image_host !== $host ) {
 				// Allowed hosts will be provided in a wildcard format i.e. img.yahoo.* or *.akamai.*.
@@ -4154,8 +4143,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$args['taxonomy'] = $this->show_or_hide_taxonomy( $taxonomies );
 
+			$args['exclude'] = array();
 			if ( $this->option_isset( 'excl_terms' ) ) {
-				$args['exclude'] = array();
 				foreach ( $taxonomies as $v1_taxonomy ) {
 					if ( isset( $this->options[ $this->prefix . 'excl_terms' ][ $v1_taxonomy ] ) ) {
 						$args['exclude'] = array_merge( $args['exclude'], $this->options[ $this->prefix . 'excl_terms' ][ $v1_taxonomy ]['terms'] );
@@ -4163,7 +4152,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 			}
 
-			$args = apply_filters( $this->prefix . 'tax_args', $args, $page, $this->options );
+			/**
+			 * The aioseop_sitemap_exclude_tax_terms filter hook.
+			 *
+			 * Allows users to exclude (or include) taxonomy terms from the sitemap.
+			 *
+			 * @since 2.9
+			 * @since 3.2.0 Rename filter hook & remove redundant params.
+			 *
+			 * @param array $args {
+			 *     @type array $taxonomy Name of the taxonomy that is being included in the sitemap.
+			 *     @type array $exclude IDs of taxonomy terms of the relevant taxonomy that need to be excluded.
+			 * }
+			 */
+			$args = apply_filters( 'aioseop_sitemap_exclude_tax_terms', $args );
 
 			return $args;
 		}
