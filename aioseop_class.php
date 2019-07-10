@@ -1066,10 +1066,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		$title_format  = $this->apply_cf_fields( $title_format );
 		if ( false !== strpos( $title_format, '%post_title%', 0 ) ) {
-			$title_format = str_replace( '%post_title%', $title, $title_format );
+			$title_format = str_replace( '%post_title%', $this->get_preview_snippet_title_helper( $title ), $title_format );
 		}
 		if ( false !== strpos( $title_format, '%page_title%', 0 ) ) {
-			$title_format = str_replace( '%page_title%', $title, $title_format );
+			$title_format = str_replace( '%page_title%', $this->get_preview_snippet_title_helper( $title ), $title_format );
 		}
 		if ( false !== strpos( $title_format, '%current_date%', 0 ) ) {
 			$title_format = str_replace( '%current_date%', aioseop_formatted_date(), $title_format );
@@ -1143,8 +1143,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$title_format = str_replace( '%taxonomy_description%', $description, $title_format );
 		}
 
-		$title_format = $this->get_preview_snippet_title_helper( $title_format );
-
 		/**
 		 * The aioseop_title_format filter hook.
 		 *
@@ -1171,7 +1169,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	/**
 	 * The get_preview_snippet_title_helper() function.
 	 *
-	 * Wraps the preview snippet title in its HTML span element.
+	 * Wraps the page or post title for the snippet title in its HTML span element.
 	 * Helper function for the get_preview_snippet_title() function.
 	 *
 	 * @since 3.2.0
