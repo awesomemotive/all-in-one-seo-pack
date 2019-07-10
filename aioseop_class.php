@@ -1122,11 +1122,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 			if ( AIOSEOPPRO ) {
 				if ( strpos( $title_format, '%tax_', 0 ) && ! empty( $post ) ) {
-					$taxes = get_object_taxonomies( $p, 'objects' );
+					$taxes = get_object_taxonomies( $post, 'objects' );
 					if ( ! empty( $taxes ) ) {
 						foreach ( $taxes as $t ) {
 							if ( strpos( $title_format, "%tax_{$t->name}%", 0 ) ) {
-								$terms = $this->get_all_terms( $p->ID, $t->name );
+								$terms = $this->get_all_terms( $post->ID, $t->name );
 								$term  = '';
 								if ( count( $terms ) > 0 ) {
 									$term = $terms[0];
