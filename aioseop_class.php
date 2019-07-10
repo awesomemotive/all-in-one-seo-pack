@@ -1169,7 +1169,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	/**
 	 * The get_preview_snippet_title_helper() function.
 	 *
-	 * Wraps the page or post title for the snippet title in its HTML span element.
+	 * Wraps the page or post title for the preview snippet title in its HTML span element.
 	 * Helper function for the get_preview_snippet_title() function.
 	 *
 	 * @since 3.2.0
