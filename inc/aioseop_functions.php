@@ -1,12 +1,19 @@
 <?php
 /**
- * General functions file.
+ * The aioseop_functions file.
  *
- * We'll eventually move these to a better place, and figure out ones not being used anymore.
+ * Contains all general functions that are used throughout the plugin.
  *
  * @package All-in-One-SEO-Pack
  * @version 2.3.13
  */
+
+/**
+ * Required for aioseop_is_woocommerce_active() function.
+ *
+ * @since 3.2.0
+ */
+include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
 if ( ! function_exists( 'aioseop_get_permalink' ) ) {
 	/**
@@ -1379,4 +1386,19 @@ function aioseop_do_shortcode_helper( $content, $conflicting_shortcodes ) {
 	}
 
 	return $content;
+}
+
+/**
+ * The aioseop_is_woocommerce_active() function.
+ *
+ * Checks whether WooCommerce is active.
+ *
+ * @since 3.2.0
+ *
+ * @return bool
+ */
+if ( ! function_exists( 'aioseop_is_woocommerce_active' ) ) {
+	function aioseop_is_woocommerce_active() {
+		return is_plugin_active( 'woocommerce/woocommerce.php' );
+	}
 }

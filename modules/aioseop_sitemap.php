@@ -2394,7 +2394,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
-		 * Get Simple Sitemap
+		 * The get_simple_sitemap() function.
+		 *
+		 * Fetches data for sitemap without indexes.
 		 *
 		 * @since 2.3.6
 		 * @since 2.3.12.3 Refactored to use aioseop_home_url() for compatibility purposes.
@@ -3289,6 +3291,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * Generate sitemap priority data for archives from an array of posts.
 		 *
 		 * @since ?
+		 * @since 3.2.0 Don't fetch WooCommerce shop page twice - #2126
 		 *
 		 * @param $posts
 		 * @return array
@@ -3297,6 +3300,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$posttypes = array();
 			if ( ! empty( $this->options[ "{$this->prefix}posttypes" ] ) ) {
 				$posttypes = $this->options[ "{$this->prefix}posttypes" ];
+			}
+
+			if ( aioseop_is_woocommerce_active() ) {
+				if ( in_array( 'product', $posttypes ) ) {
+					$index = array_search( 'product', $posttypes );
+					unset( $posttypes[ $index ] );
+				}
 			}
 
 			$types_supporting_archives = get_post_types(
