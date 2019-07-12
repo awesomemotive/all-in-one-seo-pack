@@ -402,7 +402,7 @@ class AIOSEOP_Helper {
 			'aiosp_baidu_verify'                => __( 'Enter your verification code here to verify your site with Baidu Webmaster Tools.', 'all-in-one-seo-pack' ),
 
 			// Google Settings.
-			'aiosp_google_sitelinks_search'     => __( 'Add markup to display the Google Sitelinks Search Box next to your search results in Google.', 'all-in-one-seo-pack' ),
+
 			'aiosp_google_analytics_id'         => __( 'Enter your Google Analytics ID here to track visitor behavior on your site using Google Analytics.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_advanced_options'         => __( 'Check to use advanced Google Analytics options.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_domain'                   => __( 'Enter your domain name without the http:// to set your cookie domain.', 'all-in-one-seo-pack' ),
@@ -414,6 +414,16 @@ class AIOSEOP_Helper {
 			'aiosp_ga_track_outbound_links'     => __( 'Check this if you want to track outbound links with Google Analytics.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_link_attribution'         => __( 'This enables support for the Enhanced Link Attribution in Google Analytics.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_enhanced_ecommerce'       => __( 'This enables support for the Enhanced Ecommerce in Google Analytics.', 'all-in-one-seo-pack' ),
+
+			// Schema Settings.
+			'aiosp_google_sitelinks_search'     => __( 'Add markup to display the Google Sitelinks Search Box next to your search results in Google.', 'all-in-one-seo-pack' ),
+			'aiosp_social_profile_links'        => __( 'Add URLs for your website\'s social profiles here (Facebook, Twitter, Google+, Instagram, LinkedIn), one per line.', 'all-in-one-seo-pack' ),
+			'aiosp_site_represents'             => __( 'Are the social profile links for your website for a person or an organization?', 'all-in-one-seo-pack' ),
+			'aiosp_organization_name'           => __( 'Add the name of the person or organization who owns these profiles.', 'all-in-one-seo-pack' ),
+			'aiosp_organization_logo'           => __( 'Add a logo that represents the organization.', 'all-in-one-seo-pack' ),
+			'aiosp_person_user'                 => __( 'Select user the site represents.', 'all-in-one-seo-pack' ),
+			'aiosp_phone_number'                => __( 'Add public phone number used for others to contact. It is required you use the full format, including your country\'s telephone code.', 'all-in-one-seo-pack' ),
+			'aiosp_contact_type'                => __( 'Type of contact the phone number functions as.', 'all-in-one-seo-pack' ),
 
 			// Noindex Settings.
 			'aiosp_cpostnoindex'                => __( 'Set the default NOINDEX setting for each Post Type.', 'all-in-one-seo-pack' ),
@@ -543,7 +553,6 @@ class AIOSEOP_Helper {
 			'aiosp_baidu_verify'                => 'https://semperplugins.com/documentation/baidu-webmaster-verification/',
 
 			// Google Settings.
-			'aiosp_google_sitelinks_search'     => 'https://semperplugins.com/documentation/google-settings/#display-sitelinks-search-box',
 			'aiosp_google_analytics_id'         => 'https://semperplugins.com/documentation/setting-up-google-analytics/',
 			'aiosp_ga_advanced_options'         => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/',
 			'aiosp_ga_domain'                   => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#tracking-domain',
@@ -555,6 +564,16 @@ class AIOSEOP_Helper {
 			'aiosp_ga_track_outbound_links'     => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#track-outbound-links',
 			'aiosp_ga_link_attribution'         => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#enhanced-link-attribution',
 			'aiosp_ga_enhanced_ecommerce'       => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#enhanced-ecommerce',
+
+			// Schema Settings.
+			'aiosp_google_sitelinks_search'     => 'https://semperplugins.com/documentation/google-settings/#display-sitelinks-search-box',
+			'aiosp_social_profile_links'        => '',
+			'aiosp_site_represents'             => '',
+			'aiosp_organization_name'           => '',
+			'aiosp_organization_logo'           => '',
+			'aiosp_person_user'                 => '',
+			'aiosp_phone_number'                => '',
+			'aiosp_contact_type'                => '',
 
 			// Noindex Settings.
 			'aiosp_cpostnoindex'                => 'https://semperplugins.com/documentation/noindex-settings/#noindex',
@@ -805,11 +824,6 @@ class AIOSEOP_Helper {
 			'aiosp_opengraph_dimgheight'                   => __( 'This option lets you set a default height for your images, where unspecified.', 'all-in-one-seo-pack' ),
 			'aiosp_opengraph_meta_key'                     => __( 'Enter the name of a custom field (or multiple field names separated by commas) to use that field to specify the Open Graph image on Pages or Posts.', 'all-in-one-seo-pack' ),
 
-			// Social Profile Links.
-			'aiosp_opengraph_profile_links'                => __( 'Add URLs for your website\'s social profiles here (Facebook, Twitter, Google+, Instagram, LinkedIn), one per line.', 'all-in-one-seo-pack' ),
-			'aiosp_opengraph_person_or_org'                => __( 'Are the social profile links for your website for a person or an organization?', 'all-in-one-seo-pack' ),
-			'aiosp_opengraph_social_name'                  => __( 'Add the name of the person or organization who owns these profiles.', 'all-in-one-seo-pack' ),
-
 			// Facebook Settings.
 			'aiosp_opengraph_key'                          => __( 'Enter your Facebook Admin ID here. You can enter multiple IDs separated by a comma. You can look up your Facebook ID using this tool http://findmyfbid.com/', 'all-in-one-seo-pack' ),
 			'aiosp_opengraph_appid'                        => __( 'Enter your Facebook App ID here. Information about how to get your Facebook App ID can be found at https://developers.facebook.com/docs/apps/register', 'all-in-one-seo-pack' ),
@@ -878,11 +892,6 @@ class AIOSEOP_Helper {
 			'aiosp_opengraph_dimgwidth'                    => 'https://semperplugins.com/documentation/social-meta-module/#default-image-width',
 			'aiosp_opengraph_dimgheight'                   => 'https://semperplugins.com/documentation/social-meta-module/#default-image-height',
 			'aiosp_opengraph_meta_key'                     => 'https://semperplugins.com/documentation/social-meta-module/#use-custom-field-for-image',
-
-			// Social Profile Links.
-			'aiosp_opengraph_profile_links'                => 'https://semperplugins.com/documentation/social-meta-module/#social-profile-links',
-			'aiosp_opengraph_person_or_org'                => 'https://semperplugins.com/documentation/social-meta-module/#social-profile-links',
-			'aiosp_opengraph_social_name'                  => 'https://semperplugins.com/documentation/social-meta-module/#social-profile-links',
 
 			// Facebook Settings.
 			'aiosp_opengraph_key'                          => 'https://semperplugins.com/documentation/social-meta-module/#facebook-admin-id',

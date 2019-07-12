@@ -51,19 +51,22 @@ class AIOSEOP_Graph_WebSite extends AIOSEOP_Graph_Creativework {
 		global $aioseop_options;
 
 		$rtn_data = array(
-			'@type'           => $this->slug,
-			'@id'             => home_url() . '/#' . strtolower( $this->slug ),
-			'url'             => home_url() . '/',
-			'name'            => get_bloginfo( 'name' ),
-			'publisher'       => array(
+			'@type'     => $this->slug,
+			'@id'       => home_url() . '/#' . strtolower( $this->slug ),
+			'url'       => home_url() . '/',
+			'name'      => get_bloginfo( 'name' ),
+			'publisher' => array(
 				'@id' => home_url() . '/#' . $aioseop_options['aiosp_site_represents'],
 			),
-			'potentialAction' => array(
+		);
+
+		if ( $aioseop_options['aiosp_google_sitelinks_search'] ) {
+			$rtn_data['potentialAction'] = array(
 				'@type'       => 'SearchAction',
 				'target'      => home_url() . '/?s={search_term_string}',
 				'query-input' => 'required name=search_term_string',
-			),
-		);
+			);
+		}
 
 		return $rtn_data;
 	}

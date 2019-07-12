@@ -76,6 +76,7 @@ class AIOSEOP_Graph_Article extends AIOSEOP_Graph_CreativeWork {
 			'mainEntityOfPage' => array( '@id' => wp_get_canonical_url( $post ) . '#webpage' ),
 			'publisher'        => array( '@id' => home_url() . '/#' . $aioseop_options['aiosp_site_represents'] ),
 			'articleSection'   => implode( ', ', $post_terms ),
+			'image'            => $this->prepare_image( $post ),
 		);
 
 		return $rtn_data;
@@ -94,7 +95,7 @@ class AIOSEOP_Graph_Article extends AIOSEOP_Graph_CreativeWork {
 		global $post;
 		global $aioseop_options;
 
-		if ( 'person' === $aioseop_options['aiosp_site_represents'] && intval( $post->post_author ) === intval( $aioseop_options['aioseop_person_user'] ) ) {
+		if ( 'person' === $aioseop_options['aiosp_site_represents'] && intval( $post->post_author ) === intval( $aioseop_options['aiosp_person_user'] ) ) {
 			$author_url = home_url() . '/';
 		} else {
 			$author_url = get_author_posts_url( $post->post_author );

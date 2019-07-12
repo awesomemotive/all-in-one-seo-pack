@@ -111,7 +111,7 @@ class AIOSEOP_Schema_Builder {
 			} elseif ( is_date() ) {
 				array_push( $layout['@graph'], '[aioseop_schema_CollectionPage]' );
 			}
-		} elseif ( is_single() ) {
+		} elseif ( is_singular() || is_single() ) {
 			global $post;
 
 			if ( is_post_type_hierarchical( $post->post_type ) ) {
@@ -121,7 +121,9 @@ class AIOSEOP_Schema_Builder {
 
 				// TODO Add custom setting for individual posts.
 				array_push( $layout['@graph'], '[aioseop_schema_Article]' );
-				array_push( $layout['@graph'], '[aioseop_schema_Person]' );
+				if ( ! in_array( '[aioseop_schema_Person]', $layout['@graph'] ) ) {
+					array_push( $layout['@graph'], '[aioseop_schema_Person]' );
+				}
 			}
 		} elseif ( is_front_page() ) {
 			array_push( $layout['@graph'], '[aioseop_schema_WebPage]' );
@@ -156,6 +158,7 @@ class AIOSEOP_Schema_Builder {
 		do_action( 'aioseop_schema_internal_shortcodes_off' );
 
 		echo '<script type="application/ld+json" class="aioseop-schema">' . $schema_content . '</script>';
+		echo "\n";
 	}
 
 	/**

@@ -59,7 +59,7 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 			$current_url  = home_url() . '/';
 			$current_name = get_bloginfo( 'name' ) . ' - ' . get_bloginfo( 'description' );
 			$current_desc = get_bloginfo( 'description' );
-		} elseif ( is_single() ) {
+		} elseif ( is_singular() || is_single() ) {
 			$current_url  = wp_get_canonical_url( $post );
 			$current_name = get_the_title();
 			$current_desc = $this->get_post_description( $post );
@@ -103,11 +103,7 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 		);
 
 		// Handles pages.
-		if ( is_front_page() ) {
-			$rtn_data['about'] = array(
-				'@id' => home_url() . '/#' . $aioseop_options['aiosp_site_represents'],
-			);
-		} elseif ( is_singular() ) {
+		if ( is_singular() || is_single() ) {
 			// TODO add functionality.
 			$image_data = $this->prepare_image( $post );
 
@@ -120,6 +116,12 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 			$rtn_data['dateModified']  = mysql2date( DATE_W3C, $post->post_modified_gmt, false );
 		}
 
+		if ( is_front_page() ) {
+			$rtn_data['about'] = array(
+				'@id' => home_url() . '/#' . $aioseop_options['aiosp_site_represents'],
+			);
+		}
+
 		if ( ! empty( $current_desc ) ) {
 			$rtn_data['description'] = $current_desc;
 		}
@@ -127,76 +129,7 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 		return $rtn_data;
 	}
 
-	/**
-	 * Prepare Image Data.
-	 *
-	 * TODO !?Move to graph.php since it is part of schema 'thing' object?!
-	 *
-	 * @since 3.2
-	 *
-	 * @param WP_Post $post See WP_Post for details.
-	 * @return array
-	 */
-	protected function prepare_image( $post ) {
-		$rtn_data = array();
 
-		$featured_image_url = $this->get_featured_image_url( $post );
-
-		if ( $featured_image_url ) {
-			// TODO Possibly change to call Graph ImageObject class.
-			$rtn_data = array(
-				'@type' => 'ImageObject',
-				'@id'   => wp_get_canonical_url( $post ) . '#primaryimage',
-				'url'   => $featured_image_url,
-
-			);
-		}
-
-		return $rtn_data;
-	}
-
-	/**
-	 * Get Featured Image URL.
-	 *
-	 * @since 3.2
-	 *
-	 * @param WP_Post $post See WP_Post for details.
-	 * @return false|string
-	 */
-	protected function get_featured_image_url( $post ) {
-		$image_url = '';
-
-		if ( has_post_thumbnail( $post ) ) {
-			$image_url = wp_get_attachment_image_url( get_post_thumbnail_id(), 'full' );
-		} else {
-			// Get first image from content.
-			if ( ( substr_count( $post->post_content, '<img' ) + substr_count( $post->post_content, '<IMG' ) ) ) {
-				if ( class_exists( 'DOMDocument' ) ) {
-					$dom = new domDocument();
-
-					// Non-compliant HTML might give errors, so ignore them.
-					libxml_use_internal_errors( true );
-					$dom->loadHTML( $post->post_content );
-					libxml_clear_errors();
-
-					// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-					$dom->preserveWhiteSpace = false;
-
-					$matches = $dom->getElementsByTagName( 'img' );
-					foreach ( $matches as $match ) {
-						$image_url = $match->getAttribute( 'src' );
-					}
-				} else {
-					preg_match_all( '/<img.*src=([\'"])?(.*?)\\1/', $post->post_content, $matches );
-					if ( $matches && isset( $matches[2] ) ) {
-						$image_url = $matches[2];
-					}
-				}
-			}
-		}
-
-		return $image_url;
-	}
 
 	/**
 	 * Get Post Description.
