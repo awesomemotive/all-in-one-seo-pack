@@ -4259,6 +4259,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * Return sitemap data for posts.
 		 *
 		 * @since ?
+		 * @since 3.2.0 Update Last Change timestamp for WooCommerce shop page.
 		 *
 		 * @param string $include
 		 * @param string $status
@@ -4294,6 +4295,45 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$links = $this->get_prio_from_posts( $posts, $this->get_default_priority( 'post', true ), $this->get_default_frequency( 'post', true ) );
 			$links = array_merge( $links, $this->get_archive_prio_from_posts( $posts ) );
+
+			$links = $this->aioseop_update_woocommerce_shop_timestamp( $links );
+
+			return $links;
+		}
+
+		/**
+		 * The aioseop_update_woocommerce_shop_timestamp() function.
+		 *
+		 * Updates the Last Change timestamp for the WooCommerce shop page based on the last modified product - #2126.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $links
+		 * @return array $links
+		 */
+		private function aioseop_update_woocommerce_shop_timestamp( $links ) {
+			if ( aioseop_is_woocommerce_active() ) {
+				$shop_page_url = get_permalink( woocommerce_get_page_id( 'shop' ) );
+
+				$counter = count( $links );
+				for ( $i = 0; $i < $counter; $i++ ) {
+					if ( $shop_page_url === $links[ $i ]['loc'] ) {
+						$latest_modified_product = new WP_Query(
+							array(
+								'post_type'      => 'product',
+								'post_status'    => 'publish',
+								'posts_per_page' => 1,
+								'orderby'        => 'modified',
+								'order'          => 'DESC',
+							)
+						);
+
+						if ( $latest_modified_product->have_posts() ) {
+							$links[ $i ]['lastmod'] = $latest_modified_product->posts[0]->post_modified;
+						}
+					}
+				}
+			}
 			return $links;
 		}
 
