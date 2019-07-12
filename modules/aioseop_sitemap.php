@@ -4374,7 +4374,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$links = $this->get_prio_from_posts( $posts, $this->get_default_priority( 'post', true ), $this->get_default_frequency( 'post', true ) );
 			$links = array_merge( $links, $this->get_archive_prio_from_posts( $posts ) );
 
-			$links = $this->aioseop_update_woocommerce_shop_timestamp( $links );
+			if ( 'page' === $include ) {
+				$links = $this->aioseop_update_woocommerce_shop_timestamp( $links );
+			}
 
 			return $links;
 		}
