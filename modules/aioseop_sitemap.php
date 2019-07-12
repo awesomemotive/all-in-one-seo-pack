@@ -2204,7 +2204,33 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$files = apply_filters( 'aioseop_sitemap_index_filenames', $files, $prefix, $suffix );
 
+			// Remove Additional Pages index if all pages are static and no extra pages are specified.
+			if ( ! $this->aioseop_does_addl_sitemap_contain_urls() ) {
+				$page_to_remove = array( get_site_url() . '/addl-sitemap.xml' );
+				$files = $this->aioseop_remove_urls_from_sitemap_page( $files, $page_to_remove );
+			}
+
 			return $files;
+		}
+
+		/**
+		 * The aioseop_does_addl_sitemap_contain_urls() function.
+		 *
+		 * Checks whether the Additional Pages index will contain URLs.
+		 * This will not be the case if there is both a static homepage/posts page and there are no additional pages specified.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @return bool
+		 */
+		private function aioseop_does_addl_sitemap_contain_urls() {
+			$is_addl_pages = $this->option_isset( 'aiosp_sitemap_addl_pages' );
+			if ( ! $is_addl_pages &&
+				( 0 !== get_option( 'page_on_front' ) )
+				&& ( 0 !== get_option( 'page_on_front' ) ) ) {
+					return false;
+			}
+			return true;
 		}
 
 		/**
@@ -3115,6 +3141,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @since 2.3.6
 		 * @since 2.3.12.3 Refactored to use aioseop_home_url() for compatibility purposes.
+		 * @since 3.2.0 Do not include static homepage/posts page - #2126.
 		 *
 		 * @return array
 		 */
@@ -3151,6 +3178,57 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 			$pages = apply_filters( $this->prefix . 'addl_pages', $pages );
 
+			$pages = $this->aioseop_remove_addl_static_pages( $pages );
+
+			return $pages;
+		}
+
+		/**
+		 * The aioseop_remove_addl_static_pages() function.
+		 *
+		 * Removes the homepage/posts page from the Additional Pages index if it is static - #2126.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $pages
+		 * @return array $pages
+		 */
+		private function aioseop_remove_addl_static_pages( $pages ) {
+			$pages_to_remove = array();
+			if ( 0 !== get_option( 'page_on_front' ) ) {
+				$homepage_url = get_site_url() . '/';
+				array_push( $pages_to_remove, $homepage_url );
+			}
+
+			$static_posts_page_id = get_option( 'page_for_posts' );
+			if ( 0 !== $static_posts_page_id ) {
+				array_push( $pages_to_remove, get_permalink( $static_posts_page_id ) );
+			}
+
+			if ( count( $pages_to_remove ) > 0 ) {
+				return $this->aioseop_remove_urls_from_sitemap_page( $pages, $pages_to_remove );
+			}
+			return $pages;
+		}
+
+		/**
+		 * The aioseop_remove_urls_from_sitemap_page() function.
+		 *
+		 * Removes URLs from a sitemap page. This is used both for indexes and pages within indexes.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $pages
+		 * @param array $pages_to_remove
+		 * @return array $pages
+		 */
+		private function aioseop_remove_urls_from_sitemap_page( $pages, $pages_to_remove ) {
+			$count = count( $pages );
+			for ( $i = 0; $i < $count; $i++ ) {
+				if ( in_array( $pages[ $i ]['loc'], $pages_to_remove, true ) ) {
+					unset( $pages[ $i ] );
+				}
+			}
 			return $pages;
 		}
 
