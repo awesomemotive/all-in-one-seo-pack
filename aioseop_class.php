@@ -1011,8 +1011,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( empty( $title_format ) ) {
 			$title = '<span id="' . $args['name'] . '_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title ) ) ) . '</span>';
 		} else {
-			$title_format    = $this->get_preview_snippet_title();
-			$title           = $title_format;
+			$title_format = $this->get_preview_snippet_title();
+			$title        = $title_format;
 		}
 
 		$args['value']   = sprintf( $args['value'], $title, esc_url( $url ), esc_attr( $description ) );
