@@ -4315,19 +4315,22 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function get_robots_meta() {
 		global $aioseop_options;
-		$opts        = $this->meta_opts;
-		$page        = $this->get_page_number();
-		$post_type = get_post_type();
-		$noindex       = false;
-		$nofollow      = false;
-		$robots_meta = $tax_noindex = '';
-		$aiosp_noindex = $aiosp_nofollow = '';
+		$opts           = $this->meta_opts;
+		$page           = $this->get_page_number();
+		$post_type      = get_post_type();
+		$noindex        = false;
+		$nofollow       = false;
+		$robots_meta    = '';
+		$tax_noindex    = '';
+		$aiosp_noindex  = '';
+		$aiosp_nofollow = '';
 
-		if ( ! empty( $opts ) &&
-			! is_date() &&
-			! is_author() &&
-			! is_search() &&
-			! is_home()
+		if (
+				! empty( $opts ) &&
+				! is_date() &&
+				! is_author() &&
+				! is_search() &&
+				! is_home()
 			) {
 			$aiosp_noindex  = htmlspecialchars( stripslashes( $opts['aiosp_noindex'] ) );
 			$aiosp_nofollow = htmlspecialchars( stripslashes( $opts['aiosp_nofollow'] ) );
@@ -4347,8 +4350,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$nofollow = true;
 		}
 
-		if ( is_singular() && $this->is_password_protected()
-		&& apply_filters( 'aiosp_noindex_password_posts', false ) ) {
+		if (
+				is_singular() &&
+				$this->is_password_protected() &&
+				apply_filters( 'aiosp_noindex_password_posts', false )
+		) {
 			$noindex = true;
 		}
 
@@ -4370,25 +4376,28 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if (
-			is_single() ||
-			is_page() ||
-			$this->is_static_posts_page() ||
-			is_attachment() ||
-			$this->check_singular()
+				is_single() ||
+				is_page() ||
+				$this->is_static_posts_page() ||
+				is_attachment() ||
+				$this->check_singular()
 		) {
 			if ( ! $noindex ) {
-				if ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page > 1 ||
-					'' === $aiosp_noindex &&
-					! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
-					in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
+				if ( 
+						! empty( $aioseop_options['aiosp_paginated_noindex'] ) &&
+						$page > 1 ||
+						'' === $aiosp_noindex &&
+						! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
+						in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
 				) {
 					$noindex = true;
 				}
 			}
 			if ( ! $nofollow ) {
-				if ( '' === $aiosp_nofollow &&
-					! empty( $aioseop_options['aiosp_cpostnofollow'] ) &&
-					in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
+				if (
+						'' === $aiosp_nofollow &&
+						! empty( $aioseop_options['aiosp_cpostnofollow'] ) &&
+						in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
 				) {
 					$nofollow = true;
 				}
