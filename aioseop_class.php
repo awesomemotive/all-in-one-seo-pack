@@ -4307,7 +4307,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	/**
 	 * The get_robots_meta() function.
 	 *
-	 * Gets the robots meta tag string.
+	 * Determines and returns the noindex/nofollow values for the robots meta tag string.
 	 *
 	 * @since 2.3.5
 	 * @since 2.3.11.5 Added noindex API filter hook for password protected posts.
@@ -4406,6 +4406,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	/**
 	 * The get_robots_meta_string() function.
 	 *
+
 	 * Helper function for get_robots_meta().
 	 *
 	 * @since 3.2.0
@@ -4416,8 +4417,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string
 	 */
 	private function aioseop_get_robots_meta_string( $noindex, $nofollow ) {
-		$index_value = $follow_value = '';
-
 		if ( $noindex ) {
 			$index_value = 'noindex';
 		} else {
