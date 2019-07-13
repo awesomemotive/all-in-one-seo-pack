@@ -3229,9 +3229,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						$timestamp = $latest_modified_post->posts[0]->post_modified_gmt;
 						$lastmod = date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $timestamp ) );
 						// Last Change timestamp needs to be inserted as second attribute in order to have valid sitemap schema.
-						$links[ $i ] = array_slice( $links[ $i ], 0, 1, true ) +
-						array( 'lastmod' => $lastmod ) +
-						array_slice( $links[ $i ], 1, $count, true );
+						$links[ $i ] = array_slice( $links[ $i ], 0, 1, true ) + array( 'lastmod' => $lastmod ) + array_slice( $links[ $i ], 1, $count, true );
 					}
 				}
 			}
