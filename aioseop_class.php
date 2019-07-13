@@ -4305,6 +4305,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
+	 * The get_robots_meta() function.
+	 *
 	 * Gets the robots meta tag string.
 	 *
 	 * @since 2.3.5
@@ -4320,11 +4322,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$post_type      = get_post_type();
 		$noindex        = false;
 		$nofollow       = false;
-		$robots_meta    = '';
 		$tax_noindex    = '';
 		$aiosp_noindex  = '';
 		$aiosp_nofollow = '';
 
+		// Do not fetch post meta values for these archive pages because these will be
+		// the post meta values from the first post appearing on the page.
 		if (
 				! empty( $opts ) &&
 				! is_date() &&
@@ -4360,7 +4363,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		if ( $noindex && $nofollow ) {
 			// Not needed to run subsequent checks if both are true.
-			return $this->get_robots_meta_string( $noindex, $nofollow );
+			return $this->aioseop_get_robots_meta_string( $noindex, $nofollow );
 		}
 
 		if (
@@ -4382,32 +4385,27 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				is_attachment() ||
 				$this->check_singular()
 		) {
-			if ( ! $noindex ) {
-				if ( 
-						! empty( $aioseop_options['aiosp_paginated_noindex'] ) &&
-						$page > 1 ||
-						'' === $aiosp_noindex &&
-						! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
-						in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
-				) {
-					$noindex = true;
-				}
+			if ( '' === $aiosp_noindex &&
+					! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
+					in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
+			) {
+				$noindex = true;
 			}
-			if ( ! $nofollow ) {
-				if (
-						'' === $aiosp_nofollow &&
-						! empty( $aioseop_options['aiosp_cpostnofollow'] ) &&
-						in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
-				) {
-					$nofollow = true;
-				}
+			if (
+					'' === $aiosp_nofollow &&
+					! empty( $aioseop_options['aiosp_cpostnofollow'] ) &&
+					in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
+			) {
+				$nofollow = true;
 			}
 		}
 
-		return $this->get_robots_meta_string( $noindex, $nofollow );
+		return $this->aioseop_get_robots_meta_string( $noindex, $nofollow );
 	}
 
 	/**
+	 * The get_robots_meta_string() function.
+	 *
 	 * Helper function for get_robots_meta().
 	 *
 	 * @since 3.2.0
@@ -4417,7 +4415,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @return string
 	 */
-	private function get_robots_meta_string( $noindex, $nofollow ) {
+	private function aioseop_get_robots_meta_string( $noindex, $nofollow ) {
 		$index_value = $follow_value = '';
 
 		if ( $noindex ) {
