@@ -2226,8 +2226,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		private function aioseop_does_addl_sitemap_contain_urls() {
 			$is_addl_pages = $this->option_isset( 'aiosp_sitemap_addl_pages' );
 			if ( ! $is_addl_pages &&
-				( 0 !== get_option( 'page_on_front' ) )
-				&& ( 0 !== get_option( 'page_on_front' ) ) ) {
+				( 0 !== get_option( 'page_on_front' ) ) &&
+				( 0 !== get_option( 'page_for_posts' ) ) ) {
 					return false;
 			}
 			return true;
@@ -4375,9 +4375,41 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$links = array_merge( $links, $this->get_archive_prio_from_posts( $posts ) );
 
 			if ( 'page' === $include ) {
+				$links = $this->aioseop_get_prio_freq_static_homepage( $links );
 				$links = $this->aioseop_update_woocommerce_shop_timestamp( $links );
 			}
 
+			return $links;
+		}
+
+		/**
+		 * The aioseop_get_prio_freq_static_homepage() function.
+		 *
+		 * Sets the priority and frequency for the homepage if it is static.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $links
+		 * @return array $links
+		 */
+		private function aioseop_get_prio_freq_static_homepage( $links ) {
+			if ( 0 !== get_option( 'page_on_front' ) ) {
+				$prio = $this->options['aiosp_sitemap_prio_homepage'];
+				$freq = $this->options['aiosp_sitemap_freq_homepage'];
+
+				$homepage_url = get_site_url() . '/';
+				$count = count( $links );
+				for ( $i = 0; $i < $count; $i++ ) {
+					if ( $homepage_url === $links[ $i ]['loc'] ) {
+						if ( 'no' !== $prio ) {
+							$links[ $i ]['priority'] = $prio;
+						}
+						if ( 'no' !== $freq ) {
+							$links[ $i ]['changefreq'] = $freq;
+						}
+					}
+				}
+			}
 			return $links;
 		}
 
@@ -4395,8 +4427,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( aioseop_is_woocommerce_active() ) {
 				$shop_page_url = get_permalink( woocommerce_get_page_id( 'shop' ) );
 
-				$counter = count( $links );
-				for ( $i = 0; $i < $counter; $i++ ) {
+				$count = count( $links );
+				for ( $i = 0; $i < $count; $i++ ) {
 					if ( $shop_page_url === $links[ $i ]['loc'] ) {
 						$latest_modified_product = new WP_Query(
 							array(
