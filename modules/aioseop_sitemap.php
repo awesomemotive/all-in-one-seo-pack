@@ -4393,20 +4393,21 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array $links
 		 */
 		private function aioseop_get_prio_freq_static_homepage( $links ) {
-			if ( 0 !== get_option( 'page_on_front' ) ) {
-				$prio = $this->options['aiosp_sitemap_prio_homepage'];
-				$freq = $this->options['aiosp_sitemap_freq_homepage'];
+			if ( 0 === get_option( 'page_on_front' ) ) {
+				return $links;
+			}
+			$prio = $this->options['aiosp_sitemap_prio_homepage'];
+			$freq = $this->options['aiosp_sitemap_freq_homepage'];
 
-				$homepage_url = get_site_url() . '/';
-				$count = count( $links );
-				for ( $i = 0; $i < $count; $i++ ) {
-					if ( $homepage_url === $links[ $i ]['loc'] ) {
-						if ( 'no' !== $prio ) {
-							$links[ $i ]['priority'] = $prio;
-						}
-						if ( 'no' !== $freq ) {
-							$links[ $i ]['changefreq'] = $freq;
-						}
+			$homepage_url = get_site_url() . '/';
+			$count = count( $links );
+			for ( $i = 0; $i < $count; $i++ ) {
+				if ( $homepage_url === $links[ $i ]['loc'] ) {
+					if ( 'no' !== $prio ) {
+						$links[ $i ]['priority'] = $prio;
+					}
+					if ( 'no' !== $freq ) {
+						$links[ $i ]['changefreq'] = $freq;
 					}
 				}
 			}
@@ -4424,25 +4425,26 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array $links
 		 */
 		private function aioseop_update_woocommerce_shop_timestamp( $links ) {
-			if ( aioseop_is_woocommerce_active() ) {
-				$shop_page_url = get_permalink( woocommerce_get_page_id( 'shop' ) );
+			if ( ! aioseop_is_woocommerce_active() ) {
+				return $links;
+			}
 
-				$count = count( $links );
-				for ( $i = 0; $i < $count; $i++ ) {
-					if ( $shop_page_url === $links[ $i ]['loc'] ) {
-						$latest_modified_product = new WP_Query(
-							array(
-								'post_type'      => 'product',
-								'post_status'    => 'publish',
-								'posts_per_page' => 1,
-								'orderby'        => 'modified',
-								'order'          => 'DESC',
-							)
-						);
+			$shop_page_url = get_permalink( woocommerce_get_page_id( 'shop' ) );
+			$count = count( $links );
+			for ( $i = 0; $i < $count; $i++ ) {
+				if ( $shop_page_url === $links[ $i ]['loc'] ) {
+					$latest_modified_product = new WP_Query(
+						array(
+							'post_type'      => 'product',
+							'post_status'    => 'publish',
+							'posts_per_page' => 1,
+							'orderby'        => 'modified',
+							'order'          => 'DESC',
+						)
+					);
 
-						if ( $latest_modified_product->have_posts() ) {
-							$links[ $i ]['lastmod'] = $latest_modified_product->posts[0]->post_modified;
-						}
+					if ( $latest_modified_product->have_posts() ) {
+						$links[ $i ]['lastmod'] = $latest_modified_product->posts[0]->post_modified;
 					}
 				}
 			}
