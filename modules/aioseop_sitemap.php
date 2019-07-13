@@ -2878,11 +2878,52 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						'pubDate'     => $this->get_date_for_term( $term ),
 					);
 
+					$pr_info['lastmod'] = $this->aioseop_get_tax_term_timestamp( $term );
+
 					$prio[] = $pr_info;
 				}
 			}
 
 			return $prio;
+		}
+
+		/**
+		 * The aioseop_get_tax_term_timestamp() function.
+		 *
+		 * Gets the Last Change timestamp for a term.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param object $term
+		 * @return string $lastmod
+		 */
+		private function aioseop_get_tax_term_timestamp( $term ) {
+			$taxonomy = get_taxonomy( $term->taxonomy );
+
+			$lastmod = '';
+			$count = count( $taxonomy->object_type );
+			for ( $i = 0; $i < $count; $i++ ) {
+				$latest_modified_post = new WP_Query(
+					array(
+						'post_type'      => $taxonomy->object_type[ $i ],
+						'post_status'    => 'publish',
+						'posts_per_page' => 1,
+						'orderby'        => 'modified',
+						'order'          => 'DESC',
+						'taxonomy'       => $term->taxonomy,
+						'term'           => $term->term,
+					)
+				);
+
+				if ( $latest_modified_post->have_posts() ) {
+					$timestamp = $latest_modified_post->posts[0]->post_modified;
+					if ( '' === $lastmod || ( $timestamp > $lastmod ) ) {
+						$lastmod = $timestamp;
+					}
+				}
+			}
+
+			return $lastmod;
 		}
 
 		/**
