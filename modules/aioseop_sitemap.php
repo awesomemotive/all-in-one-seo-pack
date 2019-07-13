@@ -3215,7 +3215,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			for ( $i = 0; $i < $count; $i++ ) {
 				if ( $homepage_url === $links[ $i ]['loc'] ) {
 
-					$latest_modified_product = new WP_Query(
+					$latest_modified_post = new WP_Query(
 						array(
 							'post_type'      => 'post',
 							'post_status'    => 'publish',
@@ -3225,8 +3225,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						)
 					);
 
-					if ( $latest_modified_product->have_posts() ) {
-						$timestamp = $latest_modified_product->posts[0]->post_modified_gmt;
+					if ( $latest_modified_post->have_posts() ) {
+						$timestamp = $latest_modified_post->posts[0]->post_modified_gmt;
 						$lastmod = date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $timestamp ) );
 						// Last Change timestamp needs to be inserted as second attribute in order to have valid sitemap schema.
 						$links[ $i ] = array_slice( $links[ $i ], 0, 1, true ) +
