@@ -2916,13 +2916,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				);
 
 				if ( $latest_modified_post->have_posts() ) {
-					$timestamp = $latest_modified_post->posts[0]->post_modified;
+					$timestamp = $latest_modified_post->posts[0]->post_modified_gmt;
 					if ( '' === $lastmod || ( $timestamp > $lastmod ) ) {
 						$lastmod = $timestamp;
 					}
 				}
 			}
 
+			$lastmod = date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $lastmod ) );
 			return $lastmod;
 		}
 
@@ -3226,7 +3227,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					);
 
 					if ( $latest_modified_product->have_posts() ) {
-						$links[ $i ]['lastmod'] = $latest_modified_product->posts[0]->post_modified;
+						$timestamp = $latest_modified_product->posts[0]->post_modified_gmt;
+						$links[ $i ]['lastmod'] = date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $timestamp ) );
 					}
 				}
 			}
