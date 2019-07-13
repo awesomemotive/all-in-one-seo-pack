@@ -3149,7 +3149,47 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 			$pages = apply_filters( $this->prefix . 'addl_pages', $pages );
 
+			$pages = $this->aioseop_get_homepage_timestamp( $pages );
+
 			return $pages;
+		}
+
+		/**
+		 * The aioseop_get_homepage_timestamp() function.
+		 *
+		 * Gets the Last Change timestamp for the homepage if it isn't static.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $links
+		 * @return array $links
+		 */
+		private function aioseop_get_homepage_timestamp( $links ) {
+			if ( 0 === get_option( 'page_on_front' ) ) {
+				return $links;
+			}
+
+			$homepage_url = get_site_url() . '/';
+			$count = count( $links );
+			for ( $i = 0; $i < $count; $i++ ) {
+				if ( $homepage_url === $links[ $i ]['loc'] ) {
+
+					$latest_modified_product = new WP_Query(
+						array(
+							'post_type'      => 'post',
+							'post_status'    => 'publish',
+							'posts_per_page' => 1,
+							'orderby'        => 'modified',
+							'order'          => 'DESC',
+						)
+					);
+
+					if ( $latest_modified_product->have_posts() ) {
+						$links[ $i ]['lastmod'] = $latest_modified_product->posts[0]->post_modified;
+					}
+				}
+			}
+			return $links;
 		}
 
 		/**
