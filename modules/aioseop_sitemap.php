@@ -2851,6 +2851,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				foreach ( $terms as $term ) {
 					$pr_info        = array();
 					$pr_info['loc'] = $this->get_term_link( $term, $term->taxonomy );
+					$pr_info['lastmod'] = $this->aioseop_get_tax_term_timestamp( $term );
 					if (
 						( 'sel' === $this->options[ $this->prefix . 'freq_taxonomies' ] )
 						&& isset( $this->options[ $this->prefix . 'freq_taxonomies_' . $term->taxonomy ] )
@@ -2877,8 +2878,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						'description' => $term->description,
 						'pubDate'     => $this->get_date_for_term( $term ),
 					);
-
-					$pr_info['lastmod'] = $this->aioseop_get_tax_term_timestamp( $term );
 
 					$prio[] = $pr_info;
 				}
@@ -3228,7 +3227,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 					if ( $latest_modified_product->have_posts() ) {
 						$timestamp = $latest_modified_product->posts[0]->post_modified_gmt;
-						$links[ $i ]['lastmod'] = date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $timestamp ) );
+						$lastmod = date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $timestamp ) );
+						// Last Change timestamp needs to be inserted as second attribute in order to have valid sitemap schema.
+						$links[ $i ] = array_slice( $links[ $i ], 0, 1, true ) +
+						array( 'lastmod' => $lastmod ) +
+						array_slice( $links[ $i ], 1, $count, true );
 					}
 				}
 			}
