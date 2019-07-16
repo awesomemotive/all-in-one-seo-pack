@@ -4036,7 +4036,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( ! $this->is_page_included() ) {
-			// Handle noindex, nofollow - robots meta.
+			/**
+			 * The aioseop_robots_meta filter hook.
+			 *
+			 * Can be used to filter the robots meta tag value.
+			 * e.g. 'noindex, nofollow'
+			 *
+			 * @since ?
+			 *
+			 * @param string
+			 * @return string
+			 */
 			$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
 			if ( ! empty( $robots_meta ) ) {
 				// Should plugin & version details be added here as well?
@@ -4145,7 +4155,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$meta_string .= sprintf( "<meta name=\"keywords\" %s content=\"%s\" />\n", $key_attr, $keywords );
 			}
 		}
-		// Handle noindex, nofollow - robots meta.
+		/**
+		 * The aioseop_robots_meta filter hook.
+		 *
+		 * Can be used to filter the robots meta tag value.
+		 * e.g. 'noindex, nofollow'
+		 *
+		 * @since ?
+		 *
+		 * @param string
+		 * @return string
+		 */
 		$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
 		if ( ! empty( $robots_meta ) ) {
 			$meta_string .= '<meta name="robots" content="' . esc_attr( $robots_meta ) . '" />' . "\n";
