@@ -2478,6 +2478,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 			}
 
+			$prio = $this->get_homepage_timestamp( $prio );
+			$prio = $this->get_posts_page_timestamp( $prio );
+
 			return $prio;
 		}
 
@@ -2851,7 +2854,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				foreach ( $terms as $term ) {
 					$pr_info        = array();
 					$pr_info['loc'] = $this->get_term_link( $term, $term->taxonomy );
-					$pr_info['lastmod'] = $this->aioseop_get_tax_term_timestamp( $term );
+					$pr_info['lastmod'] = $this->get_tax_term_timestamp( $term );
 					if (
 						( 'sel' === $this->options[ $this->prefix . 'freq_taxonomies' ] )
 						&& isset( $this->options[ $this->prefix . 'freq_taxonomies_' . $term->taxonomy ] )
@@ -2887,7 +2890,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
-		 * The aioseop_get_tax_term_timestamp() function.
+		 * The get_tax_term_timestamp() function.
 		 *
 		 * Gets the Last Change timestamp for a term.
 		 *
@@ -2896,7 +2899,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @param object $term
 		 * @return string $lastmod
 		 */
-		private function aioseop_get_tax_term_timestamp( $term ) {
+		private function get_tax_term_timestamp( $term ) {
 			$taxonomy = get_taxonomy( $term->taxonomy );
 
 			$lastmod = '';
@@ -2910,7 +2913,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						'orderby'        => 'modified',
 						'order'          => 'DESC',
 						'taxonomy'       => $term->taxonomy,
-						'term'           => $term->term,
+						'term'           => $term->name,
 					)
 				);
 
@@ -3190,13 +3193,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 			$pages = apply_filters( $this->prefix . 'addl_pages', $pages );
 
-			$pages = $this->aioseop_get_homepage_timestamp( $pages );
+			$pages = $this->get_homepage_timestamp( $pages );
+			$pages = $this->get_posts_page_timestamp( $pages );
 
 			return $pages;
 		}
 
 		/**
-		 * The aioseop_get_homepage_timestamp() function.
+		 * The get_homepage_timestamp() function.
 		 *
 		 * Gets the Last Change timestamp for the homepage if it isn't static.
 		 *
@@ -3205,35 +3209,104 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @param array $links
 		 * @return array $links
 		 */
-		private function aioseop_get_homepage_timestamp( $links ) {
-			if ( 0 === get_option( 'page_on_front' ) ) {
+		private function get_homepage_timestamp( $links ) {
+			if ( 0 !== (int) get_option( 'page_on_front' ) ) {
 				return $links;
 			}
 
 			$homepage_url = get_site_url() . '/';
+			$links = $this->update_static_page_timestamp( $homepage_url );
+
+			return $links;
+		}
+
+		/**
+		 * The get_posts_page_timestamp() function.
+		 *
+		 * Gets the Last Change timestamp for the posts page.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $links
+		 * @return array $links
+		 */
+		private function get_posts_page_timestamp( $links ) {
+			$posts_page_id = (int) get_option( 'page_for_posts' );
+			if ( 0 === $posts_page_id ) {
+				return $links;
+			}
+
+			$posts_page_url = get_permalink( $posts_page_id );
+			$links = $this->update_static_page_timestamp( get_permalink( $posts_page_url ) );
+
+			return $links;
+		}
+
+		/**
+		 * The update_static_page_timestamp() function.
+		 *
+		 * Update the timestamp attribute for a static page.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $links
+		 * @param string $static_page_url
+		 * @return array $links
+		 */
+		private function update_static_page_timestamp( $links, $static_page_url ) {
 			$count = count( $links );
 			for ( $i = 0; $i < $count; $i++ ) {
-				if ( $homepage_url === $links[ $i ]['loc'] ) {
-
-					$latest_modified_post = new WP_Query(
-						array(
-							'post_type'      => 'post',
-							'post_status'    => 'publish',
-							'posts_per_page' => 1,
-							'orderby'        => 'modified',
-							'order'          => 'DESC',
-						)
-					);
-
-					if ( $latest_modified_post->have_posts() ) {
-						$timestamp = $latest_modified_post->posts[0]->post_modified_gmt;
-						$lastmod = date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $timestamp ) );
-						// Last Change timestamp needs to be inserted as second attribute in order to have valid sitemap schema.
-						$links[ $i ] = array_slice( $links[ $i ], 0, 1, true ) + array( 'lastmod' => $lastmod ) + array_slice( $links[ $i ], 1, $count, true );
-					}
+				if ( $static_page_url === $links[ $i ]['loc'] ) {
+					$lastmod = $this->get_last_modified_post_timestamp();
+					$links[ $i ] = $this->insert_timestamp_as_second_attribute( $links[ $i ] );
 				}
 			}
 			return $links;
+		}
+
+		/**
+		 * The get_last_modified_post_timestamp() function.
+		 *
+		 * Gets the last modified post.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @return mixed Timestamp of the last modified post or false if there is none.
+		 */
+		private function get_last_modified_post_timestamp() {
+			$last_modified_post = new WP_Query(
+				array(
+					'post_type'      => 'post',
+					'post_status'    => 'publish',
+					'posts_per_page' => 1,
+					'orderby'        => 'modified',
+					'order'          => 'DESC',
+				)
+			);
+
+			if ( $last_modified_post->have_posts() ) {
+				$timestamp = $last_modified_post->posts[0]->post_modified_gmt;
+				return date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $timestamp ) );
+			}
+			return false;
+		}
+
+		/**
+		 * The insert_timestamp_as_second_attribute() function.
+		 *
+		 * Inserts the timestamp for a sitemap record as the second attribute.
+		 * The lastmod subtag has to be inserted as second attribute in order to have valid schema.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param $link
+		 * @param $lastmod
+		 * @return $link
+		 */
+		private function insert_timestamp_as_second_attribute( $link, $lastmod ) {
+			return array_slice( $link, 0, 1, true ) +
+			array( 'lastmod' => $lastmod ) +
+			array_slice( $link, 1, $count, true );
 		}
 
 		/**
