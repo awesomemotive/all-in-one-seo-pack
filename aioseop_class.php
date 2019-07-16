@@ -4363,7 +4363,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		if ( $noindex && $nofollow ) {
 			// Not needed to run subsequent checks if both are true.
-			return $this->aioseop_get_robots_meta_string( $noindex, $nofollow );
+			return $this->get_robots_meta_string( $noindex, $nofollow );
 		}
 
 		if (
@@ -4400,7 +4400,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 		}
 
-		return $this->aioseop_get_robots_meta_string( $noindex, $nofollow );
+		return $this->get_robots_meta_string( $noindex, $nofollow );
 	}
 
 	/**
@@ -4415,17 +4415,16 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @return string
 	 */
-	private function aioseop_get_robots_meta_string( $noindex, $nofollow ) {
+	private function get_robots_meta_string( $noindex, $nofollow ) {
+		$index_value  = 'index';
+		$follow_value = 'follow';
+
 		if ( $noindex ) {
 			$index_value = 'noindex';
-		} else {
-			$index_value = 'index';
 		}
 
 		if ( $nofollow ) {
 			$follow_value = 'nofollow';
-		} else {
-			$follow_value = 'follow';
 		}
 
 		return $index_value . ',' . $follow_value;
