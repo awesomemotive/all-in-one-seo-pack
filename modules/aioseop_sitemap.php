@@ -3237,7 +3237,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			$posts_page_url = get_permalink( $posts_page_id );
-			$links = $this->update_static_page_timestamp( $links, get_permalink( $posts_page_url ) );
+			$links = $this->update_static_page_timestamp( $links, $posts_page_url );
 
 			return $links;
 		}
@@ -3299,14 +3299,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @since 3.2.0
 		 *
-		 * @param $link
-		 * @param $lastmod
-		 * @return $link
+		 * @param array $link
+		 * @param string $lastmod
+		 * @return array $link
 		 */
 		private function insert_timestamp_as_second_attribute( $link, $lastmod ) {
 			return array_slice( $link, 0, 1, true ) +
 			array( 'lastmod' => $lastmod ) +
-			array_slice( $link, 1, $count, true );
+			array_slice( $link, 1, null, true );
 		}
 
 		/**
