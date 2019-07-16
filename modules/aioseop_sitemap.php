@@ -2205,16 +2205,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$files = apply_filters( 'aioseop_sitemap_index_filenames', $files, $prefix, $suffix );
 
 			// Remove Additional Pages index if all pages are static and no extra pages are specified.
-			if ( ! $this->aioseop_does_addl_sitemap_contain_urls() ) {
+			if ( ! $this->does_addl_sitemap_contain_urls() ) {
 				$page_to_remove = array( get_site_url() . '/addl-sitemap.xml' );
-				$files = $this->aioseop_remove_urls_from_sitemap_page( $files, $page_to_remove );
+				$files = $this->remove_urls_from_sitemap_page( $files, $page_to_remove );
 			}
 
 			return $files;
 		}
 
 		/**
-		 * The aioseop_does_addl_sitemap_contain_urls() function.
+		 * The does_addl_sitemap_contain_urls() function.
 		 *
 		 * Checks whether the Additional Pages index will contain URLs.
 		 * This will not be the case if there is both a static homepage/posts page and there are no additional pages specified.
@@ -2223,7 +2223,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @return bool
 		 */
-		private function aioseop_does_addl_sitemap_contain_urls() {
+		private function does_addl_sitemap_contain_urls() {
 			$is_addl_pages = $this->option_isset( 'aiosp_sitemap_addl_pages' );
 			if ( ! $is_addl_pages &&
 				( 0 !== get_option( 'page_on_front' ) ) &&
@@ -3206,13 +3206,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			if ( count( $pages_to_remove ) > 0 ) {
-				return $this->aioseop_remove_urls_from_sitemap_page( $pages, $pages_to_remove );
+				return $this->remove_urls_from_sitemap_page( $pages, $pages_to_remove );
 			}
 			return $pages;
 		}
 
 		/**
-		 * The aioseop_remove_urls_from_sitemap_page() function.
+		 * The remove_urls_from_sitemap_page() function.
 		 *
 		 * Removes URLs from a sitemap page. This is used both for indexes and pages within indexes.
 		 *
@@ -3222,7 +3222,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @param array $pages_to_remove
 		 * @return array $pages
 		 */
-		private function aioseop_remove_urls_from_sitemap_page( $pages, $pages_to_remove ) {
+		private function remove_urls_from_sitemap_page( $pages, $pages_to_remove ) {
 			$count = count( $pages );
 			for ( $i = 0; $i < $count; $i++ ) {
 				if ( in_array( $pages[ $i ]['loc'], $pages_to_remove, true ) ) {
@@ -4374,16 +4374,17 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$links = $this->get_prio_from_posts( $posts, $this->get_default_priority( 'post', true ), $this->get_default_frequency( 'post', true ) );
 			$links = array_merge( $links, $this->get_archive_prio_from_posts( $posts ) );
 
-			if ( 'page' === $include ) {
-				$links = $this->aioseop_get_prio_freq_static_homepage( $links );
-				$links = $this->aioseop_update_woocommerce_shop_timestamp( $links );
+			$is_sitemap_indexes_disabled = empty( $this->options['aiosp_sitemap_indexes'] );
+			if ( $is_sitemap_indexes_disabled || ( ! $is_sitemap_indexes_disabled && 'page' === $include ) ) {
+				$links = $this->get_prio_freq_static_homepage( $links );
+				$links = $this->update_woocommerce_shop_timestamp( $links );
 			}
 
 			return $links;
 		}
 
 		/**
-		 * The aioseop_get_prio_freq_static_homepage() function.
+		 * The get_prio_freq_static_homepage() function.
 		 *
 		 * Sets the priority and frequency for the homepage if it is static.
 		 *
@@ -4392,7 +4393,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @param array $links
 		 * @return array $links
 		 */
-		private function aioseop_get_prio_freq_static_homepage( $links ) {
+		private function get_prio_freq_static_homepage( $links ) {
 			if ( 0 === get_option( 'page_on_front' ) ) {
 				return $links;
 			}
@@ -4415,7 +4416,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
-		 * The aioseop_update_woocommerce_shop_timestamp() function.
+		 * The update_woocommerce_shop_timestamp() function.
 		 *
 		 * Updates the Last Change timestamp for the WooCommerce shop page based on the last modified product - #2126.
 		 *
@@ -4424,12 +4425,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @param array $links
 		 * @return array $links
 		 */
-		private function aioseop_update_woocommerce_shop_timestamp( $links ) {
+		private function update_woocommerce_shop_timestamp( $links ) {
 			if ( ! aioseop_is_woocommerce_active() ) {
 				return $links;
 			}
 
-			$shop_page_url = get_permalink( woocommerce_get_page_id( 'shop' ) );
+			$shop_page_url = get_permalink( wc_get_page_id( 'shop' ) );
 			$count = count( $links );
 			for ( $i = 0; $i < $count; $i++ ) {
 				if ( $shop_page_url === $links[ $i ]['loc'] ) {
