@@ -3215,7 +3215,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			$homepage_url = get_site_url() . '/';
-			$links = $this->update_static_page_timestamp( $homepage_url );
+			$links = $this->update_static_page_timestamp( $links, $homepage_url );
 
 			return $links;
 		}
@@ -3237,7 +3237,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			$posts_page_url = get_permalink( $posts_page_id );
-			$links = $this->update_static_page_timestamp( get_permalink( $posts_page_url ) );
+			$links = $this->update_static_page_timestamp( $links, get_permalink( $posts_page_url ) );
 
 			return $links;
 		}
