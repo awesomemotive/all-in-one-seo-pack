@@ -3178,13 +3178,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 			$pages = apply_filters( $this->prefix . 'addl_pages', $pages );
 
-			$pages = $this->aioseop_remove_addl_static_pages( $pages );
+			$pages = $this->remove_addl_static_pages( $pages );
 
 			return $pages;
 		}
 
 		/**
-		 * The aioseop_remove_addl_static_pages() function.
+		 * The remove_addl_static_pages() function.
 		 *
 		 * Removes the homepage/posts page from the Additional Pages index if it is static - #2126.
 		 *
@@ -3193,7 +3193,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @param array $pages
 		 * @return array $pages
 		 */
-		private function aioseop_remove_addl_static_pages( $pages ) {
+		private function remove_addl_static_pages( $pages ) {
 			$pages_to_remove = array();
 			if ( 0 !== get_option( 'page_on_front' ) ) {
 				$homepage_url = get_site_url() . '/';
@@ -4434,6 +4434,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$count = count( $links );
 			for ( $i = 0; $i < $count; $i++ ) {
 				if ( $shop_page_url === $links[ $i ]['loc'] ) {
+					// TODO Use get_last_modified_post_timestamp() instead when #2721 is merged.
 					$latest_modified_product = new WP_Query(
 						array(
 							'post_type'      => 'product',
@@ -4448,6 +4449,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 						$timestamp = $latest_modified_product->posts[0]->post_modified_gmt;
 						$lastmod = date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $timestamp ) );
 						// Last Change timestamp needs to be inserted as second attribute in order to have valid sitemap schema.
+						// TODO Use insert_timestamp_as_second_attribute() instead when #2721 is merged.
 						$links[ $i ] = array_slice( $links[ $i ], 0, 1, true ) + array( 'lastmod' => $lastmod ) + array_slice( $links[ $i ], 1, $count, true );
 					}
 				}

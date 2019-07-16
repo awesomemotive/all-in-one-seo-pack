@@ -8,13 +8,6 @@
  * @version 2.3.13
  */
 
-/**
- * Required for aioseop_is_woocommerce_active() function.
- *
- * @since 3.2.0
- */
-include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-
 if ( ! function_exists( 'aioseop_get_permalink' ) ) {
 	/**
 	 * AIOSEOP Get Permalink
@@ -1399,6 +1392,6 @@ function aioseop_do_shortcode_helper( $content, $conflicting_shortcodes ) {
  */
 if ( ! function_exists( 'aioseop_is_woocommerce_active' ) ) {
 	function aioseop_is_woocommerce_active() {
-		return is_plugin_active( 'woocommerce/woocommerce.php' );
+		return class_exists( 'woocommerce' );
 	}
 }
