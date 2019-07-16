@@ -100,7 +100,9 @@ class AIOSEOP_Schema_Builder {
 		array_unshift( $layout['@graph'], ( 'person' === $aioseop_options['aiosp_site_represents'] ? '[aioseop_schema_Person]' : '[aioseop_schema_Organization]' ) );
 
 		// TODO Add layout customizations to settings.
-		if ( is_archive() ) {
+		if ( is_front_page() || is_home() ) {
+			array_push( $layout['@graph'], '[aioseop_schema_WebPage]' );
+		} elseif ( is_archive() ) {
 			if ( is_author() ) {
 				array_push( $layout['@graph'], '[aioseop_schema_ProfilePage]' );
 				array_push( $layout['@graph'], '[aioseop_schema_Person]' );
@@ -125,8 +127,6 @@ class AIOSEOP_Schema_Builder {
 					array_push( $layout['@graph'], '[aioseop_schema_Person]' );
 				}
 			}
-		} elseif ( is_front_page() ) {
-			array_push( $layout['@graph'], '[aioseop_schema_WebPage]' );
 		} elseif ( is_search() ) {
 			array_push( $layout['@graph'], '[aioseop_schema_SearchResultsPage]' );
 		} elseif ( is_404() ) {

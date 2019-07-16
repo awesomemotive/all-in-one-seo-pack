@@ -55,10 +55,26 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 		$current_name = '';
 		$current_desc = '';
 
-		if ( is_front_page() ) {
+		if ( is_home() ) {
+			if ( is_front_page() ) {
+				// Front Page for 'Your latest posts'.
+				$current_url  = home_url() . '/';
+				$current_name = get_bloginfo( 'name' ) . ' - ' . get_bloginfo( 'description' );
+				$current_desc = get_bloginfo( 'description' );
+			} else {
+				// A static page - Posts page.
+				// Resembles elseif $wp_query->is_posts_page.
+				$page_id = get_option( 'page_for_posts' );
+
+				$current_url  = wp_get_canonical_url( $page_id ) . ' - ' . get_bloginfo( 'name' );
+				$current_name = get_the_title( $page_id );
+				$current_desc = $this->get_post_description( get_post( $page_id ) );
+			}
+		} elseif ( is_front_page() && is_page() ) {
+			// A static page - Homepage.
 			$current_url  = home_url() . '/';
-			$current_name = get_bloginfo( 'name' ) . ' - ' . get_bloginfo( 'description' );
-			$current_desc = get_bloginfo( 'description' );
+			$current_name = get_the_title() . ' - ' . get_bloginfo( 'name' );
+			$current_desc = $this->get_post_description( $post );
 		} elseif ( is_singular() || is_single() ) {
 			$current_url  = wp_get_canonical_url( $post );
 			$current_name = get_the_title();
@@ -74,7 +90,6 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 				$current_url = get_year_link( false );
 				/* translators: Yearly archive title. %s: Year */
 				$current_name = sprintf( __( 'Year: %s', 'all-in-one-seo-pack' ), get_the_date( _x( 'Y', 'yearly archives date format', 'all-in-one-seo-pack' ) ) );
-
 			} elseif ( is_month() ) {
 				$current_url = get_month_link( false, false );
 				/* translators: Monthly archive title. %s: Month name and year */

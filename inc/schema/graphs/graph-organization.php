@@ -119,7 +119,7 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 		$social_links = array();
 
 		if ( ! empty( $aioseop_options['aiosp_social_profile_links'] ) ) {
-			$social_links = explode( ',', $aioseop_options['aiosp_social_profile_links'] );
+			$social_links = explode( ',', str_replace( array( "\r\n", "\r" ), '', $aioseop_options['aiosp_social_profile_links'] ) );
 		}
 
 		return $social_links;
