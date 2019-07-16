@@ -3254,10 +3254,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array $links
 		 */
 		private function update_static_page_timestamp( $links, $static_page_url ) {
+			$lastmod = $this->get_last_modified_post_timestamp();
+			if ( false === $lastmod ) {
+				return $links;
+			}
 			$count = count( $links );
 			for ( $i = 0; $i < $count; $i++ ) {
 				if ( $static_page_url === $links[ $i ]['loc'] ) {
-					$lastmod = $this->get_last_modified_post_timestamp();
 					$links[ $i ] = $this->insert_timestamp_as_second_attribute( $links[ $i ], $lastmod );
 				}
 			}
