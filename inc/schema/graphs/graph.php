@@ -145,23 +145,22 @@ abstract class AIOSEOP_Graph {
 	 * @param WP_Post $post See WP_Post for details.
 	 * @return array
 	 */
-	protected function prepare_image( $post ) {
+	protected function prepare_image( $image_id, $schema_id ) {
 		$rtn_data = array(
 			'@type' => 'ImageObject',
 			'url'   => '',
 		);
 
-		$featured_image_url = $this->get_featured_image_url( $post );
+		$image_meta = wp_get_attachment_metadata( $image_id );
+		$rtn_data = array(
+			'@type'   => 'ImageObject',
+			'@id'     => $schema_id,
+			'url'     => wp_get_attachment_image_url( $image_id, 'full' ),
+			'width'   => $image_meta['width'],
+			'height'  => $image_meta['height'],
+			'caption' => wp_get_attachment_caption( $image_meta ),
 
-		if ( $featured_image_url ) {
-			// TODO Possibly change to call Graph ImageObject class.
-			$rtn_data = array(
-				'@type' => 'ImageObject',
-				'@id'   => wp_get_canonical_url( $post ) . '#primaryimage',
-				'url'   => $featured_image_url,
-
-			);
-		}
+		);
 
 		return $rtn_data;
 	}
@@ -174,39 +173,80 @@ abstract class AIOSEOP_Graph {
 	 * @param WP_Post $post See WP_Post for details.
 	 * @return false|string
 	 */
-	protected function get_featured_image_url( $post ) {
+	protected function get_image_url_from_content( $post ) {
 		$image_url = '';
 
-		if ( has_post_thumbnail( $post ) ) {
-			$image_url = wp_get_attachment_image_url( get_post_thumbnail_id(), 'full' );
-		} else {
-			// Get first image from content.
-			if ( ( substr_count( $post->post_content, '<img' ) + substr_count( $post->post_content, '<IMG' ) ) ) {
-				if ( class_exists( 'DOMDocument' ) ) {
-					$dom = new domDocument();
+		// Get first image from content.
+		if ( ( substr_count( $post->post_content, '<img' ) + substr_count( $post->post_content, '<IMG' ) ) ) {
+			if ( class_exists( 'DOMDocument' ) ) {
+				$dom = new domDocument();
 
-					// Non-compliant HTML might give errors, so ignore them.
-					libxml_use_internal_errors( true );
-					$dom->loadHTML( $post->post_content );
-					libxml_clear_errors();
+				// Non-compliant HTML might give errors, so ignore them.
+				libxml_use_internal_errors( true );
+				$dom->loadHTML( $post->post_content );
+				libxml_clear_errors();
 
-					// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-					$dom->preserveWhiteSpace = false;
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				$dom->preserveWhiteSpace = false;
 
-					$matches = $dom->getElementsByTagName( 'img' );
-					foreach ( $matches as $match ) {
-						$image_url = $match->getAttribute( 'src' );
-					}
-				} else {
-					preg_match_all( '/<img.*src=([\'"])?(.*?)\\1/', $post->post_content, $matches );
-					if ( $matches && isset( $matches[2] ) ) {
-						$image_url = $matches[2];
-					}
+				$matches = $dom->getElementsByTagName( 'img' );
+				foreach ( $matches as $match ) {
+					$image_url = $match->getAttribute( 'src' );
+				}
+			} else {
+				preg_match_all( '/<img.*src=([\'"])?(.*?)\\1/', $post->post_content, $matches );
+				if ( $matches && isset( $matches[2] ) ) {
+					$image_url = $matches[2];
 				}
 			}
 		}
 
 		return $image_url;
+	}
+
+	/**
+	 * Get User's Logo URL
+	 *
+	 * @since 3.2
+	 *
+	 * @param int $user_id
+	 * @return string
+	 */
+	protected function get_user_image_url( $user_id ) {
+		$rtn_logo_url = '';
+
+		$show_avatars = get_option( 'show_avatars' );
+		if ( $show_avatars ) {
+			$rtn_logo_url = get_avatar_url( $user_id );
+		}
+
+		return $rtn_logo_url;
+	}
+
+	/**
+	 * Get Social Profiles from user id.
+	 *
+	 * @since 3.2
+	 *
+	 * @param int $user_id
+	 * @return array
+	 */
+	protected function get_user_social_profile_links( $user_id ) {
+		$rtn_social_profiles = array();
+		$social_sites = array(
+			'facebook',
+			'twitter',
+		);
+
+		foreach ( $social_sites as $social_site ) {
+			$author_social_link = get_the_author_meta( $social_site, $user_id );
+
+			if ( $author_social_link ) {
+				$rtn_social_profiles[] = $author_social_link;
+			}
+		}
+
+		return $rtn_social_profiles;
 	}
 
 }

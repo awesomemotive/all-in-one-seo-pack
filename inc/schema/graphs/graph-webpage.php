@@ -66,8 +66,8 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 				// Resembles elseif $wp_query->is_posts_page.
 				$page_id = get_option( 'page_for_posts' );
 
-				$current_url  = wp_get_canonical_url( $page_id ) . ' - ' . get_bloginfo( 'name' );
-				$current_name = get_the_title( $page_id );
+				$current_url  = wp_get_canonical_url( $page_id );
+				$current_name = get_the_title( $page_id ) . ' - ' . get_bloginfo( 'name' );
 				$current_desc = $this->get_post_description( get_post( $page_id ) );
 			}
 		} elseif ( is_front_page() && is_page() ) {
@@ -99,6 +99,10 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 				/* translators: Daily archive title. %s: Date */
 				$current_name = sprintf( __( 'Day: %s', 'all-in-one-seo-pack' ), get_the_date( _x( 'F j, Y', 'daily archives date format', 'all-in-one-seo-pack' ) ) );
 			}
+		} elseif ( is_author() ) {
+			$user_id     = intval( $post->post_author );
+			$current_url  = get_author_posts_url( $user_id );
+			$current_name = get_the_author_meta( 'display_name', $user_id );
 		} elseif ( is_search() ) {
 			$current_url = get_search_link();
 			/* Translators: String used in search query: %s: Search */
@@ -119,11 +123,10 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 
 		// Handles pages.
 		if ( is_singular() || is_single() ) {
-			// TODO add functionality.
-			$image_data = $this->prepare_image( $post );
+			if ( has_post_thumbnail( $post ) ) {
+				$image_id = get_post_thumbnail_id();
 
-			if ( $image_data ) {
-				$rtn_data['image']              = $image_data;
+				$rtn_data['image']              = $this->prepare_image( $image_id, $current_url . '#primaryimage' );
 				$rtn_data['primaryImageOfPage'] = array( '@id' => $current_url . '#primaryimage' );
 			}
 

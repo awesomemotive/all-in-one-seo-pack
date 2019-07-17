@@ -53,8 +53,8 @@ class AIOSEOP_Graph_Article extends AIOSEOP_Graph_CreativeWork {
 		global $post;
 		global $aioseop_options;
 
-		$comment_count = get_comment_count( $post->ID );
-
+		$comment_count   = get_comment_count( $post->ID );
+		$post_url        = wp_get_canonical_url( $post );
 		$post_taxonomies = get_post_taxonomies( $post );
 		$post_terms      = array();
 		foreach ( $post_taxonomies as $taxonomy_slug ) {
@@ -66,18 +66,24 @@ class AIOSEOP_Graph_Article extends AIOSEOP_Graph_CreativeWork {
 
 		$rtn_data = array(
 			'@type'            => $this->slug,
-			'@id'              => wp_get_canonical_url( $post ) . '#' . strtolower( $this->slug ),
-			'isPartOf'         => array( '@id' => wp_get_canonical_url( $post ) . '#webpage' ),
+			'@id'              => $post_url . '#' . strtolower( $this->slug ),
+			'isPartOf'         => array( '@id' => $post_url . '#webpage' ),
 			'author'           => $this->prepare_author(),
 			'headline'         => get_the_title(),
 			'datePublished'    => mysql2date( DATE_W3C, $post->post_date_gmt, false ),
 			'dateModified'     => mysql2date( DATE_W3C, $post->post_modified_gmt, false ),
 			'commentCount'     => $comment_count['approved'],
-			'mainEntityOfPage' => array( '@id' => wp_get_canonical_url( $post ) . '#webpage' ),
+			'mainEntityOfPage' => array( '@id' => $post_url . '#webpage' ),
 			'publisher'        => array( '@id' => home_url() . '/#' . $aioseop_options['aiosp_site_represents'] ),
 			'articleSection'   => implode( ', ', $post_terms ),
-			'image'            => $this->prepare_image( $post ),
 		);
+
+		// Handle post Image.
+		if ( has_post_thumbnail( $post ) ) {
+			$image_id = get_post_thumbnail_id();
+
+			$rtn_data['image'] = $this->prepare_image( $image_id, $post_url . '#primaryimage' );
+		}
 
 		return $rtn_data;
 	}

@@ -49,22 +49,71 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 	protected function prepare() {
 		global $aioseop_options;
 
-		// Get Name from General > Schema Settings > Organization Name, and fallback on WP's Site Name.
-		$organization_name = $aioseop_options['aiosp_organization_name'] ?: get_bloginfo( 'name' );
-
 		$rtn_data = array(
-			'@type'  => $this->slug,
-			'@id'    => home_url() . '/#' . strtolower( $this->slug ),
-			'name'   => $organization_name,
-			'url'    => home_url() . '/',
-			'sameAs' => $this->get_site_social_links(),
+			'@type' => $this->slug,
+			'@id'   => home_url() . '/#' . strtolower( $this->slug ),
+			'url'   => home_url() . '/',
 		);
 
-		// Handle Logo/Image.
+		// Site represents Organization or Person.
+		if ( 'person' === $aioseop_options['aiosp_site_represents'] ) {
+			$person_id   = intval( $aioseop_options['aiosp_person_user'] );
+			$person_name = get_the_author_meta( 'display_name', $person_id );
+
+			$rtn_data['@type']  = array( 'Person', $this->slug );
+			$rtn_data['@id']    = home_url() . '/#person';
+			$rtn_data['name']   = get_the_author_meta( 'display_name', $person_id );
+			$rtn_data['sameAs'] = $this->get_user_social_profile_links( $person_id );
+
+			// Handle Logo/Image.
+			$user_image_url = $this->get_user_image_url( $person_id );
+			if ( ! empty( $user_image_url ) ) {
+				$rtn_data['image'] = array(
+					'@type'   => 'ImageObject',
+					'@id'     => home_url() . '/#personlogo',
+					'url'     => $user_image_url,
+					'caption' => $person_name,
+				);
+				$rtn_data['logo'] = array( '@id' => home_url() . '/#personlogo' );
+			}
+		} else {
+			// Get Name from General > Schema Settings > Organization Name, and fallback on WP's Site Name.
+			$rtn_data['name']   = $aioseop_options['aiosp_organization_name'] ?: get_bloginfo( 'name' );
+			$rtn_data['sameAs'] = $this->get_site_social_profile_links();
+
+			// Handle Logo/Image.
+			$data_logo = $this->prepare_logo();
+			if ( ! empty( $data_logo ) ) {
+				$rtn_data['logo'] = $data_logo;
+
+				$rtn_data['image'] = array(
+					'@id' => home_url() . '/#logo',
+				);
+			}
+
+			// Handle contactPoint.
+			if ( ! empty( $aioseop_options['aiosp_phone_number'] ) ) {
+				$rtn_data['contactPoint'] = $this->prepare_contactpoint();
+			}
+		}
+
+		return $rtn_data;
+	}
+
+	/**
+	 * Prepare Logo Data.
+	 *
+	 * @since 3.2
+	 *
+	 * @return array
+	 */
+	protected function prepare_logo() {
+		$rtn_data = array();
+
 		$logo_id   = $this->get_logo_id();
 		$logo_meta = wp_get_attachment_metadata( $logo_id );
 		if ( ! empty( $logo_id ) ) {
-			$rtn_data['logo']  = array(
+			$rtn_data = array(
 				'@type'   => 'ImageObject',
 				'@id'     => home_url() . '/#logo',
 				'url'     => wp_get_attachment_image_url( $logo_id, 'full' ),
@@ -72,13 +121,6 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 				'height'  => $logo_meta['height'],
 				'caption' => wp_get_attachment_caption( $logo_id ),
 			);
-			$rtn_data['image'] = array(
-				'@id' => home_url() . '/#logo',
-			);
-		}
-
-		if ( ! empty( $aioseop_options['aiosp_phone_number'] ) ) {
-			$rtn_data['contactPoint'] = $this->prepare_contactpoint();
 		}
 
 		return $rtn_data;
@@ -112,7 +154,7 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 	 *
 	 * @return array
 	 */
-	protected function get_site_social_links() {
+	protected function get_site_social_profile_links() {
 		// TODO Get website's Social Profile Links.
 		global $aioseop_options;
 

@@ -92,12 +92,10 @@ class AIOSEOP_Schema_Builder {
 		$layout = array(
 			'@context' => 'https://schema.org',
 			'@graph'   => array(
+				'[aioseop_schema_Organization]',
 				'[aioseop_schema_WebSite]',
 			),
 		);
-
-		// TODO Change to use aioseop general settings for schema to determine which to use.
-		array_unshift( $layout['@graph'], ( 'person' === $aioseop_options['aiosp_site_represents'] ? '[aioseop_schema_Person]' : '[aioseop_schema_Organization]' ) );
 
 		// TODO Add layout customizations to settings.
 		if ( is_front_page() || is_home() ) {
@@ -110,6 +108,10 @@ class AIOSEOP_Schema_Builder {
 				array_push( $layout['@graph'], '[aioseop_schema_CollectionPage]' );
 			} elseif ( is_tax() || is_category() || is_tag() ) {
 				array_push( $layout['@graph'], '[aioseop_schema_CollectionPage]' );
+				// Remove when Custom Taxonomies is supported.
+				if ( is_tax() ) {
+					$layout = array();
+				}
 			} elseif ( is_date() ) {
 				array_push( $layout['@graph'], '[aioseop_schema_CollectionPage]' );
 			}
@@ -127,12 +129,20 @@ class AIOSEOP_Schema_Builder {
 					array_push( $layout['@graph'], '[aioseop_schema_Person]' );
 				}
 			}
+
+			// Remove when CPT is supported.
+			if ( ! in_array( get_post_type( $post ), array( 'post', 'page' ) ) ) {
+				$layout = array();
+			}
 		} elseif ( is_search() ) {
 			array_push( $layout['@graph'], '[aioseop_schema_SearchResultsPage]' );
 		} elseif ( is_404() ) {
 			// Do 404 page.
 		}
 
+		/**
+		 * TODO Add Filter Documentation.
+		 */
 		$layout = apply_filters( 'aioseop_schema_layout', $layout );
 
 		// Encode to json string, and remove string type around shortcodes.
