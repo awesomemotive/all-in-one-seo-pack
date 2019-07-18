@@ -4,7 +4,7 @@
 Plugin Name: All In One SEO Pack
 Plugin URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Description: Out-of-the-box SEO for WordPress. Features like XML Sitemaps, SEO for custom post types, SEO for blogs or business sites, SEO for ecommerce sites, and much more. More than 50 million downloads since 2007.
-Version: 3.1
+Version: 3.2-dev
 Author: Michael Torbert
 Author URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Text Domain: all-in-one-seo-pack
@@ -32,17 +32,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * The original WordPress SEO plugin.
  *
  * @package All-in-One-SEO-Pack
- * @version 3.1
+ * @version 3.2-dev
  */
 
 if ( ! defined( 'AIOSEOPPRO' ) ) {
 	define( 'AIOSEOPPRO', false );
 }
 if ( ! defined( 'AIOSEOP_PLUGIN_NAME' ) ) {
-	define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack' );
+	if ( ! AIOSEOPPRO ) {
+		define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack' );
+	} else {
+		define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack Pro' );
+	}
 }
 if ( ! defined( 'AIOSEOP_VERSION' ) ) {
-	define( 'AIOSEOP_VERSION', '3.1' );
+	define( 'AIOSEOP_VERSION', '3.2-dev' );
 }
 
 /*
@@ -105,7 +109,7 @@ if ( ! defined( 'AIOSEOP_PLUGIN_IMAGES_URL' ) ) {
 	define( 'AIOSEOP_PLUGIN_IMAGES_URL', AIOSEOP_PLUGIN_URL . 'images/' );
 }
 if ( ! defined( 'AIOSEOP_BASELINE_MEM_LIMIT' ) ) {
-	define( 'AIOSEOP_BASELINE_MEM_LIMIT', 268435456 );
+	define( 'AIOSEOP_BASELINE_MEM_LIMIT', '256M' );
 } // 256MB
 if ( ! defined( 'WP_CONTENT_URL' ) ) {
 	define( 'WP_CONTENT_URL', site_url() . '/wp-content' );
@@ -319,6 +323,7 @@ if ( ! function_exists( 'aiosp_plugin_row_meta' ) ) {
 			$action_links = array(
 
 				'settings' => array(
+					/* translators: This is an action link users can click to open a feature request/bug report on GitHub. */
 					'label' => __( 'Feature Request/Bug Report', 'all-in-one-seo-pack' ),
 					'url'   => 'https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/new',
 				),
@@ -352,16 +357,19 @@ if ( ! function_exists( 'aiosp_add_action_links' ) ) {
 		$action_links           = array();
 		$action_links           = array(
 			'settings' => array(
+				/* translators: This is an action link users can click to open the General Settings menu. */
 				'label' => __( 'SEO Settings', 'all-in-one-seo-pack' ),
 				'url'   => get_admin_url( null, "admin.php?page=$aioseop_plugin_dirname/aioseop_class.php" ),
 			),
 
 			'forum'    => array(
+				/* translators: This is an action link users can click to open our premium support forum. */
 				'label' => __( 'Support Forum', 'all-in-one-seo-pack' ),
 				'url'   => 'https://semperplugins.com/support/',
 			),
 
 			'docs'     => array(
+				/* translators: This is an action link users can click to open our general documentation page. */
 				'label' => __( 'Documentation', 'all-in-one-seo-pack' ),
 				'url'   => 'https://semperplugins.com/documentation/',
 			),
@@ -373,6 +381,7 @@ if ( ! function_exists( 'aiosp_add_action_links' ) ) {
 		if ( ! AIOSEOPPRO ) {
 			$action_links['proupgrade'] =
 				array(
+					/* translators: This is an action link users can click to purchase a license for All in One SEO Pack Pro. */
 					'label' => __( 'Upgrade to Pro', 'all-in-one-seo-pack' ),
 					'url'   => 'https://semperplugins.com/plugins/all-in-one-seo-pack-pro-version/?loc=plugins',
 
