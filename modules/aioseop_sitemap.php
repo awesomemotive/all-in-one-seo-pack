@@ -4431,28 +4431,29 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			$shop_page_url = get_permalink( wc_get_page_id( 'shop' ) );
-			$count = count( $links );
-			for ( $i = 0; $i < $count; $i++ ) {
-				if ( $shop_page_url === $links[ $i ]['loc'] ) {
-					// TODO Use get_last_modified_post_timestamp() instead when #2721 is merged.
-					$latest_modified_product = new WP_Query(
-						array(
-							'post_type'      => 'product',
-							'post_status'    => 'publish',
-							'posts_per_page' => 1,
-							'orderby'        => 'modified',
-							'order'          => 'DESC',
-						)
-					);
+			$shop_page_index = array_search( $shop_page_url, array_column( $links, 'loc' ) );
 
-					if ( $latest_modified_product->have_posts() ) {
-						$timestamp = $latest_modified_product->posts[0]->post_modified_gmt;
-						$lastmod = date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $timestamp ) );
-						// Last Change timestamp needs to be inserted as second attribute in order to have valid sitemap schema.
-						// TODO Use insert_timestamp_as_second_attribute() instead when #2721 is merged.
-						$links[ $i ] = array_slice( $links[ $i ], 0, 1, true ) + array( 'lastmod' => $lastmod ) + array_slice( $links[ $i ], 1, $count, true );
-					}
-				}
+			if ( ! $shop_page_index ) {
+				return $links;
+			}
+
+			// TODO Use get_last_modified_post_timestamp() instead when #2721 is merged.
+			$latest_modified_product = new WP_Query(
+				array(
+					'post_type'      => 'product',
+					'post_status'    => 'publish',
+					'posts_per_page' => 1,
+					'orderby'        => 'modified',
+					'order'          => 'DESC',
+				)
+			);
+
+			if ( $latest_modified_product->have_posts() ) {
+				$timestamp = $latest_modified_product->posts[0]->post_modified_gmt;
+				$lastmod = date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $timestamp ) );
+				// Last Change timestamp needs to be inserted as second attribute in order to have valid sitemap schema.
+				// TODO Use insert_timestamp_as_second_attribute() instead when #2721 is merged.
+				$links[ $shop_page_index ] = array_slice( $links[ $shop_page_index ], 0, 1, true ) + array( 'lastmod' => $lastmod ) + array_slice( $links[ $shop_page_index ], 1, null, true );
 			}
 			return $links;
 		}
