@@ -4394,7 +4394,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array $links
 		 */
 		private function get_prio_freq_static_homepage( $links ) {
-			if ( 0 === get_option( 'page_on_front' ) ) {
+			if ( 0 === (int) get_option( 'page_on_front' ) ) {
 				return $links;
 			}
 			$prio = $this->options['aiosp_sitemap_prio_homepage'];
