@@ -2224,7 +2224,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return bool
 		 */
 		private function does_addl_sitemap_contain_urls() {
-			$is_addl_pages = $this->option_isset( 'aiosp_sitemap_addl_pages' );
+			$is_addl_pages = ! empty( $this->options['aiosp_sitemap_addl_pages'] );
 			if ( ! $is_addl_pages &&
 				( 0 !== get_option( 'page_on_front' ) ) &&
 				( 0 !== get_option( 'page_for_posts' ) ) ) {
