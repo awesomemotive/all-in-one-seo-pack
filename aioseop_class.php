@@ -4176,19 +4176,19 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		// Handle noindex, nofollow - robots meta.
 		if ( get_option( 'blog_public' ) ) {
 
-      /**
-		 * The aioseop_robots_meta filter hook.
-		 *
-		 * Can be used to filter the robots meta tag value.
-		 * e.g. 'noindex, nofollow'
-		 *
-		 * @since ?
-		 *
-		 * @param string
-		 * @return string
-		 */
+			/**
+			 * The aioseop_robots_meta filter hook.
+			 *
+			 * Can be used to filter the robots meta tag value.
+			 * e.g. 'noindex, nofollow'
+			 *
+			 * @since ?
+			 *
+			 * @param string
+			 * @return string
+			 */
 			$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
-      
+
 			if ( ! empty( $robots_meta ) ) {
 				$meta_string .= sprintf( '<meta name="robots" content="%s"', esc_attr( $robots_meta ) ) . " />\n";
 			}
@@ -4296,7 +4296,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 	}
-
 	/**
 	 * Check Rewrite Handler
 	 *
@@ -4473,21 +4472,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				! is_search() &&
 				! $is_static_homepage
 		) {
-			// TODO Use $meta_opts when get_current_options() is refactored - #2729.
-			$queried_object = get_queried_object();
-			if ( property_exists( $queried_object, 'ID' ) ) {
-				$meta = get_post_meta( $queried_object->ID );
-			}
-			if ( property_exists( $queried_object, 'term_id' ) ) {
-				$meta = get_term_meta( $queried_object->term_id );
-			}
-
-			if ( array_key_exists( '_aioseop_noindex', $meta ) && 'on' === $meta['_aioseop_noindex'][0] ) {
-				$noindex = true;
-			}
-			if ( array_key_exists( '_aioseop_nofollow', $meta ) && 'on' === $meta['_aioseop_nofollow'][0] ) {
-				$nofollow = true;
-			}
+			$noindex = $this->get_noindex_nofollow_meta_value( 'noindex' );
+			$nofollow = $this->get_noindex_nofollow_meta_value( 'nofollow' );
 		}
 
 		if ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 ) {
@@ -4545,6 +4531,40 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		return $this->get_robots_meta_string( $noindex, $nofollow );
+	}
+
+	/**
+	 * The get_noindex_nofollow_meta_value() function.
+	 *
+	 * Gets the post/term noindex/nofollow meta value for the requested object.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param string $value The requested meta value.
+	 * @return mixed
+	 */
+	private function get_noindex_nofollow_meta_value( $value ) {
+		$queried_object = get_queried_object();
+		$meta = array();
+		$meta_value = '_aioseop_' . $value;
+
+		if ( empty( $queried_object ) ) {
+			return false;
+		}
+
+		// TODO Use $meta_opts when get_current_options() is refactored - #2729.
+		if ( property_exists( $queried_object, 'ID' ) ) {
+			$meta = get_post_meta( $queried_object->ID );
+		}
+		if ( property_exists( $queried_object, 'term_id' ) ) {
+			$meta = get_term_meta( $queried_object->term_id );
+		}
+
+		if ( array_key_exists( $meta_value, $meta ) && 'on' === $meta[ $meta_value ][0] ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
