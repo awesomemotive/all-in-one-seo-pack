@@ -744,8 +744,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				$row = "\t
 					<tr>
 						<td>
-							<a href='#' class='dashicons dashicons-trash aiosp_robots_delete_rule' data-id='%s'></a>
-							<a href='#' class='dashicons dashicons-edit aiosp_robots_edit_rule' data-id='%s' data-agent='%s' data-type='%s' data-path='%s'></a>
+							<a href='#' class='dashicons dashicons-trash aiosp_robots_delete_rule' data-id='%s' aria-label='" . __('Delete this rule', 'all-in-one-seo-pack') . "'></a>
+							<a href='#' class='dashicons dashicons-edit aiosp_robots_edit_rule' data-id='%s' data-agent='%s' data-type='%s' data-path='%s' aria-label='" . __('Edit this rule', 'all-in-one-seo-pack') . "'></a>
 						</td>
 						<td>%s</td>
 						<td>%s</td>
@@ -798,7 +798,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					$buf .= '</div>';
 					break;
 				case "{$this->prefix}robots.txt":
-					$buf .= "<textarea disabled id='{$this->prefix}robot-txt' class='large-text robots-text' rows='15'>";
+					$buf .= "<h3>" . __( "Here's how your robots.txt looks:", 'all-in-one-seo-pack' ) . "</h3>";
+					$buf .= "<textarea disabled id='{$this->prefix}robot-txt' class='large-text robots-text' rows='15' aria-label='" . __('This shows how your robots.txt appears', 'all-in-one-seo-pack') . "'>";
 					$buf .= $this->do_robots();
 					$buf .= "</textarea>";
 					break;

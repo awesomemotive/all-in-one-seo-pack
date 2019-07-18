@@ -83,8 +83,12 @@
 
 .aioseop_tabs .aioseop_meta_box_help,
 .aioseop_tabs .aioseop_meta_box_help:active {
-	margin-top: 4px;
-	margin-right: 45px;
+	margin-top: 10px;
+}
+
+.aioseop_tabs #aioseop_opengraph_settings .aioseop_meta_box_help,
+.aioseop_tabs #aioseop_opengraph_settings .aioseop_meta_box_help:active {
+	margin-bottom: 20px;
 }
 
 .aioseop_label {
@@ -192,7 +196,6 @@
 	"Helvetica Neue Light",
 	"Helvetica Neue",
 	sans-serif;
-	border-bottom: 1px solid #CCC;
 	width: 100%;
     margin: 8px 0 0 0;
 }
@@ -200,12 +203,13 @@
 .aioseop_head_nav_tab {
 	padding: 10px 15px 10px 15px;
 	margin: 0 0 0 15px;
+	background-color: #fff;
 	border-radius: 4px 4px 0 0;
 	border: 1px solid #CCC;
 	border-bottom: 0 white;
 	float: left;
-	opacity: 0.5;
 	color: black;
+	font-weight: bold;
 	text-shadow: white 0 1px 0;
 	text-decoration: none;
 }
@@ -1031,6 +1035,10 @@ table.aioseop_table th {
 	padding-left: 5%;
 }
 
+.aioseop.aioseop_options.aiosp_robots_settings h3 {
+	margin: 1.5em 0.6em 0.3em;
+}
+
 #aiosp_settings_form .aioseop_no_label, 
 .aioseop_no_label {
 	float: left;
@@ -1260,7 +1268,7 @@ div.aioseop_notice a.aioseop_dismiss_link {
 }
 
 .aioseop_tab.ui-widget-content a.aioseop_help_text_link {
-	color: #888 !important;
+	color: #757575 !important;
 }
 
 .aioseop_tabs.ui-widget {
@@ -1402,6 +1410,7 @@ div.sfwd_debug_error {
 }
 
 .postbox-container .aioseop_input {
+	width: 100%;
 	margin-bottom: 10px;
 	padding: 0;
 }
@@ -1453,8 +1462,8 @@ div#aiosp_snippet_wrapper {
     border: 1px solid #8d96a0;
     clear: both;
     padding: 10px 10px 0;
-    max-width: 97%;
-    margin-bottom: 15px;
+    width: auto;
+    margin: 0 1px 15px;
 }
 
 #aiosp_snippet_wrapper > .aioseop_input:first-child {
@@ -1505,7 +1514,7 @@ div#aioseop_snippet > div > div {
 }
 
 div#aioseop_snippet > div > div > cite {
-	color: #093;
+	color: #00852B;
 	font-style: normal;
 }
 
@@ -1586,4 +1595,9 @@ div#aiosp_sitemap_status_metabox .toggle-indicator {
 
 #aiosp_file_editor_htaccess_metabox {
     margin: 0 !important;
+}
+
+.aioseop_options .aioseop-exclude-terms.selectize-control.multi .selectize-input [data-value] {
+	background-color: #0E7BBE;
+	background-image: none;
 }

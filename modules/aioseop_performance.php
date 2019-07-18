@@ -422,7 +422,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 		function get_email_input() {
 			$nonce = wp_create_nonce( 'sfwd-debug-nonce' );
 			$buf   =
-				'<input name="sfwd_debug_send_email" type="text" value="" placeholder="' . __( 'E-mail debug information', 'all-in-one-seo-pack' ) . '">' .
+				'<input name="sfwd_debug_send_email" type="text" value="" placeholder="' . __( 'E-mail debug information', 'all-in-one-seo-pack' ) . '" aria-label="' . __( 'Enter the email address provided by Semper Plugins Support to send your debug information', 'all-in-one-seo-pack' ) . '">' .
 				'<input name="sfwd_debug_nonce" type="hidden" value="' . $nonce . '">' .
 				'<input name="sfwd_debug_submit" type="submit" value="' . __( 'Submit', 'all-in-one-seo-pack' ) . '" class="button-primary">';
 			return $buf;

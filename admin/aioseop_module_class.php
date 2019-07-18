@@ -2068,15 +2068,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				wp_enqueue_style( 'aioseop-module-style-rtl', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module-rtl.css', array( 'aioseop-module-style' ), AIOSEOP_VERSION );
 			}
 
-			// Uses WP Scripts to load the current platform version of jQuery UI CSS.
 			if ( ! wp_style_is( 'aioseop-jquery-ui', 'registered' ) && ! wp_style_is( 'aioseop-jquery-ui', 'enqueued' ) ) {
-				$wp_scripts = wp_scripts();
 				wp_enqueue_style(
 					'aioseop-jquery-ui',
-					'//ajax.aspnetcdn.com/ajax/jquery.ui/' . $wp_scripts->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.min.css',
-					false,
-					AIOSEOP_VERSION,
-					false
+					AIOSEOP_PLUGIN_URL . 'css/aioseop-jquery-ui.css',
+					array(),
+					AIOSEOP_VERSION
 				);
 			}
 		}
@@ -3074,7 +3071,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					}
 					?>
 					<div id="icon-aioseop" class="icon32"><br></div>
-					<h2><?php echo $name; ?></h2>
+					<h1><?php echo $name; ?></h1>
 					<div id="dropmessage" class="updated" style="display:none;"></div>
 				</div>
 				<?php
