@@ -4556,7 +4556,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @since 3.2.0
 	 *
-	 * @param string $value The requested meta key.
+	 * @param string $key The requested meta key.
 	 * @return string
 	 */
 	private function get_noindex_nofollow_meta_value( $key ) {
