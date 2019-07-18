@@ -1408,7 +1408,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				global $post;
 			}
 
-			// TODO Use get_queried_object()->ID for static homepage/posts page. Otherwise meta values for first post appearing on page are returned - #2729.
+			// TODO Fetch correct ID for static posts page/Woocommerce shop page - #2729.
 			$post_id = $post;
 			if ( is_object( $post_id ) ) {
 				$post_id = $post_id->ID;
@@ -4456,30 +4456,45 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$aiosp_noindex  = '';
 		$aiosp_nofollow = '';
 		$tax_noindex    = array();
-		$is_static_homepage = false;
+		$is_static_page = false;
+		$is_static_posts_page = false;
+		$is_woocommerce_shop_page = false;
 
-		if ( isset( $aioseop_options['aiosp_tax_noindex'] ) ) {
+		if ( isset( $aioseop_options['aiosp_tax_noindex'] ) && ! empty( $aioseop_options['aiosp_tax_noindex'] ) ) {
 			$tax_noindex = $aioseop_options['aiosp_tax_noindex'];
 		}
 
-		if ( is_home() && 'page' !== get_option( 'show_on_front' ) ) {
-			$is_static_homepage = true;
+		if ( is_front_page() ) {
+			return $this->get_robots_meta_string( true, true );
+		}
+
+		if ( is_home() && 0 !== (int) get_option( 'page_for_posts' ) ) {
+			$is_static_posts_page = true;
+		}
+
+		// TODO Use aioseop_is_woocommerce_active() when #2720 is merged.
+		if ( class_exists( 'woocommerce' ) && is_shop() ) {
+			$is_woocommerce_shop_page = true;
+		}
+
+		if ( $is_static_posts_page || $is_woocommerce_shop_page ) {
+			$post_type = 'page';
+			$is_static_page = true;
 		}
 
 		if (
 				! is_date() &&
 				! is_author() &&
-				! is_search() &&
-				! $is_static_homepage
+				! is_search()
 		) {
-			$noindex = $this->get_noindex_nofollow_meta_value( 'noindex' );
-			$nofollow = $this->get_noindex_nofollow_meta_value( 'nofollow' );
+			$aiosp_noindex = $this->get_noindex_nofollow_meta_value( 'noindex' );
+			$aiosp_nofollow = $this->get_noindex_nofollow_meta_value( 'nofollow' );
 		}
 
-		if ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 ) {
+		if ( 'on' === $aiosp_noindex || ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 ) {
 			$noindex = true;
 		}
-		if ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 ) {
+		if ( 'on' === $aiosp_nofollow || ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 ) {
 			$nofollow = true;
 		}
 
@@ -4511,11 +4526,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if (
 				is_single() ||
 				is_page() ||
-				$this->is_static_posts_page() ||
 				is_attachment() ||
-				$this->check_singular()
+				$this->check_singular() ||
+				$is_static_page
 		) {
-			if ( '' === $aiosp_noindex &&
+			if (	
+					'' === $aiosp_noindex &&
 					! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
 					in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
 			) {
@@ -4540,16 +4556,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @since 3.2.0
 	 *
-	 * @param string $value The requested meta value.
-	 * @return mixed
+	 * @param string $value The requested meta key.
+	 * @return string
 	 */
-	private function get_noindex_nofollow_meta_value( $value ) {
-		$queried_object = get_queried_object();
+	private function get_noindex_nofollow_meta_value( $key ) {
 		$meta = array();
-		$meta_value = '_aioseop_' . $value;
+		$meta_key = '_aioseop_' . $key;
+		$meta_value = '';
 
+		$queried_object = get_queried_object();
 		if ( empty( $queried_object ) ) {
-			return false;
+			return $meta_value;
 		}
 
 		// TODO Use $meta_opts when get_current_options() is refactored - #2729.
@@ -4559,13 +4576,18 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( property_exists( $queried_object, 'term_id' ) ) {
 			$meta = get_term_meta( $queried_object->term_id );
 		}
-
-		if ( array_key_exists( $meta_value, $meta ) && 'on' === $meta[ $meta_value ][0] ) {
-			return true;
+		// TODO Use aioseop_is_woocommerce_active() when #2720 is merged.
+		if ( class_exists( 'woocommerce' ) && is_shop() ) {
+			$meta = $meta = get_post_meta( wc_get_page_id( 'shop' ) );
 		}
 
-		return false;
+		if ( array_key_exists( $meta_key, $meta ) ) {
+			$meta_value = $meta[ $meta_key ][0];
+		}
+
+		return $meta_value;
 	}
+
 
 	/**
 	 * The get_robots_meta_string() function.
