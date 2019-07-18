@@ -1311,6 +1311,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			if ( null === $post ) {
 				global $post;
 			}
+
+			// TODO Use get_queried_object()->ID for static homepage/posts page. Otherwise meta values for first post appearing on page are returned - #2729.
 			$post_id = $post;
 			if ( is_object( $post_id ) ) {
 				$post_id = $post_id->ID;
@@ -4340,13 +4342,19 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				! is_search() &&
 				! $is_static_homepage
 		) {
-			// $meta_opts cannot be used because the post meta values for archive pages will be the ones from the first post on the page.
+			// TODO Use $meta_opts when get_current_options() is refactored - #2729.
 			$queried_object = get_queried_object();
-			$post_meta = get_post_meta( $queried_object->ID );
-			if ( array_key_exists( '_aioseop_noindex', $post_meta ) && 'on' === $post_meta['_aioseop_noindex'][0] ) {
+			if ( property_exists( $queried_object, 'ID' ) ) {
+				$meta = get_post_meta( $queried_object->ID );
+			}
+			if ( property_exists( $queried_object, 'term_id' ) ) {
+				$meta = get_term_meta( $queried_object->term_id );
+			}
+
+			if ( array_key_exists( '_aioseop_noindex', $meta ) && 'on' === $meta['_aioseop_noindex'][0] ) {
 				$noindex = true;
 			}
-			if ( array_key_exists( '_aioseop_nofollow', $post_meta ) && 'on' === $post_meta['_aioseop_nofollow'][0] ) {
+			if ( array_key_exists( '_aioseop_nofollow', $meta ) && 'on' === $meta['_aioseop_nofollow'][0] ) {
 				$nofollow = true;
 			}
 		}
