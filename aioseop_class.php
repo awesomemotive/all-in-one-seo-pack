@@ -4317,39 +4317,44 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function get_robots_meta() {
 		global $aioseop_options;
-		$opts           = $this->meta_opts;
-		$page           = $this->get_page_number();
+		$page_number    = $this->get_page_number();
 		$post_type      = get_post_type();
 		$noindex        = false;
 		$nofollow       = false;
-		$tax_noindex    = '';
 		$aiosp_noindex  = '';
 		$aiosp_nofollow = '';
-
-		// Do not fetch post meta values for these archive pages because these will be
-		// the post meta values from the first post appearing on the page.
-		if (
-				! empty( $opts ) &&
-				! is_date() &&
-				! is_author() &&
-				! is_search() &&
-				! is_home()
-			) {
-			$aiosp_noindex  = htmlspecialchars( stripslashes( $opts['aiosp_noindex'] ) );
-			$aiosp_nofollow = htmlspecialchars( stripslashes( $opts['aiosp_nofollow'] ) );
-		}
+		$tax_noindex    = array();
+		$is_static_homepage = false;
 
 		if ( isset( $aioseop_options['aiosp_tax_noindex'] ) ) {
 			$tax_noindex = $aioseop_options['aiosp_tax_noindex'];
 		}
-		if ( empty( $tax_noindex ) || ! is_array( $tax_noindex ) ) {
-			$tax_noindex = array();
+
+		if ( is_home() && 'page' !== get_option( 'show_on_front' ) ) {
+			$is_static_homepage = true;
 		}
 
-		if ( 'on' === $aiosp_noindex || ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page > 1 ) ) {
+		if (
+				! is_date() &&
+				! is_author() &&
+				! is_search() &&
+				! $is_static_homepage
+		) {
+			// $meta_opts cannot be used because the post meta values for archive pages will be the ones from the first post on the page.
+			$queried_object = get_queried_object();
+			$post_meta = get_post_meta( $queried_object->ID );
+			if ( array_key_exists( '_aioseop_noindex', $post_meta ) && 'on' === $post_meta['_aioseop_noindex'][0] ) {
+				$noindex = true;
+			}
+			if ( array_key_exists( '_aioseop_nofollow', $post_meta ) && 'on' === $post_meta['_aioseop_nofollow'][0] ) {
+				$nofollow = true;
+			}
+		}
+
+		if ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 ) {
 			$noindex = true;
 		}
-		if ( 'on' === $aiosp_nofollow || ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page > 1 ) ) {
+		if ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 ) {
 			$nofollow = true;
 		}
 
