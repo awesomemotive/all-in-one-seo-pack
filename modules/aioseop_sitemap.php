@@ -4401,17 +4401,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$freq = $this->options['aiosp_sitemap_freq_homepage'];
 
 			$homepage_url = get_site_url() . '/';
-			$count = count( $links );
-			for ( $i = 0; $i < $count; $i++ ) {
-				if ( $homepage_url === $links[ $i ]['loc'] ) {
-					if ( 'no' !== $prio ) {
-						$links[ $i ]['priority'] = $prio;
-					}
-					if ( 'no' !== $freq ) {
-						$links[ $i ]['changefreq'] = $freq;
-					}
-				}
+			$homepage_index = array_search( $homepage_url, array_column( $links, 'loc' ) );
+
+			if ( ! $homepage_url ) {
+				return $links;
 			}
+
+			if ( 'no' !== $prio ) {
+				$links[ $homepage_index ]['priority'] = $prio;
+			}
+			if ( 'no' !== $freq ) {
+				$links[ $homepage_index ]['changefreq'] = $freq;
+			}
+
 			return $links;
 		}
 
