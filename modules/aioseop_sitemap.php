@@ -3194,7 +3194,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$pages = apply_filters( $this->prefix . 'addl_pages', $pages );
 
 			$pages = $this->get_homepage_timestamp( $pages );
-			$pages = $this->get_posts_page_timestamp( $pages );
 
 			return $pages;
 		}
@@ -4444,6 +4443,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$links = $this->get_prio_from_posts( $posts, $this->get_default_priority( 'post', true ), $this->get_default_frequency( 'post', true ) );
 			$links = array_merge( $links, $this->get_archive_prio_from_posts( $posts ) );
+
+			$is_sitemap_indexes_disabled = empty( $this->options['aiosp_sitemap_indexes'] );
+			if ( $is_sitemap_indexes_disabled || ( ! $is_sitemap_indexes_disabled && 'page' === $include ) ) {
+				$links = $this->get_posts_page_timestamp( $links );
+			}
+
 			return $links;
 		}
 
