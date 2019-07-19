@@ -3253,7 +3253,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array $links
 		 */
 		private function update_static_page_timestamp( $links, $static_page_url ) {
-			$lastmod = $this->get_last_modified_post_timestamp();
+			$lastmod = $this->get_last_modified_post_timestamp( 'post' );
 			if ( false === $lastmod ) {
 				return $links;
 			}
@@ -3275,10 +3275,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @return mixed Timestamp of the last modified post or false if there is none.
 		 */
-		private function get_last_modified_post_timestamp() {
+		private function get_last_modified_post_timestamp( $post_type ) {
 			$last_modified_post = new WP_Query(
 				array(
-					'post_type'      => 'post',
+					'post_type'      => $post_type,
 					'post_status'    => 'publish',
 					'posts_per_page' => 1,
 					'orderby'        => 'modified',
@@ -3473,7 +3473,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$types[ $p->post_type ] = $p;
 			}
 
-			$archives = array();
+			$archive_pages = array();
 			$types    = apply_filters( "{$this->prefix}include_post_types_archives", $types );
 			if ( $types ) {
 				foreach ( $types as $post_type => $p ) {
@@ -3481,21 +3481,50 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					if ( ! ( in_array( $post_type, $posttypes ) && in_array( $post_type, $types_supporting_archives ) ) ) {
 						continue;
 					}
-					$archives = array_merge(
-						$archives,
-						$this->get_prio_from_posts(
-							array( $p ),
-							$this->get_default_priority( 'archive', true ),
-							$this->get_default_frequency( 'archive', true ),
-							array(
-								$this,
-								'get_archive_link_from_post',
-							)
+					$temp_archive_pages = $this->get_prio_from_posts(
+						array( $p ),
+						$this->get_default_priority( 'archive', true ),
+						$this->get_default_frequency( 'archive', true ),
+						array(
+							$this,
+							'get_archive_link_from_post',
 						)
+					);
+
+					if ( ! empty( $temp_archive_pages ) ) {
+						$temp_archive_pages = $this->get_archive_page_timestamp( $temp_archive_pages, $post_type );
+					}
+
+					$archive_pages = array_merge(
+						$archive_pages,
+						$temp_archive_pages
 					);
 				}
 			}
-			return $archives;
+			return $archive_pages;
+		}
+
+		/**
+		 * The get_archive_page_timestamp() function.
+		 *
+		 * Get the Last Change timestamp for archive pages.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $archive_pages
+		 * @param string $post_type
+		 * @return array $archive_pages
+		 */
+		private function get_archive_page_timestamp( $archive_pages, $post_type ) {
+			$lastmod = $this->get_last_modified_post_timestamp( $post_type );
+			if ( false === $lastmod ) {
+				return $links;
+			}
+			$count = count( $archive_pages );
+			for ( $i = 0; $i < $count; $i++ ) {
+				$archive_pages[ $i ] = $this->insert_timestamp_as_second_attribute( $archive_pages[ $i ], $lastmod );
+			}
+			return $archive_pages;
 		}
 
 		/**
