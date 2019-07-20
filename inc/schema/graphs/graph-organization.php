@@ -119,8 +119,12 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 				'url'     => wp_get_attachment_image_url( $logo_id, 'full' ),
 				'width'   => $logo_meta['width'],
 				'height'  => $logo_meta['height'],
-				'caption' => wp_get_attachment_caption( $logo_id ),
 			);
+
+			$caption = wp_get_attachment_caption( $logo_id );
+			if ( false !== $caption || ! empty( $caption ) ) {
+				$rtn_data['caption'] = $caption;
+			}
 		}
 
 		return $rtn_data;
@@ -161,7 +165,10 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 		$social_links = array();
 
 		if ( ! empty( $aioseop_options['aiosp_social_profile_links'] ) ) {
-			$social_links = explode( ',', str_replace( array( "\r\n", "\r" ), '', $aioseop_options['aiosp_social_profile_links'] ) );
+			$social_links = $aioseop_options['aiosp_social_profile_links'];
+			$social_links = str_replace( array( ",\r\n", ",\r" ), ',', $social_links );
+			$social_links = str_replace( array( "\r\n", "\r" ), ',', $social_links );
+			$social_links = explode( ',', $social_links );
 		}
 
 		return $social_links;

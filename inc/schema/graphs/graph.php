@@ -158,9 +158,12 @@ abstract class AIOSEOP_Graph {
 			'url'     => wp_get_attachment_image_url( $image_id, 'full' ),
 			'width'   => $image_meta['width'],
 			'height'  => $image_meta['height'],
-			'caption' => wp_get_attachment_caption( $image_meta ),
-
 		);
+
+		$caption = wp_get_attachment_caption( $image_id );
+		if ( false !== $caption || ! empty( $caption ) ) {
+			$rtn_data['caption'] = $caption;
+		}
 
 		return $rtn_data;
 	}

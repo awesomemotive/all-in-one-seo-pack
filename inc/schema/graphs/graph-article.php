@@ -101,11 +101,13 @@ class AIOSEOP_Graph_Article extends AIOSEOP_Graph_CreativeWork {
 		global $post;
 		global $aioseop_options;
 
-		if ( 'person' === $aioseop_options['aiosp_site_represents'] && intval( $post->post_author ) === intval( $aioseop_options['aiosp_person_user'] ) ) {
-			$author_url = home_url() . '/';
-		} else {
-			$author_url = get_author_posts_url( $post->post_author );
-		}
+//		if ( 'person' === $aioseop_options['aiosp_site_represents'] && intval( $post->post_author ) === intval( $aioseop_options['aiosp_person_user'] ) ) {
+//			$author_url = home_url() . '/';
+//		} else {
+//			$author_url = get_author_posts_url( $post->post_author );
+//		}
+
+		$author_url = get_author_posts_url( $post->post_author );
 
 		$rtn_data = array(
 			'@id' => $author_url . '#author',

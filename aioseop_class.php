@@ -620,6 +620,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			'organization_name'           => array(
 				'name'     => __( 'Organization Name:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
+				'default'  => '',
 				'condshow' => array(
 					'aiosp_site_represents' => 'organization',
 				),
