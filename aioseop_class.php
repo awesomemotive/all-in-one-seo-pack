@@ -4465,7 +4465,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( is_front_page() ) {
-			return $this->get_robots_meta_string( true, true );
+			return $this->get_robots_meta_string( false, false );
 		}
 
 		if ( is_home() && 0 !== (int) get_option( 'page_for_posts' ) ) {
