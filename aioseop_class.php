@@ -4530,8 +4530,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$this->check_singular() ||
 				$is_static_page
 		) {
-			if (	
-					'' === $aiosp_noindex &&
+			if ( '' === $aiosp_noindex &&
 					! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
 					in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
 			) {
@@ -4552,7 +4551,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	/**
 	 * The get_noindex_nofollow_meta_value() function.
 	 *
-	 * Gets the post/term noindex/nofollow meta value for the requested object.
+	 * Gets the noindex/nofollow meta value for the requested object.
 	 *
 	 * @since 3.2.0
 	 *
