@@ -3518,7 +3518,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		private function get_archive_page_timestamp( $archive_pages, $post_type ) {
 			$lastmod = $this->get_last_modified_post_timestamp( $post_type );
 			if ( false === $lastmod ) {
-				return $links;
+				return $archive_pages;
 			}
 			$count = count( $archive_pages );
 			for ( $i = 0; $i < $count; $i++ ) {
