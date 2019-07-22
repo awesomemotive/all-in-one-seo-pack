@@ -4577,7 +4577,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		// TODO Use aioseop_is_woocommerce_active() when #2720 is merged.
 		if ( class_exists( 'woocommerce' ) && is_shop() ) {
-			$meta = $meta = get_post_meta( wc_get_page_id( 'shop' ) );
+			$meta = get_post_meta( wc_get_page_id( 'shop' ) );
 		}
 
 		if ( array_key_exists( $meta_key, $meta ) ) {
