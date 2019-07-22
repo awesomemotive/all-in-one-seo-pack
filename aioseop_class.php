@@ -791,7 +791,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'upgrade'            => array(
 						'type'    => 'html',
 						'label'   => 'none',
-						'default' => aiosp_common::get_upgrade_hyperlink( 'meta', sprintf( '%1$s %2$s Pro', __( 'Upgrade to', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ), __( 'UPGRADE TO PRO VERSION', 'all-in-one-seo-pack' ), '_blank' ),
+						'default' => aiosp_common::get_upgrade_hyperlink(
+							'meta',
+							sprintf(
+								'%1$s %2$s Pro',
+								/* translators: The complete string is as follows: "Upgrade to All in One SEO Pack Pro". */
+								__( 'Upgrade to', 'all-in-one-seo-pack' ),
+								AIOSEOP_PLUGIN_NAME
+							),
+							__( 'UPGRADE TO PRO VERSION', 'all-in-one-seo-pack' ),
+							'_blank'
+						),
 					),
 					'support'            => array(
 						'type'    => 'html',
@@ -799,6 +809,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'default' => '<a target="_blank" href="https://semperplugins.com/support/">' . __( 'Support Forum', 'all-in-one-seo-pack' ) . '</a>',
 					),
 					'snippet'            => array(
+						/* translators: The preview snippet shows how the page will look like in the search results (title, meta description and permalink). */
 						'name'    => __( 'Preview Snippet', 'all-in-one-seo-pack' ),
 						'type'    => 'custom',
 						'label'   => 'top',
@@ -823,22 +834,28 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'type' => 'text',
 					),
 					'custom_link'        => array(
+						/* translators: This is a setting that users can enable to enter a custom canonical URL. */
 						'name' => __( 'Custom Canonical URL', 'all-in-one-seo-pack' ),
 						'type' => 'text',
 						'size' => 60,
 					),
 					'noindex'            => array(
+						/* translators: This is a setting that allows users to add the NOINDEX robots meta tag value to the current post/page. */
 						'name'    => __( 'NOINDEX this page/post', 'all-in-one-seo-pack' ),
 						'default' => '',
 					),
 					'nofollow'           => array(
+						/* translators: This is a setting that allows users to add the NOFOLLOW robots meta tag value to the current post/page. */
 						'name'    => __( 'NOFOLLOW this page/post', 'all-in-one-seo-pack' ),
 						'default' => '',
 					),
+					/* translators: This is a setting that allows users to exclude the current post/page from the sitemap. */
 					'sitemap_exclude'    => array( 'name' => __( 'Exclude From Sitemap', 'all-in-one-seo-pack' ) ),
+					/* translators: This is a setting that allows users to disable All in One SEO Pack for the current post/page. */
 					'disable'            => array( 'name' => __( 'Disable on this page/post', 'all-in-one-seo-pack' ) ),
 					'disable_analytics'  => array(
-						'name'     => __( 'Disable Google Analytics', 'all-in-one-seo-pack' ),
+						/* translators: This is a setting that allows users to disable Google Analytics tracking for the current post/page. */
+							'name' => __( 'Disable Google Analytics', 'all-in-one-seo-pack' ),
 						'condshow' => array( 'aiosp_disable' => 'on' ),
 					),
 				),
@@ -849,6 +866,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		$this->layout = array(
 			'default'   => array(
+				/* translators: This is the name of the main menu. */
 				'name'      => __( 'General Settings', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/documentation/general-settings/',
 				'options'   => array(), // This is set below, to the remaining options -- pdb.
@@ -878,16 +896,19 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'cpt'       => array(
+				/* translators: This is the name of a settings section where users can indicate which post types and taxonomies they want to use All in One SEO Pack with. */
 				'name'      => __( 'Content Type Settings', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/documentation/custom-post-type-settings/',
 				'options'   => array( 'taxactive', 'cpostactive' ),
 			),
 			'display'   => array(
+				/* translators: This is the name of a settings section where users can control how All in One SEO Pack appears in the WordPress Administrator Panel. */
 				'name'      => __( 'Display Settings', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/documentation/display-settings/',
 				'options'   => array( 'posttypecolumns' ),
 			),
 			'webmaster' => array(
+				/* translators: This is the name of a settings section where users can add verification codes of webmaster platforms such as Google Search Console, Bing Webmaster Tools, etc. */
 				'name'      => __( 'Webmaster Verification', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/sections/webmaster-verification/',
 				'options'   => array( 'google_verify', 'bing_verify', 'pinterest_verify', 'yandex_verify', 'baidu_verify' ),
@@ -3326,6 +3347,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( isset( $post_types['attachment'] ) ) {
+			/* translators: This refers to entries in the Media Library (images, videos, recordings and other files) and their attachment pages. */
 			$post_types['attachment'] = __( 'Media / Attachments', 'all-in-one-seo-pack' );
 		}
 		if ( isset( $all_post_types['attachment'] ) ) {
@@ -3367,6 +3389,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$name  = $post_objs[ $p ]->labels->singular_name;
 			if ( ! isset( $this->default_options[ $field ] ) ) {
 				$this->default_options[ $field ] = array(
+					/* translators: The title format is the template that is used to format the title for each post of a certain post type (Posts, Pages, etc.). */
 					'name'     => "$name " . __( 'Title Format:', 'all-in-one-seo-pack' ) . "<br />($p)",
 					'type'     => 'text',
 					'default'  => '%post_title% | %site_title%',
@@ -3398,6 +3421,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$name  = $pt;
 				if ( ! isset( $this->default_options[ $field ] ) ) {
 					$this->default_options[ $field ]  = array(
+						/* translators: The taxonomy title format is the template that is used to format the title for each taxonomy term of a certain taxonomy (Categories, Tags, etc.). */
 						'name'     => "$name " . __( 'Taxonomy Title Format:', 'all-in-one-seo-pack' ),
 						'type'     => 'text',
 						'default'  => '%taxonomy_title% | %site_title%',
@@ -3494,11 +3518,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$submit['Submit_Default'] = array(
 			'type'  => 'submit',
 			'class' => 'aioseop_reset_settings_button button-secondary',
+			/* translators: This is the text of a button that allows users to reset the General Settings to their default values. */
 			'value' => __( 'Reset General Settings to Defaults', 'all-in-one-seo-pack' ) . ' &raquo;',
 		);
 		$submit['Submit_All_Default']      = array(
 			'type'  => 'submit',
 			'class' => 'aioseop_reset_settings_button button-secondary',
+			/* translators: This is the text of a button that allows users to reset all settings across the entire plugin to their default values. */
 			'value' => __( 'Reset ALL Settings to Defaults', 'all-in-one-seo-pack' ) . ' &raquo;',
 		);
 
@@ -3586,6 +3612,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				if ( ! empty( $this->options['aiosp_cpostnoindex'] ) && in_array( $post_type, $this->options['aiosp_cpostnoindex'] ) ) {
 					$settings[ "{$prefix}noindex" ]['type']            = 'select';
 					$settings[ "{$prefix}noindex" ]['initial_options'] = array(
+						/* translators: This indicates that the current post/page is using the default value for its post type, which is NOINDEX. */
 						''    => __( 'Default - noindex', 'all-in-one-seo-pack' ),
 						'off' => __( 'index', 'all-in-one-seo-pack' ),
 						'on'  => __( 'noindex', 'all-in-one-seo-pack' ),
@@ -3594,6 +3621,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				if ( ! empty( $this->options['aiosp_cpostnofollow'] ) && in_array( $post_type, $this->options['aiosp_cpostnofollow'] ) ) {
 					$settings[ "{$prefix}nofollow" ]['type']            = 'select';
 					$settings[ "{$prefix}nofollow" ]['initial_options'] = array(
+						/* translators: This indicates that the current post/page is using the default value for its post type, which is NOFOLLOW. */
 						''    => __( 'Default - nofollow', 'all-in-one-seo-pack' ),
 						'off' => __( 'follow', 'all-in-one-seo-pack' ),
 						'on'  => __( 'nofollow', 'all-in-one-seo-pack' ),
@@ -4915,6 +4943,7 @@ EOF;
 		$active = ' active';
 		foreach ( $tabs as $t ) {
 			if ( $active ) {
+				/* translators: This is the name of the main tab of the All in One SEO Pack meta box that appears on the Edit screen. */
 				$title = __( 'Main Settings', 'all-in-one-seo-pack' );
 			} else {
 				$title = $t['title'];
@@ -4978,6 +5007,7 @@ EOF;
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => AIOSEOP_PLUGIN_DIRNAME,
+						/* translators: This is a CTA action link to upgrade to the premium version of the plugin. */
 						'title'  => __( 'Upgrade To Pro', 'all-in-one-seo-pack' ),
 						'id'     => 'aioseop-pro-upgrade',
 						'href'   => 'https://semperplugins.com/plugins/all-in-one-seo-pack-pro-version/?loc=menu',
@@ -5151,7 +5181,7 @@ EOF;
 	 */
 	function admin_menu() {
 		$file      = plugin_basename( __FILE__ );
-		$menu_name = __( 'All in One SEO', 'all-in-one-seo-pack' );
+		$menu_name = 'All in One SEO';
 
 		$this->locations['aiosp']['default_options']['nonce-aioseop-edit']['default'] = wp_create_nonce( 'edit-aioseop-nonce' );
 
