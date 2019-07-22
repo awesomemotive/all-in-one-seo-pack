@@ -14,22 +14,54 @@ var aiosp_title_extra = parseInt( aioseop_count_chars.aiosp_title_extra, 10 ); /
 
 jQuery( document ).ready( function() {
 	aioseopInitCounting();
+	aioseopAdjustPreviewSnippet()
 });
 
 /**
- * Preview Snippet
- *
- * @since ?
- * @since 2.9.2 Move from PHP value to JS file
+ * The aioseopAdjustPreviewSnippet() function.
+ * 
+ * Adjusts the preview snippet when the title or description changes.
+ * 
+ * @since 3.2.0 Refactored code and use document title if aioseop_title is blank.
  */
-jQuery(document).ready( function() {
-	jQuery("#aiosp_title_wrapper").bind("input", function() {
-		jQuery("#aiosp_snippet_title").text(jQuery("#aiosp_title_wrapper input").val().replace(/<(?:.|\n)*?>/gm, ""));
+function aioseopAdjustPreviewSnippet() {
+	var docTitle = $('#title');
+	var aioseopTitle = $('#aiosp_title_wrapper input');
+	var aioseopDescription = $("#aiosp_description_wrapper textarea");
+	var snippetTitle = $("#aiosp_snippet_title");
+	var snippetDescription = $("#aioseop_snippet_description");
+
+	docTitle.on("input", function() {
+		if ( '' === aioseopTitle.val() ) {
+			populate_snippet_field( snippetTitle, docTitle );
+		}
 	});
-	jQuery("#aiosp_description_wrapper").bind("input", function() {
-		jQuery("#aioseop_snippet_description").text(jQuery("#aiosp_description_wrapper textarea").val().replace(/<(?:.|\n)*?>/gm, ""));
+
+	aioseopTitle.on("input", function() {
+		populate_snippet_field( snippetTitle, aioseopTitle );
+		if( '' === aioseopTitle.val() ) {
+			populate_snippet_field( snippetTitle, docTitle );
+		}
 	});
-});
+
+	aioseopDescription.on("input", function() {
+		populate_snippet_field( snippetDescription, aioseopDescription );
+	});
+}
+
+/**
+ * The aioseopPopulatePreviewSnippet() function.
+ * 
+ * Populates a field in the preview snippet.
+ * 
+ * @since 3.2.0
+ * 
+ * @param jQuery_Object $snippetField 
+ * @param jQuery_Object $inputField 
+ */
+function populate_snippet_field( snippetField, inputField ) {
+	snippetField.text( inputField.val().replace( /<(?:.|\n)*?>/gm, "" ) );
+}
 
 /**
  * AIOSEOP Init Counting
