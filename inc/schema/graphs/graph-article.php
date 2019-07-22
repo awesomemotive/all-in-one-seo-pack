@@ -79,10 +79,9 @@ class AIOSEOP_Graph_Article extends AIOSEOP_Graph_CreativeWork {
 		);
 
 		// Handle post Image.
-		if ( has_post_thumbnail( $post ) ) {
-			$image_id = get_post_thumbnail_id();
-
-			$rtn_data['image'] = $this->prepare_image( $image_id, $post_url . '#primaryimage' );
+		$image_schema = $this->prepare_image( $this->get_article_image_data( $post ), $post_url . '#primaryimage' );
+		if ( $image_schema ) {
+			$rtn_data['image'] = $image_schema;
 		}
 
 		return $rtn_data;
@@ -99,13 +98,6 @@ class AIOSEOP_Graph_Article extends AIOSEOP_Graph_CreativeWork {
 	 */
 	protected function prepare_author() {
 		global $post;
-		global $aioseop_options;
-
-//		if ( 'person' === $aioseop_options['aiosp_site_represents'] && intval( $post->post_author ) === intval( $aioseop_options['aiosp_person_user'] ) ) {
-//			$author_url = home_url() . '/';
-//		} else {
-//			$author_url = get_author_posts_url( $post->post_author );
-//		}
 
 		$author_url = get_author_posts_url( $post->post_author );
 
@@ -116,5 +108,49 @@ class AIOSEOP_Graph_Article extends AIOSEOP_Graph_CreativeWork {
 		return $rtn_data;
 	}
 
+	/**
+	 * Get Image Data for Article
+	 *
+	 * Retrieves the image (data) required for the articles. This uses multiple sources in order to
+	 * complete the required field.
+	 *
+	 * Attempts to access image sources by the following order.
+	 *
+	 * 1. Gets Featured Image from Post.
+	 * 2. If 'organization', get Organization Logo.
+	 * 3. If 'person', get User's avatar.
+	 * 4. Get Image url from Post Content.
+	 * 5. Get Site Logo from theme customizer.
+	 *
+	 * @since 3.2
+	 *
+	 * @param WP_post $post
+	 * @return array
+	 */
+	protected function get_article_image_data( $post ) {
+		global $aioseop_options;
+
+		$rtn_image_data = $this->get_image_data_defaults();
+
+		if ( has_post_thumbnail( $post ) ) {
+			$rtn_image_data = $this->get_site_image_data( get_post_thumbnail_id() );
+		} elseif ( 'organization' === $aioseop_options['aiosp_site_represents'] && ! empty( $aioseop_options['organization_logo'] ) ) {
+			$rtn_image_data = $this->get_site_image_data( $aioseop_options['organization_logo'] );
+		} elseif ( 'person' === $aioseop_options['aiosp_site_represents'] && ! empty( $post->post_author ) ) {
+			$rtn_image_data = $this->get_user_image_data( intval( $post->post_author ) );
+		} else {
+			$content_image_url = $this->get_image_url_from_content( $post );
+			if ( ! empty( $content_image_url ) ) {
+				$rtn_image_data = wp_parse_args( $this->get_image_data_defaults(), array( 'url' => $content_image_url ) );
+			} else {
+				$blog_logo = get_theme_mod( 'custom_logo' );
+				if ( $blog_logo ) {
+					$rtn_image_data = $this->get_site_image_data( $blog_logo );
+				}
+			}
+		}
+
+		return $rtn_image_data;
+	}
 
 }

@@ -68,14 +68,10 @@ class AIOSEOP_Graph_Person extends AIOSEOP_Graph {
 			'sameAs' => $this->get_user_social_profile_links( $user_id ),
 		);
 
-		$user_image_url = $this->get_user_image_url( $user_id );
-		if ( ! empty( $user_image_url ) ) {
-			$rtn_data['image'] = array(
-				'@type'   => 'ImageObject',
-				'@id'     => home_url() . '/#personlogo',
-				'url'     => $user_image_url,
-				'caption' => $author_name,
-			);
+		// Handle Logo/Image.
+		$image_schema = $this->prepare_image( $this->get_user_image_data( $user_id ), home_url() . '/#personlogo' );
+		if ( $image_schema ) {
+			$rtn_data['image'] = $image_schema;
 		}
 
 		if ( is_author() ) {

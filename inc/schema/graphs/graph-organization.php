@@ -57,8 +57,7 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 
 		// Site represents Organization or Person.
 		if ( 'person' === $aioseop_options['aiosp_site_represents'] ) {
-			$person_id   = intval( $aioseop_options['aiosp_person_user'] );
-			$person_name = get_the_author_meta( 'display_name', $person_id );
+			$person_id = intval( $aioseop_options['aiosp_person_user'] );
 
 			$rtn_data['@type']  = array( 'Person', $this->slug );
 			$rtn_data['@id']    = home_url() . '/#person';
@@ -66,14 +65,9 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 			$rtn_data['sameAs'] = $this->get_user_social_profile_links( $person_id );
 
 			// Handle Logo/Image.
-			$user_image_url = $this->get_user_image_url( $person_id );
-			if ( ! empty( $user_image_url ) ) {
-				$rtn_data['image'] = array(
-					'@type'   => 'ImageObject',
-					'@id'     => home_url() . '/#personlogo',
-					'url'     => $user_image_url,
-					'caption' => $person_name,
-				);
+			$image_schema = $this->prepare_image( $this->get_user_image_data( $person_id ), home_url() . '/#personlogo' );
+			if ( $image_schema ) {
+				$rtn_data['image'] = $image_schema;
 				$rtn_data['logo'] = array( '@id' => home_url() . '/#personlogo' );
 			}
 		} else {
@@ -114,11 +108,11 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 		$logo_meta = wp_get_attachment_metadata( $logo_id );
 		if ( ! empty( $logo_id ) ) {
 			$rtn_data = array(
-				'@type'   => 'ImageObject',
-				'@id'     => home_url() . '/#logo',
-				'url'     => wp_get_attachment_image_url( $logo_id, 'full' ),
-				'width'   => $logo_meta['width'],
-				'height'  => $logo_meta['height'],
+				'@type'  => 'ImageObject',
+				'@id'    => home_url() . '/#logo',
+				'url'    => wp_get_attachment_image_url( $logo_id, 'full' ),
+				'width'  => $logo_meta['width'],
+				'height' => $logo_meta['height'],
 			);
 
 			$caption = wp_get_attachment_caption( $logo_id );
@@ -159,7 +153,6 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 	 * @return array
 	 */
 	protected function get_site_social_profile_links() {
-		// TODO Get website's Social Profile Links.
 		global $aioseop_options;
 
 		$social_links = array();
@@ -190,6 +183,8 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 
 		// Uses logo selected from General Settings > Schema Settings > Organization Logo.
 		if ( ! empty( $aioseop_options['aiosp_organization_logo'] ) ) {
+			// Changes the URL to an ID. Known to be memory intense.
+			// Option configurations need to use IDs rather than the URL strings.
 			$logo_id = aiosp_common::attachment_url_to_postid( $aioseop_options['aiosp_organization_logo'] );
 		}
 

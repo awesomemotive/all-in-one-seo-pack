@@ -126,8 +126,11 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 			if ( has_post_thumbnail( $post ) ) {
 				$image_id = get_post_thumbnail_id();
 
-				$rtn_data['image']              = $this->prepare_image( $image_id, $current_url . '#primaryimage' );
-				$rtn_data['primaryImageOfPage'] = array( '@id' => $current_url . '#primaryimage' );
+				$image_schema = $this->prepare_image( get_site_image_data( $image_id ), $current_url . '#primaryimage' );
+				if ( $image_schema ) {
+					$rtn_data['image']              = $image_schema;
+					$rtn_data['primaryImageOfPage'] = array( '@id' => $current_url . '#primaryimage' );
+				}
 			}
 
 			$rtn_data['datePublished'] = mysql2date( DATE_W3C, $post->post_date_gmt, false );
@@ -147,8 +150,6 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 		return $rtn_data;
 	}
 
-
-
 	/**
 	 * Get Post Description.
 	 *
@@ -160,8 +161,10 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 	protected function get_post_description( $post ) {
 		$rtn_description = '';
 
+		// Using AIOSEOP's description is limited in content. With Schema's descriptions, there is no cap limit.
 		$post_description = get_post_meta( $post->ID, '_aioseop_description', true );
 
+		// If there is no AIOSEOP description, and the post isn't password protected, then use post excerpt or content.
 		if ( ! $post_description && ! post_password_required( $post ) ) {
 			if ( ! empty( $post->post_excerpt ) ) {
 				$post_description = $post->post_excerpt;
@@ -170,7 +173,6 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 				$post_description = aioseop_do_shortcodes( $post_description );
 				$post_description = strip_shortcodes( $post_description );
 				$post_description = wp_strip_all_tags( $post_description );
-				// TODO ?trim length of post description?
 			}
 		}
 

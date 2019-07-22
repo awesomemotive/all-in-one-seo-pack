@@ -37,6 +37,9 @@ abstract class AIOSEOP_Graph {
 
 	// TODO Add Schema content/context object to handled all post/page (post_type, taxonomy, terms, author) data.
 
+	// TODO Add Static Variables to store what Schema IDs are in use. Implement when adding property type schemas.
+	// For example, when using property schemas, like imageObject, more than 1 object can reference the same image object.
+
 	/**
 	 * AIOSEOP_Graph Constructor.
 	 *
@@ -138,34 +141,117 @@ abstract class AIOSEOP_Graph {
 	/**
 	 * Prepare Image Data.
 	 *
-	 * TODO !?Move to graph.php since it is part of schema 'thing' object?!
+	 * TODO !?Move/Create schema properties object?!
 	 *
 	 * @since 3.2
 	 *
-	 * @param WP_Post $post See WP_Post for details.
-	 * @return array
+	 * @param array  $image_data See `AIOSEOP_Graph::get_image_data_defaults()` for details.
+	 * @param string $schema_id  Schema reference id.
+	 * @return array Image schema. False on failure.
 	 */
-	protected function prepare_image( $image_id, $schema_id ) {
+	protected function prepare_image( $image_data, $schema_id ) {
+		if ( empty( $image_data['url'] ) ) {
+			return false;
+		}
+
 		$rtn_data = array(
 			'@type' => 'ImageObject',
-			'url'   => '',
+			'@id'   => $schema_id,
 		);
 
-		$image_meta = wp_get_attachment_metadata( $image_id );
-		$rtn_data = array(
-			'@type'   => 'ImageObject',
-			'@id'     => $schema_id,
-			'url'     => wp_get_attachment_image_url( $image_id, 'full' ),
-			'width'   => $image_meta['width'],
-			'height'  => $image_meta['height'],
-		);
-
-		$caption = wp_get_attachment_caption( $image_id );
-		if ( false !== $caption || ! empty( $caption ) ) {
-			$rtn_data['caption'] = $caption;
+		// Only use valid variables from defaults.
+		foreach ( array_keys( $this->get_image_data_defaults() ) as $key ) {
+			if ( ! empty( $image_data[ $key ] ) ) {
+				$rtn_data[ $key ] = $image_data[ $key ];
+			}
 		}
 
 		return $rtn_data;
+	}
+
+	/**
+	 * Get Image Data Defaults.
+	 *
+	 * @since 3.2
+	 *
+	 * @return array
+	 */
+	protected function get_image_data_defaults() {
+		return array(
+			'url'     => '',
+			'width'   => 0,
+			'height'  => 0,
+			'caption' => '',
+		);
+	}
+
+	/**
+	 * Get Image Data from Site.
+	 *
+	 * @since 3.2
+	 *
+	 * @uses wp_get_attachment_metadata()
+	 * @link https://developer.wordpress.org/reference/functions/wp_get_attachment_metadata/
+	 *
+	 * @param $image_id Image ID to retrieve data.
+	 * @return array|bool Image data. False on failure.
+	 */
+	protected function get_site_image_data( $image_id ) {
+		if ( ! is_numeric( $image_id ) ) {
+			return false;
+		}
+
+		// Defaults.
+		$rtn_image_data = $this->get_image_data_defaults();
+
+		// Store ID just in case of any other operations, but is not required with schema.
+		$rtn_image_data['id']  = intval( $image_id );
+		$rtn_image_data['url'] = wp_get_attachment_image_url( $image_id, 'full' );
+
+		$image_meta = wp_get_attachment_metadata( $image_id );
+		if ( $image_meta ) {
+			$rtn_image_data['width']  = $image_meta['width'];
+			$rtn_image_data['height'] = $image_meta['height'];
+		}
+
+		$caption = wp_get_attachment_caption( $image_id );
+		if ( false !== $caption || ! empty( $caption ) ) {
+			$rtn_image_data['caption'] = $caption;
+		}
+
+		return $rtn_image_data;
+	}
+
+	/**
+	 * Get Image Data from User Gravatar.
+	 *
+	 * @since 3.2
+	 *
+	 * @uses get_avatar_data()
+	 * @link https://developer.wordpress.org/reference/functions/get_avatar_data/
+	 *
+	 * @param $user_id User ID to retrieve data.
+	 * @return array|bool Gravatar image data. False on failure.
+	 */
+	protected function get_user_image_data( $user_id ) {
+		if ( ! is_numeric( $user_id ) ) {
+			return false;
+		}
+
+		// Defaults.
+		$rtn_image_data = $this->get_image_data_defaults();
+
+		if ( get_option( 'show_avatars' ) ) {
+			$avatar_data = get_avatar_data( $user_id );
+			if ( $avatar_data['found_avatar'] ) {
+				$rtn_image_data['url']     = $avatar_data['url'];
+				$rtn_image_data['width']   = $avatar_data['width'];
+				$rtn_image_data['height']  = $avatar_data['height'];
+				$rtn_image_data['caption'] = get_the_author_meta( 'display_name', $user_id );
+			}
+		}
+
+		return $rtn_image_data;
 	}
 
 	/**
@@ -207,24 +293,6 @@ abstract class AIOSEOP_Graph {
 		return $image_url;
 	}
 
-	/**
-	 * Get User's Logo URL
-	 *
-	 * @since 3.2
-	 *
-	 * @param int $user_id
-	 * @return string
-	 */
-	protected function get_user_image_url( $user_id ) {
-		$rtn_logo_url = '';
-
-		$show_avatars = get_option( 'show_avatars' );
-		if ( $show_avatars ) {
-			$rtn_logo_url = get_avatar_url( $user_id );
-		}
-
-		return $rtn_logo_url;
-	}
 
 	/**
 	 * Get Social Profiles from user id.
