@@ -1497,7 +1497,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @return bool
 		 */
 		function save_file( $filename, $contents ) {
+			/* translators: %s is a placeholder and will be replaced with the name of the relevant file. */
 			$failed_str   = sprintf( __( 'Failed to write file %s!', 'all-in-one-seo-pack' ) . "\n", $filename );
+			/* translators: %s is a placeholder and will be replaced with the name of the relevant file. */
 			$readonly_str = sprintf( __( 'File %s isn\'t writable!', 'all-in-one-seo-pack' ) . "\n", $filename );
 			$wpfs         = $this->get_filesystem_object();
 			if ( is_object( $wpfs ) ) {
@@ -1528,11 +1530,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			if ( is_object( $wpfs ) ) {
 				if ( $wpfs->exists( $filename ) ) {
 					if ( $wpfs->delete( $filename ) === false ) {
+						/* translators: %s is a placeholder and will be replaced with the name of the relevant file. */
 						$this->output_error( sprintf( __( 'Failed to delete file %s!', 'all-in-one-seo-pack' ) . "\n", $filename ) );
 					} else {
 						return true;
 					}
 				} else {
+					/* translators: %s is a placeholder and will be replaced with the name of the relevant file. */
 					$this->output_error( sprintf( __( "File %s doesn't exist!", 'all-in-one-seo-pack' ) . "\n", $filename ) );
 				}
 			}
@@ -1555,14 +1559,17 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				$newfile_exists = $wpfs->exists( $newname );
 				if ( $file_exists && ! $newfile_exists ) {
 					if ( $wpfs->move( $filename, $newname ) === false ) {
+						/* translators: %s is a placeholder and will be replaced with the name of the relevant file. */
 						$this->output_error( sprintf( __( 'Failed to rename file %s!', 'all-in-one-seo-pack' ) . "\n", $filename ) );
 					} else {
 						return true;
 					}
 				} else {
 					if ( ! $file_exists ) {
+						/* translators: %s is a placeholder and will be replaced with the name of the relevant file. */
 						$this->output_error( sprintf( __( "File %s doesn't exist!", 'all-in-one-seo-pack' ) . "\n", $filename ) );
 					} elseif ( $newfile_exists ) {
+						/* translators: %s is a placeholder and will be replaced with the name of the relevant file. */
 						$this->output_error( sprintf( __( 'File %s already exists!', 'all-in-one-seo-pack' ) . "\n", $newname ) );
 					}
 				}
@@ -2431,7 +2438,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 									$title = $this->plugin_name . ' - ' . $title;
 								}
 								if ( ! empty( $v['help_link'] ) ) {
-									$title .= "<a class='aioseop_help_text_link aioseop_meta_box_help' target='_blank' href='" . $lopts['help_link'] . "'><span>" . __( 'Help', 'all-in-one-seo-pack' ) . '</span></a>';
+									$title .= "<a class='aioseop_help_text_link aioseop_meta_box_help' target='_blank' href='" . $lopts['help_link'] . "'><span>" .
+									/* translators: This string is used as an action link which users can click on to view the relevant documentation on our website. */
+									__( 'Help', 'all-in-one-seo-pack' ) . '</span></a>';
 								}
 								add_meta_box(
 									$v['prefix'] . $k,
@@ -2727,6 +2736,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				if ( isset( $options['count_desc'] ) ) {
 					$count_desc = $options['count_desc'];
 				} else {
+					/* translators: %1$s and %2$s are placeholders and should not be translated. %1$s is replaced with a number, %2$s is replaced with the name of an meta tag field (e.g; "Title", "Description", etc.). */
 					$count_desc = __( ' characters. Most search engines use a maximum of %1$s chars for the %2$s.', 'all-in-one-seo-pack' );
 				}
 				$buf .= "<br /><input readonly tabindex='-1' type='text' name='{$prefix}length$n' size='3' maxlength='3' style='width:53px;height:23px;margin:0px;padding:0px 0px 0px 10px;' value='" . $this->strlen( $value ) . "' />"
@@ -3010,6 +3020,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					die( __( 'Security Check - If you receive this in error, log out and back in to WordPress', 'all-in-one-seo-pack' ) );
 				}
 				if ( isset( $_POST['Submit_Default'] ) || isset( $_POST['Submit_All_Default'] ) ) {
+					/* translators: This message confirms that the options have been reset. */
 					$message = __( 'Options Reset.', 'all-in-one-seo-pack' );
 					if ( isset( $_POST['Submit_All_Default'] ) ) {
 						$this->reset_options( $location, true );
@@ -3019,7 +3030,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					}
 				}
 				if ( ! empty( $_POST['Submit'] ) ) {
-					$message         = __( 'All in One SEO Options Updated.', 'all-in-one-seo-pack' );
+					/* translators: %s is a placeholder and will be replace with the name of the plugin. */
+					$message         = sprintf( __( '%s Options Updated.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
 					$default_options = $this->default_options( $location );
 					foreach ( $default_options as $k => $v ) {
 						if ( isset( $_POST[ $k ] ) ) {
@@ -3112,6 +3124,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 							'Submit_Default' => array(
 								'type'  => 'submit',
 								'class' => 'aioseop_reset_settings_button button-secondary',
+								/* translators: This is a button users can click to reset the settings of a specific module to their default values. %s is a placeholder and will be replaced with the name of a settings menu (e.g. "Performance"). */
 								'value' => sprintf( __( 'Reset %s Settings to Defaults', 'all-in-one-seo-pack' ), $name ) . ' &raquo;',
 							),
 						);
