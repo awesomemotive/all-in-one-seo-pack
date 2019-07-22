@@ -126,7 +126,7 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 			if ( has_post_thumbnail( $post ) ) {
 				$image_id = get_post_thumbnail_id();
 
-				$image_schema = $this->prepare_image( get_site_image_data( $image_id ), $current_url . '#primaryimage' );
+				$image_schema = $this->prepare_image( $this->get_site_image_data( $image_id ), $current_url . '#primaryimage' );
 				if ( $image_schema ) {
 					$rtn_data['image']              = $image_schema;
 					$rtn_data['primaryImageOfPage'] = array( '@id' => $current_url . '#primaryimage' );
