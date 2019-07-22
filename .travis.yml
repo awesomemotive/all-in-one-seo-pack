@@ -55,7 +55,7 @@ branches:
   - "/^*-v[0-9]/"
 
 install:
-  - php -d display_errors=On vendor/bin/phpunit
+  - 'php -d display_errors=On vendor/bin/phpunit'
   - if [[ $PHPUNIT = "local" ]]; then composer install; fi
   - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then chmod +x bin/init-grunt.sh; . bin/init-grunt.sh; fi
 
