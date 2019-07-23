@@ -95,7 +95,7 @@ function populate_snippet_field( snippetField, inputField ) {
  * @since ?
  */
 function aioseopInitCounting(){
-	/* ² them characters */
+	/* count them characters */
 	jQuery( '.aioseop_count_chars' ).on('keyup keydown', function(){
 		aioseopCountChars( jQuery(this).eq(0), jQuery(this).parent().find('[name="' + jQuery(this).attr('data-length-field') + '"]').eq(0));
 	});
