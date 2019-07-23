@@ -3090,7 +3090,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				do_action( 'aioseop_global_settings_header', $location );
 				do_action( $this->prefix . 'settings_header', $location );
 				?>
-				<form id="aiosp_settings_form" name="dofollow" enctype="multipart/form-data" action="" method="post">
+				<form id="aiosp_settings_form" name="dofollow" enctype="multipart/form-data" action="#" method="post">
 					<div id="aioseop_top_button">
 						<div id="aiosp_ajax_settings_message"></div>
 						<?php
