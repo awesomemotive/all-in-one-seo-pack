@@ -142,7 +142,7 @@ class aiosp_metaboxes {
 					<ul>
 						<li>
 							<div class="aioseop_icon aioseop-icon-file"></div>
-							<a target="_blank"
+							<a target="_blank" rel="noopener noreferrer"
 							href="https://semperplugins.com/documentation/">
 							<?php
 							/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
@@ -151,13 +151,13 @@ class aiosp_metaboxes {
 						</li>
 						<li>
 							<div class="aioseop_icon aioseop-icon-support"></div>
-							<a target="_blank"
+							<a target="_blank" rel="noopener noreferrer"
 							title="<?php _e( 'All in One SEO Pro Plugin Support Forum', 'all-in-one-seo-pack' ); ?>"
 							href="https://semperplugins.com/support/"><?php _e( 'Access our Premium Support Forums', 'all-in-one-seo-pack' ); ?></a>
 						</li>
 						<li>	
 							<div class="aioseop_icon aioseop-icon-cog"></div>
-							<a target="_blank" title="<?php _e( 'All in One SEO Pro Plugin Changelog', 'all-in-one-seo-pack' ); ?>"
+							<a target="_blank" rel="noopener noreferrer" title="<?php _e( 'All in One SEO Pro Plugin Changelog', 'all-in-one-seo-pack' ); ?>"
 								href="
 								<?php
 								if ( AIOSEOPPRO ) {
@@ -170,12 +170,12 @@ class aiosp_metaboxes {
 						</li>
 						<li>	
 							<div class="aioseop_icon aioseop-icon-youtube"></div>
-							<a target="_blank"
+							<a target="_blank" rel="noopener noreferrer"
 							href="https://semperplugins.com/doc-type/video/"><?php _e( 'Watch video tutorials', 'all-in-one-seo-pack' ); ?></a>
 						</li>
 						<li>	
 							<div class="aioseop_icon aioseop-icon-book"></div>
-							<a target="_blank"
+							<a target="_blank" rel="noopener noreferrer"
 							href="https://semperplugins.com/documentation/quick-start-guide/"><?php _e( 'Getting started? Read the Beginners Guide', 'all-in-one-seo-pack' ); ?></a>
 						</li>
 					</ul>		
