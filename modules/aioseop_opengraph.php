@@ -1814,7 +1814,7 @@ END;
 			$images = array();
 			if ( ! empty( $image ) ) {
 				foreach ( $image as $k => $v ) {
-					$images[ $v ] = '<img height=150 src="' . $v . '">';
+					$images[ $v ] = '<img alt="" height=150 src="' . $v . '">';
 				}
 			}
 
