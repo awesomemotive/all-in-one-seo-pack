@@ -66,9 +66,7 @@ class aiosp_metaboxes {
 				<div>
 				<?php if ( ! AIOSEOPPRO ) : ?>
 						<div class="aioseop_metabox_text">
-							<p>
 								<?php self::pro_meta_content(); ?>
-							</p>
 						</div>
 					<?php endif; ?>
 					<div class="aioseop_metabox_feature">
