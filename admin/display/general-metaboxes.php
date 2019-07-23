@@ -34,8 +34,7 @@ class aiosp_metaboxes {
 			case 'aioseop-about':
 				?>
 				<div class="aioseop_metabox_text">
-					<p><h2
-						style="display:inline;"><?php echo AIOSEOP_PLUGIN_NAME; ?></h2></p>
+					<h2 style="display:inline;"><?php echo AIOSEOP_PLUGIN_NAME; ?></h2>
 					<?php
 					global $current_user;
 					$user_id = $current_user->ID;
