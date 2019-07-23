@@ -568,7 +568,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'type'    => 'html',
 					'save'    => false,
 					'default' => '<a 
-						name="aioseop_opengraph_settings_facebook_debug"
 						id="aioseop_opengraph_settings_facebook_debug"
 						class="button-primary"
 						href=""
