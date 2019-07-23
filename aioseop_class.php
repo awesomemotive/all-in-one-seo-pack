@@ -5544,7 +5544,7 @@ EOF;
 				<?php
 				do_meta_boxes( 'aioseop_metaboxes', 'side', array( 'test' ) );
 				?>
-				<script type="text/javascript">
+				<script>
 					//<![CDATA[
 					jQuery(document).ready(function ($) {
 						// Close postboxes that should be closed.
