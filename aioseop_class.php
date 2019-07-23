@@ -3635,6 +3635,15 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @param string $hook_suffix
 	 */
 	public function admin_enqueue_scripts( $hook_suffix ) {
+		global $wp_version;
+		global $current_screen;
+		$current_screen = get_current_screen();
+		$is_gutenberg = 'false';
+
+		if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
+			$is_gutenberg = 'true';
+		}
+
 		add_filter( "{$this->prefix}display_settings", array( $this, 'filter_settings' ), 10, 3 );
 		add_filter( "{$this->prefix}display_options", array( $this, 'filter_options' ), 10, 2 );
 
@@ -3655,6 +3664,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 				$localize_post_edit = array(
 					'aiosp_title_extra' => (int) $extra_title_len,
+					'isGutenberg'       => $is_gutenberg,
 				);
 				wp_localize_script( 'aioseop-post-edit-script', 'aioseop_count_chars', $localize_post_edit );
 				break;

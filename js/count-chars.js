@@ -14,7 +14,7 @@ var aiosp_title_extra = parseInt( aioseop_count_chars.aiosp_title_extra, 10 ); /
 
 jQuery( document ).ready( function() {
 	aioseopInitCounting();
-	aioseopAdjustPreviewSnippet()
+	aioseopAdjustPreviewSnippet();
 });
 
 /**
@@ -30,19 +30,45 @@ function aioseopAdjustPreviewSnippet() {
 	var aioseopDescription = $("#aiosp_description_wrapper textarea");
 	var snippetTitle = $("#aiosp_snippet_title");
 	var snippetDescription = $("#aioseop_snippet_description");
+	var isGutenberg = aioseop_count_chars.isGutenberg; // jshint ignore:line
 
-	docTitle.on("input", function() {
-		if ( '' === aioseopTitle.val() ) {
-			populate_snippet_field( snippetTitle, docTitle );
-		}
-	});
+	if ( 'true' === isGutenberg ) {
+		window._wpLoadBlockEditor.then( function() {
+			setTimeout( function() {
 
-	aioseopTitle.on("input", function() {
-		populate_snippet_field( snippetTitle, aioseopTitle );
-		if( '' === aioseopTitle.val() ) {
-			populate_snippet_field( snippetTitle, docTitle );
-		}
-	});
+				var gutenbergDocTitle = $('#post-title-0');
+				$('#post-title-0').on("input", function() {
+					populate_snippet_field( snippetTitle, aioseopTitle );
+					if( '' === aioseopTitle.val() ) {
+						populate_snippet_field( snippetTitle, gutenbergDocTitle );
+					}
+				});
+
+				aioseopTitle.on("input", function() {
+					populate_snippet_field( snippetTitle, aioseopTitle );
+					if( '' === aioseopTitle.val() ) {
+						populate_snippet_field( snippetTitle, gutenbergDocTitle );
+					}
+				});
+
+			});
+		});
+	}
+
+	else {
+		docTitle.on("input", function() {
+			if ( '' === aioseopTitle.val() ) {
+				populate_snippet_field( snippetTitle, docTitle );
+			}
+		});
+
+		aioseopTitle.on("input", function() {
+			populate_snippet_field( snippetTitle, aioseopTitle );
+			if( '' === aioseopTitle.val() ) {
+				populate_snippet_field( snippetTitle, docTitle );
+			}
+		});
+	}
 
 	aioseopDescription.on("input", function() {
 		populate_snippet_field( snippetDescription, aioseopDescription );
@@ -69,7 +95,7 @@ function populate_snippet_field( snippetField, inputField ) {
  * @since ?
  */
 function aioseopInitCounting(){
-	/* count them characters */
+	/* ² them characters */
 	jQuery( '.aioseop_count_chars' ).on('keyup keydown', function(){
 		aioseopCountChars( jQuery(this).eq(0), jQuery(this).parent().find('[name="' + jQuery(this).attr('data-length-field') + '"]').eq(0));
 	});
