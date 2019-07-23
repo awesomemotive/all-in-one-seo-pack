@@ -679,12 +679,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( "{$this->prefix}addl_pages" === $args['name'] ) {
 				$buf .= "<div id='{$this->prefix}addl_pages'>";
 				if ( ! empty( $args['value'] ) ) {
-					$buf .= "<table class='aioseop_table' cellpadding=0 cellspacing=0>\n";
+					$buf .= "<table class='aioseop_table'>\n";
 					foreach ( $args['value'] as $k => $v ) {
 						if ( is_object( $v ) ) {
 							$v = (array) $v;
 						}
-						$buf .= "\t<tr><td><a href='#' title='$k' class='dashicons dashicons-trash aiosp_delete_url' aria-label='" . __( 'Delete this additional URL', 'all-in-one-seo-pack' ) . "'></a> {$k}</td><td>{$v['prio']}</td><td>{$v['freq']}</td><td>{$v['mod']}</td></tr>\n";
+						$buf .= "\t<tr><td><a href='#' title='$k' class='dashicons dashicons-trash aiosp_delete_url' aria-label='" . __( 'Delete this additional URL', 'all-in-one-seo-pack' ) . "'></a></td><td>{$k}</td><td>{$v['prio']}</td><td>{$v['freq']}</td><td>{$v['mod']}</td></tr>\n";
 					}
 					$buf .= "</table>\n";
 				}

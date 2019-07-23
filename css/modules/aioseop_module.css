@@ -960,13 +960,10 @@ table.aioseop_table td {
 
 #aiosp_sitemap_addl_pages_metabox table.aioseop_table td,
 #aiosp_video_sitemap_addl_pages_metabox table.aioseop_table td {
-	width: 27%;
-	padding-left: 5%;
-}
-
-#aiosp_sitemap_addl_pages_metabox table.aioseop_table td:first-child,
-#aiosp_video_sitemap_addl_pages_metabox table.aioseop_table td:first-child {
+	width: auto;
+	max-width: 50%;
 	padding-left: 2%;
+	padding-right: 2%;
 }
 
 table.aioseop_table td, 
