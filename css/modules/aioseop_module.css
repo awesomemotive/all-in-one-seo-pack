@@ -7,6 +7,10 @@
  * @package All-in-One-SEO-Pack.
  */
 
+[class*="all-in-one-seo-pack"] #wpbody-content,
+.all-in-one-seo_page_aiosp_opengraph #wpbody-content {
+    min-width: 900px;
+}
 .form-table.aioseop {
 	clear: none;
 }

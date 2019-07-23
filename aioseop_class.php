@@ -5537,11 +5537,7 @@ EOF;
 				<?php do_meta_boxes( 'aioseop_metaboxes', 'normal', array( 'test' ) ); ?>
 			</div>
 		</div>
-		<style>
-			#wpbody-content {
-				min-width: 900px;
-			}
-		</style>
+
 		<div class="aioseop_right_sidebar aioseop_options_wrapper">
 
 			<div class="aioseop_sidebar">
