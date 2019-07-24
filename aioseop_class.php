@@ -4590,7 +4590,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 	/**
 	 * The get_robots_meta_string() function.
-
+	 *
 	 * Helper function for get_robots_meta().
 	 *
 	 * @since 3.2.0
