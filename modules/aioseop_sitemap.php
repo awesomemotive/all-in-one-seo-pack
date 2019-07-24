@@ -3262,7 +3262,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return $urls;
 			}
 
-			$index = array_search( $static_page_url, array_column( $urls, 'loc' ) );
+			$url_locs = array_combine( array_keys( $urls ), wp_list_pluck( $urls, 'loc' ) );
+			$index    = array_search( $static_page_url, $url_locs );
 			if ( false === $index ) {
 				return $urls;
 			}
