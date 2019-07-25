@@ -67,7 +67,7 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 				$page_id = get_option( 'page_for_posts' );
 
 				$current_url  = wp_get_canonical_url( $page_id );
-				$current_name = get_bloginfo( 'name' );
+				$current_name = get_the_title();
 				$current_desc = $this->get_post_description( get_post( $page_id ) );
 			}
 		} elseif ( is_front_page() && is_page() ) {
