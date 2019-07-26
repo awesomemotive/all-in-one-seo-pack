@@ -117,16 +117,12 @@ class AIOSEOP_Schema_Builder {
 		} elseif ( is_singular() || is_single() ) {
 			global $post;
 
-			if ( is_post_type_hierarchical( $post->post_type ) ) {
-				array_push( $layout['@graph'], '[aioseop_schema_WebPage]' );
-			} else {
-				array_push( $layout['@graph'], '[aioseop_schema_WebPage]' );
-
+			array_push( $layout['@graph'], '[aioseop_schema_WebPage]' );
+			if ( ! is_post_type_hierarchical( $post->post_type ) ) {
 				// TODO Add custom setting for individual posts.
+
 				array_push( $layout['@graph'], '[aioseop_schema_Article]' );
-				if ( ! in_array( '[aioseop_schema_Person]', $layout['@graph'] ) ) {
-					array_push( $layout['@graph'], '[aioseop_schema_Person]' );
-				}
+				array_push( $layout['@graph'], '[aioseop_schema_Person]' );
 			}
 
 			// Remove when CPT is supported.
