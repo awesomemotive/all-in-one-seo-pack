@@ -35,9 +35,9 @@ abstract class AIOSEOP_Graph {
 	 */
 	public $name;
 
-	// TODO Add Schema content/context object to handled all post/page (post_type, taxonomy, terms, author) data.
+	// TODO Add Schema properties/content/context object to handled all post/page (post_type, taxonomy, terms, author) data.
 
-	// TODO Add Static Variables to store what Schema IDs are in use. Implement when adding property type schemas.
+	// TODO Add Static Variables to store what Schema IDs are in use. Implement when adding property types for schema.
 	// For example, when using property schemas, like imageObject, more than 1 object can reference the same image object.
 
 	/**
@@ -126,15 +126,29 @@ abstract class AIOSEOP_Graph {
 	 * @return string
 	 */
 	public function display_json_ld() {
+		// TODO Discuss what operation style to use on filter hook.
+		// A) A single hook to run added hooks multiple times.
+		// B) Multiple class hooks to run added hooks specific to schema graph object.
+//		/**
+//		 * AIOSEOP Schema Class's Prepared Data
+//		 *
+//		 * @since 3.2
+//		 *
+//		 * @param array  Dynamically generated data through inherited schema graphs.
+//		 * @param string Current schema (child) class being used to prepare data.
+//		 */
+//		$schema_data = apply_filters( 'aioseop_schema_class_data', $this->prepare(), get_class( $this ) );
+
 		/**
 		 * AIOSEOP Schema Class's Prepared Data
+		 *
+		 * Uses class name with hook `aioseop_schema_class_data_{CLASS NAME}`.
 		 *
 		 * @since 3.2
 		 *
 		 * @param array  Dynamically generated data through inherited schema graphs.
-		 * @param string Current schema (child) class being used to prepare data.
 		 */
-		$schema_data = apply_filters( 'aioseop_schema_class_data', $this->prepare(), get_class( $this ) );
+		$schema_data = apply_filters( 'aioseop_schema_class_data_' . get_class( $this ), $this->prepare() );
 		return wp_json_encode( (object) $schema_data, JSON_UNESCAPED_SLASHES ) ?: '';
 	}
 

@@ -65,8 +65,7 @@ class AIOSEOP_Schema_Builder {
 			'Webpage'           => new AIOSEOP_Graph_Webpage(),
 		);
 
-		// TODO Change to `aioseop_register_schema_graphs`.
-		$graphs = apply_filters( 'aioseop_schema_graphs', $graphs );
+		$graphs = apply_filters( 'aioseop_register_schema_objects', $graphs );
 
 		return $graphs;
 	}
