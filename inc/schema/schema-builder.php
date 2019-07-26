@@ -65,7 +65,17 @@ class AIOSEOP_Schema_Builder {
 			'Webpage'           => new AIOSEOP_Graph_Webpage(),
 		);
 
+		/**
+		 * Register Schema Objects
+		 *
+		 * @since 3.2
+		 *
+		 * @param $graphs Array containing schema objects that are currently active.
+		 */
 		$graphs = apply_filters( 'aioseop_register_schema_objects', $graphs );
+
+		// TODO Could add operation here to loop through objects to *::add_hooks(). Rather than schema __constructor executing add_hooks().
+		// That would allow some schema objects to be completely replaced without interfering.
 
 		return $graphs;
 	}
@@ -136,7 +146,13 @@ class AIOSEOP_Schema_Builder {
 		}
 
 		/**
-		 * TODO Add Filter Documentation.
+		 * Schema Layout
+		 *
+		 * Pre-formats the schema array shortcode layout.
+		 *
+		 * @since 3.2
+		 *
+		 * @param array $layout Schema array/object containing shortcodes.
 		 */
 		$layout = apply_filters( 'aioseop_schema_layout', $layout );
 
