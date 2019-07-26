@@ -2850,16 +2850,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				$args = $settings;
 			}
 			foreach ( $args as $name => $opts ) {
-				$attr_list = array( 'class', 'style', 'readonly', 'disabled', 'size', 'placeholder' );
+				// List of valid element attributes.
+				$attr_list = array( 'class', 'style', 'readonly', 'disabled', 'size', 'placeholder', 'autocomplete' );
 				if ( $opts['type'] == 'textarea' ) {
 					$attr_list = array_merge( $attr_list, array( 'rows', 'cols' ) );
 				}
+
+				// Set element attribute values.
 				$attr = '';
 				foreach ( $attr_list as $a ) {
 					if ( isset( $opts[ $a ] ) ) {
 						$attr .= ' ' . $a . '="' . esc_attr( $opts[ $a ] ) . '" ';
 					}
 				}
+
 				$opt = '';
 				if ( isset( $current_options[ $name ] ) ) {
 					$opt = $current_options[ $name ];

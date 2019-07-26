@@ -138,7 +138,7 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 
 		$rtn_data = array(
 			'@type'       => 'ContactPoint',
-			'telephone'   => $aioseop_options['aiosp_phone_number'],
+			'telephone'   => '+' . $aioseop_options['aiosp_phone_number'],
 			'contactType' => $aioseop_options['aiosp_contact_type'],
 		);
 

@@ -659,9 +659,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				// Add initial options below.
 			),
 			'phone_number'                => array(
-				'name'     => __( 'Phone Number:', 'all-in-one-seo-pack' ),
-				'type'     => 'tel',
-				'condshow' => array(
+				'name'         => __( 'Phone Number:', 'all-in-one-seo-pack' ),
+				'type'         => 'tel',
+				'autocomplete' => 'off',
+				'condshow'     => array(
 					'aiosp_schema_markup'   => 'on',
 					'aiosp_site_represents' => 'organization',
 				),
