@@ -144,10 +144,11 @@ class aiosp_metaboxes {
 							<div class="aioseop_icon aioseop-icon-file"></div>
 							<a target="_blank" rel="noopener noreferrer"
 							href="https://semperplugins.com/documentation/">
-							<?php
-							/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
-							printf( __( 'Read the %s user guide', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
-							?></a>
+								<?php
+								/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+								printf( __( 'Read the %s user guide', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
+								?>
+							</a>
 						</li>
 						<li>
 							<div class="aioseop_icon aioseop-icon-support"></div>
