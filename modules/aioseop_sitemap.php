@@ -2204,7 +2204,33 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$files = apply_filters( 'aioseop_sitemap_index_filenames', $files, $prefix, $suffix );
 
+			// Remove Additional Pages index if all pages are static and no extra pages are specified.
+			if ( ! $this->does_addl_sitemap_contain_urls() ) {
+				$page_to_remove = array( get_site_url() . '/addl-sitemap.xml' );
+				$files = $this->remove_urls_from_sitemap_page( $files, $page_to_remove );
+			}
+
 			return $files;
+		}
+
+		/**
+		 * The does_addl_sitemap_contain_urls() function.
+		 *
+		 * Checks whether the Additional Pages index will contain URLs.
+		 * This will not be the case if there is both a static homepage/posts page and there are no additional pages specified.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @return bool
+		 */
+		private function does_addl_sitemap_contain_urls() {
+			$is_addl_pages = ! empty( $this->options['aiosp_sitemap_addl_pages'] );
+			if ( ! $is_addl_pages &&
+				( 0 !== get_option( 'page_on_front' ) ) &&
+				( 0 !== get_option( 'page_for_posts' ) ) ) {
+					return false;
+			}
+			return true;
 		}
 
 		/**
@@ -2395,6 +2421,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 		/**
 		 * The get_sitemap_without_indexes() function.
+		 *
+		 * Fetches data for sitemap without indexes.
 		 *
 		 * @since 2.3.6
 		 * @since 2.3.12.3 Refactored to use aioseop_home_url() for compatibility purposes.
@@ -3161,6 +3189,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 *
 		 * @since 2.3.6
 		 * @since 2.3.12.3 Refactored to use aioseop_home_url() for compatibility purposes.
+		 * @since 3.2.0 Do not include static homepage/posts page - #2126.
 		 *
 		 * @return array
 		 */
@@ -3198,7 +3227,57 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$pages = apply_filters( $this->prefix . 'addl_pages', $pages );
 
 			$pages = $this->get_homepage_timestamp( $pages );
+			$pages = $this->remove_addl_static_pages( $pages );
 
+			return $pages;
+		}
+
+		/**
+		 * The remove_addl_static_pages() function.
+		 *
+		 * Removes the homepage/posts page from the Additional Pages index if it is static - #2126.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $pages
+		 * @return array $pages
+		 */
+		private function remove_addl_static_pages( $pages ) {
+			$pages_to_remove = array();
+			if ( 0 !== get_option( 'page_on_front' ) ) {
+				$homepage_url = get_site_url() . '/';
+				array_push( $pages_to_remove, $homepage_url );
+			}
+
+			$static_posts_page_id = get_option( 'page_for_posts' );
+			if ( 0 !== $static_posts_page_id ) {
+				array_push( $pages_to_remove, get_permalink( $static_posts_page_id ) );
+			}
+
+			if ( count( $pages_to_remove ) > 0 ) {
+				return $this->remove_urls_from_sitemap_page( $pages, $pages_to_remove );
+			}
+			return $pages;
+		}
+
+		/**
+		 * The remove_urls_from_sitemap_page() function.
+		 *
+		 * Removes URLs from a sitemap page. This is used both for indexes and pages within indexes.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $pages
+		 * @param array $pages_to_remove
+		 * @return array $pages
+		 */
+		private function remove_urls_from_sitemap_page( $pages, $pages_to_remove ) {
+			$count = count( $pages );
+			for ( $i = 0; $i < $count; $i++ ) {
+				if ( in_array( $pages[ $i ]['loc'], $pages_to_remove, true ) ) {
+					unset( $pages[ $i ] );
+				}
+			}
 			return $pages;
 		}
 
@@ -3467,6 +3546,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * Generate sitemap priority data for archives from an array of posts.
 		 *
 		 * @since ?
+		 * @since 3.2.0 Don't fetch WooCommerce shop page twice - #2126
 		 *
 		 * @param $posts
 		 * @return array
@@ -3475,6 +3555,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$posttypes = array();
 			if ( ! empty( $this->options[ "{$this->prefix}posttypes" ] ) ) {
 				$posttypes = $this->options[ "{$this->prefix}posttypes" ];
+			}
+
+			if ( aioseop_is_woocommerce_active() ) {
+				if ( in_array( 'product', $posttypes ) ) {
+					$index = array_search( 'product', $posttypes );
+					unset( $posttypes[ $index ] );
+				}
 			}
 
 			$types_supporting_archives = get_post_types(
@@ -4457,6 +4544,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * Return sitemap data for posts.
 		 *
 		 * @since ?
+		 * @since 3.2.0 Update Last Change timestamp for WooCommerce shop page.
 		 *
 		 * @param string $include
 		 * @param string $status
@@ -4496,8 +4584,87 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$is_sitemap_indexes_disabled = empty( $this->options['aiosp_sitemap_indexes'] );
 			if ( $is_sitemap_indexes_disabled || ( ! $is_sitemap_indexes_disabled && 'page' === $include ) ) {
 				$links = $this->get_posts_page_timestamp( $links );
+				$links = $this->get_prio_freq_static_homepage( $links );
+				$links = $this->update_woocommerce_shop_timestamp( $links );
 			}
 
+			return $links;
+		}
+
+		/**
+		 * The get_prio_freq_static_homepage() function.
+		 *
+		 * Sets the priority and frequency for the homepage if it is static.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $links
+		 * @return array $links
+		 */
+		private function get_prio_freq_static_homepage( $links ) {
+			if ( 0 === (int) get_option( 'page_on_front' ) ) {
+				return $links;
+			}
+			$prio = $this->options['aiosp_sitemap_prio_homepage'];
+			$freq = $this->options['aiosp_sitemap_freq_homepage'];
+
+			$homepage_url = get_site_url() . '/';
+			$homepage_index = array_search( $homepage_url, array_column( $links, 'loc' ) );
+
+			if ( ! $homepage_url ) {
+				return $links;
+			}
+
+			if ( 'no' !== $prio ) {
+				$links[ $homepage_index ]['priority'] = $prio;
+			}
+			if ( 'no' !== $freq ) {
+				$links[ $homepage_index ]['changefreq'] = $freq;
+			}
+
+			return $links;
+		}
+
+		/**
+		 * The update_woocommerce_shop_timestamp() function.
+		 *
+		 * Updates the Last Change timestamp for the WooCommerce shop page based on the last modified product - #2126.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $links
+		 * @return array $links
+		 */
+		private function update_woocommerce_shop_timestamp( $links ) {
+			if ( ! aioseop_is_woocommerce_active() ) {
+				return $links;
+			}
+
+			$shop_page_url = get_permalink( wc_get_page_id( 'shop' ) );
+			$shop_page_index = array_search( $shop_page_url, array_column( $links, 'loc' ) );
+
+			if ( ! $shop_page_index ) {
+				return $links;
+			}
+
+			// TODO Use get_last_modified_post_timestamp() instead when #2721 is merged.
+			$latest_modified_product = new WP_Query(
+				array(
+					'post_type'      => 'product',
+					'post_status'    => 'publish',
+					'posts_per_page' => 1,
+					'orderby'        => 'modified',
+					'order'          => 'DESC',
+				)
+			);
+
+			if ( $latest_modified_product->have_posts() ) {
+				$timestamp = $latest_modified_product->posts[0]->post_modified_gmt;
+				$lastmod = date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $timestamp ) );
+				// Last Change timestamp needs to be inserted as second attribute in order to have valid sitemap schema.
+				// TODO Use insert_timestamp_as_second_attribute() instead when #2721 is merged.
+				$links[ $shop_page_index ] = array_slice( $links[ $shop_page_index ], 0, 1, true ) + array( 'lastmod' => $lastmod ) + array_slice( $links[ $shop_page_index ], 1, null, true );
+			}
 			return $links;
 		}
 

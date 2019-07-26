@@ -519,8 +519,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 			$this->_setup_options( 'sitemap', $custom_options );
 
-		// calculate the number of sitemaps expected in the index. The +1 is for the sitemap_addl.xml that includes the home page.
-		$expected = intval( $enabled_post_types_count * ceil( $num_posts / $per_xml ) + 1 );
+		$expected = intval( $enabled_post_types_count * ceil( $num_posts / $per_xml ) );
 		$got = $this->count_sitemap_elements( array( '<sitemap>' ) );
 
 		$this->assertEquals( $expected, $got['<sitemap>'] );
