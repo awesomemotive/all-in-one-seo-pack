@@ -20,6 +20,7 @@ $(document).ready( function() {
  *
  * @since 1.0.0
  * @since 2.9.1 Fix conflict with LearnDash and function name.
+ * @since 3.2.0 Minor refactoring.
  *
  * @param JQuery_Object field
  * @param JQuery_Object counter
