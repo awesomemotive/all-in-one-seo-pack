@@ -129,15 +129,15 @@ abstract class AIOSEOP_Graph {
 		// TODO Discuss what operation style to use on filter hook.
 		// A) A single hook to run added hooks multiple times.
 		// B) Multiple class hooks to run added hooks specific to schema graph object.
-//		/**
-//		 * AIOSEOP Schema Class's Prepared Data
-//		 *
-//		 * @since 3.2
-//		 *
-//		 * @param array  Dynamically generated data through inherited schema graphs.
-//		 * @param string Current schema (child) class being used to prepare data.
-//		 */
-//		$schema_data = apply_filters( 'aioseop_schema_class_data', $this->prepare(), get_class( $this ) );
+		/**
+		 * AIOSEOP Schema Class's Prepared Data
+		 *
+		 * @since 3.2
+		 *
+		 * @param array  Dynamically generated data through inherited schema graphs.
+		 * @param string Current schema (child) class being used to prepare data.
+		 */
+		// $schema_data = apply_filters( 'aioseop_schema_class_data', $this->prepare(), get_class( $this ) );
 
 		/**
 		 * AIOSEOP Schema Class's Prepared Data
