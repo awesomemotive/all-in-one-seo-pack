@@ -4519,10 +4519,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$aiosp_nofollow = $this->get_noindex_nofollow_meta_value( 'nofollow' );
 		}
 
-		if ( 'on' === $aiosp_noindex || ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 ) {
+		if ( 'on' === $aiosp_noindex ||
+			( is_singular() && ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 )
+		) {
 			$noindex = true;
 		}
-		if ( 'on' === $aiosp_nofollow || ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 ) {
+		if ( 'on' === $aiosp_nofollow ||
+			( is_singular() && ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 )
+		) {
 			$nofollow = true;
 		}
 
