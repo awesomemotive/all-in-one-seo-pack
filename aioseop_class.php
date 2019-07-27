@@ -791,7 +791,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'upgrade'            => array(
 						'type'    => 'html',
 						'label'   => 'none',
-						'default' => aiosp_common::get_upgrade_hyperlink( 'meta', sprintf( '%1$s %2$s Pro', __( 'Upgrade to', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ), __( 'UPGRADE TO PRO VERSION', 'all-in-one-seo-pack' ), '_blank' ),
+						'default' => aiosp_common::get_upgrade_hyperlink(
+							'meta',
+							sprintf(
+								'%1$s %2$s Pro',
+								/* translators: The complete string is as follows: "Upgrade to All in One SEO Pack Pro". */
+								__( 'Upgrade to', 'all-in-one-seo-pack' ),
+								AIOSEOP_PLUGIN_NAME
+							),
+							__( 'UPGRADE TO PRO VERSION', 'all-in-one-seo-pack' ),
+							'_blank'
+						),
 					),
 					'support'            => array(
 						'type'    => 'html',
@@ -799,6 +809,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'default' => '<a target="_blank" href="https://semperplugins.com/support/">' . __( 'Support Forum', 'all-in-one-seo-pack' ) . '</a>',
 					),
 					'snippet'            => array(
+						/* translators: The preview snippet shows how the page will look like in the search results (title, meta description and permalink). */
 						'name'    => __( 'Preview Snippet', 'all-in-one-seo-pack' ),
 						'type'    => 'custom',
 						'label'   => 'top',
@@ -823,22 +834,28 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'type' => 'text',
 					),
 					'custom_link'        => array(
+						/* translators: This is a setting that users can enable to enter a custom canonical URL. */
 						'name' => __( 'Custom Canonical URL', 'all-in-one-seo-pack' ),
 						'type' => 'text',
 						'size' => 60,
 					),
 					'noindex'            => array(
+						/* translators: This is a setting that allows users to add the NOINDEX robots meta tag value to the current post/page. */
 						'name'    => __( 'NOINDEX this page/post', 'all-in-one-seo-pack' ),
 						'default' => '',
 					),
 					'nofollow'           => array(
+						/* translators: This is a setting that allows users to add the NOFOLLOW robots meta tag value to the current post/page. */
 						'name'    => __( 'NOFOLLOW this page/post', 'all-in-one-seo-pack' ),
 						'default' => '',
 					),
+					/* translators: This is a setting that allows users to exclude the current post/page from the sitemap. */
 					'sitemap_exclude'    => array( 'name' => __( 'Exclude From Sitemap', 'all-in-one-seo-pack' ) ),
+					/* translators: This is a setting that allows users to disable All in One SEO Pack for the current post/page. */
 					'disable'            => array( 'name' => __( 'Disable on this page/post', 'all-in-one-seo-pack' ) ),
 					'disable_analytics'  => array(
-						'name'     => __( 'Disable Google Analytics', 'all-in-one-seo-pack' ),
+						/* translators: This is a setting that allows users to disable Google Analytics tracking for the current post/page. */
+							'name' => __( 'Disable Google Analytics', 'all-in-one-seo-pack' ),
 						'condshow' => array( 'aiosp_disable' => 'on' ),
 					),
 				),
@@ -849,6 +866,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		$this->layout = array(
 			'default'   => array(
+				/* translators: This is the name of the main menu. */
 				'name'      => __( 'General Settings', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/documentation/general-settings/',
 				'options'   => array(), // This is set below, to the remaining options -- pdb.
@@ -878,16 +896,19 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'cpt'       => array(
+				/* translators: This is the name of a settings section where users can indicate which post types and taxonomies they want to use All in One SEO Pack with. */
 				'name'      => __( 'Content Type Settings', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/documentation/custom-post-type-settings/',
 				'options'   => array( 'taxactive', 'cpostactive' ),
 			),
 			'display'   => array(
+				/* translators: This is the name of a settings section where users can control how All in One SEO Pack appears in the WordPress Administrator Panel. */
 				'name'      => __( 'Display Settings', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/documentation/display-settings/',
 				'options'   => array( 'posttypecolumns' ),
 			),
 			'webmaster' => array(
+				/* translators: This is the name of a settings section where users can add verification codes of webmaster platforms such as Google Search Console, Bing Webmaster Tools, etc. */
 				'name'      => __( 'Webmaster Verification', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/sections/webmaster-verification/',
 				'options'   => array( 'google_verify', 'bing_verify', 'pinterest_verify', 'yandex_verify', 'baidu_verify' ),
@@ -1407,6 +1428,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			if ( null === $post ) {
 				global $post;
 			}
+
+			// TODO Fetch correct ID for static posts page/Woocommerce shop page - #2729.
 			$post_id = $post;
 			if ( is_object( $post_id ) ) {
 				$post_id = $post_id->ID;
@@ -3326,6 +3349,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( isset( $post_types['attachment'] ) ) {
+			/* translators: This refers to entries in the Media Library (images, videos, recordings and other files) and their attachment pages. */
 			$post_types['attachment'] = __( 'Media / Attachments', 'all-in-one-seo-pack' );
 		}
 		if ( isset( $all_post_types['attachment'] ) ) {
@@ -3367,6 +3391,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$name  = $post_objs[ $p ]->labels->singular_name;
 			if ( ! isset( $this->default_options[ $field ] ) ) {
 				$this->default_options[ $field ] = array(
+					/* translators: The title format is the template that is used to format the title for each post of a certain post type (Posts, Pages, etc.). */
 					'name'     => "$name " . __( 'Title Format:', 'all-in-one-seo-pack' ) . "<br />($p)",
 					'type'     => 'text',
 					'default'  => '%post_title% | %site_title%',
@@ -3398,6 +3423,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$name  = $pt;
 				if ( ! isset( $this->default_options[ $field ] ) ) {
 					$this->default_options[ $field ]  = array(
+						/* translators: The taxonomy title format is the template that is used to format the title for each taxonomy term of a certain taxonomy (Categories, Tags, etc.). */
 						'name'     => "$name " . __( 'Taxonomy Title Format:', 'all-in-one-seo-pack' ),
 						'type'     => 'text',
 						'default'  => '%taxonomy_title% | %site_title%',
@@ -3494,11 +3520,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$submit['Submit_Default'] = array(
 			'type'  => 'submit',
 			'class' => 'aioseop_reset_settings_button button-secondary',
+			/* translators: This is the text of a button that allows users to reset the General Settings to their default values. */
 			'value' => __( 'Reset General Settings to Defaults', 'all-in-one-seo-pack' ) . ' &raquo;',
 		);
 		$submit['Submit_All_Default']      = array(
 			'type'  => 'submit',
 			'class' => 'aioseop_reset_settings_button button-secondary',
+			/* translators: This is the text of a button that allows users to reset all settings across the entire plugin to their default values. */
 			'value' => __( 'Reset ALL Settings to Defaults', 'all-in-one-seo-pack' ) . ' &raquo;',
 		);
 
@@ -3586,6 +3614,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				if ( ! empty( $this->options['aiosp_cpostnoindex'] ) && in_array( $post_type, $this->options['aiosp_cpostnoindex'] ) ) {
 					$settings[ "{$prefix}noindex" ]['type']            = 'select';
 					$settings[ "{$prefix}noindex" ]['initial_options'] = array(
+						/* translators: This indicates that the current post/page is using the default value for its post type, which is NOINDEX. */
 						''    => __( 'Default - noindex', 'all-in-one-seo-pack' ),
 						'off' => __( 'index', 'all-in-one-seo-pack' ),
 						'on'  => __( 'noindex', 'all-in-one-seo-pack' ),
@@ -3594,6 +3623,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				if ( ! empty( $this->options['aiosp_cpostnofollow'] ) && in_array( $post_type, $this->options['aiosp_cpostnofollow'] ) ) {
 					$settings[ "{$prefix}nofollow" ]['type']            = 'select';
 					$settings[ "{$prefix}nofollow" ]['initial_options'] = array(
+						/* translators: This indicates that the current post/page is using the default value for its post type, which is NOFOLLOW. */
 						''    => __( 'Default - nofollow', 'all-in-one-seo-pack' ),
 						'off' => __( 'follow', 'all-in-one-seo-pack' ),
 						'on'  => __( 'nofollow', 'all-in-one-seo-pack' ),
@@ -3696,7 +3726,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Is Page Included
+	 * The is_page_included() function.
+	 *
+	 * Checks whether All in One SEO Pack is enabled for this page.
 	 *
 	 * @since ?
 	 *
@@ -4169,20 +4201,25 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$meta_string .= sprintf( "<meta name=\"keywords\" %s content=\"%s\" />\n", $key_attr, $keywords );
 			}
 		}
-		/**
-		 * The aioseop_robots_meta filter hook.
-		 *
-		 * Can be used to filter the robots meta tag value.
-		 * e.g. 'noindex, nofollow'
-		 *
-		 * @since ?
-		 *
-		 * @param string
-		 * @return string
-		 */
-		$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
-		if ( ! empty( $robots_meta ) ) {
-			$meta_string .= '<meta name="robots" content="' . esc_attr( $robots_meta ) . '" />' . "\n";
+		// Handle noindex, nofollow - robots meta.
+		if ( get_option( 'blog_public' ) ) {
+
+			/**
+			 * The aioseop_robots_meta filter hook.
+			 *
+			 * Can be used to filter the robots meta tag value.
+			 * e.g. 'noindex, nofollow'
+			 *
+			 * @since ?
+			 *
+			 * @param string
+			 * @return string
+			 */
+			$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
+
+			if ( ! empty( $robots_meta ) ) {
+				$meta_string .= sprintf( '<meta name="robots" content="%s"', esc_attr( $robots_meta ) ) . " />\n";
+			}
 		}
 		// Handle site verification.
 		if ( is_front_page() ) {
@@ -4287,7 +4324,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 	}
-
 	/**
 	 * Check Rewrite Handler
 	 *
@@ -4429,153 +4465,182 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Get Robots Meta
+	 * The get_robots_meta() function.
+	 *
+	 * Determines and returns the noindex/nofollow values for the robots meta tag string.
 	 *
 	 * @since 2.3.5
-	 * @since 2.3.11.5 Added no index API filter hook for password protected posts.
+	 * @since 2.3.11.5 Added noindex API filter hook for password protected posts.
+	 * @since 3.2.0 Refactored function to fix various bugs.
 	 *
 	 * @return string
 	 */
 	function get_robots_meta() {
 		global $aioseop_options;
-		$opts        = $this->meta_opts;
-		$page        = $this->get_page_number();
-		$robots_meta = $tax_noindex = '';
-		if ( isset( $aioseop_options['aiosp_tax_noindex'] ) ) {
+		$page_number    = $this->get_page_number();
+		$post_type      = get_post_type();
+		$noindex        = false;
+		$nofollow       = false;
+		$aiosp_noindex  = '';
+		$aiosp_nofollow = '';
+		$tax_noindex    = array();
+		$is_static_page = false;
+		$is_static_posts_page = false;
+		$is_woocommerce_shop_page = false;
+
+		if ( isset( $aioseop_options['aiosp_tax_noindex'] ) && ! empty( $aioseop_options['aiosp_tax_noindex'] ) ) {
 			$tax_noindex = $aioseop_options['aiosp_tax_noindex'];
 		}
 
-		if ( empty( $tax_noindex ) || ! is_array( $tax_noindex ) ) {
-			$tax_noindex = array();
+		if ( is_front_page() ) {
+			return $this->get_robots_meta_string( false, false );
 		}
 
-		$aiosp_noindex = $aiosp_nofollow = '';
-		$noindex       = 'index';
-		$nofollow      = 'follow';
+		if ( is_home() && 0 !== (int) get_option( 'page_for_posts' ) ) {
+			$is_static_posts_page = true;
+		}
 
-		if ( ! empty( $opts ) ) {
-			$aiosp_noindex  = htmlspecialchars( stripslashes( $opts['aiosp_noindex'] ) );
-			$aiosp_nofollow = htmlspecialchars( stripslashes( $opts['aiosp_nofollow'] ) );
+		// TODO Use aioseop_is_woocommerce_active() when #2720 is merged.
+		if ( class_exists( 'woocommerce' ) && is_shop() ) {
+			$is_woocommerce_shop_page = true;
+		}
+
+		if ( $is_static_posts_page || $is_woocommerce_shop_page ) {
+			$post_type = 'page';
+			$is_static_page = true;
 		}
 
 		if (
-				(
-					is_category() &&
-					! empty( $aioseop_options['aiosp_category_noindex'] )
-				) ||
-				(
-					! is_category() &&
-					is_archive() &&
-					! is_tag() &&
-					! is_tax() &&
-					(
-						(
-							is_date() &&
-							! empty( $aioseop_options['aiosp_archive_date_noindex'] )
-						) ||
-						(
-							is_author() &&
-							! empty( $aioseop_options['aiosp_archive_author_noindex'] )
-						)
-					)
-				) ||
-				(
-					is_tag() &&
-					! empty( $aioseop_options['aiosp_tags_noindex'] )
-				) ||
-				(
-					is_search() &&
-					! empty( $aioseop_options['aiosp_search_noindex'] )
-				) ||
-				(
-					is_404() &&
-					! empty( $aioseop_options['aiosp_404_noindex'] )
-				) ||
-				(
-					is_tax() &&
-					in_array( get_query_var( 'taxonomy' ), $tax_noindex )
-				)
+				! is_date() &&
+				! is_author() &&
+				! is_search()
 		) {
-			$noindex = 'noindex';
+			$aiosp_noindex = $this->get_noindex_nofollow_meta_value( 'noindex' );
+			$aiosp_nofollow = $this->get_noindex_nofollow_meta_value( 'nofollow' );
+		}
 
-			// #322: duplicating this code so that we don't step on some other entities' toes.
-			if (
-					( 'on' === $aiosp_nofollow ) ||
-					(
-						( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) ) &&
-						$page > 1
-					) ||
-					(
-							( '' === $aiosp_nofollow ) &&
-							( ! empty( $aioseop_options['aiosp_cpostnofollow'] ) ) &&
-							in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
-					)
-			) {
-				$nofollow = 'nofollow';
-			}
-			// #322: duplicating this code so that we don't step on some other entities' toes.
-		} elseif (
+		if ( 'on' === $aiosp_noindex || ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 ) {
+			$noindex = true;
+		}
+		if ( 'on' === $aiosp_nofollow || ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 ) {
+			$nofollow = true;
+		}
+
+		if (
+				is_singular() &&
+				$this->is_password_protected() &&
+				apply_filters( 'aiosp_noindex_password_posts', false )
+		) {
+			$noindex = true;
+		}
+
+		if ( $noindex && $nofollow ) {
+			// Not needed to run subsequent checks if both are true.
+			return $this->get_robots_meta_string( $noindex, $nofollow );
+		}
+
+		if (
+				( is_category() && ! empty( $aioseop_options['aiosp_category_noindex'] ) ) ||
+				( is_date() && ! empty( $aioseop_options['aiosp_archive_date_noindex'] ) ) ||
+				( is_author() && ! empty( $aioseop_options['aiosp_archive_author_noindex'] ) ) ||
+				( is_tag() && ! empty( $aioseop_options['aiosp_tags_noindex'] ) ) ||
+				( is_search() && ! empty( $aioseop_options['aiosp_search_noindex'] ) ) ||
+				( is_404() && ! empty( $aioseop_options['aiosp_404_noindex'] ) ) ||
+				( is_tax() && in_array( get_query_var( 'taxonomy' ), $tax_noindex ) )
+		) {
+			$noindex = true;
+		}
+
+		if (
 				is_single() ||
 				is_page() ||
-				$this->is_static_posts_page() ||
 				is_attachment() ||
-				is_category() ||
-				is_tag() ||
-				is_tax() ||
-				( $page > 1 ) ||
-				$this->check_singular()
+				$this->check_singular() ||
+				$is_static_page
 		) {
-			$post_type = get_post_type();
-			if (
-					$aiosp_noindex ||
-					$aiosp_nofollow ||
-					! empty( $aioseop_options['aiosp_cpostnoindex'] ) ||
-					! empty( $aioseop_options['aiosp_cpostnofollow'] ) ||
-					! empty( $aioseop_options['aiosp_paginated_noindex'] ) ||
-					! empty( $aioseop_options['aiosp_paginated_nofollow'] )
+			if ( '' === $aiosp_noindex &&
+					! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
+					in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
 			) {
-
-				if (
-						( 'on' === $aiosp_noindex ) ||
-						(
-							( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) )
-							&& $page > 1
-						) ||
-						(
-							( '' === $aiosp_noindex ) &&
-							( ! empty( $aioseop_options['aiosp_cpostnoindex'] ) ) &&
-							in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
-						)
-
-				) {
-					$noindex = 'noindex';
-				}
-				if (
-						( $aiosp_nofollow == 'on' ) ||
-						(
-							( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) ) &&
-							$page > 1
-						) ||
-						(
-							( $aiosp_nofollow == '' ) &&
-							( ! empty( $aioseop_options['aiosp_cpostnofollow'] ) ) &&
-							in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
-						)
-				) {
-					$nofollow = 'nofollow';
-				}
+				$noindex = true;
+			}
+			if (
+					'' === $aiosp_nofollow &&
+					! empty( $aioseop_options['aiosp_cpostnofollow'] ) &&
+					in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
+			) {
+				$nofollow = true;
 			}
 		}
-		if ( is_singular() && $this->is_password_protected() && apply_filters( 'aiosp_noindex_password_posts', false ) ) {
-			$noindex = 'noindex';
+
+		return $this->get_robots_meta_string( $noindex, $nofollow );
+	}
+
+	/**
+	 * The get_noindex_nofollow_meta_value() function.
+	 *
+	 * Gets the noindex/nofollow meta value for the requested object.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param string $key The requested meta key.
+	 * @return string
+	 */
+	private function get_noindex_nofollow_meta_value( $key ) {
+		$meta = array();
+		$meta_key = '_aioseop_' . $key;
+		$meta_value = '';
+
+		$queried_object = get_queried_object();
+		if ( empty( $queried_object ) ) {
+			return $meta_value;
 		}
 
-		$robots_meta = $noindex . ',' . $nofollow;
-		if ( $robots_meta == 'index,follow' ) {
-			$robots_meta = '';
+		// TODO Use $meta_opts when get_current_options() is refactored - #2729.
+		if ( property_exists( $queried_object, 'ID' ) ) {
+			$meta = get_post_meta( $queried_object->ID );
+		}
+		if ( property_exists( $queried_object, 'term_id' ) ) {
+			$meta = get_term_meta( $queried_object->term_id );
+		}
+		// TODO Use aioseop_is_woocommerce_active() when #2720 is merged.
+		if ( class_exists( 'woocommerce' ) && is_shop() ) {
+			$meta = get_post_meta( wc_get_page_id( 'shop' ) );
 		}
 
-		return $robots_meta;
+		if ( array_key_exists( $meta_key, $meta ) ) {
+			$meta_value = $meta[ $meta_key ][0];
+		}
+
+		return $meta_value;
+	}
+
+
+	/**
+	 * The get_robots_meta_string() function.
+	 *
+	 * Helper function for get_robots_meta().
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param bool $noindex
+	 * @param bool $nofollow
+	 *
+	 * @return string
+	 */
+	private function get_robots_meta_string( $noindex, $nofollow ) {
+		$index_value  = 'index';
+		$follow_value = 'follow';
+
+		if ( $noindex ) {
+			$index_value = 'noindex';
+		}
+
+		if ( $nofollow ) {
+			$follow_value = 'nofollow';
+		}
+
+		return $index_value . ',' . $follow_value;
 	}
 
 	/**
@@ -4915,6 +4980,7 @@ EOF;
 		$active = ' active';
 		foreach ( $tabs as $t ) {
 			if ( $active ) {
+				/* translators: This is the name of the main tab of the All in One SEO Pack meta box that appears on the Edit screen. */
 				$title = __( 'Main Settings', 'all-in-one-seo-pack' );
 			} else {
 				$title = $t['title'];
@@ -4978,6 +5044,7 @@ EOF;
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => AIOSEOP_PLUGIN_DIRNAME,
+						/* translators: This is a CTA action link to upgrade to the premium version of the plugin. */
 						'title'  => __( 'Upgrade To Pro', 'all-in-one-seo-pack' ),
 						'id'     => 'aioseop-pro-upgrade',
 						'href'   => 'https://semperplugins.com/plugins/all-in-one-seo-pack-pro-version/?loc=menu',
@@ -5151,7 +5218,7 @@ EOF;
 	 */
 	function admin_menu() {
 		$file      = plugin_basename( __FILE__ );
-		$menu_name = __( 'All in One SEO', 'all-in-one-seo-pack' );
+		$menu_name = 'All in One SEO';
 
 		$this->locations['aiosp']['default_options']['nonce-aioseop-edit']['default'] = wp_create_nonce( 'edit-aioseop-nonce' );
 

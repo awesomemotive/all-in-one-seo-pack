@@ -1,8 +1,8 @@
 <?php
 /**
- * General functions file.
+ * The aioseop_functions file.
  *
- * We'll eventually move these to a better place, and figure out ones not being used anymore.
+ * Contains all general functions that are used throughout the plugin.
  *
  * @package All-in-One-SEO-Pack
  * @version 2.3.13
@@ -587,6 +587,7 @@ if ( ! function_exists( 'aioseop_ajax_delete_url' ) ) {
 			$output  = str_replace( "'", "\'", $output );
 			$output  = str_replace( "\n", '\n', $output );
 		} else {
+			/* translators: %s is a placeholder and will be replaced with a number. */
 			$output = sprintf( __( 'Row %s not found; no rows were deleted.', 'all-in-one-seo-pack' ), esc_attr( $options ) );
 		}
 		die( sprintf( AIOSEOP_AJAX_MSG_TMPL, $output ) );
@@ -656,6 +657,7 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 						if ( ! empty( $m[ $tags['name'] ] ) && ! empty( $m[ $tags['value'] ] ) ) {
 							foreach ( $metadata[ $type ] as $tk => $tv ) {
 								if ( $m[ $tags['name'] ] == $tv ) {
+									/* This message is shown when a duplicate meta tag is found. %s is a placeholder and will be replaced with the name of the relevant meta tag. */
 									$meta .= "<tr><th style='color:red;'>" . sprintf( __( 'Duplicate %s Meta' ), ucwords( $type ) ) . '</th><td>' . ucwords( $tk ) . "</td><td>{$m[$tags['name']]}</td><td>{$m[$tags['value']]}</td></tr>\n";
 								}
 							}
@@ -961,10 +963,10 @@ if ( ! function_exists( 'aioseop_add_contactmethods' ) ) {
 				}
 
 				if ( $m->option_isset( 'twitter_creator' ) ) {
-					$contactmethods['twitter'] = __( 'Twitter', 'all-in-one-seo-pack' );
+					$contactmethods['twitter'] = 'Twitter';
 				}
 				if ( $m->option_isset( 'facebook_author' ) ) {
-					$contactmethods['facebook'] = __( 'Facebook', 'all-in-one-seo-pack' );
+					$contactmethods['facebook'] = 'Facebook';
 				}
 			}
 		}
@@ -1379,4 +1381,19 @@ function aioseop_do_shortcode_helper( $content, $conflicting_shortcodes ) {
 	}
 
 	return $content;
+}
+
+/**
+ * The aioseop_is_woocommerce_active() function.
+ *
+ * Checks whether WooCommerce is active.
+ *
+ * @since 3.2.0
+ *
+ * @return bool
+ */
+if ( ! function_exists( 'aioseop_is_woocommerce_active' ) ) {
+	function aioseop_is_woocommerce_active() {
+		return class_exists( 'woocommerce' );
+	}
 }
