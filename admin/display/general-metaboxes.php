@@ -159,15 +159,7 @@ class aiosp_metaboxes {
 						<li>	
 							<div class="aioseop_icon aioseop-icon-cog"></div>
 							<a target="_blank" rel="noopener noreferrer" title="<?php _e( 'All in One SEO Pro Plugin Changelog', 'all-in-one-seo-pack' ); ?>"
-								href="
-								<?php
-								if ( AIOSEOPPRO ) {
-									echo 'https://semperplugins.com/documentation/all-in-one-seo-pack-pro-changelog/';
-								} else {
-									echo 'https://semperfiwebdesign.com/all-in-one-seo-pack-release-history/';
-								}
-								?>
-								"><?php _e( 'View the Changelog', 'all-in-one-seo-pack' ); ?></a>
+								href="https://semperplugins.com/all-in-one-seo-pack-changelog/"><?php _e( 'View the Changelog', 'all-in-one-seo-pack' ); ?></a>
 						</li>
 						<li>	
 							<div class="aioseop_icon aioseop-icon-youtube"></div>

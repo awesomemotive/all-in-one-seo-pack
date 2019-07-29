@@ -1,8 +1,8 @@
 <?php
 /**
- * General functions file.
+ * The aioseop_functions file.
  *
- * We'll eventually move these to a better place, and figure out ones not being used anymore.
+ * Contains all general functions that are used throughout the plugin.
  *
  * @package All-in-One-SEO-Pack
  * @version 2.3.13
@@ -1381,4 +1381,19 @@ function aioseop_do_shortcode_helper( $content, $conflicting_shortcodes ) {
 	}
 
 	return $content;
+}
+
+/**
+ * The aioseop_is_woocommerce_active() function.
+ *
+ * Checks whether WooCommerce is active.
+ *
+ * @since 3.2.0
+ *
+ * @return bool
+ */
+if ( ! function_exists( 'aioseop_is_woocommerce_active' ) ) {
+	function aioseop_is_woocommerce_active() {
+		return class_exists( 'woocommerce' );
+	}
 }
