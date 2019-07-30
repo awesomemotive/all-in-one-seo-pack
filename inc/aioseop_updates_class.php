@@ -372,34 +372,42 @@ class AIOSEOP_Updates {
 		global $aioseop_options;
 
 		$update_values = array(
-			'aiosp_schema_markup_search_results_page' => '1',
-			'aiosp_schema_social_profile_links'       => '',
-			'aiosp_schema_site_represents'            => 'organization',
-			'aiosp_schema_organization_name'          => '',
-			'aiosp_schema_organization_logo'          => '',
-			'aiosp_schema_person_user'                => '1',
-			'aiosp_schema_phone_number'               => '',
-			'aiosp_schema_contact_type'               => 'none',
+			'aiosp_schema_markup'               => '1',
+			'aiosp_schema_search_results_page'  => '1',
+			'aiosp_schema_social_profile_links' => '',
+			'aiosp_schema_site_represents'      => 'organization',
+			'aiosp_schema_organization_name'    => '',
+			'aiosp_schema_organization_logo'    => '',
+			'aiosp_schema_person_user'          => '1',
+			'aiosp_schema_phone_number'         => '',
+			'aiosp_schema_contact_type'         => 'none',
 		);
 
+		if ( isset( $aioseop_options['aiosp_schema_markup'] ) ) {
+			if ( empty( $aioseop_options['aiosp_schema_markup'] ) || 'off' === $aioseop_options['aiosp_schema_markup'] ) {
+				$update_values['aiosp_schema_markup'] = '0';
+			}
+		}
 		if ( isset( $aioseop_options['aiosp_google_sitelinks_search'] ) ) {
-			$update_values['aiosp_schema_search_results_page'] = $aioseop_options['aiosp_google_sitelinks_search'];
+			if ( empty( $aioseop_options['aiosp_google_sitelinks_search'] ) || 'off' === $aioseop_options['aiosp_google_sitelinks_search'] ) {
+				$update_values['aiosp_schema_search_results_page'] = '0';
+			}
 		}
-		if ( isset( $aioseop_options['aiosp_opengraph_profile_links'] ) ) {
-			$update_values['aiosp_schema_social_profile_links'] = $aioseop_options['aiosp_opengraph_profile_links'];
+		if ( isset( $aioseop_options['modules']['aiosp_opengraph_options']['aiosp_opengraph_profile_links'] ) ) {
+			$update_values['aiosp_schema_social_profile_links'] = $aioseop_options['modules']['aiosp_opengraph_options']['aiosp_opengraph_profile_links'];
 		}
-		if ( isset( $aioseop_options['aiosp_opengraph_person_or_org'] ) ) {
-			$update_values['aiosp_schema_site_represents'] = $aioseop_options['aiosp_opengraph_person_or_org'];
+		if ( isset( $aioseop_options['modules']['aiosp_opengraph_options']['aiosp_opengraph_person_or_org'] ) ) {
+			if ( 'person' === $aioseop_options['modules']['aiosp_opengraph_options']['aiosp_opengraph_person_or_org'] ) {
+				$update_values['aiosp_schema_site_represents'] = 'person';
+			}
 		}
-		if ( isset( $aioseop_options['aiosp_opengraph_social_name'] ) ) {
-			$update_values['aiosp_schema_organization_name'] = $aioseop_options['aiosp_opengraph_social_name'];
+		if ( isset( $aioseop_options['modules']['aiosp_opengraph_options']['aiosp_opengraph_social_name'] ) ) {
+			$update_values['aiosp_schema_organization_name'] = $aioseop_options['modules']['aiosp_opengraph_options']['aiosp_opengraph_social_name'];
 		}
 
-		// Add any missing values to options.
+		// Add/update values to options.
 		foreach ( $update_values as $key => $value ) {
-			if ( ! isset( $aioseop_options[ $key ] ) ) {
-				$aioseop_options[ $key ] = $value;
-			}
+			$aioseop_options[ $key ] = $value;
 		}
 
 		$aiosp->update_class_option( $aioseop_options );
