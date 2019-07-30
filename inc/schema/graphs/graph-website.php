@@ -56,11 +56,11 @@ class AIOSEOP_Graph_WebSite extends AIOSEOP_Graph_Creativework {
 			'url'       => home_url() . '/',
 			'name'      => get_bloginfo( 'name' ),
 			'publisher' => array(
-				'@id' => home_url() . '/#' . $aioseop_options['aiosp_site_represents'],
+				'@id' => home_url() . '/#' . $aioseop_options['aiosp_schema_site_represents'],
 			),
 		);
 
-		if ( $aioseop_options['aiosp_google_sitelinks_search'] ) {
+		if ( $aioseop_options['aiosp_schema_add_search_results_page'] ) {
 			$rtn_data['potentialAction'] = array(
 				'@type'       => 'SearchAction',
 				'target'      => home_url() . '/?s={search_term_string}',

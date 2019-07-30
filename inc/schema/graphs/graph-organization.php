@@ -56,8 +56,8 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 		);
 
 		// Site represents Organization or Person.
-		if ( 'person' === $aioseop_options['aiosp_site_represents'] ) {
-			$person_id = intval( $aioseop_options['aiosp_person_user'] );
+		if ( 'person' === $aioseop_options['aiosp_schema_site_represents'] ) {
+			$person_id = intval( $aioseop_options['aiosp_schema_person_user'] );
 
 			$rtn_data['@type']  = array( 'Person', $this->slug );
 			$rtn_data['@id']    = home_url() . '/#person';
@@ -72,7 +72,7 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 			}
 		} else {
 			// Get Name from General > Schema Settings > Organization Name, and fallback on WP's Site Name.
-			$rtn_data['name']   = $aioseop_options['aiosp_organization_name'] ?: get_bloginfo( 'name' );
+			$rtn_data['name']   = $aioseop_options['aiosp_schema_organization_name'] ?: get_bloginfo( 'name' );
 			$rtn_data['sameAs'] = $this->get_site_social_profile_links();
 
 			// Handle Logo/Image.
@@ -86,7 +86,7 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 			}
 
 			// Handle contactPoint.
-			if ( ! empty( $aioseop_options['aiosp_phone_number'] ) ) {
+			if ( ! empty( $aioseop_options['aiosp_schema_phone_number'] ) ) {
 				$rtn_data['contactPoint'] = $this->prepare_contactpoint();
 			}
 		}
@@ -138,8 +138,8 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 
 		$rtn_data = array(
 			'@type'       => 'ContactPoint',
-			'telephone'   => '+' . $aioseop_options['aiosp_phone_number'],
-			'contactType' => $aioseop_options['aiosp_contact_type'],
+			'telephone'   => '+' . $aioseop_options['aiosp_schema_phone_number'],
+			'contactType' => $aioseop_options['aiosp_schema_contact_type'],
 		);
 
 		return $rtn_data;
@@ -157,8 +157,8 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 
 		$social_links = array();
 
-		if ( ! empty( $aioseop_options['aiosp_social_profile_links'] ) ) {
-			$social_links = $aioseop_options['aiosp_social_profile_links'];
+		if ( ! empty( $aioseop_options['aiosp_schema_social_profile_links'] ) ) {
+			$social_links = $aioseop_options['aiosp_schema_social_profile_links'];
 			$social_links = str_replace( array( ",\r\n", ",\r" ), ',', $social_links );
 			$social_links = str_replace( array( "\r\n", "\r" ), ',', $social_links );
 			$social_links = explode( ',', $social_links );
@@ -182,10 +182,10 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 		$logo_id = 0;
 
 		// Uses logo selected from General Settings > Schema Settings > Organization Logo.
-		if ( ! empty( $aioseop_options['aiosp_organization_logo'] ) ) {
+		if ( ! empty( $aioseop_options['aiosp_schema_organization_logo'] ) ) {
 			// Changes the URL to an ID. Known to be memory intense.
 			// Option configurations need to use IDs rather than the URL strings.
-			$logo_id = aiosp_common::attachment_url_to_postid( $aioseop_options['aiosp_organization_logo'] );
+			$logo_id = aiosp_common::attachment_url_to_postid( $aioseop_options['aiosp_schema_organization_logo'] );
 		}
 
 		// Fallback on Customizer site logo.

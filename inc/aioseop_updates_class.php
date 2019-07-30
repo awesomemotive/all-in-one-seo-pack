@@ -144,6 +144,12 @@ class AIOSEOP_Updates {
 		) {
 			$this->reset_flush_rewrite_rules_201906();
 		}
+
+		if (
+				version_compare( $old_version, '3.2', '<' )
+		) {
+			$this->update_schema_markup();
+		}
 	}
 
 	/**
@@ -355,6 +361,50 @@ class AIOSEOP_Updates {
 	public function reset_flush_rewrite_rules_201906() {
 		add_action( 'shutdown', 'flush_rewrite_rules' );
 	}
+
+	/**
+	 * Update to add schema markup settings.
+	 *
+	 * @since 3.2
+	 */
+	public function update_schema_markup() {
+		global $aiosp;
+		global $aioseop_options;
+
+		$update_values = array(
+			'aiosp_schema_markup_search_results_page' => '1',
+			'aiosp_schema_social_profile_links'       => '',
+			'aiosp_schema_site_represents'            => 'organization',
+			'aiosp_schema_organization_name'          => '',
+			'aiosp_schema_organization_logo'          => '',
+			'aiosp_schema_person_user'                => '1',
+			'aiosp_schema_phone_number'               => '',
+			'aiosp_schema_contact_type'               => 'none',
+		);
+
+		if ( isset( $aioseop_options['aiosp_google_sitelinks_search'] ) ) {
+			$update_values['aiosp_schema_add_search_results_page'] = $aioseop_options['aiosp_google_sitelinks_search'];
+		}
+		if ( isset( $aioseop_options['aiosp_opengraph_profile_links'] ) ) {
+			$update_values['aiosp_schema_social_profile_links'] = $aioseop_options['aiosp_opengraph_profile_links'];
+		}
+		if ( isset( $aioseop_options['aiosp_opengraph_person_or_org'] ) ) {
+			$update_values['aiosp_schema_site_represents'] = $aioseop_options['aiosp_opengraph_person_or_org'];
+		}
+		if ( isset( $aioseop_options['aiosp_opengraph_social_name'] ) ) {
+			$update_values['aiosp_schema_organization_name'] = $aioseop_options['aiosp_opengraph_social_name'];
+		}
+
+		// Add any missing values to options.
+		foreach ( $update_values as $key => $value ) {
+			if ( ! isset( $aioseop_options[ $key ] ) ) {
+				$aioseop_options[ $key ] = $value;
+			}
+		}
+
+		$aiosp->update_class_option( $aioseop_options );
+	}
+
 }
 
 

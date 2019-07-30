@@ -416,14 +416,14 @@ class AIOSEOP_Helper {
 			'aiosp_ga_enhanced_ecommerce'       => __( 'This enables support for the Enhanced Ecommerce in Google Analytics.', 'all-in-one-seo-pack' ),
 
 			// Schema Settings.
-			'aiosp_google_sitelinks_search'     => __( 'Add markup to display the Google Sitelinks Search Box next to your search results in Google.', 'all-in-one-seo-pack' ),
-			'aiosp_social_profile_links'        => __( 'Add URLs for your website\'s social profiles here (Facebook, Twitter, Google+, Instagram, LinkedIn), one per line.', 'all-in-one-seo-pack' ),
-			'aiosp_site_represents'             => __( 'Are the social profile links for your website for a person or an organization?', 'all-in-one-seo-pack' ),
-			'aiosp_organization_name'           => __( 'Add the name of the person or organization who owns these profiles.', 'all-in-one-seo-pack' ),
-			'aiosp_organization_logo'           => __( 'Add a logo that represents the organization.', 'all-in-one-seo-pack' ),
-			'aiosp_person_user'                 => __( 'Select user the site represents.', 'all-in-one-seo-pack' ),
-			'aiosp_phone_number'                => __( 'Add public phone number used for others to contact. It is required you use the full format, including your country\'s telephone code.', 'all-in-one-seo-pack' ),
-			'aiosp_contact_type'                => __( 'Type of contact the phone number functions as.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_add_search_results_page' => __( 'Add markup to display the Google Sitelinks Search Box next to your search results in Google.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_social_profile_links'    => __( 'Add URLs for your website\'s social profiles here (Facebook, Twitter, Google+, Instagram, LinkedIn), one per line.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_site_represents'         => __( 'Are the social profile links for your website for a person or an organization?', 'all-in-one-seo-pack' ),
+			'aiosp_schema_organization_name'       => __( 'Add the name of the person or organization who owns these profiles.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_organization_logo'       => __( 'Add a logo that represents the organization. If no image is selected, then the plugin will try to use the logo in the Customizer settings.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_person_user'             => __( 'Select user the site represents.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_phone_number'            => __( 'Add public phone number used for others to contact. It is required you use the full format, including your country\'s telephone code.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_contact_type'            => __( 'Type of contact the phone number functions as.', 'all-in-one-seo-pack' ),
 
 			// Noindex Settings.
 			'aiosp_cpostnoindex'                => __( 'Set the default NOINDEX setting for each Post Type.', 'all-in-one-seo-pack' ),
@@ -566,14 +566,14 @@ class AIOSEOP_Helper {
 			'aiosp_ga_enhanced_ecommerce'       => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#enhanced-ecommerce',
 
 			// Schema Settings.
-			'aiosp_google_sitelinks_search'     => 'https://semperplugins.com/documentation/google-settings/#display-sitelinks-search-box',
-			'aiosp_social_profile_links'        => '',
-			'aiosp_site_represents'             => '',
-			'aiosp_organization_name'           => '',
-			'aiosp_organization_logo'           => '',
-			'aiosp_person_user'                 => '',
-			'aiosp_phone_number'                => '',
-			'aiosp_contact_type'                => '',
+			'aiosp_schema_add_search_results_page' => 'https://semperplugins.com/documentation/google-settings/#display-sitelinks-search-box',
+			'aiosp_schema_social_profile_links'    => '',
+			'aiosp_schema_site_represents'         => '',
+			'aiosp_schema_organization_name'       => '',
+			'aiosp_schema_organization_logo'       => '',
+			'aiosp_schema_person_user'             => '',
+			'aiosp_schema_phone_number'            => '',
+			'aiosp_schema_contact_type'            => '',
 
 			// Noindex Settings.
 			'aiosp_cpostnoindex'                => 'https://semperplugins.com/documentation/noindex-settings/#noindex',

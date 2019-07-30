@@ -74,7 +74,7 @@ class AIOSEOP_Graph_Article extends AIOSEOP_Graph_CreativeWork {
 			'dateModified'     => mysql2date( DATE_W3C, $post->post_modified_gmt, false ),
 			'commentCount'     => $comment_count['approved'],
 			'mainEntityOfPage' => array( '@id' => $post_url . '#webpage' ),
-			'publisher'        => array( '@id' => home_url() . '/#' . $aioseop_options['aiosp_site_represents'] ),
+			'publisher'        => array( '@id' => home_url() . '/#' . $aioseop_options['aiosp_schema_site_represents'] ),
 			'articleSection'   => implode( ', ', $post_terms ),
 		);
 
@@ -134,9 +134,9 @@ class AIOSEOP_Graph_Article extends AIOSEOP_Graph_CreativeWork {
 
 		if ( has_post_thumbnail( $post ) ) {
 			$rtn_image_data = $this->get_site_image_data( get_post_thumbnail_id() );
-		} elseif ( 'organization' === $aioseop_options['aiosp_site_represents'] && ! empty( $aioseop_options['organization_logo'] ) ) {
-			$rtn_image_data = $this->get_site_image_data( $aioseop_options['organization_logo'] );
-		} elseif ( 'person' === $aioseop_options['aiosp_site_represents'] && ! empty( $post->post_author ) ) {
+		} elseif ( 'organization' === $aioseop_options['aiosp_schema_site_represents'] && ! empty( $aioseop_options['aiosp_schema_organization_logo'] ) ) {
+			$rtn_image_data = $this->get_site_image_data( $aioseop_options['aiosp_schema_organization_logo'] );
+		} elseif ( 'person' === $aioseop_options['aiosp_schema_site_represents'] && ! empty( $post->post_author ) ) {
 			$rtn_image_data = $this->get_user_image_data( intval( $post->post_author ) );
 		} else {
 			$content_image_url = $this->get_image_url_from_content( $post );

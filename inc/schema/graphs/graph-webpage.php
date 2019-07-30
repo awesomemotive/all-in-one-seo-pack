@@ -100,7 +100,7 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 				$current_name = sprintf( __( 'Day: %s', 'all-in-one-seo-pack' ), get_the_date( _x( 'F j, Y', 'daily archives date format', 'all-in-one-seo-pack' ) ) );
 			}
 		} elseif ( is_author() ) {
-			$user_id     = intval( $post->post_author );
+			$user_id      = intval( $post->post_author );
 			$current_url  = get_author_posts_url( $user_id );
 			$current_name = get_the_author_meta( 'display_name', $user_id );
 		} elseif ( is_search() ) {
@@ -139,7 +139,7 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 
 		if ( is_front_page() ) {
 			$rtn_data['about'] = array(
-				'@id' => home_url() . '/#' . $aioseop_options['aiosp_site_represents'],
+				'@id' => home_url() . '/#' . $aioseop_options['aiosp_schema_site_represents'],
 			);
 		}
 
