@@ -6,7 +6,7 @@
  */
 
 $(document).ready( function() {
-	$('.aioseop_count_chars').on('keypress', function(){
+	$('.aioseop_count_chars').on('keyup keydown', function(){
 		var inputField = $(this).eq(0);
 		var counter =  $(this).parent().find('[name="' + $(this).attr('data-length-field') + '"]').eq(0);
 		aioseopCountChars( inputField, counter );
