@@ -596,17 +596,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				/* translators: This is a setting that outputs basic Schema.org markup, also known as structured data, into the source code of each page. */
 				'name'            => __( 'Use Schema.org Markup', 'all-in-one-seo-pack' ),
 				'type'            => 'radio',
-				'default'         => 'off',
+				'default'         => 0,
 				'initial_options' => array(
-					'on'  => __( 'Enable', 'all-in-one-seo-pack' ),
-					'off' => __( 'Disable', 'all-in-one-seo-pack' ),
+					0 => __( 'Disable', 'all-in-one-seo-pack' ),
+					1 => __( 'Enable', 'all-in-one-seo-pack' ),
 				),
 			),
 			'google_sitelinks_search'     => array(
 				/*  translators: This is a setting users can enable to add the basic markup code to their source code that is needed for Google to generate a Sitelinks Search Box - https://developers.google.com/search/docs/data-types/sitelinks-searchbox.*/
 				'name'     => __( 'Display Sitelinks Search Box:', 'all-in-one-seo-pack' ),
 				'condshow' => array(
-					'aiosp_schema_markup' => 'on',
+					'aiosp_schema_markup' => 1,
 				),
 			),
 			'social_profile_links'        => array(
@@ -615,7 +615,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'cols'     => 60,
 				'rows'     => 5,
 				'condshow' => array(
-					'aiosp_schema_markup' => 'on',
+					'aiosp_schema_markup' => 1,
 				),
 			),
 			'site_represents'             => array(
@@ -627,7 +627,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'person'       => __( 'Person', 'all-in-one-seo-pack' ),
 				),
 				'condshow'        => array(
-					'aiosp_schema_markup' => 'on',
+					'aiosp_schema_markup' => 1,
 				),
 			),
 			'organization_name'           => array(
@@ -635,7 +635,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'type'     => 'text',
 				'default'  => '',
 				'condshow' => array(
-					'aiosp_schema_markup'   => 'on',
+					'aiosp_schema_markup'   => 1,
 					'aiosp_site_represents' => 'organization',
 				),
 			),
@@ -643,7 +643,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'     => __( 'Organization Logo:', 'all-in-one-seo-pack' ),
 				'type'     => 'image',
 				'condshow' => array(
-					'aiosp_schema_markup'   => 'on',
+					'aiosp_schema_markup'   => 1,
 					'aiosp_site_represents' => 'organization',
 				),
 			),
@@ -653,7 +653,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'type'     => 'select',
 				'default'  => 1,
 				'condshow' => array(
-					'aiosp_schema_markup'   => 'on',
+					'aiosp_schema_markup'   => 1,
 					'aiosp_site_represents' => 'person',
 				),
 				// Add initial options below.
@@ -663,7 +663,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'type'         => 'tel',
 				'autocomplete' => 'off',
 				'condshow'     => array(
-					'aiosp_schema_markup'   => 'on',
+					'aiosp_schema_markup'   => 1,
 					'aiosp_site_represents' => 'organization',
 				),
 			),
@@ -671,7 +671,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'            => __( 'Type of Contact:', 'all-in-one-seo-pack' ),
 				'type'            => 'select',
 				'condshow'        => array(
-					'aiosp_schema_markup'   => 'on',
+					'aiosp_schema_markup'   => 1,
 					'aiosp_site_represents' => 'organization',
 				),
 				'initial_options' => array(
@@ -4332,7 +4332,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		// Handle Schema.
-		if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && $aioseop_options['aiosp_schema_markup'] ) {
+		if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && boolval( $aioseop_options['aiosp_schema_markup'] ) ) {
 			$aioseop_schema = new AIOSEOP_Schema_Builder();
 			$aioseop_schema->display_json_ld_head_script();
 		}
