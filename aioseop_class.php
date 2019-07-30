@@ -602,7 +602,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					1 => __( 'Enable', 'all-in-one-seo-pack' ),
 				),
 			),
-			// TODO Change to from `google_sitelinks_search` to `schema_add_search_results_page`.
+			// TODO Change `schema_search_results_page` to `schema_add_search_results_page`. Requires modifying double arrow alignment.
 			'schema_search_results_page'  => array(
 				/*  translators: This is a setting users can enable to add the basic markup code to their source code that is needed for Google to generate a Sitelinks Search Box - https://developers.google.com/search/docs/data-types/sitelinks-searchbox.*/
 				'name'     => __( 'Include Sitelinks Search Results Page:', 'all-in-one-seo-pack' ),
@@ -610,8 +610,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'aiosp_schema_markup' => 1,
 				),
 			),
-			// TODO Update `aiosp_opengraph_profile_links` to `social_profile_links`
-			'schema_social_profile_links'        => array(
+			'schema_social_profile_links' => array(
 				'name'     => __( 'Social Profile Links:', 'all-in-one-seo-pack' ),
 				'type'     => 'textarea',
 				'cols'     => 60,
@@ -620,8 +619,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'aiosp_schema_markup' => 1,
 				),
 			),
-			// TODO `aiosp_opengraph_person_or_org`
-			'schema_site_represents'             => array(
+			'schema_site_represents'      => array(
 				'name'            => __( 'Person or Organization:', 'all-in-one-seo-pack' ),
 				'type'            => 'radio',
 				'default'         => 'organization',
@@ -633,49 +631,48 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'aiosp_schema_markup' => 1,
 				),
 			),
-			// TODO aiosp_opengraph_social_name
-			'schema_organization_name'           => array(
+			'schema_organization_name'    => array(
 				'name'     => __( 'Organization Name:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => '',
 				'condshow' => array(
-					'aiosp_schema_markup'   => 1,
+					'aiosp_schema_markup'          => 1,
 					'aiosp_schema_site_represents' => 'organization',
 				),
 			),
-			'schema_organization_logo'           => array(
+			'schema_organization_logo'    => array(
 				'name'     => __( 'Organization Logo:', 'all-in-one-seo-pack' ),
 				'type'     => 'image',
 				'condshow' => array(
-					'aiosp_schema_markup'   => 1,
+					'aiosp_schema_markup'          => 1,
 					'aiosp_schema_site_represents' => 'organization',
 				),
 			),
 
-			'schema_person_user'                 => array(
+			'schema_person_user'          => array(
 				'name'     => __( 'Person\'s Username:', 'all-in-one-seo-pack' ),
 				'type'     => 'select',
 				'default'  => 1,
 				'condshow' => array(
-					'aiosp_schema_markup'   => 1,
+					'aiosp_schema_markup'          => 1,
 					'aiosp_schema_site_represents' => 'person',
 				),
 				// Add initial options below.
 			),
-			'schema_phone_number'                => array(
+			'schema_phone_number'         => array(
 				'name'         => __( 'Phone Number:', 'all-in-one-seo-pack' ),
 				'type'         => 'tel',
 				'autocomplete' => 'off',
 				'condshow'     => array(
-					'aiosp_schema_markup'   => 1,
+					'aiosp_schema_markup'          => 1,
 					'aiosp_schema_site_represents' => 'organization',
 				),
 			),
-			'schema_contact_type'                => array(
+			'schema_contact_type'         => array(
 				'name'            => __( 'Type of Contact:', 'all-in-one-seo-pack' ),
 				'type'            => 'select',
 				'condshow'        => array(
-					'aiosp_schema_markup'   => 1,
+					'aiosp_schema_markup'          => 1,
 					'aiosp_schema_site_represents' => 'organization',
 				),
 				'initial_options' => array(
