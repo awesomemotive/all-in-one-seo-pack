@@ -603,9 +603,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			// TODO Change to from `google_sitelinks_search` to `schema_add_search_results_page`.
-			'schema_add_search_results_page' => array(
+			'schema_search_results_page'  => array(
 				/*  translators: This is a setting users can enable to add the basic markup code to their source code that is needed for Google to generate a Sitelinks Search Box - https://developers.google.com/search/docs/data-types/sitelinks-searchbox.*/
-				'name'     => __( 'Include Search Results Page:', 'all-in-one-seo-pack' ),
+				'name'     => __( 'Include Sitelinks Search Results Page:', 'all-in-one-seo-pack' ),
 				'condshow' => array(
 					'aiosp_schema_markup' => 1,
 				),
@@ -1007,7 +1007,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'help_link' => 'https://semperplugins.com/documentation/noindex-settings/',
 				'options'   => array(
 					'schema_markup',
-					'schema_add_search_results_page',
+					'schema_search_results_page',
 					'schema_social_profile_links',
 					'schema_site_represents',
 					'schema_organization_name',

@@ -383,7 +383,7 @@ class AIOSEOP_Updates {
 		);
 
 		if ( isset( $aioseop_options['aiosp_google_sitelinks_search'] ) ) {
-			$update_values['aiosp_schema_add_search_results_page'] = $aioseop_options['aiosp_google_sitelinks_search'];
+			$update_values['aiosp_schema_search_results_page'] = $aioseop_options['aiosp_google_sitelinks_search'];
 		}
 		if ( isset( $aioseop_options['aiosp_opengraph_profile_links'] ) ) {
 			$update_values['aiosp_schema_social_profile_links'] = $aioseop_options['aiosp_opengraph_profile_links'];

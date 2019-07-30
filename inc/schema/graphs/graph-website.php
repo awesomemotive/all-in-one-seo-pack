@@ -60,7 +60,7 @@ class AIOSEOP_Graph_WebSite extends AIOSEOP_Graph_Creativework {
 			),
 		);
 
-		if ( $aioseop_options['aiosp_schema_add_search_results_page'] ) {
+		if ( $aioseop_options['aiosp_schema_search_results_page'] ) {
 			$rtn_data['potentialAction'] = array(
 				'@type'       => 'SearchAction',
 				'target'      => home_url() . '/?s={search_term_string}',
