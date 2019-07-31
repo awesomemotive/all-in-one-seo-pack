@@ -598,8 +598,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'type'            => 'radio',
 				'default'         => 0,
 				'initial_options' => array(
-					0 => __( 'Disable', 'all-in-one-seo-pack' ),
-					1 => __( 'Enable', 'all-in-one-seo-pack' ),
+					1 => __( 'Enabled', 'all-in-one-seo-pack' ),
+					0 => __( 'Disabled', 'all-in-one-seo-pack' ),
 				),
 			),
 			// TODO Change `schema_search_results_page` to `schema_add_search_results_page`. Requires modifying double arrow alignment.
