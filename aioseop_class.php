@@ -605,7 +605,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			// TODO Change `schema_search_results_page` to `schema_add_search_results_page`. Requires modifying double arrow alignment.
 			'schema_search_results_page'  => array(
 				/*  translators: This is a setting users can enable to add the basic markup code to their source code that is needed for Google to generate a Sitelinks Search Box - https://developers.google.com/search/docs/data-types/sitelinks-searchbox.*/
-				'name'     => __( 'Include Sitelinks Search Results Page:', 'all-in-one-seo-pack' ),
+				'name'     => __( 'Display Sitelinks Search Box:', 'all-in-one-seo-pack' ),
 				'condshow' => array(
 					'aiosp_schema_markup' => 1,
 				),
