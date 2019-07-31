@@ -119,7 +119,7 @@ class AIOSEOP_Helper {
 			'aiosp_can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation. This will help to prevent duplicate content penalties by Google.', 'all-in-one-seo-pack' ),
 			'aiosp_no_paged_canonical_links'    => __( 'Checking this option will set the Canonical URL for all paginated content to the first page.', 'all-in-one-seo-pack' ),
 			'aiosp_use_original_title'          => __( 'Use wp_title to get the title used by the theme; this is disabled by default. If you use this option, set your title formats appropriately, as your theme might try to do its own title SEO as well.', 'all-in-one-seo-pack' ),
-			'aiosp_schema_markup'               => __( 'Check this to support Schema.org markup, i.e., itemprop on supported metadata.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_markup'               => __( 'Enabling this option will enable Schema.org structured data markup for rich snippets in search results.', 'all-in-one-seo-pack' ),
 			/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
 			'aiosp_do_log'                      => sprintf( __( 'Check this and %s will create a log of important events (all-in-one-seo-pack.log) in the wp-content directory which might help debugging. Make sure this directory is writable.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
 
