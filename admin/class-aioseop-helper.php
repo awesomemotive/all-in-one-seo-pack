@@ -516,7 +516,7 @@ class AIOSEOP_Helper {
 			'aiosp_can'                         => 'https://semperplugins.com/documentation/general-settings/#canonical-urls',
 			'aiosp_no_paged_canonical_links'    => 'https://semperplugins.com/documentation/general-settings/#no-pagination-for-canonical-urls',
 			'aiosp_use_original_title'          => 'https://semperplugins.com/documentation/general-settings/#use-original-title',
-			'aiosp_schema_markup'               => 'https://semperplugins.com/documentation/general-settings/#use-schema-markup',
+			'aiosp_schema_markup'               => 'https://semperplugins.com/documentation/schema-settings/#use-schema-markup',
 			'aiosp_do_log'                      => 'https://semperplugins.com/documentation/general-settings/#log-important-events',
 
 			// Home Page Settings.
@@ -566,14 +566,14 @@ class AIOSEOP_Helper {
 			'aiosp_ga_enhanced_ecommerce'       => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#enhanced-ecommerce',
 
 			// Schema Settings.
-			'aiosp_schema_search_results_page'  => 'https://semperplugins.com/documentation/google-settings/#display-sitelinks-search-box',
-			'aiosp_schema_social_profile_links' => '',
-			'aiosp_schema_site_represents'      => '',
-			'aiosp_schema_organization_name'    => '',
-			'aiosp_schema_organization_logo'    => '',
-			'aiosp_schema_person_user'          => '',
-			'aiosp_schema_phone_number'         => '',
-			'aiosp_schema_contact_type'         => '',
+			'aiosp_schema_search_results_page'  => 'https://semperplugins.com/documentation/schema-settings/#display-sitelinks-search-box',
+			'aiosp_schema_social_profile_links' => 'https://semperplugins.com/documentation/schema-settings/#social-profile-links',
+			'aiosp_schema_site_represents'      => 'https://semperplugins.com/documentation/schema-settings/#person-or-organization',
+			'aiosp_schema_organization_name'    => 'https://semperplugins.com/documentation/schema-settings/#organization-name',
+			'aiosp_schema_organization_logo'    => 'https://semperplugins.com/documentation/schema-settings/#organization-logo',
+			'aiosp_schema_person_user'          => 'https://semperplugins.com/documentation/schema-settings/#persons-username',
+			'aiosp_schema_phone_number'         => 'https://semperplugins.com/documentation/schema-settings/#phone-number',
+			'aiosp_schema_contact_type'         => 'https://semperplugins.com/documentation/schema-settings/#type-of-contact',
 
 			// Noindex Settings.
 			'aiosp_cpostnoindex'                => 'https://semperplugins.com/documentation/noindex-settings/#noindex',
