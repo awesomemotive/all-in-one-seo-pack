@@ -1022,7 +1022,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			),
 			'schema'    => array(
 				'name'      => __( 'Schema Settings', 'all-in-one-seo-pack' ),
-				'help_link' => 'https://semperplugins.com/documentation/noindex-settings/',
+				'help_link' => 'https://semperplugins.com/documentation/schema-settings/',
 				'options'   => array(
 					'schema_markup',
 					'schema_search_results_page',
