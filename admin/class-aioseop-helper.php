@@ -119,7 +119,7 @@ class AIOSEOP_Helper {
 			'aiosp_can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation. This will help to prevent duplicate content penalties by Google.', 'all-in-one-seo-pack' ),
 			'aiosp_no_paged_canonical_links'    => __( 'Checking this option will set the Canonical URL for all paginated content to the first page.', 'all-in-one-seo-pack' ),
 			'aiosp_use_original_title'          => __( 'Use wp_title to get the title used by the theme; this is disabled by default. If you use this option, set your title formats appropriately, as your theme might try to do its own title SEO as well.', 'all-in-one-seo-pack' ),
-			'aiosp_schema_markup'               => __( 'Enabling this option will enable Schema.org structured data markup for rich snippets in search results.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_markup'               => __( 'This enables Schema.org structured data markup for rich snippets in search results.', 'all-in-one-seo-pack' ),
 			/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
 			'aiosp_do_log'                      => sprintf( __( 'Check this and %s will create a log of important events (all-in-one-seo-pack.log) in the wp-content directory which might help debugging. Make sure this directory is writable.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
 
@@ -417,12 +417,12 @@ class AIOSEOP_Helper {
 
 			// Schema Settings.
 			'aiosp_schema_search_results_page'  => __( 'Select this to output markup that notifies Google to display the Sitelinks Search Box within certain search results.', 'all-in-one-seo-pack' ),
-			'aiosp_schema_social_profile_links' => __( 'You can add URLs for your website\'s social profiles here (Facebook, Twitter, Google+, Instagram, LinkedIn), one per line. These may be used in rich search results such as Google Knowledge Graph.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_social_profile_links' => __( 'Add the URLs for your website\'s social profiles here (Facebook, Twitter, Instagram, LinkedIn, etc.), one per line. These may be used in rich search results such as Google Knowledge Graph.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_site_represents'      => __( 'Select whether your website is primarily for a person or an organization.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_organization_name'    => __( 'Enter your organization or business name.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_organization_logo'    => __( 'Add a logo that represents your organization or business. The image must be in PNG, JPG or GIF format and a minimum size of 112px by 112px. If no image is selected, then the plugin will try to use the logo in the Customizer settings.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_person_user'          => __( 'Select the primary owner for your site from the list of users. Only users with the role of Author, Editor or Administrator will be listed here.', 'all-in-one-seo-pack' ),
-			'aiosp_schema_phone_number'         => __( 'Enter the primary phone number your organization or business. You must include the country code and the phone number must use the standard format for your country, for example: 1-800-555-1212.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_phone_number'         => __( 'Enter the primary phone number your organization or business. You must include the country code and the phone number must use the standard format for your country, for example: 1-888-888-8888.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_contact_type'         => __( 'Select the type of contact for the phone number you have entered.', 'all-in-one-seo-pack' ),
 
 			// Noindex Settings.
