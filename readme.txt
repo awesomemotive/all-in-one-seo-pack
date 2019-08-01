@@ -25,6 +25,7 @@ First created in 2007, see why AIOSEO is one of the all time most downloaded plu
 * Image XML Sitemap submitted to Google and Bing to improve your Image SEO
 * Google AMP support (Accelerated Mobile Pages)
 * Google Analytics support
+* Schema.org
 * Support for SEO on Custom Post Types
 * Advanced Canonical URLs
 * Redirect attachment pages to parent post

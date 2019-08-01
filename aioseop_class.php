@@ -450,10 +450,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default' => '',
 				'type'    => 'text',
 			),
-			'google_sitelinks_search'     => array(
-				/*  translators: This is a setting users can enable to add the basic markup code to their source code that is needed for Google to generate a Sitelinks Search Box - https://developers.google.com/search/docs/data-types/sitelinks-searchbox.*/
-				'name' => __( 'Display Sitelinks Search Box:', 'all-in-one-seo-pack' ),
-			),
 			'google_analytics_id'         => array(
 				/* translators: This is a setting where users can add their Google Analytics verification code. Leave this in English if there is no translation for "Google Analytics". */
 				'name'        => __( 'Google Analytics ID:', 'all-in-one-seo-pack' ),
@@ -596,6 +592,104 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'aiosp_ga_advanced_options' => 'on',
 				),
 			),
+			'schema_markup'               => array(
+				/* translators: This is a setting that outputs basic Schema.org markup, also known as structured data, into the source code of each page. */
+				'name'            => __( 'Use Schema.org Markup', 'all-in-one-seo-pack' ),
+				'type'            => 'radio',
+				'default'         => 0,
+				'initial_options' => array(
+					1 => __( 'Enabled', 'all-in-one-seo-pack' ),
+					0 => __( 'Disabled', 'all-in-one-seo-pack' ),
+				),
+			),
+			// TODO Change `schema_search_results_page` to `schema_add_search_results_page`. Requires modifying double arrow alignment.
+			'schema_search_results_page'  => array(
+				/*  translators: This is a setting users can enable to add the basic markup code to their source code that is needed for Google to generate a Sitelinks Search Box - https://developers.google.com/search/docs/data-types/sitelinks-searchbox.*/
+				'name'     => __( 'Display Sitelinks Search Box:', 'all-in-one-seo-pack' ),
+				'condshow' => array(
+					'aiosp_schema_markup' => 1,
+				),
+			),
+			'schema_social_profile_links' => array(
+				'name'     => __( 'Social Profile Links:', 'all-in-one-seo-pack' ),
+				'type'     => 'textarea',
+				'cols'     => 60,
+				'rows'     => 5,
+				'condshow' => array(
+					'aiosp_schema_markup' => 1,
+				),
+			),
+			'schema_site_represents'      => array(
+				'name'            => __( 'Person or Organization:', 'all-in-one-seo-pack' ),
+				'type'            => 'radio',
+				'default'         => 'organization',
+				'initial_options' => array(
+					'organization' => __( 'Organization', 'all-in-one-seo-pack' ),
+					'person'       => __( 'Person', 'all-in-one-seo-pack' ),
+				),
+				'condshow'        => array(
+					'aiosp_schema_markup' => 1,
+				),
+			),
+			'schema_organization_name'    => array(
+				'name'     => __( 'Organization Name:', 'all-in-one-seo-pack' ),
+				'type'     => 'text',
+				'default'  => '',
+				'condshow' => array(
+					'aiosp_schema_markup'          => 1,
+					'aiosp_schema_site_represents' => 'organization',
+				),
+			),
+			'schema_organization_logo'    => array(
+				'name'     => __( 'Organization Logo:', 'all-in-one-seo-pack' ),
+				'type'     => 'image',
+				'condshow' => array(
+					'aiosp_schema_markup'          => 1,
+					'aiosp_schema_site_represents' => 'organization',
+				),
+			),
+
+			'schema_person_user'          => array(
+				'name'     => __( 'Person\'s Username:', 'all-in-one-seo-pack' ),
+				'type'     => 'select',
+				'default'  => 1,
+				'condshow' => array(
+					'aiosp_schema_markup'          => 1,
+					'aiosp_schema_site_represents' => 'person',
+				),
+				// Add initial options below.
+			),
+			'schema_phone_number'         => array(
+				'name'         => __( 'Phone Number:', 'all-in-one-seo-pack' ),
+				'type'         => 'tel',
+				'autocomplete' => 'off',
+				'condshow'     => array(
+					'aiosp_schema_markup'          => 1,
+					'aiosp_schema_site_represents' => 'organization',
+				),
+			),
+			'schema_contact_type'         => array(
+				'name'            => __( 'Type of Contact:', 'all-in-one-seo-pack' ),
+				'type'            => 'select',
+				'condshow'        => array(
+					'aiosp_schema_markup'          => 1,
+					'aiosp_schema_site_represents' => 'organization',
+				),
+				'initial_options' => array(
+					'none'                => __( '-- Select --', 'all-in-one-seo-pack' ),
+					'customer support'    => __( 'Customer Support', 'all-in-one-seo-pack' ),
+					'tech support'        => __( 'Technical Support', 'all-in-one-seo-pack' ),
+					'billing support'     => __( 'Billing Support', 'all-in-one-seo-pack' ),
+					'bill payment'        => __( 'Bill Payment', 'all-in-one-seo-pack' ),
+					'sales'               => __( 'Sales', 'all-in-one-seo-pack' ),
+					'reservations'        => __( 'Reservations', 'all-in-one-seo-pack' ),
+					'credit card support' => __( 'Credit Card Support', 'all-in-one-seo-pack' ),
+					'emergency'           => __( 'Emergency', 'all-in-one-seo-pack' ),
+					'baggage tracking'    => __( 'Baggage Tracking', 'all-in-one-seo-pack' ),
+					'roadside assistance' => __( 'Roadside Assistance', 'all-in-one-seo-pack' ),
+					'package tracking'    => __( 'Package Tracking', 'all-in-one-seo-pack' ),
+				),
+			),
 			'use_categories'              => array(
 				/* translators: This is the name of a setting. By enabling it, the plugin will use the categories of the relevant post as meta keywords in addition to any user-specified keywords. */
 				'name'     => __( 'Use Categories for META keywords:', 'all-in-one-seo-pack' ),
@@ -687,11 +781,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'    => __( 'Never Shorten Long Descriptions:', 'all-in-one-seo-pack' ),
 				'default' => 0,
 			),
-			'schema_markup'               => array(
-				/* translators: This is a setting that outputs basic Schema.org markup, also known as structured data, into the source code of each page. */
-				'name'    => __( 'Use Schema.org Markup', 'all-in-one-seo-pack' ),
-				'default' => 1,
-			),
 			'unprotect_meta'              => array(
 				/* translators: This is a setting that allows users to unprotect internal postmeta fields for use with XML-RPC. */
 				'name'    => __( 'Unprotect Post Meta Fields:', 'all-in-one-seo-pack' ),
@@ -741,6 +830,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'    => __( 'Log important events:', 'all-in-one-seo-pack' ),
 				'default' => null,
 			),
+
 		);
 
 		if ( ! AIOSEOPPRO ) {
@@ -917,7 +1007,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'name'      => __( 'Google Settings', 'all-in-one-seo-pack' ),
 				'help_link' => 'https://semperplugins.com/documentation/google-settings/',
 				'options'   => array(
-					'google_sitelinks_search',
 					'google_analytics_id',
 					'ga_advanced_options',
 					'ga_domain',
@@ -929,6 +1018,21 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'ga_track_outbound_links',
 					'ga_link_attribution',
 					'ga_enhanced_ecommerce',
+				),
+			),
+			'schema'    => array(
+				'name'      => __( 'Schema Settings', 'all-in-one-seo-pack' ),
+				'help_link' => 'https://semperplugins.com/documentation/schema-settings/',
+				'options'   => array(
+					'schema_markup',
+					'schema_search_results_page',
+					'schema_social_profile_links',
+					'schema_site_represents',
+					'schema_organization_name',
+					'schema_organization_logo',
+					'schema_person_user',
+					'schema_phone_number',
+					'schema_contact_type',
 				),
 			),
 			'noindex'   => array(
@@ -977,6 +1081,21 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 		);
+
+		$user_args = array(
+			'role__in' => array(
+				'administrator',
+				'editor',
+				'author',
+			),
+			'orderby'  => 'nicename',
+		);
+		$users = get_users( $user_args );
+
+		$this->default_options['schema_person_user']['initial_options'] = array();
+		foreach ( $users as $user ) {
+			$this->default_options['schema_person_user']['initial_options'][ $user->ID ] = $user->data->user_nicename . ' (' . $user->data->display_name . ')';
+		}
 
 		if ( AIOSEOPPRO ) {
 			// Add Pro options.
@@ -4236,11 +4355,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					$meta_string .= '<meta name="' . $v . '" content="' . trim( strip_tags( $aioseop_options[ "aiosp_{$k}_verify" ] ) ) . '" />' . "\n";
 				}
 			}
-
-			// Sitelinks search. Only show if "use schema.org markup is checked".
-			if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && ! empty( $aioseop_options['aiosp_google_sitelinks_search'] ) ) {
-				$meta_string .= $this->sitelinks_search_box() . "\n";
-			}
 		}
 		// Handle extra meta fields.
 		foreach ( array( 'page_meta', 'post_meta', 'home_meta', 'front_meta' ) as $meta ) {
@@ -4287,6 +4401,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		if ( $meta_string != null ) {
 			echo "$meta_string\n";
+		}
+
+		// Handle Schema.
+		if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && boolval( $aioseop_options['aiosp_schema_markup'] ) ) {
+			$aioseop_schema = new AIOSEOP_Schema_Builder();
+			$aioseop_schema->display_json_ld_head_script();
 		}
 
 		// Handle canonical links.
@@ -4519,10 +4639,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$aiosp_nofollow = $this->get_noindex_nofollow_meta_value( 'nofollow' );
 		}
 
-		if ( 'on' === $aiosp_noindex || ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 ) {
+		if ( 'on' === $aiosp_noindex ||
+			( is_singular() && ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 )
+		) {
 			$noindex = true;
 		}
-		if ( 'on' === $aiosp_nofollow || ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 ) {
+		if ( 'on' === $aiosp_nofollow ||
+			( is_singular() && ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 )
+		) {
 			$nofollow = true;
 		}
 
@@ -4683,46 +4807,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		return false;
 
-	}
-
-	/**
-	 * Sitelinks Search Box
-	 *
-	 * @since ?
-	 *
-	 * @return mixed|void
-	 */
-	function sitelinks_search_box() {
-		global $aioseop_options;
-		$home_url     = esc_url( get_home_url() );
-		$search_block = '';
-
-		if ( ! empty( $aioseop_options['aiosp_google_sitelinks_search'] ) ) {
-			$search_block = <<<EOF
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "{$home_url}/?s={search_term}",
-          "query-input": "required name=search_term"
-        },
-EOF;
-		}
-
-		$search_box = <<<EOF
-<script type="application/ld+json">
-        {
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-EOF;
-		if ( ! empty( $search_block ) ) {
-			$search_box .= $search_block;
-		}
-		$search_box .= <<<EOF
-		  "url": "{$home_url}/"
-        }
-</script>
-EOF;
-
-		return apply_filters( 'aiosp_sitelinks_search_box', $search_box );
 	}
 
 	/**
@@ -5574,18 +5658,14 @@ EOF;
 				<?php do_meta_boxes( 'aioseop_metaboxes', 'normal', array( 'test' ) ); ?>
 			</div>
 		</div>
-		<style>
-			#wpbody-content {
-				min-width: 900px;
-			}
-		</style>
+
 		<div class="aioseop_right_sidebar aioseop_options_wrapper">
 
 			<div class="aioseop_sidebar">
 				<?php
 				do_meta_boxes( 'aioseop_metaboxes', 'side', array( 'test' ) );
 				?>
-				<script type="text/javascript">
+				<script>
 					//<![CDATA[
 					jQuery(document).ready(function ($) {
 						// Close postboxes that should be closed.

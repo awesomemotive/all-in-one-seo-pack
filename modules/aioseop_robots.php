@@ -740,7 +740,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			$buf = '';
 			if ( ! empty( $rules ) ) {
 				$rules = $this->reorder_rules( $rules );
-				$buf = sprintf( "<table class='aioseop_table' cellpadding=0 cellspacing=0 data-edit-label='%s'>\n", __( 'Modify Rule', 'all-in-one-seo-pack' ) . ' &raquo;' );
+				$buf = sprintf( "<table class='aioseop_table' data-edit-label='%s'>\n", __( 'Modify Rule', 'all-in-one-seo-pack' ) . ' &raquo;' );
 				$row = "\t
 					<tr>
 						<td>
