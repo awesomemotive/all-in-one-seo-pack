@@ -2226,8 +2226,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		private function does_addl_sitemap_contain_urls() {
 			$is_addl_pages = ! empty( $this->options['aiosp_sitemap_addl_pages'] );
 			if ( ! $is_addl_pages &&
-				( 0 !== get_option( 'page_on_front' ) ) &&
-				( 0 !== get_option( 'page_for_posts' ) ) ) {
+				( 0 !== (int) get_option( 'page_on_front' ) ) &&
+				( 0 !== (int) get_option( 'page_for_posts' ) ) ) {
 					return false;
 			}
 			return true;
@@ -3244,12 +3244,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		private function remove_addl_static_pages( $pages ) {
 			$pages_to_remove = array();
-			if ( 0 !== get_option( 'page_on_front' ) ) {
+			if ( 0 !== (int) get_option( 'page_on_front' ) ) {
 				$homepage_url = get_site_url() . '/';
 				array_push( $pages_to_remove, $homepage_url );
 			}
 
-			$static_posts_page_id = get_option( 'page_for_posts' );
+			$static_posts_page_id = (int) get_option( 'page_for_posts' );
 			if ( 0 !== $static_posts_page_id ) {
 				array_push( $pages_to_remove, get_permalink( $static_posts_page_id ) );
 			}
