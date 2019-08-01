@@ -519,7 +519,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 			$this->_setup_options( 'sitemap', $custom_options );
 
-		$expected = intval( $enabled_post_types_count * ceil( $num_posts / $per_xml ) );
+		$expected = intval( $enabled_post_types_count * ceil( $num_posts / $per_xml ) ) + 1;
 		$got = $this->count_sitemap_elements( array( '<sitemap>' ) );
 
 		$this->assertEquals( $expected, $got['<sitemap>'] );
