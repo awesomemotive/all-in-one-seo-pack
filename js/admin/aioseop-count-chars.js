@@ -13,21 +13,6 @@ jQuery( document ).ready( function() {
 });
 
 /**
- * Preview Snippet
- *
- * @since ?
- * @since 2.9.2 Move from PHP value to JS file
- */
-jQuery(document).ready( function() {
-	jQuery("#aiosp_title_wrapper").bind("input", function() {
-		jQuery("#aiosp_snippet_title").text(jQuery("#aiosp_title_wrapper input").val().replace(/<(?:.|\n)*?>/gm, ""));
-	});
-	jQuery("#aiosp_description_wrapper").bind("input", function() {
-		jQuery("#aioseop_snippet_description").text(jQuery("#aiosp_description_wrapper textarea").val().replace(/<(?:.|\n)*?>/gm, ""));
-	});
-});
-
-/**
  * AIOSEOP Init Counting
  *
  * @since ?
