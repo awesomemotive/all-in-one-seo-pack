@@ -196,7 +196,11 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 
 		// Fallback on Customizer site logo.
 		if ( ! $logo_id ) {
-			$logo_id = get_theme_mod( 'custom_logo' );
+			$customizer_logo = get_theme_mod( 'custom_logo' );
+
+			if ( is_numeric( $customizer_logo ) ) {
+				$logo_id = intval( $customizer_logo );
+			}
 		}
 
 		// Prevent case type errors if empty/false.
