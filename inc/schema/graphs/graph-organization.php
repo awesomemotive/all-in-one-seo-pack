@@ -105,15 +105,21 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 		$rtn_data = array();
 
 		$logo_id   = $this->get_logo_id();
-		$logo_meta = wp_get_attachment_metadata( $logo_id );
 		if ( ! empty( $logo_id ) ) {
 			$rtn_data = array(
-				'@type'  => 'ImageObject',
-				'@id'    => home_url() . '/#logo',
-				'url'    => wp_get_attachment_image_url( $logo_id, 'full' ),
-				'width'  => $logo_meta['width'],
-				'height' => $logo_meta['height'],
+				'@type' => 'ImageObject',
+				'@id'   => home_url() . '/#logo',
+				'url'   => wp_get_attachment_image_url( $logo_id, 'full' ),
 			);
+
+			$logo_meta = wp_get_attachment_metadata( $logo_id );
+			// Get image dimensions. Some images may not have this property.
+			if ( isset( $rtn_data['width'] ) ) {
+				$rtn_data['width']  = $logo_meta['width'];
+			}
+			if ( isset( $rtn_data['height'] ) ) {
+				$rtn_data['height'] = $logo_meta['height'];
+			}
 
 			$caption = wp_get_attachment_caption( $logo_id );
 			if ( false !== $caption || ! empty( $caption ) ) {
