@@ -168,11 +168,6 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 		if ( ! $post_description && ! post_password_required( $post ) ) {
 			if ( ! empty( $post->post_excerpt ) ) {
 				$post_description = $post->post_excerpt;
-			} elseif ( ! empty( $post->post_content ) ) {
-				$post_description = $post->post_content;
-				$post_description = aioseop_do_shortcodes( $post_description );
-				$post_description = strip_shortcodes( $post_description );
-				$post_description = wp_strip_all_tags( $post_description );
 			}
 		}
 
