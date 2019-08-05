@@ -1005,7 +1005,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			),
 			'google'    => array(
 				'name'      => __( 'Google Settings', 'all-in-one-seo-pack' ),
-				'help_link' => 'https://semperplugins.com/documentation/google-settings/',
+				'help_link' => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/',
 				'options'   => array(
 					'google_analytics_id',
 					'ga_advanced_options',
