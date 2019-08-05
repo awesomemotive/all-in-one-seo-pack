@@ -7,6 +7,10 @@
  * @package All-in-One-SEO-Pack.
  */
 
+[class*="all-in-one-seo-pack"] #wpbody-content,
+.all-in-one-seo_page_aiosp_opengraph #wpbody-content {
+    min-width: 900px;
+}
 .form-table.aioseop {
 	clear: none;
 }
@@ -956,13 +960,10 @@ table.aioseop_table td {
 
 #aiosp_sitemap_addl_pages_metabox table.aioseop_table td,
 #aiosp_video_sitemap_addl_pages_metabox table.aioseop_table td {
-	width: 27%;
-	padding-left: 5%;
-}
-
-#aiosp_sitemap_addl_pages_metabox table.aioseop_table td:first-child,
-#aiosp_video_sitemap_addl_pages_metabox table.aioseop_table td:first-child {
+	width: auto;
+	max-width: 50%;
 	padding-left: 2%;
+	padding-right: 2%;
 }
 
 table.aioseop_table td, 
@@ -1031,8 +1032,14 @@ table.aioseop_table th {
 }
 
 #aiosp_robots_default_metabox table.aioseop_table td {
-	width: 25%;
-	padding-left: 5%;
+	width: auto;
+	max-width: 50%;
+	padding-left: 2%;
+	padding-right: 2%;
+}
+
+#aiosp_robots_default_metabox table.aioseop_table td:first-child {
+	white-space: nowrap;
 }
 
 .aioseop.aioseop_options.aiosp_robots_settings h3 {

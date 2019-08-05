@@ -679,12 +679,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( "{$this->prefix}addl_pages" === $args['name'] ) {
 				$buf .= "<div id='{$this->prefix}addl_pages'>";
 				if ( ! empty( $args['value'] ) ) {
-					$buf .= "<table class='aioseop_table' cellpadding=0 cellspacing=0>\n";
+					$buf .= "<table class='aioseop_table'>\n";
 					foreach ( $args['value'] as $k => $v ) {
 						if ( is_object( $v ) ) {
 							$v = (array) $v;
 						}
-						$buf .= "\t<tr><td><a href='#' title='$k' class='dashicons dashicons-trash aiosp_delete_url' aria-label='" . __( 'Delete this additional URL', 'all-in-one-seo-pack' ) . "'></a> {$k}</td><td>{$v['prio']}</td><td>{$v['freq']}</td><td>{$v['mod']}</td></tr>\n";
+						$buf .= "\t<tr><td><a href='#' title='$k' class='dashicons dashicons-trash aiosp_delete_url' aria-label='" . __( 'Delete this additional URL', 'all-in-one-seo-pack' ) . "'></a></td><td>{$k}</td><td>{$v['prio']}</td><td>{$v['freq']}</td><td>{$v['mod']}</td></tr>\n";
 					}
 					$buf .= "</table>\n";
 				}
@@ -1683,7 +1683,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$sitemap_data = array();
 
 			if ( 0 === strpos( $sitemap_type, 'rss' ) ) {
-				$sitemap_data = $this->get_simple_sitemap();
+				$sitemap_data = $this->get_sitemap_without_indexes();
 			} elseif ( $this->options[ "{$this->prefix}indexes" ] ) {
 				$posttypes = $this->options[ "{$this->prefix}posttypes" ];
 				if ( empty( $posttypes ) ) {
@@ -1714,7 +1714,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 				}
 			} elseif ( 'root' === $sitemap_type ) {
-				$sitemap_data = $this->get_simple_sitemap();
+				$sitemap_data = $this->get_sitemap_without_indexes();
 			}
 
 			return apply_filters( $this->prefix . 'data', $sitemap_data, $sitemap_type, $page, $this->options );
@@ -2226,8 +2226,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		private function does_addl_sitemap_contain_urls() {
 			$is_addl_pages = ! empty( $this->options['aiosp_sitemap_addl_pages'] );
 			if ( ! $is_addl_pages &&
-				( 0 !== get_option( 'page_on_front' ) ) &&
-				( 0 !== get_option( 'page_for_posts' ) ) ) {
+				( 0 !== (int) get_option( 'page_on_front' ) ) &&
+				( 0 !== (int) get_option( 'page_for_posts' ) ) ) {
 					return false;
 			}
 			return true;
@@ -2420,25 +2420,28 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
-		 * The get_simple_sitemap() function.
+		 * The get_sitemap_without_indexes() function.
 		 *
 		 * Fetches data for sitemap without indexes.
 		 *
 		 * @since 2.3.6
 		 * @since 2.3.12.3 Refactored to use aioseop_home_url() for compatibility purposes.
+		 * @since 3.2.0 Improved function and variable naming.
 		 *
 		 * @return array
 		 */
-		public function get_simple_sitemap() {
-			$child   = $this->get_child_sitemap_urls();
+		public function get_sitemap_without_indexes() {
+			$child_urls   = $this->get_child_sitemap_urls();
 			$options = $this->options;
+
 			if ( is_array( $options[ "{$this->prefix}posttypes" ] ) ) {
 				$options[ "{$this->prefix}posttypes" ] = array_diff( $options[ "{$this->prefix}posttypes" ], array( 'all' ) );
 			}
 			if ( is_array( $options[ "{$this->prefix}taxonomies" ] ) ) {
 				$options[ "{$this->prefix}taxonomies" ] = array_diff( $options[ "{$this->prefix}taxonomies" ], array( 'all' ) );
 			}
-			$prio = $this->get_all_post_priority_data( $options[ "{$this->prefix}posttypes" ] );
+
+			$urls = $this->get_all_post_priority_data( $options[ "{$this->prefix}posttypes" ] );
 
 			// It's 0 if posts are on homepage, otherwise it's the id of the posts page.
 			$posts       = (int) get_option( 'page_for_posts' );
@@ -2465,48 +2468,51 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			if ( $this->option_isset( 'archive' ) ) {
-				$prio = array_merge( $prio, $this->get_date_archive_prio_data() );
+				$urls = array_merge( $urls, $this->get_date_archive_prio_data() );
 			}
 			if ( $this->option_isset( 'author' ) ) {
-				$prio = array_merge( $prio, $this->get_author_prio_data() );
+				$urls = array_merge( $urls, $this->get_author_prio_data() );
 			}
-			foreach ( $prio as $k => $p ) {
+			foreach ( $urls as $k => $p ) {
 				if ( untrailingslashit( $p['loc'] ) === untrailingslashit( $home['loc'] ) ) {
-					$prio[ $k ]['priority'] = '1.0';
+					$urls[ $k ]['priority'] = '1.0';
 					$home                   = null;
 					break;
 				}
 			}
 			if ( ( null !== $posts ) && isset( $posts['loc'] ) ) {
-				foreach ( $prio as $k => $p ) {
+				foreach ( $urls as $k => $p ) {
 					if ( $p['loc'] === $posts['loc'] ) {
-						$prio[ $k ]['changefreq'] = $this->get_default_frequency( 'blog' );
-						$prio[ $k ]['priority']   = $this->get_default_priority( 'blog' );
+						$urls[ $k ]['changefreq'] = $this->get_default_frequency( 'blog' );
+						$urls[ $k ]['priority']   = $this->get_default_priority( 'blog' );
 						$posts                    = null;
 						break;
 					}
 				}
 			}
 			if ( is_array( $posts ) && $this->remove_posts_page( $postspageid ) !== true ) {
-				array_unshift( $prio, $posts );
+				array_unshift( $urls, $posts );
 			}
 
 			if ( is_array( $home ) ) {
-				array_unshift( $prio, $home );
+				array_unshift( $urls, $home );
 			}
 			$terms = get_terms( $this->get_tax_args( $options[ "{$this->prefix}taxonomies" ] ) );
-			$prio2 = $this->get_term_priority_data( $terms );
-			$prio3 = $this->get_addl_pages_only();
-			$prio  = array_merge( $child, $prio, $prio2, $prio3 );
+			$urls2 = $this->get_term_priority_data( $terms );
+			$urls3 = $this->get_addl_pages_only();
+			$urls  = array_merge( $child_urls, $urls, $urls2, $urls3 );
 			if ( is_array( $this->extra_sitemaps ) ) {
 				foreach ( $this->extra_sitemaps as $sitemap_type ) {
 					$sitemap_data = array();
 					$sitemap_data = apply_filters( $this->prefix . 'custom_' . $sitemap_type, $sitemap_data, $page, $this_options );
-					$prio         = array_merge( $prio, $sitemap_data );
+					$urls         = array_merge( $urls, $sitemap_data );
 				}
 			}
 
-			return $prio;
+			$urls = $this->get_homepage_timestamp( $urls );
+			$urls = $this->get_posts_page_timestamp( $urls );
+
+			return $urls;
 		}
 
 		/**
@@ -2520,7 +2526,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return string
 		 */
 		public function do_simple_sitemap( $comment = '' ) {
-			$sitemap_data = $this->get_simple_sitemap();
+			$sitemap_data = $this->get_sitemap_without_indexes();
 			$sitemap_data = apply_filters( $this->prefix . 'data', $sitemap_data, 'root', 0, $this->options );
 
 			return $this->build_sitemap( $sitemap_data, '', $comment );
@@ -2537,7 +2543,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return string
 		 */
 		public function do_simple_sitemap_rss( $comment = '' ) {
-			$sitemap_data = $this->get_simple_sitemap();
+			$sitemap_data = $this->get_sitemap_without_indexes();
 			$sitemap_data = apply_filters( $this->prefix . 'data', $sitemap_data, 'rss', 0, $this->options );
 
 			return $this->build_sitemap( $sitemap_data, 'rss', $comment );
@@ -2879,6 +2885,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				foreach ( $terms as $term ) {
 					$pr_info        = array();
 					$pr_info['loc'] = $this->get_term_link( $term, $term->taxonomy );
+					$pr_info['lastmod'] = $this->get_tax_term_timestamp( $term );
 					if (
 						( 'sel' === $this->options[ $this->prefix . 'freq_taxonomies' ] )
 						&& isset( $this->options[ $this->prefix . 'freq_taxonomies_' . $term->taxonomy ] )
@@ -2911,6 +2918,47 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			return $prio;
+		}
+
+		/**
+		 * The get_tax_term_timestamp() function.
+		 *
+		 * Gets the Last Change timestamp for a taxonomy term.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param object $term
+		 * @return string $lastmod
+		 */
+		private function get_tax_term_timestamp( $term ) {
+			$taxonomy_object = get_taxonomy( $term->taxonomy );
+
+			$lastmod = '';
+
+			// Loop through all attached post types and get timestamp of last modified assigned post.
+			foreach ( $taxonomy_object->object_type as $object_type ) {
+				$latest_modified_post = new WP_Query(
+					array(
+						'post_type'      => $object_type,
+						'post_status'    => 'publish',
+						'posts_per_page' => 1,
+						'orderby'        => 'modified',
+						'order'          => 'DESC',
+						'taxonomy'       => $term->taxonomy,
+						'term'           => $term->name,
+					)
+				);
+
+				if ( $latest_modified_post->have_posts() ) {
+					$temp_lastmod = $latest_modified_post->posts[0]->post_modified_gmt;
+					if ( '' === $lastmod || ( $temp_lastmod > $lastmod ) ) {
+						$lastmod = $temp_lastmod;
+					}
+				}
+			}
+
+			$lastmod = date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $lastmod ) );
+			return $lastmod;
 		}
 
 		/**
@@ -3178,6 +3226,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 			$pages = apply_filters( $this->prefix . 'addl_pages', $pages );
 
+			$pages = $this->get_homepage_timestamp( $pages );
 			$pages = $this->remove_addl_static_pages( $pages );
 
 			return $pages;
@@ -3195,12 +3244,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 */
 		private function remove_addl_static_pages( $pages ) {
 			$pages_to_remove = array();
-			if ( 0 !== get_option( 'page_on_front' ) ) {
+			if ( 0 !== (int) get_option( 'page_on_front' ) ) {
 				$homepage_url = get_site_url() . '/';
 				array_push( $pages_to_remove, $homepage_url );
 			}
 
-			$static_posts_page_id = get_option( 'page_for_posts' );
+			$static_posts_page_id = (int) get_option( 'page_for_posts' );
 			if ( 0 !== $static_posts_page_id ) {
 				array_push( $pages_to_remove, get_permalink( $static_posts_page_id ) );
 			}
@@ -3230,6 +3279,134 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				}
 			}
 			return $pages;
+		}
+
+		/**
+		 * The get_homepage_timestamp() function.
+		 *
+		 * Gets the Last Change timestamp for the homepage if it isn't static.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $urls
+		 * @return array $urls
+		 */
+		private function get_homepage_timestamp( $urls ) {
+			if ( 0 !== (int) get_option( 'page_on_front' ) ) {
+				return $urls;
+			}
+
+			$homepage_url = get_site_url() . '/';
+			$urls = $this->update_static_page_timestamp( $urls, $homepage_url );
+
+			return $urls;
+		}
+
+		/**
+		 * The get_posts_page_timestamp() function.
+		 *
+		 * Gets the Last Change timestamp for the posts page.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $urls
+		 * @return array $urls
+		 */
+		private function get_posts_page_timestamp( $urls ) {
+			$posts_page_id = (int) get_option( 'page_for_posts' );
+			if ( 0 === $posts_page_id ) {
+				return $urls;
+			}
+
+			$posts_page_url = get_permalink( $posts_page_id );
+			$urls = $this->update_static_page_timestamp( $urls, $posts_page_url );
+
+			return $urls;
+		}
+
+		/**
+		 * The update_static_page_timestamp() function.
+		 *
+		 * Update the timestamp attribute for a static page.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $urls
+		 * @param string $static_page_url
+		 * @return array $urls
+		 */
+		private function update_static_page_timestamp( $urls, $static_page_url ) {
+			$lastmod = $this->get_last_modified_post_timestamp( 'post' );
+			if ( false === $lastmod ) {
+				return $urls;
+			}
+
+			$url_locs = array_combine( array_keys( $urls ), wp_list_pluck( $urls, 'loc' ) );
+			$index    = array_search( $static_page_url, $url_locs );
+			if ( false === $index ) {
+				return $urls;
+			}
+
+			$urls[ $index ] = $this->insert_timestamp_as_second_attribute( $urls[ $index ], $lastmod );
+			return $urls;
+		}
+
+		/**
+		 * The get_last_modified_post_timestamp() function.
+		 *
+		 * Gets the last modified post.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param string $post_type
+		 * @return mixed Timestamp of the last modified post or false if there is none.
+		 */
+		private function get_last_modified_post_timestamp( $post_type ) {
+			$last_modified_post = new WP_Query(
+				array(
+					'post_type'      => $post_type,
+					'post_status'    => 'publish',
+					'posts_per_page' => 1,
+					'orderby'        => 'modified',
+					'order'          => 'DESC',
+				)
+			);
+
+			if ( $last_modified_post->have_posts() ) {
+				return $this->format_timestamp_as_lastmod_attribute( $last_modified_post );
+			}
+			return false;
+		}
+
+		/**
+		 * The format_timestamp_as_lastmod_attribute() function.
+		 *
+		 * Formats the timestamp for a sitemap record in order to have valid sitemap schema.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param object $last_modified_post WP_Query for the last modified post.
+		 * @return string $lastmod
+		 */
+		private function format_timestamp_as_lastmod_attribute( $last_modified_post ) {
+			$lastmod = $last_modified_post->posts[0]->post_modified_gmt;
+			return date( 'Y-m-d\TH:i:s\Z', mysql2date( 'U', $lastmod ) );
+		}
+
+		/**
+		 * The insert_timestamp_as_second_attribute() function.
+		 *
+		 * Inserts the timestamp for a sitemap record as the second attribute.
+		 * The lastmod subtag has to be inserted as second attribute in order to have valid schema.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $url
+		 * @param string $lastmod
+		 * @return array $url
+		 */
+		private function insert_timestamp_as_second_attribute( $url, $lastmod ) {
+			return array_slice( $url, 0, 1, true ) + array( 'lastmod' => $lastmod ) + array_slice( $url, 1, null, true );
 		}
 
 		/**
@@ -3402,7 +3579,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$types[ $p->post_type ] = $p;
 			}
 
-			$archives = array();
+			$archive_pages = array();
 			$types    = apply_filters( "{$this->prefix}include_post_types_archives", $types );
 			if ( $types ) {
 				foreach ( $types as $post_type => $p ) {
@@ -3410,21 +3587,51 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					if ( ! ( in_array( $post_type, $posttypes ) && in_array( $post_type, $types_supporting_archives ) ) ) {
 						continue;
 					}
-					$archives = array_merge(
-						$archives,
-						$this->get_prio_from_posts(
-							array( $p ),
-							$this->get_default_priority( 'archive', true ),
-							$this->get_default_frequency( 'archive', true ),
-							array(
-								$this,
-								'get_archive_link_from_post',
-							)
+					$temp_archive_pages = $this->get_prio_from_posts(
+						array( $p ),
+						$this->get_default_priority( 'archive', true ),
+						$this->get_default_frequency( 'archive', true ),
+						array(
+							$this,
+							'get_archive_link_from_post',
 						)
+					);
+
+					if ( ! empty( $temp_archive_pages ) ) {
+						$temp_archive_pages = $this->get_archive_page_timestamp( $temp_archive_pages, $post_type );
+					}
+
+					$archive_pages = array_merge(
+						$archive_pages,
+						$temp_archive_pages
 					);
 				}
 			}
-			return $archives;
+			return $archive_pages;
+		}
+
+		/**
+		 * The get_archive_page_timestamp() function.
+		 *
+		 * Get the Last Change timestamp for archive pages.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $urls
+		 * @param string $post_type
+		 * @return array $urls
+		 */
+		private function get_archive_page_timestamp( $urls, $post_type ) {
+			$lastmod = $this->get_last_modified_post_timestamp( $post_type );
+			if ( false === $lastmod ) {
+				return $urls;
+			}
+
+			$count = count( $urls );
+			for ( $i = 0; $i < $count; $i++ ) {
+				$urls[ $i ] = $this->insert_timestamp_as_second_attribute( $urls[ $i ], $lastmod );
+			}
+			return $urls;
 		}
 
 		/**
@@ -4376,6 +4583,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$is_sitemap_indexes_disabled = empty( $this->options['aiosp_sitemap_indexes'] );
 			if ( $is_sitemap_indexes_disabled || ( ! $is_sitemap_indexes_disabled && 'page' === $include ) ) {
+				$links = $this->get_posts_page_timestamp( $links );
 				$links = $this->get_prio_freq_static_homepage( $links );
 				$links = $this->update_woocommerce_shop_timestamp( $links );
 			}

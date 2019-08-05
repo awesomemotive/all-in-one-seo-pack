@@ -348,7 +348,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'name'       => __( 'Home Title', 'all-in-one-seo-pack' ),
 					'default'    => '',
 					'type'       => 'text',
-					'class'      => 'aioseop_count_chars',
 					'count'      => true,
 					'count_desc' => $count_desc,
 					'size'       => 95,
@@ -364,7 +363,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'name'       => __( 'Home Description', 'all-in-one-seo-pack' ),
 					'default'    => '',
 					'type'       => 'textarea',
-					'class'      => 'aioseop_count_chars',
 					'count'      => true,
 					'count_desc' => $count_desc,
 					'size'       => 200,
@@ -570,7 +568,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'type'    => 'html',
 					'save'    => false,
 					'default' => '<a 
-						name="aioseop_opengraph_settings_facebook_debug"
 						id="aioseop_opengraph_settings_facebook_debug"
 						class="button-primary"
 						href=""
@@ -595,25 +592,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				),
 				'facebook_author'        => array(
 					'name' => __( 'Show Facebook Author on Articles', 'all-in-one-seo-pack' ),
-				),
-				'profile_links'          => array(
-					'name' => __( 'Social Profile Links', 'all-in-one-seo-pack' ),
-					'type' => 'textarea',
-					'cols' => 60,
-					'rows' => 5,
-				),
-				'person_or_org'          => array(
-					'name'            => __( 'Person or Organization?', 'all-in-one-seo-pack' ),
-					'type'            => 'radio',
-					'initial_options' => array(
-						'person' => __( 'Person', 'all-in-one-seo-pack' ),
-						'org'    => __( 'Organization', 'all-in-one-seo-pack' ),
-					),
-				),
-				'social_name'            => array(
-					'name'    => __( 'Associated Name', 'all-in-one-seo-pack' ),
-					'type'    => 'text',
-					'default' => '',
 				),
 			);
 			// load initial options / set defaults.
@@ -646,9 +624,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						'dimgheight',
 						'meta_key',
 						'defcard',
-						'profile_links',
-						'person_or_org',
-						'social_name',
 						'twitter_site',
 						'twitter_creator',
 						'twitter_domain',
@@ -696,11 +671,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'name'      => __( 'Image Settings', 'all-in-one-seo-pack' ),
 					'help_link' => 'https://semperplugins.com/documentation/social-meta-module/#select-og-image-source',
 					'options'   => array( 'defimg', 'fallback', 'dimg', 'dimgwidth', 'dimgheight', 'meta_key' ),
-				),
-				'links'     => array(
-					'name'      => __( 'Social Profile Links', 'all-in-one-seo-pack' ),
-					'help_link' => 'https://semperplugins.com/documentation/social-meta-module/#social-profile-links',
-					'options'   => array( 'profile_links', 'person_or_org', 'social_name' ),
 				),
 				'facebook'  => array(
 					'name'      => __( 'Facebook Settings', 'all-in-one-seo-pack' ),
@@ -1141,7 +1111,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			$extra_params = array();
 
 			$setmeta      = $this->options['aiosp_opengraph_setmeta'];
-			$social_links = '';
 			if ( is_front_page() ) {
 				$title = $this->options['aiosp_opengraph_hometitle'];
 				if ( $first_page ) {
@@ -1185,19 +1154,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 
 				if ( empty( $description ) && $first_page ) {
 					$description = get_bloginfo( 'description' );
-				}
-				if ( ! empty( $this->options['aiosp_opengraph_profile_links'] ) ) {
-					$social_links = $this->options['aiosp_opengraph_profile_links'];
-					if ( ! empty( $this->options['aiosp_opengraph_social_name'] ) ) {
-						$social_name = $this->options['aiosp_opengraph_social_name'];
-					} else {
-						$social_name = '';
-					}
-					if ( $this->options['aiosp_opengraph_person_or_org'] == 'person' ) {
-						$social_type = 'Person';
-					} else {
-						$social_type = 'Organization';
-					}
 				}
 			} elseif (
 					is_singular() && $this->option_isset( 'types' ) &&
@@ -1642,37 +1598,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					}
 				}
 			}
-			$social_link_schema = '';
-			if ( ! empty( $social_links ) ) {
-				$home_url     = esc_url( get_home_url() );
-				$social_links = explode( "\n", $social_links );
-				foreach ( $social_links as $k => $v ) {
-					$v = trim( $v );
-					if ( empty( $v ) ) {
-						unset( $social_links[ $k ] );
-					} else {
-						$v                  = esc_url( $v );
-						$social_links[ $k ] = $v;
-					}
-				}
-				$social_links       = join( '","', $social_links );
-				$social_link_schema = <<<END
-<script type="application/ld+json">
-{ "@context" : "https://schema.org",
-  "@type" : "{$social_type}",
-  "name" : "{$social_name}",
-  "url" : "{$home_url}",
-  "sameAs" : ["{$social_links}"]
-}
-</script>
-
-END;
-			}
-
-			// Only show if "use schema.org markup is checked".
-			if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) ) {
-				echo apply_filters( 'aiosp_opengraph_social_link_schema', $social_link_schema );
-			}
 		}
 
 		/**
@@ -1816,7 +1741,7 @@ END;
 			$images = array();
 			if ( ! empty( $image ) ) {
 				foreach ( $image as $k => $v ) {
-					$images[ $v ] = '<img height=150 src="' . $v . '">';
+					$images[ $v ] = '<img alt="" height=150 src="' . $v . '">';
 				}
 			}
 

@@ -2795,7 +2795,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			}
 			$input_attr .= " aioseop_{$opts['type']}_type";
 
-			$display_row_template = '<div class="aioseop_wrapper%s" id="%s_wrapper"><div class="aioseop_input">%s<span class="aioseop_option_input"><div class="aioseop_option_div" %s>%s</div></span><p style="clear:left"></p></div></div>';
+			$display_row_template = '<div class="aioseop_wrapper%s" id="%s_wrapper"><div class="aioseop_input">%s<div class="aioseop_option_input"><div class="aioseop_option_div" %s>%s</div></div><p style="clear:left"></p></div></div>';
 			return sprintf( $display_row_template, $input_attr, $name, $label_text, $id_attr, $this->get_option_html( $args ) );
 		}
 
@@ -2860,16 +2860,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				$args = $settings;
 			}
 			foreach ( $args as $name => $opts ) {
-				$attr_list = array( 'class', 'style', 'readonly', 'disabled', 'size', 'placeholder' );
+				// List of valid element attributes.
+				$attr_list = array( 'class', 'style', 'readonly', 'disabled', 'size', 'placeholder', 'autocomplete' );
 				if ( $opts['type'] == 'textarea' ) {
 					$attr_list = array_merge( $attr_list, array( 'rows', 'cols' ) );
 				}
+
+				// Set element attribute values.
 				$attr = '';
 				foreach ( $attr_list as $a ) {
 					if ( isset( $opts[ $a ] ) ) {
 						$attr .= ' ' . $a . '="' . esc_attr( $opts[ $a ] ) . '" ';
 					}
 				}
+
 				$opt = '';
 				if ( isset( $current_options[ $name ] ) ) {
 					$opt = $current_options[ $name ];
@@ -3090,7 +3094,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				do_action( 'aioseop_global_settings_header', $location );
 				do_action( $this->prefix . 'settings_header', $location );
 				?>
-				<form id="aiosp_settings_form" name="dofollow" enctype="multipart/form-data" action="" method="post">
+				<form id="aiosp_settings_form" name="dofollow" enctype="multipart/form-data" action="#" method="post">
 					<div id="aioseop_top_button">
 						<div id="aiosp_ajax_settings_message"></div>
 						<?php

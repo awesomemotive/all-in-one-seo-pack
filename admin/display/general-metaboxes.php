@@ -34,8 +34,7 @@ class aiosp_metaboxes {
 			case 'aioseop-about':
 				?>
 				<div class="aioseop_metabox_text">
-					<p><h2
-						style="display:inline;"><?php echo AIOSEOP_PLUGIN_NAME; ?></h2></p>
+					<h2 style="display:inline;"><?php echo AIOSEOP_PLUGIN_NAME; ?></h2>
 					<?php
 					global $current_user;
 					$user_id = $current_user->ID;
@@ -67,9 +66,7 @@ class aiosp_metaboxes {
 				<div>
 				<?php if ( ! AIOSEOPPRO ) : ?>
 						<div class="aioseop_metabox_text">
-							<p>
 								<?php self::pro_meta_content(); ?>
-							</p>
 						</div>
 					<?php endif; ?>
 					<div class="aioseop_metabox_feature">
@@ -142,32 +139,39 @@ class aiosp_metaboxes {
 			case 'aioseop-support':
 				?>
 				<div class="aioseop_metabox_text">
-					<p>
-					<div class="aioseop_icon aioseop-icon-file"></div>
-					<a target="_blank"
-						href="https://semperplugins.com/documentation/">
-						<?php
-						/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
-						printf( __( 'Read the %s user guide', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
-						?>
-						</a></p>
-					<p>
-					<div class="aioseop_icon aioseop-icon-support"></div>
-					<a target="_blank"
-						title="<?php _e( 'All in One SEO Pro Plugin Support Forum', 'all-in-one-seo-pack' ); ?>"
-						href="https://semperplugins.com/support/"><?php _e( 'Access our Premium Support Forums', 'all-in-one-seo-pack' ); ?></a></p>
-					<p>
-					<div class="aioseop_icon aioseop-icon-cog"></div>
-					<a target="_blank" title="<?php _e( 'All in One SEO Pro Plugin Changelog', 'all-in-one-seo-pack' ); ?>"
-						href="https://semperplugins.com/all-in-one-seo-pack-changelog/"><?php _e( 'View the Changelog', 'all-in-one-seo-pack' ); ?></a></p>
-					<p>
-					<div class="aioseop_icon aioseop-icon-youtube"></div>
-					<a target="_blank"
-						href="https://semperplugins.com/doc-type/video/"><?php _e( 'Watch video tutorials', 'all-in-one-seo-pack' ); ?></a></p>
-					<p>
-					<div class="aioseop_icon aioseop-icon-book"></div>
-					<a target="_blank"
-						href="https://semperplugins.com/documentation/quick-start-guide/"><?php _e( 'Getting started? Read the Beginners Guide', 'all-in-one-seo-pack' ); ?></a></p>
+					<ul>
+						<li>
+							<div class="aioseop_icon aioseop-icon-file"></div>
+							<a target="_blank" rel="noopener noreferrer"
+							href="https://semperplugins.com/documentation/">
+								<?php
+								/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+								printf( __( 'Read the %s user guide', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
+								?>
+							</a>
+						</li>
+						<li>
+							<div class="aioseop_icon aioseop-icon-support"></div>
+							<a target="_blank" rel="noopener noreferrer"
+							title="<?php _e( 'All in One SEO Pro Plugin Support Forum', 'all-in-one-seo-pack' ); ?>"
+							href="https://semperplugins.com/support/"><?php _e( 'Access our Premium Support Forums', 'all-in-one-seo-pack' ); ?></a>
+						</li>
+						<li>	
+							<div class="aioseop_icon aioseop-icon-cog"></div>
+							<a target="_blank" rel="noopener noreferrer" title="<?php _e( 'All in One SEO Pro Plugin Changelog', 'all-in-one-seo-pack' ); ?>"
+								href="https://semperplugins.com/all-in-one-seo-pack-changelog/"><?php _e( 'View the Changelog', 'all-in-one-seo-pack' ); ?></a>
+						</li>
+						<li>	
+							<div class="aioseop_icon aioseop-icon-youtube"></div>
+							<a target="_blank" rel="noopener noreferrer"
+							href="https://semperplugins.com/doc-type/video/"><?php _e( 'Watch video tutorials', 'all-in-one-seo-pack' ); ?></a>
+						</li>
+						<li>	
+							<div class="aioseop_icon aioseop-icon-book"></div>
+							<a target="_blank" rel="noopener noreferrer"
+							href="https://semperplugins.com/documentation/quick-start-guide/"><?php _e( 'Getting started? Read the Beginners Guide', 'all-in-one-seo-pack' ); ?></a>
+						</li>
+					</ul>		
 				</div>
 				<?php break; ?>
 		<?php endswitch; ?>
@@ -198,7 +202,7 @@ class aiosp_metaboxes {
 
 		echo '</ul>';
 
-		echo sprintf( __( '%1$sClick here%2$s to file a feature request/bug report.', 'all-in-one-seo-pack' ), '<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/new" />', '</a>' );
+		echo sprintf( __( '%1$sClick here%2$s to file a feature request/bug report.', 'all-in-one-seo-pack' ), '<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/new" target="_blank" rel="noopener noreferrer">', '</a>' );
 
 	}
 
