@@ -4732,7 +4732,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$meta = get_post_meta( wc_get_page_id( 'shop' ) );
 		}
 
-		if ( array_key_exists( $meta_key, $meta ) ) {
+		if ( is_array( $meta ) && array_key_exists( $meta_key, $meta ) ) {
 			$meta_value = $meta[ $meta_key ][0];
 		}
 
