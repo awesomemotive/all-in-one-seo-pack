@@ -1333,8 +1333,10 @@ if ( ! function_exists( 'aioseop_get_logo' ) ) {
  */
 function aioseop_do_shortcodes( $content ) {
 	$conflicting_shortcodes = array(
-		'WooCommerce Login' => '[woocommerce_my_account]',
-		'NextGen Album'     => '[album]',
+		'WooCommerce Login'      => '[woocommerce_my_account]',
+		'NextGen Gallery'        => '[ngg]',
+		'NextGen Gallery Images' => '[ngg_images]',
+		'NextGen Album'          => '[album]',
 	);
 
 	$conflict_shortcodes = array();
