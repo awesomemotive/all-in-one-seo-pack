@@ -4605,8 +4605,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( 0 === (int) get_option( 'page_on_front' ) ) {
 				return $links;
 			}
-			$prio = $this->options['aiosp_sitemap_prio_homepage'];
-			$freq = $this->options['aiosp_sitemap_freq_homepage'];
+			
+			$prio = 'no';
+			$freq = 'no';
+			if ( isset( $this->options['aiosp_sitemap_prio_homepage'] ) ) {
+				$prio = $this->options['aiosp_sitemap_prio_homepage'];
+			}
+			if ( isset( $this->options['aiosp_sitemap_freq_homepage'] ) ) {
+				$freq = $this->options['aiosp_sitemap_freq_homepage'];
+			}
 
 			$homepage_url = get_site_url() . '/';
 			$homepage_index = array_search( $homepage_url, array_column( $links, 'loc' ) );
