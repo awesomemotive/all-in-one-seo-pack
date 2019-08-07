@@ -4605,7 +4605,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			if ( 0 === (int) get_option( 'page_on_front' ) ) {
 				return $links;
 			}
-			
+
 			$prio = 'no';
 			$freq = 'no';
 			if ( isset( $this->options['aiosp_sitemap_prio_homepage'] ) ) {
