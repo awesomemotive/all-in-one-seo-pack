@@ -4608,8 +4608,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$prio = $this->options['aiosp_sitemap_prio_homepage'];
 			$freq = $this->options['aiosp_sitemap_freq_homepage'];
 
-			$homepage_url = get_site_url() . '/';
-			$homepage_index = array_search( $homepage_url, array_column( $links, 'loc' ) );
+			$homepage_url   = get_site_url() . '/';
+			$links_locs     = array_combine( array_keys( $links ), wp_list_pluck( $links, 'loc' ) );
+			$homepage_index = array_search( $homepage_url, $links_locs );
 
 			if ( ! $homepage_url ) {
 				return $links;
@@ -4640,8 +4641,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return $links;
 			}
 
-			$shop_page_url = get_permalink( wc_get_page_id( 'shop' ) );
-			$shop_page_index = array_search( $shop_page_url, array_column( $links, 'loc' ) );
+			$shop_page_url   = get_permalink( wc_get_page_id( 'shop' ) );
+			$links_locs      = array_combine( array_keys( $links ), wp_list_pluck( $links, 'loc' ) );
+			$shop_page_index = array_search( $shop_page_url, $links_locs );
 
 			if ( ! $shop_page_index ) {
 				return $links;
