@@ -447,6 +447,7 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 		require_once( AIOSEOP_PLUGIN_DIR . 'public/opengraph.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/abstract/aiosep_compatible.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/compat-init.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/php-functions.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'public/front.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'public/google-analytics.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/welcome.php' );
