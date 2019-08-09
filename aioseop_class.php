@@ -5698,7 +5698,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function check_recently_activated_modules() {
 		global $aioseop_options;
-		$options = get_option( 'aioseop_options' );
+		$options = get_option( 'aioseop_options', array() );
 		$modules_before = array();
 		$modules_now    = array();
 		if ( array_key_exists( 'modules', $aioseop_options ) && array_key_exists( 'aiosp_feature_manager_options', $aioseop_options['modules'] ) ) {
