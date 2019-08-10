@@ -58,7 +58,7 @@ class aiosp_common {
 	 * @return array|null|string|WP_Post
 	 */
 	static function get_blog_page( $p = null ) {
-		static $blog_page = '';
+		static $blog_page      = '';
 		static $page_for_posts = '';
 		if ( null === $p ) {
 			global $post;
@@ -264,7 +264,7 @@ class aiosp_common {
 		static $results_1;
 		static $results_2;
 
-		$id = 0;
+		$id      = 0;
 		$url_md5 = md5( $url );
 
 		// Gets the URL => PostIDs array.

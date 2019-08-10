@@ -58,12 +58,12 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		// @issue ( https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/2217 ).
 		sleep( 1 );
 		$new_page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
-		$new_page = get_permalink( $new_page_id );
+		$new_page    = get_permalink( $new_page_id );
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = '';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+		$custom_options                            = array();
+		$custom_options['aiosp_sitemap_indexes']   = '';
+		$custom_options['aiosp_sitemap_images']    = '';
+		$custom_options['aiosp_sitemap_gzipped']   = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'page' );
 
 		$this->_setup_options( 'sitemap', $custom_options );
@@ -102,15 +102,15 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 		$posts = $this->setup_posts( 2, 2 );
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = '';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+		$custom_options                            = array();
+		$custom_options['aiosp_sitemap_indexes']   = '';
+		$custom_options['aiosp_sitemap_images']    = '';
+		$custom_options['aiosp_sitemap_gzipped']   = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
 
 		$this->_setup_options( 'sitemap', $custom_options );
 
-		$with = $posts['with'];
+		$with    = $posts['with'];
 		$without = $posts['without'];
 		$this->validate_sitemap(
 			array(
@@ -147,15 +147,15 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 		$posts = $this->setup_posts( 2, 2 );
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = 'on';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+		$custom_options                            = array();
+		$custom_options['aiosp_sitemap_indexes']   = '';
+		$custom_options['aiosp_sitemap_images']    = 'on';
+		$custom_options['aiosp_sitemap_gzipped']   = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
 
 		$this->_setup_options( 'sitemap', $custom_options );
 
-		$with = $posts['with'];
+		$with    = $posts['with'];
 		$without = $posts['without'];
 		$this->validate_sitemap(
 			array(
@@ -185,12 +185,12 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	public function test_rss() {
 		$posts = $this->setup_posts( 2 );
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = 'on';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+		$custom_options                              = array();
+		$custom_options['aiosp_sitemap_indexes']     = '';
+		$custom_options['aiosp_sitemap_images']      = 'on';
+		$custom_options['aiosp_sitemap_gzipped']     = '';
 		$custom_options['aiosp_sitemap_rss_sitemap'] = 'on';
-		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
+		$custom_options['aiosp_sitemap_posttypes']   = array( 'post' );
 
 		$this->_setup_options( 'sitemap', $custom_options );
 
@@ -226,10 +226,10 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		$posts = $this->factory->post->create_many( 2 );
 		wp_trash_post( $posts[0] );
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = 'on';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+		$custom_options                            = array();
+		$custom_options['aiosp_sitemap_indexes']   = '';
+		$custom_options['aiosp_sitemap_images']    = 'on';
+		$custom_options['aiosp_sitemap_gzipped']   = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
 
 		$this->_setup_options( 'sitemap', $custom_options );
@@ -271,7 +271,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			foreach ( $ids as $id ) {
 				$tests[ get_permalink( $id ) ] = true;
 			}
-			$url = get_post_type_archive_link( $post_type );
+			$url           = get_post_type_archive_link( $post_type );
 			$tests[ $url ] = $has_archive && ! $exclude;
 		}
 
@@ -279,11 +279,11 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			add_filter( 'aiosp_sitemap_include_post_types_archives', array( $this, 'filter_aiosp_sitemap_include_post_types_archives' ) );
 		}
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = 'on';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
-		$custom_options['aiosp_sitemap_archive'] = 'on';
+		$custom_options                            = array();
+		$custom_options['aiosp_sitemap_indexes']   = '';
+		$custom_options['aiosp_sitemap_images']    = 'on';
+		$custom_options['aiosp_sitemap_gzipped']   = '';
+		$custom_options['aiosp_sitemap_archive']   = 'on';
 		$custom_options['aiosp_sitemap_posttypes'] = $post_types;
 
 		$this->_setup_options( 'sitemap', $custom_options );
@@ -328,7 +328,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	 * @ticket 366 Add WooCommerce product gallery images to XML sitemap
 	 */
 	public function test_woocommerce_gallery() {
-		$woo = 'woocommerce/woocommerce.php';
+		$woo  = 'woocommerce/woocommerce.php';
 		$file = dirname( dirname( AIOSEOP_UNIT_TESTING_DIR ) ) . '/';
 
 		if ( ! file_exists( $file . $woo ) ) {
@@ -354,10 +354,10 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		update_post_meta( $id, '_product_image_gallery', implode( ',', $attachments ) );
 		$url = get_permalink( $id );
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = '';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+		$custom_options                            = array();
+		$custom_options['aiosp_sitemap_indexes']   = '';
+		$custom_options['aiosp_sitemap_images']    = '';
+		$custom_options['aiosp_sitemap_gzipped']   = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'product' );
 		$this->_setup_options( 'sitemap', $custom_options );
 		$this->validate_sitemap(
@@ -383,6 +383,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		$test1 = wp_create_category( 'test1' );
 		$test2 = wp_create_category( 'test2' );
 		$test3 = wp_create_category( 'test3' );
+
 		$ids = $this->factory->post->create_many( 10 );
 		// first 3 to test1, next 3 to test2 and let others remain uncategorized.
 		for ( $x = 0; $x < 3; $x++ ) {
@@ -391,13 +392,16 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		for ( $x = 3; $x < 6; $x++ ) {
 			wp_set_post_categories( $ids[ $x ], $test2 );
 		}
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = '';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+
+		$custom_options                             = array();
+		$custom_options['aiosp_sitemap_indexes']    = '';
+		$custom_options['aiosp_sitemap_images']     = '';
+		$custom_options['aiosp_sitemap_gzipped']    = '';
 		$custom_options['aiosp_sitemap_taxonomies'] = array( 'category' );
-		$custom_options['aiosp_sitemap_posttypes'] = array();
+		$custom_options['aiosp_sitemap_posttypes']  = array();
+
 		$this->_setup_options( 'sitemap', $custom_options );
+
 		// in the sitemap, test3 should not appear as no posts have been assigned to it.
 		$this->validate_sitemap(
 			array(
@@ -450,12 +454,13 @@ class Test_Sitemap extends Sitemap_Test_Base {
 				'post_title'   => 'title with image',
 			)
 		);
+
 		$urls = array( get_permalink( $id1 ), get_permalink( $id2 ), get_permalink( $id3 ) );
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = '';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+		$custom_options                            = array();
+		$custom_options['aiosp_sitemap_indexes']   = '';
+		$custom_options['aiosp_sitemap_images']    = '';
+		$custom_options['aiosp_sitemap_gzipped']   = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
 
 		$this->_setup_options( 'sitemap', $custom_options );
@@ -490,7 +495,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 		// choose numbers which are not multiples of each other.
 		$num_posts = 22;
-		$per_xml = 7;
+		$per_xml   = 7;
 
 		if ( in_array( 'post', $enabled_post_type ) ) {
 			$this->factory->post->create_many( $num_posts );
@@ -509,18 +514,18 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			$this->factory->post->create_many( $num_posts, array( 'post_type' => $cpt ) );
 		}
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = 'on';
-		$custom_options['aiosp_sitemap_max_posts'] = $per_xml;
-		$custom_options['aiosp_sitemap_images'] = 'on';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
-		$custom_options['aiosp_sitemap_posttypes'] = $enabled_post_type;
+		$custom_options                             = array();
+		$custom_options['aiosp_sitemap_indexes']    = 'on';
+		$custom_options['aiosp_sitemap_max_posts']  = $per_xml;
+		$custom_options['aiosp_sitemap_images']     = 'on';
+		$custom_options['aiosp_sitemap_gzipped']    = '';
+		$custom_options['aiosp_sitemap_posttypes']  = $enabled_post_type;
 		$custom_options['aiosp_sitemap_taxonomies'] = array();
 
 			$this->_setup_options( 'sitemap', $custom_options );
 
 		$expected = intval( $enabled_post_types_count * ceil( $num_posts / $per_xml ) ) + 1;
-		$got = $this->count_sitemap_elements( array( '<sitemap>' ) );
+		$got      = $this->count_sitemap_elements( array( '<sitemap>' ) );
 
 		$this->assertEquals( $expected, $got['<sitemap>'] );
 	}
@@ -537,7 +542,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		$this->markTestSkipped( 'Skipping this till actual use case is determined.' );
 
 		$jetpack = 'jetpack/jetpack.php';
-		$file = dirname( dirname( AIOSEOP_UNIT_TESTING_DIR ) ) . '/';
+		$file    = dirname( dirname( AIOSEOP_UNIT_TESTING_DIR ) ) . '/';
 		if ( ! file_exists( $file . $jetpack ) ) {
 			$this->markTestSkipped( 'JetPack not installed. Skipping.' );
 		}
@@ -548,11 +553,13 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			$this->markTestSkipped( 'JetPack not activated. Skipping.' );
 		}
 		$posts = $this->setup_posts( 1, 1 );
+
 		// create 4 attachments.
 		$attachments = array();
 		for ( $x = 0; $x < 4; $x++ ) {
 			$attachments[] = $this->upload_image_and_maybe_attach( str_replace( '\\', '/', AIOSEOP_UNIT_TESTING_DIR . '/resources/images/footer-logo.png' ) );
 		}
+
 		$id = $this->factory->post->create(
 			array(
 				'post_type'    => 'post',
@@ -560,14 +567,18 @@ class Test_Sitemap extends Sitemap_Test_Base {
 				'post_title'   => 'jetpack',
 			)
 		);
+
 		$posts['with'][] = get_permalink( $id );
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = '';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+
+		$custom_options                            = array();
+		$custom_options['aiosp_sitemap_indexes']   = '';
+		$custom_options['aiosp_sitemap_images']    = '';
+		$custom_options['aiosp_sitemap_gzipped']   = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
+
 		$this->_setup_options( 'sitemap', $custom_options );
-		$with = $posts['with'];
+
+		$with    = $posts['with'];
 		$without = $posts['without'];
 		$this->validate_sitemap(
 			array(
@@ -595,7 +606,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	public function test_nextgen_gallery() {
 		wp_set_current_user( 1 );
 		$nextgen = 'nextgen-gallery/nggallery.php';
-		$file = dirname( dirname( AIOSEOP_UNIT_TESTING_DIR ) ) . '/';
+		$file    = dirname( dirname( AIOSEOP_UNIT_TESTING_DIR ) ) . '/';
 
 		if ( ! file_exists( $file . $nextgen ) ) {
 			$this->markTestSkipped( 'NextGen Gallery not installed. Skipping.' );
@@ -607,20 +618,23 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			$this->markTestSkipped( 'NextGen Gallery not activated. Skipping.' );
 		}
 		do_action( 'init' );
+
 		// nextgen shortcode does not work without creating a gallery or images. So we will have to create a gallery to do this.
 		$nggdb      = new nggdb();
 		$gallery_id = nggdb::add_gallery();
-		$images = array(
+		$images     = array(
 			$nggdb->add_image( $gallery_id, 'x.png', 'x', 'x', 'eyJiYWNrdXAiOnsiZmlsZW5hbWUiOiJzYW1wbGUucG5nIiwid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZ2VuZXJhdGVkIjoiMC4wMjM3MzMwMCAxNTA3MDk1MTcwIn0sImFwZXJ0dXJlIjpmYWxzZSwiY3JlZGl0IjpmYWxzZSwiY2FtZXJhIjpmYWxzZSwiY2FwdGlvbiI6ZmFsc2UsImNyZWF0ZWRfdGltZXN0YW1wIjpmYWxzZSwiY29weXJpZ2h0IjpmYWxzZSwiZm9jYWxfbGVuZ3RoIjpmYWxzZSwiaXNvIjpmYWxzZSwic2h1dHRlcl9zcGVlZCI6ZmFsc2UsImZsYXNoIjpmYWxzZSwidGl0bGUiOmZhbHNlLCJrZXl3b3JkcyI6ZmFsc2UsIndpZHRoIjoyNDgsImhlaWdodCI6OTgsInNhdmVkIjp0cnVlLCJtZDUiOiI3ZWUyMjVjOTNkZmNhMTMyYjQzMTc5ZjJiMGYwZTc2NiIsImZ1bGwiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwibWQ1IjoiN2VlMjI1YzkzZGZjYTEzMmI0MzE3OWYyYjBmMGU3NjYifSwidGh1bWJuYWlsIjp7IndpZHRoIjoyNDAsImhlaWdodCI6OTgsImZpbGVuYW1lIjoidGh1bWJzX3NhbXBsZS5wbmciLCJnZW5lcmF0ZWQiOiIwLjMwNDUzNDAwIDE1MDcwOTUxNzAifSwibmdnMGR5bi0weDB4MTAwLTAwZjB3MDEwYzAxMHIxMTBmMTEwcjAxMHQwMTAiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZmlsZW5hbWUiOiJzYW1wbGUucG5nLW5nZ2lkMDE3LW5nZzBkeW4tMHgweDEwMC0wMGYwdzAxMGMwMTByMTEwZjExMHIwMTB0MDEwLnBuZyIsImdlbmVyYXRlZCI6IjAuMTgwMzI0MDAgMTUyMTAxMTI1NCJ9fQ==' ),
 			$nggdb->add_image( $gallery_id, 'x.png', 'x', 'x', 'eyJiYWNrdXAiOnsiZmlsZW5hbWUiOiJzYW1wbGUucG5nIiwid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZ2VuZXJhdGVkIjoiMC4wMjM3MzMwMCAxNTA3MDk1MTcwIn0sImFwZXJ0dXJlIjpmYWxzZSwiY3JlZGl0IjpmYWxzZSwiY2FtZXJhIjpmYWxzZSwiY2FwdGlvbiI6ZmFsc2UsImNyZWF0ZWRfdGltZXN0YW1wIjpmYWxzZSwiY29weXJpZ2h0IjpmYWxzZSwiZm9jYWxfbGVuZ3RoIjpmYWxzZSwiaXNvIjpmYWxzZSwic2h1dHRlcl9zcGVlZCI6ZmFsc2UsImZsYXNoIjpmYWxzZSwidGl0bGUiOmZhbHNlLCJrZXl3b3JkcyI6ZmFsc2UsIndpZHRoIjoyNDgsImhlaWdodCI6OTgsInNhdmVkIjp0cnVlLCJtZDUiOiI3ZWUyMjVjOTNkZmNhMTMyYjQzMTc5ZjJiMGYwZTc2NiIsImZ1bGwiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwibWQ1IjoiN2VlMjI1YzkzZGZjYTEzMmI0MzE3OWYyYjBmMGU3NjYifSwidGh1bWJuYWlsIjp7IndpZHRoIjoyNDAsImhlaWdodCI6OTgsImZpbGVuYW1lIjoidGh1bWJzX3NhbXBsZS5wbmciLCJnZW5lcmF0ZWQiOiIwLjMwNDUzNDAwIDE1MDcwOTUxNzAifSwibmdnMGR5bi0weDB4MTAwLTAwZjB3MDEwYzAxMHIxMTBmMTEwcjAxMHQwMTAiOnsid2lkdGgiOjI0OCwiaGVpZ2h0Ijo5OCwiZmlsZW5hbWUiOiJzYW1wbGUucG5nLW5nZ2lkMDE3LW5nZzBkeW4tMHgweDEwMC0wMGYwdzAxMGMwMTByMTEwZjExMHIwMTB0MDEwLnBuZyIsImdlbmVyYXRlZCI6IjAuMTgwMzI0MDAgMTUyMTAxMTI1NCJ9fQ==' ),
 		);
+
 		$shortcode = '[ngg_images display_type="photocrati-nextgen_basic_thumbnails" image_ids="' . implode( ',', $images ) . '"]';
-		$content = aioseop_do_shortcodes( $shortcode );
+		$content   = aioseop_do_shortcodes( $shortcode );
 		if ( 'We cannot display this gallery' === $content ) {
 			$this->markTestSkipped( 'NextGen Gallery not working properly. Skipping.' );
 		}
 		// $content will output div and img tags but the img tags have an empty src.
 		$this->markTestIncomplete( 'We cannot add images in such a way that the shortcode displays the "src" attribute in the image tags. Skipping.' );
+
 		$id = $this->factory->post->create(
 			array(
 				'post_type'    => 'post',
@@ -628,12 +642,15 @@ class Test_Sitemap extends Sitemap_Test_Base {
 				'post_title'   => 'nextgen',
 			)
 		);
+
 		$url = get_permalink( $id );
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = '';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+
+		$custom_options                            = array();
+		$custom_options['aiosp_sitemap_indexes']   = '';
+		$custom_options['aiosp_sitemap_images']    = '';
+		$custom_options['aiosp_sitemap_gzipped']   = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
+
 		$this->_setup_options( 'sitemap', $custom_options );
 		$this->validate_sitemap(
 			array(
@@ -662,10 +679,10 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 		add_filter( 'aiosp_sitemap_addl_pages_only', array( $this, 'filter_aiosp_sitemap_addl_pages_only' ) );
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = '';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+		$custom_options                            = array();
+		$custom_options['aiosp_sitemap_indexes']   = '';
+		$custom_options['aiosp_sitemap_images']    = '';
+		$custom_options['aiosp_sitemap_gzipped']   = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
 
 		$this->_setup_options( 'sitemap', $custom_options );
@@ -696,10 +713,10 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 		$posts = $this->setup_posts( 2, 2 );
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = 'on';
-		$custom_options['aiosp_sitemap_images'] = '';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+		$custom_options                            = array();
+		$custom_options['aiosp_sitemap_indexes']   = 'on';
+		$custom_options['aiosp_sitemap_images']    = '';
+		$custom_options['aiosp_sitemap_gzipped']   = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
 
 		$this->_setup_options( 'sitemap', $custom_options );
@@ -766,20 +783,21 @@ class Test_Sitemap extends Sitemap_Test_Base {
 				'post_title'   => 'title with image',
 			)
 		);
+
 		$posts['with'] = array( get_permalink( $id1 ), get_permalink( $id2 ) );
 
 		// allow only www.x.com.
 		add_filter( 'aioseop_images_allowed_from_hosts', array( $this, 'filter_aioseop_images_allowed_from_hosts' ) );
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = '';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
+		$custom_options                            = array();
+		$custom_options['aiosp_sitemap_indexes']   = '';
+		$custom_options['aiosp_sitemap_images']    = '';
+		$custom_options['aiosp_sitemap_gzipped']   = '';
 		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
 
 		$this->_setup_options( 'sitemap', $custom_options );
 
-		$with = $posts['with'];
+		$with    = $posts['with'];
 		$without = $posts['without'];
 		$this->validate_sitemap(
 			array(
@@ -844,11 +862,11 @@ class Test_Sitemap extends Sitemap_Test_Base {
 			);
 		}
 
-		$custom_options = array();
-		$custom_options['aiosp_sitemap_indexes'] = '';
-		$custom_options['aiosp_sitemap_images'] = '';
-		$custom_options['aiosp_sitemap_gzipped'] = '';
-		$custom_options['aiosp_sitemap_posttypes'] = array( 'post' );
+		$custom_options                             = array();
+		$custom_options['aiosp_sitemap_indexes']    = '';
+		$custom_options['aiosp_sitemap_images']     = '';
+		$custom_options['aiosp_sitemap_gzipped']    = '';
+		$custom_options['aiosp_sitemap_posttypes']  = array( 'post' );
 		$custom_options['aiosp_sitemap_addl_pages'] = $pages;
 
 		$this->_setup_options( 'sitemap', $custom_options );

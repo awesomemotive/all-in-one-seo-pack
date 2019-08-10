@@ -198,7 +198,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 		 * @since ?
 		 */
 		function settings_page_init() {
-			$this->default_options['status']['default'] = $this->get_serverinfo();
+			$this->default_options['status']['default']     = $this->get_serverinfo();
 			$this->default_options['send_email']['default'] = $this->get_email_input();
 		}
 
@@ -329,8 +329,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 				__( 'Permalink Setting', 'all-in-one-seo-pack' ) => $perm_struct,
 			);
 			$debug_info[ __( 'Active Plugins', 'all-in-one-seo-pack' ) ] = null;
-			$active_plugins               = $inactive_plugins = array();
-			$plugins                      = get_plugins();
+			$active_plugins = $inactive_plugins = array();
+			$plugins        = get_plugins();
 			foreach ( $plugins as $path => $plugin ) {
 				if ( is_plugin_active( $path ) ) {
 					$debug_info[ $plugin['Name'] ] = $plugin['Version'];
@@ -339,7 +339,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 				}
 			}
 
-			$debug_key = __( 'Inactive Plugins', 'all-in-one-seo-pack' );
+			$debug_key                = __( 'Inactive Plugins', 'all-in-one-seo-pack' );
 			$debug_info[ $debug_key ] = null;
 			$debug_info               = array_merge( $debug_info, (array) $inactive_plugins );
 
@@ -371,8 +371,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 					}
 					if ( $email ) {
 						$attachments = array();
-						$upload_dir = wp_upload_dir();
-						$dir = $upload_dir['basedir'] . '/aiosp-log/';
+						$upload_dir  = wp_upload_dir();
+						$dir         = $upload_dir['basedir'] . '/aiosp-log/';
 						if ( wp_mkdir_p( $dir ) ) {
 							$file_path = $dir . 'settings_aioseop-' . date( 'Y-m-d' ) . '-' . time() . '.ini';
 							if ( ! file_exists( $file_path ) ) {

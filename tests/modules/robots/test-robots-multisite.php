@@ -184,8 +184,8 @@ class Test_Robots_Multisite extends Test_Robots {
 		$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
 		update_option( 'aioseop_options', $aioseop_options );
 
-		$errors     = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
-		$paths      = wp_list_pluck( $options['aiosp_robots_rules'], 'path' );
+		$errors = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
+		$paths  = wp_list_pluck( $options['aiosp_robots_rules'], 'path' );
 		if ( $error_message ) {
 			$this->assertGreaterThan( 0, count( $errors ), 'Error not logged!' );
 			$this->assertContains( $error_message, $errors[0], 'Error message not found!' );

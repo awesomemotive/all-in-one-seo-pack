@@ -68,7 +68,7 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 			$image_schema = $this->prepare_image( $this->get_user_image_data( $person_id ), home_url() . '/#personlogo' );
 			if ( $image_schema ) {
 				$rtn_data['image'] = $image_schema;
-				$rtn_data['logo'] = array( '@id' => home_url() . '/#personlogo' );
+				$rtn_data['logo']  = array( '@id' => home_url() . '/#personlogo' );
 			}
 		} else {
 			// Get Name from General > Schema Settings > Organization Name, and fallback on WP's Site Name.

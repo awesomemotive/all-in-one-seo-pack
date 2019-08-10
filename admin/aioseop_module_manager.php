@@ -203,7 +203,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 		 */
 		function load_module( $mod ) {
 			static $feature_options = null;
-			static $feature_prefix = null;
+			static $feature_prefix  = null;
 			if ( ! is_array( $this->modules ) ) {
 				return false;
 			}

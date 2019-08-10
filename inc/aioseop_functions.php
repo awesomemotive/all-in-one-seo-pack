@@ -417,8 +417,8 @@ if ( ! function_exists( 'aioseop_ajax_save_meta' ) ) {
 		else :
 			$label = "<label id='aioseop_label_{$target}_{$post_id}' class='aioseop-label-quickedit' for='{$target}editlink{$post_id}'></label><strong><i>" . __( 'No', 'all-in-one-seo-pack' ) . ' ' . $target . '</i></strong>';
 		endif;
-		$nonce  = wp_create_nonce( "aioseop_meta_{$target}_{$post_id}" );
-		$output = '<a id="' . $target . 'editlink' . $post_id . '" '
+		$nonce   = wp_create_nonce( "aioseop_meta_{$target}_{$post_id}" );
+		$output  = '<a id="' . $target . 'editlink' . $post_id . '" '
 			. 'class="aioseop_edit_link aioseop-icon-cog-edit" '
 			. 'href="javascript:void(0);" '
 			. 'onclick=\'aioseop_ajax_edit_meta_form(' . $post_id . ', "' . $target . '", "' . $nonce . '");return false;\' '
@@ -479,10 +479,12 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 	 * @since ?
 	 */
 	function aioseop_ajax_save_url() {
-		$valid   = true;
-		$invalid_msg    = null;
+		$valid       = true;
+		$invalid_msg = null;
+		$options     = array();
+
 		aioseop_ajax_init();
-		$options = array();
+
 		parse_str( $_POST['options'], $options );
 		foreach ( $options as $k => $v ) {
 			// all values are mandatory while adding to the sitemap.
@@ -669,7 +671,7 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 		if ( empty( $meta ) ) {
 			$meta = '<span style="color:green;">' . __( 'No duplicate meta tags found.', 'all-in-one-seo-pack' ) . '</span>';
 		} else {
-			$meta = "<table cellspacing=0 cellpadding=0 width=80% class='aioseop_table'><tr class='aioseop_table_header'><th>Meta For Site</th><th>Kind of Meta</th><th>Element Name</th><th>Element Value</th></tr>" . $meta . '</table>';
+			$meta  = "<table cellspacing=0 cellpadding=0 width=80% class='aioseop_table'><tr class='aioseop_table_header'><th>Meta For Site</th><th>Kind of Meta</th><th>Element Name</th><th>Element Value</th></tr>" . $meta . '</table>';
 			$meta .=
 				"<p><div class='aioseop_meta_info'><h3 style='padding:5px;margin-bottom:0px;'>" . __( 'What Does This Mean?', 'all-in-one-seo-pack' ) . "</h3><div style='padding:5px;padding-top:0px;'>"
 				/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */

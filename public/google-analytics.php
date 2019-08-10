@@ -159,7 +159,7 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 				}
 			}
 			$extra_options = apply_filters( 'aioseop_ga_extra_options', $extra_options, $aioseop_options );
-			$js_options = array();
+			$js_options    = array();
 			foreach ( array( 'cookie_domain', 'allow_linker' ) as $opts ) {
 				if ( ! empty( $$opts ) ) {
 					$js_options[] = $$opts;

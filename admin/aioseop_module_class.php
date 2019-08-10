@@ -729,7 +729,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					if ( $cont ) {
 						$regex .= '|';
 					}
-					$cont = 1;
+					$cont   = 1;
 					$regex .= preg_quote( trim( $l ), $quote );
 				}
 			}
@@ -1174,7 +1174,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					foreach ( $post_custom_fields as $field_name => $field ) {
 						if ( ( $this->strpos( $field_name, $prefix ) === 0 ) && $field[0] ) {
 							$has_data = true;
-							$data .= $field_name . " = '" . $field[0] . "'\n";
+							$data    .= $field_name . " = '" . $field[0] . "'\n";
 						}
 					}
 				}
@@ -1183,7 +1183,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				}
 
 				if ( $has_data != null ) {
-					$post_info = "\n[post_data]\n\n";
+					$post_info  = "\n[post_data]\n\n";
 					$post_info .= "post_title = '" . $title . "'\n";
 					$post_info .= "post_guid = '" . $guid . "'\n";
 					$post_info .= "post_date = '" . $date . "'\n";
@@ -2411,7 +2411,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 							}
 							if ( false !== strpos( $posttype, 'edit-' ) ) {
 								// Metabox priority/context on edit taxonomy screen.
-								$v['context'] = 'advanced';
+								$v['context']  = 'advanced';
 								$v['priority'] = 'default';
 							}
 
@@ -2522,9 +2522,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 */
 		function do_multi_input( $args ) {
 			$options = $args['options'];
-			$value = $args['value'];
-			$name = $args['name'];
-			$attr = $args['attr'];
+			$value   = $args['value'];
+			$name    = $args['name'];
+			$attr    = $args['attr'];
 
 			$buf1 = '';
 			$type = $options['type'];
@@ -2628,10 +2628,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			static $n = 0;
 
 			$options = $args['options'];
-			$value = $args['value'];
-			$name = $args['name'];
-			$attr = $args['attr'];
-			$prefix = isset( $args['prefix'] ) ? $args['prefix'] : '';
+			$value   = $args['value'];
+			$name    = $args['name'];
+			$attr    = $args['attr'];
+			$prefix  = isset( $args['prefix'] ) ? $args['prefix'] : '';
 
 			if ( $options['type'] == 'custom' ) {
 				return apply_filters( "{$prefix}output_option", '', $args );
@@ -2658,9 +2658,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			$onload = '';
 			if ( ! empty( $options['count'] ) ) {
 				$n ++;
-				$classes = isset( $options['class'] ) ? $options['class'] : '';
+				$classes  = isset( $options['class'] ) ? $options['class'] : '';
 				$classes .= ' aioseop_count_chars';
-				$attr .= " class='{$classes}' data-length-field='{$prefix}length$n'";
+				$attr    .= " class='{$classes}' data-length-field='{$prefix}length$n'";
 			}
 			if ( isset( $opts['id'] ) ) {
 				$attr .= " id=\"{$opts['id']}\" ";
@@ -2670,7 +2670,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			}
 			switch ( $options['type'] ) {
 				case 'multiselect':
-					$attr .= ' MULTIPLE';
+					$attr        .= ' MULTIPLE';
 					$args['attr'] = $attr;
 					$args['name'] = $name = "{$name}[]";
 					// fall through.
@@ -2713,6 +2713,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 						'class'       => true,
 						'placeholder' => true,
 					);
+
 					$buf .= wp_kses( $value, $allowed_tags );
 					break;
 				case 'esc_html':
@@ -2808,9 +2809,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 */
 		function display_options( $location = null, $meta_args = null ) {
 			static $location_settings = array();
+
 			$defaults  = null;
 			$prefix    = $this->get_prefix( $location );
 			$help_link = '';
+
 			if ( is_array( $meta_args['args'] ) && ! empty( $meta_args['args']['default_options'] ) ) {
 				$defaults = $meta_args['args']['default_options'];
 			}

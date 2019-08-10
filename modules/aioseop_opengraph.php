@@ -193,9 +193,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @param string $taxonomy Taxonomy slug.
 		 */
 		function created_term( $term_id, $tt_id, $taxonomy_name ) {
-			$k = 'settings';
-			$prefix  = $this->get_prefix( $k );
-			$tax = get_taxonomy( $taxonomy_name );
+			$k      = 'settings';
+			$prefix = $this->get_prefix( $k );
+			$tax    = get_taxonomy( $taxonomy_name );
 			$this->set_object_type_for_taxonomy( $prefix, $k, $taxonomy_name, $tax, false, array( $term_id ) );
 		}
 
@@ -293,8 +293,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @param string $k The key against which the options will be determined/set.
 		 */
 		private function set_virgin_tax_terms( $k ) {
-			$prefix  = $this->get_prefix( $k );
-			$opts    = $this->default_options( $k );
+			$prefix     = $this->get_prefix( $k );
+			$opts       = $this->default_options( $k );
 			$taxonomies = get_taxonomies( array( 'public' => true ), 'object' );
 			if ( ! $taxonomies ) {
 				return;
@@ -786,6 +786,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		function filter_options( $options, $location ) {
 			if ( $location == 'settings' ) {
 				$prefix = $this->get_prefix( $location ) . $location . '_';
+
 				list( $legacy, $images ) = $this->get_all_images( $options );
 				if ( isset( $options ) && isset( $options[ "{$prefix}image" ] ) ) {
 					$thumbnail = $options[ "{$prefix}image" ];
@@ -857,8 +858,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					if ( isset( $this->options['aiosp_opengraph_defcard'] ) ) {
 						$settings[ $prefix . 'setcard' ]['default'] = $this->options['aiosp_opengraph_defcard'];
 					}
-					$info = $aiosp->get_page_snippet_info();
-					$title = $info['title'];
+					$info        = $aiosp->get_page_snippet_info();
+					$title       = $info['title'];
 					$description = $info['description'];
 
 					// Description options.
@@ -877,7 +878,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 
 					// #1308 - we want to make sure we are ignoring php version only in the admin area
 					// while editing the post, so that it does not impact #932.
-					$screen = get_current_screen();
+					$screen             = get_current_screen();
 					$ignore_php_version = is_admin() && isset( $screen->id ) && 'post' == $screen->id;
 
 					// Add filters.
@@ -889,8 +890,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( isset( $current[ $prefix . 'setmeta' ] ) && $current[ $prefix . 'setmeta' ] ) {
 					foreach ( $opts as $opt ) {
 						if ( isset( $settings[ $prefix . $opt ] ) ) {
-							$settings[ $prefix . $opt ]['type']      = 'hidden';
-							$settings[ $prefix . $opt ]['label']     = 'none';
+							$settings[ $prefix . $opt ]['type']  = 'hidden';
+							$settings[ $prefix . $opt ]['label'] = 'none';
 							unset( $settings[ $prefix . $opt ]['count'] );
 						}
 					}
@@ -922,7 +923,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			global $aioseop_options;
 			// Prepare default and prefix.
 			$prefix = $this->get_prefix( $location ) . $location . '_';
-			$opts = array();
+			$opts   = array();
 
 			foreach ( $settings as $k => $v ) {
 				if ( $v['save'] ) {
@@ -1001,9 +1002,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		function display_custom_options( $buf, $args ) {
 			if ( $args['name'] == 'aiosp_opengraph_scan_header' ) {
 				$buf .= '<div class="aioseop aioseop_options aiosp_opengraph_settings"><div class="aioseop_wrapper aioseop_custom_type" id="aiosp_opengraph_scan_header_wrapper"><div class="aioseop_input" id="aiosp_opengraph_scan_header" style="padding-left:20px;">';
+
 				$args['options']['type'] = 'submit';
 				$args['attr']            = " class='button-primary' ";
 				$args['value']           = $args['options']['default'] = __( 'Scan Now', 'all-in-one-seo-pack' );
+
 				$buf .= __( 'Scan your site for duplicate social meta tags.', 'all-in-one-seo-pack' );
 				$buf .= '<br /><br />' . $this->get_option_html( $args );
 				$buf .= '</div></div></div>';
@@ -1281,8 +1284,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					$title = $aiosp->wp_title();
 				}
 				if ( empty( $description ) ) {
-					$term_id = isset( $_GET['tag_ID'] ) ? (int) $_GET['tag_ID'] : 0;
-					$term_id = $term_id ? $term_id : get_queried_object()->term_id;
+					$term_id     = isset( $_GET['tag_ID'] ) ? (int) $_GET['tag_ID'] : 0;
+					$term_id     = $term_id ? $term_id : get_queried_object()->term_id;
 					$description = trim( strip_tags( get_term_meta( $term_id, '_aioseop_description', true ) ) );
 				}
 				// Add default title.
@@ -1540,7 +1543,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			// Issue #1848 ( https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/1848 ).
 			if ( is_ssl() ) {
 				$meta['facebook'] += array( 'thumbnail_1' => 'og:image:secure_url' );
-				$thumbnail_1 = $thumbnail;
+				$thumbnail_1       = $thumbnail;
 			}
 
 			$tags = array(
@@ -1682,15 +1685,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				10,
 				3
 			);
-			$post_types                                        = $this->get_post_type_titles();
-			$rempost                                           = array(
+
+			$post_types = $this->get_post_type_titles();
+			$rempost    = array(
 				'revision'            => 1,
 				'nav_menu_item'       => 1,
 				'custom_css'          => 1,
 				'customize_changeset' => 1,
 			);
-			$post_types                                        = array_diff_key( $post_types, $rempost );
+			$post_types = array_diff_key( $post_types, $rempost );
+
 			$this->default_options['types']['initial_options'] = $post_types;
+
 			foreach ( $post_types as $slug => $name ) {
 				$field                                     = $slug . '_fb_object_type';
 				$this->default_options[ $field ]           = array(
@@ -1719,7 +1725,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$size    = apply_filters( 'post_thumbnail_size', 'large' );
 				$default = $this->get_the_image_by_default();
 				if ( ! empty( $default ) ) {
-					$default = set_url_scheme( $default );
+					$default         = set_url_scheme( $default );
 					$img[ $default ] = 0;
 				}
 				$img = array_merge( $img, parent::get_all_images( $options, null ) );

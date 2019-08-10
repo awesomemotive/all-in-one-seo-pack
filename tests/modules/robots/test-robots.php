@@ -75,7 +75,7 @@ class Test_Robots extends AIOSEOP_Test_Base {
 		$this->assertFalse( $this->check_file_exists(), 'Physical robots.txt not deleted' );
 
 		$aioseop_options = get_option( 'aioseop_options' );
-		$rules = $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'];
+		$rules           = $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'];
 
 		$this->assertEquals( 1, count( $rules ) );
 		$this->assertArrayHasKey( 'path', $rules[0], 'Rules not imported from physical robots.txt' );
@@ -110,7 +110,7 @@ class Test_Robots extends AIOSEOP_Test_Base {
 		$this->assertFalse( $this->check_file_exists(), 'Physical robots.txt not deleted' );
 
 		$aioseop_options = get_option( 'aioseop_options' );
-		$rules = $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'];
+		$rules           = $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'];
 
 		$this->assertEquals( 0, count( $rules ) );
 	}
@@ -203,8 +203,8 @@ class Test_Robots extends AIOSEOP_Test_Base {
 			'aiosp_robots_agent' => $rule['agent'],
 		);
 
-		$options    = apply_filters( 'aiosp_robots_update_options', array() );
-		$errors     = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
+		$errors  = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
 		$this->assertGreaterThan( 0, count( $errors ) );
 		$this->assertContains( $message, $errors[0], 'Default rule overriden' );
 
@@ -312,8 +312,8 @@ class Test_Robots extends AIOSEOP_Test_Base {
 			'aiosp_robots_agent' => $new_rule['agent'],
 		);
 
-		$options    = apply_filters( 'aiosp_robots_update_options', array() );
-		$errors     = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
+		$errors  = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
 		$this->assertGreaterThan( 0, count( $errors ) );
 		$this->assertContains( $message, $errors[0] );
 

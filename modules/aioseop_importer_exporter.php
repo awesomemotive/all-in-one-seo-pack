@@ -19,11 +19,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 		 * All_in_One_SEO_Pack_Importer_Exporter constructor.
 		 */
 		function __construct() {
-			$this->name   = __( 'Importer & Exporter', 'all-in-one-seo-pack' ); // Human-readable name of the module.
-			$this->prefix = 'aiosp_importer_exporter_';                         // option prefix.
-			$this->file   = __FILE__;
+			$this->name     = __( 'Importer & Exporter', 'all-in-one-seo-pack' ); // Human-readable name of the module.
+			$this->prefix   = 'aiosp_importer_exporter_';                         // option prefix.
+			$this->file     = __FILE__;
+			$this->warnings = array();
+
 			parent::__construct();
-			$this->warnings        = array();
+
 			$this->default_options = array(
 				'import_submit'      => array(
 					'name'    => __( 'Import', 'all-in-one-seo-pack' ),
@@ -63,6 +65,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 					) . '<br />',
 				),
 			);
+
 			$this->layout = array(
 				'default' => array(
 					'name'      => $this->name,
@@ -114,8 +117,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 		 * @since ?
 		 */
 		function debug_post_types() {
-			$post_types                                                    = $this->get_post_type_titles();
-			$rempost                                                       = array(
+			$post_types = $this->get_post_type_titles();
+			$rempost    = array(
 				'customize_changeset' => 1,
 				'custom_css'          => 1,
 				'revision'            => 1,
@@ -513,7 +516,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 							}
 						} catch ( Exception $e ) {
 							// Shows only one warning when compromised file is imported.
-							$this->warnings = array();
+							$this->warnings   = array();
 							$this->warnings[] = $e->getMessage();
 							add_action(
 								$this->prefix . 'settings_header_errors',
