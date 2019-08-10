@@ -242,7 +242,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 									$return_array[ $x[1] ]
 								);
 							}
-							if ( $k === 0 ) {
+							if ( 0 === $k ) {
 								$return_array[ $c ] = array_merge(
 									$return_array[ $c ],
 									$array[ $key ]
@@ -284,7 +284,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 						}
 						$first = true;
 						foreach ( $x as $k => $v ) {
-							if ( $first === true ) {
+							if ( true === $first ) {
 								$b     = $array[ $key ];
 								$first = false;
 							}
@@ -323,7 +323,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 							for ( $i = 0; $i < count( $elem2 ); $i ++ ) {
 								$content .= $key2 . '[] = "' . $elem2[ $i ] . "\"\n";
 							}
-						} elseif ( $elem2 == '' ) {
+						} elseif ( '' == $elem2 ) {
 							$content .= $key2 . " = \n";
 						} else {
 							$content .= $key2 . ' = "' . $elem2 . "\"\n";
@@ -336,7 +336,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 						for ( $i = 0; $i < count( $elem ); $i ++ ) {
 							$content .= $key2 . '[] = "' . $elem[ $i ] . "\"\n";
 						}
-					} elseif ( $elem == '' ) {
+					} elseif ( '' == $elem ) {
 						$content .= $key2 . " = \n";
 					} else {
 						$content .= $key2 . ' = "' . $elem . "\"\n";
@@ -393,7 +393,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 			if ( ! empty( $_REQUEST['export_submit'] ) ) {
 				$submit = 'Export';
 			}
-			if ( ( $submit != null ) && wp_verify_nonce( $nonce, 'aioseop-nonce' ) ) {
+			if ( ( null != $submit ) && wp_verify_nonce( $nonce, 'aioseop-nonce' ) ) {
 				switch ( $submit ) {
 					case 'Import':
 						try {
@@ -409,25 +409,25 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 								if ( empty( $line ) ) {
 									continue;
 								}
-								if ( $line[0] == ';' ) {
+								if ( ';' == $line[0] ) {
 									continue;
 								}
 								if ( preg_match( '/^\[(\S+)\]$/', $line, $label ) ) {
 									$section_label = strval( $label[1] );
-									if ( $section_label == 'post_data' ) {
+									if ( 'post_data' == $section_label ) {
 										$count ++;
 									}
 									if ( ! isset( $section[ $section_label ] ) ) {
 										$section[ $section_label ] = array();
 									}
 								} elseif ( preg_match( "/^(\S+)\s*=\s*'(.*)'$/", $line, $matches ) ) {
-									if ( $section_label == 'post_data' ) {
+									if ( 'post_data' == $section_label ) {
 										$section[ $section_label ][ $count ][ $matches[1] ] = $matches[2];
 									} else {
 										$section[ $section_label ][ $matches[1] ] = $matches[2];
 									}
 								} elseif ( preg_match( '/^(\S+)\s*=\s*NULL$/', $line, $matches ) ) {
-									if ( $section_label == 'post_data' ) {
+									if ( 'post_data' == $section_label ) {
 										$section[ $section_label ][ $count ][ $matches[1] ] = null;
 									} else {
 										$section[ $section_label ][ $matches[1] ] = null;
@@ -451,7 +451,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 										foreach ( $module_options as $key => $value ) {
 
 											// Updates Post Data.
-											if ( $label == 'post_data' ) {
+											if ( 'post_data' == $label ) {
 												$post_exists = post_exists(
 													$module_options[ $key ]['post_title'],
 													'',
@@ -459,8 +459,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 												);
 												$target      = get_post( $post_exists );
 												if (
-													( ! empty( $module_options[ $key ]['post_type'] ) ) &&
-													$post_exists != null
+														( ! empty( $module_options[ $key ]['post_type'] ) ) &&
+														null != $post_exists
 												) {
 													if ( is_array( $value ) ) {
 														foreach ( $value as $field_name => $field_value ) {
@@ -491,7 +491,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 														$target_title
 													);
 												}
-												if ( $post_warning != null ) {
+												if ( null != $post_warning ) {
 													$this->warnings[] = $post_warning;
 													$post_warning     = null;
 												}

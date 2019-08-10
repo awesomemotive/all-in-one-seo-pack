@@ -122,7 +122,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 		 * @return mixed
 		 */
 		function update_options_filter( $options, $location ) {
-			if ( $location == null && isset( $options[ $this->prefix . 'force_rewrites' ] ) ) {
+			if ( null == $location && isset( $options[ $this->prefix . 'force_rewrites' ] ) ) {
 				unset( $options[ $this->prefix . 'force_rewrites' ] );
 			}
 
@@ -139,7 +139,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 		 * @return mixed
 		 */
 		function display_options_filter( $options, $location ) {
-			if ( $location == null ) {
+			if ( null == $location ) {
 				$options[ $this->prefix . 'force_rewrites' ] = 1;
 				global $aiosp;
 				$opts                                        = $aiosp->get_current_options( array(), null );
@@ -157,9 +157,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 		 * @param $location
 		 */
 		function settings_update_action( $options, $location ) {
-			if ( $location == null && isset( $_POST[ $this->prefix . 'force_rewrites' ] ) ) {
+			if ( null == $location && isset( $_POST[ $this->prefix . 'force_rewrites' ] ) ) {
 				$force_rewrites = $_POST[ $this->prefix . 'force_rewrites' ];
-				if ( ( $force_rewrites == 0 ) || ( $force_rewrites == 1 ) ) {
+				if ( ( 0 == $force_rewrites ) || ( 1 == $force_rewrites ) ) {
 					global $aiosp;
 					$opts                         = $aiosp->get_current_options( array(), null );
 					$opts['aiosp_force_rewrites'] = $force_rewrites;
@@ -324,7 +324,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 				__( 'Active Theme', 'all-in-one-seo-pack' ) => $theme['Name'] . ' ' . $theme['Version'],
 				__( 'Site Title', 'all-in-one-seo-pack' )  => $site_title,
 				__( 'Site Language', 'all-in-one-seo-pack' ) => $language,
-				__( 'Front Page Displays', 'all-in-one-seo-pack' ) => $front_displays === 'page' ? $front_displays . ' [ID = ' . $page_on_front . ']' : $front_displays,
+				__( 'Front Page Displays', 'all-in-one-seo-pack' ) => 'page' === $front_displays ? $front_displays . ' [ID = ' . $page_on_front . ']' : $front_displays,
 				__( 'Search Engine Visibility', 'all-in-one-seo-pack' ) => $blog_public,
 				__( 'Permalink Setting', 'all-in-one-seo-pack' ) => $perm_struct,
 			);
@@ -348,7 +348,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 			$page_text = '';
 			if ( ! empty( $debug_info ) ) {
 				foreach ( $debug_info as $name => $value ) {
-					if ( $value !== null ) {
+					if ( null !== $value ) {
 						$page_text .= "<li><strong>$name</strong> $value</li>";
 						$mail_text .= "$name: $value\r\n";
 					} else {

@@ -1396,9 +1396,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$this->is_front_page = false;
 			}
 			if ( 'page' === get_option( 'show_on_front' ) ) {
-				if ( is_page() && $post->ID == get_option( 'page_on_front' ) ) {
+				if ( is_page() && get_option( 'page_on_front' ) == $post->ID ) {
 					$this->is_front_page = true;
-				} elseif ( $post->ID == get_option( 'page_for_posts' ) ) {
+				} elseif ( get_option( 'page_for_posts' ) == $post->ID ) {
 					$wp_query->is_home = true;
 				}
 			}
@@ -1460,7 +1460,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 			$description = $this->internationalize( $description );
 		}
-		if ( $this->is_front_page == true ) {
+		if ( true == $this->is_front_page ) {
 			// $title_format = $aioseop_options['aiosp_home_page_title_format'];
 			$title_format = ''; // Not sure why this needs to be this way, but we should extract all this out to figure out what's going on.
 		}
@@ -1685,7 +1685,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( is_front_page() ) {
 			if ( ! empty( $aioseop_options['aiosp_use_static_home_info'] ) ) {
 				global $post;
-				if ( get_option( 'show_on_front' ) == 'page' && is_page() && $post->ID == get_option( 'page_on_front' ) ) {
+				if ( 'page' == get_option( 'show_on_front' ) && is_page() && get_option( 'page_on_front' ) == $post->ID ) {
 					$title = $this->internationalize( get_post_meta( $post->ID, '_aioseop_title', true ) );
 					if ( ! $title ) {
 						$title = $this->internationalize( $post->post_title );
@@ -1712,7 +1712,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			// #1616 - Avoid trying to get property of non-object when no posts are present on the homepage.
 			global $post;
 
-			if ( $post === null ) {
+			if ( null === $post ) {
 				$post_id = get_option( 'page_on_front' );
 			} else {
 				$post_id = $post->ID;
@@ -2085,11 +2085,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 		} elseif ( is_author() ) {
 			$author = get_userdata( get_query_var( 'author' ) );
-			if ( $author === false ) {
+			if ( false === $author ) {
 				global $wp_query;
 				$author = $wp_query->get_queried_object();
 			}
-			if ( $author !== false ) {
+			if ( false !== $author ) {
 				$title = $author->display_name;
 			}
 		} elseif ( is_day() ) {
@@ -2161,7 +2161,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function apply_page_title_format( $title, $p = null, $title_format = '' ) {
 		global $aioseop_options;
-		if ( $p === null ) {
+		if ( null === $p ) {
 			global $post;
 		} else {
 			$post = $p;
@@ -2214,7 +2214,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( false !== strpos( $new_title, "%{$type}_title%", 0 ) ) {
 			$new_title = str_replace( "%{$type}_title%", $title, $new_title );
 		}
-		if ( $type == 'post' ) {
+		if ( 'post' == $type ) {
 			if ( false !== strpos( $new_title, '%category%', 0 ) ) {
 				$new_title = str_replace( '%category%', $category, $new_title );
 			}
@@ -2372,7 +2372,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string
 	 */
 	function apply_post_title_format( $title, $category = '', $p = null ) {
-		if ( $p === null ) {
+		if ( null === $p ) {
 			global $post;
 		} else {
 			$post = $p;
@@ -2393,7 +2393,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function get_post_title_format( $title_type = 'post', $p = null ) {
 		global $aioseop_options;
-		if ( ( $title_type != 'post' ) && ( $title_type != 'archive' ) ) {
+		if ( ( 'post' != $title_type ) && ( 'archive' != $title_type ) ) {
 			return false;
 		}
 		$title_format = "%{$title_type}_title% | %site_title%";
@@ -2405,12 +2405,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$wp_post_types = $aioseop_options['aiosp_cpostactive'];
 			if (
 					(
-						( $title_type == 'archive' ) &&
+						( 'archive' == $title_type ) &&
 						is_post_type_archive( $wp_post_types ) &&
 						$prefix = "aiosp_{$title_type}_"
 					) ||
 					(
-						( $title_type == 'post' ) &&
+						( 'post' == $title_type ) &&
 						$this->is_singular( $wp_post_types, $p ) &&
 						$prefix = 'aiosp_'
 					)
@@ -2452,11 +2452,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function is_static_posts_page() {
 		static $is_posts_page = null;
-		if ( $is_posts_page !== null ) {
+		if ( null !== $is_posts_page ) {
 			return $is_posts_page;
 		}
 		$post          = $this->get_queried_object();
-		$is_posts_page = ( get_option( 'show_on_front' ) == 'page' && is_home() && ! empty( $post ) && $post->ID == get_option( 'page_for_posts' ) );
+		$is_posts_page = ( 'page' == get_option( 'show_on_front' ) && is_home() && ! empty( $post ) && get_option( 'page_for_posts' ) == $post->ID );
 
 		return $is_posts_page;
 	}
@@ -2469,11 +2469,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return bool|null
 	 */
 	function is_static_front_page() {
-		if ( isset( $this->is_front_page ) && $this->is_front_page !== null ) {
+		if ( isset( $this->is_front_page ) && null !== $this->is_front_page ) {
 			return $this->is_front_page;
 		}
 		$post                = $this->get_queried_object();
-		$this->is_front_page = ( get_option( 'show_on_front' ) == 'page' && is_page() && ! empty( $post ) && $post->ID == get_option( 'page_on_front' ) );
+		$this->is_front_page = ( 'page' == get_option( 'show_on_front' ) && is_page() && ! empty( $post ) && get_option( 'page_on_front' ) == $post->ID );
 
 		return $this->is_front_page;
 	}
@@ -3091,7 +3091,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$page_name = $wp_rewrite->pagination_base;
 		}
 		if ( ! empty( $page ) && $page > 1 ) {
-			if ( $page == get_query_var( 'page' ) ) {
+			if ( get_query_var( 'page' ) == $page ) {
 				if ( get_query_var( 'p' ) ) {
 					// non-pretty urls.
 					$link = add_query_arg( 'page', $page, $link );
@@ -3667,7 +3667,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( AIOSEOPPRO ) {
 			global $aioseop_update_checker;
 		}
-		if ( $delete === true ) {
+		if ( true === $delete ) {
 
 			if ( AIOSEOPPRO ) {
 				$license_key = '';
@@ -3688,7 +3688,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		if ( AIOSEOPPRO ) {
 			foreach ( $default_options as $k => $v ) {
-				if ( $k != 'aiosp_license_key' ) {
+				if ( 'aiosp_license_key' != $k ) {
 					$this->options[ $k ] = $v;
 				}
 			}
@@ -3713,7 +3713,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return mixed
 	 */
 	function filter_settings( $settings, $location, $current ) {
-		if ( $location == null ) {
+		if ( null == $location ) {
 			$prefix = $this->prefix;
 
 			foreach ( array( 'seopostcol', 'seocustptcol', 'debug_info', 'max_words_excerpt' ) as $opt ) {
@@ -3726,7 +3726,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					$settings['aiosp_license_key']['size'] = 38;
 				}
 			}
-		} elseif ( $location == 'aiosp' ) {
+		} elseif ( 'aiosp' == $location ) {
 			global $post, $aioseop_sitemap;
 			$prefix = $this->get_prefix( $location ) . $location . '_';
 			if ( ! empty( $post ) ) {
@@ -3796,23 +3796,23 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return mixed
 	 */
 	function filter_options( $options, $location ) {
-		if ( $location == 'aiosp' ) {
+		if ( 'aiosp' == $location ) {
 			global $post;
 			if ( ! empty( $post ) ) {
 				$prefix    = $this->prefix;
 				$post_type = get_post_type( $post );
 				foreach ( array( 'noindex', 'nofollow' ) as $no ) {
 					if ( empty( $this->options[ 'aiosp_cpost' . $no ] ) || ( ! in_array( $post_type, $this->options[ 'aiosp_cpost' . $no ] ) ) ) {
-						if ( isset( $options[ "{$prefix}{$no}" ] ) && ( $options[ "{$prefix}{$no}" ] != 'on' ) ) {
+						if ( isset( $options[ "{$prefix}{$no}" ] ) && ( 'on' != $options[ "{$prefix}{$no}" ] ) ) {
 							unset( $options[ "{$prefix}{$no}" ] );
 						}
 					}
 				}
 			}
 		}
-		if ( $location == null ) {
+		if ( null == $location ) {
 			$prefix = $this->prefix;
-			if ( isset( $options[ "{$prefix}use_original_title" ] ) && ( $options[ "{$prefix}use_original_title" ] === '' ) ) {
+			if ( isset( $options[ "{$prefix}use_original_title" ] ) && ( '' === $options[ "{$prefix}use_original_title" ] ) ) {
 				$options[ "{$prefix}use_original_title" ] = 0;
 			}
 		}
@@ -3924,7 +3924,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			return false;
 		}
 
-		if ( ! empty( $this->meta_opts ) && $this->meta_opts['aiosp_disable'] == true ) {
+		if ( ! empty( $this->meta_opts ) && true == $this->meta_opts['aiosp_disable'] ) {
 			return false;
 		}
 
@@ -4045,7 +4045,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				add_action( 'after_plugin_row_' . AIOSEOP_PLUGIN_BASENAME, array( $aioseop_update_checker, 'add_plugin_row' ) );
 			}
 		} else {
-			if ( $aioseop_options['aiosp_can'] == '1' || $aioseop_options['aiosp_can'] == 'on' ) {
+			if ( '1' == $aioseop_options['aiosp_can'] || 'on' == $aioseop_options['aiosp_can'] ) {
 				remove_action( 'wp_head', 'rel_canonical' );
 			}
 			// Analytics.
@@ -4308,7 +4308,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( isset( $aioseop_options['aiosp_togglekeywords'] ) ) {
 			$togglekeywords = $aioseop_options['aiosp_togglekeywords'];
 		}
-		if ( $togglekeywords == 0 && ! ( is_front_page() && is_paged() ) ) {
+		if ( 0 == $togglekeywords && ! ( is_front_page() && is_paged() ) ) {
 			$keywords = $this->get_main_keywords();
 			$keywords = $this->apply_cf_fields( $keywords );
 			$keywords = apply_filters( 'aioseop_keywords', $keywords );
@@ -4401,7 +4401,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( ! empty( $next ) ) {
 			$meta_string .= '<link rel="next" href="' . esc_url( $next ) . "\" />\n";
 		}
-		if ( $meta_string != null ) {
+		if ( null != $meta_string ) {
 			echo "$meta_string\n";
 		}
 
@@ -5328,7 +5328,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		*/
 
-		if ( isset( $_POST ) && isset( $_POST['module'] ) && isset( $_POST['nonce-aioseop'] ) && ( $_POST['module'] == 'All_in_One_SEO_Pack' ) && wp_verify_nonce( $_POST['nonce-aioseop'], 'aioseop-nonce' ) ) {
+		if ( isset( $_POST ) && isset( $_POST['module'] ) && isset( $_POST['nonce-aioseop'] ) && ( 'All_in_One_SEO_Pack' == $_POST['module'] ) && wp_verify_nonce( $_POST['nonce-aioseop'], 'aioseop-nonce' ) ) {
 			if ( isset( $_POST['Submit'] ) && AIOSEOPPRO ) {
 				if ( isset( $_POST['aiosp_custom_menu_order'] ) ) {
 					$custom_menu_order = $_POST['aiosp_custom_menu_order'];
@@ -5352,7 +5352,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( ! AIOSEOPPRO ) {
 			if ( ! empty( $this->pointers ) ) {
 				foreach ( $this->pointers as $k => $p ) {
-					if ( ! empty( $p['pointer_scope'] ) && ( $p['pointer_scope'] == 'global' ) ) {
+					if ( ! empty( $p['pointer_scope'] ) && ( 'global' == $p['pointer_scope'] ) ) {
 						unset( $this->pointers[ $k ] );
 					}
 				}
@@ -5499,7 +5499,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			if ( $item != $file ) {
 				$order[] = $item;
 			}
-			if ( $index == 0 ) {
+			if ( 0 == $index ) {
 				$order[] = $file;
 			}
 		}

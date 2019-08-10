@@ -519,11 +519,11 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		}
 
 		if ( $node->hasChildNodes() ) {
-			if ( $node->childNodes->length == 1 ) {
+			if ( 1 == $node->childNodes->length ) {
 				$array[ $node->firstChild->nodeName ] = $node->firstChild->nodeValue;
 			} else {
 				foreach ( $node->childNodes as $child_node ) {
-					if ( $child_node->nodeType != XML_TEXT_NODE ) {
+					if ( XML_TEXT_NODE != $child_node->nodeType ) {
 						$array[ $child_node->nodeName ][] = $this->get_node_as_array( $child_node );
 					}
 				}

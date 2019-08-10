@@ -107,7 +107,7 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 
 			$this->current_locale = get_locale();
 
-			if ( $this->current_locale === 'en_US' ) {
+			if ( 'en_US' === $this->current_locale ) {
 				return;
 			}
 
@@ -267,7 +267,7 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 
 			$json = $this->get_locale_data();
 
-			if ( $json === false ) {
+			if ( false === $json ) {
 				return false;
 			}
 

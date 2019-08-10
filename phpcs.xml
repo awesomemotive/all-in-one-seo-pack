@@ -11,7 +11,6 @@
     <rule ref="WordPress-Core">
 
 
-        <exclude name="WordPress.PHP.YodaConditions.NotYoda" />
         <exclude name="Squiz.PHP.DisallowMultipleAssignments" />
 
         <!-- TODO (Maybe) Change class filenames with "class-" prepended. -->

@@ -62,12 +62,24 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Front' ) ) {
 		 */
 		function redirect_attachment() {
 			global $aioseop_options;
-			if ( ! isset( $aioseop_options['aiosp_redirect_attachement_parent'] ) || $aioseop_options['aiosp_redirect_attachement_parent'] !== 'on' ) {
+			if ( ! isset( $aioseop_options['aiosp_redirect_attachement_parent'] ) || 'on' !== $aioseop_options['aiosp_redirect_attachement_parent'] ) {
 				return false;
 			}
 
 			global $post;
-			if ( is_attachment() && ( ( is_object( $post ) && isset( $post->post_parent ) ) && ( is_numeric( $post->post_parent ) && $post->post_parent != 0 ) ) ) {
+			if (
+					is_attachment() &&
+					(
+							(
+									is_object( $post ) &&
+									isset( $post->post_parent )
+							) &&
+							(
+									is_numeric( $post->post_parent ) &&
+									0 != $post->post_parent
+							)
+					)
+			) {
 				wp_safe_redirect( aioseop_get_permalink( $post->post_parent ), 301 );
 				exit;
 			}

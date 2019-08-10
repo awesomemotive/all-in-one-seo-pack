@@ -278,7 +278,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * Called when this module is activated.
 		 */
 		public function activate_module() {
-			if ( $this->locations !== null ) {
+			if ( null !== $this->locations ) {
 				foreach ( $this->locations as $k => $v ) {
 					if ( ! isset( $v['type'] ) || 'metabox' !== $v['type'] ) {
 						continue;
@@ -784,14 +784,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		}
 
 		function filter_options( $options, $location ) {
-			if ( $location == 'settings' ) {
+			if ( 'settings' == $location ) {
 				$prefix = $this->get_prefix( $location ) . $location . '_';
 
 				list( $legacy, $images ) = $this->get_all_images( $options );
 				if ( isset( $options ) && isset( $options[ "{$prefix}image" ] ) ) {
 					$thumbnail = $options[ "{$prefix}image" ];
-					if ( ctype_digit( (string) $thumbnail ) || ( $thumbnail == 'post' ) ) {
-						if ( $thumbnail == 'post' ) {
+					if ( ctype_digit( (string) $thumbnail ) || ( 'post' == $thumbnail ) ) {
+						if ( 'post' == $thumbnail ) {
 							$thumbnail = $images['post1'];
 						} elseif ( ! empty( $legacy[ $thumbnail ] ) ) {
 							$thumbnail = $legacy[ $thumbnail ];
@@ -821,12 +821,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 */
 		function filter_settings( $settings, $location, $current ) {
 			global $aiosp, $post;
-			if ( $location == 'opengraph' || $location == 'settings' ) {
+			if ( 'opengraph' == $location || 'settings' == $location ) {
 				$prefix = $this->get_prefix( $location ) . $location . '_';
-				if ( $location == 'opengraph' ) {
+				if ( 'opengraph' == $location ) {
 					return $settings;
 				}
-				if ( $location == 'settings' ) {
+				if ( 'settings' == $location ) {
 					list( $legacy, $settings[ $prefix . 'image' ]['initial_options'] ) = $this->get_all_images( $current );
 					$opts              = array( 'title', 'desc' );
 					$current_post_type = get_post_type();
@@ -950,7 +950,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						}
 						break;
 				}
-				if ( $v === null ) {
+				if ( null === $v ) {
 					unset( $options[ $k ] );
 				}
 			}
@@ -987,7 +987,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @return array
 		 */
 		function filter_metabox_options( $options, $location, $post_id ) {
-			if ( $location == 'settings' ) {
+			if ( 'settings' == $location ) {
 				$prefix = $this->get_prefix( $location ) . $location . '_';
 				if ( isset( $options[ $prefix . 'customimg_checker' ] )
 					&& $options[ $prefix . 'customimg_checker' ]
@@ -1000,7 +1000,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 
 		/** Custom settings **/
 		function display_custom_options( $buf, $args ) {
-			if ( $args['name'] == 'aiosp_opengraph_scan_header' ) {
+			if ( 'aiosp_opengraph_scan_header' == $args['name'] ) {
 				$buf .= '<div class="aioseop aioseop_options aiosp_opengraph_settings"><div class="aioseop_wrapper aioseop_custom_type" id="aiosp_opengraph_scan_header_wrapper"><div class="aioseop_input" id="aiosp_opengraph_scan_header" style="padding-left:20px;">';
 
 				$args['options']['type'] = 'submit';
@@ -1164,7 +1164,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					in_array( $current_post_type, $this->options['aiosp_opengraph_types'] )
 			) {
 
-				if ( $type == 'article' ) {
+				if ( 'article' == $type ) {
 					if ( ! empty( $metabox['aioseop_opengraph_settings_section'] ) ) {
 						$section = $metabox['aioseop_opengraph_settings_section'];
 					}
@@ -1180,7 +1180,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					$domain = $this->options['aiosp_opengraph_twitter_domain'];
 				}
 
-				if ( $type == 'article' && ! empty( $post ) ) {
+				if ( 'article' == $type && ! empty( $post ) ) {
 					if ( isset( $post->post_author ) && ! empty( $this->options['aiosp_opengraph_facebook_author'] ) ) {
 						$author = get_the_author_meta( 'facebook', $post->post_author );
 					}
@@ -1248,7 +1248,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( isset( $metabox['aioseop_opengraph_settings_category'] ) ) {
 					$type = $metabox['aioseop_opengraph_settings_category'];
 				}
-				if ( $type == 'article' ) {
+				if ( 'article' == $type ) {
 					if ( ! empty( $metabox['aioseop_opengraph_settings_section'] ) ) {
 						$section = $metabox['aioseop_opengraph_settings_section'];
 					}
@@ -1262,7 +1262,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( ! empty( $this->options['aiosp_opengraph_twitter_domain'] ) ) {
 					$domain = $this->options['aiosp_opengraph_twitter_domain'];
 				}
-				if ( $type == 'article' && ! empty( $post ) ) {
+				if ( 'article' == $type && ! empty( $post ) ) {
 					if ( isset( $post->post_author ) && ! empty( $this->options['aiosp_opengraph_facebook_author'] ) ) {
 						$author = get_the_author_meta( 'facebook', $post->post_author );
 					}
@@ -1330,7 +1330,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				return;
 			}
 
-			if ( $type === 'article' && ! empty( $post ) && is_singular() ) {
+			if ( 'article' === $type && ! empty( $post ) && is_singular() ) {
 				if ( ! empty( $this->options['aiosp_opengraph_gen_tags'] ) ) {
 					if ( ! empty( $this->options['aiosp_opengraph_gen_keywords'] ) ) {
 						$keywords = $aiosp->get_main_keywords();
@@ -1475,7 +1475,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			}
 
 			// support for changing legacy twitter cardtype-photo to summary large image.
-			if ( $card == 'photo' ) {
+			if ( 'photo' == $card ) {
 				$card = 'summary_large_image';
 			}
 
@@ -1755,7 +1755,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		}
 
 		function get_the_image_by_author( $options = null, $p = null ) {
-			if ( $p === null ) {
+			if ( null === $p ) {
 				global $post;
 			} else {
 				$post = $p;
@@ -1847,9 +1847,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			if ( $update ) {
 				return;
 			}
-			if ( $this->locations !== null ) {
+			if ( null !== $this->locations ) {
 				foreach ( $this->locations as $k => $v ) {
-					if ( isset( $v['type'] ) && ( $v['type'] === 'metabox' ) ) {
+					if ( isset( $v['type'] ) && ( 'metabox' === $v['type'] ) ) {
 						$opts    = $this->default_options( $k );
 						$options = array();
 						$update  = false;
@@ -1897,7 +1897,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @return array
 		 */
 		public function filter_default_options( $options, $location ) {
-			if ( $location === 'settings' ) {
+			if ( 'settings' === $location ) {
 				$prefix = $this->get_prefix( $location ) . $location . '_';
 				// Add image checker as default.
 				$options[ $prefix . 'customimg_checker' ] = 0;

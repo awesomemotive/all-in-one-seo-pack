@@ -90,7 +90,7 @@ if ( ! function_exists( 'aioseop_update_settings_check' ) ) {
 				unset( $aioseop_options['aiosp_archive_title_format'] );
 				$update_options = true;
 			}
-			if ( ! empty( $aioseop_options['aiosp_archive_title_format'] ) && ( $aioseop_options['aiosp_archive_title_format'] === '%date% | %site_title%' ) ) {
+			if ( ! empty( $aioseop_options['aiosp_archive_title_format'] ) && ( '%date% | %site_title%' === $aioseop_options['aiosp_archive_title_format'] ) ) {
 				$aioseop_options['aiosp_archive_title_format'] = '%archive_title% | %site_title%';
 				$update_options                                = true;
 			}
@@ -121,7 +121,7 @@ if ( ! function_exists( 'aioseop_initialize_options' ) ) {
 				if ( $aioseop_oldval = get_option( $aioseop_opt_name ) ) {
 					$naioseop_options[ $aioseop_opt_name ] = $aioseop_oldval;
 				}
-				if ( $aioseop_oldval == '' ) {
+				if ( '' == $aioseop_oldval ) {
 					$naioseop_options[ $aioseop_opt_name ] = '';
 				}
 				delete_option( $aioseop_opt_name );
@@ -183,7 +183,7 @@ if ( ! function_exists( 'aioseop_addmycolumns' ) ) {
 		if ( ! empty( $aioseop_options ) && ! empty( $aioseop_options['aiosp_posttypecolumns'] ) ) {
 			$aiosp_posttypecolumns = $aioseop_options['aiosp_posttypecolumns'];
 		}
-		if ( ! empty( $pagenow ) && ( $pagenow === 'upload.php' ) ) {
+		if ( ! empty( $pagenow ) && ( 'upload.php' === $pagenow ) ) {
 			$post_type = 'attachment';
 		} elseif ( ! isset( $_REQUEST['post_type'] ) ) {
 			$post_type = 'post';
@@ -192,14 +192,14 @@ if ( ! function_exists( 'aioseop_addmycolumns' ) ) {
 		}
 		if ( is_array( $aiosp_posttypecolumns ) && in_array( $post_type, $aiosp_posttypecolumns ) ) {
 			add_action( 'admin_head', 'aioseop_admin_head' );
-			if ( $post_type === 'page' ) {
+			if ( 'page' === $post_type ) {
 				add_filter( 'manage_pages_columns', 'aioseop_mrt_pcolumns' );
-			} elseif ( $post_type === 'attachment' ) {
+			} elseif ( 'attachment' === $post_type ) {
 				add_filter( 'manage_media_columns', 'aioseop_mrt_pcolumns' );
 			} else {
 				add_filter( 'manage_posts_columns', 'aioseop_mrt_pcolumns' );
 			}
-			if ( $post_type === 'attachment' ) {
+			if ( 'attachment' === $post_type ) {
 				add_action( 'manage_media_custom_column', 'aioseop_mrt_pccolumn', 10, 2 );
 			} elseif ( is_post_type_hierarchical( $post_type ) ) {
 				add_action( 'manage_pages_custom_column', 'aioseop_mrt_pccolumn', 10, 2 );
@@ -390,7 +390,7 @@ if ( ! function_exists( 'aioseop_ajax_save_meta' ) ) {
 	 * AIOSEOP AJAX Save Meta
 	 */
 	function aioseop_ajax_save_meta() {
-		if ( ! empty( $_POST['_inline_edit'] ) && ( $_POST['_inline_edit'] !== 'undefined' ) ) {
+		if ( ! empty( $_POST['_inline_edit'] ) && ( 'undefined' !== $_POST['_inline_edit'] ) ) {
 			check_ajax_referer( 'inlineeditnonce', '_inline_edit' );
 		}
 		$post_id  = intval( $_POST['post_id'] );
@@ -412,7 +412,7 @@ if ( ! function_exists( 'aioseop_ajax_save_meta' ) ) {
 		} else {
 			die();
 		}
-		if ( $result != '' ) :
+		if ( '' != $result ) :
 			$label = "<label id='aioseop_label_{$target}_{$post_id}' class='aioseop-label-quickedit' for='{$target}editlink{$post_id}'>" . $result . '</label>';
 		else :
 			$label = "<label id='aioseop_label_{$target}_{$post_id}' class='aioseop-label-quickedit' for='{$target}editlink{$post_id}'></label><strong><i>" . __( 'No', 'all-in-one-seo-pack' ) . ' ' . $target . '</i></strong>';
@@ -507,9 +507,9 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 			global $aiosp, $aioseop_modules;
 			aioseop_load_modules();
 			$aiosp->admin_menu();
-			if ( ! empty( $_POST['settings'] ) && ( $_POST['settings'] === 'video_sitemap_addl_pages' ) ) {
+			if ( ! empty( $_POST['settings'] ) && ( 'video_sitemap_addl_pages' === $_POST['settings'] ) ) {
 				$module = $aioseop_modules->return_module( 'All_in_One_SEO_Pack_Video_Sitemap' );
-			} elseif ( ! empty( $_POST['settings'] ) && ( $_POST['settings'] === 'news_sitemap_addl_pages' ) ) {
+			} elseif ( ! empty( $_POST['settings'] ) && ( 'news_sitemap_addl_pages' === $_POST['settings'] ) ) {
 				$module = $aioseop_modules->return_module( 'All_in_One_SEO_Pack_News_Sitemap' );
 			} else {
 				$module = $aioseop_modules->return_module( 'All_in_One_SEO_Pack_Sitemap' );
@@ -797,7 +797,7 @@ if ( ! function_exists( 'aioseop_ajax_get_menu_links' ) ) {
 		$output = '<ul>';
 		if ( ! empty( $links ) ) {
 			foreach ( $links as $k => $v ) {
-				if ( $k === 'Feature Manager' ) {
+				if ( 'Feature Manager' === $k ) {
 					$current = ' class="current"';
 				} else {
 					$current = '';
@@ -823,13 +823,13 @@ if ( ! function_exists( 'aioseop_mrt_pccolumn' ) ) {
 	function aioseop_mrt_pccolumn( $aioseopcn, $aioseoppi ) {
 		$id     = $aioseoppi;
 		$target = null;
-		if ( $aioseopcn === 'seotitle' ) {
+		if ( 'seotitle' === $aioseopcn ) {
 			$target = 'title';
 		}
-		if ( $aioseopcn === 'seokeywords' ) {
+		if ( 'seokeywords' === $aioseopcn ) {
 			$target = 'keywords';
 		}
-		if ( $aioseopcn === 'seodesc' ) {
+		if ( 'seodesc' === $aioseopcn ) {
 			$target = 'description';
 		}
 		if ( ! $target ) {
@@ -898,7 +898,7 @@ if ( ! function_exists( 'aioseop_mrt_exclude_this_page' ) ) {
 	 */
 	function aioseop_mrt_exclude_this_page( $url = null ) {
 		static $excluded = false;
-		if ( $excluded === false ) {
+		if ( false === $excluded ) {
 			global $aioseop_options;
 			$ex_pages = '';
 			if ( isset( $aioseop_options['aiosp_ex_pages'] ) ) {
@@ -920,7 +920,7 @@ if ( ! function_exists( 'aioseop_mrt_exclude_this_page' ) ) {
 			}
 		}
 		if ( ! empty( $excluded ) ) {
-			if ( $url === null ) {
+			if ( null === $url ) {
 				$url = $_SERVER['REQUEST_URI'];
 			} else {
 				$url = wp_parse_url( $url );
@@ -958,7 +958,7 @@ if ( ! function_exists( 'aioseop_add_contactmethods' ) ) {
 
 		if ( ! empty( $aioseop_modules ) && is_object( $aioseop_modules ) ) {
 			$m = $aioseop_modules->return_module( 'All_in_One_SEO_Pack_Opengraph' );
-			if ( ( $m !== false ) && is_object( $m ) ) {
+			if ( ( false !== $m ) && is_object( $m ) ) {
 
 				if ( $m->option_isset( 'twitter_creator' ) || $m->option_isset( 'facebook_author' ) ) {
 					$contactmethods['aioseop_edit_profile_header'] = AIOSEOP_PLUGIN_NAME;
