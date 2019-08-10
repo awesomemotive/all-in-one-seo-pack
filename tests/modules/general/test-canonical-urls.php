@@ -120,7 +120,7 @@ class Test_Canonical_Urls extends AIOSEOP_Test_Base {
 		$link_page = add_query_arg( 'post_type', 'page', $link );
 		$links = $this->parse_html( $link_page, array( 'link' ) );
 
-		$names   = wp_list_pluck( $links, 'rel' );
+		$names = wp_list_pluck( $links, 'rel' );
 		$this->assertContains( 'canonical', $names );
 		foreach ( $links as $link ) {
 			if ( 'canonical' === $link['rel'] ) {

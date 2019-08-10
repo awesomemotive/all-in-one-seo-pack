@@ -217,7 +217,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$this->do_log = false;
 		}
 		/* translators: This is a header for the General Settings menu. %s is a placeholder and is replaced with the name of the plugin. */
-		$this->name      = sprintf( __( '%s Plugin Options', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
+		$this->name = sprintf( __( '%s Plugin Options', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
 		/* translators: This is the main menu of the plugin. */
 		$this->menu_name = __( 'General Settings', 'all-in-one-seo-pack' );
 
@@ -1230,7 +1230,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( false !== strpos( $title_format, '%blog_title%', 0 ) ) {
 			$title_format = str_replace( '%blog_title%', get_bloginfo( 'name' ), $title_format );
 		}
-		$title_format  = $this->apply_cf_fields( $title_format );
+		$title_format = $this->apply_cf_fields( $title_format );
 		if ( false !== strpos( $title_format, '%post_title%', 0 ) ) {
 			$title_format = str_replace( '%post_title%', $this->get_preview_snippet_title_helper( $title ), $title_format );
 		}
@@ -2985,11 +2985,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( $query->is_404 || $query->is_search ) {
 			return false;
 		}
-		$link    = '';
+
 		// this boolean will determine if any additional parameters will be added to the final link or not.
 		// this is especially useful in issues such as #491.
 		$add_query_params = false;
-		$haspost = false;
+		$link             = '';
+		$haspost          = false;
 		if ( ! empty( $query->posts ) ) {
 			$haspost = count( $query->posts ) > 0;
 		}
@@ -4282,7 +4283,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$posts[] = $post;
 		}
 
-		$posts       = $save_posts;
+		$posts = $save_posts;
 		// Handle the description format.
 		// We are not going to mandate that post description needs to be present because the content could be derived from a custom field too.
 		if ( ! ( is_front_page() && is_paged() ) ) {
@@ -4780,11 +4781,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	private function check_singular() {
 		global $wp_query, $post;
-		$is_singular    = false;
+		$is_singular = false;
 		if ( is_singular() ) {
 			// #1297 - support for bbpress 'reply' post type.
 			if ( $post && 'reply' === $post->post_type ) {
-				$is_singular    = true;
+				$is_singular = true;
 			}
 		}
 		return $is_singular;

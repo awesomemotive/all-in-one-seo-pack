@@ -104,7 +104,7 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 	protected function prepare_logo() {
 		$rtn_data = array();
 
-		$logo_id   = $this->get_logo_id();
+		$logo_id = $this->get_logo_id();
 		if ( ! empty( $logo_id ) ) {
 			$rtn_data = array(
 				'@type' => 'ImageObject',
@@ -115,7 +115,7 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 			$logo_meta = wp_get_attachment_metadata( $logo_id );
 			// Get image dimensions. Some images may not have this property.
 			if ( isset( $rtn_data['width'] ) ) {
-				$rtn_data['width']  = $logo_meta['width'];
+				$rtn_data['width'] = $logo_meta['width'];
 			}
 			if ( isset( $rtn_data['height'] ) ) {
 				$rtn_data['height'] = $logo_meta['height'];

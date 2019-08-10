@@ -1498,10 +1498,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 */
 		function save_file( $filename, $contents ) {
 			/* translators: %s is a placeholder and will be replaced with the name of the relevant file. */
-			$failed_str   = sprintf( __( 'Failed to write file %s!', 'all-in-one-seo-pack' ) . "\n", $filename );
+			$failed_str = sprintf( __( 'Failed to write file %s!', 'all-in-one-seo-pack' ) . "\n", $filename );
 			/* translators: %s is a placeholder and will be replaced with the name of the relevant file. */
 			$readonly_str = sprintf( __( 'File %s isn\'t writable!', 'all-in-one-seo-pack' ) . "\n", $filename );
-			$wpfs         = $this->get_filesystem_object();
+
+			$wpfs = $this->get_filesystem_object();
 			if ( is_object( $wpfs ) ) {
 				$file_exists = $wpfs->exists( $filename );
 				if ( ! $file_exists || $wpfs->is_writable( $filename ) ) {
@@ -1686,7 +1687,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					}
 
 					if ( ! empty( $meta_key ) && ! empty( $post ) ) {
-						$image    = $this->get_the_image_by_meta_key(
+						$image = $this->get_the_image_by_meta_key(
 							array(
 								'post_id'  => $post->ID,
 								'meta_key' => explode( ',', $meta_key ),
@@ -2692,7 +2693,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				case 'textarea':
 					// #1363: prevent characters like ampersand in title and description (in social meta module) from getting changed to &amp;
 					if ( in_array( $name, array( 'aiosp_opengraph_hometitle', 'aiosp_opengraph_description' ), true ) ) {
-						$value  = htmlspecialchars_decode( $value, ENT_QUOTES );
+						$value = htmlspecialchars_decode( $value, ENT_QUOTES );
 					}
 					$buf .= "<textarea name='$name' $attr>$value</textarea>";
 					break;

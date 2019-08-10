@@ -262,12 +262,12 @@ class Test_Sitemap extends Sitemap_Test_Base {
 		$tests = array();
 
 		foreach ( $post_types as $post_type ) {
-			$ids        = array();
+			$ids = array();
 			if ( ! in_array( $post_type, array( 'post', 'page' ) ) ) {
 				register_post_type( $post_type, array( 'has_archive' => $has_archive ) );
 			}
 
-			$ids    = $this->factory->post->create_many( 2, array( 'post_type' => $post_type ) );
+			$ids = $this->factory->post->create_many( 2, array( 'post_type' => $post_type ) );
 			foreach ( $ids as $id ) {
 				$tests[ get_permalink( $id ) ] = true;
 			}
@@ -835,7 +835,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 	public function test_make_external_urls_valid( $urls ) {
 		$posts = $this->setup_posts( 2 );
 
-		$pages  = array();
+		$pages = array();
 		foreach ( $urls as $url ) {
 			$pages[ $url['loc'] ] = array(
 				'prio' => $url['priority'],
@@ -853,7 +853,7 @@ class Test_Sitemap extends Sitemap_Test_Base {
 
 		$this->_setup_options( 'sitemap', $custom_options );
 
-		$validate_urls  = array();
+		$validate_urls = array();
 		foreach ( $urls as $url ) {
 			// the ones with http should be present and the ones without http should not be present.
 			$validate_urls[ $url['loc'] ] = strpos( $url['loc'], 'http' ) !== false;

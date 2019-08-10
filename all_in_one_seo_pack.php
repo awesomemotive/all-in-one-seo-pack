@@ -208,8 +208,8 @@ if ( ! empty( $aioseop_mem_limit ) ) {
 	}
 }
 
-$aiosp_activation    = false;
-// list all available modules here.
+$aiosp_activation = false;
+// List all available modules here.
 $aioseop_module_list = array(
 	'sitemap',
 	'opengraph',

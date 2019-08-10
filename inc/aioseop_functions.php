@@ -489,10 +489,10 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 			// this should work in the same way for news and video sitemaps too, but tackling only regular sitemaps for now.
 			if ( 'sitemap_addl_pages' === $_POST['settings'] ) {
 				if ( empty( $v ) ) {
-					$valid    = false;
+					$valid = false;
 				} elseif ( 'aiosp_sitemap_addl_url' === $k && ! aiosp_common::is_url_valid( $v ) ) {
-					$valid    = false;
-					$invalid_msg    = __( 'Please provide absolute URLs (including http or https).', 'all-in-one-seo-pack' );
+					$valid       = false;
+					$invalid_msg = __( 'Please provide absolute URLs (including http or https).', 'all-in-one-seo-pack' );
 				}
 				if ( ! $valid ) {
 					break;
@@ -535,7 +535,7 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 			if ( $invalid_msg ) {
 				$output = $invalid_msg;
 			} else {
-				$output   = __( 'All values are mandatory.', 'all-in-one-seo-pack' );
+				$output = __( 'All values are mandatory.', 'all-in-one-seo-pack' );
 			}
 		}
 		die( sprintf( AIOSEOP_AJAX_MSG_TMPL, $output ) );

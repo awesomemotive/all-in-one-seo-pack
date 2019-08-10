@@ -79,7 +79,7 @@ class Test_Meta extends AIOSEOP_Test_Base {
 
 		global $aioseop_options;
 
-		$meta_desc  = 'heyhey';
+		$meta_desc = 'heyhey';
 		// very, very important: post excerpt has to be empty or this will not work.
 		$id = $this->factory->post->create(
 			array(
@@ -242,7 +242,7 @@ class Test_Meta extends AIOSEOP_Test_Base {
 		$meta   = $this->parse_html( $url, array( 'meta' ) );
 		$links  = $this->parse_html( $url, array( 'link' ) );
 
-		$canonical  = wp_list_pluck( $links, 'rel' );
+		$canonical = wp_list_pluck( $links, 'rel' );
 
 		if ( $enabled ) {
 			// should have atleast one meta tag.
@@ -263,7 +263,7 @@ class Test_Meta extends AIOSEOP_Test_Base {
 			}
 		}
 
-		$meta_content   = wp_list_pluck( $meta, 'content' );
+		$meta_content = wp_list_pluck( $meta, 'content' );
 		if ( $enabled ) {
 			$this->assertContains( '---- desc desc', $meta_content );
 			$this->assertEquals( $url, $canonical );
@@ -297,7 +297,7 @@ class Test_Meta extends AIOSEOP_Test_Base {
 		$attachment_ids = $this->create_attachments( 1 );
 
 		// what keyword should each title contain.
-		$ids    = array(
+		$ids = array(
 			'MEDIA' => $attachment_ids[0],
 			'POST'  => $post_id,
 			'PAGE'  => $page_id,

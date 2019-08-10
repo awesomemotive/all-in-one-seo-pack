@@ -173,19 +173,19 @@ class aiosp_common {
 		if ( 0 !== strpos( $url, 'http' ) ) {
 			if ( 0 === strpos( $url, '//' ) ) {
 				// for //<host>/resource type urls.
-				$url    = $scheme . ':' . $url;
+				$url = $scheme . ':' . $url;
 			} elseif ( strpos( $url, '.' ) !== false && strpos( $url, '/' ) !== false && strpos( $url, '.' ) < strpos( $url, '/' ) ) {
 				// if the . comes before the first / then this is absolute.
-				$url    = $scheme . '://' . $url;
+				$url = $scheme . '://' . $url;
 			} else {
 				// for /resource type urls.
 				$url = home_url( $url );
 			}
 		} elseif ( strpos( $url, 'http://' ) === false ) {
 			if ( 0 === strpos( $url, 'http:/' ) ) {
-				$url    = $scheme . '://' . str_replace( 'http:/', '', $url );
+				$url = $scheme . '://' . str_replace( 'http:/', '', $url );
 			} elseif ( 0 === strpos( $url, 'http:' ) ) {
-				$url    = $scheme . '://' . str_replace( 'http:', '', $url );
+				$url = $scheme . '://' . str_replace( 'http:', '', $url );
 			}
 		}
 		return $url;

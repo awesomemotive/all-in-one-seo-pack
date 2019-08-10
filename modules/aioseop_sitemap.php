@@ -744,7 +744,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$excl_terms_init_opts = array();
 			foreach ( $taxonomies_active as $v1_taxonomy ) {
-				$args_terms        = array(
+				$args_terms = array(
 					'taxonomy'   => $v1_taxonomy,
 					'hide_empty' => false,
 				);
@@ -5032,7 +5032,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$ex_args['posts_per_page'] = -1;
 
 			// Exclude (method) query.
-			$q_exclude                 = new WP_Query( $ex_args );
+			$q_exclude = new WP_Query( $ex_args );
 			if ( ! empty( $q_exclude->posts ) ) {
 				$args['exclude'] = array_merge( $args['exclude'], $q_exclude->posts );
 			}

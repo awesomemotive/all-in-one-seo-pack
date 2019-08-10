@@ -338,8 +338,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 					$inactive_plugins[ $plugin['Name'] ] = $plugin['Version'];
 				}
 			}
-			$debug_info[ __( 'Inactive Plugins', 'all-in-one-seo-pack' ) ] = null;
-			$debug_info                     = array_merge( $debug_info, (array) $inactive_plugins );
+
+			$debug_key = __( 'Inactive Plugins', 'all-in-one-seo-pack' );
+			$debug_info[ $debug_key ] = null;
+			$debug_info               = array_merge( $debug_info, (array) $inactive_plugins );
 
 			/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the premium version of the plugin, All in One SEO Pack Pro. */
 			$mail_text = sprintf( __( '%s Debug Info', 'all-in-one-seo-pack' ), 'All in One SEO Pack Pro' ) . "\r\n------------------\r\n\r\n";
@@ -407,7 +409,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 					}
 				}
 			} while ( 0 ); // Control structure for use with break.
-			$buf   = "<ul class='sfwd_debug_settings'>\n{$page_text}\n</ul>\n";
+			$buf = "<ul class='sfwd_debug_settings'>\n{$page_text}\n</ul>\n";
 
 			return $buf;
 		}

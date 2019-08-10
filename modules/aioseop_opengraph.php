@@ -1110,7 +1110,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			// this will collect the extra values that are required outside the below IF block.
 			$extra_params = array();
 
-			$setmeta      = $this->options['aiosp_opengraph_setmeta'];
+			$setmeta = $this->options['aiosp_opengraph_setmeta'];
 			if ( is_front_page() ) {
 				$title = $this->options['aiosp_opengraph_hometitle'];
 				if ( $first_page ) {

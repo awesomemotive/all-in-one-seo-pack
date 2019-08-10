@@ -401,7 +401,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		$with    = array();
 		$without = array();
 
-		$featured   = 0;
+		$featured = 0;
 		foreach ( $posts as $id ) {
 			if ( has_post_thumbnail( $id ) ) {
 				$featured++;
