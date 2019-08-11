@@ -10,9 +10,6 @@
     <exclude-pattern>*/index.php</exclude-pattern>
     <rule ref="WordPress-Core">
 
-
-        <exclude name="Squiz.PHP.DisallowMultipleAssignments" />
-
         <!-- TODO (Maybe) Change class filenames with "class-" prepended. -->
         <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
         

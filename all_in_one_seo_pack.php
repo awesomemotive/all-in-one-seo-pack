@@ -128,7 +128,8 @@ if ( ! defined( 'WP_PLUGIN_DIR' ) ) {
 }
 
 global $aiosp, $aioseop_options, $aioseop_modules, $aioseop_module_list, $aiosp_activation, $aioseop_mem_limit, $aioseop_get_pages_start, $aioseop_admin_menu;
-$aioseop_get_pages_start = $aioseop_admin_menu = 0;
+$aioseop_get_pages_start = 0;
+$aioseop_admin_menu      = 0;
 
 if ( AIOSEOPPRO ) {
 	global $aioseop_update_checker;

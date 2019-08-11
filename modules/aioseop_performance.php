@@ -329,8 +329,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 				__( 'Permalink Setting', 'all-in-one-seo-pack' ) => $perm_struct,
 			);
 			$debug_info[ __( 'Active Plugins', 'all-in-one-seo-pack' ) ] = null;
-			$active_plugins = $inactive_plugins = array();
-			$plugins        = get_plugins();
+			$active_plugins   = array();
+			$inactive_plugins = array();
+			$plugins          = get_plugins();
 			foreach ( $plugins as $path => $plugin ) {
 				if ( is_plugin_active( $path ) ) {
 					$debug_info[ $plugin['Name'] ] = $plugin['Version'];

@@ -4563,14 +4563,17 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				$status = 'inherit';
 			}
 			// TODO Add `true` in 3rd argument with in_array(); which changes it to a strict comparison.
-			if ( is_array( $include ) && ( ( $pos = array_search( 'attachment', $include ) ) !== false ) ) {
-				unset( $include[ $pos ] );
-				$att_args = array(
-					'post_type'   => 'attachment',
-					'post_status' => 'inherit',
-				);
-				$att_args = array_merge( $att_args, $page_query );
-				$posts    = $this->get_all_post_type_data( $att_args );
+			if ( is_array( $include ) ) {
+				$pos = array_search( 'attachment', $include );
+				if ( false !== $pos ) {
+					unset( $include[ $pos ] );
+					$att_args = array(
+						'post_type'   => 'attachment',
+						'post_status' => 'inherit',
+					);
+					$att_args = array_merge( $att_args, $page_query );
+					$posts    = $this->get_all_post_type_data( $att_args );
+				}
 			}
 			$args  = array(
 				'post_type'   => $include,

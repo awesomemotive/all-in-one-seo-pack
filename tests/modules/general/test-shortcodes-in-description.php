@@ -46,8 +46,8 @@ class Test_Shortcodes_In_Description extends AIOSEOP_Test_Base {
 		global $aioseop_options;
 		$expected_description = 'This is some random content.';
 
-		$aioseop_options['aiosp_skip_excerpt']          =
-		$aioseop_options['aiosp_generate_descriptions'] =
+		$aioseop_options['aiosp_skip_excerpt']          = 1;
+		$aioseop_options['aiosp_generate_descriptions'] = 1;
 		$aioseop_options['aiosp_run_shortcodes']        = 1;
 		update_option( 'aioseop_options', $aioseop_options );
 

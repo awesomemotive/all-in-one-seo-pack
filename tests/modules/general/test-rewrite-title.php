@@ -51,7 +51,7 @@ class Test_Rewrite_Title extends AIOSEOP_Test_Base {
 		$blog_name = 'Example Blog Name';
 
 		$aioseop_options['aiosp_rewrite_titles']        = 1;
-		$aioseop_options['aiosp_post_title_format']     =
+		$aioseop_options['aiosp_post_title_format']     = $macro;
 		$aioseop_options['aiosp_category_title_format'] = $macro;
 
 		update_option( 'aioseop_options', $aioseop_options );

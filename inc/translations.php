@@ -153,9 +153,10 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 			$current_locale = $this->current_locale;
 
 			if ( strpos( $current_locale, '_formal' ) ) {
-				$this->formal = 'formal';
-				$formal       = 'formal';
-				$short_locale = $this->short_locale = str_replace( '_formal', '', $current_locale );
+				$formal             = 'formal';
+				$this->formal       = 'formal';
+				$short_locale       = str_replace( '_formal', '', $current_locale );
+				$this->short_locale = str_replace( '_formal', '', $current_locale );
 			} else {
 				$short_locale = $current_locale;
 				$this->formal = 'default';

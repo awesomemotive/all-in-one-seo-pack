@@ -1003,9 +1003,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			if ( 'aiosp_opengraph_scan_header' == $args['name'] ) {
 				$buf .= '<div class="aioseop aioseop_options aiosp_opengraph_settings"><div class="aioseop_wrapper aioseop_custom_type" id="aiosp_opengraph_scan_header_wrapper"><div class="aioseop_input" id="aiosp_opengraph_scan_header" style="padding-left:20px;">';
 
-				$args['options']['type'] = 'submit';
-				$args['attr']            = " class='button-primary' ";
-				$args['value']           = $args['options']['default'] = __( 'Scan Now', 'all-in-one-seo-pack' );
+				$args['options']['type']    = 'submit';
+				$args['attr']               = " class='button-primary' ";
+				$args['value']              = __( 'Scan Now', 'all-in-one-seo-pack' );
+				$args['options']['default'] = __( 'Scan Now', 'all-in-one-seo-pack' );
 
 				$buf .= __( 'Scan your site for duplicate social meta tags.', 'all-in-one-seo-pack' );
 				$buf .= '<br /><br />' . $this->get_option_html( $args );
@@ -1087,7 +1088,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			$key               = $this->options['aiosp_opengraph_key'];
 			$dimg              = $this->options['aiosp_opengraph_dimg'];
 			$current_post_type = get_post_type();
-			$title             = $description = $image = $video = '';
+			$title             = '';
+			$description       = '';
+			$image             = '';
+			$video             = '';
 			$type              = $this->type;
 			$sitename          = $this->options['aiosp_opengraph_sitename'];
 			$tag               = '';
@@ -1440,7 +1444,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$thumbnail = set_url_scheme( $thumbnail );
 			}
 
-			$width = $height = '';
+			$width  = '';
+			$height = '';
 			if ( ! empty( $thumbnail ) ) {
 				if ( ! empty( $metabox['aioseop_opengraph_settings_imagewidth'] ) ) {
 					$width = $metabox['aioseop_opengraph_settings_imagewidth'];
@@ -1479,7 +1484,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$card = 'summary_large_image';
 			}
 
-			$site = $domain = $creator = '';
+			$site    = '';
+			$domain  = '';
+			$creator = '';
 
 			if ( ! empty( $this->options['aiosp_opengraph_twitter_site'] ) ) {
 				$site = $this->options['aiosp_opengraph_twitter_site'];
@@ -1740,7 +1747,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$img[ $options['aioseop_opengraph_settings_customimg_twitter'] ] = 'customimg_twitter';
 			}
 
-			if ( $author_img = $this->get_the_image_by_author( $p ) ) {
+			$author_img = $this->get_the_image_by_author( $p );
+			if ( $author_img ) {
 				$image['author'] = $author_img;
 			}
 			$image  = array_flip( $img );

@@ -81,7 +81,8 @@ if ( ! function_exists( 'aioseop_update_settings_check' ) ) {
 		$update_options = false;
 		if ( ! empty( $aioseop_options ) ) {
 			if ( ! empty( $aioseop_options['aiosp_archive_noindex'] ) ) { // Migrate setting for noindex archives.
-				$aioseop_options['aiosp_archive_date_noindex'] = $aioseop_options['aiosp_archive_author_noindex'] = $aioseop_options['aiosp_archive_noindex'];
+				$aioseop_options['aiosp_archive_date_noindex']   = $aioseop_options['aiosp_archive_noindex'];
+				$aioseop_options['aiosp_archive_author_noindex'] = $aioseop_options['aiosp_archive_noindex'];
 				unset( $aioseop_options['aiosp_archive_noindex'] );
 				$update_options = true;
 			}
@@ -118,7 +119,8 @@ if ( ! function_exists( 'aioseop_initialize_options' ) ) {
 
 		if ( get_option( 'aiosp_post_title_format' ) ) {
 			foreach ( $naioseop_options as $aioseop_opt_name => $value ) {
-				if ( $aioseop_oldval = get_option( $aioseop_opt_name ) ) {
+				$aioseop_oldval = get_option( $aioseop_opt_name );
+				if ( $aioseop_oldval ) {
 					$naioseop_options[ $aioseop_opt_name ] = $aioseop_oldval;
 				}
 				if ( '' == $aioseop_oldval ) {

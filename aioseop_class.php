@@ -1362,9 +1362,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			return $info;
 		}
 		global $post, $aioseop_options, $wp_query;
-		$title = $url = $description = $term = $category = '';
-		$p     = $post;
-		$w     = $wp_query;
+		$title       = '';
+		$url         = '';
+		$description = '';
+		$term        = '';
+		$category    = '';
+		$p           = $post;
+		$w           = $wp_query;
 		if ( ! is_object( $post ) ) {
 			$post = $this->get_queried_object();
 		}
@@ -1718,28 +1722,30 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$post_id = $post->ID;
 			}
 
-			if ( is_post_type_archive() && is_post_type_archive( 'product' ) && $post_id = wc_get_page_id( 'shop' ) && $post = get_post( $post_id ) ) {
+			if ( is_post_type_archive() && is_post_type_archive( 'product' ) && function_exists( 'wc_get_page_id' ) ) {
+				$post_id = wc_get_page_id( 'shop' );
+				if ( $post_id ) {
+					$post = get_post( $post_id );
+					if ( wc_get_page_id( 'shop' ) == get_option( 'page_on_front' ) && ! empty( $aioseop_options['aiosp_use_static_home_info'] ) ) {
+						$title = $this->internationalize( get_post_meta( $post->ID, '_aioseop_title', true ) );
+					}
+					// $title = $this->internationalize( $aioseop_options['aiosp_home_title'] );
+					if ( ! $title ) {
+						$title = $this->internationalize( get_post_meta( $post_id, '_aioseop_title', true ) );
+					} // This is/was causing the first product to come through.
+					if ( ! $title ) {
+						$title = $this->internationalize( $post->post_title );
+					}
+					if ( ! $title ) {
+						$title = $this->internationalize( $this->get_original_title( '', false ) );
+					}
 
-				if ( wc_get_page_id( 'shop' ) == get_option( 'page_on_front' ) && ! empty( $aioseop_options['aiosp_use_static_home_info'] ) ) {
-					$title = $this->internationalize( get_post_meta( $post->ID, '_aioseop_title', true ) );
+					$title = $this->apply_page_title_format( $title, $post );
+					$title = $this->paged_title( $title );
+					$title = apply_filters( 'aioseop_title_page', $title );
+
+					return $title;
 				}
-				// $title = $this->internationalize( $aioseop_options['aiosp_home_title'] );
-				if ( ! $title ) {
-					$title = $this->internationalize( get_post_meta( $post_id, '_aioseop_title', true ) );
-				} // This is/was causing the first product to come through.
-				if ( ! $title ) {
-					$title = $this->internationalize( $post->post_title );
-				}
-				if ( ! $title ) {
-					$title = $this->internationalize( $this->get_original_title( '', false ) );
-				}
-
-				$title = $this->apply_page_title_format( $title, $post );
-				$title = $this->paged_title( $title );
-				$title = apply_filters( 'aioseop_title_page', $title );
-
-				return $title;
-
 			}
 
 			// this is returned for woo.
@@ -1765,7 +1771,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			if ( null === $post ) {
 				return false;
 			}
-			if ( $this->is_static_front_page() && ( $home_title = $this->internationalize( $aioseop_options['aiosp_home_title'] ) ) ) {
+
+			$home_title = $this->internationalize( $aioseop_options['aiosp_home_title'] );
+			if ( $this->is_static_front_page() && ( $home_title ) ) {
 				if ( ! empty( $aioseop_options['aiosp_home_page_title_format'] ) ) {
 					$home_title = $this->apply_page_title_format( $home_title, $post, $aioseop_options['aiosp_home_page_title_format'] );
 				}
@@ -1802,20 +1810,24 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 				return $title;
 			}
-		} elseif ( function_exists( 'wc_get_page_id' ) && is_post_type_archive( 'product' ) && ( $post_id = wc_get_page_id( 'shop' ) ) && ( $post = get_post( $post_id ) ) ) {
-			// Too far down? -mrt.
-			$title = $this->internationalize( get_post_meta( $post->ID, '_aioseop_title', true ) );
-			if ( ! $title ) {
-				$title = $this->internationalize( $post->post_title );
-			}
-			if ( ! $title ) {
-				$title = $this->internationalize( $this->get_original_title( '', false ) );
-			}
-			$title = $this->apply_page_title_format( $title, $post );
-			$title = $this->paged_title( $title );
-			$title = apply_filters( 'aioseop_title_page', $title );
+		} elseif ( is_post_type_archive( 'product' ) && function_exists( 'wc_get_page_id' ) ) {
+			$post_id = wc_get_page_id( 'shop' );
+			if ( $post_id ) {
+				$post = get_post( $post_id );
+				// Too far down? -mrt.
+				$title = $this->internationalize( get_post_meta( $post->ID, '_aioseop_title', true ) );
+				if ( ! $title ) {
+					$title = $this->internationalize( $post->post_title );
+				}
+				if ( ! $title ) {
+					$title = $this->internationalize( $this->get_original_title( '', false ) );
+				}
+				$title = $this->apply_page_title_format( $title, $post );
+				$title = $this->paged_title( $title );
+				$title = apply_filters( 'aioseop_title_page', $title );
 
-			return $title;
+				return $title;
+			}
 		} elseif ( is_single() || $this->check_singular() ) {
 			// We're not in the loop :(.
 			if ( null === $post ) {
@@ -1863,7 +1875,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			return $title;
 		} elseif ( is_tag() ) {
 			global $utw;
-			$tag = $tag_description = '';
+			$tag             = '';
+			$tag_description = '';
 			if ( $utw ) {
 				$tags = $utw->GetCurrentTagSet();
 				$tag  = $tags[0]->tag;
@@ -2048,7 +2061,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			if ( false !== $has_filter ) {
 				add_filter( 'wp_title', array( $this, 'wp_title' ), $has_filter );
 			}
-			if ( $title && ( $title = trim( $title ) ) ) {
+			$title = trim( $title );
+			if ( $title ) {
 				return trim( $title );
 			}
 		}
@@ -2403,18 +2417,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		if ( ! empty( $aioseop_options['aiosp_cpostactive'] ) ) {
 			$wp_post_types = $aioseop_options['aiosp_cpostactive'];
-			if (
-					(
-						( 'archive' == $title_type ) &&
-						is_post_type_archive( $wp_post_types ) &&
-						$prefix = "aiosp_{$title_type}_"
-					) ||
-					(
-						( 'post' == $title_type ) &&
-						$this->is_singular( $wp_post_types, $p ) &&
-						$prefix = 'aiosp_'
-					)
-			) {
+
+			$is_post_type_archive = ( 'archive' == $title_type ) && is_post_type_archive( $wp_post_types );
+			$is_singular_post     = ( 'post' == $title_type ) && $this->is_singular( $wp_post_types, $p );
+
+			if ( $is_post_type_archive || $is_singular_post ) {
+				if ( $is_post_type_archive ) {
+					$prefix = "aiosp_{$title_type}_";
+				} else {
+					$prefix = 'aiosp_';
+				}
+
 				$post_type = get_post_type( $p );
 
 				if ( ! empty( $aioseop_options[ "{$prefix}{$post_type}_title_format" ] ) ) {
@@ -2743,16 +2756,20 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$description = '';
 		if ( is_author() && $this->show_page_description() ) {
 			$description = $this->internationalize( get_the_author_meta( 'description' ) );
-		} elseif ( function_exists( 'wc_get_page_id' ) && is_post_type_archive( 'product' ) && ( $post_id = wc_get_page_id( 'shop' ) ) && ( $post = get_post( $post_id ) ) ) {
-			// $description = $this->get_post_description( $post );
-			// $description = $this->apply_cf_fields( $description );
-			if ( ! ( wc_get_page_id( 'shop' ) == get_option( 'page_on_front' ) ) ) {
-				$description = trim( $this->internationalize( get_post_meta( $post->ID, '_aioseop_description', true ) ) );
-			} elseif ( wc_get_page_id( 'shop' ) == get_option( 'page_on_front' ) && ! empty( $aioseop_options['aiosp_use_static_home_info'] ) ) {
-				// $description = $this->get_aioseop_description( $post );
-				$description = trim( $this->internationalize( get_post_meta( $post->ID, '_aioseop_description', true ) ) );
-			} elseif ( wc_get_page_id( 'shop' ) == get_option( 'page_on_front' ) && empty( $aioseop_options['aiosp_use_static_home_info'] ) ) {
-				$description = $this->get_aioseop_description( $post );
+		} elseif ( function_exists( 'wc_get_page_id' ) && is_post_type_archive( 'product' ) ) {
+			$post_id = wc_get_page_id( 'shop' );
+			if ( $post_id ) {
+				$post = get_post( $post_id );
+				// $description = $this->get_post_description( $post );
+				// $description = $this->apply_cf_fields( $description );
+				if ( ! ( wc_get_page_id( 'shop' ) == get_option( 'page_on_front' ) ) ) {
+					$description = trim( $this->internationalize( get_post_meta( $post->ID, '_aioseop_description', true ) ) );
+				} elseif ( wc_get_page_id( 'shop' ) == get_option( 'page_on_front' ) && ! empty( $aioseop_options['aiosp_use_static_home_info'] ) ) {
+					// $description = $this->get_aioseop_description( $post );
+					$description = trim( $this->internationalize( get_post_meta( $post->ID, '_aioseop_description', true ) ) );
+				} elseif ( wc_get_page_id( 'shop' ) == get_option( 'page_on_front' ) && empty( $aioseop_options['aiosp_use_static_home_info'] ) ) {
+					$description = $this->get_aioseop_description( $post );
+				}
 			}
 		} elseif ( is_front_page() ) {
 			$description = $this->get_aioseop_description( $post );
@@ -3011,8 +3028,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					return false;
 			}
 			$add_query_params = true;
-		} elseif ( $query->is_home && ( get_option( 'show_on_front' ) == 'page' ) && ( $pageid = get_option( 'page_for_posts' ) ) ) {
-			$link = aioseop_get_permalink( $pageid );
+		} elseif ( $query->is_home && ( get_option( 'show_on_front' ) == 'page' ) ) {
+			$pageid = get_option( 'page_for_posts' );
+			if ( $pageid ) {
+				$link = aioseop_get_permalink( $pageid );
+			}
 		} elseif ( is_front_page() || ( $query->is_home && ( get_option( 'show_on_front' ) != 'page' || ! get_option( 'page_for_posts' ) ) ) ) {
 			if ( function_exists( 'icl_get_home_url' ) ) {
 				$link = icl_get_home_url();
@@ -3050,8 +3070,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			if ( ! empty( $term ) ) {
 				$link = get_term_link( $term, $taxonomy );
 			}
-		} elseif ( $query->is_archive && function_exists( 'get_post_type_archive_link' ) && ( $post_type = get_query_var( 'post_type' ) ) ) {
-			if ( is_array( $post_type ) ) {
+		} elseif ( $query->is_archive && function_exists( 'get_post_type_archive_link' ) ) {
+			$post_type = get_query_var( 'post_type' );
+			if ( $post_type && is_array( $post_type ) ) {
 				$post_type = reset( $post_type );
 			}
 			$link = get_post_type_archive_link( $post_type );
@@ -3123,7 +3144,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		global $aioseop_options;
 		global $aioseop_keywords;
 		global $post;
-		$opts = $this->meta_opts;
+
+		$opts      = $this->meta_opts;
+		$blog_page = aiosp_common::get_blog_page( $post );
 		if ( ( is_front_page() && $aioseop_options['aiosp_home_keywords'] && ! $this->is_static_posts_page() ) || $this->is_static_front_page() ) {
 			if ( ! empty( $aioseop_options['aiosp_use_static_home_info'] ) ) {
 				$keywords = $this->get_all_keywords();
@@ -3132,7 +3155,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 		} elseif ( empty( $aioseop_options['aiosp_dynamic_postspage_keywords'] ) && $this->is_static_posts_page() ) {
 			$keywords = stripslashes( $this->internationalize( $opts['aiosp_keywords'] ) ); // And if option = use page set keywords instead of keywords from recent posts.
-		} elseif ( ( $blog_page = aiosp_common::get_blog_page( $post ) ) && empty( $aioseop_options['aiosp_dynamic_postspage_keywords'] ) ) {
+		} elseif ( $blog_page && empty( $aioseop_options['aiosp_dynamic_postspage_keywords'] ) ) {
 			$keywords = stripslashes( $this->internationalize( get_post_meta( $blog_page->ID, '_aioseop_keywords', true ) ) );
 		} elseif ( empty( $aioseop_options['aiosp_dynamic_postspage_keywords'] ) && ( is_archive() || is_post_type_archive() ) ) {
 			$keywords = '';
@@ -3900,7 +3923,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		$this->meta_opts = $this->get_current_options( array(), 'aiosp' );
 
-		$aiosp_disable = $aiosp_disable_analytics = false;
+		$aiosp_disable           = false;
+		$aiosp_disable_analytics = false;
 
 		if ( ! empty( $this->meta_opts ) ) {
 			if ( isset( $this->meta_opts['aiosp_disable'] ) ) {
@@ -4276,11 +4300,17 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		// This outputs robots meta tags and custom canonical URl on WooCommerce product archive page.
 		// See Github issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/755.
-		if ( function_exists( 'wc_get_page_id' ) && is_post_type_archive( 'product' ) && ( $post_id = wc_get_page_id( 'shop' ) ) && ( $post = get_post( $post_id ) ) ) {
-			global $posts;
-			$opts    = $this->meta_opts = $this->get_current_options( array(), 'aiosp', null, $post );
-			$posts   = array();
-			$posts[] = $post;
+		if ( function_exists( 'wc_get_page_id' ) && is_post_type_archive( 'product' ) ) {
+			$post_id = wc_get_page_id( 'shop' );
+			if ( $post_id ) {
+				$post = get_post( $post_id );
+
+				global $posts;
+				$opts            = $this->get_current_options( array(), 'aiosp', null, $post );
+				$this->meta_opts = $this->get_current_options( array(), 'aiosp', null, $post );
+				$posts           = array();
+				$posts[]         = $post;
+			}
 		}
 
 		$posts = $save_posts;
@@ -4820,7 +4850,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return array
 	 */
 	function get_prev_next_links( $post = null ) {
-		$prev = $next = '';
+		$prev = '';
+		$next = '';
 		$page = $this->get_page_number();
 		if ( is_home() || is_archive() || is_paged() ) {
 			global $wp_query;
@@ -4954,7 +4985,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return bool
 	 */
 	function save_post_data( $id ) {
-		$awmp_edit = $nonce = null;
+		$awmp_edit = null;
+		$nonce     = null;
 		if ( empty( $_POST ) ) {
 			return false;
 		}
@@ -5230,7 +5262,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @param $id
 	 */
 	function save_category_metaboxes( $id ) {
-		$awmp_edit = $nonce = null;
+		$awmp_edit = null;
+		$nonce     = null;
 		if ( isset( $_POST['aiosp_edit'] ) ) {
 			$awmp_edit = $_POST['aiosp_edit'];
 		}

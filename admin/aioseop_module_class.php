@@ -2676,14 +2676,17 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				case 'multiselect':
 					$attr        .= ' MULTIPLE';
 					$args['attr'] = $attr;
-					$args['name'] = $name = "{$name}[]";
+					$name         = "{$name}[]";
+					$args['name'] = $name;
 					// fall through.
 				case 'select':
 					$buf .= $this->do_multi_input( $args );
 					break;
 				case 'multicheckbox':
-					$args['name']            = $name = "{$name}[]";
-					$args['options']['type'] = $options['type'] = 'checkbox';
+					$name                    = "{$name}[]";
+					$args['name']            = $name;
+					$args['options']['type'] = 'checkbox';
+					$options['type']         = 'checkbox';
 					// fall through.
 				case 'radio':
 					$buf .= $this->do_multi_input( $args );
@@ -2768,7 +2771,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @return string
 		 */
 		function get_option_row( $name, $opts, $args ) {
-			$label_text = $input_attr = $id_attr = '';
+			$label_text = '';
+			$input_attr = '';
+			$id_attr    = '';
 
 			require_once( AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-helper.php' );
 			$info = new AIOSEOP_Helper( get_class( $this ) );

@@ -193,7 +193,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Feature_Manager' ) ) {
 		 * @return string
 		 */
 		function display_option_div( $buf, $args ) {
-			$name = $img = $desc = $checkbox = $class = '';
+			$name     = '';
+			$img      = '';
+			$desc     = '';
+			$checkbox = '';
+			$class    = '';
 			if ( isset( $args['options']['help_text'] ) && ! empty( $args['options']['help_text'] ) ) {
 				$desc .= '<p class="aioseop_desc">' . $args['options']['help_text'] . '</p>';
 			}
