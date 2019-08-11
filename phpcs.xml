@@ -8,6 +8,9 @@
     <exclude-pattern>vendor/*</exclude-pattern>
     <exclude-pattern>lib/*</exclude-pattern>
     <exclude-pattern>*/index.php</exclude-pattern>
+
+    <config name="minimum_supported_wp_version" value="4.6"/>
+
     <rule ref="WordPress-Core">
 
         <!-- TODO (Maybe) Change class filenames with "class-" prepended. -->
