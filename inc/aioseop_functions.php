@@ -424,7 +424,7 @@ if ( ! function_exists( 'aioseop_ajax_save_meta' ) ) {
 			. 'class="aioseop_edit_link aioseop-icon-cog-edit" '
 			. 'href="javascript:void(0);" '
 			. 'onclick=\'aioseop_ajax_edit_meta_form(' . $post_id . ', "' . $target . '", "' . $nonce . '");return false;\' '
-			. 'title="' . __( 'Edit' ) . '"></a>';
+			. 'title="' . __( 'Edit', 'all-in-one-seo-pack' ) . '"></a>';
 		$output .= $label;
 		die(
 			"jQuery('div#aioseop_" . $target . '_' . $post_id . "').fadeOut('fast', function() {
@@ -662,7 +662,7 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 							foreach ( $metadata[ $type ] as $tk => $tv ) {
 								if ( $m[ $tags['name'] ] == $tv ) {
 									/* This message is shown when a duplicate meta tag is found. %s is a placeholder and will be replaced with the name of the relevant meta tag. */
-									$meta .= "<tr><th style='color:red;'>" . sprintf( __( 'Duplicate %s Meta' ), ucwords( $type ) ) . '</th><td>' . ucwords( $tk ) . "</td><td>{$m[$tags['name']]}</td><td>{$m[$tags['value']]}</td></tr>\n";
+									$meta .= "<tr><th style='color:red;'>" . sprintf( __( 'Duplicate %s Meta', 'all-in-one-seo-pack' ), ucwords( $type ) ) . '</th><td>' . ucwords( $tk ) . "</td><td>{$m[$tags['name']]}</td><td>{$m[$tags['value']]}</td></tr>\n";
 								}
 							}
 						}
@@ -856,7 +856,7 @@ if ( ! function_exists( 'aioseop_mrt_pccolumn' ) ) {
 						. 'class="aioseop_edit_link aioseop-icon-cog-edit" '
 						. 'href="javascript:void(0);" '
 						. 'onclick=\'aioseop_ajax_edit_meta_form(' . $id . ', "' . $target . '", "' . $nonce . '");return false;\' '
-						. 'title="' . __( 'Edit' ) . '"></a>';
+						. 'title="' . __( 'Edit', 'all-in-one-seo-pack' ) . '"></a>';
 					echo $label;
 					?>
 				</div>

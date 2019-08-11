@@ -37,7 +37,12 @@
 
 
     </rule>
-    <rule ref="WordPress-Docs">
+    <rule ref="WordPress-Docs" />
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array" value="all-in-one-seo-pack" />
+            <property name="check_translator_comments" value="true"/>
+        </properties>
     </rule>
 
     <rule ref="Squiz.Commenting.FunctionComment.ScalarTypeHintMissing">

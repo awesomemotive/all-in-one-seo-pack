@@ -540,11 +540,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 						$settings_file = 'settings_aioseop.ini';
 						/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
 						$buf = '; ' . sprintf(
-							__(
-								'Settings export file for %s',
-								'
-							all-in-one-seo-pack'
-							),
+							__( 'Settings export file for %s', 'all-in-one-seo-pack' ),
 							AIOSEOP_PLUGIN_NAME
 						) . "\n";
 
