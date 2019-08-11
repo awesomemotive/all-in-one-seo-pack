@@ -44,6 +44,12 @@
             <property name="check_translator_comments" value="true"/>
         </properties>
     </rule>
+<!--  TODO Prefix globals and hooks.  -->
+<!--    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">-->
+<!--        <properties>-->
+<!--            <property name="prefixes" type="array" value="aioseop_" />-->
+<!--        </properties>-->
+<!--    </rule>-->
 
     <rule ref="Squiz.Commenting.FunctionComment.ScalarTypeHintMissing">
         <severity>0</severity>
