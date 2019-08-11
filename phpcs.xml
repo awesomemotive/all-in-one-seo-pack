@@ -10,6 +10,11 @@
     <exclude-pattern>*/index.php</exclude-pattern>
 
     <config name="minimum_supported_wp_version" value="4.6"/>
+    <rule ref="WordPress.WP.DeprecatedFunctions">
+        <properties>
+            <property name="minimum_supported_version" value="4.6" />
+        </properties>
+    </rule>
 
     <rule ref="WordPress-Core">
 
