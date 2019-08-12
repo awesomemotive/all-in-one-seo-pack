@@ -5,6 +5,7 @@
  * @package All_in_One_SEO_Pack
  * @since 2.3.3
  */
+
 // @codingStandardsIgnoreStart
 class aiosp_metaboxes {
 // @codingStandardsIgnoreEnd

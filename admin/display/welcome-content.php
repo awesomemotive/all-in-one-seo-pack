@@ -5,6 +5,7 @@
  * @package All_in_One_SEO_Pack
  * @since ?
  */
+
 ?>
 <div class="welcome-panel">
 	<div class="welcome-panel-content">
