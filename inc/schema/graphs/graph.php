@@ -318,7 +318,7 @@ abstract class AIOSEOP_Graph {
 	 */
 	protected function get_user_social_profile_links( $user_id ) {
 		$rtn_social_profiles = array();
-		$social_sites = array(
+		$social_sites        = array(
 			'facebook',
 			'twitter',
 		);

@@ -59,7 +59,7 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 		$this->validate_sitemap_schema( $file, 'combined' );
 
 		$xml = simplexml_load_file( $file );
-		$ns = $xml->getNamespaces( true );
+		$ns  = $xml->getNamespaces( true );
 
 		$sitemap = array();
 		foreach ( $xml->url as $url ) {
@@ -161,7 +161,7 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 		foreach ( $types as $type ) {
 			$schema = 'index';
 			if ( ! empty( $type ) ) {
-				$type = "{$type}-";
+				$type   = "{$type}-";
 				$schema = 'combined';
 			}
 			$file = ABSPATH . "/{$type}sitemap.xml";
@@ -196,7 +196,7 @@ class Sitemap_Test_Base extends AIOSEOP_Test_Base {
 	 * @return array
 	 */
 	protected final function count_sitemap_elements( $elements ) {
-		$file = $this->create_sitemap();
+		$file     = $this->create_sitemap();
 		$contents = file_get_contents( $file );
 
 		$map = array();

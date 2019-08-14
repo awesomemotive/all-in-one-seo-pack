@@ -81,7 +81,8 @@ if ( ! function_exists( 'aioseop_update_settings_check' ) ) {
 		$update_options = false;
 		if ( ! empty( $aioseop_options ) ) {
 			if ( ! empty( $aioseop_options['aiosp_archive_noindex'] ) ) { // Migrate setting for noindex archives.
-				$aioseop_options['aiosp_archive_date_noindex'] = $aioseop_options['aiosp_archive_author_noindex'] = $aioseop_options['aiosp_archive_noindex'];
+				$aioseop_options['aiosp_archive_date_noindex']   = $aioseop_options['aiosp_archive_noindex'];
+				$aioseop_options['aiosp_archive_author_noindex'] = $aioseop_options['aiosp_archive_noindex'];
 				unset( $aioseop_options['aiosp_archive_noindex'] );
 				$update_options = true;
 			}
@@ -90,7 +91,7 @@ if ( ! function_exists( 'aioseop_update_settings_check' ) ) {
 				unset( $aioseop_options['aiosp_archive_title_format'] );
 				$update_options = true;
 			}
-			if ( ! empty( $aioseop_options['aiosp_archive_title_format'] ) && ( $aioseop_options['aiosp_archive_title_format'] === '%date% | %site_title%' ) ) {
+			if ( ! empty( $aioseop_options['aiosp_archive_title_format'] ) && ( '%date% | %site_title%' === $aioseop_options['aiosp_archive_title_format'] ) ) {
 				$aioseop_options['aiosp_archive_title_format'] = '%archive_title% | %site_title%';
 				$update_options                                = true;
 			}
@@ -118,10 +119,11 @@ if ( ! function_exists( 'aioseop_initialize_options' ) ) {
 
 		if ( get_option( 'aiosp_post_title_format' ) ) {
 			foreach ( $naioseop_options as $aioseop_opt_name => $value ) {
-				if ( $aioseop_oldval = get_option( $aioseop_opt_name ) ) {
+				$aioseop_oldval = get_option( $aioseop_opt_name );
+				if ( $aioseop_oldval ) {
 					$naioseop_options[ $aioseop_opt_name ] = $aioseop_oldval;
 				}
-				if ( $aioseop_oldval == '' ) {
+				if ( '' == $aioseop_oldval ) {
 					$naioseop_options[ $aioseop_opt_name ] = '';
 				}
 				delete_option( $aioseop_opt_name );
@@ -183,7 +185,7 @@ if ( ! function_exists( 'aioseop_addmycolumns' ) ) {
 		if ( ! empty( $aioseop_options ) && ! empty( $aioseop_options['aiosp_posttypecolumns'] ) ) {
 			$aiosp_posttypecolumns = $aioseop_options['aiosp_posttypecolumns'];
 		}
-		if ( ! empty( $pagenow ) && ( $pagenow === 'upload.php' ) ) {
+		if ( ! empty( $pagenow ) && ( 'upload.php' === $pagenow ) ) {
 			$post_type = 'attachment';
 		} elseif ( ! isset( $_REQUEST['post_type'] ) ) {
 			$post_type = 'post';
@@ -192,14 +194,14 @@ if ( ! function_exists( 'aioseop_addmycolumns' ) ) {
 		}
 		if ( is_array( $aiosp_posttypecolumns ) && in_array( $post_type, $aiosp_posttypecolumns ) ) {
 			add_action( 'admin_head', 'aioseop_admin_head' );
-			if ( $post_type === 'page' ) {
+			if ( 'page' === $post_type ) {
 				add_filter( 'manage_pages_columns', 'aioseop_mrt_pcolumns' );
-			} elseif ( $post_type === 'attachment' ) {
+			} elseif ( 'attachment' === $post_type ) {
 				add_filter( 'manage_media_columns', 'aioseop_mrt_pcolumns' );
 			} else {
 				add_filter( 'manage_posts_columns', 'aioseop_mrt_pcolumns' );
 			}
-			if ( $post_type === 'attachment' ) {
+			if ( 'attachment' === $post_type ) {
 				add_action( 'manage_media_custom_column', 'aioseop_mrt_pccolumn', 10, 2 );
 			} elseif ( is_post_type_hierarchical( $post_type ) ) {
 				add_action( 'manage_pages_custom_column', 'aioseop_mrt_pccolumn', 10, 2 );
@@ -390,7 +392,7 @@ if ( ! function_exists( 'aioseop_ajax_save_meta' ) ) {
 	 * AIOSEOP AJAX Save Meta
 	 */
 	function aioseop_ajax_save_meta() {
-		if ( ! empty( $_POST['_inline_edit'] ) && ( $_POST['_inline_edit'] !== 'undefined' ) ) {
+		if ( ! empty( $_POST['_inline_edit'] ) && ( 'undefined' !== $_POST['_inline_edit'] ) ) {
 			check_ajax_referer( 'inlineeditnonce', '_inline_edit' );
 		}
 		$post_id  = intval( $_POST['post_id'] );
@@ -412,17 +414,17 @@ if ( ! function_exists( 'aioseop_ajax_save_meta' ) ) {
 		} else {
 			die();
 		}
-		if ( $result != '' ) :
+		if ( '' != $result ) :
 			$label = "<label id='aioseop_label_{$target}_{$post_id}' class='aioseop-label-quickedit' for='{$target}editlink{$post_id}'>" . $result . '</label>';
 		else :
 			$label = "<label id='aioseop_label_{$target}_{$post_id}' class='aioseop-label-quickedit' for='{$target}editlink{$post_id}'></label><strong><i>" . __( 'No', 'all-in-one-seo-pack' ) . ' ' . $target . '</i></strong>';
 		endif;
-		$nonce  = wp_create_nonce( "aioseop_meta_{$target}_{$post_id}" );
-		$output = '<a id="' . $target . 'editlink' . $post_id . '" '
+		$nonce   = wp_create_nonce( "aioseop_meta_{$target}_{$post_id}" );
+		$output  = '<a id="' . $target . 'editlink' . $post_id . '" '
 			. 'class="aioseop_edit_link aioseop-icon-cog-edit" '
 			. 'href="javascript:void(0);" '
 			. 'onclick=\'aioseop_ajax_edit_meta_form(' . $post_id . ', "' . $target . '", "' . $nonce . '");return false;\' '
-			. 'title="' . __( 'Edit' ) . '"></a>';
+			. 'title="' . __( 'Edit', 'all-in-one-seo-pack' ) . '"></a>';
 		$output .= $label;
 		die(
 			"jQuery('div#aioseop_" . $target . '_' . $post_id . "').fadeOut('fast', function() {
@@ -479,20 +481,22 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 	 * @since ?
 	 */
 	function aioseop_ajax_save_url() {
-		$valid   = true;
-		$invalid_msg    = null;
+		$valid       = true;
+		$invalid_msg = null;
+		$options     = array();
+
 		aioseop_ajax_init();
-		$options = array();
+
 		parse_str( $_POST['options'], $options );
 		foreach ( $options as $k => $v ) {
 			// all values are mandatory while adding to the sitemap.
 			// this should work in the same way for news and video sitemaps too, but tackling only regular sitemaps for now.
 			if ( 'sitemap_addl_pages' === $_POST['settings'] ) {
 				if ( empty( $v ) ) {
-					$valid    = false;
+					$valid = false;
 				} elseif ( 'aiosp_sitemap_addl_url' === $k && ! aiosp_common::is_url_valid( $v ) ) {
-					$valid    = false;
-					$invalid_msg    = __( 'Please provide absolute URLs (including http or https).', 'all-in-one-seo-pack' );
+					$valid       = false;
+					$invalid_msg = __( 'Please provide absolute URLs (including http or https).', 'all-in-one-seo-pack' );
 				}
 				if ( ! $valid ) {
 					break;
@@ -505,9 +509,9 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 			global $aiosp, $aioseop_modules;
 			aioseop_load_modules();
 			$aiosp->admin_menu();
-			if ( ! empty( $_POST['settings'] ) && ( $_POST['settings'] === 'video_sitemap_addl_pages' ) ) {
+			if ( ! empty( $_POST['settings'] ) && ( 'video_sitemap_addl_pages' === $_POST['settings'] ) ) {
 				$module = $aioseop_modules->return_module( 'All_in_One_SEO_Pack_Video_Sitemap' );
-			} elseif ( ! empty( $_POST['settings'] ) && ( $_POST['settings'] === 'news_sitemap_addl_pages' ) ) {
+			} elseif ( ! empty( $_POST['settings'] ) && ( 'news_sitemap_addl_pages' === $_POST['settings'] ) ) {
 				$module = $aioseop_modules->return_module( 'All_in_One_SEO_Pack_News_Sitemap' );
 			} else {
 				$module = $aioseop_modules->return_module( 'All_in_One_SEO_Pack_Sitemap' );
@@ -535,7 +539,7 @@ if ( ! function_exists( 'aioseop_ajax_save_url' ) ) {
 			if ( $invalid_msg ) {
 				$output = $invalid_msg;
 			} else {
-				$output   = __( 'All values are mandatory.', 'all-in-one-seo-pack' );
+				$output = __( 'All values are mandatory.', 'all-in-one-seo-pack' );
 			}
 		}
 		die( sprintf( AIOSEOP_AJAX_MSG_TMPL, $output ) );
@@ -658,7 +662,7 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 							foreach ( $metadata[ $type ] as $tk => $tv ) {
 								if ( $m[ $tags['name'] ] == $tv ) {
 									/* This message is shown when a duplicate meta tag is found. %s is a placeholder and will be replaced with the name of the relevant meta tag. */
-									$meta .= "<tr><th style='color:red;'>" . sprintf( __( 'Duplicate %s Meta' ), ucwords( $type ) ) . '</th><td>' . ucwords( $tk ) . "</td><td>{$m[$tags['name']]}</td><td>{$m[$tags['value']]}</td></tr>\n";
+									$meta .= "<tr><th style='color:red;'>" . sprintf( __( 'Duplicate %s Meta', 'all-in-one-seo-pack' ), ucwords( $type ) ) . '</th><td>' . ucwords( $tk ) . "</td><td>{$m[$tags['name']]}</td><td>{$m[$tags['value']]}</td></tr>\n";
 								}
 							}
 						}
@@ -669,7 +673,7 @@ if ( ! function_exists( 'aioseop_ajax_scan_header' ) ) {
 		if ( empty( $meta ) ) {
 			$meta = '<span style="color:green;">' . __( 'No duplicate meta tags found.', 'all-in-one-seo-pack' ) . '</span>';
 		} else {
-			$meta = "<table cellspacing=0 cellpadding=0 width=80% class='aioseop_table'><tr class='aioseop_table_header'><th>Meta For Site</th><th>Kind of Meta</th><th>Element Name</th><th>Element Value</th></tr>" . $meta . '</table>';
+			$meta  = "<table cellspacing=0 cellpadding=0 width=80% class='aioseop_table'><tr class='aioseop_table_header'><th>Meta For Site</th><th>Kind of Meta</th><th>Element Name</th><th>Element Value</th></tr>" . $meta . '</table>';
 			$meta .=
 				"<p><div class='aioseop_meta_info'><h3 style='padding:5px;margin-bottom:0px;'>" . __( 'What Does This Mean?', 'all-in-one-seo-pack' ) . "</h3><div style='padding:5px;padding-top:0px;'>"
 				/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
@@ -795,7 +799,7 @@ if ( ! function_exists( 'aioseop_ajax_get_menu_links' ) ) {
 		$output = '<ul>';
 		if ( ! empty( $links ) ) {
 			foreach ( $links as $k => $v ) {
-				if ( $k === 'Feature Manager' ) {
+				if ( 'Feature Manager' === $k ) {
 					$current = ' class="current"';
 				} else {
 					$current = '';
@@ -821,13 +825,13 @@ if ( ! function_exists( 'aioseop_mrt_pccolumn' ) ) {
 	function aioseop_mrt_pccolumn( $aioseopcn, $aioseoppi ) {
 		$id     = $aioseoppi;
 		$target = null;
-		if ( $aioseopcn === 'seotitle' ) {
+		if ( 'seotitle' === $aioseopcn ) {
 			$target = 'title';
 		}
-		if ( $aioseopcn === 'seokeywords' ) {
+		if ( 'seokeywords' === $aioseopcn ) {
 			$target = 'keywords';
 		}
-		if ( $aioseopcn === 'seodesc' ) {
+		if ( 'seodesc' === $aioseopcn ) {
 			$target = 'description';
 		}
 		if ( ! $target ) {
@@ -852,7 +856,7 @@ if ( ! function_exists( 'aioseop_mrt_pccolumn' ) ) {
 						. 'class="aioseop_edit_link aioseop-icon-cog-edit" '
 						. 'href="javascript:void(0);" '
 						. 'onclick=\'aioseop_ajax_edit_meta_form(' . $id . ', "' . $target . '", "' . $nonce . '");return false;\' '
-						. 'title="' . __( 'Edit' ) . '"></a>';
+						. 'title="' . __( 'Edit', 'all-in-one-seo-pack' ) . '"></a>';
 					echo $label;
 					?>
 				</div>
@@ -896,7 +900,7 @@ if ( ! function_exists( 'aioseop_mrt_exclude_this_page' ) ) {
 	 */
 	function aioseop_mrt_exclude_this_page( $url = null ) {
 		static $excluded = false;
-		if ( $excluded === false ) {
+		if ( false === $excluded ) {
 			global $aioseop_options;
 			$ex_pages = '';
 			if ( isset( $aioseop_options['aiosp_ex_pages'] ) ) {
@@ -918,7 +922,7 @@ if ( ! function_exists( 'aioseop_mrt_exclude_this_page' ) ) {
 			}
 		}
 		if ( ! empty( $excluded ) ) {
-			if ( $url === null ) {
+			if ( null === $url ) {
 				$url = $_SERVER['REQUEST_URI'];
 			} else {
 				$url = wp_parse_url( $url );
@@ -956,7 +960,7 @@ if ( ! function_exists( 'aioseop_add_contactmethods' ) ) {
 
 		if ( ! empty( $aioseop_modules ) && is_object( $aioseop_modules ) ) {
 			$m = $aioseop_modules->return_module( 'All_in_One_SEO_Pack_Opengraph' );
-			if ( ( $m !== false ) && is_object( $m ) ) {
+			if ( ( false !== $m ) && is_object( $m ) ) {
 
 				if ( $m->option_isset( 'twitter_creator' ) || $m->option_isset( 'facebook_author' ) ) {
 					$contactmethods['aioseop_edit_profile_header'] = AIOSEOP_PLUGIN_NAME;

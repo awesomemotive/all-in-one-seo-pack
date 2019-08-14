@@ -127,7 +127,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	public function ajaxTearDown() {
 		parent::tearDown();
 		$_POST = array();
-		$_GET = array();
+		$_GET  = array();
 		unset( $GLOBALS['post'] );
 		unset( $GLOBALS['comment'] );
 		remove_filter( 'wp_die_ajax_handler', array( $this, 'getDieHandler' ), 1, 1 );
@@ -212,7 +212,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	 * @param string $role
 	 */
 	protected function _setRole( $role ) {
-		$post = $_POST;
+		$post    = $_POST;
 		$user_id = $this->factory->user->create( array( 'role' => $role ) );
 		wp_set_current_user( $user_id );
 		$_POST = array_merge( $_POST, $post );
@@ -251,7 +251,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	 */
 	protected final function create_attachments( $num, $id = 0 ) {
 		$image = str_replace( '\\', '/', AIOSEOP_UNIT_TESTING_DIR . '/resources/images/footer-logo.png' );
-		$ids = array();
+		$ids   = array();
 		for ( $x = 0; $x < $num; $x++ ) {
 			$ids[] = $this->factory->attachment->create_upload_object( $image, $id );
 		}
@@ -401,7 +401,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		$with    = array();
 		$without = array();
 
-		$featured   = 0;
+		$featured = 0;
 		foreach ( $posts as $id ) {
 			if ( has_post_thumbnail( $id ) ) {
 				$featured++;
@@ -479,7 +479,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		ob_start();
 		do_action( 'wp_footer' );
 		$footer = ob_get_clean();
-		$html .= '<body>' . /* somehow get the body too */ $footer . '</body>';
+		$html  .= '<body>' . /* somehow get the body too */ $footer . '</body>';
 		return $html . '</html>';
 	}
 
@@ -519,11 +519,11 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		}
 
 		if ( $node->hasChildNodes() ) {
-			if ( $node->childNodes->length == 1 ) {
+			if ( 1 == $node->childNodes->length ) {
 				$array[ $node->firstChild->nodeName ] = $node->firstChild->nodeValue;
 			} else {
 				foreach ( $node->childNodes as $child_node ) {
-					if ( $child_node->nodeType != XML_TEXT_NODE ) {
+					if ( XML_TEXT_NODE != $child_node->nodeType ) {
 						$array[ $child_node->nodeName ][] = $this->get_node_as_array( $child_node );
 					}
 				}

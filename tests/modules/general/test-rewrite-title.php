@@ -50,8 +50,8 @@ class Test_Rewrite_Title extends AIOSEOP_Test_Base {
 
 		$blog_name = 'Example Blog Name';
 
-		$aioseop_options['aiosp_rewrite_titles'] = 1;
-		$aioseop_options['aiosp_post_title_format'] =
+		$aioseop_options['aiosp_rewrite_titles']        = 1;
+		$aioseop_options['aiosp_post_title_format']     = $macro;
 		$aioseop_options['aiosp_category_title_format'] = $macro;
 
 		update_option( 'aioseop_options', $aioseop_options );
@@ -64,15 +64,15 @@ class Test_Rewrite_Title extends AIOSEOP_Test_Base {
 					'post_type'  => 'post',
 					'post_title' => 'Example Title',
 				);
-				$id = $this->factory->post->create( $args );
+				$id   = $this->factory->post->create( $args );
 				break;
 			case 'category':
 				$args = array( 'taxonomy' => 'category' );
-				$id = $this->factory->term->create( $args );
+				$id   = $this->factory->term->create( $args );
 				break;
 		}
 
-		$link = get_permalink( $id );
+		$link  = get_permalink( $id );
 		$title = $this->parse_html( $link, array( 'title' ) );
 
 		$this->assertEquals( 1, count( $title ) );

@@ -203,7 +203,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 		 */
 		function load_module( $mod ) {
 			static $feature_options = null;
-			static $feature_prefix = null;
+			static $feature_prefix  = null;
 			if ( ! is_array( $this->modules ) ) {
 				return false;
 			}
@@ -229,7 +229,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 				// using $_REQUEST does not work because even if the parameter is set in $_POST or $_GET, it does not percolate to $_REQUEST.
 				$is_module_page = ( isset( $_GET['page'] ) && trailingslashit( AIOSEOP_PLUGIN_DIRNAME ) . 'modules/aioseop_feature_manager.php' === $_GET['page'] ) || ( isset( $_POST['page'] ) && trailingslashit( AIOSEOP_PLUGIN_DIRNAME ) . 'modules/aioseop_feature_manager.php' === $_POST['page'] );
 			}
-			$fm_page    = $this->module_settings_update && wp_verify_nonce( $_POST['nonce-aioseop'], 'aioseop-nonce' ) && $is_module_page;
+			$fm_page = $this->module_settings_update && wp_verify_nonce( $_POST['nonce-aioseop'], 'aioseop-nonce' ) && $is_module_page;
 			if ( $fm_page && ! $this->settings_reset ) {
 				if ( isset( $_POST[ "aiosp_feature_manager_enable_$mod" ] ) ) {
 					$mod_enable = $_POST[ "aiosp_feature_manager_enable_$mod" ];

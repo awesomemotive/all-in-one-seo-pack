@@ -5,6 +5,7 @@
  * @package All_in_One_SEO_Pack
  * @since ?
  */
+
 if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 
 	/**
@@ -48,9 +49,9 @@ if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 				echo '<div class="notice notice-warning row-title is-dismissible yst_notice"><p>', sprintf( esc_html__( 'The plugin Yoast SEO has been detected. Do you want to %1$simport its settings%2$s into %3$s', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( $aiourl ) ), '</a>', AIOSEOP_PLUGIN_NAME ), '</p></div>';
 
 			}
-
+			// phpcs:disable WordPress.WP.I18n
 			echo '<div class="error"><p>', sprintf( esc_html__( 'The plugin All-In-One-SEO has been detected. Do you want to %1$simport its settings%2$s?', 'wordpress-seo' ), sprintf( '<a href="%s">', esc_url( $yoasturl ) ), '</a>' ), '</p></div>';
-
+			// phpcs:enable
 		}
 
 		public function show_deactivate_notice() {
@@ -99,13 +100,13 @@ function aiosp_seometa_action() {
 	}
 
 	if ( empty( $_REQUEST['platform_old'] ) ) {
-		printf( '<div class="error"><p>%s</p></div>', __( 'Sorry, you can\'t do that. Please choose a platform and then click Analyze or Convert.' ) );
+		printf( '<div class="error"><p>%s</p></div>', __( 'Sorry, you can\'t do that. Please choose a platform and then click Analyze or Convert.', 'all-in-one-seo-pack' ) );
 
 		return;
 	}
 
 	if ( 'All in One SEO Pack' === $_REQUEST['platform_old'] ) {
-		printf( '<div class="error"><p>%s</p></div>', __( 'Sorry, you can\'t do that. Please choose a platform and then click Analyze or Convert.' ) );
+		printf( '<div class="error"><p>%s</p></div>', __( 'Sorry, you can\'t do that. Please choose a platform and then click Analyze or Convert.', 'all-in-one-seo-pack' ) );
 
 		return;
 	}
@@ -118,7 +119,7 @@ function aiosp_seometa_action() {
 
 		$response = aiosp_seometa_post_meta_analyze( $_REQUEST['platform_old'], 'All in One SEO Pack' );
 		if ( is_wp_error( $response ) ) {
-			printf( '<div class="error"><p>%s</p></div>', __( 'Sorry, something went wrong. Please try again' ) );
+			printf( '<div class="error"><p>%s</p></div>', __( 'Sorry, something went wrong. Please try again', 'all-in-one-seo-pack' ) );
 
 			return;
 		}
@@ -141,7 +142,7 @@ function aiosp_seometa_action() {
 
 	$result = aiosp_seometa_post_meta_convert( stripslashes( $_REQUEST['platform_old'] ), 'All in One SEO Pack' );
 	if ( is_wp_error( $result ) ) {
-		printf( '<p>%s</p>', __( 'Sorry, something went wrong. Please try again' ) );
+		printf( '<p>%s</p>', __( 'Sorry, something went wrong. Please try again', 'all-in-one-seo-pack' ) );
 
 		return;
 	}
@@ -178,7 +179,7 @@ function aiosp_seometa_admin() {
 
 		<p>
 			<span class="description">
-				<strong><?php printf( __( 'Please Note: ' ) ); ?></strong>
+				<strong><?php printf( __( 'Please Note: ', 'all-in-one-seo-pack' ) ); ?></strong>
 				<?php
 				/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
 				printf(

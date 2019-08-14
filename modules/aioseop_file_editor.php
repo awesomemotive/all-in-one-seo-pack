@@ -39,7 +39,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_File_Editor' ) ) {
 			);
 
 			$this->tabs = array(
-				'htaccess' => array( 'name' => __( '.htaccess' ) ),
+				'htaccess' => array( 'name' => __( '.htaccess', 'all-in-one-seo-pack' ) ),
 			);
 
 			$this->layout = array(

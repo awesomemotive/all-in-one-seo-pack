@@ -85,7 +85,8 @@ if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 
 			include_once( ABSPATH . WPINC . '/feed.php' );
 
-			if ( false === ( $rss_items = get_transient( 'aioseop_feed' ) ) ) {
+			$rss_items = get_transient( 'aioseop_feed' );
+			if ( false === $rss_items ) {
 
 				$rss = fetch_feed( 'https://www.semperplugins.com/feed/' );
 				if ( is_wp_error( $rss ) ) {

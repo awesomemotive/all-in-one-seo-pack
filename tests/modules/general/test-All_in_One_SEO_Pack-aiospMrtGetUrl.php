@@ -211,7 +211,7 @@ class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 			$post = get_post( $this->post_ids[0] );
 		}
 		// Set global $post_type with $post->post_type.
-		$post_type = $post->post_type;
+		$post_type        = $post->post_type;
 		$post_type_object = get_post_type_object( $post_type );
 		// Sets global post.
 		$post = get_post( $this->post_ids[0], OBJECT, 'edit' );
