@@ -8,5 +8,5 @@ then
   composer install;
 else
   composer config platform.php PHP_VERSION;
-  composer config require-dev.phpunit/phpunit PHPUNIT_VERSION;
+  composer require --dev phpunit/phpunit ^PHPUNIT_VERSION;
 fi;
