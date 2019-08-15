@@ -4613,7 +4613,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$tax_noindex = $aioseop_options['aiosp_tax_noindex'];
 		}
 
-		if ( is_front_page() ) {
+		if ( is_front_page() && $page_number === 0 ) {
 			return $this->get_robots_meta_string( false, false );
 		}
 
@@ -4641,12 +4641,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( 'on' === $aiosp_noindex ||
-			( is_singular() && ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 )
+			( is_singular() && ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 ) ||
+			( is_front_page() && ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 )
 		) {
 			$noindex = true;
 		}
 		if ( 'on' === $aiosp_nofollow ||
-			( is_singular() && ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 )
+			( is_singular() && ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 ) ||
+			( is_front_page() && ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 )
 		) {
 			$nofollow = true;
 		}
