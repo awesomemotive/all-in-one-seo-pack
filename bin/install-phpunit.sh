@@ -3,8 +3,8 @@
 PHPUNIT_VERSION=$1;
 PHP_VERSION=$2;
 
-echo $1;
-echo $PHPUNIT_VERSION;
+echo 'PHPUnit Version: '$PHPUNIT_VERSION;
+echo 'PHP Version: '$PHPUNIT_VERSION;
 
 if [[ 'local' = $PHPUNIT_VERSION ]];
 then
