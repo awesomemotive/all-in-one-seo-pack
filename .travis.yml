@@ -6,9 +6,7 @@ services:
 matrix:
   fast_finish: true
   global:
-    - env:
-      PHPUNIT=global
-      GRUNT=no
+    - env: GRUNT=no
   include:
     - name: "PHP 7.2 Test"
       php: 7.2
