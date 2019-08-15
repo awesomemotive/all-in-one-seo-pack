@@ -98,6 +98,8 @@ script:
   - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then grunt; fi
   - if [[ $PHPUNIT = "local" ]]; then
       ./vendor/bin/phpunit;
+    elif [[ ! -z "$PHPUNIT" ]]; then
+      ./vendor/bin/phpunit;
     else
       phpunit;
     fi
