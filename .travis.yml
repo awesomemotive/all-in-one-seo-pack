@@ -83,9 +83,6 @@ install:
   - if [[ ! -z "$PHPUNIT" ]]; then
       bash bin/install-phpunit.sh $PHPUNIT $TRAVIS_PHP_VERSION;
     fi
-#  - if [[ $PHPUNIT = "local" ]]; then
-#      composer install;
-#    fi
   - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then
       chmod +x bin/init-grunt.sh; . bin/init-grunt.sh;
     fi
@@ -94,7 +91,9 @@ before_script:
   - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
 script: 
-  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then grunt; fi
+  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+      grunt;
+    fi
   - if [[ $PHPUNIT = "local" ]]; then
       ./vendor/bin/phpunit;
     elif [[ ! -z "$PHPUNIT" ]]; then
