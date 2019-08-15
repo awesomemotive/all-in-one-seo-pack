@@ -6,24 +6,32 @@ services:
 matrix:
   fast_finish: true
   global:
-    - env: PHPUNIT=global GRUNT=no
+    - env:
+      PHPUNIT=global
+      GRUNT=no
   include:
     - name: "PHP 7.2 Test"
       php: 7.2
-      env: PHPUNIT=7
+      env:
+        PHPUNIT=7
     - name: "PHP 7.1 Test"
       php: 7.1
-      env: PHPUNIT=6
+      env:
+        PHPUNIT=6
     - name: "PHP 7.0 Test"
       php: 7.0
-      env: PHPUNIT=5
+      env:
+        PHPUNIT=5
     - name: "PHP 5.6 Test"
       php: 5.6
-      env: PHPUNIT=5
+      env:
+        PHPUNIT=5
     - name: "PHP 5.5 Test (WP 5.2 dropped support)"
       dist: trusty
       php: 5.5
-      env: WP_VERSION=5.1 PHPUNIT=4
+      env:
+        WP_VERSION=5.1
+        PHPUNIT=4
     - name: "PHP 5.4 Test (WP 5.2 dropped support)"
       dist: trusty
       php: 5.4
@@ -33,17 +41,24 @@ matrix:
     - name: "PHP 5.3 Test"
       dist: precise
       php: 5.3
-      env: PHPUNIT=4
+      env:
+        PHPUNIT=4
     - name: "PHP 5.2 Test"
       dist: precise
       php: 5.2
-      env: PHPUNIT=4
+      env:
+        PHPUNIT=4
     - name: "Latest WP version"
-      env: WP_VERSION=latest PHPUNIT=local
+      env:
+        WP_VERSION=latest
+        PHPUNIT=local
     - name: "Minimum WP version"
-      env: WP_VERSION=4.7 PHPUNIT=local
+      env:
+        WP_VERSION=4.7
+        PHPUNIT=local
     - name: "WP Multisite"
-      env: WP_MULTISITE=1
+      env:
+        WP_MULTISITE=1
     - name: "Grunt Tasks"
       language: node_js
       node_js:
