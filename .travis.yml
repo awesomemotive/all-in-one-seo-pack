@@ -11,7 +11,7 @@ matrix:
     - name: "PHP 7.2 Test"
       php: 7.2
       env:
-        PHPUNIT=8
+        PHPUNIT=7
     - name: "PHP 7.1 Test"
       php: 7.1
       env:
@@ -40,7 +40,7 @@ matrix:
       dist: precise
       php: 5.3
       env:
-        PHPUNIT=4.6
+        PHPUNIT=4.7
     - name: "PHP 5.2 Test"
       dist: precise
       php: 5.2
@@ -64,7 +64,7 @@ matrix:
         GRUNT=yes
         PHPUNIT=local
   allow_failures:
-    - env: WP_MULTISITE=1
+    - env: WP_MULTISITE=1 PHPUNIT=local
     - php: 5.3
       dist: precise
     - php: 5.2
