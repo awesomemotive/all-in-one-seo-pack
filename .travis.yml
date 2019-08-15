@@ -64,8 +64,8 @@ branches:
   - "/^*-v[0-9]/"
 
 install:
-  - if [[ -z "$PHPUNIT"]]; then
-      bash bin/install-phpunit.sh $PHPUNIT $TRAVIS_PHP_VERSION;
+  - if [[ ! -z "$PHPUNIT"]]; then
+      bash bin/install-phpunit.sh $PHPUNIT $TRAVIS_PHP_VERSION
     fi
 #  - if [[ $PHPUNIT = "local" ]]; then
 #      composer install;
