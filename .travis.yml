@@ -27,7 +27,9 @@ matrix:
     - name: "PHP 5.4 Test (WP 5.2 dropped support)"
       dist: trusty
       php: 5.4
-      env: WP_VERSION=5.1 PHPUNIT=4
+      env:
+        WP_VERSION=5.1
+        PHPUNIT=4
     - name: "PHP 5.3 Test"
       dist: precise
       php: 5.3
@@ -79,7 +81,11 @@ before_script:
 
 script: 
   - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then grunt; fi
-  - if [[ $PHPUNIT = "local" ]]; then ./vendor/bin/phpunit; else phpunit; fi
+  - if [[ $PHPUNIT = "local" ]]; then
+      ./vendor/bin/phpunit;
+    else
+      phpunit;
+    fi
 
 after_failure:
 - cat "logs/phpcs.log"
