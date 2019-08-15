@@ -7,6 +7,6 @@ if [[ 'local' = PHPUNIT_VERSION ]];
 then
   composer install;
 else
-  composer config platform.php PHP_VERSION;
-  composer require --dev phpunit/phpunit ^PHPUNIT_VERSION;
+  composer config platform.php $PHP_VERSION;
+  composer require --dev phpunit/phpunit '^'$PHPUNIT_VERSION;
 fi;
