@@ -36,12 +36,12 @@ matrix:
       env:
         WP_VERSION=5.1
         PHPUNIT=4
-    - name: "PHP 5.3 Test"
+    - name: "PHP 5.3 Test (Not supported by PHPUnit)"
       dist: precise
       php: 5.3
       env:
-        PHPUNIT=4.7
-    - name: "PHP 5.2 Test"
+        PHPUNIT=4.5
+    - name: "PHP 5.2 Test (Not supported by PHPUnit)"
       dist: precise
       php: 5.2
     - name: "Latest WP version"
