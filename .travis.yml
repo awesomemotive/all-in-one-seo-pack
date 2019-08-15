@@ -40,7 +40,7 @@ matrix:
       dist: precise
       php: 5.3
       env:
-        PHPUNIT=4.5
+        PHPUNIT=4.2
     - name: "PHP 5.2 Test (Not supported by PHPUnit)"
       dist: precise
       php: 5.2
