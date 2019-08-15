@@ -10,13 +10,13 @@ matrix:
   include:
     - name: "PHP 7.2 Test"
       php: 7.2
-      env: PHPUNIT=8
+      env: PHPUNIT=7
     - name: "PHP 7.1 Test"
       php: 7.1
-      env: PHPUNIT=7
+      env: PHPUNIT=6
     - name: "PHP 7.0 Test"
       php: 7.0
-      env: PHPUNIT=6
+      env: PHPUNIT=5
     - name: "PHP 5.6 Test"
       php: 5.6
       env: PHPUNIT=5
