@@ -19,17 +19,19 @@ matrix:
     - name: "PHP 5.6 Test"
       php: 5.6
     - name: "PHP 5.5 Test (WP 5.2 dropped support)"
+      dist: trusty
       php: 5.5
       env: WP_VERSION=5.1
     - name: "PHP 5.4 Test (WP 5.2 dropped support)"
+      dist: trusty
       php: 5.4
       env: WP_VERSION=5.1
     - name: "PHP 5.3 Test"
+      dist: precise
       php: 5.3
-      dist: precise
     - name: "PHP 5.2 Test"
-      php: 5.2
       dist: precise
+      php: 5.2
     - name: "Latest WP version"
       env: WP_VERSION=latest PHPUNIT=local
     - name: "Minimum WP version"
