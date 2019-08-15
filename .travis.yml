@@ -11,15 +11,15 @@ matrix:
     - name: "PHP 7.2 Test"
       php: 7.2
       env:
-        PHPUNIT=7
+        PHPUNIT=8
     - name: "PHP 7.1 Test"
       php: 7.1
       env:
-        PHPUNIT=6
+        PHPUNIT=7
     - name: "PHP 7.0 Test"
       php: 7.0
       env:
-        PHPUNIT=5
+        PHPUNIT=6
     - name: "PHP 5.6 Test"
       php: 5.6
       env:
@@ -40,12 +40,10 @@ matrix:
       dist: precise
       php: 5.3
       env:
-        PHPUNIT=4
+        PHPUNIT=4.6
     - name: "PHP 5.2 Test"
       dist: precise
       php: 5.2
-      env:
-        PHPUNIT=4
     - name: "Latest WP version"
       env:
         WP_VERSION=latest
@@ -57,11 +55,14 @@ matrix:
     - name: "WP Multisite"
       env:
         WP_MULTISITE=1
+        PHPUNIT=local
     - name: "Grunt Tasks"
       language: node_js
       node_js:
        - "8.11.3"
-      env: GRUNT=yes
+      env:
+        GRUNT=yes
+        PHPUNIT=local
   allow_failures:
     - env: WP_MULTISITE=1
     - php: 5.3
@@ -98,8 +99,6 @@ script:
       ./vendor/bin/phpunit;
     elif [[ ! -z "$PHPUNIT" ]]; then
       ./vendor/bin/phpunit;
-    else
-      phpunit;
     fi
 
 after_failure:
