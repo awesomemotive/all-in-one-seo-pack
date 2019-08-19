@@ -29,7 +29,8 @@ env:
 matrix:
   fast_finish: true
   global:
-    - env: GRUNT=no
+    - env:
+        GRUNT=no
   exclude:
     # WP >= 5.0.4 unsupported with PHPUnit 7 (PHP 7.1-7.3). Tests fail from WP errors.
     - php: 7.3
@@ -94,10 +95,6 @@ matrix:
     - php: 5.2
       dist: precise
 
-notifications:
-  email:
-    on_success: never
-    on_failure: change
 
 branches:
   except:
@@ -118,15 +115,18 @@ install:
   - if [[ "1" = "$PHPUNIT" && "false" != "$TRAVIS_PULL_REQUEST" ]]; then
       bash bin/install-phpunit.sh $PHPUNIT_VERSION $TRAVIS_PHP_VERSION;
     fi
-  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+  # Setup Grunt.
+  - if [[ "yes" = $GRUNT && "false" != "$TRAVIS_PULL_REQUEST" ]]; then
+      # Requires to be an executable.
       chmod +x bin/init-grunt.sh; . bin/init-grunt.sh;
     fi
 
 before_script:
   - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
-script: 
-  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+script:
+  # Run grunt on PR.
+  - if [[ "yes" = $GRUNT && "false" != "$TRAVIS_PULL_REQUEST" ]]; then
       grunt;
     fi
   # Run PHPUnit on PR.
@@ -137,3 +137,10 @@ script:
 after_failure:
 - cat "logs/phpcs.log"
 - cat "logs/jslogs.log"
+
+# Notifications.
+# https://docs.travis-ci.com/user/notifications/#configuring-slack-notifications
+notifications:
+  email:
+    on_success: never
+    on_failure: change
