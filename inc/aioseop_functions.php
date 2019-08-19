@@ -1397,3 +1397,31 @@ if ( ! function_exists( 'aioseop_is_woocommerce_active' ) ) {
 		return class_exists( 'woocommerce' );
 	}
 }
+
+/**
+ * The aioseop_get_page_number() function.
+ * 
+ * Returns the number of the current page.
+ * This can be used to determine if we're on a paginated page for example.
+ * 
+ * @since ?
+ * @since 3.2.0
+ * 
+ * @return int $page_number
+ */
+if ( ! function_exists( 'aioseop_get_page_number' ) ) {
+	function aioseop_get_page_number() {
+		global $post;
+		if ( is_singular() && false === strpos( $post->post_content, '<!--nextpage-->', 0 ) ) {
+			return null;
+		}
+
+		//'page' has to be used to determine the pagination number on a static front page.
+		$page_number = get_query_var( 'page' );
+		if ( empty( $page_number ) ) {
+			$page_number = get_query_var( 'paged' );
+		}
+
+		return $page_number;
+	}
+}

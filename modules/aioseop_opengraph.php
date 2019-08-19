@@ -1098,7 +1098,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 
 			if ( ! empty( $aioseop_options['aiosp_hide_paginated_descriptions'] ) ) {
 				$first_page = false;
-				if ( $aiosp->get_page_number() < 2 ) {
+				if ( aioseop_get_page_number() < 2 ) {
 					$first_page = true;
 				}
 			} else {

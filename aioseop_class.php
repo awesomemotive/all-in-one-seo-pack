@@ -12,6 +12,7 @@
  * Module Base Class
  */
 require_once( AIOSEOP_PLUGIN_DIR . 'admin/aioseop_module_class.php' ); // Include the module base class.
+require_once( AIOSEOP_PLUGIN_DIR . 'inc/general/aioseop-robots-meta.php' ); // Include the module base class.
 
 /**
  * Class All_in_One_SEO_Pack
@@ -2802,33 +2803,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	function show_page_description() {
 		global $aioseop_options;
 		if ( ! empty( $aioseop_options['aiosp_hide_paginated_descriptions'] ) ) {
-			$page = $this->get_page_number();
+			$page = aioseop_get_page_number();
 			if ( ! empty( $page ) && ( $page > 1 ) ) {
 				return false;
 			}
 		}
 
 		return true;
-	}
-
-	/**
-	 * Get Page Number
-	 *
-	 * @since ?
-	 *
-	 * @return mixed
-	 */
-	function get_page_number() {
-		global $post;
-		if ( is_singular() && false === strpos( $post->post_content, '<!--nextpage-->', 0 ) ) {
-			return null;
-		}
-		$page = get_query_var( 'page' );
-		if ( empty( $page ) ) {
-			$page = get_query_var( 'paged' );
-		}
-
-		return $page;
 	}
 
 	/**
@@ -3084,7 +3065,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function get_paged( $link ) {
 		global $wp_rewrite;
-		$page      = $this->get_page_number();
+		$page      = aioseop_get_page_number();
 		$page_name = 'page';
 		if ( ! empty( $wp_rewrite ) && ! empty( $wp_rewrite->pagination_base ) ) {
 			$page_name = $wp_rewrite->pagination_base;
@@ -4202,21 +4183,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		if ( ! $this->is_page_included() ) {
 
-			/**
-			 * The aioseop_robots_meta filter hook.
-			 *
-			 * Can be used to filter the robots meta tag value.
-			 * e.g. 'noindex, nofollow'
-			 *
-			 * @since ?
-			 *
-			 * @param string
-			 * @return string
-			 */
-			$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
+			$aioseop_robots_meta = new AIOSEOP_Robots_Meta();
+			$robots_meta = $aioseop_robots_meta->get_robots_meta();
 
-			if ( ! empty( $robots_meta ) && 'index,follow' !== $robots_meta ) {
-				printf( '<meta name="robots" content="%s"', esc_attr( $robots_meta ) ) . " >\n";
+			if ( ! empty( $robots_meta ) ) {
+				echo $robots_meta;
 			}
 
 			if ( ! empty( $old_wp_query ) ) {
@@ -4322,25 +4293,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 		}
 
-		if ( get_option( 'blog_public' ) ) {
-
-			/**
-			 * The aioseop_robots_meta filter hook.
-			 *
-			 * Can be used to filter the robots meta tag value.
-			 * e.g. 'noindex, nofollow'
-			 *
-			 * @since ?
-			 *
-			 * @param string
-			 * @return string
-			 */
-			$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
-
-			if ( ! empty( $robots_meta ) && 'index,follow' !== $robots_meta ) {
-				$meta_string .= sprintf( '<meta name="robots" content="%s"', esc_attr( $robots_meta ) ) . " />\n";
-			}
-		}
+		$aioseop_robots_meta = new AIOSEOP_Robots_Meta();
+		$meta_string .= $aioseop_robots_meta->get_robots_meta();
+		
 		// Handle site verification.
 		if ( is_front_page() ) {
 			foreach (
@@ -4586,189 +4541,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * The get_robots_meta() function.
-	 *
-	 * Determines and returns the noindex/nofollow values for the robots meta tag string.
-	 *
-	 * @since 2.3.5
-	 * @since 2.3.11.5 Added noindex API filter hook for password protected posts.
-	 * @since 3.2.0 Refactored function to fix various bugs.
-	 *
-	 * @return string
-	 */
-	function get_robots_meta() {
-		global $aioseop_options;
-		$page_number    = $this->get_page_number();
-		$post_type      = get_post_type();
-		$noindex        = false;
-		$nofollow       = false;
-		$aiosp_noindex  = '';
-		$aiosp_nofollow = '';
-		$tax_noindex    = array();
-		$is_static_page = false;
-		$is_static_posts_page = false;
-		$is_woocommerce_shop_page = false;
-
-		if ( isset( $aioseop_options['aiosp_tax_noindex'] ) && ! empty( $aioseop_options['aiosp_tax_noindex'] ) ) {
-			$tax_noindex = $aioseop_options['aiosp_tax_noindex'];
-		}
-
-		if ( is_front_page() ) {
-			return $this->get_robots_meta_string( false, false );
-		}
-
-		if ( is_home() && 0 !== (int) get_option( 'page_for_posts' ) ) {
-			$is_static_posts_page = true;
-		}
-
-		// TODO Use aioseop_is_woocommerce_active() when #2720 is merged.
-		if ( class_exists( 'woocommerce' ) && is_shop() ) {
-			$is_woocommerce_shop_page = true;
-		}
-
-		if ( $is_static_posts_page || $is_woocommerce_shop_page ) {
-			$post_type = 'page';
-			$is_static_page = true;
-		}
-
-		if (
-				! is_date() &&
-				! is_author() &&
-				! is_search()
-		) {
-			$aiosp_noindex = $this->get_noindex_nofollow_meta_value( 'noindex' );
-			$aiosp_nofollow = $this->get_noindex_nofollow_meta_value( 'nofollow' );
-		}
-
-		if ( 'on' === $aiosp_noindex ||
-			( is_singular() && ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 )
-		) {
-			$noindex = true;
-		}
-		if ( 'on' === $aiosp_nofollow ||
-			( is_singular() && ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 )
-		) {
-			$nofollow = true;
-		}
-
-		if (
-				is_singular() &&
-				$this->is_password_protected() &&
-				apply_filters( 'aiosp_noindex_password_posts', false )
-		) {
-			$noindex = true;
-		}
-
-		if ( $noindex && $nofollow ) {
-			// Not needed to run subsequent checks if both are true.
-			return $this->get_robots_meta_string( $noindex, $nofollow );
-		}
-
-		if (
-				( is_category() && ! empty( $aioseop_options['aiosp_category_noindex'] ) ) ||
-				( is_date() && ! empty( $aioseop_options['aiosp_archive_date_noindex'] ) ) ||
-				( is_author() && ! empty( $aioseop_options['aiosp_archive_author_noindex'] ) ) ||
-				( is_tag() && ! empty( $aioseop_options['aiosp_tags_noindex'] ) ) ||
-				( is_search() && ! empty( $aioseop_options['aiosp_search_noindex'] ) ) ||
-				( is_404() && ! empty( $aioseop_options['aiosp_404_noindex'] ) ) ||
-				( is_tax() && in_array( get_query_var( 'taxonomy' ), $tax_noindex ) )
-		) {
-			$noindex = true;
-		}
-
-		if (
-				is_single() ||
-				is_page() ||
-				is_attachment() ||
-				$this->check_singular() ||
-				$is_static_page
-		) {
-			if ( '' === $aiosp_noindex &&
-					! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
-					in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
-			) {
-				$noindex = true;
-			}
-			if (
-					'' === $aiosp_nofollow &&
-					! empty( $aioseop_options['aiosp_cpostnofollow'] ) &&
-					in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
-			) {
-				$nofollow = true;
-			}
-		}
-
-		return $this->get_robots_meta_string( $noindex, $nofollow );
-	}
-
-	/**
-	 * The get_noindex_nofollow_meta_value() function.
-	 *
-	 * Gets the noindex/nofollow meta value for the requested object.
-	 *
-	 * @since 3.2.0
-	 *
-	 * @param string $key The requested meta key.
-	 * @return string
-	 */
-	private function get_noindex_nofollow_meta_value( $key ) {
-		$meta = array();
-		$meta_key = '_aioseop_' . $key;
-		$meta_value = '';
-
-		$queried_object = get_queried_object();
-		if ( empty( $queried_object ) ) {
-			return $meta_value;
-		}
-
-		// TODO Use $meta_opts when get_current_options() is refactored - #2729.
-		if ( property_exists( $queried_object, 'ID' ) ) {
-			$meta = get_post_meta( $queried_object->ID );
-		}
-		if ( property_exists( $queried_object, 'term_id' ) ) {
-			$meta = get_term_meta( $queried_object->term_id );
-		}
-		// TODO Use aioseop_is_woocommerce_active() when #2720 is merged.
-		if ( class_exists( 'woocommerce' ) && is_shop() ) {
-			$meta = get_post_meta( wc_get_page_id( 'shop' ) );
-		}
-
-		if ( is_array( $meta ) && array_key_exists( $meta_key, $meta ) ) {
-			$meta_value = $meta[ $meta_key ][0];
-		}
-
-		return $meta_value;
-	}
-
-
-	/**
-	 * The get_robots_meta_string() function.
-	 *
-	 * Helper function for get_robots_meta().
-	 *
-	 * @since 3.2.0
-	 *
-	 * @param bool $noindex
-	 * @param bool $nofollow
-	 *
-	 * @return string
-	 */
-	private function get_robots_meta_string( $noindex, $nofollow ) {
-		$index_value  = 'index';
-		$follow_value = 'follow';
-
-		if ( $noindex ) {
-			$index_value = 'noindex';
-		}
-
-		if ( $nofollow ) {
-			$follow_value = 'nofollow';
-		}
-
-		return $index_value . ',' . $follow_value;
-	}
-
-	/**
 	 * Check Singular
 	 *
 	 * Determine if the post is 'like' singular. In some specific instances, such as when the Reply post type of bbpress is loaded in its own page,
@@ -4791,26 +4563,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	}
 
 	/**
-	 * Is Password Protected
-	 *
-	 * Determine if post is password protected.
-	 *
-	 * @since 2.3.11.5
-	 *
-	 * @return bool
-	 */
-	function is_password_protected() {
-		global $post;
-
-		if ( ! empty( $post->post_password ) ) {
-			return true;
-		}
-
-		return false;
-
-	}
-
-	/**
 	 * Get Previous/Next Links
 	 *
 	 * @since ?
@@ -4820,7 +4572,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	function get_prev_next_links( $post = null ) {
 		$prev = $next = '';
-		$page = $this->get_page_number();
+		$page = aioseop_get_page_number();
 		if ( is_home() || is_archive() || is_paged() ) {
 			global $wp_query;
 			$max_page = $wp_query->max_num_pages;
