@@ -101,6 +101,12 @@ matrix:
     - php: 5.2
       dist: precise
 
+# Cache directories most commonly used; like composer.
+# https://docs.travis-ci.com/user/caching/#arbitrary-directories
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
 
 branches:
   except:
