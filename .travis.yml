@@ -107,6 +107,10 @@ cache:
   directories:
     - $HOME/.composer/cache/files
 
+# Commit depth to clone the repository.
+# https://docs.travis-ci.com/user/customizing-the-build/#git-clone-depth
+git:
+  depth: 3
 
 branches:
   except:
