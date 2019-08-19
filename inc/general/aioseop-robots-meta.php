@@ -3,6 +3,8 @@
  * The aioseop-robots-meta.php file.
  *
  * Includes all code for the robots meta tag.
+ *
+ * @package All-in-One-SEO-Pack
  */
 
 /**
