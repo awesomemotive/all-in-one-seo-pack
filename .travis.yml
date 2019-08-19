@@ -1,5 +1,9 @@
+# Travis CI Configuration
+
+# Travis CI environment set to handle PHP language.
 language: php
 
+# Add MySQL service.
 services:
   - mysql
 
@@ -26,6 +30,7 @@ env:
     - WP_VERSION=4.8.9
     - WP_VERSION=4.7.13
 
+# Additional matrix builds.
 matrix:
   fast_finish: true
   global:
@@ -88,6 +93,7 @@ matrix:
     - name: "PHP 5.2 Test (Not supported by PHPUnit)"
       dist: precise
       php: 5.2
+  # The allowed configured builds to fail.
   allow_failures:
     - env: WP_MULTISITE=1 PHPUNIT=1 PHPUNIT_VERSION=local
     - php: 5.3
@@ -100,6 +106,8 @@ branches:
   except:
   - "/^*-v[0-9]/"
 
+# Travis CI Lifecycle
+# https://docs.travis-ci.com/user/job-lifecycle/
 before_install:
   # Set PHPUnit Version if PHPUnit is enabled.
   - if [[ "1" = "$PHPUNIT" && -z "$PHPUNIT_VERSION" || "0" = "$PHPUNIT_VERSION"  ]]; then
@@ -116,12 +124,13 @@ install:
       bash bin/install-phpunit.sh $PHPUNIT_VERSION $TRAVIS_PHP_VERSION;
     fi
   # Setup Grunt.
+  # Requires to be an executable.
   - if [[ "yes" = $GRUNT && "false" != "$TRAVIS_PULL_REQUEST" ]]; then
-      # Requires to be an executable.
       chmod +x bin/init-grunt.sh; . bin/init-grunt.sh;
     fi
 
 before_script:
+  # Setup WordPress.
   - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
 script:
@@ -134,6 +143,7 @@ script:
       ./vendor/bin/phpunit;
     fi
 
+# Displays information written to log files.
 after_failure:
 - cat "logs/phpcs.log"
 - cat "logs/jslogs.log"
