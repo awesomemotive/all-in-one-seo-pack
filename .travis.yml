@@ -91,12 +91,6 @@ matrix:
       env:
         WP_VERSION=5.1
         PHPUNIT=1
-    - name: "PHP 5.3 Test (Not supported by PHPUnit)"
-      dist: precise
-      php: 5.3
-    - name: "PHP 5.2 Test (Not supported by PHPUnit)"
-      dist: precise
-      php: 5.2
   # The allowed configured builds to fail.
   allow_failures:
     - env: WP_MULTISITE=1 PHPUNIT=1 PHPUNIT_VERSION=local
