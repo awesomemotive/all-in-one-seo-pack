@@ -803,7 +803,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default' => 0,
 			),
 			'ex_pages'                    => array(
-				/* translators: This is ag textarea setting where users can enter a list of pages that All in One SEO Pack should not affect. */
+				/* translators: This is a textarea setting where users can enter a list of pages that All in One SEO Pack should not affect. */
 				'name'    => __( 'Exclude Pages:', 'all-in-one-seo-pack' ),
 				'type'    => 'textarea',
 				'default' => '',
