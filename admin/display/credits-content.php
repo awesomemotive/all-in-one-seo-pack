@@ -146,7 +146,7 @@ _e( 'Recent Rockstar Contributors', 'all-in-one-seo-pack' );
 
 <h3 class="wp-people-group dashicons-before dashicons-translation">
 <?php
-/* translators: In this context, "translation contributors" are translators who submit string on translate.wordpress.org and "translation editors" are those who proofread and approve them (also known as PTEs - Project Translation Editors).*/
+/* translators: In this context, "translation contributors" are translators who submit strings on translate.wordpress.org and "translation editors" are those who proofread and approve them (also known as PTEs - Project Translation Editors).*/
 printf( _e( 'Translation contributors and translation editors', 'all-in-one-seo-pack' ), '1.2' );
 ?>
 </h3>
