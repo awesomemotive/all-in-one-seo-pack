@@ -611,6 +611,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'schema_social_profile_links' => array(
+				/* translators: This is a setting where users can add links to their social media profiles. These are then output as schema.org markup. */
 				'name'     => __( 'Social Profile Links:', 'all-in-one-seo-pack' ),
 				'type'     => 'textarea',
 				'cols'     => 60,
@@ -620,6 +621,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'schema_site_represents'      => array(
+				/* translators: This is a setting where users can indicate whether their website represents a person or organization. This is used for our schema.org markup. */
 				'name'            => __( 'Person or Organization:', 'all-in-one-seo-pack' ),
 				'type'            => 'radio',
 				'default'         => 'organization',
@@ -632,6 +634,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'schema_organization_name'    => array(
+				/* translators: This is a setting where users can enter the name of their organization. This is used for our schema.org markup. */
 				'name'     => __( 'Organization Name:', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
 				'default'  => '',
@@ -641,6 +644,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'schema_organization_logo'    => array(
+				/* translators: This is a setting where users can upload and select a logo for their organization. This is used for our schema.org markup. */
 				'name'     => __( 'Organization Logo:', 'all-in-one-seo-pack' ),
 				'type'     => 'image',
 				'condshow' => array(
@@ -650,6 +654,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			),
 
 			'schema_person_user'          => array(
+				/* translators: This is a dropdown setting where users can select the username of the person that the website is for. The profile from that user is then used for our schema.org markup.*/
 				'name'     => __( 'Person\'s Username:', 'all-in-one-seo-pack' ),
 				'type'     => 'select',
 				'default'  => 1,
@@ -660,6 +665,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				// Add initial options below.
 			),
 			'schema_phone_number'         => array(
+				/* translators: This is a setting where users can enter a phone number for their organization. This is used for our schema.org markup. */
 				'name'         => __( 'Phone Number:', 'all-in-one-seo-pack' ),
 				'type'         => 'tel',
 				'autocomplete' => 'off',
@@ -669,6 +675,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 			),
 			'schema_contact_type'         => array(
+				/* translators: This is a setting where users have to indicate what contact/department their phone number connects to (e.g. "Sales" or "Customer Support"). This is used for our schema.org markup. */
 				'name'            => __( 'Type of Contact:', 'all-in-one-seo-pack' ),
 				'type'            => 'select',
 				'condshow'        => array(
@@ -676,17 +683,21 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'aiosp_schema_site_represents' => 'organization',
 				),
 				'initial_options' => array(
+					/* translators: This is the placeholder we use in one of our dropdowns when no value has been selected yet. */
 					'none'                => __( '-- Select --', 'all-in-one-seo-pack' ),
 					'customer support'    => __( 'Customer Support', 'all-in-one-seo-pack' ),
 					'tech support'        => __( 'Technical Support', 'all-in-one-seo-pack' ),
+					/* translators: This is the support department of a business that handles all enquiries regarding billing. */
 					'billing support'     => __( 'Billing Support', 'all-in-one-seo-pack' ),
 					'bill payment'        => __( 'Bill Payment', 'all-in-one-seo-pack' ),
 					'sales'               => __( 'Sales', 'all-in-one-seo-pack' ),
 					'reservations'        => __( 'Reservations', 'all-in-one-seo-pack' ),
 					'credit card support' => __( 'Credit Card Support', 'all-in-one-seo-pack' ),
 					'emergency'           => __( 'Emergency', 'all-in-one-seo-pack' ),
+					/* translators: This is the department that handles baggage enquiries when e.g. baggage is lost or missing. */
 					'baggage tracking'    => __( 'Baggage Tracking', 'all-in-one-seo-pack' ),
 					'roadside assistance' => __( 'Roadside Assistance', 'all-in-one-seo-pack' ),
+					/* translators: This refers to the department of a courier that handles package enquiries when e.g. a package has not been delivered or is missing.  */
 					'package tracking'    => __( 'Package Tracking', 'all-in-one-seo-pack' ),
 				),
 			),
@@ -792,7 +803,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				'default' => 0,
 			),
 			'ex_pages'                    => array(
-				/* translators: This is a textarea setting where users can enter a list of pages that All in One SEO Pack should not affect. */
+				/* translators: This is ag textarea setting where users can enter a list of pages that All in One SEO Pack should not affect. */
 				'name'    => __( 'Exclude Pages:', 'all-in-one-seo-pack' ),
 				'type'    => 'textarea',
 				'default' => '',
