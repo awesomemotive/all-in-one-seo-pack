@@ -14,7 +14,7 @@
 
 <p class="about-description">
 <?php
-	/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+	/* translators: %s is a placeholder so it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
 	printf( __( '%s is created by a worldwide network of friendly folks like these.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME );
 ?>
 	</p>
@@ -24,7 +24,12 @@
 	<li class="wp-person" id="wp-person-michaeltorbert">
 		<a class="web" href="https://twitter.com/michaeltorbert" target="_blank"><img alt="" class="gravatar" src="https://s.gravatar.com/avatar/f41419cf5cfdbb071a8d591ac9976bf3?s=60">
 			Michael Torbert</a>
-		<span class="title"><?php _e( 'Project Lead', 'all-in-one-seo-pack' ); ?></span>
+		<span class="title">
+		<?php
+		/* translators: This is our CEO and founder Michael Torbert who oversees everything that is related to All in One SEO Pack. Feel free to use a different term if this doesn't translate well. */
+		_e( 'Project Lead', 'all-in-one-seo-pack' );
+		?>
+		</span>
 	</li>
 	<li class="wp-person" id="wp-person-stevemortiboy">
 		<a class="web" target="_blank" href="https://twitter.com/wpsmort"><img alt="" class="gravatar" src="https://www.gravatar.com/avatar/40e33d813c16a63500675d851b0cbf3a?s=60">
@@ -43,7 +48,12 @@
 	<li class="wp-person" id="wp-person-arnaudbroes">
 		<a class="web" target="_blank" href="https://profiles.wordpress.org/arnaudbroes"><img alt="" class="gravatar" src="https://www.gravatar.com/avatar/0ce0d554c2b0bd61d326e15c8dcde756?s=60">
 			Arnaud Broes</a>
-		<span class="title"><?php _e( 'Team Lead', 'all-in-one-seo-pack' ); ?></span>
+		<span class="title">
+		<?php
+		/* translators: ¨This is the person who leads our development team. */
+		_e( 'Team Lead', 'all-in-one-seo-pack' );
+		?>
+		</span>
 	</li>
 
 	<li class="wp-person" id="rozroz">
@@ -59,11 +69,16 @@
 
 </ul>
 
-<h3 class="wp-people-group">&#x1f31f;<?php _e( 'Recent Rockstar Contributors', 'all-in-one-seo-pack' ); ?>&#x1f31f;</h3>
+<h3 class="wp-people-group">&#x1f31f;
+<?php
+/* translators: These are people who made an awesome contribution to All in One SEO Pack. Feel free to replace "Rockstar" with whatever works best in your language. */
+_e( 'Recent Rockstar Contributors', 'all-in-one-seo-pack' );
+?>
+&#x1f31f;</h3>
 	<ul class="wp-people-group " id="wp-people-group-rockstars">
 		<li>
 		<?php
-		/* translators: '%1$s' and '%2$s' are used as placeholders and turn the text in between into a clickable link */
+		/* translators: %1$s and %2$s are used as placeholders and should not be transalted. These are used to transform the text in between them into a clickable link. */
 			printf(
 				__( 'Want to see your name and picture here as a community developer? %1$sClick here%2$s to open an issue on GitHub to report a bug, request a feature or find an issue and submit code!', 'all-in-one-seo-pack' ),
 				'<a href="https://github.com/semperfiwebdesign/all-in-one-seo-pack" target="_blank">',
@@ -129,7 +144,13 @@
 	</li>
 </ul>
 
-<h3 class="wp-people-group dashicons-before dashicons-translation"><?php printf( _e( 'Translation contributors and translation editors', 'all-in-one-seo-pack' ), '1.2' ); ?></h3>
+<h3 class="wp-people-group dashicons-before dashicons-translation">
+<?php
+/* translators: In this context, "translation contributors" are translators who submit string on translate.wordpress.org and "translation editors" are those who proofread and approve them (also known as PTEs - Project Translation Editors).*/
+printf( _e( 'Translation contributors and translation editors', 'all-in-one-seo-pack' ), '1.2' );
+?>
+</h3>
+
 <p class="wp-credits-list">
 	<a href="https://profiles.wordpress.org/pierrelannoy/" target="_blank">Pierre Lannoy</a>,
 	<a href="https://profiles.wordpress.org/sonjanyc/" target="_blank">Sonja Leix</a>,
