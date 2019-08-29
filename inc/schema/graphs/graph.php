@@ -159,7 +159,7 @@ abstract class AIOSEOP_Graph {
 			$schema_data = str_replace( '\/', '/', $schema_data );
 		}
 		// If json encode returned false, set as empty string.
-		if ( ! $schema_data ){
+		if ( ! $schema_data ) {
 			$schema_data = '';
 		}
 
