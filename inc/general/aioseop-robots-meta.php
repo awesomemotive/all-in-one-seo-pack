@@ -30,7 +30,6 @@ class AIOSEOP_Robots_Meta {
 	public function get_robots_meta() {
 		$post_type      = get_post_type();
 		$page_number    = aioseop_get_page_number();
-		$is_static_page = false;
 
 		$noindex            = false;
 		$nofollow           = false;
@@ -38,7 +37,7 @@ class AIOSEOP_Robots_Meta {
 		$post_meta_nofollow = '';
 
 		if ( ! get_option( 'blog_public' ) ) {
-			return $this->get_robots_meta_helper( true, false );
+			return '';
 		}
 
 		if ( is_front_page() && $page_number === 0 ) {
@@ -46,7 +45,6 @@ class AIOSEOP_Robots_Meta {
 		}
 
 		if ( $this->is_static_page() ) {
-			$is_static_page = true;
 			$post_type = 'page';
 		}
 
