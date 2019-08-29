@@ -3868,12 +3868,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 	}
 
-	/**
+/**
 	 * The is_page_included() function.
 	 *
 	 * Checks whether All in One SEO Pack is enabled for this page.
 	 *
 	 * @since ?
+     * @since 3.3 Show Google Analytics if post type isn't checked in options.
 	 *
 	 * @return bool
 	 */
@@ -3923,32 +3924,21 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		$this->meta_opts = $this->get_current_options( array(), 'aiosp' );
 
-		$aiosp_disable           = false;
-		$aiosp_disable_analytics = false;
+		$aiosp_disable = false;
 
 		if ( ! empty( $this->meta_opts ) ) {
 			if ( isset( $this->meta_opts['aiosp_disable'] ) ) {
 				$aiosp_disable = $this->meta_opts['aiosp_disable'];
-			}
-			if ( isset( $this->meta_opts['aiosp_disable_analytics'] ) ) {
-				$aiosp_disable_analytics = $this->meta_opts['aiosp_disable_analytics'];
 			}
 		}
 
 		$aiosp_disable = apply_filters( 'aiosp_disable', $aiosp_disable ); // API filter to disable AIOSEOP.
 
 		if ( $aiosp_disable ) {
-			if ( ! $aiosp_disable_analytics ) {
-				if ( aioseop_option_isset( 'aiosp_google_analytics_id' ) ) {
-					remove_action( 'aioseop_modules_wp_head', array( $this, 'aiosp_google_analytics' ) );
-					add_action( 'wp_head', array( $this, 'aiosp_google_analytics' ) );
-				}
-			}
-
 			return false;
 		}
 
-		if ( ! empty( $this->meta_opts ) && true == $this->meta_opts['aiosp_disable'] ) {
+		if ( ! empty( $this->meta_opts ) && $this->meta_opts['aiosp_disable'] == true ) {
 			return false;
 		}
 
@@ -4210,6 +4200,28 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		return empty( $post_type ) || in_array( get_post_type(), $aioseop_options['aiosp_cpostactive'], true );
 	}
 
+		/**
+     * Checks to see if Google Analytics should be excluded from the current page.
+     *
+     * Looks at both the individual post settings and the General Settings.
+     *
+     * @since 3.3
+     *
+	 * @return bool
+	 */
+	function analytics_excluded(){
+		$aiosp_disable_analytics = false;
+
+		if ( isset( $this->meta_opts['aiosp_disable_analytics'] ) ) {
+			$aiosp_disable_analytics = $this->meta_opts['aiosp_disable_analytics'];
+		}
+
+		if ( $aiosp_disable_analytics || ! aioseop_option_isset( 'aiosp_google_analytics_id' ) ) {
+		    return true;
+			}
+			return false;
+	}
+
 	/**
 	 * WP Head
 	 *
@@ -4226,7 +4238,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( ! $this->is_page_included() ) {
-
 			/**
 			 * The aioseop_robots_meta filter hook.
 			 *
@@ -4239,15 +4250,20 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			 * @return string
 			 */
 			$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
-
-			if ( ! empty( $robots_meta ) && 'index,follow' !== $robots_meta ) {
-				printf( '<meta name="robots" content="%s"', esc_attr( $robots_meta ) ) . " >\n";
+			if ( ! empty( $robots_meta ) ) {
+				// Should plugin & version details be added here as well?
+				echo '<meta name="robots" content="' . esc_attr( $robots_meta ) . '" />' . "\n";
 			}
 
 			if ( ! empty( $old_wp_query ) ) {
 				// Change the query back after we've finished.
 				$GLOBALS['wp_query'] = $old_wp_query;
 				unset( $old_wp_query );
+			}
+
+			if ( ! $this->analytics_excluded() ) {
+					remove_action( 'aioseop_modules_wp_head', array( $this, 'aiosp_google_analytics' ) );
+					add_action( 'wp_head', array( $this, 'aiosp_google_analytics' ) );
 			}
 
 			return;
