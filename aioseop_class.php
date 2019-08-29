@@ -4644,7 +4644,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$tax_noindex = $aioseop_options['aiosp_tax_noindex'];
 		}
 
-		if ( is_front_page() && $page_number === 0 ) {
+		if ( is_front_page() && 0 === $page_number ) {
 			return $this->get_robots_meta_string( false, false );
 		}
 

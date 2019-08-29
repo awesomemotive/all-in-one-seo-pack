@@ -162,3 +162,5 @@ notifications:
   email:
     on_success: never
     on_failure: change
+  slack: semperplugins:mz7yzPUOM7yiBrvQd5AFSHOS
+  
