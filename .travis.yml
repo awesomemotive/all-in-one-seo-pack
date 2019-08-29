@@ -36,9 +36,9 @@ env:
 
 # Order of our stages..
 stages:
-  - compatib
+  - compatibility
   - grunt
-  - default
+  - test
 
 # Additional matrix builds.
 matrix:
@@ -47,28 +47,25 @@ matrix:
     - env:
         GRUNT=no
   include:
-    - stage: compatib
+    - stage: compatibility
     - name: "PHP 5.2 (WP <= 5.0)"
       dist: precise
       php: 5.2
       env:
         WP_VERSION=5.0
         PHPUNIT=0
-    - stage: compatib
     - name: "PHP 5.3 (WP <= 5.0)"
       dist: precise
       php: 5.3
       env:
         WP_VERSION=5.0
         PHPUNIT=0
-    - stage: compatib
     - name: "PHP 5.4 (WP <= 5.1)"
       dist: trusty
       php: 5.4
       env:
         WP_VERSION=5.1
         PHPUNIT=1
-    - stage: compatib
     - name: "PHP 5.5 (WP <= 5.1)"
       dist: trusty
       php: 5.5
