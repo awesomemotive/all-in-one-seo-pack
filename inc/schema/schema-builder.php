@@ -164,8 +164,6 @@ class AIOSEOP_Schema_Builder {
 			$layout = wp_json_encode( (object) $layout );
 			$layout = str_replace( '\/', '/', $layout );
 		}
-		// If json encode returned false, set as empty string.
-		$schema_data = $layout ?: '';
 
 		$layout = str_replace( '"[', '[', $layout );
 		$layout = str_replace( ']"', ']', $layout );
