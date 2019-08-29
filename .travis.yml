@@ -73,13 +73,14 @@ matrix:
         WP_VERSION=5.1
         PHPUNIT=1
     - stage: grunt
+      script: skip
     - name: "Grunt Task Runner"
       language: node_js
       node_js:
         - "8.11.3"
       env:
         GRUNT=yes
-        PHPUNIT=0script: skip  
+        PHPUNIT=0
     # - name: "WP Multisite"
       # env:
         # WP_MULTISITE=1
