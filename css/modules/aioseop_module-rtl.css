@@ -353,3 +353,23 @@ textarea.robots-text {
 .All_in_One_SEO_Pack_Feature_Manager > .aioseop_right_sidebar.aioseop_options_wrapper  {
 	margin: 30px 0 0 0;
 }
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div .ui-datepicker-prev {
+	float: right;
+	text-align: right;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div .ui-datepicker-prev:before {
+	content: '\2192 ';
+	padding-left: 2px;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div .ui-datepicker-next {
+	float: left;
+	text-align: left;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div .ui-datepicker-next:after {
+	content: '\2190 ';
+	padding-right: 2px;
+}
