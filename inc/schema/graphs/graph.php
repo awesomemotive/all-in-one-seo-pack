@@ -149,7 +149,19 @@ abstract class AIOSEOP_Graph {
 		 * @param array  Dynamically generated data through inherited schema graphs.
 		 */
 		$schema_data = apply_filters( 'aioseop_schema_class_data_' . get_class( $this ), $this->prepare() );
-		return wp_json_encode( (object) $schema_data, JSON_UNESCAPED_SLASHES ) ?: '';
+
+		// Encode to json string, and remove string type around shortcodes.
+		if ( version_compare( PHP_VERSION, '5.4', '>=' ) ) {
+			$schema_data = wp_json_encode( (object) $schema_data, JSON_UNESCAPED_SLASHES );
+		} else {
+			// PHP <= 5.3 compatibility.
+			$schema_data = wp_json_encode( (object) $schema_data );
+			$schema_data = str_replace( '\/', '/', $schema_data );
+		}
+		// If json encode returned false, set as empty string.
+		$schema_data = $schema_data ?: '';
+
+		return $schema_data;
 	}
 
 	/**

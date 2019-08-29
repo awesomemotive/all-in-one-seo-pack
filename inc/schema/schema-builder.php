@@ -157,7 +157,16 @@ class AIOSEOP_Schema_Builder {
 		$layout = apply_filters( 'aioseop_schema_layout', $layout );
 
 		// Encode to json string, and remove string type around shortcodes.
-		$layout = wp_json_encode( (object) $layout, JSON_UNESCAPED_SLASHES );
+		if ( version_compare( PHP_VERSION, '5.4', '>=' ) ) {
+			$layout = wp_json_encode( (object) $layout, JSON_UNESCAPED_SLASHES );
+		} else {
+			// PHP <= 5.3 compatibility.
+			$layout = wp_json_encode( (object) $layout );
+			$layout = str_replace( '\/', '/', $layout );
+		}
+		// If json encode returned false, set as empty string.
+		$schema_data = $layout ?: '';
+
 		$layout = str_replace( '"[', '[', $layout );
 		$layout = str_replace( ']"', ']', $layout );
 
