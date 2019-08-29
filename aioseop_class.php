@@ -4250,9 +4250,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			 * @return string
 			 */
 			$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
-			if ( ! empty( $robots_meta ) ) {
-				// Should plugin & version details be added here as well?
-				echo '<meta name="robots" content="' . esc_attr( $robots_meta ) . '" />' . "\n";
+			if ( ! empty( $robots_meta ) && 'index,follow' !== $robots_meta ) {
+				printf( '<meta name="robots" content="%s"', esc_attr( $robots_meta ) ) . " >\n";
 			}
 
 			if ( ! empty( $old_wp_query ) ) {
