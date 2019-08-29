@@ -35,10 +35,10 @@ env:
     - WP_VERSION=4.7.13
 
 # Order of our stages..
-#stages:
-  #- compatibility
-  #- grunt
-  #- test
+stages:
+  - compatibility
+  - grunt
+  - test
 
 # Additional matrix builds.
 matrix:
