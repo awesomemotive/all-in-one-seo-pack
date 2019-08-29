@@ -40,6 +40,43 @@ matrix:
   global:
     - env:
         GRUNT=no
+  include:
+    - name: "PHP 5.2 (WP <= 5.0)"
+      dist: precise
+      php: 5.2
+      env:
+        WP_VERSION=5.0
+        PHPUNIT=0
+    - name: "PHP 5.3 (WP <= 5.0)"
+      dist: precise
+      php: 5.3
+      env:
+        WP_VERSION=5.0
+        PHPUNIT=0
+    - name: "PHP 5.4 (WP <= 5.1)"
+      dist: trusty
+      php: 5.4
+      env:
+        WP_VERSION=5.1
+        PHPUNIT=1
+    - name: "PHP 5.5 (WP <= 5.1)"
+      dist: trusty
+      php: 5.5
+      env:
+        WP_VERSION=5.1
+        PHPUNIT=1
+    - name: "Grunt Task Runner"
+      language: node_js
+      node_js:
+        - "8.11.3"
+      env:
+        GRUNT=yes
+        PHPUNIT=0
+    - name: "WP Multisite"
+      env:
+        WP_MULTISITE=1
+        PHPUNIT=1
+        PHPUNIT_VERSION=local
   exclude:
     # WP >= 5.0.4 unsupported with PHPUnit 7 (PHP 7.1-7.3). Tests fail from WP errors.
     - php: 7.3
@@ -66,31 +103,7 @@ matrix:
       env: WP_VERSION=4.8.9
     - php: 7.1
       env: WP_VERSION=4.7.13
-  include:
-    - name: "Grunt Tasks"
-      language: node_js
-      node_js:
-        - "8.11.3"
-      env:
-        GRUNT=yes
-        PHPUNIT=0
-    - name: "WP Multisite"
-      env:
-        WP_MULTISITE=1
-        PHPUNIT=1
-        PHPUNIT_VERSION=local
-    - name: "PHP 5.5 Test (WP <= 5.1)"
-      dist: trusty
-      php: 5.5
-      env:
-        WP_VERSION=5.1
-        PHPUNIT=1
-    - name: "PHP 5.4 Test (WP <= 5.1)"
-      dist: trusty
-      php: 5.4
-      env:
-        WP_VERSION=5.1
-        PHPUNIT=1
+
   # The allowed configured builds to fail.
   allow_failures:
     - env: WP_MULTISITE=1 PHPUNIT=1 PHPUNIT_VERSION=local
