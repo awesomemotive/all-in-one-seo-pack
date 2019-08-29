@@ -34,6 +34,12 @@ env:
     - WP_VERSION=4.8.9
     - WP_VERSION=4.7.13
 
+# Order of our stages..
+stages:
+  - compatib
+  - grunt
+  - default
+
 # Additional matrix builds.
 matrix:
   fast_finish: true
@@ -41,30 +47,35 @@ matrix:
     - env:
         GRUNT=no
   include:
+    - stage: compatib
     - name: "PHP 5.2 (WP <= 5.0)"
       dist: precise
       php: 5.2
       env:
         WP_VERSION=5.0
         PHPUNIT=0
+    - stage: compatib
     - name: "PHP 5.3 (WP <= 5.0)"
       dist: precise
       php: 5.3
       env:
         WP_VERSION=5.0
         PHPUNIT=0
+    - stage: compatib
     - name: "PHP 5.4 (WP <= 5.1)"
       dist: trusty
       php: 5.4
       env:
         WP_VERSION=5.1
         PHPUNIT=1
+    - stage: compatib
     - name: "PHP 5.5 (WP <= 5.1)"
       dist: trusty
       php: 5.5
       env:
         WP_VERSION=5.1
         PHPUNIT=1
+    - stage: grunt
     - name: "Grunt Task Runner"
       language: node_js
       node_js:
@@ -72,11 +83,11 @@ matrix:
       env:
         GRUNT=yes
         PHPUNIT=0
-    - name: "WP Multisite"
-      env:
-        WP_MULTISITE=1
-        PHPUNIT=1
-        PHPUNIT_VERSION=local
+    # - name: "WP Multisite"
+      # env:
+        # WP_MULTISITE=1
+        # PHPUNIT=1
+        # PHPUNIT_VERSION=local
   exclude:
     # WP >= 5.0.4 unsupported with PHPUnit 7 (PHP 7.1-7.3). Tests fail from WP errors.
     - php: 7.3
@@ -107,10 +118,6 @@ matrix:
   # The allowed configured builds to fail.
   allow_failures:
     - env: WP_MULTISITE=1 PHPUNIT=1 PHPUNIT_VERSION=local
-    - php: 5.3
-      dist: precise
-    - php: 5.2
-      dist: precise
 
 # Cache directories most commonly used; like composer.
 # https://docs.travis-ci.com/user/caching/#arbitrary-directories
