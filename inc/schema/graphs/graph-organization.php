@@ -72,7 +72,11 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 			}
 		} else {
 			// Get Name from General > Schema Settings > Organization Name, and fallback on WP's Site Name.
-			$rtn_data['name']   = $aioseop_options['aiosp_schema_organization_name'] ?: get_bloginfo( 'name' );
+			if ( $aioseop_options['aiosp_schema_organization_name'] ){
+				$rtn_data['name']   = $aioseop_options['aiosp_schema_organization_name'];
+			}else{
+				$rtn_data['name']   = get_bloginfo( 'name' );
+			}
 			$rtn_data['sameAs'] = $this->get_site_social_profile_links();
 
 			// Handle Logo/Image.
