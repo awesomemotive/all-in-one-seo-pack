@@ -319,6 +319,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					'name'  => __( 'Last Modified', 'all-in-one-seo-pack' ),
 					'type'  => 'date',
 					'save'  => false,
+					'placeholder' => 'yyyy-mm-dd',
 					'class' => 'aiseop-date',
 				),
 				'addl_pages'        => array(
