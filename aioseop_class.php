@@ -3867,14 +3867,14 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			add_filter( 'wp_title', array( $this, 'wp_title' ), 20 );
 		}
 	}
-
-/**
+	
+	/**
 	 * The is_page_included() function.
 	 *
 	 * Checks whether All in One SEO Pack is enabled for this page.
 	 *
 	 * @since ?
-     * @since 3.3 Show Google Analytics if post type isn't checked in options.
+	 * @since 3.3 Show Google Analytics if post type isn't checked in options.
 	 *
 	 * @return bool
 	 */
@@ -4200,13 +4200,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		return empty( $post_type ) || in_array( get_post_type(), $aioseop_options['aiosp_cpostactive'], true );
 	}
 
-		/**
-     * Checks to see if Google Analytics should be excluded from the current page.
-     *
-     * Looks at both the individual post settings and the General Settings.
-     *
-     * @since 3.3
-     *
+	/**
+	 * Checks to see if Google Analytics should be excluded from the current page.
+	 *
+	 * Looks at both the individual post settings and the General Settings.
+	 *
+	 * @since 3.3.0
+	 *
 	 * @return bool
 	 */
 	function analytics_excluded(){
@@ -4218,8 +4218,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		if ( $aiosp_disable_analytics || ! aioseop_option_isset( 'aiosp_google_analytics_id' ) ) {
 		    return true;
-			}
-			return false;
+		}
+		return false;
 	}
 
 	/**
@@ -4261,8 +4261,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 
 			if ( ! $this->analytics_excluded() ) {
-					remove_action( 'aioseop_modules_wp_head', array( $this, 'aiosp_google_analytics' ) );
-					add_action( 'wp_head', array( $this, 'aiosp_google_analytics' ) );
+				remove_action( 'aioseop_modules_wp_head', array( $this, 'aiosp_google_analytics' ) );
+				add_action( 'wp_head', array( $this, 'aiosp_google_analytics' ) );
 			}
 
 			return;
