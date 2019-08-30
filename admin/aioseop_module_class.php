@@ -2788,7 +2788,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			if ( 'none' != $opts['label'] ) {
 				$tmp_help_text = $info->get_help_text( $name );
 				if ( isset( $tmp_help_text ) && ! empty( $tmp_help_text ) ) {
-					$display_help = '<a tabindex="0" class="aioseop_help_text_link" style="cursor: help;" title="%s"></a><label class="aioseop_label textinput">%s</label>';
+					$display_help = '<a tabindex="0" class="aioseop_help_text_link" style="cursor: help;" title="%2$s: %1$s"></a><label class="aioseop_label textinput">%2$s</label>';
 					$help_text    = sprintf( $display_help, $info->get_help_text( $name ), $opts['name'] );
 				} else {
 					$help_text = $opts['name'];
