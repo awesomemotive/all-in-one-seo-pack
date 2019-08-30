@@ -145,8 +145,10 @@ class AIOSEOP_Updates {
 			$this->reset_flush_rewrite_rules_201906();
 		}
 
+		// Cause the update to occur again for 3.2.6.
 		if (
-				version_compare( $old_version, '3.2', '<' )
+				version_compare( $old_version, '3.2', '<' ) ||
+				version_compare( $old_version, '3.2.6', '<' )
 		) {
 			$this->update_schema_markup();
 		}
