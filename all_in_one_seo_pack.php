@@ -481,7 +481,8 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 		}
 
 		add_action( 'init', array( $aiosp, 'add_hooks' ) );
-		add_action( 'admin_init', array( $aioseop_updates, 'version_updates' ), 11 );
+		add_action( 'plugins_loaded', array( $aioseop_updates, 'version_updates' ), 11 );
+
 
 		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 		// add_action( 'admin_init', 'aioseop_review_plugin_notice' );
