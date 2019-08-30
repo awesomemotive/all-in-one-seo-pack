@@ -150,7 +150,7 @@ class AIOSEOP_Updates {
 				version_compare( $old_version, '3.2', '<' ) ||
 				version_compare( $old_version, '3.2.6', '<' )
 		) {
-			$this->update_schema_markup();
+			$this->update_schema_markup_201907();
 		}
 	}
 
@@ -369,7 +369,7 @@ class AIOSEOP_Updates {
 	 *
 	 * @since 3.2
 	 */
-	public function update_schema_markup() {
+	public function update_schema_markup_201907() {
 		global $aiosp;
 		global $aioseop_options;
 
