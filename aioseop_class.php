@@ -4209,7 +4209,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @return bool
 	 */
-	function analytics_excluded(){
+	function analytics_excluded() {
 		$aiosp_disable_analytics = false;
 
 		if ( isset( $this->meta_opts['aiosp_disable_analytics'] ) ) {
@@ -4217,7 +4217,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( $aiosp_disable_analytics || ! aioseop_option_isset( 'aiosp_google_analytics_id' ) ) {
-		    return true;
+			return true;
 		}
 		return false;
 	}
