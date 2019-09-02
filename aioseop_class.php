@@ -3639,7 +3639,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		global $current_screen;
 		global $aioseop_options;
 		$current_screen = get_current_screen();
-		$is_gutenberg = 'false';
+		$is_gutenberg   = 'false';
 
 		if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
 			$is_gutenberg = 'true';
