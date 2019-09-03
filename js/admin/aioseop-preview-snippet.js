@@ -72,6 +72,11 @@ function aioseopUpdateMetabox() {
 		snippetDescription.text( '' );
 		aioseopDescription.attr( 'placeholder', '' );
 	}
+
+	//Run once on page load.
+	timeout = setTimeout(function() {
+		aioseopUpdatePreviewSnippet();
+	}, 100);
 }
 
 function aioseopUpdatePreviewSnippet() {

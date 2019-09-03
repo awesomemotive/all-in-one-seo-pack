@@ -3661,9 +3661,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 				wp_enqueue_script(
 					'xregexp',
-					'https://cdn.jsdelivr.net/npm/xregexp@4.2.4/lib/xregexp.js',
+					'https://cdn.jsdelivr.net/npm/xregexp@3.2.0',
 					array(),
-					'4.2.4'
+					'3.2.0'
 				);
 
 				$snippet_preview_data = array(
