@@ -129,8 +129,10 @@ function aioseopShortenDescription(description) {
 	description = aioseopStripMarkup(description);
 	if (160 < description.length) {
 		var excessLength = description.length - 160;
-		var regex = new RegExp("\\s[^\\s]*.{" + excessLength + "}$");
-		description = description.replace(regex, '');
+		/* jshint ignore:start */
+		var regex = new XRegExp("[^\\pZ\\pP]*.{" + excessLength + "}$");
+		description = XRegExp.replace(description, regex, ''); 
+		/* jshint ignore:end */
 	}
 	return description;
 }
