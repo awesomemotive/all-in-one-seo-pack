@@ -136,8 +136,9 @@ function aioseopShortenDescription(description) {
 		var excessLength = description.length - 160;
 		/* jshint ignore:start */
 		var regex = new XRegExp("[^\\pZ\\pP]*.{" + excessLength + "}$");
-		description = XRegExp.replace(description, regex, ''); 
+		description = XRegExp.replace(description, regex, '');
 		/* jshint ignore:end */
+		description = description + " ...";
 	}
 	return description;
 }
