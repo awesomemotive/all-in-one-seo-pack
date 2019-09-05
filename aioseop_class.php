@@ -596,7 +596,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				/* translators: This is a setting that outputs basic Schema.org markup, also known as structured data, into the source code of each page. */
 				'name'            => __( 'Use Schema.org Markup', 'all-in-one-seo-pack' ),
 				'type'            => 'radio',
-				'default'         => 0,
+				'default'         => 1,
 				'initial_options' => array(
 					1 => __( 'Enabled', 'all-in-one-seo-pack' ),
 					0 => __( 'Disabled', 'all-in-one-seo-pack' ),
