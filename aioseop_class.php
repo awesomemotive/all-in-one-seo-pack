@@ -3867,7 +3867,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			add_filter( 'wp_title', array( $this, 'wp_title' ), 20 );
 		}
 	}
-	
+
 	/**
 	 * The is_page_included() function.
 	 *
@@ -4210,6 +4210,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return bool
 	 */
 	function analytics_excluded() {
+
+		$this->meta_opts = $this->get_current_options( array(), 'aiosp' ); // Get page-specific options.
+
 		$aiosp_disable_analytics = false;
 
 		if ( isset( $this->meta_opts['aiosp_disable_analytics'] ) ) {
