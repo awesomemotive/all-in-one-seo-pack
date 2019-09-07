@@ -2,7 +2,7 @@
 
 # OS environment distro to use.
 # Let `php: -{VERSION}` determine the distro.
-# dist: Xenial
+# distro: Xenial
 
 # Travis CI environment set to handle PHP language.
 language: php
