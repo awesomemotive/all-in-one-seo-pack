@@ -4189,8 +4189,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * @since 2.3.11.5
 	 * @since 3.3 Fix loose comparator reading empty string in $description as false and returning. #2875
+	 * @since 3.3 Add Schema to AMP. #506
 	 *
-	 * @return string|void
+	 * @return void
 	 */
 	function amp_head() {
 		if ( ! $this->is_seo_enabled_for_cpt() ) {
@@ -4224,6 +4225,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		if ( ! empty( $meta_string ) ) {
 			echo $meta_string;
+		}
+
+		// Handle Schema.
+		if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && (bool) $aioseop_options['aiosp_schema_markup'] ) {
+			$aioseop_schema = new AIOSEOP_Schema_Builder();
+			$aioseop_schema->display_json_ld_head_script();
 		}
 	}
 
