@@ -4079,13 +4079,31 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				add_action( 'aioseop_modules_wp_head', array( $this, 'aiosp_google_analytics' ) );
 			}
 			add_action( 'wp_head', array( $this, 'wp_head' ), apply_filters( 'aioseop_wp_head_priority', 1 ) );
-			add_action( 'amp_post_template_head', array( $this, 'amp_head' ), 11 );
 			add_action( 'template_redirect', array( $this, 'template_redirect' ), 0 );
 		}
 		add_filter( 'aioseop_description', array( &$this, 'filter_description' ), 10, 3 );
 		add_filter( 'aioseop_title', array( &$this, 'filter_title' ) );
+
+		// Plugin compatibility hooks.
+		// AMP.
+		$this->add_hooks_amp();
+
+		// TODO Move WooCommerce hooks here from __construct().
 	}
 
+	/**
+	 * Add Hooks for AMP.
+	 *
+	 * @since 3.3
+	 */
+	protected function add_hooks_amp() {
+		if ( ! is_admin() ) {
+			// Add AIOSEOP's output to AMP.
+			add_action( 'amp_post_template_head', array( $this, 'amp_head' ), 11 );
+		}
+	}
+
+	}
 	/**
 	 * Visibility Warning
 	 *
