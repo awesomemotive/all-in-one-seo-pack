@@ -4158,6 +4158,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @todo Change void returns to empty string returns.
 	 *
 	 * @since 2.3.11.5
+	 * @since 3.3 Fix loose comparator reading empty string in $description as false and returning. #2875
 	 *
 	 * @return string|void
 	 */
@@ -4170,7 +4171,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$description = apply_filters( 'aioseop_amp_description', $this->get_main_description( $post ) );    // Get the description.
 
 		// To disable AMP meta description just __return_false on the aioseop_amp_description filter.
-		if ( isset( $description ) && false == $description ) {
+		if ( isset( $description ) && false === $description ) {
 			return;
 		}
 
