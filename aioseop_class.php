@@ -4100,10 +4100,22 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( ! is_admin() ) {
 			// Add AIOSEOP's output to AMP.
 			add_action( 'amp_post_template_head', array( $this, 'amp_head' ), 11 );
+
+			// Removes AMP's Schema data to prevent any conflicts/duplications with AIOSEOP's.
+			add_action( 'amp_post_template_head', array( $this, 'remove_hooks_amp_schema' ), 9 );
 		}
 	}
 
+	/**
+	 * Remove Hooks with AMP's Schema.
+	 *
+	 * @since 3.3
+	 */
+	public function remove_hooks_amp_schema() {
+		// Remove AMP Schema hook used for outputting data.
+		remove_action( 'amp_post_template_head', 'amp_print_schemaorg_metadata' );
 	}
+
 	/**
 	 * Visibility Warning
 	 *
