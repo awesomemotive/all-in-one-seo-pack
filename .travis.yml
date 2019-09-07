@@ -2,7 +2,7 @@
 
 # OS environment distro to use.
 # Let `php: -{VERSION}` determine the distro.
-#dist: Xenial
+# dist: Xenial
 
 # Travis CI environment set to handle PHP language.
 language: php
@@ -65,18 +65,6 @@ matrix:
         - "8.11.3"
       env:
         GRUNT=yes
-        PHPUNIT=0
-    - name: "PHP 5.2 (WP <= 5.0)"
-      dist: precise
-      php: 5.2
-      env:
-        WP_VERSION=5.0
-        PHPUNIT=0
-    - name: "PHP 5.3 (WP <= 5.0)"
-      dist: precise
-      php: 5.3
-      env:
-        WP_VERSION=5.0
         PHPUNIT=0
     - name: "PHP 5.4 (WP <= 5.1)"
       dist: trusty
@@ -143,7 +131,7 @@ before_script:
   - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
 script:
-  # Run grunt on PR.
+  # Run Grunt tasks on PR.
   - if [[ "yes" = $GRUNT && "false" != "$TRAVIS_PULL_REQUEST" ]]; then
       grunt;
     fi
