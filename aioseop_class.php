@@ -4216,7 +4216,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
 
 			if ( ! empty( $robots_meta ) && 'index,follow' !== $robots_meta ) {
-				printf( '<meta name="robots" content="%s"', esc_attr( $robots_meta ) ) . " >\n";
+				echo sprintf( '<meta name="robots" content="%s"', esc_attr( $robots_meta ) ) . " />\n";
 			}
 
 			if ( ! empty( $old_wp_query ) ) {
