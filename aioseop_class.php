@@ -676,7 +676,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			),
 			'schema_contact_type'         => array(
 				/* translators: This is a setting where users have to indicate what contact/department their phone number connects to (e.g. "Sales" or "Customer Support"). This is used for our schema.org markup. */
-				'name'            => __( 'Type of Contact', 'all-in-one-seo-pack' )
+				'name'            => __( 'Type of Contact', 'all-in-one-seo-pack' ),
 				'type'            => 'select',
 				'condshow'        => array(
 					'aiosp_schema_markup'          => 1,
