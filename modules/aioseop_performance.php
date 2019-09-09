@@ -67,7 +67,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 
 			global $aiosp, $aioseop_options;
 			$this->default_options['force_rewrites'] = array(
-				'name'            => __( 'Force Rewrites:', 'all-in-one-seo-pack' ),
+				'name'            => __( 'Force Rewrites', 'all-in-one-seo-pack' ),
 				'default'         => 1,
 				'type'            => 'radio',
 				'initial_options' => array(

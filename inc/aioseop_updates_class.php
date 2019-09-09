@@ -66,7 +66,7 @@ class AIOSEOP_Updates {
 				set_transient( '_aioseop_activation_redirect', true, 30 ); // Sets 30 second transient for welcome screen redirect on activation.
 			}
 			delete_transient( 'aioseop_feed' );
-			add_action( 'admin_init', array( $this, 'aioseop_welcome' ) );
+			//add_action( 'admin_init', array( $this, 'aioseop_welcome' ) ); //Uncomment for welcome screen.
 
 		}
 

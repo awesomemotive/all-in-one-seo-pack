@@ -316,10 +316,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					'save'            => false,
 				),
 				'addl_mod'          => array(
-					'name'  => __( 'Last Modified', 'all-in-one-seo-pack' ),
-					'type'  => 'date',
-					'save'  => false,
-					'class' => 'aiseop-date',
+					'name'        => __( 'Last Modified', 'all-in-one-seo-pack' ),
+					'type'        => 'date',
+					'save'        => false,
+					'placeholder' => 'yyyy-mm-dd',
+					'class'       => 'aiseop-date',
 				),
 				'addl_pages'        => array(
 					'name' => __( 'Additional Pages', 'all-in-one-seo-pack' ),
