@@ -689,6 +689,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'tech support'        => __( 'Technical Support', 'all-in-one-seo-pack' ),
 					/* translators: This is the support department of a business that handles all billing related enquiries. */
 					'billing support'     => __( 'Billing Support', 'all-in-one-seo-pack' ),
+					/* translators: This is the department of a business that handles payments of bills. */
 					'bill payment'        => __( 'Bill Payment', 'all-in-one-seo-pack' ),
 					'sales'               => __( 'Sales', 'all-in-one-seo-pack' ),
 					'reservations'        => __( 'Reservations', 'all-in-one-seo-pack' ),
