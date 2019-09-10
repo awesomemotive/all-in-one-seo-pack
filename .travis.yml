@@ -59,7 +59,7 @@ matrix:
       env: WP_VERSION=4.9.10
   include:
     - stage: critical
-    - name: "Grunt Task Runner"
+      name: "Grunt Task Runner"
       language: node_js
       node_js:
         - "8.11.3"
