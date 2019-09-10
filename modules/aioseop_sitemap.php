@@ -442,6 +442,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 				$sitemap_urls = $post_counts + $num_terms;
 
+				global $aioseop_options;
 				if ( 1000 < $sitemap_urls && 'on' === $aioseop_options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_sitemap'] ) {
 					$aioseop_notices->activate_notice( 'sitemap_max_warning' );
 				} else {
