@@ -43,7 +43,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 					),
 				),
 				'export_post_types'  => array(
-					'name'            => __( 'Export Post Types:', 'all-in-one-seo-pack' ),
+					'name'            => __( 'Export Post Types', 'all-in-one-seo-pack' ),
 					'default'         => array(
 						'post' => 'post',
 						'page' => 'page',
