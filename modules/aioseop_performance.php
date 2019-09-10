@@ -315,10 +315,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 				__( 'Memory usage', 'all-in-one-seo-pack' ) => $memory_usage,
 				/* translators: "MYSQL" is the name of a database software and should not be translated. */
 				__( 'MYSQL Version', 'all-in-one-seo-pack' ) => $sqlversion,
-				/* translators: "SQL" is a programming language that is used to store in or retrieve data from databases and should not be translated. */
+				/* translators: "SQL" is a programming language that is used to store or retrieve data from databases and should not be translated. */
 				__( 'SQL Mode', 'all-in-one-seo-pack' )    => $sql_mode,
 				__( 'PHP Version', 'all-in-one-seo-pack' ) => PHP_VERSION,
-				/* translators: This is a setting of the PHP interpreter of the server. Leave this untranslated if there's no proper translation for this. */
+				/* translators: This is a setting in the PHP interpreter of the server. Leave this untranslated if there's no proper translation for this. */
 				__( 'PHP Allow URL fopen', 'all-in-one-seo-pack' ) => $allow_url_fopen,
 				/* translators: "Memory" in this context refers to RAM memory. */
 				__( 'PHP Memory Limit', 'all-in-one-seo-pack' ) => $memory_limit,
@@ -346,7 +346,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 				/* translators: This is a label that shows what page is used as the homepage/front page. */
 				__( 'Front Page Displays', 'all-in-one-seo-pack' ) => 'page' === $front_displays ? $front_displays . ' [ID = ' . $page_on_front . ']' : $front_displays,
 				__( 'Search Engine Visibility', 'all-in-one-seo-pack' ) => $blog_public,
-				/* translators: This is a label that shows what the current permalink structure is. The permalink structure is the way how URLs of the website are formatted, e.g. "examplesite.com/?p=123" or "examplesite.com/1970/01/01/sample-post/". */
+				/* translators: This is a label that shows what the current permalink structure is. The permalink structure is the way that the URLs of the website are formatted, e.g. "examplesite.com/?p=123" or "examplesite.com/1970/01/01/sample-post/". */
 				__( 'Permalink Setting', 'all-in-one-seo-pack' ) => $perm_struct,
 			);
 			$debug_info[ __( 'Active Plugins', 'all-in-one-seo-pack' ) ] = null;
