@@ -4631,7 +4631,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 */
 		do_action( 'aioseop_after_apply_description_format' );
 
-		return $description;
+		return esc_html( $description );
 	}
 
 	/**
