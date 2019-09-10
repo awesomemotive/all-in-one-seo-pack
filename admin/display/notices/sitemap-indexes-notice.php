@@ -41,4 +41,8 @@ function aioseop_notice_sitemap_indexes() {
 		),
 	);
 }
-add_filter( 'aioseop_admin_notice-sitemap_max_warning', 'aioseop_notice_sitemap_indexes' );
+
+$aioseop_options = get_option( 'aioseop_options' );
+if ( 'on' === $aioseop_options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_sitemap'] ) {
+	add_filter( 'aioseop_admin_notice-sitemap_max_warning', 'aioseop_notice_sitemap_indexes' );
+}
