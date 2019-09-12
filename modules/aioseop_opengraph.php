@@ -1553,7 +1553,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$meta['facebook'] += array( 'thumbnail_1' => 'og:image:secure_url' );
 				$thumbnail_1       = $thumbnail;
 				$meta['facebook'] += array( 'video_1' => 'og:video:secure_url' );
-				$video_1 = $video;
+				$video_1           = $video;
 			}
 
 			$tags = array(
