@@ -4198,18 +4198,22 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			return;
 		}
 
-		$post        = $this->get_queried_object();
+		$post = $this->get_queried_object();
+		/**
+		 * AIOSEOP AMP Description.
+		 *
+		 * To disable AMP meta description just __return_false on the aioseop_amp_description filter.
+		 *
+		 * @since ?
+		 *
+		 * @param string $post_description
+		 */
 		$description = apply_filters( 'aioseop_amp_description', $this->get_main_description( $post ) );    // Get the description.
-
-		// To disable AMP meta description just __return_false on the aioseop_amp_description filter.
-		if ( isset( $description ) && false === $description ) {
-			return;
-		}
 
 		global $aioseop_options;
 
 		// Handle the description format.
-		if ( isset( $description ) && ( $this->strlen( $description ) > $this->minimum_description_length ) && ! ( is_front_page() && is_paged() ) ) {
+		if ( isset( $description ) && false !== $description && ( $this->strlen( $description ) > $this->minimum_description_length ) && ! ( is_front_page() && is_paged() ) ) {
 			$description = $this->trim_description( $description );
 			if ( ! isset( $meta_string ) ) {
 				$meta_string = '';
