@@ -3635,7 +3635,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @param string $hook_suffix
 	 */
 	public function admin_enqueue_scripts( $hook_suffix ) {
-		global $wp_version;
 		global $current_screen;
 		global $aioseop_options;
 		$current_screen = get_current_screen();
