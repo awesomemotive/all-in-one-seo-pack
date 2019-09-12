@@ -77,6 +77,14 @@ function aioseopUpdateMetabox() {
 	}, 1000);
 }
 
+/**
+ * AIOSEOP Update Preview Snippet
+ *
+ * @uses wp.data.select().getEditedPostAttribute()
+ * @link https://developer.wordpress.org/block-editor/data/data-core-editor/#getEditedPostAttribute
+ *
+ * @since 3.3
+ */
 function aioseopUpdatePreviewSnippet() {
 	var postTitle 	= '';
 	var postContent = '';
