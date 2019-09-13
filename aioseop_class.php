@@ -4097,22 +4097,26 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @since 3.3
 	 */
 	protected function add_hooks_amp() {
-		/**
-		 * AIOSEOP AMP Schema Enable/Disable
-		 *
-		 * Allows or prevents the use of schema on AMP generated posts/pages.
-		 *
-		 * @since 3.3
-		 *
-		 * @param bool $var True to enable, and false to disable.
-		 */
-		$use_schema = apply_filters( 'aioseop_amp_schema', true );
-		if ( ! is_admin() && $use_schema ) {
+		if ( ! is_admin() ) {
+			global $aioseop_options;
+
 			// Add AIOSEOP's output to AMP.
 			add_action( 'amp_post_template_head', array( $this, 'amp_head' ), 11 );
 
-			// Removes AMP's Schema data to prevent any conflicts/duplications with AIOSEOP's.
-			add_action( 'amp_post_template_head', array( $this, 'remove_hooks_amp_schema' ), 9 );
+			/**
+			 * AIOSEOP AMP Schema Enable/Disable
+			 *
+			 * Allows or prevents the use of schema on AMP generated posts/pages.
+			 *
+			 * @since 3.3
+			 *
+			 * @param bool $var True to enable, and false to disable.
+			 */
+			$use_schema = apply_filters( 'aioseop_amp_schema', true );
+			if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && (bool) $aioseop_options['aiosp_schema_markup'] && $use_schema ) {
+				// Removes AMP's Schema data to prevent any conflicts/duplications with AIOSEOP's.
+				add_action( 'amp_post_template_head', array( $this, 'remove_hooks_amp_schema' ), 9 );
+			}
 		}
 	}
 
