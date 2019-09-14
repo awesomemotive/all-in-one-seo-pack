@@ -24,5 +24,8 @@
     "phpcompatibility/php-compatibility": "*",
     "wp-coding-standards/wpcs": "*"
   },
-  "prefer-stable": true
+  "prefer-stable": true,
+  "scripts": {
+    "post-install-cmd": "phpcs -i;"
+  }
 }
