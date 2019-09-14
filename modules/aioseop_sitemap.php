@@ -4312,7 +4312,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// remove the query string.
 			$url = strtok( $url, '?' );
 			// make the url XML-safe.
-			$url = htmlspecialchars( $url, ENT_COMPAT, 'UTF-8' );
+			$url = htmlspecialchars( $url, ENT_COMPAT );
 			// Make the url absolute, if its relative.
 			$url = aiosp_common::absolutize_url( $url );
 			return apply_filters( 'aioseop_clean_url', $url );
