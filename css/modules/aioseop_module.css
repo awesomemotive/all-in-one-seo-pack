@@ -1608,3 +1608,67 @@ div#aiosp_sitemap_status_metabox .toggle-indicator {
 	background-color: #0E7BBE;
 	background-image: none;
 }
+
+/**
+* Styling for jQuery UI Datepicker in Safari
+*
+*/
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div {
+	background-color: #fff;
+	padding: 15px;
+	border: 1px solid #8d96a0;
+	border-radius: 4px;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div .ui-datepicker-prev {
+	float: left;
+	text-align: left;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div .ui-datepicker-prev:before {
+	content: '\2190 ';
+	padding-right: 2px;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div .ui-datepicker-next {
+	float: right;
+	text-align: right;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div .ui-datepicker-next:after {
+	content: '\2192 ';
+	padding-left: 2px;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div .ui-datepicker-title {
+	clear: both;
+	text-align: center;
+	font-weight: bold;
+	padding: 10px 0;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div table.ui-datepicker-calendar {
+	border: 1px solid #007cba;
+	border-collapse: collapse;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div table.ui-datepicker-calendar thead {
+	background-color: #f1f1f1;
+	border-bottom: 1px solid #8d96a0;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div table.ui-datepicker-calendar thead th,
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div table.ui-datepicker-calendar td {
+	width: 2rem;
+	height: 2rem;
+	text-align: center;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div table.ui-datepicker-calendar td a {
+	text-decoration: none;
+}
+
+body[class*="all-in-one-seo_page_all-in-one-seo-pack"] #ui-datepicker-div table.ui-datepicker-calendar td a:hover {
+	border: 1px solid #8d96a0;
+	padding: 5px 7px;
+}

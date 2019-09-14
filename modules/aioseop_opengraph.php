@@ -1054,7 +1054,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			$attributes = apply_filters(
 				$this->prefix . 'attributes',
 				array(
-					'prefix="og: http://ogp.me/ns#"',
+					'prefix="og: https://ogp.me/ns#"',
 				)
 			);
 
@@ -1548,9 +1548,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			);
 
 			// Issue #1848 ( https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/1848 ).
+			// Issue #2867 ( https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/2867 ).
 			if ( is_ssl() ) {
 				$meta['facebook'] += array( 'thumbnail_1' => 'og:image:secure_url' );
 				$thumbnail_1       = $thumbnail;
+				$meta['facebook'] += array( 'video_1' => 'og:video:secure_url' );
+				$video_1           = $video;
 			}
 
 			$tags = array(
@@ -1815,16 +1818,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			);
 
 			wp_enqueue_script(
-				'aioseop-post-edit-script',
-				AIOSEOP_PLUGIN_URL . 'js/count-chars.js',
+				'aioseop-count-chars',
+				AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.js',
 				array(),
 				AIOSEOP_VERSION
 			);
 
-			$localize_post_edit = array(
-				'aiosp_title_extra' => 0,
+			$count_chars_data = array(
+				'extraTitleLength' => 0,
 			);
-			wp_localize_script( 'aioseop-post-edit-script', 'aioseop_count_chars', $localize_post_edit );
+			wp_localize_script( 'aioseop-count-chars', 'aioseop_count_chars', $count_chars_data );
 
 			// Dev note: If certain JS files need to be restricted to select screens, then follow concept
 			// used in `All_in_One_SEO_Pack::admin_enqueue_scripts()` (v2.9.1); which uses the `$hook_suffix`
