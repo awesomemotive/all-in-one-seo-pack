@@ -14,6 +14,7 @@ composer self-update
 composer global require "squizlabs/php_codesniffer"
 
 git clone -b master --depth 1 https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git "$HOME/wordpress-coding-standards"
+git clone -b master --depth 1 https://github.com/PHPCompatibility/PHPCompatibility.git "$HOME/phpcompatibility"
 phpenv rehash
-phpcs --config-set installed_paths "$HOME/wordpress-coding-standards"
+phpcs --config-set installed_paths "$HOME/wordpress-coding-standards,$HOME/phpcompatibility"
 phpenv rehash
