@@ -26,6 +26,6 @@
   },
   "prefer-stable": true,
   "scripts": {
-    "post-install-cmd": "phpcs -i"
+    "post-install-cmd": "phpcs -i;"
   }
 }

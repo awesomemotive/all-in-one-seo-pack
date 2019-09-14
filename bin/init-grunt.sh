@@ -11,9 +11,9 @@ COMPOSER_LOCATION=$(composer config home --global)
 export PATH="$COMPOSER_LOCATION/vendor/bin:$PATH"
 composer self-update
 
-composer global require "squizlabs/php_codesniffer"
+#composer global require "squizlabs/php_codesniffer"
 
-git clone -b master --depth 1 https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git "$HOME/wordpress-coding-standards"
-phpenv rehash
-phpcs --config-set installed_paths "$HOME/wordpress-coding-standards"
-phpenv rehash
+#cgit clone -b master --depth 1 https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git "$HOME/wordpress-coding-standards"
+#cphpenv rehash
+#cphpcs --config-set installed_paths "$HOME/wordpress-coding-standards"
+#cphpenv rehash
