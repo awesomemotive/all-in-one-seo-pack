@@ -238,7 +238,6 @@ class AIOSEOP_Robots_Meta {
 	 */
 	private function is_nofollowed_paginated_page( $page_number ) {
 		global $aioseop_options;
-		$page_number = aioseop_get_page_number();
 		if ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 ) {
 			return true;
 		}
@@ -310,6 +309,9 @@ class AIOSEOP_Robots_Meta {
 	 *
 	 * @since 3.3.0
 	 *
+	 * @param string $post_type
+	 * @param string $post_meta_follow
+	 *
 	 * @return bool
 	 */
 	private function is_noindexed_singular( $post_type, $post_meta_noindex ) {
@@ -327,6 +329,9 @@ class AIOSEOP_Robots_Meta {
 	 * Checks whether the current page is singular and should be nofollowed.
 	 *
 	 * @since 3.3.0
+	 *
+	 * @param string $post_type
+	 * @param string $post_meta_follow
 	 *
 	 * @return bool
 	 */

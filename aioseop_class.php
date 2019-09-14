@@ -4259,19 +4259,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		if ( ! $this->is_page_included() ) {
-			/**
-			 * The aioseop_robots_meta filter hook.
-			 *
-			 * Can be used to filter the robots meta tag value.
-			 * e.g. 'noindex, nofollow'
-			 *
-			 * @since ?
-			 *
-			 * @param string
-			 * @return string
-			 */
-			$robots_meta = apply_filters( 'aioseop_robots_meta', $this->get_robots_meta() );
-			if ( ! empty( $robots_meta ) && 'index,follow' !== $robots_meta ) {
+
+			$aioseop_robots_meta = new AIOSEOP_Robots_Meta();
+			$robots_meta         = $aioseop_robots_meta->get_robots_meta();
+
+			if ( ! empty( $robots_meta ) ) {
 				echo sprintf( '<meta name="robots" content="%s"', esc_attr( $robots_meta ) ) . " />\n";
 			}
 
@@ -4390,7 +4382,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		$aioseop_robots_meta = new AIOSEOP_Robots_Meta();
-		$meta_string        .= $aioseop_robots_meta->get_robots_meta();
+		$robots_meta         = $aioseop_robots_meta->get_robots_meta();
+
+		if ( ! empty( $robots_meta ) ) {
+			$meta_string .= $robots_meta;
+		}
 
 		// Handle site verification.
 		if ( is_front_page() ) {
