@@ -26,77 +26,63 @@ if ( ! function_exists( 'array_column' ) ) {
 
 if ( ! function_exists( 'parse_ini_string' ) ) {
 	/**
-	 * The parse_ini_string() function.
+	 * Parse INI String
 	 *
-	 * Added for PHP compatibility with v5.2.
+	 * Parse_ini_string() doesn't exist pre PHP 5.3.
 	 *
-	 * @author epicmaxim@gmail.com - https://www.php.net/manual/en/function.parse-ini-string.php
+	 * @since ?
+	 * @since Moved from inc/aioseop_functions.php to inc/compatibility/php-functions.php
 	 *
-	 * @since 3.3.0
-	 *
-	 * @param string $str
-	 * @return mixed $ret Associative arrray with settings or false on failure.
+	 * @param $string
+	 * @param $process_sections
+	 * @return array|bool
 	 */
-	function parse_ini_string( $str ) {
+	function parse_ini_string( $string, $process_sections ) {
+		if ( ! class_exists( 'parse_ini_filter' ) ) {
 
-		if ( empty( $str ) ) {
-			return false;
-		}
+			/**
+			 * Class parse_ini_filter
+			 *
+			 * Define our filter class.
+			 */
+			// @codingStandardsIgnoreStart
+			class parse_ini_filter extends php_user_filter
+			{
+				// @codingStandardsIgnoreEnd
+				/**
+				 * Buffer
+				 *
+				 * @since ?
+				 *
+				 * @var string $buf
+				 */
+				static $buf = '';
 
-		$lines          = explode( "\n", $str );
-		$ret            = array();
-		$inside_section = false;
+				/**
+				 * The actual filter for parsing.
+				 *
+				 * @param $in
+				 * @param $out
+				 * @param $consumed
+				 * @param $closing
+				 *
+				 * @return int
+				 */
+				function filter( $in, $out, &$consumed, $closing ) {
+					$bucket = stream_bucket_new( fopen( 'php://memory', 'wb' ), self::$buf );
+					stream_bucket_append( $out, $bucket );
 
-		foreach ( $lines as $line ) {
-
-			$line = trim( $line );
-
-			if ( ! $line || '#' == $line[0] || ';' == $line[0] ) {
-				continue;
-			}
-
-			if ( '[' == $line[0] && strpos( $line, ']' ) == $end_idx ) {
-				$inside_section = substr( $line, 1, $end_idx - 1 );
-				continue;
-			}
-
-			if ( ! strpos( $line, '=' ) ) {
-				continue;
-			}
-
-			$tmp = explode( '=', $line, 2 );
-
-			if ( $inside_section ) {
-
-				$key   = rtrim( $tmp[0] );
-				$value = ltrim( $tmp[1] );
-
-				if ( preg_match( '/^".*"$/', $value ) || preg_match( "/^'.*'$/", $value ) ) {
-					$value = mb_substr( $value, 1, mb_strlen( $value, 'UTF-8' ) - 2, 'UTF-8' );
+					return PSFS_PASS_ON;
 				}
+			}
 
-				$t = preg_match( '^\[(.*?)\]^', $key, $matches );
-				if ( ! empty( $matches ) && isset( $matches[0] ) ) {
-
-					$arr_name = preg_replace( '#\[(.*?)\]#is', '', $key );
-
-					if ( ! isset( $ret[ $inside_section ][ $arr_name ] ) || ! is_array( $ret[ $inside_section ][ $arr_name ] ) ) {
-						$ret[ $inside_section ][ $arr_name ] = array();
-					}
-
-					if ( isset( $matches[1] ) && ! empty( $matches[1] ) ) {
-						$ret[ $inside_section ][ $arr_name ][ $matches[1] ] = $value;
-					} else {
-						$ret[ $inside_section ][ $arr_name ][] = $value;
-					}
-				} else {
-					$ret[ $inside_section ][ trim( $tmp[0] ) ] = $value;
-				}
-			} else {
-
-				$ret[ trim( $tmp[0] ) ] = ltrim( $tmp[1] );
+			// Register our filter with PHP.
+			if ( ! stream_filter_register( 'parse_ini', 'parse_ini_filter' ) ) {
+				return false;
 			}
 		}
-		return $ret;
+		parse_ini_filter::$buf = $string;
+
+		return parse_ini_file( 'php://filter/read=parse_ini/resource=php://memory', $process_sections );
 	}
 }
