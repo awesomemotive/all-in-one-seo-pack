@@ -310,7 +310,7 @@ class AIOSEOP_Robots_Meta {
 	 * @since 3.3.0
 	 *
 	 * @param string $post_type
-	 * @param string $post_meta_follow
+	 * @param string $post_meta_noindex
 	 *
 	 * @return bool
 	 */
