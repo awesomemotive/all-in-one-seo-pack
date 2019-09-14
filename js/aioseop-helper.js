@@ -1,5 +1,5 @@
 /**
- * Use for JavaScript compatability by using anonymous functions; which
+ * Use for JavaScript compatibility by using anonymous functions; which
  * are loaded into the footer.
  *
  * @summary   AIOSEOP Footer JS

@@ -152,7 +152,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Compatibility' ) ) {
 		 * @since 2.3.12.3 WPML compatibility loaded.
 		 */
 		public function load_compatibility_classes() {
-			require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/compat-wpml.php' ); // Load classes.
+			require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatibility/compat-wpml.php' ); // Load classes.
 			// Evaluate classes and push them into array.
 			$target = new All_in_One_SEO_Pack_Wpml;
 			if ( $target->exists() ) {
