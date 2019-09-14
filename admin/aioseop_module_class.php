@@ -2101,7 +2101,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @since ?
 		 * @since 2.3.12.3 Add missing wp_enqueue_media.
 		 * @since 2.9 Switch to admin_enqueue_scripts; both the hook and function name.
-		 * @since 3.0 Add enqueue footer JS for jQuery UI Compatability. #1850
+		 * @since 3.0 Add enqueue footer JS for jQuery UI Compatibility. #1850
 		 *
 		 * @see 'admin_enqueue_scripts' hook
 		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
