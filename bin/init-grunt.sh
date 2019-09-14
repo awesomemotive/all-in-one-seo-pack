@@ -15,5 +15,5 @@ composer global require "squizlabs/php_codesniffer"
 
 #cgit clone -b master --depth 1 https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git "$HOME/wordpress-coding-standards"
 #cphpenv rehash
-#cphpcs --config-set installed_paths "$HOME/wordpress-coding-standards"
+cphpcs --config-set installed_paths "$HOME/wordpress-coding-standards,$HOME/phpcompatibility"
 #cphpenv rehash
