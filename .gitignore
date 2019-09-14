@@ -12,6 +12,7 @@ node_modules
 #######
 .idea/
 .idea/vcs.xml
+.vscode/
 
 # OS #
 ######
@@ -30,3 +31,6 @@ ehthumbs.db
 #############
 .htaccess
 
+# Composer #
+#############
+vendor/
