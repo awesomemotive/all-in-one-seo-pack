@@ -4312,7 +4312,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// remove the query string.
 			$url = strtok( $url, '?' );
 			// make the url XML-safe.
-			$url = htmlspecialchars( $url );
+			$url = htmlspecialchars( $url, ENT_COMPAT, 'UTF-8' );
 			// Make the url absolute, if its relative.
 			$url = aiosp_common::absolutize_url( $url );
 			return apply_filters( 'aioseop_clean_url', $url );
@@ -4620,7 +4620,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			$homepage_url   = get_site_url() . '/';
-			$homepage_index = array_search( $homepage_url, array_column( $links, 'loc' ) );
+			$homepage_index = array_search( $homepage_url, array_column( $links, 'loc' ) ); // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.array_columnFound
 
 			if ( ! $homepage_url ) {
 				return $links;
@@ -4652,7 +4652,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			}
 
 			$shop_page_url   = get_permalink( wc_get_page_id( 'shop' ) );
-			$shop_page_index = array_search( $shop_page_url, array_column( $links, 'loc' ) );
+			$shop_page_index = array_search( $shop_page_url, array_column( $links, 'loc' ) ); // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.array_columnFound
 
 			if ( ! $shop_page_index ) {
 				return $links;
