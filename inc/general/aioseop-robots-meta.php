@@ -28,8 +28,8 @@ class AIOSEOP_Robots_Meta {
 	 * @return string
 	 */
 	public function get_robots_meta() {
-		$post_type      = get_post_type();
-		$page_number    = aioseop_get_page_number();
+		$post_type   = get_post_type();
+		$page_number = aioseop_get_page_number();
 
 		$noindex            = false;
 		$nofollow           = false;
@@ -40,7 +40,7 @@ class AIOSEOP_Robots_Meta {
 			return '';
 		}
 
-		if ( is_front_page() && $page_number === 0 ) {
+		if ( is_front_page() && 0 === $page_number ) {
 			return $this->get_robots_meta_helper( false, false );
 		}
 
@@ -49,7 +49,7 @@ class AIOSEOP_Robots_Meta {
 		}
 
 		if ( $this->has_post_meta() ) {
-			$post_meta_noindex = $this->get_meta_value( 'noindex' );
+			$post_meta_noindex  = $this->get_meta_value( 'noindex' );
 			$post_meta_nofollow = $this->get_meta_value( 'nofollow' );
 		}
 
@@ -122,8 +122,8 @@ class AIOSEOP_Robots_Meta {
 	 */
 	private function get_meta_value( $key ) {
 		$requested_page = get_queried_object();
-		$meta = array();
-		$meta_value = '';
+		$meta           = array();
+		$meta_value     = '';
 
 		if ( property_exists( $requested_page, 'ID' ) ) {
 			$meta = get_post_meta( $requested_page->ID );

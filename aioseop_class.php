@@ -4390,7 +4390,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		$aioseop_robots_meta = new AIOSEOP_Robots_Meta();
-		$meta_string .= $aioseop_robots_meta->get_robots_meta();
+		$meta_string        .= $aioseop_robots_meta->get_robots_meta();
 
 		// Handle site verification.
 		if ( is_front_page() ) {
