@@ -151,4 +151,7 @@ module.exports = function(grunt) {
 	grunt.registerTask( 'default', ['mkdir', 'phpcbf', 'phpcs', 'phplint', 
 	'jshint', 'eslint', 'uglify', 'csslint', 'cssmin'] );
 
+	grunt.registerTask( 'build', ['mkdir', 'phpcs', 'phplint', 
+	'jshint', 'eslint', 'csslint'] );
+
 };
