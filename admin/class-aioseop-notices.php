@@ -547,9 +547,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				update_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $slug, $display_time );
 			}
 
-			$this->notices[ $slug ]['time_set'] = $time_set;
+			$this->notices[ $slug ]['time_set']   = $time_set;
 			$this->notices[ $slug ]['time_start'] = $display_time;
-			$this->active_notices[ $slug ]      = $display_time;
+			$this->active_notices[ $slug ]        = $display_time;
 
 			return true;
 		}

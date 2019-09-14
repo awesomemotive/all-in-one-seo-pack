@@ -1,70 +1,155 @@
+# Travis CI Configuration
+
+# OS environment distro to use.
+# Let `php: -{VERSION}` determine the distro.
+# distro: Xenial
+
+# Travis CI environment set to handle PHP language.
 language: php
 
+# Add MySQL service.
+services:
+  - mysql
+
+# Main PHP version matrix builds.
+php:
+  - 7.3
+  - 7.2
+  - 7.1
+  - 7.0
+  - 5.6
+
+# Main environment variable matrix builds.
+env:
+  global:
+    - GRUNT=no
+    - PHPUNIT=1
+    - WP_MULTISITE=0
+  matrix:
+    - WP_VERSION=latest
+    - WP_VERSION=trunk
+    - WP_VERSION=5.1.1
+    - WP_VERSION=5.0.4
+    - WP_VERSION=4.9.10
+
+# Order of our stages.
+stages:
+  - critical
+  - test
+
+# Additional matrix builds.
 matrix:
   fast_finish: true
   global:
-    - env: PHPUNIT=global GRUNT=no
+    - env:
+        GRUNT=no
+  exclude:
+    # WP >= 5.0.4 unsupported with PHPUnit 7 (PHP 7.1-7.3). Tests fail from WP errors.
+    - php: 7.3
+      env: WP_VERSION=5.0.4
+    - php: 7.3
+      env: WP_VERSION=4.9.10
+    - php: 7.2
+      env: WP_VERSION=5.0.4
+    - php: 7.2
+      env: WP_VERSION=4.9.10
+    - php: 7.1
+      env: WP_VERSION=5.0.4
+    - php: 7.1
+      env: WP_VERSION=4.9.10
   include:
-    - name: "PHP 7.2 Test"
-      php: 7.2
-      env: PHPUNIT=local
-    - name: "PHP 7.1 Test"
-      php: 7.1
-      env: PHPUNIT=local
-    - name: "PHP 7.0 Test"
-      php: 7.0
-    - name: "PHP 5.6 Test"
-      php: 5.6
-    - name: "PHP 5.5 Test (WP 5.2 dropped support)"
-      php: 5.5
-      env: WP_VERSION=5.1
-    - name: "PHP 5.4 Test (WP 5.2 dropped support)"
-      php: 5.4
-      env: WP_VERSION=5.1
-    - name: "PHP 5.3 Test"
-      php: 5.3
-      dist: precise
-    - name: "PHP 5.2 Test"
-      php: 5.2
-      dist: precise
-    - name: "Latest WP version"
-      env: WP_VERSION=latest PHPUNIT=local
-    - name: "Minimum WP version"
-      env: WP_VERSION=4.7 PHPUNIT=local
-    - name: "WP Multisite"
-      env: WP_MULTISITE=1
-    - name: "Grunt Tasks"
+    - stage: critical
+      name: "Grunt Task Runner"
       language: node_js
       node_js:
-       - "8.11.3"
-      env: GRUNT=yes
-  allow_failures:
-    - env: WP_MULTISITE=1
-    - php: 5.3
-      dist: precise
-    - php: 5.2
-      dist: precise
+        - "8.11.3"
+      env:
+        GRUNT=yes
+        PHPUNIT=0
+    - name: "PHP 5.4 (WP <= 5.1)"
+      dist: trusty
+      php: 5.4
+      env:
+        WP_VERSION=5.1
+        PHPUNIT=1
+    - name: "PHP 5.5 (WP <= 5.1)"
+      dist: trusty
+      php: 5.5
+      env:
+        WP_VERSION=5.1
+        PHPUNIT=1
+    # - name: "WP Multisite"
+      # env:
+        # WP_MULTISITE=1
+        # PHPUNIT=1
+        # PHPUNIT_VERSION=local
 
-notifications:
-  email:
-    on_success: never
-    on_failure: change
+  # The allowed configured builds to fail.
+  allow_failures:
+    - env: WP_MULTISITE=1 PHPUNIT=1 PHPUNIT_VERSION=local
+
+# Cache directories most commonly used; like composer.
+# https://docs.travis-ci.com/user/caching/#arbitrary-directories
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
+# Commit depth to clone the repository.
+# https://docs.travis-ci.com/user/customizing-the-build/#git-clone-depth
+git:
+  depth: 3
 
 branches:
   except:
   - "/^*-v[0-9]/"
 
+# Travis CI Lifecycle
+# https://docs.travis-ci.com/user/job-lifecycle/
+before_install:
+  # Set PHPUnit Version if PHPUnit is enabled.
+  - if [[ "1" = "$PHPUNIT" && -z "$PHPUNIT_VERSION" || "0" = "$PHPUNIT_VERSION"  ]]; then
+      PHPUNIT_VERSION=$(bash bin/get-phpunit-compat-version.sh $TRAVIS_PHP_VERSION);
+    fi
+  # if 0 (false value), then disable PHPUnit.
+  - if [[ "0" = "$PHPUNIT_VERSION" ]]; then
+      PHPUNIT=0;
+    fi
+
 install:
-  - if [[ $PHPUNIT = "local" ]]; then composer install; fi
-  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then chmod +x bin/init-grunt.sh; . bin/init-grunt.sh; fi
+  # Setup PHPUnit.
+  - if [[ "1" = "$PHPUNIT" && "false" != "$TRAVIS_PULL_REQUEST" ]]; then
+      bash bin/install-phpunit.sh $PHPUNIT_VERSION $TRAVIS_PHP_VERSION;
+    fi
+  # Setup Grunt.
+  # Requires to be an executable.
+  - if [[ "yes" = $GRUNT && "false" != "$TRAVIS_PULL_REQUEST" ]]; then
+      chmod +x bin/init-grunt.sh; . bin/init-grunt.sh;
+    fi
 
 before_script:
+  # Setup WordPress.
   - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
-script: 
-  - if [[ $GRUNT = "yes" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then grunt; fi
-  - if [[ $PHPUNIT = "local" ]]; then ./vendor/bin/phpunit; else phpunit; fi
+script:
+  # Run Grunt tasks on PR.
+  - if [[ "yes" = $GRUNT && "false" != "$TRAVIS_PULL_REQUEST" ]]; then
+      grunt;
+    fi
+  # Run PHPUnit on PR.
+  - if [[ "1" = $PHPUNIT && "false" != "$TRAVIS_PULL_REQUEST" ]]; then
+      ./vendor/bin/phpunit;
+    fi
 
+# Displays information written to log files.
 after_failure:
 - cat "logs/phpcs.log"
 - cat "logs/jslogs.log"
+
+# Notifications.
+# https://docs.travis-ci.com/user/notifications/#configuring-slack-notifications
+notifications:
+  email:
+    on_success: never
+    on_failure: change
+  slack: semperplugins:mz7yzPUOM7yiBrvQd5AFSHOS
+  

@@ -105,7 +105,11 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 		 */
 		public function universal_analytics() {
 			global $aioseop_options;
-			$allow_linker = $cookie_domain = $domain = $addl_domains = $domain_list = '';
+			$allow_linker  = '';
+			$cookie_domain = '';
+			$domain        = '';
+			$addl_domains  = '';
+			$domain_list   = '';
 			if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] ) ) {
 				$cookie_domain = $this->get_analytics_domain();
 			}
@@ -159,7 +163,7 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 				}
 			}
 			$extra_options = apply_filters( 'aioseop_ga_extra_options', $extra_options, $aioseop_options );
-			$js_options = array();
+			$js_options    = array();
 			foreach ( array( 'cookie_domain', 'allow_linker' ) as $opts ) {
 				if ( ! empty( $$opts ) ) {
 					$js_options[] = $$opts;

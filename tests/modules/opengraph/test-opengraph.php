@@ -42,7 +42,7 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	 * @since 3.0
 	 */
 	public function test_meta_tag_truncation_all( $title, $content, $og_desc_limit ) {
-		$tag_limits  = array(
+		$tag_limits = array(
 			'og:description'      => $og_desc_limit, // limit to 200 but respect full words.
 			'twitter:description' => 200,            // hard limit to 200.
 			'twitter:title'       => 70,             // hard limit to 70.
@@ -57,13 +57,14 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 
 		wp_set_current_user( 1 );
 
-		$options = get_option( 'aioseop_options' );
+		$options                      = get_option( 'aioseop_options' );
 		$options['aiosp_cpostactive'] = array( 'post' );
 		update_option( 'aioseop_options', $options );
 
 		$custom_options = array();
-		$custom_options['aiosp_opengraph_types'] = array( 'post' );
 		$custom_options['aiosp_opengraph_generate_descriptions'] = 'on';
+		$custom_options['aiosp_opengraph_types']                 = array( 'post' );
+
 		$this->_setup_options( 'opengraph', $custom_options );
 
 		$meta = $this->parse_html( get_permalink( $id ), array( 'meta' ) );
@@ -95,7 +96,7 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	 * @since 3.0
 	 */
 	public function test_meta_tag_truncation_with_manual_og_title( $title, $content ) {
-		$tag_limits  = array(
+		$tag_limits = array(
 			'og:description'      => 200,
 			'twitter:description' => 200,
 			'twitter:title'       => 70,
@@ -103,13 +104,14 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 
 		wp_set_current_user( 1 );
 
-		$options = get_option( 'aioseop_options' );
+		$options                      = get_option( 'aioseop_options' );
 		$options['aiosp_cpostactive'] = array( 'post' );
 		update_option( 'aioseop_options', $options );
 
 		$custom_options = array();
-		$custom_options['aiosp_opengraph_types'] = array( 'post' );
 		$custom_options['aiosp_opengraph_generate_descriptions'] = 'on';
+		$custom_options['aiosp_opengraph_types']                 = array( 'post' );
+
 		$this->_setup_options( 'opengraph', $custom_options );
 
 		$id = $this->factory->post->create(
@@ -119,7 +121,7 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 			)
 		);
 
-		$settings = get_post_meta( $id, '_aioseop_opengraph_settings', true );
+		$settings                                     = get_post_meta( $id, '_aioseop_opengraph_settings', true );
 		$settings['aioseop_opengraph_settings_title'] = $title;
 		update_post_meta( $id, '_aioseop_opengraph_settings', $settings );
 
@@ -152,7 +154,7 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	 * @since 3.0
 	 */
 	public function test_meta_tag_truncation_with_manual_main_title( $title, $content ) {
-		$tag_limits  = array(
+		$tag_limits = array(
 			'og:description'      => 200,
 			'twitter:description' => 200,
 			'twitter:title'       => 70,
@@ -160,13 +162,14 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 
 		wp_set_current_user( 1 );
 
-		$options = get_option( 'aioseop_options' );
+		$options                      = get_option( 'aioseop_options' );
 		$options['aiosp_cpostactive'] = array( 'post' );
 		update_option( 'aioseop_options', $options );
 
 		$custom_options = array();
-		$custom_options['aiosp_opengraph_types'] = array( 'post' );
 		$custom_options['aiosp_opengraph_generate_descriptions'] = 'on';
+		$custom_options['aiosp_opengraph_types']                 = array( 'post' );
+
 		$this->_setup_options( 'opengraph', $custom_options );
 
 		$id = $this->factory->post->create(
@@ -207,7 +210,7 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	 * @since 3.0
 	 */
 	public function test_meta_tag_truncation_filter( $title, $content ) {
-		$tag_limits  = array(
+		$tag_limits = array(
 			'og:description'      => 200,
 			'twitter:description' => 200,
 			'twitter:title'       => array( 70 ), // no limit.
@@ -222,13 +225,14 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 
 		wp_set_current_user( 1 );
 
-		$options = get_option( 'aioseop_options' );
+		$options                      = get_option( 'aioseop_options' );
 		$options['aiosp_cpostactive'] = array( 'post' );
 		update_option( 'aioseop_options', $options );
 
 		$custom_options = array();
-		$custom_options['aiosp_opengraph_types'] = array( 'post' );
 		$custom_options['aiosp_opengraph_generate_descriptions'] = 'on';
+		$custom_options['aiosp_opengraph_types']                 = array( 'post' );
+
 		$this->_setup_options( 'opengraph', $custom_options );
 
 		add_filter( 'aiosp_opengraph_disable_meta_tag_truncation', array( $this, 'filter_disable_meta_tag_truncation' ), 10, 4 );
@@ -282,8 +286,8 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 		update_option( 'show_on_front', 'page' );
 		update_option( 'page_on_front', $id );
 
-		$custom_options = array();
-		$custom_options['aiosp_opengraph_hometitle'] = $title_meta;
+		$custom_options                                = array();
+		$custom_options['aiosp_opengraph_hometitle']   = $title_meta;
 		$custom_options['aiosp_opengraph_description'] = $desc_meta;
 
 		$this->_setup_options( 'opengraph', $custom_options );
@@ -297,7 +301,7 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 		$this->assertGreaterThan( 1, count( $meta ) );
 
 		$title = null;
-		$desc = null;
+		$desc  = null;
 		foreach ( $meta as $m ) {
 			if ( ! isset( $m['property'] ) ) {
 				continue;

@@ -66,7 +66,7 @@ class AIOSEOP_Updates {
 				set_transient( '_aioseop_activation_redirect', true, 30 ); // Sets 30 second transient for welcome screen redirect on activation.
 			}
 			delete_transient( 'aioseop_feed' );
-			add_action( 'admin_init', array( $this, 'aioseop_welcome' ) );
+			// add_action( 'admin_init', array( $this, 'aioseop_welcome' ) ); //Uncomment for welcome screen.
 
 		}
 
@@ -145,10 +145,12 @@ class AIOSEOP_Updates {
 			$this->reset_flush_rewrite_rules_201906();
 		}
 
+		// Cause the update to occur again for 3.2.6.
 		if (
-				version_compare( $old_version, '3.2', '<' )
+				version_compare( $old_version, '3.2', '<' ) ||
+				version_compare( $old_version, '3.2.6', '<' )
 		) {
-			$this->update_schema_markup();
+			$this->update_schema_markup_201907();
 		}
 	}
 
@@ -164,8 +166,8 @@ class AIOSEOP_Updates {
 
 		// Remove 'DOC' from bad bots list to avoid false positives.
 		if ( isset( $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] ) ) {
-			$list                                                                                 = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
-			$list                                                                                 = str_replace(
+			$list = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
+			$list = str_replace(
 				array(
 					"DOC\r\n",
 					"DOC\n",
@@ -173,6 +175,7 @@ class AIOSEOP_Updates {
 				'',
 				$list
 			);
+
 			$aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] = $list;
 			update_option( 'aioseop_options', $aioseop_options );
 			$aiosp->update_class_option( $aioseop_options );
@@ -194,8 +197,8 @@ class AIOSEOP_Updates {
 
 		// Remove 'yandex' from bad bots list to avoid false positives.
 		if ( isset( $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] ) ) {
-			$list                                                                                 = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
-			$list                                                                                 = str_replace(
+			$list = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
+			$list = str_replace(
 				array(
 					"yandex\r\n",
 					"yandex\n",
@@ -203,6 +206,7 @@ class AIOSEOP_Updates {
 				'',
 				$list
 			);
+
 			$aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] = $list;
 			update_option( 'aioseop_options', $aioseop_options );
 			$aiosp->update_class_option( $aioseop_options );
@@ -220,8 +224,8 @@ class AIOSEOP_Updates {
 
 		// Remove 'SeznamBot' from bad bots list to avoid false positives.
 		if ( isset( $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] ) ) {
-			$list                                                                                 = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
-			$list                                                                                 = str_replace(
+			$list = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
+			$list = str_replace(
 				array(
 					"SeznamBot\r\n",
 					"SeznamBot\n",
@@ -229,6 +233,7 @@ class AIOSEOP_Updates {
 				'',
 				$list
 			);
+
 			$aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] = $list;
 			update_option( 'aioseop_options', $aioseop_options );
 			$aiosp->update_class_option( $aioseop_options );
@@ -246,8 +251,8 @@ class AIOSEOP_Updates {
 
 		// Remove 'SemrushBot' from bad bots list to avoid false positives.
 		if ( isset( $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] ) ) {
-			$list                                                                                 = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
-			$list                                                                                 = str_replace(
+			$list = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
+			$list = str_replace(
 				array(
 					"SemrushBot\r\n",
 					"SemrushBot\n",
@@ -255,6 +260,7 @@ class AIOSEOP_Updates {
 				'',
 				$list
 			);
+
 			$aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] = $list;
 			update_option( 'aioseop_options', $aioseop_options );
 			$aiosp->update_class_option( $aioseop_options );
@@ -271,8 +277,8 @@ class AIOSEOP_Updates {
 		global $aiosp, $aioseop_options;
 
 		if ( isset( $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] ) ) {
-			$list                                                                                 = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
-			$list                                                                                 = str_replace(
+			$list = $aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'];
+			$list = str_replace(
 				array(
 					"Exabot\r\n",
 					"Exabot\n",
@@ -280,6 +286,7 @@ class AIOSEOP_Updates {
 				'',
 				$list
 			);
+
 			$aioseop_options['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] = $list;
 			update_option( 'aioseop_options', $aioseop_options );
 			$aiosp->update_class_option( $aioseop_options );
@@ -367,7 +374,7 @@ class AIOSEOP_Updates {
 	 *
 	 * @since 3.2
 	 */
-	public function update_schema_markup() {
+	public function update_schema_markup_201907() {
 		global $aiosp;
 		global $aioseop_options;
 

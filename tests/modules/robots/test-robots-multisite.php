@@ -32,22 +32,22 @@ class Test_Robots_Multisite extends Test_Robots {
 
 		$this->_setup_options( 'robots', array() );
 
-		$network    = get_network()->site_id;
+		$network = get_network()->site_id;
 		switch_to_blog( $network );
 
-		$_POST      = array(
+		$_POST = array(
 			'aiosp_robots_path'  => $network_rule['path'],
 			'aiosp_robots_type'  => $network_rule['type'],
 			'aiosp_robots_agent' => $network_rule['agent'],
 		);
 
-		$options    = apply_filters( 'aiosp_robots_update_options', array() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
 		$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
 		update_option( 'aioseop_options', $aioseop_options );
 
 		restore_current_blog();
 
-		$network    = get_network()->site_id;
+		$network = get_network()->site_id;
 		switch_to_blog( $network );
 
 		$_POST = array(
@@ -56,12 +56,12 @@ class Test_Robots_Multisite extends Test_Robots {
 			'aiosp_robots_agent' => $site_rule['agent'],
 		);
 
-		$options    = apply_filters( 'aiosp_robots_update_options', array() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
 
 		$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
 		update_option( 'aioseop_options', $aioseop_options );
 
-		$errors     = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
+		$errors = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
 		$this->assertGreaterThan( 0, count( $errors ) );
 		$this->assertContains( $message, $errors[0] );
 	}
@@ -157,17 +157,17 @@ class Test_Robots_Multisite extends Test_Robots {
 				'aiosp_robots_agent' => $rule['agent'],
 			);
 
-			$options    = apply_filters( 'aiosp_robots_update_options', array() );
+			$options = apply_filters( 'aiosp_robots_update_options', array() );
 
 			$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
 			update_option( 'aioseop_options', $aioseop_options );
 		}
 
 		// get the rule_to_modify.
-		$rule_modified  = null;
+		$rule_modified = null;
 		foreach ( $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] as $rule ) {
 			if ( $rule_to_modify === $rule['path'] ) {
-				$rule_modified  = $rule;
+				$rule_modified = $rule;
 				break;
 			}
 		}
@@ -179,13 +179,13 @@ class Test_Robots_Multisite extends Test_Robots {
 			'aiosp_robots_agent' => $new_rule['agent'],
 		);
 
-		$options    = apply_filters( 'aiosp_robots_update_options', array() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
 
 		$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
 		update_option( 'aioseop_options', $aioseop_options );
 
-		$errors     = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
-		$paths      = wp_list_pluck( $options['aiosp_robots_rules'], 'path' );
+		$errors = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
+		$paths  = wp_list_pluck( $options['aiosp_robots_rules'], 'path' );
 		if ( $error_message ) {
 			$this->assertGreaterThan( 0, count( $errors ), 'Error not logged!' );
 			$this->assertContains( $error_message, $errors[0], 'Error message not found!' );

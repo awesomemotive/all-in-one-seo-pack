@@ -31,10 +31,10 @@ class Test_Robots extends AIOSEOP_Test_Base {
 			$this->delete_file();
 		}
 
-		$rule       = "User-agent: Googlebot\r\nDisallow: /wow-test-folder/";
+		$rule = "User-agent: Googlebot\r\nDisallow: /wow-test-folder/";
 
 		// create a file.
-		$file   = fopen( ABSPATH . '/robots.txt', 'w' );
+		$file = fopen( ABSPATH . '/robots.txt', 'w' );
 		fwrite( $file, $rule );
 		fclose( $file );
 	}
@@ -75,7 +75,7 @@ class Test_Robots extends AIOSEOP_Test_Base {
 		$this->assertFalse( $this->check_file_exists(), 'Physical robots.txt not deleted' );
 
 		$aioseop_options = get_option( 'aioseop_options' );
-		$rules = $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'];
+		$rules           = $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'];
 
 		$this->assertEquals( 1, count( $rules ) );
 		$this->assertArrayHasKey( 'path', $rules[0], 'Rules not imported from physical robots.txt' );
@@ -110,7 +110,7 @@ class Test_Robots extends AIOSEOP_Test_Base {
 		$this->assertFalse( $this->check_file_exists(), 'Physical robots.txt not deleted' );
 
 		$aioseop_options = get_option( 'aioseop_options' );
-		$rules = $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'];
+		$rules           = $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'];
 
 		$this->assertEquals( 0, count( $rules ) );
 	}
@@ -131,7 +131,7 @@ class Test_Robots extends AIOSEOP_Test_Base {
 			'aiosp_robots_agent' => $rule['agent'],
 		);
 
-		$path       = $rule['path'];
+		$path = $rule['path'];
 
 		// if path does not have a trailing wild card (*) or does not refer to a file (with extension), add trailing slash.
 		if ( '*' !== substr( $path, -1 ) && false === strpos( $path, '.' ) ) {
@@ -146,7 +146,7 @@ class Test_Robots extends AIOSEOP_Test_Base {
 		// convert everything to lower case.
 		$path = strtolower( $path );
 
-		$options            = apply_filters( 'aiosp_robots_update_options', array() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
 		$this->assertArrayHasKey( 'aiosp_robots_rules', $options );
 		$this->assertGreaterThan( 0, $options['aiosp_robots_rules'] );
 		$this->assertArrayHasKey( 'type', $options['aiosp_robots_rules'][0] );
@@ -203,8 +203,8 @@ class Test_Robots extends AIOSEOP_Test_Base {
 			'aiosp_robots_agent' => $rule['agent'],
 		);
 
-		$options    = apply_filters( 'aiosp_robots_update_options', array() );
-		$errors     = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
+		$errors  = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
 		$this->assertGreaterThan( 0, count( $errors ) );
 		$this->assertContains( $message, $errors[0], 'Default rule overriden' );
 
@@ -300,7 +300,7 @@ class Test_Robots extends AIOSEOP_Test_Base {
 				'aiosp_robots_agent' => $rule['agent'],
 			);
 
-			$options    = apply_filters( 'aiosp_robots_update_options', array() );
+			$options = apply_filters( 'aiosp_robots_update_options', array() );
 
 			$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
 			update_option( 'aioseop_options', $aioseop_options );
@@ -312,8 +312,8 @@ class Test_Robots extends AIOSEOP_Test_Base {
 			'aiosp_robots_agent' => $new_rule['agent'],
 		);
 
-		$options    = apply_filters( 'aiosp_robots_update_options', array() );
-		$errors     = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
+		$errors  = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
 		$this->assertGreaterThan( 0, count( $errors ) );
 		$this->assertContains( $message, $errors[0] );
 
@@ -496,17 +496,17 @@ class Test_Robots extends AIOSEOP_Test_Base {
 				'aiosp_robots_agent' => $rule['agent'],
 			);
 
-			$options    = apply_filters( 'aiosp_robots_update_options', array() );
+			$options = apply_filters( 'aiosp_robots_update_options', array() );
 
 			$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
 			update_option( 'aioseop_options', $aioseop_options );
 		}
 
 		// get the rule_to_modify.
-		$rule_modified  = null;
+		$rule_modified = null;
 		foreach ( $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] as $rule ) {
 			if ( $rule_to_modify === $rule['path'] ) {
-				$rule_modified  = $rule;
+				$rule_modified = $rule;
 				break;
 			}
 		}
@@ -518,13 +518,13 @@ class Test_Robots extends AIOSEOP_Test_Base {
 			'aiosp_robots_agent' => $new_rule['agent'],
 		);
 
-		$options    = apply_filters( 'aiosp_robots_update_options', array() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
 
 		$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
 		update_option( 'aioseop_options', $aioseop_options );
 
-		$errors     = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
-		$paths      = wp_list_pluck( $options['aiosp_robots_rules'], 'path' );
+		$errors = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
+		$paths  = wp_list_pluck( $options['aiosp_robots_rules'], 'path' );
 		if ( $error_message ) {
 			$this->assertGreaterThan( 0, count( $errors ), 'Error not logged!' );
 			$this->assertContains( $error_message, $errors[0], 'Error message not found!' );

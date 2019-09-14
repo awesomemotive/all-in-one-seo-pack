@@ -401,7 +401,7 @@ class AIOSEOP_Helper {
 			'aiosp_yandex_verify'               => __( 'Enter your verification code here to verify your site with Yandex Webmaster Tools.', 'all-in-one-seo-pack' ),
 			'aiosp_baidu_verify'                => __( 'Enter your verification code here to verify your site with Baidu Webmaster Tools.', 'all-in-one-seo-pack' ),
 
-			// Google Settings.
+			// Google Analytics.
 
 			'aiosp_google_analytics_id'         => __( 'Enter your Google Analytics ID here to track visitor behavior on your site using Google Analytics.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_advanced_options'         => __( 'Check to use advanced Google Analytics options.', 'all-in-one-seo-pack' ),
@@ -504,7 +504,7 @@ class AIOSEOP_Helper {
 					'<dt>%post_year%</dt>' .
 					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ), $name ) . '</dd>' .
 					'<dt>%post_month%</dt>' .
-					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ), $name ) . '</dd>' .
+					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ), $name ) . '</dd>';
 
 				$rtn_help_text[ 'aiosp_' . $v1_pt . '_title_format' ] = __( 'The following macros are supported:', 'all-in-one-seo-pack' ) . '<dl>' . $help_text_macros . '</dl>' . '<br /><a href="https://semperplugins.com/documentation/custom-post-type-settings/#custom-titles" target="_blank">' . __( 'Click here for documentation on this setting', 'all-in-one-seo-pack' ) . '</a>';
 			}
@@ -552,7 +552,7 @@ class AIOSEOP_Helper {
 			'aiosp_yandex_verify'               => 'https://semperplugins.com/documentation/yandex-webmaster-verification/',
 			'aiosp_baidu_verify'                => 'https://semperplugins.com/documentation/baidu-webmaster-verification/',
 
-			// Google Settings.
+			// Google Analytics.
 			'aiosp_google_analytics_id'         => 'https://semperplugins.com/documentation/setting-up-google-analytics/',
 			'aiosp_ga_advanced_options'         => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/',
 			'aiosp_ga_domain'                   => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#tracking-domain',

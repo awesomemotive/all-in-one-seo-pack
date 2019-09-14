@@ -5,6 +5,7 @@
  * @package All_in_One_SEO_Pack
  * @since 2.3.3
  */
+
 // @codingStandardsIgnoreStart
 class aiosp_metaboxes {
 // @codingStandardsIgnoreEnd
@@ -196,6 +197,10 @@ class aiosp_metaboxes {
 
 		echo '<li>' . __( 'Video SEO Module', 'all-in-one-seo-pack' ) . '</li>';
 		echo '<li>' . __( 'SEO for Categories, Tags and Custom Taxonomies', 'all-in-one-seo-pack' ) . '</li>';
+		echo '<li>' . __( 'Social Meta for Categories, Tags and Custom Taxonomies', 'all-in-one-seo-pack' ) . '</li>';
+		echo '<li>' . __( 'Advanced Google Analytics tracking', 'all-in-one-seo-pack' ) . '</li>';
+		echo '<li>' . __( 'Greater control over display settings', 'all-in-one-seo-pack' ) . '</li>';
+		echo '<li>' . __( 'Ad free (no banner adverts)', 'all-in-one-seo-pack' ) . '</li>';
 		echo '<li>' . __( 'Access to Video Screencasts', 'all-in-one-seo-pack' ) . '</li>';
 		echo '<li>' . __( 'Access to Premium Support Forums', 'all-in-one-seo-pack' ) . '</li>';
 		echo '<li>' . __( 'Access to Knowledge Center', 'all-in-one-seo-pack' ) . '</li>';
