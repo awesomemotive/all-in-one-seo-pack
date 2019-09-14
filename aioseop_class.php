@@ -1176,7 +1176,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			) . '...';
 		}
 		if ( empty( $title_format ) ) {
-			$title = '<span id="' . $args['name'] . '_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title ) ) ) . '</span>';
+			$title = '<span id="' . $args['name'] . '_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title, ENT_COMPAT, 'UTF-8' ) ) ) . '</span>';
 		} else {
 			$title_format = $this->get_preview_snippet_title();
 			$title        = $title_format;
@@ -1344,7 +1344,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string
 	 */
 	private function get_preview_snippet_title_helper( $title_format ) {
-		return '<span id="aiosp_snippet_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title_format ) ) ) . '</span>';
+		return '<span id="aiosp_snippet_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title_format, ENT_COMPAT, 'UTF-8' ) ) ) . '</span>';
 	}
 
 	/**
@@ -1590,18 +1590,18 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						$meta = get_post_meta( $post_id, '_aioseop_' . $f, true );
 					}
 					if ( 'title' === $f || 'description' === $f ) {
-						$get_opts[ $field ] = htmlspecialchars( $meta );
+						$get_opts[ $field ] = htmlspecialchars( $meta, ENT_COMPAT, 'UTF-8' );
 					} else {
-						$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ) );
+						$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ), ENT_COMPAT, 'UTF-8' );
 					}
 				} else {
 					if ( ! is_category() && ! is_tag() && ! is_tax() ) {
 						$field = "aiosp_$f";
 						$meta  = get_post_meta( $post_id, '_aioseop_' . $f, true );
 						if ( 'title' === $f || 'description' === $f ) {
-							$get_opts[ $field ] = htmlspecialchars( $meta );
+							$get_opts[ $field ] = htmlspecialchars( $meta, ENT_COMPAT, 'UTF-8' );
 						} else {
-							$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ) );
+							$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ), ENT_COMPAT, 'UTF-8' );
 						}
 					}
 				}
@@ -2147,7 +2147,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string User -readable nice words for a given request.
 	 */
 	function request_as_words( $request ) {
-		$request     = htmlspecialchars( $request );
+		$request     = htmlspecialchars( $request, ENT_COMPAT, 'UTF-8' );
 		$request     = str_replace( '.html', ' ', $request );
 		$request     = str_replace( '.htm', ' ', $request );
 		$request     = str_replace( '.', ' ', $request );
@@ -2962,7 +2962,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$len      = $this->strlen( $text2 );
 		if ( $max < $len ) {
 			if ( function_exists( 'mb_strrpos' ) ) {
-				$pos = mb_strrpos( $text2, ' ', - ( $len - $max ) );
+				$pos = mb_strrpos( $text2, ' ', - ( $len - $max ), 'UTF-8' );
 				if ( false === $pos ) {
 					$pos = $max;
 				}
@@ -4391,7 +4391,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		// Handle extra meta fields.
 		foreach ( array( 'page_meta', 'post_meta', 'home_meta', 'front_meta' ) as $meta ) {
 			if ( ! empty( $aioseop_options[ "aiosp_{$meta}_tags" ] ) ) {
-				$$meta = html_entity_decode( stripslashes( $aioseop_options[ "aiosp_{$meta}_tags" ] ), ENT_QUOTES );
+				$$meta = html_entity_decode( stripslashes( $aioseop_options[ "aiosp_{$meta}_tags" ] ), ENT_QUOTES, 'UTF-8' );
 			} else {
 				$$meta = '';
 			}
@@ -5585,7 +5585,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	public function filter_description( $value, $truncate = false, $ignore_php_version = false ) {
 		// TODO: change preg_match to version_compare someday when the reason for this condition is understood better.
 		if ( $ignore_php_version || preg_match( '/5.2[\s\S]+/', PHP_VERSION ) ) {
-			$value = htmlspecialchars( wp_strip_all_tags( htmlspecialchars_decode( $value ) ) );
+			$value = htmlspecialchars( wp_strip_all_tags( htmlspecialchars_decode( $value ) ), ENT_COMPAT, 'UTF-8' );
 		}
 		// Decode entities.
 		$value = $this->html_entity_decode( $value );
@@ -5644,7 +5644,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			),
 			$value
 		);
-		return html_entity_decode( $value );
+		return html_entity_decode( $value, ENT_COMPAT, 'UTF-8' );
 	}
 
 	/**
