@@ -45,6 +45,9 @@ class Test_Rewrite_Title extends AIOSEOP_Test_Base {
 	 * @since 3.0
 	 */
 	public function test_title_format_macros( $macro, $type = 'post' ) {
+
+		$this->markTestIncomplete( 'Test does not trigger wp_title() - https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/2387' );
+
 		wp_set_current_user( 1 );
 		global $aioseop_options;
 
