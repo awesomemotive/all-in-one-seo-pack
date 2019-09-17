@@ -4460,8 +4460,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 *
 		 * @since 3.2.8
 		 *
-		 * @param string
-		 * @return string
+		 * @return boolean
 		 */
 		if ( apply_filters( 'aioseop_disable_schema', '__return_true' ) ) {
 			// Handle Schema.
