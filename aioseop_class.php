@@ -4454,7 +4454,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		/**
-		 * aioseop_disable_schema filter hook.
+		 * The aioseop_disable_schema filter hook.
 		 *
 		 * Used to disable schema.org output programatically.
 		 *
