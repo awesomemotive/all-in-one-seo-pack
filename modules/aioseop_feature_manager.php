@@ -2,7 +2,7 @@
 /**
  * The Feature Manager class.
  *
- * 
+ * @package All_in_One_SEO_Pack
  * @since ?
  */
 
