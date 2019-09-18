@@ -664,6 +664,26 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 				// Add initial options below.
 			),
+			'schema_person_manual_name' => array(
+				/* translators: Option shown when 'Manually Enter' is selected in Person's Username. Users use this to enter the Person's name for schema Person. */
+				'name'     => __( 'Person\'s Name', 'all-in-one-seo-pack' ),
+				'type'     => 'text',
+				'condshow' => array(
+					'aiosp_schema_markup'          => 1,
+					'aiosp_schema_site_represents' => 'person',
+					'aiosp_schema_person_user'     => '-1',
+				),
+			),
+			'schema_person_manual_image' => array(
+				/* translators: Option shown when 'Manually Enter' is selected in Person's Username. Users use this to enter the Person's image for schema Person. */
+				'name'     => __( 'Person\'s Image', 'all-in-one-seo-pack' ),
+				'type'     => 'image',
+				'condshow' => array(
+					'aiosp_schema_markup'          => 1,
+					'aiosp_schema_site_represents' => 'person',
+					'aiosp_schema_person_user'     => '-1',
+				),
+			),
 			'schema_phone_number'         => array(
 				/* translators: This is a setting where users can enter a phone number for their organization. This is used for our schema.org markup. */
 				'name'         => __( 'Phone Number', 'all-in-one-seo-pack' ),
@@ -1043,6 +1063,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'schema_organization_name',
 					'schema_organization_logo',
 					'schema_person_user',
+					'schema_person_manual_name',
+					'schema_person_manual_image',
 					'schema_phone_number',
 					'schema_contact_type',
 				),
@@ -1104,7 +1126,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		);
 		$users     = get_users( $user_args );
 
-		$this->default_options['schema_person_user']['initial_options'] = array();
+		// Person's Username setting.
+		$this->default_options['schema_person_user']['initial_options'] = array(
+			0  => __( '- Select -', 'all-in-one-seo-pack' ),
+			-1 => __( 'Manually Enter', 'all-in-one-seo-pack' ),
+		);
 		foreach ( $users as $user ) {
 			$this->default_options['schema_person_user']['initial_options'][ $user->ID ] = $user->data->user_nicename . ' (' . $user->data->display_name . ')';
 		}

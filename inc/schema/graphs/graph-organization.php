@@ -58,17 +58,45 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 		// Site represents Organization or Person.
 		if ( 'person' === $aioseop_options['aiosp_schema_site_represents'] ) {
 			$person_id = intval( $aioseop_options['aiosp_schema_person_user'] );
+			// If no user is selected, then use first admin available.
+			if ( 0 === $person_id ) {
+				$args = array(
+					'role' => 'administrator'
+				);
+				$users = get_users( $args );
+
+				if ( ! empty( $users ) ) {
+					$person_id = $users[0]->ID;
+				}
+			}
 
 			$rtn_data['@type']  = array( 'Person', $this->slug );
 			$rtn_data['@id']    = home_url() . '/#person';
-			$rtn_data['name']   = get_the_author_meta( 'display_name', $person_id );
-			$rtn_data['sameAs'] = $this->get_user_social_profile_links( $person_id );
 
-			// Handle Logo/Image.
-			$image_schema = $this->prepare_image( $this->get_user_image_data( $person_id ), home_url() . '/#personlogo' );
-			if ( $image_schema ) {
-				$rtn_data['image'] = $image_schema;
-				$rtn_data['logo']  = array( '@id' => home_url() . '/#personlogo' );
+			if ( -1 === $person_id ) {
+				// Manually added Person's name.
+				$rtn_data['name'] = $aioseop_options['aiosp_schema_person_manual_name'];
+
+				// Handle Logo/Image.
+				$image_data   = wp_parse_args( array( 'url' => $aioseop_options['aiosp_schema_person_manual_image'] ), $this->get_image_data_defaults() );
+				$image_schema = $this->prepare_image( $image_data, home_url() . '/#personlogo' );
+				if ( $image_schema ) {
+					$rtn_data['image'] = $image_schema;
+					$rtn_data['logo']  = array( '@id' => home_url() . '/#personlogo' );
+				}
+			} else {
+				// User's Display Name.
+				$rtn_data['name']   = get_the_author_meta( 'display_name', $person_id );
+
+				// Social links from user profile.
+				$rtn_data['sameAs'] = $this->get_user_social_profile_links( $person_id );
+
+				// Handle Logo/Image for retrieving gravatar and image schema.
+				$image_schema = $this->prepare_image( $this->get_user_image_data( $person_id ), home_url() . '/#personlogo' );
+				if ( $image_schema ) {
+					$rtn_data['image'] = $image_schema;
+					$rtn_data['logo']  = array( '@id' => home_url() . '/#personlogo' );
+				}
 			}
 		} else {
 			// Get Name from General > Schema Settings > Organization Name, and fallback on WP's Site Name.
