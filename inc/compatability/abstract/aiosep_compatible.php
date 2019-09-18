@@ -1,4 +1,11 @@
 <?php
+/**
+ * AIOSEOP Compatable
+ *
+ * @package All_in_One_SEO_Pack
+ * @since ?
+ */
+
 if ( ! class_exists( 'All_in_One_SEO_Pack_Compatible' ) ) {
 	/**
 	 * Abstract class to be used to create compatibility with 3rd party WordPress plugins.
@@ -13,6 +20,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Compatible' ) ) {
 		/**
 		 * Returns flag indicating if compatible plugin exists in current instalation or not.
 		 * This function should be overwritten on child class.
+		 *
 		 * @since 2.3.12.3
 		 *
 		 * @return bool
@@ -23,6 +31,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Compatible' ) ) {
 
 		/**
 		 * Method executed by compatibility handler to declare hooks and/or any other compatibility code needed.
+		 *
 		 * @since 2.3.12.3
 		 */
 		public function hooks() {

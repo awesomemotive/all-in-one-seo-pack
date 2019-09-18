@@ -1,13 +1,22 @@
 <?php
 /**
- * AIOSEOP testing base class.
+ * AIOSEOP testing base class
+ *
+ * @package All_in_One_SEO_Pack
+ * @since ?
+ */
+
+/**
+ * Class AIOSEOP_Test_Base
+ *
+ * @since 2.4.2.1
  */
 class AIOSEOP_Test_Base extends WP_UnitTestCase {
 
 	public function _setUp() {
 		parent::setUp();
 
-		// avoids error - readfile(/src/wp-includes/js/wp-emoji-loader.js): failed to open stream: No such file or directory
+		// avoids error - readfile(/src/wp-includes/js/wp-emoji-loader.js): failed to open stream: No such file or directory.
 		remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 
 		// reset global options.
@@ -17,44 +26,83 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 
 	/**
 	 * Last AJAX response.  This is set via echo -or- wp_die.
+	 *
 	 * @var type
 	 */
 	protected $_last_response = '';
 	/**
 	 * List of ajax actions called via POST
+	 *
 	 * @var type
 	 */
 	protected $_core_actions_get = array( 'fetch-list', 'ajax-tag-search', 'wp-compression-test', 'imgedit-preview', 'oembed_cache' );
 	/**
 	 * Saved error reporting level
+	 *
 	 * @var int
 	 */
 	protected $_error_level = 0;
 	/**
 	 * List of ajax actions called via GET
+	 *
 	 * @var type
 	 */
 	protected $_core_actions_post = array(
-		'oembed_cache', 'image-editor', 'delete-comment', 'delete-tag', 'delete-link',
-		'delete-meta', 'delete-post', 'trash-post', 'untrash-post', 'delete-page', 'dim-comment',
-		'add-link-category', 'add-tag', 'get-tagcloud', 'get-comments', 'replyto-comment',
-		'edit-comment', 'add-menu-item', 'add-meta', 'add-user', 'autosave', 'closed-postboxes',
-		'hidden-columns', 'update-welcome-panel', 'menu-get-metabox', 'wp-link-ajax',
-		'menu-locations-save', 'menu-quick-search', 'meta-box-order', 'get-permalink',
-		'sample-permalink', 'inline-save', 'inline-save-tax', 'find_posts', 'widgets-order',
-		'save-widget', 'set-post-thumbnail', 'date_format', 'time_format', 'wp-fullscreen-save-post',
-		'wp-remove-post-lock', 'dismiss-wp-pointer', 'nopriv_autosave',
+		'oembed_cache',
+		'image-editor',
+		'delete-comment',
+		'delete-tag',
+		'delete-link',
+		'delete-meta',
+		'delete-post',
+		'trash-post',
+		'untrash-post',
+		'delete-page',
+		'dim-comment',
+		'add-link-category',
+		'add-tag',
+		'get-tagcloud',
+		'get-comments',
+		'replyto-comment',
+		'edit-comment',
+		'add-menu-item',
+		'add-meta',
+		'add-user',
+		'autosave',
+		'closed-postboxes',
+		'hidden-columns',
+		'update-welcome-panel',
+		'menu-get-metabox',
+		'wp-link-ajax',
+		'menu-locations-save',
+		'menu-quick-search',
+		'meta-box-order',
+		'get-permalink',
+		'sample-permalink',
+		'inline-save',
+		'inline-save-tax',
+		'find_posts',
+		'widgets-order',
+		'save-widget',
+		'set-post-thumbnail',
+		'date_format',
+		'time_format',
+		'wp-fullscreen-save-post',
+		'wp-remove-post-lock',
+		'dismiss-wp-pointer',
+		'nopriv_autosave',
 	);
 
 	/**
 	 * A sentence that contains the list of special characters that can be used.
+	 *
 	 * @var type
 	 */
 	protected $_spl_chars = '<tom> - tom&jerry \'cause today\'s effort makes it worth tomorrow\'s "holiday" &raquo; &laquo; &rsaquo; &lsaquo; &rdquo; &ldquo; &rsquo; &lsquo; > <';
 
 	public function ajaxSetUp() {
 		parent::setUp();
-		// Register the core actions
+		// Register the core actions.
 		foreach ( array_merge( $this->_core_actions_get, $this->_core_actions_post ) as $action ) {
 			if ( function_exists( 'wp_ajax_' . str_replace( '-', '_', $action ) ) ) {
 				add_action( 'wp_ajax_' . $action, 'wp_ajax_' . str_replace( '-', '_', $action ), 1 );
@@ -65,9 +113,9 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 			define( 'DOING_AJAX', true );
 		}
 		set_current_screen( 'ajax' );
-		// Clear logout cookies
+		// Clear logout cookies.
 		add_action( 'clear_auth_cookie', array( $this, 'logout' ) );
-		// Suppress warnings from "Cannot modify header information - headers already sent by"
+		// Suppress warnings from "Cannot modify header information - headers already sent by".
 		$this->_error_level = error_reporting();
 		error_reporting( $this->_error_level & ~E_WARNING );
 	}
@@ -79,7 +127,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	public function ajaxTearDown() {
 		parent::tearDown();
 		$_POST = array();
-		$_GET = array();
+		$_GET  = array();
 		unset( $GLOBALS['post'] );
 		unset( $GLOBALS['comment'] );
 		remove_filter( 'wp_die_ajax_handler', array( $this, 'getDieHandler' ), 1, 1 );
@@ -90,6 +138,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 
 	/**
 	 * Return our callback handler
+	 *
 	 * @return callback
 	 */
 	public function getDieHandler() {
@@ -134,20 +183,22 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	 * Mimic the ajax handling of admin-ajax.php
 	 * Capture the output via output buffering, and if there is any, store
 	 * it in $this->_last_message.
+	 *
 	 * @param string $action
 	 */
 	protected function _handleAjax( $action ) {
-		// Start output buffering
+		// Start output buffering.
 		ini_set( 'implicit_flush', false );
 		ob_start();
-		// Build the request
+		// Build the request.
 		$_POST['action'] = $action;
 		$_GET['action']  = $action;
 		$_REQUEST        = array_merge( $_POST, $_GET );
-		// Call the hooks
+		// Call the hooks.
+		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 		// do_action( 'admin_init' );
 		do_action( 'wp_ajax_' . $_REQUEST['action'], null );
-		// Save the output
+		// Save the output.
 		$buffer = ob_get_clean();
 		if ( ! empty( $buffer ) ) {
 			$this->_last_response = $buffer;
@@ -157,10 +208,11 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	/**
 	 * Switch between user roles
 	 * E.g. administrator, editor, author, contributor, subscriber
+	 *
 	 * @param string $role
 	 */
 	protected function _setRole( $role ) {
-		$post = $_POST;
+		$post    = $_POST;
 		$user_id = $this->factory->user->create( array( 'role' => $role ) );
 		wp_set_current_user( $user_id );
 		$_POST = array_merge( $_POST, $post );
@@ -170,7 +222,8 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	 * Upload an image and, optionally, attach to the post.
 	 */
 	protected final function upload_image_and_maybe_attach( $image, $id = 0 ) {
-		/* this factory method has a bug so we have to be a little clever.
+		/*
+		This factory method has a bug so we have to be a little clever.
 		$this->factory->attachment->create( array( 'file' => $image, 'post_parent' => $id ) );
 		*/
 		$attachment_id = $this->factory->attachment->create_upload_object( $image, $id );
@@ -178,7 +231,13 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		// add an image caption and title with special characters.
 		kses_remove_filters();
 		$spl = wp_generate_password( 12, true, true ) . $this->_spl_chars;
-		wp_update_post( array( 'ID' => $attachment_id, 'post_title' => $spl, 'post_excerpt' => $spl ) );
+		wp_update_post(
+			array(
+				'ID'           => $attachment_id,
+				'post_title'   => $spl,
+				'post_excerpt' => $spl,
+			)
+		);
 		kses_init_filters();
 
 		if ( 0 !== $id ) {
@@ -192,7 +251,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	 */
 	protected final function create_attachments( $num, $id = 0 ) {
 		$image = str_replace( '\\', '/', AIOSEOP_UNIT_TESTING_DIR . '/resources/images/footer-logo.png' );
-		$ids = array();
+		$ids   = array();
 		for ( $x = 0; $x < $num; $x++ ) {
 			$ids[] = $this->factory->attachment->create_upload_object( $image, $id );
 		}
@@ -210,10 +269,10 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	 * Clean up the flotsam and jetsam before starting.
 	 */
 	protected final function clean() {
-		$posts  = get_posts(
+		$posts = get_posts(
 			array(
-				'post_type' => 'any',
-				'fields'    => 'ids',
+				'post_type'   => 'any',
+				'fields'      => 'ids',
 				'numberposts' => -1,
 			)
 		);
@@ -236,22 +295,22 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		// activate the sitemap module.
 		$aioseop_options['modules'] = array(
 			'aiosp_feature_manager_options' => array(
-				"aiosp_feature_manager_enable_$module"  => 'on',
+				"aiosp_feature_manager_enable_$module" => 'on',
 			),
 		);
 		update_option( 'aioseop_options', $aioseop_options );
 
 		set_current_screen( 'edit-post' );
 
-		$nonce      = wp_create_nonce( 'aioseop-nonce' );
-		$class      = 'All_in_One_SEO_Pack_' . ucwords( $module );
-		$_POST      = array(
-			'action'                => 'aiosp_update_module',
-			'Submit_All_Default'    => 'blah',
-			'Submit'                => 'blah',
-			'nonce-aioseop'         => $nonce,
-			'settings'              => ' ',
-			'options'               => "aiosp_feature_manager_enable_{$module}=true&page=" . trailingslashit( AIOSEOP_PLUGIN_DIRNAME ) . "modules/aioseop_feature_manager.php&Submit=testing!&module={$class}&nonce-aioseop=" . $nonce,
+		$nonce = wp_create_nonce( 'aioseop-nonce' );
+		$class = 'All_in_One_SEO_Pack_' . ucwords( $module );
+		$_POST = array(
+			'action'             => 'aiosp_update_module',
+			'Submit_All_Default' => 'blah',
+			'Submit'             => 'blah',
+			'nonce-aioseop'      => $nonce,
+			'settings'           => ' ',
+			'options'            => "aiosp_feature_manager_enable_{$module}=true&page=" . trailingslashit( AIOSEOP_PLUGIN_DIRNAME ) . "modules/aioseop_feature_manager.php&Submit=testing!&module={$class}&nonce-aioseop=" . $nonce,
 		);
 
 		// so that is_admin returns true.
@@ -273,6 +332,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		update_option( 'aioseop_options', $aioseop_options );
 
 		$aioseop_options = get_option( 'aioseop_options' );
+		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 		// error_log("aioseop_options " . print_r($aioseop_options,true));
 	}
 
@@ -289,19 +349,33 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	 */
 	final protected function setup_posts( $without_images = 0, $with_images = 0, $type = 'post' ) {
 		if ( $without_images > 0 ) {
-			$this->factory->post->create_many( $without_images, array( 'post_type' => $type, 'post_content' => 'content without image', 'post_title' => 'title without image' ) );
+			$this->factory->post->create_many(
+				$without_images,
+				array(
+					'post_type'    => $type,
+					'post_content' => 'content without image',
+					'post_title'   => 'title without image',
+				)
+			);
 		}
 		if ( $with_images > 0 ) {
-			$ids    = $this->factory->post->create_many( $with_images, array( 'post_type' => $type, 'post_content' => 'content with image', 'post_title' => 'title with image' ) );
+			$ids = $this->factory->post->create_many(
+				$with_images,
+				array(
+					'post_type'    => $type,
+					'post_content' => 'content with image',
+					'post_title'   => 'title with image',
+				)
+			);
 			foreach ( $ids as $id ) {
 				$this->upload_image_and_maybe_attach( str_replace( '\\', '/', AIOSEOP_UNIT_TESTING_DIR . '/resources/images/footer-logo.png' ), $id );
 			}
 		}
 
-		$posts  = get_posts(
+		$posts = get_posts(
 			array(
-				'post_type' => $type,
-				'fields'    => 'ids',
+				'post_type'   => $type,
+				'fields'      => 'ids',
 				'numberposts' => -1,
 			)
 		);
@@ -313,10 +387,10 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 			get_permalink( $id );
 		}
 
-		$attachments    = get_posts(
+		$attachments = get_posts(
 			array(
-				'post_type' => 'attachment',
-				'fields'    => 'ids',
+				'post_type'   => 'attachment',
+				'fields'      => 'ids',
 				'numberposts' => -1,
 			)
 		);
@@ -327,7 +401,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		$with    = array();
 		$without = array();
 
-		$featured   = 0;
+		$featured = 0;
 		foreach ( $posts as $id ) {
 			if ( has_post_thumbnail( $id ) ) {
 				$featured++;
@@ -405,7 +479,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		ob_start();
 		do_action( 'wp_footer' );
 		$footer = ob_get_clean();
-		$html .= '<body>' . /* somehow get the body too */ $footer . '</body>';
+		$html  .= '<body>' . /* somehow get the body too */ $footer . '</body>';
 		return $html . '</html>';
 	}
 
@@ -435,6 +509,7 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 	 * Extracts the node from the HTML source.
 	 */
 	private function get_node_as_array( $node ) {
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$array = false;
 
 		if ( $node->hasAttributes() ) {
@@ -444,16 +519,17 @@ class AIOSEOP_Test_Base extends WP_UnitTestCase {
 		}
 
 		if ( $node->hasChildNodes() ) {
-			if ( $node->childNodes->length == 1 ) {
+			if ( 1 == $node->childNodes->length ) {
 				$array[ $node->firstChild->nodeName ] = $node->firstChild->nodeValue;
 			} else {
-				foreach ( $node->childNodes as $childNode ) {
-					if ( $childNode->nodeType != XML_TEXT_NODE ) {
-						$array[ $childNode->nodeName ][] = $this->get_node_as_array( $childNode );
+				foreach ( $node->childNodes as $child_node ) {
+					if ( XML_TEXT_NODE != $child_node->nodeType ) {
+						$array[ $child_node->nodeName ][] = $this->get_node_as_array( $child_node );
 					}
 				}
 			}
 		}
+		// phpcs:enable
 
 		return $array;
 	}

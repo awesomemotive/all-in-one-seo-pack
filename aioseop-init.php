@@ -2,6 +2,8 @@
 /**
  * We'll eventually put stuff in here from the main plugin file.
  *
- * @package All-in-One-SEO-Pack
+ * phpcs:disable Squiz.Commenting.FileComment.SpacingAfterComment
  *
+ * @package All_in_One_SEO_Pack
+ * @since 2.3.6
  */

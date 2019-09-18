@@ -4,12 +4,16 @@
  *
  * @since 2.4.4.1
  *
+ * @package All_in_One_SEO_Pack
  * @group url
  * @group post_permalink
  * @group All_in_One_SEO_Pack
  * @group aiosp_mrt_get_url
  */
 
+/**
+ * AIOSEOP test base
+ */
 require_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-test-base.php';
 
 /**
@@ -23,6 +27,14 @@ require_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-test-base.php';
  */
 class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 
+	/**
+	 * Post IDs
+	 *
+	 * @since 2.4.4.1
+	 * @access private
+	 *
+	 * @var array
+	 */
 	private $post_ids = array();
 
 	/**
@@ -165,7 +177,6 @@ class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 	 *
 	 * @expectedException count(): Parameter must be an array or an object that implements Countable
 	 * @expectedExceptionMessage Error Exception Message in Annotations.
-	 *
 	 */
 	public function test_aiosp_mrt_get_url_post_edit() {
 		global $aioseop_class;
@@ -181,7 +192,7 @@ class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 		 * appears to be a potentual bug with WP_UnitTestCase.
 		 */
 		// $this->go_to_edit_post( site_url() . '/wp-admin/post.php?post=' . $this->post_ids[0] . '&action=edit' );
-		/* OR ( Could change to override function as well) */
+		// OR ( Could change to override function as well)
 		// $this->go_to( site_url() . '/wp-admin/post.php?post=' . $this->post_ids[0] . '&action=edit' );
 		// unset( $GLOBALS['wp_query'], $GLOBALS['wp_the_query'] );
 		// $GLOBALS['wp_the_query'] = new WP_Query();
@@ -200,26 +211,21 @@ class Tests_All_in_One_SEO_Pack_AiospMrtGetUrl extends AIOSEOP_Test_Base {
 			$post = get_post( $this->post_ids[0] );
 		}
 		// Set global $post_type with $post->post_type.
-		$post_type = $post->post_type;
-		// Set global $post_type_object = get_post_type_object( $post_type );
+		$post_type        = $post->post_type;
 		$post_type_object = get_post_type_object( $post_type );
-		// Switch-case sets global $post = get_post($post_id, OBJECT, 'edit');
+		// Sets global post.
 		$post = get_post( $this->post_ids[0], OBJECT, 'edit' );
 
 		// - Operations in All_in_One_SEO_Pack::get_page_snippet_info().
 		// The global $wp_query is still un-initiated/null values.
 		// global $post is set to page being edited. $post = get_post( ID )
 		global $wp_query;
-		// Set $wp_query->is_single = true;
 		$wp_query->is_single = true;
-		// Set $this->is_front_page = false;
 		$this->is_front_page = false;
-		// Set $wp_query->queried_object = $post;
-		// When ! empty( $aioseop_options['aiosp_no_paged_canonical_links'], is when $show_page = false.
+
 		// - Operation in test function.
 		// Would need to be empty
-		// $aioseop_options['aiosp_customize_canonical_links']
-		// $opts['aiosp_custom_link']
+		// $aioseop_options['aiosp_customize_canonical_links'].
 		global $aioseop_options;
 		$aioseop_options['aiosp_no_paged_canonical_links']  = false;
 		$aioseop_options['aiosp_customize_canonical_links'] = false;

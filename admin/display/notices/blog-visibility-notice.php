@@ -7,7 +7,6 @@
  * @subpackage AIOSEOP_Notices
  */
 
-
 /**
  * Notice - Blog Visibility
  *

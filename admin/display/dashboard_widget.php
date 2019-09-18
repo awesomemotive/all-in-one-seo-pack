@@ -1,4 +1,10 @@
 <?php
+/**
+ * Dashboard Widget
+ *
+ * @package All_in_One_SEO_Pack
+ * @since 2.3.10
+ */
 
 if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 
@@ -12,19 +18,27 @@ if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 	// @codingStandardsIgnoreEnd
 
 		/**
+		 * Constructor
+		 *
 		 * Add the action to the constructor.
+		 *
+		 * @since 2.3.10
 		 */
 		function __construct() {
 			add_action( 'wp_dashboard_setup', array( $this, 'add_dashboard_widget' ) );
 		}
 
 		/**
+		 * Add Dashboard Widget
+		 *
 		 * @since 2.3.10
 		 */
 		function add_dashboard_widget() {
 			if ( current_user_can( 'install_plugins' ) && false !== $this->show_widget() ) {
 				wp_add_dashboard_widget(
-					'semperplugins-rss-feed', __( 'SEO News', 'all-in-one-seo-pack' ), array(
+					'semperplugins-rss-feed',
+					__( 'SEO News', 'all-in-one-seo-pack' ),
+					array(
 						$this,
 						'display_rss_dashboard_widget',
 					)
@@ -34,6 +48,8 @@ if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 		}
 
 		/**
+		 * Show Widget
+		 *
 		 * @since 2.3.10.2
 		 */
 		function show_widget() {
@@ -55,6 +71,8 @@ if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 		}
 
 		/**
+		 * Display RSS Dashboard Widget
+		 *
 		 * @since 2.3.10
 		 */
 		function display_rss_dashboard_widget() {
@@ -67,7 +85,8 @@ if ( ! class_exists( 'aioseop_dashboard_widget' ) ) {
 
 			include_once( ABSPATH . WPINC . '/feed.php' );
 
-			if ( false === ( $rss_items = get_transient( 'aioseop_feed' ) ) ) {
+			$rss_items = get_transient( 'aioseop_feed' );
+			if ( false === $rss_items ) {
 
 				$rss = fetch_feed( 'https://www.semperplugins.com/feed/' );
 				if ( is_wp_error( $rss ) ) {

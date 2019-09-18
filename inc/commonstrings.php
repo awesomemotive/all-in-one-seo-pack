@@ -4,9 +4,15 @@
  *
  * This is just for Pro strings to be translated.
  *
- * @package All-in-One-SEO-Pack
+ * @package All_in_One_SEO_Pack
+ * @since ?
  */
 
+/**
+ * Class AIOSP_Common_Strings
+ *
+ * @since ?
+ */
 class AIOSP_Common_Strings {
 
 	/**
@@ -14,7 +20,6 @@ class AIOSP_Common_Strings {
 	 *
 	 * We'll just put all the strings in the contruct for lack of a better place.
 	 */
-
 	private function __construct() {
 
 		// From aioseop-helper-filters.php.
@@ -23,12 +28,12 @@ class AIOSP_Common_Strings {
 		__( 'Use these checkboxes to select which Taxonomies you want to use %s with.', 'all-in-one-seo-pack' );
 		__( 'This displays an SEO News widget on the dashboard.', 'all-in-one-seo-pack' );
 		/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
-		__( 'Check this to add %s to the Admin Bar for easy access to your SEO settings.', 'all-in-one-seo-pack' );
+		__( 'Check this to add %s to the Toolbar for easy access to your SEO settings.', 'all-in-one-seo-pack' );
 		/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
 		__( 'Check this to move the %s menu item to the top of your WordPress Dashboard menu.', 'all-in-one-seo-pack' );
 		__( 'Check this if you want to track outbound forms with Google Analytics.', 'all-in-one-seo-pack' );
 		__( 'Check this if you want to track events with Google Analytics.', 'all-in-one-seo-pack' );
-		__( 'Check this if you want to track url changes for single pages with Google Analytics.', 'all-in-one-seo-pack' );
+		__( 'Check this if you want to track URL changes for single pages with Google Analytics.', 'all-in-one-seo-pack' );
 		__( 'Check this if you want to track how long pages are in visible state with Google Analytics.', 'all-in-one-seo-pack' );
 		/* translators: 'This option allows users to track media queries, allowing them to find out if users are viewing a responsive layout or not and which layout changes have been applied if the browser window has been resized by the user, see https://github.com/googleanalytics/autotrack/blob/master/docs/plugins/media-query-tracker.md. */
 		__( 'Check this if you want to track media query matching and queries with Google Analytics.', 'all-in-one-seo-pack' );
@@ -57,7 +62,6 @@ class AIOSP_Common_Strings {
 		__( 'Include Date Archives in your sitemap.', 'all-in-one-seo-pack' );
 		__( 'Include Author Archives in your sitemap.', 'all-in-one-seo-pack' );
 		__( 'Exclude Images in your sitemap.', 'all-in-one-seo-pack' );
-		__( 'Create a compressed sitemap file in .xml.gz format.', 'all-in-one-seo-pack' );
 		__( 'Places a link to your Sitemap.xml into your virtual Robots.txt file.', 'all-in-one-seo-pack' );
 		__( 'Dynamically creates the XML sitemap instead of using a static file.', 'all-in-one-seo-pack' );
 		__( 'If checked, only posts that have videos in them will be displayed on the sitemap.', 'all-in-one-seo-pack' );
@@ -84,11 +88,11 @@ class AIOSP_Common_Strings {
 
 		// From functions_general.php.
 		__( 'Show SEO News', 'all-in-one-seo-pack' );
-		__( 'Display Menu In Admin Bar:', 'all-in-one-seo-pack' );
+		__( 'Display Menu In Toolbar:', 'all-in-one-seo-pack' );
 		__( 'Display Menu At The Top:', 'all-in-one-seo-pack' );
 		__( 'Track Outbound Forms:', 'all-in-one-seo-pack' );
 		__( 'Track Events:', 'all-in-one-seo-pack' );
-		__( 'Track Url Changes:', 'all-in-one-seo-pack' );
+		__( 'Track URL Changes:', 'all-in-one-seo-pack' );
 		__( 'Track Page Visibility:', 'all-in-one-seo-pack' );
 		__( 'Track Media Query:', 'all-in-one-seo-pack' );
 		__( 'Track Elements Visibility:', 'all-in-one-seo-pack' );

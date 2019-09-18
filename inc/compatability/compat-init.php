@@ -15,7 +15,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Compatibility' ) ) {
 	 *
 	 * @since 2.3.6
 	 */
-
 	class All_in_One_SEO_Pack_Compatibility {
 
 		/**
@@ -48,26 +47,28 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Compatibility' ) ) {
 			// We'll use this until we set up our classes.
 			if ( class_exists( 'jetpack' ) ) {
 				add_filter( 'jetpack_get_available_modules', array( $this, 'remove_jetpack_sitemap' ) );
-				add_filter(
-					'jetpack_site_verification_output', array(
-						$this,
-						'filter_jetpack_site_verification_output',
-					), 10, 1
-				);
+				add_filter( 'jetpack_site_verification_output', array( $this, 'filter_jetpack_site_verification_output' ), 10, 1 );
 			}
 
 			// Remove Twitter plugin's meta if our Social Module is on.
 			global $aioseop_options;
-			if ( isset( $aioseop_options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_opengraph'] ) && $aioseop_options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_opengraph'] === 'on' ) {
+			if (
+					isset( $aioseop_options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_opengraph'] ) &&
+					'on' === $aioseop_options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_opengraph']
+			) {
 				add_filter( 'twitter_card', array( $this, 'aioseop_disable_twitter' ) );
 			}
-			// Run compatibility classes
+			// Run compatibility classes.
 			for ( $i = count( $this->classes ) - 1; $i >= 0; --$i ) {
 				$this->classes[ $i ]->hooks();
 			}
 		}
 
 		/**
+		 *
+		 * AIOSEOP Disable Twitter
+		 *
+		 * @since 2.3.11.4
 		 *
 		 * @return bool
 		 */
@@ -134,7 +135,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Compatibility' ) ) {
 
 			global $aioseop_options;
 			// Check if AIOSEOP's sitemap exists.
-			if ( isset( $aioseop_options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_sitemap'] ) && $aioseop_options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_sitemap'] === 'on' ) {
+			if (
+					isset( $aioseop_options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_sitemap'] ) &&
+					'on' === $aioseop_options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_sitemap']
+			) {
 				unset( $modules['sitemaps'] ); // Remove Jetpack's sitemap.
 			}
 
@@ -149,7 +153,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Compatibility' ) ) {
 		 */
 		public function load_compatibility_classes() {
 			require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/compat-wpml.php' ); // Load classes.
-			// Evaluate classes and push them into array
+			// Evaluate classes and push them into array.
 			$target = new All_in_One_SEO_Pack_Wpml;
 			if ( $target->exists() ) {
 				$this->classes[] = $target;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Meta Import
+ *
+ * @package All_in_One_SEO_Pack
+ * @since ?
+ */
 
 if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 
@@ -9,8 +15,22 @@ if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 	 */
 	class WPSEO_Import_AIOSEO_Hooks extends WPSEO_Import_Hooks {
 
+		/**
+		 * Plugin File
+		 *
+		 * @since ?
+		 *
+		 * @var string $plugin_file
+		 */
 		protected $plugin_file = 'all-in-one-seo-pack/all_in_one_seo_pack.php';
 
+		/**
+		 * Deactivate Listener
+		 *
+		 * @since ?
+		 *
+		 * @var string $deactivation_listener
+		 */
 		protected $deactivation_listener = 'deactivate_aioseo';
 
 		/**
@@ -29,9 +49,9 @@ if ( class_exists( 'WPSEO_Import_Hooks' ) ) {
 				echo '<div class="notice notice-warning row-title is-dismissible yst_notice"><p>', sprintf( esc_html__( 'The plugin Yoast SEO has been detected. Do you want to %1$simport its settings%2$s into %3$s', 'all-in-one-seo-pack' ), sprintf( '<a href="%s">', esc_url( $aiourl ) ), '</a>', AIOSEOP_PLUGIN_NAME ), '</p></div>';
 
 			}
-
+			// phpcs:disable WordPress.WP.I18n
 			echo '<div class="error"><p>', sprintf( esc_html__( 'The plugin All-In-One-SEO has been detected. Do you want to %1$simport its settings%2$s?', 'wordpress-seo' ), sprintf( '<a href="%s">', esc_url( $yoasturl ) ), '</a>' ), '</p></div>';
-
+			// phpcs:enable
 		}
 
 		public function show_deactivate_notice() {
@@ -80,13 +100,13 @@ function aiosp_seometa_action() {
 	}
 
 	if ( empty( $_REQUEST['platform_old'] ) ) {
-		printf( '<div class="error"><p>%s</p></div>', __( 'Sorry, you can\'t do that. Please choose a platform and then click Analyze or Convert.' ) );
+		printf( '<div class="error"><p>%s</p></div>', __( 'Sorry, you can\'t do that. Please choose a platform and then click Analyze or Convert.', 'all-in-one-seo-pack' ) );
 
 		return;
 	}
 
 	if ( 'All in One SEO Pack' === $_REQUEST['platform_old'] ) {
-		printf( '<div class="error"><p>%s</p></div>', __( 'Sorry, you can\'t do that. Please choose a platform and then click Analyze or Convert.' ) );
+		printf( '<div class="error"><p>%s</p></div>', __( 'Sorry, you can\'t do that. Please choose a platform and then click Analyze or Convert.', 'all-in-one-seo-pack' ) );
 
 		return;
 	}
@@ -99,13 +119,14 @@ function aiosp_seometa_action() {
 
 		$response = aiosp_seometa_post_meta_analyze( $_REQUEST['platform_old'], 'All in One SEO Pack' );
 		if ( is_wp_error( $response ) ) {
-			printf( '<div class="error"><p>%s</p></div>', __( 'Sorry, something went wrong. Please try again' ) );
+			printf( '<div class="error"><p>%s</p></div>', __( 'Sorry, something went wrong. Please try again', 'all-in-one-seo-pack' ) );
 
 			return;
 		}
 
 		printf( __( '<p>Analyzing records in a %1$s to %2$s conversion&hellip;', 'all-in-one-seo-pack' ), esc_html( $_POST['platform_old'] ), 'All in One SEO Pack' );
 		printf( '<p><b>%d</b> Compatible Records were identified</p>', $response->update );
+		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 		// printf( '<p>%d Compatible Records will be ignored</p>', $response->ignore );
 		printf( '<p><b>%s</b></p>', __( 'Compatible data:', 'all-in-one-seo-pack' ) );
 		echo '<ol>';
@@ -121,7 +142,7 @@ function aiosp_seometa_action() {
 
 	$result = aiosp_seometa_post_meta_convert( stripslashes( $_REQUEST['platform_old'] ), 'All in One SEO Pack' );
 	if ( is_wp_error( $result ) ) {
-		printf( '<p>%s</p>', __( 'Sorry, something went wrong. Please try again' ) );
+		printf( '<p>%s</p>', __( 'Sorry, something went wrong. Please try again', 'all-in-one-seo-pack' ) );
 
 		return;
 	}
@@ -141,7 +162,7 @@ function aiosp_seometa_admin() {
 	<div class="wrap">
 
 
-		<h2><?php _e( 'Import SEO Settings', 'all-in-one-seo-pack' ); ?></h2>
+		<h1><?php _e( 'Import SEO Settings', 'all-in-one-seo-pack' ); ?></h1>
 
 		<p><span
 				class="description"><?php printf( __( 'Use the drop down below to choose which plugin or theme you wish to import SEO data from.', 'all-in-one-seo-pack' ) ); ?></span>
@@ -156,13 +177,19 @@ function aiosp_seometa_admin() {
 				</span>
 		</p>
 
-		<p><span
-				class="description"><strong><?php printf( __( 'Please Note: ' ) ); ?></strong>
-														  <?php
-															/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
-															printf( sprintf( __( 'Some plugins and themes do not share similar data, or they store data in a non-standard way. If we cannot import this data, it will remain unchanged in your database. Any compatible SEO data will be displayed for you to review. If a post or page already has SEO data in %s, we will not import data from another plugin/theme.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ) );
-															?>
-				</span>
+		<p>
+			<span class="description">
+				<strong><?php printf( __( 'Please Note: ', 'all-in-one-seo-pack' ) ); ?></strong>
+				<?php
+				/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
+				printf(
+					sprintf(
+						__( 'Some plugins and themes do not share similar data, or they store data in a non-standard way. If we cannot import this data, it will remain unchanged in your database. Any compatible SEO data will be displayed for you to review. If a post or page already has SEO data in %s, we will not import data from another plugin/theme.', 'all-in-one-seo-pack' ),
+						AIOSEOP_PLUGIN_NAME
+					)
+				);
+				?>
+			</span>
 		</p>
 
 		<p><span
@@ -181,7 +208,7 @@ function aiosp_seometa_admin() {
 			$platform_old = ( ! isset( $_POST['platform_old'] ) ) ? '' : $_POST['platform_old'];
 
 			_e( 'Import SEO data from:', 'all-in-one-seo-pack' );
-			echo '<select name="platform_old">';
+			echo '<select name="platform_old" aria-label="' . __( 'Choose the platform you want to import SEO data from', 'all-in-one-seo-pack' ) . '">';
 			printf( '<option value="">%s</option>', __( 'Choose platform:', 'all-in-one-seo-pack' ) );
 
 			printf( '<optgroup label="%s">', __( 'Plugins', 'all-in-one-seo-pack' ) );
@@ -202,10 +229,17 @@ function aiosp_seometa_admin() {
 
 			?>
 
-			<input type="submit" class="button-secondary" name="analyze"
-				   value="<?php _e( 'Analyze', 'all-in-one-seo-pack' ); ?>" aria-label="Analyze"/>
-			<input type="submit" class="button-primary"
-				   value="<?php _e( 'Convert', 'all-in-one-seo-pack' ); ?>" aria-label="Convert"/>
+			<input
+				type="submit"
+				class="button-secondary"
+				name="analyze"
+				value="<?php _e( 'Analyze', 'all-in-one-seo-pack' ); ?>"
+				aria-label="Analyze"/>
+			<input
+				type="submit"
+				class="button-primary"
+				value="<?php _e( 'Convert', 'all-in-one-seo-pack' ); ?>"
+				aria-label="Convert"/>
 
 		</form>
 
@@ -222,7 +256,6 @@ function aiosp_seometa_admin() {
  * First check to see what records for $new already exist, storing the corresponding post_id values in an array.
  * When the conversion happens, ignore rows that contain a post_id, to avoid duplicate entries.
  *
- *
  * @param string $old Old meta_key entries.
  * @param string $new New meta_key entries.
  * @param bool $delete_old Whether to delete the old entries.
@@ -238,6 +271,7 @@ function aiosp_seometa_meta_key_convert( $old = '', $new = '', $delete_old = fal
 	$output = new stdClass;
 
 	if ( ! $old || ! $new ) {
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$output->WP_Error = 1;
 
 		return $output;
@@ -294,6 +328,7 @@ function aiosp_seometa_post_meta_convert( $old_platform = '', $new_platform = 'A
 	$output = new stdClass;
 
 	if ( empty( $_aiosp_seometa_platforms[ $old_platform ] ) || empty( $_aiosp_seometa_platforms[ $new_platform ] ) ) {
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$output->WP_Error = 1;
 
 		return $output;
@@ -353,6 +388,7 @@ function aiosp_seometa_post_meta_analyze( $old_platform = '', $new_platform = 'A
 	$output = new stdClass;
 
 	if ( empty( $_aiosp_seometa_platforms[ $old_platform ] ) || empty( $_aiosp_seometa_platforms[ $new_platform ] ) ) {
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$output->WP_Error = 1;
 
 		return $output;
@@ -378,12 +414,14 @@ function aiosp_seometa_post_meta_analyze( $old_platform = '', $new_platform = 'A
 		$update = $wpdb->get_results( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s", $meta_key ) );
 
 		// Count items in returned arrays.
+		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 		// $ignore = count( (array)$ignore );
 		$update = count( (array) $update );
 
 		// Calculate update/ignore by comparison.
+		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 		// $update = ( (int)$update > (int)$ignore ) ? ( (int)$update - (int)$ignore ) : 0;
-		// update output numbers
+		// update output numbers.
 		$output->update += (int) $update;
 		$output->ignore += (int) $ignore;
 
@@ -397,9 +435,10 @@ function aiosp_seometa_post_meta_analyze( $old_platform = '', $new_platform = 'A
 
 }
 
-
+// phpcs:disable Squiz.Commenting.InlineComment.InvalidEndChar
 // define('aiosp_seometa_PLUGIN_DIR', dirname(__FILE__));
 // add_action( 'plugins_loaded', 'aiosp_seometa_import' );
+// phpcs:enable
 /**
  * Initialize the SEO Data Transporter plugin
  */
@@ -411,7 +450,7 @@ function aiosp_seometa_import() {
 	 * The associative array of supported themes.
 	 */
 	$_aiosp_seometa_themes = array(
-		// alphabatized
+		// alphabatized.
 		'Builder'      => array(
 			'Custom Doctitle'  => '_builder_seo_title',
 			'META Description' => '_builder_seo_description',
@@ -483,8 +522,8 @@ function aiosp_seometa_import() {
 	 * The associative array of supported plugins.
 	 */
 	$_aiosp_seometa_plugins = array(
-		// alphabatized
-		'Add Meta Tags' => array(
+		// alphabatized.
+		'Add Meta Tags'                => array(
 			'Custom Doctitle'  => '_amt_title',
 			'META Description' => '_amt_description',
 			'META Keywords'    => '_amt_keywords',
@@ -515,7 +554,7 @@ function aiosp_seometa_import() {
 			'Canonical URI'    => '_wds_canonical',
 			'Redirect URI'     => '_wds_redirect',
 		),
-		'Jetpack'                => array(
+		'Jetpack'                      => array(
 			'META Description' => 'advanced_seo_description',
 		),
 		'Meta SEO Pack'                => array(
@@ -532,7 +571,7 @@ function aiosp_seometa_import() {
 			'META Description' => 'rank_math_description',
 			'Canonical URI'    => 'rank_math_canonical_url',
 		),
-		'SEOpressor'                 => array(
+		'SEOpressor'                   => array(
 			'Custom Doctitle'  => '_seopressor_meta_title',
 			'META Description' => '_seopressor_meta_description',
 		),
@@ -566,15 +605,16 @@ function aiosp_seometa_import() {
 	/**
 	 * Include the other elements of the plugin.
 	 */
+	// phpcs:disable Squiz.Commenting.InlineComment.InvalidEndChar
 	// require_once( aiosp_seometa_PLUGIN_DIR . '/admin.php' );
 	// require_once( aiosp_seometa_PLUGIN_DIR . '/functions.php' );
+	// phpcs:enable
 	/**
 	 * Init hook.
 	 *
 	 * Hook fires after plugin functions are loaded.
 	 *
 	 * @since 0.9.10
-	 *
 	 */
 	do_action( 'aiosp_seometa_import' );
 
@@ -582,11 +622,12 @@ function aiosp_seometa_import() {
 
 /**
  * Activation Hook
+ *
  * @since 0.9.4
  */
 register_activation_hook( __FILE__, 'aiosp_seometa_activation_hook' );
 function aiosp_seometa_activation_hook() {
-
+	// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 	// require_once( aiosp_seometa_PLUGIN_DIR . '/functions.php' );
 	aiosp_seometa_meta_key_convert( '_yoast_seo_title', 'yoast_wpseo_title', true );
 	aiosp_seometa_meta_key_convert( '_yoast_seo_metadesc', 'yoast_wpseo_metadesc', true );

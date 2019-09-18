@@ -116,12 +116,12 @@ class AIOSEOP_Helper {
 		// phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText
 		$rtn_help_text = array(
 			// General Settings.
-			'aiosp_can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation.  This will help to prevent duplicate content penalties by Google.', 'all-in-one-seo-pack' ),
+			'aiosp_can'                         => __( 'This option will automatically generate Canonical URLs for your entire WordPress installation. This will help to prevent duplicate content penalties by Google.', 'all-in-one-seo-pack' ),
 			'aiosp_no_paged_canonical_links'    => __( 'Checking this option will set the Canonical URL for all paginated content to the first page.', 'all-in-one-seo-pack' ),
 			'aiosp_use_original_title'          => __( 'Use wp_title to get the title used by the theme; this is disabled by default. If you use this option, set your title formats appropriately, as your theme might try to do its own title SEO as well.', 'all-in-one-seo-pack' ),
-			'aiosp_schema_markup'               => __( 'Check this to support Schema.org markup, i.e., itemprop on supported metadata.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_markup'               => __( 'This enables Schema.org structured data markup for rich snippets in search results.', 'all-in-one-seo-pack' ),
 			/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
-			'aiosp_do_log'                      => sprintf( __( 'Check this and %s will create a log of important events (all-in-one-seo-pack.log) in its plugin directory which might help debugging. Make sure this directory is writable.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
+			'aiosp_do_log'                      => sprintf( __( 'Check this and %s will create a log of important events (all-in-one-seo-pack.log) in the wp-content directory which might help debugging. Make sure this directory is writable.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
 
 			// Home Page Settings.
 			'aiosp_home_title'                  => __( 'As the name implies, this will be the Meta Title of your homepage. This is independent of any other option. If not set, the default Site Title (found in WordPress under Settings, General, Site Title) will be used.', 'all-in-one-seo-pack' ),
@@ -148,7 +148,8 @@ class AIOSEOP_Helper {
 					'<dd>' . sprintf(
 						__( 'The %1$s of the author of the %2$s', 'all-in-one-seo-pack' ),
 						/* translators: The "nicename" is the sanitized version of a username. */
-						__( 'nicename', 'all-in-one-seo-pack' ), __( 'Homepage', 'all-in-one-seo-pack' )
+						__( 'nicename', 'all-in-one-seo-pack' ),
+						__( 'Homepage', 'all-in-one-seo-pack' )
 					) . '</dd>' .
 					'<dt>%page_author_firstname%</dt>' .
 					'<dd>' . sprintf( __( 'The %1$s of the author of the %2$s', 'all-in-one-seo-pack' ), __( 'first name', 'all-in-one-seo-pack' ), __( 'Homepage', 'all-in-one-seo-pack' ) ) . '</dd>' .
@@ -160,6 +161,11 @@ class AIOSEOP_Helper {
 					'<dt>%current_year%</dt>' .
 					/* translators: %s is replaced with a time related term such as Date, Year, Month, etc. */
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month_i18n%</dt>' .
+					/* translators: %s is replaced with a time related term such as Date, Year, Month, etc. */
+					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%cf_fieldname%</dt>' .
 					'<dd>' . __( 'The name of a custom field', 'all-in-one-seo-pack' ) . '</dd>' .
 				'</dl>',
@@ -186,6 +192,10 @@ class AIOSEOP_Helper {
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month_i18n%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_date%</dt>' .
 					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ), __( 'Page', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_year%</dt>' .
@@ -220,6 +230,10 @@ class AIOSEOP_Helper {
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month_i18n%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_date%</dt>' .
 					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ), __( 'Post', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_year%</dt>' .
@@ -243,7 +257,11 @@ class AIOSEOP_Helper {
 					/* translators: %s is replaced with a content type such as Post, Page, etc. */
 					'<dd>' . sprintf( __( 'The description of the %s', 'all-in-one-seo-pack' ), __( 'Category', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
-					'<dd>' . __( 'The current year', 'all-in-one-seo-pack' ) . '</dd>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month_i18n%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 				'</dl>',
 			'aiosp_archive_title_format'        =>
 				__( 'This controls the format of the title tag for Custom Post Archives.', 'all-in-one-seo-pack' ) . '<br />' .
@@ -327,9 +345,14 @@ class AIOSEOP_Helper {
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month_i18n%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_date%</dt>' .
 					'<dd>' . sprintf(
-						__( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ),
+						__( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ),
+						__( 'date', 'all-in-one-seo-pack' ),
 						/* translators: "Post/Page" are the two main content types in WordPress. */
 						__( 'Post/Page', 'all-in-one-seo-pack' )
 					) . '</dd>' .
@@ -378,8 +401,8 @@ class AIOSEOP_Helper {
 			'aiosp_yandex_verify'               => __( 'Enter your verification code here to verify your site with Yandex Webmaster Tools.', 'all-in-one-seo-pack' ),
 			'aiosp_baidu_verify'                => __( 'Enter your verification code here to verify your site with Baidu Webmaster Tools.', 'all-in-one-seo-pack' ),
 
-			// Google Settings.
-			'aiosp_google_sitelinks_search'     => __( 'Add markup to display the Google Sitelinks Search Box next to your search results in Google.', 'all-in-one-seo-pack' ),
+			// Google Analytics.
+
 			'aiosp_google_analytics_id'         => __( 'Enter your Google Analytics ID here to track visitor behavior on your site using Google Analytics.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_advanced_options'         => __( 'Check to use advanced Google Analytics options.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_domain'                   => __( 'Enter your domain name without the http:// to set your cookie domain.', 'all-in-one-seo-pack' ),
@@ -391,6 +414,16 @@ class AIOSEOP_Helper {
 			'aiosp_ga_track_outbound_links'     => __( 'Check this if you want to track outbound links with Google Analytics.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_link_attribution'         => __( 'This enables support for the Enhanced Link Attribution in Google Analytics.', 'all-in-one-seo-pack' ),
 			'aiosp_ga_enhanced_ecommerce'       => __( 'This enables support for the Enhanced Ecommerce in Google Analytics.', 'all-in-one-seo-pack' ),
+
+			// Schema Settings.
+			'aiosp_schema_search_results_page'  => __( 'Select this to output markup that notifies Google to display the Sitelinks Search Box within certain search results.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_social_profile_links' => __( 'Add the URLs for your website\'s social profiles here (Facebook, Twitter, Instagram, LinkedIn, etc.), one per line. These may be used in rich search results such as Google Knowledge Graph.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_site_represents'      => __( 'Select whether your website is primarily for a person or an organization.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_organization_name'    => __( 'Enter your organization or business name.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_organization_logo'    => __( 'Add a logo that represents your organization or business. The image must be in PNG, JPG or GIF format and a minimum size of 112px by 112px. If no image is selected, then the plugin will try to use the logo in the Customizer settings.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_person_user'          => __( 'Select the primary owner for your site from the list of users. Only users with the role of Author, Editor or Administrator will be listed here.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_phone_number'         => __( 'Enter the primary phone number your organization or business. You must include the country code and the phone number must use the standard format for your country, for example: 1-888-888-8888.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_contact_type'         => __( 'Select the type of contact for the phone number you have entered.', 'all-in-one-seo-pack' ),
 
 			// Noindex Settings.
 			'aiosp_cpostnoindex'                => __( 'Set the default NOINDEX setting for each Post Type.', 'all-in-one-seo-pack' ),
@@ -425,9 +458,6 @@ class AIOSEOP_Helper {
 			'aiosp_use_categories'              => __( 'Check this if you want your categories for a given post used as the Meta Keywords for this post (in addition to any keywords you specify on the Edit Post screen).', 'all-in-one-seo-pack' ),
 			'aiosp_use_tags_as_keywords'        => __( 'Check this if you want your tags for a given post used as the Meta Keywords for this post (in addition to any keywords you specify on the Edit Post screen).', 'all-in-one-seo-pack' ),
 			'aiosp_dynamic_postspage_keywords'  => __( 'Check this if you want your keywords on your Posts page (set in WordPress under Settings, Reading, Front Page Displays) and your archive pages to be dynamically generated from the keywords of the posts showing on that page.  If unchecked, it will use the keywords set in the edit page screen for the posts page.', 'all-in-one-seo-pack' ),
-
-			// Unknown Location.
-			'aiosp_google_connect'              => __( 'Press the connect button to connect with Google Analytics; or if already connected, press the disconnect button to disable and remove any stored analytics credentials.', 'all-in-one-seo-pack' ),
 
 		);
 
@@ -465,12 +495,16 @@ class AIOSEOP_Helper {
 					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%current_year%</dt>' .
 					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
+					'<dt>%current_month_i18n%</dt>' .
+					'<dd>' . sprintf( __( 'The current %s (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ) ) . '</dd>' .
 					'<dt>%post_date%</dt>' .
 					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'date', 'all-in-one-seo-pack' ), $name ) . '</dd>' .
 					'<dt>%post_year%</dt>' .
 					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'year', 'all-in-one-seo-pack' ), $name ) . '</dd>' .
 					'<dt>%post_month%</dt>' .
-					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ), $name ) . '</dd>' .
+					'<dd>' . sprintf( __( 'The %1$s when the %2$s was published (localized)', 'all-in-one-seo-pack' ), __( 'month', 'all-in-one-seo-pack' ), $name ) . '</dd>';
 
 				$rtn_help_text[ 'aiosp_' . $v1_pt . '_title_format' ] = __( 'The following macros are supported:', 'all-in-one-seo-pack' ) . '<dl>' . $help_text_macros . '</dl>' . '<br /><a href="https://semperplugins.com/documentation/custom-post-type-settings/#custom-titles" target="_blank">' . __( 'Click here for documentation on this setting', 'all-in-one-seo-pack' ) . '</a>';
 			}
@@ -482,7 +516,7 @@ class AIOSEOP_Helper {
 			'aiosp_can'                         => 'https://semperplugins.com/documentation/general-settings/#canonical-urls',
 			'aiosp_no_paged_canonical_links'    => 'https://semperplugins.com/documentation/general-settings/#no-pagination-for-canonical-urls',
 			'aiosp_use_original_title'          => 'https://semperplugins.com/documentation/general-settings/#use-original-title',
-			'aiosp_schema_markup'               => 'https://semperplugins.com/documentation/general-settings/#use-schema-markup',
+			'aiosp_schema_markup'               => 'https://semperplugins.com/documentation/schema-settings/#use-schema-markup',
 			'aiosp_do_log'                      => 'https://semperplugins.com/documentation/general-settings/#log-important-events',
 
 			// Home Page Settings.
@@ -518,8 +552,7 @@ class AIOSEOP_Helper {
 			'aiosp_yandex_verify'               => 'https://semperplugins.com/documentation/yandex-webmaster-verification/',
 			'aiosp_baidu_verify'                => 'https://semperplugins.com/documentation/baidu-webmaster-verification/',
 
-			// Google Settings.
-			'aiosp_google_sitelinks_search'     => 'https://semperplugins.com/documentation/google-settings/#display-sitelinks-search-box',
+			// Google Analytics.
 			'aiosp_google_analytics_id'         => 'https://semperplugins.com/documentation/setting-up-google-analytics/',
 			'aiosp_ga_advanced_options'         => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/',
 			'aiosp_ga_domain'                   => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#tracking-domain',
@@ -531,6 +564,16 @@ class AIOSEOP_Helper {
 			'aiosp_ga_track_outbound_links'     => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#track-outbound-links',
 			'aiosp_ga_link_attribution'         => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#enhanced-link-attribution',
 			'aiosp_ga_enhanced_ecommerce'       => 'https://semperplugins.com/documentation/advanced-google-analytics-settings/#enhanced-ecommerce',
+
+			// Schema Settings.
+			'aiosp_schema_search_results_page'  => 'https://semperplugins.com/documentation/schema-settings/#display-sitelinks-search-box',
+			'aiosp_schema_social_profile_links' => 'https://semperplugins.com/documentation/schema-settings/#social-profile-links',
+			'aiosp_schema_site_represents'      => 'https://semperplugins.com/documentation/schema-settings/#person-or-organization',
+			'aiosp_schema_organization_name'    => 'https://semperplugins.com/documentation/schema-settings/#organization-name',
+			'aiosp_schema_organization_logo'    => 'https://semperplugins.com/documentation/schema-settings/#organization-logo',
+			'aiosp_schema_person_user'          => 'https://semperplugins.com/documentation/schema-settings/#persons-username',
+			'aiosp_schema_phone_number'         => 'https://semperplugins.com/documentation/schema-settings/#phone-number',
+			'aiosp_schema_contact_type'         => 'https://semperplugins.com/documentation/schema-settings/#type-of-contact',
 
 			// Noindex Settings.
 			'aiosp_cpostnoindex'                => 'https://semperplugins.com/documentation/noindex-settings/#noindex',
@@ -565,8 +608,6 @@ class AIOSEOP_Helper {
 			'aiosp_use_tags_as_keywords'        => 'https://semperplugins.com/documentation/keyword-settings/#use-tags-for-meta-keywords',
 			'aiosp_dynamic_postspage_keywords'  => 'https://semperplugins.com/documentation/keyword-settings/#dynamically-generate-keywords-for-posts-page',
 
-			// Unknown/Pro?
-			// 'aiosp_google_connect'              => '',
 		);
 
 		foreach ( $help_doc_link as $k1_slug => $v1_url ) {
@@ -657,18 +698,18 @@ class AIOSEOP_Helper {
 			'aiosp_sitemap_excl_pages'      => __( 'Use page slugs or page IDs, separated by commas, to exclude pages from the sitemap.', 'all-in-one-seo-pack' ),
 
 			// Priorities.
-			'aiosp_sitemap_prio_homepage'       => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Homepage', 'all-in-one-seo-pack' ) ),
-			'aiosp_sitemap_prio_post'           => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Posts', 'all-in-one-seo-pack' ) ),
-			'aiosp_sitemap_prio_taxonomies'     => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Taxonomies', 'all-in-one-seo-pack' ) ),
-			'aiosp_sitemap_prio_archive'        => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Archive Pages', 'all-in-one-seo-pack' ) ),
-			'aiosp_sitemap_prio_author'         => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Author Pages', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_prio_homepage'   => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Homepage', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_prio_post'       => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Posts', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_prio_taxonomies' => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Taxonomies', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_prio_archive'    => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Archive Pages', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_prio_author'     => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'priority', 'all-in-one-seo-pack' ), __( 'Author Pages', 'all-in-one-seo-pack' ) ),
 
 			// Frequencies.
-			'aiosp_sitemap_freq_homepage'       => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Homepage', 'all-in-one-seo-pack' ) ),
-			'aiosp_sitemap_freq_post'           => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Posts', 'all-in-one-seo-pack' ) ),
-			'aiosp_sitemap_freq_taxonomies'     => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Taxonomies', 'all-in-one-seo-pack' ) ),
-			'aiosp_sitemap_freq_archive'        => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Archive Pages', 'all-in-one-seo-pack' ) ),
-			'aiosp_sitemap_freq_author'         => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Author Pages', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_freq_homepage'   => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Homepage', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_freq_post'       => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Posts', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_freq_taxonomies' => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Taxonomies', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_freq_archive'    => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Archive Pages', 'all-in-one-seo-pack' ) ),
+			'aiosp_sitemap_freq_author'     => sprintf( __( 'Manually set the %1$s of your %2$s.', 'all-in-one-seo-pack' ), __( 'frequency', 'all-in-one-seo-pack' ), __( 'Author Pages', 'all-in-one-seo-pack' ) ),
 
 		);
 
@@ -714,7 +755,7 @@ class AIOSEOP_Helper {
 			'aiosp_sitemap_addl_mod'        => 'https://semperplugins.com/documentation/xml-sitemaps-module/#additional-pages',
 
 			// Exclude Items.
-			'aiosp_sitemap_excl_terms' => 'https://semperplugins.com/documentation/xml-sitemaps-module/#excluded-items',
+			'aiosp_sitemap_excl_terms'      => 'https://semperplugins.com/documentation/xml-sitemaps-module/#excluded-items',
 			'aiosp_sitemap_excl_pages'      => 'https://semperplugins.com/documentation/xml-sitemaps-module/#excluded-items',
 
 			// Priorities.
@@ -782,11 +823,6 @@ class AIOSEOP_Helper {
 			'aiosp_opengraph_dimgwidth'                    => __( 'This option lets you set a default width for your images, where unspecified.', 'all-in-one-seo-pack' ),
 			'aiosp_opengraph_dimgheight'                   => __( 'This option lets you set a default height for your images, where unspecified.', 'all-in-one-seo-pack' ),
 			'aiosp_opengraph_meta_key'                     => __( 'Enter the name of a custom field (or multiple field names separated by commas) to use that field to specify the Open Graph image on Pages or Posts.', 'all-in-one-seo-pack' ),
-
-			// Social Profile Links.
-			'aiosp_opengraph_profile_links'                => __( 'Add URLs for your website\'s social profiles here (Facebook, Twitter, Google+, Instagram, LinkedIn), one per line.', 'all-in-one-seo-pack' ),
-			'aiosp_opengraph_person_or_org'                => __( 'Are the social profile links for your website for a person or an organization?', 'all-in-one-seo-pack' ),
-			'aiosp_opengraph_social_name'                  => __( 'Add the name of the person or organization who owns these profiles.', 'all-in-one-seo-pack' ),
 
 			// Facebook Settings.
 			'aiosp_opengraph_key'                          => __( 'Enter your Facebook Admin ID here. You can enter multiple IDs separated by a comma. You can look up your Facebook ID using this tool http://findmyfbid.com/', 'all-in-one-seo-pack' ),
@@ -857,11 +893,6 @@ class AIOSEOP_Helper {
 			'aiosp_opengraph_dimgheight'                   => 'https://semperplugins.com/documentation/social-meta-module/#default-image-height',
 			'aiosp_opengraph_meta_key'                     => 'https://semperplugins.com/documentation/social-meta-module/#use-custom-field-for-image',
 
-			// Social Profile Links.
-			'aiosp_opengraph_profile_links'                => 'https://semperplugins.com/documentation/social-meta-module/#social-profile-links',
-			'aiosp_opengraph_person_or_org'                => 'https://semperplugins.com/documentation/social-meta-module/#social-profile-links',
-			'aiosp_opengraph_social_name'                  => 'https://semperplugins.com/documentation/social-meta-module/#social-profile-links',
-
 			// Facebook Settings.
 			'aiosp_opengraph_key'                          => 'https://semperplugins.com/documentation/social-meta-module/#facebook-admin-id',
 			'aiosp_opengraph_appid'                        => 'https://semperplugins.com/documentation/social-meta-module/#facebook-app-id',
@@ -920,9 +951,9 @@ class AIOSEOP_Helper {
 	 */
 	private function help_text_robots_generator() {
 		$rtn_help_text = array(
-			'aiosp_robots_type'  => __( 'Rule Type', 'all-in-one-seo-pack' ),
-			'aiosp_robots_agent' => __( 'User Agent', 'all-in-one-seo-pack' ),
-			'aiosp_robots_path'  => __( 'Directory Path', 'all-in-one-seo-pack' ),
+			'aiosp_robots_type'  => __( 'Use the dropdown to select whether you want to allow or block access to the specified directory or file.', 'all-in-one-seo-pack' ),
+			'aiosp_robots_agent' => __( 'Enter the name of a User Agent here.  You can use the wildcard * to allow or block all robots. A list of User Agents can be found <a target="_blank" rel="noopener noreferrer" href="http://www.robotstxt.org/db.html">here</a>.', 'all-in-one-seo-pack' ),
+			'aiosp_robots_path'  => __( 'Enter a valid path to a directory or file, for example: /wp-admin/ or /wp-admin/admin-ajax.php', 'all-in-one-seo-pack' ),
 		);
 
 		return $rtn_help_text;
@@ -956,7 +987,7 @@ class AIOSEOP_Helper {
 		$rtn_help_text = array(
 			// Possible HTML link concept IF links become usable inside jQuery UI Tooltips.
 			/* translators: %1$s and 12$s are placeholders, which means these should not be translated. These will be replaced with the name of the plugin, All in One SEO Pack. */
-			'aiosp_importer_exporter_import_submit'     => sprintf( __( 'Choose a valid %1$s .ini file and click &quot;Import&quot; to import options from a previous state or install of %1$s.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),
+			'aiosp_importer_exporter_import_submit'     => sprintf( __( 'Choose a valid %1$s .ini file and click &quot;Import&quot; to import options from a previous state or install of %2$s.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME, AIOSEOP_PLUGIN_NAME ),
 			'aiosp_importer_exporter_export_choices'    => __( 'You may choose to export settings from active modules, and content from post data.', 'all-in-one-seo-pack' ),
 			/* translators: %s is a placeholder, which means that it should not be translated. It will be replaced with the name of the plugin, All in One SEO Pack. */
 			'aiosp_importer_exporter_export_post_types' => sprintf( __( 'Select which Post Types you want to export your %s meta data for.', 'all-in-one-seo-pack' ), AIOSEOP_PLUGIN_NAME ),

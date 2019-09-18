@@ -2,15 +2,20 @@
 /**
  * Class Test_Robots
  *
- * @package
+ * @package All_in_One_SEO_Pack
+ * @since 2.7.2
  */
 
 /**
  * Robots test case.
  */
-
 require_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-test-base.php';
 
+/**
+ * Class Test_Robots
+ *
+ * @since 2.7.2
+ */
 class Test_Robots extends AIOSEOP_Test_Base {
 
 	public function setUp() {
@@ -26,10 +31,10 @@ class Test_Robots extends AIOSEOP_Test_Base {
 			$this->delete_file();
 		}
 
-		$rule       = "User-agent: Googlebot\r\nDisallow: /wow-test-folder/";
+		$rule = "User-agent: Googlebot\r\nDisallow: /wow-test-folder/";
 
 		// create a file.
-		$file   = fopen( ABSPATH . '/robots.txt', 'w' );
+		$file = fopen( ABSPATH . '/robots.txt', 'w' );
 		fwrite( $file, $rule );
 		fclose( $file );
 	}
@@ -70,7 +75,7 @@ class Test_Robots extends AIOSEOP_Test_Base {
 		$this->assertFalse( $this->check_file_exists(), 'Physical robots.txt not deleted' );
 
 		$aioseop_options = get_option( 'aioseop_options' );
-		$rules = $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'];
+		$rules           = $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'];
 
 		$this->assertEquals( 1, count( $rules ) );
 		$this->assertArrayHasKey( 'path', $rules[0], 'Rules not imported from physical robots.txt' );
@@ -105,7 +110,7 @@ class Test_Robots extends AIOSEOP_Test_Base {
 		$this->assertFalse( $this->check_file_exists(), 'Physical robots.txt not deleted' );
 
 		$aioseop_options = get_option( 'aioseop_options' );
-		$rules = $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'];
+		$rules           = $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'];
 
 		$this->assertEquals( 0, count( $rules ) );
 	}
@@ -120,13 +125,13 @@ class Test_Robots extends AIOSEOP_Test_Base {
 
 		$this->_setup_options( 'robots', array() );
 
-		$_POST      = array(
-			'aiosp_robots_path'     => $rule['path'],
-			'aiosp_robots_type'     => $rule['type'],
-			'aiosp_robots_agent'    => $rule['agent'],
+		$_POST = array(
+			'aiosp_robots_path'  => $rule['path'],
+			'aiosp_robots_type'  => $rule['type'],
+			'aiosp_robots_agent' => $rule['agent'],
 		);
 
-		$path       = $rule['path'];
+		$path = $rule['path'];
 
 		// if path does not have a trailing wild card (*) or does not refer to a file (with extension), add trailing slash.
 		if ( '*' !== substr( $path, -1 ) && false === strpos( $path, '.' ) ) {
@@ -141,7 +146,7 @@ class Test_Robots extends AIOSEOP_Test_Base {
 		// convert everything to lower case.
 		$path = strtolower( $path );
 
-		$options            = apply_filters( 'aiosp_robots_update_options', array() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
 		$this->assertArrayHasKey( 'aiosp_robots_rules', $options );
 		$this->assertGreaterThan( 0, $options['aiosp_robots_rules'] );
 		$this->assertArrayHasKey( 'type', $options['aiosp_robots_rules'][0] );
@@ -153,10 +158,26 @@ class Test_Robots extends AIOSEOP_Test_Base {
 
 	public function sanitizedRulesProvider() {
 		return array(
-			array( 'path' => 'test.txt', 'type' => 'disallow', 'agent' => '*' ),
-			array( 'path' => 'wp-content/image.jpg', 'type' => 'allow', 'agent' => '*' ),
-			array( 'path' => 'temp.*', 'type' => 'allow', 'agent' => '*' ),
-			array( 'path' => 'wp-content/*.txt', 'type' => 'disallow', 'agent' => '*' ),
+			array(
+				'path'  => 'test.txt',
+				'type'  => 'disallow',
+				'agent' => '*',
+			),
+			array(
+				'path'  => 'wp-content/image.jpg',
+				'type'  => 'allow',
+				'agent' => '*',
+			),
+			array(
+				'path'  => 'temp.*',
+				'type'  => 'allow',
+				'agent' => '*',
+			),
+			array(
+				'path'  => 'wp-content/*.txt',
+				'type'  => 'disallow',
+				'agent' => '*',
+			),
 		);
 	}
 
@@ -176,14 +197,14 @@ class Test_Robots extends AIOSEOP_Test_Base {
 		// import default WP rules.
 		do_action( 'aioseop_ut_aiosp_robots_admin_init' );
 
-		$_POST      = array(
-			'aiosp_robots_path'     => $rule['path'],
-			'aiosp_robots_type'     => $rule['type'],
-			'aiosp_robots_agent'    => $rule['agent'],
+		$_POST = array(
+			'aiosp_robots_path'  => $rule['path'],
+			'aiosp_robots_type'  => $rule['type'],
+			'aiosp_robots_agent' => $rule['agent'],
 		);
 
-		$options    = apply_filters( 'aiosp_robots_update_options', array() );
-		$errors     = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
+		$errors  = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
 		$this->assertGreaterThan( 0, count( $errors ) );
 		$this->assertContains( $message, $errors[0], 'Default rule overriden' );
 
@@ -191,14 +212,70 @@ class Test_Robots extends AIOSEOP_Test_Base {
 
 	public function defaultRulesProvider() {
 		return array(
-			array( array( 'path' => '/wp-admin/', 'type' => 'disallow', 'agent' => '*' ), 'Rule cannot be overridden' ),
-			array( array( 'path' => '/wp-admin/admin-ajax.php', 'type' => 'allow', 'agent' => '*' ), 'Rule cannot be overridden' ),
-			array( array( 'path' => '/wp-admin/', 'type' => 'allow', 'agent' => '*' ), 'Rule cannot be overridden' ),
-			array( array( 'path' => '/wp-admin/admin-ajax.php', 'type' => 'disallow', 'agent' => '*' ), 'Rule cannot be overridden' ),
-			array( array( 'path' => '/wp-*', 'type' => 'disallow', 'agent' => '*' ), 'Wild-card path cannot be overridden' ),
-			array( array( 'path' => '/wp-*/admin-ajax.*', 'type' => 'allow', 'agent' => '*' ), 'Wild-card path cannot be overridden' ),
-			array( array( 'path' => '/*-admin/', 'type' => 'allow', 'agent' => '*' ), 'Wild-card path cannot be overridden' ),
-			array( array( 'path' => '/*-admin/admin-ajax.*', 'type' => 'disallow', 'agent' => '*' ), 'Wild-card path cannot be overridden' ),
+			array(
+				array(
+					'path'  => '/wp-admin/',
+					'type'  => 'disallow',
+					'agent' => '*',
+				),
+				'Rule cannot be overridden',
+			),
+			array(
+				array(
+					'path'  => '/wp-admin/admin-ajax.php',
+					'type'  => 'allow',
+					'agent' => '*',
+				),
+				'Rule cannot be overridden',
+			),
+			array(
+				array(
+					'path'  => '/wp-admin/',
+					'type'  => 'allow',
+					'agent' => '*',
+				),
+				'Rule cannot be overridden',
+			),
+			array(
+				array(
+					'path'  => '/wp-admin/admin-ajax.php',
+					'type'  => 'disallow',
+					'agent' => '*',
+				),
+				'Rule cannot be overridden',
+			),
+			array(
+				array(
+					'path'  => '/wp-*',
+					'type'  => 'disallow',
+					'agent' => '*',
+				),
+				'Wild-card path cannot be overridden',
+			),
+			array(
+				array(
+					'path'  => '/wp-*/admin-ajax.*',
+					'type'  => 'allow',
+					'agent' => '*',
+				),
+				'Wild-card path cannot be overridden',
+			),
+			array(
+				array(
+					'path'  => '/*-admin/',
+					'type'  => 'allow',
+					'agent' => '*',
+				),
+				'Wild-card path cannot be overridden',
+			),
+			array(
+				array(
+					'path'  => '/*-admin/admin-ajax.*',
+					'type'  => 'disallow',
+					'agent' => '*',
+				),
+				'Wild-card path cannot be overridden',
+			),
 		);
 	}
 
@@ -217,26 +294,26 @@ class Test_Robots extends AIOSEOP_Test_Base {
 		global $aioseop_options;
 
 		foreach ( $existing_rules as $rule ) {
-			$_POST      = array(
-				'aiosp_robots_path'     => $rule['path'],
-				'aiosp_robots_type'     => $rule['type'],
-				'aiosp_robots_agent'    => $rule['agent'],
+			$_POST = array(
+				'aiosp_robots_path'  => $rule['path'],
+				'aiosp_robots_type'  => $rule['type'],
+				'aiosp_robots_agent' => $rule['agent'],
 			);
 
-			$options    = apply_filters( 'aiosp_robots_update_options', array() );
+			$options = apply_filters( 'aiosp_robots_update_options', array() );
 
 			$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
 			update_option( 'aioseop_options', $aioseop_options );
 		}
 
-		$_POST      = array(
-			'aiosp_robots_path'     => $new_rule['path'],
-			'aiosp_robots_type'     => $new_rule['type'],
-			'aiosp_robots_agent'    => $new_rule['agent'],
+		$_POST = array(
+			'aiosp_robots_path'  => $new_rule['path'],
+			'aiosp_robots_type'  => $new_rule['type'],
+			'aiosp_robots_agent' => $new_rule['agent'],
 		);
 
-		$options    = apply_filters( 'aiosp_robots_update_options', array() );
-		$errors     = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
+		$errors  = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
 		$this->assertGreaterThan( 0, count( $errors ) );
 		$this->assertContains( $message, $errors[0] );
 
@@ -245,82 +322,154 @@ class Test_Robots extends AIOSEOP_Test_Base {
 	public function conflictingRulesProvider() {
 		return array(
 
-			// It should not be possible to add a duplicate rule for an individual file
+			// It should not be possible to add a duplicate rule for an individual file.
 			array(
 				array(
-					array( 'path' => '/test.txt', 'type' => 'disallow', 'agent' => '*' ),
+					array(
+						'path'  => '/test.txt',
+						'type'  => 'disallow',
+						'agent' => '*',
+					),
 				),
-				array( 'path' => '/test.txt', 'type' => 'disallow', 'agent' => '*' ),
+				array(
+					'path'  => '/test.txt',
+					'type'  => 'disallow',
+					'agent' => '*',
+				),
 				'Identical rule exists',
 			),
 			array(
 				array(
-					array( 'path' => '/wp-content/image.jpg', 'type' => 'allow', 'agent' => '*' ),
+					array(
+						'path'  => '/wp-content/image.jpg',
+						'type'  => 'allow',
+						'agent' => '*',
+					),
 				),
-				array( 'path' => '/wp-content/image.jpg', 'type' => 'allow', 'agent' => '*' ),
+				array(
+					'path'  => '/wp-content/image.jpg',
+					'type'  => 'allow',
+					'agent' => '*',
+				),
 				'Identical rule exists',
 			),
 
-			// It should not be possible to add a duplicate rule using wildcards for an individual file
+			// It should not be possible to add a duplicate rule using wildcards for an individual file.
 			array(
 				array(
-					array( 'path' => '/test.txt', 'type' => 'disallow', 'agent' => '*' ),
+					array(
+						'path'  => '/test.txt',
+						'type'  => 'disallow',
+						'agent' => '*',
+					),
 				),
-				array( 'path' => '/test.*', 'type' => 'disallow', 'agent' => '*' ),
+				array(
+					'path'  => '/test.*',
+					'type'  => 'disallow',
+					'agent' => '*',
+				),
 				'Wild-card path cannot be overridden',
 			),
 
-			// It should not be possible to add a conflicting rule for an individual file
+			// It should not be possible to add a conflicting rule for an individual file.
 			array(
 				array(
-					array( 'path' => '/test.txt', 'type' => 'disallow', 'agent' => '*' ),
+					array(
+						'path'  => '/test.txt',
+						'type'  => 'disallow',
+						'agent' => '*',
+					),
 				),
-				array( 'path' => '/test.txt', 'type' => 'allow', 'agent' => '*' ),
+				array(
+					'path'  => '/test.txt',
+					'type'  => 'allow',
+					'agent' => '*',
+				),
 				'Rule cannot be overridden',
 			),
 
-			// It should not be possible to add a conflicting rule using wildcards for an individual file
+			// It should not be possible to add a conflicting rule using wildcards for an individual file.
 			array(
 				array(
-					array( 'path' => '/test.txt', 'type' => 'disallow', 'agent' => '*' ),
+					array(
+						'path'  => '/test.txt',
+						'type'  => 'disallow',
+						'agent' => '*',
+					),
 				),
-				array( 'path' => '/test.*', 'type' => 'allow', 'agent' => '*' ),
+				array(
+					'path'  => '/test.*',
+					'type'  => 'allow',
+					'agent' => '*',
+				),
 				'Wild-card path cannot be overridden',
 			),
 
-			// It should not be possible to add a duplicate rule for a directory
+			// It should not be possible to add a duplicate rule for a directory.
 			array(
 				array(
-					array( 'path' => '/wp-includes/', 'type' => 'disallow', 'agent' => '*' ),
+					array(
+						'path'  => '/wp-includes/',
+						'type'  => 'disallow',
+						'agent' => '*',
+					),
 				),
-				array( 'path' => '/wp-includes/', 'type' => 'disallow', 'agent' => '*' ),
+				array(
+					'path'  => '/wp-includes/',
+					'type'  => 'disallow',
+					'agent' => '*',
+				),
 				'Identical rule exists',
 			),
 
-			// It should not be possible to add a duplicate rule using wildcards for a directory
+			// It should not be possible to add a duplicate rule using wildcards for a directory.
 			array(
 				array(
-					array( 'path' => '/wp-includes/', 'type' => 'disallow', 'agent' => '*' ),
+					array(
+						'path'  => '/wp-includes/',
+						'type'  => 'disallow',
+						'agent' => '*',
+					),
 				),
-				array( 'path' => '/wp-*/', 'type' => 'disallow', 'agent' => '*' ),
+				array(
+					'path'  => '/wp-*/',
+					'type'  => 'disallow',
+					'agent' => '*',
+				),
 				'Wild-card path cannot be overridden',
 			),
 
-			// It should not be possible to add a conflicting rule for a directory
+			// It should not be possible to add a conflicting rule for a directory.
 			array(
 				array(
-					array( 'path' => '/wp-includes/', 'type' => 'disallow', 'agent' => '*' ),
+					array(
+						'path'  => '/wp-includes/',
+						'type'  => 'disallow',
+						'agent' => '*',
+					),
 				),
-				array( 'path' => '/wp-includes/', 'type' => 'allow', 'agent' => '*' ),
+				array(
+					'path'  => '/wp-includes/',
+					'type'  => 'allow',
+					'agent' => '*',
+				),
 				'Rule cannot be overridden',
 			),
 
-			// It should not be possible to add a conflicting rule using wildcards for a directory
+			// It should not be possible to add a conflicting rule using wildcards for a directory.
 			array(
 				array(
-					array( 'path' => '/wp-includes/', 'type' => 'disallow', 'agent' => '*' ),
+					array(
+						'path'  => '/wp-includes/',
+						'type'  => 'disallow',
+						'agent' => '*',
+					),
 				),
-				array( 'path' => '/wp-*/', 'type' => 'allow', 'agent' => '*' ),
+				array(
+					'path'  => '/wp-*/',
+					'type'  => 'allow',
+					'agent' => '*',
+				),
 				'Wild-card path cannot be overridden',
 			),
 		);
@@ -341,41 +490,41 @@ class Test_Robots extends AIOSEOP_Test_Base {
 		global $aioseop_options;
 
 		foreach ( $existing_rules as $rule ) {
-			$_POST      = array(
-				'aiosp_robots_path'     => $rule['path'],
-				'aiosp_robots_type'     => $rule['type'],
-				'aiosp_robots_agent'    => $rule['agent'],
+			$_POST = array(
+				'aiosp_robots_path'  => $rule['path'],
+				'aiosp_robots_type'  => $rule['type'],
+				'aiosp_robots_agent' => $rule['agent'],
 			);
 
-			$options    = apply_filters( 'aiosp_robots_update_options', array() );
+			$options = apply_filters( 'aiosp_robots_update_options', array() );
 
 			$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
 			update_option( 'aioseop_options', $aioseop_options );
 		}
 
 		// get the rule_to_modify.
-		$rule_modified  = null;
+		$rule_modified = null;
 		foreach ( $aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] as $rule ) {
 			if ( $rule_to_modify === $rule['path'] ) {
-				$rule_modified  = $rule;
+				$rule_modified = $rule;
 				break;
 			}
 		}
 
-		$_POST      = array(
-			'aiosp_robots_id'       => $rule_modified['id'],
-			'aiosp_robots_path'     => $new_rule['path'],
-			'aiosp_robots_type'     => $new_rule['type'],
-			'aiosp_robots_agent'    => $new_rule['agent'],
+		$_POST = array(
+			'aiosp_robots_id'    => $rule_modified['id'],
+			'aiosp_robots_path'  => $new_rule['path'],
+			'aiosp_robots_type'  => $new_rule['type'],
+			'aiosp_robots_agent' => $new_rule['agent'],
 		);
 
-		$options    = apply_filters( 'aiosp_robots_update_options', array() );
+		$options = apply_filters( 'aiosp_robots_update_options', array() );
 
 		$aioseop_options['modules']['aiosp_robots_options']['aiosp_robots_rules'] = $options['aiosp_robots_rules'];
 		update_option( 'aioseop_options', $aioseop_options );
 
-		$errors     = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
-		$paths      = wp_list_pluck( $options['aiosp_robots_rules'], 'path' );
+		$errors = get_transient( 'aiosp_robots_errors' . get_current_user_id() );
+		$paths  = wp_list_pluck( $options['aiosp_robots_rules'], 'path' );
 		if ( $error_message ) {
 			$this->assertGreaterThan( 0, count( $errors ), 'Error not logged!' );
 			$this->assertContains( $error_message, $errors[0], 'Error message not found!' );
@@ -391,19 +540,43 @@ class Test_Robots extends AIOSEOP_Test_Base {
 		return array(
 			array(
 				array(
-					array( 'path' => '/test.txt', 'type' => 'disallow', 'agent' => '*' ),
-					array( 'path' => '/wp-admin', 'type' => 'disallow', 'agent' => '*' ),
+					array(
+						'path'  => '/test.txt',
+						'type'  => 'disallow',
+						'agent' => '*',
+					),
+					array(
+						'path'  => '/wp-admin',
+						'type'  => 'disallow',
+						'agent' => '*',
+					),
 				),
 				'/test.txt',
-				array( 'path' => '/testttt.txt', 'type' => 'disallow', 'agent' => '*' ),
+				array(
+					'path'  => '/testttt.txt',
+					'type'  => 'disallow',
+					'agent' => '*',
+				),
 			),
 			array(
 				array(
-					array( 'path' => '/test.txt', 'type' => 'disallow', 'agent' => '*' ),
-					array( 'path' => '/wp-admin', 'type' => 'disallow', 'agent' => '*' ),
+					array(
+						'path'  => '/test.txt',
+						'type'  => 'disallow',
+						'agent' => '*',
+					),
+					array(
+						'path'  => '/wp-admin',
+						'type'  => 'disallow',
+						'agent' => '*',
+					),
 				),
 				'/test.txt',
-				array( 'path' => '/wp-admin', 'type' => 'disallow', 'agent' => '*' ),
+				array(
+					'path'  => '/wp-admin',
+					'type'  => 'disallow',
+					'agent' => '*',
+				),
 				'Identical rule exists',
 			),
 		);

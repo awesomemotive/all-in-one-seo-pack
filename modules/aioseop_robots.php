@@ -1,28 +1,41 @@
 <?php
 /**
- * @package All-in-One-SEO-Pack
+ * Robots Module
+ *
+ * @package All_in_One_SEO_Pack
+ * @since ?
  */
-/**
- * The Robots class.
- */
+
 if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
+
+	/**
+	 * Class All_in_One_SEO_Pack_Robots
+	 *
+	 * @since ?
+	 */
 	class All_in_One_SEO_Pack_Robots extends All_in_One_SEO_Pack_Module {
 
+		/**
+		 * All_in_One_SEO_Pack_Robots constructor.
+		 *
+		 * @since ?
+		 */
 		function __construct() {
-			// only for testing
+			// Only for testing.
+			// phpcs:disable Squiz.Commenting.BlockComment
 			/*
 			if ( ! defined( 'AIOSEOP_DO_LOG' ) ) {
 				define( 'AIOSEOP_DO_LOG', true );
 			}
 			*/
-
-			$this->name   = __( 'Robots.txt', 'all-in-one-seo-pack' );    // Human-readable name of the plugin
-			$this->prefix = 'aiosp_robots_';                        // option prefix
-			$this->file   = __FILE__;                                    // the current file
+			// phpcs:enable
+			$this->name   = __( 'Robots.txt', 'all-in-one-seo-pack' ); // Human-readable name of the plugin.
+			$this->prefix = 'aiosp_robots_';                           // option prefix.
+			$this->file   = __FILE__;                                  // the current file.
 			parent::__construct();
 
 			$this->default_options = array(
-				'usage'              => array(
+				'usage' => array(
 					'type'    => 'html',
 					'label'   => 'none',
 					'default' => __( 'Use the rule builder below to add/delete rules.', 'all-in-one-seo-pack' ),
@@ -30,25 +43,28 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				),
 			);
 
-			$this->rule_fields      = array(
-				'agent'         => array(
-					'name'            => __( 'User Agent', 'all-in-one-seo-pack' ),
-					'type'            => 'text',
-					'label'           => 'top',
-					'save'            => false,
-				),
-				'type'          => array(
-					'name'  => __( 'Rule', 'all-in-one-seo-pack' ),
-					'type'  => 'select',
-					'initial_options' => array( 'allow' => __( 'Allow', 'all-in-one-seo-pack' ), 'disallow' => __( 'Disallow', 'all-in-one-seo-pack' ) ),
+			$this->rule_fields = array(
+				'agent'             => array(
+					'name'  => __( 'User Agent', 'all-in-one-seo-pack' ),
+					'type'  => 'text',
 					'label' => 'top',
 					'save'  => false,
 				),
-				'path'         => array(
-					'name'            => __( 'Directory Path', 'all-in-one-seo-pack' ),
-					'type'            => 'text',
+				'type'              => array(
+					'name'            => __( 'Rule', 'all-in-one-seo-pack' ),
+					'type'            => 'select',
+					'initial_options' => array(
+						'allow'    => __( 'Allow', 'all-in-one-seo-pack' ),
+						'disallow' => __( 'Disallow', 'all-in-one-seo-pack' ),
+					),
 					'label'           => 'top',
 					'save'            => false,
+				),
+				'path'              => array(
+					'name'  => __( 'Directory Path', 'all-in-one-seo-pack' ),
+					'type'  => 'text',
+					'label' => 'top',
+					'save'  => false,
 				),
 				'Submit'            => array(
 					'type'  => 'submit',
@@ -58,13 +74,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					'save'  => false,
 					'value' => 1,
 				),
-				"{$this->prefix}id"            => array(
+				"{$this->prefix}id" => array(
 					'type'  => 'hidden',
 					'class' => 'edit-rule-id',
 					'save'  => false,
 					'value' => '',
 				),
-				'rules'        => array(
+				'rules'             => array(
 					'name' => __( 'Configured Rules', 'all-in-one-seo-pack' ),
 					'type' => 'custom',
 					'save' => true,
@@ -76,19 +92,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 				),
 			);
 
-			add_filter( $this->prefix . 'submit_options', array( $this, 'submit_options'), 10, 2 );
+			add_filter( $this->prefix . 'submit_options', array( $this, 'submit_options' ), 10, 2 );
 
 			$this->default_options = array_merge( $this->default_options, $this->rule_fields );
 
-			$this->layout             = array(
+			$this->layout = array(
 				'default' => array(
-					'name'    => __( 'Create a Robots.txt File', 'all-in-one-seo-pack' ),
+					'name'      => __( 'Create a Robots.txt File', 'all-in-one-seo-pack' ),
 					'help_link' => 'https://semperplugins.com/documentation/robots-txt-module/',
-					'options' => array_merge( array( 'usage' ), array_keys( $this->rule_fields ) ),
+					'options'   => array_merge( array( 'usage' ), array_keys( $this->rule_fields ) ),
 				),
 			);
 
-			// load initial options / set defaults
+			// load initial options / set defaults.
 			$this->update_options();
 
 			add_filter( $this->prefix . 'output_option', array( $this, 'display_custom_options' ), 10, 2 );
@@ -104,6 +120,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			}
 		}
 
+		/**
+		 * Physical File Check
+		 *
+		 * @since 2.7.1
+		 */
 		function physical_file_check() {
 			if ( $this->has_physical_file() ) {
 				if ( ( is_multisite() && is_network_admin() ) || ( ! is_multisite() && current_user_can( 'manage_options' ) ) ) {
@@ -120,6 +141,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			}
 		}
 
+		/**
+		 * Filter Display Options
+		 *
+		 * @since 2.7
+		 *
+		 * @param $options
+		 * @return mixed
+		 */
 		function filter_display_options( $options ) {
 			$errors = get_transient( "{$this->prefix}errors" . get_current_user_id() );
 			if ( false !== $errors ) {
@@ -132,7 +161,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 		}
 
 		/**
+		 * Import Default Robots
+		 *
 		 * First time import of the default robots.txt rules.
+		 *
+		 * @since 2.7
 		 */
 		function import_default_robots() {
 			$options = $this->get_option_for_blog( $this->get_network_id() );
@@ -150,12 +183,26 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			update_option( 'aioseop_options', $aioseop_options );
 		}
 
+		/**
+		 * Submit Options
+		 *
+		 * @since 2.7
+		 *
+		 * @param $submit_options
+		 * @param $location
+		 * @return mixed
+		 */
 		function submit_options( $submit_options, $location ) {
 			unset( $submit_options['Submit'] );
 			unset( $submit_options['Submit_Default'] );
 			return $submit_options;
 		}
 
+		/**
+		 * AJAX Action Physical File
+		 *
+		 * @since 2.7
+		 */
 		function ajax_action_physical_file() {
 			aioseop_ajax_init();
 			$action = $_POST['options'];
@@ -177,6 +224,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			wp_send_json_success();
 		}
 
+		/**
+		 * Import Physical File
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @return bool
+		 */
 		private function import_physical_file() {
 			$wp_filesystem = $this->get_filesystem_object();
 			$file = trailingslashit( $wp_filesystem->abspath() ) . 'robots.txt';
@@ -198,6 +254,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			return true;
 		}
 
+		/**
+		 * Extract Rules
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @param array $lines
+		 * @return array
+		 */
 		private function extract_rules( array $lines ) {
 			$rules = array();
 			$user_agent = null;
@@ -238,12 +304,30 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			return $rules;
 		}
 
+		/**
+		 * Delete Physical File
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @return mixed
+		 */
 		private function delete_physical_file() {
 			$wp_filesystem = $this->get_filesystem_object();
 			$file = trailingslashit( $wp_filesystem->abspath() ) . 'robots.txt';
 			return $wp_filesystem->delete( $file );
 		}
 
+		/**
+		 * Has Physical Files
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @return mixed
+		 */
 		private function has_physical_file() {
 			$access_type = get_filesystem_method();
 
@@ -255,10 +339,28 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			}
 		}
 
+		/**
+		 * Robots txt
+		 *
+		 * @since 2.7
+		 *
+		 * @param $output
+		 * @param $public
+		 * @return string
+		 */
 		function robots_txt( $output, $public ) {
 			return $output . "\r\n" . $this->get_rules();
 		}
 
+		/**
+		 * Get Rules
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @return string
+		 */
 		private function get_rules() {
 			$robots		= array();
 			$blog_rules	= $this->get_all_rules( is_multisite() ? $this->get_network_id() : null );
@@ -283,6 +385,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			return implode( "\r\n", $robots );
 		}
 
+		/**
+		 * Get Network ID
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @return int
+		 */
 		private function get_network_id() {
 			if ( is_multisite() ) {
 				return get_network()->site_id;
@@ -290,6 +401,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			return get_current_blog_id();
 		}
 
+		/**
+		 * Get Option for Blog
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @param null $id
+		 * @return array
+		 */
 		private function get_option_for_blog( $id = null ) {
 			if ( is_null( $id ) ) {
 				$id = get_current_blog_id();
@@ -305,7 +426,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 		}
 
 		/**
+		 * Get All Rules
+		 *
 		 * Get all rules defined for the blog.
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @param null $id
+		 * @return array|mixed
 		 */
 		private function get_all_rules( $id = null ) {
 			$options = $this->get_option_for_blog( $id );
@@ -313,13 +443,26 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 		}
 
 		/**
+		 * Get Default Rules
+		 *
 		 * Get the default robot rules that were saved in the first initialization.
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @return array|mixed
 		 */
 		private function get_default_rules() {
 			$options = $this->get_option_for_blog( $this->get_network_id() );
 			return array_key_exists( 'default', $options ) ? $options[ 'default' ] : array();
 		}
 
+		/**
+		 * AJAX Delete Rule
+		 *
+		 * @since 2.7
+		 */
 		function ajax_delete_rule() {
 			aioseop_ajax_init();
 			$id = $_POST['options'];
@@ -327,6 +470,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			$this->delete_rule( $id );
 		}
 
+		/**
+		 * Delete Rule
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @param $id
+		 * @return mixed|null
+		 */
 		private function delete_rule( $id ) {
 			global $aioseop_options;
 
@@ -346,6 +499,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			return $deleted_rule;
 		}
 
+		/**
+		 * Add Error
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @param $error
+		 */
 		private function add_error( $error ) {
 			$errors = get_transient( "{$this->prefix}errors" . get_current_user_id() );
 			if ( false === $errors ) {
@@ -357,10 +519,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 		}
 
 		/**
-		 * Filter options.
+		 * Filter Options
+		 *
+		 * @since 2.7
 		 *
 		 * @param $options
-		 *
 		 * @return mixed
 		 */
 		function filter_options( $options ) {	
@@ -403,6 +566,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			return $options;
 		}
 
+		/**
+		 * Sanitize Path
+		 *
+		 * @since 2.7
+		 *
+		 * @param $path
+		 * @return string
+		 */
 		private function sanitize_path( $path ) {
 			// if path does not have a trailing wild card (*) or does not refer to a file (with extension), add trailing slash.
 			if ( '*' !== substr( $path, -1 ) && false === strpos( $path, '.' ) ) {
@@ -420,10 +591,31 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			return $path;
 		}
 
+		/**
+		 * Create Rule ID
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @param $type
+		 * @param $agent
+		 * @param $path
+		 * @return string
+		 */
 		private function create_rule_id( $type, $agent, $path ) {
 			return md5( $type . $agent . $path );
 		}
 
+		/**
+		 * Validate Rule
+		 *
+		 * @since 2.7
+		 *
+		 * @param $rules
+		 * @param $new_rule
+		 * @return array|WP_Error
+		 */
 		private function validate_rule( $rules, $new_rule ) {
 			if ( empty( $new_rule[ 'agent' ] ) ) {
 				return new WP_Error('invalid', __( 'User Agent cannot be empty', 'all-in-one-seo-pack' ) );
@@ -504,6 +696,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			);
 		}
 
+		/**
+		 * Reorder Rules
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @param $rules
+		 * @return array
+		 */
 		private function reorder_rules( $rules ) {
 			if ( is_array( $rules ) ) {
 				uasort( $rules, array( $this, 'sort_rules' ) );
@@ -511,20 +713,39 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			return $rules;
 		}
 
+		/**
+		 * Sort Rules
+		 *
+		 * @since 2.7
+		 *
+		 * @param $a
+		 * @param $b
+		 * @return bool
+		 */
 		function sort_rules( $a, $b ) {
 			return $a['agent'] > $b['agent'];
 		}
 
+		/**
+		 * Get Display Rules
+		 *
+		 * @since 2.7
+		 *
+		 * @access private
+		 *
+		 * @param $rules
+		 * @return string
+		 */
 		private function get_display_rules( $rules ) {
 			$buf = '';
 			if ( ! empty( $rules ) ) {
 				$rules = $this->reorder_rules( $rules );
-				$buf = sprintf( "<table class='aioseop_table' cellpadding=0 cellspacing=0 data-edit-label='%s'>\n", __( 'Modify Rule', 'all-in-one-seo-pack' ) . ' &raquo;' );
+				$buf = sprintf( "<table class='aioseop_table' data-edit-label='%s'>\n", __( 'Modify Rule', 'all-in-one-seo-pack' ) . ' &raquo;' );
 				$row = "\t
 					<tr>
 						<td>
-							<a href='#' class='dashicons dashicons-trash aiosp_robots_delete_rule' data-id='%s'></a>
-							<a href='#' class='dashicons dashicons-edit aiosp_robots_edit_rule' data-id='%s' data-agent='%s' data-type='%s' data-path='%s'></a>
+							<a href='#' class='dashicons dashicons-trash aiosp_robots_delete_rule' data-id='%s' aria-label='" . __('Delete this rule', 'all-in-one-seo-pack') . "'></a>
+							<a href='#' class='dashicons dashicons-edit aiosp_robots_edit_rule' data-id='%s' data-agent='%s' data-type='%s' data-path='%s' aria-label='" . __('Edit this rule', 'all-in-one-seo-pack') . "'></a>
 						</td>
 						<td>%s</td>
 						<td>%s</td>
@@ -538,6 +759,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 			return $buf;
 		}
 
+		/**
+		 * Do Robots
+		 *
+		 * @since 2.7
+		 *
+		 * @return false|string
+		 */
 		private function do_robots() {
 			// disable header warnings.
 			error_reporting(0);
@@ -551,13 +779,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 		}
 
 		/**
-		 * Custom settings.
+		 * Custom Settings
 		 *
 		 * Displays boxes in a table layout.
 		 *
+		 * @since 2.7
+		 *
 		 * @param $buf
 		 * @param $args
-		 *
 		 * @return string
 		 */
 		function display_custom_options( $buf, $args ) {
@@ -569,7 +798,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Robots' ) ) {
 					$buf .= '</div>';
 					break;
 				case "{$this->prefix}robots.txt":
-					$buf .= "<textarea disabled id='{$this->prefix}robot-txt' class='large-text robots-text' rows='15'>";
+					$buf .= "<h3>" . __( "Here's how your robots.txt looks:", 'all-in-one-seo-pack' ) . "</h3>";
+					$buf .= "<textarea disabled id='{$this->prefix}robot-txt' class='large-text robots-text' rows='15' aria-label='" . __('This shows how your robots.txt appears', 'all-in-one-seo-pack') . "'>";
 					$buf .= $this->do_robots();
 					$buf .= "</textarea>";
 					break;

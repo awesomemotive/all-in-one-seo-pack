@@ -2,9 +2,13 @@
 /**
  * Class Test_Opengraph
  *
- * @package
+ * @package All_in_One_SEO_Pack
+ * @since 3.0
  */
 
+/**
+ * AIOSEOP test base
+ */
 require_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-test-base.php';
 
 /**
@@ -38,23 +42,29 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	 * @since 3.0
 	 */
 	public function test_meta_tag_truncation_all( $title, $content, $og_desc_limit ) {
-		$tag_limits  = array(
-			'og:description'    => $og_desc_limit,  // limit to 200 but respect full words
-			'twitter:description'   => 200, // hard limit to 200
-			'twitter:title' => 70, // hard limit to 70
+		$tag_limits = array(
+			'og:description'      => $og_desc_limit, // limit to 200 but respect full words.
+			'twitter:description' => 200,            // hard limit to 200.
+			'twitter:title'       => 70,             // hard limit to 70.
 		);
 
-		$id = $this->factory->post->create( array( 'post_title' => $title, 'post_content' => $content ) );
+		$id = $this->factory->post->create(
+			array(
+				'post_title'   => $title,
+				'post_content' => $content,
+			)
+		);
 
 		wp_set_current_user( 1 );
 
-		$options = get_option( 'aioseop_options' );
+		$options                      = get_option( 'aioseop_options' );
 		$options['aiosp_cpostactive'] = array( 'post' );
 		update_option( 'aioseop_options', $options );
 
 		$custom_options = array();
-		$custom_options['aiosp_opengraph_types'] = array( 'post' );
 		$custom_options['aiosp_opengraph_generate_descriptions'] = 'on';
+		$custom_options['aiosp_opengraph_types']                 = array( 'post' );
+
 		$this->_setup_options( 'opengraph', $custom_options );
 
 		$meta = $this->parse_html( get_permalink( $id ), array( 'meta' ) );
@@ -86,26 +96,32 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	 * @since 3.0
 	 */
 	public function test_meta_tag_truncation_with_manual_og_title( $title, $content ) {
-		$tag_limits  = array(
-			'og:description'    => 200,
-			'twitter:description'   => 200,
-			'twitter:title' => 70,
+		$tag_limits = array(
+			'og:description'      => 200,
+			'twitter:description' => 200,
+			'twitter:title'       => 70,
 		);
 
 		wp_set_current_user( 1 );
 
-		$options = get_option( 'aioseop_options' );
+		$options                      = get_option( 'aioseop_options' );
 		$options['aiosp_cpostactive'] = array( 'post' );
 		update_option( 'aioseop_options', $options );
 
 		$custom_options = array();
-		$custom_options['aiosp_opengraph_types'] = array( 'post' );
 		$custom_options['aiosp_opengraph_generate_descriptions'] = 'on';
+		$custom_options['aiosp_opengraph_types']                 = array( 'post' );
+
 		$this->_setup_options( 'opengraph', $custom_options );
 
-		$id = $this->factory->post->create( array( 'post_title' => $title, 'post_content' => $content ) );
+		$id = $this->factory->post->create(
+			array(
+				'post_title'   => $title,
+				'post_content' => $content,
+			)
+		);
 
-		$settings = get_post_meta( $id, '_aioseop_opengraph_settings', true );
+		$settings                                     = get_post_meta( $id, '_aioseop_opengraph_settings', true );
 		$settings['aioseop_opengraph_settings_title'] = $title;
 		update_post_meta( $id, '_aioseop_opengraph_settings', $settings );
 
@@ -138,24 +154,30 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	 * @since 3.0
 	 */
 	public function test_meta_tag_truncation_with_manual_main_title( $title, $content ) {
-		$tag_limits  = array(
-			'og:description'    => 200,
-			'twitter:description'   => 200,
-			'twitter:title' => 70,
+		$tag_limits = array(
+			'og:description'      => 200,
+			'twitter:description' => 200,
+			'twitter:title'       => 70,
 		);
 
 		wp_set_current_user( 1 );
 
-		$options = get_option( 'aioseop_options' );
+		$options                      = get_option( 'aioseop_options' );
 		$options['aiosp_cpostactive'] = array( 'post' );
 		update_option( 'aioseop_options', $options );
 
 		$custom_options = array();
-		$custom_options['aiosp_opengraph_types'] = array( 'post' );
 		$custom_options['aiosp_opengraph_generate_descriptions'] = 'on';
+		$custom_options['aiosp_opengraph_types']                 = array( 'post' );
+
 		$this->_setup_options( 'opengraph', $custom_options );
 
-		$id = $this->factory->post->create( array( 'post_title' => $title, 'post_content' => $content ) );
+		$id = $this->factory->post->create(
+			array(
+				'post_title'   => $title,
+				'post_content' => $content,
+			)
+		);
 
 		update_post_meta( $id, '_aioseop_title', $title );
 
@@ -188,23 +210,29 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	 * @since 3.0
 	 */
 	public function test_meta_tag_truncation_filter( $title, $content ) {
-		$tag_limits  = array(
-			'og:description'    => 200,
-			'twitter:description'   => 200,
-			'twitter:title' => array( 70 ), // no limit
+		$tag_limits = array(
+			'og:description'      => 200,
+			'twitter:description' => 200,
+			'twitter:title'       => array( 70 ), // no limit.
 		);
 
-		$id = $this->factory->post->create( array( 'post_title' => $title, 'post_content' => $content ) );
+		$id = $this->factory->post->create(
+			array(
+				'post_title'   => $title,
+				'post_content' => $content,
+			)
+		);
 
 		wp_set_current_user( 1 );
 
-		$options = get_option( 'aioseop_options' );
+		$options                      = get_option( 'aioseop_options' );
 		$options['aiosp_cpostactive'] = array( 'post' );
 		update_option( 'aioseop_options', $options );
 
 		$custom_options = array();
-		$custom_options['aiosp_opengraph_types'] = array( 'post' );
 		$custom_options['aiosp_opengraph_generate_descriptions'] = 'on';
+		$custom_options['aiosp_opengraph_types']                 = array( 'post' );
+
 		$this->_setup_options( 'opengraph', $custom_options );
 
 		add_filter( 'aiosp_opengraph_disable_meta_tag_truncation', array( $this, 'filter_disable_meta_tag_truncation' ), 10, 4 );
@@ -249,15 +277,17 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 	public function test_home_page( $title_meta, $desc_meta ) {
 		$this->markTestIncomplete( 'Cannot seem to get any meta tag when accessing the home page. Have set home page as static page as well as showing latest posts. Nothing works.' );
 
-		$id = $this->factory->post->create( array('post_type' => 'page') );
-		$home_url = get_site_url();// trailingslashit( get_site_url() ) . 'house';
+		$id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
+		// trailingslashit( get_site_url() ) . 'house';
+		$home_url = get_site_url();
+		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 		// update_option( 'home', $home_url );
-
 		update_option( 'show_on_front', 'page' );
 		update_option( 'page_on_front', $id );
 
-		$custom_options = array();
-		$custom_options['aiosp_opengraph_hometitle'] = $title_meta;
+		$custom_options                                = array();
+		$custom_options['aiosp_opengraph_hometitle']   = $title_meta;
 		$custom_options['aiosp_opengraph_description'] = $desc_meta;
 
 		$this->_setup_options( 'opengraph', $custom_options );
@@ -271,7 +301,7 @@ class Test_Opengraph extends AIOSEOP_Test_Base {
 		$this->assertGreaterThan( 1, count( $meta ) );
 
 		$title = null;
-		$desc = null;
+		$desc  = null;
 		foreach ( $meta as $m ) {
 			if ( ! isset( $m['property'] ) ) {
 				continue;

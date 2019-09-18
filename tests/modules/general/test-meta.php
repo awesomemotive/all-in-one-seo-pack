@@ -2,15 +2,20 @@
 /**
  * Class Test_Meta
  *
- * @package
+ * @package All_in_One_SEO_Pack
+ * @since 2.4.5.1
  */
 
 /**
  * Advance Custom Fields test cases.
  */
-
 require_once AIOSEOP_UNIT_TESTING_DIR . '/base/class-aioseop-test-base.php';
 
+/**
+ * Class Test_Meta
+ *
+ * @since 2.4.5.1
+ */
 class Test_Meta extends AIOSEOP_Test_Base {
 
 	public function setUp() {
@@ -28,8 +33,15 @@ class Test_Meta extends AIOSEOP_Test_Base {
 
 		global $aioseop_options;
 
-		$meta_desc  = 'heyhey';
-		$id = $this->factory->post->create( array( 'post_type' => 'post', 'post_title' => 'hey', 'post_content' => $meta_desc ) );
+		$meta_desc = 'heyhey';
+
+		$id = $this->factory->post->create(
+			array(
+				'post_type'    => 'post',
+				'post_title'   => 'hey',
+				'post_content' => $meta_desc,
+			)
+		);
 		// update the AIOSEOP description to be the same as the post description.
 		update_post_meta( $id, '_aioseop_description', $meta_desc );
 
@@ -68,9 +80,16 @@ class Test_Meta extends AIOSEOP_Test_Base {
 
 		global $aioseop_options;
 
-		$meta_desc  = 'heyhey';
+		$meta_desc = 'heyhey';
 		// very, very important: post excerpt has to be empty or this will not work.
-		$id = $this->factory->post->create( array( 'post_type' => 'post', 'post_title' => 'hey', 'post_content' => '', 'post_excerpt' => '' ) );
+		$id = $this->factory->post->create(
+			array(
+				'post_type'    => 'post',
+				'post_title'   => 'hey',
+				'post_content' => '',
+				'post_excerpt' => '',
+			)
+		);
 		// update the AIOSEOP description.
 		update_post_meta( $id, 'custom_description', $meta_desc );
 
@@ -96,15 +115,23 @@ class Test_Meta extends AIOSEOP_Test_Base {
 
 	/**
 	 * Test whether the meta description is correctly auto generated given different types of content.
+	 *
 	 * @test
 	 * @dataProvider postContentProvider
 	 */
 	public function test_auto_generate_description( $content, $meta_desc, $excerpt = '' ) {
 		wp_set_current_user( 1 );
 		global $aioseop_options;
-		$id = $this->factory->post->create( array( 'post_type' => 'post', 'post_title' => 'hey' . rand(), 'post_excerpt' => $excerpt, 'post_content' => $content ) );
+		$id = $this->factory->post->create(
+			array(
+				'post_type'    => 'post',
+				'post_title'   => 'hey' . rand(),
+				'post_excerpt' => $excerpt,
+				'post_content' => $content,
+			)
+		);
 		// update the format.
-		$aioseop_options['aiosp_description_format'] = '%description%';
+		$aioseop_options['aiosp_description_format']    = '%description%';
 		$aioseop_options['aiosp_generate_descriptions'] = 'on';
 
 		update_option( 'aioseop_options', $aioseop_options );
@@ -130,7 +157,12 @@ class Test_Meta extends AIOSEOP_Test_Base {
 	public function test_post_title_in_meta_desc( $title, $meta_desc, $format ) {
 		wp_set_current_user( 1 );
 		global $aioseop_options;
-		$id = $this->factory->post->create( array( 'post_type' => 'post', 'post_title' => $title ) );
+		$id = $this->factory->post->create(
+			array(
+				'post_type'  => 'post',
+				'post_title' => $title,
+			)
+		);
 		// update the format.
 		$aioseop_options['aiosp_description_format'] = $format;
 		update_option( 'aioseop_options', $aioseop_options );
@@ -192,21 +224,26 @@ class Test_Meta extends AIOSEOP_Test_Base {
 		wp_set_current_user( 1 );
 		global $aioseop_options;
 
-		$id = $this->factory->post->create( array( 'post_type' => $type, 'post_title' => 'heyhey' ) );
+		$id = $this->factory->post->create(
+			array(
+				'post_type'  => $type,
+				'post_title' => 'heyhey',
+			)
+		);
 
 		// remove the default action so that canonical is not included by default.
 		remove_action( 'wp_head', 'rel_canonical' );
 
-		$aioseop_options['aiosp_can'] = 'on';
-		$aioseop_options['aiosp_cpostactive'] = $enabled ? array( $type ) : array();
+		$aioseop_options['aiosp_can']                = 'on';
+		$aioseop_options['aiosp_cpostactive']        = $enabled ? array( $type ) : array();
 		$aioseop_options['aiosp_description_format'] = '---- desc desc';
 		update_option( 'aioseop_options', $aioseop_options );
 
-		$url    = get_permalink( $id );
-		$meta   = $this->parse_html( $url, array( 'meta' ) );
-		$links  = $this->parse_html( $url, array( 'link' ) );
+		$url   = get_permalink( $id );
+		$meta  = $this->parse_html( $url, array( 'meta' ) );
+		$links = $this->parse_html( $url, array( 'link' ) );
 
-		$canonical  = wp_list_pluck( $links, 'rel' );
+		$canonical = wp_list_pluck( $links, 'rel' );
 
 		if ( $enabled ) {
 			// should have atleast one meta tag.
@@ -227,7 +264,7 @@ class Test_Meta extends AIOSEOP_Test_Base {
 			}
 		}
 
-		$meta_content   = wp_list_pluck( $meta, 'content' );
+		$meta_content = wp_list_pluck( $meta, 'content' );
 		if ( $enabled ) {
 			$this->assertContains( '---- desc desc', $meta_content );
 			$this->assertEquals( $url, $canonical );
@@ -246,27 +283,39 @@ class Test_Meta extends AIOSEOP_Test_Base {
 
 		global $aioseop_options;
 
-		$post_id = $this->factory->post->create( array( 'post_type' => 'post', 'post_title' => 'heyhey' ) );
-		$page_id = $this->factory->post->create( array( 'post_type' => 'page', 'post_title' => 'heyhey' ) );
+		$post_id = $this->factory->post->create(
+			array(
+				'post_type'  => 'post',
+				'post_title' => 'heyhey',
+			)
+		);
+
+		$page_id = $this->factory->post->create(
+			array(
+				'post_type'  => 'page',
+				'post_title' => 'heyhey',
+			)
+		);
+
 		$attachment_ids = $this->create_attachments( 1 );
 
 		// what keyword should each title contain.
-		$ids    = array(
+		$ids = array(
 			'MEDIA' => $attachment_ids[0],
-			'POST' => $post_id,
-			'PAGE' => $page_id,
+			'POST'  => $post_id,
+			'PAGE'  => $page_id,
 		);
 
-		$aioseop_options['aiosp_attachment_title_format'] = '%post_title% - MEDIA';
-		$aioseop_options['aiosp_post_title_format'] = '%post_title% - POST';
-		$aioseop_options['aiosp_page_title_format'] = '%post_title% - PAGE';
-		$aioseop_options['aiosp_cpostactive'] = array( 'post', 'page', 'attachment' );
+		$aioseop_options['aiosp_attachment_title_format']     = '%post_title% - MEDIA';
+		$aioseop_options['aiosp_post_title_format']           = '%post_title% - POST';
+		$aioseop_options['aiosp_page_title_format']           = '%post_title% - PAGE';
+		$aioseop_options['aiosp_cpostactive']                 = array( 'post', 'page', 'attachment' );
 		$aioseop_options['aiosp_redirect_attachement_parent'] = '';
-		$aioseop_options['aiosp_rewrite_titles'] = 'on';
+		$aioseop_options['aiosp_rewrite_titles']              = 'on';
 		update_option( 'aioseop_options', $aioseop_options );
 
 		foreach ( $ids as $contains => $id ) {
-			$link = get_permalink( $id );
+			$link  = get_permalink( $id );
 			$title = $this->parse_html( $link, array( 'title' ) );
 
 			// should have one title tag.

@@ -112,9 +112,16 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 		 * @since 3.0
 		 */
 		public function __construct() {
-			$this->_requires();
-			if ( current_user_can( 'aiosp_manage_seo' ) ) {
 
+			// DirectoryIterator::getExtension() was added in PHP 5.3.6. We can remove this once we drop support < PHP 5.3.
+			if ( version_compare( phpversion(), '5.3.6', '<' ) ) {
+				return false;
+			}
+
+			$this->_requires();
+			$this->obj_load_options();
+
+			if ( current_user_can( 'aiosp_manage_seo' ) ) {
 				$this->aioseop_screens[] = 'toplevel_page_' . AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class';
 				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_performance';
 				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_sitemap';
@@ -125,8 +132,6 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_importer_exporter';
 				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_bad_robots';
 				$this->aioseop_screens[] = 'all-in-one-seo_page_' . AIOSEOP_PLUGIN_DIRNAME . '/modules/aioseop_feature_manager';
-
-				$this->obj_load_options();
 
 				add_action( 'admin_init', array( $this, 'init' ) );
 				add_action( 'current_screen', array( $this, 'admin_screen' ) );
@@ -235,6 +240,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				'active_notices' => array(),
 			);
 
+			// Prevent old data from being loaded instead.
+			// Some notices are instant notifications.
+			wp_cache_delete( 'aioseop_notices', 'options' );
 			$notices_options = get_option( 'aioseop_notices' );
 			if ( false === $notices_options ) {
 				return $defaults;
@@ -259,6 +267,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			$old_notices_options = $this->obj_get_options();
 			$notices_options     = wp_parse_args( $notices_options, $old_notices_options );
 
+			// Prevent old data from being loaded instead.
+			// Some notices are instant notifications.
+			wp_cache_delete( 'aioseop_notices', 'options' );
 			return update_option( 'aioseop_notices', $notices_options, false );
 		}
 
@@ -536,8 +547,9 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 				update_user_meta( $current_user_id, 'aioseop_notice_display_time_' . $slug, $display_time );
 			}
 
-			$this->notices[ $slug ]['time_set'] = $time_set;
-			$this->active_notices[ $slug ]      = $display_time;
+			$this->notices[ $slug ]['time_set']   = $time_set;
+			$this->notices[ $slug ]['time_start'] = $display_time;
+			$this->active_notices[ $slug ]        = $display_time;
 
 			return true;
 		}
@@ -718,6 +730,11 @@ if ( ! class_exists( 'AIOSEOP_Notices' ) ) {
 			$current_screen  = get_current_screen();
 			$current_user_id = get_current_user_id();
 			foreach ( $this->active_notices as $a_notice_slug => $a_notice_time_display ) {
+				// vvv TEMP Avoid review notice.
+				if ( 'review_plugin' === $a_notice_slug ) {
+					continue;
+				}
+				// ^^^ TEMP Avoid review notice.
 				$notice_show = true;
 				$notice      = $this->get_notice( $a_notice_slug );
 

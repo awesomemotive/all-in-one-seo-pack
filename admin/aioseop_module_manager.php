@@ -14,10 +14,49 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 	 * Class All_in_One_SEO_Pack_Module_Manager
 	 */
 	class All_in_One_SEO_Pack_Module_Manager {
+		/**
+		 * Modules
+		 *
+		 * @since ?
+		 *
+		 * @var array $modules
+		 */
 		protected $modules = array();
+
+		/**
+		 * Settings Update
+		 *
+		 * @since ?
+		 *
+		 * @var bool $settings_update
+		 */
 		protected $settings_update = false;
+
+		/**
+		 * Settings Reset
+		 *
+		 * @since ?
+		 *
+		 * @var bool $settings_reset
+		 */
 		protected $settings_reset = false;
+
+		/**
+		 * Settings Reset All
+		 *
+		 * @since ?
+		 *
+		 * @var bool $settings_reset_all
+		 */
 		protected $settings_reset_all = false;
+
+		/**
+		 * Module Settings Update
+		 *
+		 * @since ?
+		 *
+		 * @var bool $module_settings_update
+		 */
 		protected $module_settings_update = false;
 
 		/**
@@ -37,7 +76,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 			$reset_all = ( isset( $_POST['Submit_All_Default'] ) && '' !== $_POST['Submit_All_Default'] );
 			$reset     = ( ( isset( $_POST['Submit_Default'] ) && '' !== $_POST['Submit_Default'] ) || $reset_all );
 			$update    = ( isset( $_POST['action'] ) && $_POST['action']
-						   && ( ( isset( $_POST['Submit'] ) && '' !== $_POST['Submit'] ) || $reset )
+						&& ( ( isset( $_POST['Submit'] ) && '' !== $_POST['Submit'] ) || $reset )
 			);
 			if ( $update ) {
 				if ( $reset ) {
@@ -57,10 +96,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 		}
 
 		/**
-		 * Return module.
+		 * Return Module
+		 *
+		 * @since ?
 		 *
 		 * @param $class
-		 *
 		 * @return $this|bool|mixed
 		 */
 		function return_module( $class ) {
@@ -82,6 +122,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 		}
 
 		/**
+		 * Get Loaded Module List
+		 *
+		 * @since ?
+		 *
 		 * @return array
 		 */
 		function get_loaded_module_list() {
@@ -98,9 +142,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 		}
 
 		/**
+		 * Do Load Module
+		 *
+		 * @since ?
+		 *
 		 * @param $mod Module.
 		 * @param null $args
-		 *
 		 * @return bool
 		 */
 		function do_load_module( $mod, $args = null ) {
@@ -122,18 +169,22 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 			$this->modules[ $mod ] = $module_class;
 			if ( is_user_logged_in() && is_admin_bar_showing() && current_user_can( 'aiosp_manage_seo' ) ) {
 				add_action(
-					'admin_bar_menu', array(
+					'admin_bar_menu',
+					array(
 						$module_class,
 						'add_admin_bar_submenu',
-					), 1001 + $module_class->menu_order()
+					),
+					1001 + $module_class->menu_order()
 				);
 			}
 			if ( is_admin() ) {
 				add_action(
-					'aioseop_modules_add_menus', array(
+					'aioseop_modules_add_menus',
+					array(
 						$module_class,
 						'add_menu',
-					), $module_class->menu_order()
+					),
+					$module_class->menu_order()
 				);
 				add_action( 'aiosoep_options_reset', array( $module_class, 'reset_options' ) );
 				add_filter( 'aioseop_export_settings', array( $module_class, 'settings_export' ) );
@@ -143,13 +194,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 		}
 
 		/**
-		 * @param $mod
+		 * Load Module
 		 *
+		 * @since ?
+		 *
+		 * @param $mod
 		 * @return bool
 		 */
 		function load_module( $mod ) {
 			static $feature_options = null;
-			static $feature_prefix = null;
+			static $feature_prefix  = null;
 			if ( ! is_array( $this->modules ) ) {
 				return false;
 			}
@@ -160,10 +214,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 			if ( 'performance' === $mod && ! is_super_admin() ) {
 				return false;
 			}
-			if ( ( 'file_editor' === $mod )
-				 && ( ( defined( 'DISALLOW_FILE_EDIT' ) && DISALLOW_FILE_EDIT )
-					  || ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS )
-					  || ! is_super_admin() )
+			if (
+					( 'file_editor' === $mod )
+					&& ( ( defined( 'DISALLOW_FILE_EDIT' ) && DISALLOW_FILE_EDIT )
+					|| ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS )
+					|| ! is_super_admin() )
 			) {
 				return false;
 			}
@@ -174,7 +229,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module_Manager' ) ) {
 				// using $_REQUEST does not work because even if the parameter is set in $_POST or $_GET, it does not percolate to $_REQUEST.
 				$is_module_page = ( isset( $_GET['page'] ) && trailingslashit( AIOSEOP_PLUGIN_DIRNAME ) . 'modules/aioseop_feature_manager.php' === $_GET['page'] ) || ( isset( $_POST['page'] ) && trailingslashit( AIOSEOP_PLUGIN_DIRNAME ) . 'modules/aioseop_feature_manager.php' === $_POST['page'] );
 			}
-			$fm_page    = $this->module_settings_update && wp_verify_nonce( $_POST['nonce-aioseop'], 'aioseop-nonce' ) && $is_module_page;
+			$fm_page = $this->module_settings_update && wp_verify_nonce( $_POST['nonce-aioseop'], 'aioseop-nonce' ) && $is_module_page;
 			if ( $fm_page && ! $this->settings_reset ) {
 				if ( isset( $_POST[ "aiosp_feature_manager_enable_$mod" ] ) ) {
 					$mod_enable = $_POST[ "aiosp_feature_manager_enable_$mod" ];
