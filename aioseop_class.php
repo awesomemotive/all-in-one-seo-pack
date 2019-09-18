@@ -664,7 +664,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 				// Add initial options below.
 			),
-			'schema_person_manual_name' => array(
+			'schema_person_manual_name'   => array(
 				/* translators: Option shown when 'Manually Enter' is selected in Person's Username. Users use this to enter the Person's name for schema Person. */
 				'name'     => __( 'Person\'s Name', 'all-in-one-seo-pack' ),
 				'type'     => 'text',
@@ -674,7 +674,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'aiosp_schema_person_user'     => '-1',
 				),
 			),
-			'schema_person_manual_image' => array(
+			'schema_person_manual_image'  => array(
 				/* translators: Option shown when 'Manually Enter' is selected in Person's Username. Users use this to enter the Person's image for schema Person. */
 				'name'     => __( 'Person\'s Image', 'all-in-one-seo-pack' ),
 				'type'     => 'image',

@@ -60,8 +60,8 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 			$person_id = intval( $aioseop_options['aiosp_schema_person_user'] );
 			// If no user is selected, then use first admin available.
 			if ( 0 === $person_id ) {
-				$args = array(
-					'role' => 'administrator'
+				$args  = array(
+					'role' => 'administrator',
 				);
 				$users = get_users( $args );
 
@@ -70,8 +70,8 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 				}
 			}
 
-			$rtn_data['@type']  = array( 'Person', $this->slug );
-			$rtn_data['@id']    = home_url() . '/#person';
+			$rtn_data['@type'] = array( 'Person', $this->slug );
+			$rtn_data['@id']   = home_url() . '/#person';
 
 			if ( -1 === $person_id ) {
 				// Manually added Person's name.
@@ -86,7 +86,7 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 				}
 			} else {
 				// User's Display Name.
-				$rtn_data['name']   = get_the_author_meta( 'display_name', $person_id );
+				$rtn_data['name'] = get_the_author_meta( 'display_name', $person_id );
 
 				// Social links from user profile.
 				$rtn_data['sameAs'] = $this->get_user_social_profile_links( $person_id );
