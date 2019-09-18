@@ -27,7 +27,7 @@ function gutenberg_fix_metabox() {
 
 				$class = 'editor-writing-flow';
 
-				if ( version_compare( $wp_version, '5.2', '>=' ) ) {
+				if ( version_compare( $wp_version, '5.0', '>=' ) && version_compare( $wp_version, '5.3', '<' ) ) {
 					$class = 'block-' . $class;
 				}
 
