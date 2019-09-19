@@ -29,9 +29,8 @@ function gutenberg_fix_metabox() {
 
 				if ( version_compare( $wp_version, '5.0', '>=' ) && version_compare( $wp_version, '5.3', '<' ) ) {
 					$class = 'block-' . $class;
+					echo '<style>.' . $class . ' { height: auto; }</style>';
 				}
-
-				echo '<style>.' . $class . ' { height: auto; }</style>';
 			}
 		);
 	}
