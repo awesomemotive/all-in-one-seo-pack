@@ -4462,7 +4462,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 *
 		 * @return boolean
 		 */
-		if ( apply_filters( 'aioseop_disable_schema', '__return_true' ) ) {
+		if ( ! apply_filters( 'aioseop_disable_schema', false ) ) {
 			// Handle Schema.
 			if ( version_compare( PHP_VERSION, '5.5', '>=' ) ) {
 				if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && boolval( $aioseop_options['aiosp_schema_markup'] ) ) {
