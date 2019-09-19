@@ -52,7 +52,7 @@ function gutenberg_fix_metabox() {
  *
  * @since 3.2.8
  *
- * @param string $className
+ * @param string $class_name
  * @return void
  */
 function gutenberg_fix_metabox_helper( $class_name ) {
