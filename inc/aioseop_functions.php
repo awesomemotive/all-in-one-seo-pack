@@ -1401,3 +1401,31 @@ if ( ! function_exists( 'aioseop_is_woocommerce_active' ) ) {
 		return class_exists( 'woocommerce' );
 	}
 }
+
+	/**
+	* Gets the major version of a sementic plugin version.
+	* 
+	* @param string $version 
+	* 
+	* @since 3.2.8
+	* @return string
+	*/
+	public static function get_major_version( $version ){
+
+	if( !strpos( $version, '.' ) ){
+		// No period. Return version which should just look like "x". 
+		return $version;
+	}
+	$offset1 = strpos( $version, '.'); // Location of first period.
+
+	if ( !strpos( $version, '.', $offset1 + 1) ){
+		// No second period. Return version which should just look like "x.y".
+		return $version;
+	}
+	
+	// If we get here, there's at least an "x.y.z".
+	$offset2 = strpos( $version, '.', $offset1 + 1); // Location of second period.
+	$major_version = substr( $version, 0, $offset2);
+
+	return $major_version;
+}
