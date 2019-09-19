@@ -1410,7 +1410,7 @@ if ( ! function_exists( 'aioseop_is_woocommerce_active' ) ) {
 	* @since 3.2.8
 	* @return string
 	*/
-	public static function get_major_version( $version ){
+	function get_major_version( $version ){
 
 	if( !strpos( $version, '.' ) ){
 		// No period. Return version which should just look like "x". 
