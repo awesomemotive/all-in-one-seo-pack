@@ -9,7 +9,7 @@
  * @since 3.2.8
  */
 
-chrome_fix_overlapping_metabox();
+aioseop_chrome_fix_overlapping_metabox();
 
 /**
  * The chrome_fix_overlapping_metabox() function.
@@ -23,11 +23,11 @@ chrome_fix_overlapping_metabox();
  *
  * @return void
  */
-function chrome_fix_overlapping_metabox() {
+function aioseop_chrome_fix_overlapping_metabox() {
 	if ( false !== stripos( $_SERVER['HTTP_USER_AGENT'], 'Chrome/77.' ) ) {
 		add_action(
 			'admin_head',
-			'override_gutenberg_css_class'
+			'aioseop_override_gutenberg_css_class'
 		);
 	}
 }
@@ -44,18 +44,18 @@ function chrome_fix_overlapping_metabox() {
  *
  * @return void
  */
-function override_gutenberg_css_class() {
+function aioseop_override_gutenberg_css_class() {
 	global $wp_version;
 
-	if ( ! version_compare( $wp_version, '5.0', '>=' ) ) {
+	if ( version_compare( $wp_version, '5.0', '<' ) ) {
 		return;
 	}
 
 	// CSS class renamed from 'editor' to 'block-editor' in WP v5.2.
 	if ( version_compare( $wp_version, '5.2', '<' ) ) {
-		override_gutenberg_css_class_helper( 'editor-writing-flow' );
+		aioseop_override_gutenberg_css_class_helper( 'editor-writing-flow' );
 	} else {
-		override_gutenberg_css_class_helper( 'block-editor-writing-flow' );
+		aioseop_override_gutenberg_css_class_helper( 'block-editor-writing-flow' );
 	}
 }
 
@@ -70,6 +70,6 @@ function override_gutenberg_css_class() {
  * @param string $class_name
  * @return void
  */
-function override_gutenberg_css_class_helper( $class_name ) {
+function aioseop_override_gutenberg_css_class_helper( $class_name ) {
 	echo '<style>.' . $class_name . ' { height: auto; }</style>';
 }
