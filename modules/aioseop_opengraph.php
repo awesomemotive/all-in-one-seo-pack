@@ -1402,6 +1402,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			}
 
 			/* *** HANDLE IMAGE DIMENSIONS *** */
+
 			// TODO When Image ID is available, use meta data for image dimensions.
 			$width  = '';
 			$height = '';
@@ -1483,16 +1484,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'og:image:width'         => $width,
 					'og:image:height'        => $height,
 					'og:video'               => $video,
-					'og:video:width'         => isset( $videowidth )     ? $videowidth     : '',
-					'og:video:height'        => isset( $videoheight )    ? $videoheight    : '',
+					'og:video:width'         => isset( $videowidth ) ? $videowidth : '',
+					'og:video:height'        => isset( $videoheight ) ? $videoheight : '',
 					'fb:admins'              => $key,
 					'fb:app_id'              => $appid,
-					'article:section'        => isset( $section )        ? $section        : '',
+					'article:section'        => isset( $section ) ? $section : '',
 					'article:tag'            => $tag,
 					'article:published_time' => isset( $published_time ) ? $published_time : '',
-					'article:modified_time'  => isset( $modified_time )  ? $modified_time  : '',
-					'article:publisher'      => isset( $publisher )      ? $publisher      : '',
-					'article:author'         => isset( $author )         ? $author         : '',
+					'article:modified_time'  => isset( $modified_time ) ? $modified_time : '',
+					'article:publisher'      => isset( $publisher ) ? $publisher : '',
+					'article:author'         => isset( $author ) ? $author : '',
 				),
 				'twitter'  => array(
 					'twitter:card'        => $card,
