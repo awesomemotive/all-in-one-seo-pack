@@ -1669,6 +1669,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			/**
 			 * Disables truncation of meta tags. Return true to shortcircuit and disable truncation.
 			 *
+			 * @todo Remove `$tmp_meta_slug` and remove `$meta_keys`.
+			 *
 			 * @since 3.0
 			 *
 			 * @issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/808
