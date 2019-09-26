@@ -35,20 +35,20 @@ function aioseop_gutenberg_fix_metabox() {
  *
  */
 function aioseop_swap_css() {
-				global $wp_version;
+	global $wp_version;
 
-				// Fix should be included in WP v5.3.
-				if ( ! version_compare( $wp_version, '5.0', '>=' ) && version_compare( $wp_version, '5.3', '<' ) ) {
-					return;
-				}
+	// Fix should be included in WP v5.3.
+	if ( ! version_compare( $wp_version, '5.0', '>=' ) && version_compare( $wp_version, '5.3', '<' ) ) {
+		return;
+	}
 
-				// CSS class renamed from 'editor' to 'block-editor' in WP v5.2.
-				if ( version_compare( $wp_version, '5.2', '<' ) ) {
-					aioseop_gutenberg_fix_metabox_helper( 'editor-writing-flow' );
-				} elseif ( version_compare( $wp_version, '5.2', '>=' ) ) {
-					aioseop_gutenberg_fix_metabox_helper( 'block-editor-writing-flow' );
-				}
-			}
+	// CSS class renamed from 'editor' to 'block-editor' in WP v5.2.
+	if ( version_compare( $wp_version, '5.2', '<' ) ) {
+		aioseop_gutenberg_fix_metabox_helper( 'editor-writing-flow' );
+	} elseif ( version_compare( $wp_version, '5.2', '>=' ) ) {
+		aioseop_gutenberg_fix_metabox_helper( 'block-editor-writing-flow' );
+	}
+}
 
 /**
  * The gutenberg_fix_metabox_helper() function.
