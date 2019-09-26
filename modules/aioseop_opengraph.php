@@ -1326,9 +1326,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			$sitename    = strip_tags( esc_attr( $sitename ) );
 			$description = strip_tags( esc_attr( $description ) );
 
-			if ( empty( $thumbnail ) && ! empty( $image ) ) {
-				$thumbnail = $image;
-			}
+			// Apply last filters.
+			$description = apply_filters( 'aioseop_description', $description );
+
+			/* *** HANDLE IMAGES *** */
+			$thumbnail = $image;
 
 			// Add user supplied default image.
 			if ( empty( $thumbnail ) ) {
@@ -1425,7 +1427,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				}
 			}
 
-			$card = 'summary';
+			/* *** HANDLE TWITTER CARD *** */
+			$card              = 'summary';
+			$site              = '';
+			$domain            = '';
+			$creator           = '';
+			$twitter_thumbnail = '';
+
 			if ( ! empty( $this->options['aiosp_opengraph_defcard'] ) ) {
 				$card = $this->options['aiosp_opengraph_defcard'];
 			}
@@ -1438,10 +1446,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			if ( 'photo' == $card ) {
 				$card = 'summary_large_image';
 			}
-
-			$site    = '';
-			$domain  = '';
-			$creator = '';
 
 			if ( ! empty( $this->options['aiosp_opengraph_twitter_site'] ) ) {
 				$site = $this->options['aiosp_opengraph_twitter_site'];
@@ -1457,18 +1461,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$creator = AIOSEOP_Opengraph_Public::prepare_twitter_username( $creator );
 			}
 
-			if ( ! empty( $thumbnail ) ) {
-				$twitter_thumbnail = $thumbnail; // Default Twitter image if custom isn't set.
-			}
-
 			if ( isset( $metabox['aioseop_opengraph_settings_customimg_twitter'] ) && ! empty( $metabox['aioseop_opengraph_settings_customimg_twitter'] ) ) {
 				// Set Twitter image from custom.
 				$twitter_thumbnail = set_url_scheme( $metabox['aioseop_opengraph_settings_customimg_twitter'] );
+			} elseif ( ! empty( $thumbnail ) ) {
+				$twitter_thumbnail = $thumbnail; // Default Twitter image if custom isn't set.
 			}
 
 			/* *** COLLECT DATA *** */
-			$description = apply_filters( 'aioseop_description', $description );
-
 			$meta = array(
 				'facebook' => array(
 					'og:type'                => $type,
