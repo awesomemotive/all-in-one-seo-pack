@@ -1511,39 +1511,39 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$twitter_thumbnail = set_url_scheme( $metabox['aioseop_opengraph_settings_customimg_twitter'] );
 			}
 
-			// Apply last filters.
+			/* *** COLLECT DATA *** */
 			$description = apply_filters( 'aioseop_description', $description );
 
 			$meta = array(
 				'facebook' => array(
-					'type'           => 'og:type',
-					'title'          => 'og:title',
-					'description'    => 'og:description',
-					'url'            => 'og:url',
-					'sitename'       => 'og:site_name',
-					'thumbnail'      => 'og:image',
-					'width'          => 'og:image:width',
-					'height'         => 'og:image:height',
-					'video'          => 'og:video',
-					'videowidth'     => 'og:video:width',
-					'videoheight'    => 'og:video:height',
-					'key'            => 'fb:admins',
-					'appid'          => 'fb:app_id',
-					'section'        => 'article:section',
-					'tag'            => 'article:tag',
-					'published_time' => 'article:published_time',
-					'modified_time'  => 'article:modified_time',
-					'publisher'      => 'article:publisher',
-					'author'         => 'article:author',
+					'og:type'                => $type,
+					'og:title'               => $title,
+					'og:description'         => $description,
+					'og:url'                 => $url,
+					'og:site_name'           => $sitename,
+					'og:image'               => $thumbnail,
+					'og:image:width'         => $width,
+					'og:image:height'        => $height,
+					'og:video'               => $video,
+					'og:video:width'         => isset( $videowidth )     ? $videowidth     : '',
+					'og:video:height'        => isset( $videoheight )    ? $videoheight    : '',
+					'fb:admins'              => $key,
+					'fb:app_id'              => $appid,
+					'article:section'        => isset( $section )        ? $section        : '',
+					'article:tag'            => $tag,
+					'article:published_time' => isset( $published_time ) ? $published_time : '',
+					'article:modified_time'  => isset( $modified_time )  ? $modified_time  : '',
+					'article:publisher'      => isset( $publisher )      ? $publisher      : '',
+					'article:author'         => isset( $author )         ? $author         : '',
 				),
 				'twitter'  => array(
-					'card'              => 'twitter:card',
-					'site'              => 'twitter:site',
-					'creator'           => 'twitter:creator',
-					'domain'            => 'twitter:domain',
-					'title'             => 'twitter:title',
-					'description'       => 'twitter:description',
-					'twitter_thumbnail' => 'twitter:image',
+					'twitter:card'        => $card,
+					'twitter:site'        => $site,
+					'twitter:creator'     => $creator,
+					'twitter:domain'      => $domain,
+					'twitter:title'       => $title,
+					'twitter:description' => $description,
+					'twitter:image'       => $twitter_thumbnail,
 				),
 			);
 
@@ -1556,6 +1556,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$video_1           = $video;
 			}
 
+			/* *** RENDER DATA *** */
 			$tags = array(
 				'facebook' => array(
 					'name'  => 'property',
@@ -1567,25 +1568,59 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				),
 			);
 
-			foreach ( $meta as $t => $data ) {
-				foreach ( $data as $k => $v ) {
-					if ( empty( $$k ) ) {
-						$$k = '';
-					}
-					$filtered_value = $$k;
+			// TODO Remove when `$tmp_meta_slug` is removed from 'aiosp_opengraph_meta' filter.
+			$meta_keys = array(
+				'facebook' => array(
+					'og:type'                => 'type',
+					'og:title'               => 'title',
+					'og:description'         => 'description',
+					'og:url'                 => 'url',
+					'og:site_name'           => 'sitename',
+					'og:image'               => 'thumbnail',
+					'og:image:width'         => 'width',
+					'og:image:height'        => 'height',
+					'og:video'               => 'video',
+					'og:video:width'         => 'videowidth',
+					'og:video:height'        => 'videoheight',
+					'fb:admins'              => 'key',
+					'fb:app_id'              => 'appid',
+					'article:section'        => 'section',
+					'article:tag'            => 'tag',
+					'article:published_time' => 'published_time',
+					'article:modified_time'  => 'modified_time',
+					'article:publisher'      => 'publisher',
+					'article:author'         => 'author',
+				),
+				'twitter'  => array(
+					'twitter:card'        => 'card',
+					'twitter:site'        => 'site',
+					'twitter:creator'     => 'creator',
+					'twitter:domain'      => 'domain',
+					'twitter:title'       => 'title',
+					'twitter:description' => 'description',
+					'twitter:image'       => 'twitter_thumbnail',
+				),
+			);
 
+			foreach ( $meta as $k1_social_network => $v1_data ) {
+				foreach ( $v1_data as $k2_meta_tag => $v2_meta_value ) {
+					$tmp_meta_slug = $meta_keys[ $k1_social_network ][ $k2_meta_tag ];
 					/**
 					 * Process meta tags for their idiosyncracies.
 					 *
-					 * @since 3.0
+					 * @todo Remove `$tmp_meta_slug` and remove `$meta_keys`.
 					 *
-					 * @param string $filtered_value The value that is proposed to be shown in the tag.
-					 * @param string $t The social network.
-					 * @param string $k The meta tag without the network name prefixed.
-					 * @param string $v The meta tag with the network name prefixed. This is not always $network:$meta_tag.
-					 * @param array $extra_params Extra parameters that might be required to process the meta tag.
+					 * @since 3.0
+					 * @since 3.3 Change variable names for readability.
+					 *
+					 * @param string $filtered_value    The value that is proposed to be shown in the tag.
+					 * @param string $k1_social_network The social network.
+					 * @param string $tmp_meta_slug     The meta tag without the network name prefixed.
+					 * @param string $k2_meta_tag       The meta tag with the network name prefixed. This is not always $network:$meta_tag.
+					 * @param array  $extra_params      Extra parameters that might be required to process the meta tag.
 					 */
-					$filtered_value = apply_filters( $this->prefix . 'meta', $filtered_value, $t, $k, $v, $extra_params );
+					$filtered_value = apply_filters( 'aiosp_opengraph_meta', $filtered_value, $k1_social_network, $tmp_meta_slug, $k2_meta_tag, $extra_params );
+
 					if ( ! empty( $filtered_value ) ) {
 						if ( ! is_array( $filtered_value ) ) {
 							$filtered_value = array( $filtered_value );
@@ -1596,16 +1631,16 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						 *
 						 * @TODO Eventually we'll want to put this in its own function so things like images work too.
 						 */
-						if ( 'key' === $k ) {
+						if ( 'fb:admins' === $k2_meta_tag ) {
 							$fbadmins = explode( ',', str_replace( ' ', '', $filtered_value[0] ) ); // Trim spaces then turn comma-separated values into an array.
 							foreach ( $fbadmins as $fbadmin ) {
-								echo '<meta ' . $tags[ $t ]['name'] . '="' . $v . '" ' . $tags[ $t ]['value'] . '="' . $fbadmin . '" />' . "\n";
+								echo '<meta ' . $tags[ $k1_social_network ]['name'] . '="' . $k2_meta_tag . '" ' . $tags[ $k1_social_network ]['value'] . '="' . $fbadmin . '" />' . "\n";
 							}
 						} else {
 							// For everything else.
 							foreach ( $filtered_value as $f ) {
 								// #1363: use esc_attr( $f ) instead of htmlspecialchars_decode( $f, ENT_QUOTES )
-								echo '<meta ' . $tags[ $t ]['name'] . '="' . $v . '" ' . $tags[ $t ]['value'] . '="' . esc_attr( $f ) . '" />' . "\n";
+								echo '<meta ' . $tags[ $k1_social_network ]['name'] . '="' . $k2_meta_tag . '" ' . $tags[ $k1_social_network ]['value'] . '="' . esc_attr( $f ) . '" />' . "\n";
 							}
 						}
 					}
