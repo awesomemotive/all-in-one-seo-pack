@@ -1337,8 +1337,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				} else {
 					$img_type = $this->options['aiosp_opengraph_defimg'];
 					if ( ! empty( $post ) ) {
-						// Customize the type of image per post/post_type.
-						$img_type = apply_filters( $this->prefix . 'default_image_type', $img_type, $post, $type );
+						/**
+						 * Customize the type of image per post/post_type.
+						 *
+						 * @param string  $img_type Type of image source.
+						 * @param WP_Post $post     The global post.
+						 * @param string  $type     The OG Type.
+						 */
+						$img_type = apply_filters( 'aiosp_opengraph_default_image_type', $img_type, $post, $type );
 					}
 					switch ( $img_type ) {
 						case 'featured':
@@ -1377,8 +1383,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			if ( empty( $thumbnail ) && ! empty( $this->options['aiosp_opengraph_fallback'] ) ) {
 				$thumbnail = $this->options['aiosp_opengraph_dimg'];
 				if ( ! empty( $post ) ) {
-					// Customize the default image per post/post_type.
-					$thumbnail = apply_filters( $this->prefix . 'default_image', $thumbnail, $post, $type );
+					/**
+					 * Customize the default image per post/post_type.
+					 *
+					 * @param string  $thumbnail The image URL.
+					 * @param WP_Post $post      The global post.
+					 * @param string  $type      The OG Type.
+					 */
+					$thumbnail = apply_filters( 'aiosp_opengraph_default_image', $thumbnail, $post, $type );
 				}
 			}
 
