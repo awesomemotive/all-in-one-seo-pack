@@ -21,11 +21,20 @@
  *
  * @return void
  */
-function gutenberg_fix_metabox() {
+function aioseop_gutenberg_fix_metabox() {
 	if ( false !== stripos( $_SERVER['HTTP_USER_AGENT'], 'Chrome/77.' ) ) {
-		add_action(
-			'admin_head',
-			static function () {
+		add_action( 'admin_head', 'aioseop_swap_css' );
+	}
+}
+
+/**
+ * Swaps the CSS depending on PHP version
+ *
+ * @since 3.2.9
+ * @return void
+ *
+ */
+function aioseop_swap_css() {
 				global $wp_version;
 
 				// Fix should be included in WP v5.3.
@@ -35,14 +44,11 @@ function gutenberg_fix_metabox() {
 
 				// CSS class renamed from 'editor' to 'block-editor' in WP v5.2.
 				if ( version_compare( $wp_version, '5.2', '<' ) ) {
-					gutenberg_fix_metabox_helper( 'editor-writing-flow' );
+					aioseop_gutenberg_fix_metabox_helper( 'editor-writing-flow' );
 				} elseif ( version_compare( $wp_version, '5.2', '>=' ) ) {
-					gutenberg_fix_metabox_helper( 'block-editor-writing-flow' );
+					aioseop_gutenberg_fix_metabox_helper( 'block-editor-writing-flow' );
 				}
 			}
-		);
-	}
-}
 
 /**
  * The gutenberg_fix_metabox_helper() function.
@@ -55,8 +61,8 @@ function gutenberg_fix_metabox() {
  * @param string $class_name
  * @return void
  */
-function gutenberg_fix_metabox_helper( $class_name ) {
+function aioseop_gutenberg_fix_metabox_helper( $class_name ) {
 	echo '<style>.' . $class_name . ' { height: auto; }</style>';
 }
 
-gutenberg_fix_metabox();
+aioseop_gutenberg_fix_metabox();
