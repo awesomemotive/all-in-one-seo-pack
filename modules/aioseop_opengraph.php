@@ -1401,6 +1401,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$thumbnail = set_url_scheme( $thumbnail );
 			}
 
+			/* *** HANDLE IMAGE DIMENSIONS *** */
+			// TODO When Image ID is available, use meta data for image dimensions.
 			$width  = '';
 			$height = '';
 			if ( ! empty( $thumbnail ) ) {
@@ -1418,6 +1420,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				}
 			}
 
+			/* *** HANDLE VIDEO *** */
 			if ( ! empty( $video ) ) {
 				if ( ! empty( $metabox['aioseop_opengraph_settings_videowidth'] ) ) {
 					$videowidth = $metabox['aioseop_opengraph_settings_videowidth'];
@@ -1584,7 +1587,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						}
 
 						/**
-						 * This is to accomodate multiple fb:admins on separate lines.
+						 * This is to accommodate multiple fb:admins on separate lines.
 						 *
 						 * @TODO Eventually we'll want to put this in its own function so things like images work too.
 						 */
