@@ -31,8 +31,8 @@ function aioseop_gutenberg_fix_metabox() {
  * Swaps the CSS depending on PHP version
  *
  * @since 3.2.9
- * @return void
  *
+ * @return void
  */
 function aioseop_swap_css() {
 	global $wp_version;
