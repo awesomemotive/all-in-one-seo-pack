@@ -1483,7 +1483,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'og:image'               => $thumbnail,
 					'og:image:width'         => $width,
 					'og:image:height'        => $height,
-					'og:video'               => $video,
+					'og:video'               => isset( $video ) ? $video : '',
 					'og:video:width'         => isset( $videowidth ) ? $videowidth : '',
 					'og:video:height'        => isset( $videoheight ) ? $videoheight : '',
 					'fb:admins'              => $key,
@@ -1617,7 +1617,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @param string $value The value that is proposed to be shown in the tag.
 		 * @param string $network The social network.
 		 * @param string $meta_tag The meta tag without the network name prefixed.
-		 * @param string $network_meta_tag The meta tag with the network name prefixed. This is not always $network:$meta_tag.
 		 * @param array $extra_params Extra parameters that might be required to process the meta tag.
 		 * @return string The final value that will be shown.
 		 */
@@ -1631,6 +1630,42 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					break;
 			}
 
+			// TODO Remove when `$tmp_meta_slug` is removed from 'aiosp_opengraph_disable_meta_tag_truncation' filter.
+			$meta_keys = array(
+				'facebook' => array(
+					'og:type'                => 'type',
+					'og:title'               => 'title',
+					'og:description'         => 'description',
+					'og:url'                 => 'url',
+					'og:site_name'           => 'sitename',
+					'og:image'               => 'thumbnail',
+					'og:image:width'         => 'width',
+					'og:image:height'        => 'height',
+					'og:video'               => 'video',
+					'og:video:width'         => 'videowidth',
+					'og:video:height'        => 'videoheight',
+					'fb:admins'              => 'key',
+					'fb:app_id'              => 'appid',
+					'article:section'        => 'section',
+					'article:tag'            => 'tag',
+					'article:published_time' => 'published_time',
+					'article:modified_time'  => 'modified_time',
+					'article:publisher'      => 'publisher',
+					'article:author'         => 'author',
+				),
+				'twitter'  => array(
+					'twitter:card'        => 'card',
+					'twitter:site'        => 'site',
+					'twitter:creator'     => 'creator',
+					'twitter:domain'      => 'domain',
+					'twitter:title'       => 'title',
+					'twitter:description' => 'description',
+					'twitter:image'       => 'twitter_thumbnail',
+				),
+			);
+
+			$tmp_meta_slug = $meta_keys[ $network ][ $meta_tag ];
+
 			/**
 			 * Disables truncation of meta tags. Return true to shortcircuit and disable truncation.
 			 *
@@ -1642,10 +1677,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			 *
 			 * @param bool The value that is proposed to be shown in the tag.
 			 * @param string $network The social network.
-			 * @param string $meta_tag The meta tag without the network name prefixed.
-			 * @param array $extra_params Extra parameters that might be required to process the meta tag.
+			 * @param string $tmp_meta_slug The meta tag without the network name prefixed.
+			 * @param string $meta_tag The meta tag with the network name prefixed. This is not always $network:$meta_tag.
 			 */
-			if ( true === apply_filters( $this->prefix . 'disable_meta_tag_truncation', false, $network, $meta_tag ) ) {
+			if ( true === apply_filters( $this->prefix . 'disable_meta_tag_truncation', false, $network, $tmp_meta_slug, $meta_tag ) ) {
 				return $value;
 			}
 
