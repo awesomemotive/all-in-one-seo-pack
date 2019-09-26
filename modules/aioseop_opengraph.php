@@ -1127,9 +1127,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					}
 				}
 				if ( ! empty( $this->options['aiosp_opengraph_homeimage'] ) ) {
-					$thumbnail = $this->options['aiosp_opengraph_homeimage'];
+					$image = $this->options['aiosp_opengraph_homeimage'];
 				} else {
-					$thumbnail = $this->options['aiosp_opengraph_dimg'];
+					$image = $this->options['aiosp_opengraph_dimg'];
 				}
 
 				/* If Use AIOSEO Title and Desc Selected */
