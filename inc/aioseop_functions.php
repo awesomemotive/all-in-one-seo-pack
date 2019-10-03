@@ -1428,6 +1428,7 @@ if ( ! function_exists( 'aioseop_get_page_number' ) ) {
 
 		return $page_number;
 	}
+}
 
 /** Gets the major version of a sementic plugin version.
  *
