@@ -3,7 +3,7 @@ Contributors: hallsofmontezuma, semperplugins, wpsmort, arnaudbroes
 Tags: SEO, Google Search Console, XML Sitemap, meta description, meta title, noindex
 Requires at least: 4.7
 Tested up to: 5.2
-Stable tag: 3.2.7
+Stable tag: 3.2.9
 License: GPLv2 or later
 Requires PHP: 5.2.4
 
@@ -23,6 +23,7 @@ First created in 2007, see why AIOSEO is one of the all time most downloaded plu
 
 * XML Sitemap support - submit your sitemap to Google and Bing and improve your SEO
 * Image XML Sitemap submitted to Google and Bing to improve your Image SEO
+* RSS Sitemap
 * Google AMP support (Accelerated Mobile Pages)
 * Google Analytics support
 * Schema.org Markup
