@@ -106,7 +106,8 @@ if ( ! class_exists( 'aioseop_welcome' ) ) {
 				return;
 			}
 
-			if ( ( AIOSEOP_VERSION === $seen ) || ( true !== $activate ) ) {
+			// Compare the major versions so we don't show the welcome screen on minor versions.
+			if ( ( get_major_version( AIOSEOP_VERSION ) === get_major_version( $seen ) ) || ( true !== $activate ) ) {
 				return;
 			}
 
