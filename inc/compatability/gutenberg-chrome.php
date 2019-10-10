@@ -20,6 +20,10 @@ aioseop_chrome_fix_overlapping_metabox();
  * @return void
  */
 function aioseop_chrome_fix_overlapping_metabox() {
+	if( ! isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+		return;
+	}
+
 	if ( false !== stripos( $_SERVER['HTTP_USER_AGENT'], 'Chrome/77.' ) ) {
 		add_action(
 			'admin_head',
