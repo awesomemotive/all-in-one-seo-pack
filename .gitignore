@@ -31,7 +31,10 @@ ehthumbs.db
 #############
 .htaccess
 
+# Node.js
+package-lock.json
+
 # Composer #
 #############
 vendor/
-package-lock.json
+composer.lock
