@@ -4111,7 +4111,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 *
 		 * Allows or prevents the use of schema on AMP generated posts/pages.
 		 *
-		 * @since 3.3
+		 * @since 3.3.0
 		 *
 		 * @param bool $var True to enable, and false to disable.
 		 */
