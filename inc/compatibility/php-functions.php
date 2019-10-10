@@ -33,8 +33,8 @@ if ( ! function_exists( 'parse_ini_string' ) ) {
 	 * @since ?
 	 * @since Moved from inc/aioseop_functions.php to inc/compatibility/php-functions.php
 	 *
-	 * @param $string
-	 * @param $process_sections
+	 * @param string $string
+	 * @param bool $process_sections
 	 * @return array|bool
 	 */
 	function parse_ini_string( $string, $process_sections ) {
