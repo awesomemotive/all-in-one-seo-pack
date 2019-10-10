@@ -4094,36 +4094,38 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	/**
 	 * Add Hooks for AMP.
 	 *
-	 * @since 3.3
+	 * @since 3.3.0
 	 */
 	protected function add_hooks_amp() {
-		if ( ! is_admin() ) {
-			global $aioseop_options;
+		if ( is_admin() ) {
+			return;	
+		}
+		
+		global $aioseop_options;
 
-			// Add AIOSEOP's output to AMP.
-			add_action( 'amp_post_template_head', array( $this, 'amp_head' ), 11 );
+		// Add AIOSEOP's output to AMP.
+		add_action( 'amp_post_template_head', array( $this, 'amp_head' ), 11 );
 
-			/**
-			 * AIOSEOP AMP Schema Enable/Disable
-			 *
-			 * Allows or prevents the use of schema on AMP generated posts/pages.
-			 *
-			 * @since 3.3
-			 *
-			 * @param bool $var True to enable, and false to disable.
-			 */
-			$use_schema = apply_filters( 'aioseop_amp_schema', true );
-			if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && (bool) $aioseop_options['aiosp_schema_markup'] && $use_schema ) {
-				// Removes AMP's Schema data to prevent any conflicts/duplications with AIOSEOP's.
-				add_action( 'amp_post_template_head', array( $this, 'remove_hooks_amp_schema' ), 9 );
-			}
+		/**
+		 * AIOSEOP AMP Schema Enable/Disable
+		 *
+		 * Allows or prevents the use of schema on AMP generated posts/pages.
+		 *
+		 * @since 3.3
+		 *
+		 * @param bool $var True to enable, and false to disable.
+		 */
+		$use_schema = apply_filters( 'aioseop_amp_schema', true );
+		if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && (bool) $aioseop_options['aiosp_schema_markup'] && $use_schema ) {
+			// Removes AMP's Schema data to prevent any conflicts/duplications with AIOSEOP's.
+			add_action( 'amp_post_template_head', array( $this, 'remove_hooks_amp_schema' ), 9 );
 		}
 	}
 
 	/**
 	 * Remove Hooks with AMP's Schema.
 	 *
-	 * @since 3.3
+	 * @since 3.3.0
 	 */
 	public function remove_hooks_amp_schema() {
 		// Remove AMP Schema hook used for outputting data.
@@ -4202,8 +4204,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @todo Change void returns to empty string returns.
 	 *
 	 * @since 2.3.11.5
-	 * @since 3.3 Fix loose comparator reading empty string in $description as false and returning. #2875
-	 * @since 3.3 Add Schema to AMP. #506
+	 * @since 3.3.0 Fix loose comparator reading empty string in $description as false and returning. #2875
+	 * @since 3.3.0 Add Schema to AMP. #506
 	 *
 	 * @return void
 	 */
@@ -4251,7 +4253,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		 *
 		 * Allows or prevents the use of schema on AMP generated posts/pages. Use __return_false to disable.
 		 *
-		 * @since 3.3
+		 * @since 3.3.0
 		 *
 		 * @param bool $var True to enable, and false to disable.
 		 */
@@ -4267,7 +4269,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * Checks whether the current CPT should show the SEO tags.
 	 *
-	 * @since 2.9
+	 * @since 2.9.0
 	 *
 	 * @todo Remove this as it is only a simple boolean check.
 	 *
