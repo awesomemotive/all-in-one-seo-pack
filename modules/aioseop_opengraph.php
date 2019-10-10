@@ -109,7 +109,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				add_action( 'wp', array( $this, 'type_setup' ) );
 			}
 
-			if ( ! is_admin() || defined( 'DOING_AJAX' ) || defined( 'AIOSEOP_UNIT_TESTING' ) ) {
+			if ( ! is_admin() || wp_doing_ajax() || defined( 'AIOSEOP_UNIT_TESTING' ) ) {
 				$this->do_opengraph();
 			}
 			// Set variables after WordPress load.
@@ -1627,7 +1627,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			) {
 				add_filter( 'language_attributes', array( &$this, 'add_attributes' ) );
 			}
-			if ( ! defined( 'DOING_AJAX' ) ) {
+			if ( ! wp_doing_ajax() ) {
 				add_action( 'aioseop_modules_wp_head', array( &$this, 'add_meta' ), 5 );
 				// Add social meta to AMP plugin.
 				if ( apply_filters( 'aioseop_enable_amp_social_meta', true ) === true ) {
