@@ -34,3 +34,4 @@ ehthumbs.db
 # Composer #
 #############
 vendor/
+package-lock.json
