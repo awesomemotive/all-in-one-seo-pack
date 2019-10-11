@@ -1509,10 +1509,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			// Issue #1848 ( https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/1848 ).
 			// Issue #2867 ( https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/2867 ).
 			if ( is_ssl() ) {
-				$meta['facebook'] += array( 'thumbnail_1' => 'og:image:secure_url' );
-				$thumbnail_1       = $thumbnail;
-				$meta['facebook'] += array( 'video_1' => 'og:video:secure_url' );
-				$video_1           = $video;
+				$meta['facebook'] += array( 'og:image:secure_url' => $thumbnail );
+				$meta['facebook'] += array( 'og:video:secure_url' => $video );
 			}
 
 			/* *** RENDER DATA *** */
@@ -1560,6 +1558,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'twitter:image'       => 'twitter_thumbnail',
 				),
 			);
+			if ( is_ssl() ) {
+				$meta_keys['facebook'] += array( 'og:image:secure_url' => 'thumbnail_1' );
+				$meta_keys['facebook'] += array( 'og:video:secure_url' => 'video_1' );
+			}
 
 			foreach ( $meta as $k1_social_network => $v1_data ) {
 				foreach ( $v1_data as $k2_meta_tag => $v2_meta_value ) {
@@ -1663,6 +1665,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'twitter:image'       => 'twitter_thumbnail',
 				),
 			);
+			if ( is_ssl() ) {
+				$meta_keys['facebook'] += array( 'og:image:secure_url' => 'thumbnail_1' );
+				$meta_keys['facebook'] += array( 'og:video:secure_url' => 'video_1' );
+			}
 
 			$tmp_meta_slug = $meta_keys[ $network ][ $meta_tag ];
 
