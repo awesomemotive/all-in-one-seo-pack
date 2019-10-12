@@ -422,8 +422,8 @@ class AIOSEOP_Helper {
 			'aiosp_schema_organization_name'    => __( 'Enter your organization or business name.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_organization_logo'    => __( 'Add a logo that represents your organization or business. The image must be in PNG, JPG or GIF format and a minimum size of 112px by 112px. If no image is selected, then the plugin will try to use the logo in the Customizer settings.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_person_user'          => __( 'Select the primary owner for your site from the list of users. Only users with the role of Author, Editor or Administrator will be listed here. Alternatively, you can choose Manually Enter to manually enter the site owner\'s name.', 'all-in-one-seo-pack' ),
-			'aiosp_schema_person_manual_name'   => __( 'Enter the name of the site owner here.' ),
-			'aiosp_schema_person_manual_image'  => __( 'Upload or enter the URL for the site owner\'s image or avatar.' ),
+			'aiosp_schema_person_manual_name'   => __( 'Enter the name of the site owner here.', 'all-in-one-seo-pack' ),
+			'aiosp_schema_person_manual_image'  => __( 'Upload or enter the URL for the site owner\'s image or avatar.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_phone_number'         => __( 'Enter the primary phone number your organization or business. You must include the country code and the phone number must use the standard format for your country, for example: 1-888-888-8888.', 'all-in-one-seo-pack' ),
 			'aiosp_schema_contact_type'         => __( 'Select the type of contact for the phone number you have entered.', 'all-in-one-seo-pack' ),
 
