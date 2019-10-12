@@ -4100,7 +4100,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( is_admin() ) {
 			return;
 		}
-		
 		global $aioseop_options;
 
 		// Add AIOSEOP's output to AMP.
