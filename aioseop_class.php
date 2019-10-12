@@ -4098,7 +4098,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 */
 	protected function add_hooks_amp() {
 		if ( is_admin() ) {
-			return;	
+			return;
 		}
 		
 		global $aioseop_options;
