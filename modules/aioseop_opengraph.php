@@ -1526,42 +1526,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			);
 
 			// TODO Remove when `$tmp_meta_slug` is removed from 'aiosp_opengraph_meta' filter.
-			$meta_keys = array(
-				'facebook' => array(
-					'og:type'                => 'type',
-					'og:title'               => 'title',
-					'og:description'         => 'description',
-					'og:url'                 => 'url',
-					'og:site_name'           => 'sitename',
-					'og:image'               => 'thumbnail',
-					'og:image:width'         => 'width',
-					'og:image:height'        => 'height',
-					'og:video'               => 'video',
-					'og:video:width'         => 'videowidth',
-					'og:video:height'        => 'videoheight',
-					'fb:admins'              => 'key',
-					'fb:app_id'              => 'appid',
-					'article:section'        => 'section',
-					'article:tag'            => 'tag',
-					'article:published_time' => 'published_time',
-					'article:modified_time'  => 'modified_time',
-					'article:publisher'      => 'publisher',
-					'article:author'         => 'author',
-				),
-				'twitter'  => array(
-					'twitter:card'        => 'card',
-					'twitter:site'        => 'site',
-					'twitter:creator'     => 'creator',
-					'twitter:domain'      => 'domain',
-					'twitter:title'       => 'title',
-					'twitter:description' => 'description',
-					'twitter:image'       => 'twitter_thumbnail',
-				),
-			);
-			if ( is_ssl() ) {
-				$meta_keys['facebook'] += array( 'og:image:secure_url' => 'thumbnail_1' );
-				$meta_keys['facebook'] += array( 'og:video:secure_url' => 'video_1' );
-			}
+			$meta_keys = $this->get_reference_meta_keys();
 
 			foreach ( $meta as $k1_social_network => $v1_data ) {
 				foreach ( $v1_data as $k2_meta_tag => $v2_meta_value ) {
@@ -1633,6 +1598,55 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			}
 
 			// TODO Remove when `$tmp_meta_slug` is removed from 'aiosp_opengraph_disable_meta_tag_truncation' filter.
+			$meta_keys = $this->get_reference_meta_keys();
+
+			$tmp_meta_slug = $meta_keys[ $network ][ $meta_tag ];
+
+			/**
+			 * Disables truncation of meta tags. Return true to shortcircuit and disable truncation.
+			 *
+			 * @todo Remove `$tmp_meta_slug` and remove `$meta_keys`.
+			 *
+			 * @since 3.0
+			 *
+			 * @issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/808
+			 * @issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/2296
+			 * @link https://developer.twitter.com/en/docs/tweets/optimize-with-cards/overview/markup.html
+			 *
+			 * @param bool The value that is proposed to be shown in the tag.
+			 * @param string $network The social network.
+			 * @param string $tmp_meta_slug The meta tag without the network name prefixed.
+			 * @param string $meta_tag The meta tag with the network name prefixed. This is not always $network:$meta_tag.
+			 */
+			if ( true === apply_filters( $this->prefix . 'disable_meta_tag_truncation', false, $network, $tmp_meta_slug, $meta_tag ) ) {
+				return $value;
+			}
+
+			if ( isset( $extra_params['auto_generate_desc'] ) && $extra_params['auto_generate_desc'] ) {
+				switch ( $meta_tag ) {
+					case 'twitter:title':
+						$value = trim( $this->substr( $value, 0, 70 ) );
+						break;
+					case 'og:description':
+					case 'twitter:description':
+						$value = trim( $this->substr( $value, 0, 200 ) );
+						break;
+				}
+			}
+
+			return $value;
+		}
+
+		/**
+		 * Get Reference Meta Keys Array.
+		 *
+		 * TODO Remove when `$tmp_meta_slug` is removed from 'aiosp_opengraph_disable_meta_tag_truncation' & 'aiosp_opengraph_meta' filter.
+		 *
+		 * @since 3.3
+		 *
+		 * @return array
+		 */
+		private function get_reference_meta_keys() {
 			$meta_keys = array(
 				'facebook' => array(
 					'og:type'                => 'type',
@@ -1670,41 +1684,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$meta_keys['facebook'] += array( 'og:video:secure_url' => 'video_1' );
 			}
 
-			$tmp_meta_slug = $meta_keys[ $network ][ $meta_tag ];
-
-			/**
-			 * Disables truncation of meta tags. Return true to shortcircuit and disable truncation.
-			 *
-			 * @todo Remove `$tmp_meta_slug` and remove `$meta_keys`.
-			 *
-			 * @since 3.0
-			 *
-			 * @issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/808
-			 * @issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/2296
-			 * @link https://developer.twitter.com/en/docs/tweets/optimize-with-cards/overview/markup.html
-			 *
-			 * @param bool The value that is proposed to be shown in the tag.
-			 * @param string $network The social network.
-			 * @param string $tmp_meta_slug The meta tag without the network name prefixed.
-			 * @param string $meta_tag The meta tag with the network name prefixed. This is not always $network:$meta_tag.
-			 */
-			if ( true === apply_filters( $this->prefix . 'disable_meta_tag_truncation', false, $network, $tmp_meta_slug, $meta_tag ) ) {
-				return $value;
-			}
-
-			if ( isset( $extra_params['auto_generate_desc'] ) && $extra_params['auto_generate_desc'] ) {
-				switch ( $meta_tag ) {
-					case 'twitter:title':
-						$value = trim( $this->substr( $value, 0, 70 ) );
-						break;
-					case 'og:description':
-					case 'twitter:description':
-						$value = trim( $this->substr( $value, 0, 200 ) );
-						break;
-				}
-			}
-
-			return $value;
+			return $meta_keys;
 		}
 
 		/**
