@@ -2905,7 +2905,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			if ( empty( $aioseop_options['aiosp_skip_excerpt'] ) ) {
 				$description = $post->post_excerpt;
 			}
-			if ( ! $description && empty( $aioseop_options['aiosp_skip_excerpt'] ) {
+			if ( ! $description ) {
 				if ( ! AIOSEOPPRO || ( AIOSEOPPRO && apply_filters( 'aiosp_generate_descriptions_from_content', true, $post ) ) ) {
 					$content = $post->post_content;
 					if ( ! empty( $aioseop_options['aiosp_run_shortcodes'] ) ) {
