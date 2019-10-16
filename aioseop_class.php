@@ -2900,7 +2900,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( ! empty( $post ) && post_password_required( $post ) ) {
 			return $description;
 		}
-		
 		if ( ! $description && ! empty( $aioseop_options['aiosp_generate_descriptions'] ) ) {
 			if ( empty( $aioseop_options['aiosp_skip_excerpt'] ) ) {
 				$description = $post->post_excerpt;
