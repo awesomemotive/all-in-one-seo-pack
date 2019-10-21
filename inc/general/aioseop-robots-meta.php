@@ -296,7 +296,7 @@ class AIOSEOP_Robots_Meta {
 	 */
 	private function get_noindexed_taxonomies() {
 		global $aioseop_options;
-		if ( AIOSEOPPRO && isset( $aioseop_options['aiosp_tax_noindex'] ) && ! empty( $aioseop_options['aiosp_tax_noindex'] ) ) {
+		if ( isset( $aioseop_options['aiosp_tax_noindex'] ) && ! empty( $aioseop_options['aiosp_tax_noindex'] ) ) {
 			return $aioseop_options['aiosp_tax_noindex'];
 		}
 		return array();
