@@ -195,14 +195,14 @@ class AIOSEOP_Robots_Meta {
 	/**
 	 * The has_post_meta() function.
 	 *
-	 * Checks whether post meta exists for the current page.
+	 * Checks whether the current page can have post meta.
 	 *
 	 * @since 3.3.0
 	 *
 	 * @return bool
 	 */
 	private function has_post_meta() {
-		if ( ! is_date() && ! is_author() && ! is_search() ) {
+		if ( ! is_date() && ! is_author() && ! is_search() && ! is_404() ) {
 			return true;
 		}
 		return false;
