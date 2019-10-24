@@ -3679,7 +3679,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			case 'toplevel_page_' . AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class':
 				wp_enqueue_script(
 					'aioseop-count-chars',
-					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.min.js',
+					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.js',
 					array(),
 					AIOSEOP_VERSION,
 					true
