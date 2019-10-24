@@ -125,8 +125,9 @@
 .aioseop input[type="text"], 
 .aioseop input[type="url"]  {
 	color: #515151;
-	min-height: 35px;
-	padding: 10px;
+	min-height: 40px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	font-size: 14px;
 	width: 95%;
 	max-width: 600px;
