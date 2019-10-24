@@ -3,69 +3,90 @@
  *
  * @since 2.9.2
  * @since 3.2.0 Moved to its own file.
+ * @since 3.3.0 Refactored to fix bugs.
  */
 
+let extraTitleLength = parseInt( characterCounter.extraTitleLength, 10 );
 
-var aiosp_title_extra = parseInt( aioseop_count_chars.extraTitleLength, 10 );
+$( function() {
+	let inputField;
+	let cntField;
+	let fieldSize;
 
-jQuery( document ).ready( function() {
-	aioseopInitCounting();
+	aioseopInitCountChars();
+
+	/**
+	 * Adds the event listener to all elements with .aioseop_count_chars class.
+	 *
+	 * @since ?
+	 * @since 3.3.0 Refactored.
+	 * 
+	 * @return void
+	 */
+	function aioseopInitCountChars() {
+		$('.aioseop_count_chars').on('keyup keydown', function () {
+			inputField = $(this);
+			cntField = $(this).parent().find( '[name="' + $(this).attr('data-length-field') + '"]')
+			aioseopCountChars();
+		});
+	}
+
+	/**
+	 * Counts the characters of a certain field and displays this on the front-end.
+	 * 
+	 *
+	 * @since 1.0.0
+	 * @since 2.9.1 Fix JS conflict with LearnDash and function name.
+	 * @since 3.3.0 Refactored.
+	 *
+	 * @return void
+	 */
+	function aioseopCountChars() {
+		let extra = 0;
+
+		if ( ( 'aiosp_title' === inputField.attr('name') ) && ( 'undefined' !== typeof extraTitleLength) ) {
+			extra = extraTitleLength;
+		}
+
+		cntField.val( +inputField.val().length + extra );
+
+		if ('undefined' !== typeof inputField.attr('size')) {
+			fieldSize = +inputField.attr('size');
+		} else {
+			fieldSize = +inputField.attr('rows') * +inputField.attr('cols');
+		}
+
+		aioseopChangeCountBackground();
+	}
+
+	/**
+	 * Changes the background colour of the character counter field based on the amount of characters.
+	 * 
+	 * @since 3.3.0
+	 * 
+	 * @return void
+	 */
+	function aioseopChangeCountBackground() {
+
+		if (+cntField.val() > +fieldSize) {
+			cntField.removeClass().addClass('aioseop_count_chars_past_treshold');
+		}
+
+		else if (('aiosp_title' === inputField.attr('name')) || ('aiosp_home_title' === inputField.attr('name'))) {
+			if (+cntField.val() > (+fieldSize - 6)) {
+				cntField.removeClass().addClass('aioseop_count_chars_near_treshold');
+			} else {
+				cntField.removeClass().addClass('aioseop_count_chars_below_treshold');
+			}
+		}
+
+		else {
+			if (+cntField.val() > (+fieldSize - 10)) {
+				cntField.removeClass().addClass('aioseop_count_chars_near_treshold');
+			} else {
+				cntField.removeClass().addClass('aioseop_count_chars_below_treshold');
+			}
+		}
+	}
+
 });
-
-/**
- * AIOSEOP Init Counting
- *
- * @since ?
- */
-function aioseopInitCounting(){
-	/* count them characters */
-	jQuery( '.aioseop_count_chars' ).on('keyup keydown', function(){
-		aioseopCountChars( jQuery(this).eq(0), jQuery(this).parent().find('[name="' + jQuery(this).attr('data-length-field') + '"]').eq(0));
-	});
-	jQuery( '.aioseop_count_chars' ).each(function(){
-		aioseopCountChars( jQuery(this).eq(0), jQuery(this).parent().find('[name="' + jQuery(this).attr('data-length-field') + '"]').eq(0));
-	});
-}
-
-/**
- * @summary Counts characters.
- *
- * @since 1.0.0
- * @since 2.9.1 Fix JS conflict with LearnDash and function name.
- *
- * @param Object $field.
- * @param Object $cntfield.
- * @return Mixed.
- */
-function aioseopCountChars( field, cntfield ) {
-	var extra = 0;
-	var field_size;
-	if ( ( field.attr('name') === 'aiosp_title' ) && ( typeof aiosp_title_extra !== 'undefined' ) ) {
-		extra = aiosp_title_extra;
-	}
-	cntfield.val( field.val().length + extra );
-	if ( typeof field.attr('size') !== 'undefined' ) {
-		field_size = field.attr('size');
-	} else {
-		field_size = field.attr('rows') * field.attr('cols');
-	}
-	field_size = parseInt(field_size, 10);
-	if ( field_size < 10 ) {
-		return;
-	}
-	if ( cntfield.val() > field_size ) {
-		cntfield.removeClass().addClass('aioseop_count_ugly');
-	} else if ( ( 'aiosp_title' === field.attr('name' ) ) || ( 'aiosp_home_title' === field.attr('name') ) ) {
-		if ( cntfield.val() > ( field_size - 6 ) ) {
-			cntfield.removeClass().addClass('aioseop_count_bad');
-		} else {
-			cntfield.removeClass().addClass('aioseop_count_good');
-		}
-	} else {
-		if ( cntfield.val() > ( field_size - 10 ) ) {
-			cntfield.removeClass().addClass('aioseop_count_bad');
-		} else {
-			cntfield.removeClass().addClass('aioseop_count_good');
-		}
-	}
-}
