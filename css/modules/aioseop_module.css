@@ -1106,7 +1106,13 @@ table.aioseop_table th {
 }
 
 .aioseop_input input[type="checkbox"]:before {
+	float: left;
+	display: inline-block;
+	vertical-align: middle;
+	width: 16px;
+	content: "\f147";
     margin: -3px 0 0 -5px;
+	font: normal 21px/1 dashicons;
     color: white;
 }
 
