@@ -119,6 +119,9 @@ function aioseopUpdatePreviewSnippet() {
 			snippetDescription.text(postExcerpt);
 			aioseopDescription.attr('placeholder', postExcerpt);
 		}
+	} else {
+		snippetDescription.text("");
+		aioseopDescription.attr('placeholder', "");
 	}
 
 	if('' !== metaboxDescription) {
