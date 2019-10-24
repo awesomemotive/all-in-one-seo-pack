@@ -3651,6 +3651,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		switch ( $hook_suffix ) {
 			case 'post.php':
 			case 'post-new.php':
+			case 'term.php':
+
+				$title_format = $this->get_preview_snippet_title();
+				$length = strlen( preg_replace('/<span.*\/span>/', '', $title_format) );
+
 				wp_enqueue_script(
 					'aioseop-preview-snippet',
 					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-preview-snippet.js',
@@ -3681,7 +3686,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					true
 				);
 				$count_chars_data = array(
-					'extraTitleLength' => (int) $extra_title_len,
+					'extraTitleLength' => $extra_title_len,
 				);
 				wp_localize_script( 'aioseop-count-chars', 'characterCounter', $count_chars_data );
 				break;
