@@ -3654,7 +3654,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			case 'term.php':
 
 				$title_format = $this->get_preview_snippet_title();
-				$length = strlen( preg_replace('/<span.*\/span>/', '', $title_format) );
+				$extra_title_len = strlen( preg_replace('/<span.*\/span>/', '', $title_format) );
 
 				wp_enqueue_script(
 					'aioseop-preview-snippet',
