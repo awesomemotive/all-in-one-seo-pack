@@ -3658,7 +3658,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 				wp_enqueue_script(
 					'aioseop-preview-snippet',
-					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-preview-snippet.js',
+					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-preview-snippet.min.js',
 					array(),
 					AIOSEOP_VERSION
 				);
@@ -3680,7 +3680,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			case 'toplevel_page_' . AIOSEOP_PLUGIN_DIRNAME . '/aioseop_class':
 				wp_enqueue_script(
 					'aioseop-count-chars',
-					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.js',
+					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.min.js',
 					array(),
 					AIOSEOP_VERSION,
 					true

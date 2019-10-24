@@ -1812,14 +1812,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		public function admin_enqueue_scripts( $hook_suffix ) {
 			wp_enqueue_script(
 				'aioseop-opengraph-script',
-				AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_opengraph.js',
+				AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_opengraph.min.js',
 				array(),
 				AIOSEOP_VERSION
 			);
 
 			wp_enqueue_script(
 				'aioseop-count-chars',
-				AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.js',
+				AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.min.js',
 				array(),
 				AIOSEOP_VERSION
 			);
