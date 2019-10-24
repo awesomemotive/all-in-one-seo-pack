@@ -1827,7 +1827,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			$count_chars_data = array(
 				'extraTitleLength' => 0,
 			);
-			wp_localize_script( 'aioseop-count-chars', 'aioseop_count_chars', $count_chars_data );
+			wp_localize_script( 'aioseop-count-chars', 'characterCounter', $count_chars_data );
 
 			// Dev note: If certain JS files need to be restricted to select screens, then follow concept
 			// used in `All_in_One_SEO_Pack::admin_enqueue_scripts()` (v2.9.1); which uses the `$hook_suffix`
