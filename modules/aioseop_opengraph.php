@@ -1457,11 +1457,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				}
 			}
 
-			ob_start();
-			var_dump( $thumbnail );
-			$imp_to_file = ob_get_clean();
-			file_put_contents('/var/www/Test/test.html', $imp_to_file, FILE_APPEND);
-
 			$width  = '';
 			$height = '';
 			if ( ! empty( $thumbnail ) ) {
