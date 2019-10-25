@@ -1442,7 +1442,25 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			if ( ! empty( $thumbnail ) ) {
 				$thumbnail = esc_url( $thumbnail );
 				$thumbnail = set_url_scheme( $thumbnail );
+
+				$image_id = aioseop_get_attachment_id( $thumbnail );
+				if ( $image_id ) {
+					if ( ! empty( $img_type ) && $img_type == 'featured' ) {
+						$size  = apply_filters( 'aioseop_thumbnail_size', apply_filters( 'post_thumbnail_size', 'large' ) );
+					} else {
+						$size  = apply_filters( 'aioseop_attachment_size', 'large' );
+					}
+					$image_src = wp_get_attachment_image_src( $image_id, $size );
+					if ( $image_src ) {
+						$thumbnail = $image_src[0];
+					}
+				}
 			}
+
+			ob_start();
+			var_dump( $thumbnail );
+			$imp_to_file = ob_get_clean();
+			file_put_contents('/var/www/Test/test.html', $imp_to_file, FILE_APPEND);
 
 			$width  = '';
 			$height = '';

@@ -1429,3 +1429,70 @@ function get_major_version( $version ) {
 
 	return $major_version;
 }
+
+if ( ! function_exists( 'aioseop_get_attachment_id' ) ) {
+	/**
+	 * Get the Attachment ID for a given image URL.
+	 *
+	 * @param  string $url
+	 *
+	 * @return boolean|integer
+	 */
+	function aioseop_get_attachment_id( $url ) {
+
+		$dir = wp_upload_dir();
+
+		// baseurl never has a trailing slash
+		if ( false === strpos( $url, $dir['baseurl'] . '/' ) ) {
+			// URL points to a place outside of upload directory
+			return false;
+		}
+
+		$file  = basename( $url );
+		$query = array(
+			'post_type'  => 'attachment',
+			'fields'     => 'ids',
+			'meta_query' => array(
+				array(
+					'key'     => '_wp_attached_file',
+					'value'   => $file,
+					'compare' => 'LIKE',
+				),
+			)
+		);
+
+		// query attachments
+		$ids = get_posts( $query );
+
+		if ( ! empty( $ids ) ) {
+
+			foreach ( $ids as $id ) {
+				// first entry of returned array is the URL
+				$image_src = wp_get_attachment_image_src( $id, 'full' ) ;
+				if ( $url === array_shift( $image_src ) )
+					return $id;
+			}
+		}
+
+		$query['meta_query'][0]['key'] = '_wp_attachment_metadata';
+
+		// query attachments again
+		$ids = get_posts( $query );
+
+		if ( empty( $ids) )
+			return false;
+
+		foreach ( $ids as $id ) {
+
+			$meta = wp_get_attachment_metadata( $id );
+
+			foreach ( $meta['sizes'] as $size => $values ) {
+				$image_src = wp_get_attachment_image_src( $id, $size );
+				if ( $values['file'] === $file && $url === array_shift( $image_src ) )
+					return $id;
+			}
+		}
+
+		return false;
+	}
+}

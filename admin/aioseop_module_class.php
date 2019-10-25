@@ -1907,9 +1907,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				return false;
 			}
 
-			// Check if someone is using built-in WP filter.
-			$size  = apply_filters( 'aioseop_thumbnail_size', apply_filters( 'post_thumbnail_size', 'large' ) );
-			$image = wp_get_attachment_image_src( $post_thumbnail_id, $size );
+			$image = wp_get_attachment_image_src( $post_thumbnail_id, 'large' );
 
 			return $image[0];
 		}
@@ -1942,8 +1940,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			);
 
 			if ( empty( $attachments ) && 'attachment' == get_post_type( $post->ID ) ) {
-				$size  = apply_filters( 'aioseop_attachment_size', 'large' );
-				$image = wp_get_attachment_image_src( $post->ID, $size );
+				$image = wp_get_attachment_image_src( $post->ID, 'large' );
 			}
 
 			/* If no attachments or image is found, return false. */
@@ -1957,17 +1954,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			/* Loop through each attachment. Once the $order_of_image (default is '1') is reached, break the loop. */
 			foreach ( $attachments as $id => $attachment ) {
 				if ( 1 == ++ $i ) {
-					$size  = apply_filters( 'aioseop_attachment_size', 'large' );
-					$image = wp_get_attachment_image_src( $id, $size );
-					$alt   = trim( strip_tags( get_post_field( 'post_excerpt', $id ) ) );
+					$image = wp_get_attachment_image_src( $id, 'large' );
 					break;
 				}
 			}
 
 			/* Return the image URL. */
-
 			return $image[0];
-
 		}
 
 		/**
