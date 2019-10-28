@@ -664,6 +664,26 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				),
 				// Add initial options below.
 			),
+			'schema_person_manual_name'   => array(
+				/* translators: Option shown when 'Manually Enter' is selected in Person's Username. Users use this to enter the Person's name for schema Person. */
+				'name'     => __( 'Person\'s Name', 'all-in-one-seo-pack' ),
+				'type'     => 'text',
+				'condshow' => array(
+					'aiosp_schema_markup'          => 1,
+					'aiosp_schema_site_represents' => 'person',
+					'aiosp_schema_person_user'     => '-1',
+				),
+			),
+			'schema_person_manual_image'  => array(
+				/* translators: Option shown when 'Manually Enter' is selected in Person's Username. Users use this to enter the Person's image for schema Person. */
+				'name'     => __( 'Person\'s Image', 'all-in-one-seo-pack' ),
+				'type'     => 'image',
+				'condshow' => array(
+					'aiosp_schema_markup'          => 1,
+					'aiosp_schema_site_represents' => 'person',
+					'aiosp_schema_person_user'     => '-1',
+				),
+			),
 			'schema_phone_number'         => array(
 				/* translators: This is a setting where users can enter a phone number for their organization. This is used for our schema.org markup. */
 				'name'         => __( 'Phone Number', 'all-in-one-seo-pack' ),
@@ -1043,6 +1063,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 					'schema_organization_name',
 					'schema_organization_logo',
 					'schema_person_user',
+					'schema_person_manual_name',
+					'schema_person_manual_image',
 					'schema_phone_number',
 					'schema_contact_type',
 				),
@@ -1104,7 +1126,11 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		);
 		$users     = get_users( $user_args );
 
-		$this->default_options['schema_person_user']['initial_options'] = array();
+		// Person's Username setting.
+		$this->default_options['schema_person_user']['initial_options'] = array(
+			0  => __( '- Select -', 'all-in-one-seo-pack' ),
+			-1 => __( 'Manually Enter', 'all-in-one-seo-pack' ),
+		);
 		foreach ( $users as $user ) {
 			$this->default_options['schema_person_user']['initial_options'][ $user->ID ] = $user->data->user_nicename . ' (' . $user->data->display_name . ')';
 		}
@@ -1188,7 +1214,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			) . '...';
 		}
 		if ( empty( $title_format ) ) {
-			$title = '<span id="' . $args['name'] . '_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title ) ) ) . '</span>';
+			$title = '<span id="' . $args['name'] . '_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title, ENT_COMPAT, 'UTF-8' ) ) ) . '</span>';
 		} else {
 			$title_format = $this->get_preview_snippet_title();
 			$title        = $title_format;
@@ -1356,7 +1382,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string
 	 */
 	private function get_preview_snippet_title_helper( $title_format ) {
-		return '<span id="aiosp_snippet_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title_format ) ) ) . '</span>';
+		return '<span id="aiosp_snippet_title">' . esc_attr( wp_strip_all_tags( html_entity_decode( $title_format, ENT_COMPAT, 'UTF-8' ) ) ) . '</span>';
 	}
 
 	/**
@@ -1602,18 +1628,18 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						$meta = get_post_meta( $post_id, '_aioseop_' . $f, true );
 					}
 					if ( 'title' === $f || 'description' === $f ) {
-						$get_opts[ $field ] = htmlspecialchars( $meta );
+						$get_opts[ $field ] = htmlspecialchars( $meta, ENT_COMPAT, 'UTF-8' );
 					} else {
-						$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ) );
+						$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ), ENT_COMPAT, 'UTF-8' );
 					}
 				} else {
 					if ( ! is_category() && ! is_tag() && ! is_tax() ) {
 						$field = "aiosp_$f";
 						$meta  = get_post_meta( $post_id, '_aioseop_' . $f, true );
 						if ( 'title' === $f || 'description' === $f ) {
-							$get_opts[ $field ] = htmlspecialchars( $meta );
+							$get_opts[ $field ] = htmlspecialchars( $meta, ENT_COMPAT, 'UTF-8' );
 						} else {
-							$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ) );
+							$get_opts[ $field ] = htmlspecialchars( stripslashes( $meta ), ENT_COMPAT, 'UTF-8' );
 						}
 					}
 				}
@@ -2159,7 +2185,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return string User -readable nice words for a given request.
 	 */
 	function request_as_words( $request ) {
-		$request     = htmlspecialchars( $request );
+		$request     = htmlspecialchars( $request, ENT_COMPAT, 'UTF-8' );
 		$request     = str_replace( '.html', ' ', $request );
 		$request     = str_replace( '.htm', ' ', $request );
 		$request     = str_replace( '.', ' ', $request );
@@ -2912,12 +2938,12 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( ! empty( $post ) && post_password_required( $post ) ) {
 			return $description;
 		}
-		if ( ! $description ) {
+		if ( ! $description && ! empty( $aioseop_options['aiosp_generate_descriptions'] ) ) {
 			if ( empty( $aioseop_options['aiosp_skip_excerpt'] ) ) {
 				$description = $post->post_excerpt;
 			}
-			if ( ! $description && isset( $aioseop_options['aiosp_generate_descriptions'] ) && $aioseop_options['aiosp_generate_descriptions'] ) {
-				if ( ! AIOSEOPPRO || ( AIOSEOPPRO && apply_filters( $this->prefix . 'generate_descriptions_from_content', true, $post ) ) ) {
+			if ( ! $description ) {
+				if ( ! AIOSEOPPRO || ( AIOSEOPPRO && apply_filters( 'aiosp_generate_descriptions_from_content', true, $post ) ) ) {
 					$content = $post->post_content;
 					if ( ! empty( $aioseop_options['aiosp_run_shortcodes'] ) ) {
 						$content = aioseop_do_shortcodes( $content );
@@ -2974,7 +3000,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$len      = $this->strlen( $text2 );
 		if ( $max < $len ) {
 			if ( function_exists( 'mb_strrpos' ) ) {
-				$pos = mb_strrpos( $text2, ' ', - ( $len - $max ) );
+				$pos = mb_strrpos( $text2, ' ', - ( $len - $max ), 'UTF-8' );
 				if ( false === $pos ) {
 					$pos = $max;
 				}
@@ -3946,7 +3972,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				if ( empty( $aioseop_options['aiosp_taxactive'] ) || ! in_array( 'post_tag', $aioseop_options['aiosp_taxactive'] ) ) {
 					return false;
 				}
-			} elseif ( ! in_array( $post_type, $wp_post_types ) && ! is_front_page() && ! is_post_type_archive( $wp_post_types ) && ! is_404() ) {
+			} elseif ( ! in_array( $post_type, $wp_post_types ) && ! is_front_page() && ! is_post_type_archive( $wp_post_types ) && ! is_404() && ! is_search() ) {
 				return false;
 			}
 		} else {
@@ -4104,11 +4130,56 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				add_action( 'aioseop_modules_wp_head', array( $this, 'aiosp_google_analytics' ) );
 			}
 			add_action( 'wp_head', array( $this, 'wp_head' ), apply_filters( 'aioseop_wp_head_priority', 1 ) );
-			add_action( 'amp_post_template_head', array( $this, 'amp_head' ), 11 );
 			add_action( 'template_redirect', array( $this, 'template_redirect' ), 0 );
 		}
 		add_filter( 'aioseop_description', array( &$this, 'filter_description' ), 10, 3 );
 		add_filter( 'aioseop_title', array( &$this, 'filter_title' ) );
+
+		// Plugin compatibility hooks.
+		// AMP.
+		$this->add_hooks_amp();
+
+		// TODO Move WooCommerce hooks here from __construct().
+	}
+
+	/**
+	 * Add Hooks for AMP.
+	 *
+	 * @since 3.3.0
+	 */
+	protected function add_hooks_amp() {
+		if ( is_admin() ) {
+			return;
+		}
+		global $aioseop_options;
+
+		// Add AIOSEOP's output to AMP.
+		add_action( 'amp_post_template_head', array( $this, 'amp_head' ), 11 );
+
+		/**
+		 * AIOSEOP AMP Schema Enable/Disable
+		 *
+		 * Allows or prevents the use of schema on AMP generated posts/pages.
+		 *
+		 * @since 3.3.0
+		 *
+		 * @param bool $var True to enable, and false to disable.
+		 */
+		$use_schema = apply_filters( 'aioseop_amp_schema', true );
+		if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && (bool) $aioseop_options['aiosp_schema_markup'] && $use_schema ) {
+			// Removes AMP's Schema data to prevent any conflicts/duplications with AIOSEOP's.
+			add_action( 'amp_post_template_head', array( $this, 'remove_hooks_amp_schema' ), 9 );
+		}
+	}
+
+	/**
+	 * Remove Hooks with AMP's Schema.
+	 *
+	 * @since 3.3.0
+	 */
+	public function remove_hooks_amp_schema() {
+		// Remove AMP Schema hook used for outputting data.
+		remove_action( 'amp_post_template_head', 'amp_print_schemaorg_metadata' );
 	}
 
 	/**
@@ -4183,26 +4254,32 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @todo Change void returns to empty string returns.
 	 *
 	 * @since 2.3.11.5
+	 * @since 3.3.0 Fix loose comparator reading empty string in $description as false and returning. #2875
+	 * @since 3.3.0 Add Schema to AMP. #506
 	 *
-	 * @return string|void
+	 * @return void
 	 */
 	function amp_head() {
 		if ( ! $this->is_seo_enabled_for_cpt() ) {
 			return;
 		}
 
-		$post        = $this->get_queried_object();
+		$post = $this->get_queried_object();
+		/**
+		 * AIOSEOP AMP Description.
+		 *
+		 * To disable AMP meta description just __return_false on the aioseop_amp_description filter.
+		 *
+		 * @since ?
+		 *
+		 * @param string $post_description
+		 */
 		$description = apply_filters( 'aioseop_amp_description', $this->get_main_description( $post ) );    // Get the description.
-
-		// To disable AMP meta description just __return_false on the aioseop_amp_description filter.
-		if ( isset( $description ) && false == $description ) {
-			return;
-		}
 
 		global $aioseop_options;
 
 		// Handle the description format.
-		if ( isset( $description ) && ( $this->strlen( $description ) > $this->minimum_description_length ) && ! ( is_front_page() && is_paged() ) ) {
+		if ( isset( $description ) && false !== $description && ( $this->strlen( $description ) > $this->minimum_description_length ) && ! ( is_front_page() && is_paged() ) ) {
 			$description = $this->trim_description( $description );
 			if ( ! isset( $meta_string ) ) {
 				$meta_string = '';
@@ -4219,6 +4296,22 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( ! empty( $meta_string ) ) {
 			echo $meta_string;
 		}
+
+		// Handle Schema.
+		/**
+		 * AIOSEOP AMP Schema Enable/Disable
+		 *
+		 * Allows or prevents the use of schema on AMP generated posts/pages. Use __return_false to disable.
+		 *
+		 * @since 3.3.0
+		 *
+		 * @param bool $var True to enable, and false to disable.
+		 */
+		$use_schema = apply_filters( 'aioseop_amp_schema', true );
+		if ( $use_schema && ! empty( $aioseop_options['aiosp_schema_markup'] ) && (bool) $aioseop_options['aiosp_schema_markup'] ) {
+			$aioseop_schema = new AIOSEOP_Schema_Builder();
+			$aioseop_schema->display_json_ld_head_script();
+		}
 	}
 
 	/**
@@ -4226,7 +4319,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 *
 	 * Checks whether the current CPT should show the SEO tags.
 	 *
-	 * @since 2.9
+	 * @since 2.9.0
 	 *
 	 * @todo Remove this as it is only a simple boolean check.
 	 *
@@ -4446,7 +4539,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		// Handle extra meta fields.
 		foreach ( array( 'page_meta', 'post_meta', 'home_meta', 'front_meta' ) as $meta ) {
 			if ( ! empty( $aioseop_options[ "aiosp_{$meta}_tags" ] ) ) {
-				$$meta = html_entity_decode( stripslashes( $aioseop_options[ "aiosp_{$meta}_tags" ] ), ENT_QUOTES );
+				$$meta = html_entity_decode( stripslashes( $aioseop_options[ "aiosp_{$meta}_tags" ] ), ENT_QUOTES, 'UTF-8' );
 			} else {
 				$$meta = '';
 			}
@@ -4502,7 +4595,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( ! apply_filters( 'aioseop_disable_schema', false ) ) {
 			// Handle Schema.
 			if ( version_compare( PHP_VERSION, '5.5', '>=' ) ) {
-				if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && boolval( $aioseop_options['aiosp_schema_markup'] ) ) {
+				if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) && boolval( $aioseop_options['aiosp_schema_markup'] ) ) { // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.boolvalFound
 					$aioseop_schema = new AIOSEOP_Schema_Builder();
 					$aioseop_schema->display_json_ld_head_script();
 				}
@@ -5658,7 +5751,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	public function filter_description( $value, $truncate = false, $ignore_php_version = false ) {
 		// TODO: change preg_match to version_compare someday when the reason for this condition is understood better.
 		if ( $ignore_php_version || preg_match( '/5.2[\s\S]+/', PHP_VERSION ) ) {
-			$value = htmlspecialchars( wp_strip_all_tags( htmlspecialchars_decode( $value ) ) );
+			$value = htmlspecialchars( wp_strip_all_tags( htmlspecialchars_decode( $value ) ), ENT_COMPAT, 'UTF-8' );
 		}
 		// Decode entities.
 		$value = $this->html_entity_decode( $value );
@@ -5717,7 +5810,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			),
 			$value
 		);
-		return html_entity_decode( $value );
+		return html_entity_decode( $value, ENT_COMPAT, 'UTF-8' );
 	}
 
 	/**
