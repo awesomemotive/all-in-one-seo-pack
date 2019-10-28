@@ -93,11 +93,11 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 			} elseif ( is_month() ) {
 				$current_url = get_month_link( false, false );
 				/* translators: Monthly archive title. %s: Month name and year */
-				$current_name = sprintf( 'Month: %s', get_the_date( _x( 'F Y' ) );
+				$current_name = sprintf( 'Month: %s', get_the_date( 'F Y' );
 			} else {
 				$current_url = get_day_link( false, false, false );
 				/* translators: Daily archive title. %s: Date */
-				$current_name = sprintf( 'Day: %s', get_the_date( _x( 'F j, Y' ) );
+				$current_name = sprintf( 'Day: %s', get_the_date( 'F j, Y' );
 			}
 		} elseif ( is_author() ) {
 			$user_id      = intval( $post->post_author );
