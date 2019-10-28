@@ -133,7 +133,7 @@ before_script:
 script:
   # Run Grunt tasks on PR.
   - if [[ "yes" = $GRUNT && "false" != "$TRAVIS_PULL_REQUEST" ]]; then
-      grunt;
+      grunt build;
     fi
   # Run PHPUnit on PR.
   - if [[ "1" = $PHPUNIT && "false" != "$TRAVIS_PULL_REQUEST" ]]; then

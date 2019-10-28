@@ -202,7 +202,7 @@ class aiosp_common {
 	 * @return bool
 	 */
 	public static function is_url_valid( $url ) {
-		return filter_var( filter_var( $url, FILTER_SANITIZE_URL ), FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED | FILTER_FLAG_HOST_REQUIRED ) !== false;
+		return filter_var( filter_var( $url, FILTER_SANITIZE_URL ), FILTER_VALIDATE_URL ) !== false;
 	}
 
 	/**
