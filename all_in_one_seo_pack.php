@@ -1,5 +1,4 @@
 <?php
-
 /*
 Plugin Name: All In One SEO Pack
 Plugin URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
@@ -446,9 +445,9 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/meta_import.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'inc/translations.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'public/opengraph.php' );
-		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/abstract/aiosep_compatible.php' );
-		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/compat-init.php' );
-		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/php-functions.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatibility/abstract/aiosep_compatible.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatibility/compat-init.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatibility/php-functions.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'public/front.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'public/google-analytics.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/welcome.php' );
@@ -486,7 +485,7 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 
 		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 		// add_action( 'admin_init', 'aioseop_review_plugin_notice' );
-		if ( defined( 'DOING_AJAX' ) && ! empty( $_POST ) && ! empty( $_POST['action'] ) && 'aioseop_ajax_scan_header' === $_POST['action'] ) {
+		if ( wp_doing_ajax() && ! empty( $_POST ) && ! empty( $_POST['action'] ) && 'aioseop_ajax_scan_header' === $_POST['action'] ) {
 			remove_action( 'init', array( $aiosp, 'add_hooks' ) );
 			add_action( 'admin_init', 'aioseop_scan_post_header' );
 			// if the action doesn't run -- pdb.

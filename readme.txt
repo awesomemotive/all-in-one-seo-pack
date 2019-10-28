@@ -23,6 +23,7 @@ First created in 2007, see why AIOSEO is one of the all time most downloaded plu
 
 * XML Sitemap support - submit your sitemap to Google and Bing and improve your SEO
 * Image XML Sitemap submitted to Google and Bing to improve your Image SEO
+* RSS Sitemap
 * Google AMP support (Accelerated Mobile Pages)
 * Google Analytics support
 * Schema.org Markup

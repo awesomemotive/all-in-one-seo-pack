@@ -30,6 +30,10 @@
 		"ajaxurl",
 		"wp",
 		"aiosp_data",
-		"aioseopadmin"
+		"aioseopadmin",
+		"aioseop_count_chars",
+		"aioseop_preview_snippet",
+		"tinymce",
+		"XRegExp"
 	]
 }

@@ -1,34 +1,15 @@
 /**
- * Script for Counting Characters
+ * Counts characters of the title and description fields.
  *
- * @summary Binds input elements and counts characters for Title and Description on Post Edit, Post New,
- *          & AIOSEOP General Settings screens.
- *
- * @author Michael Torbert.
- * @author Semper Fi Web Design.
- * @copyright https://semperplugins.com
- * @version 2.9.2
+ * @since 2.9.2
+ * @since 3.2.0 Moved to its own file.
  */
 
-var aiosp_title_extra = parseInt( aioseop_count_chars.aiosp_title_extra, 10 ); // jshint ignore:line
+
+var aiosp_title_extra = parseInt( aioseop_count_chars.extraTitleLength, 10 );
 
 jQuery( document ).ready( function() {
 	aioseopInitCounting();
-});
-
-/**
- * Preview Snippet
- *
- * @since ?
- * @since 2.9.2 Move from PHP value to JS file
- */
-jQuery(document).ready( function() {
-	jQuery("#aiosp_title_wrapper").bind("input", function() {
-		jQuery("#aiosp_snippet_title").text(jQuery("#aiosp_title_wrapper input").val().replace(/<(?:.|\n)*?>/gm, ""));
-	});
-	jQuery("#aiosp_description_wrapper").bind("input", function() {
-		jQuery("#aioseop_snippet_description").text(jQuery("#aiosp_description_wrapper textarea").val().replace(/<(?:.|\n)*?>/gm, ""));
-	});
 });
 
 /**

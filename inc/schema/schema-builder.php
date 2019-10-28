@@ -158,7 +158,7 @@ class AIOSEOP_Schema_Builder {
 
 		// Encode to json string, and remove string type around shortcodes.
 		if ( version_compare( PHP_VERSION, '5.4', '>=' ) ) {
-			$layout = wp_json_encode( (object) $layout, JSON_UNESCAPED_SLASHES );
+			$layout = wp_json_encode( (object) $layout, JSON_UNESCAPED_SLASHES ); // phpcs:ignore PHPCompatibility.Constants.NewConstants.json_unescaped_slashesFound
 		} else {
 			// PHP <= 5.3 compatibility.
 			$layout = wp_json_encode( (object) $layout );

@@ -2,7 +2,7 @@
 
 # OS environment distro to use.
 # Let `php: -{VERSION}` determine the distro.
-#dist: Xenial
+# distro: Xenial
 
 # Travis CI environment set to handle PHP language.
 language: php
@@ -31,8 +31,11 @@ env:
     - WP_VERSION=5.1.1
     - WP_VERSION=5.0.4
     - WP_VERSION=4.9.10
-    - WP_VERSION=4.8.9
-    - WP_VERSION=4.7.13
+
+# Order of our stages.
+stages:
+  - critical
+  - test
 
 # Additional matrix builds.
 matrix:
@@ -46,58 +49,44 @@ matrix:
       env: WP_VERSION=5.0.4
     - php: 7.3
       env: WP_VERSION=4.9.10
-    - php: 7.3
-      env: WP_VERSION=4.8.9
-    - php: 7.3
-      env: WP_VERSION=4.7.13
     - php: 7.2
       env: WP_VERSION=5.0.4
     - php: 7.2
       env: WP_VERSION=4.9.10
-    - php: 7.2
-      env: WP_VERSION=4.8.9
-    - php: 7.2
-      env: WP_VERSION=4.7.13
     - php: 7.1
       env: WP_VERSION=5.0.4
     - php: 7.1
       env: WP_VERSION=4.9.10
-    - php: 7.1
-      env: WP_VERSION=4.8.9
-    - php: 7.1
-      env: WP_VERSION=4.7.13
   include:
-    - name: "Grunt Tasks"
+    - stage: critical
+      name: "Grunt Task Runner"
       language: node_js
       node_js:
         - "8.11.3"
       env:
         GRUNT=yes
         PHPUNIT=0
-    - name: "WP Multisite"
-      env:
-        WP_MULTISITE=1
-        PHPUNIT=1
-        PHPUNIT_VERSION=local
-    - name: "PHP 5.5 Test (WP <= 5.1)"
-      dist: trusty
-      php: 5.5
-      env:
-        WP_VERSION=5.1
-        PHPUNIT=1
-    - name: "PHP 5.4 Test (WP <= 5.1)"
+    - name: "PHP 5.4 (WP <= 5.1)"
       dist: trusty
       php: 5.4
       env:
         WP_VERSION=5.1
         PHPUNIT=1
+    - name: "PHP 5.5 (WP <= 5.1)"
+      dist: trusty
+      php: 5.5
+      env:
+        WP_VERSION=5.1
+        PHPUNIT=1
+    # - name: "WP Multisite"
+      # env:
+        # WP_MULTISITE=1
+        # PHPUNIT=1
+        # PHPUNIT_VERSION=local
+
   # The allowed configured builds to fail.
   allow_failures:
     - env: WP_MULTISITE=1 PHPUNIT=1 PHPUNIT_VERSION=local
-    - php: 5.3
-      dist: precise
-    - php: 5.2
-      dist: precise
 
 # Cache directories most commonly used; like composer.
 # https://docs.travis-ci.com/user/caching/#arbitrary-directories
@@ -142,9 +131,9 @@ before_script:
   - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
 script:
-  # Run grunt on PR.
+  # Run Grunt tasks on PR.
   - if [[ "yes" = $GRUNT && "false" != "$TRAVIS_PULL_REQUEST" ]]; then
-      grunt;
+      grunt build;
     fi
   # Run PHPUnit on PR.
   - if [[ "1" = $PHPUNIT && "false" != "$TRAVIS_PULL_REQUEST" ]]; then
