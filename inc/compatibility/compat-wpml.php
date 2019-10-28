@@ -1,6 +1,6 @@
 <?php
 /**
- * Compatability with WPML (WordPress Multilingual)
+ * Compatibility with WPML (WordPress Multilingual)
  *
  * @package All_in_One_SEO_Pack
  * @since ?

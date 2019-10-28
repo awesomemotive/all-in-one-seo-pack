@@ -3,7 +3,7 @@
 Plugin Name: All In One SEO Pack
 Plugin URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Description: Out-of-the-box SEO for WordPress. Features like XML Sitemaps, SEO for custom post types, SEO for blogs or business sites, SEO for ecommerce sites, and much more. More than 50 million downloads since 2007.
-Version: 3.2.9
+Version: 3.2.10
 Author: Michael Torbert
 Author URI: https://semperplugins.com/all-in-one-seo-pack-pro-version/
 Text Domain: all-in-one-seo-pack
@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * The original WordPress SEO plugin.
  *
  * @package All-in-One-SEO-Pack
- * @version 3.2.9
+ * @version 3.2.10
  */
 
 if ( ! defined( 'AIOSEOPPRO' ) ) {
@@ -45,7 +45,7 @@ if ( ! defined( 'AIOSEOP_PLUGIN_NAME' ) ) {
 	}
 }
 if ( ! defined( 'AIOSEOP_VERSION' ) ) {
-	define( 'AIOSEOP_VERSION', '3.2.9' );
+	define( 'AIOSEOP_VERSION', '3.2.10' );
 }
 
 /*
@@ -445,9 +445,9 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/meta_import.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'inc/translations.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'public/opengraph.php' );
-		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/abstract/aiosep_compatible.php' );
-		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/compat-init.php' );
-		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatability/php-functions.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatibility/abstract/aiosep_compatible.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatibility/compat-init.php' );
+		require_once( AIOSEOP_PLUGIN_DIR . 'inc/compatibility/php-functions.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'public/front.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'public/google-analytics.php' );
 		require_once( AIOSEOP_PLUGIN_DIR . 'admin/display/welcome.php' );
@@ -485,7 +485,7 @@ if ( ! function_exists( 'aioseop_init_class' ) ) {
 
 		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 		// add_action( 'admin_init', 'aioseop_review_plugin_notice' );
-		if ( defined( 'DOING_AJAX' ) && ! empty( $_POST ) && ! empty( $_POST['action'] ) && 'aioseop_ajax_scan_header' === $_POST['action'] ) {
+		if ( wp_doing_ajax() && ! empty( $_POST ) && ! empty( $_POST['action'] ) && 'aioseop_ajax_scan_header' === $_POST['action'] ) {
 			remove_action( 'init', array( $aiosp, 'add_hooks' ) );
 			add_action( 'admin_init', 'aioseop_scan_post_header' );
 			// if the action doesn't run -- pdb.

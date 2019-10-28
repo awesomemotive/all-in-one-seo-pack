@@ -358,7 +358,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Importer_Exporter' ) ) {
 		function parse_ini_advanced( $string ) {
 			return $this->recursive_parse(
 				$this->parse_ini_helper(
-					parse_ini_string( $string, true )
+					parse_ini_string( $string, true ) // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.parse_ini_stringFound
 				)
 			);
 		}

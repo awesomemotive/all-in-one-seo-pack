@@ -12,6 +12,7 @@ node_modules
 #######
 .idea/
 .idea/vcs.xml
+.vscode/
 
 # OS #
 ######
@@ -30,3 +31,10 @@ ehthumbs.db
 #############
 .htaccess
 
+# Node.js
+package-lock.json
+
+# Composer #
+#############
+vendor/
+composer.lock

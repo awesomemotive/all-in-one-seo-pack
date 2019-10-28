@@ -55,7 +55,7 @@ class AIOSP_Common_Strings {
 		__( 'Click here for documentation on this setting.', 'all-in-one-seo-pack' );
 		__( 'Create RSS Sitemap as well.', 'all-in-one-seo-pack' );
 		__( 'Notify search engines based on the selected schedule, and also update static sitemap daily if in use. (this uses WP-Cron, so make sure this is working properly on your server as well)', 'all-in-one-seo-pack' );
-		__( 'Organize sitemap entries into distinct files in your sitemap. Enable this only if your sitemap contains over 50,000 URLs or the file is over 5MB in size.', 'all-in-one-seo-pack' );
+		__( 'Organize sitemap entries into distinct files in your sitemap. We recommend you enable this setting if your sitemap contains more than 1,000 URLs.', 'all-in-one-seo-pack' );
 		__( 'Allows you to specify the maximum number of posts in a sitemap (up to 50,000).', 'all-in-one-seo-pack' );
 		__( 'Select which Post Types appear in your sitemap.', 'all-in-one-seo-pack' );
 		__( 'Select which taxonomy archives appear in your sitemap', 'all-in-one-seo-pack' );
