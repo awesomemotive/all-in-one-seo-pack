@@ -9,6 +9,11 @@
 if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 
 	require_once( AIOSEOP_PLUGIN_DIR . 'admin/aioseop_module_class.php' ); // Include the module base class.
+	
+	if( AIOSEOPPRO ) {
+		require_once( AIOSEOP_PLUGIN_DIR . 'pro/aioseop_google_tag_manager.php' );
+	}
+
 	/**
 	 * Google Analytics module.
 	 * TODO: Rather than extending the module base class, we should find a better way
@@ -42,6 +47,7 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 		 *
 		 * @since 2.3.9.2
 		 * @since 2.3.14 Refactored to work with autotrack.js.
+		 * @since 3.3.0 Don't run if Google Analytics ID is blank.
 		 *
 		 * @link https://github.com/googleanalytics/autotrack
 		 *
@@ -50,6 +56,11 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 		 */
 		public function google_analytics() {
 			global $aioseop_options;
+
+			if ( empty( $aioseop_options['aiosp_google_analytics_id'] ) ) {
+				return;
+			}
+			
 			// Exclude tracking for users?
 			if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] )
 				&& ! empty( $aioseop_options['aiosp_ga_exclude_users'] )
@@ -66,28 +77,27 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 					}
 				}
 			}
-			if ( ! empty( $aioseop_options['aiosp_google_analytics_id'] ) ) {
-				ob_start();
-				$analytics = $this->universal_analytics();
-				echo $analytics;
-				if ( apply_filters(
-					'aioseop_ga_enable_autotrack',
-					! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && $aioseop_options['aiosp_ga_track_outbound_links'],
-					$aioseop_options
-				) ) {
-					$autotrack = apply_filters(
-						'aiosp_google_autotrack',
-						AIOSEOP_PLUGIN_URL . 'public/js/vendor/autotrack.js'
-					);
-					?><script async src="<?php echo $autotrack; ?>"></script>
-					<?php
-					// Requested indent #921.
-				}
-				$analytics = ob_get_clean();
+			
+			ob_start();
+			$analytics = $this->universal_analytics();
+			echo $analytics;
+			if ( apply_filters(
+				'aioseop_ga_enable_autotrack',
+				! empty( $aioseop_options['aiosp_ga_advanced_options'] ) && $aioseop_options['aiosp_ga_track_outbound_links'],
+				$aioseop_options
+			) ) {
+				$autotrack = apply_filters(
+					'aiosp_google_autotrack',
+					AIOSEOP_PLUGIN_URL . 'public/js/vendor/autotrack.js'
+				);
+				?><script async src="<?php echo $autotrack; ?>"></script>
+				<?php
+				// Requested indent #921.
 			}
+			$analytics = ob_get_clean();
+
 			echo apply_filters( 'aiosp_google_analytics', $analytics );
 			do_action( 'after_aiosp_google_analytics' );
-
 		}
 
 		/**
@@ -163,6 +173,34 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 				}
 			}
 			$extra_options = apply_filters( 'aioseop_ga_extra_options', $extra_options, $aioseop_options );
+			
+			/**
+			 * Internal filter. Don't output certain GA features if Google Tag Manager is active.
+			 * 
+			 * @since 3.3.0
+			 */
+			if( apply_filters( 'aioseop_pro_gtm_enabled', __return_false() ) ) {
+				$options_to_remove = array(
+					"ga('require', 'ec');",
+					"ga('require', 'outboundLinkTracker');",
+					"ga('require', 'outboundFormTracker');",
+					"ga('require', 'eventTracker');",
+					"ga('require', 'urlChangeTracker');",
+					"ga('require', 'pageVisibilityTracker');",
+					"ga('require', 'mediaQueryTracker');",
+					"ga('require', 'impressionTracker');",
+					"ga('require', 'maxScrollTracker');",
+					"ga('require', 'socialWidgetTracker');",
+					"ga('require', 'cleanUrlTracker');",
+				);
+				foreach ( $options_to_remove as $option ) {
+					if ( $index = array_search( $option, $extra_options, true ) ) {
+						unset( $extra_options[ $index ] );
+					}
+					continue;
+				}
+			}	
+			
 			$js_options    = array();
 			foreach ( array( 'cookie_domain', 'allow_linker' ) as $opts ) {
 				if ( ! empty( $$opts ) ) {
