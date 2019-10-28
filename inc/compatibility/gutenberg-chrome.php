@@ -20,7 +20,7 @@ aioseop_chrome_fix_overlapping_metabox();
  * @return void
  */
 function aioseop_chrome_fix_overlapping_metabox() {
-	if( ! isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+	if ( ! isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
 		return;
 	}
 
