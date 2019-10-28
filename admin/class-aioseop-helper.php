@@ -552,7 +552,7 @@ class AIOSEOP_Helper {
 			'aiosp_bing_verify'                 => 'https://semperplugins.com/documentation/bing-webmaster-verification/',
 			'aiosp_pinterest_verify'            => 'https://semperplugins.com/documentation/pinterest-site-verification/',
 			'aiosp_yandex_verify'               => 'https://semperplugins.com/documentation/yandex-webmaster-verification/',
-			'aiosp_baidu_verify'                => 'https://semperplugins.com/documentation/baidu-webmaster-verification/',
+			'aiosp_baidu_verify'                => 'https://semperplugins.com/documentation/baidu-webmaster-tools-verification/',
 
 			// Google Analytics.
 			'aiosp_google_analytics_id'         => 'https://semperplugins.com/documentation/setting-up-google-analytics/',
