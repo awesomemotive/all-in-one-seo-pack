@@ -89,15 +89,15 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 			if ( is_year() ) {
 				$current_url = get_year_link( false );
 				/* translators: Yearly archive title. %s: Year */
-				$current_name = sprintf( __( 'Year: %s', 'all-in-one-seo-pack' ), get_the_date( _x( 'Y', 'yearly archives date format', 'all-in-one-seo-pack' ) ) );
+				$current_name = sprintf( 'Year: %s', get_the_date( 'Y' ) );
 			} elseif ( is_month() ) {
 				$current_url = get_month_link( false, false );
 				/* translators: Monthly archive title. %s: Month name and year */
-				$current_name = sprintf( __( 'Month: %s', 'all-in-one-seo-pack' ), get_the_date( _x( 'F Y', 'monthly archives date format', 'all-in-one-seo-pack' ) ) );
+				$current_name = sprintf( 'Month: %s', get_the_date( _x( 'F Y' ) );
 			} else {
 				$current_url = get_day_link( false, false, false );
 				/* translators: Daily archive title. %s: Date */
-				$current_name = sprintf( __( 'Day: %s', 'all-in-one-seo-pack' ), get_the_date( _x( 'F j, Y', 'daily archives date format', 'all-in-one-seo-pack' ) ) );
+				$current_name = sprintf( 'Day: %s', get_the_date( _x( 'F j, Y' ) );
 			}
 		} elseif ( is_author() ) {
 			$user_id      = intval( $post->post_author );
