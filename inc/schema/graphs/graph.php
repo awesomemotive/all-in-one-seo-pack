@@ -152,7 +152,7 @@ abstract class AIOSEOP_Graph {
 
 		// Encode to json string, and remove string type around shortcodes.
 		if ( version_compare( PHP_VERSION, '5.4', '>=' ) ) {
-			$schema_data = wp_json_encode( (object) $schema_data, JSON_UNESCAPED_SLASHES );
+			$schema_data = wp_json_encode( (object) $schema_data, JSON_UNESCAPED_SLASHES ); // phpcs:ignore PHPCompatibility.Constants.NewConstants.json_unescaped_slashesFound
 		} else {
 			// PHP <= 5.3 compatibility.
 			$schema_data = wp_json_encode( (object) $schema_data );

@@ -36,6 +36,7 @@ module.exports = function(grunt) {
 			// https://www.npmjs.com/package/grunt-phpcs#php-code-sniffer-task
 			phpcs: {
 				options: {
+					bin: 'vendor/bin/phpcs',
 					standard: 'phpcs.xml',
 					reportFile: 'logs/phpcs.log',
 					extensions: 'php'
@@ -47,6 +48,7 @@ module.exports = function(grunt) {
 			// https://www.npmjs.com/package/grunt-phpcbf#the-phpcbf-task
 			phpcbf: {
 				options: {
+					bin: 'vendor/bin/phpcbf',
 					standard: 'phpcs.xml',
 					noPatch:false,
 					extensions: 'php'
@@ -150,5 +152,9 @@ module.exports = function(grunt) {
 	// Default task(s).
 	grunt.registerTask( 'default', ['mkdir', 'phpcbf', 'phpcs', 'phplint', 
 	'jshint', 'eslint', 'uglify', 'csslint', 'cssmin'] );
+
+	// Travis CI builds.
+	grunt.registerTask( 'build', ['mkdir', 'phpcs', 'phplint', 
+	'jshint', 'eslint', 'csslint'] );
 
 };
