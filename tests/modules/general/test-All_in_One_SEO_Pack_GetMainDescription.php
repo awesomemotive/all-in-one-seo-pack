@@ -175,6 +175,9 @@ class Test_GetMainDescription extends AIOSEOP_Test_Base {
 	 * @group description
 	 */
 	public function test_get_main_description_test_length( $aioseop_options_config = array() ) {
+
+		$this->markTestIncomplete( 'Needs to be refactored.' );
+
 		global $post;
 		global $aioseop_options;
 
