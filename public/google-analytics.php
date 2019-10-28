@@ -9,8 +9,8 @@
 if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 
 	require_once( AIOSEOP_PLUGIN_DIR . 'admin/aioseop_module_class.php' ); // Include the module base class.
-	
-	if( AIOSEOPPRO ) {
+
+	if ( AIOSEOPPRO ) {
 		require_once( AIOSEOP_PLUGIN_DIR . 'pro/aioseop_google_tag_manager.php' );
 	}
 
@@ -60,7 +60,7 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 			if ( empty( $aioseop_options['aiosp_google_analytics_id'] ) ) {
 				return;
 			}
-			
+
 			// Exclude tracking for users?
 			if ( ! empty( $aioseop_options['aiosp_ga_advanced_options'] )
 				&& ! empty( $aioseop_options['aiosp_ga_exclude_users'] )
@@ -77,7 +77,7 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 					}
 				}
 			}
-			
+
 			ob_start();
 			$analytics = $this->universal_analytics();
 			echo $analytics;
@@ -173,13 +173,13 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 				}
 			}
 			$extra_options = apply_filters( 'aioseop_ga_extra_options', $extra_options, $aioseop_options );
-			
+
 			/**
 			 * Internal filter. Don't output certain GA features if Google Tag Manager is active.
-			 * 
+			 *
 			 * @since 3.3.0
 			 */
-			if( apply_filters( 'aioseop_pro_gtm_enabled', __return_false() ) ) {
+			if ( apply_filters( 'aioseop_pro_gtm_enabled', __return_false() ) ) {
 				$options_to_remove = array(
 					"ga('require', 'ec');",
 					"ga('require', 'outboundLinkTracker');",
@@ -199,8 +199,8 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 					}
 					continue;
 				}
-			}	
-			
+			}
+
 			$js_options    = array();
 			foreach ( array( 'cookie_domain', 'allow_linker' ) as $opts ) {
 				if ( ! empty( $$opts ) ) {
