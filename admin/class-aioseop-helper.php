@@ -480,7 +480,15 @@ class AIOSEOP_Helper {
 				$pt_obj_taxes = get_object_taxonomies( $v1_pt, 'objects' );
 				foreach ( $pt_obj_taxes as $k2_slug => $v2_tax_obj ) {
 					if ( $v2_tax_obj->public ) {
-						$help_text_macros .= sprintf( '<dt>%%tax_%1$s%%</dt><dd>' . __( 'The title of the %2$s taxonomy that is associated to this %3$s', 'all-in-one-seo-pack' ) . '</dd>', $k2_slug, ucwords( $v2_tax_obj->label ), $name );
+						$help_text_macros .= sprintf(
+							'<dt>%%tax_%1$s%%</dt><dd>' .
+							/* translators: %2$s and %3$s are placeholders and should not be translated. These are replaced with the name of the taxonomy (%2$s) that is associated with (the name of) a custom post type (%2$s). */
+							__( 'The title of the %2$s taxonomy that is associated to this %3$s', 'all-in-one-seo-pack' )
+							. '</dd>',
+							$k2_slug,
+							ucwords( $v2_tax_obj->label ),
+							$name
+						);
 					}
 				}
 
@@ -552,7 +560,7 @@ class AIOSEOP_Helper {
 			'aiosp_bing_verify'                 => 'https://semperplugins.com/documentation/bing-webmaster-verification/',
 			'aiosp_pinterest_verify'            => 'https://semperplugins.com/documentation/pinterest-site-verification/',
 			'aiosp_yandex_verify'               => 'https://semperplugins.com/documentation/yandex-webmaster-verification/',
-			'aiosp_baidu_verify'                => 'https://semperplugins.com/documentation/baidu-webmaster-verification/',
+			'aiosp_baidu_verify'                => 'https://semperplugins.com/documentation/baidu-webmaster-tools-verification/',
 
 			// Google Analytics.
 			'aiosp_google_analytics_id'         => 'https://semperplugins.com/documentation/setting-up-google-analytics/',
