@@ -564,7 +564,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'rhs' => '',
 					),
 					'aiosp_ga_advanced_options' => 'on',
-					'aiosp_gtm_container_id' => array(
+					'aiosp_gtm_container_id'    => array(
 						'lhs' => 'aiosp_gtm_container_id',
 						'op'  => '==',
 						'rhs' => '',
@@ -595,7 +595,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'rhs' => '',
 					),
 					'aiosp_ga_advanced_options' => 'on',
-					'aiosp_gtm_container_id' => array(
+					'aiosp_gtm_container_id'    => array(
 						'lhs' => 'aiosp_gtm_container_id',
 						'op'  => '==',
 						'rhs' => '',
@@ -5143,7 +5143,9 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 	 * @return mixed
 	 */
 	function aiosp_google_analytics() {
-		new AIOSEOP_Pro_Google_Tag_Manager;
+		if ( AIOSEOPPRO ) {
+			new AIOSEOP_Pro_Google_Tag_Manager;
+		}
 		new aioseop_google_analytics;
 	}
 

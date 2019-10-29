@@ -194,14 +194,15 @@ if ( ! class_exists( 'aioseop_google_analytics' ) ) {
 					"ga('require', 'cleanUrlTracker');",
 				);
 				foreach ( $options_to_remove as $option ) {
-					if ( $index = array_search( $option, $extra_options, true ) ) {
+					$index = array_search( $option, $extra_options, true );
+					if ( $index ) {
 						unset( $extra_options[ $index ] );
 					}
 					continue;
 				}
 			}
 
-			$js_options    = array();
+			$js_options = array();
 			foreach ( array( 'cookie_domain', 'allow_linker' ) as $opts ) {
 				if ( ! empty( $$opts ) ) {
 					$js_options[] = $$opts;
