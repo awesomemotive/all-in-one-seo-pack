@@ -3713,7 +3713,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$count_chars_data = array(
 					'extraTitleLength' => $extra_title_len,
 				);
-				wp_localize_script( 'aioseop-count-chars', 'characterCounter', $count_chars_data );
+				wp_localize_script( 'aioseop-count-chars', 'aioseopCharacterCounter', $count_chars_data );
 				break;
 		}
 		parent::admin_enqueue_scripts( $hook_suffix );
