@@ -480,7 +480,15 @@ class AIOSEOP_Helper {
 				$pt_obj_taxes = get_object_taxonomies( $v1_pt, 'objects' );
 				foreach ( $pt_obj_taxes as $k2_slug => $v2_tax_obj ) {
 					if ( $v2_tax_obj->public ) {
-						$help_text_macros .= sprintf( '<dt>%%tax_%1$s%%</dt><dd>' . __( 'The title of the %2$s taxonomy that is associated to this %3$s', 'all-in-one-seo-pack' ) . '</dd>', $k2_slug, ucwords( $v2_tax_obj->label ), $name );
+						$help_text_macros .= sprintf(
+							'<dt>%%tax_%1$s%%</dt><dd>' .
+							/* translators: %2$s and %3$s are placeholders and should not be translated. These are replaced with the name of the taxonomy (%2$s) that is associated with (the name of) a custom post type (%2$s). */
+							__( 'The title of the %2$s taxonomy that is associated to this %3$s', 'all-in-one-seo-pack' )
+							. '</dd>',
+							$k2_slug,
+							ucwords( $v2_tax_obj->label ),
+							$name
+						);
 					}
 				}
 
