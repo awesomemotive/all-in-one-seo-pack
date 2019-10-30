@@ -53,12 +53,11 @@ class AIOSEOP_Robots_Meta {
 			$post_meta_nofollow = $this->get_meta_value( 'nofollow' );
 		}
 
-		if ( 
-			'on' === $post_meta_noindex || 
+		if ( 'on' === $post_meta_noindex ||
 			$this->is_noindexed_paginated_page( $page_number ) ||
-			$this->is_noindexed_password_protected_post() || 
-			$this->is_noindexed_tax() || 
-			$this->is_noindexed_singular( $post_type, $post_meta_noindex ) 
+			$this->is_noindexed_password_protected_post() ||
+			$this->is_noindexed_tax() ||
+			$this->is_noindexed_singular( $post_type, $post_meta_noindex )
 		) {
 			$noindex = true;
 		}
@@ -207,11 +206,10 @@ class AIOSEOP_Robots_Meta {
 	 * @return bool
 	 */
 	private function has_post_meta() {
-		if ( 
-			! is_date() && 
-			! is_author() && 
-			! is_search() && 
-			! is_404() 
+		if ( ! is_date() &&
+			! is_author() &&
+			! is_search() &&
+			! is_404()
 		) {
 			return true;
 		}
@@ -264,10 +262,9 @@ class AIOSEOP_Robots_Meta {
 	 * @return bool
 	 */
 	private function is_noindexed_password_protected_post() {
-		if ( 
-			is_singular() && 
-			$this->is_password_protected() 
-			&& apply_filters( 'post_meta_noindex_password_posts', false ) 
+		if ( is_singular() &&
+			$this->is_password_protected()
+			&& apply_filters( 'post_meta_noindex_password_posts', false )
 		) {
 			return true;
 		}
@@ -330,10 +327,9 @@ class AIOSEOP_Robots_Meta {
 	 */
 	private function is_noindexed_singular( $post_type, $post_meta_noindex ) {
 		global $aioseop_options;
-		if ( 
-			is_singular() && '' === $post_meta_noindex &&
-			! empty( $aioseop_options['aiosp_cpostnoindex'] ) && 
-			in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] ) 
+		if ( is_singular() && '' === $post_meta_noindex &&
+			! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
+			in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
 		) {
 			return true;
 		}
@@ -354,10 +350,9 @@ class AIOSEOP_Robots_Meta {
 	 */
 	private function is_nofollowed_singular( $post_type, $post_meta_follow ) {
 		global $aioseop_options;
-		if ( 
-			is_singular() && '' === $post_meta_follow &&
-			! empty( $aioseop_options['aiosp_cpostnofollow'] ) && 
-			in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] ) 
+		if ( is_singular() && '' === $post_meta_follow &&
+			! empty( $aioseop_options['aiosp_cpostnofollow'] ) &&
+			in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
 		) {
 			return true;
 		}
