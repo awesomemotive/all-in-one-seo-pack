@@ -1126,23 +1126,35 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			),
 		);
 
-		$user_args = array(
-			'role__in' => array(
-				'administrator',
-				'editor',
-				'author',
-			),
-			'orderby'  => 'nicename',
-		);
-		$users     = get_users( $user_args );
+		global $pagenow;
+		if ( 'admin.php' === $pagenow ) {
+			// Person's Username setting.
+			$this->default_options['schema_person_user']['initial_options'] = array(
+				0  => __( '- Select -', 'all-in-one-seo-pack' ),
+				-1 => __( 'Manually Enter', 'all-in-one-seo-pack' ),
+			);
 
-		// Person's Username setting.
-		$this->default_options['schema_person_user']['initial_options'] = array(
-			0  => __( '- Select -', 'all-in-one-seo-pack' ),
-			-1 => __( 'Manually Enter', 'all-in-one-seo-pack' ),
-		);
-		foreach ( $users as $user ) {
-			$this->default_options['schema_person_user']['initial_options'][ $user->ID ] = $user->data->user_nicename . ' (' . $user->data->display_name . ')';
+			global $wpdb;
+			$user_count = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->users" );
+			if ( 20 < $user_count ) {
+				$this->default_options['schema_person_user']['initial_options'] = array(
+					-1 => __( 'Manually Enter', 'all-in-one-seo-pack' ),
+				);
+			} else {
+				$user_args = array(
+					'role__in' => array(
+						'administrator',
+						'editor',
+						'author',
+					),
+					'orderby'  => 'nicename',
+				);
+				$users     = get_users( $user_args );
+
+				foreach ( $users as $user ) {
+					$this->default_options['schema_person_user']['initial_options'][ $user->ID ] = $user->data->user_nicename . ' (' . $user->data->display_name . ')';
+				}
+			}
 		}
 
 		if ( AIOSEOPPRO ) {
