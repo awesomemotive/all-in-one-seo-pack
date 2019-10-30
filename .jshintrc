@@ -35,6 +35,7 @@
 		"aioseop_preview_snippet",
 		"tinymce",
 		"XRegExp",
-		"aioseopCharacterCounter"
+		"aioseopCharacterCounter",
+		"aioseopOGCharacterCounter"
 	]
 }

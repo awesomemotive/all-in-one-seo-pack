@@ -1884,6 +1884,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @param string $hook_suffix
 		 */
 		public function admin_enqueue_scripts( $hook_suffix ) {
+			global $current_screen;
+			$current_screen = get_current_screen();
+
 			wp_enqueue_script(
 				'aioseop-opengraph-script',
 				AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_opengraph.min.js',
@@ -1897,6 +1900,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				array(),
 				AIOSEOP_VERSION
 			);
+
+			$count_chars_data = array(
+				'pluginDirName' => AIOSEOP_PLUGIN_DIRNAME,
+				'currentPage'   => $hook_suffix,
+			);
+			wp_localize_script( 'aioseop-count-chars', 'aioseopOGCharacterCounter', $count_chars_data );
+
 			// Dev note: If certain JS files need to be restricted to select screens, then follow concept
 			// used in `All_in_One_SEO_Pack::admin_enqueue_scripts()` (v2.9.1); which uses the `$hook_suffix`
 			// and a switch-case. This also helps prevent unnessecarily processing localized data when it isn't needed.
