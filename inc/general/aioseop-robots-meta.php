@@ -53,8 +53,13 @@ class AIOSEOP_Robots_Meta {
 			$post_meta_nofollow = $this->get_meta_value( 'nofollow' );
 		}
 
-		if ( 'on' === $post_meta_noindex || $this->is_noindexed_paginated_page( $page_number ) ||
-		$this->is_noindexed_password_protected_post() || $this->is_noindexed_tax() || $this->is_noindexed_singular( $post_type, $post_meta_noindex ) ) {
+		if ( 
+			'on' === $post_meta_noindex || 
+			$this->is_noindexed_paginated_page( $page_number ) ||
+			$this->is_noindexed_password_protected_post() || 
+			$this->is_noindexed_tax() || 
+			$this->is_noindexed_singular( $post_type, $post_meta_noindex ) 
+			) {
 			$noindex = true;
 		}
 
@@ -220,7 +225,7 @@ class AIOSEOP_Robots_Meta {
 	 */
 	private function is_noindexed_paginated_page( $page_number ) {
 		global $aioseop_options;
-		if ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && $page_number > 1 ) {
+		if ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && 1 < $page_number ) {
 			return true;
 		}
 		return false;
@@ -238,7 +243,7 @@ class AIOSEOP_Robots_Meta {
 	 */
 	private function is_nofollowed_paginated_page( $page_number ) {
 		global $aioseop_options;
-		if ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && $page_number > 1 ) {
+		if ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && 1 < $page_number ) {
 			return true;
 		}
 		return false;
@@ -337,8 +342,11 @@ class AIOSEOP_Robots_Meta {
 	 */
 	private function is_nofollowed_singular( $post_type, $post_meta_follow ) {
 		global $aioseop_options;
-		if ( is_singular() && '' === $post_meta_follow &&
-		! empty( $aioseop_options['aiosp_cpostnofollow'] ) && in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] ) ) {
+		if ( 
+			is_singular() && '' === $post_meta_follow &&
+			! empty( $aioseop_options['aiosp_cpostnofollow'] ) && 
+			in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] ) 
+			) {
 			return true;
 		}
 		return false;
