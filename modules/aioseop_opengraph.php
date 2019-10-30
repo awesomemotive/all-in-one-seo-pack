@@ -1884,9 +1884,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @param string $hook_suffix
 		 */
 		public function admin_enqueue_scripts( $hook_suffix ) {
-			global $current_screen;
-			$current_screen = get_current_screen();
-
 			wp_enqueue_script(
 				'aioseop-opengraph-script',
 				AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_opengraph.min.js',
