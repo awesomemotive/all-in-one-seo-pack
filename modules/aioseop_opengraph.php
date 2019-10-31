@@ -1884,25 +1884,40 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @param string $hook_suffix
 		 */
 		public function admin_enqueue_scripts( $hook_suffix ) {
-			wp_enqueue_script(
-				'aioseop-opengraph-script',
-				AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_opengraph.min.js',
-				array(),
-				AIOSEOP_VERSION
-			);
+			switch ( $hook_suffix ) {
+				case 'term.php':
+					// Legacy code for taxonomy terms until we refactor all title format related code.
+					$count_chars_data['aiosp_title_extra'] = 0;
+					wp_enqueue_script(
+						'aioseop-count-chars-old',
+						AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars-old.min.js',
+						array(),
+						AIOSEOP_VERSION,
+						true
+					);
+					break;
+				default:
+					wp_enqueue_script(
+						'aioseop-opengraph-script',
+						AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_opengraph.min.js',
+						array(),
+						AIOSEOP_VERSION
+					);
 
-			wp_enqueue_script(
-				'aioseop-count-chars',
-				AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.min.js',
-				array(),
-				AIOSEOP_VERSION
-			);
+					wp_enqueue_script(
+						'aioseop-count-chars',
+						AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.min.js',
+						array(),
+						AIOSEOP_VERSION
+					);
 
-			$count_chars_data = array(
-				'pluginDirName' => AIOSEOP_PLUGIN_DIRNAME,
-				'currentPage'   => $hook_suffix,
-			);
-			wp_localize_script( 'aioseop-count-chars', 'aioseopOGCharacterCounter', $count_chars_data );
+					$count_chars_data = array(
+						'pluginDirName' => AIOSEOP_PLUGIN_DIRNAME,
+						'currentPage'   => $hook_suffix,
+					);
+					wp_localize_script( 'aioseop-count-chars', 'aioseopOGCharacterCounter', $count_chars_data );
+					break;
+			}
 
 			// Dev note: If certain JS files need to be restricted to select screens, then follow concept
 			// used in `All_in_One_SEO_Pack::admin_enqueue_scripts()` (v2.9.1); which uses the `$hook_suffix`

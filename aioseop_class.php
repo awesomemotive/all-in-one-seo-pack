@@ -3673,12 +3673,22 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		add_filter( "{$this->prefix}display_settings", array( $this, 'filter_settings' ), 10, 3 );
 		add_filter( "{$this->prefix}display_options", array( $this, 'filter_options' ), 10, 2 );
 
-		$count_chars_data   = array();
-
+		$count_chars_data = array();
 		switch ( $hook_suffix ) {
+			case 'term.php':
+				// Legacy code for taxonomy terms until we refactor all title format related code.
+				$count_chars_data['aiosp_title_extra'] = 0;
+				wp_enqueue_script(
+					'aioseop-count-chars-old',
+					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars-old.min.js',
+					array(),
+					AIOSEOP_VERSION,
+					true
+				);
+				wp_localize_script( 'aioseop-count-chars-old', 'aioseop_count_chars', $count_chars_data );
+				break;
 			case 'post.php':
 			case 'post-new.php':
-			case 'term.php':
 				$title_format       = $this->get_preview_snippet_title();
 				$extra_title_length = strlen( preg_replace( '/<span.*\/span>/', '', $title_format ) );
 
