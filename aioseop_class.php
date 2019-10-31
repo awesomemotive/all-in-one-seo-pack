@@ -3673,7 +3673,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		add_filter( "{$this->prefix}display_settings", array( $this, 'filter_settings' ), 10, 3 );
 		add_filter( "{$this->prefix}display_options", array( $this, 'filter_options' ), 10, 2 );
 
-		$extra_title_length = 0;
 		$count_chars_data   = array();
 
 		switch ( $hook_suffix ) {
