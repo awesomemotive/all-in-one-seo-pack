@@ -1136,7 +1136,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 			global $wpdb;
 			$user_count = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->users" );
-			if ( 20 < $user_count ) {
+			if ( 50 < $user_count ) {
 				$this->default_options['schema_person_user']['initial_options'] = array(
 					-1 => __( 'Manually Enter', 'all-in-one-seo-pack' ),
 				);
