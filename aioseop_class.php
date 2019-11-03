@@ -3680,7 +3680,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$count_chars_data['aiosp_title_extra'] = 0;
 				wp_enqueue_script(
 					'aioseop-count-chars-old',
-					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars-old.min.js',
+					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars-old.js',
 					array(),
 					AIOSEOP_VERSION,
 					true
@@ -3704,7 +3704,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 				wp_enqueue_script(
 					'aioseop-preview-snippet',
-					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-preview-snippet.min.js',
+					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-preview-snippet.js',
 					array(),
 					AIOSEOP_VERSION
 				);
@@ -3723,7 +3723,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 				wp_enqueue_script(
 					'aioseop-count-chars',
-					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.min.js',
+					AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.js',
 					array(),
 					AIOSEOP_VERSION,
 					true

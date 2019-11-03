@@ -1890,7 +1890,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					$count_chars_data['aiosp_title_extra'] = 0;
 					wp_enqueue_script(
 						'aioseop-count-chars-old',
-						AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars-old.min.js',
+						AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars-old.js',
 						array(),
 						AIOSEOP_VERSION,
 						true
@@ -1899,14 +1899,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				default:
 					wp_enqueue_script(
 						'aioseop-opengraph-script',
-						AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_opengraph.min.js',
+						AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_opengraph.js',
 						array(),
 						AIOSEOP_VERSION
 					);
 
 					wp_enqueue_script(
 						'aioseop-count-chars',
-						AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.min.js',
+						AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.js',
 						array(),
 						AIOSEOP_VERSION
 					);
