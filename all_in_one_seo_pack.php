@@ -119,7 +119,9 @@ if ( ! defined( 'WP_PLUGIN_DIR' ) ) {
 if ( ! function_exists( 'aioseop_define_constants' ) ) {
 
 	/**
-	 * Define constants from readme file
+	 * Define constants from readme file.
+	 *
+	 * @todo Could potentially have plugin file data define the Slug and Text-Domain.
 	 *
 	 * @since 3.4
 	 *
@@ -131,11 +133,10 @@ if ( ! function_exists( 'aioseop_define_constants' ) ) {
 
 		// Use get_file_data with this file, and get the plugin's file data with default_headers.
 		$default_headers = array(
-			'Name'       => 'Plugin Name',
-			// 'Slug'       => 'Slug',
-			// 'TextDomain' => 'Text Domain',
-			'Version'    => 'Version',
+			'Name'    => 'Plugin Name',
+			'Version' => 'Version',
 		);
+
 		$plugin_data = get_file_data( __FILE__, $default_headers );
 
 		/**
@@ -147,10 +148,6 @@ if ( ! function_exists( 'aioseop_define_constants' ) ) {
 		 * @var string $AIOSEOP_PLUGIN_NAME Contains 'All In One SEO Pack'.
 		 */
 		define( 'AIOSEOP_PLUGIN_NAME', $plugin_data['Name'] );
-
-		// define( 'AIOSEOP_PLUGIN_SLUG', $plugin_data['Slug'] );
-
-		// define( 'AIOSEOP_TEXT_DOMAIN', $plugin_data['TextDomain'] );
 
 		/**
 		 * Plugin Version Number
