@@ -37,16 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 if ( ! defined( 'AIOSEOPPRO' ) ) {
 	define( 'AIOSEOPPRO', false );
 }
-if ( ! defined( 'AIOSEOP_PLUGIN_NAME' ) ) {
-	if ( ! AIOSEOPPRO ) {
-		define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack' );
-	} else {
-		define( 'AIOSEOP_PLUGIN_NAME', 'All in One SEO Pack Pro' );
-	}
-}
-if ( ! defined( 'AIOSEOP_VERSION' ) ) {
-	define( 'AIOSEOP_VERSION', '3.2.10' );
-}
 
 /*
  * DO NOT EDIT BELOW THIS LINE.
@@ -125,6 +115,55 @@ if ( ! defined( 'WP_PLUGIN_URL' ) ) {
 if ( ! defined( 'WP_PLUGIN_DIR' ) ) {
 	define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 }
+
+if ( ! function_exists( 'aioseop_define_constants' ) ) {
+
+	/**
+	 * Define constants from readme file
+	 *
+	 * @since 3.4
+	 *
+	 * @see get_file_data()
+	 * @link https://developer.wordpress.org/reference/functions/get_file_data/
+	 * @link https://hitchhackerguide.com/2011/02/12/get_plugin_data/
+	 */
+	function aioseop_define_constants() {
+
+		// Use get_file_data with this file, and get the plugin's file data with default_headers.
+		$default_headers = array(
+			'Name'       => 'Plugin Name',
+			// 'Slug'       => 'Slug',
+			// 'TextDomain' => 'Text Domain',
+			'Version'    => 'Version',
+		);
+		$plugin_data = get_file_data( __FILE__, $default_headers );
+
+		/**
+		 * AIOSEOP Display Name
+		 *
+		 * @since ?
+		 * @since 3.4 Change to file header data.
+		 *
+		 * @var string $AIOSEOP_PLUGIN_NAME Contains 'All In One SEO Pack'.
+		 */
+		define( 'AIOSEOP_PLUGIN_NAME', $plugin_data['Name'] );
+
+		// define( 'AIOSEOP_PLUGIN_SLUG', $plugin_data['Slug'] );
+
+		// define( 'AIOSEOP_TEXT_DOMAIN', $plugin_data['TextDomain'] );
+
+		/**
+		 * Plugin Version Number
+		 *
+		 * @since ?
+		 * @since 3.4 Change to file header data.
+		 *
+		 * @var string $AIOSEOP_VERSION Contains the plugin's version number. Eg. '3.2.4'
+		 */
+		define( 'AIOSEOP_VERSION', $plugin_data['Version'] );
+	}
+}
+add_action( 'plugins_loaded', 'aioseop_define_constants', 9 );
 
 global $aiosp, $aioseop_options, $aioseop_modules, $aioseop_module_list, $aiosp_activation, $aioseop_mem_limit, $aioseop_get_pages_start, $aioseop_admin_menu;
 $aioseop_get_pages_start = 0;
