@@ -238,7 +238,6 @@ class aiosp_common {
 	 * is to avoid having to query if possible (if cache was set prior), and if not, there is only 1 query per instance
 	 * rather than multiple queries per instance.
 	 * NOTE: Attempting to paginate the query actually caused the memory to peak higher.
-	 * NOTE: The weakest point in this function is multiple calls to Result_2's SQL query for custom attachment URLs.
 	 *
 	 * This is intended to work much the same way as WP's `attachment_url_to_postid()`.
 	 *
@@ -247,10 +246,6 @@ class aiosp_common {
 	 * @see aiosp_common::set_transient_url_postids()
 	 * @see get_transient()
 	 * @link https://developer.wordpress.org/reference/functions/get_transient/
-	 * @see wpdb::get_results()
-	 * @link https://developer.wordpress.org/reference/classes/wpdb/get_results/
-	 * @see wp_list_pluck()
-	 * @link https://developer.wordpress.org/reference/functions/wp_list_pluck/
 	 * @see wp_upload_dir()
 	 * @link https://developer.wordpress.org/reference/functions/wp_upload_dir/
 	 *
@@ -260,10 +255,6 @@ class aiosp_common {
 	 * @return int
 	 */
 	public static function attachment_url_to_postid( $url ) {
-		global $wpdb;
-		static $results_1;
-		static $results_2;
-
 		$id      = 0;
 		$url_md5 = md5( $url );
 
@@ -289,33 +280,14 @@ class aiosp_common {
 		} else {
 			// Check to make sure Image URL is not outside the website.
 			$uploads_dir = wp_upload_dir();
+
 			if ( false !== strpos( $url, $uploads_dir['baseurl'] . '/' ) ) {
-				// Results_1 query looks for URLs with the original guid that is uncropped and unedited.
-				if ( is_null( $results_1 ) ) {
-					$results_1 = aiosp_common::attachment_url_to_postid_query_1();
+				// Results_1 query looks for URLs with the original full size image
+				$id = aiosp_common::attachment_url_to_postid_query_1( $url );
+				if ( empty( $id ) ) {
+					// Results_2 query looks for URLs with custimom sizes images
+					$id = aiosp_common::attachment_url_to_postid_query_2( $url );
 				}
-
-				if ( isset( $results_1[ $url_md5 ] ) ) {
-					$id = intval( $results_1[ $url_md5 ] );
-				}
-
-				// phpcs:disable Squiz.Commenting.InlineComment.InvalidEndChar
-				// TODO Add setting to enable; this is TOO MEMORY INTENSE which could result in 1 or more crashes,
-				// TODO however some may still need custom image URLs.
-				// TODO NOTE: Transient data does prevent continual crashes.
-				// else {
-				// Results_2 query looks for the URL that is cropped and edited. This searches JSON strings
-				// and returns the original attachment ID (there is no custom attachment IDs).
-				//
-				// if ( is_null( $results_2 ) ) {
-				// $results_2 = aiosp_common::attachment_url_to_postid_query_2();
-				// }
-				//
-				// if ( isset( $results_2[ $url_md5 ] ) ) {
-				// $id = intval( $results_2[ $url_md5 ] );
-				// }
-				// }
-				// phpcs:enable
 			}
 
 			self::$attachment_url_postids[ $url_md5 ] = $id;
@@ -356,110 +328,88 @@ class aiosp_common {
 	 * This is intended to work solely with `aiosp_common::attachment_url_to_post_id()`. Calling this multiple times
 	 * is memory intense.
 	 *
-	 * @see wpdb::get_results()
-	 * @link https://developer.wordpress.org/reference/classes/wpdb/get_results/
+	 * @see get_posts
+	 * @link https://developer.wordpress.org/reference/functions/get_posts/
 	 *
-	 * @return array
+	 * @param string $url Full image URL.
+	 *
+	 * @return null|int
 	 */
-	public static function attachment_url_to_postid_query_1() {
-		global $wpdb;
+	public static function attachment_url_to_postid_query_1( $url ) {
 
-		$results_1 = $wpdb->get_results(
-			"SELECT ID, MD5(guid) AS guid FROM $wpdb->posts WHERE post_type='attachment' AND post_status='inherit' AND post_mime_type LIKE 'image/%';",
-			ARRAY_A
+		$file  = basename( $url );
+		$query = array(
+			'post_type'  => 'attachment',
+			'fields'     => 'ids',
+			'meta_query' => array(
+				array(
+					'key'     => '_wp_attached_file',
+					'value'   => $file,
+					'compare' => 'LIKE',
+				),
+			)
 		);
 
-		if ( $results_1 ) {
-			$results_1 = array_combine(
-				wp_list_pluck( $results_1, 'guid' ),
-				wp_list_pluck( $results_1, 'ID' )
-			);
-		} else {
-			$results_1 = array();
-		}
+		// query attachments
+		$ids = get_posts( $query );
 
-		return $results_1;
+		if ( ! empty( $ids ) ) {
+
+			foreach ( $ids as $id ) {
+				// first entry of returned array is the URL
+				$image_src = wp_get_attachment_image_src( $id, 'full' ) ;
+				if ( $url === array_shift( $image_src ) )
+					return $id;
+			}
+		}
 	}
 
 	/**
 	 * Attachment URL to Post ID - Query 2
 	 *
-	 * Unused/Conceptual function. This is intended to work solely with `aiosp_common::attachment_url_to_post_id()`.
+	 * This is intended to work solely with `aiosp_common::attachment_url_to_post_id()`.
 	 * Calling this multiple times is memory intense. It's intended to query for custom images, and data for those types
 	 * of images only exists in the postmeta database table
 	 *
-	 * @todo Investigate unserialize() memory consumption/leak.
-	 * @link https://www.evonide.com/breaking-phps-garbage-collection-and-unserialize/
-	 *
 	 * @see aiosp_common::attachment_url_to_postid()
-	 * @see unserialize()
-	 * @link http://php.net/manual/en/function.unserialize.php
-	 * @see wpdb::get_results()
-	 * @link https://developer.wordpress.org/reference/classes/wpdb/get_results/
+	 * @see get_posts
+	 * @link https://developer.wordpress.org/reference/functions/get_posts/
 	 * @see wp_upload_dir()
 	 * @link https://developer.wordpress.org/reference/functions/wp_upload_dir/
 	 *
-	 * @return array
+	 * @param string $url Custom image URL.
+	 *
+	 * @return null|int
 	 */
-	public static function attachment_url_to_postid_query_2() {
-		global $wpdb;
-
-		$tmp_arr = array();
-		// @codingStandardsIgnoreStart WordPress.WP.PreparedSQL.NotPrepared
-		$results_2 = $wpdb->get_results(
-			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE `meta_key` = '_wp_attachment_metadata' AND `meta_value` != '" . serialize( array() ) . "';",
-			ARRAY_A
+	public static function attachment_url_to_postid_query_2( $url ) {
+		$file  = basename( $url );
+		$query = array(
+			'post_type'  => 'attachment',
+			'fields'     => 'ids',
+			'meta_query' => array(
+				array(
+					'key'     => '_wp_attachment_metadata',
+					'value'   => $file,
+					'compare' => 'LIKE',
+				),
+			)
 		);
-		// @codingStandardsIgnoreStop WordPress.WP.PreparedSQL.NotPrepared
-		if ( $results_2 ) {
-			for ( $i = 0; $i < count( $results_2 ); $i++ ) {
-				// TODO Investigate potentual memory leak(s); currently with unserialize.
-				$meta_value = maybe_unserialize( $results_2[ $i ]['meta_value'] );
 
-				// TODO Needs Discussion: Should this be added? To handle errors better instead of suspecting aioseop is at fault and lessen support threads.
-				/**
-				 * This currently handles "warning" notices with unserialize which normally can't be handled with a try/catch.
-				 * However, this notice should be identified and corrected; which is seperate from the plugin, but
-				 * can also triggered by the plugin.
-				 *
-				 * @see aiosp_common::error_handle_images()
-				 * @see set_error_handler()
-				 * @link http://php.net/manual/en/function.set-error-handler.php
-				 * @see restore_error_handler()
-				 * @link http://php.net/manual/en/function.restore-error-handler.php
-				 */
-				/*
-				set_error_handler( 'aiosp_common::error_handle_images' );
-				try {
-					$meta_value = unserialize( $results_2[ $i ]['meta_value'] );
-				} catch ( Exception $e ) {
-					unset( $meta_value );
-					restore_error_handler();
-					continue;
+		$ids = get_posts( $query );
+
+		if ( ! empty( $ids ) ) {
+
+			foreach ( $ids as $id ) {
+				$meta = wp_get_attachment_metadata( $id );
+
+				foreach ( $meta['sizes'] as $size => $values ) {
+					$image_src = wp_get_attachment_image_src( $id, $size );
+					if ( $values['file'] === $file && $url === array_shift( $image_src ) ) {
+						return $id;
+					}
 				}
-				restore_error_handler();
-				*/
-
-				// Images and Videos use different variable structures.
-				if ( false === $meta_value || ! isset( $meta_value['file'] ) && ! isset( $meta_value['sizes'] ) ) {
-					continue;
-				}
-
-				// Set the URL => PostIDs.
-				$uploads_dir = wp_upload_dir();
-				$custom_img_base_url = $uploads_dir['baseurl'] . '/' . str_replace( wp_basename( $meta_value['file'] ), '', $meta_value['file'] );
-				foreach ( $meta_value['sizes'] as $image_size_arr ) {
-					$tmp_arr[ md5( ( $custom_img_base_url . $image_size_arr['file'] ) ) ] = $results_2[ $i ]['post_id'];
-				}
-
-				unset( $meta_value );
 			}
 		}
-
-		$results_2 = $tmp_arr;
-		unset( $tmp_arr );
-
-		return $results_2;
 	}
 
 	/**
