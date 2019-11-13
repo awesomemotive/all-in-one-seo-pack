@@ -6,7 +6,7 @@
  * @since 3.3.0 Full refactoring.
  */
 
-(function($) { // eslint-disable-line max-statements
+jQuery(function($){ // eslint-disable-line max-statements
 
 	"use strict";
 
@@ -359,4 +359,4 @@
 		return true;
 	}
 
-})(jQuery);
+});
