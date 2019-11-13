@@ -7,7 +7,7 @@
  * @package xregexp
  */
 
-$(function () {
+jQuery(function($){
 
 	"use strict";
 
