@@ -6,6 +6,7 @@
  * @package all-in-one-seo-pack
  * @package xregexp
  */
+
 (function($) {
 
 	"use strict";
