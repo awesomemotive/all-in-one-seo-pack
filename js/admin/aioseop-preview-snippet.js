@@ -7,7 +7,7 @@
  * @package xregexp
  */
 
-(function($) {
+jQuery(function($){
 
 	"use strict";
 
@@ -180,4 +180,4 @@
 		return textArea.value;
 	}
 
-})(jQuery);
+});
