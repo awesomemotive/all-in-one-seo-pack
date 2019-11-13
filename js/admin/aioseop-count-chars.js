@@ -6,7 +6,7 @@
  * @since 3.3.0 Full refactoring.
  */
 
-jQuery(function($){ // eslint-disable-line max-statements
+(function($) { // eslint-disable-line max-statements
 
 	"use strict";
 
@@ -359,4 +359,4 @@ jQuery(function($){ // eslint-disable-line max-statements
 		return true;
 	}
 
-});
+})(jQuery);
