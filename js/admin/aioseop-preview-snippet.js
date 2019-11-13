@@ -6,8 +6,7 @@
  * @package all-in-one-seo-pack
  * @package xregexp
  */
-
-jQuery(function($){
+(function($) {
 
 	"use strict";
 
@@ -180,4 +179,4 @@ jQuery(function($){
 		return textArea.value;
 	}
 
-});
+})(jQuery);
