@@ -110,11 +110,11 @@ class Test_Rewrite_Title extends AIOSEOP_Test_Base {
 	 * @since 3.0
 	 */
 	public function macroProvider() {
-		return [
-			'%site_title% & post'     => [ '%site_title', 'post' ],
-			'%site_title% & category' => [ '%site_title', 'category' ],
-			'%blog_title% & post'     => [ '%blog_title', 'post' ],
-			'%blog_title% & category' => [ '%blog_title', 'category' ],
-		];
+		return array(
+			'%site_title% & post'     => array( '%site_title', 'post' ),
+			'%site_title% & category' => array( '%site_title', 'category' ),
+			'%blog_title% & post'     => array( '%blog_title', 'post' ),
+			'%blog_title% & category' => array( '%blog_title', 'category' ),
+		);
 	}
 }
