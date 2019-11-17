@@ -28,6 +28,7 @@ jQuery(function($){ // eslint-disable-line max-statements
 		currentPage              = aioseopCharacterCounter.currentPage;
 	}
 	else if ('undefined' !== typeof aioseopOGCharacterCounter) {
+		isGutenberg   = aioseopOGCharacterCounter.isGutenberg;
 		pluginDirName = aioseopOGCharacterCounter.pluginDirName;
 		currentPage   = aioseopOGCharacterCounter.currentPage;
 	}
@@ -194,7 +195,9 @@ jQuery(function($){ // eslint-disable-line max-statements
 		switch (inputField.attr('name')) {
 			case 'aiosp_title':
 			case 'aioseop_opengraph_settings_title':
-				counterField.val(+$('#aiosp_snippet_title').parent()[0].innerText.length);
+				if( 'undefined' !== typeof $('#aiosp_snippet_title').parent()[0]) {
+					counterField.val(+$('#aiosp_snippet_title').parent()[0].innerText.length);
+				}
 				break;
 			default:
 				descriptionField = $('[name=aiosp_description]')[0].placeholder;
