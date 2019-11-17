@@ -57,6 +57,7 @@
         <exclude name="WordPress.PHP.StrictComparisons.LooseComparison" />
         <exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
         <exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict" />
+        <exclude name="WordPress.DateTime.RestrictedFunctions" />
     </rule>
 
     <rule ref="WordPress-Docs" />
@@ -88,8 +89,6 @@
             <property name="posts_per_page" value="50000" />
         </properties>
     </rule>
-    <rule ref="WordPress.WP.TimezoneChange" />
-
 
     <!--  TODO Prefix globals and hooks.  -->
 <!--    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">-->
