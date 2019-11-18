@@ -1885,7 +1885,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 */
 		public function admin_enqueue_scripts( $hook_suffix ) {
 			global $current_screen;
-			
+
 			$is_gutenberg = 'false';
 			if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
 				$is_gutenberg = 'true';
