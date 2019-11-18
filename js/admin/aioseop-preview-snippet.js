@@ -88,13 +88,13 @@ jQuery(function($){
 
 		if ('false' === isGutenberg) {
 			postTitle   = aioseopStripMarkup($.trim($('#title').val()));
-			postContent = aioseopShortenDescription($('#content_ifr').contents().find('body')[0].innerHTML);
-			postExcerpt = aioseopShortenDescription($.trim($('#excerpt').val()));
+			postContent = aioseopGetDescription($('#content_ifr').contents().find('body')[0].innerHTML);
+			postExcerpt = aioseopGetDescription($.trim($('#excerpt').val()));
 		}
 		else {
 			postTitle   = aioseopStripMarkup($.trim($('#post-title-0').val()));
-			postContent = aioseopShortenDescription(wp.data.select('core/editor').getEditedPostAttribute('content'));
-			postExcerpt = aioseopShortenDescription(wp.data.select('core/editor').getEditedPostAttribute('excerpt'));
+			postContent = aioseopGetDescription(wp.data.select('core/editor').getEditedPostAttribute('content'));
+			postExcerpt = aioseopGetDescription(wp.data.select('core/editor').getEditedPostAttribute('excerpt'));
 		}
 
 		let metaboxTitle       = aioseopStripMarkup($.trim($('input[name="aiosp_title').val()));
@@ -127,15 +127,20 @@ jQuery(function($){
 	}
 
 	/**
-	 * The aioseopShortenDescription() function.
+	 * The aioseopGetDescription() function.
 	 * 
 	 * Shortens the description to max. 160 characters without truncation.
 	 * 
 	 * @since 3.3.0
+	 * @since 3.3.4 Shorten post content to improve performance.
 	 * 
-	 * @param string description 
+	 * @param string postContent
+	 * @return string description
 	 */
-	function aioseopShortenDescription(description) {
+	function aioseopGetDescription(postContent) {
+		// Shorten content first to avoid performance drops.
+		let description = postContent.substring(0, 5000);
+
 		description = aioseopStripMarkup(description);
 		if (160 < description.length) {
 			let excessLength = description.length - 160;
