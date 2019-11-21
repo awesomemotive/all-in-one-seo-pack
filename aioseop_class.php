@@ -565,11 +565,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'rhs' => '',
 					),
 					'aiosp_ga_advanced_options' => 'on',
-					'aiosp_gtm_container_id'    => array(
-						'lhs' => 'aiosp_gtm_container_id',
-						'op'  => '==',
-						'rhs' => '',
-					),
 				),
 			),
 			'ga_link_attribution'         => array(
@@ -596,11 +591,6 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 						'rhs' => '',
 					),
 					'aiosp_ga_advanced_options' => 'on',
-					'aiosp_gtm_container_id'    => array(
-						'lhs' => 'aiosp_gtm_container_id',
-						'op'  => '==',
-						'rhs' => '',
-					),
 				),
 			),
 			'schema_markup'               => array(
