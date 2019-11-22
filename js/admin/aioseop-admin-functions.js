@@ -6,6 +6,8 @@
  * @package all-in-one-seo-pack
  */
 
+ "use strict";
+
 /**
  * Checks whether the Gutenberg Editor is active.
  * 
