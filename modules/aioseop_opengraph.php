@@ -1884,12 +1884,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @param string $hook_suffix
 		 */
 		public function admin_enqueue_scripts( $hook_suffix ) {
-			global $current_screen;
-
-			$is_gutenberg = 'false';
-			if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
-				$is_gutenberg = 'true';
-			}
 
 			switch ( $hook_suffix ) {
 				case 'term.php':
@@ -1918,8 +1912,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						AIOSEOP_VERSION
 					);
 
+					
+					wp_enqueue_script(
+						'aioseop-admin-functions',
+						AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-admin-functions.js',
+						array(),
+						AIOSEOP_VERSION
+					);
+
 					$count_chars_data = array(
-						'isGutenberg'   => $is_gutenberg,
 						'pluginDirName' => AIOSEOP_PLUGIN_DIRNAME,
 						'currentPage'   => $hook_suffix,
 					);

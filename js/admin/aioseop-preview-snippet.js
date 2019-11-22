@@ -31,7 +31,7 @@ jQuery(function($){
 	 */
 	function aioseopInitPreviewSnippet() {
 		let inputFields = [aioseopTitle, aioseopDescription];
-		 
+
 		if (isClassicEditor) {
 			docTitle = $('#title');
 			let postExcerpt = $('#excerpt');
@@ -173,36 +173,6 @@ jQuery(function($){
 		let textArea = document.createElement('textarea');
 		textArea.innerHTML = encodedString;
 		return textArea.value;
-	}
-
-	/**
-	 * Checks whether the Classic Editor is active.
-	 * 
-	 * @since 3.3.4
-	 * 
-	 * @return bool Whether or not the Classic Editor is active.
-	 */
-	function aioseopIsClassicEditor() {
-		if (typeof(tinyMCE) != "undefined") {
-			if (tinyMCE.activeEditor == null || tinyMCE.activeEditor.isHidden() != false) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Determines whether the visual tab is active in the Classic Editor.
-	 * 
-	 * @since 3.3.4
-	 * 
-	 * @return bool Whether or not the visual tab is active.
-	 */
-	function aioseopIsVisualTab() {
-		if($('#wp-content-wrap').hasClass('tmce-active')) {
-			return true;
-		}
-		return false;
 	}
 
 	/**
