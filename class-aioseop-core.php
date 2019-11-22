@@ -179,7 +179,11 @@ class AIOSEOP_Core {
 	 * @access private
 	 */
 	private function _define_constants() {
-		$aioseop_dir = WP_PLUGIN_DIR . '\\' . AIOSEOP_PLUGIN_BASENAME;
+		if ( defined( 'AIOSEOP_VERSION' ) ) {
+			return;
+		}
+
+		$aioseop_dir = str_replace( basename( __DIR__ ), '', __DIR__ ) . AIOSEOP_PLUGIN_BASENAME;
 
 		// Use get_file_data with this file, and get the plugin's file data with default_headers.
 		$default_headers = array(
