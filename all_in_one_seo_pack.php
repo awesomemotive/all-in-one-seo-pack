@@ -46,6 +46,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
+if ( ! defined( 'AIOSEOP_PLUGIN_BASENAME' ) ) {
+
+	/**
+	 * Plugin Basename.
+	 *
+	 * @since ?
+	 *
+	 * @var string $AIOSEOP_PLUGIN_BASENAME Plugin basename on WP platform. Eg. 'all-in-one-seo-pack/all_in_one_seo_pack.php`.
+	 */
+	define( 'AIOSEOP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+}
+
 require_once plugin_dir_path( __FILE__ ) . 'class-aioseop-core.php';
 global $aioseop_core;
 if ( is_null( $aioseop_core ) ) {

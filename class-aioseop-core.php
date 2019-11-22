@@ -179,8 +179,7 @@ class AIOSEOP_Core {
 	 * @access private
 	 */
 	private function _define_constants() {
-		// TODO Replace if there is a better concept to get current plugin path dynamically.
-		global $plugin;
+		$aioseop_dir = WP_PLUGIN_DIR . '\\' . AIOSEOP_PLUGIN_BASENAME;
 
 		// Use get_file_data with this file, and get the plugin's file data with default_headers.
 		$default_headers = array(
@@ -188,7 +187,7 @@ class AIOSEOP_Core {
 			'Version' => 'Version',
 		);
 
-		$plugin_data = get_file_data( $plugin, $default_headers );
+		$plugin_data = get_file_data( $aioseop_dir, $default_headers );
 
 		/**
 		 * AIOSEOP Display Name
@@ -223,32 +222,12 @@ class AIOSEOP_Core {
 			 *
 			 * @var string $AIOSEOP_PLUGIN_DIR Plugin folder directory path. Eg. `C:\WebProjects\UW-WPDev-aioseop\src-plugins/all-in-one-seo-pack/`
 			 */
-			define( 'AIOSEOP_PLUGIN_DIR', plugin_dir_path( $plugin ) );
-		} elseif ( AIOSEOP_PLUGIN_DIR !== plugin_dir_path( $plugin ) ) {
-			/*
-			This is not a great message.
-			add_action( 'admin_notices', create_function( '', 'echo "' . "<div class='error'>" . sprintf(
-						__( "%s detected a conflict; please deactivate the plugin located in %s.", 'all-in-one-seo-pack' ),
-						$aioseop_plugin_name, AIOSEOP_PLUGIN_DIR ) . "</div>" . '";' ) );
-			*/
-			return;
+			define( 'AIOSEOP_PLUGIN_DIR', plugin_dir_path( $aioseop_dir ) );
 		}
 
 		// Defines constants that haven't been defined.
 		// Keep `! defined()` for development purposes to possibly separate plugin development from other plugins.
 		// DEV NOTE: This may not be practical. WP still requires AIOSEOP to be in the plugins folder in order to be detected.
-		if ( ! defined( 'AIOSEOP_PLUGIN_BASENAME' ) ) {
-
-			/**
-			 * Plugin Basename.
-			 *
-			 * @since ?
-			 *
-			 * @var string $AIOSEOP_PLUGIN_BASENAME Plugin basename on WP platform. Eg. 'all-in-one-seo-pack/all_in_one_seo_pack.php`.
-			 */
-
-			define( 'AIOSEOP_PLUGIN_BASENAME', plugin_basename( $plugin ) );
-		}
 		if ( ! defined( 'AIOSEOP_PLUGIN_DIRNAME' ) ) {
 
 			/**
@@ -269,7 +248,7 @@ class AIOSEOP_Core {
 			 *
 			 * @var string $AIOSEOP_PLUGIN_URL Plugin directory url. Eg `http://aioseop.test/wp-content/plugins/all-in-one-seo-pack/`
 			 */
-			define( 'AIOSEOP_PLUGIN_URL', plugin_dir_url( $plugin ) );
+			define( 'AIOSEOP_PLUGIN_URL', plugin_dir_url( $aioseop_dir ) );
 		}
 		if ( ! defined( 'AIOSEOP_PLUGIN_IMAGES_URL' ) ) {
 
