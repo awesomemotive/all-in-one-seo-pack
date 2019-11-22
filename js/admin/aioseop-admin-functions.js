@@ -27,7 +27,7 @@ function aioseopIsGutenbergEditor() {
  * @return bool Whether or not the visual tab is active.
  */
 function aioseopIsVisualTab() {
-    if ($('#wp-content-wrap').hasClass('tmce-active')) {
+    if (jQuery('#wp-content-wrap').hasClass('tmce-active')) {
         return true;
     }
     return false;
@@ -49,7 +49,7 @@ function aioseopSetClassicEditorEventListener(functionName) {
         }, 500);
     } else {
         setTimeout(function () {
-            $('.wp-editor-area').on('change', function () {
+            jQuery('.wp-editor-area').on('change', function () {
                 functionName();
             });
         }, 500);
@@ -64,8 +64,8 @@ function aioseopSetClassicEditorEventListener(functionName) {
  * @param string functionName The name of the function that needs to be called when the event is triggered.
  */
 function aioseopSetClassicEditorTabSwitchEventListener(functionName) {
-    $('.wp-switch-editor').each(function () {
-        $(this).on('click', function () {
+    jQuery('.wp-switch-editor').each(function () {
+        jQuery(this).on('click', function () {
             setTimeout(function () {
                 aioseopSetClassicEditorEventListener(functionName);
             });
@@ -83,9 +83,9 @@ function aioseopSetClassicEditorTabSwitchEventListener(functionName) {
 function aioseopGetClassicEditorContent() {
     if (aioseopIsVisualTab()) {
         //tinymce.activeEditor.getContent();
-        return $('#content_ifr').contents().find('body')[0].innerHTML;
+        return jQuery('#content_ifr').contents().find('body')[0].innerHTML;
     }
-    return $('.wp-editor-area').val();
+    return jQuery('.wp-editor-area').val();
 }
 
 /**
