@@ -55,7 +55,7 @@ if ( ! defined( 'AIOSEOP_PLUGIN_BASENAME' ) ) {
 	 *
 	 * @var string $AIOSEOP_PLUGIN_BASENAME Plugin basename on WP platform. Eg. 'all-in-one-seo-pack/all_in_one_seo_pack.php`.
 	 */
-	define( 'AIOSEOP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+	define( 'AIOSEOP_PLUGIN_BASENAME', str_replace( basename( __DIR__ ) . '\\', '', plugin_basename( __FILE__ ) ) );
 }
 
 require_once plugin_dir_path( __FILE__ ) . 'class-aioseop-core.php';
