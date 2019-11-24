@@ -184,7 +184,7 @@ class AIOSEOP_Core {
 		}
 
 		// PHP > 5.2 compatibility for __DIR__.
-		$directory   = dirname( __FILE__ );
+		$directory = dirname( __FILE__ );
 
 		$root_dir    = wp_normalize_path( str_replace( basename( $directory ), '', $directory ) );
 		$aioseop_dir = $root_dir . AIOSEOP_PLUGIN_BASENAME;

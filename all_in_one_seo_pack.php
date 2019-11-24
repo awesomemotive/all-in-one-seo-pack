@@ -50,8 +50,8 @@ if ( ! defined( 'AIOSEOP_PLUGIN_BASENAME' ) ) {
 	// PHP > 5.2 compatibility for __DIR__.
 	$aioseop_directory = dirname( __FILE__ );
 
-	$search            = str_replace( basename( $aioseop_directory ), '', $aioseop_directory );
-	$aioseop_basename  = wp_normalize_path( str_replace( $search, '', __FILE__ ) );
+	$search           = str_replace( basename( $aioseop_directory ), '', $aioseop_directory );
+	$aioseop_basename = wp_normalize_path( str_replace( $search, '', __FILE__ ) );
 	/**
 	 * Plugin Basename.
 	 *
