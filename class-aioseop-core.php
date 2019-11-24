@@ -79,6 +79,7 @@ class AIOSEOP_Core {
 	 */
 	public function init() {
 		global $aiosp;
+		global $aioseop_options;
 
 		// Error notice when class already exists.
 		if ( class_exists( 'All_in_One_SEO_Pack' ) ) {
@@ -139,7 +140,7 @@ class AIOSEOP_Core {
 
 		// TODO Move this to updates file.
 		// FIXME This is executed in AIOSEOP_Core::aioseop_welcome() on admin_init hook.
-		$aioseop_welcome = new aioseop_welcome();
+		new aioseop_welcome();
 		add_action( 'admin_init', array( $this, 'aioseop_welcome' ) );
 
 		// TODO Move this add_action to All_in_One_SEO_Pack::__construct().
@@ -342,11 +343,13 @@ class AIOSEOP_Core {
 	 *
 	 * TODO This could be moved to the performance module, but may need the ability to fire early (before other operations occur).
 	 * TODO Should this also set the execution time even if the mem_limit is empty (both are set by the same module options).
+	 * TODO Add Try/Catch for ini_set() & ini_time_limit().
 	 *
 	 * @since 3.4
 	 *
 	 * @param string $memory_limit   Amount of memory to set the memory limit to.
 	 * @param string $execution_time Amount of time to set the timeout to.
+	 * @return string
 	 */
 	private function set_mem_limit( $memory_limit, $execution_time ) {
 		// @codingStandardsIgnoreStart
@@ -377,6 +380,8 @@ class AIOSEOP_Core {
 				// @codingStandardsIgnoreEnd
 			}
 		}
+
+		return $aioseop_mem_limit;
 	}
 
 	/**
@@ -435,9 +440,6 @@ class AIOSEOP_Core {
 	public static function activate() {
 		// Check if we just got activated.
 		global $aiosp_activation;
-		if ( AIOSEOPPRO ) {
-			global $aioseop_update_checker;
-		}
 		$aiosp_activation = true;
 
 		// phpcs:disable
@@ -454,6 +456,7 @@ class AIOSEOP_Core {
 		delete_user_meta( get_current_user_id(), 'aioseop_yst_detected_notice_dismissed' );
 
 		if ( AIOSEOPPRO ) {
+			global $aioseop_update_checker;
 			$aioseop_update_checker->checkForUpdates();
 		}
 	}
@@ -617,7 +620,6 @@ class AIOSEOP_Core {
 		}
 
 		$aioseop_plugin_dirname = AIOSEOP_PLUGIN_DIRNAME;
-		$action_links           = array();
 		$action_links           = array(
 			'settings' => array(
 				/* translators: This is an action link users can click to open the General Settings menu. */
