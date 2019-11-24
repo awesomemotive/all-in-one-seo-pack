@@ -47,15 +47,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'AIOSEOP_PLUGIN_BASENAME' ) ) {
-
+	$search           = wp_normalize_path( dirname( __DIR__, 1 ) ) . '/';
+	$aioseop_basename = str_replace( $search, '', plugin_basename( __FILE__ ) );
 	/**
 	 * Plugin Basename.
 	 *
 	 * @since ?
+	 * @since 3.4 Fix plugin basename on Travis CI & PHPUnit testing when plugin directory is outside of wp-plugins.
 	 *
 	 * @var string $AIOSEOP_PLUGIN_BASENAME Plugin basename on WP platform. Eg. 'all-in-one-seo-pack/all_in_one_seo_pack.php`.
 	 */
-	define( 'AIOSEOP_PLUGIN_BASENAME', str_replace( basename( __DIR__ ) . '\\', '', plugin_basename( __FILE__ ) ) );
+	define( 'AIOSEOP_PLUGIN_BASENAME', $aioseop_basename );
 }
 
 require_once plugin_dir_path( __FILE__ ) . 'class-aioseop-core.php';
