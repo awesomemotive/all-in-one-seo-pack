@@ -8,7 +8,7 @@
  */
 
 jQuery(function($){
-	
+
 	"use strict";
 
 	let docTitle                 = '';
