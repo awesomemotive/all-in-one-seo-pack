@@ -183,7 +183,10 @@ class AIOSEOP_Core {
 			return;
 		}
 
-		$root_dir    = wp_normalize_path( str_replace( basename( __DIR__ ), '', __DIR__ ) );
+		// PHP > 5.2 compatibility for __DIR__.
+		$directory   = dirname( __FILE__ );
+
+		$root_dir    = wp_normalize_path( str_replace( basename( $directory ), '', $directory ) );
 		$aioseop_dir = $root_dir . AIOSEOP_PLUGIN_BASENAME;
 
 		// Use get_file_data with this file, and get the plugin's file data with default_headers.
