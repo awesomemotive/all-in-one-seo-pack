@@ -47,8 +47,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'AIOSEOP_PLUGIN_BASENAME' ) ) {
-	$search           = wp_normalize_path( str_replace( basename( __DIR__ ), '', __DIR__ ) );
-	$aioseop_basename = str_replace( $search, '', plugin_basename( __FILE__ ) );
+	$search           = str_replace( basename( __DIR__ ), '', __DIR__ );
+	$aioseop_basename = wp_normalize_path( str_replace( $search, '', __FILE__ ) );
 	/**
 	 * Plugin Basename.
 	 *
