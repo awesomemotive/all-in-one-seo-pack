@@ -183,7 +183,8 @@ class AIOSEOP_Core {
 			return;
 		}
 
-		$aioseop_dir = wp_normalize_path( dirname( __DIR__, 1 ) )  . '/'. AIOSEOP_PLUGIN_BASENAME;
+		$root_dir    = wp_normalize_path( str_replace( basename( __DIR__ ), '', __DIR__ ) );
+		$aioseop_dir = $root_dir . AIOSEOP_PLUGIN_BASENAME;
 
 		// Use get_file_data with this file, and get the plugin's file data with default_headers.
 		$default_headers = array(
