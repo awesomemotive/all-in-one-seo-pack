@@ -6,7 +6,7 @@
  * @package all-in-one-seo-pack
  */
 
- "use strict";
+"use strict";
 
 /**
  * Checks whether the Gutenberg Editor is active.
@@ -16,7 +16,7 @@
  * @return bool Whether or not the Gutenberg Editor is active.
  */
 function aioseopIsGutenbergEditor() {
-    return document.body.classList.contains( 'block-editor-page' );
+	return document.body.classList.contains('block-editor-page');
 }
 
 /**
@@ -27,10 +27,10 @@ function aioseopIsGutenbergEditor() {
  * @return bool Whether or not the visual tab is active.
  */
 function aioseopIsVisualTab() {
-    if (jQuery('#wp-content-wrap').hasClass('tmce-active')) {
-        return true;
-    }
-    return false;
+	if (jQuery('#wp-content-wrap').hasClass('tmce-active')) {
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -41,19 +41,19 @@ function aioseopIsVisualTab() {
  * @param string functionName The name of the function that has to be called when the event is triggered.
  */
 function aioseopSetClassicEditorEventListener(functionName) {
-    if (aioseopIsVisualTab()) {
-        setTimeout(function () {
-            tinymce.editors[0].on('KeyUp', function () {
-                functionName();
-            });
-        }, 500);
-    } else {
-        setTimeout(function () {
-            jQuery('.wp-editor-area').on('change', function () {
-                functionName();
-            });
-        }, 500);
-    }
+	if (aioseopIsVisualTab()) {
+		setTimeout(function () {
+			tinymce.editors[0].on('KeyUp', function () {
+				functionName();
+			});
+		}, 500);
+	} else {
+		setTimeout(function () {
+			jQuery('.wp-editor-area').on('change', function () {
+				functionName();
+			});
+		}, 500);
+	}
 }
 
 /**
@@ -64,13 +64,13 @@ function aioseopSetClassicEditorEventListener(functionName) {
  * @param string functionName The name of the function that needs to be called when the event is triggered.
  */
 function aioseopSetClassicEditorTabSwitchEventListener(functionName) {
-    jQuery('.wp-switch-editor').each(function () {
-        jQuery(this).on('click', function () {
-            setTimeout(function () {
-                aioseopSetClassicEditorEventListener(functionName);
-            });
-        })
-    });
+	jQuery('.wp-switch-editor').each(function () {
+		jQuery(this).on('click', function () {
+			setTimeout(function () {
+				aioseopSetClassicEditorEventListener(functionName);
+			});
+		})
+	});
 }
 
 /**
@@ -81,11 +81,11 @@ function aioseopSetClassicEditorTabSwitchEventListener(functionName) {
  * @return string The content of the active editor tab.
  */
 function aioseopGetClassicEditorContent() {
-    if (aioseopIsVisualTab()) {
-        //tinymce.activeEditor.getContent();
-        return jQuery('#content_ifr').contents().find('body')[0].innerHTML;
-    }
-    return jQuery('.wp-editor-area').val();
+	if (aioseopIsVisualTab()) {
+		//tinymce.activeEditor.getContent();
+		return jQuery('#content_ifr').contents().find('body')[0].innerHTML;
+	}
+	return jQuery('.wp-editor-area').val();
 }
 
 /**
@@ -97,16 +97,16 @@ function aioseopGetClassicEditorContent() {
  * @param functionName The name of the function that needs to be called when the event is triggered.
  */
 function aioseopSetGutenbergEditorEventListener(functionName) {
-    window._wpLoadBlockEditor.then(function () {
-        setTimeout(function () {
-            // https://developer.wordpress.org/block-editor/packages/packages-data/
-            wp.data.subscribe(function () {
-                clearTimeout(aioseopGutenbergEventTimeout);
-                // This is needed because the code otherwise is triggered dozens of times.
-                var aioseopGutenbergEventTimeout = setTimeout(function () {
-                    functionName();
-                }, 200);
-            });
-        });
-    });
+	window._wpLoadBlockEditor.then(function () {
+		setTimeout(function () {
+			// https://developer.wordpress.org/block-editor/packages/packages-data/
+			wp.data.subscribe(function () {
+				clearTimeout(aioseopGutenbergEventTimeout);
+				// This is needed because the code otherwise is triggered dozens of times.
+				var aioseopGutenbergEventTimeout = setTimeout(function () {
+					functionName();
+				}, 200);
+			});
+		});
+	});
 }
