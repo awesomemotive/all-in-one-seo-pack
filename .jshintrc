@@ -12,7 +12,7 @@
 	"onevar": true,
 	"trailing": true,
 	"undef": true,
-	"sub":true,
+	"sub": true,
 	"unused": false,
 	"browser": true,
 	"globals": {
@@ -22,7 +22,12 @@
 		"JSON": false,
 		"wp": false,
 		"alert": false,
-		"ajaxurl": false
+		"ajaxurl": false,
+		"aioseopIsGutenbergEditor": true,
+		"aioseopSetGutenbergEditorEventListener": true,
+		"aioseopSetClassicEditorEventListener": true,
+		"aioseopSetClassicEditorTabSwitchEventListener": true,
+		"aioseopGetClassicEditorContent": true
 	},
 	"predef": [
 		"jQuery",

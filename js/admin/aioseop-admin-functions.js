@@ -6,7 +6,7 @@
  * @package all-in-one-seo-pack
  */
 
-"use strict";
+(function () {'use strict';}());
 
 /**
  * Checks whether the Gutenberg Editor is active.
@@ -69,7 +69,7 @@ function aioseopSetClassicEditorTabSwitchEventListener(functionName) {
 			setTimeout(function () {
 				aioseopSetClassicEditorEventListener(functionName);
 			});
-		})
+		});
 	});
 }
 

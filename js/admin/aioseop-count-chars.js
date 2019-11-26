@@ -52,7 +52,7 @@ jQuery(function($){ // eslint-disable-line max-statements
 		if (!isGutenbergEditor) {
 			aioseopSetClassicEditorListeners();
 		} else {
-			aioseopSetGutenbergEditorEventListener(aioseopCountChars)
+			aioseopSetGutenbergEditorEventListener(aioseopCountChars);
 		}
 	}
 
