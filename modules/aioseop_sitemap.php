@@ -279,7 +279,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 
 					$arr[ $k . '_' . $opt ] = array(
-						'name'            => $this->ucwords( $val ),
+						'name'            => AIOSEOP_PHP_Functions::ucwords( $val ),
 						'type'            => 'select',
 						'initial_options' => $iopts,
 						'default'         => 'no',
@@ -1350,7 +1350,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				if ( $this->is_file( $f ) ) {
 					$fn         = $f;
 					$compressed = false;
-					if ( $this->substr( $f, - 3 ) === '.gz' ) {
+					if ( AIOSEOP_PHP_Functions::substr( $f, - 3 ) === '.gz' ) {
 						$compressed = true;
 					}
 					if ( $use_wpfs ) {

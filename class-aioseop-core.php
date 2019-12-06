@@ -322,6 +322,7 @@ class AIOSEOP_Core {
 		require_once AIOSEOP_PLUGIN_DIR . 'inc/compatibility/abstract/aiosep_compatible.php';
 		require_once AIOSEOP_PLUGIN_DIR . 'inc/compatibility/compat-init.php';
 		require_once AIOSEOP_PLUGIN_DIR . 'inc/compatibility/php-functions.php';
+		require_once AIOSEOP_PLUGIN_DIR . 'inc/compatibility/class-aioseop-php-functions.php';
 		require_once AIOSEOP_PLUGIN_DIR . 'public/front.php';
 		require_once AIOSEOP_PLUGIN_DIR . 'public/google-analytics.php';
 		require_once AIOSEOP_PLUGIN_DIR . 'admin/display/welcome.php';

@@ -1224,13 +1224,13 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$w                         = $info['w'];
 		$p                         = $info['p'];
 
-		if ( $this->strlen( $title ) > 70 ) {
+		if ( AIOSEOP_PHP_Functions::strlen( $title ) > 70 ) {
 			$title = $this->trim_excerpt_without_filters(
 				$this->html_entity_decode( $title ),
 				70
 			) . '...';
 		}
-		if ( $this->strlen( $description ) > 156 ) {
+		if ( AIOSEOP_PHP_Functions::strlen( $description ) > 156 ) {
 			$description = $this->trim_excerpt_without_filters(
 				$this->html_entity_decode( $description ),
 				156
@@ -2141,7 +2141,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$search = esc_attr( stripslashes( $s ) );
 			$title  = $search;
 		} elseif ( ( is_tax() || is_category() ) && ! is_feed() ) {
-			$category_name = $this->ucwords( $this->internationalize( single_cat_title( '', false ) ) );
+			$category_name = AIOSEOP_PHP_Functions::ucwords( $this->internationalize( single_cat_title( '', false ) ) );
 			$title         = $category_name;
 		} elseif ( is_page() ) {
 			$title = $this->internationalize( single_post_title( '', false ) );
@@ -2217,7 +2217,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$request_a   = explode( ' ', $request );
 		$request_new = array();
 		foreach ( $request_a as $token ) {
-			$request_new[] = $this->ucwords( trim( $token ) );
+			$request_new[] = AIOSEOP_PHP_Functions::ucwords( trim( $token ) );
 		}
 		$request = implode( ' ', $request_new );
 
@@ -2319,10 +2319,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$new_title = str_replace( "%{$type}_author_nicename%", $authordata->user_nicename, $new_title );
 		}
 		if ( false !== strpos( $new_title, "%{$type}_author_firstname%", 0 ) ) {
-			$new_title = str_replace( "%{$type}_author_firstname%", $this->ucwords( $authordata->first_name ), $new_title );
+			$new_title = str_replace( "%{$type}_author_firstname%", AIOSEOP_PHP_Functions::ucwords( $authordata->first_name ), $new_title );
 		}
 		if ( false !== strpos( $new_title, "%{$type}_author_lastname%", 0 ) ) {
-			$new_title = str_replace( "%{$type}_author_lastname%", $this->ucwords( $authordata->last_name ), $new_title );
+			$new_title = str_replace( "%{$type}_author_lastname%", AIOSEOP_PHP_Functions::ucwords( $authordata->last_name ), $new_title );
 		}
 		if ( false !== strpos( $new_title, '%current_date%', 0 ) ) {
 			$new_title = str_replace( '%current_date%', aioseop_formatted_date(), $new_title );
@@ -3000,7 +3000,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			$max = $this->maximum_description_length;
 		}
 		$max_orig = $max;
-		$len      = $this->strlen( $text2 );
+		$len      = AIOSEOP_PHP_Functions::strlen( $text2 );
 		if ( $max < $len ) {
 			if ( function_exists( 'mb_strrpos' ) ) {
 				$pos = mb_strrpos( $text2, ' ', - ( $len - $max ), 'UTF-8' );
@@ -3023,7 +3023,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 				$max = $max_orig;
 			}
 		}
-		$text = $this->substr( $text, 0, $max );
+		$text = AIOSEOP_PHP_Functions::substr( $text, 0, $max );
 
 		return trim( $text );
 	}
@@ -3055,15 +3055,15 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 
 		if ( get_query_var( 'm' ) ) {
 			$m = preg_replace( '/[^0-9]/', '', get_query_var( 'm' ) );
-			switch ( $this->strlen( $m ) ) {
+			switch ( AIOSEOP_PHP_Functions::strlen( $m ) ) {
 				case 4:
 					$link = get_year_link( $m );
 					break;
 				case 6:
-					$link = get_month_link( $this->substr( $m, 0, 4 ), $this->substr( $m, 4, 2 ) );
+					$link = get_month_link( AIOSEOP_PHP_Functions::substr( $m, 0, 4 ), AIOSEOP_PHP_Functions::substr( $m, 4, 2 ) );
 					break;
 				case 8:
-					$link = get_day_link( $this->substr( $m, 0, 4 ), $this->substr( $m, 4, 2 ), $this->substr( $m, 6, 2 ) );
+					$link = get_day_link( AIOSEOP_PHP_Functions::substr( $m, 0, 4 ), AIOSEOP_PHP_Functions::substr( $m, 4, 2 ), AIOSEOP_PHP_Functions::substr( $m, 6, 2 ) );
 					break;
 				default:
 					return false;
@@ -3364,7 +3364,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 		if ( ! empty( $keywords ) ) {
 			foreach ( $keywords as $word ) {
-				$small_keywords[] = trim( $this->strtolower( $word ) );
+				$small_keywords[] = trim( AIOSEOP_PHP_Functions::strtolower( $word ) );
 			}
 		}
 
@@ -4095,8 +4095,8 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		$title             = trim( strip_tags( $title ) );
 		$title_tag_start   = '<title';
 		$title_tag_end     = '</title';
-		$start             = $this->strpos( $content, $title_tag_start, 0 );
-		$end               = $this->strpos( $content, $title_tag_end, 0 );
+		$start             = AIOSEOP_PHP_Functions::strpos( $content, $title_tag_start, 0 );
+		$end               = AIOSEOP_PHP_Functions::strpos( $content, $title_tag_end, 0 );
 		$this->title_start = $start;
 		$this->title_end   = $end;
 		$this->orig_title  = $title;
@@ -4299,7 +4299,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		global $aioseop_options;
 
 		// Handle the description format.
-		if ( isset( $description ) && false !== $description && ( $this->strlen( $description ) > $this->minimum_description_length ) && ! ( is_front_page() && is_paged() ) ) {
+		if ( isset( $description ) && false !== $description && ( AIOSEOP_PHP_Functions::strlen( $description ) > $this->minimum_description_length ) && ! ( is_front_page() && is_paged() ) ) {
 			$description = $this->trim_description( $description );
 			if ( ! isset( $meta_string ) ) {
 				$meta_string = '';
@@ -4664,7 +4664,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 			}
 			if (
 					sizeof( $active_handlers ) > 0 &&
-					$this->strtolower( $active_handlers[ sizeof( $active_handlers ) - 1 ] ) == $this->strtolower( 'All_in_One_SEO_Pack::output_callback_for_title' )
+					AIOSEOP_PHP_Functions::strtolower( $active_handlers[ sizeof( $active_handlers ) - 1 ] ) == AIOSEOP_PHP_Functions::strtolower( 'All_in_One_SEO_Pack::output_callback_for_title' )
 			) {
 				ob_end_flush();
 			} else {
