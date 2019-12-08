@@ -1919,8 +1919,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 *
 		 * @since ?
 		 *
-		 * @param null $p
-		 * @return bool
+		 * @param null|WP_Post $p WordPress post object.
+		 * @return string
 		 */
 		function get_the_image_by_attachment( $p = null ) {
 
@@ -1928,6 +1928,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				global $post;
 			} else {
 				$post = $p;
+			}
+
+			if ( empty( $post ) ) {
+				return '';
 			}
 
 			$attachments = get_children(
@@ -1948,7 +1952,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 
 			/* If no attachments or image is found, return false. */
 			if ( empty( $attachments ) && empty( $image ) ) {
-				return false;
+				return '';
 			}
 
 			/* Set the default iterator to 0. */
