@@ -6,7 +6,9 @@
  * @package all-in-one-seo-pack
  */
 
-(function () {'use strict';}());
+(function () { 'use strict'; }());
+
+var aioseopEditorUndefined = false;
 
 /**
  * Checks whether the Gutenberg Editor is active.
@@ -41,6 +43,10 @@ function aioseopIsVisualTab() {
  * @param string functionName The name of the function that has to be called when the event is triggered.
  */
 function aioseopSetClassicEditorEventListener(functionName) {
+	if ('undefined' === typeof (window._wpLoadBlockEditor)) {
+		aioseopEditorUndefined = true;
+		return;
+	}
 	if (aioseopIsVisualTab()) {
 		setTimeout(function () {
 			tinymce.editors[0].on('KeyUp', function () {

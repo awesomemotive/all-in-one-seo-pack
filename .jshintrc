@@ -27,7 +27,8 @@
 		"aioseopSetGutenbergEditorEventListener": true,
 		"aioseopSetClassicEditorEventListener": true,
 		"aioseopSetClassicEditorTabSwitchEventListener": true,
-		"aioseopGetClassicEditorContent": true
+		"aioseopGetClassicEditorContent": true,
+		"aioseopEditorUndefined": true
 	},
 	"predef": [
 		"jQuery",

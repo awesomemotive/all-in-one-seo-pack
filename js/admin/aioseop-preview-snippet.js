@@ -71,6 +71,10 @@ jQuery(function($){
 		let postContent = '';
 		let postExcerpt = '';
 
+		if(aioseopEditorUndefined) {
+			return;
+		}
+		
 		if (!isGutenbergEditor) {
 			postTitle   = aioseopStripMarkup($.trim($('#title').val()));
 			postContent = aioseopGetDescription(aioseopGetClassicEditorContent());
