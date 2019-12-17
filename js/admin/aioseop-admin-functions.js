@@ -43,10 +43,6 @@ function aioseopIsVisualTab() {
  * @param string functionName The name of the function that has to be called when the event is triggered.
  */
 function aioseopSetClassicEditorEventListener(functionName) {
-	if ('undefined' === typeof (window._wpLoadBlockEditor)) {
-		aioseopEditorUndefined = true;
-		return;
-	}
 	if (aioseopIsVisualTab()) {
 		setTimeout(function () {
 			tinymce.editors[0].on('KeyUp', function () {
@@ -103,6 +99,10 @@ function aioseopGetClassicEditorContent() {
  * @param functionName The name of the function that needs to be called when the event is triggered.
  */
 function aioseopSetGutenbergEditorEventListener(functionName) {
+	if ('undefined' === typeof (window._wpLoadBlockEditor)) {
+		aioseopEditorUndefined = true;
+		return;
+	}
 	window._wpLoadBlockEditor.then(function () {
 		setTimeout(function () {
 			// https://developer.wordpress.org/block-editor/packages/packages-data/
