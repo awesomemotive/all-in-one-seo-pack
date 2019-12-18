@@ -71,7 +71,7 @@ jQuery(function($){
 		let postContent = '';
 		let postExcerpt = '';
 
-		if(aioseopEditorUndefined) {
+		if (aioseopEditorUndefined) {
 			return;
 		}
 		
