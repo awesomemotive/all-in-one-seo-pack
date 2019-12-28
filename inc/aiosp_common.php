@@ -231,15 +231,17 @@ class aiosp_common {
 	}
 
 	/**
-	 * Attachment URL to Post ID
+	 * Attachment URL to Post ID whole search.
 	 *
 	 * Returns the (original) post/attachment ID from the URL param given. The function checks if URL is
 	 * within, chacks for original attachment URLs, and then custom attachment URLs. The main intent for this function
 	 * is to avoid having to query if possible (if cache was set prior), and if not, there is only 1 query per instance
 	 * rather than multiple queries per instance.
-	 * NOTE: Attempting to paginate the query actually caused the memory to peak higher.
+	 * NOTE: Attempting to paginate the query actually caused the memory to peak higher use.
+	 * NOTE: For a not paginatnated query case use aiosp_common:convert_image_url_to_id_individually istead.
 	 *
-	 * This is intended to work much the same way as WP's `attachment_url_to_postid()`.
+	 * This is intended to work much the same way as WP's `attachment_url_to_postid()`
+	 * But less expensive in loop case and also optionaly searching among custom image sizes.
 	 *
 	 * @link https://developer.wordpress.org/reference/functions/attachment_url_to_postid/
 	 *
@@ -252,11 +254,16 @@ class aiosp_common {
 	 * @since 2.9.2
 	 *
 	 * @param string $url Full image URL.
+	 * @param bool $sizes_active Also search among image sizes
+	 *
 	 * @return int
 	 */
-	public static function attachment_url_to_postid( $url ) {
-		$id      = 0;
-		$url_md5 = md5( $url );
+	public static function convert_image_url_to_id_bulky( $url, $sizes_active = false ) {
+		static $main_image_id_url;
+		static $custom_image_id_url;
+		static $uploads_dir;
+
+		$id = 0;
 
 		// Gets the URL => PostIDs array.
 		// If static variable is still empty, load transient data.
@@ -274,23 +281,34 @@ class aiosp_common {
 		}
 
 		// Search for URL and get ID.
-		if ( isset( self::$attachment_url_postids[ $url_md5 ] ) ) {
+		if ( isset( self::$attachment_url_postids[ $url ] ) ) {
 			// If static is already loaded and has URL, then return the URL's Post ID.
-			$id = intval( self::$attachment_url_postids[ $url_md5 ] );
+			$id = intval( self::$attachment_url_postids[ $url ] );
 		} else {
 			// Check to make sure Image URL is not outside the website.
-			$uploads_dir = wp_upload_dir();
+			if ( is_null( $uploads_dir ) ) {
+				$uploads_dir = wp_upload_dir();
+			}
 
 			if ( false !== strpos( $url, $uploads_dir['baseurl'] . '/' ) ) {
-				// Results_1 query looks for URLs with the original full size image
-				$id = aiosp_common::attachment_url_to_postid_query_1( $url );
-				if ( empty( $id ) ) {
-					// Results_2 query looks for URLs with custimom sizes images
-					$id = aiosp_common::attachment_url_to_postid_query_2( $url );
+				if ( is_null( $main_image_id_url ) ) {
+					$main_image_id_url = self::get_all_main_images();
+				}
+				if ( isset( $main_image_id_url[$url] ) ) {
+					$id = intval( $main_image_id_url[$url] );
+				}
+
+				if ( empty( $id ) && $sizes_active ) { 
+					if (is_null( $custom_image_id_url ) ) {
+						$custom_image_id_url = self::get_all_custom_images();
+					}
+					if ( isset( $custom_image_id_url[$url] ) ) {
+						$id = intval( $custom_image_id_url[$url] );
+					}
 				}
 			}
 
-			self::$attachment_url_postids[ $url_md5 ] = $id;
+			self::$attachment_url_postids[ $url ] = $id;
 
 			/**
 			 * Sets the transient data at the last hook instead at every call.
@@ -304,74 +322,133 @@ class aiosp_common {
 	}
 
 	/**
-	 * Set Transient URL Post IDs
+	 * Attachment URL to Post ID individual search.
 	 *
-	 * Sets the transient data at the last hook instead at every call.
+	 * Returns the (original) post/attachment ID from the URL param given.
+	 * NOTE: Attempting to paginate the query actually caused the memory to peak higher use 
+	 * NOTE: For a paginatnated query case try to use aiosp_common:convert_image_url_to_id_bulky istead.
 	 *
-	 * @see set_transient()
-	 * @link https://developer.wordpress.org/reference/functions/set_transient/
+	 * This is intended to work much the same way as WP's `attachment_url_to_postid()`
+	 * But also optionaly searching among custom image sizes.
 	 *
-	 * @since 2.9.2
-	 */
-	public static function set_transient_url_postids() {
-		if ( is_multisite() ) {
-			set_site_transient( 'aioseop_multisite_attachment_url_postids', self::$attachment_url_postids, 24 * HOUR_IN_SECONDS );
-		} else {
-			set_transient( 'aioseop_attachment_url_postids', self::$attachment_url_postids, 24 * HOUR_IN_SECONDS );
-		}
-
-	}
-
-	/**
-	 * Attachment URL to Post ID - Query 1
+	 * @link https://developer.wordpress.org/reference/functions/attachment_url_to_postid/
+	 * @link https://developer.wordpress.org/reference/functions/wp_upload_dir/
 	 *
-	 * This is intended to work solely with `aiosp_common::attachment_url_to_post_id()`. Calling this multiple times
-	 * is memory intense.
-	 *
-	 * @see get_posts
-	 * @link https://developer.wordpress.org/reference/functions/get_posts/
+	 * @since 3.4
 	 *
 	 * @param string $url Full image URL.
+	 * @param bool $sizes_active Also search among image sizes
 	 *
-	 * @return null|int
+	 * @return int
 	 */
-	public static function attachment_url_to_postid_query_1( $url ) {
+	public static function convert_image_url_to_id_individually( $url, $sizes_active = false ) {
+		$id = 0;
 
-		$file  = basename( $url );
-		$query = array(
-			'post_type'  => 'attachment',
-			'fields'     => 'ids',
-			'meta_query' => array(
-				array(
-					'key'     => '_wp_attached_file',
-					'value'   => $file,
-					'compare' => 'LIKE',
-				),
-			)
-		);
+		$uploads_dir = wp_upload_dir();
+		// Check to make sure Image URL is not outside the website.
+		if ( false !== strpos( $url, $uploads_dir['baseurl'] . '/' ) ) {
+			// search like main image
+			$id = attachment_url_to_postid( $url );
 
-		// query attachments
-		$ids = get_posts( $query );
-
-		if ( ! empty( $ids ) ) {
-
-			foreach ( $ids as $id ) {
-				// first entry of returned array is the URL
-				$image_src = wp_get_attachment_image_src( $id, 'full' ) ;
-				if ( $url === array_shift( $image_src ) )
-					return $id;
+			if ( ! $id ) {
+				// search like custom image
+				$id = self::get_single_custom_image_id( $url );
 			}
 		}
+
+		return $id;
 	}
 
 	/**
-	 * Attachment URL to Post ID - Query 2
+	 * Attachment URL to Post ID main images look over
 	 *
-	 * This is intended to work solely with `aiosp_common::attachment_url_to_post_id()`.
-	 * Calling this multiple times is memory intense. It's intended to query for custom images, and data for those types
+	 * This is intended to work solely with `aiosp_common::convert_image_url_to_id_bulky()`.
+	 * NOTE: Calling this multiple times is memory intense.
+	 *
+	 * @see wpdb::get_results()
+	 * @link https://developer.wordpress.org/reference/classes/wpdb/get_results/
+	 *
+	 * @return array
+	 */
+	public static function get_all_main_images() {
+		global $wpdb;
+		$image_id_url = [];
+
+		$results = $wpdb->get_results(
+			"SELECT post_id, meta_value FROM $wpdb->postmeta WHERE meta_key='_wp_attached_file' ",
+			ARRAY_A
+		);
+
+		$upload_dir = wp_upload_dir();
+		$upload_dir = $upload_dir['baseurl'] . '/';
+
+		$image_id_url = array();
+		foreach ( $results as $image_data ) {
+			$post_id = $image_data['post_id'];
+			$image_meta = $image_data['meta_value'];
+
+			$image_id_url[$upload_dir . $image_meta] = $post_id;
+		}
+
+		return $image_id_url;
+	}
+
+	/**
+	 * Attachment URL to Post ID custom size images look over.
+	 *
+	 * It's intended to query for custom images, and data for those types
 	 * of images only exists in the postmeta database table
+	 * This is intended to work solely with `aiosp_common::convert_image_url_to_id_bulky()`.
+	 * NOTE: Calling this multiple times is memory intense.
 	 *
-	 * @see aiosp_common::attachment_url_to_postid()
+	 * @see wpdb::get_results()
+	 * @link https://developer.wordpress.org/reference/classes/wpdb/get_results/
+	 *
+	 * @return array
+	 */
+	public static function get_all_custom_images() {
+		global $wpdb;
+		$image_id_url = [];
+
+		$results = $wpdb->get_results(
+			"SELECT post_id, meta_value FROM $wpdb->postmeta WHERE meta_key='_wp_attachment_metadata'",
+			ARRAY_A
+		);
+
+		$upload_dir = wp_upload_dir();
+		$upload_dir = $upload_dir['baseurl'] . '/';
+
+		$image_id_url = array();
+		foreach ( $results as $image_data ) {
+			$image_meta = $image_data['meta_value'];
+			$post_id = $image_data['post_id'];
+
+			$image_meta = unserialize( $image_meta );
+
+			if ( ! empty( $image_meta['file'] ) && ! empty( $image_meta['sizes'] ) ) {
+
+				$main_image = $image_meta['file'];
+				$upload_path = substr( $main_image, 0,  strpos( $main_image, strrchr( $main_image, '/' ) ) );
+				$image_sizes = $image_meta['sizes'];
+
+				foreach ( $image_sizes as $size ) {
+					$image_id_url[$upload_dir . $upload_path . '/' . $size['file']] = $post_id;
+				}
+			}
+		}
+
+		return $image_id_url;
+	}
+
+	/**
+	 * Attachment URL to Post ID - Query 2.
+	 *
+	 * It's intended to query for custom images, and data for those types
+	 * of images only exists in the postmeta database table
+	 * This is intended to work solely with `aiosp_common::convert_image_url_to_id_individually()`.
+	 * NOTE: Calling this multiple times is memory intense.
+	 * NOTE: For a paginatnated query case try to use aiosp_common:convert_image_url_to_id_bulky istead.
+	 *
 	 * @see get_posts
 	 * @link https://developer.wordpress.org/reference/functions/get_posts/
 	 * @see wp_upload_dir()
@@ -381,7 +458,7 @@ class aiosp_common {
 	 *
 	 * @return null|int
 	 */
-	public static function attachment_url_to_postid_query_2( $url ) {
+	public static function get_single_custom_image_id( $url ) {
 		$file  = basename( $url );
 		$query = array(
 			'post_type'  => 'attachment',
@@ -409,6 +486,24 @@ class aiosp_common {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Set Transient URL Post IDs.
+	 *
+	 * Sets the transient data at the last hook instead at every call.
+	 *
+	 * @see set_transient()
+	 * @link https://developer.wordpress.org/reference/functions/set_transient/
+	 *
+	 * @since 2.9.2
+	 */
+	public static function set_transient_url_postids() {
+		if ( is_multisite() ) {
+			set_site_transient( 'aioseop_multisite_attachment_url_postids', self::$attachment_url_postids, 24 * HOUR_IN_SECONDS );
+		} else {
+			set_transient( 'aioseop_attachment_url_postids', self::$attachment_url_postids, 24 * HOUR_IN_SECONDS );
 		}
 	}
 

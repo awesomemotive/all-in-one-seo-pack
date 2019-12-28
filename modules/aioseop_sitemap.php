@@ -4037,7 +4037,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				// This is to base the attachment query on the ID instead of the URL; which is less SQL intense.
 				foreach ( $post_image_urls as $k1_index => &$v1_image_url ) {
 					$v1_image_url  = aiosp_common::absolutize_url( $v1_image_url );
-					$attachment_id = aiosp_common::attachment_url_to_postid( $v1_image_url );
+					$attachment_id = aiosp_common::convert_image_url_to_id_bulky( $v1_image_url, true );
 
 					if ( $attachment_id ) {
 						if ( ! isset( $this->image_ids_urls[ $attachment_id ] ) ) {

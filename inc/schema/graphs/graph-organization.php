@@ -195,7 +195,7 @@ class AIOSEOP_Graph_Organization extends AIOSEOP_Graph {
 		if ( ! empty( $aioseop_options['aiosp_schema_organization_logo'] ) ) {
 			// Changes the URL to an ID. Known to be memory intense.
 			// Option configurations need to use IDs rather than the URL strings.
-			$logo_id = aiosp_common::attachment_url_to_postid( $aioseop_options['aiosp_schema_organization_logo'] );
+			$logo_id = aiosp_common::convert_image_url_to_id_individually( $aioseop_options['aiosp_schema_organization_logo'], true );
 		}
 
 		// Fallback on Customizer site logo.

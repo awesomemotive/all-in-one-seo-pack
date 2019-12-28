@@ -1443,7 +1443,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$thumbnail = esc_url( $thumbnail );
 				$thumbnail = set_url_scheme( $thumbnail );
 
-				$image_id = aiosp_common::attachment_url_to_postid( $thumbnail );
+				$image_id = aiosp_common::convert_image_url_to_id_individually( $thumbnail, true );
+
 				if ( $image_id ) {
 					if ( ! empty( $img_type ) && $img_type == 'featured' ) {
 						$size  = apply_filters( 'aioseop_thumbnail_size', apply_filters( 'post_thumbnail_size', 'large' ) );
