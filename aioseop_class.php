@@ -4382,10 +4382,10 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		if ( ! $this->is_page_included() ) {
 
 			$aioseop_robots_meta = new AIOSEOP_Robots_Meta();
-			$robots_meta         = $aioseop_robots_meta->get_robots_meta();
+			$robots_meta         = $aioseop_robots_meta->get_robots_meta_tag();
 
 			if ( ! empty( $robots_meta ) ) {
-				echo sprintf( '<meta name="robots" content="%s"', esc_attr( $robots_meta ) ) . " />\n";
+				echo $robots_meta;
 			}
 
 			if ( ! empty( $old_wp_query ) ) {
@@ -4503,7 +4503,7 @@ class All_in_One_SEO_Pack extends All_in_One_SEO_Pack_Module {
 		}
 
 		$aioseop_robots_meta = new AIOSEOP_Robots_Meta();
-		$robots_meta         = $aioseop_robots_meta->get_robots_meta();
+		$robots_meta         = $aioseop_robots_meta->get_robots_meta_tag();
 
 		if ( ! empty( $robots_meta ) ) {
 			$meta_string .= $robots_meta;

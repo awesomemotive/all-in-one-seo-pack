@@ -16,7 +16,7 @@ class AIOSEOP_Robots_Meta {
 
 	/**
 	 * User-defined plugin options.
-	 * 
+	 *
 	 * @since 3.3.1
 	 *
 	 * @var array
@@ -29,9 +29,7 @@ class AIOSEOP_Robots_Meta {
 	}
 
 	/**
-	 * The get_robots_meta() function.
-	 *
-	 * Returns the noindex & nofollow value for the robots meta tag string.
+	 * Returns the robots meta tag string.
 	 *
 	 * @since 2.3.5
 	 * @since 2.3.11.5 Added noindex API filter hook for password protected posts.
@@ -41,7 +39,7 @@ class AIOSEOP_Robots_Meta {
 	 *
 	 * @return string
 	 */
-	public function get_robots_meta() {
+	public function get_robots_meta_tag() {
 		$post_type   = get_post_type();
 		$page_number = aioseop_get_page_number();
 
@@ -55,7 +53,7 @@ class AIOSEOP_Robots_Meta {
 		}
 
 		if ( is_front_page() && 0 === $page_number ) {
-			return $this->get_robots_meta_helper( false, false );
+			return $this->get_robots_meta_tag_helper( false, false );
 		}
 
 		if ( $this->is_static_page() ) {
@@ -80,13 +78,11 @@ class AIOSEOP_Robots_Meta {
 			$nofollow = true;
 		}
 
-		return $this->get_robots_meta_helper( $noindex, $nofollow );
+		return $this->get_robots_meta_tag_helper( $noindex, $nofollow );
 	}
 
 	/**
-	 * The get_robots_meta_helper() function.
-	 *
-	 * Helper function for get_robots_meta().
+	 * Helper function for get_robots_meta_tag().
 	 *
 	 * @since 3.2.0
 	 *
@@ -95,7 +91,7 @@ class AIOSEOP_Robots_Meta {
 	 *
 	 * @return string
 	 */
-	private function get_robots_meta_helper( $noindex, $nofollow ) {
+	private function get_robots_meta_tag_helper( $noindex, $nofollow ) {
 		$index_value  = 'index';
 		$follow_value = 'follow';
 
