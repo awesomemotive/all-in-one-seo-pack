@@ -1274,7 +1274,10 @@ if ( ! function_exists( 'aioseop_get_logo' ) ) {
  */
 function aioseop_do_shortcodes( $content ) {
 	$conflicting_shortcodes = array(
-		'WooCommerce Login' => '[woocommerce_my_account]',
+		'WooCommerce Login'          => '[woocommerce_my_account]',
+		'WooCommerce Checkout'       => '[woocommerce_checkout]',
+		'WooCommerce Order Tracking' => '[woocommerce_order_tracking]',
+		'WooCommerce Cart'           => '[woocommerce_cart]',
 	);
 
 	$rtn_conflict_shortcodes = array();
