@@ -3234,47 +3234,54 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
-		 * The remove_addl_static_pages() function.
-		 *
-		 * Removes the homepage/posts page from the Additional Pages index if it is static - #2126.
+		 * Removes static pages (set under Settings > Reading) from the addl-sitemap file - #2126.
 		 *
 		 * @since 3.2.0
+		 * @since 3.3.5 Fixed a bug where the addl-sitemap file returns a 404 error when static pages have not been cleared - #3090.
 		 *
-		 * @param array $pages
-		 * @return array $pages
+		 * @param   array   $pages  Pages inside the addl-sitemap file.
+		 * @return  array   $pages  Filtered pages without static pages.
 		 */
 		private function remove_addl_static_pages( $pages ) {
+			$static_homepage_id              = (int) get_option( 'page_on_front' );
+			$is_static_homepage_set          = ( 0 !== $static_homepage_id ) ? true : false;
+			$static_blog_page_id             = (int) get_option( 'page_for_posts' );
+			$is_static_blog_page_set         = ( 0 !== $static_blog_page_id ) ? true : false;
+			$is_homepage_set_to_latest_posts = ( 'posts' === get_option( 'show_on_front' ) ) ? true : false;
+			$are_addl_pages_set              = ! empty( $this->options['aiosp_sitemap_addl_pages'] );
+
 			$pages_to_remove = array();
-			if ( 0 !== (int) get_option( 'page_on_front' ) ) {
-				$homepage_url = get_site_url() . '/';
-				array_push( $pages_to_remove, $homepage_url );
+			if ( $is_static_blog_page_set ) {
+				array_push( $pages_to_remove, get_permalink( $static_blog_page_id ) );
 			}
 
-			$static_posts_page_id = (int) get_option( 'page_for_posts' );
-			if ( 0 !== $static_posts_page_id ) {
-				array_push( $pages_to_remove, get_permalink( $static_posts_page_id ) );
+			if ( ! $is_homepage_set_to_latest_posts && $is_static_homepage_set ) {
+				array_push( $pages_to_remove, get_permalink( $is_static_homepage_set ) );
+
+				if ( $are_addl_pages_set ) {
+					$homepage_url = get_site_url() . '/';
+					array_push( $pages_to_remove, $homepage_url );
+				}
 			}
 
-			if ( count( $pages_to_remove ) > 0 ) {
-				return $this->remove_urls_from_sitemap_page( $pages, $pages_to_remove );
-			}
-			return $pages;
+			return $this->remove_urls_from_sitemap_page( $pages, $pages_to_remove );
 		}
 
 		/**
-		 * The remove_urls_from_sitemap_page() function.
-		 *
 		 * Removes URLs from a sitemap page. This is used both for indexes and pages within indexes.
 		 *
 		 * @since 3.2.0
 		 *
-		 * @param array $pages
-		 * @param array $pages_to_remove
-		 * @return array $pages
+		 * @param   array   $pages              All pages, including the ones that have to be removed.
+		 * @param   array   $pages_to_remove    The pages that have to be removed.
+		 * @return  array   $pages              The remaining pages.
 		 */
 		private function remove_urls_from_sitemap_page( $pages, $pages_to_remove ) {
-			$count = count( $pages );
-			for ( $i = 0; $i < $count; $i++ ) {
+			if ( empty( $pages ) ) {
+				return $pages;
+			}
+
+			for ( $i = 0; $i < count( $pages ); $i++ ) {
 				if ( in_array( $pages[ $i ]['loc'], $pages_to_remove, true ) ) {
 					unset( $pages[ $i ] );
 				}
