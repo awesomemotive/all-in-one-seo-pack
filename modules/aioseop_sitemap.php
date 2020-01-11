@@ -3281,7 +3281,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 				return $pages;
 			}
 
-			for ( $i = 0; $i < count( $pages ); $i++ ) {
+			$page_count = count( $pages );
+			for ( $i = 0; $i < $page_count; $i++ ) {
 				if ( in_array( $pages[ $i ]['loc'], $pages_to_remove, true ) ) {
 					unset( $pages[ $i ] );
 				}
