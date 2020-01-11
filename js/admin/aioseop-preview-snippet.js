@@ -47,7 +47,7 @@ jQuery(function($){
 
 		inputFields.forEach(addEvent);
 		function addEvent(item) {
-			item.on('input', function () {
+			item.on('keyup', function () {
 				aioseopUpdatePreviewSnippet();
 			});
 		}
