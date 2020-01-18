@@ -2207,8 +2207,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 
 			$files = apply_filters( 'aioseop_sitemap_index_filenames', $files, $prefix, $suffix );
 
-			// Remove Additional Pages index if all pages are static and no extra pages are specified.
-			if ( ! $this->does_addl_sitemap_contain_urls() ) {
+			if ( ! $this->should_addl_sitemap_exist() ) {
 				$page_to_remove = array( get_site_url() . '/addl-sitemap.xml' );
 				$files          = $this->remove_urls_from_sitemap_page( $files, $page_to_remove );
 			}
@@ -2217,20 +2216,24 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
-		 * The does_addl_sitemap_contain_urls() function.
-		 *
-		 * Checks whether the Additional Pages index will contain URLs.
-		 * This will not be the case if there is both a static homepage/posts page and there are no additional pages specified.
+		 * Checks whether the addl-sitemap file should be added to the root sitemap index.
+		 * This should not happen if both the static homepage/posts page have been set and no additional pages have been specified manually.
 		 *
 		 * @since 3.2.0
+		 * @since 3.3.5 Fix issue where addl-sitemap file is not added to root when static pages are set but not being used - #3090.
 		 *
-		 * @return bool
+		 * @return  bool    Whether or not the addl-sitemap file should be added to the root sitemap index.
 		 */
-		private function does_addl_sitemap_contain_urls() {
-			$is_addl_pages = ! empty( $this->options['aiosp_sitemap_addl_pages'] );
-			if ( ! $is_addl_pages && ( 'page' === get_option( 'show_on_front' ) ) ) {
+		private function should_addl_sitemap_exist() {
+			$are_addl_pages                  = ! empty( $this->options['aiosp_sitemap_addl_pages'] );
+			$static_homepage_id              = (int) get_option( 'page_on_front' );
+			$is_static_homepage_set          = ( 0 !== $static_homepage_id ) ? true : false;
+			$is_homepage_set_to_latest_posts = ( 'posts' === get_option( 'show_on_front' ) ) ? true : false;
+
+			if ( ! $is_homepage_set_to_latest_posts && $is_static_homepage_set && ! $are_addl_pages ) {
 					return false;
 			}
+
 			return true;
 		}
 
