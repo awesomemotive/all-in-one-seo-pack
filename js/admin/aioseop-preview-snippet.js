@@ -21,7 +21,9 @@ jQuery(function($){
 	let skipExcerpt              = aioseop_preview_snippet.skipExcerpt;
 	let isGutenbergEditor        = aioseopIsGutenbergEditor();
 
-	aioseopInitPreviewSnippet();
+	$(window).on("load", function() {
+		aioseopInitPreviewSnippet();
+	});
 
 	/**
 	 * Defines the relevant fields and adds the relevant event listeners based on which editor is active.
@@ -52,10 +54,7 @@ jQuery(function($){
 			});
 		}
 
-		// Run once on page load.
-		timeout = setTimeout(function () {
-			aioseopUpdatePreviewSnippet();
-		}, 1000);
+		aioseopUpdatePreviewSnippet();
 	}
 
 	/**
