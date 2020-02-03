@@ -79,13 +79,13 @@ function aioseopSetClassicEditorTabSwitchEventListener(functionName) {
  * Gets the content of the active Classic Editor tab.
  * 
  * @since 3.3.4
+ * @since 3.3.5 Use built-in function tinymce.activeEditor.getContent() to grab content.
  * 
  * @return string The content of the active editor tab.
  */
 function aioseopGetClassicEditorContent() {
 	if (aioseopIsVisualTab()) {
-		//tinymce.activeEditor.getContent();
-		return jQuery('#content_ifr').contents().find('body')[0].innerHTML;
+		return tinymce.activeEditor.getContent({format : 'raw'});
 	}
 	return jQuery('.wp-editor-area').val();
 }

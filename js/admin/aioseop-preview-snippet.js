@@ -30,6 +30,7 @@ jQuery(function($){
 	 * 
 	 * @since 3.3.0
 	 * @since 3.3.4 Add support for text tab in Classic Editor.
+	 * @since 3.3.5 Run preview snippet only after Classic Editor content iframe is loaded - #3097.
 	 */
 	function aioseopInitPreviewSnippet() {
 		let inputFields = [aioseopTitle, aioseopDescription];
@@ -39,22 +40,36 @@ jQuery(function($){
 			let postExcerpt = $('#excerpt');
 
 			inputFields.push(docTitle, postExcerpt);
+			aioseopAddPreviewSnippetEventListeners(inputFields)
 
 			aioseopSetClassicEditorTabSwitchEventListener(aioseopUpdatePreviewSnippet);
 			aioseopSetClassicEditorEventListener(aioseopUpdatePreviewSnippet);
+		
+			$('#content_ifr').load(function() {
+				aioseopUpdatePreviewSnippet();
+			});
 		}
 		else {
-			aioseopSetGutenbergEditorEventListener(aioseopUpdatePreviewSnippet);
+			aioseopSetGutenbergEditorEventListener(aioseopUpdatePreviewSnippet);	
+			aioseopAddPreviewSnippetEventListeners(inputFields)	
+			aioseopUpdatePreviewSnippet();
 		}
+	}
 
+	/**
+	 * Adds event listeners to input fields that need to update the preview snippet on change.
+	 * 
+	 * @since 3.3.5
+	 * 
+	 * @param 	Array 	inputFields 	All input fields that need to update the preview snippet on change.
+	 */
+	function aioseopAddPreviewSnippetEventListeners(inputFields) {
 		inputFields.forEach(addEvent);
 		function addEvent(item) {
 			item.on('input', function () {
 				aioseopUpdatePreviewSnippet();
 			});
 		}
-
-		aioseopUpdatePreviewSnippet();
 	}
 
 	/**
