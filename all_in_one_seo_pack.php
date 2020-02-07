@@ -297,7 +297,25 @@ if ( ! function_exists( 'aioseop_activate' ) ) {
 		delete_user_meta( get_current_user_id(), 'aioseop_yst_detected_notice_dismissed' );
 
 		if ( AIOSEOPPRO ) {
+			global $aioseop_options;
+
 			$aioseop_update_checker->checkForUpdates();
+
+			if (
+					isset( $aioseop_options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_video_sitemap'] ) &&
+					'on' === $aioseop_options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_video_sitemap']
+			) {
+				$next_scan_timestamp = wp_next_scheduled( 'aiosp_video_sitemap_scan' );
+				if ( false !== $next_scan_timestamp && 10 < ( $next_scan_timestamp - time() ) ) {
+					// Reschedule cron job to avoid waiting for next (daily) scan.
+					wp_unschedule_event( $next_scan_timestamp, 'aiosp_video_sitemap_scan' );
+					$next_scan_timestamp = false;
+				}
+
+				if ( false === $next_scan_timestamp ) {
+					wp_schedule_single_event( time() + 10, 'aiosp_video_sitemap_scan' );
+				}
+			}
 		}
 	}
 }
