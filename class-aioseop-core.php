@@ -458,7 +458,7 @@ class AIOSEOP_Core {
 		if ( AIOSEOPPRO ) {
 			global $aioseop_options;
 			global $aioseop_update_checker;
-			
+
 			$aioseop_update_checker->checkForUpdates();
 
 			if (
