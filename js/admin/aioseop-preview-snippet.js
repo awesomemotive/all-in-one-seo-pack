@@ -40,7 +40,7 @@ jQuery(function($){
 			let postExcerpt = $('#excerpt');
 
 			inputFields.push(docTitle, postExcerpt);
-			aioseopAddPreviewSnippetEventListeners(inputFields)
+			aioseopAddPreviewSnippetEventListeners(inputFields);
 
 			aioseopSetClassicEditorTabSwitchEventListener(aioseopUpdatePreviewSnippet);
 			aioseopSetClassicEditorEventListener(aioseopUpdatePreviewSnippet);
@@ -51,7 +51,7 @@ jQuery(function($){
 		}
 		else {
 			aioseopSetGutenbergEditorEventListener(aioseopUpdatePreviewSnippet);	
-			aioseopAddPreviewSnippetEventListeners(inputFields)	
+			aioseopAddPreviewSnippetEventListeners(inputFields);
 			aioseopUpdatePreviewSnippet();
 		}
 	}
