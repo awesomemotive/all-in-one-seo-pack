@@ -1884,6 +1884,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @param string $hook_suffix
 		 */
 		public function admin_enqueue_scripts( $hook_suffix ) {
+
 			switch ( $hook_suffix ) {
 				case 'term.php':
 					// Legacy code for taxonomy terms until we refactor all title format related code.
@@ -1907,6 +1908,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					wp_enqueue_script(
 						'aioseop-count-chars',
 						AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.js',
+						array(),
+						AIOSEOP_VERSION
+					);
+
+					wp_enqueue_script(
+						'aioseop-admin-functions',
+						AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-admin-functions.js',
 						array(),
 						AIOSEOP_VERSION
 					);

@@ -252,8 +252,11 @@ if ( ! class_exists( 'AIOSEOP_Translations' ) ) :
 				return;
 			}
 			if ( function_exists( 'wp_get_available_translations' ) ) {
-				$translations      = wp_get_available_translations();
-				$this->native_name = $translations[ $this->current_locale ]['native_name'];
+				$translations = wp_get_available_translations();
+
+				if ( ! empty( $translations ) ) {
+					$this->native_name = $translations[ $this->current_locale ]['native_name'];
+				}
 			}
 		}
 

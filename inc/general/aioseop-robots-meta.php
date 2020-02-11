@@ -15,9 +15,21 @@
 class AIOSEOP_Robots_Meta {
 
 	/**
-	 * The get_robots_meta() function.
+	 * User-defined plugin options.
 	 *
-	 * Returns the noindex & nofollow value for the robots meta tag string.
+	 * @since 3.3.1
+	 *
+	 * @var array
+	 */
+	private $plugin_options;
+
+	public function __construct() {
+		global $aioseop_options;
+		$this->plugin_options = $aioseop_options;
+	}
+
+	/**
+	 * Returns the robots meta tag string.
 	 *
 	 * @since 2.3.5
 	 * @since 2.3.11.5 Added noindex API filter hook for password protected posts.
@@ -27,7 +39,7 @@ class AIOSEOP_Robots_Meta {
 	 *
 	 * @return string
 	 */
-	public function get_robots_meta() {
+	public function get_robots_meta_tag() {
 		$post_type   = get_post_type();
 		$page_number = aioseop_get_page_number();
 
@@ -41,7 +53,7 @@ class AIOSEOP_Robots_Meta {
 		}
 
 		if ( is_front_page() && 0 === $page_number ) {
-			return $this->get_robots_meta_helper( false, false );
+			return $this->get_robots_meta_tag_helper( false, false );
 		}
 
 		if ( $this->is_static_page() ) {
@@ -66,13 +78,11 @@ class AIOSEOP_Robots_Meta {
 			$nofollow = true;
 		}
 
-		return $this->get_robots_meta_helper( $noindex, $nofollow );
+		return $this->get_robots_meta_tag_helper( $noindex, $nofollow );
 	}
 
 	/**
-	 * The get_robots_meta_helper() function.
-	 *
-	 * Helper function for get_robots_meta().
+	 * Helper function for get_robots_meta_tag().
 	 *
 	 * @since 3.2.0
 	 *
@@ -81,7 +91,7 @@ class AIOSEOP_Robots_Meta {
 	 *
 	 * @return string
 	 */
-	private function get_robots_meta_helper( $noindex, $nofollow ) {
+	private function get_robots_meta_tag_helper( $noindex, $nofollow ) {
 		$index_value  = 'index';
 		$follow_value = 'follow';
 
@@ -125,10 +135,15 @@ class AIOSEOP_Robots_Meta {
 	 * @return string
 	 */
 	private function get_meta_value( $key ) {
-		$requested_page = get_queried_object();
 		$meta           = array();
 		$meta_value     = '';
+		$requested_page = get_queried_object();
 
+		if ( empty( $requested_page ) ) {
+			return $meta_value;
+		}
+
+		// TODO Use $meta_opts when get_current_options() is refactored - #2729.
 		if ( property_exists( $requested_page, 'ID' ) ) {
 			$meta = get_post_meta( $requested_page->ID );
 		}
@@ -227,8 +242,7 @@ class AIOSEOP_Robots_Meta {
 	 * @return bool
 	 */
 	private function is_noindexed_paginated_page( $page_number ) {
-		global $aioseop_options;
-		if ( ! empty( $aioseop_options['aiosp_paginated_noindex'] ) && 1 < $page_number ) {
+		if ( ! empty( $this->plugin_options['aiosp_paginated_noindex'] ) && 1 < $page_number ) {
 			return true;
 		}
 		return false;
@@ -245,8 +259,7 @@ class AIOSEOP_Robots_Meta {
 	 * @return bool
 	 */
 	private function is_nofollowed_paginated_page( $page_number ) {
-		global $aioseop_options;
-		if ( ! empty( $aioseop_options['aiosp_paginated_nofollow'] ) && 1 < $page_number ) {
+		if ( ! empty( $this->plugin_options['aiosp_paginated_nofollow'] ) && 1 < $page_number ) {
 			return true;
 		}
 		return false;
@@ -281,14 +294,13 @@ class AIOSEOP_Robots_Meta {
 	 * @return bool
 	 */
 	private function is_noindexed_tax() {
-		global $aioseop_options;
 		if (
-			( is_category() && ! empty( $aioseop_options['aiosp_category_noindex'] ) ) ||
-			( is_date() && ! empty( $aioseop_options['aiosp_archive_date_noindex'] ) ) ||
-			( is_author() && ! empty( $aioseop_options['aiosp_archive_author_noindex'] ) ) ||
-			( is_tag() && ! empty( $aioseop_options['aiosp_tags_noindex'] ) ) ||
-			( is_search() && ! empty( $aioseop_options['aiosp_search_noindex'] ) ) ||
-			( is_404() && ! empty( $aioseop_options['aiosp_404_noindex'] ) ) ||
+			( is_category() && ! empty( $this->plugin_options['aiosp_category_noindex'] ) ) ||
+			( is_date() && ! empty( $this->plugin_options['aiosp_archive_date_noindex'] ) ) ||
+			( is_author() && ! empty( $this->plugin_options['aiosp_archive_author_noindex'] ) ) ||
+			( is_tag() && ! empty( $this->plugin_options['aiosp_tags_noindex'] ) ) ||
+			( is_search() && ! empty( $this->plugin_options['aiosp_search_noindex'] ) ) ||
+			( is_404() && ! empty( $this->plugin_options['aiosp_404_noindex'] ) ) ||
 			( is_tax() && in_array( get_query_var( 'taxonomy' ), $this->get_noindexed_taxonomies() ) )
 		) {
 			return true;
@@ -306,9 +318,8 @@ class AIOSEOP_Robots_Meta {
 	 * @return array
 	 */
 	private function get_noindexed_taxonomies() {
-		global $aioseop_options;
-		if ( isset( $aioseop_options['aiosp_tax_noindex'] ) && ! empty( $aioseop_options['aiosp_tax_noindex'] ) ) {
-			return $aioseop_options['aiosp_tax_noindex'];
+		if ( isset( $this->plugin_options['aiosp_tax_noindex'] ) && ! empty( $this->plugin_options['aiosp_tax_noindex'] ) ) {
+			return $this->plugin_options['aiosp_tax_noindex'];
 		}
 		return array();
 	}
@@ -326,10 +337,9 @@ class AIOSEOP_Robots_Meta {
 	 * @return bool
 	 */
 	private function is_noindexed_singular( $post_type, $post_meta_noindex ) {
-		global $aioseop_options;
 		if ( is_singular() && '' === $post_meta_noindex &&
-			! empty( $aioseop_options['aiosp_cpostnoindex'] ) &&
-			in_array( $post_type, $aioseop_options['aiosp_cpostnoindex'] )
+			! empty( $this->plugin_options['aiosp_cpostnoindex'] ) &&
+			in_array( $post_type, $this->plugin_options['aiosp_cpostnoindex'] )
 		) {
 			return true;
 		}
@@ -349,10 +359,9 @@ class AIOSEOP_Robots_Meta {
 	 * @return bool
 	 */
 	private function is_nofollowed_singular( $post_type, $post_meta_follow ) {
-		global $aioseop_options;
 		if ( is_singular() && '' === $post_meta_follow &&
-			! empty( $aioseop_options['aiosp_cpostnofollow'] ) &&
-			in_array( $post_type, $aioseop_options['aiosp_cpostnofollow'] )
+			! empty( $this->plugin_options['aiosp_cpostnofollow'] ) &&
+			in_array( $post_type, $this->plugin_options['aiosp_cpostnofollow'] )
 		) {
 			return true;
 		}
