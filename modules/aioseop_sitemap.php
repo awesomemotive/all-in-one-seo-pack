@@ -4248,7 +4248,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			// Support for NextGen Gallery.
 			static $gallery_types;
 
-			$gallery_types   = array( 'ngg_images' );
+			$gallery_types   = array( 'ngg', 'ngg_images' );
 			$types           = apply_filters( 'aioseop_gallery_shortcodes', $gallery_types );
 			$gallery_content = '';
 

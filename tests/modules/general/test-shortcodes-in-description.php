@@ -74,8 +74,8 @@ class Test_Shortcodes_In_Description extends AIOSEOP_Test_Base {
 	 * @since 3.0
 	 */
 	public function conflictingShortcodeProvider() {
-		return [
-			'WooCommerce My Account' => [ '[woocommerce_my_account]' ],
-		];
+		return array(
+			'WooCommerce My Account' => array( '[woocommerce_my_account]' ),
+		);
 	}
 }
