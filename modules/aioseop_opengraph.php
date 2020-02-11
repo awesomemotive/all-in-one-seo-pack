@@ -1912,7 +1912,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						AIOSEOP_VERSION
 					);
 
-					
 					wp_enqueue_script(
 						'aioseop-admin-functions',
 						AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-admin-functions.js',
