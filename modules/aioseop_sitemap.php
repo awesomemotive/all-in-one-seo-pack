@@ -2376,7 +2376,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array
 		 */
 		public function get_sitemap_without_indexes() {
-			$options    = $this->options;
+			$options = $this->options;
 
 			if ( is_array( $options[ "{$this->prefix}posttypes" ] ) ) {
 				$options[ "{$this->prefix}posttypes" ] = array_diff( $options[ "{$this->prefix}posttypes" ], array( 'all' ) );
