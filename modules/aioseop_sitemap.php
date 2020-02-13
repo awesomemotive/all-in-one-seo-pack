@@ -1097,58 +1097,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		}
 
 		/**
-		 * Get Child Sitemap URLs
-		 *
-		 * Get sitemap urls of child blogs, if any.
-		 *
-		 * @since ?
-		 *
-		 * @return array
-		 */
-		public function get_child_sitemap_urls() {
-			$siteurls = array();
-			$blogs    = $this->get_child_blogs();
-			if ( ! empty( $blogs ) ) {
-				$option_name = $this->get_option_name();
-				foreach ( $blogs as $blog_id ) {
-					if ( $this->is_aioseop_active_on_blog( $blog_id ) ) {
-						$options = get_blog_option( $blog_id, $this->parent_option );
-						if (
-							! empty( $options )
-							&& ! empty( $options['modules'] )
-							&& ! empty( $options['modules']['aiosp_feature_manager_options'] )
-							&& ! empty( $options['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_sitemap'] )
-							&& ! empty( $options['modules'][ $option_name ] )
-						) {
-							global $wpdb;
-							$sitemap_options = $options['modules'][ $option_name ];
-							$siteurl         = '';
-							if ( defined( 'SUNRISE' ) && SUNRISE && is_object( $wpdb ) && isset( $wpdb->dmtable ) && ! empty( $wpdb->dmtable ) ) {
-								// @codingStandardsIgnoreStart
-								$domain = $wpdb->get_var( "SELECT domain FROM {$wpdb->dmtable} WHERE blog_id = '$blog_id' AND active = 1 LIMIT 1" );
-								// @codingStandardsIgnoreEnd
-								if ( $domain ) {
-									if ( ! isset( $_SERVER['HTTPS'] ) ) {
-										$_SERVER['HTTPS'] = 'Off';
-									}
-									$protocol = ( 'on' === strtolower( $_SERVER['HTTPS'] ) ) ? 'https://' : 'http://';
-									$siteurl  = untrailingslashit( $protocol . $domain );
-								}
-							}
-							if ( ! $siteurl ) {
-								$siteurl = get_home_url( $blog_id );
-							}
-							$url        = $siteurl . '/' . $this->get_filename() . '.xml';
-							$siteurls[] = $url;
-						}
-					}
-				}
-			}
-			$siteurls = apply_filters( $this->prefix . 'sitemap_urls', $siteurls ); // Legacy.
-			return apply_filters( $this->prefix . 'child_urls', $siteurls );
-		}
-
-		/**
 		 * Gets Home Path
 		 *
 		 * If we're in wp-admin, use the WordPress function, otherwise we user our own version here.
@@ -2197,13 +2145,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 					}
 				}
 			}
-			foreach ( $this->get_child_sitemap_urls() as $csm ) {
-				$files[] = array(
-					'loc'        => $csm,
-					'changefreq' => $this->get_default_frequency( 'sitemap' ),
-					'priority'   => $this->get_default_priority( 'sitemap' ),
-				);
-			}
 
 			$files = apply_filters( 'aioseop_sitemap_index_filenames', $files, $prefix, $suffix );
 
@@ -2435,7 +2376,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 		 * @return array
 		 */
 		public function get_sitemap_without_indexes() {
-			$child_urls = $this->get_child_sitemap_urls();
 			$options    = $this->options;
 
 			if ( is_array( $options[ "{$this->prefix}posttypes" ] ) ) {
@@ -2504,7 +2444,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Sitemap' ) ) {
 			$terms = get_terms( $this->get_tax_args( $options[ "{$this->prefix}taxonomies" ] ) );
 			$urls2 = $this->get_term_priority_data( $terms );
 			$urls3 = $this->get_addl_pages_only();
-			$urls  = array_merge( $child_urls, $urls, $urls2, $urls3 );
+			$urls  = array_merge( $urls, $urls2, $urls3 );
 			if ( is_array( $this->extra_sitemaps ) ) {
 				foreach ( $this->extra_sitemaps as $sitemap_type ) {
 					$sitemap_data = array();
