@@ -14,17 +14,17 @@
 class AIOSEOP_Link_Attributes {
 
 	/**
-	 * Enqueues the aioseop-link-attributes.js file.
+	 * Enqueues the aioseop-link-attributes.js file for the Classic Editor.
 	 *
 	 * Acts as a callback for the wp_enqueue_editor action hook.
 	 *
 	 * @since 3.4.0
 	 */
-	public static function add_attributes() {
+	public static function add_attributes_model_classic_editor() {
 
-		wp_deregister_script('aioseop-link-attributes');
+		wp_deregister_script( 'aioseop-link-attributes' );
 		wp_register_script( 'aioseop-link-attributes', AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-link-attributes.js', array( 'jquery' ), AIOSEOP_VERSION, true );
-		wp_enqueue_script('aioseop-link-attributes');
+		wp_enqueue_script( 'aioseop-link-attributes' );
 
 		wp_localize_script(
 			'aioseop-link-attributes',
