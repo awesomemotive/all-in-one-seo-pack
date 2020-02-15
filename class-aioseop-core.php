@@ -431,7 +431,7 @@ class AIOSEOP_Core {
 			}
 		}
 
-		add_action( 'wp_enqueue_editor', array( 'AIOSEOP_Link_Attributes', 'add_attributes_model_classic_editor' ), 99999 );
+		add_action( 'wp_enqueue_editor', array( 'AIOSEOP_Link_Attributes', 'add_attributes_modal_classic_editor' ), 99999 );
 
 		// TODO ^^ Move to aioseop_admin class.
 	}

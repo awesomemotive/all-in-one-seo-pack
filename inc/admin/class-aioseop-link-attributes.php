@@ -20,7 +20,7 @@ class AIOSEOP_Link_Attributes {
 	 *
 	 * @since 3.4.0
 	 */
-	public static function add_attributes_model_classic_editor() {
+	public static function add_attributes_modal_classic_editor() {
 
 		wp_deregister_script( 'aioseop-link-attributes' );
 		wp_register_script( 'aioseop-link-attributes', AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-link-attributes.js', array( 'jquery' ), AIOSEOP_VERSION, true );
