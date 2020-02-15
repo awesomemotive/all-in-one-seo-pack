@@ -22,6 +22,9 @@
   "homepage": "https://github.com/semperfiwebdesign/all-in-one-seo-pack#readme",
   "devDependencies": {
     "@wordpress/scripts": "7.1.0",
+    "classnames": "^2.2.6",
+    "dom-scroll-into-view": "^2.0.1",
+    "lodash": "^4.17.15",
     "grunt": "^1.0.2",
     "grunt-contrib-csslint": "^2.0.0",
     "grunt-contrib-cssmin": "^3.0.0",
@@ -30,7 +33,7 @@
     "grunt-mkdir": "^1.0.0",
     "grunt-phpcbf": "^0.1.1",
     "grunt-phpcs": "^0.4.0",
-    "grunt-phplint": "^0.1.0"
+    "grunt-phplint": "^0.1.0",
   },
   "dependencies": {
     "grunt-contrib-jshint": "^1.1.0"
