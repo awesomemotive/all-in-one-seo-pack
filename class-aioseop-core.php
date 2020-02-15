@@ -329,6 +329,7 @@ class AIOSEOP_Core {
 		require_once AIOSEOP_PLUGIN_DIR . 'admin/display/menu.php';
 		require_once AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-notices.php';
 		require_once AIOSEOP_PLUGIN_DIR . 'inc/schema/schema-builder.php';
+		require_once AIOSEOP_PLUGIN_DIR . 'inc/admin/class-aioseop-link-attributes.php';
 
 		// Loads pro files and other pro init stuff.
 		if ( AIOSEOPPRO ) {
@@ -429,6 +430,9 @@ class AIOSEOP_Core {
 				add_action( 'wp_ajax_aioseop_ajax_facebook_debug', 'aioseop_ajax_facebook_debug' );
 			}
 		}
+
+		add_action( 'wp_enqueue_editor', array( 'AIOSEOP_Link_Attributes', 'add_attributes' ), 99999 );
+
 		// TODO ^^ Move to aioseop_admin class.
 	}
 
