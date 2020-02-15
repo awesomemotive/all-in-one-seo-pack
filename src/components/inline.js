@@ -300,12 +300,12 @@ class InlineLinkUI extends Component {
 								onChange={ this.setLinkTarget }
 							/>
 							<ToggleControl
-								label={ __( 'No Follow', 'block-options' ) }
+								label={ __( 'Add "nofollow" to link', 'block-options' ) }
 								checked={ noFollow }
 								onChange={ this.setNoFollow }
 							/>
 							<ToggleControl
-								label={ __( 'Sponsored', 'block-options' ) }
+								label={ __( 'Add "sponsored" to link', 'block-options' ) }
 								checked={ sponsored }
 								onChange={ this.setSponsored }
 							/>
