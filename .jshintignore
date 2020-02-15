@@ -1,0 +1,5 @@
+// List of files and folders that JSHint should ignore.
+
+/webpack-config.js
+/build/*.js
+/src/*.js

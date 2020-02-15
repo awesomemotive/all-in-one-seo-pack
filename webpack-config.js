@@ -1,6 +1,3 @@
-// jshint ignore: start
-/* eslint-disable */
-
 /**
  * External dependencies
  */

@@ -21,6 +21,7 @@
     <exclude-pattern>vendor/*</exclude-pattern>
     <exclude-pattern>lib/*</exclude-pattern>
     <exclude-pattern>*/index.php</exclude-pattern>
+    <exclude-pattern>build/*</exclude-pattern>
 
     <!-- Minimum WP version supported -->
     <config name="minimum_supported_wp_version" value="4.6"/>
