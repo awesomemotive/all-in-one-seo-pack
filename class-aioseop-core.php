@@ -431,7 +431,10 @@ class AIOSEOP_Core {
 			}
 		}
 
-		add_action( 'wp_enqueue_editor', array( 'AIOSEOP_Link_Attributes', 'add_attributes_modal_classic_editor' ), 99999 );
+		add_action( 'wp_enqueue_editor', array( 'AIOSEOP_Link_Attributes', 'enqueue_link_attributes_classic_editor' ), 99999 );
+
+		add_action( 'admin_init', array( 'AIOSEOP_Link_Attributes', 'register_link_attributes_gutenberg_editor' ) );
+		add_action( 'enqueue_block_editor_assets', array( 'AIOSEOP_Link_Attributes', 'enqueue_link_attributes_gutenberg_editor' ) );
 
 		// TODO ^^ Move to aioseop_admin class.
 	}
