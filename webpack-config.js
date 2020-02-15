@@ -21,7 +21,7 @@ const mode = isProduction ? 'production' : 'development';
 const config = {
 	mode,
 	entry: {
-		'aioseop-link-attributes-gutenberg': path.resolve( process.cwd(), 'src', 'aioseop-link-attributes-gutenberg.js' ),
+		'aioseop-link-attributes-gutenberg-editor': path.resolve( process.cwd(), 'src', 'aioseop-link-attributes-gutenberg-editor.js' ),
 	},
 	output: {
 		filename: '[name].js',

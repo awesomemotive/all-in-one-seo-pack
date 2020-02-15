@@ -24,7 +24,7 @@ class AIOSEOP_Link_Attributes {
 	 */
 	public static function enqueue_link_attributes_classic_editor() {
 		wp_enqueue_script(
-			'aioseop-link-attributes',
+			'aioseop-link-attributes-classic-editor',
 			AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-link-attributes-classic-editor.js',
 			array( 'jquery' ),
 			AIOSEOP_VERSION,
@@ -32,7 +32,7 @@ class AIOSEOP_Link_Attributes {
 		);
 
 		wp_localize_script(
-			'aioseop-link-attributes',
+			'aioseop-link-attributes-classic-editor',
 			'aioseopL10n',
 			array(
 				'title'          => __( 'Insert/edit link', 'all-in-one-seo-pack' ),
@@ -58,7 +58,7 @@ class AIOSEOP_Link_Attributes {
 	 */
 	public static function register_link_attributes_gutenberg_editor() {
 		wp_register_script(
-			'aioseop-link-attributes',
+			'aioseop-link-attributes-gutenberg-editor',
 			AIOSEOP_PLUGIN_URL . 'build/aioseop-link-attributes-gutenberg-editor.js',
 			array(
 				'wp-blocks',
@@ -87,6 +87,6 @@ class AIOSEOP_Link_Attributes {
 	 * @return void
 	 */
 	public static function enqueue_link_attributes_gutenberg_editor() {
-		wp_enqueue_script( 'aioseop-link-attributes' );
+		wp_enqueue_script( 'aioseop-link-attributes-gutenberg-editor' );
 	}
 }
