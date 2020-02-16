@@ -391,6 +391,8 @@ class AIOSEOP_Core {
 	 * @since 3.4
 	 */
 	public function add_hooks() {
+		global $wp_version;
+
 		add_action( 'plugins_loaded', array( $this, 'add_cap' ) );
 
 		add_action( 'init', 'aioseop_load_modules', 1 );
@@ -434,7 +436,10 @@ class AIOSEOP_Core {
 		add_action( 'wp_enqueue_editor', array( 'AIOSEOP_Link_Attributes', 'enqueue_link_attributes_classic_editor' ), 99999 );
 
 		add_action( 'admin_init', array( 'AIOSEOP_Link_Attributes', 'register_link_attributes_gutenberg_editor' ) );
-		add_action( 'enqueue_block_editor_assets', array( 'AIOSEOP_Link_Attributes', 'enqueue_link_attributes_gutenberg_editor' ) );
+
+		if ( version_compare( $wp_version, '5.0', '>=' ) ) {
+			add_action( 'enqueue_block_editor_assets', array( 'AIOSEOP_Link_Attributes', 'enqueue_link_attributes_gutenberg_editor' ) );
+		}
 
 		// TODO ^^ Move to aioseop_admin class.
 	}
