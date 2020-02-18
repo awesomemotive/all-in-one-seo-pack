@@ -1918,6 +1918,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * Get the Image by Attachment
 		 *
 		 * @since ?
+		 * @since 3.4 Change return variable type bool|string to just string.
 		 *
 		 * @param null|WP_Post $p WordPress post object.
 		 * @return string
@@ -1978,9 +1979,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * Get the Image by Scan
 		 *
 		 * @since ?
+		 * @since 3.4 Change return variable type bool|string to just string.
 		 *
-		 * @param null $p
-		 * @return bool
+		 * @param null|WP_Post $p WP Post object to scan content for image.
+		 * @return string URL source of <img> element.
 		 */
 		function get_the_image_by_scan( $p = null ) {
 			if ( null === $p ) {
@@ -1989,15 +1991,21 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				$post = $p;
 			}
 
+			if ( empty( $post ) ) {
+				return '';
+			}
+
+			$rtn_url = '';
+
 			/* Search the post's content for the <img /> tag and get its URL. */
 			preg_match_all( '|<img.*?src=[\'"](.*?)[\'"].*?>|i', get_post_field( 'post_content', $post->ID ), $matches );
 
 			/* If there is a match for the image, return its URL. */
 			if ( isset( $matches ) && ! empty( $matches[1][0] ) ) {
-				return $matches[1][0];
+				$rtn_url = $matches[1][0];
 			}
 
-			return false;
+			return $rtn_url;
 		}
 
 		/**
