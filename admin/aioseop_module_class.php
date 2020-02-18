@@ -1920,8 +1920,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @since ?
 		 * @since 3.4 Change return variable type bool|string to just string.
 		 *
-		 * @param null|WP_Post $p WordPress post object.
-		 * @return string
+		 * @param null|WP_Post $p WP Post object.
+		 * @return string Image URL.
 		 */
 		function get_the_image_by_attachment( $p = null ) {
 
@@ -1978,11 +1978,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		/**
 		 * Get the Image by Scan
 		 *
+		 * Scans a Post's content by (regex) capturing an <img> element's source for the image URL.
+		 *
 		 * @since ?
 		 * @since 3.4 Change return variable type bool|string to just string.
 		 *
-		 * @param null|WP_Post $p WP Post object to scan content for image.
-		 * @return string URL source of <img> element.
+		 * @param null|WP_Post $p WP Post object.
+		 * @return string Image URL source.
 		 */
 		function get_the_image_by_scan( $p = null ) {
 			if ( null === $p ) {
