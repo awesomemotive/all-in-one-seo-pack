@@ -35,7 +35,7 @@ var wpLink;
             
             //change by "Title and Nofollow for Links" begin
             $("#wp-link .link-target").append('<br><label style="padding-left: 4px;"><span>&nbsp;</span><input type="checkbox" id="tanfl-add-nofollow">' + aioseopL10n.noFollow + "</label>");
-            $("#wp-link .link-target").append('<br><label style="padding-left: 4px;"><span>&nbsp;</span><input type="checkbox" id="tanfl-add-sponsored">' + ' Add <code>rel="sponsored"</code> to link' + '</label><br>');
+            $("#wp-link .link-target").append('<br><label style="padding-left: 4px;"><span>&nbsp;</span><input type="checkbox" id="tanfl-add-sponsored">' + aioseopL10n.sponsored + '</label><br>');
             $(".wp-link-text-field").before('<div class="link-title-field"><label><span style="padding-left: 4px;">' + aioseopL10n.labelTitle + '</span><input id="wp-link-title" type="text" name="linktitle" /></label></div>');
             $('<style type="text/css"> .has-text-field #wp-link .query-results { top: 256px !important; } #wp-link-wrap.search-panel-visible {height: 549px !important;}</style>').appendTo("head");
             //change by "Title and Nofollow for Links" end
@@ -275,6 +275,7 @@ var wpLink;
 				}
 
 				if ( searchStr && searchStr !== href ) {
+					inputs.url.val( searchStr );
 					// The user has typed something in the inline dialog. Trigger a search with it.
 					inputs.search.val( searchStr );
 				} else {

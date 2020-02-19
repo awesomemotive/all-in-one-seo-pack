@@ -35,14 +35,15 @@ class AIOSEOP_Link_Attributes {
 			'aioseop-link-attributes-classic-editor',
 			'aioseopL10n',
 			array(
-				'title'          => __( 'Insert/edit link', 'all-in-one-seo-pack' ),
-				'update'         => __( 'Update', 'all-in-one-seo-pack' ),
+				//'title'          => __( 'Insert/edit link', 'all-in-one-seo-pack' ),
+				//'update'         => __( 'Update', 'all-in-one-seo-pack' ),
 				'save'           => __( 'Add Link', 'all-in-one-seo-pack' ),
 				'noTitle'        => __( '(no title)', 'all-in-one-seo-pack' ),
 				'labelTitle'     => __( 'Title', 'all-in-one-seo-pack' ),
 				'noMatchesFound' => __( 'No results found.', 'all-in-one-seo-pack' ),
 				'linkInserted'   => __( 'Link has been inserted.', 'all-in-one-seo-pack' ),
 				'noFollow'       => __( '&nbsp;Add <code>rel="nofollow"</code> to link', 'all-in-one-seo-pack' ),
+				'sponsored'		 => __( '&nbsp;Add <code>rel="sponsored"</code> to link', 'all-in-one-seo-pack' ),
 			)
 		);
 	}
