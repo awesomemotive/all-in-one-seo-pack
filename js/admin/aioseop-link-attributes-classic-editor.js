@@ -260,8 +260,6 @@ var wpLink;
 				linkNode = getLink(),
 				onlyText = this.hasSelectedText( linkNode );
 
-				console.log(linkNode);
-
 			if ( linkNode ) {
 				linkText = linkNode.textContent || linkNode.innerText;
 				href = editor.dom.getAttrib( linkNode, 'href' );
