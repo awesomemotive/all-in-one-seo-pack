@@ -96,7 +96,7 @@ export function isValidHref( href ) {
  */
 export function createLinkFormat( { url, opensInNewWindow, noFollow, sponsored, text } ) {
 	const format = {
-		type: 'editorskit/link',
+		type: 'aioseop/link',
 		attributes: {
 			url,
 		},

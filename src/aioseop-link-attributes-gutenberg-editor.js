@@ -18,13 +18,13 @@ const { isURL } = wp.url;
 /**
  * Block constants
  */
-const name = 'editorskit/link';
+const name = 'aioseop/link';
 
 export const link = {
 	name,
-	title: __( 'Link', 'block-options' ),
+	title: __( 'Link', 'all-in-one-seo-pack' ),
 	tagName: 'a',
-	className: 'ek-link',
+	className: 'aioseop-link',
 	attributes: {
 		url: 'href',
 		target: 'target',

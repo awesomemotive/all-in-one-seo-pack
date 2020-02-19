@@ -203,12 +203,14 @@ class InlineLinkUI extends Component {
 
 	submitLink( event ) {
 		const { isActive, value, onChange, speak } = this.props;
-		const { inputValue, opensInNewWindow } = this.state;
+		const { inputValue, opensInNewWindow, noFollow, sponsored } = this.state;
 		const url = prependHTTP( inputValue );
 		const selectedText = getTextContent( slice( value ) );
 		const format = createLinkFormat( {
 			url,
 			opensInNewWindow,
+			noFollow,
+			sponsored,
 			text: selectedText,
 		} );
 

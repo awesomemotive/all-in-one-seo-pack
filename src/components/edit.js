@@ -28,7 +28,7 @@ const { compose, ifCondition } = wp.compose;
  */
 import InlineLinkUI from './inline';
 
-const name = 'editorskit/link';
+const name = 'aioseop/link';
 const title = __( 'Add Link', 'all-in-one-seo-pack' );
 const EMAIL_REGEXP = /^(mailto:)?[a-z0-9._%+-]+@[a-z0-9][a-z0-9.-]*\.[a-z]{2,63}$/i;
 
@@ -79,7 +79,7 @@ class Edit extends Component {
 
 		let newValue = value;
 
-		map( [ 'core/link', 'editorskit/link' ], ( linkFormat ) => {
+		map( [ 'core/link', 'aioseop/link' ], ( linkFormat ) => {
 			newValue = removeFormat( newValue, linkFormat );
 		} );
 
