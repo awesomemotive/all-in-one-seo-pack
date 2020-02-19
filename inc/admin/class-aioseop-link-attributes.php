@@ -36,7 +36,7 @@ class AIOSEOP_Link_Attributes {
 			'aioseopL10n',
 			array(
 				//'title'          => __( 'Insert/edit link', 'all-in-one-seo-pack' ),
-				//'update'         => __( 'Update', 'all-in-one-seo-pack' ),
+				'update'         => __( 'Update', 'all-in-one-seo-pack' ),
 				'save'           => __( 'Add Link', 'all-in-one-seo-pack' ),
 				'noTitle'        => __( '(no title)', 'all-in-one-seo-pack' ),
 				'labelTitle'     => __( 'Title', 'all-in-one-seo-pack' ),
