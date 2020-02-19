@@ -53,7 +53,7 @@ export default function LinkViewer( {
 			{ ...props }
 		>
 			<LinkViewerUrl url={ url } urlLabel={ urlLabel } className={ linkClassName } />
-			{ onEditLinkClick && <IconButton icon="edit" label={ __( 'Edit', 'block-options' ) } onClick={ onEditLinkClick } /> }
+			{ onEditLinkClick && <IconButton icon="edit" label={ __( 'Edit', 'all-in-one-seo-pack' ) } onClick={ onEditLinkClick } /> }
 		</div>
 	);
 }

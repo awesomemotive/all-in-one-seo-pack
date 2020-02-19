@@ -37,7 +37,7 @@ export default function LinkEditor( {
 				onChange={ onChangeInputValue }
 				autocompleteRef={ autocompleteRef }
 			/>
-			<IconButton icon="editor-break" label={ __( 'Apply', 'block-options' ) } type="submit" />
+			<IconButton icon="editor-break" label={ __( 'Apply', 'all-in-one-seo-pack' ) } type="submit" />
 		</form>
 	);
 }

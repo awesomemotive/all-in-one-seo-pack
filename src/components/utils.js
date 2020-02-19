@@ -106,7 +106,7 @@ export function createLinkFormat( { url, opensInNewWindow, noFollow, sponsored, 
 
 	if ( opensInNewWindow ) {
 		// translators: accessibility label for external links, where the argument is the link text
-		const label = sprintf( __( '%s (opens in a new tab)', 'block-options' ), text );
+		const label = sprintf( __( '%s (opens in a new tab)', 'all-in-one-seo-pack' ), text );
 
 		format.attributes.target = '_blank';
 		format.attributes[ 'aria-label' ] = label;

@@ -224,11 +224,11 @@ class InlineLinkUI extends Component {
 		this.resetState();
 
 		if ( ! isValidHref( url ) ) {
-			speak( __( 'Warning: the link has been inserted but may have errors. Please test it.', 'block-options' ), 'assertive' );
+			speak( __( 'Warning: the link has been inserted but could have errors. Please test it.', 'all-in-one-seo-pack' ), 'assertive' );
 		} else if ( isActive ) {
-			speak( __( 'Link edited.', 'block-options' ), 'assertive' );
+			speak( __( 'Link edited.', 'all-in-one-seo-pack' ), 'assertive' );
 		} else {
-			speak( __( 'Link inserted.', 'block-options' ), 'assertive' );
+			speak( __( 'Link inserted.', 'all-in-one-seo-pack' ), 'assertive' );
 		}
 	}
 
@@ -295,17 +295,17 @@ class InlineLinkUI extends Component {
 					renderSettings={ () => (
 						<Fragment>
 							<ToggleControl
-								label={ __( 'Open in New Tab', 'block-options' ) }
+								label={ __( 'Open in New Tab', 'all-in-one-seo-pack' ) }
 								checked={ opensInNewWindow }
 								onChange={ this.setLinkTarget }
 							/>
 							<ToggleControl
-								label={ __( 'Add "nofollow" to link', 'block-options' ) }
+								label={ __( 'Add "nofollow" to link', 'all-in-one-seo-pack' ) }
 								checked={ noFollow }
 								onChange={ this.setNoFollow }
 							/>
 							<ToggleControl
-								label={ __( 'Add "sponsored" to link', 'block-options' ) }
+								label={ __( 'Add "sponsored" to link', 'all-in-one-seo-pack' ) }
 								checked={ sponsored }
 								onChange={ this.setSponsored }
 							/>

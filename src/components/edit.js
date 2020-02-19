@@ -29,7 +29,7 @@ const { compose, ifCondition } = wp.compose;
 import InlineLinkUI from './inline';
 
 const name = 'editorskit/link';
-const title = __( 'Add Link', 'block-options' );
+const title = __( 'Add Link', 'all-in-one-seo-pack' );
 const EMAIL_REGEXP = /^(mailto:)?[a-z0-9._%+-]+@[a-z0-9][a-z0-9.-]*\.[a-z]{2,63}$/i;
 
 class Edit extends Component {
@@ -84,7 +84,7 @@ class Edit extends Component {
 		} );
 
 		onChange( { ...newValue } );
-		speak( __( 'Link removed.', 'block-options' ), 'assertive' );
+		speak( __( 'Link removed.', 'all-in-one-seo-pack' ), 'assertive' );
 	}
 
 	render() {
@@ -124,7 +124,7 @@ class Edit extends Component {
 						{ isActive && <RichTextToolbarButton
 							name="link"
 							icon="editor-unlink"
-							title={ __( 'Unlink', 'block-options' ) }
+							title={ __( 'Unlink', 'all-in-one-seo-pack' ) }
 							onClick={ this.onRemoveFormat }
 							isActive={ isActive }
 							shortcutType="primaryShift"

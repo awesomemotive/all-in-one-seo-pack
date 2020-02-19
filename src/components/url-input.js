@@ -117,7 +117,7 @@ class URLInput extends Component {
 					posts.length
 				), posts.length ), 'assertive' );
 			} else {
-				this.props.debouncedSpeak( __( 'No results.', 'block-options' ), 'assertive' );
+				this.props.debouncedSpeak( __( 'No results.', 'all-in-one-seo-pack' ), 'assertive' );
 			}
 		} ).catch( () => {
 			if ( this.suggestionsRequest === request ) {
@@ -201,7 +201,7 @@ class URLInput extends Component {
 				if ( this.state.selectedSuggestion !== null ) {
 					this.selectLink( post );
 					// Announce a link has been selected when tabbing away from the input field.
-					this.props.speak( __( 'Link selected.', 'block-options' ) );
+					this.props.speak( __( 'Link selected.', 'all-in-one-seo-pack' ) );
 				}
 				break;
 			}
@@ -238,12 +238,12 @@ class URLInput extends Component {
 				<input
 					autoFocus={ autoFocus }
 					type="text"
-					aria-label={ __( 'URL', 'block-options' ) }
+					aria-label={ __( 'URL', 'all-in-one-seo-pack' ) }
 					required
 					value={ value }
 					onChange={ this.onChange }
 					onInput={ stopEventPropagation }
-					placeholder={ __( 'Paste URL or type to search', 'block-options' ) }
+					placeholder={ __( 'Paste URL or type to search', 'all-in-one-seo-pack' ) }
 					onKeyDown={ this.onKeyDown }
 					role="combobox"
 					aria-expanded={ showSuggestions }
@@ -280,7 +280,7 @@ class URLInput extends Component {
 									onClick={ () => this.handleOnClick( post ) }
 									aria-selected={ index === selectedSuggestion }
 								>
-									{ decodeEntities( post.title ) || __( '(no title)', 'block-options' ) }
+									{ decodeEntities( post.title ) || __( '(no title)', 'all-in-one-seo-pack' ) }
 								</button>
 							) ) }
 						</div>
