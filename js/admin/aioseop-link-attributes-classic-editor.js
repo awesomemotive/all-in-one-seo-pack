@@ -303,6 +303,7 @@ var wpLink;
 			} else {
 				linkText = editor.selection.getContent({ format: 'text' }) || text || '';
 				this.setDefaultValues( linkText );
+				inputs.url.val( searchStr );
 			}
 
 			if ( onlyText ) {
