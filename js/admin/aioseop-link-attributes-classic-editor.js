@@ -19,7 +19,13 @@ var wpLink;
 		isTouch = ( 'ontouchend' in document );
 
 	function getLink() {
-		return linkNode || editor.dom.getParent( editor.selection.getNode(), 'a[href]' );
+		let node = linkNode || editor.dom.getParent( editor.selection.getNode(), 'a[href]' );
+
+		if( null == node ) {
+			node = editor.selection.getNode().getElementsByTagName('a')[0];
+		}
+
+		return node;
 	}
 
 	wpLink = {
@@ -253,6 +259,8 @@ var wpLink;
 			var linkText, href,
 				linkNode = getLink(),
 				onlyText = this.hasSelectedText( linkNode );
+
+				console.log(linkNode);
 
 			if ( linkNode ) {
 				linkText = linkNode.textContent || linkNode.innerText;
