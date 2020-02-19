@@ -270,7 +270,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Performance' ) ) {
 				$memory_usage = __( 'N/A', 'all-in-one-seo-pack' );
 			}
 			if ( is_callable( 'exif_read_data' ) ) {
-				$exif = __( 'Yes', 'all-in-one-seo-pack' ) . ' ( V' . $this->substr( phpversion( 'exif' ), 0, 4 ) . ')';
+				$exif = __( 'Yes', 'all-in-one-seo-pack' ) . ' ( V' . AIOSEOP_PHP_Functions::substr( phpversion( 'exif' ), 0, 4 ) . ')';
 			} else {
 				$exif = __( 'No', 'all-in-one-seo-pack' );
 			}

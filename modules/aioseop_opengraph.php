@@ -1625,11 +1625,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			if ( isset( $extra_params['auto_generate_desc'] ) && $extra_params['auto_generate_desc'] ) {
 				switch ( $meta_tag ) {
 					case 'twitter:title':
-						$value = trim( $this->substr( $value, 0, 70 ) );
+						$value = trim( AIOSEOP_PHP_Functions::substr( $value, 0, 70 ) );
 						break;
 					case 'og:description':
 					case 'twitter:description':
-						$value = trim( $this->substr( $value, 0, 200 ) );
+						$value = trim( AIOSEOP_PHP_Functions::substr( $value, 0, 200 ) );
 						break;
 				}
 			}

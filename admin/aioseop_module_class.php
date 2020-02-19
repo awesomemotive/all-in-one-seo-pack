@@ -263,8 +263,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @throws BadMethodCallException
 		 */
 		function __call( $name, $arguments ) {
-			if ( $this->strpos( $name, 'display_settings_page_' ) === 0 ) {
-				return $this->display_settings_page( $this->substr( $name, 22 ) );
+			if ( AIOSEOP_PHP_Functions::strpos( $name, 'display_settings_page_' ) === 0 ) {
+				return $this->display_settings_page( AIOSEOP_PHP_Functions::substr( $name, 22 ) );
 			}
 			$error = sprintf( __( "Method %s doesn't exist", 'all-in-one-seo-pack' ), $name );
 			if ( class_exists( 'BadMethodCallException' ) ) {
@@ -380,168 +380,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			$opt    = $prefix . $option;
 
 			return ( isset( $this->options[ $opt ] ) && $this->options[ $opt ] );
-		}
-
-		/**
-		 * Case conversion; handle non UTF-8 encodings and fallback **
-		 *
-		 * @param        $str
-		 * @param string $mode
-		 *
-		 * @return string
-		 */
-
-		function convert_case( $str, $mode = 'upper' ) {
-			static $charset = null;
-			if ( null == $charset ) {
-				$charset = get_bloginfo( 'charset' );
-			}
-			$str = (string) $str;
-			if ( 'title' == $mode ) {
-				if ( function_exists( 'mb_convert_case' ) ) {
-					return mb_convert_case( $str, MB_CASE_TITLE, $charset );
-				} else {
-					return ucwords( $str );
-				}
-			}
-
-			if ( 'UTF-8' == $charset ) {
-				// phpcs:disable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
-				global $UTF8_TABLES;
-				include_once( AIOSEOP_PLUGIN_DIR . 'inc/aioseop_UTF8.php' );
-				if ( is_array( $UTF8_TABLES ) ) {
-					if ( 'upper' == $mode ) {
-						return strtr( $str, $UTF8_TABLES['strtoupper'] );
-					}
-					if ( 'lower' == $mode ) {
-						return strtr( $str, $UTF8_TABLES['strtolower'] );
-					}
-				}
-				// phpcs:enable
-			}
-
-			if ( 'upper' == $mode ) {
-				if ( function_exists( 'mb_strtoupper' ) ) {
-					return mb_strtoupper( $str, $charset );
-				} else {
-					return strtoupper( $str );
-				}
-			}
-
-			if ( 'lower' == $mode ) {
-				if ( function_exists( 'mb_strtolower' ) ) {
-					return mb_strtolower( $str, $charset );
-				} else {
-					return strtolower( $str );
-				}
-			}
-
-			return $str;
-		}
-
-		/**
-		 * Convert a string to lower case
-		 * Compatible with mb_strtolower(), an UTF-8 friendly replacement for strtolower()
-		 *
-		 * @param $str
-		 *
-		 * @return string
-		 */
-		function strtolower( $str ) {
-			return $this->convert_case( $str, 'lower' );
-		}
-
-		/**
-		 * Convert a string to upper case
-		 * Compatible with mb_strtoupper(), an UTF-8 friendly replacement for strtoupper()
-		 *
-		 * @param $str
-		 *
-		 * @return string
-		 */
-		function strtoupper( $str ) {
-			return $this->convert_case( $str, 'upper' );
-		}
-
-		/**
-		 * Convert a string to title case
-		 * Compatible with mb_convert_case(), an UTF-8 friendly replacement for ucwords()
-		 *
-		 * @param $str
-		 *
-		 * @return string
-		 */
-		function ucwords( $str ) {
-			return $this->convert_case( $str, 'title' );
-		}
-
-		/**
-		 * Wrapper for strlen() - uses mb_strlen() if possible.
-		 *
-		 * @param $string
-		 *
-		 * @return int
-		 */
-		function strlen( $string ) {
-			if ( function_exists( 'mb_strlen' ) ) {
-				return mb_strlen( $string, 'UTF-8' );
-			}
-
-			return strlen( $string );
-		}
-
-		/**
-		 * Wrapper for substr() - uses mb_substr() if possible.
-		 *
-		 * @param     $string
-		 * @param int $start
-		 * @param int $length
-		 *
-		 * @return mixed
-		 */
-		function substr( $string, $start = 0, $length = 2147483647 ) {
-			$args = func_get_args();
-			if ( function_exists( 'mb_substr' ) ) {
-				return call_user_func_array( 'mb_substr', $args );
-			}
-
-			return call_user_func_array( 'substr', $args );
-		}
-
-		/**
-		 * Wrapper for strpos() - uses mb_strpos() if possible.
-		 *
-		 * @param        $haystack
-		 * @param string $needle
-		 *
-		 * @param int    $offset
-		 *
-		 * @return bool|int
-		 */
-		function strpos( $haystack, $needle, $offset = 0 ) {
-			if ( function_exists( 'mb_strpos' ) ) {
-				return mb_strpos( $haystack, $needle, $offset, 'UTF-8' );
-			}
-
-			return strpos( $haystack, $needle, $offset );
-		}
-
-		/**
-		 * Wrapper for strrpos() - uses mb_strrpos() if possible.
-		 *
-		 * @param        $haystack
-		 * @param string $needle
-		 *
-		 * @param int    $offset
-		 *
-		 * @return bool|int
-		 */
-		function strrpos( $haystack, $needle, $offset = 0 ) {
-			if ( function_exists( 'mb_strrpos' ) ) {
-				return mb_strrpos( $haystack, $needle, $offset, 'UTF-8' );
-			}
-
-			return strrpos( $haystack, $needle, $offset );
 		}
 
 		/**
@@ -1172,7 +1010,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 
 				if ( is_array( $post_custom_fields ) ) {
 					foreach ( $post_custom_fields as $field_name => $field ) {
-						if ( ( $this->strpos( $field_name, $prefix ) === 0 ) && $field[0] ) {
+						if ( ( AIOSEOP_PHP_Functions::strpos( $field_name, $prefix ) === 0 ) && $field[0] ) {
 							$has_data = true;
 							$data    .= $field_name . " = '" . $field[0] . "'\n";
 						}
@@ -1475,9 +1313,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 						return $file;
 					}
 					if ( 0 > $maxlen ) {
-						return $this->substr( $file, $offset );
+						return AIOSEOP_PHP_Functions::substr( $file, $offset );
 					} else {
-						return $this->substr( $file, $offset, $maxlen );
+						return AIOSEOP_PHP_Functions::substr( $file, $offset, $maxlen );
 					}
 				} else {
 					return $wpfs->get_contents( $filename );
@@ -2222,8 +2060,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 */
 		function add_page_hooks() {
 			$hookname = current_filter();
-			if ( $this->strpos( $hookname, 'load-' ) === 0 ) {
-				$this->pagehook = $this->substr( $hookname, 5 );
+			if ( AIOSEOP_PHP_Functions::strpos( $hookname, 'load-' ) === 0 ) {
+				$this->pagehook = AIOSEOP_PHP_Functions::substr( $hookname, 5 );
 			}
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ) );
@@ -2748,8 +2586,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					/* translators: %1$s and %2$s are placeholders and should not be translated. %1$s is replaced with a number, %2$s is replaced with the name of an meta tag field (e.g; "Title", "Description", etc.). */
 					$count_desc = __( ' characters. Most search engines use a maximum of %1$s chars for the %2$s.', 'all-in-one-seo-pack' );
 				}
-				$buf .= "<br /><input readonly tabindex='-1' type='text' name='{$prefix}length$n' size='3' maxlength='3' style='width:53px;height:23px;margin:0px;padding:0px 0px 0px 10px;' value='" . $this->strlen( $value ) . "' />"
-						. sprintf( $count_desc, $size, trim( $this->strtolower( $options['name'] ), ':' ) );
+				$buf .= "<br /><input readonly tabindex='-1' type='text' name='{$prefix}length$n' size='3' maxlength='3' style='width:53px;height:23px;margin:0px;padding:0px 0px 0px 10px;' value='" . AIOSEOP_PHP_Functions::strlen( $value ) . "' />"
+						. sprintf( $count_desc, $size, trim( AIOSEOP_PHP_Functions::strtolower( $options['name'] ), ':' ) );
 				if ( ! empty( $onload ) ) {
 					$buf .= "<script>jQuery( document ).ready(function() { {$onload} });</script>";
 				}
@@ -2930,11 +2768,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 */
 		function sanitize_domain( $domain ) {
 			$domain = trim( $domain );
-			$domain = $this->strtolower( $domain );
-			if ( 0 === $this->strpos( $domain, 'http://' ) ) {
-				$domain = $this->substr( $domain, 7 );
-			} elseif ( 0 === $this->strpos( $domain, 'https://' ) ) {
-				$domain = $this->substr( $domain, 8 );
+			$domain = AIOSEOP_PHP_Functions::strtolower( $domain );
+			if ( 0 === AIOSEOP_PHP_Functions::strpos( $domain, 'http://' ) ) {
+				$domain = AIOSEOP_PHP_Functions::substr( $domain, 7 );
+			} elseif ( 0 === AIOSEOP_PHP_Functions::strpos( $domain, 'https://' ) ) {
+				$domain = AIOSEOP_PHP_Functions::substr( $domain, 8 );
 			}
 			$domain = untrailingslashit( $domain );
 
@@ -3295,7 +3133,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			if ( ! empty( $options ) ) {
 				foreach ( $options as $k => $v ) {
 					if ( ! isset( $v['name'] ) ) {
-						$v['name'] = $this->ucwords( strtr( $k, '_', ' ' ) );
+						$v['name'] = AIOSEOP_PHP_Functions::ucwords( strtr( $k, '_', ' ' ) );
 					}
 					if ( ! isset( $v['type'] ) ) {
 						$v['type'] = 'checkbox';
