@@ -2,7 +2,7 @@
 /* eslint-disable */
 
 /**
- * Allows users to add nofollow, sponsored and title attributes to links in the Gutenberg Editor and Classic Editor.
+ * Allows users to add nofollow, sponsored and title attributes to links in the Classic Editor.
  * 
  * @author WPKube
  * @since 3.4.0
