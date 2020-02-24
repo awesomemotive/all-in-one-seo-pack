@@ -225,10 +225,19 @@ class AIOSEOP_Context {
 					break;
 
 				case 'date_archive':
-				case 'year_date_archive':
-				case 'month_date_archive':
-				case 'day_date_archive':
 					$obj_type = 'var_date';
+					break;
+
+				case 'year_date_archive':
+					$obj_type = 'var_date_year';
+					break;
+
+				case 'month_date_archive':
+					$obj_type = 'var_date_month';
+					break;
+
+				case 'day_date_archive':
+					$obj_type = 'var_date_day';
 					break;
 
 				case 'search':
@@ -398,6 +407,10 @@ class AIOSEOP_Context {
 		$object = false;
 		switch ( $type ) {
 			case 'var_site':
+			case 'var_date':
+			case 'var_date_year':
+			case 'var_date_month':
+			case 'var_date_day':
 				$object = array(
 					'context_type' => $type,
 					'context_key'  => $key,
@@ -491,7 +504,7 @@ class AIOSEOP_Context {
 				break;
 
 			case 'var_date_month':
-				$display_name = sprintf( __( 'Day: %s', 'all-in-one-seo-pack' ), get_the_date( 'F Y' ) );
+				$display_name = sprintf( __( 'Month: %s', 'all-in-one-seo-pack' ), get_the_date( 'F Y' ) );
 				break;
 
 			case 'var_date_day':
