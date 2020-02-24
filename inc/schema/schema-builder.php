@@ -44,6 +44,9 @@ class AIOSEOP_Schema_Builder {
 		require_once AIOSEOP_PLUGIN_DIR . 'inc/schema/graphs/graph-organization.php';
 		require_once AIOSEOP_PLUGIN_DIR . 'inc/schema/graphs/graph-person.php';
 
+		require_once AIOSEOP_PLUGIN_DIR . 'inc/schema/graphs/graph-itemlist.php';
+		require_once AIOSEOP_PLUGIN_DIR . 'inc/schema/graphs/graph-breadcrumblist.php';
+
 		require_once AIOSEOP_PLUGIN_DIR . 'inc/schema/graphs/graph-creativework.php';
 		require_once AIOSEOP_PLUGIN_DIR . 'inc/schema/graphs/graph-article.php';
 		require_once AIOSEOP_PLUGIN_DIR . 'inc/schema/graphs/graph-website.php';
@@ -53,9 +56,12 @@ class AIOSEOP_Schema_Builder {
 		require_once AIOSEOP_PLUGIN_DIR . 'inc/schema/graphs/graph-profilepage.php';
 		require_once AIOSEOP_PLUGIN_DIR . 'inc/schema/graphs/graph-searchresultspage.php';
 
+		require_once AIOSEOP_PLUGIN_DIR . 'inc/schema/aioseop-context.php';
+
 		$graphs = array(
 			// Keys/Slugs follow Schema's @type format.
 			'Article'           => new AIOSEOP_Graph_Article(),
+			'BreadcrumbList'    => new AIOSEOP_Graph_BreadcrumbList(),
 			'CollectionPage'    => new AIOSEOP_Graph_CollectionPage(),
 			'Organization'      => new AIOSEOP_Graph_Organization(),
 			'Person'            => new AIOSEOP_Graph_Person(),
@@ -70,7 +76,7 @@ class AIOSEOP_Schema_Builder {
 		 *
 		 * @since 3.2
 		 *
-		 * @param $graphs Array containing schema objects that are currently active.
+		 * @param $graphs array containing schema objects that are currently active.
 		 */
 		$graphs = apply_filters( 'aioseop_register_schema_objects', $graphs );
 
@@ -113,16 +119,20 @@ class AIOSEOP_Schema_Builder {
 			if ( is_author() ) {
 				array_push( $layout['@graph'], '[aioseop_schema_ProfilePage]' );
 				array_push( $layout['@graph'], '[aioseop_schema_Person]' );
+				array_push( $layout['@graph'], '[aioseop_schema_BreadcrumbList]' );
 			} elseif ( is_post_type_archive() ) {
 				array_push( $layout['@graph'], '[aioseop_schema_CollectionPage]' );
+				array_push( $layout['@graph'], '[aioseop_schema_BreadcrumbList]' );
 			} elseif ( is_tax() || is_category() || is_tag() ) {
 				array_push( $layout['@graph'], '[aioseop_schema_CollectionPage]' );
+				array_push( $layout['@graph'], '[aioseop_schema_BreadcrumbList]' );
 				// Remove when Custom Taxonomies is supported.
 				if ( is_tax() ) {
 					$layout = array();
 				}
 			} elseif ( is_date() ) {
 				array_push( $layout['@graph'], '[aioseop_schema_CollectionPage]' );
+				array_push( $layout['@graph'], '[aioseop_schema_BreadcrumbList]' );
 			}
 		} elseif ( is_singular() || is_single() ) {
 			global $post;
@@ -134,6 +144,7 @@ class AIOSEOP_Schema_Builder {
 				array_push( $layout['@graph'], '[aioseop_schema_Article]' );
 				array_push( $layout['@graph'], '[aioseop_schema_Person]' );
 			}
+			array_push( $layout['@graph'], '[aioseop_schema_BreadcrumbList]' );
 
 			// Remove when CPT is supported.
 			if ( ! in_array( get_post_type( $post ), array( 'post', 'page' ) ) ) {
@@ -141,6 +152,7 @@ class AIOSEOP_Schema_Builder {
 			}
 		} elseif ( is_search() ) {
 			array_push( $layout['@graph'], '[aioseop_schema_SearchResultsPage]' );
+			array_push( $layout['@graph'], '[aioseop_schema_BreadcrumbList]' );
 		} elseif ( is_404() ) {
 			// Do 404 page.
 		}

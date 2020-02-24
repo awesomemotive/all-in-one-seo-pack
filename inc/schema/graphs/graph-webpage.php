@@ -51,6 +51,8 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 		global $post;
 		global $aioseop_options;
 
+		$context = AIOSEOP_Context::get_instance();
+
 		$current_url  = '';
 		$current_name = '';
 		$current_desc = '';
@@ -118,7 +120,9 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 			'isPartOf'   => array(
 				'@id' => home_url() . '/#website',
 			),
-
+			'breadcrumb' => array(
+				'@id' => $context->get_url() . '#breadcrumblist'
+			),
 		);
 
 		// Handles pages.
