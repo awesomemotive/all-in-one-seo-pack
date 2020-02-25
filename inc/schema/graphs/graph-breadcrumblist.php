@@ -47,7 +47,7 @@ class AIOSEOP_Graph_BreadcrumbList extends AIOSEOP_Graph_ItemList {
 	 * @return array
 	 */
 	protected function prepare( $data = array() ) {
-		$context = AIOSEOP_Context::get_instance();
+		$context  = AIOSEOP_Context::get_instance();
 		$rtn_data = array(
 			'@type'           => $this->slug,
 			'@id'             => $context->get_url() . '#' . strtolower( $this->slug ),

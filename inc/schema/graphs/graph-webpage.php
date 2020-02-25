@@ -121,7 +121,7 @@ class AIOSEOP_Graph_WebPage extends AIOSEOP_Graph_Creativework {
 				'@id' => home_url() . '/#website',
 			),
 			'breadcrumb' => array(
-				'@id' => $context->get_url() . '#breadcrumblist'
+				'@id' => $context->get_url() . '#breadcrumblist',
 			),
 		);
 

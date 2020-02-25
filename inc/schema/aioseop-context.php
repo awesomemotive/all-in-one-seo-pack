@@ -1,4 +1,9 @@
 <?php
+/**
+ * Context Handler
+ *
+ * @package All_in_One_SEO_Pack
+ */
 
 /**
  * Website Context Handler.
@@ -7,10 +12,15 @@
  *
  * Multiton (Multi-Singleton)
  *
+ * @since 3.4.0
  */
 class AIOSEOP_Context {
 
 	/**
+	 * Multi-Instances
+	 *
+	 * @since 3.4.0
+	 *
 	 * @var array $type {
 	 *     @type array $key {
 	 *         @type AIOSEOP_Context
@@ -20,6 +30,8 @@ class AIOSEOP_Context {
 	protected static $instances = array();
 
 	/**
+	 * Context Key (ID|slug).
+	 *
 	 * @since 3.4.0
 	 *
 	 * @var string
@@ -27,9 +39,9 @@ class AIOSEOP_Context {
 	public $context_type = '';
 
 	/**
-	 * Unique key for WP Objects.
+	 * Unique key for WP Objects
 	 *
-	 * Could be a numberic ID or a string Slug.
+	 * Could be a numeric ID or a string Slug.
 	 *
 	 * @since 3.4.0
 	 *
@@ -40,9 +52,11 @@ class AIOSEOP_Context {
 	/**
 	 * WP Class Properties
 	 *
-	 * Stores essentual properties to query by or potentually reduce querying.
-	 * 
+	 * Stores essential properties to query by or potentially reduce querying.
+	 *
 	 * These properties can also be used with `$context` param to query by.
+	 *
+	 * @since 3.4.0
 	 *
 	 * @var array {
 	 *     @type string       $taxonomy    (Optional) Terms limited to those matching `taxonomy`.
@@ -57,17 +71,18 @@ class AIOSEOP_Context {
 	 */
 	public $wp_props = array();
 
-
 	/**
+	 * Get Instance
+	 *
 	 * @since 3.4.0
 	 *
 	 * @param string|array|AIOSEOP_Context|WP_Site|WP_Post|WP_Post_Type|WP_Taxonomy|WP_Term|WP_User $context
 	 * @return AIOSEOP_Context
 	 */
 	public static function get_instance( $context = '' ) {
-		$type   = self::get_context_type( $context );
-		$key    = self::get_context_key( $context, $type );
-		$props  = self::get_wp_props( $context, $type, $key );
+		$type  = self::get_context_type( $context );
+		$key   = self::get_context_key( $context, $type );
+		$props = self::get_wp_props( $context, $type, $key );
 
 		if ( ! isset( self::$instances[ $type ] ) ) {
 			self::$instances[ $type ] = array();
@@ -104,7 +119,6 @@ class AIOSEOP_Context {
 	 *
 	 * @since 3.4.0
 	 *
-	 * @param string|object $context
 	 * @return string
 	 */
 	public static function get_is() {
@@ -166,14 +180,13 @@ class AIOSEOP_Context {
 				$context['context_type'] = 'var_site';
 			}
 			return $context['context_type'];
-		} elseif ( $context instanceof AIOSEOP_Context || ! empty ( $context->context_type ) ) {
+		} elseif ( $context instanceof AIOSEOP_Context || ! empty( $context->context_type ) ) {
 			if ( 'WP_Site' === $context->context_type && ! class_exists( 'WP_Site' ) ) {
 				$context->context_type = 'var_site';
 			}
 			return $context->context_type;
 		}
 
-		$test01 = get_queried_object();
 		$obj_type = '';
 		if ( $context instanceof WP_Network ) {
 			$obj_type = 'WP_Site';
@@ -269,7 +282,7 @@ class AIOSEOP_Context {
 	public static function get_context_key( $context, $type = '' ) {
 		if ( is_array( $context ) && isset( $context['context_key'] ) ) {
 			return $context['context_key'];
-		} elseif ( $context instanceof AIOSEOP_Context || ! empty ( $context->context_key ) ) {
+		} elseif ( $context instanceof AIOSEOP_Context || ! empty( $context->context_key ) ) {
 			return $context->context_key;
 		}
 
@@ -306,7 +319,7 @@ class AIOSEOP_Context {
 				break;
 
 			case 'WP_Term':
-				if ( ! $context instanceof WP_Term) {
+				if ( ! $context instanceof WP_Term ) {
 					$context = get_queried_object();
 				}
 				$key = $context->term_id;
@@ -345,7 +358,7 @@ class AIOSEOP_Context {
 
 	/**
 	 * Get (Required/Requested) WP Object Fields
-	 * 
+	 *
 	 * @since 3.4.0
 	 *
 	 * @param mixed  $context
@@ -364,27 +377,27 @@ class AIOSEOP_Context {
 
 		if ( is_array( $context ) && isset( $context['wp_props'] ) ) {
 			$wp_props = $context['wp_props'];
-		} elseif ( $context instanceof AIOSEOP_Context || ! empty ( $context->wp_props ) ) {
+		} elseif ( $context instanceof AIOSEOP_Context || ! empty( $context->wp_props ) ) {
 			$wp_props = $context->wp_props;
 		}
 
 		$object = new stdClass();
 		switch ( $type ) {
 			case 'WP_Taxonomy':
-				$object = self::get_object( $type, $key, $wp_props );
+				$object                  = self::get_object( $type, $key, $wp_props );
 				$wp_props['object_type'] = $object->object_type;
 				break;
 			case 'WP_Term':
-//				$object = self::get_object( $type, $key, $wp_props );
-//				$wp_props['taxonomy'] = $object->taxonomy;
+				// $object = self::get_object( $type, $key, $wp_props );
+				// $wp_props['taxonomy'] = $object->taxonomy;
 				break;
 			case 'WP_User':
 				$object = self::get_object( $type, $key, $wp_props );
-//				$wp_props['user_login'] = $object->user_login;
-				$wp_props['site_id']    = $object->site_id;
+				// $wp_props['user_login'] = $object->user_login;
+				$wp_props['site_id'] = $object->site_id;
 				break;
 		}
-		
+
 		// Also get only the object properties that match in $context['wp_props'] | $context->wp_props.
 		foreach ( $wp_props as $key => $value ) {
 			if ( isset( $object->$key ) ) {
@@ -396,6 +409,8 @@ class AIOSEOP_Context {
 	}
 
 	/**
+	 * Get Object
+	 *
 	 * @since 3.4.0
 	 *
 	 * @param string $type WP object type.
@@ -416,6 +431,7 @@ class AIOSEOP_Context {
 					'context_key'  => $key,
 				);
 				break;
+
 			case 'WP_Site':
 				/*
 				 * PHP 5.2 conflict. Could merge WP_Site & WP_Post together after WP 5.1 becomes the required version.
@@ -426,20 +442,24 @@ class AIOSEOP_Context {
 
 				$object = WP_Site::get_instance( $key );
 				break;
+
 			case 'WP_Post':
 				$object = WP_Post::get_instance( $key );
 				break;
+
 			case 'WP_Taxonomy':
 				$object_type = isset( $args['object_type'] ) ? $args['object_type'] : 'post';
-				$object = new WP_Taxonomy( $key, $object_type );
+				$object      = new WP_Taxonomy( $key, $object_type );
 				break;
+
 			case 'WP_Term':
 				$taxonomy = isset( $args['taxonomy'] ) ? $args['taxonomy'] : null;
 				$object   = WP_Term::get_instance( $key, $taxonomy );
 				break;
+
 			case 'WP_User':
 				$name    = isset( $args['user_login'] ) ? $args['user_login'] : '';
-				$site_id = isset( $args['site_id'] )    ? $args['site_id']    : '';
+				$site_id = isset( $args['site_id'] ) ? $args['site_id'] : '';
 				$object  = new WP_User( $key, $name, $site_id );
 				break;
 		}
@@ -448,12 +468,14 @@ class AIOSEOP_Context {
 	}
 
 	/**
+	 * Get Slug
+	 *
 	 * @since 3.4.0
 	 *
 	 * @return string
 	 */
 	public function get_slug() {
-		$slug = '';
+		$slug   = '';
 		$wp_obj = self::get_object( $this->context_type, $this->context_key, $this->wp_props );
 		switch ( $this->context_type ) {
 			case 'var_site':
@@ -474,10 +496,12 @@ class AIOSEOP_Context {
 
 		return $slug;
 	}
-	
+
 	public function get_nicename() {}
 
 	/**
+	 * Get Display Name
+	 *
 	 * @since 3.4.0
 	 *
 	 * @return string
@@ -490,17 +514,17 @@ class AIOSEOP_Context {
 				break;
 
 			case 'WP_Post':
-				$wp_obj = self::get_object( $this->context_type, $this->context_key );
+				$wp_obj       = self::get_object( $this->context_type, $this->context_key );
 				$display_name = $wp_obj->post_title;
 				break;
 
 			case 'WP_Term':
-				$wp_obj = self::get_object( $this->context_type, $this->context_key, $this->wp_props );
+				$wp_obj       = self::get_object( $this->context_type, $this->context_key, $this->wp_props );
 				$display_name = $wp_obj->name;
 				break;
 
 			case 'WP_User':
-				$wp_obj = self::get_object( $this->context_type, $this->context_key, $this->wp_props );
+				$wp_obj       = self::get_object( $this->context_type, $this->context_key, $this->wp_props );
 				$display_name = $wp_obj->display_name;
 				break;
 
@@ -529,7 +553,6 @@ class AIOSEOP_Context {
 	 * Get URL (Page)
 	 *
 	 * Uses a static variable for performance faulty operations; only use with heavy operations.
-	 *
 	 *
 	 * @since 3.4.0
 	 *
@@ -564,7 +587,7 @@ class AIOSEOP_Context {
 					// Source URL.
 					// May need to check setting for attachment redirect.
 					// Use $this->get_images() to get attachment link.
-					//$url = wp_get_attachment_url( $wp_obj->ID );
+					// $url = wp_get_attachment_url( $wp_obj->ID );
 					// (Attachment) Post URL.
 					$url = get_permalink( $wp_obj );
 				} else {
@@ -614,6 +637,8 @@ class AIOSEOP_Context {
 	}
 
 	/**
+	 * Get Description
+	 *
 	 * @since 3.4.0
 	 *
 	 * @return string
@@ -646,12 +671,13 @@ class AIOSEOP_Context {
 	 * registered images to post.
 	 * post content.
 	 *
+	 * @param string|array
 	 * @return array {
 	 *     @type int|string $id
 	 *     @type string     $url
 	 * }
 	 */
-	public function get_images( $sources = 'all') {
+	public function get_images( $sources = 'all' ) {
 		$image = array();
 		switch ( $this->context_type ) {
 			case 'WP_Post':
@@ -670,6 +696,8 @@ class AIOSEOP_Context {
 	}
 
 	/**
+	 * Get Breadcrumb
+	 *
 	 * @since 3.4.0
 	 *
 	 * @return array {
@@ -706,7 +734,7 @@ class AIOSEOP_Context {
 						'context_key'  => $object->post_parent, // Create get_parent().
 					);
 					$context = self::get_instance( $context );
-					$object         = self::get_object( $context->context_type, $context->context_key );
+					$object  = self::get_object( $context->context_type, $context->context_key );
 				}
 				array_unshift(
 					$rtn_list,
@@ -736,7 +764,7 @@ class AIOSEOP_Context {
 					$context = array(
 						'context_type' => $context->context_type,
 						'context_key'  => $object->parent, // Create get_parent().
-						'wp_props'    => $context->wp_props
+						'wp_props'     => $context->wp_props,
 					);
 					$context = self::get_instance( $context );
 					$object  = self::get_object( $context->context_type, $context->context_key, $context->wp_props );
