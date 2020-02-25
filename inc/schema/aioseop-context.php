@@ -440,7 +440,6 @@ class AIOSEOP_Context {
 				 * $object = $type::get_instance( $key );
 				 */
 
-				$object = $type::get_instance( $key );
 				$object = WP_Site::get_instance( $key );
 				break;
 
