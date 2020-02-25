@@ -417,8 +417,17 @@ class AIOSEOP_Context {
 				);
 				break;
 			case 'WP_Site':
+				/*
+				 * PHP 5.2 conflict. Could merge WP_Site & WP_Post together after WP 5.1 becomes the required version.
+				 *
+				 * Change to...
+				 * $object = $type::get_instance( $key );
+				 */
+
+				$object = WP_Site::get_instance( $key );
+				break;
 			case 'WP_Post':
-				$object = $type::get_instance( $key );
+				$object = WP_Post::get_instance( $key );
 				break;
 			case 'WP_Taxonomy':
 				$object_type = isset( $args['object_type'] ) ? $args['object_type'] : 'post';
