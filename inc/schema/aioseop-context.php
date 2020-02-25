@@ -711,6 +711,7 @@ class AIOSEOP_Context {
 	public function get_breadcrumb() {
 		$rtn_list = array();
 		// WP_Post & WP_Terms could be merged once a parent_id() method is created.
+		$context = $this;
 		switch ( $this->context_type ) {
 			case 'var_site':
 			case 'WP_Site':
@@ -718,7 +719,7 @@ class AIOSEOP_Context {
 				break;
 
 			case 'WP_Post':
-				$context = $this;
+
 				$object  = self::get_object( $this->context_type, $this->context_key );
 				while ( ! empty( $object->post_parent ) ) {
 					array_unshift(
@@ -750,7 +751,6 @@ class AIOSEOP_Context {
 				break;
 
 			case 'WP_Term':
-				$context = $this;
 				$object  = self::get_object( $context->context_type, $context->context_key, $context->wp_props );
 				while ( ! empty( $object->parent ) ) {
 					array_unshift(
@@ -778,9 +778,38 @@ class AIOSEOP_Context {
 				);
 				break;
 
+			case 'var_date':
+			case 'var_date_day':
+				array_unshift(
+					$rtn_list,
+					array(
+						'title' => $context->get_display_name(),
+						'url'   => $context->get_url(),
+					)
+				);
+				$context = array(
+					'context_type' => 'var_date_month',
+					'context_key'  => 0,
+				);
+				$context = AIOSEOP_Context::get_instance( $context );
+				// Fall through.
+			case 'var_date_month':
+				array_unshift(
+					$rtn_list,
+					array(
+						'title' => $context->get_display_name(),
+						'url'   => $context->get_url(),
+					)
+				);
+				$context = array(
+					'context_type' => 'var_date_year',
+					'context_key'  => 0,
+				);
+				$context = AIOSEOP_Context::get_instance( $context );
+				// Fall through.
+			case 'var_date_year':
 			case 'WP_User':
 			case 'var_search':
-				$context = $this;
 				array_unshift(
 					$rtn_list,
 					array(
@@ -789,7 +818,6 @@ class AIOSEOP_Context {
 					)
 				);
 				break;
-
 		}
 
 		// Add Homepage as root/base.
