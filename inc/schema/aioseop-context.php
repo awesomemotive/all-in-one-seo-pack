@@ -440,6 +440,7 @@ class AIOSEOP_Context {
 				 * $object = $type::get_instance( $key );
 				 */
 
+				$object = $type::get_instance( $key );
 				$object = WP_Site::get_instance( $key );
 				break;
 
@@ -719,8 +720,7 @@ class AIOSEOP_Context {
 				break;
 
 			case 'WP_Post':
-
-				$object  = self::get_object( $this->context_type, $this->context_key );
+				$object = self::get_object( $this->context_type, $this->context_key );
 				while ( ! empty( $object->post_parent ) ) {
 					array_unshift(
 						$rtn_list,
@@ -751,7 +751,7 @@ class AIOSEOP_Context {
 				break;
 
 			case 'WP_Term':
-				$object  = self::get_object( $context->context_type, $context->context_key, $context->wp_props );
+				$object = self::get_object( $context->context_type, $context->context_key, $context->wp_props );
 				while ( ! empty( $object->parent ) ) {
 					array_unshift(
 						$rtn_list,
