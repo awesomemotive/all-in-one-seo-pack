@@ -115,6 +115,7 @@ class AIOSEOP_Schema_Builder {
 		// TODO Add layout customizations to settings.
 		if ( is_front_page() || is_home() ) {
 			array_push( $layout['@graph'], '[aioseop_schema_WebPage]' );
+			array_push( $layout['@graph'], '[aioseop_schema_BreadcrumbList]' );
 		} elseif ( is_archive() ) {
 			if ( is_author() ) {
 				array_push( $layout['@graph'], '[aioseop_schema_ProfilePage]' );
