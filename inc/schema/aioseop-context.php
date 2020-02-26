@@ -124,8 +124,12 @@ class AIOSEOP_Context {
 	public static function get_is() {
 		$state_is = '';
 		if ( is_front_page() || is_home() ) {
-			if ( is_front_page() ) {
+			global $wp_query;
+
+			if ( $wp_query->is_front_page() ) {
 				$state_is = 'front_page';
+			} elseif ( $wp_query->is_posts_page ) {
+				$state_is = 'posts_page';
 			} else {
 				$state_is = 'home'; // Static front page.
 			}
@@ -230,6 +234,7 @@ class AIOSEOP_Context {
 					break;
 
 				case 'home':
+				case 'posts_page':
 				case 'single_page':
 				case 'single_post':
 				case 'single_attachment':
@@ -305,8 +310,12 @@ class AIOSEOP_Context {
 
 			case 'WP_Post':
 				if ( ! $context instanceof WP_Post ) {
-					global $post;
-					$context = $post;
+					if ( 'posts_page' === self::get_is() ) {
+						$context = get_queried_object();
+					} else {
+						global $post;
+						$context = $post;
+					}
 				}
 				$key = $context->ID;
 				break;
