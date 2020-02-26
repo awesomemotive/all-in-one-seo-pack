@@ -577,7 +577,7 @@ class AIOSEOP_Context {
 				break;
 
 			case 'WP_Site':
-				// Do stuff.
+				$url = get_site_url( $this->context_key );
 				break;
 
 			case 'WP_Post':
