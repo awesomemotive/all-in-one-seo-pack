@@ -4,11 +4,10 @@
 /**
  * Allows users to add nofollow, sponsored and title attributes to links in the Classic Editor.
  * 
- * @author WPKube
  * @since 3.4.0
  */
 
-var wpLink;
+var aioseopLink;
 
 ( function( $, aioseopL10n, wp ) {
 	var editor, searchTimer, River, Query, correctedURL, linkNode,
@@ -19,6 +18,7 @@ var wpLink;
 		isTouch = ( 'ontouchend' in document );
 
 	function getLink() {
+		// All in One SEO Pack - Begin
 		let node = linkNode || editor.dom.getParent( editor.selection.getNode(), 'a[href]' );
 
 		if( null == node ) {
@@ -26,9 +26,10 @@ var wpLink;
 		}
 
 		return node;
+		// All in One SEO Pack - End
 	}
 
-	wpLink = {
+	aioseopLink = {
 		timeToTriggerRiver: 150,
 		minRiverAJAXDuration: 200,
 		riverBottomThreshold: 5,
@@ -39,12 +40,12 @@ var wpLink;
 
 		init: function() {
             
-            //change by "Title and Nofollow for Links" begin
+            // All in One SEO Pack - Begin
             $("#wp-link .link-target").append('<br><label style="padding-left: 4px;"><span>&nbsp;</span><input type="checkbox" id="tanfl-add-nofollow">' + aioseopL10n.noFollow + "</label>");
             $("#wp-link .link-target").append('<br><label style="padding-left: 4px;"><span>&nbsp;</span><input type="checkbox" id="tanfl-add-sponsored">' + aioseopL10n.sponsored + '</label><br>');
             $(".wp-link-text-field").before('<div class="link-title-field"><label><span style="padding-left: 4px;">' + aioseopL10n.labelTitle + '</span><input id="wp-link-title" type="text" name="linktitle" /></label></div>');
             $('<style type="text/css"> .has-text-field #wp-link .query-results { top: 256px !important; } #wp-link-wrap.search-panel-visible {height: 549px !important;}</style>').appendTo("head");
-            //change by "Title and Nofollow for Links" end
+            // All in One SEO Pack - End
             
 			inputs.wrap = $('#wp-link-wrap');
 			inputs.dialog = $( '#wp-link' );
@@ -52,11 +53,11 @@ var wpLink;
 			inputs.submit = $( '#wp-link-submit' );
 			inputs.close = $( '#wp-link-close' );
             
-            //change by "Title and Nofollow for Links" begin
+            // All in One SEO Pack - Begin
             inputs.tanfl = $( '#tanfl-add-nofollow' );
             inputs.tanfl_sponsored = $( '#tanfl-add-sponsored' );
  			inputs.title = $( '#wp-link-title' );
-            //change by "Title and Nofollow for Links" end
+            // All in One SEO Pack - End
 
 			// Input
 			inputs.text = $( '#wp-link-text' );
@@ -76,25 +77,25 @@ var wpLink;
 			inputs.queryNoticeTextHint = inputs.queryNotice.find( '.query-notice-hint' );
 
 			// Bind event handlers
-			inputs.dialog.keydown( wpLink.keydown );
-			inputs.dialog.keyup( wpLink.keyup );
+			inputs.dialog.keydown( aioseopLink.keydown );
+			inputs.dialog.keyup( aioseopLink.keyup );
 			inputs.submit.click( function( event ) {
 				event.preventDefault();
-				wpLink.update();
+				aioseopLink.update();
 			});
 
 			inputs.close.add( inputs.backdrop ).add( '#wp-link-cancel button' ).click( function( event ) {
 				event.preventDefault();
-				wpLink.close();
+				aioseopLink.close();
 			});
 
-			rivers.elements.on( 'river-select', wpLink.updateFields );
+			rivers.elements.on( 'river-select', aioseopLink.updateFields );
 
 			// Display 'hint' message when search field or 'query-results' box are focused
-			inputs.search.on( 'focus.wplink', function() {
+			inputs.search.on( 'focus.aioseopLink', function() {
 				inputs.queryNoticeTextDefault.hide();
 				inputs.queryNoticeTextHint.removeClass( 'screen-reader-text' ).show();
-			} ).on( 'blur.wplink', function() {
+			} ).on( 'blur.aioseopLink', function() {
 				inputs.queryNoticeTextDefault.show();
 				inputs.queryNoticeTextHint.addClass( 'screen-reader-text' ).hide();
 			} );
@@ -102,15 +103,15 @@ var wpLink;
 			inputs.search.on( 'keyup input', function() {
 				window.clearTimeout( searchTimer );
 				searchTimer = window.setTimeout( function() {
-					wpLink.searchInternalLinks();
+					aioseopLink.searchInternalLinks();
 				}, 500 );
 			});
 
 			inputs.url.on( 'paste', function() {
-				setTimeout( wpLink.correctURL, 0 );
+				setTimeout( aioseopLink.correctURL, 0 );
 			} );
 
-			inputs.url.on( 'blur', wpLink.correctURL );
+			inputs.url.on( 'blur', aioseopLink.correctURL );
 		},
 
 		// If URL wasn't corrected last time and doesn't start with http:, https:, ? # or /, prepend http://
@@ -128,10 +129,10 @@ var wpLink;
 				$body = $( document.body );
 
 			$body.addClass( 'modal-open' );
-			wpLink.modalOpen = true;
+			aioseopLink.modalOpen = true;
 			linkNode = node;
 
-			wpLink.range = null;
+			aioseopLink.range = null;
 
 			if ( editorId ) {
 				window.wpActiveEditor = editorId;
@@ -157,7 +158,7 @@ var wpLink;
 				}
 			}
 
-			if ( ! wpLink.isMCE() && document.selection ) {
+			if ( ! aioseopLink.isMCE() && document.selection ) {
 				this.textarea.focus();
 				this.range = document.selection.createRange();
 			}
@@ -165,9 +166,9 @@ var wpLink;
 			inputs.wrap.show();
 			inputs.backdrop.show();
 
-			wpLink.refresh( url, text );
+			aioseopLink.refresh( url, text );
 
-			$( document ).trigger( 'wplink-open', inputs.wrap );
+			$( document ).trigger( 'aioseopLink-open', inputs.wrap );
 		},
 
 		isMCE: function() {
@@ -181,8 +182,8 @@ var wpLink;
 			rivers.search.refresh();
 			rivers.recent.refresh();
 
-			if ( wpLink.isMCE() ) {
-				wpLink.mceRefresh( url, text );
+			if ( aioseopLink.isMCE() ) {
+				aioseopLink.mceRefresh( url, text );
 			} else {
 				// For the Text editor the "Link text" field is always shown
 				if ( ! inputs.wrap.hasClass( 'has-text-field' ) ) {
@@ -199,7 +200,7 @@ var wpLink;
 				}
 
 				inputs.text.val( text );
-				wpLink.setDefaultValues();
+				aioseopLink.setDefaultValues();
 			}
 
 			if ( isTouch ) {
@@ -222,9 +223,9 @@ var wpLink;
 
             correctedURL = inputs.url.val().replace( /^http:\/\//, '' );
             
-            //change by "Title and Nofollow for Links" begin
+            // All in One SEO Pack - Begin
             jQuery('.has-text-field #wp-link .query-results').css( 'margin-top', 25 );
-            //change by "Title and Nofollow for Links" end
+            // All in One SEO Pack - End
 
 		},
 
@@ -281,14 +282,16 @@ var wpLink;
 				}
 
 				if ( searchStr && searchStr !== href ) {
+					// All in One SEO Pack - Begin
 					inputs.url.val( searchStr );
+					// All in One SEO Pack - End
 					// The user has typed something in the inline dialog. Trigger a search with it.
 					inputs.search.val( searchStr );
 				} else {
 					inputs.search.val( '' );
 				}
                 
-                //change by "Title and Nofollow for Links" begin
+                // All in One SEO Pack - Begin
 				if (editor.dom.getAttrib(linkNode, 'rel').indexOf("nofollow") >= 0){
 					inputs.tanfl.prop('checked', true);
                 } else {
@@ -300,16 +303,18 @@ var wpLink;
 					inputs.tanfl_sponsored.prop('checked', false);
                 }
                 inputs.title.val( editor.dom.getAttrib( linkNode, 'title' ) );
-                //change by "Title and Nofollow for Links" begin
+                // All in One SEO Pack - End
 
 				// Always reset the search
 				window.setTimeout( function() {
-					wpLink.searchInternalLinks();
+					aioseopLink.searchInternalLinks();
 				} );
 			} else {
 				linkText = editor.selection.getContent({ format: 'text' }) || text || '';
 				this.setDefaultValues( linkText );
+				// All in One SEO Pack - Begin
 				inputs.url.val( searchStr );
+				// All in One SEO Pack - End
 			}
 
 			if ( onlyText ) {
@@ -323,19 +328,19 @@ var wpLink;
 
 		close: function( reset ) {
 			$( document.body ).removeClass( 'modal-open' );
-			wpLink.modalOpen = false;
+			aioseopLink.modalOpen = false;
 
 			if ( reset !== 'noReset' ) {
-				if ( ! wpLink.isMCE() ) {
-					wpLink.textarea.focus();
+				if ( ! aioseopLink.isMCE() ) {
+					aioseopLink.textarea.focus();
 
-					if ( wpLink.range ) {
-						wpLink.range.moveToBookmark( wpLink.range.getBookmark() );
-						wpLink.range.select();
+					if ( aioseopLink.range ) {
+						aioseopLink.range.moveToBookmark( aioseopLink.range.getBookmark() );
+						aioseopLink.range.select();
 					}
 				} else {
-					if ( editor.plugins.wplink ) {
-						editor.plugins.wplink.close();
+					if ( editor.plugins.aioseopLink ) {
+						editor.plugins.aioseopLink.close();
 					}
 
 					editor.focus();
@@ -347,13 +352,13 @@ var wpLink;
 
 			correctedURL = false;
 
-			$( document ).trigger( 'wplink-close', inputs.wrap );
+			$( document ).trigger( 'aioseopLink-close', inputs.wrap );
 		},
 
 		getAttrs: function() {
-			wpLink.correctURL();
+			aioseopLink.correctURL();
 
-            //change by "Title and Nofollow for Links" begin
+            // All in One SEO Pack - Begin
             var tanfl_value = '';
             if ( inputs.tanfl.prop('checked') ) {
                 tanfl_value += 'nofollow ';
@@ -361,22 +366,22 @@ var wpLink;
             if ( inputs.tanfl_sponsored.prop('checked') ) {
                 tanfl_value += 'sponsored';
             }
-            //change by "Title and Nofollow for Links" end
+            // All in One SEO Pack - End
 
 			return {
 				href: $.trim( inputs.url.val() ),
-				target: inputs.openInNewTab.prop( 'checked' ) ? '_blank' : null, // , - by "Title and Nofollow for Links" begin
-                //change by "Title and Nofollow for Links" begin
+				target: inputs.openInNewTab.prop( 'checked' ) ? '_blank' : null,
+                // All in One SEO Pack - Begin
 				rel: tanfl_value,
         		title: $.trim( inputs.title.val() )                               
-                //change by "Title and Nofollow for Links" end
+                // All in One SEO Pack - End
 			};
 		},
 
 		buildHtml: function(attrs) {
 			var html = '<a href="' + attrs.href + '"';
             
-            //change by "Title and Nofollow for Links" begin
+            // All in One SEO Pack - Begin
             if ( attrs.title ) {
 				title = attrs.title.replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' );
 				html += ' title="' + title + '"';
@@ -394,29 +399,29 @@ var wpLink;
                     html += ' rel="' + attrs.rel + '"';
                 }
             }    
-            //change by "Title and Nofollow for Links" end
+            // All in One SEO Pack - End
             
 
 			return html + '>';
 		},
 
 		update: function() {
-			if ( wpLink.isMCE() ) {
-				wpLink.mceUpdate();
+			if ( aioseopLink.isMCE() ) {
+				aioseopLink.mceUpdate();
 			} else {
-				wpLink.htmlUpdate();
+				aioseopLink.htmlUpdate();
 			}
 		},
 
 		htmlUpdate: function() {
 			var attrs, text, html, begin, end, cursor, selection,
-				textarea = wpLink.textarea;
+				textarea = aioseopLink.textarea;
 
 			if ( ! textarea ) {
 				return;
 			}
 
-			attrs = wpLink.getAttrs();
+			attrs = aioseopLink.getAttrs();
 			text = inputs.text.val();
 
 			var parser = document.createElement( 'a' );
@@ -431,19 +436,19 @@ var wpLink;
 				return;
 			}
             
-			html = wpLink.buildHtml(attrs);
+			html = aioseopLink.buildHtml(attrs);
 
 			// Insert HTML
-			if ( document.selection && wpLink.range ) {
+			if ( document.selection && aioseopLink.range ) {
 				// IE
 				// Note: If no text is selected, IE will not place the cursor
 				//       inside the closing tag.
 				textarea.focus();
-				wpLink.range.text = html + ( text || wpLink.range.text ) + '</a>';
-				wpLink.range.moveToBookmark( wpLink.range.getBookmark() );
-				wpLink.range.select();
+				aioseopLink.range.text = html + ( text || aioseopLink.range.text ) + '</a>';
+				aioseopLink.range.moveToBookmark( aioseopLink.range.getBookmark() );
+				aioseopLink.range.select();
 
-				wpLink.range = null;
+				aioseopLink.range = null;
 			} else if ( typeof textarea.selectionStart !== 'undefined' ) {
 				// W3C
 				begin = textarea.selectionStart;
@@ -467,7 +472,7 @@ var wpLink;
 				textarea.selectionStart = textarea.selectionEnd = cursor;
 			}
 
-			wpLink.close();
+			aioseopLink.close();
 			textarea.focus();
 			$( textarea ).trigger( 'change' );
 
@@ -478,7 +483,7 @@ var wpLink;
 		},
 
 		mceUpdate: function() {
-			var attrs = wpLink.getAttrs(),
+			var attrs = aioseopLink.getAttrs(),
 				$link, text, hasText, $mceCaret;
 
 			var parser = document.createElement( 'a' );
@@ -490,7 +495,7 @@ var wpLink;
 
 			if ( ! attrs.href ) {
 				editor.execCommand( 'unlink' );
-				wpLink.close();
+				aioseopLink.close();
 				return;
 			}
 
@@ -498,8 +503,9 @@ var wpLink;
 
 			editor.undoManager.transact( function() {
 				if ( ! $link.length ) {
-					//AIOSEOP
+					// All in One SEO Pack - Begin
 					//editor.execCommand( 'mceInsertLink', false, { href: '_wp_link_placeholder', 'data-wp-temp-link': 1 } );
+					// All in One SEO Pack - End
 					$link = editor.$( 'a[data-wp-temp-link="1"]' ).removeAttr( 'data-wp-temp-link' );
 					hasText = $.trim( $link.text() );
 				}
@@ -517,21 +523,21 @@ var wpLink;
 						}
 					}
 
-					attrs['data-wplink-edit'] = null;
+					attrs['data-aioseopLink-edit'] = null;
 					attrs['data-mce-href'] = null; // attrs.href
                     
-                    //change by "Title and Nofollow for Links" begin
+                    // All in One SEO Pack - Begin
                     if ( !attrs.title ) {
                          attrs['title'] = null;
                     }
-                    //change by "Title and Nofollow for Links" end
+                    // All in One SEO Pack - End
                     
                    
 					$link.attr( attrs );
 				}
 			} );
 
-			wpLink.close( 'noReset' );
+			aioseopLink.close( 'noReset' );
 			editor.focus();
 
 			if ( $link.length ) {
@@ -544,8 +550,8 @@ var wpLink;
 				editor.selection.select( $link[0] );
 				editor.selection.collapse();
 
-				if ( editor.plugins.wplink ) {
-					editor.plugins.wplink.checkLink( $link[0] );
+				if ( editor.plugins.aioseopLink ) {
+					editor.plugins.aioseopLink.checkLink( $link[0] );
 				}
 			}
 
@@ -559,17 +565,17 @@ var wpLink;
 
 		updateFields: function( e, li ) {
 			inputs.url.val( li.children( '.item-permalink' ).val() );
-            //change by "Title and Nofollow for Links" begin
+            // All in One SEO Pack - Begin
 			inputs.title.val( li.hasClass( 'no-title' ) ? '' : li.children( '.item-title' ).text() );
-            //change by "Title and Nofollow for Links" end
+            // All in One SEO Pack - End
 		},
 
 		getUrlFromSelection: function( selection ) {
 			if ( ! selection ) {
 				if ( this.isMCE() ) {
 					selection = editor.selection.getContent({ format: 'text' });
-				} else if ( document.selection && wpLink.range ) {
-					selection = wpLink.range.text;
+				} else if ( document.selection && aioseopLink.range ) {
+					selection = aioseopLink.range.text;
 				} else if ( typeof this.textarea.selectionStart !== 'undefined' ) {
 					selection = this.textarea.value.substring( this.textarea.selectionStart, this.textarea.selectionEnd );
 				}
@@ -591,13 +597,13 @@ var wpLink;
 		setDefaultValues: function( selection ) {
 			inputs.url.val( this.getUrlFromSelection( selection ) );
 
-            //change by "Title and Nofollow for Links" begin
+            // All in One SEO Pack - Begin
         	inputs.title.val( '' );
-            //change by "Title and Nofollow for Links" end
+            // All in One SEO Pack - End
             
 			// Empty the search field and swap the "rivers".
 			inputs.search.val('');
-			wpLink.searchInternalLinks();
+			aioseopLink.searchInternalLinks();
 
 			// Update save prompt.
 			inputs.submit.val( aioseopL10n.save );
@@ -612,10 +618,10 @@ var wpLink;
 				rivers.search.show();
 
 				// Don't search if the keypress didn't change the title.
-				if ( wpLink.lastSearch == search )
+				if ( aioseopLink.lastSearch == search )
 					return;
 
-				wpLink.lastSearch = search;
+				aioseopLink.lastSearch = search;
 				waiting = inputs.search.parent().find( '.spinner' ).addClass( 'is-active' );
 
 				rivers.search.change( search );
@@ -643,7 +649,7 @@ var wpLink;
 
 			// Escape key.
 			if ( 27 === event.keyCode ) {
-				wpLink.close();
+				aioseopLink.close();
 				event.stopImmediatePropagation();
 			// Tab key.
 			} else if ( 9 === event.keyCode ) {
@@ -672,16 +678,16 @@ var wpLink;
 
 			// Up Arrow key.
 			fn = 38 === event.keyCode ? 'prev' : 'next';
-			clearInterval( wpLink.keyInterval );
-			wpLink[ fn ]();
-			wpLink.keyInterval = setInterval( wpLink[ fn ], wpLink.keySensitivity );
+			clearInterval( aioseopLink.keyInterval );
+			aioseopLink[ fn ]();
+			aioseopLink.keyInterval = setInterval( aioseopLink[ fn ], aioseopLink.keySensitivity );
 			event.preventDefault();
 		},
 
 		keyup: function( event ) {
 			// Up Arrow and Down Arrow keys.
 			if ( 38 === event.keyCode || 40 === event.keyCode ) {
-				clearInterval( wpLink.keyInterval );
+				clearInterval( aioseopLink.keyInterval );
 				event.preventDefault();
 			}
 		},
@@ -793,8 +799,8 @@ var wpLink;
 		},
 		ajax: function( callback ) {
 			var self = this,
-				delay = this.query.page == 1 ? 0 : wpLink.minRiverAJAXDuration,
-				response = wpLink.delayedCallback( function( results, params ) {
+				delay = this.query.page == 1 ? 0 : aioseopLink.minRiverAJAXDuration,
+				response = aioseopLink.delayedCallback( function( results, params ) {
 					self.process( results, params );
 					if ( callback )
 						callback( results, params );
@@ -839,14 +845,14 @@ var wpLink;
 				el = this.element,
 				bottom = el.scrollTop() + el.height();
 
-			if ( ! this.query.ready() || bottom < this.contentHeight.height() - wpLink.riverBottomThreshold )
+			if ( ! this.query.ready() || bottom < this.contentHeight.height() - aioseopLink.riverBottomThreshold )
 				return;
 
 			setTimeout(function() {
 				var newTop = el.scrollTop(),
 					newBottom = newTop + el.height();
 
-				if ( ! self.query.ready() || newBottom < self.contentHeight.height() - wpLink.riverBottomThreshold )
+				if ( ! self.query.ready() || newBottom < self.contentHeight.height() - aioseopLink.riverBottomThreshold )
 					return;
 
 				self.waiting.addClass( 'is-active' );
@@ -855,7 +861,7 @@ var wpLink;
 				self.ajax( function() {
 					self.waiting.removeClass( 'is-active' );
 				});
-			}, wpLink.timeToTriggerRiver );
+			}, aioseopLink.timeToTriggerRiver );
 		}
 	});
 
@@ -892,5 +898,5 @@ var wpLink;
 		}
 	});
 
-	$( document ).ready( wpLink.init );
+	$( document ).ready( aioseopLink.init );
 })( jQuery, window.aioseopL10n, window.wp );
