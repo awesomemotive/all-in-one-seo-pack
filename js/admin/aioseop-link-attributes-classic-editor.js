@@ -430,11 +430,8 @@ var wpLink;
 			if ( ! attrs.href ) {
 				return;
 			}
-
-            
             
 			html = wpLink.buildHtml(attrs);
-            
 
 			// Insert HTML
 			if ( document.selection && wpLink.range ) {

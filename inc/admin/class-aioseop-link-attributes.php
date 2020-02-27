@@ -23,10 +23,11 @@ class AIOSEOP_Link_Attributes {
 	 * @return void
 	 */
 	public static function enqueue_link_attributes_classic_editor() {
+		wp_deregister_script( 'wplink' );
 		wp_enqueue_script(
 			'aioseop-link-attributes-classic-editor',
 			AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-link-attributes-classic-editor.js',
-			array( 'jquery' ),
+			array( 'jquery', 'wp-a11y' ),
 			AIOSEOP_VERSION,
 			true
 		);
