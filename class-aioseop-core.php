@@ -433,7 +433,8 @@ class AIOSEOP_Core {
 			}
 		}
 
-		add_action( 'wp_enqueue_editor', array( 'AIOSEOP_Link_Attributes', 'enqueue_link_attributes_classic_editor' ), 99999 );
+		// Low priority allows us to override implementations of other plugins.
+		add_action( 'wp_enqueue_editor', array( 'AIOSEOP_Link_Attributes', 'enqueue_link_attributes_classic_editor' ), 999999 );
 
 		add_action( 'admin_init', array( 'AIOSEOP_Link_Attributes', 'register_link_attributes_gutenberg_editor' ) );
 
