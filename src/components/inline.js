@@ -37,7 +37,7 @@ function isShowingInput( props, state ) {
 	return props.addingLink || state.editLink;
 }
 
-const URLPopoverAtLink = ( { isActive, addingLink, value, ...props } ) => {
+const URLPopoverAtLink = ( { isActive, addingLink, value, resetOnMount, ...props } ) => {
 	const anchorRect = useMemo( () => {
 		const selection = window.getSelection();
 		const range = selection.rangeCount > 0 ? selection.getRangeAt( 0 ) : null;
@@ -68,6 +68,8 @@ const URLPopoverAtLink = ( { isActive, addingLink, value, ...props } ) => {
 		return null;
 	}
 
+	resetOnMount( anchorRect );
+
 	return <URLPopover anchorRect={ anchorRect } { ...props } />;
 };
 
@@ -85,12 +87,14 @@ class InlineLinkUI extends Component {
 		this.onFocusOutside = this.onFocusOutside.bind( this );
 		this.resetState = this.resetState.bind( this );
 		this.autocompleteRef = createRef();
+		this.resetOnMount = this.resetOnMount.bind( this );
 
 		this.state = {
 			opensInNewWindow: false,
 			noFollow: false,
 			sponsored: false,
 			inputValue: '',
+			anchorRect: false,
 		};
 	}
 
@@ -252,6 +256,12 @@ class InlineLinkUI extends Component {
 		this.setState( { editLink: false } );
 	}
 
+	resetOnMount( anchorRect ) {
+		if ( this.state.anchorRect !== anchorRect ) {
+			this.setState( { opensInNewWindow: false, noFollow: false, sponsored: false, anchorRect: anchorRect } );
+		}
+	}
+
 	render() {
 		const { isActive, activeAttributes: { url, target, rel }, addingLink, value } = this.props;
 
@@ -261,7 +271,7 @@ class InlineLinkUI extends Component {
 
 		const { inputValue, opensInNewWindow, noFollow, sponsored } = this.state;
 		const showInput = isShowingInput( this.props, this.state );
-
+		
 		if ( ! opensInNewWindow && target === '_blank' ) {
 			this.setState( { opensInNewWindow: true } );
 		}
@@ -284,6 +294,7 @@ class InlineLinkUI extends Component {
 				key={ `${ value.start }${ value.end }` /* Used to force rerender on selection change */ }
 			>
 				<URLPopoverAtLink
+					resetOnMount={ this.resetOnMount }
 					value={ value }
 					isActive={ isActive }
 					addingLink={ addingLink }
