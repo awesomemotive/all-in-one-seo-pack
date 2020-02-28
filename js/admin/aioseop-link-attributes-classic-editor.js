@@ -7,7 +7,7 @@
  * @since 3.4.0
  */
 
-var aioseopLink;
+var wpLink;
 
 ( function( $, aioseopL10n, wp ) {
 	var editor, searchTimer, River, Query, correctedURL, linkNode,
@@ -29,7 +29,7 @@ var aioseopLink;
 		// All in One SEO Pack - End
 	}
 
-	aioseopLink = {
+	wpLink = {
 		timeToTriggerRiver: 150,
 		minRiverAJAXDuration: 200,
 		riverBottomThreshold: 5,
@@ -77,25 +77,25 @@ var aioseopLink;
 			inputs.queryNoticeTextHint = inputs.queryNotice.find( '.query-notice-hint' );
 
 			// Bind event handlers
-			inputs.dialog.keydown( aioseopLink.keydown );
-			inputs.dialog.keyup( aioseopLink.keyup );
+			inputs.dialog.keydown( wpLink.keydown );
+			inputs.dialog.keyup( wpLink.keyup );
 			inputs.submit.click( function( event ) {
 				event.preventDefault();
-				aioseopLink.update();
+				wpLink.update();
 			});
 
 			inputs.close.add( inputs.backdrop ).add( '#wp-link-cancel button' ).click( function( event ) {
 				event.preventDefault();
-				aioseopLink.close();
+				wpLink.close();
 			});
 
-			rivers.elements.on( 'river-select', aioseopLink.updateFields );
+			rivers.elements.on( 'river-select', wpLink.updateFields );
 
 			// Display 'hint' message when search field or 'query-results' box are focused
-			inputs.search.on( 'focus.aioseopLink', function() {
+			inputs.search.on( 'focus.wpLink', function() {
 				inputs.queryNoticeTextDefault.hide();
 				inputs.queryNoticeTextHint.removeClass( 'screen-reader-text' ).show();
-			} ).on( 'blur.aioseopLink', function() {
+			} ).on( 'blur.wpLink', function() {
 				inputs.queryNoticeTextDefault.show();
 				inputs.queryNoticeTextHint.addClass( 'screen-reader-text' ).hide();
 			} );
@@ -103,15 +103,15 @@ var aioseopLink;
 			inputs.search.on( 'keyup input', function() {
 				window.clearTimeout( searchTimer );
 				searchTimer = window.setTimeout( function() {
-					aioseopLink.searchInternalLinks();
+					wpLink.searchInternalLinks();
 				}, 500 );
 			});
 
 			inputs.url.on( 'paste', function() {
-				setTimeout( aioseopLink.correctURL, 0 );
+				setTimeout( wpLink.correctURL, 0 );
 			} );
 
-			inputs.url.on( 'blur', aioseopLink.correctURL );
+			inputs.url.on( 'blur', wpLink.correctURL );
 		},
 
 		// If URL wasn't corrected last time and doesn't start with http:, https:, ? # or /, prepend http://
@@ -129,10 +129,10 @@ var aioseopLink;
 				$body = $( document.body );
 
 			$body.addClass( 'modal-open' );
-			aioseopLink.modalOpen = true;
+			wpLink.modalOpen = true;
 			linkNode = node;
 
-			aioseopLink.range = null;
+			wpLink.range = null;
 
 			if ( editorId ) {
 				window.wpActiveEditor = editorId;
@@ -158,7 +158,7 @@ var aioseopLink;
 				}
 			}
 
-			if ( ! aioseopLink.isMCE() && document.selection ) {
+			if ( ! wpLink.isMCE() && document.selection ) {
 				this.textarea.focus();
 				this.range = document.selection.createRange();
 			}
@@ -166,9 +166,9 @@ var aioseopLink;
 			inputs.wrap.show();
 			inputs.backdrop.show();
 
-			aioseopLink.refresh( url, text );
+			wpLink.refresh( url, text );
 
-			$( document ).trigger( 'aioseopLink-open', inputs.wrap );
+			$( document ).trigger( 'wpLink-open', inputs.wrap );
 		},
 
 		isMCE: function() {
@@ -182,8 +182,8 @@ var aioseopLink;
 			rivers.search.refresh();
 			rivers.recent.refresh();
 
-			if ( aioseopLink.isMCE() ) {
-				aioseopLink.mceRefresh( url, text );
+			if ( wpLink.isMCE() ) {
+				wpLink.mceRefresh( url, text );
 			} else {
 				// For the Text editor the "Link text" field is always shown
 				if ( ! inputs.wrap.hasClass( 'has-text-field' ) ) {
@@ -200,7 +200,7 @@ var aioseopLink;
 				}
 
 				inputs.text.val( text );
-				aioseopLink.setDefaultValues();
+				wpLink.setDefaultValues();
 			}
 
 			if ( isTouch ) {
@@ -307,7 +307,7 @@ var aioseopLink;
 
 				// Always reset the search
 				window.setTimeout( function() {
-					aioseopLink.searchInternalLinks();
+					wpLink.searchInternalLinks();
 				} );
 			} else {
 				linkText = editor.selection.getContent({ format: 'text' }) || text || '';
@@ -328,19 +328,19 @@ var aioseopLink;
 
 		close: function( reset ) {
 			$( document.body ).removeClass( 'modal-open' );
-			aioseopLink.modalOpen = false;
+			wpLink.modalOpen = false;
 
 			if ( reset !== 'noReset' ) {
-				if ( ! aioseopLink.isMCE() ) {
-					aioseopLink.textarea.focus();
+				if ( ! wpLink.isMCE() ) {
+					wpLink.textarea.focus();
 
-					if ( aioseopLink.range ) {
-						aioseopLink.range.moveToBookmark( aioseopLink.range.getBookmark() );
-						aioseopLink.range.select();
+					if ( wpLink.range ) {
+						wpLink.range.moveToBookmark( wpLink.range.getBookmark() );
+						wpLink.range.select();
 					}
 				} else {
-					if ( editor.plugins.aioseopLink ) {
-						editor.plugins.aioseopLink.close();
+					if ( editor.plugins.wpLink ) {
+						editor.plugins.wpLink.close();
 					}
 
 					editor.focus();
@@ -352,11 +352,11 @@ var aioseopLink;
 
 			correctedURL = false;
 
-			$( document ).trigger( 'aioseopLink-close', inputs.wrap );
+			$( document ).trigger( 'wpLink-close', inputs.wrap );
 		},
 
 		getAttrs: function() {
-			aioseopLink.correctURL();
+			wpLink.correctURL();
 
             // All in One SEO Pack - Begin
             var tanfl_value = '';
@@ -406,22 +406,22 @@ var aioseopLink;
 		},
 
 		update: function() {
-			if ( aioseopLink.isMCE() ) {
-				aioseopLink.mceUpdate();
+			if ( wpLink.isMCE() ) {
+				wpLink.mceUpdate();
 			} else {
-				aioseopLink.htmlUpdate();
+				wpLink.htmlUpdate();
 			}
 		},
 
 		htmlUpdate: function() {
 			var attrs, text, html, begin, end, cursor, selection,
-				textarea = aioseopLink.textarea;
+				textarea = wpLink.textarea;
 
 			if ( ! textarea ) {
 				return;
 			}
 
-			attrs = aioseopLink.getAttrs();
+			attrs = wpLink.getAttrs();
 			text = inputs.text.val();
 
 			var parser = document.createElement( 'a' );
@@ -436,19 +436,19 @@ var aioseopLink;
 				return;
 			}
             
-			html = aioseopLink.buildHtml(attrs);
+			html = wpLink.buildHtml(attrs);
 
 			// Insert HTML
-			if ( document.selection && aioseopLink.range ) {
+			if ( document.selection && wpLink.range ) {
 				// IE
 				// Note: If no text is selected, IE will not place the cursor
 				//       inside the closing tag.
 				textarea.focus();
-				aioseopLink.range.text = html + ( text || aioseopLink.range.text ) + '</a>';
-				aioseopLink.range.moveToBookmark( aioseopLink.range.getBookmark() );
-				aioseopLink.range.select();
+				wpLink.range.text = html + ( text || wpLink.range.text ) + '</a>';
+				wpLink.range.moveToBookmark( wpLink.range.getBookmark() );
+				wpLink.range.select();
 
-				aioseopLink.range = null;
+				wpLink.range = null;
 			} else if ( typeof textarea.selectionStart !== 'undefined' ) {
 				// W3C
 				begin = textarea.selectionStart;
@@ -472,7 +472,7 @@ var aioseopLink;
 				textarea.selectionStart = textarea.selectionEnd = cursor;
 			}
 
-			aioseopLink.close();
+			wpLink.close();
 			textarea.focus();
 			$( textarea ).trigger( 'change' );
 
@@ -483,7 +483,7 @@ var aioseopLink;
 		},
 
 		mceUpdate: function() {
-			var attrs = aioseopLink.getAttrs(),
+			var attrs = wpLink.getAttrs(),
 				$link, text, hasText, $mceCaret;
 
 			var parser = document.createElement( 'a' );
@@ -495,7 +495,7 @@ var aioseopLink;
 
 			if ( ! attrs.href ) {
 				editor.execCommand( 'unlink' );
-				aioseopLink.close();
+				wpLink.close();
 				return;
 			}
 
@@ -523,7 +523,7 @@ var aioseopLink;
 						}
 					}
 
-					attrs['data-aioseopLink-edit'] = null;
+					attrs['data-wpLink-edit'] = null;
 					attrs['data-mce-href'] = null; // attrs.href
                     
                     // All in One SEO Pack - Begin
@@ -537,7 +537,7 @@ var aioseopLink;
 				}
 			} );
 
-			aioseopLink.close( 'noReset' );
+			wpLink.close( 'noReset' );
 			editor.focus();
 
 			if ( $link.length ) {
@@ -550,8 +550,8 @@ var aioseopLink;
 				editor.selection.select( $link[0] );
 				editor.selection.collapse();
 
-				if ( editor.plugins.aioseopLink ) {
-					editor.plugins.aioseopLink.checkLink( $link[0] );
+				if ( editor.plugins.wpLink ) {
+					editor.plugins.wpLink.checkLink( $link[0] );
 				}
 			}
 
@@ -574,8 +574,8 @@ var aioseopLink;
 			if ( ! selection ) {
 				if ( this.isMCE() ) {
 					selection = editor.selection.getContent({ format: 'text' });
-				} else if ( document.selection && aioseopLink.range ) {
-					selection = aioseopLink.range.text;
+				} else if ( document.selection && wpLink.range ) {
+					selection = wpLink.range.text;
 				} else if ( typeof this.textarea.selectionStart !== 'undefined' ) {
 					selection = this.textarea.value.substring( this.textarea.selectionStart, this.textarea.selectionEnd );
 				}
@@ -603,7 +603,7 @@ var aioseopLink;
             
 			// Empty the search field and swap the "rivers".
 			inputs.search.val('');
-			aioseopLink.searchInternalLinks();
+			wpLink.searchInternalLinks();
 
 			// Update save prompt.
 			inputs.submit.val( aioseopL10n.save );
@@ -618,10 +618,10 @@ var aioseopLink;
 				rivers.search.show();
 
 				// Don't search if the keypress didn't change the title.
-				if ( aioseopLink.lastSearch == search )
+				if ( wpLink.lastSearch == search )
 					return;
 
-				aioseopLink.lastSearch = search;
+				wpLink.lastSearch = search;
 				waiting = inputs.search.parent().find( '.spinner' ).addClass( 'is-active' );
 
 				rivers.search.change( search );
@@ -649,7 +649,7 @@ var aioseopLink;
 
 			// Escape key.
 			if ( 27 === event.keyCode ) {
-				aioseopLink.close();
+				wpLink.close();
 				event.stopImmediatePropagation();
 			// Tab key.
 			} else if ( 9 === event.keyCode ) {
@@ -678,16 +678,16 @@ var aioseopLink;
 
 			// Up Arrow key.
 			fn = 38 === event.keyCode ? 'prev' : 'next';
-			clearInterval( aioseopLink.keyInterval );
-			aioseopLink[ fn ]();
-			aioseopLink.keyInterval = setInterval( aioseopLink[ fn ], aioseopLink.keySensitivity );
+			clearInterval( wpLink.keyInterval );
+			wpLink[ fn ]();
+			wpLink.keyInterval = setInterval( wpLink[ fn ], wpLink.keySensitivity );
 			event.preventDefault();
 		},
 
 		keyup: function( event ) {
 			// Up Arrow and Down Arrow keys.
 			if ( 38 === event.keyCode || 40 === event.keyCode ) {
-				clearInterval( aioseopLink.keyInterval );
+				clearInterval( wpLink.keyInterval );
 				event.preventDefault();
 			}
 		},
@@ -799,8 +799,8 @@ var aioseopLink;
 		},
 		ajax: function( callback ) {
 			var self = this,
-				delay = this.query.page == 1 ? 0 : aioseopLink.minRiverAJAXDuration,
-				response = aioseopLink.delayedCallback( function( results, params ) {
+				delay = this.query.page == 1 ? 0 : wpLink.minRiverAJAXDuration,
+				response = wpLink.delayedCallback( function( results, params ) {
 					self.process( results, params );
 					if ( callback )
 						callback( results, params );
@@ -845,14 +845,14 @@ var aioseopLink;
 				el = this.element,
 				bottom = el.scrollTop() + el.height();
 
-			if ( ! this.query.ready() || bottom < this.contentHeight.height() - aioseopLink.riverBottomThreshold )
+			if ( ! this.query.ready() || bottom < this.contentHeight.height() - wpLink.riverBottomThreshold )
 				return;
 
 			setTimeout(function() {
 				var newTop = el.scrollTop(),
 					newBottom = newTop + el.height();
 
-				if ( ! self.query.ready() || newBottom < self.contentHeight.height() - aioseopLink.riverBottomThreshold )
+				if ( ! self.query.ready() || newBottom < self.contentHeight.height() - wpLink.riverBottomThreshold )
 					return;
 
 				self.waiting.addClass( 'is-active' );
@@ -861,7 +861,7 @@ var aioseopLink;
 				self.ajax( function() {
 					self.waiting.removeClass( 'is-active' );
 				});
-			}, aioseopLink.timeToTriggerRiver );
+			}, wpLink.timeToTriggerRiver );
 		}
 	});
 
@@ -898,5 +898,5 @@ var aioseopLink;
 		}
 	});
 
-	$( document ).ready( aioseopLink.init );
+	$( document ).ready( wpLink.init );
 })( jQuery, window.aioseopL10n, window.wp );
