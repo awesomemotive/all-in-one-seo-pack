@@ -22,7 +22,14 @@ var wpLink;
 		let node = linkNode || editor.dom.getParent( editor.selection.getNode(), 'a[href]' );
 
 		if( null == node ) {
-			node = editor.selection.getNode().getElementsByTagName('a')[0];
+			let selectedText = editor.selection.getContent({format : 'text'});
+			let anchorElements = editor.selection.getNode().getElementsByTagName('a');
+			
+			for(let i = 0; i < anchorElements.length; i++) {
+				if(anchorElements[i].textContent.includes(selectedText)) {
+					node = editor.selection.getNode().getElementsByTagName('a')[i];
+				}
+			}
 		}
 
 		return node;
