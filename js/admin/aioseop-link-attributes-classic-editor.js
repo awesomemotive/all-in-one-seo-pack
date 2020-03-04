@@ -5,12 +5,11 @@
  * Allows users to add nofollow, sponsored and title attributes to links in the Classic Editor.
  * 
  * @since 3.4.0
+ * @link https://github.com/WordPress/WordPress/blob/master/wp-includes/js/wplink.js
  */
 
-var wpLink;
-
 (function ($, aioseopL10n, wp) {
-	var editor, searchTimer, River, Query, correctedURL, linkNode,
+	var editor, searchTimer, River, Query, correctedURL,
 		emailRegexp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$/i,
 		urlRegexp = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,63}[^ "]*$/i,
 		inputs = {},
@@ -18,25 +17,14 @@ var wpLink;
 		isTouch = ('ontouchend' in document);
 
 	function getLink() {
-		// All in One SEO Pack - Begin
-		let node = linkNode || editor.dom.getParent(editor.selection.getNode(), 'a[href]');
-
-		if (null == node) {
-			let selectedText = editor.selection.getContent({ format: 'text' });
-			let anchorElements = editor.selection.getNode().getElementsByTagName('a');
-
-			for (let i = 0; i < anchorElements.length; i++) {
-				if (anchorElements[i].textContent.includes(selectedText)) {
-					node = editor.selection.getNode().getElementsByTagName('a')[i];
-				}
-			}
+		if (editor) {
+			return editor.$('a[data-wplink-edit="true"]');
 		}
 
-		return node;
-		// All in One SEO Pack - End
+		return null;
 	}
 
-	wpLink = {
+	window.wpLink = {
 		timeToTriggerRiver: 150,
 		minRiverAJAXDuration: 200,
 		riverBottomThreshold: 5,
@@ -46,7 +34,6 @@ var wpLink;
 		modalOpen: false,
 
 		init: function () {
-
 			// All in One SEO Pack - Begin
 			$("#wp-link .link-target").append('<br><label style="padding-left: 4px;"><span>&nbsp;</span><input type="checkbox" id="tanfl-add-nofollow">' + aioseopL10n.noFollow + "</label>");
 			$("#wp-link .link-target").append('<br><label style="padding-left: 4px;"><span>&nbsp;</span><input type="checkbox" id="tanfl-add-sponsored">' + aioseopL10n.sponsored + '</label><br>');
@@ -66,24 +53,24 @@ var wpLink;
 			inputs.title = $('#wp-link-title');
 			// All in One SEO Pack - End
 
-			// Input
+			// Input.
 			inputs.text = $('#wp-link-text');
 			inputs.url = $('#wp-link-url');
 			inputs.nonce = $('#_ajax_linking_nonce');
 			inputs.openInNewTab = $('#wp-link-target');
 			inputs.search = $('#wp-link-search');
 
-			// Build Rivers
+			// Build rivers.
 			rivers.search = new River($('#search-results'));
 			rivers.recent = new River($('#most-recent-results'));
 			rivers.elements = inputs.dialog.find('.query-results');
 
-			// Get search notice text
+			// Get search notice text.
 			inputs.queryNotice = $('#query-notice-message');
 			inputs.queryNoticeTextDefault = inputs.queryNotice.find('.query-notice-default');
 			inputs.queryNoticeTextHint = inputs.queryNotice.find('.query-notice-hint');
 
-			// Bind event handlers
+			// Bind event handlers.
 			inputs.dialog.keydown(wpLink.keydown);
 			inputs.dialog.keyup(wpLink.keyup);
 			inputs.submit.click(function (event) {
@@ -98,11 +85,11 @@ var wpLink;
 
 			rivers.elements.on('river-select', wpLink.updateFields);
 
-			// Display 'hint' message when search field or 'query-results' box are focused
-			inputs.search.on('focus.wpLink', function () {
+			// Display 'hint' message when search field or 'query-results' box are focused.
+			inputs.search.on('focus.wplink', function () {
 				inputs.queryNoticeTextDefault.hide();
 				inputs.queryNoticeTextHint.removeClass('screen-reader-text').show();
-			}).on('blur.wpLink', function () {
+			}).on('blur.wplink', function () {
 				inputs.queryNoticeTextDefault.show();
 				inputs.queryNoticeTextHint.addClass('screen-reader-text').hide();
 			});
@@ -121,7 +108,7 @@ var wpLink;
 			inputs.url.on('blur', wpLink.correctURL);
 		},
 
-		// If URL wasn't corrected last time and doesn't start with http:, https:, ? # or /, prepend http://
+		// If URL wasn't corrected last time and doesn't start with http:, https:, ? # or /, prepend http://.
 		correctURL: function () {
 			var url = $.trim(inputs.url.val());
 
@@ -131,13 +118,12 @@ var wpLink;
 			}
 		},
 
-		open: function (editorId, url, text, node) {
+		open: function (editorId, url, text) {
 			var ed,
 				$body = $(document.body);
 
 			$body.addClass('modal-open');
 			wpLink.modalOpen = true;
-			linkNode = node;
 
 			wpLink.range = null;
 
@@ -175,7 +161,7 @@ var wpLink;
 
 			wpLink.refresh(url, text);
 
-			$(document).trigger('wpLink-open', inputs.wrap);
+			$(document).trigger('wplink-open', inputs.wrap);
 		},
 
 		isMCE: function () {
@@ -185,24 +171,24 @@ var wpLink;
 		refresh: function (url, text) {
 			var linkText = '';
 
-			// Refresh rivers (clear links, check visibility)
+			// Refresh rivers (clear links, check visibility).
 			rivers.search.refresh();
 			rivers.recent.refresh();
 
 			if (wpLink.isMCE()) {
 				wpLink.mceRefresh(url, text);
 			} else {
-				// For the Text editor the "Link text" field is always shown
+				// For the Text editor the "Link text" field is always shown.
 				if (!inputs.wrap.hasClass('has-text-field')) {
 					inputs.wrap.addClass('has-text-field');
 				}
 
 				if (document.selection) {
-					// Old IE
+					// Old IE.
 					linkText = document.selection.createRange().text || text || '';
 				} else if (typeof this.textarea.selectionStart !== 'undefined' &&
 					(this.textarea.selectionStart !== this.textarea.selectionEnd)) {
-					// W3C
+					// W3C.
 					text = this.textarea.value.substring(this.textarea.selectionStart, this.textarea.selectionEnd) || text || '';
 				}
 
@@ -211,12 +197,14 @@ var wpLink;
 			}
 
 			if (isTouch) {
-				// Close the onscreen keyboard
+				// Close the onscreen keyboard.
 				inputs.url.focus().blur();
 			} else {
-				// Focus the URL field and highlight its contents.
-				// If this is moved above the selection changes,
-				// IE will show a flashing cursor over the dialog.
+				/*
+				 * Focus the URL field and highlight its contents.
+				 * If this is moved above the selection changes,
+				 * IE will show a flashing cursor over the dialog.
+				 */
 				window.setTimeout(function () {
 					inputs.url[0].select();
 					inputs.url.focus();
@@ -233,21 +221,20 @@ var wpLink;
 			// All in One SEO Pack - Begin
 			jQuery('.has-text-field #wp-link .query-results').css('margin-top', 25);
 			// All in One SEO Pack - End
-
 		},
 
 		hasSelectedText: function (linkNode) {
 			var node, nodes, i, html = editor.selection.getContent();
 
-			// Partial html and not a fully selected anchor element
+			// Partial html and not a fully selected anchor element.
 			if (/</.test(html) && (! /^<a [^>]+>[^<]+<\/a>$/.test(html) || html.indexOf('href=') === -1)) {
 				return false;
 			}
 
-			if (linkNode) {
-				nodes = linkNode.childNodes;
+			if (linkNode.length) {
+				nodes = linkNode[0].childNodes;
 
-				if (nodes.length === 0) {
+				if (!nodes || !nodes.length) {
 					return false;
 				}
 
@@ -268,9 +255,9 @@ var wpLink;
 				linkNode = getLink(),
 				onlyText = this.hasSelectedText(linkNode);
 
-			if (linkNode) {
-				linkText = linkNode.textContent || linkNode.innerText;
-				href = editor.dom.getAttrib(linkNode, 'href');
+			if (linkNode.length) {
+				linkText = linkNode.text();
+				href = linkNode.attr('href');
 
 				if (!$.trim(linkText)) {
 					linkText = text || '';
@@ -282,7 +269,7 @@ var wpLink;
 
 				if (href !== '_wp_link_placeholder') {
 					inputs.url.val(href);
-					inputs.openInNewTab.prop('checked', '_blank' === editor.dom.getAttrib(linkNode, 'target'));
+					inputs.openInNewTab.prop('checked', '_blank' === linkNode.attr('target'));
 					inputs.submit.val(aioseopL10n.update);
 				} else {
 					this.setDefaultValues(linkText);
@@ -312,7 +299,7 @@ var wpLink;
 				inputs.title.val(editor.dom.getAttrib(linkNode, 'title'));
 				// All in One SEO Pack - End
 
-				// Always reset the search
+				// Always reset the search.
 				window.setTimeout(function () {
 					wpLink.searchInternalLinks();
 				});
@@ -346,8 +333,8 @@ var wpLink;
 						wpLink.range.select();
 					}
 				} else {
-					if (editor.plugins.wpLink) {
-						editor.plugins.wpLink.close();
+					if (editor.plugins.wplink) {
+						editor.plugins.wplink.close();
 					}
 
 					editor.focus();
@@ -359,7 +346,7 @@ var wpLink;
 
 			correctedURL = false;
 
-			$(document).trigger('wpLink-close', inputs.wrap);
+			$(document).trigger('wplink-close', inputs.wrap);
 		},
 
 		getAttrs: function () {
@@ -379,8 +366,8 @@ var wpLink;
 				href: $.trim(inputs.url.val()),
 				target: inputs.openInNewTab.prop('checked') ? '_blank' : null,
 				// All in One SEO Pack - Begin
-				rel: tanfl_value,
-				title: $.trim(inputs.title.val())
+				rel: '' !== tanfl_value ? tanfl_value : null,
+				title: '' !== inputs.title.val() ? $.trim(inputs.title.val()) : null
 				// All in One SEO Pack - End
 			};
 		},
@@ -396,7 +383,7 @@ var wpLink;
 
 			if (attrs.target) {
 				if (attrs.rel) {
-					html += ' rel="noopener nofollow" target="' + attrs.target + '"';
+					html += ' rel="noopener ' + attrs.rel + '" target="' + attrs.target + '"';
 				}
 				else {
 					html += ' rel="noopener" target="' + attrs.target + '"';
@@ -407,7 +394,6 @@ var wpLink;
 				}
 			}
 			// All in One SEO Pack - End
-
 
 			return html + '>';
 		},
@@ -445,11 +431,11 @@ var wpLink;
 
 			html = wpLink.buildHtml(attrs);
 
-			// Insert HTML
+			// Insert HTML.
 			if (document.selection && wpLink.range) {
-				// IE
+				// IE.
 				// Note: If no text is selected, IE will not place the cursor
-				//       inside the closing tag.
+				// inside the closing tag.
 				textarea.focus();
 				wpLink.range.text = html + (text || wpLink.range.text) + '</a>';
 				wpLink.range.moveToBookmark(wpLink.range.getBookmark());
@@ -457,7 +443,7 @@ var wpLink;
 
 				wpLink.range = null;
 			} else if (typeof textarea.selectionStart !== 'undefined') {
-				// W3C
+				// W3C.
 				begin = textarea.selectionStart;
 				end = textarea.selectionEnd;
 				selection = text || textarea.value.substring(begin, end);
@@ -475,7 +461,7 @@ var wpLink;
 					textarea.value.substring(end, textarea.value.length)
 				);
 
-				// Update cursor position
+				// Update cursor position.
 				textarea.selectionStart = textarea.selectionEnd = cursor;
 			}
 
@@ -484,14 +470,12 @@ var wpLink;
 			$(textarea).trigger('change');
 
 			// Audible confirmation message when a link has been inserted in the Editor.
-			if ('undefined' !== typeof (wp.a11y)) {
-				wp.a11y.speak(aioseopL10n.linkInserted);
-			}
+			wp.a11y.speak(aioseopL10n.linkInserted);
 		},
 
 		mceUpdate: function () {
 			var attrs = wpLink.getAttrs(),
-				$link, text, hasText, $mceCaret;
+				$link, text, hasText;
 
 			var parser = document.createElement('a');
 			parser.href = attrs.href;
@@ -506,13 +490,11 @@ var wpLink;
 				return;
 			}
 
-			$link = editor.$(getLink());
+			$link = getLink();
 
 			editor.undoManager.transact(function () {
 				if (!$link.length) {
-					// All in One SEO Pack - Begin
-					//editor.execCommand( 'mceInsertLink', false, { href: '_wp_link_placeholder', 'data-wp-temp-link': 1 } );
-					// All in One SEO Pack - End
+					editor.execCommand('mceInsertLink', false, { href: '_wp_link_placeholder', 'data-wp-temp-link': 1 });
 					$link = editor.$('a[data-wp-temp-link="1"]').removeAttr('data-wp-temp-link');
 					hasText = $.trim($link.text());
 				}
@@ -530,44 +512,31 @@ var wpLink;
 						}
 					}
 
-					attrs['data-wpLink-edit'] = null;
-					attrs['data-mce-href'] = null; // attrs.href
-
-					// All in One SEO Pack - Begin
-					if (!attrs.title) {
-						attrs['title'] = null;
-					}
-					// All in One SEO Pack - End
-
-
+					attrs['data-wplink-edit'] = null;
+					attrs['data-mce-href'] = attrs.href;
 					$link.attr(attrs);
 				}
 			});
+
+			// All in One SEO Pack - Begin
+			$link = editor.$('a[data-wplink-url-error="1"]').removeAttr('data-wplink-url-error');
+			// All in One SEO Pack - End
 
 			wpLink.close('noReset');
 			editor.focus();
 
 			if ($link.length) {
-				$mceCaret = $link.parent('#_mce_caret');
-
-				if ($mceCaret.length) {
-					$mceCaret.before($link.removeAttr('data-mce-bogus'));
-				}
-
 				editor.selection.select($link[0]);
-				editor.selection.collapse();
 
-				if (editor.plugins.wpLink) {
-					editor.plugins.wpLink.checkLink($link[0]);
+				if (editor.plugins.wplink) {
+					editor.plugins.wplink.checkLink($link[0]);
 				}
 			}
 
 			editor.nodeChanged();
 
 			// Audible confirmation message when a link has been inserted in the Editor.
-			if ('undefined' !== typeof (wp.a11y)) {
-				wp.a11y.speak(aioseopL10n.linkInserted);
-			}
+			wp.a11y.speak(aioseopL10n.linkInserted);
 		},
 
 		updateFields: function (e, li) {
@@ -575,6 +544,10 @@ var wpLink;
 			// All in One SEO Pack - Begin
 			inputs.title.val(li.hasClass('no-title') ? '' : li.children('.item-title').text());
 			// All in One SEO Pack - End
+
+			if (inputs.wrap.hasClass('has-text-field') && !inputs.text.val()) {
+				inputs.text.val(li.children('.item-title').text());
+			}
 		},
 
 		getUrlFromSelection: function (selection) {
@@ -591,10 +564,10 @@ var wpLink;
 			selection = $.trim(selection);
 
 			if (selection && emailRegexp.test(selection)) {
-				// Selection is email address
+				// Selection is email address.
 				return 'mailto:' + selection;
 			} else if (selection && urlRegexp.test(selection)) {
-				// Selection is URL
+				// Selection is URL.
 				return selection.replace(/&amp;|&#0?38;/gi, '&');
 			}
 
@@ -606,6 +579,9 @@ var wpLink;
 
 			// All in One SEO Pack - Begin
 			inputs.title.val('');
+			inputs.openInNewTab.prop('checked', false);
+			inputs.tanfl.prop('checked', false);
+			inputs.tanfl_sponsored.prop('checked', false);
 			// All in One SEO Pack - End
 
 			// Empty the search field and swap the "rivers".
@@ -618,9 +594,10 @@ var wpLink;
 
 		searchInternalLinks: function () {
 			var waiting,
-				search = inputs.search.val() || '';
+				search = inputs.search.val() || '',
+				minInputLength = parseInt(aioseopL10n.minInputLength, 10) || 3;
 
-			if (search.length > 2) {
+			if (search.length >= minInputLength) {
 				rivers.recent.hide();
 				rivers.search.show();
 
@@ -663,7 +640,7 @@ var wpLink;
 				id = event.target.id;
 
 				// wp-link-submit must always be the last focusable element in the dialog.
-				// following focusable elements will be skipped on keyboard navigation.
+				// Following focusable elements will be skipped on keyboard navigation.
 				if (id === 'wp-link-submit' && !event.shiftKey) {
 					inputs.close.focus();
 					event.preventDefault();
@@ -674,7 +651,7 @@ var wpLink;
 			}
 
 			// Up Arrow and Down Arrow keys.
-			if (38 !== event.keyCode && 40 !== event.keyCode) {
+			if (event.shiftKey || (38 !== event.keyCode && 40 !== event.keyCode)) {
 				return;
 			}
 
@@ -766,18 +743,18 @@ var wpLink;
 
 			this.deselect();
 			this.selected = li.addClass('selected');
-			// Make sure the element is visible
+			// Make sure the element is visible.
 			liHeight = li.outerHeight();
 			elHeight = this.element.height();
 			liTop = li.position().top;
 			elTop = this.element.scrollTop();
 
-			if (liTop < 0) // Make first visible element
+			if (liTop < 0) // Make first visible element.
 				this.element.scrollTop(elTop + liTop);
-			else if (liTop + liHeight > elHeight) // Make last visible element
+			else if (liTop + liHeight > elHeight) // Make last visible element.
 				this.element.scrollTop(elTop + liTop - elHeight + liHeight);
 
-			// Trigger the river-select event
+			// Trigger the river-select event.
 			this.element.trigger('river-select', [li, event, this]);
 		},
 		deselect: function () {
