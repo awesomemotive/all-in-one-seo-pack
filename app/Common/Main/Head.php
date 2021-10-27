@@ -31,7 +31,7 @@ class Head {
 	public function __construct() {
 		add_action( 'init', [ $this, 'addAnalytics' ] );
 		add_action( 'wp', [ $this, 'registerTitleHooks' ], 1000 );
-		add_action( 'wp_head', [ $this, 'init' ], 1 );
+		add_action( 'wp_head', [ $this, 'init' ], 8 );
 
 		$this->analytics    = new GoogleAnalytics();
 		$this->links        = new Meta\Links();
