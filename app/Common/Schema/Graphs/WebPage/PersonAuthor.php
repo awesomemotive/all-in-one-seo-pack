@@ -56,7 +56,7 @@ class PersonAuthor extends Graphs\Graph {
 			$data['image'] = $avatar;
 		}
 
-		$socialUrls = $this->getUserProfiles( $userId );
+		$socialUrls = array_values( $this->getUserProfiles( $userId ) );
 		if ( $socialUrls ) {
 			$data['sameAs'] = $socialUrls;
 		}
