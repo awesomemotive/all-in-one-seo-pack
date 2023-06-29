@@ -1,5 +1,9 @@
+import {
+	usePostEditorStore,
+	useTagsStore
+} from '@/vue/stores'
+
 import TruSeo from '@/vue/plugins/tru-seo'
-import store from '@/vue/store'
 import { customFieldsContent } from './customFields'
 import { getPostEditedPermalink } from './postPermalink'
 import { flattenBlocks } from '@/vue/utils/helpers'
@@ -91,8 +95,9 @@ const getProcessedBlockContent = (content, prefix) => {
  * @returns {string} Post Content
  */
 export const getPostContent = () => {
-	if (store.state['live-tags'].liveTags.post_content) {
-		return store.state['live-tags'].liveTags.post_content
+	const tagsStore = useTagsStore()
+	if (tagsStore.liveTags.post_content) {
+		return tagsStore.liveTags.post_content
 	}
 
 	let postContent = ''
@@ -119,7 +124,8 @@ export const getPostContent = () => {
 		postContent = getEditorContent()
 	}
 
-	if (window.aioseo.currentPost.descriptionIncludeCustomFields) {
+	const postEditorStore = usePostEditorStore()
+	if (postEditorStore.currentPost.descriptionIncludeCustomFields) {
 		postContent = postContent + customFieldsContent()
 	}
 
@@ -127,7 +133,7 @@ export const getPostContent = () => {
 	postContent = postContent.replace(base64regex, '')
 
 	if (postContent) {
-		store.commit('live-tags/updatePostContent', postContent)
+		tagsStore.updatePostContent(postContent)
 	}
 
 	return postContent
@@ -162,7 +168,8 @@ export const getPostEditedContent = () => {
 		postContent = getEditorContent()
 	}
 
-	if (window.aioseo.currentPost.descriptionIncludeCustomFields) {
+	const postEditorStore = usePostEditorStore()
+	if (postEditorStore.currentPost.descriptionIncludeCustomFields) {
 		postContent = postContent + customFieldsContent()
 	}
 
@@ -177,15 +184,21 @@ export const maybeUpdatePostContent = async (run = true) => {
 	const newPostContent = getPostEditedContent()
 	if (postContent !== newPostContent) {
 		postContent = newPostContent
-		store.commit('live-tags/updatePostContent', postContent)
-		if (run) {
-			(new TruSeo()).runAnalysis({
-				postId   : store.state.currentPost.id,
-				postData : { ...store.state.currentPost },
-				content  : getPostEditedContent(),
-				slug     : getPostEditedPermalink()
-			})
+
+		const postEditorStore = usePostEditorStore()
+		const tagsStore       = useTagsStore()
+		tagsStore.updatePostContent(postContent)
+
+		if (!run) {
+			return
 		}
+
+		(new TruSeo()).runAnalysis({
+			postId   : postEditorStore.currentPost.id,
+			postData : { ...postEditorStore.currentPost },
+			content  : getPostEditedContent(),
+			slug     : getPostEditedPermalink()
+		})
 	}
 }
 

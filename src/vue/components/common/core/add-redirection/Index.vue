@@ -197,7 +197,10 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import {
+	useRedirectsStore
+} from '@/vue/stores'
+
 import { debounce } from '@/vue/utils/debounce'
 import { JsonValues } from '@/vue/mixins'
 import { sanitizeString } from '@/vue/utils/strings'
@@ -210,6 +213,11 @@ import TransitionSlide from '@/vue/components/common/transition/Slide'
 import Redirect from '@/vue/mixins/redirects/Redirect'
 
 export default {
+	setup () {
+		return {
+			redirectsStore : useRedirectsStore()
+		}
+	},
 	emits      : [ 'cancel', 'added-redirect' ],
 	components : {
 		CoreAddRedirectionTargetUrl,
@@ -281,7 +289,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('redirects', [ 'options' ]),
 		saveIsDisabled () {
 			return !!this.sourceUrls.filter(url => !url.url).length ||
 				!!this.sourceUrls.filter(url => 0 < url.errors.length).length ||
@@ -362,24 +369,24 @@ export default {
 			return warnings
 		},
 		getDefaultRedirectType () {
-			let option = this.getJsonValue(this.options.redirectDefaults.redirectType)
+			let option = this.getJsonValue(this.redirectsStore.options.redirectDefaults.redirectType)
 			if (!option) {
 				option = this.$constants.REDIRECT_TYPES[0]
 			}
 			return option
 		},
 		getDefaultQueryParam () {
-			let option = this.getJsonValue(this.options.redirectDefaults.queryParam)
+			let option = this.getJsonValue(this.redirectsStore.options.redirectDefaults.queryParam)
 			if (!option) {
 				option = this.$constants.REDIRECT_QUERY_PARAMS[0]
 			}
 			return option
 		},
 		getDefaultSlash () {
-			return this.options.redirectDefaults.ignoreSlash
+			return this.redirectsStore.options.redirectDefaults.ignoreSlash
 		},
 		getDefaultCase () {
-			return this.options.redirectDefaults.ignoreCase
+			return this.redirectsStore.options.redirectDefaults.ignoreCase
 		},
 		getDefaultSourceUrls () {
 			return [ JSON.parse(JSON.stringify(this.getDefaultSourceUrl)) ]
@@ -418,7 +425,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions('redirects', [ 'create', 'update' ]),
 		beginsWith (str, match) {
 			return 0 === match.indexOf(str) || str.substr(0, match.length) === match
 		},
@@ -440,7 +446,7 @@ export default {
 				return url
 			})
 
-			this.create({
+			this.redirectsStore.create({
 				sourceUrls            : this.sourceUrls,
 				targetUrl             : this.targetUrl,
 				queryParam            : this.queryParam.value,
@@ -452,7 +458,7 @@ export default {
 			})
 				.then(() => {
 					this.$emit('added-redirect')
-					this.$bus.$emit('added-redirect')
+					window.aioseoBus.$emit('added-redirect')
 					this.reset()
 				})
 				.catch(error => {
@@ -467,7 +473,7 @@ export default {
 				this.sourceUrls[0].url = '/' + this.sourceUrls[0].url
 			}
 
-			this.update({
+			this.redirectsStore.update({
 				id      : this.sourceUrls[0].id,
 				payload : {
 					sourceUrls            : this.sourceUrls,

@@ -1,3 +1,8 @@
+import {
+	useNotificationsStore,
+	useRootStore
+} from '@/vue/stores'
+
 export const Url = {
 	data () {
 		return {
@@ -16,7 +21,8 @@ export const Url = {
 				const actionArray      = href.split('#')
 				const actionArrayParts = actionArray[1].split(':')
 
-				url = this.$aioseo.urls.aio.dashboard.replace('page=aioseo', `page=${actionArrayParts[0]}#/${actionArrayParts[1]}`)
+				const rootStore = useRootStore()
+				url = rootStore.aioseo.urls.aio.dashboard.replace('page=aioseo', `page=${actionArrayParts[0]}#/${actionArrayParts[1]}`)
 			}
 			return url
 		},
@@ -49,11 +55,14 @@ export const Url = {
 			const pattern = /[^#?]*/gm
 			const matches = action.match(pattern)
 			const slug    = matches[2]
-			this.processButtonAction(slug)
+
+			const notificationsStore = useNotificationsStore()
+			notificationsStore.processButtonAction(slug)
 				.then(() => {
 					if (matches[4] && matches[4].startsWith('redirect=')) {
+						const rootStore        = useRootStore()
 						const actionArrayParts = matches[4].replace('redirect=', '').split(':')
-						const url              = this.$aioseo.urls.aio.dashboard.replace('page=aioseo', `page=${actionArrayParts[0]}#/${actionArrayParts[1]}`)
+						const url              = rootStore.aioseo.urls.aio.dashboard.replace('page=aioseo', `page=${actionArrayParts[0]}#/${actionArrayParts[1]}`)
 						if (url === window.location.href) {
 							window.location.reload()
 							return
@@ -67,10 +76,12 @@ export const Url = {
 				})
 		},
 		processRoute (action) {
+			const rootStore = useRootStore()
+
 			const pattern = /[^#?]*/gm
 			const matches = action.match(pattern)
 			const slug    = matches[2].split(':')
-			const url     = this.$aioseo.urls.aio.dashboard.replace('page=aioseo', `page=${slug[0]}#/${slug[1]}`)
+			const url     = rootStore.aioseo.urls.aio.dashboard.replace('page=aioseo', `page=${slug[0]}#/${slug[1]}`)
 			if (url === window.location.href) {
 				window.location.reload()
 			}

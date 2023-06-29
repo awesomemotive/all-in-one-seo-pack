@@ -2,16 +2,24 @@
 	<div class="aioseo-search-statistics-keywords-graph">
 		<graph
 			:series="series"
-			:loading="loading.keywords"
+			:loading="searchStatisticsStore.loading.keywords"
 			:legend-style="legendStyle"
 		/>
 	</div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import Graph from '../Graph'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		Graph
 	},
@@ -19,14 +27,13 @@ export default {
 		legendStyle : String
 	},
 	computed : {
-		...mapState('search-statistics', [ 'data', 'loading' ]),
 		series () {
-			if (!this.data?.keywords?.distribution || !this.data?.keywords?.distributionIntervals) {
+			if (!this.searchStatisticsStore.data?.keywords?.distribution || !this.searchStatisticsStore.data?.keywords?.distributionIntervals) {
 				return []
 			}
 
-			const data  = this.data.keywords.distribution
-			const graph = this.data.keywords.distributionIntervals
+			const data  = this.searchStatisticsStore.data.keywords.distribution
+			const graph = this.searchStatisticsStore.data.keywords.distributionIntervals
 
 			return [ {
 				name   : this.$t.__('Top 3 Position', this.$td),

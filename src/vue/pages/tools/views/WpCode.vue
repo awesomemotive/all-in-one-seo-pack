@@ -3,7 +3,7 @@
 		<div :class="blurClass">
 			<grid-row>
 				<grid-column
-					v-for="(snippet, index) in snippets"
+					v-for="(snippet, index) in wpCodeStore.snippets"
 					:key="index"
 					sm="12"
 					md="6"
@@ -43,7 +43,7 @@
 		</div>
 
 		<cta
-			v-if="!showSnippets && snippets.length"
+			v-if="!showSnippets && wpCodeStore.snippets.length"
 			:button-text="ctaButtonText"
 			:learn-more-link="$links.getDocUrl('wpcode')"
 			:cta-button-loading="activationLoading"
@@ -66,7 +66,7 @@
 		</cta>
 
 		<core-alert
-			v-if="showSnippets && snippets.length === 0"
+			v-if="showSnippets && wpCodeStore.snippets.length === 0"
 			type="yellow"
 		>
 			<div>{{ strings.noSnippets }}</div>
@@ -75,12 +75,23 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import {
+	usePluginsStore,
+	useWpCodeStore
+} from '@/vue/stores'
+
+import tags from '@/vue/utils/tags'
 import Cta from '@/vue/components/common/cta/Index.vue'
 import CoreAlert from '@/vue/components/common/core/alert/Index.vue'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 export default {
+	setup () {
+		return {
+			pluginsStore : usePluginsStore(),
+			wpCodeStore  : useWpCodeStore()
+		}
+	},
 	components : {
 		Cta,
 		CoreAlert,
@@ -105,30 +116,29 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('wpcode', [ 'snippets', 'pluginInstalled', 'pluginActive', 'pluginNeedsUpdate', 'ctaUrl' ]),
 		showSnippets () {
-			return this.pluginInstalled && this.pluginActive && !this.pluginNeedsUpdate
+			return this.wpCodeStore.pluginInstalled && this.wpCodeStore.pluginActive && !this.wpCodeStore.pluginNeedsUpdate
 		},
 		blurClass () {
 			return this.showSnippets ? '' : 'aioseo-blur'
 		},
 		ctaTitle () {
-			if (this.pluginNeedsUpdate) {
+			if (this.wpCodeStore.pluginNeedsUpdate) {
 				return this.$t.__('Please Update WPCode to load the AIOSEO Snippet Library', this.$td)
-			} else if (!this.pluginInstalled) {
+			} else if (!this.wpCodeStore.pluginInstalled) {
 				return this.$t.__('Please Install WPCode to load the AIOSEO Snippet Library', this.$td)
-			} else if (!this.pluginActive) {
+			} else if (!this.wpCodeStore.pluginActive) {
 				return this.$t.__('Please Activate WPCode to load the AIOSEO Snippet Library', this.$td)
 			}
 
 			return this.$t.__('Please Install WPCode to load the AIOSEO Snippet Library', this.$td)
 		},
 		ctaButtonText () {
-			if (this.pluginNeedsUpdate) {
+			if (this.wpCodeStore.pluginNeedsUpdate) {
 				return this.$t.__('Update WPCode', this.$td)
-			} else if (!this.pluginInstalled) {
+			} else if (!this.wpCodeStore.pluginInstalled) {
 				return this.$t.__('Install WPCode', this.$td)
-			} else if (!this.pluginActive) {
+			} else if (!this.wpCodeStore.pluginActive) {
 				return this.$t.__('Activate WPCode', this.$td)
 			}
 
@@ -136,20 +146,18 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'installPlugins', 'upgradePlugins' ]),
-		...mapActions('wpcode', [ 'loadSnippets' ]),
 		processUpdateOrActivate () {
-			this.activateOrUpdate(this.pluginNeedsUpdate)
+			this.activateOrUpdate(this.wpCodeStore.pluginNeedsUpdate)
 		},
 		activateOrUpdate (update = false) {
 			this.failed            = false
 			this.activationLoading = true
 
 			const action     = update ? 'upgradePlugins' : 'installPlugins'
-			const wpcodePro  = this.$aioseo.plugins.wpcodePro
+			const wpcodePro  = this.pluginsStore.plugins.wpcodePro
 			const pluginName = wpcodePro.installed ? 'wpcodePro' : 'wpcode'
 
-			this[action]([
+			this.pluginsStore[action]([
 				{
 					plugin : pluginName,
 					type   : 'plugin'
@@ -162,7 +170,7 @@ export default {
 				}
 
 				const promises = [
-					this.loadSnippets()
+					this.wpCodeStore.loadSnippets()
 				]
 
 				Promise.all(promises)
@@ -177,7 +185,7 @@ export default {
 				})
 		},
 		decodeHTMLEntities (url) {
-			return this.$tags.decodeHTMLEntities(url)
+			return tags.decodeHTMLEntities(url)
 		}
 	}
 }

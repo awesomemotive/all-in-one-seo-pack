@@ -38,8 +38,8 @@
 						</template>
 
 						<posts-table
-							:posts="data?.seoStatistics?.pages?.paginated || defaultPages"
-							:columns="[ 'post_title', 'seo_score', 'clicks', 'impressions', 'position', 'diffPosition' ]"
+							:posts="searchStatisticsStore.data?.seoStatistics?.pages?.paginated || defaultPages"
+							:columns="[ 'postTitle', 'seoScore', 'clicksSortable', 'impressionsSortable', 'positionSortable', 'diffPositionSortable' ]"
 							show-items-per-page
 							show-table-footer
 						/>
@@ -51,7 +51,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreCard from '@/vue/components/common/core/Card'
 import Graph from '../../partials/Graph'
@@ -60,6 +63,11 @@ import GridRow from '@/vue/components/common/grid/Row'
 import PostsTable from '../../partials/PostsTable'
 import SeoStatisticsOverview from '../../partials/SeoStatisticsOverview'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreBlur,
 		CoreCard,
@@ -88,25 +96,24 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('search-statistics', [ 'data', 'loading', 'isConnected' ]),
 		series () {
-			if (!this.data?.seoStatistics?.statistics || !this.data?.seoStatistics?.intervals) {
+			if (!this.searchStatisticsStore.data?.seoStatistics?.statistics || !this.searchStatisticsStore.data?.seoStatistics?.intervals) {
 				return []
 			}
 
 			return [
 				{
 					name   : this.$t.__('Search Impressions', this.$td),
-					data   : this.data.seoStatistics.intervals.map((tick) => ({ x: tick.date, y: tick.impressions })),
+					data   : this.searchStatisticsStore.data.seoStatistics.intervals.map((tick) => ({ x: tick.date, y: tick.impressions })),
 					legend : {
-						total : this.data.seoStatistics.statistics.impressions
+						total : this.searchStatisticsStore.data.seoStatistics.statistics.impressions
 					}
 				},
 				{
 					name   : this.$t.__('Search Clicks', this.$td),
-					data   : this.data.seoStatistics.intervals.map((tick) => ({ x: tick.date, y: tick.clicks })),
+					data   : this.searchStatisticsStore.data.seoStatistics.intervals.map((tick) => ({ x: tick.date, y: tick.clicks })),
 					legend : {
-						total : this.data.seoStatistics.statistics.clicks
+						total : this.searchStatisticsStore.data.seoStatistics.statistics.clicks
 					}
 				}
 			]

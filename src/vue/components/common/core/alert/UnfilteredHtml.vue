@@ -1,14 +1,23 @@
 <template>
 	<core-alert
 		class="no-access"
-		v-if="!$aioseo.user.unfilteredHtml"
+		v-if="!rootStore.aioseo.user.unfilteredHtml"
 		type="red"
 		v-html="strings.unfilteredHtmlError"
 	/>
 </template>
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		CoreAlert
 	},

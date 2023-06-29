@@ -1,11 +1,11 @@
 <template>
-	<div v-if="currentPost.id">
+	<div v-if="postEditorStore.currentPost.id">
 		<span class="components-checkbox-control__input-container">
 			<input
 				id="aioseo-limit-modified-date-input"
 				class="components-checkbox-control__input"
 				type="checkbox"
-				v-model="currentPost.limit_modified_date"
+				v-model="postEditorStore.currentPost.limit_modified_date"
 				@change="addLimitModifiedDateAttribute"
 			/>
 
@@ -28,12 +28,19 @@
 </template>
 
 <script>
-import { Standalone } from '@/vue/mixins/Standalone'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import { isBlockEditor } from '@/vue/utils/context'
 
 export default {
-	emits  : [ 'standalone-update-post' ],
-	mixins : [ Standalone ],
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore()
+		}
+	},
+	emits : [ 'standalone-update-post' ],
 	data () {
 		return {
 			strings : {
@@ -48,19 +55,19 @@ export default {
 			}
 
 			window.wp.data.dispatch('core/editor').editPost({
-				aioseo_limit_modified_date : this.currentPost.limit_modified_date
+				aioseo_limit_modified_date : this.postEditorStore.currentPost.limit_modified_date
 			})
 		}
 	},
 	computed : {
 		canShowSvg () {
-			return isBlockEditor() && this.currentPost.limit_modified_date
+			return isBlockEditor() && this.postEditorStore.currentPost.limit_modified_date
 		}
 	},
 	watch : {
-		'currentPost.limit_modified_date' (newVal) {
+		'postEditorStore.currentPost.limit_modified_date' (newVal) {
 			// Update the hidden aioseo-post-settings field.
-			this.$bus.$emit('standalone-update-post', { limit_modified_date: newVal })
+			window.aioseoBus.$emit('standalone-update-post', { limit_modified_date: newVal })
 		}
 	}
 }

@@ -1,26 +1,39 @@
 <template>
 	<div>
 		<database-tools
-			v-if="!$aioseo.data.isNetworkAdmin || (!isUnlicensed && $license.hasCoreFeature($aioseo, 'tools', 'network-tools-database'))"
+			v-if="!rootStore.aioseo.data.isNetworkAdmin || (!licenseStore.isUnlicensed && license.hasCoreFeature('tools', 'network-tools-database'))"
 		/>
 
 		<lite-database-tools
-			v-if="$aioseo.data.isNetworkAdmin && (isUnlicensed || !$license.hasCoreFeature($aioseo, 'tools', 'network-tools-database'))"
+			v-if="rootStore.aioseo.data.isNetworkAdmin && (licenseStore.isUnlicensed || !license.hasCoreFeature('tools', 'network-tools-database'))"
 		/>
 	</div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore,
+	useRootStore
+} from '@/vue/stores'
+
+import license from '@/vue/utils/license'
 import DatabaseTools from './partials/DatabaseTools'
 import LiteDatabaseTools from './lite/DatabaseTools'
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		DatabaseTools,
 		LiteDatabaseTools
 	},
-	computed : {
-		...mapGetters([ 'isUnlicensed' ])
+	data () {
+		return {
+			license
+		}
 	}
 }
 </script>

@@ -11,8 +11,12 @@
 </template>
 
 <script>
+import {
+	useLinkAssistantStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
 import { RequiresActivation, RequiresUpdate } from '@/vue/mixins'
-import { mapActions, mapMutations, mapState } from 'vuex'
 import CoreMain from '@/vue/components/common/core/main/Index'
 import CoreProcessingPopup from '@/vue/components/common/core/ProcessingPopup'
 import DomainsReport from './AIOSEO_VERSION/DomainsReport'
@@ -21,6 +25,11 @@ import Overview from './Overview'
 import PostReport from './AIOSEO_VERSION/PostReport'
 import Settings from './AIOSEO_VERSION/Settings'
 export default {
+	setup () {
+		return {
+			linkAssistantStore : useLinkAssistantStore()
+		}
+	},
 	components : {
 		CoreMain,
 		CoreProcessingPopup,
@@ -39,10 +48,9 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('linkAssistant', [ 'suggestionsScan' ]),
 		excludedTabs () {
 			const excludedTabs = (
-				!this.$addons.isActive('aioseo-link-assistant')
+				!addons.isActive('aioseo-link-assistant')
 					? this.getExcludedActivationTabs('aioseo-link-assistant')
 					: this.getExcludedUpdateTabs('aioseo-link-assistant')
 			) || []
@@ -50,23 +58,19 @@ export default {
 			return excludedTabs
 		}
 	},
-	methods : {
-		...mapMutations('linkAssistant', [ 'toggleProcessingPopup' ]),
-		...mapActions('linkAssistant', [ 'pollSuggestionsScan', 'getMenuData' ])
-	},
 	mounted () {
-		this.$bus.$on('changes-saved', () => {
-			this.getMenuData()
+		window.aioseoBus.$on('changes-saved', () => {
+			this.linkAssistantStore.getMenuData()
 		})
 
 		if (
 			this.$isPro &&
-			100 !== this.suggestionsScan.percent &&
-			this.$addons.isActive('aioseo-link-assistant') &&
-			!this.$addons.requiresUpgrade('aioseo-link-assistant') &&
-			this.$addons.hasMinimumVersion('aioseo-link-assistant')
+			100 !== this.linkAssistantStore.suggestionsScan.percent &&
+			addons.isActive('aioseo-link-assistant') &&
+			!addons.requiresUpgrade('aioseo-link-assistant') &&
+			addons.hasMinimumVersion('aioseo-link-assistant')
 		) {
-			this.pollSuggestionsScan()
+			this.linkAssistantStore.pollSuggestionsScan()
 		}
 	}
 }

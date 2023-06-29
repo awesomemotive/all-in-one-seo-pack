@@ -1,7 +1,10 @@
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import { sprintf } from '@wordpress/i18n'
 const marketingSite = 'https://aioseo.com/'
-const upgradeUrl    = window.aioseo.urls.upgradeUrl
-const docLinks = {
+const docLinks      = {
 	home                          : `${marketingSite}docs/`,
 	ultimateGuide                 : `${marketingSite}ultimate-wordpress-seo-guide/`,
 	quickStartGuide               : `${marketingSite}docs/quick-start-guide/`,
@@ -202,6 +205,8 @@ const getPricingUrl = (feature, medium, content, url = `${marketingSite}pricing/
 const utmUrl = (medium, content = null, url = `${marketingSite}pricing/`) => {
 	let isUpgradeUrl = false
 	if (`${marketingSite}pricing/` === url && 'pro' !== import.meta.env.VITE_VERSION.toLowerCase()) {
+		const rootStore  = useRootStore()
+		const upgradeUrl = rootStore.aioseo.urls.upgradeUrl
 		isUpgradeUrl = (upgradeUrl !== marketingSite)
 		url = `${marketingSite}lite-upgrade/`
 	}
@@ -239,6 +244,9 @@ const utmUrl = (medium, content = null, url = `${marketingSite}pricing/`) => {
 	}
 
 	if (isUpgradeUrl) {
+		const rootStore  = useRootStore()
+		const upgradeUrl = rootStore.aioseo.urls.upgradeUrl
+
 		url = upgradeUrl.replace('https%3A%2F%2Faioseo.com%2F', rawUrlEncode(url))
 	}
 	return url
@@ -279,8 +287,9 @@ const trailingSlashIt = str => {
 }
 
 const restUrl = (path, namespace = 'aioseo/v1') => {
-	path = window.aioseo.data.hasUrlTrailingSlash ? trailingSlashIt(path) : unTrailingSlashIt(path)
-	return trailingSlashIt(window.aioseo.urls.restUrl) + trailingSlashIt(namespace) + unForwardSlashIt(path)
+	const rootStore = useRootStore()
+	path = rootStore.aioseo.data.hasUrlTrailingSlash ? trailingSlashIt(path) : unTrailingSlashIt(path)
+	return trailingSlashIt(rootStore.aioseo.urls.restUrl) + trailingSlashIt(namespace) + unForwardSlashIt(path)
 }
 
 export default {

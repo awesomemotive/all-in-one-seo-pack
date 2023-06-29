@@ -37,6 +37,7 @@ module.exports = function (calleeName, options, globalOptions) {
 		}
 	}
 
+	const loggedBadPath = false
 	return (node, sourceFile, addMessage) => {
 		if (node.kind !== ts.SyntaxKind.CallExpression) {
 			return
@@ -60,20 +61,24 @@ module.exports = function (calleeName, options, globalOptions) {
 
 		// Use a for loop to loop through the text domains array.
 		let valid   = false,
+			badPath = false,
 			domains = []
+
 		for (let i = 0; i < globalOptions.textDomains.length; i++) {
 			const textDomain = globalOptions.textDomains[i]
-
-			// Check if the file is in the path for the current textdomain.
-			if (!sourceFile.fileName.match(textDomain.path)) {
-				continue
-			}
 
 			domains.push(textDomain.domain)
 			domains = [
 				...domains,
 				...textDomain.matches
 			]
+
+			// Check if the file is in the path for the current textdomain.
+			if (!sourceFile.fileName.match(textDomain.path)) {
+				badPath          = textDomain
+				badPath.fileName = sourceFile.fileName
+				continue
+			}
 
 			if (
 				textDomain.matches.includes(message.textDomain) ||
@@ -82,6 +87,14 @@ module.exports = function (calleeName, options, globalOptions) {
 				valid = true
 			}
 		}
+
+		// Only log the bad path once.
+		// if (loggedBadPath?.fileName !== badPath?.fileName) {
+		//  loggedBadPath = JSON.parse(JSON.stringify(badPath))
+		//  console.error('\n\n', '\x1b[41m The following error means there is a file included in this build which SHOULD NOT BE HERE! (Usually a Pro file inside a Lite build). \x1b[0m')
+		//  console.error('\x1b[41m Please check the following error messages carefully and make sure you are including files properly. \x1b[0m', '\n')
+		//  console.error('\n', '\x1b[31m Invalid path for textdomain: \x1b[0m', `${sourceFile.fileName}\n`, `\x1b[31m Current path pattern: \x1b[0m${badPath.path}\n`, `\x1b[31m Current textdomain: \x1b[0m${badPath.domain}\n`)
+		// }
 
 		if (!valid) {
 			const lineInfo = sourceFile.getLineAndCharacterOfPosition(node.getStart())

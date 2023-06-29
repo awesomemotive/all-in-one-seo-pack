@@ -9,12 +9,13 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
+import { loadPiniaStores } from '@/vue/stores'
+
 import TruSeo from '@/vue/plugins/tru-seo'
 
 import initWatcher from './watcher'
 
 import App from '@/vue/standalone/post-settings/App.vue'
-import store from '@/vue/store'
 
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
 
@@ -39,6 +40,7 @@ const mountComponent = () => {
 			})
 
 			let app = createApp({
+				name : 'Standalone/SeedProd',
 				data () {
 					return {
 						tableContext  : window.aioseo.currentPost.context,
@@ -56,10 +58,11 @@ const mountComponent = () => {
 			app = loadVersionedComponents(app)
 
 			app.use(router)
-			app.use(store)
 
-			store._vm = app
 			router.app = app
+
+			// Use the pinia store.
+			loadPiniaStores(app, router)
 
 			app.config.globalProperties.$truSeo = new TruSeo()
 

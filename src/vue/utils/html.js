@@ -1,3 +1,7 @@
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import { decodeHTMLEntities } from '@/vue/utils/helpers'
 
 /**
@@ -55,7 +59,7 @@ export const getImages = (html) => {
  *
  * @param {string} string The text.
  * @param {number} length Text max character length.
- * @returns {string} 	  The shortened string.
+ * @returns {string}      The shortened string.
  */
 export const truncate = (string, length = 200) => {
 	if (!string) {
@@ -106,7 +110,8 @@ export const getFacebookSnippetData = () => {
 		facebookData.title = document.title || ''
 
 		if (!facebookData.title) {
-			facebookData.title = window.aioseo.urls.domain
+			const rootStore = useRootStore()
+			facebookData.title = rootStore.aioseo.urls.domain
 		}
 	}
 

@@ -1,11 +1,16 @@
-import store from '@/vue/store'
+import {
+	usePostEditorStore,
+	useSeoRevisionsStore
+} from '@/vue/stores'
+
 import emitter from 'tiny-emitter/instance'
 import { isEqual, isEmpty } from 'lodash-es'
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
 import { registerElementorUIHookAfter, registerElementorDataHookAfter } from './hooks'
 import { getEditorData } from './helpers'
 
-let editorData = {}
+let editorData = {},
+	inited = false
 
 /**
  * Run TruSEO analysis when content updates.
@@ -38,8 +43,9 @@ const handleEditorChange = () => {
  * @returns {void}.
  */
 const handleEditorSave = () => {
+	const postEditorStore = usePostEditorStore()
 	// Don't perform our save if we didn't set our data.
-	if (isEmpty(store.state.currentPost)) {
+	if (isEmpty(postEditorStore.currentPost)) {
 		return
 	}
 
@@ -52,7 +58,10 @@ const handleEditorSave = () => {
 	* This would result in AIOSEO data being live while saving a draft.
 	*/
 	if (window.elementor.config.document.id === window.elementor.config.document.revisions.current_id) {
-		store.dispatch('saveCurrentPost', store.state.currentPost)
+		postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
+			const seoRevisionsStore = useSeoRevisionsStore()
+			seoRevisionsStore.fetch()
+		})
 	}
 }
 
@@ -71,6 +80,11 @@ const enableSaveButton = () => {
  * @returns {void}.
  */
 export default () => {
+	if (inited) {
+		return
+	}
+	inited = true
+
 	// This hook will fire when the Elementor preview becomes available.
 	registerElementorUIHookAfter('editor/documents/attach-preview', 'aioseo-content-scraper-attach-preview', handleEditorChange)
 

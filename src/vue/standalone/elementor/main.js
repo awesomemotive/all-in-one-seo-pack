@@ -7,6 +7,8 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
+import { loadPiniaStores } from '@/vue/stores'
+
 import TruSeo from '@/vue/plugins/tru-seo'
 
 import initWatcher from './watcher'
@@ -14,7 +16,6 @@ import initIntroduction from './introduction'
 
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
 import App from '@/vue/standalone/post-settings/App.vue'
-import store from '@/vue/store'
 
 /**
  * Add to the body a class to identify the Elementor color schema.
@@ -126,6 +127,7 @@ const initAioseoEditor = (selector) => {
 	})
 
 	let app = createApp({
+		name : 'Standalone/Elementor',
 		data () {
 			return {
 				tableContext  : window.aioseo.currentPost.context,
@@ -140,10 +142,14 @@ const initAioseoEditor = (selector) => {
 	app = loadVersionedComponents(app)
 
 	app.use(router)
-	app.use(store)
 
-	store._vm  = app
 	router.app = app
+
+	// Use the pinia store.
+	loadPiniaStores(app, router)
+
+	// Initialize the editor data watcher.
+	initWatcher()
 
 	app.config.globalProperties.$truSeo = new TruSeo()
 
@@ -164,9 +170,6 @@ const init = () => {
 
 	// Initialize the introduction.
 	initIntroduction()
-
-	// Initialize the editor data watcher.
-	initWatcher()
 }
 
 let preload = false

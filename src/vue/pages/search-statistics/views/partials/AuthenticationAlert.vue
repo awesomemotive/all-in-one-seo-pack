@@ -9,9 +9,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 export default {
+	setup () {
+		return {
+			optionsStore          : useOptionsStore(),
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreAlert
 	},
@@ -21,10 +31,8 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'internalOptions' ]),
-		...mapState('search-statistics', [ 'unverifiedSite' ]),
 		invalidAuthentication () {
-			return this.unverifiedSite || 'object' !== typeof this.internalOptions.internal?.searchStatistics?.profile
+			return this.searchStatisticsStore.unverifiedSite || 'object' !== typeof this.optionsStore.internalOptions.internal?.searchStatistics?.profile
 		}
 	}
 }

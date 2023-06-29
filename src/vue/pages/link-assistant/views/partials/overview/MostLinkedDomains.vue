@@ -55,7 +55,7 @@
 					</div>
 				</table-column>
 				<table-column class="count">
-					<span>{{ $numbers.numberFormat(row.count) }}</span>
+					<span>{{ numbers.numberFormat(row.count) }}</span>
 				</table-column>
 			</table-row>
 
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import numbers from '@/vue/utils/numbers'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import CoreDonutChartWithLegend from '@/vue/components/common/core/DonutChartWithLegend'
@@ -99,6 +99,7 @@ export default {
 	},
 	data () {
 		return {
+			numbers,
 			strings : {
 				mostLinkedDomains  : this.$t.__('Most Linked to Domains', this.$td),
 				totalExternalLinks : this.$t.__('Total External Links', this.$td),
@@ -112,7 +113,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'linkAssistant' ]),
 		sortedParts () {
 			// Clone object before splicing so that it doesn't affect the store.
 			const parts = this.mostLinkedDomains.map((x) => x).splice(0, 3)

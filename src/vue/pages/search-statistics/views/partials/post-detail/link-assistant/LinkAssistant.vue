@@ -34,7 +34,7 @@
 
 		<div class="aioseo-card-footer">
 			<a
-				:href="$aioseo.urls.aio.linkAssistant"
+				:href="rootStore.aioseo.urls.aio.linkAssistant"
 				v-html="strings.linkOpportunities"
 			/>
 		</div>
@@ -42,12 +42,21 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import SvgLinkAffiliate from '@/vue/components/common/svg/link/Affiliate'
 import SvgLinkExternal from '@/vue/components/common/svg/link/External'
 import SvgLinkInternalInbound from '@/vue/components/common/svg/link/InternalInbound'
 import SvgLinkInternalOutbound from '@/vue/components/common/svg/link/InternalOutbound'
 import SvgLinkSuggestion from '@/vue/components/common/svg/link/Suggestion'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		SvgLinkAffiliate,
 		SvgLinkExternal,

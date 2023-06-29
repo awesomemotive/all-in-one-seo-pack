@@ -12,7 +12,7 @@
 
 		<div
 			class="aioseo-settings-row"
-			v-if="$aioseo.data.isNetworkAdmin"
+			v-if="rootStore.aioseo.data.isNetworkAdmin"
 		>
 			<div class="select-site">
 				{{ strings.selectSite }}
@@ -45,7 +45,7 @@
 		</div>
 
 		<template
-			v-if="getBackups.length && !($aioseo.data.isNetworkAdmin && !site)"
+			v-if="getBackups.length && !(rootStore.aioseo.data.isNetworkAdmin && !site)"
 		>
 			<div class="backups-table">
 				<div class="backups-rows">
@@ -95,7 +95,7 @@
 			size="medium"
 			@click="processCreateBackup"
 			:loading="loading"
-			:disabled="$aioseo.data.isNetworkAdmin && !site"
+			:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
 		>
 			<svg-circle-plus />
 			{{ strings.createBackup }}
@@ -142,8 +142,12 @@
 </template>
 
 <script>
+import {
+	useBackupsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { DateTime } from 'luxon'
-import { mapActions, mapState } from 'vuex'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreModal from '@/vue/components/common/core/modal/Index'
@@ -155,6 +159,12 @@ import SvgHistory from '@/vue/components/common/svg/History'
 import SvgRefresh from '@/vue/components/common/svg/Refresh'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 export default {
+	setup () {
+		return {
+			backupsStore : useBackupsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreCard,
@@ -195,12 +205,11 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'backups', 'networkBackups' ]),
 		getBackups () {
 			if (this.site) {
-				return this.networkBackups[this.site.blog_id] || []
+				return this.backupsStore.networkBackups[this.site.blog_id] || []
 			}
-			return this.backups
+			return this.backupsStore.backups
 		},
 		areYouSure () {
 			return this.backupToDelete ? this.strings.areYouSureDeleteBackup : this.strings.areYouSureRestoreBackup
@@ -210,10 +219,9 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'createBackup', 'deleteBackup', 'restoreBackup' ]),
 		processCreateBackup () {
 			this.loading = true
-			this.createBackup({
+			this.backupsStore.createBackup({
 				siteId : this.site ? this.site.blog_id : null
 			})
 				.then(() => {
@@ -232,7 +240,7 @@ export default {
 		},
 		processDeleteBackup () {
 			this.loading = true
-			this.deleteBackup({
+			this.backupsStore.deleteBackup({
 				backup : this.backupToDelete,
 				siteId : this.site ? this.site.blog_id : null
 			})
@@ -250,7 +258,7 @@ export default {
 		},
 		processRestoreBackup () {
 			this.loading = true
-			this.restoreBackup({
+			this.backupsStore.restoreBackup({
 				backup : this.backupToRestore,
 				siteId : this.site ? this.site.blog_id : null
 			})

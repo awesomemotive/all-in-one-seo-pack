@@ -8,19 +8,25 @@
 		<p v-html="strings.didYouKnow" />
 		<p v-html="strings.learnMoreLink" />
 
-		<svg-close @click.native.stop="disablePrimaryTermEducation" />
+		<svg-close @click.native.stop="postEditorStore.disablePrimaryTermEducation" />
 	</div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import { getSelectedTerms } from '@/vue/standalone/primary-term/helpers'
-import { Standalone } from '@/vue/mixins/Standalone'
 import SvgCircleInformation from '@/vue/components/common/svg/circle/Information'
 import SvgClose from '@/vue/components/common/svg/Close'
 
 export default {
-	mixins     : [ Standalone ],
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore()
+		}
+	},
 	components : {
 		SvgCircleInformation,
 		SvgClose
@@ -49,14 +55,13 @@ export default {
 		taxonomy : String
 	},
 	methods : {
-		...mapActions([ 'disablePrimaryTermEducation' ]),
 		updateSelectedTerms () {
 			this.selectedTerms = getSelectedTerms(this.taxonomy)
 		}
 	},
 	computed : {
 		canShowUpsell () {
-			const { options }               = this.currentPost
+			const { options }               = this.postEditorStore.currentPost
 			const productEducationDismissed = options.primaryTerm.productEducationDismissed
 
 			return !productEducationDismissed && 1 < this.selectedTerms.length
@@ -65,10 +70,10 @@ export default {
 	mounted () {
 		this.updateSelectedTerms()
 
-		this.$bus.$on('updateSelectedTerms', this.updateSelectedTerms)
+		window.aioseoBus.$on('updateSelectedTerms', this.updateSelectedTerms)
 	},
 	beforeDestroy () {
-		this.$bus.$off('updateSelectedTerms', this.updateSelectedTerms)
+		window.aioseoBus.$off('updateSelectedTerms', this.updateSelectedTerms)
 	}
 }
 </script>

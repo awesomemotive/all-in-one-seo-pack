@@ -7,7 +7,7 @@
 		>
 			<div>
 				<div
-					v-if="settings.showSetupWizard && $allowed('aioseo_setup_wizard')"
+					v-if="settingsStore.settings.showSetupWizard && allowed('aioseo_setup_wizard')"
 					class="dashboard-getting-started"
 				>
 					<core-getting-started />
@@ -18,7 +18,7 @@
 						md="6"
 					>
 						<core-card
-							v-if="!$aioseo.setupWizard.isCompleted"
+							v-if="!rootStore.aioseo.setupWizard.isCompleted"
 							slug="dashboardSeoSetup"
 							:header-text="strings.seoSetup"
 						>
@@ -59,7 +59,7 @@
 								<core-feature-card
 									:feature="link"
 									:can-activate="false"
-									:can-manage="$allowed(link.access)"
+									:can-manage="allowed(link.access)"
 									static-card
 								>
 									<template #title>
@@ -110,7 +110,7 @@
 
 							<core-notification-cards
 								:notifications="filteredNotifications"
-								:dismissedCount="dismissedNotificationsCount"
+								:dismissedCount="notificationsStore.dismissedNotificationsCount"
 								@toggle-dismissed="dismissed = !dismissed"
 							>
 								<template #no-notifications>
@@ -119,7 +119,7 @@
 											{{ strings.noNewNotificationsThisMoment }}
 										</div>
 										<a
-											v-if="dismissedNotificationsCount"
+											v-if="notificationsStore.dismissedNotificationsCount"
 											href="#"
 											@click.prevent="dismissed = true"
 										>{{ strings.seeAllDismissedNotifications }}</a>
@@ -137,7 +137,7 @@
 									>
 										<a
 											href="#"
-											@click.stop.prevent="toggleNotifications"
+											@click.stop.prevent="notificationsStore.toggleNotifications"
 										>
 											{{ moreNotifications }}
 										</a>
@@ -145,7 +145,7 @@
 										<a
 											class="no-underline"
 											href="#"
-											@click.stop.prevent="toggleNotifications"
+											@click.stop.prevent="notificationsStore.toggleNotifications"
 										>
 											&rarr;
 										</a>
@@ -191,7 +191,7 @@
 						</core-card>
 
 						<cta
-							v-if="isUnlicensed"
+							v-if="licenseStore.isUnlicensed"
 							class="dashboard-cta"
 							:type="3"
 							:floating="false"
@@ -212,10 +212,17 @@
 </template>
 
 <script>
+import {
+	useLicenseStore,
+	useNotificationsStore,
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { merge } from 'lodash-es'
 import { useNotifications } from '@/vue/composables'
 import { Notifications } from '@/vue/mixins'
-import { mapActions, mapGetters, mapState } from 'vuex'
 
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreFeatureCard from '@/vue/components/common/core/FeatureCard'
@@ -250,7 +257,11 @@ export default {
 		const { strings } = useNotifications()
 
 		return {
-			composableStrings : strings
+			licenseStore       : useLicenseStore(),
+			notificationsStore : useNotificationsStore(),
+			rootStore          : useRootStore(),
+			settingsStore      : useSettingsStore(),
+			composableStrings  : strings
 		}
 	},
 	components : {
@@ -285,6 +296,7 @@ export default {
 	mixins : [ Notifications ],
 	data () {
 		return {
+			allowed,
 			dismissed            : false,
 			visibleNotifications : 3,
 			strings              : merge(this.composableStrings, {
@@ -346,8 +358,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
-		...mapState([ 'settings' ]),
 		moreNotifications () {
 			return this.$t.sprintf(
 				// Translators: 1 - A number representing the remaining notifications.
@@ -371,16 +381,16 @@ export default {
 				{ icon: 'svg-book', text: this.strings.gettingStarted, link: this.$links.utmUrl('dashboard-support-box', 'beginners-guide', 'docs/quick-start-guide/'), blank: true }
 			]
 
-			if (!this.$allowed('aioseo_setup_wizard')) {
+			if (!allowed('aioseo_setup_wizard')) {
 				return options
 			}
 
-			return this.settings.showSetupWizard
+			return this.settingsStore.settings.showSetupWizard
 				? options
 				: options.concat({
 					icon  : 'svg-rocket',
 					text  : this.strings.relaunchSetupWizard,
-					link  : this.$aioseo.urls.aio.wizard,
+					link  : this.rootStore.aioseo.urls.aio.wizard,
 					blank : false
 				})
 		},
@@ -390,76 +400,75 @@ export default {
 					icon        : 'svg-title-and-meta',
 					description : this.strings.manageSearchAppearance,
 					name        : this.strings.searchAppearance,
-					manageUrl   : this.$aioseo.urls.aio.searchAppearance,
+					manageUrl   : this.rootStore.aioseo.urls.aio.searchAppearance,
 					access      : 'aioseo_search_appearance_settings'
 				},
 				{
 					icon        : 'svg-clipboard-checkmark',
 					description : this.strings.manageSeoAnalysis,
 					name        : this.strings.seoAnalysis,
-					manageUrl   : this.$aioseo.urls.aio.seoAnalysis,
+					manageUrl   : this.rootStore.aioseo.urls.aio.seoAnalysis,
 					access      : 'aioseo_seo_analysis_settings'
 				},
 				{
 					icon        : 'svg-location-pin',
 					description : this.strings.manageLocalSeo,
 					name        : this.strings.localSeo,
-					manageUrl   : this.$aioseo.urls.aio.localSeo,
+					manageUrl   : this.rootStore.aioseo.urls.aio.localSeo,
 					access      : 'aioseo_local_seo_settings'
 				},
 				{
 					icon        : 'svg-share',
 					description : this.strings.manageSocialNetworks,
 					name        : this.strings.socialNetworks,
-					manageUrl   : this.$aioseo.urls.aio.socialNetworks,
+					manageUrl   : this.rootStore.aioseo.urls.aio.socialNetworks,
 					access      : 'aioseo_social_networks_settings'
 				},
 				{
 					icon        : 'svg-statistics',
 					description : this.strings.manageSearchStatistics,
 					name        : this.strings.searchStatistics,
-					manageUrl   : this.$aioseo.urls.aio.searchStatistics,
+					manageUrl   : this.rootStore.aioseo.urls.aio.searchStatistics,
 					access      : 'aioseo_search_statistics_settings'
 				},
 				/* {
 					icon        : 'svg-build',
 					description : this.strings.manageTools,
 					name        : this.strings.tools,
-					manageUrl   : this.$aioseo.urls.aio.tools,
+					manageUrl   : this.rootStore.aioseo.urls.aio.tools,
 					access      : 'aioseo_tools_settings'
 				}, */
 				{
 					icon        : 'svg-sitemaps-pro',
 					description : this.strings.manageSitemap,
 					name        : this.strings.sitemap,
-					manageUrl   : this.$aioseo.urls.aio.sitemaps,
+					manageUrl   : this.rootStore.aioseo.urls.aio.sitemaps,
 					access      : 'aioseo_sitemap_settings'
 				},
 				{
 					icon        : 'svg-link-assistant',
 					description : this.strings.manageLinkAssistant,
 					name        : this.strings.linkAssistant,
-					manageUrl   : this.$aioseo.urls.aio.linkAssistant,
+					manageUrl   : this.rootStore.aioseo.urls.aio.linkAssistant,
 					access      : 'aioseo_link_assistant_settings'
 				},
 				{
 					icon        : 'svg-redirect',
 					description : this.strings.manageRedirects,
 					name        : this.strings.redirects,
-					manageUrl   : this.$aioseo.urls.aio.redirects,
+					manageUrl   : this.rootStore.aioseo.urls.aio.redirects,
 					access      : 'aioseo_redirects_settings'
 				}
-			].filter(link => this.$allowed(link.access))
+			].filter(link => allowed(link.access))
 		}
 	},
 	methods : {
-		...mapActions([ 'dismissNotifications' ]),
 		processDismissAllNotifications () {
 			const slugs = []
 			this.notifications.forEach(notification => {
 				slugs.push(notification.slug)
 			})
-			this.dismissNotifications(slugs)
+			this.notificationsStore.dismissNotifications(slugs)
 		}
 	}
 }

@@ -2,14 +2,14 @@ import { AddonConditions } from './AddonConditions'
 import { Date } from './Date'
 import { LicenseConditions } from './LicenseConditions'
 import { HeadlineResult } from './HeadlineResult'
-import { ImageSourceOptions, Uploader, ImagePreview } from './Image'
-import { IsDirty } from './IsDirty'
+import { ImageSourceOptions, ImagePreview } from './Image'
 import { JsonValues } from './JsonValues'
 import { License } from './License'
 import { MaxCounts } from './MaxCounts'
 import { MetaTag } from './MetaTag'
 import { Network } from './Network'
 import { Notifications } from './Notifications'
+import { objectType, twitterCard } from './PostSocial'
 import { RequiresActivation } from './RequiresActivation'
 import { RequiresUpdate } from './RequiresUpdate'
 import { SaveChanges } from './SaveChanges'
@@ -29,13 +29,13 @@ export {
 	HeadlineResult,
 	ImagePreview,
 	ImageSourceOptions,
-	IsDirty,
 	JsonValues,
 	License,
 	MaxCounts,
 	MetaTag,
 	Network,
 	Notifications,
+	objectType,
 	RequiresActivation,
 	RequiresUpdate,
 	SaveChanges,
@@ -44,7 +44,7 @@ export {
 	Tags,
 	ToolsSettings,
 	TruSeoScore,
-	Uploader,
+	twitterCard,
 	Url,
 	Wizard,
 	WizardUsageTracking,

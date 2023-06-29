@@ -15,7 +15,7 @@
 							<svg-aioseo-logo-gear />
 							<span>♥</span>
 							<img
-								:src="$getAssetUrl(emLogoImg)"
+								:src="getAssetUrl(emLogoImg)"
 								height="90"
 								alt="ExactMetrics"
 							/>
@@ -28,7 +28,7 @@
 						</p>
 						<div class="preview-list">
 							<img
-								:src="$getAssetUrl(emGraphImg)"
+								:src="getAssetUrl(emGraphImg)"
 								height="200"
 								alt="mi-graph-preview"
 							/>
@@ -53,7 +53,7 @@
 							<svg-aioseo-logo-gear />
 							<span>♥</span>
 							<img
-								:src="$getAssetUrl(miLogoImg)"
+								:src="getAssetUrl(miLogoImg)"
 								height="90"
 								alt="MonsterInsights"
 							/>
@@ -66,7 +66,7 @@
 						</p>
 						<div class="preview-list">
 							<img
-								:src="$getAssetUrl(miGraphImg)"
+								:src="getAssetUrl(miGraphImg)"
 								height="200"
 								alt="mi-graph-preview"
 							/>
@@ -109,17 +109,17 @@
 						<template v-else>{{ strings.miInstallP }}</template>
 					</p>
 					<base-button
-						v-if="!$aioseo.plugins.miLite.canInstall"
+						v-if="!pluginsStore.plugins.miLite.canInstall"
 						type="blue"
 						size="medium"
 						tag="a"
 						target="_blank"
-						:href="$aioseo.plugins.miLite.wpLink"
+						:href="pluginsStore.plugins.miLite.wpLink"
 					>
 						<svg-external /> {{ strings.installMi }}
 					</base-button>
 					<base-button
-						v-if="$aioseo.plugins.miLite.canInstall"
+						v-if="pluginsStore.plugins.miLite.canInstall"
 						:loading="installingPlugin"
 						:type="justInstalled || gaActivated ? 'disabled' : 'blue'"
 						size="medium"
@@ -173,7 +173,12 @@
 	</div>
 </template>
 <script>
-import { mapActions, mapState } from 'vuex'
+import {
+	usePluginsStore,
+	useRootStore
+} from '@/vue/stores'
+
+import { getAssetUrl } from '@/vue/utils/helpers'
 import emLogoImg from '@/vue/assets/images/about/plugins/em.png'
 import emGraphImg from '@/vue/assets/images/plugins/em-graph-preview.png'
 import miLogoImg from '@/vue/assets/images/plugins/mi-logo.png'
@@ -183,6 +188,12 @@ import SvgAioseoLogoGear from '@/vue/components/common/svg/aioseo/LogoGear'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgExternal from '@/vue/components/common/svg/External'
 export default {
+	setup () {
+		return {
+			pluginsStore : usePluginsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		CoreCard,
 		SvgAioseoLogoGear,
@@ -294,46 +305,44 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options', 'internalOptions' ]),
 		gaActivated () {
-			return this.$aioseo.plugins.miLite.activated ||
-				this.$aioseo.plugins.emLite.activated ||
-				this.$aioseo.plugins.miPro.activated ||
-				this.$aioseo.plugins.emPro.activated
+			return this.pluginsStore.plugins.miLite.activated ||
+				this.pluginsStore.plugins.emLite.activated ||
+				this.pluginsStore.plugins.miPro.activated ||
+				this.pluginsStore.plugins.emPro.activated
 		},
 		gaInstalled () {
-			return this.$aioseo.plugins.miLite.installed ||
-				this.$aioseo.plugins.emLite.installed ||
-				this.$aioseo.plugins.miPro.installed ||
-				this.$aioseo.plugins.emPro.installed
+			return this.pluginsStore.plugins.miLite.installed ||
+				this.pluginsStore.plugins.emLite.installed ||
+				this.pluginsStore.plugins.miPro.installed ||
+				this.pluginsStore.plugins.emPro.installed
 		},
 		miOnboardingUrl () {
 			return this.prefersEm
-				? `${this.$aioseo.urls.home}/wp-admin/admin.php?page=exactmetrics-onboarding`
-				: `${this.$aioseo.urls.home}/wp-admin/admin.php?page=monsterinsights-onboarding`
+				? `${this.rootStore.aioseo.urls.home}/wp-admin/admin.php?page=exactmetrics-onboarding`
+				: `${this.rootStore.aioseo.urls.home}/wp-admin/admin.php?page=monsterinsights-onboarding`
 		},
 		prefersEm () {
-			return (this.$aioseo.plugins.emLite.installed ||
-				this.$aioseo.plugins.emPro.installed) &&
-				(!this.$aioseo.plugins.miLite.installed &&
-				!this.$aioseo.plugins.miPro.installed)
+			return (this.pluginsStore.plugins.emLite.installed ||
+				this.pluginsStore.plugins.emPro.installed) &&
+				(!this.pluginsStore.plugins.miLite.installed &&
+				!this.pluginsStore.plugins.miPro.installed)
 		}
 	},
 	methods : {
-		...mapActions([ 'installPlugins' ]),
+		getAssetUrl,
 		installMi () {
 			this.installingPlugin = true
-			this.installPlugins([
+			this.pluginsStore.installPlugins([
 				{
 					plugin : this.prefersEm ? 'emLite' : 'miLite',
 					type   : 'plugin'
 				}
 			])
 				.then(() => {
-					this.installingPlugin                  = false
-					this.justInstalled                     = true
-					this.$aioseo.plugins.miLite.activated  = true
-					window.aioseo.plugins.miLite.activated = true
+					this.installingPlugin                      = false
+					this.justInstalled                         = true
+					this.pluginsStore.plugins.miLite.activated = true
 				})
 				.catch(error => {
 					console.error(error)

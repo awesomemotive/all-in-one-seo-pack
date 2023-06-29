@@ -10,10 +10,10 @@
 			:filters="posts.filters"
 			:additional-filters="posts.additionalFilters"
 			:selected-filters="selectedFilters"
-			:loading="isLoading || loading.seoStatistics"
+			:loading="isLoading || searchStatisticsStore.loading.seoStatistics"
 			:initial-page-number="pageNumber"
 			:initial-search-term="searchTerm"
-			:initial-items-per-page="$aioseo.settings.tablePagination[changeItemsPerPageSlug]"
+			:initial-items-per-page="settingsStore.settings.tablePagination[changeItemsPerPageSlug]"
 			:show-header="showHeader"
 			:show-bulk-actions="false"
 			:show-table-footer="showTableFooter"
@@ -34,7 +34,7 @@
 				</div>
 			</template>
 
-			<template #post_title="{ row }">
+			<template #postTitle="{ row }">
 				<div class="post-title">
 					<a
 						v-if="row.postId"
@@ -80,7 +80,7 @@
 				</div>
 			</template>
 
-			<template #seo_score="{ row }">
+			<template #seoScore="{ row }">
 				<core-score-button
 					v-if="row.seoScore"
 					class="table-score-button"
@@ -89,11 +89,11 @@
 			</template>
 
 			<template #clicks="{ row }">
-				{{ $numbers.compactNumber(row.clicks) }}
+				{{ numbers.compactNumber(row.clicks) }}
 			</template>
 
 			<template #impressions="{ row }">
-				{{ $numbers.compactNumber(row.impressions) }}
+				{{ numbers.compactNumber(row.impressions) }}
 			</template>
 
 			<template #position="{ row }">
@@ -170,7 +170,13 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from 'vuex'
+import {
+	useLicenseStore,
+	useSearchStatisticsStore,
+	useSettingsStore
+} from '@/vue/stores'
+
+import numbers from '@/vue/utils/numbers'
 import { clone } from 'lodash-es'
 import { WpTable } from '@/vue/mixins'
 import PostTypesMixin from '@/vue/mixins/PostTypes.js'
@@ -182,6 +188,13 @@ import GraphDecay from './GraphDecay'
 import PostActions from './AIOSEO_VERSION/PostActions'
 import Statistic from './Statistic'
 export default {
+	setup () {
+		return {
+			licenseStore          : useLicenseStore(),
+			searchStatisticsStore : useSearchStatisticsStore(),
+			settingsStore         : useSettingsStore()
+		}
+	},
 	components : {
 		CoreScoreButton,
 		CoreWpTable,
@@ -193,9 +206,11 @@ export default {
 	mixins : [ PostTypesMixin, WpTable, Table ],
 	data () {
 		return {
+			numbers,
 			tableId                : 'aioseo-search-statistics-post-table',
 			changeItemsPerPageSlug : 'searchStatisticsSeoStatistics',
 			showUpsell             : false,
+			sortableColumns        : [],
 			strings                : {
 				position      : this.$t.__('Position', this.$td),
 				ctaButtonText : this.$t.__('Upgrade to Pro and Unlock Access Control', this.$td),
@@ -219,11 +234,10 @@ export default {
 		},
 		showTableFooter  : Boolean,
 		showItemsPerPage : Boolean,
-		disableSorting   : Boolean,
 		columns          : {
 			type : Array,
 			default () {
-				return [ 'post_title', 'seo_score', 'clicks', 'impressions', 'position' ]
+				return [ 'postTitle', 'seoScore', 'clicks', 'impressions', 'position' ]
 			}
 		},
 		appendColumns : {
@@ -252,8 +266,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('search-statistics', [ 'data', 'loading' ]),
-		...mapGetters([ 'isUnlicensed' ]),
 		allColumns () {
 			const columns = clone(this.columns)
 
@@ -264,7 +276,15 @@ export default {
 				columns.push(this.appendColumns[activeFilter.slug || 'all'])
 			}
 
-			return columns
+			return columns.map(column => {
+				// In order to have this column sortable, add the "Sortable" suffix to the column name.
+				if (column.endsWith('Sortable')) {
+					column = column.replace('Sortable', '')
+					this.sortableColumns.push(column)
+				}
+
+				return column
+			})
 		},
 		tableColumns () {
 			return [
@@ -274,65 +294,44 @@ export default {
 					width : '40px'
 				},
 				{
-					slug    : 'post_title',
-					label   : this.$t.__('Title', this.$td),
-					width   : '100%',
-					sortDir : 'post_title' === this.orderBy ? this.orderDir : 'asc',
-					sorted  : 'post_title' === this.orderBy
+					slug  : 'postTitle',
+					label : this.$t.__('Title', this.$td),
+					width : '100%'
 				},
 				{
-					slug    : 'seo_score',
-					label   : this.$t.__('TruSEO Score', this.$td),
-					width   : '130px',
-					sortDir : 'seo_score' === this.orderBy ? this.orderDir : 'asc',
-					sorted  : 'seo_score' === this.orderBy
+					slug  : 'seoScore',
+					label : this.$t.__('TruSEO Score', this.$td),
+					width : '130px'
 				},
 				{
-					slug     : 'clicks',
-					label    : this.$t.__('Clicks', this.$td),
-					width    : '80px',
-					sortable : this.isSortable,
-					sortDir  : 'clicks' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'clicks' === this.orderBy
+					slug  : 'clicks',
+					label : this.$t.__('Clicks', this.$td),
+					width : '80px'
 				},
 				{
-					slug     : 'impressions',
-					label    : this.$t.__('Impressions', this.$td),
-					width    : '110px',
-					sortable : this.isSortable,
-					sortDir  : 'impressions' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'impressions' === this.orderBy
+					slug  : 'impressions',
+					label : this.$t.__('Impressions', this.$td),
+					width : '110px'
 				},
 				{
-					slug     : 'position',
-					label    : this.$t.__('Position', this.$td),
-					width    : '90px',
-					sortable : this.isSortable,
-					sortDir  : 'position' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'position' === this.orderBy
+					slug  : 'position',
+					label : this.$t.__('Position', this.$td),
+					width : '90px'
 				},
 				{
-					slug    : 'lastUpdated',
-					label   : this.$t.__('Last Updated On', this.$td),
-					width   : '160px',
-					sortDir : 'lastUpdated' === this.orderBy ? this.orderDir : 'asc',
-					sorted  : 'lastUpdated' === this.orderBy
+					slug  : 'lastUpdated',
+					label : this.$t.__('Last Updated On', this.$td),
+					width : '160px'
 				},
 				{
-					slug     : 'decay',
-					label    : this.$t.__('Loss', this.$td),
-					width    : '140px',
-					sortable : this.isSortable,
-					sortDir  : 'decay' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'decay' === this.orderBy
+					slug  : 'decay',
+					label : this.$t.__('Loss', this.$td),
+					width : '140px'
 				},
 				{
-					slug     : 'decayPercent',
-					label    : this.$t.__('Drop (%)', this.$td),
-					width    : '120px',
-					sortable : this.isSortable,
-					sortDir  : 'decayPercent' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'decayPercent' === this.orderBy
+					slug  : 'decayPercent',
+					label : this.$t.__('Drop (%)', this.$td),
+					width : '120px'
 				},
 				{
 					slug  : 'performance',
@@ -350,24 +349,29 @@ export default {
 					width : '80px'
 				}
 			].filter(column => this.allColumns.includes(column.slug))
+				.map(column => {
+					column.sortable = this.isSortable && this.sortableColumns.includes(column.slug)
+
+					if (column.sortable) {
+						column.sortDir = column.slug === this.orderBy ? this.orderDir : 'asc'
+						column.sorted  = column.slug === this.orderBy
+					}
+
+					return column
+				})
 		},
 		isSortable () {
-			if (this.disableSorting) {
-				return false
-			}
-
-			return 'all' === this.filter && (this.$isPro && !this.isUnlicensed)
+			return 'all' === this.filter && (this.$isPro && !this.licenseStore.isUnlicensed)
 		}
 	},
 	methods : {
-		...mapActions('search-statistics', [ 'updateSeoStatistics', 'updateContentRankings' ]),
 		resetSelectedFilters () {
 			this.selectedFilters.postType = ''
 			this.processAdditionaFilterOptionSelected({ name: 'postType', selectedValue: '' })
 		},
 		fetchData (payload) {
-			if ('function' === typeof this[this.updateAction]) {
-				return this[this.updateAction](payload)
+			if ('function' === typeof this.searchStatisticsStore[this.updateAction]) {
+				return this.searchStatisticsStore[this.updateAction](payload)
 			}
 		}
 	},
@@ -385,7 +389,7 @@ export default {
 .aioseo-search-statistics-post-table {
 	.posts-table {
 		.manage-column {
-			&.post_title {
+			&.postTitle {
 				display: flex;
 				flex-wrap: wrap;
 				align-items: center;

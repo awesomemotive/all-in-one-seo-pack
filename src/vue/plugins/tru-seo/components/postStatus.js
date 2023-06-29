@@ -1,4 +1,7 @@
-import store from '@/vue/store'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import { isBlockEditor } from '@/vue/utils/context'
 
 /**
@@ -7,7 +10,8 @@ import { isBlockEditor } from '@/vue/utils/context'
  * @returns {string} Post status
  */
 export const getPostStatus = () => {
-	let postStatus = store.state.currentPost.postStatus
+	const postEditorStore = usePostEditorStore()
+	let postStatus = postEditorStore.currentPost.postStatus
 	if (isBlockEditor()) {
 		postStatus = window.wp.data.select('core/editor').getCurrentPostAttribute('status')
 	}

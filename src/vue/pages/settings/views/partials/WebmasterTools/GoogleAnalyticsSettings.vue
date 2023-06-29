@@ -20,37 +20,37 @@
 								<base-input
 									size="small"
 									@blur="maybeUpdateId(setting.option)"
-									v-model="options.webmasterTools[setting.option]"
+									v-model="optionsStore.options.webmasterTools[setting.option]"
 								/>
 							</template>
 
 							<template
-								v-if="setting.parent && (!setting.pro || !isUnlicensed)"
+								v-if="setting.parent && (!setting.pro || !licenseStore.isUnlicensed)"
 							>
 								<base-input
 									v-if="'input' === setting.type || !setting.type"
 									size="small"
-									v-model="options.deprecated.webmasterTools[setting.parent][setting.option]"
+									v-model="optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option]"
 									:placeholder="setting.placeholder"
-									:disabled="isUnlicensed && setting.pro"
+									:disabled="licenseStore.isUnlicensed && setting.pro"
 								/>
 								<base-toggle
 									v-if="'toggle' === setting.type"
-									v-model="options.deprecated.webmasterTools[setting.parent][setting.option]"
-									:disabled="isUnlicensed && setting.pro"
+									v-model="optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option]"
+									:disabled="licenseStore.isUnlicensed && setting.pro"
 								/>
 								<base-radio-toggle
 									v-if="'radio-toggle' === setting.type"
-									v-model="options.deprecated.webmasterTools[setting.parent][setting.option]"
+									v-model="optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option]"
 									:name="setting.option"
 									:options="setting.options"
-									:disabled="isUnlicensed && setting.pro"
+									:disabled="licenseStore.isUnlicensed && setting.pro"
 								/>
 								<base-textarea
 									v-if="'textarea' === setting.type"
-									v-model="options.deprecated.webmasterTools[setting.parent][setting.option]"
+									v-model="optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option]"
 									:min-height="100"
-									:disabled="isUnlicensed && setting.pro"
+									:disabled="licenseStore.isUnlicensed && setting.pro"
 								/>
 								<grid-row
 									v-if="'multicheck' === setting.type"
@@ -96,17 +96,17 @@
 							<br>
 
 							<base-button
-								v-if="!$aioseo.plugins.miLite.canInstall"
+								v-if="!pluginsStore.plugins.miLite.canInstall"
 								type="blue"
 								size="medium"
 								tag="a"
 								target="_blank"
-								:href="$aioseo.plugins.miLite.wpLink"
+								:href="pluginsStore.plugins.miLite.wpLink"
 							>
 								<svg-external /> {{ strings.installMi }}
 							</base-button>
 							<base-button
-								v-if="$aioseo.plugins.miLite.canInstall"
+								v-if="pluginsStore.plugins.miLite.canInstall"
 								:loading="installingPlugin"
 								:type="miInstalled ? 'green' : 'blue'"
 								size="medium"
@@ -131,13 +131,13 @@
 					type="blue"
 				>
 					<div
-						v-if="$aioseo.plugins.miLite.activated || $aioseo.plugins.miPro.activated"
+						v-if="pluginsStore.plugins.miLite.activated || pluginsStore.plugins.miPro.activated"
 					>
 						{{ strings.miHandlesGa }}
 					</div>
 
 					<div
-						v-if="$aioseo.plugins.emLite.activated || $aioseo.plugins.emPro.activated"
+						v-if="pluginsStore.plugins.emLite.activated || pluginsStore.plugins.emPro.activated"
 					>
 						{{ strings.emHandlesGa }}
 					</div>
@@ -158,7 +158,7 @@
 						type="blue"
 						size="medium"
 						tag="a"
-						:href="$aioseo.urls.aio.monsterinsights"
+						:href="rootStore.aioseo.urls.aio.monsterinsights"
 					>
 						<template v-if="gaActivated || !showMiPromo">
 							{{ strings.manageGa }}
@@ -174,6 +174,13 @@
 </template>
 
 <script>
+import {
+	useLicenseStore,
+	useOptionsStore,
+	usePluginsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
 import { useWebmasterTools } from '@/vue/composables'
 import { MiOrEm, WebmasterTools } from '@/vue/pages/settings/mixins'
@@ -192,6 +199,10 @@ export default {
 		const { strings } = useWebmasterTools()
 
 		return {
+			licenseStore      : useLicenseStore(),
+			optionsStore      : useOptionsStore(),
+			pluginsStore      : usePluginsStore(),
+			rootStore         : useRootStore(),
 			composableStrings : strings
 		}
 	},
@@ -246,9 +257,9 @@ export default {
 			)
 		},
 		gaDeprecated () {
-			return !this.$aioseo.internalOptions.internal.deprecatedOptions.includes('googleAnalytics') &&
-				!this.$aioseo.options.deprecated.webmasterTools.googleAnalytics.id &&
-				!this.$aioseo.options.deprecated.webmasterTools.googleAnalytics.gtmContainerId
+			return !this.optionsStore.internalOptions.internal.deprecatedOptions.includes('googleAnalytics') &&
+				!this.optionsStore.options.deprecated.webmasterTools.googleAnalytics.id &&
+				!this.optionsStore.options.deprecated.webmasterTools.googleAnalytics.gtmContainerId
 		},
 		filteredSettings () {
 			return this.tool.settings.filter(setting => this.shouldDisplaySetting(setting))
@@ -257,23 +268,23 @@ export default {
 	methods : {
 		updateValue (checked, setting, option) {
 			if (checked) {
-				const users = this.options.deprecated.webmasterTools[setting.parent][setting.option]
+				const users = this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option]
 				users.push(option.value)
-				this.options.deprecated.webmasterTools[setting.parent][setting.option] = users
+				this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option] = users
 				return
 			}
 
-			const index = this.options.deprecated.webmasterTools[setting.parent][setting.option].findIndex(t => t === option.value)
+			const index = this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option].findIndex(t => t === option.value)
 			if (-1 !== index) {
-				this.options.deprecated.webmasterTools[setting.parent][setting.option].splice(index, 1)
+				this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option].splice(index, 1)
 			}
 		},
 		getValue (setting, option) {
-			return this.options.deprecated.webmasterTools[setting.parent][setting.option].includes(option.value)
+			return this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option].includes(option.value)
 		},
 		shouldDisplaySetting (setting) {
 			// Pro checks first.
-			if (this.isUnlicensed && setting.pro) {
+			if (this.licenseStore.isUnlicensed && setting.pro) {
 				return false
 			}
 
@@ -283,16 +294,16 @@ export default {
 
 			if ('string' === typeof setting.displayIf) {
 				return setting.displayIf.startsWith('!')
-					? !this.options.deprecated.webmasterTools[setting.parent][setting.displayIf.replace('!', '')]
-					: this.options.deprecated.webmasterTools[setting.parent][setting.displayIf]
+					? !this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.displayIf.replace('!', '')]
+					: this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.displayIf]
 			}
 
 			if (Array.isArray(setting.displayIf)) {
 				const passed = []
 				setting.displayIf.forEach(display => {
 					passed.push(display.startsWith('!')
-						? !this.options.deprecated.webmasterTools[setting.parent][display.replace('!', '')]
-						: this.options.deprecated.webmasterTools[setting.parent][display]
+						? !this.optionsStore.options.deprecated.webmasterTools[setting.parent][display.replace('!', '')]
+						: this.optionsStore.options.deprecated.webmasterTools[setting.parent][display]
 					)
 				})
 

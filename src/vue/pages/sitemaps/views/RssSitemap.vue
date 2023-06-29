@@ -16,13 +16,13 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.sitemap.rss.enable"
+						v-model="optionsStore.options.sitemap.rss.enable"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.sitemap.rss.enable"
+				v-if="optionsStore.options.sitemap.rss.enable"
 				:name="$constants.GLOBAL_STRINGS.preview"
 			>
 				<template #content>
@@ -31,7 +31,7 @@
 							size="medium"
 							type="blue"
 							tag="a"
-							:href="$aioseo.urls.rssSitemapUrl"
+							:href="rootStore.aioseo.urls.rssSitemapUrl"
 							target="_blank"
 						>
 							<svg-external />
@@ -52,7 +52,7 @@
 		</core-card>
 
 		<core-card
-			v-if="options.sitemap.rss.enable"
+			v-if="optionsStore.options.sitemap.rss.enable"
 			slug="rssSitemapSettings"
 			:header-text="strings.sitemapSettings"
 		>
@@ -61,7 +61,7 @@
 			>
 				<template #content>
 					<base-input
-						v-model="options.sitemap.rss.linksPerIndex"
+						v-model="optionsStore.options.sitemap.rss.linksPerIndex"
 						class="aioseo-links-per-site"
 						type="number"
 						size="medium"
@@ -86,14 +86,14 @@
 				<template #content>
 					<base-checkbox
 						size="medium"
-						v-model="options.sitemap.rss.postTypes.all"
+						v-model="optionsStore.options.sitemap.rss.postTypes.all"
 					>
 						{{ strings.includeAllPostTypes }}
 					</base-checkbox>
 
 					<core-post-type-options
-						v-if="!options.sitemap.rss.postTypes.all"
-						:options="options.sitemap.rss"
+						v-if="!optionsStore.options.sitemap.rss.postTypes.all"
+						:options="optionsStore.options.sitemap.rss"
 						type="postTypes"
 						:excluded="getExcludedPostTypes"
 					/>
@@ -112,7 +112,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { useCommonSitemap } from '@/vue/pages/sitemaps/composables'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -124,6 +128,8 @@ export default {
 		const { validateLinksPerIndex } = useCommonSitemap()
 
 		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore(),
 			validateLinksPerIndex
 		}
 	},
@@ -164,7 +170,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options' ]),
 		getExcludedPostTypes () {
 			return [ 'attachment' ]
 		}

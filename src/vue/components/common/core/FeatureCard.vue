@@ -52,10 +52,10 @@
 		<div
 			v-if="canActivate"
 			class="feature-card-footer"
-			:class="{ 'upgrade-required': feature.requiresUpgrade || !$aioseo.license.isActive }"
+			:class="{ 'upgrade-required': feature.requiresUpgrade || !licenseStore.license.isActive }"
 		>
 			<div
-				v-if="!feature.requiresUpgrade && $aioseo.license.isActive && (!feature.installed || feature.hasMinimumVersion)"
+				v-if="!feature.requiresUpgrade && licenseStore.license.isActive && (!feature.installed || feature.hasMinimumVersion)"
 				class="feature-card-install-activate"
 			>
 				<core-loader
@@ -79,7 +79,7 @@
 			</div>
 
 			<div
-				v-if="feature.requiresUpgrade || !$aioseo.license.isActive"
+				v-if="feature.requiresUpgrade || !licenseStore.license.isActive"
 				class="feature-card-upgrade-cta"
 			>
 				<base-button
@@ -108,7 +108,7 @@
 					<template #tooltip>
 						{{ strings.updateRequired }}
 						<strong
-							v-if="!$addons.userCanUpdate(feature.sku)"
+							v-if="!addons.userCanUpdate(feature.sku)"
 						>
 							{{ strings.permissionWarning }}
 						</strong>
@@ -119,7 +119,7 @@
 					size="medium"
 					@click="processUpgradeFeature"
 					:loading="featureUpgrading"
-					:disabled="!$addons.userCanUpdate(feature.sku)"
+					:disabled="!addons.userCanUpdate(feature.sku)"
 				>
 					{{ strings.updateFeature }}
 				</base-button>
@@ -168,15 +168,31 @@
 </template>
 
 <script>
+import {
+	useAddonsStore,
+	useLicenseStore,
+	usePluginsStore,
+	useRootStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
 import { getParams } from '@/vue/utils/params'
 import { Url } from '@/vue/mixins'
-import { mapActions, mapMutations } from 'vuex'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgClose from '@/vue/components/common/svg/Close'
 export default {
+	setup () {
+		return {
+			addonsStore  : useAddonsStore(),
+			licenseStore : useLicenseStore(),
+			pluginsStore : usePluginsStore(),
+			rootStore    : useRootStore()
+		}
+	},
+	mixins     : [ Url ],
 	components : {
 		CoreAlert,
 		CoreLoader,
@@ -184,8 +200,7 @@ export default {
 		CoreTooltip,
 		SvgClose
 	},
-	mixins : [ Url ],
-	props  : {
+	props : {
 		feature : {
 			type     : Object,
 			required : true
@@ -206,6 +221,7 @@ export default {
 	},
 	data () {
 		return {
+			addons,
 			showNetworkModal : false,
 			failed           : false,
 			loading          : false,
@@ -246,8 +262,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'deactivatePlugins', 'installPlugins', 'upgradePlugins' ]),
-		...mapMutations([ 'updateAddon' ]),
 		closeNetworkModal (changeStatus = false) {
 			this.activated        = changeStatus ? this.activated : !this.activated
 			this.showNetworkModal = false
@@ -258,7 +272,7 @@ export default {
 		},
 		processStatusChange () {
 			this.activated = !this.activated
-			if (this.$aioseo.data.isNetworkAdmin) {
+			if (this.rootStore.aioseo.data.isNetworkAdmin) {
 				this.showNetworkModal = true
 				return
 			}
@@ -271,7 +285,7 @@ export default {
 
 			// The action is reversed because we already swapped it earlier.
 			const action   = this.activated ? 'installPlugins' : 'deactivatePlugins'
-			this[action]([ { plugin: this.feature.basename } ])
+			this.pluginsStore[action]([ { plugin: this.feature.basename } ])
 				.then(response => {
 					this.loading = false
 					if (response.body.failed.length) {
@@ -287,8 +301,8 @@ export default {
 		processUpgradeFeature () {
 			this.failed           = false
 			this.featureUpgrading = true
-			const addon           = this.$addons.getAddon(this.feature.sku)
-			this.upgradePlugins([ { plugin: this.feature.sku } ])
+			const addon           = addons.getAddon(this.feature.sku)
+			this.pluginsStore.upgradePlugins([ { plugin: this.feature.sku } ])
 				.then(response => {
 					this.featureUpgrading = false
 					if (response.body.failed.length) {
@@ -302,7 +316,7 @@ export default {
 					addon.hasMinimumVersion = true
 					addon.isActive          = true
 					addon.installedVersion  = updatedAddon.installedVersion
-					this.updateAddon(addon)
+					this.addonsStore.updateAddon(addon)
 				})
 				.catch(() => {
 					this.featureUpgrading = false
@@ -319,7 +333,7 @@ export default {
 		if (!this.activated && params['aioseo-activate'] && params['aioseo-activate'] === this.feature.sku) {
 			this.loading   = true
 			this.activated = true
-			this.installPlugins([ { plugin: this.feature.basename } ])
+			this.pluginsStore.installPlugins([ { plugin: this.feature.basename } ])
 				.then(() => (this.loading = false))
 				.catch(() => {
 					this.loading   = false

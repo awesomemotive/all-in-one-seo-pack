@@ -6,20 +6,21 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
+import { loadPiniaStores } from '@/vue/stores'
+
 import TruSeo from '@/vue/plugins/tru-seo'
 import { elemLoaded } from '@/vue/utils/elemLoaded'
 
 import App from './App.vue'
 import TermApp from './TermApp.vue'
-import store from '@/vue/store'
 
 const localCreateApp = (app) => {
 	app = loadPlugins(app)
 	app = loadComponents(app)
 	app = loadVersionedComponents(app)
 
-	app.use(store)
-	store._vm = app
+	// Use the pinia store.
+	loadPiniaStores(app)
 
 	app.config.globalProperties.$truSeo = new TruSeo()
 
@@ -28,6 +29,7 @@ const localCreateApp = (app) => {
 
 const loadPostsTable = (post, index) => {
 	const app = localCreateApp(createApp({
+		name : 'Standalone/PostsTable/' + post.id,
 		data () {
 			return {
 				screen : window.aioseo.screen
@@ -55,6 +57,7 @@ if (window.aioseo.posts) {
 
 const loadTermsTable = (term, index) => {
 	const app = localCreateApp(createApp({
+		name : 'Standalone/TermsTable/' + term.id,
 		data () {
 			return {
 				screen : window.aioseo.screen

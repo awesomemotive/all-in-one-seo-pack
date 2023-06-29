@@ -13,22 +13,29 @@
 </template>
 
 <script>
+import {
+	useOptionsStore
+} from '@/vue/stores'
+
 import { DateTime } from 'luxon'
-import { mapState } from 'vuex'
 
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore()
+		}
+	},
 	computed : {
-		...mapState([ 'internalOptions' ]),
 		infoItems () {
 			return [
 				{
 					label : 'Migrated Version',
-					value : this.internalOptions.internal.migratedVersion
+					value : this.optionsStore.internalOptions.internal.migratedVersion
 				},
 				{
 					label : 'First Activated',
-					value : 0 !== this.internalOptions.internal.firstActivated
-						? DateTime.fromMillis(this.internalOptions.internal.firstActivated * 1000).toFormat('MMMM d, yyyy')
+					value : 0 !== this.optionsStore.internalOptions.internal.firstActivated
+						? DateTime.fromMillis(this.optionsStore.internalOptions.internal.firstActivated * 1000).toFormat('MMMM d, yyyy')
 						: false
 				}
 			]

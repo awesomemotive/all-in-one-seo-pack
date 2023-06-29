@@ -99,10 +99,24 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex'
+import {
+	useLicenseStore,
+	useNotificationsStore,
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 export default {
+	setup () {
+		return {
+			licenseStore       : useLicenseStore(),
+			notificationsStore : useNotificationsStore(),
+			optionsStore       : useOptionsStore(),
+			rootStore          : useRootStore()
+		}
+	},
 	emits      : [ 'dismissed-notification' ],
 	components : {
 		SvgCircleCheck,
@@ -130,8 +144,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options' ]),
-		...mapGetters([ 'licenseKey' ]),
 		title () {
 			switch (this.step) {
 				case 2:
@@ -167,24 +179,23 @@ export default {
 			}
 		},
 		feedbackUrl () {
-			const key = this.options.general && this.licenseKey ? this.licenseKey : ''
+			const key = this.optionsStore.options.general && this.licenseStore.licenseKey ? this.licenseStore.licenseKey : ''
 			const pro = this.$isPro ? 'pro' : 'lite'
 			return this.$links.utmUrl(
 				'notification-review-notice',
-				this.$aioseo.version,
+				this.rootStore.aioseo.version,
 				'https://aioseo.com/plugin-feedback/' +
-					'?wpf7528_24=' + encodeURIComponent(this.$aioseo.urls.home) +
+					'?wpf7528_24=' + encodeURIComponent(this.rootStore.aioseo.urls.home) +
 					'&wpf7528_26=' + key +
 					'&wpf7528_27=' + pro +
-					'&wpf7528_28=' + this.$aioseo.version
+					'&wpf7528_28=' + this.rootStore.aioseo.version
 			)
 		}
 	},
 	methods : {
-		...mapActions([ 'dismissNotifications', 'processButtonAction' ]),
 		processDismissNotification (delay = false) {
 			this.active = false
-			this.dismissNotifications([ this.notification.slug + (delay ? '-delay' : '') ])
+			this.notificationsStore.dismissNotifications([ this.notification.slug + (delay ? '-delay' : '') ])
 			this.$emit('dismissed-notification')
 		}
 	}

@@ -19,22 +19,22 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.sitemap.html.enable"
+						v-model="optionsStore.options.sitemap.html.enable"
 					/>
 				</template>
 			</core-settings-row>
 
 			<html-sitemap-display-info
-				v-if="options.sitemap.html.enable"
+				v-if="optionsStore.options.sitemap.html.enable"
 				:label="strings.displayLabel"
 				:displayOptions="displayOptions"
-				:url="options.sitemap.html.pageUrl"
+				:url="optionsStore.options.sitemap.html.pageUrl"
 			/>
 		</core-card>
 
 		<core-card
 			class="aioseo-html-sitemap-settings"
-			v-if="options.sitemap.html.enable"
+			v-if="optionsStore.options.sitemap.html.enable"
 			slug="htmlSitemapSettings"
 		>
 			<template #header>
@@ -47,14 +47,14 @@
 				<template #content>
 					<base-checkbox
 						size="medium"
-						v-model="options.sitemap.html.postTypes.all"
+						v-model="optionsStore.options.sitemap.html.postTypes.all"
 					>
 						{{ strings.includeAllPostTypes }}
 					</base-checkbox>
 
 					<core-post-type-options
-						v-if="!options.sitemap.html.postTypes.all"
-						:options="options.sitemap.html"
+						v-if="!optionsStore.options.sitemap.html.postTypes.all"
+						:options="optionsStore.options.sitemap.html"
 						type="postTypes"
 						:excluded="[ 'attachment' ]"
 					/>
@@ -71,14 +71,14 @@
 				<template #content>
 					<base-checkbox
 						size="medium"
-						v-model="options.sitemap.html.taxonomies.all"
+						v-model="optionsStore.options.sitemap.html.taxonomies.all"
 					>
 						{{ strings.includeAllTaxonomies }}
 					</base-checkbox>
 
 					<core-post-type-options
-						v-if="!options.sitemap.html.taxonomies.all"
-						:options="options.sitemap.html"
+						v-if="!optionsStore.options.sitemap.html.taxonomies.all"
+						:options="optionsStore.options.sitemap.html"
 						type="taxonomies"
 					/>
 
@@ -97,8 +97,8 @@
 					<base-select
 						size="medium"
 						:options="sortOrders"
-						:modelValue="getSortOrder(options.sitemap.html.sortOrder)"
-						@update:modelValue="value => options.sitemap.html.sortOrder = value.value"
+						:modelValue="getSortOrder(optionsStore.options.sitemap.html.sortOrder)"
+						@update:modelValue="value => optionsStore.options.sitemap.html.sortOrder = value.value"
 					/>
 				</template>
 			</core-settings-row>
@@ -112,8 +112,8 @@
 					<base-select
 						size="medium"
 						:options="sortDirections"
-						:modelValue="getSortDirection(options.sitemap.html.sortDirection)"
-						@update:modelValue="value => options.sitemap.html.sortDirection = value.value"
+						:modelValue="getSortDirection(optionsStore.options.sitemap.html.sortDirection)"
+						@update:modelValue="value => optionsStore.options.sitemap.html.sortDirection = value.value"
 					/>
 				</template>
 			</core-settings-row>
@@ -124,7 +124,7 @@
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.sitemap.html.publicationDate"
+						v-model="optionsStore.options.sitemap.html.publicationDate"
 						name="publicationDate"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.hide, value: false, activeClass: 'dark' },
@@ -144,7 +144,7 @@
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.sitemap.html.compactArchives"
+						v-model="optionsStore.options.sitemap.html.compactArchives"
 						name="compactArchives"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
@@ -162,26 +162,26 @@
 
 		<core-card
 			slug="htmlSitemapAdvancedSettings"
-			v-if="options.sitemap.html.enable"
-			:toggles="options.sitemap.html.advancedSettings.enable"
+			v-if="optionsStore.options.sitemap.html.enable"
+			:toggles="optionsStore.options.sitemap.html.advancedSettings.enable"
 		>
 			<template #header>
 				<base-toggle
-					v-model="options.sitemap.html.advancedSettings.enable"
+					v-model="optionsStore.options.sitemap.html.advancedSettings.enable"
 				/>
 
 				<span>{{ strings.advancedSettings }}</span>
 			</template>
 
 			<div
-				v-if="options.sitemap.html.advancedSettings.enable"
+				v-if="optionsStore.options.sitemap.html.advancedSettings.enable"
 			>
 				<!-- <core-settings-row
 					:name="strings.nofollowLinks"
 				>
 					<template #content>
 						<base-radio-toggle
-							v-model="options.sitemap.html.advancedSettings.nofollowLinks"
+							v-model="optionsStore.options.sitemap.html.advancedSettings.nofollowLinks"
 							name="nofollow"
 							:options="[
 								{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
@@ -198,7 +198,7 @@
 				>
 					<template #content>
 						<core-exclude-posts
-							:options="options.sitemap.html.advancedSettings"
+							:options="optionsStore.options.sitemap.html.advancedSettings"
 							type="posts"
 						/>
 					</template>
@@ -211,7 +211,7 @@
 				>
 					<template #content>
 						<core-exclude-posts
-							:options="options.sitemap.html.advancedSettings"
+							:options="optionsStore.options.sitemap.html.advancedSettings"
 							type="terms"
 						/>
 					</template>
@@ -222,7 +222,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -231,6 +235,12 @@ import CorePostTypeOptions from '@/vue/components/common/core/PostTypeOptions'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import HtmlSitemapDisplayInfo from '@/vue/components/common/html-sitemap/DisplayInfo'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		BaseCheckbox,
 		BaseRadioToggle,
@@ -279,7 +289,7 @@ export default {
 					desc : this.$t.sprintf(
 						// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag, 3 - Opening HTML strong tag, 4 - The plugin short name ("AIOSEO"), 5 - Closing HTML strong tag.
 						this.$t.__('To add this widget, visit the %1$swidgets page%2$s and look for the %3$s"%4$s - HTML Sitemap"%5$s widget.', this.$td),
-						`<a href="${this.$aioseo.urls.admin.widgets}" target="_blank">`, '</a>',
+						`<a href="${this.rootStore.aioseo.urls.admin.widgets}" target="_blank">`, '</a>',
 						'<strong>',
 						import.meta.env.VITE_SHORT_NAME,
 						'</strong>'
@@ -322,9 +332,6 @@ export default {
 				excludeTerms      : this.$t.__('Exclude Terms', this.$td)
 			}
 		}
-	},
-	computed : {
-		...mapState([ 'options', 'internalOptions' ])
 	},
 	methods : {
 		getSortOrder (option) {

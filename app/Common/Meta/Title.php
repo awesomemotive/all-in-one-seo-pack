@@ -59,7 +59,13 @@ class Title {
 			return $title ? $title : aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
 		}
 
-		$title = $this->helpers->prepare( aioseo()->options->searchAppearance->global->siteTitle );
+		$title = aioseo()->options->searchAppearance->global->siteTitle;
+		if ( aioseo()->helpers->isWpmlActive() ) {
+			// Allow WPML to translate the title if the homepage is not static.
+			$title = apply_filters( 'wpml_translate_single_string', $title, 'admin_texts_aioseo_options_localized', '[aioseo_options_localized]searchAppearance_global_siteTitle' );
+		}
+
+		$title = $this->helpers->prepare( $title );
 
 		return $title ? $title : aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
 	}

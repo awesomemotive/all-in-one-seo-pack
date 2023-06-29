@@ -52,10 +52,13 @@
 </template>
 
 <script>
+import {
+	useAnalyzerStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
 import { useSeoSiteScore } from '@/vue/composables'
 import { SeoSiteScore } from '@/vue/mixins'
-import { mapActions } from 'vuex'
 import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
 import SvgRefresh from '@/vue/components/common/svg/Refresh'
 export default {
@@ -63,6 +66,7 @@ export default {
 		const { strings } = useSeoSiteScore()
 
 		return {
+			analyzerStore     : useAnalyzerStore(),
 			composableStrings : strings
 		}
 	},
@@ -101,10 +105,9 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'runSiteAnalyzer', 'deleteCompetitorSite' ]),
 		refresh () {
 			this.isAnalyzing = true
-			this.runSiteAnalyzer({
+			this.analyzerStore.runSiteAnalyzer({
 				url     : this.site,
 				refresh : true
 			})

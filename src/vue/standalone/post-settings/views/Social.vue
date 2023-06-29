@@ -13,7 +13,7 @@
 				/>
 				<base-radio-toggle
 					v-if="'metabox' === $root._data.screenContext || 'modal' === parentComponentContext"
-					:modelValue="currentPost.socialMobilePreview"
+					:modelValue="postEditorStore.currentPost.socialMobilePreview"
 					@update:modelValue="isMobilePreviewEv"
 					name="previewSocialIsMobile"
 					class="circle"
@@ -40,7 +40,11 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
+import {
+	usePostEditorStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import { getParams, removeParam } from '@/vue/utils/params'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
@@ -51,6 +55,12 @@ import SocialSideBar from './SocialSideBar'
 import SvgDesktop from '@/vue/components/common/svg/Desktop'
 import SvgMobile from '@/vue/components/common/svg/Mobile'
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore(),
+			settingsStore   : useSettingsStore()
+		}
+	},
 	components : {
 		BaseRadioToggle,
 		CoreMainTabs,
@@ -82,33 +92,35 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'currentPost', 'metaBoxTabs', 'options' ]),
 		initTab : function () {
-			let initTab = this.metaBoxTabs.social
+			let initTab = this.settingsStore.metaBoxTabs.social
 
 			if (getParams()['social-tab']) {
 				initTab = getParams()['social-tab']
-
-				removeParam('social-tab')
 			}
 			if ('modal' === this.parentComponentContext) {
-				initTab = this.metaBoxTabs.socialModal
+				initTab = this.settingsStore.metaBoxTabs.socialModal
 			}
 
 			return initTab
 		}
 	},
+	mounted () {
+		setTimeout(() => {
+			if (getParams()['social-tab']) {
+				removeParam('social-tab')
+			}
+		}, 500)
+	},
 	methods : {
-		...mapActions([ 'changeSocialPreview' ]),
-		...mapMutations([ 'changeTabSettings' ]),
 		isMobilePreviewEv (ev) {
-			this.changeSocialPreview(ev)
+			this.postEditorStore.changeSocialPreview(ev)
 		},
 		processChangeTab (newTabValue) {
 			if ('modal' === this.parentComponentContext) {
-				this.changeTabSettings({ setting: 'socialModal', value: newTabValue })
+				this.settingsStore.changeTabSettings({ setting: 'socialModal', value: newTabValue })
 			} else {
-				this.changeTabSettings({ setting: 'social', value: newTabValue })
+				this.settingsStore.changeTabSettings({ setting: 'social', value: newTabValue })
 			}
 		}
 	}

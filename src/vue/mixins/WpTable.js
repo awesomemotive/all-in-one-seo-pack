@@ -1,4 +1,6 @@
-import { mapActions } from 'vuex'
+import {
+	useSettingsStore
+} from '@/vue/stores'
 
 export const WpTable = {
 	data () {
@@ -14,7 +16,6 @@ export const WpTable = {
 		}
 	},
 	methods : {
-		...mapActions([ 'changeItemsPerPage' ]),
 		refreshTable () {
 			this.wpTableLoading = true
 
@@ -60,7 +61,8 @@ export const WpTable = {
 			this.resultsPerPage = newNumber
 			this.wpTableLoading = true
 
-			this.changeItemsPerPage({
+			const settingsStore = useSettingsStore()
+			settingsStore.changeItemsPerPage({
 				slug  : this.changeItemsPerPageSlug,
 				value : newNumber
 			})
@@ -94,6 +96,7 @@ export const WpTable = {
 		resetSelectedFilters () {}
 	},
 	created () {
-		this.resultsPerPage = this.$aioseo.settings.tablePagination[this.changeItemsPerPageSlug] || this.resultsPerPage
+		const settingsStore = useSettingsStore()
+		this.resultsPerPage = settingsStore.settings.tablePagination[this.changeItemsPerPageSlug] || this.resultsPerPage
 	}
 }

@@ -60,6 +60,10 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import BaseButton from '@/vue/components/common/base/Button'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreModal from '@/vue/components/common/core/modal/Index'
@@ -74,6 +78,11 @@ import ViewSeoInspector from './views/SeoInspector'
 import ViewTwitter from './views/Twitter'
 
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		BaseButton,
 		CoreMainTabs,
@@ -96,7 +105,7 @@ export default {
 				return false
 			}
 
-			this.$aioseo.mainAssetCssQueue.forEach((style) => {
+			this.rootStore.aioseo.mainAssetCssQueue.forEach((style) => {
 				if (
 					'undefined' === typeof style.url ||
 					!style.url
@@ -169,13 +178,13 @@ export default {
 			}
 
 			if ('ViewGoogle' === this.activeTab) {
-				data.url = this.$aioseo?.editGoogleSnippetUrl || ''
+				data.url = this.rootStore.aioseo.editGoogleSnippetUrl || ''
 				data.btnText = this.$t.__('Edit Snippet', this.$td)
 			} else if ('ViewFacebook' === this.activeTab) {
-				data.url = this.$aioseo?.editFacebookSnippetUrl || ''
+				data.url = this.rootStore.aioseo.editFacebookSnippetUrl || ''
 				data.btnText = this.$t.__('Edit Facebook Meta Data', this.$td)
 			} else if ('ViewTwitter' === this.activeTab) {
-				data.url = this.$aioseo?.editTwitterSnippetUrl || ''
+				data.url = this.rootStore.aioseo.editTwitterSnippetUrl || ''
 				data.btnText = this.$t.__('Edit Twitter Meta Data', this.$td)
 			}
 
@@ -188,8 +197,8 @@ export default {
 			}
 
 			if ('ViewSeoInspector' === this.activeTab) {
-				data.url = this.$aioseo?.editObjectUrl || ''
-				data.btnText = this.$aioseo?.editObjectBtnText || ''
+				data.url = this.rootStore.aioseo.editObjectUrl || ''
+				data.btnText = this.rootStore.aioseo.editObjectBtnText || ''
 			}
 
 			return data

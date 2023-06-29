@@ -10,7 +10,7 @@
 		</core-card>
 
 		<core-card
-			v-if="(($isPro && licenseKey) || internalOptions.internal.siteAnalysis.connectToken) && internalOptions.internal.siteAnalysis.score"
+			v-if="(($isPro && licenseStore.licenseKey) || optionsStore.internalOptions.internal.siteAnalysis.connectToken) && optionsStore.internalOptions.internal.siteAnalysis.score"
 			slug="completeSeoChecklist"
 			no-slide
 			:toggles="false"
@@ -33,7 +33,7 @@
 					type="gray"
 					size="small"
 					@click="refresh"
-					:loading="analyzing"
+					:loading="analyzerStore.analyzing"
 				>
 					<svg-refresh />
 					{{ strings.refreshResults }}
@@ -44,7 +44,7 @@
 				<core-main-tabs
 					:tabs="tabs"
 					:showSaveButton="false"
-					:active="settings.internalTabs.seoAuditChecklist"
+					:active="settingsStore.settings.internalTabs.seoAuditChecklist"
 					internal
 					@changed="processChangeTab"
 					skinny-tabs
@@ -63,8 +63,8 @@
 			</template>
 
 			<core-seo-site-analysis-results
-				:section="settings.internalTabs.seoAuditChecklist"
-				:all-results="getSiteAnalysisResults"
+				:section="settingsStore.settings.internalTabs.seoAuditChecklist"
+				:all-results="analyzerStore.getSiteAnalysisResults"
 				show-instructions
 			/>
 		</core-card>
@@ -72,7 +72,13 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapGetters } from 'vuex'
+import {
+	useAnalyzerStore,
+	useLicenseStore,
+	useOptionsStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreSeoSiteAnalysisResults from '@/vue/components/common/core/SeoSiteAnalysisResults'
@@ -81,6 +87,14 @@ import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgRefresh from '@/vue/components/common/svg/Refresh'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 export default {
+	setup () {
+		return {
+			analyzerStore : useAnalyzerStore(),
+			licenseStore  : useLicenseStore(),
+			optionsStore  : useOptionsStore(),
+			settingsStore : useSettingsStore()
+		}
+	},
 	components : {
 		CoreCard,
 		CoreMainTabs,
@@ -102,10 +116,8 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'internalOptions', 'options', 'settings', 'analyzing' ]),
-		...mapGetters([ 'getSiteAnalysisResults', 'allItemsCount', 'criticalCount', 'recommendedCount', 'goodCount', 'licenseKey' ]),
 		tabs () {
-			const siteAnalysis = this.internalOptions.internal.siteAnalysis
+			const siteAnalysis = this.optionsStore.internalOptions.internal.siteAnalysis
 			return [
 				{
 					slug    : 'all-items',
@@ -113,7 +125,7 @@ export default {
 					analyze : {
 						classColor : 'black',
 						count      : siteAnalysis.score
-							? this.allItemsCount()
+							? this.analyzerStore.allItemsCount()
 							: 0
 					}
 				},
@@ -123,7 +135,7 @@ export default {
 					analyze : {
 						classColor : 'red',
 						count      : siteAnalysis.score
-							? this.criticalCount()
+							? this.analyzerStore.criticalCount()
 							: 0
 					}
 				},
@@ -133,7 +145,7 @@ export default {
 					analyze : {
 						classColor : 'blue',
 						count      : siteAnalysis.score
-							? this.recommendedCount()
+							? this.analyzerStore.recommendedCount()
 							: 0
 					}
 				},
@@ -143,7 +155,7 @@ export default {
 					analyze : {
 						classColor : 'green',
 						count      : siteAnalysis.score
-							? this.goodCount()
+							? this.analyzerStore.goodCount()
 							: 0
 					}
 				}
@@ -151,14 +163,13 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'changeTab', 'runSiteAnalyzer' ]),
 		processChangeTab (value) {
 			if (this.internalDebounce) {
 				return
 			}
 
 			this.internalDebounce = true
-			this.changeTab({ slug: 'seoAuditChecklist', value })
+			this.settingsStore.changeTab({ slug: 'seoAuditChecklist', value })
 
 			// Debouncing a little here to save extra API calls.
 			setTimeout(() => {
@@ -166,8 +177,8 @@ export default {
 			}, 50)
 		},
 		refresh () {
-			this.$store.commit('analyzing', true)
-			this.runSiteAnalyzer({
+			this.analyzerStore.analyzing = true
+			this.analyzerStore.runSiteAnalyzer({
 				refresh : true
 			})
 		}

@@ -1,9 +1,14 @@
-export default function RequiresUpgrade ({ app, next, router, to }) {
-	// We need to do a manual check for licensed users here, though this could change after runtime.
-	const isUnlicensed   = 'pro' !== import.meta.env.VITE_VERSION.toLowerCase() || !window.aioseo.license.isActive
-	const licenseFeature = to.meta.licenseFeature || to.meta.middlewareData.licenseFeature || ''
+import {
+	useLicenseStore
+} from '@/vue/stores'
 
-	if (isUnlicensed || !app.$license.hasCoreFeature(app.$aioseo, licenseFeature[0], licenseFeature[1])) {
+import license from '@/vue/utils/license'
+
+export default function RequiresUpgrade ({ next, router, to }) {
+	const licenseFeature = to.meta.licenseFeature || to.meta.middlewareData.licenseFeature || ''
+	const licenseStore   = useLicenseStore()
+
+	if (licenseStore.isUnlicensed || !license.hasCoreFeature(licenseFeature[0], licenseFeature[1])) {
 		next()
 		return router.push({ name: to.meta.middlewareData.routeName })
 			.catch(() => {})

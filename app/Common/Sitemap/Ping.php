@@ -100,9 +100,10 @@ class Ping {
 			$sitemapUrls[] = aioseo()->sitemap->helpers->getUrl( 'rss' );
 		}
 
-		foreach ( aioseo()->addons->getLoadedAddons() as $loadedAddon ) {
-			if ( ! empty( $loadedAddon->ping ) && method_exists( $loadedAddon->ping, 'getPingUrls' ) ) {
-				$sitemapUrls = $sitemapUrls + $loadedAddon->ping->getPingUrls();
+		$addonsSitemapUrls = aioseo()->addons->doAddonFunction( 'ping', 'getPingUrls' );
+		foreach ( $addonsSitemapUrls as $addonSitemapUrls ) {
+			if ( is_array( $addonSitemapUrls ) ) {
+				$sitemapUrls = array_merge( $sitemapUrls, $addonSitemapUrls );
 			}
 		}
 

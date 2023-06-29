@@ -22,7 +22,7 @@
 
 					<base-input
 						size="medium"
-						v-model="smartRecommendations.accountInfo"
+						v-model="setupWizardStore.smartRecommendations.accountInfo"
 					/>
 
 					<div class="aioseo-description">
@@ -48,7 +48,7 @@
 					</div>
 
 					<base-toggle
-						v-model="smartRecommendations.usageTracking"
+						v-model="setupWizardStore.smartRecommendations.usageTracking"
 					>
 						{{ strings.yesCountMeIn }}
 					</base-toggle>
@@ -56,9 +56,9 @@
 
 				<template #footer>
 					<div class="go-back">
-						<router-link :to="getPrevLink" class="no-underline">&larr;</router-link>
+						<router-link :to="setupWizardStore.getPrevLink" class="no-underline">&larr;</router-link>
 						&nbsp;
-						<router-link :to="getPrevLink">{{ strings.goBack }}</router-link>
+						<router-link :to="setupWizardStore.getPrevLink">{{ strings.goBack }}</router-link>
 					</div>
 					<div class="spacer"></div>
 					<base-button
@@ -133,7 +133,7 @@
 					<div class="actions">
 						<div class="spacer"></div>
 						<div class="go-back">
-							<router-link :to="getNextLink">{{ strings.illDoItLater }}</router-link>
+							<router-link :to="setupWizardStore.getNextLink">{{ strings.illDoItLater }}</router-link>
 						</div>
 						<base-button
 							type="green"
@@ -153,10 +153,14 @@
 </template>
 
 <script>
+import {
+	useRootStore,
+	useSetupWizardStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
 import { Wizard } from '@/vue/mixins'
-import { mapActions, mapState } from 'vuex'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreModal from '@/vue/components/common/core/modal/Index'
@@ -176,6 +180,8 @@ export default {
 		const { strings } = useWizard()
 
 		return {
+			rootStore         : useRootStore(),
+			setupWizardStore  : useSetupWizardStore(),
 			composableStrings : strings
 		}
 	},
@@ -244,14 +250,9 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'internalOptions' ]),
-		...mapState('wizard', {
-			smartRecommendations : 'smartRecommendations',
-			presetFeatures       : 'features'
-		}),
 		selectedFeaturesNeedsUpsell () {
 			let upsell = false
-			this.presetFeatures.forEach(feature => {
+			this.setupWizardStore.features.forEach(feature => {
 				if (this.needsUpsell(this.features.find(f => f.value === feature))) {
 					upsell = true
 				}
@@ -261,20 +262,18 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'saveConnectToken' ]),
-		...mapActions('wizard', [ 'saveWizard' ]),
 		purchase () {
 			this.modalLoading = true
-			const redirect = `&license-redirect=${btoa(this.$aioseo.urls.aio.wizard)}#/license-key`
+			const redirect = `&license-redirect=${btoa(this.rootStore.aioseo.urls.aio.wizard)}#/license-key`
 			window.open('https://aioseo.com/pricing/?features[]=' + this.getSelectedUpsellFeatures.map(f => f.value).join('&features[]=') + redirect)
-			this.$router.push(this.getNextLink)
+			this.$router.push(this.setupWizardStore.getNextLink)
 		},
 		saveAndContinue () {
 			this.loading = true
-			this.saveWizard('smartRecommendations')
+			this.setupWizardStore.saveWizard('smartRecommendations')
 				.then(() => {
 					if (!this.selectedFeaturesNeedsUpsell) {
-						return this.$router.push(this.getNextLink)
+						return this.$router.push(this.setupWizardStore.getNextLink)
 					}
 
 					this.showModal = true
@@ -282,8 +281,8 @@ export default {
 				})
 		},
 		skipStep () {
-			this.saveWizard()
-			this.$router.push(this.getNextLink)
+			this.setupWizardStore.saveWizard()
+			this.$router.push(this.setupWizardStore.getNextLink)
 		},
 		preventUncheck (event) {
 			event.preventDefault()
@@ -291,7 +290,7 @@ export default {
 		}
 	},
 	mounted () {
-		this.smartRecommendations.accountInfo = this.$aioseo.user.data.data.user_email
+		this.setupWizardStore.smartRecommendations.accountInfo = this.rootStore.aioseo.user.data.data.user_email
 	}
 }
 </script>

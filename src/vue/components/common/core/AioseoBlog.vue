@@ -1,8 +1,8 @@
 <template>
-	<div v-if="$aioseo.rssFeed" class="aioseo-blog">
+	<div v-if="rootStore.aioseo.rssFeed" class="aioseo-blog">
 		<ul class="aioseo-blog-list">
 			<li
-				v-for="(post, index) in $aioseo.rssFeed"
+				v-for="(post, index) in rootStore.aioseo.rssFeed"
 				:key="index"
 				class="aioseo-blog-list-item"
 			>
@@ -24,8 +24,17 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import SvgExternal from '@/vue/components/common/svg/External'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		SvgExternal
 	},

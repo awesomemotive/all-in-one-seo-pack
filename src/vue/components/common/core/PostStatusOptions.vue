@@ -44,11 +44,20 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import BaseHighlightToggle from '@/vue/components/common/base/HighlightToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		BaseHighlightToggle,
 		CoreAlert,
@@ -86,7 +95,7 @@ export default {
 	},
 	computed : {
 		getRegisteredPostStatuses () {
-			return this.registeredPostStatuses || this.$aioseo.postData
+			return this.registeredPostStatuses || this.rootStore.aioseo.postData
 		},
 		postStatuses () {
 			return this.getRegisteredPostStatuses[this.type].filter(postStatus => {

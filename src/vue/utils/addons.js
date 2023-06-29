@@ -1,8 +1,9 @@
+import { useAddonsStore } from '@/vue/stores'
 import { upperFirst } from 'lodash-es'
-import store from '@/vue/store'
 
 const getAddon = slug => {
-	return store.state.addons.length ? store.state.addons.find(item => slug === item.sku) : null
+	const store = useAddonsStore()
+	return store.addons.length ? store.addons.find(item => slug === item.sku) : null
 }
 
 const isActive = slug => {
@@ -53,7 +54,7 @@ const currentPlans = slug => {
 }
 
 const hasMinimumVersion = slug => {
-	const addon = store.state.addons.find(item => slug === item.sku)
+	const addon = getAddon(slug)
 	return addon && addon.hasMinimumVersion
 }
 

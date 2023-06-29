@@ -1,18 +1,24 @@
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
+import license from '@/vue/utils/license'
 
 export const LicenseConditions = {
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
 		shouldShowLite () {
-			return this.isUnlicensed
+			const licenseStore = useLicenseStore()
+			return licenseStore.isUnlicensed
 		}
 	},
 	methods : {
 		shouldShowMain (sectionSlug, feature) {
-			return !this.isUnlicensed && this.$license.hasCoreFeature(this.$aioseo, sectionSlug, feature)
+			const licenseStore = useLicenseStore()
+			return !licenseStore.isUnlicensed && license.hasCoreFeature(sectionSlug, feature)
 		},
 		shouldShowUpgrade (sectionSlug, feature) {
-			return !this.isUnlicensed && !this.$license.hasCoreFeature(this.$aioseo, sectionSlug, feature)
+			const licenseStore = useLicenseStore()
+			return !licenseStore.isUnlicensed && !license.hasCoreFeature(sectionSlug, feature)
 		}
 	}
 }

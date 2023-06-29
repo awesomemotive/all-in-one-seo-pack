@@ -1,16 +1,23 @@
 <template>
 	<posts-table
-		:posts="data?.seoStatistics?.pages?.topPages || defaultPages"
-		:columns="[ 'row', 'post_title', 'seo_score', 'clicks', 'impressions', 'position', 'diffPosition' ]"
+		:posts="searchStatisticsStore.data?.seoStatistics?.pages?.topPages || defaultPages"
+		:columns="[ 'row', 'postTitle', 'seoScore', 'clicks', 'impressions', 'position', 'diffPosition' ]"
 		:show-header="false"
-		:disableSorting="true"
 	/>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import PostsTable from './PostsTable'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		PostsTable
 	},
@@ -20,9 +27,6 @@ export default {
 				rows : []
 			}
 		}
-	},
-	computed : {
-		...mapState('search-statistics', [ 'data' ])
 	}
 }
 </script>

@@ -26,7 +26,7 @@
 							<base-checkbox
 								size="medium"
 								v-model="options.all"
-								:disabled="$aioseo.data.isNetworkAdmin && !site"
+								:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
 							>
 								{{ strings.allSettings }}
 							</base-checkbox>
@@ -42,7 +42,7 @@
 								v-if="!options.all"
 								size="medium"
 								v-model="options[setting.value]"
-								:disabled="$aioseo.data.isNetworkAdmin && !site"
+								:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
 							>
 								{{ setting.label }}
 							</base-checkbox>
@@ -112,7 +112,11 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {
+	useRootStore,
+	useToolsStore
+} from '@/vue/stores'
+
 import { ToolsSettings } from '@/vue/mixins'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
@@ -122,6 +126,12 @@ import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgClose from '@/vue/components/common/svg/Close'
 export default {
+	setup () {
+		return {
+			rootStore  : useRootStore(),
+			toolsStore : useToolsStore()
+		}
+	},
 	components : {
 		BaseCheckbox,
 		CoreAlert,
@@ -165,7 +175,7 @@ export default {
 	},
 	computed : {
 		canReset () {
-			if (this.$aioseo.data.isNetworkAdmin && !this.site) {
+			if (this.rootStore.aioseo.data.isNetworkAdmin && !this.site) {
 				return false
 			}
 
@@ -178,7 +188,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'resetSettings' ]),
 		processResetSettings () {
 			const payload = []
 			if (this.options.all) {
@@ -196,7 +205,7 @@ export default {
 			}
 
 			this.loading = true
-			this.resetSettings({
+			this.toolsStore.resetSettings({
 				payload,
 				siteId : this.site ? this.site.blog_id : null
 			})

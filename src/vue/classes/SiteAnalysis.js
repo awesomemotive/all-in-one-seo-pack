@@ -1,8 +1,11 @@
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import tags from '@/vue/utils/tags'
 import { __, sprintf } from '@wordpress/i18n'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
-
 class SiteAnalysis {
 	personalize = false
 
@@ -69,13 +72,14 @@ class SiteAnalysis {
 	}
 
 	titleBody = result => {
+		const rootStore = useRootStore()
 		const body = {
 			code       : 'title-missing' === result.error ? null : result.value,
 			message    : __('Ensure your page\'s title includes your target keywords, and design it to encourage users to click.', td) + '<br><br>' + __('Writing compelling titles is both a science and an art. There are automated tools that can analyze your title against known metrics for readability and click-worthiness. You also need to understand the psychology of your target audience.', td),
 			buttonText : __('Edit Your Page Title', td),
-			buttonLink : window.aioseo.data.staticHomePage
-				? `${window.aioseo.urls.staticHomePage}&aioseo-scroll=aioseo-post-settings-post-title-row&aioseo-highlight=aioseo-post-settings-post-title-row`
-				: `${window.aioseo.urls.aio.searchAppearance}&aioseo-scroll=aioseo-home-page-site-title&aioseo-highlight=aioseo-home-page-site-title`
+			buttonLink : rootStore.aioseo.data.staticHomePage
+				? `${rootStore.aioseo.urls.staticHomePage}&aioseo-scroll=aioseo-post-settings-post-title-row&aioseo-highlight=aioseo-post-settings-post-title-row`
+				: `${rootStore.aioseo.urls.aio.searchAppearance}&aioseo-scroll=aioseo-home-page-site-title&aioseo-highlight=aioseo-home-page-site-title`
 		}
 
 		return body
@@ -126,13 +130,14 @@ class SiteAnalysis {
 	}
 
 	descriptionBody = result => {
+		const rootStore = useRootStore()
 		const body = {
 			code       : 'description-missing' === result.error ? null : result.value,
 			message    : __('Write a meta description for your page. Use your target keywords (in a natural way) and write with human readers in mind. Summarize the content - describe the topics your article discusses.', td) + '<br><br>' + __('The description should stimulate reader interest and get them to click on the article. Think of it as a mini-advertisement for your content.', td),
 			buttonText : __('Edit Your Meta Description', td),
-			buttonLink : window.aioseo.data.staticHomePage
-				? `${window.aioseo.urls.staticHomePage}&aioseo-scroll=aioseo-post-settings-meta-description-row&aioseo-highlight=aioseo-post-settings-meta-description-row`
-				: `${window.aioseo.urls.aio.searchAppearance}&aioseo-scroll=aioseo-home-page-meta-description&aioseo-highlight=aioseo-home-page-meta-description`
+			buttonLink : rootStore.aioseo.data.staticHomePage
+				? `${rootStore.aioseo.urls.staticHomePage}&aioseo-scroll=aioseo-post-settings-meta-description-row&aioseo-highlight=aioseo-post-settings-meta-description-row`
+				: `${rootStore.aioseo.urls.aio.searchAppearance}&aioseo-scroll=aioseo-home-page-meta-description&aioseo-highlight=aioseo-home-page-meta-description`
 		}
 
 		return body
@@ -155,11 +160,12 @@ class SiteAnalysis {
 	}
 
 	h1TagsBody = result => {
+		const rootStore = useRootStore()
 		const body = {
 			code       : 'h1-missing' === result.error ? null : result.value.join('<br>'),
 			message    : __('WordPress sites usually insert the page or post title as an H1 tag (although custom themes can change this behavior).', td) + '<br><br>' + __('Ensure your most important keywords appear in the H1 tag - don\'t force it, use them in a natural way that makes sense to human readers.', td) + '<br><br>' + __('Because your headline plays a large role in reader engagement, it\'s worth spending extra time perfecting it. Many top copywriters spend hours getting their headlines just right - sometimes they spend longer on the headline than the rest of the article!', td) + '<br><br>' + __('A good headline stimulates reader interest and offers a compelling reason to read your content. It promises a believable benefit.', td) + '<br><br>' + __('You should write as if your readers are selfish people with short attention spans (because that describes a large percentage of the world\'s population). Readers visit websites for selfish reasons - they\'re not there to make you happy.', td),
 			buttonText : __('Edit Your Page', td),
-			buttonLink : window.aioseo.data.staticHomePage ? window.aioseo.urls.staticHomePage : null
+			buttonLink : rootStore.aioseo.data.staticHomePage ? rootStore.aioseo.urls.staticHomePage : null
 		}
 
 		return body
@@ -178,11 +184,12 @@ class SiteAnalysis {
 	}
 
 	h2TagsBody = result => {
+		const rootStore = useRootStore()
 		const body = {
 			code       : 'h2-missing' === result.error ? null : result.value.join('<br>'),
 			message    : __('Make sure you have a good balance of H2 tags to plain text in your content. Break the content down into logical sections, and use headings to introduce each new topic.', td) + '<br><br>' + __('Also, try to include synonyms and relevant terminology in H2 tag text. Search engines are pretty smart - they know which words usually occur together in each niche.', td) + '<br><br>' + __('It should be easy to include your main and supporting keywords in the H2 tags - after all, these keywords describe your content! If it\'s hard to work the keywords into your subheadings, it could be a sign that the keywords aren\'t closely related to your content.', td) + '<br><br>' + __('Don\'t try to force keywords into sub-headings if they feel unnatural. It will send the wrong message to your readers, possibly driving them away.', td),
 			buttonText : __('Edit Your Page', td),
-			buttonLink : window.aioseo.data.staticHomePage ? window.aioseo.urls.staticHomePage : null
+			buttonLink : rootStore.aioseo.data.staticHomePage ? rootStore.aioseo.urls.staticHomePage : null
 		}
 
 		return body
@@ -201,11 +208,12 @@ class SiteAnalysis {
 	}
 
 	noImgAltAttsBody = result => {
+		const rootStore = useRootStore()
 		const body = {
 			codeAlt    : 'image-missing-alt' !== result.error ? null : result.value.map(tag => tags.decodeHTMLEntities(tag)).join('\n'),
 			message    : __('Make sure every image has an alt tag, and add useful descriptions to each image. Add your keywords or synonyms - but do it in a natural way.', td),
 			buttonText : __('Edit Your Page', td),
-			buttonLink : window.aioseo.data.staticHomePage ? window.aioseo.urls.staticHomePage : null
+			buttonLink : rootStore.aioseo.data.staticHomePage ? rootStore.aioseo.urls.staticHomePage : null
 		}
 
 		return body
@@ -230,11 +238,12 @@ class SiteAnalysis {
 	}
 
 	linksRatioBody = result => {
+		const rootStore = useRootStore()
 		const body = {
 			code       : __('Internal:', td) + ' ' + result.value.internal + '<br>' + __('External:', td) + ' ' + result.value.external,
 			message    : __('Add links to internal and external resources that are useful for your readers. For Internal links, make sure the links are highly relevant to the subject you\'re writing about. For external links, make sure you link to high-quality sites - Google penalizes pages that link to "spammy" sites (ones that break the Google webmaster guidelines).', td) + '<br><br>' + __('It\'s impossible to cover every aspect of a subject on a single page, but your readers may be fascinated by some detail you barely touch on. If you link to a resource where they can learn more, they\'ll be grateful. What\'s more, you\'ll be rewarded with higher rankings!', td),
 			buttonText : __('Edit Your Page', td),
-			buttonLink : window.aioseo.data.staticHomePage ? window.aioseo.urls.staticHomePage : null
+			buttonLink : rootStore.aioseo.data.staticHomePage ? rootStore.aioseo.urls.staticHomePage : null
 		}
 
 		return body
@@ -253,12 +262,13 @@ class SiteAnalysis {
 	}
 
 	canonicalTagBody = result => {
+		const rootStore = useRootStore()
 		const body = {
 			code       : result.value,
 			message    : __('Every page on your site should have a <link> tag with a \'rel="canonical"\' attribute. The link tag should go inside the page\'s head tag, and it should contain the page\'s "correct" URL.', td) + '<br><br>' + __('If you\'ve republished an article from another source (such as another site or a different section of your own site) then you need to pick which URL is the "correct" one and use that!', td),
 			buttonText : __('Edit Your Page', td),
-			buttonLink : window.aioseo.data.staticHomePage
-				? `${window.aioseo.urls.staticHomePage}&aioseo-tab=advanced&aioseo-scroll=aioseo-post-canonical-url&aioseo-highlight=aioseo-post-canonical-url`
+			buttonLink : rootStore.aioseo.data.staticHomePage
+				? `${rootStore.aioseo.urls.staticHomePage}&aioseo-tab=advanced&aioseo-scroll=aioseo-post-canonical-url&aioseo-highlight=aioseo-post-canonical-url`
 				: null
 		}
 
@@ -278,11 +288,12 @@ class SiteAnalysis {
 	}
 
 	noindexBody = () => {
+		const rootStore = useRootStore()
 		const body = {
 			message    : __('Only ever use noindex meta tag or header on pages you want to keep out of the reach of search engines!', td),
 			buttonText : __('Edit Your Page', td),
-			buttonLink : window.aioseo.data.staticHomePage
-				? `${window.aioseo.urls.staticHomePage}&aioseo-tab=advanced&aioseo-scroll=aioseo-post-robots-setting&aioseo-highlight=aioseo-post-robots-setting`
+			buttonLink : rootStore.aioseo.data.staticHomePage
+				? `${rootStore.aioseo.urls.staticHomePage}&aioseo-tab=advanced&aioseo-scroll=aioseo-post-robots-setting&aioseo-highlight=aioseo-post-robots-setting`
 				: null
 		}
 
@@ -302,10 +313,11 @@ class SiteAnalysis {
 	}
 
 	wwwCanonicalizationBody = () => {
+		const rootStore = useRootStore()
 		const body = {
 			message    : __('Decide whether you want your site\'s URLs to include a "www", or if you prefer a plain domain name. There are marketing pros and cons for each choice, but neither one is better or worse for SEO purposes - as long as you\'re consistent.', td) + '<br><br>' + __('You should use HTTP redirections (301 permanant redirects) to pass PageRank from the "wrong" URLs to the standard (canonical) ones. That way, your content will still benefit from backlinks if someone makes a mistake and uses the wrong URL.', td),
 			buttonText : __('Edit Your Page', td),
-			buttonLink : window.aioseo.data.staticHomePage ? window.aioseo.urls.staticHomePage : null
+			buttonLink : rootStore.aioseo.data.staticHomePage ? rootStore.aioseo.urls.staticHomePage : null
 		}
 
 		return body
@@ -332,6 +344,7 @@ class SiteAnalysis {
 	}
 
 	robotsRulesBody = result => {
+		const rootStore = useRootStore()
 		const body = {
 			code    : 'no-robots' === result.error ? null : result.value,
 			message : __('Make sure that you only block parts you don\'t want to be indexed.', td) +
@@ -344,7 +357,7 @@ class SiteAnalysis {
 					import.meta.env.VITE_SHORT_NAME
 				),
 			buttonText : __('Edit Your Page', td),
-			buttonLink : window.aioseo.data.staticHomePage ? window.aioseo.urls.staticHomePage : null
+			buttonLink : rootStore.aioseo.data.staticHomePage ? rootStore.aioseo.urls.staticHomePage : null
 		}
 
 		return body
@@ -361,6 +374,7 @@ class SiteAnalysis {
 	}
 
 	openGraphBody = result => {
+		const rootStore = useRootStore()
 		const body = {
 			code    : result.value ? result.value.join('<br>') : null,
 			message : __('Insert a customized Open Graph meta tag for each important page on your site. The standard is very well documented - you can learn more from Facebook\'s developer pages.', td) +
@@ -371,9 +385,9 @@ class SiteAnalysis {
 					import.meta.env.VITE_SHORT_NAME
 				),
 			buttonText : __('Edit Your Page', td),
-			buttonLink : window.aioseo.data.staticHomePage
-				? `${window.aioseo.urls.staticHomePage}&aioseo-tab=social&social-tab=facebook&aioseo-scroll=aioseo-post-settings-facebook&aioseo-highlight=aioseo-post-settings-facebook`
-				: window.aioseo.urls.aio.socialNetworks + '#/facebook'
+			buttonLink : rootStore.aioseo.data.staticHomePage
+				? `${rootStore.aioseo.urls.staticHomePage}&aioseo-tab=social&social-tab=facebook&aioseo-scroll=aioseo-post-settings-facebook&aioseo-highlight=aioseo-post-settings-facebook`
+				: rootStore.aioseo.urls.aio.socialNetworks + '#/facebook'
 		}
 
 		return body
@@ -392,6 +406,7 @@ class SiteAnalysis {
 	}
 
 	schemaBody = () => {
+		const rootStore = useRootStore()
 		const body = {
 			message : sprintf(
 				// Translators: 1 - The Plugin short name ("AIOSEO").
@@ -399,8 +414,8 @@ class SiteAnalysis {
 				import.meta.env.VITE_SHORT_NAME
 			),
 			buttonText : __('Edit Your Page', td),
-			buttonLink : window.aioseo.data.staticHomePage
-				? `${window.aioseo.urls.staticHomePage}&aioseo-tab=schema&aioseo-scroll=aioseo-post-schema&aioseo-highlight=aioseo-post-schema`
+			buttonLink : rootStore.aioseo.data.staticHomePage
+				? `${rootStore.aioseo.urls.staticHomePage}&aioseo-tab=schema&aioseo-scroll=aioseo-post-schema&aioseo-highlight=aioseo-post-schema`
 				: null
 		}
 

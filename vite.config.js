@@ -42,7 +42,8 @@ const getPages = () => {
 		settings            : './src/vue/pages/settings/main.js',
 		sitemaps            : './src/vue/pages/sitemaps/main.js',
 		'social-networks'   : './src/vue/pages/social-networks/main.js',
-		tools               : './src/vue/pages/tools/main.js'
+		tools               : './src/vue/pages/tools/main.js',
+		'seo-revisions'     : './src/vue/pages/seo-revisions/main.js'
 	}
 }
 
@@ -195,8 +196,7 @@ export default ({ mode }) => {
 				'vue-scrollto'
 			],
 			exclude : [
-				'@/vue/plugins/constants',
-				'@/vue/store'
+				'@/vue/plugins/constants'
 			]
 		},
 		server : {
@@ -204,7 +204,7 @@ export default ({ mode }) => {
 			cors       : true,
 			strictPort : true,
 			port       : process.env.VITE_AIOSEO_DEV_PORT,
-			host       : process.env.VITE_AIOSEO_DOMAIN,
+			host       : 'localhost' === process.env.VITE_AIOSEO_DOMAIN ? '0.0.0.0' : process.env.VITE_AIOSEO_DOMAIN,
 			hmr        : {
 				port : process.env.VITE_AIOSEO_DEV_PORT,
 				host : process.env.VITE_AIOSEO_DOMAIN
@@ -282,6 +282,7 @@ const getHttps = () => {
 let autotrackFilename
 const getPlugins = version => {
 	const plugins = [
+		parseEnvironmentVariables(),
 		// eslintPlugin(),
 		{
 			name : 'getAutotrackHashedName',
@@ -356,4 +357,31 @@ const getTextDomains = version => {
 	}
 
 	return textDomains
+}
+
+const parseEnvironmentVariables = () => {
+	let config
+
+	return {
+		name : 'parse-environment-variables',
+		configResolved (resolvedConfig) {
+			config = resolvedConfig
+			const env = config.env
+
+			config.env = Object.keys(env).reduce((a, b) => {
+				let parsed = config.env[b]
+
+				try {
+					parsed = JSON.parse(config.env[b])
+				} catch {}
+
+				return ({
+					...a,
+					[b] : parsed
+				})
+			}, {})
+
+			return config
+		}
+	}
 }

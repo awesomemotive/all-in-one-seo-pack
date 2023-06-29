@@ -13,10 +13,18 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {
+	useSettingsStore
+} from '@/vue/stores'
+
 import SvgAioseoLogoGear from '@/vue/components/common/svg/aioseo/LogoGear'
 import SvgClose from '@/vue/components/common/svg/Close'
 export default {
+	setup () {
+		return {
+			settingsStore : useSettingsStore()
+		}
+	},
 	components : {
 		SvgAioseoLogoGear,
 		SvgClose
@@ -56,10 +64,9 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'hideUpgradeBar' ]),
 		processHideUpgradeBar () {
 			document.body.classList.remove('aioseo-has-bar')
-			this.hideUpgradeBar()
+			this.settingsStore.hideUpgradeBar()
 		}
 	},
 	mounted () {

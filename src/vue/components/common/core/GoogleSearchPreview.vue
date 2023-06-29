@@ -19,12 +19,17 @@
 </template>
 
 <script>
-import { getCurrentInstance } from 'vue'
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import { truncate } from '@/vue/utils/html'
 
 export default {
-	methods : {
-		truncate
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
 	},
 	props : {
 		title : {
@@ -38,12 +43,14 @@ export default {
 		domain : {
 			type : String,
 			default () {
-				const app = getCurrentInstance()
-
-				return app.appContext.app.$aioseo.urls.mainSiteUrl
+				const rootStore = useRootStore()
+				return rootStore.aioseo.urls.mainSiteUrl
 			}
 		},
 		separator : String
+	},
+	methods : {
+		truncate
 	}
 }
 </script>

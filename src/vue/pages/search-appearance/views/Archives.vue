@@ -19,7 +19,7 @@
 				<core-main-tabs
 					:tabs="tabs"
 					:showSaveButton="false"
-					:active="settings.internalTabs[`${archive.name}Archives`]"
+					:active="settingsStore.settings.internalTabs[`${archive.name}Archives`]"
 					internal
 					@changed="value => processChangeTab(archive.name, value)"
 				/>
@@ -27,9 +27,9 @@
 
 			<transition name="route-fade" mode="out-in">
 				<component
-					:is="settings.internalTabs[`${archive.name}Archives`]"
+					:is="settingsStore.settings.internalTabs[`${archive.name}Archives`]"
 					:object="archive"
-					:separator="options.searchAppearance.global.separator"
+					:separator="optionsStore.options.searchAppearance.global.separator"
 					:options="getOptions(archive)"
 					type="archives"
 					:show-bulk="false"
@@ -42,12 +42,24 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import Advanced from './partials/Advanced'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import TitleDescription from './partials/TitleDescription'
 export default {
+	setup () {
+		return {
+			optionsStore  : useOptionsStore(),
+			rootStore     : useRootStore(),
+			settingsStore : useSettingsStore()
+		}
+	},
 	components : {
 		Advanced,
 		CoreCard,
@@ -94,9 +106,8 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options', 'dynamicOptions', 'settings' ]),
 		getArchives () {
-			return this.archives.concat(this.$aioseo.postData.archives.map(a => ({
+			return this.archives.concat(this.rootStore.aioseo.postData.archives.map(a => ({
 				label    : `${a.label} Archives`,
 				name     : `${a.name}Archive`,
 				icon     : 'dashicons-category',
@@ -106,14 +117,13 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'changeTab' ]),
 		processChangeTab (archive, value) {
 			if (this.internalDebounce) {
 				return
 			}
 
 			this.internalDebounce = true
-			this.changeTab({ slug: `${archive}Archives`, value })
+			this.settingsStore.changeTab({ slug: `${archive}Archives`, value })
 
 			// Debouncing a little here to save extra API calls.
 			setTimeout(() => {
@@ -122,10 +132,10 @@ export default {
 		},
 		getOptions (archive) {
 			if (archive.dynamic) {
-				return this.dynamicOptions.searchAppearance.archives[archive.name.replace('Archive', '')]
+				return this.optionsStore.dynamicOptions.searchAppearance.archives[archive.name.replace('Archive', '')]
 			}
 
-			return this.options.searchAppearance.archives[archive.name]
+			return this.optionsStore.options.searchAppearance.archives[archive.name]
 		}
 	}
 }

@@ -188,11 +188,11 @@ body[class*="page_aioseo"] {
 		transition: all 0.2s;
 	}
 
-	.route-fade-enter, .route-fade-leave-active {
+	.route-fade-enter-from, .route-fade-leave-active {
 		opacity: 0;
 	}
 
-	.route-fade-enter {
+	.route-fade-enter-from {
 		transform: translateX(30px);
 	}
 

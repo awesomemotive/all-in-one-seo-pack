@@ -156,4 +156,22 @@ trait Arrays {
 
 		return $array1;
 	}
+
+	/**
+	 * Sorts the keys of an array alphabetically.
+	 * The array is passed by reference, so it's not returned the same as in `ksort()`.
+	 *
+	 * @since {next}
+	 *
+	 * @param array $array The array to sort, passed by reference.
+	 */
+	public function arrayRecursiveKsort( &$array ) {
+		foreach ( $array as &$value ) {
+			if ( is_array( $value ) ) {
+				$this->arrayRecursiveKsort( $value );
+			}
+		}
+
+		ksort( $array );
+	}
 }

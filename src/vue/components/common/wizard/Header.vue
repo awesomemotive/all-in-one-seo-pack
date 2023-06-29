@@ -11,20 +11,27 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+	useSetupWizardStore
+} from '@/vue/stores'
+
 import SvgAioseoLogo from '@/vue/components/common/svg/aioseo/Logo'
 import WizardProgress from '@/vue/components/common/wizard/Progress'
 export default {
+	setup () {
+		return {
+			setupWizardStore : useSetupWizardStore()
+		}
+	},
 	components : {
 		SvgAioseoLogo,
 		WizardProgress
 	},
 	computed : {
-		...mapGetters('wizard', [ 'getCurrentStageCount', 'getTotalStageCount' ]),
 		steps () {
 			const steps = []
-			for (let i = 0; i < this.getTotalStageCount; i++) {
-				if (i < this.getCurrentStageCount) {
+			for (let i = 0; i < this.setupWizardStore.getTotalStageCount; i++) {
+				if (i < this.setupWizardStore.getCurrentStageCount) {
 					steps.push({ active: true })
 				} else {
 					steps.push({ active: false })

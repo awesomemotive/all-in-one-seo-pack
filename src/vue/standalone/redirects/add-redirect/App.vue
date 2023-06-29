@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="aioseo-redirects-add-redirect-standalone"
-		v-if="$addons.isActive('aioseo-redirects')"
+		v-if="addons.isActive('aioseo-redirects')"
 	>
 		<core-modal-portal
 			v-if="display"
@@ -28,18 +28,29 @@
 </template>
 
 <script>
-import { getOptions } from '@/vue/utils/options'
-import { merge, isEmpty } from 'lodash-es'
+import {
+	useRootStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
+import http from '@/vue/utils/http'
+import { isEmpty } from 'lodash-es'
 import CoreModalPortal from '@/vue/components/common/core/modal/Portal'
 import CoreAddRedirection from '@/vue/components/common/core/add-redirection/Index'
 
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		CoreModalPortal,
 		CoreAddRedirection
 	},
 	data () {
 		return {
+			addons,
 			urls    : [],
 			display : false,
 			target  : null,
@@ -49,7 +60,7 @@ export default {
 				redirectAdded : this.$t.sprintf(
 					// Translators: 1 - A internal link for Redirects, 2 - Open strong tag, 3 - Close strong tag.
 					this.$t.__('%2$sYour redirect was added and you may edit it <a href="%1$s" target="_blank">here</a>.%3$s', this.$td),
-					this.$aioseo.urls.aio.redirects,
+					this.rootStore.aioseo.urls.aio.redirects,
 					'<strong>',
 					'</strong>'
 				)
@@ -85,7 +96,7 @@ export default {
 		},
 		loadRedirect (manualUrlsHash) {
 			this.loading = true
-			this.$http.get(this.$links.restUrl('redirects/manual-redirects/' + manualUrlsHash))
+			http.get(this.$links.restUrl('redirects/manual-redirects/' + manualUrlsHash))
 				.then(response => {
 					this.urls = response.body.redirects
 					this.loading = false
@@ -144,17 +155,10 @@ export default {
 		}
 	},
 	async created () {
-		const {
-			addons,
-			redirects
-		} = await getOptions(this.$.appContext.app)
-		this.$store.state.addons = merge([ ...this.$store.state.addons ], [ ...addons ])
-		this.$store.state.redirects = merge({ ...this.$store.state.redirects }, { ...redirects })
-
 		this.preloadRedirect()
 		this.watchClicks()
 
-		this.$bus.$on('wp-core-notice-created', () => {
+		window.aioseoBus.$on('wp-core-notice-created', () => {
 			this.preloadRedirect()
 		})
 	}

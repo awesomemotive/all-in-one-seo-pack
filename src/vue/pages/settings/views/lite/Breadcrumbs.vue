@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import ContentTypesLite from '../partials/Breadcrumbs/ContentTypesLite'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -115,9 +114,6 @@ export default {
 				}
 			]
 		}
-	},
-	computed : {
-		...mapState([ 'options' ])
 	},
 	methods : {}
 }

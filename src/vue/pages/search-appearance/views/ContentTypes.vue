@@ -31,7 +31,7 @@
 				<core-main-tabs
 					:tabs="tabs"
 					:showSaveButton="false"
-					:active="settings.internalTabs[`${postType.name}SA`]"
+					:active="settingsStore.settings.internalTabs[`${postType.name}SA`]"
 					internal
 					@changed="value => processChangeTab(postType.name, value)"
 				/>
@@ -39,10 +39,10 @@
 
 			<transition name="route-fade" mode="out-in">
 				<component
-					:is="settings.internalTabs[`${postType.name}SA`]"
+					:is="settingsStore.settings.internalTabs[`${postType.name}SA`]"
 					:object="postType"
-					:separator="options.searchAppearance.global.separator"
-					:options="dynamicOptions.searchAppearance.postTypes[postType.name]"
+					:separator="optionsStore.options.searchAppearance.global.separator"
+					:options="optionsStore.dynamicOptions.searchAppearance.postTypes[postType.name]"
 					type="postTypes"
 				/>
 			</transition>
@@ -51,7 +51,12 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import Advanced from './partials/Advanced'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
@@ -61,6 +66,13 @@ import Schema from './partials/Schema'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import TitleDescription from './partials/TitleDescription'
 export default {
+	setup () {
+		return {
+			optionsStore  : useOptionsStore(),
+			rootStore     : useRootStore(),
+			settingsStore : useSettingsStore()
+		}
+	},
 	components : {
 		Advanced,
 		CoreCard,
@@ -107,21 +119,19 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options', 'dynamicOptions', 'settings' ]),
 		postTypes () {
-			return this.$aioseo.postData.postTypes
+			return this.rootStore.aioseo.postData.postTypes
 				.filter(pt => 'attachment' !== pt.name)
 		}
 	},
 	methods : {
-		...mapActions([ 'changeTab' ]),
 		processChangeTab (postType, value) {
 			if (this.internalDebounce) {
 				return
 			}
 
 			this.internalDebounce = true
-			this.changeTab({ slug: `${postType}SA`, value })
+			this.settingsStore.changeTab({ slug: `${postType}SA`, value })
 
 			// Debouncing a little here to save extra API calls.
 			setTimeout(() => {

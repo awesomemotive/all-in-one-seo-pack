@@ -59,7 +59,7 @@
 			</template>
 
 			<template #clicks="{ row }">
-				{{ $numbers.compactNumber(row.clicks) }}
+				{{ numbers.compactNumber(row.clicks) }}
 			</template>
 
 			<template #ctr="{ row }">
@@ -67,7 +67,7 @@
 			</template>
 
 			<template #impressions="{ row }">
-				{{ $numbers.compactNumber(row.impressions) }}
+				{{ numbers.compactNumber(row.impressions) }}
 			</template>
 
 			<template #position="{ row }">
@@ -83,12 +83,21 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
+import numbers from '@/vue/utils/numbers'
 import PostTypesMixin from '@/vue/mixins/PostTypes.js'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Statistic from './Statistic'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreLoader,
 		CoreWpTable,
@@ -108,11 +117,11 @@ export default {
 	},
 	data () {
 		return {
+			numbers,
 			loading : false
 		}
 	},
 	computed : {
-		...mapState('search-statistics', [ 'data' ]),
 		postColumns () {
 			return [
 				{
@@ -144,17 +153,16 @@ export default {
 		},
 		keywords () {
 			if (this.postDetail) {
-				return this.data.postDetail.keywords.paginated.rows
+				return this.searchStatisticsStore.data.postDetail.keywords.paginated.rows
 			}
 
-			return this.data.keywords.paginated.rows
+			return this.searchStatisticsStore.data.keywords.paginated.rows
 		},
 		row () {
 			return this.keywords[this.index]
 		}
 	},
 	methods : {
-		...mapActions('search-statistics', [ 'getPagesByKeywords' ]),
 		openPostDetail (post) {
 			this.$router.push({
 				path  : '/post-detail',
@@ -171,7 +179,7 @@ export default {
 		}
 
 		this.loading = true
-		this.getPagesByKeywords([ this.row.keyword ]).then(data => {
+		this.searchStatisticsStore.getPagesByKeywords([ this.row.keyword ]).then(data => {
 			this.loading = false
 
 			const pages = data[this.row.keyword]
@@ -180,9 +188,9 @@ export default {
 			}
 
 			if (this.postDetail) {
-				this.data.postDetail.keywords.paginated.rows[this.index].pages = Object.values(pages).slice(0, 10)
+				this.searchStatisticsStore.data.postDetail.keywords.paginated.rows[this.index].pages = Object.values(pages).slice(0, 10)
 			} else {
-				this.data.keywords.paginated.rows[this.index].pages = Object.values(pages).slice(0, 10)
+				this.searchStatisticsStore.data.keywords.paginated.rows[this.index].pages = Object.values(pages).slice(0, 10)
 			}
 		})
 	}

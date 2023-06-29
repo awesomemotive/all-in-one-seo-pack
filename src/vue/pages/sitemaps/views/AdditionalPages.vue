@@ -1,13 +1,12 @@
-
 <template>
 	<core-card
-		v-if="options.sitemap.general.enable"
+		v-if="optionsStore.options.sitemap.general.enable"
 		slug="additionalPages"
-		:toggles="options.sitemap.general.additionalPages.enable"
+		:toggles="optionsStore.options.sitemap.general.additionalPages.enable"
 	>
 		<template #header>
 			<base-toggle
-				v-model="options.sitemap.general.additionalPages.enable"
+				v-model="optionsStore.options.sitemap.general.additionalPages.enable"
 			/>
 
 			<span>{{ strings.additionalPages }}</span>
@@ -30,7 +29,7 @@
 				:id="tableId"
 				:bulk-options="bulkOptions"
 				:columns="columns"
-				:initial-items-per-page="$aioseo.settings.tablePagination.sitemapAdditionalPages"
+				:initial-items-per-page="settingsStore.settings.tablePagination.sitemapAdditionalPages"
 				:initial-page-number="pageNumber"
 				:key="wpTableKey"
 				:loading="wpTableLoading"
@@ -151,7 +150,12 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import { WpTable } from '@/vue/mixins'
 import AddAdditionalPage from './partials/AddAdditionalPage'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
@@ -161,6 +165,13 @@ import CoreModal from '@/vue/components/common/core/modal/Index'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 
 export default {
+	setup () {
+		return {
+			optionsStore  : useOptionsStore(),
+			rootStore     : useRootStore(),
+			settingsStore : useSettingsStore()
+		}
+	},
 	mixins     : [ WpTable ],
 	components : {
 		AddAdditionalPage,
@@ -187,21 +198,9 @@ export default {
 				{ label: this.$t.__('Delete', this.$td), value: 'delete' }
 			],
 			strings : {
-				placeholder : this.$t.sprintf(
-					// Translators: 1 - An example URL (e.g. https://aioseo.com/example).
-					this.$t.__('Enter a page URL, e.g. %1$s', this.$td),
-					`${this.$aioseo.urls.home}/new-page`
-				),
-				pageUrl                : this.$t.__('Page URL', this.$td),
-				priority               : this.$t.__('Priority', this.$td),
-				frequency              : this.$t.__('Frequency', this.$td),
-				lastModified           : this.$t.__('Last Modified', this.$td),
 				searchUrls             : this.$t.__('Search URLs', this.$td),
 				edit                   : this.$t.__('Edit', this.$td),
 				delete                 : this.$t.__('Delete', this.$td),
-				addPage                : this.$t.__('Add Page', this.$td),
-				importFromCSV          : this.$t.__('Import from CSV', this.$td),
-				always                 : this.$t.__('always', this.$td),
 				additionalPages        : this.$t.__('Additional Pages', this.$td),
 				additionalPagesTooltip : this.$t.__('You can use this section to add any URLs to your sitemap which aren\'t a part of your WordPress installation. For example, if you have a contact form that you would like to be included on your sitemap you can enter the information manually.', this.$td),
 				areYouSureDeleteLink   : this.$t.__('Are you sure you want to delete this page?', this.$td),
@@ -215,10 +214,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options', 'additionalPages' ]),
-		...mapState({
-			pages : state => state.options.sitemap.general.additionalPages.pages
-		}),
 		currentPages () { return this.searchResults || this.getParsedPages() },
 		rows () {
 			const rows  = this.currentPages.map(page => ({
@@ -278,7 +273,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapMutations([ 'updateAdditionalPages' ]),
 		// Placeholder method.
 		fetchData () {
 			return Promise.resolve()
@@ -331,7 +325,8 @@ export default {
 			this.getParsedPages().forEach((r) => {
 				if (r.url !== url) { pages.push(JSON.stringify(r)) }
 			})
-			this.updateAdditionalPages(pages)
+
+			this.optionsStore.options.sitemap.general.additionalPages.pages = pages
 
 			if (this.searchResults) this.processSearch()
 		},
@@ -343,9 +338,7 @@ export default {
 			this.editedPage = page
 		},
 		processPageAddAndUpdate () {
-			if (this.searchTerm) {
-				this.processSearch(this.searchTerm)
-			}
+			this.processSearch(this.searchTerm || '')
 		},
 		rowPage (index) {
 			return this.searchResults ? this.searchResults[this.getPaginatedIndex(index)]  : this.getParsedPages()[this.getPaginatedIndex(index)]
@@ -354,7 +347,7 @@ export default {
 			return (this.pageNumber - 1) * this.resultsPerPage + index
 		},
 		getParsedPages () {
-			return this.pages.map(page => JSON.parse(page))
+			return this.optionsStore.options.sitemap.general.additionalPages.pages.map(page => JSON.parse(page))
 		}
 	}
 }

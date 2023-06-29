@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<redirects
-			v-if="shouldShowMain || isUnlicensed"
+			v-if="shouldShowMain || licenseStore.isUnlicensed"
 			:redirects="redirects"
 		/>
 
@@ -14,30 +14,41 @@
 		/>
 
 		<upgrade
-			v-if="$addons.requiresUpgrade(addonSlug)"
+			v-if="addons.requiresUpgrade(addonSlug)"
 		/>
 	</div>
 </template>
 
 <script>
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
+import { AddonConditions } from '@/vue/mixins'
 import Activate from './redirects/Activate'
 import Redirects from './redirects/Redirects'
 import Update from './redirects/Update'
 import Upgrade from './redirects/Upgrade'
-import { AddonConditions } from '@/vue/mixins'
 export default {
-	mixins : [ AddonConditions ],
-	props  : {
-		redirects : Object
+	setup () {
+		return {
+			licenseStore : useLicenseStore()
+		}
 	},
+	mixins     : [ AddonConditions ],
 	components : {
 		Activate,
 		Redirects,
 		Update,
 		Upgrade
 	},
+	props : {
+		redirects : Object
+	},
 	data () {
 		return {
+			addons,
 			addonSlug : 'aioseo-redirects'
 		}
 	}

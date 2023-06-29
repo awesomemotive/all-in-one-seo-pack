@@ -1,4 +1,7 @@
-import store from '@/vue/store'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import { maybeUpdatePost } from '@/vue/plugins/tru-seo/components/helpers'
 
 export const watchBlockEditor = () => {
@@ -13,7 +16,9 @@ export const watchBlockEditor = () => {
 		const isSavingPost     = window.wp.data.select('core/editor').isSavingPost()
 		const isAutosavingPost = window.wp.data.select('core/editor').isAutosavingPost()
 		if (isSavingPost && !isAutosavingPost) {
-			store.commit('isDirty', false)
+			const postEditorStore   = usePostEditorStore()
+			postEditorStore.isDirty = false
+
 			maybeUpdatePost()
 		}
 	})

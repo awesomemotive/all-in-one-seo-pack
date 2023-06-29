@@ -1,12 +1,15 @@
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
 import { RequiresUpdate as RequiresUpdateMiddleware } from '@/vue/router/middleware'
-import { mapGetters } from 'vuex'
+
 export const RequiresUpdate = {
-	computed : {
-		...mapGetters([ 'isUnlicensed' ])
-	},
 	methods : {
 		getExcludedUpdateTabs (addon) {
-			if (!this.isUnlicensed && this.$addons.hasMinimumVersion(addon) && !this.$addons.requiresUpgrade(addon)) {
+			const licenseStore = useLicenseStore()
+			if (!licenseStore.isUnlicensed && addons.hasMinimumVersion(addon) && !addons.requiresUpgrade(addon)) {
 				return []
 			}
 

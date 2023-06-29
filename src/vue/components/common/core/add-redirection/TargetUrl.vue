@@ -51,14 +51,26 @@
 </template>
 
 <script>
+import {
+	usePostEditorStore,
+	useRedirectsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { debounce } from '@/vue/utils/debounce'
-import { mapActions, mapState } from 'vuex'
 import CoreAddRedirectionUrlResults from '@/vue/components/common/core/add-redirection/UrlResults'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation'
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore(),
+			redirectsStore  : useRedirectsStore(),
+			rootStore       : useRootStore()
+		}
+	},
 	components : {
 		CoreAddRedirectionUrlResults,
 		CoreLoader,
@@ -93,11 +105,7 @@ export default {
 			}
 		}
 	},
-	computed : {
-		...mapState([ 'currentPost' ])
-	},
 	methods : {
-		...mapActions('redirects', [ 'getPosts' ]),
 		onBlur () {
 			setTimeout(() => {
 				this.$emit('update:modelValue', this.value)
@@ -132,14 +140,14 @@ export default {
 			}, 500)
 		},
 		ajaxSearch (query) {
-			return this.getPosts({ query, postId: this.currentPost.id })
+			return this.redirectsStore.getPosts({ query, postId: this.postEditorStore.currentPost.id })
 				.then((response) => {
 					this.results = response.body.objects
 				})
 		},
 		setUrl (url) {
 			this.showResults = false
-			this.value       = url.replace(this.$aioseo.urls.mainSiteUrl, '', url)
+			this.value       = url.replace(this.rootStore.aioseo.urls.mainSiteUrl, '', url)
 			this.$emit('update:modelValue', this.value)
 		},
 		documentClick (event) {

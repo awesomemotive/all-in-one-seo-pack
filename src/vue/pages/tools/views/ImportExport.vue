@@ -1,26 +1,39 @@
 <template>
 	<div>
 		<import-export
-			v-if="!$aioseo.data.isNetworkAdmin || (!isUnlicensed && $license.hasCoreFeature($aioseo, 'tools', 'network-tools-import-export'))"
+			v-if="!rootStore.aioseo.data.isNetworkAdmin || (!licenseStore.isUnlicensed && license.hasCoreFeature('tools', 'network-tools-import-export'))"
 		/>
 
 		<lite-import-export
-			v-if="$aioseo.data.isNetworkAdmin && (isUnlicensed || !$license.hasCoreFeature($aioseo, 'tools', 'network-tools-import-export'))"
+			v-if="rootStore.aioseo.data.isNetworkAdmin && (licenseStore.isUnlicensed || !license.hasCoreFeature('tools', 'network-tools-import-export'))"
 		/>
 	</div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore,
+	useRootStore
+} from '@/vue/stores'
+
+import license from '@/vue/utils/license'
 import ImportExport from './partials/ImportExport'
 import LiteImportExport from './lite/ImportExport'
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		ImportExport,
 		LiteImportExport
 	},
-	computed : {
-		...mapGetters([ 'isUnlicensed' ])
+	data () {
+		return {
+			license
+		}
 	}
 }
 </script>

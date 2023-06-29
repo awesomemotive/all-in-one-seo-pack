@@ -1,13 +1,18 @@
-import { mapState } from 'vuex'
+import {
+	useSchemaStore
+} from '@/vue/stores'
+
+import license from '@/vue/utils/license'
+
 export default {
 	computed : {
-		...mapState([ 'schema' ]),
 		hasFeature () {
-			if (this.schema.isEditingDefaultGraph) {
+			const schemaStore = useSchemaStore()
+			if (schemaStore.isEditingDefaultGraph) {
 				return true
 			}
 
-			switch (this.schema.graph.graphName) {
+			switch (schemaStore.graph.graphName) {
 				case 'Event':
 				case 'JobPosting':
 					break
@@ -17,15 +22,16 @@ export default {
 			}
 
 			// First convert the graph name to kebab case.
-			const graphName = this.schema.graph.graphName.replace(/(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])/, '-$1').toLowerCase()
+			const graphName = schemaStore.graph.graphName.replace(/(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])/, '-$1').toLowerCase()
 
-			return this.$license.hasCoreFeature(this.$aioseo, 'schema', graphName)
+			return license.hasCoreFeature('schema', graphName)
 		},
 		graphNotIncluded () {
+			const schemaStore = useSchemaStore()
 			const upgradeLink = this.$links.getPricingUrl(
-				'graph-' + this.schema.graph.graphName.toLowerCase(),
+				'graph-' + schemaStore.graph.graphName.toLowerCase(),
 				'schema-generator',
-				'graph-' + this.schema.graph.graphName.toLowerCase(),
+				'graph-' + schemaStore.graph.graphName.toLowerCase(),
 				'pricing'
 			)
 
@@ -37,16 +43,17 @@ export default {
 						// Translators: 1 - The name of a schema type (e.g. "Event", "Job Posting", etc.).
 						this.$t.__('Upgrade your plan and unlock %1$s schema', this.$td),
 						// Convert PascalCase to spaced out words.
-						this.schema.graph.graphName.replace(/([A-Z].*?)([A-Z])(?![A-Z])/, '$1 $2')
+						schemaStore.graph.graphName.replace(/([A-Z].*?)([A-Z])(?![A-Z])/, '$1 $2')
 					)
 				)
 		},
 		isEditing () {
-			return this.schema.isEdtingCustomGraph ||
-				this.schema.isEditingCustomTemplate ||
-				this.schema.isEditingDefaultGraph ||
-				this.schema.isEditingGraph ||
-				this.schema.isEditingTemplate
+			const schemaStore = useSchemaStore()
+			return schemaStore.isEditingCustomGraph ||
+				schemaStore.isEditingCustomTemplate ||
+				schemaStore.isEditingDefaultGraph ||
+				schemaStore.isEditingGraph ||
+				schemaStore.isEditingTemplate
 		}
 	}
 }

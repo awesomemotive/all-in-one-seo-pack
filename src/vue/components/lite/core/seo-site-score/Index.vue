@@ -1,7 +1,7 @@
 <template>
 	<div class="aioseo-seo-site-score">
 		<core-blur
-			v-if="!internalOptions.internal.siteAnalysis.connectToken"
+			v-if="!optionsStore.internalOptions.internal.siteAnalysis.connectToken"
 		>
 			<core-site-score-dashboard
 				:score="85"
@@ -10,30 +10,36 @@
 		</core-blur>
 
 		<div
-			v-if="!internalOptions.internal.siteAnalysis.connectToken"
+			v-if="!optionsStore.internalOptions.internal.siteAnalysis.connectToken"
 			class="aioseo-seo-site-score-cta"
 		>
 			<a
 				href="#"
-				@click.prevent="openPopup($aioseo.urls.connect)"
+				@click.prevent="openPopup(rootStore.aioseo.urls.connect)"
 			>{{ connectWithAioseo }}</a> {{ strings.toSeeYourSiteScore }}
 		</div>
 
 		<core-site-score-dashboard
-			v-if="internalOptions.internal.siteAnalysis.connectToken"
-			:score="internalOptions.internal.siteAnalysis.score"
+			v-if="optionsStore.internalOptions.internal.siteAnalysis.connectToken"
+			:score="optionsStore.internalOptions.internal.siteAnalysis.score"
 			:description="description"
-			:loading="analyzing"
+			:loading="analyzerStore.analyzing"
 			:summary="getSummary"
 		/>
 	</div>
 </template>
 
 <script>
+import {
+	useAnalyzerStore,
+	useConnectStore,
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { popup } from '@/vue/utils/popup'
 import { useSeoSiteScore } from '@/vue/composables'
 import { SeoSiteScore } from '@/vue/mixins'
-import { mapActions, mapState, mapGetters } from 'vuex'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreSiteScoreDashboard from '@/vue/components/common/core/site-score/Dashboard'
 export default {
@@ -41,6 +47,10 @@ export default {
 		const { strings } = useSeoSiteScore()
 
 		return {
+			analyzerStore : useAnalyzerStore(),
+			connectStore  : useConnectStore(),
+			optionsStore  : useOptionsStore(),
+			rootStore     : useRootStore(),
 			strings
 		}
 	},
@@ -55,18 +65,15 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'internalOptions', 'analyzing' ]),
-		...mapGetters([ 'goodCount', 'recommendedCount', 'criticalCount' ]),
 		getSummary () {
 			return {
-				recommended : this.recommendedCount(),
-				critical    : this.criticalCount(),
-				good        : this.goodCount()
+				recommended : this.analyzerStore.recommendedCount(),
+				critical    : this.analyzerStore.criticalCount(),
+				good        : this.analyzerStore.goodCount()
 			}
 		}
 	},
 	methods : {
-		...mapActions([ 'saveConnectToken', 'runSiteAnalyzer' ]),
 		openPopup (url) {
 			popup(
 				url,
@@ -80,20 +87,20 @@ export default {
 			)
 		},
 		completedCallback (payload) {
-			return this.saveConnectToken(payload.token)
+			return this.connectStore.saveConnectToken(payload.token)
 		},
 		closedCallback (reload) {
 			if (reload) {
-				this.runSiteAnalyzer()
+				this.analyzerStore.runSiteAnalyzer()
 			}
 
-			this.$store.commit('analyzing', true)
+			this.analyzerStore.analyzing = true
 		}
 	},
 	mounted () {
-		if (!this.internalOptions.internal.siteAnalysis.score && this.internalOptions.internal.siteAnalysis.connectToken) {
-			this.$store.commit('analyzing', true)
-			this.runSiteAnalyzer()
+		if (!this.optionsStore.internalOptions.internal.siteAnalysis.score && this.optionsStore.internalOptions.internal.siteAnalysis.connectToken) {
+			this.analyzerStore.analyzing = true
+			this.analyzerStore.runSiteAnalyzer()
 		}
 	}
 }

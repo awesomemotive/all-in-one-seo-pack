@@ -27,9 +27,9 @@
 						@mouseleave="removeHoverClass"
 					>
 						<core-google-search-preview
-							:title="parseTags(category.siteTitle)"
-							:separator="options.searchAppearance.global.separator"
-							:description="parseTags(category.metaDescription)"
+							:title="parseTags(setupWizardStore.category.siteTitle)"
+							:separator="optionsStore.options.searchAppearance.global.separator"
+							:description="parseTags(setupWizardStore.category.metaDescription)"
 						/>
 
 						<div
@@ -61,7 +61,7 @@
 							<div class="name small-margin">{{ strings.siteTitle }}</div>
 						</div>
 						<core-html-tags-editor
-							v-model="category.siteTitle"
+							v-model="setupWizardStore.category.siteTitle"
 							:line-numbers="false"
 							single
 							@counter="count => updateCount(count, 'titleCount')"
@@ -88,7 +88,7 @@
 							<div class="name small-margin">{{ strings.metaDescription }}</div>
 						</div>
 						<core-html-tags-editor
-							v-model="category.metaDescription"
+							v-model="setupWizardStore.category.metaDescription"
 							:line-numbers="false"
 							@counter="count => updateCount(count, 'descriptionCount')"
 							tags-context="homePage"
@@ -113,8 +113,8 @@
 				<div
 					class="aioseo-settings-row no-border"
 					:class="[
-						{ 'no-margin': searchAppearance.underConstruction },
-						{ 'small-padding': searchAppearance.underConstruction }
+						{ 'no-margin': setupWizardStore.searchAppearance.underConstruction },
+						{ 'small-padding': setupWizardStore.searchAppearance.underConstruction }
 					]"
 				>
 					<div class="settings-name">
@@ -124,7 +124,7 @@
 					</div>
 
 					<base-radio-toggle
-						v-model="searchAppearance.underConstruction"
+						v-model="setupWizardStore.searchAppearance.underConstruction"
 						name="underConstruction"
 						:options="[
 							{ label: strings.underConstruction, value: true, activeClass: 'dark' },
@@ -134,25 +134,25 @@
 				</div>
 
 				<div
-					v-if="!searchAppearance.underConstruction"
+					v-if="!setupWizardStore.searchAppearance.underConstruction"
 					class="aioseo-settings-row no-border post-types"
 				>
 					<base-toggle
 						size="medium"
-						v-model="searchAppearance.postTypes.postTypes.all"
+						v-model="setupWizardStore.searchAppearance.postTypes.postTypes.all"
 					>
 						{{ strings.includeAllPostTypes }}
 					</base-toggle>
 
 					<core-post-type-options
-						v-if="!searchAppearance.postTypes.postTypes.all"
-						:options="searchAppearance.postTypes"
+						v-if="!setupWizardStore.searchAppearance.postTypes.postTypes.all"
+						:options="setupWizardStore.searchAppearance.postTypes"
 						type="postTypes"
 					/>
 				</div>
 
 				<div
-					v-if="!searchAppearance.underConstruction"
+					v-if="!setupWizardStore.searchAppearance.underConstruction"
 					class="aioseo-settings-row no-border enable-sitemaps"
 				>
 					<base-checkbox
@@ -167,7 +167,7 @@
 				</div>
 
 				<div
-					v-if="!searchAppearance.underConstruction"
+					v-if="!setupWizardStore.searchAppearance.underConstruction"
 					class="aioseo-settings-row no-border"
 				>
 					<div class="settings-name">
@@ -177,7 +177,7 @@
 					</div>
 
 					<base-radio-toggle
-						v-model="searchAppearance.multipleAuthors"
+						v-model="setupWizardStore.searchAppearance.multipleAuthors"
 						name="multipleAuthors"
 						class="small"
 						:options="[
@@ -188,7 +188,7 @@
 				</div>
 
 				<div
-					v-if="!searchAppearance.underConstruction"
+					v-if="!setupWizardStore.searchAppearance.underConstruction"
 					class="aioseo-settings-row no-border no-margin small-padding"
 				>
 					<div class="settings-name">
@@ -198,7 +198,7 @@
 					</div>
 
 					<base-radio-toggle
-						v-model="searchAppearance.redirectAttachmentPages"
+						v-model="setupWizardStore.searchAppearance.redirectAttachmentPages"
 						name="redirectAttachmentPages"
 						class="small"
 						:options="[
@@ -210,9 +210,9 @@
 
 				<template #footer>
 					<div class="go-back">
-						<router-link :to="getPrevLink" class="no-underline">&larr;</router-link>
+						<router-link :to="setupWizardStore.getPrevLink" class="no-underline">&larr;</router-link>
 						&nbsp;
-						<router-link :to="getPrevLink">{{ strings.goBack }}</router-link>
+						<router-link :to="setupWizardStore.getPrevLink">{{ strings.goBack }}</router-link>
 					</div>
 					<div class="spacer"></div>
 					<base-button
@@ -233,10 +233,14 @@
 </template>
 
 <script>
+import {
+	useOptionsStore,
+	useSetupWizardStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
 import { MaxCounts, Tags, Wizard } from '@/vue/mixins'
-import { mapActions, mapState } from 'vuex'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
@@ -252,6 +256,8 @@ export default {
 		const { strings } = useWizard()
 
 		return {
+			optionsStore      : useOptionsStore(),
+			setupWizardStore  : useSetupWizardStore(),
 			composableStrings : strings
 		}
 	},
@@ -297,12 +303,7 @@ export default {
 			})
 		}
 	},
-	computed : {
-		...mapState([ 'options', 'dynamicOptions' ]),
-		...mapState('wizard', [ 'category', 'searchAppearance' ])
-	},
 	methods : {
-		...mapActions('wizard', [ 'saveWizard' ]),
 		addHoverClass () {
 			this.showHoverClass = true
 		},
@@ -311,19 +312,19 @@ export default {
 		},
 		saveAndContinue () {
 			this.loading = true
-			this.saveWizard('searchAppearance')
+			this.setupWizardStore.saveWizard('searchAppearance')
 				.then(() => {
-					this.$router.push(this.getNextLink)
+					this.$router.push(this.setupWizardStore.getNextLink)
 				})
 		},
 		skipStep () {
-			this.saveWizard()
-			this.$router.push(this.getNextLink)
+			this.setupWizardStore.saveWizard()
+			this.$router.push(this.setupWizardStore.getNextLink)
 		}
 	},
 	mounted () {
 		this.$nextTick(() => {
-			this.searchAppearance.redirectAttachmentPages = 'attachment' === this.dynamicOptions.searchAppearance.postTypes.attachment.redirectAttachmentUrls
+			this.setupWizardStore.searchAppearance.redirectAttachmentPages = 'attachment' === this.optionsStore.dynamicOptions.searchAppearance.postTypes.attachment.redirectAttachmentUrls
 			this.loaded = true
 		})
 	}

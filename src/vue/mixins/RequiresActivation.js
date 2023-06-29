@@ -1,8 +1,15 @@
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
 import { RequiresActivation as RequiresActivationMiddleware } from '@/vue/router/middleware'
+
 export const RequiresActivation = {
 	methods : {
 		getExcludedActivationTabs (addon) {
-			if (!this.isUnlicensed && this.$addons.isActive(addon) && !this.$addons.requiresUpgrade(addon)) {
+			const licenseStore = useLicenseStore()
+			if (!licenseStore.isUnlicensed && addons.isActive(addon) && !addons.requiresUpgrade(addon)) {
 				return []
 			}
 

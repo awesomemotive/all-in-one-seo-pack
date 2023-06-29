@@ -221,13 +221,19 @@ class Admin {
 				'parent'     => $this->pageSlug
 			],
 			'aioseo-monsterinsights'   => [
-				'menu_title' => esc_html__( 'Analytics', 'all-in-one-seo-pack' ),
-				'parent'     => 'aioseo-monsterinsights'
+				'menu_title'          => esc_html__( 'Analytics', 'all-in-one-seo-pack' ),
+				'parent'              => 'aioseo-monsterinsights',
+				'hide_admin_bar_menu' => true
 			],
 			'aioseo-about'             => [
 				'menu_title' => esc_html__( 'About Us', 'all-in-one-seo-pack' ),
 				'parent'     => $this->pageSlug
-			]
+			],
+			'aioseo-seo-revisions'     => [
+				'menu_title'          => esc_html__( 'SEO Revisions', 'all-in-one-seo-pack' ),
+				'parent'              => 'aioseo-seo-revisions',
+				'hide_admin_bar_menu' => true
+			],
 		];
 	}
 
@@ -584,8 +590,8 @@ class Admin {
 
 		$parent = is_admin() ? 'aioseo-main' : 'aioseo-settings-main';
 		foreach ( $this->pages as $id => $page ) {
-			// Remove the analytics menu.
-			if ( 'aioseo-monsterinsights' === $id ) {
+			// Remove page from admin bar menu.
+			if ( ! empty( $page['hide_admin_bar_menu'] ) ) {
 				continue;
 			}
 
@@ -765,7 +771,8 @@ class Admin {
 			'tools',
 			'feature-manager',
 			'monsterinsights',
-			'about'
+			'about',
+			'seo-revisions'
 		];
 
 		foreach ( $pages as $page ) {

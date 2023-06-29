@@ -88,7 +88,14 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
+import {
+	useAddonsStore,
+	useIndexNowStore,
+	useLicenseStore,
+	usePluginsStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
 import { merge } from 'lodash-es'
 import { useWebmasterTools } from '@/vue/composables'
 import { WebmasterTools } from '@/vue/pages/settings/mixins'
@@ -100,6 +107,10 @@ export default {
 		const { strings } = useWebmasterTools()
 
 		return {
+			addonsStore       : useAddonsStore(),
+			indexNowStore     : useIndexNowStore(),
+			licenseStore      : useLicenseStore(),
+			pluginsStore      : usePluginsStore(),
 			composableStrings : strings
 		}
 	},
@@ -131,9 +142,9 @@ export default {
 					this.$t.__('The IndexNow addon requires an update. %1$s %2$s requires a minimum version of %3$s for the %4$s addon. You currently have %5$s installed.', this.$td),
 					import.meta.env.VITE_SHORT_NAME,
 					'Pro',
-					this.$addons.getAddon('aioseo-index-now').minimumVersion,
+					addons.getAddon('aioseo-index-now').minimumVersion,
 					'IndexNow',
-					this.$addons.getAddon('aioseo-index-now').installedVersion
+					addons.getAddon('aioseo-index-now').installedVersion
 				),
 				update           : this.$t.__('Update IndexNow', this.$td),
 				regenerateApiKey : this.$t.__('Regenerate API Key', this.$td)
@@ -141,15 +152,11 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'installPlugins', 'upgradePlugins' ]),
-		...mapActions('index-now', [ 'generateApiKey', 'getApiKey' ]),
-		...mapMutations('index-now', [ 'updateApiKey' ]),
-		...mapMutations([ 'updateAddon' ]),
 		activateIndexNow () {
 			this.indexNowFailed   = false
 			this.installingPlugin = true
-			const addon = this.$addons.getAddon('aioseo-index-now')
-			this.installPlugins([ { plugin: addon.basename } ])
+			const addon = addons.getAddon('aioseo-index-now')
+			this.pluginsStore.installPlugins([ { plugin: addon.basename } ])
 				.then(response => {
 					if (response.body.failed.length) {
 						this.installingPlugin = false
@@ -157,13 +164,13 @@ export default {
 						return
 					}
 
-					this.getApiKey()
+					this.indexNowStore.getApiKey()
 						.then(apiKey => {
 							this.indexNow.apiKey    = apiKey
 							this.installingPlugin   = false
 							addon.hasMinimumVersion = true
 							addon.isActive          = true
-							this.updateAddon(addon)
+							this.addonsStore.updateAddon(addon)
 						})
 				})
 				.catch(error => {
@@ -173,8 +180,8 @@ export default {
 		updateIndexNow () {
 			this.indexNowFailed   = false
 			this.installingPlugin = true
-			const addon = this.$addons.getAddon('aioseo-index-now')
-			this.upgradePlugins([ { plugin: addon.sku } ])
+			const addon = addons.getAddon('aioseo-index-now')
+			this.pluginsStore.upgradePlugins([ { plugin: addon.sku } ])
 				.then(response => {
 					this.installingPlugin = false
 					if (response.body.failed.length) {
@@ -194,7 +201,7 @@ export default {
 		},
 		regenerateApiKey () {
 			this.regeneratingApiKey = true
-			this.generateApiKey()
+			this.indexNowStore.generateApiKey()
 				.then(apiKey => {
 					this.indexNow.apiKey    = apiKey
 					this.regeneratingApiKey = false
@@ -203,41 +210,38 @@ export default {
 	},
 	watch : {
 		'indexNow.apiKey' (newValue) {
-			this.updateApiKey(newValue)
+			this.indexNowStore.options.indexNow.apiKey = newValue
 		}
 	},
 	computed : {
-		...mapState('index-now', {
-			indexNowOptions : 'options'
-		}),
 		isIndexNowEnabled () {
-			return !this.isUnlicensed &&
-				this.$addons.isActive('aioseo-index-now') &&
-				!this.$addons.requiresUpgrade('aioseo-index-now') &&
-				this.$addons.hasMinimumVersion('aioseo-index-now')
+			return !this.licenseStore.isUnlicensed &&
+				addons.isActive('aioseo-index-now') &&
+				!addons.requiresUpgrade('aioseo-index-now') &&
+				addons.hasMinimumVersion('aioseo-index-now')
 		},
 		isIndexNowLite () {
-			return this.isUnlicensed || this.$addons.requiresUpgrade('aioseo-index-now')
+			return this.licenseStore.isUnlicensed || addons.requiresUpgrade('aioseo-index-now')
 		},
 		isIndexNowActivate () {
-			return !this.isUnlicensed &&
-				!this.$addons.isActive('aioseo-index-now') &&
-				this.$addons.canActivate('aioseo-index-now') &&
-				!this.$addons.requiresUpgrade('aioseo-index-now') &&
+			return !this.licenseStore.isUnlicensed &&
+				!addons.isActive('aioseo-index-now') &&
+				addons.canActivate('aioseo-index-now') &&
+				!addons.requiresUpgrade('aioseo-index-now') &&
 				(
-					this.$addons.hasMinimumVersion('aioseo-index-now') ||
-					!this.$addons.isInstalled('aioseo-index-now')
+					addons.hasMinimumVersion('aioseo-index-now') ||
+					!addons.isInstalled('aioseo-index-now')
 				)
 		},
 		isIndexNowUpdate () {
-			return !this.isUnlicensed &&
-				this.$addons.isInstalled('aioseo-index-now') &&
-				!this.$addons.requiresUpgrade('aioseo-index-now') &&
-				!this.$addons.hasMinimumVersion('aioseo-index-now')
+			return !this.licenseStore.isUnlicensed &&
+				addons.isInstalled('aioseo-index-now') &&
+				!addons.requiresUpgrade('aioseo-index-now') &&
+				!addons.hasMinimumVersion('aioseo-index-now')
 		}
 	},
 	mounted () {
-		this.indexNow.apiKey = this.indexNowOptions.indexNow.apiKey
+		this.indexNow.apiKey = this.indexNowStore.options.indexNow.apiKey
 	}
 }
 </script>

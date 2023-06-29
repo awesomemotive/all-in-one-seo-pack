@@ -193,10 +193,14 @@ class DetailsColumn {
 			'postType'           => $postType
 		];
 
-		foreach ( aioseo()->addons->getLoadedAddons() as $loadedAddon ) {
-			if ( isset( $loadedAddon->admin ) && method_exists( $loadedAddon->admin, 'renderColumnData' ) ) {
-				$postData = array_merge( $postData, $loadedAddon->admin->renderColumnData( $columnName, $postId, $postData ) );
-			}
+		$addonsColumnData = array_filter( aioseo()->addons->doAddonFunction( 'admin', 'renderColumnData', [
+			$columnName,
+			$postId,
+			$postData
+		] ) );
+
+		foreach ( $addonsColumnData as $addonColumnData ) {
+			$postData = array_merge( $postData, $addonColumnData );
 		}
 
 		$posts[]       = $postData;

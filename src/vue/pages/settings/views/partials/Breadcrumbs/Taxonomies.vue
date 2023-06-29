@@ -9,25 +9,25 @@
 				<div>
 					<preview
 						:preview-data="getPreview(taxonomy)"
-						:useDefaultTemplate="dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].useDefaultTemplate"
+						:useDefaultTemplate="optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].useDefaultTemplate"
 					/>
 
 					<grid-row>
 						<grid-column>
 							<base-toggle
-								v-model="dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].useDefaultTemplate"
+								v-model="optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].useDefaultTemplate"
 								class="current-item"
 							/>
 							{{ strings.useDefaultTemplate }}
 						</grid-column>
 					</grid-row>
 
-					<grid-row v-if="!dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].useDefaultTemplate">
+					<grid-row v-if="!optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].useDefaultTemplate">
 						<grid-column
-							v-if="options.breadcrumbs.breadcrumbPrefix && options.breadcrumbs.breadcrumbPrefix.length"
+							v-if="optionsStore.options.breadcrumbs.breadcrumbPrefix && optionsStore.options.breadcrumbs.breadcrumbPrefix.length"
 						>
 							<base-toggle
-								v-model="dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].showPrefixCrumb"
+								v-model="optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].showPrefixCrumb"
 								class="current-item"
 							/>
 							{{ strings.showPrefixLabel }}
@@ -35,7 +35,7 @@
 
 						<grid-column>
 							<base-toggle
-								v-model="dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].showHomeCrumb"
+								v-model="optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].showHomeCrumb"
 								class="current-item"
 							/>
 							{{ strings.showHomeLabel }}
@@ -43,7 +43,7 @@
 
 						<grid-column v-if="taxonomy.hierarchical">
 							<base-toggle
-								v-model="dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].showParentCrumbs"
+								v-model="optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].showParentCrumbs"
 								class="current-item"
 							/>
 							{{ strings.showParentLabel }}
@@ -51,13 +51,13 @@
 
 						<grid-column>
 							<core-settings-row
-								:name="taxonomy.hierarchical && dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].showParentCrumbs ? strings.singleTemplateLabel : ''"
+								:name="taxonomy.hierarchical && optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].showParentCrumbs ? strings.singleTemplateLabel : ''"
 								leftSize="12"
 								rightSize="12"
 							>
 								<template #content>
 									<core-html-tags-editor
-										v-model="dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].template"
+										v-model="optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].template"
 										:line-numbers="true"
 										checkUnfilteredHtml
 										:tags-context="'breadcrumbs-taxonomy-'+taxonomy.name"
@@ -71,7 +71,7 @@
 							</core-settings-row>
 						</grid-column>
 						<grid-column
-							v-if="taxonomy.hierarchical && dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].showParentCrumbs">
+							v-if="taxonomy.hierarchical && optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].showParentCrumbs">
 							<core-settings-row
 								:name="strings.parentTemplateLabel"
 								leftSize="12"
@@ -79,7 +79,7 @@
 							>
 								<template #content>
 									<core-html-tags-editor
-										v-model="dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].parentTemplate"
+										v-model="optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].parentTemplate"
 										:line-numbers="true"
 										checkUnfilteredHtml
 										:tags-context="'breadcrumbs-taxonomy-'+taxonomy.name"
@@ -101,13 +101,23 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import Preview from './Preview'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		CoreHtmlTagsEditor,
 		CoreSettingsRow,
@@ -129,34 +139,33 @@ export default {
 	},
 	methods : {
 		getPreview (taxonomy) {
-			const breadcrumbOptions = this.options.breadcrumbs
-			const taxOptions = this.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name]
+			const breadcrumbOptions = this.optionsStore.options.breadcrumbs
+			const taxOptions = this.optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name]
 			const useDefault = taxOptions.useDefaultTemplate
 			return [
 				(useDefault && breadcrumbOptions.breadcrumbPrefix) || (!useDefault && taxOptions.showPrefixCrumb) ? breadcrumbOptions.breadcrumbPrefix : '',
 				(useDefault && breadcrumbOptions.homepageLink) || (!useDefault && taxOptions.showHomeCrumb) ? (breadcrumbOptions.homepageLabel ? breadcrumbOptions.homepageLabel : 'Home') : '',
-				([ 'category', 'post_tag' ].includes(taxonomy.name) && breadcrumbOptions.showBlogHome && this.$aioseo.data.staticBlogPage) ? 'Blog Home' : '',
+				([ 'category', 'post_tag' ].includes(taxonomy.name) && breadcrumbOptions.showBlogHome && this.rootStore.aioseo.data.staticBlogPage) ? 'Blog Home' : '',
 				this.taxonomyHasArchive(taxonomy) ? taxonomy.label : '',
 				taxonomy.hierarchical && (useDefault || (!useDefault && taxOptions.showParentCrumbs)) ? this.getTaxonomyParentTemplate(taxonomy) : '',
 				this.getTaxonomyTemplate(taxonomy)
 			]
 		},
 		taxonomyHasArchive (taxonomy) {
-			return 0 < this.$aioseo.postData.taxonomies.filter(taxonomyData => taxonomyData.name === taxonomy.name && taxonomyData.hasArchive).length
+			return 0 < this.rootStore.aioseo.postData.taxonomies.filter(taxonomyData => taxonomyData.name === taxonomy.name && taxonomyData.hasArchive).length
 		},
 		getTaxonomyParentTemplate (taxonomy) {
-			const template = this.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].useDefaultTemplate ? this.$aioseo.breadcrumbs.defaultTemplates.taxonomies[taxonomy.name] : this.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].parentTemplate
+			const template = this.optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].useDefaultTemplate ? this.rootStore.aioseo.breadcrumbs.defaultTemplates.taxonomies[taxonomy.name] : this.optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].parentTemplate
 			return template.replace(new RegExp('#breadcrumb_taxonomy_title', 'g'), taxonomy.singular + ' Parent')
 		},
 		getTaxonomyTemplate (taxonomy) {
-			const template = this.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].useDefaultTemplate ? this.$aioseo.breadcrumbs.defaultTemplates.taxonomies[taxonomy.name] : this.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].template
+			const template = this.optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].useDefaultTemplate ? this.rootStore.aioseo.breadcrumbs.defaultTemplates.taxonomies[taxonomy.name] : this.optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].template
 			return template.replace(new RegExp('#breadcrumb_taxonomy_title', 'g'), taxonomy.singular)
 		}
 	},
 	computed : {
-		...mapState([ 'options', 'dynamicOptions' ]),
 		taxonomies () {
-			return this.$aioseo.postData.taxonomies
+			return this.rootStore.aioseo.postData.taxonomies
 		}
 	}
 }

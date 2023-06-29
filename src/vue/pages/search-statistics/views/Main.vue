@@ -11,7 +11,7 @@
 				@change="onDateChange"
 				@updated="rolling => highlightShortcut(rolling)"
 				:defaultValue="defaultRange"
-				:defaultRolling="$aioseo.searchStatistics.rolling"
+				:defaultRolling="searchStatisticsStore.rolling"
 				:isDisabledDate="isDisabledDate"
 				:shortcuts="datepickerShortcuts"
 				size="small"
@@ -61,8 +61,13 @@
 </template>
 
 <script>
+import {
+	useLicenseStore,
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
+import license from '@/vue/utils/license'
 import { DateTime } from 'luxon'
-import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import AuthenticationAlert from './partials/AuthenticationAlert'
 import BaseDatePicker from '@/vue/components/common/base/DatePicker'
 import CoreBlur from '@/vue/components/common/core/Blur'
@@ -75,6 +80,12 @@ import PostDetail from './AIOSEO_VERSION/PostDetail'
 import SeoStatistics from './SeoStatistics'
 import Settings from './AIOSEO_VERSION/Settings'
 export default {
+	setup () {
+		return {
+			licenseStore          : useLicenseStore(),
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	emits      : [ 'rolling' ],
 	components : {
 		AuthenticationAlert,
@@ -107,25 +118,16 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('search-statistics', [
-			'range',
-			'isConnected',
-			'fetching',
-			'scanPercentage',
-			'showScanPopup',
-			'unverifiedSite'
-		]),
-		...mapGetters([ 'isUnlicensed' ]),
 		defaultRange () {
-			const start = new Date(`${this.range.start} 00:00:00`)
-			const end   = new Date(`${this.range.end} 00:00:00`)
+			const start = new Date(`${this.searchStatisticsStore.range.start} 00:00:00`)
+			const end   = new Date(`${this.searchStatisticsStore.range.end} 00:00:00`)
 
 			return [ start, end ]
 		},
 		excludeTabs () {
 			const exclude = [ 'post-detail' ]
 
-			if (this.isUnlicensed || !this.$license.hasCoreFeature(this.$aioseo, 'search-statistics')) {
+			if (this.licenseStore.isUnlicensed || !license.hasCoreFeature('search-statistics')) {
 				exclude.push('settings')
 			}
 
@@ -135,27 +137,27 @@ export default {
 			return 'settings' === this.$route.name
 		},
 		showConnectCta () {
-			return ((this.$license.hasCoreFeature(this.$aioseo, 'search-statistics') && !this.isConnected) || this.unverifiedSite) && !this.isSettings
+			return ((license.hasCoreFeature('search-statistics') && !this.searchStatisticsStore.isConnected) || this.searchStatisticsStore.unverifiedSite) && !this.isSettings
 		},
 		showDatePicker () {
-			return ![ 'settings', 'content-rankings' ].includes(this.$route.name) && this.isConnected && !this.unverifiedSite
+			return ![ 'settings', 'content-rankings' ].includes(this.$route.name) && this.searchStatisticsStore.isConnected && !this.searchStatisticsStore.unverifiedSite
 		},
 		containerClasses () {
 			const classes = []
 
 			// Add the blur to the main container if we are fetching data.
-			if (this.fetching) {
+			if (this.searchStatisticsStore.fetching) {
 				classes.push('aioseo-blur')
 			}
 
 			return classes
 		},
 		getOriginalMaxDate () {
-			if (!this.$aioseo.searchStatistics.latestAvailableDate) {
+			if (!this.searchStatisticsStore.latestAvailableDate) {
 				return DateTime.local().plus({ days: -2 })
 			}
 
-			return DateTime.fromFormat(this.$aioseo.searchStatistics.latestAvailableDate, 'yyyy-MM-dd').setZone(DateTime.zone) ||
+			return DateTime.fromFormat(this.searchStatisticsStore.latestAvailableDate, 'yyyy-MM-dd').setZone(DateTime.zone) ||
 				DateTime.local().plus({ days: -2 })
 		},
 		datepickerShortcuts () {
@@ -185,8 +187,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions('search-statistics', [ 'setDateRange', 'getAuthUrl' ]),
-		...mapMutations('search-statistics', [ 'toggleShowScanPopup' ]),
 		isDisabledDate (date) {
 			if (null === this.minDate) {
 				return true
@@ -195,14 +195,14 @@ export default {
 			return date.getTime() < this.minDate.getTime() || date.getTime() > this.maxDate.getTime()
 		},
 		onDateChange (dateRange, rolling) {
-			this.setDateRange({
+			this.searchStatisticsStore.setDateRange({
 				dateRange,
 				rolling
 			})
 		},
 		connect () {
 			this.loadingConnect = true
-			this.getAuthUrl()
+			this.searchStatisticsStore.getAuthUrl()
 				.then(url => {
 					window.location = url
 				})

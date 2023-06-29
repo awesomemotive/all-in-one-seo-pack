@@ -48,7 +48,7 @@
 			<core-settings-row
 				align
 				class="social-profile"
-				v-for="profile in profiles"
+				v-for="(profile, index) in profiles"
 				:key="profile.key + errorsKey"
 				:class="profile.key"
 				:leftSize="leftSize"
@@ -108,7 +108,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore
+} from '@/vue/stores'
 
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseTextarea from '@/vue/components/common/base/Textarea'
@@ -129,6 +131,11 @@ import SvgIconYelp from '@/vue/components/common/svg/icon/Yelp'
 import SvgIconYoutube from '@/vue/components/common/svg/icon/Youtube'
 
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore()
+		}
+	},
 	emits      : [ 'updated' ],
 	components : {
 		BaseCheckbox,
@@ -193,9 +200,8 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options' ]),
 		profileData () {
-			return this.userProfiles || this.options.social.profiles
+			return this.userProfiles || this.optionsStore.options.social.profiles
 		},
 		profiles () {
 			// We use a set of alternative keys for the User Profile Tab as we otherwise would need to migrate old, existing links for Facebook and Twitter.

@@ -1,7 +1,7 @@
 <template>
 	<component
 		class="aioseo-toc-list--rendered"
-		:is="listStyle"
+		:is="tableOfContentsStore.listStyle"
 	>
 		<li
 			class="aioseo-toc-list-item--rendered"
@@ -23,17 +23,24 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useTableOfContentsStore
+} from '@/vue/stores'
+
 export default {
+	setup () {
+		const tableOfContentsStore = useTableOfContentsStore()
+
+		return {
+			tableOfContentsStore
+		}
+	},
 	name  : 'ListRendered',
 	props : {
 		headings : {
 			required : true,
 			type     : Array
 		}
-	},
-	computed : {
-		...mapState([ 'listStyle' ])
 	}
 }
 </script>

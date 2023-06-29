@@ -5,10 +5,10 @@ import loadPlugins from '@/vue/plugins'
 
 import loadComponents from '@/vue/components/common'
 
+import { loadPiniaStores } from '@/vue/stores'
+
 import SeoSetup from './SeoSetup.vue'
 import Overview from './Overview.vue'
-
-import store from '@/vue/store'
 
 import { elemLoaded } from '@/vue/utils/elemLoaded'
 import camelCase from 'lodash/camelCase'
@@ -19,12 +19,12 @@ const dashboardWidgetsMap = [
 ]
 
 const loadDashboardWidget = (widget) => {
-	let app = createApp(widget.component)
+	let app = createApp({ ...widget.component, name: 'Standalone/DashboardWidgets' })
 	app     = loadPlugins(app)
 	app     = loadComponents(app)
 
-	app.use(store)
-	store._vm = app
+	// Use the pinia store.
+	loadPiniaStores(app)
 
 	app.mount('#' + widget.id)
 }

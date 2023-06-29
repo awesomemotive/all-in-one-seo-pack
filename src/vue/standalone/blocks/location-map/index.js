@@ -5,6 +5,12 @@ import loadPlugins from '@/vue/plugins'
 
 import LocationMapSidebar from './LocationMapSidebar.vue'
 
+import {
+	useOptionsStore,
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { observeElement } from '@/vue/utils/helpers'
 import { __, sprintf } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
@@ -33,6 +39,7 @@ const icon = el('svg',
 )
 
 const vueInitialState = {}
+const locationMapSidebarApps = []
 
 export const name = 'aioseo/locationmap'
 export const settings = {
@@ -80,12 +87,14 @@ export const settings = {
 		}
 	},
 	edit : withSelect(function (select) {
-		const locations = select('core').getEntityRecords('postType', window.aioseo.localBusiness.postTypeName, { per_page: 100 })
+		const rootStore = useRootStore()
+		const locations = select('core').getEntityRecords('postType', rootStore.aioseo.localBusiness.postTypeName, { per_page: 100 })
 		return {
 			locations : locations
 		}
 	})(function (props) {
-		const multipleLocations = window.aioseo.options.localBusiness?.locations.general.multiple
+		const optionsStore      = useOptionsStore()
+		const multipleLocations = optionsStore.options.localBusiness?.locations.general.multiple
 		const { setAttributes, attributes, className, clientId, isSelected } = props
 		let { locations } = props
 		const vueAioseoId   = 'aioseo-location-map-' + clientId
@@ -112,6 +121,7 @@ export const settings = {
 			)
 		}
 
+		const rootStore = useRootStore()
 		if (multipleLocations && 0 === locations.length) {
 			return el(Fragment, {},
 				el(
@@ -120,18 +130,19 @@ export const settings = {
 					sprintf(
 						// Translators: 1 - The plural label of the custom post type.
 						__('No %1$s found', td),
-						window.aioseo.localBusiness.postTypePluralLabel
+						rootStore.aioseo.localBusiness.postTypePluralLabel
 					)
 				)
 			)
 		}
 
-		const isLocationPostType = window.aioseo.currentPost.postType === window.aioseo.localBusiness.postTypeName
+		const postEditorStore    = usePostEditorStore()
+		const isLocationPostType = postEditorStore.currentPost.postType === rootStore.aioseo.localBusiness.postTypeName
 
 		// Force locationId if we're in the local-business post type.
-		attributes.locationId = (!attributes.locationId && isLocationPostType) ? window.aioseo.currentPost.id : attributes.locationId
+		attributes.locationId = (!attributes.locationId && isLocationPostType) ? postEditorStore.currentPost.id : attributes.locationId
 		const location = locations.find(item => item.id === attributes.locationId)
-		const locationMap = isLocationPostType ? window.aioseo.currentPost.local_seo.maps : (location ? location.maps : null)
+		const locationMap = isLocationPostType ? postEditorStore.currentPost.local_seo.maps : (location ? location.maps : null)
 
 		if (isSelected) {
 			// Refresh the initial state object.
@@ -146,7 +157,15 @@ export const settings = {
 				parent  : document.querySelector('.block-editor'),
 				subtree : true,
 				done    : function (el) {
+					const findAppIndex = locationMapSidebarApps.findIndex(item => item._container.id === el.id)
+					if (-1 !== findAppIndex) {
+						// Prevent Vue from creating multiple instances of the same app.
+						locationMapSidebarApps[findAppIndex].unmount()
+						locationMapSidebarApps.splice(findAppIndex, 1)
+					}
+
 					let app = createApp({
+						name : 'Blocks/LocationMap',
 						data : function () {
 							return vueInitialState[clientId]
 						},
@@ -164,6 +183,8 @@ export const settings = {
 					app = loadPlugins(app)
 
 					app.mount(el)
+
+					locationMapSidebarApps.push(app)
 				}
 			})
 		}
@@ -175,8 +196,9 @@ export const settings = {
 				subtree : true,
 				done    : function (el) {
 					let app = createApp({
+						name : 'Blocks/LocationMapWatcher',
 						data : function () {
-							return window.aioseo.currentPost.local_seo.maps
+							return postEditorStore.currentPost.local_seo.maps
 						},
 						watch : {
 							$data : {
@@ -188,7 +210,7 @@ export const settings = {
 								deep : true
 							}
 						},
-						render : () => h(null) // This stops the watcher from rendering multiple times.
+						render : () => h('div') // This stops the watcher from rendering multiple times.
 					})
 
 					app = loadPlugins(app)
@@ -203,7 +225,7 @@ export const settings = {
 			null,
 			el(
 				PanelBody,
-				{ title: __('Settings', td), initialOpen: true },
+				{ title: __('Settings', td), opened: true },
 				el(
 					'div',
 					null,
@@ -226,7 +248,7 @@ export const settings = {
 						sprintf(
 							// Translators: 1 - The singular label of the custom post type.
 							__('Select a %1$s', td),
-							window.aioseo.localBusiness.postTypeSingleLabel
+							rootStore.aioseo.localBusiness.postTypeSingleLabel
 						)
 					)
 				)
@@ -260,16 +282,16 @@ export const settings = {
 			parent   : document.querySelector('.block-editor'),
 			subtree  : true,
 			done     : function () {
-				const mapToRender =  locationMap || window.aioseo.options.localBusiness.maps
+				const mapToRender = locationMap || optionsStore.options.localBusiness.maps
 				// Debounce functions don't work here.
 				setTimeout(function () {
-					document.dispatchEvent(new CustomEvent(window.aioseo.localBusiness.mapLoadEvent, {
+					document.dispatchEvent(new CustomEvent(rootStore.aioseo.localBusiness.mapLoadEvent, {
 						detail : {
 							element           : renderedMapDiv,
 							mapOptions        : mapToRender.mapOptions,
-							customMarker      : attributes.customMarker || mapToRender.customMarker || window.aioseo.options.localBusiness.maps.customMarker,
+							customMarker      : attributes.customMarker || mapToRender.customMarker || optionsStore.options.localBusiness.maps.customMarker,
 							instance          : attributes,
-							placeId           : window.aioseo.options.localBusiness.maps.mapsEmbedApiEnabled ? mapToRender.placeId : null,
+							placeId           : optionsStore.options.localBusiness.maps.mapsEmbedApiEnabled ? mapToRender.placeId : null,
 							infoWindowContent : mapToRender.infoWindowContent ? mapToRender.infoWindowContent : null
 						}
 					}))
@@ -298,7 +320,7 @@ export const settings = {
 								height       : attributes.height,
 								label        : attributes.label,
 								updated      : attributes.updated,
-								dataObject   : isLocationPostType ? JSON.stringify(window.aioseo.currentPost.local_seo.maps) : null
+								dataObject   : isLocationPostType ? JSON.stringify(postEditorStore.currentPost.local_seo.maps) : null
 							}
 						}
 					)

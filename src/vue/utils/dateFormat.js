@@ -1,4 +1,12 @@
-const lang = window.aioseo?.user.locale.replace('_', '-') || 'en-US'
+import {
+	useRootStore
+} from '@/vue/stores'
+
+const lang = () => {
+	const rootStore = useRootStore()
+
+	return rootStore.aioseo.user.locale.replace('_', '-') || 'en-US'
+}
 
 // Format tokens and functions.
 const tokens = {
@@ -107,10 +115,10 @@ const tokens = {
 
 // Helpers.
 // Return day name for date.
-const getDayName = d => d.toLocaleString(lang, { weekday: 'long' })
+const getDayName = d => d.toLocaleString(lang(), { weekday: 'long' })
 
 // Return month name for date.
-const getMonthName = d => d.toLocaleString(lang, { month: 'long' })
+const getMonthName = d => d.toLocaleString(lang(), { month: 'long' })
 
 // Return [std offest, DST offset]. If no DST, same offset for both.
 const getOffsets = d => {

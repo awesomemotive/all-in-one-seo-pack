@@ -1,3 +1,9 @@
+import {
+	useOptionsStore,
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { debounce } from '@/vue/utils/debounce'
 
 // Importing these directly to avaoid circular dependencies.
@@ -11,7 +17,6 @@ import { maybeUpdateTerm } from './term'
 import { maybeUpdateAttachment } from './attachments'
 
 import TruSeo from '@/vue/plugins/tru-seo'
-import store from '@/vue/store'
 
 export {
 	isBlockEditor,
@@ -21,40 +26,49 @@ export {
 } from '@/vue/utils/context'
 
 export const truSeoShouldAnalyze = () => {
-	if (!window.aioseo.currentPost || !window.aioseo.currentPost.id) {
+	const postEditorStore = usePostEditorStore()
+	if (!postEditorStore.currentPost?.id) {
 		return false
 	}
+
+	const optionsStore = useOptionsStore()
 	return (
-		window.aioseo.options.advanced &&
-		window.aioseo.options.advanced.truSeo &&
-		!window.aioseo.currentPost.isSpecialPage &&
-		'attachment' !== window.aioseo.currentPost.postType &&
+		optionsStore.options.advanced?.truSeo &&
+		!postEditorStore.currentPost.isSpecialPage &&
+		'attachment' !== postEditorStore.currentPost.postType &&
 		shouldShowMetaBox()
 	)
 }
 
 export const shouldShowTruSeoScore = () => {
-	if (!window.aioseo.screen || !window.aioseo.screen.postType) {
+	const rootStore = useRootStore()
+	if (!rootStore.aioseo.screen?.postType) {
 		return false
 	}
 
+	const optionsStore = useOptionsStore()
 	return !!(
-		window.aioseo.options.advanced &&
-		window.aioseo.options.advanced.truSeo &&
-		shouldShowMetaBox(window.aioseo.screen.postType)
+		optionsStore.options.advanced?.truSeo &&
+		shouldShowMetaBox(rootStore.aioseo.screen.postType)
 	)
 }
 
+/**
+ * Since this runs before any stores are loaded, we have to use the window object to determine if it should be shown or not.
+ *
+ * @version 4.4.0
+ *
+ * @param   {string} postType The post type to check.
+ * @returns {boolean}         Returns true if the meta box should be shown.
+ */
 export const shouldShowMetaBox = (postType = null) => {
 	if (postType) {
 		return !!(
-			window.aioseo.dynamicOptions.searchAppearance.postTypes[postType] &&
-			window.aioseo.dynamicOptions.searchAppearance.postTypes[postType].advanced &&
-			window.aioseo.dynamicOptions.searchAppearance.postTypes[postType].advanced.showMetaBox
+			window.aioseo.dynamicOptions.searchAppearance.postTypes[postType]?.advanced?.showMetaBox
 		)
 	}
 
-	if (!window.aioseo.currentPost || !window.aioseo.currentPost.id) {
+	if (!window.aioseo.currentPost?.id) {
 		return false
 	}
 	const pt       = window.aioseo.currentPost.postType
@@ -63,15 +77,13 @@ export const shouldShowMetaBox = (postType = null) => {
 		pt &&
 		'post' === window.aioseo.currentPost.context &&
 		window.aioseo.dynamicOptions.searchAppearance.postTypes[pt] &&
-		window.aioseo.dynamicOptions.searchAppearance.postTypes[pt].advanced &&
-		window.aioseo.dynamicOptions.searchAppearance.postTypes[pt].advanced.showMetaBox
+		window.aioseo.dynamicOptions.searchAppearance.postTypes[pt]?.advanced?.showMetaBox
 	)
 	const showForTerm = !!(
 		taxonomy &&
 		'term' === window.aioseo.currentPost.context &&
 		window.aioseo.dynamicOptions.searchAppearance.taxonomies[taxonomy] &&
-		window.aioseo.dynamicOptions.searchAppearance.taxonomies[taxonomy].advanced &&
-		window.aioseo.dynamicOptions.searchAppearance.taxonomies[taxonomy].advanced.showMetaBox
+		window.aioseo.dynamicOptions.searchAppearance.taxonomies[taxonomy]?.advanced?.showMetaBox
 	)
 
 	return showForPost || showForTerm
@@ -88,8 +100,9 @@ export const maybeUpdatePost = async (time = 900, run = true) => {
 		maybeUpdateTerm(false)
 		maybeUpdateAttachment(false)
 
+		const postEditorStore = usePostEditorStore()
 		if (run) {
-			(new TruSeo()).runAnalysis({ postId: store.state.currentPost.id })
+			(new TruSeo()).runAnalysis({ postId: postEditorStore.currentPost.id })
 		}
 	}, time)
 }

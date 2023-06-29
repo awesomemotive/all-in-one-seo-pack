@@ -6,9 +6,10 @@ import loadPlugins from '@/vue/plugins'
 
 import loadComponents from '@/vue/components/common'
 
+import { loadPiniaStores } from '@/vue/stores'
+
 import TruSeo from '@/vue/plugins/tru-seo'
 
-import store from '@/vue/store'
 import initSettingsBar from './settings-bar'
 import initWatcher from './watcher'
 import Modal from './Modal.vue'
@@ -31,6 +32,7 @@ const mountPostSettings = () => {
 	})
 
 	let app = createApp({
+		name : 'Standalone/Divi',
 		data () {
 			return {
 				tableContext  : window.aioseo.currentPost.context,
@@ -44,10 +46,11 @@ const mountPostSettings = () => {
 	app = loadComponents(app)
 
 	app.use(router)
-	app.use(store)
 
-	store._vm = app
 	router.app = app
+
+	// Use the pinia store.
+	loadPiniaStores(app, router)
 
 	app.config.globalProperties.$truSeo = new TruSeo()
 

@@ -1,20 +1,23 @@
 <template>
-	<div v-if="internalOptions.internal">
+	<div v-if="optionsStore.internalOptions.internal">
 		<core-seo-setup :isWpDashboard="true" />
 	</div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { Standalone } from '@/vue/mixins/Standalone'
+import {
+	useOptionsStore
+} from '@/vue/stores'
+
 import CoreSeoSetup from '@/vue/components/common/core/SeoSetup'
 export default {
-	mixins     : [ Standalone ],
+	setup () {
+		return {
+			optionsStore : useOptionsStore()
+		}
+	},
 	components : {
 		CoreSeoSetup
-	},
-	computed : {
-		...mapState([ 'internalOptions' ])
 	}
 }
 </script>

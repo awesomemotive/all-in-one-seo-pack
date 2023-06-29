@@ -240,15 +240,19 @@ class PostMeta {
 							$keyphrases = (array) json_decode( $meta[ $mappedMeta[ $name ] ] );
 						}
 
-						$yoastKeyphrases = json_decode( $value );
-						for ( $i = 0; $i < count( $yoastKeyphrases ); $i++ ) {
-							$keyphrase = [ 'keyphrase' => aioseo()->helpers->sanitizeOption( $yoastKeyphrases[ $i ]->keyword ) ];
+						$yoastKeyphrases = json_decode( $value, true );
+						if ( is_array( $yoastKeyphrases ) ) {
+							foreach ( $yoastKeyphrases as $yoastKeyphrase ) {
+								if ( ! empty( $yoastKeyphrase['keyword'] ) ) {
+									$keyphrase = [ 'keyphrase' => aioseo()->helpers->sanitizeOption( $yoastKeyphrase['keyword'] ) ];
 
-							if ( ! isset( $keyphrases['additional'] ) ) {
-								$keyphrases['additional'] = [];
+									if ( ! isset( $keyphrases['additional'] ) ) {
+										$keyphrases['additional'] = [];
+									}
+
+									$keyphrases['additional'][] = $keyphrase;
+								}
 							}
-
-							$keyphrases['additional'][ $i ] = $keyphrase;
 						}
 
 						if ( ! empty( $keyphrases ) ) {

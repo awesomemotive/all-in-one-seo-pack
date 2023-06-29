@@ -101,7 +101,8 @@ trait Vue {
 					'socialNetworks'   => admin_url( 'admin.php?page=aioseo-social-networks' ),
 					'tools'            => admin_url( 'admin.php?page=aioseo-tools' ),
 					'wizard'           => admin_url( 'index.php?page=aioseo-setup-wizard' ),
-					'networkSettings'  => is_network_admin() ? network_admin_url( 'admin.php?page=aioseo-settings' ) : ''
+					'networkSettings'  => is_network_admin() ? network_admin_url( 'admin.php?page=aioseo-settings' ) : '',
+					'seoRevisions'     => admin_url( 'admin.php?page=aioseo-seo-revisions' ),
 				],
 				'admin'             => [
 					'widgets'          => admin_url( 'widgets.php' ),
@@ -265,6 +266,16 @@ trait Vue {
 				$data['integration'] = aioseo()->helpers->getPostPageBuilderName( $postId );
 			}
 
+			/**
+			 * @TODO Remove "static" after this method stops being called twice.
+			 */
+			static $seoRevisionsData = null;
+			if ( is_null( $seoRevisionsData ) ) {
+				$seoRevisionsData = aioseo()->seoRevisions->getVueDataEdit();
+			}
+
+			$data['seoRevisions'] = $seoRevisionsData;
+
 			if ( ! $post->exists() ) {
 				$oldPostMeta = aioseo()->migration->meta->getMigratedPostMeta( $postId );
 				foreach ( $oldPostMeta as $k => $v ) {
@@ -354,6 +365,10 @@ trait Vue {
 				'pluginActive'      => WpCodeIntegration::isPluginActive(),
 				'pluginNeedsUpdate' => WpCodeIntegration::pluginNeedsUpdate()
 			];
+		}
+
+		if ( 'seo-revisions' === $page ) {
+			$data['seoRevisions'] = aioseo()->seoRevisions->getVueDataCompare();
 		}
 
 		if (

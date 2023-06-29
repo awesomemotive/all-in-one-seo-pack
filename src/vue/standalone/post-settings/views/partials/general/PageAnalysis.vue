@@ -16,20 +16,30 @@
 		/>
 		<transition mode="out-in">
 			<metaboxAnalysisDetail
-				v-if="currentPost.page_analysis"
-				:analysisItems="currentPost.page_analysis.analysis[this.initTab]"
+				v-if="postEditorStore.currentPost.page_analysis"
+				:analysisItems="postEditorStore.currentPost.page_analysis.analysis[this.initTab]"
 			/>
 		</transition>
 	</div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { isBlockEditor } from '@/vue/utils/context'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import metaboxAnalysisDetail from './MetaboxAnalysisDetail'
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore(),
+			rootStore       : useRootStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreMainTabs,
@@ -55,19 +65,18 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'currentPost' ]),
 		pageBuilderAlert () {
-			if (!isBlockEditor() || '' === this.$aioseo.integration) {
+			if (!isBlockEditor() || '' === this.rootStore.aioseo.integration) {
 				return false
 			}
 
-			const pageBuilderName = this.$aioseo.integration.charAt(0).toUpperCase() + this.$aioseo.integration.slice(1)
+			const pageBuilderName = this.rootStore.aioseo.integration.charAt(0).toUpperCase() + this.rootStore.aioseo.integration.slice(1)
 
 			return this.$t.sprintf(
 				// Translators: 1 - The Page Builder name, 2 - HTML code opening tag, 3 - HTML code closing tag.
 				this.$t.__('We have detected that you are currently using the %1$s Page Builder. Please click %2$shere%3$s to use the %1$s editor for a most accurate result.', this.$td),
 				pageBuilderName,
-				'<a href="' + this.currentPost.editlink + '">',
+				'<a href="' + this.postEditorStore.currentPost.editlink + '">',
 				'</a>'
 			)
 		}
@@ -79,7 +88,7 @@ export default {
 	},
 	mounted () {
 		this.tabs.map(tab => {
-			tab.errorCount = this.currentPost.page_analysis.analysis[tab.slug].errors
+			tab.errorCount = this.postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors
 			return tab
 		})
 	}

@@ -255,7 +255,6 @@ class PostsTerms {
 		$body    = $request->get_json_params();
 		$postId  = ! empty( $body['postId'] ) ? intval( $body['postId'] ) : null;
 		$isMedia = isset( $body['isMedia'] ) ? true : false;
-		$post    = aioseo()->helpers->getPost( $postId );
 
 		if ( ! $postId ) {
 			return new \WP_REST_Response( [
@@ -264,47 +263,29 @@ class PostsTerms {
 			], 400 );
 		}
 
-		$thePost = Models\Post::getPost( $postId );
+		$aioseoPost = Models\Post::getPost( $postId );
+		$aioseoData = json_decode( wp_json_encode( $aioseoPost ), true );
 
-		if ( $thePost->exists() ) {
-			$metaTitle = aioseo()->meta->title->getPostTypeTitle( $post->post_type );
-			if ( empty( $thePost->title ) && ! empty( $body['title'] ) && trim( $body['title'] ) === trim( $metaTitle ) ) {
-				$body['title'] = null;
-			}
-			$thePost->title = ! empty( $body['title'] ) ? sanitize_text_field( $body['title'] ) : null;
-
-			$metaDescription = aioseo()->meta->description->getPostTypeDescription( $post->post_type );
-			if ( empty( $thePost->description ) && ! empty( $body['description'] ) && trim( $body['description'] ) === trim( $metaDescription ) ) {
-				$body['description'] = null;
-			}
-			$thePost->description = ! empty( $body['description'] ) ? sanitize_text_field( $body['description'] ) : '';
-			$thePost->updated     = gmdate( 'Y-m-d H:i:s' );
-			if ( $isMedia ) {
-				wp_update_post(
-					[
-						'ID'         => $postId,
-						'post_title' => sanitize_text_field( $body['imageTitle'] ),
-					]
-				);
-				update_post_meta( $postId, '_wp_attachment_image_alt', sanitize_text_field( $body['imageAltTag'] ) );
-			}
-		} else {
-			$thePost->post_id     = $postId;
-			$thePost->title       = ! empty( $body['title'] ) ? sanitize_text_field( $body['title'] ) : '';
-			$thePost->description = ! empty( $body['description'] ) ? sanitize_text_field( $body['description'] ) : null;
-			$thePost->created     = gmdate( 'Y-m-d H:i:s' );
-			$thePost->updated     = gmdate( 'Y-m-d H:i:s' );
-			if ( $isMedia ) {
-				wp_update_post(
-					[
-						'ID'         => $postId,
-						'post_title' => sanitize_text_field( $body['imageTitle'] ),
-					]
-				);
-				update_post_meta( $postId, '_wp_attachment_image_alt', sanitize_text_field( $body['imageAltTag'] ) );
-			}
+		// Decode these below because `savePost()` expects them to be an array.
+		if ( ! empty( $aioseoData['keyphrases'] ) ) {
+			$aioseoData['keyphrases'] = json_decode( $aioseoData['keyphrases'], true );
 		}
-		$thePost->save();
+
+		if ( ! empty( $aioseoData['page_analysis'] ) ) {
+			$aioseoData['page_analysis'] = json_decode( $aioseoData['page_analysis'], true );
+		}
+
+		if ( $isMedia ) {
+			wp_update_post(
+				[
+					'ID'         => $postId,
+					'post_title' => sanitize_text_field( $body['imageTitle'] ),
+				]
+			);
+			update_post_meta( $postId, '_wp_attachment_image_alt', sanitize_text_field( $body['imageAltTag'] ) );
+		}
+
+		Models\Post::savePost( $postId, array_replace( $aioseoData, $body ) );
 
 		$lastError = aioseo()->core->db->lastError();
 		if ( ! empty( $lastError ) ) {

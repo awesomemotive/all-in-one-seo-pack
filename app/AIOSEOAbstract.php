@@ -561,4 +561,13 @@ abstract class AIOSEOAbstract {
 	 * @var null|\AIOSEO\Plugin\Pro\Ai\Ai
 	 */
 	public $ai = null;
+
+	/**
+	 * SeoRevisions class instance.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @var null|\AIOSEO\Plugin\Pro\SeoRevisions\SeoRevisions
+	 */
+	public $seoRevisions = null;
 }

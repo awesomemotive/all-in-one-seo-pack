@@ -42,7 +42,7 @@
 					<div class="twitter-site-description">
 						<div class="site-domain">
 							<slot name="site-url">
-								{{ $aioseo.urls.domain }}
+								{{ rootStore.aioseo.urls.domain }}
 							</slot>
 						</div>
 
@@ -61,7 +61,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { truncate } from '@/vue/utils/html'
 import BaseImg from '@/vue/components/common/base/Img'
 import CoreLoader from '@/vue/components/common/core/Loader'
@@ -69,6 +73,12 @@ import SvgBook from '@/vue/components/common/svg/Book'
 import SvgDannieProfile from '@/vue/components/common/svg/dannie/Profile'
 
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		BaseImg,
 		CoreLoader,
@@ -97,13 +107,12 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options' ]),
 		appName () {
 			return import.meta.env.VITE_NAME
 		},
 		getCard () {
 			if ('default' === this.card) {
-				return this.options.social.twitter.general.defaultCardType
+				return this.optionsStore.options.social.twitter.general.defaultCardType
 			}
 
 			return this.card

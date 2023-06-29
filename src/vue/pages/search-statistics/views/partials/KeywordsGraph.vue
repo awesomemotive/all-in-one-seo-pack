@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<keywords-graph
-			v-if="shouldShowMain('search-statistics', 'keyword-rankings') || isUnlicensed"
+			v-if="shouldShowMain('search-statistics', 'keyword-rankings') || licenseStore.isUnlicensed"
 			legend-style="simple"
 		/>
 
@@ -12,11 +12,19 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
 import KeywordsGraph from './keywords-graph/KeywordsGraph'
 import Upgrade from './keywords-graph/Upgrade'
 import { LicenseConditions } from '@/vue/mixins'
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore()
+		}
+	},
 	mixins : [ LicenseConditions ],
 	props  : {
 		redirects : Object
@@ -24,9 +32,6 @@ export default {
 	components : {
 		KeywordsGraph,
 		Upgrade
-	},
-	computed : {
-		...mapGetters([ 'isUnlicensed' ])
 	}
 }
 </script>

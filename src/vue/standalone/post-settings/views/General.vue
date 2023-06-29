@@ -1,13 +1,13 @@
 <template>
 	<div class="aioseo-tab-content aioseo-post-general">
 		<core-settings-row
-			v-if="this.$allowed('aioseo_page_general_settings')"
+			v-if="allowed('aioseo_page_general_settings')"
 			class="mobile-radio-buttons"
 		>
 			<template #content>
 				<base-radio-toggle
 					v-if="'metabox' === $root._data.screenContext || 'modal' === parentComponentContext"
-					:modelValue="currentPost.generalMobilePrev"
+					:modelValue="postEditorStore.currentPost.generalMobilePrev"
 					@update:modelValue="isMobilePreviewEv"
 					name="previewGeneralIsMobile"
 					class="circle"
@@ -28,18 +28,18 @@
 
 		<core-settings-row
 			:name="strings.snippetPreview"
-			v-if="this.$allowed('aioseo_page_general_settings')"
+			v-if="allowed('aioseo_page_general_settings')"
 			class="snippet-preview-row"
 		>
 			<template #content>
 				<core-google-search-preview
-					:title="parseTags(currentPost.title || currentPost.tags.title || '#post_title #separator_sa #site_title')"
-					:separator="options.searchAppearance.global.separator"
-					:description="parseTags(currentPost.description || currentPost.tags.description || '#post_content')"
-					:class="{ ismobile: currentPost.generalMobilePrev }"
+					:title="parseTags(postEditorStore.currentPost.title || postEditorStore.currentPost.tags.title || '#post_title #separator_sa #site_title')"
+					:separator="optionsStore.options.searchAppearance.global.separator"
+					:description="parseTags(postEditorStore.currentPost.description || postEditorStore.currentPost.tags.description || '#post_content')"
+					:class="{ ismobile: postEditorStore.currentPost.generalMobilePrev }"
 				>
 					<template #domain>
-						{{ liveTags.permalink }}
+						{{ tagsStore.liveTags.permalink }}
 					</template>
 				</core-google-search-preview>
 
@@ -57,18 +57,18 @@
 		<core-settings-row
 			id="aioseo-post-settings-post-title-row"
 			class="snippet-title-row"
-			v-if="('metabox' === $root._data.screenContext || 'modal' === parentComponentContext) && this.$allowed('aioseo_page_general_settings')"
+			v-if="('metabox' === $root._data.screenContext || 'modal' === parentComponentContext) && allowed('aioseo_page_general_settings')"
 			:name="title"
 			:key="titleKey"
 		>
 			<template #content>
 				<core-html-tags-editor
-					v-model="currentPost.title"
+					v-model="postEditorStore.currentPost.title"
 					:line-numbers="false"
 					single
 					@counter="count => updateCount(count, 'titleCount')"
-					@update:modelValue="setIsDirty"
-					:tags-context="`${currentPost.postType || currentPost.termType}Title`"
+					@update:modelValue="postEditorStore.isDirty = true"
+					:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Title`"
 					:defaultMenuOrientation="'modal' === parentComponentContext ? 'top' : 'bottom'"
 					:default-tags="getDefaultTags('title')"
 				>
@@ -78,7 +78,7 @@
 
 					<template #append-button>
 						<ai-generator
-							v-if="currentPost.postType && !isPageBuilderEditor()"
+							v-if="postEditorStore.currentPost.postType && !isPageBuilderEditor()"
 							type="title"
 						/>
 					</template>
@@ -94,18 +94,18 @@
 		<core-settings-row
 			id="aioseo-post-settings-meta-description-row"
 			class="snippet-description-row"
-			v-if="('metabox' === $root._data.screenContext || 'modal' === parentComponentContext) && this.$allowed('aioseo_page_general_settings')"
+			v-if="('metabox' === $root._data.screenContext || 'modal' === parentComponentContext) && allowed('aioseo_page_general_settings')"
 			:name="strings.metaDescription"
 			:key="descriptionKey"
 		>
 			<template #content>
 				<core-html-tags-editor
-					v-model="currentPost.description"
+					v-model="postEditorStore.currentPost.description"
 					:line-numbers="false"
 					description
 					@counter="count => updateCount(count, 'descriptionCount')"
-					@update:modelValue="setIsDirty"
-					:tags-context="`${currentPost.postType || currentPost.termType}Description`"
+					@update:modelValue="postEditorStore.isDirty = true"
+					:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Description`"
 					:defaultMenuOrientation="'modal' === parentComponentContext ? 'top' : 'bottom'"
 					:default-tags="getDefaultTags('description')"
 				>
@@ -115,7 +115,7 @@
 
 					<template #append-button>
 						<ai-generator
-							v-if="currentPost.postType && !isPageBuilderEditor()"
+							v-if="postEditorStore.currentPost.postType && !isPageBuilderEditor()"
 							type="description"
 						/>
 					</template>
@@ -129,7 +129,7 @@
 		</core-settings-row>
 
 		<div
-			v-if="displayTruSeoMetaboxCard && options.searchAppearance.advanced.useKeywords && options.searchAppearance.advanced.keywordsLooking"
+			v-if="displayTruSeoMetaboxCard && optionsStore.options.searchAppearance.advanced.useKeywords && optionsStore.options.searchAppearance.advanced.keywordsLooking"
 		>
 			<core-alert
 				class="meta-keywords-alert"
@@ -189,7 +189,7 @@
 		</core-settings-row>
 
 		<core-settings-row
-			v-if="displayTruSeoMetaboxCard && currentPost.page_analysis"
+			v-if="displayTruSeoMetaboxCard && postEditorStore.currentPost.page_analysis"
 			:name="strings.pageAnalysis"
 			class="snippet-page-analysis-row"
 			align
@@ -233,38 +233,46 @@
 			v-if="displayTruSeoSidebarAnalysisCard"
 			slug="basicseo"
 			:header-text="strings.basicSeo"
-			:trueSeoScore="currentPost.page_analysis.analysis.basic.errors"
+			:trueSeoScore="postEditorStore.currentPost.page_analysis.analysis.basic.errors"
 			class="card-basic-seo"
 		>
-			<metabox-analysis-detail :analysisItems="currentPost.page_analysis.analysis.basic" />
+			<metabox-analysis-detail :analysisItems="postEditorStore.currentPost.page_analysis.analysis.basic" />
 		</core-sidebar-card>
 
 		<core-sidebar-card
 			v-if="displayTruSeoSidebarAnalysisCard"
 			slug="title"
 			:header-text="strings.title"
-			:trueSeoScore="currentPost.page_analysis.analysis.title.errors"
+			:trueSeoScore="postEditorStore.currentPost.page_analysis.analysis.title.errors"
 			class="card-title-seo"
 		>
-			<metabox-analysis-detail :analysisItems="currentPost.page_analysis.analysis.title" />
+			<metabox-analysis-detail :analysisItems="postEditorStore.currentPost.page_analysis.analysis.title" />
 		</core-sidebar-card>
 
 		<core-sidebar-card
 			v-if="displayTruSeoSidebarAnalysisCard"
 			slug="readability"
 			:header-text="strings.readability"
-			:trueSeoScore="currentPost.page_analysis.analysis.readability.errors"
+			:trueSeoScore="postEditorStore.currentPost.page_analysis.analysis.readability.errors"
 			class="card-readability-seo"
 		>
-			<metabox-analysis-detail :analysisItems="currentPost.page_analysis.analysis.readability" />
+			<metabox-analysis-detail :analysisItems="postEditorStore.currentPost.page_analysis.analysis.readability" />
 		</core-sidebar-card>
 	</div>
 </template>
 <script>
+import {
+	useOptionsStore,
+	usePostEditorStore,
+	useRootStore,
+	useSettingsStore,
+	useTagsStore
+} from '@/vue/stores'
+
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { merge } from 'lodash-es'
 import { useTruSeoScore } from '@/vue/composables'
-import { mapActions, mapState, mapMutations } from 'vuex'
-import { IsDirty, MaxCounts, SaveChanges, Tags, TruSeoScore } from '@/vue/mixins'
+import { MaxCounts, SaveChanges, Tags, TruSeoScore } from '@/vue/mixins'
 import { debounce } from '@/vue/utils/debounce'
 import { isPageBuilderEditor } from '@/vue/utils/context'
 import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
@@ -289,11 +297,16 @@ export default {
 		const { strings } = useTruSeoScore()
 
 		return {
+			optionsStore      : useOptionsStore(),
+			postEditorStore   : usePostEditorStore(),
+			rootStore         : useRootStore(),
+			settingsStore     : useSettingsStore(),
+			tagsStore         : useTagsStore(),
 			composableStrings : strings
 		}
 	},
 	emits      : [ 'changeTab' ],
-	mixins     : [ IsDirty, MaxCounts, SaveChanges, Tags, TruSeoScore ],
+	mixins     : [ MaxCounts, SaveChanges, Tags, TruSeoScore ],
 	components : {
 		AdditionalKeyphrases,
 		AiGenerator,
@@ -323,6 +336,7 @@ export default {
 	},
 	data () {
 		return {
+			allowed,
 			separator         : undefined,
 			isPageBuilderEditor,
 			titleCount        : 0,
@@ -360,68 +374,66 @@ export default {
 		}
 	},
 	watch : {
-		'currentPost.title' () {
-			debounce(() => this.runAnalysis({ postId: this.currentPost.id }), 750)
+		'postEditorStore.currentPost.title' () {
+			debounce(() => this.runAnalysis({ postId: this.postEditorStore.currentPost.id }), 750)
 		},
-		'currentPost.description' () {
-			debounce(() => this.runAnalysis({ postId: this.currentPost.id }), 750)
+		'postEditorStore.currentPost.description' () {
+			debounce(() => this.runAnalysis({ postId: this.postEditorStore.currentPost.id }), 750)
 		}
 	},
 	computed : {
-		...mapState([ 'currentPost', 'options' ]),
-		...mapState('live-tags', [ 'liveTags' ]),
 		title () {
 			return this.$t.sprintf(
 				// Translators: 1 - The type of page (Post, Page, Category, Tag, etc.).
 				this.$t.__('%1$s Title', this.$td),
-				this.currentPost.type
+				this.postEditorStore.currentPost.type
 			)
 		},
 		toggled : function () {
-			return 1 === this.currentPost.pillar_content
+			return 1 === this.postEditorStore.currentPost.pillar_content
 		},
 		displayTruSeoMetaboxCard () {
-			return truSeoShouldAnalyze() && 'metabox' === this.$root._data.screenContext && 'post' === this.currentPost.context && 'attachment' !== this.currentPost.postType && 'modal' !== this.parentComponentContext && this.$allowed('aioseo_page_analysis') && !this.currentPost.isSpecialPage && !this.isForum
+			return truSeoShouldAnalyze() && 'metabox' === this.$root._data.screenContext && 'post' === this.postEditorStore.currentPost.context && 'attachment' !== this.postEditorStore.currentPost.postType && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.postEditorStore.currentPost.isSpecialPage && !this.isForum
 		},
 		displayTruSeoSidebarKeyphraseCard () {
-			return truSeoShouldAnalyze() && 'sidebar' === this.$root._data.screenContext && 'modal' !== this.parentComponentContext && this.$allowed('aioseo_page_analysis') && !this.currentPost.isSpecialPage && !this.isForum
+			return truSeoShouldAnalyze() && 'sidebar' === this.$root._data.screenContext && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.postEditorStore.currentPost.isSpecialPage && !this.isForum
 		},
 		displayTruSeoSidebarAnalysisCard () {
-			return truSeoShouldAnalyze() && 'sidebar' === this.$root._data.screenContext && this.currentPost.page_analysis && 'modal' !== this.parentComponentContext && this.$allowed('aioseo_page_analysis') && !this.currentPost.isSpecialPage && !this.isForum
+			return truSeoShouldAnalyze() && 'sidebar' === this.$root._data.screenContext && this.postEditorStore.currentPost.page_analysis && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.postEditorStore.currentPost.isSpecialPage && !this.isForum
 		},
 		isForum () {
-			if (('forum' === this.currentPost.postType || 'topic' === this.currentPost.postType || 'reply' === this.currentPost.postType) && window.aioseo.data.isBBPressActive) {
-				return true
-			}
-			return false
+			return this.rootStore.aioseo.data.isBBPressActive &&
+				(
+					'forum' === this.postEditorStore.currentPost.postType ||
+					'topic' === this.postEditorStore.currentPost.postType ||
+					'reply' === this.postEditorStore.currentPost.postType
+				)
 		},
 		focusKeyphraseScore () {
-			if (!this.currentPost.keyphrases.focus.keyphrase) {
+			if (!this.postEditorStore.currentPost.keyphrases.focus.keyphrase) {
 				return null
 			}
 
-			return this.currentPost.keyphrases.focus.score
+			return this.postEditorStore.currentPost.keyphrases.focus.score
 		}
 	},
 	methods : {
-		...mapActions([ 'openModal', 'changeGeneralPreview' ]),
-		...mapMutations([ 'changeTabSettings' ]),
 		hideKeywordsLooking () {
-			this.options.searchAppearance.advanced.keywordsLooking = false
-			this.saveChanges()
+			this.optionsStore.options.searchAppearance.advanced.keywordsLooking = false
+			this.optionsStore.saveChanges()
 		},
 		isMobilePreviewEv (ev) {
-			this.changeGeneralPreview(ev)
+			this.postEditorStore.changeGeneralPreview(ev)
 		},
 		editSnippetEv () {
 			this.editSnippet = !this.editSnippet
-			this.changeTabSettings({ setting: 'modal', value: 'general' })
-			this.openModal(true)
+			this.settingsStore.changeTabSettings({ setting: 'modal', value: 'general' })
+			this.postEditorStore.openModal(true)
 		},
 		getDefaultTags (location) {
 			switch (location) {
 				case 'title':
-					return 'post' === this.currentPost.context
+					return 'post' === this.postEditorStore.currentPost.context
 						? [
 							'post_title',
 							'separator_sa',
@@ -433,15 +445,15 @@ export default {
 							'site_title'
 						]
 				case 'description':
-					return 'post' === this.currentPost.context
+					return 'post' === this.postEditorStore.currentPost.context
 						? (
-							'attachment' === this.currentPost.postType
+							'attachment' === this.postEditorStore.currentPost.postType
 								? [
 									'attachment_caption',
 									'separator_sa',
 									'site_title'
 								]
-								: 'product' === this.currentPost.postType
+								: 'product' === this.postEditorStore.currentPost.postType
 									? [
 										'post_excerpt',
 										'post_content'
@@ -461,16 +473,16 @@ export default {
 		}
 	},
 	mounted () {
-		this.keyphrases = this.currentPost.keyphrases
-		if ('post' === this.currentPost.context && !this.currentPost.keyphrases.length) {
+		this.keyphrases = this.postEditorStore.currentPost.keyphrases
+		if ('post' === this.postEditorStore.currentPost.context && !this.postEditorStore.currentPost.keyphrases.length) {
 			this.selectedKeyphrase = -1
 		}
 
-		this.$bus.$on('updateTitleKey', () => {
+		window.aioseoBus.$on('updateTitleKey', () => {
 			this.titleKey = 'title' + Math.random(0, 999)
 		})
 
-		this.$bus.$on('updateDescriptionKey', () => {
+		window.aioseoBus.$on('updateDescriptionKey', () => {
 			this.descriptionKey = 'description' + Math.random(0, 999)
 		})
 	}

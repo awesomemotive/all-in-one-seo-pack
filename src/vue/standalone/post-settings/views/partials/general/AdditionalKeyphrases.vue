@@ -1,8 +1,8 @@
 <template>
 	<div class="additional-keyphrases-panel">
-		<div v-if="currentPost.keyphrases.additional && currentPost.keyphrases.additional.length && ($isPro && $aioseo.license.isActive)">
+		<div v-if="postEditorStore.currentPost.keyphrases.additional && postEditorStore.currentPost.keyphrases.additional.length && ($isPro && licenseStore.license.isActive)">
 			<core-keyphrase
-				v-for="(keyphrase, index) in currentPost.keyphrases.additional"
+				v-for="(keyphrase, index) in postEditorStore.currentPost.keyphrases.additional"
 				:key="index"
 				:index="index"
 				:keyphrase="keyphrase.keyphrase"
@@ -16,27 +16,27 @@
 			<div class="analysis-wrapper">
 				<core-loader
 					class="analysis-loading"
-					v-if="currentPost.loading.additional[this.selectedKeyphrase] &&
-						currentPost.keyphrases.additional[this.selectedKeyphrase] &&
-						currentPost.keyphrases.additional[this.selectedKeyphrase].keyphrase"
+					v-if="postEditorStore.currentPost.loading.additional[this.selectedKeyphrase] &&
+						postEditorStore.currentPost.keyphrases.additional[this.selectedKeyphrase] &&
+						postEditorStore.currentPost.keyphrases.additional[this.selectedKeyphrase].keyphrase"
 					dark
 				/>
 				<metaboxAnalysisDetail
-					v-if="!currentPost.loading.additional[this.selectedKeyphrase] &&
-						currentPost.keyphrases.additional[this.selectedKeyphrase] &&
-						currentPost.keyphrases.additional[this.selectedKeyphrase].keyphrase"
-					:analysisItems="currentPost.keyphrases.additional[this.selectedKeyphrase].analysis"
+					v-if="!postEditorStore.currentPost.loading.additional[this.selectedKeyphrase] &&
+						postEditorStore.currentPost.keyphrases.additional[this.selectedKeyphrase] &&
+						postEditorStore.currentPost.keyphrases.additional[this.selectedKeyphrase].keyphrase"
+					:analysisItems="postEditorStore.currentPost.keyphrases.additional[this.selectedKeyphrase].analysis"
 				/>
 			</div>
 		</div>
 		<base-input
-			v-if="$isPro && $aioseo.license.isActive"
+			v-if="$isPro && licenseStore.license.isActive"
 			size="medium"
 			:class="`add-keyphrase-${this.$root._data.screenContext}-input`"
 			@keydown.enter="pressEnter"
 		/>
 		<base-button
-			v-if="$isPro && $aioseo.license.isActive"
+			v-if="$isPro && licenseStore.license.isActive"
 			id="add-additional-keyphrase"
 			class="add-keyphrase gray medium"
 			@click="addKeyphraseEv"
@@ -46,7 +46,7 @@
 		</base-button>
 
 		<template
-			v-if="!$isPro || !$aioseo.license.isActive"
+			v-if="!$isPro || !licenseStore.license.isActive"
 		>
 			<div class="aioseo-description additional-keyphrases-description">
 				{{ strings.keyphraseDocumentation }}
@@ -63,14 +63,23 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { IsDirty } from '@/vue/mixins'
+import {
+	useLicenseStore,
+	usePostEditorStore
+} from '@/vue/stores'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreKeyphrase from '@/vue/components/common/core/Keyphrase'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import metaboxAnalysisDetail from './MetaboxAnalysisDetail'
 export default {
+	setup () {
+		return {
+			licenseStore    : useLicenseStore(),
+			postEditorStore : usePostEditorStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreKeyphrase,
@@ -78,7 +87,6 @@ export default {
 		SvgCirclePlus,
 		metaboxAnalysisDetail
 	},
-	mixins : [ IsDirty ],
 	data () {
 		return {
 			selectedKeyphrase : 0,
@@ -103,14 +111,11 @@ export default {
 		}
 	},
 	watch : {
-		'currentPost.keyphrases.additional' () {
-			if (this.currentPost.keyphrases.additional && !this.currentPost.keyphrases.additional[this.selectedKeyphrase]) {
+		'postEditorStore.currentPost.keyphrases.additional' () {
+			if (this.postEditorStore.currentPost.keyphrases.additional && !this.postEditorStore.currentPost.keyphrases.additional[this.selectedKeyphrase]) {
 				this.selectedKeyphrase = 0
 			}
 		}
-	},
-	computed : {
-		...mapState([ 'currentPost' ])
 	},
 	methods : {
 		onSelectedKeyphrase (panel) {
@@ -118,23 +123,23 @@ export default {
 		},
 		onSaved (payload) {
 			const { index, value } = payload
-			this.currentPost.keyphrases.additional[index].keyphrase = value
-			this.currentPost.keyphrases.additional[index].score = 0
-			this.currentPost.loading.additional[index] = true
+			this.postEditorStore.currentPost.keyphrases.additional[index].keyphrase = value
+			this.postEditorStore.currentPost.keyphrases.additional[index].score = 0
+			this.postEditorStore.currentPost.loading.additional[index] = true
 
-			this.setIsDirty()
-			this.$truSeo.runAnalysis({ postId: this.currentPost.id, postData: this.currentPost })
+			this.postEditorStore.isDirty = true
+			this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 			this.selectedKeyphrase = index
 		},
 		onDeleted (index) {
-			const additionalCopy = [ ...this.currentPost.keyphrases.additional ]
+			const additionalCopy = [ ...this.postEditorStore.currentPost.keyphrases.additional ]
 			additionalCopy.splice(index, 1)
-			this.currentPost.keyphrases.additional = null
+			this.postEditorStore.currentPost.keyphrases.additional = null
 
 			setTimeout(() => {
-				this.currentPost.keyphrases.additional = additionalCopy
-				this.setIsDirty()
-				this.$truSeo.runAnalysis({ postId: this.currentPost.id, postData: this.currentPost })
+				this.postEditorStore.currentPost.keyphrases.additional = additionalCopy
+				this.postEditorStore.isDirty           = true
+				this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 			}, 300)
 		},
 		addKeyphraseEv () {
@@ -142,15 +147,15 @@ export default {
 			const keyphraseInput          = keyphraseInputComponent[0].querySelector('.medium')
 			if (keyphraseInput.value) {
 				const newKeyphrase      = { keyphrase: keyphraseInput.value, score: 0 }
-				const newKeyphraseIndex = this.currentPost.keyphrases.additional.push(newKeyphrase)
+				const newKeyphraseIndex = this.postEditorStore.currentPost.keyphrases.additional.push(newKeyphrase)
 				const keyphrasePanel    = document.getElementsByClassName('keyphrase-name')
-				this.currentPost.loading.additional[0] = true
+				this.postEditorStore.currentPost.loading.additional[0] = true
 				keyphraseInput.value = ''
 				keyphraseInput.blur()
 
-				this.setIsDirty()
+				this.postEditorStore.isDirty = true
 				keyphrasePanel[newKeyphraseIndex]?.click()
-				this.$truSeo.runAnalysis({ postId: this.currentPost.id, postData: this.currentPost })
+				this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 			}
 		},
 		pressEnter (event) {
@@ -159,8 +164,8 @@ export default {
 			addButon.click()
 		},
 		created () {
-			this.currentPost.keyphrases.forEach((keyphrase, index) => {
-				this.currentPost.loading.additional[index] = false
+			this.postEditorStore.currentPost.keyphrases.forEach((keyphrase, index) => {
+				this.postEditorStore.currentPost.loading.additional[index] = false
 			})
 		}
 	}

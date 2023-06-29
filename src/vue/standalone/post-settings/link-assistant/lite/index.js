@@ -1,1 +1,1 @@
-// Silence is golden. :-)
+export default class LinkAssistantWatcher {}

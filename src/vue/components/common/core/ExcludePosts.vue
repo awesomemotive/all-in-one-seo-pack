@@ -82,14 +82,22 @@
 </template>
 
 <script>
+import {
+	useOptionsStore
+} from '@/vue/stores'
+
 import { JsonValues } from '@/vue/mixins'
-import { mapActions } from 'vuex'
 import BaseButton from '@/vue/components/common/base/Button'
 import BaseSelect from '@/vue/components/common/base/Select'
 import SvgAddPlus from '@/vue/components/common/svg/AddPlus'
 import SvgClose from '@/vue/components/common/svg/Close'
 import SvgExternal from '@/vue/components/common/svg/External'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore()
+		}
+	},
 	components : {
 		BaseButton,
 		BaseSelect,
@@ -143,9 +151,8 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'getObjects' ]),
 		processGetObjects (term) {
-			return this.getObjects({ query: term, type: this.type })
+			return this.optionsStore.getObjects({ query: term, type: this.type })
 				.then((response) => {
 					this.excludeOptions = response.body.objects
 				})

@@ -383,13 +383,12 @@ class Addons {
 	}
 
 	/**
-	 * Load an addon into aioseo
+	 * Load an addon into aioseo.
 	 *
 	 * @since 4.1.0
 	 *
-	 * @param string $slug
-	 * @param object $addon Addon class instance
-	 *
+	 * @param  string $slug
+	 * @param  object $addon Addon class instance.
 	 * @return void
 	 */
 	public function loadAddon( $slug, $addon ) {
@@ -398,12 +397,11 @@ class Addons {
 	}
 
 	/**
-	 * Return a loaded addon
+	 * Return a loaded addon.
 	 *
 	 * @since 4.1.0
 	 *
-	 * @param string $slug
-	 *
+	 * @param  string $slug
 	 * @return object|null
 	 */
 	public function getLoadedAddon( $slug ) {
@@ -438,7 +436,7 @@ class Addons {
 	 * @param  array  $args     The args for the function.
 	 * @return array            The response from each addon.
 	 */
-	public function doFunction( $class, $function, $args = [] ) {
+	public function doAddonFunction( $class, $function, $args = [] ) {
 		$addonResponses = [];
 
 		foreach ( $this->getLoadedAddons() as $addonSlug => $addon ) {
@@ -448,6 +446,25 @@ class Addons {
 		}
 
 		return $addonResponses;
+	}
+
+	/**
+	 * Merges the data for Vue.
+	 *
+	 * @since 4.4.1
+	 *
+	 * @param  array  $data The data to merge.
+	 * @param  string $page The current page.
+	 * @return array        The data.
+	 */
+	public function getVueData( $data = [], $page = null ) {
+		foreach ( $this->getLoadedAddons() as $addon ) {
+			if ( isset( $addon->helpers ) && method_exists( $addon->helpers, 'getVueData' ) ) {
+				$data = array_merge( $data, $addon->helpers->getVueData( $data, $page ) );
+			}
+		}
+
+		return $data;
 	}
 
 	/**

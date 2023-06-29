@@ -1,4 +1,7 @@
-import store from '@/vue/store'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import { isBlockEditor, isClassicEditor, isClassicNoEditor, isElementorEditor, isDiviEditor } from '@/vue/utils/context'
 import { getEditorData as getElementorData } from '@/vue/standalone/elementor/helpers'
 import { getEditorData as getDiviData } from '@/vue/standalone/divi/helpers'
@@ -46,14 +49,18 @@ export const getPostFeaturedImage = async () => {
 	}
 
 	if (isBlockEditor()) {
-		const mediaId = await getBlockEditorFeaturedMediaId().then(id => id)
+		const mediaId = await getBlockEditorFeaturedMediaId()
+			.then(id => id)
+
 		if (isNaN(mediaId) || 0 === mediaId) {
 			return ''
 		}
 
-		return await store.dispatch('getMediaData', { mediaId }).then(media => {
-			return media.source_url
-		})
+		const postEditorStore = usePostEditorStore()
+		return postEditorStore.getMediaData({ mediaId })
+			.then(media => {
+				return media.source_url
+			})
 	}
 
 	if (isElementorEditor()) {
@@ -78,14 +85,18 @@ export const getPostEditedFeaturedImage = async () => {
 	}
 
 	if (isBlockEditor()) {
-		const mediaId = await getBlockEditorFeaturedMediaId(true).then(id => id)
+		const mediaId = await getBlockEditorFeaturedMediaId(true)
+			.then(id => id)
+
 		if (isNaN(mediaId) || 0 === mediaId) {
 			return ''
 		}
 
-		return await store.dispatch('getMediaData', { mediaId }).then(media => {
-			return media.source_url
-		})
+		const postEditorStore = usePostEditorStore()
+		return postEditorStore.getMediaData({ mediaId })
+			.then(media => {
+				return media.source_url
+			})
 	}
 
 	if (isElementorEditor()) {

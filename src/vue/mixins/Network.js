@@ -1,10 +1,14 @@
-import { mapState } from 'vuex'
+import {
+	useNetworkStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { arrayDiff } from '@/vue/utils/helpers'
 export const Network = {
 	computed : {
-		...mapState([ 'networkData' ]),
 		getSites () {
-			return JSON.parse(JSON.stringify(this.networkData.sites.sites))
+			const networkStore = useNetworkStore()
+			return JSON.parse(JSON.stringify(networkStore.networkData.sites.sites))
 		},
 		getSitesIds () {
 			return Array.from(this.getSites, site => this.getUniqueSiteId(site))
@@ -14,9 +18,10 @@ export const Network = {
 		},
 		activeSitesIds () {
 			const ids = []
+			const networkStore = useNetworkStore()
 
 			this.getSites.forEach(s => {
-				if (this.networkData.activeSites.some(as => as.domain === s.domain && as.path === s.path)) {
+				if (networkStore.networkData.activeSites.some(as => as.domain === s.domain && as.path === s.path)) {
 					ids.push(this.getUniqueSiteId(s))
 				}
 			})
@@ -39,7 +44,8 @@ export const Network = {
 			return mainSite
 		},
 		isMainSite (domain, path) {
-			return (this.$aioseo.urls.mainSiteUrl + '/').includes(`${(this.$aioseo.data.isSsl ? 'https' : 'http')}://${domain}${path}`)
+			const rootStore = useRootStore()
+			return (rootStore.aioseo.urls.mainSiteUrl + '/').includes(`${(rootStore.aioseo.data.isSsl ? 'https' : 'http')}://${domain}${path}`)
 		},
 		getSiteByDomainAndPath (domain, path) {
 			return this.getSites.find(s => s.domain === domain && s.path === path)
@@ -50,7 +56,8 @@ export const Network = {
 		getActiveSiteByUniqueId (uniqueSiteId) {
 			const site = this.getSiteByUniqueId(uniqueSiteId)
 			if (site) {
-				return this.networkData.activeSites.find(s => s.domain === site.domain && s.path === site.path)
+				const networkStore = useNetworkStore()
+				return networkStore.networkData.activeSites.find(s => s.domain === site.domain && s.path === site.path)
 			}
 
 			return null

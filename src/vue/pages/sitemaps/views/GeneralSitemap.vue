@@ -16,13 +16,13 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.sitemap.general.enable"
+						v-model="optionsStore.options.sitemap.general.enable"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.sitemap.general.enable"
+				v-if="optionsStore.options.sitemap.general.enable"
 				:name="$constants.GLOBAL_STRINGS.preview"
 			>
 				<template #content>
@@ -31,7 +31,7 @@
 							size="medium"
 							type="blue"
 							tag="a"
-							:href="$aioseo.urls.generalSitemapUrl"
+							:href="rootStore.aioseo.urls.generalSitemapUrl"
 							target="_blank"
 						>
 							<svg-external />
@@ -50,7 +50,7 @@
 
 					<core-alert
 						class="static-regeneration-notice"
-						v-if="!options.deprecated.sitemap.general.advancedSettings.dynamic && $aioseo.scheduledActions && $aioseo.scheduledActions.sitemap && $aioseo.scheduledActions.sitemap.includes('staticSitemapRegeneration')"
+						v-if="!optionsStore.options.deprecated.sitemap.general.advancedSettings.dynamic && rootStore.aioseo.scheduledActions && rootStore.aioseo.scheduledActions.sitemap && rootStore.aioseo.scheduledActions.sitemap.includes('staticSitemapRegeneration')"
 						type="blue"
 					>
 						{{ strings.warningStaticRegeneration }}
@@ -60,7 +60,7 @@
 		</core-card>
 
 		<core-card
-			v-if="options.sitemap.general.enable"
+			v-if="optionsStore.options.sitemap.general.enable"
 			slug="generalSitemapSettings"
 			:header-text="strings.sitemapSettings"
 		>
@@ -69,7 +69,7 @@
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.sitemap.general.indexes"
+						v-model="optionsStore.options.sitemap.general.indexes"
 						name="sitemapIndexes"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
@@ -88,12 +88,12 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.sitemap.general.indexes"
+				v-if="optionsStore.options.sitemap.general.indexes"
 				:name="strings.linksPerSitemap"
 			>
 				<template #content>
 					<base-input
-						v-model="options.sitemap.general.linksPerIndex"
+						v-model="optionsStore.options.sitemap.general.linksPerIndex"
 						class="aioseo-links-per-site"
 						type="number"
 						size="medium"
@@ -112,7 +112,7 @@
 
 					<core-alert
 						class="index-notice"
-						v-if="options.sitemap.general.indexes && 1000 < options.sitemap.general.linksPerIndex"
+						v-if="optionsStore.options.sitemap.general.indexes && 1000 < optionsStore.options.sitemap.general.linksPerIndex"
 						type="yellow"
 					>
 						{{ strings.warningLinksPerSitemap }}
@@ -126,14 +126,14 @@
 				<template #content>
 					<base-checkbox
 						size="medium"
-						v-model="options.sitemap.general.postTypes.all"
+						v-model="optionsStore.options.sitemap.general.postTypes.all"
 					>
 						{{ strings.includeAllPostTypes }}
 					</base-checkbox>
 
 					<core-post-type-options
-						v-if="!options.sitemap.general.postTypes.all"
-						:options="options.sitemap.general"
+						v-if="!optionsStore.options.sitemap.general.postTypes.all"
+						:options="optionsStore.options.sitemap.general"
 						type="postTypes"
 					/>
 
@@ -153,14 +153,14 @@
 				<template #content>
 					<base-checkbox
 						size="medium"
-						v-model="options.sitemap.general.taxonomies.all"
+						v-model="optionsStore.options.sitemap.general.taxonomies.all"
 					>
 						{{ strings.includeAllTaxonomies }}
 					</base-checkbox>
 
 					<core-post-type-options
-						v-if="!options.sitemap.general.taxonomies.all"
-						:options="options.sitemap.general"
+						v-if="!optionsStore.options.sitemap.general.taxonomies.all"
+						:options="optionsStore.options.sitemap.general"
 						type="taxonomies"
 					/>
 
@@ -179,7 +179,7 @@
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.sitemap.general.date"
+						v-model="optionsStore.options.sitemap.general.date"
 						name="dateArchiveSitemap"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
@@ -202,7 +202,7 @@
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.sitemap.general.author"
+						v-model="optionsStore.options.sitemap.general.author"
 						name="authorSitemap"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
@@ -224,13 +224,13 @@
 		<AdditionalPages />
 
 		<core-card
-			v-if="options.sitemap.general.enable"
+			v-if="optionsStore.options.sitemap.general.enable"
 			slug="advancedSettings"
-			:toggles="options.sitemap.general.advancedSettings.enable"
+			:toggles="optionsStore.options.sitemap.general.advancedSettings.enable"
 		>
 			<template #header>
 				<base-toggle
-					v-model="options.sitemap.general.advancedSettings.enable"
+					v-model="optionsStore.options.sitemap.general.advancedSettings.enable"
 				/>
 
 				<span>{{ strings.advancedSettings }}</span>
@@ -242,7 +242,7 @@
 			>
 				<template #content>
 					<core-exclude-posts
-						:options="options.sitemap.general.advancedSettings"
+						:options="optionsStore.options.sitemap.general.advancedSettings"
 						type="posts"
 					/>
 				</template>
@@ -254,7 +254,7 @@
 			>
 				<template #content>
 					<core-exclude-posts
-						:options="options.sitemap.general.advancedSettings"
+						:options="optionsStore.options.sitemap.general.advancedSettings"
 						type="terms"
 					/>
 
@@ -270,7 +270,7 @@
 			>
 				<template #content>
 					<core-priority-score
-						:priority="options.sitemap.general.advancedSettings.priority"
+						:priority="optionsStore.options.sitemap.general.advancedSettings.priority"
 						:rows="[
 							'homePage',
 							'archive',
@@ -286,20 +286,20 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.sitemap.general.advancedSettings.priority.postTypes.grouped"
+						v-model="optionsStore.options.sitemap.general.advancedSettings.priority.postTypes.grouped"
 					>
 						{{ strings.grouped }}
 					</base-toggle>
 					<core-priority-score
-						v-if="options.sitemap.general.advancedSettings.priority.postTypes.grouped"
-						:priority="options.sitemap.general.advancedSettings.priority"
+						v-if="optionsStore.options.sitemap.general.advancedSettings.priority.postTypes.grouped"
+						:priority="optionsStore.options.sitemap.general.advancedSettings.priority"
 						:rows="[
 							'postTypes'
 						]"
 					/>
 					<core-priority-score
-						v-if="!options.sitemap.general.advancedSettings.priority.postTypes.grouped"
-						:priority="dynamicOptions.sitemap.priority.postTypes"
+						v-if="!optionsStore.options.sitemap.general.advancedSettings.priority.postTypes.grouped"
+						:priority="optionsStore.dynamicOptions.sitemap.priority.postTypes"
 						:rows="getPostTypeRows"
 						:labels="getPostTypeLabels"
 					/>
@@ -312,20 +312,20 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.sitemap.general.advancedSettings.priority.taxonomies.grouped"
+						v-model="optionsStore.options.sitemap.general.advancedSettings.priority.taxonomies.grouped"
 					>
 						{{ strings.grouped }}
 					</base-toggle>
 					<core-priority-score
-						v-if="options.sitemap.general.advancedSettings.priority.taxonomies.grouped"
-						:priority="options.sitemap.general.advancedSettings.priority"
+						v-if="optionsStore.options.sitemap.general.advancedSettings.priority.taxonomies.grouped"
+						:priority="optionsStore.options.sitemap.general.advancedSettings.priority"
 						:rows="[
 							'taxonomies'
 						]"
 					/>
 					<core-priority-score
-						v-if="!options.sitemap.general.advancedSettings.priority.taxonomies.grouped"
-						:priority="dynamicOptions.sitemap.priority.taxonomies"
+						v-if="!optionsStore.options.sitemap.general.advancedSettings.priority.taxonomies.grouped"
+						:priority="optionsStore.dynamicOptions.sitemap.priority.taxonomies"
 						:rows="getTaxonomyRows"
 						:labels="getTaxonomyLabels"
 					/>
@@ -334,11 +334,11 @@
 
 			<core-settings-row
 				:name="strings.dynamicallyGenerate"
-				v-if="internalOptions.internal.deprecatedOptions.includes('staticSitemap')"
+				v-if="optionsStore.internalOptions.internal.deprecatedOptions.includes('staticSitemap')"
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.deprecated.sitemap.general.advancedSettings.dynamic"
+						v-model="optionsStore.options.deprecated.sitemap.general.advancedSettings.dynamic"
 						name="dynamic"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
@@ -361,7 +361,7 @@
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.sitemap.general.advancedSettings.excludeImages"
+						v-model="optionsStore.options.sitemap.general.advancedSettings.excludeImages"
 						name="excludeImages"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
@@ -383,7 +383,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { useCommonSitemap } from '@/vue/pages/sitemaps/composables'
 
 import AdditionalPages from './AdditionalPages'
@@ -402,6 +406,8 @@ export default {
 		const { validateLinksPerIndex } = useCommonSitemap()
 
 		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore(),
 			validateLinksPerIndex
 		}
 	},
@@ -465,23 +471,22 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options', 'dynamicOptions', 'internalOptions' ]),
 		getPostTypeRows () {
-			return this.$aioseo.postData.postTypes.map(p => p.name)
+			return this.rootStore.aioseo.postData.postTypes.map(p => p.name)
 		},
 		getPostTypeLabels () {
 			const labels = {}
-			this.$aioseo.postData.postTypes.forEach(p => {
+			this.rootStore.aioseo.postData.postTypes.forEach(p => {
 				labels[p.name] = p.label
 			})
 			return labels
 		},
 		getTaxonomyRows () {
-			return this.$aioseo.postData.taxonomies.map(t => t.name)
+			return this.rootStore.aioseo.postData.taxonomies.map(t => t.name)
 		},
 		getTaxonomyLabels () {
 			const labels = {}
-			this.$aioseo.postData.taxonomies.forEach(t => {
+			this.rootStore.aioseo.postData.taxonomies.forEach(t => {
 				labels[t.name] = t.label
 			})
 			return labels

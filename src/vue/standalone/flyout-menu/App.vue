@@ -37,8 +37,10 @@
 </template>
 
 <script>
-import { Standalone } from '@/vue/mixins/Standalone'
-import { mapState } from 'vuex'
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import SvgFlyoutDannie from '@/vue/components/common/svg/flyout-dannie/Index'
 import SvgFlyoutDannieUp from '@/vue/components/common/svg/flyout-dannie/Up'
 import SvgLightBulb from '@/vue/components/common/svg/LightBulb'
@@ -46,6 +48,11 @@ import SvgMessage from '@/vue/components/common/svg/Message'
 import SvgStar from '@/vue/components/common/svg/Star'
 import SvgSupport from '@/vue/components/common/svg/Support'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		SvgFlyoutDannie,
 		SvgFlyoutDannieUp,
@@ -54,7 +61,6 @@ export default {
 		SvgStar,
 		SvgSupport
 	},
-	mixins : [ Standalone ],
 	data () {
 		return {
 			isOpen   : false,
@@ -66,7 +72,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'pong' ]),
 		items () {
 			const items = [
 				{
@@ -98,7 +103,7 @@ export default {
 				}
 			]
 
-			if (!this.$isPro && this.pong) {
+			if (!this.$isPro && this.rootStore.pong) {
 				items.unshift({
 					label : this.$t.sprintf(
 						// Translators: 1 - The plugin short name ("AIOSEO"), 2 - "Pro" string.

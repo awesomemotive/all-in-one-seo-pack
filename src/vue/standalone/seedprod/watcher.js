@@ -1,4 +1,8 @@
-import store from '@/vue/store'
+import {
+	usePostEditorStore,
+	useSeoRevisionsStore
+} from '@/vue/stores'
+
 import { isEmpty } from 'lodash-es'
 
 /**
@@ -7,11 +11,15 @@ import { isEmpty } from 'lodash-es'
  * @returns {void}.
  */
 const handleEditorSave = () => {
-	if (isEmpty(store.state.currentPost)) {
+	const postEditorStore = usePostEditorStore()
+	if (isEmpty(postEditorStore.currentPost)) {
 		return
 	}
 
-	store.dispatch('saveCurrentPost', store.state.currentPost)
+	postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
+		const seoRevisionsStore = useSeoRevisionsStore()
+		seoRevisionsStore.fetch({})
+	})
 }
 
 export default () => {

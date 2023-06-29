@@ -1,7 +1,10 @@
-import state from './../../store/state'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import { debounce } from 'lodash-es'
 
-if ('post' === window.aioseo?.currentPost?.context) {
+if ('post' === window.aioseo.currentPost?.context) {
 	let blockList = []
 	window.wp.data.subscribe(() => {
 		checkBlocksLength()
@@ -29,8 +32,10 @@ if ('post' === window.aioseo?.currentPost?.context) {
 			return block
 		})
 
+		const postEditorStore = usePostEditorStore()
+
 		// Then, grab the existing stored block graphs and loop over them to see if any of them were removed.
-		const blockGraphs = state.currentPost.schema?.blockGraphs || []
+		const blockGraphs = postEditorStore.currentPost.schema?.blockGraphs || []
 		blockGraphs.forEach((blockGraph, blockGraphIndex) => {
 			const blockIndex = blocks.findIndex(block => block?.attributes?.schemaBlockId === blockGraph?.schemaBlockId)
 
@@ -68,6 +73,6 @@ if ('post' === window.aioseo?.currentPost?.context) {
 			}
 		})
 
-		state.currentPost.schema.blockGraphs = blockGraphs
+		postEditorStore.currentPost.schema.blockGraphs = blockGraphs
 	}, 200)
 }

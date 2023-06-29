@@ -63,9 +63,9 @@
 
 				<template #footer>
 					<div class="go-back">
-						<router-link :to="getPrevLink" class="no-underline">&larr;</router-link>
+						<router-link :to="setupWizardStore.getPrevLink" class="no-underline">&larr;</router-link>
 						&nbsp;
-						<router-link :to="getPrevLink">{{ strings.goBack }}</router-link>
+						<router-link :to="setupWizardStore.getPrevLink">{{ strings.goBack }}</router-link>
 					</div>
 					<div class="spacer"></div>
 					<base-button
@@ -81,11 +81,18 @@
 </template>
 
 <script>
+import {
+	useConnectStore,
+	useLicenseStore,
+	useOptionsStore,
+	useRootStore,
+	useSetupWizardStore
+} from '@/vue/stores'
+
 import { popup } from '@/vue/utils/popup'
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
 import { Wizard } from '@/vue/mixins'
-import { mapActions, mapMutations, mapState } from 'vuex'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
@@ -100,6 +107,11 @@ export default {
 		const { strings } = useWizard()
 
 		return {
+			connectStore      : useConnectStore(),
+			licenseStore      : useLicenseStore(),
+			optionsStore      : useOptionsStore(),
+			rootStore         : useRootStore(),
+			setupWizardStore  : useSetupWizardStore(),
 			composableStrings : strings
 		}
 	},
@@ -149,15 +161,10 @@ export default {
 	},
 	watch : {
 		localLicenseKey (newVal) {
-			this.updateLicenseKey(newVal)
+			this.setupWizardStore.licenseKey = newVal
 		}
 	},
 	computed : {
-		...mapState([ 'options' ]),
-		...mapState('wizard', {
-			stateLicenseKey : 'licenseKey',
-			presetFeatures  : 'features'
-		}),
 		noLicenseNeeded () {
 			return this.$t.sprintf(
 				// Translators: 1 - The plugin name ("All in One SEO").
@@ -189,9 +196,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'getConnectUrl', 'processConnect', 'activate' ]),
-		...mapActions('wizard', [ 'saveWizard' ]),
-		...mapMutations('wizard', [ 'updateLicenseKey' ]),
 		processConnectOrActivate () {
 			if (this.$isPro) {
 				return this.processActivateLicense()
@@ -202,19 +206,19 @@ export default {
 		processActivateLicense () {
 			this.error   = null
 			this.loading = true
-			this.$store.commit('loading', true)
-			this.activate(this.localLicenseKey)
+			this.rootStore.loading = true
+			this.licenseStore.activate(this.localLicenseKey)
 				.then(() => {
-					this.$aioseo.internalOptions.internal.license.expired = false
-					this.saveWizard('license-key')
+					this.optionsStore.internalOptions.internal.license.expired = false
+					this.setupWizardStore.saveWizard('license-key')
 						.then(() => {
-							this.$router.push(this.getNextLink)
+							this.$router.push(this.setupWizardStore.getNextLink)
 						})
 				})
 				.catch(error => {
 					this.loading         = false
 					this.localLicenseKey = null
-					this.$store.commit('loading', false)
+					this.rootStore.loading = false
 					if (!error || !error.response || !error.response.body || !error.response.body.error || !error.response.body.licenseData) {
 						this.error = this.$t.__('An unknown error occurred, please try again later.', this.$td)
 						return
@@ -236,8 +240,8 @@ export default {
 		},
 		processGetConnectUrl () {
 			this.loading = true
-			this.$store.commit('loading', true)
-			this.getConnectUrl({
+			this.rootStore.loading = true
+			this.connectStore.getConnectUrl({
 				key    : this.localLicenseKey,
 				wizard : true
 			})
@@ -245,7 +249,7 @@ export default {
 					if (response.body.url) {
 						if (!response.body.popup) {
 							this.loading = false
-							this.$store.commit('loading', false)
+							this.rootStore.loading = false
 							return window.open(response.body.url)
 						}
 
@@ -267,7 +271,7 @@ export default {
 		},
 		completedCallback (payload) {
 			payload.wizard = true
-			return this.processConnect(payload)
+			return this.connectStore.processConnect(payload)
 		},
 		closedCallback (reload) {
 			if (reload) {
@@ -275,15 +279,15 @@ export default {
 			}
 
 			this.loading = false
-			this.$store.commit('loading', false)
+			this.rootStore.loading = false
 		},
 		skipStep () {
-			this.saveWizard()
-			this.$router.push(this.getNextLink)
+			this.setupWizardStore.saveWizard()
+			this.$router.push(this.setupWizardStore.getNextLink)
 		}
 	},
 	mounted () {
-		this.localLicenseKey = this.stateLicenseKey
+		this.localLicenseKey = this.setupWizardStore.licenseKey
 	}
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="aioseo-post-publish"
-		v-if="liveTags.permalink"
+		v-if="tagsStore.liveTags.permalink"
 	>
 		<h2 class="title">{{ strings.title }}</h2>
 		<p class="description">{{ strings.description }}</p>
@@ -20,20 +20,26 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { Standalone } from '@/vue/mixins/Standalone'
+import {
+	useTagsStore
+} from '@/vue/stores'
+
 import SvgFacebookRounded from '@/vue/components/common/svg/facebook/Rounded'
 import SvgLinkedinRounded from '@/vue/components/common/svg/LinkedinRounded'
 import SvgPinterestRounded from '@/vue/components/common/svg/PinterestRounded'
 import SvgTwitterRounded from '@/vue/components/common/svg/TwitterRounded'
 export default {
+	setup () {
+		return {
+			tagsStore : useTagsStore()
+		}
+	},
 	components : {
 		SvgFacebookRounded,
 		SvgLinkedinRounded,
 		SvgPinterestRounded,
 		SvgTwitterRounded
 	},
-	mixins : [ Standalone ],
 	data () {
 		return {
 			strings : {
@@ -43,7 +49,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('live-tags', [ 'liveTags' ]),
 		socialNetworks () {
 			return [
 				{
@@ -63,7 +68,7 @@ export default {
 					link : 'https://www.linkedin.com/shareArticle?url='
 				}
 			].map(network => {
-				return { ...network, link: network.link + this.liveTags.permalink }
+				return { ...network, link: network.link + this.tagsStore.liveTags.permalink }
 			})
 		}
 	}

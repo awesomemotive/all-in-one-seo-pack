@@ -17,15 +17,23 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import {
+	usePostEditorStore
+} from '@/vue/stores/'
+
+import { debounce } from '@/vue/utils/debounce'
 import BusinessInfo from './BusinessInfo'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import OpeningHours from './OpeningHours'
 import Maps from './Maps'
 import SvgSettings from '@/vue/components/common/svg/Settings'
-import { debounce } from '@/vue/utils/debounce'
 
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore()
+		}
+	},
 	components : {
 		BusinessInfo,
 		CoreMainTabs,
@@ -34,10 +42,10 @@ export default {
 		SvgSettings
 	},
 	watch : {
-		currentPost : {
+		'postEditorStore.currentPost' : {
 			deep : true,
 			handler () {
-				debounce(this.savePostState, 250)
+				debounce(this.postEditorStore.savePostState, 250)
 			}
 		}
 	},
@@ -63,11 +71,7 @@ export default {
 			]
 		}
 	},
-	computed : {
-		...mapState([ 'currentPost' ])
-	},
 	methods : {
-		...mapActions([ 'savePostState' ]),
 		processChangeTab (newTabValue) {
 			this.tab = newTabValue
 		}

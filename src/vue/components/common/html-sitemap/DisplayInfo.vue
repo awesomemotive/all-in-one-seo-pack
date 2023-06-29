@@ -122,8 +122,13 @@
 </template>
 
 <script>
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
+import http from '@/vue/utils/http'
 import { debounce } from '@/vue/utils/debounce'
-import { mapState } from 'vuex'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreAttributesList from '@/vue/components/common/core/AttributesList'
 import CoreDisplayInfo from '@/vue/components/common/core/DisplayInfo'
@@ -134,6 +139,12 @@ import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import SvgExternal from '@/vue/components/common/svg/External'
 import SvgFile from '@/vue/components/common/svg/File'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreAttributesList,
@@ -169,14 +180,14 @@ export default {
 				placeholder : this.$t.sprintf(
 					// Translators: 1 - A URL.
 					this.$t.__('e.g. %1$s', this.$td),
-					`${this.$aioseo.urls.home}/new-page`
+					`${this.rootStore.aioseo.urls.home}/new-page`
 				),
 				pageButton           : this.$t.__('Open HTML Sitemap', this.$td),
 				errorMessage         : this.$t.__('The page that you have entered is invalid or already exists. Please enter a page with a unique slug.', this.$td),
 				errorMessageDisabled : this.$t.sprintf(
 					// Translators: 1 - Opening link tag, 2 - Closing link tag.
 					this.$t.__('Dedicated HTML Sitemaps do not work while using "plain" permalinks. Please update your %1$spermalink structure%2$s to use this option.', this.$td),
-					'<a href="' + this.$aioseo.urls.home + '/wp-admin/options-permalink.php">',
+					'<a href="' + this.rootStore.aioseo.urls.home + '/wp-admin/options-permalink.php">',
 					'</a>'
 				),
 				shortcodeAttributesDescription : this.$t.__('The following shortcode attributes can be used to override the default settings:', this.$td),
@@ -247,19 +258,18 @@ export default {
 		}
 	},
 	created () {
-		this.pageUrl = this.dedicatedPageDisabled ?  '' : this.options.sitemap.html.pageUrl
+		this.pageUrl = this.dedicatedPageDisabled ?  '' : this.optionsStore.options.sitemap.html.pageUrl
 		this.addSiteUrl()
 
 		if (this.pageUrl) {
 			this.buttonLocked = false
 		}
 
-		this.$bus.$on('changes-saved', () => {
+		window.aioseoBus.$on('changes-saved', () => {
 			this.processChangesSaved()
 		})
 	},
 	computed : {
-		...mapState([ 'options' ]),
 		sitemapButtonDisabled () {
 			if (this.pageUrl) {
 				return this.strings.saveFirst
@@ -267,7 +277,7 @@ export default {
 			return this.strings.editAndSaveFirst
 		},
 		dedicatedPageDisabled () {
-			return '' === this.$aioseo.data.permalinkStructure
+			return '' === this.rootStore.aioseo.data.permalinkStructure
 		}
 	},
 	methods : {
@@ -275,17 +285,17 @@ export default {
 			if (!this.pageUrl) {
 				return
 			}
-			if (!this.pageUrl.startsWith(`http://${window.aioseo.urls.domain}`) && !this.pageUrl.startsWith(`https://${window.aioseo.urls.domain}`)) {
-				this.pageUrl = this.$aioseo.data.isSsl
-					? `https://${window.aioseo.urls.domain}/${this.pageUrl}`
-					: `http://${window.aioseo.urls.domain}/${this.pageUrl}`
+			if (!this.pageUrl.startsWith(`http://${this.rootStore.aioseo.urls.domain}`) && !this.pageUrl.startsWith(`https://${this.rootStore.aioseo.urls.domain}`)) {
+				this.pageUrl = this.rootStore.aioseo.data.isSsl
+					? `https://${this.rootStore.aioseo.urls.domain}/${this.pageUrl}`
+					: `http://${this.rootStore.aioseo.urls.domain}/${this.pageUrl}`
 			}
 		},
 		validateNewSlug (event) {
 			this.pageUrl = event.target.value
 
 			if (!this.pageUrl) {
-				this.options.sitemap.html.pageUrl = ''
+				this.optionsStore.options.sitemap.html.pageUrl = ''
 				return
 			}
 
@@ -307,7 +317,7 @@ export default {
 					return
 				}
 
-				this.$http.post(this.$links.restUrl('sitemap/validate-html-sitemap-slug'))
+				http.post(this.$links.restUrl('sitemap/validate-html-sitemap-slug'))
 					.send({
 						pageUrl : this.pageUrl
 					})
@@ -317,7 +327,7 @@ export default {
 							this.showResults = true
 						} else {
 							this.error                        = false
-							this.options.sitemap.html.pageUrl = this.pageUrl
+							this.optionsStore.options.sitemap.html.pageUrl = this.pageUrl
 						}
 						this.isLoading = false
 					})

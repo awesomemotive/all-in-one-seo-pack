@@ -5,14 +5,20 @@
 </template>
 
 <script>
-import { Standalone } from '@/vue/mixins/Standalone'
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
-const searchAppearanceUrl = window.aioseo.urls.aio.searchAppearance
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		CoreAlert
 	},
-	mixins : [ Standalone ],
 	data () {
 		return {
 			strings : {
@@ -20,7 +26,7 @@ export default {
 					// Translators: 1 - The plugin name ("All in One SEO"), 2 - Opening HTML link tag, 3 - Closing HTML link tag.
 					this.$t.__('The options below are disabled because you are using %1$s to manage your SEO. They can be changed in the %2$sSearch Appearance menu%3$s.', this.$td),
 					import.meta.env.VITE_NAME,
-					`<a href="${searchAppearanceUrl}" target="_blank">`,
+					`<a href="${this.rootStore.aioseo.urls.aio.searchAppearance}" target="_blank">`,
 					'</a>'
 				)
 			}

@@ -10,24 +10,24 @@
 				<div>
 					<preview
 						:preview-data="getPreview(postType)"
-						:useDefaultTemplate="dynamicOptions.breadcrumbs.postTypes[postType.name].useDefaultTemplate"
+						:useDefaultTemplate="optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].useDefaultTemplate"
 					/>
 
 					<grid-row>
 						<grid-column>
 							<base-toggle
-								v-model="dynamicOptions.breadcrumbs.postTypes[postType.name].useDefaultTemplate"
+								v-model="optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].useDefaultTemplate"
 								class="current-item"
 							/>
 							{{ strings.useDefaultTemplate }}
 						</grid-column>
 					</grid-row>
 
-					<grid-row v-if="!dynamicOptions.breadcrumbs.postTypes[postType.name].useDefaultTemplate">
+					<grid-row v-if="!optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].useDefaultTemplate">
 						<grid-column
-							v-if="options.breadcrumbs.breadcrumbPrefix && options.breadcrumbs.breadcrumbPrefix.length">
+							v-if="optionsStore.options.breadcrumbs.breadcrumbPrefix && optionsStore.options.breadcrumbs.breadcrumbPrefix.length">
 							<base-toggle
-								v-model="dynamicOptions.breadcrumbs.postTypes[postType.name].showPrefixCrumb"
+								v-model="optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].showPrefixCrumb"
 								class="current-item"
 							/>
 							{{ strings.showPrefixLabel }}
@@ -35,7 +35,7 @@
 
 						<grid-column>
 							<base-toggle
-								v-model="dynamicOptions.breadcrumbs.postTypes[postType.name].showHomeCrumb"
+								v-model="optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].showHomeCrumb"
 								class="current-item"
 							/>
 							{{ strings.showHomeLabel }}
@@ -43,7 +43,7 @@
 
 						<grid-column v-if="postTypeHasArchive(postType)">
 							<base-toggle
-								v-model="dynamicOptions.breadcrumbs.postTypes[postType.name].showArchiveCrumb"
+								v-model="optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].showArchiveCrumb"
 								class="current-item"
 							/>
 							{{ strings.showPostTypeArchiveLabel }}
@@ -51,7 +51,7 @@
 
 						<grid-column v-if="getPostTaxonomyOptions(postType).length">
 							<base-toggle
-								v-model="dynamicOptions.breadcrumbs.postTypes[postType.name].showTaxonomyCrumbs"
+								v-model="optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].showTaxonomyCrumbs"
 								class="current-item"
 							/>
 							{{ strings.showTaxonomyLabel }}
@@ -59,7 +59,7 @@
 
 						<grid-column v-if="postTypeIsHierarchical(postType)">
 							<base-toggle
-								v-model="dynamicOptions.breadcrumbs.postTypes[postType.name].showParentCrumbs"
+								v-model="optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].showParentCrumbs"
 								class="current-item"
 							/>
 							{{ strings.showParentLabel }}
@@ -67,13 +67,13 @@
 
 						<grid-column>
 							<core-settings-row
-								:name="postTypeIsHierarchical(postType) && dynamicOptions.breadcrumbs.postTypes[postType.name].showParentCrumbs ? strings.singleTemplateLabel : ''"
+								:name="postTypeIsHierarchical(postType) && optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].showParentCrumbs ? strings.singleTemplateLabel : ''"
 								leftSize="12"
 								rightSize="12"
 							>
 								<template #content>
 									<core-html-tags-editor
-										v-model="dynamicOptions.breadcrumbs.postTypes[postType.name].template"
+										v-model="optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].template"
 										:line-numbers="true"
 										:tags-context="'breadcrumbs-post-type-'+postType.name"
 										:minimum-line-numbers="3"
@@ -88,7 +88,7 @@
 						</grid-column>
 
 						<grid-column
-							v-if="postTypeIsHierarchical(postType) && dynamicOptions.breadcrumbs.postTypes[postType.name].showParentCrumbs">
+							v-if="postTypeIsHierarchical(postType) && optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].showParentCrumbs">
 							<core-settings-row
 								:name="strings.parentTemplateLabel"
 								leftSize="12"
@@ -96,7 +96,7 @@
 							>
 								<template #content>
 									<core-html-tags-editor
-										v-model="dynamicOptions.breadcrumbs.postTypes[postType.name].parentTemplate"
+										v-model="optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].parentTemplate"
 										:line-numbers="true"
 										:tags-context="'breadcrumbs-post-type-'+postType.name"
 										:minimum-line-numbers="3"
@@ -111,7 +111,7 @@
 						</grid-column>
 
 						<grid-column
-							v-if="dynamicOptions.breadcrumbs.postTypes[postType.name].showTaxonomyCrumbs && getPostTaxonomyOptions(postType).length">
+							v-if="optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].showTaxonomyCrumbs && getPostTaxonomyOptions(postType).length">
 							<grid-column>
 								<div class="taxonomy-select">
 									{{ strings.selectTaxonomyLabel }}
@@ -120,7 +120,7 @@
 										:options="getPostTaxonomyOptions(postType)"
 										:placeholder="strings.selectTaxonomy"
 										:modelValue="getPostTaxonomyOptions(postType).find(t => t.value === getPostTypeTaxonomy(postType).name)"
-										@update:modelValue="value => dynamicOptions.breadcrumbs.postTypes[postType.name].taxonomy = value.value"
+										@update:modelValue="value => optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].taxonomy = value.value"
 									/>
 								</div>
 							</grid-column>
@@ -137,13 +137,23 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import Preview from './Preview'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		CoreHtmlTagsEditor,
 		CoreSettingsRow,
@@ -168,15 +178,20 @@ export default {
 			}
 		}
 	},
+	computed : {
+		postTypes () {
+			return this.rootStore.aioseo.postData.postTypes || []
+		}
+	},
 	methods : {
 		getPreview (postType) {
-			const breadcrumbOptions = this.options.breadcrumbs
-			const postTypeOptions = this.dynamicOptions.breadcrumbs.postTypes[postType.name]
+			const breadcrumbOptions = this.optionsStore.options.breadcrumbs
+			const postTypeOptions = this.optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name]
 			const useDefault = postTypeOptions.useDefaultTemplate
 			return [
 				(useDefault && breadcrumbOptions.breadcrumbPrefix) || (!useDefault && postTypeOptions.showPrefixCrumb) ? breadcrumbOptions.breadcrumbPrefix : '',
 				(useDefault && breadcrumbOptions.homepageLink) || (!useDefault && postTypeOptions.showHomeCrumb) ? (breadcrumbOptions.homepageLabel ? breadcrumbOptions.homepageLabel : 'Home') : '',
-				breadcrumbOptions.showBlogHome && this.$aioseo.data.staticBlogPage && 'post' === postType.name ? 'Blog Home' : '',
+				breadcrumbOptions.showBlogHome && this.rootStore.aioseo.data.staticBlogPage && 'post' === postType.name ? 'Blog Home' : '',
 				this.postTypeHasArchive(postType) && (useDefault || (!useDefault && postTypeOptions.showArchiveCrumb)) ? postType.label : '',
 				useDefault || (!useDefault && postTypeOptions.showTaxonomyCrumbs) ? this.getPostTypeTaxonomyTemplate(postType) : '',
 				this.postTypeIsHierarchical(postType) && (useDefault || (!useDefault && postTypeOptions.showParentCrumbs)) ? this.getPostTypeParentTemplate(postType) : '',
@@ -184,10 +199,10 @@ export default {
 			]
 		},
 		postTypeIsHierarchical (postType) {
-			return 0 < this.$aioseo.postData.postTypes.filter(postTypeData => postTypeData.name === postType.name && postTypeData.hierarchical).length
+			return 0 < this.rootStore.aioseo.postData.postTypes.filter(postTypeData => postTypeData.name === postType.name && postTypeData.hierarchical).length
 		},
 		postTypeHasArchive (postType) {
-			return 0 < this.$aioseo.postData.postTypes.filter(postTypeData => postTypeData.name === postType.name && postTypeData.hasArchive).length
+			return 0 < this.rootStore.aioseo.postData.postTypes.filter(postTypeData => postTypeData.name === postType.name && postTypeData.hasArchive).length
 		},
 		getPostTypeTaxonomyTemplate (postType) {
 			const taxonomy = this.getPostTypeTaxonomy(postType)
@@ -195,17 +210,17 @@ export default {
 				return
 			}
 
-			const parentTemplate = this.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].parentTemplate || this.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].template
+			const parentTemplate = this.optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].parentTemplate || this.optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].template
 
-			const template = this.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].useDefaultTemplate ? this.$aioseo.breadcrumbs.defaultTemplates.taxonomies[taxonomy.name] : parentTemplate
+			const template = this.optionsStore.dynamicOptions.breadcrumbs.taxonomies[taxonomy.name].useDefaultTemplate ? this.rootStore.aioseo.breadcrumbs.defaultTemplates.taxonomies[taxonomy.name] : parentTemplate
 			return template.replace(new RegExp('#breadcrumb_taxonomy_title', 'g'), taxonomy.singular + ' Parent')
 		},
 		getPostTypeParentTemplate (postType) {
-			const template = this.dynamicOptions.breadcrumbs.postTypes[postType.name].useDefaultTemplate ? this.$aioseo.breadcrumbs.defaultTemplates.postTypes[postType.name] : this.dynamicOptions.breadcrumbs.postTypes[postType.name].parentTemplate
+			const template = this.optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].useDefaultTemplate ? this.rootStore.aioseo.breadcrumbs.defaultTemplates.postTypes[postType.name] : this.optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].parentTemplate
 			return template.replace(new RegExp('#breadcrumb_post_title', 'g'), postType.singular + ' Parent')
 		},
 		getPostTypeTemplate (postType) {
-			let template = this.dynamicOptions.breadcrumbs.postTypes[postType.name].useDefaultTemplate ? this.$aioseo.breadcrumbs.defaultTemplates.postTypes[postType.name] : this.dynamicOptions.breadcrumbs.postTypes[postType.name].template
+			let template = this.optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].useDefaultTemplate ? this.rootStore.aioseo.breadcrumbs.defaultTemplates.postTypes[postType.name] : this.optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].template
 			if ('product' === postType.name) {
 				template = template.replace(new RegExp('#breadcrumb_wc_product_sku', 'g'), 'SKU')
 				template = template.replace(new RegExp('#breadcrumb_wc_product_price', 'g'), '$10.00')
@@ -214,7 +229,7 @@ export default {
 			return template.replace(new RegExp('#breadcrumb_post_title', 'g'), postType.singular)
 		},
 		getPostTaxonomyOptions (postType) {
-			return this.$aioseo.postData.taxonomies.filter(tax => postType.taxonomies.includes(tax.name)).map(tax => {
+			return this.rootStore.aioseo.postData.taxonomies.filter(tax => postType.taxonomies.includes(tax.name)).map(tax => {
 				return {
 					value : tax.name,
 					label : tax.label
@@ -222,18 +237,12 @@ export default {
 			})
 		},
 		getPostTypeTaxonomy (postType) {
-			let taxonomies = this.$aioseo.postData.taxonomies.filter(taxData => taxData.name === this.dynamicOptions.breadcrumbs.postTypes[postType.name].taxonomy)
+			let taxonomies = this.rootStore.aioseo.postData.taxonomies.filter(taxData => taxData.name === this.optionsStore.dynamicOptions.breadcrumbs.postTypes[postType.name].taxonomy)
 			if (0 === taxonomies.length && 0 < postType.taxonomies.length) {
-				taxonomies = this.$aioseo.postData.taxonomies.filter(taxData => postType.taxonomies.includes(taxData.name))
+				taxonomies = this.rootStore.aioseo.postData.taxonomies.filter(taxData => postType.taxonomies.includes(taxData.name))
 			}
 
 			return 0 < taxonomies.length ? taxonomies[0] : []
-		}
-	},
-	computed : {
-		...mapState([ 'options', 'dynamicOptions' ]),
-		postTypes () {
-			return this.$aioseo.postData.postTypes || []
 		}
 	}
 }

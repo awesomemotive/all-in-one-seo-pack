@@ -68,8 +68,8 @@
 				<template #content>
 					<core-alert-unfiltered-html />
 					<base-editor
-						:disabled="!$aioseo.user.unfilteredHtml"
-						v-model="options.webmasterTools.miscellaneousVerification"
+						:disabled="!rootStore.aioseo.user.unfilteredHtml"
+						v-model="optionsStore.options.webmasterTools.miscellaneousVerification"
 						line-numbers
 						monospace
 						preserve-whitespace
@@ -86,7 +86,13 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import {
+	useIndexNowStore,
+	useOptionsStore,
+	usePluginsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { MetaTag } from '@/vue/mixins'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseEditor from '@/vue/components/common/base/Editor'
@@ -115,6 +121,14 @@ import SvgLogoYandex from '@/vue/components/common/svg/logo/Yandex'
 import ToolSettings from './partials/WebmasterTools/ToolSettings'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 export default {
+	setup () {
+		return {
+			indexNowStore : useIndexNowStore(),
+			optionsStore  : useOptionsStore(),
+			pluginsStore  : usePluginsStore(),
+			rootStore     : useRootStore()
+		}
+	},
 	components : {
 		BaseCheckbox,
 		BaseEditor,
@@ -167,11 +181,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
-		...mapState([ 'options' ]),
-		...mapState('index-now', {
-			indexNowOptions : 'options'
-		}),
 		tools () {
 			return [
 				{
@@ -425,8 +434,8 @@ export default {
 							option  : 'excludeUsers',
 							label   : this.$t.__('Exclude Users from Tracking', this.$td),
 							type    : 'multicheck',
-							options : Object.keys(this.$aioseo.user.roles).map(key => {
-								const role = this.$aioseo.user.roles[key]
+							options : Object.keys(this.rootStore.aioseo.user.roles).map(key => {
+								const role = this.rootStore.aioseo.user.roles[key]
 								return {
 									value : key,
 									label : role
@@ -671,10 +680,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'installPlugins', 'upgradePlugins' ]),
-		...mapActions('index-now', [ 'generateApiKey', 'getApiKey' ]),
-		...mapMutations('index-now', [ 'updateApiKey' ]),
-		...mapMutations([ 'updateAddon' ]),
 		getLinkWrapper (link, text) {
 			return this.$t.sprintf(
 				'<a href="%1$s" target="_blank">%2$s</a>',
@@ -728,14 +733,14 @@ export default {
 		},
 		isConnected (tool) {
 			if ('indexNow' === tool.slug) {
-				return this.indexNowOptions.indexNow && !!this.indexNowOptions.indexNow.apiKey
+				return !!this.indexNowStore.options.indexNow.apiKey
 			}
 
 			if ('googleAnalytics' === tool.slug) {
-				return this.options.deprecated.webmasterTools[tool.settings[0].parent][tool.settings[0].option] && !this.$aioseo.plugins.miLite.activated
+				return this.optionsStore.options.deprecated.webmasterTools[tool.settings[0].parent][tool.settings[0].option] && !this.pluginsStore.plugins.miLite.activated
 			}
 
-			return !!this.options.webmasterTools[tool.settings[0].option]
+			return !!this.optionsStore.options.webmasterTools[tool.settings[0].option]
 		}
 	},
 	beforeUnmount () {

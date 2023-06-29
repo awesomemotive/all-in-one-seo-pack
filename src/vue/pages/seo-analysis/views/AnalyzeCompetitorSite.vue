@@ -20,8 +20,8 @@
 
 					<div
 						class="analyze-errors aioseo-description aioseo-error"
-						v-if="'competitor-site' === analyzer && analyzeError"
-						v-html="analyzeError"
+						v-if="'competitor-site' === analyzerStore.analyzer && analyzerStore.analyzeError"
+						v-html="analyzerStore.analyzeError"
 					/>
 				</template>
 			</core-analyze>
@@ -50,7 +50,7 @@
 						<core-site-score-competitor
 							:site="site"
 							:score="parseResults(results).score"
-							:loading="analyzing"
+							:loading="analyzerStore.analyzing"
 							:summary="getSummary(parseResults(results).results)"
 							:mobile-snapshot="parseResults(results).results.advanced.mobileSnapshot"
 						/>
@@ -70,7 +70,11 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapGetters, mapMutations } from 'vuex'
+import {
+	useAnalyzerStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
 import { useSeoSiteScore } from '@/vue/composables'
 import { SeoSiteScore } from '@/vue/mixins'
@@ -87,6 +91,8 @@ export default {
 		const { strings } = useSeoSiteScore()
 
 		return {
+			analyzerStore     : useAnalyzerStore(),
+			settingsStore     : useSettingsStore(),
 			composableStrings : strings
 		}
 	},
@@ -117,17 +123,15 @@ export default {
 		}
 	},
 	watch : {
-		analyzeError (newValue) {
+		'analyzerStore.analyzeError' (newValue) {
 			if (newValue) {
 				this.isAnalyzing = false
 			}
 		}
 	},
 	computed : {
-		...mapState([ 'options', 'analyzer', 'analyzing', 'analyzeError' ]),
-		...mapGetters([ 'getCompetitorSiteAnalysisResults', 'goodCount', 'recommendedCount', 'criticalCount' ]),
 		getError () {
-			switch (this.analyzeError) {
+			switch (this.analyzerStore.analyzeError) {
 				case 'invalid-url':
 					return this.$t.__('The URL provided is invalid.', this.$td)
 				case 'missing-content':
@@ -144,20 +148,18 @@ export default {
 					)
 			}
 
-			return this.analyzeError
+			return this.analyzerStore.analyzeError
 		}
 	},
 	methods : {
-		...mapActions([ 'runSiteAnalyzer', 'deleteCompetitorSite', 'saveConnectToken' ]),
-		...mapMutations([ 'toggleCard', 'closeCard' ]),
 		parseResults (results) {
 			return JSON.parse(results)
 		},
 		getSummary (results) {
 			return {
-				recommended : this.recommendedCount(results),
-				critical    : this.criticalCount(results),
-				good        : this.goodCount(results)
+				recommended : this.analyzerStore.recommendedCount(results),
+				critical    : this.analyzerStore.criticalCount(results),
+				good        : this.analyzerStore.goodCount(results)
 			}
 		},
 		startAnalyzing (competitorUrl) {
@@ -173,9 +175,9 @@ export default {
 				return
 			}
 
-			this.$store.commit('analyzing', true)
-			this.$store.commit('analyzeError', false)
-			this.runSiteAnalyzer({
+			this.analyzerStore.analyzing    = true
+			this.analyzerStore.analyzeError = false
+			this.analyzerStore.runSiteAnalyzer({
 				url : this.competitorUrl
 			})
 
@@ -186,7 +188,7 @@ export default {
 		},
 		checkStatus () {
 			this.isAnalyzing = false
-			if (this.analyzing) {
+			if (this.analyzerStore.analyzing) {
 				this.$nextTick(() => {
 					this.isAnalyzing = true
 
@@ -203,7 +205,7 @@ export default {
 			}
 
 			this.competitorUrl     = null
-			this.competitorResults = this.getCompetitorSiteAnalysisResults
+			this.competitorResults = this.analyzerStore.getCompetitorSiteAnalysisResults
 			this.toggleFirstCard()
 
 			this.$nextTick(() => {
@@ -219,20 +221,20 @@ export default {
 
 			delete this.competitorResults[site]
 
-			this.deleteCompetitorSite(site)
+			this.analyzerStore.deleteCompetitorSite(site)
 				.then(() => {
-					this.competitorResults = this.getCompetitorSiteAnalysisResults
+					this.competitorResults = this.analyzerStore.getCompetitorSiteAnalysisResults
 				})
 		},
 		closeAllCards () {
 			const keys = Object.keys(this.competitorResults)
 			keys.forEach(key => {
-				this.closeCard('analyzeCompetitorSite' + key)
+				this.settingsStore.closeCard('analyzeCompetitorSite' + key)
 			})
 		},
 		toggleFirstCard () {
 			const keys = Object.keys(this.competitorResults)
-			this.toggleCard('analyzeCompetitorSite' + keys[0])
+			this.settingsStore.toggleCard({ slug: 'analyzeCompetitorSite' + keys[0] })
 		},
 		hashCode (string) {
 			if (!string) {
@@ -248,8 +250,8 @@ export default {
 		}
 	},
 	mounted () {
-		this.$store.commit('analyzeError', false)
-		this.competitorResults = this.getCompetitorSiteAnalysisResults
+		this.analyzerStore.analyzeError = false
+		this.competitorResults          = this.analyzerStore.getCompetitorSiteAnalysisResults
 
 		this.toggleFirstCard()
 	}

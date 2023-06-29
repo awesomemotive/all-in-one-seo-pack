@@ -4,22 +4,20 @@
 	</div>
 </template>
 
-<script>
-import { mapGetters, mapState } from 'vuex'
-export default {
-	computed : {
-		...mapState('wizard', [ 'currentStage' ]),
-		...mapGetters('wizard', [ 'getCurrentStageCount', 'getTotalStageCount' ]),
-		getSteps () {
-			return this.$t.sprintf(
-				// Translators: 1 - The current step count. 2 - The total step count.
-				this.$t.__('Step %1$s of %2$s', this.$td),
-				this.getCurrentStageCount,
-				this.getTotalStageCount
-			)
-		}
-	}
-}
+<script setup>
+import {
+	useSetupWizardStore
+} from '@/vue/stores'
+import { __, sprintf } from '@wordpress/i18n'
+
+const td               = import.meta.env.VITE_TEXTDOMAIN
+const setupWizardStore = useSetupWizardStore()
+const getSteps         = sprintf(
+	// Translators: 1 - The current step count. 2 - The total step count.
+	__('Step %1$s of %2$s', td),
+	setupWizardStore.getCurrentStageCount,
+	setupWizardStore.getTotalStageCount
+)
 </script>
 
 <style lang="scss">

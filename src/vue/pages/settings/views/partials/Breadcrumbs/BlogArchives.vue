@@ -2,31 +2,31 @@
 	<core-settings-row
 		name="Blog"
 		key="Blog"
-		v-if="$aioseo.data.staticBlogPage"
+		v-if="rootStore.aioseo.data.staticBlogPage"
 	>
 		<template #content>
 			<div>
 				<preview
 					:preview-data="getPreview()"
-					:useDefaultTemplate="dynamicOptions.breadcrumbs.archives.blog.useDefaultTemplate"
+					:useDefaultTemplate="optionsStore.dynamicOptions.breadcrumbs.archives.blog.useDefaultTemplate"
 				/>
 
 				<grid-row>
 					<grid-column>
 						<base-toggle
-							v-model="dynamicOptions.breadcrumbs.archives.blog.useDefaultTemplate"
+							v-model="optionsStore.dynamicOptions.breadcrumbs.archives.blog.useDefaultTemplate"
 							class="current-item"
 						/>
 						{{ strings.useDefaultTemplate }}
 					</grid-column>
 				</grid-row>
 
-				<grid-row v-if="!dynamicOptions.breadcrumbs.archives.blog.useDefaultTemplate">
+				<grid-row v-if="!optionsStore.dynamicOptions.breadcrumbs.archives.blog.useDefaultTemplate">
 					<grid-column
-						v-if="options.breadcrumbs.breadcrumbPrefix && options.breadcrumbs.breadcrumbPrefix.length"
+						v-if="optionsStore.options.breadcrumbs.breadcrumbPrefix && optionsStore.options.breadcrumbs.breadcrumbPrefix.length"
 					>
 						<base-toggle
-							v-model="dynamicOptions.breadcrumbs.archives.blog.showPrefixCrumb"
+							v-model="optionsStore.dynamicOptions.breadcrumbs.archives.blog.showPrefixCrumb"
 							class="current-item"
 						/>
 						{{ strings.showPrefixLabel }}
@@ -34,7 +34,7 @@
 
 					<grid-column>
 						<base-toggle
-							v-model="dynamicOptions.breadcrumbs.archives.blog.showHomeCrumb"
+							v-model="optionsStore.dynamicOptions.breadcrumbs.archives.blog.showHomeCrumb"
 							class="current-item"
 						/>
 						{{ strings.showHomeLabel }}
@@ -42,7 +42,7 @@
 
 					<grid-column>
 						<core-html-tags-editor
-							v-model="dynamicOptions.breadcrumbs.archives.blog.template"
+							v-model="optionsStore.dynamicOptions.breadcrumbs.archives.blog.template"
 							:line-numbers="true"
 							checkUnfilteredHtml
 							tags-context="breadcrumbs-blog-archive"
@@ -61,13 +61,23 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import Preview from './Preview'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		CoreHtmlTagsEditor,
 		CoreSettingsRow,
@@ -86,9 +96,10 @@ export default {
 	},
 	methods : {
 		getPreview () {
-			const breadcrumbOptions = this.options.breadcrumbs
-			const archiveOptions = this.dynamicOptions.breadcrumbs.archives.blog
-			const useDefault = archiveOptions.useDefaultTemplate
+			const breadcrumbOptions = this.optionsStore.options.breadcrumbs
+			const archiveOptions    = this.optionsStore.dynamicOptions.breadcrumbs.archives.blog
+			const useDefault        = archiveOptions.useDefaultTemplate
+
 			return [
 				(useDefault && breadcrumbOptions.breadcrumbPrefix) || (!useDefault && archiveOptions.showPrefixCrumb) ? breadcrumbOptions.breadcrumbPrefix : '',
 				(useDefault && breadcrumbOptions.homepageLink) || (!useDefault && archiveOptions.showHomeCrumb) ? (breadcrumbOptions.homepageLabel ? breadcrumbOptions.homepageLabel : 'Home') : '',
@@ -96,12 +107,9 @@ export default {
 			]
 		},
 		getTemplate () {
-			const template = this.dynamicOptions.breadcrumbs.archives.blog.useDefaultTemplate ? this.$aioseo.breadcrumbs.defaultTemplates.archives.blog : this.dynamicOptions.breadcrumbs.archives.blog.template
-			return template.replace(/#breadcrumb_blog_page_title/g, this.$aioseo.data.staticBlogPageTitle)
+			const template = this.optionsStore.dynamicOptions.breadcrumbs.archives.blog.useDefaultTemplate ? this.rootStore.aioseo.breadcrumbs.defaultTemplates.archives.blog : this.optionsStore.dynamicOptions.breadcrumbs.archives.blog.template
+			return template.replace(/#breadcrumb_blog_page_title/g, this.rootStore.aioseo.data.staticBlogPageTitle)
 		}
-	},
-	computed : {
-		...mapState([ 'options', 'dynamicOptions' ])
 	}
 }
 </script>

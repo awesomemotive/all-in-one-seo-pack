@@ -77,13 +77,22 @@
 </template>
 
 <script>
-import { getCurrentInstance } from 'vue'
+import {
+	useRootStore
+} from '@/vue/stores'
 
+import { getCurrentInstance } from 'vue'
+import tags from '@/vue/utils/tags'
 import BaseEditor from '@/vue/components/common/base/Editor'
 import CoreAddTemplateTag from '@/vue/components/common/core/AddTemplateTag'
 import CoreAlertUnfilteredHtml from '@/vue/components/common/core/alert/UnfilteredHtml'
 import CoreEmoji from '@/vue/components/common/core/Emoji'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	emits      : [ 'counter', 'update:modelValue' ],
 	components : {
 		BaseEditor,
@@ -149,9 +158,8 @@ export default {
 		disabled : {
 			type : Boolean,
 			default (props) {
-				const app = getCurrentInstance()
-
-				return props.checkUnfilteredHtml && !app.appContext.app.$aioseo.user.unfilteredHtml
+				const rootStore = useRootStore()
+				return props.checkUnfilteredHtml && !rootStore.aioseo.user.unfilteredHtml
 			}
 		}
 	},
@@ -165,12 +173,12 @@ export default {
 	},
 	computed : {
 		filteredTags () {
-			const tags = this.tagsContext ? this.$tags.context(this.tagsContext) : this.$aioseo.tags.tags
+			const tagContext = this.tagsContext ? tags.context(this.tagsContext) : this.rootStore.aioseo.tags.tags
 			return !this.defaultTags
-				? tags
+				? tagContext
 					.filter(tag => !tag.deprecated)
 					.slice(0, 3)
-				: this.defaultTags.map(dt => tags.find(t => t.id === dt))
+				: this.defaultTags.map(dt => tagContext.find(t => t.id === dt))
 					.filter(tag => tag)
 		}
 	},

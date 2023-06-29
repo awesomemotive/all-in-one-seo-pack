@@ -1,24 +1,25 @@
 <template>
 	<div>
 		<main-view
-			v-if="currentPost.id"
+			v-if="postEditorStore.currentPost.id"
 		/>
 	</div>
 </template>
 
 <script>
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import Main from './views/Main'
-import { getOptions } from '@/vue/utils/options'
-import { mapState } from 'vuex'
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore()
+		}
+	},
 	components : {
 		'main-view' : Main
-	},
-	computed : {
-		...mapState([ 'currentPost' ])
-	},
-	async created () {
-		await getOptions(this.$.appContext.app)
 	}
 }
 </script>

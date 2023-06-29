@@ -64,10 +64,11 @@ class Image {
 		$this->type          = $type;
 		$this->post          = $post;
 		$this->thumbnailSize = apply_filters( 'aioseo_thumbnail_size', 'fullsize' );
+		$hash                = md5( $this->type . $imageSource );
 
 		static $images = [];
-		if ( isset( $images[ $this->type ] ) ) {
-			return $images[ $this->type ];
+		if ( isset( $images[ $hash ] ) ) {
+			return $images[ $hash ];
 		}
 
 		if ( 'auto' === $imageSource && aioseo()->helpers->getPostPageBuilderName( $post->ID ) ) {
@@ -95,7 +96,7 @@ class Image {
 					$image = $this->getCustomFieldImage();
 					break;
 				case 'custom_image':
-					$metaData = aioseo()->meta->metaData->getMetaData();
+					$metaData = aioseo()->meta->metaData->getMetaData( $post );
 					if ( empty( $metaData ) ) {
 						break;
 					}
@@ -114,16 +115,16 @@ class Image {
 		}
 
 		if ( is_array( $image ) ) {
-			$images[ $this->type ] = $image;
+			$images[ $hash ] = $image;
 
-			return $images[ $this->type ];
+			return $images[ $hash ];
 		}
 
 		$imageWithoutDimensions = aioseo()->helpers->removeImageDimensions( $image );
 		$attachmentId           = aioseo()->helpers->attachmentUrlToPostId( $imageWithoutDimensions );
-		$images[ $this->type ]  = $attachmentId ? wp_get_attachment_image_src( $attachmentId, $this->thumbnailSize ) : $image;
+		$images[ $hash ]        = $attachmentId ? wp_get_attachment_image_src( $attachmentId, $this->thumbnailSize ) : $image;
 
-		return $images[ $this->type ];
+		return $images[ $hash ];
 	}
 
 	/**

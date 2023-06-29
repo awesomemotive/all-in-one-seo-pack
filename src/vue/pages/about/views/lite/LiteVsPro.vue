@@ -274,6 +274,16 @@ export default {
 						description : this.$t.__('View detailed link & domain reports, manage existing links and discover new internal linking opportunities through smart suggestions (Pro & Elite plans only)', this.$td)
 					}
 				},
+				seoRevisions : {
+					name : this.$t.__('SEO Revisions', this.$td),
+					lite : {
+						title : this.$t.__('Not Available', this.$td)
+					},
+					pro : {
+						title       : this.$t.__('Included as Pro Feature', this.$td),
+						description : this.$t.__('SEO Revisions provide a historical record of SEO updates, allowing you to monitor the effectiveness of your SEO efforts and make informed decisions. (Plus, Pro & Elite plans only)', this.$td)
+					}
+				},
 				restApi : {
 					name : this.$t.__('REST API', this.$td),
 					lite : {

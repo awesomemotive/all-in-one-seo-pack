@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 export default {
@@ -64,7 +63,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options' ]),
 		content () {
 			let addonsList = '<ul>'
 			this.notification.addons.forEach(addon => {

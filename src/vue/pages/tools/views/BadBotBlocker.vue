@@ -9,7 +9,7 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.deprecated.tools.blocker.blockBots"
+						v-model="optionsStore.options.deprecated.tools.blocker.blockBots"
 					/>
 				</template>
 			</core-settings-row>
@@ -19,55 +19,55 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.deprecated.tools.blocker.blockReferer"
+						v-model="optionsStore.options.deprecated.tools.blocker.blockReferer"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.deprecated.tools.blocker.blockBots || options.deprecated.tools.blocker.blockReferer"
+				v-if="optionsStore.options.deprecated.tools.blocker.blockBots || optionsStore.options.deprecated.tools.blocker.blockReferer"
 				:name="strings.useCustomBlocklists"
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.deprecated.tools.blocker.custom.enable"
+						v-model="optionsStore.options.deprecated.tools.blocker.custom.enable"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.deprecated.tools.blocker.blockBots && options.deprecated.tools.blocker.custom.enable"
+				v-if="optionsStore.options.deprecated.tools.blocker.blockBots && optionsStore.options.deprecated.tools.blocker.custom.enable"
 				:name="strings.userAgentBlocklist"
 			>
 				<template #content>
 					<base-textarea
 						:minHeight="200"
 						:maxHeight="200"
-						v-model="options.deprecated.tools.blocker.custom.bots"
+						v-model="optionsStore.options.deprecated.tools.blocker.custom.bots"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.deprecated.tools.blocker.blockReferer && options.deprecated.tools.blocker.custom.enable"
+				v-if="optionsStore.options.deprecated.tools.blocker.blockReferer && optionsStore.options.deprecated.tools.blocker.custom.enable"
 				:name="strings.refererBlockList"
 			>
 				<template #content>
 					<base-textarea
 						:minHeight="200"
 						:maxHeight="200"
-						v-model="options.deprecated.tools.blocker.custom.referer"
+						v-model="optionsStore.options.deprecated.tools.blocker.custom.referer"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.deprecated.tools.blocker.blockBots || options.deprecated.tools.blocker.blockReferer"
+				v-if="optionsStore.options.deprecated.tools.blocker.blockBots || optionsStore.options.deprecated.tools.blocker.blockReferer"
 				:name="strings.trackBlockedBots"
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.deprecated.tools.blocker.track"
+						v-model="optionsStore.options.deprecated.tools.blocker.track"
 					/>
 
 					<core-alert
@@ -81,12 +81,22 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import BaseTextarea from '@/vue/components/common/base/Textarea'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		BaseTextarea,
 		CoreAlert,
@@ -107,13 +117,10 @@ export default {
 				logLocation           : this.$t.sprintf(
 					// Translators: 1 - The location of the log file.
 					this.$t.__('The log for the blocked bots is located here: %1$s', this.$td),
-					'<br><a href="' + this.$aioseo.urls.blockedBotsLogUrl + '" target="_blank">' + this.$aioseo.urls.blockedBotsLogUrl + '</a>'
+					'<br><a href="' + this.rootStore.aioseo.urls.blockedBotsLogUrl + '" target="_blank">' + this.rootStore.aioseo.urls.blockedBotsLogUrl + '</a>'
 				)
 			}
 		}
-	},
-	computed : {
-		...mapState([ 'options' ])
 	}
 }
 </script>

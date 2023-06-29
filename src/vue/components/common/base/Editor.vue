@@ -32,7 +32,7 @@
 		</div>
 
 		<template
-			v-for="(tag, index) in $tags.context(tagsContext)"
+			v-for="(tag, index) in tags.context(tagsContext)"
 			:key="index"
 		>
 			<div
@@ -112,7 +112,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	usePostEditorStore,
+	useTagsStore
+} from '@/vue/stores'
+
+import tags from '@/vue/utils/tags'
 import { addTags, removeTags } from '@/vue/plugins/quill/quill-auto-tagger'
 import Quill from 'quill'
 import '@/vue/plugins/quill/quill-line-numbers'
@@ -130,6 +135,12 @@ import SvgTrash from '@/vue/components/common/svg/Trash'
 const QuillEditor = []
 
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore(),
+			tagsStore       : useTagsStore()
+		}
+	},
 	emits      : [ 'counter', 'selection-change', 'updateEditor', 'focus', 'blur', 'update:modelValue' ],
 	components : {
 		SvgCaret,
@@ -167,6 +178,7 @@ export default {
 	},
 	data () {
 		return {
+			tags,
 			localTags    : [],
 			quill        : null,
 			html         : '',
@@ -193,7 +205,7 @@ export default {
 				this.startup(true)
 			}
 		},
-		liveTags : {
+		'tagsStore.liveTags' : {
 			deep : true,
 			handler () {
 				this.localTags       = this.getTags()
@@ -216,21 +228,17 @@ export default {
 			}
 		}
 	},
-	computed : {
-		...mapState([ 'currentPost', 'tags' ]),
-		...mapState('live-tags', [ 'liveTags' ])
-	},
 	methods : {
 		emitPasteEvent (event) {
 			this.$emit('paste', event)
 		},
 		getTags () {
-			const tags = this.tagsContext
-				? [ ...this.$tags.context(this.tagsContext) ]
-				: [ ...this.tags.tags ]
+			const t = this.tagsContext
+				? [ ...tags.context(this.tagsContext) ]
+				: [ ...this.tagsStore.tags ]
 					.filter(tag => !tag.deprecated)
-			return tags.map((item, index) => {
-				const value = this.currentPost ? (this.liveTags[item.id] || item.value) : item.value
+			return t.map((item, index) => {
+				const value = this.postEditorStore.currentPost ? (this.tagsStore.liveTags[item.id] || item.value) : item.value
 				return {
 					...item,
 					valueText : value,
@@ -478,21 +486,21 @@ export default {
 								return `${item.menuHtml}`
 							},
 							source : (searchTerm, renderList, mentionChar, returnItem = false, customValue = '') => {
-								const tags = [ ...this.localTags ]
-								if (tags[0].custom) {
-									tags[0].customValue = customValue
+								const localTags = [ ...this.localTags ]
+								if (localTags[0].custom) {
+									localTags[0].customValue = customValue
 								}
 
 								if (0 === searchTerm.length) {
-									return renderList(tags, searchTerm, returnItem, this.insertExact)
+									return renderList(localTags, searchTerm, returnItem, this.insertExact)
 								}
 
 								const matches = []
-								for (let i = 0; i < tags.length; i++) {
+								for (let i = 0; i < localTags.length; i++) {
 									if (
-										~tags[i].name.toLowerCase().indexOf(searchTerm.toLowerCase()) ||
-									~tags[i].id.toLowerCase().indexOf(searchTerm.toLowerCase())
-									) { matches.push(tags[i]) }
+										~localTags[i].name.toLowerCase().indexOf(searchTerm.toLowerCase()) ||
+									~localTags[i].id.toLowerCase().indexOf(searchTerm.toLowerCase())
+									) { matches.push(localTags[i]) }
 								}
 
 								return renderList(matches, searchTerm, returnItem, this.insertExact)
@@ -565,7 +573,7 @@ export default {
 		this.startup(true)
 
 		if (this.tagsContext) {
-			this.$bus.$on('updateEditor' + this.tagsContext, (uid) => {
+			window.aioseoBus.$on('updateEditor' + this.tagsContext, (uid) => {
 				if (uid !== this._uid) {
 					this.startup(true)
 				}
@@ -577,7 +585,7 @@ export default {
 	},
 	unmounted () {
 		if (this.tagsContext) {
-			this.$bus.$emit('updateEditor' + this.tagsContext, this._uid)
+			window.aioseoBus.$emit('updateEditor' + this.tagsContext, this._uid)
 		}
 	}
 }

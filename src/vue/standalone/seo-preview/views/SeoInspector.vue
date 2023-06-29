@@ -108,6 +108,10 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
 import { useTruSeoScore } from '@/vue/composables'
 import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
@@ -122,6 +126,7 @@ export default {
 		const { strings } = useTruSeoScore()
 
 		return {
+			rootStore         : useRootStore(),
 			composableStrings : strings
 		}
 	},
@@ -134,12 +139,12 @@ export default {
 	},
 	computed : {
 		focusKeyphrase () {
-			return this.$aioseo?.keyphrases?.focus?.keyphrase || false
+			return this.rootStore.aioseo?.keyphrases?.focus?.keyphrase || false
 		}
 	},
 	methods : {
 		getCheckObject (which) {
-			return this.$aioseo?.page_analysis?.analysis[which]
+			return this.rootStore.aioseo?.page_analysis?.analysis[which]
 		},
 		getCheckErrors (which) {
 			return this.getCheckObject(which)?.errors || 0
@@ -156,10 +161,10 @@ export default {
 			return 'svg-circle-check'
 		},
 		checkErrorsExists (which) {
-			return 'undefined' !== typeof this.$aioseo.page_analysis.analysis?.[which]?.errors
+			return 'undefined' !== typeof this.rootStore.aioseo.page_analysis.analysis?.[which]?.errors
 		},
 		isCheckEligible () {
-			return 'undefined' !== typeof this.$aioseo.page_analysis?.analysis
+			return 'undefined' !== typeof this.rootStore.aioseo.page_analysis?.analysis
 		}
 	},
 	mixins : [ TruSeoScore ],

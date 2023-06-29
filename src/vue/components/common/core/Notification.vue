@@ -64,8 +64,11 @@
 </template>
 
 <script>
+import {
+	useNotificationsStore
+} from '@/vue/stores'
+
 import { Url, Date } from '@/vue/mixins'
-import { mapActions } from 'vuex'
 import BaseButton from '@/vue/components/common/base/Button'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
@@ -73,7 +76,12 @@ import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation
 import SvgGear from '@/vue/components/common/svg/Gear'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 export default {
-	emits      : [ 'dismiss-notification' ],
+	setup () {
+		return {
+			notificationsStore : useNotificationsStore()
+		}
+	},
+	emits      : [ 'dismissed-notification' ],
 	components : {
 		BaseButton,
 		SvgCircleCheck,
@@ -116,10 +124,9 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'dismissNotifications', 'processButtonAction' ]),
 		processDismissNotification () {
 			this.active = false
-			this.dismissNotifications([ this.notification.slug ])
+			this.notificationsStore.dismissNotifications([ this.notification.slug ])
 			this.$emit('dismissed-notification')
 		}
 	}

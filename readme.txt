@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta ti
 Tested up to: 6.2.2
 Requires at least: 4.9
 Requires PHP: 5.6
-Stable tag: 4.3.9
+Stable tag: 4.4.0.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -256,6 +256,15 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 
 == Changelog ==
+
+**New in Version 4.4.0.1**
+
+* Fixed: Table of Contents block sometimes not able to detect certain headings.
+
+**New in Version 4.4.0**
+
+* New: SEO Revisions - Keep a historical record of SEO changes, allowing you to monitor the effectiveness of your SEO efforts and make informed decisions.
+* New: Google Updates & Revision Markers for Search Statistics - Track how Google algorithm updates and SEO/post revisions affect your search traffic over time. 📈
 
 **New in Version 4.3.9**
 
@@ -607,6 +616,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.3.9 =
+= 4.4.0.1 =
 
 This update adds major improvements and bug fixes.

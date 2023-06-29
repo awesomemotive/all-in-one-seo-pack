@@ -6,19 +6,20 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
+import { loadPiniaStores } from '@/vue/stores'
+
 import { elemLoaded } from '@/vue/utils/elemLoaded'
 
 import App from './App.vue'
-import store from '@/vue/store'
 
 const loadLaDidYouKnow = () => {
-	let app = createApp(App)
+	let app = createApp({ ...App, name: 'Standalone/LinkFormat' })
 	app     = loadPlugins(app)
 	app     = loadComponents(app)
 	app     = loadVersionedComponents(app)
 
-	app.use(store)
-	store._vm = app
+	// Use the pinia store.
+	loadPiniaStores(app)
 
 	app.mount('#aioseo-link-assistant-education-mount')
 }

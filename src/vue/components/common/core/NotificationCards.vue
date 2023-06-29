@@ -21,7 +21,7 @@
 				<div class="no-notifications">
 					<img
 						alt="Dannie the Detective"
-						:src="$getAssetUrl(dannieDetectiveImg)"
+						:src="getAssetUrl(dannieDetectiveImg)"
 					/>
 
 					<div class="great-scott">
@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import { getAssetUrl } from '@/vue/utils/helpers'
 import dannieDetectiveImg from '@/vue/assets/images/aio/dannie-detective.png'
 import CoreNotification from '@/vue/components/common/core/Notification'
 import NotificationsReview from '@/vue/components/common/notifications/Review'
@@ -77,6 +78,9 @@ export default {
 				seeDismissed       : this.$t.__('See Dismissed Notifications', this.$td)
 			}
 		}
+	},
+	methods : {
+		getAssetUrl
 	}
 }
 </script>

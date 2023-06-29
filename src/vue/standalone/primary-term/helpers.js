@@ -1,3 +1,7 @@
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import { isBlockEditor } from '@/vue/plugins/tru-seo/components/helpers'
 
 const blockEditor = {
@@ -66,7 +70,8 @@ const classicEditor = {
  * @returns {Array} The taxonomies that have primary term support.
  */
 export const getTaxonomies = () => {
-	const taxonomies = window.aioseo.postData?.taxonomies || []
+	const rootStore = useRootStore()
+	const taxonomies = rootStore.aioseo.postData?.taxonomies || []
 
 	return taxonomies.filter(taxonomy => {
 		return true === taxonomy.primaryTermSupport

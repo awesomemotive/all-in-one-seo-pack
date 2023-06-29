@@ -5,7 +5,7 @@
 	>
 		<transition name="notifications-slide">
 			<div
-				v-if="showNotifications"
+				v-if="notificationsStore.showNotifications"
 				class="notification-menu"
 			>
 				<div class="notification-header">
@@ -16,17 +16,17 @@
 						<a
 							href="#"
 							@click.stop.prevent="dismissed = true"
-							v-if="!dismissed && dismissedNotificationsCount"
+							v-if="!dismissed && notificationsStore.dismissedNotificationsCount"
 						>{{ strings.dismissedNotifications }}</a>
 
 						<a
 							href="#"
 							@click.stop.prevent="dismissed = false"
-							v-if="dismissed && dismissedNotificationsCount"
+							v-if="dismissed && notificationsStore.dismissedNotificationsCount"
 						>{{ strings.activeNotifications }}</a>
 					</div>
 					<div
-						@click.stop="toggleNotifications"
+						@click.stop="notificationsStore.toggleNotifications"
 					>
 						<svg-close />
 					</div>
@@ -35,7 +35,7 @@
 				<core-notification-cards
 					class="notification-cards"
 					:notifications="filteredNotifications"
-					:dismissedCount="dismissedNotificationsCount"
+					:dismissedCount="notificationsStore.dismissedNotificationsCount"
 					@toggle-dismissed="dismissed = !dismissed"
 				/>
 
@@ -75,8 +75,8 @@
 
 		<transition name="notifications-fade">
 			<div
-				@click="toggleNotifications"
-				v-if="showNotifications"
+				@click="notificationsStore.toggleNotifications"
+				v-if="notificationsStore.showNotifications"
 				class="overlay"
 			/>
 		</transition>
@@ -84,10 +84,13 @@
 </template>
 
 <script>
-import { merge } from 'lodash-es'
+import {
+	useNotificationsStore
+} from '@/vue/stores'
+
 import { useNotifications } from '@/vue/composables'
+import { merge } from 'lodash-es'
 import { Notifications } from '@/vue/mixins'
-import { mapActions, mapState, mapMutations } from 'vuex'
 import CoreNotificationCards from '@/vue/components/common/core/NotificationCards'
 import SvgClose from '@/vue/components/common/svg/Close'
 export default {
@@ -95,7 +98,8 @@ export default {
 		const { strings } = useNotifications()
 
 		return {
-			composableStrings : strings
+			notificationsStore : useNotificationsStore(),
+			composableStrings  : strings
 		}
 	},
 	components : {
@@ -116,7 +120,7 @@ export default {
 		}
 	},
 	watch : {
-		showNotifications (newValue) {
+		'notificationsStore.showNotifications' (newValue) {
 			if (newValue) {
 				this.currentPage = 0
 				this.setMaxNotifications()
@@ -133,7 +137,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'showNotifications' ]),
 		filteredNotifications () {
 			const notifications = [ ...this.notifications ]
 			return notifications.splice(0 === this.currentPage ? 0 : this.currentPage * this.maxNotifications, this.maxNotifications)
@@ -150,11 +153,9 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'dismissNotifications' ]),
-		...mapMutations([ 'toggleNotifications' ]),
 		escapeListener (event) {
-			if ('Escape' === event.key && this.showNotifications) {
-				this.toggleNotifications()
+			if ('Escape' === event.key && this.notificationsStore.showNotifications) {
+				this.notificationsStore.toggleNotifications()
 			}
 		},
 		addBodyClass () {
@@ -164,7 +165,7 @@ export default {
 			document.body.classList.remove('aioseo-show-notifications')
 		},
 		documentClick (event) {
-			if (!this.showNotifications) {
+			if (!this.notificationsStore.showNotifications) {
 				return
 			}
 
@@ -193,18 +194,18 @@ export default {
 				return
 			}
 
-			this.toggleNotifications()
+			this.notificationsStore.toggleNotifications()
 		},
 		notificationsLinkClick (event) {
 			event.preventDefault()
-			this.toggleNotifications()
+			this.notificationsStore.toggleNotifications()
 		},
 		processDismissAllNotifications () {
 			const slugs = []
 			this.notifications.forEach(notification => {
 				slugs.push(notification.slug)
 			})
-			this.dismissNotifications(slugs)
+			this.notificationsStore.dismissNotifications(slugs)
 				.then(() => {
 					this.setMaxNotifications()
 				})

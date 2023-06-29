@@ -1,18 +1,19 @@
-import { mapGetters, mapMutations } from 'vuex'
+import {
+	useNotificationsStore
+} from '@/vue/stores'
+
 export const Notifications = {
 	computed : {
-		...mapGetters([ 'activeNotifications', 'activeNotificationsCount', 'dismissedNotifications', 'dismissedNotificationsCount' ]),
 		notificationsCount () {
-			return this.dismissed ? this.dismissedNotificationsCount : this.activeNotificationsCount
+			const notificationsStore = useNotificationsStore()
+			return this.dismissed ? notificationsStore.dismissedNotificationsCount : notificationsStore.activeNotificationsCount
 		},
 		notifications () {
-			return this.dismissed ? this.dismissedNotifications : this.activeNotifications
+			const notificationsStore = useNotificationsStore()
+			return this.dismissed ? notificationsStore.dismissedNotifications : notificationsStore.activeNotifications
 		},
 		notificationTitle () {
 			return this.dismissed ? this.strings.notifications : this.strings.newNotifications
 		}
-	},
-	methods : {
-		...mapMutations([ 'toggleDismissedNotifications', 'toggleNotifications' ])
 	}
 }

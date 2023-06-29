@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import Blur from './Blur'
 import Cta from '@/vue/components/common/cta/Index'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
@@ -59,9 +58,6 @@ export default {
 				feature4            : this.$t.__('Speed tests for individual pages/posts', this.$td)
 			}
 		}
-	},
-	computed : {
-		...mapGetters([ 'isUnlicensed' ])
 	}
 }
 </script>

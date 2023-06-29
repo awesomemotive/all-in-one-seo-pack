@@ -45,9 +45,9 @@
 
 				<template #footer>
 					<div class="go-back">
-						<router-link :to="getPrevLink" class="no-underline">&larr;</router-link>
+						<router-link :to="setupWizardStore.getPrevLink" class="no-underline">&larr;</router-link>
 						&nbsp;
-						<router-link :to="getPrevLink">{{ strings.goBack }}</router-link>
+						<router-link :to="setupWizardStore.getPrevLink">{{ strings.goBack }}</router-link>
 					</div>
 					<div class="spacer"></div>
 					<base-button
@@ -70,10 +70,13 @@
 </template>
 
 <script>
+import {
+	useSetupWizardStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
 import { Wizard } from '@/vue/mixins'
-import { mapActions, mapMutations, mapState } from 'vuex'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import GridColumn from '@/vue/components/common/grid/Column'
@@ -88,6 +91,7 @@ export default {
 		const { strings } = useWizard()
 
 		return {
+			setupWizardStore  : useSetupWizardStore(),
 			composableStrings : strings
 		}
 	},
@@ -120,56 +124,51 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options' ]),
-		...mapState('wizard', {
-			additionalInformation : 'additionalInformation',
-			presetFeatures        : 'features'
-		}),
 		showPluginsAll () {
 			return (
-				this.presetFeatures.includes('analytics') ||
-					this.presetFeatures.includes('conversion-tools')
+				this.setupWizardStore.features.includes('analytics') ||
+					this.setupWizardStore.features.includes('conversion-tools')
 			) &&
 				(
-					this.presetFeatures.includes('image-seo') ||
-					this.presetFeatures.includes('news-sitemap') ||
-					this.presetFeatures.includes('video-sitemap') ||
-					this.presetFeatures.includes('local-seo') ||
-					this.presetFeatures.includes('redirects') ||
-					this.presetFeatures.includes('index-now') ||
-					this.presetFeatures.includes('link-assistant') ||
-					this.presetFeatures.includes('rest-api')
+					this.setupWizardStore.features.includes('image-seo') ||
+					this.setupWizardStore.features.includes('news-sitemap') ||
+					this.setupWizardStore.features.includes('video-sitemap') ||
+					this.setupWizardStore.features.includes('local-seo') ||
+					this.setupWizardStore.features.includes('redirects') ||
+					this.setupWizardStore.features.includes('index-now') ||
+					this.setupWizardStore.features.includes('link-assistant') ||
+					this.setupWizardStore.features.includes('rest-api')
 				)
 		},
 		showPluginsAddons () {
 			return (
-				!this.presetFeatures.includes('analytics') ||
-				!this.presetFeatures.includes('conversion-tools')
+				!this.setupWizardStore.features.includes('analytics') ||
+				!this.setupWizardStore.features.includes('conversion-tools')
 			) &&
 				(
-					this.presetFeatures.includes('image-seo') ||
-					this.presetFeatures.includes('news-sitemap') ||
-					this.presetFeatures.includes('video-sitemap') ||
-					this.presetFeatures.includes('local-seo') ||
-					this.presetFeatures.includes('redirects') ||
-					this.presetFeatures.includes('index-now') ||
-					this.presetFeatures.includes('link-assistant') ||
-					this.presetFeatures.includes('rest-api')
+					this.setupWizardStore.features.includes('image-seo') ||
+					this.setupWizardStore.features.includes('news-sitemap') ||
+					this.setupWizardStore.features.includes('video-sitemap') ||
+					this.setupWizardStore.features.includes('local-seo') ||
+					this.setupWizardStore.features.includes('redirects') ||
+					this.setupWizardStore.features.includes('index-now') ||
+					this.setupWizardStore.features.includes('link-assistant') ||
+					this.setupWizardStore.features.includes('rest-api')
 				)
 		},
 		showPluginsOnly () {
 			return (
-				this.presetFeatures.includes('analytics') ||
-				this.presetFeatures.includes('conversion-tools')
+				this.setupWizardStore.features.includes('analytics') ||
+				this.setupWizardStore.features.includes('conversion-tools')
 			) &&
-				!this.presetFeatures.includes('image-seo') &&
-				!this.presetFeatures.includes('news-sitemap') &&
-				!this.presetFeatures.includes('video-sitemap') &&
-				!this.presetFeatures.includes('local-seo') &&
-				!this.presetFeatures.includes('redirects') &&
-				!this.presetFeatures.includes('index-now') &&
-				!this.presetFeatures.includes('link-assistant') &&
-				!this.presetFeatures.includes('rest-api')
+				!this.setupWizardStore.features.includes('image-seo') &&
+				!this.setupWizardStore.features.includes('news-sitemap') &&
+				!this.setupWizardStore.features.includes('video-sitemap') &&
+				!this.setupWizardStore.features.includes('local-seo') &&
+				!this.setupWizardStore.features.includes('redirects') &&
+				!this.setupWizardStore.features.includes('index-now') &&
+				!this.setupWizardStore.features.includes('link-assistant') &&
+				!this.setupWizardStore.features.includes('rest-api')
 		},
 		getPluginsText () {
 			if (this.showPluginsOnly) {
@@ -202,43 +201,43 @@ export default {
 		},
 		getPluginNames () {
 			const pluginNames = []
-			if (this.presetFeatures.includes('analytics')) {
+			if (this.setupWizardStore.features.includes('analytics')) {
 				pluginNames.push('MonsterInsights Free')
 			}
 
-			if (this.presetFeatures.includes('conversion-tools')) {
+			if (this.setupWizardStore.features.includes('conversion-tools')) {
 				pluginNames.push('OptinMonster')
 			}
 
-			if (this.presetFeatures.includes('image-seo')) {
+			if (this.setupWizardStore.features.includes('image-seo')) {
 				pluginNames.push('Image SEO')
 			}
 
-			if (this.presetFeatures.includes('local-seo')) {
+			if (this.setupWizardStore.features.includes('local-seo')) {
 				pluginNames.push('Local Business SEO')
 			}
 
-			if (this.presetFeatures.includes('video-sitemap')) {
+			if (this.setupWizardStore.features.includes('video-sitemap')) {
 				pluginNames.push('Video Sitemap')
 			}
 
-			if (this.presetFeatures.includes('news-sitemap')) {
+			if (this.setupWizardStore.features.includes('news-sitemap')) {
 				pluginNames.push('News Sitemap')
 			}
 
-			if (this.presetFeatures.includes('redirects')) {
+			if (this.setupWizardStore.features.includes('redirects')) {
 				pluginNames.push('Redirects')
 			}
 
-			if (this.presetFeatures.includes('index-now')) {
+			if (this.setupWizardStore.features.includes('index-now')) {
 				pluginNames.push('Index Now')
 			}
 
-			if (this.presetFeatures.includes('link-assistant')) {
+			if (this.setupWizardStore.features.includes('link-assistant')) {
 				pluginNames.push('Link Assistant')
 			}
 
-			if (this.presetFeatures.includes('rest-api')) {
+			if (this.setupWizardStore.features.includes('rest-api')) {
 				pluginNames.push('REST API')
 			}
 
@@ -251,7 +250,7 @@ export default {
 				.filter(f => 'breadcrumbs' !== f.value)
 				.map(f => {
 					f.selected = false
-					if (this.presetFeatures.includes(f.value)) {
+					if (this.setupWizardStore.features.includes(f.value)) {
 						f.selected = true
 					}
 					return f
@@ -259,8 +258,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapMutations('wizard', [ 'updateFeatures' ]),
-		...mapActions('wizard', [ 'saveWizard' ]),
 		preventUncheck (event, feature) {
 			if (feature.required) {
 				event.preventDefault()
@@ -268,14 +265,14 @@ export default {
 			}
 		},
 		getValue (feature) {
-			return this.presetFeatures.includes(feature.value)
+			return this.setupWizardStore.features.includes(feature.value)
 		},
 		updateValue (checked, feature) {
-			const features = [ ...this.presetFeatures ]
+			const features = [ ...this.setupWizardStore.features ]
 
 			if (checked) {
 				features.push(feature.value)
-				this.updateFeatures(features)
+				this.setupWizardStore.features = features
 				return
 			}
 
@@ -284,13 +281,13 @@ export default {
 				features.splice(index, 1)
 			}
 
-			this.updateFeatures(features)
+			this.setupWizardStore.features = features
 		},
 		saveAndContinue () {
 			this.loading = true
-			this.saveWizard('features')
+			this.setupWizardStore.saveWizard('features')
 				.then(() => {
-					this.$router.push(this.getNextLink)
+					this.$router.push(this.setupWizardStore.getNextLink)
 				})
 		}
 	}

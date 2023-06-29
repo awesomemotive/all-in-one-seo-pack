@@ -3,7 +3,7 @@
 		<core-blur>
 			<graph
 				:series="series"
-				:loading="loading.keywords"
+				:loading="searchStatisticsStore.loading.keywords"
 				:chartOverrides="{
 					legend: {
 						show: false
@@ -16,8 +16,8 @@
 			/>
 
 			<keywords-table
-				:keywords="data.keywords.list"
-				:loading="loading.keywords"
+				:keywords="searchStatisticsStore.data.keywords.list"
+				:loading="searchStatisticsStore.loading.keywords"
 				:refreshOnLoad="false"
 			>
 				<template #buttons="{}">
@@ -62,7 +62,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import CoreBlur from '@/vue/components/common/core/Blur'
 import Cta from '@/vue/components/common/cta/Index'
 import Graph from '../Graph'
@@ -71,6 +74,11 @@ import KeywordsList from '../KeywordsList'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreBlur,
 		Cta,
@@ -105,9 +113,8 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('search-statistics', [ 'data', 'loading' ]),
 		graphKeywords () {
-			return Object.values(this.data.keywords.list.rows).slice(0, 3)
+			return Object.values(this.searchStatisticsStore.data.keywords.list.rows).slice(0, 3)
 		},
 		series () {
 			return this.graphKeywords.map((row) => ({

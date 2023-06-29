@@ -9,7 +9,7 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.advanced.truSeo"
+						v-model="optionsStore.options.advanced.truSeo"
 					/>
 
 					<div class="aioseo-description">
@@ -23,8 +23,8 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.advanced.headlineAnalyzer"
-						:disabled="versionCompare($aioseo.wpVersion, '5.2', '<')"
+						v-model="optionsStore.options.advanced.headlineAnalyzer"
+						:disabled="versionCompare(rootStore.aioseo.wpVersion, '5.2', '<')"
 					/>
 
 					<div class="aioseo-description">
@@ -33,7 +33,7 @@
 
 					<core-alert
 						class="warning"
-						v-if="versionCompare($aioseo.wpVersion, '5.2', '<')"
+						v-if="versionCompare(rootStore.aioseo.wpVersion, '5.2', '<')"
 						type="yellow"
 					>
 						<div v-html="strings.headlineAnalyzerWarning"/>
@@ -47,14 +47,14 @@
 				<template #content>
 					<base-checkbox
 						size="medium"
-						v-model="options.advanced.postTypes.all"
+						v-model="optionsStore.options.advanced.postTypes.all"
 					>
 						{{ strings.includeAllPostTypes }}
 					</base-checkbox>
 
 					<core-post-type-options
-						v-if="!options.advanced.postTypes.all"
-						:options="options.advanced"
+						v-if="!optionsStore.options.advanced.postTypes.all"
+						:options="optionsStore.options.advanced"
 						type="postTypes"
 					/>
 
@@ -72,12 +72,12 @@
 				<template #name>
 					{{ strings.taxonomyColumns }}
 					<core-pro-badge
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 					/>
 				</template>
 				<template #content>
 					<base-checkbox
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 						disabled
 						size="medium"
 						:modelValue="true"
@@ -86,16 +86,16 @@
 					</base-checkbox>
 
 					<base-checkbox
-						v-if="!isUnlicensed"
+						v-if="!licenseStore.isUnlicensed"
 						size="medium"
-						v-model="options.advanced.taxonomies.all"
+						v-model="optionsStore.options.advanced.taxonomies.all"
 					>
 						{{ strings.includeAllTaxonomies }}
 					</base-checkbox>
 
 					<core-post-type-options
-						v-if="!options.advanced.taxonomies.all && !isUnlicensed"
-						:options="options.advanced"
+						v-if="!optionsStore.options.advanced.taxonomies.all && !licenseStore.isUnlicensed"
+						:options="optionsStore.options.advanced"
 						type="taxonomies"
 					/>
 
@@ -109,7 +109,7 @@
 
 					<core-alert
 						class="inline-upsell"
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
 						<div v-html="strings.taxonomyColumnsUpsell" />
@@ -121,13 +121,13 @@
 				<template #name>
 					{{ strings.adminBarMenu }}
 					<core-pro-badge
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 					/>
 				</template>
 
 				<template #content>
 					<base-radio-toggle
-						:disabled="isUnlicensed"
+						:disabled="licenseStore.isUnlicensed"
 						v-model="adminBarMenu"
 						name="adminBarMenu"
 						:options="[
@@ -142,7 +142,7 @@
 
 					<core-alert
 						class="inline-upsell"
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
 						<div v-html="strings.adminBarMenuUpsell" />
@@ -154,7 +154,7 @@
 				<template #name>
 					{{ strings.dashboardWidgets }}
 					<core-pro-badge
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 					/>
 				</template>
 				<template #content>
@@ -165,7 +165,7 @@
 						>
 							<base-checkbox
 								size="medium"
-								:disabled="isUnlicensed"
+								:disabled="licenseStore.isUnlicensed"
 								:modelValue="isDashboardWidgetChecked(widget)"
 								@update:modelValue="value => updateDashboardWidgets(value, widget)"
 							>
@@ -187,7 +187,7 @@
 
 					<core-alert
 						class="inline-upsell"
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
 						<div v-html="strings.dashboardWidgetsUpsell" />
@@ -200,7 +200,7 @@
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.advanced.announcements"
+						v-model="optionsStore.options.advanced.announcements"
 						name="announcements"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.hide, value: false, activeClass: 'dark' },
@@ -220,7 +220,7 @@
 				</template>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.advanced.autoUpdates"
+						v-model="optionsStore.options.advanced.autoUpdates"
 						name="autoUpdates"
 						:options="[
 							{ label: strings.all, value: 'all' },
@@ -230,9 +230,9 @@
 					/>
 
 					<div class="aioseo-description">
-						<span v-if="'all' === options.advanced.autoUpdates">{{ strings.allDescription }}</span>
-						<span v-if="'minor' === options.advanced.autoUpdates">{{ strings.minorDescription }}</span>
-						<span v-if="'none' === options.advanced.autoUpdates">{{ strings.noneDescription }}</span>
+						<span v-if="'all' === optionsStore.options.advanced.autoUpdates">{{ strings.allDescription }}</span>
+						<span v-if="'minor' === optionsStore.options.advanced.autoUpdates">{{ strings.minorDescription }}</span>
+						<span v-if="'none' === optionsStore.options.advanced.autoUpdates">{{ strings.noneDescription }}</span>
 					</div>
 				</template>
 			</core-settings-row>
@@ -253,7 +253,7 @@
 
 				<template #content>
 					<base-toggle
-						v-model="options.advanced.usageTracking"
+						v-model="optionsStore.options.advanced.usageTracking"
 					/>
 
 					<div class="aioseo-description">
@@ -269,7 +269,7 @@
 				<template #name>
 					{{ strings.openAiKey }}
 					<core-pro-badge
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 					/>
 				</template>
 
@@ -278,8 +278,8 @@
 						class="openAiKey"
 						type="text"
 						size="medium"
-						v-model="options.advanced.openAiKey"
-						:disabled="isUnlicensed"
+						v-model="optionsStore.options.advanced.openAiKey"
+						:disabled="licenseStore.isUnlicensed"
 						@blur="validateOpenAiKey"
 					/>
 
@@ -290,7 +290,7 @@
 
 					<core-alert
 						class="inline-upsell"
-						v-if="!isUnlicensed && options.advanced.openAiKey && openAiKeyInvalid"
+						v-if="!licenseStore.isUnlicensed && optionsStore.options.advanced.openAiKey && openAiKeyInvalid"
 						type="red"
 					>
 						<div>{{strings.openAiKeyInvalid}}</div>
@@ -298,7 +298,7 @@
 
 					<core-alert
 						class="inline-upsell"
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
 						<div v-html="strings.openAiKeyUpsell" />
@@ -311,7 +311,7 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.advanced.uninstall"
+						v-model="optionsStore.options.advanced.uninstall"
 					/>
 
 					<div class="aioseo-description">
@@ -324,7 +324,12 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import {
+	useLicenseStore,
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { versionCompare } from '@/vue/utils/helpers'
 
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
@@ -340,6 +345,13 @@ import GridRow from '@/vue/components/common/grid/Row'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore(),
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		BaseCheckbox,
 		BaseRadioToggle,
@@ -460,14 +472,12 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'settings', 'isUnlicensed' ]),
-		...mapState([ 'options' ]),
 		adminBarMenu : {
 			get () {
-				return !this.isUnlicensed ? this.options.advanced.adminBarMenu : true
+				return !this.licenseStore.isUnlicensed ? this.optionsStore.options.advanced.adminBarMenu : true
 			},
 			set (newValue) {
-				this.options.advanced.adminBarMenu = newValue
+				this.optionsStore.options.advanced.adminBarMenu = newValue
 			}
 		},
 		widgets () {
@@ -494,22 +504,22 @@ export default {
 		versionCompare : versionCompare,
 		updateDashboardWidgets (checked, widget) {
 			if (checked) {
-				const included = this.options.advanced.dashboardWidgets
+				const included = this.optionsStore.options.advanced.dashboardWidgets
 				included.push(widget.key)
-				this.options.advanced.dashboardWidgets = included
+				this.optionsStore.options.advanced.dashboardWidgets = included
 				return
 			}
 
-			const index = this.options.advanced.dashboardWidgets.findIndex(t => t === widget.key)
+			const index = this.optionsStore.options.advanced.dashboardWidgets.findIndex(t => t === widget.key)
 			if (-1 !== index) {
-				this.options.advanced.dashboardWidgets.splice(index, 1)
+				this.optionsStore.options.advanced.dashboardWidgets.splice(index, 1)
 			}
 		},
 		isDashboardWidgetChecked (widget) {
-			return !this.isUnlicensed ? this.options.advanced.dashboardWidgets.includes(widget.key) : true
+			return !this.licenseStore.isUnlicensed ? this.optionsStore.options.advanced.dashboardWidgets.includes(widget.key) : true
 		},
 		validateOpenAiKey () {
-			if (this.options.advanced.openAiKey && null === this.options.advanced.openAiKey.match(/^sk-[a-zA-Z0-9]{48}$/)) {
+			if (this.optionsStore.options.advanced.openAiKey && null === this.optionsStore.options.advanced.openAiKey.match(/^sk-[a-zA-Z0-9]{48}$/)) {
 				this.openAiKeyInvalid = true
 			} else {
 				this.openAiKeyInvalid = false

@@ -3,6 +3,11 @@ import { h, createApp } from 'vue'
 
 import loadPlugins from '@/vue/plugins'
 
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import LocationsSidebar from './LocationsSidebar.vue'
 
 import { observeElement } from '@/vue/utils/helpers'
@@ -47,12 +52,14 @@ export const settings = {
 		}
 	},
 	edit : withSelect(function (select) {
-		const categories = select('core').getEntityRecords('taxonomy', window.aioseo.localBusiness.taxonomyName)
+		const rootStore  = useRootStore()
+		const categories = select('core').getEntityRecords('taxonomy', rootStore.aioseo.localBusiness.taxonomyName)
 		return {
 			categories : categories
 		}
 	})(function (props) {
-		const multipleLocations = window.aioseo.options.localBusiness?.locations.general.multiple
+		const optionsStore      = useOptionsStore()
+		const multipleLocations = optionsStore.options.localBusiness?.locations.general.multiple
 		const { setAttributes, attributes, className, clientId, isSelected } = props
 		let { categories } = props
 		const vueAioseoId   = 'aioseo-' + clientId
@@ -79,6 +86,7 @@ export const settings = {
 			)
 		}
 
+		const rootStore = useRootStore()
 		if (0 === categories.length) {
 			return el(Fragment, {},
 				el(
@@ -87,7 +95,7 @@ export const settings = {
 					sprintf(
 						// Translators: 1 - The plural label of the custom post type.
 						__('No %1$s found', td),
-						window.aioseo.localBusiness.taxonomyPluralLabel
+						rootStore.aioseo.localBusiness.taxonomyPluralLabel
 					)
 				)
 			)
@@ -107,6 +115,7 @@ export const settings = {
 				subtree : true,
 				done    : function (el) {
 					let app = createApp({
+						name : 'Blocks/Locations',
 						data : function () {
 							return vueInitialState[clientId]
 						},
@@ -133,7 +142,7 @@ export const settings = {
 			null,
 			el(
 				PanelBody,
-				{ title: window.aioseo.localBusiness.postTypePluralLabel, initialOpen: true },
+				{ title: rootStore.aioseo.localBusiness.postTypePluralLabel, initialOpen: true },
 				el(
 					'div',
 					{},
@@ -154,7 +163,7 @@ export const settings = {
 					sprintf(
 						// Translators: 1 - The plural label of the custom post type.
 						__('No %1$s found', td),
-						window.aioseo.localBusiness.taxonomyPluralLabel
+						rootStore.aioseo.localBusiness.taxonomyPluralLabel
 					)
 				)
 			)
@@ -169,7 +178,7 @@ export const settings = {
 					sprintf(
 						// Translators: 1 - The singular label of the custom post type.
 						__('Select a %1$s', td),
-						window.aioseo.localBusiness.taxonomySingleLabel
+						rootStore.aioseo.localBusiness.taxonomySingleLabel
 					)
 				)
 			)

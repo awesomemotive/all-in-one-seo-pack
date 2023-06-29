@@ -23,6 +23,7 @@
 								<slot name="headerTitle" />
 								<button
 									class="close"
+									type="button"
 									@click.stop="$emit('close')"
 								>
 									<svg-close @click="$emit('close')" />

@@ -104,6 +104,7 @@ class PostSettings {
 		$linkAssistantCapability        = aioseo()->access->hasCapability( 'aioseo_page_link_assistant_settings' );
 		$redirectsCapability            = aioseo()->access->hasCapability( 'aioseo_page_redirects_manage' );
 		$advancedSettingsCapability     = aioseo()->access->hasCapability( 'aioseo_page_advanced_settings' );
+		$seoRevisionsSettingsCapability = aioseo()->access->hasCapability( 'aioseo_page_seo_revisions_settings' );
 
 		if (
 			$dynamicOptions->searchAppearance->postTypes->has( $postType ) &&
@@ -115,7 +116,8 @@ class PostSettings {
 				empty( $schemaSettingsCapability ) &&
 				empty( $linkAssistantCapability ) &&
 				empty( $redirectsCapability ) &&
-				empty( $advancedSettingsCapability )
+				empty( $advancedSettingsCapability ) &&
+				empty( $seoRevisionsSettingsCapability )
 			)
 		) {
 			return true;

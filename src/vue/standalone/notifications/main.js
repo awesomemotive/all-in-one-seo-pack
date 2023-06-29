@@ -1,16 +1,18 @@
 import '@/vue/utils/vue2.js'
 import { createApp } from 'vue'
 
+import { loadPiniaStores } from '@/vue/stores'
+
 import App from './App.vue'
-import store from '@/vue/store'
 
 import translate from '@/vue/plugins/translations'
 
 const newNotifications = document.querySelector('#aioseo-menu-new-notifications')
 if (newNotifications) {
-	const app = createApp(App)
+	const app = createApp({ ...App, name: 'Standalone/Notifications' })
 
-	app.use(store)
+	// Use the pinia store.
+	loadPiniaStores(app)
 
 	app.config.globalProperties.$t     = translate
 	app.config.globalProperties.$td    = import.meta.env.VITE_TEXTDOMAIN

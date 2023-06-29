@@ -66,7 +66,7 @@
 
 			<div class="aioseo-settings-row">
 				<template
-					v-for="(group, i) in $aioseo.data.status"
+					v-for="(group, i) in rootStore.aioseo.data.status"
 					:key="i"
 				>
 					<div
@@ -103,8 +103,12 @@
 </template>
 
 <script>
+import {
+	useRootStore,
+	useToolsStore
+} from '@/vue/stores'
+
 import { DateTime } from 'luxon'
-import { mapActions } from 'vuex'
 import CoreCard from '@/vue/components/common/core/Card'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
@@ -114,6 +118,12 @@ import SvgDownload from '@/vue/components/common/svg/Download'
 import TableColumn from '@/vue/components/common/table/Column'
 import TableRow from '@/vue/components/common/table/Row'
 export default {
+	setup () {
+		return {
+			rootStore  : useRootStore(),
+			toolsStore : useToolsStore()
+		}
+	},
 	components : {
 		CoreCard,
 		GridColumn,
@@ -148,11 +158,10 @@ export default {
 	},
 	computed : {
 		copySystemStatusInfo () {
-			return JSON.stringify(this.$aioseo.data.status)
+			return JSON.stringify(this.rootStore.aioseo.data.status)
 		}
 	},
 	methods : {
-		...mapActions([ 'emailDebugInfo' ]),
 		onCopy () {
 			this.copied = true
 			setTimeout(() => {
@@ -161,7 +170,7 @@ export default {
 		},
 		onError () {},
 		downloadSystemStatusInfo () {
-			const blob    = new Blob([ JSON.stringify(this.$aioseo.data.status) ], { type: 'application/json' })
+			const blob    = new Blob([ JSON.stringify(this.rootStore.aioseo.data.status) ], { type: 'application/json' })
 			const link    = document.createElement('a')
 			link.href     = URL.createObjectURL(blob)
 			link.download = `aioseo-system-status-${DateTime.now().toFormat('yyyy-MM-dd')}.json`
@@ -176,7 +185,7 @@ export default {
 			}
 
 			this.sendingEmail = true
-			this.emailDebugInfo(this.emailAddress)
+			this.toolsStore.emailDebugInfo(this.emailAddress)
 				.then(() => {
 					this.emailAddress = null
 					this.sendingEmail = false

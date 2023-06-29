@@ -9,8 +9,8 @@
 			>
 				<template #content>
 					<core-google-search-preview
-						:title="parseTags(`#site_title ${options.searchAppearance.global.separator} #tagline`)"
-						:separator="options.searchAppearance.global.separator"
+						:title="parseTags(`#site_title ${optionsStore.options.searchAppearance.global.separator} #tagline`)"
+						:separator="optionsStore.options.searchAppearance.global.separator"
 						:description="parseTags('#tagline')"
 					/>
 				</template>
@@ -21,8 +21,8 @@
 			>
 				<template #content>
 					<core-settings-separator
-						:options-separator="options.searchAppearance.global.separator"
-						@update:separator="value => options.searchAppearance.global.separator = value"
+						:options-separator="optionsStore.options.searchAppearance.global.separator"
+						@update:separator="value => optionsStore.options.searchAppearance.global.separator = value"
 						show-more-slug="searchShowMoreSeparators"
 					/>
 				</template>
@@ -35,7 +35,7 @@
 			id="home-page-settings"
 		>
 			<div
-				v-if="$aioseo.data.staticHomePage"
+				v-if="rootStore.aioseo.data.staticHomePage"
 				class="aioseo-settings-row aioseo-section-description"
 			>
 				<span v-html="strings.homePageDisabledDescription" />
@@ -50,29 +50,29 @@
 			>
 				<template #content>
 					<core-google-search-preview
-						v-if="$aioseo.data.staticHomePage"
-						:title="parseTags($aioseo.data.staticHomePageTitle || '#site_title')"
-						:separator="options.searchAppearance.global.separator"
-						:description="parseTags($aioseo.data.staticHomePageDescription || '#tagline')"
+						v-if="rootStore.aioseo.data.staticHomePage"
+						:title="homePageTitle"
+						:separator="optionsStore.options.searchAppearance.global.separator"
+						:description="parseTags(rootStore.aioseo.data.staticHomePageDescription || '#tagline')"
 					/>
 
 					<core-google-search-preview
-						v-if="!$aioseo.data.staticHomePage"
-						:title="parseTags(options.searchAppearance.global.siteTitle || '#site_title')"
-						:separator="options.searchAppearance.global.separator"
-						:description="parseTags(options.searchAppearance.global.metaDescription || '#tagline')"
+						v-if="!rootStore.aioseo.data.staticHomePage"
+						:title="homePageTitle"
+						:separator="optionsStore.options.searchAppearance.global.separator"
+						:description="parseTags(optionsStore.options.searchAppearance.global.metaDescription || '#tagline')"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
 				id="aioseo-home-page-site-title"
-				v-if="!$aioseo.data.staticHomePage"
+				v-if="!rootStore.aioseo.data.staticHomePage"
 				:name="strings.siteTitle"
 			>
 				<template #content>
 					<core-html-tags-editor
-						v-model="options.searchAppearance.global.siteTitle"
+						v-model="optionsStore.options.searchAppearance.global.siteTitle"
 						:line-numbers="false"
 						single
 						@counter="count => updateCount(count, 'titleCount')"
@@ -97,12 +97,12 @@
 
 			<core-settings-row
 				id="aioseo-home-page-meta-description"
-				v-if="!$aioseo.data.staticHomePage"
+				v-if="!rootStore.aioseo.data.staticHomePage"
 				:name="strings.metaDescription"
 			>
 				<template #content>
 					<core-html-tags-editor
-						v-model="options.searchAppearance.global.metaDescription"
+						v-model="optionsStore.options.searchAppearance.global.metaDescription"
 						:line-numbers="false"
 						description
 						@counter="count => updateCount(count, 'descriptionCount')"
@@ -126,7 +126,7 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.searchAppearance.advanced.useKeywords && !$aioseo.data.staticHomePage"
+				v-if="optionsStore.options.searchAppearance.advanced.useKeywords && !rootStore.aioseo.data.staticHomePage"
 				:name="strings.keywords"
 				align
 			>
@@ -134,9 +134,9 @@
 					<base-select
 						multiple
 						taggable
-						:options="getJsonValue(options.searchAppearance.global.keywords, []) || []"
-						:modelValue="getJsonValue(options.searchAppearance.global.keywords, []) || []"
-						@update:modelValue="values => options.searchAppearance.global.keywords = setJsonValue(values)"
+						:options="getJsonValue(optionsStore.options.searchAppearance.global.keywords, []) || []"
+						:modelValue="getJsonValue(optionsStore.options.searchAppearance.global.keywords, []) || []"
+						@update:modelValue="values => optionsStore.options.searchAppearance.global.keywords = setJsonValue(values)"
 						:tag-placeholder="strings.tagPlaceholder"
 					/>
 				</template>
@@ -152,13 +152,13 @@
 			</template>
 
 			<core-settings-row
-				v-if="internalOptions.internal.deprecatedOptions.includes('enableSchemaMarkup')"
+				v-if="optionsStore.internalOptions.internal.deprecatedOptions.includes('enableSchemaMarkup')"
 				:name="strings.enableSchemaMarkup"
 				align
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.deprecated.searchAppearance.global.schema.enableSchemaMarkup"
+						v-model="optionsStore.options.deprecated.searchAppearance.global.schema.enableSchemaMarkup"
 						name="enableSchemaMarkup"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.off, value: false, activeClass: 'dark' },
@@ -174,7 +174,7 @@
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.searchAppearance.global.schema.websiteName"
+						v-model="optionsStore.options.searchAppearance.global.schema.websiteName"
 					/>
 
 					<div class="aioseo-description">
@@ -189,7 +189,7 @@
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.searchAppearance.global.schema.websiteAlternateName"
+						v-model="optionsStore.options.searchAppearance.global.schema.websiteAlternateName"
 					/>
 
 					<div class="aioseo-description">
@@ -204,7 +204,7 @@
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.searchAppearance.global.schema.siteRepresents"
+						v-model="optionsStore.options.searchAppearance.global.schema.siteRepresents"
 						name="siteRepresents"
 						:options="[
 							{ label: strings.person, value: 'person' },
@@ -219,15 +219,15 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="'person' === options.searchAppearance.global.schema.siteRepresents"
+				v-if="'person' === optionsStore.options.searchAppearance.global.schema.siteRepresents"
 				:name="strings.choosePerson"
 			>
 				<template #content>
 					<base-select
 						class="person-chooser"
 						:options="users"
-						:modelValue="getPersonOptions(options.searchAppearance.global.schema.person)"
-						@update:modelValue="value => options.searchAppearance.global.schema.person = value.value"
+						:modelValue="getPersonOptions(optionsStore.options.searchAppearance.global.schema.person)"
+						@update:modelValue="value => optionsStore.options.searchAppearance.global.schema.person = value.value"
 					>
 						<template #singleLabel="{ option }">
 							<div class="person-label">
@@ -268,26 +268,26 @@
 
 			<core-settings-row
 				class="schema-graph-name"
-				v-if="'organization' === options.searchAppearance.global.schema.siteRepresents"
+				v-if="'organization' === optionsStore.options.searchAppearance.global.schema.siteRepresents"
 				:name="name"
 			>
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.searchAppearance.global.schema.organizationName"
+						v-model="optionsStore.options.searchAppearance.global.schema.organizationName"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
 				class="schema-graph-name"
-				v-if="'organization' !== options.searchAppearance.global.schema.siteRepresents && 'manual' === options.searchAppearance.global.schema.person"
+				v-if="'organization' !== optionsStore.options.searchAppearance.global.schema.siteRepresents && 'manual' === optionsStore.options.searchAppearance.global.schema.person"
 				:name="name"
 			>
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.searchAppearance.global.schema.personName"
+						v-model="optionsStore.options.searchAppearance.global.schema.personName"
 					/>
 				</template>
 			</core-settings-row>
@@ -295,19 +295,19 @@
 			<core-settings-row
 				id="schema-graph-phone"
 				class="schema-graph-phone"
-				v-if="'organization' === options.searchAppearance.global.schema.siteRepresents"
+				v-if="'organization' === optionsStore.options.searchAppearance.global.schema.siteRepresents"
 				:name="strings.phone"
 			>
 				<template #content>
 					<base-phone
-						v-model="options.searchAppearance.global.schema.phone"
+						v-model="optionsStore.options.searchAppearance.global.schema.phone"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
 				class="schema-graph-contact-type"
-				v-if="'organization' === options.searchAppearance.global.schema.siteRepresents"
+				v-if="'organization' === optionsStore.options.searchAppearance.global.schema.siteRepresents"
 				:name="strings.contactType"
 			>
 				<template #content>
@@ -315,8 +315,8 @@
 						size="medium"
 						:options="$constants.CONTACT_TYPES"
 						:placeholder="strings.chooseContactType"
-						:modelValue="getContactTypeOptions(options.searchAppearance.global.schema.contactType)"
-						@update:modelValue="value => options.searchAppearance.global.schema.contactType = value.value"
+						:modelValue="getContactTypeOptions(optionsStore.options.searchAppearance.global.schema.contactType)"
+						@update:modelValue="value => optionsStore.options.searchAppearance.global.schema.contactType = value.value"
 					/>
 
 					<div class="aioseo-description">
@@ -327,96 +327,38 @@
 
 			<core-settings-row
 				class="schema-graph-contact-type-manual"
-				v-if="'organization' === options.searchAppearance.global.schema.siteRepresents && 'manual' === options.searchAppearance.global.schema.contactType"
+				v-if="'organization' === optionsStore.options.searchAppearance.global.schema.siteRepresents && 'manual' === optionsStore.options.searchAppearance.global.schema.contactType"
 				:name="strings.contactType"
 			>
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.searchAppearance.global.schema.contactTypeManual"
+						v-model="optionsStore.options.searchAppearance.global.schema.contactTypeManual"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
 				class="schema-graph-image"
-				v-if="'organization' === options.searchAppearance.global.schema.siteRepresents"
+				v-if="'organization' === optionsStore.options.searchAppearance.global.schema.siteRepresents"
 				:name="strings.logo"
 			>
 				<template #content>
-					<div class="image-upload">
-						<base-input
-							size="medium"
-							v-model="options.searchAppearance.global.schema.organizationLogo"
-							:placeholder="strings.pasteYourImageUrl"
-						/>
-
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('organizationLogo', (imageUrl) => options.searchAppearance.global.schema.organizationLogo = imageUrl)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="options.searchAppearance.global.schema.organizationLogo = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						{{ strings.minimumSize }}
-					</div>
-
-					<base-img :src="options.searchAppearance.global.schema.organizationLogo" />
+					<core-image-uploader
+						v-model="optionsStore.options.searchAppearance.global.schema.organizationLogo"
+					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
 				class="schema-graph-image"
-				v-if="'organization' !== options.searchAppearance.global.schema.siteRepresents && 'manual' === options.searchAppearance.global.schema.person"
+				v-if="'organization' !== optionsStore.options.searchAppearance.global.schema.siteRepresents && 'manual' === optionsStore.options.searchAppearance.global.schema.person"
 				:name="strings.logo"
 			>
 				<template #content>
-					<div class="image-upload">
-						<base-input
-							size="medium"
-							v-model="options.searchAppearance.global.schema.personLogo"
-							:placeholder="strings.pasteYourImageUrl"
-						/>
-
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('personLogo', (imageUrl) => options.searchAppearance.global.schema.personLogo = imageUrl)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="options.searchAppearance.global.schema.personLogo = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						{{ strings.minimumSize }}
-					</div>
-
-					<base-img :src="options.searchAppearance.global.schema.personLogo" />
+					<core-image-uploader
+						v-model="optionsStore.options.searchAppearance.global.schema.personLogo"
+					/>
 				</template>
 			</core-settings-row>
 
@@ -428,7 +370,7 @@
 						size="medium"
 						type="blue"
 						tag="a"
-						:href="$aioseo.urls.aio.localSeo"
+						:href="rootStore.aioseo.urls.aio.localSeo"
 					>
 						{{ strings.goToLocalSeoSettings }}
 					</base-button>
@@ -439,32 +381,40 @@
 </template>
 
 <script>
-import { JsonValues, MaxCounts, Tags, Uploader } from '@/vue/mixins'
-import { mapState } from 'vuex'
-import BaseImg from '@/vue/components/common/base/Img'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
+import { JsonValues, MaxCounts, Tags } from '@/vue/mixins'
 import BasePhone from '@/vue/components/common/base/Phone'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
+import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreSettingsSeparator from '@/vue/components/common/core/SettingsSeparator'
-import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import SvgLocalSeo from '@/vue/components/common/svg/local/Seo'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
-		BaseImg,
 		BasePhone,
 		BaseRadioToggle,
 		CoreCard,
 		CoreGoogleSearchPreview,
 		CoreHtmlTagsEditor,
+		CoreImageUploader,
 		CoreSettingsRow,
 		CoreSettingsSeparator,
-		SvgCirclePlus,
 		SvgLocalSeo
 	},
-	mixins : [ JsonValues, MaxCounts, Tags, Uploader ],
+	mixins : [ JsonValues, MaxCounts, Tags ],
 	data () {
 		return {
 			titleCount       : 0,
@@ -476,7 +426,7 @@ export default {
 				homePageDisabledDescription : this.$t.sprintf(
 					// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag.
 					this.$t.__('You are using a static home page which is found under Pages. You can %1$sedit your home page settings%2$s directly to change the title and description.', this.$td),
-					`<a href="${this.$aioseo.urls.staticHomePage}&aioseo-scroll=aioseo-post-settings-post-title-row&aioseo-highlight=aioseo-post-settings-post-title-row,aioseo-post-settings-meta-description-row">`,
+					`<a href="${this.rootStore.aioseo.urls.staticHomePage}&aioseo-scroll=aioseo-post-settings-post-title-row&aioseo-highlight=aioseo-post-settings-post-title-row,aioseo-post-settings-meta-description-row">`,
 					'</a>'
 				),
 				homePage                        : this.$t.__('Home Page', this.$td),
@@ -498,10 +448,6 @@ export default {
 				contactType                     : this.$t.__('Contact Type', this.$td),
 				contactTypeDescription          : this.$t.__('Select which team or department the phone number belongs to.', this.$td),
 				logo                            : this.$t.__('Logo', this.$td),
-				uploadOrSelectImage             : this.$t.__('Upload or Select Image', this.$td),
-				pasteYourImageUrl               : this.$t.__('Paste your image URL or select a new image', this.$td),
-				minimumSize                     : this.$t.__('Minimum size: 112px x 112px, The image must be in JPG, PNG, GIF, SVG, or WEBP format.', this.$td),
-				remove                          : this.$t.__('Remove', this.$td),
 				goToLocalSeo                    : this.$t.sprintf(
 					// Translators: 1 - Opening HTML bold tag, 2 - Closing HTML bold tag., 3 - "Pro", 4 - "Pro".
 					this.$t.__('Go to %1$sLocal SEO Settings%2$s and set up your local business info like location address, opening hours (%3$s), and Google Maps settings (%4$s).', this.$td),
@@ -522,19 +468,25 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options', 'internalOptions' ]),
+		homePageTitle () {
+			if (this.rootStore.aioseo.data.staticHomePage) {
+				return this.parseTags(this.parseSeparator(this.rootStore.aioseo.data.staticHomePageTitle) || '#site_title')
+			}
+
+			return this.parseTags(this.parseSeparator(this.optionsStore.options.searchAppearance.global.siteTitle) || '#site_title')
+		},
 		users () {
 			return [ {
 				label : this.$t.__('Manually Enter Person', this.$td),
 				value : 'manual'
-			} ].concat(this.$aioseo.users.map(u => ({
+			} ].concat(this.rootStore.aioseo.users.map(u => ({
 				label    : `${u.displayName} (${u.email})`,
 				gravatar : u.gravatar,
 				value    : u.id
 			})))
 		},
 		name () {
-			if ('organization' === this.options.searchAppearance.global.schema.siteRepresents) {
+			if ('organization' === this.optionsStore.options.searchAppearance.global.schema.siteRepresents) {
 				return this.strings.organizationName
 			}
 
@@ -547,6 +499,9 @@ export default {
 		},
 		getContactTypeOptions (option) {
 			return this.$constants.CONTACT_TYPES.find(t => t.value === option)
+		},
+		parseSeparator (title) {
+			return title.replace('#separator_sa', this.optionsStore.options.searchAppearance.global.separator)
 		}
 	}
 }
@@ -572,39 +527,6 @@ export default {
 
 	.schema-graph-image {
 		margin-bottom: 16px;
-
-		.image-upload {
-			display: flex;
-
-			.aioseo-input-container {
-				width: 100%;
-				max-width: 445px;
-				margin-right: 8px;
-
-				.aioseo-input {
-					width: 100%;
-				}
-			}
-
-			.insert-image {
-				min-width: 214px;
-				margin-right: 8px;
-
-				svg.aioseo-circle-plus {
-					width: 13px;
-					height: 13px;
-					margin-right: 10px;
-				}
-			}
-		}
-
-		img {
-			margin-top: 20px;
-			width: auto;
-			max-width: 525px;
-			max-height: 525px;
-			height: auto;
-		}
 	}
 
 	.person-chooser {

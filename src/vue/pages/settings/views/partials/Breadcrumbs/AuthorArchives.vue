@@ -7,24 +7,24 @@
 			<div>
 				<preview
 					:preview-data="getPreview()"
-					:useDefaultTemplate="dynamicOptions.breadcrumbs.archives.author.useDefaultTemplate"
+					:useDefaultTemplate="optionsStore.dynamicOptions.breadcrumbs.archives.author.useDefaultTemplate"
 				/>
 
 				<grid-row>
 					<grid-column>
 						<base-toggle
-							v-model="dynamicOptions.breadcrumbs.archives.author.useDefaultTemplate"
+							v-model="optionsStore.dynamicOptions.breadcrumbs.archives.author.useDefaultTemplate"
 							class="current-item"
 						/>
 						{{ strings.useDefaultTemplate }}
 					</grid-column>
 				</grid-row>
 
-				<grid-row v-if="!dynamicOptions.breadcrumbs.archives.author.useDefaultTemplate">
+				<grid-row v-if="!optionsStore.dynamicOptions.breadcrumbs.archives.author.useDefaultTemplate">
 					<grid-column
-						v-if="options.breadcrumbs.breadcrumbPrefix && options.breadcrumbs.breadcrumbPrefix.length">
+						v-if="optionsStore.options.breadcrumbs.breadcrumbPrefix && optionsStore.options.breadcrumbs.breadcrumbPrefix.length">
 						<base-toggle
-							v-model="dynamicOptions.breadcrumbs.archives.author.showPrefixCrumb"
+							v-model="optionsStore.dynamicOptions.breadcrumbs.archives.author.showPrefixCrumb"
 							class="current-item"
 						/>
 						{{ strings.showPrefixLabel }}
@@ -32,7 +32,7 @@
 
 					<grid-column>
 						<base-toggle
-							v-model="dynamicOptions.breadcrumbs.archives.author.showHomeCrumb"
+							v-model="optionsStore.dynamicOptions.breadcrumbs.archives.author.showHomeCrumb"
 							class="current-item"
 						/>
 						{{ strings.showHomeLabel }}
@@ -40,7 +40,7 @@
 
 					<grid-column>
 						<core-html-tags-editor
-							v-model="dynamicOptions.breadcrumbs.archives.author.template"
+							v-model="optionsStore.dynamicOptions.breadcrumbs.archives.author.template"
 							:line-numbers="true"
 							checkUnfilteredHtml
 							tags-context="breadcrumbs-author"
@@ -58,13 +58,23 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import Preview from './Preview'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		CoreHtmlTagsEditor,
 		CoreSettingsRow,
@@ -86,8 +96,8 @@ export default {
 	},
 	methods : {
 		getPreview () {
-			const breadcrumbOptions = this.options.breadcrumbs
-			const archiveOptions = this.dynamicOptions.breadcrumbs.archives.author
+			const breadcrumbOptions = this.optionsStore.options.breadcrumbs
+			const archiveOptions = this.optionsStore.dynamicOptions.breadcrumbs.archives.author
 			const useDefault = archiveOptions.useDefaultTemplate
 			return [
 				(useDefault && breadcrumbOptions.breadcrumbPrefix) || (!useDefault && archiveOptions.showPrefixCrumb) ? breadcrumbOptions.breadcrumbPrefix : '',
@@ -96,15 +106,12 @@ export default {
 			]
 		},
 		getTemplate () {
-			let template = this.dynamicOptions.breadcrumbs.archives.author.useDefaultTemplate ? this.$aioseo.breadcrumbs.defaultTemplates.archives.author : this.dynamicOptions.breadcrumbs.archives.author.template
+			let template = this.optionsStore.dynamicOptions.breadcrumbs.archives.author.useDefaultTemplate ? this.rootStore.aioseo.breadcrumbs.defaultTemplates.archives.author : this.optionsStore.dynamicOptions.breadcrumbs.archives.author.template
 			template = template.replace(/#breadcrumb_author_display_name/g, this.strings.authorName)
 			template = template.replace(/#breadcrumb_author_first_name/g, this.strings.authorNameFirst)
 			template = template.replace(/#breadcrumb_author_last_name/g, this.strings.authorNameLast)
 			return template
 		}
-	},
-	computed : {
-		...mapState([ 'options', 'dynamicOptions' ])
 	}
 }
 </script>

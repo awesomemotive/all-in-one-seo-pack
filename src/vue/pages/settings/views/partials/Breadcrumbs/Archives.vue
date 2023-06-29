@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import DateArchives from './DateArchives'
 import PostTypeArchives from './PostTypeArchives'
 import SearchArchives from './SearchArchives'
@@ -72,9 +71,6 @@ export default {
 					}
 				]
 		}
-	},
-	computed : {
-		...mapState([ 'options' ])
 	}
 }
 </script>

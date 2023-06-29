@@ -98,6 +98,10 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import SvgTrash from '@/vue/components/common/svg/Trash'
@@ -108,6 +112,11 @@ const matchDefaults = {
 	regex : null
 }
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		CoreTooltip,
 		SvgCirclePlus,
@@ -145,7 +154,7 @@ export default {
 					value       : 'role',
 					multiple    : true,
 					placeholder : this.$t.__('Select Roles', this.$td),
-					options     : Object.entries(this.$aioseo.user.roles).map((item) => {
+					options     : Object.entries(this.rootStore.aioseo.user.roles).map((item) => {
 						return { label: item[1], value: item[0] }
 					})
 				},

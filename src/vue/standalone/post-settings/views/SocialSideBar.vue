@@ -21,10 +21,20 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import {
+	usePostEditorStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore(),
+			settingsStore   : useSettingsStore()
+		}
+	},
 	components : {
 		CoreSettingsRow,
 		SvgPencil
@@ -39,11 +49,9 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'openModal' ]),
-		...mapMutations([ 'changeTabSettings' ]),
 		openModalEv () {
-			this.changeTabSettings({ setting: 'modal', value: 'social' })
-			this.openModal(true)
+			this.settingsStore.changeTabSettings({ setting: 'modal', value: 'social' })
+			this.postEditorStore.openModal(true)
 		}
 	}
 }

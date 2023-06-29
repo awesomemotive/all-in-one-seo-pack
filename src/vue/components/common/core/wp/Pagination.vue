@@ -1,6 +1,6 @@
 <template>
 	<div class="tablenav-pages pagination">
-		<span class="displaying-num">{{ $numbers.numberFormat(totals.total) }} {{ strings.items }}</span>
+		<span class="displaying-num">{{ numbers.numberFormat(totals.total) }} {{ strings.items }}</span>
 		<span class="pagination-links">
 			<component
 				href="#"
@@ -59,6 +59,7 @@
 </template>
 
 <script>
+import numbers from '@/vue/utils/numbers'
 export default {
 	emits : [ 'paginate' ],
 	props : {
@@ -76,6 +77,7 @@ export default {
 	},
 	data () {
 		return {
+			numbers,
 			pageNumber : 1,
 			strings    : {
 				of    : this.$t.__('of', this.$td),

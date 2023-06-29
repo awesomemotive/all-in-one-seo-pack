@@ -1,8 +1,8 @@
 <template>
 	<div class="aioseo-wizard-close-and-exit">
 		<a
-			v-if="$isPro || $aioseo.options.advanced.usageTracking"
-			:href="$aioseo.urls.aio.dashboard"
+			v-if="$isPro || optionsStore.options.advanced.usageTracking"
+			:href="rootStore.aioseo.urls.aio.dashboard"
 		>
 			{{ strings.closeAndExit }}
 		</a>
@@ -39,7 +39,7 @@
 					<div class="actions">
 						<base-button
 							tag="a"
-							:href="$aioseo.urls.aio.dashboard"
+							:href="rootStore.aioseo.urls.aio.dashboard"
 							type="gray"
 							size="medium"
 						>
@@ -62,6 +62,11 @@
 </template>
 
 <script>
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { useWizard } from '@/vue/composables'
 import { WizardUsageTracking } from '@/vue/mixins'
 export default {
@@ -69,6 +74,8 @@ export default {
 		const { strings } = useWizard()
 
 		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore(),
 			strings
 		}
 	},

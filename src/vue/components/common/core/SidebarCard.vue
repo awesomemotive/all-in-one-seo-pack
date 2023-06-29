@@ -5,7 +5,7 @@
 		<div
 			v-if="!hideHeader"
 			class="header"
-			@click="toggleCard({ slug, shouldSave : saveToggleStatus })"
+			@click="settingsStore.toggleCard({ slug, shouldSave : saveToggleStatus })"
 		>
 			<div class="text">
 				<slot name="header">
@@ -57,14 +57,14 @@
 			</div>
 
 			<svg-caret
-				v-if="toggles && settings.toggledCards"
-				:class="{ rotated: !settings.toggledCards[slug] }"
+				v-if="toggles && settingsStore.settings.toggledCards"
+				:class="{ rotated: !settingsStore.settings.toggledCards[slug] }"
 			/>
 		</div>
 
 		<transition-slide
-			v-if="settings.toggledCards || noSlide"
-			:active="(settings.toggledCards[slug] && toggles) || noSlide"
+			v-if="settingsStore.settings.toggledCards || noSlide"
+			:active="(settingsStore.settings.toggledCards[slug] && toggles) || noSlide"
 		>
 			<div
 				v-if="$slots['before-tabs']"
@@ -86,9 +86,12 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapGetters } from 'vuex'
+import {
+	useSettingsStore
+} from '@/vue/stores'
+
 import { useTruSeoScore } from '@/vue/composables'
-import { TruSeoScore } from '@/vue/mixins'
+import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
@@ -100,6 +103,7 @@ export default {
 		const { strings } = useTruSeoScore()
 
 		return {
+			settingsStore : useSettingsStore(),
 			strings
 		}
 	},
@@ -136,7 +140,7 @@ export default {
 		}
 	},
 	watch : {
-		'metaBoxTabs.mainSidebar' : {
+		'settingsStore.metaBoxTabs.mainSidebar' : {
 			deep : true,
 			handler (mainSidebar) {
 				if ('sidebar' === this.$root._data.screenContext) {
@@ -145,23 +149,18 @@ export default {
 			}
 		}
 	},
-	computed : {
-		...mapGetters([ 'settings' ]),
-		...mapState([ 'metaBoxTabs' ])
-	},
 	methods : {
-		...mapActions([ 'toggleCard' ]),
 		openCard (card) {
-			for (const toggledCard in this.settings.toggledCards) {
-				if (this.settings.toggledCards[toggledCard]) {
-					this.toggleCard({ slug: toggledCard })
+			for (const toggledCard in this.settingsStore.settings.toggledCards) {
+				if (this.settingsStore.settings.toggledCards[toggledCard]) {
+					this.settingsStore.toggleCard({ slug: toggledCard })
 				}
 			}
-			this.toggleCard({ slug: card })
+			this.settingsStore.toggleCard({ slug: card })
 		}
 	},
 	created () {
-		this.openCard(this.metaBoxTabs.mainSidebar.card)
+		this.openCard(this.settingsStore.metaBoxTabs.mainSidebar.card)
 	}
 }
 </script>

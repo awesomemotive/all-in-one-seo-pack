@@ -1,5 +1,8 @@
-import store from '@/vue/store'
-import { setOptions } from '@/vue/utils/options'
+import {
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
 import {
 	isBlockEditor,
 	shouldShowMetaBox,
@@ -17,25 +20,23 @@ import {
 } from '@/vue/plugins/tru-seo/context'
 
 export default (app, populateHiddenField = true) => {
-	// If the options are not loaded, just call the setOptions with empty object.
-	if (!store.state.loaded) {
-		setOptions(app, {})
-	}
-
 	if (!shouldShowMetaBox()) {
 		return
 	}
 
 	// Update post analysis on initial page load.
 	maybeUpdatePost()
-	if ('term' === window.aioseo.currentPost.context) {
+
+	const postEditorStore = usePostEditorStore()
+	if ('term' === postEditorStore.currentPost.context) {
 		maybeUpdateTerm()
 	} else {
 		// Make sure the API is available.
-		store.dispatch('ping')
+		const rootStore = useRootStore()
+		rootStore.ping()
 
 		if (populateHiddenField) {
-			store.dispatch('savePostState')
+			postEditorStore.savePostState()
 		}
 
 		if (isBlockEditor()) {
@@ -46,13 +47,6 @@ export default (app, populateHiddenField = true) => {
 					watchBlockEditor()
 				}
 			}, 50)
-			window.addEventListener('beforeunload', (event) => {
-				if (!store.state.isDirty) {
-					return undefined
-				}
-				event.preventDefault()
-				event.returnValue = ''
-			})
 		} else {
 			if (isWooCommerceProduct()) {
 				watchWooCommerce()

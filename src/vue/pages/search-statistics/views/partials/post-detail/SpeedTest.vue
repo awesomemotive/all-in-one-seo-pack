@@ -75,6 +75,10 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import Lottie from '@/vue/components/common/core/Lottie'
 import * as rocketAnimation from '@/vue/assets/lottie/rocket-flighting.json'
 import dateFormat from '@/vue/utils/dateFormat'
@@ -82,6 +86,11 @@ import SvgDesktop from '@/vue/components/common/svg/Desktop'
 import SvgMobile from '@/vue/components/common/svg/Mobile'
 import SvgRefresh from '@/vue/components/common/svg/Refresh'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	emits      : [ 'refresh' ],
 	components : {
 		Lottie,
@@ -127,8 +136,8 @@ export default {
 			}
 
 			const format    = {
-				date : this.$aioseo.data.dateFormat,
-				time : this.$aioseo.data.timeFormat
+				date : this.rootStore.aioseo.data.dateFormat,
+				time : this.rootStore.aioseo.data.timeFormat
 			}
 
 			return dateFormat(new Date(refreshed), `${format.date} ${format.time}`)

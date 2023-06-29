@@ -2,27 +2,34 @@
 	<div class="aioseo-search-statistics-keywords-distribution-graph">
 		<graph
 			:series="series"
-			:loading="loading.keywords"
+			:loading="searchStatisticsStore.loading.keywords"
 			preset="keywordsDistribution"
 		/>
 	</div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import Graph from './Graph'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		Graph
 	},
 	computed : {
-		...mapState('search-statistics', [ 'data', 'loading' ]),
 		series () {
-			if (!this.data?.keywords?.distribution) {
+			if (!this.searchStatisticsStore.data?.keywords?.distribution) {
 				return []
 			}
 
-			const data = this.data.keywords.distribution
+			const data = this.searchStatisticsStore.data.keywords.distribution
 
 			return [ {
 				name : this.$t.__('Keywords', this.$td),

@@ -37,7 +37,7 @@
 				<div class="facebook-site-description">
 					<div class="site-domain">
 						<slot name="site-url">
-							{{ $aioseo.urls.domain }}
+							{{ rootStore.aioseo.urls.domain }}
 						</slot>
 					</div>
 
@@ -57,12 +57,21 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import { truncate } from '@/vue/utils/html'
 import BaseImg from '@/vue/components/common/base/Img'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import SvgDannieProfile from '@/vue/components/common/svg/dannie/Profile'
 
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		BaseImg,
 		CoreLoader,

@@ -16,13 +16,13 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.social.twitter.general.enable"
+						v-model="optionsStore.options.social.twitter.general.enable"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.twitter.general.enable"
+				v-if="optionsStore.options.social.twitter.general.enable"
 				class="default-card-type"
 				:name="strings.defaultCardType"
 				align
@@ -31,15 +31,15 @@
 					<base-select
 						size="medium"
 						:options="twitterCards"
-						:modelValue="getCardOptions(options.social.twitter.general.defaultCardType)"
-						@update:modelValue="value => options.social.twitter.general.defaultCardType = value.value"
+						:modelValue="getCardOptions(optionsStore.options.social.twitter.general.defaultCardType)"
+						@update:modelValue="value => optionsStore.options.social.twitter.general.defaultCardType = value.value"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
 				class="twitter-default-image-source"
-				v-if="options.social.twitter.general.enable"
+				v-if="optionsStore.options.social.twitter.general.enable"
 				:name="strings.defaultImageSourcePosts"
 				align
 			>
@@ -47,85 +47,56 @@
 					<base-select
 						size="medium"
 						:options="imageSourceOptions"
-						:modelValue="getImageSourceOption(options.social.twitter.general.defaultImageSourcePosts)"
-						@update:modelValue="value => options.social.twitter.general.defaultImageSourcePosts = value.value"
+						:modelValue="getImageSourceOption(optionsStore.options.social.twitter.general.defaultImageSourcePosts)"
+						@update:modelValue="value => optionsStore.options.social.twitter.general.defaultImageSourcePosts = value.value"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.twitter.general.enable && 'custom' === options.social.twitter.general.defaultImageSourcePosts"
+				v-if="optionsStore.options.social.twitter.general.enable && 'custom' === optionsStore.options.social.twitter.general.defaultImageSourcePosts"
 				:name="strings.postCustomFieldName"
 				align
 			>
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.social.twitter.general.customFieldImagePosts"
+						v-model="optionsStore.options.social.twitter.general.customFieldImagePosts"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.twitter.general.enable"
+				v-if="optionsStore.options.social.twitter.general.enable"
 				class="twitter-image"
 				:name="strings.defaultTwitterImagePosts"
 				align
 			>
 				<template #content>
-					<div class="twitter-image-upload">
-						<base-input
-							size="medium"
-							v-model="options.social.twitter.general.defaultImagePosts"
-							:placeholder="strings.pasteYourImageUrl"
-						/>
-
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('defaultImagePosts', (imageUrl) => options.social.twitter.general.defaultImagePosts = imageUrl)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="options.social.twitter.general.defaultImagePosts = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						<span v-if="'summary' === options.social.twitter.general.defaultCardType">{{ strings.minimumSizeSummary }}</span>
-						<span v-if="'summary_large_image' === options.social.twitter.general.defaultCardType">{{ strings.minimumSizeSummaryWithLarge }}</span>
-					</div>
-
-					<base-img :src="options.social.twitter.general.defaultImagePosts" />
+					<core-image-uploader
+						:description="'summary' === optionsStore.options.social.twitter.general.defaultCardType ? strings.minimumSizeSummary : strings.minimumSizeSummaryWithLarge"
+						v-model="optionsStore.options.social.twitter.general.defaultImagePosts"
+					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
 				class="twitter-default-image-source"
-				v-if="options.social.twitter.general.enable"
+				v-if="optionsStore.options.social.twitter.general.enable"
 				:name="strings.defaultImageSourceTerms"
 				align
 			>
 				<template #content>
 					<base-select
-						v-if="!isUnlicensed"
+						v-if="!licenseStore.isUnlicensed"
 						size="medium"
 						:options="getTermImageSourceOptions()"
-						:modelValue="getImageSourceOption(options.social.twitter.general.defaultImageSourceTerms)"
-						@update:modelValue="value => options.social.twitter.general.defaultImageSourceTerms = value.value"
+						:modelValue="getImageSourceOption(optionsStore.options.social.twitter.general.defaultImageSourceTerms)"
+						@update:modelValue="value => optionsStore.options.social.twitter.general.defaultImageSourceTerms = value.value"
 					/>
 
 					<base-select
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 						size="medium"
 						:options="getTermImageSourceOptions()"
 						:modelValue="getImageSourceOption('default')"
@@ -134,7 +105,7 @@
 
 					<core-alert
 						class="inline-upsell"
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
 						<div v-html="strings.defaultTermImageSourceUpsell" />
@@ -143,69 +114,40 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.twitter.general.enable && 'custom' === options.social.twitter.general.defaultImageSourceTerms && !isUnlicensed"
+				v-if="optionsStore.options.social.twitter.general.enable && 'custom' === optionsStore.options.social.twitter.general.defaultImageSourceTerms && !licenseStore.isUnlicensed"
 				:name="strings.termsCustomFieldName"
 				align
 			>
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.social.twitter.general.customFieldImageTerms"
+						v-model="optionsStore.options.social.twitter.general.customFieldImageTerms"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.twitter.general.enable && !isUnlicensed"
+				v-if="optionsStore.options.social.twitter.general.enable && !licenseStore.isUnlicensed"
 				class="twitter-image"
 				:name="strings.defaultTwitterImageTerms"
 				align
 			>
 				<template #content>
-					<div class="twitter-image-upload">
-						<base-input
-							size="medium"
-							v-model="options.social.twitter.general.defaultImageTerms"
-							:placeholder="strings.pasteYourImageUrl"
-						/>
-
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('defaultImageTerms', (imageUrl) => options.social.twitter.general.defaultImageTerms = imageUrl)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="options.social.twitter.general.defaultImageTerms = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						<span v-if="'summary' === options.social.twitter.general.defaultCardType">{{ strings.minimumSizeSummary }}</span>
-						<span v-if="'summary_large_image' === options.social.twitter.general.defaultCardType">{{ strings.minimumSizeSummaryWithLarge }}</span>
-					</div>
-
-					<base-img :src="options.social.twitter.general.defaultImageTerms" />
+					<core-image-uploader
+						:description="'summary' === optionsStore.options.social.twitter.general.defaultCardType ? strings.minimumSizeSummary : strings.minimumSizeSummaryWithLarge"
+						v-model="optionsStore.options.social.twitter.general.defaultImageTerms"
+					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.twitter.general.enable"
+				v-if="optionsStore.options.social.twitter.general.enable"
 				:name="strings.showTwitterAuthor"
 				align
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.social.twitter.general.showAuthor"
+						v-model="optionsStore.options.social.twitter.general.showAuthor"
 						name="showTwitterAuthor"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
@@ -216,13 +158,13 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.twitter.general.enable"
+				v-if="optionsStore.options.social.twitter.general.enable"
 				:name="strings.additionalData"
 				align
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.social.twitter.general.additionalData"
+						v-model="optionsStore.options.social.twitter.general.additionalData"
 						name="additionalData"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
@@ -237,13 +179,13 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.twitter.general.enable"
+				v-if="optionsStore.options.social.twitter.general.enable"
 				:name="strings.useDataFromFacebook"
 				align
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.social.twitter.general.useOgData"
+						v-model="optionsStore.options.social.twitter.general.useOgData"
 						name="useOgData"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
@@ -258,12 +200,12 @@
 		</core-card>
 
 		<core-card
-			v-if="options.social.twitter.general.enable"
+			v-if="optionsStore.options.social.twitter.general.enable"
 			slug="twitterHomePageSettings"
 			:header-text="strings.homePageSettings"
 		>
 			<div
-				v-if="$aioseo.data.staticHomePage"
+				v-if="rootStore.aioseo.data.staticHomePage"
 				class="aioseo-settings-row aioseo-section-description"
 			>
 				<span v-html="strings.homePageDisabledDescription" />
@@ -274,7 +216,7 @@
 			</div>
 
 			<br
-				v-if="$aioseo.data.staticHomePage"
+				v-if="rootStore.aioseo.data.staticHomePage"
 			>
 
 			<core-settings-row
@@ -282,16 +224,16 @@
 			>
 				<template #content>
 					<core-twitter-preview
-						:card="options.social.twitter.homePage.cardType"
+						:card="optionsStore.options.social.twitter.homePage.cardType"
 						:description="previewDescription"
-						:image="options.social.twitter.homePage.image"
+						:image="optionsStore.options.social.twitter.homePage.image"
 						:title="previewTitle"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!$aioseo.data.staticHomePage"
+				v-if="!rootStore.aioseo.data.staticHomePage"
 				class="default-card-type"
 				:name="strings.cardType"
 				align
@@ -300,63 +242,34 @@
 					<base-select
 						size="medium"
 						:options="twitterCards"
-						:modelValue="getCardOptions(options.social.twitter.homePage.cardType)"
-						@update:modelValue="value => options.social.twitter.homePage.cardType = value.value"
+						:modelValue="getCardOptions(optionsStore.options.social.twitter.homePage.cardType)"
+						@update:modelValue="value => optionsStore.options.social.twitter.homePage.cardType = value.value"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!$aioseo.data.staticHomePage"
+				v-if="!rootStore.aioseo.data.staticHomePage"
 				class="twitter-image"
 				:name="strings.homePageImage"
 				align
 			>
 				<template #content>
-					<div class="twitter-image-upload">
-						<base-input
-							size="medium"
-							v-model="options.social.twitter.homePage.image"
-							:placeholder="strings.pasteYourImageUrl"
-						/>
-
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('homePageImage', (imageUrl) => options.social.twitter.homePage.image = imageUrl)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="options.social.twitter.homePage.image = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						<span v-if="'summary' === options.social.twitter.homePage.cardType">{{ strings.minimumSizeSummary }}</span>
-						<span v-if="'summary_large_image' === options.social.twitter.homePage.cardType">{{ strings.minimumSizeSummaryWithLarge }}</span>
-					</div>
-
-					<base-img :src="options.social.twitter.homePage.image" />
+					<core-image-uploader
+						:description="'summary' === optionsStore.options.social.twitter.homePage.cardType ? strings.minimumSizeSummary : strings.minimumSizeSummaryWithLarge"
+						v-model="optionsStore.options.social.twitter.homePage.image"
+					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!$aioseo.data.staticHomePage"
+				v-if="!rootStore.aioseo.data.staticHomePage"
 				:name="strings.homePageTitle"
 			>
 				<template #content>
 					<core-html-tags-editor
 						class="twitter-meta-input"
-						v-model="options.social.twitter.homePage.title"
+						v-model="optionsStore.options.social.twitter.homePage.title"
 						:line-numbers="false"
 						single
 						@counter="count => updateCount(count, 'titleCount')"
@@ -380,13 +293,13 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!$aioseo.data.staticHomePage"
+				v-if="!rootStore.aioseo.data.staticHomePage"
 				:name="strings.homePageDescription"
 			>
 				<template #content>
 					<core-html-tags-editor
 						class="twitter-meta-input"
-						v-model="options.social.twitter.homePage.description"
+						v-model="optionsStore.options.social.twitter.homePage.description"
 						:line-numbers="false"
 						@counter="count => updateCount(count, 'descriptionCount')"
 						tags-context="homePage"
@@ -412,29 +325,39 @@
 </template>
 
 <script>
-import { ImageSourceOptions, JsonValues, MaxCounts, Tags, Uploader } from '@/vue/mixins'
-import { mapState, mapGetters } from 'vuex'
-import BaseImg from '@/vue/components/common/base/Img'
+import {
+	useLicenseStore,
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
+import { ImageSourceOptions, JsonValues, MaxCounts, Tags } from '@/vue/mixins'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
+import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreTwitterPreview from '@/vue/components/common/core/TwitterPreview'
-import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore(),
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
-		BaseImg,
 		BaseRadioToggle,
 		CoreAlert,
 		CoreCard,
 		CoreHtmlTagsEditor,
+		CoreImageUploader,
 		CoreSettingsRow,
-		CoreTwitterPreview,
-		SvgCirclePlus
+		CoreTwitterPreview
 	},
-	mixins : [ ImageSourceOptions, JsonValues, MaxCounts, Tags, Uploader ],
+	mixins : [ ImageSourceOptions, JsonValues, MaxCounts, Tags ],
 	data () {
 		return {
 			separator        : undefined,
@@ -459,8 +382,6 @@ export default {
 				termsCustomFieldName          : this.$t.__('Term Custom Field Name', this.$td),
 				defaultTwitterImagePosts      : this.$t.__('Default Post Twitter Image', this.$td),
 				defaultTwitterImageTerms      : this.$t.__('Default Term Twitter Image', this.$td),
-				uploadOrSelectImage           : this.$t.__('Upload or Select Image', this.$td),
-				pasteYourImageUrl             : this.$t.__('Paste your image URL or select a new image', this.$td),
 				minimumSizeSummary            : this.$t.__('Minimum size: 144px x 144px, ideal ratio 1:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', this.$td),
 				minimumSizeSummaryWithLarge   : this.$t.__('Minimum size: 300px x 157px, ideal ratio 2:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', this.$td),
 				homePageSettings              : this.$t.__('Home Page Settings', this.$td),
@@ -471,12 +392,11 @@ export default {
 				homePageDescription           : this.$t.__('Description', this.$td),
 				useHomePageDescription        : this.$t.__('Use the home page description', this.$td),
 				clickToAddHomePageDescription : this.$t.__('Click on the tags below to insert variables into your description.', this.$td),
-				remove                        : this.$t.__('Remove', this.$td),
 				showTwitterAuthor             : this.$t.__('Show Twitter Author', this.$td),
 				homePageDisabledDescription   : this.$t.sprintf(
 					// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag.
 					this.$t.__('You are using a static home page which is found under Pages. You can %1$sedit your home page settings%2$s directly to change the title, meta description and image.', this.$td),
-					`<a href="${this.$aioseo.urls.staticHomePage}&aioseo-tab=social&social-tab=twitter&aioseo-scroll=aioseo-post-settings-twitter&aioseo-highlight=aioseo-post-settings-twitter">`,
+					`<a href="${this.rootStore.aioseo.urls.staticHomePage}&aioseo-tab=social&social-tab=twitter&aioseo-scroll=aioseo-post-settings-twitter&aioseo-highlight=aioseo-post-settings-twitter">`,
 					'</a>'
 				),
 				cardType                     : this.$t.__('Card Type', this.$td),
@@ -492,8 +412,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
-		...mapState([ 'options' ]),
 		twitterCards () {
 			return [
 				{ label: this.strings.summary, value: 'summary' },
@@ -501,18 +419,18 @@ export default {
 			]
 		},
 		previewTitle () {
-			if (this.$aioseo.data.staticHomePage) {
-				return this.parseTags(this.$aioseo.data.staticHomePageTwitterTitle || '#site_title')
+			if (this.rootStore.aioseo.data.staticHomePage) {
+				return this.parseTags(this.rootStore.aioseo.data.staticHomePageTwitterTitle || '#site_title')
 			}
 
-			return this.parseTags(this.options.social.twitter.homePage.title || '#site_title')
+			return this.parseTags(this.optionsStore.options.social.twitter.homePage.title || '#site_title')
 		},
 		previewDescription () {
-			if (this.$aioseo.data.staticHomePage) {
-				return this.parseTags(this.$aioseo.data.staticHomePageTwitterDescription || '#tagline')
+			if (this.rootStore.aioseo.data.staticHomePage) {
+				return this.parseTags(this.rootStore.aioseo.data.staticHomePageTwitterDescription || '#tagline')
 			}
 
-			return this.parseTags(this.options.social.twitter.homePage.description || '#tagline')
+			return this.parseTags(this.optionsStore.options.social.twitter.homePage.description || '#tagline')
 		}
 	},
 	methods : {
@@ -529,30 +447,6 @@ export default {
 	.inline-upsell {
 		display: inline-flex;
 		margin-top: 12px;
-	}
-
-	.twitter-image-upload {
-		display: flex;
-		gap: 8px;
-
-		.aioseo-input-container {
-			width: 100%;
-			max-width: 445px;
-
-			.aioseo-input {
-				width: 100%;
-			}
-		}
-
-		.insert-image {
-			min-width: 214px;
-
-			svg.aioseo-circle-plus {
-				width: 13px;
-				height: 13px;
-				margin-right: 10px;
-			}
-		}
 	}
 
 	.twitter-image {

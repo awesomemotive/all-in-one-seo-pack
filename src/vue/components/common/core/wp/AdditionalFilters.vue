@@ -35,7 +35,7 @@
 
 <script>
 export default {
-	emits : [ 'process-additional-filters' ],
+	emits : [ 'process-additional-filters', 'change' ],
 	props : {
 		additionalFilters : {
 			type     : Array,

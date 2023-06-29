@@ -88,9 +88,8 @@
 </template>
 
 <script>
-import { getOptions, setOptions } from '@/vue/utils/options'
+import http from '@/vue/utils/http'
 import { merge } from 'lodash-es'
-import { mapState } from 'vuex'
 import { useTruSeoScore } from '@/vue/composables'
 import { TruSeoScore } from '@/vue/mixins'
 import { truncate } from '@/vue/utils/html'
@@ -113,6 +112,7 @@ export default {
 	mixins : [ TruSeoScore ],
 	props  : {
 		term  : Object,
+		terms : Array,
 		index : Number
 	},
 	data () {
@@ -136,9 +136,6 @@ export default {
 			})
 		}
 	},
-	computed : {
-		...mapState([ 'options', 'currentPost' ])
-	},
 	methods : {
 		save () {
 			this.showEditTitle       = false
@@ -146,7 +143,7 @@ export default {
 			this.term.title          = this.title
 			this.term.description    = this.termDescription
 
-			this.$http.post(this.$links.restUrl('termscreen'))
+			http.post(this.$links.restUrl('termscreen'))
 				.send({
 					termId      : this.term.id,
 					title       : this.term.title,
@@ -158,12 +155,6 @@ export default {
 
 					this.term.titleParsed       = response.body.title
 					this.term.descriptionParsed = response.body.description
-
-					const terms       = window.aioseo.terms
-					terms[this.index] = this.term
-					setOptions(this.$.appContext.app, {
-						terms
-					})
 				})
 				.catch(error => {
 					console.error(`Unable to update term with ID ${this.term.id}: ${error}`)
@@ -190,10 +181,6 @@ export default {
 		this.descriptionParsed = this.term.descriptionParsed
 	},
 	async created () {
-		const { options, currentPost, tags } = await getOptions(this.$.appContext.app)
-		this.$store.state.options = merge({ ...this.$store.state.options }, { ...options })
-		this.$store.state.currentPost = merge({ ...this.$store.state.currentPost }, { ...currentPost })
-		this.$store.state.tags = merge({ ...this.$store.state.tags }, { ...tags })
 		this.showTruSeo = truSeoShouldAnalyze()
 	}
 }

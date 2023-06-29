@@ -42,18 +42,23 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import dateFormat from '@/vue/utils/dateFormat'
 import SvgCalendar from '@/vue/components/common/svg/Calendar'
 import { ElDatePicker } from 'element-plus'
 import en from 'element-plus/dist/locale/en.mjs'
 import 'element-plus/theme-chalk/el-date-picker.css'
 export default {
-	emits : [ 'change', 'updated' ],
 	setup () {
 		return {
-			locale : en
+			rootStore : useRootStore(),
+			locale    : en
 		}
 	},
+	emits      : [ 'change', 'updated' ],
 	components : {
 		ElDatePicker,
 		SvgCalendar
@@ -110,7 +115,7 @@ export default {
 	},
 	computed : {
 		format () {
-			return this.dateFormat || this.$aioseo.data.dateFormat
+			return this.dateFormat || this.rootStore.aioseo.data.dateFormat
 		},
 		label () {
 			if (!this.value) {
@@ -139,7 +144,7 @@ export default {
 			}
 		})
 		this.rolling = this.defaultRolling
-		this.$bus.$on('rolling', (rolling) => {
+		window.aioseoBus.$on('rolling', (rolling) => {
 			this.rolling = rolling
 		})
 		this.$emit('updated', this.rolling)

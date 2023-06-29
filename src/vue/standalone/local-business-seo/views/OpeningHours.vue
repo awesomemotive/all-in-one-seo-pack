@@ -8,7 +8,7 @@
 				<div class="aioseo-col col-xs-12 text-xs-left">
 					<base-radio-toggle
 						name="useDefaults"
-						v-model="currentPost.local_seo.openingHours.useDefaults"
+						v-model="postEditorStore.currentPost.local_seo.openingHours.useDefaults"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.no, value: false },
 							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
@@ -17,7 +17,7 @@
 				</div>
 			</template>
 		</core-settings-row>
-		<div v-if="!currentPost.local_seo.openingHours.useDefaults">
+		<div v-if="!postEditorStore.currentPost.local_seo.openingHours.useDefaults">
 			<core-settings-row
 				:name="strings.showOpeningHours"
 				class="info-openinghours-row"
@@ -27,7 +27,7 @@
 					<div class="aioseo-col col-xs-12 text-xs-left">
 						<base-radio-toggle
 							name="openingHours"
-							v-model="currentPost.local_seo.openingHours.show"
+							v-model="postEditorStore.currentPost.local_seo.openingHours.show"
 							:options="[
 								{ label: $constants.GLOBAL_STRINGS.no, value: false },
 								{ label: $constants.GLOBAL_STRINGS.yes, value: true }
@@ -38,7 +38,7 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="currentPost.local_seo.openingHours.show"
+				v-if="postEditorStore.currentPost.local_seo.openingHours.show"
 				:name="strings.labels"
 				class="info-labels-row"
 				align
@@ -49,7 +49,7 @@
 						<base-input
 							type="text"
 							size="medium"
-							v-model="currentPost.local_seo.openingHours.labels.closed"
+							v-model="postEditorStore.currentPost.local_seo.openingHours.labels.closed"
 						/>
 						<span class="field-description mt-10">{{ strings.closedLabelDesc }}</span>
 					</div>
@@ -57,7 +57,7 @@
 						<span class="field-description mt-8">{{ strings.open24Label }}</span>
 						<base-input
 							size="medium"
-							v-model="currentPost.local_seo.openingHours.labels.alwaysOpen"
+							v-model="postEditorStore.currentPost.local_seo.openingHours.labels.alwaysOpen"
 						/>
 						<span class="field-description mt-10">{{ strings.open24LabelDesc }}</span>
 					</div>
@@ -65,7 +65,7 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="currentPost.local_seo.openingHours.show"
+				v-if="postEditorStore.currentPost.local_seo.openingHours.show"
 				:name="strings.settings"
 				class="info-settings-row"
 				align
@@ -73,21 +73,21 @@
 				<template #content>
 					<div class="aioseo-col col-xs-12 text-xs-left">
 						<base-toggle
-							v-model="currentPost.local_seo.openingHours.alwaysOpen"
+							v-model="postEditorStore.currentPost.local_seo.openingHours.alwaysOpen"
 						>
 							{{ strings.alwaysOpen }}
 						</base-toggle>
 					</div>
 					<div class="aioseo-col col-xs-12 text-xs-left">
 						<base-toggle
-							v-model="currentPost.local_seo.openingHours.use24hFormat"
+							v-model="postEditorStore.currentPost.local_seo.openingHours.use24hFormat"
 						>
 							{{ strings.use24hFormat }}
 						</base-toggle>
 					</div>
 					<!--<div class="aioseo-col col-xs-12 text-xs-left">
 						<base-toggle
-							v-model="currentPost.local_seo.openingHours.twoSets"
+							v-model="postEditorStore.currentPost.local_seo.openingHours.twoSets"
 						>
 							{{ strings.twoSets }}
 						</base-toggle>
@@ -104,7 +104,7 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="currentPost.local_seo.openingHours.show && !currentPost.local_seo.openingHours.alwaysOpen"
+				v-if="postEditorStore.currentPost.local_seo.openingHours.show && !postEditorStore.currentPost.local_seo.openingHours.alwaysOpen"
 				:name="strings.hours"
 				class="info-hours-row"
 				align
@@ -121,7 +121,7 @@
 									<base-select
 										:disabled="getWeekDay(index).open24h || getWeekDay(index).closed"
 										size="medium"
-										:options="currentPost.local_seo.openingHours.use24hFormat ? $constants.HOURS_24H_FORMAT : $constants.HOURS_12H_FORMAT"
+										:options="postEditorStore.currentPost.local_seo.openingHours.use24hFormat ? $constants.HOURS_24H_FORMAT : $constants.HOURS_12H_FORMAT"
 										:modelValue="getSelectOptions(getWeekDay(index).openTime)"
 										@update:modelValue="value => saveDay(index, 'openTime', value.value)"
 									/>
@@ -129,7 +129,7 @@
 									<base-select
 										:disabled="getWeekDay(index).open24h || getWeekDay(index).closed"
 										size="medium"
-										:options="currentPost.local_seo.openingHours.use24hFormat ? $constants.HOURS_24H_FORMAT : $constants.HOURS_12H_FORMAT"
+										:options="postEditorStore.currentPost.local_seo.openingHours.use24hFormat ? $constants.HOURS_24H_FORMAT : $constants.HOURS_12H_FORMAT"
 										:modelValue="getSelectOptions(getWeekDay(index).closeTime)"
 										@update:modelValue="value => saveDay(index, 'closeTime', value.value)"
 									/>
@@ -160,11 +160,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore()
+		}
+	},
 	components : {
 		BaseCheckbox,
 		BaseRadioToggle,
@@ -206,7 +214,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'currentPost' ]),
 		toggled : function () {
 			return true
 		},
@@ -215,24 +222,24 @@ export default {
 		},
 		closedLabel : {
 			get () {
-				return this.currentPost.local_seo.openingHours.closedLabel
+				return this.postEditorStore.currentPost.local_seo.openingHours.closedLabel
 			},
 			set (newValue) {
-				this.currentPost.local_seo.openingHours.closedLabel = newValue
+				this.postEditorStore.currentPost.local_seo.openingHours.closedLabel = newValue
 			}
 		}
 	},
 	methods : {
 		getSelectOptions (option) {
-			return this.currentPost.local_seo.openingHours.use24hFormat
+			return this.postEditorStore.currentPost.local_seo.openingHours.use24hFormat
 				? this.$constants.HOURS_24H_FORMAT.find(h => h.value === option)
 				: this.$constants.HOURS_12H_FORMAT.find(h => h.value === option)
 		},
 		saveDay (day, hour, value) {
-			this.currentPost.local_seo.openingHours.days[day][hour] = value
+			this.postEditorStore.currentPost.local_seo.openingHours.days[day][hour] = value
 		},
 		getWeekDay (index) {
-			return this.currentPost.local_seo.openingHours.days[index]
+			return this.postEditorStore.currentPost.local_seo.openingHours.days[index]
 		}
 	}
 }

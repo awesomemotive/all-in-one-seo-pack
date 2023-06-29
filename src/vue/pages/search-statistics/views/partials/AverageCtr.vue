@@ -11,26 +11,34 @@
 		</core-tooltip>
 
 		<core-loader
-			v-if="loading.keywords"
+			v-if="searchStatisticsStore.loading.keywords"
 			dark
 		/>
 
 		<statistic
-			v-if="!loading.keywords && data?.seoStatistics?.statistics?.ctr"
+			v-if="!searchStatisticsStore.loading.keywords && searchStatisticsStore.data?.seoStatistics?.statistics?.ctr"
 			type="ctr"
-			:total="data.seoStatistics.statistics.ctr"
-			:difference="data.seoStatistics.statistics.difference.ctr"
+			:total="searchStatisticsStore.data.seoStatistics.statistics.ctr"
+			:difference="searchStatisticsStore.data.seoStatistics.statistics.difference.ctr"
 		/>
 	</div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Statistic from './Statistic'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreLoader,
 		CoreTooltip,
@@ -44,9 +52,6 @@ export default {
 				tooltip : this.$t.__('Average CTR (click-through rate), is the ratio of clicks to impressions for your site content, and it measures how well the website or page is performing in terms of attracting clicks from the search results.', this.$td)
 			}
 		}
-	},
-	computed : {
-		...mapState('search-statistics', [ 'data', 'loading' ])
 	}
 }
 </script>

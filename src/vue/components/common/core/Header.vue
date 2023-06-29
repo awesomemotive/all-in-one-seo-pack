@@ -1,15 +1,15 @@
 <template>
 	<div class="aioseo-header">
 		<core-upgrade-bar
-			v-if="!$isPro && settings.showUpgradeBar && upgradeBar && pong"
+			v-if="!$isPro && settingsStore.settings.showUpgradeBar && upgradeBar && rootStore.pong"
 		/>
 
 		<core-license-key-bar
-			v-if="$isPro && isUnlicensed && pong"
+			v-if="$isPro && licenseStore.isUnlicensed && rootStore.pong"
 		/>
 
 		<core-api-bar
-			v-if="!pong"
+			v-if="!rootStore.pong"
 		/>
 
 		<grid-container
@@ -18,7 +18,7 @@
 		>
 			<div class="aioseo-header-content">
 				<a
-					v-if="isUnlicensed"
+					v-if="licenseStore.isUnlicensed"
 					:href="$links.utmUrl('header-logo')"
 					target="_blank"
 
@@ -26,7 +26,7 @@
 					<svg-aioseo-logo />
 				</a>
 				<svg-aioseo-logo
-					v-if="!isUnlicensed"
+					v-if="!licenseStore.isUnlicensed"
 				/>
 				<span
 					v-if="pageName"
@@ -62,23 +62,23 @@
 
 					<span
 						class="round"
-						@click.stop="toggleNotifications"
+						@click.stop="notificationsStore.toggleNotifications"
 					>
 						<span class="round number"
-							v-if="activeNotificationsCount"
+							v-if="notificationsStore.activeNotificationsCount"
 						>
-							{{ activeNotificationsCount > 9 ? '!' : activeNotificationsCount }}
+							{{ notificationsStore.activeNotificationsCount > 9 ? '!' : notificationsStore.activeNotificationsCount }}
 						</span>
 
 						<svg-notifications
-							@click.stop="toggleNotifications"
+							@click.stop="notificationsStore.toggleNotifications"
 						/>
 					</span>
 
 					<span
 						class="round"
 						@click.stop="toggleModal"
-						v-if="helpPanel.docs && Object.keys(helpPanel.docs).length"
+						v-if="helpPanelStore.docs && Object.keys(helpPanelStore.docs).length"
 					>
 						<svg-circle-question-mark />
 					</span>
@@ -89,8 +89,17 @@
 </template>
 
 <script>
+import {
+	useHelpPanelStore,
+	useLicenseStore,
+	useLinkAssistantStore,
+	useNotificationsStore,
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
 import { ScrollAndHighlight } from '@/vue/mixins'
-import { mapGetters, mapMutations, mapState } from 'vuex'
 import CoreApiBar from '@/vue/components/common/core/ApiBar'
 import CoreLicenseKeyBar from '@/vue/components/AIOSEO_VERSION/core/LicenseKeyBar'
 import CorePercentCircle from '@/vue/components/common/core/PercentCircle'
@@ -101,6 +110,16 @@ import SvgAioseoLogo from '@/vue/components/common/svg/aioseo/Logo'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import SvgNotifications from '@/vue/components/common/svg/Notifications'
 export default {
+	setup () {
+		return {
+			helpPanelStore     : useHelpPanelStore(),
+			licenseStore       : useLicenseStore(),
+			linkAssistantStore : useLinkAssistantStore(),
+			notificationsStore : useNotificationsStore(),
+			rootStore          : useRootStore(),
+			settingsStore      : useSettingsStore()
+		}
+	},
 	components : {
 		CoreApiBar,
 		CoreLicenseKeyBar,
@@ -146,13 +165,10 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'settings', 'activeNotificationsCount', 'isUnlicensed', 'helpPanel' ]),
-		...mapState([ 'notifications', 'pong' ]),
-		...mapState('linkAssistant', [ 'suggestionsScan' ]),
 		percentage () {
 			switch (this.activeScan) {
 				case 'linkAssistant':
-					return this.suggestionsScan.percent
+					return this.linkAssistantStore.suggestionsScan.percent
 				default:
 					return null
 			}
@@ -160,7 +176,7 @@ export default {
 		showPopup () {
 			switch (this.activeScan) {
 				case 'linkAssistant':
-					return this.suggestionsScan.showProcessingPopup && 100 !== this.suggestionsScan.percent
+					return this.linkAssistantStore.suggestionsScan.showProcessingPopup && 100 !== this.linkAssistantStore.suggestionsScan.percent
 				default:
 					return null
 			}
@@ -175,8 +191,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapMutations([ 'toggleNotifications' ]),
-		...mapMutations('linkAssistant', [ 'toggleProcessingPopup' ]),
 		debounce (fn) {
 			let frame
 			return (...params) => {
@@ -198,12 +212,12 @@ export default {
 		},
 		checkForActiveScan () {
 			if (
-				'link-assistant' === this.$aioseo.page &&
-				this.$addons.isActive('aioseo-link-assistant') &&
-				!this.$addons.requiresUpgrade('aioseo-link-assistant') &&
-				this.$addons.hasMinimumVersion('aioseo-link-assistant') &&
+				'link-assistant' === this.rootStore.aioseo.page &&
+				addons.isActive('aioseo-link-assistant') &&
+				!addons.requiresUpgrade('aioseo-link-assistant') &&
+				addons.hasMinimumVersion('aioseo-link-assistant') &&
 				('links-report' === this.$route.name || 'overview' === this.$route.name) &&
-				100 !== this.suggestionsScan.percent
+				100 !== this.linkAssistantStore.suggestionsScan.percent
 			) {
 				this.activeScan = 'linkAssistant'
 			}
@@ -211,7 +225,7 @@ export default {
 		toggleCirclePopup () {
 			switch (this.activeScan) {
 				case 'linkAssistant':
-					return this.toggleProcessingPopup()
+					return this.linkAssistantStore.toggleProcessingPopup()
 				default:
 					return null
 			}

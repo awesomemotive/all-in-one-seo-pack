@@ -13,7 +13,7 @@
 			<div class="welcome-image">
 				<figure>
 					<img
-						:src="$getAssetUrl(teamImg)"
+						:src="getAssetUrl(teamImg)"
 						:alt="strings.welcome.imageCaption"
 					/>
 					<figcaption>{{ strings.welcome.imageCaption }}</figcaption>
@@ -114,7 +114,12 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {
+	usePluginsStore,
+	useRootStore
+} from '@/vue/stores'
+
+import { getAssetUrl } from '@/vue/utils/helpers'
 import teamImg from '@/vue/assets/images/about/team.jpg'
 
 // Plugin image urls.
@@ -142,6 +147,12 @@ import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgExternal from '@/vue/components/common/svg/External'
 export default {
+	setup () {
+		return {
+			pluginsStore : usePluginsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		GridColumn,
 		GridRow,
@@ -149,6 +160,7 @@ export default {
 	},
 	data () {
 		return {
+			getAssetUrl,
 			teamImg,
 			localPlugins     : [],
 			networkActivated : [],
@@ -193,7 +205,7 @@ export default {
 				optinMonster : {
 					name        : 'OptinMonster',
 					description : this.$t.__('Instantly get more subscribers, leads, and sales with the #1 conversion optimization toolkit. Create high converting popups, announcement bars, spin a wheel, and more with smart targeting and personalization.', this.$td),
-					icon        : this.$getAssetUrl(omImg),
+					icon        : getAssetUrl(omImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -202,7 +214,7 @@ export default {
 				wpForms : {
 					name        : 'WPForms',
 					description : this.$t.__('The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 100+ form templates. Trusted by over 4 million websites as the best forms plugin.', this.$td),
-					icon        : this.$getAssetUrl(wpformsImg),
+					icon        : getAssetUrl(wpformsImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -219,7 +231,7 @@ export default {
 				miLite : {
 					name        : 'MonsterInsights',
 					description : this.$t.__('The leading WordPress analytics plugin that shows you how people find and use your website, so you can make data driven decisions to grow your business. Properly set up Google Analytics without writing code.', this.$td),
-					icon        : this.$getAssetUrl(miImg),
+					icon        : getAssetUrl(miImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -236,7 +248,7 @@ export default {
 				emLite : {
 					name        : 'ExactMetrics',
 					description : this.$t.__('The ExactMetrics Google Analytics for WordPress plugin helps you properly setup all the powerful Google Analytics tracking features without writing any code or hiring a developer.', this.$td),
-					icon        : this.$getAssetUrl(emImg),
+					icon        : getAssetUrl(emImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -253,7 +265,7 @@ export default {
 				wpMail : {
 					name        : 'WP Mail SMTP',
 					description : this.$t.__('Improve your WordPress email deliverability and make sure that your website emails reach user’s inbox with the #1 SMTP plugin for WordPress. Over 2 million websites use it to fix WordPress email issues.', this.$td),
-					icon        : this.$getAssetUrl(smtpImg),
+					icon        : getAssetUrl(smtpImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -270,7 +282,7 @@ export default {
 				wpcode : {
 					name        : 'WPCode',
 					description : this.$t.__('Future proof your WordPress customizations with the most popular code snippet management plugin for WordPress. Trusted by over 1,500,000+ websites for easily adding code to WordPress right from the admin area.', this.$td),
-					icon        : this.$getAssetUrl(wpcodeImg),
+					icon        : getAssetUrl(wpcodeImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -287,7 +299,7 @@ export default {
 				seedProd : {
 					name        : 'SeedProd Coming Soon',
 					description : this.$t.__('The fastest drag & drop landing page builder for WordPress. Create custom landing pages without writing code, connect them with your CRM, collect subscribers, and grow your audience. Trusted by 1 million sites.', this.$td),
-					icon        : this.$getAssetUrl(spImg),
+					icon        : getAssetUrl(spImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -304,7 +316,7 @@ export default {
 				trustPulse : {
 					name        : 'TrustPulse',
 					description : this.$t.__('Boost your sales and conversions by up to 15% with real-time social proof notifications. TrustPulse helps you show live user activity and purchases to help convince other users to purchase.', this.$td),
-					icon        : this.$getAssetUrl(tpImg),
+					icon        : getAssetUrl(tpImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -313,7 +325,7 @@ export default {
 				rafflePress : {
 					name        : 'RafflePress',
 					description : this.$t.__('Turn your website visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with the most powerful giveaways & contests plugin for WordPress.', this.$td),
-					icon        : this.$getAssetUrl(rafflepressImg),
+					icon        : getAssetUrl(rafflepressImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -330,7 +342,7 @@ export default {
 				facebookFeed : {
 					name        : 'Smash Balloon Facebook Feeds',
 					description : this.$t.__('Easily display Facebook content on your WordPress site without writing any code. Comes with multiple templates, ability to embed albums, group content, reviews, live videos, comments, and reactions.', this.$td),
-					icon        : this.$getAssetUrl(ffImg),
+					icon        : getAssetUrl(ffImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -347,7 +359,7 @@ export default {
 				instagramFeed : {
 					name        : 'Smash Balloon Instagram Feeds',
 					description : this.$t.__('Easily display Instagram content on your WordPress site without writing any code. Comes with multiple templates, ability to show content from multiple accounts, hashtags, and more. Trusted by 1 million websites.', this.$td),
-					icon        : this.$getAssetUrl(ifImg),
+					icon        : getAssetUrl(ifImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -364,7 +376,7 @@ export default {
 				twitterFeed : {
 					name        : 'Smash Balloon Twitter Feeds',
 					description : this.$t.__('Easily display Twitter content in WordPress without writing any code. Comes with multiple layouts, ability to combine multiple Twitter feeds, Twitter card support, tweet moderation, and more.', this.$td),
-					icon        : this.$getAssetUrl(tfImg),
+					icon        : getAssetUrl(tfImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -381,7 +393,7 @@ export default {
 				youTubeFeed : {
 					name        : 'Smash Balloon YouTube Feeds',
 					description : this.$t.__('Easily display YouTube videos on your WordPress site without writing any code. Comes with multiple layouts, ability to embed live streams, video filtering, ability to combine multiple channel videos, and more.', this.$td),
-					icon        : this.$getAssetUrl(yfImg),
+					icon        : getAssetUrl(yfImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -398,7 +410,7 @@ export default {
 				pushEngage : {
 					name        : 'PushEngage',
 					description : this.$t.__('Connect with your visitors after they leave your website with the leading web push notification software. Over 10,000+ businesses worldwide use PushEngage to send 9 billion notifications each month.', this.$td),
-					icon        : this.$getAssetUrl(peImg),
+					icon        : getAssetUrl(peImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -407,7 +419,7 @@ export default {
 				searchWp : {
 					name        : 'SearchWP',
 					description : this.$t.__('The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.', this.$td),
-					icon        : this.$getAssetUrl(swpImg),
+					icon        : getAssetUrl(swpImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -417,7 +429,7 @@ export default {
 				affiliateWp : {
 					name        : 'AffiliateWP',
 					description : this.$t.__('The #1 affiliate management plugin for WordPress. Easily create an affiliate program for your eCommerce store or membership site within minutes and start growing your sales with the power of referral marketing.', this.$td),
-					icon        : this.$getAssetUrl(afwpImg),
+					icon        : getAssetUrl(afwpImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -427,7 +439,7 @@ export default {
 				wpSimplePay : {
 					name        : 'WP Simple Pay',
 					description : this.$t.__('The #1 Stripe payments plugin for WordPress. Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required.', this.$td),
-					icon        : this.$getAssetUrl(wpspImg),
+					icon        : getAssetUrl(wpspImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -444,7 +456,7 @@ export default {
 				easyDigitalDownloads : {
 					name        : 'Easy Digital Downloads',
 					description : this.$t.__('The best WordPress eCommerce plugin for selling digital downloads. Start selling eBooks, software, music, digital art, and more within minutes. Accept payments, manage subscriptions, advanced access control, and more.', this.$td),
-					icon        : this.$getAssetUrl(eddImg),
+					icon        : getAssetUrl(eddImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -461,7 +473,7 @@ export default {
 				sugarCalendar : {
 					name        : 'Sugar Calendar',
 					description : this.$t.__('A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more.', this.$td),
-					icon        : this.$getAssetUrl(scImg),
+					icon        : getAssetUrl(scImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
@@ -479,7 +491,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'installPlugins' ]),
 		activate (pluginName) {
 			if (!this.plugins[pluginName].installed && this.plugins[pluginName].installUrl) {
 				window.open(this.plugins[pluginName].installUrl, '_blank').focus()
@@ -487,7 +498,7 @@ export default {
 			}
 
 			this.plugins[pluginName].loading = true
-			this.installPlugins([
+			this.pluginsStore.installPlugins([
 				{
 					plugin : pluginName,
 					type   : 'plugin'
@@ -498,7 +509,7 @@ export default {
 					this.plugins[pluginName].installed = true
 					this.plugins[pluginName].activated = true
 
-					if (this.$aioseo.data.isNetworkAdmin) {
+					if (this.rootStore.aioseo.data.isNetworkAdmin) {
 						this.networkActivated.push(pluginName)
 					}
 				} else if (Object.keys(response.body.failed).length) {
@@ -511,7 +522,7 @@ export default {
 				})
 		},
 		getPluginAdminUrl (pluginName, plugin) {
-			if (!this.$aioseo.data.isNetworkAdmin) {
+			if (!this.rootStore.aioseo.data.isNetworkAdmin) {
 				return plugin.adminUrl
 			}
 
@@ -539,7 +550,7 @@ export default {
 		}
 	},
 	mounted () {
-		this.localPlugins = { ...this.$aioseo.plugins }
+		this.localPlugins = { ...this.rootStore.aioseo.plugins }
 
 		// Set installation and activation status for each plugin.
 		Object.keys(this.localPlugins).forEach(pluginName => {

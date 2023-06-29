@@ -1,20 +1,25 @@
-import { mapGetters, mapMutations, mapActions, mapState } from 'vuex'
+import {
+	useLicenseStore,
+	useRootStore,
+	useSetupWizardStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import SvgClose from '@/vue/components/common/svg/Close'
 
 export const Wizard = {
 	computed : {
-		...mapGetters('wizard', [ 'getNextLink', 'getPrevLink' ]),
-		...mapGetters([ 'isUnlicensed' ]),
 		features () {
 			return [ ...this.$constants.WIZARD_FEATURES ]
 		},
 		getSelectedUpsellFeatures () {
-			if (!this.presetFeatures) {
+			const setupWizardStore = useSetupWizardStore()
+			if (!setupWizardStore.features) {
 				return []
 			}
 
-			return this.presetFeatures
+			return setupWizardStore.features
 				.filter(feature => {
 					return this.needsUpsell(this.features.find(f => f.value === feature))
 				})
@@ -22,25 +27,22 @@ export const Wizard = {
 		}
 	},
 	methods : {
-		...mapMutations('wizard', [ 'setCurrentStage' ]),
 		needsUpsell (feature) {
 			if (!feature.pro) {
 				return false
 			}
 
-			if (this.isUnlicensed) {
+			const licenseStore = useLicenseStore()
+			if (licenseStore.isUnlicensed) {
 				return true
 			}
 
-			if (feature.upgrade && this.$addons.requiresUpgrade(feature.upgrade)) {
-				return true
-			}
-
-			return false
+			return feature.upgrade && addons.requiresUpgrade(feature.upgrade)
 		}
 	},
 	mounted () {
-		this.setCurrentStage(this.stage)
+		const setupWizardStore        = useSetupWizardStore()
+		setupWizardStore.currentStage = this.stage
 	}
 }
 
@@ -55,17 +57,17 @@ export const WizardUsageTracking = {
 			showModal : false
 		}
 	},
-	computed : {
-		...mapState('wizard', [ 'smartRecommendations' ])
-	},
 	methods : {
-		...mapActions('wizard', [ 'saveWizard' ]),
 		processOptIn () {
-			this.smartRecommendations.usageTracking = true
-			this.loading                            = true
-			this.saveWizard('smartRecommendations')
+			const setupWizardStore = useSetupWizardStore()
+
+			this.setupWizardStore.smartRecommendations.usageTracking = true
+			this.loading                                             = true
+
+			setupWizardStore.saveWizard('smartRecommendations')
 				.then(() => {
-					window.location.href = this.$aioseo.urls.aio.dashboard
+					const rootStore      = useRootStore()
+					window.location.href = rootStore.aioseo.urls.aio.dashboard
 				})
 		}
 	}

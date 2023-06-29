@@ -1,30 +1,39 @@
 <template>
 	<div class="aioseo-tab-content aioseo-link-assistant">
 		<Links
-			v-if="!isUnlicensed && $addons.isActive('aioseo-link-assistant') && !$addons.requiresUpgrade('aioseo-link-assistant')"
+			v-if="!licenseStore.isUnlicensed && addons.isActive('aioseo-link-assistant') && !addons.requiresUpgrade('aioseo-link-assistant')"
 			:parentComponentContext="parentComponentContext"
 		/>
 
 		<LinksLite
-			v-if="isUnlicensed || $addons.requiresUpgrade('aioseo-link-assistant')"
+			v-if="licenseStore.isUnlicensed || addons.requiresUpgrade('aioseo-link-assistant')"
 			:parentComponentContext="parentComponentContext"
 		/>
 
 		<LinksActivate
-			v-if="!isUnlicensed && !$addons.isActive('aioseo-link-assistant') && $addons.canActivate('aioseo-link-assistant') && !$addons.requiresUpgrade('aioseo-link-assistant')"
+			v-if="!licenseStore.isUnlicensed && !addons.isActive('aioseo-link-assistant') && addons.canActivate('aioseo-link-assistant') && !addons.requiresUpgrade('aioseo-link-assistant')"
 			:parentComponentContext="parentComponentContext"
 		/>
 	</div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore
+} from '@/vue/stores'
 
+import addons from '@/vue/utils/addons'
 import Links from './AIOSEO_VERSION/partials-links/Links'
 import LinksActivate from './AIOSEO_VERSION/partials-links/LinksActivate'
 import LinksLite from './lite/partials-links/Links'
 
 export default {
+	setup () {
+		return {
+			addons,
+			licenseStore : useLicenseStore()
+		}
+	},
 	components : {
 		Links,
 		LinksActivate,
@@ -32,9 +41,6 @@ export default {
 	},
 	props : {
 		parentComponentContext : String
-	},
-	computed : {
-		...mapGetters([ 'isUnlicensed' ])
 	}
 }
 </script>

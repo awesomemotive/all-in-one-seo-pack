@@ -1,7 +1,7 @@
 <template>
 	<div class="aioseo-focus-keyphrase-panel">
 		<base-input
-			v-if="!currentPost.keyphrases.focus || !currentPost.keyphrases.focus.keyphrase"
+			v-if="!postEditorStore.currentPost.keyphrases.focus || !postEditorStore.currentPost.keyphrases.focus.keyphrase"
 			size="medium"
 			:class="`add-focus-keyphrase-${this.$root._data.screenContext}-input`"
 			@keydown.enter="pressEnter"
@@ -11,7 +11,7 @@
 			:class="`add-focus-keyphrase-${this.$root._data.screenContext}-button`"
 		>
 			<base-button
-				v-if="!currentPost.keyphrases.focus || !currentPost.keyphrases.focus.keyphrase"
+				v-if="!postEditorStore.currentPost.keyphrases.focus || !postEditorStore.currentPost.keyphrases.focus.keyphrase"
 				id="add-focus-keyphrase"
 				class="add-keyphrase gray medium"
 				@click="addKeyphraseEv"
@@ -21,7 +21,7 @@
 			</base-button>
 
 			<core-tooltip
-				v-if="!currentPost.keyphrases.focus || !currentPost.keyphrases.focus.keyphrase"
+				v-if="!postEditorStore.currentPost.keyphrases.focus || !postEditorStore.currentPost.keyphrases.focus.keyphrase"
 			>
 				<div
 					class="disabled-button gray medium"
@@ -40,10 +40,10 @@
 		</div>
 
 		<core-keyphrase
-			v-if="currentPost.keyphrases.focus && currentPost.keyphrases.focus.keyphrase"
+			v-if="postEditorStore.currentPost.keyphrases.focus && postEditorStore.currentPost.keyphrases.focus.keyphrase"
 			:index=0
-			:keyphrase="currentPost.keyphrases.focus.keyphrase"
-			:score="currentPost.keyphrases.focus.score"
+			:keyphrase="postEditorStore.currentPost.keyphrases.focus.keyphrase"
+			:score="postEditorStore.currentPost.keyphrases.focus.score"
 			@saved="onSaved"
 			@deleted="onDeleted"
 			class="aioseo-keyphrase-tag"
@@ -51,17 +51,17 @@
 
 		<core-loader
 			class="analysis-loading"
-			v-if="currentPost.loading.focus && currentPost.keyphrases.focus"
+			v-if="postEditorStore.currentPost.loading.focus && postEditorStore.currentPost.keyphrases.focus"
 			dark
 		/>
 
 		<metaboxAnalysisDetail
-			v-if="!currentPost.loading.focus && currentPost.keyphrases.focus && currentPost.keyphrases.focus.keyphrase"
-			:analysisItems="currentPost.keyphrases.focus.analysis"
+			v-if="!postEditorStore.currentPost.loading.focus && postEditorStore.currentPost.keyphrases.focus && postEditorStore.currentPost.keyphrases.focus.keyphrase"
+			:analysisItems="postEditorStore.currentPost.keyphrases.focus.analysis"
 		/>
 
 		<core-tooltip
-			v-if="!currentPost.loading.focus && currentPost.keyphrases.focus && currentPost.keyphrases.focus.keyphrase && $isPro && isUnlicensed"
+			v-if="!postEditorStore.currentPost.loading.focus && postEditorStore.currentPost.keyphrases.focus && postEditorStore.currentPost.keyphrases.focus.keyphrase && $isPro && licenseStore.isUnlicensed"
 		>
 			<div
 				class="disabled-button gray"
@@ -78,7 +78,7 @@
 		</core-tooltip>
 
 		<core-tooltip
-			v-if="!currentPost.loading.focus && currentPost.keyphrases.focus && currentPost.keyphrases.focus.keyphrase && (!$isPro || !isUnlicensed)"
+			v-if="!postEditorStore.currentPost.loading.focus && postEditorStore.currentPost.keyphrases.focus && postEditorStore.currentPost.keyphrases.focus.keyphrase && (!$isPro || !licenseStore.isUnlicensed)"
 			:disabled="!showSemrushTooltip || $isPro"
 			:force-show="showSemrushTooltip && !$isPro"
 		>
@@ -109,7 +109,7 @@
 			<template #body>
 				<div class="aioseo-modal-content has-padding">
 					<core-alert
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 						type="blue"
 						v-html="strings.upsell"
 					/>
@@ -142,19 +142,19 @@
 									<th class="keyphrase-volume">{{ strings.volume }}</th>
 									<th class="keyphrase-trend">{{ strings.trend }}</th>
 									<th
-										v-if="!isUnlicensed"
+										v-if="!licenseStore.isUnlicensed"
 										class="keyphrase-actions"
 									/>
 								</tr>
 							</thead>
 							<tbody class="keyphrases-rows">
 								<template
-									v-if="semrush.results.length && !loadingResults"
+									v-if="semrushStore.results.length && !loadingResults"
 								>
 									<tr
 										class="keyphrase-row"
 										:class="{ even: 0 === index % 2 }"
-										v-for="(keyphrase, index) in semrush.results"
+										v-for="(keyphrase, index) in semrushStore.results"
 										:key="index"
 									>
 										<td class="keyphrase">
@@ -174,18 +174,18 @@
 											/>
 										</td>
 										<td
-											v-if="!isUnlicensed"
+											v-if="!licenseStore.isUnlicensed"
 											class="keyphrase-actions"
 										>
 											<div
-												v-if="keyphrase[0] === currentPost.keyphrases.focus.keyphrase.toLowerCase()"
+												v-if="keyphrase[0] === postEditorStore.currentPost.keyphrases.focus.keyphrase.toLowerCase()"
 												class="focus-keyphrase"
 											>
 												<svg-circle-check />
 												{{ strings.focusKeyphrase }}
 											</div>
 											<div
-												v-if="keyphrase[0] !== currentPost.keyphrases.focus.keyphrase.toLowerCase()"
+												v-if="keyphrase[0] !== postEditorStore.currentPost.keyphrases.focus.keyphrase.toLowerCase()"
 											>
 												<base-button
 													v-if="index !== removingAdditionalKeyphrase && (index === addingAdditionalKeyphrase || !hasAdditionalKeyphrase(keyphrase[0]))"
@@ -225,11 +225,11 @@
 								</template>
 
 								<template
-									v-if="!semrush.results.length || loadingResults"
+									v-if="!semrushStore.results.length || loadingResults"
 								>
 									<tr class="keyphrase-row">
 										<td
-											:colspan="isUnlicensed ? 3 : 4"
+											:colspan="licenseStore.isUnlicensed ? 3 : 4"
 											class="no-results"
 										>
 											<div>
@@ -239,20 +239,20 @@
 												/>
 
 												<span
-													v-if="!loadingResults && !semrush.error"
+													v-if="!loadingResults && !semrushStore.error"
 												>
 													{{ strings.noResults }}
 												</span>
 
 												<core-alert
 													type="red"
-													v-if="semrush.error && !semrush.error.includes('TOTAL LIMIT EXCEEDED')"
+													v-if="semrushStore.error && !semrushStore.error.includes('TOTAL LIMIT EXCEEDED')"
 												>
 													{{ semrushError }}
 												</core-alert>
 
 												<template
-													v-if="semrush.error && semrush.error.includes('TOTAL LIMIT EXCEEDED')"
+													v-if="semrushStore.error && semrushStore.error.includes('TOTAL LIMIT EXCEEDED')"
 												>
 													<div class="semrush-logo">
 														<svg-logo-semrush />
@@ -281,10 +281,18 @@
 </template>
 
 <script>
+import {
+	useConnectStore,
+	useLicenseStore,
+	useOptionsStore,
+	usePostEditorStore,
+	useRootStore,
+	useSemrushStore
+} from '@/vue/stores'
+
 import { popup } from '@/vue/utils/popup'
 import { getParams } from '@/vue/utils/params'
-import { mapActions, mapGetters, mapState } from 'vuex'
-import { IsDirty } from '@/vue/mixins'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreKeyphrase from '@/vue/components/common/core/Keyphrase'
 import CoreLoader from '@/vue/components/common/core/Loader'
@@ -297,6 +305,16 @@ import SvgLogoSemrush from '@/vue/components/common/svg/logo/Semrush'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 import metaboxAnalysisDetail from './MetaboxAnalysisDetail'
 export default {
+	setup () {
+		return {
+			connectStore    : useConnectStore(),
+			licenseStore    : useLicenseStore(),
+			optionsStore    : useOptionsStore(),
+			postEditorStore : usePostEditorStore(),
+			rootStore       : useRootStore(),
+			semrushStore    : useSemrushStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreKeyphrase,
@@ -310,7 +328,6 @@ export default {
 		SvgTrash,
 		metaboxAnalysisDetail
 	},
-	mixins : [ IsDirty ],
 	data () {
 		return {
 			showSemrushTooltip          : false,
@@ -358,7 +375,7 @@ export default {
 				semrushTooltipLicenseKey : this.$t.sprintf(
 					// Translators: 1 - Opening link tag, 2 - Closing link tag, 3 - Semrush.
 					this.$t.__('%1$sA valid license key is required%2$s in order to connect with %3$s.', this.$td),
-					'<a href="' + this.$aioseo.urls.aio.settings + '">',
+					'<a href="' + this.rootStore.aioseo.urls.aio.settings + '">',
 					'</a>',
 					'Semrush'
 				),
@@ -384,12 +401,8 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters('integrations', [ 'semrushExpired', 'semrushHasValidTokens' ]),
-		...mapGetters([ 'isUnlicensed', 'isConnected' ]),
-		...mapState([ 'currentPost', 'internalOptions' ]),
-		...mapState('integrations', [ 'semrush' ]),
 		semrushError () {
-			if (this.semrush.error.includes('TOTAL LIMIT EXCEEDED')) {
+			if (this.semrushStore.error.includes('TOTAL LIMIT EXCEEDED')) {
 				return this.$t.__('You have exceeded the limit for requests. Please try again later.', this.$td)
 			}
 
@@ -417,16 +430,14 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions('integrations', [ 'semrushAuthenticate', 'semrushRefresh', 'semrushGetKeyphrases' ]),
-		...mapActions([ 'saveConnectToken' ]),
 		getAdditionalKeyphrases () {
 			this.showSemrushTooltip = false
-			if (!this.isConnected) {
-				this.openConnectPopup(this.$aioseo.urls.connect + '&semrush=true')
+			if (!this.connectStore.isConnected) {
+				this.openConnectPopup(this.rootStore.aioseo.urls.connect + '&semrush=true')
 				return
 			}
 
-			if (!this.semrushHasValidTokens) {
+			if (!this.semrushStore.hasValidTokens) {
 				this.openPopup('https://oauth.semrush.com/auth/login?client_id=aioseo&redirect_uri=https%3A%2F%2Foauth.semrush.com%2Foauth2%2Faioseo%2Fsuccess&ref=2190331110&response_type=code&scope=user.id')
 				return
 			}
@@ -464,14 +475,14 @@ export default {
 			)
 		},
 		async completedCallback (payload) {
-			return this.semrushAuthenticate(payload.code)
+			return this.semrushStore.authenticate(payload.code)
 		},
 		completedConnectCallback (payload) {
-			return this.saveConnectToken(payload.token)
+			return this.connectStore.saveConnectToken(payload.token)
 		},
 		openModal () {
 			this.semrushShowModal = true
-			if (this.semrush.error) {
+			if (this.semrushStore.error) {
 				return
 			}
 
@@ -479,7 +490,7 @@ export default {
 		},
 		getKeyphrases () {
 			this.loadingResults = true
-			this.semrushGetKeyphrases(this.semrushCountry.value)
+			this.semrushStore.getKeyphrases(this.semrushCountry.value)
 				.then(() => {
 					this.loadingResults = false
 				})
@@ -499,7 +510,7 @@ export default {
 				return
 			}
 
-			if (this.semrushHasValidTokens) {
+			if (this.semrushStore.hasValidTokens) {
 				this.$nextTick(this.getAdditionalKeyphrases)
 				return
 			}
@@ -543,37 +554,37 @@ export default {
 		},
 		onSaved (payload) {
 			const { value }   = payload
-			this.currentPost.keyphrases.focus.keyphrase = value
-			this.currentPost.loading.focus = true
+			this.postEditorStore.currentPost.keyphrases.focus.keyphrase = value
+			this.postEditorStore.currentPost.loading.focus = true
 
-			this.setIsDirty()
-			this.$truSeo.runAnalysis({ postId: this.currentPost.id, postData: this.currentPost })
+			this.postEditorStore.isDirty = true
+			this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 		},
 		onDeleted () {
-			this.currentPost.keyphrases.focus.keyphrase = null
-			this.setIsDirty()
-			this.$truSeo.runAnalysis({ postId: this.currentPost.id, postData: this.currentPost })
+			this.postEditorStore.currentPost.keyphrases.focus.keyphrase = null
+			this.postEditorStore.isDirty                = true
+			this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 		},
 		addKeyphraseEv () {
 			const keyphraseInputComponent = document.getElementsByClassName(`add-focus-keyphrase-${this.$root._data.screenContext}-input`)
 			const keyphraseInput          = keyphraseInputComponent[0].querySelector('.medium')
 			if (keyphraseInput.value) {
 				const newKeyphrase = { keyphrase: keyphraseInput.value, score: 0, analysis: {} }
-				this.currentPost.keyphrases.focus = newKeyphrase
-				this.currentPost.loading.focus = true
+				this.postEditorStore.currentPost.keyphrases.focus = newKeyphrase
+				this.postEditorStore.currentPost.loading.focus = true
 				keyphraseInput.value = ''
 				keyphraseInput.blur()
 
-				this.setIsDirty()
-				this.$truSeo.runAnalysis({ postId: this.currentPost.id, postData: this.currentPost })
+				this.postEditorStore.isDirty = true
+				this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 			}
 		},
 		hasAdditionalKeyphrase (keyphrase) {
-			const { additional } = this.currentPost.keyphrases
+			const { additional } = this.postEditorStore.currentPost.keyphrases
 			return additional.filter(k => k.keyphrase.toLowerCase() === keyphrase).length
 		},
 		getAdditionalKeyphrase (keyphrase) {
-			const { additional } = this.currentPost.keyphrases
+			const { additional } = this.postEditorStore.currentPost.keyphrases
 			return additional.find(k => k.keyphrase.toLowerCase() === keyphrase)
 		},
 		scoreClass (score) {
@@ -581,13 +592,13 @@ export default {
 		},
 		async addAdditionalKeyphrase (keyphrase, index) {
 			this.addingAdditionalKeyphrase = index
-			const { additional }           = this.currentPost.keyphrases
+			const { additional }           = this.postEditorStore.currentPost.keyphrases
 			const keyphraseIndex           = additional.push({ keyphrase, score: 0 })
 			const keyphrasePanel           = document.getElementsByClassName('keyphrase-name')
-			this.currentPost.keyphrases.additional = additional
+			this.postEditorStore.currentPost.keyphrases.additional = additional
 
-			this.setIsDirty()
-			await this.$truSeo.runAnalysis({ postId: this.currentPost.id, postData: this.currentPost })
+			this.postEditorStore.isDirty = true
+			await this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 			await this.$nextTick()
 
 			if (keyphrasePanel[keyphraseIndex]) {
@@ -597,7 +608,7 @@ export default {
 			this.addingAdditionalKeyphrase = false
 		},
 		goToAdditionalKeyphrase (keyphrase) {
-			const { additional }             = this.currentPost.keyphrases
+			const { additional }             = this.postEditorStore.currentPost.keyphrases
 			const keyphraseIndex             = additional.findIndex(k => k.keyphrase.toLowerCase() === keyphrase)
 			if (-1 !== keyphraseIndex) {
 				const keyphrasePanel = document.getElementsByClassName('keyphrase-name')
@@ -609,11 +620,11 @@ export default {
 		},
 		removeAdditionalKeyphrase (keyphrase, index) {
 			this.removingAdditionalKeyphrase = index
-			const { additional }             = this.currentPost.keyphrases
+			const { additional }             = this.postEditorStore.currentPost.keyphrases
 			const keyphraseIndex             = additional.findIndex(k => k.keyphrase.toLowerCase() === keyphrase)
 			if (-1 !== keyphraseIndex) {
 				additional.splice(keyphraseIndex, 1)
-				this.currentPost.keyphrases.additional = additional
+				this.postEditorStore.currentPost.keyphrases.additional = additional
 				const keyphrasePanel = document.getElementsByClassName('keyphrase-name')
 				if (keyphrasePanel[0]) {
 					keyphrasePanel[0].click()
@@ -635,8 +646,8 @@ export default {
 	},
 	mounted () {
 		const promises = []
-		if (this.internalOptions.integrations.semrush.accessToken && this.semrushExpired) {
-			promises.push(this.semrushRefresh())
+		if (this.optionsStore.internalOptions.integrations.semrush.accessToken && this.semrushStore.expired) {
+			promises.push(this.semrushStore.refresh())
 		}
 	}
 }

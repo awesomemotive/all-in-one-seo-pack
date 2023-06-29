@@ -1,45 +1,52 @@
-import { mapActions } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 export const SaveChanges = {
 	emits   : [ 'changes-saved' ],
 	methods : {
-		...mapActions([ 'saveChanges', 'saveHtaccess', 'saveNetworkRobots' ]),
 		processSaveChanges () {
-			this.$store.commit('loading', true)
+			const rootStore   = useRootStore()
+			rootStore.loading = true
+
 			let switchBack = false,
 				saved      = false,
 				action     = 'saveChanges'
 			setTimeout(() => {
 				switchBack = true
 				if (saved) {
-					this.$store.commit('loading', false)
+					rootStore.loading = false
 				}
 			}, 1500)
 
-			if ('htaccess-editor' === this.$store.state.route.name) {
+			const optionsStore = useOptionsStore()
+			if ('htaccess-editor' === this.$router.currentRoute.value.name) {
 				action = 'saveHtaccess'
-				this.$store.commit('setHtaccessError', null)
+
+				optionsStore.htaccessError = null
 			}
 
 			if (
-				this.$aioseo.data.isNetworkAdmin &&
-				'robots-editor' === this.$store.state.route.name
+				rootStore.aioseo.data.isNetworkAdmin &&
+				'robots-editor' === this.$router.currentRoute.value.name
 			) {
 				action = 'saveNetworkRobots'
 			}
 
-			this[action]()
+			optionsStore[action]()
 				.then(response => {
 					if (response && response.body.redirection) {
 						return
 					}
 
-					if (switchBack || 'htaccess-editor' === this.$store.state.route.name) {
-						this.$store.commit('loading', false)
+					if (switchBack || 'htaccess-editor' === this.$router.currentRoute.value.name) {
+						rootStore.loading = false
 					} else {
 						saved = true
 					}
 
-					this.$bus.$emit('changes-saved')
+					window.aioseoBus.$emit('changes-saved')
 				})
 		}
 	}

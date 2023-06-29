@@ -13,7 +13,7 @@
 
 		<div
 			class="aioseo-settings-row"
-			v-if="$aioseo.data.isNetworkAdmin"
+			v-if="rootStore.aioseo.data.isNetworkAdmin"
 		>
 			<div class="select-site">
 				{{ strings.selectSite }}
@@ -49,7 +49,7 @@
 			v-model="plugin"
 			:options="plugins"
 			:placeholder="strings.selectPlugin"
-			:disabled="$aioseo.data.isNetworkAdmin && !site"
+			:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
 		>
 			<template #option="{ option }">
 				<div class="import-plugin-label">
@@ -123,7 +123,11 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {
+	useRootStore,
+	useToolsStore
+} from '@/vue/stores'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -132,6 +136,12 @@ import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgDownload from '@/vue/components/common/svg/Download'
 export default {
+	setup () {
+		return {
+			rootStore  : useRootStore(),
+			toolsStore : useToolsStore()
+		}
+	},
 	components : {
 		BaseCheckbox,
 		CoreAlert,
@@ -186,7 +196,7 @@ export default {
 		},
 		plugins () {
 			const plugins = []
-			this.$aioseo.importers.forEach(plugin => {
+			this.rootStore.aioseo.importers.forEach(plugin => {
 				plugins.push({
 					value       : plugin.slug,
 					label       : plugin.name,
@@ -199,7 +209,7 @@ export default {
 			return plugins
 		},
 		canImport () {
-			if (this.$aioseo.data.isNetworkAdmin && !this.site) {
+			if (this.rootStore.aioseo.data.isNetworkAdmin && !this.site) {
 				return false
 			}
 
@@ -225,7 +235,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'importPlugins' ]),
 		processImportPlugin () {
 			this.importSuccess = false
 			this.importError   = false
@@ -245,7 +254,7 @@ export default {
 				})
 			}
 
-			this.importPlugins({
+			this.toolsStore.importPlugins({
 				plugins : [ {
 					plugin : this.plugin.value,
 					settings

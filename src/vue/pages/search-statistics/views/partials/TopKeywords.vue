@@ -3,7 +3,7 @@
 		<div
 			v-if="0 === keywords.length"
 			class="top-keywords-empty"
-			:class="{ blurred : loading.keywords }"
+			:class="{ blurred : searchStatisticsStore.loading.keywords }"
 		>
 			<h3 class="title">{{ strings.noKeywords }}</h3>
 		</div>
@@ -18,7 +18,7 @@
 
 			<div
 				class="top-keywords"
-				:class="{ blurred : loading.keywords }"
+				:class="{ blurred : searchStatisticsStore.loading.keywords }"
 			>
 				<div
 					v-for="i in 10"
@@ -54,17 +54,25 @@
 			</div>
 		</template>
 
-		<core-loader v-if="loading.keywords" dark />
+		<core-loader v-if="searchStatisticsStore.loading.keywords" dark />
 	</div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import { decodeHTMLEntities } from '@/vue/utils/helpers'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Statistic from './Statistic'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreLoader,
 		CoreTooltip,
@@ -80,12 +88,11 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('search-statistics', [ 'data', 'loading' ]),
 		keywords () {
-			if (!this.data?.keywords?.topKeywords) {
+			if (!this.searchStatisticsStore.data?.keywords?.topKeywords) {
 				return []
 			}
-			return this.data.keywords.topKeywords.slice(0, 10)
+			return this.searchStatisticsStore.data.keywords.topKeywords.slice(0, 10)
 		}
 	},
 	methods : {

@@ -384,17 +384,13 @@ class Sitemap {
 		$entries = aioseo()->sitemap->content->get();
 		$total   = aioseo()->sitemap->content->getTotal();
 		if ( ! $entries ) {
-			foreach ( aioseo()->addons->getLoadedAddons() as $loadedAddon ) {
-				if ( ! empty( $loadedAddon->content ) && method_exists( $loadedAddon->content, 'get' ) ) {
-					$entries = $loadedAddon->content->get();
-					$total   = count( $entries );
-					if ( method_exists( $loadedAddon->content, 'getTotal' ) ) {
-						$total = $loadedAddon->content->getTotal();
-					}
-
-					if ( $entries ) {
-						break;
-					}
+			$addonsEntries = aioseo()->addons->doAddonFunction( 'content', 'get' );
+			$addonTotals   = aioseo()->addons->doAddonFunction( 'content', 'getTotal' );
+			foreach ( $addonsEntries as $addonSlug => $addonEntries ) {
+				if ( ! empty( $addonEntries ) ) {
+					$entries = $addonEntries;
+					$total   = ! empty( $addonTotals[ $addonSlug ] ) ? $addonTotals[ $addonSlug ] : count( $entries );
+					break;
 				}
 			}
 		}
@@ -411,11 +407,7 @@ class Sitemap {
 
 		$this->headers();
 		aioseo()->sitemap->output->output( $entries );
-		foreach ( aioseo()->addons->getLoadedAddons() as $loadedAddon ) {
-			if ( ! empty( $loadedAddon->output ) && method_exists( $loadedAddon->output, 'output' ) ) {
-				$loadedAddon->output->output( $entries );
-			}
-		}
+		aioseo()->addons->doAddonFunction( 'output', 'output', [ $entries ] );
 
 		exit;
 	}
@@ -430,11 +422,7 @@ class Sitemap {
 	 * @return void
 	 */
 	protected function doesFileExist() {
-		foreach ( aioseo()->addons->getLoadedAddons() as $loadedAddon ) {
-			if ( ! empty( $loadedAddon->sitemap ) && method_exists( $loadedAddon->sitemap, 'doesFileExist' ) ) {
-				$loadedAddon->sitemap->doesFileExist();
-			}
-		}
+		aioseo()->addons->doAddonFunction( 'sitemap', 'doesFileExist' );
 
 		if (
 			'general' !== $this->type ||

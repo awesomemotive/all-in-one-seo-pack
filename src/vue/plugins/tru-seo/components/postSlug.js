@@ -1,5 +1,9 @@
+import {
+	usePostEditorStore,
+	useTagsStore
+} from '@/vue/stores'
+
 import TruSeo from '@/vue/plugins/tru-seo'
-import store from '@/vue/store'
 import { cleanForSlug } from '@/vue/utils/cleanForSlug'
 import { getPostEditedContent } from './postContent'
 import { getPostEditedPermalink } from './postPermalink'
@@ -37,8 +41,9 @@ const getEditorSlug = () => {
  * @returns {string} Post Slug
  */
 export const getPostSlug = () => {
-	if (store.state['live-tags'].permalinkSlug) {
-		return store.state['live-tags'].permalinkSlug
+	const tagsStore = useTagsStore()
+	if (tagsStore.permalinkSlug) {
+		return tagsStore.permalinkSlug
 	}
 
 	let postSlug = ''
@@ -59,7 +64,7 @@ export const getPostSlug = () => {
 	}
 
 	if (postSlug) {
-		store.commit('live-tags/updatePermalinkSlug', postSlug)
+		tagsStore.updatePermalinkSlug(postSlug)
 	}
 
 	return postSlug
@@ -103,14 +108,20 @@ export const maybeUpdatePostSlug = async (run = true) => {
 	const newPostSlug = getPostEditedSlug()
 	if (postSlug !== newPostSlug) {
 		postSlug = newPostSlug
-		store.commit('live-tags/updatePermalinkSlug', postSlug)
-		if (run) {
-			(new TruSeo()).runAnalysis({
-				postId   : store.state.currentPost.id,
-				postData : { ...store.state.currentPost },
-				content  : getPostEditedContent(),
-				slug     : getPostEditedPermalink()
-			})
+
+		const postEditorStore = usePostEditorStore()
+		const tagsStore       = useTagsStore()
+		tagsStore.updatePermalinkSlug(postSlug)
+
+		if (!run) {
+			return
 		}
+
+		(new TruSeo()).runAnalysis({
+			postId   : postEditorStore.currentPost.id,
+			postData : { ...postEditorStore.currentPost },
+			content  : getPostEditedContent(),
+			slug     : getPostEditedPermalink()
+		})
 	}
 }

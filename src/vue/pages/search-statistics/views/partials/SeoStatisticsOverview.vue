@@ -14,7 +14,7 @@
 		>
 			<div
 				:class="[{
-					blurred : loading.seoStatistics,
+					blurred : searchStatisticsStore.loading.seoStatistics,
 				}]"
 			>
 				<div class="statistics-title">
@@ -57,13 +57,17 @@
 				</div>
 			</div>
 
-			<core-loader v-if="loading.seoStatistics" dark />
+			<core-loader v-if="searchStatisticsStore.loading.seoStatistics" dark />
 		</div>
 	</div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useRootStore,
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import StatisticMixin from '../../mixins/Statistic.js'
 import dateFormat from '@/vue/utils/dateFormat'
 import CoreLoader from '@/vue/components/common/core/Loader'
@@ -72,6 +76,12 @@ import Graph from './Graph'
 import Statistic from './Statistic'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 export default {
+	setup () {
+		return {
+			rootStore             : useRootStore(),
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreLoader,
 		CoreTooltip,
@@ -134,7 +144,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('search-statistics', [ 'data', 'loading' ]),
 		seoStatistics () {
 			const statistics = []
 			this.statistics.forEach(key => {
@@ -172,7 +181,7 @@ export default {
 		getData (key) {
 			const data = this.statisticsData
 				? this.statisticsData
-				: this.data?.seoStatistics?.statistics
+				: this.searchStatisticsStore.data?.seoStatistics?.statistics
 
 			if (!data) {
 				return {
@@ -187,8 +196,8 @@ export default {
 				total      : data[key] || 0,
 				difference : data.difference ? Math.abs(data.difference[key]) || 0 : 0,
 				direction  : data.difference && 0 > data.difference[key] ? 'down' : 'up',
-				chart      : this.data?.seoStatistics?.intervals?.map((tick) => ({
-					x : dateFormat(new Date(tick.date + ' 00:00:00'), this.$aioseo.data.dateFormat),
+				chart      : this.searchStatisticsStore.data?.seoStatistics?.intervals?.map((tick) => ({
+					x : dateFormat(new Date(tick.date + ' 00:00:00'), this.rootStore.aioseo.data.dateFormat),
 					y : tick[key] ? tick[key] : 0
 				}))
 			}

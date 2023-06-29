@@ -58,11 +58,20 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import BaseHighlightToggle from '@/vue/components/common/base/HighlightToggle'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		BaseHighlightToggle,
 		CoreTooltip,
@@ -98,7 +107,7 @@ export default {
 		},
 		objects () {
 			const objectName = 'taxonomies' === this.type ? 'taxonomies' : 'postTypes'
-			return this.$aioseo.postData[objectName].filter(object => {
+			return this.rootStore.aioseo.postData[objectName].filter(object => {
 				return !this.excluded.includes(object.name)
 			})
 		}

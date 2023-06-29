@@ -45,7 +45,7 @@ const HeadlineAnalyzer = () => {
 			return
 		}
 
-		http(window.aioseo.nonce).post(restUrl('analyze_headline'))
+		http(window.aioseo.nonce).post(restUrl('analyze-headline'))
 			.send({
 				headline            : postTitle,
 				shouldStoreHeadline : false
@@ -272,7 +272,7 @@ const HeadlineAnalyzer = () => {
 						''
 					)}
 				<div className="aioseo-headline-analyzer-bottom-notice">
-					<p dangerouslySetInnerHTML={{ __html: headlineAnalyzerNotice }}></p>
+					<p dangerouslySetInnerHTML={{ __html: headlineAnalyzerNotice() }}></p>
 				</div>
 			</PluginSidebar>
 		</Fragment>

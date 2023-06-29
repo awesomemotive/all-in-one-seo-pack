@@ -11,17 +11,30 @@
 		/>
 
 		<svg-close
-			@click.native.stop="disableLinkAssistantEducation"
+			@click.native.stop="postEditorStore.disableLinkAssistantEducation"
 		/>
 	</div>
 </template>
 
 <script>
+import {
+	useLicenseStore,
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
 import urlMethods from 'url'
-import { mapActions, mapGetters, mapState } from 'vuex'
 import SvgCircleInformation from '@/vue/components/common/svg/circle/Information'
 import SvgClose from '@/vue/components/common/svg/Close'
 export default {
+	setup () {
+		return {
+			licenseStore    : useLicenseStore(),
+			postEditorStore : usePostEditorStore(),
+			rootStore       : useRootStore()
+		}
+	},
 	components : {
 		SvgCircleInformation,
 		SvgClose
@@ -35,22 +48,20 @@ export default {
 				upsell : this.$t.sprintf(
 					// Translators: 1 - Learn more link.
 					this.$t.__('Did you know you can automatically add internal links using Link Assistant? %1$s', this.$td),
-					this.$links.getPlainLink(this.$constants.GLOBAL_STRINGS.learnMore, this.$aioseo.urls.aio.linkAssistant, true)
+					this.$links.getPlainLink(this.$constants.GLOBAL_STRINGS.learnMore, this.rootStore.aioseo.urls.aio.linkAssistant, true)
 				)
 			}
 		}
 	},
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
-		...mapState([ 'currentPost' ]),
 		canShowUpsell () {
-			const addon                  = this.$addons.getAddon('aioseo-link-assistant')
-			const { options }            = this.currentPost
+			const addon                  = addons.getAddon('aioseo-link-assistant')
+			const { options }            = this.postEditorStore.currentPost
 			const internalLinkCount      = options.linkFormat.internalLinkCount
 			const linkAssistantDismissed = options.linkFormat.linkAssistantDismissed
 
 			return (
-				this.isUnlicensed ||
+				this.licenseStore.isUnlicensed ||
 				(
 					!addon ||
 					!addon.isActive ||
@@ -65,12 +76,11 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'incrementInternalLinkCount', 'disableLinkAssistantEducation' ]),
 		async linkAdded (context) {
 			await this.$nextTick()
 
 			// Return early if the process is disabled or has already run.
-			const { options }            = this.currentPost
+			const { options }            = this.postEditorStore.currentPost
 			const internalLinkCount      = options.linkFormat.internalLinkCount
 			const linkAssistantDismissed = options.linkFormat.linkAssistantDismissed
 			if (
@@ -81,7 +91,7 @@ export default {
 			}
 
 			if (this.isInternalLink(context.url || context.suggestion?.url || null)) {
-				this.incrementInternalLinkCount()
+				this.postEditorStore.incrementInternalLinkCount()
 			}
 		},
 		async setLinkFormatValue () {
@@ -108,7 +118,7 @@ export default {
 				return true
 			}
 
-			return parsedUrl.host === this.$aioseo.urls.domain
+			return parsedUrl.host === this.rootStore.aioseo.urls.domain
 		}
 	},
 	created () {

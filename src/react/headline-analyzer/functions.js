@@ -1,5 +1,9 @@
 import superagent from 'superagent'
 
+import {
+	useRootStore
+} from '@/vue/stores'
+
 export const http = (nonce) => superagent
 	.agent()
 	.set('X-WP-Nonce', nonce)
@@ -26,6 +30,8 @@ const trailingSlashIt = str => {
 }
 
 export const restUrl = (path) => {
-	path = window.aioseo.data.hasUrlTrailingSlash ? trailingSlashIt(path) : unTrailingSlashIt(path)
-	return trailingSlashIt(window.aioseo.urls.restUrl) + trailingSlashIt('aioseo/v1') + unForwardSlashIt(path)
+	const rootStore = useRootStore()
+
+	path = rootStore.aioseo.data.hasUrlTrailingSlash ? trailingSlashIt(path) : unTrailingSlashIt(path)
+	return trailingSlashIt(rootStore.aioseo.urls.restUrl) + trailingSlashIt('aioseo/v1') + unForwardSlashIt(path)
 }

@@ -104,7 +104,6 @@ class Priority {
 		if ( empty( self::$grouped[ $pageType . $objectType ] ) && self::$advanced ) {
 			if ( ! isset( self::$objectTypePriority[ $pageType . $objectType ] ) ) {
 				$dynamicOptions = aioseo()->dynamicOptions->noConflict();
-
 				self::$objectTypePriority[ $pageType . $objectType ] = $dynamicOptions->sitemap->priority->has( $pageType ) && $dynamicOptions->sitemap->priority->$pageType->has( $objectType )
 					? json_decode( $dynamicOptions->sitemap->priority->$pageType->$objectType->priority )
 					: false;
@@ -118,7 +117,7 @@ class Priority {
 				! empty( self::$objectTypePriority[ $pageType . $objectType ] )
 					? self::$objectTypePriority[ $pageType . $objectType ]
 					: self::$globalPriority[ $pageType . $objectType ];
-			$priority     = null === $defaultValue->value ? $priority : $defaultValue->value;
+			$priority     = 'default' === $defaultValue->value ? $priority : $defaultValue->value;
 		}
 
 		return $priority;

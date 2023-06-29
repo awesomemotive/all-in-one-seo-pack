@@ -12,7 +12,7 @@
 				<base-button
 					type="blue"
 					tag="a"
-					:href="$aioseo.urls.aio.linkAssistant"
+					:href="rootStore.aioseo.urls.aio.linkAssistant"
 					size="small"
 				>
 					{{ strings.updateLinkAssistant }}
@@ -23,9 +23,18 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import Blur from './Blur'
 import Cta from '@/vue/components/common/cta/Index'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		Blur,
 		Cta

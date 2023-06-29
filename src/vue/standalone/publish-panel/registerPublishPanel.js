@@ -1,3 +1,7 @@
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import { isBlockEditor, shouldShowMetaBox } from '@/vue/plugins/tru-seo/components/helpers'
 
 (function (wp) {
@@ -10,7 +14,8 @@ import { isBlockEditor, shouldShowMetaBox } from '@/vue/plugins/tru-seo/componen
 	const PluginPostPublishPanel     = wp.editPost.PluginPostPublishPanel
 	const registerPlugin             = wp.plugins.registerPlugin
 
-	const user = window.aioseo.user
+	const rootStore = useRootStore()
+	const user      = rootStore.aioseo.user
 	if (
 		!user.capabilities.aioseo_page_analysis &&
 		!user.capabilities.aioseo_page_general_settings &&

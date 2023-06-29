@@ -8,6 +8,10 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import BadBotBlocker from './BadBotBlocker'
 import CoreMain from '@/vue/components/common/core/main/Index'
 import DatabaseTools from './DatabaseTools'
@@ -18,6 +22,11 @@ import RobotsEditor from './RobotsEditor'
 import SystemStatus from './SystemStatus'
 import WpCode from './WpCode'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		BadBotBlocker,
 		CoreMain,
@@ -32,7 +41,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				pageName : this.$aioseo.data.isNetworkAdmin
+				pageName : this.rootStore.aioseo.data.isNetworkAdmin
 					? this.$t.__('Network Tools', this.$td)
 					: this.$t.__('Tools', this.$td)
 			}

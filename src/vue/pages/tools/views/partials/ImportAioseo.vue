@@ -12,7 +12,7 @@
 
 		<div
 			class="aioseo-settings-row"
-			v-if="$aioseo.data.isNetworkAdmin"
+			v-if="rootStore.aioseo.data.isNetworkAdmin"
 		>
 			<div class="select-site">
 				{{ strings.selectSite }}
@@ -54,14 +54,14 @@
 				@focus="triggerFileUpload"
 				:placeholder="strings.fileUploadPlaceholder"
 				:class="{ 'aioseo-error': uploadError }"
-				:disabled="$aioseo.data.isNetworkAdmin && !site"
+				:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
 			/>
 
 			<base-button
 				type="black"
 				size="medium"
 				@click="triggerFileUpload"
-				:disabled="$aioseo.data.isNetworkAdmin && !site"
+				:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
 			>
 				{{ strings.chooseAFile }}
 			</base-button>
@@ -93,12 +93,22 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {
+	useRootStore,
+	useToolsStore
+} from '@/vue/stores'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreNetworkSiteSelector from '@/vue/components/common/core/NetworkSiteSelector'
 import SvgDownload from '@/vue/components/common/svg/Download'
 export default {
+	setup () {
+		return {
+			rootStore  : useRootStore(),
+			toolsStore : useToolsStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreCard,
@@ -138,7 +148,7 @@ export default {
 	},
 	computed : {
 		importValidated () {
-			if (this.$aioseo.data.isNetworkAdmin && !this.site) {
+			if (this.rootStore.aioseo.data.isNetworkAdmin && !this.site) {
 				return false
 			}
 
@@ -154,7 +164,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'uploadFile' ]),
 		reset () {
 			this.uploadError = false
 			this.filename    = null
@@ -168,7 +177,7 @@ export default {
 		},
 		submitFile () {
 			this.loading = true
-			this.uploadFile({
+			this.toolsStore.uploadFile({
 				file     : this.file,
 				filename : this.filename,
 				siteId   : this.site ? this.site.blog_id : null

@@ -153,7 +153,7 @@
 					</div>
 
 					<img
-						:src="$getAssetUrl(csvFileImage)"
+						:src="getAssetUrl(csvFileImage)"
 						:alt="strings.imgAltText"
 					/>
 
@@ -209,11 +209,15 @@
 </template>
 
 <script>
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { DateTime } from 'luxon'
 import { Date } from '@/vue/mixins'
-import { mapMutations, mapState } from 'vuex'
 import { __ } from '@wordpress/i18n'
-import { isUrl, cloneObject } from '@/vue/utils/helpers'
+import { getAssetUrl, isUrl, cloneObject } from '@/vue/utils/helpers'
 import csvFileImage from '@/vue/assets/images/sitemap/import-from-csv.png'
 
 import BaseDatePicker from '@/vue/components/common/base/DatePicker'
@@ -233,6 +237,12 @@ const defaults = {
 }
 
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	emits      : [ 'cancel', 'process-page-add-and-update', 'process-page-edit' ],
 	mixins     : [ Date ],
 	components : {
@@ -262,8 +272,11 @@ export default {
 			},
 			isLoading : false,
 			strings   : {
-				// Translators: 1 - An example URL (e.g. https://aioseo.com/example).
-				placeholder           : this.$t.sprintf(this.$t.__('Enter a page URL, e.g. %1$s', this.$td), `${this.$aioseo.urls.home}/new-page`),
+				placeholder : this.$t.sprintf(
+					// Translators: 1 - An example URL (e.g. https://aioseo.com/example).
+					this.$t.__('Enter a page URL, e.g. %1$s', this.$td),
+					`${this.rootStore.aioseo.urls.home}/new-page`
+				),
 				pageUrl               : this.$t.__('Page URL', this.$td),
 				priority              : this.$t.__('Priority', this.$td),
 				frequency             : this.$t.__('Frequency', this.$td),
@@ -298,9 +311,12 @@ export default {
 		}
 	},
 	methods : {
-		...mapMutations([ 'updateAdditionalPages' ]),
+		getAssetUrl,
+		updateAdditionalPages (pages) {
+			this.optionsStore.options.sitemap.general.additionalPages.pages = pages
+		},
 		addPage () {
-			const pages = [ ...this.pages ]
+			const pages = this.optionsStore.options.sitemap.general.additionalPages.pages
 			pages.unshift(JSON.stringify(this.page))
 
 			this.updateAdditionalPages(pages)
@@ -330,7 +346,7 @@ export default {
 			}
 		},
 		updatePage (index) {
-			const pages = [ ...this.pages ]
+			const pages = this.optionsStore.options.sitemap.general.additionalPages.pages
 			pages[this.getPaginatedIndex(index)] = JSON.stringify(this.page)
 
 			this.updateAdditionalPages(pages)
@@ -355,7 +371,7 @@ export default {
 
 			try {
 				const additionalPages = await this.parseFile()
-				const pages           = this.pages
+				const pages           = this.optionsStore.options.sitemap.general.additionalPages.pages
 
 				additionalPages.forEach(page => {
 					const preparedPage = this.prepareAdditionalPage(page)
@@ -379,23 +395,29 @@ export default {
 			const preparedPage = cloneObject(defaults.page)
 
 			page.forEach(prop => {
-				if (isUrl(prop) && !this.pageExists(prop)) {
-					preparedPage.url = prop
-					return
-				}
+				try {
+					if (isUrl(prop) && !this.pageExists(prop)) {
+						preparedPage.url = prop
+						return
+					}
 
-				if (this.priorityOptionsValues.includes(prop)) {
-					preparedPage.priority.label = preparedPage.priority.value = prop
-					return
-				}
+					if (this.priorityOptionsValues.includes(prop)) {
+						preparedPage.priority.label = preparedPage.priority.value = prop
+						return
+					}
 
-				if (this.frequencyOptionsValues.includes(prop.toLowerCase())) {
-					preparedPage.frequency.label = preparedPage.frequency.value = prop.toLowerCase()
-					return
-				}
+					if (this.frequencyOptionsValues.includes(prop.toLowerCase())) {
+						preparedPage.frequency.label = preparedPage.frequency.value = prop.toLowerCase()
+						return
+					}
 
-				if (!isNaN(Date.parse(prop))) {
-					preparedPage.lastModified = prop
+					if (!isNaN(Date.parse(prop))) {
+						preparedPage.lastModified = prop
+					}
+				} catch {
+					// Do nothing.
+					// Somehow the script terminates if Date.parse() is called on a non-date string,
+					// so we need to catch the error and do nothing. Otherwise the CSV import fails on the first row with the headers.
 				}
 			})
 
@@ -435,9 +457,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState({
-			pages : state => state.options.sitemap.general.additionalPages.pages
-		}),
 		importValidated () {
 			return 'text/csv' === this.file.type
 		}

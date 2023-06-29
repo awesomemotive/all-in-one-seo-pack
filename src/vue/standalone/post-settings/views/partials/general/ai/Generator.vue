@@ -6,13 +6,13 @@
 		>
 			<button
 				type="button"
-				@click="setModalState({
+				@click="settingsStore.setModalState({
 					modalName : 'aiGenerator',
 					value : type
 				})"
 			>
 				<svg-ai-robot
-				@click="setModalState({
+				@click="settingsStore.setModalState({
 					modalName : 'aiGenerator',
 					value : type
 				})"
@@ -25,22 +25,24 @@
 		</core-tooltip>
 
 		<ai-modal
-			v-if="modals.aiGenerator === type"
+			v-if="settingsStore.modals.aiGenerator === type"
 			:type="type"
 		/>
 	</div>
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import {
+	useSettingsStore
+} from '@/vue/stores'
+
 import AiModal from '../../../AIOSEO_VERSION/partials-ai/Modal'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgAiRobot from '@/vue/components/common/svg/ai/Robot'
 export default {
-	props : {
-		type : {
-			type     : String,
-			required : true
+	setup () {
+		return {
+			settingsStore : useSettingsStore()
 		}
 	},
 	components : {
@@ -48,18 +50,18 @@ export default {
 		CoreTooltip,
 		SvgAiRobot
 	},
+	props : {
+		type : {
+			type     : String,
+			required : true
+		}
+	},
 	data () {
 		return {
 			strings : {
 				useAiGenerator : this.$t.__('Use AI Generator', this.$td)
 			}
 		}
-	},
-	computed : {
-		...mapState([ 'modals' ])
-	},
-	methods : {
-		...mapMutations([ 'setModalState' ])
 	}
 }
 </script>

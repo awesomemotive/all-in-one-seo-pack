@@ -1,14 +1,14 @@
 <template>
 	<div class="aioseo-robots-meta">
 		<base-toggle
-			v-model="currentPost.default"
-			@update:modelValue="setIsDirty"
+			v-model="postEditorStore.currentPost.default"
+			@update:modelValue="postEditorStore.isDirty = true"
 		>
 			{{ strings.useDefaultSettings }}
 		</base-toggle>
 
 		<div
-			v-if="!currentPost.default"
+			v-if="!postEditorStore.currentPost.default"
 			class="global-robots-settings aioseo-description"
 		>
 			<span class="robots-meta-title">{{ strings.robotsMeta }}</span>
@@ -19,12 +19,12 @@
 					xl="3"
 					md="4"
 					sm="6"
-					v-if="!this.$aioseo.currentPost.isHomePage"
+					v-if="!postEditorStore.currentPost.isHomePage"
 				>
 					<base-checkbox
 						size="medium"
-						v-model="currentPost.noindex"
-						@update:modelValue="setIsDirty"
+						v-model="postEditorStore.currentPost.noindex"
+						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.noindex }}
 					</base-checkbox>
@@ -36,8 +36,8 @@
 				>
 					<base-checkbox
 						size="medium"
-						v-model="currentPost.nofollow"
-						@update:modelValue="setIsDirty"
+						v-model="postEditorStore.currentPost.nofollow"
+						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.nofollow }}
 					</base-checkbox>
@@ -49,8 +49,8 @@
 				>
 					<base-checkbox
 						size="medium"
-						v-model="currentPost.noarchive"
-						@update:modelValue="setIsDirty"
+						v-model="postEditorStore.currentPost.noarchive"
+						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.noarchive }}
 					</base-checkbox>
@@ -62,8 +62,8 @@
 				>
 					<base-checkbox
 						size="medium"
-						v-model="currentPost.notranslate"
-						@update:modelValue="setIsDirty"
+						v-model="postEditorStore.currentPost.notranslate"
+						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.notranslate }}
 					</base-checkbox>
@@ -75,8 +75,8 @@
 				>
 					<base-checkbox
 						size="medium"
-						v-model="currentPost.noimageindex"
-						@update:modelValue="setIsDirty"
+						v-model="postEditorStore.currentPost.noimageindex"
+						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.noimageindex }}
 					</base-checkbox>
@@ -88,8 +88,8 @@
 				>
 				<base-checkbox
 						size="medium"
-						v-model="currentPost.nosnippet"
-						@update:modelValue="setIsDirty"
+						v-model="postEditorStore.currentPost.nosnippet"
+						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.nosnippet }}
 					</base-checkbox>
@@ -101,8 +101,8 @@
 				>
 					<base-checkbox
 						size="medium"
-						v-model="currentPost.noodp"
-						@update:modelValue="setIsDirty"
+						v-model="postEditorStore.currentPost.noodp"
+						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.noodp }}
 					</base-checkbox>
@@ -111,15 +111,15 @@
 
 			<div class="global-robots-settings-options">
 				<div
-					v-if="!currentPost.nosnippet"
+					v-if="!postEditorStore.currentPost.nosnippet"
 					class="aioseo-description max-snippet"
 				>
 					<span>{{ strings.maxSnippet }}</span>
 					<base-input
 						type="number"
 						size="medium"
-						v-model="currentPost.maxSnippet"
-						@update:modelValue="setIsDirty"
+						v-model="postEditorStore.currentPost.maxSnippet"
+						@update:modelValue="postEditorStore.isDirty = true"
 					/>
 				</div>
 
@@ -130,20 +130,20 @@
 					<base-input
 						type="number"
 						size="medium"
-						v-model="currentPost.maxVideoPreview"
-						@update:modelValue="setIsDirty"
+						v-model="postEditorStore.currentPost.maxVideoPreview"
+						@update:modelValue="postEditorStore.isDirty = true"
 					/>
 				</div>
 
 				<div
-					v-if="!currentPost.noimageindex"
+					v-if="!postEditorStore.currentPost.noimageindex"
 					class="aioseo-description max-image-preview"
 				>
 					<span>{{ strings.maxImagePreview }}</span>
 					<base-select
 						size="medium"
 						:options="imagePreviewOptions"
-						:modelValue="getImagePreview(currentPost.maxImagePreview)"
+						:modelValue="getImagePreview(postEditorStore.currentPost.maxImagePreview)"
 						@update:modelValue="value => saveImagePreview(value.value)"
 					/>
 				</div>
@@ -153,18 +153,24 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { IsDirty } from '@/vue/mixins'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore()
+		}
+	},
 	components : {
 		BaseCheckbox,
 		GridColumn,
 		GridRow
 	},
-	mixins : [ IsDirty ],
 	data () {
 		return {
 			strings : {
@@ -187,7 +193,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'currentPost' ]),
 		imagePreviewOptions () {
 			return [
 				{ label: this.strings.none, value: 'none' },
@@ -201,8 +206,8 @@ export default {
 			return this.imagePreviewOptions.find(h => h.value === option)
 		},
 		saveImagePreview (value) {
-			this.currentPost.maxImagePreview = value
-			this.$store.commit('isDirty', true)
+			this.postEditorStore.currentPost.maxImagePreview = value
+			this.postEditorStore.isDirty                     = true
 		}
 	}
 }

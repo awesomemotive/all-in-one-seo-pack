@@ -6,18 +6,16 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
-import App from './App.vue'
-import store from '@/vue/store'
+import { loadPiniaStores } from '@/vue/stores'
 
-let app = createApp(App)
+import App from './App.vue'
+
+let app = createApp({ ...App, name: 'Standalone/FlyoutMenu' })
 app     = loadPlugins(app)
 app     = loadComponents(app)
 app     = loadVersionedComponents(app)
 
-// Give the store access to the app.
-store._vm = app
-
-// Use the store.
-app.use(store)
+// Use the pinia store.
+loadPiniaStores(app)
 
 app.mount('#aioseo-flyout-menu')

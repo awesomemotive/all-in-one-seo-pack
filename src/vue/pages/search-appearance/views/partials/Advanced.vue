@@ -36,13 +36,13 @@
 			<template #name>
 				{{ strings.removeCatBase }}
 				<core-pro-badge
-					v-if="isUnlicensed"
+					v-if="licenseStore.isUnlicensed"
 				/>
 			</template>
 
 			<template #content>
 				<base-radio-toggle
-					:disabled="isUnlicensed"
+					:disabled="licenseStore.isUnlicensed"
 					v-model="removeCatBase"
 					name="removeCatBase"
 					:options="[
@@ -53,7 +53,7 @@
 
 				<core-alert
 					class="inline-upsell"
-					v-if="isUnlicensed"
+					v-if="licenseStore.isUnlicensed"
 					type="blue"
 				>
 					<div v-html="strings.removeCatBaseUpsell" />
@@ -62,7 +62,7 @@
 		</core-settings-row>
 
 		<core-settings-row
-			v-if="!noMetaBox && (!isUnlicensed || 'taxonomies' !== type)"
+			v-if="!noMetaBox && (!licenseStore.isUnlicensed || 'taxonomies' !== type)"
 			:name="strings.otherOptions"
 		>
 			<template #content>
@@ -91,7 +91,7 @@
 		</core-settings-row>
 
 		<core-settings-row
-			v-if="mainOptions.searchAppearance.advanced.useKeywords && includeKeywords"
+			v-if="optionsStore.options.searchAppearance.advanced.useKeywords && includeKeywords"
 			:name="strings.keywords"
 			align
 		>
@@ -110,7 +110,11 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import {
+	useLicenseStore,
+	useOptionsStore
+} from '@/vue/stores'
+
 import { JsonValues, MaxCounts } from '@/vue/mixins'
 
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
@@ -120,6 +124,12 @@ import CoreRobotsMeta from '@/vue/components/common/core/RobotsMeta'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore(),
+			optionsStore : useOptionsStore()
+		}
+	},
 	components : {
 		BaseRadioToggle,
 		CoreAlert,
@@ -167,18 +177,12 @@ export default {
 		}
 	},
 	computed : {
-		...mapState({
-			mainOptions : 'options'
-		}),
-		...mapGetters([
-			'isUnlicensed'
-		]),
 		removeCatBase : {
 			get () {
-				return this.$isPro ? this.mainOptions.searchAppearance.advanced.removeCatBase : false
+				return this.$isPro ? this.optionsStore.options.searchAppearance.advanced.removeCatBase : false
 			},
 			set (newValue) {
-				this.mainOptions.searchAppearance.advanced.removeCatBase = newValue
+				this.optionsStore.options.searchAppearance.advanced.removeCatBase = newValue
 			}
 		},
 		title () {

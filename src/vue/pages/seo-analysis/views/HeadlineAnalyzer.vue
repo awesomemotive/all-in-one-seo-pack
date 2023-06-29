@@ -17,8 +17,8 @@
 				<template #errors>
 					<div
 						class="analyze-errors aioseo-description aioseo-error"
-						v-if="'headline' === analyzer && analyzeError"
-						v-html="analyzeError"
+						v-if="'headline' === analyzerStore.analyzer && analyzerStore.analyzeError"
+						v-html="analyzerStore.analyzeError"
 					/>
 				</template>
 			</core-analyze>
@@ -46,7 +46,7 @@
 			<div class="headline-result-main">
 				<core-headline-score
 					:score="parseResult(result).score"
-					:loading="analyzing"
+					:loading="analyzerStore.analyzing"
 				/>
 
 				<div class="headline-result-body">
@@ -60,7 +60,11 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapGetters, mapMutations } from 'vuex'
+import {
+	useAnalyzerStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import CoreAnalyze from '@/vue/components/common/core/analyze/Index'
 import CoreAnalyzeScore from '@/vue/components/common/core/analyze/Score'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -68,6 +72,12 @@ import CoreHeadlineResult from '@/vue/components/common/core/headline/Result'
 import CoreHeadlineScore from '@/vue/components/common/core/headline/Score'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 export default {
+	setup () {
+		return {
+			analyzerStore : useAnalyzerStore(),
+			settingsStore : useSettingsStore()
+		}
+	},
 	components : {
 		CoreAnalyze,
 		CoreAnalyzeScore,
@@ -95,27 +105,21 @@ export default {
 		}
 	},
 	watch : {
-		analyzeError (newValue) {
+		'analyzerStore.analyzeError' (newValue) {
 			if (newValue) {
 				this.isAnalyzing = false
 			}
 		}
 	},
-	computed : {
-		...mapState([ 'options', 'analyzer', 'analyzing', 'analyzeError' ]),
-		...mapGetters([ 'getHeadlineAnalysisResults' ])
-	},
 	methods : {
-		...mapActions([ 'runHeadlineAnalyzer', 'deleteHeadline' ]),
-		...mapMutations([ 'toggleCard', 'closeCard' ]),
 		parseResult (results) {
 			return JSON.parse(results)
 		},
 		startAnalyzing (headline) {
 			this.headline = headline
-			this.$store.commit('analyzing', true)
-			this.$store.commit('analyzeError', false)
-			this.runHeadlineAnalyzer({
+			this.analyzerStore.analyzing    = true
+			this.analyzerStore.analyzeError = false
+			this.analyzerStore.runHeadlineAnalyzer({
 				headline            : this.headline,
 				shouldStoreHeadline : true
 			})
@@ -144,7 +148,7 @@ export default {
 			}
 
 			this.headline  = null
-			this.headlines = this.getHeadlineAnalysisResults
+			this.headlines = this.analyzerStore.getHeadlineAnalysisResults
 			this.toggleFirstCard()
 
 			this.$nextTick(() => {
@@ -160,20 +164,20 @@ export default {
 
 			delete this.headlines[headline]
 
-			this.deleteHeadline(headline)
+			this.analyzerStore.deleteHeadline(headline)
 				.then(() => {
-					this.headlines = this.getHeadlineAnalysisResults
+					this.headlines = this.analyzerStore.getHeadlineAnalysisResults
 				})
 		},
 		closeAllCards () {
 			const keys = Object.keys(this.headlines)
 			keys.forEach(key => {
-				this.closeCard('analyzeHeadline' + key)
+				this.settingsStore.closeCard('analyzeHeadline' + key)
 			})
 		},
 		toggleFirstCard () {
 			const keys = Object.keys(this.headlines)
-			this.toggleCard('analyzeHeadline' + keys[0])
+			this.settingsStore.toggleCard({ slug: 'analyzeHeadline' + keys[0] })
 		},
 		hashCode (string) {
 			if (!string) {
@@ -189,8 +193,8 @@ export default {
 		}
 	},
 	mounted () {
-		this.$store.commit('analyzeError', false)
-		this.headlines = this.getHeadlineAnalysisResults
+		this.analyzerStore.analyzeError = false
+		this.headlines                  = this.analyzerStore.getHeadlineAnalysisResults
 
 		this.toggleFirstCard()
 	}

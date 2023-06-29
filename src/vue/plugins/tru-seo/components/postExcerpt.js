@@ -1,5 +1,9 @@
+import {
+	usePostEditorStore,
+	useTagsStore
+} from '@/vue/stores'
+
 import TruSeo from '@/vue/plugins/tru-seo'
-import store from '@/vue/store'
 import { getPostContent, getPostEditedContent } from './postContent'
 import { getPostEditedPermalink } from './postPermalink'
 import { isBlockEditor, isClassicEditor, isClassicNoEditor, isElementorEditor, isDiviEditor, isSeedProdEditor } from '@/vue/utils/context'
@@ -66,8 +70,9 @@ const getEditorExcerpt = () => {
  * @returns {string} Post Excerpt
  */
 export const getPostExcerpt = () => {
-	if (store.state['live-tags'].liveTags.post_excerpt) {
-		return store.state['live-tags'].liveTags.post_excerpt
+	const tagsStore = useTagsStore()
+	if (tagsStore.liveTags.post_excerpt) {
+		return tagsStore.liveTags.post_excerpt
 	}
 
 	let postExcerpt
@@ -89,7 +94,7 @@ export const getPostExcerpt = () => {
 	}
 
 	if (postExcerpt) {
-		store.commit('live-tags/updatePostExcerpt', postExcerpt)
+		tagsStore.updatePostExcerpt(postExcerpt)
 	}
 	return postExcerpt
 }
@@ -126,15 +131,21 @@ export const maybeUpdatePostExcerpt = async (run = true) => {
 	const newPostExcerpt = getPostEditedExcerpt()
 	if (postExcerpt !== newPostExcerpt) {
 		postExcerpt = newPostExcerpt
-		store.commit('live-tags/updatePostExcerpt', postExcerpt)
-		if (run) {
-			(new TruSeo()).runAnalysis({
-				postId   : store.state.currentPost.id,
-				postData : { ...store.state.currentPost },
-				content  : getPostEditedContent(),
-				slug     : getPostEditedPermalink()
-			})
+
+		const postEditorStore = usePostEditorStore()
+		const tagsStore       = useTagsStore()
+		tagsStore.updatePostExcerpt(postExcerpt)
+
+		if (!run) {
+			return
 		}
+
+		(new TruSeo()).runAnalysis({
+			postId   : postEditorStore.currentPost.id,
+			postData : { ...postEditorStore.currentPost },
+			content  : getPostEditedContent(),
+			slug     : getPostEditedPermalink()
+		})
 	}
 }
 

@@ -1,4 +1,10 @@
-import store from '@/vue/store'
+import {
+	useOptionsStore,
+	usePostEditorStore,
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import { getPostEditedAuthor } from '../plugins/tru-seo/components/postAuthor'
 import { getPostEditedFeaturedImage } from '../plugins/tru-seo/components/postFeaturedImage'
 import { getPostEditedContent } from '../plugins/tru-seo/components/postContent'
@@ -26,6 +32,7 @@ export const ImageSourceOptions = {
 			]
 		},
 		imageSourceOptionsFiltered () {
+			const postEditorStore = usePostEditorStore()
 			const options = this.imageSourceOptions
 				.map(option => {
 					if ('default' === option.value) {
@@ -34,14 +41,16 @@ export const ImageSourceOptions = {
 					return option
 				}).concat({ label: this.$t.__('Custom Image', this.$td), value: 'custom_image' })
 
-			if ('term' === this.currentPost.context) {
+			if ('term' === postEditorStore.currentPost?.context) {
 				return options.filter(option => !this.excludedTermOptions.includes(option.value))
 			}
-			if ('post' === this.currentPost.context && 'attachment' === this.currentPost.postType) {
+			if ('post' === postEditorStore.currentPost?.context && 'attachment' === postEditorStore.currentPost?.postType) {
 				return options.filter(option => !this.excludedAttachmentOptions.includes(option.value))
 			}
-			if (this.$aioseo.integration) {
-				if ('seedprod' === this.$aioseo.integration) {
+
+			const rootStore = useRootStore()
+			if (rootStore.aioseo.integration) {
+				if ('seedprod' === rootStore.aioseo.integration) {
 					this.excludedPageBuilderOptions.push('featured', 'custom')
 				}
 				return options.filter(option => !this.excludedPageBuilderOptions.includes(option.value))
@@ -82,9 +91,11 @@ const getFirstAvailableImage = async (currentPost, type, prefix) => {
 	}
 
 	if (!image) {
-		await store.dispatch('getFirstAttachedImage', { postId: currentPost.id }).then((url) => {
-			image = url
-		})
+		const postEditorStore = usePostEditorStore()
+		await postEditorStore.getFirstAttachedImage({ postId: currentPost.id })
+			.then((url) => {
+				image = url
+			})
 	}
 
 	if (!image) {
@@ -92,19 +103,22 @@ const getFirstAvailableImage = async (currentPost, type, prefix) => {
 	}
 
 	if (!image) {
-		image = this.options.social[type].homePage.image
+		const optionsStore = useOptionsStore()
+		image = optionsStore.options.social[type].homePage.image
 	}
 
 	return image
 }
 
 const getUserImage = async () => {
-	const userId = getPostEditedAuthor()
 	let image    = ''
 
-	await store.dispatch('getUserImage', { userId }).then((gravatar) => {
-		image = gravatar
-	})
+	const userId          = getPostEditedAuthor()
+	const postEditorStore = usePostEditorStore()
+	await postEditorStore.getUserImage({ userId })
+		.then((gravatar) => {
+			image = gravatar
+		})
 
 	return image
 }
@@ -121,13 +135,16 @@ export const ImagePreview = {
 	},
 	methods : {
 		async setImageUrl (socialNetwork = '') {
-			const currentPost = this.currentPost
-			const tab         = socialNetwork || this.metaBoxTabs?.social || 'facebook'
-			const prefix      = 'facebook' === tab || ('twitter' === tab && currentPost.twitter_use_og) ? 'og_' : 'twitter_'
+			const optionsStore    = useOptionsStore()
+			const postEditorStore = usePostEditorStore()
+			const settingsStore   = useSettingsStore()
+			const currentPost     = postEditorStore.currentPost
+			const tab             = socialNetwork || settingsStore.metaBoxTabs?.social || 'facebook'
+			const prefix         = 'facebook' === tab || ('twitter' === tab && currentPost.twitter_use_og) ? 'og_' : 'twitter_'
 
 			let imageSource = currentPost[`${prefix}image_type`] || 'default'
 			if ('default' === imageSource) {
-				imageSource = this.options.social[tab].general.defaultImageSourcePosts
+				imageSource = optionsStore.options.social[tab].general.defaultImageSourcePosts
 			}
 
 			this.imageUrl = ''
@@ -135,18 +152,20 @@ export const ImagePreview = {
 			switch (imageSource) {
 				case 'featured':
 					this.loading = true
-					await getPostEditedFeaturedImage().then(url => {
-						this.imageUrl = url
-						this.loading = false
-					})
+					await getPostEditedFeaturedImage()
+						.then(url => {
+							this.imageUrl = url
+							this.loading  = false
+						})
 					break
 
 				case 'attach':
 					this.loading = true
-					await store.dispatch('getFirstAttachedImage', { postId: currentPost.id }).then((url) => {
-						this.imageUrl = url
-						this.loading = false
-					})
+					await postEditorStore.getFirstAttachedImage({ postId: currentPost.id })
+						.then((url) => {
+							this.imageUrl = url
+							this.loading  = false
+						})
 					break
 
 				case 'content':
@@ -155,18 +174,20 @@ export const ImagePreview = {
 
 				case 'author':
 					this.loading = true
-					await getUserImage().then((url) => {
-						this.imageUrl = url
-						this.loading = false
-					})
+					await getUserImage()
+						.then((url) => {
+							this.imageUrl = url
+							this.loading  = false
+						})
 					break
 
 				case 'auto':
 					this.loading = true
-					await getFirstAvailableImage(currentPost, tab, prefix).then(url => {
-						this.imageUrl = url
-						this.loading = false
-					})
+					await getFirstAvailableImage(currentPost, tab, prefix)
+						.then(url => {
+							this.imageUrl = url
+							this.loading  = false
+						})
 					break
 
 				case 'custom':
@@ -179,50 +200,16 @@ export const ImagePreview = {
 
 				case 'default':
 				default:
-					this.imageUrl = this.options.social[tab].general.defaultImagePosts
+					this.imageUrl = optionsStore.options.social[tab].general.defaultImagePosts
 					break
 			}
 
-			if (!this.imageUrl && this.$aioseo.urls.siteLogo) {
-				this.imageUrl = this.$aioseo.urls.siteLogo
+			const rootStore = useRootStore()
+			if (!this.imageUrl && rootStore.aioseo.urls.siteLogo) {
+				this.imageUrl = rootStore.aioseo.urls.siteLogo
 			}
 
-			this.$bus.$emit('updateSocialImagePreview', { social: tab, image: this.imageUrl })
-		}
-	}
-}
-
-const customUploader = {}
-export const Uploader = {
-	methods : {
-		async openUploadModal (uploader, setter) {
-			const callback = () => {
-				const attachment = customUploader[uploader].state().get('selection').first().toJSON()
-				setter(attachment.url)
-			}
-
-			// If the uploader object has already been created, reopen the dialog
-			if (customUploader[uploader]) {
-				customUploader[uploader].open()
-				return
-			}
-
-			// Extend the wp.media object
-			customUploader[uploader] = window.wp.media({
-				title  : this.$t.__('Choose Image', this.$td),
-				button : {
-					text : this.$t.__('Choose Image', this.$td)
-				},
-				multiple : false
-			})
-
-			// When a file is selected, grab the URL and set it as the text field's value
-			customUploader[uploader].on('select', callback)
-
-			// Open the uploader dialog
-			await this.$nextTick()
-
-			customUploader[uploader].open()
+			window.aioseoBus.$emit('updateSocialImagePreview', { social: tab, image: this.imageUrl })
 		}
 	}
 }

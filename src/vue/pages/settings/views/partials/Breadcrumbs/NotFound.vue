@@ -7,25 +7,25 @@
 			<div>
 				<preview
 					:preview-data="getPreview()"
-					:useDefaultTemplate="dynamicOptions.breadcrumbs.archives.notFound.useDefaultTemplate"
+					:useDefaultTemplate="optionsStore.dynamicOptions.breadcrumbs.archives.notFound.useDefaultTemplate"
 				/>
 
 				<grid-row>
 					<grid-column>
 						<base-toggle
-							v-model="dynamicOptions.breadcrumbs.archives.notFound.useDefaultTemplate"
+							v-model="optionsStore.dynamicOptions.breadcrumbs.archives.notFound.useDefaultTemplate"
 							class="current-item"
 						/>
 						{{ strings.useDefaultTemplate }}
 					</grid-column>
 				</grid-row>
 
-				<grid-row v-if="!dynamicOptions.breadcrumbs.archives.notFound.useDefaultTemplate">
+				<grid-row v-if="!optionsStore.dynamicOptions.breadcrumbs.archives.notFound.useDefaultTemplate">
 					<grid-column
-						v-if="options.breadcrumbs.breadcrumbPrefix && options.breadcrumbs.breadcrumbPrefix.length"
+						v-if="optionsStore.options.breadcrumbs.breadcrumbPrefix && optionsStore.options.breadcrumbs.breadcrumbPrefix.length"
 					>
 						<base-toggle
-							v-model="dynamicOptions.breadcrumbs.archives.notFound.showPrefixCrumb"
+							v-model="optionsStore.dynamicOptions.breadcrumbs.archives.notFound.showPrefixCrumb"
 							class="current-item"
 						/>
 						{{ strings.showPrefixLabel }}
@@ -33,7 +33,7 @@
 
 					<grid-column>
 						<base-toggle
-							v-model="dynamicOptions.breadcrumbs.archives.notFound.showHomeCrumb"
+							v-model="optionsStore.dynamicOptions.breadcrumbs.archives.notFound.showHomeCrumb"
 							class="current-item"
 						/>
 						{{ strings.showHomeLabel }}
@@ -41,7 +41,7 @@
 
 					<grid-column>
 						<core-html-tags-editor
-							v-model="dynamicOptions.breadcrumbs.archives.notFound.template"
+							v-model="optionsStore.dynamicOptions.breadcrumbs.archives.notFound.template"
 							:line-numbers="true"
 							checkUnfilteredHtml
 							tags-context="breadcrumbs-notFound"
@@ -59,13 +59,23 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import Preview from './Preview'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		CoreHtmlTagsEditor,
 		CoreSettingsRow,
@@ -84,8 +94,8 @@ export default {
 	},
 	methods : {
 		getPreview () {
-			const breadcrumbOptions = this.options.breadcrumbs
-			const archiveOptions = this.dynamicOptions.breadcrumbs.archives.notFound
+			const breadcrumbOptions = this.optionsStore.options.breadcrumbs
+			const archiveOptions = this.optionsStore.dynamicOptions.breadcrumbs.archives.notFound
 			const useDefault = archiveOptions.useDefaultTemplate
 			return [
 				(useDefault && breadcrumbOptions.breadcrumbPrefix) || (!useDefault && archiveOptions.showPrefixCrumb) ? breadcrumbOptions.breadcrumbPrefix : '',
@@ -94,12 +104,9 @@ export default {
 			]
 		},
 		getTemplate () {
-			const template = this.dynamicOptions.breadcrumbs.archives.notFound.useDefaultTemplate ? this.$aioseo.breadcrumbs.defaultTemplates.archives.notFound : this.dynamicOptions.breadcrumbs.archives.notFound.template
-			return template.replace(/#breadcrumb_404_error_format/g, this.options.breadcrumbs.errorFormat404)
+			const template = this.optionsStore.dynamicOptions.breadcrumbs.archives.notFound.useDefaultTemplate ? this.rootStore.aioseo.breadcrumbs.defaultTemplates.archives.notFound : this.optionsStore.dynamicOptions.breadcrumbs.archives.notFound.template
+			return template.replace(/#breadcrumb_404_error_format/g, this.optionsStore.options.breadcrumbs.errorFormat404)
 		}
-	},
-	computed : {
-		...mapState([ 'options', 'dynamicOptions' ])
 	}
 }
 </script>

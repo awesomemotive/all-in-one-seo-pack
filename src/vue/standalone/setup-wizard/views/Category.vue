@@ -57,7 +57,7 @@
 							v-if="selected.length"
 							:disabled="'other' !== selected[0].value"
 							size="medium"
-							v-model="category.categoryOther"
+							v-model="setupWizardStore.category.categoryOther"
 							:placeholder="strings.enterYourAnswer"
 							ref="other-category"
 						/>
@@ -71,7 +71,7 @@
 						</div>
 
 						<core-html-tags-editor
-							v-model="category.siteTitle"
+							v-model="setupWizardStore.category.siteTitle"
 							:line-numbers="false"
 							single
 							tags-context="homePage"
@@ -89,7 +89,7 @@
 						</div>
 
 						<core-html-tags-editor
-							v-model="category.metaDescription"
+							v-model="setupWizardStore.category.metaDescription"
 							:line-numbers="false"
 							description
 							tags-context="homePage"
@@ -104,9 +104,9 @@
 
 				<template #footer>
 					<div class="go-back">
-						<router-link :to="getPrevLink" class="no-underline">&larr;</router-link>
+						<router-link :to="setupWizardStore.getPrevLink" class="no-underline">&larr;</router-link>
 						&nbsp;
-						<router-link :to="getPrevLink">{{ strings.goBack }}</router-link>
+						<router-link :to="setupWizardStore.getPrevLink">{{ strings.goBack }}</router-link>
 					</div>
 					<div class="spacer"></div>
 					<base-button
@@ -123,10 +123,15 @@
 </template>
 
 <script>
+import {
+	useOptionsStore,
+	useRootStore,
+	useSetupWizardStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
 import { Wizard } from '@/vue/mixins'
-import { mapActions, mapMutations, mapState } from 'vuex'
 import BaseHighlightToggle from '@/vue/components/common/base/HighlightToggle'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import GridColumn from '@/vue/components/common/grid/Column'
@@ -148,6 +153,9 @@ export default {
 		const { strings } = useWizard()
 
 		return {
+			optionsStore      : useOptionsStore(),
+			rootStore         : useRootStore(),
+			setupWizardStore  : useSetupWizardStore(),
 			composableStrings : strings
 		}
 	},
@@ -198,18 +206,12 @@ export default {
 	},
 	watch : {
 		selected (newVal) {
-			this.category.category = newVal[0].value
+			this.setupWizardStore.category.category = newVal[0].value
 
 			this.triggerFeaturesUpdate(newVal[0].value)
 		}
 	},
-	computed : {
-		...mapState([ 'options' ]),
-		...mapState('wizard', [ 'category' ])
-	},
 	methods : {
-		...mapMutations('wizard', [ 'updateFeatures' ]),
-		...mapActions('wizard', [ 'saveWizard' ]),
 		triggerFeaturesUpdate (category) {
 			const features = [
 				'optimized-search-appearance',
@@ -256,7 +258,7 @@ export default {
 					break
 			}
 
-			this.updateFeatures(features)
+			this.setupWizardStore.features = features
 		},
 		updateValue (checked, category) {
 			this.selected = []
@@ -283,27 +285,27 @@ export default {
 		},
 		saveAndContinue () {
 			this.loading = true
-			this.saveWizard('category')
+			this.setupWizardStore.saveWizard('category')
 				.then(() => {
-					this.$router.push(this.getNextLink)
+					this.$router.push(this.setupWizardStore.getNextLink)
 				})
 		}
 	},
 	mounted () {
 		this.$nextTick(() => {
-			const category = this.categories.find(c => c.value === this.category.category) || this.categories[0]
+			const category = this.categories.find(c => c.value === this.setupWizardStore.category.category) || this.categories[0]
 
 			this.selected.push(category)
 			this.triggerFeaturesUpdate(category)
 
-			const siteTitle = this.$aioseo.data.staticHomePage ? this.$aioseo.data.staticHomePageTitle : this.options.searchAppearance.global.siteTitle
-			if (siteTitle && this.category.siteTitle !== siteTitle) {
-				this.category.siteTitle = siteTitle
+			const siteTitle = this.rootStore.aioseo.data.staticHomePage ? this.rootStore.aioseo.data.staticHomePageTitle : this.optionsStore.options.searchAppearance.global.siteTitle
+			if (siteTitle && this.setupWizardStore.category.siteTitle !== siteTitle) {
+				this.setupWizardStore.category.siteTitle = siteTitle
 			}
 
-			const metaDescription = this.$aioseo.data.staticHomePage ? this.$aioseo.data.staticHomePageDescription : this.options.searchAppearance.global.metaDescription
-			if (metaDescription && this.category.metaDescription !== metaDescription) {
-				this.category.metaDescription = metaDescription
+			const metaDescription = this.rootStore.aioseo.data.staticHomePage ? this.rootStore.aioseo.data.staticHomePageDescription : this.optionsStore.options.searchAppearance.global.metaDescription
+			if (metaDescription && this.setupWizardStore.category.metaDescription !== metaDescription) {
+				this.setupWizardStore.category.metaDescription = metaDescription
 			}
 
 			this.loaded = true

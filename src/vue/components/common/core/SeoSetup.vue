@@ -36,11 +36,25 @@
 </template>
 
 <script>
-import { mapGetters, mapState, mapMutations } from 'vuex'
+import {
+	useLicenseStore,
+	useOptionsStore,
+	useRootStore,
+	useSetupWizardStore
+} from '@/vue/stores'
+
 import SvgProgressCircle from '@/vue/components/common/svg/ProgressCircle'
 import SvgRocket from '@/vue/components/common/svg/Rocket'
 import SvgSeo from '@/vue/components/common/svg/Seo'
 export default {
+	setup () {
+		return {
+			licenseStore     : useLicenseStore(),
+			optionsStore     : useOptionsStore(),
+			rootStore        : useRootStore(),
+			setupWizardStore : useSetupWizardStore()
+		}
+	},
 	components : {
 		SvgProgressCircle,
 		SvgRocket,
@@ -63,14 +77,9 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters('wizard', [ 'getCurrentStageCount', 'getTotalStageCount', 'getNextLink' ]),
-		...mapState('wizard', [ 'stages' ]),
-		...mapGetters('wizard', [ 'shouldShowImportStep' ]),
-		...mapGetters([ 'isUnlicensed' ]),
-		...mapState([ 'internalOptions' ]),
 		steps () {
-			const currentHtml = `<strong>${this.getCurrentStageCount}</strong>`
-			const totalHtml   = `<strong>${this.getTotalStageCount}</strong>`
+			const currentHtml = `<strong>${this.setupWizardStore.getCurrentStageCount}</strong>`
+			const totalHtml   = `<strong>${this.setupWizardStore.getTotalStageCount}</strong>`
 
 			return this.$t.sprintf(
 				// Translators: 1 - The current step count. 2 - The total step count.
@@ -80,36 +89,32 @@ export default {
 			)
 		},
 		percent () {
-			return Math.ceil((100 * this.getCurrentStageCount) / this.getTotalStageCount)
+			return Math.ceil((100 * this.setupWizardStore.getCurrentStageCount) / this.setupWizardStore.getTotalStageCount)
 		},
 		wizardUrl () {
-			return `${this.$aioseo.urls.aio.wizard}#/${this.getNextLink.name}`
+			return `${this.rootStore.aioseo.urls.aio.wizard}#/${this.setupWizardStore.getNextLink.name}`
 		}
 	},
 	methods : {
-		...mapMutations('wizard', [ 'loadState', 'setStages' ]),
 		deleteStage (stage) {
-			const stages = [ ...this.stages ]
-			const index = stages.findIndex(s => stage === s)
+			const index = this.setupWizardStore.stages.findIndex(s => stage === s)
 			if (-1 !== index) {
 				// Delete the stage from stages.
-				stages.splice(index, 1)
+				this.setupWizardStore.stages.splice(index, 1)
 			}
-
-			this.setStages(stages)
 		}
 	},
 	mounted () {
-		if (this.internalOptions.internal.wizard) {
-			const wizard = JSON.parse(this.internalOptions.internal.wizard)
-			this.loadState(wizard)
+		if (this.optionsStore.internalOptions.internal.wizard) {
+			const wizard = JSON.parse(this.optionsStore.internalOptions.internal.wizard)
+			this.setupWizardStore.loadState(wizard)
 		}
 
-		if (!this.shouldShowImportStep) {
+		if (!this.setupWizardStore.shouldShowImportStep) {
 			this.deleteStage('import')
 		}
 
-		if (!this.isUnlicensed) {
+		if (!this.licenseStore.isUnlicensed) {
 			this.deleteStage('license-key')
 		}
 

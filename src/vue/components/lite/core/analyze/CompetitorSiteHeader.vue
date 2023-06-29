@@ -7,24 +7,24 @@
 			:toggles="false"
 		>
 			<component
-				:is="!internalOptions.internal.siteAnalysis.connectToken ? 'core-blur' : 'div'"
+				:is="!optionsStore.internalOptions.internal.siteAnalysis.connectToken ? 'core-blur' : 'div'"
 			>
 				<slot />
 			</component>
 
 			<div
-				v-if="!internalOptions.internal.siteAnalysis.connectToken"
+				v-if="!optionsStore.internalOptions.internal.siteAnalysis.connectToken"
 				class="aioseo-seo-site-score-cta"
 			>
 				<a
 					href="#"
-					@click.prevent="openPopup($aioseo.urls.connect)"
+					@click.prevent="openPopup(rootStore.aioseo.urls.connect)"
 				>{{ connectWithAioseo }}</a> {{ strings.toAnalyzeCompetitorSite }}
 			</div>
 		</core-card>
 
 		<template
-			v-if="internalOptions.internal.siteAnalysis.connectToken"
+			v-if="optionsStore.internalOptions.internal.siteAnalysis.connectToken"
 		>
 			<slot name="competitor-results" />
 		</template>
@@ -32,10 +32,15 @@
 </template>
 
 <script>
+import {
+	useConnectStore,
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { popup } from '@/vue/utils/popup'
 import { useSeoSiteScore } from '@/vue/composables'
 import { SeoSiteScore } from '@/vue/mixins'
-import { mapState, mapActions } from 'vuex'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreCard from '@/vue/components/common/core/Card'
 export default {
@@ -43,6 +48,9 @@ export default {
 		const { strings } = useSeoSiteScore()
 
 		return {
+			connectStore : useConnectStore(),
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore(),
 			strings
 		}
 	},
@@ -56,11 +64,7 @@ export default {
 			score : 0
 		}
 	},
-	computed : {
-		...mapState([ 'internalOptions' ])
-	},
 	methods : {
-		...mapActions([ 'saveConnectToken' ]),
 		openPopup (url) {
 			popup(
 				url,
@@ -74,7 +78,7 @@ export default {
 			)
 		},
 		completedCallback (payload) {
-			return this.saveConnectToken(payload.token)
+			return this.connectStore.saveConnectToken(payload.token)
 		}
 	}
 }

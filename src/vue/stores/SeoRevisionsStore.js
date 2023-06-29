@@ -1,0 +1,84 @@
+import { defineStore } from 'pinia'
+import http from '@/vue/utils/http'
+import links from '@/vue/utils/links'
+
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
+export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
+	state : () => ({
+		items       : [],
+		currentUser : {
+			avatar       : null,
+			display_name : null
+		},
+		itemFrom              : {},
+		itemTo                : {},
+		noteMaxLength         : 0,
+		itemsLimit            : 0,
+		itemsTotalCount       : 0,
+		seoRevisionsDiff      : {},
+		seoRevisionsDiffCache : {}
+	}),
+	actions : {
+		delete (id) {
+			return http.delete(links.restUrl(`seo-revisions/${id}`))
+				.then((response) => {
+					this.itemsTotalCount = response.body.itemsTotalCount
+
+					return response
+				})
+		},
+		fetch (payload = {}, append = false) {
+			const postEditorStore = usePostEditorStore()
+			return http.get(links.restUrl('seo-revisions/' + postEditorStore.currentPost.context + '/' + postEditorStore.currentPost.id))
+				.query(payload)
+				.then(response => {
+					this.itemsTotalCount = response.body.itemsTotalCount
+					if (append) {
+						for (const item of response.body.items) {
+							this.items.push(item)
+						}
+					} else {
+						this.items = response.body.items
+					}
+
+					return response
+				})
+		},
+		update ({ id, payload }) {
+			return http.post(links.restUrl(`seo-revisions/${id}/`))
+				.send(payload)
+				.then((response) => {
+					return response
+				})
+		},
+		restore ({ id }) {
+			return http.post(links.restUrl(`seo-revisions/restore/${id}/`))
+				.then((response) => {
+					return response
+				})
+		},
+		fetchDiff (payload) {
+			const cacheKey = payload.fromId + '-' + payload.toId
+
+			return new Promise((resolve) => {
+				if (this.seoRevisionsDiffCache[cacheKey]) {
+					this.seoRevisionsDiff = this.seoRevisionsDiffCache[cacheKey]
+
+					resolve({})
+				} else {
+					http.get(links.restUrl('seo-revisions/diff'))
+						.query(payload)
+						.then((response) => {
+							this.seoRevisionsDiff      = response.body.diff
+							this.seoRevisionsDiffCache = { key: cacheKey, value: response.body.diff }
+
+							resolve(response)
+						})
+				}
+			})
+		}
+	}
+})

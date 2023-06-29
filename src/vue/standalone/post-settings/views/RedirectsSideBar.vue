@@ -11,7 +11,7 @@
 
 				<base-button
 					class="open-redirects-modal gray small"
-					@click="toggleRedirectsModal"
+					@click="postEditorStore.toggleRedirectsModal"
 				>
 					<svg-right-arrow-short />
 					{{ strings.button }}
@@ -22,10 +22,18 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgRightArrowShort from '@/vue/components/common/svg/right-arrow/Short'
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore()
+		}
+	},
 	components : {
 		CoreSettingsRow,
 		SvgRightArrowShort
@@ -38,9 +46,6 @@ export default {
 				button      : this.$t.__('Open Redirects', this.$td)
 			}
 		}
-	},
-	methods : {
-		...mapMutations([ 'toggleRedirectsModal' ])
 	}
 }
 </script>

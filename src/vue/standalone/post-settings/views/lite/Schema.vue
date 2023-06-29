@@ -25,8 +25,8 @@
 					</div>
 
 					<graph-card
-						v-if="currentPost.schema.defaultGraph && 'none' !== currentPost.schema.defaultGraph"
-						:defaultGraph="currentPost.schema.defaultGraph"
+						v-if="postEditorStore.currentPost.schema.default.graphName && postEditorStore.currentPost.schema.default.isEnabled"
+						:defaultGraph="postEditorStore.currentPost.schema.default.graphName"
 					>
 						<template #buttons>
 							<core-tooltip
@@ -53,7 +53,7 @@
 					<core-alert
 						class="no-graphs"
 						type="yellow"
-						v-if="(!currentPost.schema.defaultGraph || 'none' === currentPost.schema.defaultGraph)"
+						v-if="!postEditorStore.currentPost.schema.default.graphName || !postEditorStore.currentPost.schema.default.isEnabled"
 					>
 						{{strings.noGraphs}}
 					</core-alert>
@@ -90,7 +90,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
@@ -99,6 +102,11 @@ import GraphCard from '../partials/GraphCard'
 import SvgEye from '@/vue/components/common/svg/Eye'
 
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreSettingsRow,
@@ -125,7 +133,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'currentPost', 'schema' ]),
 		isSidebar () {
 			return 'sidebar' === this.$root._data.screenContext
 		}

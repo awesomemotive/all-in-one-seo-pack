@@ -1,3 +1,8 @@
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { __, sprintf } from '@wordpress/i18n'
 
 const wp = window.wp
@@ -29,12 +34,14 @@ export const settings = {
 	icon     : icon,
 	example  : {},
 	edit     : withSelect(function (select) {
-		const categories = select('core').getEntityRecords('taxonomy', window.aioseo.localBusiness.taxonomyName)
+		const rootStore  = useRootStore()
+		const categories = select('core').getEntityRecords('taxonomy', rootStore.aioseo.localBusiness.taxonomyName)
 		return {
 			categories : categories
 		}
 	})(function (props) {
-		const multipleLocations = window.aioseo.options.localBusiness?.locations.general.multiple
+		const optionsStore      = useOptionsStore()
+		const multipleLocations = optionsStore.options.localBusiness?.locations.general.multiple
 		const { className } = props
 		let { categories } = props
 
@@ -61,6 +68,7 @@ export const settings = {
 		}
 
 		if (0 === categories.length) {
+			const rootStore = useRootStore()
 			return el(Fragment, {},
 				el(
 					'div',
@@ -68,7 +76,7 @@ export const settings = {
 					sprintf(
 						// Translators: 1 - The plural label of the custom post type.
 						__('No %1$s found', td),
-						window.aioseo.localBusiness.taxonomyPluralLabel
+						rootStore.aioseo.localBusiness.taxonomyPluralLabel
 					)
 				)
 			)

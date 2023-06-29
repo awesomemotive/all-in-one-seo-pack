@@ -6,7 +6,7 @@
 		>
 			<div
 				class="aioseo-settings-row"
-				v-if="$aioseo.data.isNetworkAdmin"
+				v-if="rootStore.aioseo.data.isNetworkAdmin"
 			>
 				<div class="select-site">
 					{{ strings.selectSite }}
@@ -123,7 +123,10 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {
+	useRootStore,
+	useToolsStore
+} from '@/vue/stores'
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -136,10 +139,10 @@ import MigrationInfo from './debug/MigrationInfo'
 import SvgClose from '@/vue/components/common/svg/Close'
 
 export default {
-	props : {
-		extraActions : {
-			type     : Array,
-			required : false
+	setup () {
+		return {
+			rootStore  : useRootStore(),
+			toolsStore : useToolsStore()
 		}
 	},
 	components : {
@@ -152,6 +155,12 @@ export default {
 		DeprecatedOptions,
 		MigrationInfo,
 		SvgClose
+	},
+	props : {
+		extraActions : {
+			type     : Array,
+			required : false
+		}
 	},
 	data () {
 		return {
@@ -172,7 +181,7 @@ export default {
 				yesDoAction    : 'Yes, run this action',
 				noChangedMind  : 'No, I changed my mind'
 			},
-			alertLink : this.$links.getPlainLink('Click here to open to the Scheduled Actions panel', this.$aioseo.urls.admin.scheduledActions, true)
+			alertLink : this.$links.getPlainLink('Click here to open to the Scheduled Actions panel', this.rootStore.aioseo.urls.admin.scheduledActions, true)
 		}
 	},
 	computed : {
@@ -180,9 +189,9 @@ export default {
 			return `Are you sure you want to run the "${this.currentAction.label}" action?`
 		},
 		tabs () {
-			const scheduledActionsLink          = this.$t.sprintf('<a href="%1$s" target="_blank">Scheduled Actions</a>', this.$aioseo.urls.admin.scheduledActions)
-			const networkClearCache             = this.$aioseo.data.isNetworkAdmin ? '<br><strong>NOTE: If no site is selected, this will clear the network cache.</strong>' : ''
-			const networkPluginUpdatesTransient = this.$aioseo.data.isNetworkAdmin ? '<br><strong>NOTE: If no site is selected, this will clear the network plugin updates transient.</strong>' : ''
+			const scheduledActionsLink          = this.$t.sprintf('<a href="%1$s" target="_blank">Scheduled Actions</a>', this.rootStore.aioseo.urls.admin.scheduledActions)
+			const networkClearCache             = this.rootStore.aioseo.data.isNetworkAdmin ? '<br><strong>NOTE: If no site is selected, this will clear the network cache.</strong>' : ''
+			const networkPluginUpdatesTransient = this.rootStore.aioseo.data.isNetworkAdmin ? '<br><strong>NOTE: If no site is selected, this will clear the network plugin updates transient.</strong>' : ''
 			return [
 				{
 					slug    : 'general',
@@ -293,9 +302,8 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'doTask' ]),
 		isActionDisabled (action) {
-			if (!this.$aioseo.data.isNetworkAdmin) {
+			if (!this.rootStore.aioseo.data.isNetworkAdmin) {
 				return false
 			}
 
@@ -341,7 +349,7 @@ export default {
 			this.showAreYouSureModal                  = false
 
 			this.doingActionKey++
-			this.doTask({
+			this.toolsStore.doTask({
 				action : this.currentAction.slug,
 				siteId : this.site.blog_id,
 				data
@@ -357,10 +365,10 @@ export default {
 	},
 	beforeMount () {
 		let existingTabIndex = -1
-		if (this.$aioseo.data.v3Options) {
+		if (this.rootStore.aioseo.data.v3Options) {
 			existingTabIndex = this.tabs.findIndex(existingTab => 'migrations' === existingTab.slug.toLowerCase())
 			if (-1 !== existingTabIndex) {
-				const scheduledActionsLink = this.$t.sprintf('<a href="%1$s" target="_blank">Scheduled Actions</a>', this.$aioseo.urls.admin.scheduledActions)
+				const scheduledActionsLink = this.$t.sprintf('<a href="%1$s" target="_blank">Scheduled Actions</a>', this.rootStore.aioseo.urls.admin.scheduledActions)
 				this.tabs[existingTabIndex].actions.push({
 					label            : 'Rerun V3 Migration',
 					slug             : 'restart-v3-migration',

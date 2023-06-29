@@ -1,29 +1,31 @@
 import { __ } from '@wordpress/i18n'
-import store from '@/vue/store'
+
+import {
+	useRootStore,
+	useTagsStore
+} from '@/vue/stores'
 
 import { decodeHTMLEntities } from '@/vue/utils/helpers'
 
-const td     = import.meta.env.VITE_TEXTDOMAIN
-const aioseo = window.aioseo || {
-	postData : {
-		postTypes : []
-	}
-}
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 const context = context => {
-	if (!store.state.tags.tags.length) {
+	const tagsStore = useTagsStore()
+
+	if (!tagsStore.tags.length) {
 		return []
 	}
 
-	const current = store.state.tags.context[context]
+	const current = tagsStore.context[context]
 	if (!current) {
-		return store.state.tags.tags
+		return tagsStore.tags
 			.filter(tag => !tag.context || tag.context.includes('all'))
 	}
 
 	const contextualTags = []
 	let tags             = []
 	current.forEach(key => {
-		const allTags = store.state.tags.tags.filter(tag => tag.id === key)
+		const allTags = tagsStore.tags.filter(tag => tag.id === key)
 		allTags.forEach(tag => {
 			if (tag.context) {
 				if (!tag.context.includes('all') && !tag.context.includes(context)) {
@@ -52,7 +54,8 @@ const context = context => {
 		}
 	}
 
-	const postType = aioseo.postData.postTypes.find(pt => pt.name + 'Title' === context || pt.name + 'Description' === context || 'breadcrumbs-post-type-' + pt.name === context)
+	const rootStore = useRootStore()
+	const postType = rootStore.aioseo.postData.postTypes.find(pt => pt.name + 'Title' === context || pt.name + 'Description' === context || 'breadcrumbs-post-type-' + pt.name === context)
 	if (postType) {
 		tags = tags.map(tag => {
 			tag.name        = tag.name.replace('Post', postType.singular)
@@ -70,7 +73,7 @@ const context = context => {
 		}
 	}
 
-	const taxonomy = aioseo.postData.taxonomies.find(tax => tax.name + 'Title' === context || tax.name + 'Description' === context || 'breadcrumbs-taxonomy-' + tax.name === context)
+	const taxonomy = rootStore.aioseo.postData.taxonomies.find(tax => tax.name + 'Title' === context || tax.name + 'Description' === context || 'breadcrumbs-taxonomy-' + tax.name === context)
 	if (taxonomy) {
 		tags = tags.map(tag => {
 			tag.name = tag.name.replace('Category', taxonomy.singular)

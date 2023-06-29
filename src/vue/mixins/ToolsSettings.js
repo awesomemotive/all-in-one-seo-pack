@@ -1,9 +1,16 @@
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore,
+	useOptionsStore
+	// useRootStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 
 export const ToolsSettings = {
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
 		toolsSettings () {
+			const licenseStore = useLicenseStore()
 			const settings = [
 				{
 					value  : 'webmasterTools',
@@ -47,7 +54,8 @@ export const ToolsSettings = {
 				}
 			]
 
-			if (window.aioseo.internalOptions.internal.deprecatedOptions.includes('badBotBlocker')) {
+			const optionsStore = useOptionsStore()
+			if (optionsStore.internalOptions.internal.deprecatedOptions.includes('badBotBlocker')) {
 				settings.push({
 					value  : 'blocker',
 					label  : this.$t.__('Bad Bot Blocker', this.$td),
@@ -55,7 +63,8 @@ export const ToolsSettings = {
 				})
 			}
 
-			// if (this.$aioseo.data.server.apache) {
+			// const rootStore = useRootStore()
+			// if (rootStore.aioseo.data.server.apache) {
 			//  settings.push({ value: 'htaccess', label: this.$t.__('.htaccess', this.$td) })
 			// }
 
@@ -67,7 +76,7 @@ export const ToolsSettings = {
 				})
 			}
 
-			if (!this.isUnlicensed && this.showImageSeoReset) {
+			if (!licenseStore.isUnlicensed && this.showImageSeoReset) {
 				settings.push({
 					value  : 'image',
 					label  : this.$t.__('Image SEO', this.$td),
@@ -75,7 +84,7 @@ export const ToolsSettings = {
 				})
 			}
 
-			if (!this.isUnlicensed && this.showLocalBusinessReset) {
+			if (!licenseStore.isUnlicensed && this.showLocalBusinessReset) {
 				settings.push({
 					value  : 'localBusiness',
 					label  : this.$t.__('Local Business SEO', this.$td),
@@ -83,7 +92,7 @@ export const ToolsSettings = {
 				})
 			}
 
-			if (!this.isUnlicensed && this.showRedirectsReset) {
+			if (!licenseStore.isUnlicensed && this.showRedirectsReset) {
 				settings.push({
 					value  : 'redirects',
 					label  : this.$t.__('Redirects', this.$td),
@@ -91,7 +100,7 @@ export const ToolsSettings = {
 				})
 			}
 
-			if (!this.isUnlicensed && this.showLinkAssistantReset) {
+			if (!licenseStore.isUnlicensed && this.showLinkAssistantReset) {
 				settings.push({
 					value  : 'linkAssistant',
 					label  : this.$t.__('Link Assistant', this.$td),
@@ -99,22 +108,22 @@ export const ToolsSettings = {
 				})
 			}
 
-			return settings.filter(setting => this.$allowed(setting.access))
+			return settings.filter(setting => allowed(setting.access))
 		},
 		showImageSeoReset () {
-			const addon = this.$addons.getAddon('aioseo-image-seo')
+			const addon = addons.getAddon('aioseo-image-seo')
 			return addon && addon.isActive && !addon.requiresUpgrade
 		},
 		showLocalBusinessReset () {
-			const addon = this.$addons.getAddon('aioseo-local-business')
+			const addon = addons.getAddon('aioseo-local-business')
 			return addon && addon.isActive && !addon.requiresUpgrade
 		},
 		showRedirectsReset () {
-			const addon = this.$addons.getAddon('aioseo-redirects')
+			const addon = addons.getAddon('aioseo-redirects')
 			return addon && addon.isActive && !addon.requiresUpgrade
 		},
 		showLinkAssistantReset () {
-			const addon = this.$addons.getAddon('aioseo-link-assistant')
+			const addon = addons.getAddon('aioseo-link-assistant')
 			return addon && addon.isActive && !addon.requiresUpgrade
 		}
 	}

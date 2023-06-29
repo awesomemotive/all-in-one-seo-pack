@@ -12,7 +12,7 @@
 
 		<div
 			class="aioseo-settings-row"
-			v-if="$aioseo.data.isNetworkAdmin"
+			v-if="rootStore.aioseo.data.isNetworkAdmin"
 		>
 			<div class="select-site">
 				{{ strings.selectSite }}
@@ -34,7 +34,7 @@
 					<base-checkbox
 						size="medium"
 						v-model="options.all"
-						:disabled="$aioseo.data.isNetworkAdmin && !site"
+						:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
 					>
 						{{ strings.allSettings }}
 					</base-checkbox>
@@ -48,7 +48,7 @@
 						v-if="!options.all"
 						size="medium"
 						v-model="options[setting.value]"
-						:disabled="$aioseo.data.isNetworkAdmin && !site"
+						:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
 					>
 						{{ setting.label }}
 					</base-checkbox>
@@ -76,13 +76,13 @@
 					<base-checkbox
 						size="medium"
 						v-model="postOptions.all"
-						:disabled="$aioseo.data.isNetworkAdmin && !site"
+						:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
 					>
 						{{ strings.allPostTypes }}
 					</base-checkbox>
 				</grid-column>
 				<grid-column
-					v-for="(postType, index) in $aioseo.postData.postTypes"
+					v-for="(postType, index) in rootStore.aioseo.postData.postTypes"
 					:key="index"
 					sm="6"
 				>
@@ -90,7 +90,7 @@
 						v-if="!postOptions.all"
 						size="medium"
 						v-model="postOptions[postType.name]"
-						:disabled="$aioseo.data.isNetworkAdmin && !site"
+						:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
 					>
 						{{ postType.label }}
 					</base-checkbox>
@@ -121,8 +121,13 @@
 </template>
 
 <script>
+import {
+	useRootStore,
+	useToolsStore
+} from '@/vue/stores'
+
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { DateTime } from 'luxon'
-import { mapActions } from 'vuex'
 import { ToolsSettings } from '@/vue/mixins'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -131,6 +136,12 @@ import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgUpload from '@/vue/components/common/svg/Upload'
 export default {
+	setup () {
+		return {
+			rootStore  : useRootStore(),
+			toolsStore : useToolsStore()
+		}
+	},
 	components : {
 		BaseCheckbox,
 		CoreCard,
@@ -142,6 +153,7 @@ export default {
 	mixins : [ ToolsSettings ],
 	data () {
 		return {
+			allowed,
 			site        : null,
 			options     : {},
 			postOptions : {},
@@ -156,7 +168,7 @@ export default {
 	},
 	computed : {
 		canExport () {
-			if (this.$aioseo.data.isNetworkAdmin && !this.site) {
+			if (this.rootStore.aioseo.data.isNetworkAdmin && !this.site) {
 				return false
 			}
 
@@ -177,11 +189,10 @@ export default {
 				'aioseo_page_schema_settings',
 				'aioseo_page_social_settings',
 				'aioseo_page_local_seo_settings'
-			].some(capability => this.$allowed(capability))
+			].some(capability => allowed(capability))
 		}
 	},
 	methods : {
-		...mapActions([ 'exportSettings' ]),
 		processExportSettings () {
 			const settings = []
 			if (this.options.all) {
@@ -205,7 +216,7 @@ export default {
 
 			const postOptions = []
 			if (this.postOptions.all) {
-				this.$aioseo.postData.postTypes
+				this.rootStore.aioseo.postData.postTypes
 					.forEach(postType => {
 						postOptions.push(postType.name)
 					})
@@ -220,7 +231,7 @@ export default {
 			const site = this.site ? `${this.site.domain}${this.site.path.replace('/', '-')}` : ''
 
 			this.loading = true
-			this.exportSettings({
+			this.toolsStore.exportSettings({
 				settings,
 				postOptions,
 				siteId : this.site ? this.site.blog_id : null

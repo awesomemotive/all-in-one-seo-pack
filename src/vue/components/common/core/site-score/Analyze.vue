@@ -1,7 +1,7 @@
 <template>
 	<div class="aioseo-site-score-analyze">
 		<div
-			v-if="!analyzeError"
+			v-if="!analyzerStore.analyzeError"
 			class="aioseo-seo-site-score-score"
 		>
 			<core-site-score
@@ -13,7 +13,7 @@
 		</div>
 
 		<div
-			v-if="!analyzeError"
+			v-if="!analyzerStore.analyzeError"
 			class="aioseo-seo-site-score-description"
 		>
 			<h2>{{ strings.yourOverallSiteScore }}</h2>
@@ -34,7 +34,7 @@
 
 		<div
 			class="analyze-errors"
-			v-if="analyzeError"
+			v-if="analyzerStore.analyzeError"
 		>
 			<h3>{{ strings.anErrorOccurred }}</h3>
 
@@ -44,10 +44,18 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useAnalyzerStore
+} from '@/vue/stores'
+
 import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
 import SvgBook from '@/vue/components/common/svg/Book'
 export default {
+	setup () {
+		return {
+			analyzerStore : useAnalyzerStore()
+		}
+	},
 	components : {
 		CoreSiteScore,
 		SvgBook
@@ -93,9 +101,8 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'analyzeError' ]),
 		getError () {
-			switch (this.analyzeError) {
+			switch (this.analyzerStore.analyzeError) {
 				case 'invalid-url':
 					return this.$t.__('The URL provided is invalid.', this.$td)
 				case 'missing-content':
@@ -112,7 +119,7 @@ export default {
 					)
 			}
 
-			return this.analyzeError
+			return this.analyzerStore.analyzeError
 		}
 	}
 }

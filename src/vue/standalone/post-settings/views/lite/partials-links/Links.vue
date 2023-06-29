@@ -50,8 +50,8 @@
 
 		<core-modal-portal
 			:classes="[ 'aioseo-link-assistant-modal' ]"
-			v-if="currentPost.linkAssistant.modalOpen && 'sidebar' === $root._data.screenContext"
-			@close="toggleLinkAssistantModal"
+			v-if="postEditorStore.currentPost.linkAssistant.modalOpen && 'sidebar' === $root._data.screenContext"
+			@close="postEditorStore.toggleLinkAssistantModal"
 		>
 			<template #headerTitle>
 				{{ modalHeader }}
@@ -111,7 +111,10 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
@@ -126,6 +129,11 @@ import SvgLinkInternalInbound from '@/vue/components/common/svg/link/InternalInb
 import SvgLinkInternalOutbound from '@/vue/components/common/svg/link/InternalOutbound'
 import SvgLinkSuggestion from '@/vue/components/common/svg/link/Suggestion'
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreBlur,
@@ -266,7 +274,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'currentPost' ]),
 		initialTab () {
 			return 'inbound-internal'
 		},
@@ -326,9 +333,6 @@ export default {
 				window.wp.data.select('core/editor').getEditedPostAttribute('title')
 			)
 		}
-	},
-	methods : {
-		...mapMutations([ 'toggleLinkAssistantModal' ])
 	}
 }
 </script>

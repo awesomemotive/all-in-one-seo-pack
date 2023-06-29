@@ -131,7 +131,11 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {
+	useRedirectsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { debounce } from '@/vue/utils/debounce'
 import { sanitizeString } from '@/vue/utils/strings'
 import { makeUrlRelative } from '@/vue/utils/urls'
@@ -148,6 +152,12 @@ import SvgGear from '@/vue/components/common/svg/Gear'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 export default {
+	setup () {
+		return {
+			redirectsStore : useRedirectsStore(),
+			rootStore      : useRootStore()
+		}
+	},
 	emits      : [ 'updated-url', 'remove-url', 'updated-option' ],
 	components : {
 		BaseCheckbox,
@@ -337,7 +347,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions('redirects', [ 'getPosts' ]),
 		updateSourceUrl (value) {
 			if (!value) {
 				return
@@ -355,7 +364,7 @@ export default {
 				}
 
 				// Remove the home url.
-				value = makeUrlRelative(value, this.$aioseo.urls.home)
+				value = makeUrlRelative(value, this.rootStore.aioseo.urls.home)
 			}
 
 			this.url.url = value
@@ -399,14 +408,14 @@ export default {
 			}, 500)
 		},
 		ajaxSearch (query) {
-			return this.getPosts({ query })
+			return this.redirectsStore.getPosts({ query })
 				.then((response) => {
 					this.results = response.body.objects
 				})
 		},
 		setUrl (url) {
 			this.showResults = false
-			this.updateOption('url', url.replace(this.$aioseo.urls.mainSiteUrl, '', url))
+			this.updateOption('url', url.replace(this.rootStore.aioseo.urls.mainSiteUrl, '', url))
 		},
 		documentClick (event) {
 			if (!this.showResults) {

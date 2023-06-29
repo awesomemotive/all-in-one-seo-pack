@@ -14,15 +14,15 @@
 			>
 				<template #content>
 					<core-alert
-						v-if="htaccessError"
+						v-if="optionsStore.htaccessError"
 						type="red"
 					>
-						{{ htaccessError }}
+						{{ optionsStore.htaccessError }}
 					</core-alert>
 					<base-editor
 						class="htaccess-editor"
-						:disabled="!$aioseo.user.unfilteredHtml"
-						v-model="$aioseo.data.htaccess"
+						:disabled="!rootStore.aioseo.user.unfilteredHtml"
+						v-model="rootStore.aioseo.data.htaccess"
 						line-numbers
 						monospace
 						preserve-whitespace
@@ -34,12 +34,22 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import BaseEditor from '@/vue/components/common/base/Editor'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		BaseEditor,
 		CoreAlert,
@@ -59,9 +69,6 @@ export default {
 				)
 			}
 		}
-	},
-	computed : {
-		...mapState([ 'htaccessError' ])
 	}
 }
 </script>

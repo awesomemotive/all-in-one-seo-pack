@@ -7,7 +7,7 @@
 			<template #content>
 				<core-alert
 					class="twitter-disabled-warning"
-					v-if="!options.social.twitter.general.enable"
+					v-if="!optionsStore.options.social.twitter.general.enable"
 					v-html="strings.twitterDisabled"
 					type="red"
 				/>
@@ -19,8 +19,8 @@
 		>
 			<template #content>
 				<core-twitter-preview
-					:card="currentPost.twitter_card"
-					:class="{ ismobilecard: currentPost.socialMobilePreview }"
+					:card="postEditorStore.currentPost.twitter_card"
+					:class="{ ismobilecard: postEditorStore.currentPost.socialMobilePreview }"
 					:description="previewDescription"
 					:image="imageUrl"
 					:loading="loading"
@@ -36,14 +36,14 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="currentPost.twitter_use_og"
-						@update:modelValue="setIsDirty"
+						v-model="postEditorStore.currentPost.twitter_use_og"
+						@update:modelValue="postEditorStore.isDirty = true"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!currentPost.twitter_use_og"
+				v-if="!postEditorStore.currentPost.twitter_use_og"
 				:name="strings.twitterTitle"
 				class="twitter-title-settings"
 				align
@@ -51,13 +51,13 @@
 				<template #content>
 					<core-html-tags-editor
 						class="twitter-meta-input"
-						v-model="currentPost.twitter_title"
+						v-model="postEditorStore.currentPost.twitter_title"
 						:line-numbers="false"
 						single
 						@counter="count => updateCount(count, 'titleCount')"
-						@update:modelValue="setIsDirty"
-						:tags-context="`${currentPost.postType || currentPost.termType}Title`"
-						:default-tags="$tags.getDefaultTags('term' === currentPost.context ? 'taxonomies' : null, null, 'title')"
+						@update:modelValue="postEditorStore.isDirty = true"
+						:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Title`"
+						:default-tags="tags.getDefaultTags('term' === postEditorStore.currentPost.context ? 'taxonomies' : null, null, 'title')"
 					>
 					</core-html-tags-editor>
 
@@ -69,7 +69,7 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!currentPost.twitter_use_og"
+				v-if="!postEditorStore.currentPost.twitter_use_og"
 				:name="strings.twitterDescription"
 				class="twitter-description-settings"
 				align
@@ -77,13 +77,13 @@
 				<template #content>
 					<core-html-tags-editor
 						class="twitter-meta-input"
-						v-model="currentPost.twitter_description"
+						v-model="postEditorStore.currentPost.twitter_description"
 						:line-numbers="false"
 						description
 						@counter="count => updateCount(count, 'descriptionCount')"
-						@update:modelValue="setIsDirty"
-						:tags-context="`${currentPost.postType || currentPost.termType}Description`"
-						:default-tags="$tags.getDefaultTags('term' === currentPost.context ? 'taxonomies' : null, null, 'description')"
+						@update:modelValue="postEditorStore.isDirty = true"
+						:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Description`"
+						:default-tags="tags.getDefaultTags('term' === postEditorStore.currentPost.context ? 'taxonomies' : null, null, 'description')"
 					>
 						<template #tags-description>
 							{{ strings.clickToAddHomePageDescription }}
@@ -98,7 +98,7 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!currentPost.twitter_use_og"
+				v-if="!postEditorStore.currentPost.twitter_use_og"
 				class="twitter-image-source"
 				:name="strings.imageSource"
 				align
@@ -107,14 +107,14 @@
 					<base-select
 						size="medium"
 						:options="imageSourceOptionsFiltered"
-						:modelValue="getImageSourceOptionFiltered(currentPost.twitter_image_type)"
+						:modelValue="getImageSourceOptionFiltered(postEditorStore.currentPost.twitter_image_type)"
 						@update:modelValue="value => saveTwitterImageType(value.value)"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!currentPost.twitter_use_og && 'custom' === currentPost.twitter_image_type"
+				v-if="!postEditorStore.currentPost.twitter_use_og && 'custom' === postEditorStore.currentPost.twitter_image_type"
 				class="twitter-custom-field"
 				:name="strings.customFieldsName"
 				align
@@ -124,52 +124,22 @@
 						type="text"
 						size="medium"
 						:placeholder="strings.placeholder"
-						v-model="currentPost.twitter_image_custom_fields"
-						@update:modelValue="setIsDirty"
+						v-model="postEditorStore.currentPost.twitter_image_custom_fields"
+						@update:modelValue="postEditorStore.isDirty = true"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!currentPost.twitter_use_og && 'custom_image' === currentPost.twitter_image_type"
+				v-if="!postEditorStore.currentPost.twitter_use_og && 'custom_image' === postEditorStore.currentPost.twitter_image_type"
 				class="twitter-image"
 				:name="strings.twitterImage"
 			>
 				<template #content>
-					<div class="twitter-image-upload">
-						<base-input
-							size="medium"
-							v-model="currentPost.twitter_image_custom_url"
-							@update:modelValue="setIsDirty"
-							:placeholder="strings.pasteYourImageUrl"
-						/>
-
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('twitterImage', updateImage)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="currentPost.twitter_image_custom_url = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						<span v-if="'summary' === currentPost.twitter_card || ('default' === currentPost.twitter_card && 'summary' === options.social.twitter.general.defaultCardType)">{{ strings.minimumSizeSummary }}</span>
-						<span v-if="'summary_large_image' === currentPost.twitter_card || ('default' === currentPost.twitter_card && 'summary_large_image' === options.social.twitter.general.defaultCardType)">{{ strings.minimumSizeSummaryWithLarge }}</span>
-					</div>
-
-					<base-img :src="currentPost.twitter_image_custom_url" />
+					<core-image-uploader
+						:description="twitterImageUploaderDescription"
+						v-model="postEditorStore.currentPost.twitter_image_custom_url"
+					/>
 				</template>
 			</core-settings-row>
 
@@ -182,8 +152,8 @@
 					<base-select
 						size="medium"
 						open-direction="top"
-						:options="twitterCards"
-						:modelValue="getCardOptions(currentPost.twitter_card)"
+						:options="twitterCardOptions"
+						:modelValue="getCardOptions(postEditorStore.currentPost.twitter_card)"
 						@update:modelValue="value => cardSelect(value.value)"
 					/>
 				</template>
@@ -193,25 +163,36 @@
 </template>
 
 <script>
-import { ImageSourceOptions, ImagePreview, MaxCounts, Tags, Uploader, IsDirty } from '@/vue/mixins'
-import { mapState, mapActions } from 'vuex'
-import BaseImg from '@/vue/components/common/base/Img'
+import {
+	useOptionsStore,
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
+import tags from '@/vue/utils/tags'
+import { ImageSourceOptions, ImagePreview, MaxCounts, Tags, twitterCard } from '@/vue/mixins'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
+import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreTwitterPreview from '@/vue/components/common/core/TwitterPreview'
-import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 
 export default {
+	setup () {
+		return {
+			optionsStore    : useOptionsStore(),
+			postEditorStore : usePostEditorStore(),
+			rootStore       : useRootStore()
+		}
+	},
 	components : {
-		BaseImg,
 		CoreAlert,
 		CoreHtmlTagsEditor,
+		CoreImageUploader,
 		CoreSettingsRow,
-		CoreTwitterPreview,
-		SvgCirclePlus
+		CoreTwitterPreview
 	},
-	mixins : [ ImageSourceOptions, ImagePreview, MaxCounts, Tags, Uploader, IsDirty ],
+	mixins : [ ImageSourceOptions, ImagePreview, MaxCounts, Tags, twitterCard ],
 	props  : {
 		isMobilePreview : {
 			type : Boolean,
@@ -222,6 +203,7 @@ export default {
 	},
 	data () {
 		return {
+			tags,
 			separator        : undefined,
 			titleCount       : 0,
 			descriptionCount : 0,
@@ -234,9 +216,6 @@ export default {
 				twitterTitle                : this.$t.__('Twitter Title', this.$td),
 				twitterDescription          : this.$t.__('Twitter Description', this.$td),
 				twitterCardType             : this.$t.__('Twitter Card Type', this.$td),
-				pasteYourImageUrl           : this.$t.__('Paste your image URL or select a new image', this.$td),
-				uploadOrSelectImage         : this.$t.__('Upload or Select Image', this.$td),
-				remove                      : this.$t.__('Remove', this.$td),
 				minimumSizeSummary          : this.$t.__('Minimum size: 144px x 144px, ideal ratio 1:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', this.$td),
 				minimumSizeSummaryWithLarge : this.$t.__('Minimum size: 300px x 157px, ideal ratio 2:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', this.$td),
 				twitterDisabled             : this.$t.sprintf(
@@ -245,7 +224,7 @@ export default {
 					this.$t.__('Twitter', this.$td),
 					this.$t.sprintf(
 						'<a href="%1$s" target="_blank">%2$s<span class="link-right-arrow">&nbsp;&rarr;</span></a>',
-						this.$aioseo.urls.aio.socialNetworks + '#twitter',
+						this.rootStore.aioseo.urls.aio.socialNetworks + '#twitter',
 						this.$t.__('Go to Social Networks', this.$td)
 					)
 				)
@@ -253,31 +232,33 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'currentPost', 'metaBoxTabs', 'options' ]),
-		twitterCards () {
-			return [
-				{ label: this.$t.__('Default (Set under Social Networks)', this.$td), value: 'default' },
-				{ label: this.$t.__('Summary', this.$td), value: 'summary' },
-				{ label: this.$t.__('Summary with Large Image', this.$td), value: 'summary_large_image' }
-			]
-		},
 		previewTitle () {
-			const title = this.currentPost.twitter_use_og ? this.currentPost.og_title : this.currentPost.twitter_title
-			return this.parseTags(title || this.currentPost.title || this.currentPost.tags.title || '#post_title #separator_sa #site_title')
+			const title = this.postEditorStore.currentPost.twitter_use_og ? this.postEditorStore.currentPost.og_title : this.postEditorStore.currentPost.twitter_title
+			return this.parseTags(title || this.postEditorStore.currentPost.title || this.postEditorStore.currentPost.tags.title || '#post_title #separator_sa #site_title')
 		},
 		previewDescription () {
-			const description = this.currentPost.twitter_use_og ? this.currentPost.og_description : this.currentPost.twitter_description
-			return this.parseTags(description || this.currentPost.description || this.currentPost.tags.description || '#post_content')
+			const description = this.postEditorStore.currentPost.twitter_use_og ? this.postEditorStore.currentPost.og_description : this.postEditorStore.currentPost.twitter_description
+			return this.parseTags(description || this.postEditorStore.currentPost.description || this.postEditorStore.currentPost.tags.description || '#post_content')
+		},
+		twitterImageUploaderDescription () {
+			if ('summary' === this.postEditorStore.currentPost.twitter_card || ('default' === this.postEditorStore.currentPost.twitter_card && 'summary' === this.optionsStore.options.social.twitter.general.defaultCardType)) {
+				return this.strings.minimumSizeSummary
+			}
+
+			if ('summary_large_image' === this.postEditorStore.currentPost.twitter_card || ('default' === this.postEditorStore.currentPost.twitter_card && 'summary_large_image' === this.optionsStore.options.social.twitter.general.defaultCardType)) {
+				return this.strings.minimumSizeSummaryWithLarge
+			}
+
+			return ''
 		}
 	},
 	methods : {
-		...mapActions([ 'savePostState' ]),
 		getCardOptions (option) {
-			return this.twitterCards.find(t => t.value === option)
+			return this.twitterCardOptions.find(t => t.value === option)
 		},
 		cardSelect (option) {
-			this.$store.state.currentPost.twitter_card = option
-			this.$store.commit('isDirty', true)
+			this.postEditorStore.currentPost.twitter_card = option
+			this.postEditorStore.isDirty                  = true
 		},
 		scrollToElement () {
 			const container = document.getElementsByClassName('component-wrapper')[0]
@@ -288,22 +269,22 @@ export default {
 			}, 10)
 		},
 		saveTwitterImageType (value) {
-			this.$store.state.currentPost.twitter_image_type = value
-			this.$store.commit('isDirty', true)
+			this.postEditorStore.currentPost.twitter_image_type = value
+			this.postEditorStore.isDirty                        = true
 		},
 		updateImage (imageUrl) {
-			this.currentPost.twitter_image_custom_url = imageUrl
-			this.savePostState()
+			this.postEditorStore.currentPost.twitter_image_custom_url = imageUrl
+			this.postEditorStore.savePostState()
 		}
 	},
 	watch : {
-		'currentPost.twitter_use_og' () {
+		'postEditorStore.currentPost.twitter_use_og' () {
 			this.setImageUrl()
 		},
-		'currentPost.twitter_image_type' () {
+		'postEditorStore.currentPost.twitter_image_type' () {
 			this.setImageUrl()
 		},
-		'currentPost.twitter_image_custom_url' () {
+		'postEditorStore.currentPost.twitter_image_custom_url' () {
 			this.setImageUrl()
 		}
 	},
@@ -315,30 +296,6 @@ export default {
 
 <style lang="scss">
 .tab-twitter {
-	.twitter-image-upload {
-		display: flex;
-		gap: 8px;
-
-		.aioseo-input-container {
-			width: 100%;
-			max-width: 445px;
-
-			.aioseo-input {
-				width: 100%;
-			}
-		}
-
-		.insert-image {
-			min-width: 214px;
-
-			svg.aioseo-circle-plus {
-				width: 13px;
-				height: 13px;
-				margin-right: 10px;
-			}
-		}
-	}
-
 	.twitter-image {
 		img {
 			margin-top: 20px;

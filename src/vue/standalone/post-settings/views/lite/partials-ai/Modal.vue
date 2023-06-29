@@ -1,7 +1,7 @@
 <template>
 	<core-modal-portal
 		:classes="[ 'aioseo-ai-generator-modal' ]"
-		@close="setModalState({
+		@close="settingsStore.setModalState({
 			modalName : 'aiGenerator',
 			value     : false
 		})"
@@ -43,7 +43,7 @@
 
 			<div class="cta">
 				<img
-					:src="$getAssetUrl(OpenAiImage)"
+					:src="getAssetUrl(OpenAiImage)"
 					alt="open-ai-upsell"
 				/>
 
@@ -72,17 +72,20 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import {
+	useSettingsStore
+} from '@/vue/stores'
+
+import { getAssetUrl } from '@/vue/utils/helpers'
 import BaseEditor from '@/vue/components/common/base/Editor'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreModalPortal from '@/vue/components/common/core/modal/Portal'
 import OpenAiImage from '@/vue/assets/images/ai/open-ai.png'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 export default {
-	props : {
-		type : {
-			type     : String,
-			required : true
+	setup () {
+		return {
+			settingsStore : useSettingsStore()
 		}
 	},
 	components : {
@@ -90,6 +93,12 @@ export default {
 		CoreBlur,
 		CoreModalPortal,
 		SvgCirclePlus
+	},
+	props : {
+		type : {
+			type     : String,
+			required : true
+		}
 	},
 	data () {
 		return {
@@ -162,10 +171,10 @@ export default {
 				this.$t.__('meta descriptions', this.$td),
 				this.$t.__('description', this.$td)
 			)
+		},
+		methods : {
+			getAssetUrl
 		}
-	},
-	methods : {
-		...mapMutations([ 'setModalState' ])
 	}
 }
 </script>

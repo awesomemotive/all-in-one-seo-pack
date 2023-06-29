@@ -1,3 +1,7 @@
+import {
+	useRootStore
+} from '@/vue/stores'
+
 const { __, sprintf } = window.wp.i18n
 
 /**
@@ -25,14 +29,17 @@ export const forBetterResults = sprintf(
 	70
 )
 
-export const headlineAnalyzerNotice = sprintf(
-	// Translators: 1 - The short plugin name ("AIOSEO"), 2 - Opening HTML link/span tag, 3 - Closing HTML span tag, 4 - Closing HTML link tag.
-	__('This Headline Analyzer is part of %1$s to help you increase your traffic. %2$sAnalyze your site further here%3$s →%4$s', import.meta.env.VITE_TEXTDOMAIN),
-	import.meta.env.VITE_SHORT_NAME,
-	sprintf(
-		'<a href="%1$s" className="aioseo-headline-analyzer-link" target="_blank"><span>',
-		window.aioseo.urls.aio.seoAnalysis
-	),
-	'</span>',
-	'</a>'
-)
+export const headlineAnalyzerNotice = () => {
+	const rootStore = useRootStore()
+	return sprintf(
+		// Translators: 1 - The short plugin name ("AIOSEO"), 2 - Opening HTML link/span tag, 3 - Closing HTML span tag, 4 - Closing HTML link tag.
+		__('This Headline Analyzer is part of %1$s to help you increase your traffic. %2$sAnalyze your site further here%3$s →%4$s', import.meta.env.VITE_TEXTDOMAIN),
+		import.meta.env.VITE_SHORT_NAME,
+		sprintf(
+			'<a href="%1$s" className="aioseo-headline-analyzer-link" target="_blank"><span>',
+			rootStore.aioseo.urls.aio.seoAnalysis
+		),
+		'</span>',
+		'</a>'
+	)
+}

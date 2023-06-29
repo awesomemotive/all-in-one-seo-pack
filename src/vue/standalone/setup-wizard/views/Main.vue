@@ -3,6 +3,12 @@
 </template>
 
 <script>
+import {
+	useLicenseStore,
+	useOptionsStore,
+	useSetupWizardStore
+} from '@/vue/stores'
+
 import AdditionalInformation from './AdditionalInformation'
 import Category from './Category'
 import Features from './Features'
@@ -12,8 +18,15 @@ import SearchAppearance from './SearchAppearance'
 import SmartRecommendations from './SmartRecommendations'
 import Success from './Success'
 import Welcome from './Welcome'
-import { mapGetters, mapMutations, mapState } from 'vuex'
+
 export default {
+	setup () {
+		return {
+			licenseStore     : useLicenseStore(),
+			optionsStore     : useOptionsStore(),
+			setupWizardStore : useSetupWizardStore()
+		}
+	},
 	components : {
 		AdditionalInformation,
 		Category,
@@ -25,39 +38,30 @@ export default {
 		Success,
 		Welcome
 	},
-	computed : {
-		...mapGetters('wizard', [ 'shouldShowImportStep' ]),
-		...mapGetters([ 'isUnlicensed' ]),
-		...mapState('wizard', [ 'stages' ]),
-		...mapState([ 'internalOptions' ])
-	},
 	methods : {
-		...mapMutations('wizard', [ 'setStages', 'loadState' ]),
 		deleteStage (stage) {
-			const stages = [ ...this.stages ]
-			const index = stages.findIndex(s => stage === s)
+			const index = this.setupWizardStore.stages.findIndex(s => stage === s)
 			if (-1 !== index) {
 				// Delete the stage from stages.
-				stages.splice(index, 1)
+				this.setupWizardStore.stages.splice(index, 1)
 			}
-
-			this.setStages(stages)
 		}
 	},
 	mounted () {
-		if (this.internalOptions.internal.wizard) {
-			const wizard = JSON.parse(this.internalOptions.internal.wizard)
+		if (this.optionsStore.internalOptions.internal.wizard) {
+			const wizard = JSON.parse(this.optionsStore.internalOptions.internal.wizard)
 			delete wizard.currentStage
 			delete wizard.stages
 			delete wizard.licenseKey
-			this.loadState(wizard)
+
+			this.setupWizardStore.loadState(wizard)
 		}
 
-		if (!this.shouldShowImportStep) {
+		if (!this.setupWizardStore.shouldShowImportStep) {
 			this.deleteStage('import')
 		}
 
-		if (!this.isUnlicensed) {
+		if (!this.licenseStore.isUnlicensed) {
 			this.deleteStage('license-key')
 		}
 

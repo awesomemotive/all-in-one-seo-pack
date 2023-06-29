@@ -1,7 +1,11 @@
 import '@/vue/utils/vue2.js'
 import { createApp } from 'vue'
 
-import store from './store'
+import {
+	loadPiniaStores,
+	useTableOfContentsStore
+} from '@/vue/stores'
+
 import App from './vue/App.vue'
 import { formatHeadingList, flattenHeadings } from './helpers'
 import { sidebarControls } from './sidebar-controls'
@@ -34,27 +38,27 @@ export default function edit (props) {
 			parent  : document.querySelector('.block-editor'),
 			subtree : true,
 			done    : function (el) {
-				// Initialize the block state with any existing attributes that were saved previously or simply the defaults.
-				// NOTE: We need to populate the state before we create our Vue instance because the client ID otherwise will not be available yet when mounted() runs.
-				store.state.blockClientId = clientId
-				store.state.headings      = attributes.headings
-				store.state.listStyle     = attributes.listStyle
-				store.state.reOrdered     = attributes.reOrdered
+				const app = createApp({ ...App, name: 'Blocks/TableOfContents' })
 
-				const app = createApp(App)
+				app.$t  = app.config.globalProperties.$t  = translate
+				app.$td = app.config.globalProperties.$td = import.meta.env.VITE_TEXTDOMAIN
 
-				app.$t      = app.config.globalProperties.$t      = translate
-				app.$td     = app.config.globalProperties.$td     = import.meta.env.VITE_TEXTDOMAIN
-				app.$aioseo = app.config.globalProperties.$aioseo = window.aioseoSeoPreview
-
-				app.use(store)
-				store._vm = app
+				// Use the pinia store.
+				loadPiniaStores(app)
 
 				app.mount(el)
 
+				// Initialize the block state with any existing attributes that were saved previously or simply the defaults.
+				// NOTE: We need to populate the state before we create our Vue instance because the client ID otherwise will not be available yet when mounted() runs.
+				const tableOfContentsStore         = useTableOfContentsStore()
+				tableOfContentsStore.blockClientId = clientId
+				tableOfContentsStore.headings      = attributes.headings
+				tableOfContentsStore.listStyle     = attributes.listStyle
+				tableOfContentsStore.reOrdered     = attributes.reOrdered
+
 				// If headings were already saved previously, we need to sync up the new block client IDs.
-				if (store.state.headings?.length) {
-					const syncedHeadings = flattenHeadings(deepCopy(store.state.headings))
+				if (tableOfContentsStore.headings?.length) {
+					const syncedHeadings = flattenHeadings(deepCopy(tableOfContentsStore.headings))
 					syncedHeadings.forEach((heading) => {
 						const matchingHeading = latestHeadings.find((x) => {
 							return x.content === heading.content &&
@@ -68,12 +72,12 @@ export default function edit (props) {
 						}
 					})
 
-					store.state.headings = formatHeadingList(syncedHeadings)
-					setAttributes(store.state)
+					tableOfContentsStore.headings = formatHeadingList(syncedHeadings)
+					setAttributes(tableOfContentsStore)
 				}
 
 				window.aioseoBus.$on('setAttributes' + clientId, () => {
-					setAttributes(store.state)
+					setAttributes(tableOfContentsStore.$state)
 				})
 			}
 		})
@@ -130,11 +134,11 @@ export default function edit (props) {
 				}
 
 				headings.push({
-					id            : headingIndex,
-					blockClientId : blockClientId,
-					content       : headingContent,
-					level         : Number(headingLevel),
-					anchor        : hasAnchor ? headingAttributes.anchor : ''
+					id      : headingIndex,
+					blockClientId,
+					content : headingContent,
+					level   : Number(headingLevel),
+					anchor  : hasAnchor ? headingAttributes.anchor : ''
 				})
 			})
 
@@ -144,7 +148,8 @@ export default function edit (props) {
 
 			// Next, get our existing headings from the state. It's important that we clone them because we're also flattening them and we don't want to flatten by reference.
 			// Then, delete all the dynamic properties; otherwise the headings from the editor will always be different from the headings from the state.
-			const existingHeadings = flattenHeadings(deepCopy(store.state.headings))?.map((existingHeading) => {
+			const tableOfContentsStore = useTableOfContentsStore()
+			const existingHeadings     = flattenHeadings(deepCopy(tableOfContentsStore.headings))?.map((existingHeading) => {
 				Object.keys(extraHeadingProperties).forEach((propName) => {
 					delete existingHeading[propName]
 				})
@@ -173,7 +178,7 @@ export default function edit (props) {
 			// We'll order by editedOrder and compare our attributes to our store.
 			if (true === getBlockAttributes(clientId)?.reOrdered) {
 				if (!isEqual(
-					flattenHeadings([ ...store.state.headings ]).sort((a, b) => a.editedOrder - b.editedOrder),
+					flattenHeadings([ ...tableOfContentsStore.headings ]).sort((a, b) => a.editedOrder - b.editedOrder),
 					flattenHeadings([ ...getBlockAttributes(clientId)?.headings ]).sort((a, b) => a.editedOrder - b.editedOrder)
 				)) {
 					return headings

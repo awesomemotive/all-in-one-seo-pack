@@ -1,8 +1,8 @@
 <template>
 	<cta
-		:cta-button-visible="$addons.userCanUpdate(addonSlug)"
+		:cta-button-visible="addons.userCanUpdate(addonSlug)"
 		:cta-button-visible-warning="strings.permissionWarning"
-		:cta-link="`${$aioseo.urls.aio.featureManager}&aioseo-activate=${addonSlug}`"
+		:cta-link="`${rootStore.aioseo.urls.aio.featureManager}&aioseo-activate=${addonSlug}`"
 		cta-button-action
 		:cta-button-loading="activationLoading"
 		@cta-button-click="upgradeAddon"
@@ -37,10 +37,23 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import {
+	useAddonsStore,
+	usePluginsStore,
+	useRootStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import Cta from '@/vue/components/common/cta/Index'
 export default {
+	setup () {
+		return {
+			addonsStore  : useAddonsStore(),
+			pluginsStore : usePluginsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	emits      : [ 'addon-activated' ],
 	components : {
 		CoreAlert,
@@ -71,6 +84,7 @@ export default {
 	},
 	data () {
 		return {
+			addons,
 			strings : {
 				activateError     : this.$t.__('An error occurred while activating the addon. Please upload it manually or contact support for more information.', this.$td),
 				permissionWarning : this.$t.__('You currently don\'t have permission to activate this addon. Please ask a site administrator to activate first.', this.$td),
@@ -79,9 +93,9 @@ export default {
 					this.$t.__('This addon requires an update. %1$s %2$s requires a minimum version of %3$s for the %4$s addon. You currently have %5$s installed.', this.$td),
 					import.meta.env.VITE_SHORT_NAME,
 					'Pro',
-					this.$addons.getAddon(this.addonSlug).installedVersion,
-					this.$addons.getAddon(this.addonSlug).name,
-					this.$addons.getAddon(this.addonSlug).installedVersion
+					addons.getAddon(this.addonSlug).installedVersion,
+					addons.getAddon(this.addonSlug).name,
+					addons.getAddon(this.addonSlug).installedVersion
 				)
 			},
 			failed            : false,
@@ -89,13 +103,11 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'upgradePlugins' ]),
-		...mapMutations([ 'updateAddon' ]),
 		upgradeAddon () {
 			this.failed            = false
 			this.activationLoading = true
-			const addon            = this.$addons.getAddon(this.addonSlug)
-			this.upgradePlugins([ { plugin: addon.sku } ])
+			const addon            = addons.getAddon(this.addonSlug)
+			this.pluginsStore.upgradePlugins([ { plugin: addon.sku } ])
 				.then(response => {
 					if (response.body.failed.length) {
 						this.activationLoading = false
@@ -112,7 +124,7 @@ export default {
 							addon.hasMinimumVersion = true
 							addon.isActive          = true
 							addon.installedVersion  = updatedAddon.installedVersion
-							this.updateAddon(addon)
+							this.addonsStore.updateAddon(addon)
 
 							// Emit event to do any post processing.
 							this.$emit('addon-activated', addon)

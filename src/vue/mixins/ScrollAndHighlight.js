@@ -2,7 +2,7 @@ import { getParams, removeParam } from '@/vue/utils/params'
 export const ScrollAndHighlight = {
 	mounted () {
 		const scroll = getParams()['aioseo-scroll'] || history.state?.scroll
-		if (scroll) {
+		if (scroll && 'string' === typeof scroll) {
 			setTimeout(() => {
 				this.$scrollTo(`#${scroll}`, { offset: -130, container: this.scrollContainer || 'body' })
 				removeParam('aioseo-scroll')
@@ -11,7 +11,7 @@ export const ScrollAndHighlight = {
 		}
 
 		const highlight = getParams()['aioseo-highlight'] || history.state?.highlight
-		if (highlight) {
+		if (highlight && 'string' === typeof highlight) {
 			const timeout = scroll ? this.scrollAndHighlightTimeout || 1500 : this.highlightTimeout || 500
 			setTimeout(() => {
 				const elements = document.querySelectorAll(`#${highlight.replace(/,/g, ', #').replace(/%2C/ig, ', #')}`)

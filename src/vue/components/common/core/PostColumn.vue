@@ -7,17 +7,17 @@
 	>
 		<div>
 			<div
-				v-if="'edit' === this.$root._data.screen.base && showTruSeo && this.$allowed('aioseo_page_analysis') && !isSpecialPage"
+				v-if="'edit' === $root._data.screen.base && showTruSeo && allowed('aioseo_page_analysis') && !isSpecialPage"
 				class="edit-row"
 			>
 				<core-score-button
-					:score="this.post.value"
+					:score="post.value"
 					:postId="postId"
 				/>
 			</div>
 
 			<div
-				v-if="this.$allowed('aioseo_page_general_settings')"
+				v-if="allowed('aioseo_page_general_settings')"
 				class="edit-row edit-title"
 			>
 				<a
@@ -63,7 +63,7 @@
 			</div>
 
 			<div
-				v-if="this.$allowed('aioseo_page_general_settings')"
+				v-if="allowed('aioseo_page_general_settings')"
 				class="edit-row edit-description"
 			>
 				<a
@@ -111,7 +111,7 @@
 			<slot />
 
 			<div
-				v-if="'upload' === this.$root._data.screen.base && post.showMedia"
+				v-if="'upload' === $root._data.screen.base && post.showMedia"
 				class="edit-row edit-image-title"
 			>
 				<a
@@ -157,7 +157,7 @@
 			</div>
 
 			<div
-				v-if="'upload' === this.$root._data.screen.base && post.showMedia"
+				v-if="'upload' === $root._data.screen.base && post.showMedia"
 				class="edit-row edit-image-alt"
 			>
 				<a
@@ -206,9 +206,10 @@
 </template>
 
 <script>
-import { getOptions, setOptions } from '@/vue/utils/options'
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+import http from '@/vue/utils/http'
+
 import { merge } from 'lodash-es'
-import { mapState } from 'vuex'
 import { useTruSeoScore } from '@/vue/composables'
 import { TruSeoScore } from '@/vue/mixins'
 import { truncate } from '@/vue/utils/html'
@@ -233,10 +234,12 @@ export default {
 	mixins : [ TruSeoScore ],
 	props  : {
 		post  : Object,
+		posts : Array,
 		index : Number
 	},
 	data () {
 		return {
+			allowed,
 			postId              : null,
 			columnName          : null,
 			value               : null,
@@ -264,16 +267,13 @@ export default {
 			})
 		}
 	},
-	computed : {
-		...mapState([ 'options', 'currentPost' ])
-	},
 	methods : {
 		save () {
 			this.showEditTitle       = false
 			this.showEditDescription = false
 			this.post.title          = this.title
 			this.post.description    = this.postDescription
-			this.$http.post(this.$links.restUrl('postscreen'))
+			http.post(this.$links.restUrl('postscreen'))
 				.send({
 					postId      : this.post.id,
 					title       : this.post.title,
@@ -285,12 +285,6 @@ export default {
 
 					this.post.titleParsed       = response.body.title
 					this.post.descriptionParsed = response.body.description
-
-					const posts       = window.aioseo.posts
-					posts[this.index] = this.post
-					setOptions(this.$.appContext.app, {
-						posts
-					})
 
 					if ('upload' !== this.$root._data.screen.base) {
 						this.runAnalysis(this.post.id)
@@ -307,7 +301,7 @@ export default {
 			this.post.description    = this.postDescription
 			this.post.imageTitle     = this.imageTitle
 			this.post.imageAltTag    = this.imageAltTag
-			this.$http.post(this.$links.restUrl('postscreen'))
+			http.post(this.$links.restUrl('postscreen'))
 				.send({
 					postId      : this.post.id,
 					isMedia     : true,
@@ -368,12 +362,7 @@ export default {
 		this.descriptionParsed = this.post.descriptionParsed
 	},
 	async created () {
-		const { options, currentPost, tags } = await getOptions(this.$.appContext.app)
-
-		this.$store.state.options     = merge({ ...this.$store.state.options }, { ...options })
-		this.$store.state.currentPost = merge({ ...this.$store.state.currentPost }, { ...currentPost })
-		this.$store.state.tags        = merge({ ...this.$store.state.tags }, { ...tags })
-		this.showTruSeo               = shouldShowTruSeoScore()
+		this.showTruSeo = shouldShowTruSeoScore()
 	}
 }
 </script>

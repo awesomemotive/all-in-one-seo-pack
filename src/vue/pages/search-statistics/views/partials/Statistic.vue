@@ -44,12 +44,23 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useRootStore,
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
+import numbers from '@/vue/utils/numbers'
 import StatisticMixin from '../../mixins/Statistic.js'
 import dateFormat from '@/vue/utils/dateFormat'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCaretSolid from '@/vue/components/common/svg/CaretSolid'
 export default {
+	setup () {
+		return {
+			rootStore             : useRootStore(),
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreTooltip,
 		SvgCaretSolid
@@ -88,7 +99,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('search-statistics', [ 'range' ]),
 		differenceRounded () {
 			if ('position' === this.type) {
 				return parseInt(Math.round(this.difference))
@@ -103,8 +113,8 @@ export default {
 				? this.$t.__('Up', this.$td)
 				: this.$t.__('Down', this.$td)
 
-			const compareStart = new Date(`${this.range.compareStart} 00:00:00`)
-			const compareEnd   = new Date(`${this.range.compareEnd} 00:00:00`)
+			const compareStart = new Date(`${this.searchStatisticsStore.range.compareStart} 00:00:00`)
+			const compareEnd   = new Date(`${this.searchStatisticsStore.range.compareEnd} 00:00:00`)
 
 			return this.$t.sprintf(
 				// Translators: 1 - The direction (up or down), 2 - The difference, 3 - "in search results", 4 - The first date, 5 - The second date.
@@ -114,8 +124,8 @@ export default {
 				'position' === this.type
 					? this.$t.__('in search results', this.$td)
 					: '',
-				'<strong>' + dateFormat(compareStart, this.$aioseo.data.dateFormat) + '</strong>',
-				'<strong>' + dateFormat(compareEnd, this.$aioseo.data.dateFormat) + '</strong>'
+				'<strong>' + dateFormat(compareStart, this.rootStore.aioseo.data.dateFormat) + '</strong>',
+				'<strong>' + dateFormat(compareEnd, this.rootStore.aioseo.data.dateFormat) + '</strong>'
 			)
 		},
 		points (number) {
@@ -124,13 +134,13 @@ export default {
 					return this.$t.sprintf(
 						// Translators: 1 - The number of clicks.
 						this.$t._n('%s click', '%s clicks', parseInt(this.formatStatistic('clicks', number)), this.$td),
-						this.$numbers.compactNumber(number)
+						numbers.compactNumber(number)
 					)
 				case 'impressions':
 					return this.$t.sprintf(
 						// Translators: 1 - The number of impressions.
 						this.$t._n('%s impression', '%s impressions', parseInt(this.formatStatistic('impressions', number)), this.$td),
-						this.$numbers.compactNumber(number)
+						numbers.compactNumber(number)
 					)
 				case 'ctr':
 					return this.formatStatistic('ctr', number)
@@ -145,14 +155,14 @@ export default {
 					return this.$t.sprintf(
 						// Translators: 1 - The number of keywords.
 						this.$t._n('%s keyword', '%s keywords', parseInt(this.formatStatistic('keywords', number)), this.$td),
-						this.$numbers.compactNumber(number)
+						numbers.compactNumber(number)
 					)
 				case 'decay':
 				case 'diffDecay':
 					return this.$t.sprintf(
 						// Translators: 1 - The number of points.
 						this.$t._n('%s point', '%s points', parseInt((this.formatStatistic('keywords', number))), this.$td),
-						this.$numbers.compactNumber(number)
+						numbers.compactNumber(number)
 					)
 				default:
 					return ''

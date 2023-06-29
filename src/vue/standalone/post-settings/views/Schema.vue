@@ -1,31 +1,36 @@
 <template>
 	<div class="aioseo-post-schema-view">
 		<schema
-			v-if="!isUnlicensed"
+			v-if="!licenseStore.isUnlicensed"
 			:parentComponentContext="parentComponentContext"
 		/>
 
 		<schema-lite
-			v-if="isUnlicensed"
+			v-if="licenseStore.isUnlicensed"
 			:parentComponentContext="parentComponentContext"
 		/>
 	</div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
 import Schema from './AIOSEO_VERSION/Schema'
 import SchemaLite from './lite/Schema'
 export default {
-	props : {
-		parentComponentContext : String
+	setup () {
+		return {
+			licenseStore : useLicenseStore()
+		}
 	},
 	components : {
 		Schema,
 		SchemaLite
 	},
-	computed : {
-		...mapGetters([ 'isUnlicensed' ])
+	props : {
+		parentComponentContext : String
 	}
 }
 </script>

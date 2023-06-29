@@ -14,31 +14,50 @@
 
 		<core-loader v-if="loading" dark />
 
-		<core-tooltip
-			v-for="(update, index) in googleUpdates"
-			:key="index"
-			:ref="'tooltip' + update.date"
+		<core-popper
+			ref="timelineMarkersPopper"
+			:options="{ placement : 'top' }"
+			@show="handleTimelineMarkersTooltip"
+			@hide="handleTimelineMarkersTooltip"
 		>
-			<div />
-
-			<template #tooltip>
-				{{ update.content }}
-			</template>
-		</core-tooltip>
+			<span class="popper">
+				<graph-timeline-markers
+					v-if="timelineMarkersDate"
+					:date="timelineMarkersDate"
+					:timelineMarkers="timelineMarkers"
+					@update="handleTimelineMarkersTooltipUpdate"
+				/>
+			</span>
+		</core-popper>
 	</div>
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
+import numbers from '@/vue/utils/numbers'
+import { getAssetUrl } from '@/vue/utils/helpers'
 import dateFormat from '@/vue/utils/dateFormat'
 import VueApexCharts from 'vue3-apexcharts'
 import CoreLoader from '@/vue/components/common/core/Loader'
-import CoreTooltip from '@/vue/components/common/core/Tooltip'
-import googleSvg from '@/vue/assets/images/logos/google.svg'
+import CorePopper from '@/vue/components/common/core/Popper'
+import GraphTimelineMarkers from './GraphTimelineMarkers'
+import SvgGoogle from '@/vue/assets/images/logos/google.svg'
+import SvgWordPress from '@/vue/assets/images/logos/wordpress.svg'
+import SvgAioseo from '@/vue/assets/images/logos/aioseo.svg'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		apexchart : VueApexCharts,
 		CoreLoader,
-		CoreTooltip
+		CorePopper,
+		GraphTimelineMarkers
 	},
 	props : {
 		series : {
@@ -65,11 +84,9 @@ export default {
 			type    : Boolean,
 			default : false
 		},
-		googleUpdates : {
-			type : Array,
-			default () {
-				return []
-			}
+		timelineMarkers : {
+			type    : Object,
+			default : () => ({})
 		},
 		multiAxis   : Boolean,
 		preset      : String,
@@ -105,7 +122,7 @@ export default {
 						labels : {
 							show      : false,
 							formatter : (val) => {
-								return val ? this.$numbers.compactNumber(val) : 0
+								return val ? numbers.compactNumber(val) : 0
 							}
 						}
 					}
@@ -139,7 +156,41 @@ export default {
 					},
 					tooltip : {}
 				}
+			},
+			timelineMarkersDate : null
+		}
+	},
+	methods : {
+		handleTimelineMarkersTooltip (tooltip) {
+			tooltip.referenceElm?.classList.remove('active-point')
+
+			if (tooltip.showPopper) {
+				tooltip.referenceElm?.classList.add('active-point')
 			}
+		},
+		handleTimelineMarkersTooltipUpdate (args) {
+			const tooltip = this.$refs.timelineMarkersPopper
+			tooltip.updatePopper()
+
+			// Close the tooltip if the modal is open.
+			args.modal ? tooltip.doClose() : tooltip.doShow()
+
+			this.handleTimelineMarkersTooltip(tooltip)
+		},
+		showTimelineMarkersTooltip (reference) {
+			const tooltip = this.$refs.timelineMarkersPopper
+
+			tooltip.referenceElm?.classList.remove('active-point')
+			reference?.classList.add('active-point')
+
+			// If the reference element changed, we need to recreate the instance.
+			tooltip.destroyPopper()
+			tooltip.doDestroy()
+
+			tooltip.referenceElm = reference
+
+			tooltip.createPopper()
+			tooltip.doShow()
 		}
 	},
 	computed : {
@@ -268,7 +319,7 @@ export default {
 						x       : {
 							formatter : (seriesName, opts) => {
 								const newVal = new Date(`${series[opts.seriesIndex]?.data[opts.dataPointIndex]?.x} 00:00:00`)
-								return dateFormat(newVal, this.$aioseo.data.dateFormat)
+								return dateFormat(newVal, this.rootStore.aioseo.data.dateFormat)
 							}
 						}
 					},
@@ -295,7 +346,7 @@ export default {
 							show      : true,
 							formatter : (val, index, options) => {
 								if (!this.invertYAxis || !options?.config) {
-									return val ? this.$numbers.compactNumber(val) : 0
+									return val ? numbers.compactNumber(val) : 0
 								}
 
 								const yAxis = [ ...options?.globals?.yAxisScale[0].result ].reverse()
@@ -303,7 +354,7 @@ export default {
 									val = yAxis[index]
 								}
 
-								return val ? this.$numbers.compactNumber(val) : 0
+								return val ? numbers.compactNumber(val) : 0
 							}
 						}
 					}
@@ -313,14 +364,14 @@ export default {
 					x       : {
 						formatter : (seriesName, opts) => {
 							const newVal = new Date(`${series[opts.seriesIndex]?.data[opts.dataPointIndex]?.x} 00:00:00`)
-							return dateFormat(newVal, this.$aioseo.data.dateFormat)
+							return dateFormat(newVal, this.rootStore.aioseo.data.dateFormat)
 						}
 					},
 					y : {
 						formatter : (seriesName, opts) => {
 							return this.invertYAxis && series[opts.seriesIndex]?.data[opts.dataPointIndex].label
 								? series[opts.seriesIndex]?.data[opts.dataPointIndex].label
-								: this.$numbers.compactNumber(series[opts.seriesIndex]?.data[opts.dataPointIndex].y)
+								: numbers.compactNumber(series[opts.seriesIndex]?.data[opts.dataPointIndex].y)
 						}
 					}
 				},
@@ -342,7 +393,7 @@ export default {
 
 						let total = series[opts.seriesIndex]?.legend?.total || ''
 						if (!isNaN(total)) {
-							total = this.$numbers.compactNumber(total)
+							total = numbers.compactNumber(total)
 						}
 
 						return [ `<strong>${total}</strong>`, name ]
@@ -405,7 +456,7 @@ export default {
 					labels     : {
 						show      : true,
 						formatter : (val) => {
-							return val ? this.$numbers.compactNumber(val) : 0
+							return val ? numbers.compactNumber(val) : 0
 						}
 					}
 				})
@@ -416,28 +467,63 @@ export default {
 		annotationsPoints () {
 			const points = []
 
-			if (this.googleUpdates) {
-				this.googleUpdates.forEach(update => {
-					points.push({
-						x           : update.date * 1000,
+			if (this.timelineMarkers) {
+				Object.keys(this.timelineMarkers).forEach(key => {
+					const point = {
+						x           : new Date(key).getTime(),
 						y           : 0,
 						yAxisIndex  : 0,
 						seriesIndex : 0,
-						mouseLeave  : () => {
-							const tooltip = this.$refs['tooltip' + update.date][0].$children[0]
-							tooltip.doClose()
+						mouseEnter  : (pointer, event) => {
+							let target = event.target
+
+							if ('circle' === event.relatedTarget.tagName.toLowerCase()) {
+								target = event.relatedTarget
+							}
+
+							this.timelineMarkersDate = key
+							this.showTimelineMarkersTooltip(target)
 						},
-						click : (pointer, event) => {
-							const tooltip = this.$refs['tooltip' + update.date][0].$children[0]
-							tooltip.referenceElm = event.srcElement
-							tooltip.doToggle()
+						label : {
+							text        : this.timelineMarkers[key].length,
+							borderWidth : 0,
+							offsetY     : 23,
+							style       : {
+								background : 'transparent',
+								color      : '#141B38',
+								fontSize   : '12px',
+								fontWeight : 700
+							}
+						},
+						marker : {
+							size        : 12,
+							strokeWidth : 1,
+							strokeColor : '#D0D1D7'
 						},
 						image : {
-							path   : this.$getAssetUrl(googleSvg),
-							width  : 25,
-							height : 25
+							width  : 17,
+							height : 17
 						}
-					})
+					}
+
+					const types = this.timelineMarkers[key].map(a => a.type)
+					if (1 === types.length) {
+						point.label = {}
+
+						switch (types[0]) {
+							case 'aioseoRevision':
+								point.image.path = getAssetUrl(SvgAioseo)
+								break
+							case 'googleUpdate':
+								point.image.path = getAssetUrl(SvgGoogle)
+								break
+							case 'wpRevision':
+								point.image.path = getAssetUrl(SvgWordPress)
+								break
+						}
+					}
+
+					points.push(point)
 				})
 			}
 
@@ -505,6 +591,16 @@ export default {
 
 	.apexcharts-point-annotations {
 		cursor: pointer;
+
+		text,
+		rect {
+			pointer-events: none;
+		}
+
+		.active-point {
+			stroke: $blue;
+			fill: $blue4;
+		}
 	}
 
 	.aioseo-loading-spinner {

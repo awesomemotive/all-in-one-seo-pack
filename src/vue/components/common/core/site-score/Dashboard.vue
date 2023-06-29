@@ -1,7 +1,7 @@
 <template>
 	<div class="aioseo-site-score-dashboard">
 		<div
-			v-if="!analyzeError"
+			v-if="!analyzerStore.analyzeError"
 			class="aioseo-seo-site-score-score"
 		>
 			<core-site-score
@@ -13,7 +13,7 @@
 		</div>
 
 		<div
-			v-if="!analyzeError"
+			v-if="!analyzerStore.analyzeError"
 			class="aioseo-seo-site-score-recommendations"
 		>
 			<div class="critical">
@@ -29,15 +29,15 @@
 				{{ strings.goodResults }}
 			</div>
 
-			<div class="links" v-if="$allowed('aioseo_seo_analysis_settings')">
-				<a :href="$aioseo.urls.aio.seoAnalysis">{{ strings.completeSiteAuditChecklist }}</a>
-				<a :href="$aioseo.urls.aio.seoAnalysis" class="no-underline">&rarr;</a>
+			<div class="links" v-if="allowed('aioseo_seo_analysis_settings')">
+				<a :href="rootStore.aioseo.urls.aio.seoAnalysis">{{ strings.completeSiteAuditChecklist }}</a>
+				<a :href="rootStore.aioseo.urls.aio.seoAnalysis" class="no-underline">&rarr;</a>
 			</div>
 		</div>
 
 		<div
 			class="analyze-errors"
-			v-if="analyzeError"
+			v-if="analyzerStore.analyzeError"
 		>
 			<strong>{{ strings.anErrorOccurred }}</strong><br/>
 			<p>{{ getError }}</p>
@@ -46,7 +46,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useAnalyzerStore,
+	useRootStore
+} from '@/vue/stores'
+
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { merge } from 'lodash-es'
 import { useSeoSiteScore } from '@/vue/composables'
 import { SeoSiteScore } from '@/vue/mixins'
@@ -56,6 +61,8 @@ export default {
 		const { strings } = useSeoSiteScore()
 
 		return {
+			analyzerStore     : useAnalyzerStore(),
+			rootStore         : useRootStore(),
 			composableStrings : strings
 		}
 	},
@@ -75,6 +82,7 @@ export default {
 	},
 	data () {
 		return {
+			allowed,
 			strings : merge(this.composableStrings, {
 				anErrorOccurred            : this.$t.__('An error occurred while analyzing your site.', this.$td),
 				criticalIssues             : this.$t.__('Important Issues', this.$td),
@@ -86,9 +94,8 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'analyzeError' ]),
 		getError () {
-			switch (this.analyzeError) {
+			switch (this.analyzerStore.analyzeError) {
 				case 'invalid-url':
 					return this.$t.__('The URL provided is invalid.', this.$td)
 				case 'missing-content':
@@ -101,7 +108,7 @@ export default {
 					)
 			}
 
-			return this.analyzeError
+			return this.analyzerStore.analyzeError
 		}
 	}
 }

@@ -27,18 +27,18 @@
 						<span
 							v-if="tab.errorCount >= 0"
 							class="tab-score"
-							:class="getErrorClass(currentPost.page_analysis.analysis[tab.slug].errors)"
+							:class="getErrorClass(postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors)"
 						>
 							<svg-ellipse
-								v-if="0 < currentPost.page_analysis.analysis[tab.slug].errors"
+								v-if="0 < postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors"
 								width="6"
 							/>
 
 							<svg-circle-check
-								v-if="0 === currentPost.page_analysis.analysis[tab.slug].errors"
+								v-if="0 === postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors"
 								width="12"
 							/>
-							{{ getErrorDisplay(currentPost.page_analysis.analysis[tab.slug].errors) }}
+							{{ getErrorDisplay(postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors) }}
 						</span>
 
 						<span
@@ -116,7 +116,7 @@
 				<base-button
 					type="blue"
 					size="medium"
-					:loading="loading"
+					:loading="rootStore.loading"
 					@click="processSaveChanges"
 				>
 					{{ strings.saveChanges }}
@@ -131,11 +131,15 @@
 </template>
 
 <script>
+import {
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
-import { SaveChanges } from '@/vue/mixins/SaveChanges'
 import { useTruSeoScore } from '@/vue/composables'
+import { SaveChanges } from '@/vue/mixins/SaveChanges'
 import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
-import { mapActions, mapState } from 'vuex'
 
 import BaseButton from '@/vue/components/common/base/Button'
 import SvgCaret from '@/vue/components/common/svg/Caret'
@@ -150,6 +154,8 @@ export default {
 		const { strings } = useTruSeoScore()
 
 		return {
+			postEditorStore   : usePostEditorStore(),
+			rootStore         : useRootStore(),
 			composableStrings : strings
 		}
 	},
@@ -193,7 +199,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'loading', 'currentPost' ]),
 		activeTab () {
 			if (this.active) {
 				return this.active
@@ -210,7 +215,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'openModal' ]),
 		maybeChangeTab (id) {
 			if (this.active) {
 				this.$emit('changed', id)

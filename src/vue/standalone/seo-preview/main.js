@@ -2,8 +2,14 @@ import '@/vue/utils/vue2.js'
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
+import {
+	loadPinia,
+	useRootStore
+} from '@/vue/stores'
+
 import App from './App.vue'
 import translate from '@/vue/plugins/translations'
+import { merge } from 'lodash-es'
 
 // Router placeholder to prevent errors when using router-link.
 const router = createRouter({
@@ -16,14 +22,20 @@ const router = createRouter({
 	]
 })
 
-const app = createApp(App)
+const app = createApp({ ...App, name: 'Standalone/SeoPreview' })
 
 app.use(router)
 router.app = app
 
-app.$t      = app.config.globalProperties.$t      = translate
-app.$td     = app.config.globalProperties.$td     = import.meta.env.VITE_TEXTDOMAIN
-app.$aioseo = app.config.globalProperties.$aioseo = window.aioseoSeoPreview
+// Use the pinia store.
+loadPinia(app, router)
+
+const rootStore = useRootStore()
+const aioseo = JSON.parse(JSON.stringify(window.aioseoSeoPreview))
+rootStore.aioseo = merge({ ...rootStore.aioseo }, { ...aioseo || {} })
+
+app.$t  = app.config.globalProperties.$t  = translate
+app.$td = app.config.globalProperties.$td = import.meta.env.VITE_TEXTDOMAIN
 
 const elemDiv = document.createElement('div')
 

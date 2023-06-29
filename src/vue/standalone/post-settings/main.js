@@ -7,17 +7,17 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
-import '@/vue/plugins/redirects'
+import { loadPiniaStores } from '@/vue/stores'
 
+import RedirectsSlugMonitor from '@/vue/plugins/redirects'
 import TruSeo from '@/vue/plugins/tru-seo'
 
 import App from './App.vue'
-import './registerScoreToggler'
-import store from '@/vue/store'
+import registerScoreToggler from './registerScoreToggler'
 import { elemLoaded } from '@/vue/utils/elemLoaded'
 import { shouldShowMetaBox } from '@/vue/plugins/tru-seo/components/helpers'
 import loadTruSeo from '@/vue/standalone/post-settings/loadTruSeo'
-import './link-assistant/AIOSEO_VERSION'
+import LinkAssistantWatcher from './link-assistant/AIOSEO_VERSION'
 
 // Local Business.
 import AppLocalBusiness from '../local-business-seo/App.vue'
@@ -38,12 +38,17 @@ const localCreateApp = (app) => {
 	app = loadComponents(app)
 	app = loadVersionedComponents(app)
 
-	app.use(store)
 	app.use(router)
 
-	store._vm  = app
 	router.app = app
 
+	// Use the pinia store.
+	loadPiniaStores(app, router)
+
+	// The code below requires Pinia to be loaded.
+	new RedirectsSlugMonitor()
+	new LinkAssistantWatcher()
+	registerScoreToggler()
 	app.config.globalProperties.$truSeo = new TruSeo()
 
 	window.addEventListener('load', () => loadTruSeo(app))
@@ -53,6 +58,7 @@ const localCreateApp = (app) => {
 
 const loadSidebarApp = () => {
 	localCreateApp(createApp({
+		name : 'Standalone/PostSettings/Sidebar',
 		data () {
 			return {
 				tableContext  : 'post',
@@ -72,6 +78,7 @@ if (window.aioseo.currentPost) {
 		}
 
 		localCreateApp(createApp({
+			name : 'Standalone/PostSettings/Metabox',
 			data () {
 				return {
 					tableContext  : currentContext,
@@ -99,6 +106,7 @@ if (window.aioseo.currentPost) {
 
 if (window.aioseo.currentPost && window.aioseo.localBusiness && document.getElementById('aioseo-location-settings-metabox')) {
 	localCreateApp(createApp({
+		name : 'Standalone/LocalSeo/Metabox',
 		data () {
 			return {
 				screenContext : 'metabox'

@@ -1,4 +1,7 @@
-import store from './store'
+import {
+	useTableOfContentsStore
+} from '@/vue/stores'
+
 import { html } from '@/vue/standalone/blocks/utils'
 const { __ }                       = window.wp.i18n
 const { InspectorControls }        = window.wp.blockEditor
@@ -7,6 +10,8 @@ const td                           = import.meta.env.VITE_TEXTDOMAIN
 
 export const sidebarControls = (props) => {
 	const { setAttributes, attributes: { listStyle } } = props
+
+	const tableOfContentsStore = useTableOfContentsStore()
 
 	return html`
 	<${InspectorControls}>
@@ -19,7 +24,7 @@ export const sidebarControls = (props) => {
 				]}
 				value=${listStyle}
 				onChange=${(value) => {
-					store.state.listStyle = value
+					tableOfContentsStore.listStyle = value
 					setAttributes({ listStyle: value })
 				}}
 			/>

@@ -26,40 +26,15 @@
 		</div>
 		<div class="sidebar-row">
 			<p class="title">{{strings.customMarker}}</p>
-			<div class="image-upload">
-				<base-input
-					size="small"
-					v-model="$root.$data.customMarker"
-					:placeholder="strings.pasteYourImageUrl"
-				/>
 
-				<base-button
-					class="insert-image"
-					@click="openUploadModal('locationMapImage', (imageUrl) => $root.$data.customMarker = imageUrl)"
-					size="small"
-					type="black"
-				>
-					<svg-circle-plus />
-					{{ strings.uploadOrSelectImage }}
-				</base-button>
-
-				<base-button
-					v-if="$root.$data.customMarker"
-					class="remove-image"
-					@click="$root.$data.customMarker = null"
-					size="small"
-					type="gray"
-				>
-					{{ strings.remove }}
-				</base-button>
-			</div>
-
-			<div
-				class="aioseo-description"
-				v-html="strings.minimumSize"
+			<core-image-uploader
+				class="aioseo-image-uploader--no-icon"
+				img-preview-max-width="100px"
+				img-preview-max-height="100px"
+				base-size="small"
+				:description="strings.minimumSize"
+				v-model="$root.$data.customMarker"
 			/>
-
-			<base-img :src="$root.$data.customMarker" />
 		</div>
 		<div class="sidebar-row">
 			<p class="title">{{strings.mapDisplay}}</p>
@@ -93,47 +68,48 @@
 </template>
 
 <script>
-import { Uploader } from '@/vue/mixins'
+import {
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
 
-import BaseImg from '@/vue/components/common/base/Img'
 import BaseInput from '@/vue/components/common/base/Input'
 import BaseSelect from '@/vue/components/common/base/Select'
 import BaseToggle from '@/vue/components/common/base/Toggle'
-import BaseButton from '@/vue/components/common/base/Button'
-import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
+import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore(),
+			rootStore       : useRootStore()
+		}
+	},
 	components : {
-		BaseImg,
 		BaseInput,
 		BaseSelect,
 		BaseToggle,
-		BaseButton,
-		SvgCirclePlus
+		CoreImageUploader
 	},
-	mixins : [ Uploader ],
 	data () {
 		return {
 			locationsList : [],
 			strings       : {
-				selectLocation      : window.aioseo.localBusiness.postTypeSingleLabel,
-				showLabel           : this.$t.__('Show label', this.$td),
-				showIcon            : this.$t.__('Show icon', this.$td),
-				businessInfo        : this.$t.__('Business Info', this.$td),
-				mapDisplay          : this.$t.__('Map Display', this.$td),
-				width               : this.$t.__('Width', this.$td),
-				height              : this.$t.__('Height', this.$td),
-				customMarker        : this.$t.__('Custom Marker', this.$td),
-				uploadOrSelectImage : this.$t.__('Upload or Select Image', this.$td),
-				pasteYourImageUrl   : this.$t.__('Paste your image URL or select a new image', this.$td),
-				minimumSize         : this.$t.sprintf(
+				selectLocation : this.rootStore.aioseo.localBusiness.postTypeSingleLabel,
+				showLabel      : this.$t.__('Show label', this.$td),
+				showIcon       : this.$t.__('Show icon', this.$td),
+				businessInfo   : this.$t.__('Business Info', this.$td),
+				mapDisplay     : this.$t.__('Map Display', this.$td),
+				width          : this.$t.__('Width', this.$td),
+				height         : this.$t.__('Height', this.$td),
+				customMarker   : this.$t.__('Custom Marker', this.$td),
+				minimumSize    : this.$t.sprintf(
 					// Translators: 1 - Strong tag, 2 - Close strong tag.
 					this.$t.__('%1$sThe custom marker should be: 100x100 px.%2$s If the image exceeds those dimensions it could (partially) cover the info popup.', this.$td),
 					'<strong>',
 					'</strong>'
 				),
-				remove : this.$t.__('Remove', this.$td),
-				label  : this.$t.__('Label', this.$td)
+				label : this.$t.__('Label', this.$td)
 			}
 		}
 	},
@@ -152,7 +128,7 @@ export default {
 			return selected
 		},
 		isLocationPostType () {
-			return window.aioseo.currentPost.postType === window.aioseo.localBusiness.postTypeName
+			return this.postEditorStore.currentPost.postType === this.rootStore.aioseo.localBusiness.postTypeName
 		}
 	},
 	created () {
@@ -192,12 +168,5 @@ export default {
 			padding-bottom: 8px;
 		}
 	}
-}
-
-.image-upload {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-	margin-bottom: 12px;
 }
 </style>

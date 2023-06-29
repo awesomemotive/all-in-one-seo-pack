@@ -29,7 +29,7 @@
 			</div>
 
 			<CoreSocialProfiles
-				:userProfiles="userProfile.profiles"
+				:userProfiles="settingsStore.userProfile.profiles"
 				@updated="newSocialProfiles => updateHiddenInputField(newSocialProfiles)"
 			/>
 		</CoreCard>
@@ -37,15 +37,22 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { setOptions } from '@/vue/utils/options'
-import { merge } from 'lodash-es'
+import {
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
 
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreSocialProfiles from '@/vue/components/common/core/SocialProfiles'
 import SvgLogoGear from '@/vue/components/common/svg/aioseo/LogoGear'
 
 export default {
+	setup () {
+		return {
+			rootStore     : useRootStore(),
+			settingsStore : useSettingsStore()
+		}
+	},
 	components : {
 		CoreCard,
 		CoreSocialProfiles,
@@ -90,9 +97,9 @@ export default {
 					// Reset back to original tab index so that the screen isn't blank while we're loading the new page.
 					this.activeTabIndex = originalTabIndex
 
-					window.location.href = this.$aioseo.urls.home +
-						'/wp-admin/admin.php?page=followup-emails-reports&tab=reportuser_view&email=' + encodeURIComponent(this.userProfile.userData.user_email) +
-						'&user_id=' + this.userProfile.userData.ID
+					window.location.href = this.rootStore.aioseo.urls.home +
+						'/wp-admin/admin.php?page=followup-emails-reports&tab=reportuser_view&email=' + encodeURIComponent(this.settingsStore.userProfile.userData.user_email) +
+						'&user_id=' + this.settingsStore.userProfile.userData.ID
 					break
 				default:
 					break
@@ -103,7 +110,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'userProfile', 'options' ]),
 		tabs () {
 			const tabs = [
 				{
@@ -117,7 +123,7 @@ export default {
 				}
 			]
 
-			if (this.userProfile.isWooCommerceFollowupEmailsActive) {
+			if (this.settingsStore.userProfile.isWooCommerceFollowupEmailsActive) {
 				tabs.push({
 					label : this.$t.__('Customer Data', this.$td),
 					slug  : 'customer-data'
@@ -130,18 +136,9 @@ export default {
 			return this.tabs[this.activeTabIndex]
 		}
 	},
-	created () {
-		if (!this.$store.state.loaded) {
-			setOptions(this.$.appContext.app, {})
-		}
-
-		// We're populating only the userProfile store since that's the only data we need here.
-		this.$store.state.userProfile = merge({ ...this.$store.state.userProfile }, { ...this.$aioseo.userProfile })
-		this.$store.state.options = merge({ ...this.$store.state.options }, { ...this.$aioseo.options })
-		this.$store.state.settings = merge({ ...this.$store.state.settings }, { ...this.$aioseo.settings })
-
+	async created () {
 		// Set the initial values.
-		this.updateHiddenInputField(this.userProfile.profiles)
+		this.updateHiddenInputField(this.settingsStore.userProfile.profiles)
 	},
 	mounted () {
 		const params = new URLSearchParams(window.location.search)

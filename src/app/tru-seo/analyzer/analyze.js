@@ -53,9 +53,9 @@ class TruSeoAnalyzer {
 		this.postContent           = decodeSpecialChars(content)
 		this.postSlug              = slug
 		this.postTitle             = postData.title || postData.metaDefaults.title || '#post_title'
-		this.postParsedTitle       = decodeSpecialChars(parseTags(this.postTitle, this.aioseo.tags.tags))
+		this.postParsedTitle       = decodeSpecialChars(parseTags(this.postTitle, this.aioseo.tags))
 		this.postDescription       = postData.description || postData.metaDefaults.description
-		this.postParsedDescription = decodeSpecialChars(parseTags(this.postDescription, this.aioseo.tags.tags))
+		this.postParsedDescription = decodeSpecialChars(parseTags(this.postDescription, this.aioseo.tags))
 		this.keyphrases            = (postData.keyphrases) ? postData.keyphrases : null
 		this.postEditedTitle       = decodeSpecialChars(postEditedTitle)
 		this.locale                = this.aioseo.locale || 'en_US'
@@ -127,7 +127,7 @@ class TruSeoAnalyzer {
 			focusAnalysis.keyphraseInIntroduction = analyzers.keyphraseInIntroduction(this.postContent, keyphrase, 'focus', this.locale)
 			focusAnalysis.keyphraseInSubHeadings = analyzers.keyphraseInSubHeadings(this.postContent, keyphrase, this.locale)
 			focusAnalysis.keyphraseInImageAlt = analyzers.keyphraseInImageAlt(this.postContent, keyphrase, 'focus')
-			// focus.keyphraseDensity = analyzers.keyphraseDensity(this.postContent, keyphrase, 'focus')
+			// focusAnalysis.keyphraseDensity = analyzers.keyphraseDensity(this.postContent, keyphrase, 'focus')
 		}
 
 		const keyphraseScore = await calculateScore(focusAnalysis)

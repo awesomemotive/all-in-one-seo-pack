@@ -2,14 +2,16 @@ import '@/vue/utils/vue2.js'
 import { createApp } from 'vue'
 
 import loadPlugins from '@/vue/plugins'
+
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
+
+import { loadPiniaStores } from '@/vue/stores'
 
 import { elemLoaded } from '@/vue/utils/elemLoaded'
 import { shouldShowMetaBox } from '@/vue/plugins/tru-seo/components/helpers'
 
 import App from './App.vue'
-import store from '@/vue/store'
 
 import './blockEditor'
 import './classicEditor'
@@ -27,13 +29,20 @@ const loadPrimaryTermApp = (element) => {
 
 	const taxonomy = element.getAttribute('taxonomy')
 
-	let app = createApp(App, { taxonomy })
+	let app = createApp(
+		{
+			...App,
+			name : 'Standalone/PrimaryTerm'
+		},
+		{ taxonomy }
+	)
 	app     = loadPlugins(app)
 	app     = loadComponents(app)
 	app     = loadVersionedComponents(app)
 
-	store._vm  = app
-	app.use(store)
+	// Use the pinia store.
+	loadPiniaStores(app)
+
 	app.mount(element)
 }
 

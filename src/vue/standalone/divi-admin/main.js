@@ -6,8 +6,9 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
+import { loadPiniaStores } from '@/vue/stores'
+
 import App from './App.vue'
-import store from '@/vue/store'
 
 /**
  * Mount the Alert component inside each tab of the SEO settings from Divi.
@@ -24,13 +25,13 @@ const mountAlert = () => {
 		// Insert the element before the first child of the tab content.
 		tabs[i].insertBefore(element, tabs[i].firstChild)
 
-		let app = createApp(App)
+		let app = createApp({ ...App, name: 'Standalone/DiviAdmin' })
 		app     = loadPlugins(app)
 		app     = loadComponents(app)
 		app     = loadVersionedComponents(app)
 
-		app.use(store)
-		store._vm = app
+		// Use the pinia store.
+		loadPiniaStores(app)
 
 		app.mount(`#${element.getAttribute('id')}`)
 	}

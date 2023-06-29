@@ -42,11 +42,19 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import Graph from '../Graph'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreLoader,
@@ -88,16 +96,13 @@ export default {
 			} ]
 		}
 	},
-	methods : {
-		...mapActions('search-statistics', [ 'getPostDetailFocusKeywordTrend' ])
-	},
 	beforeMount () {
 		if (!this.focusKeyword) {
 			return
 		}
 
 		this.loading = true
-		this.getPostDetailFocusKeywordTrend({
+		this.searchStatisticsStore.getPostDetailFocusKeywordTrend({
 			focusKeyword : this.focusKeyword
 		}).then((response) => {
 			this.intervals = response.body.data.intervals

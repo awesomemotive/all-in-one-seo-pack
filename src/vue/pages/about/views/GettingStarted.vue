@@ -1,7 +1,7 @@
 <template>
 	<div class="aioseo-getting-started">
 		<core-getting-started
-			v-if="$allowed('aioseo_setup_wizard')"
+			v-if="allowed('aioseo_setup_wizard')"
 			disable-close
 		/>
 
@@ -27,7 +27,7 @@
 			<template #featured-image>
 				<img
 					alt="Getting Started with AIOSEO"
-					:src="$getAssetUrl(ctaImg)"
+					:src="getAssetUrl(ctaImg)"
 				/>
 			</template>
 		</cta>
@@ -70,7 +70,7 @@
 						:title="video.title"
 					>
 						<img
-							:src="$getAssetUrl(thumbnailImg)"
+							:src="getAssetUrl(thumbnailImg)"
 						/>
 						<div>{{ video.title }}</div>
 					</a>
@@ -126,6 +126,8 @@
 </template>
 
 <script>
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+import { getAssetUrl } from '@/vue/utils/helpers'
 import ctaImg from '@/vue/assets/images/upsells/news-sitemap.png'
 // import thumbnailImg from '@/vue/assets/images/about/thumbnail.jpg'
 import CoreGettingStarted from '@/vue/components/common/core/GettingStarted'
@@ -143,6 +145,7 @@ export default {
 	},
 	data () {
 		return {
+			allowed,
 			ctaImg,
 			// thumbnailImg,
 			strings : {
@@ -256,6 +259,9 @@ export default {
 				'Pro'
 			)
 		}
+	},
+	methods : {
+		getAssetUrl
 	}
 }
 </script>

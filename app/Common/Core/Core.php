@@ -34,7 +34,8 @@ class Core {
 		'aioseo_redirects_hits',
 		'aioseo_redirects_logs',
 		'aioseo_terms',
-		'aioseo_search_statistics_objects'
+		'aioseo_search_statistics_objects',
+		'aioseo_revisions'
 	];
 
 	/**

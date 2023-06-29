@@ -75,11 +75,13 @@ class Widget extends \WP_Widget {
 			echo $args['after_title'];
 		}
 
-		// If it's a customizer preview or coming from the widgets page, show the preview.
+		// If not being previewed in the Customizer maybe show the dummy preview.
 		if (
-			is_customize_preview() ||
-			false !== strpos( wp_get_referer(), admin_url( 'widgets.php' ) ) ||
-			false !== strpos( wp_get_referer(), admin_url( 'customize.php' ) )
+			! is_customize_preview() &&
+			(
+				false !== strpos( wp_get_referer(), admin_url( 'widgets.php' ) ) ||
+				false !== strpos( wp_get_referer(), admin_url( 'customize.php' ) )
+			)
 		) {
 			aioseo()->breadcrumbs->frontend->preview();
 		} else {

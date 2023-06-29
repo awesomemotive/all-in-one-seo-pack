@@ -798,7 +798,8 @@ trait Wp {
 		global $wp_version;
 		if (
 			version_compare( $wp_version, '5.8', '<' ) ||
-			is_active_widget( false, false, $idBase )
+			is_active_widget( false, false, $idBase ) ||
+			aioseo()->standalone->pageBuilderIntegrations['elementor']->isPluginActive()
 		) {
 			return true;
 		}

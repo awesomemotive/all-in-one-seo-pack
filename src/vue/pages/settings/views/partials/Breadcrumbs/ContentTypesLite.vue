@@ -25,12 +25,22 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import Preview from './Preview'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		CoreSettingsRow,
 		GridColumn,
@@ -46,7 +56,7 @@ export default {
 	},
 	methods : {
 		getPreview (postType) {
-			const breadcrumbOptions = this.options.breadcrumbs
+			const breadcrumbOptions = this.optionsStore.options.breadcrumbs
 			return [
 				breadcrumbOptions.breadcrumbPrefix ? breadcrumbOptions.breadcrumbPrefix : '',
 				breadcrumbOptions.homepageLink ? (breadcrumbOptions.homepageLabel ? breadcrumbOptions.homepageLabel : 'Home') : '',
@@ -58,13 +68,13 @@ export default {
 			]
 		},
 		postTypeIsHierarchical (postType) {
-			return 0 < this.$aioseo.postData.postTypes.filter(postTypeData => postTypeData.name === postType.name && postTypeData.hierarchical).length
+			return 0 < this.rootStore.aioseo.postData.postTypes.filter(postTypeData => postTypeData.name === postType.name && postTypeData.hierarchical).length
 		},
 		postTypeHasArchive (postType) {
-			return 0 < this.$aioseo.postData.postTypes.filter(postTypeData => postTypeData.name === postType.name && postTypeData.hasArchive).length
+			return 0 < this.rootStore.aioseo.postData.postTypes.filter(postTypeData => postTypeData.name === postType.name && postTypeData.hasArchive).length
 		},
 		getPostTypeTemplate (postType, replace = true) {
-			let template = this.$aioseo.breadcrumbs.defaultTemplate
+			let template = this.rootStore.aioseo.breadcrumbs.defaultTemplate
 			if (replace) {
 				template = template.replace(new RegExp('#breadcrumb_label', 'g'), postType.singular)
 			} else {
@@ -73,7 +83,7 @@ export default {
 			return template
 		},
 		getPostTaxonomyOptions (postType) {
-			return this.$aioseo.postData.taxonomies.filter(tax => postType.taxonomies.includes(tax.name)).map(tax => {
+			return this.rootStore.aioseo.postData.taxonomies.filter(tax => postType.taxonomies.includes(tax.name)).map(tax => {
 				return {
 					value : tax.name,
 					label : tax.label
@@ -81,14 +91,13 @@ export default {
 			})
 		},
 		getPostTypeTaxonomy (postType) {
-			const taxonomies = this.$aioseo.postData.taxonomies.filter(taxData => postType.taxonomies.includes(taxData.name))
+			const taxonomies = this.rootStore.aioseo.postData.taxonomies.filter(taxData => postType.taxonomies.includes(taxData.name))
 			return 0 < taxonomies.length ? taxonomies[0] : []
 		}
 	},
 	computed : {
-		...mapState([ 'options' ]),
 		postTypes () {
-			return this.$aioseo.postData.postTypes
+			return this.rootStore.aioseo.postData.postTypes
 		}
 	}
 }

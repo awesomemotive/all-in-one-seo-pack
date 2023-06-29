@@ -4,7 +4,7 @@
 			class="settings"
 		>
 			<grid-column
-				v-for="(option, index) in $aioseo.deprecatedOptions"
+				v-for="(option, index) in rootStore.aioseo.deprecatedOptions"
 				:key="index"
 				xl="6"
 				sm="12"
@@ -37,10 +37,19 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	emits      : [ 'update' ],
 	components : {
 		BaseCheckbox,
@@ -60,7 +69,7 @@ export default {
 		}
 	},
 	mounted () {
-		this.$aioseo.deprecatedOptions.forEach(option => {
+		this.rootStore.aioseo.deprecatedOptions.forEach(option => {
 			if (option.enabled) {
 				this.options[option.value] = true
 			}

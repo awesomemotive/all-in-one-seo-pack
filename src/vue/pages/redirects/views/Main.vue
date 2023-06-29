@@ -9,8 +9,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useRedirectsStore
+} from '@/vue/stores'
+
 import { RequiresActivation, RequiresUpdate } from '@/vue/mixins'
+import addons from '@/vue/utils/addons'
 import CoreMain from '@/vue/components/common/core/main/Index'
 import FullSiteRedirect from './AIOSEO_VERSION/FullSiteRedirect'
 import ImportExport from './AIOSEO_VERSION/ImportExport'
@@ -19,6 +23,11 @@ import Logs404 from './AIOSEO_VERSION/Logs404'
 import Redirects from './Redirects'
 import Settings from './AIOSEO_VERSION/Settings'
 export default {
+	setup () {
+		return {
+			redirectsStore : useRedirectsStore()
+		}
+	},
 	components : {
 		CoreMain,
 		FullSiteRedirect,
@@ -37,7 +46,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('redirects', [ 'options' ]),
 		showSaveButton () {
 			return 'redirects' !== this.$route.name &&
 				'groups' !== this.$route.name &&
@@ -46,15 +54,15 @@ export default {
 				'import-export' !== this.$route.name
 		},
 		excludeTabs () {
-			const exclude = !this.$addons.isActive('aioseo-redirects')
+			const exclude = !addons.isActive('aioseo-redirects')
 				? this.getExcludedActivationTabs('aioseo-redirects')
 				: this.getExcludedUpdateTabs('aioseo-redirects')
 
-			if (!this.options.logs.log404.enabled) {
+			if (!this.redirectsStore.options?.logs?.log404?.enabled) {
 				exclude.push('logs-404')
 			}
 
-			if (!this.options.logs.redirects.enabled || 'server' === this.options.main.method) {
+			if (!this.redirectsStore.options?.logs?.redirects?.enabled || 'server' === this.redirectsStore.options?.main?.method) {
 				exclude.push('logs')
 			}
 

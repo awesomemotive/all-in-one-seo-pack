@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import Cta from './AIOSEO_VERSION/redirects/Cta'
 import Lite from './lite/redirects/Redirects'
 import Redirects from './AIOSEO_VERSION/redirects/Redirects'
@@ -31,9 +30,6 @@ export default {
 		return {
 			addonSlug : 'aioseo-redirects'
 		}
-	},
-	computed : {
-		...mapState([ 'options', 'settings' ])
 	}
 }
 </script>

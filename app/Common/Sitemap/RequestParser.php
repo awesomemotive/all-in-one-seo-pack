@@ -236,10 +236,9 @@ class RequestParser {
 			]
 		];
 
-		foreach ( aioseo()->addons->getLoadedAddons() as $addonName => $loadedAddon ) {
-			if ( ! empty( $loadedAddon->helpers ) && method_exists( $loadedAddon->helpers, 'getOtherSitemapPatterns' ) ) {
-				$sitemapPatterns[ $addonName ] = $loadedAddon->helpers->getOtherSitemapPatterns();
-			}
+		$addonSitemapPatterns = aioseo()->addons->doAddonFunction( 'helpers', 'getOtherSitemapPatterns' );
+		if ( ! empty( $addonSitemapPatterns ) ) {
+			$sitemapPatterns = array_merge( $sitemapPatterns, $addonSitemapPatterns );
 		}
 
 		foreach ( $sitemapPatterns as $type => $patterns ) {

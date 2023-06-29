@@ -1,6 +1,6 @@
 <template>
 	<core-alert
-		v-if="isUnlicensed || showAlert"
+		v-if="licenseStore.isUnlicensed || showAlert"
 		type="red"
 	>
 		{{ requiredPlansString }} <strong>{{ getRequiredPlans }}</strong>
@@ -8,9 +8,19 @@
 </template>
 
 <script>
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
+import license from '@/vue/utils/license'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
-import { mapGetters } from 'vuex'
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore()
+		}
+	},
 	components : {
 		CoreAlert
 	},
@@ -38,7 +48,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
 		requiredPlansString () {
 			return 1 < this.requiredPlans.length
 				? this.strings.thisFeatureRequires
@@ -48,7 +57,7 @@ export default {
 			return this.requiredPlans.join(', ')
 		},
 		showAlert () {
-			return this.$addons.requiresUpgrade(this.addon) && this.requiredPlans.length
+			return addons.requiresUpgrade(this.addon) && this.requiredPlans.length
 		},
 		requiredPlans () {
 			if (this.coreFeature.length || this.addonFeature.length) {
@@ -56,10 +65,10 @@ export default {
 				const feature     = this.coreFeature.length
 					? ('undefined' !== typeof this.coreFeature[1] ? this.coreFeature[1] : '')
 					: ('undefined' !== typeof this.addonFeature[1] ? this.addonFeature[1] : '')
-				return this.$license.getPlansForFeature(this.$aioseo, sectionSlug, feature)
+				return license.getPlansForFeature(sectionSlug, feature)
 			}
 
-			return this.$addons.currentPlans(this.addon) || []
+			return addons.currentPlans(this.addon) || []
 		}
 	}
 }

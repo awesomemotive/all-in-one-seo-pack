@@ -5,7 +5,7 @@
 			:class="{'link-assistant-inner-table' : !postReport}"
 			:columns="columns"
 			:id="tableId"
-			:initial-items-per-page="$aioseo.settings.tablePagination.linkAssistantPostsReport"
+			:initial-items-per-page="settingsStore.settings.tablePagination.linkAssistantPostsReport"
 			:initial-page-number="pageNumber"
 			:key="wpTableKey"
 			:loading="wpTableLoading"
@@ -22,7 +22,7 @@
 			<template #post_title="{ row }">
 				<span>
 					{{ row.context.postTitle }}
-					<span v-if="row.context.permalink.replace(/\/$/, '') === $aioseo.urls.home">({{ strings.frontPage }})</span>
+					<span v-if="row.context.permalink.replace(/\/$/, '') === rootStore.aioseo.urls.home">({{ strings.frontPage }})</span>
 				</span>
 
 				<div
@@ -125,6 +125,11 @@
 </template>
 
 <script>
+import {
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
 import { WpTable } from '@/vue/mixins'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
@@ -142,9 +147,11 @@ export default {
 		const { strings, modalStrings, bulkOptions } = useLinks()
 
 		return {
+			rootStore         : useRootStore(),
+			settingsStore     : useSettingsStore(),
+			composableStrings : strings,
 			bulkOptions,
-			modalStrings,
-			composableStrings : strings
+			modalStrings
 		}
 	},
 	emits      : [ 'openSuggestions' ],

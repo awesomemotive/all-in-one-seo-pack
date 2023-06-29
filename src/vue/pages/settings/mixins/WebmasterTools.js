@@ -1,4 +1,7 @@
-import { mapGetters, mapState, mapActions } from 'vuex'
+import {
+	usePluginsStore
+} from '@/vue/stores'
+
 import { MetaTag } from '@/vue/mixins'
 export const WebmasterTools = {
 	mixins : [ MetaTag ],
@@ -13,10 +16,6 @@ export const WebmasterTools = {
 				return false
 			}
 		}
-	},
-	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
-		...mapState([ 'options' ])
 	}
 }
 
@@ -31,23 +30,24 @@ export const MiOrEm = {
 	},
 	computed : {
 		gaActivated () {
-			return this.$aioseo.plugins.miLite.activated ||
-				this.$aioseo.plugins.emLite.activated ||
-				this.$aioseo.plugins.miPro.activated ||
-				this.$aioseo.plugins.emPro.activated
+			return this.pluginsStore.plugins.miLite.activated ||
+				this.pluginsStore.plugins.emLite.activated ||
+				this.pluginsStore.plugins.miPro.activated ||
+				this.pluginsStore.plugins.emPro.activated
 		},
 		prefersEm () {
-			return (this.$aioseo.plugins.emLite.installed ||
-				this.$aioseo.plugins.emPro.installed) &&
-				(!this.$aioseo.plugins.miLite.installed &&
-				!this.$aioseo.plugins.miPro.installed)
+			return (this.pluginsStore.plugins.emLite.installed ||
+				this.pluginsStore.plugins.emPro.installed) &&
+				(!this.pluginsStore.plugins.miLite.installed &&
+				!this.pluginsStore.plugins.miPro.installed)
 		}
 	},
 	methods : {
-		...mapActions([ 'installPlugins', 'upgradePlugins' ]),
 		installMi () {
 			this.installingPlugin = true
-			this.installPlugins([
+
+			const pluginsStore = usePluginsStore()
+			pluginsStore.installPlugins([
 				{
 					plugin : 'miLite',
 					type   : 'plugin'
@@ -65,8 +65,7 @@ export const MiOrEm = {
 						this.showMiPromo = false
 
 						// Update the active status globally.
-						this.$aioseo.plugins.miLite.activated  = true
-						window.aioseo.plugins.miLite.activated = true
+						this.pluginsStore.plugins.miLite.activated = true
 					}, 3000)
 				})
 				.catch(error => {

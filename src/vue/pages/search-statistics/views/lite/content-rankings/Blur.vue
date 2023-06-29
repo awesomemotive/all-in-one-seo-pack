@@ -16,9 +16,8 @@
 					</div>
 
 					<posts-table
-						:posts="data?.contentRankings?.paginated || defaultPages"
-						:columns="[ 'post_title', 'lastUpdated', 'loss', 'drop', 'performance' ]"
-						disableSorting
+						:posts="searchStatisticsStore.data?.contentRankings?.paginated || defaultPages"
+						:columns="[ 'postTitle', 'lastUpdated', 'loss', 'drop', 'performance' ]"
 						show-items-per-page
 						show-table-footer
 					/>
@@ -29,13 +28,21 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import PostsTable from '../../partials/PostsTable'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreBlur,
@@ -58,9 +65,6 @@ export default {
 				}
 			}
 		}
-	},
-	computed : {
-		...mapState('search-statistics', [ 'data' ])
 	}
 }
 </script>

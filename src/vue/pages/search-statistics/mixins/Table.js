@@ -1,4 +1,10 @@
+import {
+	useLicenseStore,
+	useRootStore
+} from '@/vue/stores'
+
 import dateFormat from '@/vue/utils/dateFormat'
+
 export default {
 	data () {
 		return {
@@ -25,10 +31,11 @@ export default {
 				return []
 			}
 
+			const rootStore = useRootStore()
 			return [ {
 				name : this.strings.position,
 				data : row.graph?.map((tick) => ({
-					x : dateFormat(new Date(tick.date + ' 00:00:00'), this.$aioseo.data.dateFormat),
+					x : dateFormat(new Date(tick.date + ' 00:00:00'), rootStore.aioseo.data.dateFormat),
 					y : tick.position
 				}))
 			} ]
@@ -43,7 +50,8 @@ export default {
 			})
 		},
 		processFilter (filter) {
-			this.showUpsell = (!this.$isPro || this.isUnlicensed) && 'all' !== filter.slug
+			const licenseStore = useLicenseStore()
+			this.showUpsell = (!this.$isPro || licenseStore.isUnlicensed) && 'all' !== filter.slug
 			this.processFilterTable(filter)
 		},
 		processAdditionaFilterOptionSelected ({ name, selectedValue }) {

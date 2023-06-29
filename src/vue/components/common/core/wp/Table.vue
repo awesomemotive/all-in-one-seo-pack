@@ -22,7 +22,7 @@
 							{{ filter.name }}
 							<span
 								v-if="showFilterCount(filter)"
-							>&nbsp;({{ $numbers.numberFormat(filter.count) }})</span>
+							>&nbsp;({{ numbers.numberFormat(filter.count) }})</span>
 						</a>
 
 						<template
@@ -31,7 +31,7 @@
 							{{ filter.name }}
 							<span
 								v-if="showFilterCount(filter)"
-							>&nbsp;({{ $numbers.numberFormat(filter.count) }})</span>
+							>&nbsp;({{ numbers.numberFormat(filter.count) }})</span>
 						</template>
 
 					</span>
@@ -298,6 +298,7 @@
 </template>
 
 <script>
+import numbers from '@/vue/utils/numbers'
 import { getCurrentInstance } from 'vue'
 import { debounce } from '@/vue/utils/debounce'
 
@@ -310,7 +311,16 @@ import CoreWpTableHeaderFooter from './TableHeaderFooter'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 
 export default {
-	emits      : [ 'sort-column', 'process-bulk-action', 'paginate', 'search', 'filter-table', 'process-change-items-per-page', 'process-additional-filters' ],
+	emits : [
+		'sort-column',
+		'process-bulk-action',
+		'paginate',
+		'search',
+		'filter-table',
+		'process-change-items-per-page',
+		'process-additional-filters',
+		'additional-filter-option-selected'
+	],
 	components : {
 		CoreLoader,
 		CoreWpAdditionalFilters,
@@ -407,6 +417,7 @@ export default {
 	},
 	data () {
 		return {
+			numbers,
 			itemsPerPage : null,
 			searchTerm   : '',
 			pageNumber   : 1,

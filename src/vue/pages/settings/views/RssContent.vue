@@ -16,7 +16,7 @@
 				/>
 
 				<core-alert
-					v-if="options.searchAppearance.advanced.crawlCleanup.enable && !options.searchAppearance.advanced.crawlCleanup.feeds.global"
+					v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.enable && !optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.global"
 					type="red"
 					v-html="strings.rssFeedDisabled"
 				/>
@@ -30,9 +30,9 @@
 						size="medium"
 						type="blue"
 						tag="a"
-						:href="$aioseo.urls.feeds.global"
+						:href="rootStore.aioseo.urls.feeds.global"
 						target="_blank"
-						:disabled="options.searchAppearance.advanced.crawlCleanup.enable && !options.searchAppearance.advanced.crawlCleanup.feeds.global"
+						:disabled="optionsStore.options.searchAppearance.advanced.crawlCleanup.enable && !optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.global"
 					>
 						<svg-external />
 						{{ strings.openYourRssFeed }}
@@ -46,7 +46,7 @@
 				<template #content>
 					<core-html-tags-editor
 						checkUnfilteredHtml
-						v-model="options.rssContent.before"
+						v-model="optionsStore.options.rssContent.before"
 						:minimum-line-numbers="5"
 						tags-context="rss"
 						:default-tags="[
@@ -54,7 +54,7 @@
 							'site_link',
 							'author_link'
 						]"
-						:disabled="options.searchAppearance.advanced.crawlCleanup.enable && !options.searchAppearance.advanced.crawlCleanup.feeds.global"
+						:disabled="optionsStore.options.searchAppearance.advanced.crawlCleanup.enable && !optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.global"
 					/>
 
 					<div class="aioseo-description">
@@ -69,7 +69,7 @@
 				<template #content>
 					<core-html-tags-editor
 						checkUnfilteredHtml
-						v-model="options.rssContent.after"
+						v-model="optionsStore.options.rssContent.after"
 						:minimum-line-numbers="5"
 						tags-context="rss"
 						:default-tags="[
@@ -77,7 +77,7 @@
 							'site_link',
 							'author_link'
 						]"
-						:disabled="options.searchAppearance.advanced.crawlCleanup.enable && !options.searchAppearance.advanced.crawlCleanup.feeds.global"
+						:disabled="optionsStore.options.searchAppearance.advanced.crawlCleanup.enable && !optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.global"
 					/>
 
 					<div class="aioseo-description">
@@ -90,13 +90,23 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgExternal from '@/vue/components/common/svg/External'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreCard,
@@ -113,7 +123,7 @@ export default {
 				rssFeedDisabled : this.$t.sprintf(
 					// Translators: 1 - Opening link tag, 2 - Closing link tag.
 					this.$t.__('Your RSS feed has been disabled. Disabling the global RSS feed is NOT recommended. This will prevent users from subscribing to your content and can hurt your SEO rankings. You can re-enable the global RSS feed in the %1$scrawl content settings%2$s.', this.$td),
-					'<a href="' + this.$aioseo.urls.aio.searchAppearance + '&aioseo-scroll=crawl-content-global-feed&aioseo-highlight=crawl-content-global-feed#/advanced">',
+					'<a href="' + this.rootStore.aioseo.urls.aio.searchAppearance + '&aioseo-scroll=crawl-content-global-feed&aioseo-highlight=crawl-content-global-feed#/advanced">',
 					'</a>'
 				),
 				rssContent           : this.$t.__('RSS Content Settings', this.$td),
@@ -129,9 +139,6 @@ export default {
 				)
 			}
 		}
-	},
-	computed : {
-		...mapState([ 'options' ])
 	}
 }
 </script>

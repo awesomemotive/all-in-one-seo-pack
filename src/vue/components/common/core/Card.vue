@@ -10,7 +10,7 @@
 			v-if="!hideHeader"
 			class="header"
 			:class="[ { toggles : toggles } ]"
-			@click="toggleCard({ slug, shouldSave : saveToggleStatus })"
+			@click="settingsStore.toggleCard({ slug, shouldSave : saveToggleStatus })"
 		>
 			<div class="text">
 				<div class="header-icon">
@@ -42,8 +42,8 @@
 			</div>
 
 			<svg-caret
-				v-if="!closes && toggles && settings.toggledCards && !noSlide && !disabled"
-				:class="{ rotated: !settings.toggledCards[slug] }"
+				v-if="!closes && toggles && settingsStore.settings.toggledCards && !noSlide && !disabled"
+				:class="{ rotated: !settingsStore.settings.toggledCards[slug] }"
 			/>
 
 			<svg-close
@@ -57,8 +57,8 @@
 		</div>
 
 		<transition-slide
-			v-if="(settings.toggledCards || noSlide) && !disabled"
-			:active="(settings.toggledCards[slug] && toggles) || noSlide"
+			v-if="(settingsStore.settings.toggledCards || noSlide) && !disabled"
+			:active="(settingsStore.settings.toggledCards[slug] && toggles) || noSlide"
 		>
 			<div
 				v-if="$slots['before-tabs']"
@@ -80,13 +80,21 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import {
+	useSettingsStore
+} from '@/vue/stores'
+
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import SvgClose from '@/vue/components/common/svg/Close'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 export default {
+	setup () {
+		return {
+			settingsStore : useSettingsStore()
+		}
+	},
 	emits      : [ 'close-card' ],
 	components : {
 		CoreTooltip,
@@ -127,16 +135,10 @@ export default {
 	watch : {
 		toggles (value) {
 			const slug = this.slug
-			if (value && !this.settings.toggledCards[slug]) {
-				this.toggleCard({ slug, shouldSave: true })
+			if (value && !this.settingsStore.settings.toggledCards[slug]) {
+				this.settingsStore.toggleCard({ slug, shouldSave: true })
 			}
 		}
-	},
-	computed : {
-		...mapGetters([ 'settings' ])
-	},
-	methods : {
-		...mapActions([ 'toggleCard' ])
 	}
 }
 </script>

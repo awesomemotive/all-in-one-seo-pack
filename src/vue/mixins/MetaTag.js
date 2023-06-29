@@ -1,11 +1,17 @@
+import {
+	useOptionsStore
+} from '@/vue/stores'
+
 export const MetaTag = {
 	methods : {
 		maybeUpdateId (setting) {
+			const optionsStore = useOptionsStore()
+
 			// First, let's see if the value is a valid HTML element.
-			const meta = this.metaHtml(this.options.webmasterTools[setting])
+			const meta = this.metaHtml(optionsStore.options.webmasterTools[setting])
 			if (meta instanceof HTMLElement && 'META' === meta.nodeName) {
 				if (meta.getAttribute('content').length) {
-					this.options.webmasterTools[setting] = meta.getAttribute('content')
+					optionsStore.options.webmasterTools[setting] = meta.getAttribute('content')
 				}
 			}
 		},

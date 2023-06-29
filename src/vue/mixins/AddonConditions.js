@@ -1,9 +1,13 @@
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
 import Activate from '@/vue/components/common/core/addon/Activate'
 import Update from '@/vue/components/common/core/addon/Update'
+
 export const AddonConditions = {
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
 		ctaComponent () {
 			if (this.shouldShowUpdate) {
 				return Update
@@ -12,29 +16,33 @@ export const AddonConditions = {
 			return Activate
 		},
 		shouldShowMain () {
-			return !this.isUnlicensed &&
-				this.$addons.isActive(this.addonSlug) &&
-				!this.$addons.requiresUpgrade(this.addonSlug) &&
-				this.$addons.hasMinimumVersion(this.addonSlug)
+			const licenseStore = useLicenseStore()
+			return !licenseStore.isUnlicensed &&
+				addons.isActive(this.addonSlug) &&
+				!addons.requiresUpgrade(this.addonSlug) &&
+				addons.hasMinimumVersion(this.addonSlug)
 		},
 		shouldShowActivate () {
-			return !this.isUnlicensed &&
-				!this.$addons.isActive(this.addonSlug) &&
-				this.$addons.canActivate(this.addonSlug) &&
-				!this.$addons.requiresUpgrade(this.addonSlug) &&
+			const licenseStore = useLicenseStore()
+			return !licenseStore.isUnlicensed &&
+				!addons.isActive(this.addonSlug) &&
+				addons.canActivate(this.addonSlug) &&
+				!addons.requiresUpgrade(this.addonSlug) &&
 				(
-					this.$addons.hasMinimumVersion(this.addonSlug) ||
-					!this.$addons.isInstalled(this.addonSlug)
+					addons.hasMinimumVersion(this.addonSlug) ||
+					!addons.isInstalled(this.addonSlug)
 				)
 		},
 		shouldShowUpdate () {
-			return !this.isUnlicensed &&
-				this.$addons.isInstalled(this.addonSlug) &&
-				!this.$addons.requiresUpgrade(this.addonSlug) &&
-				!this.$addons.hasMinimumVersion(this.addonSlug)
+			const licenseStore = useLicenseStore()
+			return !licenseStore.isUnlicensed &&
+				addons.isInstalled(this.addonSlug) &&
+				!addons.requiresUpgrade(this.addonSlug) &&
+				!addons.hasMinimumVersion(this.addonSlug)
 		},
 		shouldShowLite () {
-			return this.isUnlicensed || this.$addons.requiresUpgrade(this.addonSlug)
+			const licenseStore = useLicenseStore()
+			return licenseStore.isUnlicensed || addons.requiresUpgrade(this.addonSlug)
 		}
 	}
 }

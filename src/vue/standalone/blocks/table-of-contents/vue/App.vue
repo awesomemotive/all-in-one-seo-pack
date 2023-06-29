@@ -5,7 +5,7 @@
 		<div
 			:class="[
 				'aioseo-toc-menu',
-				{ 'aioseo-toc-placeholder' : 0 === headings.length }
+				{ 'aioseo-toc-placeholder' : 0 === tableOfContentsStore.headings.length }
 			]"
 			>
 			<header class="aioseo-toc-header">
@@ -21,14 +21,14 @@
 					</core-tooltip>
 				</div>
 				<div
-					v-if="0 === headings.length"
+					v-if="0 === tableOfContentsStore.headings.length"
 					class="aioseo-toc-header-instructions"
 				>
 					{{strings.instructions}}
 				</div>
 
 				<div
-					v-if="0 !== headings.length"
+					v-if="0 !== tableOfContentsStore.headings.length"
 					class="aioseo-toc-header-buttons"
 				>
 					<a
@@ -50,39 +50,49 @@
 			</header>
 
 			<div
-				v-if="0 !== headings.length"
+				v-if="0 !== tableOfContentsStore.headings.length"
 				class="aioseo-toc-content"
 			>
-				<List :headings="headings"/>
+				<List :headings="tableOfContentsStore.headings"/>
 			</div>
 
 			<Reorder
 				v-if="showModal"
-				:headings="headings"
+				:headings="tableOfContentsStore.headings"
 				@closeModal="showModal = false"
 			/>
 		</div>
 
 		<ListRendered
-			v-if="0 !== headings.length"
-			:headings="headings"
+			v-if="0 !== tableOfContentsStore.headings.length"
+			:headings="tableOfContentsStore.headings"
 		/>
 	</div>
 </template>
 
 <script>
+import {
+	useTableOfContentsStore
+} from '@/vue/stores'
+
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Info from '@/vue/components/common/svg/Info'
 import List from './List'
 import ListRendered from './ListRendered'
 import Reorder from './AIOSEO_VERSION/Reorder'
 
-import { mapState, mapMutations } from 'vuex'
 import { deepCopy } from '@/vue/standalone/blocks/utils'
 import { flattenHeadings, formatHeadingList } from '../helpers'
 import { extraHeadingProperties } from '../constants'
 
 export default {
+	setup () {
+		const tableOfContentsStore = useTableOfContentsStore()
+
+		return {
+			tableOfContentsStore
+		}
+	},
 	components : {
 		CoreTooltip,
 		Info,
@@ -111,11 +121,7 @@ export default {
 			}
 		}
 	},
-	computed : {
-		...mapState([ 'blockClientId', 'headings', 'reOrdered' ])
-	},
 	methods : {
-		...mapMutations([ 'setHeadings' ]),
 		save (event) {
 			const block = event.target.closest('.wp-block')
 			block?.classList.remove('is-selected')
@@ -129,7 +135,7 @@ export default {
 		},
 		updateHeadings (latestHeadings) {
 			// First, clone the existing headings from the state. It's important that we clone them because we're also flattening them and we don't want to flatten by reference.
-			const existingHeadings = flattenHeadings(deepCopy(this.headings))
+			const existingHeadings = flattenHeadings(deepCopy(this.tableOfContentsStore.headings))
 
 			// Then, add all dynamic properties to the new headings.
 			let newHeadings = latestHeadings.map((newHeading) => {
@@ -164,7 +170,7 @@ export default {
 
 			// If the list isn't following the content order and a new heading is added
 			// we need to give that heading an editedOrder number for proper sorting.
-			if (this.$store.state.reOrdered) {
+			if (this.tableOfContentsStore.reOrdered) {
 				if (0 < newHeadings.length - existingHeadings.length) {
 					newHeadings.sort((a, b) => a.id - b.id)
 					newHeadings.forEach((heading, index) => {
@@ -182,25 +188,27 @@ export default {
 			// Finally, before we update the state, create a new nested structure.
 			newHeadings = formatHeadingList(newHeadings)
 
-			this.setHeadings(newHeadings)
+			this.tableOfContentsStore.setHeadings(newHeadings)
 		}
 	},
 	watch : {
-		headings : {
+		'tableOfContentsStore.headings' : {
 			handler (headings) {
-				window.aioseoBus.$emit('setAttributes' + this.blockClientId, headings)
+				window.aioseoBus.$emit('setAttributes' + this.tableOfContentsStore.blockClientId, headings)
 			},
 			deep : true
 		},
-		reOrdered : {
+		'tableOfContentsStore.reOrdered' : {
 			handler (reOrdered) {
-				window.aioseoBus.$emit('setAttributes' + this.blockClientId, reOrdered)
+				window.aioseoBus.$emit('setAttributes' + this.tableOfContentsStore.blockClientId, reOrdered)
 			}
 		}
 	},
 	mounted () {
-		window.aioseoBus.$on('updateHeadings' + this.blockClientId, (latestHeadings) => {
-			this.updateHeadings(latestHeadings)
+		this.$nextTick(() => {
+			window.aioseoBus.$on('updateHeadings' + this.tableOfContentsStore.blockClientId, (latestHeadings) => {
+				this.updateHeadings(latestHeadings)
+			})
 		})
 	}
 }

@@ -199,3 +199,12 @@ export const arrayDiff = (array1, array2) => array1.filter(el => !array2.include
  * @returns {Array}        Common elements.
  */
 export const arrayIntersection = (array1, array2) => array1.filter(el => array2.includes(el))
+
+/**
+ * Return the values from a single column in the input array.
+ *
+ * @param 	{Array} 	    arr A multidimensional array from which to pull a column of values.
+ * @param 	{number|string} key The column of values to return.
+ * @returns {Array} 			Returns an array of values representing a single column from the input array.
+ */
+export const arrayColumn = (arr, key) => arr.map(x => x[key])

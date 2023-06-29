@@ -9,7 +9,7 @@
 				<p>{{ strings.description }}</p>
 				<base-button
 					class="open-link-assistant-modal gray small"
-					@click="toggleLinkAssistantModal"
+					@click="postEditorStore.toggleLinkAssistantModal"
 				>
 					<svg-right-arrow-short />
 					{{ strings.button }}
@@ -20,10 +20,18 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgRightArrowShort from '@/vue/components/common/svg/right-arrow/Short'
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore()
+		}
+	},
 	components : {
 		CoreSettingsRow,
 		SvgRightArrowShort
@@ -36,9 +44,6 @@ export default {
 				button      : this.$t.__('Open Link Assistant', this.$td)
 			}
 		}
-	},
-	methods : {
-		...mapMutations([ 'toggleLinkAssistantModal' ])
 	}
 }
 </script>

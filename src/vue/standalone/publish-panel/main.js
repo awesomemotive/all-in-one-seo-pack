@@ -6,10 +6,11 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
+import { loadPiniaStores } from '@/vue/stores'
+
 import PrePublish from './PrePublish.vue'
 import PostPublish from './PostPublish.vue'
 
-import store from '@/vue/store'
 import './registerPublishPanel.js'
 import loadTruSeo from '@/vue/standalone/post-settings/loadTruSeo'
 
@@ -17,13 +18,13 @@ import { elemLoaded } from '@/vue/utils/elemLoaded'
 import { camelCase } from 'lodash-es'
 
 const loadPublishPanel = block => {
-	let app = createApp(block.component)
+	let app = createApp({ ...block.component, name: 'Standalone/PublishPanel' })
 	app     = loadPlugins(app)
 	app     = loadComponents(app)
 	app     = loadVersionedComponents(app)
 
-	store._vm  = app
-	app.use(store)
+	// Use the pinia store.
+	loadPiniaStores(app)
 
 	app.mount('#' + block.id)
 

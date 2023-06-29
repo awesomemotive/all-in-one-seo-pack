@@ -1,4 +1,3 @@
-
 <template>
 	<div class="aioseo-wizard-additional-information">
 		<wizard-header />
@@ -16,7 +15,7 @@
 						<div class="name small-margin">{{ strings.personOrOrganization }}</div>
 					</div>
 					<base-radio-toggle
-						v-model="additionalInformation.siteRepresents"
+						v-model="setupWizardStore.additionalInformation.siteRepresents"
 						name="siteRepresents"
 						:options="[
 							{ label: strings.person, value: 'person' },
@@ -30,7 +29,7 @@
 				</div>
 
 				<div
-					v-if="'person' === additionalInformation.siteRepresents"
+					v-if="'person' === setupWizardStore.additionalInformation.siteRepresents"
 					class="aioseo-settings-row no-border no-margin"
 				>
 					<div class="settings-name">
@@ -39,8 +38,8 @@
 					<base-select
 						class="person-chooser"
 						:options="users"
-						:modelValue="getPersonOptions(additionalInformation.person)"
-						@update:modelValue="value => additionalInformation.person = value.value"
+						:modelValue="getPersonOptions(setupWizardStore.additionalInformation.person)"
+						@update:modelValue="value => setupWizardStore.additionalInformation.person = value.value"
 					>
 						<template #singleLabel="{ option }">
 							<div class="person-label">
@@ -78,7 +77,7 @@
 				</div>
 
 				<div
-					v-if="'organization' === additionalInformation.siteRepresents"
+					v-if="'organization' === setupWizardStore.additionalInformation.siteRepresents"
 					class="schema-graph-name aioseo-settings-row no-border no-margin"
 				>
 					<div class="settings-name">
@@ -86,12 +85,12 @@
 					</div>
 					<base-input
 						size="medium"
-						v-model="additionalInformation.organizationName"
+						v-model="setupWizardStore.additionalInformation.organizationName"
 					/>
 				</div>
 
 				<div
-					v-if="'organization' !== additionalInformation.siteRepresents && 'manual' === additionalInformation.person"
+					v-if="'organization' !== setupWizardStore.additionalInformation.siteRepresents && 'manual' === setupWizardStore.additionalInformation.person"
 					class="schema-graph-name aioseo-settings-row no-border no-margin"
 				>
 					<div class="settings-name">
@@ -99,24 +98,24 @@
 					</div>
 					<base-input
 						size="medium"
-						v-model="additionalInformation.personName"
+						v-model="setupWizardStore.additionalInformation.personName"
 					/>
 				</div>
 
 				<div
-					v-if="'organization' === additionalInformation.siteRepresents"
+					v-if="'organization' === setupWizardStore.additionalInformation.siteRepresents"
 					class="schema-graph-phone aioseo-settings-row no-border no-margin"
 				>
 					<div class="settings-name">
 						<div class="name small-margin">{{ strings.phone }}</div>
 					</div>
 					<base-phone
-						v-model="additionalInformation.phone"
+						v-model="setupWizardStore.additionalInformation.phone"
 					/>
 				</div>
 
 				<div
-					v-if="'organization' === additionalInformation.siteRepresents"
+					v-if="'organization' === setupWizardStore.additionalInformation.siteRepresents"
 					class="schema-graph-contact-type aioseo-settings-row no-border no-margin"
 				>
 					<div class="settings-name">
@@ -126,8 +125,8 @@
 						size="medium"
 						:options="$constants.CONTACT_TYPES"
 						:placeholder="strings.chooseContactType"
-						:modelValue="getContactTypeOptions(additionalInformation.contactType)"
-						@update:modelValue="value => additionalInformation.contactType = value.value"
+						:modelValue="getContactTypeOptions(setupWizardStore.additionalInformation.contactType)"
+						@update:modelValue="value => setupWizardStore.additionalInformation.contactType = value.value"
 					/>
 					<div class="aioseo-description">
 						{{ strings.contactTypeDescription }}
@@ -135,7 +134,7 @@
 				</div>
 
 				<div
-					v-if="'organization' === additionalInformation.siteRepresents && 'manual' === additionalInformation.contactType"
+					v-if="'organization' === setupWizardStore.additionalInformation.siteRepresents && 'manual' === setupWizardStore.additionalInformation.contactType"
 					class="schema-graph-contact-type-manual aioseo-settings-row no-border no-margin"
 				>
 					<div class="settings-name">
@@ -143,90 +142,34 @@
 					</div>
 					<base-input
 						size="medium"
-						v-model="additionalInformation.contactTypeManual"
+						v-model="setupWizardStore.additionalInformation.contactTypeManual"
 					/>
 				</div>
 
 				<div
-					v-if="'organization' === additionalInformation.siteRepresents"
+					v-if="'organization' === setupWizardStore.additionalInformation.siteRepresents"
 					class="schema-graph-image aioseo-settings-row no-border no-margin"
 				>
 					<div class="settings-name">
 						<div class="name small-margin">{{ strings.logo }}</div>
 					</div>
-					<div class="image-upload">
-						<base-input
-							size="medium"
-							v-model="additionalInformation.organizationLogo"
-							:placeholder="strings.pasteYourImageUrl"
-						/>
 
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('organizationLogo', (imageUrl) => additionalInformation.organizationLogo = imageUrl)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="additionalInformation.organizationLogo = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						{{ strings.minimumSize }}
-					</div>
-
-					<base-img :src="additionalInformation.organizationLogo" />
+					<core-image-uploader
+						v-model="setupWizardStore.additionalInformation.organizationLogo"
+					/>
 				</div>
 
 				<div
-					v-if="'organization' !== additionalInformation.siteRepresents && 'manual' === additionalInformation.person"
+					v-if="'organization' !== setupWizardStore.additionalInformation.siteRepresents && 'manual' === setupWizardStore.additionalInformation.person"
 					class="schema-graph-image aioseo-settings-row no-border no-margin"
 				>
 					<div class="settings-name">
 						<div class="name small-margin">{{ strings.logo }}</div>
 					</div>
-					<div class="image-upload">
-						<base-input
-							size="medium"
-							v-model="additionalInformation.personLogo"
-							:placeholder="strings.pasteYourImageUrl"
-						/>
 
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('personLogo', (imageUrl) => additionalInformation.personLogo = imageUrl)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="additionalInformation.personLogo = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						{{ strings.minimumSize }}
-					</div>
-
-					<base-img :src="additionalInformation.personLogo" />
+					<core-image-uploader
+						v-model="setupWizardStore.additionalInformation.personLogo"
+					/>
 				</div>
 
 				<div
@@ -235,38 +178,10 @@
 					<div class="settings-name">
 						<div class="name small-margin">{{ strings.defaultSocialShareImage }}</div>
 					</div>
-					<div class="image-upload">
-						<base-input
-							size="medium"
-							v-model="additionalInformation.socialShareImage"
-							:placeholder="strings.pasteYourImageUrl"
-						/>
 
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('socialShareImage', (imageUrl) => additionalInformation.socialShareImage = imageUrl)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="additionalInformation.socialShareImage = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						{{ strings.minimumSize }}
-					</div>
-
-					<base-img :src="additionalInformation.socialShareImage" />
+					<core-image-uploader
+						v-model="setupWizardStore.additionalInformation.socialShareImage"
+					/>
 				</div>
 
 				<div class="header social">
@@ -275,7 +190,7 @@
 
 				<div v-if="loaded" class="social-profiles">
 					<core-social-profiles
-						:options="additionalInformation"
+						:options="setupWizardStore.additionalInformation"
 						leftSize="4"
 						rightSize="8"
 						sameUsernameWidth="4"
@@ -285,9 +200,9 @@
 
 				<template #footer>
 					<div class="go-back">
-						<router-link :to="getPrevLink" class="no-underline">&larr;</router-link>
+						<router-link :to="setupWizardStore.getPrevLink" class="no-underline">&larr;</router-link>
 						&nbsp;
-						<router-link :to="getPrevLink">{{ strings.goBack }}</router-link>
+						<router-link :to="setupWizardStore.getPrevLink">{{ strings.goBack }}</router-link>
 					</div>
 					<div class="spacer"></div>
 					<base-button
@@ -304,15 +219,19 @@
 </template>
 
 <script>
+import {
+	useOptionsStore,
+	useRootStore,
+	useSetupWizardStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
-import { MaxCounts, Uploader, Wizard } from '@/vue/mixins'
-import { mapActions, mapState } from 'vuex'
-import BaseImg from '@/vue/components/common/base/Img'
+import { MaxCounts, Wizard } from '@/vue/mixins'
 import BasePhone from '@/vue/components/common/base/Phone'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
+import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 import CoreSocialProfiles from '@/vue/components/common/core/SocialProfiles'
-import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import WizardBody from '@/vue/components/common/wizard/Body'
 import WizardCloseAndExit from '@/vue/components/common/wizard/CloseAndExit'
 import WizardContainer from '@/vue/components/common/wizard/Container'
@@ -323,22 +242,24 @@ export default {
 		const { strings } = useWizard()
 
 		return {
+			optionsStore      : useOptionsStore(),
+			rootStore         : useRootStore(),
+			setupWizardStore  : useSetupWizardStore(),
 			composableStrings : strings
 		}
 	},
 	components : {
-		BaseImg,
 		BasePhone,
 		BaseRadioToggle,
+		CoreImageUploader,
 		CoreSocialProfiles,
-		SvgCirclePlus,
 		WizardBody,
 		WizardCloseAndExit,
 		WizardContainer,
 		WizardHeader,
 		WizardSteps
 	},
-	mixins : [ MaxCounts, Uploader, Wizard ],
+	mixins : [ MaxCounts, Wizard ],
 	data () {
 		return {
 			loaded  : false,
@@ -358,31 +279,25 @@ export default {
 				contactType                     : this.$t.__('Contact Type', this.$td),
 				contactTypeDescription          : this.$t.__('Select which team or department the phone number belongs to.', this.$td),
 				logo                            : this.$t.__('Logo', this.$td),
-				uploadOrSelectImage             : this.$t.__('Upload or Select Image', this.$td),
-				pasteYourImageUrl               : this.$t.__('Paste your image URL or select a new image', this.$td),
-				minimumSize                     : this.$t.__('Minimum size: 112px x 112px, The image must be in JPG, PNG, GIF, SVG, or WEBP format.', this.$td),
-				remove                          : this.$t.__('Remove', this.$td),
 				defaultSocialShareImage         : this.$t.__('Default Social Share Image', this.$td),
 				yourSocialProfiles              : this.$t.__('Your Social Profiles', this.$td)
 			})
 		}
 	},
 	watch : {
-		'options.social.profiles' : {
+		'optionsStore.options.social.profiles' : {
 			deep : true,
 			handler (newValue) {
-				this.additionalInformation.social.profiles = newValue
+				this.setupWizardStore.additionalInformation.social.profiles = newValue
 			}
 		}
 	},
 	computed : {
-		...mapState([ 'options' ]),
-		...mapState('wizard', [ 'additionalInformation' ]),
 		users () {
 			return [ {
 				label : this.$t.__('Manually Enter Person', this.$td),
 				value : 'manual'
-			} ].concat(this.$aioseo.users.map(u => ({
+			} ].concat(this.rootStore.aioseo.users.map(u => ({
 				label    : `${u.displayName} (${u.email})`,
 				gravatar : u.gravatar,
 				value    : u.id
@@ -390,7 +305,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions('wizard', [ 'saveWizard' ]),
 		getPersonOptions (option) {
 			return this.users.find(u => u.value === option)
 		},
@@ -399,27 +313,28 @@ export default {
 		},
 		saveAndContinue () {
 			this.loading = true
-			this.saveWizard('additionalInformation')
+			this.setupWizardStore.saveWizard('additionalInformation')
 				.then(() => {
-					this.$router.push(this.getNextLink)
+					this.$router.push(this.setupWizardStore.getNextLink)
 				})
 		}
 	},
 	mounted () {
 		this.$nextTick(() => {
-			const searchAppearance = JSON.parse(JSON.stringify(this.options.searchAppearance))
-			const social           = JSON.parse(JSON.stringify(this.options.social))
-			this.additionalInformation.social.profiles   = JSON.parse(JSON.stringify(social.profiles))
-			this.additionalInformation.socialShareImage  = social.facebook.general.defaultImagePosts
-			this.additionalInformation.siteRepresents    = searchAppearance.global.schema.siteRepresents
-			this.additionalInformation.person            = searchAppearance.global.schema.person
-			this.additionalInformation.organizationName  = searchAppearance.global.schema.organizationName
-			this.additionalInformation.organizationLogo  = searchAppearance.global.schema.organizationLogo
-			this.additionalInformation.personName        = searchAppearance.global.schema.personName
-			this.additionalInformation.personLogo        = searchAppearance.global.schema.personLogo
-			this.additionalInformation.phone             = searchAppearance.global.schema.phone
-			this.additionalInformation.contactType       = searchAppearance.global.schema.contactType
-			this.additionalInformation.contactTypeManual = searchAppearance.global.schema.contactTypeManual
+			const searchAppearance = JSON.parse(JSON.stringify(this.optionsStore.options.searchAppearance))
+			const social           = JSON.parse(JSON.stringify(this.optionsStore.options.social))
+
+			this.setupWizardStore.additionalInformation.social.profiles   = JSON.parse(JSON.stringify(social.profiles))
+			this.setupWizardStore.additionalInformation.socialShareImage  = social.facebook.general.defaultImagePosts
+			this.setupWizardStore.additionalInformation.siteRepresents    = searchAppearance.global.schema.siteRepresents
+			this.setupWizardStore.additionalInformation.person            = searchAppearance.global.schema.person
+			this.setupWizardStore.additionalInformation.organizationName  = searchAppearance.global.schema.organizationName
+			this.setupWizardStore.additionalInformation.organizationLogo  = searchAppearance.global.schema.organizationLogo
+			this.setupWizardStore.additionalInformation.personName        = searchAppearance.global.schema.personName
+			this.setupWizardStore.additionalInformation.personLogo        = searchAppearance.global.schema.personLogo
+			this.setupWizardStore.additionalInformation.phone             = searchAppearance.global.schema.phone
+			this.setupWizardStore.additionalInformation.contactType       = searchAppearance.global.schema.contactType
+			this.setupWizardStore.additionalInformation.contactTypeManual = searchAppearance.global.schema.contactTypeManual
 			this.loaded = true
 		})
 	}
@@ -441,42 +356,6 @@ export default {
 
 		.aioseo-select {
 			max-width: 300px;
-		}
-	}
-
-	.schema-graph-image {
-
-		.image-upload {
-			display: flex;
-
-			.aioseo-input-container {
-				width: 100%;
-				max-width: 445px;
-				margin-right: 8px;
-
-				.aioseo-input {
-					width: 100%;
-				}
-			}
-
-			.insert-image {
-				min-width: 214px;
-				margin-right: 8px;
-
-				svg.aioseo-circle-plus {
-					width: 13px;
-					height: 13px;
-					margin-right: 10px;
-				}
-			}
-		}
-
-		img {
-			margin-top: 20px;
-			width: auto;
-			max-width: 525px;
-			max-height: 525px;
-			height: auto;
 		}
 	}
 

@@ -1,27 +1,34 @@
-import store from '@/vue/store'
+import {
+	useAddonsStore,
+	useRedirectsStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { isBlockEditor, isWooCommerceProduct } from '@/vue/utils/context'
 import { getPostEditedSlug } from '@/vue/plugins/tru-seo/components/postSlug'
 import { getPostStatus } from '@/vue/plugins/tru-seo/components/postStatus'
 import { debounce } from 'lodash-es'
 
-export default class Redirects {
+export default class RedirectsSlugMonitor {
 	previousPostSlug
 	previousPostStatus
 	updatingRedirects = false
 
 	constructor () {
-		const addon = window.aioseo.addons.find(item => 'aioseo-redirects' === item.sku)
+		const addonsStore = useAddonsStore()
+		const rootStore   = useRootStore()
+		const addon       = addonsStore.addons.find(item => 'aioseo-redirects' === item.sku)
 		if (
-			!window.aioseo.currentPost ||
+			!rootStore.aioseo.currentPost ||
 			!addon ||
 			!addon.isActive
 		) {
 			return
 		}
 
-		if (!window.aioseo.redirectsWatcherSet) {
+		if (!rootStore.aioseo.redirectsWatcherSet) {
 			this.initWatchers()
-			window.aioseo.redirectsWatcherSet = true
+			rootStore.aioseo.redirectsWatcherSet = true
 		}
 	}
 
@@ -63,10 +70,11 @@ export default class Redirects {
 		this.previousPostSlug = postSlug
 		this.previousPostStatus = postStatus
 		this.updatingRedirects = true
-		store.dispatch('redirects/getPostRedirects', {}, { root: true }).finally(() => {
-			this.updatingRedirects = false
-		})
+
+		const redirectsStore = useRedirectsStore()
+		redirectsStore.getPostRedirects({})
+			.finally(() => {
+				this.updatingRedirects = false
+			})
 	}, 2500)
 }
-
-new Redirects()

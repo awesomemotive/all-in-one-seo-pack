@@ -155,11 +155,22 @@
 </template>
 
 <script>
+import {
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
 import BaseInput from '@/vue/components/common/base/Input'
 import BaseSelect from '@/vue/components/common/base/Select'
 import BaseToggle from '@/vue/components/common/base/Toggle'
 
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore(),
+			rootStore       : useRootStore()
+		}
+	},
 	components : {
 		BaseInput,
 		BaseSelect,
@@ -169,7 +180,7 @@ export default {
 		return {
 			locationsList : [],
 			strings       : {
-				selectLocation : window.aioseo.localBusiness.postTypeSingleLabel,
+				selectLocation : this.rootStore.aioseo.localBusiness.postTypeSingleLabel,
 				showLabels     : this.$t.__('Show labels', this.$td),
 				showIcons      : this.$t.__('Show icons', this.$td),
 				businessInfo   : this.$t.__('Business Info', this.$td),
@@ -206,7 +217,7 @@ export default {
 			return selected
 		},
 		isLocationPostType () {
-			return window.aioseo.currentPost.postType === window.aioseo.localBusiness.postTypeName
+			return this.postEditorStore.currentPost.postType === this.rootStore.aioseo.localBusiness.postTypeName
 		}
 	},
 	created () {

@@ -1,24 +1,38 @@
+import {
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { isBlockEditor, shouldShowMetaBox, shouldShowTruSeoScore } from '@/vue/plugins/tru-seo/components/helpers'
 import { __ } from '@wordpress/i18n'
 
-(function (wp) {
+export default function registerScoreToggler () {
 	const td = import.meta.env.VITE_TEXTDOMAIN
 	if (!isBlockEditor() || !shouldShowMetaBox()) {
 		return
 	}
-	const registerPlugin            = wp.plugins.registerPlugin
-	const PluginSidebarMoreMenuItem = wp.editPost.PluginSidebarMoreMenuItem
-	const PluginSidebar             = wp.editPost.PluginSidebar
-	const Fragment                  = wp.element.Fragment
-	const el                        = wp.element.createElement
-	const analysisCapability        = window.aioseo.user.capabilities.aioseo_page_analysis
-	const score                     = window.aioseo.currentPost.seo_score
+
+	const rootStore = useRootStore()
+	if (rootStore.aioseo.registerScoreTogglerSet) {
+		return
+	}
+
+	rootStore.aioseo.registerScoreTogglerSet = true
+
+	const registerPlugin            = window.wp.plugins.registerPlugin
+	const PluginSidebarMoreMenuItem = window.wp.editPost.PluginSidebarMoreMenuItem
+	const PluginSidebar             = window.wp.editPost.PluginSidebar
+	const Fragment                  = window.wp.element.Fragment
+	const el                        = window.wp.element.createElement
+	const analysisCapability        = rootStore.aioseo.user.capabilities.aioseo_page_analysis
+	const postEditorStore           = usePostEditorStore()
+	const score                     = postEditorStore.currentPost.seo_score
 	const naString                  = __('N/A', td)
 	const scoreClass                = function (score) {
 		if (!analysisCapability || !shouldShowTruSeoScore()) {
 			return 'score-disabled'
 		}
-		return 80 < score ? 'score-green' : 50 < score ? 'score-orange' : 1 < score  ? 'score-red' : 'score-disabled'
+		return 80 < score ? 'score-green' : 50 < score ? 'score-orange' : 1 < score ? 'score-red' : 'score-disabled'
 	}
 
 	const AioseoIcon = el('svg',
@@ -54,11 +68,17 @@ import { __ } from '@wordpress/i18n'
 			'/100'
 		)
 	)
-	const user = window.aioseo.user
+	const user = rootStore.aioseo.user
 
 	registerPlugin('aioseo-post-settings-sidebar', {
 		render : function () {
-			if (!user.capabilities.aioseo_page_analysis && !user.capabilities.aioseo_page_general_settings && !user.capabilities.aioseo_page_social_settings && !user.capabilities.aioseo_page_schema_settings && !user.capabilities.aioseo_page_advanced_settings) {
+			if (
+				!user.capabilities.aioseo_page_analysis &&
+				!user.capabilities.aioseo_page_general_settings &&
+				!user.capabilities.aioseo_page_social_settings &&
+				!user.capabilities.aioseo_page_schema_settings &&
+				!user.capabilities.aioseo_page_advanced_settings
+			) {
 				return null
 			}
 			return el(Fragment, {},
@@ -103,4 +123,4 @@ import { __ } from '@wordpress/i18n'
 			)
 		}
 	})
-})(window.wp)
+}

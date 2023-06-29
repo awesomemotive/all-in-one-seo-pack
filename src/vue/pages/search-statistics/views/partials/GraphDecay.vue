@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import numbers from '@/vue/utils/numbers'
 import { DateTime } from 'luxon'
 import VueApexCharts from 'vue3-apexcharts'
 export default {
@@ -125,7 +126,7 @@ export default {
 							const points = this.$t.sprintf(
 								// Translators: 1 - The number of points.
 								this.$t.__('%1$s points', this.$td),
-								this.$numbers.numberFormat(seriesName, 0)
+								numbers.numberFormat(seriesName, 0)
 							)
 
 							let peakMarker = ''

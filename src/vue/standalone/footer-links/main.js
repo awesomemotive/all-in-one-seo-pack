@@ -7,7 +7,7 @@ import App from './App.vue'
 
 const footerLinks = document.querySelector('#aioseo-footer-links')
 if (footerLinks) {
-	let app = createApp(App)
+	let app = createApp({ ...App, name: 'Standalone/FooterLinks' })
 	app     = loadPlugins(app)
 
 	app.mount('#aioseo-footer-links')

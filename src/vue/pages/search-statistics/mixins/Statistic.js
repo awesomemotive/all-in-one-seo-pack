@@ -1,3 +1,4 @@
+import numbers from '@/vue/utils/numbers'
 
 export default {
 	methods : {
@@ -14,7 +15,7 @@ export default {
 				return this.$t.sprintf(
 					// Translators: 1 - The number of points.
 					this.$t.__('%1$s Points', this.$td),
-					this.$numbers.numberFormat(number, 0)
+					numbers.numberFormat(number, 0)
 				)
 			}
 
@@ -23,7 +24,7 @@ export default {
 			}
 
 			number = Math.abs(number)
-			return this.$numbers.compactNumber(number)
+			return numbers.compactNumber(number)
 		}
 	}
 }

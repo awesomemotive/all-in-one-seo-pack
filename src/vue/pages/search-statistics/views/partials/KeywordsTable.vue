@@ -12,7 +12,7 @@
 			:loading="loading"
 			:initial-page-number="pageNumber"
 			:initial-search-term="searchTerm"
-			:initial-items-per-page="$aioseo.settings.tablePagination[changeItemsPerPageSlug]"
+			:initial-items-per-page="settingsStore.settings.tablePagination[changeItemsPerPageSlug]"
 			:show-header="showHeader"
 			:show-bulk-actions="false"
 			:show-table-footer="showTableFooter"
@@ -57,11 +57,11 @@
 			</template>
 
 			<template #ctr="{ row }">
-				{{ $numbers.compactNumber(row.ctr) }}%
+				{{ numbers.compactNumber(row.ctr) }}%
 			</template>
 
 			<template #impressions="{ row }">
-				{{ $numbers.compactNumber(row.impressions) }}
+				{{ numbers.compactNumber(row.impressions) }}
 			</template>
 
 			<template #position="{ row }">
@@ -136,8 +136,14 @@
 </template>
 
 <script>
+import {
+	useLicenseStore,
+	useSearchStatisticsStore,
+	useSettingsStore
+} from '@/vue/stores'
+
+import numbers from '@/vue/utils/numbers'
 import { decodeHTMLEntities } from '@/vue/utils/helpers'
-import { mapActions, mapGetters, mapState } from 'vuex'
 import { clone } from 'lodash-es'
 import { WpTable } from '@/vue/mixins'
 import PostTypesMixin from '@/vue/mixins/PostTypes.js'
@@ -149,6 +155,13 @@ import KeywordInner from './KeywordInner'
 import Statistic from './Statistic'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 export default {
+	setup () {
+		return {
+			licenseStore          : useLicenseStore(),
+			searchStatisticsStore : useSearchStatisticsStore(),
+			settingsStore         : useSettingsStore()
+		}
+	},
 	components : {
 		CoreTooltip,
 		CoreWpTable,
@@ -160,13 +173,15 @@ export default {
 	mixins : [ PostTypesMixin, WpTable, Table ],
 	data () {
 		return {
-			tableId      : 'aioseo-search-statistics-keywords-table',
-			activeRow    : -1,
-			showUpsell   : false,
-			isPreloading : false,
-			isFetching   : false,
-			interval     : null,
-			strings      : {
+			numbers,
+			tableId         : 'aioseo-search-statistics-keywords-table',
+			activeRow       : -1,
+			showUpsell      : false,
+			isPreloading    : false,
+			isFetching      : false,
+			interval        : null,
+			sortableColumns : [],
+			strings         : {
 				position      : this.$t.__('Position', this.$td),
 				ctaButtonText : this.$t.__('Upgrade to Pro and Unlock Access Control', this.$td),
 				ctaHeader     : this.$t.sprintf(
@@ -226,8 +241,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
-		...mapState('search-statistics', [ 'data', 'isConnected' ]),
 		changeItemsPerPageSlug () {
 			if (this.postDetail) {
 				return 'searchStatisticsPostDetailKeywords'
@@ -245,48 +258,41 @@ export default {
 				columns.push(this.appendColumns[activeFilter.slug || 'all'])
 			}
 
-			return columns
+			return columns.map(column => {
+				// In order to have this column sortable, add the "Sortable" suffix to the column name.
+				if (column.endsWith('Sortable')) {
+					column = column.replace('Sortable', '')
+					this.sortableColumns.push(column)
+				}
+
+				return column
+			})
 		},
 		tableColumns () {
 			return [
 				{
-					slug     : 'keyword',
-					label    : this.$t.__('Keyword', this.$td),
-					sortable : this.isSortable,
-					sortDir  : 'keyword' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'keyword' === this.orderBy
+					slug  : 'keyword',
+					label : this.$t.__('Keyword', this.$td)
 				},
 				{
-					slug     : 'clicks',
-					label    : this.$t.__('Clicks', this.$td),
-					width    : '80px',
-					sortable : this.isSortable,
-					sortDir  : 'clicks' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'clicks' === this.orderBy
+					slug  : 'clicks',
+					label : this.$t.__('Clicks', this.$td),
+					width : '80px'
 				},
 				{
-					slug     : 'ctr',
-					label    : this.$t.__('Avg. CTR', this.$td),
-					width    : '100px',
-					sortable : this.isSortable,
-					sortDir  : 'ctr' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'ctr' === this.orderBy
+					slug  : 'ctr',
+					label : this.$t.__('Avg. CTR', this.$td),
+					width : '100px'
 				},
 				{
-					slug     : 'impressions',
-					label    : this.$t.__('Impressions', this.$td),
-					width    : '120px',
-					sortable : this.isSortable,
-					sortDir  : 'impressions' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'impressions' === this.orderBy
+					slug  : 'impressions',
+					label : this.$t.__('Impressions', this.$td),
+					width : '120px'
 				},
 				{
-					slug     : 'position',
-					label    : this.$t.__('Position', this.$td),
-					width    : '85px',
-					sortable : this.isSortable,
-					sortDir  : 'position' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'position' === this.orderBy
+					slug  : 'position',
+					label : this.$t.__('Position', this.$td),
+					width : '85px'
 				},
 				{
 					slug  : 'diffDecay',
@@ -304,17 +310,22 @@ export default {
 					width : this.hasSlot('buttons') ? '240px' : '40px'
 				}
 			].filter(column => this.allColumns.includes(column.slug))
+				.map(column => {
+					column.sortable = this.isSortable && this.sortableColumns.includes(column.slug)
+
+					if (column.sortable) {
+						column.sortDir = column.slug === this.orderBy ? this.orderDir : 'asc'
+						column.sorted  = column.slug === this.orderBy
+					}
+
+					return column
+				})
 		},
 		isSortable () {
-			return 'all' === this.filter && (this.$isPro && !this.isUnlicensed)
+			return 'all' === this.filter && (this.$isPro && !this.licenseStore.isUnlicensed)
 		}
 	},
 	methods : {
-		...mapActions('search-statistics', [
-			'getPagesByKeywords',
-			'updateKeywords',
-			'updatePostDetailKeywords' ]
-		),
 		decodeHTMLEntities,
 		isRowActive (index) {
 			return index === this.activeRow
@@ -335,12 +346,12 @@ export default {
 			}
 
 			if (this.postDetail) {
-				return this.updatePostDetailKeywords(payload).finally(() => {
+				return this.searchStatisticsStore.updatePostDetailKeywords(payload).finally(() => {
 					this.isFetching = false
 				})
 			}
 
-			return this.updateKeywords(payload).finally(() => {
+			return this.searchStatisticsStore.updateKeywords(payload).finally(() => {
 				this.isFetching = false
 			})
 		},
@@ -351,7 +362,7 @@ export default {
 			return 120 < decodeHTMLEntities(line).length
 		},
 		maybePreloadPages () {
-			if (!this.isConnected || this.isPreloading) {
+			if (!this.searchStatisticsStore.isConnected || this.isPreloading) {
 				return
 			}
 
@@ -372,9 +383,9 @@ export default {
 			})
 		},
 		preloadPages () {
-			let rows = this.data.keywords?.paginated?.rows
+			let rows = this.searchStatisticsStore.data.keywords?.paginated?.rows
 			if (this.postDetail) {
-				rows = this.data.postDetail?.keywords?.paginated?.rows
+				rows = this.searchStatisticsStore.data.postDetail?.keywords?.paginated?.rows
 			}
 
 			const keywords = []
@@ -395,7 +406,7 @@ export default {
 			chunks.forEach(chunk => {
 				promises.push(
 					new Promise(resolve => {
-						this.getPagesByKeywords(chunk).then((data) => {
+						this.searchStatisticsStore.getPagesByKeywords(chunk).then((data) => {
 							Object.entries(data).forEach((row) => {
 								const [ key, value ] = row
 								const rowIndex = rows.findIndex(row => row.keyword === key)
@@ -406,9 +417,9 @@ export default {
 								const pages = Object.values(value).slice(0, 10)
 
 								if (this.postDetail) {
-									this.data.postDetail.keywords.paginated.rows[rowIndex].pages = pages
+									this.searchStatisticsStore.data.postDetail.keywords.paginated.rows[rowIndex].pages = pages
 								} else {
-									this.data.keywords.paginated.rows[rowIndex].pages = pages
+									this.searchStatisticsStore.data.keywords.paginated.rows[rowIndex].pages = pages
 								}
 							})
 						}).finally(() => {

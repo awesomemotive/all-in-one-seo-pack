@@ -1,4 +1,7 @@
-import { mapState, mapActions } from 'vuex'
+import {
+	useLinkAssistantStore,
+	usePostEditorStore
+} from '@/vue/stores'
 
 import { isBlockEditor, isClassicEditor } from '@/vue/utils/context'
 import { escapeRegex } from '@/vue/utils/regex'
@@ -39,10 +42,12 @@ export default {
 		}
 	},
 	beforeMount () {
-		this.$bus.$on('updatingLinks', (loading) => {
+		window.aioseoBus.$on('updatingLinks', (loading) => {
 			this.wpTableLoading = loading
 		})
-		this.pageNumber = this.linkType ? this.linkAssistant.postReport[this.linkType].totals.page : 1
+
+		const linkAssistantStore = useLinkAssistantStore()
+		this.pageNumber = this.linkType ? linkAssistantStore.postReport[this.linkType].totals.page : 1
 	},
 	data () {
 		return {
@@ -53,7 +58,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'linkAssistant', 'currentPost' ]),
 		rows () {
 			if (!this.metabox) {
 				return this.post.links[this.linkType].rows
@@ -64,28 +68,23 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions('linkAssistant', [
-			'linkDelete',
-			'linksBulk',
-			'fetchPostReport',
-			'fetchLinksReportInner',
-			'postSettingsUpdate'
-		]),
 		fetchData (payload) {
-			this.$bus.$emit('updatingLinks', true)
+			const postEditorStore = usePostEditorStore()
+			window.aioseoBus.$emit('updatingLinks', true)
 
 			const newPayload = {
 				...payload,
 				additionalFilters : {
-					postId    : this.post.ID || this.currentPost.id,
+					postId    : this.post.ID || postEditorStore.currentPost.id,
 					postIndex : this.postIndex,
 					type      : this.linkType
 				}
 			}
 
-			const action = this.postReport ? 'fetchPostReport' : 'fetchLinksReportInner'
-			return this[action](newPayload).finally(() => {
-				this.$bus.$emit('updatingLinks', false)
+			const linkAssistantStore = useLinkAssistantStore()
+			const action             = this.postReport ? 'fetchPostReport' : 'fetchLinksReportInner'
+			return linkAssistantStore[action](newPayload).finally(() => {
+				window.aioseoBus.$emit('updatingLinks', false)
 			})
 		},
 		openPostReport (initialTab) {
@@ -119,17 +118,19 @@ export default {
 				return
 			}
 
-			this.$bus.$emit('updatingLinks', true)
-			this.linksBulk({
+			window.aioseoBus.$emit('updatingLinks', true)
+			const linkAssistantStore = useLinkAssistantStore()
+			const postEditorStore    = usePostEditorStore()
+			linkAssistantStore.linksBulk({
 				postIndex   : this.postIndex,
-				postId      : this.post.ID || this.currentPost.id,
+				postId      : this.post.ID || postEditorStore.currentPost.id,
 				action      : this.action,
 				linkType    : this.linkType,
 				linkIds     : this.selectedRows,
 				linksReport : this.linksReport,
 				postReport  : this.postReport
 			}).finally(() => {
-				this.$bus.$emit('updatingLinks', false)
+				window.aioseoBus.$emit('updatingLinks', false)
 				this.$emit('linksUpdated')
 				this.refreshTable()
 			})
@@ -145,36 +146,40 @@ export default {
 				return
 			}
 
-			this.$bus.$emit('updatingLinks', true)
-			this.linkDelete({
+			window.aioseoBus.$emit('updatingLinks', true)
+
+			const linkAssistantStore = useLinkAssistantStore()
+			const postEditorStore    = usePostEditorStore()
+			linkAssistantStore.linkDelete({
 				postIndex   : this.postIndex,
-				postId      : this.post.ID || this.currentPost.id,
+				postId      : this.post.ID || postEditorStore.currentPost.id,
 				linkId,
 				linksReport : this.linksReport,
 				postReport  : this.postReport
 			}).finally(() => {
-				this.$bus.$emit('updatingLinks', false)
+				window.aioseoBus.$emit('updatingLinks', false)
 				this.$emit('linksUpdated')
 				this.refreshTable()
 			})
 		},
 		editorRemoveLink (rowIndex) {
 			if (isBlockEditor()) {
-				this.$bus.$emit('updatingLinks', false)
+				window.aioseoBus.$emit('updatingLinks', false)
 				this.blockEditorRemoveLink(rowIndex)
-				this.$bus.$emit('updatingLinks', false)
+				window.aioseoBus.$emit('updatingLinks', false)
 			}
 			if (isClassicEditor()) {
 				this.classicEditorRemoveLink(rowIndex)
 			}
 		},
 		blockEditorRemoveLink (rowIndex) {
-			const link = this.currentPost.linkAssistant.links[this.linkType].rows[rowIndex]
+			const postEditorStore = usePostEditorStore()
+			const link            = postEditorStore.currentPost.linkAssistant.links[this.linkType].rows[rowIndex]
 			if (!link) {
 				return
 			}
 
-			this.$bus.$emit('updatingLinks', true)
+			window.aioseoBus.$emit('updatingLinks', true)
 
 			const escapedAnchor     = escapeRegex(link.anchor.trim())
 			const phraseHtml        = link.phrase_html.trim()
@@ -184,13 +189,13 @@ export default {
 			const targetBlockId  = this.findTargetBlock(blocks, phraseHtml)
 
 			if (!targetBlockId) {
-				this.$bus.$emit('updatingLinks', false)
+				window.aioseoBus.$emit('updatingLinks', false)
 				return
 			}
 
 			const targetBlock = window.wp.data.select('core/block-editor').getBlock(targetBlockId)
 			if (!targetBlock) {
-				this.$bus.$emit('updatingLinks', false)
+				window.aioseoBus.$emit('updatingLinks', false)
 				return
 			}
 
@@ -207,17 +212,18 @@ export default {
 			}).catch((error) => {
 				console.error(`Couldn\t delete link with type "${this.linkType}" and index ${rowIndex}:`, error)
 			}).finally(() => {
-				this.$bus.$emit('updatingLinks', false)
+				window.aioseoBus.$emit('updatingLinks', false)
 				this.$emit('linksUpdated')
 			})
 		},
 		classicEditorRemoveLink (rowIndex) {
-			const link = this.currentPost.linkAssistant.links[this.linkType].rows[rowIndex]
+			const postEditorStore = usePostEditorStore()
+			const link            = postEditorStore.currentPost.linkAssistant.links[this.linkType].rows[rowIndex]
 			if (!link || !window.tinyMCE) {
 				return
 			}
 
-			this.$bus.$emit('updatingLinks', true)
+			window.aioseoBus.$emit('updatingLinks', true)
 
 			let postContent = '',
 			 editor         = null,
@@ -231,7 +237,7 @@ export default {
 			}
 
 			if (!postContent) {
-				this.$bus.$emit('updatingLinks', false)
+				window.aioseoBus.$emit('updatingLinks', false)
 				return
 			}
 
@@ -259,9 +265,10 @@ export default {
 
 			this.post.links[this.linkType].rows.splice(rowIndex, 1)
 
-			this.postSettingsUpdate({ postContent: postContent })
+			const linkAssistantStore = useLinkAssistantStore()
+			linkAssistantStore.postSettingsUpdate({ postContent: postContent })
 				.finally(() => {
-					this.$bus.$emit('updatingLinks', false)
+					window.aioseoBus.$emit('updatingLinks', false)
 					this.$emit('linksUpdated')
 				})
 		},

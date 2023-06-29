@@ -59,7 +59,7 @@
 					:line-numbers="false"
 					single
 					:tags-context="`${object.name}Title`"
-					:default-tags="$tags.getDefaultTags(type, object.name, 'title')"
+					:default-tags="tags.getDefaultTags(type, object.name, 'title')"
 				>
 					<template #tags-description>
 						{{ strings.clickToAddTitle }}
@@ -71,7 +71,7 @@
 					:line-numbers="false"
 					single
 					:tags-context="`${object.name}Title`"
-					:default-tags="$tags.getDefaultTags(type, object.name, 'title')"
+					:default-tags="tags.getDefaultTags(type, object.name, 'title')"
 				>
 					<template #tags-description>
 						{{ strings.clickToAddTitle }}
@@ -91,7 +91,7 @@
 					:line-numbers="false"
 					description
 					:tags-context="`${object.name}Description`"
-					:default-tags="$tags.getDefaultTags(type, object.name, 'description')"
+					:default-tags="tags.getDefaultTags(type, object.name, 'description')"
 				>
 					<template #tags-description>
 						{{ strings.clickToAddDescription }}
@@ -102,7 +102,7 @@
 					v-if="!edit"
 					:line-numbers="false"
 					:tags-context="`${object.name}Description`"
-					:default-tags="$tags.getDefaultTags(type, object.name, 'description')"
+					:default-tags="tags.getDefaultTags(type, object.name, 'description')"
 				>
 					<template #tags-description>
 						{{ strings.clickToAddDescription }}
@@ -114,6 +114,7 @@
 </template>
 
 <script>
+import tags from '@/vue/utils/tags'
 import { MaxCounts, Tags } from '@/vue/mixins'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
@@ -155,6 +156,7 @@ export default {
 	},
 	data () {
 		return {
+			tags,
 			titleCount       : 0,
 			descriptionCount : 0,
 			strings          : {

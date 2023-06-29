@@ -1,9 +1,17 @@
+import {
+	useOptionsStore,
+	usePostEditorStore,
+	useRootStore,
+	useTagsStore
+} from '@/vue/stores'
+
+import { markRaw } from 'vue'
+
 import { getPostEditedContent } from '@/vue/plugins/tru-seo/components/postContent'
 import { getPostEditedPermalink } from '@/vue/plugins/tru-seo/components/postPermalink'
 import { getPostEditedTitle } from '@/vue/plugins/tru-seo/components/postTitle'
 import { isBlockEditor } from '@/vue/plugins/tru-seo/components/helpers'
 
-import store from '@/vue/store'
 import { decodeHTMLEntities } from '@/vue/utils/helpers'
 
 import TruSeoWorker from '@/app/tru-seo/analyzer/main.js?worker'
@@ -33,15 +41,17 @@ class TruSeo {
 	async runAnalysis (
 		{
 			postId,
-			postData = { ...store.state.currentPost },
+			postData,
 			content  = getPostEditedContent(),
 			slug     = getPostEditedPermalink()
 		}
 	) {
+		const postEditorStore = usePostEditorStore()
+		const optionsStore    = useOptionsStore()
+		postData              = postData || { ...postEditorStore.currentPost } // TODO: Verify that this works as expected since it is different logic.
 		if (
-			!store.state.options.advanced ||
-			!store.state.options.advanced.truSeo ||
-			!store.state.currentPost.page_analysis ||
+			!optionsStore.options.advanced?.truSeo ||
+			!postEditorStore.currentPost.page_analysis ||
 			this.isAnalyzing
 		) {
 			return
@@ -53,24 +63,32 @@ class TruSeo {
 		}
 
 		const aioseoGlobals = {
-			separator : decodeHTMLEntities(window.aioseo.options.searchAppearance.global.separator)
+			separator : decodeHTMLEntities(optionsStore.options.searchAppearance.global.separator)
+		}
+
+		const rootStore = useRootStore()
+		const tagsStore = useTagsStore()
+		const aioseo    = {
+			...markRaw(rootStore.aioseo),
+			tags        : markRaw(tagsStore.tags),
+			currentPost : markRaw(postEditorStore.currentPost)
 		}
 
 		const analysisData = JSON.parse(JSON.stringify({
 			postId,
 			postData,
 			content,
+			aioseo,
 			slug,
 			postEditedTitle : getPostEditedTitle(),
-			aioseo          : window.aioseo,
 			aioseoGlobals
 		}))
 
 		let dispatch = []
 		if (import.meta.env.PROD || import.meta.env.VITE_TRUSEO_WEB_WORKER) {
-			this.worker  = import.meta.env.PROD
+			this.worker     = import.meta.env.PROD
 				? new TruSeoWorker()
-				: new Worker(window.aioseo.urls.truSeoWorker, {
+				: new Worker(rootStore.aioseo.urls.truSeoWorker, {
 					type : 'module'
 				})
 
@@ -116,14 +134,16 @@ class TruSeo {
 	}
 
 	dispatchActions (dispatch, analysisData) {
+		const postEditorStore = usePostEditorStore()
 		dispatch.forEach(d => {
 			if ('updateState' === d.action) {
 				// Update the sidebar score.
-				if ('attachment' !== window.aioseo.currentPost.postType && analysisData.postEditedTitle) {
+				if ('attachment' !== postEditorStore.currentPost.postType && analysisData.postEditedTitle) {
 					this.setSidebarButtonScore(d.data.seo_score)
 				}
 			}
-			store.dispatch(d.action, d.data)
+
+			postEditorStore[d.action](d.data)
 		})
 	}
 }

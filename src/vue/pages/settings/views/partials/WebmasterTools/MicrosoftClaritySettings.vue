@@ -17,7 +17,7 @@
 						<base-input
 							size="small"
 							@blur="maybeUpdateId(setting.option)"
-							v-model="options.webmasterTools[setting.option]"
+							v-model="optionsStore.options.webmasterTools[setting.option]"
 						/>
 					</div>
 
@@ -30,8 +30,8 @@
 						class="aioseo-description"
 						v-if="isConnected"
 					>
-						<a target="_blank" :href="clarityDashboardUrl(options.webmasterTools[setting.option])">{{ strings.dashboard }}</a> |
-						<a target="_blank" :href="claritySettingsUrl(options.webmasterTools[setting.option])">{{ strings.settings }}</a>
+						<a target="_blank" :href="clarityDashboardUrl(optionsStore.options.webmasterTools[setting.option])">{{ strings.dashboard }}</a> |
+						<a target="_blank" :href="claritySettingsUrl(optionsStore.options.webmasterTools[setting.option])">{{ strings.settings }}</a>
 					</div>
 
 					<br>
@@ -49,17 +49,17 @@
 						<div v-html="strings.miPromo" />
 						<br>
 						<base-button
-							v-if="!$aioseo.plugins.miLite.canInstall"
+							v-if="!pluginsStore.plugins.miLite.canInstall"
 							type="blue"
 							size="medium"
 							tag="a"
 							target="_blank"
-							:href="$aioseo.plugins.miLite.wpLink"
+							:href="pluginsStore.plugins.miLite.wpLink"
 						>
 							<svg-external /> {{ strings.installMi }}
 						</base-button>
 						<base-button
-							v-if="$aioseo.plugins.miLite.canInstall"
+							v-if="pluginsStore.plugins.miLite.canInstall"
 							:loading="installingPlugin"
 							type="blue"
 							:disabled="miInstalled"
@@ -86,7 +86,7 @@
 							size="medium"
 							tag="a"
 							target="_blank"
-							:href="$aioseo.plugins.miLite.adminUrl"
+							:href="pluginsStore.plugins.miLite.adminUrl"
 						>
 							<svg-external /> {{ strings.manageGa }}
 						</base-button>
@@ -98,6 +98,11 @@
 </template>
 
 <script>
+import {
+	useOptionsStore,
+	usePluginsStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
 import { useWebmasterTools } from '@/vue/composables'
 import { MiOrEm, WebmasterTools } from '@/vue/pages/settings/mixins'
@@ -110,6 +115,8 @@ export default {
 		const { strings } = useWebmasterTools()
 
 		return {
+			optionsStore      : useOptionsStore(),
+			pluginsStore      : usePluginsStore(),
 			composableStrings : strings
 		}
 	},

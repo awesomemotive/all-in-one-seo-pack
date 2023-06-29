@@ -16,6 +16,8 @@
 					]"
 					:is="tab.icon"
 				/>
+
+				<component :is="tab.badge" />
 			</template>
 		</core-main-tabs>
 
@@ -35,6 +37,8 @@
 
 					<div class="name">{{ tab.name }}</div>
 
+					<component :is="tab.badge" />
+
 					<svg-circle-information-solid
 						v-if="tab.warning"
 						width="15"
@@ -51,7 +55,7 @@
 				v-if="activeTab"
 				:key="activeTab"
 				class="aioseo-tab"
-				:class="{ 'is-page-builder': !!$aioseo.integration }"
+				:class="{ 'is-page-builder': !!rootStore.aioseo.integration }"
 			>
 				<div
 					v-if="'sidebar' === $root._data.screenContext"
@@ -73,7 +77,7 @@
 		</transition>
 
 		<core-modal-portal
-			v-if="currentPost.modalOpen && 'sidebar' === $root._data.screenContext"
+			v-if="postEditorStore.currentPost.modalOpen && 'sidebar' === $root._data.screenContext"
 			@close="closeModal"
 			:classes="[ 'aioseo-post-settings-modal' ]"
 		>
@@ -89,9 +93,20 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from 'vuex'
+import {
+	useLicenseStore,
+	usePostEditorStore,
+	useRedirectsStore,
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 import { getParams, removeParam } from '@/vue/utils/params'
 import { debounceContext } from '@/vue/utils/debounce'
+import { isBlockEditor } from '@/vue/utils/context'
+import { ObjectRevisions } from '@/vue/mixins/seo-revisions/SeoRevisions'
 import Advanced from './Advanced'
 import Alert from './partials/Alert'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
@@ -101,7 +116,10 @@ import LinkAssistant from './Links'
 import ModalContent from './ModalContent'
 import Redirects from './Redirects'
 import Schema from './Schema'
+import SeoRevisions from './SeoRevisions'
+import SeoRevisionsCountBadge from './pro/partials-seo-revisions/CountBadge'
 import Social from './Social'
+import SvgBackup from '@/vue/components/common/svg/Backup'
 import SvgBuild from '@/vue/components/common/svg/Build'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgCircleInformationSolid from '@/vue/components/common/svg/circle/InformationSolid'
@@ -111,7 +129,17 @@ import SvgReceipt from '@/vue/components/common/svg/Receipt'
 import SvgRedirectCrossedArrows from '@/vue/components/common/svg/redirect/CrossedArrows'
 import SvgSettings from '@/vue/components/common/svg/Settings'
 import SvgShare from '@/vue/components/common/svg/Share'
+
 export default {
+	setup () {
+		return {
+			licenseStore    : useLicenseStore(),
+			postEditorStore : usePostEditorStore(),
+			redirectsStore  : useRedirectsStore(),
+			rootStore       : useRootStore(),
+			settingsStore   : useSettingsStore()
+		}
+	},
 	components : {
 		Advanced,
 		Alert,
@@ -122,7 +150,10 @@ export default {
 		ModalContent,
 		Redirects,
 		Schema,
+		SeoRevisions,
+		SeoRevisionsCountBadge,
 		Social,
+		SvgBackup,
 		SvgBuild,
 		SvgCaret,
 		SvgCircleInformationSolid,
@@ -145,24 +176,24 @@ export default {
 		}
 	},
 	watch : {
-		currentPost : {
+		'postEditorStore.currentPost' : {
 			deep : true,
 			handler () {
-				debounceContext(this.savePostState, 250)
+				debounceContext(this.postEditorStore.savePostState, 250)
 			}
 		},
-		'currentPost.modalOpen' (isModalOpen) {
+		'postEditorStore.currentPost.modalOpen' (isModalOpen) {
 			if ('general' !== this.activeTab) {
 				this.maybeResetActiveTab(isModalOpen)
 			}
 		},
-		'currentPost.linkAssistant.modalOpen' (isModalOpen) {
+		'postEditorStore.currentPost.linkAssistant.modalOpen' (isModalOpen) {
 			this.maybeResetActiveTab(isModalOpen)
 		},
-		'currentPost.redirects.modalOpen' (isModalOpen) {
+		'postEditorStore.currentPost.redirects.modalOpen' (isModalOpen) {
 			this.maybeResetActiveTab(isModalOpen)
 		},
-		'metaBoxTabs.mainSidebar' : {
+		'settingsStore.metaBoxTabs.mainSidebar' : {
 			deep : true,
 			handler (mainSidebar) {
 				if ('sidebar' !== this.$root._data.screenContext) {
@@ -180,7 +211,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'currentPost', 'redirects', 'metaBoxTabs' ]),
 		tabs () {
 			const tabs = [
 				{
@@ -202,8 +232,14 @@ export default {
 					slug       : 'redirects',
 					icon       : 'svg-redirect-crossed-arrows',
 					name       : 'Redirects',
-					warning    : (0 < this?.redirects?.rows?.filter(row => !!row.enabled).length),
+					warning    : (0 < this.redirectsStore.rows.filter(row => !!row.enabled).length),
 					permission : 'aioseo_page_redirects_manage'
+				},
+				{
+					slug  : 'seoRevisions',
+					icon  : 'svg-backup',
+					name  : 'SEO Revisions',
+					badge : 'seo-revisions-count-badge'
 				},
 				{
 					slug : 'advanced',
@@ -213,9 +249,9 @@ export default {
 			]
 
 			if (
-				!this.$aioseo.integration &&
-				'post' === this.currentPost.context &&
-				(!this.currentPost.linkAssistant || !this.currentPost.linkAssistant.isExcludedPost)
+				!this.rootStore.aioseo.integration &&
+				'post' === this.postEditorStore.currentPost.context &&
+				!this.postEditorStore.currentPost.linkAssistant?.isExcludedPost
 			) {
 				tabs.splice(3, 0, {
 					slug : 'linkAssistant',
@@ -230,30 +266,28 @@ export default {
 			return this.getTabs[0].slug
 		},
 		getTabs () {
-			if ('term' === this.currentPost.context || this.currentPost.isWooCommercePageWithoutSchema) {
+			if ('term' === this.postEditorStore.currentPost.context || this.postEditorStore.currentPost.isWooCommercePageWithoutSchema) {
 				return this.tabs.filter((tab) => {
-					return 'schema' !== tab.slug && this.$allowed(this.getTabPermission(tab.slug), true)
+					return 'schema' !== tab.slug && allowed(this.getTabPermission(tab.slug), true)
 				})
 			}
 
 			return this.tabs.filter(tab => {
-				if (this.$allowed(this.getTabPermission(tab.slug), true)) {
+				if (allowed(this.getTabPermission(tab.slug), true)) {
 					return true
 				}
 
 				return (
 					'general' === tab.slug &&
 					(
-						this.$allowed('aioseo_page_analysis') ||
-						this.$allowed(this.getTabPermission(tab.slug), true)
+						allowed('aioseo_page_analysis') ||
+						allowed(this.getTabPermission(tab.slug), true)
 					)
 				)
 			})
 		}
 	},
 	methods : {
-		...mapMutations([ 'toggleLinkAssistantModal', 'toggleRedirectsModal', 'changeTabSettings' ]),
-		...mapActions([ 'openModal', 'updateState', 'savePostState' ]),
 		processChangeTab (newTabValue) {
 			switch (this.$root._data.screenContext) {
 				case 'sidebar' :
@@ -265,7 +299,7 @@ export default {
 					break
 				default :
 					this.activeTab = newTabValue
-					this.changeTabSettings({ setting: 'main', value: newTabValue })
+					this.settingsStore.changeTabSettings({ setting: 'main', value: newTabValue })
 					break
 			}
 
@@ -281,19 +315,19 @@ export default {
 
 			switch (newTabValue) {
 				case 'social':
-					if (!this.currentPost.modalOpen) {
-						this.changeTabSettings({ setting: 'modal', value: 'social' })
-						this.openModal(true)
+					if (!this.postEditorStore.currentPost.modalOpen) {
+						this.settingsStore.changeTabSettings({ setting: 'modal', value: 'social' })
+						this.postEditorStore.openModal(true)
 					}
 					break
 				case 'linkAssistant':
-					if (this.currentPost.linkAssistant && !this.currentPost.linkAssistant.modalOpen) {
-						this.toggleLinkAssistantModal()
+					if (this.postEditorStore.currentPost.linkAssistant && !this.postEditorStore.currentPost.linkAssistant.modalOpen) {
+						this.postEditorStore.toggleLinkAssistantModal()
 					}
 					break
 				case 'redirects':
-					if (this.currentPost.redirects && !this.currentPost.redirects.modalOpen) {
-						this.toggleRedirectsModal()
+					if (this.postEditorStore.currentPost.redirects && !this.postEditorStore.currentPost.redirects.modalOpen) {
+						this.postEditorStore.toggleRedirectsModal()
 					}
 					break
 				default:
@@ -314,7 +348,7 @@ export default {
 			})
 		},
 		closeModal () {
-			this.openModal(false)
+			this.postEditorStore.openModal(false)
 		},
 		getTabPermission (slug) {
 			const tab = this.tabs.find(t => t.slug === slug)
@@ -325,25 +359,26 @@ export default {
 			return tab?.name
 		}
 	},
+	mixins : [ ObjectRevisions ],
 	created () {
 		this.modal = getParams()['aioseo-modaltab'] || this.modal
 		if (this.modal) {
-			this.changeTabSettings({ setting: 'modal', value: this.modal })
-			this.openModal(true)
+			this.settingsStore.changeTabSettings({ setting: 'modal', value: this.modal })
+			this.postEditorStore.openModal(true)
 			setTimeout(() => {
 				removeParam('aioseo-modaltab')
 			}, 500)
 		}
 
 		this.$nextTick(() => {
-			if (this.metaBoxTabs.mainSidebar.tab) {
-				this.processChangeTab(this.metaBoxTabs.mainSidebar.tab)
+			if (this.settingsStore.metaBoxTabs.mainSidebar.tab) {
+				this.processChangeTab(this.settingsStore.metaBoxTabs.mainSidebar.tab)
 			}
 		})
 
-		this.$bus.$on('standalone-update-post', (param) => {
+		window.aioseoBus.$on('standalone-update-post', (param) => {
 			Object.keys(param).forEach(option => {
-				this.currentPost[option] = param[option]
+				this.postEditorStore.currentPost[option] = param[option]
 			})
 		})
 
@@ -353,7 +388,7 @@ export default {
 				break
 			default :
 				this.activeTab = getParams()['aioseo-tab'] || this.initTab
-				this.changeTabSettings({ setting: 'main', value: this.activeTab })
+				this.settingsStore.changeTabSettings({ setting: 'main', value: this.activeTab })
 				setTimeout(() => {
 					removeParam('aioseo-tab')
 				}, 500)
@@ -368,6 +403,18 @@ export default {
 		const unpinButton = document.querySelector('.interface-complementary-area__pin-unpin-item')
 		if (unpinButton && null !== unpinButton) {
 			unpinButton.style.display = 'block'
+		}
+	},
+	mounted () {
+		if (
+			isBlockEditor() &&
+			'function' === typeof (window?.wp?.data?.dispatch || null) &&
+			!this.licenseStore.isUnlicensed
+
+		) {
+			const dispatchEditor = window.wp.data.dispatch('core/editor')
+
+			this.watchObjectRevisionsOnSavePost(dispatchEditor)
 		}
 	}
 }

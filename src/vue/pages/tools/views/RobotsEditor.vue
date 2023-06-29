@@ -6,7 +6,7 @@
 		>
 			<div
 				class="aioseo-settings-row"
-				v-if="$aioseo.data.isNetworkAdmin && !isUnlicensed && $license.hasCoreFeature($aioseo, 'tools', 'network-tools-robots')"
+				v-if="rootStore.aioseo.data.isNetworkAdmin && !licenseStore.isUnlicensed && license.hasCoreFeature('tools', 'network-tools-robots')"
 			>
 				<div class="select-site">
 					{{ strings.selectSite }}
@@ -31,7 +31,7 @@
 						v-if="isNetwork"
 						type="blue"
 					>
-						{{ (isUnlicensed || !$license.hasCoreFeature($aioseo, 'tools', 'network-tools-robots')) ? strings.networkAlertLite : strings.networkAlert }}
+						{{ (licenseStore.isUnlicensed || !license.hasCoreFeature('tools', 'network-tools-robots')) ? strings.networkAlertLite : strings.networkAlert }}
 					</core-alert>
 
 					{{ strings.description }}
@@ -46,7 +46,7 @@
 				</div>
 
 				<div
-					v-if="$aioseo.data.robots.hasPhysicalRobots && getOptions.robotsDetected"
+					v-if="rootStore.aioseo.data.robots.hasPhysicalRobots && getOptions.robotsDetected"
 					class="aioseo-settings-row physical-robots"
 				>
 					<core-alert
@@ -79,7 +79,7 @@
 				</div>
 
 				<div
-					v-if="!$aioseo.data.robots.rewriteExists"
+					v-if="!rootStore.aioseo.data.robots.rewriteExists"
 					class="aioseo-settings-row rewrite-exists"
 				>
 					<core-alert
@@ -252,9 +252,17 @@
 </template>
 
 <script>
+import {
+	useLicenseStore,
+	useNetworkStore,
+	useNotificationsStore,
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
+import license from '@/vue/utils/license'
 import { stringify, mergeRules, parse } from '@/vue/utils/robots'
 import { Network, SaveChanges } from '@/vue/mixins'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import BaseEditor from '@/vue/components/common/base/Editor'
 import BaseRadio from '@/vue/components/common/base/Radio'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
@@ -266,12 +274,23 @@ import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import SvgExternal from '@/vue/components/common/svg/External'
 import SvgTrash from '@/vue/components/common/svg/Trash'
+
 const defaults = {
 	userAgent     : null,
 	rule          : 'allow',
 	directoryPath : null
 }
+
 export default {
+	setup () {
+		return {
+			licenseStore       : useLicenseStore(),
+			networkStore       : useNetworkStore(),
+			notificationsStore : useNotificationsStore(),
+			optionsStore       : useOptionsStore(),
+			rootStore          : useRootStore()
+		}
+	},
 	components : {
 		BaseEditor,
 		BaseRadio,
@@ -288,6 +307,7 @@ export default {
 	mixins : [ Network, SaveChanges ],
 	data () {
 		return {
+			license,
 			site          : {},
 			inputKey      : 0,
 			importLoading : false,
@@ -342,11 +362,11 @@ export default {
 				await this.$nextTick()
 
 				if (this.isNetwork) {
-					this.networkOptions.tools.robots.rules = this.networkRobots.rules
+					this.optionsStore.networkOptions.tools.robots.rules = this.networkStore.networkRobots.rules
 					return
 				}
 
-				this.options.tools.robots.rules = this.networkRobots.rules
+				this.optionsStore.options.tools.robots.rules = this.networkStore.networkRobots.rules
 			}
 		},
 		site (newVal, oldVal) {
@@ -366,28 +386,26 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options', 'networkRobots', 'networkOptions' ]),
-		...mapGetters([ 'getNetworkRobots', 'isUnlicensed' ]),
 		isValidRobotsSite () {
-			return this.$aioseo.data.subdomain || this.isNetwork || this.isMainSite(this.site.domain, this.site.path) || (!this.$aioseo.data.isNetworkAdmin && this.$aioseo.data.mainSite)
+			return this.rootStore.aioseo.data.subdomain || this.isNetwork || this.isMainSite(this.site.domain, this.site.path) || (!this.rootStore.aioseo.data.isNetworkAdmin && this.rootStore.aioseo.data.mainSite)
 		},
 		robotsTxtUrl () {
 			return 'network' === this.site.blog_id || !this.isValidRobotsSite || !this.site.domain
-				? this.$aioseo.urls.robotsTxtUrl
-				: `${this.$aioseo.data.isSsl ? 'https://' : 'http://'}${this.site.domain}${this.site.path}robots.txt`
+				? this.rootStore.aioseo.urls.robotsTxtUrl
+				: `${this.rootStore.aioseo.data.isSsl ? 'https://' : 'http://'}${this.site.domain}${this.site.path}robots.txt`
 		},
 		getOptions () {
-			return this.isNetwork ? this.getNetworkRobots : this.options.tools.robots
+			return this.isNetwork ? this.networkStore.getNetworkRobots : this.optionsStore.options.tools.robots
 		},
 		parsedRules () {
-			return this.networkRobots.rules.map(rule => JSON.parse(rule))
+			return this.networkStore.networkRobots.rules.map(rule => JSON.parse(rule))
 		},
 		robotsTxt () {
-			const networkRules = JSON.parse(JSON.stringify(this.$aioseo.data.isMultisite && this.$aioseo.networkOptions.tools.robots.enable && !this.isNetwork ? parse(this.getNetworkRobots.rules) : {}))
-			const robots       = JSON.parse(JSON.stringify(this.$aioseo.data.robots.defaultRules))
-			const sitemapUrls  = '\r\n' + this.$aioseo.data.robots.sitemapUrls.filter(url => 0 < url.length).join('\r\n')
+			const networkRules = JSON.parse(JSON.stringify(this.rootStore.aioseo.data.isMultisite && this.optionsStore.networkOptions.tools.robots.enable && !this.isNetwork ? parse(this.networkStore.getNetworkRobots.rules) : {}))
+			const robots       = JSON.parse(JSON.stringify(this.rootStore.aioseo.data.robots.defaultRules))
+			const sitemapUrls  = '\r\n' + this.rootStore.aioseo.data.robots.sitemapUrls.filter(url => 0 < url.length).join('\r\n')
 			return this.getOptions.enable
-				? stringify(mergeRules({ ...robots }, mergeRules({ ...networkRules }, parse(this.networkRobots.rules)), false, true)) + sitemapUrls
+				? stringify(mergeRules({ ...robots }, mergeRules({ ...networkRules }, parse(this.networkStore.networkRobots.rules)), false, true)) + sitemapUrls
 				: stringify(mergeRules({ ...robots }, { ...networkRules })) + sitemapUrls
 		},
 		sanitizedRobotsTxt () {
@@ -400,20 +418,20 @@ export default {
 			return this.$t.sprintf(
 				// Translators: 1 - The url to the main site.
 				this.$t.__('This site is running in a sub-directory of your main site located at %1$s. Your robots.txt file should only appear in the root directory of that site.', this.$td),
-				'<a href="' + this.$aioseo.urls.mainSiteUrl + '" target="_blank"><strong>' + this.$aioseo.urls.mainSiteUrl + '</strong></a>'
+				'<a href="' + this.rootStore.aioseo.urls.mainSiteUrl + '" target="_blank"><strong>' + this.rootStore.aioseo.urls.mainSiteUrl + '</strong></a>'
 			)
 		},
 		missingRewriteRules () {
 			const string1 = this.$t.__('It looks like you are missing the proper rewrite rules for the robots.txt file.', this.$td)
 			let string2   = ''
-			if (this.$aioseo.data.server.apache) {
+			if (this.rootStore.aioseo.data.server.apache) {
 				string2 = this.$t.sprintf(
 					// Translators: 1 - Opening link tag. 2 - Closing link tag.
 					this.$t.__('It appears that your server is running on Apache, so the fix should be as simple as checking the %1$scorrect .htaccess implementation on wordpress.org%2$s.', this.$td),
 					'<a href="https://wordpress.org/support/article/htaccess/" target="_blank">',
 					'</a>'
 				)
-			} else if (this.$aioseo.data.server.nginx) {
+			} else if (this.rootStore.aioseo.data.server.nginx) {
 				string2 = string2 = this.$t.sprintf(
 					// Translators: 1 - Opening link tag, 2 - Closing link tag.
 					this.$t.__('It appears that your server is running on nginx, so the fix will most likely require adding the correct rewrite rules to our nginx configuration. %1$sCheck our documentation for more information%2$s.', this.$td),
@@ -426,23 +444,21 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'processButtonAction', 'fetchSiteRobots' ]),
-		...mapMutations([ 'updateNetworkRobots' ]),
 		processFetchSiteRobots () {
 			this.siteLoading = true
 
-			this.fetchSiteRobots(this.site.blog_id)
+			this.networkStore.fetchSiteRobots(this.site.blog_id)
 				.then(() => {
-					if (!this.networkRobots.rules.length) {
+					if (!this.networkStore.networkRobots.rules.length) {
 						this.addRow()
 					}
 				})
 				.then(() => (this.siteLoading = false))
 		},
 		removeRow (index) {
-			this.networkRobots.rules.splice(index, 1)
+			this.networkStore.networkRobots.rules.splice(index, 1)
 
-			if (!this.networkRobots.rules.length) {
+			if (!this.networkStore.networkRobots.rules.length) {
 				this.addRow()
 			}
 
@@ -453,21 +469,21 @@ export default {
 				return
 			}
 
-			this.networkRobots.rules.push(JSON.stringify({ ...defaults }))
+			this.networkStore.networkRobots.rules.push(JSON.stringify({ ...defaults }))
 			this.$nextTick(() => {
-				this.$refs.userAgent[this.networkRobots.rules.length - 1].$el.querySelector('.robots-user-agent input').focus()
+				this.$refs.userAgent[this.networkStore.networkRobots.rules.length - 1].$el.querySelector('.robots-user-agent input').focus()
 			})
 		},
 		updateRule (type, value, ruleIndex) {
-			const rule = JSON.parse(this.networkRobots.rules[ruleIndex])
+			const rule = JSON.parse(this.networkStore.networkRobots.rules[ruleIndex])
 			rule[type] = value
-			this.networkRobots.rules[ruleIndex] = JSON.stringify(rule)
+			this.networkStore.networkRobots.rules[ruleIndex] = JSON.stringify(rule)
 
 			// Set the sanitized path.
 			if ('directoryPath' === type) {
 				rule[type] = this.sanitizePath(value)
 				this.inputKey++
-				this.networkRobots.rules[ruleIndex] = JSON.stringify(rule)
+				this.networkStore.networkRobots.rules[ruleIndex] = JSON.stringify(rule)
 			}
 			this.validateRules()
 
@@ -500,9 +516,9 @@ export default {
 			}
 
 			const firstRobots  = {}
-			const networkRules = JSON.parse(JSON.stringify(this.$aioseo.data.isMultisite && !this.isNetwork ? parse(this.getNetworkRobots.rules) : {}))
-			const original     = JSON.parse(JSON.stringify(this.$aioseo.data.robots.defaultRules))
-			const firstRules   = mergeRules({ ...original }, parse(this.networkRobots.rules, true), true)
+			const networkRules = JSON.parse(JSON.stringify(this.rootStore.aioseo.data.isMultisite && !this.isNetwork ? parse(this.networkStore.getNetworkRobots.rules) : {}))
+			const original     = JSON.parse(JSON.stringify(this.rootStore.aioseo.data.robots.defaultRules))
+			const firstRules   = mergeRules({ ...original }, parse(this.networkStore.networkRobots.rules, true), true)
 
 			Object.keys(firstRules).forEach(userAgent => {
 				const rule = firstRules[userAgent]
@@ -533,7 +549,7 @@ export default {
 			})
 
 			const secondRobots = {}
-			const secondRules  = mergeRules({ ...networkRules }, parse(this.networkRobots.rules, true), true)
+			const secondRules  = mergeRules({ ...networkRules }, parse(this.networkStore.networkRobots.rules, true), true)
 			Object.keys(secondRules).forEach(userAgent => {
 				const rule = secondRules[userAgent]
 				if (!secondRobots[userAgent]) {
@@ -590,37 +606,37 @@ export default {
 		},
 		importAndDeleteRobots () {
 			this.importLoading = true
-			this.processButtonAction('tools/import-robots-txt')
+			this.notificationsStore.processButtonAction('tools/import-robots-txt')
 				.then(() => {
 					window.location.reload()
 				})
 		},
 		deleteRobots () {
 			this.deleteLoading = true
-			this.processButtonAction('tools/delete-robots-txt')
+			this.notificationsStore.processButtonAction('tools/delete-robots-txt')
 				.then(() => {
 					window.location.reload()
 				})
 		},
 		hideRobotsDetected () {
 			this.getOptions.robotsDetected = false
-			this.saveChanges()
+			this.optionsStore.saveChanges()
 		}
 	},
 	created () {
-		if (this.$aioseo.data.isNetworkAdmin) {
+		if (this.rootStore.aioseo.data.isNetworkAdmin) {
 			this.isNetwork = true
 		}
 	},
 	mounted () {
 		this.validateRules()
-		if (!this.networkRobots.rules.length) {
+		if (!this.networkStore.networkRobots.rules.length) {
 			this.addRow()
 		}
 
-		const rules = this.isNetwork ? this.getNetworkRobots.rules : this.options.tools.robots.rules
+		const rules = this.isNetwork ? this.networkStore.getNetworkRobots.rules : this.optionsStore.options.tools.robots.rules
 		if (rules.length) {
-			this.updateNetworkRobots(rules)
+			this.networkStore.networkRobots.rules = rules
 		}
 	}
 }

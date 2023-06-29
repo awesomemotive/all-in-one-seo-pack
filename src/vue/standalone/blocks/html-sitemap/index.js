@@ -6,7 +6,7 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
-import store from '@/vue/store'
+import { loadPiniaStores } from '@/vue/stores'
 
 import { observeElement } from '@/vue/utils/helpers'
 import { __ } from '@wordpress/i18n'
@@ -120,6 +120,7 @@ export const settings = {
 				subtree : true,
 				done    : function (el) {
 					let app = createApp({
+						name : 'Blocks/HtmlSitemap',
 						data : function () {
 							return vueInitialState[clientId]
 						},
@@ -138,8 +139,8 @@ export const settings = {
 					app = loadComponents(app)
 					app = loadVersionedComponents(app)
 
-					app.use(store)
-					store._vm = app
+					// Use the pinia store.
+					loadPiniaStores(app)
 
 					app.mount(el)
 				}

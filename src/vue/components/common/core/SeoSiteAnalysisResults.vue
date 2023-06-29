@@ -151,7 +151,7 @@ export default {
 		}
 	},
 	mounted () {
-		if (this.allResults.advanced.searchPreview) {
+		if (this.allResults.advanced?.searchPreview ?? null) {
 			const div = document.createElement('div')
 			div.innerHTML = this.allResults.advanced.searchPreview
 

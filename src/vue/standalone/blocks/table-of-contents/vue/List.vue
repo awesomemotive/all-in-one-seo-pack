@@ -93,7 +93,10 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import {
+	useTableOfContentsStore
+} from '@/vue/stores'
+
 import { cleanForSlug } from '@/vue/utils/cleanForSlug'
 import { deepCopy, cleanHtml } from '@/vue/standalone/blocks/utils'
 import { formatHeadingList, orderHeadings } from '../helpers'
@@ -109,6 +112,13 @@ import SvgInfo from '@/vue/components/common/svg/Info'
 import SvgTocLink from '@/vue/components/common/svg/Link'
 
 export default {
+	setup () {
+		const tableOfContentsStore = useTableOfContentsStore()
+
+		return {
+			tableOfContentsStore
+		}
+	},
 	name       : 'List',
 	components : {
 		BaseInput,
@@ -148,13 +158,9 @@ export default {
 		}
 	},
 	computed : {
-		...mapState({
-			listStyle     : state => state.listStyle,
-			storeHeadings : state => state.headings
-		}),
 		dragOptions () {
 			return {
-				tag        : this.listStyle,
+				tag        : this.tableOfContentsStore.listStyle,
 				animation  : 300,
 				group      : 'description',
 				disabled   : !this.allowReorder,
@@ -164,7 +170,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapMutations([ 'setHeadings' ]),
 		setEditedContent : function (newValue, heading) {
 			if (newValue === heading.content) {
 				heading.editedContent = ''
@@ -175,11 +180,11 @@ export default {
 			heading.editedContent = cleanHtml(newValue, true)
 		},
 		setReorder () {
-			this.$store.state.reOrdered = true
-			const rearrangedList = orderHeadings(deepCopy(this.storeHeadings))
+			this.tableOfContentsStore.reOrdered = true
+			const rearrangedList = orderHeadings(deepCopy(this.tableOfContentsStore.headings))
 
-			this.setHeadings(rearrangedList)
-			window.aioseoBus.$emit('updateHeadings' + this.$store.state.blockClientId, rearrangedList)
+			this.tableOfContentsStore.setHeadings(rearrangedList)
+			window.aioseoBus.$emit('updateHeadings' + this.tableOfContentsStore.blockClientId, rearrangedList)
 		},
 		setAnchor : function (newValue, heading) {
 			heading.anchor = cleanForSlug(newValue)
@@ -205,7 +210,7 @@ export default {
 			} else {
 				heading.editedLevel = 9
 			}
-			this.setHeadings(formatHeadingList([ ...this.storeHeadings ]))
+			this.tableOfContentsStore.setHeadings(formatHeadingList([ ...this.tableOfContentsStore.headings ]))
 		},
 		handleAnchorInput (event) {
 			const inputRow = event.target.closest('.aioseo-toc-list-item')

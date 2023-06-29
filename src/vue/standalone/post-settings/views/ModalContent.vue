@@ -4,7 +4,7 @@
 			<core-main-tabs
 				:tabs="getTabs"
 				:showSaveButton="false"
-				:active="metaBoxTabs.modal || 'general'"
+				:active="settingsStore.metaBoxTabs.modal || 'general'"
 				internal
 				@changed="value => processChangeTab(value)"
 			/>
@@ -13,7 +13,7 @@
 		<div class="component-wrapper">
 			<transition name="route-fade" mode="out-in">
 				<component
-					:is="this.metaBoxTabs.modal || 'general'"
+					:is="settingsStore.metaBoxTabs.modal || 'general'"
 					parentComponentContext="modal"
 				/>
 			</transition>
@@ -22,7 +22,12 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import {
+	useSettingsStore
+} from '@/vue/stores'
+
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import General from './General'
@@ -30,6 +35,11 @@ import Social from './Social'
 import SvgSettings from '@/vue/components/common/svg/Settings'
 import SvgShare from '@/vue/components/common/svg/Share'
 export default {
+	setup () {
+		return {
+			settingsStore : useSettingsStore()
+		}
+	},
 	components : {
 		CoreMainTabs,
 		CoreSettingsRow,
@@ -58,15 +68,13 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'metaBoxTabs' ]),
 		getTabs () {
-			return this.tabs.filter(tab => this.$allowed(`aioseo_page_${tab.slug}_settings`))
+			return this.tabs.filter(tab => allowed(`aioseo_page_${tab.slug}_settings`))
 		}
 	},
 	methods : {
-		...mapMutations([ 'changeTabSettings' ]),
 		processChangeTab (newTabValue) {
-			this.changeTabSettings({ setting: 'modal', value: newTabValue })
+			this.settingsStore.changeTabSettings({ setting: 'modal', value: newTabValue })
 		}
 	}
 }

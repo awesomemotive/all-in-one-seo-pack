@@ -42,12 +42,20 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore
+} from '@/vue/stores'
+
 import { JsonValues } from '@/vue/mixins'
 import TableColumn from '@/vue/components/common/table/Column'
 import TableRow from '@/vue/components/common/table/Row'
 
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore()
+		}
+	},
 	components : {
 		TableColumn,
 		TableRow
@@ -83,7 +91,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options' ]),
 		getFrequencyOptions () {
 			return [ { label: this.$t.__('default', this.$td), value: 'default' } ].concat(this.$constants.FREQUENCY_OPTIONS)
 		},
@@ -92,11 +99,11 @@ export default {
 		},
 		filteredRows () {
 			let filteredRows = this.rows
-			if (!this.options.sitemap.general.date) {
+			if (!this.optionsStore.options.sitemap.general.date) {
 				filteredRows = filteredRows.filter(rowName => 'archive' !== rowName)
 			}
 
-			if (!this.options.sitemap.general.author) {
+			if (!this.optionsStore.options.sitemap.general.author) {
 				filteredRows = filteredRows.filter(rowName => 'author' !== rowName)
 			}
 

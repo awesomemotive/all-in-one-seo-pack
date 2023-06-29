@@ -41,7 +41,7 @@
 						</template>
 
 						<keywords-table
-							:keywords="data?.keywords?.paginated || defaultKeywords"
+							:keywords="searchStatisticsStore.data?.keywords?.paginated || defaultKeywords"
 							ref="table"
 							show-items-per-page
 							show-table-footer
@@ -54,7 +54,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreCard from '@/vue/components/common/core/Card'
 import GridColumn from '@/vue/components/common/grid/Column'
@@ -64,6 +67,11 @@ import KeywordsGraph from '../../partials/KeywordsGraph'
 import KeywordsTable from '../../partials/KeywordsTable'
 import SeoStatisticsOverview from '../../partials/SeoStatisticsOverview'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreBlur,
 		CoreCard,
@@ -91,9 +99,6 @@ export default {
 				}
 			}
 		}
-	},
-	computed : {
-		...mapState('search-statistics', [ 'data' ])
 	}
 }
 </script>

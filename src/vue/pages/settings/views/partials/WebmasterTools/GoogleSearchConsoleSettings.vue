@@ -17,7 +17,7 @@
 						<base-input
 							size="small"
 							@blur="maybeUpdateId(setting.option)"
-							v-model="options.webmasterTools[setting.option]"
+							v-model="optionsStore.options.webmasterTools[setting.option]"
 						/>
 					</div>
 
@@ -26,7 +26,7 @@
 					<core-alert
 						class="inline-upsell"
 						type="blue"
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 					>
 						<div v-html="strings.liteUpsell" />
 					</core-alert>
@@ -34,7 +34,7 @@
 					<core-alert
 						class="inline-upsell"
 						type="blue"
-						v-if="!isUnlicensed && !$license.hasCoreFeature($aioseo, 'search-statistics', 'seo-statistics')"
+						v-if="!licenseStore.isUnlicensed && !license.hasCoreFeature('search-statistics', 'seo-statistics')"
 					>
 						<div v-html="requiredPlansString" />
 					</core-alert>
@@ -42,7 +42,7 @@
 					<core-alert
 						class="inline-upsell"
 						type="blue"
-						v-if="!isUnlicensed && $license.hasCoreFeature($aioseo, 'search-statistics', 'seo-statistics') && !$aioseo?.searchStatistics.isConnected"
+						v-if="!licenseStore.isUnlicensed && license.hasCoreFeature('search-statistics', 'seo-statistics') && !searchStatisticsStore.isConnected"
 					>
 						<div v-html="strings.notConnected" />
 					</core-alert>
@@ -53,7 +53,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore,
+	useOptionsStore,
+	useRootStore,
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
+import license from '@/vue/utils/license'
 import { merge } from 'lodash-es'
 import { useWebmasterTools } from '@/vue/composables'
 import { WebmasterTools } from '@/vue/pages/settings/mixins'
@@ -65,7 +72,11 @@ export default {
 		const { strings } = useWebmasterTools()
 
 		return {
-			composableStrings : strings
+			licenseStore          : useLicenseStore(),
+			optionsStore          : useOptionsStore(),
+			rootStore             : useRootStore(),
+			searchStatisticsStore : useSearchStatisticsStore(),
+			composableStrings     : strings
 		}
 	},
 	components : {
@@ -76,6 +87,7 @@ export default {
 	mixins : [ WebmasterTools ],
 	data () {
 		return {
+			license,
 			strings : merge(this.composableStrings, {
 				thisFeatureRequires         : this.$t.__('Advanced tracking and actionable reports require one of the following plans:', this.$td),
 				thisFeatureRequiresSingular : this.$t.__('Advanced tracking and actionable reports require the following plan:', this.$td),
@@ -88,11 +100,11 @@ export default {
 				notConnected : this.$t.sprintf(
 					// Translators: 1 - The opening anchor tag, 2 - The closing anchor tag, 3 - "Learn more".
 					this.$t.__('Connect your site with Google Search Console in %1$sSearch Statistics%2$s to track how your site is performing in search rankings and generate actionable reports. %3$s', this.$td),
-					`<a href='${this.$aioseo.urls.aio.searchStatistics}#/settings'>`,
+					`<a href='${this.rootStore.aioseo.urls.aio.searchStatistics}#/settings'>`,
 					'</a>',
 					this.$links.getPlainLink(
 						this.$constants.GLOBAL_STRINGS.learnMore,
-						`${this.$aioseo.urls.aio.searchStatistics}#/settings`,
+						`${this.rootStore.aioseo.urls.aio.searchStatistics}#/settings`,
 						true,
 						false
 					)
@@ -101,9 +113,8 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'settings', 'isUnlicensed' ]),
 		requiredPlans () {
-			return this.$license.getPlansForFeature(this.$aioseo, 'search-statistics', 'seo-statistics')
+			return license.getPlansForFeature('search-statistics', 'seo-statistics')
 		},
 		requiredPlansString () {
 			let string = 1 < this.requiredPlans

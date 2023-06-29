@@ -22,7 +22,7 @@
 						<base-button
 							type="green"
 							tag="a"
-							:href="$aioseo.urls.aio.wizard"
+							:href="rootStore.aioseo.urls.aio.wizard"
 						>
 							<svg-rocket /> {{ strings.launchSetupWizard }}&nbsp;&rarr;
 						</base-button>
@@ -63,17 +63,21 @@
 			v-if="!disableClose"
 			class="close-wizard"
 			href="#"
-			@click.prevent="hideSetupWizard"
+			@click.prevent="settingsStore.hideSetupWizard"
 		>
 			<svg-close
-				@click="hideSetupWizard"
+				@click="settingsStore.hideSetupWizard"
 			/>
 		</a>
 	</div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgBook from '@/vue/components/common/svg/Book'
@@ -81,6 +85,12 @@ import SvgClose from '@/vue/components/common/svg/Close'
 import SvgRocket from '@/vue/components/common/svg/Rocket'
 import SvgSetupWizardBg from '@/vue/components/common/svg/SetupWizardBg'
 export default {
+	setup () {
+		return {
+			rootStore     : useRootStore(),
+			settingsStore : useSettingsStore()
+		}
+	},
 	components : {
 		GridColumn,
 		GridRow,
@@ -110,9 +120,6 @@ export default {
 				readSetupGuide    : this.$t.__('Read the Setup Guide', this.$td)
 			}
 		}
-	},
-	methods : {
-		...mapActions([ 'hideSetupWizard' ])
 	}
 }
 </script>

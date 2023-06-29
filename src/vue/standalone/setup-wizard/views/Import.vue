@@ -47,9 +47,9 @@
 
 				<template #footer>
 					<div class="go-back">
-						<router-link :to="getPrevLink" class="no-underline">&larr;</router-link>
+						<router-link :to="setupWizardStore.getPrevLink" class="no-underline">&larr;</router-link>
 						&nbsp;
-						<router-link :to="getPrevLink">{{ strings.goBack }}</router-link>
+						<router-link :to="setupWizardStore.getPrevLink">{{ strings.goBack }}</router-link>
 					</div>
 					<div class="spacer"></div>
 					<base-button
@@ -70,10 +70,15 @@
 </template>
 
 <script>
+import {
+	useRootStore,
+	useSetupWizardStore
+} from '@/vue/stores'
+
+import { getAssetUrl } from '@/vue/utils/helpers'
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
 import { Wizard } from '@/vue/mixins'
-import { mapActions, mapMutations } from 'vuex'
 import yoastSeoImg from '@/vue/assets/images/plugins/yoast-logo-small.png'
 import rankMathSeoImg from '@/vue/assets/images/plugins/rank-math-seo-logo-small.png'
 import seopressImg from '@/vue/assets/images/plugins/seopress-free-logo-small.svg'
@@ -91,6 +96,8 @@ export default {
 		const { strings } = useWizard()
 
 		return {
+			rootStore         : useRootStore(),
+			setupWizardStore  : useSetupWizardStore(),
 			composableStrings : strings
 		}
 	},
@@ -119,29 +126,27 @@ export default {
 				importDataAndContinue : this.$t.__('Import Data and Continue', this.$td)
 			}),
 			pluginImages : {
-				'yoast-seo'         : this.$getAssetUrl(yoastSeoImg),
-				'yoast-seo-premium' : this.$getAssetUrl(yoastSeoImg),
-				'rank-math-seo'     : this.$getAssetUrl(rankMathSeoImg),
-				seopress            : this.$getAssetUrl(seopressImg),
-				'seopress-pro'      : this.$getAssetUrl(seopressProImg)
+				'yoast-seo'         : getAssetUrl(yoastSeoImg),
+				'yoast-seo-premium' : getAssetUrl(yoastSeoImg),
+				'rank-math-seo'     : getAssetUrl(rankMathSeoImg),
+				seopress            : getAssetUrl(seopressImg),
+				'seopress-pro'      : getAssetUrl(seopressProImg)
 			},
 			selected : []
 		}
 	},
 	watch : {
 		selected (newVal) {
-			this.updateImporters(newVal.map(v => v.slug))
+			this.setupWizardStore.importers = newVal.map(v => v.slug)
 		}
 	},
 	computed : {
 		getPlugins () {
-			return this.$aioseo.importers
+			return this.rootStore.aioseo.importers
 				.filter(plugin => plugin.canImport)
 		}
 	},
 	methods : {
-		...mapMutations('wizard', [ 'updateImporters' ]),
-		...mapActions('wizard', [ 'saveWizard' ]),
 		updateValue (checked, plugin) {
 			if (checked) {
 				this.selected.push(plugin)
@@ -166,14 +171,14 @@ export default {
 		},
 		saveAndContinue () {
 			this.loading = true
-			this.saveWizard('importers')
+			this.setupWizardStore.saveWizard('importers')
 				.then(() => {
-					this.$router.push(this.getNextLink)
+					this.$router.push(this.setupWizardStore.getNextLink)
 				})
 		},
 		skipStep () {
-			this.saveWizard()
-			this.$router.push(this.getNextLink)
+			this.setupWizardStore.saveWizard()
+			this.$router.push(this.setupWizardStore.getNextLink)
 		}
 	}
 }
@@ -187,12 +192,13 @@ export default {
 		--aioseo-gutter: 16px;
 
 		img {
-			width: 16px;
+			width: 25px;
 			height: auto;
 
 			&.seopress,
 			&.seopress-pro {
-				margin: 5px 10px 5px 5px;
+				width: 20px;
+				margin: 0 5px 0 5px;
 			}
 		}
 	}

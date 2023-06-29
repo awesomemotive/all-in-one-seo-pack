@@ -5,20 +5,19 @@ import loadPlugins from '@/vue/plugins'
 
 import loadComponents from '@/vue/components/common'
 
-import store from '@/vue/store'
+import { loadPiniaStores } from '@/vue/stores'
+
 import App from './App.vue'
 
 const elemDiv = document.createElement('div')
 elemDiv.id    = 'aioseo-redirects-add-redirect-standalone'
 document.body.appendChild(elemDiv)
 
-let app = createApp(App)
+let app = createApp({ ...App, name: 'Standalone/Redirects/AddRedirect' })
 app     = loadPlugins(app)
 app     = loadComponents(app)
 
-app.use(store)
-store._vm = app
-
-app.config.globalProperties.$aioseo = window.aioseo
+// Use the pinia store.
+loadPiniaStores(app)
 
 app.mount('#aioseo-redirects-add-redirect-standalone')

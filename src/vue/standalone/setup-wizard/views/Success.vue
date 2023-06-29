@@ -69,7 +69,7 @@
 					</div>
 				</div>
 
-				<template v-if="isUnlicensed" #cta>
+				<template v-if="licenseStore.isUnlicensed" #cta>
 					<div class="content">
 						<div class="cta-header">
 							{{ strings.upgradeToProToUnlock }}
@@ -111,19 +111,19 @@
 					<base-button
 						type="gray"
 						tag="a"
-						:href="$aioseo.urls.aio.settings + '#/webmaster-tools'"
+						:href="rootStore.aioseo.urls.aio.settings + '#/webmaster-tools'"
 					>{{ strings.setupWebmasterTools }}</base-button>
 					<div class="spacer"></div>
 					<base-button
 						type="gray"
 						tag="a"
-						:href="$aioseo.urls.aio.settings + '#/advanced'"
+						:href="rootStore.aioseo.urls.aio.settings + '#/advanced'"
 					>{{ strings.seeAdvancedSettings }}</base-button>
 					<div class="spacer"></div>
 					<base-button
 						type="blue"
 						tag="a"
-						:href="$aioseo.urls.aio.dashboard"
+						:href="rootStore.aioseo.urls.aio.dashboard"
 					>{{ strings.finishSetup }}</base-button>
 				</template>
 			</wizard-body>
@@ -133,10 +133,14 @@
 </template>
 
 <script>
+import {
+	useLicenseStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
 import { Wizard } from '@/vue/mixins'
-import { mapGetters } from 'vuex'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
@@ -155,6 +159,8 @@ export default {
 		const { strings } = useWizard()
 
 		return {
+			licenseStore      : useLicenseStore(),
+			rootStore         : useRootStore(),
 			composableStrings : strings
 		}
 	},
@@ -220,7 +226,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
 		featureList () {
 			return [
 				this.strings.videoNewsSitemaps,

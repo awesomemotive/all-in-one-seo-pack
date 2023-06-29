@@ -210,7 +210,7 @@ class Post extends Model {
 		foreach ( $post->schema->graphs as $graph ) {
 			// If the first character of the graph ID isn't a pound, add one.
 			// We have to do this because the schema migration in 4.2.5 didn't add the pound for custom graphs.
-			if ( '#' !== substr( $graph->id, 0, 1 ) ) {
+			if ( property_exists( $graph, 'id' ) && '#' !== substr( $graph->id, 0, 1 ) ) {
 				$graph->id = '#' . $graph->id;
 			}
 		}
@@ -278,6 +278,9 @@ class Post extends Model {
 		if ( ! empty( $lastError ) ) {
 			return $lastError;
 		}
+
+		// Fires once an AIOSEO post has been saved.
+		do_action( 'aioseo_insert_post', $postId );
 	}
 
 	/**
@@ -403,8 +406,8 @@ class Post extends Model {
 		$thePost->page_analysis               = ! empty( $data['page_analysis'] ) ? wp_json_encode( self::sanitizePageAnalysis( $data['page_analysis'] ) ) : null;
 		$thePost->seo_score                   = ! empty( $data['seo_score'] ) ? sanitize_text_field( $data['seo_score'] ) : 0;
 		// Sitemap
-		$thePost->priority                    = ! empty( $data['priority'] ) ? sanitize_text_field( $data['priority'] ) : null;
-		$thePost->frequency                   = ! empty( $data['frequency'] ) ? sanitize_text_field( $data['frequency'] ) : null;
+		$thePost->priority                    = isset( $data['priority'] ) ? ( 'default' === sanitize_text_field( $data['priority'] ) ? null : (float) $data['priority'] ) : null;
+		$thePost->frequency                   = ! empty( $data['frequency'] ) ? sanitize_text_field( $data['frequency'] ) : 'default';
 		// Robots Meta
 		$thePost->robots_default              = isset( $data['default'] ) ? rest_sanitize_boolean( $data['default'] ) : 1;
 		$thePost->robots_noindex              = isset( $data['noindex'] ) ? rest_sanitize_boolean( $data['noindex'] ) : 0;
@@ -633,7 +636,9 @@ class Post extends Model {
 		}
 
 		// Reset the default graph type to make sure it's accurate.
-		$existingOptions['default']['graphName'] = $defaultGraphName;
+		if ( $defaultGraphName ) {
+			$existingOptions['default']['graphName'] = $defaultGraphName;
+		}
 
 		return json_decode( wp_json_encode( $existingOptions ) );
 	}

@@ -44,7 +44,13 @@ class Description {
 			return $description ? $description : aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'description' ) );
 		}
 
-		$description = $this->helpers->prepare( aioseo()->options->searchAppearance->global->metaDescription );
+		$description = aioseo()->options->searchAppearance->global->metaDescription;
+		if ( aioseo()->helpers->isWpmlActive() ) {
+			// Allow WPML to translate the title if the homepage is not static.
+			$description = apply_filters( 'wpml_translate_single_string', $description, 'admin_texts_aioseo_options_localized', '[aioseo_options_localized]searchAppearance_global_metaDescription' );
+		}
+
+		$description = $this->helpers->prepare( $description );
 
 		return $description ? $description : aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'description' ) );
 	}

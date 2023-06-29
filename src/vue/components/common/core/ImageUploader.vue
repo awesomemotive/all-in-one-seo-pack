@@ -1,0 +1,199 @@
+<template>
+	<div
+		class="aioseo-image-uploader"
+		:class="{'aioseo-image-uploader--has-image': !!modelValue}"
+	>
+		<div class="image-upload">
+			<base-input
+				:size="baseSize"
+				:modelValue="modelValue"
+				:placeholder="strings.pasteYourImageUrl"
+				@change="(src) => setImgSrc(src)"
+			>
+				<template #append-icon>
+					<base-button
+						v-if="!!modelValue"
+						:size="baseSize"
+						class="remove-image"
+						type="gray"
+						@click.prevent="setImgSrc(null)"
+					>
+						<svg-trash :width="iconWidth"/>
+					</base-button>
+				</template>
+			</base-input>
+
+			<base-button
+				:size="baseSize"
+				class="insert-image"
+				type="black"
+				@click.prevent="openUploadModal()"
+			>
+				<svg-circle-plus width="14"/>
+
+				{{ strings.uploadOrSelectImage }}
+			</base-button>
+		</div>
+
+		<div
+			class="aioseo-description"
+			v-html="description || strings.description"
+		/>
+
+		<base-img
+			class="image-preview"
+			:src="modelValue"
+		/>
+	</div>
+</template>
+
+<script>
+import BaseButton from '@/vue/components/common/base/Button'
+import BaseImg from '@/vue/components/common/base/Img'
+import BaseInput from '@/vue/components/common/base/Input'
+import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
+import SvgTrash from '@/vue/components/common/svg/Trash'
+
+let customUploader = {}
+
+export default {
+	components : {
+		BaseButton,
+		BaseImg,
+		BaseInput,
+		SvgCirclePlus,
+		SvgTrash
+	},
+	emits   : [ 'update:modelValue' ],
+	methods : {
+		setImgSrc (src) {
+			this.$emit('update:modelValue', src)
+		},
+		openUploadModal () {
+			customUploader = window.wp.media({
+				title  : this.$t.__('Choose Image', this.$td),
+				button : {
+					text : this.$t.__('Choose Image', this.$td)
+				},
+				multiple : false
+			})
+
+			customUploader.on('select', () => {
+				const attachment = customUploader.state().get('selection').first().toJSON()
+
+				this.setImgSrc(attachment?.url || null)
+			})
+
+			customUploader.on('close', () => {
+				// Destroy the uploader HTML.
+				customUploader.detach()
+			})
+
+			this.$nextTick(() => {
+				customUploader.open()
+			})
+		}
+	},
+	props : {
+		baseSize : {
+			type    : String,
+			default : 'medium'
+		},
+		imgPreviewMaxHeight : {
+			type    : String,
+			default : '525px'
+		},
+		imgPreviewMaxWidth : {
+			type    : String,
+			default : '525px'
+		},
+		description : String,
+		modelValue  : {
+			type    : String,
+			default : ''
+		}
+	},
+	data () {
+		return {
+			strings : {
+				description         : this.$t.__('Minimum size: 112px x 112px, The image must be in JPG, PNG, GIF, SVG, or WEBP format.', this.$td),
+				pasteYourImageUrl   : this.$t.__('Paste your image URL or select a new image', this.$td),
+				remove              : this.$t.__('Remove', this.$td),
+				uploadOrSelectImage : this.$t.__('Upload or Select Image', this.$td)
+			}
+		}
+	},
+	computed : {
+		iconWidth () {
+			return 'small' === this.baseSize ? '16' : '20'
+		}
+	}
+}
+</script>
+
+<style lang="scss" scoped>
+.aioseo-image-uploader {
+	display: grid;
+	gap: 8px;
+
+	&--no-icon {
+		svg.aioseo-circle-plus {
+			display: none;
+		}
+	}
+
+	&--has-image {
+		:deep(.aioseo-input input) {
+			padding-right: 45px;
+			text-overflow: ellipsis;
+		}
+	}
+
+	.image-upload {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+
+		.aioseo-input-container {
+			flex: 1 1 50%;
+			min-width: 50%;
+			max-width: 445px;
+
+			:deep(.aioseo-input) {
+				max-width: 100%;
+			}
+		}
+
+		.insert-image {
+			flex: 1 1 auto;
+			max-width: 250px;
+
+			svg.aioseo-circle-plus {
+				margin-right: 8px;
+			}
+		}
+
+		.remove-image {
+			padding-left: 6px;
+			padding-right: 6px;
+			position: absolute;
+			right: 4px;
+			top: 50%;
+			transform: translateY(-50%);
+			height: calc(100% - 8px);
+		}
+	}
+
+	.aioseo-description {
+		margin: 0;
+	}
+
+	img.image-preview {
+		margin: 0;
+		max-height: v-bind(imgPreviewMaxHeight);
+		max-width: v-bind(imgPreviewMaxWidth);
+		height: auto;
+		width: auto;
+	}
+}
+</style>

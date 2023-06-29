@@ -1,3 +1,8 @@
+import {
+	useOptionsStore,
+	usePostEditorStore
+} from '@/vue/stores'
+
 import { debounce } from '@/vue/utils/debounce'
 import {
 	truSeoShouldAnalyze,
@@ -9,11 +14,14 @@ import {
  * @returns {string} string of field values.
  */
 export const customFieldsContent = () => {
-	if (!window.aioseo.currentPost || !window.aioseo.currentPost.postType) {
+	const postEditorStore = usePostEditorStore()
+	const postType        = postEditorStore.currentPost.postType
+	if (!postType) {
 		return ''
 	}
-	const postType  = window.aioseo.currentPost.postType
-	const truFields = window.aioseo.dynamicOptions.searchAppearance.postTypes[postType].customFields
+
+	const optionsStore = useOptionsStore()
+	const truFields           = optionsStore.dynamicOptions.searchAppearance.postTypes[postType].customFields
 
 	// No custom fields have been specified.
 	if (!truFields || !truSeoShouldAnalyze) {

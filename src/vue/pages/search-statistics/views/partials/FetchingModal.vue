@@ -1,6 +1,6 @@
 <template>
 	<core-modal
-		v-if="fetching"
+		v-if="searchStatisticsStore.fetching"
 		:classes="[ 'aioseo-fetching-data' ]"
 		noHeader
 	>
@@ -20,11 +20,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import SvgCircleInformation from '@/vue/components/common/svg/circle/Information'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreLoader,
 		CoreModal,
@@ -37,9 +45,6 @@ export default {
 				description : this.$t.__('Loading new report data...', this.$td)
 			}
 		}
-	},
-	computed : {
-		...mapState('search-statistics', [ 'fetching' ])
 	}
 }
 </script>

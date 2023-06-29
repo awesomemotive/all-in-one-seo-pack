@@ -1,27 +1,32 @@
 <template>
 	<div class="aioseo-access-control">
 		<access-control
-			v-if="!isUnlicensed"
+			v-if="!licenseStore.isUnlicensed"
 		/>
 
 		<access-control-lite
-			v-if="isUnlicensed"
+			v-if="licenseStore.isUnlicensed"
 		/>
 
 	</div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
 import AccessControl from './AIOSEO_VERSION/AccessControl'
 import AccessControlLite from './lite/AccessControl'
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore()
+		}
+	},
 	components : {
 		AccessControl,
 		AccessControlLite
-	},
-	computed : {
-		...mapGetters([ 'isUnlicensed' ])
 	}
 }
 </script>

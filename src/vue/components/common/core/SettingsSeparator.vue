@@ -90,11 +90,19 @@
 </template>
 
 <script>
+import {
+	useSettingsStore
+} from '@/vue/stores'
+
 import { decodeHTMLEntities } from '@/vue/utils/helpers'
-import { mapActions, mapState } from 'vuex'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 export default {
+	setup () {
+		return {
+			settingsStore : useSettingsStore()
+		}
+	},
 	emits      : [ 'update:separator' ],
 	components : {
 		GridColumn,
@@ -149,7 +157,7 @@ export default {
 				this.showMoreInitial = false
 				return
 			}
-			this.toggleRadio({ slug: this.showMoreSlug, value: newValue })
+			this.settingsStore.toggleRadio({ slug: this.showMoreSlug, value: newValue })
 		},
 		customSeparator (newVal) {
 			if (null === newVal) {
@@ -164,7 +172,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options', 'settings' ]),
 		hiddenSeparator () {
 			return this.optionsSeparator === this.customSeparator || this.decodedMoreSeparators.includes(this.optionsSeparator)
 				? this.optionsSeparator
@@ -181,14 +188,13 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'toggleRadio' ]),
 		setSeparator (separator) {
 			this.customSeparator = null
 			this.$emit('update:separator', separator)
 		}
 	},
 	mounted () {
-		this.showMoreSeparators = this.settings.toggledRadio[this.showMoreSlug]
+		this.showMoreSeparators = this.settingsStore.settings.toggledRadio[this.showMoreSlug]
 		this.customSeparator    = !this.decodedSeparators.concat(this.decodedMoreSeparators).includes(this.optionsSeparator)
 			? this.optionsSeparator
 			: null

@@ -29,7 +29,7 @@
 					<base-button
 						type="blue"
 						size="medium"
-						:loading="loading"
+						:loading="rootStore.loading"
 						@click="processSaveChanges"
 					>
 						{{ strings.saveChanges }}
@@ -39,22 +39,37 @@
 		</div>
 
 		<core-help
-			v-if="helpPanel.docs && Object.keys(helpPanel.docs).length"
+			v-if="helpPanelStore.docs && Object.keys(helpPanelStore.docs).length"
 		/>
 	</div>
 </template>
 
 <script>
+import {
+	useHelpPanelStore,
+	useNotificationsStore,
+	useRootStore
+} from '@/vue/stores'
+
+import license from '@/vue/utils/license'
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import '@/vue/assets/scss/main.scss'
+
 import { getParams, removeParam } from '@/vue/utils/params'
 import { SaveChanges } from '@/vue/mixins'
-import { mapGetters, mapMutations, mapState } from 'vuex'
 import CoreHeader from '@/vue/components/common/core/Header'
 import CoreHelp from '@/vue/components/common/core/Help'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreNotifications from '@/vue/components/common/core/Notifications'
 import GridContainer from '@/vue/components/common/grid/Container'
 export default {
+	setup () {
+		return {
+			helpPanelStore     : useHelpPanelStore(),
+			notificationsStore : useNotificationsStore(),
+			rootStore          : useRootStore()
+		}
+	},
 	components : {
 		CoreHeader,
 		CoreHelp,
@@ -107,13 +122,11 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'settings' ]),
-		...mapState([ 'loading', 'options', 'showNotifications', 'helpPanel', 'notifications' ]),
 		tabs () {
 			return this.$router.options.routes
 				.filter(route => route.name && route.meta && route.meta.name)
-				.filter(route => this.$allowed(route.meta.access))
-				.filter(route => !route.meta.license || this.$license.hasMinimumLevel(this.$aioseo, route.meta.license))
+				.filter(route => allowed(route.meta.access))
+				.filter(route => !route.meta.license || license.hasMinimumLevel(route.meta.license))
 				.filter(route => {
 					if ('lite' === route.meta.display && this.$isPro) {
 						return false
@@ -144,13 +157,10 @@ export default {
 			return this.showSaveButton
 		}
 	},
-	methods : {
-		...mapMutations([ 'toggleNotifications', 'disableForceShowNotifications' ])
-	},
 	mounted () {
 		if (getParams().notifications) {
-			if (!this.showNotifications) {
-				this.toggleNotifications()
+			if (!this.notificationsStore.showNotifications) {
+				this.notificationsStore.toggleNotifications()
 			}
 
 			setTimeout(() => {
@@ -158,12 +168,12 @@ export default {
 			}, 500)
 		}
 
-		if (this.notifications.force && this.notifications.active.length) {
+		if (this.notificationsStore.force && this.notificationsStore.active.length) {
 			// First, disable the force show.
-			this.disableForceShowNotifications()
+			this.notificationsStore.force = false
 
 			// Then show the notifications.
-			this.toggleNotifications()
+			this.notificationsStore.toggleNotifications()
 		}
 	}
 }

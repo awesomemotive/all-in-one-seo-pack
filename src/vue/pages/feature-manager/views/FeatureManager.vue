@@ -10,7 +10,7 @@
 						@click="activateAllFeatures"
 					>{{ strings.activateAllFeatures }}</base-button>
 					<base-button
-						v-if="!isUnlicensed"
+						v-if="!licenseStore.isUnlicensed"
 						size="medium"
 						type="gray"
 						:loading="loading.deactivateAll"
@@ -30,7 +30,7 @@
 
 		<div class="aioseo-feature-manager-addons">
 			<core-alert
-				v-if="$isPro && isUnlicensed"
+				v-if="$isPro && licenseStore.isUnlicensed"
 				type="red"
 			>
 				<strong>{{ yourLicenseIsText }}</strong>
@@ -41,7 +41,7 @@
 						type="blue"
 						size="small"
 						tag="a"
-						:href="$aioseo.data.isNetworkAdmin ? $aioseo.urls.aio.networkSettings : $aioseo.urls.aio.settings"
+						:href="rootStore.aioseo.data.isNetworkAdmin ? rootStore.aioseo.urls.aio.networkSettings : rootStore.aioseo.urls.aio.settings"
 					>
 						{{ strings.enterLicenseKey }}
 					</base-button>
@@ -68,7 +68,7 @@
 					<core-feature-card
 						ref="addons"
 						:can-activate="addon.canActivate"
-						:can-manage="$allowed(addon.capability)"
+						:can-manage="allowed(addon.capability)"
 						:feature="addon"
 					>
 						<template #title>
@@ -94,7 +94,7 @@
 		</div>
 
 		<cta
-			v-if="isUnlicensed"
+			v-if="licenseStore.isUnlicensed"
 			class="feature-manager-upsell"
 			:type="2"
 			:button-text="strings.ctaButtonText"
@@ -114,7 +114,7 @@
 			<template #featured-image>
 				<img
 					alt="Purchase AIOSEO Today!"
-					:src="$getAssetUrl(ctaImg)"
+					:src="getAssetUrl(ctaImg)"
 				/>
 			</template>
 		</cta>
@@ -161,8 +161,16 @@
 </template>
 
 <script>
+import {
+	useAddonsStore,
+	useLicenseStore,
+	usePluginsStore,
+	useRootStore
+} from '@/vue/stores'
+
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+import { getAssetUrl } from '@/vue/utils/helpers'
 import { License } from '@/vue/mixins'
-import { mapActions, mapGetters, mapState } from 'vuex'
 
 import ctaImg from '@/vue/assets/images/upsells/news-sitemap.png'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
@@ -180,6 +188,14 @@ import SvgRedirect from '@/vue/components/common/svg/Redirect'
 import SvgSitemapsPro from '@/vue/components/common/svg/SitemapsPro'
 
 export default {
+	setup () {
+		return {
+			addonsStore  : useAddonsStore(),
+			licenseStore : useLicenseStore(),
+			pluginsStore : usePluginsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreFeatureCard,
@@ -198,6 +214,7 @@ export default {
 	mixins : [ License ],
 	data () {
 		return {
+			allowed,
 			ctaImg,
 			showNetworkModal : false,
 			maybeActivate    : false,
@@ -251,8 +268,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
-		...mapState([ 'addons' ]),
 		upgradeToday () {
 			return this.$t.sprintf(
 				// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
@@ -262,7 +277,7 @@ export default {
 			)
 		},
 		getAddons () {
-			return this.addons
+			return this.addonsStore.addons
 				.filter(addon => !this.search || addon.name.toLowerCase().includes(this.search.toLowerCase()))
 		},
 		networkChangeMessage () {
@@ -274,7 +289,7 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'installPlugins', 'deactivatePlugins' ]),
+		getAssetUrl,
 		closeNetworkModal (changeStatus = false) {
 			this.showNetworkModal = false
 
@@ -307,11 +322,11 @@ export default {
 		activateAllFeatures () {
 			// First, check to see if this user is licensed and has an active license.
 			// If not, we want to redirect the user to a new page with an upsell.
-			if (!this.$isPro || !this.$aioseo.license.isActive) {
-				return window.open(this.$links.utmUrl(this.$aioseo.data.isNetworkAdmin ? 'network-activate-all-features' : 'activate-all-features'))
+			if (!this.$isPro || !this.licenseStore.license.isActive) {
+				return window.open(this.$links.utmUrl(this.rootStore.aioseo.data.isNetworkAdmin ? 'network-activate-all-features' : 'activate-all-features'))
 			}
 
-			if (this.$aioseo.data.isNetworkAdmin) {
+			if (this.rootStore.aioseo.data.isNetworkAdmin) {
 				this.showNetworkModal = true
 				this.maybeActivate    = true
 				return
@@ -321,12 +336,12 @@ export default {
 		},
 		actuallyActivateAllFeatures () {
 			this.loading.activateAll = true
-			const addons = this.addons
+			const addons = this.addonsStore.addons
 				.filter(addon => !addon.requiresUpgrade)
 				.map(addon => ({
 					plugin : addon.basename
 				}))
-			this.installPlugins(addons)
+			this.pluginsStore.installPlugins(addons)
 				.then(response => {
 					const completed = Object.keys(response.body.completed).map(k => response.body.completed[k])
 					this.$refs.addons.forEach(component => {
@@ -338,7 +353,7 @@ export default {
 				})
 		},
 		deactivateAllFeatures () {
-			if (this.$aioseo.data.isNetworkAdmin) {
+			if (this.rootStore.aioseo.data.isNetworkAdmin) {
 				this.showNetworkModal = true
 				this.maybeDeactivate  = true
 				return
@@ -348,13 +363,13 @@ export default {
 		},
 		actuallyDeactivateAllFeatures () {
 			this.loading.deactivateAll = true
-			const addons = this.addons
+			const addons = this.addonsStore.addons
 				.filter(addon => !addon.requiresUpgrade)
 				.filter(addon => addon.installed)
 				.map(addon => ({
 					plugin : addon.basename
 				}))
-			this.deactivatePlugins(addons)
+			this.pluginsStore.deactivatePlugins(addons)
 				.then(response => {
 					const completed = Object.keys(response.body.completed).map(k => response.body.completed[k])
 					this.$refs.addons.forEach(component => {

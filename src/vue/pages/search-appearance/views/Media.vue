@@ -19,7 +19,7 @@
 				>
 					<template #content>
 						<base-radio-toggle
-							v-model="dynamicOptions.searchAppearance.postTypes.attachment.redirectAttachmentUrls"
+							v-model="optionsStore.dynamicOptions.searchAppearance.postTypes.attachment.redirectAttachmentUrls"
 							name="redirectAttachmentUrls"
 							:options="[
 								{ label: $constants.GLOBAL_STRINGS.disabled, value: 'disabled', activeClass: 'dark' },
@@ -37,12 +37,12 @@
 
 			<template
 				#tabs
-				v-if="'disabled' === dynamicOptions.searchAppearance.postTypes.attachment.redirectAttachmentUrls"
+				v-if="'disabled' === optionsStore.dynamicOptions.searchAppearance.postTypes.attachment.redirectAttachmentUrls"
 			>
 				<core-main-tabs
 					:tabs="tabs.attachments"
 					:showSaveButton="false"
-					:active="settings.internalTabs[`${postType.name}SA`]"
+					:active="settingsStore.settings.internalTabs[`${postType.name}SA`]"
 					internal
 					@changed="value => processChangeTab(postType.name, value)"
 				/>
@@ -50,13 +50,13 @@
 
 			<transition
 				name="route-fade" mode="out-in"
-				v-if="'disabled' === dynamicOptions.searchAppearance.postTypes.attachment.redirectAttachmentUrls"
+				v-if="'disabled' === optionsStore.dynamicOptions.searchAppearance.postTypes.attachment.redirectAttachmentUrls"
 			>
 				<component
-					:is="settings.internalTabs[`${postType.name}SA`]"
+					:is="settingsStore.settings.internalTabs[`${postType.name}SA`]"
 					:object="postType"
-					:separator="options.searchAppearance.global.separator"
-					:options="dynamicOptions.searchAppearance.postTypes[postType.name]"
+					:separator="optionsStore.options.searchAppearance.global.separator"
+					:options="optionsStore.dynamicOptions.searchAppearance.postTypes[postType.name]"
 					type="postTypes"
 				/>
 			</transition>
@@ -100,7 +100,12 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import { AddonConditions } from '@/vue/mixins'
 import Advanced from './partials/Advanced'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
@@ -116,6 +121,13 @@ import Schema from './partials/Schema'
 import TitleDescription from './partials/TitleDescription'
 
 export default {
+	setup () {
+		return {
+			optionsStore  : useOptionsStore(),
+			rootStore     : useRootStore(),
+			settingsStore : useSettingsStore()
+		}
+	},
 	mixins     : [ AddonConditions ],
 	components : {
 		Advanced,
@@ -201,21 +213,19 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options', 'dynamicOptions', 'settings' ]),
 		postType () {
-			return this.$aioseo.postData.postTypes
+			return this.rootStore.aioseo.postData.postTypes
 				.filter(pt => 'attachment' === pt.name)[0]
 		}
 	},
 	methods : {
-		...mapActions([ 'changeTab' ]),
 		processChangeTab (postType, value) {
 			if (this.internalDebounce) {
 				return
 			}
 
 			this.internalDebounce = true
-			this.changeTab({ slug: `${postType}SA`, value })
+			this.settingsStore.changeTab({ slug: `${postType}SA`, value })
 
 			// Debouncing a little here to save extra API calls.
 			setTimeout(() => {

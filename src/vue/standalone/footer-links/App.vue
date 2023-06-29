@@ -5,7 +5,7 @@
 		<div>
 			<a :href="getUtmLink('https://aioseo.com/plugin/lite-support')" target="_blank" rel="noreferrer noopener">{{strings.support}}</a><span>/</span>
 			<a :href="getUtmLink('https://aioseo.com/docs/')" target="_blank" rel="noreferrer noopener">{{strings.docs}}</a><span>/</span>
-			<a :href="$aioseo.urls.aio.about" rel="noreferrer noopener">{{strings.freePlugins}}</a>
+			<a :href="rootStore.aioseo.urls.aio.about" rel="noreferrer noopener">{{strings.freePlugins}}</a>
 		</div>
 
 		<div>
@@ -18,11 +18,20 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import FacebookSvg from '@/vue/components/common/svg/social/Facebook'
 import LinkedInSvg from '@/vue/components/common/svg/social/LinkedIn'
 import TwitterSvg from '@/vue/components/common/svg/social/Twitter'
 import YouTubeSvg from '@/vue/components/common/svg/social/YouTube'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		FacebookSvg,
 		LinkedInSvg,
@@ -41,7 +50,7 @@ export default {
 	},
 	methods : {
 		getUtmLink (url) {
-			return this.$links.utmUrl('footer', this.$aioseo.page, url)
+			return this.$links.utmUrl('footer', this.rootStore.aioseo.page, url)
 		}
 	}
 }

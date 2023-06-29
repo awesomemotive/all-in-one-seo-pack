@@ -1,22 +1,24 @@
-import { mapState } from 'vuex'
+import {
+	useTagsStore
+} from '@/vue/stores'
+
+import tags from '@/vue/utils/tags'
 import { customFieldValue } from '@/vue/plugins/tru-seo/components/customFields'
 
 export const Tags = {
-	computed : {
-		...mapState([ 'currentPost', 'tags' ]),
-		...mapState('live-tags', [ 'liveTags' ])
-	},
 	methods : {
 		parseTags (string) {
+			const tagsStore = useTagsStore()
+
 			if (!string) {
 				return string
 			}
 
-			if (!this.tags.tags) {
+			if (!tagsStore.tags) {
 				return string
 			}
 
-			this.tags.tags.forEach(tag => {
+			tagsStore.tags.forEach(tag => {
 				if ('custom_field' === tag.id) {
 					const customFieldRegex   = new RegExp(`#${tag.id}-([a-zA-Z0-9_-]+)`)
 					const customFieldMatches = string.match(customFieldRegex)
@@ -43,24 +45,16 @@ export const Tags = {
 				}
 
 				const matches = string.match(regex)
-				const value   = (this.liveTags[tag.id] || tag.value)
+				const value   = (tagsStore.liveTags[tag.id] || tag.value)
 				if (matches) {
 					string = string.replace(regex, '%|%' + value)
-				}
-
-				// Let's update our new value to the window object.
-				tag.value = value
-				const { tags }  = window.aioseo.tags
-				const windowTag = tags.find(t => t.id === tag.id)
-				if (windowTag) {
-					windowTag.value = value
 				}
 			})
 
 			// Since we added a delimiter, let's remove all of that now.
 			string = string.replace(/%\|%/g, '')
 
-			return this.$tags.decodeHTMLEntities(this.$tags.decodeHTMLEntities(string.replace(/<(?:.|\n)*?>/gm, ' ').replace(/\s/g, ' ')))
+			return tags.decodeHTMLEntities(tags.decodeHTMLEntities(string.replace(/<(?:.|\n)*?>/gm, ' ').replace(/\s/g, ' ')))
 		}
 	}
 }

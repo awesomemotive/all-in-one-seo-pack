@@ -24,7 +24,7 @@
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.webmasterTools.pinterest"
+						v-model="optionsStore.options.webmasterTools.pinterest"
 						@blur="maybeUpdateId('pinterest')"
 					/>
 				</template>
@@ -34,11 +34,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore
+} from '@/vue/stores'
+
 import { MetaTag } from '@/vue/mixins'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore()
+		}
+	},
 	components : {
 		CoreCard,
 		CoreSettingsRow
@@ -55,9 +63,6 @@ export default {
 				pinterestVerificationCode : this.$t.__('Pinterest Verification Code', this.$td)
 			}
 		}
-	},
-	computed : {
-		...mapState([ 'options' ])
 	}
 }
 </script>

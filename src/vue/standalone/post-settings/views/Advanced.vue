@@ -20,8 +20,8 @@
 					type="text"
 					size="medium"
 					:placeholder="strings.placeholder"
-					v-model="currentPost.canonicalUrl"
-					@update:modelValue="setIsDirty"
+					v-model="postEditorStore.currentPost.canonicalUrl"
+					@update:modelValue="postEditorStore.isDirty = true"
 				/>
 			</template>
 		</core-settings-row>
@@ -35,11 +35,11 @@
 					<div class="select">
 						<span>{{ strings.priority }}</span>
 						<base-select
-							:disabled="isUnlicensed"
+							:disabled="licenseStore.isUnlicensed"
 							size="medium"
 							:options="getPriorityOptions"
-							:modelValue="isUnlicensed ? getPriority('default') : getPriority(currentPost.priority)"
-							@update:modelValue="value => isUnlicensed ? null : savePriority(value.value)"
+							:modelValue="licenseStore.isUnlicensed ? getPriority('default') : getPriority(postEditorStore.currentPost.priority)"
+							@update:modelValue="value => licenseStore.isUnlicensed ? null : savePriority(value.value)"
 						/>
 					</div>
 					<div class="separator">
@@ -49,18 +49,18 @@
 					<div class="select">
 						<span>{{ strings.frequency }}</span>
 						<base-select
-							:disabled="isUnlicensed"
+							:disabled="licenseStore.isUnlicensed"
 							size="medium"
 							:options="getFrequencyOptions"
-							:modelValue="isUnlicensed ? getFrequency('default') : getFrequency(currentPost.frequency)"
-							@update:modelValue="value => isUnlicensed ? null : saveFrequency(value.value)"
+							:modelValue="licenseStore.isUnlicensed ? getFrequency('default') : getFrequency(postEditorStore.currentPost.frequency)"
+							@update:modelValue="value => licenseStore.isUnlicensed ? null : saveFrequency(value.value)"
 						/>
 					</div>
 				</div>
 
 				<core-alert
 					class="inline-upsell"
-					v-if="isUnlicensed"
+					v-if="licenseStore.isUnlicensed"
 					type="blue"
 				>
 					<div v-html="strings.priorityFrequencyUpsell" />
@@ -69,7 +69,7 @@
 		</core-settings-row>
 
 		<core-settings-row
-			v-if="options.searchAppearance.advanced.useKeywords"
+			v-if="optionsStore.options.searchAppearance.advanced.useKeywords"
 			:name="strings.keywords"
 			align
 		>
@@ -77,9 +77,9 @@
 				<base-select
 					multiple
 					taggable
-					:options="getJsonValue(currentPost.keywords) || []"
-					:modelValue="getJsonValue(currentPost.keywords) || []"
-					@update:modelValue="values => currentPost.keywords = setJsonValue(values)"
+					:options="getJsonValue(postEditorStore.currentPost.keywords) || []"
+					:modelValue="getJsonValue(postEditorStore.currentPost.keywords) || []"
+					@update:modelValue="values => postEditorStore.currentPost.keywords = setJsonValue(values)"
 					:tag-placeholder="strings.tagPlaceholder"
 				/>
 			</template>
@@ -87,18 +87,30 @@
 	</div>
 </template>
 <script>
-import { mapGetters, mapState } from 'vuex'
-import { IsDirty, JsonValues } from '@/vue/mixins'
+import {
+	useLicenseStore,
+	useOptionsStore,
+	usePostEditorStore
+} from '@/vue/stores'
+
+import { JsonValues } from '@/vue/mixins'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreSingleRobotsMeta from '@/vue/components/common/core/SingleRobotsMeta'
 export default {
+	setup () {
+		return {
+			licenseStore    : useLicenseStore(),
+			optionsStore    : useOptionsStore(),
+			postEditorStore : usePostEditorStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreSettingsRow,
 		CoreSingleRobotsMeta
 	},
-	mixins : [ IsDirty, JsonValues ],
+	mixins : [ JsonValues ],
 	props  : {
 		disabled : {
 			type : Boolean,
@@ -138,8 +150,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
-		...mapState([ 'currentPost', 'options' ]),
 		getPriorityOptions () {
 			return [ { label: this.$t.__('default', this.$td), value: 'default' } ].concat(this.$constants.PRIORITY_OPTIONS)
 		},
@@ -152,15 +162,15 @@ export default {
 			return this.getPriorityOptions.find(h => h.value === option)
 		},
 		savePriority (value) {
-			this.currentPost.priority = value
-			this.$store.commit('isDirty', true)
+			this.postEditorStore.currentPost.priority    = value
+			this.postEditorStore.isDirty = true
 		},
 		getFrequency (option) {
 			return this.getFrequencyOptions.find(h => h.value === option)
 		},
 		saveFrequency (value) {
-			this.currentPost.frequency = value
-			this.$store.commit('isDirty', true)
+			this.postEditorStore.currentPost.frequency   = value
+			this.postEditorStore.isDirty = true
 		}
 	}
 }

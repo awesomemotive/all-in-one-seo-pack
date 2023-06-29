@@ -18,14 +18,14 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.social.facebook.general.enable"
+						v-model="optionsStore.options.social.facebook.general.enable"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
 				class="facebook-default-image-source"
-				v-if="options.social.facebook.general.enable"
+				v-if="optionsStore.options.social.facebook.general.enable"
 				:name="strings.defaultImageSourcePosts"
 				align
 			>
@@ -33,84 +33,56 @@
 					<base-select
 						size="medium"
 						:options="imageSourceOptions"
-						:modelValue="getImageSourceOption(options.social.facebook.general.defaultImageSourcePosts)"
-						@update:modelValue="value => options.social.facebook.general.defaultImageSourcePosts = value.value"
+						:modelValue="getImageSourceOption(optionsStore.options.social.facebook.general.defaultImageSourcePosts)"
+						@update:modelValue="value => optionsStore.options.social.facebook.general.defaultImageSourcePosts = value.value"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.facebook.general.enable && 'custom' === options.social.facebook.general.defaultImageSourcePosts"
+				v-if="optionsStore.options.social.facebook.general.enable && 'custom' === optionsStore.options.social.facebook.general.defaultImageSourcePosts"
 				:name="strings.postCustomFieldName"
 				align
 			>
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.social.facebook.general.customFieldImagePosts"
+						v-model="optionsStore.options.social.facebook.general.customFieldImagePosts"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.facebook.general.enable"
+				v-if="optionsStore.options.social.facebook.general.enable"
 				class="facebook-image"
 				:name="strings.defaultFacebookImagePosts"
 				align
 			>
 				<template #content>
-					<div class="facebook-image-upload">
-						<base-input
-							size="medium"
-							v-model="options.social.facebook.general.defaultImagePosts"
-							:placeholder="strings.pasteYourImageUrl"
-						/>
-
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('defaultImagePosts', (imageUrl) => options.social.facebook.general.defaultImagePosts = imageUrl)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="options.social.facebook.general.defaultImagePosts = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						{{ strings.minimumSize }}
-					</div>
-
-					<base-img :src="options.social.facebook.general.defaultImagePosts" />
+					<core-image-uploader
+						:description="strings.minimumSize"
+						v-model="optionsStore.options.social.facebook.general.defaultImagePosts"
+					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
 				class="facebook-default-image-source"
-				v-if="options.social.facebook.general.enable"
+				v-if="optionsStore.options.social.facebook.general.enable"
 				:name="strings.defaultImageSourceTerms"
 				align
 			>
 				<template #content>
 					<base-select
-						v-if="!isUnlicensed"
+						v-if="!licenseStore.isUnlicensed"
 						size="medium"
 						:options="getTermImageSourceOptions()"
-						:modelValue="getImageSourceOption(options.social.facebook.general.defaultImageSourceTerms)"
-						@update:modelValue="value => options.social.facebook.general.defaultImageSourceTerms = value.value"
+						:modelValue="getImageSourceOption(optionsStore.options.social.facebook.general.defaultImageSourceTerms)"
+						@update:modelValue="value => optionsStore.options.social.facebook.general.defaultImageSourceTerms = value.value"
 					/>
 
 					<base-select
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 						size="medium"
 						:options="getTermImageSourceOptions()"
 						:modelValue="getImageSourceOption('default')"
@@ -119,7 +91,7 @@
 
 					<core-alert
 						class="inline-upsell"
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
 						<div v-html="strings.defaultTermImageSourceUpsell" />
@@ -128,69 +100,41 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.facebook.general.enable && 'custom' === options.social.facebook.general.defaultImageSourceTerms && !isUnlicensed"
+				v-if="optionsStore.options.social.facebook.general.enable && 'custom' === optionsStore.options.social.facebook.general.defaultImageSourceTerms && !licenseStore.isUnlicensed"
 				:name="strings.termsCustomFieldName"
 				align
 			>
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.social.facebook.general.customFieldImageTerms"
+						v-model="optionsStore.options.social.facebook.general.customFieldImageTerms"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.facebook.general.enable && !isUnlicensed"
+				v-if="optionsStore.options.social.facebook.general.enable && !licenseStore.isUnlicensed"
 				class="facebook-image"
 				:name="strings.defaultFacebookImageTerms"
 				align
 			>
 				<template #content>
-					<div class="facebook-image-upload">
-						<base-input
-							size="medium"
-							v-model="options.social.facebook.general.defaultImageTerms"
-							:placeholder="strings.pasteYourImageUrl"
-						/>
-
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('defaultImageTerms', (imageUrl) => options.social.facebook.general.defaultImageTerms = imageUrl)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="options.social.facebook.general.defaultImageTerms = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						{{ strings.minimumSize }}
-					</div>
-
-					<base-img :src="options.social.facebook.general.defaultImageTerms" />
+					<core-image-uploader
+						:description="strings.minimumSize"
+						v-model="optionsStore.options.social.facebook.general.defaultImageTerms"
+					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.facebook.general.enable"
+				v-if="optionsStore.options.social.facebook.general.enable"
 				:name="strings.postTypeObjectTypes"
 				align
 			>
 				<template #content>
 					<table-row
 						class="facebook-object-types"
-						v-for="(postType, index) in $aioseo.postData.postTypes"
+						v-for="(postType, index) in rootStore.aioseo.postData.postTypes"
 						:key="index"
 					>
 						<table-column>
@@ -203,8 +147,8 @@
 								:options="objectTypeOptions"
 								group-label="groupLabel"
 								group-values="options"
-								:modelValue="getObjectTypeOptions(dynamicOptions.social.facebook.general.postTypes[postType.name].objectType)"
-								@update:modelValue="value => dynamicOptions.social.facebook.general.postTypes[postType.name].objectType = value.value"
+								:modelValue="getObjectTypeOptions(optionsStore.dynamicOptions.social.facebook.general.postTypes[postType.name].objectType)"
+								@update:modelValue="value => optionsStore.dynamicOptions.social.facebook.general.postTypes[postType.name].objectType = value.value"
 							/>
 						</table-column>
 					</table-row>
@@ -212,14 +156,14 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.facebook.general.enable"
+				v-if="optionsStore.options.social.facebook.general.enable"
 				:name="strings.taxonomyObjectTypes"
 				align
 			>
 				<template #content>
 					<table-row
 						class="facebook-object-types"
-						v-for="(taxonomy, index) in $aioseo.postData.taxonomies"
+						v-for="(taxonomy, index) in rootStore.aioseo.postData.taxonomies"
 						:key="index"
 					>
 						<table-column>
@@ -228,17 +172,17 @@
 
 						<table-column>
 							<base-select
-								v-if="!isUnlicensed"
+								v-if="!licenseStore.isUnlicensed"
 								size="medium"
 								:options="objectTypeOptions"
 								group-label="groupLabel"
 								group-values="options"
-								:modelValue="getObjectTypeOptions(dynamicOptions.social.facebook.general.taxonomies[taxonomy.name].objectType)"
-								@update:modelValue="value => dynamicOptions.social.facebook.general.taxonomies[taxonomy.name].objectType = value.value"
+								:modelValue="getObjectTypeOptions(optionsStore.dynamicOptions.social.facebook.general.taxonomies[taxonomy.name].objectType)"
+								@update:modelValue="value => optionsStore.dynamicOptions.social.facebook.general.taxonomies[taxonomy.name].objectType = value.value"
 							/>
 
 							<base-select
-								v-if="isUnlicensed"
+								v-if="licenseStore.isUnlicensed"
 								size="medium"
 								:options="objectTypeOptions"
 								group-label="groupLabel"
@@ -251,7 +195,7 @@
 
 					<core-alert
 						class="inline-upsell"
-						v-if="isUnlicensed"
+						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
 						<div v-html="strings.taxonomyObjectTypesUpsell" />
@@ -260,13 +204,13 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.facebook.general.enable"
+				v-if="optionsStore.options.social.facebook.general.enable"
 				:name="strings.showFacebookAuthor"
 				align
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.social.facebook.general.showAuthor"
+						v-model="optionsStore.options.social.facebook.general.showAuthor"
 						name="showFacebookAuthor"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
@@ -277,14 +221,14 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.facebook.general.enable"
+				v-if="optionsStore.options.social.facebook.general.enable"
 				:name="strings.siteName"
 				align
 			>
 				<template #content>
 					<core-html-tags-editor
 						class="facebook-meta-input"
-						v-model="options.social.facebook.general.siteName"
+						v-model="optionsStore.options.social.facebook.general.siteName"
 						:line-numbers="false"
 						single
 						@counter="count => updateCount(count, 'siteNameCount')"
@@ -309,12 +253,12 @@
 		</core-card>
 
 		<core-card
-			v-if="options.social.facebook.general.enable"
+			v-if="optionsStore.options.social.facebook.general.enable"
 			slug="facebookHomePageSettings"
 			:header-text="strings.homePageSettings"
 		>
 			<div
-				v-if="$aioseo.data.staticHomePage"
+				v-if="rootStore.aioseo.data.staticHomePage"
 				class="aioseo-settings-row aioseo-section-description"
 			>
 				<span v-html="strings.homePageDisabledDescription" />
@@ -330,62 +274,34 @@
 				<template #content>
 					<core-facebook-preview
 						:description="previewDescription"
-						:image="options.social.facebook.homePage.image"
+						:image="optionsStore.options.social.facebook.homePage.image"
 						:title="previewTitle"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!$aioseo.data.staticHomePage"
+				v-if="!rootStore.aioseo.data.staticHomePage"
 				class="facebook-image"
 				:name="strings.homePageImage"
 			>
 				<template #content>
-					<div class="facebook-image-upload">
-						<base-input
-							size="medium"
-							v-model="options.social.facebook.homePage.image"
-							:placeholder="strings.pasteYourImageUrl"
-						/>
-
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('homePageImage', (imageUrl) => options.social.facebook.homePage.image = imageUrl)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="options.social.facebook.homePage.image = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						{{ strings.minimumSize }}
-					</div>
-
-					<base-img :src="options.social.facebook.homePage.image" />
+					<core-image-uploader
+						:description="strings.minimumSize"
+						v-model="optionsStore.options.social.facebook.homePage.image"
+					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!$aioseo.data.staticHomePage"
+				v-if="!rootStore.aioseo.data.staticHomePage"
 				:name="strings.homePageTitle"
 				align
 			>
 				<template #content>
 					<core-html-tags-editor
 						class="facebook-meta-input"
-						v-model="options.social.facebook.homePage.title"
+						v-model="optionsStore.options.social.facebook.homePage.title"
 						:line-numbers="false"
 						single
 						@counter="count => updateCount(count, 'titleCount')"
@@ -409,14 +325,14 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!$aioseo.data.staticHomePage"
+				v-if="!rootStore.aioseo.data.staticHomePage"
 				:name="strings.homePageDescription"
 				align
 			>
 				<template #content>
 					<core-html-tags-editor
 						class="facebook-meta-input"
-						v-model="options.social.facebook.homePage.description"
+						v-model="optionsStore.options.social.facebook.homePage.description"
 						:line-numbers="false"
 						@counter="count => updateCount(count, 'descriptionCount')"
 						tags-context="homePage"
@@ -439,7 +355,7 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!$aioseo.data.staticHomePage"
+				v-if="!rootStore.aioseo.data.staticHomePage"
 				class="facebook-home-page-object-type"
 				:name="strings.objectType"
 				align
@@ -450,21 +366,21 @@
 						:options="objectTypeOptions"
 						group-label="groupLabel"
 						group-values="options"
-						:modelValue="getObjectTypeOptions(options.social.facebook.homePage.objectType)"
-						@update:modelValue="value => options.social.facebook.homePage.objectType = value.value"
+						:modelValue="getObjectTypeOptions(optionsStore.options.social.facebook.homePage.objectType)"
+						@update:modelValue="value => optionsStore.options.social.facebook.homePage.objectType = value.value"
 					/>
 				</template>
 			</core-settings-row>
 		</core-card>
 
 		<core-card
-			v-if="options.social.facebook.general.enable"
+			v-if="optionsStore.options.social.facebook.general.enable"
 			slug="facebookAdvancedSettings"
-			:toggles="options.social.facebook.advanced.enable"
+			:toggles="optionsStore.options.social.facebook.advanced.enable"
 		>
 			<template #header>
 				<base-toggle
-					v-model="options.social.facebook.advanced.enable"
+					v-model="optionsStore.options.social.facebook.advanced.enable"
 				/>
 
 				<span>{{ strings.advancedSettings }}</span>
@@ -477,7 +393,7 @@
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.social.facebook.advanced.adminId"
+						v-model="optionsStore.options.social.facebook.advanced.adminId"
 					/>
 
 					<div class="aioseo-description">
@@ -509,7 +425,7 @@
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.social.facebook.advanced.appId"
+						v-model="optionsStore.options.social.facebook.advanced.appId"
 					/>
 
 					<div class="aioseo-description">
@@ -541,7 +457,7 @@
 				<template #content>
 					<base-input
 						size="medium"
-						v-model="options.social.facebook.advanced.authorUrl"
+						v-model="optionsStore.options.social.facebook.advanced.authorUrl"
 					/>
 
 					<div class="aioseo-description">
@@ -572,7 +488,7 @@
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.social.facebook.advanced.generateArticleTags"
+						v-model="optionsStore.options.social.facebook.advanced.generateArticleTags"
 						name="generateArticleTags"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
@@ -583,13 +499,13 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.facebook.advanced.generateArticleTags"
+				v-if="optionsStore.options.social.facebook.advanced.generateArticleTags"
 				:name="strings.useKeywordsInTags"
 				align
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.social.facebook.advanced.useKeywordsInTags"
+						v-model="optionsStore.options.social.facebook.advanced.useKeywordsInTags"
 						name="useKeywordsInTags"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
@@ -600,13 +516,13 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.facebook.advanced.generateArticleTags"
+				v-if="optionsStore.options.social.facebook.advanced.generateArticleTags"
 				:name="strings.useCategoriesInTags"
 				align
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.social.facebook.advanced.useCategoriesInTags"
+						v-model="optionsStore.options.social.facebook.advanced.useCategoriesInTags"
 						name="useCategoriesInTags"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
@@ -617,13 +533,13 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="options.social.facebook.advanced.generateArticleTags"
+				v-if="optionsStore.options.social.facebook.advanced.generateArticleTags"
 				:name="strings.usePostTagsInTags"
 				align
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.social.facebook.advanced.usePostTagsInTags"
+						v-model="optionsStore.options.social.facebook.advanced.usePostTagsInTags"
 						name="usePostTagsInTags"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
@@ -637,35 +553,45 @@
 </template>
 
 <script>
-import { ImageSourceOptions, MaxCounts, Tags, Uploader } from '@/vue/mixins'
-import { mapGetters, mapState } from 'vuex'
-import BaseImg from '@/vue/components/common/base/Img'
+import {
+	useLicenseStore,
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
+import { ImageSourceOptions, MaxCounts, Tags } from '@/vue/mixins'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreFacebookPreview from '@/vue/components/common/core/FacebookPreview'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
+import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgBook from '@/vue/components/common/svg/Book'
-import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import TableColumn from '@/vue/components/common/table/Column'
 import TableRow from '@/vue/components/common/table/Row'
 
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			licenseStore : useLicenseStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
-		BaseImg,
 		BaseRadioToggle,
 		CoreAlert,
 		CoreCard,
 		CoreFacebookPreview,
 		CoreHtmlTagsEditor,
+		CoreImageUploader,
 		CoreSettingsRow,
 		SvgBook,
-		SvgCirclePlus,
 		TableColumn,
 		TableRow
 	},
-	mixins : [ ImageSourceOptions, MaxCounts, Tags, Uploader ],
+	mixins : [ ImageSourceOptions, MaxCounts, Tags ],
 	data () {
 		return {
 			separator        : undefined,
@@ -686,8 +612,6 @@ export default {
 				termsCustomFieldName      : this.$t.__('Term Custom Field Name', this.$td),
 				defaultFacebookImagePosts : this.$t.__('Default Post Facebook Image', this.$td),
 				defaultFacebookImageTerms : this.$t.__('Default Term Facebook Image', this.$td),
-				uploadOrSelectImage       : this.$t.__('Upload or Select Image', this.$td),
-				pasteYourImageUrl         : this.$t.__('Paste your image URL or select a new image', this.$td),
 				minimumSize               : this.$t.__('Minimum size: 200px x 200px, ideal ratio 1.91:1, 8MB max. (eg: 1640px x 856px or 3280px x 1712px for Retina screens). JPG, PNG, WEBP and GIF formats only.', this.$td),
 				homePageSettings          : this.$t.__('Home Page Settings', this.$td),
 				exampleSiteTitle          : this.$t.__('The Title of the Page or Site you are Sharing', this.$td),
@@ -705,7 +629,6 @@ export default {
 				homePageDescription           : this.$t.__('Description', this.$td),
 				useHomePageDescription        : this.$t.__('Use the home page description', this.$td),
 				clickToAddHomePageDescription : this.$t.__('Click on the tags below to insert variables into your description.', this.$td),
-				remove                        : this.$t.__('Remove', this.$td),
 				advancedSettings              : this.$t.__('Advanced Settings', this.$td),
 				facebookAdminId               : this.$t.__('Facebook Admin ID', this.$td),
 				facebookAppId                 : this.$t.__('Facebook App ID', this.$td),
@@ -738,7 +661,7 @@ export default {
 				homePageDisabledDescription : this.$t.sprintf(
 					// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag.
 					this.$t.__('You are using a static home page which is found under Pages. You can %1$sedit your home page settings%2$s directly to change the title, meta description and image.', this.$td),
-					`<a href="${this.$aioseo.urls.staticHomePage}&aioseo-tab=social&social-tab=facebook&aioseo-scroll=aioseo-post-settings-facebook&aioseo-highlight=aioseo-post-settings-facebook">`,
+					`<a href="${this.rootStore.aioseo.urls.staticHomePage}&aioseo-tab=social&social-tab=facebook&aioseo-scroll=aioseo-post-settings-facebook&aioseo-highlight=aioseo-post-settings-facebook">`,
 					'</a>'
 				),
 				objectType : this.$t.__('Object Type', this.$td)
@@ -746,24 +669,22 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
-		...mapState([ 'options', 'dynamicOptions' ]),
 		objectTypeOptions () {
 			return this.$constants.OG_TYPE_OPTIONS
 		},
 		previewTitle () {
-			if (this.$aioseo.data.staticHomePage) {
-				return this.parseTags(this.$aioseo.data.staticHomePageOgTitle || '#site_title')
+			if (this.rootStore.aioseo.data.staticHomePage) {
+				return this.parseTags(this.rootStore.aioseo.data.staticHomePageOgTitle || '#site_title')
 			}
 
-			return this.parseTags(this.options.social.facebook.homePage.title || '#site_title')
+			return this.parseTags(this.optionsStore.options.social.facebook.homePage.title || '#site_title')
 		},
 		previewDescription () {
-			if (this.$aioseo.data.staticHomePage) {
-				return this.parseTags(this.$aioseo.data.staticHomePageOgDescription || '#tagline')
+			if (this.rootStore.aioseo.data.staticHomePage) {
+				return this.parseTags(this.rootStore.aioseo.data.staticHomePageOgDescription || '#tagline')
 			}
 
-			return this.parseTags(this.options.social.facebook.homePage.description || '#tagline')
+			return this.parseTags(this.optionsStore.options.social.facebook.homePage.description || '#tagline')
 		}
 	},
 	methods : {
@@ -788,30 +709,6 @@ export default {
 	.inline-upsell {
 		display: inline-flex;
 		margin-top: 12px;
-	}
-
-	.facebook-image-upload {
-		display: flex;
-		gap: 8px;
-
-		.aioseo-input-container {
-			width: 100%;
-			max-width: 445px;
-
-			.aioseo-input {
-				width: 100%;
-			}
-		}
-
-		.insert-image {
-			min-width: 214px;
-
-			svg.aioseo-circle-plus {
-				width: 13px;
-				height: 13px;
-				margin-right: 10px;
-			}
-		}
 	}
 
 	.facebook-image {

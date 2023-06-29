@@ -32,11 +32,7 @@ class File {
 	 * @return void
 	 */
 	public function generate( $force = false ) {
-		foreach ( aioseo()->addons->getLoadedAddons() as $loadedAddon ) {
-			if ( ! empty( $loadedAddon->file ) && method_exists( $loadedAddon->file, 'generate' ) ) {
-				$loadedAddon->file->generate( $force );
-			}
-		}
+		aioseo()->addons->doAddonFunction( 'file', 'generate', [ $force ] );
 
 		// Exit if static sitemap generation isn't enabled.
 		if (
@@ -251,11 +247,7 @@ class File {
 
 		ob_start();
 		aioseo()->sitemap->output->output( $entries, $total );
-		foreach ( aioseo()->addons->getLoadedAddons() as $instance ) {
-			if ( ! empty( $instance->output ) && method_exists( $instance->output, 'output' ) ) {
-				$instance->output->output( $entries, $total );
-			}
-		}
+		aioseo()->addons->doAddonFunction( 'output', 'output', [ $entries, $total ] );
 		$content = ob_get_clean();
 
 		$fs         = aioseo()->core->fs;

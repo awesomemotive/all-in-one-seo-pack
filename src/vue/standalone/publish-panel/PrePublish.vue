@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="seo-overview"
-		v-if="currentPost.id"
+		v-if="postEditorStore.currentPost.id"
 	>
 		<ul class="pre-publish-checklist">
 			<li
@@ -18,7 +18,7 @@
 				<span>{{ tip.label }}: <span class="result" :class="tip.value.endsWith('/100') ? tip.type : null">{{ tip.value }}</span></span>
 
 				<span
-					v-if="dynamicOptions.searchAppearance.postTypes[currentPost.postType] && dynamicOptions.searchAppearance.postTypes[currentPost.postType].advanced.showMetaBox"
+					v-if="optionsStore.dynamicOptions.searchAppearance.postTypes[postEditorStore.currentPost.postType] && optionsStore.dynamicOptions.searchAppearance.postTypes[postEditorStore.currentPost.postType].advanced.showMetaBox"
 					class="edit"
 					@click="openSidebar(tip.name)"
 				>
@@ -29,18 +29,18 @@
 
 		<div
 			class="snippet-preview"
-			v-if="$allowed('aioseo_page_analysis')"
+			v-if="allowed('aioseo_page_analysis')"
 		>
 			<p class="title">{{ strings.snippetPreview }}:</p>
 			<core-google-search-preview
-				:title="parseTags(currentPost.title || currentPost.tags.title || '#post_title #separator_sa #site_title')"
-				:separator="options.searchAppearance.global.separator"
-				:description="parseTags(currentPost.description || currentPost.tags.description || '#post_content')"
-				:class="{ ismobile: currentPost.generalMobilePrev }"
+				:title="parseTags(postEditorStore.currentPost.title || postEditorStore.currentPost.tags.title || '#post_title #separator_sa #site_title')"
+				:separator="optionsStore.options.searchAppearance.global.separator"
+				:description="parseTags(postEditorStore.currentPost.description || postEditorStore.currentPost.tags.description || '#post_content')"
+				:class="{ ismobile: postEditorStore.currentPost.generalMobilePrev }"
 			>
 				<template #domain>
-					<a :href="liveTags.permalink" target="_blank">
-						{{ liveTags.permalink }}
+					<a :href="tagsStore.liveTags.permalink" target="_blank">
+						{{ tagsStore.liveTags.permalink }}
 					</a>
 				</template>
 			</core-google-search-preview>
@@ -48,7 +48,7 @@
 
 		<div
 			class="canonical-url"
-			v-if="$allowed('aioseo_page_analysis') && currentPost.canonicalUrl"
+			v-if="allowed('aioseo_page_analysis') && postEditorStore.currentPost.canonicalUrl"
 		>
 			<p class="title">
 				{{ strings.canonicalUrl }}:
@@ -56,8 +56,8 @@
 					<svg-pencil />
 				</span>
 			</p>
-			<a :href="currentPost.canonicalUrl" target="_blank" rel="noopener noreferrer">
-				<span>{{ currentPost.canonicalUrl }}</span>
+			<a :href="postEditorStore.currentPost.canonicalUrl" target="_blank" rel="noopener noreferrer">
+				<span>{{ postEditorStore.currentPost.canonicalUrl }}</span>
 				<svg-external />
 			</a>
 		</div>
@@ -65,9 +65,16 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import {
+	useOptionsStore,
+	usePostEditorStore,
+	useSettingsStore,
+	useTagsStore
+} from '@/vue/stores'
+
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 import { Tags, ImagePreview } from '@/vue/mixins'
-import { Standalone } from '@/vue/mixins/Standalone'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
@@ -75,6 +82,15 @@ import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation
 import SvgExternal from '@/vue/components/common/svg/External'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
 export default {
+	setup () {
+		return {
+			optionsStore    : useOptionsStore(),
+			postEditorStore : usePostEditorStore(),
+			settingsStore   : useSettingsStore(),
+			tagsStore       : useTagsStore()
+		}
+	},
+	mixins     : [ Tags, ImagePreview ],
 	components : {
 		CoreGoogleSearchPreview,
 		SvgCircleCheck,
@@ -83,9 +99,9 @@ export default {
 		SvgExternal,
 		SvgPencil
 	},
-	mixins : [ Standalone, Tags, ImagePreview ],
 	data () {
 		return {
+			allowed,
 			separator      : undefined,
 			socialImage    : null,
 			socialImageKey : 0,
@@ -96,8 +112,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'currentPost' ]),
-		...mapState('live-tags', [ 'liveTags' ]),
 		tips () {
 			let tips = [
 				{
@@ -126,15 +140,15 @@ export default {
 					access : 'aioseo_page_social_settings'
 				}
 			].filter((tip) => {
-				return this.$allowed(tip.access) && (
+				return this.allowed(tip.access) && (
 					// Exclude items which require TruSEO to be enabled.
 					'aioseo_page_analysis' !== tip.access ||
-					this.options.advanced.truSeo
+					this.optionsStore.options.advanced.truSeo
 				)
 			})
 
 			// Remove Social tip if both Twitter and Facebook markup are disabled.
-			if (!this.options.social.facebook.general.enable && !this.options.social.twitter.general.enable) {
+			if (!this.optionsStore.options.social.facebook.general.enable && !this.optionsStore.options.social.twitter.general.enable) {
 				tips = tips.filter(tip => 'social' !== tip.name)
 			}
 
@@ -149,7 +163,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapMutations([ 'changeTabSettings' ]),
 		getIcon (type) {
 			switch (type) {
 				case 'error':
@@ -168,13 +181,13 @@ export default {
 				result.value = this.$t.__('Good!', this.$td)
 				result.type  = 'success'
 
-				const value = this.currentPost.default
+				const value = this.postEditorStore.currentPost.default
 					? (
-						this.dynamicOptions.searchAppearance.postTypes[this.currentPost.postType] &&
-						!this.dynamicOptions.searchAppearance.postTypes[this.currentPost.postType].advanced.robotsMeta.default &&
-						this.dynamicOptions.searchAppearance.postTypes[this.currentPost.postType].advanced.robotsMeta.noindex
+						this.optionsStore.dynamicOptions.searchAppearance.postTypes[this.postEditorStore.currentPost.postType] &&
+						!this.optionsStore.dynamicOptions.searchAppearance.postTypes[this.postEditorStore.currentPost.postType].advanced.robotsMeta.default &&
+						this.optionsStore.dynamicOptions.searchAppearance.postTypes[this.postEditorStore.currentPost.postType].advanced.robotsMeta.noindex
 					)
-					: this.currentPost.noindex
+					: this.postEditorStore.currentPost.noindex
 				if (value) {
 					result.value = this.$t.__('Blocked!', this.$td)
 					result.type  = 'error'
@@ -185,7 +198,7 @@ export default {
 				result.value = this.$t.__('N/A', this.$td)
 				result.type  = 'error'
 
-				const value = this.currentPost.seo_score
+				const value = this.postEditorStore.currentPost.seo_score
 				if (Number.isInteger(value)) {
 					result.value = value + '/100'
 					result.type  = 80 < value ? 'success' : 50 < value ? 'warning' : 'error'
@@ -196,7 +209,7 @@ export default {
 				result.value = this.$t.__('Good!', this.$td)
 				result.type  = 'success'
 
-				const value = this.currentPost.page_analysis.analysis.readability.errors
+				const value = this.postEditorStore.currentPost.page_analysis.analysis.readability.errors
 				if (value && 0 < value) {
 					result.value = this.$t.sprintf(
 						// Translators: 1 - How many errors were found.
@@ -211,7 +224,7 @@ export default {
 				result.value = this.$t.__('No focus keyphrase!', this.$td)
 				result.type  = 'error'
 
-				const value = this.currentPost.keyphrases.focus
+				const value = this.postEditorStore.currentPost.keyphrases.focus
 				if (value && value.keyphrase) {
 					result.value = value.score + '/100'
 					result.type  = 80 < value.score ? 'success' : 50 < value.score ? 'warning' : 'error'
@@ -226,8 +239,8 @@ export default {
 				// eslint-disable-next-line no-unused-expressions
 				this.socialImageKey
 
-				const socialTitle       = this.parseTags(this.currentPost.og_title || this.currentPost.title || this.currentPost.tags.title).trim()
-				const socialDescription = this.parseTags(this.currentPost.og_description || this.currentPost.description || this.currentPost.tags.description).trim()
+				const socialTitle       = this.parseTags(this.postEditorStore.currentPost.og_title || this.postEditorStore.currentPost.title || this.postEditorStore.currentPost.tags.title).trim()
+				const socialDescription = this.parseTags(this.postEditorStore.currentPost.og_description || this.postEditorStore.currentPost.description || this.postEditorStore.currentPost.tags.description).trim()
 				const socialImage       = this.socialImage
 
 				if (!socialTitle || !socialDescription || !socialImage) {
@@ -268,7 +281,7 @@ export default {
 					break
 			}
 
-			this.changeTabSettings({ setting: 'mainSidebar', value: sidebarSettings })
+			this.settingsStore.changeTabSettings({ setting: 'mainSidebar', value: sidebarSettings })
 		}
 	},
 	async mounted () {
@@ -276,7 +289,7 @@ export default {
 			this.socialImage = this.imageUrl
 		})
 
-		this.$bus.$on('updateSocialImagePreview', (param) => {
+		window.aioseoBus.$on('updateSocialImagePreview', (param) => {
 			this.socialImage = param.image
 			this.socialImageKey++
 		})

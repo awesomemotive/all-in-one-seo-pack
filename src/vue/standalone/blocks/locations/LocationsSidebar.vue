@@ -14,8 +14,19 @@
 </template>
 
 <script>
+import {
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
 import BaseSelect from '@/vue/components/common/base/Select'
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore(),
+			rootStore       : useRootStore()
+		}
+	},
 	components : {
 		BaseSelect
 	},
@@ -23,7 +34,7 @@ export default {
 		return {
 			locationCategories : [],
 			strings            : {
-				selectLocation : window.aioseo.localBusiness.taxonomySingleLabel
+				selectLocation : this.rootStore.aioseo.localBusiness.taxonomySingleLabel
 			}
 		}
 	},
@@ -33,7 +44,7 @@ export default {
 
 			// Try to find the current category ( inside a location ) or default to the first category in the list.
 			if (!selected) {
-				selected = this.locationCategories.find(u => u.value === window.aioseo.currentPost.localBusinessCategory) || this.locationCategories.find(u => !!u)
+				selected = this.locationCategories.find(u => u.value === this.postEditorStore.currentPost.localBusinessCategory) || this.locationCategories.find(u => !!u)
 				if (selected) {
 					this.$root.$data.categoryId = selected.value
 				}

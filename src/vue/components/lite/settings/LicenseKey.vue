@@ -31,7 +31,7 @@
 				<base-button
 					type="green"
 					:disabled="!licenseKey"
-					:loading="loading"
+					:loading="rootStore.loading"
 					@click="processGetConnectUrl"
 				>
 					{{ strings.connect }}
@@ -42,10 +42,20 @@
 </template>
 
 <script>
+import {
+	useConnectStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { popup } from '@/vue/utils/popup'
-import { mapActions, mapState } from 'vuex'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 export default {
+	setup () {
+		return {
+			connectStore : useConnectStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		CoreSettingsRow
 	},
@@ -81,7 +91,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'loading' ]),
 		link () {
 			return this.$t.sprintf(
 				'<strong><a href="%1$s" target="_blank">%2$s</a></strong>',
@@ -119,16 +128,15 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'getConnectUrl', 'processConnect' ]),
 		processGetConnectUrl () {
-			this.$store.commit('loading', true)
-			this.getConnectUrl({
+			this.rootStore.loading = true
+			this.connectStore.getConnectUrl({
 				key : this.licenseKey
 			})
 				.then(response => {
 					if (response.body.url) {
 						if (!response.body.popup) {
-							this.$store.commit('loading', false)
+							this.rootStore.loading = false
 							return window.open(response.body.url, '_blank')
 						}
 
@@ -149,14 +157,14 @@ export default {
 			)
 		},
 		completedCallback (payload) {
-			return this.processConnect(payload)
+			return this.connectStore.processConnect(payload)
 		},
 		closedCallback (reload) {
 			if (reload) {
 				return window.location.reload()
 			}
 
-			this.$store.commit('loading', false)
+			this.rootStore.loading = false
 		}
 	}
 }

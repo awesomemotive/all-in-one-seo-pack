@@ -52,10 +52,20 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import {
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreDonutChartWithLegend from '@/vue/components/common/core/DonutChartWithLegend'
 export default {
+	setup () {
+		return {
+			rootStore     : useRootStore(),
+			settingsStore : useSettingsStore()
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreDonutChartWithLegend
@@ -123,18 +133,14 @@ export default {
 				return
 			}
 
-			this.toggleRadio({ slug: 'overviewPostType', value: newValue.value })
+			this.settingsStore.toggleRadio({ slug: 'overviewPostType', value: newValue.value })
 		}
 	},
-	methods : {
-		...mapActions([ 'toggleRadio' ])
-	},
 	computed : {
-		...mapState([ 'settings' ]),
 		postTypes () {
 			const postTypes = []
-			this.$aioseo.postData.postTypes.forEach(postType => {
-				if (this.$aioseo.seoOverview[postType.name]) {
+			this.rootStore.aioseo.postData.postTypes.forEach(postType => {
+				if (this.rootStore.aioseo.seoOverview[postType.name]) {
 					postTypes.push({
 						value : postType.name,
 						label : postType.label
@@ -144,7 +150,7 @@ export default {
 			return postTypes
 		},
 		totalPosts () {
-			return this.$aioseo.seoOverview[this.postType.value].total
+			return this.rootStore.aioseo.seoOverview[this.postType.value].total
 		},
 		totalPostsLabel () {
 			return this.$t.sprintf(
@@ -158,9 +164,9 @@ export default {
 
 			// Set the count and the ratio.
 			parts.forEach((part, index) => {
-				parts[index].count = this.$aioseo.seoOverview[this.postType.value][part.slug]
+				parts[index].count = this.rootStore.aioseo.seoOverview[this.postType.value][part.slug]
 				parts[index].ratio = 0 === index ? 100 : (part.count / this.totalPosts) * 100
-				parts[index].link  = `${this.$aioseo.urls.editScreen}?post_status=publish&post_type=${this.postType.value}&aioseo-filter=${part.slug}`
+				parts[index].link  = `${this.rootStore.aioseo.urls.editScreen}?post_status=publish&post_type=${this.postType.value}&aioseo-filter=${part.slug}`
 			})
 
 			parts.filter(part => 0 !== part.count)
@@ -185,7 +191,7 @@ export default {
 	},
 	mounted () {
 		this.$nextTick(() => {
-			const selectedPostType = this.settings.toggledRadio?.overviewPostType
+			const selectedPostType = this.settingsStore.settings.toggledRadio?.overviewPostType
 			const postTypeIndex = this.postTypes.findIndex(postType => selectedPostType === postType.value)
 			this.postType = this.postTypes[postTypeIndex] || this.postTypes[0]
 		})

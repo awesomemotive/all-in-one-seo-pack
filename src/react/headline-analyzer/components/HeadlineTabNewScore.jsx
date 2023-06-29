@@ -32,7 +32,7 @@ const HeadlineTabNewScore = props => {
 			return
 		}
 
-		http(window.aioseo.nonce).post(restUrl('analyze_headline'))
+		http(window.aioseo.nonce).post(restUrl('analyze-headline'))
 			.send({
 				headline            : headline,
 				shouldStoreHeadline : false

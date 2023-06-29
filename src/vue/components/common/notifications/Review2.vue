@@ -52,10 +52,18 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import {
+	useNotificationsStore
+} from '@/vue/stores'
+
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 export default {
+	setup () {
+		return {
+			notificationsStore : useNotificationsStore()
+		}
+	},
 	emits      : [ 'dismissed-notification' ],
 	components : {
 		SvgCircleCheck,
@@ -82,7 +90,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapState([ 'options' ]),
 		title () {
 			return this.$t.sprintf(
 				// Translators: 1 - The plugin short name ("AIOSEO").
@@ -105,10 +112,9 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'dismissNotifications', 'processButtonAction' ]),
 		processDismissNotification (delay = false) {
 			this.active = false
-			this.dismissNotifications([ this.notification.slug + (delay ? '-delay' : '') ])
+			this.notificationsStore.dismissNotifications([ this.notification.slug + (delay ? '-delay' : '') ])
 			this.$emit('dismissed-notification')
 		}
 	}

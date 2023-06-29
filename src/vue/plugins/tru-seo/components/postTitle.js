@@ -1,5 +1,9 @@
+import {
+	usePostEditorStore,
+	useTagsStore
+} from '@/vue/stores'
+
 import TruSeo from '@/vue/plugins/tru-seo'
-import store from '@/vue/store'
 import { getPostEditedContent } from './postContent'
 import { getPostEditedPermalink } from './postPermalink'
 import { isBlockEditor, isClassicEditor, isClassicNoEditor, isElementorEditor, isDiviEditor, isSeedProdEditor } from '@/vue/utils/context'
@@ -36,8 +40,9 @@ const getEditorTitle = () => {
  * @returns {string} Post
  */
 export const getPostTitle = () => {
-	if (store.state['live-tags'].liveTags.post_title) {
-		return store.state['live-tags'].liveTags.post_title
+	const tagsStore = useTagsStore()
+	if (tagsStore.liveTags.post_title) {
+		return tagsStore.liveTags.post_title
 	}
 
 	let postTitle
@@ -56,7 +61,7 @@ export const getPostTitle = () => {
 	}
 
 	if (postTitle) {
-		store.commit('live-tags/updatePostTitle', postTitle)
+		tagsStore.updatePostTitle(postTitle)
 	}
 
 	return postTitle
@@ -93,14 +98,20 @@ export const maybeUpdatePostTitle = async (run = true) => {
 
 	if (postTitle !== newPostTitle) {
 		postTitle = newPostTitle
-		store.commit('live-tags/updatePostTitle', postTitle)
-		if (run) {
-			(new TruSeo()).runAnalysis({
-				postId   : store.state.currentPost.id,
-				postData : { ...store.state.currentPost },
-				content  : getPostEditedContent(),
-				slug     : getPostEditedPermalink()
-			})
+
+		const postEditorStore = usePostEditorStore()
+		const tagsStore       = useTagsStore()
+		tagsStore.updatePostTitle(postTitle)
+
+		if (!run) {
+			return
 		}
+
+		(new TruSeo()).runAnalysis({
+			postId   : postEditorStore.currentPost.id,
+			postData : { ...postEditorStore.currentPost },
+			content  : getPostEditedContent(),
+			slug     : getPostEditedPermalink()
+		})
 	}
 }

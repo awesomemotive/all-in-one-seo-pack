@@ -1,14 +1,14 @@
 <template>
 	<div class="aioseo-sa-ct-custom-fields-view">
 		<custom-fields
-			v-if="!isUnlicensed"
+			v-if="!licenseStore.isUnlicensed"
 			:type="type"
 			:object="object"
 			:options="options"
 			:show-bulk="showBulk"
 		/>
 		<custom-fields-lite
-			v-if="isUnlicensed"
+			v-if="licenseStore.isUnlicensed"
 			:type="type"
 			:object="object"
 			:options="options"
@@ -18,10 +18,18 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
 import CustomFields from './AIOSEO_VERSION/CustomFields'
 import CustomFieldsLite from './lite/CustomFields'
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore()
+		}
+	},
 	components : {
 		CustomFields,
 		CustomFieldsLite
@@ -40,9 +48,6 @@ export default {
 			required : true
 		},
 		showBulk : Boolean
-	},
-	computed : {
-		...mapGetters([ 'isUnlicensed' ])
 	}
 }
 </script>

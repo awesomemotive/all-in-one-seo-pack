@@ -6,8 +6,9 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
+import { loadPiniaStores } from '@/vue/stores'
+
 import App from './App.vue'
-import store from '@/vue/store'
 import startRouter from '@/vue/router'
 import paths from '@/vue/pages/about/router/paths'
 
@@ -16,15 +17,16 @@ app     = loadPlugins(app)
 app     = loadComponents(app)
 app     = loadVersionedComponents(app)
 
-const router = startRouter(paths, app, store)
+const router = startRouter(paths, app)
 
-// Give the router and store access to the app.
-store._vm  = app
+// Give the router access to the app.
 router.app = app
 
-// Use the store and router.
-app.use(store)
+// Use the router.
 app.use(router)
+
+// Use the pinia store.
+loadPiniaStores(app, router)
 
 // // Set state from the window object.
 app.mount('#aioseo-app')

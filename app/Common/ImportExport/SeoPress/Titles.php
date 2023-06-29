@@ -186,7 +186,7 @@ class Titles {
 	 * @return void
 	 */
 	private function migrateTaxonomiesSettings() {
-		$titles = $this->options['seopress_titles_tax_titles'];
+		$titles = ! empty( $this->options['seopress_titles_tax_titles'] ) ? $this->options['seopress_titles_tax_titles'] : '';
 		if ( empty( $titles ) ) {
 			return;
 		}

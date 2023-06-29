@@ -5,7 +5,7 @@
 		>
 			<template #content>
 				<base-radio-toggle
-					v-model="options.breadcrumbs.advanced.showPaged"
+					v-model="optionsStore.options.breadcrumbs.advanced.showPaged"
 					name="showPaged"
 					:options="[
 								{ label: $constants.GLOBAL_STRINGS.off, value: false, activeClass: 'dark' },
@@ -19,11 +19,11 @@
 		</core-settings-row>
 
 		<core-settings-row
-			:name="strings.pagedFormat" v-if="options.breadcrumbs.advanced.showPaged"
+			:name="strings.pagedFormat" v-if="optionsStore.options.breadcrumbs.advanced.showPaged"
 		>
 			<template #content>
 				<core-html-tags-editor
-					v-model="options.breadcrumbs.advanced.pagedFormat"
+					v-model="optionsStore.options.breadcrumbs.advanced.pagedFormat"
 					:line-numbers="false"
 					single
 					checkUnfilteredHtml
@@ -45,7 +45,7 @@
 		>
 			<template #content>
 				<base-radio-toggle
-					v-model="options.breadcrumbs.advanced.taxonomySkipUnselected"
+					v-model="optionsStore.options.breadcrumbs.advanced.taxonomySkipUnselected"
 					name="taxonomySkipUnselected"
 					:options="[
 								{ label: $constants.GLOBAL_STRINGS.include, value: false },
@@ -61,11 +61,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useOptionsStore
+} from '@/vue/stores'
+
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore()
+		}
+	},
 	components : {
 		BaseRadioToggle,
 		CoreHtmlTagsEditor,
@@ -82,9 +90,6 @@ export default {
 				taxonomySkipUnselectedDescription : this.$t.__('Show/hide parent terms that are not explicitly selected in your post.', this.$td)
 			}
 		}
-	},
-	computed : {
-		...mapState([ 'options' ])
 	}
 }
 </script>

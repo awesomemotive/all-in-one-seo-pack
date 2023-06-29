@@ -8,8 +8,8 @@
 
 		<core-modal-portal
 			:classes="[ 'aioseo-redirects', 'modal' ]"
-			v-if="currentPost.redirects.modalOpen && 'sidebar' === $root._data.screenContext"
-			@close="toggleRedirectsModal"
+			v-if="postEditorStore.currentPost.redirects.modalOpen && 'sidebar' === $root._data.screenContext"
+			@close="postEditorStore.toggleRedirectsModal"
 		>
 			<template #headerTitle>
 				{{ strings.modalHeader }}
@@ -30,11 +30,19 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import {
+	usePostEditorStore
+} from '@/vue/stores'
+
 import CoreModalPortal from '@/vue/components/common/core/modal/Portal'
 import RedirectsSideBar from './../../RedirectsSideBar'
 import RedirectsLite from '@/vue/pages/redirects/views/lite/redirects/Redirects'
 export default {
+	setup () {
+		return {
+			postEditorStore : usePostEditorStore()
+		}
+	},
 	components : {
 		CoreModalPortal,
 		RedirectsSideBar,
@@ -49,12 +57,6 @@ export default {
 				modalHeader : this.$t.__('Redirects', this.$td)
 			}
 		}
-	},
-	computed : {
-		...mapState([ 'currentPost' ])
-	},
-	methods : {
-		...mapMutations([ 'toggleRedirectsModal' ])
 	}
 }
 </script>

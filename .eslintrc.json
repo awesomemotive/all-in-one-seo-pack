@@ -11,6 +11,7 @@
 		"vue/no-v-for-template-key": "off",
 		"vue/multi-word-component-names": "off",
 		"vue/no-v-text-v-html-on-component": "off",
+		"vue/no-v-model-argument": "off",
 		"object-shorthand": "off", // TODO: Add this in.
 		"import/extensions": "off",
 		"no-empty": [

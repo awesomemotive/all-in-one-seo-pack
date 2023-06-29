@@ -5,7 +5,7 @@
 			:header-text="strings.resetRestoreSettings"
 		>
 			<core-settings-row
-				v-if="$aioseo.data.isNetworkAdmin"
+				v-if="rootStore.aioseo.data.isNetworkAdmin"
 				:name="strings.selectSite"
 			>
 				<template #content>
@@ -32,7 +32,7 @@
 			</template>
 
 			<core-settings-row
-				v-if="$aioseo.data.logSizes.logs404"
+				v-if="rootStore.aioseo.data.logSizes.logs404"
 				:name="strings.logs404"
 				align
 			>
@@ -61,15 +61,15 @@
 					<div class="log-size">
 						<span
 							class="size-dot"
-							:class="getSizeClass($aioseo.data.logSizes.logs404.original)"
+							:class="getSizeClass(rootStore.aioseo.data.logSizes.logs404.original)"
 						/>
-						{{ $aioseo.data.logSizes.logs404.readable }}
+						{{ rootStore.aioseo.data.logSizes.logs404.readable }}
 					</div>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="$aioseo.data.logSizes.redirectLogs"
+				v-if="rootStore.aioseo.data.logSizes.redirectLogs"
 				:name="strings.redirectLogs"
 				align
 			>
@@ -98,9 +98,9 @@
 					<div class="log-size">
 						<span
 							class="size-dot"
-							:class="getSizeClass($aioseo.data.logSizes.redirectLogs.original)"
+							:class="getSizeClass(rootStore.aioseo.data.logSizes.redirectLogs.original)"
 						/>
-						{{ $aioseo.data.logSizes.redirectLogs.readable }}
+						{{ rootStore.aioseo.data.logSizes.redirectLogs.readable }}
 					</div>
 				</template>
 			</core-settings-row>
@@ -135,9 +135,9 @@
 					<div class="log-size">
 						<span
 							class="size-dot"
-							:class="getSizeClass($aioseo.data.logSizes.badBotBlockerLog.original)"
+							:class="getSizeClass(rootStore.aioseo.data.logSizes.badBotBlockerLog.original)"
 						/>
-						{{ $aioseo.data.logSizes.badBotBlockerLog.readable }}
+						{{ rootStore.aioseo.data.logSizes.badBotBlockerLog.readable }}
 					</div>
 				</template>
 			</core-settings-row>
@@ -146,13 +146,25 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore,
+	useToolsStore
+} from '@/vue/stores'
+
 import { Network } from '@/vue/mixins'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreResetSettings from '@/vue/components/common/core/ResetSettings'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgCheckmark from '@/vue/components/common/svg/Checkmark'
 export default {
+	setup () {
+		return {
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore(),
+			toolsStore   : useToolsStore()
+		}
+	},
 	mixins     : [ Network ],
 	components : {
 		CoreCard,
@@ -187,7 +199,7 @@ export default {
 	},
 	watch : {
 		site (newVal) {
-			this.selectedSite = this.$aioseo.data.network.sites.sites.find(s => this.getUniqueSiteId(s) === newVal.value)
+			this.selectedSite = this.rootStore.aioseo.data.network.sites.sites.find(s => this.getUniqueSiteId(s) === newVal.value)
 		}
 	},
 	computed : {
@@ -199,15 +211,15 @@ export default {
 			return !passed.some(a => a)
 		},
 		showLogs () {
-			return !this.$aioseo.data.isNetworkAdmin &&
+			return !this.rootStore.aioseo.data.isNetworkAdmin &&
 				(
 					this.showBadBotBlockerLogs ||
-					this.$aioseo.data.logSizes.redirectLogs ||
-					this.$aioseo.data.logSizes.logs404
+					this.rootStore.aioseo.data.logSizes.redirectLogs ||
+					this.rootStore.aioseo.data.logSizes.logs404
 				)
 		},
 		showBadBotBlockerLogs () {
-			return window.aioseo.internalOptions.internal.deprecatedOptions.includes('badBotBlocker')
+			return this.optionsStore.internalOptions.internal.deprecatedOptions.includes('badBotBlocker')
 		},
 		sites () {
 			return this.getSites
@@ -221,7 +233,6 @@ export default {
 		}
 	},
 	methods : {
-		...mapActions([ 'clearLog' ]),
 		getSizeClass (size) {
 			let color = 'green'
 			if (262144000 < size) {
@@ -234,14 +245,14 @@ export default {
 		},
 		processClearLog (log) {
 			this.loadingLog = log
-			this.clearLog(log)
+			this.toolsStore.clearLog(log)
 				.then(() => {
 					this.loadingLog       = null
 					this.clearedLogs[log] = true
 				})
 		},
 		disabledLog (log) {
-			return !this.$aioseo.data.logSizes[log].original || this.clearedLogs[log]
+			return !this.rootStore.aioseo.data.logSizes[log].original || this.clearedLogs[log]
 		}
 	}
 }

@@ -45,7 +45,7 @@
 				<core-main-tabs
 					:tabs="tabs"
 					:showSaveButton="false"
-					:active="settings.internalTabs[`${taxonomy.name}SA`]"
+					:active="settingsStore.settings.internalTabs[`${taxonomy.name}SA`]"
 					internal
 					@changed="value => processChangeTab(taxonomy.name, value)"
 				/>
@@ -55,10 +55,10 @@
 				name="route-fade" mode="out-in"
 			>
 				<component
-					:is="settings.internalTabs[`${taxonomy.name}SA`]"
+					:is="settingsStore.settings.internalTabs[`${taxonomy.name}SA`]"
 					:object="taxonomy"
-					:separator="options.searchAppearance.global.separator"
-					:options="dynamicOptions.searchAppearance.taxonomies[taxonomy.name]"
+					:separator="optionsStore.options.searchAppearance.global.separator"
+					:options="optionsStore.dynamicOptions.searchAppearance.taxonomies[taxonomy.name]"
 					type="taxonomies"
 					:show-bulk="false"
 				/>
@@ -68,7 +68,12 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex'
+import {
+	useOptionsStore,
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import Advanced from './partials/Advanced'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
@@ -76,6 +81,13 @@ import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import TitleDescription from './partials/TitleDescription'
 export default {
+	setup () {
+		return {
+			optionsStore  : useOptionsStore(),
+			rootStore     : useRootStore(),
+			settingsStore : useSettingsStore()
+		}
+	},
 	components : {
 		Advanced,
 		CoreCard,
@@ -122,21 +134,18 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'isUnlicensed' ]),
-		...mapState([ 'options', 'dynamicOptions', 'settings' ]),
 		taxonomies () {
-			return this.$aioseo.postData.taxonomies
+			return this.rootStore.aioseo.postData.taxonomies
 		}
 	},
 	methods : {
-		...mapActions([ 'changeTab' ]),
 		processChangeTab (taxonomy, value) {
 			if (this.internalDebounce) {
 				return
 			}
 
 			this.internalDebounce = true
-			this.changeTab({ slug: `${taxonomy}SA`, value })
+			this.settingsStore.changeTab({ slug: `${taxonomy}SA`, value })
 
 			// Debouncing a little here to save extra API calls.
 			setTimeout(() => {

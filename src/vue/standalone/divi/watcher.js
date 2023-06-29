@@ -1,5 +1,9 @@
 /* globals ETBuilderBackendDynamic */
-import store from '@/vue/store'
+import {
+	usePostEditorStore,
+	useSeoRevisionsStore
+} from '@/vue/stores'
+
 import { isEqual, set } from 'lodash-es'
 import { debounce } from '@/vue/utils/debounce'
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
@@ -13,6 +17,11 @@ let editorData = {}
  * @returns {void}.
  */
 const handleEditorChange = () => {
+	// Don't run the analysis if we're in wireframe mode.
+	if (document.documentElement.classList.contains('et-fb-preview--wireframe')) {
+		return
+	}
+
 	const oldData = { ...editorData }
 	const data = getEditorData()
 
@@ -28,7 +37,11 @@ const handleEditorChange = () => {
  * @returns {void}.
  */
 const handleEditorSave = () => {
-	store.dispatch('saveCurrentPost', store.state.currentPost)
+	const postEditorStore = usePostEditorStore()
+	postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
+		const seoRevisionsStore = useSeoRevisionsStore()
+		seoRevisionsStore.fetch()
+	})
 }
 
 export default () => {

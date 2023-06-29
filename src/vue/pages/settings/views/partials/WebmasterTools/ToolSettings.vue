@@ -17,7 +17,7 @@
 						<base-input
 							size="small"
 							@blur="maybeUpdateId(setting.option)"
-							v-model="options.webmasterTools[setting.option]"
+							v-model="optionsStore.options.webmasterTools[setting.option]"
 						/>
 					</div>
 
@@ -32,6 +32,10 @@
 </template>
 
 <script>
+import {
+	useOptionsStore
+} from '@/vue/stores'
+
 import { useWebmasterTools } from '@/vue/composables'
 import { WebmasterTools } from '@/vue/pages/settings/mixins'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
@@ -41,6 +45,7 @@ export default {
 		const { strings } = useWebmasterTools()
 
 		return {
+			optionsStore : useOptionsStore(),
 			strings
 		}
 	},

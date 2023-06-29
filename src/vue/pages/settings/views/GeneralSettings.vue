@@ -1,7 +1,7 @@
 <template>
 	<div class="aioseo-general-settings">
 		<core-getting-started
-			v-if="settings.showSetupWizard && $allowed('aioseo_setup_wizard') && !$aioseo.data.isNetworkAdmin"
+			v-if="settingsStore.settings.showSetupWizard && allowed('aioseo_setup_wizard') && !rootStore.aioseo.data.isNetworkAdmin"
 		/>
 
 		<core-card
@@ -26,14 +26,14 @@
 
 			<core-settings-row
 				:name="strings.setupWizard"
-				v-if="!settings.showSetupWizard && $allowed('aioseo_setup_wizard') && !$aioseo.data.isNetworkAdmin"
+				v-if="!settingsStore.settings.showSetupWizard && allowed('aioseo_setup_wizard') && !rootStore.aioseo.data.isNetworkAdmin"
 			>
 				<template #content>
 					<base-button
 						type="blue"
 						size="medium"
 						tag="a"
-						:href="$aioseo.urls.aio.wizard"
+						:href="rootStore.aioseo.urls.aio.wizard"
 					>
 						<svg-rocket /> {{ strings.relaunchSetupWizard }}
 					</base-button>
@@ -46,21 +46,29 @@
 		<core-card
 			slug="domainActivations"
 			:header-text="strings.domainActivations"
-			v-if="$aioseo.data.isNetworkAdmin"
+			v-if="rootStore.aioseo.data.isNetworkAdmin"
 		>
 			<settings-network-sites-activation
-				v-if="!isUnlicensed && $license.hasCoreFeature($aioseo, 'tools', 'network-tools-site-activation')"
+				v-if="!licenseStore.isUnlicensed && license.hasCoreFeature('tools', 'network-tools-site-activation')"
 			/>
 
 			<lite-settings-network-sites-activation
-				v-if="isUnlicensed || !$license.hasCoreFeature($aioseo, 'tools', 'network-tools-site-activation')"
+				v-if="licenseStore.isUnlicensed || !license.hasCoreFeature('tools', 'network-tools-site-activation')"
 			/>
 		</core-card>
 	</div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore,
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
+import license from '@/vue/utils/license'
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreGettingStarted from '@/vue/components/common/core/GettingStarted'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
@@ -69,6 +77,13 @@ import SettingsLicenseKey from '@/vue/components/AIOSEO_VERSION/settings/License
 import SettingsNetworkSitesActivation from '@/vue/components/AIOSEO_VERSION/settings/NetworkSitesActivation'
 import SvgRocket from '@/vue/components/common/svg/Rocket'
 export default {
+	setup () {
+		return {
+			licenseStore  : useLicenseStore(),
+			rootStore     : useRootStore(),
+			settingsStore : useSettingsStore()
+		}
+	},
 	components : {
 		CoreCard,
 		CoreGettingStarted,
@@ -80,6 +95,8 @@ export default {
 	},
 	data () {
 		return {
+			allowed,
+			license,
 			strings : {
 				license  : this.$t.__('License', this.$td),
 				boldText : this.$t.sprintf(
@@ -114,7 +131,6 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'settings', 'isUnlicensed' ]),
 		link () {
 			return this.$t.sprintf(
 				'<strong><a href="%1$s" target="_blank">%2$s</a></strong>',

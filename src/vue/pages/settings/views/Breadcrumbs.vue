@@ -18,20 +18,20 @@
 			>
 				<template #content>
 					<base-toggle
-						v-model="options.breadcrumbs.enable"
+						v-model="optionsStore.options.breadcrumbs.enable"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-display-info
-				v-if="options.breadcrumbs.enable"
+				v-if="optionsStore.options.breadcrumbs.enable"
 				:label="strings.showBreadcrumbsOnYourWebsite"
 				:options="displayInfo"
 			/>
 		</core-card>
 
 		<core-card
-			v-if="options.breadcrumbs.enable"
+			v-if="optionsStore.options.breadcrumbs.enable"
 			slug="breadcrumbSettings"
 			:header-text="strings.breadcrumbSettings"
 		>
@@ -62,8 +62,8 @@
 			>
 				<template #content>
 					<core-settings-separator
-						:options-separator="options.breadcrumbs.separator"
-						@update:separator="value => options.breadcrumbs.separator = value"
+						:options-separator="optionsStore.options.breadcrumbs.separator"
+						@update:separator="value => optionsStore.options.breadcrumbs.separator = value"
 						show-more-slug="breadcrumbsShowMoreSeparators"
 					/>
 				</template>
@@ -75,7 +75,7 @@
 				<template #content>
 					<div class="homepage-link">
 						<base-radio-toggle
-							v-model="options.breadcrumbs.homepageLink"
+							v-model="optionsStore.options.breadcrumbs.homepageLink"
 							name="homepageLink"
 							:options="[
 								{ label: $constants.GLOBAL_STRINGS.off, value: false, activeClass: 'dark' },
@@ -88,9 +88,9 @@
 
 							<base-input
 								size="medium"
-								:modelValue="sanitizeString(options.breadcrumbs.homepageLabel)"
-								@update:modelValue="value => options.breadcrumbs.homepageLabel = sanitizeString(value)"
-								v-model="options.breadcrumbs.homepageLabel"
+								:modelValue="sanitizeString(optionsStore.options.breadcrumbs.homepageLabel)"
+								@update:modelValue="value => optionsStore.options.breadcrumbs.homepageLabel = sanitizeString(value)"
+								v-model="optionsStore.options.breadcrumbs.homepageLabel"
 							/>
 						</div>
 					</div>
@@ -106,8 +106,8 @@
 			>
 				<template #content>
 					<base-input
-						:modelValue="sanitizeString(options.breadcrumbs.breadcrumbPrefix)"
-						@update:modelValue="value => options.breadcrumbs.breadcrumbPrefix = sanitizeString(value)"
+						:modelValue="sanitizeString(optionsStore.options.breadcrumbs.breadcrumbPrefix)"
+						@update:modelValue="value => optionsStore.options.breadcrumbs.breadcrumbPrefix = sanitizeString(value)"
 						size="medium"
 					/>
 
@@ -118,12 +118,12 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="0 < $aioseo.data.staticBlogPage"
+				v-if="0 < rootStore.aioseo.data.staticBlogPage"
 				:name="strings.showBlogHome"
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="options.breadcrumbs.showBlogHome"
+						v-model="optionsStore.options.breadcrumbs.showBlogHome"
 						name="showBlogHome"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.off, value: false, activeClass: 'dark' },
@@ -138,8 +138,8 @@
 			>
 				<template #content>
 					<core-html-tags-editor
-						:modelValue="sanitizeString(options.breadcrumbs.archiveFormat)"
-						@update:modelValue="value => options.breadcrumbs.archiveFormat = sanitizeString(value)"
+						:modelValue="sanitizeString(optionsStore.options.breadcrumbs.archiveFormat)"
+						@update:modelValue="value => optionsStore.options.breadcrumbs.archiveFormat = sanitizeString(value)"
 						:line-numbers="false"
 						single
 						checkUnfilteredHtml
@@ -163,8 +163,8 @@
 			>
 				<template #content>
 					<core-html-tags-editor
-						:modelValue="sanitizeString(options.breadcrumbs.searchResultFormat)"
-						@update:modelValue="value => options.breadcrumbs.searchResultFormat = sanitizeString(value)"
+						:modelValue="sanitizeString(optionsStore.options.breadcrumbs.searchResultFormat)"
+						@update:modelValue="value => optionsStore.options.breadcrumbs.searchResultFormat = sanitizeString(value)"
 						:line-numbers="false"
 						single
 						checkUnfilteredHtml
@@ -188,8 +188,8 @@
 			>
 				<template #content>
 					<base-input
-						:modelValue="sanitizeString(options.breadcrumbs.errorFormat404)"
-						@update:modelValue="value => options.breadcrumbs.errorFormat404 = sanitizeString(value)"
+						:modelValue="sanitizeString(optionsStore.options.breadcrumbs.errorFormat404)"
+						@update:modelValue="value => optionsStore.options.breadcrumbs.errorFormat404 = sanitizeString(value)"
 						size="medium"
 					/>
 
@@ -205,15 +205,15 @@
 				<template #content>
 					<div class="aioseo-description first">
 						<base-toggle
-							v-model="options.breadcrumbs.showCurrentItem"
+							v-model="optionsStore.options.breadcrumbs.showCurrentItem"
 							class="current-item"
 						/>
 						{{ strings.showCurrentItem }}
 					</div>
 
-					<div class="aioseo-description" v-if="options.breadcrumbs.showCurrentItem">
+					<div class="aioseo-description" v-if="optionsStore.options.breadcrumbs.showCurrentItem">
 						<base-toggle
-							v-model="options.breadcrumbs.linkCurrentItem"
+							v-model="optionsStore.options.breadcrumbs.linkCurrentItem"
 							class="current-item"
 						/>
 						{{ strings.linkCurrentItem }}
@@ -223,17 +223,23 @@
 		</core-card>
 
 		<breadcrumbs-lite
-			v-if="isUnlicensed"
+			v-if="licenseStore.isUnlicensed"
 		/>
 
 		<breadcrumbs
-			v-if="options.breadcrumbs.enable && !isUnlicensed"
+			v-if="optionsStore.options.breadcrumbs.enable && !licenseStore.isUnlicensed"
 		/>
 	</div>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import {
+	useLicenseStore,
+	useOptionsStore,
+	useRootStore
+} from '@/vue/stores'
+
+import tags from '@/vue/utils/tags'
 import { sanitizeString } from '@/vue/utils/strings'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import Breadcrumbs from './AIOSEO_VERSION/Breadcrumbs'
@@ -245,6 +251,13 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreSettingsSeparator from '@/vue/components/common/core/SettingsSeparator'
 import Preview from './partials/Breadcrumbs/Preview'
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore(),
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore()
+		}
+	},
 	components : {
 		BaseRadioToggle,
 		Breadcrumbs,
@@ -281,7 +294,7 @@ export default {
 					desc : this.$t.sprintf(
 						// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag, 3 - The plugin short name ("AIOSEO"), 4 - "Learn More" link.
 						this.$t.__('To add this widget, visit the %1$swidgets page%2$s and look for the "%3$s - Breadcrumbs" widget. %4$s', this.$td),
-						`<a href="${this.$aioseo.urls.admin.widgets}" target="_blank">`, '</a>',
+						`<a href="${this.rootStore.aioseo.urls.admin.widgets}" target="_blank">`, '</a>',
 						import.meta.env.VITE_SHORT_NAME,
 						this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'breadcrumbsDisplay', true)
 					)
@@ -340,47 +353,46 @@ export default {
 	},
 	methods : {
 		getRootPreview () {
+			const homepageLabel = this.optionsStore.options.breadcrumbs.homepageLabel ? this.optionsStore.options.breadcrumbs.homepageLabel : 'Home'
 			return [
-				this.options.breadcrumbs.breadcrumbPrefix ? this.options.breadcrumbs.breadcrumbPrefix : '',
-				this.options.breadcrumbs.homepageLink ? (this.options.breadcrumbs.homepageLabel ? this.options.breadcrumbs.homepageLabel : 'Home') : ''
-			].filter(item => !!item).map(item => this.$tags.decodeHTMLEntities(item))
+				this.optionsStore.options.breadcrumbs.breadcrumbPrefix ? this.optionsStore.options.breadcrumbs.breadcrumbPrefix : '',
+				this.optionsStore.options.breadcrumbs.homepageLink ? homepageLabel : ''
+			].filter(item => !!item).map(item => tags.decodeHTMLEntities(item))
 		},
 		getPostPreview () {
 			return [ ...this.getRootPreview(), ...[
-				this.options.breadcrumbs.showBlogHome ? 'Blog Home' : '',
+				this.optionsStore.options.breadcrumbs.showBlogHome ? 'Blog Home' : '',
 				this.strings.category,
 				this.strings.subcategory,
 				this.strings.articleTitle
-			] ].filter(item => !!item).map(item => this.$tags.decodeHTMLEntities(item))
+			] ].filter(item => !!item).map(item => tags.decodeHTMLEntities(item))
 		},
 		getArchivePreview () {
 			return [ ...this.getRootPreview(), ...[
 				this.getArchivesOfText
-			] ].filter(item => !!item).map(item => this.$tags.decodeHTMLEntities(item))
+			] ].filter(item => !!item).map(item => tags.decodeHTMLEntities(item))
 		},
 		getSearchPreview () {
 			return [ ...this.getRootPreview(), ...[
 				this.getSearchForText
-			] ].filter(item => !!item).map(item => this.$tags.decodeHTMLEntities(item))
+			] ].filter(item => !!item).map(item => tags.decodeHTMLEntities(item))
 		},
 		get404Preview () {
 			return [ ...this.getRootPreview(), ...[
-				this.options.breadcrumbs.errorFormat404
-			] ].filter(item => !!item).map(item => this.$tags.decodeHTMLEntities(item))
+				this.optionsStore.options.breadcrumbs.errorFormat404
+			] ].filter(item => !!item).map(item => tags.decodeHTMLEntities(item))
 		},
 		sanitizeString
 	},
 	computed : {
-		...mapState([ 'options' ]),
-		...mapGetters([ 'isUnlicensed' ]),
 		getSearchForText () {
-			return this.options.breadcrumbs.searchResultFormat.replace(new RegExp('#breadcrumb_search_string', 'g'), `<strong>${this.strings.searchKeyword}</strong>`)
+			return this.optionsStore.options.breadcrumbs.searchResultFormat.replace(new RegExp('#breadcrumb_search_string', 'g'), `<strong>${this.strings.searchKeyword}</strong>`)
 		},
 		getArchivesOfText () {
-			return this.options.breadcrumbs.archiveFormat.replace(new RegExp('#breadcrumb_archive_post_type_name', 'g'), `<strong>${this.strings.categoryName}</strong>`)
+			return this.optionsStore.options.breadcrumbs.archiveFormat.replace(new RegExp('#breadcrumb_archive_post_type_name', 'g'), `<strong>${this.strings.categoryName}</strong>`)
 		},
 		getPagedText () {
-			return this.options.breadcrumbs.pagedFormat.replace(new RegExp('#breadcrumb_format_page_number', 'g'), '<strong>2</strong>')
+			return this.optionsStore.options.breadcrumbs.pagedFormat.replace(new RegExp('#breadcrumb_format_page_number', 'g'), '<strong>2</strong>')
 		},
 		previews () {
 			return [

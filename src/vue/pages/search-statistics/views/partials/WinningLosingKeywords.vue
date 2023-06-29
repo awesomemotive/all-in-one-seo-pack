@@ -3,7 +3,7 @@
 		<div
 			v-if="0 === rows"
 			class="winning-losing-keywords-empty"
-			:class="{ blurred : loading.keywords }"
+			:class="{ blurred : searchStatisticsStore.loading.keywords }"
 		>
 			<h3 class="title">{{ strings.noKeywords }}</h3>
 		</div>
@@ -11,7 +11,7 @@
 		<div
 			v-if="0 < rows"
 			class="winning-losing-keywords"
-			:class="{ blurred : loading.keywords }"
+			:class="{ blurred : searchStatisticsStore.loading.keywords }"
 		>
 			<div class="winning-losing-keywords-title">
 				<div>{{ strings.winning }}</div>
@@ -67,17 +67,25 @@
 			</div>
 		</div>
 
-		<core-loader v-if="loading.keywords" dark />
+		<core-loader v-if="searchStatisticsStore.loading.keywords" dark />
 	</div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {
+	useSearchStatisticsStore
+} from '@/vue/stores'
+
 import { decodeHTMLEntities } from '@/vue/utils/helpers'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Statistic from './Statistic'
 export default {
+	setup () {
+		return {
+			searchStatisticsStore : useSearchStatisticsStore()
+		}
+	},
 	components : {
 		CoreLoader,
 		CoreTooltip,
@@ -93,18 +101,17 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('search-statistics', [ 'data', 'loading' ]),
 		topWinning () {
-			if (!this.data?.keywords?.topWinning?.length) {
+			if (!this.searchStatisticsStore.data?.keywords?.topWinning?.length) {
 				return []
 			}
-			return this.data.keywords.topWinning.slice(0, 5)
+			return this.searchStatisticsStore.data.keywords.topWinning.slice(0, 5)
 		},
 		topLosing () {
-			if (!this.data?.keywords?.topLosing?.length) {
+			if (!this.searchStatisticsStore.data?.keywords?.topLosing?.length) {
 				return []
 			}
-			return this.data.keywords.topLosing.slice(0, 5)
+			return this.searchStatisticsStore.data.keywords.topLosing.slice(0, 5)
 		},
 		rows () {
 			const winning = this.topWinning.length

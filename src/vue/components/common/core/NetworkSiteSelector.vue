@@ -9,8 +9,17 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import { Network } from '@/vue/mixins'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	emits  : [ 'selected-site' ],
 	mixins : [ Network ],
 	props  : {
@@ -29,7 +38,7 @@ export default {
 	},
 	watch : {
 		site (newVal) {
-			let site = this.$aioseo.data.network.sites.sites.find(s => this.getUniqueSiteId(s) === newVal.value)
+			let site = this.rootStore.aioseo.data.network.sites.sites.find(s => this.getUniqueSiteId(s) === newVal.value)
 			if ('network' === newVal.value) {
 				site = {
 					blog_id : 'network'

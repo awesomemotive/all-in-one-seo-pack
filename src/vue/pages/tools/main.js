@@ -6,12 +6,13 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
+import { loadPiniaStores } from '@/vue/stores'
+
 import App from './App.vue'
-import store from '@/vue/store'
 import startRouter from '@/vue/router'
 import paths from '@/vue/pages/tools/router/paths'
 
-let app = createApp(App)
+let app = createApp({ ...App, name: 'Pages/Tools' })
 app     = loadPlugins(app)
 app     = loadComponents(app)
 app     = loadVersionedComponents(app)
@@ -23,17 +24,17 @@ const router = startRouter(
 		.filter(p => 'bad-bot-blocker' !== p.name || (window.aioseo.internalOptions.internal.deprecatedOptions.includes('badBotBlocker') && !window.aioseo.data.isNetworkAdmin))
 		.filter(p => 'debug' !== p.name || window.aioseo.data.isDev)
 		.filter(p => 'system-status' !== p.name || !window.aioseo.data.isNetworkAdmin),
-	app,
-	store
+	app
 )
 
-// Give the router and store access to the app.
-store._vm  = app
+// Give the router access to the app.
 router.app = app
 
-// Use the store and router.
-app.use(store)
+// Use the router.
 app.use(router)
+
+// Use the pinia store.
+loadPiniaStores(app, router)
 
 // // Set state from the window object.
 app.mount('#aioseo-app')

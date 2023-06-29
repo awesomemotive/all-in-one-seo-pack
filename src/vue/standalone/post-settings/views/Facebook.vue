@@ -7,7 +7,7 @@
 			<template #content>
 				<core-alert
 					class="facebook-disabled-warning"
-					v-if="!options.social.facebook.general.enable"
+					v-if="!optionsStore.options.social.facebook.general.enable"
 					v-html="strings.facebookDisabled"
 					type="red"
 				/>
@@ -19,7 +19,7 @@
 		>
 			<template #content>
 				<core-facebook-preview
-					:class="{ ismobilecard: currentPost.socialMobilePreview }"
+					:class="{ ismobilecard: postEditorStore.currentPost.socialMobilePreview }"
 					:description="previewDescription"
 					:image="imageUrl"
 					:loading="loading"
@@ -37,13 +37,13 @@
 				<template #content>
 					<core-html-tags-editor
 						class="facebook-meta-input"
-						v-model="currentPost.og_title"
+						v-model="postEditorStore.currentPost.og_title"
 						:line-numbers="false"
 						single
 						@counter="count => updateCount(count, 'titleCount')"
-						@update:modelValue="setIsDirty"
-						:tags-context="`${currentPost.postType || currentPost.termType}Title`"
-						:default-tags="$tags.getDefaultTags('term' === currentPost.context ? 'taxonomies' : null, null, 'title')"
+						@update:modelValue="postEditorStore.isDirty = true"
+						:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Title`"
+						:default-tags="tags.getDefaultTags('term' === postEditorStore.currentPost.context ? 'taxonomies' : null, null, 'title')"
 					>
 						<template #tags-description>
 							{{ strings.clickToAddSiteName }}
@@ -64,13 +64,13 @@
 				<template #content>
 					<core-html-tags-editor
 						class="facebook-meta-input"
-						v-model="currentPost.og_description"
+						v-model="postEditorStore.currentPost.og_description"
 						:line-numbers="false"
 						description
 						@counter="count => updateCount(count, 'descriptionCount')"
-						@update:modelValue="setIsDirty"
-						:tags-context="`${currentPost.postType || currentPost.termType}Description`"
-						:default-tags="$tags.getDefaultTags('term' === currentPost.context ? 'taxonomies' : null, null, 'description')"
+						@update:modelValue="postEditorStore.isDirty = true"
+						:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Description`"
+						:default-tags="tags.getDefaultTags('term' === postEditorStore.currentPost.context ? 'taxonomies' : null, null, 'description')"
 					>
 						<template #tags-description>
 							{{ strings.clickToAddHomePageDescription }}
@@ -92,14 +92,14 @@
 					<base-select
 						size="medium"
 						:options="imageSourceOptionsFiltered"
-						:modelValue="getImageSourceOptionFiltered(currentPost.og_image_type)"
+						:modelValue="getImageSourceOptionFiltered(postEditorStore.currentPost.og_image_type)"
 						@update:modelValue="value => saveImageType(value.value)"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="'custom' === currentPost.og_image_type"
+				v-if="'custom' === postEditorStore.currentPost.og_image_type"
 				:name="strings.customFieldsName"
 				align
 			>
@@ -108,51 +108,22 @@
 						type="text"
 						size="medium"
 						:placeholder="strings.placeholder"
-						v-model="currentPost.og_image_custom_fields"
-						@update:modelValue="setIsDirty"
+						v-model="postEditorStore.currentPost.og_image_custom_fields"
+						@update:modelValue="postEditorStore.isDirty = true"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="'custom_image' === currentPost.og_image_type"
+				v-if="'custom_image' === postEditorStore.currentPost.og_image_type"
 				class="facebook-image"
 				:name="strings.facebookImage"
 			>
 				<template #content>
-					<div class="facebook-image-upload">
-						<base-input
-							size="medium"
-							v-model="currentPost.og_image_custom_url"
-							:placeholder="strings.pasteYourImageUrl"
-							@update:modelValue="setIsDirty"
-						/>
-
-						<base-button
-							class="insert-image"
-							@click="openUploadModal('facebookImage', updateImage)"
-							size="medium"
-							type="black"
-						>
-							<svg-circle-plus />
-							{{ strings.uploadOrSelectImage }}
-						</base-button>
-
-						<base-button
-							class="remove-image"
-							@click="currentPost.og_image_custom_url = null"
-							size="medium"
-							type="gray"
-						>
-							{{ strings.remove }}
-						</base-button>
-					</div>
-
-					<div class="aioseo-description">
-						{{ strings.minimumSize }}
-					</div>
-
-					<base-img :src="currentPost.og_image_custom_url" />
+					<core-image-uploader
+						:description="strings.minimumSize"
+						v-model="postEditorStore.currentPost.og_image_custom_url"
+					/>
 				</template>
 			</core-settings-row>
 
@@ -165,7 +136,7 @@
 					<base-input
 						type="text"
 						size="medium"
-						v-model="currentPost.og_video"
+						v-model="postEditorStore.currentPost.og_video"
 					/>
 				</template>
 			</core-settings-row>
@@ -182,7 +153,7 @@
 						:options="objectTypeOptions"
 						group-label="groupLabel"
 						group-values="options"
-						:modelValue="getObjectTypeOptions(currentPost.og_object_type)"
+						:modelValue="getObjectTypeOptions(postEditorStore.currentPost.og_object_type)"
 						@update:modelValue="value => setObjectType(value.value)"
 					/>
 				</template>
@@ -197,7 +168,7 @@
 					<base-input
 						type="text"
 						size="medium"
-						v-model="currentPost.og_article_section"
+						v-model="postEditorStore.currentPost.og_article_section"
 					/>
 				</template>
 			</core-settings-row>
@@ -211,9 +182,9 @@
 					<base-select
 						multiple
 						taggable
-						:options="getJsonValue(currentPost.og_article_tags) || []"
-						:modelValue="getJsonValue(currentPost.og_article_tags) || []"
-						@update:modelValue="values => currentPost.og_article_tags = setJsonValue(values)"
+						:options="getJsonValue(postEditorStore.currentPost.og_article_tags) || []"
+						:modelValue="getJsonValue(postEditorStore.currentPost.og_article_tags) || []"
+						@update:modelValue="values => postEditorStore.currentPost.og_article_tags = setJsonValue(values)"
 						:tag-placeholder="strings.tagPlaceholder"
 					/>
 				</template>
@@ -223,25 +194,44 @@
 </template>
 
 <script>
-import { ImageSourceOptions, ImagePreview, JsonValues, MaxCounts, Tags, Uploader, IsDirty } from '@/vue/mixins'
-import { mapState, mapActions } from 'vuex'
-import BaseImg from '@/vue/components/common/base/Img'
+import {
+	useOptionsStore,
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
+import {
+	ImageSourceOptions,
+	ImagePreview,
+	JsonValues,
+	MaxCounts,
+	Tags,
+	objectType
+} from '@/vue/mixins'
+
+import tags from '@/vue/utils/tags'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreFacebookPreview from '@/vue/components/common/core/FacebookPreview'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
+import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
-import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 
 export default {
+	setup () {
+		return {
+			optionsStore    : useOptionsStore(),
+			postEditorStore : usePostEditorStore(),
+			rootStore       : useRootStore()
+		}
+	},
 	components : {
-		BaseImg,
 		CoreAlert,
 		CoreFacebookPreview,
 		CoreHtmlTagsEditor,
-		CoreSettingsRow,
-		SvgCirclePlus
+		CoreImageUploader,
+		CoreSettingsRow
 	},
-	mixins : [ ImageSourceOptions, ImagePreview, JsonValues, MaxCounts, Tags, Uploader, IsDirty ],
+	mixins : [ ImageSourceOptions, ImagePreview, JsonValues, MaxCounts, Tags, objectType ],
 	props  : {
 		isMobilePreview : {
 			type : Boolean,
@@ -252,6 +242,7 @@ export default {
 	},
 	data () {
 		return {
+			tags,
 			separator        : undefined,
 			titleCount       : 0,
 			descriptionCount : 0,
@@ -266,10 +257,7 @@ export default {
 				facebookImage                 : this.$t.__('Facebook Image', this.$td),
 				facebookTitle                 : this.$t.__('Facebook Title', this.$td),
 				facebookDescription           : this.$t.__('Facebook Description', this.$td),
-				uploadOrSelectImage           : this.$t.__('Upload or Select Image', this.$td),
-				pasteYourImageUrl             : this.$t.__('Paste your image URL or select a new image', this.$td),
 				minimumSize                   : this.$t.__('Minimum size: 200px x 200px, ideal ratio 1.91:1, 5MB max. (eg: 1640px x 856px or 3280px x 1712px for Retina screens). JPG, PNG, WEBP and GIF formats only.', this.$td),
-				remove                        : this.$t.__('Remove', this.$td),
 				clickToAddSiteName            : this.$t.__('Click on the tags below to insert variables into your site name.', this.$td),
 				clickToAddHomePageDescription : this.$t.__('Click on the tags below to insert variables into your meta description.', this.$td),
 				articleSection                : this.$t.__('Article Section', this.$td),
@@ -281,7 +269,7 @@ export default {
 					this.$t.__('Open Graph', this.$td),
 					this.$t.sprintf(
 						'<a href="%1$s" target="_blank">%2$s<span class="link-right-arrow">&nbsp;&rarr;</span></a>',
-						this.$aioseo.urls.aio.socialNetworks + '#facebook',
+						this.rootStore.aioseo.urls.aio.socialNetworks + '#facebook',
 						this.$t.__('Go to Social Networks', this.$td)
 					)
 				)
@@ -289,28 +277,22 @@ export default {
 		}
 	},
 	computed : {
-		...mapState('live-tags', [ 'liveTags' ]),
-		...mapState([ 'currentPost', 'metaBoxTabs', 'options', 'dynamicOptions' ]),
-		objectTypeOptions () {
-			return [ { groupLabel: this.$t.__('Default', this.$td), options: [ { label: this.$t.__('Default Object Type (Set in Social Networks)', this.$td), value: 'default' } ] } ].concat(this.$constants.OG_TYPE_OPTIONS)
-		},
 		previewTitle () {
-			return this.parseTags(this.currentPost.og_title || this.currentPost.title || this.currentPost.tags.title || '#post_title #separator_sa #site_title')
+			return this.parseTags(this.postEditorStore.currentPost.og_title || this.postEditorStore.currentPost.title || this.postEditorStore.currentPost.tags.title || '#post_title #separator_sa #site_title')
 		},
 		previewDescription () {
-			return this.parseTags(this.currentPost.og_description || this.currentPost.description || this.currentPost.tags.description || '#post_content')
+			return this.parseTags(this.postEditorStore.currentPost.og_description || this.postEditorStore.currentPost.description || this.postEditorStore.currentPost.tags.description || '#post_content')
 		},
 		shouldShowArticleSection () {
-			const context = 'term' === this.currentPost.context ? 'taxonomies' : 'postTypes'
-			return 'article' === this.currentPost.og_object_type ||
+			const context = 'term' === this.postEditorStore.currentPost.context ? 'taxonomies' : 'postTypes'
+			return 'article' === this.postEditorStore.currentPost.og_object_type ||
 				(
-					'default' === this.currentPost.og_object_type &&
-					'article' === this.dynamicOptions.social.facebook.general[context][this.currentPost.postType || this.currentPost.termType].objectType
+					'default' === this.postEditorStore.currentPost.og_object_type &&
+					'article' === this.optionsStore.dynamicOptions.social.facebook.general[context][this.postEditorStore.currentPost.postType || this.postEditorStore.currentPost.termType].objectType
 				)
 		}
 	},
 	methods : {
-		...mapActions([ 'savePostState' ]),
 		scrollToElement () {
 			const container = document.getElementsByClassName('component-wrapper')[0]
 			setTimeout(() => {
@@ -320,8 +302,8 @@ export default {
 			}, 10)
 		},
 		saveImageType (value) {
-			this.$store.state.currentPost.og_image_type = value
-			this.$store.commit('isDirty', true)
+			this.postEditorStore.currentPost.og_image_type = value
+			this.postEditorStore.isDirty                   = true
 		},
 		getObjectTypeOptions (savedOption) {
 			let option = null
@@ -335,19 +317,19 @@ export default {
 			return option
 		},
 		setObjectType (option) {
-			this.$store.state.currentPost.og_object_type = option
-			this.$store.commit('isDirty', true)
+			this.postEditorStore.currentPost.og_object_type = option
+			this.postEditorStore.isDirty                    = true
 		},
 		updateImage (imageUrl) {
-			this.currentPost.og_image_custom_url = imageUrl
-			this.savePostState()
+			this.postEditorStore.currentPost.og_image_custom_url = imageUrl
+			this.postEditorStore.savePostState()
 		}
 	},
 	watch : {
-		'currentPost.og_image_type' () {
+		'postEditorStore.currentPost.og_image_type' () {
 			this.setImageUrl()
 		},
-		'currentPost.og_image_custom_url' () {
+		'postEditorStore.currentPost.og_image_custom_url' () {
 			this.setImageUrl()
 		}
 	},
@@ -358,31 +340,6 @@ export default {
 </script>
 <style lang="scss">
 .tab-facebook {
-	.facebook-image-upload {
-		display: flex;
-
-		.aioseo-input-container {
-			width: 100%;
-			max-width: 445px;
-			margin-right: 8px;
-
-			.aioseo-input {
-				width: 100%;
-			}
-		}
-
-		.insert-image {
-			min-width: 214px;
-			margin-right: 8px;
-
-			svg.aioseo-circle-plus {
-				width: 13px;
-				height: 13px;
-				margin-right: 10px;
-			}
-		}
-	}
-
 	.facebook-image {
 		img {
 			margin-top: 20px;

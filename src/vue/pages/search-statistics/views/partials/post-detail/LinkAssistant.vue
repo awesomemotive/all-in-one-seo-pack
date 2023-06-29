@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<link-assistant
-			v-if="shouldShowMain || isUnlicensed"
+			v-if="shouldShowMain || licenseStore.isUnlicensed"
 			:links="links"
 		/>
 
@@ -14,30 +14,41 @@
 		/>
 
 		<upgrade
-			v-if="$addons.requiresUpgrade(addonSlug)"
+			v-if="addons.requiresUpgrade(addonSlug)"
 		/>
 	</div>
 </template>
 
 <script>
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
+import addons from '@/vue/utils/addons'
+import { AddonConditions } from '@/vue/mixins'
 import Activate from './link-assistant/Activate'
 import LinkAssistant from './link-assistant/LinkAssistant'
 import Update from './link-assistant/Update'
 import Upgrade from './link-assistant/Upgrade'
-import { AddonConditions } from '@/vue/mixins'
 export default {
-	mixins : [ AddonConditions ],
-	props  : {
-		links : Object
+	setup () {
+		return {
+			licenseStore : useLicenseStore()
+		}
 	},
+	mixins     : [ AddonConditions ],
 	components : {
 		Activate,
 		LinkAssistant,
 		Update,
 		Upgrade
 	},
+	props : {
+		links : Object
+	},
 	data () {
 		return {
+			addons,
 			addonSlug : 'aioseo-link-assistant'
 		}
 	}

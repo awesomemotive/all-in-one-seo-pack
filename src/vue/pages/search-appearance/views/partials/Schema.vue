@@ -1,7 +1,7 @@
 <template>
 	<div class="aioseo-sa-ct-schema-view">
 		<schema
-			v-if="!isUnlicensed"
+			v-if="!licenseStore.isUnlicensed"
 			:type="type"
 			:object="object"
 			:options="options"
@@ -9,7 +9,7 @@
 		/>
 
 		<schema-lite
-			v-if="isUnlicensed"
+			v-if="licenseStore.isUnlicensed"
 			:type="type"
 			:object="object"
 			:options="options"
@@ -19,10 +19,18 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
 import Schema from './AIOSEO_VERSION/Schema'
 import SchemaLite from './lite/Schema'
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore()
+		}
+	},
 	components : {
 		Schema,
 		SchemaLite
@@ -41,9 +49,6 @@ export default {
 			required : true
 		},
 		showBulk : Boolean
-	},
-	computed : {
-		...mapGetters([ 'isUnlicensed' ])
 	}
 }
 </script>

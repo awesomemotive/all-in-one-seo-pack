@@ -5,6 +5,12 @@ import loadPlugins from '@/vue/plugins'
 
 import OpeningHoursSidebar from './OpeningHoursSidebar.vue'
 
+import {
+	useOptionsStore,
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
 import { observeElement } from '@/vue/utils/helpers'
 import { __, sprintf } from '@wordpress/i18n'
 
@@ -99,13 +105,15 @@ export const settings = {
 		}
 	},
 	edit : withSelect(function (select) {
-		const locations = select('core').getEntityRecords('postType', window.aioseo.localBusiness.postTypeName, { per_page: 100 })
+		const rootStore = useRootStore()
+		const locations = select('core').getEntityRecords('postType', rootStore.aioseo.localBusiness.postTypeName, { per_page: 100 })
 		return {
 			locations : locations
 		}
 	}
 	)(function (props) {
-		const multipleLocations = window.aioseo.options.localBusiness?.locations.general.multiple
+		const optionsStore      = useOptionsStore()
+		const multipleLocations = optionsStore.options.localBusiness?.locations.general.multiple
 		const { setAttributes, attributes, className, clientId, isSelected } = props
 		let { locations } = props
 		const vueAIOSEOSettingsId = `aioseo-${clientId}-settings`
@@ -132,6 +140,7 @@ export const settings = {
 			)
 		}
 
+		const rootStore = useRootStore()
 		if (multipleLocations && 0 === locations.length) {
 			return el(Fragment, {},
 				el(
@@ -140,14 +149,15 @@ export const settings = {
 					sprintf(
 						// Translators: 1 - The plural label of the custom post type.
 						__('No %1$s found', td),
-						window.aioseo.localBusiness.postTypePluralLabel
+						rootStore.aioseo.localBusiness.postTypePluralLabel
 					)
 				)
 			)
 		}
 
 		// Force locationId if we're in the local-business post type.
-		attributes.locationId = (!attributes.locationId && window.aioseo.currentPost.postType === window.aioseo.localBusiness.postTypeName) ? window.aioseo.currentPost.id : attributes.locationId
+		const postEditorStore = usePostEditorStore()
+		attributes.locationId = (!attributes.locationId && postEditorStore.currentPost.postType === rootStore.aioseo.localBusiness.postTypeName) ? postEditorStore.currentPost.id : attributes.locationId
 
 		if (isSelected) {
 			// Refresh the initial state object.
@@ -163,6 +173,7 @@ export const settings = {
 				subtree : true,
 				done    : function (el) {
 					let app = createApp({
+						name : 'Blocks/OpeningHours',
 						data : function () {
 							return vueInitialState[clientId]
 						},
@@ -184,15 +195,16 @@ export const settings = {
 			})
 		}
 
-		if (window.aioseo.currentPost.postType === window.aioseo.localBusiness.postTypeName) {
+		if (postEditorStore.currentPost.postType === rootStore.aioseo.localBusiness.postTypeName) {
 			observeElement({
 				id      : vueAIOSEOSettingsId + '-watcher',
 				parent  : document.querySelector('.block-editor'),
 				subtree : true,
 				done    : function (el) {
 					let app = createApp({
+						name : 'Blocks/OpeningHoursWatcher',
 						data : function () {
-							return window.aioseo.currentPost.local_seo.openingHours
+							return postEditorStore.currentPost.local_seo.openingHours
 						},
 						watch : {
 							$data : {
@@ -202,7 +214,7 @@ export const settings = {
 								deep : true
 							}
 						},
-						render : () => h(null) // This stops the watcher from rendering multiple times.
+						render : () => h('div')
 					})
 
 					app = loadPlugins(app)
@@ -239,7 +251,7 @@ export const settings = {
 					sprintf(
 						// Translators: 1 - The singular label of the custom post type.
 						__('Select a %1$s', td),
-						window.aioseo.localBusiness.postTypeSingleLabel
+						rootStore.aioseo.localBusiness.postTypeSingleLabel
 					)
 				)
 			)
@@ -271,7 +283,7 @@ export const settings = {
 								showSunday    : attributes.showSunday,
 								label         : attributes.label,
 								updated       : attributes.updated,
-								dataObject    : window.aioseo.currentPost.postType === window.aioseo.localBusiness.postTypeName ? JSON.stringify(window.aioseo.currentPost.local_seo.openingHours) : null
+								dataObject    : postEditorStore.currentPost.postType === rootStore.aioseo.localBusiness.postTypeName ? JSON.stringify(postEditorStore.currentPost.local_seo.openingHours) : null
 							}
 						}
 					)

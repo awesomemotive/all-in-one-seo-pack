@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import numbers from '@/vue/utils/numbers'
 export default {
 	props : {
 		number     : Number,
@@ -31,12 +32,12 @@ export default {
 	},
 	computed : {
 		formattedNumber () {
-			return this.formatNumber ? this.$numbers.numberFormat(this.animatedNumber) : this.animatedNumber
+			return this.formatNumber ? numbers.numberFormat(this.animatedNumber) : this.animatedNumber
 		}
 	},
 	methods : {
 		animateNumber () {
-			const promise = this.$numbers.animateNumbers(this.fromNumber, this.number, value => (this.animatedNumber = value))
+			const promise = numbers.animateNumbers(this.fromNumber, this.number, value => (this.animatedNumber = value))
 
 			window.addEventListener('blur', () => {
 				promise.cancel()

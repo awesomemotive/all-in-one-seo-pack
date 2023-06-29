@@ -32,7 +32,7 @@
 			v-if="(redirects?.from?.length || redirects.to)"
 		>
 			<a
-				:href="$aioseo.urls.aio.redirects"
+				:href="rootStore.aioseo.urls.aio.redirects"
 				v-html="strings.manageRedirects"
 			/>
 		</div>
@@ -45,7 +45,7 @@
 			<base-button
 				type="blue"
 				tag="a"
-				:href="$aioseo.urls.aio.redirects"
+				:href="rootStore.aioseo.urls.aio.redirects"
 				size="small"
 			>
 				{{ strings.addRedirects }}
@@ -55,7 +55,16 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	props : {
 		redirects : {
 			type : Object,

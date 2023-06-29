@@ -1,21 +1,21 @@
 <template>
 	<div id="aioseo-help-modal" class="aioseo-help">
 		<core-upgrade-bar
-			v-if="!$isPro && settings.showUpgradeBar && pong"
+			v-if="!$isPro && settingsStore.settings.showUpgradeBar && rootStore.pong"
 		/>
 
 		<core-license-key-bar
-			v-if="$isPro && isUnlicensed && pong"
+			v-if="$isPro && licenseStore.isUnlicensed && rootStore.pong"
 		/>
 
 		<core-api-bar
-			v-if="!pong"
+			v-if="!rootStore.pong"
 		/>
 
 		<div class="aioseo-help-header">
 			<div class="logo">
 				<a
-					v-if="isUnlicensed"
+					v-if="licenseStore.isUnlicensed"
 					:href="$links.utmUrl('header-logo')"
 					target="_blank"
 
@@ -25,7 +25,7 @@
 					/>
 				</a>
 				<svg-aioseo-logo
-					v-if="!isUnlicensed"
+					v-if="!licenseStore.isUnlicensed"
 					id="aioseo-help-logo"
 				/>
 			</div>
@@ -62,7 +62,7 @@
 			<div id="aioseo-help-categories">
 				<ul class="aioseo-help-categories-toggle">
 					<li
-						v-for="(category, index) in helpPanel.categories"
+						v-for="(category, index) in helpPanelStore.categories"
 						:key="index"
 						class="aioseo-help-category"
 						:class="{ opened: 'getting-started' === index }"
@@ -116,7 +116,10 @@
 
 				<div class="aioseo-help-footer-block">
 					<a
-						:href="!$isPro || !$aioseo.license.isActive ? $links.getUpsellUrl('help-panel', 'get-support', 'liteUpgrade') : `https://aioseo.com/account/support/`"
+						:href="!$isPro || !licenseStore.license.isActive
+							? $links.getUpsellUrl('help-panel', 'get-support', 'liteUpgrade')
+							: $links.utmUrl('help-panel-support', '', 'https://aioseo.com/account/support/')
+						"
 						rel="noopener noreferrer"
 						target="_blank"
 					>
@@ -125,13 +128,13 @@
 						<p>{{ strings.submitTicket }}</p>
 						<base-button
 							class="aioseo-help-docs-support blue small"
-							v-if="$isPro && $aioseo.license.isActive"
+							v-if="$isPro && licenseStore.license.isActive"
 						>
 							{{ strings.submitSupportTicket }}
 						</base-button>
 						<base-button
 							class="aioseo-help-docs-support green small"
-							v-if="!$isPro || !$aioseo.license.isActive"
+							v-if="!$isPro || !licenseStore.license.isActive"
 						>
 							{{ strings.upgradeToPro }}
 						</base-button>
@@ -143,7 +146,13 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import {
+	useHelpPanelStore,
+	useLicenseStore,
+	useRootStore,
+	useSettingsStore
+} from '@/vue/stores'
+
 import { debounce } from '@/vue/utils/debounce'
 import CoreApiBar from '@/vue/components/common/core/ApiBar'
 import CoreLicenseKeyBar from '@/vue/components/AIOSEO_VERSION/core/LicenseKeyBar'
@@ -154,6 +163,14 @@ import SvgDescription from '@/vue/components/common/svg/Description'
 import SvgFolderOpen from '@/vue/components/common/svg/FolderOpen'
 import SvgSupport from '@/vue/components/common/svg/Support'
 export default {
+	setup () {
+		return {
+			licenseStore   : useLicenseStore(),
+			rootStore      : useRootStore(),
+			helpPanelStore : useHelpPanelStore(),
+			settingsStore  : useSettingsStore()
+		}
+	},
 	components : {
 		CoreApiBar,
 		CoreLicenseKeyBar,
@@ -187,11 +204,9 @@ export default {
 		}
 	},
 	computed : {
-		...mapGetters([ 'settings', 'isUnlicensed' ]),
-		...mapState([ 'showHelpModal', 'helpPanel', 'pong' ]),
 		filteredDocs () {
 			if ('' !== this.searchItem) {
-				return Object.values(this.helpPanel.docs).filter(post => {
+				return Object.values(this.helpPanelStore.docs).filter(post => {
 					return null !== this.searchItem ? post.title.toLowerCase().includes(this.searchItem.toLowerCase()) : null
 				})
 			}
@@ -219,7 +234,7 @@ export default {
 			document.body.classList.toggle('modal-open')
 		},
 		getCategoryDocs (category) {
-			return Object.values(this.helpPanel.docs).filter(post => {
+			return Object.values(this.helpPanelStore.docs).filter(post => {
 				return post.categories.flat().includes(category) ? post : null
 			})
 		}

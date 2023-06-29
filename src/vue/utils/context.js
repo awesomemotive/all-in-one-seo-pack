@@ -1,4 +1,9 @@
-if (!window.wp.blockEditor && window.wp.blocks && window.wp.oldEditor) {
+import {
+	usePostEditorStore,
+	useRootStore
+} from '@/vue/stores'
+
+if (!window.wp?.blockEditor && window.wp?.blocks && window.wp.oldEditor) {
 	window.wp.blockEditor = window.wp.editor
 }
 
@@ -27,7 +32,14 @@ export const isSeedProdEditor = () => {
 }
 
 export const isWooCommerceProduct = () => {
-	return (window.aioseo.data.isWooCommerceActive && window.aioseo.currentPost && 'product' === window.aioseo.currentPost.postType)
+	const postEditorStore = usePostEditorStore()
+	const rootStore       = useRootStore()
+
+	return (
+		rootStore.aioseo.data.isWooCommerceActive &&
+		postEditorStore.currentPost &&
+		'product' === postEditorStore.currentPost.postType
+	)
 }
 
 export const isPageBuilderEditor = () => {

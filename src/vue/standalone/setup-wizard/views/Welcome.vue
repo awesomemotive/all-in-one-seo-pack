@@ -14,15 +14,15 @@
 					type="green"
 					inline
 					tag="router-link"
-					:to="getNextLink"
+					:to="setupWizardStore.getNextLink"
 				>
 					{{ strings.letsGetStarted }} &rarr;
 				</base-button>
 
 				<div class="aioseo-go-back">
 					<a
-						v-if="$isPro || $aioseo.options.advanced.usageTracking"
-						:href="$aioseo.urls.aio.dashboard"
+						v-if="$isPro || optionsStore.options.advanced.usageTracking"
+						:href="rootStore.aioseo.urls.aio.dashboard"
 						class="no-underline"
 					>&larr;</a>
 					<a
@@ -33,8 +33,8 @@
 					>&larr;</a>
 					&nbsp;
 					<a
-						v-if="$isPro || $aioseo.options.advanced.usageTracking"
-						:href="$aioseo.urls.aio.dashboard"
+						v-if="$isPro || optionsStore.options.advanced.usageTracking"
+						:href="rootStore.aioseo.urls.aio.dashboard"
 					>
 						{{ strings.goBack }}
 					</a>
@@ -73,7 +73,7 @@
 					<div class="actions">
 						<base-button
 							tag="a"
-							:href="$aioseo.urls.aio.dashboard"
+							:href="rootStore.aioseo.urls.aio.dashboard"
 							type="gray"
 							size="medium"
 						>
@@ -96,6 +96,11 @@
 </template>
 
 <script>
+import {
+	useOptionsStore,
+	useRootStore,
+	useSetupWizardStore
+} from '@/vue/stores'
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
 import { Wizard, WizardUsageTracking } from '@/vue/mixins'
@@ -103,8 +108,10 @@ import SvgGiantGear from '@/vue/components/common/svg/GiantGear'
 export default {
 	setup () {
 		const { strings } = useWizard()
-
 		return {
+			optionsStore      : useOptionsStore(),
+			rootStore         : useRootStore(),
+			setupWizardStore  : useSetupWizardStore(),
 			composableStrings : strings
 		}
 	},
