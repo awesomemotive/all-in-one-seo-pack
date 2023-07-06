@@ -161,7 +161,7 @@ trait Arrays {
 	 * Sorts the keys of an array alphabetically.
 	 * The array is passed by reference, so it's not returned the same as in `ksort()`.
 	 *
-	 * @since {next}
+	 * @since 4.4.0.3
 	 *
 	 * @param array $array The array to sort, passed by reference.
 	 */

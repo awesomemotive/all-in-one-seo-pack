@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta ti
 Tested up to: 6.2.2
 Requires at least: 4.9
 Requires PHP: 5.6
-Stable tag: 4.4.0.1
+Stable tag: 4.4.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -256,6 +256,27 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 
 == Changelog ==
+
+**New in Version 4.4.1**
+
+* Updated: The primary term is now favoured for the permalink and canonical URL when the permalink structure includes a term.
+* Updated: Added additional filters/sorting options to the Content Rankings report in Search Statistics.
+* Updated: Improved the breadcrumb preview inside the Site Editor.
+* Updated: Added support for translating image title attributes with WPML.
+* Updated: Import from SEOPress compatibility.
+* Fixed: The breadcrumb and HTML sitemap blocks now work again inside Elementor's visual editor.
+* Fixed: TruSEO content analysis no longer runs when Divi Wireframe mode is active.
+* Fixed: Posts of a hidden language from WPML would sometimes be included in the sitemap.
+* Fixed: Dynamic homepage title/description would sometimes not be translated by WPML.
+* Fixed: SEO Analysis results not loading without clicking the "Refresh Results" button.
+* Fixed: Sitemap additional pages CSV import not importing all URLs correctly.
+* Fixed: Missing caret for navigation menu tabs dropdown when screen is not wide enough.
+* Fixed: Editing custom schema graphs now loads the correct content instead of an empty editor.
+* Fixed: Service schema would sometimes not output images.
+* Fixed: Product schema no longer includes aggregate rating when there is no rating value for the review.
+* Fixed: Review rating value not saving for Software and Movie schema graphs.
+* Fixed: The footer actions in the AI Title/Description Generator modal are now still visible when a scrollbar is present.
+* Fixed: Prevented fatal error when importing meta keywords from Yoast SEO.
 
 **New in Version 4.4.0.1**
 
@@ -616,6 +637,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.4.0.1 =
+= 4.4.1 =
 
 This update adds major improvements and bug fixes.

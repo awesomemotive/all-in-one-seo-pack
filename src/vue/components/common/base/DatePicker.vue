@@ -119,13 +119,13 @@ export default {
 		},
 		label () {
 			if (!this.value) {
-				return '&nbsp;'
+				return ' '
 			}
 			if (!this.isDateRange) {
 				return dateFormat(this.value, this.format)
 			}
 			const start = dateFormat(this.value[0], this.format)
-			const end   = dateFormat(this.value[1], this.format)
+			const end = dateFormat(this.value[1], this.format)
 			return [ start, end ]
 		},
 		isDateRange () {

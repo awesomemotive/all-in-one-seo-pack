@@ -228,10 +228,10 @@ class HipChatHandler extends SocketHandler
      * will be the highest level from the given records. Datetime will be taken
      * from the first record.
      *
-     * @param array $records
+     * @param $records
      * @return array
      */
-    private function combineRecords(array $records)
+    private function combineRecords($records)
     {
         $batchRecord = null;
         $batchRecords = array();

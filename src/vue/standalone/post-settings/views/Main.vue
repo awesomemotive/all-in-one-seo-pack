@@ -446,10 +446,8 @@ export default {
 		svg {
 			display: none;
 
-			@media screen and (max-width: 785px) {
-				&.aioseo-caret {
-					display: inline;
-				}
+			&.aioseo-caret {
+				display: inline;
 			}
 		}
 	}
@@ -640,10 +638,8 @@ export default {
 			svg {
 				display: none;
 
-				@media screen and (max-width: 785px) {
-					&.aioseo-caret {
-						display: inline;
-					}
+				&.aioseo-caret {
+					display: inline;
 				}
 			}
 		}

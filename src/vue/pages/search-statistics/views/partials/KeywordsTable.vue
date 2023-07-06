@@ -383,9 +383,9 @@ export default {
 			})
 		},
 		preloadPages () {
-			let rows = this.searchStatisticsStore.data.keywords?.paginated?.rows
+			let rows = this.searchStatisticsStore.data.keywords?.paginated?.rows || []
 			if (this.postDetail) {
-				rows = this.searchStatisticsStore.data.postDetail?.keywords?.paginated?.rows
+				rows = this.searchStatisticsStore.data.postDetail?.keywords?.paginated?.rows || []
 			}
 
 			const keywords = []

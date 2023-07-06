@@ -61,7 +61,7 @@ class FirePHPHandler extends AbstractProcessingHandler
      *
      * @see createHeader()
      * @param  array  $record
-     * @return array
+     * @return string
      */
     protected function createRecordHeader(array $record)
     {
