@@ -201,10 +201,33 @@ export const arrayDiff = (array1, array2) => array1.filter(el => !array2.include
 export const arrayIntersection = (array1, array2) => array1.filter(el => array2.includes(el))
 
 /**
- * Return the values from a single column in the input array.
+ * Return an array containing the values of a specified column from an array of objects or an array of arrays.
  *
- * @param 	{Array} 	    arr A multidimensional array from which to pull a column of values.
- * @param 	{number|string} key The column of values to return.
- * @returns {Array} 			Returns an array of values representing a single column from the input array.
+ * @param 	{Array|Object}  input     The input array or object.
+ * @param 	{string|number} columnKey The key or index of the column to retrieve.
+ * @returns {Array} 				  An array containing the values of the specified column.
  */
-export const arrayColumn = (arr, key) => arr.map(x => x[key])
+export const arrayColumn = (input, columnKey) => {
+	if (Array.isArray(input)) {
+		return input.map(function (item) {
+			return item[columnKey]
+		})
+	} else if ('object' === typeof input) {
+		const output = []
+		for (const key in input) {
+			output.push(input[key][columnKey])
+		}
+
+		return output
+	}
+}
+
+/**
+ * Returns a new array containing only the unique elements of the input array.
+ *
+ * @param 	{Array} array The input array to extract unique elements from.
+ * @returns {Array}	   	  An array containing only the unique elements of the input array.
+ */
+export const arrayUnique = (array) => {
+	return Array.from(new Set(array))
+}

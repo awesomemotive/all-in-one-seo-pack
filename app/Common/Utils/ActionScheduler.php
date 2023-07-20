@@ -35,7 +35,7 @@ class ActionScheduler {
 	}
 
 	/**
-	 * Maybe register the `${table_prefix}_actionscheduler_${suffix}` tables with WordPress and create them if needed.
+	 * Maybe register the `{$table_prefix}_actionscheduler_{$suffix}` tables with WordPress and create them if needed.
 	 * Hooked into `plugins_loaded` action hook.
 	 *
 	 * @since 4.2.7

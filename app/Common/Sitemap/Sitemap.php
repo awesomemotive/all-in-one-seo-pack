@@ -123,6 +123,69 @@ class Sitemap {
 	public $type = '';
 
 	/**
+	 * The sitemap filename.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var string
+	 */
+	public $filename = '';
+
+	/**
+	 * Whether the sitemap indexes are enabled.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var bool
+	 */
+	public $indexes = false;
+
+	/**
+	 * The sitemap index name.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var string
+	 */
+	public $indexName = '';
+
+	/**
+	 * The number of links per index.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var int
+	 */
+	public $linksPerIndex = 1000;
+
+	/**
+	 * The current page number.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var int
+	 */
+	public $pageNumber = 0;
+
+	/**
+	 * The entries' offset.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var int
+	 */
+	public $offset = 0;
+
+	/**
+	 * Whether the sitemap is static.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var bool
+	 */
+	public $isStatic = false;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.0.0

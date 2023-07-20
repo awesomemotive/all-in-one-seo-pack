@@ -197,6 +197,10 @@ class Updates {
 			$this->migratePriorityColumn();
 		}
 
+		if ( version_compare( $lastActiveVersion, '4.4.2', '<' ) ) {
+			$this->updateRobotsTxtRules();
+		}
+
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
 
 		// Always clear the cache if the last active version is different from our current.
@@ -1009,8 +1013,8 @@ class Updates {
 	private function schedulePostSchemaMigration() {
 		aioseo()->actionScheduler->scheduleSingle( 'aioseo_v4_migrate_post_schema', 10 );
 
-		if ( ! aioseo()->cache->get( 'v4_migrate_post_schema_default_date' ) ) {
-			aioseo()->cache->update( 'v4_migrate_post_schema_default_date', gmdate( 'Y-m-d H:i:s' ), 3 * MONTH_IN_SECONDS );
+		if ( ! aioseo()->core->cache->get( 'v4_migrate_post_schema_default_date' ) ) {
+			aioseo()->core->cache->update( 'v4_migrate_post_schema_default_date', gmdate( 'Y-m-d H:i:s' ), 3 * MONTH_IN_SECONDS );
 		}
 	}
 
@@ -1061,7 +1065,7 @@ class Updates {
 	 * @return void
 	 */
 	public function migratePostSchemaDefault() {
-		$migrationStartDate = aioseo()->cache->get( 'v4_migrate_post_schema_default_date' );
+		$migrationStartDate = aioseo()->core->cache->get( 'v4_migrate_post_schema_default_date' );
 		if ( ! $migrationStartDate ) {
 			return;
 		}
@@ -1075,7 +1079,7 @@ class Updates {
 			->models( 'AIOSEO\\Plugin\\Common\\Models\\Post' );
 
 		if ( empty( $posts ) ) {
-			aioseo()->cache->delete( 'v4_migrate_post_schema_default_date' );
+			aioseo()->core->cache->delete( 'v4_migrate_post_schema_default_date' );
 
 			return;
 		}
@@ -1436,11 +1440,11 @@ class Updates {
 	 * @return void
 	 */
 	private function migratePriorityColumn() {
-		if ( ! aioseo()->db->columnExists( 'aioseo_posts', 'priority' ) ) {
+		if ( ! aioseo()->core->db->columnExists( 'aioseo_posts', 'priority' ) ) {
 			return;
 		}
 
-		$prefix               = aioseo()->db->prefix;
+		$prefix               = aioseo()->core->db->prefix;
 		$aioseoPostsTableName = $prefix . 'aioseo_posts';
 
 		// First, cast the default value to NULL since it's a string.
@@ -1448,5 +1452,43 @@ class Updates {
 
 		// Then, alter the column to a float.
 		aioseo()->core->db->execute( "ALTER TABLE {$aioseoPostsTableName} MODIFY priority float" );
+	}
+
+	/**
+	 * Update the custom robots.txt rules to the new format,
+	 * by replacing `rule` and `directoryPath` with `directive` and `fieldValue`, respectively.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @return void
+	 */
+	private function updateRobotsTxtRules() {
+		$rawOptions   = $this->getRawOptions();
+		$currentRules = $rawOptions && ! empty( $rawOptions['tools']['robots']['rules'] )
+			? $rawOptions['tools']['robots']['rules']
+			: [];
+		if ( empty( $currentRules ) || ! is_array( $currentRules ) ) {
+			return;
+		}
+
+		$newRules = [];
+		foreach ( $currentRules as $oldRule ) {
+			$parsedRule = json_decode( $oldRule, true );
+			if ( empty( $parsedRule['rule'] ) && empty( $parsedRule['directoryPath'] ) ) {
+				continue;
+			}
+
+			$newRule = [
+				'userAgent'  => array_key_exists( 'userAgent', $parsedRule ) ? $parsedRule['userAgent'] : '',
+				'directive'  => array_key_exists( 'rule', $parsedRule ) ? $parsedRule['rule'] : '',
+				'fieldValue' => array_key_exists( 'directoryPath', $parsedRule ) ? $parsedRule['directoryPath'] : '',
+			];
+
+			$newRules[] = wp_json_encode( $newRule );
+		}
+
+		if ( $newRules ) {
+			aioseo()->options->tools->robots->rules = $newRules;
+		}
 	}
 }

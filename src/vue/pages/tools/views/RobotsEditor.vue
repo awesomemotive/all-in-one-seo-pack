@@ -8,109 +8,111 @@
 				class="aioseo-settings-row"
 				v-if="rootStore.aioseo.data.isNetworkAdmin && !licenseStore.isUnlicensed && license.hasCoreFeature('tools', 'network-tools-robots')"
 			>
-				<div class="select-site">
-					{{ strings.selectSite }}
+				<div class="settings-name">
+					<div class="name small-margin">{{ strings.selectSite }}</div>
 				</div>
 
-				<core-network-site-selector
-					@selected-site="site = $event"
-					show-network
+				<div class="settings-content">
+					<core-network-site-selector
+						@selected-site="currentSite = $event"
+						follow-selected-site
+						show-network
+					/>
+				</div>
+			</div>
+
+			<div class="aioseo-settings-row">
+				<core-alert v-if="'network' === this.currentSite?.blog_id">
+					{{
+						licenseStore.isUnlicensed || !license.hasCoreFeature('tools', 'network-tools-robots')
+							? strings.networkAlertLite
+							: strings.networkAlert
+					}}
+				</core-alert>
+
+				<p class="description">
+					{{ strings.description }}
+				</p>
+
+				<p class="description">
+					{{ strings.description2 }}
+
+					<span v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'robotsEditor', true)"/>
+				</p>
+			</div>
+
+			<div
+				v-if="rootStore.aioseo.data.robots.hasPhysicalRobots && showRobotsDetectedAlert"
+				class="aioseo-settings-row"
+			>
+				<core-alert
+					v-if="errors.importAndDeleteRobotsTxt || errors.deleteRobotsTxt"
+					type="red"
+				>
+					{{ errors.importAndDeleteRobotsTxt || errors.deleteRobotsTxt }}
+				</core-alert>
+
+				<core-alert
+					type="red"
+					:show-close="!getOptions.enable"
+					@close-alert="hideRobotsDetected"
+				>
+					<p class="description">
+						{{ strings.physicalRobotsFound }}
+					</p>
+
+					<p class="buttons description">
+						<base-button
+							type="blue"
+							size="medium"
+							@click="onClickBtnImportAndDeleteRobotsTxt"
+							:loading="loading.btnImportAndDeleteRobotsTxt"
+						>
+							{{ strings.importAndDelete }}
+						</base-button>
+
+						<base-button
+							type="blue"
+							size="medium"
+							@click="onClickBtnDeleteRobotsTxt"
+							:loading="loading.btnDeleteRobotsTxt"
+						>
+							{{ $constants.GLOBAL_STRINGS.delete }}
+						</base-button>
+					</p>
+				</core-alert>
+			</div>
+
+			<div
+				v-if="!rootStore.aioseo.data.robots.rewriteExists"
+				class="aioseo-settings-row"
+			>
+				<core-alert
+					type="red"
+					v-html="missingRewriteRules"
 				/>
 			</div>
 
-			<div class="robots-background">
-				<div
-					class="loader-overlay"
-					v-if="siteLoading"
-				>
-					<core-loader />
-				</div>
-
-				<div class="aioseo-settings-row aioseo-section-description">
-					<core-alert
-						v-if="isNetwork"
-						type="blue"
-					>
-						{{ (licenseStore.isUnlicensed || !license.hasCoreFeature('tools', 'network-tools-robots')) ? strings.networkAlertLite : strings.networkAlert }}
-					</core-alert>
-
-					{{ strings.description }}
-
-					<br>
-					<br>
-
-					{{ strings.description2 }}
-					<span
-						v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'robotsEditor', true)"
-					/>
-				</div>
-
-				<div
-					v-if="rootStore.aioseo.data.robots.hasPhysicalRobots && getOptions.robotsDetected"
-					class="aioseo-settings-row physical-robots"
-				>
-					<core-alert
-						type="red"
-						show-close
-						@close-alert="hideRobotsDetected"
-					>
-						{{ strings.physicalRobotsFound }}
-
-						<div class="buttons">
-							<base-button
-								type="blue"
-								size="medium"
-								@click="importAndDeleteRobots"
-								:loading="importLoading"
-							>
-								{{ strings.importAndDelete }}
-							</base-button>
-
-							<base-button
-								type="blue"
-								size="medium"
-								@click="deleteRobots"
-								:loading="deleteLoading"
-							>
-								{{ strings.delete }}
-							</base-button>
-						</div>
-					</core-alert>
-				</div>
-
-				<div
-					v-if="!rootStore.aioseo.data.robots.rewriteExists"
-					class="aioseo-settings-row rewrite-exists"
-				>
-					<core-alert
-						type="red"
-						v-html="missingRewriteRules"
-					/>
-				</div>
-
-				<core-settings-row
-					:name="$constants.GLOBAL_STRINGS.preview"
-					align
-				>
+			<template v-if="isValidRobotsSite">
+				<core-settings-row :name="$constants.GLOBAL_STRINGS.preview">
 					<template #content>
-						<div class="aioseo-sitemap-preview">
-							<base-button
-								size="medium"
-								type="blue"
-								tag="a"
-								:href="robotsTxtUrl"
-								target="_blank"
-							>
-								<svg-external />
-								{{ strings.openRobotsTxt }}
-							</base-button>
-						</div>
+						<base-button
+							size="medium"
+							type="blue"
+							tag="a"
+							:href="robotsTxtUrl"
+							target="_blank"
+						>
+							<svg-external width="14"/>
+
+							{{ strings.openRobotsTxt }}
+						</base-button>
 					</template>
 				</core-settings-row>
 
 				<core-settings-row
-					v-if="isValidRobotsSite"
 					:name="strings.enableCustomRobots"
+					class="no-border no-margin"
 				>
 					<template #content>
 						<base-toggle
@@ -119,133 +121,305 @@
 					</template>
 				</core-settings-row>
 
-				<core-alert
-					v-if="!isValidRobotsSite"
-					type="blue"
-					v-html="subdirectoryAlert"
-				/>
-
-				<div
-					v-if="isValidRobotsSite"
-					class="aioseo-settings-row"
-				>
+				<div class="aioseo-settings-row">
 					<div class="settings-content">
-						<core-alert
-							v-if="this.hasErrors"
-							type="red"
-						>
-							{{ strings.duplicateOrInvalid }}
-						</core-alert>
-
-						<div class="robots-table">
-							<div class="robots-header">
-								<div class="robots-user-agent">{{ strings.userAgent }}</div>
-								<div class="robots-rule">{{ strings.rule }}</div>
-								<div class="robots-directory-path">{{ strings.directoryPath }}</div>
-								<div class="robots-actions" />
+						<div class="robots-editor-table">
+							<div class="robots-editor-table__header">
+								<div class="robots-editor-table__row">
+									<div class="robots-editor-table__column">#</div>
+									<div class="robots-editor-table__column">{{ strings.userAgent }}</div>
+									<div class="robots-editor-table__column">{{ strings.directive }}</div>
+									<div class="robots-editor-table__column">{{ $constants.GLOBAL_STRINGS.value }}</div>
+									<div class="robots-editor-table__column"></div>
+								</div>
 							</div>
-							<div class="robots-rows">
-								<div
-									class="robots-row"
-									:class="{ even: 0 === index % 2 }"
-									v-for="(rule, index) in parsedRules"
-									:key="index"
-								>
-									<div class="robots-user-agent">
-										<base-input
-											ref="userAgent"
-											:class="hasError(rule.userAgent + rule.rule + rule.directoryPath)"
-											:modelValue="rule.userAgent"
-											@blur="updateRule('userAgent', $event, index)"
-											size="medium"
-											:placeholder="strings.userAgentPlaceholder"
-											:disabled="!getOptions.enable"
-										/>
-									</div>
-									<div class="robots-rule">
-										<base-radio
-											ref="allow"
-											:name="`rule-${index}`"
-											:modelValue="'allow' === rule.rule"
-											@update:modelValue="updateRule('rule', 'allow', index)"
-											:disabled="!getOptions.enable"
-											size="medium"
-											:type="2"
-										>
-											{{ strings.allow }}
-										</base-radio>
-										<base-radio
-											ref="disallow"
-											:name="`rule-${index}`"
-											:modelValue="'disallow' === rule.rule"
-											@update:modelValue="updateRule('rule', 'disallow', index)"
-											:disabled="!getOptions.enable"
-											size="medium"
-											:type="2"
-										>
-											{{ strings.disallow }}
-										</base-radio>
-									</div>
-									<div class="robots-directory-path">
-										<base-input
-											:key="inputKey"
-											:class="hasError(rule.userAgent + rule.rule + rule.directoryPath)"
-											:modelValue="rule.directoryPath"
-											@blur="updateRule('directoryPath', $event, index)"
-											size="medium"
-											:placeholder="strings.directoryPathPlaceholder"
-											:disabled="!getOptions.enable"
-										/>
-									</div>
-									<div class="robots-actions">
-										<core-tooltip
-											v-if="getOptions.enable"
-											type="action"
-										>
-											<svg-trash
-												@click.native.stop="removeRow(index)"
-											/>
 
-											<template #tooltip>
-												{{ strings.deleteRule }}
-											</template>
-										</core-tooltip>
+							<div class="robots-editor-table__body">
+								<div
+									v-for="(rule, index) in parsedDefaultRules"
+									:key="index"
+									class="robots-editor-table__row robots-editor-table__row--stripe"
+								>
+									<div class="robots-editor-table__column">
+										{{ index + 1 }}
 									</div>
+
+									<div class="robots-editor-table__column">
+										<base-input
+											:modelValue="rule.userAgent"
+											:disabled="true"
+											size="medium"
+										/>
+									</div>
+
+									<div class="robots-editor-table__column">
+										<base-select
+											:modelValue="directiveOptions.find(v => v.value === rule.directive)"
+											:options="[]"
+											:disabled="true"
+											size="medium"
+										/>
+									</div>
+
+									<div class="robots-editor-table__column">
+										<base-input
+											:modelValue="rule.fieldValue"
+											:disabled="true"
+											size="medium"
+										/>
+									</div>
+
+									<div class="robots-editor-table__column"/>
+								</div>
+
+								<draggable
+									handle=".aioseo-drag-wrapper"
+									v-model="tableRules"
+									:item-key="_uid.toString()"
+									class="draggable-rules"
+								>
+									<template #item="{element:rule, index}">
+										<div
+											class="robots-editor-table__row robots-editor-table__row--stripe"
+											:class="{'aioseo-error': hasTableRuleError(index + parsedDefaultRules.length + 1, rule)}"
+										>
+											<div
+												class="robots-editor-table__column robots-editor-table__column--truncate">
+												{{ index + parsedDefaultRules.length + 1 }}
+											</div>
+
+											<div class="robots-editor-table__column">
+												<base-input
+													:modelValue="rule.userAgent"
+													:spellcheck="false"
+													:disabled="!getOptions.enable"
+													@blur="updateRule(rule, 'userAgent', $event, index)"
+													size="medium"
+												/>
+											</div>
+
+											<div class="robots-editor-table__column">
+												<base-select
+													:modelValue="directiveOptions.find(v => v.value === rule.directive)"
+													:options="directiveOptions"
+													:disabled="!getOptions.enable"
+													@update:modelValue="updateRule(rule, 'directive', $event.value, index)"
+													size="medium"
+												/>
+											</div>
+
+											<div class="robots-editor-table__column">
+												<base-input
+													:modelValue="rule.fieldValue"
+													:spellcheck="false"
+													:disabled="!getOptions.enable"
+													@blur="updateRule(rule, 'fieldValue', $event, index)"
+													size="medium"
+												/>
+											</div>
+
+											<div class="robots-editor-table__column robots-editor-table__column--actions">
+												<a
+													@click.prevent="deleteRow(index)"
+													href="#"
+													role="button"
+													class="btn-delete-rule aioseo-outline"
+													:title="strings.deleteRule"
+													v-show="getOptions.enable"
+												>
+													<svg-trash width="20"/>
+												</a>
+
+												<a
+													@click.prevent
+													href="#"
+													role="button"
+													class="aioseo-drag-wrapper aioseo-outline"
+													v-show="getOptions.enable"
+												>
+													<svg-drag width="20"/>
+												</a>
+											</div>
+
+											<rule-errors
+												:errors="getTableRuleErrors(index + parsedDefaultRules.length + 1, rule)"
+												class="robots-editor-table__column robots-editor-table__column--rule-error"
+											/>
+										</div>
+									</template>
+								</draggable>
+							</div>
+
+							<div class="robots-editor-table__footer">
+								<div class="buttons">
+									<base-button
+										@click.exact="addRow"
+										:disabled="!getOptions.enable"
+										class="btn-add-rule"
+										type="black"
+										size="small"
+									>
+										<svg-circle-plus width="14"/>
+
+										{{ strings.addRule }}
+									</base-button>
+
+									<base-button
+										@click.prevent="showImportModal = true"
+										:disabled="!getOptions.enable"
+										type="black"
+										size="small"
+									>
+										<svg-upload width="14"/>
+
+										{{ $constants.GLOBAL_STRINGS.import }}
+									</base-button>
 								</div>
 							</div>
 						</div>
-
-						<base-button
-							type="blue"
-							size="medium"
-							@click="addRow"
-							:disabled="!getOptions.enable"
-						>
-							<svg-circle-plus />
-							{{ strings.addRule }}
-						</base-button>
 					</div>
 				</div>
 
-				<div
-					v-if="isValidRobotsSite"
-					class="aioseo-settings-row"
-				>
+				<div class="aioseo-settings-row aioseo-settings-row--preview-robots no-margin">
 					<div class="settings-name">
-						<div class="name">{{ strings.robotsPreview }}</div>
+						<div class="name">
+							{{ strings.customRobotsPreview }}
+
+							<div
+								v-if="robotsPreviewErrorLabel"
+								class="aioseo-error"
+							>
+								<svg-ellipse width="8"/>
+
+								<span>{{ robotsPreviewErrorLabel }}</span>
+							</div>
+						</div>
 					</div>
 
 					<div class="settings-content">
 						<base-editor
-							:modelValue="sanitizedRobotsTxt"
+							:modelValue="inputCustomRobotsTxtPreview"
 							:line-numbers="true"
-							:minimum-line-numbers="13"
 							disabled
 							force-updates
 							monospace
+							ref="input-custom-robots-txt-preview"
 						/>
 					</div>
 				</div>
+			</template>
+
+			<template v-else>
+				<core-alert v-html="subdirectoryAlert"/>
+			</template>
+
+			<core-modal
+				v-if="showImportModal"
+				@close="showImportModal = false"
+			>
+				<template #headerTitle>
+					{{ strings.importRobots }}
+				</template>
+
+				<template #body>
+					<div
+						v-if="errors.importRobotsTxt"
+						class="aioseo-settings-row no-margin no-border"
+					>
+						<core-alert
+							type="red"
+							show-close
+							@close-alert="errors.importRobotsTxt = null"
+						>
+							{{ errors.importRobotsTxt }}
+						</core-alert>
+					</div>
+
+					<div
+						class="aioseo-settings-row aioseo-settings-row--or"
+						:data-or="$constants.GLOBAL_STRINGS.or"
+					>
+						<div class="settings-name">
+							<div class="name small-margin">
+								{{ strings.importFromUrl }}
+							</div>
+						</div>
+
+						<div class="settings-content settings-content--gap">
+							<base-input
+								:modelValue="inputImportRobotsTxtFromUrl"
+								@update:modelValue="v => onChangeInputImportRobotsTxtFromUrl(v)"
+								:placeholder="strings.pasteUrl"
+								:disabled="!!inputPasteRobotsTxtText"
+								type="url"
+								size="medium"
+							/>
+
+							<core-alert
+								v-if="errors.importRobotsTxtFromUrl"
+								type="red"
+								size="small"
+							>
+								{{ errors.importRobotsTxtFromUrl }}
+							</core-alert>
+						</div>
+					</div>
+
+					<div class="aioseo-settings-row">
+						<div class="settings-name">
+							<div class="name small-margin">{{ strings.pasteRobotsText }}</div>
+						</div>
+
+						<div class="settings-content settings-content--gap">
+							<base-editor
+								:modelValue="inputPasteRobotsTxtText"
+								@update:modelValue="v => onChangeInputPasteRobotsTxtText(v)"
+								:line-numbers="true"
+								:minimum-line-numbers="10"
+								:disabled="!!inputImportRobotsTxtFromUrl"
+								:spellcheck="false"
+								monospace
+							/>
+
+							<core-alert
+								v-if="errors.pasteRobotsTxtText"
+								type="red"
+								size="small"
+							>
+								{{ errors.pasteRobotsTxtText }}
+							</core-alert>
+						</div>
+					</div>
+				</template>
+
+				<template #footer>
+					<div class="buttons">
+						<base-button
+							@click.exact="showImportModal = false"
+							type="gray"
+							size="medium"
+						>
+							{{ $constants.GLOBAL_STRINGS.cancel }}
+						</base-button>
+
+						<base-button
+							@click.exact="onClickBtnImportRobotsTxt(inputImportRobotsTxtFromUrl ? 'url' : 'text')"
+							:loading="loading.btnImportRobotsTxt"
+							:disabled="!!btnImportRobotsTxtDisabled"
+							type="blue"
+							size="medium"
+						>
+							{{ $constants.GLOBAL_STRINGS.import }}
+						</base-button>
+					</div>
+				</template>
+			</core-modal>
+
+			<div
+				class="loader-overlay"
+				v-if="loading.cardOverlay"
+			>
+				<core-loader/>
 			</div>
 		</core-card>
 	</div>
@@ -261,25 +435,25 @@ import {
 } from '@/vue/stores'
 
 import license from '@/vue/utils/license'
-import { stringify, mergeRules, parse } from '@/vue/utils/robots'
+import { arrayColumn, arrayUnique } from '@/vue/utils/helpers'
+import { groupRulesByUserAgent, stringifyRuleset, validateRuleset } from '@/vue/utils/robots'
 import { Network, SaveChanges } from '@/vue/mixins'
+import BaseButton from '@/vue/components/common/base/Button'
 import BaseEditor from '@/vue/components/common/base/Editor'
-import BaseRadio from '@/vue/components/common/base/Radio'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreLoader from '@/vue/components/common/core/Loader'
+import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreNetworkSiteSelector from '@/vue/components/common/core/NetworkSiteSelector'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
-import CoreTooltip from '@/vue/components/common/core/Tooltip'
+import Draggable from 'vuedraggable'
+import RuleErrors from './partials/robots-editor/RuleErrors'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
+import SvgEllipse from '@/vue/components/common/svg/Ellipse'
 import SvgExternal from '@/vue/components/common/svg/External'
 import SvgTrash from '@/vue/components/common/svg/Trash'
-
-const defaults = {
-	userAgent     : null,
-	rule          : 'allow',
-	directoryPath : null
-}
+import SvgUpload from '@/vue/components/common/svg/Upload'
+import SvgDrag from '@/vue/components/common/svg/Drag'
 
 export default {
 	setup () {
@@ -292,35 +466,59 @@ export default {
 		}
 	},
 	components : {
+		SvgDrag,
+		BaseButton,
 		BaseEditor,
-		BaseRadio,
 		CoreAlert,
 		CoreCard,
 		CoreLoader,
+		CoreModal,
 		CoreNetworkSiteSelector,
 		CoreSettingsRow,
-		CoreTooltip,
+		Draggable,
+		RuleErrors,
 		SvgCirclePlus,
+		SvgEllipse,
 		SvgExternal,
-		SvgTrash
+		SvgTrash,
+		SvgUpload
 	},
 	mixins : [ Network, SaveChanges ],
 	data () {
 		return {
+			currentSite      : {},
+			defaultRules     : this.rootStore.aioseo.data.robots?.defaultRules || {},
+			directiveOptions : [
+				{ value: 'allow', label: 'Allow' },
+				{ value: 'disallow', label: 'Disallow' },
+				{ value: 'clean-param', label: 'Clean-param' },
+				{ value: 'crawl-delay', label: 'Crawl-delay' }
+			],
+			errors : {
+				deleteRobotsTxt          : null,
+				importAndDeleteRobotsTxt : null,
+				importRobotsTxt          : null,
+				importRobotsTxtFromUrl   : null,
+				pasteRobotsTxtText       : null,
+				tableRule                : []
+			},
+			forceRobotsDetectedAlert    : false,
+			inputImportRobotsTxtFromUrl : '',
+			inputPasteRobotsTxtText     : '',
 			license,
-			site          : {},
-			inputKey      : 0,
-			importLoading : false,
-			deleteLoading : false,
-			siteLoading   : false,
-			isNetwork     : false,
-			errors        : {},
-			strings       : {
-				selectSite       : this.$t.__('Select Site', this.$td),
-				networkAlert     : this.$t.__('These custom robots.txt rules will apply globally to your entire network. To adjust the robots.txt rules for an individual site, please choose it in the list above.', this.$td),
-				networkAlertLite : this.$t.__('These custom robots.txt rules will apply globally to your entire network. To adjust the robots.txt rules for an individual site, please visit the dashboard for that site directly and update the settings there.', this.$td),
-				robotsEditor     : this.$t.__('Robots.txt Editor', this.$td),
-				description      : this.$t.sprintf(
+			loading                     : {
+				btnDeleteRobotsTxt          : false,
+				btnImportAndDeleteRobotsTxt : false,
+				btnImportRobotsTxt          : false,
+				cardOverlay                 : false
+			},
+			showImportModal : false,
+			strings         : {
+				addRule             : this.$t.__('Add Rule', this.$td),
+				allow               : this.$t.__('Allow', this.$td),
+				customRobotsPreview : this.$t.__('Custom Robots.txt Preview', this.$td),
+				deleteRule          : this.$t.__('Delete Rule', this.$td),
+				description         : this.$t.sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - The plugin short name ("AIOSEO").
 					this.$t.__('The robots.txt editor in %1$s allows you to set up a robots.txt file for your site that will override the default robots.txt file that WordPress creates. By creating a robots.txt file with %2$s you have greater control over the instructions you give web crawlers about your site.', this.$td),
 					import.meta.env.VITE_SHORT_NAME,
@@ -331,102 +529,99 @@ export default {
 					this.$t.__('Just like WordPress, %1$s generates a dynamic file so there is no static file to be found on your server.  The content of the robots.txt file is stored in your WordPress database.', this.$td),
 					import.meta.env.VITE_NAME
 				),
-				enableCustomRobots  : this.$t.__('Enable Custom Robots.txt', this.$td),
-				duplicateOrInvalid  : this.$t.__('Duplicate or invalid entries have been detected! Please check your rules and try again.', this.$td),
-				userAgent           : this.$t.__('User Agent', this.$td),
-				rule                : this.$t.__('Rule', this.$td),
-				directoryPath       : this.$t.__('Directory Path', this.$td),
-				allow               : this.$t.__('Allow', this.$td),
+				directive           : this.$t.__('Directive', this.$td),
 				disallow            : this.$t.__('Disallow', this.$td),
-				addRule             : this.$t.__('Add Rule', this.$td),
-				deleteRule          : this.$t.__('Delete Rule', this.$td),
-				robotsPreview       : this.$t.__('Robots.txt Preview:', this.$td),
+				enableCustomRobots  : this.$t.__('Enable Custom Robots.txt', this.$td),
+				importAndDelete     : this.$t.__('Import and Delete', this.$td),
+				importFromUrl       : this.$t.__('Import from URL', this.$td),
+				importRobots        : this.$t.__('Import Robots.txt', this.$td),
+				networkAlert        : this.$t.__('These custom robots.txt rules will apply globally to your entire network. To adjust the robots.txt rules for an individual site, please choose it in the list above.', this.$td),
+				networkAlertLite    : this.$t.__('These custom robots.txt rules will apply globally to your entire network. To adjust the robots.txt rules for an individual site, please visit the dashboard for that site directly and update the settings there.', this.$td),
+				invalidRobotsTxtUrl : this.$t.__('Invalid robots.txt URL.', this.$td),
 				openRobotsTxt       : this.$t.__('Open Robots.txt', this.$td),
+				pasteRobotsText     : this.$t.__('Paste Robots.txt text', this.$td),
+				userAgentNotFound   : this.$t.__('No User-agent found in the content beginning.', this.$td),
+				// Translators: This domain is just a placeholder, please translate "any-domain" to your language so the user understands that they can add any domain here.
+				pasteUrl            : this.$t.__('https://any-domain.com/robots.txt', this.$td),
 				physicalRobotsFound : this.$t.sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - The plugin short name ("AIOSEO").
 					this.$t.__('%1$s has detected a physical robots.txt file in the root folder of your WordPress installation. We recommend removing this file as it could cause conflicts with WordPress\' dynamically generated one. %2$s can import this file and delete it, or you can simply delete it.', this.$td),
 					import.meta.env.VITE_SHORT_NAME,
 					import.meta.env.VITE_SHORT_NAME
 				),
-				importAndDelete : this.$t.__('Import and Delete', this.$td),
-				delete          : this.$t.__('Delete', this.$td)
+				robotsEditor : this.$t.__('Robots.txt Editor', this.$td),
+				selectSite   : this.$t.__('Select Site', this.$td),
+				userAgent    : this.$t.__('User Agent', this.$td)
 			}
 		}
 	},
 	watch : {
-		networkRobots : {
+		'networkStore.networkRobots' : {
 			deep : true,
-			async handler () {
-				this.validateRules()
-
-				await this.$nextTick()
-
-				if (this.isNetwork) {
+			handler () {
+				if ('network' === this.currentSite?.blog_id) {
 					this.optionsStore.networkOptions.tools.robots.rules = this.networkStore.networkRobots.rules
-					return
+				} else {
+					this.optionsStore.options.tools.robots.rules = this.networkStore.networkRobots.rules
 				}
 
-				this.optionsStore.options.tools.robots.rules = this.networkStore.networkRobots.rules
+				this.$nextTick(() => {
+					this.validateRules()
+				})
 			}
 		},
-		site (newVal, oldVal) {
-			this.isNetwork = false
-			if ('network' === newVal.blog_id) {
-				this.isNetwork = true
+		currentSite (_newVal, oldVal) {
+			if (oldVal.blog_id) {
+				this.processFetchSiteRobots()
 			}
-
-			if (!oldVal.blog_id) {
-				return
-			}
-
-			this.processFetchSiteRobots()
 		},
 		'getOptions.enable' () {
 			this.validateRules()
+			this.maybeForceRobotsDetectedAlert()
 		}
 	},
 	computed : {
-		isValidRobotsSite () {
-			return this.rootStore.aioseo.data.subdomain || this.isNetwork || this.isMainSite(this.site.domain, this.site.path) || (!this.rootStore.aioseo.data.isNetworkAdmin && this.rootStore.aioseo.data.mainSite)
-		},
-		robotsTxtUrl () {
-			return 'network' === this.site.blog_id || !this.isValidRobotsSite || !this.site.domain
-				? this.rootStore.aioseo.urls.robotsTxtUrl
-				: `${this.rootStore.aioseo.data.isSsl ? 'https://' : 'http://'}${this.site.domain}${this.site.path}robots.txt`
+		btnImportRobotsTxtDisabled () {
+			if (!this.inputImportRobotsTxtFromUrl && !this.inputPasteRobotsTxtText) {
+				return true
+			}
+
+			return this.errors.importRobotsTxtFromUrl || this.errors.pasteRobotsTxtText
 		},
 		getOptions () {
-			return this.isNetwork ? this.networkStore.getNetworkRobots : this.optionsStore.options.tools.robots
+			return 'network' === this.currentSite?.blog_id ? this.networkStore.getNetworkRobots : this.optionsStore.options.tools.robots
 		},
-		parsedRules () {
-			return this.networkStore.networkRobots.rules.map(rule => JSON.parse(rule))
+		inputCustomRobotsTxtPreview () {
+			const networkRules = this.isNetworkSite && this.optionsStore.networkOptions.tools.robots.enable ? groupRulesByUserAgent(this.networkStore.getNetworkRobots.rules) : {}
+			const customRules = groupRulesByUserAgent(this.networkStore.networkRobots.rules)
+			const sitemapUrls = '\r\n' + this.rootStore.aioseo.data.robots.sitemapUrls.filter(url => 0 < url.length).join('\r\n')
+
+			let output = this.getOptions.enable
+				? this.mergeRuleset(this.defaultRules, this.mergeRuleset(networkRules, customRules), true)
+				: this.mergeRuleset(this.defaultRules, networkRules)
+			output = stringifyRuleset(output) + sitemapUrls
+
+			return output.replace(/<[^>]*>/g, '')
 		},
-		robotsTxt () {
-			const networkRules = JSON.parse(JSON.stringify(this.rootStore.aioseo.data.isMultisite && this.optionsStore.networkOptions.tools.robots.enable && !this.isNetwork ? parse(this.networkStore.getNetworkRobots.rules) : {}))
-			const robots       = JSON.parse(JSON.stringify(this.rootStore.aioseo.data.robots.defaultRules))
-			const sitemapUrls  = '\r\n' + this.rootStore.aioseo.data.robots.sitemapUrls.filter(url => 0 < url.length).join('\r\n')
-			return this.getOptions.enable
-				? stringify(mergeRules({ ...robots }, mergeRules({ ...networkRules }, parse(this.networkStore.networkRobots.rules)), false, true)) + sitemapUrls
-				: stringify(mergeRules({ ...robots }, { ...networkRules })) + sitemapUrls
+		isNetworkSite () {
+			return this.rootStore.aioseo.data.isMultisite && 'network' !== this.currentSite?.blog_id
 		},
-		sanitizedRobotsTxt () {
-			return this.robotsTxt.replace(/(<([^>]+)>)/gi, '')
-		},
-		hasErrors () {
-			return Object.keys(this.errors).length
-		},
-		subdirectoryAlert () {
-			return this.$t.sprintf(
-				// Translators: 1 - The url to the main site.
-				this.$t.__('This site is running in a sub-directory of your main site located at %1$s. Your robots.txt file should only appear in the root directory of that site.', this.$td),
-				'<a href="' + this.rootStore.aioseo.urls.mainSiteUrl + '" target="_blank"><strong>' + this.rootStore.aioseo.urls.mainSiteUrl + '</strong></a>'
-			)
+		isValidRobotsSite () {
+			const parseRobotsTxtUrl = new URL(this.robotsTxtUrl)
+
+			// The robots.txt file must be located at the root of the website host to which it applies.
+			if (!parseRobotsTxtUrl.pathname.match(/^\/robots.txt\/?/)) {
+				return false
+			}
+
+			return this.rootStore.aioseo.data.subdomain || 'network' === this.currentSite?.blog_id || this.isMainSite(this.currentSite.domain, this.currentSite.path) || (!this.rootStore.aioseo.data.isNetworkAdmin && this.rootStore.aioseo.data.mainSite)
 		},
 		missingRewriteRules () {
 			const string1 = this.$t.__('It looks like you are missing the proper rewrite rules for the robots.txt file.', this.$td)
-			let string2   = ''
+			let string2 = ''
 			if (this.rootStore.aioseo.data.server.apache) {
 				string2 = this.$t.sprintf(
-					// Translators: 1 - Opening link tag. 2 - Closing link tag.
+					// Translators: 1 - Opening link tag, 2 - Closing link tag.
 					this.$t.__('It appears that your server is running on Apache, so the fix should be as simple as checking the %1$scorrect .htaccess implementation on wordpress.org%2$s.', this.$td),
 					'<a href="https://wordpress.org/support/article/htaccess/" target="_blank">',
 					'</a>'
@@ -441,316 +636,416 @@ export default {
 			}
 
 			return string1 + ' ' + string2
+		},
+		parsedCustomRules () {
+			const parsed = []
+			for (const rule of this.networkStore.networkRobots.rules.values()) {
+				const r = JSON.parse(rule)
+				parsed.push({
+					userAgent    : r.userAgent,
+					directive    : r.directive,
+					fieldValue   : r.fieldValue,
+					default      : false,
+					networkLevel : false
+				})
+			}
+			return parsed
+		},
+		parsedDefaultRules () {
+			const parsed = []
+			Object.keys(this.defaultRules).forEach(userAgent => {
+				for (const rule of this.defaultRules[userAgent].values()) {
+					const [ directive, value ] = rule.split(':').map(v => v.trim())
+					parsed.push({
+						userAgent,
+						directive,
+						fieldValue   : value,
+						default      : true,
+						networkLevel : false
+					})
+				}
+			})
+
+			return parsed
+		},
+		parsedNetworkRules () {
+			const networkRules = this.isNetworkSite && this.optionsStore.networkOptions.tools.robots.enable ? this.networkStore.getNetworkRobots.rules : {}
+			const parsed = []
+			if (Object.keys(networkRules).length) {
+				for (const rule of networkRules.values()) {
+					const r = JSON.parse(rule)
+					parsed.push({
+						userAgent    : r.userAgent,
+						directive    : r.directive,
+						fieldValue   : r.fieldValue,
+						default      : false,
+						networkLevel : true
+					})
+				}
+			}
+			return parsed
+		},
+		robotsPreviewErrorLabel () {
+			const redErrors = this.errors.tableRule.length ? this.errors.tableRule.filter(e => 'red' === e.type) : []
+			if (!redErrors.length) {
+				return ''
+			}
+
+			const previewIndexes = arrayColumn(redErrors, 'previewIndex')
+			const previewIndexesCount = arrayUnique(previewIndexes).length
+			return this.$t.sprintf(
+				// Translators: 1 - The amount of errors.
+				this.$t._n('%1$s Error', '%1$s Errors', previewIndexesCount, this.$td),
+				previewIndexesCount
+			)
+		},
+		robotsTxtUrl () {
+			if ('network' !== this.currentSite?.blog_id && (this.currentSite?.domain || null)) {
+				return `${this.rootStore.aioseo.data.isSsl ? 'https://' : 'http://'}${this.currentSite.domain}${this.currentSite.path}robots.txt`
+			}
+
+			return this.rootStore.aioseo.urls.robotsTxtUrl
+		},
+		subdirectoryAlert () {
+			if (this.isNetworkSite) {
+				return this.$t.sprintf(
+					// Translators: 1 - The url to the main site.
+					this.$t.__('This site is running in a sub-directory of your main site located at %1$s. Your robots.txt file should only appear in the root directory of that site.', this.$td),
+					'<a href="' + this.rootStore.aioseo.urls.mainSiteUrl + '" target="_blank"><strong>' + this.rootStore.aioseo.urls.mainSiteUrl + '</strong></a>'
+				)
+			}
+
+			return this.$t.__('This site runs in a sub-directory. The robots.txt file must be located at the root of the website host to which it applies.', this.$td)
+		},
+		showRobotsDetectedAlert () {
+			return this.getOptions.robotsDetected || this.forceRobotsDetectedAlert
+		},
+		tableRules : {
+			get () {
+				return this.networkStore.networkRobots.rules.map(rule => JSON.parse(rule))
+			},
+			set (newTableRules) {
+				const rawRules = []
+				newTableRules.forEach(parsedRule => {
+					rawRules.push(JSON.stringify({
+						userAgent  : parsedRule.userAgent,
+						directive  : parsedRule.directive,
+						fieldValue : parsedRule.fieldValue
+					}))
+				})
+				this.networkStore.networkRobots.rules = rawRules
+			}
 		}
 	},
 	methods : {
-		processFetchSiteRobots () {
-			this.siteLoading = true
-
-			this.networkStore.fetchSiteRobots(this.site.blog_id)
-				.then(() => {
-					if (!this.networkStore.networkRobots.rules.length) {
-						this.addRow()
-					}
-				})
-				.then(() => (this.siteLoading = false))
-		},
-		removeRow (index) {
-			this.networkStore.networkRobots.rules.splice(index, 1)
-
-			if (!this.networkStore.networkRobots.rules.length) {
-				this.addRow()
-			}
-
-			this.validateRules()
-		},
 		addRow () {
-			if (!this.isValidRobotsSite) {
-				return
-			}
+			this.networkStore.networkRobots.rules.push(JSON.stringify({
+				userAgent  : null,
+				directive  : 'allow',
+				fieldValue : null
+			}))
 
-			this.networkStore.networkRobots.rules.push(JSON.stringify({ ...defaults }))
 			this.$nextTick(() => {
-				this.$refs.userAgent[this.networkStore.networkRobots.rules.length - 1].$el.querySelector('.robots-user-agent input').focus()
+				document.querySelector('.robots-editor-table__body .robots-editor-table__row:last-child input').focus()
 			})
 		},
-		updateRule (type, value, ruleIndex) {
-			const rule = JSON.parse(this.networkStore.networkRobots.rules[ruleIndex])
-			rule[type] = value
-			this.networkStore.networkRobots.rules[ruleIndex] = JSON.stringify(rule)
-
-			// Set the sanitized path.
-			if ('directoryPath' === type) {
-				rule[type] = this.sanitizePath(value)
-				this.inputKey++
-				this.networkStore.networkRobots.rules[ruleIndex] = JSON.stringify(rule)
-			}
-			this.validateRules()
-
-			// Re-focus the element.
-			if ('rule' === type) {
-				this.$nextTick(() => this.$refs[value][ruleIndex].$el.querySelector('input').focus())
-			}
+		deleteRow (index) {
+			this.networkStore.networkRobots.rules.splice(index, 1)
 		},
-		sanitizePath (path) {
-			// If path does not have a trailing wild card (*) or does not refer to a file (with extension), add trailing slash.
-			if ('*' !== path.slice(path.length - 1) && !path.includes('.')) {
-				path = this.$links.trailingSlashIt(path)
-			}
+		getTableIndexedRuleset () {
+			const ruleset = []
+			const tableIndexedRules = []
+			const mergedParsedRules = [ ...this.parsedDefaultRules, ...this.parsedNetworkRules, ...this.parsedCustomRules ]
 
-			// If path does not have a leading slash, add it.
-			if ('/' !== path.charAt(0)) {
-				path = '/' + path
-			}
+			let networkTableIndex = this.parsedDefaultRules.length,
+				customTableIndex = 0
+			// Append table index.
+			mergedParsedRules.forEach(rule => {
+				rule.tableIndex = rule.networkLevel ? ++networkTableIndex : ++customTableIndex
+				tableIndexedRules.push(rule)
+			})
 
-			return path.toLowerCase()
-		},
-		hasError (error) {
-			return this.errors[error] ? 'aioseo-error' : ''
-		},
-		validateRules () {
-			this.errors = {}
+			// Group by User-agent.
+			tableIndexedRules.forEach(rule => {
+				if (!ruleset[rule.userAgent]) {
+					ruleset[rule.userAgent] = [ rule ]
 
-			if (!this.getOptions.enable) {
-				return
-			}
-
-			const firstRobots  = {}
-			const networkRules = JSON.parse(JSON.stringify(this.rootStore.aioseo.data.isMultisite && !this.isNetwork ? parse(this.networkStore.getNetworkRobots.rules) : {}))
-			const original     = JSON.parse(JSON.stringify(this.rootStore.aioseo.data.robots.defaultRules))
-			const firstRules   = mergeRules({ ...original }, parse(this.networkStore.networkRobots.rules, true), true)
-
-			Object.keys(firstRules).forEach(userAgent => {
-				const rule = firstRules[userAgent]
-				if (!firstRobots[userAgent]) {
-					firstRobots[userAgent] = {
-						allow    : [],
-						disallow : []
-					}
+					return
 				}
 
-				rule.allow.forEach(path => {
-					if (firstRobots[userAgent].allow.includes(path)) {
-						this.errors[userAgent + 'allow' + path] = true
-						return
-					}
-
-					firstRobots[userAgent].allow.push(path)
-				})
-
-				rule.disallow.forEach(path => {
-					if (firstRobots[userAgent].disallow.includes(path)) {
-						this.errors[userAgent + 'disallow' + path] = true
-						return
-					}
-
-					firstRobots[userAgent].disallow.push(path)
-				})
+				ruleset[rule.userAgent].push(rule)
 			})
 
-			const secondRobots = {}
-			const secondRules  = mergeRules({ ...networkRules }, parse(this.networkStore.networkRobots.rules, true), true)
-			Object.keys(secondRules).forEach(userAgent => {
-				const rule = secondRules[userAgent]
-				if (!secondRobots[userAgent]) {
-					secondRobots[userAgent] = {
-						allow    : [],
-						disallow : []
-					}
-				}
-
-				rule.allow.forEach(path => {
-					if (secondRobots[userAgent].allow.includes(path)) {
-						this.errors[userAgent + 'allow' + path] = true
-						return
-					} else if (secondRobots[userAgent].disallow.includes(path)) {
-						this.errors[userAgent + 'allow' + path]    = true
-						this.errors[userAgent + 'disallow' + path] = true
-						return
-					}
-
-					// Let's now check for custom patterns trying to override the network options.
-					const pattern = '^' + path.replace('.', '\\.').replace('/', '\\/').replace('*', '(.*)') + '$'
-					const matches = secondRobots[userAgent].allow.some(p => p && p.match(pattern)) || secondRobots[userAgent].disallow.some(p => p && p.match(pattern))
-					if (matches) {
-						this.errors[userAgent + 'allow' + path]    = true
-						this.errors[userAgent + 'disallow' + path] = true
-						return
-					}
-
-					secondRobots[userAgent].allow.push(path)
-				})
-
-				rule.disallow.forEach(path => {
-					if (secondRobots[userAgent].disallow.includes(path)) {
-						this.errors[userAgent + 'disallow' + path] = true
-						return
-					} else if (secondRobots[userAgent].allow.includes(path)) {
-						this.errors[userAgent + 'allow' + path]    = true
-						this.errors[userAgent + 'disallow' + path] = true
-						return
-					}
-
-					// Let's now check for custom patterns trying to override the network options.
-					const pattern = '^' + path.replace('.', '\\.').replace('/', '\\/').replace('*', '(.*)') + '$'
-					const matches = secondRobots[userAgent].allow.some(p => p && p.match(pattern)) || secondRobots[userAgent].disallow.some(p => p && p.match(pattern))
-					if (matches) {
-						this.errors[userAgent + 'allow' + path]    = true
-						this.errors[userAgent + 'disallow' + path] = true
-						return
-					}
-
-					secondRobots[userAgent].disallow.push(path)
-				})
-			})
+			return ruleset
 		},
-		importAndDeleteRobots () {
-			this.importLoading = true
-			this.notificationsStore.processButtonAction('tools/import-robots-txt')
-				.then(() => {
-					window.location.reload()
+		getTableRuleErrors (tableIndex, rule) {
+			if (this.errors.tableRule.length) {
+				return this.errors.tableRule.filter(e => {
+					return e.hash === `${tableIndex}${rule.userAgent}${rule.directive}${rule.fieldValue}`
 				})
+			}
+
+			return []
 		},
-		deleteRobots () {
-			this.deleteLoading = true
-			this.notificationsStore.processButtonAction('tools/delete-robots-txt')
-				.then(() => {
-					window.location.reload()
+		hasTableRuleError (tableIndex, rule) {
+			if (this.errors.tableRule.length) {
+				return this.errors.tableRule.find((e) => {
+					return tableIndex === (e.duplicateIndex || e.equivalentIndex || e.conflictingIndex) || e.hash === `${tableIndex}${rule.userAgent}${rule.directive}${rule.fieldValue}`
 				})
+			}
+
+			return false
 		},
 		hideRobotsDetected () {
 			this.getOptions.robotsDetected = false
+
 			this.optionsStore.saveChanges()
-		}
-	},
-	created () {
-		if (this.rootStore.aioseo.data.isNetworkAdmin) {
-			this.isNetwork = true
+		},
+		maybeForceRobotsDetectedAlert () {
+			if (!this.getOptions.enable) {
+				this.forceRobotsDetectedAlert = false
+			}
+
+			if (this.getOptions.enable && this.rootStore.aioseo.data.robots.hasPhysicalRobots) {
+				this.forceRobotsDetectedAlert = true
+			}
+		},
+		mergeRuleset (firstRules, secondRules, allowOverride = false) {
+			const merged = { ...firstRules }
+			Object.keys(secondRules).forEach(userAgent => {
+				if (!(userAgent in merged)) {
+					merged[userAgent] = secondRules[userAgent]
+
+					return
+				}
+
+				for (const rule of secondRules[userAgent].values()) {
+					const [ directive, value ] = rule.split(':').map(v => v.trim())
+					if (directive.match(/disallow|allow/i)) {
+						const otherDirective = 'disallow' === directive ? 'allow' : 'disallow'
+						const conflictingIndex = merged[userAgent].indexOf(`${otherDirective}: ${value}`)
+						if (-1 !== conflictingIndex) {
+							if (allowOverride) {
+								merged[userAgent] = merged[userAgent].filter((_v, i) => i !== conflictingIndex)
+							} else {
+								secondRules[userAgent] = secondRules[userAgent].filter((v) => v !== `${directive}: ${value}`)
+							}
+						}
+					}
+				}
+
+				merged[userAgent] = [
+					...merged[userAgent],
+					...secondRules[userAgent]
+				]
+			})
+
+			return merged
+		},
+		onChangeInputImportRobotsTxtFromUrl (value) {
+			this.inputImportRobotsTxtFromUrl = value
+			this.errors.importRobotsTxtFromUrl = null
+			if (value && !value.match(/^https?:\/\/.{2,}\..{2,}\/robots\.txt$/)) {
+				this.errors.importRobotsTxtFromUrl = this.strings.invalidRobotsTxtUrl
+			}
+		},
+		onChangeInputPasteRobotsTxtText (value) {
+			this.inputPasteRobotsTxtText = value.replace(/#[^\n\r]*/g, '')
+			this.errors.pasteRobotsTxtText = null
+			if (this.inputPasteRobotsTxtText && !this.inputPasteRobotsTxtText.match(/^\s*user-agent:\s*./gi)) {
+				this.errors.pasteRobotsTxtText = this.strings.userAgentNotFound
+			}
+		},
+		onClickBtnDeleteRobotsTxt () {
+			this.loading.btnDeleteRobotsTxt = true
+
+			this.notificationsStore.processButtonAction('tools/delete-robots-txt')
+				.then(() => (window.location.reload()))
+				.catch(error => {
+					this.loading.btnDeleteRobotsTxt = false
+					this.errors.deleteRobotsTxt = error?.response?.body?.message || null
+				})
+		},
+		onClickBtnImportAndDeleteRobotsTxt () {
+			this.loading.btnImportAndDeleteRobotsTxt = true
+
+			this.processImportRobotsTxt('static')
+				.then(() => {
+					this.notificationsStore.processButtonAction('tools/delete-robots-txt')
+						.then(() => (window.location.reload()))
+						.catch(error => {
+							this.loading.btnImportAndDeleteRobotsTxt = false
+							this.errors.importAndDeleteRobotsTxt = error?.response?.body?.message || null
+						})
+				})
+				.catch(error => {
+					this.loading.btnImportAndDeleteRobotsTxt = false
+					this.errors.importAndDeleteRobotsTxt = error?.response?.body?.message || null
+				})
+		},
+		onClickBtnImportRobotsTxt (source) {
+			this.loading.btnImportRobotsTxt = true
+
+			this.processImportRobotsTxt(source)
+				.then(() => (window.location.reload()))
+				.catch(error => {
+					this.loading.btnImportRobotsTxt = false
+					this.errors.importRobotsTxt = error?.response?.body?.message || null
+				})
+		},
+		processFetchSiteRobots () {
+			this.loading.cardOverlay = true
+
+			this.networkStore.fetchSiteRobots(this.currentSite.blog_id)
+				.then(() => (this.loading.cardOverlay = false))
+		},
+		processImportRobotsTxt (source) {
+			return this.networkStore.importRobotsTxt({
+				source,
+				url          : this.inputImportRobotsTxtFromUrl,
+				text         : this.inputPasteRobotsTxtText,
+				networkLevel : this.rootStore.aioseo.data.isNetworkAdmin,
+				blogId       : this.currentSite?.blog_id || null
+			})
+		},
+		sanitizeDirectiveValue (rule, type, value) {
+			// Percent-encoded characters are stripped from our option values, so we decode.
+			value = decodeURIComponent(value.trim())
+			if (!value) {
+				return value
+			}
+
+			if ('userAgent' === type) {
+				value = value.replace(/([^a-z0-9\-_*,.\s])/gi, '')
+				value = value.replace(/\s+/g, ' ')
+			}
+
+			if ('fieldValue' === type && rule.directive.match(/allow|disallow/)) {
+				value = 0 === value.indexOf('*') && 1 < value.length ? value : '/' + value.replace(/(^\/+)/, '')
+			}
+
+			return value
+		},
+		updateRule (rule, type, value, index) {
+			rule[type] = this.sanitizeDirectiveValue(rule, type, value)
+
+			this.networkStore.networkRobots.rules.splice(index, 1, JSON.stringify(rule))
+		},
+		validateRules () {
+			if (!this.getOptions.enable) {
+				this.errors.tableRule = []
+
+				return false
+			}
+
+			try {
+				validateRuleset(this.getTableIndexedRuleset())
+
+				this.errors.tableRule = []
+			} catch (errors) {
+				this.errors.tableRule = errors
+
+				this.$nextTick(() => {
+					const redErrors = this.errors.tableRule.length ? this.errors.tableRule.filter(e => 'red' === e.type) : []
+					const robotsPreviewEditor = this.$refs['input-custom-robots-txt-preview']?.$el.querySelector('.ql-editor') || null
+					if (!robotsPreviewEditor) {
+						return false
+					}
+
+					const robotsPreviewLines = robotsPreviewEditor.querySelectorAll('p')
+					const previewIndexes = arrayColumn(redErrors, 'previewIndex')
+					const sourcePreviewIndexes = arrayColumn(redErrors, 'sourcePreviewIndex')
+					const searchIndexes = [ ...new Set([ ...previewIndexes, ...sourcePreviewIndexes ]) ]
+					for (const index of searchIndexes) {
+						if (robotsPreviewLines[index - 1]) {
+							robotsPreviewLines[index - 1].classList.add('has-error')
+						}
+					}
+				})
+			}
 		}
 	},
 	mounted () {
-		this.validateRules()
-		if (!this.networkStore.networkRobots.rules.length) {
-			this.addRow()
-		}
+		this.networkStore.networkRobots.rules = 'network' === this.currentSite?.blog_id
+			? this.networkStore.getNetworkRobots.rules
+			: this.optionsStore.options.tools.robots.rules
 
-		const rules = this.isNetwork ? this.networkStore.getNetworkRobots.rules : this.optionsStore.options.tools.robots.rules
-		if (rules.length) {
-			this.networkStore.networkRobots.rules = rules
-		}
+		this.validateRules()
+		this.maybeForceRobotsDetectedAlert()
 	}
 }
 </script>
 
 <style lang="scss">
 .aioseo-tools-robots-editor {
-	.select-site {
-		font-size: 16px;
-		font-weight: bold;
-		margin-bottom: 5px;
+	.buttons {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
 	}
 
-	.aioseo-alert {
-		margin-bottom: 20px;
-	}
+	.aioseo-alert,
+	.description {
+		color: $black;
+		margin: 0;
 
-	.robots-background {
-		position: relative;
-
-		.loader-overlay {
-			position: absolute;
-			height: 100%;
-			width: 100%;
-			background: rgba(0, 0, 0, 0.3);
-			z-index: 1;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		.aioseo-settings-row:last-child {
-
-			> .settings-name {
-				margin-bottom: 16px;
-			}
+		+ .aioseo-alert,
+		+ .description {
+			margin-top: 12px;
 		}
 	}
 
-	.robots-table {
+	.robots-editor-table {
+		border-radius: 4px;
 		border: 1px solid $input-border;
-		border-radius: 3px;
-		margin-bottom: 20px;
+		color: $black;
 
-		.robots-user-agent {
-			max-width: 180px;
-		}
-
-		.robots-rule {
-			max-width: 200px;
-			display: inline-flex;
-			align-items: center;
-
-			.aioseo-radio:not(:first-child) {
-				margin-left: 20px;
-			}
-		}
-
-		.robots-actions {
-			max-width: 20px;
-
-			.aioseo-tooltip {
-				display: inline-block;
-				margin: 0;
-			}
-		}
-
-		.robots-header {
-			height: 50px;
-			display: flex;
-			font-size: 14px;
-			padding: 0 16px;
-			align-items: center;
+		&__header {
 			border-bottom: 1px solid $input-border;
+		}
 
-			> div {
-				flex: 1 0 auto;
+		&__footer {
+			border-top: 1px solid $input-border;
+			padding: 9px 16px;
+		}
+
+		&__row {
+			align-items: center;
+			display: grid;
+			gap: 16px;
+			grid-template-columns: 1fr 6fr 6fr 12fr 1fr auto;
+			padding: 16px;
+
+			&--stripe:nth-child(odd) {
+				background-color: $background;
 			}
 		}
 
-		.robots-rows {
-			font-size: 14px;
+		&__column {
+			&--rule-error {
+				grid-column: 2/span 5;
+				padding-right: 16px;
+			}
 
-			.robots-row {
-				background-color: #fff;
-				height: 72px;
-				display: flex;
+			&--truncate {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			&--actions {
 				align-items: center;
-				padding: 0 16px;
+				display: flex;
+				justify-content: space-between;
+				line-height: 1;
 
-				&:last-of-type {
-					border-radius: 0 0 3px 3px;
-				}
+				.btn-delete-rule {
+					cursor: pointer;
+					height: 20px;
+					width: 20px;
 
-				&.even {
-					background-color: $box-background;
-				}
-
-				> div {
-					flex: 1 0 auto;
-					padding-right: 16px;
-
-					&:last-child {
-						padding-right: 0;
-					}
-				}
-
-				.robots-actions {
-					svg.aioseo-trash {
-						width: 20px;
-						height: 20px;
+					svg {
 						color: $placeholder-color;
-						cursor: pointer;
-						transition: color 0.1s ease;
 
 						&:hover {
 							color: $red;
@@ -761,6 +1056,104 @@ export default {
 		}
 	}
 
+	.aioseo-settings-row {
+		&--preview-robots {
+			.settings-name {
+				margin-bottom: 16px;
+
+				.name {
+					.aioseo-error {
+						align-items: center;
+						color: $red;
+						display: inline-flex;
+						line-height: normal;
+						gap: 8px;
+						margin-left: 16px;
+					}
+				}
+			}
+
+			.ql-editor {
+				.has-error {
+					background-color: #FECACA;
+					display: table;
+				}
+			}
+		}
+
+		&--or {
+			margin-bottom: 35px;
+			padding-bottom: 35px;
+			position: relative;
+
+			&:before {
+				align-items: center;
+				background-color: $input-border;
+				border-radius: 50%;
+				content: attr(data-or);
+				display: inline-flex;
+				font-size: 12px;
+				font-weight: 700;
+				height: 30px;
+				justify-content: center;
+				left: 50%;
+				line-height: 30px;
+				margin-bottom: 35px;
+				position: absolute;
+				text-transform: uppercase;
+				top: calc(100% - 15px);
+				transform: translateX(-50%);
+				width: 30px;
+			}
+		}
+
+		.settings-content {
+			&--gap {
+				display: grid;
+				gap: 10px;
+			}
+		}
+	}
+
+	.aioseo-modal {
+		.modal-header {
+			padding-left: 20px;
+		}
+
+		.modal-container {
+			height: auto;
+			overflow: revert;
+
+			.modal-body {
+				max-height: 70vh;
+				padding: 20px;
+			}
+
+			&__footer {
+				display: flex;
+				justify-content: end;
+				padding: 12px 20px;
+			}
+		}
+	}
+
+	.aioseo-drag-wrapper {
+		cursor: move;
+		width: 20px;
+		height: 20px;
+
+		svg.aioseo-drag {
+			color: $placeholder-color;
+		}
+	}
+
+	.aioseo-outline {
+		display: inline-block;
+		outline: revert;
+		outline-color: $blue;
+	}
+
+	svg.aioseo-upload,
 	svg.aioseo-external,
 	svg.aioseo-circle-plus {
 		width: 14px;
@@ -768,14 +1161,16 @@ export default {
 		margin-right: 10px;
 	}
 
-	.physical-robots {
-		.buttons {
-			margin-top: 20px;
-
-			.aioseo-button {
-				margin-right: 10px;
-			}
-		}
+	.loader-overlay {
+		background: rgba(0, 0, 0, 0.3);
+		display: flex;
+		height: 100%;
+		justify-content: center;
+		left: 0;
+		padding: 50px;
+		position: absolute;
+		top: 0;
+		width: 100%;
 	}
 }
 </style>

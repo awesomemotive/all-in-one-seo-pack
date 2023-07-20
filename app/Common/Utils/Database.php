@@ -602,7 +602,7 @@ class Database {
 	public function start( $table = '', $includesPrefix = false, $statement = 'SELECT' ) {
 		// Always reset everything when starting a new query.
 		$this->reset();
-		$this->table = $includesPrefix ? $table : $this->prefix . $table;
+		$this->table     = $includesPrefix ? $table : $this->prefix . $table;
 		$this->statement = $statement;
 
 		return $this;
@@ -848,7 +848,7 @@ class Database {
 			}
 
 			$values = implode( ',', $values );
-			$this->whereRaw( "$field IN($values)" );
+			$this->whereRaw( "$field IN ($values)" );
 		}
 
 		return $this;

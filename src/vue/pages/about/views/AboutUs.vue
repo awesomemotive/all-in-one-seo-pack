@@ -550,7 +550,7 @@ export default {
 		}
 	},
 	mounted () {
-		this.localPlugins = { ...this.rootStore.aioseo.plugins }
+		this.localPlugins = { ...this.pluginsStore.plugins }
 
 		// Set installation and activation status for each plugin.
 		Object.keys(this.localPlugins).forEach(pluginName => {

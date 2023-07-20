@@ -16,63 +16,92 @@ use AIOSEO\Plugin\Common\Tools as CommonTools;
  */
 class Tools {
 	/**
-	 * Import and delete the static robots.txt.
+	 * Import contents from a robots.txt url, static file or pasted text.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.4.2
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
-	 * @return \WP_REST_Response The response.
+	 * @param  \WP_REST_Request  $request The REST Request.
+	 * @return \WP_REST_Response          The response.
 	 */
 	public static function importRobotsTxt( $request ) {
-		$body    = $request->get_json_params();
-		$network = ! empty( $body['network'] ) ? (bool) $body['network'] : false;
+		$body         = $request->get_json_params();
+		$blogId       = ! empty( $body['blogId'] ) ? absint( $body['blogId'] ) : 0;
+		$networkLevel = ! empty( $body['networkLevel'] );
+		$source       = ! empty( $body['source'] ) ? $body['source'] : '';
+		$text         = ! empty( $body['text'] ) ? sanitize_textarea_field( $body['text'] ) : '';
+		$url          = ! empty( $body['url'] ) ? sanitize_url( $body['url'], [ 'http', 'https' ] ) : '';
 
-		if ( ! aioseo()->robotsTxt->importPhysicalRobotsTxt( $network ) ) {
+		try {
+			if ( 0 < $blogId && ! $networkLevel ) {
+				aioseo()->helpers->switchToBlog( $blogId );
+			}
+
+			switch ( $source ) {
+				case 'url':
+					aioseo()->robotsTxt->importRobotsTxtFromUrl( $url, $networkLevel );
+
+					break;
+				case 'text':
+					aioseo()->robotsTxt->importRobotsTxtFromText( $text, $networkLevel );
+
+					break;
+				case 'static':
+					aioseo()->robotsTxt->importPhysicalRobotsTxt( $networkLevel );
+
+					$options = aioseo()->options;
+					if ( $networkLevel ) {
+						$options = aioseo()->networkOptions;
+					}
+
+					$options->tools->robots->enable = true;
+
+					break;
+				default:
+					break;
+			}
+
+			return new \WP_REST_Response( [
+				'success' => true
+			], 200 );
+		} catch ( \Exception $e ) {
 			return new \WP_REST_Response( [
 				'success' => false,
-				'message' => 'There was an error importing the physical robots.txt file.'
+				'message' => $e->getMessage()
 			], 400 );
 		}
-
-		aioseo()->options->tools->robots->enable = true;
-
-		if ( ! aioseo()->robotsTxt->deletePhysicalRobotsTxt() ) {
-			return new \WP_REST_Response( [
-				'success' => false,
-				'message' => __( 'There was an error deleting the physical robots.txt file.', 'all-in-one-seo-pack' )
-			], 400 );
-		}
-
-		Models\Notification::deleteNotificationByName( 'robots-physical-file' );
-
-		return new \WP_REST_Response( [
-			'success'       => true,
-			'notifications' => Models\Notification::getNotifications()
-		], 200 );
 	}
 
 	/**
-	 * Delete the static robots.txt.
+	 * Delete the static robots.txt file.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.4.2
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function deleteRobotsTxt() {
-		if ( ! aioseo()->robotsTxt->deletePhysicalRobotsTxt() ) {
+		try {
+			$fs = aioseo()->core->fs;
+			if (
+				! $fs->isWpfsValid() ||
+				! $fs->fs->delete( trailingslashit( $fs->fs->abspath() ) . 'robots.txt' )
+			) {
+				throw new \Exception( esc_html__( 'There was an error deleting the physical robots.txt file.', 'all-in-one-seo-pack' ) );
+			}
+
+			Models\Notification::deleteNotificationByName( 'robots-physical-file' );
+
+			return new \WP_REST_Response( [
+				'success'       => true,
+				'notifications' => Models\Notification::getNotifications()
+			], 200 );
+		} catch ( \Exception $e ) {
 			return new \WP_REST_Response( [
 				'success' => false,
-				'message' => __( 'There was an error deleting the physical robots.txt file.', 'all-in-one-seo-pack' )
+				'message' => $e->getMessage()
 			], 400 );
 		}
-
-		Models\Notification::deleteNotificationByName( 'robots-physical-file' );
-
-		return new \WP_REST_Response( [
-			'success'       => true,
-			'notifications' => Models\Notification::getNotifications()
-		], 200 );
 	}
 
 	/**

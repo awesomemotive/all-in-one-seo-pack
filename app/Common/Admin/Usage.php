@@ -151,7 +151,7 @@ abstract class Usage {
 			'aioseo_license_key'            => null,
 			'aioseo_license_type'           => null,
 			'aioseo_is_pro'                 => false,
-			"aioseo_${type}_installed_date" => aioseo()->internalOptions->internal->installed,
+			"aioseo_{$type}_installed_date" => aioseo()->internalOptions->internal->installed,
 			'aioseo_settings'               => $this->getSettings()
 		];
 	}

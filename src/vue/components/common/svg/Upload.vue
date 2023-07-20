@@ -1,5 +1,5 @@
 <template>
-	<svg viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<svg viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="aioseo-upload">
 		<path
 			fill-rule="evenodd"
 			clip-rule="evenodd"

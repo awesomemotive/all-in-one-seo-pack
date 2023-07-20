@@ -33,6 +33,78 @@ class Addons {
 	protected $addonsUrl = 'https://licensing-cdn.aioseo.com/keys/lite/all-in-one-seo-pack-pro.json';
 
 	/**
+	 * The main Image SEO addon class.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var \AIOSEO\Plugin\Addon\ImageSEO\ImageSEO
+	 */
+	private $imageSeo = null;
+
+	/**
+	 * The main Index Now addon class.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var \AIOSEO\Plugin\Addon\IndexNow\IndexNow
+	 */
+	private $indexNow = null;
+
+	/**
+	 * The main Local Business addon class.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var \AIOSEO\Plugin\Addon\LocalBusiness\LocalBusiness
+	 */
+	private $localBusiness = null;
+
+	/**
+	 * The main News Sitemap addon class.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var \AIOSEO\Plugin\Addon\NewsSitemap\NewsSitemap
+	 */
+	private $newsSitemap = null;
+
+	/**
+	 * The main Redirects addon class.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var \AIOSEO\Plugin\Addon\Redirects\Redirects
+	 */
+	private $redirects = null;
+
+	/**
+	 * The main REST API addon class.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var \AIOSEO\Plugin\Addon\RestApi\RestApi
+	 */
+	private $restApi = null;
+
+	/**
+	 * The main Video Sitemap addon class.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var \AIOSEO\Plugin\Addon\VideoSitemap\VideoSitemap
+	 */
+	private $videoSitemap = null;
+
+	/**
+	 * The main LinkAssistant addon class.
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var \AIOSEO\Plugin\Addon\LinkAssistant\LinkAssistant
+	 */
+	private $linkAssistant = null;
+
+	/**
 	 * Returns our addons.
 	 *
 	 * @since 4.0.0

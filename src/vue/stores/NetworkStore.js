@@ -52,6 +52,19 @@ export const useNetworkStore = defineStore('NetworkStore', {
 					this.networkRobots.rules  = response.body.rules
 					this.networkRobots.siteId = blogId
 				})
+		},
+		importRobotsTxt ({ url, text, source, networkLevel, blogId }) {
+			return http.post(links.restUrl('tools/import-robots-txt'))
+				.send({
+					url,
+					text,
+					source,
+					networkLevel,
+					blogId
+				})
+				.then(response => {
+					return response
+				})
 		}
 	}
 })

@@ -91,7 +91,7 @@ class CompactArchive {
 	 */
 	public function generateMonth( $year, $months, $month ) {
 		$hasPosts         = isset( $months[ $month ] );
-		$dummyDate        = strtotime( "2009/${month}/25" );
+		$dummyDate        = strtotime( "2009/{$month}/25" );
 		$monthAbbrevation = date_i18n( 'M', $dummyDate );
 
 		$html = '<span class="aioseo-empty-month">' . esc_html( $monthAbbrevation ) . '</span> ';

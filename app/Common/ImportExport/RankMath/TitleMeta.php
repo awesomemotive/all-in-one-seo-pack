@@ -115,14 +115,14 @@ class TitleMeta extends ImportExport\SearchAppearance {
 				aioseo()->options->searchAppearance->archives->$archive->advanced->robotsMeta->$robotsMetaName = false;
 			}
 
-			if ( isset( $this->options[ "disable_${archive}_archives" ] ) ) {
-				aioseo()->options->searchAppearance->archives->$archive->show                          = 'off' === $this->options[ "disable_${archive}_archives" ];
-				aioseo()->options->searchAppearance->archives->$archive->advanced->robotsMeta->default = 'on' === $this->options[ "disable_${archive}_archives" ];
-				aioseo()->options->searchAppearance->archives->$archive->advanced->robotsMeta->noindex = 'on' === $this->options[ "disable_${archive}_archives" ];
+			if ( isset( $this->options[ "disable_{$archive}_archives" ] ) ) {
+				aioseo()->options->searchAppearance->archives->$archive->show                          = 'off' === $this->options[ "disable_{$archive}_archives" ];
+				aioseo()->options->searchAppearance->archives->$archive->advanced->robotsMeta->default = 'on' === $this->options[ "disable_{$archive}_archives" ];
+				aioseo()->options->searchAppearance->archives->$archive->advanced->robotsMeta->noindex = 'on' === $this->options[ "disable_{$archive}_archives" ];
 			}
 
-			if ( isset( $this->options[ "${archive}_archive_title" ] ) ) {
-				$value = aioseo()->helpers->sanitizeOption( aioseo()->importExport->rankMath->helpers->macrosToSmartTags( $this->options[ "${archive}_archive_title" ], 'archive' ) );
+			if ( isset( $this->options[ "{$archive}_archive_title" ] ) ) {
+				$value = aioseo()->helpers->sanitizeOption( aioseo()->importExport->rankMath->helpers->macrosToSmartTags( $this->options[ "{$archive}_archive_title" ], 'archive' ) );
 				if ( 'date' !== $archive ) {
 					// Archive Title tag needs to be stripped since we don't support it for author archives.
 					$value = aioseo()->helpers->pregReplace( '/#archive_title/', '', $value );
@@ -130,17 +130,17 @@ class TitleMeta extends ImportExport\SearchAppearance {
 				aioseo()->options->searchAppearance->archives->$archive->title = $value;
 			}
 
-			if ( isset( $this->options[ "${archive}_archive_description" ] ) ) {
+			if ( isset( $this->options[ "{$archive}_archive_description" ] ) ) {
 				aioseo()->options->searchAppearance->archives->$archive->metaDescription =
-					aioseo()->helpers->sanitizeOption( aioseo()->importExport->rankMath->helpers->macrosToSmartTags( $this->options[ "${archive}_archive_description" ], 'archive' ) );
+					aioseo()->helpers->sanitizeOption( aioseo()->importExport->rankMath->helpers->macrosToSmartTags( $this->options[ "{$archive}_archive_description" ], 'archive' ) );
 			}
 
-			if ( ! empty( $this->options[ "${archive}_custom_robots" ] ) ) {
-				aioseo()->options->searchAppearance->archives->$archive->advanced->robotsMeta->default = 'off' === $this->options[ "${archive}_custom_robots" ];
+			if ( ! empty( $this->options[ "{$archive}_custom_robots" ] ) ) {
+				aioseo()->options->searchAppearance->archives->$archive->advanced->robotsMeta->default = 'off' === $this->options[ "{$archive}_custom_robots" ];
 			}
 
-			if ( ! empty( $this->options[ "${archive}_robots" ] ) ) {
-				foreach ( $this->options[ "${archive}_robots" ] as $robotsName ) {
+			if ( ! empty( $this->options[ "{$archive}_robots" ] ) ) {
+				foreach ( $this->options[ "{$archive}_robots" ] as $robotsName ) {
 					if ( 'index' === $robotsName ) {
 						continue;
 					}
@@ -153,16 +153,16 @@ class TitleMeta extends ImportExport\SearchAppearance {
 				}
 			}
 
-			if ( ! empty( $this->options[ "${archive}_advanced_robots" ] ) ) {
-				if ( ! empty( $this->options[ "${archive}_advanced_robots" ]['max-snippet'] ) ) {
-					aioseo()->options->searchAppearance->archives->$archive->advanced->robotsMeta->maxSnippet = intval( $this->options[ "${archive}_advanced_robots" ]['max-snippet'] );
+			if ( ! empty( $this->options[ "{$archive}_advanced_robots" ] ) ) {
+				if ( ! empty( $this->options[ "{$archive}_advanced_robots" ]['max-snippet'] ) ) {
+					aioseo()->options->searchAppearance->archives->$archive->advanced->robotsMeta->maxSnippet = intval( $this->options[ "{$archive}_advanced_robots" ]['max-snippet'] );
 				}
-				if ( ! empty( $this->options[ "${archive}_advanced_robots" ]['max-video-preview'] ) ) {
-					aioseo()->options->searchAppearance->archives->$archive->advanced->robotsMeta->maxVideoPreview = intval( $this->options[ "${archive}_advanced_robots" ]['max-video-preview'] );
+				if ( ! empty( $this->options[ "{$archive}_advanced_robots" ]['max-video-preview'] ) ) {
+					aioseo()->options->searchAppearance->archives->$archive->advanced->robotsMeta->maxVideoPreview = intval( $this->options[ "{$archive}_advanced_robots" ]['max-video-preview'] );
 				}
-				if ( ! empty( $this->options[ "${archive}_advanced_robots" ]['max-image-preview'] ) ) {
+				if ( ! empty( $this->options[ "{$archive}_advanced_robots" ]['max-image-preview'] ) ) {
 					aioseo()->options->searchAppearance->archives->$archive->advanced->robotsMeta->maxImagePreview =
-						aioseo()->helpers->sanitizeOption( lcfirst( $this->options[ "${archive}_advanced_robots" ]['max-image-preview'] ) );
+						aioseo()->helpers->sanitizeOption( lcfirst( $this->options[ "{$archive}_advanced_robots" ]['max-image-preview'] ) );
 				}
 			}
 		}
@@ -206,7 +206,7 @@ class TitleMeta extends ImportExport\SearchAppearance {
 			}
 
 			foreach ( $this->options as $name => $value ) {
-				if ( ! preg_match( "#^pt_${postType}_(.*)$#", $name, $match ) || ! in_array( $match[1], $supportedSettings, true ) ) {
+				if ( ! preg_match( "#^pt_{$postType}_(.*)$#", $name, $match ) || ! in_array( $match[1], $supportedSettings, true ) ) {
 					continue;
 				}
 
@@ -303,7 +303,7 @@ class TitleMeta extends ImportExport\SearchAppearance {
 
 		foreach ( aioseo()->helpers->getPublicPostTypes( true, true ) as $postType ) {
 			foreach ( $this->options as $name => $value ) {
-				if ( ! preg_match( "#^pt_${postType}_archive_(.*)$#", $name, $match ) || ! in_array( $match[1], $supportedSettings, true ) ) {
+				if ( ! preg_match( "#^pt_{$postType}_archive_(.*)$#", $name, $match ) || ! in_array( $match[1], $supportedSettings, true ) ) {
 					continue;
 				}
 

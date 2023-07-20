@@ -27,22 +27,14 @@ export const removeParam = (param, url) => {
 	window.history.replaceState(null, null, newUrl)
 }
 
-export const addParam = (url, param, val) => {
-	if (!url || !param) {
-		return url
-	}
-	const re = new RegExp('([?|&])' + param + '=.*?(&|#|$)', 'i')
-	if (url.match(re)) {
-		url = url.replace(re, '$1' + param + '=' + val + '$2')
-	} else {
-		const sep = -1 !== url.indexOf('?') ? '&' : '?'
-		let hash  = ''
-		if (-1 !== url.indexOf('#')) {
-			hash = url.replace(/.*#/, '#')
-			url = url.replace(/#.*/, '')
-		}
-		url = url + sep + param + '=' + val + hash
-	}
+export const addParam = (param, val) => {
+	const url = new URL(window.location.href)
+	const searchParams = url.searchParams
 
-	window.location.href = url
+	searchParams.delete(param)
+	searchParams.append(param, val)
+
+	url.search = searchParams.toString()
+
+	window.history.replaceState(null, null, url.toString())
 }

@@ -346,6 +346,10 @@ export default {
 				}
 			}
 		}
+
+		.aioseo-error & {
+			border-color: $red;
+		}
 	}
 
 	&.multiselect--active {

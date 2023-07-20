@@ -13,7 +13,9 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
+import { addParam, getParams, removeParam } from '@/vue/utils/params'
 import { Network } from '@/vue/mixins'
+
 export default {
 	setup () {
 		return {
@@ -23,16 +25,15 @@ export default {
 	emits  : [ 'selected-site' ],
 	mixins : [ Network ],
 	props  : {
-		showNetwork : Boolean
+		followSelectedSite : Boolean,
+		showNetwork        : Boolean
 	},
 	data () {
 		return {
 			site    : null,
 			network : {
-
 				value : 'network',
 				label : this.$t.__('Network Admin (no site)', this.$td)
-
 			}
 		}
 	},
@@ -45,6 +46,10 @@ export default {
 				}
 			}
 			this.$emit('selected-site', site)
+
+			if (this.followSelectedSite) {
+				this.querySelectedSite()
+			}
 		}
 	},
 	computed : {
@@ -63,7 +68,24 @@ export default {
 				: sites
 		}
 	},
+	methods : {
+		querySelectedSite () {
+			removeParam('aioseo-selected-site-value')
+			if ('network' !== this.site.value) {
+				addParam('aioseo-selected-site-value', this.site.value)
+			}
+		}
+	},
 	created () {
+		const params = getParams()
+		if (params['aioseo-selected-site-value']) {
+			this.site = this.sites.find(s => s.value === decodeURIComponent(params['aioseo-selected-site-value']))
+
+			removeParam('aioseo-selected-site-value')
+
+			return false
+		}
+
 		if (this.showNetwork) {
 			this.site = this.network
 		}

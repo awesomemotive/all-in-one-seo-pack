@@ -27,18 +27,23 @@ export const FREQUENCY_OPTIONS = [
 ]
 
 export const GLOBAL_STRINGS = {
-	no        : __('No', td),
-	yes       : __('Yes', td),
-	off       : __('Off', td),
-	on        : __('On', td),
-	show      : __('Show', td),
-	hide      : __('Hide', td),
-	learnMore : __('Learn More', td),
+	cancel    : __('Cancel', td),
+	delete    : __('Delete', td),
 	disabled  : __('Disabled', td),
 	enabled   : __('Enabled', td),
-	preview   : __('Preview', td),
+	hide      : __('Hide', td),
+	import    : __('Import', td),
 	include   : __('Include', td),
-	remove    : __('Remove', td)
+	learnMore : __('Learn More', td),
+	no        : __('No', td),
+	off       : __('Off', td),
+	on        : __('On', td),
+	or        : __('Or', td),
+	preview   : __('Preview', td),
+	remove    : __('Remove', td),
+	show      : __('Show', td),
+	value     : __('Value', td),
+	yes       : __('Yes', td)
 }
 
 export const CURRENCY_LIST = [

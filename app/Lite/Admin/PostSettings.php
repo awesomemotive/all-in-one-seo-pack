@@ -15,6 +15,16 @@ use AIOSEO\Plugin\Common\Admin as CommonAdmin;
  */
 class PostSettings extends CommonAdmin\PostSettings {
 	/**
+	 * Holds a list of page builder integration class instances.
+	 * This prop exists for backwards compatibility with pre-4.2.0 versions (see backwardsCompatibilityLoad() in AIOSEO.php).
+	 *
+	 * @since 4.4.2
+	 *
+	 * @var object[]
+	 */
+	public $integrations = null;
+
+	/**
 	 * Initialize the admin.
 	 *
 	 * @since 4.0.0

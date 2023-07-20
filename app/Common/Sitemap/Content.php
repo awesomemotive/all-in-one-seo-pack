@@ -473,7 +473,7 @@ class Content {
 			return [];
 		}
 
-		$authors = aioseo()->db->start( 'users as u' )
+		$authors = aioseo()->core->db->start( 'users as u' )
 			->select( 'u.ID as ID, u.user_nicename as nicename, MAX(p.post_modified_gmt) as lastModified' )
 			->join( 'posts as p', 'u.ID = p.post_author' )
 			->where( 'p.post_status', 'publish' )
@@ -529,8 +529,8 @@ class Content {
 			return [];
 		}
 
-		$postsTable = aioseo()->db->db->posts;
-		$dates      = aioseo()->db->execute(
+		$postsTable = aioseo()->core->db->db->posts;
+		$dates      = aioseo()->core->db->execute(
 			"SELECT
 				YEAR(post_date) AS `year`,
 				MONTH(post_date) AS `month`,

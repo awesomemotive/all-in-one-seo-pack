@@ -348,7 +348,8 @@ export default {
 			}
 		}
 
-		&.aioseo-error {
+		&.aioseo-error,
+		.aioseo-error & {
 			input {
 				border-color: $red;
 

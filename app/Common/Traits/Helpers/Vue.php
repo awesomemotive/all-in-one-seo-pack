@@ -339,19 +339,19 @@ trait Vue {
 		}
 
 		if ( 'tools' === $page ) {
-			$data['backups']        = array_reverse( aioseo()->backup->all() );
-			$data['importers']      = aioseo()->importExport->plugins();
-			$data['data']['server'] = [
+			$data['backups']           = array_reverse( aioseo()->backup->all() );
+			$data['importers']         = aioseo()->importExport->plugins();
+			$data['data']['server']    = [
 				'apache' => $this->isApache(),
 				'nginx'  => $this->isNginx()
 			];
-			$data['data']['robots'] = [
-				'defaultRules'      => $page ? aioseo()->robotsTxt->getDefaultRules() : [],
+			$data['data']['robots']    = [
+				'defaultRules'      => $page ? aioseo()->robotsTxt->extractRules( aioseo()->robotsTxt->getDefaultRobotsTxtContent() ) : [],
 				'hasPhysicalRobots' => aioseo()->robotsTxt->hasPhysicalRobotsTxt(),
 				'rewriteExists'     => aioseo()->robotsTxt->rewriteRulesExist(),
 				'sitemapUrls'       => array_merge( aioseo()->sitemap->helpers->getSitemapUrls(), $this->extractSitemapUrlsFromRobotsTxt() )
 			];
-			$data['data']['logSizes'] = [
+			$data['data']['logSizes']  = [
 				'badBotBlockerLog' => $this->convertFileSize( aioseo()->badBotBlocker->getLogSize() )
 			];
 			$data['data']['status']    = Tools\SystemStatus::getSystemStatusInfo();
@@ -463,6 +463,6 @@ trait Vue {
 			return [];
 		}
 
-		return aioseo()->robotsTxt->extractSitemapUrls( explode( "\n", $robotsTxt ) );
+		return aioseo()->robotsTxt->extractSitemapUrls( $robotsTxt );
 	}
 }

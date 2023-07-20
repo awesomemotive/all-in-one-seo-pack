@@ -543,7 +543,7 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 				$primaryTerm = aioseo()->standalone->primaryTerm->getPrimaryTerm( $post->ID, $taxonomy );
 				$terms       = wp_get_object_terms( $post->ID, $taxonomy );
 				// Use the first taxonomy with terms.
-				if ( empty( $terms ) ) {
+				if ( empty( $terms ) || is_wp_error( $terms ) ) {
 					continue;
 				}
 

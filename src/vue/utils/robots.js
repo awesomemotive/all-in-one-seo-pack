@@ -1,123 +1,189 @@
-export const stringify = rules => {
-	const robots = []
-	Object.keys(rules).forEach(userAgent => {
-		const rulesets = rules[userAgent]
-		robots.push(`User-agent: ${userAgent}`)
+/**
+ * Converts an array of robots.txt rules into a string.
+ *
+ * @param 	{Object[]} ruleset An object of robots.txt rules grouped by User-agent.
+ * @returns {string} 		   A string representation of the ruleset in the format specified by the robots.txt documentation.
+ */
+export const stringifyRuleset = ruleset => {
+	const rules = []
+	Object.keys(ruleset).forEach(userAgent => {
+		if (!userAgent) {
+			return
+		}
 
-		Object.keys(rulesets).forEach(rule => {
-			const paths = rulesets[rule]
-			paths.forEach(path => {
-				robots.push(`${rule.charAt(0).toUpperCase() + rule.slice(1)}: ${path}`)
-			})
+		rules.push(`User-agent: ${userAgent}`)
+
+		Object.keys(ruleset[userAgent]).forEach(index => {
+			const [ directive, value ] = ruleset[userAgent][index].split(':').map(v => v.trim())
+			rules.push(`${directive.charAt(0).toUpperCase() + directive.slice(1)}: ${value}`)
 		})
 
-		robots.push('')
+		rules.push('')
 	})
 
-	return robots.join('\r\n')
+	return rules.join('\r\n')
 }
 
-export const parse = (rules, allowDuplicates = false) => {
-	const robots = {}
+/**
+ * Groups robots.txt rules by User-agent.
+ *
+ * @param 	{Array}  rules An array of rules.
+ * @returns {Object} 	   An object containing the rules grouped by User-agent.
+ */
+export const groupRulesByUserAgent = rules => {
+	const groups = {}
 	rules.forEach(rule => {
 		const r = JSON.parse(rule)
-		if (null === r.userAgent || null === r.directoryPath) {
+		if (!r.userAgent || !r.fieldValue) {
 			return
 		}
 
-		if (!robots[r.userAgent]) {
-			robots[r.userAgent] = {
-				allow    : [],
-				disallow : []
-			}
-		}
+		if (!groups[r.userAgent]) {
+			groups[r.userAgent] = [ `${r.directive}: ${r.fieldValue}` ]
 
-		let duplicate = false
-		robots[r.userAgent][r.rule].forEach(path => {
-			if (path === r.directoryPath) {
-				duplicate = true
-			}
-		})
-
-		if (duplicate && !allowDuplicates) {
 			return
 		}
 
-		robots[r.userAgent][r.rule].push(r.directoryPath)
+		groups[r.userAgent].push(`${r.directive}: ${r.fieldValue}`)
 	})
 
-	return robots
+	return groups
 }
 
-export const mergeRules = (rules1, rules2, allowDuplicates = false, allowOverride = false) => {
-	for (const userAgent in rules2) {
-		if (!userAgent) {
-			continue
+/**
+ * Validates the robots.txt rules.
+ *
+ * @param 	{Object[]} 		 ruleset An object of robots.txt rules grouped by User-agent.
+ * @returns {boolean|Object}   		 True if all rules are valid. Throws an object filled with errors otherwise.
+ */
+export const validateRuleset = (ruleset) => {
+	const overriddenIndexes = []
+	const pathPattern = /^\/.*$/
+
+	const fillErrors = (previousErrors, type, message, rule, args = {}) => {
+		const hash = `${rule.tableIndex}${rule.userAgent}${rule.directive}${rule.fieldValue}`
+		if (previousErrors.find(e => 'defaultRuleOverride' === message && e.hash === hash && e.message === message)) {
+			return previousErrors
 		}
 
-		if (!(userAgent in rules1)) {
-			rules1[userAgent] = validateRules(rules2[userAgent], rules2[userAgent], allowDuplicates, allowOverride)
-			continue
-		}
+		previousErrors.push({
+			type,
+			message,
+			hash,
+			isNetworkIndex     : args.isNetworkIndex,
+			previewIndex       : args.previewIndex,
+			sourcePreviewIndex : args?.sourcePreviewIndex || null,
+			conflictingIndex   : args?.conflictingIndex || null,
+			duplicateIndex     : args?.duplicateIndex || null,
+			equivalentIndex    : args?.equivalentIndex || null,
+			overriddenIndex    : args?.overriddenIndex || null
+		})
 
-		validateRules(rules1[userAgent], rules2[userAgent], allowDuplicates, allowOverride, true)
+		overriddenIndexes.push(args?.overriddenIndex || null)
 
-		const allow = [
-			...rules1[userAgent].allow,
-			...rules2[userAgent].allow
-		]
-		rules1[userAgent].allow = allowDuplicates ? allow : arrayUnique(allow)
-
-		const disallow = [
-			...rules1[userAgent].disallow,
-			...rules2[userAgent].disallow
-		]
-		rules1[userAgent].disallow = allowDuplicates ? disallow : arrayUnique(disallow)
+		return previousErrors
 	}
 
-	return rules1
-}
+	const incPreviewIndex = (previousPreviewIndex, value) => previousPreviewIndex + value
 
-const validateRules = (rules1, rules2, allowDuplicates, allowOverride, matchPattern = false) => {
-	const validateRulesHelper = (directive, rules1, rules2, allowDuplicates, allowOverride, matchPattern = false) => {
-		const otherDirective = ('allow' === directive) ? 'disallow' : 'allow'
+	let errors = [],
+		previewIndex = 0
+	for (const userAgent in ruleset) {
+		previewIndex = incPreviewIndex(previewIndex, 2)
 
-		rules2[directive].forEach((path, index1) => {
-			const index2 = rules1[otherDirective].indexOf(path)
-			if (-1 !== index2) {
-				if (allowOverride) {
-					rules1[otherDirective].splice(index2, 1)
-				} else if (!allowDuplicates) {
-					rules2[directive].splice(index1, 1)
-				}
+		for (const [ index, rule ] of Object.entries(ruleset[userAgent])) {
+			const [ directive, value ] = [ rule.directive, rule.fieldValue ]
+			if (!directive || !value) {
+				continue
 			}
 
-			if (matchPattern) {
-				const pattern = '^' + path.replace(/./g, '\\.').replace(/\//g, '\\/').replace(/\*/g, '(.*)').replace(/\?/, '\\?') + '$'
-				const matches = rules1.allow.some(p => p && p.match(pattern)) || rules1.disallow.some(p => p && p.match(pattern))
-				if (matches) {
-					if (!allowDuplicates) {
-						rules2[directive].splice(index1, 1)
+			let savePreviewIndex = previewIndex
+			for (let nextIndex = parseInt(index) + 1; nextIndex < ruleset[userAgent].length; nextIndex++) {
+				const [ nextDirective, nextValue ] = [ ruleset[userAgent][nextIndex].directive, ruleset[userAgent][nextIndex].fieldValue ]
+				if (!nextDirective || !nextValue) {
+					continue
+				}
+
+				// Valueless or directiveless rules are not previewed, so we increment the `previewIndex` only if they are not empty.
+				previewIndex = incPreviewIndex(previewIndex, 1)
+
+				// Check for duplicates.
+				if (`${directive}${value}` === `${nextDirective}${nextValue}`) {
+					errors = fillErrors(errors, 'red', 'duplicateRule', ruleset[userAgent][nextIndex], {
+						previewIndex,
+						sourcePreviewIndex : savePreviewIndex,
+						isNetworkIndex     : rule.networkLevel,
+						duplicateIndex     : rule.tableIndex
+					})
+				}
+
+				if (
+					directive.match(/disallow|allow/i) &&
+					nextDirective.match(/disallow|allow/i)
+				) {
+					// Check for Allow/Disallow conflicts.
+					if (
+						directive !== nextDirective &&
+						value === nextValue
+					) {
+						if (rule.default) {
+							if (!overriddenIndexes.includes(rule.tableIndex)) {
+								// Make sure the `previewIndex` is decreased by one, because the overridden rule is not shown on the preview.
+								savePreviewIndex--
+							}
+							errors = fillErrors(errors, 'yellow', 'defaultRuleOverride', ruleset[userAgent][nextIndex], {
+								previewIndex,
+								isNetworkIndex  : rule.networkLevel,
+								overriddenIndex : rule.tableIndex
+							})
+						} else {
+							errors = fillErrors(errors, rule.networkLevel ? 'yellow' : 'red', 'conflictingPath', ruleset[userAgent][nextIndex], {
+								previewIndex,
+								sourcePreviewIndex : rule.networkLevel ? null : savePreviewIndex,
+								isNetworkIndex     : rule.networkLevel,
+								conflictingIndex   : rule.tableIndex
+							})
+						}
+					}
+
+					// Check for equivalent path matches.
+					const equivalentPattern = new RegExp(`^${nextValue.replace(/\*+$/g, '')}$`)
+					if (-1 !== nextValue.indexOf('*') && value.match(equivalentPattern)) {
+						errors = fillErrors(errors, 'red', 'equivalentPath', ruleset[userAgent][nextIndex], {
+							previewIndex,
+							sourcePreviewIndex : savePreviewIndex,
+							isNetworkIndex     : rule.networkLevel,
+							equivalentIndex    : rule.tableIndex
+						})
 					}
 				}
 			}
-		})
-		return [ rules1, rules2 ]
-	}
 
-	// If we are allowing an override, let's do that now.
-	[ rules1, rules2 ] = validateRulesHelper('disallow', rules1, rules2, allowDuplicates, allowOverride, matchPattern);
-	[ rules1, rules2 ] = validateRulesHelper('allow', rules1, rules2, allowDuplicates, allowOverride, matchPattern)
-	return rules1
-}
+			previewIndex = savePreviewIndex
 
-const arrayUnique = array => {
-	const a = array.concat()
-	for (let i = 0; i < a.length; ++i) {
-		for (let j = i + 1; j < a.length; ++j) {
-			if (a[i] === a[j]) { a.splice(j--, 1) }
+			if (directive.match(/^clean-param/i)) {
+				// Clean-param needs to have at least one param, path is optional.
+				const [ param, path ] = value.split(/\s+/).map(v => v.trim())
+				if (!param || param.match(pathPattern) || (path && !path.match(pathPattern))) {
+					errors = fillErrors(errors, 'red', 'invalidCleanParam', rule, { previewIndex })
+				}
+			}
+
+			if (directive.match(/^crawl-delay/i)) {
+				// Crawl-delay must be a number greater than 0.
+				const delay = Number(value)
+				if (isNaN(delay) || 0 > delay) {
+					errors = fillErrors(errors, 'red', 'invalidCrawlDelay', rule, { previewIndex })
+				}
+			}
+
+			previewIndex = incPreviewIndex(previewIndex, 1)
 		}
 	}
 
-	return a
+	if (errors.length) {
+		throw errors
+	}
+
+	return true
 }

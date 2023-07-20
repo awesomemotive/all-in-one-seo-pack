@@ -77,7 +77,7 @@ class Root {
 			}
 		}
 
-		$postsTable = aioseo()->db->db->posts;
+		$postsTable = aioseo()->core->db->db->posts;
 		if (
 			aioseo()->sitemap->helpers->lastModifiedPost() &&
 			aioseo()->options->sitemap->general->author &&
@@ -91,9 +91,9 @@ class Root {
 				! aioseo()->options->searchAppearance->advanced->globalRobotsMeta->noindex
 			)
 		) {
-			$usersTable        = aioseo()->db->db->users;
+			$usersTable        = aioseo()->core->db->db->users;
 			$implodedPostTypes = aioseo()->helpers->implodeWhereIn( $postTypes, true );
-			$result            = aioseo()->db->execute(
+			$result            = aioseo()->core->db->execute(
 				"SELECT count(*) as amountOfAuthors FROM
 				(
 					SELECT u.ID FROM {$usersTable} as u
@@ -121,7 +121,7 @@ class Root {
 				! aioseo()->options->searchAppearance->advanced->globalRobotsMeta->noindex
 			)
 		) {
-			$result = aioseo()->db->execute(
+			$result = aioseo()->core->db->execute(
 				"SELECT count(*) as amountOfUrls FROM (
 					SELECT post_date
 					FROM {$postsTable}
@@ -259,7 +259,7 @@ class Root {
 		for ( $i = 0; $i < $chunks; $i++ ) {
 			$indexNumber = 1 < $chunks ? $i + 1 : '';
 
-			$lastModified = aioseo()->db->start( 'users as u' )
+			$lastModified = aioseo()->core->db->start( 'users as u' )
 				->select( 'MAX(p.post_modified_gmt) as lastModified' )
 				->join( 'posts as p', 'u.ID = p.post_author' )
 				->where( 'p.post_status', 'publish' )
@@ -293,7 +293,7 @@ class Root {
 	 * @return array            The indexes.
 	 */
 	private function buildIndexesPostType( $postType ) {
-		$prefix           = aioseo()->db->prefix;
+		$prefix           = aioseo()->core->db->prefix;
 		$postsTable       = $prefix . 'posts';
 		$aioseoPostsTable = $prefix . 'aioseo_posts';
 		$linksPerIndex    = aioseo()->sitemap->linksPerIndex;

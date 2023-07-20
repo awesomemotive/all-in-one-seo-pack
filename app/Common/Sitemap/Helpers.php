@@ -254,8 +254,8 @@ class Helpers {
 	 * @return bool             Whether or not there is an indexed post.
 	 */
 	private function checkForIndexedPost( $postType ) {
-		$posts = aioseo()->core->db
-			->start( aioseo()->core->db->db->posts . ' as p', true )
+		$db    = aioseo()->core->db->noConflict();
+		$posts = $db->start( aioseo()->core->db->db->posts . ' as p', true )
 			->select( 'p.ID' )
 			->join( 'aioseo_posts as ap', '`ap`.`post_id` = `p`.`ID`' )
 			->where( 'p.post_status', 'attachment' === $postType ? 'inherit' : 'publish' )
@@ -403,7 +403,7 @@ class Helpers {
 					}, $objectTypes );
 				}
 
-				$dbNoConflict = aioseo()->db->noConflict();
+				$dbNoConflict = aioseo()->core->db->noConflict();
 				$rows         = $dbNoConflict->start( 'icl_translations' )
 					->select( 'element_id' )
 					->whereIn( 'element_type', $objectTypes )

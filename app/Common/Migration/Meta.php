@@ -452,7 +452,7 @@ class Meta {
 
 		$postType    = $post->post_type;
 		$oldOptions  = get_option( 'aioseo_options_v3' );
-		$titleFormat = isset( $oldOptions[ "aiosp_${postType}_title_format" ] ) ? $oldOptions[ "aiosp_${postType}_title_format" ] : '';
+		$titleFormat = isset( $oldOptions[ "aiosp_{$postType}_title_format" ] ) ? $oldOptions[ "aiosp_{$postType}_title_format" ] : '';
 
 		$seoTitle = aioseo()->helpers->pregReplace( '/(%post_title%|%page_title%)/', $seoTitle, $titleFormat );
 
