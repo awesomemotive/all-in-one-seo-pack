@@ -172,6 +172,22 @@ trait WpContext {
 	public function getPost( $postId = false ) {
 		$postId = is_a( $postId, 'WP_Post' ) ? $postId->ID : $postId;
 
+		/**
+		 * Filter: Allow to change post ID.
+		 *
+		 * @see https://github.com/rankmath/seo-by-rank-math/blob/76e87a34fb3a4f325c396251a65d19fd71fac6b5/includes/class-post.php#L97-#L130
+		 *
+		 * @since x.x.x
+		 *
+		 * @param int $postId Post ID.
+		 */
+		$newPostId = apply_filters( 'aioseo_pre_simple_post_id', $postId );
+		$post      = get_post( $newPostId );
+
+		if ( $post ) {
+			return $post;
+		}
+
 		if ( aioseo()->helpers->isWooCommerceShopPage( $postId ) ) {
 			return get_post( wc_get_page_id( 'shop' ) );
 		}
