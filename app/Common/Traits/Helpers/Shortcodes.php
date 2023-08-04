@@ -133,7 +133,14 @@ trait Shortcodes {
 			}
 		}
 
+		// Set a flag to indicate Divi that it's processing internal content.
+		// https://github.com/awesomemotive/aioseo/issues/5099
+		$default = aioseo()->helpers->setDiviInternalRendering( true );
+
 		$content = do_shortcode( $content );
+
+		// Reset the Divi flag to its default value.
+		aioseo()->helpers->setDiviInternalRendering( $default );
 
 		if ( $postId ) {
 			wp_reset_postdata();

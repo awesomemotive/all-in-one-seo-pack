@@ -150,7 +150,7 @@ class DeprecatedWordPress {
 	 *
 	 * @since 4.1.2
 	 *
-	 * @return WP_Response The successful response.
+	 * @return string The successful response.
 	 */
 	public function dismissNotice() {
 		// Early exit if we're not on a aioseo-dismiss-deprecated-wordpress-notice action.

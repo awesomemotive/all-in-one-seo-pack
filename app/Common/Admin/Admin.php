@@ -76,6 +76,15 @@ class Admin {
 	];
 
 	/**
+	 * Connect class instance.
+	 *
+	 * @since 4.4.3
+	 *
+	 * @var \AIOSEO\Plugin\Lite\Admin\Connect|null
+	 */
+	public $connect = null;
+
+	/**
 	 * Construct method.
 	 *
 	 * @since 4.0.0
@@ -353,7 +362,7 @@ class Admin {
 
 		$linkFormat = 'block';
 		if ( is_plugin_active( 'gutenberg/gutenberg.php' ) ) {
-			$data = get_plugin_data( ABSPATH . 'wp-content/plugins/gutenberg/gutenberg.php', false, false );
+			$data = get_plugin_data( WP_CONTENT_DIR . '/plugins/gutenberg/gutenberg.php', false, false );
 			if ( version_compare( $data['Version'], '7.4.0', '<' ) ) {
 				$linkFormat = 'block-old';
 			}

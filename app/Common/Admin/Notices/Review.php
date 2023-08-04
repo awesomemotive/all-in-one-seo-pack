@@ -291,7 +291,7 @@ class Review {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return WP_Response The successful response.
+	 * @return string The successful response.
 	 */
 	public function dismissNotice() {
 		// Early exit if we're not on a aioseo-dismiss-review-plugin-cta action.

@@ -246,7 +246,7 @@ trait WpUri {
 	* @param  string       $path     The path.
 	* @param  string       $output   The output type. OBJECT, ARRAY_A, or ARRAY_N.
 	* @param  string|array $postType The post type(s) to check against.
-	* @return Object|false           The post or false on failure.
+	* @return object|false           The post or false on failure.
 	*/
 	public function getPostByPath( $path, $output = OBJECT, $postType = 'page' ) {
 		$lastChanged = wp_cache_get_last_changed( 'aioseo_posts_by_path' );

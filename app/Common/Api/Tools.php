@@ -21,7 +21,7 @@ class Tools {
 	 * @since   4.0.0
 	 * @version 4.4.2
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request.
+	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function importRobotsTxt( $request ) {

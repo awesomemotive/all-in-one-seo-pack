@@ -54,7 +54,10 @@ class Root {
 						! aioseo()->dynamicOptions->searchAppearance->archives->$postType->advanced->robotsMeta->noindex
 					)
 				) {
-					$postArchives[ $postType ] = aioseo()->sitemap->helpers->lastModifiedPostTime( $postType );
+					$lastModifiedPostTime = aioseo()->sitemap->helpers->lastModifiedPostTime( $postType );
+					if ( $lastModifiedPostTime ) {
+						$postArchives[ $postType ] = $lastModifiedPostTime;
+					}
 				}
 			}
 
@@ -198,8 +201,8 @@ class Root {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  integer $entries The entries.
-	 * @return array            The indexes.
+	 * @param  array $entries Entries.
+	 * @return array          The index.
 	 */
 	private function buildAdditionalIndexes( $entries ) {
 		$postTypes             = aioseo()->sitemap->helpers->includedPostTypes();

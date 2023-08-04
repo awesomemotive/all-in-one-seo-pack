@@ -148,7 +148,7 @@ class Image {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post|int $post The post object or ID.
+	 * @param  \WP_Post|int $post The post object or ID.
 	 * @return void
 	 */
 	public function scanPost( $post ) {
@@ -192,8 +192,8 @@ class Image {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Term $term The term object.
-	 * @return array         The image entries.
+	 * @param  \WP_Term $term The term object.
+	 * @return array          The image entries.
 	 */
 	public function term( $term ) {
 		if ( aioseo()->sitemap->helpers->excludeImages() ) {

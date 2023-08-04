@@ -37,7 +37,7 @@ class Addons {
 	 *
 	 * @since 4.4.2
 	 *
-	 * @var \AIOSEO\Plugin\Addon\ImageSEO\ImageSEO
+	 * @var \AIOSEO\Plugin\Addon\ImageSeo\ImageSeo
 	 */
 	private $imageSeo = null;
 
@@ -846,4 +846,29 @@ class Addons {
 	 * @return void
 	 */
 	public function registerUpdateCheck() {}
+
+	/**
+	 * Updates a given addon or plugin.
+	 *
+	 * @since 4.4.3
+	 *
+	 * @param  string $name    The addon name/sku.
+	 * @param  bool   $network Whether we are in a network environment.
+	 * @return bool            Whether the installation was succesful.
+	 */
+	public function upgradeAddon( $name, $network ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+		return false;
+	}
+
+	/**
+	 * Get the download URL for the given addon.
+	 *
+	 * @since 4.4.3
+	 *
+	 * @param  string $sku The addon sku.
+	 * @return string      The download url for the addon.
+	 */
+	public function getDownloadUrl( $sku ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+		return '';
+	}
 }

@@ -48,7 +48,7 @@ trait NetworkOptions {
 	 *
 	 * @since 4.2.5
 	 *
-	 * @param  array $newoptions The new options to sanitize, then save.
+	 * @param  array $newOptions The new options to sanitize, then save.
 	 * @return void
 	 */
 	public function sanitizeAndSave( $newOptions ) {

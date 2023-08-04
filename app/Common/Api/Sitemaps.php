@@ -77,8 +77,7 @@ class Sitemaps {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
-	 * @return \WP_REST_Response          The response.
+	 * @return \WP_REST_Response The response.
 	 */
 	public static function deactivateConflictingPlugins() {
 		$error = esc_html__( 'Deactivation failed. Please check permissions and try again.', 'all-in-one-seo-pack' );

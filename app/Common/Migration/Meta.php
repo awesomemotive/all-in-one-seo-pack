@@ -108,7 +108,7 @@ class Meta {
 	 * @since 4.0.3
 	 *
 	 * @param  int   $postId The post ID.
-	 * @return array $meta   The post meta.
+	 * @return array         The post meta.
 	 */
 	public function getMigratedPostMeta( $postId ) {
 		if ( is_category() || is_tag() || is_tax() || ! is_numeric( $postId ) ) {

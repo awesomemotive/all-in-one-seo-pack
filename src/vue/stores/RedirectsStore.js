@@ -119,8 +119,8 @@ export const useRedirectsStore = defineStore('RedirectsStore', {
 					searchTerm
 				})
 				.then(response => {
-					this['404' === slug ? 'logs404' : 'logs']              = response.body.rows
-					this.totals['404' === slug ? 'total404' : 'logs'].logs = response.body.totals
+					this['404' === slug ? 'logs404' : 'logs'] = response.body.rows
+					this.totals['404' === slug ? 'total404' : 'logs'] = response.body.totals
 				})
 		},
 		create (payload) {

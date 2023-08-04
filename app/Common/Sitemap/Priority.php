@@ -71,12 +71,12 @@ class Priority {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string   $pageType   The type of page (e.g. homepage, blog, post, taxonomies, etc.).
-	 * @param  stdClass $object     The post/term object (optional).
-	 * @param  string   $objectType The post/term object type (optional).
-	 * @return float    $priority   The priority.
+	 * @param  string         $pageType   The type of page (e.g. homepage, blog, post, taxonomies, etc.).
+	 * @param  \stdClass|bool $object     The post/term object (optional).
+	 * @param  string         $objectType The post/term object type (optional).
+	 * @return float                      The priority.
 	 */
-	public function priority( $pageType, $object = false, $objectType = null ) {
+	public function priority( $pageType, $object = false, $objectType = '' ) {
 		// Store setting values in static properties so that we can cache them.
 		// Otherwise this has a significant impact on the load time of the sitemap.
 		if ( ! self::$advanced ) {
@@ -128,12 +128,12 @@ class Priority {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string   $pageType   The type of page (e.g. homepage, blog, post, taxonomies, etc.).
-	 * @param  stdClass $object     The post/term object (optional).
-	 * @param  string   $objectType The post/term object type (optional).
-	 * @return float    $frequency  The frequency.
+	 * @param  string         $pageType   The type of page (e.g. homepage, blog, post, taxonomies, etc.).
+	 * @param  \stdClass|bool $object     The post/term object (optional).
+	 * @param  string         $objectType The post/term object type (optional).
+	 * @return float                      The frequency.
 	 */
-	public function frequency( $pageType, $object = false, $objectType = null ) {
+	public function frequency( $pageType, $object = false, $objectType = '' ) {
 		// Store setting values in static properties so that we can cache them.
 		// Otherwise this has a significant impact on the load time of the sitemap.
 		if ( ! self::$advanced ) {

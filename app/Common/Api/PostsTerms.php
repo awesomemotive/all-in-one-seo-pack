@@ -189,8 +189,8 @@ class PostsTerms {
 	 *
 	 * @since 4.0.6
 	 *
-	 * @param  WP_Post|int $post The post.
-	 * @return string            The custom field content.
+	 * @param  \WP_Post|int $post The post.
+	 * @return string             The custom field content.
 	 */
 	private static function getAnalysisContent( $post = null ) {
 		$analysisContent = apply_filters( 'aioseo_analysis_content', aioseo()->helpers->getPostContent( $post ) );

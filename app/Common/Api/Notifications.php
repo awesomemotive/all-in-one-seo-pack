@@ -19,7 +19,6 @@ class Notifications {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function blogVisibilityReminder() {
@@ -31,7 +30,6 @@ class Notifications {
 	 *
 	 * @since 4.0.5
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function descriptionFormatReminder() {
@@ -43,7 +41,6 @@ class Notifications {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function installMiReminder() {
@@ -55,7 +52,6 @@ class Notifications {
 	 *
 	 * @since 4.2.1
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function installOmReminder() {
@@ -67,7 +63,6 @@ class Notifications {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function installAddonsReminder() {
@@ -79,7 +74,6 @@ class Notifications {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function installImageSeoReminder() {
@@ -91,7 +85,6 @@ class Notifications {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function installLocalBusinessReminder() {
@@ -103,7 +96,6 @@ class Notifications {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function installNewsSitemapReminder() {
@@ -115,7 +107,6 @@ class Notifications {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function installVideoSitemapReminder() {
@@ -127,7 +118,6 @@ class Notifications {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function conflictingPluginsReminder() {
@@ -139,7 +129,6 @@ class Notifications {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function migrationCustomFieldReminder() {
@@ -151,7 +140,6 @@ class Notifications {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function migrationSchemaNumberReminder() {
@@ -163,8 +151,8 @@ class Notifications {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string $slug The slug of the reminder.
-	 * @return @return \WP_REST_Response The response.
+	 * @param  string            $slug The slug of the reminder.
+	 * @return \WP_REST_Response       The response.
 	 */
 	protected static function reminder( $slug ) {
 		aioseo()->notices->remindMeLater( $slug );

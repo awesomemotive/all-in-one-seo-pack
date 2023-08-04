@@ -125,8 +125,8 @@ class Twitter {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post|integer $post The post object or ID (optional).
-	 * @return string                The Twitter title.
+	 * @param  \WP_Post|integer $post The post object or ID (optional).
+	 * @return string                 The Twitter title.
 	 */
 	public function getTitle( $post = null ) {
 		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
@@ -155,8 +155,8 @@ class Twitter {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post|integer $post The post object or ID (optional).
-	 * @return string                The Twitter description.
+	 * @param  \WP_Post|integer $post The post object or ID (optional).
+	 * @return string                 The Twitter description.
 	 */
 	public function getDescription( $post = null ) {
 		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {

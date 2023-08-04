@@ -51,7 +51,7 @@
 								v-for="(page, index) in pages"
 								:class="{ active: page.number === 1 + currentPage }"
 								:key="index"
-								@click="currentPage = page.number - 1"
+								@click.stop="currentPage = page.number - 1"
 							>
 								{{ page.number }}
 							</div>

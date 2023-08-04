@@ -72,6 +72,10 @@ class Access {
 	 * @since 4.0.0
 	 */
 	public function __construct() {
+		// First load the roles so that we can pull the roles from the other plugins.
+		$this->setRoles();
+
+		// Load later again so that we can pull the roles lately registered.
 		// This needs to run before 1000 so that our update migrations and other hook callbacks can pull the roles.
 		add_action( 'init', [ $this, 'setRoles' ], 999 );
 	}
@@ -131,8 +135,6 @@ class Access {
 				}
 			}
 		}
-
-		$this->removeCapabilities();
 	}
 
 	/**
@@ -154,7 +156,7 @@ class Access {
 				continue;
 			}
 
-			if ( in_array( $key, $this->roles, true ) ) {
+			if ( array_key_exists( $key, $this->roles ) ) {
 				continue;
 			}
 
@@ -307,8 +309,7 @@ class Access {
 	 *
 	 * @since 4.1.3
 	 *
-	 * @param  string $role The given role.
-	 * @return array        An array with the option names.
+	 * @return array An array with the option names.
 	 */
 	public function getNotAllowedOptions() {
 		return [];
@@ -319,8 +320,7 @@ class Access {
 	 *
 	 * @since 4.1.3
 	 *
-	 * @param  string $role The given role.
-	 * @return array        An array with the field names.
+	 * @return array An array with the field names.
 	 */
 	public function getNotAllowedPageFields() {
 		return [];

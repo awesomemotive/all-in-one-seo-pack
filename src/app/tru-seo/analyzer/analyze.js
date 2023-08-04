@@ -125,9 +125,9 @@ class TruSeoAnalyzer {
 
 		if (this.postContent) {
 			focusAnalysis.keyphraseInIntroduction = analyzers.keyphraseInIntroduction(this.postContent, keyphrase, 'focus', this.locale)
-			focusAnalysis.keyphraseInSubHeadings = analyzers.keyphraseInSubHeadings(this.postContent, keyphrase, this.locale)
-			focusAnalysis.keyphraseInImageAlt = analyzers.keyphraseInImageAlt(this.postContent, keyphrase, 'focus')
-			// focusAnalysis.keyphraseDensity = analyzers.keyphraseDensity(this.postContent, keyphrase, 'focus')
+			focusAnalysis.keyphraseInSubHeadings  = analyzers.keyphraseInSubHeadings(this.postContent, keyphrase, this.locale)
+			focusAnalysis.keyphraseInImageAlt     = analyzers.keyphraseInImageAlt(this.postContent, keyphrase, 'focus')
+			focusAnalysis.keywordDensity          = analyzers.keywordDensity(this.postContent, keyphrase, 'focus')
 		}
 
 		const keyphraseScore = await calculateScore(focusAnalysis)
@@ -161,8 +161,8 @@ class TruSeoAnalyzer {
 
 		if (this.postContent) {
 			additionalAnalysis.keyphraseInIntroduction = analyzers.keyphraseInIntroduction(this.postContent, keyphrase, null, this.locale)
-			additionalAnalysis.keyphraseInImageAlt = analyzers.keyphraseInImageAlt(this.postContent, keyphrase)
-			// additionalAnalysis.keyphraseDensity = analyzers.keyphraseDensity(this.postContent, keyphrase)
+			additionalAnalysis.keyphraseInImageAlt     = analyzers.keyphraseInImageAlt(this.postContent, keyphrase)
+			additionalAnalysis.keywordDensity          = analyzers.keywordDensity(this.postContent, keyphrase)
 		}
 
 		const additionalAnalysisScore = await calculateScore(additionalAnalysis)

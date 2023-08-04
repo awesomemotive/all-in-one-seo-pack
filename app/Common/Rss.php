@@ -424,9 +424,9 @@ class Rss {
 	 *
 	 * @since 4.2.1
 	 *
-	 * @param  array $args   An array of arguments.
-	 * @param  WP_Term $term The term.
-	 * @return array         An array of attributes.
+	 * @param  array $args    An array of arguments.
+	 * @param  \WP_Term $term The term.
+	 * @return array          An array of attributes.
 	 */
 	private function getTaxonomiesAttributes( $args, $term ) {
 		$title = null;

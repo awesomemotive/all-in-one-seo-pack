@@ -606,8 +606,7 @@ TEMPLATE
 		$cachedOptions = aioseo()->core->optionsCache->getOptions( $this->optionsName );
 		$dbOptions     = aioseo()->helpers->arrayReplaceRecursive(
 			$cachedOptions,
-			$this->addValueToValuesArray( $cachedOptions, $options, [], true ),
-			true
+			$this->addValueToValuesArray( $cachedOptions, $options, [], true )
 		);
 
 		// Now, we must also intersect both arrays to delete any individual keys that were unset.

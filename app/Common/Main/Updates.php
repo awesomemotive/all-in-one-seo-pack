@@ -1097,8 +1097,8 @@ class Updates {
 	 *
 	 * @since  4.2.5
 	 *
-	 * @param  Post $aioseoPost The AIOSEO post object.
-	 * @return Post             The modified AIOSEO post object.
+	 * @param  Models\Post $aioseoPost The AIOSEO post object.
+	 * @return Models\Post             The modified AIOSEO post object.
 	 */
 	public function migratePostSchemaHelper( $aioseoPost ) {
 		$post              = aioseo()->helpers->getPost( $aioseoPost->post_id );

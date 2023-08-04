@@ -77,8 +77,8 @@ class RobotsTxt {
 	 *
 	 * @param  array   $rules1          An array of rules to merge with.
 	 * @param  array   $rules2          An array of rules to merge.
-	 * @param  boolean $allowOverride   Whether or not to allow overriding.
-	 * @param  boolean $allowDuplicates Whether or not to allow duplicates.
+	 * @param  boolean $allowOverride   Whether to allow overriding.
+	 * @param  boolean $allowDuplicates Whether to allow duplicates.
 	 * @return array                    The validated rules.
 	 */
 	private function mergeRules( $rules1, $rules2, $allowOverride = false, $allowDuplicates = false ) {
@@ -225,18 +225,16 @@ class RobotsTxt {
 	private function groupRulesByUserAgent( $rules ) {
 		$groups = [];
 		foreach ( $rules as $rule ) {
-			$r = json_decode( $rule );
-			if ( empty( $r->userAgent ) || empty( $r->fieldValue ) ) {
+			$r = json_decode( $rule, true );
+			if ( empty( $r['userAgent'] ) || empty( $r['fieldValue'] ) ) {
 				continue;
 			}
 
-			if ( empty( $groups[ $r->userAgent ] ) ) {
-				$groups[ $r->userAgent ] = [ "$r->directive: $r->fieldValue" ];
-
-				continue;
+			if ( empty( $groups[ $r['userAgent'] ] ) ) {
+				$groups[ $r['userAgent'] ] = [];
 			}
 
-			$groups[ $r->userAgent ][] = "$r->directive: $r->fieldValue";
+			$groups[ $r['userAgent'] ][] = "{$r['directive']}: {$r['fieldValue']}";
 		}
 
 		return $groups;

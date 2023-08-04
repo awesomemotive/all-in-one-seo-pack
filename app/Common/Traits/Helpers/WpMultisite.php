@@ -33,7 +33,7 @@ trait WpMultisite {
 	 * @since 4.2.5
 	 *
 	 * @param  int          $blogId The blog ID.
-	 * @return WP_Site|null         The site.
+	 * @return \WP_Site|null         The site.
 	 */
 	public function getSiteByBlogId( $blogId ) {
 		$sites = $this->getSites();
@@ -51,7 +51,7 @@ trait WpMultisite {
 	 *
 	 * @since 4.2.5
 	 *
-	 * @return \WP_Site|Object A WP_Site instance of the current site or an object representing the same.
+	 * @return \WP_Site|object A WP_Site instance of the current site or an object representing the same.
 	 */
 	public function getSite() {
 		if ( is_multisite() ) {

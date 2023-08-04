@@ -22,8 +22,8 @@ class Helpers extends ImportExport\Helpers {
 	 * @since 4.1.4
 	 *
 	 * @param  string $string   The string with macros.
-	 * @param  string $pageType The page type.
-	 * @return string $string   The string with smart tags.
+	 * @param  string $postType The post type.
+	 * @return string           The string with smart tags.
 	 */
 	public function macrosToSmartTags( $string, $postType = null ) {
 		$macros = $this->getMacros( $postType );

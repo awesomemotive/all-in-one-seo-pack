@@ -252,7 +252,7 @@ class SystemStatus {
 			'results' => [
 				[
 					'header' => $themeData->name,
-					'value'  => $themeData->Version
+					'value'  => $themeData->version
 				]
 			]
 		];

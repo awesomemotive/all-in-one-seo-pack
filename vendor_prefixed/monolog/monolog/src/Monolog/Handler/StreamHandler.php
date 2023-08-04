@@ -137,7 +137,7 @@ class StreamHandler extends AbstractProcessingHandler
         if ('file://' === \substr($stream, 0, 7)) {
             return \dirname(\substr($stream, 7));
         }
-        return;
+        return null;
     }
     private function createDir()
     {

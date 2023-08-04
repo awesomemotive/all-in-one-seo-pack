@@ -83,7 +83,6 @@ class Meta {
 	 * @since 4.0.1
 	 *
 	 * @param  integer $postId The ID of the post.
-	 * @param  WP_Post $post   The post object.
 	 * @return void
 	 */
 	public function deletePostMeta( $postId ) {

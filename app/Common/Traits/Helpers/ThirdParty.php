@@ -274,10 +274,10 @@ trait ThirdParty {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  int     $postId The post ID.
-	 * @return boolean         If the page is a BuddyPress page or not.
+	 * @param  int  $postId The post ID.
+	 * @return bool         If the page is a BuddyPress page or not.
 	 */
-	public function isBuddyPressPage( $postId = false ) {
+	public function isBuddyPressPage( $postId = 0 ) {
 		$bpPages = get_option( 'bp-pages' );
 
 		if ( empty( $bpPages ) ) {
@@ -316,9 +316,9 @@ trait ThirdParty {
 	 *
 	 * @since 4.0.6
 	 *
-	 * @param  WP_Post|int $post         The post.
-	 * @param  array       $allowedTypes A whitelist of ACF field types.
-	 * @return array                     An array of meta keys and values.
+	 * @param  \WP_Post|int $post  The post.
+	 * @param  array        $types A whitelist of ACF field types.
+	 * @return array               An array of meta keys and values.
 	 */
 	public function getAcfContent( $post = null, $types = [] ) {
 		$post = ( $post && is_object( $post ) ) ? $post : $this->getPost( $post );
@@ -612,5 +612,26 @@ trait ThirdParty {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Set a flag to indicate Divi whether it is processing internal content or not.
+	 *
+	 * @since 4.4.3
+	 *
+	 * @param  null|bool $flag The flag value.
+	 * @return null|bool       The previous flag value to reset it later.
+	 */
+	public function setDiviInternalRendering( $flag ) {
+		if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
+			return null;
+		}
+
+		global $et_pb_rendering_column_content;
+
+		$originalValue                  = $et_pb_rendering_column_content;
+		$et_pb_rendering_column_content = $flag;
+
+		return $originalValue;
 	}
 }

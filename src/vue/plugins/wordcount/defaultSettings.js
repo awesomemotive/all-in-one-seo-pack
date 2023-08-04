@@ -13,7 +13,7 @@ export const defaultSettings = {
 			'[',
 
 			// Basic Latin (extract)
-			'\u0021-\u0040\u005B-\u0060\u007B-\u007E',
+			'\u0021-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E',
 
 			// Latin-1 Supplement (extract)
 			'\u0080-\u00BF\u00D7\u00F7',
@@ -56,7 +56,7 @@ export const defaultSettings = {
 
 	// Remove UTF-16 surrogate points, see https://en.wikipedia.org/wiki/UTF-16#U.2BD800_to_U.2BDFFF
 	astralRegExp                      : /[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
-	wordsRegExp                       : /\S\s+/g,
+	wordsRegExp                       : /\b\w/g,
 	characters_excluding_spacesRegExp : /\S/g,
 
 	/*

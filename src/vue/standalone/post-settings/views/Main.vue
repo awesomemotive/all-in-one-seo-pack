@@ -408,13 +408,10 @@ export default {
 	mounted () {
 		if (
 			isBlockEditor() &&
-			'function' === typeof (window?.wp?.data?.dispatch || null) &&
 			!this.licenseStore.isUnlicensed
 
 		) {
-			const dispatchEditor = window.wp.data.dispatch('core/editor')
-
-			this.watchObjectRevisionsOnSavePost(dispatchEditor)
+			this.watchObjectRevisionsOnSavePost()
 		}
 	}
 }

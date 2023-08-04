@@ -492,14 +492,14 @@ trait Wp {
 	 * @since 4.1.4
 	 *
 	 * @param  int   $postId The post ID.
-	 * @return array $names  The category names.
+	 * @return array         The category names.
 	 */
 	public function getAllCategories( $postId = 0 ) {
 		$names      = [];
 		$categories = get_the_category( $postId );
 		if ( $categories && count( $categories ) ) {
 			foreach ( $categories as $category ) {
-				$names[] = aioseo()->helpers->internationalize( $category->cat_name );
+				$names[] = aioseo()->helpers->internationalize( $category->name );
 			}
 		}
 
@@ -663,7 +663,7 @@ trait Wp {
 	 *
 	 * @since 4.1.9
 	 *
-	 * @param  string $postType The name of the taxonomy.
+	 * @param  string $taxonomy The name of the taxonomy.
 	 * @return array            The capabilities.
 	 */
 	public function getTaxonomyCapabilities( $taxonomy ) {
@@ -769,8 +769,8 @@ trait Wp {
 	 *
 	 * @since 4.3.5.1
 	 *
-	 * @param  string|WP_Taxonomy $taxonomy The taxonomy name or object.
-	 * @return bool                         Whether the taxonomy is viewable.
+	 * @param  string|\WP_Taxonomy $taxonomy The taxonomy name or object.
+	 * @return bool                          Whether the taxonomy is viewable.
 	 */
 	public function isTaxonomyViewable( $taxonomy ) {
 		if ( is_scalar( $taxonomy ) ) {

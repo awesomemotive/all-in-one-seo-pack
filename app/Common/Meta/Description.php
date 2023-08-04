@@ -60,9 +60,9 @@ class Description {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post $post    The post object (optional).
-	 * @param  boolean $default Whether we want the default value, not the post one.
-	 * @return string           The page description.
+	 * @param  \WP_Post $post    The post object (optional).
+	 * @param  boolean  $default Whether we want the default value, not the post one.
+	 * @return string            The page description.
 	 */
 	public function getDescription( $post = null, $default = false ) {
 		if ( is_home() ) {
@@ -126,9 +126,9 @@ class Description {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post|int $post    The post object or ID.
-	 * @param  boolean     $default Whether we want the default value, not the post one.
-	 * @return string               The post description.
+	 * @param  \WP_Post|int $post    The post object or ID.
+	 * @param  boolean      $default Whether we want the default value, not the post one.
+	 * @return string                The post description.
 	 */
 	public function getPostDescription( $post, $default = false ) {
 		$post = $post && is_object( $post ) ? $post : aioseo()->helpers->getPost( $post );
@@ -144,7 +144,7 @@ class Description {
 		$description = '';
 		$metaData    = aioseo()->meta->metaData->getMetaData( $post );
 		if ( ! empty( $metaData->description ) && ! $default ) {
-			$description = $this->helpers->prepare( $metaData->description, $post->ID, false, false );
+			$description = $this->helpers->prepare( $metaData->description, $post->ID, false );
 		}
 
 		if (
@@ -174,7 +174,7 @@ class Description {
 
 			$description = $this->helpers->sanitize( $description, $post->ID, $default );
 			if ( ! $description && $generateDescriptions && $post->post_content ) {
-				$description = $this->helpers->sanitize( aioseo()->helpers->getDescriptionFromContent( $post ), $post->ID, $default, false );
+				$description = $this->helpers->sanitize( aioseo()->helpers->getDescriptionFromContent( $post ), $post->ID, $default );
 			}
 		}
 
@@ -220,9 +220,9 @@ class Description {
 	 *
 	 * @since 4.0.6
 	 *
-	 * @param  WP_Term $term    The term object.
-	 * @param  boolean $default Whether we want the default value, not the post one.
-	 * @return string           The term description.
+	 * @param  \WP_Term $term    The term object.
+	 * @param  boolean  $default Whether we want the default value, not the post one.
+	 * @return string            The term description.
 	 */
 	public function getTermDescription( $term, $default = false ) {
 		if ( ! is_a( $term, 'WP_Term' ) ) {

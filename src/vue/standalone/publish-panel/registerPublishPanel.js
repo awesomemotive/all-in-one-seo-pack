@@ -1,4 +1,5 @@
 import {
+	loadPiniaStores,
 	useRootStore
 } from '@/vue/stores'
 
@@ -14,6 +15,8 @@ import { isBlockEditor, shouldShowMetaBox } from '@/vue/plugins/tru-seo/componen
 	const PluginPostPublishPanel     = wp.editPost.PluginPostPublishPanel
 	const registerPlugin             = wp.plugins.registerPlugin
 
+	// We need to load the Pinia here since we are using the store outside an App.
+	loadPiniaStores()
 	const rootStore = useRootStore()
 	const user      = rootStore.aioseo.user
 	if (

@@ -78,20 +78,14 @@
 
 		<core-modal
 			v-if="showModal"
-			no-header
 			@close="showModal = false"
 		>
+			<template #headerTitle>
+				{{ strings.wouldYouLikeToPurchase }}
+			</template>
+
 			<template #body>
 				<div class="aioseo-modal-body">
-					<button
-						class="close"
-						@click.stop="showModal = false"
-					>
-						<svg-close @click="showModal = false" />
-					</button>
-
-					<h3>{{ strings.wouldYouLikeToPurchase }}</h3>
-
 					<div
 						class="available-features"
 						v-html="strings.theseFeaturesAreAvailable"
@@ -169,7 +163,6 @@ import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
-import SvgClose from '@/vue/components/common/svg/Close'
 import WizardBody from '@/vue/components/common/wizard/Body'
 import WizardCloseAndExit from '@/vue/components/common/wizard/CloseAndExit'
 import WizardContainer from '@/vue/components/common/wizard/Container'
@@ -194,7 +187,6 @@ export default {
 		GridColumn,
 		GridRow,
 		SvgCircleQuestionMark,
-		SvgClose,
 		WizardBody,
 		WizardCloseAndExit,
 		WizardContainer,
@@ -263,7 +255,6 @@ export default {
 	},
 	methods : {
 		purchase () {
-			this.modalLoading = true
 			const redirect = `&license-redirect=${btoa(this.rootStore.aioseo.urls.aio.wizard)}#/license-key`
 			window.open('https://aioseo.com/pricing/?features[]=' + this.getSelectedUpsellFeatures.map(f => f.value).join('&features[]=') + redirect)
 			this.$router.push(this.setupWizardStore.getNextLink)
@@ -347,38 +338,10 @@ export default {
 	}
 
 	.aioseo-modal-body {
-		max-height: 90vh;
-		overflow: auto;
 		padding: 20px 50px 50px;
 		display: flex;
 		flex-direction: column;
 		position: relative;
-
-		h3 {
-			font-size: 20px;
-
-			&+ .aioseo-description {
-				margin-bottom: 20px;
-			}
-		}
-
-		button.close {
-			position: absolute;
-			right: 11px;
-			top: 11px;
-			width: 24px;
-			height: 24px;
-			background-color: #fff;
-			border: none;
-			display: flex;
-			align-items: center;
-
-			svg.aioseo-close {
-				cursor: pointer;
-				width: 14px;
-				height: 14px;
-			}
-		}
 
 		.actions {
 			margin-top: 20px;

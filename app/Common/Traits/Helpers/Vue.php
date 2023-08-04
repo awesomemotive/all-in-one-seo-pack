@@ -38,6 +38,7 @@ trait Vue {
 		}
 
 		global $wp_version;
+		global $_wp_theme_features;
 		$screen = aioseo()->helpers->getCurrentScreen();
 
 		$isStaticHomePage = 'page' === get_option( 'show_on_front' );
@@ -173,7 +174,10 @@ trait Vue {
 			'scheduledActions'  => [
 				'sitemaps' => []
 			],
-			'integration'       => $integration
+			'integration'       => $integration,
+			'theme'             => [
+				'features' => isset( $_wp_theme_features ) && is_array( $_wp_theme_features ) ? $_wp_theme_features : []
+			]
 		];
 
 		if ( is_multisite() ) {

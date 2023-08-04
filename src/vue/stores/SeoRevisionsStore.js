@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { arrayColumn } from '@/vue/utils/helpers'
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 
@@ -21,6 +22,15 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 		seoRevisionsDiff      : {},
 		seoRevisionsDiffCache : {}
 	}),
+	getters : {
+		hasDiff () {
+			if (0 < this.seoRevisionsDiff.length) {
+				return 0 < arrayColumn(this.seoRevisionsDiff, 'diff').filter(v => v).length
+			}
+
+			return true
+		}
+	},
 	actions : {
 		delete (id) {
 			return http.delete(links.restUrl(`seo-revisions/${id}`))
@@ -61,7 +71,7 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 				})
 		},
 		fetchDiff (payload) {
-			const cacheKey = payload.fromId + '-' + payload.toId
+			const cacheKey = payload.fromId + '_' + payload.toId
 
 			return new Promise((resolve) => {
 				if (this.seoRevisionsDiffCache[cacheKey]) {
@@ -72,8 +82,8 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 					http.get(links.restUrl('seo-revisions/diff'))
 						.query(payload)
 						.then((response) => {
-							this.seoRevisionsDiff      = response.body.diff
-							this.seoRevisionsDiffCache = { key: cacheKey, value: response.body.diff }
+							this.seoRevisionsDiff = response.body.diff
+							this.seoRevisionsDiffCache[cacheKey] = response.body.diff
 
 							resolve(response)
 						})

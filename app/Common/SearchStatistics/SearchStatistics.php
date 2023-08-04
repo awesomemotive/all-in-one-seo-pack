@@ -41,8 +41,8 @@ class SearchStatistics {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param  string $dateRange The date range.
-	 * @return array             The data for the SEO Overview.
+	 * @param  array $dateRange The date range.
+	 * @return array            The data for the SEO Overview.
 	 */
 	protected function getSeoOverviewData( $dateRange = [] ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		$pageRows = [
@@ -411,8 +411,8 @@ class SearchStatistics {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param  string $dateRange The date range.
-	 * @return array             The data for the Keywords.
+	 * @param  array $dateRange The date range.
+	 * @return array            The data for the Keywords.
 	 */
 	protected function getKeywordsData( $dateRange = [] ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		$keywordsRows = [

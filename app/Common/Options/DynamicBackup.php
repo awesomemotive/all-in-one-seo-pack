@@ -200,9 +200,9 @@ class DynamicBackup {
 	 *
 	 * @since 4.1.3
 	 *
-	 * @return void
 	 * @param  array $backupOptions The options to be restored.
 	 * @param  array $groups        The group that the option should be restored.
+	 * @return void
 	 */
 	protected function restoreOptions( $backupOptions, $groups ) {
 		$groupPath = $this->options;

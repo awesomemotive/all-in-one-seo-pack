@@ -54,17 +54,14 @@ class Connect {
 	 */
 	public static function processConnect( $request ) {
 		$body        = $request->get_json_params();
-		$downloadUrl = ! empty( $body['downloadUrl'] ) ? esc_url_raw( urldecode( $body['downloadUrl'] ) ) : null;
-		$token       = ! empty( $body['token'] ) ? sanitize_text_field( $body['token'] ) : null;
 		$wizard      = ! empty( $body['wizard'] ) ? sanitize_text_field( $body['wizard'] ) : null;
 		$success     = true;
-		$message     = '';
 
 		if ( $wizard ) {
 			aioseo()->internalOptions->internal->wizard = $wizard;
 		}
 
-		$response = aioseo()->admin->connect->process( $downloadUrl, $token );
+		$response = aioseo()->admin->connect->process();
 		if ( ! empty( $response['error'] ) ) {
 			$message = $response['error'];
 		} else {

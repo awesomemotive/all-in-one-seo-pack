@@ -223,7 +223,7 @@ class Context {
 			'url'         => aioseo()->helpers->getUrl()
 		];
 
-		$context['breadcrumb'] = $this->breadcrumb->date( $context );
+		$context['breadcrumb'] = $this->breadcrumb->date();
 
 		return $context;
 	}

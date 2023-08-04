@@ -72,7 +72,7 @@ export default {
 
 		window.aioseoBus.$on('updateSelectedTerms', this.updateSelectedTerms)
 	},
-	beforeDestroy () {
+	beforeUnmount () {
 		window.aioseoBus.$off('updateSelectedTerms', this.updateSelectedTerms)
 	}
 }

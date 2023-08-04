@@ -48,7 +48,7 @@ class RequestParser {
 	 *
 	 * @since 4.2.1
 	 *
-	 * @param  WP   $wp The main WordPress environment instance.
+	 * @param  \WP  $wp The main WordPress environment instance.
 	 * @return void
 	 */
 	public function checkRequest( $wp ) {
@@ -153,7 +153,7 @@ class RequestParser {
 	protected function checkForXsl() {
 		// Trim off the URL params.
 		$newSlug = preg_replace( '/\?.*$/', '', $this->slug );
-		if ( preg_match( '/^default\.xsl$/i', $newSlug ) ) {
+		if ( preg_match( '/^default-sitemap\.xsl$/i', $newSlug ) ) {
 			aioseo()->sitemap->xsl->generate();
 		}
 	}

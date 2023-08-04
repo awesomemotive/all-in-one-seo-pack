@@ -1,58 +1,58 @@
 // @TODO: We may possibly add these back in, so let's leave for now.
-import lengthContent from './lengthContent'
-import keyphraseLength from './keyphraseLength'
-import keyphraseInTitle from './keyphraseInTitle'
+import calculateFleschReading from './calculateFleschReading'
+import consecutiveSentences from './consecutiveSentences'
+import contentHasAssets from './contentHasAssets'
+import isExternalLink from './isExternalLink'
+import isInternalLink from './isInternalLink'
 import keyphraseInBeginningTitle from './keyphraseBeginningTitle'
-import keyphraseInDescription from './keyphraseInDescription'
-import keyphraseInURL from './keyphraseInURL'
 import keyphraseInContent from './keyphraseInContent'
+import keyphraseInDescription from './keyphraseInDescription'
+import keyphraseInImageAlt from './keyphraseInImageAlt'
 import keyphraseInIntroduction from './keyphraseInIntroduction'
 import keyphraseInSubHeadings from './keyphraseInSubHeadings'
-import keyphraseInImageAlt from './keyphraseInImageAlt'
-import titleLength from './titleLength'
+import keyphraseInTitle from './keyphraseInTitle'
+import keyphraseInURL from './keyphraseInURL'
+import keyphraseLength from './keyphraseLength'
+import keywordDensity from './keywordDensity'
+import lengthContent from './lengthContent'
 import metadescriptionLength from './metadescriptionLength'
-import contentHasAssets from './contentHasAssets'
 import paragraphLength from './paragraphLength'
-import sentenceLength from './sentenceLength'
 import passiveVoice from './passiveVoice'
-import transitionWords from './transitionWords'
-import consecutiveSentences from './consecutiveSentences'
+import sentenceLength from './sentenceLength'
 import subheadingsDistribution from './subheadingsDistribution'
-import calculateFleschReading from './calculateFleschReading'
-import isInternalLink from './isInternalLink'
-import isExternalLink from './isExternalLink'
-// import keyphraseDensity from './keyphraseDensity'
+import titleLength from './titleLength'
+import transitionWords from './transitionWords'
 // import titleHasNumber from './titleHasNumber'
 // import titleHasPowerWords from './titleHasPowerWords'
 // import titleSentiment from './titleSentiment'
 // import isExternalLinkNoFollow from './isExternalLinkNoFollow'
 
 export const analyzers = {
-	keyphraseInTitle,
-	keyphraseInDescription,
-	keyphraseInURL,
-	keyphraseInIntroduction,
-	keyphraseInSubHeadings,
-	keyphraseInImageAlt,
-	keyphraseInContent,
-	keyphraseInBeginningTitle,
-	keyphraseLength,
-	// keyphraseDensity
-	metadescriptionLength,
-	lengthContent,
-	isInternalLink,
-	isExternalLink,
 	// isExternalLinkNoFollow
-	titleLength,
 	// titleHasNumber,
 	// titleHasPowerWords,
 	// titleSentiment
-	contentHasAssets,
-	paragraphLength,
-	sentenceLength,
-	passiveVoice,
-	transitionWords,
+	calculateFleschReading,
 	consecutiveSentences,
+	contentHasAssets,
+	isExternalLink,
+	isInternalLink,
+	keyphraseInBeginningTitle,
+	keyphraseInContent,
+	keyphraseInDescription,
+	keyphraseInImageAlt,
+	keyphraseInIntroduction,
+	keyphraseInSubHeadings,
+	keyphraseInTitle,
+	keyphraseInURL,
+	keyphraseLength,
+	keywordDensity,
+	lengthContent,
+	metadescriptionLength,
+	paragraphLength,
+	passiveVoice,
+	sentenceLength,
 	subheadingsDistribution,
-	calculateFleschReading
+	titleLength,
+	transitionWords
 }

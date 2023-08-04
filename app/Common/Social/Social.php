@@ -163,8 +163,8 @@ class Social {
 	 *
 	 * @since 4.2.0
 	 *
-	 * @param  int     $postId The post ID.
-	 * @param  WP_Post $post   The post object.
+	 * @param  int      $postId The post ID.
+	 * @param  \WP_Post $post   The post object.
 	 * @return void
 	 */
 	public function scheduleBustOgCachePost( $postId, $post = null ) {

@@ -1,4 +1,4 @@
-import { createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 
 import { useAddonsStore } from '@/vue/stores/AddonsStore'
 import { useAnalyzerStore } from '@/vue/stores/AnalyzerStore'
@@ -180,6 +180,11 @@ const loadPinia = (app, router = null) => {
 		pinia.use(({ store }) => {
 			store.$router = markRaw(router)
 		})
+	}
+
+	if (!app) {
+		setActivePinia(pinia)
+		return pinia
 	}
 
 	app.use(pinia)

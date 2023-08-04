@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta ti
 Tested up to: 6.2.2
 Requires at least: 4.9
 Requires PHP: 5.6
-Stable tag: 4.4.2
+Stable tag: 4.4.3
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -257,6 +257,27 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 
 == Changelog ==
+
+**New in Version 4.4.3**
+
+* New: Added keyword density test to TruSEO content analysis.
+* Updated: TruSEO now considers numbers as valid focus keywords.
+* Updated: Breadcrumbs block now shows a warning when breadcrumbs feature is disabled under the General Settings.
+* Updated: Redirect trash monitor now monitors deleted posts as well.
+* Updated: Improved compatibility with ClassicPress v2.0.
+* Fixed: Conflict with Bluehost plugin where the sitemap stylesheet returns a white screen.
+* Fixed: Plugin conflict when WP content directory does not use the default location.
+* Fixed: Post list now shows the correct title/description for every post when filtered by a category.
+* Fixed: Post archives without posts are no longer incorrectly included in sitemap root index.
+* Fixed: Search Statistics now works correctly on multisite subsites.
+* Fixed: Dashboard Widget now accurately counts posts without a focus keyword.
+* Fixed: Enabling a filter for the redirects tables no longer reset any active column sorting.
+* Fixed: Pagination for notifications in the Notification Center sometimes not working correctly.
+* Fixed: Divi element suffixes incorrectly incremented when shortcode parsing is enabled in AIOSEO.
+* Fixed: Removed duplicate description tag from Hello Elementor theme.
+* Fixed: Parent term smart tag not working correctly in some cases.
+* Fixed: Three-way plugin conflict between AIOSEO, BuddyBoss Platform and User Role Editor where our capabilities are removed from custom roles.
+* Fixed: Trashed posts are now correctly monitored again. After trashing, a redirect will be suggested.
 
 **New in Version 4.4.2**
 
@@ -522,6 +543,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.4.2 =
+= 4.4.3 =
 
 This update adds major improvements and bug fixes.

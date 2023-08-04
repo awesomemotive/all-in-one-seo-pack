@@ -15,7 +15,7 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 		 *
 		 * @since 4.1.1
 		 *
-		 * @var AIOSEO\Plugin\Common\Breadcrumbs\Frontend
+		 * @var \AIOSEO\Plugin\Common\Breadcrumbs\Frontend|\AIOSEO\Plugin\Pro\Breadcrumbs\Frontend
 		 */
 		public $frontend;
 
@@ -24,7 +24,7 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 		 *
 		 * @since 4.1.1
 		 *
-		 * @var AIOSEO\Plugin\Common\Breadcrumbs\Shortcode
+		 * @var Shortcode
 		 */
 		public $shortcode;
 
@@ -33,7 +33,7 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 		 *
 		 * @since 4.1.1
 		 *
-		 * @var AIOSEO\Plugin\Common\Breadcrumbs\Block
+		 * @var Block
 		 */
 		public $block;
 
@@ -42,7 +42,7 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 		 *
 		 * @since 4.1.1
 		 *
-		 * @var AIOSEO\Plugin\Common\Breadcrumbs\Tags
+		 * @var Tags
 		 */
 		public $tags;
 

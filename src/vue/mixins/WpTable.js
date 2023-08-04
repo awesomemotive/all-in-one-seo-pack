@@ -7,7 +7,7 @@ export const WpTable = {
 		return {
 			resultsPerPage : 20,
 			orderBy        : null,
-			orderDir       : 'asc',
+			orderDir       : null,
 			searchTerm     : '',
 			pageNumber     : 1,
 			filter         : 'all',
@@ -24,6 +24,7 @@ export const WpTable = {
 		},
 		processAdditionalFilters ({ filters }) {
 			this.wpTableLoading = true
+			this.selectedFilters = filters
 
 			this.processFetchTableData(filters)
 				.then(() => (this.wpTableLoading = false))

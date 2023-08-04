@@ -133,9 +133,8 @@ class Model implements \JsonSerializable {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  mixed $var Generally the primary key to load up the model from the DB.
-	 *
-	 * @return BaseModelResource|bool        Returns the current object.
+	 * @param  mixed      $var Generally the primary key to load up the model from the DB.
+	 * @return Model|bool      Returns the current object.
 	 */
 	protected function loadData( $var = null ) {
 		// Return false if var is invalid or not supplied.
@@ -205,9 +204,8 @@ class Model implements \JsonSerializable {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string $key   The table column.
-	 * @param  string $table The table we are looking in.
-	 * @return array         The array of valid columns for the database query.
+	 * @param  string $key The table column.
+	 * @return array       The array of valid columns for the database query.
 	 */
 	protected function filter( $key ) {
 		$table   = aioseo()->core->db->prefix . $this->table;

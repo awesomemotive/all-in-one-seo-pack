@@ -53,9 +53,9 @@ trait Strings {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string $string     The string to convert.
-	 * @param  bool   $capitalize Whether or not to capitalize the first letter.
-	 * @return string             The converted string.
+	 * @param  string $string                   The string to convert.
+	 * @param  bool   $capitalizeFirstCharacter Whether to capitalize the first letter.
+	 * @return string                           The converted string.
 	 */
 	public function dashesToCamelCase( $string, $capitalizeFirstCharacter = false ) {
 		$string = str_replace( ' ', '', ucwords( str_replace( '-', ' ', $string ) ) );
@@ -74,7 +74,7 @@ trait Strings {
 	 * @param  string  $string             The string.
 	 * @param  int     $maxCharacters      The max. amount of characters.
 	 * @param  boolean $shouldHaveEllipsis Whether the string should have a trailing ellipsis (defaults to true).
-	 * @return string  $string             The string.
+	 * @return string                      The string.
 	 */
 	public function truncate( $string, $maxCharacters, $shouldHaveEllipsis = true ) {
 		$length       = strlen( $string );

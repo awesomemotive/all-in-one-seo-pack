@@ -235,19 +235,20 @@ class Connect {
 		$network = isset( $_POST['network'] ) ? (bool) wp_unslash( $_POST['network'] ) : false; // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized, HM.Security.NonceVerification.Missing, Generic.Files.LineLength.MaxExceeded
 		$network = ! empty( $network );
 
-		// Redirect.
-		$token = hash( 'sha512', wp_rand() );
+		// Generate a hash that can be compared after the user is redirected back.
+		$oth       = hash( 'sha512', wp_rand() );
+		$hashedOth = hash_hmac( 'sha512', $oth, wp_salt() );
 
 		// Save the options.
 		aioseo()->internalOptions->internal->connect->key     = $key;
 		aioseo()->internalOptions->internal->connect->time    = time();
 		aioseo()->internalOptions->internal->connect->network = $network;
-		aioseo()->internalOptions->internal->connect->token   = $token;
+		aioseo()->internalOptions->internal->connect->token   = $oth;
 
 		$url = add_query_arg( [
 			'key'      => $key,
 			'network'  => $network,
-			'token'    => $token,
+			'token'    => $hashedOth,
 			'version'  => aioseo()->version,
 			'siteurl'  => admin_url(),
 			'homeurl'  => home_url(),
@@ -271,32 +272,32 @@ class Connect {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param  string $downloadUrl The download URL.
-	 * @param  string $postToken   The token to validate.
-	 * @return array               An array containing a valid response or an error message.
+	 * @return array An array containing a valid response or an error message.
 	 */
 	public function process() {
-		// Verify params present (oth & download link).
-		$postToken   = ! empty( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : ''; // phpcs:ignore HM.Security.NonceVerification.Missing
+		$hashedOth   = ! empty( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : ''; // phpcs:ignore HM.Security.NonceVerification.Missing
 		$downloadUrl = ! empty( $_POST['file'] ) ? esc_url_raw( wp_unslash( $_POST['file'] ) ) : ''; // phpcs:ignore HM.Security.NonceVerification.Missing
 
-		// Translators: 1 - The marketing site anchor name ("aioseo.com").
-		$error   = sprintf( esc_html__( 'Could not install upgrade. Please download from %1$s and install manually.', 'all-in-one-seo-pack' ), esc_html( AIOSEO_MARKETING_DOMAIN ) );
+		$error = sprintf(
+			// Translators: 1 - The marketing site domain ("aioseo.com").
+			esc_html__( 'Could not install upgrade. Please download from %1$s and install manually.', 'all-in-one-seo-pack' ),
+			esc_html( AIOSEO_MARKETING_DOMAIN )
+		);
+
 		$success = esc_html__( 'Plugin installed & activated.', 'all-in-one-seo-pack' );
 
-		// verify params present (token & download link).
-		if ( empty( $downloadUrl ) || empty( $postToken ) ) {
+		// Check if all required params are present.
+		if ( empty( $downloadUrl ) || empty( $hashedOth ) ) {
 			wp_send_json_error( $error );
 		}
 
-		// Verify token.
-		$token = aioseo()->internalOptions->internal->connect->token;
-		if ( empty( $token ) ) {
+		$oth = aioseo()->internalOptions->internal->connect->token;
+		if ( empty( $oth ) ) {
 			wp_send_json_error( $error );
 		}
 
-		// This function has been included in WP Core since 3.9.2. @see: https://developer.wordpress.org/reference/functions/hash_equals/
-		if ( ! hash_equals( $token, $postToken ) ) { // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.hash_equalsFound
+		// Check if the stored hash matches the salted one that is sent back from the server.
+		if ( hash_hmac( 'sha512', $oth, wp_salt() ) !== $hashedOth ) {
 			wp_send_json_error( $error );
 		}
 

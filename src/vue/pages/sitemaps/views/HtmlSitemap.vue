@@ -223,10 +223,10 @@
 
 <script>
 import {
-	useOptionsStore,
-	useRootStore
+	useOptionsStore
 } from '@/vue/stores'
 
+import { useWidgets } from '@/vue/composables'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -236,9 +236,11 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import HtmlSitemapDisplayInfo from '@/vue/components/common/html-sitemap/DisplayInfo'
 export default {
 	setup () {
+		const { strings } = useWidgets({ name: 'htmlSitemap' })
+
 		return {
-			optionsStore : useOptionsStore(),
-			rootStore    : useRootStore()
+			optionsStore      : useOptionsStore(),
+			composableStrings : strings
 		}
 	},
 	components : {
@@ -286,14 +288,7 @@ export default {
 				},
 				widget : {
 					copy : '',
-					desc : this.$t.sprintf(
-						// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag, 3 - Opening HTML strong tag, 4 - The plugin short name ("AIOSEO"), 5 - Closing HTML strong tag.
-						this.$t.__('To add this widget, visit the %1$swidgets page%2$s and look for the %3$s"%4$s - HTML Sitemap"%5$s widget.', this.$td),
-						`<a href="${this.rootStore.aioseo.urls.admin.widgets}" target="_blank">`, '</a>',
-						'<strong>',
-						import.meta.env.VITE_SHORT_NAME,
-						'</strong>'
-					)
+					desc : this.composableStrings.visitWidgetsPage
 				},
 				php : {
 					copy : '<?php if( function_exists( \'aioseo_html_sitemap\' ) ) aioseo_html_sitemap(); ?>',

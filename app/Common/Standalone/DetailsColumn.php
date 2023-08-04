@@ -173,6 +173,14 @@ class DetailsColumn {
 			$data = json_decode( str_replace( 'var aioseo = ', '', substr( $data, 0, -1 ) ), true );
 		}
 
+		// We have to temporarily modify the query here since the query incorrectly identifies
+		// the current page as a category page when posts are filtered by a specific category.
+		global $wp_query;
+		$originalQuery = clone $wp_query;
+		$wp_query->is_category = false;
+		$wp_query->is_tag      = false;
+		$wp_query->is_tax      = false;
+
 		$nonce    = wp_create_nonce( "aioseo_meta_{$columnName}_{$postId}" );
 		$posts    = ! empty( $data['posts'] ) ? $data['posts'] : [];
 		$thePost  = Models\Post::getPost( $postId );
@@ -202,6 +210,8 @@ class DetailsColumn {
 		foreach ( $addonsColumnData as $addonColumnData ) {
 			$postData = array_merge( $postData, $addonColumnData );
 		}
+
+		$wp_query = $originalQuery;
 
 		$posts[]       = $postData;
 		$data['posts'] = $posts;

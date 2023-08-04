@@ -315,8 +315,8 @@ class Frontend {
 	 *
 	 * @since 4.1.3
 	 *
-	 * @param  array  $objects The object.
-	 * @return string          The HTML code.
+	 * @param  array  $object The object.
+	 * @return string         The HTML code.
 	 */
 	private function generateListItem( $object ) {
 		$li = '';

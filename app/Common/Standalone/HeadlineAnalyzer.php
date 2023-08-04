@@ -223,8 +223,9 @@ class HeadlineAnalyzer {
 	*
 	* @since 4.1.2
 	*
-	* @param  string $sentence         The headline.
+	* @param  string $headline         The headline.
 	* @param  array  $explodedHeadline The exploded headline.
+	* @param  array  $words            The words to match.
 	* @return array                    The matches that were found.
 	*/
 	public function matchWords( $headline, $explodedHeadline, $words ) {

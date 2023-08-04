@@ -213,8 +213,8 @@ class Facebook {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post|integer $post The post object or ID (optional).
-	 * @return string                The Open Graph title.
+	 * @param  \WP_Post|integer $post The post object or ID (optional).
+	 * @return string                 The Open Graph title.
 	 */
 	public function getTitle( $post = null ) {
 		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
@@ -255,8 +255,8 @@ class Facebook {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post|integer $post The post object or ID (optional).
-	 * @return string                The Open Graph description.
+	 * @param  \WP_Post|integer $post The post object or ID (optional).
+	 * @return string                 The Open Graph description.
 	 */
 	public function getDescription( $post = null ) {
 		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
@@ -382,7 +382,7 @@ class Facebook {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return void
+	 * @return array An array of unique keywords.
 	 */
 	public function getArticleTags() {
 		$post     = aioseo()->helpers->getPost();

@@ -181,8 +181,8 @@ class QueryArgs {
 	 *
 	 * @since 4.2.1
 	 *
-	 * @param  WP_Post $thePost The post we are looking at.
-	 * @return string           The new URL.
+	 * @param  \WP_Post $thePost The post we are looking at.
+	 * @return string            The new URL.
 	 */
 	private function getSingularUrl( $thePost ) {
 		$page   = aioseo()->helpers->getPageNumber();

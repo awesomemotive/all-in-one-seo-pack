@@ -20,6 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	RewriteEngine On
 
 	RewriteRule sitemap(|[0-9]+)\.xml$ /index.php [L]
-	RewriteRule (default|video)\.xsl /index.php [L]
+	RewriteRule (default|video)-sitemap\.xsl /index.php [L]
 </IfModule>
 # END: All in One SEO Sitemap Rewrite Rules

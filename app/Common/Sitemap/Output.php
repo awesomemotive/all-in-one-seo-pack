@@ -47,7 +47,7 @@ class Output {
 		) . ' -->';
 
 		if ( 'rss' === aioseo()->sitemap->type ) {
-			$xslUrl = home_url() . '/default.xsl';
+			$xslUrl = home_url() . '/default-sitemap.xsl';
 
 			if ( ! is_multisite() ) {
 				$title       = get_bloginfo( 'name' );
@@ -74,7 +74,7 @@ class Output {
 		}
 
 		if ( 'root' === aioseo()->sitemap->indexName && aioseo()->sitemap->indexes ) {
-			$xslUrl = add_query_arg( 'sitemap', aioseo()->sitemap->indexName, home_url() . '/default.xsl' );
+			$xslUrl = add_query_arg( 'sitemap', aioseo()->sitemap->indexName, home_url() . '/default-sitemap.xsl' );
 
 			echo "\r\n\r\n<?xml-stylesheet type=\"text/xsl\" href=\"" . esc_url( $xslUrl ) . "\"?>\r\n";
 			include AIOSEO_DIR . '/app/Common/Views/sitemap/xml/root.php';
@@ -82,7 +82,7 @@ class Output {
 			return;
 		}
 
-		$xslUrl = add_query_arg( 'sitemap', aioseo()->sitemap->indexName, home_url() . '/default.xsl' );
+		$xslUrl = add_query_arg( 'sitemap', aioseo()->sitemap->indexName, home_url() . '/default-sitemap.xsl' );
 
 		echo "\r\n\r\n<?xml-stylesheet type=\"text/xsl\" href=\"" . esc_url( $xslUrl ) . "\"?>\r\n";
 		include AIOSEO_DIR . '/app/Common/Views/sitemap/xml/default.php';
@@ -94,7 +94,7 @@ class Output {
 	 * @since 4.0.0
 	 *
 	 * @param  string $value The tag value.
-	 * @param  string $wrap  Whether the value should we wrapped in a CDATA section.
+	 * @param  bool   $wrap  Whether the value should we wrapped in a CDATA section.
 	 * @return void
 	 */
 	public function escapeAndEcho( $value, $wrap = true ) {

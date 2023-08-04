@@ -18,7 +18,7 @@ namespace AIOSEO\Plugin {
 		 *
 		 * @since 4.0.0
 		 *
-		 * @var AIOSEO\Plugin\AIOSEO
+		 * @var AIOSEO
 		 */
 		private static $instance;
 

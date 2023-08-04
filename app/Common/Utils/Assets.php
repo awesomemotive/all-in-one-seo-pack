@@ -30,7 +30,7 @@ class Assets {
 	 *
 	 * @since 4.1.9
 	 *
-	 * @param Core $core The AIOSEO Core class.
+	 * @param \AIOSEO\Plugin\Common\Core\Core $core The AIOSEO Core class.
 	 */
 	public function __construct( $core ) {
 		$this->core         = $core;

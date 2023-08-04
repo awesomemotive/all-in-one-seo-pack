@@ -246,7 +246,7 @@ class File {
 		aioseo()->sitemap->xsl->saveXslData( $filename, $entries, $total );
 
 		ob_start();
-		aioseo()->sitemap->output->output( $entries, $total );
+		aioseo()->sitemap->output->output( $entries );
 		aioseo()->addons->doAddonFunction( 'output', 'output', [ $entries, $total ] );
 		$content = ob_get_clean();
 

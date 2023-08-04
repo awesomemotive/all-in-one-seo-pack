@@ -63,9 +63,9 @@ class CompactArchive {
 	*
 	* @since 4.1.3
 	*
-	* @param  int    The year archive.
-	* @param  array  The month archives for the current year.
-	* @return string The HTML code for the year.
+	* @param  int    $year   The year archive.
+	* @param  array  $months The month archives for the current year.
+	* @return string         The HTML code for the year.
 	*/
 	protected function generateYearLine( $year, $months ) {
 		$html = '<li><strong><a href="' . get_year_link( $year ) . '">' . esc_html( $year ) . '</a>: </strong> ';

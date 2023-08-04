@@ -10,6 +10,8 @@
 		</template>
 
 		<template #description>
+			<required-plans :core-feature="['seo-revisions']" />
+
 			{{ strings.ctaDescription }}
 		</template>
 	</cta>
@@ -17,10 +19,12 @@
 
 <script>
 import Cta from '@/vue/components/common/cta/Index'
+import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 
 export default {
 	components : {
-		Cta
+		Cta,
+		RequiredPlans
 	},
 	props : {
 		parentComponentContext : String

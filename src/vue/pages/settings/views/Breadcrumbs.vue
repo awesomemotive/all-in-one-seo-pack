@@ -241,6 +241,7 @@ import {
 
 import tags from '@/vue/utils/tags'
 import { sanitizeString } from '@/vue/utils/strings'
+import { useWidgets } from '@/vue/composables'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import Breadcrumbs from './AIOSEO_VERSION/Breadcrumbs'
 import BreadcrumbsLite from './lite/Breadcrumbs'
@@ -252,10 +253,13 @@ import CoreSettingsSeparator from '@/vue/components/common/core/SettingsSeparato
 import Preview from './partials/Breadcrumbs/Preview'
 export default {
 	setup () {
+		const { strings } = useWidgets({ name: 'breadcrumbs' })
+
 		return {
-			licenseStore : useLicenseStore(),
-			optionsStore : useOptionsStore(),
-			rootStore    : useRootStore()
+			licenseStore      : useLicenseStore(),
+			optionsStore      : useOptionsStore(),
+			rootStore         : useRootStore(),
+			composableStrings : strings
 		}
 	},
 	components : {
@@ -291,13 +295,7 @@ export default {
 				},
 				widget : {
 					copy : '',
-					desc : this.$t.sprintf(
-						// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag, 3 - The plugin short name ("AIOSEO"), 4 - "Learn More" link.
-						this.$t.__('To add this widget, visit the %1$swidgets page%2$s and look for the "%3$s - Breadcrumbs" widget. %4$s', this.$td),
-						`<a href="${this.rootStore.aioseo.urls.admin.widgets}" target="_blank">`, '</a>',
-						import.meta.env.VITE_SHORT_NAME,
-						this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'breadcrumbsDisplay', true)
-					)
+					desc : `${this.composableStrings.visitWidgetsPage} ${this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'breadcrumbsDisplay', true)}`
 				},
 				php : {
 					copy : '<?php if( function_exists( \'aioseo_breadcrumbs\' ) ) aioseo_breadcrumbs(); ?>',

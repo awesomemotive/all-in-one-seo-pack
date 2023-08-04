@@ -20,7 +20,8 @@ import jsonToPhp from './build/aioseo-rollup-plugin-json-to-php'
 
 // Pro only inputs.
 const proInput = {
-	'aioseo-gtm' : './src/app/gtm/main.js'
+	'aioseo-gtm'          : './src/app/gtm/main.js',
+	
 }
 
 // Lite only inputs.

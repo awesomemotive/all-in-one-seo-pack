@@ -66,8 +66,8 @@ class ImportExport {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string $content The .ini file contents.
-	 * @return array           The settings.
+	 * @param  string $contents The .ini file contents.
+	 * @return array            The settings.
 	 */
 	public function importIniData( $contents ) {
 		$lines = array_filter( preg_split( '/\r\n|\r|\n/', $contents ) );
@@ -382,7 +382,7 @@ class ImportExport {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return void
+	 * @return array
 	 */
 	public function plugins() {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';

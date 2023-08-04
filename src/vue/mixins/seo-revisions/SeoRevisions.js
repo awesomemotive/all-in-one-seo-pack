@@ -16,29 +16,37 @@ export const RevisionMeta = {
 }
 
 export const ObjectRevisions = {
+	data () {
+		return {
+			updatingSeoRevisions : false
+		}
+	},
 	methods : {
-		async watchObjectRevisionsOnSavePost (dispatchEditor) {
+		updateSeoRevisions () {
+			if (
+				window.wp.data.select('core/editor').isSavingPost() &&
+				!window.wp.data.select('core/editor').isAutosavingPost()
+			) {
+				this.updatingSeoRevisions = true
+
+				const $this = this
+				const seoRevisionsStore = useSeoRevisionsStore()
+
+				setTimeout(() => {
+					seoRevisionsStore.fetch().finally(() => {
+						$this.updatingSeoRevisions = false
+					})
+				}, 2500)
+			}
+		},
+		async watchObjectRevisionsOnSavePost () {
 			await this.$nextTick()
 
-			const savePost = dispatchEditor?.savePost || null
-			if ('function' !== typeof savePost) {
-				return false
-			}
-
-			const seoRevisionsStore = useSeoRevisionsStore()
-
-			dispatchEditor.savePost = (options) => {
-				options = options || {}
-
-				return savePost(options)
-					.then(() => {
-						if (!options.isAutosave && !options.isPreview) {
-							setTimeout(() => {
-								seoRevisionsStore.fetch()
-							}, 2000)
-						}
-					})
-			}
+			window.wp.data.subscribe(() => {
+				if (!this.updatingSeoRevisions) {
+					this.updateSeoRevisions()
+				}
+			})
 		}
 	}
 }

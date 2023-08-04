@@ -57,7 +57,7 @@ class Main {
 			return;
 		}
 
-		aioseo()->core->assets->enqueueCss( 'src/vue/assets/scss/app/admin-bar.scss', [], 'src/vue/assets/scss/app/admin-bar.scss' );
+		aioseo()->core->assets->enqueueCss( 'src/vue/assets/scss/app/admin-bar.scss' );
 	}
 
 	/**

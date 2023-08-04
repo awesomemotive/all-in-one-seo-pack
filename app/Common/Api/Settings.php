@@ -20,8 +20,7 @@ class Settings {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
-	 * @return \WP_REST_Response          The response.
+	 * @return \WP_REST_Response The response.
 	 */
 	public static function getOptions() {
 		return new \WP_REST_Response( [
@@ -125,8 +124,7 @@ class Settings {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
-	 * @return \WP_REST_Response          The response.
+	 * @return \WP_REST_Response The response.
 	 */
 	public static function hideUpgradeBar() {
 		aioseo()->settings->showUpgradeBar = false;
@@ -141,8 +139,7 @@ class Settings {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
-	 * @return \WP_REST_Response          The response.
+	 * @return \WP_REST_Response The response.
 	 */
 	public static function hideSetupWizard() {
 		aioseo()->settings->showSetupWizard = false;

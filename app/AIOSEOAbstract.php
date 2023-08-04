@@ -61,7 +61,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var \AIOSEO\Plugin\Common\Core\Db
+	 * @var \AIOSEO\Plugin\Common\Utils\Database
 	 */
 	public $db = null;
 
@@ -71,7 +71,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var \AIOSEO\Plugin\Common\Core\Cache
+	 * @var \AIOSEO\Plugin\Common\Utils\Cache
 	 */
 	public $transients = null;
 
@@ -99,7 +99,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var AIOSEO\Plugin\Common\Standalone
+	 * @var \AIOSEO\Plugin\Common\Standalone\Standalone
 	 */
 	public $standalone = null;
 
@@ -108,25 +108,16 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @var \AIOSEO\Plugin\Common\SearchStatistics\SearchStatistics|\AIOSEO\Plugin\Pro\SearchStatistics\SearchStatistics
+	 * @var \AIOSEO\Plugin\Pro\SearchStatistics\SearchStatistics
 	 */
 	public $searchStatistics = null;
-
-	/**
-	 * ThirdParty class instance.
-	 *
-	 * @since 4.2.7
-	 *
-	 * @var \AIOSEO\Plugin\Common\ThirdParty\ThirdParty
-	 */
-	public $thirdParty = null;
 
 	/**
 	 * Tags class instance.
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var \AIOSEO\Plugin\Common\Utils\Addons|\AIOSEO\Plugin\Pro\Utils\Addons
+	 * @var \AIOSEO\Plugin\Pro\Utils\Tags
 	 */
 	public $tags = null;
 
@@ -225,7 +216,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var \AIOSEO\Plugin\Common\Meta\Meta|\AIOSEO\Plugin\Pro\Meta\Meta
+	 * @var \AIOSEO\Plugin\Pro\Meta\Meta
 	 */
 	public $meta = null;
 
@@ -306,7 +297,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var \AIOSEO\Plugin\Common\Main|Activate|\AIOSEO\Plugin\Pro\Main\Activate
+	 * @var \AIOSEO\Plugin\Common\Main\Activate|\AIOSEO\Plugin\Pro\Main\Activate
 	 */
 	public $activate = null;
 
@@ -324,7 +315,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var \AIOSEO\Plugin\Common\Migration\Migration|\AIOSEO\Plugin\Pro\Migration\Migration
+	 * @var \AIOSEO\Plugin\Pro\Migration\Migration
 	 */
 	public $migration = null;
 
@@ -378,7 +369,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var \AIOSEO\Plugin\Common\Schema\Schema|\AIOSEO\Plugin\Pro\Schema\Schema
+	 * @var \AIOSEO\Plugin\Pro\Schema\Schema
 	 */
 	public $schema = null;
 
@@ -450,7 +441,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var \AIOSEO\Plugin\Common\Core\Cache
+	 * @var \AIOSEO\Plugin\Common\Utils\Cache
 	 */
 	public $cache = null;
 
@@ -459,7 +450,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var \AIOSEO\Plugin\Common\Core\CachePrune
+	 * @var \AIOSEO\Plugin\Common\Utils\CachePrune
 	 */
 	public $cachePrune = null;
 
@@ -468,7 +459,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var \AIOSEO\Plugin\Common\Utils\Addons|\AIOSEO\Plugin\Pro\Utils\Addons
+	 * @var \AIOSEO\Plugin\Pro\Utils\Addons|\AIOSEO\Plugin\Common\Utils\Addons
 	 */
 	public $addons = null;
 
@@ -486,7 +477,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var \AIOSEO\Plugin\Lite\Options\Options|\AIOSEO\Plugin\Pro\Options\Options
+	 * @var \AIOSEO\Plugin\Common\Options\Options|\AIOSEO\Plugin\Pro\Options\Options
 	 */
 	public $options = null;
 
@@ -504,7 +495,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var \AIOSEO\Plugin\Lite\Admin\Usage|\Admin\Plugin\Pro\Admin\Usage
+	 * @var \AIOSEO\Plugin\Lite\Admin\Usage|\AIOSEO\Plugin\Pro\Admin\Usage
 	 */
 	public $usage = null;
 
@@ -522,7 +513,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var null|\AIOSEO\Plugin\Admin\AutoUpdates
+	 * @var \AIOSEO\Plugin\Pro\Admin\AutoUpdates
 	 */
 	public $autoUpdates = null;
 

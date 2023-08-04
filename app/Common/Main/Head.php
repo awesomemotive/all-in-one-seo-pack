@@ -64,7 +64,7 @@ class Head {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @var Meta\Verification
+	 * @var Meta\SiteVerification
 	 */
 	protected $verification = null;
 

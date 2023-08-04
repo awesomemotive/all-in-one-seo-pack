@@ -39,7 +39,7 @@ class RankMath extends ImportExport\Importer {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param ImportExport $importer the ImportExport class.
+	 * @param ImportExport\ImportExport $importer the ImportExport class.
 	 */
 	public function __construct( $importer ) {
 		$this->helpers  = new Helpers();

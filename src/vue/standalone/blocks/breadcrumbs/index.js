@@ -49,7 +49,7 @@ export const settings = {
 				'div',
 				{},
 				el(
-					Disabled,
+					window.aioseo.options.breadcrumbs.enable ? Disabled : 'div',
 					null,
 					el(
 						ServerSideRender,

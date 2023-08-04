@@ -49,9 +49,9 @@ class PrimaryTerm {
 	 *
 	 * @since 4.3.6
 	 *
-	 * @param  int           $postId       The post ID.
-	 * @param  string        $taxonomyName The taxonomy name.
-	 * @return WP_Term|false               The term or false.
+	 * @param  int            $postId       The post ID.
+	 * @param  string         $taxonomyName The taxonomy name.
+	 * @return \WP_Term|false               The term or false.
 	 */
 	public function getPrimaryTerm( $postId, $taxonomyName ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		return false;

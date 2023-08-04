@@ -40,8 +40,8 @@ class Ping {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  integer $postId The ID of the post.
-	 * @param  WP_Post $post   The post object.
+	 * @param  integer  $postId The ID of the post.
+	 * @param  \WP_Post $post   The post object.
 	 * @return void
 	 */
 	public function schedule( $postId, $post = null ) {

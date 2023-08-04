@@ -250,7 +250,7 @@ class GeneralSettings {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post $post The post object.
+	 * @param  \WP_Post $post The post object.
 	 * @return void
 	 */
 	private function maybeShowHomePageTitleNotice( $post ) {
@@ -332,7 +332,7 @@ class GeneralSettings {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post $post The post object.
+	 * @param  \WP_Post $post The post object.
 	 * @return void
 	 */
 	private function maybeShowHomePageDescriptionNotice( $post ) {

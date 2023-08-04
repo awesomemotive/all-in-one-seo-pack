@@ -17,7 +17,7 @@ class NewsArticle extends Article {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return Object $graphData The graph data.
+	 * @return object $graphData The graph data.
 	 * @return array             The parsed graph data.
 	 */
 	public function get( $graphData = null ) {

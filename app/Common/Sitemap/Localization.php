@@ -47,7 +47,6 @@ class Localization {
 	 * @param  int    $entryId     The post/term ID.
 	 * @param  string $objectName  The post type or taxonomy name.
 	 * @param  string $objectType  Whether the entry is a post or term.
-	 * @param  bool   $rss         Whether or not we are localizing for the RSS sitemap.
 	 * @return array               The entry.
 	 */
 	public function localizeEntry( $entry, $entryId, $objectName, $objectType ) {

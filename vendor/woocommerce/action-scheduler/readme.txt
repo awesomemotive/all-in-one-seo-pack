@@ -2,8 +2,8 @@
 Contributors: Automattic, wpmuguru, claudiosanches, peterfabian1000, vedjain, jamosova, obliviousharmony, konamiman, sadowski, royho, barryhughes-1
 Tags: scheduler, cron
 Requires at least: 5.2
-Tested up to: 5.7
-Stable tag: 3.4.2
+Tested up to: 6.0
+Stable tag: 3.6.1
 License: GPLv3
 Requires PHP: 5.6
 
@@ -46,6 +46,65 @@ Action Scheduler is developed and maintained by [Automattic](http://automattic.c
 Collaboration is cool. We'd love to work with you to improve Action Scheduler. [Pull Requests](https://github.com/woocommerce/action-scheduler/pulls) welcome.
 
 == Changelog ==
+
+= 3.6.1 - 2023-06-14 =
+* Document new optional `$priority` arg for various API functions.
+* Document the new `--exclude-groups` WP CLI option.
+* Document the new `action_scheduler_init` hook.
+* Ensure actions within each claim are executed in the expected order.
+* Fix incorrect text domain.
+* Remove SHOW TABLES usage when checking if tables exist.
+
+= 3.6.0 - 2023-05-10 =
+* Add $unique parameter to function signatures.
+* Add a cast-to-int for extra safety before forming new DateTime object.
+* Add a hook allowing exceptions for consistently failing recurring actions.
+* Add action priorities.
+* Add init hook.
+* Always raise the time limit.
+* Bump minimatch from 3.0.4 to 3.0.8.
+* Bump yaml from 2.2.1 to 2.2.2.
+* Defensive coding relating to gaps in declared schedule types.
+* Do not process an action if it cannot be set to `in-progress`.
+* Filter view labels (status names) should be translatable | #919.
+* Fix WPCLI progress messages.
+* Improve data-store initialization flow.
+* Improve error handling across all supported PHP versions.
+* Improve logic for flushing the runtime cache.
+* Support exclusion of multiple groups.
+* Update lint-staged and Node/NPM requirements.
+* add CLI clean command.
+* add CLI exclude-group filter.
+* exclude past-due from list table all filter count.
+* throwing an exception if as_schedule_recurring_action interval param is not of type integer.
+
+= 3.5.4 - 2023-01-17 =
+* Add pre filters during action registration.
+* Async scheduling.
+* Calculate timeouts based on total actions.
+* Correctly order the parameters for `ActionScheduler_ActionFactory`'s calls to `single_unique`.
+* Fetch action in memory first before releasing claim to avoid deadlock.
+* PHP 8.2: declare property to fix creation of dynamic property warning.
+* PHP 8.2: fix "Using ${var} in strings is deprecated, use {$var} instead".
+* Prevent `undefined variable` warning for `$num_pastdue_actions`.
+
+= 3.5.3 - 2022-11-09 =
+* Query actions with partial match.
+
+= 3.5.2 - 2022-09-16 =
+* Fix - erroneous 3.5.1 release.
+
+= 3.5.1 - 2022-09-13 =
+* Maintenance on A/S docs.
+* fix: PHP 8.2 deprecated notice.
+
+= 3.5.0 - 2022-08-25 =
+* Add - The active view link within the "Tools > Scheduled Actions" screen is now clickable.
+* Add - A warning when there are past-due actions.
+* Enhancement - Added the ability to schedule unique actions via an atomic operation.
+* Enhancement - Improvements to cache invalidation when processing batches (when running on WordPress 6.0+).
+* Enhancement - If a recurring action is found to be consistently failing, it will stop being rescheduled.
+* Enhancement - Adds a new "Past Due" view to the scheduled actions list table.
 
 = 3.4.2 - 2022-06-08 =
 * Fix - Change the include for better linting.

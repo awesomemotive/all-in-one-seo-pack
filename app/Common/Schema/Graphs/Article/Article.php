@@ -102,8 +102,8 @@ class Article extends Graphs\Graph {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post $post The post object.
-	 * @return array         The image graph data.
+	 * @param  \WP_Post $post The post object.
+	 * @return array          The image graph data.
 	 */
 	private function postImage( $post ) {
 		$featuredImage = $this->getFeaturedImage();

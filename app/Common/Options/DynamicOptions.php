@@ -127,8 +127,7 @@ class DynamicOptions {
 		// It's important we use the helper method since we want to replace populated arrays with empty ones if needed (when a setting was cleared out).
 		$dbOptions = aioseo()->helpers->arrayReplaceRecursive(
 			$cachedOptions,
-			$this->addValueToValuesArray( $cachedOptions, $options, [], true ),
-			true
+			$this->addValueToValuesArray( $cachedOptions, $options, [], true )
 		);
 
 		// Now, we must also intersect both arrays to delete any individual keys that were unset.

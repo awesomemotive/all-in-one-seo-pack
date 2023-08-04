@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import '@/vue/assets/scss/main.scss'
+
 import {
 	useRootStore
 } from '@/vue/stores'
@@ -164,3 +166,10 @@ export default {
 	}
 }
 </script>
+<style>
+.aioseo-redirects.modal {
+	.bd {
+		padding: 20px
+	}
+}
+</style>

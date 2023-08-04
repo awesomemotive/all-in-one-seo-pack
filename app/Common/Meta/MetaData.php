@@ -93,8 +93,8 @@ class MetaData {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post    $post The post object (optional).
-	 * @return array|bool       The meta data or false.
+	 * @param  \WP_Post         $post The post object (optional).
+	 * @return Models\Post|bool       The meta data or false.
 	 */
 	public function getMetaData( $post = null ) {
 		if ( ! $post ) {
@@ -152,8 +152,8 @@ class MetaData {
 	 *
 	 * @since 4.1.7
 	 *
-	 * @param  int  $postId   The post ID.
-	 * @param  Post $metaData The meta data.
+	 * @param  int         $postId   The post ID.
+	 * @param  Models\Post $metaData The meta data.
 	 * @return void
 	 */
 	public function bustPostCache( $postId, $metaData = null ) {

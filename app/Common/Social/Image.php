@@ -28,7 +28,7 @@ class Image {
 	 *
 	 * @since 4.1.6.2
 	 *
-	 * @var WP_Post
+	 * @var \WP_Post
 	 */
 	private $post;
 
@@ -55,10 +55,10 @@ class Image {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string       $type        The type ("Facebook" or "Twitter").
-	 * @param  string       $imageSource The image source.
-	 * @param  WP_Post      $post        The post object.
-	 * @return string|array              The image data.
+	 * @param  string        $type        The type ("Facebook" or "Twitter").
+	 * @param  string        $imageSource The image source.
+	 * @param  \WP_Post      $post        The post object.
+	 * @return string|array               The image data.
 	 */
 	public function getImage( $type, $imageSource, $post ) {
 		$this->type          = $type;
@@ -294,8 +294,8 @@ class Image {
 	 *
 	 * @since 4.1.6.2
 	 *
-	 * @param  WP_term      The object for which we need to get the cached image.
-	 * @return string|array The image URL or data.
+	 * @param  \WP_Term     $object The object for which we need to get the cached image.
+	 * @return string|array         The image URL or data.
 	 */
 	protected function getCachedImage( $object = null ) {
 		if ( null === $object ) {

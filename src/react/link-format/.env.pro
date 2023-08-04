@@ -1,0 +1,1 @@
+AIOSEO_VERSION="Pro"

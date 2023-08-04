@@ -693,7 +693,6 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  mixed    A string or array to add to the select clause.
 	 * @return Database Returns the Database class which can be method chained for more query building.
 	 */
 	public function select() {
@@ -712,7 +711,6 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  mixed    A string or array to add to the where clause.
 	 * @return Database Returns the Database class which can be method chained for more query building.
 	 */
 	public function where() {
@@ -758,7 +756,6 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  mixed    A string or array to add to the where clause.
 	 * @return Database Returns the Database class which can be method chained for more query building.
 	 */
 	public function whereRaw() {
@@ -777,7 +774,6 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  mixed    A string or array to add to the where clause.
 	 * @return Database Returns the Database class which can be method chained for more query building.
 	 */
 	public function whereOr() {
@@ -816,7 +812,6 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param mixed     A string or array to add to the where clause.
 	 * @return Database Returns the Database class which can be method chained for more query building.
 	 */
 	public function whereIn() {
@@ -859,7 +854,6 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  mixed    A string or array to add to the where clause.
 	 * @return Database Returns the Database class which can be method chained for more query building.
 	 */
 	public function whereNotIn() {
@@ -901,7 +895,6 @@ class Database {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param  mixed     A string or array to add to the where clause.
 	 * @return Database  Returns the Database class which can be method chained for more query building.
 	 */
 	public function whereBetween() {
@@ -975,9 +968,9 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  Database|string The query (Database object or query string) to be joined with.
-	 * @param  bool            Set whether this union should be distinct or not.
-	 * @return Database        Returns the Database class which can be method chained for more query building.
+	 * @param  Database|string $query    The query (Database object or query string) to be joined with.
+	 * @param  bool            $distinct Set whether this union should be distinct or not.
+	 * @return Database                  Returns the Database class which can be method chained for more query building.
 	 */
 	public function union( $query, $distinct = true ) {
 		$this->union[] = [ $query, $distinct ];
@@ -990,7 +983,6 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  mixed    A string or array to add to the group by clause.
 	 * @return Database Returns the Database class which can be method chained for more query building.
 	 */
 	public function groupBy() {
@@ -1010,7 +1002,6 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param string    A string to add to the order by clause.
 	 * @return Database Returns the Database class which can be method chained for more query building.
 	 */
 	public function orderBy() {
@@ -1039,8 +1030,8 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param string    $direction This sets the direction of the order by clause, default is 'ASC'.
-	 * @return Database            Returns the Database class which can be method chained for more query building.
+	 * @param  string    $direction This sets the direction of the order by clause, default is 'ASC'.
+	 * @return Database             Returns the Database class which can be method chained for more query building.
 	 */
 	public function orderDirection( $direction = 'ASC' ) {
 		$this->orderDirection = $direction;
@@ -1072,8 +1063,8 @@ class Database {
 	 *
 	 * @since 4.1.5
 	 *
-	 * @param  array $args        The arguments.
-	 * @return array $preparedSet The prepared arguments.
+	 * @param  array $args The arguments.
+	 * @return array       The prepared arguments.
 	 */
 	private function prepareSet( $args ) {
 		$args = $this->prepArgs( $args );
@@ -1104,7 +1095,6 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  array    An associative array with columns mapped to their new values.
 	 * @return Database Returns the Database class which can be method chained for more query building.
 	 */
 	public function set() {
@@ -1118,7 +1108,6 @@ class Database {
 	 *
 	 * @since 4.1.5
 	 *
-	 * @param  mixed    An associative array with columns mapped to their new values.
 	 * @return Database Returns the Database class which can be method chained for more query building.
 	 */
 	public function onDuplicate() {
@@ -1163,7 +1152,7 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  bool     $reset  Whether or not to reset the results/query.
+	 * @param  bool     $reset  Whether to reset the results/query.
 	 * @param  string   $return Determine which method to call on the $wpdb object
 	 * @param  array    $params Optional extra parameters to pass to the db method call
 	 * @return Database         Returns the Database class which can be method chained for more query building.
@@ -1267,10 +1256,10 @@ class Database {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param string $class The name of the model class to call.
-	 * @param string $id    The ID of the index to use.
-	 * @param string $index The index if necessary.
-	 * @return array         An array of model class instances.
+	 * @param  string $class  The name of the model class to call.
+	 * @param  string $id     The ID of the index to use.
+	 * @param  bool   $toJson The index if necessary.
+	 * @return array          An array of model class instances.
 	 */
 	public function models( $class, $id = null, $toJson = false ) {
 		if ( ! empty( $this->models ) ) {

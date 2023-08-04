@@ -93,8 +93,8 @@ class Links {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post $post The post.
-	 * @return array         An array of link data.
+	 * @param  \WP_Post $post The post.
+	 * @return array          An array of link data.
 	 */
 	private function getPostLinks( $post ) {
 		$prev     = '';

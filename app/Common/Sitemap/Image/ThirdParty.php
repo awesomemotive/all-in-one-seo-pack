@@ -17,7 +17,7 @@ class ThirdParty {
 	 *
 	 * @since 4.2.2
 	 *
-	 * @var WP_Post
+	 * @var \WP_Post
 	 */
 	private $post;
 
@@ -100,8 +100,8 @@ class ThirdParty {
 	 *
 	 * @since 4.2.2
 	 *
-	 * @param WP_Post $post              The post object.
-	 * @param string  $parsedPostContent The parsed post content.
+	 * @param \WP_Post $post              The post object.
+	 * @param string   $parsedPostContent The parsed post content.
 	 */
 	public function __construct( $post, $parsedPostContent ) {
 		$this->post              = $post;

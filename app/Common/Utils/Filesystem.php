@@ -19,7 +19,7 @@ class Filesystem {
 	 *
 	 * @since 4.1.9
 	 *
-	 * @var WP_Filesystem
+	 * @var \WP_Filesystem_Base
 	 */
 	public $fs = null;
 
@@ -37,8 +37,8 @@ class Filesystem {
 	 *
 	 * @since 4.1.9
 	 *
-	 * @param Core  $core The AIOSEO Core class.
-	 * @param array $args Any arguments needed to construct the class with.
+	 * @param \AIOSEO\Plugin\Common\Core\Core $core The AIOSEO Core class.
+	 * @param array                           $args Any arguments needed to construct the class with.
 	 */
 	public function __construct( $core, $args = [] ) {
 		$this->core = $core;

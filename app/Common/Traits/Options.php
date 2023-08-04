@@ -832,7 +832,7 @@ trait Options {
 	 * @param  string  $name      The name of the option to set.
 	 * @param  array   $arguments Any arguments needed if this was a method called.
 	 * @param  mixed   $value     The value if we are setting an option.
-	 * @return Options            The options object.
+	 * @return object             The options object.
 	 */
 	private function setSubGroup( $name, $arguments = null, $value = null ) {
 		if ( ! is_null( $arguments ) ) {
@@ -1038,8 +1038,8 @@ trait Options {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  bool    $reInitialize Whether or not to reinitialize on the clone.
-	 * @return Options               The cloned Options object.
+	 * @param  bool   $reInitialize Whether to reinitialize on the clone.
+	 * @return object               The cloned Options object.
 	 */
 	public function noConflict( $reInitialize = false ) {
 		$class          = clone $this;

@@ -18,7 +18,7 @@ trait WpContext {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @var WP_Query
+	 * @var \WP_Query
 	 */
 	public $originalQuery;
 
@@ -27,7 +27,7 @@ trait WpContext {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @var WP_Post
+	 * @var \WP_Post
 	 */
 	public $originalPost;
 
@@ -36,7 +36,7 @@ trait WpContext {
 	 *
 	 * @since 4.1.1
 	 *
-	 * @return WP_Post|null The home page.
+	 * @return \WP_Post|null The home page.
 	 */
 	public function getHomePage() {
 		$homePageId = $this->getHomePageId();
@@ -49,7 +49,7 @@ trait WpContext {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return integer|null The home page ID.
+	 * @return int|null The home page ID.
 	 */
 	public function getHomePageId() {
 		$pageShowOnFront = ( 'page' === get_option( 'show_on_front' ) );
@@ -63,7 +63,7 @@ trait WpContext {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return WP_Post|null The blog page.
+	 * @return \WP_Post|null The blog page.
 	 */
 	public function getBlogPage() {
 		$blogPageId = $this->getBlogPageId();
@@ -166,8 +166,8 @@ trait WpContext {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post|int  $postId The post ID.
-	 * @return WP_Post|null         The post object.
+	 * @param  \WP_Post|int|bool $postId The post ID.
+	 * @return \WP_Post|null             The post object.
 	 */
 	public function getPost( $postId = false ) {
 		$postId = is_a( $postId, 'WP_Post' ) ? $postId->ID : $postId;
@@ -227,8 +227,8 @@ trait WpContext {
 	 *
 	 * @since 4.1.5
 	 *
-	 * @param  WP_Post|int $post The post (optional).
-	 * @return string            The post content.
+	 * @param  \WP_Post|int $post The post (optional).
+	 * @return string             The post content.
 	 */
 	public function getPostContent( $post = null ) {
 		$post = is_a( $post, 'WP_Post' ) ? $post : $this->getPost( $post );
@@ -252,8 +252,8 @@ trait WpContext {
 	 *
 	 * @since 4.2.7
 	 *
-	 * @param  WP_Post|int $post A post object or ID.
-	 * @return string            The content.
+	 * @param  \WP_Post|int $post A post object or ID.
+	 * @return string             The content.
 	 */
 	public function getPostCustomFieldsContent( $post = null ) {
 		$post = is_a( $post, 'WP_Post' ) ? $post : $this->getPost( $post );
@@ -300,8 +300,8 @@ trait WpContext {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  WP_Post|int $post The post (optional).
-	 * @return string            The description.
+	 * @param  \WP_Post|int $post The post (optional).
+	 * @return string             The description.
 	 */
 	public function getDescriptionFromContent( $post = null ) {
 		$post = is_a( $post, 'WP_Post' ) ? $post : $this->getPost( $post );
@@ -331,9 +331,9 @@ trait WpContext {
 	 *
 	 * @since 4.0.6
 	 *
-	 * @param  WP_Post|int $post The post.
-	 * @param  array       $keys The post meta_keys to check for values.
-	 * @return string            The custom field content.
+	 * @param  \WP_Post|int $post The post.
+	 * @param  array        $keys The post meta_keys to check for values.
+	 * @return string             The custom field content.
 	 */
 	public function getCustomFieldsContent( $post = null, $keys = [] ) {
 		$post = is_a( $post, 'WP_Post' ) ? $post : $this->getPost( $post );
@@ -369,7 +369,7 @@ trait WpContext {
 	 * @param  int  $postId The post ID.
 	 * @return bool         If the page is special or not.
 	 */
-	public function isSpecialPage( $postId = false ) {
+	public function isSpecialPage( $postId = 0 ) {
 		if (
 			(int) get_option( 'page_for_posts' ) === (int) $postId ||
 			(int) get_option( 'wp_page_for_privacy_policy' ) === (int) $postId ||
@@ -422,9 +422,9 @@ trait WpContext {
 	 *
 	 * @since 4.0.5
 	 *
-	 * @param  WP_Post $post                The Post object to check.
-	 * @param  array   $allowedPostStatuses Allowed post statuses.
-	 * @return bool                         True if valid, false if not.
+	 * @param  \WP_Post $post                The Post object to check.
+	 * @param  array    $allowedPostStatuses Allowed post statuses.
+	 * @return bool                          True if valid, false if not.
 	 */
 	public function isValidPost( $post, $allowedPostStatuses = [ 'publish' ] ) {
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -771,7 +771,7 @@ trait WpContext {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param  \WP_Post $post The post object.
+	 * @param  \WP_Post $wpPost The post object.
 	 * @return void
 	 */
 	public function setWpQueryPost( $wpPost ) {
@@ -792,36 +792,6 @@ trait WpContext {
 		}
 
 		$post = $wpPost;
-	}
-
-	/**
-	 * Sets the given term as the queried object of the main query.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param  \WP_Term $term The term object.
-	 * @return void
-	 */
-	public function setWpQueryTerm( $term ) {
-		global $wp_query;
-		$this->originalQuery = clone $wp_query;
-
-		$term->term_id = $term->id;
-
-		$wp_query->get_queried_object_id = (int) $term->id;
-		$wp_query->queried_object        = $term;
-		$wp_query->is_tax                = true;
-
-		switch ( $term->taxonomy ) {
-			case 'category':
-				$wp_query->is_category = true;
-				break;
-			case 'post_tag':
-				$wp_query->is_tag = true;
-				break;
-			default:
-				break;
-		}
 	}
 
 	/**

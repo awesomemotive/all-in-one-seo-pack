@@ -45,7 +45,7 @@ abstract class Filters {
 		add_filter( 'genesis_detect_seo_plugins', [ $this, 'genesisTheme' ] );
 
 		// WeGlot compatibility.
-		if ( preg_match( '#(/default\.xsl)$#i', $_SERVER['REQUEST_URI'] ) ) {
+		if ( preg_match( '#(/default-sitemap\.xsl)$#i', $_SERVER['REQUEST_URI'] ) ) {
 			add_filter( 'weglot_active_translation_before_treat_page', '__return_false' );
 		}
 
@@ -82,6 +82,8 @@ abstract class Filters {
 		if ( aioseo()->options->sitemap->general->enable ) {
 			add_filter( 'jetpack_get_available_modules', [ $this, 'disableJetpackSitemaps' ] );
 		}
+
+		add_action( 'after_setup_theme', [ $this, 'removeHelloElementorDescriptionTag' ] );
 	}
 
 	/**
@@ -141,8 +143,8 @@ abstract class Filters {
 	 *
 	 * @since 4.1.1
 	 *
-	 * @param  integer $newPostId    The new post ID.
-	 * @param  WP_Post $originalPost The original post object.
+	 * @param  integer  $newPostId     The new post ID.
+	 * @param  \WP_Post $originalPost The original post object.
 	 * @return void
 	 */
 	public function duplicatePost( $newPostId, $originalPost = null ) {
@@ -198,8 +200,8 @@ abstract class Filters {
 	 *
 	 * @since 4.1.4
 	 *
-	 * @param  \WP_Product $newProduct      The new, duplicated product.
-	 * @param  \WP_Product $originalProduct The original product.
+	 * @param  \WC_Product $newProduct      The new, duplicated product.
+	 * @param  \WC_Product $originalProduct The original product.
 	 * @return void
 	 */
 	public function scheduleDuplicateProduct( $newProduct, $originalProduct = null ) {
@@ -338,8 +340,8 @@ abstract class Filters {
 	 *
 	 * @since 4.1.9
 	 *
-	 * @param  array[Object]|array[string] $postTypes The post types.
-	 * @return array[Object]|array[string]            The filtered post types.
+	 * @param  array[object]|array[string] $postTypes The post types.
+	 * @return array[object]|array[string]            The filtered post types.
 	 */
 	public function removeInvalidPublicPostTypes( $postTypes ) {
 		$elementorEnabled = isset( aioseo()->standalone->pageBuilderIntegrations['elementor'] ) &&
@@ -372,8 +374,8 @@ abstract class Filters {
 	 *
 	 * @since 4.2.4
 	 *
-	 * @param  array[Object]|array[string] $taxonomies The taxonomies.
-	 * @return array[Object]|array[string]             The filtered taxonomies.
+	 * @param  array[object]|array[string] $taxonomies The taxonomies.
+	 * @return array[object]|array[string]             The filtered taxonomies.
 	 */
 	public function removeInvalidPublicTaxonomies( $taxonomies ) {
 		// Check if the Avada Builder plugin is enabled.
@@ -461,5 +463,18 @@ abstract class Filters {
 		if ( function_exists( 'learn_press_admin_assets' ) ) {
 			remove_action( 'admin_enqueue_scripts', [ learn_press_admin_assets(), 'load_scripts' ] );
 		}
+	}
+
+	/**
+	 * Removes the duplicate meta description tag from the Hello Elementor theme.
+	 *
+	 * @since 4.4.3
+	 *
+	 * @link https://developers.elementor.com/docs/hello-elementor-theme/hello_elementor_add_description_meta_tag/
+	 *
+	 * @return void
+	 */
+	public function removeHelloElementorDescriptionTag() {
+		remove_action( 'wp_head', 'hello_elementor_add_description_meta_tag' );
 	}
 }

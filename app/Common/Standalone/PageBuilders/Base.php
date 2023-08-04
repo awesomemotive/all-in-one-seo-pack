@@ -134,7 +134,7 @@ abstract class Base {
 		$integrationSlug = $this->integrationSlug;
 		aioseo()->core->assets->load( "src/vue/standalone/$integrationSlug/main.js", [], aioseo()->helpers->getVueData( 'post', $this->getPostId(), $this->integrationSlug ) );
 
-		aioseo()->core->assets->enqueueCss( 'src/vue/assets/scss/integrations/main.scss', [], 'src/vue/assets/scss/integrations/main.scss' );
+		aioseo()->core->assets->enqueueCss( 'src/vue/assets/scss/integrations/main.scss' );
 
 		aioseo()->admin->addAioseoModalPortal();
 		aioseo()->main->enqueueTranslations();

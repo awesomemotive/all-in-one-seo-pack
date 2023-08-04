@@ -75,7 +75,6 @@ class Semrush {
 	 *
 	 * @since 4.0.16
 	 *
-	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function semrushRefresh() {

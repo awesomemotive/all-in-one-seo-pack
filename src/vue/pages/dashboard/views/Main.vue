@@ -128,41 +128,23 @@
 							</core-notification-cards>
 
 							<div
-								v-if="filteredNotifications.length && (!dismissed || 3 < filteredNotifications.length)"
+								v-if="notifications.length > visibleNotifications"
 								class="notification-footer"
 							>
 								<div class="more-notifications">
-									<template
-										v-if="notifications.length > visibleNotifications"
-									>
-										<a
-											href="#"
-											@click.stop.prevent="notificationsStore.toggleNotifications"
-										>
-											{{ moreNotifications }}
-										</a>
-
-										<a
-											class="no-underline"
-											href="#"
-											@click.stop.prevent="notificationsStore.toggleNotifications"
-										>
-											&rarr;
-										</a>
-									</template>
-								</div>
-
-								<div
-									v-if="!dismissed"
-									class="dismiss-all"
-								>
 									<a
-										v-if="notifications.length"
-										class="dismiss"
 										href="#"
-										@click.stop.prevent="processDismissAllNotifications"
+										@click.stop.prevent="notificationsStore.toggleNotifications"
 									>
-										{{ strings.dismissAll }}
+										{{ moreNotifications }}
+									</a>
+
+									<a
+										class="no-underline"
+										href="#"
+										@click.stop.prevent="notificationsStore.toggleNotifications"
+									>
+										&rarr;
 									</a>
 								</div>
 							</div>
@@ -298,7 +280,7 @@ export default {
 		return {
 			allowed,
 			dismissed            : false,
-			visibleNotifications : 3,
+			visibleNotifications : 2,
 			strings              : merge(this.composableStrings, {
 				pageName                     : this.$t.__('Dashboard', this.$td),
 				noNewNotificationsThisMoment : this.$t.__('There are no new notifications at this moment.', this.$td),
@@ -359,8 +341,12 @@ export default {
 	},
 	computed : {
 		moreNotifications () {
+			if (1 === this.remainingNotificationsCount) {
+				return this.$t.__('You have 1 more notification', this.$td)
+			}
+
 			return this.$t.sprintf(
-				// Translators: 1 - A number representing the remaining notifications.
+				// Translators: 1 - The amount of remaining notifications.
 				this.$t.__('You have %1$s more notifications', this.$td),
 				this.remainingNotificationsCount
 			)

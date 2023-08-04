@@ -72,7 +72,7 @@ class YoastSeo extends ImportExport\Importer {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param ImportExport $importer The main importer class.
+	 * @param ImportExport\ImportExport $importer The main importer class.
 	 */
 	public function __construct( $importer ) {
 		$this->helpers  = new Helpers();

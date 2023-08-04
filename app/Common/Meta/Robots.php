@@ -334,7 +334,7 @@ class Robots {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  array $metaData The post/term meta data.
+	 * @param  \AIOSEO\Plugin\Common\Models\Post|\AIOSEO\Plugin\Pro\Models\Term $metaData The post/term meta data.
 	 * @return void
 	 */
 	protected function metaValues( $metaData ) {
