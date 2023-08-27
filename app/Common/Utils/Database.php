@@ -1081,7 +1081,7 @@ class Database {
 			}
 
 			if ( is_object( $value ) ) {
-				throw new \Exception( 'Cannot save an unserialized object in the database. Data passed was: ' . $value );
+				throw new \Exception( 'Cannot save an unserialized object in the database. Data passed was: ' . esc_html( $value ) );
 			}
 
 			$preparedSet[] = sprintf( "`$field` = %s", $this->escape( $value, $this->getEscapeOptions() | self::ESCAPE_QUOTE ) );

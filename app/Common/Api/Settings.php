@@ -443,93 +443,79 @@ class Settings {
 		$data          = ! empty( $body['data'] ) ? $body['data'] : [];
 		$network       = ! empty( $body['network'] ) ? boolval( $body['network'] ) : false;
 		$siteId        = ! empty( $body['siteId'] ) ? intval( $body['siteId'] ) : false;
-		$siteOrNetwork = empty( $siteId ) ? aioseo()->helpers->getNetworkId() : $siteId;
+		$siteOrNetwork = empty( $siteId ) ? aioseo()->helpers->getNetworkId() : $siteId; // If we don't have a siteId, we will use the networkId.
+
+		// When on network admin page and no siteId, it is supposed to perform on network level.
+		if ( $network && 'clear-cache' === $action && empty( $siteId ) ) {
+			aioseo()->core->networkCache->clear();
+
+			return new \WP_REST_Response( [
+				'success' => true
+			], 200 );
+		}
+
+		// Switch to the right blog before processing any task.
+		aioseo()->helpers->switchToBlog( $siteOrNetwork );
 
 		switch ( $action ) {
 			// General
 			case 'clear-cache':
-				if ( ! $network ) {
-					aioseo()->core->cache->clear();
-					break;
-				}
-
-				if ( empty( $siteId ) ) {
-					aioseo()->helpers->switchToBlog( aioseo()->helpers->getNetworkId() );
-					aioseo()->core->networkCache->clear();
-					aioseo()->helpers->restoreCurrentBlog();
-					break;
-				}
-
-				aioseo()->helpers->switchToBlog( $siteId );
 				aioseo()->core->cache->clear();
-				aioseo()->helpers->restoreCurrentBlog();
 				break;
 			case 'clear-plugin-updates-transient':
-				aioseo()->helpers->switchToBlog( $siteOrNetwork );
 				delete_site_transient( 'update_plugins' );
-				aioseo()->helpers->restoreCurrentBlog();
 				break;
 			case 'readd-capabilities':
-				aioseo()->helpers->switchToBlog( $siteOrNetwork );
 				aioseo()->access->addCapabilities();
-				aioseo()->helpers->restoreCurrentBlog();
 				break;
 			case 'reset-data':
-				aioseo()->helpers->switchToBlog( $siteOrNetwork );
 				aioseo()->core->uninstallDb( true );
 				aioseo()->internalOptions->database->installedTables = '';
 				aioseo()->internalOptions->internal->lastActiveVersion = '4.0.0';
+				aioseo()->internalOptions->save( true );
 				aioseo()->updates->addInitialCustomTablesForV4();
-				aioseo()->helpers->restoreCurrentBlog();
 				break;
 			// Sitemap
 			case 'clear-image-data':
-				aioseo()->helpers->switchToBlog( $siteOrNetwork );
 				aioseo()->sitemap->query->resetImages();
-				aioseo()->helpers->restoreCurrentBlog();
 				break;
 			// Migrations
 			case 'rerun-migrations':
-				aioseo()->helpers->switchToBlog( $siteOrNetwork );
 				aioseo()->internalOptions->database->installedTables   = '';
 				aioseo()->internalOptions->internal->lastActiveVersion = '4.0.0';
-				aioseo()->helpers->restoreCurrentBlog();
+				aioseo()->internalOptions->save( true );
 				break;
 			case 'restart-v3-migration':
-				aioseo()->helpers->switchToBlog( $siteOrNetwork );
 				Migration\Helpers::redoMigration();
-				aioseo()->helpers->restoreCurrentBlog();
 				break;
 			// Old Issues
 			case 'remove-duplicates':
-				aioseo()->helpers->switchToBlog( $siteOrNetwork );
 				aioseo()->updates->removeDuplicateRecords();
-				aioseo()->helpers->restoreCurrentBlog();
 				break;
 			case 'unescape-data':
-				aioseo()->helpers->switchToBlog( $siteOrNetwork );
 				aioseo()->admin->scheduleUnescapeData();
-				aioseo()->helpers->restoreCurrentBlog();
 				break;
 			// Deprecated Options
 			case 'deprecated-options':
-				aioseo()->helpers->switchToBlog( $siteOrNetwork );
-
 				// Check if the user is forcefully wanting to add a deprecated option.
 				$allDeprecatedOptions = aioseo()->internalOptions->getAllDeprecatedOptions() ?: [];
 				$enableOptions        = array_keys( array_filter( $data ) );
 				$enabledDeprecated    = array_intersect( $allDeprecatedOptions, $enableOptions );
 
 				aioseo()->internalOptions->internal->deprecatedOptions = array_values( $enabledDeprecated );
-
-				aioseo()->helpers->restoreCurrentBlog();
+				aioseo()->internalOptions->save( true );
 				break;
 			default:
+				aioseo()->helpers->restoreCurrentBlog();
+
 				return new \WP_REST_Response( [
 					'success' => true,
 					'error'   => 'The given action isn\'t defined.'
 				], 400 );
 		}
+
+		// Revert back to the current blog after processing to avoid conflict with other actions.
+		aioseo()->helpers->restoreCurrentBlog();
 
 		return new \WP_REST_Response( [
 			'success' => true

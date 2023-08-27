@@ -399,7 +399,7 @@ class Helpers {
 				if ( 'excludeTerms' === $option ) {
 					$objectTypes = aioseo()->sitemap->helpers->includedTaxonomies();
 					$objectTypes = array_map( function( $taxonomy ) {
-						return "tax{$taxonomy}";
+						return "tax_{$taxonomy}";
 					}, $objectTypes );
 				}
 
@@ -424,7 +424,8 @@ class Helpers {
 		$excluded  = array_merge( $hiddenObjectIds, aioseo()->options->sitemap->{$type}->advancedSettings->{$option} );
 
 		if (
-			( ! $advanced || empty( $excluded ) ) &&
+			! $advanced &&
+			empty( $excluded ) &&
 			! $hasFilter
 		) {
 			return '';
@@ -527,5 +528,19 @@ class Helpers {
 		$shouldExclude = aioseo()->options->sitemap->general->advancedSettings->enable && aioseo()->options->sitemap->general->advancedSettings->excludeImages;
 
 		return apply_filters( 'aioseo_sitemap_exclude_images', $shouldExclude );
+	}
+
+	/**
+	 * Returns the post types to check against for the author sitemap.
+	 *
+	 * @since 4.4.4
+	 *
+	 * @return array The post types.
+	 */
+	public function getAuthorPostTypes() {
+		// By default, WP only considers posts for author archives, but users can include additional post types.
+		$postTypes = [ 'post' ];
+
+		return apply_filters( 'aioseo_sitemap_author_post_types', $postTypes );
 	}
 }

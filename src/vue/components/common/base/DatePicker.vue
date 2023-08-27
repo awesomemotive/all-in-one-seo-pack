@@ -181,7 +181,6 @@ export default {
 		border: 1px solid $input-border;
 		border-radius: 4px;
 		color: $black;
-		line-height: 1.4em;
 		cursor: pointer;
 		font-weight: 400;
 		font-size: 14px;
@@ -211,7 +210,9 @@ export default {
 		}
 
 		&--large {
-			padding: 9px;
+			padding: 7px 10px;
+			min-height: 40px;
+			line-height: 25px;
 			font-size: 14px;
 		}
 	}
@@ -237,8 +238,8 @@ export default {
 		}
 
 		.el-picker-panel {
-			overflow: hidden;
 			color: $black2-hover;
+
 			&__shortcut {
 				color: $black2;
 				font-weight: 400;
@@ -286,10 +287,30 @@ export default {
 
 		.el-date-range-picker__content {
 			padding: 0 8px;
+
 			.el-date-range-picker__header div {
 				font-size: 14px;
 				font-weight: $font-bold;
 				color: $black2-hover;
+			}
+		}
+
+		.el-date-picker {
+			&__time-header {
+				.el-input__inner {
+					border: 0;
+
+					&:focus {
+						outline: 0;
+						box-shadow: none;
+					}
+				}
+			}
+		}
+
+		.el-time-spinner {
+			&__item {
+				margin-bottom: 0;
 			}
 		}
 

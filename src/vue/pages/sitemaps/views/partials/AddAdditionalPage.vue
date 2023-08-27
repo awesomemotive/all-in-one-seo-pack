@@ -22,7 +22,6 @@
 					:placeholder="strings.placeholder"
 					:class="this.errors.url.invalid && 'aioseo-error' || this.page.url && this.errors.url.exists && 'aioseo-warning' || this.page.url && 'aioseo-active' "
 				>
-
 					<template #append-icon>
 						<div class="append-icon">
 							<template
@@ -81,18 +80,18 @@
 
 			<div class="page-last-modified">
 				<base-date-picker
-					type="date"
+					type="datetime"
 					size="large"
-					dateFormat="m/d/Y"
+					dateFormat="m/d/Y H:i:s"
 					:defaultValue="dateStringToLocalJs(page.lastModified)"
-					@change="value => editPage('lastModified', dateJsToLocal(value, 'MM/dd/yyyy'))"
+					@change="value => editPage('lastModified', dateJsToLocal(value, 'MM/dd/yyyy HH:mm:ss'))"
+					:isDisabledDate="isDisabledDate"
 				/>
 			</div>
 		</div>
 
 		<div class="page-input-footer">
 			 <div v-if="inTable">
-
 				<base-button
 					type="blue"
 					size="medium"
@@ -283,7 +282,7 @@ export default {
 				lastModified          : this.$t.__('Last Modified', this.$td),
 				addPage               : this.$t.__('Add Page', this.$td),
 				importFromCSV         : this.$t.__('Import from CSV', this.$td),
-				saveChanges           : this.$t.__('Save Changes', this.$td),
+				saveChanges           : this.$t.__('Update Page', this.$td),
 				cancel                : this.$t.__('Cancel', this.$td),
 				importAdditionalPages : this.$t.__('Import Additional Pages', this.$td),
 				modalDescription      : this.$t.sprintf(
@@ -454,6 +453,9 @@ export default {
 		closeImportModal () {
 			this.reset()
 			this.showImportModal = false
+		},
+		isDisabledDate (date) {
+			return date > DateTime.now()
 		}
 	},
 	computed : {
@@ -530,9 +532,12 @@ export default {
 		}
 
 		.page-priority,
-		.page-frequency,
-		.page-last-modified {
+		.page-frequency {
 			max-width: 160px;
+		}
+
+		.page-last-modified {
+			max-width: 180px;
 		}
 
 		.page-row {

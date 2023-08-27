@@ -8,7 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use AIOSEO\Plugin\Common\Models;
 use AIOSEO\Plugin\Common\Migration;
-use AIOSEO\Plugin\Common\Traits;
 
 /**
  * Abstract class that Pro and Lite both extend.
@@ -16,8 +15,6 @@ use AIOSEO\Plugin\Common\Traits;
  * @since 4.0.0
  */
 class Admin {
-	use Traits\Admin;
-
 	/**
 	 * The page slug for the sidebar.
 	 *
@@ -1007,8 +1004,11 @@ class Admin {
 				</svg>
 				<span>
 					<?php
-						// Translators: 1 - The short plugin name ("AIOSEO").
-						echo sprintf( esc_html__( '%1$s Score', 'all-in-one-seo-pack' ), esc_html( AIOSEO_PLUGIN_SHORT_NAME ) );
+						echo sprintf(
+							// Translators: 1 - The short plugin name ("AIOSEO").
+							esc_html__( '%1$s Score', 'all-in-one-seo-pack' ),
+							esc_html( AIOSEO_PLUGIN_SHORT_NAME )
+						);
 					?>
 				</span>
 				<div id="aioseo-post-settings-sidebar-button" class="aioseo-score-button classic-editor <?php echo esc_attr( $this->getScoreClass( $score ) ); ?>">
@@ -1236,5 +1236,20 @@ class Admin {
 	 */
 	public function addAioseoModalPortal() {
 		echo '<div id="aioseo-modal-portal"></div>';
+	}
+
+	/**
+	 * Outputs the element we can mount our footer promotion standalone Vue app on.
+	 * Also enqueues the assets.
+	 *
+	 * @since   4.3.6
+	 * @version 4.4.3
+	 *
+	 * @return void
+	 */
+	public function addFooterPromotion() {
+		echo wp_kses_post( '<div id="aioseo-footer-links"></div>' );
+
+		aioseo()->core->assets->load( 'src/vue/standalone/footer-links/main.js' );
 	}
 }

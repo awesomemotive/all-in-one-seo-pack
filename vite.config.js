@@ -150,7 +150,7 @@ export default ({ mode }) => {
 
 						return '[ext]/[name].[hash][extname]'
 					},
-					chunkFileNames : 'js/[name].[hash].js'
+					chunkFileNames : 'js/[name].[hash].js',
 				},
 				plugins : [
 					del({

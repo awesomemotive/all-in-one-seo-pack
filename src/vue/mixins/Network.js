@@ -21,7 +21,7 @@ export const Network = {
 			const networkStore = useNetworkStore()
 
 			this.getSites.forEach(s => {
-				if (networkStore.networkData.activeSites.some(as => as.domain === s.domain && as.path === s.path)) {
+				if (networkStore.activeSites.some(as => as.domain === s.domain && as.path === s.path)) {
 					ids.push(this.getUniqueSiteId(s))
 				}
 			})
@@ -57,7 +57,7 @@ export const Network = {
 			const site = this.getSiteByUniqueId(uniqueSiteId)
 			if (site) {
 				const networkStore = useNetworkStore()
-				return networkStore.networkData.activeSites.find(s => s.domain === site.domain && s.path === site.path)
+				return networkStore.activeSites.find(s => s.domain === site.domain && s.path === site.path)
 			}
 
 			return null

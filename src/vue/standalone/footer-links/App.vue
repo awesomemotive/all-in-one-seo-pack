@@ -3,7 +3,7 @@
 		<div>{{strings.madeBy}}</div>
 
 		<div>
-			<a :href="getUtmLink('https://aioseo.com/plugin/lite-support')" target="_blank" rel="noreferrer noopener">{{strings.support}}</a><span>/</span>
+			<support-link /><span>/</span>
 			<a :href="getUtmLink('https://aioseo.com/docs/')" target="_blank" rel="noreferrer noopener">{{strings.docs}}</a><span>/</span>
 			<a :href="rootStore.aioseo.urls.aio.about" rel="noreferrer noopener">{{strings.freePlugins}}</a>
 		</div>
@@ -18,9 +18,8 @@
 </template>
 
 <script>
-import {
-	useRootStore
-} from '@/vue/stores'
+import { useRootStore } from '@/vue/stores'
+import SupportLink from './AIOSEO_VERSION/SupportLink'
 
 import FacebookSvg from '@/vue/components/common/svg/social/Facebook'
 import LinkedInSvg from '@/vue/components/common/svg/social/LinkedIn'
@@ -36,7 +35,8 @@ export default {
 		FacebookSvg,
 		LinkedInSvg,
 		TwitterSvg,
-		YouTubeSvg
+		YouTubeSvg,
+		SupportLink
 	},
 	data () {
 		return {

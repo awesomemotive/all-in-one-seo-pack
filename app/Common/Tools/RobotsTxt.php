@@ -339,6 +339,8 @@ class RobotsTxt {
 			return $value;
 		}
 
+		$value = preg_replace( '/[><]/', '', $value );
+
 		if ( 'user-agent' === $directive ) {
 			$value = preg_replace( '/[^a-z0-9\-_*,.\s]/i', '', $value );
 		}
@@ -419,7 +421,7 @@ class RobotsTxt {
 
 			return true;
 		} catch ( \Exception $e ) {
-			throw new \Exception( $e->getMessage() );
+			throw new \Exception( esc_html( $e->getMessage() ) );
 		}
 	}
 

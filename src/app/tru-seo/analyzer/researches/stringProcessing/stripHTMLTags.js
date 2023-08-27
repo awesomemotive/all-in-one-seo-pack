@@ -39,6 +39,12 @@ const stripBlockTagsAtStartEnd = function (text) {
  * @returns {string} The text without HTML-tags.
  */
 const stripFullTags = function (text) {
+	// Strip the AIOSEO Table of Contents block menu content.
+	// TODO: Remove this once we have a better solution for this where we don't return the editor content of the block
+	// but rather the final content to getPostEditedContent().
+	text = text.replace(/<header[^>]*? class\s*=\s*["']?aioseo-toc-header[^>]+>([\S\s]*?)<\/header>/gms, '')
+	text = text.replace(/<span[^>]*? class\s*=\s*["']?aioseo-tooltip[^>]+>([\S\s]*?)<\/span>/gms, '')
+
 	// Replace block level tags with a space so words don't run together.
 	text = text.replace(blockElementRegex, ' ')
 

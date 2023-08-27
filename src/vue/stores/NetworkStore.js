@@ -9,6 +9,7 @@ import {
 
 export const useNetworkStore = defineStore('NetworkStore', {
 	state : () => ({
+		activeSites   : [],
 		networkData   : {},
 		networkRobots : {
 			siteId : 'network',
@@ -51,6 +52,13 @@ export const useNetworkStore = defineStore('NetworkStore', {
 				.then(response => {
 					this.networkRobots.rules  = response.body.rules
 					this.networkRobots.siteId = blogId
+				})
+		},
+		getActiveSites (domains) {
+			return http.post(links.restUrl('activated'))
+				.send({ domains })
+				.then(response => {
+					this.activeSites = response.body.activeSites
 				})
 		},
 		importRobotsTxt ({ url, text, source, networkLevel, blogId }) {

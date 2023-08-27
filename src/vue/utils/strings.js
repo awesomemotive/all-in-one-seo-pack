@@ -14,3 +14,19 @@ export const stripTags = (string) => {
 	}
 	return string.replace(/(<([^>]+)>)/gi, '')
 }
+
+/**
+ * Sanitizes a string by only removing HTML tags containing JS events.
+ *
+ * @since {next}
+ *
+ * @param   {string} string The string to sanitize.
+ * @returns {string}        Returns the sanitized string.
+ */
+export const softSanitizeHtml = (string) => {
+	if ('string' !== typeof string) {
+		return string
+	}
+
+	return string.replace(/(<|&lt;).*?\bon\w+=.*?(&gt;|>)/gmi, '')
+}

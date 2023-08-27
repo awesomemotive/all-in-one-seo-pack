@@ -356,6 +356,7 @@ class Content {
 		$lastModified = aioseo()->core->db
 			->start( aioseo()->core->db->db->posts . ' as p', true )
 			->select( 'MAX(`p`.`post_modified_gmt`) as last_modified' )
+			->where( 'p.post_status', 'publish' )
 			->whereRaw( "
 			( `p`.`ID` IN
 				(
@@ -473,16 +474,21 @@ class Content {
 			return [];
 		}
 
-		$authors = aioseo()->core->db->start( 'users as u' )
-			->select( 'u.ID as ID, u.user_nicename as nicename, MAX(p.post_modified_gmt) as lastModified' )
-			->join( 'posts as p', 'u.ID = p.post_author' )
-			->where( 'p.post_status', 'publish' )
-			->whereIn( 'p.post_type', aioseo()->sitemap->helpers->includedPostTypes() )
-			->groupBy( 'u.ID' )
-			->orderBy( 'lastModified DESC' )
-			->limit( aioseo()->sitemap->linksPerIndex, aioseo()->sitemap->pageNumber * aioseo()->sitemap->linksPerIndex )
-			->run()
-			->result();
+		// Allow users to filter the authors in case their sites use a membership plugin or have custom code that affect the authors on their site.
+		// e.g. there might be additional roles/conditions that need to be checked here.
+		$authors = apply_filters( 'aioseo_sitemap_authors', [] );
+		if ( empty( $authors ) ) {
+			$authors = aioseo()->core->db->start( 'users as u' )
+				->select( 'u.ID as ID, u.user_nicename as nicename, MAX(p.post_modified_gmt) as lastModified' )
+				->join( 'posts as p', 'u.ID = p.post_author' )
+				->where( 'p.post_status', 'publish' )
+				->whereIn( 'p.post_type', aioseo()->sitemap->helpers->getAuthorPostTypes() )
+				->groupBy( 'u.ID' )
+				->orderBy( 'lastModified DESC' )
+				->limit( aioseo()->sitemap->linksPerIndex, aioseo()->sitemap->pageNumber * aioseo()->sitemap->linksPerIndex )
+				->run()
+				->result();
+		}
 
 		if ( empty( $authors ) ) {
 			return [];
@@ -492,7 +498,7 @@ class Content {
 		foreach ( $authors as $authorData ) {
 			$nicename  = $authorData->nicename ? $authorData->nicename : null;
 			$entries[] = [
-				'loc'        => get_author_posts_url( $authorData->ID, $nicename ),
+				'loc'        => ! empty( $authorData->authorUrl ) ? $authorData->authorUrl : get_author_posts_url( $authorData->ID, $nicename ),
 				'lastmod'    => aioseo()->helpers->dateTimeToIso8601( $authorData->lastModified ),
 				'changefreq' => aioseo()->sitemap->priority->frequency( 'author' ),
 				'priority'   => aioseo()->sitemap->priority->priority( 'author' )

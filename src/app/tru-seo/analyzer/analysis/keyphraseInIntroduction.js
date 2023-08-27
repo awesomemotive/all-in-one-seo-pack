@@ -34,7 +34,7 @@ function keyphraseInIntroduction (content, keyphrase, type, locale) {
 	}
 
 	let paragraphs = matchParagraphs(content)
-	paragraphs = reject(paragraphs, isEmpty)
+	paragraphs     = reject(paragraphs, isEmpty)
 
 	const keywordMatched = wordMatch(paragraphs[0], keyphrase, locale)
 	if (0 < keywordMatched.count) {

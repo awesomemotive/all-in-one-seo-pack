@@ -351,7 +351,7 @@ export default {
 			this.doingActionKey++
 			this.toolsStore.doTask({
 				action : this.currentAction.slug,
-				siteId : this.site.blog_id,
+				siteId : this.site.blog_id || this.rootStore.aioseo.data.currentBlogId,
 				data
 			}).then(() => {
 				console.log(`Action "${this.currentAction.label}" has been completed.`)

@@ -4,7 +4,6 @@ import links from '@/vue/utils/links'
 
 import {
 	useNotificationsStore,
-	useNetworkStore,
 	useOptionsStore,
 	useRootStore
 } from '@/vue/stores'
@@ -33,7 +32,7 @@ export const useLicenseStore = defineStore('LicenseStore', {
 	actions : {
 		activate (key) {
 			const notificationsStore = useNotificationsStore()
-			const rootStore = useRootStore()
+			const rootStore          = useRootStore()
 
 			return http.post(links.restUrl('activate'))
 				.send({
@@ -62,7 +61,7 @@ export const useLicenseStore = defineStore('LicenseStore', {
 		},
 		multisite (sites) {
 			const notificationsStore = useNotificationsStore()
-			const rootStore = useRootStore()
+			const rootStore          = useRootStore()
 
 			return http.post(links.restUrl('multisite'))
 				.send({
@@ -73,22 +72,16 @@ export const useLicenseStore = defineStore('LicenseStore', {
 					rootStore.aioseo.data = {
 						...rootStore.aioseo.data,
 						...{
-							network : {
-								...rootStore.aioseo.data.network,
-								activeSites : response.body.activeSites
-							}
+							network : { ...rootStore.aioseo.data.network }
 						}
 					}
-
-					const networkStore = useNetworkStore()
-					networkStore.networkData.activeSites = response.body.activeSites
 
 					notificationsStore.updateNotifications(response.body.notifications)
 				})
 		},
 		deactivate () {
 			const notificationsStore = useNotificationsStore()
-			const rootStore = useRootStore()
+			const rootStore          = useRootStore()
 
 			return http.post(links.restUrl('deactivate'))
 				.send({

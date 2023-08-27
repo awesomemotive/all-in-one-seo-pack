@@ -293,5 +293,4 @@ trait Constants {
 			'AX' => 'Åland Islands'
 		];
 	}
-
 }

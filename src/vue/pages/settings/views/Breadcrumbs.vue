@@ -2,7 +2,7 @@
 	<div class="aioseo-breadcrumbs">
 		<core-card
 			slug="enableBreadcrumbs"
-			:header-text="strings.enableBreadcrumbs"
+			:header-text="strings.breadcrumbs"
 		>
 			<template #tooltip>
 				{{ strings.descriptionTooltip }}
@@ -312,6 +312,7 @@ export default {
 					this.$t.__('Breadcrumbs are an essential part of SEO. By default %1$s will automatically add breadcrumbs to the schema markup that we add to your site and you don\'t need to make any changes for that to work. Breadcrumbs can also be used as a secondary navigation system that tells users where they are on a website relative to the homepage.', this.$td), import.meta.env.VITE_SHORT_NAME
 				),
 				descriptionTooltip           : this.$t.__('The purpose of breadcrumb navigation is to help users navigate around your website. It also helps search engines understand the structure and hierarchy of links on a web page.', this.$td),
+				breadcrumbs                  : this.$t.__('Breadcrumbs', this.$td),
 				enableBreadcrumbs            : this.$t.__('Enable Breadcrumbs', this.$td),
 				showBreadcrumbsOnYourWebsite : this.$t.__('Show Breadcrumbs on Your Website', this.$td),
 				breadcrumbSettings           : this.$t.__('Breadcrumb Settings', this.$td),

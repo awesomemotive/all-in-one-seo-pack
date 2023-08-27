@@ -190,10 +190,10 @@
 
 											<div class="robots-editor-table__column">
 												<base-input
-													:modelValue="rule.userAgent"
+													v-model="rule.userAgent"
 													:spellcheck="false"
 													:disabled="!getOptions.enable"
-													@blur="updateRule(rule, 'userAgent', $event, index)"
+													@change="updateRule(rule, 'userAgent', $event, index)"
 													size="medium"
 												/>
 											</div>
@@ -210,10 +210,10 @@
 
 											<div class="robots-editor-table__column">
 												<base-input
-													:modelValue="rule.fieldValue"
+													v-model="rule.fieldValue"
 													:spellcheck="false"
 													:disabled="!getOptions.enable"
-													@blur="updateRule(rule, 'fieldValue', $event, index)"
+													@change="updateRule(rule, 'fieldValue', $event, index)"
 													size="medium"
 												/>
 											</div>
@@ -915,6 +915,8 @@ export default {
 				return value
 			}
 
+			value = value.replace(/[><]/, '')
+
 			if ('userAgent' === type) {
 				value = value.replace(/([^a-z0-9\-_*,.\s])/gi, '')
 				value = value.replace(/\s+/g, ' ')
@@ -926,7 +928,12 @@ export default {
 
 			return value
 		},
-		updateRule (rule, type, value, index) {
+		async updateRule (rule, type, value, index) {
+			// Make sure sanitized values always show in the input field by tracking all rule changes in the store.
+			this.networkStore.networkRobots.rules.splice(index, 1, JSON.stringify(rule))
+
+			await this.$nextTick()
+
 			rule[type] = this.sanitizeDirectiveValue(rule, type, value)
 
 			this.networkStore.networkRobots.rules.splice(index, 1, JSON.stringify(rule))

@@ -37,6 +37,7 @@ import {
 
 import tags from '@/vue/utils/tags'
 import { decodeHTMLEntities } from '@/vue/utils/helpers'
+import { softSanitizeHtml } from '@/vue/utils/strings'
 
 export default {
 	setup () {
@@ -62,7 +63,7 @@ export default {
 	},
 	methods : {
 		getPreviewData () {
-			let crumbs = this.previewData.filter(item => !!item).map(item => tags.decodeHTMLEntities(item).replace(/#breadcrumb_separator/g, '<span class="aioseo-breadcrumb-separator">' + this.optionsStore.options.breadcrumbs.separator + '</span>').replace(/#breadcrumb_link/g, 'Permalink'))
+			let crumbs = this.previewData.filter(item => !!item).map(item => tags.decodeHTMLEntities(softSanitizeHtml(item)).replace(/#breadcrumb_separator/g, '<span class="aioseo-breadcrumb-separator">' + this.optionsStore.options.breadcrumbs.separator + '</span>').replace(/#breadcrumb_link/g, 'Permalink'))
 			if (this.useDefaultTemplate && !this.optionsStore.options.breadcrumbs.showCurrentItem) {
 				crumbs = crumbs.slice(0, crumbs.length - 1)
 			}

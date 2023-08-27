@@ -133,6 +133,7 @@ trait Vue {
 				'htaccess'            => '',
 				'isMultisite'         => is_multisite(),
 				'isNetworkAdmin'      => is_network_admin(),
+				'currentBlogId'       => get_current_blog_id(),
 				'mainSite'            => is_main_site(),
 				'subdomain'           => $this->isSubdomain(),
 				'isWooCommerceActive' => $this->isWooCommerceActive(),
@@ -384,9 +385,8 @@ trait Vue {
 			is_network_admin()
 		) {
 			$data['data']['network'] = [
-				'sites'       => aioseo()->helpers->getSites( aioseo()->settings->tablePagination['networkDomains'] ),
-				'activeSites' => [],
-				'backups'     => []
+				'sites'   => aioseo()->helpers->getSites( aioseo()->settings->tablePagination['networkDomains'] ),
+				'backups' => []
 			];
 		}
 

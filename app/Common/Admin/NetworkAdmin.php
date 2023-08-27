@@ -6,16 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use AIOSEO\Plugin\Common\Traits;
-
 /**
  * Abstract class that Pro and Lite both extend.
  *
  * @since 4.2.5
  */
 class NetworkAdmin extends Admin {
-	use Traits\Admin;
-
 	/**
 	 * Construct method.
 	 *

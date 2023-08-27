@@ -78,7 +78,7 @@ trait WpMultisite {
 	 * @return array                   An array of sites.
 	 */
 	public function getSites( $limit = 'all', $offset = 0, $searchTerm = null, $filter = 'all', $orderBy = null, $orderDir = 'DESC' ) {
-		$countSites = wp_count_sites();
+		$countSites = $this->countSites();
 		$sites      = get_sites( [
 			'network_id' => get_current_network_id(),
 			'number'     => $countSites['public'],
@@ -155,6 +155,42 @@ trait WpMultisite {
 	}
 
 	/**
+	 * Count the number of sites in the network. A clone of wp_count_sites. We use this because
+	 * we don't yet support WordPress 5.3. Once we do, we can revert to wp_count_sites.
+	 *
+	 * @since {next}
+	 *
+	 * @return array          An array of aliases.
+	 */
+	private function countSites() {
+		$networkId = get_current_network_id();
+
+		$counts = [];
+		$args   = [
+			'network_id'    => $networkId,
+			'number'        => 1,
+			'fields'        => 'ids',
+			'no_found_rows' => false,
+		];
+
+		$q             = new \WP_Site_Query( $args );
+		$counts['all'] = $q->found_sites;
+
+		$_args    = $args;
+		$statuses = [ 'public', 'archived', 'mature', 'spam', 'deleted' ];
+
+		foreach ( $statuses as $status ) {
+			$_args            = $args;
+			$_args[ $status ] = 1;
+
+			$q                 = new \WP_Site_Query( $_args );
+			$counts[ $status ] = $q->found_sites;
+		}
+
+		return $counts;
+	}
+
+	/**
 	 * Filter sites based on a passed in filter. Options include 'all', 'activated' or 'deactivated'.
 	 *
 	 * @since 4.2.5
@@ -168,18 +204,7 @@ trait WpMultisite {
 			return true;
 		}
 
-		static $activeSites = null;
-		if ( null === $activeSites ) {
-			$activeSites = json_decode( aioseo()->internalNetworkOptions->internal->sites->active );
-		}
-
-		$siteIsActive = false;
-		foreach ( $activeSites as $as ) {
-			if ( $as->domain === $site->domain && $as->path === $site->path ) {
-				$siteIsActive = true;
-			}
-		}
-
+		$siteIsActive = aioseo()->networkLicense->isSiteActive( $site );
 		if (
 			( 'deactivated' === $filter && ! $siteIsActive ) ||
 			( 'activated' === $filter && $siteIsActive )

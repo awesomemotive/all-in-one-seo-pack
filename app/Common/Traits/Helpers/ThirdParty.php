@@ -634,4 +634,15 @@ trait ThirdParty {
 
 		return $originalValue;
 	}
+
+	/**
+	 * Checks whether the current request is being done by a crawler from Yandex.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @return bool Whether the current request is being done by a crawler from Yandex.
+	 */
+	public function isYandexUserAgent() {
+		return preg_match( '#.*Yandex.*#', $_SERVER['HTTP_USER_AGENT'] );
+	}
 }

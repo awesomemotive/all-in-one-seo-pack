@@ -95,13 +95,15 @@ class Root {
 			)
 		) {
 			$usersTable        = aioseo()->core->db->db->users;
-			$implodedPostTypes = aioseo()->helpers->implodeWhereIn( $postTypes, true );
+			$authorPostTypes   = aioseo()->sitemap->helpers->getAuthorPostTypes();
+			$implodedPostTypes = aioseo()->helpers->implodeWhereIn( $authorPostTypes, true );
 			$result            = aioseo()->core->db->execute(
 				"SELECT count(*) as amountOfAuthors FROM
 				(
 					SELECT u.ID FROM {$usersTable} as u
 					INNER JOIN {$postsTable} as p ON u.ID = p.post_author
-					WHERE p.post_status = 'publish' AND p.post_type IN ( {$implodedPostTypes} ) GROUP BY u.ID
+					WHERE p.post_status = 'publish' AND p.post_type IN ( {$implodedPostTypes} )
+					GROUP BY u.ID
 				) as x",
 				true
 			)->result();
@@ -319,6 +321,7 @@ class Root {
 						ORDER BY ap.priority DESC, p.post_modified_gmt DESC
 					) AS x
 					CROSS JOIN (SELECT @row := 0) AS vars
+					ORDER BY post_modified_gmt DESC
 				) AS y
 				WHERE rownum = 1 OR rownum % %d = 1;",
 				[

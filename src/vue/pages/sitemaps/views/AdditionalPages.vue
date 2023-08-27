@@ -253,7 +253,7 @@ export default {
 				{
 					slug  : 'lastModified',
 					label : this.$t.__('Last Modified', this.$td),
-					width : '110px'
+					width : '180px'
 				},
 				{
 					slug  : 'page-actions',

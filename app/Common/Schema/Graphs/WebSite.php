@@ -43,6 +43,15 @@ class WebSite extends Graph {
 				],
 				'query-input' => 'required name=search_term_string',
 			];
+
+			// Yandex requires a different, older format.
+			if ( aioseo()->helpers->isYandexUserAgent() ) {
+				$data['potentialAction'] = [
+					'@type'  => 'SearchAction',
+					'target' => $homeUrl . '?s={search_term_string}',
+					'query'  => 'required'
+				];
+			}
 		}
 
 		return $data;

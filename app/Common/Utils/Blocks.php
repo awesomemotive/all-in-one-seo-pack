@@ -72,7 +72,7 @@ class Blocks {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		return register_block_type( $slug, $args );
+		return register_block_type( $slug, $args ); // phpcs:ignore AIOSEO.WpFunctionUse.NewFunctions.register_block_typeFound
 	}
 
 	/**

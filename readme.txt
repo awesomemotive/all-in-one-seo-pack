@@ -1,10 +1,10 @@
 === All in One SEO – Best WordPress SEO Plugin – Easily Improve SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta title, rich snippets, woocommerce seo, local seo, open graph, google news sitemap, video sitemap, robots.txt, seo audit, content analysis, seo plugin, redirection
-Tested up to: 6.2.2
+Tested up to: 6.3
 Requires at least: 4.9
-Requires PHP: 5.6
-Stable tag: 4.4.3
+Requires PHP: 7.0
+Stable tag: 4.4.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -257,6 +257,19 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 
 == Changelog ==
+
+**New in Version 4.4.4**
+
+* Updated: Bumped minimum PHP version to 7.0.
+* Updated: Improved date picker for Additional Pages in General Sitemap settings so that users can now enter the time as well.
+* Updated: Improved relevance of AI Title/Description Generator suggestions.
+* Updated: Added back old sitelinks schema to support Yandex search engine.
+* Updated: Added support for manual reviews for WooCommerce products when customer reviews are disabled.
+* Updated: Improved performance of license activations table in Network Admin for multisite installations.
+* Fixed: Custom data sometimes not output for default Blog Posting and News Article schema graphs.
+* Fixed: "hasPart" prop no longer output for Dataset schema graphs that do not have a subset.
+* Fixed: Author sitemap indexes by default now only include users who have a published a regular post.
+* Fixed: Terms in sitemap sometimes having incorrect last modified date when their latest updated assigned post isn't published.
 
 **New in Version 4.4.3**
 
@@ -543,6 +556,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.4.3 =
+= 4.4.4 =
 
 This update adds major improvements and bug fixes.

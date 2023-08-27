@@ -15,7 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel><?php
-	if ( ! $isYandexBot ) {
+	// Yandex doesn't support some tags so we need to check the user agent.
+	if ( ! aioseo()->helpers->isYandexUserAgent() ) {
 		?>
 
 		<title><?php aioseo()->sitemap->output->escapeAndEcho( $title, false ); ?></title>

@@ -1,7 +1,7 @@
 <?php
 namespace AIOSEO\Plugin\Common\Main;
 
-use AIOSEO\Plugin\Common\Models as Models;
+use AIOSEO\Plugin\Common\Models;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
