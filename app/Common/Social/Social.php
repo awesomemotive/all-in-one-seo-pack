@@ -102,7 +102,8 @@ class Social {
 	/**
 	 * Adds our attributes to the registered language attributes.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.4.5 Adds trim function the html tag removing empty spaces.
 	 *
 	 * @param  string $htmlTag The 'html' tag as a string.
 	 * @return string          The filtered 'html' tag as a string.
@@ -112,50 +113,14 @@ class Social {
 			return $htmlTag;
 		}
 
-		// Avoid having duplicate meta tags.
-		$type = aioseo()->social->facebook->getObjectType();
-		if ( empty( $type ) ) {
-			$type = 'website';
-		}
-
-		$schemaTypes = [
-			'album'      => 'MusicAlbum',
-			'article'    => 'Article',
-			'bar'        => 'BarOrPub',
-			'blog'       => 'Blog',
-			'book'       => 'Book',
-			'cafe'       => 'CafeOrCoffeeShop',
-			'city'       => 'City',
-			'country'    => 'Country',
-			'episode'    => 'Episode',
-			'food'       => 'FoodEvent',
-			'game'       => 'Game',
-			'hotel'      => 'Hotel',
-			'landmark'   => 'LandmarksOrHistoricalBuildings',
-			'movie'      => 'Movie',
-			'product'    => 'Product',
-			'profile'    => 'ProfilePage',
-			'restaurant' => 'Restaurant',
-			'school'     => 'School',
-			'sport'      => 'SportsEvent',
-			'website'    => 'WebSite',
-		];
-
-		if ( ! empty( $schemaTypes[ $type ] ) ) {
-			$type = $schemaTypes[ $type ];
-		} else {
-			$type = 'WebSite';
-		}
-
 		$attributes = apply_filters( 'aioseo_opengraph_attributes', [ 'prefix="og: https://ogp.me/ns#"' ] );
-
 		foreach ( $attributes as $attr ) {
 			if ( strpos( $htmlTag, $attr ) === false ) {
-				$htmlTag .= "\n\t$attr ";
+				$htmlTag .= " $attr ";
 			}
 		}
 
-		return $htmlTag;
+		return trim( $htmlTag );
 	}
 
 	/**

@@ -106,7 +106,7 @@ class DeprecatedWordPress {
 
 		<?php
 		// In case this is on plugin activation.
-		if ( isset( $_GET['activate'] ) ) {
+		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
 			unset( $_GET['activate'] );
 		}
 	}

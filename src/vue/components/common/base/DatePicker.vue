@@ -4,7 +4,6 @@
 			v-model="value"
 			ref="picker"
 			:type="type"
-			align="right"
 			:size="size"
 			:range-separator="separator"
 			@change="value => $emit('change', value, rolling)"
@@ -220,8 +219,6 @@ export default {
 	// Hide El input and build ours instead.
 	.el-date-editor {
 		position: absolute;
-		bottom: 5px;
-		right: 0;
 		width: 100%;
 		height: 100%;
 		opacity: 0;
@@ -271,6 +268,7 @@ export default {
 				.el-picker-panel__content {
 					border-left: 0 !important;
 					border-right: 0 !important;
+					padding: 10px 0;
 
 					&::after {
 						content: '';

@@ -396,7 +396,7 @@ export default {
 					import.meta.env.VITE_SHORT_NAME
 				),
 				announcements            : this.$t.__('Announcements', this.$td),
-				announcementsDescription : this.$t.__('This allows you to hide plugin announcements and update details.', this.$td),
+				announcementsDescription : this.$t.__('This allows you to hide plugin announcements and update details in the Notification Center.', this.$td),
 				automaticUpdates         : this.$t.__('Automatic Updates', this.$td),
 				all                      : this.$t.__('All (recommended)', this.$td),
 				allDescription           : this.$t.__('You are getting the latest features, bugfixes, and security updates as they are released.', this.$td),

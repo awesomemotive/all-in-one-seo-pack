@@ -20,7 +20,7 @@ $medium    = false !== strpos( AIOSEO_PHP_VERSION_DIR, 'pro' ) ? 'proplugin' : '
 		margin: auto;
 		width: 750px;
 		max-width: 100%;
-		animation: loadAioseoSettingsNoJSView 0s 2s forwards;
+		animation: loadAioseoSettingsNoJSView 0s 5s forwards;
 	}
 
 	#aioseo-settings-error-loading-area {

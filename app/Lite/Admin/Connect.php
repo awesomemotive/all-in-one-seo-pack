@@ -48,6 +48,7 @@ class Connect {
 	 * @return void
 	 */
 	public function maybeLoadConnect() {
+		// phpcs:disable HM.Security.ValidatedSanitizedInput.InputNotSanitized, HM.Security.NonceVerification.Recommended
 		// Don't load the interface if doing an ajax call.
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			return;
@@ -58,7 +59,7 @@ class Connect {
 		// Check if current user is allowed to save settings.
 		if (
 			! isset( $_GET['page'] ) ||
-			( 'aioseo-connect-pro' !== $_GET['page'] && 'aioseo-connect' !== wp_unslash( $_GET['page'] ) ) || // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
+			( 'aioseo-connect-pro' !== $_GET['page'] && 'aioseo-connect' !== sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) ||
 			! current_user_can( 'aioseo_manage_seo' )
 		) {
 			return;
@@ -69,13 +70,14 @@ class Connect {
 		// Remove an action in the Gutenberg plugin ( not core Gutenberg ) which throws an error.
 		remove_action( 'admin_print_styles', 'gutenberg_block_editor_admin_print_styles' );
 
-		if ( 'aioseo-connect-pro' === wp_unslash( $_GET['page'] ) ) { // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( 'aioseo-connect-pro' === sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) {
 			$this->loadConnectPro();
 
 			return;
 		}
 
 		$this->loadConnect();
+		// phpcs:enable
 	}
 
 	/**

@@ -382,9 +382,9 @@ class RobotsTxt {
 			'type'              => 'error',
 			'level'             => [ 'all' ],
 			'button1_label'     => __( 'Import and Delete', 'all-in-one-seo-pack' ),
-			'button1_action'    => 'http://action#tools/import-robots-txt?redirect=aioseo-tools',
+			'button1_action'    => 'http://action#tools/import-robots-txt?redirect=aioseo-tools:robots-editor',
 			'button2_label'     => __( 'Delete', 'all-in-one-seo-pack' ),
-			'button2_action'    => 'http://action#tools/delete-robots-txt?redirect=aioseo-tools',
+			'button2_action'    => 'http://action#tools/delete-robots-txt?redirect=aioseo-tools:robots-editor',
 			'start'             => gmdate( 'Y-m-d H:i:s' )
 		] );
 	}
@@ -486,6 +486,32 @@ class RobotsTxt {
 		$options->tools->robots->rules = aioseo()->robotsTxt->prepareRobotsTxt( $newRules );
 
 		return true;
+	}
+
+	/**
+	 * Deletes the physical robots.txt file.
+	 *
+	 * @since 4.4.5
+	 *
+	 * @throws \Exception If the file is not readable, or it can't be deleted.
+	 * @return true       True if the file was successfully deleted.
+	 */
+	public function deletePhysicalRobotsTxt() {
+		try {
+			$fs = aioseo()->core->fs;
+			if (
+				! $fs->isWpfsValid() ||
+				! $fs->fs->delete( trailingslashit( $fs->fs->abspath() ) . 'robots.txt' )
+			) {
+				throw new \Exception( __( 'There was an error deleting the physical robots.txt file.', 'all-in-one-seo-pack' ) );
+			}
+
+			Models\Notification::deleteNotificationByName( 'robots-physical-file' );
+
+			return true;
+		} catch ( \Exception $e ) {
+			throw new \Exception( esc_html( $e->getMessage() ) );
+		}
 	}
 
 	/**

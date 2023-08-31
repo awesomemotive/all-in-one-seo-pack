@@ -53,7 +53,7 @@ class SetupWizard {
 		}
 
 		// Only do this for single site installs.
-		if ( isset( $_GET['activate-multi'] ) || is_network_admin() ) {
+		if ( isset( $_GET['activate-multi'] ) || is_network_admin() ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
 			return;
 		}
 
@@ -100,8 +100,8 @@ class SetupWizard {
 		// Allow plugins to disable the setup wizard
 		// Check if current user is allowed to save settings.
 		if (
-			! isset( $_GET['page'] ) ||
-			'aioseo-setup-wizard' !== wp_unslash( $_GET['page'] ) || // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
+			! isset( $_GET['page'] ) || // phpcs:ignore HM.Security.NonceVerification.Recommended
+			'aioseo-setup-wizard' !== sanitize_text_field( wp_unslash( $_GET['page'] ) ) || // phpcs:ignore HM.Security.NonceVerification.Recommended
 			! current_user_can( aioseo()->admin->getPageRequiredCapability( 'aioseo-setup-wizard' ) )
 		) {
 			return;

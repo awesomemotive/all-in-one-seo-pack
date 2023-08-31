@@ -27,7 +27,7 @@ class Tools {
 	public static function importRobotsTxt( $request ) {
 		$body         = $request->get_json_params();
 		$blogId       = ! empty( $body['blogId'] ) ? absint( $body['blogId'] ) : 0;
-		$networkLevel = ! empty( $body['networkLevel'] );
+		$networkLevel = ! empty( $body['networkLevel'] ) || ! empty( $body['network'] );
 		$source       = ! empty( $body['source'] ) ? $body['source'] : '';
 		$text         = ! empty( $body['text'] ) ? sanitize_textarea_field( $body['text'] ) : '';
 		$url          = ! empty( $body['url'] ) ? sanitize_url( $body['url'], [ 'http', 'https' ] ) : '';
@@ -47,7 +47,9 @@ class Tools {
 
 					break;
 				case 'static':
+				default:
 					aioseo()->robotsTxt->importPhysicalRobotsTxt( $networkLevel );
+					aioseo()->robotsTxt->deletePhysicalRobotsTxt();
 
 					$options = aioseo()->options;
 					if ( $networkLevel ) {
@@ -57,12 +59,11 @@ class Tools {
 					$options->tools->robots->enable = true;
 
 					break;
-				default:
-					break;
 			}
 
 			return new \WP_REST_Response( [
-				'success' => true
+				'success'       => true,
+				'notifications' => Models\Notification::getNotifications()
 			], 200 );
 		} catch ( \Exception $e ) {
 			return new \WP_REST_Response( [
@@ -76,21 +77,13 @@ class Tools {
 	 * Delete the static robots.txt file.
 	 *
 	 * @since   4.0.0
-	 * @version 4.4.2
+	 * @version 4.4.5
 	 *
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function deleteRobotsTxt() {
 		try {
-			$fs = aioseo()->core->fs;
-			if (
-				! $fs->isWpfsValid() ||
-				! $fs->fs->delete( trailingslashit( $fs->fs->abspath() ) . 'robots.txt' )
-			) {
-				throw new \Exception( esc_html__( 'There was an error deleting the physical robots.txt file.', 'all-in-one-seo-pack' ) );
-			}
-
-			Models\Notification::deleteNotificationByName( 'robots-physical-file' );
+			aioseo()->robotsTxt->deletePhysicalRobotsTxt();
 
 			return new \WP_REST_Response( [
 				'success'       => true,

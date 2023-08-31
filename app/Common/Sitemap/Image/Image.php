@@ -226,10 +226,10 @@ class Image {
 				continue;
 			}
 
-			$entries[] = [ 'image:loc' => $imageUrl ];
+			$entries[ $idOrUrl ] = [ 'image:loc' => $imageUrl ];
 		}
 
-		return $entries;
+		return array_values( $entries );
 	}
 
 	/**

@@ -271,6 +271,14 @@ export default {
 				}
 			}
 
+			// Protected path
+			if (0 < this.redirectsStore?.protectedPaths.length) {
+				const normalizedPaths = this.redirectsStore.protectedPaths.map(path => path.replace(/\/$/, ''))
+				if (this.url.url.match(new RegExp('^(' + normalizedPaths.join('|') + ')'))) {
+					errors.push(this.$t.__('Your source is a protected path and cannot be redirected.', this.$td))
+				}
+			}
+
 			return errors
 		},
 		iffyUrl () {

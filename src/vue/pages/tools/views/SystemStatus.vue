@@ -66,12 +66,13 @@
 
 			<div class="aioseo-settings-row">
 				<template
-					v-for="(group, i) in rootStore.aioseo.data.status"
-					:key="i"
+					v-for="(group, slug) in rootStore.aioseo.data.status"
+					:key="slug"
 				>
 					<div
-						v-if="group.results.length"
+						v-if="group.results?.length"
 						class="settings-group"
+						:class="[ 'settings-group--' + slug ]"
 					>
 						<div class="settings-name">
 							<div class="name">{{ group.label }}</div>
@@ -87,7 +88,7 @@
 									<table-column
 										class="system-status-header"
 									>
-										{{ row.header }}
+										<span :title="row.header">{{ row.header }}</span>
 									</table-column>
 									<table-column>
 										{{ row.value }}
@@ -267,12 +268,30 @@ export default {
 	}
 
 	.aioseo-settings-row {
-		.settings-content {
-			margin-top: 16px;
-		}
+		.settings-group {
+			&--database {
+				.settings-content {
+					overflow: auto;
+					max-height: 500px;
 
-		.settings-group:not(:first-child) {
-			margin-top: var(--aioseo-gutter);
+					.system-status-header {
+						> span {
+							white-space: nowrap;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							direction: rtl;
+						}
+					}
+				}
+			}
+
+			.settings-content {
+				margin-top: 16px;
+			}
+
+			&:not(:first-child) {
+				margin-top: var(--aioseo-gutter);
+			}
 		}
 	}
 }

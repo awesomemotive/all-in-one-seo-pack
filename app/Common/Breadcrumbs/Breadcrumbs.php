@@ -190,7 +190,7 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 		 * @return array             A crumb.
 		 */
 		public function getPrefixCrumb( $type, $reference ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
-			if ( empty( aioseo()->options->breadcrumbs->breadcrumbPrefix ) ) {
+			if ( 0 === strlen( aioseo()->options->breadcrumbs->breadcrumbPrefix ) ) {
 				return [];
 			}
 

@@ -320,12 +320,12 @@ namespace AIOSEO\Plugin {
 			$this->actionScheduler    = new Common\Utils\ActionScheduler();
 			$this->seoRevisions       = $this->pro ? new Pro\SeoRevisions\SeoRevisions() : new Common\SeoRevisions\SeoRevisions();
 			$this->ai                 = $this->pro ? new Pro\Ai\Ai() : null;
+			$this->filters            = $this->pro ? new Pro\Main\Filters() : new Lite\Main\Filters();
 
 			if ( ! wp_doing_ajax() && ! wp_doing_cron() ) {
 				$this->rss       = new Common\Rss();
 				$this->main      = $this->pro ? new Pro\Main\Main() : new Common\Main\Main();
 				$this->head      = $this->pro ? new Pro\Main\Head() : new Common\Main\Head();
-				$this->filters   = $this->pro ? new Pro\Main\Filters() : new Lite\Main\Filters();
 				$this->dashboard = $this->pro ? new Pro\Admin\Dashboard() : new Common\Admin\Dashboard();
 				$this->api       = $this->pro ? new Pro\Api\Api() : new Lite\Api\Api();
 				$this->help      = new Common\Help\Help();

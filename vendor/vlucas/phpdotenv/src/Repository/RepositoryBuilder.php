@@ -111,7 +111,7 @@ final class RepositoryBuilder
     }
 
     /**
-     * Determine if the given name if of an adapterclass.
+     * Determine if the given name if of an adapaterclass.
      *
      * @param string $name
      *

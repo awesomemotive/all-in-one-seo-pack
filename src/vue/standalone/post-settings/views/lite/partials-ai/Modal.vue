@@ -85,6 +85,7 @@ import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 export default {
 	setup () {
 		return {
+			getAssetUrl,
 			settingsStore : useSettingsStore()
 		}
 	},
@@ -171,9 +172,6 @@ export default {
 				this.$t.__('meta descriptions', this.$td),
 				this.$t.__('description', this.$td)
 			)
-		},
-		methods : {
-			getAssetUrl
 		}
 	}
 }

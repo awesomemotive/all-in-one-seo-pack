@@ -182,7 +182,7 @@ class Robots {
 			$this->attributes['nofollow'] = 'nofollow';
 		}
 
-		$this->attributes = array_filter( apply_filters( 'aioseo_robots_meta', $this->attributes ) );
+		$this->attributes = array_filter( (array) apply_filters( 'aioseo_robots_meta', $this->attributes ) );
 
 		return $array ? $this->attributes : implode( ', ', $this->attributes );
 	}

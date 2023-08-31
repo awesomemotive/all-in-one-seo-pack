@@ -3,6 +3,7 @@ import {
 } from '@/vue/stores'
 
 import { debounce } from 'lodash-es'
+import { flattenBlocks } from '@/vue/utils/helpers'
 
 if ('post' === window.aioseo.currentPost?.context) {
 	let blockList = []
@@ -24,7 +25,9 @@ if ('post' === window.aioseo.currentPost?.context) {
 
 	const updateBlockGraphs = debounce(() => {
 		// First, grab all schema supported blocks from the editor.
-		let blocks = window.wp.data.select('core/block-editor').getBlocks().filter(block => block?.attributes?.schemaBlockId)
+		let blocks = window.wp.data.select('core/block-editor').getBlocks()
+		blocks     = flattenBlocks(blocks) // Extract inner blocks.
+		blocks     = blocks.filter(block => block?.attributes?.schemaBlockId)
 
 		// Now, map their type to their attributes so that we can identify their type in the backend.
 		blocks = blocks.map((block) => {

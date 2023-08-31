@@ -37,8 +37,8 @@ final class GuardedWriter implements WriterInterface
     /**
      * Write to an environment variable, if possible.
      *
-     * @param non-empty-string $name
-     * @param string           $value
+     * @param string $name
+     * @param string $value
      *
      * @return bool
      */
@@ -56,7 +56,7 @@ final class GuardedWriter implements WriterInterface
     /**
      * Delete an environment variable, if possible.
      *
-     * @param non-empty-string $name
+     * @param string $name
      *
      * @return bool
      */
@@ -74,7 +74,7 @@ final class GuardedWriter implements WriterInterface
     /**
      * Determine if the given variable is allowed.
      *
-     * @param non-empty-string $name
+     * @param string $name
      *
      * @return bool
      */

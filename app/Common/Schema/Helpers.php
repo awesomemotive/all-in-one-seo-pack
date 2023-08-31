@@ -92,7 +92,7 @@ class Helpers {
 		// Some users report better SEO performance when non-Latin unicode characters are not escaped.
 		$jsonFlags = apply_filters( 'aioseo_schema_json_flags', 0 );
 
-		$json = isset( $_GET['aioseo-dev'] ) || $isValidator
+		$json = isset( $_GET['aioseo-dev'] ) || $isValidator // phpcs:ignore HM.Security.NonceVerification.Recommended
 			? aioseo()->helpers->wpJsonEncode( $schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE )
 			: aioseo()->helpers->wpJsonEncode( $schema, $jsonFlags );
 

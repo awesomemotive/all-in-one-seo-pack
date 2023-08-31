@@ -197,6 +197,9 @@ trait WpContext {
 			$postId = $learnPressLesson;
 		}
 
+		// Allow other plugins to filter the post ID e.g. for a special archive page.
+		$postId = apply_filters( 'aioseo_get_post_id', $postId );
+
 		// We need to check these conditions and cannot always return get_post() because we'll return the first post on archive pages (dynamic homepage, term pages, etc.).
 		if (
 			$this->isScreenBase( 'post' ) ||
@@ -710,7 +713,13 @@ trait WpContext {
 	 * @return bool Login or register page.
 	 */
 	public function isWpLoginPage() {
-		$self = ! empty( $_SERVER['PHP_SELF'] ) ? wp_unslash( $_SERVER['PHP_SELF'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		// In order to prevent a conflict with Wealthy Affiliate's custom login page, we need to make sure that
+		// this function is defined because it is called inside sanitize_file_name().
+		if ( ! function_exists( 'wp_get_current_user' ) ) {
+			require_once ABSPATH . 'wp-includes/pluggable.php';
+		}
+
+		$self = ! empty( $_SERVER['PHP_SELF'] ) ? sanitize_file_name( wp_unslash( $_SERVER['PHP_SELF'] ) ) : '';
 		if ( preg_match( '/wp-login\.php$|wp-register\.php$/', $self ) ) {
 			return true;
 		}

@@ -13,6 +13,7 @@ export const SaveChanges = {
 			let switchBack = false,
 				saved      = false,
 				action     = 'saveChanges'
+
 			setTimeout(() => {
 				switchBack = true
 				if (saved) {

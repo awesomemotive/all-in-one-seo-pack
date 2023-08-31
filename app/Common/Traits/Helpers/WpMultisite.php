@@ -158,7 +158,7 @@ trait WpMultisite {
 	 * Count the number of sites in the network. A clone of wp_count_sites. We use this because
 	 * we don't yet support WordPress 5.3. Once we do, we can revert to wp_count_sites.
 	 *
-	 * @since {next}
+	 * @since 4.4.5
 	 *
 	 * @return array          An array of aliases.
 	 */

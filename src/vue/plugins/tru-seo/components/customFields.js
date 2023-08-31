@@ -4,6 +4,7 @@ import {
 } from '@/vue/stores'
 
 import { debounce } from '@/vue/utils/debounce'
+import { getFieldValue as getAcfFieldValue } from '@/vue/utils/acf'
 import {
 	truSeoShouldAnalyze,
 	maybeUpdatePost
@@ -82,6 +83,15 @@ export const customFieldsContent = () => {
 				fieldEl = acfField.querySelector('.acf-gallery-attachment img')
 			}
 
+			if ('link' === acfField.dataset.type) {
+				fieldEl = getAcfFieldValue(acfField.dataset.key) || acfField.querySelector(`[name$="[${acfField.dataset.key}][url]"]`) || {}
+				fieldEl = {
+					tagName : 'INPUT',
+					type    : 'url',
+					value   : fieldEl?.url ?? fieldEl?.value ?? ''
+				}
+			}
+
 			if (!fieldEl) {
 				return ''
 			}
@@ -147,7 +157,7 @@ export const customFieldsContent = () => {
 	fields.forEach((field) => {
 		let content = ''
 
-		if (inputTypes.includes(field.tagName)) {
+		if (inputTypes.includes(field.tagName) && 'function' === typeof field?.addEventListener) {
 			field.addEventListener('keyup', updateValues)
 		}
 

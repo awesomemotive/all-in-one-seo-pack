@@ -68,12 +68,16 @@ class TruSeo {
 
 		const rootStore = useRootStore()
 		const tagsStore = useTagsStore()
+		const tags = tagsStore.tags.map(t => {
+			return undefined !== tagsStore.liveTags[t.id] && t.value !== tagsStore.liveTags[t.id]
+				? { ...t, value: tagsStore.liveTags[t.id] }
+				: t
+		})
 		const aioseo    = {
 			...markRaw(rootStore.aioseo),
-			tags        : markRaw(tagsStore.tags),
+			tags        : markRaw(tags),
 			currentPost : markRaw(postEditorStore.currentPost)
 		}
-
 		const analysisData = JSON.parse(JSON.stringify({
 			postId,
 			postData,

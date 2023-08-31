@@ -871,12 +871,7 @@ export default {
 
 			this.processImportRobotsTxt('static')
 				.then(() => {
-					this.notificationsStore.processButtonAction('tools/delete-robots-txt')
-						.then(() => (window.location.reload()))
-						.catch(error => {
-							this.loading.btnImportAndDeleteRobotsTxt = false
-							this.errors.importAndDeleteRobotsTxt = error?.response?.body?.message || null
-						})
+					window.location.reload()
 				})
 				.catch(error => {
 					this.loading.btnImportAndDeleteRobotsTxt = false

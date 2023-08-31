@@ -252,7 +252,7 @@ class ActionScheduler_ListTable extends ActionScheduler_Abstract_ListTable {
 	 */
 	protected function get_recurrence( $action ) {
 		$schedule = $action->get_schedule();
-		if ( $schedule->is_recurring() && method_exists( $schedule, 'get_recurrence' ) ) {
+		if ( $schedule->is_recurring() ) {
 			$recurrence = $schedule->get_recurrence();
 
 			if ( is_numeric( $recurrence ) ) {
@@ -467,11 +467,7 @@ class ActionScheduler_ListTable extends ActionScheduler_Abstract_ListTable {
 
 		$schedule_display_string = '';
 
-		if ( is_a( $schedule, 'ActionScheduler_NullSchedule' ) ) {
-			return __( 'async', 'action-scheduler' );
-		}
-
-		if ( ! method_exists( $schedule, 'get_date' ) || ! $schedule->get_date() ) {
+		if ( ! $schedule->get_date() ) {
 			return '0000-00-00 00:00:00';
 		}
 
@@ -587,16 +583,6 @@ class ActionScheduler_ListTable extends ActionScheduler_Abstract_ListTable {
 			'search'   => $this->get_request_search_query(),
 		);
 
-		/**
-		 * Change query arguments to query for past-due actions.
-		 * Past-due actions have the 'pending' status and are in the past.
-		 * This is needed because registering 'past-due' as a status is overkill.
-		 */
-		if ( 'past-due' === $this->get_request_status() ) {
-			$query['status'] = ActionScheduler_Store::STATUS_PENDING;
-			$query['date']   = as_get_datetime_object();
-		}
-
 		$this->items = array();
 
 		$total_items = $this->store->query_actions( $query, 'count' );
@@ -637,7 +623,7 @@ class ActionScheduler_ListTable extends ActionScheduler_Abstract_ListTable {
 	 * Prints the available statuses so the user can click to filter.
 	 */
 	protected function display_filter_by_status() {
-		$this->status_counts = $this->store->action_counts() + $this->store->extra_action_counts();
+		$this->status_counts = $this->store->action_counts();
 		parent::display_filter_by_status();
 	}
 

@@ -148,6 +148,7 @@ abstract class Base {
 	 * @return int|null The post ID or null.
 	 */
 	public function getPostId() {
+		// phpcs:disable HM.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['id'] ) ) {
 			return (int) $_GET['id'];
 		}
@@ -161,6 +162,7 @@ abstract class Base {
 		}
 
 		return null;
+		// phpcs:enable HM.Security.NonceVerification.Recommended
 	}
 
 	/**

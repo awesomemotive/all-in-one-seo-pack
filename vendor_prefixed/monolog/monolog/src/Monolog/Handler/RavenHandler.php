@@ -36,7 +36,7 @@ class RavenHandler extends AbstractProcessingHandler
      */
     protected $ravenClient;
     /**
-     * @var FormatterInterface The formatter to use for the logs generated via handleBatch()
+     * @var LineFormatter The formatter to use for the logs generated via handleBatch()
      */
     protected $batchFormatter;
     /**

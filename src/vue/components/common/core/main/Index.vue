@@ -7,6 +7,13 @@
 				:page-name="pageName"
 			/>
 			<grid-container :class="containerClasses">
+				<core-alert
+					v-if="optionsStore.saveError"
+					type="red"
+				>
+					<div v-html="errorSaving"></div>
+				</core-alert>
+
 				<core-main-tabs
 					v-if="showTabs"
 					:key="tabsKey"
@@ -48,7 +55,8 @@
 import {
 	useHelpPanelStore,
 	useNotificationsStore,
-	useRootStore
+	useRootStore,
+	useOptionsStore
 } from '@/vue/stores'
 
 import license from '@/vue/utils/license'
@@ -57,6 +65,7 @@ import '@/vue/assets/scss/main.scss'
 
 import { getParams, removeParam } from '@/vue/utils/params'
 import { SaveChanges } from '@/vue/mixins'
+import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreHeader from '@/vue/components/common/core/Header'
 import CoreHelp from '@/vue/components/common/core/Help'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
@@ -67,10 +76,12 @@ export default {
 		return {
 			helpPanelStore     : useHelpPanelStore(),
 			notificationsStore : useNotificationsStore(),
-			rootStore          : useRootStore()
+			rootStore          : useRootStore(),
+			optionsStore       : useOptionsStore()
 		}
 	},
 	components : {
+		CoreAlert,
 		CoreHeader,
 		CoreHelp,
 		CoreMainTabs,
@@ -155,6 +166,16 @@ export default {
 				}
 			}
 			return this.showSaveButton
+		},
+		errorSaving () {
+			const url = this.$isPro ? 'https://aioseo.com/plugin/pro-support' : 'https://aioseo.com/plugin/lite-support'
+
+			return this.$t.sprintf(
+				// Translators: 1 - Opening link tag, 2 - Closing link tag.
+				this.$t.__('Oops! It looks like an error occurred while saving the changes. Please try again or %1$scontact our support team%2$s.', this.$td),
+				'<a href="' + this.$links.utmUrl('error-saving', this.rootStore.aioseo.page, url) + '" target="_blank">',
+				'</a>'
+			)
 		}
 	},
 	mounted () {

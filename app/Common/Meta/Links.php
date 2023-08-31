@@ -157,10 +157,12 @@ class Links {
 
 		if ( is_preview() ) {
 
+			// phpcs:disable HM.Security.NonceVerification.Recommended
 			if ( ( 'draft' !== $post->post_status ) && isset( $_GET['preview_id'], $_GET['preview_nonce'] ) ) {
 				$queryArgs['preview_id']    = sanitize_text_field( wp_unslash( $_GET['preview_id'] ) );
 				$queryArgs['preview_nonce'] = sanitize_text_field( wp_unslash( $_GET['preview_nonce'] ) );
 			}
+			// phpcs:enable
 
 			$url = get_preview_post_link( $post, $queryArgs, $url );
 		}

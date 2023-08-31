@@ -158,24 +158,6 @@ export default {
 
 <style lang="scss">
 .aioseo-general-settings {
-
-	.aioseo-card {
-
-		.settings-content {
-
-			.license-key + .aioseo-description {
-				display: inline-block;
-				margin: 8px 4px 0 0;
-			}
-
-			.deactivate-license {
-				display: inline-block;
-				font-weight: $font-bold;
-				margin-top: 8px;
-			}
-		}
-	}
-
 	.wizard-actions .aioseo-button {
 		text-align: center;
 	}

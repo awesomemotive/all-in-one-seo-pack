@@ -87,7 +87,7 @@ if (canLoadBlocks()) {
 		[
 			breadcrumbs,
 			htmlSitemap,
-			tableOfContents,
+			'post' === window?.aioseo?.screen?.base ? tableOfContents : null,
 			faq
 
 		].forEach(registerBlock)

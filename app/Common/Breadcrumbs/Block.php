@@ -60,7 +60,9 @@ class Block {
 	 * @return string                  The output from the output buffering.
 	 */
 	public function render( $blockAttributes ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
-		$postId = ! empty( $_GET['post_id'] ) ? wp_unslash( $_GET['post_id'] ) : false; // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
+		// phpcs:disable HM.Security.ValidatedSanitizedInput.InputNotSanitized, HM.Security.NonceVerification.Recommended
+		$postId = ! empty( $_GET['post_id'] ) ? (int) wp_unslash( $_GET['post_id'] ) : false;
+		// phpcs:enable
 
 		if ( ! empty( $blockAttributes['primaryTerm'] ) ) {
 			$this->primaryTerm = json_decode( $blockAttributes['primaryTerm'], true );

@@ -19,7 +19,8 @@ export const useOptionsStore = defineStore('OptionsStore', {
 		internalOptions        : {},
 		networkOptions         : {},
 		options                : {},
-		htaccessError          : null
+		htaccessError          : null,
+		saveError              : null
 	}),
 	actions : {
 		saveChanges () {
@@ -79,6 +80,10 @@ export const useOptionsStore = defineStore('OptionsStore', {
 
 					return response
 				})
+				.catch(error => {
+					console.error('Failed to save the options.', error)
+					this.saveError = error.response.body.message
+				})
 		},
 		saveHtaccess () {
 			const rootStore = useRootStore()
@@ -88,6 +93,7 @@ export const useOptionsStore = defineStore('OptionsStore', {
 				})
 				.then(() => {})
 				.catch(error => {
+					console.error('Failed to update .htaccess file.', error)
 					this.htaccessError = error.response.body.message
 				})
 		},

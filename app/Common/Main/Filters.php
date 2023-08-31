@@ -38,6 +38,12 @@ abstract class Filters {
 	 * @since 4.0.0
 	 */
 	public function __construct() {
+		add_filter( 'wp_optimize_get_tables', [ $this, 'wpOptimizeAioseoTables' ] );
+
+		if ( wp_doing_ajax() || wp_doing_cron() ) {
+			return;
+		}
+
 		add_filter( 'plugin_row_meta', [ $this, 'pluginRowMeta' ], 10, 2 );
 		add_filter( 'plugin_action_links_' . AIOSEO_PLUGIN_BASENAME, [ $this, 'pluginActionLinks' ], 10, 2 );
 
@@ -344,14 +350,8 @@ abstract class Filters {
 	 * @return array[object]|array[string]            The filtered post types.
 	 */
 	public function removeInvalidPublicPostTypes( $postTypes ) {
-		$elementorEnabled = isset( aioseo()->standalone->pageBuilderIntegrations['elementor'] ) &&
-			aioseo()->standalone->pageBuilderIntegrations['elementor']->isPluginActive();
-
-		if ( ! $elementorEnabled ) {
-			return $postTypes;
-		}
-
 		$postTypesToRemove = [
+			'fusion_element',
 			'elementor_library'
 		];
 
@@ -476,5 +476,28 @@ abstract class Filters {
 	 */
 	public function removeHelloElementorDescriptionTag() {
 		remove_action( 'wp_head', 'hello_elementor_add_description_meta_tag' );
+	}
+
+	/**
+	 * Prevent WP-Optimize from deleting our tables.
+	 *
+	 * @since 4.4.5
+	 *
+	 * @param  array $tables List of tables.
+	 * @return array         Filtered tables.
+	 */
+	public function wpOptimizeAioseoTables( $tables ) {
+		foreach ( $tables as &$table ) {
+			if (
+				is_object( $table ) &&
+				property_exists( $table, 'Name' ) &&
+				false !== stripos( $table->Name, 'aioseo_' )
+			) {
+				$table->is_using       = true;
+				$table->can_be_removed = false;
+			}
+		}
+
+		return $tables;
 	}
 }

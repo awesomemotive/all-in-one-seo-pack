@@ -22,7 +22,8 @@ class SystemStatus {
 			'muPlugins'       => self::mustUsePlugins(),
 			'activeTheme'     => self::activeTheme(),
 			'activePlugins'   => self::activePlugins(),
-			'inactivePlugins' => self::inactivePlugins()
+			'inactivePlugins' => self::inactivePlugins(),
+			'database'        => self::getDatabaseInfo()
 		];
 	}
 
@@ -106,6 +107,50 @@ class SystemStatus {
 						__( 'Base URL:', 'all-in-one-seo-pack' ) . ' ' . $uploadsDir['baseurl']
 				]
 			]
+		];
+	}
+
+	/**
+	 * Get an array of database info from WordPress.
+	 *
+	 * @since 4.4.5
+	 *
+	 * @return array An array of database info.
+	 */
+	public static function getDatabaseInfo() {
+		$dbInfo = aioseo()->core->db->getDatabaseInfo();
+		if ( empty( $dbInfo['tables'] ) ) {
+			return [];
+		}
+
+		if ( ! aioseo()->helpers->isDev() ) {
+			return [];
+		}
+
+		$results = [];
+		$tables  = array_merge( $dbInfo['tables']['aioseo'], $dbInfo['tables']['other'] );
+		foreach ( $tables as $tableName => $tableData ) {
+			$results[] = [
+				'header' => $tableName,
+				'value'  => sprintf(
+					// Translators: %1$s is the data size, %2$s is the index size, %3$s is the engine type.
+					__( 'Data: %1$.2f MB / Index: %2$.2f MB / Engine: %3$s / Collation: %4$s', 'all-in-one-seo-pack' ),
+					$tableData['data'],
+					$tableData['index'],
+					$tableData['engine'],
+					$tableData['collation']
+				)
+			];
+		}
+
+		return [
+			'label'   => __( 'Database', 'all-in-one-seo-pack' ),
+			'results' => array_merge( [
+				[
+					'header' => __( 'Database Size', 'all-in-one-seo-pack' ),
+					'value'  => sprintf( '%.2f MB', $dbInfo['size']['data'] + $dbInfo['size']['index'] )
+				]
+			], $results )
 		];
 	}
 
@@ -194,11 +239,15 @@ class SystemStatus {
 					'value'  => function_exists( 'memory_get_usage' ) ? round( memory_get_usage() / 1024 / 1024, 2 ) . 'M' : __( 'N/A', 'all-in-one-seo-pack' )
 				],
 				[
-					'header' => __( 'MySQL Version', 'all-in-one-seo-pack' ),
+					'header' => __( 'Database Powered By', 'all-in-one-seo-pack' ),
+					'value'  => stripos( aioseo()->core->db->db->db_server_info(), 'mariadb' ) !== false ? __( 'MariaDB', 'all-in-one-seo-pack' ) : __( 'MySQL', 'all-in-one-seo-pack' )
+				],
+				[
+					'header' => __( 'Database Version', 'all-in-one-seo-pack' ),
 					'value'  => aioseo()->core->db->db->db_version()
 				],
 				[
-					'header' => __( 'MySQL SQL Mode', 'all-in-one-seo-pack' ),
+					'header' => __( 'SQL Mode', 'all-in-one-seo-pack' ),
 					'value'  => empty( $sqlMode ) ? __( 'Not Set', 'all-in-one-seo-pack' ) : $sqlMode
 				],
 				[

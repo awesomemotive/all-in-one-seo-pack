@@ -63,7 +63,7 @@ if ( ! function_exists( 'aioseo_php_notice' ) ) {
 
 		<?php
 		// In case this is on plugin activation.
-		if ( isset( $_GET['activate'] ) ) {
+		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
 			unset( $_GET['activate'] );
 		}
 	}
@@ -131,7 +131,7 @@ if ( ! function_exists( 'aioseo_php_notice_deprecated' ) ) {
 
 		<?php
 		// In case this is on plugin activation.
-		if ( isset( $_GET['activate'] ) ) {
+		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
 			unset( $_GET['activate'] );
 		}
 	}
@@ -191,7 +191,7 @@ if ( ! function_exists( 'aioseo_wordpress_notice' ) ) {
 
 		<?php
 		// In case this is on plugin activation.
-		if ( isset( $_GET['activate'] ) ) {
+		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
 			unset( $_GET['activate'] );
 		}
 	}
@@ -226,7 +226,7 @@ if ( ! function_exists( 'aioseo_lite_notice' ) ) {
 			sprintf( esc_html__( 'Your site already has %1$s activated. If you want to switch to %2$s, please first go to Plugins > Installed Plugins and deactivate %1$s. Then, you can activate %2$s.', 'all-in-one-seo-pack' ), 'AIOSEO Pro', 'AIOSEO Lite' ) // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 		);
 
-		if ( isset( $_GET['activate'] ) ) {
+		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
 			unset( $_GET['activate'] );
 		}
 

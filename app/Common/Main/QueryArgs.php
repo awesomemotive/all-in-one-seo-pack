@@ -58,7 +58,7 @@ class QueryArgs {
 			is_admin() ||
 			is_robots() ||
 			get_query_var( 'aiosp_sitemap_path' ) ||
-			empty( $_GET )
+			empty( $_GET ) // phpcs:ignore HM.Security.NonceVerification.Recommended
 		) {
 			return;
 		}
@@ -77,7 +77,11 @@ class QueryArgs {
 			$thePost = aioseo()->helpers->getPost( $post->ID );
 
 			// Leave the preview query arguments intact.
-			if ( isset( $_GET['preview'] ) && isset( $_GET['preview_nonce'] ) && current_user_can( 'edit_post', $thePost->ID ) ) {
+			if (
+				isset( $_GET['preview'] ) && // phpcs:ignore HM.Security.NonceVerification.Recommended
+				isset( $_GET['preview_nonce'] ) && // phpcs:ignore HM.Security.NonceVerification.Recommended
+				current_user_can( 'edit_post', $thePost->ID )
+			) {
 				return;
 			}
 

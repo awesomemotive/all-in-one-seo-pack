@@ -6,6 +6,6 @@
  * Facilitates catching Exceptions unique to Action Scheduler.
  *
  * @package ActionScheduler
- * @since 2.1.0
+ * @since %VERSION%
  */
 interface ActionScheduler_Exception {}

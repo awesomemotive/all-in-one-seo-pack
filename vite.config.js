@@ -151,6 +151,7 @@ export default ({ mode }) => {
 						return '[ext]/[name].[hash][extname]'
 					},
 					chunkFileNames : 'js/[name].[hash].js',
+					
 				},
 				plugins : [
 					del({
@@ -159,6 +160,7 @@ export default ({ mode }) => {
 						runOnce : true,
 						hook    : 'buildStart'
 					}),
+					
 					i18n({
 						exclude     : 'node_modules/**',
 						include     : '**/*@(vue|js|jsx)',

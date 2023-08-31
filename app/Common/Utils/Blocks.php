@@ -49,7 +49,7 @@ class Blocks {
 		}
 
 		if ( ! $this->isBlockEditorActive() ) {
-			return;
+			return false;
 		}
 
 		// Check if the block requires a minimum WP version.

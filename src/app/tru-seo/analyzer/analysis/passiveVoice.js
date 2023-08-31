@@ -1,4 +1,3 @@
-import { inRange } from 'lodash-es'
 import getPassiveVoice from '../researches/getPassiveVoice'
 import formatNumber from '../researches/helpers/formatNumber'
 import { __, sprintf } from '@wordpress/i18n'
@@ -9,7 +8,7 @@ function passiveVoice (content, locale) {
 		return {}
 	}
 
-	let score,
+	let score = 9,
 		percentage = 0
 	const recommendedValue = 10
 	const passiveVoiceResult = getPassiveVoice(content, locale)
@@ -18,19 +17,17 @@ function passiveVoice (content, locale) {
 		percentage = formatNumber((passiveVoiceResult.passives.length / passiveVoiceResult.total)  * 100)
 	}
 
-	if (10 >= percentage) {
-		// Green indicator.
-		score = 9
-	}
-	if (inRange(percentage, 10, 15)) {
+	if (10 < percentage) {
 		// Orange indicator.
 		score = 6
 	}
+
 	if (15 < percentage) {
 		// Red indicator.
 		score = 3
 	}
-	if (7 <= score) {
+
+	if (6 < score) {
 		return {
 			title       : __('Passive voice', td),
 			description : __('You\'re using enough active voice. That\'s great!', td),
@@ -39,6 +36,7 @@ function passiveVoice (content, locale) {
 			error       : 0
 		}
 	}
+
 	return {
 		title       : __('Passive voice', td),
 		description : sprintf(

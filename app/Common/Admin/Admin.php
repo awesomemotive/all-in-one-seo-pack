@@ -1154,12 +1154,13 @@ class Admin {
 			return $messages;
 		}
 
-		if ( empty( $_GET['ids'] ) ) {
+		if ( empty( $_GET['ids'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
 			return $messages;
 		}
 
+		$ids = array_map( 'intval', explode( ',', wp_unslash( $_GET['ids'] ) ) ); // phpcs:ignore HM.Security.NonceVerification.Recommended, HM.Security.ValidatedSanitizedInput.InputNotSanitized
+
 		$posts = [];
-		$ids     = array_map( 'intval', explode( ',', wp_unslash( $_GET['ids'] ) ) ); // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
 		foreach ( $ids as $id ) {
 			// We need to clone the post here so we can get a real permalink for the post even if it is not published already.
 			$post = aioseo()->helpers->getPost( $id );

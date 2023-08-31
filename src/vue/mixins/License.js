@@ -6,7 +6,7 @@ export const License = {
 	computed : {
 		yourLicenseIsText () {
 			const licenseStore = useLicenseStore()
-			let text = this.$t.__('You have not yet added a license key.', this.$td)
+			let text = this.$t.__('You have not yet added a valid license key.', this.$td)
 
 			if (licenseStore.license.isExpired) {
 				text = this.$t.__('Your license has expired.', this.$td)

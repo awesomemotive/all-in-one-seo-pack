@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta ti
 Tested up to: 6.3
 Requires at least: 4.9
 Requires PHP: 7.0
-Stable tag: 4.4.4
+Stable tag: 4.4.5.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -257,6 +257,41 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 
 == Changelog ==
+
+**New in Version 4.4.5.1**
+
+* New: REST API addon endpoints now return the breadcrumb trail.
+* New: Added filter hook to filter post ID 
+* Updated: Importing redirects in Redirection Manager addon now supports pass-through status from the Redirection plugin.
+* Updated: Adding a redirect to a protected path like `/wp-admin/` now throws a warning.
+* Updated: Added support for ACF Link field to TruSEO algorithm.
+* Updated: Product schema now outputs multiple offers for variable WooCommerce Products.
+* Updated: Image sitemap now detects images inside Kadance Gallery block.
+* Updated: Local SEO Map no longer uses geocoding to center the map.
+* Fixed: Breadcrumbs prefix not rendering on frontend.
+* Fixed: Searching for redirects now works again when a user enters one or more numbers.
+* Fixed: Testing a regex redirect that uses regex groups no longer returns a false-negative.
+* Fixed: Redirects no longer have an automatic trailing slash added to the target URL.
+* Fixed: PHP warnings from Product schema when a WooCommerce Product doesn't have reviews enabled.
+* Fixed: Generic Product schema not working for posts other than EDD Downloads and WooCommerce Products.
+* Fixed: Missing FAQ schema if FAQ Block is nested inside another block.
+* Fixed: Event schema now outputs the start and end date again.
+* Fixed: Schema no longer outputs Aggregate Ratings when a WooCommerce Product has no reviews.
+* Fixed: Product review rating value and review count are now correct for EDD Products when a review is missing a value.
+* Fixed: Plugin conflict where WP Optimize removed AIOSEO custom tables.
+* Fixed: Plugin conflicts with Product shipping details schema.
+* Fixed: Plugin conflict with Jetpack WAF causing warnings when a failed login attempt occurs.
+* Fixed: Theme conflict with JupitorX causing the "lang" and "prefix" attributes to be combined.
+* Fixed: Avada Theme's Fusion Elements are no longer available in the AIOSEO options.
+* Fixed: Removed Table of Contents block from Widgets Editor.
+* Fixed: Removing a static robots.txt file through the relevant notification in the Notifications Center now works correctly.
+* Fixed: Search Statistics date range picker sometimes hidden behind admin bar.
+* Fixed: TruSEO algorithm now parses special characters in post titles correctly.
+* Fixed: TruSEO's Passive Voice check now correctly warns users when over 10% of the content uses passive voice.
+* Fixed: Image SEO addon bulk action to add image attributes throws a PHP notice.
+* Fixed: PHP 8 notice in Robots.txt Editor.
+* Fixed: PHP error on login page for Wealthy Affiliate users.
+* Fixed: WP 6.3 affecting styling of link format in Block Editor.
 
 **New in Version 4.4.4**
 
@@ -556,6 +591,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.4.4 =
+= 4.4.5.1 =
 
 This update adds major improvements and bug fixes.
