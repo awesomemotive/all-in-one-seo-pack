@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta ti
 Tested up to: 6.3
 Requires at least: 4.9
 Requires PHP: 7.0
-Stable tag: 4.4.5.1
+Stable tag: 4.4.6
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -258,10 +258,15 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 == Changelog ==
 
-**New in Version 4.4.5**
+**New in Version 4.4.6**
+
+* New: TruSEO Highlighter – Our improved TruSEO content algorithm now lets you highlight phrases that need to be improved, allowing you to easily optimize your post content for SE👁️!
+* Fixed: Conflicts with Post SMTP Mailer and other plugins where call to sanitize_file_name breaks features.
+
+**New in Version 4.4.5.1**
 
 * New: REST API addon endpoints now return the breadcrumb trail.
-* New: Added filter hook to filter post ID 
+* New: Added filter hook to filter post ID.
 * Updated: Importing redirects in Redirection Manager addon now supports pass-through status from the Redirection plugin.
 * Updated: Adding a redirect to a protected path like `/wp-admin/` now throws a warning.
 * Updated: Added support for ACF Link field to TruSEO algorithm.
@@ -591,6 +596,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.4.5.1 =
+= 4.4.6 =
 
 This update adds major improvements and bug fixes.
