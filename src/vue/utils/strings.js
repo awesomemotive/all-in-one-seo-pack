@@ -18,7 +18,7 @@ export const stripTags = (string) => {
 /**
  * Sanitizes a string by only removing HTML tags containing JS events.
  *
- * @since {next}
+ * @since 4.4.6
  *
  * @param   {string} string The string to sanitize.
  * @returns {string}        Returns the sanitized string.

@@ -48,34 +48,93 @@ abstract class ActionScheduler_Abstract_QueueRunner extends ActionScheduler_Abst
 	 *        Generally, this should be capitalised and not localised as it's a proper noun.
 	 */
 	public function process_action( $action_id, $context = '' ) {
+		// Temporarily override the error handler while we process the current action.
+		set_error_handler(
+			/**
+			 * Temporary error handler which can catch errors and convert them into exceptions. This faciliates more
+			 * robust error handling across all supported PHP versions.
+			 *
+			 * @throws Exception
+			 *
+			 * @param int    $type    Error level expressed as an integer.
+			 * @param string $message Error message.
+			 */
+			function ( $type, $message ) {
+				throw new Exception( $message );
+			},
+			E_USER_ERROR | E_RECOVERABLE_ERROR
+		);
+
+		/*
+		 * The nested try/catch structure is required because we potentially need to convert thrown errors into
+		 * exceptions (and an exception thrown from a catch block cannot be caught by a later catch block in the *same*
+		 * structure).
+		 */
 		try {
-			$valid_action = false;
-			do_action( 'action_scheduler_before_execute', $action_id, $context );
+			try {
+				$valid_action = false;
+				do_action( 'action_scheduler_before_execute', $action_id, $context );
 
-			if ( ActionScheduler_Store::STATUS_PENDING !== $this->store->get_status( $action_id ) ) {
-				do_action( 'action_scheduler_execution_ignored', $action_id, $context );
-				return;
+				if ( ActionScheduler_Store::STATUS_PENDING !== $this->store->get_status( $action_id ) ) {
+					do_action( 'action_scheduler_execution_ignored', $action_id, $context );
+					return;
+				}
+
+				$valid_action = true;
+				do_action( 'action_scheduler_begin_execute', $action_id, $context );
+
+				$action = $this->store->fetch_action( $action_id );
+				$this->store->log_execution( $action_id );
+				$action->execute();
+				do_action( 'action_scheduler_after_execute', $action_id, $action, $context );
+				$this->store->mark_complete( $action_id );
+			} catch ( Throwable $e ) {
+				// Throwable is defined when executing under PHP 7.0 and up. We convert it to an exception, for
+				// compatibility with ActionScheduler_Logger.
+				throw new Exception( $e->getMessage(), $e->getCode(), $e->getPrevious() );
 			}
-
-			$valid_action = true;
-			do_action( 'action_scheduler_begin_execute', $action_id, $context );
-
-			$action = $this->store->fetch_action( $action_id );
-			$this->store->log_execution( $action_id );
-			$action->execute();
-			do_action( 'action_scheduler_after_execute', $action_id, $action, $context );
-			$this->store->mark_complete( $action_id );
 		} catch ( Exception $e ) {
-			if ( $valid_action ) {
-				$this->store->mark_failure( $action_id );
-				do_action( 'action_scheduler_failed_execution', $action_id, $e, $context );
-			} else {
-				do_action( 'action_scheduler_failed_validation', $action_id, $e, $context );
-			}
+			// This catch block exists for compatibility with PHP 5.6.
+			$this->handle_action_error( $action_id, $e, $context, $valid_action );
+		} finally {
+			restore_error_handler();
 		}
 
 		if ( isset( $action ) && is_a( $action, 'ActionScheduler_Action' ) && $action->get_schedule()->is_recurring() ) {
 			$this->schedule_next_instance( $action, $action_id );
+		}
+	}
+
+	/**
+	 * Marks actions as either having failed execution or failed validation, as appropriate.
+	 *
+	 * @param int       $action_id    Action ID.
+	 * @param Exception $e            Exception instance.
+	 * @param string    $context      Execution context.
+	 * @param bool      $valid_action If the action is valid.
+	 *
+	 * @return void
+	 */
+	private function handle_action_error( $action_id, $e, $context, $valid_action ) {
+		if ( $valid_action ) {
+			$this->store->mark_failure( $action_id );
+			/**
+			 * Runs when action execution fails.
+			 *
+			 * @param int       $action_id Action ID.
+			 * @param Exception $e         Exception instance.
+			 * @param string    $context   Execution context.
+			 */
+			do_action( 'action_scheduler_failed_execution', $action_id, $e, $context );
+		} else {
+			/**
+			 * Runs when action validation fails.
+			 *
+			 * @param int       $action_id Action ID.
+			 * @param Exception $e         Exception instance.
+			 * @param string    $context   Execution context.
+			 */
+			do_action( 'action_scheduler_failed_validation', $action_id, $e, $context );
 		}
 	}
 
@@ -86,11 +145,79 @@ abstract class ActionScheduler_Abstract_QueueRunner extends ActionScheduler_Abst
 	 * @param int $action_id
 	 */
 	protected function schedule_next_instance( ActionScheduler_Action $action, $action_id ) {
+		// If a recurring action has been consistently failing, we may wish to stop rescheduling it.
+		if (
+			ActionScheduler_Store::STATUS_FAILED === $this->store->get_status( $action_id )
+			&& $this->recurring_action_is_consistently_failing( $action, $action_id )
+		) {
+			ActionScheduler_Logger::instance()->log(
+				$action_id,
+				__( 'This action appears to be consistently failing. A new instance will not be scheduled.', 'action-scheduler' )
+			);
+
+			return;
+		}
+
 		try {
 			ActionScheduler::factory()->repeat( $action );
 		} catch ( Exception $e ) {
 			do_action( 'action_scheduler_failed_to_schedule_next_instance', $action_id, $e, $action );
 		}
+	}
+
+	/**
+	 * Determine if the specified recurring action has been consistently failing.
+	 *
+	 * @param ActionScheduler_Action $action    The recurring action to be rescheduled.
+	 * @param int                    $action_id The ID of the recurring action.
+	 *
+	 * @return bool
+	 */
+	private function recurring_action_is_consistently_failing( ActionScheduler_Action $action, $action_id ) {
+		/**
+		 * Controls the failure threshold for recurring actions.
+		 *
+		 * Before rescheduling a recurring action, we look at its status. If it failed, we then check if all of the most
+		 * recent actions (upto the threshold set by this filter) sharing the same hook have also failed: if they have,
+		 * that is considered consistent failure and a new instance of the action will not be scheduled.
+		 *
+		 * @param int $failure_threshold Number of actions of the same hook to examine for failure. Defaults to 5.
+		 */
+		$consistent_failure_threshold = (int) apply_filters( 'action_scheduler_recurring_action_failure_threshold', 5 );
+
+		// This query should find the earliest *failing* action (for the hook we are interested in) within our threshold.
+		$query_args = array(
+			'hook'         => $action->get_hook(),
+			'status'       => ActionScheduler_Store::STATUS_FAILED,
+			'date'         => date_create( 'now', timezone_open( 'UTC' ) )->format( 'Y-m-d H:i:s' ),
+			'date_compare' => '<',
+			'per_page'     => 1,
+			'offset'       => $consistent_failure_threshold - 1
+		);
+
+		$first_failing_action_id = $this->store->query_actions( $query_args );
+
+		// If we didn't retrieve an action ID, then there haven't been enough failures for us to worry about.
+		if ( empty( $first_failing_action_id ) ) {
+			return false;
+		}
+
+		// Now let's fetch the first action (having the same hook) of *any status* within the same window.
+		unset( $query_args['status'] );
+		$first_action_id_with_the_same_hook = $this->store->query_actions( $query_args );
+
+		/**
+		 * If a recurring action is assessed as consistently failing, it will not be rescheduled. This hook provides a
+		 * way to observe and optionally override that assessment.
+		 *
+		 * @param bool                   $is_consistently_failing If the action is considered to be consistently failing.
+		 * @param ActionScheduler_Action $action                  The action being assessed.
+		 */
+		return (bool) apply_filters(
+			'action_scheduler_recurring_action_is_consistently_failing',
+			$first_action_id_with_the_same_hook === $first_failing_action_id,
+			$action
+		);
 	}
 
 	/**
@@ -165,9 +292,14 @@ abstract class ActionScheduler_Abstract_QueueRunner extends ActionScheduler_Abst
 	 * @return bool
 	 */
 	protected function time_likely_to_be_exceeded( $processed_actions ) {
+		$execution_time     = $this->get_execution_time();
+		$max_execution_time = $this->get_time_limit();
 
-		$execution_time        = $this->get_execution_time();
-		$max_execution_time    = $this->get_time_limit();
+		// Safety against division by zero errors.
+		if ( 0 === $processed_actions ) {
+			return $execution_time >= $max_execution_time;
+		}
+
 		$time_per_action       = $execution_time / $processed_actions;
 		$estimated_time        = $execution_time + ( $time_per_action * 3 );
 		$likely_to_be_exceeded = $estimated_time > $max_execution_time;

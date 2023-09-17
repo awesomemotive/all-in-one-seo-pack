@@ -1,5 +1,5 @@
 import { filter, inRange } from 'lodash-es'
-import getSubheadingTextLengths from '../researches/helpers/getSubheadingTextLengths'
+import getSubheadingTexts from '../researches/stringProcessing/getSubheadingTexts'
 import isTextTooLong from '../researches/helpers/isValueTooLong'
 import { getSubheadings } from '../researches/stringProcessing/getSubheadings'
 import getWords from '../researches/stringProcessing/getWords'
@@ -33,44 +33,25 @@ function subheadingsDistribution (content) {
 		return {}
 	}
 
-	let subheadingTextsLength = getSubheadingTextLengths(content)
-	subheadingTextsLength = subheadingTextsLength.sort((a, b) => b.wordCount - a.wordCount)
-
-	const hasSubheadings     = checkSubheadings(content)
-	const textLength         = getWords(content).length
-	const tooLongTextsNumber = getTooLongSubheadingTexts(subheadingTextsLength).length
+	const highlightSentences = []
+	const hasSubheadings = checkSubheadings(content)
+	const textLength = getWords(content).length
+	const subheadingTexts = getSubheadingTexts(content)
+	subheadingTexts.sort((a, b) => b.wordCount - a.wordCount)
 
 	if (300 < textLength) {
 		if (hasSubheadings) {
-			const longestSubheadingTextLength = subheadingTextsLength[0].wordCount
+			const tooLongTextsNumber = getTooLongSubheadingTexts(subheadingTexts).length
+			const longestSubheadingTextLength = subheadingTexts[0].wordCount
 
 			if (longestSubheadingTextLength <= parameters.slightlyTooMany) {
 				return {
-					title       : __('Subheading distribution', td),
-					description : __('Great job!', td),
-					score       : scores.goodSubheadings,
-					maxScore    : 9,
-					error       : 0
-				}
-			}
-
-			if (inRange(longestSubheadingTextLength, parameters.slightlyTooMany, parameters.farTooMany)) {
-				return {
-					title       : __('Subheading distribution', td),
-					description : sprintf(
-						// Translators: 1 - Expand to the number of text sections not separated by subheadings, 2 - expands to the recommended number of words following a subheading.
-						_n(
-							'%1$d section of your text is longer than %2$d words and is not separated by any subheadings. Add subheadings to improve readability.',
-							'%1$d sections of your text are longer than %2$d words and are not separated by any subheadings. Add subheadings to improve readability.',
-							tooLongTextsNumber,
-							td
-						),
-						tooLongTextsNumber,
-						parameters.recommendedMaximumWordCount
-					),
-					score    : scores.okSubheadings,
-					maxScore : 9,
-					error    : 1
+					title              : __('Subheading distribution', td),
+					description        : __('Great job!', td),
+					score              : scores.goodSubheadings,
+					maxScore           : 9,
+					error              : 0,
+					highlightSentences : highlightSentences
 				}
 			}
 
@@ -87,37 +68,41 @@ function subheadingsDistribution (content) {
 					tooLongTextsNumber,
 					parameters.recommendedMaximumWordCount
 				),
-				score    : scores.badSubheadings,
-				maxScore : 9,
-				error    : 1
+				score              : inRange(longestSubheadingTextLength, parameters.slightlyTooMany, parameters.farTooMany) ? scores.okSubheadings : scores.badSubheadings,
+				maxScore           : 9,
+				error              : 1,
+				highlightSentences : [ subheadingTexts[0].subheading ]
 			}
 		}
 
 		return {
-			title       : __('Subheading distribution', td),
-			description : __('You are not using any subheadings, although your text is rather long. Try and add some subheadings.', td),
-			score       : scores.badLongTextNoSubheadings,
-			maxScore    : 9,
-			error       : 1
+			title              : __('Subheading distribution', td),
+			description        : __('You are not using any subheadings, although your text is rather long. Try and add some subheadings.', td),
+			score              : scores.badLongTextNoSubheadings,
+			maxScore           : 9,
+			error              : 1,
+			highlightSentences : highlightSentences
 		}
 	}
 
 	if (hasSubheadings) {
 		return {
-			title       : __('Subheading distribution', td),
-			description : __('Great job!', td),
-			score       : scores.goodSubheadings,
-			maxScore    : 9,
-			error       : 0
+			title              : __('Subheading distribution', td),
+			description        : __('Great job!', td),
+			score              : scores.goodSubheadings,
+			maxScore           : 9,
+			error              : 0,
+			highlightSentences : highlightSentences
 		}
 	}
 
 	return {
-		title       : __('Subheading distribution', td),
-		description : __('You are not using any subheadings, but your text is short enough and probably doesn\'t need them.', td),
-		score       : scores.goodShortTextNoSubheadings,
-		maxScore    : 9,
-		error       : 0
+		title              : __('Subheading distribution', td),
+		description        : __('You are not using any subheadings, but your text is short enough and probably doesn\'t need them.', td),
+		score              : scores.goodShortTextNoSubheadings,
+		maxScore           : 9,
+		error              : 0,
+		highlightSentences : highlightSentences
 	}
 }
 

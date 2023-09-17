@@ -10,11 +10,12 @@ function passiveVoice (content, locale) {
 
 	let score = 9,
 		percentage = 0
+	const highlightSentences = []
 	const recommendedValue = 10
 	const passiveVoiceResult = getPassiveVoice(content, locale)
 
 	if (0 !== passiveVoiceResult.total) {
-		percentage = formatNumber((passiveVoiceResult.passives.length / passiveVoiceResult.total)  * 100)
+		percentage = formatNumber((passiveVoiceResult.passives.length / passiveVoiceResult.total) * 100)
 	}
 
 	if (10 < percentage) {
@@ -27,13 +28,18 @@ function passiveVoice (content, locale) {
 		score = 3
 	}
 
+	if (Array.isArray(passiveVoiceResult.passives) && passiveVoiceResult.passives.length) {
+		highlightSentences.push(...passiveVoiceResult.passives)
+	}
+
 	if (6 < score) {
 		return {
-			title       : __('Passive voice', td),
-			description : __('You\'re using enough active voice. That\'s great!', td),
-			score       : score,
-			maxScore    : 9,
-			error       : 0
+			title              : __('Passive voice', td),
+			description        : __('You\'re using enough active voice. That\'s great!', td),
+			score              : score,
+			maxScore           : 9,
+			error              : 0,
+			highlightSentences : highlightSentences
 		}
 	}
 
@@ -45,9 +51,10 @@ function passiveVoice (content, locale) {
 			`${percentage}%`,
 			`${recommendedValue}%`
 		),
-		score    : score,
-		maxScore : 9,
-		error    : 1
+		score              : score,
+		maxScore           : 9,
+		error              : 1,
+		highlightSentences : highlightSentences
 	}
 }
 

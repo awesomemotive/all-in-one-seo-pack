@@ -713,13 +713,8 @@ trait WpContext {
 	 * @return bool Login or register page.
 	 */
 	public function isWpLoginPage() {
-		// In order to prevent a conflict with Wealthy Affiliate's custom login page, we need to make sure that
-		// this function is defined because it is called inside sanitize_file_name().
-		if ( ! function_exists( 'wp_get_current_user' ) ) {
-			require_once ABSPATH . 'wp-includes/pluggable.php';
-		}
-
-		$self = ! empty( $_SERVER['PHP_SELF'] ) ? sanitize_file_name( wp_unslash( $_SERVER['PHP_SELF'] ) ) : '';
+		// We can't sanitize the filename using sanitize_file_name() here because it will cause issues with custom login pages and certain plugins/themes where this function is not defined.
+		$self = ! empty( $_SERVER['PHP_SELF'] ) ? wp_unslash( $_SERVER['PHP_SELF'] ) : ''; // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( preg_match( '/wp-login\.php$|wp-register\.php$/', $self ) ) {
 			return true;
 		}

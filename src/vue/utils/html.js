@@ -37,6 +37,22 @@ export const getText = (html) => {
 }
 
 /**
+ * Retrieves the `outerText` from a string or node.
+ *
+ * @since 4.4.6
+ *
+ * @param   {string|HTMLElement} html The string or node to retrieve the `outerText` property from.
+ * @returns {string}                  The text.
+ */
+export const getOuterText = (html) => {
+	if ('string' === typeof html) {
+		html = createElement(html)
+	}
+
+	return html?.outerText ?? ''
+}
+
+/**
  * Get the image list from an HTML piece.
  *
  * @since 4.2.1

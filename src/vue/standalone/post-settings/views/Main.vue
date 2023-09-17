@@ -430,11 +430,6 @@ export default {
 		background: $background;
 
 		.var-tab {
-			&--active {
-				-webkit-text-stroke-width: 0.2px;
-				-webkit-text-stroke-color: $black;
-			}
-
 			.icon {
 				display: none;
 			}
@@ -622,11 +617,6 @@ export default {
 			background: $background;
 
 			.var-tab {
-				&--active {
-					-webkit-text-stroke-width: 0.2px;
-					-webkit-text-stroke-color: $black;
-				}
-
 				.icon {
 					display: none;
 				}

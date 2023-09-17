@@ -18,6 +18,7 @@ import { SeoSiteScore } from './SeoSiteScore'
 import { Tags } from './Tags'
 import { ToolsSettings } from './ToolsSettings'
 import { TruSeoScore } from './TruSeoScore'
+import { TruSeoHighlighter } from './TruSeoHighlighter'
 import { Url } from './Url'
 import { Wizard, WizardUsageTracking } from './Wizard'
 import { WpTable } from './WpTable'
@@ -44,6 +45,7 @@ export {
 	Tags,
 	ToolsSettings,
 	TruSeoScore,
+	TruSeoHighlighter,
 	twitterCard,
 	Url,
 	Wizard,

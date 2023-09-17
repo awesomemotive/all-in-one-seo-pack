@@ -273,13 +273,14 @@ import {
 	usePostEditorStore,
 	useRootStore,
 	useSettingsStore,
-	useTagsStore
+	useTagsStore,
+	useTruSeoHighlighterStore
 } from '@/vue/stores'
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { merge } from 'lodash-es'
 import { useTruSeoScore } from '@/vue/composables'
-import { MaxCounts, SaveChanges, Tags, TruSeoScore } from '@/vue/mixins'
+import { MaxCounts, SaveChanges, Tags, TruSeoScore, TruSeoHighlighter } from '@/vue/mixins'
 import { debounce } from '@/vue/utils/debounce'
 import { isPageBuilderEditor } from '@/vue/utils/context'
 import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
@@ -304,16 +305,17 @@ export default {
 		const { strings } = useTruSeoScore()
 
 		return {
-			optionsStore      : useOptionsStore(),
-			postEditorStore   : usePostEditorStore(),
-			rootStore         : useRootStore(),
-			settingsStore     : useSettingsStore(),
-			tagsStore         : useTagsStore(),
-			composableStrings : strings
+			optionsStore           : useOptionsStore(),
+			postEditorStore        : usePostEditorStore(),
+			rootStore              : useRootStore(),
+			settingsStore          : useSettingsStore(),
+			tagsStore              : useTagsStore(),
+			truSeoHighlighterStore : useTruSeoHighlighterStore(),
+			composableStrings      : strings
 		}
 	},
 	emits      : [ 'changeTab' ],
-	mixins     : [ MaxCounts, SaveChanges, Tags, TruSeoScore ],
+	mixins     : [ MaxCounts, SaveChanges, Tags, TruSeoScore, TruSeoHighlighter ],
 	components : {
 		AdditionalKeyphrases,
 		AiGenerator,
@@ -395,6 +397,9 @@ export default {
 		},
 		'postEditorStore.currentPost.description' () {
 			debounce(() => this.runAnalysis({ postId: this.postEditorStore.currentPost.id }), 750)
+		},
+		'truSeoHighlighterStore.highlightSentences' (value, oldValue) {
+			debounce(() => this.watchHighlightSentences(value, oldValue))
 		}
 	},
 	computed : {

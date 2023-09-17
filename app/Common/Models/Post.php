@@ -371,8 +371,8 @@ class Post extends Model {
 
 		foreach ( $data['analysis'] as &$analysis ) {
 			foreach ( $analysis as $key => $result ) {
-				// Remove unnecessary 'title' and 'description'.
-				foreach ( [ 'title', 'description' ] as $keyToRemove ) {
+				// Remove unnecessary data.
+				foreach ( [ 'title', 'description', 'highlightSentences' ] as $keyToRemove ) {
 					if ( isset( $analysis[ $key ][ $keyToRemove ] ) ) {
 						unset( $analysis[ $key ][ $keyToRemove ] );
 					}

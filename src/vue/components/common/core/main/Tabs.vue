@@ -31,14 +31,17 @@
 						>
 							<svg-ellipse
 								v-if="0 < postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors"
-								width="6"
+								width="8"
 							/>
 
 							<svg-circle-check
 								v-if="0 === postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors"
 								width="12"
 							/>
-							{{ getErrorDisplay(postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors) }}
+
+							<span
+								v-text="getErrorDisplay(postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors)"
+							/>
 						</span>
 
 						<span
@@ -354,7 +357,7 @@ export default {
 		--tabs-indicator-inner-size: 100%;
 		--color-text-disabled: #8c8f9a;
 		--tab-padding: 18px;
-		--tab-active-color: #{$black};
+		--tab-active-color: #{$blue};
 		--tab-inactive-color: #{$black};
 		--tab-disabled-color: var(--color-text-disabled);
 		--tab-font-size: 14px;
@@ -410,12 +413,9 @@ export default {
 
 		.tab-score {
 			display: inline-flex;
-			align-items: center;
-			justify-content: flex-end;
-			font-size: 11px;
 			font-weight: 700;
+			line-height: normal;
 			padding-left: 12px;
-			-webkit-text-stroke-width: 0;
 			&.green {
 				color: $green;
 			}
@@ -427,7 +427,7 @@ export default {
 			}
 			svg {
 				display: inline;
-				margin-right: 7px;
+				margin-right: 4px;
 			}
 		}
 

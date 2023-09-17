@@ -14,6 +14,9 @@ class ActionScheduler_QueueRunner extends ActionScheduler_Abstract_QueueRunner {
 	/** @var ActionScheduler_QueueRunner  */
 	private static $runner = null;
 
+	/** @var int  */
+	private $processed_actions_count = 0;
+
 	/**
 	 * @return ActionScheduler_QueueRunner
 	 * @codeCoverageIgnore
@@ -125,17 +128,18 @@ class ActionScheduler_QueueRunner extends ActionScheduler_Abstract_QueueRunner {
 		ActionScheduler_Compatibility::raise_time_limit( $this->get_time_limit() );
 		do_action( 'action_scheduler_before_process_queue' );
 		$this->run_cleanup();
-		$processed_actions = 0;
+
+		$this->processed_actions_count = 0;
 		if ( false === $this->has_maximum_concurrent_batches() ) {
 			$batch_size = apply_filters( 'action_scheduler_queue_runner_batch_size', 25 );
 			do {
-				$processed_actions_in_batch = $this->do_batch( $batch_size, $context );
-				$processed_actions         += $processed_actions_in_batch;
-			} while ( $processed_actions_in_batch > 0 && ! $this->batch_limits_exceeded( $processed_actions ) ); // keep going until we run out of actions, time, or memory
+				$processed_actions_in_batch     = $this->do_batch( $batch_size, $context );
+				$this->processed_actions_count += $processed_actions_in_batch;
+			} while ( $processed_actions_in_batch > 0 && ! $this->batch_limits_exceeded( $this->processed_actions_count ) ); // keep going until we run out of actions, time, or memory
 		}
 
 		do_action( 'action_scheduler_after_process_queue' );
-		return $processed_actions;
+		return $this->processed_actions_count;
 	}
 
 	/**
@@ -162,7 +166,7 @@ class ActionScheduler_QueueRunner extends ActionScheduler_Abstract_QueueRunner {
 			$this->process_action( $action_id, $context );
 			$processed_actions++;
 
-			if ( $this->batch_limits_exceeded( $processed_actions ) ) {
+			if ( $this->batch_limits_exceeded( $processed_actions + $this->processed_actions_count ) ) {
 				break;
 			}
 		}
@@ -173,15 +177,40 @@ class ActionScheduler_QueueRunner extends ActionScheduler_Abstract_QueueRunner {
 	}
 
 	/**
-	 * Running large batches can eat up memory, as WP adds data to its object cache.
+	 * Flush the cache if possible (intended for use after a batch of actions has been processed).
 	 *
-	 * If using a persistent object store, this has the side effect of flushing that
-	 * as well, so this is disabled by default. To enable:
-	 *
-	 * add_filter( 'action_scheduler_queue_runner_flush_cache', '__return_true' );
+	 * This is useful because running large batches can eat up memory and because invalid data can accrue in the
+	 * runtime cache, which may lead to unexpected results.
 	 */
 	protected function clear_caches() {
-		if ( ! wp_using_ext_object_cache() || apply_filters( 'action_scheduler_queue_runner_flush_cache', false ) ) {
+		/*
+		 * Calling wp_cache_flush_runtime() lets us clear the runtime cache without invalidating the external object
+		 * cache, so we will always prefer this method (as compared to calling wp_cache_flush()) when it is available.
+		 *
+		 * However, this function was only introduced in WordPress 6.0. Additionally, the preferred way of detecting if
+		 * it is supported changed in WordPress 6.1 so we use two different methods to decide if we should utilize it.
+		 */
+		$flushing_runtime_cache_explicitly_supported = function_exists( 'wp_cache_supports' ) && wp_cache_supports( 'flush_runtime' );
+		$flushing_runtime_cache_implicitly_supported = ! function_exists( 'wp_cache_supports' ) && function_exists( 'wp_cache_flush_runtime' );
+
+		if ( $flushing_runtime_cache_explicitly_supported || $flushing_runtime_cache_implicitly_supported ) {
+			wp_cache_flush_runtime();
+		} elseif (
+			! wp_using_ext_object_cache()
+			/**
+			 * When an external object cache is in use, and when wp_cache_flush_runtime() is not available, then
+			 * normally the cache will not be flushed after processing a batch of actions (to avoid a performance
+			 * penalty for other processes).
+			 *
+			 * This filter makes it possible to override this behavior and always flush the cache, even if an external
+			 * object cache is in use.
+			 *
+			 * @since 1.0
+			 *
+			 * @param bool $flush_cache If the cache should be flushed.
+			 */
+			|| apply_filters( 'action_scheduler_queue_runner_flush_cache', false )
+		) {
 			wp_cache_flush();
 		}
 	}

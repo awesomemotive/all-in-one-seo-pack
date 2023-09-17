@@ -11,6 +11,16 @@ export const decodeHTMLEntities = string => {
 }
 
 /**
+ * Removes <script> tags from the given string.
+ *
+ * @param 	{string} string The input string that may contain <script> tags.
+ * @returns {string} 		A new string with all <script> tags removed.
+ */
+export const removeScriptTag = string => {
+	return string.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '')
+}
+
+/**
  * Converts a number of HTML entities into their special characters.
  * JS equivilant of wp_specialchars_decode().
  *
@@ -34,10 +44,7 @@ export const decodeSpecialChars = string => {
 		string = string.replaceAll(key, value)
 	})
 
-	// Remove any script tags that may have been created.
-	string = string.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '')
-
-	return string
+	return removeScriptTag(string)
 }
 
 export const observeElement = params => {

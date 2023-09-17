@@ -1,20 +1,19 @@
-import { partition, sortBy } from 'lodash-es'
+import { partition } from 'lodash-es'
 import getSentenceBeginnings from '../researches/helpers/getSentenceBeginnings'
 import { __, sprintf } from '@wordpress/i18n'
 import { td } from '@/vue/plugins/constants'
 
-const maximumConsecutiveDuplicates = 2
-
-function groupSentenceBeginnings (sentenceBeginnings) {
-	const tooOften = partition(sentenceBeginnings, word => word.count > maximumConsecutiveDuplicates)
-
-	if (0 === tooOften[0].length) {
+function parseSentenceBeginnings (sentenceBeginnings) {
+	const [ tooOften ] = partition(sentenceBeginnings, word => 2 < word.count)
+	if (0 === tooOften.length) {
 		return { total: 0 }
 	}
 
-	const sortedCounts = sortBy(tooOften[0], word => word.count)
-
-	return { total: tooOften[0].length, lowestCount: sortedCounts[0].count }
+	return {
+		total           : tooOften.length,
+		lowestCount     : Math.min(...tooOften.map(word => word.count)),
+		sentenceResults : tooOften.map(s => s.sentences)
+	}
 }
 
 export default function consecutiveSentences (content, locale) {
@@ -22,28 +21,33 @@ export default function consecutiveSentences (content, locale) {
 		return {}
 	}
 
-	const sentenceBeginnings        = getSentenceBeginnings(content, locale)
-	const groupedSentenceBeginnings = groupSentenceBeginnings(sentenceBeginnings)
+	const highlightSentences = []
+	const sentenceBeginnings = parseSentenceBeginnings(getSentenceBeginnings(content, locale))
+	if (0 < sentenceBeginnings.total) {
+		if (Array.isArray(sentenceBeginnings.sentenceResults) && sentenceBeginnings.sentenceResults.length) {
+			highlightSentences.push(...sentenceBeginnings.sentenceResults)
+		}
 
-	if (0 < groupedSentenceBeginnings.total) {
 		return {
 			title       : __('Consecutive sentences', td),
 			description : sprintf(
 				// Translators: 1 - Number of sentences.
-				__('The text contains %1$d consecutive sentences starting with the same word. Try to mix things up!', td),
-				groupedSentenceBeginnings.lowestCount
+				__('The text contains at least %1$d consecutive sentences starting with the same word. Try to mix things up!', td),
+				sentenceBeginnings.lowestCount
 			),
-			score    : 3,
-			maxScore : 9,
-			error    : 1
+			score              : 3,
+			maxScore           : 9,
+			error              : 1,
+			highlightSentences : highlightSentences
 		}
 	}
 
 	return {
-		title       : __('Consecutive sentences', td),
-		description : __('There is enough variety in your sentences. That\'s great!', td),
-		score       : 9,
-		maxScore    : 9,
-		error       : 0
+		title              : __('Consecutive sentences', td),
+		description        : __('There is enough variety in your sentences. That\'s great!', td),
+		score              : 9,
+		maxScore           : 9,
+		error              : 0,
+		highlightSentences : highlightSentences
 	}
 }

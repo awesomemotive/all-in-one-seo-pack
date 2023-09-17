@@ -15,24 +15,20 @@ const scores = {
 	correctLength   : 9
 }
 
-function calculatePercentage (sentences) {
-	let percentage = 0
+function getTooLongSentencesData (sentences) {
+	let longSentences = [],
+		percentage = 0
 
 	if (0 !== sentences.length) {
-		const tooLongTotal = countTooLongSentences(sentences)
-
-		percentage = formatNumber((tooLongTotal / sentences.length) * 100)
+		longSentences = getTooLongSentences(sentences)
+		percentage = formatNumber((longSentences.length / sentences.length) * 100)
 	}
 
-	return percentage
+	return { longSentences, percentage }
 }
 
 function getTooLongSentences (sentences) {
 	return checkTooLongSentences(sentences, parameters.recommendedWordCount)
-}
-
-function countTooLongSentences (sentences) {
-	return getTooLongSentences(sentences).length
 }
 
 function sentenceLength (content) {
@@ -41,17 +37,17 @@ function sentenceLength (content) {
 	}
 
 	const sentenceCount = countSentencesFromText(content)
-	const percentage    = calculatePercentage(sentenceCount)
+	const longSentencesData = getTooLongSentencesData(sentenceCount)
+	const highlightSentences = []
 
-	// const sentenceObjects = getTooLongSentences(sentenceCount)  @TODO: [V4+] Get sentences that need improvement
-
-	if (percentage <= parameters.slightlyTooMany) {
+	if (longSentencesData.percentage <= parameters.slightlyTooMany) {
 		return {
-			title       : __('Sentences length', td),
-			description : __('Sentence length is looking great!', td),
-			score       : scores.correctLength,
-			maxScore    : scores.correctLength,
-			error       : 0
+			title              : __('Sentences length', td),
+			description        : __('Sentence length is looking great!', td),
+			score              : scores.correctLength,
+			maxScore           : scores.correctLength,
+			error              : 0,
+			highlightSentences : highlightSentences
 		}
 	}
 
@@ -60,13 +56,14 @@ function sentenceLength (content) {
 		description : sprintf(
 			// Translators: 1 - Number of the sentences, 2 - Number of words, 3 - Recommended maximum of words.
 			__('%1$s of the sentences contain more than %2$s words, which is more than the recommended maximum of %3$s. Try to shorten the sentences.', td),
-			`${percentage}%`,
+			`${longSentencesData.percentage}%`,
 			parameters.recommendedWordCount,
 			`${parameters.slightlyTooMany}%`
 		),
-		score    : scores.slightlyCorrect,
-		maxScore : scores.correctLength,
-		error    : 1
+		score              : scores.slightlyCorrect,
+		maxScore           : scores.correctLength,
+		error              : 1,
+		highlightSentences : longSentencesData.longSentences.map(ls => ls.sentence)
 	}
 }
 

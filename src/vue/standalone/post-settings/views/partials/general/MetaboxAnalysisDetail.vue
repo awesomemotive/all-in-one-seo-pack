@@ -11,12 +11,21 @@
 					class="title"
 					:class="0 === keyphrase.error ? 'toggled' : ''"
 				>
-					<svg-circle-check width="12" v-if="0 === keyphrase.error" />
-					<svg-circle-close width="12" v-if="1 === keyphrase.error" />
-					{{ keyphrase.title }}
+					<svg-circle-check width="16" v-if="0 === keyphrase.error" />
+
+					<svg-circle-close width="16" v-if="1 === keyphrase.error" />
+
+					<span class="title__text">{{ keyphrase.title }}</span>
+
+					<tru-seo-toggle-highlighter
+						v-if="keyphrase?.highlightSentences?.length"
+						:analyzer="index"
+					/>
+
 					<svg-caret
 						width="16"
-						@click="toggleDescriptionEv"
+						role="button"
+						@click.stop="toggleDescriptionEv"
 					/>
 				</p>
 				<p class="description">{{ keyphrase.description }}</p>
@@ -29,22 +38,18 @@
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
+import TruSeoToggleHighlighter from './tru-seo/ToggleHighlighter'
+
 export default {
 	components : {
 		SvgCaret,
 		SvgCircleCheck,
-		SvgCircleClose
+		SvgCircleClose,
+		TruSeoToggleHighlighter
 	},
 	props : {
 		analysisItems : {
 			type : Object
-		}
-	},
-	data () {
-		return {
-			strings : {
-				delete : this.$t.__('Delete', this.$td)
-			}
 		}
 	},
 	methods : {
@@ -80,9 +85,6 @@ export default {
 		}
 
 		svg {
-			position: relative;
-			left: 0;
-			top: 3px;
 			&.aioseo-circle-check {
 				color: $green;
 			}
@@ -93,7 +95,7 @@ export default {
 			&.aioseo-circle-close {
 				position: absolute;
 				left: 0;
-				top: 5px;
+				top: 2px;
 			}
 			&.aioseo-caret {
 				cursor: pointer;
@@ -103,8 +105,18 @@ export default {
 		}
 
 		.title {
-			font-size: 14px;
-			margin-bottom: 6px !important;
+			align-items: center;
+			display: flex;
+			gap: 4px;
+
+			&__text {
+				font-weight: 700;
+				margin-right: 6px;
+
+				.edit-post-sidebar & {
+					flex: 1;
+				}
+			}
 
 			&.toggled {
 
@@ -118,23 +130,34 @@ export default {
 					margin: 0;
 				}
 			}
+
+			.tru-seo-toggle-highlighter {
+				color: $black2;
+				height: 16px;
+				width: 16px;
+
+				.aioseo-tooltip {
+					display: block;
+					margin: 0;
+
+					:has(svg) {
+						&, * {
+							height: 16px;
+							width: 16px;
+						}
+					}
+				}
+			}
 		}
 
 		.description {
-			font-size: 14px;
+			color: $black;
 			font-style: normal;
+			font-weight: 400;
 			opacity: 1;
 			height: auto;
+			margin-top: 5px;
 			transition: all 0.3s;
-		}
-	}
-}
-
-.edit-post-sidebar {
-	.aioseo-analysis-detail {
-
-		.description {
-			color: $gray3;
 		}
 	}
 }

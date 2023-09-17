@@ -1,5 +1,5 @@
 import { analyzers } from './analysis'
-import { decodeSpecialChars } from '@/vue/utils/helpers'
+import { decodeSpecialChars, removeScriptTag } from '@/vue/utils/helpers'
 import {
 	calculateErrors,
 	calculateScore,
@@ -50,7 +50,7 @@ class TruSeoAnalyzer {
 		this.isAnalyzing           = true
 		this.aioseo                = aioseo
 		this.postId                = postId
-		this.postContent           = decodeSpecialChars(content)
+		this.postContent           = removeScriptTag(content)
 		this.postSlug              = slug
 		this.postTitle             = postData.title || postData.metaDefaults.title || '#post_title'
 		this.postParsedTitle       = decodeSpecialChars(parseTags(this.postTitle, this.aioseo.tags))

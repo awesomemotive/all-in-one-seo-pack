@@ -228,8 +228,8 @@ export default {
 				flex: 1;
 				align-items: center;
 				justify-content: flex-end;
-				padding-right: 18px;
-				font-size: 13px;
+				padding-right: 10px;
+				font-size: 12px;
 				&.green {
 					color: $green;
 				}
@@ -240,7 +240,7 @@ export default {
 					color: $red;
 				}
 				svg {
-					margin-right: 7px;
+					margin-right: 4px;
 				}
 			}
 		}

@@ -191,7 +191,7 @@ export default {
 			}
 
 			.description {
-				margin: 0;
+				margin-bottom: 0;
 			}
 		}
 	}

@@ -258,7 +258,7 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 == Changelog ==
 
-**New in Version 4.4.5.1**
+**New in Version 4.4.5**
 
 * New: REST API addon endpoints now return the breadcrumb trail.
 * New: Added filter hook to filter post ID 

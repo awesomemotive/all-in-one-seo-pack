@@ -23,8 +23,9 @@ import { useSettingsStore } from '@/vue/stores/SettingsStore'
 import { useSetupWizardStore } from '@/vue/stores/SetupWizardStore'
 import { useTagsStore } from '@/vue/stores/TagsStore'
 import { useToolsStore } from '@/vue/stores/ToolsStore'
+import { useTruSeoHighlighterStore } from '@/vue/stores/TruSeoHighlighterStore'
 
-// Standolone stores.
+// Standalone stores.
 import {
 	useTableOfContentsStore
 } from '@/vue/stores/standalones'
@@ -222,5 +223,6 @@ export {
 	useTableOfContentsStore,
 	useTagsStore,
 	useToolsStore,
+	useTruSeoHighlighterStore,
 	useWpCodeStore
 }

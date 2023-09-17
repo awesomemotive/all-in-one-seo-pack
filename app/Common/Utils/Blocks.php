@@ -100,6 +100,7 @@ class Blocks {
 		aioseo()->core->assets->loadCss( 'src/vue/standalone/blocks/main.js' );
 
 		$dependencies = [
+			'wp-annotations',
 			'wp-blocks',
 			'wp-components',
 			'wp-element',

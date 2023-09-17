@@ -110,7 +110,7 @@ function matchCharacters (text, regex, settings) {
  * @return {number} The word or character count.
  */
 
-export function count (text, type, userSettings) {
+export function count (text, type, userSettings = {}) {
 	if ('' === text) {
 		return 0
 	}

@@ -35,10 +35,10 @@ function transitionWords (content, locale) {
 		return {}
 	}
 
+	const highlightSentences = []
 	const transitionWordSentences = findTransitionWords(content, locale)
 	const percentage = calculateTransitionWordPercentage(transitionWordSentences)
-	const score      = calculateScoreFromPercentage(percentage)
-
+	const score = calculateScoreFromPercentage(percentage)
 	if (7 > score && 0 === percentage) {
 		return {
 			title       : __('Transition words', td),
@@ -49,6 +49,10 @@ function transitionWords (content, locale) {
 		}
 	}
 
+	if (Array.isArray(transitionWordSentences.sentenceResults) && transitionWordSentences.sentenceResults.length) {
+		highlightSentences.push(...transitionWordSentences.sentenceResults.map(s => s.sentence))
+	}
+
 	if (7 > score) {
 		return {
 			title       : __('Transition words', td),
@@ -57,18 +61,20 @@ function transitionWords (content, locale) {
 				__('Only %1$s of the sentences contain transition words, which is not enough. Use more of them.', td),
 				`${percentage}%`
 			),
-			score    : formatNumber(score),
-			maxScore : 9,
-			error    : 1
+			score              : formatNumber(score),
+			maxScore           : 9,
+			error              : 1,
+			highlightSentences : highlightSentences
 		}
 	}
 
 	return {
-		title       : __('Transition words', td),
-		description : __('Well done!', td),
-		score       : 9,
-		maxScore    : 9,
-		error       : 0
+		title              : __('Transition words', td),
+		description        : __('Well done!', td),
+		score              : 9,
+		maxScore           : 9,
+		error              : 0,
+		highlightSentences : highlightSentences
 	}
 }
 
