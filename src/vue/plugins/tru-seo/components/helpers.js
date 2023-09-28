@@ -184,7 +184,7 @@ export const createHighlightPopoverNode = () => {
 
 	el.classList.add('tru-seo-highlight-popover-wrapper')
 	el.style.position = 'absolute'
-	el.style.zIndex = '100'
+	el.style.zIndex = '999'
 	el.style.display = 'flex'
 	el.setAttribute('tabindex', -1)
 

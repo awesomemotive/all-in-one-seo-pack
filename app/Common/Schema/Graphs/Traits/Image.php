@@ -31,7 +31,8 @@ trait Image {
 		];
 
 		if ( $graphId ) {
-			$data['@id'] = trailingslashit( home_url() ) . '#' . $graphId;
+			$baseUrl     = aioseo()->schema->context['url'] ?? aioseo()->helpers->getUrl();
+			$data['@id'] = trailingslashit( $baseUrl ) . '#' . $graphId;
 		}
 
 		if ( ! $attachmentId ) {

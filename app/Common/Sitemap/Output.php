@@ -92,9 +92,9 @@ class Output {
 	 * @return void
 	 */
 	public function escapeAndEcho( $value, $wrap = true ) {
-		$safeText = wp_check_invalid_utf8( $value, true );
-
-		if ( ! $safeText ) {
+		$safeText = is_string( $value ) ? wp_check_invalid_utf8( $value, true ) : $value;
+		$isZero   = is_numeric( $value ) ? 0 === (int) $value : false;
+		if ( ! $safeText && ! $isZero ) {
 			return;
 		}
 
@@ -119,9 +119,12 @@ class Output {
 			$safeText
 		);
 
+		$safeText = $safeText ? $safeText : ( $isZero ? $value : '' );
+
 		if ( ! $wrap ) {
 			return print( $safeText ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
+
 		printf( '<![CDATA[%1$s]]>', $safeText ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 

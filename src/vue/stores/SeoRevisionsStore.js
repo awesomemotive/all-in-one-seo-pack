@@ -20,7 +20,8 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 		itemsLimit            : 0,
 		itemsTotalCount       : 0,
 		seoRevisionsDiff      : {},
-		seoRevisionsDiffCache : {}
+		seoRevisionsDiffCache : {},
+		modalOpenSidebar      : false
 	}),
 	getters : {
 		hasDiff () {
@@ -89,6 +90,9 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 						})
 				}
 			})
+		},
+		toggleModalOpenSidebar () {
+			this.modalOpenSidebar = !this.modalOpenSidebar
 		}
 	}
 })

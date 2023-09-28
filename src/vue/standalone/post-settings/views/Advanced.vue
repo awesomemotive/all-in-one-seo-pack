@@ -159,6 +159,7 @@ export default {
 	},
 	methods : {
 		getPriority (option) {
+			option = 'default' !== option ? parseFloat(option) : option
 			return this.getPriorityOptions.find(h => h.value === option)
 		},
 		savePriority (value) {

@@ -120,6 +120,7 @@ import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgIconFacebook from '@/vue/components/common/svg/icon/Facebook'
 import SvgIconInstagram from '@/vue/components/common/svg/icon/Instagram'
+import SvgIconTiktok from '@/vue/components/common/svg/icon/Tiktok'
 import SvgIconLinkedin from '@/vue/components/common/svg/icon/Linkedin'
 import SvgIconMyspace from '@/vue/components/common/svg/icon/Myspace'
 import SvgIconPinterest from '@/vue/components/common/svg/icon/Pinterest'
@@ -146,6 +147,7 @@ export default {
 		GridRow,
 		SvgIconFacebook,
 		SvgIconInstagram,
+		SvgIconTiktok,
 		SvgIconLinkedin,
 		SvgIconMyspace,
 		SvgIconPinterest,
@@ -234,6 +236,16 @@ export default {
 					svg        : 'svg-icon-instagram',
 					validation : [
 						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?instagram\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your Instagram URL is invalid. Please check the format and try again.', this.$td)
+					]
+				},
+				{
+					key        : 'tiktokUrl',
+					name       : 'TikTok',
+					label      : 'TikTok URL',
+					url        : 'https://tiktok.com/@',
+					svg        : 'svg-icon-tiktok',
+					validation : [
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?tiktok\.[a-z.]+\/@.*$/.test(v) || this.$t.__('Your TikTok URL is invalid. Please check the format and try again.', this.$td)
 					]
 				},
 				{
@@ -339,6 +351,9 @@ export default {
 			const username = this.profileData.sameUsername.username || ''
 			if ('tumblrUrl' === profile.key) {
 				return profile.url.replace('{profile}', username)
+			}
+			if ('tiktokUrl' === profile.key) {
+				return profile.url + username
 			}
 			return profile.url + '/' + username
 		},

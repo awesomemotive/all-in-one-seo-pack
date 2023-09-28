@@ -7,17 +7,11 @@
  * @returns {string} The text without double spaces
  */
 export default function (text) {
-	// Replace multiple spaces with single space
+	// Replace multiple spaces with single space.
 	text = text.replace(/\s{2,}/g, ' ')
 
 	// Replace spaces followed by periods with only the period.
 	text = text.replace(/\s\./g, '.')
 
-	// Remove first character if space
-	text = text.replace(/^\s+/g, '')
-
-	// Remove last character if space
-	text = text.replace(/\s+$/g, '')
-
-	return text
+	return text.trim()
 }

@@ -155,26 +155,34 @@ class Root {
 	private function getAdditionalIndexes() {
 		$additionalPages = [];
 		if ( aioseo()->options->sitemap->general->additionalPages->enable ) {
-			foreach ( aioseo()->options->sitemap->general->additionalPages->pages as $additionalPage ) {
-				$additionalPage = json_decode( $additionalPage );
-				if ( empty( $additionalPage->url ) ) {
-					continue;
-				}
-
-				$additionalPages[] = $additionalPage;
-			}
+			$additionalPages = array_map( 'json_decode', aioseo()->options->sitemap->general->additionalPages->pages );
+			$additionalPages = array_filter( $additionalPages, function( $additionalPage ) {
+				return ! empty( $additionalPage->url );
+			} );
 		}
 
-		$indexes         = [];
-		$postTypes       = aioseo()->sitemap->helpers->includedPostTypes();
-		$additionalPages = apply_filters( 'aioseo_sitemap_additional_pages', $additionalPages );
-		if (
-			'posts' === get_option( 'show_on_front' ) ||
-			count( $additionalPages ) ||
-			! in_array( 'page', $postTypes, true )
-		) {
-			$indexes = $this->buildAdditionalIndexes( $additionalPages );
+		$entries = [];
+		foreach ( $additionalPages as $additionalPage ) {
+			$entries[] = [
+				'loc'        => $additionalPage->url,
+				'lastmod'    => aioseo()->sitemap->helpers->lastModifiedAdditionalPage( $additionalPage ),
+				'changefreq' => $additionalPage->frequency->value,
+				'priority'   => $additionalPage->priority->value,
+				'isTimezone' => true
+			];
 		}
+
+		if ( aioseo()->options->sitemap->general->additionalPages->enable ) {
+			$entries = apply_filters( 'aioseo_sitemap_additional_pages', $entries );
+		}
+
+		$postTypes             = aioseo()->sitemap->helpers->includedPostTypes();
+		$shouldIncludeHomepage = 'posts' === get_option( 'show_on_front' ) || ! in_array( 'page', $postTypes, true );
+		if ( ! $shouldIncludeHomepage && ! count( $entries ) ) {
+			return [];
+		}
+
+		$indexes = $this->buildAdditionalIndexes( $entries, $shouldIncludeHomepage );
 
 		return $indexes;
 	}
@@ -203,25 +211,24 @@ class Root {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  array $entries Entries.
-	 * @return array          The index.
+	 * @param  array $entries               The additional pages.
+	 * @param  bool  $shouldIncludeHomepage Whether or not the homepage should be included.
+	 * @return array                        The indexes.
 	 */
-	private function buildAdditionalIndexes( $entries ) {
-		$postTypes             = aioseo()->sitemap->helpers->includedPostTypes();
-		$shouldIncludeHomepage = 'posts' === get_option( 'show_on_front' ) || ! in_array( 'page', $postTypes, true );
-
+	private function buildAdditionalIndexes( $entries, $shouldIncludeHomepage ) {
 		if ( $shouldIncludeHomepage ) {
-			$homePageEntry               = new \stdClass();
-			$homePageEntry->lastModified = aioseo()->sitemap->helpers->lastModifiedPostTime();
-			array_unshift( $entries, $homePageEntry );
+			$entries[] = [
+				'loc'     => home_url(),
+				'lastmod' => aioseo()->sitemap->helpers->lastModifiedPostTime()
+			];
 		}
 
-		if ( ! $entries ) {
+		if ( empty( $entries ) ) {
 			return [];
 		}
 
-		$filename       = aioseo()->sitemap->filename;
-		$chunks         = aioseo()->sitemap->helpers->chunkEntries( $entries );
+		$filename  = aioseo()->sitemap->filename;
+		$chunks    = aioseo()->sitemap->helpers->chunkEntries( $entries );
 
 		$indexes = [];
 		for ( $i = 0; $i < count( $chunks ); $i++ ) {
@@ -230,7 +237,7 @@ class Root {
 
 			$index = [
 				'loc'     => aioseo()->helpers->localizedUrl( "/addl-$filename$indexNumber.xml" ),
-				'lastmod' => $chunk[0]->lastModified ? aioseo()->helpers->dateTimeToIso8601( $chunk[0]->lastModified ) : '',
+				'lastmod' => ! empty( $chunk[0]['lastmod'] ) ? aioseo()->helpers->dateTimeToIso8601( $chunk[0]['lastmod'] ) : '',
 				'count'   => count( $chunks[ $i ] )
 			];
 
@@ -298,13 +305,56 @@ class Root {
 	 * @return array            The indexes.
 	 */
 	private function buildIndexesPostType( $postType ) {
-		$prefix           = aioseo()->core->db->prefix;
-		$postsTable       = $prefix . 'posts';
-		$aioseoPostsTable = $prefix . 'aioseo_posts';
-		$linksPerIndex    = aioseo()->sitemap->linksPerIndex;
+		$prefix                 = aioseo()->core->db->prefix;
+		$postsTable             = $prefix . 'posts';
+		$aioseoPostsTable       = $prefix . 'aioseo_posts';
+		$termRelationshipsTable = $prefix . 'term_relationships';
+		$termTaxonomyTable      = $prefix . 'term_taxonomy';
+		$termsTable             = $prefix . 'terms';
+		$linksPerIndex          = aioseo()->sitemap->linksPerIndex;
 
 		if ( 'attachment' === $postType && 'disabled' !== aioseo()->dynamicOptions->searchAppearance->postTypes->attachment->redirectAttachmentUrls ) {
 			return [];
+		}
+
+		$excludedPostIds = [];
+		$excludedTermIds = aioseo()->sitemap->helpers->excludedTerms();
+		if ( ! empty( $excludedTermIds ) ) {
+			$excludedTermIds = explode( ', ', $excludedTermIds );
+			$excludedPostIds = aioseo()->core->db->start( 'term_relationships' )
+				->select( 'object_id' )
+				->whereIn( 'term_taxonomy_id', $excludedTermIds )
+				->run()
+				->result();
+
+			$excludedPostIds = array_map( function( $post ) {
+				return $post->object_id;
+			}, $excludedPostIds );
+		}
+
+		$whereClause         = '';
+		$excludedPostsString = aioseo()->sitemap->helpers->excludedPosts();
+		if ( ! empty( $excludedPostsString ) ) {
+			$excludedPostIds = array_merge( $excludedPostIds, explode( ', ', $excludedPostsString ) );
+		}
+
+		if ( ! empty( $excludedPostIds ) ) {
+			$implodedPostIds = aioseo()->helpers->implodeWhereIn( $excludedPostIds, true );
+			$whereClause     = "AND p.ID NOT IN ( $implodedPostIds )";
+		}
+
+		if (
+			apply_filters( 'aioseo_sitemap_woocommerce_exclude_hidden_products', true ) &&
+			aioseo()->helpers->isWooCommerceActive() &&
+			'product' === $postType
+		) {
+			$whereClause .= " AND p.ID NOT IN (
+				SELECT tr.object_id
+				FROM {$termRelationshipsTable} AS tr
+				JOIN {$termTaxonomyTable} AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				JOIN {$termsTable} AS t ON tt.term_id = t.term_id
+				WHERE t.name = 'exclude-from-catalog'
+			)";
 		}
 
 		$posts = aioseo()->core->db->execute(
@@ -314,10 +364,13 @@ class Root {
 					SELECT @row := @row + 1 AS rownum, ID, post_modified_gmt
 					FROM (
 						SELECT p.ID, ap.priority, p.post_modified_gmt
-						FROM {$postsTable} as p
-						LEFT JOIN {$aioseoPostsTable} as ap ON p.ID = ap.post_id
-						WHERE p.post_status IN ( 'publish', 'inherit' ) AND p.post_type = %s
-						AND (ap.robots_noindex IS NULL or ap.robots_default = 1 or ap.robots_noindex = 0)
+						FROM {$postsTable} AS p
+						LEFT JOIN {$aioseoPostsTable} AS ap ON p.ID = ap.post_id
+						WHERE p.post_status IN ( 'publish', 'inherit' )
+							AND p.post_type = %s
+							AND p.post_password = ''
+							AND (ap.robots_noindex IS NULL OR ap.robots_default = 1 OR ap.robots_noindex = 0)
+							{$whereClause}
 						ORDER BY ap.priority DESC, p.post_modified_gmt DESC
 					) AS x
 					CROSS JOIN (SELECT @row := 0) AS vars
@@ -337,8 +390,12 @@ class Root {
 				"SELECT COUNT(*) as count
 				FROM {$postsTable} as p
 				LEFT JOIN {$aioseoPostsTable} as ap ON p.ID = ap.post_id
-				WHERE p.post_status IN ( 'publish', 'inherit' ) AND p.post_type = %s
-				AND (ap.robots_noindex IS NULL or ap.robots_default = 1 or ap.robots_noindex = 0)",
+				WHERE p.post_status IN ( 'publish', 'inherit' )
+					AND p.post_type = %s
+					AND p.post_password = ''
+					AND (ap.robots_noindex IS NULL OR ap.robots_default = 1 OR ap.robots_noindex = 0)
+					{$whereClause}
+				",
 				[
 					$postType
 				]

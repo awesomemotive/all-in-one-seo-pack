@@ -4,238 +4,240 @@ $modal-header-height: 58px;
 $modal-spacing: 30px;
 $modal-width: 400px;
 
-/* The containers */
-#aioseo-settings {
-	position: absolute;
-	width: 36px;
-	height: 36px;
-	background-color: #fff !important;
-	z-index: 10;
-	pointer-events: auto;
-	cursor: pointer;
-	visibility: hidden;
-	border-radius: 50% !important;
-	&::before {
-		@include icon;
-		display: block;
-		fill: #fff;
-		margin: -2px 0 0 -2px;
-		width: 40px;
-		height: 40px;
-		background-color: #6c2eb9; /* Divi purple */
-	}
-}
-
-#aioseo-app-modal {
-	position: absolute;
-	z-index: 1;
-	top: 0;
-	left: 0;
-	height: 0;
-	width: 0;
-	overflow: visible;
-}
-
-.aioseo-settings-bar-is {
-	&-inactive {
-		#aioseo-settings {
-			visibility: visible;
-
-			&.aioseo-settings-bar-root {
-				&-top,
-				&-bottom,
-				&-top-left,
-				&-bottom-left {
-					left: calc(50% + 45px)
-				}
-
-				&-top-right,
-				&-bottom-right {
-					right: calc(50% + 45px)
-				}
-
-				&-left,
-				&-right {
-					top: calc(50% + 45px)
-				}
-			}
+.et-fb { // Add wrapper class to prevent affecting other pages.
+	/* The containers */
+	#aioseo-settings {
+		position: absolute;
+		width: 36px;
+		height: 36px;
+		background-color: #fff !important;
+		z-index: 10;
+		pointer-events: auto;
+		cursor: pointer;
+		visibility: hidden;
+		border-radius: 50% !important;
+		&::before {
+			@include icon;
+			display: block;
+			fill: #fff;
+			margin: -2px 0 0 -2px;
+			width: 40px;
+			height: 40px;
+			background-color: #6c2eb9; /* Divi purple */
 		}
 	}
 
-	&-active {
-		#aioseo-settings {
-			visibility: visible;
-
-			&.aioseo-settings-bar-root-is {
-				&-mobile {
-					&-top-left,
-					&-top-right {
-						top: calc(100% + 24px)
-					}
-					
-					&-bottom-left,
-					&-bottom-right {
-						bottom: calc(100% + 24px)
-					}
-					
-					&-left,
-					&-right {
-						top: calc(100% + 24px)
-					}
-				}
-
-				&-desktop {
-					&-top,
-					&-bottom,
-					&-top-left,
-					&-bottom-left {
-						left: calc(100% + 24px)
-					}
-					
-					&-top-right,
-					&-bottom-right {
-						right: calc(100% + 24px)
-					}
-					
-					&-left,
-					&-right {
-						top: calc(100% + 24px)
-					}
-				}
-			}
-		}
-	}
-
-	&-top {
-		.aioseo-modal {
-			top: calc(#{$adminbar-height} + #{$settings-bar-height});
-			left: $modal-spacing;
-		}
-
-		&-right {
-			.aioseo-modal {
-				top: calc(#{$adminbar-height} + #{$settings-bar-height});
-				left: $modal-spacing;
-			}
-		}
-
-		&-left {
-			.aioseo-modal {
-				left: calc(100vw - #{$modal-width} - #{$modal-spacing});
-			}
-		}
-	}
-
-	&-bottom {
-		.aioseo-modal {
-			left: $modal-spacing;
-		}
-
-		&-right {
-			.aioseo-modal {
-				left: $modal-spacing;
-			}
-		}
-
-		&-left {
-			.aioseo-modal {
-				left: calc(100vw - #{$modal-width} - #{$modal-spacing});
-			}
-		}
-	}
-
-	&-left {
-		.aioseo-modal {
-			top: calc(#{$adminbar-height} + #{$settings-bar-height});
-			left: calc(100vw - #{$modal-width} - #{$modal-spacing});
-		}
-	}
-
-	&-right {
-		.aioseo-modal {
-			left: $modal-spacing;
-		}
-	}
-}
-
-.aioseo-modal {
-	position: relative;
-	top: calc(#{$modal-spacing} + #{$adminbar-height});
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-	width: $modal-width;
-	padding-top: $modal-header-height;
-	background: #fff;
-	box-shadow: 0 5px 30px rgba(44, 135, 218, 0.2);
-	border-radius: 3px 3px 0 0;
-
-	&-is-closed {
-		display: none;
-	}
-
-	&-header {
+	#aioseo-app-modal {
 		position: absolute;
 		z-index: 1;
 		top: 0;
 		left: 0;
-		display: flex;
-		width: 100%;
-		height: $modal-header-height;
-		padding-right: 21px;
-		padding-left: 26px;
-		color: #fff;
-		background-color: #6c2eb9;
-		align-items: center;
-		justify-content: space-between;
-		box-sizing: border-box;
-		cursor: move;
+		height: 0;
+		width: 0;
+		overflow: visible;
+	}
 
-		&-title {
-			font-family: "Open Sans", Helvetica, Roboto, Arial, sans-serif;
-			font-size: 18px;
-			font-weight: 600;
-			font-style: normal;
-			line-height: 16px;
-			cursor: move;
-			user-select: none;
-			text-decoration: none;
-			letter-spacing: 0;
-			text-transform: none;
-			color: #fff;
+	&.aioseo-settings-bar-is {
+		&-inactive {
+			#aioseo-settings {
+				visibility: visible;
+
+				&.aioseo-settings-bar-root {
+					&-top,
+					&-bottom,
+					&-top-left,
+					&-bottom-left {
+						left: calc(50% + 45px)
+					}
+
+					&-top-right,
+					&-bottom-right {
+						right: calc(50% + 45px)
+					}
+
+					&-left,
+					&-right {
+						top: calc(50% + 45px)
+					}
+				}
+			}
 		}
 
-		&-close {
-			cursor: pointer;
+		&-active {
+			#aioseo-settings {
+				visibility: visible;
 
-			svg {
-				position: relative;
-				top: 4px;
-				width: 16px;
-				height: 16px;
-				fill: #fff;
+				&.aioseo-settings-bar-root-is {
+					&-mobile {
+						&-top-left,
+						&-top-right {
+							top: calc(100% + 24px)
+						}
+						
+						&-bottom-left,
+						&-bottom-right {
+							bottom: calc(100% + 24px)
+						}
+						
+						&-left,
+						&-right {
+							top: calc(100% + 24px)
+						}
+					}
+
+					&-desktop {
+						&-top,
+						&-bottom,
+						&-top-left,
+						&-bottom-left {
+							left: calc(100% + 24px)
+						}
+						
+						&-top-right,
+						&-bottom-right {
+							right: calc(100% + 24px)
+						}
+						
+						&-left,
+						&-right {
+							top: calc(100% + 24px)
+						}
+					}
+				}
+			}
+		}
+
+		&-top {
+			.aioseo-modal {
+				top: calc(#{$adminbar-height} + #{$settings-bar-height});
+				left: $modal-spacing;
+			}
+
+			&-right {
+				.aioseo-modal {
+					top: calc(#{$adminbar-height} + #{$settings-bar-height});
+					left: $modal-spacing;
+				}
+			}
+
+			&-left {
+				.aioseo-modal {
+					left: calc(100vw - #{$modal-width} - #{$modal-spacing});
+				}
+			}
+		}
+
+		&-bottom {
+			.aioseo-modal {
+				left: $modal-spacing;
+			}
+
+			&-right {
+				.aioseo-modal {
+					left: $modal-spacing;
+				}
+			}
+
+			&-left {
+				.aioseo-modal {
+					left: calc(100vw - #{$modal-width} - #{$modal-spacing});
+				}
+			}
+		}
+
+		&-left {
+			.aioseo-modal {
+				top: calc(#{$adminbar-height} + #{$settings-bar-height});
+				left: calc(100vw - #{$modal-width} - #{$modal-spacing});
+			}
+		}
+
+		&-right {
+			.aioseo-modal {
+				left: $modal-spacing;
 			}
 		}
 	}
 
-	&-body {
+	.aioseo-modal {
 		position: relative;
-		z-index: 1;
+		top: calc(#{$modal-spacing} + #{$adminbar-height});
+		display: flex;
+		flex-direction: column;
 		overflow: hidden;
-		overflow-y: auto;
-		max-height: calc(100vh - #{$adminbar-height} - #{$settings-bar-height} - #{$modal-spacing} - #{$modal-header-height});
+		width: $modal-width;
+		padding-top: $modal-header-height;
+		background: #fff;
+		box-shadow: 0 5px 30px rgba(44, 135, 218, 0.2);
+		border-radius: 3px 3px 0 0;
 
-		p {
-			padding-bottom: 0;
+		&-is-closed {
+			display: none;
+		}
+
+		&-header {
+			position: absolute;
+			z-index: 1;
+			top: 0;
+			left: 0;
+			display: flex;
+			width: 100%;
+			height: $modal-header-height;
+			padding-right: 21px;
+			padding-left: 26px;
+			color: #fff;
+			background-color: #6c2eb9;
+			align-items: center;
+			justify-content: space-between;
+			box-sizing: border-box;
+			cursor: move;
+
+			&-title {
+				font-family: "Open Sans", Helvetica, Roboto, Arial, sans-serif;
+				font-size: 18px;
+				font-weight: 600;
+				font-style: normal;
+				line-height: 16px;
+				cursor: move;
+				user-select: none;
+				text-decoration: none;
+				letter-spacing: 0;
+				text-transform: none;
+				color: #fff;
+			}
+
+			&-close {
+				cursor: pointer;
+
+				svg {
+					position: relative;
+					top: 4px;
+					width: 16px;
+					height: 16px;
+					fill: #fff;
+				}
+			}
+		}
+
+		&-body {
+			position: relative;
+			z-index: 1;
+			overflow: hidden;
+			overflow-y: auto;
+			max-height: calc(100vh - #{$adminbar-height} - #{$settings-bar-height} - #{$modal-spacing} - #{$modal-header-height});
+
+			p {
+				padding-bottom: 0;
+			}
 		}
 	}
-}
 
-.aioseo-app {
-	.aioseo-cta {
-		a.learn-more,
-		a.learn-more:hover {
-			text-decoration: underline;
+	.aioseo-app {
+		.aioseo-cta {
+			a.learn-more,
+			a.learn-more:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 }

@@ -45,7 +45,7 @@ const getParagraphsInTags = (text, stripTags) => {
  *
  * @returns {Array} The array containing all paragraphs from the text.
  */
-export default (text, stripTags) => {
+export default (text, stripTags = false) => {
 	text = flow(
 		[
 			stripShortcodes,
@@ -55,12 +55,5 @@ export default (text, stripTags) => {
 	)(text)
 	stripTags = stripTags || false
 
-	const paragraphs = getParagraphsInTags(text, stripTags)
-
-	if (0 < paragraphs.length) {
-		return paragraphs
-	}
-
-	// If no paragraphs are found, return an array containing the entire text.
-	return [ stripTags ? cleanText(text) : text ]
+	return getParagraphsInTags(text, stripTags)
 }

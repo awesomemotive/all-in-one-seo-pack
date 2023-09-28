@@ -55,18 +55,21 @@ class RobotsTxt {
 		}
 
 		if ( ! aioseo()->options->tools->robots->enable ) {
-			$networkAndOriginal = $this->mergeRules( $originalRules, $this->groupRulesByUserAgent( $networkRules ) );
-
-			return $this->stringifyRuleset( $networkAndOriginal );
+			$ruleset = $this->mergeRules( $originalRules, $this->groupRulesByUserAgent( $networkRules ) );
+		} else {
+			$ruleset = $this->mergeRules(
+				$originalRules,
+				$this->mergeRules( $this->groupRulesByUserAgent( $networkRules ), $this->groupRulesByUserAgent( aioseo()->options->tools->robots->rules ) ),
+				true
+			);
 		}
 
-		$allRules = $this->mergeRules(
-			$originalRules,
-			$this->mergeRules( $this->groupRulesByUserAgent( $networkRules ), $this->groupRulesByUserAgent( aioseo()->options->tools->robots->rules ) ),
-			true
-		);
-
-		return $this->stringifyRuleset( $allRules );
+		/**
+		 * Any plugin can wrongly modify the robots.txt output by hoking into the `do_robots` action hook,
+		 * instead of hooking into the `robots_txt` filter hook.
+		 * For the first scenario, to make sure our output doesn't conflict with theirs, a new line is necessary.
+		 */
+		return $this->stringifyRuleset( $ruleset ) . "\n";
 	}
 
 	/**
@@ -592,12 +595,11 @@ class RobotsTxt {
 		remove_filter( 'robots_txt', [ $this, 'buildRules' ], 10000 );
 
 		ob_start();
-		do_action( 'do_robots' );
+		do_robots();
 		if ( is_admin() ) {
-			// conflict with WooCommerce etc. cause the page to render as text/plain.
-			header( 'Content-Type:text/html' );
+			header( 'Content-Type: text/html; charset=utf-8' );
 		}
-		$rules = ob_get_clean();
+		$rules = strval( ob_get_clean() );
 
 		// Add the filter back.
 		add_filter( 'robots_txt', [ $this, 'buildRules' ], 10000 );

@@ -22,7 +22,7 @@ export const removeScriptTag = string => {
 
 /**
  * Converts a number of HTML entities into their special characters.
- * JS equivilant of wp_specialchars_decode().
+ * JS equivalent of wp_specialchars_decode().
  *
  * @param   {string}  string The text which is to be decoded.
  * @returns {string}         The decoded text without HTML entities.

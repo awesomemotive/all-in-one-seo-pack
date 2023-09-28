@@ -20,7 +20,8 @@
 	$column-count: calc(12 / $column-span);
 	$width: calc(100 / $column-count);
 	$gap-divisor: calc((100 - $width) / 100);
-	$calculated-width: calc(#{$width}% - var(--aioseo-gutter) * #{$gap-divisor});
+	$width-percent: calc(100% / $column-count);
+	$calculated-width: calc(#{$width-percent} - var(--aioseo-gutter) * #{$gap-divisor});
 
 	max-width: $calculated-width;
 	flex-basis: $calculated-width;

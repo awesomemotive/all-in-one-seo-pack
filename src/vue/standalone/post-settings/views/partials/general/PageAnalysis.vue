@@ -8,7 +8,7 @@
 		</core-alert>
 
 		<core-main-tabs
-			:tabs="tabs"
+			:tabs="parseTabs"
 			:showSaveButton="false"
 			:active="this.initTab"
 			internal
@@ -65,6 +65,13 @@ export default {
 		}
 	},
 	computed : {
+		parseTabs () {
+			return this.tabs.map(tab => {
+				tab.errorCount = this.postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors
+
+				return tab
+			})
+		},
 		pageBuilderAlert () {
 			if (!isBlockEditor() || '' === this.rootStore.aioseo.integration) {
 				return false
@@ -85,12 +92,6 @@ export default {
 		processChangeTab (newTabValue) {
 			this.initTab = newTabValue
 		}
-	},
-	mounted () {
-		this.tabs.map(tab => {
-			tab.errorCount = this.postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors
-			return tab
-		})
 	}
 }
 </script>

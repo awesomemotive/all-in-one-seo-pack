@@ -73,7 +73,7 @@ class UserProfileTab {
 			$sameUsername = [
 				'enable'   => false,
 				'username' => '',
-				'included' => [ 'facebookPageUrl', 'twitterUrl', 'pinterestUrl', 'instagramUrl', 'youtubeUrl', 'linkedinUrl' ] // Same as in Options.php.
+				'included' => [ 'facebookPageUrl', 'twitterUrl', 'tiktokUrl', 'pinterestUrl', 'instagramUrl', 'youtubeUrl', 'linkedinUrl' ] // Same as in Options.php.
 			];
 		}
 
@@ -155,6 +155,7 @@ class UserProfileTab {
 			'facebookPageUrl' => '',
 			'twitterUrl'      => '',
 			'instagramUrl'    => '',
+			'tiktokUrl'       => '',
 			'pinterestUrl'    => '',
 			'youtubeUrl'      => '',
 			'linkedinUrl'     => '',

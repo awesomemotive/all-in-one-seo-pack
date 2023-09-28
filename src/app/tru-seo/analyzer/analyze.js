@@ -17,6 +17,7 @@ class TruSeoAnalyzer {
 	postDescription       = null
 	keyphrases            = null
 	postContent           = null
+	postParsedContent     = null
 	postSlug              = null
 	isAnalyzing           = false
 	postEditedTitle       = null
@@ -50,7 +51,8 @@ class TruSeoAnalyzer {
 		this.isAnalyzing           = true
 		this.aioseo                = aioseo
 		this.postId                = postId
-		this.postContent           = removeScriptTag(content)
+		this.postContent           = removeScriptTag(content || '')
+		this.postParsedContent     = decodeSpecialChars(content || '')
 		this.postSlug              = slug
 		this.postTitle             = postData.title || postData.metaDefaults.title || '#post_title'
 		this.postParsedTitle       = decodeSpecialChars(parseTags(this.postTitle, this.aioseo.tags))
@@ -123,11 +125,11 @@ class TruSeoAnalyzer {
 			focusAnalysis.keyphraseInURL = analyzers.keyphraseInURL(this.postSlug, keyphrase)
 		}
 
-		if (this.postContent) {
-			focusAnalysis.keyphraseInIntroduction = analyzers.keyphraseInIntroduction(this.postContent, keyphrase, 'focus', this.locale)
-			focusAnalysis.keyphraseInSubHeadings  = analyzers.keyphraseInSubHeadings(this.postContent, keyphrase, this.locale)
-			focusAnalysis.keyphraseInImageAlt     = analyzers.keyphraseInImageAlt(this.postContent, keyphrase, 'focus')
-			focusAnalysis.keywordDensity          = analyzers.keywordDensity(this.postContent, keyphrase, 'focus')
+		if (this.postParsedContent) {
+			focusAnalysis.keyphraseInIntroduction = analyzers.keyphraseInIntroduction(this.postParsedContent, keyphrase, 'focus', this.locale)
+			focusAnalysis.keyphraseInSubHeadings  = analyzers.keyphraseInSubHeadings(this.postParsedContent, keyphrase, this.locale)
+			focusAnalysis.keyphraseInImageAlt     = analyzers.keyphraseInImageAlt(this.postParsedContent, keyphrase, 'focus')
+			focusAnalysis.keywordDensity          = analyzers.keywordDensity(this.postParsedContent, keyphrase, 'focus')
 		}
 
 		const keyphraseScore = await calculateScore(focusAnalysis)
@@ -159,10 +161,10 @@ class TruSeoAnalyzer {
 		additionalAnalysis.keyphraseInDescription = analyzers.keyphraseInDescription(this.postParsedDescription, keyphrase, null, this.locale)
 		additionalAnalysis.keyphraseLength = analyzers.keyphraseLength(keyphrase)
 
-		if (this.postContent) {
-			additionalAnalysis.keyphraseInIntroduction = analyzers.keyphraseInIntroduction(this.postContent, keyphrase, null, this.locale)
-			additionalAnalysis.keyphraseInImageAlt     = analyzers.keyphraseInImageAlt(this.postContent, keyphrase)
-			additionalAnalysis.keywordDensity          = analyzers.keywordDensity(this.postContent, keyphrase)
+		if (this.postParsedContent) {
+			additionalAnalysis.keyphraseInIntroduction = analyzers.keyphraseInIntroduction(this.postParsedContent, keyphrase, null, this.locale)
+			additionalAnalysis.keyphraseInImageAlt     = analyzers.keyphraseInImageAlt(this.postParsedContent, keyphrase)
+			additionalAnalysis.keywordDensity          = analyzers.keywordDensity(this.postParsedContent, keyphrase)
 		}
 
 		const additionalAnalysisScore = await calculateScore(additionalAnalysis)
@@ -194,8 +196,8 @@ class TruSeoAnalyzer {
 		}
 
 		if (hasFocusKeyphrase(this.keyphrases)) {
-			basic.keyphraseInContent = analyzers.keyphraseInContent(this.postContent, focusKeyphrase, this.locale)
-			basic.keyphraseInIntroduction = analyzers.keyphraseInIntroduction(this.postContent, focusKeyphrase, 'focus', this.locale)
+			basic.keyphraseInContent = analyzers.keyphraseInContent(this.postParsedContent, focusKeyphrase, this.locale)
+			basic.keyphraseInIntroduction = analyzers.keyphraseInIntroduction(this.postParsedContent, focusKeyphrase, 'focus', this.locale)
 			basic.keyphraseInDescription = analyzers.keyphraseInDescription(this.postParsedDescription, focusKeyphrase, 'focus', this.locale)
 
 			// Skip keyphraseInURL if we're on a static homepage.

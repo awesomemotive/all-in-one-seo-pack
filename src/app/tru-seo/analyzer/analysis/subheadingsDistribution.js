@@ -1,7 +1,6 @@
 import { filter, inRange } from 'lodash-es'
 import getSubheadingTexts from '../researches/stringProcessing/getSubheadingTexts'
 import isTextTooLong from '../researches/helpers/isValueTooLong'
-import { getSubheadings } from '../researches/stringProcessing/getSubheadings'
 import getWords from '../researches/stringProcessing/getWords'
 import { __, _n, sprintf } from '@wordpress/i18n'
 import { td } from '@/vue/plugins/constants'
@@ -19,11 +18,6 @@ const scores = {
 	badLongTextNoSubheadings   : 2
 }
 
-function checkSubheadings (content) {
-	const subheadings = getSubheadings(content)
-	return 0 < subheadings.length
-}
-
 function getTooLongSubheadingTexts (subheadingTextsLength) {
 	return filter(subheadingTextsLength, subheading => isTextTooLong(parameters.recommendedMaximumWordCount, subheading.wordCount))
 }
@@ -34,16 +28,13 @@ function subheadingsDistribution (content) {
 	}
 
 	const highlightSentences = []
-	const hasSubheadings = checkSubheadings(content)
-	const textLength = getWords(content).length
 	const subheadingTexts = getSubheadingTexts(content)
-	subheadingTexts.sort((a, b) => b.wordCount - a.wordCount)
-
+	const textLength = getWords(content).length
 	if (300 < textLength) {
-		if (hasSubheadings) {
-			const tooLongTextsNumber = getTooLongSubheadingTexts(subheadingTexts).length
-			const longestSubheadingTextLength = subheadingTexts[0].wordCount
-
+		if (subheadingTexts.length) {
+			const longSubheadingTexts = getTooLongSubheadingTexts(subheadingTexts)
+			const sortSubheadingTexts = [ ...subheadingTexts ].sort((a, b) => b.wordCount - a.wordCount)
+			const longestSubheadingTextLength = sortSubheadingTexts[0].wordCount
 			if (longestSubheadingTextLength <= parameters.slightlyTooMany) {
 				return {
 					title              : __('Subheading distribution', td),
@@ -62,16 +53,16 @@ function subheadingsDistribution (content) {
 					_n(
 						'%1$d section of your text is longer than %2$d words and is not separated by any subheadings. Add subheadings to improve readability.',
 						'%1$d sections of your text are longer than %2$d words and are not separated by any subheadings. Add subheadings to improve readability.',
-						tooLongTextsNumber,
+						longSubheadingTexts.length,
 						td
 					),
-					tooLongTextsNumber,
+					longSubheadingTexts.length,
 					parameters.recommendedMaximumWordCount
 				),
 				score              : inRange(longestSubheadingTextLength, parameters.slightlyTooMany, parameters.farTooMany) ? scores.okSubheadings : scores.badSubheadings,
 				maxScore           : 9,
 				error              : 1,
-				highlightSentences : [ subheadingTexts[0].subheading ]
+				highlightSentences : longSubheadingTexts.map(lst => lst.subheading)
 			}
 		}
 
@@ -85,7 +76,7 @@ function subheadingsDistribution (content) {
 		}
 	}
 
-	if (hasSubheadings) {
+	if (subheadingTexts.length) {
 		return {
 			title              : __('Subheading distribution', td),
 			description        : __('Great job!', td),

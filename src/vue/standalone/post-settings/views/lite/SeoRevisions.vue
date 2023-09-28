@@ -16,8 +16,8 @@
 	>
 		<core-modal-portal
 			:classes="[]"
-			v-if="modalOpenSidebar"
-			@close="modalOpenSidebar = false"
+			v-if="seoRevisionsStore.modalOpenSidebar"
+			@close="seoRevisionsStore.toggleModalOpenSidebar"
 		>
 			<template #headerTitle>
 				{{ strings.seoRevisions }}
@@ -46,7 +46,7 @@
 			<template #content>
 				<base-button
 					class="gray small"
-					@click.stop.exact="modalOpenSidebar = true"
+					@click.stop.exact="seoRevisionsStore.toggleModalOpenSidebar"
 				>
 					<svg-right-arrow-short width="10"/>
 
@@ -60,6 +60,10 @@
 </template>
 
 <script>
+import {
+	useSeoRevisionsStore
+} from '@/vue/stores'
+
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreModalPortal from '@/vue/components/common/core/modal/Portal'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
@@ -68,6 +72,11 @@ import SeoRevisionsUpsell from '@/vue/components/common/seo-revisions/Upsell'
 import SvgRightArrowShort from '@/vue/components/common/svg/right-arrow/Short'
 
 export default {
+	setup () {
+		return {
+			seoRevisionsStore : useSeoRevisionsStore()
+		}
+	},
 	components : {
 		CoreBlur,
 		CoreModalPortal,
@@ -78,8 +87,7 @@ export default {
 	},
 	data () {
 		return {
-			modalOpenSidebar : false,
-			strings          : {
+			strings : {
 				button       : this.$t.__('Open SEO Revisions', this.$td),
 				description  : this.$t.__('With our powerful revisions feature for all your SEO data, never lose the exact SEO title or description (and more!) that helped you rank higher in search results and restore it back in a single click.', this.$td),
 				seoRevisions : this.$t.__('SEO Revisions', this.$td)

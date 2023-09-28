@@ -98,7 +98,8 @@ import {
 	usePostEditorStore,
 	useRedirectsStore,
 	useRootStore,
-	useSettingsStore
+	useSettingsStore,
+	useSeoRevisionsStore
 } from '@/vue/stores'
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
@@ -133,11 +134,12 @@ import SvgShare from '@/vue/components/common/svg/Share'
 export default {
 	setup () {
 		return {
-			licenseStore    : useLicenseStore(),
-			postEditorStore : usePostEditorStore(),
-			redirectsStore  : useRedirectsStore(),
-			rootStore       : useRootStore(),
-			settingsStore   : useSettingsStore()
+			licenseStore      : useLicenseStore(),
+			postEditorStore   : usePostEditorStore(),
+			redirectsStore    : useRedirectsStore(),
+			rootStore         : useRootStore(),
+			settingsStore     : useSettingsStore(),
+			seoRevisionsStore : useSeoRevisionsStore()
 		}
 	},
 	components : {
@@ -191,6 +193,9 @@ export default {
 			this.maybeResetActiveTab(isModalOpen)
 		},
 		'postEditorStore.currentPost.redirects.modalOpen' (isModalOpen) {
+			this.maybeResetActiveTab(isModalOpen)
+		},
+		'seoRevisionsStore.modalOpenSidebar' (isModalOpen) {
 			this.maybeResetActiveTab(isModalOpen)
 		},
 		'settingsStore.metaBoxTabs.mainSidebar' : {
@@ -330,6 +335,11 @@ export default {
 						this.postEditorStore.toggleRedirectsModal()
 					}
 					break
+				case 'seoRevisions':
+					if (!this.seoRevisionsStore.modalOpenSidebar && this.licenseStore.isUnlicensed) {
+						this.seoRevisionsStore.toggleModalOpenSidebar()
+					}
+					break
 				default:
 					break
 			}
@@ -409,7 +419,6 @@ export default {
 		if (
 			isBlockEditor() &&
 			!this.licenseStore.isUnlicensed
-
 		) {
 			this.watchObjectRevisionsOnSavePost()
 		}

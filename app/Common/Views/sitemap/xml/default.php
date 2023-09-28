@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<changefreq><?php aioseo()->sitemap->output->escapeAndEcho( $entry['changefreq'] ); ?></changefreq><?php
 	}
-	if ( ! empty( $entry['priority'] ) ) {
+	if ( isset( $entry['priority'] ) ) {
 			?>
 
 		<priority><?php aioseo()->sitemap->output->escapeAndEcho( $entry['priority'] ); ?></priority><?php

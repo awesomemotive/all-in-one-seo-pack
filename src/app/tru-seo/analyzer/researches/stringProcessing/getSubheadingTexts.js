@@ -1,39 +1,47 @@
-import { isEmpty } from 'lodash-es'
 import countWords from './countWords'
 
 /**
  * Returns all texts per subheading.
  *
- * @param 	{string} text The text to extract from.
- * @returns {Array} 	  An array of objects containing subheading data.
+ * @param 	{string} string The text to extract from.
+ * @returns {Array} 	  	An array of objects containing subheading data.
  */
-export default function (text) {
+export default function (string) {
+	string = string.trim().replace(/^<!--[^<]+/, '')
+
+	const regex = /<h([1-6])(?:[^>]+)?>(.+?)<\/h\1>/gi
 	const subheadings = []
+	const subheadingTexts = []
 
-	/*
-	 Matching this in a regex is pretty hard, since we need to find a way for matching the text after a heading, and before the end of the text.
-	 The hard thing capturing this is with a capture, it captures the next subheading as well, so it skips the next part of the text,
-	 since the subheading is already matched.
-	 For now we use this method to be sure we capture the right blocks of text. We remove all | 's from text,
-	 then replace all headings with a | and split on a |.
-	 */
-	text = text.replace(/\|/ig, '')
-	text = text.replace(/<h([1-6])(?:[^>]+)?>(.+?)<\/h\1>/ig, (_match, _p1, p2) => {
-		subheadings.push(p2)
-
-		return '|'
-	})
-
-	const subheadingTexts = text.split('|')
-	if (isEmpty(subheadingTexts[0])) {
-		subheadingTexts.shift()
+	let match
+	while (null !== (match = regex.exec(string))) {
+		subheadings.push({
+			subheading : match[2],
+			startIndex : match.index,
+			endIndex   : match.index + match[0].length
+		})
 	}
 
-	return subheadingTexts.map((value, i) => {
-		return {
-			subheading : 0 === i ? '' : subheadings[i - 1],
-			text       : value,
-			wordCount  : countWords(value)
+	for (const [ i, v ] of subheadings.entries()) {
+		// Append an empty subheading if the first found subheading is below some content.
+		if (0 === i && 0 < v.startIndex) {
+			subheadingTexts.unshift({
+				text       : string.substring(0, v.startIndex),
+				wordCount  : countWords(string.substring(0, v.startIndex)),
+				subheading : ''
+			})
 		}
-	})
+
+		const subheadingText = subheadings[i + 1]
+			? string.substring(v.endIndex, subheadings[i + 1].startIndex)
+			: string.substring(v.endIndex)
+
+		subheadingTexts.push({
+			text       : subheadingText,
+			wordCount  : countWords(subheadingText),
+			subheading : v.subheading
+		})
+	}
+
+	return subheadingTexts
 }

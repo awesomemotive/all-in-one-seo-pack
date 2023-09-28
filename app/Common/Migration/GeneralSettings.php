@@ -652,6 +652,7 @@ class GeneralSettings {
 			'facebook.com'   => 'facebookPageUrl',
 			'twitter.com'    => 'twitterUrl',
 			'instagram.com'  => 'instagramUrl',
+			'tiktok.com'     => 'tiktokUrl',
 			'pinterest.com'  => 'pinterestUrl',
 			'youtube.com'    => 'youtubeUrl',
 			'linkedin.com'   => 'linkedinUrl',

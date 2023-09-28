@@ -21,16 +21,18 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 	getters : {
 		highlightAnalysis () {
 			const postEditorStore = usePostEditorStore()
+			const rawAnalysis = postEditorStore.currentPost?.page_analysis?.analysis || {}
+			const analysis = Object.values(rawAnalysis).flat().find((a) => !!a[this.highlightAnalyzer]) || {}
 
-			return Object.values(postEditorStore.currentPost.page_analysis.analysis).flat().find((a) => !!a[this.highlightAnalyzer]) || {}
+			return analysis[this.highlightAnalyzer] || {}
 		},
 		highlightAnalyzerHasError () {
-			return !!(this.highlightAnalysis[this.highlightAnalyzer]?.error || false)
+			return !!(this.highlightAnalysis?.error || false)
 		},
 		highlightSentences () {
 			let sentences = []
-			if (Array.isArray(this.highlightAnalysis[this.highlightAnalyzer]?.highlightSentences)) {
-				sentences = this.highlightAnalysis[this.highlightAnalyzer].highlightSentences.flat()
+			if (Array.isArray(this.highlightAnalysis?.highlightSentences)) {
+				sentences = this.highlightAnalysis.highlightSentences.flat()
 				sentences = sentences.map(s => {
 					// Remove one HTML entity at the end of the sentence to prevent the annotation API from malfunctioning.
 					s = s.replace(/&[a-zA-Z0-9#]{2,};$/, '')

@@ -838,7 +838,7 @@ export default {
 					background-color: $inline-background;
 
 					.aioseo-tag-description {
-						color: initial;
+						color: $black;
 					}
 				}
 

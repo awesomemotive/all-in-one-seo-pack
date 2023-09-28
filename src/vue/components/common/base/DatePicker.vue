@@ -293,7 +293,8 @@ export default {
 			}
 		}
 
-		.el-date-picker {
+		.el-date-picker,
+		.el-date-range-picker {
 			&__time-header {
 				.el-input__inner {
 					border: 0;

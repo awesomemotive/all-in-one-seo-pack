@@ -352,7 +352,7 @@ class Helpers {
 	 * @return string The excluded IDs.
 	 */
 	public function excludedPosts() {
-		return $this->excludedObjects( 'excludePosts' );
+		return $this->excludedObjectIds( 'excludePosts' );
 	}
 
 	/**
@@ -363,7 +363,7 @@ class Helpers {
 	 * @return string The excluded IDs.
 	 */
 	public function excludedTerms() {
-		return $this->excludedObjects( 'excludeTerms' );
+		return $this->excludedObjectIds( 'excludeTerms' );
 	}
 
 	/**
@@ -371,12 +371,13 @@ class Helpers {
 	 *
 	 * Helper method for excludedPosts() and excludedTerms().
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.4.7 Improved method name.
 	 *
 	 * @param  string $option The option name.
 	 * @return string         The excluded IDs.
 	 */
-	private function excludedObjects( $option ) {
+	private function excludedObjectIds( $option ) {
 		$type = aioseo()->sitemap->type;
 		// The RSS Sitemap needs to exclude whatever is excluded in the general sitemap.
 		if ( 'rss' === $type ) {

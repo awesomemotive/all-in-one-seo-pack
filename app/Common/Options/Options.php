@@ -166,12 +166,13 @@ TEMPLATE
 				'sameUsername'   => [
 					'enable'   => [ 'type' => 'boolean', 'default' => false ],
 					'username' => [ 'type' => 'string' ],
-					'included' => [ 'type' => 'array', 'default' => [ 'facebookPageUrl', 'twitterUrl', 'pinterestUrl', 'instagramUrl', 'youtubeUrl', 'linkedinUrl' ] ]
+					'included' => [ 'type' => 'array', 'default' => [ 'facebookPageUrl', 'twitterUrl', 'tiktokUrl', 'pinterestUrl', 'instagramUrl', 'youtubeUrl', 'linkedinUrl' ] ]
 				],
 				'urls'           => [
 					'facebookPageUrl' => [ 'type' => 'string' ],
 					'twitterUrl'      => [ 'type' => 'string' ],
 					'instagramUrl'    => [ 'type' => 'string' ],
+					'tiktokUrl'       => [ 'type' => 'string' ],
 					'pinterestUrl'    => [ 'type' => 'string' ],
 					'youtubeUrl'      => [ 'type' => 'string' ],
 					'linkedinUrl'     => [ 'type' => 'string' ],

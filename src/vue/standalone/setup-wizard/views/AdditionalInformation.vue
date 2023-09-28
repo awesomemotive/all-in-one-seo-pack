@@ -188,14 +188,23 @@
 					{{ strings.yourSocialProfiles }}
 				</div>
 
-				<div v-if="loaded" class="social-profiles">
+				<div
+					v-if="loaded"
+					class="social-profiles"
+					:class="{ 'show-more': showOtherSocialNetworks }"
+				>
 					<core-social-profiles
-						:options="setupWizardStore.additionalInformation"
 						leftSize="4"
 						rightSize="8"
 						sameUsernameWidth="4"
 						hideAdditionalProfiles
 					/>
+					<a
+						class="show-more-link aioseo-col col-md-offset-4"
+						@click="showHideOtherSocialNetworks"
+					>
+						{{ strings.showMore }}
+					</a>
 				</div>
 
 				<template #footer>
@@ -262,10 +271,11 @@ export default {
 	mixins : [ MaxCounts, Wizard ],
 	data () {
 		return {
-			loaded  : false,
-			loading : false,
-			stage   : 'additional-information',
-			strings : merge(this.composableStrings, {
+			showOtherSocialNetworks : false,
+			loaded                  : false,
+			loading                 : false,
+			stage                   : 'additional-information',
+			strings                 : merge(this.composableStrings, {
 				additionalSiteInformation       : this.$t.__('Additional Site Information', this.$td),
 				personOrOrganization            : this.$t.__('Person or Organization', this.$td),
 				choosePerson                    : this.$t.__('Choose a Person', this.$td),
@@ -280,7 +290,8 @@ export default {
 				contactTypeDescription          : this.$t.__('Select which team or department the phone number belongs to.', this.$td),
 				logo                            : this.$t.__('Logo', this.$td),
 				defaultSocialShareImage         : this.$t.__('Default Social Share Image', this.$td),
-				yourSocialProfiles              : this.$t.__('Your Social Profiles', this.$td)
+				yourSocialProfiles              : this.$t.__('Your Social Profiles', this.$td),
+				showMore                        : this.$t.__('Show more', this.$td)
 			})
 		}
 	},
@@ -317,6 +328,9 @@ export default {
 				.then(() => {
 					this.$router.push(this.setupWizardStore.getNextLink)
 				})
+		},
+		showHideOtherSocialNetworks () {
+			this.showOtherSocialNetworks = !this.showOtherSocialNetworks
 		}
 	},
 	mounted () {
@@ -383,6 +397,35 @@ export default {
 		a {
 			color: $black2;
 			font-size: 14px;
+		}
+	}
+
+	.social-profiles {
+		&:not(.show-more) {
+			.aioseo-social-profile-list {
+				.aioseo-settings-row:nth-child(n+5) {
+					display: none;
+				}
+			}
+
+			.show-more-link {
+				display: inline-block;
+			}
+
+			.same-username .use-same {
+				.profiles {
+					.aioseo-col:nth-child(n+5) {
+						display: none;
+					}
+				}
+			}
+		}
+
+		.show-more-link {
+			display: none;
+			margin-top: 16px;
+			cursor: pointer;
+			text-decoration: underline;
 		}
 	}
 }

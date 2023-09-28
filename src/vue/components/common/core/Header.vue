@@ -330,9 +330,10 @@ html:not([data-scroll='0']) {
 				color: #fff;
 				top: -8px;
 				left: 50%;
-				transform: translateX(-50%);
+				transform: translate(-50%, 0);
 				margin: 0;
 				animation: bounce 2s 5;
+				will-change: transform;
 
 				&:hover {
 					background-color: $red;
@@ -340,13 +341,13 @@ html:not([data-scroll='0']) {
 
 				@keyframes bounce {
 					0%, 25%, 50%, 75%, 100% {
-						transform: translateX(-50%) translateY(0);
+						transform: translate(-50%, 0);
 					}
 					40% {
-						transform: translateX(-50%) translateY(-8px);
+						transform: translate(-50%, -8px);
 					}
 					60% {
-						transform: translateX(-50%) translateY(-4px);
+						transform: translate(-50%, -4px);
 					}
 				}
 			}

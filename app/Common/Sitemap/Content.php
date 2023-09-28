@@ -386,10 +386,26 @@ class Content {
 	public function addl( $shouldChunk = true ) {
 		$additionalPages = [];
 		if ( aioseo()->options->sitemap->general->additionalPages->enable ) {
-			$additionalPages = apply_filters( 'aioseo_sitemap_additional_pages', aioseo()->options->sitemap->general->additionalPages->pages );
+			$additionalPages = array_map( 'json_decode', aioseo()->options->sitemap->general->additionalPages->pages );
+			$additionalPages = array_filter( $additionalPages, function( $additionalPage ) {
+				return ! empty( $additionalPage->url );
+			} );
 		}
 
-		if ( 'posts' === get_option( 'show_on_front' ) || ! in_array( 'page', aioseo()->sitemap->helpers->includedPostTypes(), true ) ) {
+		$entries = [];
+		foreach ( $additionalPages as $additionalPage ) {
+			$entries[] = [
+				'loc'        => $additionalPage->url,
+				'lastmod'    => aioseo()->sitemap->helpers->lastModifiedAdditionalPage( $additionalPage ),
+				'changefreq' => $additionalPage->frequency->value,
+				'priority'   => $additionalPage->priority->value,
+				'isTimezone' => true
+			];
+		}
+
+		$postTypes             = aioseo()->sitemap->helpers->includedPostTypes();
+		$shouldIncludeHomepage = 'posts' === get_option( 'show_on_front' ) || ! in_array( 'page', $postTypes, true );
+		if ( $shouldIncludeHomepage ) {
 			$frontPageId  = (int) get_option( 'page_on_front' );
 			$frontPageUrl = aioseo()->helpers->localizedUrl( '/' );
 			$post         = aioseo()->helpers->getPost( $frontPageId );
@@ -398,7 +414,7 @@ class Content {
 				'loc'        => aioseo()->helpers->maybeRemoveTrailingSlash( $frontPageUrl ),
 				'lastmod'    => $post ? aioseo()->helpers->dateTimeToIso8601( $post->post_modified_gmt ) : aioseo()->sitemap->helpers->lastModifiedPostTime(),
 				'changefreq' => aioseo()->sitemap->priority->frequency( 'homePage' ),
-				'priority'   => aioseo()->sitemap->priority->priority( 'homePage' ),
+				'priority'   => aioseo()->sitemap->priority->priority( 'homePage' )
 			];
 
 			$translatedHomepages = aioseo()->helpers->wpmlHomePages();
@@ -411,37 +427,21 @@ class Content {
 				}
 			}
 
-			array_unshift( $additionalPages, $homepageEntry );
+			// Add homepage to the first position.
+			array_unshift( $entries, $homepageEntry );
 		}
 
-		if ( ! $additionalPages ) {
+		if ( aioseo()->options->sitemap->general->additionalPages->enable ) {
+			$entries = apply_filters( 'aioseo_sitemap_additional_pages', $entries );
+		}
+
+		if ( empty( $entries ) ) {
 			return [];
 		}
 
 		if ( aioseo()->options->sitemap->general->indexes && $shouldChunk ) {
-			$additionalPages = aioseo()->sitemap->helpers->chunkEntries( $additionalPages );
-			$additionalPages = $additionalPages[ aioseo()->sitemap->pageNumber ];
-		}
-
-		$entries = [];
-		foreach ( $additionalPages as $page ) {
-			if ( is_array( $page ) ) {
-				$entries[] = $page;
-				continue;
-			}
-
-			$additionalPage = json_decode( $page );
-			if ( empty( $additionalPage->url ) ) {
-				continue;
-			}
-
-			$entries[] = [
-				'loc'        => $additionalPage->url,
-				'lastmod'    => aioseo()->sitemap->helpers->lastModifiedAdditionalPage( $additionalPage ),
-				'isTimezone' => true,
-				'changefreq' => $additionalPage->frequency->value,
-				'priority'   => $additionalPage->priority->value
-			];
+			$entries = aioseo()->sitemap->helpers->chunkEntries( $entries );
+			$entries = $entries[ aioseo()->sitemap->pageNumber ];
 		}
 
 		return $entries;

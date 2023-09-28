@@ -416,6 +416,7 @@ export default {
 			font-weight: 700;
 			line-height: normal;
 			padding-left: 12px;
+			font-size: 12px;
 			&.green {
 				color: $green;
 			}

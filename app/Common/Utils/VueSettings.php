@@ -118,8 +118,6 @@ class VueSettings {
 			'404Settings'                  => true
 		],
 		'toggledRadio'    => [
-			'locationsShowOnWebsite'        => 'widget',
-			'breadcrumbsShowOnWebsite'      => 'shortcode',
 			'breadcrumbsShowMoreSeparators' => false,
 			'searchShowMoreSeparators'      => false,
 			'overviewPostType'              => 'post',

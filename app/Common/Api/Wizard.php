@@ -184,6 +184,10 @@ class Wizard {
 						$options->social->profiles->urls->instagramUrl = $urls['instagramUrl'];
 					}
 
+					if ( ! empty( $urls['tiktokUrl'] ) ) {
+						$options->social->profiles->urls->tiktokUrl = $urls['tiktokUrl'];
+					}
+
 					if ( ! empty( $urls['pinterestUrl'] ) ) {
 						$options->social->profiles->urls->pinterestUrl = $urls['pinterestUrl'];
 					}

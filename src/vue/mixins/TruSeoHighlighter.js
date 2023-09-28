@@ -8,6 +8,7 @@ import { debounce, random } from 'lodash-es'
 import { isPageBuilderEditor } from '@/vue/utils/context'
 import { getOuterText } from '@/vue/utils/html'
 import { escapeRegex } from '@/vue/utils/regex'
+import { getMostReadableColor } from '@wordpress/block-editor/src/components/colors/utils'
 import {
 	isBlockEditor,
 	isClassicEditor,
@@ -25,7 +26,25 @@ export const TruSeoHighlighter = {
 		}
 	},
 	computed : {
-		...mapStores(useTruSeoHighlighterStore)
+		...mapStores(useTruSeoHighlighterStore),
+		markBgColor () {
+			const defaultBgColor = '#cce0ff'
+			if ('function' !== typeof getMostReadableColor) {
+				return defaultBgColor
+			}
+
+			const node = this.getEditorNode('first-block')?.parentElement || {}
+			const color = Object.values(node).length ? document.defaultView.getComputedStyle(node)?.backgroundColor : ''
+			if (color && !color.match(/(fffff|255,\s?255,\s?255|rgba)/gi)) {
+				return getMostReadableColor([
+					{ color: '#e6f0ff' }, // Lighter.
+					{ color: defaultBgColor }, // Original.
+					{ color: '#b3d1ff' }// Darker.
+				], color)
+			}
+
+			return defaultBgColor
+		}
 	},
 	data () {
 		return {
@@ -176,7 +195,7 @@ export const TruSeoHighlighter = {
 				}
 
 				if ('first-block' === which) {
-					return this.tinymceEditor.getBody().firstChild
+					return this.tinymceEditor.getBody()?.firstChild || {}
 				}
 			}
 
@@ -491,7 +510,8 @@ export const TruSeoHighlighter = {
 			this.truSeoHighlighterStore.clearAll()
 
 			this.$nextTick().then(() => {
-				// The user might have fixed the errors while the highlighter was activated.
+				/* The user might have fixed the errors while the highlighter was activated.
+				   Or the highlighter was simply disabled. */
 				if (!this.truSeoHighlighterStore.highlightSentences) {
 					this.truSeoHighlighterStore.toggleHighlightAnalyzer(null)
 
@@ -547,6 +567,8 @@ export const TruSeoHighlighter = {
 			})
 			if (-1 !== findIndex) {
 				this.truSeoHighlighterStore.highlightMarks[findIndex].node = node
+
+				node.style.backgroundColor = this.markBgColor
 			}
 		},
 		setHighlightMarks ({ block, node }) {
@@ -609,6 +631,12 @@ export const TruSeoHighlighter = {
 					span.annotation-text.annotation-text-${this.truSeoHighlighterStore.source} {
 						background-color: #CCE0FF;
 						border-radius: 4px;
+						color: inherit;
+						display: inline;
+						font-size: inherit;
+						font-weight: inherit;
+						letter-spacing: inherit;
+						line-height: inherit;
 						position: static;
 					}
 					`.trim()

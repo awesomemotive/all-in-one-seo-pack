@@ -195,7 +195,7 @@ trait Vue {
 				'context'                        => 'post',
 				'tags'                           => aioseo()->tags->getDefaultPostTags( $postId ),
 				'id'                             => $postId,
-				'priority'                       => ! empty( $post->priority ) ? $post->priority : 'default',
+				'priority'                       => isset( $post->priority ) && 'default' !== $post->priority ? $post->priority : 'default',
 				'frequency'                      => ! empty( $post->frequency ) ? $post->frequency : 'default',
 				'permalink'                      => get_permalink( $postId ),
 				'editlink'                       => aioseo()->helpers->getPostEditLink( $postId ),
