@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta ti
 Tested up to: 6.3.1
 Requires at least: 4.9
 Requires PHP: 7.0
-Stable tag: 4.4.7
+Stable tag: 4.4.7.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -257,6 +257,10 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 
 == Changelog ==
+
+**New in Version 4.4.7.1**
+
+* Fixed: Plugin conflict with Divi where the visual editor does not load.
 
 **New in Version 4.4.7**
 
@@ -618,6 +622,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.4.7 =
+= 4.4.7.1 =
 
 This update adds major improvements and bug fixes.

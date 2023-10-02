@@ -818,11 +818,21 @@ trait WpContext {
 	public function restoreWpQuery() {
 		global $wp_query, $post;
 		if ( is_a( $this->originalQuery, 'WP_Query' ) ) {
-			$wp_query = $this->deepClone( $this->originalQuery );
+			// Loop over all properties and replace the ones that have changed.
+			// We want to avoid replacing the entire object because it can cause issues with other plugins.
+			foreach ( $this->originalQuery as $key => $value ) {
+				if ( $value !== $wp_query->{$key} ) {
+					$wp_query->{$key} = $value;
+				}
+			}
 		}
 
 		if ( is_a( $this->originalPost, 'WP_Post' ) ) {
-			$post = $this->deepClone( $this->originalPost );
+			foreach ( $this->originalPost as $key => $value ) {
+				if ( $value !== $post->{$key} ) {
+					$post->{$key} = $value;
+				}
+			}
 		}
 
 		$this->originalQuery = null;
