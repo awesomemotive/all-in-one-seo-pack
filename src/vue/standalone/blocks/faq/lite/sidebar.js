@@ -1,5 +1,5 @@
-
 import { html } from '@/vue/standalone/blocks/utils'
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
 import links from '@/vue/utils/links'
 
 const {
@@ -41,7 +41,7 @@ export const render = (className, attributes, setSchemaBlockAttributes) => {
 	const upgradeLink = links.getUpsellLink(
 		'faq-block',
 		// Translators: The full string is "Click here to get AIOSEO Pro".
-		__('Click here to get', td) + ' ' + import.meta.env.VITE_SHORT_NAME + ' Pro',
+		GLOBAL_STRINGS.learnMore,
 		'sidebar',
 		true
 	)
@@ -73,7 +73,7 @@ export const render = (className, attributes, setSchemaBlockAttributes) => {
 						disabled
 					/>
 					<div className="aioseo-alert aioseo-alert inline-upsell blue medium">
-						<div dangerouslySetInnerHTML=${{ __html: __('FAQPage schema is a Pro feature.', td) + ' ' + upgradeLink }}></div>
+						<div dangerouslySetInnerHTML=${{ __html: __('FAQ schema is a Pro feature.', td) + ' ' + upgradeLink }}></div>
 					</div>
 				</${PanelBody}>
 			</${InspectorControls}>

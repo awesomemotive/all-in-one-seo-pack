@@ -12,7 +12,7 @@
 			:floating="false"
 			:button-text="strings.cta.button"
 			:cta-link="$links.utmUrl('getting-started', 'main-cta')"
-			:learn-more-link="$links.getUpsellUrl('getting-started', 'main-cta', 'home')"
+			:learn-more-link="$links.getUpsellUrl('getting-started', 'main-cta', $isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="$constants.UPSELL_FEATURE_LIST"
 			:showLink="false"
 		>

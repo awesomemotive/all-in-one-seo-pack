@@ -54,9 +54,9 @@
 
 			<core-alert
 				class="inline-upsell"
-				type="yellow"
+				type="blue"
 			>
-				<div v-html="strings.upSell" />
+				<div v-html="strings.upsell" />
 			</core-alert>
 		</template>
 	</div>
@@ -94,19 +94,12 @@ export default {
 				additional             : this.$t.__('Additional Keyphrases', this.$td),
 				addKeyphrase           : this.$t.__('Add Additional Keyphrases', this.$td),
 				keyphraseDocumentation : this.$t.__('Improve your SEO rankings with additional keyphrases.', this.$td),
-				upSell                 : this.$t.sprintf(
+				upsell                 : this.$t.sprintf(
 					// Translators: 1 - "Pro" string, 2 - "Learn more link".
-					this.$t.__('Multiple Keyphrases is a %1$s feature. %2$s', this.$td),
-					'Pro',
-					this.$links.getUpsellLink(
-						'seo-settings',
-						// Translators: The full string is "Click here to get AIOSEO Pro".
-						this.$t.__('Click here to get', this.$td) + ' ' + import.meta.env.VITE_SHORT_NAME + ' Pro',
-						'additional-keyphrases',
-						true
-					)
+					this.$t.__('Additional Keyphrases are a %1$s feature. %2$s', this.$td),
+					'PRO',
+					this.$links.getUpsellLink('post-settings', this.$constants.GLOBAL_STRINGS.learnMore, 'additional-keywords', true)
 				)
-
 			}
 		}
 	},

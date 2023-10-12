@@ -168,9 +168,9 @@ export default {
 				keywords                : this.$t.__('Keywords', this.$td),
 				removeCatBase           : this.$t.__('Remove Category Base Prefix', this.$td),
 				removeCatBaseUpsell     : this.$t.sprintf(
-					// Translators: 1 - The plugin short name name ("AIOSEO") + Pro, 2 - "Learn more".
-					this.$t.__('This feature is only for licensed %1$s users. %2$s', this.$td),
-					`<strong>${import.meta.env.VITE_SHORT_NAME} Pro</strong>`,
+					// Translators: 1 - "PRO", 2 - "Learn more".
+					this.$t.__('Remove Category Base Prefix is a %1$s feature. %2$s', this.$td),
+					'PRO',
 					this.$links.getUpsellLink('search-appearance-advanced', this.$constants.GLOBAL_STRINGS.learnMore, 'remove-category-base-prefix', true)
 				)
 			}

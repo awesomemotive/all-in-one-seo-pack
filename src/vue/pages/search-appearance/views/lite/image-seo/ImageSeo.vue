@@ -5,8 +5,9 @@
 		<cta
 			:cta-link="$links.getPricingUrl('image-seo', 'image-seo-upsell')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="$links.getUpsellUrl('image-seo', null, 'home')"
+			:learn-more-link="$links.getUpsellUrl('image-seo', null, $isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="features"
+			:hide-bonus="!licenseStore.isUnlicensed"
 		>
 			<template #header-text>
 				{{ strings.ctaHeader }}
@@ -22,10 +23,19 @@
 </template>
 
 <script>
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
 import Blur from './Blur'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 import Cta from '@/vue/components/common/cta/Index'
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore()
+		}
+	},
 	components : {
 		Blur,
 		RequiredPlans,
@@ -36,12 +46,11 @@ export default {
 			strings : {
 				titleAttributeFormat : this.$t.__('Title Attribute Format', this.$td),
 				ctaDescription       : this.$t.__('The Image SEO module is a premium feature that enables you to globally control the title, alt tag, caption, description and filename of the images on your site.', this.$td),
-				ctaButtonText        : this.$t.__('Upgrade to Pro and Unlock Image SEO', this.$td),
+				ctaButtonText        : this.$t.__('Unlock Image SEO', this.$td),
 				ctaHeader            : this.$t.sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('Image SEO is only available for licensed %1$s %2$s users.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+					// Translators: 1 - "PRO".
+					this.$t.__('Image SEO is a %1$s Feature', this.$td),
+					'PRO'
 				)
 			},
 			features : [

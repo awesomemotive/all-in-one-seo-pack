@@ -11,6 +11,7 @@
 		:learn-more-link="learnMoreLink"
 		:feature-list="featureList"
 		:align-top="alignTop"
+		hide-bonus
 	>
 		<template #header-text>
 			{{ ctaHeader }}
@@ -93,7 +94,7 @@ export default {
 					this.$t.__('This addon requires an update. %1$s %2$s requires a minimum version of %3$s for the %4$s addon. You currently have %5$s installed.', this.$td),
 					import.meta.env.VITE_SHORT_NAME,
 					'Pro',
-					addons.getAddon(this.addonSlug).installedVersion,
+					addons.getAddon(this.addonSlug).minimumVersion,
 					addons.getAddon(this.addonSlug).name,
 					addons.getAddon(this.addonSlug).installedVersion
 				)

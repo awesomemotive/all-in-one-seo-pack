@@ -36,7 +36,7 @@
 			<cta
 				:cta-link="$links.getPricingUrl('schema-markup', 'schema-markup-upsell')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="$links.getUpsellUrl('schema-markup', null, 'home')"
+				:learn-more-link="$links.getUpsellUrl('schema-markup', null, $isPro ? 'pricing' : 'liteUpgrade')"
 				:feature-list="features"
 			>
 				<template #header-text>
@@ -85,12 +85,11 @@ export default {
 				blogPost       : this.$t.__('Blog Post', this.$td),
 				newsArticle    : this.$t.__('News Article', this.$td),
 				ctaDescription : this.$t.__('Easily generate unlimited schema markup for your content to help you rank higher in search results. Our schema validator ensures your schema works out of the box.', this.$td),
-				ctaButtonText  : this.$t.__('Upgrade to Pro and Unlock Schema Generator', this.$td),
+				ctaButtonText  : this.$t.__('Unlock Schema Markup Generator', this.$td),
 				ctaHeader      : this.$t.sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('Schema Generator is only available for licensed %1$s %2$s users.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+					// Translators: 1 - "PRO".
+					this.$t.__('Schema Markup Generator is a %1$s Feature', this.$td),
+					'PRO'
 				)
 			},
 			features : [

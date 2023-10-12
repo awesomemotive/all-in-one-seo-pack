@@ -8,8 +8,8 @@
 				:type="1"
 				:floating="false"
 				:cta-link="$links.utmUrl('toc-block')"
-				:button-text="'Upgrade to Pro and Unlock Reordering'"
-				:learn-more-link="$links.getUpsellUrl('toc-block', null, 'reorder-modal')"
+				:button-text="'Unlock Reordering'"
+				:learn-more-link="$links.getUpsellUrl('toc-block', null, $isPro ? 'pricing' : 'liteUpgrade')"
 			>
 				<template #header-text>
 					{{strings.header}}
@@ -39,9 +39,9 @@ export default {
 		return {
 			strings : {
 				header : sprintf(
-					// Translators: The short plugin name ("AIOSEO Pro").
-					__('This feature is available only for %1$s users', td),
-					import.meta.env.VITE_SHORT_NAME + ' Pro'
+					// Translators: "PRO".
+					__('Reordering Headings is a %1$s Feature', td),
+					'PRO'
 				),
 				description : __('Reordering the headings in the Table of Contents block is a feature that can only be used by Pro users. Upgrade to Pro to unlock this advanced functionality.', td)
 			}

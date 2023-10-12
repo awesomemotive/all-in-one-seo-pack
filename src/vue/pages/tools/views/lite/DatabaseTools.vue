@@ -24,7 +24,7 @@
 			<cta
 				:cta-link="$links.getPricingUrl('network-tools', 'database-tools')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="$links.getUpsellUrl('network-tools', 'database-tools', 'home')"
+				:learn-more-link="$links.getUpsellUrl('network-tools', 'database-tools', $isPro ? 'pricing' : 'liteUpgrade')"
 			>
 				<template #header-text>
 					{{ strings.ctaHeader }}

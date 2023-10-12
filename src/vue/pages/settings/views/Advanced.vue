@@ -415,15 +415,15 @@ export default {
 					'</a></strong>'
 				),
 				adminBarMenuUpsell : this.$t.sprintf(
-					// Translators: 1 - The plugin name ("All in One SEO"), 2 - "Learn more".
-					this.$t.__('The Admin Bar feature is only available for licensed %1$s users. %2$s', this.$td),
-					`<strong>${import.meta.env.VITE_SHORT_NAME} Pro</strong>`,
+					// Translators: 1 - "PRO", 2 - "Learn more".
+					this.$t.__('Admin Bar Menu is a %1$s feature. %2$s', this.$td),
+					'PRO',
 					this.$links.getUpsellLink('general-settings-advanced', this.$constants.GLOBAL_STRINGS.learnMore, 'admin-bar-menu', true)
 				),
 				dashboardWidgetsUpsell : this.$t.sprintf(
-					// Translators: 1 - The plugin name ("All in One SEO"), 2 - "Learn more".
-					this.$t.__('The Dashboard Widget feature is only available for licensed %1$s users. %2$s', this.$td),
-					`<strong>${import.meta.env.VITE_SHORT_NAME} Pro</strong>`,
+					// Translators: 1 - "PRO", 2 - "Learn more".
+					this.$t.__('Dashboard Widgets is a %1$s feature. %2$s', this.$td),
+					'PRO',
 					this.$links.getUpsellLink('general-settings-advanced', this.$constants.GLOBAL_STRINGS.learnMore, 'dashboard-widget', true)
 				),
 				taxonomyColumns      : this.$t.__('Taxonomy Columns', this.$td),
@@ -434,9 +434,9 @@ export default {
 					import.meta.env.VITE_SHORT_NAME
 				),
 				taxonomyColumnsUpsell : this.$t.sprintf(
-					// Translators: 1 - The plugin short name name ("AIOSEO") + Pro, 2 - "Learn more".
-					this.$t.__('This feature is only for licensed %1$s users. %2$s', this.$td),
-					`<strong>${import.meta.env.VITE_SHORT_NAME} Pro</strong>`,
+					// Translators: 1 - "PRO", 2 - "Learn more".
+					this.$t.__('Taxonomy Columns is a %1$s feature. %2$s', this.$td),
+					'PRO',
 					this.$links.getUpsellLink('general-settings-advanced', this.$constants.GLOBAL_STRINGS.learnMore, 'taxonomy-columns', true)
 				),
 				uninstallAioseo : this.$t.sprintf(
@@ -462,9 +462,9 @@ export default {
 					this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'openAi', true)
 				),
 				openAiKeyUpsell : this.$t.sprintf(
-					// Translators: 1 - The plugin name ("All in One SEO"), 2 - "Learn more".
-					this.$t.__('The OpenAI integration is only available for licensed %1$s users. %2$s', this.$td),
-					`<strong>${import.meta.env.VITE_SHORT_NAME} Pro</strong>`,
+					// Translators: 1 - "PRO", 2 - "Learn more".
+					this.$t.__('OpenAI Integration is a %1$s feature. %2$s', this.$td),
+					'PRO',
 					this.$links.getUpsellLink('general-settings-advanced', this.$constants.GLOBAL_STRINGS.learnMore, 'open-ai', true)
 				),
 				openAiKeyInvalid : this.$t.__('The API key you have entered is invalid. Please check your API key and try again.', this.$td)

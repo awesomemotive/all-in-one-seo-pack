@@ -86,7 +86,7 @@
 					type="green"
 					size="medium"
 					tag="a"
-					:href="!$isPro ? $links.getUpsellUrl('feature-manager-upgrade', feature.sku, 'liteUpgrade') : $links.getUpsellUrl('feature-manager-upgrade', feature.sku, 'pricing')"
+					:href="$links.getUpsellUrl('feature-manager-upgrade', feature.sku, $isPro ? 'pricing' : 'liteUpgrade')"
 					target="_blank"
 				>
 					<span v-if="$isPro">{{ strings.upgradeYourPlan }}</span>

@@ -74,7 +74,7 @@ const HeadlineAnalyzer = () => {
 					dataExist : false
 				}
 				setAnalyzer({ ...analyzer, ...newAnalyzerData })
-				console.log('Couldn\'t fetch score for headline:', error)
+				console.error('Couldn\'t fetch score for headline:', error)
 			})
 	}
 

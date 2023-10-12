@@ -48,8 +48,9 @@
 			]"
 			:cta-link="$links.getPricingUrl('search-statistics', 'search-statistics-upsell')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="$links.getUpsellUrl('search-statistics', null, 'home')"
+			:learn-more-link="$links.getUpsellUrl('search-statistics', null, $isPro ? 'pricing' : 'liteUpgrade')"
 			align-top
+			:hide-bonus="!licenseStore.isUnlicensed"
 		>
 			<template #header-text>
 				{{ strings.ctaHeader }}
@@ -63,6 +64,7 @@
 
 <script>
 import {
+	useLicenseStore,
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
@@ -76,6 +78,7 @@ import SvgTrash from '@/vue/components/common/svg/Trash'
 export default {
 	setup () {
 		return {
+			licenseStore          : useLicenseStore(),
 			searchStatisticsStore : useSearchStatisticsStore()
 		}
 	},
@@ -102,12 +105,11 @@ export default {
 					this.$t.__('By default, only users with an Administrator role have permission to manage %1$s within your WordPress admin area. With Access Controls, though, you can easily extend specific access permissions to other user roles.', this.$td),
 					import.meta.env.VITE_NAME
 				),
-				ctaButtonText : this.$t.__('Upgrade to Pro and Unlock Search Statistics', this.$td),
+				ctaButtonText : this.$t.__('Unlock Keyword Rank Tracking', this.$td),
 				ctaHeader     : this.$t.sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('Access Control is only available for licensed %1$s %2$s users.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+					// Translators: 1 - "PRO".
+					this.$t.__('Keyword Rank Tracking is a %1$s Feature', this.$td),
+					'PRO'
 				)
 			}
 		}

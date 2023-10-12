@@ -43,7 +43,7 @@
 			>
 					<transition name="fade-percent-circle">
 						<core-percent-circle
-							v-if="activeScan && showPopup"
+							v-if="activeScan && 100 !== percentage"
 							:percentage="percentage"
 							@click.native="toggleCirclePopup"
 						/>

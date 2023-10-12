@@ -139,9 +139,9 @@ export default {
 				priority                : this.$t.__('Priority', this.$td),
 				frequency               : this.$t.__('Frequency', this.$td),
 				priorityFrequencyUpsell : this.$t.sprintf(
-					// Translators: 1 - The plugin short name name ("AIOSEO") + Pro, 2 - "Learn more".
-					this.$t.__('This feature is only for licensed %1$s users. %2$s', this.$td),
-					`<strong>${import.meta.env.VITE_SHORT_NAME} Pro</strong>`,
+					// Translators: 1 - "PRO", 2 - "Learn more".
+					this.$t.__('Priority Score is a %1$s feature. %2$s', this.$td),
+					'PRO',
 					this.$links.getUpsellLink('post-advanced', this.$constants.GLOBAL_STRINGS.learnMore, 'priority-frequency', true)
 				),
 				keywords       : this.$t.__('Keywords', this.$td),

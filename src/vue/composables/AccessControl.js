@@ -5,9 +5,9 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 export const useAccessControl = () => {
 	const strings = {
 		tooltip : sprintf(
-			// Translators: 1 - The plugin name ("All in One SEO")
-			__('By default, only users with an Administrator role have permission to manage %1$s within your WordPress admin area. With Access Controls, though, you can easily extend specific access permissions to other user roles.', td),
-			import.meta.env.VITE_NAME
+			// Translators: 1 - The plugin short name ("AIOSEO").
+			__('By default, only Administrators have permission to manage %1$s within WordPress. With Access Controls, you can easily extend access permissions to other user roles.', td),
+			import.meta.env.VITE_SHORT_NAME
 		),
 		accessControl      : __('Access Control Settings', td),
 		useDefaultSettings : __('Use Default Settings', td)

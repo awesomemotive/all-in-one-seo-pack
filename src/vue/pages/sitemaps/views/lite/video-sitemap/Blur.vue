@@ -1,7 +1,7 @@
 <template>
 	<core-blur>
 		<div class="aioseo-settings-row aioseo-section-description">
-			{{ strings.description }}
+			{{ strings.extendedDescription }}
 			<span
 				v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'videoSitemaps', true)"
 			/>

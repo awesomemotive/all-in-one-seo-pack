@@ -39,6 +39,7 @@
 
 					<core-alert
 						class="inline-upsell"
+						:class="{ 'is-pro': !isIndexNowLite && (isIndexNowActivate || isIndexNowUpdate) }"
 						v-if="isIndexNowLite || isIndexNowActivate || isIndexNowUpdate"
 						type="blue"
 					>
@@ -130,9 +131,9 @@ export default {
 			installingPlugin   : false,
 			strings            : merge(this.composableStrings, {
 				upsell : this.$t.sprintf(
-					// Translators: 1 - The plugin short name name ("AIOSEO") + Pro, 2 - "Learn more".
-					this.$t.__('This feature is only for licensed %1$s users. %2$s', this.$td),
-					`<strong>${import.meta.env.VITE_SHORT_NAME} Pro</strong>`,
+					// Translators: 1 - "PRO", 2 - "Learn more".
+					this.$t.__('IndexNow is a %1$s feature. %2$s', this.$td),
+					'PRO',
 					this.$links.getUpsellLink('webmaster-tools', this.$constants.GLOBAL_STRINGS.learnMore, 'index-now', true)
 				),
 				activate            : this.$t.__('Activate IndexNow', this.$td),
@@ -249,8 +250,14 @@ export default {
 <style lang="scss">
 .tool-settings-index-now {
 	.inline-upsell {
-		display: inline-block;
+		display: inline-flex;
 		margin-top: 12px;
+		gap: 10px;
+
+		&.is-pro {
+			min-width: 100%;
+			max-width: 100%;
+		}
 	}
 
 	.aioseo-index-now-key {

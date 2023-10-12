@@ -45,7 +45,7 @@
 				]"
 				:cta-link="$links.getPricingUrl('access-control', 'access-control-upsell')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="$links.getUpsellUrl('access-control', null, 'home')"
+				:learn-more-link="$links.getUpsellUrl('access-control', null, $isPro ? 'pricing' : 'liteUpgrade')"
 				align-top
 			>
 				<template #header-text>
@@ -93,12 +93,11 @@ export default {
 				seoEditorRole   : this.$t.__('SEO Editor Role', this.$td),
 				defaultSettings : this.$t.__('Default settings that just work', this.$td),
 				granularControl : this.$t.__('Granular controls per role', this.$td),
-				ctaButtonText   : this.$t.__('Upgrade to Pro and Unlock Access Control', this.$td),
+				ctaButtonText   : this.$t.__('Unlock Access Control', this.$td),
 				ctaHeader       : this.$t.sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('Access Control is only available for licensed %1$s %2$s users.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+					// Translators: 1 - "PRO".
+					this.$t.__('Access Control is a %1$s Feature', this.$td),
+					'PRO'
 				)
 			})
 		}

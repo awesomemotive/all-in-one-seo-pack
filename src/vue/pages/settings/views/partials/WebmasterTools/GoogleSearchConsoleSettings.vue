@@ -92,9 +92,9 @@ export default {
 				thisFeatureRequires         : this.$t.__('Advanced tracking and actionable reports require one of the following plans:', this.$td),
 				thisFeatureRequiresSingular : this.$t.__('Advanced tracking and actionable reports require the following plan:', this.$td),
 				liteUpsell                  : this.$t.sprintf(
-					// Translators: 1 - The plugin short name name ("AIOSEO") + Pro, 2 - "Learn more".
-					this.$t.__('Advanced tracking and actionable reports are available to licensed %1$s users. %2$s', this.$td),
-					`${import.meta.env.VITE_SHORT_NAME} Pro`,
+					// Translators: 1 - "PRO", 2 - "Learn more".
+					this.$t.__('Advanced tracking and actionable reports is a %1$s feature. %2$s', this.$td),
+					'PRO',
 					this.$links.getUpsellLink('search-statistics', this.$constants.GLOBAL_STRINGS.learnMore, 'webmaster-tools', true)
 				),
 				notConnected : this.$t.sprintf(

@@ -7,243 +7,55 @@
 		}"
 	>
 		<div class="aioseo-cta-background">
-			<div
-				v-if="1 === type"
-				class="type-1"
+			<component
+				:is="getCtaComponent"
+				:strings="strings"
+				:feature-list="featureList"
+				:cta-button-visible="ctaButtonVisible"
+				:cta-button-loading="ctaButtonLoading"
+				:cta-button-visible-warning="ctaButtonVisibleWarning"
+				:cta-link="ctaLink"
+				:target="target"
+				:button-text="buttonText"
+				:cta-button-click="ctaButtonClick"
+				:show-link="showLink"
+				:learn-more-link="learnMoreLink"
+				:hide-bonus="hideBonus"
 			>
-				<div class="header-text">
-					<slot name="header-text">
-						{{ strings.ctaHeader }}
-					</slot>
-				</div>
+				<template #header-text>
+					<slot name="header-text" />
+				</template>
 
-				<div class="description">
-					<slot name="description">
-						{{ strings.ctaDescription }}
-					</slot>
-				</div>
+				<template #description>
+					<slot name="description" />
+				</template>
 
-				<grid-row
-					v-if="featureList"
-					class="feature-list"
-				>
-					<grid-column
-						md="6"
-						v-for="(feature, index) in featureList"
-						:key="index"
-					>
-						<svg-circle-check />
-						{{ feature }}
-					</grid-column>
-				</grid-row>
+				<template #learn-more-text>
+					<slot name="learn-more-text" />
+				</template>
 
-				<core-alert
-					v-if="!ctaButtonVisible && ctaButtonVisibleWarning"
-					type="yellow"
-					v-html="ctaButtonVisibleWarning"
-				/>
-
-				<base-button
-					v-if="ctaButtonVisible"
-					type="green"
-					tag="a"
-					:href="ctaLink"
-					:target="target"
-					@click.native="ctaButtonClick"
-					:loading="ctaButtonLoading"
-				>
-					{{ buttonText }}
-				</base-button>
-
-				<a
-					v-if="showLink"
-					class="learn-more"
-					:href="learnMoreLink"
-					target="_blank"
-				>
-					<slot name="learn-more-text">
-						{{ strings.learnMoreAllFeatures }}
-					</slot>
-				</a>
-			</div>
-
-			<div
-				v-if="2 === type"
-				class="type-2"
-			>
-				<div>
-					<div class="header-text">
-						<slot name="header-text">
-							{{ strings.ctaHeader }}
-						</slot>
-					</div>
-
-					<div class="description">
-						<slot name="description">
-							{{ strings.ctaDescription }}
-						</slot>
-					</div>
-
-					<grid-row
-						v-if="featureList && featureList.length <= 5"
-						class="feature-list"
-					>
-						<grid-column
-							md="12"
-							v-for="(feature, index) in featureList"
-							:key="index"
-						>
-							<svg-circle-check />
-							{{ feature }}
-						</grid-column>
-					</grid-row>
-
-					<grid-row
-						v-if="featureList && featureList.length > 5"
-						class="feature-list"
-					>
-						<grid-column
-							md="6"
-							v-for="(feature, index) in featureList"
-							:key="index"
-						>
-							<svg-circle-check />
-							{{ feature }}
-						</grid-column>
-					</grid-row>
-
-					<core-alert
-						v-if="!ctaButtonVisible && ctaButtonVisibleWarning"
-						type="yellow"
-						v-html="ctaButtonVisibleWarning"
-					/>
-
-					<base-button
-						v-if="ctaButtonVisible"
-						type="green"
-						tag="a"
-						:href="ctaLink"
-						:target="target"
-						@click.native="ctaButtonClick"
-						:loading="ctaButtonLoading"
-					>
-						{{ buttonText }}
-					</base-button>
-
-					<br>
-					<br>
-
-					<a
-						v-if="showLink"
-						class="learn-more"
-						:href="learnMoreLink"
-						target="_blank"
-					>
-						<slot name="learn-more-text">
-							{{ strings.learnMoreAllFeatures }}
-						</slot>
-					</a>
-				</div>
-
-				<div class="featured-image">
+				<template #featured-image>
 					<slot name="featured-image" />
-				</div>
-			</div>
-
-			<div
-				v-if="3 === type"
-				class="type-3"
-			>
-				<div class="sub-header">
-					{{ strings.upgradeToPro }}
-				</div>
-				<div class="header-text">
-					<slot name="header-text">
-						{{ strings.ctaHeader }}
-					</slot>
-				</div>
-
-				<grid-row
-					v-if="featureList"
-					class="feature-list"
-				>
-					<grid-column
-						md="6"
-						v-for="(feature, index) in featureList"
-						:key="index"
-					>
-						<svg-circle-check />
-						{{ feature }}
-					</grid-column>
-				</grid-row>
-
-				<core-alert
-					v-if="!ctaButtonVisible && ctaButtonVisibleWarning"
-					type="yellow"
-					v-html="ctaButtonVisibleWarning"
-				/>
-
-				<base-button
-					v-if="ctaButtonVisible"
-					type="green"
-					tag="a"
-					:href="ctaLink"
-					:target="target"
-					@click.native="ctaButtonClick"
-					:loading="ctaButtonLoading"
-					size="medium"
-				>
-					{{ buttonText }}
-				</base-button>
-
-				<base-button
-					v-if="showLink"
-					type="gray"
-					tag="a"
-					:href="learnMoreLink"
-					target="_blank"
-					size="medium"
-				>
-					<slot name="learn-more-text">
-						{{ strings.seeAllFeatures }}
-					</slot>
-				</base-button>
-			</div>
-
-			<div
-				v-if="4 === type"
-				class="type-4"
-			>
-				<div class="header-text">
-					<slot name="header-text">
-						{{ strings.ctaHeader }}
-					</slot>
-				</div>
-
-				<div class="description">
-					<slot name="description">
-						{{ strings.ctaDescription }}
-					</slot>
-				</div>
-			</div>
+				</template>
+			</component>
 		</div>
 	</div>
 </template>
 
 <script>
-import CoreAlert from '@/vue/components/common/core/alert/Index'
-import BaseButton from '@/vue/components/common/base/Button'
-import GridColumn from '@/vue/components/common/grid/Column'
-import GridRow from '@/vue/components/common/grid/Row'
-import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
+import Type1 from '@/vue/components/common/cta/Type/1'
+import Type2 from '@/vue/components/common/cta/Type/2'
+import Type3 from '@/vue/components/common/cta/Type/3'
+import Type4 from '@/vue/components/common/cta/Type/4'
+import Type5 from '@/vue/components/common/cta/Type/5'
 export default {
 	emits      : [ 'cta-button-click' ],
 	components : {
-		CoreAlert,
-		BaseButton,
-		GridColumn,
-		GridRow,
-		SvgCircleCheck
+		Type1,
+		Type2,
+		Type3,
+		Type4,
+		Type5
 	},
 	props : {
 		type : {
@@ -295,7 +107,8 @@ export default {
 			default () {
 				return false
 			}
-		}
+		},
+		hideBonus : Boolean
 	},
 	data () {
 		return {
@@ -307,10 +120,9 @@ export default {
 					'Pro'
 				),
 				ctaHeader : this.$t.sprintf(
-					// Translators: 1 - The plugin name ("All in One SEO"), 2 - "Pro".
-					this.$t.__('This feature is only available for licensed %1$s %2$s users.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+					// Translators: 1 - "PRO".
+					this.$t.__('This is a %1$s Feature', this.$td),
+					'PRO'
 				),
 				ctaDescription : this.$t.sprintf(
 					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
@@ -321,6 +133,11 @@ export default {
 				learnMoreAllFeatures : this.$t.__('Learn more about all features', this.$td),
 				seeAllFeatures       : this.$t.__('See all features', this.$td)
 			}
+		}
+	},
+	computed : {
+		getCtaComponent () {
+			return `Type${this.type}`
 		}
 	},
 	methods : {
@@ -429,131 +246,6 @@ export default {
 				margin-top: 20px;
 				color: $placeholder-color;
 				font-size: 14px;
-			}
-
-			.type-1 {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-			}
-
-			.type-2 {
-				// margin: 30px 0 30px 50px;
-				display: flex;
-
-				.header-text,
-				.description {
-					text-align: left;
-				}
-
-				.description {
-					margin: 16px 0 30px;
-				}
-
-				.feature-list {
-					margin: 30px 0;
-				}
-
-				> div {
-					margin-right: 20px;
-					flex: 0 0 50%;
-				}
-
-				.featured-image {
-					max-height: 540px;
-					border: 1px solid $border;
-					flex: 1;
-					overflow: hidden;
-					margin-right: -41px;
-					margin-bottom: -71px;
-					border-radius: 5px 0 0;
-
-					img {
-						max-height: 600px;
-					}
-				}
-
-				@media only screen and (max-width: 912px) {
-					flex-direction: column;
-					align-items: center;
-
-					.header-text,
-					.description {
-						text-align: center;
-					}
-
-					> div {
-						text-align: center;
-						margin-right: 0;
-						margin-bottom: 30px;
-						flex: 1 0 100%;
-						width: 100%;
-					}
-
-					.featured-image {
-						margin: 0 -10px -41px -10px;
-						border-radius: 5px 5px 0 0;
-						max-height: 300px;
-					}
-				}
-			}
-
-			.type-3 {
-				display: flex;
-				flex-wrap: wrap;
-				justify-content: center;
-				column-gap: 20px;
-				row-gap: 8px;
-
-				> * {
-					width: 100%;
-				}
-
-				.sub-header {
-					line-height: 1.4;
-					font-size: 12px;
-					font-weight: $font-bold;
-					color: $blue;
-					text-align: center;
-				}
-
-				.header-text {
-					text-align: center;
-				}
-
-				.feature-list {
-					margin: 22px 0;
-
-					.aioseo-col {
-
-						svg.aioseo-circle-check {
-							color: $green;
-							width: 21px;
-							min-width: 21px;
-							min-height: 21px;
-							margin-right: 10px;
-						}
-					}
-				}
-
-				.aioseo-button {
-					width: auto;
-				}
-			}
-
-			.type-4 {
-
-				.header-text {
-					font-weight: $font-bold;
-					font-size: 16px;
-					margin-bottom: 8px;
-				}
-
-				.description {
-					font-weight: 400;
-					font-size: 14px;
-					margin: 0;
-				}
 			}
 		}
 	}

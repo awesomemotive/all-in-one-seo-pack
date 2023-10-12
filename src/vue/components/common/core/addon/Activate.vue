@@ -11,6 +11,7 @@
 		:learn-more-link="learnMoreLink"
 		:feature-list="featureList"
 		:align-top="alignTop"
+		hide-bonus
 	>
 		<template #header-text>
 			{{ ctaHeader }}

@@ -162,3 +162,11 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss">
+.tool-settings-microsoft-clarity {
+	.aioseo-alert {
+		display: inline-block;
+	}
+}
+</style>

@@ -103,7 +103,7 @@ export default {
 				label          : this.$t.__('Label:', this.$td),
 				name           : this.$t.__('Slug:', this.$td),
 				postTypes      : this.$t.__('Post Types:', this.$td),
-				ctaButtonText  : this.$t.__('Upgrade to Pro and Unlock Custom Taxonomies', this.$td),
+				ctaButtonText  : this.$t.__('Unlock Custom Taxonomies', this.$td),
 				ctaDescription : this.$t.sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - "Pro".
 					this.$t.__('%1$s %2$s lets you set the SEO title and description for custom taxonomies. You can also control all of the robots meta and other options just like the default category and tags taxonomies.', this.$td),
@@ -111,10 +111,9 @@ export default {
 					'Pro'
 				),
 				ctaHeader : this.$t.sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('Custom Taxonomy Support is only available for licensed %1$s %2$s users.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+					// Translators: 1 - "PRO".
+					this.$t.__('Custom Taxonomy Support is a %1$s Feature', this.$td),
+					'PRO'
 				)
 			},
 			tabs : [

@@ -30,7 +30,10 @@ export const usePluginsStore = defineStore('PluginsStore', {
 						const basename = response.body.completed[sku]
 						const addon    = addonsStore.addons.find(item => sku === item.sku)
 						if (addon) {
-							addon.basename = basename
+							addon.basename          = basename
+							addon.installed         = true
+							addon.hasMinimumVersion = true
+							addon.installedVersion  = addon.version
 							addonsStore.updateAddon(addon)
 						}
 					})

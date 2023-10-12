@@ -5,11 +5,21 @@
 		no-slide
 		:header-text="strings.linkingOpportunities"
 	>
+		<template #tabs>
+			<core-main-tabs
+				:tabs="tabs"
+				:showSaveButton="false"
+				:active="activeTab"
+				@changed="value => activeTab = value"
+				internal
+			/>
+		</template>
+
 		<div>
 			<div class="linking-opportunities-table">
 				<table-row
 					class="header-row"
-					v-if="linkingOpportunities.length"
+					v-if="opportunities?.length"
 				>
 					<table-column
 						v-for="(column, index) in columns"
@@ -35,7 +45,7 @@
 				</table-row>
 
 				<table-row
-					v-for="(row, index) in linkingOpportunities"
+					v-for="(row, index) in opportunities"
 					:key="index"
 					class="row"
 					:class="{
@@ -47,11 +57,14 @@
 							<core-tooltip
 								type="action"
 							>
-								<a
-									:href="`#/links-report?postTitle=${row.postTitle}`"
-								>
+								<router-link :to="{
+									name : 'links-report',
+									query : {
+										postTitle : row.postTitle
+									}
+								}">
 									{{ row.postTitle }}
-								</a>
+								</router-link>
 
 								<template #tooltip>
 									<a
@@ -66,17 +79,23 @@
 						</div>
 					</table-column>
 
-					<table-column class="internal-inbound">
-						<span class="count">{{ row.suggestionsInbound }}</span>
+					<table-column
+						class="internal-inbound"
+						v-if="'inbound' === activeTab"
+					>
+						<span class="count">{{ row.inboundSuggestions }}</span>
 					</table-column>
 
-					<table-column class="internal-outbound">
-						<span class="count">{{ row.suggestionsOutbound }}</span>
+					<table-column
+						class="internal-outbound"
+						v-if="'outbound' === activeTab"
+					>
+						<span class="count">{{ row.outboundSuggestions }}</span>
 					</table-column>
 				</table-row>
 
 				<table-row
-					v-if="!linkingOpportunities.length"
+					v-if="!opportunities?.length"
 					class="row even"
 				>
 
@@ -87,7 +106,7 @@
 			</div>
 
 			<div class="links-report-link"
-				v-if="linkingOpportunities.length"
+				v-if="opportunities?.length"
 			>
 				<span v-html="link" />
 			</div>
@@ -97,6 +116,7 @@
 
 <script>
 import CoreCard from '@/vue/components/common/core/Card'
+import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgLinkInternalInbound from '@/vue/components/common/svg/link/InternalInbound'
 import SvgLinkInternalOutbound from '@/vue/components/common/svg/link/InternalOutbound'
@@ -105,6 +125,7 @@ import TableRow from '@/vue/components/common/table/Row'
 export default {
 	components : {
 		CoreCard,
+		CoreMainTabs,
 		CoreTooltip,
 		SvgLinkInternalInbound,
 		SvgLinkInternalOutbound,
@@ -119,7 +140,8 @@ export default {
 	},
 	data () {
 		return {
-			strings : {
+			activeTab : 'inbound',
+			strings   : {
 				linkingOpportunities : this.$t.__('Linking Opportunities', this.$td),
 				noResults            : this.$t.__('No items found.', this.$td)
 			},
@@ -127,37 +149,32 @@ export default {
 				'<a class="links-report-link" href="%1$s">%2$s</a><a href="%1$s"> <span>&rarr;</span></a>',
 				'#/links-report?linkingOpportunities=1',
 				this.$t.__('See All Linking Opportunities', this.$td)
-			)
-		}
-	},
-	computed : {
-		columns () {
-			return [
+			),
+			tabs : [
+				{
+					slug : 'inbound',
+					name : this.$t.__('Inbound Suggestions', this.$td)
+				},
+				{
+					slug : 'outbound',
+					name : this.$t.__('Outbound Suggestions', this.$td)
+				}
+			],
+			columns : [
 				{
 					slug  : 'post-title',
 					label : this.$t.__('Post Title', this.$td)
 				},
 				{
-					slug  : 'internal-inbound',
-					label : this.$t.sprintf(
-						// Translators: 1 - Opening strong tag, 2 - Closing strong tag, BR tag.
-						this.$t.__('%1$sInbound Internal Links%2$sLinks from other posts to this post', this.$td),
-						'<strong>',
-						'</strong><br />'
-					),
-					tooltipIcon : 'svg-link-internal-inbound'
-				},
-				{
-					slug  : 'internal-outbound',
-					label : this.$t.sprintf(
-						// Translators: 1 - Opening strong tag, 2 - Closing strong tag, BR tag.
-						this.$t.__('%1$sOutbound Internal Links%2$sLinks from this post to other posts', this.$td),
-						'<strong>',
-						'</strong><br />'
-					),
-					tooltipIcon : 'svg-link-internal-outbound'
+					slug  : 'suggestions-count',
+					label : this.$t.__('Count', this.$td)
 				}
 			]
+		}
+	},
+	computed : {
+		opportunities () {
+			return this.linkingOpportunities[this.activeTab]
 		}
 	}
 }
@@ -215,30 +232,21 @@ export default {
 					}
 				}
 
+				&.suggestions-count .row {
+					margin-left: auto;
+				}
+
 				&.internal-inbound,
 				&.internal-outbound {
 					min-width: 60px;
 					flex: 0;
-					text-align: center;
-
-					.row {
-						align-self: center;
-					}
+					text-align: right;
 				}
 
 				.aioseo-tooltip-wrapper {
 					display: flex;
 					.aioseo-tooltip {
 						margin: 0;
-					}
-				}
-
-				svg {
-					&.aioseo-link-internal-outbound,
-					&.aioseo-link-internal-inbound {
-						height: 17px;
-						width: 17px;
-						color: $green;
 					}
 				}
 			}

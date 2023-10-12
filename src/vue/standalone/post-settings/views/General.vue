@@ -135,6 +135,30 @@
 			</template>
 		</core-settings-row>
 
+		<core-settings-row
+			v-if="
+				'metabox' === $root._data.screenContext &&
+				'post' === postEditorStore.currentPost.context &&
+				!isPageBuilderEditor()
+			"
+			id="aioseo-post-settings-cornerstone-content-row"
+			class="cornerstone-content-row"
+		>
+			<template #name>
+				{{ strings.cornerstoneContent }}
+
+				<core-pro-badge
+					v-if="licenseStore.isUnlicensed"
+				/>
+			</template>
+
+			<template #content>
+				<cornerstone-content
+					@changeTab="newTab => $emit('changeTab', newTab)"
+				/>
+			</template>
+		</core-settings-row>
+
 		<div
 			v-if="displayTruSeoMetaboxCard && optionsStore.options.searchAppearance.advanced.useKeywords && optionsStore.options.searchAppearance.advanced.keywordsLooking"
 		>
@@ -158,7 +182,7 @@
 					href="#"
 					@click.prevent="$emit('changeTab', 'advanced')"
 				>
-						→
+					→
 				</a>
 			</core-alert>
 		</div>
@@ -205,6 +229,17 @@
 				<page-analysis />
 			</template>
 		</core-settings-row>
+
+		<core-sidebar-card
+			v-if="'sidebar' === $root._data.screenContext && !isPageBuilderEditor() && 'modal' !== this.parentComponentContext"
+			class="card-cornerstone-content"
+			slug="cornerstoneContent"
+			:header-text="strings.cornerstoneContent"
+		>
+			<cornerstone-content
+				@changeTab="newTab => $emit('changeTab', newTab)"
+			/>
+		</core-sidebar-card>
 
 		<core-sidebar-card
 			v-if="displayTruSeoSidebarKeyphraseCard"
@@ -269,6 +304,7 @@
 </template>
 <script>
 import {
+	useLicenseStore,
 	useOptionsStore,
 	usePostEditorStore,
 	useRootStore,
@@ -293,18 +329,22 @@ import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreSidebarCard from '@/vue/components/common/core/SidebarCard'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
+import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import FocusKeyphrase from './partials/general/FocusKeyphrase'
 import MetaboxAnalysisDetail from './partials/general/MetaboxAnalysisDetail'
 import PageAnalysis from './partials/general/PageAnalysis'
+import CornerstoneContent from './partials/general/CornerstoneContent'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import SvgDesktop from '@/vue/components/common/svg/Desktop'
 import SvgMobile from '@/vue/components/common/svg/Mobile'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
+import license from '@/vue/utils/license'
 export default {
 	setup () {
 		const { strings } = useTruSeoScore()
 
 		return {
+			licenseStore           : useLicenseStore(),
 			optionsStore           : useOptionsStore(),
 			postEditorStore        : usePostEditorStore(),
 			rootStore              : useRootStore(),
@@ -326,9 +366,11 @@ export default {
 		CoreSettingsRow,
 		CoreSidebarCard,
 		CoreTooltip,
+		CoreProBadge,
 		FocusKeyphrase,
 		MetaboxAnalysisDetail,
 		PageAnalysis,
+		CornerstoneContent,
 		SvgCircleQuestionMark,
 		SvgDesktop,
 		SvgMobile,
@@ -345,6 +387,7 @@ export default {
 	},
 	data () {
 		return {
+			license,
 			allowed,
 			separator         : undefined,
 			isPageBuilderEditor,
@@ -364,8 +407,7 @@ export default {
 				clickToAddTitle               : this.$t.__('Click on the tags below to insert variables into your title.', this.$td),
 				metaDescription               : this.$t.__('Meta Description', this.$td),
 				clickToAddDescription         : this.$t.__('Click on the tags below to insert variables into your meta description.', this.$td),
-				pillarContent                 : this.$t.__('Pillar Content', this.$td),
-				pillarContentCopy             : this.$t.__('Cornerstone content should be the most important and extensive articles on your site.', this.$td),
+				cornerstoneContent            : this.$t.__('Cornerstone Content', this.$td),
 				focusKeyphrase                : this.$t.__('Focus Keyphrase', this.$td),
 				additionalKeyphrases          : this.$t.__('Additional Keyphrases', this.$td),
 				pageAnalysis                  : this.$t.__('Page Analysis', this.$td),
@@ -597,15 +639,6 @@ export default {
 		}
 	}
 
-	.aioseo-toggle {
-		display: block;
-
-		.toggle-content input:checked + .toggle-switch {
-			border: 1px solid $green;
-			background-color: $green;
-		}
-	}
-
 	.aioseo-keyphrase-tag {
 		display: inline-block;
 		margin-right: 10px;
@@ -749,8 +782,23 @@ export default {
 		margin-bottom: 20px;
 	}
 
+	.cornerstone-content-row {
+		.cornerstone-content-panel {
+			display: flex;
+			flex-flow: column;
+
+			p {
+				order: 2;
+			}
+		}
+	}
+
 	.aioseo-alert {
 		margin-bottom: 5px;
+
+		&.inline-upsell {
+			margin-top: 10px;
+		}
 	}
 }
 
@@ -781,7 +829,8 @@ export default {
 	.card-additional-keyphrase,
 	.card-basic-seo,
 	.card-title-seo,
-	.card-readability-seo {
+	.card-readability-seo,
+	.card-cornerstone-content {
 		margin: 0 -1rem;
 		box-shadow: none;
 		border: none;
@@ -839,6 +888,10 @@ export default {
 
 	.card-readability-seo {
 		border-bottom: 1px solid $border;
+
+		.aioseo-toggle {
+			margin-bottom: 14px;
+		}
 	}
 
 	.aioseo-keyphrase-tag {

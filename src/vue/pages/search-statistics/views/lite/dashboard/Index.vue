@@ -5,7 +5,7 @@
 		<cta
 			:cta-link="$links.getPricingUrl('search-statistics', 'search-statistics-upsell', 'dashboard')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="$links.getUpsellUrl('search-statistics', 'dashboard', 'home')"
+			:learn-more-link="$links.getUpsellUrl('search-statistics', 'dashboard', $isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="[
 				strings.feature1,
 				strings.feature2,
@@ -13,6 +13,7 @@
 				strings.feature4
 			]"
 			align-top
+			:hide-bonus="!licenseStore.isUnlicensed"
 		>
 			<template #header-text>
 				{{ strings.ctaHeader }}
@@ -27,10 +28,19 @@
 </template>
 
 <script>
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
 import Blur from './Blur'
 import Cta from '@/vue/components/common/cta/Index'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore()
+		}
+	},
 	components : {
 		Blur,
 		Cta,
@@ -39,16 +49,11 @@ export default {
 	data () {
 		return {
 			strings : {
-				ctaButtonText : this.$t.sprintf(
-					// Translators: 1 - "Pro".
-					this.$t.__('Upgrade to %1$s and Unlock Search Statistics', this.$td),
-					'Pro'
-				),
-				ctaHeader : this.$t.sprintf(
-					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('Search Statistics is only for licensed %1$s %2$s users.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+				ctaButtonText : this.$t.__('Unlock Search Statistics', this.$td),
+				ctaHeader     : this.$t.sprintf(
+					// Translators: 1 - "PRO".
+					this.$t.__('Search Statistics is a %1$s Feature', this.$td),
+					'PRO'
 				),
 				ctaDescription      : this.$t.__('Connect your site to Google Search Console to receive insights on how content is being discovered. Identify areas for improvement and drive traffic to your website.', this.$td),
 				thisFeatureRequires : this.$t.__('This feature requires one of the following plans:', this.$td),

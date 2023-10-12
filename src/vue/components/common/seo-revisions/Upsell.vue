@@ -2,8 +2,9 @@
 	<cta
 		:cta-link="$links.getPricingUrl('seo-revisions', 'seo-revisions', parentComponentContext)"
 		:button-text="strings.ctaButtonText"
-		:learn-more-link="$links.getUpsellUrl('seo-revisions', parentComponentContext, 'home')"
+		:learn-more-link="$links.getUpsellUrl('seo-revisions', parentComponentContext, $isPro ? 'pricing' : 'liteUpgrade')"
 		:feature-list="strings.ctaFeatures"
+		:hide-bonus="!licenseStore.isUnlicensed"
 	>
 		<template #header-text>
 			{{ strings.ctaHeader }}
@@ -18,10 +19,19 @@
 </template>
 
 <script>
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
 import Cta from '@/vue/components/common/cta/Index'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore()
+		}
+	},
 	components : {
 		Cta,
 		RequiredPlans
@@ -33,10 +43,9 @@ export default {
 		return {
 			strings : {
 				ctaHeader : this.$t.sprintf(
-					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('SEO Revisions is only available for licensed %1$s %2$s users.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+					// Translators: 1 - "PRO".
+					this.$t.__('SEO Revisions is a %1$s Feature', this.$td),
+					'PRO'
 				),
 				ctaDescription : this.$t.__('Our powerful revisions feature provides a valuable record of SEO updates, allowing you to monitor the effectiveness of your SEO efforts and make informed decisions.', this.$td),
 				ctaFeatures    : [
@@ -45,11 +54,7 @@ export default {
 					this.$t.__('Greater transparency and accountability', this.$td),
 					this.$t.__('Historical record of optimization efforts', this.$td)
 				],
-				ctaButtonText : this.$t.sprintf(
-					// Translators: 1 - "Pro".
-					this.$t.__('Upgrade to %1$s and Unlock SEO Revisions', this.$td),
-					'Pro'
-				)
+				ctaButtonText : this.$t.__('Unlock SEO Revisions', this.$td)
 			}
 		}
 	}

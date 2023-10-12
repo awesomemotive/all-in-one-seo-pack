@@ -53,7 +53,7 @@ const HeadlineTabNewScore = props => {
 				props.setAnalyzer({
 					isNewData : false
 				})
-				console.log(error)
+				console.error(error)
 			})
 	}
 

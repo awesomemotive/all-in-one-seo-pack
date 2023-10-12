@@ -100,7 +100,7 @@
 			:button-text="strings.ctaButtonText"
 			:floating="false"
 			:cta-link="$links.utmUrl('feature-manager', 'main-cta')"
-			:learn-more-link="$links.getUpsellUrl('feature-manager', 'main-cta', 'home')"
+			:learn-more-link="$links.getUpsellUrl('feature-manager', 'main-cta', $isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="$constants.UPSELL_FEATURE_LIST"
 		>
 			<template #header-text>
@@ -239,7 +239,7 @@ export default {
 					this.$t.__('Upgrade %1$s to Pro and Unlock all Features!', this.$td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				ctaButtonText           : this.$t.__('Upgrade to Pro and Unlock All Features', this.$td),
+				ctaButtonText           : this.$t.__('Unlock All Features', this.$td),
 				aValidLicenseIsRequired : this.$t.__('A valid license key is required in order to use our addons.', this.$td),
 				enterLicenseKey         : this.$t.__('Enter License Key', this.$td),
 				purchaseLicense         : this.$t.__('Purchase License', this.$td),
@@ -425,7 +425,6 @@ export default {
 	}
 
 	.aioseo-feature-manager-addons > .aioseo-row {
-
 			@include aioseoGrid(3, 290px);
 
 			.aioseo-col {

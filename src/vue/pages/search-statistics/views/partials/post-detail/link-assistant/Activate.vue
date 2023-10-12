@@ -2,7 +2,10 @@
 	<div class="aioseo-search-statistics-link-assistant">
 		<blur />
 
-		<cta :type="4">
+		<cta
+			:type="4"
+			hideBonus
+		>
 			<template #header-text>
 				{{ strings.ctaHeader }}
 			</template>
@@ -44,7 +47,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				ctaHeader           : this.$t.__('Enable Link Assistant on your Site', this.$td),
+				ctaHeader           : this.$t.__('Enable Link Assistant on Your Site', this.$td),
 				ctaDescription      : this.$t.__('Get internal link suggestions for all your content including orphaned posts that have no internal links.', this.$td),
 				enableLinkAssistant : this.$t.__('Enable Link Assistant', this.$td)
 			}

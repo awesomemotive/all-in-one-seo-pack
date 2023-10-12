@@ -1,7 +1,8 @@
 <template>
 	<core-alert
+		class="aioseo-required-plans"
 		v-if="licenseStore.isUnlicensed || showAlert"
-		type="red"
+		type="blue"
 	>
 		{{ requiredPlansString }} <strong>{{ getRequiredPlans }}</strong>
 	</core-alert>
@@ -73,3 +74,9 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss">
+.aioseo-app .aioseo-cta .aioseo-cta-background .description .aioseo-alert.aioseo-required-plans {
+	text-align: center;
+}
+</style>

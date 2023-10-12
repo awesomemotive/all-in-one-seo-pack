@@ -294,6 +294,15 @@ export default {
 	},
 	methods : {
 		processChangeTab (newTabValue) {
+			// We need to check for null here explicitly because null values identify themselves as objects.
+			if (null !== newTabValue && 'object' === typeof newTabValue) {
+				this.processChangeTab(newTabValue.main)
+				this.$nextTick(() => {
+					this.settingsStore.changeTabSettings({ setting: newTabValue.main, value: newTabValue.sub })
+				})
+				return
+			}
+
 			switch (this.$root._data.screenContext) {
 				case 'sidebar' :
 					// Change the WordPress components panel header to static if there's a tab open.

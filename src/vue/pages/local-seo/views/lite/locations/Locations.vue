@@ -16,9 +16,10 @@
 			<cta
 				:cta-link="$links.getPricingUrl('local-seo', 'local-seo-upsell', 'locations')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="$links.getUpsellUrl('local-seo', null, 'home')"
+				:learn-more-link="$links.getUpsellUrl('local-seo', null, $isPro ? 'pricing' : 'liteUpgrade')"
 				:feature-list="features"
 				align-top
+				:hide-bonus="!licenseStore.isUnlicensed"
 			>
 				<template #header-text>
 					{{ strings.ctaHeader }}
@@ -34,12 +35,21 @@
 </template>
 
 <script>
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
 import Blur from './Blur'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import Cta from '@/vue/components/common/cta/Index'
 export default {
+	setup () {
+		return {
+			licenseStore : useLicenseStore()
+		}
+	},
 	components : {
 		Blur,
 		RequiredPlans,
@@ -56,14 +66,13 @@ export default {
 				this.$t.__('Detailed Address, Contact and Payment Info', this.$td)
 			],
 			strings : {
-				locationInfo1 : this.$t.__('Local Business schema markup enables you to tell Google about your business, including your business name, address and phone number, opening hours and price range. This information may be displayed as a Knowledge Graph card or business carousel.', this.$td),
+				locationInfo1 : this.$t.__('Local Business schema markup informs Google about your business details like name, address, phone number, hours, and price range, which can appear in a Knowledge Graph card or business carousel.', this.$td),
 				businessInfo  : this.$t.__('Business Info', this.$td),
-				ctaButtonText : this.$t.__('Upgrade to Pro and Unlock Local SEO', this.$td),
+				ctaButtonText : this.$t.__('Unlock Local SEO', this.$td),
 				ctaHeader     : this.$t.sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('Local SEO is only available for licensed %1$s %2$s users.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+					// Translators: 1 - "PRO".
+					this.$t.__('Local SEO is a %1$s Feature', this.$td),
+					'PRO'
 				)
 			}
 		}

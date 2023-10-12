@@ -1,19 +1,19 @@
 <template>
 	<div>
 		<core-wp-table
-			:bulk-options="bulkOptions"
+			:id="tableId"
+			:key="wpTableKey"
 			:class="{'link-assistant-inner-table' : !postReport}"
 			:columns="columns"
-			:id="tableId"
-			:initial-items-per-page="settingsStore.settings.tablePagination.linkAssistantPostsReport"
-			:initial-page-number="pageNumber"
-			:key="wpTableKey"
 			:loading="wpTableLoading"
 			:rows="rows"
+			:totals="post.links.inboundInternal.totals"
+			:bulk-options="bulkOptions"
+			:initial-items-per-page="settingsStore.settings.tablePagination.linkAssistantPostsReport"
+			:initial-page-number="pageNumber"
 			:show-pagination="!linksReport"
 			:show-search="false"
 			:show-table-footer="postReport"
-			:totals="post.links.inboundInternal.totals"
 			show-items-per-page
 			@paginate="processPagination"
 			@process-bulk-action="maybeDoBulkAction"
@@ -33,14 +33,14 @@
 						<a
 							:href="row.context.permalink"
 							target="_blank"
-						>{{ maybeViewPost(row) }}</a> |
+						>{{ viewPost(row.context.postType.singular) }}</a> |
 					</span>
 
 					<span class="edit">
 						<a
 							:href="row.context.editLink"
 							target="_blank"
-						>{{ maybeEditPost(row) }}</a>
+						>{{ editPost(row.context.postType.singular) }}</a>
 					</span>
 				</div>
 			</template>
@@ -208,12 +208,6 @@ export default {
 		}
 	},
 	methods : {
-		maybeViewPost (row) {
-			this.viewPost(row.context?.postType?.singular || 'Post')
-		},
-		maybeEditPost (row) {
-			this.editPost(row.context?.postType?.singular || 'Post')
-		},
 		processPagination (pageNumber) {
 			this.pageNumber = pageNumber
 

@@ -87,11 +87,22 @@ abstract class Base {
 	public function init() {}
 
 	/**
+	 * Check if the integration is active.
+	 *
+	 * @since 4.4.8
+	 *
+	 * @return bool Whether or not the integration is active.
+	 */
+	public function isActive() {
+		return $this->isPluginActive() || $this->isThemeActive();
+	}
+
+	/**
 	 * Check whether or not the plugin is active.
 	 *
 	 * @since 4.1.7
 	 *
-	 * @return boolean Whether or not the plugin is active.
+	 * @return bool Whether or not the plugin is active.
 	 */
 	public function isPluginActive() {
 		include_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -110,7 +121,7 @@ abstract class Base {
 	 *
 	 * @since 4.1.7
 	 *
-	 * @return boolean Whether or not the theme is active.
+	 * @return bool Whether or not the theme is active.
 	 */
 	public function isThemeActive() {
 		$theme = wp_get_theme();

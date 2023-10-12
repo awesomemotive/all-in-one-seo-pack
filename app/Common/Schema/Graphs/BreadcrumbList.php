@@ -17,37 +17,35 @@ class BreadcrumbList extends Graph {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return array $data The graph data.
+	 * @return array The graph data.
 	 */
 	public function get() {
-		$breadcrumbs = isset( aioseo()->schema->context['breadcrumb'] ) ? aioseo()->schema->context['breadcrumb'] : '';
-		if ( ! $breadcrumbs || ! count( $breadcrumbs ) ) {
+		$breadcrumbs = aioseo()->schema->context['breadcrumb'] ?? '';
+		if ( ! $breadcrumbs ) {
 			return [];
 		}
 
-		$data = [
-			'@type'           => 'BreadcrumbList',
-			'@id'             => aioseo()->schema->context['url'] . '#breadcrumblist',
-			'itemListElement' => []
-		];
-
 		$trailLength = count( $breadcrumbs );
+		if ( ! $trailLength ) {
+			return [];
+		}
+
+		$listItems = [];
 		foreach ( $breadcrumbs as $breadcrumb ) {
 			$listItem = [
 				'@type'    => 'ListItem',
 				'@id'      => $breadcrumb['url'] . '#listItem',
 				'position' => $breadcrumb['position'],
-				'item'     => [
-					'@type'       => 'WebPage',
-					'@id'         => $breadcrumb['url'],
-					'name'        => ! empty( $breadcrumb['name'] ) ? $breadcrumb['name'] : '',
-					'description' => ! empty( $breadcrumb['description'] ) ? $breadcrumb['description'] : '',
-					'url'         => $breadcrumb['url'],
-				]
+				'name'     => $breadcrumb['name'] ?? ''
 			];
 
+			// Don't add "item" prop for last crumb.
+			if ( $trailLength !== $breadcrumb['position'] ) {
+				$listItem['item'] = $breadcrumb['url'];
+			}
+
 			if ( 1 === $trailLength ) {
-				$data['itemListElement'][] = $listItem;
+				$listItems[] = $listItem;
 				continue;
 			}
 
@@ -59,8 +57,14 @@ class BreadcrumbList extends Graph {
 				$listItem['previousItem'] = $breadcrumbs[ $breadcrumb['position'] - 2 ]['url'] . '#listItem';
 			}
 
-			$data['itemListElement'][] = $listItem;
+			$listItems[] = $listItem;
 		}
+
+		$data = [
+			'@type'           => 'BreadcrumbList',
+			'@id'             => aioseo()->schema->context['url'] . '#breadcrumblist',
+			'itemListElement' => $listItems
+		];
 
 		return $data;
 	}

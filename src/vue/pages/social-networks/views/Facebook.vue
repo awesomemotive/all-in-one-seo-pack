@@ -643,16 +643,16 @@ export default {
 				postTypeObjectTypes           : this.$t.__('Default Post Type Object Types', this.$td),
 				taxonomyObjectTypes           : this.$t.__('Default Taxonomy Object Types', this.$td),
 				taxonomyObjectTypesUpsell     : this.$t.sprintf(
-					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - Learn more link.
-					this.$t.__('Default Taxonomy Object Types are only available for licensed %1$s users. %2$s', this.$td),
-					`<strong>${import.meta.env.VITE_SHORT_NAME} Pro</strong>`,
+					// Translators: 1 - "PRO", 2 - Learn more link.
+					this.$t.__('Default Taxonomy Object Types is a %1$s feature. %2$s', this.$td),
+					'PRO',
 					this.$links.getUpsellLink('general-facebook-settings', this.$constants.GLOBAL_STRINGS.learnMore, 'default-taxonomy-object-types', true)
 				),
 				defaultTermImageSourceUpsell : this.$t.sprintf(
-					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - Learn more link.
-					this.$t.__('Default Term Image Source is only available for licensed %1$s users. %2$s', this.$td),
-					`<strong>${import.meta.env.VITE_SHORT_NAME} Pro</strong>`,
-					this.$links.getUpsellLink('general-facebook-settings', this.$constants.GLOBAL_STRINGS.learnMore, 'default-term-image-soruce', true)
+					// Translators: 1 - "PRO", 2 - Learn more link.
+					this.$t.__('Default Term Image Source is a %1$s feature. %2$s', this.$td),
+					'PRO',
+					this.$links.getUpsellLink('general-facebook-settings', this.$constants.GLOBAL_STRINGS.learnMore, 'default-term-image-source', true)
 				),
 				generateArticleTags         : this.$t.__('Automatically Generate Article Tags', this.$td),
 				useKeywordsInTags           : this.$t.__('Use Keywords in Article Tags', this.$td),

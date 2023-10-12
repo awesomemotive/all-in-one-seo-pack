@@ -18,7 +18,8 @@
 				]"
 				:cta-link="$links.getPricingUrl('news-sitemap', 'news-sitemap-upsell')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="$links.getUpsellUrl('news-sitemap', null, 'home')"
+				:learn-more-link="$links.getUpsellUrl('news-sitemap', null, $isPro ? 'pricing' : 'liteUpgrade')"
+				:hide-bonus="!licenseStore.isUnlicensed"
 			>
 				<template #header-text>
 					{{ strings.ctaHeader }}
@@ -34,6 +35,10 @@
 </template>
 
 <script>
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
 import { useNewsSitemap } from '@/vue/pages/sitemaps/composables'
 import Blur from './Blur'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
@@ -45,6 +50,7 @@ export default {
 		const { strings } = useNewsSitemap()
 
 		return {
+			licenseStore : useLicenseStore(),
 			strings
 		}
 	},

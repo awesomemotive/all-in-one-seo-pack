@@ -67,19 +67,23 @@
 				{{ strings.cta.button }}
 			</base-button>
 
-			<div
-				class="cta-text"
-				v-html="strings.cta.bonus"
-			/>
+			<core-alert
+				class="cta-text bonus-alert"
+				type="yellow"
+			>
+				🎁 <span v-html="strings.cta.bonus" />
+			</core-alert>
 		</div>
 	</div>
 </template>
 
 <script>
+import CoreAlert from '@/vue/components/common/core/alert/Index'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgClose from '@/vue/components/common/svg/Close'
 export default {
 	components : {
+		CoreAlert,
 		SvgCircleCheck,
 		SvgClose
 	},

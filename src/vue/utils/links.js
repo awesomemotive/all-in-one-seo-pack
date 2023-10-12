@@ -123,7 +123,8 @@ const docLinks      = {
 	smartTags                     : `${marketingSite}docs/using-the-smart-tags-in-titles-and-descriptions/`,
 	openAi                        : `${marketingSite}docs/using-openai-to-generate-seo-titles-and-meta-descriptions/`,
 	wpcode                        : `${marketingSite}docs/wpcode-snippet-library/`,
-	primaryTerm                   : `${marketingSite}docs/setting-the-primary-term-for-breadcrumbs/`
+	primaryTerm                   : `${marketingSite}docs/setting-the-primary-term-for-breadcrumbs/`,
+	cornerstoneContent            : `${marketingSite}docs/cornerstone-content/`
 }
 
 const upsellLinks = {
@@ -204,7 +205,10 @@ const getPricingUrl = (feature, medium, content, url = `${marketingSite}pricing/
 
 const utmUrl = (medium, content = null, url = `${marketingSite}pricing/`) => {
 	let isUpgradeUrl = false
-	if (`${marketingSite}pricing/` === url && 'pro' !== import.meta.env.VITE_VERSION.toLowerCase()) {
+	if (
+		(`${marketingSite}pricing/` === url || `${marketingSite}lite-upgrade/` === url) &&
+		'pro' !== import.meta.env.VITE_VERSION.toLowerCase()
+	) {
 		const rootStore  = useRootStore()
 		const upgradeUrl = rootStore.aioseo.urls.upgradeUrl
 		isUpgradeUrl = (upgradeUrl !== marketingSite)

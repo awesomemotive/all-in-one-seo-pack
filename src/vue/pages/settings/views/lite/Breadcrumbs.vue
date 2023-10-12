@@ -31,9 +31,8 @@
 					<cta
 						:cta-link="$links.getPricingUrl('breadcrumb-templates', 'breadcrumb-templates-upsell')"
 						:button-text="strings.ctaButtonText"
-						:learn-more-link="$links.getUpsellUrl('breadcrumb-templates', null, 'home')"
+						:learn-more-link="$links.getUpsellUrl('breadcrumb-templates', null, $isPro ? 'pricing' : 'liteUpgrade')"
 						:feature-list="features"
-						align-top
 					>
 						<template #header-text>
 							{{ strings.ctaHeader1 }}<br>
@@ -70,13 +69,11 @@ export default {
 			strings : {
 				breadcrumbTemplates        : this.$t.__('Breadcrumb Templates', this.$td),
 				breadcrumbTemplatesTooltip : this.$t.__('Override the default template for breadcrumbs on your site using our easy-to-use template editor.', this.$td),
-				ctaButtonText              : this.$t.__('Upgrade to Pro and Unlock Breadcrumb Templates', this.$td),
-				ctaHeader1                 : this.$t.__('Breadcrumb Templates are only available', this.$td),
-				ctaHeader2                 : this.$t.sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('for licensed %1$s %2$s users.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+				ctaButtonText              : this.$t.__('Unlock Breadcrumb Templates', this.$td),
+				ctaHeader1                 : this.$t.sprintf(
+					// Translators: 1 - "PRO".
+					this.$t.__('Breadcrumb Templates is a %1$s Feature', this.$td),
+					'PRO'
 				),
 				ctaDescription : this.$t.__('Our template editor will allow you to easily customize how breadcrumbs are displayed on your site based on each post type or taxonomy.', this.$td)
 			},

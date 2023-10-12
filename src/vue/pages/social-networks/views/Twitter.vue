@@ -403,10 +403,10 @@ export default {
 				additionalData               : this.$t.__('Additional Data', this.$td),
 				additionalDataDescription    : this.$t.__('Enable this option to show additional Twitter data on your posts and pages (i.e., who the post was written by and how long it might take to read the article).', this.$td),
 				defaultTermImageSourceUpsell : this.$t.sprintf(
-					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - Learn more link.
-					this.$t.__('Default Term Image Source is only available for licensed %1$s users. %2$s', this.$td),
-					`<strong>${import.meta.env.VITE_SHORT_NAME} Pro</strong>`,
-					this.$links.getUpsellLink('general-facebook-settings', this.$constants.GLOBAL_STRINGS.learnMore, 'default-term-image-soruce', true)
+					// Translators: 1 - "PRO", 2 - Learn more link.
+					this.$t.__('Default Term Image Source is a %1$s feature. %2$s', this.$td),
+					'PRO',
+					this.$links.getUpsellLink('general-facebook-settings', this.$constants.GLOBAL_STRINGS.learnMore, 'default-term-image-source', true)
 				)
 			}
 		}

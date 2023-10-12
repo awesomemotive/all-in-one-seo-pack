@@ -468,6 +468,7 @@ export default {
 		},
 		processSearch () {
 			debounce(() => {
+				this.editRow(-1)
 				this.$emit('search', this.searchTerm)
 			}, 100)
 		},
@@ -480,20 +481,27 @@ export default {
 				selectedRows : this.selectedItems()
 			})
 
+			this.editRow(-1)
 			this.resetSelectedItems()
 		},
 		processPaginate (page) {
 			this.pageNumber = page
+
+			this.editRow(-1)
 			this.$emit('paginate', page, this.searchTerm)
 		},
 		processFilter (filter) {
 			this.pageNumber = 1
 			this.searchTerm = ''
+
+			this.editRow(-1)
 			this.$emit('filter-table', filter)
 		},
 		processAdditionalFilters (filters) {
 			this.pageNumber = 1
 			this.searchTerm = ''
+
+			this.editRow(-1)
 			this.$emit('process-additional-filters', {
 				filters
 			})
@@ -820,6 +828,15 @@ export default {
 
 				&:hover {
 					color: $blue;
+				}
+			}
+
+			.post_title {
+				.aioseo-tooltip {
+					a {
+						font-weight: normal;
+						color: $blue;
+					}
 				}
 			}
 

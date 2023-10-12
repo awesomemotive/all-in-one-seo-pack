@@ -52,9 +52,6 @@ export const link = {
 			return value
 		}
 
-		// Allows us to ask for this information when we get a report.
-		window.console.log('Created link:\n\n', pastedText)
-
 		return applyFormat(value, {
 			type       : name,
 			attributes : {

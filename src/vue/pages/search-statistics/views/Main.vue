@@ -36,6 +36,7 @@
 					:show-link="false"
 					:button-text="strings.ctaButtonText"
 					:alignTop="true"
+					:hideBonus="true"
 					:feature-list="[
 						strings.feature1,
 						strings.feature2,
@@ -108,7 +109,7 @@ export default {
 			strings        : {
 				pageName       : this.$t.__('Search Statistics', this.$td),
 				ctaHeaderText  : this.$t.__('Connect your website to Google Search Console', this.$td),
-				ctaDescription : this.$t.__('Connect to Google Search Console to receive valuable insights on how your content is being discovered. Identify areas for improvement in order to improve search engine rankings and drive more traffic to your website.', this.$td),
+				ctaDescription : this.$t.__('Connect your site to Google Search Console to receive insights on how content is being discovered. Identify areas for improvement and drive traffic to your website.', this.$td),
 				ctaButtonText  : this.$t.__('Connect to Google Search Console', this.$td),
 				feature1       : this.$t.__('Search traffic insights', this.$td),
 				feature2       : this.$t.__('Improved visibility', this.$td),

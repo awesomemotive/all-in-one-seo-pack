@@ -120,7 +120,8 @@
 					v-if="showUpsell"
 					:cta-link="$links.getPricingUrl('search-statistics', 'search-statistics-upsell')"
 					:button-text="strings.ctaButtonText"
-					:learn-more-link="$links.getUpsellUrl('search-statistics', 'search-statistics-upsell', 'home')"
+					:learn-more-link="$links.getUpsellUrl('search-statistics', 'search-statistics-upsell', $isPro ? 'pricing' : 'liteUpgrade')"
+					:hide-bonus="!licenseStore.isUnlicensed"
 				>
 					<template #header-text>
 						{{ strings.ctaHeader }}
@@ -183,12 +184,11 @@ export default {
 			sortableColumns : [],
 			strings         : {
 				position      : this.$t.__('Position', this.$td),
-				ctaButtonText : this.$t.__('Upgrade to Pro and Unlock Access Control', this.$td),
+				ctaButtonText : this.$t.__('Unlock Keyword Tracking', this.$td),
 				ctaHeader     : this.$t.sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('Access Control is only available for licensed %1$s %2$s users.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+					// Translators: 1 - "PRO".
+					this.$t.__('Keyword Tracking is a %1$s Feature', this.$td),
+					'PRO'
 				)
 			}
 		}

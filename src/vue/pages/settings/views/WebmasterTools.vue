@@ -895,7 +895,6 @@ export default {
 
 		.inline-upsell {
 			display: inline-flex;
-			width: 100%;
 			align-items: center;
 			justify-content: space-between;
 			margin-top: 16px;
@@ -904,7 +903,6 @@ export default {
 		}
 
 		.aioseo-alert {
-			width: 100%;
 			padding: 8px 12px;
 			font-weight: 400;
 			margin-top: 16px;

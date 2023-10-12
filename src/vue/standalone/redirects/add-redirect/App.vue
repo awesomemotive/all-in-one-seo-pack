@@ -102,8 +102,7 @@ export default {
 				.then(response => {
 					this.urls = response.body.redirects
 					this.loading = false
-				})
-				.catch((error) => console.log('Redirect modal failed to load the redirect data.', error))
+				}).catch((error) => console.error('Redirect modal failed to load the redirect data.', error))
 		},
 		preloadRedirect () {
 			const redirect = document.querySelector(this.classSelectors)

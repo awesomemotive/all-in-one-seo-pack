@@ -88,6 +88,10 @@ const getPlansForFeature = (sectionSlug, feature = '') => {
 		plans.push(upperFirst(featureArray.license_level))
 	})
 
+	const knownPlans = [ 'Basic', 'Plus', 'Pro', 'Elite' ]
+	// Ensure that plans are in the correct order.
+	plans.sort((a, b) => knownPlans.indexOf(a) - knownPlans.indexOf(b))
+
 	return [ ...new Set(plans) ]
 }
 

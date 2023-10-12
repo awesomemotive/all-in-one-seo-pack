@@ -51,6 +51,7 @@
 			same-tab
 			align-top
 			cta-button-action
+			hide-bonus
 		>
 			<template #header-text>
 				{{ ctaTitle }}

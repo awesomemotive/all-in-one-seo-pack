@@ -180,7 +180,7 @@
 							:cta-link="$links.utmUrl('dashboard-cta')"
 							:feature-list="$constants.UPSELL_FEATURE_LIST"
 							:button-text="strings.ctaButton"
-							:learn-more-link="$links.getUpsellUrl('dashboard-cta', null, 'home')"
+							:learn-more-link="$links.getUpsellUrl('dashboard-cta', null, $isPro ? 'pricing' : 'liteUpgrade')"
 						>
 							<template #header-text>
 								{{ strings.ctaHeaderText }}

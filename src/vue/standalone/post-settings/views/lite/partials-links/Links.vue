@@ -29,13 +29,14 @@
 			<cta
 				:cta-link="$links.getPricingUrl('link-assistant', 'link-assistant-upsell', 'metabox')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="$links.getUpsellUrl('link-assistant', 'metabox', 'home')"
+				:learn-more-link="$links.getUpsellUrl('link-assistant', 'metabox', $isPro ? 'pricing' : 'liteUpgrade')"
 				:feature-list="[
 					strings.linkOpportunities,
 					strings.domainReports,
 					strings.orphanedPosts,
 					strings.affiliateLinks
 				]"
+				:hide-bonus="!licenseStore.isUnlicensed"
 			>
 				<template #header-text>
 					{{ strings.ctaHeader }}
@@ -86,13 +87,14 @@
 				<cta
 					:cta-link="$links.getPricingUrl('link-assistant', 'link-assistant-upsell', 'metabox')"
 					:button-text="strings.ctaButtonText"
-					:learn-more-link="$links.getUpsellUrl('link-assistant', 'metabox', 'home')"
+					:learn-more-link="$links.getUpsellUrl('link-assistant', 'metabox', $isPro ? 'pricing' : 'liteUpgrade')"
 					:feature-list="[
 						strings.linkOpportunities,
 						strings.domainReports,
 						strings.orphanedPosts,
 						strings.affiliateLinks
 					]"
+					:hide-bonus="!licenseStore.isUnlicensed"
 				>
 					<template #header-text>
 						{{ strings.ctaHeader }}
@@ -112,6 +114,7 @@
 
 <script>
 import {
+	useLicenseStore,
 	usePostEditorStore
 } from '@/vue/stores'
 
@@ -131,6 +134,7 @@ import SvgLinkSuggestion from '@/vue/components/common/svg/link/Suggestion'
 export default {
 	setup () {
 		return {
+			licenseStore    : useLicenseStore(),
 			postEditorStore : usePostEditorStore()
 		}
 	},
@@ -167,7 +171,10 @@ export default {
 								context : {
 									postTitle : 'How to Perform an SEO Analysis on Your WordPress Website',
 									permalink : '#',
-									editLink  : '#'
+									editLink  : '#',
+									postType  : {
+										singular : 'Post'
+									}
 								}
 							},
 							{
@@ -177,7 +184,10 @@ export default {
 								context : {
 									postTitle : 'How to Create WordPress Image Sitemap',
 									permalink : '#',
-									editLink  : '#'
+									editLink  : '#',
+									postType  : {
+										singular : 'Post'
+									}
 								}
 							},
 							{
@@ -187,7 +197,10 @@ export default {
 								context : {
 									postTitle : 'What’s the Best Image Format for Your Website?',
 									permalink : '#',
-									editLink  : '#'
+									editLink  : '#',
+									postType  : {
+										singular : 'Post'
+									}
 								}
 							},
 							{
@@ -197,7 +210,10 @@ export default {
 								context : {
 									postTitle : 'How to Perform an SEO Analysis on Your WordPress Website',
 									permalink : '#',
-									editLink  : '#'
+									editLink  : '#',
+									postType  : {
+										singular : 'Post'
+									}
 								}
 							},
 							{
@@ -207,7 +223,10 @@ export default {
 								context : {
 									postTitle : 'How to Write Alt Text for Images for SEO',
 									permalink : '#',
-									editLink  : '#'
+									editLink  : '#',
+									postType  : {
+										singular : 'Post'
+									}
 								}
 							},
 							{
@@ -217,7 +236,10 @@ export default {
 								context : {
 									postTitle : 'How to Easily Import and Export Redirects in WordPress',
 									permalink : '#',
-									editLink  : '#'
+									editLink  : '#',
+									postType  : {
+										singular : 'Post'
+									}
 								}
 							}
 						],
@@ -253,16 +275,11 @@ export default {
 				}
 			},
 			strings : {
-				ctaButtonText : this.$t.sprintf(
-					// Translators: 1 - "Pro".
-					this.$t.__('Upgrade to %1$s and Unlock Link Assistant', this.$td),
-					'Pro'
-				),
-				ctaHeader : this.$t.sprintf(
-					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('Link Assistant is only available for licensed %1$s %2$s users.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+				ctaButtonText : this.$t.__('Unlock Link Assistant', this.$td),
+				ctaHeader     : this.$t.sprintf(
+					// Translators: 1 - "PRO".
+					this.$t.__('Link Assistant is a %1$s Feature', this.$td),
+					'PRO'
 				),
 				linkAssistantDescription : this.$t.__('Get relevant suggestions for adding internal links to all your content as well as finding any orphaned posts that have no internal links.', this.$td),
 				thisFeatureRequires      : this.$t.__('This feature requires one of the following plans:', this.$td),
