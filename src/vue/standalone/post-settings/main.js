@@ -14,6 +14,7 @@ import TruSeo from '@/vue/plugins/tru-seo'
 
 import App from './App.vue'
 import registerScoreToggler from './registerScoreToggler'
+import initWatcher from './watcher/main.js'
 import { elemLoaded } from '@/vue/utils/elemLoaded'
 import { shouldShowMetaBox } from '@/vue/plugins/tru-seo/components/helpers'
 import loadTruSeo from '@/vue/standalone/post-settings/loadTruSeo'
@@ -21,6 +22,8 @@ import LinkAssistantWatcher from './link-assistant/AIOSEO_VERSION'
 
 // Local Business.
 import AppLocalBusiness from '../local-business-seo/App.vue'
+
+initWatcher()
 
 // Router placeholder to prevent errors when using router-link.
 const router = createRouter({

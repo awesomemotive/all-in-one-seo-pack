@@ -55,7 +55,8 @@ export const useRedirectsStore = defineStore('RedirectsStore', {
 			logs      : false,
 			logs404   : false
 		},
-		protectedPaths : []
+		protectedPaths : [],
+		path           : ''
 	}),
 	actions : {
 		bulk ({ action, rowIds }) {

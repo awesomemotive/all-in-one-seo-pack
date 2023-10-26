@@ -422,4 +422,35 @@ trait WpUri {
 			? $parsedHomeUrl['host'] === $parsedUrlToCheck['host']
 			: false;
 	}
+
+	/**
+	 * Helper for the rest url.
+	 *
+	 * @since 4.4.9
+	 *
+	 * @return string
+	 */
+	public function getRestUrl() {
+		$restUrl = get_rest_url();
+
+		if ( aioseo()->helpers->isWpmlActive() ) {
+			global $sitepress;
+
+			// Replace the rest url 'all' language prefix so our rest calls don't fail.
+			if (
+				is_object( $sitepress ) &&
+				method_exists( $sitepress, 'get_current_language' ) &&
+				method_exists( $sitepress, 'get_default_language' ) &&
+				'all' === $sitepress->get_current_language()
+			) {
+				$restUrl = str_replace(
+					get_home_url( null, '/all/' ),
+					get_home_url( null, '/' . $sitepress->get_default_language() . '/' ),
+					$restUrl
+				);
+			}
+		}
+
+		return $restUrl;
+	}
 }

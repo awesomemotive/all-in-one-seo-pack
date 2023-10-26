@@ -355,17 +355,14 @@ trait WpContext {
 		foreach ( $keys as $key ) {
 			// Try ACF.
 			if ( isset( $acfFields[ $key ] ) ) {
-				$customFieldContent .= "{$acfFields[$key]} ";
+				$customFieldContent .= "$acfFields[$key] ";
 				continue;
 			}
 
 			// Fallback to post meta.
 			$value = get_post_meta( $post->ID, $key, true );
-			if ( $value ) {
-				if ( ! is_string( $value ) ) {
-					$value = strval( $value );
-				}
-				$customFieldContent .= "{$value} ";
+			if ( $value && is_scalar( $value ) ) {
+				$customFieldContent .= $value . ' ';
 			}
 		}
 
@@ -837,5 +834,18 @@ trait WpContext {
 
 		$this->originalQuery = null;
 		$this->originalPost  = null;
+	}
+
+	/**
+	 * Gets the list of theme features.
+	 *
+	 * @since 4.4.9
+	 *
+	 * @return array List of theme features.
+	 */
+	public function getThemeFeatures() {
+		global $_wp_theme_features;
+
+		return isset( $_wp_theme_features ) && is_array( $_wp_theme_features ) ? $_wp_theme_features : [];
 	}
 }

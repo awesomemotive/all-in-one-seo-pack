@@ -33,14 +33,19 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 			let sentences = []
 			if (Array.isArray(this.highlightAnalysis?.highlightSentences)) {
 				sentences = this.highlightAnalysis.highlightSentences.flat()
-				sentences = sentences.map(s => {
-					// Remove one HTML entity at the end of the sentence to prevent the annotation API from malfunctioning.
-					s = s.replace(/&[a-zA-Z0-9#]{2,};$/, '')
-					// Keep line breaks otherwise `getOuterText()` don't recognize them.
-					s = s.replace(/<br[^>]*>/gi, '\n')
+					.map(s => {
+						// Remove one HTML entity at the end of the sentence to prevent the annotation API from malfunctioning.
+						s = s.replace(/&[a-zA-Z0-9#]{2,};$/, '')
+						// Keep line breaks otherwise `getOuterText()` don't recognize them.
+						s = s.replace(/<br[^>]*>/gi, '\n')
 
-					return getOuterText(s)
-				})
+						return getOuterText(s)
+					})
+					.filter(s => {
+						// Some sentences come as an `alt` attribute of an `img` tag, and at this point `getOuterText()` returned an empty string for them.
+						// That's okay, they're not even highlightable, but empty strings need to be out.
+						return !!s.trim()
+					})
 			}
 
 			return sentences.length ? sentences : null

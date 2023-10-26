@@ -340,7 +340,7 @@ trait ThirdParty {
 			'wysiwyg',
 			'image',
 			'gallery',
-			// 'link',
+			'link',
 			// 'taxonomy',
 		];
 
@@ -359,25 +359,26 @@ trait ThirdParty {
 		// Create an array with the field names and values with added HTML markup.
 		$acfFields = [];
 		foreach ( $fields as $field ) {
-			if ( 'url' === $field['type'] ) {
+			switch ( $field['type'] ) {
+				case 'url':
+					$value = make_clickable( $field['value'] ?? '' );
+					break;
+				case 'image':
+					// Image format options are array, URL (string), id (int).
+					$imageUrl = is_array( $field['value'] ) ? $field['value']['url'] : $field['value'];
+					$imageUrl = is_numeric( $imageUrl ) ? wp_get_attachment_image_url( $imageUrl ) : $imageUrl;
 
-				// Url field
-				$value = "<a href='{$field['value']}'>{$field['value']}</a>";
-			} elseif ( 'image' === $field['type'] ) {
-
-				// Image format options are array, URL (string), id (int).
-				$imageUrl = is_array( $field['value'] ) ? $field['value']['url'] : $field['value'];
-				$imageUrl = is_numeric( $imageUrl ) ? wp_get_attachment_image_url( $imageUrl ) : $imageUrl;
-
-				$value = "<img src='{$imageUrl}'>";
-			} elseif ( 'gallery' === $field['type'] ) {
-
-				// Image field
-				$value = "<img src='{$field['value'][0]['url']}'>";
-			} else {
-
-				// Other fields
-				$value = $field['value'];
+					$value = "<img src='$imageUrl' />";
+					break;
+				case 'gallery':
+					$value = "<img src='{$field['value'][0]['url']}' />";
+					break;
+				case 'link':
+					$value = make_clickable( $field['value']['url'] ?? $field['value'] ?? '' );
+					break;
+				default:
+					$value = $field['value'];
+					break;
 			}
 
 			if ( $value ) {
@@ -643,6 +644,10 @@ trait ThirdParty {
 	 * @return bool Whether the current request is being done by a crawler from Yandex.
 	 */
 	public function isYandexUserAgent() {
+		if ( ! isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+			return false;
+		}
+
 		return preg_match( '#.*Yandex.*#', $_SERVER['HTTP_USER_AGENT'] );
 	}
 }

@@ -199,7 +199,7 @@ export default {
 
 		.aioseo-seo {
 			max-width: 225px;
-			min-width: 0;
+			min-width: 175px;
 		}
 
 		@media screen and (max-width: 520px) {

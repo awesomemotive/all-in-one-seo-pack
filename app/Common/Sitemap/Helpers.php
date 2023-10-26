@@ -490,6 +490,33 @@ class Helpers {
 	}
 
 	/**
+	 * Extracts existing sitemap URLs from the robots.txt file.
+	 * We need this in case users have existing sitemap directives added to their robots.txt file.
+	 *
+	 * @since   4.0.10
+	 * @version 4.4.9
+	 *
+	 * @return array The sitemap URLs.
+	 */
+	public function extractSitemapUrlsFromRobotsTxt() {
+		// First, we need to remove our filter, so that it doesn't run unintentionally.
+		remove_filter( 'robots_txt', [ aioseo()->robotsTxt, 'buildRules' ], 10000 );
+		$robotsTxt = apply_filters( 'robots_txt', '', true );
+		add_filter( 'robots_txt', [ aioseo()->robotsTxt, 'buildRules' ], 10000 );
+
+		if ( ! $robotsTxt ) {
+			return [];
+		}
+
+		$lines = explode( "\n", $robotsTxt );
+		if ( ! is_array( $lines ) || ! count( $lines ) ) {
+			return [];
+		}
+
+		return aioseo()->robotsTxt->extractSitemapUrls( $robotsTxt );
+	}
+
+	/**
 	 * Returns the URL of the given sitemap type.
 	 *
 	 * @since 4.1.5

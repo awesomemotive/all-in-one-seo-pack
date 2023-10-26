@@ -1,53 +1,85 @@
 <template>
 	<div
 		class="aioseo-overview"
-		:class="isWpDashboard ? 'aioseo-overview--wp-styles' : ''"
-		v-if="postType.value"
+		:class="[
+			isWpDashboard ? 'aioseo-overview--wp-styles' : '',
+			postType?.value ? '' : 'aioseo-overview--invalid'
+		]"
 	>
-		<p
-			class="aioseo-overview-description"
-			v-if="!toHide.includes('description')"
-		>
-			{{ strings.description }}
-		</p>
+		<template v-if="postType?.value">
+			<p
+				class="aioseo-overview-description"
+				v-if="!toHide.includes('description')"
+			>
+				{{ strings.description }}
+			</p>
 
-		<div class="aioseo-overview-selector">
-			<strong>{{ strings.choosePostType }}</strong>
+			<div class="aioseo-overview-selector">
+				<strong>{{ strings.choosePostType }}</strong>
 
-			<base-select
-				v-if="!isWpDashboard"
-				size="medium"
-				:placeholder="strings.choosePostType"
-				:options="postTypes"
-				v-model="postType"
+				<base-select
+					v-if="!isWpDashboard"
+					size="medium"
+					:placeholder="strings.choosePostType"
+					:options="postTypes"
+					v-model="postType"
+				/>
+
+				<select
+					v-if="isWpDashboard"
+					v-model="postType"
+				>
+					<option
+						v-for="option in postTypes"
+						:key="option.value"
+						:value="option"
+					>
+						{{ option.label }}
+					</option>
+				</select>
+			</div>
+
+			<core-donut-chart-with-legend
+				:parts="sortedParts"
+				:total="totalPosts"
+				:label="totalPostsLabel"
+				:animatedNumber="!isWpDashboard"
 			/>
 
-			<select
-				v-if="isWpDashboard"
-				v-model="postType"
-			>
-				<option
-					v-for="option in postTypes"
-					:key="option.value"
-					:value="option"
+			<core-alert
+				v-if="!toHide.includes('upgradeAlert') && !$isPro"
+				type="yellow"
+				v-html="strings.upgradeToPro"
+			/>
+		</template>
+
+		<template v-else>
+			<div>
+				<div class="aioseo-overview-title">{{ strings.invalidTitle }}</div>
+
+				<div class="aioseo-overview-description">{{ strings.invalidDescription }}</div>
+
+				<base-button
+					v-if="!isWpDashboard"
+					type="blue"
+					size="medium"
+					tag="a"
+					:href="searchAppearanceUrl"
 				>
-					{{ option.label }}
-				</option>
-			</select>
-		</div>
+					<svg-edit-paper /> {{ strings.invalidButton }}
+				</base-button>
 
-		<core-donut-chart-with-legend
-			:parts="sortedParts"
-			:total="totalPosts"
-			:label="totalPostsLabel"
-			:animatedNumber="!isWpDashboard"
-		/>
+				<a
+					v-if="isWpDashboard"
+					:href="searchAppearanceUrl"
+					class="button button-primary"
+				>
+					<svg-edit-paper /> {{ strings.invalidButton }}
+				</a>
+			</div>
 
-		<core-alert
-			v-if="!toHide.includes('upgradeAlert') && !$isPro"
-			type="yellow"
-			v-html="strings.upgradeToPro"
-		/>
+			<svg-overview />
+		</template>
 	</div>
 </template>
 
@@ -59,6 +91,8 @@ import {
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreDonutChartWithLegend from '@/vue/components/common/core/DonutChartWithLegend'
+import SvgEditPaper from '@/vue/components/common/svg/EditPaper'
+import SvgOverview from '@/vue/components/common/svg/Overview'
 export default {
 	setup () {
 		return {
@@ -68,7 +102,9 @@ export default {
 	},
 	components : {
 		CoreAlert,
-		CoreDonutChartWithLegend
+		CoreDonutChartWithLegend,
+		SvgEditPaper,
+		SvgOverview
 	},
 	props : {
 		isWpDashboard : {
@@ -98,7 +134,10 @@ export default {
 				upgradeToPro   : this.$t.sprintf(
 					// Translators: 1 - The upgrade call to action.
 					this.$t.__('Get additional keyphrases and many more modules! %1$s', this.$td), this.$links.getUpsellLink('dashboard-overview', this.$t.__('Upgrade to Pro Today!', this.$td), 'liteUpgrade', true)
-				)
+				),
+				invalidTitle       : this.$t.__('It looks like you haven\'t selected any post types yet!', this.$td),
+				invalidDescription : this.$t.__('TruSEO scoring can improve your search engine rankings. To see TruSEO scores for your published posts, enable at least one post type by turning on "Show in Search Results" in the Search Appearance settings.', this.$td),
+				invalidButton      : this.$t.__('Enable Post Types', this.$td)
 			},
 			postTypeInitial : true,
 			postType        : {},
@@ -187,13 +226,16 @@ export default {
 				return part
 			})
 			return parts
+		},
+		searchAppearanceUrl () {
+			return this.rootStore.aioseo.urls.aio.searchAppearance + '#/content-types'
 		}
 	},
 	mounted () {
 		this.$nextTick(() => {
 			const selectedPostType = this.settingsStore.settings.toggledRadio?.overviewPostType
 			const postTypeIndex = this.postTypes.findIndex(postType => selectedPostType === postType.value)
-			this.postType = this.postTypes[postTypeIndex] || this.postTypes[0]
+			this.postType = this.postTypes[postTypeIndex] || this.postTypes[0] || null
 		})
 	}
 }
@@ -201,6 +243,13 @@ export default {
 
 <style lang="scss">
 .aioseo-overview {
+	&-title {
+		font-weight: 600;
+		margin-bottom: 15px;
+		font-size: 14px;
+		line-height: 21px;
+	}
+
 	&-description {
 		color: $black2;
 		font-size: 14px !important;
@@ -255,8 +304,35 @@ export default {
 		border-color: $border;
 	}
 
+	.aioseo-button {
+		font-size: $font-sm;
+		height: 32px;
+
+		svg {
+			width: 16px;
+			height: 16px;
+			margin-right: 10px;
+		}
+	}
+
+	.aioseo-overview {
+		max-width: 300px;
+		min-width: 275px;
+		width: 100%;
+		height: auto;
+		@media screen and (max-width: 1280px) {
+			min-width: 0;
+		}
+	}
+
 	> :last-child {
 		margin-bottom: 0;
+	}
+
+	&--invalid {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
 	}
 
 	&--wp-styles {
@@ -274,8 +350,17 @@ export default {
 			}
 		}
 
-		a {
+		a:not(.button) {
 			color: #2271B1 !important;
+		}
+
+		.button {
+			svg {
+				width: 16px;
+				height: 16px;
+				vertical-align: sub;
+				margin-right: 10px;
+			}
 		}
 
 		.aioseo-alert {
@@ -288,6 +373,11 @@ export default {
 			margin-left: -12px;
 			border-color: #C3C4C7;
 			border-top: 0;
+		}
+
+		.aioseo-overview {
+			max-width: 225px;
+			min-width: 175px;
 		}
 	}
 }

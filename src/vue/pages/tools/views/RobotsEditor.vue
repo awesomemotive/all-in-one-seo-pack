@@ -183,8 +183,7 @@
 											class="robots-editor-table__row robots-editor-table__row--stripe"
 											:class="{'aioseo-error': hasTableRuleError(index + parsedDefaultRules.length + 1, rule)}"
 										>
-											<div
-												class="robots-editor-table__column robots-editor-table__column--truncate">
+											<div class="robots-editor-table__column robots-editor-table__column--truncate">
 												{{ index + parsedDefaultRules.length + 1 }}
 											</div>
 
@@ -788,13 +787,13 @@ export default {
 			return []
 		},
 		hasTableRuleError (tableIndex, rule) {
-			if (this.errors.tableRule.length) {
-				return this.errors.tableRule.find((e) => {
-					return tableIndex === (e.duplicateIndex || e.equivalentIndex || e.conflictingIndex) || e.hash === `${tableIndex}${rule.userAgent}${rule.directive}${rule.fieldValue}`
-				})
-			}
+			return this.errors.tableRule.find((e) => {
+				// The `foundTableIndex` can't come from the network level, otherwise the wrong table rule might be red-highlighted.
+				const foundTableIndex = tableIndex === (e.duplicateIndex || e.equivalentIndex || e.conflictingIndex) && !e.isNetworkIndex
+				const foundHash = e.hash === `${tableIndex}${rule.userAgent}${rule.directive}${rule.fieldValue}`
 
-			return false
+				return foundTableIndex || foundHash
+			}) || false
 		},
 		hideRobotsDetected () {
 			this.getOptions.robotsDetected = false

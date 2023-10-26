@@ -98,6 +98,7 @@ export const validateRuleset = (ruleset) => {
 			}
 
 			let savePreviewIndex = previewIndex
+			// Compare all rules with each other, with the benefit of not making a comparison twice.
 			for (let nextIndex = parseInt(index) + 1; nextIndex < ruleset[userAgent].length; nextIndex++) {
 				const [ nextDirective, nextValue ] = [ ruleset[userAgent][nextIndex].directive, ruleset[userAgent][nextIndex].fieldValue ]
 				if (!nextDirective || !nextValue) {
@@ -117,15 +118,9 @@ export const validateRuleset = (ruleset) => {
 					})
 				}
 
-				if (
-					directive.match(/disallow|allow/i) &&
-					nextDirective.match(/disallow|allow/i)
-				) {
+				if (directive.match(/disallow|allow/i) && nextDirective.match(/disallow|allow/i)) {
 					// Check for Allow/Disallow conflicts.
-					if (
-						directive !== nextDirective &&
-						value === nextValue
-					) {
+					if (directive !== nextDirective && value === nextValue) {
 						if (rule.default) {
 							if (!overriddenIndexes.includes(rule.tableIndex)) {
 								// Make sure the `previewIndex` is decreased by one, because the overridden rule is not shown on the preview.
@@ -157,6 +152,16 @@ export const validateRuleset = (ruleset) => {
 						})
 					}
 				}
+
+				// Each user-agent must have only one "Crawl-delay".
+				if ('crawl-delay' === directive && 'crawl-delay' === nextDirective && value !== nextValue) {
+					errors = fillErrors(errors, 'red', 'conflictingCrawlDelay', ruleset[userAgent][nextIndex], {
+						previewIndex,
+						sourcePreviewIndex : savePreviewIndex,
+						isNetworkIndex     : rule.networkLevel,
+						conflictingIndex   : rule.tableIndex
+					})
+				}
 			}
 
 			previewIndex = savePreviewIndex
@@ -172,7 +177,7 @@ export const validateRuleset = (ruleset) => {
 			if (directive.match(/^crawl-delay/i)) {
 				// Crawl-delay must be a number greater than 0.
 				const delay = Number(value)
-				if (isNaN(delay) || 0 > delay) {
+				if (isNaN(delay) || 1 > delay) {
 					errors = fillErrors(errors, 'red', 'invalidCrawlDelay', rule, { previewIndex })
 				}
 			}

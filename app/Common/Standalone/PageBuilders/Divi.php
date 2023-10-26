@@ -19,7 +19,7 @@ class Divi extends Base {
 	 *
 	 * @var array
 	 */
-	public $themes = [ 'Divi' ];
+	public $themes = [ 'Divi', 'Extra' ];
 
 	/**
 	 * The plugin files.

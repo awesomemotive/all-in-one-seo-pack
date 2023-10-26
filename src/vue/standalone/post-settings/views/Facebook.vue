@@ -323,18 +323,27 @@ export default {
 		updateImage (imageUrl) {
 			this.postEditorStore.currentPost.og_image_custom_url = imageUrl
 			this.postEditorStore.savePostState()
+		},
+		handleImageUpdate () {
+			this.setImageUrl()
 		}
 	},
 	watch : {
 		'postEditorStore.currentPost.og_image_type' () {
-			this.setImageUrl()
+			this.handleImageUpdate()
 		},
 		'postEditorStore.currentPost.og_image_custom_url' () {
-			this.setImageUrl()
+			this.handleImageUpdate()
 		}
 	},
 	mounted () {
 		this.scrollToElement()
+		this.setImageUrl()
+
+		window.aioseoBus.$on('updateFeaturedImage', this.handleImageUpdate)
+	},
+	beforeUnmount () {
+		window.aioseoBus.$off('updateFeaturedImage', this.handleImageUpdate)
 	}
 }
 </script>

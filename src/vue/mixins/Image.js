@@ -140,7 +140,7 @@ export const ImagePreview = {
 			const settingsStore   = useSettingsStore()
 			const currentPost     = postEditorStore.currentPost
 			const tab             = socialNetwork || settingsStore.metaBoxTabs?.social || 'facebook'
-			const prefix         = 'facebook' === tab || ('twitter' === tab && currentPost.twitter_use_og) ? 'og_' : 'twitter_'
+			const prefix          = 'facebook' === tab || ('twitter' === tab && currentPost.twitter_use_og) ? 'og_' : 'twitter_'
 
 			let imageSource = currentPost[`${prefix}image_type`] || 'default'
 			if ('default' === imageSource) {

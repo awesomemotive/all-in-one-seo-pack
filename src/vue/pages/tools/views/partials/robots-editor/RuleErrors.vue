@@ -79,6 +79,16 @@ export default {
 				)
 			}
 
+			if ('conflictingCrawlDelay' === error.message) {
+				return this.$t.sprintf(
+					// Translators: 1 - The table row index, 2 - Warn this index is on the network level, 3 - Warn about unpredictable behavior.
+					this.$t.__('This rule conflicts with rule #%1$s%2$s.%3$s', this.$td),
+					error.conflictingIndex,
+					error.isNetworkIndex ? ` (${this.strings.fromTheNetwork})` : '',
+					` ${this.strings.conflictingCrawlDelay}`
+				)
+			}
+
 			return this.strings[error.message]
 		}
 	},
@@ -94,7 +104,8 @@ export default {
 				allowTakesPrecedence       : this.$t.__('The "Allow" rule takes precedence.', this.$td),
 				fromTheNetwork             : this.$t.__('from the network level', this.$td),
 				invalidCleanParam          : this.$t.__('Clean-param must start with at least one param which is optionally followed by one path.', this.$td),
-				invalidCrawlDelay          : this.$t.__('Crawl-delay must be a number greater than 0.', this.$td),
+				invalidCrawlDelay          : this.$t.__('Crawl-delay must be a number starting from 1.', this.$td),
+				conflictingCrawlDelay      : this.$t.__('For some crawlers, encountering conflicting "Crawl-delay" might lead to unpredictable behavior.', this.$td),
 				networkRuleTakesPrecedence : this.$t.__('The network rule takes precedence.', this.$td)
 			}
 		}
