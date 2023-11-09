@@ -248,13 +248,18 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 					this.loading.contentRankings = false
 				})
 		},
+		getInspectionResult (paths) {
+			return http.get(links.restUrl('search-statistics/inspection-result'))
+				.query({ 'paths[]': paths })
+				.then(response => response.body.data)
+		},
 		getPagesByKeywords (keywords) {
 			return http.post(links.restUrl('search-statistics/stats/keywords/posts'))
 				.send({
 					startDate : this.range.start,
 					endDate   : this.range.end,
 					keywords  : keywords
-				 })
+				})
 				.then(response => response.body.data)
 		},
 		getPostDetail (postId) {

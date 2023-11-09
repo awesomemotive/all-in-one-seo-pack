@@ -116,9 +116,9 @@ const HeadlineAnalyzer = () => {
 		) {
 			const currentScore = analyzer.currentHeadlineData.score
 			const classOnScore =
-				40 > currentScore
+				50 > currentScore
 					? 'red'
-					: 60 >= currentScore
+					: 80 >= currentScore
 						? 'orange'
 						: 'green'
 			pinnedIcon.parentNode.setAttribute(
@@ -137,13 +137,13 @@ const HeadlineAnalyzer = () => {
 		} else {
 			pinnedIcon.parentNode.setAttribute('aioseo-button-color', 'red')
 			if (!pinnedIcon.nextElementSibling) {
-				scoreTag.innerHTML = '00/100'
+				scoreTag.innerHTML = '0/100'
 				pinnedIcon.parentNode.insertBefore(
 					scoreTag,
 					pinnedIcon.nextSibling
 				)
 			} else {
-				pinnedIcon.nextElementSibling.innerHTML = '00/100'
+				pinnedIcon.nextElementSibling.innerHTML = '0/100'
 			}
 		}
 	}

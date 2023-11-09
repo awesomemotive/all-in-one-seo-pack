@@ -6,6 +6,8 @@ import {
 
 import { debounce } from '@/vue/utils/debounce'
 
+import { shouldShowMetaBox } from '@/vue/utils/metabox'
+
 // Importing these directly to avoid circular dependencies.
 import { maybeUpdatePostTitle } from './postTitle'
 import { maybeUpdatePostContent } from './postContent'
@@ -17,13 +19,6 @@ import { maybeUpdateTerm } from './term'
 import { maybeUpdateAttachment } from './attachments'
 
 import TruSeo from '@/vue/plugins/tru-seo'
-
-export {
-	isBlockEditor,
-	isClassicEditor,
-	isClassicNoEditor,
-	isWooCommerceProduct
-} from '@/vue/utils/context'
 
 export const truSeoShouldAnalyze = () => {
 	const postEditorStore = usePostEditorStore()
@@ -46,47 +41,13 @@ export const shouldShowTruSeoScore = () => {
 		return false
 	}
 
-	const optionsStore = useOptionsStore()
+	const postEditorStore = usePostEditorStore()
+	const optionsStore    = useOptionsStore()
 	return !!(
 		optionsStore.options.advanced?.truSeo &&
-		shouldShowMetaBox(rootStore.aioseo.screen.postType)
+		shouldShowMetaBox(rootStore.aioseo.screen.postType) &&
+		!postEditorStore.currentPost.isStaticPostsPage
 	)
-}
-
-/**
- * Since this runs before any stores are loaded, we have to use the window object to determine if it should be shown or not.
- *
- * @version 4.4.0
- *
- * @param   {string} postType The post type to check.
- * @returns {boolean}         Returns true if the meta box should be shown.
- */
-export const shouldShowMetaBox = (postType = null) => {
-	if (postType) {
-		return !!(
-			window.aioseo.dynamicOptions.searchAppearance.postTypes[postType]?.advanced?.showMetaBox
-		)
-	}
-
-	if (!window.aioseo.currentPost?.id) {
-		return false
-	}
-	const pt       = window.aioseo.currentPost.postType
-	const taxonomy = window.aioseo.currentPost.termType
-	const showForPost = !!(
-		pt &&
-		'post' === window.aioseo.currentPost.context &&
-		window.aioseo.dynamicOptions.searchAppearance.postTypes[pt] &&
-		window.aioseo.dynamicOptions.searchAppearance.postTypes[pt]?.advanced?.showMetaBox
-	)
-	const showForTerm = !!(
-		taxonomy &&
-		'term' === window.aioseo.currentPost.context &&
-		window.aioseo.dynamicOptions.searchAppearance.taxonomies[taxonomy] &&
-		window.aioseo.dynamicOptions.searchAppearance.taxonomies[taxonomy]?.advanced?.showMetaBox
-	)
-
-	return showForPost || showForTerm
 }
 
 export const maybeUpdatePost = async (time = 900, run = true) => {
@@ -112,8 +73,8 @@ export const maybeUpdatePost = async (time = 900, run = true) => {
  *
  * @since 4.4.6
  *
- * @param 	{Object} selection The Selection object.
- * @returns {Object} 		   The reversed Selection object.
+ * @param   {Object} selection The Selection object.
+ * @returns {Object}           The reversed Selection object.
  */
 export const reverseWindowSelection = (selection) => {
 	const selectionRange = selection.getRangeAt(0)
@@ -148,11 +109,11 @@ export const normalizeWhitespaces = (string) => {
  *
  * @since 4.4.6
  *
- * @param   {Object}  options  		   The options for finding the node.
+ * @param   {Object}  options          The options for finding the node.
  * @param   {Element} options.element  The element from which to start searching.
  * @param   {string}  options.property The CSS property to compare against.
  * @param   {string}  options.value    The value to match against the property value.
- * @returns {Element} 	   			   The closest element with the specified property value, or the html root element if not found.
+ * @returns {Element}                  The closest element with the specified property value, or the html root element if not found.
  */
 export const getClosestNodeByPropertyValue = ({ element, property, value }) => {
 	if (!element) {

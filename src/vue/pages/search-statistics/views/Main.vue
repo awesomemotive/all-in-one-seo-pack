@@ -10,6 +10,7 @@
 				v-if="showDatePicker"
 				@change="onDateChange"
 				@updated="rolling => highlightShortcut(rolling)"
+				:clearable="false"
 				:defaultValue="defaultRange"
 				:defaultRolling="searchStatisticsStore.rolling"
 				:isDisabledDate="isDisabledDate"
@@ -285,7 +286,7 @@ export default {
 				font-size: 14px;
 			}
 
-			.post-title,
+			.object-title,
 			.keyword {
 				a {
 					font-weight: bold;

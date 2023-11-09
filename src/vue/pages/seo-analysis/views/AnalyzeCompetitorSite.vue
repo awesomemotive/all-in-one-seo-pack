@@ -77,7 +77,7 @@ import {
 
 import { merge } from 'lodash-es'
 import { useSeoSiteScore } from '@/vue/composables'
-import { SeoSiteScore } from '@/vue/mixins'
+import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
 import { isUrl } from '@/vue/utils/helpers'
 import CoreAnalyze from '@/vue/components/common/core/analyze/Index'
 import CoreAnalyzeScore from '@/vue/components/common/core/analyze/Score'

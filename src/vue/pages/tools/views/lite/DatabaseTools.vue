@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { Network } from '@/vue/mixins'
+import { Network } from '@/vue/mixins/Network'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreResetSettings from '@/vue/components/common/core/ResetSettings'

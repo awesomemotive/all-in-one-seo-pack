@@ -386,7 +386,9 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { JsonValues, MaxCounts, Tags } from '@/vue/mixins'
+import { JsonValues } from '@/vue/mixins/JsonValues'
+import { MaxCounts } from '@/vue/mixins/MaxCounts'
+import { Tags } from '@/vue/mixins/Tags'
 import BasePhone from '@/vue/components/common/base/Phone'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreCard from '@/vue/components/common/core/Card'

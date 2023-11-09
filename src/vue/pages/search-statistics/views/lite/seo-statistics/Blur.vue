@@ -39,7 +39,7 @@
 
 						<posts-table
 							:posts="searchStatisticsStore.data?.seoStatistics?.pages?.paginated || defaultPages"
-							:columns="[ 'postTitle', 'seoScore', 'clicksSortable', 'impressionsSortable', 'positionSortable', 'diffPositionSortable' ]"
+							:columns="[ 'postTitle', 'indexStatus', 'seoScore', 'clicksSortable', 'impressionsSortable', 'positionSortable', 'diffPositionSortable' ]"
 							show-items-per-page
 							show-table-footer
 						/>

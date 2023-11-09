@@ -93,7 +93,7 @@ import {
 	usePostEditorStore
 } from '@/vue/stores'
 
-import { JsonValues } from '@/vue/mixins'
+import { JsonValues } from '@/vue/mixins/JsonValues'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreSingleRobotsMeta from '@/vue/components/common/core/SingleRobotsMeta'

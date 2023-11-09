@@ -19,7 +19,7 @@ import CoreCard from '@/vue/components/common/core/Card'
 import CoreDonutChartWithLegend from '@/vue/components/common/core/DonutChartWithLegend'
 import { merge } from 'lodash-es'
 import { useSeoSiteScore } from '@/vue/composables'
-import { SeoSiteScore } from '@/vue/mixins'
+import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
 export default {
 	setup () {
 		const { strings } = useSeoSiteScore()

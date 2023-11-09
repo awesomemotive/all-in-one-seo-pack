@@ -240,7 +240,9 @@ import {
 
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
-import { MaxCounts, Tags, Wizard } from '@/vue/mixins'
+import { MaxCounts } from '@/vue/mixins/MaxCounts'
+import { Tags } from '@/vue/mixins/Tags'
+import { Wizard } from '@/vue/mixins/Wizard'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'

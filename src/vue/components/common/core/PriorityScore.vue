@@ -46,7 +46,7 @@ import {
 	useOptionsStore
 } from '@/vue/stores'
 
-import { JsonValues } from '@/vue/mixins'
+import { JsonValues } from '@/vue/mixins/JsonValues'
 import TableColumn from '@/vue/components/common/table/Column'
 import TableRow from '@/vue/components/common/table/Row'
 

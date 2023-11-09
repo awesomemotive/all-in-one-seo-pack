@@ -38,7 +38,7 @@ import {
 	useOptionsStore
 } from '@/vue/stores'
 
-import { MetaTag } from '@/vue/mixins'
+import { MetaTag } from '@/vue/mixins/MetaTag'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 export default {

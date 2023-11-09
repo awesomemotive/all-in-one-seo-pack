@@ -200,14 +200,11 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import {
-	ImageSourceOptions,
-	ImagePreview,
-	JsonValues,
-	MaxCounts,
-	Tags,
-	objectType
-} from '@/vue/mixins'
+import { ImageSourceOptions, ImagePreview } from '@/vue/mixins/Image'
+import { JsonValues } from '@/vue/mixins/JsonValues'
+import { MaxCounts } from '@/vue/mixins/MaxCounts'
+import { Tags } from '@/vue/mixins/Tags'
+import { objectType } from '@/vue/mixins/PostSocial'
 
 import tags from '@/vue/utils/tags'
 import CoreAlert from '@/vue/components/common/core/alert/Index'

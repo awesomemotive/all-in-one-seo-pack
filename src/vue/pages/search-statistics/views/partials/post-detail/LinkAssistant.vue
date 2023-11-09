@@ -25,7 +25,7 @@ import {
 } from '@/vue/stores'
 
 import addons from '@/vue/utils/addons'
-import { AddonConditions } from '@/vue/mixins'
+import { AddonConditions } from '@/vue/mixins/AddonConditions'
 import Activate from './link-assistant/Activate'
 import LinkAssistant from './link-assistant/LinkAssistant'
 import Update from './link-assistant/Update'

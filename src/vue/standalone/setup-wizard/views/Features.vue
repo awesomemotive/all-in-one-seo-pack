@@ -76,7 +76,7 @@ import {
 
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
-import { Wizard } from '@/vue/mixins'
+import { Wizard } from '@/vue/mixins/Wizard'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import GridColumn from '@/vue/components/common/grid/Column'

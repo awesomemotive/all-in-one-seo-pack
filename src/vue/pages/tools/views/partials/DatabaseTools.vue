@@ -152,7 +152,7 @@ import {
 	useToolsStore
 } from '@/vue/stores'
 
-import { Network } from '@/vue/mixins'
+import { Network } from '@/vue/mixins/Network'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreResetSettings from '@/vue/components/common/core/ResetSettings'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'

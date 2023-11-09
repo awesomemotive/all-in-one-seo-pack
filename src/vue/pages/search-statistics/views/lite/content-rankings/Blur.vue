@@ -17,7 +17,7 @@
 
 					<posts-table
 						:posts="searchStatisticsStore.data?.contentRankings?.paginated || defaultPages"
-						:columns="[ 'postTitle', 'lastUpdated', 'loss', 'drop', 'performance' ]"
+						:columns="[ 'postTitle', 'indexStatus', 'lastUpdated', 'loss', 'drop', 'performance' ]"
 						show-items-per-page
 						show-table-footer
 					/>

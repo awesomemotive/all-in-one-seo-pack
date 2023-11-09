@@ -21,7 +21,7 @@
 import OpeningHours from './AIOSEO_VERSION/opening-hours/OpeningHours'
 import Cta from './AIOSEO_VERSION/partials/Cta'
 import Lite from './lite/opening-hours/OpeningHours'
-import { AddonConditions } from '@/vue/mixins'
+import { AddonConditions } from '@/vue/mixins/AddonConditions'
 export default {
 	mixins     : [ AddonConditions ],
 	components : {

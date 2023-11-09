@@ -36,6 +36,14 @@
 					{{ label }}
 				</template>
 			</div>
+
+			<div
+				v-if="clearable && value"
+				class="clear"
+				@click.stop="clear"
+			>
+				<svg-circle-close />
+			</div>
 		</div>
 	</div>
 </template>
@@ -47,6 +55,7 @@ import {
 
 import dateFormat from '@/vue/utils/dateFormat'
 import SvgCalendar from '@/vue/components/common/svg/Calendar'
+import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import { ElDatePicker } from 'element-plus'
 import en from 'element-plus/dist/locale/en.mjs'
 import 'element-plus/theme-chalk/el-date-picker.css'
@@ -60,7 +69,8 @@ export default {
 	emits      : [ 'change', 'updated' ],
 	components : {
 		ElDatePicker,
-		SvgCalendar
+		SvgCalendar,
+		SvgCircleClose
 	},
 	props : {
 		size : {
@@ -79,6 +89,12 @@ export default {
 			type : String,
 			default () {
 				return '-'
+			}
+		},
+		clearable : {
+			type : Boolean,
+			default () {
+				return true
 			}
 		},
 		isDisabledDate : {
@@ -134,6 +150,10 @@ export default {
 	methods : {
 		openPicker () {
 			this.$refs.picker.focus()
+		},
+		clear () {
+			this.value = null
+			this.$emit('change', this.value, this.rolling)
 		}
 	},
 	mounted () {
@@ -195,6 +215,18 @@ export default {
 		.label {
 			span {
 				font-weight: 400;
+			}
+		}
+
+		.clear {
+			opacity: 1;
+			margin-left: auto;
+			line-height: 0;
+
+			svg {
+				color: $placeholder-color;
+				width: 15px;
+				height: 15px;
 			}
 		}
 

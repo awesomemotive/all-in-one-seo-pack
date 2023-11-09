@@ -85,7 +85,7 @@ import {
 	useOptionsStore
 } from '@/vue/stores'
 
-import { JsonValues } from '@/vue/mixins'
+import { JsonValues } from '@/vue/mixins/JsonValues'
 import SvgAddPlus from '@/vue/components/common/svg/AddPlus'
 import SvgClose from '@/vue/components/common/svg/Close'
 import SvgExternal from '@/vue/components/common/svg/External'
@@ -150,6 +150,10 @@ export default {
 				})
 		},
 		getOptionTitle (title, search) {
+			// First, sanitize the title and search term. We must do this as we'll be using the result of this method in a v-html directive.
+			title  = title.replace(/<\/?[^>]+(>|$)/g, '')
+			search = search.replace(/<\/?[^>]+(>|$)/g, '')
+
 			const regex = new RegExp(`(${search})`, 'gi')
 			return title.replace(regex, '<span class="search-term">$1</span>')
 		}

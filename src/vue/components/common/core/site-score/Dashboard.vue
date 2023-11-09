@@ -54,7 +54,7 @@ import {
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { merge } from 'lodash-es'
 import { useSeoSiteScore } from '@/vue/composables'
-import { SeoSiteScore } from '@/vue/mixins'
+import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
 import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
 export default {
 	setup () {

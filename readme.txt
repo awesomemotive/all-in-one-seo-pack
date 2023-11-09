@@ -1,10 +1,10 @@
 === All in One SEO – Best WordPress SEO Plugin – Easily Improve SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta title, rich snippets, woocommerce seo, local seo, open graph, google news sitemap, video sitemap, robots.txt, seo audit, content analysis, seo plugin, redirection
-Tested up to: 6.3.1
+Tested up to: 6.4
 Requires at least: 4.9
 Requires PHP: 7.0
-Stable tag: 4.4.9.1
+Stable tag: 4.5.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -257,6 +257,16 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 
 == Changelog ==
+
+**New in Version 4.5.0**
+
+* New: Post Index Status - Check whether your posts have been indexed by Google inside our Search Statistics reports and revamped AIOSEO Details column.
+* New: AIOSEO Details Column Revamp - We've redesigned our post/term column to give it a fresh lick of paint. You can now add smart tags to the title & meta description inside the column and see your headline score.
+* Fixed: Search Statistics no longer considers URLs with query args or HTML anchors.
+
+**New in Version 4.4.9.2**
+
+* Fixed: Widgets page not loading due to JavaScript error.
 
 **New in Version 4.4.9.1**
 
@@ -643,6 +653,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.4.9.1 =
+= 4.5.0 =
 
 This update adds major improvements and bug fixes.

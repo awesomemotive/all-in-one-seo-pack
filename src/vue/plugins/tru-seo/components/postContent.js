@@ -115,7 +115,7 @@ export const getPostContent = () => {
 	}
 
 	if (isBlockEditor()) {
-		postContent = window.wp.data.select('core/editor').getCurrentPost().content
+		postContent = window.wp.data.select('core/editor').getCurrentPost().content || ''
 		postContent = getReusableBlockContent(postContent)
 		postContent = getProcessedBlockContent(postContent, blockPrefixesToProcess)
 	}

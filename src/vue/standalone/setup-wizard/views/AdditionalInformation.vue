@@ -236,7 +236,8 @@ import {
 
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
-import { MaxCounts, Wizard } from '@/vue/mixins'
+import { MaxCounts } from '@/vue/mixins/MaxCounts'
+import { Wizard } from '@/vue/mixins/Wizard'
 import BasePhone from '@/vue/components/common/base/Phone'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreImageUploader from '@/vue/components/common/core/ImageUploader'

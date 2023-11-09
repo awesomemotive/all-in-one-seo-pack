@@ -177,7 +177,7 @@ import {
 
 import addons from '@/vue/utils/addons'
 import { getParams } from '@/vue/utils/params'
-import { Url } from '@/vue/mixins'
+import { Url } from '@/vue/mixins/Url'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreModal from '@/vue/components/common/core/modal/Index'

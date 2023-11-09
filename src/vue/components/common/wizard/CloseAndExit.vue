@@ -68,7 +68,7 @@ import {
 } from '@/vue/stores'
 
 import { useWizard } from '@/vue/composables'
-import { WizardUsageTracking } from '@/vue/mixins'
+import { WizardUsageTracking } from '@/vue/mixins/Wizard'
 export default {
 	setup () {
 		const { strings } = useWizard()

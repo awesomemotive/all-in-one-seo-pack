@@ -47,7 +47,7 @@ export default (paths, app) => {
 		const redirectsStore = useRedirectsStore()
 
 		if (!rootStore.loaded) {
-			loadPiniaStores()
+			loadPiniaStores(app)
 		}
 
 		// Make sure the API is available.

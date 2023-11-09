@@ -48,7 +48,7 @@ class Core {
 	public $fs = null;
 
 	/**
-	 * Filesystem class instance.
+	 * Assets class instance.
 	 *
 	 * @since 4.2.7
 	 *
@@ -57,7 +57,7 @@ class Core {
 	public $assets = null;
 
 	/**
-	 * Assets class instance.
+	 * DB class instance.
 	 *
 	 * @since 4.2.7
 	 *
@@ -93,7 +93,7 @@ class Core {
 	public $cachePrune = null;
 
 	/**
-	 * Cache class instance.
+	 * Options Cache class instance.
 	 *
 	 * @since 4.2.7
 	 *

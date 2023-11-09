@@ -219,6 +219,10 @@ export default ({ mode }) => {
 					replacement : path.resolve(__dirname, 'src')
 				},
 				{
+					find        : '$',
+					replacement : path.resolve(__dirname, 'src')
+				},
+				{
 					find        : 'vue',
 					replacement : '@vue/compat'
 				}

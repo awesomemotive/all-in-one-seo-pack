@@ -186,7 +186,7 @@ export default {
 			cachedPhrase : '',
 			strings      : {
 				searchPlaceholder    : this.$t.__('Search for an item...', this.$td),
-				enterCustomFieldName : this.$t.__('Enter a custom field name...', this.$td),
+				enterCustomFieldName : this.$t.__('Enter a custom field/taxonomy name...', this.$td),
 				learnMoreSmartTags   : this.$t.__('Learn more about Smart Tags', this.$td),
 				removeSmartTag       : this.$t.__('Remove Smart Tag', this.$td)
 			}
@@ -738,6 +738,9 @@ export default {
 				position: relative;
 				display: inline-flex;
 				align-items: center;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 
 				.tag-toggle {
 					display: inline-flex;

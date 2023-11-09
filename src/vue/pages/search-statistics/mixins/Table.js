@@ -44,7 +44,7 @@ export default {
 			this.$router.push({
 				name  : 'post-detail',
 				query : {
-					postId        : post.postId,
+					postId        : post.objectId,
 					previousRoute : this.$route.name
 				}
 			})

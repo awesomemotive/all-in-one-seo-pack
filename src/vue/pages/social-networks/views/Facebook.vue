@@ -559,7 +559,9 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { ImageSourceOptions, MaxCounts, Tags } from '@/vue/mixins'
+import { ImageSourceOptions } from '@/vue/mixins/Image'
+import { MaxCounts } from '@/vue/mixins/MaxCounts'
+import { Tags } from '@/vue/mixins/Tags'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'

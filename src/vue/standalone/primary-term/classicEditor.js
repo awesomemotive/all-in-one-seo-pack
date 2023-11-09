@@ -1,4 +1,4 @@
-import { isClassicEditor } from '@/vue/plugins/tru-seo/components/helpers'
+import { isClassicEditor } from '@/vue/utils/context'
 import { getTaxonomies } from './helpers'
 import {
 	loadPiniaStores

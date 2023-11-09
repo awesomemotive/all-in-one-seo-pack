@@ -99,7 +99,7 @@ import {
 } from '@/vue/stores'
 
 import addons from '@/vue/utils/addons'
-import { ScrollAndHighlight } from '@/vue/mixins'
+import { ScrollAndHighlight } from '@/vue/mixins/ScrollAndHighlight'
 import CoreApiBar from '@/vue/components/common/core/ApiBar'
 import CoreLicenseKeyBar from '@/vue/components/AIOSEO_VERSION/core/LicenseKeyBar'
 import CorePercentCircle from '@/vue/components/common/core/PercentCircle'

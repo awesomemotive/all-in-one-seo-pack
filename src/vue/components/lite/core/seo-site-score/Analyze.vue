@@ -39,7 +39,7 @@ import {
 
 import { popup } from '@/vue/utils/popup'
 import { useSeoSiteScore } from '@/vue/composables'
-import { SeoSiteScore } from '@/vue/mixins'
+import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreSiteScoreAnalyze from '@/vue/components/common/core/site-score/Analyze'
 export default {

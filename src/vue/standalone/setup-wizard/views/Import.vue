@@ -78,7 +78,7 @@ import {
 import { getAssetUrl } from '@/vue/utils/helpers'
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
-import { Wizard } from '@/vue/mixins'
+import { Wizard } from '@/vue/mixins/Wizard'
 import yoastSeoImg from '@/vue/assets/images/plugins/yoast-logo-small.png'
 import rankMathSeoImg from '@/vue/assets/images/plugins/rank-math-seo-logo-small.png'
 import seopressImg from '@/vue/assets/images/plugins/seopress-free-logo-small.svg'

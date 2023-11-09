@@ -3,14 +3,14 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
+import { shouldShowMetaBox } from '@/vue/utils/metabox'
 import {
 	isBlockEditor,
-	shouldShowMetaBox,
 	isClassicEditor,
 	isClassicNoEditor,
-	isWooCommerceProduct,
-	maybeUpdatePost
-} from '@/vue/plugins/tru-seo/components/helpers'
+	isWooCommerceProduct
+} from '@/vue/utils/context'
+import { maybeUpdatePost } from '@/vue/plugins/tru-seo/components/helpers'
 import { maybeUpdateTerm } from '@/vue/plugins/tru-seo/components/term'
 import { maybeUpdateAttachment } from '@/vue/plugins/tru-seo/components/attachments'
 import {

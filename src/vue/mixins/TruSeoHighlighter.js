@@ -5,13 +5,15 @@ import {
 import { createApp, h } from 'vue'
 import { mapStores } from 'pinia'
 import { debounce, random } from 'lodash-es'
-import { isPageBuilderEditor } from '@/vue/utils/context'
 import { getOuterText } from '@/vue/utils/html'
 import { escapeRegex } from '@/vue/utils/regex'
 import { getMostReadableColor } from '@wordpress/block-editor/src/components/colors/utils'
 import {
 	isBlockEditor,
 	isClassicEditor,
+	isPageBuilderEditor
+} from '@/vue/utils/context'
+import {
 	normalizeWhitespaces,
 	reverseWindowSelection,
 	getClosestNodeByPropertyValue,

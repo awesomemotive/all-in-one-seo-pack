@@ -13,7 +13,7 @@
 <script>
 import Lite from './lite/seo-statistics/Index'
 import SeoStatistics from './AIOSEO_VERSION/seo-statistics/Index'
-import { LicenseConditions } from '@/vue/mixins'
+import { LicenseConditions } from '@/vue/mixins/LicenseConditions'
 export default {
 	mixins     : [ LicenseConditions ],
 	components : {

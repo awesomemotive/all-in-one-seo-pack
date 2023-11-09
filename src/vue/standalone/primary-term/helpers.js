@@ -2,7 +2,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { isBlockEditor } from '@/vue/plugins/tru-seo/components/helpers'
+import { isBlockEditor } from '@/vue/utils/context'
 
 const blockEditor = {
 	getTerms : async (taxName) => {

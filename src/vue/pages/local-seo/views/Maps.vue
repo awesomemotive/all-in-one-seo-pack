@@ -21,7 +21,7 @@
 import Maps from './AIOSEO_VERSION/maps/Maps'
 import Cta from './AIOSEO_VERSION/partials/Cta'
 import Lite from './lite/maps/Maps'
-import { AddonConditions } from '@/vue/mixins'
+import { AddonConditions } from '@/vue/mixins/AddonConditions'
 export default {
 	mixins     : [ AddonConditions ],
 	components : {

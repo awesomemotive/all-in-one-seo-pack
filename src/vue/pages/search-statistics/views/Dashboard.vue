@@ -13,7 +13,7 @@
 <script>
 import Lite from './lite/dashboard/Index'
 import Dashboard from './AIOSEO_VERSION/dashboard/Index'
-import { LicenseConditions } from '@/vue/mixins'
+import { LicenseConditions } from '@/vue/mixins/LicenseConditions'
 export default {
 	mixins     : [ LicenseConditions ],
 	components : {

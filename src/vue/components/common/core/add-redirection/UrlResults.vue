@@ -66,7 +66,11 @@ export default {
 	},
 	methods : {
 		getOptionTitle (title) {
-			const regex = new RegExp(`(${this.url})`, 'gi')
+			// First, sanitize the title and URL. We must do this as we'll be using the result of this method in a v-html directive.
+			title     = title.replace(/<\/?[^>]+(>|$)/g, '')
+			const url = this.url.replace(/<\/?[^>]+(>|$)/g, '')
+
+			const regex = new RegExp(`(${url})`, 'gi')
 			return title.replace(regex, '<span class="search-term">$1</span>')
 		},
 		getStatusLabel (status) {

@@ -204,7 +204,7 @@ import {
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { merge } from 'lodash-es'
 import { useNotifications } from '@/vue/composables'
-import { Notifications } from '@/vue/mixins'
+import { Notifications } from '@/vue/mixins/Notifications'
 
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreFeatureCard from '@/vue/components/common/core/FeatureCard'

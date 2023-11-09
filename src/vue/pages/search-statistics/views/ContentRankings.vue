@@ -13,7 +13,7 @@
 <script>
 import Lite from './lite/content-rankings/Index'
 import ContentRankings from './AIOSEO_VERSION/content-rankings/Index'
-import { LicenseConditions } from '@/vue/mixins'
+import { LicenseConditions } from '@/vue/mixins/LicenseConditions'
 export default {
 	mixins     : [ LicenseConditions ],
 	components : {

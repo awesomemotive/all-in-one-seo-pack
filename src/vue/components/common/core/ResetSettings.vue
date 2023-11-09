@@ -117,7 +117,7 @@ import {
 	useToolsStore
 } from '@/vue/stores'
 
-import { ToolsSettings } from '@/vue/mixins'
+import { ToolsSettings } from '@/vue/mixins/ToolsSettings'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreModal from '@/vue/components/common/core/modal/Index'

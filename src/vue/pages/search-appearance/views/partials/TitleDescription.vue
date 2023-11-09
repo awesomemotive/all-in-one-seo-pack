@@ -115,7 +115,8 @@
 
 <script>
 import tags from '@/vue/utils/tags'
-import { MaxCounts, Tags } from '@/vue/mixins'
+import { MaxCounts } from '@/vue/mixins/MaxCounts'
+import { Tags } from '@/vue/mixins/Tags'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'

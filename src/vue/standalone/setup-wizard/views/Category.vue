@@ -131,7 +131,7 @@ import {
 
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
-import { Wizard } from '@/vue/mixins'
+import { Wizard } from '@/vue/mixins/Wizard'
 import BaseHighlightToggle from '@/vue/components/common/base/HighlightToggle'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import GridColumn from '@/vue/components/common/grid/Column'

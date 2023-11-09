@@ -103,7 +103,7 @@ import {
 } from '@/vue/stores'
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
-import { Wizard, WizardUsageTracking } from '@/vue/mixins'
+import { Wizard, WizardUsageTracking } from '@/vue/mixins/Wizard'
 import SvgGiantGear from '@/vue/components/common/svg/GiantGear'
 export default {
 	setup () {

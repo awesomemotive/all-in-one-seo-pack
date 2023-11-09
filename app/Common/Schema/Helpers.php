@@ -85,6 +85,14 @@ class Helpers {
 
 		// Sort the graphs alphabetically.
 		usort( $schema['@graph'], function ( $a, $b ) {
+			if ( is_array( $a['@type'] ) ) {
+				return 1;
+			}
+
+			if ( is_array( $b['@type'] ) ) {
+				return -1;
+			}
+
 			return strcmp( $a['@type'], $b['@type'] );
 		} );
 

@@ -170,7 +170,7 @@ import {
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { getAssetUrl } from '@/vue/utils/helpers'
-import { License } from '@/vue/mixins'
+import { License } from '@/vue/mixins/License'
 
 import ctaImg from '@/vue/assets/images/upsells/news-sitemap.png'
 import CoreAlert from '@/vue/components/common/core/alert/Index'

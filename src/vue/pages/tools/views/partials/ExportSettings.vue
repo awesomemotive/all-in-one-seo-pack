@@ -128,7 +128,7 @@ import {
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { DateTime } from 'luxon'
-import { ToolsSettings } from '@/vue/mixins'
+import { ToolsSettings } from '@/vue/mixins/ToolsSettings'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreNetworkSiteSelector from '@/vue/components/common/core/NetworkSiteSelector'

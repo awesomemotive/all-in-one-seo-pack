@@ -64,7 +64,7 @@ import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import '@/vue/assets/scss/main.scss'
 
 import { getParams, removeParam } from '@/vue/utils/params'
-import { SaveChanges } from '@/vue/mixins'
+import { SaveChanges } from '@/vue/mixins/SaveChanges'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreHeader from '@/vue/components/common/core/Header'
 import CoreHelp from '@/vue/components/common/core/Help'

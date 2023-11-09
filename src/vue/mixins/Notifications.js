@@ -1,6 +1,6 @@
 import {
 	useNotificationsStore
-} from '@/vue/stores'
+} from '$/vue/stores'
 
 export const Notifications = {
 	computed : {

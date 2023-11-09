@@ -18,7 +18,7 @@
 import Cta from './AIOSEO_VERSION/redirects/Cta'
 import Lite from './lite/redirects/Redirects'
 import Redirects from './AIOSEO_VERSION/redirects/Redirects'
-import { AddonConditions } from '@/vue/mixins'
+import { AddonConditions } from '@/vue/mixins/AddonConditions'
 export default {
 	mixins     : [ AddonConditions ],
 	components : {

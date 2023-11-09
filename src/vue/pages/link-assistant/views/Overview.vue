@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { AddonConditions } from '@/vue/mixins'
+import { AddonConditions } from '@/vue/mixins/AddonConditions'
 import Cta from './AIOSEO_VERSION/overview/Cta'
 import Lite from './lite/overview/Overview'
 import Overview from './AIOSEO_VERSION/overview/Overview'

@@ -13,7 +13,8 @@ import {
 	useRedirectsStore
 } from '@/vue/stores'
 
-import { RequiresActivation, RequiresUpdate } from '@/vue/mixins'
+import { RequiresActivation } from '@/vue/mixins/RequiresActivation'
+import { RequiresUpdate } from '@/vue/mixins/RequiresUpdate'
 import addons from '@/vue/utils/addons'
 import CoreMain from '@/vue/components/common/core/main/Index'
 import FullSiteRedirect from './AIOSEO_VERSION/FullSiteRedirect'

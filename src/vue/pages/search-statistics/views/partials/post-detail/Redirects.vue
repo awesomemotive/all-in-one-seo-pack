@@ -25,7 +25,7 @@ import {
 } from '@/vue/stores'
 
 import addons from '@/vue/utils/addons'
-import { AddonConditions } from '@/vue/mixins'
+import { AddonConditions } from '@/vue/mixins/AddonConditions'
 import Activate from './redirects/Activate'
 import Redirects from './redirects/Redirects'
 import Update from './redirects/Update'

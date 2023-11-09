@@ -93,7 +93,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { MetaTag } from '@/vue/mixins'
+import { MetaTag } from '@/vue/mixins/MetaTag'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseEditor from '@/vue/components/common/base/Editor'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'

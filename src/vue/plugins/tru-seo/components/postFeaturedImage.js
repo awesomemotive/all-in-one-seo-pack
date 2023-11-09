@@ -28,7 +28,7 @@ const getClassicEditorFeaturedImage = () => {
  */
 const getBlockEditorFeaturedMediaId = async (edited = false) => {
 	const coreEditor = window.wp.data.select('core/editor')
-	const mediaId    = edited ? coreEditor.getEditedPostAttribute('featured_media') : coreEditor.getCurrentPost().featured_media
+	const mediaId    = edited && coreEditor ? coreEditor?.getEditedPostAttribute('featured_media') : coreEditor?.getCurrentPost()?.featured_media
 
 	// Try again if the Block Editor API is not fully loaded yet.
 	if ('undefined' === typeof mediaId) {

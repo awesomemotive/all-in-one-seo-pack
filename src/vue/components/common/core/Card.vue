@@ -82,7 +82,7 @@
 <script>
 import {
 	useSettingsStore
-} from '@/vue/stores'
+} from '$/vue/stores'
 
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCaret from '@/vue/components/common/svg/Caret'

@@ -17,7 +17,7 @@ import {
 } from '@/vue/stores'
 
 import MainView from './views/Main'
-import { ScrollAndHighlight } from '@/vue/mixins'
+import { ScrollAndHighlight } from '@/vue/mixins/ScrollAndHighlight'
 import Alert from './views/partials/Alert'
 export default {
 	setup () {

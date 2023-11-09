@@ -68,7 +68,8 @@ import {
 	useNotificationsStore
 } from '@/vue/stores'
 
-import { Url, Date } from '@/vue/mixins'
+import { Url } from '@/vue/mixins/Url'
+import { Date } from '@/vue/mixins/Date'
 import BaseButton from '@/vue/components/common/base/Button'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'

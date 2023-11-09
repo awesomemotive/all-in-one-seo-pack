@@ -2,7 +2,7 @@ import {
 	usePluginsStore
 } from '@/vue/stores'
 
-import { MetaTag } from '@/vue/mixins'
+import { MetaTag } from '@/vue/mixins/MetaTag'
 export const WebmasterTools = {
 	mixins : [ MetaTag ],
 	props  : {

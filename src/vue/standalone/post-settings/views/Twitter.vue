@@ -170,7 +170,10 @@ import {
 } from '@/vue/stores'
 
 import tags from '@/vue/utils/tags'
-import { ImageSourceOptions, ImagePreview, MaxCounts, Tags, twitterCard } from '@/vue/mixins'
+import { ImageSourceOptions, ImagePreview } from '@/vue/mixins/Image'
+import { MaxCounts } from '@/vue/mixins/MaxCounts'
+import { Tags } from '@/vue/mixins/Tags'
+import { twitterCard } from '@/vue/mixins/PostSocial'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreImageUploader from '@/vue/components/common/core/ImageUploader'

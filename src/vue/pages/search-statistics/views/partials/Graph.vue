@@ -474,7 +474,7 @@ export default {
 						y           : 0,
 						yAxisIndex  : 0,
 						seriesIndex : 0,
-						mouseEnter  : (pointer, event) => {
+						mouseEnter  : (_pointer, event) => {
 							let target = event.target
 
 							if ('circle' === event.relatedTarget.tagName.toLowerCase()) {
@@ -483,6 +483,14 @@ export default {
 
 							this.timelineMarkersDate = key
 							this.showTimelineMarkersTooltip(target)
+							console.log('enter')
+						},
+						mouseLeave : (_pointer, event) => {
+							if ('string' === event.toElement.className && event.toElement.className.includes('popper')) {
+								return
+							}
+
+							this.$refs.timelineMarkersPopper.doClose()
 						},
 						label : {
 							text        : this.timelineMarkers[key].length,
@@ -498,7 +506,8 @@ export default {
 						marker : {
 							size        : 12,
 							strokeWidth : 1,
-							strokeColor : '#D0D1D7'
+							strokeColor : '#D0D1D7',
+							cssClass    : 'marker-circle'
 						},
 						image : {
 							width  : 17,
@@ -600,6 +609,10 @@ export default {
 		.active-point {
 			stroke: $blue;
 			fill: $blue4;
+		}
+
+		.marker-circle {
+			pointer-events: none;
 		}
 	}
 

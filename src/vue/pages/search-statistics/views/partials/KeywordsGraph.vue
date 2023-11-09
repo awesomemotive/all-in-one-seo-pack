@@ -18,7 +18,7 @@ import {
 
 import KeywordsGraph from './keywords-graph/KeywordsGraph'
 import Upgrade from './keywords-graph/Upgrade'
-import { LicenseConditions } from '@/vue/mixins'
+import { LicenseConditions } from '@/vue/mixins/LicenseConditions'
 export default {
 	setup () {
 		return {

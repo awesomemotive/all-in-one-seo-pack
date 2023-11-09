@@ -8,7 +8,7 @@ export default () => {
 		const { subscribe, select } = window.wp.data
 		const coreEditor            = select('core/editor')
 		subscribe(() => {
-			const featuredImage = coreEditor.getEditedPostAttribute('featured_media')
+			const featuredImage = coreEditor?.getEditedPostAttribute('featured_media')
 			if (!prevValue || prevValue !== featuredImage) {
 				emitter.emit('updateFeaturedImage', featuredImage)
 				prevValue = featuredImage

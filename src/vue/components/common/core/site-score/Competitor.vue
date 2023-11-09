@@ -58,7 +58,7 @@ import {
 
 import { merge } from 'lodash-es'
 import { useSeoSiteScore } from '@/vue/composables'
-import { SeoSiteScore } from '@/vue/mixins'
+import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
 import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
 import SvgRefresh from '@/vue/components/common/svg/Refresh'
 export default {

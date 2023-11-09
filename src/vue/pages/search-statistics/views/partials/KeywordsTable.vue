@@ -146,7 +146,7 @@ import {
 import numbers from '@/vue/utils/numbers'
 import { decodeHTMLEntities } from '@/vue/utils/helpers'
 import { clone } from 'lodash-es'
-import { WpTable } from '@/vue/mixins'
+import { WpTable } from '@/vue/mixins/WpTable'
 import PostTypesMixin from '@/vue/mixins/PostTypes.js'
 import Table from '../../mixins/Table.js'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'

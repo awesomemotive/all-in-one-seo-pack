@@ -278,6 +278,7 @@ trait Vue {
 			'postType'                       => 'type' === $postTypeObj->name ? '_aioseo_type' : $postTypeObj->name,
 			'postStatus'                     => get_post_status( $postId ),
 			'isSpecialPage'                  => $this->isSpecialPage( $postId ),
+			'isStaticPostsPage'              => aioseo()->helpers->isStaticPostsPage(),
 			'isHomePage'                     => $postId === $staticHomePage,
 			'isWooCommercePageWithoutSchema' => $this->isWooCommercePageWithoutSchema( $postId ),
 			'seo_score'                      => (int) $post->seo_score,

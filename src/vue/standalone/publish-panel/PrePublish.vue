@@ -74,7 +74,8 @@ import {
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 
-import { Tags, ImagePreview } from '@/vue/mixins'
+import { ImagePreview } from '@/vue/mixins/Image'
+import { Tags } from '@/vue/mixins/Tags'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'

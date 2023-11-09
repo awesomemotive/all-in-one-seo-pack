@@ -16,7 +16,8 @@ import {
 } from '@/vue/stores'
 
 import addons from '@/vue/utils/addons'
-import { RequiresActivation, RequiresUpdate } from '@/vue/mixins'
+import { RequiresActivation } from '@/vue/mixins/RequiresActivation'
+import { RequiresUpdate } from '@/vue/mixins/RequiresUpdate'
 import CoreMain from '@/vue/components/common/core/main/Index'
 import CoreProcessingPopup from '@/vue/components/common/core/ProcessingPopup'
 import DomainsReport from './AIOSEO_VERSION/DomainsReport'
@@ -175,7 +176,6 @@ export default {
 	}
 
 	#the-list .aioseo-wp-table.link-assistant-inner-table {
-
 		.wp-table table {
 			border: 0;
 

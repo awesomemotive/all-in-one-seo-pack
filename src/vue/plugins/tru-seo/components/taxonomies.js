@@ -5,7 +5,7 @@ import {
 } from '@/vue/stores'
 
 import TruSeo from '@/vue/plugins/tru-seo'
-import { isBlockEditor, isClassicEditor, isClassicNoEditor } from './helpers'
+import { isBlockEditor, isClassicEditor, isClassicNoEditor } from '@/vue/utils/context'
 
 let taxonomyTitle = '',
 	listOfCategories = ''

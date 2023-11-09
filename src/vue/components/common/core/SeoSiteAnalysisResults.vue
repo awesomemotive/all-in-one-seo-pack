@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { Tags } from '@/vue/mixins'
+import { Tags } from '@/vue/mixins/Tags'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
 import CoreSeoSiteAnalysisResult from '@/vue/components/common/core/SeoSiteAnalysisResult'
 export default {

@@ -10,7 +10,8 @@ import { markRaw } from 'vue'
 import { getPostEditedContent } from '@/vue/plugins/tru-seo/components/postContent'
 import { getPostEditedPermalink } from '@/vue/plugins/tru-seo/components/postPermalink'
 import { getPostEditedTitle } from '@/vue/plugins/tru-seo/components/postTitle'
-import { isBlockEditor } from '@/vue/plugins/tru-seo/components/helpers'
+import { isBlockEditor } from '@/vue/utils/context'
+import { shouldShowTruSeoScore } from '@/vue/plugins/tru-seo/components/helpers'
 
 import { decodeHTMLEntities } from '@/vue/utils/helpers'
 
@@ -142,7 +143,11 @@ class TruSeo {
 		dispatch.forEach(d => {
 			if ('updateState' === d.action) {
 				// Update the sidebar score.
-				if ('attachment' !== postEditorStore.currentPost.postType && analysisData.postEditedTitle) {
+				if (
+					'attachment' !== postEditorStore.currentPost.postType &&
+					shouldShowTruSeoScore() &&
+					analysisData.postEditedTitle
+				) {
 					this.setSidebarButtonScore(d.data.seo_score)
 				}
 			}

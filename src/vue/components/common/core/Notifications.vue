@@ -5,7 +5,7 @@
 	>
 		<transition name="notifications-slide">
 			<div
-				v-if="notificationsStore.showNotifications"
+			v-if="notificationsStore.showNotifications"
 				class="notification-menu"
 			>
 				<div class="notification-header">
@@ -84,21 +84,20 @@
 </template>
 
 <script>
-import {
-	useNotificationsStore
-} from '@/vue/stores'
+import { useNotificationsStore } from '$/vue/stores'
 
 import { useNotifications } from '@/vue/composables'
 import { merge } from 'lodash-es'
-import { Notifications } from '@/vue/mixins'
+import { Notifications } from '@/vue/mixins/Notifications'
 import CoreNotificationCards from '@/vue/components/common/core/NotificationCards'
 import SvgClose from '@/vue/components/common/svg/Close'
 export default {
 	setup () {
-		const { strings } = useNotifications()
+		const notificationStore = useNotificationsStore()
+		const { strings }       = useNotifications()
 
 		return {
-			notificationsStore : useNotificationsStore(),
+			notificationsStore : notificationStore,
 			composableStrings  : strings
 		}
 	},

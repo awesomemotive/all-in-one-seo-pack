@@ -13,7 +13,7 @@
 <script>
 import Lite from './lite/keyword-rankings/Index'
 import KeywordRankings from './AIOSEO_VERSION/keyword-rankings/Index'
-import { LicenseConditions } from '@/vue/mixins'
+import { LicenseConditions } from '@/vue/mixins/LicenseConditions'
 export default {
 	mixins     : [ LicenseConditions ],
 	components : {

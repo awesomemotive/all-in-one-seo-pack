@@ -1,10 +1,10 @@
 <template>
 	<svg
-		viewBox="0 0 20 20"
+		viewBox="0 0 30 30"
 		fill="currentColor"
 		xmlns="http://www.w3.org/2000/svg"
 		class="aioseo-circle-exclamation-solid"
 	>
-		<path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z" fill="currentColor"/>
+		<path d="M 15.0005 2.84 C 8.1005 2.84 2.5005 8.44 2.5005 15.34 C 2.5005 22.24 8.1005 27.84 15.0005 27.84 C 21.9005 27.84 27.5005 22.24 27.5005 15.34 C 27.5005 8.44 21.9005 2.84 15.0005 2.84 Z M 16.2505 21.59 H 13.7505 V 19.09 H 16.2505 V 21.6 Z M 16.2505 16.59 H 13.7505 V 9.09 H 16.2505 V 16.59 Z" />
 	</svg>
 </template>

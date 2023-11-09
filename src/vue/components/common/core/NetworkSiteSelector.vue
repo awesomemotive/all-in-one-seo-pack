@@ -14,7 +14,7 @@ import {
 } from '@/vue/stores'
 
 import { addParam, getParams, removeParam } from '@/vue/utils/params'
-import { Network } from '@/vue/mixins'
+import { Network } from '@/vue/mixins/Network'
 
 export default {
 	setup () {

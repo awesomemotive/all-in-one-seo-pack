@@ -131,7 +131,7 @@ import {
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { WpTable } from '@/vue/mixins'
+import { WpTable } from '@/vue/mixins/WpTable'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import { useLinks } from '@/vue/composables/link-assistant/Links'

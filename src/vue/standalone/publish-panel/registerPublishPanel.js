@@ -3,7 +3,8 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { isBlockEditor, shouldShowMetaBox } from '@/vue/plugins/tru-seo/components/helpers'
+import { shouldShowMetaBox } from '@/vue/utils/metabox'
+import { isBlockEditor } from '@/vue/utils/context'
 
 (function (wp) {
 	if (!isBlockEditor() || !shouldShowMetaBox() || !wp.editPost.PluginDocumentSettingPanel) {

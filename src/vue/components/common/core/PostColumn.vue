@@ -7,199 +7,299 @@
 	>
 		<div>
 			<div
-				v-if="'edit' === $root._data.screen.base && showTruSeo && allowed('aioseo_page_analysis') && !isSpecialPage"
-				class="edit-row"
+				v-if="'edit' === $root._data.screen.base && !isSpecialPage"
+				class="edit-row scores"
 			>
-				<core-score-button
-					:score="post.value"
-					:postId="postId"
+				<index-status
+					v-if="showIndexStatus"
+					:result="inspectionResult?.indexStatusResult"
+					:result-link="inspectionResult?.inspectionResultLink"
+					:loading="inspectionResultLoading"
+					:viewable="post.isPostVisible"
+					tooltip-offset="-150px,0"
 				/>
+
+				<core-tooltip
+					type="action"
+					v-if="optionsStore.options.advanced.headlineAnalyzer"
+				>
+					<core-score-button
+						:score="post.headlineScore"
+						:postId="postId"
+					>
+						<template #icon>
+							<svg-headline-analyzer />
+						</template>
+					</core-score-button>
+
+					<template #tooltip>
+						{{ strings.headlineScore }}
+					</template>
+				</core-tooltip>
+
+				<core-tooltip
+					type="action"
+					v-if="showTruSeo && allowed('aioseo_page_analysis')"
+				>
+					<core-score-button
+						:score="post.value"
+						:postId="postId"
+					>
+						<template #icon>
+							<svg-aioseo-logo-gear />
+						</template>
+					</core-score-button>
+
+					<template #tooltip>
+						{{ strings.truSeoScore }}
+					</template>
+				</core-tooltip>
 			</div>
 
-			<div
-				v-if="allowed('aioseo_page_general_settings')"
-				class="edit-row edit-title"
-			>
-				<a
-					class="dashicons dashicons-edit aioseo-quickedit"
-					:title="strings.edit"
-					@click.prevent="editTitle"
+			<div>
+				<core-tooltip
+					v-if="allowed('aioseo_page_general_settings')"
+					class="aioseo-details-column__tooltip"
+					:disabled="showEditTitle"
 				>
-				</a>
+					<div class="edit-row edit-title">
+						<strong>{{ strings.title }}</strong>
 
-				<strong>{{ strings.title }}&nbsp;</strong>
+						<span v-if="!showEditTitle">
+							<strong>:</strong>
+							{{ truncate(titleParsed, 100) }}
+						</span>
 
-				<span :id="`aioseo-${columnName}-${postId}-value`">
-					{{ truncate(titleParsed, 100) }}
-				</span>
+						<svg-pencil
+							v-if="!showEditTitle"
+							class="pencil-icon"
+							@click.prevent="editTitle"
+						/>
+					</div>
+
+					<template #tooltip>
+						<strong>{{ strings.title }}:</strong>
+						{{ titleParsed }}
+					</template>
+				</core-tooltip>
 			</div>
 
 			<div
 				v-if="showEditTitle"
 				class="edit-row"
 			>
-				<textarea
+				<core-html-tags-editor
 					v-model="title"
-					class="aioseo-quickedit-input"
-					rows="4"
-					columns="32"
+					:line-numbers="false"
+					single
+					tags-context="postTitle"
+					defaultMenuOrientation="bottom"
+					tagsDescription=''
+					:default-tags="[ 'post_title' ]"
 				/>
 
-				<a
-					class="dashicons aioseo-quickedit-input-save"
-					@click.prevent="save"
-					:title="strings.save"
-				>
-					<svg-circle-check width="20" />
-				</a>
-
-				<a
-					class="dashicons aioseo-quickedit-input-cancel"
+				<base-button
+					type="gray"
+					size="small"
 					@click.prevent="cancel"
-					:title="strings.cancel"
 				>
-					<svg-circle-close width="20" />
-				</a>
+					{{ strings.discardChanges }}
+				</base-button>
+
+				<base-button
+					type="blue"
+					size="small"
+					@click.prevent="save"
+				>
+					{{ strings.saveChanges }}
+				</base-button>
 			</div>
 
-			<div
-				v-if="allowed('aioseo_page_general_settings')"
-				class="edit-row edit-description"
-			>
-				<a
-					class="dashicons dashicons-edit aioseo-quickedit"
-					:title="strings.edit"
-					@click.prevent="editDescription"
+			<div>
+				<core-tooltip
+					v-if="allowed('aioseo_page_general_settings')"
+					class="aioseo-details-column__tooltip"
+					:disabled="showEditDescription"
 				>
-				</a>
+					<div class="edit-row edit-description">
+						<strong>{{ strings.description }}</strong>
 
-				<strong>{{ strings.description }}&nbsp;</strong>
+						<span
+							v-if="!showEditDescription"
+							:id="`aioseo-${columnName}-${postId}-value`"
+						>
+							<strong>:</strong>
+							{{ truncate(descriptionParsed) }}
+						</span>
 
-				<span :id="`aioseo-${columnName}-${postId}-value`">
-					{{ truncate(descriptionParsed) }}
-				</span>
+						<svg-pencil
+							v-if="!showEditDescription"
+							class="pencil-icon"
+							@click.prevent="editDescription"
+						/>
+					</div>
+
+					<template #tooltip>
+						<strong>{{ strings.description }}:</strong>
+						{{ truncate(descriptionParsed) }}
+					</template>
+				</core-tooltip>
 			</div>
 
 			<div
 				v-if="showEditDescription"
 				class="edit-row"
 			>
-				<textarea
+				<core-html-tags-editor
 					v-model="postDescription"
-					class="aioseo-quickedit-input"
-					rows="4"
-					columns="32"
+					:line-numbers="false"
+					tags-context="postDescription"
+					defaultMenuOrientation="bottom"
+					tagsDescription=''
+					:default-tags="[ 'post_excerpt' ]"
 				/>
 
-				<a
-					class="dashicons aioseo-quickedit-input-save"
-					@click.prevent="save"
-					:title="strings.save"
-				>
-					<svg-circle-check width="20" />
-				</a>
-
-				<a
-					class="dashicons aioseo-quickedit-input-cancel"
+				<base-button
+					type="gray"
+					size="small"
 					@click.prevent="cancel"
-					:title="strings.cancel"
 				>
-					<svg-circle-close width="20" />
-				</a>
+					{{ strings.discardChanges }}
+				</base-button>
+
+				<base-button
+					type="blue"
+					size="small"
+					@click.prevent="save"
+				>
+					{{ strings.saveChanges }}
+				</base-button>
 			</div>
 
 			<slot />
 
-			<div
-				v-if="'upload' === $root._data.screen.base && post.showMedia"
-				class="edit-row edit-image-title"
-			>
-				<a
-					class="dashicons dashicons-edit aioseo-quickedit"
-					:title="strings.edit"
-					@click.prevent="editImageTitle"
+			<div>
+				<core-tooltip
+					v-if="'upload' === $root._data.screen.base && post.showMedia"
+					class="aioseo-details-column__tooltip"
+					:disabled="showEditImageTitle"
 				>
-				</a>
+					<div class="edit-row edit-image-title">
+						<strong>{{ strings.imageTitle }}</strong>
 
-				<strong>{{ strings.imageTitle }} </strong>
+						<span
+							v-if="!showEditImageTitle"
+							:id="`aioseo-${columnName}-${postId}-value`"
+						>
+							<strong>:</strong>
+							{{ imageTitle }}
+						</span>
 
-				<span :id="`aioseo-${columnName}-${postId}-value`">
-					{{ imageTitle }}
-				</span>
+						<svg-pencil
+							v-if="!showEditImageTitle"
+							class="pencil-icon"
+							@click.prevent="editImageTitle"
+						/>
+					</div>
+
+					<template #tooltip>
+						<strong>{{ strings.imageTitle }}:</strong>
+						{{ imageTitle }}
+					</template>
+				</core-tooltip>
 			</div>
 
 			<div
 				v-if="showEditImageTitle"
 				class="edit-row"
 			>
-				<textarea
+				<core-html-tags-editor
 					v-model="imageTitle"
-					class="aioseo-quickedit-input"
-					rows="4"
-					columns="32"
+					:line-numbers="false"
+					single
+					tags-context="attachmentTitle"
+					defaultMenuOrientation="bottom"
+					tagsDescription=''
+					:default-tags="[ 'image_title' ]"
 				/>
 
-				<a
-					class="dashicons aioseo-quickedit-input-save"
-					@click.prevent="saveImage"
-					:title="strings.save"
-				>
-					<svg-circle-check width="20" />
-				</a>
-
-				<a
-					class="dashicons aioseo-quickedit-input-cancel"
+				<base-button
+					type="gray"
+					size="small"
 					@click.prevent="cancel"
-					:title="strings.cancel"
 				>
-					<svg-circle-close width="20" />
-				</a>
+					{{ strings.discardChanges }}
+				</base-button>
+
+				<base-button
+					type="blue"
+					size="small"
+					@click.prevent="saveImage"
+				>
+					{{ strings.saveChanges }}
+				</base-button>
 			</div>
 
-			<div
-				v-if="'upload' === $root._data.screen.base && post.showMedia"
-				class="edit-row edit-image-alt"
-			>
-				<a
-					class="dashicons dashicons-edit aioseo-quickedit"
-					:title="strings.edit"
-					@click.prevent="editImageAlt"
+			<div>
+				<core-tooltip
+					v-if="'upload' === $root._data.screen.base && post.showMedia"
+					class="aioseo-details-column__tooltip"
+					:disabled="showEditImageAltTag"
 				>
-				</a>
+					<div class="edit-row edit-image-alt">
+						<strong>{{ strings.imageAltTag }}</strong>
 
-				<strong>{{ strings.imageAltTag }} </strong>
+						<span
+							v-if="!showEditImageAltTag"
+							:id="`aioseo-${columnName}-${postId}-value`"
+						>
+							<strong>:</strong>
+							{{ imageAltTag }}
+						</span>
 
-				<span :id="`aioseo-${columnName}-${postId}-value`">
-					{{ imageAltTag }}
-				</span>
+						<svg-pencil
+							v-if="!showEditImageAltTag"
+							class="pencil-icon"
+							@click.prevent="editImageAlt"
+						/>
+					</div>
+
+					<template #tooltip>
+						<strong>{{ strings.imageAltTag }}:</strong>
+						{{ imageAltTag }}
+					</template>
+				</core-tooltip>
 			</div>
 
 			<div
 				v-if="showEditImageAltTag"
 				class="edit-row"
 			>
-				<textarea
+				<core-html-tags-editor
 					v-model="imageAltTag"
-					class="aioseo-quickedit-input"
-					rows="4"
-					columns="32"
+					:line-numbers="false"
+					single
+					tags-context="attachmentDescription"
+					defaultMenuOrientation="bottom"
+					tagsDescription=''
+					:default-tags="[ 'alt_tag' ]"
 				/>
 
-				<a
-					class="dashicons aioseo-quickedit-input-save"
-					@click.prevent="saveImage"
-					:title="strings.save"
-				>
-					<svg-circle-check width="20" />
-				</a>
-
-				<a
-					class="dashicons aioseo-quickedit-input-cancel"
+				<base-button
+					type="gray"
+					size="small"
 					@click.prevent="cancel"
-					:title="strings.cancel"
 				>
-					<svg-circle-close width="20" />
-				</a>
+					{{ strings.discardChanges }}
+				</base-button>
+
+				<base-button
+					type="blue"
+					size="small"
+					@click.prevent="saveImage"
+				>
+					{{ strings.saveChanges }}
+				</base-button>
 			</div>
 		</div>
 	</div>
@@ -208,63 +308,96 @@
 <script>
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import http from '@/vue/utils/http'
-
+import { useOptionsStore, useSearchStatisticsStore } from '@/vue/stores'
 import { merge } from 'lodash-es'
 import { useTruSeoScore } from '@/vue/composables'
-import { TruSeoScore } from '@/vue/mixins'
+import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
 import { truncate } from '@/vue/utils/html'
+import license from '@/vue/utils/license'
 
 import { shouldShowTruSeoScore } from '@/vue/plugins/tru-seo/components/helpers'
+import BaseButton from '@/vue/components/common/base/Button'
+import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreScoreButton from '@/vue/components/common/core/ScoreButton'
-import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
-import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
+import CoreTooltip from '@/vue/components/common/core/Tooltip'
+import IndexStatus from '@/vue/components/AIOSEO_VERSION/search-statistics/IndexStatus'
+import SvgAioseoLogoGear from '@/vue/components/common/svg/aioseo/LogoGear'
+import SvgHeadlineAnalyzer from '@/vue/components/common/svg/HeadlineAnalyzer'
+import SvgPencil from '@/vue/components/common/svg/Pencil'
 export default {
 	setup () {
 		const { strings } = useTruSeoScore()
 
 		return {
-			composableStrings : strings
+			composableStrings     : strings,
+			optionsStore          : useOptionsStore(),
+			searchStatisticsStore : useSearchStatisticsStore()
 		}
 	},
 	components : {
+		BaseButton,
+		CoreHtmlTagsEditor,
 		CoreScoreButton,
-		SvgCircleCheck,
-		SvgCircleClose
+		CoreTooltip,
+		IndexStatus,
+		SvgAioseoLogoGear,
+		SvgHeadlineAnalyzer,
+		SvgPencil
 	},
 	mixins : [ TruSeoScore ],
 	props  : {
 		post  : Object,
-		posts : Array,
-		index : Number
+		posts : Array
 	},
 	data () {
 		return {
 			allowed,
-			postId              : null,
-			columnName          : null,
-			value               : null,
-			title               : null,
-			titleParsed         : null,
-			postDescription     : null,
-			descriptionParsed   : null,
-			imageTitle          : null,
-			imageAltTag         : null,
-			showEditTitle       : false,
-			showEditDescription : false,
-			showEditImageTitle  : false,
-			showEditImageAltTag : false,
-			showTruSeo          : false,
-			isSpecialPage       : false,
-			strings             : merge(this.composableStrings, {
-				title       : this.$t.__('Title:', this.$td),
-				description : this.$t.__('Description:', this.$td),
-				imageTitle  : this.$t.__('Image Title:', this.$td),
-				imageAltTag : this.$t.__('Image Alt Tag:', this.$td),
-				edit        : this.$t.__('Edit', this.$td),
-				save        : this.$t.__('Save', this.$td),
-				cancel      : this.$t.__('Cancel', this.$td),
-				wait        : this.$t.__('Please wait...', this.$td)
-			})
+			postId                  : null,
+			columnName              : null,
+			value                   : null,
+			title                   : null,
+			titleParsed             : null,
+			postDescription         : null,
+			descriptionParsed       : null,
+			imageTitle              : null,
+			imageAltTag             : null,
+			showEditTitle           : false,
+			showEditDescription     : false,
+			showEditImageTitle      : false,
+			showEditImageAltTag     : false,
+			showTruSeo              : false,
+			isSpecialPage           : false,
+			inspectionResult        : false,
+			inspectionResultLoading : true,
+			teucu                   : false,
+			strings                 : merge(this.composableStrings, {
+				title          : this.$t.__('Title', this.$td),
+				description    : this.$t.__('Description', this.$td),
+				imageTitle     : this.$t.__('Image Title', this.$td),
+				imageAltTag    : this.$t.__('Image Alt Tag', this.$td),
+				saveChanges    : this.$t.__('Save Changes', this.$td),
+				discardChanges : this.$t.__('Discard Changes', this.$td),
+				truSeoScore    : this.$t.__('TruSEO Score', this.$td),
+				headlineScore  : this.$t.__('Headline Score', this.$td)
+			}),
+			license
+		}
+	},
+	computed : {
+		showIndexStatus () {
+			if (!this.$isPro) {
+				return false
+			}
+
+			if (!license.hasCoreFeature('search-statistics', 'index-status')) {
+				return false
+			}
+
+			const isVerified  = !this.searchStatisticsStore.unverifiedSite
+			const isConnected = 'string' === typeof this.optionsStore.internalOptions.internal?.searchStatistics?.profile?.key
+			const isAllowed   = this.allowed('aioseo_search_statistics_settings')
+
+			return isVerified && isConnected && isAllowed
 		}
 	},
 	methods : {
@@ -347,19 +480,38 @@ export default {
 			const image = title.getElementsByTagName('span')[0]
 			title.innerText = value
 			title.prepend(image)
+		},
+		updateInspectionResult (post) {
+			const { inspectionResult, inspectionResultLoading } = post
+
+			this.inspectionResult        = inspectionResult
+			this.inspectionResultLoading = inspectionResultLoading
 		}
 	},
 	mounted () {
-		this.postId            = this.post.id
-		this.columnName        = this.post.columnName
-		this.value             = this.post.value
-		this.imageTitle        = this.post.imageTitle
-		this.imageAltTag       = this.post.imageAltTag
-		this.isSpecialPage     = this.post.isSpecialPage
-		this.title             = this.post.title || this.post.defaultTitle
-		this.titleParsed       = this.post.titleParsed
-		this.postDescription   = this.post.description || this.post.defaultDescription
-		this.descriptionParsed = this.post.descriptionParsed
+		this.postId                  = this.post.id
+		this.columnName              = this.post.columnName
+		this.value                   = this.post.value
+		this.imageTitle              = this.post.imageTitle
+		this.imageAltTag             = this.post.imageAltTag
+		this.isSpecialPage           = this.post.isSpecialPage
+		this.title                   = this.post.title || this.post.defaultTitle
+		this.titleParsed             = this.post.titleParsed
+		this.postDescription         = this.post.description || this.post.defaultDescription
+		this.descriptionParsed       = this.post.descriptionParsed
+		this.inspectionResult        = this.post.inspectionResult
+		this.inspectionResultLoading = this.post.inspectionResultLoading
+
+		// If the post data changed, we need to parse the title and description again.
+		// This can happen after using the quick-edit feature.
+		if (this.post.reload) {
+			this.save()
+		}
+
+		window.aioseoBus.$on('updateInspectionResult' + this.postId, this.updateInspectionResult)
+	},
+	beforeUnmount () {
+		window.aioseoBus.$off('updateInspectionResult' + this.postId, this.updateInspectionResult)
 	},
 	async created () {
 		this.showTruSeo = shouldShowTruSeoScore()
@@ -394,44 +546,91 @@ export default {
 		}
 	}
 
-	.aioseo-quickedit-input {
-		float:left;
-		position:relative;
-		margin-bottom: 10px;
-		font-size:13px;
-		width:100%;
-		z-index:1;
-	}
-
-	.aioseo-quickedit-input-save {
-		margin-right: 5px;
-		color: rgb(22, 204, 22);
-	}
-
-	.aioseo-quickedit-input-cancel {
-		color: red;
-	}
-
-	.aioseo-quickedit:focus,
-	.aioseo-quickedit-input-save:focus,
-	.aioseo-quickedit-input-cancel:focus  {
-		box-shadow: none;
-	}
-
-	.aioseo-quickedit-spinner {
-		float:left;
-		width:20px;
-		margin-right:5px;
+	&__tooltip {
+		display: inline-block;
+		margin-left: 0;
+		max-width: 100%;
+		width: auto;
 	}
 
 	.edit-row {
 		margin-bottom: 10px;
+
 		&.edit-title,
 		&.edit-description,
 		&.edit-image-title,
 		&.edit-image-alt {
-			max-height: 70px;
-			overflow: hidden;
+			display: flex;
+
+			span {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.aioseo-pencil {
+				margin-left: 5px;
+				padding-left: 2px;
+				flex: 0 0 16px;
+				opacity: 0;
+				display: inline-block;
+				vertical-align: middle;
+				cursor: pointer;
+				color: $black;
+				width: 16px;
+				height: 16px;
+			}
+
+			&:hover {
+				.aioseo-pencil {
+					opacity: 1;
+				}
+			}
+		}
+
+		.aioseo-html-tags-editor {
+			margin-bottom: 4px;
+
+			.ql-editor,
+			.aioseo-add-template-tag {
+				background: $white;
+			}
+
+			@media (max-width: 1300px) {
+				.add-tags {
+					flex-direction: column;
+					align-items: start;
+				}
+			}
+
+			.aioseo-emoji-picker em-emoji-picker {
+				right: 0;
+				left: auto;
+			}
+		}
+
+		.aioseo-button {
+			margin-right: 2px;
+			margin-bottom: 2px;
+
+			@media screen and (max-width: 1366px) {
+				width: 100%;
+				margin-right: 0;
+			}
+		}
+
+		&.scores {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+
+			.aioseo-tooltip {
+				margin-left: 0;
+
+				> div + div { // Fix for tooltip alignment.
+					line-height: 0;
+				}
+			}
 		}
 	}
 }

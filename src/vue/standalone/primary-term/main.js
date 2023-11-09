@@ -9,7 +9,7 @@ import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 import { loadPiniaStores } from '@/vue/stores'
 
 import { elemLoaded } from '@/vue/utils/elemLoaded'
-import { shouldShowMetaBox } from '@/vue/plugins/tru-seo/components/helpers'
+import { shouldShowMetaBox } from '@/vue/utils/metabox'
 
 import App from './App.vue'
 

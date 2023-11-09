@@ -214,7 +214,7 @@ import {
 } from '@/vue/stores'
 
 import { DateTime } from 'luxon'
-import { Date } from '@/vue/mixins'
+import { Date } from '@/vue/mixins/Date'
 import { __ } from '@wordpress/i18n'
 import { getAssetUrl, isUrl, cloneObject } from '@/vue/utils/helpers'
 import csvFileImage from '@/vue/assets/images/sitemap/import-from-csv.png'
@@ -537,7 +537,7 @@ export default {
 		}
 
 		.page-last-modified {
-			max-width: 180px;
+			max-width: 200px;
 		}
 
 		.page-row {

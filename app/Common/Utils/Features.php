@@ -161,6 +161,11 @@ class Features {
 				'license_level' => 'elite',
 				'section'       => 'search-statistics',
 				'feature'       => 'post-detail-keyword-tracking'
+			],
+			[
+				'license_level' => 'elite',
+				'section'       => 'search-statistics',
+				'feature'       => 'index-status'
 			]
 		] ) );
 	}

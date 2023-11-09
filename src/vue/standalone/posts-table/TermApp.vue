@@ -1,87 +1,120 @@
 <template>
-	<div
-		class="aioseo-details-column"
-		:class="{
-			editing: showEditTitle || showEditDescription
-		}"
-	>
-		<div>
-			<div class="edit-row edit-title">
-				<a
-					class="dashicons dashicons-edit aioseo-quickedit"
-					:title="strings.edit"
-					@click.prevent="editTitle"
-				/>
+	<div class="aioseo-app">
+		<div
+			class="aioseo-details-column"
+			:class="{
+				editing: showEditTitle || showEditDescription
+			}"
+		>
+			<div>
+				<div>
+					<core-tooltip class="aioseo-details-column__tooltip">
+						<div class="edit-row edit-title">
+							<strong>{{ strings.title }} </strong>
 
-				<strong>{{ strings.title }} </strong>
+							<span v-if="!showEditTitle">
+								<strong>:</strong>
+								{{ truncate(titleParsed, 100) }}
+							</span>
 
-				<span :id="`aioseo-${columnName}-${termId}-value`">
-					{{ truncate(titleParsed, 100) }}
-				</span>
-			</div>
-			<div
-				v-if="showEditTitle"
-				class="edit-row"
-			>
-				<textarea
-					v-model="title"
-					class="aioseo-quickedit-input"
-					rows="4"
-					columns="32"
-				/>
-				<a
-					class="dashicons aioseo-quickedit-input-save"
-					@click.prevent="save"
-					:title="strings.save"
+							<svg-pencil
+								v-if="!showEditTitle"
+								class="pencil-icon"
+								@click.prevent="editTitle"
+							/>
+						</div>
+
+						<template #tooltip>
+							<strong>{{ strings.title }}:</strong>
+							{{ titleParsed }}
+						</template>
+					</core-tooltip>
+				</div>
+
+				<div
+					v-if="showEditTitle"
+					class="edit-row"
 				>
-					<svg-circle-check width="20" />
-				</a>
-				<a
-					class="dashicons aioseo-quickedit-input-cancel"
-					@click.prevent="cancel"
-					:title="strings.cancel"
-				>
-					<svg-circle-close width="20" />
-				</a>
-			</div>
+					<core-html-tags-editor
+						v-model="title"
+						:line-numbers="false"
+						single
+						tags-context="taxonomyTitle"
+						defaultMenuOrientation="bottom"
+						tagsDescription=''
+						:default-tags="[ 'taxonomy_title' ]"
+					/>
 
-			<div class="edit-row edit-description">
-				<a
-					class="dashicons dashicons-edit aioseo-quickedit"
-					:title="strings.edit"
-					@click.prevent="editDescription"
-				/>
+					<base-button
+						type="gray"
+						size="small"
+						@click.prevent="cancel"
+					>
+						{{ strings.discardChanges }}
+					</base-button>
 
-				<strong>{{ strings.description }}</strong>
+					<base-button
+						type="blue"
+						size="small"
+						@click.prevent="save"
+					>
+						{{ strings.saveChanges }}
+					</base-button>
+				</div>
 
-				<span :id="`aioseo-${columnName}-${termId}-value`">
-					{{ truncate(descriptionParsed) }}
-				</span>
-			</div>
-			<div
-				v-if="showEditDescription"
-				class="edit-row"
-			>
-				<textarea
-					v-model="termDescription"
-					class="aioseo-quickedit-input"
-					rows="4"
-					columns="32"
-				/>
-				<a
-					class="dashicons aioseo-quickedit-input-save"
-					@click.prevent="save"
-					:title="strings.save"
+				<div>
+					<core-tooltip class="aioseo-details-column__tooltip">
+						<div class="edit-row edit-description">
+							<strong>{{ strings.description }}</strong>
+
+							<span v-if="!showEditDescription">
+								<strong>:</strong>
+								{{ truncate(descriptionParsed) }}
+							</span>
+
+							<svg-pencil
+								v-if="!showEditDescription"
+								class="pencil-icon"
+								@click.prevent="editDescription"
+							/>
+						</div>
+
+						<template #tooltip>
+							<strong>{{ strings.description }}:</strong>
+							{{ descriptionParsed }}
+						</template>
+					</core-tooltip>
+				</div>
+
+				<div
+					v-if="showEditDescription"
+					class="edit-row"
 				>
-					<svg-circle-check width="20" />
-				</a>
-				<a
-					class="dashicons aioseo-quickedit-input-cancel"
-					@click.prevent="cancel"
-					:title="strings.cancel"
-				>
-					<svg-circle-close width="20" />
-				</a>
+					<core-html-tags-editor
+						v-model="termDescription"
+						:line-numbers="false"
+						tags-context="taxonomyDescription"
+						defaultMenuOrientation="bottom"
+						tagsDescription=''
+						:default-tags="[ 'taxonomy_description' ]"
+					/>
+
+					<base-button
+						type="gray"
+						size="small"
+						@click.prevent="cancel"
+					>
+						{{ strings.discardChanges }}
+					</base-button>
+
+					<base-button
+						type="blue"
+						size="small"
+						@click.prevent="save"
+					>
+						{{ strings.saveChanges }}
+					</base-button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -91,11 +124,14 @@
 import http from '@/vue/utils/http'
 import { merge } from 'lodash-es'
 import { useTruSeoScore } from '@/vue/composables'
-import { TruSeoScore } from '@/vue/mixins'
+import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
 import { truncate } from '@/vue/utils/html'
 import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
-import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
-import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
+import BaseButton from '@/vue/components/common/base/Button'
+import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
+import CoreTooltip from '@/vue/components/common/core/Tooltip'
+import SvgPencil from '@/vue/components/common/svg/Pencil'
+import '@/vue/assets/scss/main.scss'
 
 export default {
 	setup () {
@@ -106,8 +142,10 @@ export default {
 		}
 	},
 	components : {
-		SvgCircleCheck,
-		SvgCircleClose
+		BaseButton,
+		CoreHtmlTagsEditor,
+		CoreTooltip,
+		SvgPencil
 	},
 	mixins : [ TruSeoScore ],
 	props  : {
@@ -127,12 +165,10 @@ export default {
 			showEditDescription : false,
 			showTruSeo          : false,
 			strings             : merge(this.composableStrings, {
-				title       : this.$t.__('Title:', this.$td),
-				description : this.$t.__('Description:', this.$td),
-				edit        : this.$t.__('Edit', this.$td),
-				save        : this.$t.__('Save', this.$td),
-				cancel      : this.$t.__('Cancel', this.$td),
-				wait        : this.$t.__('Please wait...', this.$td)
+				title          : this.$t.__('Title', this.$td),
+				description    : this.$t.__('Description', this.$td),
+				saveChanges    : this.$t.__('Save Changes', this.$td),
+				discardChanges : this.$t.__('Discard Changes', this.$td)
 			})
 		}
 	},
@@ -179,6 +215,12 @@ export default {
 		this.titleParsed       = this.term.titleParsed
 		this.termDescription   = this.term.description
 		this.descriptionParsed = this.term.descriptionParsed
+
+		// If the term data changed, we need to parse the title and description again.
+		// This can happen after using the quick-edit feature.
+		if (this.term.reload) {
+			this.save()
+		}
 	},
 	async created () {
 		this.showTruSeo = truSeoShouldAnalyze()
@@ -258,6 +300,15 @@ export default {
 table.wp-list-table {
 	.column-name {
 		width: auto !important;
+	}
+
+	&.tags {
+		.aioseo-html-tags-editor {
+			.add-tags {
+				flex-direction: column;
+				align-items: start;
+			}
+		}
 	}
 }
 

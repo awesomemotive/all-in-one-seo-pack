@@ -784,6 +784,56 @@ trait Wp {
 	}
 
 	/**
+	 * Checks whether the post status should be considered viewable.
+	 * This function is a copy of the WordPress core function is_post_status_viewable() which was introduced in WP 5.7.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param  string|\stdClass $postStatus The post status name or object.
+	 * @return bool                         Whether the post status is viewable.
+	 */
+	public function isPostStatusViewable( $postStatus ) {
+		if ( is_scalar( $postStatus ) ) {
+			$postStatus = get_post_status_object( $postStatus );
+
+			if ( ! $postStatus ) {
+				return false;
+			}
+		}
+
+		if (
+			! is_object( $postStatus ) ||
+			$postStatus->internal ||
+			$postStatus->protected
+		) {
+			return false;
+		}
+
+		return $postStatus->publicly_queryable || ( $postStatus->_builtin && $postStatus->public );
+	}
+
+	/**
+	 * Checks whether the given post is publicly viewable.
+	 * This function is a copy of the WordPress core function is_post_publicly_viewable() which was introduced in WP 5.7.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param  int|\WP_Post  $post Optional. Post ID or post object. Defaults to global $post.
+	 * @return boolean                      Whether the post is publicly viewable or not.
+	 */
+	public function isPostPubliclyViewable( $post = null ) {
+		$post = get_post( $post );
+		if ( empty( $post ) ) {
+			return false;
+		}
+
+		$postType   = get_post_type( $post );
+		$postStatus = get_post_status( $post );
+
+		return is_post_type_viewable( $postType ) && $this->isPostStatusViewable( $postStatus );
+	}
+
+	/**
 	 * Only register a legacy widget if the WP version is lower than 5.8 or the widget is being used.
 	 * The "Block-based Widgets Editor" was released in WP 5.8, so for WP versions below 5.8 it's okay to register them.
 	 * The main purpose here is to avoid blocks and widgets with the same name to be displayed on the Customizer,

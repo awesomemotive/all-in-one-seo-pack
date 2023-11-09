@@ -10,7 +10,7 @@
 			:filters="posts.filters"
 			:additional-filters="posts.additionalFilters"
 			:selected-filters="selectedFilters"
-			:loading="isLoading || searchStatisticsStore.loading.seoStatistics"
+			:loading="isLoading"
 			:initial-page-number="pageNumber"
 			:initial-search-term="searchTerm"
 			:initial-items-per-page="settingsStore.settings.tablePagination[changeItemsPerPageSlug]"
@@ -29,34 +29,34 @@
 			@sort-column="processSort"
 		>
 			<template #row="{ index }">
-				<div class="post-row">
+				<div class="object-row">
 					{{ index + 1 }}
 				</div>
 			</template>
 
 			<template #postTitle="{ row }">
-				<div class="post-title">
+				<div class="object-title">
 					<a
-						v-if="row.postId"
+						v-if="row.objectId && 'post' === row.objectType"
 						href="#"
 						@click.prevent="openPostDetail(row)"
 					>
-						{{ row.postTitle }}
+						{{ row.objectTitle }}
 					</a>
 
 					<span
 						v-else
-						class="post-title"
+						class="object-title"
 					>
-						{{ row.postTitle }}
+						{{ row.objectTitle }}
 					</span>
 				</div>
 
-				<post-actions :row="row" />
+				<object-actions :row="row" />
 
 				<div
 					class="row-actions"
-					v-if="row.postId"
+					v-if="row.objectId && 'post' === row.objectType"
 				>
 					<span>
 						<a
@@ -85,6 +85,14 @@
 					v-if="row.seoScore"
 					class="table-score-button"
 					:score="row.seoScore"
+				/>
+			</template>
+
+			<template #indexStatus="{ row }">
+				<index-status
+					:result="row.inspectionResult?.indexStatusResult"
+					:result-link="row.inspectionResult?.inspectionResultLink"
+					:loading="row.inspectionResultLoading"
 				/>
 			</template>
 
@@ -174,26 +182,30 @@
 import {
 	useLicenseStore,
 	useSearchStatisticsStore,
-	useSettingsStore
+	useSettingsStore,
+	useOptionsStore
 } from '@/vue/stores'
 
+import license from '@/vue/utils/license'
 import numbers from '@/vue/utils/numbers'
 import { clone } from 'lodash-es'
-import { WpTable } from '@/vue/mixins'
-import PostTypesMixin from '@/vue/mixins/PostTypes.js'
-import Table from '../../mixins/Table.js'
+import { WpTable } from '@/vue/mixins/WpTable'
 import CoreScoreButton from '@/vue/components/common/core/ScoreButton'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Cta from '@/vue/components/common/cta/Index'
 import GraphDecay from './GraphDecay'
-import PostActions from './AIOSEO_VERSION/PostActions'
+import IndexStatus from '@/vue/components/AIOSEO_VERSION/search-statistics/IndexStatus'
+import ObjectActions from './AIOSEO_VERSION/ObjectActions'
+import PostTypesMixin from '@/vue/mixins/PostTypes.js'
 import Statistic from './Statistic'
+import Table from '../../mixins/Table.js'
 export default {
 	setup () {
 		return {
 			licenseStore          : useLicenseStore(),
 			searchStatisticsStore : useSearchStatisticsStore(),
-			settingsStore         : useSettingsStore()
+			settingsStore         : useSettingsStore(),
+			optionsStore          : useOptionsStore()
 		}
 	},
 	components : {
@@ -201,7 +213,8 @@ export default {
 		CoreWpTable,
 		Cta,
 		GraphDecay,
-		PostActions,
+		IndexStatus,
+		ObjectActions,
 		Statistic
 	},
 	mixins : [ PostTypesMixin, WpTable, Table ],
@@ -220,7 +233,8 @@ export default {
 					this.$t.__('Post Tracking is a %1$s Feature', this.$td),
 					'PRO'
 				)
-			}
+			},
+			license
 		}
 	},
 	props : {
@@ -304,6 +318,12 @@ export default {
 					width : '130px'
 				},
 				{
+					slug        : 'indexStatus',
+					label       : this.$t.__('Indexed', this.$td),
+					width       : '80px',
+					coreFeature : 'index-status'
+				},
+				{
 					slug  : 'clicks',
 					label : this.$t.__('Clicks', this.$td),
 					width : '80px'
@@ -348,20 +368,44 @@ export default {
 					label : this.$t.__('Diff', this.$td),
 					width : '80px'
 				}
-			].filter(column => this.allColumns.includes(column.slug))
-				.map(column => {
-					column.sortable = this.isSortable && this.sortableColumns.includes(column.slug)
-
-					if (column.sortable) {
-						column.sortDir = column.slug === this.orderBy ? this.orderDir : 'asc'
-						column.sorted  = column.slug === this.orderBy
+			].filter(column => {
+				if (column.coreFeature) {
+					if (!this.$isPro || this.licenseStore.isUnlicensed) {
+						return false
 					}
 
-					return column
-				})
+					if (!this.license.hasCoreFeature('search-statistics', column.coreFeature)) {
+						return false
+					}
+				}
+
+				if ('seoScore' === column.slug) {
+					return this.optionsStore.options.advanced.truSeo
+				}
+
+				return this.allColumns.includes(column.slug)
+			}).map(column => {
+				column.sortable = this.isSortable && this.sortableColumns.includes(column.slug)
+
+				if (column.sortable) {
+					column.sortDir = column.slug === this.orderBy ? this.orderDir : 'asc'
+					column.sorted  = column.slug === this.orderBy
+				}
+
+				return column
+			})
 		},
 		isSortable () {
 			return 'all' === this.filter && (this.$isPro && !this.licenseStore.isUnlicensed)
+		}
+	},
+	watch : {
+		isLoading (loading) {
+			if (!loading) {
+				this.$nextTick(() => {
+					this.loadInspectionResult()
+				})
+			}
 		}
 	},
 	methods : {
@@ -373,6 +417,28 @@ export default {
 			if ('function' === typeof this.searchStatisticsStore[this.updateAction]) {
 				return this.searchStatisticsStore[this.updateAction](payload)
 			}
+		},
+		loadInspectionResult () {
+			if (!this.posts?.rows) {
+				return
+			}
+
+			const missingResults = Object.values(this.posts.rows).filter(post => !post.inspectionResult || 0 === post.inspectionResult?.length)
+			if (!missingResults.length) {
+				return
+			}
+
+			missingResults.forEach(post => {
+				this.posts.rows[post.page].inspectionResultLoading = true
+			})
+
+			this.searchStatisticsStore.getInspectionResult(missingResults.map(post => post.page))
+				.then(response => {
+					missingResults.forEach(post => {
+						this.posts.rows[post.page].inspectionResult        = response[post.page]
+						this.posts.rows[post.page].inspectionResultLoading = false
+					})
+				})
 		}
 	},
 	mounted () {
@@ -381,6 +447,8 @@ export default {
 				slug : this.initialFilter
 			})
 		}
+
+		this.loadInspectionResult()
 	}
 }
 </script>
@@ -394,7 +462,7 @@ export default {
 				flex-wrap: wrap;
 				align-items: center;
 
-				.post-title {
+				.object-title {
 					font-weight: 700;
 					width: 100%;
 					padding-bottom: 5px;

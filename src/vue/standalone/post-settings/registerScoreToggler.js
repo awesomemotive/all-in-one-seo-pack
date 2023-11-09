@@ -3,7 +3,9 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { isBlockEditor, shouldShowMetaBox, shouldShowTruSeoScore } from '@/vue/plugins/tru-seo/components/helpers'
+import { shouldShowMetaBox } from '@/vue/utils/metabox'
+import { shouldShowTruSeoScore } from '@/vue/plugins/tru-seo/components/helpers'
+import { isBlockEditor } from '@/vue/utils/context'
 import { __ } from '@wordpress/i18n'
 
 export default function registerScoreToggler () {

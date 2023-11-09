@@ -92,7 +92,7 @@ import {
 import { popup } from '@/vue/utils/popup'
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
-import { Wizard } from '@/vue/mixins'
+import { Wizard } from '@/vue/mixins/Wizard'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'

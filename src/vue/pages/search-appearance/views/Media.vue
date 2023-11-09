@@ -106,7 +106,7 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
-import { AddonConditions } from '@/vue/mixins'
+import { AddonConditions } from '@/vue/mixins/AddonConditions'
 import Advanced from './partials/Advanced'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreCard from '@/vue/components/common/core/Card'

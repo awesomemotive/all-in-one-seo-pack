@@ -16,7 +16,7 @@ import App from './App.vue'
 import registerScoreToggler from './registerScoreToggler'
 import initWatcher from './watcher/main.js'
 import { elemLoaded } from '@/vue/utils/elemLoaded'
-import { shouldShowMetaBox } from '@/vue/plugins/tru-seo/components/helpers'
+import { shouldShowMetaBox } from '@/vue/utils/metabox'
 import loadTruSeo from '@/vue/standalone/post-settings/loadTruSeo'
 import LinkAssistantWatcher from './link-assistant/AIOSEO_VERSION'
 

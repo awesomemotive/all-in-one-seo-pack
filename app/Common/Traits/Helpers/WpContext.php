@@ -125,7 +125,9 @@ trait WpContext {
 
 		$post = aioseo()->helpers->getPost( $post );
 
-		return ( 'page' === get_option( 'show_on_front' ) && ! empty( $post->ID ) && (int) get_option( 'page_on_front' ) === $post->ID );
+		$isHomePage = ( 'page' === get_option( 'show_on_front' ) && ! empty( $post->ID ) && (int) get_option( 'page_on_front' ) === $post->ID );
+
+		return $isHomePage;
 	}
 
 	/**
@@ -146,8 +148,20 @@ trait WpContext {
 	 *
 	 * @return bool Whether the current page is the static posts page.
 	 */
-	public function isStaticPostsPage() {
-		return is_home() && ( 0 !== (int) get_option( 'page_for_posts' ) );
+	public function isStaticPostsPage( $post = null ) {
+		static $isStaticPostsPage = null;
+		if ( null !== $isStaticPostsPage ) {
+			return $isStaticPostsPage;
+		}
+
+		$post = aioseo()->helpers->getPost( $post );
+
+		$isStaticPostsPage = (
+			( is_home() && ( 0 !== (int) get_option( 'page_for_posts' ) ) ) ||
+			( ! empty( $post->ID ) && (int) get_option( 'page_for_posts' ) === $post->ID )
+		);
+
+		return $isStaticPostsPage;
 	}
 
 	/**

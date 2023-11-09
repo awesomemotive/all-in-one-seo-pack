@@ -156,7 +156,7 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
-import { WpTable } from '@/vue/mixins'
+import { WpTable } from '@/vue/mixins/WpTable'
 import AddAdditionalPage from './partials/AddAdditionalPage'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import CoreCard from '@/vue/components/common/core/Card'

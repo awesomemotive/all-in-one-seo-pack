@@ -1,8 +1,5 @@
 <template>
-	<core-post-column
-		:post="post"
-		:index="index"
-	/>
+	<core-post-column :post="post" />
 </template>
 
 <script>
@@ -12,8 +9,7 @@ export default {
 		CorePostColumn
 	},
 	props : {
-		post  : Object,
-		index : Number
+		post : Object
 	}
 }
 </script>

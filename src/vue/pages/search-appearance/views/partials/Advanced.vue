@@ -115,7 +115,8 @@ import {
 	useOptionsStore
 } from '@/vue/stores'
 
-import { JsonValues, MaxCounts } from '@/vue/mixins'
+import { JsonValues } from '@/vue/mixins/JsonValues'
+import { MaxCounts } from '@/vue/mixins/MaxCounts'
 
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'

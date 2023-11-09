@@ -162,7 +162,7 @@
 </template>
 
 <script>
-import { HeadlineResult } from '@/vue/mixins'
+import { HeadlineResult } from '@/vue/mixins/HeadlineResult'
 import { useHeadlineResult } from '@/vue/composables'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'

@@ -18,7 +18,7 @@
 import Cta from './AIOSEO_VERSION/news-sitemap/Cta'
 import Lite from './lite/news-sitemap/NewsSitemap'
 import NewsSitemap from './AIOSEO_VERSION/news-sitemap/NewsSitemap'
-import { AddonConditions } from '@/vue/mixins'
+import { AddonConditions } from '@/vue/mixins/AddonConditions'
 export default {
 	mixins     : [ AddonConditions ],
 	components : {

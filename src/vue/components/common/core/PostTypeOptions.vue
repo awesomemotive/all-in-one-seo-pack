@@ -59,7 +59,7 @@
 <script>
 import {
 	useRootStore
-} from '@/vue/stores'
+} from '$/vue/stores'
 
 import BaseHighlightToggle from '@/vue/components/common/base/HighlightToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'

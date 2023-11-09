@@ -18,7 +18,7 @@
 import Cta from './AIOSEO_VERSION/video-sitemap/Cta'
 import Lite from './lite/video-sitemap/VideoSitemap'
 import VideoSitemap from './AIOSEO_VERSION/video-sitemap/VideoSitemap'
-import { AddonConditions } from '@/vue/mixins'
+import { AddonConditions } from '@/vue/mixins/AddonConditions'
 export default {
 	mixins     : [ AddonConditions ],
 	components : {

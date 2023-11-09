@@ -1,7 +1,8 @@
 <template>
 	<posts-table
 		:posts="searchStatisticsStore.data?.seoStatistics?.pages?.topPages || defaultPages"
-		:columns="[ 'row', 'postTitle', 'seoScore', 'clicks', 'impressions', 'position', 'diffPosition' ]"
+		:columns="[ 'row', 'postTitle', 'indexStatus', 'seoScore', 'clicks', 'impressions', 'position', 'diffPosition' ]"
+		:isLoading="searchStatisticsStore.loading.seoStatistics"
 		:show-header="false"
 	/>
 </template>

@@ -202,7 +202,7 @@ import {
 } from '@/vue/stores'
 
 import { debounce } from '@/vue/utils/debounce'
-import { JsonValues } from '@/vue/mixins'
+import { JsonValues } from '@/vue/mixins/JsonValues'
 import { sanitizeString } from '@/vue/utils/strings'
 import CoreAddRedirectionTargetUrl from '@/vue/components/common/core/add-redirection/TargetUrl'
 import CoreAddRedirectionUrl from '@/vue/components/common/core/add-redirection/Url'

@@ -25,16 +25,12 @@ import { useTagsStore } from '@/vue/stores/TagsStore'
 import { useToolsStore } from '@/vue/stores/ToolsStore'
 import { useTruSeoHighlighterStore } from '@/vue/stores/TruSeoHighlighterStore'
 
-// Standalone stores.
-import {
-	useTableOfContentsStore
-} from '@/vue/stores/standalones'
+// Standolone stores.
+import { useTableOfContentsStore } from '@/vue/stores/standalones/TableOfContentsStore'
 
 // Integration Stores.
-import {
-	useSemrushStore,
-	useWpCodeStore
-} from '@/vue/stores/integrations'
+import { useSemrushStore } from '@/vue/stores/integrations/SemrushStore'
+import { useWpCodeStore } from '@/vue/stores/integrations/WpCodeStore'
 
 import { merge } from 'lodash-es'
 import { __ } from '@wordpress/i18n'
