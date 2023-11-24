@@ -621,6 +621,7 @@ export default {
 
 		&.scores {
 			display: flex;
+			flex-wrap: wrap;
 			align-items: center;
 			gap: 8px;
 
@@ -632,12 +633,6 @@ export default {
 				}
 			}
 		}
-	}
-}
-
-table.wp-list-table {
-	.column-name {
-		width: auto !important;
 	}
 }
 

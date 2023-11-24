@@ -1,7 +1,8 @@
 /* globals ETBuilderBackendDynamic */
 import {
 	usePostEditorStore,
-	useSeoRevisionsStore
+	useSeoRevisionsStore,
+	useLicenseStore
 } from '@/vue/stores'
 
 import { isEqual, set } from 'lodash-es'
@@ -39,8 +40,11 @@ const handleEditorChange = () => {
 const handleEditorSave = () => {
 	const postEditorStore = usePostEditorStore()
 	postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
+		const licenseStore      = useLicenseStore()
 		const seoRevisionsStore = useSeoRevisionsStore()
-		seoRevisionsStore.fetch()
+		if (!licenseStore.isUnlicensed) {
+			seoRevisionsStore.fetch()
+		}
 	})
 }
 

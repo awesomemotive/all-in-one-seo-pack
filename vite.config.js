@@ -6,7 +6,6 @@ import liveReload from 'vite-plugin-live-reload'
 import postcssRTLCSS from 'postcss-rtlcss'
 import replace from '@rollup/plugin-replace'
 import del from 'rollup-plugin-delete'
-import copy from 'rollup-plugin-copy'
 import path from 'path'
 import fs from 'fs'
 import * as dotenv from 'dotenv'
@@ -89,7 +88,6 @@ const getNonVueStandalones = () => {
 
 		// Native JS.
 		plugins                    : './src/app/plugins/main.js',
-		autotrack                  : './src/app/autotrack/autotrack.js',
 		'follow-up-emails-nav-bar' : './src/vue/standalone/user-profile-tab/follow-up-emails-nav-bar.js',
 		'tru-seo-analyzer'         : './src/app/tru-seo/analyzer/main.js',
 
@@ -151,6 +149,7 @@ export default ({ mode }) => {
 						return '[ext]/[name].[hash][extname]'
 					},
 					chunkFileNames : 'js/[name].[hash].js',
+					
 				},
 				plugins : [
 					del({
@@ -285,17 +284,10 @@ const getHttps = () => {
 	return https
 }
 
-let autotrackFilename
 const getPlugins = version => {
 	const plugins = [
 		parseEnvironmentVariables(),
 		// eslintPlugin(),
-		{
-			name : 'getAutotrackHashedName',
-			writeBundle (options, bundle) {
-				autotrackFilename = path.basename(Object.keys(bundle).find(key => false !== key.startsWith('autotrack')))
-			}
-		},
 		replace({
 			preventAssignment : true,
 			values            : {
@@ -304,18 +296,6 @@ const getPlugins = version => {
 		}),
 		vue(),
 		react(),
-		copy({
-			targets : [
-				{
-					src    : './src/app/autotrack/autotrack.js',
-					dest   : `dist/${version}/assets`,
-					rename : () => autotrackFilename
-				}
-			],
-			hook     : 'writeBundle',
-			verbose  : true,
-			copyOnce : true
-		}),
 		ElementPlus()
 	]
 

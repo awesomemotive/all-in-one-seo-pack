@@ -1,5 +1,6 @@
 import {
-	useRootStore
+	useRootStore,
+	loadPiniaStores
 } from '@/vue/stores'
 
 import { isBlockEditor } from '@/vue/utils/context'
@@ -70,6 +71,9 @@ const classicEditor = {
  * @returns {Array} The taxonomies that have primary term support.
  */
 export const getTaxonomies = () => {
+	// We need to load the Pinia here since we are using the store outside an App.
+	// So when using useRootStore, it will throw an error because the store wasn't initialized.
+	loadPiniaStores()
 	const rootStore = useRootStore()
 	const taxonomies = rootStore.aioseo.postData?.taxonomies || []
 

@@ -50,7 +50,7 @@ function metadescriptionLength (content) {
 
 	if (descriptionLength >= recommendedMaximumLength && descriptionLength <= maximumLength) {
 		return {
-			title       : __('Meta description Length', td),
+			title       : __('Meta description length', td),
 			description : __('Well done!', td),
 			score       : scores.correctLength,
 			maxScore    : 9,

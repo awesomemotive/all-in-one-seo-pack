@@ -1,6 +1,7 @@
 import {
 	usePostEditorStore,
-	useSeoRevisionsStore
+	useSeoRevisionsStore,
+	useLicenseStore
 } from '@/vue/stores'
 
 import emitter from 'tiny-emitter/instance'
@@ -59,8 +60,11 @@ const handleEditorSave = () => {
 	*/
 	if (window.elementor.config.document.id === window.elementor.config.document.revisions.current_id) {
 		postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
+			const licenseStore      = useLicenseStore()
 			const seoRevisionsStore = useSeoRevisionsStore()
-			seoRevisionsStore.fetch()
+			if (!licenseStore.isUnlicensed) {
+				seoRevisionsStore.fetch()
+			}
 		})
 	}
 }

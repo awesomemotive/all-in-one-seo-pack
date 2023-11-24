@@ -60,8 +60,8 @@
 
 			<grid-row>
 				<grid-column
-					v-for="(addon, index) in getAddons"
-					:key="index"
+					v-for="addon in getAddons"
+					:key="addon.sku"
 					sm="6"
 					lg="4"
 				>
@@ -344,10 +344,12 @@ export default {
 			this.pluginsStore.installPlugins(addons)
 				.then(response => {
 					const completed = Object.keys(response.body.completed).map(k => response.body.completed[k])
-					this.$refs.addons.forEach(component => {
-						if (completed.includes(component.feature.basename)) {
-							component.activated = true
+					this.addonsStore.addons.map(addon => {
+						if (completed.includes(addon.basename)) {
+							addon.isActive = true
 						}
+
+						return addon
 					})
 					this.loading.activateAll = false
 				})
@@ -372,10 +374,12 @@ export default {
 			this.pluginsStore.deactivatePlugins(addons)
 				.then(response => {
 					const completed = Object.keys(response.body.completed).map(k => response.body.completed[k])
-					this.$refs.addons.forEach(component => {
-						if (completed.includes(component.feature.basename)) {
-							component.activated = false
+					this.addonsStore.addons.map(addon => {
+						if (completed.includes(addon.basename)) {
+							addon.isActive = false
 						}
+
+						return addon
 					})
 					this.loading.deactivateAll = false
 				})

@@ -1,5 +1,6 @@
 <template>
 	<core-card
+		id="aioseo-backup-settings"
 		class="aioseo-backup-settings"
 		slug="backupSettings"
 		:toggles="false"

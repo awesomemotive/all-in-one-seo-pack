@@ -1,97 +1,10 @@
 <template>
 	<div class="aioseo-analytics">
 		<div id="aioseo-analytics" class="aioseo-wrap aioseo-plugin-landing">
-			<core-card
-				slug="monsterinsights-intro"
-				:hideHeader="true"
-				:noSlide="true"
-				:cardClass="{
-					'aioseo-card--intro': true
-				}"
-			>
-				<div class="aioseo-analytics__intro">
-					<template v-if="prefersEm">
-						<div class="intro-image">
-							<svg-aioseo-logo-gear />
-							<span>♥</span>
-							<img
-								:src="getAssetUrl(emLogoImg)"
-								height="90"
-								alt="ExactMetrics"
-							/>
-						</div>
-						<h2 class="intro-heading">
-							{{ strings.emIntroH }}
-						</h2>
-						<p>
-							{{ strings.emIntroP }}
-						</p>
-						<div class="preview-list">
-							<img
-								:src="getAssetUrl(emGraphImg)"
-								height="200"
-								alt="mi-graph-preview"
-							/>
-							<ul>
-								<li>
-									<svg-circle-check />
-									{{ strings.emIntroLi1 }}
-								</li>
-								<li>
-									<svg-circle-check />
-									{{ strings.emIntroLi2 }}
-								</li>
-								<li>
-									<svg-circle-check />
-									{{ strings.emIntroLi3 }}
-								</li>
-							</ul>
-						</div>
-					</template>
-					<template v-else>
-						<div class="intro-image">
-							<svg-aioseo-logo-gear />
-							<span>♥</span>
-							<img
-								:src="getAssetUrl(miLogoImg)"
-								height="90"
-								alt="MonsterInsights"
-							/>
-						</div>
-						<h2 class="intro-heading">
-							{{ strings.miIntroH }}
-						</h2>
-						<p>
-							{{ strings.miIntroP }}
-						</p>
-						<div class="preview-list">
-							<img
-								:src="getAssetUrl(miGraphImg)"
-								height="200"
-								alt="mi-graph-preview"
-							/>
-							<ul>
-								<li>
-									<svg-circle-check />
-									{{ strings.miIntroLi1 }}
-								</li>
-								<li>
-									<svg-circle-check />
-									{{ strings.miIntroLi2 }}
-								</li>
-								<li>
-									<svg-circle-check />
-									{{ strings.miIntroLi3 }}
-								</li>
-								<li>
-									<svg-circle-check />
-									{{ strings.miIntroLi4 }}
-								</li>
-							</ul>
-						</div>
-					</template>
-				</div>
-			</core-card>
+			<core-mi-intro
+				:prefers-em="prefersEm"
+			/>
+
 			<section
 				:class="justInstalled || gaActivated ? 'aioseo-card step step--completed' : 'aioseo-card step step--current'"
 			>
@@ -100,7 +13,7 @@
 				</div>
 				<div class="content">
 					<h2 class="step-title">
-						<template v-if="!gaInstalled">{{ strings.miemInstallH }}</template>
+						<template v-if="!gaInstalled">{{ strings.miemInstallH }} &amp;&nbsp;</template>
 						<template v-if="prefersEm">{{ strings.emInstallH }}</template>
 						<template v-else>{{ strings.miInstallH }}</template>
 					</h2>
@@ -178,14 +91,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { getAssetUrl } from '@/vue/utils/helpers'
-import emLogoImg from '@/vue/assets/images/about/plugins/em.png'
-import emGraphImg from '@/vue/assets/images/plugins/em-graph-preview.png'
-import miLogoImg from '@/vue/assets/images/plugins/mi-logo.png'
-import miGraphImg from '@/vue/assets/images/plugins/mi-graph-preview.png'
-import CoreCard from '@/vue/components/common/core/Card'
-import SvgAioseoLogoGear from '@/vue/components/common/svg/aioseo/LogoGear'
-import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
+import CoreMiIntro from '@/vue/components/common/core/MiIntro'
 import SvgExternal from '@/vue/components/common/svg/External'
 export default {
 	setup () {
@@ -195,17 +101,11 @@ export default {
 		}
 	},
 	components : {
-		CoreCard,
-		SvgAioseoLogoGear,
-		SvgCircleCheck,
+		CoreMiIntro,
 		SvgExternal
 	},
 	data () {
 		return {
-			emLogoImg,
-			emGraphImg,
-			miLogoImg,
-			miGraphImg,
 			installingPlugin : false,
 			justInstalled    : false,
 			strings          : {
@@ -239,16 +139,6 @@ export default {
 					'ExactMetrics'),
 				setupGA : this.$t.__('Launch Setup Wizard', this.$td
 				),
-				emIntroH : this.$t.__('The Best Google Analytics Plugin for WordPress', this.$td),
-				emIntroP : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins, 2 - The name of one of our partner plugins.
-					this.$t.__('%1$s connects AIOSEO to Google Analytics, providing a powerful integration. %2$s is a sister company of AIOSEO.', this.$td),
-					'ExactMetrics',
-					'ExactMetrics'
-				),
-				emIntroLi1 : this.$t.__('Quick & Easy Google Analytics Setup', this.$td),
-				emIntroLi2 : this.$t.__('Google Analytics Dashboard + Real Time Stats', this.$td),
-				emIntroLi3 : this.$t.__('Google Analytics Enhanced Ecommerce Tracking', this.$td),
 				emInstallH : this.$t.sprintf(
 					// Translators: 1 - The name of one of our partner plugins.
 					this.$t.__('Activate %1$s', this.$td),
@@ -259,18 +149,7 @@ export default {
 					this.$t.__('%1$s shows you exactly which content gets the most visits, so you can analyze and optimize it for higher conversions.', this.$td),
 					'ExactMetrics'
 				),
-				miIntroH : this.$t.__('The Best Google Analytics Plugin for WordPress', this.$td),
-				miIntroP : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins, 2 - The name of one of our partner plugins.
-					this.$t.__('%1$s connects AIOSEO to Google Analytics, providing a powerful integration. %2$s is a sister company of AIOSEO.', this.$td),
-					'MonsterInsights',
-					'MonsterInsights'
-				),
-				miIntroLi1   : this.$t.__('Quick & Easy Google Analytics Setup', this.$td),
-				miIntroLi2   : this.$t.__('Google Analytics Dashboard + Real Time Stats', this.$td),
-				miIntroLi3   : this.$t.__('Google Analytics Enhanced Ecommerce Tracking', this.$td),
-				miIntroLi4   : this.$t.__('Universal Tracking for AMP and Instant Articles', this.$td),
-				miemInstallH : this.$t.__('Install &', this.$td),
+				miemInstallH : this.$t.__('Install', this.$td),
 				miInstallH   : this.$t.sprintf(
 					// Translators: 1 - The name of one of our partner plugins.
 					this.$t.__('Activate %1$s', this.$td),
@@ -330,7 +209,6 @@ export default {
 		}
 	},
 	methods : {
-		getAssetUrl,
 		installMi () {
 			this.installingPlugin = true
 			this.pluginsStore.installPlugins([
@@ -374,11 +252,6 @@ export default {
 		}
 	}
 
-	.aioseo-card.aioseo-card--intro {
-		background-color: $box-background2;
-		box-shadow: none;
-	}
-
 	.step-count {
 		max-width: 170px;
 		width: 100%;
@@ -420,64 +293,6 @@ export default {
 		cursor: default;
 		box-shadow: none !important;
 		transform: none !important;
-	}
-
-	.aioseo-analytics__intro {
-		text-align: center;
-
-		.intro-image {
-			max-width: 300px;
-			margin: 0 auto;
-			display: flex;
-			justify-content: space-between;
-			font-size: 45px;
-			align-items: center;
-
-			.aioseo-logo-gear {
-				width: 100%;
-				max-width: 90px;
-				color: $blue;
-			}
-
-			span {
-				color: $red;
-			}
-		}
-
-		.intro-heading {
-			margin: 24px auto;
-			font-size: 36px;
-			line-height: 1.25;
-		}
-
-		p {
-			margin: 0 auto;
-		}
-	}
-
-	.preview-list {
-		display: flex;
-		text-align: left;
-		align-items: center;
-		max-width: 800px;
-		margin: 24px auto 0;
-
-		ul {
-			margin-left: 24px;
-		}
-
-		li {
-			display: flex;
-			align-items: flex-start;
-			font-size: 16px;
-		}
-	}
-
-	.aioseo-circle-check {
-		color: $green;
-		max-width: 18px;
-		margin-right: 18px;
-		margin-top: 3px;
 	}
 
 	.step--pending {

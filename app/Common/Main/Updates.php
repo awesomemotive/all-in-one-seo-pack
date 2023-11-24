@@ -201,6 +201,10 @@ class Updates {
 			$this->updateRobotsTxtRules();
 		}
 
+		if ( version_compare( $lastActiveVersion, '4.5.1', '<' ) ) {
+			$this->checkForGaAnalyticsV3();
+		}
+
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
 
 		// Always clear the cache if the last active version is different from our current.
@@ -1396,7 +1400,7 @@ class Updates {
 		$widgets = [ 'seoNews' ];
 
 		// If the dashboardWidgets was activated, let's turn on the other widgets.
-		if ( $rawOptions['advanced']['dashboardWidgets'] ) {
+		if ( ! empty( $rawOptions['advanced']['dashboardWidgets'] ) ) {
 			$widgets[] = 'seoOverview';
 			$widgets[] = 'seoSetup';
 		}
@@ -1490,5 +1494,70 @@ class Updates {
 		if ( $newRules ) {
 			aioseo()->options->tools->robots->rules = $newRules;
 		}
+	}
+
+	/**
+	 * Checks if the user is currently using the old GA Analytics v3 integration and create a notification.
+	 *
+	 * @since 4.5.1
+	 *
+	 * @return void
+	 */
+	private function checkForGaAnalyticsV3() {
+		// If either MonsterInsights or ExactMetrics is active, let's return early.
+		$pluginData = aioseo()->helpers->getPluginData();
+		if (
+			$pluginData['miPro']['activated'] ||
+			$pluginData['miLite']['activated'] ||
+			$pluginData['emPro']['activated'] ||
+			$pluginData['emLite']['activated']
+		) {
+			return;
+		}
+
+		$rawOptions = $this->getRawOptions();
+		if ( empty( $rawOptions['deprecated']['webmasterTools']['googleAnalytics']['id'] ) ) {
+			return;
+		}
+
+		// Let's clear the notification if the search is working again.
+		$notification = Models\Notification::getNotificationByName( 'google-analytics-v3-deprecation' );
+		if ( $notification->exists() ) {
+			$notification->dismissed = false;
+			$notification->save();
+
+			return;
+		}
+
+		// Determine which plugin name to use.
+		$pluginName = 'MonsterInsights';
+		if (
+			(
+				$pluginData['emPro']['installed'] ||
+				$pluginData['emLite']['installed']
+			) &&
+			! $pluginData['miPro']['installed'] &&
+			! $pluginData['miLite']['installed']
+		) {
+			$pluginName = 'ExactMetrics';
+		}
+
+		Models\Notification::addNotification( [
+			'slug'              => uniqid(),
+			'notification_name' => 'google-analytics-v3-deprecation',
+			'title'             => __( 'Universal Analytics V3 Deprecation Notice', 'all-in-one-seo-pack' ),
+			'content'           => sprintf(
+				// Translators: 1 - Line break HTML tags, 2 - Plugin short name ("AIOSEO"), Analytics plugin name (e.g. "MonsterInsights").
+				__( 'You have been using the %2$s Google Analytics V3 (Universal Analytics) integration which has been deprecated by Google and is no longer supported. This may affect your website\'s data accuracy and performance.%1$sTo ensure a seamless analytics experience, we recommend migrating to %3$s, a powerful analytics solution.%1$s%3$s offers advanced features such as real-time tracking, enhanced e-commerce analytics, and easy-to-understand reports, helping you make informed decisions to grow your online presence effectively.%1$sClick the button below to be redirected to the %3$s setup process, where you can start benefiting from its robust analytics capabilities immediately.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+				'<br><br>',
+				AIOSEO_PLUGIN_SHORT_NAME,
+				$pluginName
+			),
+			'type'              => 'error',
+			'level'             => [ 'all' ],
+			'button1_label'     => __( 'Fix Now', 'all-in-one-seo-pack' ),
+			'button1_action'    => admin_url( 'admin.php?page=aioseo-monsterinsights' ),
+			'start'             => gmdate( 'Y-m-d H:i:s' )
+		] );
 	}
 }

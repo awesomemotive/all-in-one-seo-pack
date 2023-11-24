@@ -404,7 +404,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 					postId       : postId,
 					graphs       : postEditorStore.currentPost.schema.graphs,
 					customGraphs : postEditorStore.currentPost.schema.customGraphs,
-					defaultGraph : postEditorStore.currentPost.schema.defaultGraph
+					defaultGraph : postEditorStore.currentPost.schema.defaultGraph,
+					blockGraphs  : postEditorStore.currentPost.schema.blockGraphs
 				})
 				.then((response) => {
 					if (response.body.success && response.body.output) {

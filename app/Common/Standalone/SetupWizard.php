@@ -173,9 +173,6 @@ class SetupWizard {
 				echo sprintf( esc_html__( '%1$s &rsaquo; Onboarding Wizard', 'all-in-one-seo-pack' ), esc_html( AIOSEO_PLUGIN_SHORT_NAME ) );
 			?>
 			</title>
-			<?php do_action( 'admin_print_scripts' ); ?>
-			<?php do_action( 'admin_print_styles' ); ?>
-			<?php do_action( 'admin_head' ); ?>
 		</head>
 		<body class="aioseo-setup-wizard">
 		<?php

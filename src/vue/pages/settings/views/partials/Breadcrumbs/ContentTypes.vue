@@ -147,6 +147,10 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import Preview from './Preview'
+
+import { __ } from '@wordpress/i18n'
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -164,17 +168,17 @@ export default {
 	data () {
 		return {
 			strings : {
-				useDefaultTemplate        : this.$t.__('Use a default template', this.$td),
-				selectTaxonomyLabel       : this.$t.__('Taxonomy priority:', this.$td),
-				selectTaxonomy            : this.$t.__('Select a taxonomy', this.$td),
-				selectTaxonomyDescription : this.$t.__('Choose taxonomy that should have a priority for this post type.', this.$td),
-				showPostTypeArchiveLabel  : this.$t.__('Show post type archive link', this.$td),
-				showTaxonomyLabel         : this.$t.__('Show taxonomy link', this.$td),
-				showHomeLabel             : this.$t.__('Show homepage link', this.$td),
-				showPrefixLabel           : this.$t.__('Show prefix link', this.$td),
-				showParentLabel           : this.$t.__('Show parent item link', this.$td),
-				singleTemplateLabel       : this.$t.__('Single item template', this.$td),
-				parentTemplateLabel       : this.$t.__('Parent item template', this.$td)
+				useDefaultTemplate        : __('Use a default template', td),
+				selectTaxonomyLabel       : __('Taxonomy Priority:', td),
+				selectTaxonomy            : __('Select a taxonomy', td),
+				selectTaxonomyDescription : __('Choose taxonomy that should have a priority for this post type.', td),
+				showPostTypeArchiveLabel  : __('Show post type archive link', td),
+				showTaxonomyLabel         : __('Show taxonomy link', td),
+				showHomeLabel             : __('Show homepage link', td),
+				showPrefixLabel           : __('Show prefix link', td),
+				showParentLabel           : __('Show parent item link', td),
+				singleTemplateLabel       : __('Single item template', td),
+				parentTemplateLabel       : __('Parent item template', td)
 			}
 		}
 	},

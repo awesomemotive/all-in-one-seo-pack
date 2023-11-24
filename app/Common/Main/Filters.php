@@ -353,7 +353,8 @@ abstract class Filters {
 		$postTypesToRemove = [
 			'fusion_element', // Avada
 			'elementor_library',
-			'redirect_rule' // Safe Redirect Manager
+			'redirect_rule', // Safe Redirect Manager
+			'seedprod'
 		];
 
 		foreach ( $postTypes as $index => $postType ) {

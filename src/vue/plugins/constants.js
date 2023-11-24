@@ -1284,26 +1284,26 @@ export const SCHEMA_PRODUCT_IDENTIFIERS = [
 ]
 
 export const REDIRECT_TYPES = [
-	{ label: '301 ' + 'Moved Permanently', value: 301 },
-	{ label: '302 ' + 'Found', value: 302 },
-	{ label: '303 ' + 'See Other', value: 303 },
-	{ label: '304 ' + 'Not Modified', value: 304 },
-	{ label: '307 ' + 'Temporary Redirect', value: 307 },
-	{ label: '308 ' + 'Permanent Redirect', value: 308 },
-	{ label: '400 ' + 'Bad Request', value: 400, noTarget: true },
-	{ label: '401 ' + 'Unauthorized', value: 401, noTarget: true },
-	{ label: '403 ' + 'Forbidden', value: 403, noTarget: true },
-	{ label: '404 ' + 'Not Found', value: 404, noTarget: true },
-	{ label: '410 ' + 'Gone', value: 410, noTarget: true },
-	{ label: '418 ' + 'I\'m a Teapot', value: 418, noTarget: true },
-	{ label: '451 ' + 'Unavailable for Legal Reasons', value: 451, noTarget: true },
-	{ label: '500 ' + 'Internal Server Error', value: 500, noTarget: true },
-	{ label: '501 ' + 'Not Implemented', value: 501, noTarget: true },
-	{ label: '502 ' + 'Bad Gateway', value: 502, noTarget: true },
-	{ label: '503 ' + 'Service Unavailable', value: 503, noTarget: true },
-	{ label: '504 ' + 'Gateway Timeout', value: 504, noTarget: true },
-	{ label: '505 ' + 'HTTP Version Not Supported', value: 505, noTarget: true },
-	{ label: 'Pass through', value: 0 }
+	{ label: '301 ' + __('Moved Permanently', td), value: 301 },
+	{ label: '302 ' + __('Found', td), value: 302 },
+	{ label: '303 ' + __('See Other', td), value: 303 },
+	{ label: '304 ' + __('Not Modified', td), value: 304 },
+	{ label: '307 ' + __('Temporary Redirect', td), value: 307 },
+	{ label: '308 ' + __('Permanent Redirect', td), value: 308 },
+	{ label: '400 ' + __('Bad Request', td), value: 400, noTarget: true },
+	{ label: '401 ' + __('Unauthorized', td), value: 401, noTarget: true },
+	{ label: '403 ' + __('Forbidden', td), value: 403, noTarget: true },
+	{ label: '404 ' + __('Not Found', td), value: 404, noTarget: true },
+	{ label: '410 ' + __('Gone', td), value: 410, noTarget: true },
+	{ label: '418 ' + __('I\'m a Teapot', td), value: 418, noTarget: true },
+	{ label: '451 ' + __('Unavailable for Legal Reasons', td), value: 451, noTarget: true },
+	{ label: '500 ' + __('Internal Server Error', td), value: 500, noTarget: true },
+	{ label: '501 ' + __('Not Implemented', td), value: 501, noTarget: true },
+	{ label: '502 ' + __('Bad Gateway', td), value: 502, noTarget: true },
+	{ label: '503 ' + __('Service Unavailable', td), value: 503, noTarget: true },
+	{ label: '504 ' + __('Gateway Timeout', td), value: 504, noTarget: true },
+	{ label: '505 ' + __('HTTP Version Not Supported', td), value: 505, noTarget: true },
+	{ label: __('Pass through', td), value: 0 }
 ]
 
 export const REDIRECT_QUERY_PARAMS = [

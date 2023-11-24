@@ -56,23 +56,30 @@
 								lg="6"
 								class="aioseo-quicklinks-cards"
 							>
-								<core-feature-card
-									:feature="link"
-									:can-activate="false"
-									:can-manage="allowed(link.access)"
-									static-card
-								>
-									<template #title>
+								<div class="feature-card-body">
+									<div class="feature-card-header">
 										<component
 											:is="link.icon"
 										/>
 										{{ link.name }}
-									</template>
-
-									<template #description>
+									</div>
+									<div class="feature-card-description">
 										{{ link.description }}
-									</template>
-								</core-feature-card>
+
+										<div
+											v-if="link.manageUrl && allowed(link.access)"
+											class="learn-more"
+										>
+											<a :href="getHref(link.manageUrl)">{{ strings.manage }}</a>
+											<a
+												:href="getHref(link.manageUrl)"
+												class="no-underline"
+											>
+												&rarr;
+											</a>
+										</div>
+									</div>
+								</div>
 							</grid-column>
 						</grid-row>
 					</grid-column>
@@ -205,6 +212,7 @@ import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { merge } from 'lodash-es'
 import { useNotifications } from '@/vue/composables'
 import { Notifications } from '@/vue/mixins/Notifications'
+import { Url } from '@/vue/mixins/Url'
 
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreFeatureCard from '@/vue/components/common/core/FeatureCard'
@@ -275,7 +283,7 @@ export default {
 		SvgTitleAndMeta,
 		SvgVideoCamera
 	},
-	mixins : [ Notifications ],
+	mixins : [ Notifications, Url ],
 	data () {
 		return {
 			allowed,
@@ -304,6 +312,7 @@ export default {
 				gettingStarted         : this.$t.__('Getting started? Read the Beginners Guide', this.$td),
 				quicklinks             : this.$t.__('Quicklinks', this.$td),
 				quicklinksTooltip      : this.$t.__('You can use these quicklinks to quickly access our settings pages to adjust your site\'s SEO settings.', this.$td),
+				manage                 : this.$t.__('Manage', this.$td),
 				searchAppearance       : this.$t.__('Search Appearance', this.$td),
 				manageSearchAppearance : this.$t.__('Configure how your website content will look in Google, Bing and other search engines.', this.$td),
 				seoAnalysis            : this.$t.__('SEO Analysis', this.$td),
@@ -581,6 +590,47 @@ export default {
 		.aioseo-col:first-child {
 			grid-column: 1 / -1;
 			grid-row: 1 / -1;
+		}
+
+		.aioseo-quicklinks-cards {
+			height: 100%;
+			border: 1px solid $border;
+			background: #fff;
+			box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
+			color: $black;
+			display: flex;
+			flex-direction: column;
+
+			.feature-card-body {
+				line-height: 22px;
+				padding: $gutter;
+				flex: 1;
+
+				.feature-card-header {
+					display: flex;
+					align-items: center;
+					font-size: $font-md;
+					font-weight: $font-bold;
+					margin-bottom: 12px;
+
+					img,
+					svg {
+						width: 24px;
+						height: 24px;
+						margin-right: 10px;
+					}
+				}
+
+				.feature-card-description {
+					color: $black2;
+					font-size: $font-md;
+
+					.learn-more {
+						margin-top: 12px;
+						font-size: $font-md;
+					}
+				}
+			}
 		}
 	}
 

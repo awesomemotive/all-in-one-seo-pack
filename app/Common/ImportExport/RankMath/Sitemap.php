@@ -38,7 +38,6 @@ class Sitemap {
 		$this->migrateIncludeImages();
 		$this->migrateExcludedPosts();
 		$this->migrateExcludedTerms();
-		$this->migrateExcludedRoles();
 
 		$settings = [
 			'items_per_page' => [ 'type' => 'string', 'newOption' => [ 'sitemap', 'general', 'linksPerIndex' ] ],
@@ -172,27 +171,5 @@ class Sitemap {
 			aioseo()->options->sitemap->general->advancedSettings->enable = true;
 		}
 		aioseo()->options->sitemap->general->advancedSettings->excludeTerms = $excludedTerms;
-	}
-
-	/**
-	 * Migrates the roles that are excluded from GA tracking.
-	 *
-	 * For some reason, Rank Math stores these in the sitemap settings.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return void
-	 */
-	private function migrateExcludedRoles() {
-		if ( empty( $this->options['exclude_users'] ) ) {
-			return;
-		}
-
-		$excludedRoles = [];
-		foreach ( $this->options['exclude_users'] as $k => $v ) {
-			$excludedRoles[] = $k;
-		}
-
-		aioseo()->options->deprecated->webmasterTools->googleAnalytics->excludeUsers = $excludedRoles;
 	}
 }

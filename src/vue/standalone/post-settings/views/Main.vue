@@ -221,35 +221,35 @@ export default {
 				{
 					slug : 'general',
 					icon : 'svg-settings',
-					name : 'General'
+					name : this.$t.__('General', this.$td)
 				},
 				{
 					slug : 'social',
 					icon : 'svg-share',
-					name : 'Social'
+					name : this.$t.__('Social', this.$td)
 				},
 				{
 					slug : 'schema',
 					icon : 'svg-receipt',
-					name : 'Schema'
+					name : this.$t.__('Schema', this.$td)
 				},
 				{
 					slug       : 'redirects',
 					icon       : 'svg-redirect-crossed-arrows',
-					name       : 'Redirects',
+					name       : this.$t.__('Redirects', this.$td),
 					warning    : (0 < this.redirectsStore.rows.filter(row => !!row.enabled).length),
 					permission : 'aioseo_page_redirects_manage'
 				},
 				{
 					slug  : 'seoRevisions',
 					icon  : 'svg-backup',
-					name  : 'SEO Revisions',
+					name  : this.$t.__('SEO Revisions', this.$td),
 					badge : 'seo-revisions-count-badge'
 				},
 				{
 					slug : 'advanced',
 					icon : 'svg-build',
-					name : 'Advanced'
+					name : this.$t.__('Advanced', this.$td)
 				}
 			]
 
@@ -261,7 +261,7 @@ export default {
 				tabs.splice(3, 0, {
 					slug : 'linkAssistant',
 					icon : 'svg-link-suggestion',
-					name : 'Link Assistant'
+					name : this.$t.__('Link Assistant', this.$td)
 				})
 			}
 

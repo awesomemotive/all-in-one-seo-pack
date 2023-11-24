@@ -1,6 +1,7 @@
 import { count } from '@/vue/plugins/wordcount'
 import { __ } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const recommendedMaximumLength = 40
 const maximumLength = 60
@@ -55,7 +56,7 @@ function titleLength (content) {
 
 	if (tLength >= recommendedMaximumLength && tLength <= maximumLength) {
 		return {
-			title       : __('Title Length', td),
+			title       : __('SEO Title length', td),
 			description : __('Well done!', td),
 			score       : scores.correctLength,
 			maxScore    : 9,

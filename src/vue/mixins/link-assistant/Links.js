@@ -266,11 +266,10 @@ export default {
 			this.post.links[this.linkType].rows.splice(rowIndex, 1)
 
 			const linkAssistantStore = useLinkAssistantStore()
-			linkAssistantStore.postSettingsUpdate({ postContent: postContent })
-				.finally(() => {
-					window.aioseoBus.$emit('updatingLinks', false)
-					this.$emit('linksUpdated')
-				})
+			linkAssistantStore.postSettingsUpdate({ postContent: postContent })?.finally(() => {
+				window.aioseoBus.$emit('updatingLinks', false)
+				this.$emit('linksUpdated')
+			})
 		},
 		idsToIndexes (selectedRows) {
 			let ids, indexes = []

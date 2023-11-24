@@ -4,10 +4,14 @@ import links from '@/vue/utils/links'
 
 export const useRootStore = defineStore('RootStore', {
 	state : () => ({
-		pong    : true,
-		loaded  : false,
-		loading : false,
-		aioseo  : {}
+		pong     : true,
+		loaded   : false,
+		loading  : false,
+		aioseo   : {},
+		navigate : {
+			scroll    : null,
+			highlight : null
+		}
 	}),
 	actions : {
 		ping () {

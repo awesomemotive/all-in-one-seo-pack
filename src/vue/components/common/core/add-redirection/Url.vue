@@ -367,7 +367,7 @@ export default {
 				}
 
 				// Remove white space from the url if it's not a regex.
-				if (!this.url.regex) {
+				if (!this.url.regex && value.startsWith('/')) {
 					value = value.replace(/\s+/g, '')
 				}
 

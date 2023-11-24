@@ -12,27 +12,27 @@
 				<slot name="description" />
 
 				<div
-					v-if="(!activated || feature.requiresUpgrade) && !staticCard"
+					v-if="(!addon.isActive || addon.requiresUpgrade) && !staticCard"
 					class="learn-more"
 				>
 					<a
-						:href="$links.utmUrl('feature-manager-addon-link', feature.sku, feature.learnMoreUrl)"
+						:href="$links.utmUrl('feature-manager-addon-link', addon.sku, addon.learnMoreUrl)"
 						target="_blank"
 					>{{ $constants.GLOBAL_STRINGS.learnMore }}</a>
 					<a
-						:href="$links.utmUrl('feature-manager-addon-link', feature.sku, feature.learnMoreUrl)"
+						:href="$links.utmUrl('feature-manager-addon-link', addon.sku, addon.learnMoreUrl)"
 						class="no-underline"
 						target="_blank"
 					>&nbsp;&rarr;</a>
 				</div>
 
 				<div
-					v-if="feature.manageUrl && ((activated && !feature.requiresUpgrade) || staticCard) && canManage"
+					v-if="addon.manageUrl && ((addon.isActive && !addon.requiresUpgrade) || staticCard) && canManage"
 					class="learn-more"
 				>
-					<a :href="getHref(feature.manageUrl)">{{ strings.manage }}</a>
+					<a :href="getHref(addon.manageUrl)">{{ strings.manage }}</a>
 					<a
-						:href="getHref(feature.manageUrl)"
+						:href="getHref(addon.manageUrl)"
 						class="no-underline"
 					>
 						&rarr;
@@ -52,10 +52,10 @@
 		<div
 			v-if="canActivate"
 			class="feature-card-footer"
-			:class="{ 'upgrade-required': feature.requiresUpgrade || !licenseStore.license.isActive }"
+			:class="{ 'upgrade-required': addon.requiresUpgrade || !licenseStore.license.isActive }"
 		>
 			<div
-				v-if="!feature.requiresUpgrade && licenseStore.license.isActive && (!feature.installed || feature.hasMinimumVersion)"
+				v-if="!addon.requiresUpgrade && licenseStore.license.isActive && (!addon.installed || addon.hasMinimumVersion)"
 				class="feature-card-install-activate"
 			>
 				<core-loader
@@ -63,30 +63,30 @@
 					dark
 				/>
 				<span
-					v-if="!loading && feature.installedVersion"
+					v-if="!loading && addon.installedVersion"
 					class="version"
 				>
-					{{ strings.version }} {{ feature.installedVersion }}
+					{{ strings.version }} {{ addon.installedVersion }}
 				</span>
 				<span class="status">
-					{{ activated ? strings.activated : (feature.installed || feature.canInstall ? strings.deactivated : strings.notInstalled) }}
+					{{ addon.isActive ? strings.activated : (addon.installed || addon.canInstall ? strings.deactivated : strings.notInstalled) }}
 				</span>
 				<base-toggle
-					v-if="feature.installed || feature.canInstall"
-					:modelValue="activated"
-					@update:modelValue="processStatusChange"
+					v-if="addon.installed || addon.canInstall"
+					:modelValue="addon.isActive"
+					@update:modelValue="value => processStatusChange(value)"
 				/>
 			</div>
 
 			<div
-				v-if="feature.requiresUpgrade || !licenseStore.license.isActive"
+				v-if="addon.requiresUpgrade || !licenseStore.license.isActive"
 				class="feature-card-upgrade-cta"
 			>
 				<base-button
 					type="green"
 					size="medium"
 					tag="a"
-					:href="$links.getUpsellUrl('feature-manager-upgrade', feature.sku, $isPro ? 'pricing' : 'liteUpgrade')"
+					:href="$links.getUpsellUrl('feature-manager-upgrade', addon.sku, $isPro ? 'pricing' : 'liteUpgrade')"
 					target="_blank"
 				>
 					<span v-if="$isPro">{{ strings.upgradeYourPlan }}</span>
@@ -95,20 +95,20 @@
 			</div>
 
 			<div
-				v-if="$isPro && !feature.requiresUpgrade && feature.installed && !feature.hasMinimumVersion"
+				v-if="$isPro && !addon.requiresUpgrade && addon.installed && !addon.hasMinimumVersion"
 				class="feature-card-upgrade-cta"
 			>
 				<core-tooltip
-					v-if="activated && !loading"
+					v-if="addon.isActive && !loading"
 				>
 					<span class="version">
-						{{ strings.updateToVersion }} {{ feature.minimumVersion }}
+						{{ strings.updateToVersion }} {{ addon.minimumVersion }}
 					</span>
 
 					<template #tooltip>
 						{{ strings.updateRequired }}
 						<strong
-							v-if="!addons.userCanUpdate(feature.sku)"
+							v-if="!addons.userCanUpdate(addon.sku)"
 						>
 							{{ strings.permissionWarning }}
 						</strong>
@@ -119,7 +119,7 @@
 					size="medium"
 					@click="processUpgradeFeature"
 					:loading="featureUpgrading"
-					:disabled="!addons.userCanUpdate(feature.sku)"
+					:disabled="!addons.userCanUpdate(addon.sku)"
 				>
 					{{ strings.updateFeature }}
 				</base-button>
@@ -222,10 +222,10 @@ export default {
 	data () {
 		return {
 			addons,
+			addon            : {},
 			showNetworkModal : false,
 			failed           : false,
 			loading          : false,
-			activated        : false,
 			featureUpgrading : false,
 			strings          : {
 				version           : this.$t.__('Version', this.$td),
@@ -254,7 +254,7 @@ export default {
 	computed : {
 		networkChangeMessage () {
 			// The logic is reversed here because the option has been toggled already.
-			if (!this.activated) {
+			if (!this.addon.isActive) {
 				return this.$t.__('Are you sure you want to deactivate this addon across the network?', this.$td)
 			}
 
@@ -263,15 +263,15 @@ export default {
 	},
 	methods : {
 		closeNetworkModal (changeStatus = false) {
-			this.activated        = changeStatus ? this.activated : !this.activated
+			this.addon.isActive = !changeStatus
 			this.showNetworkModal = false
 
 			if (changeStatus) {
 				this.actuallyProcessStatusChange(changeStatus)
 			}
 		},
-		processStatusChange () {
-			this.activated = !this.activated
+		processStatusChange (activated) {
+			this.addon.isActive = activated
 			if (this.rootStore.aioseo.data.isNetworkAdmin) {
 				this.showNetworkModal = true
 				return
@@ -284,60 +284,51 @@ export default {
 			this.loading = true
 
 			// The action is reversed because we already swapped it earlier.
-			const action   = this.activated ? 'installPlugins' : 'deactivatePlugins'
-			this.pluginsStore[action]([ { plugin: this.feature.basename } ])
+			const action   = this.addon.isActive ? 'installPlugins' : 'deactivatePlugins'
+			this.pluginsStore[action]([ { plugin: this.addon.basename } ])
 				.then(response => {
 					this.loading = false
 					if (response.body.failed.length) {
-						this.activated = !this.activated
+						this.addon.isActive = !this.addon.isActive
 						this.failed = true
 					}
 				})
 				.catch(() => {
 					this.loading   = false
-					this.activated = !this.activated
+					this.addon.isActive = !this.addon.isActive
 				})
 		},
 		processUpgradeFeature () {
 			this.failed           = false
 			this.featureUpgrading = true
-			const addon           = addons.getAddon(this.feature.sku)
-			this.pluginsStore.upgradePlugins([ { plugin: this.feature.sku } ])
+			this.pluginsStore.upgradePlugins([ { plugin: this.addon.sku } ])
 				.then(response => {
 					this.featureUpgrading = false
 					if (response.body.failed.length) {
-						this.activated = false
+						this.addon.isActive = false
 						this.failed    = true
 						return
 					}
 
-					this.activated          = true
-					const updatedAddon      = response.body.completed[addon.sku]
-					addon.hasMinimumVersion = true
-					addon.isActive          = true
-					addon.installedVersion  = updatedAddon.installedVersion
-					this.addonsStore.updateAddon(addon)
+					this.addon = this.addons.getAddon(this.addon.sku)
 				})
 				.catch(() => {
 					this.featureUpgrading = false
-					this.activated        = false
+					this.addon.isActive = false
 				})
 		}
 	},
 	mounted () {
-		if (this.feature.isActive) {
-			this.activated = true
-		}
-
+		this.addon = this.addons.getAddon(this.feature.sku)
 		const params = getParams()
-		if (!this.activated && params['aioseo-activate'] && params['aioseo-activate'] === this.feature.sku) {
+		if (!this.addon.isActive && params['aioseo-activate'] && params['aioseo-activate'] === this.addon.sku) {
 			this.loading   = true
-			this.activated = true
-			this.pluginsStore.installPlugins([ { plugin: this.feature.basename } ])
+			this.addon.isActive = true
+			this.pluginsStore.installPlugins([ { plugin: this.addon.basename } ])
 				.then(() => (this.loading = false))
 				.catch(() => {
 					this.loading   = false
-					this.activated = !this.activated
+					this.addon.isActive = !this.addon.isActive
 				})
 		}
 	}

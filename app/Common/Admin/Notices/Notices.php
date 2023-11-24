@@ -60,6 +60,15 @@ class Notices {
 	private $deprecatedWordPress = null;
 
 	/**
+	 * ConflictingPlugins class instance.
+	 *
+	 * @since 4.5.1
+	 *
+	 * @var ConflictingPlugins
+	 */
+	private $conflictingPlugins = null;
+
+	/**
 	 * Class Constructor.
 	 *
 	 * @since 4.0.0
@@ -78,6 +87,7 @@ class Notices {
 		$this->migration           = new Migration();
 		$this->import              = new Import();
 		$this->deprecatedWordPress = new DeprecatedWordPress();
+		$this->conflictingPlugins  = new ConflictingPlugins();
 
 		add_action( 'admin_notices', [ $this, 'notices' ] );
 	}
@@ -368,6 +378,7 @@ class Notices {
 		$this->migration->maybeShowNotice();
 		$this->import->maybeShowNotice();
 		$this->deprecatedWordPress->maybeShowNotice();
+		$this->conflictingPlugins->maybeShowNotice();
 	}
 
 	/**

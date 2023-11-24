@@ -15,26 +15,6 @@ const docLinks      = {
 	pinterestSiteVerification     : `${marketingSite}docs/how-to-verify-your-site-with-pinterest/`,
 	indexNow                      : `${marketingSite}docs/integrating-with-indexnow-to-instantly-re-index-your-content/`,
 	microsoftClarityDocumentation : `${marketingSite}docs/how-to-verify-your-site-with-microsoft-clarity/`,
-	googleAnalytics               : `${marketingSite}docs/how-to-connect-your-site-with-google-analytics/`,
-	advancedGoogleAnalytics       : `${marketingSite}docs/advanced-settings-for-google-analytics/`,
-	trackingDomain                : `${marketingSite}docs/advanced-settings-for-google-analytics/#tracking-domain`,
-	trackMultipleDomains          : `${marketingSite}docs/advanced-settings-for-google-analytics/#track-multiple-domains`,
-	additionalDomains             : `${marketingSite}docs/advanced-settings-for-google-analytics/#track-multiple-domains`,
-	anonymizeIps                  : `${marketingSite}docs/advanced-settings-for-google-analytics/#anonymize-ip-addresses`,
-	displayAdvertiserTracking     : `${marketingSite}docs/advanced-settings-for-google-analytics/#display-advertiser-tracking`,
-	excludeUsers                  : `${marketingSite}docs/advanced-settings-for-google-analytics/#exclude-users-from-tracking`,
-	trackOutboundLinks            : `${marketingSite}docs/advanced-settings-for-google-analytics/#track-outbound-links`,
-	enhancedLinkAttribution       : `${marketingSite}docs/advanced-settings-for-google-analytics/#enhanced-link-attribution`,
-	enhancedEcommerce             : `${marketingSite}docs/advanced-settings-for-google-analytics/#enhanced-ecommerce`,
-	trackOutboundForms            : `${marketingSite}docs/advanced-settings-for-google-analytics/#track-outbound-forms`,
-	trackEvents                   : `${marketingSite}docs/advanced-settings-for-google-analytics/#track-events`,
-	trackUrlChanges               : `${marketingSite}docs/advanced-settings-for-google-analytics/#track-url-changes`,
-	trackVisibility               : `${marketingSite}docs/advanced-settings-for-google-analytics/#track-page-visibility`,
-	trackMediaQueries             : `${marketingSite}docs/advanced-settings-for-google-analytics/#track-media-queries`,
-	trackImpressions              : `${marketingSite}docs/advanced-settings-for-google-analytics/#track-elements-visibility`,
-	trackScrollbar                : `${marketingSite}docs/advanced-settings-for-google-analytics/#track-page-scrolling`,
-	trackSocial                   : `${marketingSite}docs/advanced-settings-for-google-analytics/#track-facebook-and-twitter`,
-	trackCleanUrl                 : `${marketingSite}docs/advanced-settings-for-google-analytics/#ensure-url-consistency`,
 	gtmContainerId                : `${marketingSite}docs/how-to-connect-your-site-with-google-tag-manager/`,
 	rssContent                    : `${marketingSite}docs/how-to-protect-your-content-with-rss-content-settings/`,
 	twitter                       : `${marketingSite}docs/beginners-guide-to-social-networks-settings-for-twitter/`,
@@ -138,7 +118,7 @@ const getUpsellUrl = (medium, content = null, link) => {
 	if ('feature-manager-upgrade' === medium && 'no-license-key' !== content) {
 		const feature = 'aioseo-local-business' === content
 			? '&features[]=local-seo'
-			: '&features[]=' + content.replace('aioseo-', '')
+			: '&features[]=' + (content ? content.replace('aioseo-', '') : '')
 
 		// This ensures that we only show plans on the pricing page that include the relevant addon.
 		return utmUrl(medium, content, upsellLinks[link]) + feature

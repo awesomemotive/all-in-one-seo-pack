@@ -408,21 +408,6 @@ TEMPLATE
 			]
 		],
 		'deprecated'       => [
-			'webmasterTools'   => [
-				'googleAnalytics' => [
-					'id'                        => [ 'type' => 'string' ],
-					'advanced'                  => [ 'type' => 'boolean', 'default' => false ],
-					'trackingDomain'            => [ 'type' => 'string' ],
-					'multipleDomains'           => [ 'type' => 'boolean', 'default' => false ],
-					'additionalDomains'         => [ 'type' => 'html' ],
-					'anonymizeIp'               => [ 'type' => 'boolean', 'default' => false ],
-					'displayAdvertiserTracking' => [ 'type' => 'boolean', 'default' => false ],
-					'excludeUsers'              => [ 'type' => 'array', 'default' => [] ],
-					'trackOutboundLinks'        => [ 'type' => 'boolean', 'default' => false ],
-					'enhancedLinkAttribution'   => [ 'type' => 'boolean', 'default' => false ],
-					'enhancedEcommerce'         => [ 'type' => 'boolean', 'default' => false ]
-				]
-			],
 			'searchAppearance' => [
 				'global'   => [
 					'descriptionFormat' => [ 'type' => 'string' ],
