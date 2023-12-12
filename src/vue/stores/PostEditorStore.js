@@ -141,6 +141,15 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 		getMediaData ({ mediaId }) {
 			return http.get(links.restUrl(`media/${mediaId}`, 'wp/v2'))
 				.then(response => 200 === response.statusCode ? response.body : {})
+		},
+		processContent ({ content }) {
+			return http.post(links.restUrl(`post/${this.currentPost.id}/process-content`))
+				.send({
+					content
+				})
+				.then(response => {
+					this.currentPost.processedContent = response.body.content
+				})
 		}
 	}
 })

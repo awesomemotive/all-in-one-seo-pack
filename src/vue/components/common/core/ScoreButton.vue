@@ -2,7 +2,7 @@
 	<div
 		class="aioseo-score-button"
 		:class="scoreClass"
-		:id="`score-button-${postId}`"
+		:id="buttonId"
 	>
 		<slot name="icon" />
 
@@ -22,6 +22,10 @@ const props = defineProps({
 		type    : Number,
 		default : 0
 	}
+})
+
+const buttonId = computed(() => {
+	return 0 < props.postId ? `score-button-${props.postId}` : null
 })
 
 const scoreClass = computed(() => {
@@ -89,6 +93,27 @@ const scoreClass = computed(() => {
 	&.score-green {
 		border-color: $green;
 		color: $green !important;
+	}
+
+	&--active {
+		&.score-red,
+		&.score-none {
+			background: $red !important;
+			color: $white !important;
+			border-color: $white;
+		}
+
+		&.score-orange {
+			background: $orange !important;
+			color: $white !important;
+			border-color: $white;
+		}
+
+		&.score-green {
+			background: $green !important;
+			color: $white !important;
+			border-color: $white;
+		}
 	}
 
 	&.classic-editor {

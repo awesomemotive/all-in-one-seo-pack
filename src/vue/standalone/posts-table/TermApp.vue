@@ -298,10 +298,6 @@ export default {
 }
 
 table.wp-list-table {
-	.column-name {
-		width: auto !important;
-	}
-
 	&.tags {
 		.aioseo-html-tags-editor {
 			.add-tags {

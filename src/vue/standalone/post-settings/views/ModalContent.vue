@@ -57,12 +57,12 @@ export default {
 				{
 					slug : 'general',
 					icon : 'svg-settings',
-					name : 'General'
+					name : this.$t.__('General', this.$td)
 				},
 				{
 					slug : 'social',
 					icon : 'svg-share',
-					name : 'Social'
+					name : this.$t.__('Social', this.$td)
 				}
 			]
 		}

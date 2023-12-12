@@ -1,10 +1,10 @@
 === All in One SEO – Best WordPress SEO Plugin – Easily Improve SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta title, rich snippets, woocommerce seo, local seo, open graph, google news sitemap, video sitemap, robots.txt, seo audit, content analysis, seo plugin, redirection
-Tested up to: 6.4
+Tested up to: 6.4.2
 Requires at least: 4.9
 Requires PHP: 7.0
-Stable tag: 4.5.0
+Stable tag: 4.5.2.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -257,6 +257,48 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 
 == Changelog ==
+
+**New in Version 4.5.2.1**
+
+* Fixed: Conflict with Avada where some Avada elements cause the post editor to load the wrong data.
+
+**New in Version 4.5.2**
+
+* New: Integrations with Avada & WPBakery - Control your SEO and optimize your content directly from the Avada and WPBakery visual page builders.
+* New: Added support for the Limit Modified Date setting to Elementor, Divi and SeedProd.
+* Updated: Improved shipping details schema logic for WooCommerce to better prevent plugin/theme conflicts.
+* Fixed: PHP error in Tools menu when using WP 5.4 or lower.
+
+**New in Version 4.5.1.1**
+
+* Fixed: Plugin conflict with Jetpack.
+
+**New in Version 4.5.1**
+
+* Updated: Added support for the Performant Translations plugin.
+* Updated: Added support for schema validation for AIOSEO's schema supported blocks (FAQ block).
+* Updated: Added support for WooCommerce grouped products to Product schema.
+* Updated: Updated our icons for X (formely Twitter).
+* Updated: Removed support for Google Analytics V3 as it has been discontinued by Google.
+* Updated: We now hide the TruSEO score for static blog pages.
+* Updated: Added emoji picker to the 404 breadcrumb template.
+* Updated: Advanced 404 redirect can now use an external domain URL.
+* Fixed: Rare issue where site could use more memory due to circular cache reference.
+* Fixed: Conflict with Safe Redirect Manager.
+* Fixed: Conflict between AIOSEO and the Presto Player and Product Tabs Manager plugins by Sparks.
+* Fixed: Schema Generator custom schema and validator editors not rendered on smaller screens.
+* Fixed: Default date value for datepicker in Event schema graph settings.
+* Fixed: Default schema not added to new SeedProd landing pages.
+* Fixed: Post column makes the post title column too small on smaller screens.
+* Fixed: Spaces stripped when searching for a post in the source/target URL field in Redirects.
+* Fixed: Feature inside Feature Manager would sometimes appear as active even when it is disabled.
+* Fixed: Fixed a number of strings that weren't localized before.
+* Fixed: PHP 8.2 deprecation warnings in Setup Wizard when using WP 6.4+
+* Fixed: PHP error when fetching WooCommerce Product Categories through REST API when AIOSEO REST API addon is active.
+* Fixed: PHP notice when using a custom multi-type JSON schema graph.
+* Fixed: Console error in Link Assistant when attempting to add a link through an Outbound Internal Suggestion.
+* Fixed: Redirects table footer height.
+* Fixed: Redirect source and target url no longer strip empty spaces when searching for posts/pages.
 
 **New in Version 4.5.0**
 
@@ -653,6 +695,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.5.0 =
+= 4.5.2.1 =
 
 This update adds major improvements and bug fixes.

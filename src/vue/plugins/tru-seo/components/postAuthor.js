@@ -1,3 +1,6 @@
+import {
+	usePostEditorStore
+} from '@/vue/stores'
 import { isBlockEditor, isClassicEditor, isClassicNoEditor } from '@/vue/utils/context'
 
 /**
@@ -33,6 +36,11 @@ export const getPostEditedAuthor = () => {
 
 	if (isBlockEditor()) {
 		author = window.wp.data.select('core/editor').getEditedPostAttribute('author')
+	}
+
+	if (!author) {
+		const postEditorStore = usePostEditorStore()
+		author = postEditorStore.currentPost.postAuthor
 	}
 
 	return author

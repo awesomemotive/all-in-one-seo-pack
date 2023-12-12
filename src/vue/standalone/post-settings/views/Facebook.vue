@@ -322,7 +322,7 @@ export default {
 			this.postEditorStore.savePostState()
 		},
 		handleImageUpdate () {
-			this.setImageUrl()
+			this.setImageUrl('facebook')
 		}
 	},
 	watch : {
@@ -335,7 +335,7 @@ export default {
 	},
 	mounted () {
 		this.scrollToElement()
-		this.setImageUrl()
+		this.setImageUrl('facebook')
 
 		window.aioseoBus.$on('updateFeaturedImage', this.handleImageUpdate)
 	},

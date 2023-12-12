@@ -101,7 +101,7 @@
 					<base-button
 						type="gray"
 						size="medium"
-						@click="showModal = false"
+						@click="noMakeBackup"
 					>
 						{{ strings.noBackup }}
 					</base-button>
@@ -188,6 +188,14 @@ export default {
 		}
 	},
 	methods : {
+		noMakeBackup () {
+			this.rootStore.navigate.scroll    = 'aioseo-backup-settings'
+			this.rootStore.navigate.highlight = 'aioseo-backup-settings'
+
+			this.$router.push({
+				name : 'import-export'
+			})
+		},
 		processResetSettings () {
 			const payload = []
 			if (this.options.all) {

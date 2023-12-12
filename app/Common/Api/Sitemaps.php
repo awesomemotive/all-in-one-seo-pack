@@ -88,18 +88,7 @@ class Sitemaps {
 			], 400 );
 		}
 
-		$plugins = array_merge(
-			aioseo()->conflictingPlugins->getConflictingPlugins( 'seo' ),
-			aioseo()->conflictingPlugins->getConflictingPlugins( 'sitemap' )
-		);
-
-		require_once ABSPATH . 'wp-admin/includes/plugin.php';
-
-		foreach ( $plugins as $pluginPath ) {
-			if ( is_plugin_active( $pluginPath ) ) {
-				deactivate_plugins( $pluginPath );
-			}
-		}
+		aioseo()->conflictingPlugins->deactivateConflictingPlugins( [ 'seo', 'sitemap' ] );
 
 		Models\Notification::deleteNotificationByName( 'conflicting-plugins' );
 

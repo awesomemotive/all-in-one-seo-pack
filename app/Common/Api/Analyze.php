@@ -36,7 +36,7 @@ class Analyze {
 		) {
 			$token      = aioseo()->internalOptions->internal->siteAnalysis->connectToken;
 			$url        = defined( 'AIOSEO_ANALYZE_URL' ) ? AIOSEO_ANALYZE_URL : 'https://analyze.aioseo.com';
-			$response   = aioseo()->helpers->wpRemotePost( $url . '/v1/analyze/', [
+			$response   = aioseo()->helpers->wpRemotePost( $url . '/v2/analyze/', [
 				'timeout' => 60,
 				'headers' => [
 					'X-AIOSEO-Key' => $token,

@@ -17,13 +17,13 @@ use AIOSEO\Plugin\Common\Tools;
  */
 trait Vue {
 	/**
-	 * Keeps the data for Vue.
+	 * Holds the data for Vue.
 	 *
 	 * @since 4.4.9
 	 *
 	 * @var array
 	 */
-	private static $data = [];
+	private $data = [];
 
 	/**
 	 * Optional arguments for setting the data.
@@ -33,6 +33,15 @@ trait Vue {
 	 * @var array
 	 */
 	private $args = [];
+
+	/**
+	 * Holds the cached data.
+	 *
+	 * @since 4.5.1
+	 *
+	 * @var array
+	 */
+	private $cache = [];
 
 	/**
 	 * Returns the data for Vue.
@@ -48,9 +57,12 @@ trait Vue {
 	public function getVueData( $page = null, $staticPostId = null, $integration = null ) {
 		$this->args = compact( 'page', 'staticPostId', 'integration' );
 		$hash       = md5( implode( '', array_map( 'strval', $this->args ) ) );
-		if ( isset( self::$data[ $hash ] ) ) {
-			return self::$data[ $hash ];
+		if ( isset( $this->cache[ $hash ] ) ) {
+			return $this->cache[ $hash ];
 		}
+
+		// Clear the data so we start fresh.
+		$this->data = [];
 
 		$this->setInitialData();
 		$this->setMultisiteData();
@@ -63,11 +75,11 @@ trait Vue {
 		$this->setSocialNetworksData();
 		$this->setSeoRevisionsData();
 		$this->setToolsOrSettingsData();
-		$this->setDiviData();
+		$this->setPageBuilderData();
 
-		self::$data[ $hash ] = self::$data;
+		$this->cache[ $hash ] = $this->data;
 
-		return self::$data[ $hash ];
+		return $this->cache[ $hash ];
 	}
 
 	/**
@@ -82,7 +94,7 @@ trait Vue {
 		$isStaticHomePage = 'page' === get_option( 'show_on_front' );
 		$staticHomePage   = intval( get_option( 'page_on_front' ) );
 
-		self::$data = [
+		$this->data = [
 			'page'              => $this->args['page'],
 			'screen'            => [
 				'base'        => isset( $screen->base ) ? $screen->base : '',
@@ -233,8 +245,8 @@ trait Vue {
 			return;
 		}
 
-		self::$data['internalNetworkOptions'] = aioseo()->internalNetworkOptions->all();
-		self::$data['networkOptions']         = aioseo()->networkOptions->all();
+		$this->data['internalNetworkOptions'] = aioseo()->internalNetworkOptions->all();
+		$this->data['networkOptions']         = aioseo()->networkOptions->all();
 	}
 
 	/**
@@ -252,9 +264,10 @@ trait Vue {
 		$postId         = $this->args['staticPostId'] ?: get_the_ID();
 		$postTypeObj    = get_post_type_object( get_post_type( $postId ) );
 		$post           = Models\Post::getPost( $postId );
+		$wpPost         = get_post( $postId );
 		$staticHomePage = intval( get_option( 'page_on_front' ) );
 
-		self::$data['currentPost'] = [
+		$this->data['currentPost'] = [
 			'context'                        => 'post',
 			'tags'                           => aioseo()->tags->getDefaultPostTags( $postId ),
 			'id'                             => $postId,
@@ -277,6 +290,7 @@ trait Vue {
 			'type'                           => $postTypeObj->labels->singular_name,
 			'postType'                       => 'type' === $postTypeObj->name ? '_aioseo_type' : $postTypeObj->name,
 			'postStatus'                     => get_post_status( $postId ),
+			'postAuthor'                     => (int) $wpPost->post_author,
 			'isSpecialPage'                  => $this->isSpecialPage( $postId ),
 			'isStaticPostsPage'              => aioseo()->helpers->isStaticPostsPage(),
 			'isHomePage'                     => $postId === $staticHomePage,
@@ -315,8 +329,8 @@ trait Vue {
 			'twitter_title'                  => $post->twitter_title,
 			'twitter_description'            => $post->twitter_description,
 			'schema'                         => ( ! empty( $post->schema ) )
-				? Models\Post::getDefaultSchemaOptions( $post->schema )
-				: Models\Post::getDefaultSchemaOptions(),
+				? Models\Post::getDefaultSchemaOptions( $post->schema, aioseo()->helpers->getPost( $postId ) )
+				: Models\Post::getDefaultSchemaOptions( '', aioseo()->helpers->getPost( $postId ) ),
 			'metaDefaults'                   => [
 				'title'       => aioseo()->meta->title->getPostTypeTitle( $postTypeObj->name ),
 				'description' => aioseo()->meta->description->getPostTypeDescription( $postTypeObj->name )
@@ -332,7 +346,7 @@ trait Vue {
 		];
 
 		if ( empty( $this->args['integration'] ) ) {
-			self::$data['integration'] = aioseo()->helpers->getPostPageBuilderName( $postId );
+			$this->data['integration'] = aioseo()->helpers->getPostPageBuilderName( $postId );
 		}
 
 		if ( ! $post->exists() ) {
@@ -346,7 +360,7 @@ trait Vue {
 					$oldPostMeta['canonicalUrl'] = $v;
 				}
 			}
-			self::$data['currentPost'] = array_merge( self::$data['currentPost'], $oldPostMeta );
+			$this->data['currentPost'] = array_merge( $this->data['currentPost'], $oldPostMeta );
 		}
 	}
 
@@ -362,9 +376,9 @@ trait Vue {
 			return;
 		}
 
-		self::$data['setupWizard']['isCompleted'] = aioseo()->standalone->setupWizard->isCompleted();
-		self::$data['seoOverview']                = aioseo()->postSettings->getPostTypesOverview();
-		self::$data['importers']                  = aioseo()->importExport->plugins();
+		$this->data['setupWizard']['isCompleted'] = aioseo()->standalone->setupWizard->isCompleted();
+		$this->data['seoOverview']                = aioseo()->postSettings->getPostTypesOverview();
+		$this->data['importers']                  = aioseo()->importExport->plugins();
 	}
 
 	/**
@@ -379,8 +393,8 @@ trait Vue {
 			return;
 		}
 
-		self::$data['seoOverview']      = aioseo()->postSettings->getPostTypesOverview();
-		self::$data['searchStatistics'] = aioseo()->searchStatistics->getVueData();
+		$this->data['seoOverview']      = aioseo()->postSettings->getPostTypesOverview();
+		$this->data['searchStatistics'] = aioseo()->searchStatistics->getVueData();
 	}
 
 	/**
@@ -397,7 +411,7 @@ trait Vue {
 
 		try {
 			if ( as_next_scheduled_action( 'aioseo_static_sitemap_regeneration' ) ) {
-				self::$data['scheduledActions']['sitemap'][] = 'staticSitemapRegeneration';
+				$this->data['scheduledActions']['sitemap'][] = 'staticSitemapRegeneration';
 			}
 		} catch ( \Exception $e ) {
 			// Do nothing.
@@ -419,9 +433,9 @@ trait Vue {
 		$isStaticHomePage = 'page' === get_option( 'show_on_front' );
 		$staticHomePage   = intval( get_option( 'page_on_front' ) );
 
-		self::$data['users']     = $this->getSiteUsers( [ 'administrator', 'editor', 'author' ] );
-		self::$data['importers'] = aioseo()->importExport->plugins();
-		self::$data['data']      += [
+		$this->data['users']     = $this->getSiteUsers( [ 'administrator', 'editor', 'author' ] );
+		$this->data['importers'] = aioseo()->importExport->plugins();
+		$this->data['data']      += [
 			'staticHomePageTitle'       => $isStaticHomePage ? aioseo()->meta->title->getTitle( $staticHomePage ) : '',
 			'staticHomePageDescription' => $isStaticHomePage ? aioseo()->meta->description->getDescription( $staticHomePage ) : '',
 		];
@@ -442,8 +456,8 @@ trait Vue {
 		$isStaticHomePage = 'page' === get_option( 'show_on_front' );
 		$staticHomePage   = intval( get_option( 'page_on_front' ) );
 
-		self::$data['users'] = $this->getSiteUsers( [ 'administrator', 'editor', 'author' ] );
-		self::$data['data']  += [
+		$this->data['users'] = $this->getSiteUsers( [ 'administrator', 'editor', 'author' ] );
+		$this->data['data']  += [
 			'staticHomePageTitle'       => $isStaticHomePage ? aioseo()->meta->title->getTitle( $staticHomePage ) : '',
 			'staticHomePageDescription' => $isStaticHomePage ? aioseo()->meta->description->getDescription( $staticHomePage ) : '',
 		];
@@ -464,7 +478,7 @@ trait Vue {
 		$isStaticHomePage = 'page' === get_option( 'show_on_front' );
 		$staticHomePage   = intval( get_option( 'page_on_front' ) );
 
-		self::$data['data'] += [
+		$this->data['data'] += [
 			'staticHomePageOgTitle'            => $isStaticHomePage ? aioseo()->social->facebook->getTitle( $staticHomePage ) : '',
 			'staticHomePageOgDescription'      => $isStaticHomePage ? aioseo()->social->facebook->getDescription( $staticHomePage ) : '',
 			'staticHomePageTwitterTitle'       => $isStaticHomePage ? aioseo()->social->twitter->getTitle( $staticHomePage ) : '',
@@ -481,11 +495,11 @@ trait Vue {
 	 */
 	private function setSeoRevisionsData() {
 		if ( 'post' === $this->args['page'] ) {
-			self::$data['seoRevisions'] = aioseo()->seoRevisions->getVueDataEdit();
+			$this->data['seoRevisions'] = aioseo()->seoRevisions->getVueDataEdit();
 		}
 
 		if ( 'seo-revisions' === $this->args['page'] ) {
-			self::$data['seoRevisions'] = aioseo()->seoRevisions->getVueDataCompare();
+			$this->data['seoRevisions'] = aioseo()->seoRevisions->getVueDataCompare();
 		}
 	}
 
@@ -505,25 +519,25 @@ trait Vue {
 		}
 
 		if ( 'tools' === $this->args['page'] ) {
-			self::$data['backups']                = array_reverse( aioseo()->backup->all() );
-			self::$data['importers']              = aioseo()->importExport->plugins();
-			self::$data['data']['server']         = [
+			$this->data['backups']                = array_reverse( aioseo()->backup->all() );
+			$this->data['importers']              = aioseo()->importExport->plugins();
+			$this->data['data']['server']         = [
 				'apache' => $this->isApache(),
 				'nginx'  => $this->isNginx()
 			];
-			self::$data['data']['robots']         = [
+			$this->data['data']['robots']         = [
 				'defaultRules'      => $this->args['page'] ? aioseo()->robotsTxt->extractRules( aioseo()->robotsTxt->getDefaultRobotsTxtContent() ) : [],
 				'hasPhysicalRobots' => aioseo()->robotsTxt->hasPhysicalRobotsTxt(),
 				'rewriteExists'     => aioseo()->robotsTxt->rewriteRulesExist(),
 				'sitemapUrls'       => array_merge( aioseo()->sitemap->helpers->getSitemapUrls(), aioseo()->sitemap->helpers->extractSitemapUrlsFromRobotsTxt() )
 			];
-			self::$data['data']['logSizes']       = [
+			$this->data['data']['logSizes']       = [
 				'badBotBlockerLog' => $this->convertFileSize( aioseo()->badBotBlocker->getLogSize() )
 			];
-			self::$data['data']['status']         = Tools\SystemStatus::getSystemStatusInfo();
-			self::$data['data']['htaccess']       = aioseo()->htaccess->getContents();
-			self::$data['data']['v3Options']      = ! empty( get_option( 'aioseop_options' ) );
-			self::$data['integrations']['wpcode'] = [
+			$this->data['data']['status']         = Tools\SystemStatus::getSystemStatusInfo();
+			$this->data['data']['htaccess']       = aioseo()->htaccess->getContents();
+			$this->data['data']['v3Options']      = ! empty( get_option( 'aioseop_options' ) );
+			$this->data['integrations']['wpcode'] = [
 				'snippets'          => WpCodeIntegration::loadWpCodeSnippets(),
 				'pluginInstalled'   => WpCodeIntegration::isPluginInstalled(),
 				'pluginActive'      => WpCodeIntegration::isPluginActive(),
@@ -532,14 +546,14 @@ trait Vue {
 		}
 
 		if ( 'settings' === $this->args['page'] ) {
-			self::$data['breadcrumbs']['defaultTemplate'] = aioseo()->helpers->encodeOutputHtml( aioseo()->breadcrumbs->frontend->getDefaultTemplate() );
+			$this->data['breadcrumbs']['defaultTemplate'] = aioseo()->helpers->encodeOutputHtml( aioseo()->breadcrumbs->frontend->getDefaultTemplate() );
 		}
 
 		if (
 			is_multisite() &&
 			is_network_admin()
 		) {
-			self::$data['data']['network'] = [
+			$this->data['data']['network'] = [
 				'sites'   => aioseo()->helpers->getSites( aioseo()->settings->tablePagination['networkDomains'] ),
 				'backups' => []
 			];
@@ -547,20 +561,23 @@ trait Vue {
 	}
 
 	/**
-	 * Set Vue Divi data.
+	 * Set Vue Page Builder data.
 	 *
-	 * @since 4.4.9
+	 * @since   4.4.9
+	 * @version 4.5.2 Renamed.
 	 *
 	 * @return void
 	 */
-	private function setDiviData() {
-		if ( 'divi' !== $this->args['integration'] ) {
+	private function setPageBuilderData() {
+		if ( empty( $this->args['integration'] ) ) {
 			return;
 		}
 
-		// This needs to be dropped in order to prevent JavaScript errors in Divi's visual builder.
-		// Some of the data from the site analysis can contain HTML tags, e.g. the search preview, and somehow that causes JSON.parse to fail on our localized Vue data.
-		unset( self::$data['internalOptions']['internal']['siteAnalysis'] );
+		if ( 'divi' === $this->args['integration'] ) {
+			// This needs to be dropped in order to prevent JavaScript errors in Divi's visual builder.
+			// Some of the data from the site analysis can contain HTML tags, e.g. the search preview, and somehow that causes JSON.parse to fail on our localized Vue data.
+			unset( $this->data['internalOptions']['internal']['siteAnalysis'] );
+		}
 	}
 
 	/**
@@ -585,7 +602,7 @@ trait Vue {
 			$locale['']['plural_forms'] = $translations->headers['Plural-Forms'];
 		}
 
-		foreach ( $translations->entries as $msgid => $entry ) {
+		foreach ( $translations->entries as $entry ) {
 			if ( empty( $entry->translations ) || ! is_array( $entry->translations ) ) {
 				continue;
 			}
@@ -597,7 +614,8 @@ trait Vue {
 				}
 			}
 
-			$locale[ $msgid ] = $entry->translations;
+			// Set the translation data using the singular string as the index. This is how Jed expects it, even for plural strings.
+			$locale[ $entry->singular ] = $entry->translations;
 		}
 
 		return $locale;

@@ -16,7 +16,7 @@ export const ImageSourceOptions = {
 		return {
 			excludedTermOptions        : [ 'featured', 'attach', 'content', 'author', 'auto' ],
 			excludedAttachmentOptions  : [ 'featured', 'content', 'author' ],
-			excludedPageBuilderOptions : [ 'auto' ]
+			excludedPageBuilderOptions : [ 'featured', 'auto' ]
 		}
 	},
 	computed : {
@@ -129,9 +129,6 @@ export const ImagePreview = {
 			imageUrl : '',
 			loading  : false
 		}
-	},
-	async mounted () {
-		await this.setImageUrl()
 	},
 	methods : {
 		async setImageUrl (socialNetwork = '') {

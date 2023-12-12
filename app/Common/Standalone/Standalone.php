@@ -95,7 +95,9 @@ class Standalone {
 		$this->pageBuilderIntegrations = [
 			'elementor' => new PageBuilders\Elementor(),
 			'divi'      => new PageBuilders\Divi(),
-			'seedprod'  => new PageBuilders\SeedProd()
+			'seedprod'  => new PageBuilders\SeedProd(),
+			'wpbakery'  => new PageBuilders\WPBakery(),
+			'avada'     => new PageBuilders\Avada()
 		];
 
 		$this->standaloneBlocks = [

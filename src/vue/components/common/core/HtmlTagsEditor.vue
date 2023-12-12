@@ -13,17 +13,19 @@
 			</div>
 
 			<div
-				v-if="showTags && allowTags"
 				class="add-tags"
 			>
-				<core-add-template-tag
-					v-for="(tag, index) in filteredTags"
-					:key="index"
-					@click.native="insertTag(tag.id)"
+				<template
+					v-if="allowTags && showTags"
 				>
-					{{ tag.name }}
-				</core-add-template-tag>
-
+					<core-add-template-tag
+						v-for="(tag, index) in filteredTags"
+						:key="index"
+						@click.native="insertTag(tag.id)"
+					>
+						{{ tag.name }}
+					</core-add-template-tag>
+				</template>
 				<div
 					v-if="!disableEmoji"
 				>
@@ -41,7 +43,7 @@
 				</div>
 
 				<a
-					v-if="showAllTagsLink"
+					v-if="showAllTagsLink && allowTags && showTags"
 					class="aioseo-view-all-tags"
 					href="#"
 					@click.prevent="insertTag()"
@@ -81,12 +83,15 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { getCurrentInstance } from 'vue'
 import tags from '@/vue/utils/tags'
 import BaseEditor from '@/vue/components/common/base/Editor'
 import CoreAddTemplateTag from '@/vue/components/common/core/AddTemplateTag'
 import CoreAlertUnfilteredHtml from '@/vue/components/common/core/alert/UnfilteredHtml'
 import CoreEmoji from '@/vue/components/common/core/Emoji'
+
+import { __ } from '@wordpress/i18n'
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -144,9 +149,7 @@ export default {
 		tagsDescription        : {
 			type : String,
 			default () {
-				const app = getCurrentInstance()
-
-				return app.appContext.app.$t.__('Click on the tags below to insert variables into your template.', app.appContext.app.$td)
+				return __('Click on the tags below to insert variables into your template.', td)
 			}
 		},
 		checkUnfilteredHtml : {
@@ -167,7 +170,7 @@ export default {
 		return {
 			showEmojiPicker : false,
 			strings         : {
-				allTags : this.$t.__('View all tags', this.$td)
+				allTags : __('View all tags', td)
 			}
 		}
 	},

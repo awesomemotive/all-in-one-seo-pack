@@ -13,7 +13,7 @@ import { decodeHTMLEntities } from '@/vue/utils/helpers'
  * @param {string} element The wrapper element.
  * @returns {Element}      The element.
  */
-const createElement = (html, element = 'div') => {
+export const createElement = (html, element = 'div') => {
 	const div = document.createElement(element)
 	div.innerHTML = html.trim()
 	return div

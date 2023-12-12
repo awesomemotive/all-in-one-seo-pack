@@ -33,15 +33,6 @@ class Head {
 	private $title;
 
 	/**
-	 * GoogleAnalytics class instance.
-	 *
-	 * @since 4.2.7
-	 *
-	 * @var GoogleAnalytics
-	 */
-	protected $analytics = null;
-
-	/**
 	 * Links class instance.
 	 *
 	 * @since 4.2.7
@@ -83,12 +74,10 @@ class Head {
 	 * @since 4.0.0
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'addAnalytics' ] );
 		add_action( 'wp', [ $this, 'registerTitleHooks' ], 1000 );
 		add_action( 'wp_head', [ $this, 'init' ], 1 );
 
 		$this->title        = new Title();
-		$this->analytics    = new GoogleAnalytics();
 		$this->links        = new Meta\Links();
 		$this->keywords     = new Meta\Keywords();
 		$this->verification = new Meta\SiteVerification();
@@ -98,19 +87,6 @@ class Head {
 			'schema'  => AIOSEO_DIR . '/app/Common/Views/main/schema.php',
 			'clarity' => AIOSEO_DIR . '/app/Common/Views/main/clarity.php'
 		];
-	}
-
-	/**
-	 * Adds analytics to the views if needed.
-	 *
-	 * @since 4.0.5
-	 *
-	 * @return void
-	 */
-	public function addAnalytics() {
-		if ( $this->analytics->canShowScript() ) {
-			$this->views['analytics'] = AIOSEO_DIR . '/app/Common/Views/main/analytics.php';
-		}
 	}
 
 	/**

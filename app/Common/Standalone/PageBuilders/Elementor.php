@@ -195,4 +195,27 @@ class Elementor extends Base {
 
 		return $elementorDocument;
 	}
+
+	/**
+	 * Checks whether or not we should prevent the date from being modified.
+	 * This method is supposed to be used in the `wp_ajax_seedprod_pro_save_lpage` action.
+	 *
+	 * @since 4.5.2
+	 *
+	 * @param  int  $postId The Post ID.
+	 * @return bool         Whether or not we should prevent the date from being modified.
+	 */
+	public function limitModifiedDate( $postId ) {
+		// This method is supposed to be used in the `wp_ajax_elementor_ajax` action.
+		if ( empty( $_REQUEST['_nonce'] ) || ! wp_verify_nonce( $_REQUEST['_nonce'], 'elementor_ajax' ) ) {
+			return false;
+		}
+
+		$editorPostId = ! empty( $_REQUEST['editor_post_id'] ) ? (int) $_REQUEST['editor_post_id'] : false;
+		if ( $editorPostId !== $postId ) {
+			return false;
+		}
+
+		return ! empty( $_REQUEST['aioseo_limit_modified_date'] );
+	}
 }

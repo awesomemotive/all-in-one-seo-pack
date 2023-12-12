@@ -1,5 +1,43 @@
 <template>
 	<grid-column class="tool-settings tool-settings-google-analytics">
+		<div class="mi-alert">
+			<core-mi-intro
+				v-if="!gaActivated"
+				:prefers-em="prefersEm"
+				show-button
+			/>
+
+			<template v-if="gaActivated">
+				<core-alert
+					class="aioseo-ga-activated"
+					type="blue"
+				>
+					<div
+						v-if="pluginsStore.plugins.miLite.activated || pluginsStore.plugins.miPro.activated"
+					>
+						{{ strings.miHandlesGa }}
+					</div>
+
+					<div
+						v-if="pluginsStore.plugins.emLite.activated || pluginsStore.plugins.emPro.activated"
+					>
+						{{ strings.emHandlesGa }}
+					</div>
+
+					<br>
+
+					<base-button
+						type="blue"
+						size="medium"
+						tag="a"
+						:href="getGaAdminUrl"
+					>
+						{{ strings.manageGa }}
+					</base-button>
+				</core-alert>
+			</template>
+		</div>
+
 		<template v-if="!gaActivated && showMiPromo && !gaDeprecated">
 			<div
 				v-for="(setting, index) in filteredSettings"
@@ -15,60 +53,15 @@
 					<template #content>
 						<div class="d-flex">
 							<template
-								v-if="!setting.parent"
-							>
-								<base-input
-									size="small"
-									@blur="maybeUpdateId(setting.option)"
-									v-model="optionsStore.options.webmasterTools[setting.option]"
-								/>
-							</template>
-
-							<template
-								v-if="setting.parent && (!setting.pro || !licenseStore.isUnlicensed)"
+								v-if="!setting.pro || !licenseStore.isUnlicensed"
 							>
 								<base-input
 									v-if="'input' === setting.type || !setting.type"
 									size="small"
-									v-model="optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option]"
+									v-model="optionsStore.options.deprecated.webmasterTools.googleAnalytics[setting.option]"
 									:placeholder="setting.placeholder"
 									:disabled="licenseStore.isUnlicensed && setting.pro"
 								/>
-								<base-toggle
-									v-if="'toggle' === setting.type"
-									v-model="optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option]"
-									:disabled="licenseStore.isUnlicensed && setting.pro"
-								/>
-								<base-radio-toggle
-									v-if="'radio-toggle' === setting.type"
-									v-model="optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option]"
-									:name="setting.option"
-									:options="setting.options"
-									:disabled="licenseStore.isUnlicensed && setting.pro"
-								/>
-								<base-textarea
-									v-if="'textarea' === setting.type"
-									v-model="optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option]"
-									:min-height="100"
-									:disabled="licenseStore.isUnlicensed && setting.pro"
-								/>
-								<grid-row
-									v-if="'multicheck' === setting.type"
-								>
-									<grid-column
-										md="4"
-										v-for="(option, index) in setting.options"
-										:key="index"
-									>
-										<base-checkbox
-											size="medium"
-											:modelValue="getValue(setting, option)"
-											@update:modelValue="checked => updateValue(checked, setting, option)"
-										>
-											{{ option.label }}
-										</base-checkbox>
-									</grid-column>
-								</grid-row>
 							</template>
 						</div>
 
@@ -124,52 +117,6 @@
 				</core-settings-row>
 			</div>
 		</template>
-
-		<template v-if="gaActivated || !showMiPromo || gaDeprecated">
-			<div class="mi-alert">
-				<core-alert
-					type="blue"
-				>
-					<div
-						v-if="pluginsStore.plugins.miLite.activated || pluginsStore.plugins.miPro.activated"
-					>
-						{{ strings.miHandlesGa }}
-					</div>
-
-					<div
-						v-if="pluginsStore.plugins.emLite.activated || pluginsStore.plugins.emPro.activated"
-					>
-						{{ strings.emHandlesGa }}
-					</div>
-
-					<div
-						v-if="gaDeprecated && !gaActivated && prefersEm"
-						v-html="emPromo"
-					/>
-
-					<div
-						v-if="gaDeprecated && !gaActivated && !prefersEm"
-						v-html="miPromo"
-					/>
-
-					<br>
-
-					<base-button
-						type="blue"
-						size="medium"
-						tag="a"
-						:href="rootStore.aioseo.urls.aio.monsterinsights"
-					>
-						<template v-if="gaActivated || !showMiPromo">
-							{{ strings.manageGa }}
-						</template>
-						<template v-else>
-							{{ strings.startGa }}
-						</template>
-					</base-button>
-				</core-alert>
-			</div>
-		</template>
 	</grid-column>
 </template>
 
@@ -185,13 +132,10 @@ import { merge } from 'lodash-es'
 import { useWebmasterTools } from '@/vue/composables'
 import { MiOrEm, WebmasterTools } from '@/vue/pages/settings/mixins'
 
-import BaseCheckbox from '@/vue/components/common/base/Checkbox'
-import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
-import BaseTextarea from '@/vue/components/common/base/Textarea'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
+import CoreMiIntro from '@/vue/components/common/core/MiIntro'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
-import GridRow from '@/vue/components/common/grid/Row'
 import SvgExternal from '@/vue/components/common/svg/External'
 
 export default {
@@ -207,23 +151,16 @@ export default {
 		}
 	},
 	components : {
-		BaseCheckbox,
-		BaseRadioToggle,
-		BaseTextarea,
 		CoreAlert,
+		CoreMiIntro,
 		CoreSettingsRow,
 		GridColumn,
-		GridRow,
 		SvgExternal
 	},
 	mixins : [ MiOrEm, WebmasterTools ],
 	data () {
 		return {
 			strings : merge(this.composableStrings, {
-				miLink : this.$t.sprintf(
-					'<strong>%1$s</strong>',
-					this.$t.__('Click here', this.$td)
-				),
 				miHandlesGa : this.$t.sprintf(
 					// Translators: 1 - The name of one of our partner plugins.
 					this.$t.__('Google Analytics is now handled by %1$s.', this.$td),
@@ -234,8 +171,7 @@ export default {
 					this.$t.__('Google Analytics is now handled by %1$s.', this.$td),
 					'ExactMetrics'
 				),
-				manageGa : this.$t.__('Manage Google Analytics', this.$td),
-				startGa  : this.$t.__('Get Started', this.$td)
+				manageGa : this.$t.__('Manage Google Analytics', this.$td)
 			})
 		}
 	},
@@ -258,59 +194,32 @@ export default {
 		},
 		gaDeprecated () {
 			return !this.optionsStore.internalOptions.internal.deprecatedOptions.includes('googleAnalytics') &&
-				!this.optionsStore.options.deprecated.webmasterTools.googleAnalytics.id &&
 				!this.optionsStore.options.deprecated.webmasterTools.googleAnalytics.gtmContainerId
 		},
 		filteredSettings () {
 			return this.tool.settings.filter(setting => this.shouldDisplaySetting(setting))
+		},
+		getGaAdminUrl () {
+			let url = this.pluginsStore.plugins.miLite.adminUrl
+
+			if (this.pluginsStore.plugins.miPro.activated) {
+				url = this.pluginsStore.plugins.miPro.adminUrl
+			}
+
+			if (this.pluginsStore.plugins.emLite.activated) {
+				url = this.pluginsStore.plugins.emLite.adminUrl
+			}
+
+			if (this.pluginsStore.plugins.emPro.activated) {
+				url = this.pluginsStore.plugins.emPro.adminUrl
+			}
+
+			return url
 		}
 	},
 	methods : {
-		updateValue (checked, setting, option) {
-			if (checked) {
-				const users = this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option]
-				users.push(option.value)
-				this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option] = users
-				return
-			}
-
-			const index = this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option].findIndex(t => t === option.value)
-			if (-1 !== index) {
-				this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option].splice(index, 1)
-			}
-		},
-		getValue (setting, option) {
-			return this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.option].includes(option.value)
-		},
 		shouldDisplaySetting (setting) {
-			// Pro checks first.
-			if (this.licenseStore.isUnlicensed && setting.pro) {
-				return false
-			}
-
-			if (!setting.displayIf) {
-				return true
-			}
-
-			if ('string' === typeof setting.displayIf) {
-				return setting.displayIf.startsWith('!')
-					? !this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.displayIf.replace('!', '')]
-					: this.optionsStore.options.deprecated.webmasterTools[setting.parent][setting.displayIf]
-			}
-
-			if (Array.isArray(setting.displayIf)) {
-				const passed = []
-				setting.displayIf.forEach(display => {
-					passed.push(display.startsWith('!')
-						? !this.optionsStore.options.deprecated.webmasterTools[setting.parent][display.replace('!', '')]
-						: this.optionsStore.options.deprecated.webmasterTools[setting.parent][display]
-					)
-				})
-
-				return passed.every(a => a)
-			}
-
-			return false
+			return !(this.licenseStore.isUnlicensed && setting.pro)
 		}
 	}
 }
@@ -321,15 +230,17 @@ export default {
 	.mi-alert {
 		font-size: 16px;
 
-		.aioseo-alert.blue {
+		.aioseo-card {
+			margin: 0;
+		}
+
+		.aioseo-ga-activated {
 			display: flex;
-			justify-content: space-between;
 			align-items: center;
-			flex-wrap: wrap;
-			gap: 12px;
-			margin-top: 0;
-			min-width: 100%;
-			max-width: 100%;
+
+			> div {
+				flex: 1;
+			}
 		}
 	}
 }

@@ -7,10 +7,21 @@ import TruSeo from '@/vue/plugins/tru-seo'
 import { cleanForSlug } from '@/vue/utils/cleanForSlug'
 import { getPostEditedContent } from './postContent'
 import { getPostEditedPermalink } from './postPermalink'
-import { isBlockEditor, isClassicEditor, isClassicNoEditor, isElementorEditor, isDiviEditor, isSeedProdEditor } from '@/vue/utils/context'
-import { getEditorData as getElementorData } from '@/vue/standalone/elementor/helpers'
-import { getEditorData as getDiviData } from '@/vue/standalone/divi/helpers'
-import { getEditorData as getSeedProdData } from '@/vue/standalone/seedprod/helpers'
+import {
+	isBlockEditor,
+	isClassicEditor,
+	isClassicNoEditor,
+	isElementorEditor,
+	isDiviEditor,
+	isSeedProdEditor,
+	isWPBakeryEditor,
+	isAvadaEditor
+} from '@/vue/utils/context'
+import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
+import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
+import { getEditorData as getSeedProdData } from '@/vue/standalone/page-builders/seedprod/helpers'
+import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders/wpbakery/helpers'
+import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
 
 /**
  * Returns the post slug from page builders.
@@ -20,16 +31,22 @@ import { getEditorData as getSeedProdData } from '@/vue/standalone/seedprod/help
 const getEditorSlug = () => {
 	let postSlug = ''
 
-	if (isElementorEditor()) {
-		postSlug = getElementorData().slug
-	}
-
-	if (isDiviEditor()) {
-		postSlug = getDiviData().slug
-	}
-
-	if (isSeedProdEditor()) {
-		postSlug = getSeedProdData().slug
+	switch (true) {
+		case isElementorEditor():
+			postSlug = getElementorData().slug
+			break
+		case isDiviEditor():
+			postSlug = getDiviData().slug
+			break
+		case isSeedProdEditor():
+			postSlug = getSeedProdData().slug
+			break
+		case isWPBakeryEditor():
+			postSlug = getWPBakeryData().slug
+			break
+		case isAvadaEditor():
+			postSlug = getAvadaData().slug
+			break
 	}
 
 	return postSlug

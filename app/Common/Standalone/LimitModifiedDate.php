@@ -144,6 +144,13 @@ class LimitModifiedDate {
 			}
 		}
 
+		foreach ( aioseo()->standalone->pageBuilderIntegrations as $pageBuilder ) {
+			if ( $pageBuilder->isBuiltWith( $unsanitizedData['ID'] ) && $pageBuilder->limitModifiedDate( $unsanitizedData['ID'] ) ) {
+				$shouldReset = true;
+				break;
+			}
+		}
+
 		if ( $shouldReset ) {
 			$sanitizedData['post_modified']     = $unsanitizedData['post_modified'];
 			$sanitizedData['post_modified_gmt'] = $unsanitizedData['post_modified_gmt'];

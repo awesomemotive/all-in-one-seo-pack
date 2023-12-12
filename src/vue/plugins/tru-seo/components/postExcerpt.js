@@ -6,10 +6,21 @@ import {
 import TruSeo from '@/vue/plugins/tru-seo'
 import { getPostContent, getPostEditedContent } from './postContent'
 import { getPostEditedPermalink } from './postPermalink'
-import { isBlockEditor, isClassicEditor, isClassicNoEditor, isElementorEditor, isDiviEditor, isSeedProdEditor } from '@/vue/utils/context'
-import { getEditorData as getElementorData } from '@/vue/standalone/elementor/helpers'
-import { getEditorData as getDiviData } from '@/vue/standalone/divi/helpers'
-import { getEditorData as getSeedProdData } from '@/vue/standalone/seedprod/helpers'
+import {
+	isBlockEditor,
+	isClassicEditor,
+	isClassicNoEditor,
+	isElementorEditor,
+	isDiviEditor,
+	isSeedProdEditor,
+	isWPBakeryEditor,
+	isAvadaEditor
+} from '@/vue/utils/context'
+import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
+import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
+import { getEditorData as getSeedProdData } from '@/vue/standalone/page-builders/seedprod/helpers'
+import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders/wpbakery/helpers'
+import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
 
 /**
  * Retrieves the excerpt from the given content.
@@ -49,16 +60,22 @@ const excerptFromContent = (content) => {
 const getEditorExcerpt = () => {
 	let postExcerpt = ''
 
-	if (isElementorEditor()) {
-		postExcerpt = getElementorData().excerpt
-	}
-
-	if (isDiviEditor()) {
-		postExcerpt = getDiviData().excerpt
-	}
-
-	if (isSeedProdEditor()) {
-		postExcerpt = getSeedProdData().excerpt
+	switch (true) {
+		case isElementorEditor():
+			postExcerpt = getElementorData().excerpt
+			break
+		case isDiviEditor():
+			postExcerpt = getDiviData().excerpt
+			break
+		case isSeedProdEditor():
+			postExcerpt = getSeedProdData().excerpt
+			break
+		case isWPBakeryEditor():
+			postExcerpt = getWPBakeryData().excerpt
+			break
+		case isAvadaEditor():
+			postExcerpt = getAvadaData().excerpt
+			break
 	}
 
 	return postExcerpt

@@ -250,7 +250,9 @@
 			<template #header>
 				<span>{{ strings.focusKeyphrase }}</span>
 
-				<core-tooltip>
+				<core-tooltip
+					:offset="isPageBuilderEditor() ? '35px,0' : '0,0'"
+				>
 					<svg-circle-question-mark />
 
 					<template #tooltip>
@@ -919,6 +921,7 @@ export default {
 		.aioseo-add-keyphrase-tag {
 			display: flex;
 			width: 100%;
+			align-items: center;
 
 			.keyphrase-score {
 				flex: 1;

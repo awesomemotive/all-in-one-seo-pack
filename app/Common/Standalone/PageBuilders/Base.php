@@ -143,7 +143,7 @@ abstract class Base {
 	 */
 	public function enqueue() {
 		$integrationSlug = $this->integrationSlug;
-		aioseo()->core->assets->load( "src/vue/standalone/$integrationSlug/main.js", [], aioseo()->helpers->getVueData( 'post', $this->getPostId(), $this->integrationSlug ) );
+		aioseo()->core->assets->load( "src/vue/standalone/page-builders/$integrationSlug/main.js", [], aioseo()->helpers->getVueData( 'post', $this->getPostId(), $integrationSlug ) );
 
 		aioseo()->core->assets->enqueueCss( 'src/vue/assets/scss/integrations/main.scss' );
 
@@ -160,20 +160,18 @@ abstract class Base {
 	 */
 	public function getPostId() {
 		// phpcs:disable HM.Security.NonceVerification.Recommended
-		if ( ! empty( $_GET['id'] ) ) {
-			return (int) $_GET['id'];
+		foreach ( [ 'id', 'post', 'post_id' ] as $key ) {
+			if ( ! empty( $_GET[ $key ] ) ) {
+				return (int) $_GET[ $key ];
+			}
 		}
-
-		if ( ! empty( $_GET['post'] ) ) {
-			return (int) $_GET['post'];
-		}
+		// phpcs:enable
 
 		if ( ! empty( $GLOBALS['post'] ) ) {
 			return (int) $GLOBALS['post']->ID;
 		}
 
 		return null;
-		// phpcs:enable HM.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -198,5 +196,37 @@ abstract class Base {
 	 */
 	public function isBuiltWith( $postId ) { // phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		return false;
+	}
+
+	/**
+	 * Checks whether or not we should prevent the date from being modified.
+	 *
+	 * @since 4.5.2
+	 *
+	 * @param  int  $postId The Post ID.
+	 * @return bool         Whether or not we should prevent the date from being modified.
+	 */
+	public function limitModifiedDate( $postId ) { // phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+		return false;
+	}
+
+	/**
+	 * Returns the processed page builder content.
+	 *
+	 * @since 4.5.2
+	 *
+	 * @param  int    $postId  The post id.
+	 * @param  string $content The raw content.
+	 * @return string          The processed content.
+	 */
+	public function processContent( $postId, $content = '' ) {
+		if ( empty( $content ) ) {
+			$post = get_post( $postId );
+			if ( is_a( $post, 'WP_Post' ) ) {
+				$content = $post->post_content;
+			}
+		}
+
+		return apply_filters( 'the_content', $content );
 	}
 }

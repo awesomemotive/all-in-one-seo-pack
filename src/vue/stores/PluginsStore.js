@@ -56,12 +56,7 @@ export const usePluginsStore = defineStore('PluginsStore', {
 					const addonsStore = useAddonsStore()
 
 					Object.keys(response.body.completed).forEach(sku => {
-						const basename = response.body.completed[sku].basename
-						const addon    = addonsStore.find(item => sku === item.sku)
-						if (addon) {
-							addon.basename = basename
-							addonsStore.updateAddon(addon)
-						}
+						addonsStore.updateAddon(response.body.completed[sku])
 					})
 
 					return response

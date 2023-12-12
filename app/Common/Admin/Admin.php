@@ -294,12 +294,13 @@ class Admin {
 	public function addPluginScripts() {
 		global $pagenow;
 
-		if ( 'plugins.php' !== $pagenow ) {
+		if ( 'plugins.php' !== $pagenow && 'plugin-install.php' !== $pagenow ) {
 			return;
 		}
 
 		aioseo()->core->assets->load( $this->assetSlugs['plugins'], [], [
-			'basename' => AIOSEO_PLUGIN_BASENAME
+			'basename'           => AIOSEO_PLUGIN_BASENAME,
+			'conflictingPlugins' => aioseo()->conflictingPlugins->getConflictingPluginSlugs()
 		], 'aioseoPlugins' );
 	}
 

@@ -95,7 +95,9 @@ export default {
 		value () {
 			if (this.value) {
 				this.value = this.value.replace(/(https?:\/)(\/)+|(\/)+/g, '$1$2$3')
-				this.value = this.value.replace(/\s+/g, '')
+				if (this.value.startsWith('/')) {
+					this.value = this.value.replace(/\s+/g, '')
+				}
 			}
 		},
 		url : {

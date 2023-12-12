@@ -280,7 +280,7 @@ export default {
 			this.postEditorStore.savePostState()
 		},
 		handleImageUpdate () {
-			this.setImageUrl()
+			this.setImageUrl('twitter')
 		}
 	},
 	watch : {
@@ -296,7 +296,7 @@ export default {
 	},
 	mounted () {
 		this.scrollToElement()
-		this.setImageUrl()
+		this.setImageUrl('twitter')
 
 		window.aioseoBus.$on('updateFeaturedImage', this.handleImageUpdate)
 	},

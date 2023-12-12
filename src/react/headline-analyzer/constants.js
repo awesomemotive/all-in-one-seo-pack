@@ -1,5 +1,6 @@
 import {
-	useRootStore
+	useRootStore,
+	loadPiniaStores
 } from '@/vue/stores'
 
 const { __, sprintf } = window.wp.i18n
@@ -30,6 +31,9 @@ export const forBetterResults = sprintf(
 )
 
 export const headlineAnalyzerNotice = () => {
+	// We need to load the Pinia here since we are using the store outside an App.
+	// So when using useRootStore, it will throw an error because the store wasn't initialized.
+	loadPiniaStores()
 	const rootStore = useRootStore()
 	return sprintf(
 		// Translators: 1 - The short plugin name ("AIOSEO"), 2 - Opening HTML link/span tag, 3 - Closing HTML span tag, 4 - Closing HTML link tag.

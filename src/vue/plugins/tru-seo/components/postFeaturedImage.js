@@ -3,8 +3,8 @@ import {
 } from '@/vue/stores'
 
 import { isBlockEditor, isClassicEditor, isClassicNoEditor, isElementorEditor, isDiviEditor } from '@/vue/utils/context'
-import { getEditorData as getElementorData } from '@/vue/standalone/elementor/helpers'
-import { getEditorData as getDiviData } from '@/vue/standalone/divi/helpers'
+import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
+import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
 
 /**
  * Get the Classic Editor featured image.

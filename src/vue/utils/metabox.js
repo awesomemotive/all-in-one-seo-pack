@@ -8,7 +8,7 @@ import {
  * Determine whether or not we should show the metabox.
  *
  * @version 4.4.0
- * @version {next} Moved to its own utils file instead of the TruSEO one.
+ * @version 4.5.0 Moved to its own utils file instead of the TruSEO one.
  *
  * @param   {string} postType The post type to check.
  * @returns {boolean}         Returns true if the meta box should be shown.

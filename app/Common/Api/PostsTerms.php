@@ -433,4 +433,44 @@ class PostsTerms {
 			'success' => true
 		], 200 );
 	}
+
+	/**
+	 * Get the processed content by the given raw content.
+	 *
+	 * @since 4.5.2
+	 *
+	 * @param  \WP_REST_Request  $request The REST Request.
+	 * @return \WP_REST_Response          The response.
+	 */
+	public static function processContent( $request ) {
+		$args = $request->get_params();
+		$body = $request->get_json_params();
+
+		if ( empty( $args['postId'] ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'No post ID was provided.'
+			], 400 );
+		}
+
+		// Check if the content was passed, otherwise get it from the post.
+		$content = $body['content'] ?? '';
+		if ( empty( $content ) ) {
+			$content = aioseo()->helpers->getPostContent( $args['postId'] );
+		}
+
+		// Check if we can process it using a page builder integration.
+		$pageBuilder = aioseo()->helpers->getPostPageBuilderName( $args['postId'] );
+		if ( ! empty( $pageBuilder ) ) {
+			return new \WP_REST_Response( [
+				'success' => true,
+				'content' => aioseo()->standalone->pageBuilderIntegrations[ $pageBuilder ]->processContent( $args['postId'], $body['content'] ),
+			], 200 );
+		}
+
+		return new \WP_REST_Response( [
+			'success' => true,
+			'content' => apply_filters( 'the_content', $content ),
+		], 200 );
+	}
 }

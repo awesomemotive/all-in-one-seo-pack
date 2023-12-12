@@ -106,7 +106,7 @@ import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 
 import { getParams, removeParam } from '@/vue/utils/params'
 import { debounceContext } from '@/vue/utils/debounce'
-import { isBlockEditor } from '@/vue/utils/context'
+import { isBlockEditor, isPageBuilderEditor } from '@/vue/utils/context'
 import { ObjectRevisions } from '@/vue/mixins/seo-revisions/SeoRevisions'
 import Advanced from './Advanced'
 import Alert from './partials/Alert'
@@ -174,7 +174,8 @@ export default {
 				pageName   : 'General',
 				modalTitle : this.$t.__('Preview Snippet Editor', this.$td)
 			},
-			activeMainSidebarTab : ''
+			activeMainSidebarTab : '',
+			isPageBuilderEditor
 		}
 	},
 	watch : {
@@ -221,47 +222,48 @@ export default {
 				{
 					slug : 'general',
 					icon : 'svg-settings',
-					name : 'General'
+					name : this.$t.__('General', this.$td)
 				},
 				{
 					slug : 'social',
 					icon : 'svg-share',
-					name : 'Social'
+					name : this.$t.__('Social', this.$td)
 				},
 				{
 					slug : 'schema',
 					icon : 'svg-receipt',
-					name : 'Schema'
+					name : this.$t.__('Schema', this.$td)
 				},
 				{
 					slug       : 'redirects',
 					icon       : 'svg-redirect-crossed-arrows',
-					name       : 'Redirects',
+					name       : this.$t.__('Redirects', this.$td),
 					warning    : (0 < this.redirectsStore.rows.filter(row => !!row.enabled).length),
 					permission : 'aioseo_page_redirects_manage'
 				},
 				{
 					slug  : 'seoRevisions',
 					icon  : 'svg-backup',
-					name  : 'SEO Revisions',
+					name  : this.$t.__('SEO Revisions', this.$td),
 					badge : 'seo-revisions-count-badge'
 				},
 				{
 					slug : 'advanced',
 					icon : 'svg-build',
-					name : 'Advanced'
+					name : this.$t.__('Advanced', this.$td)
 				}
 			]
 
 			if (
 				!this.rootStore.aioseo.integration &&
+				!isPageBuilderEditor() &&
 				'post' === this.postEditorStore.currentPost.context &&
 				!this.postEditorStore.currentPost.linkAssistant?.isExcludedPost
 			) {
 				tabs.splice(3, 0, {
 					slug : 'linkAssistant',
 					icon : 'svg-link-suggestion',
-					name : 'Link Assistant'
+					name : this.$t.__('Link Assistant', this.$td)
 				})
 			}
 

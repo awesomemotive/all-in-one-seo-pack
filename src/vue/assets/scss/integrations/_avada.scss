@@ -1,0 +1,16 @@
+.fusion-builder-preview-mode {
+	.aioseo-modal {
+		display: none;
+	}
+}
+
+.fusion-builder-live {
+	.aioseo-blur {
+		.aioseo-wp-table {
+			&-header,
+			.tablenav {
+				display: none;
+			}
+		}
+	}
+}

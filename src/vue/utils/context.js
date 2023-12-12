@@ -20,15 +20,23 @@ export const isClassicNoEditor = () => {
 }
 
 export const isElementorEditor = () => {
-	return document.body.classList.contains('elementor-editor-active') && window.elementor
+	return !!(document.body.classList.contains('elementor-editor-active') && window.elementor)
 }
 
 export const isDiviEditor = () => {
-	return document.body.classList.contains('et_pb_pagebuilder_layout') && window.ET_Builder
+	return !!(document.body.classList.contains('et_pb_pagebuilder_layout') && window.ET_Builder)
 }
 
 export const isSeedProdEditor = () => {
-	return document.body.classList.contains('seedprod-builder') && window.seedprod_data
+	return !!(document.body.classList.contains('seedprod-builder') && window.seedprod_data)
+}
+
+export const isWPBakeryEditor = () => {
+	return !!(window.vc && window.vc_mode)
+}
+
+export const isAvadaEditor = () => {
+	return !!(window.FusionApp || window.FusionPageBuilderApp)
 }
 
 export const isWooCommerceProduct = () => {
@@ -43,7 +51,7 @@ export const isWooCommerceProduct = () => {
 }
 
 export const isPageBuilderEditor = () => {
-	return isElementorEditor() || isDiviEditor() || isSeedProdEditor()
+	return isElementorEditor() || isDiviEditor() || isSeedProdEditor() || isWPBakeryEditor() || isAvadaEditor()
 }
 
 export const canLoadBlocks = () => {

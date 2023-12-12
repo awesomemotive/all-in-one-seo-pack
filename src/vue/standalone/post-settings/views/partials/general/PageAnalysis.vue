@@ -73,7 +73,7 @@ export default {
 			})
 		},
 		pageBuilderAlert () {
-			if (!isBlockEditor() || '' === this.rootStore.aioseo.integration) {
+			if (!isBlockEditor() || ![ 'elementor', 'divi' ].includes(this.rootStore.aioseo.integration)) {
 				return false
 			}
 

@@ -90,7 +90,7 @@ class Divi extends Base {
 			return;
 		}
 
-		aioseo()->core->assets->load( 'src/vue/standalone/divi-admin/main.js', [], aioseo()->helpers->getVueData() );
+		aioseo()->core->assets->load( 'src/vue/standalone/page-builders/divi-admin/main.js', [], aioseo()->helpers->getVueData() );
 
 		aioseo()->main->enqueueTranslations();
 	}
@@ -106,7 +106,7 @@ class Divi extends Base {
 	 */
 	public function addEtTag( $tag, $handle = '' ) {
 		$scriptHandles = [
-			'aioseo/js/src/vue/standalone/divi/main.js',
+			'aioseo/js/src/vue/standalone/page-builders/divi/main.js',
 			'aioseo/js/src/vue/standalone/app/main.js'
 		];
 
@@ -198,5 +198,27 @@ class Divi extends Base {
 		}
 
 		return $editUrl;
+	}
+
+	/**
+	 * Checks whether or not we should prevent the date from being modified.
+	 *
+	 * @since 4.5.2
+	 *
+	 * @param  int  $postId The Post ID.
+	 * @return bool         Whether or not we should prevent the date from being modified.
+	 */
+	public function limitModifiedDate( $postId ) {
+		// This method is supposed to be used in the `wp_ajax_et_fb_ajax_save` action.
+		if ( empty( $_REQUEST['et_fb_save_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_REQUEST['et_fb_save_nonce'] ), 'et_fb_save_nonce' ) ) {
+			return false;
+		}
+
+		$editorPostId = ! empty( $_REQUEST['post_id'] ) ? intval( $_REQUEST['post_id'] ) : 0;
+		if ( $editorPostId !== $postId ) {
+			return false;
+		}
+
+		return ! empty( $_REQUEST['options']['conditional_tags']['aioseo_limit_modified_date'] );
 	}
 }

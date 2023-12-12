@@ -84,7 +84,6 @@
 </template>
 
 <script>
-import { getCurrentInstance } from 'vue'
 import BaseBoxToggle from '@/vue/components/common/base/BoxToggle'
 import CoreCopyBlock from '@/vue/components/common/core/CopyBlock'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
@@ -93,6 +92,9 @@ import SvgPhp from '@/vue/components/common/svg/Php'
 import SvgShortcode from '@/vue/components/common/svg/Shortcode'
 import SvgWidget from '@/vue/components/common/svg/Widget'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
+
+import { __ } from '@wordpress/i18n'
+const td = import.meta.env.VITE_TEXTDOMAIN
 export default {
 	components : {
 		BaseBoxToggle,
@@ -108,9 +110,7 @@ export default {
 		label : {
 			type : String,
 			default () {
-				const app = getCurrentInstance()
-
-				return app.appContext.app.$t.__('Display Info', app.appContext.app.$td)
+				return __('Display Info', td)
 			}
 		},
 		options : {
@@ -132,11 +132,11 @@ export default {
 			errors               : [],
 			showAdvancedSettings : false,
 			strings              : {
-				advancedSettings : this.$t.__('Advanced Settings', this.$td),
-				gutenbergBlock   : this.$t.__('Gutenberg Block', this.$td),
-				phpCode          : this.$t.__('PHP Code', this.$td),
-				shortcode        : this.$t.__('Shortcode', this.$td),
-				widget           : this.$t.__('Widget', this.$td)
+				advancedSettings : __('Advanced Settings', td),
+				gutenbergBlock   : __('Gutenberg Block', td),
+				phpCode          : __('PHP Code', td),
+				shortcode        : __('Shortcode', td),
+				widget           : __('Widget', td)
 			}
 		}
 	},

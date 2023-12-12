@@ -1,10 +1,6 @@
-$adminbar-height: 32px;
 $settings-bar-height: 90px;
-$modal-header-height: 58px;
-$modal-spacing: 30px;
-$modal-width: 400px;
 
-.et-fb { // Add wrapper class to prevent affecting other pages.
+.et-fb {
 	/* The containers */
 	#aioseo-settings {
 		position: absolute;
@@ -108,126 +104,68 @@ $modal-width: 400px;
 		}
 
 		&-top {
-			.aioseo-modal {
+			.aioseo-pagebuilder-modal {
 				top: calc(#{$adminbar-height} + #{$settings-bar-height});
 				left: $modal-spacing;
 			}
 
 			&-right {
-				.aioseo-modal {
+				.aioseo-pagebuilder-modal {
 					top: calc(#{$adminbar-height} + #{$settings-bar-height});
 					left: $modal-spacing;
 				}
 			}
 
 			&-left {
-				.aioseo-modal {
+				.aioseo-pagebuilder-modal {
 					left: calc(100vw - #{$modal-width} - #{$modal-spacing});
 				}
 			}
 		}
 
 		&-bottom {
-			.aioseo-modal {
+			.aioseo-pagebuilder-modal {
 				left: $modal-spacing;
 			}
 
 			&-right {
-				.aioseo-modal {
+				.aioseo-pagebuilder-modal {
 					left: $modal-spacing;
 				}
 			}
 
 			&-left {
-				.aioseo-modal {
+				.aioseo-pagebuilder-modal {
 					left: calc(100vw - #{$modal-width} - #{$modal-spacing});
 				}
 			}
 		}
 
 		&-left {
-			.aioseo-modal {
+			.aioseo-pagebuilder-modal {
 				top: calc(#{$adminbar-height} + #{$settings-bar-height});
 				left: calc(100vw - #{$modal-width} - #{$modal-spacing});
 			}
 		}
 
 		&-right {
-			.aioseo-modal {
+			.aioseo-pagebuilder-modal {
 				left: $modal-spacing;
 			}
 		}
 	}
 
-	.aioseo-modal {
-		position: relative;
+	.aioseo-pagebuilder-modal {
 		top: calc(#{$modal-spacing} + #{$adminbar-height});
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-		width: $modal-width;
-		padding-top: $modal-header-height;
-		background: #fff;
-		box-shadow: 0 5px 30px rgba(44, 135, 218, 0.2);
-		border-radius: 3px 3px 0 0;
-
-		&-is-closed {
-			display: none;
-		}
 
 		&-header {
-			position: absolute;
-			z-index: 1;
-			top: 0;
-			left: 0;
-			display: flex;
-			width: 100%;
-			height: $modal-header-height;
-			padding-right: 21px;
-			padding-left: 26px;
-			color: #fff;
 			background-color: #6c2eb9;
-			align-items: center;
-			justify-content: space-between;
-			box-sizing: border-box;
-			cursor: move;
-
-			&-title {
-				font-family: "Open Sans", Helvetica, Roboto, Arial, sans-serif;
-				font-size: 18px;
-				font-weight: 600;
-				font-style: normal;
-				line-height: 16px;
-				cursor: move;
-				user-select: none;
-				text-decoration: none;
-				letter-spacing: 0;
-				text-transform: none;
-				color: #fff;
-			}
 
 			&-close {
-				cursor: pointer;
-
 				svg {
 					position: relative;
 					top: 4px;
-					width: 16px;
-					height: 16px;
-					fill: #fff;
 				}
-			}
-		}
-
-		&-body {
-			position: relative;
-			z-index: 1;
-			overflow: hidden;
-			overflow-y: auto;
-			max-height: calc(100vh - #{$adminbar-height} - #{$settings-bar-height} - #{$modal-spacing} - #{$modal-header-height});
-
-			p {
-				padding-bottom: 0;
 			}
 		}
 	}

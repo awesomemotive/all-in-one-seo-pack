@@ -187,12 +187,18 @@
 				:name="strings.errorFormat404"
 			>
 				<template #content>
-					<base-input
+					<core-html-tags-editor
 						:modelValue="sanitizeString(optionsStore.options.breadcrumbs.errorFormat404)"
 						@update:modelValue="value => optionsStore.options.breadcrumbs.errorFormat404 = sanitizeString(value)"
-						size="medium"
+						:line-numbers="false"
+						:allowTags="false"
+						:disableEmoji="false"
+						single
+						checkUnfilteredHtml
+						:minimum-line-numbers="3"
+						:showAllTagsLink="false"
+						tagsDescription=""
 					/>
-
 					<div class="aioseo-description">
 						{{ strings.errorFormat404Description }}
 					</div>

@@ -5,10 +5,21 @@ import {
 
 import TruSeo from '@/vue/plugins/tru-seo'
 import { getPostEditedContent } from './postContent'
-import { isBlockEditor, isClassicEditor, isClassicNoEditor, isElementorEditor, isDiviEditor, isSeedProdEditor } from '@/vue/utils/context'
-import { getEditorData as getElementorData } from '@/vue/standalone/elementor/helpers'
-import { getEditorData as getDiviData } from '@/vue/standalone/divi/helpers'
-import { getEditorData as getSeedProdData } from '@/vue/standalone/seedprod/helpers'
+import {
+	isBlockEditor,
+	isClassicEditor,
+	isClassicNoEditor,
+	isElementorEditor,
+	isDiviEditor,
+	isSeedProdEditor,
+	isWPBakeryEditor,
+	isAvadaEditor
+} from '@/vue/utils/context'
+import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
+import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
+import { getEditorData as getSeedProdData } from '@/vue/standalone/page-builders/seedprod/helpers'
+import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders/wpbakery/helpers'
+import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
 
 /**
  * Returns the post permalink from page builders.
@@ -18,16 +29,22 @@ import { getEditorData as getSeedProdData } from '@/vue/standalone/seedprod/help
 const getEditorPermalink = () => {
 	let postPermalink = ''
 
-	if (isElementorEditor()) {
-		postPermalink = getElementorData().permalink
-	}
-
-	if (isDiviEditor()) {
-		postPermalink = getDiviData().permalink
-	}
-
-	if (isSeedProdEditor()) {
-		postPermalink = getSeedProdData().permalink
+	switch (true) {
+		case isElementorEditor():
+			postPermalink = getElementorData().permalink
+			break
+		case isDiviEditor():
+			postPermalink = getDiviData().permalink
+			break
+		case isSeedProdEditor():
+			postPermalink = getSeedProdData().permalink
+			break
+		case isWPBakeryEditor():
+			postPermalink = getWPBakeryData().permalink
+			break
+		case isAvadaEditor():
+			postPermalink = getAvadaData().permalink
+			break
 	}
 
 	return postPermalink

@@ -53,6 +53,7 @@ class Api {
 			'post/(?P<postId>[\d]+)/disable-primary-term-education' => [ 'callback' => [ 'PostsTerms', 'disablePrimaryTermEducation' ], 'access' => 'aioseo_page_general_settings' ],
 			'post/(?P<postId>[\d]+)/disable-link-format-education'  => [ 'callback' => [ 'PostsTerms', 'disableLinkFormatEducation' ], 'access' => 'aioseo_page_general_settings' ],
 			'post/(?P<postId>[\d]+)/update-internal-link-count'     => [ 'callback' => [ 'PostsTerms', 'updateInternalLinkCount' ], 'access' => 'aioseo_page_general_settings' ],
+			'post/(?P<postId>[\d]+)/process-content'                => [ 'callback' => [ 'PostsTerms', 'processContent' ], 'access' => 'aioseo_page_general_settings' ],
 			'postscreen'                                            => [ 'callback' => [ 'PostsTerms', 'updatePostFromScreen' ], 'access' => 'aioseo_page_general_settings' ],
 			'termscreen'                                            => [ 'callback' => [ 'PostsTerms', 'updateTermFromScreen' ], 'access' => 'aioseo_page_general_settings' ],
 			'keyphrases'                                            => [ 'callback' => [ 'PostsTerms', 'updatePostKeyphrases' ], 'access' => 'aioseo_page_analysis' ],

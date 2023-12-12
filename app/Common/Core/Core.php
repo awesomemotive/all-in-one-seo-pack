@@ -16,7 +16,7 @@ use AIOSEO\Plugin\Common\Utils;
  */
 class Core {
 	/**
-	 * AIOSEO Tables.
+	 * List of AIOSEO tables.
 	 *
 	 * @since 4.2.5
 	 *

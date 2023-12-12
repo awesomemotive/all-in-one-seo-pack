@@ -299,7 +299,6 @@
 
 <script>
 import numbers from '@/vue/utils/numbers'
-import { getCurrentInstance } from 'vue'
 import { debounce } from '@/vue/utils/debounce'
 
 import CoreLoader from '@/vue/components/common/core/Loader'
@@ -309,6 +308,9 @@ import CoreWpItemsPerPage from './ItemsPerPage'
 import CoreWpPagination from './Pagination'
 import CoreWpTableHeaderFooter from './TableHeaderFooter'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
+
+import { __ } from '@wordpress/i18n'
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	emits : [
@@ -381,9 +383,7 @@ export default {
 		searchLabel : {
 			type : String,
 			default () {
-				const app = getCurrentInstance()
-
-				return app.appContext.app.$t.__('Search', app.appContext.app.$td)
+				return __('Search', td)
 			}
 		},
 		initialPageNumber : {
@@ -423,8 +423,8 @@ export default {
 			pageNumber   : 1,
 			activeRow    : null,
 			strings      : {
-				items     : this.$t.__('items', this.$td),
-				noResults : this.$t.__('No items found.', this.$td)
+				items     : __('items', td),
+				noResults : __('No items found.', td)
 			}
 		}
 	},

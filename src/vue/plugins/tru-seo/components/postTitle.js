@@ -6,10 +6,21 @@ import {
 import TruSeo from '@/vue/plugins/tru-seo'
 import { getPostEditedContent } from './postContent'
 import { getPostEditedPermalink } from './postPermalink'
-import { isBlockEditor, isClassicEditor, isClassicNoEditor, isElementorEditor, isDiviEditor, isSeedProdEditor } from '@/vue/utils/context'
-import { getEditorData as getElementorData } from '@/vue/standalone/elementor/helpers'
-import { getEditorData as getDiviData } from '@/vue/standalone/divi/helpers'
-import { getEditorData as getSeedProdData } from '@/vue/standalone/seedprod/helpers'
+import {
+	isBlockEditor,
+	isClassicEditor,
+	isClassicNoEditor,
+	isElementorEditor,
+	isDiviEditor,
+	isSeedProdEditor,
+	isWPBakeryEditor,
+	isAvadaEditor
+} from '@/vue/utils/context'
+import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
+import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
+import { getEditorData as getSeedProdData } from '@/vue/standalone/page-builders/seedprod/helpers'
+import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders/wpbakery/helpers'
+import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
 
 /**
  * Returns the post title from page builders.
@@ -19,16 +30,22 @@ import { getEditorData as getSeedProdData } from '@/vue/standalone/seedprod/help
 const getEditorTitle = () => {
 	let postTitle = ''
 
-	if (isElementorEditor()) {
-		postTitle = getElementorData().title
-	}
-
-	if (isDiviEditor()) {
-		postTitle = getDiviData().title
-	}
-
-	if (isSeedProdEditor()) {
-		postTitle = getSeedProdData().title
+	switch (true) {
+		case isElementorEditor():
+			postTitle = getElementorData().title
+			break
+		case isDiviEditor():
+			postTitle = getDiviData().title
+			break
+		case isSeedProdEditor():
+			postTitle = getSeedProdData().title
+			break
+		case isWPBakeryEditor():
+			postTitle = getWPBakeryData().title
+			break
+		case isAvadaEditor():
+			postTitle = getAvadaData().title
+			break
 	}
 
 	return postTitle

@@ -160,9 +160,6 @@ class Connect {
 				echo sprintf( esc_html__( '%1$s &rsaquo; Connect', 'all-in-one-seo-pack' ), esc_html( AIOSEO_PLUGIN_NAME ) );
 			?>
 			</title>
-			<?php do_action( 'admin_print_scripts' ); ?>
-			<?php do_action( 'admin_print_styles' ); ?>
-			<?php do_action( 'admin_head' ); ?>
 		</head>
 		<body class="aioseo-connect">
 		<?php

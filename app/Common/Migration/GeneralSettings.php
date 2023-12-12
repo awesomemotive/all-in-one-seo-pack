@@ -48,7 +48,6 @@ class GeneralSettings {
 		$this->migrateRssContentSettings();
 		$this->migrateRedirectToParent();
 		$this->migrateDisabledPosts();
-		$this->migrateGoogleAnalytics();
 
 		$settings = [
 			'aiosp_no_paged_canonical_links'   => [ 'type' => 'boolean', 'newOption' => [ 'searchAppearance', 'advanced', 'noPaginationForCanonical' ] ],
@@ -58,17 +57,6 @@ class GeneralSettings {
 			'aiosp_pinterest_verify'           => [ 'type' => 'string', 'newOption' => [ 'webmasterTools', 'pinterest' ] ],
 			'aiosp_yandex_verify'              => [ 'type' => 'string', 'newOption' => [ 'webmasterTools', 'yandex' ] ],
 			'aiosp_baidu_verify'               => [ 'type' => 'string', 'newOption' => [ 'webmasterTools', 'baidu' ] ],
-			'aiosp_google_analytics_id'        => [ 'type' => 'string', 'newOption' => [ 'deprecated', 'webmasterTools', 'googleAnalytics', 'id' ] ],
-			'aiosp_ga_advanced_options'        => [ 'type' => 'boolean', 'newOption' => [ 'deprecated', 'webmasterTools', 'googleAnalytics', 'advanced' ] ],
-			'aiosp_ga_domain'                  => [ 'type' => 'string', 'newOption' => [ 'deprecated', 'webmasterTools', 'googleAnalytics', 'trackingDomain' ] ],
-			'aiosp_ga_multi_domain'            => [ 'type' => 'boolean', 'newOption' => [ 'deprecated', 'webmasterTools', 'googleAnalytics', 'multipleDomains' ] ],
-			'aiosp_ga_addl_domains'            => [ 'type' => 'string', 'newOption' => [ 'deprecated', 'webmasterTools', 'googleAnalytics', 'additionalDomains' ] ],
-			'aiosp_ga_anonymize_ip'            => [ 'type' => 'boolean', 'newOption' => [ 'deprecated', 'webmasterTools', 'googleAnalytics', 'anonymizeIp' ] ],
-			'aiosp_ga_display_advertising'     => [ 'type' => 'boolean', 'newOption' => [ 'deprecated', 'webmasterTools', 'googleAnalytics', 'displayAdvertiserTracking' ] ],
-			'aiosp_ga_exclude_users'           => [ 'type' => 'array', 'newOption' => [ 'deprecated', 'webmasterTools', 'googleAnalytics', 'excludeUsers' ] ],
-			'aiosp_ga_track_outbound_links'    => [ 'type' => 'boolean', 'newOption' => [ 'deprecated', 'webmasterTools', 'googleAnalytics', 'trackOutboundLinks' ] ],
-			'aiosp_ga_link_attribution'        => [ 'type' => 'boolean', 'newOption' => [ 'deprecated', 'webmasterTools', 'googleAnalytics', 'enhancedLinkAttribution' ] ],
-			'aiosp_ga_enhanced_ecommerce'      => [ 'type' => 'boolean', 'newOption' => [ 'deprecated', 'webmasterTools', 'googleAnalytics', 'enhancedEcommerce' ] ],
 			'aiosp_schema_site_represents'     => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'siteRepresents' ] ],
 			'aiosp_schema_organization_name'   => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'organizationName' ] ],
 			'aiosp_schema_person_manual_name'  => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'personName' ] ],
@@ -873,24 +861,5 @@ class GeneralSettings {
 			}
 		}
 		aioseo()->options->deprecated->searchAppearance->advanced->excludePosts = $excludedPosts;
-	}
-
-	/**
-	 * Enables deprecated Google Analytics if there is an existing GA id.
-	 *
-	 * @since 4.0.6
-	 *
-	 * @return void
-	 */
-	private function migrateGoogleAnalytics() {
-		if ( empty( $this->oldOptions['aiosp_google_analytics_id'] ) ) {
-			return;
-		}
-
-		$deprecatedOptions = aioseo()->internalOptions->internal->deprecatedOptions;
-		if ( ! in_array( 'googleAnalytics', $deprecatedOptions, true ) ) {
-			array_push( $deprecatedOptions, 'googleAnalytics' );
-			aioseo()->internalOptions->internal->deprecatedOptions = $deprecatedOptions;
-		}
 	}
 }

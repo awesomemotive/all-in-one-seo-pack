@@ -7,10 +7,21 @@ import TruSeo from '@/vue/plugins/tru-seo'
 import { customFieldsContent } from './customFields'
 import { getPostEditedPermalink } from './postPermalink'
 import { flattenBlocks } from '@/vue/utils/helpers'
-import { isBlockEditor, isClassicEditor, isElementorEditor, isDiviEditor, isSeedProdEditor } from '@/vue/utils/context'
-import { getEditorData as getElementorData } from '@/vue/standalone/elementor/helpers'
-import { getEditorData as getDiviData } from '@/vue/standalone/divi/helpers'
-import { getEditorData as getSeedProdData } from '@/vue/standalone/seedprod/helpers'
+import {
+	isBlockEditor,
+	isClassicEditor,
+	isElementorEditor,
+	isDiviEditor,
+	isSeedProdEditor,
+	isWPBakeryEditor,
+	isAvadaEditor,
+	isPageBuilderEditor
+} from '@/vue/utils/context'
+import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
+import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
+import { getEditorData as getSeedProdData } from '@/vue/standalone/page-builders/seedprod/helpers'
+import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders/wpbakery/helpers'
+import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
 
 const base64regex            = /base64,(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)/g
 const blockPrefixesToProcess = [ 'acf', 'aioseo' ]
@@ -23,16 +34,22 @@ const blockPrefixesToProcess = [ 'acf', 'aioseo' ]
 const getEditorContent = () => {
 	let postContent = ''
 
-	if (isElementorEditor()) {
-		postContent = getElementorData().content
-	}
-
-	if (isDiviEditor()) {
-		postContent = getDiviData().content
-	}
-
-	if (isSeedProdEditor()) {
-		postContent = getSeedProdData().content
+	switch (true) {
+		case isElementorEditor():
+			postContent = getElementorData().content
+			break
+		case isDiviEditor():
+			postContent = getDiviData().content
+			break
+		case isSeedProdEditor():
+			postContent = getSeedProdData().content
+			break
+		case isWPBakeryEditor():
+			postContent = getWPBakeryData().content
+			break
+		case isAvadaEditor():
+			postContent = getAvadaData().content
+			break
 	}
 
 	return postContent
@@ -101,7 +118,7 @@ export const getPostContent = () => {
 	}
 
 	let postContent = ''
-	if (isClassicEditor()) {
+	if (isClassicEditor() && !isPageBuilderEditor()) {
 		if (window.tinyMCE || document.querySelector('#wp-content-wrap.html-active')) {
 			postContent = classicContent()
 		} else {
@@ -146,7 +163,7 @@ export const getPostContent = () => {
  */
 export const getPostEditedContent = () => {
 	let postContent = ''
-	if (isClassicEditor()) {
+	if (isClassicEditor() && !isPageBuilderEditor()) {
 		if (window.tinyMCE || document.querySelector('#wp-content-wrap.html-active')) {
 			postContent = classicContent()
 		} else {
