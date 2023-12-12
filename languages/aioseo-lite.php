@@ -1986,6 +1986,9 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/composables/IndexStatus.js:91
 	__( 'Desktop user agent', 'all-in-one-seo-pack' ),
 
+	// Reference: /src/vue/composables/IndexStatus.js:91
+	__( 'Desktop user agent', 'all-in-one-seo-pack' ),
+
 	// Reference: /src/vue/pages/local-seo/views/lite/locations/Locations.vue:30
 	__( 'Detailed Address, Contact and Payment Info', 'all-in-one-seo-pack' ),
 
@@ -2963,7 +2966,7 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/pages/search-appearance/views/GlobalSettings.vue:58
 	__( 'Google, Bing and other search engines use specific data from your schema markup to output data in their Knowledge Panels. This data is known as the Knowledge Graph. Use these settings to change how that data looks.', 'all-in-one-seo-pack' ),
 
-	// Reference: /src/vue/standalone/page-builders/elementor/introduction.js:37
+	// Reference: /src/vue/standalone/elementor/introduction.js:37
 	__( 'Got It!', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/plugins/constants.js:1335
@@ -4157,7 +4160,7 @@ $generated_i18n_strings = [
 	// Reference: /src/react/headline-analyzer/components/HeadlinePanelNewScore.jsx:11
 	__( 'New Score', 'all-in-one-seo-pack' ),
 
-	// Reference: /src/vue/standalone/page-builders/elementor/introduction.js:21
+	// Reference: /src/vue/standalone/elementor/introduction.js:21
 	// Translators: 1 - The plugin short name ("AIOSEO"), 2 - The Elementor plugin name ("Elementor").
 	__( 'New: %1$s %2$s integration', 'all-in-one-seo-pack' ),
 
@@ -6289,7 +6292,7 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/pages/tools/views/partials/robots-editor/RuleErrors.vue:85
 	__( 'The network rule takes precedence.', 'all-in-one-seo-pack' ),
 
-	// Reference: /src/vue/standalone/page-builders/divi-admin/App.vue:21
+	// Reference: /src/vue/standalone/divi-admin/App.vue:21
 	// Translators: 1 - The plugin name ("All in One SEO"), 2 - Opening HTML link tag, 3 - Closing HTML link tag.
 	__( 'The options below are disabled because you are using %1$s to manage your SEO. They can be changed in the %2$sSearch Appearance menu%3$s.', 'all-in-one-seo-pack' ),
 
@@ -7708,7 +7711,7 @@ $generated_i18n_strings = [
 	// Translators: 1 - Learn more link.
 	__( 'You can manually set an API key here, but if left blank a new one will be auto-generated. %1$s', 'all-in-one-seo-pack' ),
 
-	// Reference: /src/vue/standalone/page-builders/elementor/introduction.js:28
+	// Reference: /src/vue/standalone/elementor/introduction.js:28
 	// Translators: 1 - The plugin name ("All in One SEO"), 2 - The Elementor plugin name ("Elementor").
 	__( 'You can now manage your SEO settings inside of %1$s via %2$s before you publish your post!', 'all-in-one-seo-pack' ),
 

@@ -1,6 +1,8 @@
 import {
 	usePostEditorStore,
-	useSeoRevisionsStore
+	useSeoRevisionsStore,
+	useLicenseStore,
+	loadPiniaStores
 } from '@/vue/stores'
 
 import { isEmpty } from 'lodash-es'
@@ -11,14 +13,20 @@ import { isEmpty } from 'lodash-es'
  * @returns {void}.
  */
 const handleEditorSave = () => {
+	// We need to load the Pinia here since we are using the store outside an App.
+	// So when using useRootStore, it will throw an error because the store wasn't initialized.
+	loadPiniaStores()
 	const postEditorStore = usePostEditorStore()
 	if (isEmpty(postEditorStore.currentPost)) {
 		return
 	}
 
 	postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
+		const licenseStore      = useLicenseStore()
 		const seoRevisionsStore = useSeoRevisionsStore()
-		seoRevisionsStore.fetch({})
+		if (!licenseStore.isUnlicensed) {
+			seoRevisionsStore.fetch()
+		}
 	})
 }
 
