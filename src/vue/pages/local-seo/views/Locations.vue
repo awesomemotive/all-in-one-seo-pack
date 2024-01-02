@@ -8,7 +8,6 @@
 			v-if="shouldShowUpdate || shouldShowActivate"
 			card-slug="localBusinessInfo"
 			:header-text="strings.businessInfo"
-			align-top
 		/>
 
 		<lite

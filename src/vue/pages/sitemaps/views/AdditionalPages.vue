@@ -108,9 +108,10 @@
 			</core-wp-table>
 
 			<core-modal
-				v-if="showDeleteModal"
+				:show="showDeleteModal"
 				no-header
 				@close="showDeleteModal = false"
+				:classes="[ 'aioseo-additional-pages-modal' ]"
 			>
 				<template #body >
 					<div class="aioseo-modal-body delete">
@@ -398,8 +399,11 @@ export default {
 			}
 		}
 	}
+}
 
+.aioseo-additional-pages-modal {
 	.aioseo-modal-body {
+		padding: 20px 40px 40px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -441,7 +445,6 @@ export default {
 			color: $black;
 			margin-bottom: 16px;
 			text-align: center;
-			max-width: 515px;
 		}
 
 		.aioseo-button:not(.close):not(.import) {
@@ -449,7 +452,7 @@ export default {
 		}
 	}
 
-	.modal-mask .modal-wrapper .modal-container {
+	.modal-wrapper .modal-container {
 		max-width: 650px;
 	}
 }

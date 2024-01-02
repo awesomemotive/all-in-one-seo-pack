@@ -1,7 +1,7 @@
 <template>
 	<core-modal
-		v-if="display"
-		:classes="['aioseo-app', 'aioseo-seo-preview-standalone']"
+		:show="display"
+		:classes="[ 'aioseo-app', 'aioseo-seo-preview-standalone' ]"
 		@close="display = false"
 	>
 		<template #headerTitle>
@@ -211,72 +211,71 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .aioseo-seo-preview-standalone {
 	font-family: $font-family;
 	line-height: 1.4;
 
-	:deep() {
-		* {
-			box-sizing: border-box;
-			letter-spacing: normal;
-		}
+	* {
+		box-sizing: border-box;
+		letter-spacing: normal;
+	}
 
-		.modal-mask {
-			z-index: 100000; // This is higher then the wp admin bar (#wpadminbar) by one.
-		}
+	.modal-mask,
+	.modal-wrapper {
+		z-index: 100000; // This is higher then the wp admin bar (#wpadminbar) by one.
+	}
 
-		.modal-wrapper {
-			.modal-container {
+	.modal-wrapper {
+		.modal-container {
+			display: flex;
+			flex-direction: column;
+			height: 720px;
+
+			.modal-header {
+				flex: 0 0 60px;
+				padding-left: 20px;
+
+				.aioseo-close {
+					color: $black;
+					min-height: 14px;
+					min-width: 14px;
+				}
+			}
+
+			.modal-body {
+				flex: 1 1 100%;
+			}
+
+			.aioseo-modal-content {
 				display: flex;
 				flex-direction: column;
-				height: 720px;
+				height: 100%;
 
-				.modal-header {
-					flex: 0 0 60px;
-					padding-left: 20px;
-
-					.aioseo-close {
-						color: $black;
-						min-height: 14px;
-						min-width: 14px;
-					}
-				}
-
-				.modal-body {
+				.component-overflow {
 					flex: 1 1 100%;
-				}
+					overflow-y: auto;
 
-				.aioseo-modal-content {
-					display: flex;
-					flex-direction: column;
-					height: 100%;
+					.component-container {
+						display: table;
+						width: 100%;
+						height: 100%;
 
-					.component-overflow {
-						flex: 1 1 100%;
-						overflow-y: auto;
+						.component-wrapper {
+							background-color: $white2;
+							display: table-cell;
+							vertical-align: middle;
 
-						.component-container {
-							display: table;
-							width: 100%;
-							height: 100%;
+							&.tabViewSeoInspector {
+								background-color: #fff;
+								vertical-align: top;
+							}
 
-							.component-wrapper {
-								background-color: $white2;
-								display: table-cell;
-								vertical-align: middle;
+							.preview-wrapper {
+								margin: 20px;
 
-								&.tabViewSeoInspector {
-									background-color: #fff;
-									vertical-align: top;
-								}
-
-								.preview-wrapper {
-									margin: 20px;
-
-									> * {
-										padding: 0;
-									}
+								> * {
+									padding: 0;
 								}
 							}
 						}
@@ -284,39 +283,39 @@ export default {
 				}
 			}
 		}
+	}
 
-		.aioseo-tabs {
-			margin-bottom: 0;
+	.aioseo-tabs {
+		margin-bottom: 0;
 
-			.var-tab {
-				align-items: center;
-				display: flex;
-				gap: 6px;
+		.var-tab {
+			align-items: center;
+			display: flex;
+			gap: 6px;
 
-				svg {
-					width: 20px;
-				}
-
-				.label {
-					font-weight: 700;
-					text-transform: none;
-				}
+			svg {
+				width: 20px;
 			}
 
-			.aioseo-mobile-tabs {
-				margin-top: 0;
+			.label {
+				font-weight: 700;
+				text-transform: none;
 			}
 		}
 
-		.btn-edit-preview-data-wrapper {
-			padding: 20px;
+		.aioseo-mobile-tabs {
+			margin-top: 0;
+		}
+	}
 
-			.btn-edit-preview-data {
-				gap: 6px;
+	.btn-edit-preview-data-wrapper {
+		padding: 20px;
 
-				svg {
-					width: 14px;
-				}
+		.btn-edit-preview-data {
+			gap: 6px;
+
+			svg {
+				width: 14px;
 			}
 		}
 	}

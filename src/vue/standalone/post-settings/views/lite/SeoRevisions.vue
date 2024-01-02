@@ -14,10 +14,10 @@
 		v-else-if="'sidebar' === $root._data.screenContext"
 		class="aioseo-seo-revisions-sidebar"
 	>
-		<core-modal-portal
+		<core-modal
+			:show="seoRevisionsStore.modalOpenSidebar"
 			:classes="[]"
-			v-if="seoRevisionsStore.modalOpenSidebar"
-			@close="seoRevisionsStore.toggleModalOpenSidebar"
+			@close="seoRevisionsStore.modalOpenSidebar = false"
 		>
 			<template #headerTitle>
 				{{ strings.seoRevisions }}
@@ -32,7 +32,7 @@
 					<seo-revisions-upsell :parent-component-context="'modal'"/>
 				</div>
 			</template>
-		</core-modal-portal>
+		</core-modal>
 
 		<core-settings-row align>
 			<template #name>
@@ -46,7 +46,7 @@
 			<template #content>
 				<base-button
 					class="gray small"
-					@click.stop.exact="seoRevisionsStore.toggleModalOpenSidebar"
+					@click.stop.exact="seoRevisionsStore.modalOpenSidebar = true"
 				>
 					<svg-right-arrow-short width="10"/>
 
@@ -65,7 +65,7 @@ import {
 } from '@/vue/stores'
 
 import CoreBlur from '@/vue/components/common/core/Blur'
-import CoreModalPortal from '@/vue/components/common/core/modal/Portal'
+import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SeoRevisionsList from './partials-seo-revisions/List'
 import SeoRevisionsUpsell from '@/vue/components/common/seo-revisions/Upsell'
@@ -79,7 +79,7 @@ export default {
 	},
 	components : {
 		CoreBlur,
-		CoreModalPortal,
+		CoreModal,
 		CoreSettingsRow,
 		SeoRevisionsList,
 		SeoRevisionsUpsell,

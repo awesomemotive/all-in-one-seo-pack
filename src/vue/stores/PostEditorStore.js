@@ -22,12 +22,6 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 		openAiError : null
 	}),
 	actions : {
-		toggleLinkAssistantModal () {
-			this.currentPost.linkAssistant.modalOpen = !this.currentPost.linkAssistant.modalOpen
-		},
-		toggleRedirectsModal () {
-			this.currentPost.redirects.modalOpen = !this.currentPost.redirects.modalOpen
-		},
 		updateTitle (title) {
 			this.currentPost.title = title
 
@@ -37,9 +31,6 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 			this.currentPost.description = description
 
 			window.aioseoBus.$emit('updateDescriptionKey')
-		},
-		openModal (value) {
-			this.currentPost.modalOpen = value
 		},
 		changeGeneralPreview (value) {
 			this.currentPost.generalMobilePrev = value

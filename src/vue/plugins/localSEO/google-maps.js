@@ -59,7 +59,7 @@ export function isGoogleApiEnabled (apiKey, apiName, http) {
 }
 
 export async function isGoogleLibraryEnabled (google, library, query) {
-	if (!google) {
+	if (!google?.maps) {
 		return false
 	}
 
@@ -67,6 +67,10 @@ export async function isGoogleLibraryEnabled (google, library, query) {
 
 	switch (library) {
 		case 'places':
+			if (!google.maps.places) {
+				return false
+			}
+
 			service = new google.maps.places.AutocompleteService()
 			return new Promise((resolve) => {
 				service.getQueryPredictions({ input: query || 'NYC' }, function (predictions, status) {

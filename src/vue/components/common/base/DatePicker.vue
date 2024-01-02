@@ -186,6 +186,7 @@ export default {
 	--el-color-primary: #{$blue};
 	--el-datepicker-border-color: #{$input-border};
 	--el-border-color-light: #{$input-border};
+	font-family: $font-family;
 }
 
 .aioseo-datepicker {
@@ -312,6 +313,18 @@ export default {
 						background: $border;
 					}
 				}
+
+				.el-picker-panel__icon-btn {
+					padding: 1px 6px;
+				}
+			}
+
+			&__footer {
+				.el-button {
+					font-size: 12px;
+					line-height: 1;
+					padding: 5px 11px;
+				}
 			}
 		}
 
@@ -322,6 +335,10 @@ export default {
 				font-size: 14px;
 				font-weight: $font-bold;
 				color: $black2-hover;
+			}
+
+			.el-date-table {
+				border: 0;
 			}
 		}
 
@@ -339,9 +356,26 @@ export default {
 			}
 		}
 
-		.el-time-spinner {
-			&__item {
-				margin-bottom: 0;
+		.el-time {
+			&-spinner {
+				&__item {
+					margin-bottom: 0;
+				}
+			}
+			&-panel {
+				&__footer {
+					.el-time-panel__btn {
+						border: none;
+						line-height: 28px;
+						padding: 0 5px;
+						margin: 0 5px;
+						cursor: pointer;
+						background-color: transparent;
+						outline: 0;
+						font-size: 12px;
+						color: var(--el-text-color-primary);
+					}
+				}
 			}
 		}
 

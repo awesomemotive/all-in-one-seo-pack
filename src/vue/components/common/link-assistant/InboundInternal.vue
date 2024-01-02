@@ -22,7 +22,7 @@
 			<template #post_title="{ row }">
 				<span>
 					{{ row.context.postTitle }}
-					<span v-if="row.context.permalink.replace(/\/$/, '') === rootStore.aioseo.urls.home">({{ strings.frontPage }})</span>
+					<span v-if="row.context?.permalink?.replace(/\/$/, '') === rootStore.aioseo.urls.home">({{ strings.frontPage }})</span>
 				</span>
 
 				<div
@@ -115,7 +115,7 @@
 		</div>
 
 		<link-assistant-confirmation-modal
-			v-if="showModal"
+			:show="showModal"
 			:selectedRows="selectedRows"
 			:strings="modalStrings"
 			@doBulkAction="doBulkAction"

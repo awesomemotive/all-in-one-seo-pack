@@ -11,12 +11,14 @@ import CoreMain from '@/vue/components/common/core/main/Index'
 import Locations from './Locations'
 import Maps from './Maps'
 import OpeningHours from './OpeningHours'
+import Import from './Import'
 export default {
 	components : {
 		CoreMain,
 		Locations,
 		Maps,
-		OpeningHours
+		OpeningHours,
+		Import
 	},
 	data () {
 		return {

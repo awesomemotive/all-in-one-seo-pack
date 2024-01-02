@@ -192,6 +192,10 @@ export default {
 		},
 		resetFirstLastOption () {
 			this.$nextTick(() => {
+				if (!this.$refs['aioseo-select']) {
+					return
+				}
+
 				const elements = this.$refs['aioseo-select'].$el.querySelectorAll('li.multiselect__element')
 				elements.forEach((element, index) => {
 					element.classList.remove('last')

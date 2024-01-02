@@ -76,10 +76,11 @@
 			</div>
 		</transition>
 
-		<core-modal-portal
-			v-if="postEditorStore.currentPost.modalOpen && 'sidebar' === $root._data.screenContext"
+		<core-modal
+			:show="postEditorStore.currentPost.modalOpen && 'sidebar' === $root._data.screenContext"
 			@close="closeModal"
 			:classes="[ 'aioseo-post-settings-modal' ]"
+			modal-name="preview-snippet-editor"
 		>
 			<template #headerTitle>
 				{{ strings.modalTitle }}
@@ -88,7 +89,7 @@
 			<template #body>
 				<modal-content />
 			</template>
-		</core-modal-portal>
+		</core-modal>
 	</div>
 </template>
 
@@ -103,6 +104,7 @@ import {
 } from '@/vue/stores'
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+import license from '@/vue/utils/license'
 
 import { getParams, removeParam } from '@/vue/utils/params'
 import { debounceContext } from '@/vue/utils/debounce'
@@ -111,7 +113,7 @@ import { ObjectRevisions } from '@/vue/mixins/seo-revisions/SeoRevisions'
 import Advanced from './Advanced'
 import Alert from './partials/Alert'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
-import CoreModalPortal from '@/vue/components/common/core/modal/Portal'
+import CoreModal from '@/vue/components/common/core/modal/Index'
 import General from './General'
 import LinkAssistant from './Links'
 import ModalContent from './ModalContent'
@@ -146,7 +148,7 @@ export default {
 		Advanced,
 		Alert,
 		CoreMainTabs,
-		CoreModalPortal,
+		CoreModal,
 		General,
 		LinkAssistant,
 		ModalContent,
@@ -295,7 +297,7 @@ export default {
 		}
 	},
 	methods : {
-		processChangeTab (newTabValue) {
+		async processChangeTab (newTabValue) {
 			// We need to check for null here explicitly because null values identify themselves as objects.
 			if (null !== newTabValue && 'object' === typeof newTabValue) {
 				this.processChangeTab(newTabValue.main)
@@ -329,26 +331,29 @@ export default {
 
 			this.activeTab = newTabValue
 
+			await this.$nextTick()
+
 			switch (newTabValue) {
 				case 'social':
 					if (!this.postEditorStore.currentPost.modalOpen) {
 						this.settingsStore.changeTabSettings({ setting: 'modal', value: 'social' })
-						this.postEditorStore.openModal(true)
+						this.postEditorStore.currentPost.modalOpen = true
 					}
 					break
 				case 'linkAssistant':
 					if (this.postEditorStore.currentPost.linkAssistant && !this.postEditorStore.currentPost.linkAssistant.modalOpen) {
-						this.postEditorStore.toggleLinkAssistantModal()
+						this.postEditorStore.currentPost.linkAssistant.modalOpen = true
 					}
 					break
 				case 'redirects':
 					if (this.postEditorStore.currentPost.redirects && !this.postEditorStore.currentPost.redirects.modalOpen) {
-						this.postEditorStore.toggleRedirectsModal()
+						this.postEditorStore.currentPost.redirects.modalOpen = true
 					}
 					break
 				case 'seoRevisions':
-					if (!this.seoRevisionsStore.modalOpenSidebar && this.licenseStore.isUnlicensed) {
-						this.seoRevisionsStore.toggleModalOpenSidebar()
+					await this.$nextTick()
+					if (!this.seoRevisionsStore.modalOpenSidebar && (this.licenseStore.isUnlicensed || !license.hasCoreFeature('seo-revisions'))) {
+						this.seoRevisionsStore.modalOpenSidebar = true
 					}
 					break
 				default:
@@ -369,7 +374,7 @@ export default {
 			})
 		},
 		closeModal () {
-			this.postEditorStore.openModal(false)
+			this.postEditorStore.currentPost.modalOpen = false
 		},
 		getTabPermission (slug) {
 			const tab = this.tabs.find(t => t.slug === slug)
@@ -385,7 +390,7 @@ export default {
 		this.modal = getParams()['aioseo-modaltab'] || this.modal
 		if (this.modal) {
 			this.settingsStore.changeTabSettings({ setting: 'modal', value: this.modal })
-			this.postEditorStore.openModal(true)
+			this.postEditorStore.currentPost.modalOpen = true
 			setTimeout(() => {
 				removeParam('aioseo-modaltab')
 			}, 500)
@@ -692,7 +697,7 @@ export default {
 		padding: 20px;
 	}
 
-	.modal-mask .modal-wrapper .modal-container {
+	.modal-wrapper .modal-container {
 		max-width: 1000px;
 	}
 }

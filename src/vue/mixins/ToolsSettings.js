@@ -63,11 +63,6 @@ export const ToolsSettings = {
 				})
 			}
 
-			// const rootStore = useRootStore()
-			// if (rootStore.aioseo.data.server.apache) {
-			//  settings.push({ value: 'htaccess', label: this.$t.__('.htaccess', this.$td) })
-			// }
-
 			if (this.$isPro) {
 				settings.push({
 					value  : 'accessControl',

@@ -74,6 +74,8 @@ const enableSaveButton = () => {
 }
 
 export default () => {
+	processContent()
+
 	const fusionEvents = window.FusionEvents || window.FusionPageBuilderEvents || {}
 	const changeEvents = [
 		'fusion-app-setup', // Triggers on first load.

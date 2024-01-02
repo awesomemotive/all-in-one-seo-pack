@@ -9,7 +9,7 @@
 				<p>{{ strings.description }}</p>
 				<base-button
 					class="open-link-assistant-modal gray small"
-					@click="postEditorStore.toggleLinkAssistantModal"
+					@click="postEditorStore.currentPost.linkAssistant.modalOpen = true"
 				>
 					<svg-right-arrow-short />
 					{{ strings.button }}

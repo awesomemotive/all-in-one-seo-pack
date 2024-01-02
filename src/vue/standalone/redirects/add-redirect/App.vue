@@ -3,8 +3,8 @@
 		class="aioseo-redirects-add-redirect-standalone"
 		v-if="addons.isActive('aioseo-redirects')"
 	>
-		<core-modal-portal
-			v-if="display"
+		<core-modal
+			:show="display"
 			:classes="[ 'aioseo-redirects', 'modal' ]"
 			@close="display = false"
 		>
@@ -23,7 +23,7 @@
 					/>
 				</div>
 			</template>
-		</core-modal-portal>
+		</core-modal>
 	</div>
 </template>
 
@@ -37,7 +37,7 @@ import {
 import addons from '@/vue/utils/addons'
 import http from '@/vue/utils/http'
 import { isEmpty } from 'lodash-es'
-import CoreModalPortal from '@/vue/components/common/core/modal/Portal'
+import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreAddRedirection from '@/vue/components/common/core/add-redirection/Index'
 
 export default {
@@ -47,7 +47,7 @@ export default {
 		}
 	},
 	components : {
-		CoreModalPortal,
+		CoreModal,
 		CoreAddRedirection
 	},
 	data () {
@@ -165,7 +165,7 @@ export default {
 	}
 }
 </script>
-<style>
+<style lang="scss">
 .aioseo-redirects.modal {
 	.bd {
 		padding: 20px

@@ -103,9 +103,10 @@
 		</base-button>
 
 		<core-modal
-			v-if="showModal"
+			:show="showModal"
 			no-header
 			@close="showModal = false"
+			:classes="[ 'aioseo-core-backup-settings-modal' ]"
 		>
 			<template #body >
 				<div class="aioseo-modal-body">
@@ -371,9 +372,11 @@ export default {
 		height: 14px;
 		margin-right: 10px;
 	}
+}
 
+.aioseo-core-backup-settings-modal {
 	.aioseo-modal-body {
-		padding: 20px 50px 50px;
+		padding: 20px 40px 40px;
 		display: flex;
 		align-items: center;
 		justify-content: center;

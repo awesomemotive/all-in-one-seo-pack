@@ -8,7 +8,6 @@
 			v-if="shouldShowUpdate || shouldShowActivate"
 			card-slug="localBusinessMapsApiKey"
 			:header-text="strings.googleMapsApiKey"
-			align-top
 		/>
 
 		<lite

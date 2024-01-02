@@ -59,8 +59,13 @@ const localCreateApp = (app) => {
 	return app
 }
 
+let sidebarApp
 const loadSidebarApp = () => {
-	localCreateApp(createApp({
+	if (sidebarApp) {
+		sidebarApp.unmount()
+	}
+
+	sidebarApp = createApp({
 		name : 'Standalone/PostSettings/Sidebar',
 		data () {
 			return {
@@ -69,7 +74,9 @@ const loadSidebarApp = () => {
 			}
 		},
 		render : () => h(App)
-	})).mount('#aioseo-post-settings-sidebar-vue')
+	})
+
+	localCreateApp(sidebarApp).mount('#aioseo-post-settings-sidebar-vue')
 }
 
 if (window.aioseo.currentPost) {

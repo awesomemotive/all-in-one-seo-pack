@@ -35,7 +35,7 @@ export default {
 					}
 
 					const link = child.querySelector('a')
-					if (link && !linkChild.classList.contains('red')) {
+					if (link && linkChild.classList.contains('lite')) {
 						link.setAttribute('target', '_blank')
 					}
 				}

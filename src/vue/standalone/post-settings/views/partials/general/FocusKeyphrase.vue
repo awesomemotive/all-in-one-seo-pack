@@ -97,8 +97,8 @@
 			</template>
 		</core-tooltip>
 
-		<core-modal-portal
-			v-if="semrushShowModal"
+		<core-modal
+			:show="semrushShowModal"
 			@close="semrushShowModal = false"
 			:classes="[ 'aioseo-focus-keyphrase-panel-modal' ]"
 		>
@@ -276,7 +276,7 @@
 					</div>
 				</div>
 			</template>
-		</core-modal-portal>
+		</core-modal>
 	</div>
 </template>
 
@@ -296,7 +296,7 @@ import { getParams } from '@/vue/utils/params'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreKeyphrase from '@/vue/components/common/core/Keyphrase'
 import CoreLoader from '@/vue/components/common/core/Loader'
-import CoreModalPortal from '@/vue/components/common/core/modal/Portal'
+import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgAreaChart from '@/vue/components/common/svg/AreaChart'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
@@ -319,7 +319,7 @@ export default {
 		CoreAlert,
 		CoreKeyphrase,
 		CoreLoader,
-		CoreModalPortal,
+		CoreModal,
 		CoreTooltip,
 		SvgAreaChart,
 		SvgCircleCheck,

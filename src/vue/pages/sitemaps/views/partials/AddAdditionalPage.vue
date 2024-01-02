@@ -131,8 +131,9 @@
 		</div>
 
 		<core-modal
-			v-if="showImportModal"
+			:show="showImportModal"
 			@close="closeImportModal"
+			:classes="[ 'aioseo-add-additional-pages-modal' ]"
 		>
 			<template #headerTitle>
 				{{ strings.importAdditionalPages }}
@@ -593,7 +594,9 @@ export default {
 	.aioseo-alert {
 		margin-top: 10px;
 	}
+}
 
+.aioseo-add-additional-pages-modal {
 	.aioseo-modal-body.delete {
 		margin: 20px 0 50px 0;
 	}

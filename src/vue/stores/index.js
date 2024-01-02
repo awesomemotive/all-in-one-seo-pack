@@ -9,6 +9,7 @@ import { useHelpPanelStore } from '@/vue/stores/HelpPanelStore'
 import { useIndexNowStore } from '@/vue/stores/IndexNowStore'
 import { useLicenseStore } from '@/vue/stores/LicenseStore'
 import { useLinkAssistantStore } from '@/vue/stores/LinkAssistantStore'
+import { useLocalSeoStore } from '@/vue/stores/LocalSeoStore'
 import { useNetworkStore } from '@/vue/stores/NetworkStore'
 import { useNotificationsStore } from '@/vue/stores/NotificationsStore'
 import { useOptionsStore } from '@/vue/stores/OptionsStore'
@@ -59,6 +60,7 @@ const loadPiniaStores = (app, router = null) => {
 	const indexNowStore         = useIndexNowStore()
 	const licenseStore          = useLicenseStore()
 	const linkAssistantStore    = useLinkAssistantStore()
+	const localSeoStore         = useLocalSeoStore()
 	const networkStore          = useNetworkStore()
 	const notificationsStore    = useNotificationsStore()
 	const optionsStore          = useOptionsStore()
@@ -92,6 +94,7 @@ const loadPiniaStores = (app, router = null) => {
 	indexNowStore.$state         = merge({ ...indexNowStore.$state }, { ...aioseo.indexNow || {} })
 	licenseStore.license         = merge({ ...licenseStore.license }, { ...aioseo.license || {} })
 	linkAssistantStore.$state    = merge({ ...linkAssistantStore.$state }, { ...aioseo.linkAssistant || {} })
+	localSeoStore.$state         = merge({ ...localSeoStore.$state }, { ...aioseo.localBusiness || {} })
 	networkStore.networkData     = merge({ ...networkStore.networkData }, { ...networkData })
 	notificationsStore.$state    = merge({ ...notificationsStore.$state }, { ...aioseo.notifications || {} })
 	pluginsStore.plugins         = merge({ ...pluginsStore.plugins }, { ...aioseo.plugins || {} })
@@ -203,6 +206,7 @@ export {
 	useIndexNowStore,
 	useLicenseStore,
 	useLinkAssistantStore,
+	useLocalSeoStore,
 	useNetworkStore,
 	useNotificationsStore,
 	useOptionsStore,

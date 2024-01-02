@@ -47,7 +47,7 @@ export default {
 
 <style lang="scss">
 .aioseo-link-assistant,
-.aioseo-link-assistant-modal {
+.aioseo-modal.aioseo-link-assistant-modal {
 	padding: 0 !important;
 
 	.link-assistant-inner-table {
@@ -295,14 +295,14 @@ export default {
 	}
 }
 
-.aioseo-link-assistant-modal {
-	.modal-mask .modal-wrapper .modal-container {
+.aioseo-modal.aioseo-link-assistant-modal {
+	.modal-wrapper .modal-container {
 		max-width: 1300px;
 	}
 
 	.modal-body {
 		align-items: start;
-		padding: 16px !important;
+		padding: 0 0 20px !important;
 
 		.title-header {
 			margin: 45px 0 0 0;
@@ -318,16 +318,16 @@ export default {
 }
 
 @media (max-width: 1500px) {
-	.aioseo-link-assistant-modal {
-		.modal-mask .modal-wrapper .modal-container {
+	.aioseo-modal.aioseo-link-assistant-modal {
+		.modal-wrapper .modal-container {
 			max-width: 1000px;
 		}
 	}
 }
 
 @media (max-width: 1150px) {
-	.aioseo-link-assistant-modal {
-		.modal-mask .modal-wrapper .modal-container {
+	.aioseo-modal.aioseo-link-assistant-modal {
+		.modal-wrapper .modal-container {
 			max-width: 750px;
 
 			.modal-body {

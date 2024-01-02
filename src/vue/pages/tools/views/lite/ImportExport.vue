@@ -63,12 +63,11 @@ export default {
 		return {
 			strings : {
 				ctaHeader : this.$t.sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('This feature is not available in your current plan.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+					// Translators: 1 - "PRO".
+					this.$t.__('Network Tools is a %1$s Feature', this.$td),
+					'PRO'
 				),
-				ctaButtonText                   : this.$t.__('Upgrade Your Plan and Unlock Network Tools', this.$td),
+				ctaButtonText                   : this.$t.__('Unlock Network Tools', this.$td),
 				networkDatabaseToolsDescription : this.$t.__('Unlock network-level tools to manage all your sites from one easy-to-use location. Migrate data or create backups without the need to visit each dashboard.', this.$td)
 			}
 		}

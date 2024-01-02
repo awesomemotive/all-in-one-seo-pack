@@ -51,7 +51,7 @@ export default {
 	methods : {
 		openModalEv () {
 			this.settingsStore.changeTabSettings({ setting: 'modal', value: 'social' })
-			this.postEditorStore.openModal(true)
+			this.postEditorStore.currentPost.modalOpen = true
 		}
 	}
 }

@@ -91,7 +91,7 @@ export default {
 			window.location.href = `#/post-report?postId=${this.postId}&postIndex=${this.postIndex}&initialTab=${initialTab}`
 		},
 		maybeDoBulkAction ({ action, selectedRows }) {
-			if (false === selectedRows || !action) {
+			if (!selectedRows.length || !action) {
 				return
 			}
 
@@ -101,7 +101,7 @@ export default {
 		},
 		doBulkAction () {
 			this.showModal    = false
-			if (false === this.selectedRows || 'undefined' === typeof this.selectedRows) {
+			if (false === this.selectedRows || 'undefined' === typeof this.selectedRows || !this.selectedRows.length) {
 				return
 			}
 

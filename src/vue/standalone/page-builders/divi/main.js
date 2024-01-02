@@ -15,6 +15,8 @@ import initWatcher from './watcher'
 import initLimitModifiedDate from './limit-modified-date/main'
 import App from './App.vue'
 
+let aioseoApp = null
+
 /**
  * Mount our Modal to render the SEO Settings.
  *
@@ -56,6 +58,8 @@ const mountPostSettings = () => {
 	app.config.globalProperties.$truSeo = new TruSeo()
 
 	app.mount('#aioseo-app-modal > div')
+
+	return app
 }
 
 /**
@@ -68,7 +72,8 @@ const init = () => {
 	initSettingsBar()
 
 	// Mount our Vue components in the Divi modal.
-	mountPostSettings()
+	aioseoApp?.unmount()
+	aioseoApp = mountPostSettings()
 
 	// Initialize the editor data watcher.
 	initWatcher(window)

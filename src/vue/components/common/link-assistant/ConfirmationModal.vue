@@ -1,7 +1,9 @@
 <template>
 	<core-modal
-		class="aioseo-confirmation-modal"
+		:show="show"
+		:classes="[ 'aioseo-link-assistant-confirmation-modal' ]"
 		no-header
+		@close="$emit('closeModal', true)"
 	>
 		<template #body >
 			<div class="aioseo-modal-body">
@@ -54,7 +56,8 @@ export default {
 		strings : {
 			type     : Object,
 			required : true
-		}
+		},
+		show : Boolean
 	},
 	computed : {
 		areYouSure () {
@@ -80,61 +83,59 @@ export default {
 </script>
 
 <style lang="scss">
-.aioseo-app {
-	.aioseo-confirmation-modal {
-		.modal-container {
-			max-width: 650px !important;
-		}
+.aioseo-link-assistant-confirmation-modal {
+	.modal-container {
+		max-width: 650px !important;
+	}
 
-		.aioseo-modal-body {
-			padding: 20px 50px 50px;
-			display: flex;
-			align-items: center !important;
-			justify-content: center;
-			flex-direction: column;
-			position: relative;
-		}
+	.aioseo-modal-body {
+		padding: 20px 40px 40px;
+		display: flex;
+		align-items: center !important;
+		justify-content: center;
+		flex-direction: column;
+		position: relative;
+	}
 
-		.aioseo-button:not(.close) {
-			margin-top: 16px;
-		}
+	.aioseo-button:not(.close) {
+		margin-top: 16px;
+	}
 
-		h3 {
-			font-size: 20px;
-			margin-bottom: 16px;
-			text-align: center;
-		}
+	h3 {
+		font-size: 20px;
+		margin-bottom: 16px;
+		text-align: center;
+	}
 
-		.reset-description {
-			font-size: 16px;
-			color: $black;
-			margin-bottom: 16px;
-			text-align: center;
-			max-width: 515px;
-		}
+	.reset-description {
+		font-size: 16px;
+		color: $black;
+		margin-bottom: 16px;
+		text-align: center;
+		max-width: 515px;
+	}
 
-		button.close {
-			position: absolute;
-			right: 11px;
-			top: 11px;
-			width: 24px;
-			height: 24px;
-			background-color: #fff;
-			border: none;
-			display: flex;
-			align-items: center;
+	button.close {
+		position: absolute;
+		right: 11px;
+		top: 11px;
+		width: 24px;
+		height: 24px;
+		background-color: #fff;
+		border: none;
+		display: flex;
+		align-items: center;
 
-			svg.aioseo-close {
-				cursor: pointer;
-				width: 14px;
-				height: 14px;
-			}
+		svg.aioseo-close {
+			cursor: pointer;
+			width: 14px;
+			height: 14px;
 		}
+	}
 
-		.aioseo-description {
-			max-width: 510px;
-			text-align: center;
-		}
+	.aioseo-description {
+		max-width: 510px;
+		text-align: center;
 	}
 }
 </style>

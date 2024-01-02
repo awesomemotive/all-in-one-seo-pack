@@ -25,7 +25,7 @@
 		</core-tooltip>
 
 		<ai-modal
-			v-if="settingsStore.modals.aiGenerator === type"
+			:show="settingsStore.modals.aiGenerator === type"
 			:type="type"
 		/>
 	</div>

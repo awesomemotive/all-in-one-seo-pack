@@ -161,13 +161,7 @@ export default {
 		content () {
 			switch (this.step) {
 				case 2:
-					return this.$t.__('Could you please do me a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?', this.$td) +
-					'<br><br><strong>~ Syed Balkhi<br>' +
-					this.$t.sprintf(
-						// Translators: 1 - The plugin name ("All in One SEO").
-						this.$t.__('CEO of %1$s', this.$td),
-						import.meta.env.VITE_NAME
-					) + '</strong>'
+					return this.$t.__('Could you please do us a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?', this.$td)
 				case 3:
 					return this.$t.sprintf(
 						// Translators: 1 - The plugin name ("All in One SEO").

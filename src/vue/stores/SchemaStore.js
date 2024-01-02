@@ -1,3 +1,4 @@
+import { nextTick } from 'vue'
 import { defineStore } from 'pinia'
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
@@ -303,7 +304,7 @@ export const useSchemaStore = defineStore('SchemaStore', {
 				this.modalOpenMetabox = true
 			}
 		},
-		editGraph ({ graphIndex, isSidebar }) {
+		async editGraph ({ graphIndex, isSidebar }) {
 			// It's important to create a clone so that we're not editing the existing graph object.
 			const postEditorStore = usePostEditorStore()
 			const editedGraph     = JSON.parse(JSON.stringify(postEditorStore.currentPost.schema.graphs[graphIndex]))
@@ -317,8 +318,14 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			} else {
 				this.modalOpenMetabox = true
 			}
+
+			// We need to wait for the next tick so that the modal is open before we turn off the isDirty flag.
+			await nextTick()
+
+			// Turn off the isDirty flag since we JUST opened up the edit modal.
+			this.isDirty = false
 		},
-		editTemplate (templateIndex) {
+		async editTemplate (templateIndex) {
 			// It's important to create a clone so that we're not editing the existing template object.
 			const optionsStore   = useOptionsStore()
 			const editedTemplate = JSON.parse(JSON.stringify(optionsStore.internalOptions.internal.schema.templates[templateIndex]))
@@ -337,6 +344,12 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 				this.isEditingTemplate = true
 			}
+
+			// We need to wait for the next tick so that the modal is open before we turn off the isDirty flag.
+			await nextTick()
+
+			// Turn off the isDirty flag since we JUST opened up the edit modal.
+			this.isDirty = false
 		},
 		updateCustomGraph () {
 			const postEditorStore = usePostEditorStore()

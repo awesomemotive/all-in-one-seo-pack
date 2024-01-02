@@ -1,5 +1,5 @@
 <template>
-	<core-modal-portal
+	<core-modal
 		:classes="[ 'aioseo-post-schema-modal-cta' ]"
 		@close="$emit('close')"
 	>
@@ -85,13 +85,13 @@
 				</template>
 			</cta>
 		</template>
-	</core-modal-portal>
+	</core-modal>
 </template>
 
 <script>
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
-import CoreModalPortal from '@/vue/components/common/core/modal/Portal'
+import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Cta from '@/vue/components/common/cta/Index'
 import GraphCard from '../../partials/GraphCard'
@@ -104,7 +104,7 @@ export default {
 	components : {
 		CoreBlur,
 		CoreMainTabs,
-		CoreModalPortal,
+		CoreModal,
 		CoreTooltip,
 		Cta,
 		GraphCard,
@@ -170,8 +170,8 @@ export default {
 </script>
 
 <style lang="scss">
-.aioseo-post-schema-modal-cta {
-	.modal-mask .modal-wrapper {
+.aioseo-modal.aioseo-post-schema-modal-cta {
+	.modal-wrapper {
 		.modal-container {
 			display: flex;
 			flex : 1;
@@ -192,6 +192,8 @@ export default {
 				}
 
 				.aioseo-tabs {
+					margin-bottom: 0px;
+
 					.tabs-scroller {
 						.var-tabs {
 							.var-tab {
@@ -211,6 +213,18 @@ export default {
 								}
 							}
 						}
+					}
+				}
+
+				.main {
+					.search {
+						margin-top: 20px;
+					}
+				}
+
+				.aioseo-cta {
+					.header-text {
+						font-size: 18px;
 					}
 				}
 
@@ -485,26 +499,6 @@ export default {
 						}
 					}
 				}
-			}
-		}
-	}
-}
-
-.aioseo-post-schema-modal-cta {
-	.modal-mask .modal-wrapper .modal-container .modal-body {
-		.aioseo-tabs {
-			margin-bottom: 0px;
-		}
-
-		.main {
-			.search {
-				margin-top: 20px;
-			}
-		}
-
-		.aioseo-cta {
-			.header-text {
-				font-size: 18px;
 			}
 		}
 	}

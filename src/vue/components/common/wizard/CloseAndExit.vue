@@ -1,32 +1,35 @@
 <template>
 	<div class="aioseo-wizard-close-and-exit">
-		<a
-			v-if="$isPro || optionsStore.options.advanced.usageTracking"
-			:href="rootStore.aioseo.urls.aio.dashboard"
-		>
-			{{ strings.closeAndExit }}
-		</a>
+		<slot name="links">
+			<a
+				v-if="$isPro || optionsStore.options.advanced.usageTracking"
+				:href="rootStore.aioseo.urls.aio.dashboard"
+			>
+				{{ strings.closeAndExit }}
+			</a>
 
-		<a
-			v-else
-			href="#"
-			@click.prevent="showModal = true"
-		>
-			{{ strings.closeAndExit }}
-		</a>
+			<a
+				v-else
+				href="#"
+				@click.prevent="setupWizardStore.showUsageTrackingModal = true"
+			>
+				{{ strings.closeAndExit }}
+			</a>
+		</slot>
 
 		<core-modal
-			v-if="showModal && !$isPro"
-			@close="showModal = false"
+			:show="setupWizardStore.showUsageTrackingModal && !$isPro"
+			@close="setupWizardStore.showUsageTrackingModal = false"
+			:classes="[ 'aioseo-close-and-exit-modal' ]"
 		>
 			<template #header>
 				{{ strings.buildABetterAioseo }}
 
 				<button
 					class="close"
-					@click.stop="showModal = false"
+					@click.stop="setupWizardStore.showUsageTrackingModal = false"
 				>
-					<svg-close @click="showModal = false" />
+					<svg-close @click="setupWizardStore.showUsageTrackingModal = false" />
 				</button>
 			</template>
 
@@ -50,7 +53,7 @@
 							type="blue"
 							size="medium"
 							:loading="loading"
-							@click="processOptIn"
+							@click.stop="processOptIn"
 						>
 							{{ strings.yesCountMeIn }}
 						</base-button>
@@ -64,22 +67,46 @@
 <script>
 import {
 	useOptionsStore,
-	useRootStore
+	useRootStore,
+	useSetupWizardStore
 } from '@/vue/stores'
 
 import { useWizard } from '@/vue/composables'
-import { WizardUsageTracking } from '@/vue/mixins/Wizard'
+
+import CoreModal from '@/vue/components/common/core/modal/Index'
+import SvgClose from '@/vue/components/common/svg/Close'
+
 export default {
 	setup () {
 		const { strings } = useWizard()
 
 		return {
-			optionsStore : useOptionsStore(),
-			rootStore    : useRootStore(),
+			optionsStore     : useOptionsStore(),
+			rootStore        : useRootStore(),
+			setupWizardStore : useSetupWizardStore(),
 			strings
 		}
 	},
-	mixins : [ WizardUsageTracking ]
+	components : {
+		CoreModal,
+		SvgClose
+	},
+	data () {
+		return {
+			loading : false
+		}
+	},
+	methods : {
+		processOptIn () {
+			this.setupWizardStore.smartRecommendations.usageTracking = true
+			this.loading                                             = true
+
+			this.setupWizardStore.saveWizard('smartRecommendations')
+				.then(() => {
+					window.location.href = this.rootStore.aioseo.urls.aio.dashboard
+				})
+		}
+	}
 }
 </script>
 
@@ -94,8 +121,10 @@ export default {
 	a {
 		color: $placeholder-color !important;
 	}
+}
 
-	.modal-mask .modal-wrapper .modal-container {
+.aioseo-close-and-exit-modal {
+	.modal-wrapper .modal-container {
 		max-width: 600px;
 
 		.modal-header {

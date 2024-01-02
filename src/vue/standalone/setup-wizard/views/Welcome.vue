@@ -20,78 +20,39 @@
 				</base-button>
 
 				<div class="aioseo-go-back">
-					<a
-						v-if="$isPro || optionsStore.options.advanced.usageTracking"
-						:href="rootStore.aioseo.urls.aio.dashboard"
-						class="no-underline"
-					>&larr;</a>
-					<a
-						v-else
-						class="no-underline"
-						href="#"
-						@click.prevent="showModal = true"
-					>&larr;</a>
-					&nbsp;
-					<a
-						v-if="$isPro || optionsStore.options.advanced.usageTracking"
-						:href="rootStore.aioseo.urls.aio.dashboard"
-					>
-						{{ strings.goBack }}
-					</a>
+					<wizard-close-and-exit>
+						<template #links>
+							<a
+								v-if="$isPro || optionsStore.options.advanced.usageTracking"
+								:href="rootStore.aioseo.urls.aio.dashboard"
+								class="no-underline"
+							>&larr;</a>
+							<a
+								v-else
+								href="#"
+								class="no-underline"
+								@click.prevent="setupWizardStore.showUsageTrackingModal = true"
+							>&larr;</a>
+							&nbsp;
+							<a
+								v-if="$isPro || optionsStore.options.advanced.usageTracking"
+								:href="rootStore.aioseo.urls.aio.dashboard"
+							>
+								{{ strings.goBack }}
+							</a>
 
-					<a
-						v-else
-						href="#"
-						@click.prevent="showModal = true"
-					>
-						{{ strings.goBack }}
-					</a>
+							<a
+								v-else
+								href="#"
+								@click.prevent="setupWizardStore.showUsageTrackingModal = true"
+							>
+								{{ strings.goBack }}
+							</a>
+						</template>
+					</wizard-close-and-exit>
 				</div>
 			</div>
 		</div>
-
-		<core-modal
-			v-if="showModal && !$isPro"
-			@close="showModal = false"
-		>
-			<template #header>
-				<span>{{ strings.buildABetterAioseo }}</span>
-
-				<button
-					class="close"
-					@click.stop="showModal = false"
-				>
-					<svg-close @click="showModal = false" />
-				</button>
-			</template>
-			<template #body >
-				<div class="aioseo-modal-body">
-					<div class="reset-description"
-						v-html="strings.getImprovedFeatures"
-					/>
-
-					<div class="actions">
-						<base-button
-							tag="a"
-							:href="rootStore.aioseo.urls.aio.dashboard"
-							type="gray"
-							size="medium"
-						>
-							{{ strings.noThanks }}
-						</base-button>
-
-						<base-button
-							type="blue"
-							size="medium"
-							:loading="loading"
-							@click="processOptIn"
-						>
-							{{ strings.yesCountMeIn }}
-						</base-button>
-					</div>
-				</div>
-			</template>
-		</core-modal>
 	</div>
 </template>
 
@@ -103,8 +64,9 @@ import {
 } from '@/vue/stores'
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
-import { Wizard, WizardUsageTracking } from '@/vue/mixins/Wizard'
+import { Wizard } from '@/vue/mixins/Wizard'
 import SvgGiantGear from '@/vue/components/common/svg/GiantGear'
+import WizardCloseAndExit from '@/vue/components/common/wizard/CloseAndExit'
 export default {
 	setup () {
 		const { strings } = useWizard()
@@ -116,9 +78,10 @@ export default {
 		}
 	},
 	components : {
-		SvgGiantGear
+		SvgGiantGear,
+		WizardCloseAndExit
 	},
-	mixins : [ Wizard, WizardUsageTracking ],
+	mixins : [ Wizard ],
 	data () {
 		return {
 			stage   : 'welcome',
@@ -183,12 +146,8 @@ export default {
 
 			.aioseo-go-back {
 				position: absolute;
-				bottom: -80px;
+				bottom: -120px;
 				align-self: center;
-
-				a {
-					color: $placeholder-color;
-				}
 			}
 
 			.header {
@@ -220,7 +179,7 @@ export default {
 		}
 	}
 
-	.modal-mask .modal-wrapper .modal-container {
+	.modal-wrapper .modal-container {
 		max-width: 600px;
 
 		.modal-header {

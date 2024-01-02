@@ -17,6 +17,10 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import 'emoji-mart/dist/browser'
 import SvgEmojiBasketball from '@/vue/components/common/svg/emoji/Basketball'
 import SvgEmojiCar from '@/vue/components/common/svg/emoji/Car'
@@ -29,6 +33,11 @@ import SvgEmojiSmile from '@/vue/components/common/svg/emoji/Smile'
 import SvgEmojiSymbols from '@/vue/components/common/svg/emoji/Symbols'
 import SvgSearch from '@/vue/components/common/svg/Search'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	emits      : [ 'selected-emoji', 'update:show' ],
 	components : {
 		SvgEmojiBasketball,
@@ -66,6 +75,9 @@ export default {
 			if (show) {
 				this.startListening()
 				this.positionInModal()
+
+				this.rootStore.setActiveModal(this.modalName || this._uid)
+
 				return
 			}
 			this.positionInModal()
@@ -183,6 +195,7 @@ export default {
 		},
 		closePicker () {
 			this.$emit('update:show', false)
+			this.rootStore.unsetActiveModal(this.modalName || this._uid)
 		},
 		documentClick (event) {
 			if (!this.show) {
@@ -216,17 +229,18 @@ export default {
 		},
 		escapeListener (event) {
 			if ('Escape' === event.key && this.show) {
+				event.stopPropagation()
 				this.closePicker()
 				this.stopListening()
 			}
 		},
 		startListening () {
-			document.addEventListener('click', this.documentClick)
-			document.addEventListener('keydown', this.escapeListener)
+			document.addEventListener('keydown', this.escapeListener, true)
+			document.addEventListener('mousedown', this.documentClick)
 		},
 		stopListening () {
-			document.removeEventListener('click', this.documentClick)
 			document.removeEventListener('keydown', this.escapeListener)
+			document.removeEventListener('mousedown', this.documentClick)
 		},
 		getModal () {
 			const $modals = document.getElementsByClassName('aioseo-modal')

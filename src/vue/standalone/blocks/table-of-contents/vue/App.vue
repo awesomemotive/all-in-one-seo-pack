@@ -56,8 +56,8 @@
 				<List :headings="tableOfContentsStore.headings"/>
 			</div>
 
-			<Reorder
-				v-if="showModal"
+			<reorder
+				:show="showModal"
 				:headings="tableOfContentsStore.headings"
 				@closeModal="showModal = false"
 			/>
@@ -215,12 +215,8 @@ export default {
 </script>
 
 <style lang="scss">
-.modal-mask .modal-wrapper .modal-container {
-	border-radius: 4px;
-}
-
 .wp-block-aioseo-table-of-contents .aioseo-toc-menu,
-.aioseo-toc-modal .modal-body {
+.aioseo-modal.aioseo-toc-modal .modal-body {
 	font-family: $font-family;
 	background-color: $background;
 	padding: 20px;
@@ -285,9 +281,9 @@ export default {
 	}
 }
 
-.aioseo-toc-modal {
+.aioseo-modal.aioseo-toc-modal {
 
-	.modal-mask .modal-wrapper {
+	.modal-wrapper {
 		font-family: inherit;
 
 		.modal-body {

@@ -77,8 +77,9 @@
 		</wizard-container>
 
 		<core-modal
-			v-if="showModal"
+			:show="showModal"
 			@close="showModal = false"
+			:classes="[ 'aioseo-smart-recommendations-modal' ]"
 		>
 			<template #headerTitle>
 				{{ strings.wouldYouLikeToPurchase }}
@@ -137,9 +138,11 @@
 					</div>
 
 					<core-alert
+						class="bonus-alert"
 						type="yellow"
-						v-html="strings.bonusText"
-					/>
+					>
+						🎁 <span v-html="strings.bonusText" />
+					</core-alert>
 				</div>
 			</template>
 		</core-modal>
@@ -221,10 +224,11 @@ export default {
 				illDoItLater              : this.$t.__('I\'ll do it later', this.$td),
 				purchaseAndInstallNow     : this.$t.__('Purchase and Install Now', this.$td),
 				bonusText                 : this.$t.sprintf(
-					// Translators: 1 - Opening bold tag, 2 - Closing bold tag, 3 - Opening bold tag, 4 - Percent between 1-100, 5 - Closing bold tag.
-					this.$t.__('%1$sBonus:%2$s You can upgrade your plan today and %3$ssave %4$s off%5$s (discount auto-applied).', this.$td),
+					// Translators: 1 - Opening bold tag, 2 - Closing bold tag, 3 - "Pro", 4 - Opening bold tag, 5 - A discount percentage (e.g. "50%"), 6 - Closing bold tag.
+					this.$t.__('%1$sBonus:%2$s You can upgrade to the %3$s plan today and %4$ssave %5$s off%6$s (discount auto-applied).', this.$td),
 					'<strong>',
 					'</strong>',
+					'Pro',
 					'<strong>',
 					this.$constants.DISCOUNT_PERCENTAGE,
 					'</strong>'
@@ -336,9 +340,11 @@ export default {
 			font-size: 14px;
 		}
 	}
+}
 
+.aioseo-smart-recommendations-modal {
 	.aioseo-modal-body {
-		padding: 20px 50px 50px;
+		padding: 20px 40px 40px;
 		display: flex;
 		flex-direction: column;
 		position: relative;
@@ -365,6 +371,11 @@ export default {
 			margin-top: 30px;
 			font-size: 14px;
 			text-align: center;
+		}
+
+		.bonus-alert {
+			margin: 24px auto;
+			max-width: 650px;
 		}
 	}
 }

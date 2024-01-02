@@ -170,11 +170,37 @@ $settings-bar-height: 90px;
 		}
 	}
 
-	.aioseo-app {
+	.aioseo-app,
+	.el-popper {
 		.aioseo-cta {
 			a.learn-more,
 			a.learn-more:hover {
 				text-decoration: underline;
+			}
+		}
+
+		button,
+		.aioseo-button {
+			text-transform: initial;
+
+			&:hover {
+				&.blue {
+					color: $white;
+				}
+			}
+		}
+
+		.input,
+		.textarea,
+		input,
+		input[type="email"],
+		input[type="password"],
+		input[type="search"],
+		input[type="text"],
+		select,
+		textarea {
+			&:focus {
+				background: initial;
 			}
 		}
 	}

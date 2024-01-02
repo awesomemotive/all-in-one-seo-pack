@@ -313,8 +313,9 @@
 			</template>
 
 			<core-modal
-				v-if="showImportModal"
+				:show="showImportModal"
 				@close="showImportModal = false"
+				:classes="[ 'aioseo-robots-import-modal' ]"
 			>
 				<template #headerTitle>
 					{{ strings.importRobots }}
@@ -619,15 +620,17 @@ export default {
 		missingRewriteRules () {
 			const string1 = this.$t.__('It looks like you are missing the proper rewrite rules for the robots.txt file.', this.$td)
 			let string2 = ''
-			if (this.rootStore.aioseo.data.server.apache) {
+			if (this.rootStore.aioseo.data.server.match(/apache|litespeed/)) {
+				const serverName = 'apache' === this.rootStore.aioseo.data.server ? 'Apache' : 'LiteSpeed'
 				string2 = this.$t.sprintf(
-					// Translators: 1 - Opening link tag, 2 - Closing link tag.
-					this.$t.__('It appears that your server is running on Apache, so the fix should be as simple as checking the %1$scorrect .htaccess implementation on wordpress.org%2$s.', this.$td),
+					// Translators: 1 - Server name, 2 - Opening link tag, 3 - Closing link tag.
+					this.$t.__('It appears that your server is running on %1$s, so the fix should be as simple as checking the %2$scorrect .htaccess implementation on wordpress.org%3$s.', this.$td),
+					serverName,
 					'<a href="https://wordpress.org/support/article/htaccess/" target="_blank">',
 					'</a>'
 				)
-			} else if (this.rootStore.aioseo.data.server.nginx) {
-				string2 = string2 = this.$t.sprintf(
+			} else if ('nginx' === this.rootStore.aioseo.data.server) {
+				string2 = this.$t.sprintf(
 					// Translators: 1 - Opening link tag, 2 - Closing link tag.
 					this.$t.__('It appears that your server is running on nginx, so the fix will most likely require adding the correct rewrite rules to our nginx configuration. %1$sCheck our documentation for more information%2$s.', this.$td),
 					'<a href="' + this.$links.getDocUrl('robotsRewrite') + '" target="_blank">',
@@ -1082,61 +1085,18 @@ export default {
 				}
 			}
 		}
-
-		&--or {
-			margin-bottom: 35px;
-			padding-bottom: 35px;
-			position: relative;
-
-			&:before {
-				align-items: center;
-				background-color: $input-border;
-				border-radius: 50%;
-				content: attr(data-or);
-				display: inline-flex;
-				font-size: 12px;
-				font-weight: 700;
-				height: 30px;
-				justify-content: center;
-				left: 50%;
-				line-height: 30px;
-				margin-bottom: 35px;
-				position: absolute;
-				text-transform: uppercase;
-				top: calc(100% - 15px);
-				transform: translateX(-50%);
-				width: 30px;
-			}
-		}
-
-		.settings-content {
-			&--gap {
-				display: grid;
-				gap: 10px;
-			}
-		}
 	}
 
-	.aioseo-modal {
-		.modal-header {
-			padding-left: 20px;
-		}
-
-		.modal-container {
-			height: auto;
-			overflow: revert;
-
-			.modal-body {
-				max-height: 70vh;
-				padding: 20px;
-			}
-
-			&__footer {
-				display: flex;
-				justify-content: end;
-				padding: 12px 20px;
-			}
-		}
+	.loader-overlay {
+		background: rgba(0, 0, 0, 0.3);
+		display: flex;
+		height: 100%;
+		justify-content: center;
+		left: 0;
+		padding: 50px;
+		position: absolute;
+		top: 0;
+		width: 100%;
 	}
 
 	.aioseo-drag-wrapper {
@@ -1162,17 +1122,75 @@ export default {
 		height: 14px;
 		margin-right: 10px;
 	}
+}
 
-	.loader-overlay {
-		background: rgba(0, 0, 0, 0.3);
-		display: flex;
-		height: 100%;
-		justify-content: center;
-		left: 0;
-		padding: 50px;
-		position: absolute;
-		top: 0;
-		width: 100%;
+.aioseo-robots-import-modal {
+	&.aioseo-modal {
+		.buttons {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px;
+		}
+
+		.modal-header {
+			padding-left: 20px;
+		}
+
+		.modal-container {
+			height: auto;
+			overflow: revert;
+
+			.modal-body {
+				max-height: 70vh;
+				padding: 20px;
+			}
+
+			&__footer {
+				display: flex;
+				justify-content: end;
+				padding: 12px 20px;
+			}
+		}
+
+		.aioseo-settings-row {
+			&:last-of-type {
+				border-bottom: 0;
+				margin-bottom: 0;
+			}
+
+			&--or {
+				margin-bottom: 35px;
+				padding-bottom: 35px;
+				position: relative;
+
+				&:before {
+					align-items: center;
+					background-color: $input-border;
+					border-radius: 50%;
+					content: attr(data-or);
+					display: inline-flex;
+					font-size: 12px;
+					font-weight: 700;
+					height: 30px;
+					justify-content: center;
+					left: 50%;
+					line-height: 30px;
+					margin-bottom: 35px;
+					position: absolute;
+					text-transform: uppercase;
+					top: calc(100% - 15px);
+					transform: translateX(-50%);
+					width: 30px;
+				}
+			}
+
+			.settings-content {
+				&--gap {
+					display: grid;
+					gap: 10px;
+				}
+			}
+		}
 	}
 }
 </style>

@@ -109,6 +109,7 @@ import SvgSoftwareApplication from '@/vue/components/common/svg/schema/SoftwareA
 import SvgTerminal from '@/vue/components/common/svg/schema/Terminal'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 import SvgVideo from '@/vue/components/common/svg/schema/Video'
+import SvgWebPage from '@/vue/components/common/svg/schema/WebPage'
 
 export default {
 	emits      : [ 'append-icon-click', 'blur', 'change', 'focus', 'keydown', 'update:modelValue' ],
@@ -143,7 +144,8 @@ export default {
 		SvgSoftwareApplication,
 		SvgTerminal,
 		SvgTrash,
-		SvgVideo
+		SvgVideo,
+		SvgWebPage
 	},
 	props : {
 		modelValue   : [ String, Number ],

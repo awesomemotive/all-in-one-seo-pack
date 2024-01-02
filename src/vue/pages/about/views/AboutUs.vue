@@ -142,6 +142,8 @@ import wpformsImg from '@/vue/assets/images/about/plugins/wpforms.png'
 import wpspImg from '@/vue/assets/images/about/plugins/wpsp.png'
 import yfImg from '@/vue/assets/images/about/plugins/yf.png'
 import wpcodeImg from '@/vue/assets/images/about/plugins/wpcode.svg'
+import charitableImg from '@/vue/assets/images/about/plugins/charitable.svg'
+import duplicatorImg from '@/vue/assets/images/about/plugins/duplicator.svg'
 
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
@@ -189,7 +191,7 @@ export default {
 				},
 				plugins : {
 					actions : {
-						install  : this.$t.__('Install Plugin', this.$td),
+						install  : this.$t.__('Install Free Plugin', this.$td),
 						activate : this.$t.__('Activate', this.$td),
 						manage   : this.$t.__('Manage', this.$td)
 					},
@@ -213,7 +215,7 @@ export default {
 				},
 				wpForms : {
 					name        : 'WPForms',
-					description : this.$t.__('The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 100+ form templates. Trusted by over 4 million websites as the best forms plugin.', this.$td),
+					description : this.$t.__('The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 1000+ form templates. Trusted by over 6 million websites as the best forms plugin.', this.$td),
 					icon        : getAssetUrl(wpformsImg),
 					installed   : false,
 					canInstall  : false,
@@ -264,7 +266,7 @@ export default {
 				},
 				wpMail : {
 					name        : 'WP Mail SMTP',
-					description : this.$t.__('Improve your WordPress email deliverability and make sure that your website emails reach user’s inbox with the #1 SMTP plugin for WordPress. Over 2 million websites use it to fix WordPress email issues.', this.$td),
+					description : this.$t.__('Improve your WordPress email deliverability and make sure that your website emails reach user’s inbox with the #1 SMTP plugin for WordPress. Over 3 million websites use it to fix WordPress email issues.', this.$td),
 					icon        : getAssetUrl(smtpImg),
 					installed   : false,
 					canInstall  : false,
@@ -409,7 +411,7 @@ export default {
 				},
 				pushEngage : {
 					name        : 'PushEngage',
-					description : this.$t.__('Connect with your visitors after they leave your website with the leading web push notification software. Over 10,000+ businesses worldwide use PushEngage to send 9 billion notifications each month.', this.$td),
+					description : this.$t.__('Connect with your visitors after they leave your website with the leading web push notification software. Over 10,000+ businesses worldwide use PushEngage to send 15 billion notifications each month.', this.$td),
 					icon        : getAssetUrl(peImg),
 					installed   : false,
 					canInstall  : false,
@@ -486,6 +488,24 @@ export default {
 					canInstall : false,
 					activated  : false,
 					loading    : false
+				},
+				charitable : {
+					name        : 'WP Charitable',
+					description : this.$t.__('Top-rated WordPress donation and fundraising plugin. Over 10,000+ non-profit organizations and website owners use Charitable to create fundraising campaigns and raise more money online.', this.$td),
+					icon        : getAssetUrl(charitableImg),
+					installed   : false,
+					canInstall  : false,
+					activated   : false,
+					loading     : false
+				},
+				duplicator : {
+					name        : 'Duplicator - WordPress Migration & Backup Plugin',
+					description : this.$t.__('Leading WordPress backup & site migration plugin. Over 1,500,000+ smart website owners use Duplicator to make reliable and secure WordPress backups to protect their websites. It also makes website migration really easy.', this.$td),
+					icon        : getAssetUrl(duplicatorImg),
+					installed   : false,
+					canInstall  : false,
+					activated   : false,
+					loading     : false
 				}
 			}
 		}
@@ -551,6 +571,7 @@ export default {
 	},
 	mounted () {
 		this.localPlugins = { ...this.pluginsStore.plugins }
+		console.log(this.localPlugins)
 
 		// Set installation and activation status for each plugin.
 		Object.keys(this.localPlugins).forEach(pluginName => {

@@ -22,6 +22,10 @@ body {
 			
 		}
 	}
+
+	.block-editor-link-control__settings .block-editor-link-control__setting .components-base-control__field {
+		flex-direction: column;
+	}
 }
 
 @media (max-width: 782px) {

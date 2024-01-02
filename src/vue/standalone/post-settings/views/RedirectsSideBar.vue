@@ -11,7 +11,7 @@
 
 				<base-button
 					class="open-redirects-modal gray small"
-					@click="postEditorStore.toggleRedirectsModal"
+					@click="postEditorStore.currentPost.redirects.modalOpen = true"
 				>
 					<svg-right-arrow-short />
 					{{ strings.button }}

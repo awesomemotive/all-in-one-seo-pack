@@ -48,7 +48,8 @@ export const useRedirectsStore = defineStore('RedirectsStore', {
 			redirectTest : {
 				testing : false,
 				failed  : false
-			}
+			},
+			filePath : ''
 		},
 		lateRefresh : {
 			redirects : false,

@@ -57,4 +57,9 @@ if (false !== import.meta.env.PROD) {
 	document.body.appendChild(elemDiv)
 }
 
+// Add div to mount modal to.
+const elemModal = document.createElement('div')
+elemModal.setAttribute('id', 'aioseo-modal-portal')
+document.body.appendChild(elemModal)
+
 app.mount(elemDiv)

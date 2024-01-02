@@ -248,7 +248,7 @@ export default {
 
 <style lang="scss">
 .wp-block-aioseo-table-of-contents .aioseo-toc-menu,
-.aioseo-toc-modal {
+.aioseo-modal.aioseo-toc-modal {
 
 	.aioseo-toc-list {
 		margin: 0;
@@ -496,7 +496,7 @@ export default {
 	}
 }
 
-.aioseo-toc-modal .modal-body {
+.aioseo-modal.aioseo-toc-modal .modal-body {
 
 	.heading-hidden {
 		display: none;

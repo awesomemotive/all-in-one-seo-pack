@@ -255,17 +255,17 @@ export default {
 	},
 	mounted () {
 		document.addEventListener('keydown', this.escapeListener)
-		document.addEventListener('click', this.documentClick)
+		document.addEventListener('mousedown', this.documentClick)
 
 		const notificationsLink = document.querySelector('#wp-admin-bar-aioseo-notifications .ab-item')
 		if (notificationsLink) {
-			notificationsLink.addEventListener('click', this.notificationsLinkClick)
+			notificationsLink.addEventListener('mousedown', this.notificationsLinkClick)
 		}
 
 		const sidebarNotificationsLink      = document.querySelector('#toplevel_page_aioseo .wp-first-item')
 		const sidebarNotificationsLinkPulse = document.querySelector('#toplevel_page_aioseo .wp-first-item .aioseo-menu-notification-indicator')
 		if (sidebarNotificationsLink && sidebarNotificationsLinkPulse) {
-			sidebarNotificationsLink.addEventListener('click', this.notificationsLinkClick)
+			sidebarNotificationsLink.addEventListener('mousedown', this.notificationsLinkClick)
 		}
 	}
 }

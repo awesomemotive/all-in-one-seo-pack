@@ -69,12 +69,11 @@ export default {
 				clearRedirectLogs      : this.$t.__('Clear Redirect Logs', this.$td),
 				logsTooltip            : this.$t.__('Log sizes may fluctuate and not always be 100% accurate since the results can be cached. Also after clearing a log, it may not show as "0" since database tables also include additional information such as indexes that we don\'t clear.', this.$td),
 				ctaHeader              : this.$t.sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('This feature is not available in your current plan.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+					// Translators: 1 - "PRO".
+					this.$t.__('Network Tools is a %1$s Feature', this.$td),
+					'PRO'
 				),
-				ctaButtonText                   : this.$t.__('Upgrade Your Plan and Unlock Network Tools', this.$td),
+				ctaButtonText                   : this.$t.__('Unlock Network Tools', this.$td),
 				networkDatabaseToolsDescription : this.$t.__('Unlock network-level tools to manage all your sites from one easy-to-use location. Migrate data or create backups without the need to visit each dashboard.', this.$td)
 			}
 		}

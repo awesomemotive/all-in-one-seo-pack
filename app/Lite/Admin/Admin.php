@@ -48,7 +48,7 @@ class Admin extends CommonAdmin\Admin {
 		if ( current_user_can( $this->getPageRequiredCapability( '' ) ) ) {
 			$this->adminBarMenuItems['aioseo-pro-upgrade'] = [
 				'parent' => 'aioseo-main',
-				'title'  => '<span class="aioseo-menu-highlight">' . __( 'Upgrade to Pro', 'all-in-one-seo-pack' ) . '</span>',
+				'title'  => '<span class="aioseo-menu-highlight lite">' . __( 'Upgrade to Pro', 'all-in-one-seo-pack' ) . '</span>',
 				'id'     => 'aioseo-pro-upgrade',
 				'href'   => apply_filters(
 					'aioseo_upgrade_link',
@@ -77,7 +77,7 @@ class Admin extends CommonAdmin\Admin {
 		if ( current_user_can( $capability ) ) {
 			global $submenu;
 			$submenu[ $this->pageSlug ][] = [
-				'<span class="aioseo-menu-highlight">' . esc_html__( 'Upgrade to Pro', 'all-in-one-seo-pack' ) . '</span>',
+				'<span class="aioseo-menu-highlight lite">' . esc_html__( 'Upgrade to Pro', 'all-in-one-seo-pack' ) . '</span>',
 				$capability,
 				apply_filters(
 					'aioseo_upgrade_link',

@@ -71,9 +71,10 @@
 		</core-settings-row>
 
 		<core-modal
-			v-if="showModal"
+			:show="showModal"
 			no-header
 			@close="showModal = false"
+			:classes="[ 'aioseo-core-reset-settings-modal' ]"
 		>
 			<template #body >
 				<div class="aioseo-modal-body">
@@ -255,9 +256,11 @@ export default {
 			margin-top: 16px;
 		}
 	}
+}
 
+.aioseo-core-reset-settings-modal {
 	.aioseo-modal-body {
-		padding: 20px 50px 50px;
+		padding: 20px 40px 40px;
 		display: flex;
 		align-items: center;
 		justify-content: center;

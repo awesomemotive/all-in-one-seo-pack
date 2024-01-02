@@ -50,7 +50,9 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 		'easyDigitalDownloads' => 'https://downloads.wordpress.org/plugins/easy-digital-downloads.zip',
 		'wpcode'               => 'https://downloads.wordpress.org/plugin/insert-headers-and-footers.zip',
 		'searchWp'             => '',
-		'affiliateWp'          => ''
+		'affiliateWp'          => '',
+		'charitable'           => 'https://downloads.wordpress.org/plugin/charitable.zip',
+		'duplicator'           => 'https://downloads.wordpress.org/plugin/duplicator.zip'
 	];
 
 	/**
@@ -78,7 +80,9 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 		'wpSimplePay'   => 'https://wordpress.org/plugins/stripe/',
 		'searchWp'      => 'https://searchwp.com/',
 		'affiliateWp'   => 'https://affiliatewp.com/',
-		'wpcode'        => 'https://wordpress.org/plugins/insert-headers-and-footers/'
+		'wpcode'        => 'https://wordpress.org/plugins/insert-headers-and-footers/',
+		'charitable'    => 'https://wordpress.org/plugins/charitable/',
+		'duplicator'    => 'https://wordpress.org/plugins/duplicator/'
 	];
 
 	/**
@@ -121,7 +125,9 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 		'searchWp'                => 'searchwp/index.php',
 		'affiliateWp'             => 'affiliate-wp/affiliate-wp.php',
 		'wpcode'                  => 'insert-headers-and-footers/ihaf.php',
-		'wpcodePro'               => 'wpcode-premium/wpcode.php'
+		'wpcodePro'               => 'wpcode-premium/wpcode.php',
+		'charitable'              => 'charitable/charitable.php',
+		'duplicator'              => 'duplicator/duplicator.php'
 	];
 
 	/**
@@ -150,11 +156,11 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 		'instagramFeedPro'        => 'admin.php?page=sb-instagram-feed',
 		'facebookFeed'            => 'admin.php?page=cff-top',
 		'facebookFeedPro'         => 'admin.php?page=cff-top',
-		'twitterFeed'             => 'admin.php?page=custom-twitter-feeds',
-		'twitterFeedPro'          => 'admin.php?page=custom-twitter-feeds',
-		'youTubeFeed'             => 'admin.php?page=youtube-feed',
-		'youTubeFeedPro'          => 'admin.php?page=youtube-feed',
-		'pushEngage'              => 'admin.php?page=pushengage-admin',
+		'twitterFeed'             => 'admin.php?page=ctf-settings',
+		'twitterFeedPro'          => 'admin.php?page=ctf-settings',
+		'youTubeFeed'             => 'admin.php?page=youtube-feed-settings',
+		'youTubeFeedPro'          => 'admin.php?page=youtube-feed-settings',
+		'pushEngage'              => 'admin.php?page=pushengage',
 		'sugarCalendar'           => 'admin.php?page=sugar-calendar',
 		'sugarCalendarPro'        => 'admin.php?page=sugar-calendar',
 		'wpSimplePay'             => 'edit.php?post_type=simple-pay',
@@ -164,7 +170,9 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 		'searchWp'                => 'options-general.php?page=searchwp',
 		'affiliateWp'             => 'admin.php?page=affiliate-wp',
 		'wpcode'                  => 'admin.php?page=wpcode',
-		'wpcodePro'               => 'admin.php?page=wpcode'
+		'wpcodePro'               => 'admin.php?page=wpcode',
+		'charitable'              => 'admin.php?page=charitable-settings',
+		'duplicator'              => 'admin.php?page=duplicator-settings'
 	];
 
 	/**

@@ -18,6 +18,9 @@ import initLimitModifiedDate from './limit-modified-date'
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
 import App from '@/vue/standalone/post-settings/App'
 
+let aioseoApp = null,
+	preload   = false
+
 /**
  * Add to the body a class to identify the Elementor color schema.
  *
@@ -51,7 +54,8 @@ const initElementorHooks = ({ elementor, $e, Marionette }) => {
 
 		// Initialize our Vue component.
 		if ('panel/page-settings/aioseo' === route) {
-			initAioseoEditor('#elementor-panel-page-settings-controls')
+			aioseoApp?.unmount()
+			aioseoApp = initAioseoEditor('#elementor-panel-page-settings-controls')
 		}
 	})
 
@@ -90,7 +94,8 @@ const initElementorHooks = ({ elementor, $e, Marionette }) => {
 					document.getElementById('elementor-panel-elements-search-area').hidden = true
 				},
 				onShow () {
-					initAioseoEditor('#elementor-panel-aioseo')
+					aioseoApp?.unmount()
+					aioseoApp = initAioseoEditor('#elementor-panel-aioseo')
 				},
 				onDestroy () {
 					document.getElementById('elementor-panel-elements-search-area').hidden = false
@@ -160,6 +165,8 @@ const initAioseoEditor = (selector) => {
 
 	// Update the post data and run the analysis when our panel loads.
 	updatePostData()
+
+	return app
 }
 
 /**
@@ -178,7 +185,6 @@ const init = () => {
 	initLimitModifiedDate(window)
 }
 
-let preload = false
 if (window.elementor) {
 	setTimeout(init)
 	preload = true

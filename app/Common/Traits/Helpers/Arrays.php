@@ -174,4 +174,29 @@ trait Arrays {
 
 		ksort( $array );
 	}
+
+	/**
+	 * Creates a multidimensional array from a list of keys and a value.
+	 *
+	 * @since 4.5.3
+	 *
+	 * @param  array $keys  The keys to create the array from.
+	 * @param  mixed $value The value to assign to the last key.
+	 * @param  array $array The array when recursing.
+	 * @return array        The multidimensional array.
+	 */
+	public function createMultidimensionalArray( $keys, $value, $array = [] ) {
+		$key = array_shift( $keys );
+		if ( empty( $array[ $key ] ) ) {
+			$array[ $key ] = null;
+		}
+
+		if ( 0 < count( $keys ) ) {
+			$array[ $key ] = $this->createMultidimensionalArray( $keys, $value, $array[ $key ] );
+		} else {
+			$array[ $key ] = $value;
+		}
+
+		return $array;
+	}
 }

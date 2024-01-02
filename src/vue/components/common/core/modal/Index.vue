@@ -1,19 +1,25 @@
 <template>
-	<transition name="modal">
+	<teleport to="#aioseo-modal-portal">
 		<div
-			class="aioseo-modal"
+			:show="show"
+			class="aioseo-app aioseo-modal"
 			:class="[
-				{
-					'aioseo-app'     : isolate,
-					'allow-overflow' : allowOverflow
-				},
-				...classes
+				...cssClasses
 			]"
 		>
-			<div
-				class="modal-mask"
-			>
-				<div class="modal-wrapper">
+			<transition name="modal-background">
+				<div
+					v-if="show"
+					class="modal-mask"
+				/>
+			</transition>
+
+			<transition name="modal-content">
+				<div
+					v-if="show"
+					class="modal-wrapper"
+					@click.stop="maybeCloseModal"
+				>
 					<div class="modal-container">
 						<div
 							v-if="!noHeader"
@@ -24,9 +30,9 @@
 								<button
 									class="close"
 									type="button"
-									@click.stop="$emit('close')"
+									@click.stop="closeModal"
 								>
-									<svg-close @click="$emit('close')" />
+									<svg-close @click="closeModal" />
 								</button>
 							</slot>
 						</div>
@@ -43,14 +49,23 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			</transition>
 		</div>
-	</transition>
+	</teleport>
 </template>
 
 <script>
+import {
+	useRootStore
+} from '$/vue/stores'
+
 import SvgClose from '@/vue/components/common/svg/Close'
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	emits      : [ 'close' ],
 	components : {
 		SvgClose
@@ -62,15 +77,44 @@ export default {
 				return []
 			}
 		},
+		allowBgClose : {
+			type    : Boolean,
+			default : true
+		},
 		noHeader      : Boolean,
-		// TODO: In the future we need to remove this isolate once we get the Table of Contents working correctly.
-		isolate       : Boolean,
 		allowOverflow : Boolean,
-		confirmation  : Boolean
+		show          : Boolean,
+		modalName     : String
+	},
+	watch : {
+		show (show) {
+			if (show) {
+				this.startListening()
+				this.scrollToElement()
+
+				this.rootStore.setActiveModal(this.modalName || this._uid)
+
+				return
+			}
+
+			this.closeModal()
+			this.stopListening()
+		}
+	},
+	computed : {
+		cssClasses () {
+			const classes = Array.isArray(this.classes) ? this.classes : []
+
+			if (this.allowOverflow) {
+				classes.push('allow-overflow')
+			}
+
+			return Array.isArray(this.classes) ? this.classes : []
+		}
 	},
 	methods : {
 		scrollToElement () {
-			const container = this.$el.getElementsByClassName('component-wrapper')[0]
+			const container = this.$el.getElementsByClassName ? this.$el.getElementsByClassName('component-wrapper')[0] : null
 			setTimeout(() => {
 				if (container) {
 					container.firstChild.scrollTop = 0
@@ -78,52 +122,67 @@ export default {
 			}, 10)
 		},
 		escapeListener (event) {
-			if ('Escape' === event.key && !this.confirmation) {
-				this.$emit('close')
+			if ('Escape' === event.key && (this.modalName || this._uid) === this.rootStore.modals.active) {
+				event.stopPropagation()
+				this.closeModal()
 			}
+		},
+		maybeCloseModal (event) {
+			if (this.allowBgClose && event.target.classList.contains('modal-wrapper') && (this.modalName || this._uid) === this.rootStore.modals.active) {
+				this.closeModal()
+			}
+		},
+		startListening () {
+			document.addEventListener('keydown', this.escapeListener, true)
+		},
+		stopListening () {
+			document.removeEventListener('keydown', this.escapeListener)
+		},
+		closeModal () {
+			this.$emit('close')
+			this.rootStore.unsetActiveModal(this.modalName || this._uid)
 		}
-	},
-	mounted () {
-		document.addEventListener('keydown', this.escapeListener)
-
-		this.scrollToElement()
-
-		if (this.isolate) {
-			document.body.appendChild(this.$el)
-		}
-	},
-	beforeUnmount () {
-		document.removeEventListener('click', this.escapeListener)
 	}
 }
 </script>
 
 <style lang="scss">
-.modal-mask {
-	position: fixed;
-	z-index: 9998;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(20,27,56,.3);
-	display: table;
-	transition: opacity .3s ease;
+.aioseo-modal {
+	.modal-mask {
+		position: fixed;
+		z-index: 9998;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 32, 80, 0.3);
+		display: table;
+		transition: opacity 0.3s ease;
+		backdrop-filter: blur(1.5px);
 
-	@media screen and (max-width: 520px) {
-		display: block;
-		top: 46px;
+		@media screen and (max-width: 520px) {
+			display: block;
+			top: 46px;
+		}
 	}
 
 	.modal-wrapper {
-		display: table-cell;
-		vertical-align: middle;
+		position: fixed;
+		z-index: 9998;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		align-content: center;
 		font-family: $font-family;
 
-			@media screen and (max-width: 520px) {
-				display: block;
-				height: 100%;
-			}
+		@media screen and (max-width: 520px) {
+			display: block;
+			height: 100%;
+		}
 
 		.modal-container {
 			width: 100%;
@@ -265,18 +324,27 @@ export default {
  * You can easily play with the modal transition by editing
  * these styles.
  */
+.modal-background-enter-active,
+.modal-background-leave-active {
+	transition: opacity 0.3s ease;
+}
 
-.modal-enter-from {
+.modal-background-enter-from,
+.modal-background-leave-to {
 	opacity: 0;
 }
 
-.modal-leave-active {
-	opacity: 0;
+.modal-content-enter-active {
+	transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02) 0.05s;
 }
 
-.modal-enter-from .modal-container,
-.modal-leave-active .modal-container {
-	-webkit-transform: scale(1.1);
-	transform: scale(1.1);
+.modal-content-leave-active {
+	transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02);
+}
+
+.modal-content-enter-from,
+.modal-content-leave-to {
+	opacity: 0;
+	transform: scale(0.8);
 }
 </style>

@@ -101,9 +101,8 @@ class Review {
 		); // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 		$string5  = __( 'Give feedback', 'all-in-one-seo-pack' );
 		$string6  = __( 'No thanks', 'all-in-one-seo-pack' );
-		$string7  = __( 'That\'s awesome! Could you please do me a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?', 'all-in-one-seo-pack' );
+		$string7  = __( 'That\'s awesome! Could you please do us a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?', 'all-in-one-seo-pack' );
 		// Translators: 1 - The plugin name ("All in One SEO").
-		$string8  = sprintf( __( 'CEO of %1$s', 'all-in-one-seo-pack' ), AIOSEO_PLUGIN_NAME );
 		$string9  = __( 'Ok, you deserve it', 'all-in-one-seo-pack' );
 		$string10 = __( 'Nope, maybe later', 'all-in-one-seo-pack' );
 		$string11 = __( 'I already did', 'all-in-one-seo-pack' );
@@ -126,14 +125,13 @@ class Review {
 			</div>
 			<div class="step-3" style="display:none;">
 				<p><?php echo esc_html( $string7 ); ?></p>
-				<p><strong>~ Syed Balkhi<br><?php echo esc_html( $string8 ); ?></strong></p>
 				<p>
 					<a href="https://wordpress.org/support/plugin/all-in-one-seo-pack/reviews/?filter=5#new-post" class="aioseo-dismiss-review-notice" target="_blank" rel="noopener noreferrer">
 						<?php echo esc_html( $string9 ); ?>
-					</a>&nbsp;&nbsp;
+					</a>&nbsp;&bull;&nbsp;
 					<a href="#" class="aioseo-dismiss-review-notice-delay" target="_blank" rel="noopener noreferrer">
 						<?php echo esc_html( $string10 ); ?>
-					</a>&nbsp;&nbsp;
+					</a>&nbsp;&bull;&nbsp;
 					<a href="#" class="aioseo-dismiss-review-notice" target="_blank" rel="noopener noreferrer">
 						<?php echo esc_html( $string11 ); ?>
 					</a>
@@ -153,12 +151,11 @@ class Review {
 	public function showNotice2() {
 		$string1 = sprintf(
 			// Translators: 1 - The plugin name ("All in One SEO").
-			__( 'Hey, I noticed you have been using %1$s for some time - that’s awesome! Could you please do me a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+			__( 'Hey, we noticed you have been using %1$s for some time - that’s awesome! Could you please do us a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 			'<strong>' . esc_html( AIOSEO_PLUGIN_NAME ) . '</strong>'
 		);
 
 		// Translators: 1 - The plugin name ("All in One SEO").
-		$string8  = sprintf( __( 'CEO of %1$s', 'all-in-one-seo-pack' ), AIOSEO_PLUGIN_NAME );
 		$string9  = __( 'Ok, you deserve it', 'all-in-one-seo-pack' );
 		$string10 = __( 'Nope, maybe later', 'all-in-one-seo-pack' );
 		$string11 = __( 'I already did', 'all-in-one-seo-pack' );
@@ -167,14 +164,13 @@ class Review {
 		<div class="notice notice-info aioseo-review-plugin-cta is-dismissible">
 			<div class="step-3">
 				<p><?php echo $string1; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
-				<p><strong>~ Syed Balkhi<br><?php echo esc_html( $string8 ); ?></strong></p>
 				<p>
 					<a href="https://wordpress.org/support/plugin/all-in-one-seo-pack/reviews/?filter=5#new-post" class="aioseo-dismiss-review-notice" target="_blank" rel="noopener noreferrer">
 						<?php echo esc_html( $string9 ); ?>
-					</a><br />
+					</a>&nbsp;&bull;&nbsp;
 					<a href="#" class="aioseo-dismiss-review-notice-delay" target="_blank" rel="noopener noreferrer">
 						<?php echo esc_html( $string10 ); ?>
-					</a><br />
+					</a>&nbsp;&bull;&nbsp;
 					<a href="#" class="aioseo-dismiss-review-notice" target="_blank" rel="noopener noreferrer">
 						<?php echo esc_html( $string11 ); ?>
 					</a>

@@ -1,12 +1,9 @@
 import {
 	useLicenseStore,
-	useRootStore,
 	useSetupWizardStore
 } from '@/vue/stores'
 
 import addons from '@/vue/utils/addons'
-import CoreModal from '@/vue/components/common/core/modal/Index'
-import SvgClose from '@/vue/components/common/svg/Close'
 
 export const Wizard = {
 	computed : {
@@ -43,32 +40,5 @@ export const Wizard = {
 	mounted () {
 		const setupWizardStore        = useSetupWizardStore()
 		setupWizardStore.currentStage = this.stage
-	}
-}
-
-export const WizardUsageTracking = {
-	components : {
-		CoreModal,
-		SvgClose
-	},
-	data () {
-		return {
-			loading   : false,
-			showModal : false
-		}
-	},
-	methods : {
-		processOptIn () {
-			const setupWizardStore = useSetupWizardStore()
-
-			this.setupWizardStore.smartRecommendations.usageTracking = true
-			this.loading                                             = true
-
-			setupWizardStore.saveWizard('smartRecommendations')
-				.then(() => {
-					const rootStore      = useRootStore()
-					window.location.href = rootStore.aioseo.urls.aio.dashboard
-				})
-		}
 	}
 }

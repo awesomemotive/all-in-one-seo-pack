@@ -80,9 +80,10 @@
 			</core-settings-row>
 
 			<core-modal
-				v-if="showAreYouSureModal"
+				:show="showAreYouSureModal"
 				no-header
 				@close="showAreYouSureModal = false"
+				:classes="[ 'aioseo-debug-modal' ]"
 			>
 				<template #body >
 					<div class="aioseo-modal-body">
@@ -417,13 +418,15 @@ export default {
 	.aioseo-tabs.internal {
 		margin: 8px 0 var(--aioseo-gutter) 0;
 	}
+}
 
+.aioseo-debug-modal {
 	.aioseo-description:empty {
 		display: none;
 	}
 
 	.aioseo-modal-body {
-		padding: 20px 50px 50px;
+		padding: 20px 40px 40px;
 		display: flex;
 		align-items: center;
 		justify-content: center;

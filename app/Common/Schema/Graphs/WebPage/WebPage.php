@@ -81,8 +81,8 @@ class WebPage extends Graphs\Graph {
 				}
 			}
 
-			$data['datePublished'] = mysql2date( DATE_W3C, $post->post_date_gmt, false );
-			$data['dateModified']  = mysql2date( DATE_W3C, $post->post_modified_gmt, false );
+			$data['datePublished'] = mysql2date( DATE_W3C, $post->post_date, false );
+			$data['dateModified']  = mysql2date( DATE_W3C, $post->post_modified, false );
 
 			return $data;
 		}

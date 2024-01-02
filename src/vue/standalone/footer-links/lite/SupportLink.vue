@@ -1,6 +1,6 @@
 <template>
 	<a
-		:href="links.utmUrl('footer', rootStore.aioseo.page, 'https://aioseo.com/plugin/lite-support')"
+		:href="getUtmLink('https://aioseo.com/plugin/lite-support', 'support')"
 		target="_blank"
 		rel="noreferrer noopener"
 	>
@@ -8,23 +8,13 @@
 	</a>
 </template>
 
-<script>
-import { useRootStore } from '@/vue/stores'
-import links from '@/vue/utils/links'
+<script setup>
+import { __ } from '@wordpress/i18n'
+import { getUtmLink } from '../composables/utmLink'
 
-export default {
-	setup () {
-		return {
-			links,
-			rootStore : useRootStore()
-		}
-	},
-	data () {
-		return {
-			strings : {
-				support : this.$t.__('Support', this.$td)
-			}
-		}
-	}
+const td = import.meta.env.VITE_TEXTDOMAIN
+
+const strings = {
+	support : __('Support', td)
 }
 </script>

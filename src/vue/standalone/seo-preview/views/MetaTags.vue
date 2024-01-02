@@ -78,7 +78,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .aioseo-seo-preview-standalone-view-meta-tags {
 	dl {
 		margin: 0;

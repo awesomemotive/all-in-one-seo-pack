@@ -127,9 +127,10 @@
 		</div>
 
 		<core-modal
-			v-if="showNetworkModal"
+			:show="showNetworkModal"
 			no-header
 			@close="closeNetworkModal(false)"
+			:classes="[ 'aioseo-feature-card-modal' ]"
 		>
 			<template #body>
 				<div class="aioseo-modal-body">
@@ -446,9 +447,11 @@ export default {
 			}
 		}
 	}
+}
 
+.aioseo-feature-card-modal {
 	.aioseo-modal-body {
-		padding: 20px 50px 50px;
+		padding: 20px 40px 40px;
 		display: flex;
 		align-items: center;
 		justify-content: center;

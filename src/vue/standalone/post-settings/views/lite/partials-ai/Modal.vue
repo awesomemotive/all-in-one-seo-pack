@@ -1,5 +1,5 @@
 <template>
-	<core-modal-portal
+	<core-modal
 		:classes="[ 'aioseo-ai-generator-modal' ]"
 		@close="settingsStore.setModalState({
 			modalName : 'aiGenerator',
@@ -11,36 +11,6 @@
 		</template>
 
 		<template #body>
-			<div class="aioseo-ai-unlicensed-modal">
-				<core-blur>
-					<div class="list">
-						<div class="suggestions">
-							<div
-								class="suggestion"
-								v-for="(suggestion, index) in suggestions['title']"
-								:key="index"
-							>
-								<base-editor
-									ref="editor"
-									:value="suggestion"
-									single
-									disabled
-								>
-									<template #append-button>
-										<button
-											type="button"
-											disabled
-										>
-											<svg-circle-plus />
-										</button>
-									</template>
-								</base-editor>
-							</div>
-						</div>
-					</div>
-				</core-blur>
-			</div>
-
 			<div class="cta">
 				<img
 					:src="getAssetUrl(OpenAiImage)"
@@ -49,8 +19,8 @@
 
 				<div class="bottom">
 					<div>
-						<p class="title">{{ctaHeaderTitle}}</p>
-						<p>{{ctaDescription}}</p>
+						<p class="title">{{ ctaHeaderTitle }}</p>
+						<p>{{ ctaDescription }}</p>
 					</div>
 
 					<div>
@@ -68,7 +38,7 @@
 				</div>
 			</div>
 		</template>
-	</core-modal-portal>
+	</core-modal>
 </template>
 
 <script>
@@ -77,11 +47,8 @@ import {
 } from '@/vue/stores'
 
 import { getAssetUrl } from '@/vue/utils/helpers'
-import BaseEditor from '@/vue/components/common/base/Editor'
-import CoreBlur from '@/vue/components/common/core/Blur'
-import CoreModalPortal from '@/vue/components/common/core/modal/Portal'
+import CoreModal from '@/vue/components/common/core/modal/Index'
 import OpenAiImage from '@/vue/assets/images/ai/open-ai.png'
-import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 export default {
 	setup () {
 		return {
@@ -90,10 +57,7 @@ export default {
 		}
 	},
 	components : {
-		BaseEditor,
-		CoreBlur,
-		CoreModalPortal,
-		SvgCirclePlus
+		CoreModal
 	},
 	props : {
 		type : {
@@ -104,15 +68,6 @@ export default {
 	data () {
 		return {
 			OpenAiImage,
-			suggestions : {
-				title : [
-					'21 Amazing Blog Design Examples to Inspire Your Creativity',
-					'Create a Good First Impression with 21 Amazing Blog Design Examples',
-					'Create a Good First Impression: 21 Amazing Blog Design Examples to Spark Your Creativity',
-					'Create a Good First Impression With 21 Eye-Catching Blog Design Examples',
-					'Create a First Impression with 21 Eye-Catching Blog Design Examples'
-				]
-			},
 			strings : {
 				upgradeToPro  : this.$t.__('Upgrade to Pro Today', this.$td),
 				learnMoreLink : this.$t.sprintf(
@@ -179,7 +134,7 @@ export default {
 
 <style lang="scss">
 .aioseo-ai-generator-modal {
-	.modal-mask .modal-wrapper {
+	.modal-wrapper {
 		.modal-container {
 			max-width: 850px;
 
@@ -189,10 +144,6 @@ export default {
 
 			.modal-body {
 				position: relative;
-
-				.aioseo-ai-unlicensed-modal {
-					height: 450px;
-				}
 
 				.list {
 					.suggestions {
@@ -231,14 +182,7 @@ export default {
 				}
 
 				.cta {
-					max-width: 720px;
-					position: absolute;
-					top: 20px;
-					left: 0;
-					right: 0;
-					margin-left: auto;
-					margin-right: auto;
-
+					padding: 0 0 40px;
 					background-color: white;
 
 					img {

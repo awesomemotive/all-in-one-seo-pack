@@ -379,6 +379,8 @@ export default {
 
 		&.aioseo-trash {
 			color: $gray2;
+			width: 20px;
+			height: 20px;
 
 			&:hover {
 				color: $red;
@@ -395,6 +397,14 @@ export default {
 		svg {
 			color: #fff;
 			margin-right: 6px;
+		}
+	}
+
+	.redirects-options-table {
+		thead, tfoot {
+			td {
+				height: 50px;
+			}
 		}
 	}
 }

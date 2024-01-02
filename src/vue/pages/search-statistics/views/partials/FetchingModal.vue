@@ -1,6 +1,6 @@
 <template>
 	<core-modal
-		v-if="searchStatisticsStore.fetching"
+		:show="searchStatisticsStore.fetching"
 		:classes="[ 'aioseo-fetching-data' ]"
 		noHeader
 	>
@@ -53,7 +53,7 @@ export default {
 .aioseo-fetching-data {
 	text-align: center;
 
-	.modal-mask .modal-wrapper .modal-container {
+	.modal-wrapper .modal-container {
 		max-width: 400px;
 
 		.modal-body {

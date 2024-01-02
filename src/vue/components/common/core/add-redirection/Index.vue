@@ -486,6 +486,7 @@ export default {
 				}
 			})
 				.then(() => {
+					this.$emit('added-redirect')
 					this.reset()
 				})
 				.catch(error => {
@@ -616,6 +617,13 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/vue/assets/scss/redirects/table.scss';
+
+.aioseo-redirects.modal {
+	.bd {
+		padding: 20px;
+	}
+}
 .aioseo-add-redirection {
 	&.edit-url {
 		.urls {
@@ -643,6 +651,7 @@ export default {
 	.aioseo-settings-row {
 		.settings-name {
 			.name {
+				line-height: 1.4;
 				font-size: 14px;
 				font-weight: 600;
 				margin-bottom: 5px;
@@ -674,7 +683,7 @@ export default {
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			margin: 40px 30px;
+			margin: 36px 30px;
 
 			&:empty {
 				margin-block: 0;
@@ -729,7 +738,7 @@ export default {
 			}
 
 			.aioseo-description {
-				height: 30px;
+				margin: 8px 0;
 			}
 
 			.target-url-warning,

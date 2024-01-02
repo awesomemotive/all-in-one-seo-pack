@@ -112,8 +112,8 @@ export default {
 
 <style lang="scss">
 .aioseo-post-schema,
-.aioseo-post-schema-modal,
-.aioseo-post-schema-modal-cta {
+.aioseo-modal.aioseo-post-schema-modal,
+.aioseo-modal.aioseo-post-schema-modal-cta {
 	.graph-container {
 		flex: 0 1 32.22%;
 		max-width: 309.33px;
@@ -159,12 +159,15 @@ export default {
 
 				&.action-buttons {
 					display: inline-flex;
+					gap: 5px;
 
 					.aioseo-tooltip {
 						margin-left: 4px;
 					}
 
 					button {
+						line-height: 1;
+
 						&.small {
 							padding: 0 9px;
 						}

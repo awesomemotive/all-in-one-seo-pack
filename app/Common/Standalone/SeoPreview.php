@@ -79,6 +79,11 @@ class SeoPreview {
 
 		$this->enable = true;
 
+		// Prevent Autoptimize from optimizing the translations for the SEO Preview. If we don't do this, Autoptimize can break the frontend for certain languages - #5235.
+		if ( is_user_logged_in() && 'en_US' !== get_user_locale() ) {
+			add_filter( 'autoptimize_filter_noptimize', '__return_true' );
+		}
+
 		// As WordPress uses priority 10 to print footer scripts we use 9 to make sure our script still gets output.
 		add_action( 'wp_print_footer_scripts', [ $this, 'enqueueScript' ], 9 );
 	}

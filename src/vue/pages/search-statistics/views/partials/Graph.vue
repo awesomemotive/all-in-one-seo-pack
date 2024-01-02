@@ -483,7 +483,6 @@ export default {
 
 							this.timelineMarkersDate = key
 							this.showTimelineMarkersTooltip(target)
-							console.log('enter')
 						},
 						mouseLeave : (_pointer, event) => {
 							if ('string' === event.toElement.className && event.toElement.className.includes('popper')) {

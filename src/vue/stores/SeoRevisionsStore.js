@@ -90,9 +90,6 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 						})
 				}
 			})
-		},
-		toggleModalOpenSidebar () {
-			this.modalOpenSidebar = !this.modalOpenSidebar
 		}
 	}
 })

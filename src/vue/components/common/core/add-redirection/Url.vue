@@ -62,44 +62,28 @@
 			:active="showOptions"
 			class="source-url-options"
 		>
-			<div>
-				<grid-row>
-					<grid-column
-						xs="4"
-					>
-						<base-checkbox
-							size="medium"
-							:modelValue="url.ignoreSlash"
-							@update:modelValue="value => updateOption('ignoreSlash', value)"
-						>
-							{{ strings.ignoreSlash }}
-						</base-checkbox>
-					</grid-column>
-					<grid-column
-						xs="4"
-					>
-						<base-checkbox
-							size="medium"
-							:modelValue="url.ignoreCase"
-							@update:modelValue="value => updateOption('ignoreCase', value)"
-						>
-							{{ strings.ignoreCase }}
-						</base-checkbox>
-					</grid-column>
-					<grid-column
-						xs="4"
-						v-if="!log404 && !disableSource"
-					>
-						<base-checkbox
-							size="medium"
-							:modelValue="url.regex"
-							@update:modelValue="value => updateOption('regex', value)"
-						>
-							{{ strings.regex }}
-						</base-checkbox>
-					</grid-column>
-				</grid-row>
-			</div>
+			<base-checkbox
+				size="medium"
+				:modelValue="url.ignoreSlash"
+				@update:modelValue="value => updateOption('ignoreSlash', value)"
+			>
+				{{ strings.ignoreSlash }}
+			</base-checkbox>
+			<base-checkbox
+				size="medium"
+				:modelValue="url.ignoreCase"
+				@update:modelValue="value => updateOption('ignoreCase', value)"
+			>
+				{{ strings.ignoreCase }}
+			</base-checkbox>
+			<base-checkbox
+				v-if="!log404 && !disableSource"
+				size="medium"
+				:modelValue="url.regex"
+				@update:modelValue="value => updateOption('regex', value)"
+			>
+				{{ strings.regex }}
+			</base-checkbox>
 		</transition-slide>
 
 		<transition-slide
@@ -143,8 +127,6 @@ import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreAddRedirectionUrlResults from '@/vue/components/common/core/add-redirection/UrlResults'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreLoader from '@/vue/components/common/core/Loader'
-import GridColumn from '@/vue/components/common/grid/Column'
-import GridRow from '@/vue/components/common/grid/Row'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation'
@@ -164,8 +146,6 @@ export default {
 		CoreAddRedirectionUrlResults,
 		CoreAlert,
 		CoreLoader,
-		GridColumn,
-		GridRow,
 		SvgCircleCheck,
 		SvgCircleClose,
 		SvgCircleExclamation,
@@ -510,13 +490,10 @@ export default {
 	}
 
 	.source-url-options {
-		> div {
-			padding-bottom: 5px;
-
-			> div {
-				margin-bottom: 5px;
-			}
-		}
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 30px;
+		margin: 10px 0;
 	}
 }
 </style>

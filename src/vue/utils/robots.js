@@ -1,3 +1,5 @@
+import { escapeRegex } from '@/vue/utils/regex'
+
 /**
  * Converts an array of robots.txt rules into a string.
  *
@@ -142,7 +144,7 @@ export const validateRuleset = (ruleset) => {
 					}
 
 					// Check for equivalent path matches.
-					const equivalentPattern = new RegExp(`^${nextValue.replace(/\*+$/g, '')}$`)
+					const equivalentPattern = new RegExp(`^${escapeRegex(nextValue.replace(/\*+$/g, ''))}$`)
 					if (-1 !== nextValue.indexOf('*') && value.match(equivalentPattern)) {
 						errors = fillErrors(errors, 'red', 'equivalentPath', ruleset[userAgent][nextIndex], {
 							previewIndex,

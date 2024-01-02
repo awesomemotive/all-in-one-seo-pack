@@ -39,6 +39,7 @@
 					<core-emoji
 						v-model:show="showEmojiPicker"
 						@selected-emoji="insertSelectedEmoji"
+						modal-name="aioseo-emoji-picker"
 					/>
 				</div>
 

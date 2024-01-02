@@ -95,12 +95,11 @@ export default {
 				visitSite  : this.$t.__('Visit Site', this.$td),
 				dashboard  : this.$t.__('Dashboard', this.$td),
 				ctaHeader  : this.$t.sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('This feature is not available in your current plan.', this.$td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
+					// Translators: 1 - "PRO".
+					this.$t.__('Domain Activations is a %1$s Feature', this.$td),
+					'PRO'
 				),
-				ctaButtonText                   : this.$t.__('Upgrade Your Plan and Unlock Network Tools', this.$td),
+				ctaButtonText                   : this.$t.__('Unlock Domain Activations', this.$td),
 				networkDatabaseToolsDescription : this.$t.__('Unlock network-level tools to manage all your sites from one easy-to-use location. Manage your license key activations for each individual domain.', this.$td)
 			}
 		}

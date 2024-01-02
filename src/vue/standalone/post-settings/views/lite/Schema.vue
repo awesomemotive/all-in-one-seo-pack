@@ -76,12 +76,12 @@
 				</div>
 
 				<cta-modal
-					v-if="!isSidebar && modalOpenMetabox"
+					:show="!isSidebar && modalOpenMetabox"
 					@close="modalOpenMetabox = false"
 				/>
 
 				<cta-modal
-					v-if="isSidebar && modalOpenSidebar"
+					:show="isSidebar && modalOpenSidebar"
 					@close="modalOpenSidebar = false"
 				/>
 			</template>
@@ -201,32 +201,30 @@ export default {
 	}
 }
 
-.aioseo-post-schema-modal-cta {
-	.modal-mask {
-		.modal-wrapper {
-			.modal-container {
-				max-width: 1000px;
-				overflow: visible;
+.aioseo-modal.aioseo-post-schema-modal-cta {
+	.modal-wrapper {
+		.modal-container {
+			max-width: 1000px;
+			overflow: visible;
 
-				.modal-header {
-					padding: 0 0 0 18px;
+			.modal-header {
+				padding: 0 0 0 18px;
 
-					display: flex;
-					align-items: center;
-				}
+				display: flex;
+				align-items: center;
+			}
 
-				.modal-body {
-					position: unset;
-				}
+			.modal-body {
+				position: unset;
+			}
 
-				svg.aioseo-circle-question-mark {
-					width: 16px;
-					height: 16px;
-					color: $placeholder-color;
+			svg.aioseo-circle-question-mark {
+				width: 16px;
+				height: 16px;
+				color: $placeholder-color;
 
-					&:hover {
-						cursor: pointer;
-					}
+				&:hover {
+					cursor: pointer;
 				}
 			}
 		}
@@ -234,8 +232,8 @@ export default {
 }
 
 .aioseo-post-schema,
-.aioseo-post-schema-modal,
-.aioseo-post-schema-modal-cta {
+.aioseo-modal.aioseo-post-schema-modal,
+.aioseo-modal.aioseo-post-schema-modal-cta {
 		svg {
 		&.aioseo-article,
 		&.aioseo-dataset,
@@ -339,7 +337,7 @@ export default {
 	}
 
 	.aioseo-modal-body {
-		padding: 20px 50px 50px;
+		padding: 20px 40px 40px;
 		display: flex;
 		align-items: center;
 		justify-content: center;

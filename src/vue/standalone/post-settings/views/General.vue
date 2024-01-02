@@ -139,6 +139,7 @@
 			v-if="
 				'metabox' === $root._data.screenContext &&
 				'post' === postEditorStore.currentPost.context &&
+				'attachment' !== postEditorStore.currentPost.postType &&
 				!isPageBuilderEditor()
 			"
 			id="aioseo-post-settings-cornerstone-content-row"
@@ -508,7 +509,7 @@ export default {
 		editSnippetEv () {
 			this.editSnippet = !this.editSnippet
 			this.settingsStore.changeTabSettings({ setting: 'modal', value: 'general' })
-			this.postEditorStore.openModal(true)
+			this.postEditorStore.currentPost.modalOpen = true
 		},
 		getDefaultTags (location) {
 			switch (location) {

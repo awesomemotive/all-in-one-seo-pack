@@ -100,10 +100,11 @@
 						</base-button>
 
 						<core-alert
-							class="no-border text-center"
+							class="bonus-alert"
 							type="yellow"
-							v-html="strings.bonusText"
-						/>
+						>
+							🎁 <span v-html="strings.bonusText" />
+						</core-alert>
 					</div>
 				</template>
 
@@ -201,10 +202,11 @@ export default {
 				seeAdvancedSettings : this.$t.__('See Advanced Settings', this.$td),
 				setupWebmasterTools : this.$t.__('Setup Webmaster Tools', this.$td),
 				bonusText           : this.$t.sprintf(
-					// Translators: 1 - Opening bold tag, 2 - Closing bold tag, 3 - Opening bold tag, 4 - Percent between 1-100, 5 - Closing bold tag.
-					this.$t.__('%1$sBonus:%2$s You can upgrade your plan today and %3$ssave %4$s off%5$s (discount auto-applied).', this.$td),
+					// Translators: 1 - Opening bold tag, 2 - Closing bold tag, 3 - "Pro", 4 - Opening bold tag, 5 - A discount percentage (e.g. "50%"), 6 - Closing bold tag.
+					this.$t.__('%1$sBonus:%2$s You can upgrade to the %3$s plan today and %4$ssave %5$s off%6$s (discount auto-applied).', this.$td),
 					'<strong>',
 					'</strong>',
+					'Pro',
 					'<strong>',
 					this.$constants.DISCOUNT_PERCENTAGE,
 					'</strong>'
@@ -360,10 +362,6 @@ export default {
 				width: 100%;
 			}
 
-			.aioseo-button {
-				margin-bottom: 40px;
-			}
-
 			.feature-list {
 				color: $black;
 				font-size: 16px;
@@ -385,6 +383,11 @@ export default {
 					}
 				}
 			}
+		}
+
+		.bonus-alert {
+			margin: 24px auto;
+			max-width: 650px;
 		}
 	}
 }

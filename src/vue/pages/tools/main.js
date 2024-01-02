@@ -20,7 +20,7 @@ app     = loadVersionedComponents(app)
 // If this is not an apache site, let's hide the .htaccess editor.
 const router = startRouter(
 	paths
-		.filter(p => 'htaccess-editor' !== p.name || (window.aioseo.data.server.apache && !window.aioseo.data.isNetworkAdmin))
+		.filter(p => 'htaccess-editor' !== p.name || (window.aioseo.data.server.match(/apache|litespeed/) && !window.aioseo.data.isNetworkAdmin))
 		.filter(p => 'bad-bot-blocker' !== p.name || (window.aioseo.internalOptions.internal.deprecatedOptions.includes('badBotBlocker') && !window.aioseo.data.isNetworkAdmin))
 		.filter(p => 'debug' !== p.name || window.aioseo.data.isDev)
 		.filter(p => 'system-status' !== p.name || !window.aioseo.data.isNetworkAdmin),

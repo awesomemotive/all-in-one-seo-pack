@@ -243,7 +243,7 @@ const hideModalOnOutsideClick = (event) => {
 	}
 
 	const elem                 = event.target
-	const seoModalSelector     = '.aioseo-modal'
+	const seoModalSelector     = '.aioseo-pagebuilder-modal'
 	const previewModalSelector = '.aioseo-app.aioseo-post-settings-modal'
 
 	if (
@@ -264,7 +264,7 @@ const hideModalOnOutsideClick = (event) => {
  * @returns {bool} Whether the SEO modal is open or not.
  */
 const isModalOpen = () => {
-	return !document.querySelector('.aioseo-modal').classList.contains('aioseo-modal-is-closed')
+	return !document.querySelector('.aioseo-pagebuilder-modal').classList.contains('aioseo-pagebuilder-modal-is-closed')
 }
 
 /**

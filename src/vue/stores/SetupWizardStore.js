@@ -86,7 +86,8 @@ export const useSetupWizardStore = defineStore('SetupWizardStore', {
 			accountInfo   : null,
 			usageTracking : true
 		},
-		licenseKey : null
+		licenseKey             : null,
+		showUsageTrackingModal : false
 	}),
 	getters : {
 		shouldShowImportStep : () => {
@@ -128,10 +129,15 @@ export const useSetupWizardStore = defineStore('SetupWizardStore', {
 	actions : {
 		saveWizard (section) {
 			const rootStore = useRootStore()
+			const wizard    = { ...this.$state }
+
+			// Force the usage tracking modal to be hidden.
+			wizard.showUsageTrackingModal = false
+
 			return http.post(links.restUrl('wizard'))
 				.send({
 					section,
-					wizard  : { ...this.$state },
+					wizard,
 					network : rootStore.aioseo.data.isNetworkAdmin
 				})
 				.then(response => {

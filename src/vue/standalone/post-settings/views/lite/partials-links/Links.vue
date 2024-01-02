@@ -49,10 +49,10 @@
 			</cta>
 		</div>
 
-		<core-modal-portal
+		<core-modal
+			:show="postEditorStore.currentPost.linkAssistant.modalOpen && 'sidebar' === $root._data.screenContext"
 			:classes="[ 'aioseo-link-assistant-modal' ]"
-			v-if="postEditorStore.currentPost.linkAssistant.modalOpen && 'sidebar' === $root._data.screenContext"
-			@close="postEditorStore.toggleLinkAssistantModal"
+			@close="postEditorStore.currentPost.linkAssistant.modalOpen = false"
 		>
 			<template #headerTitle>
 				{{ modalHeader }}
@@ -106,7 +106,7 @@
 					</template>
 				</cta>
 			</template>
-		</core-modal-portal>
+		</core-modal>
 
 		<links-side-bar v-if="'modal' !== this.parentComponentContext" />
 	</div>
@@ -121,7 +121,7 @@ import {
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
-import CoreModalPortal from '@/vue/components/common/core/modal/Portal'
+import CoreModal from '@/vue/components/common/core/modal/Index'
 import Cta from '@/vue/components/common/cta/Index'
 import LinksSideBar from './../../LinksSideBar'
 import LinkAssistantInboundInternal from '@/vue/components/common/link-assistant/InboundInternal'
@@ -142,7 +142,7 @@ export default {
 		CoreAlert,
 		CoreBlur,
 		CoreMainTabs,
-		CoreModalPortal,
+		CoreModal,
 		Cta,
 		LinkAssistantInboundInternal,
 		LinksSideBar,

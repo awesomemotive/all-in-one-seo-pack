@@ -36,5 +36,14 @@ export default [
 			access : 'aioseo_local_seo_settings',
 			name   : __('Maps', td)
 		}
+	},
+	{
+		path      : '/import',
+		name      : 'import',
+		component : loadView('Main'),
+		meta      : {
+			access : 'aioseo_local_seo_settings',
+			name   : __('Import', td)
+		}
 	}
 ]

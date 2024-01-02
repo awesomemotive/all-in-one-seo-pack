@@ -356,6 +356,8 @@ export default {
 		}
 
 		.aioseo-row {
+			margin-top: 12px;
+
 			.aioseo-col {
 				display: flex;
 				align-items: center;

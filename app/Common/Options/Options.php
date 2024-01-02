@@ -280,7 +280,7 @@ TEMPLATE
 				'useCategoriesForMetaKeywords' => [ 'type' => 'boolean', 'default' => false ],
 				'useTagsForMetaKeywords'       => [ 'type' => 'boolean', 'default' => false ],
 				'dynamicallyGenerateKeywords'  => [ 'type' => 'boolean', 'default' => false ],
-				'pagedFormat'                  => [ 'type' => 'string', 'default' => '- Page #page_number', 'localized' => true ],
+				'pagedFormat'                  => [ 'type' => 'string', 'default' => '#separator_sa Page #page_number', 'localized' => true ],
 				'runShortcodes'                => [ 'type' => 'boolean', 'default' => false ],
 				'crawlCleanup'                 => [
 					'enable'                      => [ 'type' => 'boolean', 'default' => false ],
