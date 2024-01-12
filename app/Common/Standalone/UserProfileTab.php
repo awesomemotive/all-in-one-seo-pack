@@ -59,7 +59,7 @@ class UserProfileTab {
 	 *
 	 * @return array
 	 */
-	private function getVueData() {
+	public function getVueData() {
 		global $user_id;
 
 		$socialProfiles = $this->getSocialProfiles();

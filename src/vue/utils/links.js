@@ -104,7 +104,9 @@ const docLinks      = {
 	openAi                        : `${marketingSite}docs/using-openai-to-generate-seo-titles-and-meta-descriptions/`,
 	wpcode                        : `${marketingSite}docs/wpcode-snippet-library/`,
 	primaryTerm                   : `${marketingSite}docs/setting-the-primary-term-for-breadcrumbs/`,
-	cornerstoneContent            : `${marketingSite}docs/cornerstone-content/`
+	cornerstoneContent            : `${marketingSite}docs/cornerstone-content/`,
+	eeat                          : `${marketingSite}docs/adding-author-seo-e-e-a-t-to-your-site/`,
+	eeatAuthorBioInjection        : `${marketingSite}docs/adding-author-seo-e-e-a-t-to-your-site/#aioseo-automatically-displaying-the-author-excerpt`
 }
 
 const upsellLinks = {

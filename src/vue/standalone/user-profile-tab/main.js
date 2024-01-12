@@ -19,7 +19,7 @@ const insertRequiredElements = () => {
 	}
 	// Add our tab bar and hidden form field.
 	const targetElement = document.createElement('div')
-	targetElement.id    = 'aioseo-user-profile-tab'
+	targetElement.id    = 'aioseo-user-profile-tab-wrapper'
 
 	const hiddenInputElement = document.createElement('input')
 	hiddenInputElement.id    = 'aioseo-user-social-profiles'
@@ -39,7 +39,7 @@ const mountApp = () => {
 	// Use the pinia store.
 	loadPiniaStores(app)
 
-	app.mount('#aioseo-user-profile-tab')
+	app.mount('#aioseo-user-profile-tab-wrapper')
 }
 
 elemLoaded('#your-profile', 'profilePageLoaded')

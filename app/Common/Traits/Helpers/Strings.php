@@ -475,7 +475,7 @@ trait Strings {
 
 		$isValid = true;
 
-		if ( false === preg_match( $pattern, null ) ) {
+		if ( false === preg_match( $pattern, '' ) ) {
 			$isValid = false;
 		}
 

@@ -76,7 +76,10 @@ export default {
 </script>
 
 <style lang="scss">
-.aioseo-app .aioseo-cta .aioseo-cta-background .description .aioseo-alert.aioseo-required-plans {
-	text-align: center;
+.aioseo-app,
+#aioseo-user-profile-tab {
+	.aioseo-cta .aioseo-cta-background .description .aioseo-alert.aioseo-required-plans {
+		text-align: center;
+	}
 }
 </style>

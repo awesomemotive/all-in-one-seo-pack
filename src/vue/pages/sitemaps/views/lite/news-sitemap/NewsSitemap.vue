@@ -41,10 +41,10 @@ import {
 
 import { useNewsSitemap } from '@/vue/pages/sitemaps/composables'
 import Blur from './Blur'
-import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import Cta from '@/vue/components/common/cta/Index'
+import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 export default {
 	setup () {
 		const { strings } = useNewsSitemap()
@@ -56,10 +56,10 @@ export default {
 	},
 	components : {
 		Blur,
-		RequiredPlans,
 		CoreCard,
 		CoreProBadge,
-		Cta
+		Cta,
+		RequiredPlans
 	}
 }
 </script>

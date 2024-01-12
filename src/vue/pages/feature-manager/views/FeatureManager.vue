@@ -182,6 +182,7 @@ import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgClose from '@/vue/components/common/svg/Close'
 import SvgCode from '@/vue/components/common/svg/Code'
+import SvgEeat from '@/vue/components/common/svg/Eeat'
 import SvgImageSeo from '@/vue/components/common/svg/ImageSeo'
 import SvgLinkAssistant from '@/vue/components/common/svg/link/Assistant'
 import SvgLocalBusiness from '@/vue/components/common/svg/local/Business'
@@ -206,6 +207,7 @@ export default {
 		GridRow,
 		SvgClose,
 		SvgCode,
+		SvgEeat,
 		SvgImageSeo,
 		SvgLinkAssistant,
 		SvgLocalBusiness,
@@ -302,6 +304,9 @@ export default {
 			}
 		},
 		getIconComponent (icon) {
+			if (!icon) {
+				return 'img'
+			}
 			return icon.startsWith('svg-') ? icon : 'img'
 		},
 		getIconSrc (icon, image) {
@@ -385,6 +390,9 @@ export default {
 					this.loading.deactivateAll = false
 				})
 		}
+	},
+	beforeMount () {
+		console.log(this.getAddons)
 	}
 }
 </script>

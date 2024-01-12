@@ -930,11 +930,7 @@ class Tags {
 			case 'taxonomy_title':
 				$title = $this->getTaxonomyTitle( $postId );
 
-				if ( empty( $postId ) ) {
-					return $sampleData ? __( 'Sample Taxonomy Title', 'all-in-one-seo-pack' ) : '';
-				}
-
-				return $title;
+				return ! $title && $sampleData ? __( 'Sample Taxonomy Title', 'all-in-one-seo-pack' ) : $title;
 			case 'tax_parent_name':
 				$termObject       = get_term( $id );
 				$parentTermObject = ! empty( $termObject->parent ) ? get_term( $termObject->parent ) : '';

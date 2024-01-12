@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta ti
 Tested up to: 6.4.2
 Requires at least: 4.9
 Requires PHP: 7.0
-Stable tag: 4.5.3.1
+Stable tag: 4.5.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -148,6 +148,7 @@ Since redirect speed is important for SEO, we built in both Apache / NGINX serve
 * **Advanced SEO Schema** - Easily add advanced SEO schema markups like FAQ schema, product schema, recipe schema (food blogger SEO), software application schema markup (SaaS SEO), online course schema (for course SEO), and more using our Schema Generator.
 * **Sitelinks Search Box** - Helps you get a search box in Google SEO rankings.
 * **Google Site Links** - Our SEO markup can help you get sitelinks for your brand.
+* **Author SEO** - Boost your SEO performance by highlighting the professional expertise and trustworthiness of your authors, aligning with Google's E-E-A-T standards.
 * **Robots.txt Editor** - Control what SEO robots can see with our easy SEO robots.txt editor.
 * **SEO Audit Checklist** - Improve your website's SEO ranking with our SEO audit checklist.
 * **Google Search Console** - Connect your WordPress site with Google webmaster tools and Google Search Console to see additional SEO insights (like content rankings, keyword rankings, keyword tracking, page speed insights and more) directly in your WordPress dashboard and submit your XML sitemaps within minutes.
@@ -213,6 +214,9 @@ Since redirect speed is important for SEO, we built in both Apache / NGINX serve
 * **Local Business Maps** - embed maps directly on your location pages to allow your customers to easily find your location with driving directions and reviews.
 * **Local Business Opening Hours** - display the hours that your local business is open or closed.
 * **Breadcrumbs** - output a breadcrumb trail for your current page or post.
+* **Author Bio** - display an author bio for the author of your current post or author archive page.
+* **Author Name** - display the name of the author of your current post or author archive page.
+* **Reviewer Name** - display the name of the reviewer of your current post.
 
 **After reading this feature list, you can probably imagine why AIOSEO is the best WordPress SEO plugin in the market.**
 
@@ -260,6 +264,12 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 
 == Changelog ==
+
+**New in Version 4.5.4**
+
+* New: Author SEO (E-E-A-T) Addon - Optimize your site for Google's E-E-A-T ranking factor by proving your writer's expertise through author schema markup and new UI elements.
+* Fixed: Plugin conflict where post content sometimes disappeared in the post editor when using AIOSEO, Avada and the Classic Editor.
+* Fixed: Taxonomy title smart tag not outputting proper value when archive page has no posts.
 
 **New in Version 4.5.3.1**
 
@@ -727,6 +737,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.5.3.1 =
+= 4.5.4 =
 
 This update adds major improvements and bug fixes.

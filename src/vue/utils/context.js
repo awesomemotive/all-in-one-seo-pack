@@ -36,7 +36,7 @@ export const isWPBakeryEditor = () => {
 }
 
 export const isAvadaEditor = () => {
-	return !!(window.FusionApp || window.FusionPageBuilderApp)
+	return (window.FusionApp || window.FusionPageBuilderApp)?.builderActive
 }
 
 export const isWooCommerceProduct = () => {

@@ -128,6 +128,7 @@ import '@/vue/plugins/quill/quill-character-counter'
 import '@/vue/plugins/quill/quill-auto-link'
 import '@/vue/plugins/quill/quill-phrase-editor-formats'
 import '@/vue/plugins/quill/quill-preserve-whitespace'
+import BaseInput from '@/vue/components/common/base/Input'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgPlus from '@/vue/components/common/svg/Plus'
 import SvgTrash from '@/vue/components/common/svg/Trash'
@@ -143,6 +144,7 @@ export default {
 	},
 	emits      : [ 'counter', 'selection-change', 'updateEditor', 'focus', 'blur', 'update:modelValue' ],
 	components : {
+		BaseInput,
 		SvgCaret,
 		SvgPlus,
 		SvgTrash

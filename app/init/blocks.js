@@ -34,3 +34,12 @@ registerBlockType('aioseo/locationmap', {
 registerBlockType('aioseo/openinghours', {
 	title : 'AIOSEO - Local Business Opening Hours'
 })
+registerBlockType('aioseo/openinghours', {
+	title : 'AIOSEO - Author Bio (E-E-A-T)'
+})
+registerBlockType('aioseo/openinghours', {
+	title : 'AIOSEO - Author Name (E-E-A-T)'
+})
+registerBlockType('aioseo/openinghours', {
+	title : 'AIOSEO - Reviewer Name (E-E-A-T)'
+})

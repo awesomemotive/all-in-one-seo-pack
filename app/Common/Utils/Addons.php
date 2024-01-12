@@ -96,13 +96,22 @@ class Addons {
 	private $videoSitemap = null;
 
 	/**
-	 * The main LinkAssistant addon class.
+	 * The main Link Assistant addon class.
 	 *
 	 * @since 4.4.2
 	 *
 	 * @var \AIOSEO\Plugin\Addon\LinkAssistant\LinkAssistant
 	 */
 	private $linkAssistant = null;
+
+	/**
+	 * The main EEAT addon class.
+	 *
+	 * @since 4.5.4
+	 *
+	 * @var \AIOSEO\Plugin\Addon\LinkAssistant\LinkAssistant
+	 */
+	private $eeat = null;
 
 	/**
 	 * Returns our addons.
@@ -131,6 +140,10 @@ class Addons {
 
 		$installedPlugins = array_keys( get_plugins() );
 		foreach ( $addons as $key => $addon ) {
+			if ( ! is_object( $addon ) ) {
+				continue;
+			}
+
 			$addons[ $key ]->basename          = $this->getAddonBasename( $addon->sku );
 			$addons[ $key ]->installed         = in_array( $this->getAddonBasename( $addon->sku ), $installedPlugins, true );
 			$addons[ $key ]->isActive          = is_plugin_active( $addons[ $key ]->basename );
@@ -201,6 +214,10 @@ class Addons {
 
 		$addons = $this->getAddons();
 		foreach ( $addons as $addon ) {
+			if ( ! is_object( $addon ) ) {
+				continue;
+			}
+
 			if ( $addon->isActive ) {
 				$unlicensed['addons'][] = $addon;
 			}
@@ -568,6 +585,38 @@ class Addons {
 	 */
 	protected function getDefaultAddons() {
 		return json_decode( wp_json_encode( [
+			[
+				'sku'                => 'aioseo-eeat',
+				'name'               => 'Author SEO (E-E-A-T)',
+				'version'            => '1.0.0',
+				'image'              => null,
+				'icon'               => 'svg-eeat',
+				'levels'             => [
+					'plus',
+					'pro',
+					'elite',
+				],
+				'currentLevels'      => [
+					'plus',
+					'pro',
+					'elite'
+				],
+				'requiresUpgrade'    => true,
+				'description'        => '<p>Optimize your site for Google\'s E-E-A-T ranking factor by proving your writer\'s expertise through author schema markup and new UI elements.</p>',
+				'descriptionVersion' => 0,
+				'productUrl'         => 'https://aioseo.com/author-seo-eeat/',
+				'learnMoreUrl'       => 'https://aioseo.com/author-seo-eeat/',
+				'manageUrl'          => '',
+				'basename'           => 'aioseo-eeat/aioseo-eeat.php',
+				'installed'          => false,
+				'isActive'           => false,
+				'canInstall'         => false,
+				'canActivate'        => false,
+				'canUpdate'          => false,
+				'capability'         => $this->getManageCapability( 'aioseo-eeat' ),
+				'minimumVersion'     => '0.0.0',
+				'hasMinimumVersion'  => false
+			],
 			[
 				'sku'                => 'aioseo-redirects',
 				'name'               => 'Redirection Manager',

@@ -74,6 +74,10 @@ const enableSaveButton = () => {
 }
 
 export default () => {
+	if (!(window.FusionApp || window.FusionPageBuilderApp)?.builderActive) {
+		return
+	}
+
 	processContent()
 
 	const fusionEvents = window.FusionEvents || window.FusionPageBuilderEvents || {}

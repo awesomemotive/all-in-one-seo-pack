@@ -126,6 +126,7 @@ trait Arrays {
 	 * Recursively intersects the two given arrays.
 	 * You can pass in an optional argument (allowedKey) to restrict the intersect to arrays with a specific key.
 	 * This is needed when we are e.g. sanitizing array values before setting/saving them to an option.
+	 * This helper method was mainly built to support our complex options architecture.
 	 *
 	 * @since 4.2.5
 	 *
@@ -137,7 +138,7 @@ trait Arrays {
 	 */
 	public function arrayIntersectRecursive( $array1, $array2, $allowedKey = '', $parentKey = '' ) {
 		if ( ! $allowedKey || $allowedKey === $parentKey ) {
-			$array1 = array_intersect_assoc( $array1, $array2 );
+			$array1 = $this->arrayIntersectRecursiveHelper( $array1, $array2 );
 		}
 
 		if ( empty( $array1 ) ) {
@@ -155,6 +156,54 @@ trait Arrays {
 		}
 
 		return $array1;
+	}
+
+	/**
+	 * Recursively intersects the two given arrays. Supports arrays with a mix of nested arrays and primitive values.
+	 * Helper function for arrayIntersectRecursive().
+	 *
+	 * @since 4.5.4
+	 *
+	 * @param  array $array1 The first array.
+	 * @param  array $array2 The second array.
+	 * @return array         The intersected array.
+	 */
+	private function arrayIntersectRecursiveHelper( $array1, $array2 ) {
+		if ( null === $array2 ) {
+			$array2 = [];
+		}
+
+		if ( is_array( $array1 ) ) {
+			// First, check with keys are nested arrays and which are primitive values.
+			$arrays     = [];
+			$primitives = [];
+			foreach ( $array1 as $k => $v ) {
+				if ( is_array( $v ) ) {
+					$arrays[ $k ] = $v;
+				} else {
+					$primitives[ $k ] = $v;
+				}
+			}
+
+			// Then, intersect the primitive values.
+			$intersectedPrimitives = array_intersect_assoc( $primitives, $array2 );
+
+			// Finally, recursively intersect the nested arrays.
+			$intersectedArrays = [];
+			foreach ( $arrays as $k => $v ) {
+				if ( isset( $array2[ $k ] ) ) {
+					$intersectedArrays[ $k ] = $this->arrayIntersectRecursiveHelper( $v, $array2[ $k ] );
+				} else {
+					// If the nested array doesn't exist in the second array, we can just unset it.
+					unset( $arrays[ $k ] );
+				}
+			}
+
+			// Merge the intersected arrays and primitive values.
+			return array_merge( $intersectedPrimitives, $intersectedArrays );
+		}
+
+		return array_intersect_assoc( $array1, $array2 );
 	}
 
 	/**

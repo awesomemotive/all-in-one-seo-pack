@@ -787,6 +787,11 @@ trait Options {
 			case 'array':
 				$array = [];
 				foreach ( (array) $value as $k => $v ) {
+					if ( is_array( $v ) ) {
+						$array[ $k ] = $this->sanitizeField( $v, 'array' );
+						continue;
+					}
+
 					$array[ $k ] = sanitize_text_field( $preserveHtml ? htmlspecialchars( $v, ENT_NOQUOTES, 'UTF-8' ) : $v );
 				}
 

@@ -10,7 +10,7 @@
 			v-if="!hideHeader"
 			class="header"
 			:class="[ { toggles : toggles } ]"
-			@click="settingsStore.toggleCard({ slug, shouldSave : saveToggleStatus })"
+			@click="toggleCard"
 		>
 			<div class="text">
 				<div class="header-icon">
@@ -95,7 +95,7 @@ export default {
 			settingsStore : useSettingsStore()
 		}
 	},
-	emits      : [ 'close-card' ],
+	emits      : [ 'close-card', 'toggle-card' ],
 	components : {
 		CoreTooltip,
 		SvgCaret,
@@ -138,6 +138,12 @@ export default {
 			if (value && !this.settingsStore.settings.toggledCards[slug]) {
 				this.settingsStore.toggleCard({ slug, shouldSave: true })
 			}
+		}
+	},
+	methods : {
+		toggleCard () {
+			this.settingsStore.toggleCard({ slug: this.slug, shouldSave: this.saveToggleStatus })
+			this.$emit('toggle-card')
 		}
 	}
 }

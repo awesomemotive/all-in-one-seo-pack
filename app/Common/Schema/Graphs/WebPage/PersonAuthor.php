@@ -20,22 +20,29 @@ class PersonAuthor extends Graphs\Graph {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return array $data The graph data.
+	 * @param  int   $userId The user ID.
+	 * @return array $data   The graph data.
 	 */
-	public function get() {
+	public function get( $userId = null ) {
 		$post         = aioseo()->helpers->getPost();
 		$user         = get_queried_object();
 		$isAuthorPage = is_author() && is_a( $user, 'WP_User' );
 		if (
-			( ! is_singular() && ! $isAuthorPage ) ||
-			( is_singular() && ! is_a( $post, 'WP_Post' ) )
+			(
+				( ! is_singular() && ! $isAuthorPage ) ||
+				( is_singular() && ! is_a( $post, 'WP_Post' ) )
+			) &&
+			! $userId
 		) {
 			return [];
 		}
 
-		$userId = $isAuthorPage ? $user->ID : $post->post_author;
-		if ( function_exists( 'bp_is_user' ) && bp_is_user() ) {
-			$userId = intval( wp_get_current_user()->ID );
+		// Dynamically determine the User ID.
+		if ( ! $userId ) {
+			$userId = $isAuthorPage ? $user->ID : $post->post_author;
+			if ( function_exists( 'bp_is_user' ) && bp_is_user() ) {
+				$userId = intval( wp_get_current_user()->ID );
+			}
 		}
 
 		if ( ! $userId ) {
@@ -65,6 +72,16 @@ class PersonAuthor extends Graphs\Graph {
 			$data['mainEntityOfPage'] = [
 				'@id' => aioseo()->schema->context['url'] . '#profilepage'
 			];
+		}
+
+		// Check if our addons need to modify this graph.
+		$addonsPersonAuthorData = array_filter( aioseo()->addons->doAddonFunction( 'personAuthor', 'get', [
+			'userId' => $userId,
+			'data'   => $data
+		] ) );
+
+		foreach ( $addonsPersonAuthorData as $addonPersonAuthorData ) {
+			$data = array_merge( $data, $addonPersonAuthorData );
 		}
 
 		return $data;

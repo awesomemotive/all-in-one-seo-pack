@@ -45,10 +45,9 @@ class WebPage extends Graphs\Graph {
 			'breadcrumb'  => [ '@id' => aioseo()->schema->context['url'] . '#breadcrumblist' ]
 		];
 
-		if ( is_singular() && ! is_page() ) {
+		if ( is_singular() && 'page' !== get_post_type() ) {
 			$post = aioseo()->helpers->getPost();
-
-			if ( is_a( $post, 'WP_Post' ) ) {
+			if ( is_a( $post, 'WP_Post' ) && post_type_supports( $post->post_type, 'author' ) ) {
 				$author = get_author_posts_url( $post->post_author );
 				if ( ! empty( $author ) ) {
 					if ( ! in_array( 'PersonAuthor', aioseo()->schema->graphs, true ) ) {

@@ -17,22 +17,25 @@
 			</a>
 		</div>
 
-		<CoreCard
-			slug="userProfiles"
-			:header-text="strings.socialProfiles"
-			no-slide
-			:toggles="false"
-			v-if="'social-profiles' === activeTabObject.slug"
-		>
-			<div class="aioseo-settings-row aioseo-section-description">
-				{{ strings.description }}
-			</div>
+		<template v-if="'social-profiles' === activeTabObject.slug">
+			<eeat-cta />
 
-			<CoreSocialProfiles
-				:userProfiles="settingsStore.userProfile.profiles"
-				@updated="newSocialProfiles => updateHiddenInputField(newSocialProfiles)"
-			/>
-		</CoreCard>
+			<div class="aioseo-user-profile-fields">
+				<core-card
+					slug="userProfiles"
+					:header-text="strings.socialProfiles"
+				>
+					<div class="aioseo-settings-row aioseo-section-description">
+						{{ strings.description }}
+					</div>
+
+					<core-social-profiles
+						:userProfiles="settingsStore.userProfile.profiles"
+						@updated="newSocialProfiles => updateHiddenInputField(newSocialProfiles)"
+					/>
+				</core-card>
+			</div>
+		</template>
 	</div>
 </template>
 
@@ -44,6 +47,7 @@ import {
 
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreSocialProfiles from '@/vue/components/common/core/SocialProfiles'
+import EeatCta from './EeatCta'
 import SvgLogoGear from '@/vue/components/common/svg/aioseo/LogoGear'
 
 export default {
@@ -56,6 +60,7 @@ export default {
 	components : {
 		CoreCard,
 		CoreSocialProfiles,
+		EeatCta,
 		SvgLogoGear
 	},
 	data () {
@@ -83,7 +88,7 @@ export default {
 				case 'social-profiles':
 					document.getElementById('your-profile').childNodes.forEach(node => {
 						if (
-							'aioseo-user-profile-tab' === node.id ||
+							'aioseo-user-profile-tab-wrapper' === node.id ||
 							'submit' === node.className ||
 							!node.style
 						) {
@@ -117,7 +122,7 @@ export default {
 					slug  : 'personal-options'
 				},
 				{
-					label : this.$t.__('Social Profiles', this.$td),
+					label : this.$t.__('Author SEO', this.$td),
 					slug  : 'social-profiles',
 					svg   : 'svg-logo-gear'
 				}
@@ -139,6 +144,11 @@ export default {
 	async created () {
 		// Set the initial values.
 		this.updateHiddenInputField(this.settingsStore.userProfile.profiles)
+	},
+	beforeMount () {
+		if (new URLSearchParams(window.location.search).has('authorInfo')) {
+			this.setActiveTab(1)
+		}
 	},
 	mounted () {
 		const params = new URLSearchParams(window.location.search)

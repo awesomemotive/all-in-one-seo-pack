@@ -40,7 +40,7 @@ import { markRaw } from 'vue'
 const pinia = createPinia()
 
 let isDirtyWatcher = false
-const loadPiniaStores = (app, router = null) => {
+const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 	loadPinia(app, router)
 
 	const rootStore = useRootStore()
@@ -110,6 +110,8 @@ const loadPiniaStores = (app, router = null) => {
 	if (aioseo.integrations?.wpcode) {
 		wpCodeStore.$state = merge({ ...wpCodeStore.$state }, { ...aioseo.integrations.wpcode || {} })
 	}
+
+	loadStoresCallback(aioseo)
 
 	// Default AIOSEO root store without the above data.
 	delete aioseo.addons

@@ -646,6 +646,7 @@ class Admin {
 				$slug,
 				[ $this, 'page' ]
 			);
+
 			add_action( "load-{$hook}", [ $this, 'hooks' ] );
 		}
 

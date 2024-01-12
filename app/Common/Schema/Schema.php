@@ -244,7 +244,7 @@ class Schema {
 		}
 
 		if ( is_author() ) {
-			$this->graphs[] = 'CollectionPage';
+			$this->graphs[] = 'ProfilePage';
 			$this->graphs[] = 'PersonAuthor';
 			$this->context  = $contextInstance->author();
 		}

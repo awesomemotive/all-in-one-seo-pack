@@ -68,12 +68,13 @@ export default {
 			type    : Array,
 			default : () => []
 		},
-		ctaButtonText  : String,
-		ctaHeader      : String,
-		ctaDescription : String,
-		learnMoreText  : String,
-		learnMoreLink  : String,
-		alignTop       : Boolean
+		ctaButtonText            : String,
+		ctaHeader                : String,
+		ctaDescription           : String,
+		learnMoreText            : String,
+		learnMoreLink            : String,
+		alignTop                 : Boolean,
+		preventGlobalAddonUpdate : Boolean
 	},
 	data () {
 		return {
@@ -103,11 +104,16 @@ export default {
 
 					Promise.all(promises)
 						.then(() => {
+							if (this.preventGlobalAddonUpdate) {
+								return
+							}
+
 							this.activationLoading  = false
 							addon.hasMinimumVersion = true
 							addon.isActive          = true
 							this.addonsStore.updateAddon(addon)
-
+						})
+						.then(() => {
 							// Emit event to do any post processing.
 							this.$emit('addon-activated', addon)
 						})

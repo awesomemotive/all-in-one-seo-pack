@@ -307,6 +307,7 @@ export default {
 			display: flex;
 			align-items: center;
 			flex-wrap: wrap;
+			gap: 6px;
 
 			.multiselect__tag {
 				margin: 0 3px 0 0;

@@ -527,7 +527,7 @@ trait Assets {
 	 * sub-domains that don't have the proper CORS headers. Those sites will need
 	 * manual fixes.
 	 *
-	 * 4.1.10
+	 * @since 4.1.10
 	 *
 	 * @param  string $path The path to normalize.
 	 * @return string       The normalized path.

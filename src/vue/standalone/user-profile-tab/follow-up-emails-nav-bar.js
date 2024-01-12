@@ -15,7 +15,7 @@ document.addEventListener('animationstart', function (event) {
 
 	const newLink            = document.createElement('a')
 	newLink.href             = location.origin + '/wp-admin/profile.php?social-profiles=1'
-	newLink.innerHTML        = getSvg() + __('Social Profiles', import.meta.env.VITE_TEXTDOMAIN)
+	newLink.innerHTML        = getSvg() + __('Author SEO', import.meta.env.VITE_TEXTDOMAIN)
 	newLink.className        = 'nav-tab'
 	newLink.style.display    = 'flex'
 	newLink.style.alignItems = 'center'

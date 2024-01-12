@@ -48,7 +48,7 @@
 			/>
 
 			<div
-				v-if="!$slots.append && appendIcon"
+				v-if="!$slots.append && appendIcon && !appendIconOnValue || (appendIconOnValue && modelValue)"
 				class="append-icon"
 				:class="{ [size]: size, clickable : $attrs['append-icon-click'] }"
 				@click="$emit('append-icon-click', $event)"
@@ -148,8 +148,12 @@ export default {
 		SvgWebPage
 	},
 	props : {
-		modelValue   : [ String, Number ],
-		appendIcon   : String,
+		modelValue        : [ String, Number ],
+		appendIcon        : String,
+		appendIconOnValue : {
+			type    : Boolean,
+			default : false
+		},
 		autocomplete : String,
 		prependIcon  : String,
 		placeholder  : String,

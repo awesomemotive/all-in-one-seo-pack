@@ -71,7 +71,7 @@ export const ToolsSettings = {
 				})
 			}
 
-			if (!licenseStore.isUnlicensed && this.showImageSeoReset) {
+			if (!licenseStore.isUnlicensed && this.showAddonReset('aioseo-image-seo')) {
 				settings.push({
 					value  : 'image',
 					label  : this.$t.__('Image SEO', this.$td),
@@ -79,7 +79,7 @@ export const ToolsSettings = {
 				})
 			}
 
-			if (!licenseStore.isUnlicensed && this.showLocalBusinessReset) {
+			if (!licenseStore.isUnlicensed && this.showAddonReset('aioseo-local-business')) {
 				settings.push({
 					value  : 'localBusiness',
 					label  : this.$t.__('Local Business SEO', this.$td),
@@ -87,7 +87,7 @@ export const ToolsSettings = {
 				})
 			}
 
-			if (!licenseStore.isUnlicensed && this.showRedirectsReset) {
+			if (!licenseStore.isUnlicensed && this.showAddonReset('aioseo-redirects')) {
 				settings.push({
 					value  : 'redirects',
 					label  : this.$t.__('Redirects', this.$td),
@@ -95,7 +95,7 @@ export const ToolsSettings = {
 				})
 			}
 
-			if (!licenseStore.isUnlicensed && this.showLinkAssistantReset) {
+			if (!licenseStore.isUnlicensed && this.showAddonReset('aioseo-link-assistant')) {
 				settings.push({
 					value  : 'linkAssistant',
 					label  : this.$t.__('Link Assistant', this.$td),
@@ -103,22 +103,20 @@ export const ToolsSettings = {
 				})
 			}
 
+			if (!licenseStore.isUnlicensed && this.showAddonReset('aioseo-eeat')) {
+				settings.push({
+					value  : 'eeat',
+					label  : this.$t.__('Author SEO (E-E-A-T)', this.$td),
+					access : 'aioseo_search_appearance_settings'
+				})
+			}
+
 			return settings.filter(setting => allowed(setting.access))
-		},
-		showImageSeoReset () {
-			const addon = addons.getAddon('aioseo-image-seo')
-			return addon && addon.isActive && !addon.requiresUpgrade
-		},
-		showLocalBusinessReset () {
-			const addon = addons.getAddon('aioseo-local-business')
-			return addon && addon.isActive && !addon.requiresUpgrade
-		},
-		showRedirectsReset () {
-			const addon = addons.getAddon('aioseo-redirects')
-			return addon && addon.isActive && !addon.requiresUpgrade
-		},
-		showLinkAssistantReset () {
-			const addon = addons.getAddon('aioseo-link-assistant')
+		}
+	},
+	methods : {
+		showAddonReset (slug) {
+			const addon = addons.getAddon(slug)
 			return addon && addon.isActive && !addon.requiresUpgrade
 		}
 	}

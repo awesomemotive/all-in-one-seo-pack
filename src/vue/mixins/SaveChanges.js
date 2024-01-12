@@ -4,9 +4,11 @@ import {
 } from '@/vue/stores'
 
 export const SaveChanges = {
-	emits   : [ 'changes-saved' ],
+	emits   : [ 'saving-changes', 'changes-saved' ],
 	methods : {
 		processSaveChanges () {
+			window.aioseoBus.$emit('saving-changes')
+
 			const rootStore   = useRootStore()
 			rootStore.loading = true
 

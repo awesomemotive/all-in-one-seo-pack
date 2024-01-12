@@ -73,15 +73,16 @@ export default {
 			type    : Array,
 			default : () => []
 		},
-		addonName        : String,
-		installedVersion : String,
-		minimumVersion   : String,
-		ctaButtonText    : String,
-		ctaHeader        : String,
-		ctaDescription   : String,
-		learnMoreText    : String,
-		learnMoreLink    : String,
-		alignTop         : Boolean
+		addonName                : String,
+		installedVersion         : String,
+		minimumVersion           : String,
+		ctaButtonText            : String,
+		ctaHeader                : String,
+		ctaDescription           : String,
+		learnMoreText            : String,
+		learnMoreLink            : String,
+		alignTop                 : Boolean,
+		preventGlobalAddonUpdate : Boolean
 	},
 	data () {
 		return {
@@ -120,13 +121,18 @@ export default {
 
 					Promise.all(promises)
 						.then(() => {
+							if (this.preventGlobalAddonUpdate) {
+								return
+							}
+
 							const updatedAddon      = response.body.completed[addon.sku]
 							this.activationLoading  = false
 							addon.hasMinimumVersion = true
 							addon.isActive          = true
 							addon.installedVersion  = updatedAddon.installedVersion
 							this.addonsStore.updateAddon(addon)
-
+						})
+						.then(() => {
 							// Emit event to do any post processing.
 							this.$emit('addon-activated', addon)
 						})

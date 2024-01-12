@@ -138,7 +138,7 @@ export const useIndexStatus = () => {
 					case 'BLOCKED_BY_HTTP_HEADER':
 						return __('Indexing not allowed, \'noindex\' detected in \'X-Robots-Tag\' http header', td)
 					case 'BLOCKED_BY_ROBOTS_TXT':
-						return __('Reserved, no longer in use', td)
+						return __('Indexing not allowed, blocking robots.txt rule detected', td)
 					default:
 						return __('Unknown indexing status', td)
 				}
