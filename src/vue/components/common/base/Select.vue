@@ -196,7 +196,7 @@ export default {
 					return
 				}
 
-				const elements = this.$refs['aioseo-select'].$el.querySelectorAll('li.multiselect__element')
+				const elements = this.$refs['aioseo-select']?.$el?.querySelectorAll('li.multiselect__element') || []
 				elements.forEach((element, index) => {
 					element.classList.remove('last')
 					element.classList.remove('first')

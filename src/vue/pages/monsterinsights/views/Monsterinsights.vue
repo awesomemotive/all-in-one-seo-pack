@@ -114,69 +114,69 @@ export default {
 					this.$t.__('Click here', this.$td)
 				),
 				installMi : this.$t.sprintf(
-					// Translators: 1 - The addon or plugin name.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('Install %1$s', this.$td),
 					'MonsterInsights'
 				),
 				activateMi : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('Activate %1$s', this.$td),
 					'MonsterInsights'
 				),
 				activateEm : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('Activate %1$s', this.$td),
 					'ExactMetrics'
 				),
 				miInstalled : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('%1$s is Installed & Active', this.$td),
 					'MonsterInsights'
 				),
 				emInstalled : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('%1$s is Installed & Active', this.$td),
 					'ExactMetrics'),
 				setupGA : this.$t.__('Launch Setup Wizard', this.$td
 				),
 				emInstallH : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('Activate %1$s', this.$td),
 					'ExactMetrics'
 				),
 				emInstallP : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('%1$s shows you exactly which content gets the most visits, so you can analyze and optimize it for higher conversions.', this.$td),
 					'ExactMetrics'
 				),
 				miemInstallH : this.$t.__('Install', this.$td),
 				miInstallH   : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('Activate %1$s', this.$td),
 					'MonsterInsights'
 				),
 				miInstallP : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('%1$s shows you exactly which content gets the most visits, so you can analyze and optimize it for higher conversions.', this.$td),
 					'MonsterInsights'
 				),
 				emWizardH : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('Setup %1$s', this.$td),
 					'ExactMetrics'
 				),
 				miWizardH : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('Setup %1$s', this.$td),
 					'MonsterInsights'
 				),
 				emWizardP : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('%1$s has an intuitive setup wizard to guide you through the setup process.', this.$td),
 					'ExactMetrics'
 				),
 				miWizardP : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
+					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
 					this.$t.__('%1$s has an intuitive setup wizard to guide you through the setup process.', this.$td),
 					'MonsterInsights'
 				)

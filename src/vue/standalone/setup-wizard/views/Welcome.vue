@@ -3,6 +3,9 @@
 		<svg-giant-gear />
 
 		<div class="aioseo-welcome-container">
+
+			<svg-aioseo-logo />
+
 			<div class="aioseo-welcome-content">
 				<span class="header">{{ strings.welcome }}</span>
 
@@ -65,6 +68,7 @@ import {
 import { merge } from 'lodash-es'
 import { useWizard } from '@/vue/composables'
 import { Wizard } from '@/vue/mixins/Wizard'
+import SvgAioseoLogo from '@/vue/components/common/svg/aioseo/Logo'
 import SvgGiantGear from '@/vue/components/common/svg/GiantGear'
 import WizardCloseAndExit from '@/vue/components/common/wizard/CloseAndExit'
 export default {
@@ -78,6 +82,7 @@ export default {
 		}
 	},
 	components : {
+		SvgAioseoLogo,
 		SvgGiantGear,
 		WizardCloseAndExit
 	},
@@ -130,6 +135,13 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		flex-direction: column;
+		gap: 20px;
+
+		svg.aioseo-logo {
+			height: 40px;
+			margin-top: -60px;
+		}
 
 		.aioseo-welcome-content {
 			position: relative;

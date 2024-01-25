@@ -128,7 +128,7 @@ export default {
 					border-radius: 0!important;
 				}
 
-				.label {
+				.tab-label {
 					display: inline!important;
 					margin-left: 10px;
 				}

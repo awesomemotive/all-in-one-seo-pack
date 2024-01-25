@@ -70,6 +70,8 @@
 							{{ truncate(titleParsed, 100) }}
 						</span>
 
+						<core-loader v-if="postLoading" dark />
+
 						<svg-pencil
 							v-if="!showEditTitle"
 							class="pencil-icon"
@@ -131,6 +133,8 @@
 							<strong>:</strong>
 							{{ truncate(descriptionParsed) }}
 						</span>
+
+						<core-loader v-if="postLoading" dark />
 
 						<svg-pencil
 							v-if="!showEditDescription"
@@ -318,6 +322,7 @@ import license from '@/vue/utils/license'
 import { shouldShowTruSeoScore } from '@/vue/plugins/tru-seo/components/helpers'
 import BaseButton from '@/vue/components/common/base/Button'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
+import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreScoreButton from '@/vue/components/common/core/ScoreButton'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import IndexStatus from '@/vue/components/AIOSEO_VERSION/search-statistics/IndexStatus'
@@ -337,6 +342,7 @@ export default {
 	components : {
 		BaseButton,
 		CoreHtmlTagsEditor,
+		CoreLoader,
 		CoreScoreButton,
 		CoreTooltip,
 		IndexStatus,
@@ -369,7 +375,7 @@ export default {
 			isSpecialPage           : false,
 			inspectionResult        : false,
 			inspectionResultLoading : true,
-			teucu                   : false,
+			postLoading             : false,
 			strings                 : merge(this.composableStrings, {
 				title          : this.$t.__('Title', this.$td),
 				description    : this.$t.__('Description', this.$td),
@@ -406,7 +412,8 @@ export default {
 			this.showEditDescription = false
 			this.post.title          = this.title
 			this.post.description    = this.postDescription
-			http.post(this.$links.restUrl('postscreen'))
+			this.postLoading         = true
+			http.post(this.$links.restUrl('posts-list/update-details-column'))
 				.send({
 					postId      : this.post.id,
 					title       : this.post.title,
@@ -426,6 +433,9 @@ export default {
 				.catch(error => {
 					console.error(`Unable to update post with ID ${this.post.id}: ${error}`)
 				})
+				.finally(() => {
+					this.postLoading = false
+				})
 		},
 		saveImage () {
 			this.showEditImageTitle  = false
@@ -434,7 +444,7 @@ export default {
 			this.post.description    = this.postDescription
 			this.post.imageTitle     = this.imageTitle
 			this.post.imageAltTag    = this.imageAltTag
-			http.post(this.$links.restUrl('postscreen'))
+			http.post(this.$links.restUrl('posts-list/update-details-column'))
 				.send({
 					postId      : this.post.id,
 					isMedia     : true,
@@ -566,6 +576,14 @@ export default {
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
+			}
+
+			.aioseo-loading-spinner {
+				position: relative;
+				width: 18px;
+				height: 18px;
+				margin-left: 5px;
+				vertical-align: middle;
 			}
 
 			.aioseo-pencil {

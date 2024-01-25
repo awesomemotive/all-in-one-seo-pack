@@ -48,7 +48,11 @@ class DetailsColumn {
 	 * @return void
 	 */
 	public function registerColumnHooks() {
-		$screen = get_current_screen();
+		$screen = aioseo()->helpers->getCurrentScreen();
+		if ( empty( $screen->base ) || empty( $screen->post_type ) ) {
+			return;
+		}
+
 		if ( ! $this->shouldRegisterColumn( $screen->base, $screen->post_type ) ) {
 			return;
 		}
@@ -87,7 +91,7 @@ class DetailsColumn {
 	 */
 	public function addPostColumnsAjax() {
 		if (
-			! isset( $_POST['_inline_edit'], $_POST['post_ID'] ) ||
+			! isset( $_POST['_inline_edit'], $_POST['post_ID'], $_POST['aioseo-has-details-column'] ) ||
 			! wp_verify_nonce( $_POST['_inline_edit'], 'inlineeditnonce' )
 		) {
 			return;
@@ -215,22 +219,18 @@ class DetailsColumn {
 	 * @return array              The post data.
 	 */
 	protected function getPostData( $postId, $columnName ) {
-		$nonce          = wp_create_nonce( "aioseo_meta_{$columnName}_{$postId}" );
-		$thePost        = Models\Post::getPost( $postId );
-		$postType       = get_post_type( $postId );
-		$headlineResult = aioseo()->standalone->headlineAnalyzer->getResult( html_entity_decode( get_the_title( $postId ) ) );
-		$postData       = [
+		$nonce    = wp_create_nonce( "aioseo_meta_{$columnName}_{$postId}" );
+		$thePost  = Models\Post::getPost( $postId );
+		$postType = get_post_type( $postId );
+		$postData = [
 			'id'                 => $postId,
 			'columnName'         => $columnName,
 			'nonce'              => $nonce,
 			'title'              => $thePost->title,
-			'titleParsed'        => aioseo()->meta->title->getPostTitle( $postId ),
 			'defaultTitle'       => aioseo()->meta->title->getPostTypeTitle( $postType ),
 			'description'        => $thePost->description,
-			'descriptionParsed'  => aioseo()->meta->description->getPostDescription( $postId ),
 			'defaultDescription' => aioseo()->meta->description->getPostTypeDescription( $postType ),
 			'value'              => ! empty( $thePost->seo_score ) ? (int) $thePost->seo_score : 0,
-			'headlineScore'      => ! empty( $headlineResult['score'] ) ? (int) $headlineResult['score'] : 0,
 			'showMedia'          => false,
 			'isSpecialPage'      => aioseo()->helpers->isSpecialPage( $postId ),
 			'postType'           => $postType,

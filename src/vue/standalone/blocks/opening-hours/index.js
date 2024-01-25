@@ -3,7 +3,7 @@ import { h, createApp } from 'vue'
 
 import loadPlugins from '@/vue/plugins'
 
-import OpeningHoursSidebar from './OpeningHoursSidebar.vue'
+import OpeningHoursSidebar from './OpeningHoursSidebar'
 
 import {
 	useOptionsStore,
@@ -13,6 +13,8 @@ import {
 
 import { observeElement } from '@/vue/utils/helpers'
 import { __, sprintf } from '@wordpress/i18n'
+
+import { maybeDeleteBlockVueApp } from '@/vue/standalone/blocks/utils'
 
 const wp = window.wp
 const el = wp.element.createElement
@@ -38,6 +40,7 @@ const icon = el('svg',
 )
 
 const vueInitialState = {}
+const openingHoursSidebarApps = []
 
 export const name = 'aioseo/openinghours'
 export const settings = {
@@ -114,7 +117,7 @@ export const settings = {
 	)(function (props) {
 		const optionsStore      = useOptionsStore()
 		const multipleLocations = optionsStore.options.localBusiness?.locations.general.multiple
-		const { setAttributes, attributes, className, clientId, isSelected } = props
+		const { setAttributes, attributes, className, clientId, isSelected, toggleSelection } = props
 		let { locations } = props
 		const vueAIOSEOSettingsId = `aioseo-${clientId}-settings`
 
@@ -159,40 +162,54 @@ export const settings = {
 		const postEditorStore = usePostEditorStore()
 		attributes.locationId = (!attributes.locationId && postEditorStore.currentPost.postType === rootStore.aioseo.localBusiness.postTypeName) ? postEditorStore.currentPost.id : attributes.locationId
 
+		const observeElementArgs = {
+			id      : vueAIOSEOSettingsId,
+			parent  : document.querySelector('.block-editor'),
+			subtree : true,
+			loop    : false,
+			done    : function (node) {
+				maybeDeleteBlockVueApp(clientId, openingHoursSidebarApps)
+
+				let app = createApp({
+					name : 'Blocks/OpeningHours',
+					data : function () {
+						return vueInitialState[clientId]
+					},
+					watch : {
+						$data : {
+							handler : function (val) {
+								setAttributes(val)
+							},
+							deep : true
+						}
+					},
+					render : () => h(OpeningHoursSidebar)
+				})
+
+				app = loadPlugins(app)
+
+				app.mount(node)
+
+				openingHoursSidebarApps.push({ clientId, app })
+			}
+		}
+
 		if (isSelected) {
 			// Refresh the initial state object.
 			vueInitialState[clientId] = {}
-			Object.keys(attributes).forEach(function (key) {
+			Object.keys(attributes).forEach((key) => {
 				vueInitialState[clientId][key] = attributes[key]
 			})
 			vueInitialState[clientId].locations = locations
 
-			observeElement({
-				id      : vueAIOSEOSettingsId,
-				parent  : document.querySelector('.block-editor'),
-				subtree : true,
-				done    : function (el) {
-					let app = createApp({
-						name : 'Blocks/OpeningHours',
-						data : function () {
-							return vueInitialState[clientId]
-						},
-						watch : {
-							$data : {
-								handler : function (val) {
-									setAttributes(val)
-								},
-								deep : true
-							}
-						},
-						render : () => h(OpeningHoursSidebar)
-					})
+			observeElement(observeElementArgs)
+		}
 
-					app = loadPlugins(app)
-
-					app.mount(el)
-				}
-			})
+		const generalSidebarName = wp.data.useSelect(
+			select => select('core/edit-post').getActiveGeneralSidebarName()
+		)
+		if ('edit-post/block' === generalSidebarName) {
+			'function' !== typeof toggleSelection || toggleSelection(true)
 		}
 
 		if (postEditorStore.currentPost.postType === rootStore.aioseo.localBusiness.postTypeName) {
@@ -229,7 +246,13 @@ export const settings = {
 			null,
 			el(
 				PanelBody,
-				{ title: __('Display Settings', td), initialOpen: true },
+				{
+					title       : __('Display Settings', td),
+					initialOpen : true,
+					onToggle    : () => {
+						observeElement(observeElementArgs)
+					}
+				},
 				el(
 					'div',
 					{},

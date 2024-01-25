@@ -10,6 +10,7 @@ return array(
     'AIOSEO\\Plugin\\Common\\Admin\\Admin' => $baseDir . '/app/Common/Admin/Admin.php',
     'AIOSEO\\Plugin\\Common\\Admin\\ConflictingPlugins' => $baseDir . '/app/Common/Admin/ConflictingPlugins.php',
     'AIOSEO\\Plugin\\Common\\Admin\\Dashboard' => $baseDir . '/app/Common/Admin/Dashboard.php',
+    'AIOSEO\\Plugin\\Common\\Admin\\DeactivationSurvey' => $baseDir . '/app/Common/Admin/DeactivationSurvey.php',
     'AIOSEO\\Plugin\\Common\\Admin\\NetworkAdmin' => $baseDir . '/app/Common/Admin/NetworkAdmin.php',
     'AIOSEO\\Plugin\\Common\\Admin\\Notices\\ConflictingPlugins' => $baseDir . '/app/Common/Admin/Notices/ConflictingPlugins.php',
     'AIOSEO\\Plugin\\Common\\Admin\\Notices\\DeprecatedWordPress' => $baseDir . '/app/Common/Admin/Notices/DeprecatedWordPress.php',

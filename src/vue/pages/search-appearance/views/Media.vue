@@ -6,7 +6,7 @@
 			<template #header>
 				<div
 					class="icon dashicons"
-					:class="`${postType.icon || 'dashicons-admin-post'}`"
+					:class="getPostIconClass(postType.icon)"
 				/>
 
 				<div>{{ postType.label }}</div>
@@ -117,6 +117,7 @@ import Cta from './AIOSEO_VERSION/image-seo/Cta'
 import CustomFields from './partials/AIOSEO_VERSION/CustomFields'
 import ImageSeo from './AIOSEO_VERSION/image-seo/ImageSeo'
 import Lite from './lite/image-seo/ImageSeo'
+import PostTypesMixin from '@/vue/mixins/PostTypes'
 import Schema from './partials/Schema'
 import TitleDescription from './partials/TitleDescription'
 
@@ -128,7 +129,7 @@ export default {
 			settingsStore : useSettingsStore()
 		}
 	},
-	mixins     : [ AddonConditions ],
+	mixins     : [ AddonConditions, PostTypesMixin ],
 	components : {
 		Advanced,
 		BaseRadioToggle,

@@ -162,7 +162,11 @@ class Dashboard {
 	 */
 	public function displayRssDashboardWidget() {
 		// Check if the user has chosen not to display this widget through screen options.
-		$currentScreen = get_current_screen();
+		$currentScreen = aioseo()->helpers->getCurrentScreen();
+		if ( empty( $currentScreen->id ) ) {
+			return;
+		}
+
 		$hiddenWidgets = get_user_meta( get_current_user_id(), 'metaboxhidden_' . $currentScreen->id );
 		if ( $hiddenWidgets && count( $hiddenWidgets ) > 0 && is_array( $hiddenWidgets[0] ) && in_array( 'aioseo-rss-feed', $hiddenWidgets[0], true ) ) {
 			return;

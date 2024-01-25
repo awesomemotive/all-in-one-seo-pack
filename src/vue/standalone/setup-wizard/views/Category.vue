@@ -214,6 +214,7 @@ export default {
 	methods : {
 		triggerFeaturesUpdate (category) {
 			const features = [
+				'broken-link-checker',
 				'optimized-search-appearance',
 				'analytics',
 				'conversion-tools',

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit651aebe52d12925c0afecab162ebab77
+class ComposerStaticInit2dccc40b7e60ef1b014be0cac2366dd2
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -91,6 +91,7 @@ class ComposerStaticInit651aebe52d12925c0afecab162ebab77
         'AIOSEO\\Plugin\\Common\\Admin\\Admin' => __DIR__ . '/../..' . '/app/Common/Admin/Admin.php',
         'AIOSEO\\Plugin\\Common\\Admin\\ConflictingPlugins' => __DIR__ . '/../..' . '/app/Common/Admin/ConflictingPlugins.php',
         'AIOSEO\\Plugin\\Common\\Admin\\Dashboard' => __DIR__ . '/../..' . '/app/Common/Admin/Dashboard.php',
+        'AIOSEO\\Plugin\\Common\\Admin\\DeactivationSurvey' => __DIR__ . '/../..' . '/app/Common/Admin/DeactivationSurvey.php',
         'AIOSEO\\Plugin\\Common\\Admin\\NetworkAdmin' => __DIR__ . '/../..' . '/app/Common/Admin/NetworkAdmin.php',
         'AIOSEO\\Plugin\\Common\\Admin\\Notices\\ConflictingPlugins' => __DIR__ . '/../..' . '/app/Common/Admin/Notices/ConflictingPlugins.php',
         'AIOSEO\\Plugin\\Common\\Admin\\Notices\\DeprecatedWordPress' => __DIR__ . '/../..' . '/app/Common/Admin/Notices/DeprecatedWordPress.php',
@@ -646,10 +647,10 @@ class ComposerStaticInit651aebe52d12925c0afecab162ebab77
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit651aebe52d12925c0afecab162ebab77::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit651aebe52d12925c0afecab162ebab77::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit651aebe52d12925c0afecab162ebab77::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit651aebe52d12925c0afecab162ebab77::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2dccc40b7e60ef1b014be0cac2366dd2::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2dccc40b7e60ef1b014be0cac2366dd2::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit2dccc40b7e60ef1b014be0cac2366dd2::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit2dccc40b7e60ef1b014be0cac2366dd2::$classMap;
 
         }, null, ClassLoader::class);
     }

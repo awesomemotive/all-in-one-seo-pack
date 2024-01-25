@@ -154,6 +154,12 @@ class Title {
 			$title = aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
 		}
 
+		if ( empty( $title ) ) {
+			// Just return the WP default.
+			$title = get_the_title( $post->ID ) . ' - ' . get_bloginfo( 'name' );
+			$title = aioseo()->helpers->decodeHtmlEntities( $title );
+		}
+
 		$posts[ $post->ID ] = $title;
 
 		return $posts[ $post->ID ];

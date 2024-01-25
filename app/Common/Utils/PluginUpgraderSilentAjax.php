@@ -32,6 +32,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 * @var array
 	 */
 	public $pluginLinks = [
+		'brokenLinkChecker'    => 'https://downloads.wordpress.org/plugin/broken-link-checker-seo.zip',
 		'optinMonster'         => 'https://downloads.wordpress.org/plugin/optinmonster.zip',
 		'wpForms'              => 'https://downloads.wordpress.org/plugin/wpforms-lite.zip',
 		'miLite'               => 'https://downloads.wordpress.org/plugin/google-analytics-for-wordpress.zip',
@@ -63,26 +64,27 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 * @var array
 	 */
 	public $wpPluginLinks = [
-		'optinMonster'  => 'https://wordpress.org/plugin/optinmonster/',
-		'wpForms'       => 'https://wordpress.org/plugin/wpforms-lite/',
-		'miLite'        => 'https://wordpress.org/plugin/google-analytics-for-wordpress/',
-		'emLite'        => 'https://wordpress.org/plugin/google-analytics-dashboard-for-wp/',
-		'wpMail'        => 'https://wordpress.org/plugin/wp-mail-smtp/',
-		'rafflePress'   => 'https://wordpress.org/plugin/rafflepress/',
-		'seedProd'      => 'https://wordpress.org/plugin/coming-soon/',
-		'trustPulse'    => 'https://wordpress.org/plugin/trustpulse-api/',
-		'instagramFeed' => 'https://wordpress.org/plugin/instagram-feed/',
-		'facebookFeed'  => 'https://wordpress.org/plugin/custom-facebook-feed/',
-		'twitterFeed'   => 'https://wordpress.org/plugin/custom-twitter-feeds/',
-		'youTubeFeed'   => 'https://wordpress.org/plugin/feeds-for-youtube/',
-		'pushEngage'    => 'https://wordpress.org/plugins/pushengage/',
-		'sugarCalendar' => 'https://wordpress.org/plugins/sugar-calendar-lite/',
-		'wpSimplePay'   => 'https://wordpress.org/plugins/stripe/',
-		'searchWp'      => 'https://searchwp.com/',
-		'affiliateWp'   => 'https://affiliatewp.com/',
-		'wpcode'        => 'https://wordpress.org/plugins/insert-headers-and-footers/',
-		'charitable'    => 'https://wordpress.org/plugins/charitable/',
-		'duplicator'    => 'https://wordpress.org/plugins/duplicator/'
+		'brokenLinkChecker' => 'https://wordpress.org/plugins/broken-link-checker-seo/',
+		'optinMonster'      => 'https://wordpress.org/plugin/optinmonster/',
+		'wpForms'           => 'https://wordpress.org/plugin/wpforms-lite/',
+		'miLite'            => 'https://wordpress.org/plugin/google-analytics-for-wordpress/',
+		'emLite'            => 'https://wordpress.org/plugin/google-analytics-dashboard-for-wp/',
+		'wpMail'            => 'https://wordpress.org/plugin/wp-mail-smtp/',
+		'rafflePress'       => 'https://wordpress.org/plugin/rafflepress/',
+		'seedProd'          => 'https://wordpress.org/plugin/coming-soon/',
+		'trustPulse'        => 'https://wordpress.org/plugin/trustpulse-api/',
+		'instagramFeed'     => 'https://wordpress.org/plugin/instagram-feed/',
+		'facebookFeed'      => 'https://wordpress.org/plugin/custom-facebook-feed/',
+		'twitterFeed'       => 'https://wordpress.org/plugin/custom-twitter-feeds/',
+		'youTubeFeed'       => 'https://wordpress.org/plugin/feeds-for-youtube/',
+		'pushEngage'        => 'https://wordpress.org/plugins/pushengage/',
+		'sugarCalendar'     => 'https://wordpress.org/plugins/sugar-calendar-lite/',
+		'wpSimplePay'       => 'https://wordpress.org/plugins/stripe/',
+		'searchWp'          => 'https://searchwp.com/',
+		'affiliateWp'       => 'https://affiliatewp.com/',
+		'wpcode'            => 'https://wordpress.org/plugins/insert-headers-and-footers/',
+		'charitable'        => 'https://wordpress.org/plugins/charitable/',
+		'duplicator'        => 'https://wordpress.org/plugins/duplicator/'
 	];
 
 	/**
@@ -93,6 +95,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 * @var array
 	 */
 	public $pluginSlugs = [
+		'brokenLinkChecker'       => 'broken-link-checker-seo/aioseo-broken-link-checker.php',
 		'optinMonster'            => 'optinmonster/optin-monster-wp-api.php',
 		'wpForms'                 => 'wpforms-lite/wpforms.php',
 		'wpFormsPro'              => 'wpforms/wpforms.php',
@@ -138,6 +141,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 * @var array
 	 */
 	public $pluginAdminUrls = [
+		'brokenLinkChecker'       => 'admin.php?page=broken-link-checker#/settings',
 		'optinMonster'            => 'admin.php?page=optin-monster-api-settings',
 		'wpForms'                 => 'admin.php?page=wpforms-settings',
 		'wpFormsPro'              => 'admin.php?page=wpforms-settings',

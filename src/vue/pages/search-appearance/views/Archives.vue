@@ -8,7 +8,7 @@
 			<template #header>
 				<div
 					class="icon dashicons"
-					:class="`${archive.icon || 'dashicons-admin-post'}`"
+					:class="getPostIconClass(archive.icon)"
 				/>
 				<div>
 					{{ archive.label }}
@@ -51,6 +51,7 @@ import {
 import Advanced from './partials/Advanced'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
+import PostTypesMixin from '@/vue/mixins/PostTypes'
 import TitleDescription from './partials/TitleDescription'
 export default {
 	setup () {
@@ -66,6 +67,7 @@ export default {
 		CoreMainTabs,
 		TitleDescription
 	},
+	mixins : [ PostTypesMixin ],
 	data () {
 		return {
 			internalDebounce : null,

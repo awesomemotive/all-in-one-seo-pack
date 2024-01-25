@@ -20,8 +20,6 @@ class Tags {
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function getTags() {
-		return new \WP_REST_Response( [
-			'tags' => aioseo()->tags->all( true )
-		], 200 );
+		return new \WP_REST_Response( aioseo()->tags->all( true ), 200 );
 	}
 }

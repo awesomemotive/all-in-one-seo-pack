@@ -8,7 +8,7 @@
 			<template #header>
 				<div
 					class="icon dashicons"
-					:class="`${postType.icon || 'dashicons-admin-post'}`"
+					:class="getPostIconClass(postType.icon)"
 				/>
 
 				{{ postType.label }}
@@ -62,6 +62,7 @@ import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import CustomFields from './partials/CustomFields'
+import PostTypesMixin from '@/vue/mixins/PostTypes'
 import Schema from './partials/Schema'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import TitleDescription from './partials/TitleDescription'
@@ -83,6 +84,7 @@ export default {
 		SvgCircleQuestionMark,
 		TitleDescription
 	},
+	mixins : [ PostTypesMixin ],
 	data () {
 		return {
 			internalDebounce : null,
@@ -137,6 +139,17 @@ export default {
 			setTimeout(() => {
 				this.internalDebounce = false
 			}, 50)
+		},
+		getPostIconClass (icon) {
+			const defaultIcon = 'dashicons-admin-post'
+
+			// If the icon's name starts with 'dashicons-awb-', then it's a custom icon for Avada that
+			// we are not able to import.
+			if (icon?.startsWith('dashicons-awb-')) {
+				return defaultIcon
+			}
+
+			return icon || defaultIcon
 		}
 	}
 }

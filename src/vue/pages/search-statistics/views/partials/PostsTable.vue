@@ -419,7 +419,7 @@ export default {
 			}
 		},
 		loadInspectionResult () {
-			if (!this.posts?.rows) {
+			if (!this.posts?.rows || this.searchStatisticsStore.quotaExceeded.urlInspection) {
 				return
 			}
 

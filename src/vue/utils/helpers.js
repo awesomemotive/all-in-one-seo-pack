@@ -48,7 +48,7 @@ export const decodeSpecialChars = string => {
 }
 
 export const observeElement = params => {
-	new MutationObserver(function () {
+	const mutationCallback = (_list, obs) => {
 		let el = params.id ? document.getElementById(params.id) : document.querySelector(params.selector)
 
 		// If we can't find the element, also look for it inside the iFrame of the Full Site Editor (if present).
@@ -63,10 +63,14 @@ export const observeElement = params => {
 		if (el) {
 			params.done(el)
 			if (!params.loop) {
-				this.disconnect()
+				obs.disconnect()
 			}
 		}
-	}).observe(params.parent || document, {
+	}
+
+	const observer = new MutationObserver(mutationCallback)
+
+	observer.observe(params.parent || document, {
 		subtree   : !!params.subtree || !params.parent,
 		childList : true
 	})

@@ -10,6 +10,7 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 		latestAvailableDate : null,
 		unverifiedSite      : false,
 		authedSite          : null,
+		quotaExceeded       : {},
 		range               : {
 			start        : null,
 			end          : null,
@@ -250,8 +251,14 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 		},
 		getInspectionResult (paths) {
 			return http.get(links.restUrl('search-statistics/inspection-result'))
-				.query({ 'paths[]': paths })
-				.then(response => response.body.data)
+				.query({
+					'paths[]' : paths
+				})
+				.then(response => {
+					this.quotaExceeded.urlInspection = response.body.quotaExceeded
+
+					return response.body.data
+				})
 		},
 		getPagesByKeywords (keywords) {
 			return http.post(links.restUrl('search-statistics/stats/keywords/posts'))

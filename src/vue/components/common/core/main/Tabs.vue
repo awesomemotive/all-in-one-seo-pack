@@ -22,7 +22,7 @@
 					<slot name="var-tab" :tab="tab">
 						<slot name="var-tab-icon" :tab="tab" />
 
-						<span class="label">{{ tab.name }}</span>
+						<span class="tab-label">{{ tab.name }}</span>
 
 						<span
 							v-if="tab.errorCount >= 0"

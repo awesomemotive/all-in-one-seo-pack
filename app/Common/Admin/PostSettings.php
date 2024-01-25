@@ -89,7 +89,11 @@ class PostSettings {
 			aioseo()->core->assets->load( 'src/vue/standalone/link-format/main.js', [], aioseo()->helpers->getVueData( $page ) );
 		}
 
-		$screen = get_current_screen();
+		$screen = aioseo()->helpers->getCurrentScreen();
+		if ( empty( $screen->id ) ) {
+			return;
+		}
+
 		if ( 'attachment' === $screen->id ) {
 			wp_enqueue_media();
 		}
@@ -143,9 +147,12 @@ class PostSettings {
 	 * @return void
 	 */
 	public function addPostSettingsMetabox() {
-		$screen   = get_current_screen();
-		$postType = $screen->post_type;
+		$screen = aioseo()->helpers->getCurrentScreen();
+		if ( empty( $screen->post_type ) ) {
+			return;
+		}
 
+		$postType = $screen->post_type;
 		if ( $this->canAddPostSettingsMetabox( $postType ) ) {
 			// Translators: 1 - The plugin short name ("AIOSEO").
 			$aioseoMetaboxTitle = sprintf( esc_html__( '%1$s Settings', 'all-in-one-seo-pack' ), AIOSEO_PLUGIN_SHORT_NAME );

@@ -446,6 +446,11 @@ abstract class Filters {
 			wp_dequeue_script( 'pmt__vuejs' );
 			wp_dequeue_script( 'pmt__script' );
 		}
+
+		// Plugin: Wpbingo Core (By TungHV).
+		if ( strpos( wp_styles()->query( 'bwp-lookbook-css' )->src ?? '', 'wpbingo' ) !== false ) {
+			wp_dequeue_style( 'bwp-lookbook-css' );
+		}
 	}
 
 	/**

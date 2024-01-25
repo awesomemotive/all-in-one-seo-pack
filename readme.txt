@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta ti
 Tested up to: 6.4.2
 Requires at least: 4.9
 Requires PHP: 7.0
-Stable tag: 4.5.4
+Stable tag: 4.5.5
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -264,6 +264,23 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 
 == Changelog ==
+
+**New in Version 4.5.5**
+
+* Updated: Various AI Title/Description Generator improvements for more reliable results and better foreign language support.
+* Updated: Removed Search Statistics Index status background scan in favour of loading results on-the-fly to prevent quota from running out.
+* Updated: Added a survey that triggers when users deactivate the plugin.
+* Updated: Added WooCommerce Shop page to the breadcrumb trail for WooCommerce Products and related taxonomies.
+* Updated: Added Broken Link Checker as an installable plugin to the Setup Wizard and About Us page.
+* Fixed: Block settings sidebar not re-expanding after user closed it previously.
+* Fixed: Primary term not included in canonical URL for WooCommerce products.
+* Fixed: Schema not correctly reflecting Out of Stock status for variable products in WooCommerce.
+* Fixed: Schema Generator graph/template search box disappeared when certain special characters were entered.
+* Fixed: SEO Revisions not created for attachments.
+* Fixed: Plugin conflict with WPBingo Core where AIOSEO setting tabs are collapsed.
+* Fixed: Conflict between AIOSEO Redirects and Divi page builder.
+* Fixed: Redirection plugins are no longer marked as conflicting when AIOSEO Redirects isn’t installed.
+* Fixed: AIOSEO Details column on post list page would sometimes load unnecessarily.
 
 **New in Version 4.5.4**
 
@@ -737,6 +754,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.5.4 =
+= 4.5.5 =
 
 This update adds major improvements and bug fixes.

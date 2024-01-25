@@ -21,7 +21,7 @@ class ConflictingPlugins {
 	 *
 	 * @var array
 	 */
-	private $conflictingPluginSlugs = [
+	protected $conflictingPluginSlugs = [
 		// Note: We should NOT add Jetpack here since they automatically disable their SEO module when ours is active.
 		'wordpress-seo',
 		'seo-by-rank-math',
@@ -29,15 +29,6 @@ class ConflictingPlugins {
 		'autodescription',
 		'slim-seo',
 		'squirrly-seo',
-		'redirection',
-		'eps-301-redirects',
-		'simple-301-redirects',
-		'301-redirects',
-		'404-to-homepage',
-		'quick-301-redirects',
-		'all-404-redirect-to-homepage',
-		'redirect-redirection',
-		'safe-redirect-manager',
 		'google-sitemap-generator',
 		'xml-sitemap-feed',
 		'www-xml-sitemap-generator-org',
@@ -45,7 +36,7 @@ class ConflictingPlugins {
 	];
 
 	/**
-	 * Class Constructor.
+	 * Class constructor.
 	 *
 	 * @since 4.0.0
 	 */
@@ -55,7 +46,7 @@ class ConflictingPlugins {
 			return;
 		}
 
-		add_action( 'init', [ $this, 'init' ] );
+		add_action( 'init', [ $this, 'init' ], 20 );
 	}
 
 	/**

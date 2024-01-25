@@ -3,7 +3,7 @@ import { h, createApp } from 'vue'
 
 import loadPlugins from '@/vue/plugins'
 
-import LocationMapSidebar from './LocationMapSidebar.vue'
+import LocationMapSidebar from './LocationMapSidebar'
 
 import {
 	useOptionsStore,
@@ -14,6 +14,8 @@ import {
 import { observeElement } from '@/vue/utils/helpers'
 import { __, sprintf } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
+
+import { maybeDeleteBlockVueApp } from '@/vue/standalone/blocks/utils'
 
 const wp = window.wp
 const el = wp.element.createElement
@@ -95,7 +97,7 @@ export const settings = {
 	})(function (props) {
 		const optionsStore      = useOptionsStore()
 		const multipleLocations = optionsStore.options.localBusiness?.locations.general.multiple
-		const { setAttributes, attributes, className, clientId, isSelected } = props
+		const { setAttributes, attributes, className, clientId, isSelected, toggleSelection } = props
 		let { locations } = props
 		const vueAioseoId   = 'aioseo-location-map-' + clientId
 
@@ -143,6 +145,37 @@ export const settings = {
 		attributes.locationId = (!attributes.locationId && isLocationPostType) ? postEditorStore.currentPost.id : attributes.locationId
 		const location = locations.find(item => item.id === attributes.locationId)
 		const locationMap = isLocationPostType ? postEditorStore.currentPost.local_seo.maps : (location ? location.maps : null)
+		const observeElementArgs = {
+			id      : vueAioseoId,
+			parent  : document.querySelector('.block-editor'),
+			subtree : true,
+			loop    : false,
+			done    : function (node) {
+				maybeDeleteBlockVueApp(clientId, locationMapSidebarApps)
+
+				let app = createApp({
+					name : 'Blocks/LocationMap',
+					data : function () {
+						return vueInitialState[clientId]
+					},
+					watch : {
+						$data : {
+							handler : function (val) {
+								setAttributes(val)
+							},
+							deep : true
+						}
+					},
+					render : () => h(LocationMapSidebar)
+				})
+
+				app = loadPlugins(app)
+
+				app.mount(node)
+
+				locationMapSidebarApps.push({ clientId, app })
+			}
+		}
 
 		if (isSelected) {
 			// Refresh the initial state object.
@@ -152,41 +185,14 @@ export const settings = {
 			})
 			vueInitialState[clientId].locations = locations
 
-			observeElement({
-				id      : vueAioseoId,
-				parent  : document.querySelector('.block-editor'),
-				subtree : true,
-				done    : function (el) {
-					const findAppIndex = locationMapSidebarApps.findIndex(item => item._container.id === el.id)
-					if (-1 !== findAppIndex) {
-						// Prevent Vue from creating multiple instances of the same app.
-						locationMapSidebarApps[findAppIndex].unmount()
-						locationMapSidebarApps.splice(findAppIndex, 1)
-					}
+			observeElement(observeElementArgs)
+		}
 
-					let app = createApp({
-						name : 'Blocks/LocationMap',
-						data : function () {
-							return vueInitialState[clientId]
-						},
-						watch : {
-							$data : {
-								handler : function (val) {
-									setAttributes(val)
-								},
-								deep : true
-							}
-						},
-						render : () => h(LocationMapSidebar)
-					})
-
-					app = loadPlugins(app)
-
-					app.mount(el)
-
-					locationMapSidebarApps.push(app)
-				}
-			})
+		const generalSidebarName = wp.data.useSelect(
+			select => select('core/edit-post').getActiveGeneralSidebarName()
+		)
+		if ('edit-post/block' === generalSidebarName) {
+			'function' !== typeof toggleSelection || toggleSelection(true)
 		}
 
 		if (isLocationPostType) {
@@ -225,7 +231,13 @@ export const settings = {
 			null,
 			el(
 				PanelBody,
-				{ title: __('Settings', td), opened: true },
+				{
+					title       : __('Settings', td),
+					initialOpen : true,
+					onToggle    : () => {
+						observeElement(observeElementArgs)
+					}
+				},
 				el(
 					'div',
 					null,

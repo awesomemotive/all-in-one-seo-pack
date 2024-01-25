@@ -729,7 +729,7 @@ class Post extends Model {
 	 * @since 4.3.2
 	 *
 	 * @param  array $existingOptions The existing options.
-	 * @return array                  The default options.
+	 * @return object                 The default options.
 	 */
 	public static function getDefaultOpenAiOptions( $existingOptions = [] ) {
 		$defaults = [

@@ -21,7 +21,8 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 		itemsTotalCount       : 0,
 		seoRevisionsDiff      : {},
 		seoRevisionsDiffCache : {},
-		modalOpenSidebar      : false
+		modalOpenSidebar      : false,
+		error                 : null
 	}),
 	getters : {
 		hasDiff () {

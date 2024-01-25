@@ -39,7 +39,7 @@
 						<core-tooltip>
 							<span
 								class="icon dashicons"
-								:class="`${object.icon || 'dashicons-admin-post'}`"
+								:class="getPostIconClass(object.icon)"
 							/>
 
 							<template #tooltip>
@@ -66,6 +66,7 @@ import BaseHighlightToggle from '@/vue/components/common/base/HighlightToggle'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
+import PostTypesMixin from '@/vue/mixins/PostTypes'
 export default {
 	setup () {
 		return {
@@ -78,7 +79,8 @@ export default {
 		GridColumn,
 		GridRow
 	},
-	props : {
+	mixins : [ PostTypesMixin ],
+	props  : {
 		type : {
 			type     : String,
 			required : true

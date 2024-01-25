@@ -362,6 +362,7 @@ export default {
 		}
 
 		.error {
+			border: none;
 			color: $red;
 		}
 	}

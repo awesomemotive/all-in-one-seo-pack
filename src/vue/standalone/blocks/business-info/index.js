@@ -12,7 +12,9 @@ import {
 import { observeElement } from '@/vue/utils/helpers'
 import { __, sprintf } from '@wordpress/i18n'
 
-import BusinessInfoSidebar from './BusinessInfoSidebar.vue'
+import { maybeDeleteBlockVueApp } from '@/vue/standalone/blocks/utils'
+
+import BusinessInfoSidebar from './BusinessInfoSidebar'
 
 const wp = window.wp
 const el = wp.element.createElement
@@ -38,6 +40,7 @@ const icon = el('svg',
 )
 
 const vueInitialState = {}
+const businessInfoSidebarApps = []
 
 export const name = 'aioseo/businessinfo'
 export const settings = {
@@ -133,7 +136,7 @@ export const settings = {
 	})(function (props) {
 		const optionsStore      = useOptionsStore()
 		const multipleLocations = optionsStore.options.localBusiness?.locations.general.multiple
-		const { setAttributes, attributes, className, clientId, isSelected } = props
+		const { setAttributes, attributes, className, clientId, isSelected, toggleSelection } = props
 		let { locations } = props
 		const vueAioseoId   = 'aioseo-' + clientId
 
@@ -178,40 +181,54 @@ export const settings = {
 		const postEditorStore = usePostEditorStore()
 		attributes.locationId = (!attributes.locationId && postEditorStore.currentPost.postType === rootStore.aioseo.localBusiness.postTypeName) ? postEditorStore.currentPost.id : attributes.locationId
 
+		const observeElementArgs = {
+			id      : vueAioseoId,
+			parent  : document.querySelector('.block-editor'),
+			subtree : true,
+			loop    : false,
+			done    : function (node) {
+				maybeDeleteBlockVueApp(clientId, businessInfoSidebarApps)
+
+				let app = createApp({
+					name : 'Blocks/BusinessInfo',
+					data : function () {
+						return vueInitialState[clientId]
+					},
+					watch : {
+						$data : {
+							handler : function (val) {
+								setAttributes(val)
+							},
+							deep : true
+						}
+					},
+					render : () => h(BusinessInfoSidebar)
+				})
+
+				app = loadPlugins(app)
+
+				app.mount(node)
+
+				businessInfoSidebarApps.push({ clientId, app })
+			}
+		}
+
 		if (isSelected) {
 			// Refresh the initial state object.
 			vueInitialState[clientId] = {}
-			Object.keys(attributes).forEach(function (key) {
+			Object.keys(attributes).forEach((key) => {
 				vueInitialState[clientId][key] = attributes[key]
 			})
 			vueInitialState[clientId].locations = locations
 
-			observeElement({
-				id      : vueAioseoId,
-				parent  : document.querySelector('.block-editor'),
-				subtree : true,
-				done    : function (el) {
-					let app = createApp({
-						name : 'Blocks/BusinessInfo',
-						data : function () {
-							return vueInitialState[clientId]
-						},
-						watch : {
-							$data : {
-								handler : function (val) {
-									setAttributes(val)
-								},
-								deep : true
-							}
-						},
-						render : () => h(BusinessInfoSidebar)
-					})
+			observeElement(observeElementArgs)
+		}
 
-					app = loadPlugins(app)
-
-					app.mount(el)
-				}
-			})
+		const generalSidebarName = wp.data.useSelect(
+			select => select('core/edit-post').getActiveGeneralSidebarName()
+		)
+		if ('edit-post/block' === generalSidebarName) {
+			'function' !== typeof toggleSelection || toggleSelection(true)
 		}
 
 		if (postEditorStore.currentPost.postType === rootStore.aioseo.localBusiness.postTypeName) {
@@ -248,7 +265,13 @@ export const settings = {
 			null,
 			el(
 				PanelBody,
-				{ title: __('Display Settings', td), initialOpen: true },
+				{
+					title       : __('Display Settings', td),
+					initialOpen : true,
+					onToggle    : () => {
+						observeElement(observeElementArgs)
+					}
+				},
 				el(
 					'div',
 					null,

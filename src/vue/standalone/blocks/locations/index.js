@@ -8,10 +8,12 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import LocationsSidebar from './LocationsSidebar.vue'
+import LocationsSidebar from './LocationsSidebar'
 
 import { observeElement } from '@/vue/utils/helpers'
 import { __, sprintf } from '@wordpress/i18n'
+
+import { maybeDeleteBlockVueApp } from '@/vue/standalone/blocks/utils'
 
 const wp = window.wp
 const el = wp.element.createElement
@@ -37,6 +39,7 @@ const icon = el('svg',
 )
 
 const vueInitialState = {}
+const locationsSidebarApps = []
 
 export const name = 'aioseo/locations'
 export const settings = {
@@ -60,7 +63,7 @@ export const settings = {
 	})(function (props) {
 		const optionsStore      = useOptionsStore()
 		const multipleLocations = optionsStore.options.localBusiness?.locations.general.multiple
-		const { setAttributes, attributes, className, clientId, isSelected } = props
+		const { setAttributes, attributes, className, clientId, isSelected, toggleSelection } = props
 		let { categories } = props
 		const vueAioseoId   = 'aioseo-' + clientId
 
@@ -101,40 +104,54 @@ export const settings = {
 			)
 		}
 
+		const observeElementArgs = {
+			id      : vueAioseoId,
+			parent  : document.querySelector('.block-editor'),
+			subtree : true,
+			loop    : false,
+			done    : function (node) {
+				maybeDeleteBlockVueApp(clientId, locationsSidebarApps)
+
+				let app = createApp({
+					name : 'Blocks/Locations',
+					data : function () {
+						return vueInitialState[clientId]
+					},
+					watch : {
+						$data : {
+							handler : function (val) {
+								setAttributes(val)
+							},
+							deep : true
+						}
+					},
+					render : () => h(LocationsSidebar)
+				})
+
+				app = loadPlugins(app)
+
+				app.mount(node)
+
+				locationsSidebarApps.push({ clientId, app })
+			}
+		}
+
 		if (isSelected) {
 			// Refresh the initial state object.
 			vueInitialState[clientId] = {}
-			Object.keys(attributes).forEach(function (key) {
+			Object.keys(attributes).forEach((key) => {
 				vueInitialState[clientId][key] = attributes[key]
 			})
 			vueInitialState[clientId].categories = categories
 
-			observeElement({
-				id      : vueAioseoId,
-				parent  : document.querySelector('.block-editor'),
-				subtree : true,
-				done    : function (el) {
-					let app = createApp({
-						name : 'Blocks/Locations',
-						data : function () {
-							return vueInitialState[clientId]
-						},
-						watch : {
-							$data : {
-								handler : function (val) {
-									setAttributes(val)
-								},
-								deep : true
-							}
-						},
-						render : () => h(LocationsSidebar)
-					})
+			observeElement(observeElementArgs)
+		}
 
-					app = loadPlugins(app)
-
-					app.mount(el)
-				}
-			})
+		const generalSidebarName = wp.data.useSelect(
+			select => select('core/edit-post').getActiveGeneralSidebarName()
+		)
+		if ('edit-post/block' === generalSidebarName) {
+			'function' !== typeof toggleSelection || toggleSelection(true)
 		}
 
 		const sidebar = el(
@@ -142,7 +159,13 @@ export const settings = {
 			null,
 			el(
 				PanelBody,
-				{ title: rootStore.aioseo.localBusiness.postTypePluralLabel, initialOpen: true },
+				{
+					title       : rootStore.aioseo.localBusiness.postTypePluralLabel,
+					initialOpen : true,
+					onToggle    : () => {
+						observeElement(observeElementArgs)
+					}
+				},
 				el(
 					'div',
 					{},

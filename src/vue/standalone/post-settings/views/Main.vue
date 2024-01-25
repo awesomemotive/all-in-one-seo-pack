@@ -104,8 +104,6 @@ import {
 } from '@/vue/stores'
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
-import license from '@/vue/utils/license'
-
 import { getParams, removeParam } from '@/vue/utils/params'
 import { debounceContext } from '@/vue/utils/debounce'
 import { isBlockEditor, isPageBuilderEditor } from '@/vue/utils/context'
@@ -352,7 +350,7 @@ export default {
 					break
 				case 'seoRevisions':
 					await this.$nextTick()
-					if (!this.seoRevisionsStore.modalOpenSidebar && (this.licenseStore.isUnlicensed || !license.hasCoreFeature('seo-revisions'))) {
+					if (!this.seoRevisionsStore.modalOpenSidebar && (this.licenseStore.isUnlicensed || 0 === this.seoRevisionsStore.itemsLimit)) {
 						this.seoRevisionsStore.modalOpenSidebar = true
 					}
 					break

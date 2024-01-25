@@ -85,14 +85,14 @@ export default {
 			if ('title' === this.type) {
 				return this.$t.sprintf(
 					// Translators: 1 - "Title" or "Description".
-					this.$t.__('Generate New SEO Post %1$s', this.$td),
+					this.$t.__('Generate New SEO %1$s', this.$td),
 					this.$t.__('Title', this.$td)
 				)
 			}
 
 			return this.$t.sprintf(
 				// Translators: 1 - "Title" or "Description".
-				this.$t.__('Generate New SEO Post %1$s', this.$td),
+				this.$t.__('Generate New SEO %1$s', this.$td),
 				this.$t.__('Description', this.$td)
 			)
 		},
@@ -100,14 +100,14 @@ export default {
 			if ('title' === this.type) {
 				return this.$t.sprintf(
 					// Translators: 1 - "Titles" or "Descriptions".
-					this.$t.__('Generating SEO Post %1$s is a Pro Feature', this.$td),
+					this.$t.__('Generating SEO %1$s is a Pro Feature', this.$td),
 					this.$t.__('Titles', this.$td)
 				)
 			}
 
 			return this.$t.sprintf(
 				// Translators: 1 - "Titles" or "Descriptions".
-				this.$t.__('Generating SEO Post %1$s is a Pro Feature', this.$td),
+				this.$t.__('Generating SEO %1$s is a Pro Feature', this.$td),
 				this.$t.__('Descriptions', this.$td)
 			)
 		},

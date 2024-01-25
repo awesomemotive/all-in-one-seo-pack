@@ -1025,7 +1025,7 @@ export default {
 				display: none;
 			}
 
-			.label {
+			.tab-label {
 				display: inline!important;
 			}
 		}

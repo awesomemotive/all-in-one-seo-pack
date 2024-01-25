@@ -14,7 +14,7 @@
 				</div>
 
 				<div
-					v-for="(feature, index) in getFeatures"
+					v-for="(feature, index) in features"
 					:key="index"
 					class="feature-grid small-padding medium-margin"
 				>
@@ -28,8 +28,15 @@
 								<div class="aioseo-description-text">
 									{{ feature.description }}
 								</div>
+								<div
+									v-if="feature.installs && getValue(feature)"
+									class="aioseo-installs-text"
+								>
+									{{ feature.installs }}
+								</div>
 							</div>
 						</grid-column>
+
 						<grid-column xs="1">
 							<base-checkbox
 								round
@@ -127,40 +134,44 @@ export default {
 		showPluginsAll () {
 			return (
 				this.setupWizardStore.features.includes('analytics') ||
-					this.setupWizardStore.features.includes('conversion-tools')
+				this.setupWizardStore.features.includes('conversion-tools') ||
+				this.setupWizardStore.features.includes('broken-link-checker')
 			) &&
-				(
-					this.setupWizardStore.features.includes('image-seo') ||
-					this.setupWizardStore.features.includes('news-sitemap') ||
-					this.setupWizardStore.features.includes('video-sitemap') ||
-					this.setupWizardStore.features.includes('local-seo') ||
-					this.setupWizardStore.features.includes('redirects') ||
-					this.setupWizardStore.features.includes('index-now') ||
-					this.setupWizardStore.features.includes('link-assistant') ||
-					this.setupWizardStore.features.includes('rest-api')
-				)
+			(
+				this.setupWizardStore.features.includes('image-seo') ||
+				this.setupWizardStore.features.includes('news-sitemap') ||
+				this.setupWizardStore.features.includes('video-sitemap') ||
+				this.setupWizardStore.features.includes('local-seo') ||
+				this.setupWizardStore.features.includes('redirects') ||
+				this.setupWizardStore.features.includes('index-now') ||
+				this.setupWizardStore.features.includes('link-assistant') ||
+				this.setupWizardStore.features.includes('rest-api')
+			)
 		},
 		showPluginsAddons () {
 			return (
 				!this.setupWizardStore.features.includes('analytics') ||
-				!this.setupWizardStore.features.includes('conversion-tools')
+				!this.setupWizardStore.features.includes('conversion-tools') ||
+				!this.setupWizardStore.features.includes('broken-link-checker')
 			) &&
-				(
-					this.setupWizardStore.features.includes('image-seo') ||
-					this.setupWizardStore.features.includes('news-sitemap') ||
-					this.setupWizardStore.features.includes('video-sitemap') ||
-					this.setupWizardStore.features.includes('local-seo') ||
-					this.setupWizardStore.features.includes('redirects') ||
-					this.setupWizardStore.features.includes('index-now') ||
-					this.setupWizardStore.features.includes('link-assistant') ||
-					this.setupWizardStore.features.includes('rest-api')
-				)
+			(
+				this.setupWizardStore.features.includes('image-seo') ||
+				this.setupWizardStore.features.includes('news-sitemap') ||
+				this.setupWizardStore.features.includes('video-sitemap') ||
+				this.setupWizardStore.features.includes('local-seo') ||
+				this.setupWizardStore.features.includes('redirects') ||
+				this.setupWizardStore.features.includes('index-now') ||
+				this.setupWizardStore.features.includes('link-assistant') ||
+				this.setupWizardStore.features.includes('rest-api')
+			)
 		},
 		showPluginsOnly () {
 			return (
 				this.setupWizardStore.features.includes('analytics') ||
-				this.setupWizardStore.features.includes('conversion-tools')
+				this.setupWizardStore.features.includes('conversion-tools') ||
+				this.setupWizardStore.features.includes('broken-link-checker')
 			) &&
+			(
 				!this.setupWizardStore.features.includes('image-seo') &&
 				!this.setupWizardStore.features.includes('news-sitemap') &&
 				!this.setupWizardStore.features.includes('video-sitemap') &&
@@ -169,6 +180,7 @@ export default {
 				!this.setupWizardStore.features.includes('index-now') &&
 				!this.setupWizardStore.features.includes('link-assistant') &&
 				!this.setupWizardStore.features.includes('rest-api')
+			)
 		},
 		getPluginsText () {
 			if (this.showPluginsOnly) {
@@ -201,60 +213,31 @@ export default {
 		},
 		getPluginNames () {
 			const pluginNames = []
-			if (this.setupWizardStore.features.includes('analytics')) {
-				pluginNames.push('MonsterInsights Free')
+			this.features.forEach(feature => {
+				if (this.setupWizardStore.features.includes(feature.value) && feature.pluginName) {
+					pluginNames.push(feature.pluginName)
+				}
+			})
+
+			// Separate the last plugin with an "and" if there is more than one.
+			let lastPlugin = ''
+			if (1 < pluginNames.length) {
+				lastPlugin = this.$t.sprintf(
+					// Translators: 1 - A plugin's name (e.g. "OptinMonster", "Broken Link Checker").
+					this.$t.__(' and %1$s', this.$td),
+					pluginNames[pluginNames.length - 1]
+				)
+			} else {
+				lastPlugin = pluginNames[pluginNames.length - 1]
 			}
 
-			if (this.setupWizardStore.features.includes('conversion-tools')) {
-				pluginNames.push('OptinMonster')
-			}
+			delete pluginNames[pluginNames.length - 1]
 
-			if (this.setupWizardStore.features.includes('image-seo')) {
-				pluginNames.push('Image SEO')
-			}
+			// Implode the list but trim leading and trailing commas and spaces.
+			const pluginNamesString = pluginNames.join(', ').replace(/(^[,\s]+)|([,\s]+$)/g, '')
 
-			if (this.setupWizardStore.features.includes('local-seo')) {
-				pluginNames.push('Local Business SEO')
-			}
-
-			if (this.setupWizardStore.features.includes('video-sitemap')) {
-				pluginNames.push('Video Sitemap')
-			}
-
-			if (this.setupWizardStore.features.includes('news-sitemap')) {
-				pluginNames.push('News Sitemap')
-			}
-
-			if (this.setupWizardStore.features.includes('redirects')) {
-				pluginNames.push('Redirects')
-			}
-
-			if (this.setupWizardStore.features.includes('index-now')) {
-				pluginNames.push('Index Now')
-			}
-
-			if (this.setupWizardStore.features.includes('link-assistant')) {
-				pluginNames.push('Link Assistant')
-			}
-
-			if (this.setupWizardStore.features.includes('rest-api')) {
-				pluginNames.push('REST API')
-			}
-
-			return pluginNames.join(', ')
-		},
-		// Because we want translations for future options, we need to filter out ones we don't want showing right now.
-		getFeatures () {
-			return this.features
-				// Hiding the following for now since we do not support them in this launch.
-				.filter(f => 'breadcrumbs' !== f.value)
-				.map(f => {
-					f.selected = false
-					if (this.setupWizardStore.features.includes(f.value)) {
-						f.selected = true
-					}
-					return f
-				})
+			// Add the last plugin to the list.
+			return pluginNamesString + lastPlugin
 		}
 	},
 	methods : {
@@ -329,14 +312,24 @@ export default {
 				max-width: 650px;
 				color: $black2;
 			}
+
+			.aioseo-installs-text {
+				font-style: italic;
+				margin-top: 5px;
+				font-size: 12px;
+				color: $black2;
+			}
 		}
 	}
 
 	.plugins {
-		margin-top: 16px;
-		font-size: 14px;
+		font-style: italic;
+		max-width: 650px;
+		margin: 16px auto 0;
+		font-size: 12px;
 		text-align: center;
-		color: $black2;
+		color: $placeholder-color;
+		line-height: 1.5;
 	}
 
 	.go-back {

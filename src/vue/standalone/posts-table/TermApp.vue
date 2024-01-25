@@ -17,6 +17,8 @@
 								{{ truncate(titleParsed, 100) }}
 							</span>
 
+							<core-loader v-if="termLoading" dark />
+
 							<svg-pencil
 								v-if="!showEditTitle"
 								class="pencil-icon"
@@ -71,6 +73,8 @@
 								<strong>:</strong>
 								{{ truncate(descriptionParsed) }}
 							</span>
+
+							<core-loader v-if="termLoading" dark />
 
 							<svg-pencil
 								v-if="!showEditDescription"
@@ -129,6 +133,7 @@ import { truncate } from '@/vue/utils/html'
 import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
 import BaseButton from '@/vue/components/common/base/Button'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
+import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
 import '@/vue/assets/scss/main.scss'
@@ -144,6 +149,7 @@ export default {
 	components : {
 		BaseButton,
 		CoreHtmlTagsEditor,
+		CoreLoader,
 		CoreTooltip,
 		SvgPencil
 	},
@@ -164,6 +170,7 @@ export default {
 			showEditTitle       : false,
 			showEditDescription : false,
 			showTruSeo          : false,
+			termLoading         : false,
 			strings             : merge(this.composableStrings, {
 				title          : this.$t.__('Title', this.$td),
 				description    : this.$t.__('Description', this.$td),
@@ -178,8 +185,9 @@ export default {
 			this.showEditDescription = false
 			this.term.title          = this.title
 			this.term.description    = this.termDescription
+			this.termLoading         = true
 
-			http.post(this.$links.restUrl('termscreen'))
+			http.post(this.$links.restUrl('terms-list/update-details-column'))
 				.send({
 					termId      : this.term.id,
 					title       : this.term.title,
@@ -194,6 +202,9 @@ export default {
 				})
 				.catch(error => {
 					console.error(`Unable to update term with ID ${this.term.id}: ${error}`)
+				})
+				.finally(() => {
+					this.termLoading = false
 				})
 		},
 		cancel () {

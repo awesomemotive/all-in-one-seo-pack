@@ -62,7 +62,7 @@ export default {
 		return {
 			strings : {
 				header : this.$t.sprintf(
-					// Translators: 1 - The short plugin name ("AIOSEO").
+					// Translators: 1 - The plugin short name ("AIOSEO").
 					this.$t.__('%1$s Settings', this.$td),
 					import.meta.env.VITE_SHORT_NAME
 				)

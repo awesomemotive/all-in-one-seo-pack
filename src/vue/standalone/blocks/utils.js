@@ -162,3 +162,18 @@ export const cleanHtml = (htmlString, stripTags = false) => {
 export const generateUniqueSchemaBlockId = () => {
 	return 'aioseo-' + new Date().getTime().toString(36)
 }
+
+/**
+ * Unmount app and prevent Vue from creating multiple instances of the same app.
+ *
+ * @param {string} clientId A block ID.
+ * @param {Array} apps Array of Vue apps.
+ * @returns {void}
+ */
+export const maybeDeleteBlockVueApp = (clientId, apps) => {
+	const findAppIndex = apps.findIndex(a => a.clientId === clientId)
+	if (-1 !== findAppIndex) {
+		apps[findAppIndex].app.unmount()
+		apps.splice(findAppIndex, 1)
+	}
+}

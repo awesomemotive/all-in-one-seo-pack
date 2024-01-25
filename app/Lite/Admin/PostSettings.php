@@ -60,7 +60,7 @@ class PostSettings extends CommonAdmin\PostSettings {
 	 * @return void
 	 */
 	public function addTaxonomyUpsell() {
-		$screen = get_current_screen();
+		$screen = aioseo()->helpers->getCurrentScreen();
 		if (
 			! isset( $screen->parent_base ) ||
 			'edit' !== $screen->parent_base ||

@@ -8,7 +8,7 @@
 			<template #header>
 				<div
 					class="icon dashicons"
-					:class="`${taxonomy.icon || 'dashicons-admin-post'}`"
+					:class="getPostIconClass(taxonomy.icon)"
 				/>
 
 				{{ taxonomy.label }}
@@ -78,6 +78,7 @@ import Advanced from './partials/Advanced'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
+import PostTypesMixin from '@/vue/mixins/PostTypes'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import TitleDescription from './partials/TitleDescription'
 export default {
@@ -96,6 +97,7 @@ export default {
 		SvgCircleQuestionMark,
 		TitleDescription
 	},
+	mixins : [ PostTypesMixin ],
 	data () {
 		return {
 			internalDebounce : null,

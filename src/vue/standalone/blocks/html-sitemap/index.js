@@ -11,6 +11,8 @@ import { loadPiniaStores } from '@/vue/stores'
 import { observeElement } from '@/vue/utils/helpers'
 import { __ } from '@wordpress/i18n'
 
+import { maybeDeleteBlockVueApp } from '@/vue/standalone/blocks/utils'
+
 import HtmlSitemapSidebar from './HtmlSitemapSidebar'
 
 const wp = window.wp
@@ -37,6 +39,7 @@ const icon = el('svg',
 	)
 )
 const vueInitialState = {}
+const htmlSitemapSidebarApps = []
 
 export const name = 'aioseo/html-sitemap'
 export const settings = {
@@ -104,47 +107,59 @@ export const settings = {
 		}
 	},
 	edit : function (props) {
-		const { setAttributes, attributes, className, clientId, isSelected } = props
+		const { setAttributes, attributes, className, clientId, isSelected, toggleSelection } = props
 		const vueAioseoHtmlSitemapID = 'aioseo-' + clientId
+		const observeElementArgs = {
+			id      : vueAioseoHtmlSitemapID,
+			parent  : document.querySelector('.block-editor'),
+			subtree : true,
+			loop    : false,
+			done    : function (node) {
+				maybeDeleteBlockVueApp(clientId, htmlSitemapSidebarApps)
+
+				let app = createApp({
+					name : 'Blocks/HtmlSitemap',
+					data : function () {
+						return vueInitialState[clientId]
+					},
+					watch : {
+						$data : {
+							handler : function (val) {
+								setAttributes(val)
+							},
+							deep : true
+						}
+					},
+					render : () => h(HtmlSitemapSidebar)
+				})
+
+				app = loadPlugins(app)
+				app = loadComponents(app)
+				app = loadVersionedComponents(app)
+
+				loadPiniaStores(app)
+
+				app.mount(node)
+
+				htmlSitemapSidebarApps.push({ clientId, app })
+			}
+		}
 
 		if (isSelected) {
 			// Refresh the initial state object.
 			vueInitialState[clientId] = {}
-			Object.keys(attributes).forEach(function (key) {
+			Object.keys(attributes).forEach((key) => {
 				vueInitialState[clientId][key] = attributes[key]
 			})
 
-			observeElement({
-				id      : vueAioseoHtmlSitemapID,
-				parent  : document.querySelector('.block-editor'),
-				subtree : true,
-				done    : function (el) {
-					let app = createApp({
-						name : 'Blocks/HtmlSitemap',
-						data : function () {
-							return vueInitialState[clientId]
-						},
-						watch : {
-							$data : {
-								handler : function (val) {
-									setAttributes(val)
-								},
-								deep : true
-							}
-						},
-						render : () => h(HtmlSitemapSidebar)
-					})
+			observeElement(observeElementArgs)
+		}
 
-					app = loadPlugins(app)
-					app = loadComponents(app)
-					app = loadVersionedComponents(app)
-
-					// Use the pinia store.
-					loadPiniaStores(app)
-
-					app.mount(el)
-				}
-			})
+		const generalSidebarName = wp.data.useSelect(
+			select => select('core/edit-post').getActiveGeneralSidebarName()
+		)
+		if ('edit-post/block' === generalSidebarName) {
+			'function' !== typeof toggleSelection || toggleSelection(true)
 		}
 
 		const sidebar = el(
@@ -152,7 +167,13 @@ export const settings = {
 			null,
 			el(
 				PanelBody,
-				{ title: __('Display Settings', td), initialOpen: true },
+				{
+					title       : __('Display Settings', td),
+					initialOpen : true,
+					onToggle    : () => {
+						observeElement(observeElementArgs)
+					}
+				},
 				el(
 					'div',
 					null,

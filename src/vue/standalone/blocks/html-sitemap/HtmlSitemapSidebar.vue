@@ -8,7 +8,7 @@
 			</base-toggle>
 		</div>
 
-		<div v-if="!$root.$data.default">
+		<template v-if="!$root.$data.default">
 			<div class="aioseo-sidebar-row">
 				<base-toggle
 					v-model="$root.$data.archives"
@@ -114,7 +114,7 @@
 					type="terms"
 				/>
 			</div>
-		</div>
+		</template>
 	</div>
 </template>
 
@@ -176,7 +176,10 @@ export default {
 }
 
 .aioseo-sidebar-row {
-	margin-bottom: 16px;
+	& + & {
+		margin-top: 16px;
+	}
+
 	.aioseo-sidebar-title {
 		font-weight: 500;
 	}

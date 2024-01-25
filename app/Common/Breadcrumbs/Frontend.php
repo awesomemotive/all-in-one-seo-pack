@@ -68,6 +68,16 @@ class Frontend {
 			if ( is_home() ) {
 				$type = 'blog';
 			}
+
+			// Support WC shop page.
+			if ( aioseo()->helpers->isWooCommerceShopPage() ) {
+				$type = 'wcShop';
+			}
+
+			// Support WC products.
+			if ( aioseo()->helpers->isWooCommerceProductPage() ) {
+				$type = 'wcProduct';
+			}
 		}
 
 		if ( is_date() ) {

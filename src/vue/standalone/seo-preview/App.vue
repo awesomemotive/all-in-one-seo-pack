@@ -297,7 +297,7 @@ export default {
 				width: 20px;
 			}
 
-			.label {
+			.tab-label {
 				font-weight: 700;
 				text-transform: none;
 			}

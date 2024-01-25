@@ -390,9 +390,6 @@ export default {
 					this.loading.deactivateAll = false
 				})
 		}
-	},
-	beforeMount () {
-		console.log(this.getAddons)
 	}
 }
 </script>

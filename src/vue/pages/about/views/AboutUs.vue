@@ -124,6 +124,7 @@ import teamImg from '@/vue/assets/images/about/team.jpg'
 
 // Plugin image urls.
 import afwpImg from '@/vue/assets/images/about/plugins/afwp.png'
+import blcImg from '@/vue/assets/images/about/plugins/blc.svg'
 import eddImg from '@/vue/assets/images/about/plugins/edd.png'
 import emImg from '@/vue/assets/images/about/plugins/em.png'
 import ffImg from '@/vue/assets/images/about/plugins/ff.png'
@@ -204,6 +205,15 @@ export default {
 				}
 			},
 			pluginData : {
+				brokenLinkChecker : {
+					name        : 'Broken Link Checker',
+					description : this.$t.__('Broken Link Checker by AIOSEO is an essential tool for ensuring that all internal and external links on your website are functioning correctly. Quickly check your site for broken links and easily fix them to improve SEO.', this.$td),
+					icon        : getAssetUrl(blcImg),
+					installed   : false,
+					canInstall  : false,
+					activated   : false,
+					loading     : false
+				},
 				optinMonster : {
 					name        : 'OptinMonster',
 					description : this.$t.__('Instantly get more subscribers, leads, and sales with the #1 conversion optimization toolkit. Create high converting popups, announcement bars, spin a wheel, and more with smart targeting and personalization.', this.$td),
@@ -571,7 +581,6 @@ export default {
 	},
 	mounted () {
 		this.localPlugins = { ...this.pluginsStore.plugins }
-		console.log(this.localPlugins)
 
 		// Set installation and activation status for each plugin.
 		Object.keys(this.localPlugins).forEach(pluginName => {

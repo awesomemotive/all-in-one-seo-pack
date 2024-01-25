@@ -180,6 +180,42 @@ trait ThirdParty {
 	}
 
 	/**
+	 * Checks whether the queried object is a WooCommerce product page.
+	 *
+	 * @since 4.5.5
+	 *
+	 * @return bool Whether the current page is a WooCommerce product page.
+	 */
+	public function isWooCommerceProductPage() {
+		if (
+			! $this->isWooCommerceActive() ||
+			! function_exists( 'is_product' )
+		) {
+			return false;
+		}
+
+		return is_product();
+	}
+
+	/**
+	 * Checks whether the queried object is a WooCommerce taxonomy page.
+	 *
+	 * @since 4.5.5
+	 *
+	 * @return bool Whether the current page is a WooCommerce taxonomy page.
+	 */
+	public function isWooCommerceTaxonomyPage() {
+		if (
+			! $this->isWooCommerceActive() ||
+			! function_exists( 'is_product_taxonomy' )
+		) {
+			return false;
+		}
+
+		return is_product_taxonomy();
+	}
+
+	/**
 	 * Internationalize.
 	 *
 	 * @since 4.0.0
