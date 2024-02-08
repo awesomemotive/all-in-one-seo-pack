@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="author-seo-cta">
 		<eeat-cta v-if="shouldShowUpdate || shouldShowActivate"/>
 
 		<eeat-cta-lite v-if="shouldShowLite"/>
@@ -25,3 +25,9 @@ export default {
 	}
 }
 </script>
+
+<style>
+.aioseo-app .author-seo-cta {
+	position: relative;
+}
+</style>

@@ -186,6 +186,10 @@ export const useRedirectsStore = defineStore('RedirectsStore', {
 				})
 				.then(() => this.setLateRefresh({ value: true, type: 'redirects' }))
 		},
+		importCsvRedirects (redirects) {
+			return http.post(links.restUrl('redirects/import-csv'))
+				.send(redirects)
+		},
 		getPosts (payload) {
 			return http.post(links.restUrl('redirects/posts'))
 				.send(payload)

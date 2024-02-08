@@ -272,7 +272,7 @@ class Image {
 		$images = array_merge( $images, $this->getPostGalleryImages() );
 
 		// Now, get the remaining images from image tags in the post content.
-		$parsedPostContent = function_exists( 'do_blocks' ) ? do_blocks( $this->post->post_content ) : $this->post->post_content; // phpcs:disable AIOSEO.WpFunctionUse.NewFunctions
+		$parsedPostContent = do_blocks( $this->post->post_content );
 		$parsedPostContent = aioseo()->helpers->doShortcodes( $parsedPostContent, true, $this->post->ID );
 		$parsedPostContent = preg_replace( '/\s\s+/u', ' ', trim( $parsedPostContent ) ); // Trim both internal and external whitespace.
 

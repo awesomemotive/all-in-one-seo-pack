@@ -308,7 +308,6 @@ trait Vue {
 			'maxImagePreview'                => $post->robots_max_imagepreview,
 			'modalOpen'                      => false,
 			'generalMobilePrev'              => false,
-			'socialMobilePreview'            => false,
 			'og_object_type'                 => ! empty( $post->og_object_type ) ? $post->og_object_type : 'default',
 			'og_title'                       => $post->og_title,
 			'og_description'                 => $post->og_description,

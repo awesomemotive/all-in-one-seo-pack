@@ -1,5 +1,5 @@
 <template>
-	<teleport to="#aioseo-modal-portal">
+	<teleport :to="teleportTo">
 		<div
 			:show="show"
 			class="aioseo-app aioseo-modal"
@@ -84,7 +84,13 @@ export default {
 		noHeader      : Boolean,
 		allowOverflow : Boolean,
 		show          : Boolean,
-		modalName     : String
+		modalName     : String,
+		teleportTo   	: {
+			type : String,
+			default () {
+				return '#aioseo-modal-portal'
+			}
+		}
 	},
 	watch : {
 		show (show) {

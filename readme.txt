@@ -1,8 +1,8 @@
 === All in One SEO – Best WordPress SEO Plugin – Easily Improve SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta title, rich snippets, woocommerce seo, local seo, open graph, google news sitemap, video sitemap, robots.txt, seo audit, content analysis, seo plugin, redirection
-Tested up to: 6.4.2
-Requires at least: 4.9
+Tested up to: 6.4.3
+Requires at least: 5.3
 Requires PHP: 7.0
 Stable tag: 4.5.5
 License: GPLv3 or later
@@ -264,6 +264,16 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 
 == Changelog ==
+
+**New in Version 4.5.6**
+
+* New: SEO Preview Redesign - Our revamped preview better reflects how your pages may look like in search results and now also supports various Google rich results snippets, including products, FAQ pages and more.
+* New: Redirect Schedules - Add redirects for your pages ahead of time or schedule them for a specific date range thanks to our new scheduling ability.
+* New: Redirect CSV Importer - Import redirects directly into AIOSEO by uploading a CSV file.
+* Updated: Added Author SEO tab with additional settings for the Author SEO (E-E-A-T) addon.
+* Updated: Added support for PHP 8.3.
+* Updated: Bumped the minimum required WordPress Core version to 5.3.
+* Fixed: ProfilePage schema error because "mainEntity" property is missing.
 
 **New in Version 4.5.5**
 
@@ -754,6 +764,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.5.5 =
+= 4.5.6 =
 
 This update adds major improvements and bug fixes.

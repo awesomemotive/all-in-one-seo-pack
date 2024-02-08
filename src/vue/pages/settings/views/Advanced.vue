@@ -22,22 +22,11 @@
 				:name="strings.headlineAnalyzer"
 			>
 				<template #content>
-					<base-toggle
-						v-model="optionsStore.options.advanced.headlineAnalyzer"
-						:disabled="versionCompare(rootStore.aioseo.wpVersion, '5.2', '<')"
-					/>
+					<base-toggle v-model="optionsStore.options.advanced.headlineAnalyzer"/>
 
 					<div class="aioseo-description">
 						{{ strings.headlineAnalyzerDescription }}
 					</div>
-
-					<core-alert
-						class="warning"
-						v-if="versionCompare(rootStore.aioseo.wpVersion, '5.2', '<')"
-						type="yellow"
-					>
-						<div v-html="strings.headlineAnalyzerWarning"/>
-					</core-alert>
 				</template>
 			</core-settings-row>
 
@@ -448,12 +437,6 @@ export default {
 					// Translators: 1 - Plugin Short Name ("AIOSEO").
 					this.$t.__('Check this if you would like to remove ALL %1$s data upon plugin deletion. All settings and SEO data will be unrecoverable.', this.$td),
 					import.meta.env.VITE_SHORT_NAME
-				),
-				headlineAnalyzerWarning : this.$t.sprintf(
-					// Translators: 1 - "WordPress 5.2", 2 - "Learn More".
-					this.$t.__('The Headline Analyzer is only available in %1$s and up. %2$s', this.$td),
-					'WordPress 5.2',
-					this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'updateWordPress', true)
 				),
 				openAiKey            : this.$t.__('OpenAI API Key', this.$td),
 				openAiKeyDescription : this.$t.sprintf(

@@ -3,7 +3,7 @@
 		xmlns="http://www.w3.org/2000/svg"
 		fill="none"
 		class="aioseo-logo-google"
-		viewBox="0 0 180 61"
+		viewBox="21.6 8.34 136.57 44.81"
 	>
 		<g clip-path="url(#clip0_4358_31060)">
 			<path

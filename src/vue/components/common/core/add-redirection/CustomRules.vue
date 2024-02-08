@@ -18,50 +18,87 @@
 				:class="{ even: 0 === index % 2 }"
 				:key="index"
 			>
-				<td  class="rule-settings">
-						<base-select
-							:options="filteredTypes"
-							size="medium"
-							:placeholder="strings.selectMatchRule"
-							:modelValue="getRuleValue('type', index)"
-							@update:modelValue="updateRule('type', $event, index)"
-						/>
-						<base-select
-							v-if="getType(index, 'options') || getType(index, 'taggable')"
-							:options="getType(index, 'options') || []"
-							size="medium"
-							:modelValue="getRuleValue('value', index)"
-							@update:modelValue="updateRule('value', $event, index)"
-							:multiple="getType(index, 'multiple') || getType(index, 'taggable')"
-							:taggable="getType(index, 'taggable')"
-							:placeholder="getType(index, 'placeholder') || strings.selectAValue"
-						/>
-						<!-- Key field when there's a key/value pair. -->
-						<base-input
-							v-if="getType(index, 'keyValuePair')"
-							:modelValue="getRuleValue('key', index)"
-							@update:modelValue="updateRule('key', $event, index)"
-							size="medium"
-							:placeholder="getType(index, 'placeholderKey') || strings.key"
-						/>
-						<!-- Key field when there's a key/value pair. -->
-						<!-- Value field if there are no options and the option is not taggable -->
-						<base-input
-							v-if="!getType(index, 'options') && !getType(index, 'taggable')"
-							:modelValue="getRuleValue('value', index)"
-							@update:modelValue="updateRule('value', $event, index)"
-							size="medium"
-							:placeholder="getType(index, 'placeholder') || strings.value"
-							:disabled="!getType(index)"
-						/>
-						<!-- Value field if there are no options and the option is not taggable/multiple -->
-						<base-toggle
-							v-if="getType(index, 'regex')"
-							:modelValue="getRuleValue('regex', index)"
-							@update:modelValue="updateRule('regex', $event, index)"
-						>
-							{{ strings.regex }}
-						</base-toggle>
+				<td class="rule-settings">
+					<div class="rule-row">
+						<div class="rule-option">
+							<base-select
+								:options="filteredTypes"
+								size="medium"
+								:placeholder="strings.selectMatchRule"
+								:modelValue="getRuleValue('type', index)"
+								@update:modelValue="updateRule('type', $event, index)"
+							/>
+							<base-select
+								v-if="getType(index, 'options') || getType(index, 'taggable')"
+								:options="getType(index, 'options') || []"
+								size="medium"
+								:modelValue="getRuleValue('value', index)"
+								@update:modelValue="updateRule('value', $event, index)"
+								:multiple="getType(index, 'multiple') || getType(index, 'taggable')"
+								:taggable="getType(index, 'taggable')"
+								:placeholder="getType(index, 'placeholder') || strings.selectAValue"
+							/>
+							<!-- Key field when there's a key/value pair. -->
+							<base-input
+								v-if="getType(index, 'keyValuePair')"
+								:modelValue="getRuleValue('key', index)"
+								@update:modelValue="updateRule('key', $event, index)"
+								size="medium"
+								:placeholder="getType(index, 'placeholderKey') || strings.key"
+							/>
+							<!-- Key field when there's a key/value pair. -->
+							<!-- Value field if there are no options and the option is not taggable -->
+							<base-input
+								v-if="!getType(index, 'options') && !getType(index, 'taggable') && !getType(index, 'dateRange')"
+								:modelValue="getRuleValue('value', index)"
+								@update:modelValue="updateRule('value', $event, index)"
+								size="medium"
+								:placeholder="getType(index, 'placeholder') || strings.value"
+								:disabled="!getType(index)"
+							/>
+							<div
+								v-if="getType(index, 'dateRange')"
+								class="date-range"
+							>
+								<base-date-picker
+									type="datetime"
+									size="large"
+									:placeholder="strings.startDate"
+									:dateFormat="rootStore.aioseo.data.dateFormat + ' - ' + rootStore.aioseo.data.timeFormat"
+									:defaultValue="dateStringToLocalJs(getRuleValue('scheduleStart', index))"
+									@change="value => updateDate(value, 'scheduleStart', index)"
+									:isDisabledDate="isDisabledStartDate"
+								/>
+								<base-date-picker
+									type="datetime"
+									size="large"
+									:placeholder="strings.endDate"
+									:dateFormat="rootStore.aioseo.data.dateFormat + ' - ' + rootStore.aioseo.data.timeFormat"
+									:defaultValue="dateStringToLocalJs(getRuleValue('scheduleEnd', index))"
+									@change="value => updateDate(value, 'scheduleEnd', index)"
+									:isDisabledDate="(date) => isDisabledEndDate(date, index)"
+								/>
+							</div>
+							<!-- Value field if there are no options and the option is not taggable/multiple -->
+							<base-toggle
+								v-if="getType(index, 'regex')"
+								:modelValue="getRuleValue('regex', index)"
+								@update:modelValue="updateRule('regex', $event, index)"
+							>
+								{{ strings.regex }}
+							</base-toggle>
+						</div>
+						<div
+							class="rule-error"
+							v-if="!!rulesErrors[index]">
+							<core-alert
+								type="red"
+								size="small"
+							>
+								{{ rulesErrors[index] }}
+							</core-alert>
+						</div>
+					</div>
 				</td>
 				<td class="actions">
 					<core-tooltip
@@ -102,9 +139,15 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
+import { Date as DateMixin } from '@/vue/mixins/Date'
+import { DateTime } from 'luxon'
+
+import BaseDatePicker from '@/vue/components/common/base/DatePicker'
+import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import SvgTrash from '@/vue/components/common/svg/Trash'
+
 const matchDefaults = {
 	type  : null,
 	key   : null,
@@ -112,12 +155,15 @@ const matchDefaults = {
 	regex : null
 }
 export default {
+	emits : [ 'redirects-custom-rule-error' ],
 	setup () {
 		return {
 			rootStore : useRootStore()
 		}
 	},
 	components : {
+		BaseDatePicker,
+		CoreAlert,
 		CoreTooltip,
 		SvgCirclePlus,
 		SvgTrash
@@ -125,8 +171,10 @@ export default {
 	props : {
 		editCustomRules : Array
 	},
+	mixins : [ DateMixin ],
 	data () {
 		return {
+			DateTime,
 			strings : {
 				customRules     : this.$t.__('Custom Rules', this.$td),
 				selectMatchRule : this.$t.__('Select Rule', this.$td),
@@ -135,10 +183,20 @@ export default {
 				regex           : this.$t.__('Regex', this.$td),
 				selectAValue    : this.$t.__('Select a Value or Add a New One', this.$td),
 				key             : this.$t.__('Key', this.$td),
-				value           : this.$t.__('Value', this.$td)
+				value           : this.$t.__('Value', this.$td),
+				startDate       : this.$t.__('Start Date', this.$td),
+				endDate         : this.$t.__('End Date', this.$td)
 			},
 			customRules : [],
+			rulesErrors	: [],
 			types       : [
+				{
+					label     : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.schedule,
+					value     : 'schedule',
+					taggable  : false,
+					regex     : false,
+					dateRange : true
+				},
 				{
 					label       : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.login,
 					value       : 'login',
@@ -247,6 +305,21 @@ export default {
 		}
 	},
 	methods : {
+		isDisabledStartDate (date) {
+			const today = new Date()
+			today.setHours(0, 0, 0, 0)
+			return date < today
+		},
+		isDisabledEndDate (date, index) {
+			const startDate = this.getRuleValue('scheduleStart', index)
+
+			if (startDate) {
+				date.setHours(23, 59, 59, 0)
+				return this.dateStringToLocalJs(startDate) > date
+			}
+
+			return this.isDisabledStartDate(date)
+		},
 		removeRule (index) {
 			this.customRules.splice(index, 1)
 			if (!this.hasCustomRules) {
@@ -295,6 +368,7 @@ export default {
 					break
 				case 'value':
 					typeOptions = this.getType(index, 'options')
+
 					if (typeOptions) {
 						if ('object' === typeof value) {
 							value = value.map(val => typeOptions.find(option => val === option.value) || val).filter(item => !!item)
@@ -321,6 +395,38 @@ export default {
 				return currentType && 'undefined' !== typeof currentType[key] ? currentType[key] : false
 			}
 			return currentType
+		},
+		validationError () {
+			let hasError = false,
+				start    = null,
+				end      = null
+
+			this.customRules.forEach((customRule, index) => {
+				this.rulesErrors[index] = null
+				switch (customRule.type) {
+					case 'schedule':
+						start = this.getRuleValue('scheduleStart', index)
+						end   = this.getRuleValue('scheduleEnd', index)
+
+						if (start && end) {
+							if (start > end) {
+								this.rulesErrors[index] = this.$t.__('The Start Date must be lower than the End Date.', this.$td)
+								hasError = true
+							}
+
+							if (start === end) {
+								this.rulesErrors[index] = this.$t.__('Start Date and End Date must be different.', this.$td)
+								hasError = true
+							}
+						}
+						break
+				}
+			})
+			this.$emit('redirects-custom-rule-error', hasError)
+		},
+		updateDate (value, dateSchedule, index) {
+			const date = null !== value ? DateTime.fromJSDate(value).toUTC().toString() : ''
+			this.updateRule(dateSchedule, date, index)
 		}
 	},
 	mounted () {
@@ -329,6 +435,14 @@ export default {
 		}
 		if (!this.hasCustomRules) {
 			this.addRule(null)
+		}
+	},
+	watch : {
+		customRules : {
+			deep : true,
+			handler () {
+				this.validationError()
+			}
 		}
 	}
 }
@@ -345,26 +459,45 @@ export default {
 			align-items: center;
 			flex: 1;
 
-			> .aioseo-select:first-child {
+			.rule-row {
 				width: 100%;
-				max-width: 250px;
-			}
+				display: flex;
+				flex-direction: column;
+				align-items: baseline;
+				gap: 15px;
 
-			> * {
-				margin: 0 16px 0 0;
-
-				&:last-child{
-					margin-right: 0;
+				.rule-error {
+					width: 100%;
 				}
 
-				&.aioseo-toggle {
-					margin: 0 10px 0 4px;
+				.rule-option {
+					display: flex;
+					width: 100%;
+
+					> .aioseo-select:first-child {
+						width: 100%;
+						max-width: 250px;
+					}
+
+					> * {
+						margin: 0 16px 0 0;
+
+						&:last-child{
+							margin-right: 0;
+						}
+
+						&.aioseo-toggle {
+							margin: 0 10px 0 4px;
+						}
+					}
 				}
 			}
 		}
 
 		.actions{
 			flex: 0;
+			vertical-align: top !important;
+			padding-top: 27px !important;
 		}
 
 		.logical {
@@ -397,6 +530,19 @@ export default {
 		svg {
 			color: #fff;
 			margin-right: 6px;
+			vertical-align: middle;
+		}
+	}
+
+	.date-range {
+		flex: 1;
+		display: flex;
+		width: 100%;
+		flex-direction: row;
+		gap: 15px;
+
+		.aioseo-datepicker {
+			flex: 1;
 		}
 	}
 

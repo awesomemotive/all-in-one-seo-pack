@@ -1,4 +1,3 @@
-import '@/vue/utils/vue2.js'
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -16,7 +15,7 @@ const router = createRouter({
 	history : createWebHistory(),
 	routes  : [
 		{
-			path      : '/',
+			path      : '/:pathMatch(.*)*', // Will match everything and prevent warnings.
 			component : App
 		}
 	]
@@ -38,6 +37,7 @@ app.$t  = app.config.globalProperties.$t  = translate
 app.$td = app.config.globalProperties.$td = import.meta.env.VITE_TEXTDOMAIN
 
 const elemDiv = document.createElement('div')
+elemDiv.setAttribute('id', 'aioseo-modal-portal')
 
 // If building for production.
 if (false !== import.meta.env.PROD) {
@@ -56,10 +56,5 @@ if (false !== import.meta.env.PROD) {
 } else {
 	document.body.appendChild(elemDiv)
 }
-
-// Add div to mount modal to.
-const elemModal = document.createElement('div')
-elemModal.setAttribute('id', 'aioseo-modal-portal')
-document.body.appendChild(elemModal)
 
 app.mount(elemDiv)

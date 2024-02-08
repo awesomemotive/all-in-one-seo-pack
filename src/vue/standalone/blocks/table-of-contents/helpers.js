@@ -14,10 +14,11 @@ export const areHeadingsNested = (headings) => {
 /**
  * Iterate through an array of heading objects, recursing into nested headings and un-nesting them.
  *
- * @param   {Array} headings Heading objects to flatten.
- * @returns {Array}          Flattened array of heading objects.
+ * @param   {Array}  headings Heading objects to flatten.
+ * @param   {number} end 	  The end index of the specified portion of the array.
+ * @returns {Array}           Flattened array of heading objects.
  */
-export const flattenHeadings = (headings) => {
+export const flattenHeadings = (headings, end = 0) => {
 	if (!areHeadingsNested([ ...headings ])) {
 		return headings
 	}
@@ -26,6 +27,10 @@ export const flattenHeadings = (headings) => {
 	const stack             = [ ...headings ]
 
 	while (stack.length) {
+		if (end && flattenedHeadings.length === end) {
+			break
+		}
+
 		const { ...heading } = stack.shift()
 		if (heading.headings?.length) {
 			stack.unshift(...heading.headings)

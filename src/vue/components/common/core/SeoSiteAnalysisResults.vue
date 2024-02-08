@@ -4,7 +4,8 @@
 			v-if="showGooglePreview && 'all-items' === section"
 		>
 			<core-google-search-preview
-				:domain="searchPreviewDomain"
+				:hostname="searchPreviewHostname"
+				:url="searchPreviewUrl"
 				:title="parseTags(allResults.basic.title.value)"
 				:description="parseTags(allResults.basic.description.value)"
 			/>
@@ -100,9 +101,9 @@ export default {
 	},
 	data () {
 		return {
-			separator           : undefined,
-			searchPreviewDomain : null,
-			strings             : {
+			searchPreviewHostname : null,
+			searchPreviewUrl      : null,
+			strings               : {
 				basic       : this.$t.__('Basic SEO', this.$td),
 				advanced    : this.$t.__('Advanced SEO', this.$td),
 				performance : this.$t.__('Performance', this.$td),
@@ -157,7 +158,10 @@ export default {
 
 			const domain = div.querySelector('.domain')
 			if (domain) {
-				this.searchPreviewDomain = domain.innerText
+				const urlObject = new URL(domain.innerText)
+
+				this.searchPreviewUrl = urlObject.href
+				this.searchPreviewHostname = urlObject.host
 			}
 		}
 	}
@@ -167,6 +171,11 @@ export default {
 <style lang="scss">
 .aioseo-seo-site-analysis-results {
 	padding-top: 12px;
+
+	.aioseo-google-search-preview {
+		border: 1px solid $border;
+		padding: 16px;
+	}
 
 	.group-header {
 		font-size: 16px;

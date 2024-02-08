@@ -62,17 +62,27 @@ export const Wizard = {
 					upgrade     : false
 				},
 				{
-					value       : 'image-seo',
+					value       : 'aioseo-image-seo',
 					name        : __('Image SEO', td),
 					pluginName  : __('Image SEO', td),
-					description : __('Globally control Title and Alt attributes for attachment pages and images that are embedded in your content.', td),
+					description : __('Globally control the title, alt text, description and filename for attachment pages & images that are embedded in your content.', td),
 					installs    : __('Installs AIOSEO Image SEO', td),
 					required    : false,
 					pro         : true,
 					upgrade     : 'aioseo-image-seo'
 				},
 				{
-					value       : 'local-seo',
+					value       : 'aioseo-eeat',
+					name        : __('Author SEO', td),
+					pluginName  : __('Author SEO (E-E-A-T)', td),
+					description : __('Boost your SEO performance by highlighting the professional expertise and trustworthiness of your authors, aligning with Google\'s E-E-A-T standards.', td),
+					installs    : __('Installs AIOSEO Author SEO (E-E-A-T)', td),
+					required    : false,
+					pro         : true,
+					upgrade     : 'aioseo-eeat'
+				},
+				{
+					value       : 'aioseo-local-business',
 					name        : __('Local SEO', td),
 					pluginName  : __('Local Business SEO', td),
 					description : __('Tell Google about your business for display as a Knowledge Graph card or business carousel.', td),
@@ -82,17 +92,17 @@ export const Wizard = {
 					upgrade     : 'aioseo-local-business'
 				},
 				{
-					value       : 'video-sitemap',
+					value       : 'aioseo-video-sitemap',
 					name        : __('Video Sitemap', td),
 					pluginName  : __('Video Sitemap', td),
-					description : __('Generate an XML Sitemap specifically for video content on your site.', td),
+					description : __('Generate an XML Sitemap specifically for videos on your site to help search engines find them.', td),
 					installs    : __('Installs AIOSEO Video Sitemap', td),
 					required    : false,
 					pro         : true,
 					upgrade     : 'aioseo-video-sitemap'
 				},
 				{
-					value       : 'news-sitemap',
+					value       : 'aioseo-news-sitemap',
 					name        : __('News Sitemap', td),
 					pluginName  : __('News Sitemap', td),
 					description : __('Submit articles to Google News that were published in the last 48 hours.', td),
@@ -102,7 +112,7 @@ export const Wizard = {
 					upgrade     : 'aioseo-news-sitemap'
 				},
 				{
-					value       : 'redirects',
+					value       : 'aioseo-redirects',
 					name        : __('Smart Redirects + 404 Detection', td),
 					pluginName  : __('Redirects', td),
 					description : __('Create and manage redirects for your broken links.', td),
@@ -112,7 +122,7 @@ export const Wizard = {
 					upgrade     : 'aioseo-redirects'
 				},
 				{
-					value       : 'link-assistant',
+					value       : 'aioseo-link-assistant',
 					name        : __('Link Assistant', td),
 					pluginName  : __('Link Assistant', td),
 					description : __('Get relevant suggestions for adding internal links to older content as well as finding any orphaned posts that have no internal links.', td),
@@ -122,7 +132,7 @@ export const Wizard = {
 					upgrade     : 'aioseo-link-assistant'
 				},
 				{
-					value       : 'index-now',
+					value       : 'aioseo-index-now',
 					name        : __('Index Now', td),
 					pluginName  : __('Index Now', td),
 					description : __('Add IndexNow support to instantly notify search engines when your content has changed.', td),
@@ -132,7 +142,7 @@ export const Wizard = {
 					upgrade     : 'aioseo-index-now'
 				},
 				{
-					value       : 'rest-api',
+					value       : 'aioseo-rest-api',
 					name        : __('REST API', td),
 					pluginName  : __('REST API', td),
 					description : __('Manage your post and term SEO meta via the WordPress REST API. This addon also works seamlessly with headless WordPress installs.', td),

@@ -10,7 +10,6 @@
 				<template #content>
 					<core-google-search-preview
 						:title="parseTags(`#site_title ${optionsStore.options.searchAppearance.global.separator} #tagline`)"
-						:separator="optionsStore.options.searchAppearance.global.separator"
 						:description="parseTags('#tagline')"
 					/>
 				</template>
@@ -52,14 +51,12 @@
 					<core-google-search-preview
 						v-if="rootStore.aioseo.data.staticHomePage"
 						:title="homePageTitle"
-						:separator="optionsStore.options.searchAppearance.global.separator"
 						:description="parseTags(rootStore.aioseo.data.staticHomePageDescription || '#tagline')"
 					/>
 
 					<core-google-search-preview
 						v-if="!rootStore.aioseo.data.staticHomePage"
 						:title="homePageTitle"
-						:separator="optionsStore.options.searchAppearance.global.separator"
 						:description="parseTags(optionsStore.options.searchAppearance.global.metaDescription || '#tagline')"
 					/>
 				</template>
@@ -577,6 +574,11 @@ export default {
 		&:last-child {
 			padding: 30px;
 		}
+	}
+
+	.aioseo-google-search-preview {
+		border: 1px solid $border;
+		padding: 16px;
 	}
 }
 </style>

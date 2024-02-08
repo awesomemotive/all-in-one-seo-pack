@@ -21,7 +21,7 @@
 							</span>
 						</dd>
 
-						<dt>{{ strings.checks }}</dt>
+						<dt>{{ strings.pageAnalysis }}</dt>
 						<dd>
 							<div
 								v-if="checkErrorsExists('basic')"
@@ -90,6 +90,12 @@
 							</div>
 						</dd>
 					</dl>
+
+					<core-alert
+						v-if="rootStore.aioseo.editObjectBtnText && editFocusKeyphraseUrl"
+						v-html="`${strings.visitAdmin} <a style='display: inline-flex' href='${editFocusKeyphraseUrl}'>${rootStore.aioseo.editObjectBtnText} &rarr;</a>`"
+						size="small"
+					/>
 				</div>
 			</div>
 
@@ -115,6 +121,7 @@ import {
 import { merge } from 'lodash-es'
 import { useTruSeoScore } from '@/vue/composables'
 import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
+import CoreAlert from '@/vue/components/common/core/alert/Index'
 import SvgIconPencil from '@/vue/components/common/svg/Pencil'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation'
@@ -131,6 +138,7 @@ export default {
 		}
 	},
 	components : {
+		CoreAlert,
 		SvgIconPencil,
 		SvgCircleCheck,
 		SvgCircleExclamation,
@@ -140,6 +148,20 @@ export default {
 	computed : {
 		focusKeyphrase () {
 			return this.rootStore.aioseo?.keyphrases?.focus?.keyphrase || false
+		},
+		editFocusKeyphraseUrl () {
+			try {
+				if (!this.rootStore.aioseo?.editObjectUrl) {
+					return '#'
+				}
+
+				const scrollTo = 'aioseo-post-settings-snippet-focus-keyphrase-row'
+				const url = new URL(this.rootStore.aioseo.editObjectUrl)
+
+				return `${url.href}&aioseo-scroll=${scrollTo}&aioseo-highlight=${scrollTo}`
+			} catch (e) {
+				return '#'
+			}
 		}
 	},
 	methods : {
@@ -172,13 +194,14 @@ export default {
 		return {
 			strings : merge(this.composableStrings, {
 				focusKeyphrase   : this.$t.__('Focus Keyphrase', this.$td),
-				checks           : this.$t.__('Checks', this.$td),
+				pageAnalysis     : this.$t.__('Page Analysis', this.$td),
 				basicSeo         : this.$t.__('Basic SEO', this.$td),
 				readability      : this.$t.__('Readability', this.$td),
 				title            : this.$t.__('Title', this.$td),
 				metaTags         : this.$t.__('Meta Tags', this.$td),
 				noKeyphraseFound : this.$t.__('No keyphrase found', this.$td),
-				noDataYet        : this.$t.__('No data yet', this.$td)
+				noDataYet        : this.$t.__('No data yet', this.$td),
+				visitAdmin       : this.$t.__('You can edit the "Focus Keyphrase" and view information about "Page Analysis" on the admin side.', this.$td)
 			})
 		}
 	}
@@ -187,8 +210,6 @@ export default {
 
 <style lang="scss" scoped>
 .aioseo-seo-preview-standalone-view-seo-inspector {
-	padding: 20px;
-
 	> div {
 		display: flex;
 		margin: 0 -20px;
@@ -201,7 +222,6 @@ export default {
 		dt,
 		dd {
 			font-family: $font-family;
-			line-height: 1.4;
 			margin: 0;
 			padding: 0;
 		}
@@ -220,6 +240,8 @@ export default {
 			color: $black2;
 			font-size: 14px;
 			font-weight: 400;
+			overflow-wrap: break-word;
+			word-break: break-word;
 
 			+ dt {
 				margin-top: 20px;
@@ -231,8 +253,7 @@ export default {
 		align-items: center;
 		display: flex;
 		flex-wrap: nowrap;
-		gap: 2px;
-		line-height: 1.2;
+		gap: 3px;
 
 		+ .check {
 			margin-top: 10px;
@@ -295,7 +316,15 @@ export default {
 		color: $orange;
 		display: flex;
 		gap: 2px;
-		line-height: 1;
+	}
+
+	.aioseo-alert {
+		margin-top: 30px;
+
+		:deep(a) {
+			color: $blue;
+			text-decoration: none;
+		}
 	}
 }
 </style>

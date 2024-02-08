@@ -176,21 +176,6 @@
 			<div
 				v-if="optionsStore.options.sitemap.html.advancedSettings.enable"
 			>
-				<!-- <core-settings-row
-					:name="strings.nofollowLinks"
-				>
-					<template #content>
-						<base-radio-toggle
-							v-model="optionsStore.options.sitemap.html.advancedSettings.nofollowLinks"
-							name="nofollow"
-							:options="[
-								{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-								{ label: $constants.GLOBAL_STRINGS.enabled, value: true }
-							]"
-						/>
-					</template>
-				</core-settings-row> -->
-
 				<core-settings-row
 					:name="strings.excludePostsPages"
 					class="aioseo-exclude-pages-posts"
@@ -234,6 +219,7 @@ import CoreExcludePosts from '@/vue/components/common/core/ExcludePosts'
 import CorePostTypeOptions from '@/vue/components/common/core/PostTypeOptions'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import HtmlSitemapDisplayInfo from '@/vue/components/common/html-sitemap/DisplayInfo'
+
 export default {
 	setup () {
 		const { strings } = useWidgets({ name: 'htmlSitemap' })
@@ -253,6 +239,62 @@ export default {
 		HtmlSitemapDisplayInfo
 	},
 	data () {
+		const attributes = [
+			{
+				name        : 'post_types',
+				description : this.$t.__('The post types (by slug, comma-separated) that are included in the sitemap.', this.$td)
+			},
+			{
+				name        : 'taxonomies',
+				description : this.$t.__('The taxonomies (by slug, comma-separated) that are included in the sitemap.', this.$td)
+			},
+			{
+				name        : 'label_tag',
+				description : this.$t.sprintf(
+					// Translators: 1 - The default value.
+					this.$t.__('The HTML tag that is used for the label of each section. Defaults to %1$s.', this.$td),
+					'<code>h4</code>'
+				)
+			},
+			{
+				name        : 'show_label',
+				description : this.$t.sprintf(
+					// Translators: 1 - The default value.
+					this.$t.__('Whether the labels should be shown or not. Defaults to %1$s.', this.$td),
+					'<code>true</code>'
+				)
+			},
+			{
+				name        : 'publication_date',
+				description : this.$t.__('Whether the publication date of posts should be shown.', this.$td)
+			},
+			{
+				name        : 'archives',
+				description : this.$t.__('Whether the regular sitemap or compact date archive sitemap is output.', this.$td)
+			},
+			{
+				name        : 'order',
+				// Translators: 1 - "ASC", 2 - "DESC".
+				description : this.$t.sprintf(
+					// Translators: 1 - HTML code opening tag, 2 - HTML code closing tag.
+					this.$t.__('The sort direction. The supported values are %1$s and %2$s.', this.$td),
+					'<code>ASC</code>',
+					'<code>DESC</code>'
+				)
+			},
+			{
+				name        : 'order_by',
+				description : this.$t.sprintf(
+					// Translators: 1 - HTML code opening tag, 2 - HTML code closing tag.
+					this.$t.__('The sort order. The supported values are %1$s, %2$s, %3$s and %4$s.', this.$td),
+					'<code>publish_date</code>',
+					'<code>last_updated</code>',
+					'<code>alphabetical</code>',
+					'<code>id</code>'
+				)
+			}
+		]
+
 		return {
 			sortOrders : [
 				{ label: this.$t.__('Publish Date', this.$td), value: 'publish_date' },
@@ -284,7 +326,10 @@ export default {
 						// Translators: 1 - Learn more link.
 						this.$t.__('Use the following shortcode to display the HTML Sitemap. %1$s', this.$td),
 						this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'htmlSitemapShortcode', true)
-					)
+					),
+					hasAdvanced           : true,
+					attributes            : attributes,
+					attributesDescription : this.$t.__('The following shortcode attributes can be used to override the default settings:', this.$td)
 				},
 				widget : {
 					copy : '',
@@ -296,7 +341,10 @@ export default {
 						// Translators: 1 - Learn more link.
 						this.$t.__('Use the following PHP code anywhere in your theme to display the sitemap. %1$s', this.$td),
 						this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'htmlSitemapFunction', true)
-					)
+					),
+					hasAdvanced           : true,
+					attributes            : attributes,
+					attributesDescription : this.$t.__('The function accepts an associative array with the following arguments that can be used to override the default settings:', this.$td)
 				}
 			},
 			strings : {

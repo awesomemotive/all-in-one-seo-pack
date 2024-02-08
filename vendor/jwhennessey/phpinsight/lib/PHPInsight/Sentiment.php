@@ -104,9 +104,9 @@ class Sentiment {
 	 * @var array
 	 */
 	private $prior = array(
-		'pos' => 0.333333333333,
-		'neg' => 0.333333333333,
-		'neu' => 0.333333333334
+		'pos' => 0.333,
+		'neg' => 0.333,
+		'neu' => 0.334,
 	);
 
 	/**
@@ -222,7 +222,7 @@ class Sentiment {
 		$fn = "{$this->dataFolder}data.{$class}.php";
 
 		if (file_exists($fn)) {
-			$temp = file_get_contents($fn);
+			$temp  = trim((string) file_get_contents($fn));
 			$words = unserialize($temp);
 		} else {
 			echo 'File does not exist: ' . $fn;
@@ -321,9 +321,10 @@ class Sentiment {
 
 		//Make all texts lowercase as the database of words in in lowercase
 		$string = strtolower($string);
+		$string = preg_replace('/[[:punct:]]+/', '', $string);
 
 		//Break string into individual words using explode putting them into an array
-		$matches = explode(" ", $string);
+		$matches = explode(' ', $string);
 
 		//Return array with each individual token
 		return $matches;
@@ -342,7 +343,7 @@ class Sentiment {
 		$fn = "{$this->dataFolder}data.{$type}.php";
 		;
 		if (file_exists($fn)) {
-			$temp = file_get_contents($fn);
+			$temp  = trim((string) file_get_contents($fn));
 			$words = unserialize($temp);
 		} else {
 			return 'File does not exist: ' . $fn;
@@ -385,6 +386,36 @@ class Sentiment {
 				/* yNn */ chr(255) . chr(209) . chr(241);
 
 		return strtolower(strtr($string, $diac, 'AAAAAAaaaaaaOOOOOOooooooEEEEeeeeCcIIIIiiiiUUUUuuuuyNn'));
+	}
+
+	/**
+	 * Deletes old data/data.* files
+	 * Creates new files from updated source fi
+	 */
+	public function reloadDictionaries(){
+
+		foreach($this->classes as $class){
+			$fn = "{$this->dataFolder}data.{$class}.php";
+			if (file_exists($fn)) {
+				unlink($fn);
+			} 
+		}
+
+		$dictionaries = __DIR__ . '/dictionaries/';
+
+		foreach($this->classes as $class){
+			$dict = "{$dictionaries}source.{$class}.php";
+
+			require_once($dict);
+
+			$data = $class;
+
+			$fn = "{$this->dataFolder}data.{$class}.php";
+			file_put_contents($fn, serialize($$data));
+		}
+
+		
+
 	}
 
 }

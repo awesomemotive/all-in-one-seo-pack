@@ -17,7 +17,7 @@
 			</a>
 		</div>
 
-		<template v-if="'social-profiles' === activeTabObject.slug">
+		<template v-if="'author-seo' === activeTabObject.slug">
 			<eeat-cta />
 
 			<div class="aioseo-user-profile-fields">
@@ -85,7 +85,7 @@ export default {
 						}
 					})
 					break
-				case 'social-profiles':
+				case 'author-seo':
 					document.getElementById('your-profile').childNodes.forEach(node => {
 						if (
 							'aioseo-user-profile-tab-wrapper' === node.id ||
@@ -109,6 +109,8 @@ export default {
 				default:
 					break
 			}
+
+			location.hash = this.activeTabObject?.slug
 		},
 		updateHiddenInputField (newSocialProfiles) {
 			document.getElementById('aioseo-user-social-profiles').value = JSON.stringify(newSocialProfiles)
@@ -123,7 +125,7 @@ export default {
 				},
 				{
 					label : this.$t.__('Author SEO', this.$td),
-					slug  : 'social-profiles',
+					slug  : 'author-seo',
 					svg   : 'svg-logo-gear'
 				}
 			]
@@ -151,8 +153,8 @@ export default {
 		}
 	},
 	mounted () {
-		const params = new URLSearchParams(window.location.search)
-		if (params && params.get('social-profiles')) {
+		const params = new URLSearchParams(window.location.search) || null
+		if (params?.get('author-seo') || location?.hash.includes('author-seo')) {
 			this.setActiveTab(1)
 		}
 	}
@@ -160,6 +162,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/vue/assets/scss/main.scss';
+
 // Hide the nav bar from WooCommerce Follow-up Emails.
 h2.woo-nav-tab-wrapper {
 	display: none !important;

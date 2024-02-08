@@ -134,52 +134,55 @@ export default {
 		showPluginsAll () {
 			return (
 				this.setupWizardStore.features.includes('analytics') ||
-				this.setupWizardStore.features.includes('conversion-tools') ||
-				this.setupWizardStore.features.includes('broken-link-checker')
+				this.setupWizardStore.features.includes('broken-link-checker') ||
+				this.setupWizardStore.features.includes('conversion-tools')
 			) &&
 			(
-				this.setupWizardStore.features.includes('image-seo') ||
-				this.setupWizardStore.features.includes('news-sitemap') ||
-				this.setupWizardStore.features.includes('video-sitemap') ||
-				this.setupWizardStore.features.includes('local-seo') ||
-				this.setupWizardStore.features.includes('redirects') ||
-				this.setupWizardStore.features.includes('index-now') ||
-				this.setupWizardStore.features.includes('link-assistant') ||
-				this.setupWizardStore.features.includes('rest-api')
+				this.setupWizardStore.features.includes('aioseo-eeat') ||
+				this.setupWizardStore.features.includes('aioseo-image-seo') ||
+				this.setupWizardStore.features.includes('aioseo-index-now') ||
+				this.setupWizardStore.features.includes('aioseo-link-assistant') ||
+				this.setupWizardStore.features.includes('aioseo-local-business') ||
+				this.setupWizardStore.features.includes('aioseo-news-sitemap') ||
+				this.setupWizardStore.features.includes('aioseo-redirects') ||
+				this.setupWizardStore.features.includes('aioseo-rest-api') ||
+				this.setupWizardStore.features.includes('aioseo-video-sitemap')
 			)
 		},
 		showPluginsAddons () {
 			return (
 				!this.setupWizardStore.features.includes('analytics') ||
-				!this.setupWizardStore.features.includes('conversion-tools') ||
-				!this.setupWizardStore.features.includes('broken-link-checker')
+				!this.setupWizardStore.features.includes('broken-link-checker') ||
+				!this.setupWizardStore.features.includes('conversion-tools')
 			) &&
 			(
-				this.setupWizardStore.features.includes('image-seo') ||
-				this.setupWizardStore.features.includes('news-sitemap') ||
-				this.setupWizardStore.features.includes('video-sitemap') ||
-				this.setupWizardStore.features.includes('local-seo') ||
-				this.setupWizardStore.features.includes('redirects') ||
-				this.setupWizardStore.features.includes('index-now') ||
-				this.setupWizardStore.features.includes('link-assistant') ||
-				this.setupWizardStore.features.includes('rest-api')
+				this.setupWizardStore.features.includes('aioseo-eeat') ||
+				this.setupWizardStore.features.includes('aioseo-image-seo') ||
+				this.setupWizardStore.features.includes('aioseo-index-now') ||
+				this.setupWizardStore.features.includes('aioseo-link-assistant') ||
+				this.setupWizardStore.features.includes('aioseo-local-business') ||
+				this.setupWizardStore.features.includes('aioseo-news-sitemap') ||
+				this.setupWizardStore.features.includes('aioseo-redirects') ||
+				this.setupWizardStore.features.includes('aioseo-rest-api') ||
+				this.setupWizardStore.features.includes('aioseo-video-sitemap')
 			)
 		},
 		showPluginsOnly () {
 			return (
 				this.setupWizardStore.features.includes('analytics') ||
-				this.setupWizardStore.features.includes('conversion-tools') ||
-				this.setupWizardStore.features.includes('broken-link-checker')
+				this.setupWizardStore.features.includes('broken-link-checker') ||
+				this.setupWizardStore.features.includes('conversion-tools')
 			) &&
 			(
-				!this.setupWizardStore.features.includes('image-seo') &&
-				!this.setupWizardStore.features.includes('news-sitemap') &&
-				!this.setupWizardStore.features.includes('video-sitemap') &&
-				!this.setupWizardStore.features.includes('local-seo') &&
-				!this.setupWizardStore.features.includes('redirects') &&
-				!this.setupWizardStore.features.includes('index-now') &&
-				!this.setupWizardStore.features.includes('link-assistant') &&
-				!this.setupWizardStore.features.includes('rest-api')
+				!this.setupWizardStore.features.includes('aioseo-eeat') &&
+				!this.setupWizardStore.features.includes('aioseo-image-seo') &&
+				!this.setupWizardStore.features.includes('aioseo-index-now') &&
+				!this.setupWizardStore.features.includes('aioseo-link-assistant') &&
+				!this.setupWizardStore.features.includes('aioseo-local-business') &&
+				!this.setupWizardStore.features.includes('aioseo-news-sitemap') &&
+				!this.setupWizardStore.features.includes('aioseo-redirects') &&
+				!this.setupWizardStore.features.includes('aioseo-rest-api') &&
+				!this.setupWizardStore.features.includes('aioseo-video-sitemap')
 			)
 		},
 		getPluginsText () {

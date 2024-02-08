@@ -93,9 +93,9 @@ body.block-editor-page {
 	}
 	svg {
 		margin-right: 10px;
-		fill: currentColor;
+		fill: currentColor !important; // This is needed to override the important statements from WP 5.3. We can remove these when WP 5.3 is no longer supported.
 		* {
-			fill: currentColor;
+			fill: currentColor !important; // This is needed to override the important statements from WP 5.3. We can remove these when WP 5.3 is no longer supported.
 		}
 	}
 	&.score-disabled {

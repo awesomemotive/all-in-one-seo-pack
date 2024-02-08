@@ -23,7 +23,7 @@
 				</template>
 			</core-settings-row>
 
-			<core-display-info
+			<core-ui-element-slider
 				v-if="optionsStore.options.breadcrumbs.enable"
 				:label="strings.showBreadcrumbsOnYourWebsite"
 				:options="displayInfo"
@@ -252,10 +252,10 @@ import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import Breadcrumbs from './AIOSEO_VERSION/Breadcrumbs'
 import BreadcrumbsLite from './lite/Breadcrumbs'
 import CoreCard from '@/vue/components/common/core/Card'
-import CoreDisplayInfo from '@/vue/components/common/core/DisplayInfo'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreSettingsSeparator from '@/vue/components/common/core/SettingsSeparator'
+import CoreUiElementSlider from '@/vue/components/common/core/ui-element-slider/Index'
 import Preview from './partials/Breadcrumbs/Preview'
 export default {
 	setup () {
@@ -273,10 +273,10 @@ export default {
 		Breadcrumbs,
 		BreadcrumbsLite,
 		CoreCard,
-		CoreDisplayInfo,
 		CoreHtmlTagsEditor,
 		CoreSettingsRow,
 		CoreSettingsSeparator,
+		CoreUiElementSlider,
 		Preview
 	},
 	data () {

@@ -276,7 +276,7 @@ class ThirdParty {
 
 		// For this specific check, we only want to parse blocks and do not want to run shortcodes because some NextGen blocks (e.g. Mosaic) are parsed into shortcodes.
 		// And after parsing the shortcodes, the attributes we're looking for are gone.
-		$contentWithBlocksParsed = function_exists( 'do_blocks' ) ? do_blocks( $this->post->post_content ) : $this->post->post_content; // phpcs:disable AIOSEO.WpFunctionUse.NewFunctions
+		$contentWithBlocksParsed = do_blocks( $this->post->post_content );
 
 		$imageIds = [];
 		preg_match_all( '/\[ngg.*src="galleries" ids="(.*?)".*\]/i', $contentWithBlocksParsed, $shortcodes );

@@ -19,6 +19,7 @@ import { useRedirectsStore } from '@/vue/stores/RedirectsStore'
 import { useRootStore } from '@/vue/stores/RootStore'
 import { useSchemaStore } from '@/vue/stores/SchemaStore'
 import { useSearchStatisticsStore } from '@/vue/stores/SearchStatisticsStore'
+import { useSeoPreviewStore } from '@/vue/stores/SeoPreviewStore'
 import { useSeoRevisionsStore } from '@/vue/stores/SeoRevisionsStore'
 import { useSettingsStore } from '@/vue/stores/SettingsStore'
 import { useSetupWizardStore } from '@/vue/stores/SetupWizardStore'
@@ -218,6 +219,7 @@ export {
 	useRootStore,
 	useSchemaStore,
 	useSearchStatisticsStore,
+	useSeoPreviewStore,
 	useSeoRevisionsStore,
 	useSemrushStore,
 	useSettingsStore,

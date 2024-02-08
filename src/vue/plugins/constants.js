@@ -1346,7 +1346,7 @@ export const REDIRECTS_CUSTOM_RULES_LABELS = {
 	role      : __('WordPress User Roles', td),
 	agent     : __('User Agent', td),
 	cookie    : __('Cookie', td),
-	ip        : __('IP', td),
+	ip        : __('IP Address', td),
 	server    : __('Server', td),
 	header    : __('HTTP Header', td),
 	wp_filter : __('WordPress Filter', td),
@@ -1355,7 +1355,8 @@ export const REDIRECTS_CUSTOM_RULES_LABELS = {
 	feeds     : __('Feeds', td),
 	libraries : __('Libraries', td),
 	loggedin  : __('Logged In', td),
-	loggedout : __('Logged Out', td)
+	loggedout : __('Logged Out', td),
+	schedule  : __('Schedule', td)
 }
 
 export const UPSELL_FEATURE_LIST = [

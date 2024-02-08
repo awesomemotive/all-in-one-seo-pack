@@ -15,7 +15,7 @@
 		:show-labels="false"
 		:track-by="trackBy"
 		:custom-label="customLabel"
-		:allow-empty="!!multiple"
+		:allow-empty="allowEmpty || !!multiple"
 		:filterable="filterable"
 		:internal-search="true"
 		:loading="isLoading"
@@ -146,7 +146,13 @@ export default {
 				return true
 			}
 		},
-		tagPlaceholder : String
+		tagPlaceholder : String,
+		allowEmpty     : {
+			type : Boolean,
+			default () {
+				return false
+			}
+		}
 	},
 	data () {
 		return {

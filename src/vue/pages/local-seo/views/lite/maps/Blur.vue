@@ -19,7 +19,7 @@
 				</template>
 			</core-settings-row>
 
-			<core-display-info
+			<core-ui-element-slider
 				:options="displayInfo"
 			/>
 
@@ -38,13 +38,13 @@
 
 <script>
 import CoreBlur from '@/vue/components/common/core/Blur'
-import CoreDisplayInfo from '@/vue/components/common/core/DisplayInfo'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
+import CoreUiElementSlider from '@/vue/components/common/core/ui-element-slider/Index'
 export default {
 	components : {
 		CoreBlur,
-		CoreDisplayInfo,
-		CoreSettingsRow
+		CoreSettingsRow,
+		CoreUiElementSlider
 	},
 	data () {
 		return {

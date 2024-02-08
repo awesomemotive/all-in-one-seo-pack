@@ -40,10 +40,8 @@ class HeadlineAnalyzer {
 	 * @return void
 	 */
 	public function enqueue() {
-		global $wp_version;
 		if (
 			! aioseo()->helpers->isScreenBase( 'post' ) ||
-			version_compare( $wp_version, '5.2', '<' ) ||
 			! aioseo()->access->hasCapability( 'aioseo_page_analysis' )
 		) {
 			return;

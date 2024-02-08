@@ -4,7 +4,8 @@
 		:class="{
 			'no-horizontal-margin': noHorizontalMargin,
 			'no-vertical-margin': noVerticalMargin,
-			'no-border': noBorder
+			'no-border': noBorder,
+			'no-right-max-width': noRightMaxWidth
 		}"
 	>
 		<slot name="header" />
@@ -15,7 +16,7 @@
 			<div
 				:class="[
 					'settings-name',
-					{ 'no-name': !name }
+					{ 'no-name': !name && !$slots.name }
 				]"
 			>
 				<div
@@ -81,6 +82,10 @@ export default {
 			type    : Boolean,
 			default : false
 		},
+		noRightMaxWidth : {
+			type    : Boolean,
+			default : false
+		},
 		leftSize : {
 			type : String,
 			default () {
@@ -109,9 +114,11 @@ export default {
 			max-width: 240px;
 		}
 
-		> .col-md-9:last-child {
-			max-width: 940px;
-			flex: 1;
+		&:not(.no-right-max-width) {
+			> .col-md-9:last-child {
+				max-width: 940px;
+				flex: 1;
+			}
 		}
 	}
 

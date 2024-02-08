@@ -684,6 +684,14 @@ class Admin {
 			];
 		}
 
+		if ( current_user_can( $this->getPageRequiredCapability( 'aioseo-search-appearance' ) ) ) {
+			$submenu['users.php'][] = [
+				esc_html__( 'Author SEO', 'all-in-one-seo-pack' ),
+				$this->getPageRequiredCapability( 'aioseo-search-appearance' ),
+				admin_url( '/admin.php?page=aioseo-search-appearance/#author-seo' )
+			];
+		}
+
 		// We use the global submenu, because we are adding an external link here.
 		$count         = count( Models\Notification::getAllActiveNotifications() );
 		$firstPageSlug = $this->getFirstAvailablePageSlug();

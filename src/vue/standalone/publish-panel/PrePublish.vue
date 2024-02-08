@@ -31,19 +31,12 @@
 			class="snippet-preview"
 			v-if="allowed('aioseo_page_analysis')"
 		>
-			<p class="title">{{ strings.snippetPreview }}:</p>
+			<p class="title">{{ strings.serpPreview }}:</p>
 			<core-google-search-preview
+				:url="tagsStore.liveTags.permalink"
 				:title="parseTags(postEditorStore.currentPost.title || postEditorStore.currentPost.tags.title || '#post_title #separator_sa #site_title')"
-				:separator="optionsStore.options.searchAppearance.global.separator"
 				:description="parseTags(postEditorStore.currentPost.description || postEditorStore.currentPost.tags.description || '#post_content')"
-				:class="{ ismobile: postEditorStore.currentPost.generalMobilePrev }"
-			>
-				<template #domain>
-					<a :href="tagsStore.liveTags.permalink" target="_blank">
-						{{ tagsStore.liveTags.permalink }}
-					</a>
-				</template>
-			</core-google-search-preview>
+			/>
 		</div>
 
 		<div
@@ -107,8 +100,8 @@ export default {
 			socialImage    : null,
 			socialImageKey : 0,
 			strings        : {
-				snippetPreview : this.$t.__('Snippet Preview', this.$td),
-				canonicalUrl   : this.$t.__('Canonical URL', this.$td)
+				serpPreview  : this.$t.__('SERP Preview', this.$td),
+				canonicalUrl : this.$t.__('Canonical URL', this.$td)
 			}
 		}
 	},
@@ -399,10 +392,8 @@ export default {
 		}
 
 		.aioseo-google-search-preview {
-
-			.google-post {
-				padding: 10px;
-			}
+			border: 1px solid $border;
+			padding: 10px;
 
 			a {
 				color: $black3;

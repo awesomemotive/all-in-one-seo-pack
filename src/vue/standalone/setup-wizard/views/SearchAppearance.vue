@@ -16,7 +16,7 @@
 				<div class="aioseo-settings-row no-border">
 					<div class="settings-name">
 						<div class="name small-margin">
-							{{ strings.googleSnippetPreview }}
+							{{ strings.serpPreview }}
 						</div>
 					</div>
 
@@ -28,7 +28,6 @@
 					>
 						<core-google-search-preview
 							:title="parseTags(setupWizardStore.category.siteTitle)"
-							:separator="optionsStore.options.searchAppearance.global.separator"
 							:description="parseTags(setupWizardStore.category.metaDescription)"
 						/>
 
@@ -289,7 +288,7 @@ export default {
 			strings          : merge(this.composableStrings, {
 				searchAppearance          : this.$t.__('Search Appearance', this.$td),
 				description               : this.$t.__('The way your site is displayed in search results is very important. Take some time to look over these settings and tweak as needed.', this.$td),
-				googleSnippetPreview      : this.$t.__('Google Snippet Preview', this.$td),
+				serpPreview               : this.$t.__('SERP Preview', this.$td),
 				editTitleAndDescription   : this.$t.__('Edit Title and Description', this.$td),
 				clickToAddSiteTitle       : this.$t.__('Click on the tags below to insert variables into your site title.', this.$td),
 				clickToAddSiteDescription : this.$t.__('Click on the tags below to insert variables into your meta description.', this.$td),
@@ -350,7 +349,9 @@ export default {
 			position: relative;
 
 			.aioseo-google-search-preview {
+				border: 1px solid $border;
 				flex: 1;
+				padding: 16px;
 			}
 
 			.action {

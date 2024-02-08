@@ -45,7 +45,6 @@
 			<template #content>
 				<core-google-search-preview
 					:title="parseTags(options.title)"
-					:separator="separator"
 					:description="parseTags(options.metaDescription)"
 				/>
 			</template>
@@ -225,3 +224,12 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss" scoped>
+.aioseo-sa-ct-title-description {
+	.aioseo-google-search-preview {
+		border: 1px solid $border;
+		padding: 16px;
+	}
+}
+</style>

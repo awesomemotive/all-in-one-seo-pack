@@ -33,7 +33,17 @@
 				<template
 					v-if="!isDateRange"
 				>
-					{{ label }}
+					<span
+						v-if="label.trim()"
+					>
+						{{ label }}
+					</span>
+					<span
+						v-if="!label.trim() && placeholder"
+						class="placeholder"
+					>
+						{{ placeholder }}
+					</span>
 				</template>
 			</div>
 
@@ -115,6 +125,12 @@ export default {
 				return null
 			}
 		},
+		placeholder : {
+			type : String,
+			default () {
+				return null
+			}
+		},
 		dateFormat   : String,
 		defaultValue : [ Array, Object ]
 	},
@@ -123,8 +139,8 @@ export default {
 			rolling : null,
 			value   : null,
 			strings : {
-				startDate : this.$t.__('Start date', this.$td),
-				endDate   : this.$t.__('End date', this.$td)
+				startDate : this.$t.__('Start Date', this.$td),
+				endDate   : this.$t.__('End Date', this.$td)
 			}
 		}
 	},
@@ -216,6 +232,10 @@ export default {
 		.label {
 			span {
 				font-weight: 400;
+
+				&.placeholder {
+					color: $placeholder-color;
+				}
 			}
 		}
 

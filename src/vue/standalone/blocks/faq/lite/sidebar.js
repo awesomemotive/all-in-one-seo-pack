@@ -35,7 +35,8 @@ export const render = (className, attributes, setSchemaBlockAttributes) => {
 	const {
 		hidden,
 		question,
-		tagName
+		tagName,
+		schemaBlockId
 	} = attributes
 
 	const upgradeLink = links.getUpsellLink(
@@ -47,7 +48,7 @@ export const render = (className, attributes, setSchemaBlockAttributes) => {
 	)
 
 	return html`
-		<div data-schema-only="${hidden}" className="${className}">
+		<div data-schema-only="${hidden}" className="${className}" data-schema-block-id="${schemaBlockId}">
 			<${InspectorControls}>
 				<${PanelBody} title=${__('FAQ Options', td)}>
 					<${SelectControl}

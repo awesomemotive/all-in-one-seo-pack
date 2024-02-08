@@ -257,6 +257,8 @@ export default {
 						margin: 0;
 						padding: 0;
 						text-transform: none;
+						overflow-wrap: break-word;
+						word-break: break-word;
 					}
 
 					.site-domain {

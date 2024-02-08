@@ -279,6 +279,45 @@ class Helpers {
 	}
 
 	/**
+	 * Sanitizes a given variable
+	 *
+	 * @since 4.5.6
+	 *
+	 * @param  mixed $variable             The variable.
+	 * @param  bool  $preserveHtml         Whether or not to preserve HTML for ALL fields.
+	 * @param  array $fieldsToPreserveHtml Specific fields to preserve HTML for.
+	 * @param  string $fieldName           The name of the current field (when looping over a list).
+	 * @return mixed                       The sanitized variable.
+	 */
+	public function sanitize( $variable, $preserveHtml = false, $fieldsToPreserveHtml = [], $fieldName = '' ) {
+		$type = gettype( $variable );
+		switch ( $type ) {
+			case 'boolean':
+				return (bool) $variable;
+			case 'string':
+				if ( $preserveHtml || in_array( $fieldName, $fieldsToPreserveHtml, true ) ) {
+					return aioseo()->helpers->decodeHtmlEntities( sanitize_text_field( htmlspecialchars( $variable, ENT_NOQUOTES, 'UTF-8' ) ) );
+				}
+
+				return sanitize_text_field( $variable );
+			case 'integer':
+				return intval( $variable );
+			case 'float':
+			case 'double':
+				return floatval( $variable );
+			case 'array':
+				$array = [];
+				foreach ( (array) $variable as $k => $v ) {
+					$array[ $k ] = $this->sanitize( $v, $preserveHtml, $fieldsToPreserveHtml, $k );
+				}
+
+				return $array;
+			default:
+				return false;
+		}
+	}
+
+	/**
 	 * Return the version number with a filter to enable users to hide the version.
 	 *
 	 * @since 4.3.7

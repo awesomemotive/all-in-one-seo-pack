@@ -369,9 +369,9 @@ export default {
 			option           : null,
 			pagePostOptions  : [],
 			strings          : {
-				twitterCardSettings           : this.$t.__('Twitter Card Settings', this.$td),
-				description                   : this.$t.__('Enable this feature if you want Twitter to display a preview card with images and a text excerpt when a link to your site is shared.', this.$td),
-				enableTwitterCard             : this.$t.__('Enable Twitter Card', this.$td),
+				twitterCardSettings           : this.$t.__('X (Twitter) Card Settings', this.$td),
+				description                   : this.$t.__('Enable this feature if you want X to display a preview card with images and a text excerpt when a link to your site is shared.', this.$td),
+				enableTwitterCard             : this.$t.__('Enable X Card', this.$td),
 				useDataFromFacebook           : this.$t.__('Use Data from Facebook Tab', this.$td),
 				useOgDataDescription          : this.$t.__('Choose whether you want to use the OG data from the Facebook tab in your individual pages/posts by default.', this.$td),
 				defaultCardType               : this.$t.__('Default Card Type', this.$td),
@@ -383,8 +383,8 @@ export default {
 				height                        : this.$t.__('Height', this.$td),
 				postCustomFieldName           : this.$t.__('Post Custom Field Name', this.$td),
 				termsCustomFieldName          : this.$t.__('Term Custom Field Name', this.$td),
-				defaultTwitterImagePosts      : this.$t.__('Default Post Twitter Image', this.$td),
-				defaultTwitterImageTerms      : this.$t.__('Default Term Twitter Image', this.$td),
+				defaultTwitterImagePosts      : this.$t.__('Default Post X Image', this.$td),
+				defaultTwitterImageTerms      : this.$t.__('Default Term X Image', this.$td),
 				minimumSizeSummary            : this.$t.__('Minimum size: 144px x 144px, ideal ratio 1:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', this.$td),
 				minimumSizeSummaryWithLarge   : this.$t.__('Minimum size: 300px x 157px, ideal ratio 2:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', this.$td),
 				homePageSettings              : this.$t.__('Home Page Settings', this.$td),
@@ -395,7 +395,7 @@ export default {
 				homePageDescription           : this.$t.__('Description', this.$td),
 				useHomePageDescription        : this.$t.__('Use the home page description', this.$td),
 				clickToAddHomePageDescription : this.$t.__('Click on the tags below to insert variables into your description.', this.$td),
-				showTwitterAuthor             : this.$t.__('Show Twitter Author', this.$td),
+				showTwitterAuthor             : this.$t.__('Show X Author', this.$td),
 				homePageDisabledDescription   : this.$t.sprintf(
 					// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag.
 					this.$t.__('You are using a static home page which is found under Pages. You can %1$sedit your home page settings%2$s directly to change the title, meta description and image.', this.$td),
@@ -404,7 +404,7 @@ export default {
 				),
 				cardType                     : this.$t.__('Card Type', this.$td),
 				additionalData               : this.$t.__('Additional Data', this.$td),
-				additionalDataDescription    : this.$t.__('Enable this option to show additional Twitter data on your posts and pages (i.e., who the post was written by and how long it might take to read the article).', this.$td),
+				additionalDataDescription    : this.$t.__('Enable this option to show additional X data on your posts and pages (i.e., who the post was written by and how long it might take to read the article).', this.$td),
 				defaultTermImageSourceUpsell : this.$t.sprintf(
 					// Translators: 1 - "PRO", 2 - Learn more link.
 					this.$t.__('Default Term Image Source is a %1$s feature. %2$s', this.$td),

@@ -163,7 +163,8 @@ body[class*="page_aioseo"] {
 	}
 }
 
-.aioseo-app {
+.aioseo-app,
+#aioseo-user-profile-tab {
 	--aioseo-gutter: 20px;
 
 	font-family: $font-family;
@@ -334,6 +335,7 @@ body[class*="page_aioseo"] {
 		z-index: 9999;
 		max-width: 350px;
 		line-height: 1.4;
+		white-space: normal;
 
 		&.action {
 			padding: 8px 12px;

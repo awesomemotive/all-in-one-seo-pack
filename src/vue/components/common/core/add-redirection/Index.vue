@@ -166,7 +166,10 @@
 				class="advanced-settings"
 				:active="showAdvancedSettings"
 			>
-				<custom-rules :edit-custom-rules="customRules" />
+				<custom-rules
+					:edit-custom-rules="customRules"
+					@redirects-custom-rule-error="value => this.customRulesError = value"
+				/>
 			</transition-slide>
 			<div
 				class="actions"
@@ -260,6 +263,7 @@ export default {
 			redirectType         : null,
 			queryParam           : null,
 			customRules          : [],
+			customRulesError     : false,
 			strings              : {
 				redirectType         : this.$t.__('Redirect Type:', this.$td),
 				targetUrl            : this.$t.__('Target URL', this.$td),
@@ -292,7 +296,8 @@ export default {
 		saveIsDisabled () {
 			return !!this.sourceUrls.filter(url => !url.url).length ||
 				!!this.sourceUrls.filter(url => 0 < url.errors.length).length ||
-				(this.redirectTypeHasTarget() && !this.targetUrl)
+				(this.redirectTypeHasTarget() && !this.targetUrl) ||
+				this.customRulesError
 		},
 		getRelativeAbsolute () {
 			const matched = this.targetUrl.match(/^\/([a-zA-Z0-9_\-%]*\..*)\//)

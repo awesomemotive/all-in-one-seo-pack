@@ -1,8 +1,9 @@
 <template>
 	<core-modal
 		:show="display"
-		:classes="[ 'aioseo-app', 'aioseo-seo-preview-standalone' ]"
-		@close="display = false"
+		:classes="[ 'aioseo-seo-preview-standalone' ]"
+		@close="display = null"
+		:teleport-to="teleportTo"
 	>
 		<template #headerTitle>
 			{{ strings.modalHeader }}
@@ -25,10 +26,11 @@
 					<div class="component-container">
 						<div
 							class="component-wrapper"
-							:class="'tab'+activeTab"
+							:class="'tab'+activeTab + ' ' + 'tab' + activeTab + '--' + device"
 						>
 							<component
 								:is="activeTab"
+								:device="device"
 								parentComponentContext="modal"
 							/>
 						</div>
@@ -37,7 +39,10 @@
 			</div>
 		</template>
 
-		<template #footer>
+		<template
+			#footer
+			v-if="editSnippetData.url || editObjectData.url || 'ViewGoogle' === activeTab"
+		>
 			<div
 				v-if="editSnippetData.url || editObjectData.url"
 				class="btn-edit-preview-data-wrapper"
@@ -51,9 +56,35 @@
 					size="small"
 					tag="a"
 				>
-					<svg-icon-pencil/>
+					<svg-icon-pencil width="14"/>
+
 					{{ editSnippetData.btnText || editObjectData.btnText }}
 				</base-button>
+			</div>
+
+			<div
+				v-if="'ViewGoogle' === activeTab"
+				class="device-toggle"
+			>
+				<a
+					class="btn-device"
+					:class="{'btn-device--active': device === 'desktop'}"
+					role="button"
+					href="#"
+					@click.prevent="device = 'desktop'"
+				>
+					<svg-desktop width="24"/>
+				</a>
+
+				<a
+					class="btn-device"
+					:class="{'btn-device--active': device === 'mobile'}"
+					role="button"
+					href="#"
+					@click.prevent="device = 'mobile'"
+				>
+					<svg-mobile width="24"/>
+				</a>
 			</div>
 		</template>
 	</core-modal>
@@ -67,11 +98,13 @@ import {
 import BaseButton from '@/vue/components/common/base/Button'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreModal from '@/vue/components/common/core/modal/Index'
+import SvgDesktop from '@/vue/components/common/svg/Desktop'
 import SvgIconFacebook from '@/vue/components/common/svg/icon/Facebook'
 import SvgIconGoogle from '@/vue/components/common/svg/icon/Google'
 import SvgIconPencil from '@/vue/components/common/svg/Pencil'
 import SvgIconSettings from '@/vue/components/common/svg/Settings'
 import SvgIconTwitter from '@/vue/components/common/svg/icon/Twitter'
+import SvgMobile from '@/vue/components/common/svg/Mobile'
 import ViewFacebook from './views/Facebook'
 import ViewGoogle from './views/Google'
 import ViewSeoInspector from './views/SeoInspector'
@@ -87,21 +120,24 @@ export default {
 		BaseButton,
 		CoreMainTabs,
 		CoreModal,
+		SvgDesktop,
 		SvgIconFacebook,
 		SvgIconGoogle,
 		SvgIconPencil,
 		SvgIconSettings,
 		SvgIconTwitter,
+		SvgMobile,
 		ViewFacebook,
 		ViewGoogle,
 		ViewSeoInspector,
 		ViewTwitter
 	},
 	methods : {
+		getShadowRoot () {
+			return (document.querySelector('.aioseo-seo-preview-shadow-wrapper') || {})?.shadowRoot || null
+		},
 		styleShadowDom () {
-			const elemShadowWrapper = document.querySelector('.aioseo-seo-preview-shadow-wrapper')
-
-			if (!elemShadowWrapper) {
+			if (!this.getShadowRoot()) {
 				return false
 			}
 
@@ -119,7 +155,7 @@ export default {
 				elemLink.setAttribute('media', 'all')
 				elemLink.setAttribute('href', style.url)
 
-				elemShadowWrapper.shadowRoot.prepend(elemLink)
+				this.getShadowRoot().prepend(elemLink)
 			})
 		},
 		watchClicks () {
@@ -136,8 +172,10 @@ export default {
 	},
 	data () {
 		return {
+			teleportTo                : this.getShadowRoot() ? this.getShadowRoot().querySelector('#aioseo-modal-portal') : '#aioseo-modal-portal',
 			activeTab                 : 'ViewGoogle',
-			display                   : false,
+			device                    : 'desktop',
+			display                   : null,
 			loadingEditPreviewDataBtn : false,
 			strings                   : {
 				modalHeader : this.$t.__('SEO Preview', this.$td)
@@ -158,7 +196,7 @@ export default {
 				{
 					slug      : 'ViewTwitter',
 					icon      : 'svg-icon-twitter',
-					name      : 'Twitter',
+					name      : 'X (Twitter)',
 					component : 'ViewTwitter'
 				},
 				{
@@ -178,14 +216,24 @@ export default {
 			}
 
 			if ('ViewGoogle' === this.activeTab) {
-				data.url = this.rootStore.aioseo.editGoogleSnippetUrl || ''
+				data.url     = this.rootStore.aioseo.editGoogleSnippetUrl || ''
 				data.btnText = this.$t.__('Edit Snippet', this.$td)
-			} else if ('ViewFacebook' === this.activeTab) {
-				data.url = this.rootStore.aioseo.editFacebookSnippetUrl || ''
+
+				console.log(data)
+
+				return data
+			}
+
+			if ('ViewFacebook' === this.activeTab) {
+				data.url     = this.rootStore.aioseo.editFacebookSnippetUrl || ''
 				data.btnText = this.$t.__('Edit Facebook Meta Data', this.$td)
-			} else if ('ViewTwitter' === this.activeTab) {
-				data.url = this.rootStore.aioseo.editTwitterSnippetUrl || ''
-				data.btnText = this.$t.__('Edit Twitter Meta Data', this.$td)
+
+				return data
+			}
+
+			if ('ViewTwitter' === this.activeTab) {
+				data.url     = this.rootStore.aioseo.editTwitterSnippetUrl || ''
+				data.btnText = this.$t.__('Edit X Meta Data', this.$td)
 			}
 
 			return data
@@ -214,11 +262,17 @@ export default {
 <style lang="scss">
 .aioseo-seo-preview-standalone {
 	font-family: $font-family;
-	line-height: 1.4;
+	line-height: normal;
 
 	* {
 		box-sizing: border-box;
 		letter-spacing: normal;
+	}
+
+	.text-truncate {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.modal-mask,
@@ -247,6 +301,37 @@ export default {
 				flex: 1 1 100%;
 			}
 
+			&__footer {
+				align-items: center;
+				display: grid;
+				grid-template-columns: auto auto;
+				justify-content: space-between;
+				padding: 0 20px;
+				min-height: 56px;
+
+				.device-toggle {
+					display: flex;
+					gap: 8px;
+
+					.btn-device {
+						align-items: center;
+						border-radius: 50%;
+						color: $black;
+						display: inline-flex;
+						height: 36px;
+						justify-content: center;
+						opacity: 0.5;
+						outline-color: $blue;
+						width: 36px;
+
+						&--active {
+							background-color: $input-border;
+							opacity: 1;
+						}
+					}
+				}
+			}
+
 			.aioseo-modal-content {
 				display: flex;
 				flex-direction: column;
@@ -259,6 +344,7 @@ export default {
 					.component-container {
 						display: table;
 						width: 100%;
+						position: relative;
 						height: 100%;
 
 						.component-wrapper {
@@ -268,14 +354,13 @@ export default {
 
 							&.tabViewSeoInspector {
 								background-color: #fff;
+								border: 20px solid #fff;
 								vertical-align: top;
 							}
 
-							.preview-wrapper {
-								margin: 20px;
-
-								> * {
-									padding: 0;
+							&.tabViewGoogle {
+								&--mobile {
+									vertical-align: bottom;
 								}
 							}
 						}
@@ -289,8 +374,6 @@ export default {
 		margin-bottom: 0;
 
 		.var-tab {
-			align-items: center;
-			display: flex;
 			gap: 6px;
 
 			svg {
@@ -309,10 +392,9 @@ export default {
 	}
 
 	.btn-edit-preview-data-wrapper {
-		padding: 20px;
-
 		.btn-edit-preview-data {
 			gap: 6px;
+			outline-color: $blue;
 
 			svg {
 				width: 14px;

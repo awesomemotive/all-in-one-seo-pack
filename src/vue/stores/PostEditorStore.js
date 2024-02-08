@@ -35,9 +35,6 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 		changeGeneralPreview (value) {
 			this.currentPost.generalMobilePrev = value
 		},
-		changeSocialPreview (value) {
-			this.currentPost.socialMobilePreview = value
-		},
 		saveCurrentPost (payload) {
 			this.currentPost = payload
 

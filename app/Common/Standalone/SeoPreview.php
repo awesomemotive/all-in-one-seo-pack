@@ -55,7 +55,7 @@ class SeoPreview {
 			is_admin() ||
 			! is_admin_bar_showing() ||
 			// If we're seeing the Divi theme Visual Builder.
-			function_exists( 'et_core_is_fb_enabled' ) && et_core_is_fb_enabled() ||
+			( function_exists( 'et_core_is_fb_enabled' ) && et_core_is_fb_enabled() ) ||
 			aioseo()->helpers->isAmpPage()
 		) {
 			return;
@@ -183,10 +183,14 @@ class SeoPreview {
 			'keyphrases'             => isset( $keyphrases ) ? $keyphrases : '',
 			'page_analysis'          => isset( $pageAnalysis ) ? $pageAnalysis : '',
 			'urls'                   => [
+				'home'        => home_url(),
 				'domain'      => aioseo()->helpers->getSiteDomain(),
 				'mainSiteUrl' => aioseo()->helpers->getSiteUrl(),
 			],
 			'mainAssetCssQueue'      => aioseo()->core->assets->getJsAssetCssQueue( $this->mainAssetRelativeFilename ),
+			'data'                   => [
+				'isDev' => aioseo()->helpers->isDev()
+			]
 		];
 	}
 
@@ -209,16 +213,11 @@ class SeoPreview {
 		}
 
 		// If we're in a post/page/term (not an attachment) we'll have a URL directly to the meta box.
-		if (
-			'single' === $templateType ||
-			'page' === $templateType ||
-			'taxonomy' === $templateType
-		) {
-			$url = in_array( $templateType, [ 'single', 'page' ], true )
-				? get_edit_post_link( $object, 'url' ) . '#aioseo-settings'
-				: get_edit_term_link( $object, $object->taxonomy ) . '#aioseo-term-settings-field';
+		if ( in_array( $templateType, [ 'single', 'page', 'attachment', 'taxonomy' ], true ) ) {
+			$url = 'taxonomy' === $templateType
+				? get_edit_term_link( $object, $object->taxonomy ) . '#aioseo-term-settings-field'
+				: get_edit_post_link( $object, 'url' ) . '#aioseo-settings';
 
-			// Default `$queryArgs` for 'google' snippet.
 			$queryArgs = [ 'aioseo-tab' => 'general' ];
 			if ( in_array( $snippet, [ 'facebook', 'twitter' ], true ) ) {
 				$queryArgs = [
@@ -231,12 +230,7 @@ class SeoPreview {
 		}
 
 		// If we're in any sort of archive let's point to the global archive editing.
-		if (
-			'archive' === $templateType ||
-			'author' === $templateType ||
-			'date' === $templateType ||
-			'search' === $templateType
-		) {
+		if ( in_array( $templateType, [ 'archive', 'author', 'date', 'search' ], true ) ) {
 			return admin_url( 'admin.php?page=aioseo-search-appearance' ) . '#/archives';
 		}
 

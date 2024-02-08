@@ -407,9 +407,14 @@ export const useSchemaStore = defineStore('SchemaStore', {
 		},
 		updateSchemaOutput () {
 			const postEditorStore = usePostEditorStore()
+
 			let postId = postEditorStore.currentPost.id
 			if (isBlockEditor()) {
 				postId = window.wp.data.select('core/editor').getCurrentPostId()
+			}
+
+			if (!postId || 'post' !== postEditorStore.currentPost.context) {
+				return
 			}
 
 			http.post(links.restUrl('schema/validator/output'))

@@ -2,6 +2,7 @@ import { generateUniqueSchemaBlockId } from '@/vue/standalone/blocks/utils'
 import { render } from './AIOSEO_VERSION/sidebar.js'
 
 const { useSelect }    = window.wp.data
+const { useEffect }    = window.wp.element
 const blockEditorStore = window.wp.blockEditor.store
 const { serialize }    = window.wp.blocks
 const hasInitialized   = []
@@ -81,10 +82,12 @@ export default function edit (props) {
 		window.aioseoBus.$emit('schemaBlockUpdated')
 	}
 
-	if (!schemaBlockId) {
-		// Set a unique ID so that we can use this to track updates and deletes.
-		setSchemaBlockAttributes({ schemaBlockId: generateUniqueSchemaBlockId() })
-	}
+	useEffect(() => {
+		if (!schemaBlockId || 1 < (document.querySelectorAll(`[data-schema-block-id='${schemaBlockId}']`) || []).length) {
+			// Set a unique ID so that we can use this to track updates and deletes.
+			setSchemaBlockAttributes({ schemaBlockId: generateUniqueSchemaBlockId() })
+		}
+	}, [])
 
 	const closestFaqAttributes = useSelect(
 		select => {

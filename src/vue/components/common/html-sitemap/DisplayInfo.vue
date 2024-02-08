@@ -1,24 +1,9 @@
 <template>
-	<core-display-info
+	<core-ui-element-slider
 		:label="strings.label"
 		:options="displayOptions"
 		:url="url"
 	>
-
-		<template #shortcodeAdvanced>
-			<core-attributes-list
-				:description="strings.shortcodeAttributesDescription"
-				:attributes="attributes"
-			/>
-		</template>
-
-		<template #phpAdvanced>
-			<core-attributes-list
-				:description="strings.phpArgumentsDescription"
-				:attributes="attributes"
-			/>
-		</template>
-
 		<template #extra>
 			<svg-file />
 			<p>{{ strings.page }}</p>
@@ -118,7 +103,7 @@
 				</div>
 			</div>
 		</template>
-	</core-display-info>
+	</core-ui-element-slider>
 </template>
 
 <script>
@@ -130,8 +115,7 @@ import {
 import http from '@/vue/utils/http'
 import { debounce } from '@/vue/utils/debounce'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
-import CoreAttributesList from '@/vue/components/common/core/AttributesList'
-import CoreDisplayInfo from '@/vue/components/common/core/DisplayInfo'
+import CoreUiElementSlider from '@/vue/components/common/core/ui-element-slider/Index'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
@@ -147,8 +131,7 @@ export default {
 	},
 	components : {
 		CoreAlert,
-		CoreAttributesList,
-		CoreDisplayInfo,
+		CoreUiElementSlider,
 		CoreLoader,
 		CoreTooltip,
 		SvgCircleCheck,
@@ -190,71 +173,9 @@ export default {
 					'<a href="' + this.rootStore.aioseo.urls.home + '/wp-admin/options-permalink.php">',
 					'</a>'
 				),
-				shortcodeAttributesDescription : this.$t.__('The following shortcode attributes can be used to override the default settings:', this.$td),
-				phpArgumentsDescription        : this.$t.__('The function accepts an associative array with the following arguments that can be used to override the default settings:', this.$td),
-				advancedSettings               : this.$t.__('Advanced Settings', this.$td),
-				editAndSaveFirst               : this.$t.__('To view the sitemap, enter a URL and save changes.', this.$td),
-				saveFirst                      : this.$t.__('To view the new sitemap, first save changes.', this.$td)
-			},
-			attributes : [
-				{
-					name        : 'post_types',
-					description : this.$t.__('The post types (by slug, comma-separated) that are included in the sitemap.', this.$td)
-				},
-				{
-					name        : 'taxonomies',
-					description : this.$t.__('The taxonomies (by slug, comma-separated) that are included in the sitemap.', this.$td)
-				},
-				{
-					name        : 'label_tag',
-					description : this.$t.sprintf(
-						// Translators: 1 - The default value.
-						this.$t.__('The HTML tag that is used for the label of each section. Defaults to %1$s.', this.$td),
-						'<code>h4</code>'
-					)
-				},
-				{
-					name        : 'show_label',
-					description : this.$t.sprintf(
-						// Translators: 1 - The default value.
-						this.$t.__('Whether the labels should be shown or not. Defaults to %1$s.', this.$td),
-						'<code>true</code>'
-					)
-				},
-				/* {
-					name        : 'nofollow_links',
-					description : this.$t.__('Whether the links should be nofollowed.', this.$td)
-				}, */
-				{
-					name        : 'publication_date',
-					description : this.$t.__('Whether the publication date of posts should be shown.', this.$td)
-				},
-				{
-					name        : 'archives',
-					description : this.$t.__('Whether the regular sitemap or compact date archive sitemap is output.', this.$td)
-				},
-				{
-					name        : 'order',
-					// Translators: 1 - "ASC", 2 - "DESC".
-					description : this.$t.sprintf(
-						// Translators: 1 - HTML code opening tag, 2 - HTML code closing tag.
-						this.$t.__('The sort direction. The supported values are %1$s and %2$s.', this.$td),
-						'<code>ASC</code>',
-						'<code>DESC</code>'
-					)
-				},
-				{
-					name        : 'order_by',
-					description : this.$t.sprintf(
-						// Translators: 1 - HTML code opening tag, 2 - HTML code closing tag.
-						this.$t.__('The sort order. The supported values are %1$s, %2$s, %3$s and %4$s.', this.$td),
-						'<code>publish_date</code>',
-						'<code>last_updated</code>',
-						'<code>alphabetical</code>',
-						'<code>id</code>'
-					)
-				}
-			]
+				editAndSaveFirst : this.$t.__('To view the sitemap, enter a URL and save changes.', this.$td),
+				saveFirst        : this.$t.__('To view the new sitemap, first save changes.', this.$td)
+			}
 		}
 	},
 	created () {
@@ -350,7 +271,7 @@ export default {
 </script>
 
 <style lang="scss">
-.aioseo-display-info {
+.aioseo-ui-element-slider {
 	svg.aioseo-new-page{
 		width: 100%;
 		height: auto;

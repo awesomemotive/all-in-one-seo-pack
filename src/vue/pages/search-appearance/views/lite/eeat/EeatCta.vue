@@ -1,10 +1,5 @@
 <template>
-	<core-card noSlide>
-		<template #header>
-			<span>{{ strings.globalAuthor }}</span>
-			<core-pro-badge />
-		</template>
-
+	<div>
 		<eeat-blur />
 
 		<cta
@@ -12,6 +7,7 @@
 			:button-text="strings.ctaButtonText"
 			:learn-more-link="links.getUpsellUrl('eeat', null, $isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="features"
+			alignTop
 		>
 			<template #header-text>
 				{{ strings.headerText }}
@@ -23,7 +19,7 @@
 				{{ strings.description }}
 			</template>
 		</cta>
-	</core-card>
+	</div>
 </template>
 
 <script>
@@ -34,8 +30,6 @@ import {
 import { AddonConditions } from '@/vue/mixins/AddonConditions'
 import { JsonValues } from '@/vue/mixins/JsonValues'
 import { useEeatCta } from '@/vue/composables/EeatCta'
-import CoreCard from '@/vue/components/common/core/Card'
-import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import Cta from '@/vue/components/common/cta/Index'
 import EeatBlur from '../../partials/eeat/EeatBlur'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
@@ -55,8 +49,6 @@ export default {
 		}
 	},
 	components : {
-		CoreCard,
-		CoreProBadge,
 		Cta,
 		EeatBlur,
 		RequiredPlans

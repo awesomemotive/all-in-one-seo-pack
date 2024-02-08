@@ -90,17 +90,57 @@ export const truncate = (string, length = 200) => {
 }
 
 /**
+ * Get the schema graph from a string.
+ *
+ * @since 4.5.6
+ *
+ * @param   {string}      type          The schema graph to get.
+ * @param   {string}      schemaContent The entire schema.
+ * @returns {Object|false}              The schema graph object, or false if not found.
+ */
+export const parseSchemaByType = (type, schemaContent) => {
+	try {
+		const parseSchema = JSON.parse(schemaContent)
+		if (!parseSchema) {
+			return false
+		}
+
+		if (
+			parseSchema['@type'] &&
+			(
+				type === parseSchema['@type'] ||
+				(Array.isArray(parseSchema['@type']) && parseSchema['@type'].includes(type))
+			)
+		) {
+			return parseSchema
+		}
+
+		if (Array.isArray(parseSchema['@graph'])) {
+			const foundItem = parseSchema['@graph']
+				.find(item => (Array.isArray(item['@type']) ? item['@type'].includes(type) : item['@type'] === type))
+
+			return foundItem || false
+		}
+
+		return false
+	} catch (_e) {
+		return false
+	}
+}
+
+/**
  * Extract the Google SERP snippet data from DOM.
  *
  * @since 4.2.8
  *
- * @returns {{domain: string, description: string, title: string}} The data.
+ * @returns {{hostname: string, url: string, title: string, description: string}} The data.
  */
-export const getGoogleSnippetData = () => {
+export const getDomGoogleSerpData = () => {
 	return {
-		description : document.head.querySelector('meta[name="description"]')?.content || '',
-		domain      : window.location.origin,
-		title       : document.title || ''
+		hostname    : window.location.hostname,
+		url         : window.location.href,
+		title       : document.title || '',
+		description : document.querySelector('meta[name="description"]')?.content || ''
 	}
 }
 
@@ -116,10 +156,10 @@ export const getGoogleSnippetData = () => {
  */
 export const getFacebookSnippetData = () => {
 	const facebookData = {
-		description : document.head.querySelector('meta[property="og:description"]')?.content || '',
-		image       : document.head.querySelector('meta[property="og:image"]')?.content || '',
-		title       : document.head.querySelector('meta[property="og:title"]')?.content || '',
-		type        : document.head.querySelector('meta[property="og:type"]')?.content || ''
+		description : document.querySelector('meta[property="og:description"]')?.content || '',
+		image       : document.querySelector('meta[property="og:image"]')?.content || '',
+		title       : document.querySelector('meta[property="og:title"]')?.content || '',
+		type        : document.querySelector('meta[property="og:type"]')?.content || ''
 	}
 
 	if (!facebookData.title) {
@@ -145,9 +185,9 @@ export const getFacebookSnippetData = () => {
  */
 export const getTwitterSnippetData = () => {
 	return {
-		card        : document.head.querySelector('meta[name="twitter:card"]')?.content || '',
-		description : document.head.querySelector('meta[name="twitter:description"]')?.content || '',
-		image       : document.head.querySelector('meta[name="twitter:image"]')?.content || '',
-		title       : document.head.querySelector('meta[name="twitter:title"]')?.content || ''
+		card        : document.querySelector('meta[name="twitter:card"]')?.content || '',
+		description : document.querySelector('meta[name="twitter:description"]')?.content || '',
+		image       : document.querySelector('meta[name="twitter:image"]')?.content || '',
+		title       : document.querySelector('meta[name="twitter:title"]')?.content || ''
 	}
 }

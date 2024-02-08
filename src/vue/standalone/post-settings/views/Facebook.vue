@@ -1,9 +1,10 @@
 <template>
 	<div class="tab-facebook">
-		<core-settings-row
-			noBorder
-			noVerticalMargin
-		>
+		<core-settings-row class="snippet-preview-row">
+			<template #name>
+				<span>{{ strings.tabName }}</span>
+			</template>
+
 			<template #content>
 				<core-alert
 					class="facebook-disabled-warning"
@@ -11,15 +12,8 @@
 					v-html="strings.facebookDisabled"
 					type="red"
 				/>
-			</template>
-		</core-settings-row>
 
-		<core-settings-row
-			:name="strings.tabName"
-		>
-			<template #content>
 				<core-facebook-preview
-					:class="{ ismobilecard: postEditorStore.currentPost.socialMobilePreview }"
 					:description="previewDescription"
 					:image="imageUrl"
 					:loading="loading"
@@ -361,6 +355,10 @@ export default {
 				max-height: 158px;
 			}
 		}
+	}
+
+	.aioseo-alert {
+		margin-bottom: 20px;
 	}
 }
 </style>

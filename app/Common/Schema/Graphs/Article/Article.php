@@ -94,16 +94,6 @@ class Article extends Graphs\Graph {
 			$data['pagination'] = $pageNumber;
 		}
 
-		// Check if our addons need to modify this graph.
-		$addonsArticleData = array_filter( aioseo()->addons->doAddonFunction( 'article', 'get', [
-			'postId' => $post->ID,
-			'data'   => $data
-		] ) );
-
-		foreach ( $addonsArticleData as $addonArticleData ) {
-			$data = array_merge( $data, $addonArticleData );
-		}
-
 		return $data;
 	}
 

@@ -47,6 +47,15 @@ export default [
 		}
 	},
 	{
+		path      : '/author-seo',
+		name      : 'author-seo',
+		component : loadView('Main'),
+		meta      : {
+			access : 'aioseo_search_appearance_settings',
+			name   : __('Author SEO', td)
+		}
+	},
+	{
 		path      : '/archives',
 		name      : 'archives',
 		component : loadView('Main'),

@@ -701,8 +701,6 @@
 				</template>
 			</core-settings-row>
 		</core-card>
-
-		<eeat-cta />
 	</div>
 </template>
 
@@ -723,7 +721,6 @@ import CorePostTypeOptions from '@/vue/components/common/core/PostTypeOptions'
 import CoreRobotsMeta from '@/vue/components/common/core/RobotsMeta'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
-import EeatCta from './EeatCta'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import SvgExternal from '@/vue/components/common/svg/External'
 export default {
@@ -745,7 +742,6 @@ export default {
 		CoreRobotsMeta,
 		CoreSettingsRow,
 		CoreTooltip,
-		EeatCta,
 		SvgCircleQuestionMark,
 		SvgExternal
 	},

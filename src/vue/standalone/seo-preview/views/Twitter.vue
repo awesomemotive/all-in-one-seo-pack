@@ -24,3 +24,13 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss" scoped>
+.preview-wrapper {
+	margin: 20px;
+
+	> * {
+		padding: 0;
+	}
+}
+</style>

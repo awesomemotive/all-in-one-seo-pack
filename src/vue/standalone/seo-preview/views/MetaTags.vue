@@ -87,7 +87,6 @@ export default {
 		dt,
 		dd {
 			font-family: $font-family;
-			line-height: 1.4;
 			margin: 0;
 			padding: 0;
 		}
@@ -98,7 +97,7 @@ export default {
 			font-weight: 700;
 
 			+ dd {
-				margin-top: 0;
+				margin-top: 4px;
 				padding-left: 10px;
 			}
 		}
@@ -112,12 +111,10 @@ export default {
 				margin-top: 8px;
 			}
 
-			:deep() {
-				a {
-					border-bottom: 1px dotted $blue;
-					color: $blue;
-					text-decoration: none;
-				}
+			:deep(a) {
+				border-bottom: 1px dotted $blue;
+				color: $blue;
+				text-decoration: none;
 			}
 		}
 	}

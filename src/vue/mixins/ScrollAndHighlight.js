@@ -38,7 +38,10 @@ export const ScrollAndHighlight = {
 			const scroll    = getParams()['aioseo-scroll'] || history.state?.scroll || rootStore.navigate.scroll
 			if (scroll && 'string' === typeof scroll) {
 				setTimeout(() => {
-					this.$scrollTo(`#${scroll}`, { offset: -130, container: this.scrollContainer || 'body' })
+					this.$scrollTo(`#${scroll}`, {
+						offset    : -130,
+						container : (document.querySelector(this.scrollContainer || null) ? this.scrollContainer : 'body')
+					})
 					removeParam('aioseo-scroll')
 					delete history.state?.scroll
 					rootStore.navigate.scroll = null

@@ -2,9 +2,25 @@
 	<div class="aioseo-tab-content aioseo-post-general">
 		<core-settings-row
 			v-if="allowed('aioseo_page_general_settings')"
-			class="mobile-radio-buttons"
+			class="snippet-preview-row"
+			no-right-max-width
 		>
-			<template #content>
+			<template #name>
+				<div>
+					<span>{{ strings.serpPreview }}</span>
+
+					<core-tooltip
+						:offset="'sidebar' === $root._data.screenContext && 'metabox' === parentComponentContext ? '10px,0' : '50px,0'"
+						:placement="'bottom'"
+					>
+						<svg-circle-question-mark/>
+
+						<template #tooltip>
+							{{ strings.serpPreviewDocumentation }}
+						</template>
+					</core-tooltip>
+				</div>
+
 				<base-radio-toggle
 					v-if="'metabox' === $root._data.screenContext || 'modal' === parentComponentContext"
 					:modelValue="postEditorStore.currentPost.generalMobilePrev"
@@ -24,24 +40,16 @@
 					</template>
 				</base-radio-toggle>
 			</template>
-		</core-settings-row>
 
-		<core-settings-row
-			:name="strings.snippetPreview"
-			v-if="allowed('aioseo_page_general_settings')"
-			class="snippet-preview-row"
-		>
 			<template #content>
 				<core-google-search-preview
+					:focus-keyphrase="postEditorStore.currentPost?.keyphrases?.focus?.keyphrase ?? ''"
+					:device="'sidebar' === $root._data.screenContext && 'metabox' === parentComponentContext ? 'mobile' : (postEditorStore.currentPost.generalMobilePrev ? 'mobile' : 'desktop')"
+					:url="tagsStore.liveTags.permalink"
 					:title="parseTags(postEditorStore.currentPost.title || postEditorStore.currentPost.tags.title || '#post_title #separator_sa #site_title')"
-					:separator="optionsStore.options.searchAppearance.global.separator"
 					:description="parseTags(postEditorStore.currentPost.description || postEditorStore.currentPost.tags.description || '#post_content')"
-					:class="{ ismobile: postEditorStore.currentPost.generalMobilePrev }"
-				>
-					<template #domain>
-						{{ tagsStore.liveTags.permalink }}
-					</template>
-				</core-google-search-preview>
+					:rich-results="seoPreviewStore.richResults"
+				/>
 
 				<base-button
 					v-if="'sidebar' === $root._data.screenContext && 'modal' !== parentComponentContext"
@@ -190,13 +198,14 @@
 
 		<core-settings-row
 			v-if="displayTruSeoMetaboxCard"
+			id="aioseo-post-settings-snippet-focus-keyphrase-row"
 			class="snippet-focus-keyphrase-row"
 			align
 		>
 			<template #name>
-				{{ strings.focusKeyphrase }}
+				<span>{{ strings.focusKeyphrase }}</span>
 
-				<core-tooltip>
+				<core-tooltip :offset="'25px,0'">
 					<svg-circle-question-mark />
 
 					<template #tooltip>
@@ -311,6 +320,7 @@ import {
 	useOptionsStore,
 	usePostEditorStore,
 	useRootStore,
+	useSeoPreviewStore,
 	useSettingsStore,
 	useTagsStore,
 	useTruSeoHighlighterStore
@@ -355,6 +365,7 @@ export default {
 			optionsStore           : useOptionsStore(),
 			postEditorStore        : usePostEditorStore(),
 			rootStore              : useRootStore(),
+			seoPreviewStore        : useSeoPreviewStore(),
 			settingsStore          : useSettingsStore(),
 			tagsStore              : useTagsStore(),
 			truSeoHighlighterStore : useTruSeoHighlighterStore(),
@@ -409,7 +420,8 @@ export default {
 			descriptionKey    : 'description' + 0,
 			strings           : merge(this.composableStrings, {
 				pageName                      : this.$t.__('General', this.$td),
-				snippetPreview                : this.$t.__('Snippet Preview', this.$td),
+				serpPreview                   : this.$t.__('SERP Preview', this.$td),
+				serpPreviewDocumentation      : this.$t.__('SERP: Search Engine Results Page preview. Your site\'s potential appearance in Google search results. Final display may vary, but this preview closely resembles it.', this.$td),
 				editSnippet                   : this.$t.__('Edit Snippet', this.$td),
 				clickToAddTitle               : this.$t.__('Click on the tags below to insert variables into your title.', this.$td),
 				metaDescription               : this.$t.__('Meta Description', this.$td),
@@ -571,6 +583,15 @@ export default {
 </script>
 <style lang="scss">
 .aioseo-post-general {
+	.aioseo-tooltip {
+		line-height: normal;
+		vertical-align: middle;
+
+		:has(.aioseo-circle-question-mark) {
+			display: inline-flex;
+		}
+	}
+
 	svg.aioseo-circle-question-mark {
 		width: 17px;
 		height: 17px;
@@ -588,26 +609,6 @@ export default {
 		color: $black2;
 	}
 
-	.mobile-radio-buttons {
-		padding: 0!important;
-		border: 0;
-
-		> .aioseo-col {
-			padding: 0;
-		}
-
-		.aioseo-radio-toggle {
-			justify-content: flex-end;
-			&> div {
-				margin-left: 10px;
-			}
-		}
-	}
-
-	.ismobile {
-		max-width: 375px;
-	}
-
 	.edit-snippet,
 	.add-keyphrase {
 		margin-top: 12px;
@@ -617,6 +618,7 @@ export default {
 			margin-right: 11px;
 		}
 	}
+
 	.disabled-button {
 		margin-top: 12px;
 		border: 1px solid #dcdde1;
@@ -668,13 +670,13 @@ export default {
 			}
 
 			&:before {
-				left: calc( 50% - 6px );
+				left: calc(50% - 6px);
 				border-width: 0 10px 10px 10px;
 				border-color: transparent transparent $border transparent;
 			}
 
 			&:after {
-				left: calc( 50% - 4px );
+				left: calc(50% - 4px);
 				border-width: 0 8px 8px 8px;
 				border-color: transparent transparent #fff transparent;
 			}
@@ -747,6 +749,7 @@ export default {
 				height: 16px;
 				display: block;
 				cursor: pointer;
+
 				&:hover {
 					color: $red;
 				}
@@ -789,6 +792,55 @@ export default {
 		margin-bottom: 20px;
 	}
 
+	.snippet-description-row {
+
+		.aioseo-modal-content & {
+			border: none;
+			margin-bottom: 0 !important;
+			padding-bottom: 0 !important;
+		}
+	}
+
+	.snippet-preview-row {
+		.aioseo-google-search-preview {
+			border: 1px solid $input-border;
+			border-radius: 3px;
+			padding: 10px;
+			max-width: 610px;
+
+			&--mobile {
+				max-width: 375px;
+			}
+		}
+
+		.settings-name .name {
+			align-items: start;
+			flex-direction: column;
+			gap: 12px;
+			white-space: nowrap;
+
+			.aioseo-modal-content & {
+				align-items: center;
+				display: grid;
+				grid-template-columns: auto 1fr;
+				justify-items: end;
+			}
+
+			.aioseo-radio-toggle {
+				gap: 10px;
+			}
+
+			.popper {
+				max-width: 260px;
+			}
+		}
+
+		.edit-post-sidebar & {
+			padding-bottom: 0 !important;
+			border-bottom: none;
+		}
+	}
+
 	.cornerstone-content-row {
 		.cornerstone-content-panel {
 			display: flex;
@@ -810,14 +862,6 @@ export default {
 }
 
 .edit-post-sidebar {
-
-	.aioseo-google-search-preview {
-
-		.google-post {
-			padding: 16px;
-		}
-	}
-
 	.aioseo-button.edit-snippet {
 		display: inline-flex;
 	}
@@ -825,11 +869,6 @@ export default {
 	.snippet-focus-keyphrases-row {
 		border-bottom: none;
 		margin-bottom: 0 !important;
-	}
-
-	.snippet-preview-row {
-		padding-bottom: 0 !important;
-		border-bottom: none;
 	}
 
 	.card-focus-keyphrase,
@@ -961,15 +1000,6 @@ export default {
 		margin-bottom: 0!important;
 	}
 
-	.aioseo-tab-content .mobile-radio-buttons {
-		margin-bottom: 12px;
-	}
-
-	.aioseo-post-general > .mobile-radio-buttons {
-		margin-bottom: -30px;
-		padding-bottom: 0;
-	}
-
 	.snippet-title-row,
 	.snippet-description-row {
 		position: relative;
@@ -997,13 +1027,6 @@ export default {
 		margin-top: 12px;
 	}
 
-	.snippet-preview-row,
-	.snippet-description-row {
-		border: none;
-		margin-bottom: 0!important;
-		padding-bottom: 0!important;
-	}
-
 	.snippet-pillar-row {
 		display: none;
 	}
@@ -1027,16 +1050,6 @@ export default {
 
 			.tab-label {
 				display: inline!important;
-			}
-		}
-	}
-
-	.mobile-radio-buttons {
-		.aioseo-tabs .var-tab:not(.var-tab--active) {
-			margin: 0!important;
-
-			&:before {
-				top: 0!important;
 			}
 		}
 	}

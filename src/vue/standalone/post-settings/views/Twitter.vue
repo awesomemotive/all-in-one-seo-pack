@@ -1,9 +1,14 @@
 <template>
 	<div class="tab-twitter">
-		<core-settings-row
-			noBorder
-			noVerticalMargin
-		>
+		<core-settings-row class="snippet-preview-row">
+			<template #name>
+				<span>{{ strings.twitterPreview }}</span>
+			</template>
+
+			<template #description>
+				<i>{{ strings.twitterPreviewDescription }}</i>
+			</template>
+
 			<template #content>
 				<core-alert
 					class="twitter-disabled-warning"
@@ -11,18 +16,11 @@
 					v-html="strings.twitterDisabled"
 					type="red"
 				/>
-			</template>
-		</core-settings-row>
 
-		<core-settings-row
-			:name="strings.twitterPreview"
-		>
-			<template #content>
 				<core-twitter-preview
 					:card="postEditorStore.currentPost.twitter_card"
-					:class="{ ismobilecard: postEditorStore.currentPost.socialMobilePreview }"
 					:description="previewDescription"
-					:image="imageUrl"
+					:image="previewImage"
 					:loading="loading"
 					:title="previewTitle"
 				/>
@@ -210,21 +208,23 @@ export default {
 			separator        : undefined,
 			titleCount       : 0,
 			descriptionCount : 0,
+			facebookImageUrl : '',
 			strings          : {
-				twitterPreview              : this.$t.__('Twitter Preview', this.$td),
+				twitterPreview              : this.$t.__('X (Twitter) Preview', this.$td),
+				twitterPreviewDescription   : this.$t.__('X cards by default will use the data defined below. If no data is set, X will instead pick up the data set on the Facebook tab.', this.$td),
 				useFB                       : this.$t.__('Use Data from Facebook Tab', this.$td),
 				imageSource                 : this.$t.__('Image Source', this.$td),
 				customFieldsName            : this.$t.__('Custom Field Name', this.$td),
-				twitterImage                : this.$t.__('Twitter Image', this.$td),
-				twitterTitle                : this.$t.__('Twitter Title', this.$td),
-				twitterDescription          : this.$t.__('Twitter Description', this.$td),
-				twitterCardType             : this.$t.__('Twitter Card Type', this.$td),
+				twitterImage                : this.$t.__('X Image', this.$td),
+				twitterTitle                : this.$t.__('X Title', this.$td),
+				twitterDescription          : this.$t.__('X Description', this.$td),
+				twitterCardType             : this.$t.__('X Card Type', this.$td),
 				minimumSizeSummary          : this.$t.__('Minimum size: 144px x 144px, ideal ratio 1:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', this.$td),
 				minimumSizeSummaryWithLarge : this.$t.__('Minimum size: 300px x 157px, ideal ratio 2:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', this.$td),
 				twitterDisabled             : this.$t.sprintf(
 					// Translators: 1 - "Open Graph", 2 - "Go to Social Networks ->".
 					this.$t.__('No %1$s markup will be output for your post because it is currently disabled. You can enable %1$s markup in the Social Networks settings. %2$s', this.$td),
-					this.$t.__('Twitter', this.$td),
+					this.$t.__('X (Twitter)', this.$td),
 					this.$t.sprintf(
 						'<a href="%1$s" target="_blank">%2$s<span class="link-right-arrow">&nbsp;&rarr;</span></a>',
 						this.rootStore.aioseo.urls.aio.socialNetworks + '#twitter',
@@ -236,12 +236,21 @@ export default {
 	},
 	computed : {
 		previewTitle () {
-			const title = this.postEditorStore.currentPost.twitter_use_og ? this.postEditorStore.currentPost.og_title : this.postEditorStore.currentPost.twitter_title
+			const title = (this.postEditorStore.currentPost.twitter_use_og || !this.postEditorStore.currentPost.twitter_title)
+				? this.postEditorStore.currentPost.og_title
+				: this.postEditorStore.currentPost.twitter_title
 			return this.parseTags(title || this.postEditorStore.currentPost.title || this.postEditorStore.currentPost.tags.title || '#post_title #separator_sa #site_title')
 		},
 		previewDescription () {
-			const description = this.postEditorStore.currentPost.twitter_use_og ? this.postEditorStore.currentPost.og_description : this.postEditorStore.currentPost.twitter_description
+			const description = (this.postEditorStore.currentPost.twitter_use_og || !this.postEditorStore.currentPost.twitter_description)
+				? this.postEditorStore.currentPost.og_description
+				: this.postEditorStore.currentPost.twitter_description
 			return this.parseTags(description || this.postEditorStore.currentPost.description || this.postEditorStore.currentPost.tags.description || '#post_content')
+		},
+		previewImage () {
+			return (this.postEditorStore.currentPost.twitter_use_og || !this.imageUrl)
+				? this.facebookImageUrl
+				: this.imageUrl
 		},
 		twitterImageUploaderDescription () {
 			if ('summary' === this.postEditorStore.currentPost.twitter_card || ('default' === this.postEditorStore.currentPost.twitter_card && 'summary' === this.optionsStore.options.social.twitter.general.defaultCardType)) {
@@ -295,7 +304,14 @@ export default {
 		}
 	},
 	mounted () {
+		window.aioseoBus.$on('updateSocialImagePreview', (param) => {
+			if ('facebook' === param.social) {
+				this.facebookImageUrl = param.image
+			}
+		})
+
 		this.scrollToElement()
+		this.setImageUrl('facebook')
 		this.setImageUrl('twitter')
 
 		window.aioseoBus.$on('updateFeaturedImage', this.handleImageUpdate)
@@ -323,6 +339,10 @@ export default {
 				max-height: 158px;
 			}
 		}
+	}
+
+	.aioseo-alert {
+		margin-bottom: 20px;
 	}
 }
 </style>

@@ -48,7 +48,6 @@ export default {
 				),
 				selectPlugin : this.$t.__('Select a plugin...', this.$td),
 				import       : this.$t.__('Import', this.$td),
-				allLocalSeo  : this.$t.__('All Local Seo', this.$td),
 				notInstalled : this.$t.__('not installed', this.$td)
 			}
 		}

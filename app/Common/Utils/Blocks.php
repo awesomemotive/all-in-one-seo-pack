@@ -72,7 +72,7 @@ class Blocks {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		return register_block_type( $slug, $args ); // phpcs:ignore AIOSEO.WpFunctionUse.NewFunctions.register_block_typeFound
+		return register_block_type( $slug, $args );
 	}
 
 	/**
@@ -101,6 +101,7 @@ class Blocks {
 
 		$dependencies = [
 			'wp-annotations',
+			'wp-block-editor',
 			'wp-blocks',
 			'wp-components',
 			'wp-element',
@@ -110,11 +111,6 @@ class Blocks {
 			'wp-polyfill',
 			aioseo()->core->assets->jsHandle( $postSettingJsAsset )
 		];
-
-		global $wp_version;
-		if ( version_compare( $wp_version, '5.2', '>=' ) ) {
-			$dependencies[] = 'wp-block-editor';
-		}
 
 		aioseo()->core->assets->enqueueJs( 'src/vue/standalone/blocks/main.js', $dependencies );
 		aioseo()->core->assets->registerCss( 'src/vue/assets/scss/blocks-editor.scss' );

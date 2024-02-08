@@ -3,6 +3,7 @@
 		fill="none"
 		viewBox="6.54 6.57 46.71 60.72"
 		xmlns="http://www.w3.org/2000/svg"
+		class="aioseo-dannie-profile"
 	>
 		<g clip-rule="evenodd" fill-rule="evenodd">
 			<path d="M17.683 56.907l3.04-8.826-1.17-2.133c-5.016.175-8.424 3.67-8.634 7.026l6.764 3.933z" fill="#004BCE"/>

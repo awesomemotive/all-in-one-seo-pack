@@ -214,13 +214,14 @@ export default {
 	methods : {
 		triggerFeaturesUpdate (category) {
 			const features = [
-				'broken-link-checker',
-				'optimized-search-appearance',
+				'aioseo-eeat',
+				'aioseo-image-seo',
+				'aioseo-redirects',
+				'aioseo-sitemaps',
 				'analytics',
+				'broken-link-checker',
 				'conversion-tools',
-				'image-seo',
-				'sitemaps',
-				'redirects'
+				'optimized-search-appearance'
 			]
 
 			// Let's preselect some features based on the category set.
@@ -228,34 +229,34 @@ export default {
 				case 'blog':
 				case 'portfolio':
 				case 'other':
-					features.push('index-now')
-					features.push('link-assistant')
+					features.push('aioseo-index-now')
+					features.push('aioseo-link-assistant')
 					break
 				case 'news-channel':
-					features.push('news-sitemap')
-					features.push('video-sitemap')
-					features.push('index-now')
-					features.push('link-assistant')
-					features.push('rest-api')
+					features.push('aioseo-index-now')
+					features.push('aioseo-link-assistant')
+					features.push('aioseo-news-sitemap')
+					features.push('aioseo-rest-api')
+					features.push('aioseo-video-sitemap')
 					break
 				case 'online-store':
-					features.push('video-sitemap')
-					features.push('index-now')
-					features.push('link-assistant')
-					features.push('rest-api')
+					features.push('aioseo-index-now')
+					features.push('aioseo-link-assistant')
+					features.push('aioseo-rest-api')
+					features.push('aioseo-video-sitemap')
 					break
 				case 'small-offline-business':
-					features.push('local-seo')
-					features.push('video-sitemap')
-					features.push('rest-api')
+					features.push('aioseo-local-business')
+					features.push('aioseo-rest-api')
+					features.push('aioseo-video-sitemap')
 					break
 				case 'corporation':
-					features.push('index-now')
-					features.push('link-assistant')
-					features.push('local-seo')
-					features.push('news-sitemap')
-					features.push('video-sitemap')
-					features.push('rest-api')
+					features.push('aioseo-index-now')
+					features.push('aioseo-link-assistant')
+					features.push('aioseo-local-business')
+					features.push('aioseo-news-sitemap')
+					features.push('aioseo-rest-api')
+					features.push('aioseo-video-sitemap')
 					break
 			}
 

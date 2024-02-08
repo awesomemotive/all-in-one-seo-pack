@@ -13,8 +13,8 @@ if ('post' === window.aioseo.currentPost?.context) {
 
 	const checkBlocksLength = debounce(() => {
 		const newBlockList = window.wp.data.select('core/block-editor').getBlocks()
-
-		if (newBlockList.length < blockList.length) {
+		// After the last block is deleted a paragraph block is added automatically.
+		if (newBlockList.length < blockList.length || 1 === newBlockList.length) {
 			updateBlockGraphs()
 		}
 
@@ -74,6 +74,13 @@ if ('post' === window.aioseo.currentPost?.context) {
 			if (-1 === blockGraphIndex && block?.attributes) {
 				blockGraphs.push(block.attributes)
 			}
+		})
+
+		// Sort the `blockGraphs` based on the `blocks` order.
+		blockGraphs.sort((a, b) => {
+			const aIndex = blocks.findIndex(block => block?.attributes?.schemaBlockId === a?.schemaBlockId)
+			const bIndex = blocks.findIndex(block => block?.attributes?.schemaBlockId === b?.schemaBlockId)
+			return aIndex - bIndex
 		})
 
 		postEditorStore.currentPost.schema.blockGraphs = blockGraphs

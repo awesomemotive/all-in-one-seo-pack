@@ -302,6 +302,24 @@ class Addons {
 	}
 
 	/**
+	 * Returns a list of addon SKUs.
+	 *
+	 * @since 4.5.6
+	 *
+	 * @return array The addon SKUs.
+	 */
+	public function getAddonSkus() {
+		$addons = $this->getAddons();
+		if ( empty( $addons ) ) {
+			return [];
+		}
+
+		return array_map( function( $addon ) {
+			return $addon->sku;
+		}, $addons );
+	}
+
+	/**
 	 * Get the URL to get addons.
 	 *
 	 * @since 4.1.8
@@ -606,7 +624,7 @@ class Addons {
 				'descriptionVersion' => 0,
 				'productUrl'         => 'https://aioseo.com/author-seo-eeat/',
 				'learnMoreUrl'       => 'https://aioseo.com/author-seo-eeat/',
-				'manageUrl'          => '',
+				'manageUrl'          => 'https://route#aioseo-search-appearance:author-seo',
 				'basename'           => 'aioseo-eeat/aioseo-eeat.php',
 				'installed'          => false,
 				'isActive'           => false,

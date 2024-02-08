@@ -127,7 +127,7 @@ const strings = {
 	emIntroH : __('The Best Google Analytics Plugin for WordPress', td),
 	emIntroP : sprintf(
 		// Translators: 1 - The name of one of our partner plugins, 2 - The plugin short name ("AIOSEO").
-		__('%1$s connects %2$s to Google Analytics, providing a powerful integration. %1$s is a sister company of %2$s.', td),
+		__('%1$s connects %2$s to Google Analytics, providing a powerful integration. %1$s is a partner of %2$s.', td),
 		'ExactMetrics',
 		import.meta.env.VITE_SHORT_NAME
 	),
@@ -137,7 +137,7 @@ const strings = {
 	miIntroH   : __('The Best Google Analytics Plugin for WordPress', td),
 	miIntroP   : sprintf(
 		// Translators: 1 - The name of one of our partner plugins, 2 - The plugin short name ("AIOSEO").
-		__('%1$s connects %2$s to Google Analytics, providing a powerful integration. %1$s is a sister company of %2$s.', td),
+		__('%1$s connects %2$s to Google Analytics, providing a powerful integration. %1$s is a partner of %2$s.', td),
 		'MonsterInsights',
 		import.meta.env.VITE_SHORT_NAME
 	),

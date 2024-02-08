@@ -34,7 +34,7 @@ export default [
 		component : loadView('Main'),
 		meta      : {
 			access : 'aioseo_social_networks_settings',
-			name   : __('Twitter', td)
+			name   : __('X (Twitter)', td)
 		}
 	},
 	{

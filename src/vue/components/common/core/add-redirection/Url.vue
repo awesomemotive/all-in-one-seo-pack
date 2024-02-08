@@ -133,6 +133,7 @@ import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation
 import SvgGear from '@/vue/components/common/svg/Gear'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
+import Redirect from '@/vue/mixins/redirects/Redirect'
 export default {
 	setup () {
 		return {
@@ -140,6 +141,7 @@ export default {
 			rootStore      : useRootStore()
 		}
 	},
+	mixins     : [ Redirect ],
 	emits      : [ 'updated-url', 'remove-url', 'updated-option' ],
 	components : {
 		BaseCheckbox,
@@ -202,64 +204,6 @@ export default {
 			}
 
 			return false
-		},
-		invalidUrl () {
-			if (!this.url.url) {
-				return false
-			}
-
-			const errors = []
-			if (this.url.regex) {
-				try {
-					new RegExp(this.url.url)
-				} catch (e) {
-					errors.push(this.$t.__('The regex syntax is invalid.', this.$td))
-					return errors
-				}
-			}
-
-			if (!this.url.regex && !sanitizeString(this.url.url)) {
-				errors.push(this.$t.__('Your URL is invalid.', this.$td))
-				return errors
-			}
-
-			if ('http' === this.url.url.substr(0, 4)) {
-				errors.push(this.$t.__('Please enter a valid relative source URL.', this.$td))
-			}
-
-			if (this.url.url.match(/%[a-zA-Z]+%/)) {
-				errors.push(this.$t.__('Permalinks are not currently supported.', this.$td))
-			}
-
-			if ('/(.*)' === this.url.url || '^/(.*)' === this.url.url) {
-				errors.push(this.$t.__('This redirect is supported using the Relocate Site feature under Full Site Redirect tab.', this.$td))
-			}
-
-			// Loop detection.
-			if (this.url.url && this.url.url.length && this.targetUrl && this.targetUrl.length) {
-				let compareSource = this.url.ignoreSlash ? this.$links.unTrailingSlashIt(this.url.url) : this.url.url,
-					compareTarget = this.url.ignoreSlash ? this.$links.unTrailingSlashIt(this.targetUrl) : this.targetUrl
-				compareSource = this.url.ignoreCase ? compareSource.toLowerCase() : compareSource
-				compareTarget = this.url.ignoreCase ? compareTarget.toLowerCase() : compareTarget
-				if (compareSource === compareTarget ||
-					(
-						this.url.regex &&
-						compareTarget.match(compareSource)
-					)
-				) {
-					errors.push(this.$t.__('Your source is the same as a target and this will create a loop.', this.$td))
-				}
-			}
-
-			// Protected path
-			if (0 < this.redirectsStore?.protectedPaths.length) {
-				const normalizedPaths = this.redirectsStore.protectedPaths.map(path => path.replace(/\/$/, ''))
-				if (this.url.url.match(new RegExp('^(' + normalizedPaths.join('|') + ')'))) {
-					errors.push(this.$t.__('Your source is a protected path and cannot be redirected.', this.$td))
-				}
-			}
-
-			return errors
 		},
 		iffyUrl () {
 			if (!this.url.url || this.disableSource) {
@@ -356,7 +300,7 @@ export default {
 			}
 
 			this.url.url = value
-			this.url.errors = this.invalidUrl
+			this.url.errors = this.validateRedirect(this)
 			this.url.warnings = this.iffyUrl
 			this.$emit('updated-url', this.url)
 		},
