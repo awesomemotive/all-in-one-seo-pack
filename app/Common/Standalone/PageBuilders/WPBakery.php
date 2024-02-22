@@ -109,7 +109,9 @@ class WPBakery extends Base {
 	 * @return string          The processed content.
 	 */
 	public function processContent( $postId, $content = '' ) {
-		\WPBMap::addAllMappedShortcodes();
+		if ( method_exists( '\WPBMap', 'addAllMappedShortcodes' ) ) {
+			\WPBMap::addAllMappedShortcodes();
+		}
 
 		return parent::processContent( $postId, $content );
 	}

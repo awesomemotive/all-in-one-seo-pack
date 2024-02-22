@@ -86,21 +86,18 @@ class Helpers extends ImportExport\Helpers {
 			'%term_description%' => '#taxonomy_description',
 			'%currentdate%'      => '#current_date',
 			'%currentday%'       => '#current_day',
+			'%currentyear%'      => '#current_year',
 			'%currentmonth%'     => '#current_month',
 			'%name%'             => '#author_first_name #author_last_name',
 			'%author%'           => '#author_first_name #author_last_name',
 			'%date%'             => '#post_date',
 			'%year%'             => '#current_year',
 			'%search_query%'     => '#search_term',
+			// RSS Content tags.
 			'%AUTHORLINK%'       => '#author_link',
 			'%POSTLINK%'         => '#post_link',
 			'%BLOGLINK%'         => '#site_link',
-			/* '%seo_description%'  => '',
-			'%user_description%' => '',
-			'%wc_price%'         => '',
-			'%page%'             => '',
-			'%FEATUREDIMAGE%'    => '',
-			'%filename%'         => '',*/
+			'%FEATUREDIMAGE%'    => '#featured_image'
 		];
 
 		switch ( $pageType ) {

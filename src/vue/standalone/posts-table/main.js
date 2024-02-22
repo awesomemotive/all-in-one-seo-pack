@@ -20,6 +20,10 @@ import TermApp from './TermApp.vue'
 
 import './AIOSEO_VERSION/urlInspection.js'
 
+// We need to load the Pinia here since we will use the store outside an App.
+// links.restUrl method that we use below uses rootStore to get the rest URL.
+loadPiniaStores()
+
 const localCreateApp = (app) => {
 	app = loadPlugins(app)
 	app = loadComponents(app)

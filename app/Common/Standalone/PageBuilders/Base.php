@@ -227,6 +227,10 @@ abstract class Base {
 			}
 		}
 
-		return apply_filters( 'the_content', $content );
+		if ( aioseo()->helpers->isAjaxCronRestRequest() ) {
+			return apply_filters( 'the_content', $content );
+		}
+
+		return $content;
 	}
 }

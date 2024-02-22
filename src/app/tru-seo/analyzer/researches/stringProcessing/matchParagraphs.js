@@ -1,4 +1,4 @@
-import { map, flatMap, filter } from 'lodash-es'
+import { flatMap, filter } from 'lodash-es'
 
 import { getBlocks } from '../helpers/html'
 
@@ -10,18 +10,19 @@ import { getBlocks } from '../helpers/html'
 const getParagraphsInTags = function (text) {
 	const paragraphs = []
 	// Get paragraph content by matching everything between <p> tags.
-	// We'll also include shortcodes as those aren't wrapped in any tags and we want to consider them when looking for keyphrases.
-	const regex = /(<p(?:[^>]+)?>(.*?)<\/p>|\[.*](.*?)\[.*])/ig
+	// We'll also want to consider shortcodes content while looking for keyphrases.
+	const regex = /<p(?:[^>]+)?>(.+?)<\/p>|\[.+?](.+?)\[\/.+?]/ig
 
 	let match
 	while (null !== (match = regex.exec(text))) {
-		paragraphs.push(match)
+		// Only look for the shortcode content if the <p> tag content is empty.
+		const found = match[1] || match[2] || ''
+		if (found) {
+			paragraphs.push(found)
+		}
 	}
 
-	// Returns only the text from within the paragraph tags.
-	return map(paragraphs, function (paragraph) {
-		return paragraph[1]
-	})
+	return paragraphs
 }
 
 /**

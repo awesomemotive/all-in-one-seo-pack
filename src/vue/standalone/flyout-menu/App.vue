@@ -175,6 +175,7 @@ export default {
 		align-items: center;
 		justify-content: flex-end;
 		cursor: pointer;
+
 		> span {
 			position: relative;
 			z-index: 0;
@@ -234,6 +235,11 @@ export default {
 					max-width: 60%;
 					max-height: 60%;
 					transition: all 0.2s ease;
+
+					@supports (-webkit-appearance: none) {
+						min-height: 20px;
+						min-width: 20px;
+					}
 
 					path,
 					g {

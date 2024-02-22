@@ -60,7 +60,7 @@ class TruSeoAnalyzer {
 		this.postParsedDescription = decodeSpecialChars(parseTags(this.postDescription, this.aioseo.tags))
 		this.keyphrases            = (postData.keyphrases) ? postData.keyphrases : null
 		this.postEditedTitle       = decodeSpecialChars(postEditedTitle)
-		this.locale                = this.aioseo.locale || 'en_US'
+		this.locale                = this.aioseo.user.locale || 'en_US'
 		this.domain                = this.aioseo.urls.domain
 
 		// Set up the window/self object.

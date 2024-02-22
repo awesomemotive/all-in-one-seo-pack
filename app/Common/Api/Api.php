@@ -252,7 +252,7 @@ class Api {
 				// Any user is able to access the route.
 				return true;
 			default:
-				return current_user_can( apply_filters( 'aioseo_manage_seo', 'aioseo_manage_seo' ) );
+				return aioseo()->access->hasCapability( $routeData['access'] );
 		}
 	}
 

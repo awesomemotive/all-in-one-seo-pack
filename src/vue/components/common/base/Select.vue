@@ -251,7 +251,6 @@ export default {
 	}
 
 	.multiselect__tags {
-		height: 100%;
 		border: 1px solid $input-border;
 		border-radius: 3px;
 		display: flex;

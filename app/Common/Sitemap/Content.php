@@ -478,7 +478,8 @@ class Content {
 		// e.g. there might be additional roles/conditions that need to be checked here.
 		$authors = apply_filters( 'aioseo_sitemap_authors', [] );
 		if ( empty( $authors ) ) {
-			$authors = aioseo()->core->db->start( 'users as u' )
+			$usersTableName = aioseo()->core->db->db->users; // We get the table name from WPDB since multisites share the same table.
+			$authors        = aioseo()->core->db->start( "$usersTableName as u", true )
 				->select( 'u.ID as ID, u.user_nicename as nicename, MAX(p.post_modified_gmt) as lastModified' )
 				->join( 'posts as p', 'u.ID = p.post_author' )
 				->where( 'p.post_status', 'publish' )

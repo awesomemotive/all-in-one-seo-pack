@@ -29,9 +29,24 @@ const getClassicEditorSlug = () => {
 	return link.parentElement.href
 }
 
+const isTinyMceEmpty = (editor) => {
+	// When tinyMce is empty the raw content seems to be: `<p><br data-mce-bogus="1"></p>`.
+	const body = editor.getBody()
+	if (1 < body.childNodes.length) {
+		return false
+	} else if (0 === body.childNodes.length) {
+		return true
+	}
+	if (1 < body.childNodes[0].childNodes.length) {
+		return false
+	}
+	return /^\n?$/.test(body.innerText || body.textContent)
+}
+
 export {
 	tinyMceActive,
 	textViewActive,
 	getClassicEditorContent,
-	getClassicEditorSlug
+	getClassicEditorSlug,
+	isTinyMceEmpty
 }

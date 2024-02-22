@@ -219,8 +219,6 @@ export default {
 				data.url     = this.rootStore.aioseo.editGoogleSnippetUrl || ''
 				data.btnText = this.$t.__('Edit Snippet', this.$td)
 
-				console.log(data)
-
 				return data
 			}
 

@@ -5,7 +5,7 @@
 	>
 		<core-modal
 			:show="display"
-			:classes="[ 'aioseo-redirects', 'modal' ]"
+			:classes="[ 'aioseo-redirects' ]"
 			@close="display = false"
 		>
 			<template #headerTitle>
@@ -166,7 +166,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.aioseo-redirects.modal {
+.aioseo-redirects.aioseo-modal {
 	.bd {
 		padding: 20px
 	}

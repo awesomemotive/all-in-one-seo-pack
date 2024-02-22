@@ -280,6 +280,8 @@ class DynamicOptions {
 				]
 			);
 
+			$this->setDynamicSitemapOptions( 'taxonomies', $taxonomy['name'] );
+
 			$this->defaults['searchAppearance']['taxonomies'][ $taxonomy['name'] ] = $defaultOptions;
 		}
 	}

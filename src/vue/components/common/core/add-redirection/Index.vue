@@ -624,7 +624,7 @@ export default {
 <style lang="scss">
 @import '@/vue/assets/scss/redirects/table.scss';
 
-.aioseo-redirects.modal {
+.aioseo-redirects.aioseo-modal {
 	.bd {
 		padding: 20px;
 	}

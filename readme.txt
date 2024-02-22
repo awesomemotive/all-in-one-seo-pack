@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta ti
 Tested up to: 6.4.3
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.5.5
+Stable tag: 4.5.7.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -264,6 +264,34 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 
 == Changelog ==
+
+**New in Version 4.5.7.1**
+
+* Fixed: Plugin conflict with WPBakery page builder when a post was previously edited with WPBakery and the page builder is then deactivated.
+* Fixed: SEO Preview no longer triggers a 404 request when fetching the schema output for the preview in Lite.
+
+**New in Version 4.5.7**
+
+* Updated: Added a new Featured Image tag for the RSS feed settings.
+* Updated: Improved TruSEO Highlighter support for the Classic Editor.
+* Fixed: Author sitemap would sometimes not load correctly for multisites due to incorrect users table name.
+* Fixed: Default priority for terms of a given taxonomy not correctly reflected in the sitemap.
+* Fixed: XML sitemap header no longer includes query args.
+* Fixed: %currentyear% smart tag is now correctly imported from Rank Math into AIOSEO.
+* Fixed: Search Statistics link to check Index Status in Google Search Console now considers subfolder WordPress installs.
+* Fixed: Error in Link Assistant when site has no posts at all.
+* Fixed: Deleting a redirect now correctly closes the editor.
+* Fixed: Redirects table header no longer renders line breaks when used on small screens.
+* Fixed: Redirect testing of a pass-through redirect now works as expected.
+* Fixed: Redirects are no longer triggered when WP CLI is running.
+* Fixed: Conflict with Simple Link Directory plugin where AIOSEO modals are opened on post/term edit.
+* Fixed: Flyout menu box shadows and icons not rendered correctly in Safari.
+* Fixed: Revision count for new, unpublished posts is no longer incorrect inside Avada and WPBakery.
+* Fixed: Wrong social image output in some cases for various page builders.
+* Fixed: Canonical URL for the dedicated HTML Sitemap page is now correct and no longer based on the post permalink structure.
+* Fixed: Post/term details column sometimes not loading for authors and editors.
+* Fixed: Issue causing TruSEO to sometimes not detect foreign languages correctly.
+* Fixed: Issue where the "Focus Keyphrase in Introduction" check was not detecting content inside custom fields unless the shortcode block is used.
 
 **New in Version 4.5.6**
 
@@ -764,6 +792,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.5.6 =
+= 4.5.7.1 =
 
 This update adds major improvements and bug fixes.

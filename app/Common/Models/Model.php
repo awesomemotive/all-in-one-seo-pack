@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 #[\AllowDynamicProperties]
 class Model implements \JsonSerializable {
 	/**
-	 * Fields that should be null when saving to the database.
+	 * Fields that can be null when saving to the database.
 	 *
 	 * @since 4.0.0
 	 *

@@ -5,7 +5,8 @@ import links from '@/vue/utils/links'
 
 import {
 	useOptionsStore,
-	usePostEditorStore
+	usePostEditorStore,
+	useLicenseStore
 } from '@/vue/stores'
 
 import { isBlockEditor } from '@/vue/utils/context'
@@ -407,6 +408,11 @@ export const useSchemaStore = defineStore('SchemaStore', {
 		},
 		updateSchemaOutput () {
 			const postEditorStore = usePostEditorStore()
+			const licenseStore    = useLicenseStore()
+
+			if (licenseStore.isUnlicensed) {
+				return
+			}
 
 			let postId = postEditorStore.currentPost.id
 			if (isBlockEditor()) {

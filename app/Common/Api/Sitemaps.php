@@ -134,7 +134,7 @@ class Sitemaps {
 			], 400 );
 		}
 
-		$pathExists = self::pathExists( $parsedPageUrl['path'], $isUrl );
+		$pathExists = self::pathExists( $parsedPageUrl['path'], false );
 
 		return new \WP_REST_Response( [
 			'exists' => $pathExists

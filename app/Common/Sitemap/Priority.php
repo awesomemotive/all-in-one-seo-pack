@@ -196,7 +196,7 @@ class Priority {
 			'archive'    => 0.5,
 			'author'     => 0.3,
 			'taxonomies' => 0.3,
-			'other'      => 0.5,
+			'other'      => 0.5
 		];
 
 		if ( array_key_exists( $pageType, $defaults ) ) {

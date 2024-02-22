@@ -94,7 +94,7 @@ class Root {
 				! aioseo()->options->searchAppearance->advanced->globalRobotsMeta->noindex
 			)
 		) {
-			$usersTable        = aioseo()->core->db->db->users;
+			$usersTable        = aioseo()->core->db->db->users; // We get the table name from WPDB since multisites share the same table.
 			$authorPostTypes   = aioseo()->sitemap->helpers->getAuthorPostTypes();
 			$implodedPostTypes = aioseo()->helpers->implodeWhereIn( $authorPostTypes, true );
 			$result            = aioseo()->core->db->execute(
@@ -271,7 +271,8 @@ class Root {
 		for ( $i = 0; $i < $chunks; $i++ ) {
 			$indexNumber = 1 < $chunks ? $i + 1 : '';
 
-			$lastModified = aioseo()->core->db->start( 'users as u' )
+			$usersTableName = aioseo()->core->db->db->users; // We get the table name from WPDB since multisites share the same table.
+			$lastModified   = aioseo()->core->db->start( "$usersTableName as u", true )
 				->select( 'MAX(p.post_modified_gmt) as lastModified' )
 				->join( 'posts as p', 'u.ID = p.post_author' )
 				->where( 'p.post_status', 'publish' )

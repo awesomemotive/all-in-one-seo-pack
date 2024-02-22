@@ -1,3 +1,4 @@
+import { encode } from 'he'
 import { html } from '@/vue/standalone/blocks/utils'
 
 const { RawHTML } = window.wp.element
@@ -25,9 +26,10 @@ const getNestedHeadings = (headings, listStyle) => {
 			return
 		}
 
-		let listItem = '<li>'
+		let listItem  = '<li>'
 
-		listItem += `<a href="#${heading.anchor}">${heading.editedContent || heading.content}</a>`
+		const content = heading.editedContent || heading.content
+		listItem += `<a href="#${heading.anchor}">${encode(content)}</a>`
 
 		if (heading.headings?.length) {
 			listItem += getNestedHeadings(heading.headings, listStyle)

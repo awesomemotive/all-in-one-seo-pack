@@ -8,7 +8,7 @@
 
 		<core-modal
 			:show="postEditorStore.currentPost.redirects.modalOpen && 'sidebar' === $root._data.screenContext"
-			:classes="[ 'aioseo-redirects', 'modal' ]"
+			:classes="[ 'aioseo-redirects' ]"
 			@close="postEditorStore.currentPost.redirects.modalOpen = false"
 		>
 			<template #headerTitle>

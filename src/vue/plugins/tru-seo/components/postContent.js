@@ -17,6 +17,7 @@ import {
 	isAvadaEditor,
 	isPageBuilderEditor
 } from '@/vue/utils/context'
+import { isTinyMceEmpty } from '@/vue/standalone/post-settings/utils/classicEditor'
 import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
 import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
 import { getEditorData as getSeedProdData } from '@/vue/standalone/page-builders/seedprod/helpers'
@@ -220,12 +221,11 @@ export const maybeUpdatePostContent = async (run = true) => {
 }
 
 const classicContent = () => {
-	let cc = ''
+	let cc
 
 	const editor = window.tinyMCE ? window.tinyMCE.get('content') : ''
 	if (document.querySelector('#wp-content-wrap.tmce-active') && editor) {
-		// tinyMCE
-		cc = editor.getContent({ format: 'raw' })
+		cc = editor.getContent({ format: isTinyMceEmpty(editor) ? 'html' : 'raw' })
 	} else {
 		// No tinyMCE. Let's see if there's a proper #content textarea.
 		const textEditor = document.querySelector('textarea#content')

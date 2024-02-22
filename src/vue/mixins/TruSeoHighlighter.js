@@ -197,7 +197,7 @@ export const TruSeoHighlighter = {
 				}
 
 				if ('first-block' === which) {
-					return this.tinymceEditor.getBody()?.firstChild || {}
+					return this.tinymceEditor.getBody()?.firstElementChild || {}
 				}
 			}
 

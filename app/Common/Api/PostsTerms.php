@@ -490,12 +490,6 @@ class PostsTerms {
 			], 400 );
 		}
 
-		// Check if the content was passed, otherwise get it from the post.
-		$content = $body['content'] ?? '';
-		if ( empty( $content ) ) {
-			$content = aioseo()->helpers->getPostContent( $args['postId'] );
-		}
-
 		// Check if we can process it using a page builder integration.
 		$pageBuilder = aioseo()->helpers->getPostPageBuilderName( $args['postId'] );
 		if ( ! empty( $pageBuilder ) ) {
@@ -504,6 +498,9 @@ class PostsTerms {
 				'content' => aioseo()->standalone->pageBuilderIntegrations[ $pageBuilder ]->processContent( $args['postId'], $body['content'] ),
 			], 200 );
 		}
+
+		// Check if the content was passed, otherwise get it from the post.
+		$content = $body['content'] ?? aioseo()->helpers->getPostContent( $args['postId'] );
 
 		return new \WP_REST_Response( [
 			'success' => true,

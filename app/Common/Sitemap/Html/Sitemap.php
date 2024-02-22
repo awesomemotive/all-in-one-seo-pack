@@ -57,6 +57,7 @@ namespace AIOSEO\Plugin\Common\Sitemap\Html {
 			$this->block     = new Block();
 
 			add_action( 'widgets_init', [ $this, 'registerWidget' ] );
+			add_filter( 'aioseo_canonical_url', [ $this, 'getCanonicalUrl' ] );
 
 			if ( ! is_admin() || wp_doing_ajax() || wp_doing_cron() ) {
 				add_action( 'template_redirect', [ $this, 'checkForDedicatedPage' ] );
@@ -162,6 +163,32 @@ namespace AIOSEO\Plugin\Common\Sitemap\Html {
 
 			// Setting is_404 is not sufficient, so we still need to change the status code.
 			status_header( 200 );
+		}
+
+		/**
+		 * Get the canonical URL for the dedicated HTML sitemap page.
+		 *
+		 * @since 4.5.7
+		 *
+		 * @param  string $originalUrl The canonical URL.
+		 * @return string              The canonical URL.
+		 */
+		public function getCanonicalUrl( $originalUrl ) {
+			$sitemapOptions = aioseo()->options->sitemap->html;
+
+			if ( ! $sitemapOptions->enable || ! $this->isDedicatedPage ) {
+				return $originalUrl;
+			}
+
+			// If the user has set a custom URL for the sitemap page, use that.
+			if ( $sitemapOptions->pageUrl ) {
+				return $sitemapOptions->pageUrl;
+			}
+
+			// Return the current URL of WP.
+			global $wp;
+
+			return home_url( $wp->request );
 		}
 	}
 }

@@ -162,7 +162,6 @@ export default {
 		width: 100%;
 		height: 100%;
 		background-color: rgba(0, 32, 80, 0.3);
-		display: table;
 		transition: opacity 0.3s ease;
 		backdrop-filter: blur(1.5px);
 

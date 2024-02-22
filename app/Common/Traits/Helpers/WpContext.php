@@ -255,7 +255,14 @@ trait WpContext {
 			return $content[ $post->ID ];
 		}
 
-		$content[ $post->ID ] = $this->theContent( $post->post_content );
+		// We need to process the content for page builders.
+		$postContent = $post->post_content;
+		$pageBuilder = aioseo()->helpers->getPostPageBuilderName( $post->ID );
+		if ( ! empty( $pageBuilder ) ) {
+			$postContent = aioseo()->standalone->pageBuilderIntegrations[ $pageBuilder ]->processContent( $post->ID, $postContent );
+		}
+
+		$content[ $post->ID ] = $this->theContent( $postContent );
 
 		if ( apply_filters( 'aioseo_description_include_custom_fields', true, $post ) ) {
 			$content[ $post->ID ] .= $this->theContent( $this->getPostCustomFieldsContent( $post ) );
