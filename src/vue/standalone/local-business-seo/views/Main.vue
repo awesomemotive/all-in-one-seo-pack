@@ -19,7 +19,7 @@
 <script>
 import {
 	usePostEditorStore
-} from '@/vue/stores/'
+} from '@/vue/stores'
 
 import { debounce } from '@/vue/utils/debounce'
 import BusinessInfo from './BusinessInfo'

@@ -168,7 +168,7 @@ export default ({ mode }) => {
 					}),
 					jsonToPhp([
 						{
-							from : `dist/${version}/assets/manifest.json`,
+							from : `dist/${version}/assets/.vite/manifest.json`,
 							to   : `dist/${version}/manifest.php`
 						}
 					])
@@ -323,7 +323,8 @@ const getTextDomains = version => {
 		matches : [
 			'this.$tdPro',
 			'tdPro',
-			'({}).VITE_TEXTDOMAIN_PRO'
+			'({}).VITE_TEXTDOMAIN_PRO',
+			'define_import_meta_env_default.VITE_TEXTDOMAIN'
 		]
 	}
 
@@ -336,7 +337,8 @@ const getTextDomains = version => {
 			matches : [
 				'this.$td',
 				'td',
-				'({}).VITE_TEXTDOMAIN'
+				'({}).VITE_TEXTDOMAIN',
+				'define_import_meta_env_default.VITE_TEXTDOMAIN'
 			]
 		}
 	]

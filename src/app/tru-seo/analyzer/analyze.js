@@ -1,5 +1,7 @@
 import { analyzers } from './analysis'
 import { decodeSpecialChars, removeScriptTag } from '@/vue/utils/helpers'
+import getLanguage from './researches/helpers/getLanguage.js'
+
 import {
 	calculateErrors,
 	calculateScore,
@@ -8,6 +10,23 @@ import {
 	hasKeyphrases,
 	parseTags
 } from './utils'
+
+const supportedLanguages = [
+	'ar',
+	'ca',
+	'nl',
+	'en',
+	'fr',
+	'de',
+	'he',
+	'hu',
+	'id',
+	'it',
+	'pl',
+	'pt',
+	'ru',
+	'se'
+]
 
 class TruSeoAnalyzer {
 	postId                = null
@@ -48,6 +67,11 @@ class TruSeoAnalyzer {
 			aioseoGlobals
 		}
 	) {
+		let locale = aioseo.user.locale || 'en_US'
+		if (!supportedLanguages.includes(getLanguage(locale))) {
+			locale = 'en_US'
+		}
+
 		this.isAnalyzing           = true
 		this.aioseo                = aioseo
 		this.postId                = postId
@@ -60,7 +84,7 @@ class TruSeoAnalyzer {
 		this.postParsedDescription = decodeSpecialChars(parseTags(this.postDescription, this.aioseo.tags))
 		this.keyphrases            = (postData.keyphrases) ? postData.keyphrases : null
 		this.postEditedTitle       = decodeSpecialChars(postEditedTitle)
-		this.locale                = this.aioseo.user.locale || 'en_US'
+		this.locale                = locale
 		this.domain                = this.aioseo.urls.domain
 
 		// Set up the window/self object.

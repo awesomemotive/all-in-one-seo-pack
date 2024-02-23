@@ -1,15 +1,16 @@
-const { createFilter }             = require('rollup-pluginutils')
-const { GettextExtractor }         = require('gettext-extractor')
-const pluralForm                   = require('plural-forms')
-const { SourceMapGenerator }       = require('source-map')
-const fs                           = require('fs')
-const callExpressionWithLiteral    = require('./callExpressionWithLiteral.js')
-const decorateJsParserWithReplacer = require('./decorateJsParserWithReplacer.js')
-const config                       = require('./config.js')
+import { createFilter } from '@rollup/pluginutils'
+import { GettextExtractor } from 'gettext-extractor'
+import pluralForm from 'plural-forms'
+import { SourceMapGenerator } from 'source-map'
+import fs from 'fs'
+
+import callExpressionWithLiteral from './callExpressionWithLiteral'
+import decorateJsParserWithReplacer from './decorateJsParserWithReplacer'
+import config from './config'
 
 const cacheFilesParse = {}
 
-function i18n (options = {}) {
+export default function i18n (options = {}) {
 	const filter        = createFilter(options.include, options.exclude)
 	const languageFiles = config.defaultLanguage
 	const language      = languageFiles
@@ -174,5 +175,3 @@ function i18n (options = {}) {
 		}
 	}
 }
-
-module.exports = i18n

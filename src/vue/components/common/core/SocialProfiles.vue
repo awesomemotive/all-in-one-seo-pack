@@ -220,12 +220,12 @@ export default {
 				},
 				{
 					key        : 'twitterUrl',
-					name       : 'Twitter',
-					label      : 'Twitter URL',
-					url        : 'https://twitter.com',
+					name       : 'X (Twitter)',
+					label      : 'X (Twitter) URL',
+					url        : 'https://x.com',
 					svg        : 'svg-icon-twitter',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?twitter\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your Twitter URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?twitter\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your X (Twitter) URL is invalid. Please check the format and try again.', this.$td)
 					]
 				},
 				{

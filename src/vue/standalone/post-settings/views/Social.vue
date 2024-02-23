@@ -71,7 +71,7 @@ export default {
 				},
 				{
 					slug : 'twitter',
-					name : this.$t.__('Twitter', this.$td)
+					name : this.$t.__('X (Twitter)', this.$td)
 				}
 			]
 		}

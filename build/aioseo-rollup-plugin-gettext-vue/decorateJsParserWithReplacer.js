@@ -1,8 +1,8 @@
-const validate1 = require('gettext-extractor/dist/utils/validate')
-const parser1   = require('gettext-extractor/dist/parser')
-const ts        = require('typescript')
+import ts from 'typescript'
+import validate1 from 'gettext-extractor/dist/utils/validate'
+import parser1 from 'gettext-extractor/dist/parser'
 
-module.exports = function (jsParser) {
+export default function (jsParser) {
 	jsParser.parseSourceFile = function (source, fileName, options = {}) {
 		validate1.Validate.required.string({ source })
 		validate1.Validate.optional.nonEmptyString({ fileName })

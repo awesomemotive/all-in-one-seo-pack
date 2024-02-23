@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-function jsonToPhp (files = []) {
+export default function jsonToPhp (files = []) {
 	const log = msg => console.log('\x1b[36m%s\x1b[0m', msg)
 
 	return {
@@ -35,5 +35,3 @@ function jsonToPhp (files = []) {
 		}
 	}
 }
-
-module.exports = jsonToPhp

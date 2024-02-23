@@ -108,7 +108,7 @@ const optionsArray = [ {
 	extractorOptions : extractorOptions._nx
 } ]
 
-module.exports = {
+export default {
 	defaultLanguage  : defaultLanguage,
 	localesExt       : LOCALES_EXT,
 	localedirmap     : LOCALEDIRMAP,

@@ -1,11 +1,11 @@
-const ts        = require('typescript')
-const validate1 = require('gettext-extractor/dist/utils/validate')
-const content1  = require('gettext-extractor/dist/utils/content')
-const common1   = require('gettext-extractor/dist/js/extractors/common')
-const utils1    = require('gettext-extractor/dist/js/utils')
-const comments1 = require('gettext-extractor/dist/js/extractors/comments')
+import ts from 'typescript'
+import validate1 from 'gettext-extractor/dist/utils/validate'
+import content1 from 'gettext-extractor/dist/utils/content'
+import common1 from 'gettext-extractor/dist/js/extractors/common'
+import utils1 from 'gettext-extractor/dist/js/utils'
+import comments1 from 'gettext-extractor/dist/js/extractors/comments'
 
-module.exports = function (calleeName, options, globalOptions) {
+export default function (calleeName, options, globalOptions) {
 	validate1.Validate.required.argument({ calleeName })
 
 	const calleeNames = [].concat(calleeName)
@@ -37,7 +37,7 @@ module.exports = function (calleeName, options, globalOptions) {
 		}
 	}
 
-	const loggedBadPath = false
+	// const loggedBadPath = false
 	return (node, sourceFile, addMessage) => {
 		if (node.kind !== ts.SyntaxKind.CallExpression) {
 			return
@@ -54,6 +54,17 @@ module.exports = function (calleeName, options, globalOptions) {
 			return
 		}
 
+		// Get all the paths from the globalOptions.textDomains.
+		const paths = []
+		for (let i = 0; i < globalOptions.textDomains.length; i++) {
+			paths.push(globalOptions.textDomains[i].path)
+		}
+
+		// Check if the file is in the path for the current textdomain.
+		if (!paths.some(path => sourceFile.fileName.match(path))) {
+			return
+		}
+
 		if (!message.textDomain) {
 			console.error('\n', 'Missing a textdomain: ', message)
 			return
@@ -61,7 +72,6 @@ module.exports = function (calleeName, options, globalOptions) {
 
 		// Use a for loop to loop through the text domains array.
 		let valid   = false,
-			badPath = false,
 			domains = []
 
 		for (let i = 0; i < globalOptions.textDomains.length; i++) {
@@ -73,13 +83,6 @@ module.exports = function (calleeName, options, globalOptions) {
 				...textDomain.matches
 			]
 
-			// Check if the file is in the path for the current textdomain.
-			if (!sourceFile.fileName.match(textDomain.path)) {
-				badPath          = textDomain
-				badPath.fileName = sourceFile.fileName
-				continue
-			}
-
 			if (
 				textDomain.matches.includes(message.textDomain) ||
 				message.textDomain === textDomain.domain
@@ -87,14 +90,6 @@ module.exports = function (calleeName, options, globalOptions) {
 				valid = true
 			}
 		}
-
-		// Only log the bad path once.
-		// if (loggedBadPath?.fileName !== badPath?.fileName) {
-		//  loggedBadPath = JSON.parse(JSON.stringify(badPath))
-		//  console.error('\n\n', '\x1b[41m The following error means there is a file included in this build which SHOULD NOT BE HERE! (Usually a Pro file inside a Lite build). \x1b[0m')
-		//  console.error('\x1b[41m Please check the following error messages carefully and make sure you are including files properly. \x1b[0m', '\n')
-		//  console.error('\n', '\x1b[31m Invalid path for textdomain: \x1b[0m', `${sourceFile.fileName}\n`, `\x1b[31m Current path pattern: \x1b[0m${badPath.path}\n`, `\x1b[31m Current textdomain: \x1b[0m${badPath.domain}\n`)
-		// }
 
 		if (!valid) {
 			const lineInfo = sourceFile.getLineAndCharacterOfPosition(node.getStart())
