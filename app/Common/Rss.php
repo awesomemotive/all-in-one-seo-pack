@@ -205,7 +205,7 @@ class Rss {
 		$taxonomies = aioseo()->options->searchAppearance->advanced->crawlCleanup->feeds->taxonomies->included;
 		$term       = get_queried_object();
 		if (
-			$term &&
+			is_a( $term, 'WP_Term' ) &&
 			! aioseo()->options->searchAppearance->advanced->crawlCleanup->feeds->taxonomies->all &&
 			! in_array( $term->taxonomy, $taxonomies, true ) &&
 			(

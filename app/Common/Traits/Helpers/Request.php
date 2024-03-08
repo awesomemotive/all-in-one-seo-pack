@@ -13,28 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Request {
 	/**
-	 * Get the current URL.
-	 *
-	 * @since 4.2.1
-	 *
-	 * @return string The current URL.
-	 */
-	public function getCurrentUrl() {
-		return untrailingslashit( $this->getServer() ) . $this->getRequestUrl();
-	}
-
-	/**
-	 * Get the server.
-	 *
-	 * @since 4.2.1
-	 *
-	 * @return string The server.
-	 */
-	private function getServer() {
-		return $this->getProtocol() . '://' . $this->getServerName();
-	}
-
-	/**
 	 * Get the server port.
 	 *
 	 * @since 4.2.1
@@ -105,7 +83,7 @@ trait Request {
 	 *
 	 * @return string The request URL.
 	 */
-	private function getRequestUrl() {
+	public function getRequestUrl() {
 		$url = '';
 
 		if ( isset( $_SERVER['REQUEST_URI'] ) ) {

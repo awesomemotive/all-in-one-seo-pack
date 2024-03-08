@@ -324,55 +324,6 @@
 			</div>
 
 			<core-settings-row
-				:name="strings.removeUnrecognizedQueryArgs"
-				align
-			>
-				<template #content>
-					<base-radio-toggle
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.removeUnrecognizedQueryArgs"
-						name="removeUnrecognizedQueryArgs"
-						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
-						]"
-					/>
-
-					<div
-						class="aioseo-description"
-						v-if="!optionsStore.options.searchAppearance.advanced.crawlCleanup.removeUnrecognizedQueryArgs"
-					>
-						{{ strings.removeUnrecognizedQueryArgsDescription }}
-						{{ strings.removeUnrecognizedQueryArgsAlert }}
-					</div>
-
-					<core-alert
-						v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.removeUnrecognizedQueryArgs"
-						type="yellow"
-					>
-						{{ strings.removeUnrecognizedQueryArgsAlert }}
-					</core-alert>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
-				v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.removeUnrecognizedQueryArgs"
-				:name="strings.allowedQueryArgs"
-			>
-				<template #content>
-					<base-textarea
-						:minHeight="200"
-						:maxHeight="200"
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.allowedQueryArgs"
-					/>
-
-					<div
-						class="aioseo-description"
-						v-html="strings.allowedQueryArgsDescription"
-					/>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
 				id="crawl-content-global-feed"
 				:name="strings.globalFeed"
 				align
@@ -701,6 +652,44 @@
 				</template>
 			</core-settings-row>
 		</core-card>
+
+		<core-card
+			id="aioseo-query-arg-monitoring"
+			slug="queryArgLogs"
+			:toggles="optionsStore.options.searchAppearance.advanced.blockArgs.enable"
+		>
+			<template #header>
+				<base-toggle
+					v-model="optionsStore.options.searchAppearance.advanced.blockArgs.enable"
+				/>
+				<span>{{ strings.queryArgMonitoring }}</span>
+			</template>
+
+			<div class="aioseo-settings-row aioseo-section-description">
+				{{ strings.queryArgMonitorDescription }}
+
+				<span
+					v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'queryArgMonitor', true)"
+				/>
+			</div>
+			<core-settings-row
+				:name="strings.logsRetention"
+				class="table-retention"
+			>
+				<template #content>
+					<base-select
+						size="medium"
+						:options="logsRetentionOptions"
+						:modelValue="getJsonValue(optionsStore.options.searchAppearance.advanced.blockArgs.logsRetention)"
+						@update:modelValue="value => optionsStore.options.searchAppearance.advanced.blockArgs.logsRetention = setJsonValue(value)"
+					/>
+				</template>
+			</core-settings-row>
+
+			<query-arg-monitor-block-arg />
+
+			<query-arg-monitor-table />
+		</core-card>
 	</div>
 </template>
 
@@ -710,9 +699,10 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
+import { JsonValues } from '@/vue/mixins/JsonValues'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
-import BaseTextarea from '@/vue/components/common/base/Textarea'
+import BaseSelect from '@/vue/components/common/base/Select'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreExcludePosts from '@/vue/components/common/core/ExcludePosts'
@@ -723,6 +713,9 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import SvgExternal from '@/vue/components/common/svg/External'
+import QueryArgMonitorBlockArg from './partials/query-arg-monitor/BlockArg'
+import QueryArgMonitorTable from './partials/query-arg-monitor/Table'
+
 export default {
 	setup () {
 		return {
@@ -733,7 +726,7 @@ export default {
 	components : {
 		BaseCheckbox,
 		BaseRadioToggle,
-		BaseTextarea,
+		BaseSelect,
 		CoreAlert,
 		CoreCard,
 		CoreExcludePosts,
@@ -743,8 +736,11 @@ export default {
 		CoreSettingsRow,
 		CoreTooltip,
 		SvgCircleQuestionMark,
-		SvgExternal
+		SvgExternal,
+		QueryArgMonitorBlockArg,
+		QueryArgMonitorTable
 	},
+	mixins : [ JsonValues ],
 	data () {
 		return {
 			emptyString : '',
@@ -765,21 +761,12 @@ export default {
 					this.$t.__('NOTE: Enabling this setting may cause conflicts with third-party plugins/themes. %1$s', this.$td),
 					this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'runningShortcodes', true)
 				),
-				noPaginationForCanonical               : this.$t.__('No Pagination for Canonical URLs', this.$td),
-				useKeywords                            : this.$t.__('Use Meta Keywords', this.$td),
-				useKeywordsDescription                 : this.$t.__('This option allows you to toggle the use of Meta Keywords throughout the whole of the site.', this.$td),
-				useCategoriesForMetaKeywords           : this.$t.__('Use Categories for Meta Keywords', this.$td),
-				useCategoriesDescription               : this.$t.__('Check this if you want your categories for a given post used as the Meta Keywords for this post (in addition to any keywords you specify on the Edit Post screen).', this.$td),
-				useTagsForMetaKeywords                 : this.$t.__('Use Tags for Meta Keywords', this.$td),
-				removeUnrecognizedQueryArgs            : this.$t.__('Remove Query Args', this.$td),
-				removeUnrecognizedQueryArgsDescription : this.$t.__('Enable this option to remove any unrecognized query args from your site.', this.$td),
-				removeUnrecognizedQueryArgsAlert       : this.$t.__('This will help prevent search engines from crawling every variation of your pages with all the unrecognized query arguments. Only enable this if you understand exactly what it does as it can have a significant impact on your site.', this.$td),
-				allowedQueryArgs                       : this.$t.__('Allowed Query Args', this.$td),
-				allowedQueryArgsDescription            : this.$t.sprintf(
-					// Translators: 1 - "Learn More" link.
-					this.$t.__('Add any query args that you want to allow, one per line. You can also use regular expressions here for advanced use. All query args that are used by WordPress Core (e.g. "s" for search pages) are automatically whitelisted by default. %1$s', this.$td),
-					this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'crawlCleanup', true)
-				),
+				noPaginationForCanonical       : this.$t.__('No Pagination for Canonical URLs', this.$td),
+				useKeywords                    : this.$t.__('Use Meta Keywords', this.$td),
+				useKeywordsDescription         : this.$t.__('This option allows you to toggle the use of Meta Keywords throughout the whole of the site.', this.$td),
+				useCategoriesForMetaKeywords   : this.$t.__('Use Categories for Meta Keywords', this.$td),
+				useCategoriesDescription       : this.$t.__('Check this if you want your categories for a given post used as the Meta Keywords for this post (in addition to any keywords you specify on the Edit Post screen).', this.$td),
+				useTagsForMetaKeywords         : this.$t.__('Use Tags for Meta Keywords', this.$td),
 				useTagsDescription             : this.$t.__('Check this if you want your tags for a given post used as the Meta Keywords for this post (in addition to any keywords you specify on the Edit Post screen).', this.$td),
 				dynamicallyGenerateKeywords    : this.$t.__('Dynamically Generate Meta Keywords', this.$td),
 				dynamicallyGenerateDescription : this.$t.__('Check this if you want your keywords on your Posts page (set in WordPress under Settings, Reading, Front Page Displays) and your archive pages to be dynamically generated from the keywords of the posts showing on that page. If unchecked, it will use the keywords set in the edit page screen for the posts page.', this.$td),
@@ -796,7 +783,10 @@ export default {
 				),
 				descriptionTagRequired        : this.$t.__('A Description tag is required in order to properly display your meta descriptions on your site.', this.$td),
 				crawlCleanup                  : this.$t.__('Crawl Cleanup', this.$td),
-				crawlCleanupDescription       : this.$t.__('Removing unrecognized query arguments from URLs and disabling unnecessary RSS feeds can help save search engine crawl quota and speed up content indexing for larger sites. If you choose to disable any feeds, those feed links will automatically redirect to your homepage or applicable archive page.', this.$td),
+				queryArgMonitoring            : this.$t.__('Query Arg Monitoring', this.$td),
+				logsRetention                 : this.$t.__('Logs Retention', this.$td),
+				crawlCleanupDescription       : this.$t.__('Disabling unnecessary RSS feeds can help save search engine crawl quota and speed up content indexing for larger sites. If you choose to disable any feeds, those feed links will automatically redirect to your homepage or applicable archive page.', this.$td),
+				queryArgMonitorDescription    : this.$t.__('This feature allows you to log all query arguments that are used on your site and block them. This will help prevent search engines from crawling every variation of your pages with unrecognized query arguments and help save search engine crawl quota.', this.$td),
 				globalFeed                    : this.$t.__('Global RSS Feed', this.$td),
 				globalFeedDescription         : this.$t.__('The global RSS feed is how users subscribe to any new content that has been created on your site.', this.$td),
 				openYourRssFeed               : this.$t.__('Open Your RSS Feed', this.$td),
@@ -837,7 +827,13 @@ export default {
 				openYourRdfFeed          : this.$t.__('Open Your RDF Feed', this.$td),
 				paginatedFeed            : this.$t.__('Paginated RSS Feeds', this.$td),
 				paginatedFeedDescription : this.$t.__('The paginated RSS feeds are for any posts or pages that are paginated.', this.$td)
-			}
+			},
+			logsRetentionOptions : [
+				{ label: this.$t.__('1 hour', this.$td), value: 'hour' },
+				{ label: this.$t.__('1 day', this.$td), value: 'day' },
+				{ label: this.$t.__('1 week', this.$td), value: 'week' },
+				{ label: this.$t.__('Forever', this.$td), value: 'forever' }
+			]
 		}
 	}
 }
@@ -870,7 +866,8 @@ export default {
 		margin-top: 10px;
 	}
 
-	.aioseo-rss-content-advanced {
+	.aioseo-rss-content-advanced,
+	#aioseo-query-arg-monitoring {
 		.aioseo-settings-row {
 			.aioseo-col {
 				padding-top: 0;
@@ -887,6 +884,22 @@ export default {
 			div.rss-link {
 				margin: 8px 0 0;
 			}
+		}
+	}
+
+	.card-block-query {
+		.header {
+			height: unset;
+		}
+
+		.content {
+			padding: 0 !important;
+		}
+	}
+
+	.table-retention {
+		.aioseo-select {
+			max-width: 200px;
 		}
 	}
 }

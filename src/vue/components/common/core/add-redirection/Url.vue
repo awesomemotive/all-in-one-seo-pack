@@ -259,7 +259,7 @@ export default {
 
 				if (this.url.url.length - 1 !== this.url.url.indexOf('$') && -1 !== this.url.url.indexOf('$')) {
 					warnings.push(this.$t.sprintf(
-						// Translators: 1 - Adds a html tag with an option like: <code>^/</code>
+						// Translators: 1 - The dollar symbol, 2 - Dollar symbol example.
 						this.$t.__('The dollar symbol %1$s should be at the end. For example: %2$s', this.$td),
 						'<code>$</code>',
 						'<code>' + sanitizeString(this.url.url.replace(/\$/g, '')) + '$</code>'

@@ -226,7 +226,7 @@
 					</template>
 
 					<template v-if="!rows.length">
-						<td :colspan="columns.length">
+						<td :colspan="showBulkActions ? columns.length + 1 : columns.length">
 							<div class="no-results">
 								<span v-if="!loading">{{noResults}}</span>
 							</div>
@@ -664,17 +664,6 @@ export default {
 			}
 		}
 
-		button,
-		input {
-			font-size: $font-md;
-			line-height: 22px;
-
-			&.button {
-				min-height: 30px;
-				padding: 0 14px;
-			}
-		}
-
 		@media screen and (max-width: 782px) {
 			display: flex;
 			flex-wrap: wrap;
@@ -702,6 +691,17 @@ export default {
 
 			.tablenav-pages-navspan.button {
 				margin-left: 4px;
+			}
+		}
+
+		button,
+		input {
+			font-size: $font-md;
+			line-height: 22px;
+
+			&.button {
+				min-height: 30px;
+				padding: 0 14px;
 			}
 		}
 	}

@@ -122,7 +122,23 @@ class Api {
 			'integration/wpcode/snippets'                           => [
 				'callback' => [ 'WpCode', 'getSnippets', 'AIOSEO\\Plugin\\Common\\Api\\Integrations' ],
 				'access'   => 'aioseo_tools_settings'
-			]
+			],
+			'crawl-cleanup'                                         => [
+				'callback' => [ 'CrawlCleanup', 'fetchLogs', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
+				'access'   => [ 'aioseo_search_appearance_settings' ]
+			],
+			'crawl-cleanup/block'                                   => [
+				'callback' => [ 'CrawlCleanup', 'blockArg', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
+				'access'   => [ 'aioseo_search_appearance_settings' ]
+			],
+			'crawl-cleanup/delete-blocked'                          => [
+				'callback' => [ 'CrawlCleanup', 'deleteBlocked', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
+				'access'   => [ 'aioseo_search_appearance_settings' ]
+			],
+			'crawl-cleanup/delete-unblocked'                        => [
+				'callback' => [ 'CrawlCleanup', 'deleteLog', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
+				'access'   => [ 'aioseo_search_appearance_settings' ]
+			],
 		],
 		'DELETE' => [
 			'backup' => [ 'callback' => [ 'Tools', 'deleteBackup' ], 'access' => 'aioseo_tools_settings' ]

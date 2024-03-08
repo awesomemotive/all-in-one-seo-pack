@@ -41,6 +41,14 @@ export default {
 				apply       : this.$t.__('Apply', this.$td)
 			}
 		}
+	},
+	watch : {
+		bulkOptions (bulkOptions) {
+			// Set 'Bulk Actions' in case the action selected doesn't exist in the list.
+			if (undefined === bulkOptions.find(row => row.value === this.bulkAction)) {
+				this.bulkAction = '-1'
+			}
+		}
 	}
 }
 </script>

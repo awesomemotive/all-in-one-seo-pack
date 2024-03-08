@@ -217,11 +217,11 @@ export default {
 				'aioseo-eeat',
 				'aioseo-image-seo',
 				'aioseo-redirects',
-				'aioseo-sitemaps',
 				'analytics',
 				'broken-link-checker',
 				'conversion-tools',
-				'optimized-search-appearance'
+				'optimized-search-appearance',
+				'sitemaps'
 			]
 
 			// Let's preselect some features based on the category set.

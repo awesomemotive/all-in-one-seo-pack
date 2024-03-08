@@ -106,7 +106,8 @@ const docLinks      = {
 	primaryTerm                   : `${marketingSite}docs/setting-the-primary-term-for-breadcrumbs/`,
 	cornerstoneContent            : `${marketingSite}docs/cornerstone-content/`,
 	eeat                          : `${marketingSite}docs/adding-author-seo-e-e-a-t-to-your-site/`,
-	eeatAuthorBioInjection        : `${marketingSite}docs/adding-author-seo-e-e-a-t-to-your-site/#aioseo-automatically-displaying-the-author-excerpt`
+	eeatAuthorBioInjection        : `${marketingSite}docs/adding-author-seo-e-e-a-t-to-your-site/#aioseo-automatically-displaying-the-author-excerpt`,
+	queryArgMonitor               : `${marketingSite}docs/query-arg-monitor/`
 }
 
 const upsellLinks = {

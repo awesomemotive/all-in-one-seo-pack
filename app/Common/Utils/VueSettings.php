@@ -116,7 +116,8 @@ class VueSettings {
 			'linkAssistantSettings'        => true,
 			'domainActivations'            => true,
 			'404Settings'                  => true,
-			'userProfiles'                 => true
+			'userProfiles'                 => true,
+			'queryArgLogs'                 => true,
 		],
 		'toggledRadio'    => [
 			'breadcrumbsShowMoreSeparators' => false,
@@ -144,7 +145,8 @@ class VueSettings {
 			'searchStatisticsSeoStatistics'      => 20,
 			'searchStatisticsKeywordRankings'    => 20,
 			'searchStatisticsContentRankings'    => 20,
-			'searchStatisticsPostDetailKeywords' => 20
+			'searchStatisticsPostDetailKeywords' => 20,
+			'queryArgs'                          => 20
 		]
 	];
 

@@ -205,6 +205,11 @@ class Updates {
 			$this->checkForGaAnalyticsV3();
 		}
 
+		if ( version_compare( $lastActiveVersion, '4.5.8', '<' ) ) {
+			$this->addQueryArgMonitorTables();
+			$this->addQueryArgMonitorNotification();
+		}
+
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
 
 		// Always clear the cache if the last active version is different from our current.
@@ -1557,6 +1562,96 @@ class Updates {
 			'level'             => [ 'all' ],
 			'button1_label'     => __( 'Fix Now', 'all-in-one-seo-pack' ),
 			'button1_action'    => admin_url( 'admin.php?page=aioseo-monsterinsights' ),
+			'start'             => gmdate( 'Y-m-d H:i:s' )
+		] );
+	}
+
+	/**
+	 * Adds our custom tables for the query arg monitor.
+	 *
+	 * @since 4.5.8
+	 *
+	 * @return void
+	 */
+	public function addQueryArgMonitorTables() {
+		$db             = aioseo()->core->db->db;
+		$charsetCollate = '';
+
+		if ( ! empty( $db->charset ) ) {
+			$charsetCollate .= "DEFAULT CHARACTER SET {$db->charset}";
+		}
+		if ( ! empty( $db->collate ) ) {
+			$charsetCollate .= " COLLATE {$db->collate}";
+		}
+
+		// Check for crawl cleanup logs table.
+		if ( ! aioseo()->core->db->tableExists( 'aioseo_crawl_cleanup_logs' ) ) {
+			$tableName = $db->prefix . 'aioseo_crawl_cleanup_logs';
+
+			aioseo()->core->db->execute(
+				"CREATE TABLE {$tableName} (
+					`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+					`slug` text NOT NULL,
+					`key` text NOT NULL,
+					`value` text,
+					`hash` varchar(40) NOT NULL,
+					`hits` int(20) NOT NULL DEFAULT 1,
+					`created` datetime NOT NULL,
+					`updated` datetime NOT NULL,
+					PRIMARY KEY (id),
+					UNIQUE KEY ndx_aioseo_crawl_cleanup_logs_hash (hash)
+				) {$charsetCollate};"
+			);
+		}
+
+		// Check for crawl cleanup blocked table.
+		if ( ! aioseo()->core->db->tableExists( 'aioseo_crawl_cleanup_blocked_args' ) ) {
+			$tableName = $db->prefix . 'aioseo_crawl_cleanup_blocked_args';
+
+			aioseo()->core->db->execute(
+				"CREATE TABLE {$tableName} (
+					`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+					`key` text,
+					`value` text,
+					`key_value_hash` varchar(40),
+					`regex` varchar(255),
+					`hits` int(20) NOT NULL DEFAULT 0,
+					`created` datetime NOT NULL,
+					`updated` datetime NOT NULL,
+					PRIMARY KEY (id),
+					UNIQUE KEY ndx_aioseo_crawl_cleanup_blocked_args_key_value_hash (key_value_hash),
+					UNIQUE KEY ndx_aioseo_crawl_cleanup_blocked_args_regex (regex)
+				) {$charsetCollate};"
+			);
+		}
+	}
+
+	/**
+	 * Adds a notification for the query arg monitor.
+	 *
+	 * @since 4.5.8
+	 *
+	 * @return void
+	 */
+	private function addQueryArgMonitorNotification() {
+		if ( ! aioseo()->options->searchAppearance->advanced->crawlCleanup->enable || ! aioseo()->options->searchAppearance->advanced->crawlCleanup->removeUnrecognizedQueryArgs ) {
+			return;
+		}
+
+		$notification = Models\Notification::getNotificationByName( 'crawl-cleanup-updated' );
+		if ( $notification->exists() ) {
+			return;
+		}
+
+		Models\Notification::addNotification( [
+			'slug'              => uniqid(),
+			'notification_name' => 'crawl-cleanup-updated',
+			'title'             => __( 'Crawl Cleanup changes you should know about', 'all-in-one-seo-pack' ),
+			'content'           => __( 'We\'ve made some significant changes to how we monitor Query Args for our Crawl Cleanup feature. Instead of DISABLING all query args and requiring you to add individual exceptions, we\'ve now changed it to ALLOW all query args by default with the option to easily block unrecognized ones through our new log table.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+			'type'              => 'info',
+			'level'             => [ 'all' ],
+			'button1_label'     => __( 'Learn More', 'all-in-one-seo-pack' ),
+			'button1_action'    => 'http://route#aioseo-search-appearance&aioseo-scroll=aioseo-query-arg-monitoring&aioseo-highlight=aioseo-query-arg-monitoring:advanced',
 			'start'             => gmdate( 'Y-m-d H:i:s' )
 		] );
 	}

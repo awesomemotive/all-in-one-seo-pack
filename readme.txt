@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta ti
 Tested up to: 6.4.3
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.5.7.2
+Stable tag: 4.5.8
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -227,6 +227,16 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.5.8**
+
+* New: Query Arg Monitor - Monitor the query args that are used on your site and block them. This prevents search engines from crawling every variation of your pages with unrecognized query arguments and helps save crawl quota.
+* Updated: Compatibility with new ACF image data format.
+* Fixed: TruSEO sometimes freezes when used with particular languages.
+
+**New in Version 4.5.7.3**
+
+* Fixed: Setup Wizard no longer freezes in Lite when the sitemap feature is selected for activation.
+
 **New in Version 4.5.7.2**
 
 * Fixed: Adding a Focus Keyphrase in TruSEO sometimes fails when user is using a language that is not officially supported.
@@ -417,6 +427,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.5.7.2 =
+= 4.5.8 =
 
 This update adds major improvements and bug fixes.

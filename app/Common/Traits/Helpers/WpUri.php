@@ -453,4 +453,17 @@ trait WpUri {
 
 		return $restUrl;
 	}
+
+	/**
+	 * Exclude the home path from a full path.
+	 *
+	 * @since   1.2.3 Moved from aioseo-redirects.
+	 * @version 4.5.8
+	 *
+	 * @param  string $path The original path.
+	 * @return string       The path without WP's home path.
+	 */
+	public function excludeHomePath( $path ) {
+		return preg_replace( '@^' . $this->getHomePath() . '@', '/', $path );
+	}
 }

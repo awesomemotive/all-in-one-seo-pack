@@ -321,6 +321,7 @@ namespace AIOSEO\Plugin {
 			$this->seoRevisions       = $this->pro ? new Pro\SeoRevisions\SeoRevisions() : new Common\SeoRevisions\SeoRevisions();
 			$this->ai                 = $this->pro ? new Pro\Ai\Ai() : null;
 			$this->filters            = $this->pro ? new Pro\Main\Filters() : new Lite\Main\Filters();
+			$this->crawlCleanup       = new Common\QueryArgs\CrawlCleanup();
 
 			if ( ! wp_doing_ajax() && ! wp_doing_cron() ) {
 				$this->rss       = new Common\Rss();

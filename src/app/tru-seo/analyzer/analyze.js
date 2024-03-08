@@ -12,20 +12,20 @@ import {
 } from './utils'
 
 const supportedLanguages = [
-	'ar',
-	'ca',
+	// 'ar',
+	// 'ca',
 	'nl',
 	'en',
 	'fr',
 	'de',
 	'he',
-	'hu',
+	// 'hu',
 	'id',
 	'it',
 	'pl',
 	'pt',
-	'ru',
-	'se'
+	'ru'
+	// 'se'
 ]
 
 class TruSeoAnalyzer {

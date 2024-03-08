@@ -561,4 +561,13 @@ abstract class AIOSEOAbstract {
 	 * @var null|\AIOSEO\Plugin\Pro\SeoRevisions\SeoRevisions
 	 */
 	public $seoRevisions = null;
+
+	/**
+	 * Crawl Cleanup class instance.
+	 *
+	 * @since 4.5.8
+	 *
+	 * @var \AIOSEO\Plugin\Common\QueryArgs\CrawlCleanup
+	 */
+	public $crawlCleanup = null;
 }

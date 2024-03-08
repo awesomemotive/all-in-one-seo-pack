@@ -283,8 +283,8 @@ TEMPLATE
 				'pagedFormat'                  => [ 'type' => 'string', 'default' => '#separator_sa Page #page_number', 'localized' => true ],
 				'runShortcodes'                => [ 'type' => 'boolean', 'default' => false ],
 				'crawlCleanup'                 => [
-					'enable'                      => [ 'type' => 'boolean', 'default' => false ],
-					'feeds'                       => [
+					'enable' => [ 'type' => 'boolean', 'default' => false ],
+					'feeds'  => [
 						'global'         => [ 'type' => 'boolean', 'default' => true ],
 						'globalComments' => [ 'type' => 'boolean', 'default' => false ],
 						'staticBlogPage' => [ 'type' => 'boolean', 'default' => true ],
@@ -303,15 +303,12 @@ TEMPLATE
 						'atom'           => [ 'type' => 'boolean', 'default' => false ],
 						'rdf'            => [ 'type' => 'boolean', 'default' => false ],
 						'paginated'      => [ 'type' => 'boolean', 'default' => false ]
-					],
-					'removeUnrecognizedQueryArgs' => [ 'type' => 'boolean', 'default' => true ],
-					'allowedQueryArgs'            => [
-						'type'    => 'html',
-						'default' => <<<TEMPLATE
-/^utm_*/
-TEMPLATE
 					]
 				],
+				'blockArgs'                    => [
+					'enable'        => [ 'type' => 'boolean', 'default' => false ],
+					'logsRetention' => [ 'type' => 'string', 'default' => '{"label":"1 week","value":"week"}' ]
+				]
 			],
 			'archives' => [
 				'author' => [
@@ -578,6 +575,8 @@ TEMPLATE
 				? $options['searchAppearance']['global']['schema']['phone']
 				: null;
 		$oldHtmlSitemapUrl = aioseo()->options->sitemap->html->pageUrl;
+		$logsRetention     = isset( $options['searchAppearance']['advanced']['blockArgs']['logsRetention'] ) ? $options['searchAppearance']['advanced']['blockArgs']['logsRetention'] : null;
+		$oldLogsRetention  = aioseo()->options->searchAppearance->advanced->blockArgs->logsRetention;
 
 		$options = $this->maybeRemoveUnfilteredHtmlFields( $options );
 
@@ -658,6 +657,11 @@ TEMPLATE
 			) {
 				aioseo()->sitemap->scheduleRegeneration();
 			}
+		}
+
+		// Add or remove schedule for clearing crawl cleanup logs.
+		if ( ! empty( $logsRetention ) && $oldLogsRetention !== $logsRetention ) {
+			aioseo()->crawlCleanup->scheduleClearingLogs();
 		}
 
 		// This is required in order for the Pro options to be refreshed before they save data again.
