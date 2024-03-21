@@ -7,9 +7,11 @@
 					:class="result.status"
 				/>
 			</div>
+
 			<div class="result-content">
 				{{ getTestTitle }}
 			</div>
+
 			<div
 				v-if="showInstructions || getBody.code ||getBody.codeAlt"
 				class="result-toggle"
@@ -54,9 +56,9 @@
 					<base-button
 						:href="getBody.buttonLink"
 						tag="a"
+						target="_blank"
 						type="blue"
 						size="medium"
-						@click.native="loading = true"
 						:loading="loading"
 					>{{ getBody.buttonText }}</base-button>
 				</div>

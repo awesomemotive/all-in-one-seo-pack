@@ -48,9 +48,9 @@ class GeneralSettings {
 		$this->migrateRssContentSettings();
 		$this->migrateRedirectToParent();
 		$this->migrateDisabledPosts();
+		$this->migrateNoPaginationForCanonicalUrls();
 
 		$settings = [
-			'aiosp_no_paged_canonical_links'   => [ 'type' => 'boolean', 'newOption' => [ 'searchAppearance', 'advanced', 'noPaginationForCanonical' ] ],
 			'aiosp_admin_bar'                  => [ 'type' => 'boolean', 'newOption' => [ 'advanced', 'adminBarMenu' ] ],
 			'aiosp_google_verify'              => [ 'type' => 'string', 'newOption' => [ 'webmasterTools', 'google' ] ],
 			'aiosp_bing_verify'                => [ 'type' => 'string', 'newOption' => [ 'webmasterTools', 'bing' ] ],
@@ -861,5 +861,26 @@ class GeneralSettings {
 			}
 		}
 		aioseo()->options->deprecated->searchAppearance->advanced->excludePosts = $excludedPosts;
+	}
+
+	/**
+	 * Migrates the deprecated "No Pagination for Canonical URLs" setting.
+	 *
+	 * @since 4.5.9
+	 *
+	 * @return void
+	 */
+	private function migrateNoPaginationForCanonicalUrls() {
+		if ( empty( $this->oldOptions['aiosp_no_paged_canonical_links'] ) ) {
+			return;
+		}
+
+		$deprecatedOptions = aioseo()->internalOptions->deprecatedOptions;
+		if ( ! in_array( 'noPaginationForCanonical', $deprecatedOptions, true ) ) {
+			$deprecatedOptions[]                         = 'noPaginationForCanonical';
+			aioseo()->internalOptions->deprecatedOptions = $deprecatedOptions;
+		}
+
+		aioseo()->options->deprecated->searchAppearance->advanced->noPaginationForCanonical = true;
 	}
 }

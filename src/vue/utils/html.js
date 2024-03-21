@@ -2,7 +2,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { decodeHTMLEntities } from '@/vue/utils/helpers'
+import { decode } from 'he'
 
 /**
  * Create an HTML element from a string.
@@ -83,7 +83,7 @@ export const truncate = (string, length = 200) => {
 	}
 
 	if (length < string.length) {
-		string = string.substring(0, length).trim() + decodeHTMLEntities('&hellip;')
+		string = string.substring(0, length).trim() + decode('&hellip;')
 	}
 
 	return string

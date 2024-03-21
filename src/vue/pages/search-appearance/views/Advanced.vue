@@ -70,12 +70,13 @@
 			</core-settings-row>
 
 			<core-settings-row
+				v-if="optionsStore.internalOptions.internal.deprecatedOptions.includes('noPaginationForCanonical')"
 				:name="strings.noPaginationForCanonical"
 				align
 			>
 				<template #content>
 					<base-radio-toggle
-						v-model="optionsStore.options.searchAppearance.advanced.noPaginationForCanonical"
+						v-model="optionsStore.options.deprecated.searchAppearance.advanced.noPaginationForCanonical"
 						name="noPaginationForCanonical"
 						:options="[
 							{ label: $constants.GLOBAL_STRINGS.off, value: false, activeClass: 'dark' },

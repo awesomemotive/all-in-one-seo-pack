@@ -213,7 +213,7 @@ class Breadcrumb {
 			);
 
 			if ( $term->parent ) {
-				$term = get_term( $term->parent );
+				$term = get_term( $term->parent, $term->taxonomy );
 			} else {
 				$term = false;
 			}

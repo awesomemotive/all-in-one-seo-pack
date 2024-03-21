@@ -348,6 +348,7 @@ export default {
 			.cta-header {
 				font-size: 24px;
 				font-weight: 700;
+				line-height: 1.2;
 				margin-bottom: 24px;
 				margin-top: 20px;
 			}

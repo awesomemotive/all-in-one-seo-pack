@@ -42,6 +42,7 @@
 						<span>{{ site }}</span>
 
 						<svg-trash
+							v-if="!isAnalyzing"
 							@click.native="startDeleteSite(site)"
 						/>
 					</template>
@@ -165,8 +166,8 @@ export default {
 		startAnalyzing (competitorUrl) {
 			this.inputError = false
 
-			this.competitorUrl = competitorUrl.replace('http://', 'https://')
-			if (!this.competitorUrl.startsWith('https://')) {
+			this.competitorUrl = competitorUrl
+			if (!this.competitorUrl.startsWith('http://') && !this.competitorUrl.startsWith('https')) {
 				this.competitorUrl = 'https://' + this.competitorUrl
 			}
 

@@ -319,7 +319,7 @@ class Robots {
 			$this->attributes['max-image-preview'] = "max-image-preview:$maxImagePreview";
 		}
 		$maxVideoPreview = $robotsMeta['maxVideoPreview'];
-		if ( $maxVideoPreview && intval( $maxVideoPreview ) ) {
+		if ( isset( $maxVideoPreview ) && is_numeric( $maxVideoPreview ) ) {
 			$this->attributes['max-video-preview'] = "max-video-preview:$maxVideoPreview";
 		}
 
@@ -363,7 +363,7 @@ class Robots {
 		if ( ! $metaData->robots_noimageindex && $metaData->robots_max_imagepreview && in_array( $metaData->robots_max_imagepreview, [ 'none', 'standard', 'large' ], true ) ) {
 			$this->attributes['max-image-preview'] = "max-image-preview:$metaData->robots_max_imagepreview";
 		}
-		if ( $metaData->robots_max_videopreview && intval( $metaData->robots_max_videopreview ) ) {
+		if ( isset( $metaData->robots_max_videopreview ) && is_numeric( $metaData->robots_max_videopreview ) ) {
 			$this->attributes['max-video-preview'] = "max-video-preview:$metaData->robots_max_videopreview";
 		}
 

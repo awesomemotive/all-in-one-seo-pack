@@ -2,7 +2,7 @@ import {
 	useTagsStore
 } from '@/vue/stores'
 
-import tags from '@/vue/utils/tags'
+import { decode } from 'he'
 import { customFieldValue } from '@/vue/plugins/tru-seo/components/customFields'
 
 export const Tags = {
@@ -54,7 +54,7 @@ export const Tags = {
 			// Since we added a delimiter, let's remove all of that now.
 			string = string.replace(/%\|%/g, '')
 
-			return tags.decodeHTMLEntities(tags.decodeHTMLEntities(string.replace(/<(?:.|\n)*?>/gm, ' ').replace(/\s/g, ' ')))
+			return decode(decode(string.replace(/<(?:.|\n)*?>/gm, ' ').replace(/\s/g, ' ')))
 		}
 	}
 }

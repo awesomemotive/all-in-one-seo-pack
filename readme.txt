@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta ti
 Tested up to: 6.4.3
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.5.8
+Stable tag: 4.5.9.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -227,6 +227,29 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.5.9.1**
+
+* Fixed: PHP error sometimes thrown on multisites because SECURE_AUTH_COOKIE constant not set due to loading WordPress pluggables too soon.
+* Fixed: PHP error sometimes thrown in update migration due to invalid old options data.
+
+**New in Version 4.5.9**
+
+* Updated: Various improvements and behind-the-scenes bug fixes for the SEO Analyzer to increase result accuracy.
+* Updated: Added a filter to skip logging for redirects and 404 URLs.
+* Updated: Deprecated the No Pagination for Canonical URLs setting for new users.
+* Fixed: Product schema is now correctly output again for virtual, downloadable and free WooCommerce products.
+* Fixed: Unspecified type for organization image causing an error in schema validation tools.
+* Fixed: `max-video-preview` robots meta value not output when set to 0.
+* Fixed: Search Statistics is now able to find the correct matching post when permalink has no trailing slash.
+* Fixed: Avada builder styles no longer leak into Author SEO (E-E-A-T) blocks.
+* Fixed: SeedProd builder styles no longer leak into AIOSEO Metabox.
+* Fixed: Canonical URL no longer strip the "/amp" slug when the page is not a valid AMP page.
+* Fixed: PHP error when WPBakery plugin is not activated.
+* Fixed: PHP error when the `wp_get_current_user` function is not declared yet in rare cases.
+* Fixed: PHP error caused by the capability variable being an array instead of a string in rare cases.
+* Fixed: PHP warnings for object properties in Image SEO addon.
+* Fixed: Redirects CSV Import was not showing some URLs that failed to import.
+
 **New in Version 4.5.8**
 
 * New: Query Arg Monitor - Monitor the query args that are used on your site and block them. This prevents search engines from crawling every variation of your pages with unrecognized query arguments and helps save crawl quota.
@@ -427,6 +450,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.5.8 =
+= 4.5.9.1 =
 
 This update adds major improvements and bug fixes.

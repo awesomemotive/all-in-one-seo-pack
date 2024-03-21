@@ -1,4 +1,4 @@
-import { decodeHTMLEntities } from '@/vue/utils/helpers'
+import { decode } from 'he'
 
 export const useDirtyOptions = () => {
 	const replacer = (key, value) => {
@@ -16,7 +16,7 @@ export const useDirtyOptions = () => {
 		}
 
 		if ('separator' === key) {
-			value = decodeHTMLEntities(value)
+			value = decode(value)
 		}
 
 		return null === value ? '' : value

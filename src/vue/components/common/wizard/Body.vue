@@ -61,6 +61,12 @@
 			font-size: 14px;
 			line-height: 22px;
 			height: 40px;
+
+			@at-root {
+				.aioseo-wizard-success & {
+					margin-right: 0;
+				}
+			}
 		}
 
 		.spacer {

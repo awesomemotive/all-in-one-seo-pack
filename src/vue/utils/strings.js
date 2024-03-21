@@ -1,11 +1,11 @@
-import { decodeHTMLEntities } from '@/vue/utils/helpers'
+import { decode } from 'he'
 import { isString } from 'lodash-es'
 
 export const sanitizeString = (string) => {
 	if (!isString(string)) {
 		return ''
 	}
-	return stripTags(decodeHTMLEntities(string))
+	return stripTags(decode(string))
 }
 
 export const stripTags = (string) => {

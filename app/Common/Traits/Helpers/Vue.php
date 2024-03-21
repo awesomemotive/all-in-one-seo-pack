@@ -190,6 +190,7 @@ trait Vue {
 				'staticBlogPage'      => $this->getBlogPageId(),
 				'staticBlogPageTitle' => get_the_title( $this->getBlogPageId() ),
 				'isDev'               => $this->isDev(),
+				'isLocal'             => $this->isLocalUrl( site_url() ),
 				'isSsl'               => is_ssl(),
 				'hasUrlTrailingSlash' => '/' === user_trailingslashit( '' ),
 				'permalinkStructure'  => get_option( 'permalink_structure' ),

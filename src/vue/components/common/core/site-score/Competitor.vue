@@ -110,8 +110,7 @@ export default {
 			this.analyzerStore.runSiteAnalyzer({
 				url     : this.site,
 				refresh : true
-			})
-				.then(() => (this.isAnalyzing = false))
+			}).then(() => (this.isAnalyzing = false))
 		}
 	}
 }

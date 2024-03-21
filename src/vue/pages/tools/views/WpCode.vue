@@ -26,7 +26,7 @@
 								type="blue"
 								size="medium"
 								tag="a"
-								:href="decodeHTMLEntities(snippet.install)"
+								:href="decode(snippet.install)"
 								@click="loadingUseSnippet = snippet.install"
 								:loading="snippet.install === loadingUseSnippet"
 							>
@@ -81,7 +81,7 @@ import {
 	useWpCodeStore
 } from '@/vue/stores'
 
-import tags from '@/vue/utils/tags'
+import { decode } from 'he'
 import Cta from '@/vue/components/common/cta/Index.vue'
 import CoreAlert from '@/vue/components/common/core/alert/Index.vue'
 import GridColumn from '@/vue/components/common/grid/Column'
@@ -147,6 +147,7 @@ export default {
 		}
 	},
 	methods : {
+		decode,
 		processUpdateOrActivate () {
 			this.activateOrUpdate(this.wpCodeStore.pluginNeedsUpdate)
 		},
@@ -184,9 +185,6 @@ export default {
 					this.failed            = true
 					console.error(`Unable to install ${pluginName}: ${error}`)
 				})
-		},
-		decodeHTMLEntities (url) {
-			return tags.decodeHTMLEntities(url)
 		}
 	}
 }

@@ -1,8 +1,8 @@
 <template>
-	<div class="aioseo-site-score-analyze">
+	<div class="aioseo-seo-analysis">
 		<div
 			v-if="!analyzerStore.analyzeError"
-			class="aioseo-seo-site-score-score"
+			class="seo-analysis-score"
 		>
 			<core-site-score
 				:loading="loading"
@@ -14,7 +14,7 @@
 
 		<div
 			v-if="!analyzerStore.analyzeError"
-			class="aioseo-seo-site-score-description"
+			class="seo-analysis-description"
 		>
 			<h2>{{ strings.yourOverallSiteScore }}</h2>
 
@@ -33,12 +33,30 @@
 		</div>
 
 		<div
-			class="analyze-errors"
-			v-if="analyzerStore.analyzeError"
+			class="seo-analysis-error"
+			v-if="analyzerStore.analyzeError && errorObject"
 		>
-			<h3>{{ strings.anErrorOccurred }}</h3>
+			<svg-dannie-lab />
 
-			<span v-html="getError"/>
+			<p class="error-title">{{ strings.anErrorOccurred }}</p>
+
+			<p class="error-description" v-html="errorObject.description"/>
+
+			<div class="error-action-buttons">
+				<base-button
+					v-for="(button, index) in errorObject.buttons"
+					:key="index"
+					:type="button.type"
+					:tag="button.tag ? button.tag : 'button'"
+					target="_blank"
+					:href="button.url ? button.url : ''"
+					size="medium"
+					:loading="button?.runAgain && analyzerStore.analyzing"
+					@click="button?.runAgain ? analyzerStore.runSiteAnalyzer() : ''"
+				>
+					{{ button.text }}
+				</base-button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -48,17 +66,28 @@ import {
 	useAnalyzerStore
 } from '@/vue/stores'
 
+import { useSeoSiteScore } from '@/vue/composables'
+
+import { merge } from 'lodash-es'
+
 import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
 import SvgBook from '@/vue/components/common/svg/Book'
+import SvgDannieLab from '@/vue/components/common/svg/dannie/Lab'
+
 export default {
 	setup () {
+		const seoSiteScore = useSeoSiteScore()
+
 		return {
-			analyzerStore : useAnalyzerStore()
+			analyzerStore     : useAnalyzerStore(),
+			composableStrings : seoSiteScore.strings,
+			errorObject       : seoSiteScore.errorObject
 		}
 	},
 	components : {
 		CoreSiteScore,
-		SvgBook
+		SvgBook,
+		SvgDannieLab
 	},
 	props : {
 		score       : Number,
@@ -73,7 +102,7 @@ export default {
 	},
 	data () {
 		return {
-			strings : {
+			strings : merge({
 				yourOverallSiteScore : this.$t.__('Your Overall Site Score', this.$td),
 				goodResult           : this.$t.sprintf(
 					// Translators: 1 - Opening bold HTML tag, 2 - Closing bold HTML tag, 3 - Initial score range, 4 - Final score range.
@@ -90,71 +119,32 @@ export default {
 					'</strong>',
 					70
 				),
-				anErrorOccurred            : this.$t.__('An error occurred while analyzing your site.', this.$td),
-				criticalIssues             : this.$t.__('Important Issues', this.$td),
-				warnings                   : this.$t.__('Warnings', this.$td),
-				recommendedImprovements    : this.$t.__('Recommended Improvements', this.$td),
-				goodResults                : this.$t.__('Good Results', this.$td),
-				completeSiteAuditChecklist : this.$t.__('Complete Site Audit Checklist', this.$td),
-				readUltimateSeoGuide       : this.$t.__('Read the Ultimate WordPress SEO Guide', this.$td)
-			}
-		}
-	},
-	computed : {
-		getError () {
-			switch (this.analyzerStore.analyzeError) {
-				case 'invalid-url':
-					return this.$t.__('The URL provided is invalid.', this.$td)
-				case 'missing-content':
-					return this.$t.sprintf(
-						'%1$s %2$s',
-						this.$t.__('We were unable to parse the content for this site.', this.$td),
-						this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'seoAnalyzerIssues', true)
-					)
-				case 'invalid-token':
-					return this.$t.sprintf(
-						// Translators: 1 - The plugin short name ('AIOSEO').
-						this.$t.__('Your site is not connected. Please connect to %1$s, then try again.', this.$td),
-						import.meta.env.VITE_SHORT_NAME
-					)
-			}
-
-			return this.analyzerStore.analyzeError
+				readUltimateSeoGuide : this.$t.__('Read the Ultimate WordPress SEO Guide', this.$td)
+			}, this.composableStrings)
 		}
 	}
 }
 </script>
 
 <style lang="scss">
-.aioseo-site-score-analyze {
-	position: relative;
+.aioseo-seo-analysis {
 	display: flex;
-	align-items: center;
-	justify-content: center;
+	position: relative;
 	flex: 1;
+	justify-content: center;
+	align-items: center;
 
-	.analyze-errors {
-		text-align: center;
-		margin-bottom: 1em;
-	}
-
-	.aioseo-seo-site-score-score {
+	.seo-analysis-score {
 		position: relative;
 		width: 100%;
 		max-width: 160px;
 		margin-right: 32px;
-
-		svg {
-			width: 100%;
-			height: auto;
-		}
 
 		.aioseo-site-score {
 			display: flex;
 		}
 
 		.aioseo-score-amount {
-
 			.score {
 				font-size: 40px;
 				line-height: 1.2;
@@ -168,14 +158,28 @@ export default {
 		.score-description {
 			font-size: 13px;
 		}
+
+		svg {
+			width: 100%;
+			height: auto;
+		}
 	}
 
-	.aioseo-seo-site-score-description {
-
+	.seo-analysis-description {
 		h2 {
 			font-size: 24px;
 			line-height: 30px;
 			margin-bottom: 12px;
+		}
+
+		.links {
+			margin-top: 30px;
+			font-size: 14px;
+			font-weight: 600;
+
+			.no-underline {
+				padding-left: 5px;
+			}
 		}
 
 		div[class] {
@@ -188,15 +192,39 @@ export default {
 			margin: 0 10px 0 0;
 			color: $blue;
 		}
+	}
 
-		.links {
-			margin-top: 30px;
-			font-size: 14px;
-			font-weight: 600;
+	.seo-analysis-error {
+		max-width: 740px;
+		text-align: center;
+		margin: 40px 0;
 
-			.no-underline {
-				padding-left: 5px;
+		p {
+			&.error-title {
+				margin: 20px 0 8px 0;
+
+				font-size: 24px;
+				font-weight: 700;
+				line-height: 30px;
 			}
+
+			&.error-description {
+				font-size: 16px;
+				font-weight: 400;
+				line-height: 24px;
+			}
+		}
+
+		.error-action-buttons {
+				display: flex;
+				gap: 12px;
+				margin-top: 20px;
+				justify-content: center;
+			}
+
+		svg.aioseo-dannie-lab {
+			width: 120px;
+			height: 120px;
 		}
 	}
 }

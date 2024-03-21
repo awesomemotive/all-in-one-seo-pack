@@ -5,8 +5,6 @@ import {
 	useTagsStore
 } from '@/vue/stores'
 
-import { decodeHTMLEntities } from '@/vue/utils/helpers'
-
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 const context = context => {
@@ -196,6 +194,5 @@ const getDefaultTags = (type, name, location) => {
 
 export default {
 	context,
-	decodeHTMLEntities,
 	getDefaultTags
 }

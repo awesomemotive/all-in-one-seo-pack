@@ -112,7 +112,8 @@ trait WpUri {
 		}
 
 		$url                      = $this->getUrl( true );
-		$noPaginationForCanonical = aioseo()->options->searchAppearance->advanced->noPaginationForCanonical;
+		$noPaginationForCanonical = in_array( 'noPaginationForCanonical', aioseo()->internalOptions->deprecatedOptions, true )
+			&& aioseo()->options->deprecated->searchAppearance->advanced->noPaginationForCanonical;
 		$pageNumber               = $this->getPageNumber();
 		if ( $noPaginationForCanonical ) {
 			global $wp_rewrite;
@@ -135,7 +136,10 @@ trait WpUri {
 		$url = $this->maybeRemoveTrailingSlash( $url );
 
 		// Get rid of /amp at the end of the URL.
-		if ( ! apply_filters( 'aioseo_disable_canonical_url_amp', false ) ) {
+		if (
+			aioseo()->helpers->isAmpPage() &&
+			! apply_filters( 'aioseo_disable_canonical_url_amp', false )
+		) {
 			$url = preg_replace( '/\/amp$/', '', $url );
 			$url = preg_replace( '/\/amp\/$/', '/', $url );
 		}

@@ -6,14 +6,13 @@ import {
 } from '@/vue/stores'
 
 import { markRaw } from 'vue'
+import { decode } from 'he'
 
 import { getPostEditedContent } from '@/vue/plugins/tru-seo/components/postContent'
 import { getPostEditedPermalink } from '@/vue/plugins/tru-seo/components/postPermalink'
 import { getPostEditedTitle } from '@/vue/plugins/tru-seo/components/postTitle'
 import { isBlockEditor } from '@/vue/utils/context'
 import { shouldShowTruSeoScore } from '@/vue/plugins/tru-seo/components/helpers'
-
-import { decodeHTMLEntities } from '@/vue/utils/helpers'
 
 import TruSeoWorker from '@/app/tru-seo/analyzer/main.js?worker'
 
@@ -64,7 +63,7 @@ class TruSeo {
 		}
 
 		const aioseoGlobals = {
-			separator : decodeHTMLEntities(optionsStore.options.searchAppearance.global.separator)
+			separator : decode(optionsStore.options.searchAppearance.global.separator)
 		}
 
 		const rootStore = useRootStore()

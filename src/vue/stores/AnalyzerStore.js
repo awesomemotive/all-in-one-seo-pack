@@ -3,11 +3,34 @@ import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 import { __ } from '@wordpress/i18n'
 
+import SiteAnalysis from '@/vue/classes/SiteAnalysis'
+
 import {
 	useOptionsStore
 } from '@/vue/stores'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
+
+const filterResults = (results) => {
+	// Drop all tests/results that do not have a matching title.
+	// If a test has no title, it means it is deprecated/not supported by this version of the plugin.
+	Object.keys(results).forEach(testName => {
+		const testResult = results[testName]
+		if (!SiteAnalysis.head(testName, testResult)) {
+			const exceptions = [
+				'searchPreview',
+				'mobileSearchPreview',
+				'mobileSnapshot'
+			]
+
+			if (!exceptions.includes(testName)) {
+				delete results[testName]
+			}
+		}
+	})
+
+	return results
+}
 
 export const useAnalyzerStore = defineStore('AnalyzerStore', {
 	state : () => ({
@@ -36,10 +59,11 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 		},
 		allItemsCount    : state => results => state.recommendedCount(results) + state.criticalCount(results) + state.goodCount(results),
 		recommendedCount : state => results => {
-			let total     = 0
+			let total = 0
 			results = results || state.getSiteAnalysisResults || {}
+
 			Object.keys(results).forEach(group => {
-				const groupResults = results[group]
+				const groupResults = filterResults(results[group])
 				Object.keys(groupResults).forEach(r => {
 					const result = groupResults[r]
 					if ('warning' === result.status) {
@@ -51,10 +75,11 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 			return total
 		},
 		criticalCount : state => results => {
-			let total     = 0
-			results = results || state.getSiteAnalysisResults || {}
+			let total = 0
+			results   = results || state.getSiteAnalysisResults || {}
+
 			Object.keys(results).forEach(group => {
-				const groupResults = results[group]
+				const groupResults = filterResults(results[group])
 				Object.keys(groupResults).forEach(r => {
 					const result = groupResults[r]
 					if ('error' === result.status) {
@@ -66,10 +91,11 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 			return total
 		},
 		goodCount : state => results => {
-			let total     = 0
-			results = results || state.getSiteAnalysisResults || {}
+			let total = 0
+			results   = results || state.getSiteAnalysisResults || {}
+
 			Object.keys(results).forEach(group => {
-				const groupResults = results[group]
+				const groupResults = filterResults(results[group])
 				Object.keys(groupResults).forEach(r => {
 					const result = groupResults[r]
 					if ('passed' === result.status) {
@@ -83,7 +109,9 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 	},
 	actions : {
 		runSiteAnalyzer (payload = {}) {
-			this.analyzer = 'competitor-site'
+			this.analyzing = true
+			this.analyzer  = 'competitor-site'
+
 			return http.post(links.restUrl('analyze'))
 				.send({
 					url     : payload.url,

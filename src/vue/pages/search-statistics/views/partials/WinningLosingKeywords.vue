@@ -28,14 +28,14 @@
 				<div class="keyword">
 					<template v-if="topWinning[i-1]">
 						<core-tooltip v-if="shouldLimitText(topWinning[i-1].keyword)">
-							<span class="limit-line">{{ decodeHTMLEntities(topWinning[i-1].keyword) }}</span>
+							<span class="limit-line">{{ decode(topWinning[i-1].keyword) }}</span>
 
 							<template #tooltip>
-								{{ decodeHTMLEntities(topWinning[i-1].keyword) }}
+								{{ decode(topWinning[i-1].keyword) }}
 							</template>
 						</core-tooltip>
 
-						<span v-else>{{ decodeHTMLEntities(topWinning[i-1].keyword) }}</span>
+						<span v-else>{{ decode(topWinning[i-1].keyword) }}</span>
 
 						<statistic
 							type="decay"
@@ -48,14 +48,14 @@
 				<div class="keyword">
 					<template v-if="topLosing[i-1]">
 						<core-tooltip v-if="shouldLimitText(topLosing[i-1].keyword)">
-							<span class="limit-line">{{ decodeHTMLEntities(topLosing[i-1].keyword) }}</span>
+							<span class="limit-line">{{ decode(topLosing[i-1].keyword) }}</span>
 
 							<template #tooltip>
-								{{ decodeHTMLEntities(topLosing[i-1].keyword) }}
+								{{ decode(topLosing[i-1].keyword) }}
 							</template>
 						</core-tooltip>
 
-						<span v-else>{{ decodeHTMLEntities(topLosing[i-1].keyword) }}</span>
+						<span v-else>{{ decode(topLosing[i-1].keyword) }}</span>
 
 						<statistic
 							type="decay"
@@ -76,7 +76,7 @@ import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
-import { decodeHTMLEntities } from '@/vue/utils/helpers'
+import { decode } from 'he'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Statistic from './Statistic'
@@ -121,9 +121,9 @@ export default {
 		}
 	},
 	methods : {
-		decodeHTMLEntities,
+		decode,
 		shouldLimitText (line) {
-			return 60 < decodeHTMLEntities(line).length
+			return 60 < decode(line).length
 		}
 	}
 }

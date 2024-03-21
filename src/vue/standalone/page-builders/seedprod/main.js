@@ -67,6 +67,9 @@ const mountComponent = (seedprodApp) => {
 			app.config.globalProperties.$truSeo = new TruSeo()
 
 			app.mount('#seedprod-preview-wrapper .seedprod-settings-page-wrapper')
+
+			// Remove the class to prevent the styles from being applied our app.
+			document.querySelector('.seedprod-settings-page-wrapper').classList.remove('seedprod-settings-page-wrapper')
 		}
 	},
 	{

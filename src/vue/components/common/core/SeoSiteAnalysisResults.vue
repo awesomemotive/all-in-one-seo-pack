@@ -79,6 +79,7 @@
 
 <script>
 import { Tags } from '@/vue/mixins/Tags'
+import SiteAnalysis from '@/vue/classes/SiteAnalysis'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
 import CoreSeoSiteAnalysisResult from '@/vue/components/common/core/SeoSiteAnalysisResult'
 export default {
@@ -101,8 +102,8 @@ export default {
 	},
 	data () {
 		return {
-			searchPreviewHostname : null,
-			searchPreviewUrl      : null,
+			searchPreviewHostname : '',
+			searchPreviewUrl      : '',
 			strings               : {
 				basic       : this.$t.__('Basic SEO', this.$td),
 				advanced    : this.$t.__('Advanced SEO', this.$td),
@@ -115,17 +116,21 @@ export default {
 		filterResults (resultSet) {
 			const results = { ...resultSet }
 
-			const deprecatedChecks = [
-				'searchPreview',
-				'mobileSearchPreview',
-				'mobileSnapshot',
-				'keywords',
-				'keywordsInTitleDescription'
-			]
+			// Filter out results that aren't rendered as rows.
+			Object.keys(results).forEach(testName => {
+				const testResult = results[testName]
+				if (!SiteAnalysis.head(testName, testResult)) {
+					const exceptions = [
+						'keywords',
+						'keywordsInTitleDescription',
+						'searchPreview',
+						'mobileSearchPreview',
+						'mobileSnapshot'
+					]
 
-			deprecatedChecks.forEach((name) => {
-				if (results[name]) {
-					delete results[name]
+					if (exceptions.includes(testName)) {
+						delete results[testName]
+					}
 				}
 			})
 
@@ -152,17 +157,19 @@ export default {
 		}
 	},
 	mounted () {
-		if (this.allResults.advanced?.searchPreview ?? null) {
-			const div = document.createElement('div')
-			div.innerHTML = this.allResults.advanced.searchPreview
+		if (!this.allResults?.advanced?.searchPreview) {
+			return
+		}
 
-			const domain = div.querySelector('.domain')
-			if (domain) {
-				const urlObject = new URL(domain.innerText)
+		const div = document.createElement('div')
+		div.innerHTML = this.allResults.advanced.searchPreview
 
-				this.searchPreviewUrl = urlObject.href
-				this.searchPreviewHostname = urlObject.host
-			}
+		const domain = div.querySelector('.domain')
+		if (domain) {
+			const urlObject = new URL(domain.innerText)
+
+			this.searchPreviewUrl      = urlObject.href
+			this.searchPreviewHostname = urlObject.host
 		}
 	}
 }

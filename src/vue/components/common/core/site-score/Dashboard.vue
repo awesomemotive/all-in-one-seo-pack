@@ -36,11 +36,30 @@
 		</div>
 
 		<div
-			class="analyze-errors"
-			v-if="analyzerStore.analyzeError"
+			class="seo-analysis-error"
+			v-if="analyzerStore.analyzeError && errorObject"
 		>
-			<strong>{{ strings.anErrorOccurred }}</strong><br/>
-			<p>{{ getError }}</p>
+			<svg-dannie-lab />
+
+			<p class="error-title">{{ strings.anErrorOccurred }}</p>
+
+			<p class="error-description" v-html="errorObject.description"/>
+
+			<div class="error-action-buttons">
+				<base-button
+					v-for="(button, index) in errorObject.buttons"
+					:key="index"
+					:type="button.type"
+					:tag="button.tag ? button.tag : 'button'"
+					target="_blank"
+					:href="button.url ? button.url : ''"
+					size="small"
+					:loading="button?.runAgain && analyzerStore.analyzing"
+					@click="button?.runAgain ? analyzerStore.runSiteAnalyzer() : ''"
+				>
+					{{ button.text }}
+				</base-button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -52,22 +71,26 @@ import {
 } from '@/vue/stores'
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
-import { merge } from 'lodash-es'
 import { useSeoSiteScore } from '@/vue/composables'
 import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
+
 import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
+import SvgDannieLab from '@/vue/components/common/svg/dannie/Lab'
+
 export default {
 	setup () {
-		const { strings } = useSeoSiteScore()
+		const { errorObject, strings } = useSeoSiteScore()
 
 		return {
 			analyzerStore     : useAnalyzerStore(),
 			rootStore         : useRootStore(),
-			composableStrings : strings
+			composableStrings : strings,
+			errorObject
 		}
 	},
 	components : {
-		CoreSiteScore
+		CoreSiteScore,
+		SvgDannieLab
 	},
 	mixins : [ SeoSiteScore ],
 	props  : {
@@ -83,14 +106,7 @@ export default {
 	data () {
 		return {
 			allowed,
-			strings : merge(this.composableStrings, {
-				anErrorOccurred            : this.$t.__('An error occurred while analyzing your site.', this.$td),
-				criticalIssues             : this.$t.__('Important Issues', this.$td),
-				warnings                   : this.$t.__('Warnings', this.$td),
-				recommendedImprovements    : this.$t.__('Recommended Improvements', this.$td),
-				goodResults                : this.$t.__('Good Results', this.$td),
-				completeSiteAuditChecklist : this.$t.__('Complete Site Audit Checklist', this.$td)
-			})
+			strings : this.composableStrings
 		}
 	},
 	computed : {
@@ -192,6 +208,39 @@ export default {
 			.no-underline {
 				padding-left: 5px;
 			}
+		}
+	}
+
+	.seo-analysis-error {
+		max-width: 740px;
+		text-align: center;
+		margin: 12px 0;
+
+		p {
+			&.error-title {
+				margin: 12px 0 6px 0;
+
+				font-size: 16px;
+				font-weight: 700;
+				line-height: 30px;
+			}
+
+			&.error-description {
+				font-weight: 400;
+				line-height: 24px;
+			}
+		}
+
+		.error-action-buttons {
+				display: flex;
+				gap: 12px;
+				margin-top: 12px;
+				justify-content: center;
+			}
+
+		svg.aioseo-dannie-lab {
+			width: 120px;
+			height: 120px;
 		}
 	}
 }

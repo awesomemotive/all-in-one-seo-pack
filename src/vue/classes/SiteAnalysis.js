@@ -2,7 +2,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import tags from '@/vue/utils/tags'
+import { decode } from 'he'
 import { __, sprintf } from '@wordpress/i18n'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
@@ -12,69 +12,69 @@ class SiteAnalysis {
 	head = (test, result) => {
 		if (undefined !== this[test + 'Head']) {
 			return this[test + 'Head'](result)
-		} else if (result.initialTitle) {
-			return result.initialTitle
 		}
 
-		return test
+		// Return nothing so that we hide the check.
+		return ''
 	}
 
 	body = (test, result) => {
 		if (undefined !== this[test + 'Body']) {
 			return this[test + 'Body'](result)
-		} else if (result.initialBody) {
-			return result.initialBody
 		}
 
-		return result
+		return ''
 	}
 
 	titleHead = result => {
-		if ('title-missing' === result.error) {
-			return __('We couldn\'t find an SEO Title.', td)
-		} else if ('title-too-short' === result.error) {
-			return this.personalize
-				? sprintf(
-					// Translators: 1 - The length of the SEO title as a number.
-					__('Your SEO title is only %1$d characters long, which is too short.', td),
-					result.value.length
-				)
-				: sprintf(
-					// Translators: 1 - The length of the SEO title as a number.
-					__('The SEO title is only %1$d characters long, which is too short.', td),
-					result.value.length
-				)
-		} else if ('title-too-long' === result.error) {
-			return this.personalize
-				? sprintf(
-					// Translators: 1 - The length of the SEO title as a number.
-					__('Your SEO title is %1$d characters long, which is too long.', td),
-					result.value.length
-				)
-				: sprintf(
-					// Translators: 1 - The length of the SEO title as a number.
-					__('The SEO title is %1$d characters long, which is too long.', td),
-					result.value.length
-				)
-		}
+		const error = result?.error || ''
 
-		return this.personalize
-			? sprintf(
-				// Translators: 1 - The length of the SEO title as a number.
-				__('Your SEO title is set and is %1$d characters long.', td),
-				result.value.length
-			)
-			: sprintf(
-				// Translators: 1 - The length of the SEO title as a number.
-				__('The SEO title is set and is %1$d characters long.', td),
-				result.value.length
-			)
+		switch (error) {
+			case 'title-missing':
+				return __('We couldn\'t find an SEO Title.', td)
+			case 'title-too-short':
+				return this.personalize
+					? sprintf(
+						// Translators: 1 - The length of the SEO title as a number.
+						__('Your SEO title is only %1$d characters long, which is too short.', td),
+						result.value.length
+					)
+					: sprintf(
+						// Translators: 1 - The length of the SEO title as a number.
+						__('The SEO title is only %1$d characters long, which is too short.', td),
+						result.value.length
+					)
+			case 'title-too-long':
+				return this.personalize
+					? sprintf(
+						// Translators: 1 - The length of the SEO title as a number.
+						__('Your SEO title is %1$d characters long, which is too long.', td),
+						result.value.length
+					)
+					: sprintf(
+						// Translators: 1 - The length of the SEO title as a number.
+						__('The SEO title is %1$d characters long, which is too long.', td),
+						result.value.length
+					)
+			default:
+				return this.personalize
+					? sprintf(
+						// Translators: 1 - The length of the SEO title as a number.
+						__('Your SEO title is set and is %1$d characters long.', td),
+						result.value.length
+					)
+					: sprintf(
+						// Translators: 1 - The length of the SEO title as a number.
+						__('The SEO title is set and is %1$d characters long.', td),
+						result.value.length
+					)
+		}
 	}
 
 	titleBody = result => {
 		const rootStore = useRootStore()
 		const body = {
-			code       : 'title-missing' === result.error ? null : result.value,
+			code       : result.value,
 			message    : __('Ensure your page\'s title includes your target keywords, and design it to encourage users to click.', td) + '<br><br>' + __('Writing compelling titles is both a science and an art. There are automated tools that can analyze your title against known metrics for readability and click-worthiness. You also need to understand the psychology of your target audience.', td),
 			buttonText : __('Edit Your Page Title', td),
 			buttonLink : rootStore.aioseo.data.staticHomePage
@@ -86,47 +86,50 @@ class SiteAnalysis {
 	}
 
 	descriptionHead = result => {
-		if ('description-missing' === result.error) {
-			return this.personalize
-				? __('No meta description was found for your page.', td)
-				: __('No meta description was found for the page.', td)
-		} else if ('description-too-short' === result.error) {
-			return this.personalize
-				? sprintf(
-					// Translators: 1 - The length of the meta description as a number.
-					__('Your meta description is only %1$d characters long, which is too short.', td),
-					result.value.length
-				)
-				: sprintf(
-					// Translators: 1 - The length of the meta description as a number.
-					__('The meta description is only %1$d characters long, which is too short.', td),
-					result.value.length
-				)
-		} else if ('description-too-long' === result.error) {
-			return this.personalize
-				? sprintf(
-					// Translators: 1 - The length of the meta description as a number.
-					__('Your meta description is %1$d characters long, which is too long.', td),
-					result.value.length
-				)
-				: sprintf(
-					// Translators: 1 - The length of the meta description as a number.
-					__('The meta description is %1$d characters long, which is too long.', td),
-					result.value.length
-				)
-		}
+		const error = result?.error || ''
 
-		return this.personalize
-			? sprintf(
-				// Translators: 1 - The length of the meta description as a number.
-				__('Your meta description is set and is %1$d characters long.', td),
-				result.value.length
-			)
-			: sprintf(
-				// Translators: 1 - The length of the meta description as a number.
-				__('The meta description is set and is %1$d characters long.', td),
-				result.value.length
-			)
+		switch (error) {
+			case 'description-missing':
+				return this.personalize
+					? __('No meta description was found for your page.', td)
+					: __('No meta description was found for the page.', td)
+			case 'description-too-short':
+				return this.personalize
+					? sprintf(
+						// Translators: 1 - The length of the meta description as a number.
+						__('Your meta description is only %1$d characters long, which is too short.', td),
+						result.value.length
+					)
+					: sprintf(
+						// Translators: 1 - The length of the meta description as a number.
+						__('The meta description is only %1$d characters long, which is too short.', td),
+						result.value.length
+					)
+			case 'description-too-long':
+				return this.personalize
+					? sprintf(
+						// Translators: 1 - The length of the meta description as a number.
+						__('Your meta description is %1$d characters long, which is too long.', td),
+						result.value.length
+					)
+					: sprintf(
+						// Translators: 1 - The length of the meta description as a number.
+						__('The meta description is %1$d characters long, which is too long.', td),
+						result.value.length
+					)
+			default:
+				return this.personalize
+					? sprintf(
+						// Translators: 1 - The length of the meta description as a number.
+						__('Your meta description is set and is %1$d characters long.', td),
+						result.value.length
+					)
+					: sprintf(
+						// Translators: 1 - The length of the meta description as a number.
+						__('The meta description is set and is %1$d characters long.', td),
+						result.value.length
+					)
+		}
 	}
 
 	descriptionBody = result => {
@@ -144,19 +147,22 @@ class SiteAnalysis {
 	}
 
 	h1TagsHead = result => {
-		if ('h1-missing' === result.error) {
-			return __('No H1 tag was found.', td) + ' ' + __('For the best SEO results there should be exactly one H1 tag on each page.', td)
-		} else if ('h1-too-many' === result.error) {
-			return sprintf(
-				// Translators: 1 - The number of H1 tags found.
-				__('%1$d H1 tags were found.', td),
-				result.value.length
-			) + ' ' + __('For the best SEO results there should be exactly one H1 tag on each page.', td)
-		}
+		const error = result?.error || ''
 
-		return this.personalize
-			? __('One H1 tag was found on your page.', td)
-			: __('One H1 tag was found on the page.', td)
+		switch (error) {
+			case 'h1-missing':
+				return __('No H1 tag was found.', td) + ' ' + __('For the best user experience there should be exactly one H1 tag on each page.', td)
+			case 'h1-too-many':
+				return sprintf(
+					// Translators: 1 - The number of H1 tags found.
+					__('%1$d H1 tags were found.', td),
+					result.value.length
+				) + ' ' + __('For the best user experience there should be exactly one H1 tag on each page.', td)
+			default:
+				return this.personalize
+					? __('One H1 tag was found on your page.', td)
+					: __('One H1 tag was found on the page.', td)
+		}
 	}
 
 	h1TagsBody = result => {
@@ -209,8 +215,8 @@ class SiteAnalysis {
 
 	noImgAltAttsBody = result => {
 		const rootStore = useRootStore()
-		const body = {
-			codeAlt    : 'image-missing-alt' !== result.error ? null : result.value.map(tag => tags.decodeHTMLEntities(tag)).join('\n'),
+		const body      = {
+			codeAlt    : 'image-missing-alt' !== result.error ? null : result.value.map(tag => decode(tag)).join('\n'),
 			message    : __('Make sure every image has an alt tag, and add useful descriptions to each image. Add your keywords or synonyms - but do it in a natural way.', td),
 			buttonText : __('Edit Your Page', td),
 			buttonLink : rootStore.aioseo.data.staticHomePage ? rootStore.aioseo.urls.staticHomePage : null
@@ -220,21 +226,24 @@ class SiteAnalysis {
 	}
 
 	linksRatioHead = result => {
-		if ('internal-links-missing' === result.error) {
-			return this.personalize
-				? __('No internal links were found on your page.', td)
-				: __('No internal links were found on the page.', td)
-		} else if ('internal-links-too-few' === result.error) {
-			return this.personalize
-				? __('Too few internal links on your page.', td)
-				: __('Too few internal links on the page.', td)
-		} else if ('invalid-ratio' === result.error) {
-			return __('The ratio of internal links to external links is uneven.', td)
-		}
+		const error = result?.error || ''
 
-		return this.personalize
-			? __('Your page has a correct number of internal and external links.', td)
-			: __('The page has a correct number of internal and external links.', td)
+		switch (error) {
+			case 'internal-links-missing':
+				return this.personalize
+					? __('No internal links were found on your page.', td)
+					: __('No internal links were found on the page.', td)
+			case 'internal-links-too-few':
+				return this.personalize
+					? __('Too few internal links on your page.', td)
+					: __('Too few internal links on the page.', td)
+			case 'invalid-ratio':
+				return __('The ratio of internal links to external links is uneven.', td)
+			default:
+				return this.personalize
+					? __('Your page has a correct number of internal and external links.', td)
+					: __('The page has a correct number of internal and external links.', td)
+		}
 	}
 
 	linksRatioBody = result => {
@@ -366,7 +375,9 @@ class SiteAnalysis {
 	openGraphHead = result => {
 		if ('ogp-missing' === result.error) {
 			return __('Some Open Graph meta tags are missing.', td)
-		} else if ('ogp-duplicates' === result.error) {
+		}
+
+		if ('ogp-duplicates' === result.error) {
 			return __('Duplicate Open Graph meta tags were found.', td)
 		}
 
@@ -505,20 +516,25 @@ class SiteAnalysis {
 	}
 
 	pageSizeHead = result => {
-		let pageSize = sprintf(
-			// Translators: 1 - The total number of page requests.
-			__('The size of the HTML document is %1$d KB.', td),
-			Math.round(result.value / 1000)
-		)
+		let pageSize = Math.round(result.value / 1000),
+		 extraText   = ''
+
 		if ('page-size-too-big' === result.error) {
-			return pageSize + ' ' + __('This is over our recommendation of 50 KB.', td)
+			pageSize  = Math.ceil(result.value / 1000) // Round upwards to prevent issues where the page size is larger but is rounded down to 50 KB.
+			extraText = __('This is over our recommendation of 50 KB.', td)
 		}
 
 		if (33 > Math.round(result.value / 1000)) {
-			pageSize += ' ' + __('This is under the average of 33 KB.', td)
+			extraText = __('This is under the average of 33 KB.', td)
 		}
 
-		return pageSize
+		const text = sprintf(
+			// Translators: 1 - The total number of page requests.
+			__('The size of the HTML document is %1$d KB.', td),
+			pageSize
+		)
+
+		return text + ' ' + extraText
 	}
 
 	pageSizeBody = () => {

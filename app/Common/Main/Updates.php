@@ -210,6 +210,10 @@ class Updates {
 			$this->addQueryArgMonitorNotification();
 		}
 
+		if ( version_compare( $lastActiveVersion, '4.5.9', '<' ) ) {
+			$this->deprecateNoPaginationForCanonicalUrlsSetting();
+		}
+
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
 
 		// Always clear the cache if the last active version is different from our current.
@@ -1634,7 +1638,11 @@ class Updates {
 	 * @return void
 	 */
 	private function addQueryArgMonitorNotification() {
-		if ( ! aioseo()->options->searchAppearance->advanced->crawlCleanup->enable || ! aioseo()->options->searchAppearance->advanced->crawlCleanup->removeUnrecognizedQueryArgs ) {
+		$options = $this->getRawOptions();
+		if (
+			empty( $options['searchAppearance']['advanced']['crawlCleanup']['enable'] ) ||
+			empty( $options['searchAppearance']['advanced']['crawlCleanup']['removeUnrecognizedQueryArgs'] )
+		) {
 			return;
 		}
 
@@ -1654,5 +1662,27 @@ class Updates {
 			'button1_action'    => 'http://route#aioseo-search-appearance&aioseo-scroll=aioseo-query-arg-monitoring&aioseo-highlight=aioseo-query-arg-monitoring:advanced',
 			'start'             => gmdate( 'Y-m-d H:i:s' )
 		] );
+	}
+
+	/**
+	 * Deprecates the "No Pagination for Canonical URLs" setting.
+	 *
+	 * @since 4.5.9
+	 *
+	 * @return void
+	 */
+	public function deprecateNoPaginationForCanonicalUrlsSetting() {
+		$options = $this->getRawOptions();
+		if ( empty( $options['searchAppearance']['advanced']['noPaginationForCanonical'] ) ) {
+			return;
+		}
+
+		$deprecatedOptions = aioseo()->internalOptions->deprecatedOptions;
+		if ( ! in_array( 'noPaginationForCanonical', $deprecatedOptions, true ) ) {
+			$deprecatedOptions[]                         = 'noPaginationForCanonical';
+			aioseo()->internalOptions->deprecatedOptions = $deprecatedOptions;
+		}
+
+		aioseo()->options->deprecated->searchAppearance->advanced->noPaginationForCanonical = true;
 	}
 }

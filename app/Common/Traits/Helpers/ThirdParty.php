@@ -630,23 +630,48 @@ trait ThirdParty {
 	}
 
 	/**
+	 * Helper function for {@see isAmpPage()}.
 	 * Checks if the current page is an AMP page.
-	 * Helper function for isAmpPage(). Contains common logic that applies to both AMP and AMP for WP.
 	 *
 	 * @since 4.2.4
 	 *
 	 * @return bool Whether the current page is an AMP page.
 	 */
 	private function isAmpPageHelper() {
-		// Check if the AMP or AMP for WP plugin is active.
-		if ( ! function_exists( 'is_amp_endpoint' ) ) {
-			return false;
+		// First check for the existence of any AMP plugin functions. Bail early if none are found, and prevent false positives.
+		if (
+			! function_exists( 'amp_is_request' ) &&
+			! function_exists( 'is_amp_endpoint' ) &&
+			! function_exists( 'ampforwp_is_amp_endpoint' ) &&
+			! function_exists( 'is_amp_wp' )
+		) {
+			// If none of the AMP plugin functions are found, return false and allow compatibility with custom implementations.
+			return apply_filters( 'aioseo_is_amp_page', false );
 		}
 
-		global $wp;
+		if ( did_action( 'parse_query' ) ) {
+			// Check for the "AMP" plugin.
+			if ( function_exists( 'amp_is_request' ) ) {
+				return (bool) amp_is_request();
+			}
 
-		// This URL param is set when using plain permalinks.
-		return isset( $_GET['amp'] ) || preg_match( '/amp$/', untrailingslashit( $wp->request ) ); // phpcs:ignore HM.Security.NonceVerification.Recommended
+			// Check for the "AMP" plugin (`is_amp_endpoint()` is deprecated).
+			if ( function_exists( 'is_amp_endpoint' ) ) {
+				return (bool) is_amp_endpoint();
+			}
+
+			// Check for the "AMP for WP – Accelerated Mobile Pages" plugin.
+			if ( function_exists( 'ampforwp_is_amp_endpoint' ) ) {
+				return (bool) ampforwp_is_amp_endpoint();
+			}
+
+			// Check for the "AMP WP" plugin.
+			if ( function_exists( 'is_amp_wp' ) ) {
+				return (bool) is_amp_wp();
+			}
+		}
+
+		return false;
 	}
 
 	/**

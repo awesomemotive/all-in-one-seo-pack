@@ -164,6 +164,7 @@ export default {
 
 			.header {
 				font-size: 24px;
+				line-height: 1.2;
 				color: $black;
 				font-weight: 600;
 				margin-bottom: 30px;

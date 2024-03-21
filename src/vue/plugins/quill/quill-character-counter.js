@@ -29,7 +29,7 @@ class Counter {
 					const aioTag  = n.querySelector('.aioseo-tag .tag-name')
 					if (aioTag) {
 						const tag     = this.options.tags.find(t => t.name === aioTag.textContent)
-						const newNode = document.createTextNode(this.decodeHTMLEntities(tag.valueText))
+						const newNode = document.createTextNode(this.decodeHtmlEntities(tag.valueText))
 						fragNew.appendChild(newNode)
 					}
 				}
@@ -45,7 +45,7 @@ class Counter {
 		div.appendChild(fragNew.cloneNode(true))
 
 		html = div.innerHTML.replace(/&nbsp;/gi, ' ').replace(/<br\s*[/]?>/gi, this.single ? '' : '\n').trim()
-		return { length: this.decodeHTMLEntities(html).length, text: html }
+		return { length: this.decodeHtmlEntities(html).length, text: html }
 	}
 
 	update () {
@@ -60,7 +60,7 @@ class Counter {
 		}
 	}
 
-	decodeHTMLEntities (string) {
+	decodeHtmlEntities (string) {
 		const element = document.createElement('div')
 		if (string && 'string' === typeof string) {
 			// strip script/html tags

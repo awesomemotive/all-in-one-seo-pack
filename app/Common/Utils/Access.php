@@ -185,27 +185,31 @@ class Access {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string      $capability The capability to check against.
-	 * @param  string|null $checkRole  A role to check against.
-	 * @return bool                    Whether or not the user has this capability.
+	 * @param  string|array $capability The capability to check against.
+	 * @param  string|null  $checkRole  A role to check against.
+	 * @return bool                     Whether or not the user has this capability.
 	 */
 	public function hasCapability( $capability, $checkRole = null ) {
-		// Only admins have access.
 		if ( $this->isAdmin( $checkRole ) ) {
 			return true;
 		}
 
-		if (
-			(
-				$this->can( 'publish_posts', $checkRole ) ||
-				$this->can( 'edit_posts', $checkRole )
-			) &&
-			false !== strpos( $capability, 'aioseo_page_' )
-		) {
-			return true;
+		$canPublishOrEdit = $this->can( 'publish_posts', $checkRole ) || $this->can( 'edit_posts', $checkRole );
+		if ( ! $canPublishOrEdit ) {
+			return false;
 		}
 
-		return false;
+		if ( is_array( $capability ) ) {
+			foreach ( $capability as $cap ) {
+				if ( false !== strpos( $cap, 'aioseo_page_' ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		return false !== strpos( $capability, 'aioseo_page_' );
 	}
 
 	/**
@@ -254,6 +258,10 @@ class Access {
 				return true;
 			}
 
+			return false;
+		}
+
+		if ( ! function_exists( 'wp_get_current_user' ) ) {
 			return false;
 		}
 

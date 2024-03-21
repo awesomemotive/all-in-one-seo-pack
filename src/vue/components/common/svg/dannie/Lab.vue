@@ -1,5 +1,6 @@
 <template>
 	<svg
+		class="aioseo-dannie-lab"
 		viewBox="0 0 315 388"
 		version="1.1"
 		xmlns="http://www.w3.org/2000/svg"

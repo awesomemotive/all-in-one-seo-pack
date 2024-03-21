@@ -101,8 +101,8 @@ export default {
 		CoreSeoSiteAnalysisResults,
 		CoreSeoSiteScoreAnalyze,
 		CoreTooltip,
-		SvgRefresh,
-		SvgCircleQuestionMark
+		SvgCircleQuestionMark,
+		SvgRefresh
 	},
 	data () {
 		return {

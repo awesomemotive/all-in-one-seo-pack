@@ -34,7 +34,7 @@ class KgOrganization extends Graphs\Graph {
 		$logo = $this->logo();
 		if ( ! empty( $logo ) ) {
 			$data['logo']  = $logo;
-			$data['image'] = [ '@id' => $homeUrl . '#organizationLogo' ];
+			$data['image'] = [ '@id' => $data['logo']['@id'] ];
 		}
 
 		$socialUrls = array_values( $this->getOrganizationProfiles() );

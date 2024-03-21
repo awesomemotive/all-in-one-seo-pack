@@ -165,7 +165,7 @@ class PostMeta {
 						if ( ! empty( $value['max-snippet'] ) && intval( $value['max-snippet'] ) ) {
 							$meta['robots_max_snippet'] = intval( $value['max-snippet'] );
 						}
-						if ( ! empty( $value['max-video-preview'] ) && intval( $value['max-video-preview'] ) ) {
+						if ( isset( $value['max-video-preview'] ) && is_numeric( $value['max-video-preview'] ) ) {
 							$meta['robots_max_videopreview'] = intval( $value['max-video-preview'] );
 						}
 						if ( ! empty( $value['max-image-preview'] ) ) {
