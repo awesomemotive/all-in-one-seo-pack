@@ -71,11 +71,7 @@ class FlyoutMenu {
 	 * @return bool Whether the flyout menu script should be enqueued.
 	 */
 	private function shouldEnqueue() {
-		if ( aioseo()->admin->isAioseoScreen() ) {
-			return true;
-		}
-
-		return false;
+		return aioseo()->admin->isAioseoScreen();
 	}
 
 	/**

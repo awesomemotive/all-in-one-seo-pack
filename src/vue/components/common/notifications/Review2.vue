@@ -56,6 +56,7 @@ import {
 	useNotificationsStore
 } from '@/vue/stores'
 
+import BaseButton from '@/vue/components/common/base/Button'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 export default {
@@ -66,6 +67,7 @@ export default {
 	},
 	emits      : [ 'dismissed-notification' ],
 	components : {
+		BaseButton,
 		SvgCircleCheck,
 		TransitionSlide
 	},

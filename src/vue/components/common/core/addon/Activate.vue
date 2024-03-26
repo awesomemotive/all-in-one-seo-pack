@@ -2,7 +2,7 @@
 	<cta
 		:cta-button-visible="addons.userCanInstallOrActivate(addonSlug)"
 		:cta-button-visible-warning="strings.permissionWarning"
-		:cta-link="`${rootStore.aioseo.urls.aio.featureManager}&aioseo-activate=${addonSlug}`"
+		:cta-link="`${rootStore?.aioseo?.urls.aio.featureManager}&aioseo-activate=${addonSlug}`"
 		cta-button-action
 		:cta-button-loading="activationLoading"
 		@cta-button-click="activateAddon"

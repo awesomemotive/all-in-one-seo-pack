@@ -207,8 +207,7 @@ class Review {
 		<script>
 			window.addEventListener('load', function () {
 				var aioseoSetupButton,
-					dismissBtn,
-					interval
+					dismissBtn
 
 				aioseoSetupButton = function (dismissBtn) {
 					var notice      = document.querySelector('.notice.aioseo-review-plugin-cta'),

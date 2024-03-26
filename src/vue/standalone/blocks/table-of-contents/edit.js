@@ -113,7 +113,10 @@ export default function edit (props) {
 					return
 				}
 
-				let headingContent = headingAttributes.question || headingAttributes.content || ''
+				let headingContent =
+					headingAttributes.question || // Support FAQ block headings.
+					headingAttributes.content?.text || // Heading block content WP 6.5 and up.
+					headingAttributes.content || '' // Heading block content WP 6.4 and below.
 
 				// Don't add a heading until it has content & is below the TOC.
 				if (

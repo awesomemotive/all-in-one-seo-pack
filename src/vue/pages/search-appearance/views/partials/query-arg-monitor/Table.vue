@@ -235,7 +235,6 @@ export default {
 			alertType        : null,
 			strings          : {
 				delete                 : this.$t.__('Delete', this.$td),
-				add                    : this.$t.__('Add Block', this.$td),
 				regex                  : this.$t.__('Regex', this.$td),
 				key                    : this.$t.__('Key', this.$td),
 				value                  : this.$t.__('Value', this.$td),

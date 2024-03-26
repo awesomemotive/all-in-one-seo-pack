@@ -150,6 +150,15 @@
 						v-for="(row, index) in rows"
 						:key="index"
 					>
+						<tr v-if="row.alert && 'top' === row.alert?.position">
+							<td :colspan="filteredColumns.length + 1">
+								<core-alert
+									:type="row.alert.color || 'blue'"
+									v-html="row.alert.description"
+								/>
+							</td>
+						</tr>
+
 						<tr
 							class="main-row"
 							:class="{
@@ -221,6 +230,15 @@
 										/>
 									</div>
 								</transition-slide>
+							</td>
+						</tr>
+
+						<tr v-if="row.alert && 'bottom' === row.alert?.position">
+							<td :colspan="filteredColumns.length + 1">
+								<core-alert
+									:type="row.alert.color || 'blue'"
+									v-html="row.alert.description"
+								/>
 							</td>
 						</tr>
 					</template>
@@ -301,6 +319,7 @@
 import numbers from '@/vue/utils/numbers'
 import { debounce } from '@/vue/utils/debounce'
 
+import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreWpAdditionalFilters from './AdditionalFilters'
 import CoreWpBulkActions from './BulkActions'
@@ -324,6 +343,7 @@ export default {
 		'additional-filter-option-selected'
 	],
 	components : {
+		CoreAlert,
 		CoreLoader,
 		CoreWpAdditionalFilters,
 		CoreWpBulkActions,

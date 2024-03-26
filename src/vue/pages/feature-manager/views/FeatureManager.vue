@@ -251,20 +251,40 @@ export default {
 				noChangedMind           : this.$t.__('No, I changed my mind', this.$td)
 			},
 			descriptions : {
+				aioseoEeat : {
+					description : this.$t.__('Optimize your site for Google\'s E-E-A-T ranking factor by proving your writer\'s expertise through author schema markup and new UI elements.', this.$td),
+					version     : 0
+				},
 				aioseoImageSeo : {
-					description : '<p>' + this.$t.__('Globally control the Title attribute and Alt text for images in your content. These attributes are essential for both accessibility and SEO.', this.$td) + '</p>',
+					description : this.$t.__('Globally control the Title attribute and Alt text for images in your content. These attributes are essential for both accessibility and SEO.', this.$td),
 					version     : 0
 				},
-				aioseoVideoSitemap : {
-					description : '<p>' + this.$t.__('The Video Sitemap works in much the same way as the XML Sitemap module, it generates an XML Sitemap specifically for video content on your site. Search engines use this information to display rich snippet information in search results.', this.$td) + '</p>',
+				aioseoIndexNow : {
+					description : this.$t.__('Add IndexNow support to instantly notify search engines when your content has changed. This helps the search engines to prioritize the changes on your website and helps you rank faster.', this.$td),
 					version     : 0
 				},
-				aioseoNewsSitemap : {
-					description : '<p>' + this.$t.__('Our Google News Sitemap lets you control which content you submit to Google News and only contains articles that were published in the last 48 hours. In order to submit a News Sitemap to Google, you must have added your site to Google’s Publisher Center and had it approved.', this.$td) + '</p>',
+				aioseoLinkAssistant : {
+					description : this.$t.__('Super-charge your SEO with Link Assistant! Get relevant suggestions for adding internal links to older content as well as finding any orphaned posts that have no internal links. Use our reporting feature to see all link suggestions or add them directly from any page or post.', this.$td),
 					version     : 0
 				},
 				aioseoLocalBusiness : {
-					description : '<p>' + this.$t.__('Local Business schema markup enables you to tell Google about your business, including your business name, address and phone number, opening hours and price range. This information may be displayed as a Knowledge Graph card or business carousel.', this.$td) + '</p>',
+					description : this.$t.__('Local Business schema markup enables you to tell Google about your business, including your business name, address and phone number, opening hours and price range. This information may be displayed as a Knowledge Graph card or business carousel.', this.$td),
+					version     : 0
+				},
+				aioseoNewsSitemap : {
+					description : this.$t.__('Our Google News Sitemap lets you control which content you submit to Google News and only contains articles that were published in the last 48 hours. In order to submit a News Sitemap to Google, you must have added your site to Google’s Publisher Center and had it approved.', this.$td),
+					version     : 0
+				},
+				aioseoRedirects : {
+					description : this.$t.__('Our Redirection Manager allows you to create and manage redirects for 404s or modified posts.', this.$td),
+					version     : 0
+				},
+				aioseoRestApi : {
+					description : this.$t.__('Manage your post and term SEO meta via the WordPress REST API. This addon also works seamlessly with headless WordPress installs.', this.$td),
+					version     : 0
+				},
+				aioseoVideoSitemap : {
+					description : this.$t.__('The Video Sitemap works in much the same way as the XML Sitemap module, it generates an XML Sitemap specifically for video content on your site. Search engines use this information to display rich snippet information in search results.', this.$td),
 					version     : 0
 				}
 			}
@@ -320,7 +340,7 @@ export default {
 		},
 		getAddonDescription (addon) {
 			const camelizedName = addon.sku.replace(/-./g, x => x.toUpperCase()[1])
-			if (this.descriptions[camelizedName] && this.descriptions[camelizedName].description && addon.descriptionVersion <= this.descriptions[camelizedName].version) {
+			if (this.descriptions[camelizedName]?.description && addon.descriptionVersion <= this.descriptions[camelizedName]?.version) {
 				return this.descriptions[camelizedName].description
 			}
 			return addon.description

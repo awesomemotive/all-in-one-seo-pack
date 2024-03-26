@@ -134,7 +134,7 @@
 					<div class="redirect-type">
 						{{ strings.redirectType }}
 						<base-select
-							:options="$constants.REDIRECT_TYPES"
+							:options="REDIRECT_TYPES"
 							v-model="redirectType"
 							size="medium"
 						/>
@@ -204,9 +204,13 @@ import {
 	useRedirectsStore
 } from '@/vue/stores'
 
+import { REDIRECT_TYPES, REDIRECT_QUERY_PARAMS  } from '@/vue/plugins/constants'
 import { debounce } from '@/vue/utils/debounce'
 import { JsonValues } from '@/vue/mixins/JsonValues'
 import { sanitizeString } from '@/vue/utils/strings'
+
+import BaseButton from '@/vue/components/common/base/Button'
+import BaseSelect from '@/vue/components/common/base/Select'
 import CoreAddRedirectionTargetUrl from '@/vue/components/common/core/add-redirection/TargetUrl'
 import CoreAddRedirectionUrl from '@/vue/components/common/core/add-redirection/Url'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
@@ -223,6 +227,8 @@ export default {
 	},
 	emits      : [ 'cancel', 'added-redirect' ],
 	components : {
+		BaseButton,
+		BaseSelect,
 		CoreAddRedirectionTargetUrl,
 		CoreAddRedirectionUrl,
 		CoreAlert,
@@ -253,6 +259,7 @@ export default {
 	},
 	data () {
 		return {
+			REDIRECT_TYPES,
 			genericError         : false,
 			showAdvancedSettings : false,
 			addingRedirect       : false,
@@ -376,14 +383,14 @@ export default {
 		getDefaultRedirectType () {
 			let option = this.getJsonValue(this.redirectsStore.options.redirectDefaults.redirectType)
 			if (!option) {
-				option = this.$constants.REDIRECT_TYPES[0]
+				option = REDIRECT_TYPES[0]
 			}
 			return option
 		},
 		getDefaultQueryParam () {
 			let option = this.getJsonValue(this.redirectsStore.options.redirectDefaults.queryParam)
 			if (!option) {
-				option = this.$constants.REDIRECT_QUERY_PARAMS[0]
+				option = REDIRECT_QUERY_PARAMS[0]
 			}
 			return option
 		},
@@ -409,18 +416,18 @@ export default {
 		},
 		redirectQueryParams () {
 			return 0 < this.sourceUrls.filter(u => u.regex).length
-				? this.$constants.REDIRECT_QUERY_PARAMS.map(param => {
+				? REDIRECT_QUERY_PARAMS.map(param => {
 					param.$isDisabled = false
 					if ('exact' === param.value) {
 						param.$isDisabled = true
 						// Let's also reset the selected queryParam.
 						if ('exact' === this.queryParam.value) {
-							this.queryParam = this.$constants.REDIRECT_QUERY_PARAMS.find(option => !option.$isDisabled)
+							this.queryParam = REDIRECT_QUERY_PARAMS.find(option => !option.$isDisabled)
 						}
 					}
 					return param
 				})
-				: this.$constants.REDIRECT_QUERY_PARAMS.map(param => {
+				: REDIRECT_QUERY_PARAMS.map(param => {
 					param.$isDisabled = false
 					return param
 				})
@@ -543,8 +550,8 @@ export default {
 				return
 			}
 
-			const redirectType = this.$constants.REDIRECT_TYPES.find(t => t.value === this.type) || this.getDefaultRedirectType
-			const queryParam   = this.$constants.REDIRECT_QUERY_PARAMS.find(t => t.value === this.query) || this.getDefaultQueryParam
+			const redirectType = REDIRECT_TYPES.find(t => t.value === this.type) || this.getDefaultRedirectType
+			const queryParam   = REDIRECT_QUERY_PARAMS.find(t => t.value === this.query) || this.getDefaultQueryParam
 
 			this.sourceUrls        = [ JSON.parse(JSON.stringify(this.getDefaultSourceUrl)) ]
 			this.targetUrl         = null
@@ -608,12 +615,12 @@ export default {
 			this.customRules = this.rules
 		}
 
-		const redirectType = this.$constants.REDIRECT_TYPES.find(t => t.value === this.type) || this.getDefaultRedirectType
+		const redirectType = REDIRECT_TYPES.find(t => t.value === this.type) || this.getDefaultRedirectType
 		if (redirectType) {
 			this.redirectType = redirectType
 		}
 
-		const queryParam = this.$constants.REDIRECT_QUERY_PARAMS.find(t => t.value === this.query) || this.getDefaultQueryParam
+		const queryParam = REDIRECT_QUERY_PARAMS.find(t => t.value === this.query) || this.getDefaultQueryParam
 		if (queryParam) {
 			this.queryParam = queryParam
 		}

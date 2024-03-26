@@ -26,6 +26,14 @@ body {
 	.block-editor-link-control__settings .block-editor-link-control__setting .components-base-control__field {
 		flex-direction: column;
 	}
+
+	.block-editor-link-control__search-item .block-editor-link-control__search-item-title {
+		display: block;
+	}
+
+	.block-editor-link-control__search-item .block-editor-link-control__search-item-action.is-secondary {
+		margin-left: auto;
+	}
 }
 
 @media (max-width: 782px) {

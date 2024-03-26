@@ -123,7 +123,9 @@ import {
 import { debounce } from '@/vue/utils/debounce'
 import { sanitizeString } from '@/vue/utils/strings'
 import { makeUrlRelative } from '@/vue/utils/urls'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
+import BaseInput from '@/vue/components/common/base/Input'
 import CoreAddRedirectionUrlResults from '@/vue/components/common/core/add-redirection/UrlResults'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreLoader from '@/vue/components/common/core/Loader'
@@ -145,6 +147,7 @@ export default {
 	emits      : [ 'updated-url', 'remove-url', 'updated-option' ],
 	components : {
 		BaseCheckbox,
+		BaseInput,
 		CoreAddRedirectionUrlResults,
 		CoreAlert,
 		CoreLoader,

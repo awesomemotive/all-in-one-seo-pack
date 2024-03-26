@@ -8,8 +8,8 @@
 		>
 			<core-blur>
 				<core-add-redirection
-					:type="$constants.REDIRECT_TYPES[0].value"
-					:query="$constants.REDIRECT_QUERY_PARAMS[0].value"
+					:type="REDIRECT_TYPES[0].value"
+					:query="REDIRECT_QUERY_PARAMS[0].value"
 					:slash="true"
 					:case="true"
 				/>
@@ -20,8 +20,8 @@
 			v-if="noCoreCard"
 		>
 			<core-add-redirection
-				:type="$constants.REDIRECT_TYPES[0].value"
-				:query="$constants.REDIRECT_QUERY_PARAMS[0].value"
+				:type="REDIRECT_TYPES[0].value"
+				:query="REDIRECT_QUERY_PARAMS[0].value"
 				:slash="true"
 				:case="true"
 			/>
@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS, REDIRECT_TYPES, REDIRECT_QUERY_PARAMS, REDIRECT_GROUPS } from '@/vue/plugins/constants'
+
 import CoreAddRedirection from '@/vue/components/common/core/add-redirection/Index'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -62,6 +64,8 @@ export default {
 	},
 	data () {
 		return {
+			REDIRECT_TYPES,
+			REDIRECT_QUERY_PARAMS,
 			strings : {
 				addNewRedirection : this.$t.__('Add New Redirection', this.$td),
 				searchUrls        : this.$t.__('Search URLs', this.$td)
@@ -99,7 +103,7 @@ export default {
 				},
 				{
 					slug  : 'enabled',
-					label : this.$constants.GLOBAL_STRINGS.enabled,
+					label : GLOBAL_STRINGS.enabled,
 					width : '80px'
 				}
 			]
@@ -111,7 +115,7 @@ export default {
 				{
 					label   : this.$t.__('Filter by Group', this.$td),
 					name    : 'group',
-					options : [ { label: this.$t.__('All Groups', this.$td), value: 'all' } ].concat(this.$constants.REDIRECT_GROUPS)
+					options : [ { label: this.$t.__('All Groups', this.$td), value: 'all' } ].concat(REDIRECT_GROUPS)
 				}
 			]
 		}

@@ -200,3 +200,17 @@ button[aria-label="AIOSEO"]:hover {
 		}
 	}
 }
+
+.interface-pinned-items {
+	button.components-button {
+		height: 36px;
+
+		&.is-compact.has-icon {
+			&[aria-label*="AIOSEO"],
+			&[aria-label*="SEO Headline Analyzer"] {
+				width: auto;
+				padding: 6px;
+			}
+		}
+	}
+}

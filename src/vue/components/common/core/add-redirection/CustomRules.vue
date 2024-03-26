@@ -142,7 +142,10 @@ import {
 import { Date as DateMixin } from '@/vue/mixins/Date'
 import { DateTime } from 'luxon'
 
+import BaseButton from '@/vue/components/common/base/Button'
 import BaseDatePicker from '@/vue/components/common/base/DatePicker'
+import BaseInput from '@/vue/components/common/base/Input'
+import BaseSelect from '@/vue/components/common/base/Select'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
@@ -162,7 +165,10 @@ export default {
 		}
 	},
 	components : {
+		BaseButton,
 		BaseDatePicker,
+		BaseInput,
+		BaseSelect,
 		CoreAlert,
 		CoreTooltip,
 		SvgCirclePlus,

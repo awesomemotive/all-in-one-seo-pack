@@ -49,7 +49,7 @@ import { getAssetUrl } from '@/vue/utils/helpers'
 import dannieDetectiveImg from '@/vue/assets/images/aio/dannie-detective.png'
 import CoreNotification from '@/vue/components/common/core/Notification'
 import NotificationsReview from '@/vue/components/common/notifications/Review'
-import NotificationsReview2 from '@/vue/components/common/notifications/Review2'
+import NotificationsReview2 from '$/vue/components/common/notifications/Review2'
 import NotificationsUnlicensedAddons from '@/vue/components/common/notifications/UnlicensedAddons'
 export default {
 	emits      : [ 'toggle-dismissed', 'dismissed-notification' ],

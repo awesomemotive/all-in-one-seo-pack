@@ -58,6 +58,8 @@ import {
 } from '@/vue/stores'
 
 import { debounce } from '@/vue/utils/debounce'
+
+import BaseInput from '@/vue/components/common/base/Input'
 import CoreAddRedirectionUrlResults from '@/vue/components/common/core/add-redirection/UrlResults'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
@@ -72,6 +74,7 @@ export default {
 		}
 	},
 	components : {
+		BaseInput,
 		CoreAddRedirectionUrlResults,
 		CoreLoader,
 		SvgCircleCheck,

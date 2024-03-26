@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit651aebe52d12925c0afecab162ebab77
+class ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -190,6 +190,8 @@ class ComposerStaticInit651aebe52d12925c0afecab162ebab77
         'AIOSEO\\Plugin\\Common\\Migration\\Sitemap' => __DIR__ . '/../..' . '/app/Common/Migration/Sitemap.php',
         'AIOSEO\\Plugin\\Common\\Migration\\SocialMeta' => __DIR__ . '/../..' . '/app/Common/Migration/SocialMeta.php',
         'AIOSEO\\Plugin\\Common\\Migration\\Wpml' => __DIR__ . '/../..' . '/app/Common/Migration/Wpml.php',
+        'AIOSEO\\Plugin\\Common\\Models\\CrawlCleanupBlockedArg' => __DIR__ . '/../..' . '/app/Common/Models/CrawlCleanupBlockedArg.php',
+        'AIOSEO\\Plugin\\Common\\Models\\CrawlCleanupLog' => __DIR__ . '/../..' . '/app/Common/Models/CrawlCleanupLog.php',
         'AIOSEO\\Plugin\\Common\\Models\\Model' => __DIR__ . '/../..' . '/app/Common/Models/Model.php',
         'AIOSEO\\Plugin\\Common\\Models\\Notification' => __DIR__ . '/../..' . '/app/Common/Models/Notification.php',
         'AIOSEO\\Plugin\\Common\\Models\\Post' => __DIR__ . '/../..' . '/app/Common/Models/Post.php',
@@ -200,6 +202,7 @@ class ComposerStaticInit651aebe52d12925c0afecab162ebab77
         'AIOSEO\\Plugin\\Common\\Options\\InternalOptions' => __DIR__ . '/../..' . '/app/Common/Options/InternalOptions.php',
         'AIOSEO\\Plugin\\Common\\Options\\NetworkOptions' => __DIR__ . '/../..' . '/app/Common/Options/NetworkOptions.php',
         'AIOSEO\\Plugin\\Common\\Options\\Options' => __DIR__ . '/../..' . '/app/Common/Options/Options.php',
+        'AIOSEO\\Plugin\\Common\\QueryArgs\\CrawlCleanup' => __DIR__ . '/../..' . '/app/Common/QueryArgs/CrawlCleanup.php',
         'AIOSEO\\Plugin\\Common\\Rss' => __DIR__ . '/../..' . '/app/Common/Rss.php',
         'AIOSEO\\Plugin\\Common\\Schema\\Breadcrumb' => __DIR__ . '/../..' . '/app/Common/Schema/Breadcrumb.php',
         'AIOSEO\\Plugin\\Common\\Schema\\Context' => __DIR__ . '/../..' . '/app/Common/Schema/Context.php',
@@ -647,10 +650,10 @@ class ComposerStaticInit651aebe52d12925c0afecab162ebab77
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit651aebe52d12925c0afecab162ebab77::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit651aebe52d12925c0afecab162ebab77::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit651aebe52d12925c0afecab162ebab77::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit651aebe52d12925c0afecab162ebab77::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1::$classMap;
 
         }, null, ClassLoader::class);
     }
