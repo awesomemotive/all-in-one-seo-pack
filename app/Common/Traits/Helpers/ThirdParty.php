@@ -605,6 +605,7 @@ trait ThirdParty {
 
 	/**
 	 * Checks if the current page is an AMP page.
+	 * This function is only effective if called after the `wp` action.
 	 *
 	 * @since 4.2.3
 	 *
@@ -649,7 +650,9 @@ trait ThirdParty {
 			return apply_filters( 'aioseo_is_amp_page', false );
 		}
 
-		if ( did_action( 'parse_query' ) ) {
+		// AMP plugin requires the `wp` action to be called to function properly, otherwise, it will throw warnings.
+		// https://github.com/awesomemotive/aioseo/issues/6056
+		if ( did_action( 'wp' ) ) {
 			// Check for the "AMP" plugin.
 			if ( function_exists( 'amp_is_request' ) ) {
 				return (bool) amp_is_request();

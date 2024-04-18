@@ -2,7 +2,10 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { decode } from 'he'
+import {
+	sanitizeString,
+	softSanitizeHtml
+} from '@/vue/utils/strings'
 
 /**
  * Create an HTML element from a string.
@@ -15,7 +18,7 @@ import { decode } from 'he'
  */
 export const createElement = (html, element = 'div') => {
 	const div = document.createElement(element)
-	div.innerHTML = html.trim()
+	div.innerHTML = softSanitizeHtml(html.trim())
 	return div
 }
 
@@ -83,7 +86,7 @@ export const truncate = (string, length = 200) => {
 	}
 
 	if (length < string.length) {
-		string = string.substring(0, length).trim() + decode('&hellip;')
+		string = string.substring(0, length).trim() + sanitizeString('&hellip;')
 	}
 
 	return string
@@ -133,11 +136,10 @@ export const parseSchemaByType = (type, schemaContent) => {
  *
  * @since 4.2.8
  *
- * @returns {{hostname: string, url: string, title: string, description: string}} The data.
+ * @returns {{url: string, title: string, description: string}} The data.
  */
 export const getDomGoogleSerpData = () => {
 	return {
-		hostname    : window.location.hostname,
 		url         : window.location.href,
 		title       : document.title || '',
 		description : document.querySelector('meta[name="description"]')?.content || ''

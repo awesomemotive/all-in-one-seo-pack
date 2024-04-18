@@ -423,20 +423,27 @@ export default {
 				return
 			}
 
-			const missingResults = Object.values(this.posts.rows).filter(post => !post.inspectionResult || 0 === post.inspectionResult?.length)
+			const rowsArray      = Object.values(this.posts.rows)
+			const missingResults = rowsArray.filter(post => !post.inspectionResult || 0 === post.inspectionResult?.length)
 			if (!missingResults.length) {
 				return
 			}
 
 			missingResults.forEach(post => {
-				this.posts.rows[post.page].inspectionResultLoading = true
+				const row = rowsArray.find(row => row.page === post.page)
+				if (row) {
+					row.inspectionResultLoading = true
+				}
 			})
 
 			this.searchStatisticsStore.getInspectionResult(missingResults.map(post => post.page))
 				.then(response => {
 					missingResults.forEach(post => {
-						this.posts.rows[post.page].inspectionResult        = response[post.page]
-						this.posts.rows[post.page].inspectionResultLoading = false
+						const row = rowsArray.find(row => row.page === post.page)
+						if (row) {
+							row.inspectionResult        = response[post.page]
+							row.inspectionResultLoading = false
+						}
 					})
 				})
 		}

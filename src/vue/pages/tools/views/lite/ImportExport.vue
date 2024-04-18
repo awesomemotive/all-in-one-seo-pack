@@ -32,7 +32,7 @@
 				{{ strings.ctaHeader }}
 			</template>
 			<template #description>
-				<!-- <required-plans addon="aioseo-redirects" /> -->
+				<required-plans :core-feature="[ 'tools', 'network-tools-import-export' ]" />
 				{{ strings.networkDatabaseToolsDescription }}
 			</template>
 		</cta>
@@ -48,8 +48,10 @@ import GridRow from '@/vue/components/common/grid/Row'
 import ExportSettings from '../partials/ExportSettings'
 import ImportAioseo from '../partials/ImportAioseo'
 import ImportOthers from '../partials/ImportOthers'
+import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans.vue'
 export default {
 	components : {
+		RequiredPlans,
 		BackupSettings,
 		CoreBlur,
 		Cta,

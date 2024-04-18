@@ -168,66 +168,64 @@
 			</template>
 		</core-settings-row>
 
-		<div
-			v-if="displayTruSeoMetaboxCard && optionsStore.options.searchAppearance.advanced.useKeywords && optionsStore.options.searchAppearance.advanced.keywordsLooking"
-		>
-			<core-alert
-				class="meta-keywords-alert"
-				type="blue"
-				show-close
-				@close-alert="hideKeywordsLooking"
+		<template v-if="displayTruSeoMetaboxCard">
+			<div v-if="optionsStore.options.searchAppearance.advanced.useKeywords && optionsStore.options.searchAppearance.advanced.keywordsLooking">
+				<core-alert
+					class="meta-keywords-alert"
+					type="blue"
+					show-close
+					@close-alert="hideKeywordsLooking"
+				>
+					{{ strings.lookingForMetaKeywords }}
+
+					<a
+						href="#"
+						@click.prevent="$emit('changeTab', 'advanced')"
+					>
+						{{ strings.goToAdvancedTab }}
+					</a>
+
+					<a
+						class="no-underline"
+						href="#"
+						@click.prevent="$emit('changeTab', 'advanced')"
+					>
+						→
+					</a>
+				</core-alert>
+			</div>
+
+			<core-settings-row
+				id="aioseo-post-settings-snippet-focus-keyphrase-row"
+				class="snippet-focus-keyphrase-row"
+				align
 			>
-				{{ strings.lookingForMetaKeywords }}
+				<template #name>
+					<span>{{ strings.focusKeyphrase }}</span>
 
-				<a
-					href="#"
-					@click.prevent="$emit('changeTab', 'advanced')"
-				>
-					{{ strings.goToAdvancedTab }}
-				</a>
+					<core-tooltip :offset="'25px,0'">
+						<svg-circle-question-mark />
 
-				<a
-					class="no-underline"
-					href="#"
-					@click.prevent="$emit('changeTab', 'advanced')"
-				>
-					→
-				</a>
-			</core-alert>
-		</div>
+						<template #tooltip>
+							<div v-html="strings.keyphraseDocumentation" />
+						</template>
+					</core-tooltip>
+				</template>
 
-		<core-settings-row
-			v-if="displayTruSeoMetaboxCard"
-			id="aioseo-post-settings-snippet-focus-keyphrase-row"
-			class="snippet-focus-keyphrase-row"
-			align
-		>
-			<template #name>
-				<span>{{ strings.focusKeyphrase }}</span>
+				<template #content>
+					<focus-keyphrase />
+				</template>
+			</core-settings-row>
 
-				<core-tooltip :offset="'25px,0'">
-					<svg-circle-question-mark />
-
-					<template #tooltip>
-						<div v-html="strings.keyphraseDocumentation" />
-					</template>
-				</core-tooltip>
-			</template>
-
-			<template #content>
-				<focus-keyphrase />
-			</template>
-		</core-settings-row>
-
-		<core-settings-row
-			v-if="displayTruSeoMetaboxCard"
-			:name="strings.additionalKeyphrases"
-			class="snippet-additional-keyphrases-row"
-		>
-			<template #content>
-				<additional-keyphrases />
-			</template>
-		</core-settings-row>
+			<core-settings-row
+				:name="strings.additionalKeyphrases"
+				class="snippet-additional-keyphrases-row"
+			>
+				<template #content>
+					<additional-keyphrases />
+				</template>
+			</core-settings-row>
+		</template>
 
 		<core-settings-row
 			v-if="displayTruSeoMetaboxCard && postEditorStore.currentPost.page_analysis"
@@ -475,13 +473,13 @@ export default {
 			return 1 === this.postEditorStore.currentPost.pillar_content
 		},
 		displayTruSeoMetaboxCard () {
-			return truSeoShouldAnalyze() && 'metabox' === this.$root._data.screenContext && 'post' === this.postEditorStore.currentPost.context && 'attachment' !== this.postEditorStore.currentPost.postType && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.postEditorStore.currentPost.isSpecialPage && !this.isForum
+			return truSeoShouldAnalyze() && 'metabox' === this.$root._data.screenContext && 'post' === this.postEditorStore.currentPost.context && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.isForum
 		},
 		displayTruSeoSidebarKeyphraseCard () {
-			return truSeoShouldAnalyze() && 'sidebar' === this.$root._data.screenContext && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.postEditorStore.currentPost.isSpecialPage && !this.isForum
+			return truSeoShouldAnalyze() && 'sidebar' === this.$root._data.screenContext && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.isForum
 		},
 		displayTruSeoSidebarAnalysisCard () {
-			return truSeoShouldAnalyze() && 'sidebar' === this.$root._data.screenContext && this.postEditorStore.currentPost.page_analysis && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.postEditorStore.currentPost.isSpecialPage && !this.isForum
+			return truSeoShouldAnalyze() && 'sidebar' === this.$root._data.screenContext && this.postEditorStore.currentPost.page_analysis && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.isForum
 		},
 		isForum () {
 			return this.rootStore.aioseo.data.isBBPressActive &&

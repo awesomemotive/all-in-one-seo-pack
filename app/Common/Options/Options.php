@@ -181,7 +181,8 @@ TEMPLATE
 					'soundCloudUrl'   => [ 'type' => 'string' ],
 					'wikipediaUrl'    => [ 'type' => 'string' ],
 					'myspaceUrl'      => [ 'type' => 'string' ],
-					'googlePlacesUrl' => [ 'type' => 'string' ]
+					'googlePlacesUrl' => [ 'type' => 'string' ],
+					'wordPressUrl'    => [ 'type' => 'string' ],
 				],
 				'additionalUrls' => [ 'type' => 'string' ]
 			],

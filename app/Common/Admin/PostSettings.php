@@ -306,7 +306,7 @@ class PostSettings {
 		}
 
 		$posts = aioseo()->core->db->start( 'posts as p' )
-			->select( 'ap.seo_score, ap.keyphrases' )
+			->select( 'p.ID, ap.seo_score, ap.keyphrases' )
 			->leftJoin( 'aioseo_posts as ap', 'ap.post_id = p.ID' )
 			->where( 'p.post_status', 'publish' )
 			->where( 'p.post_type', $postType )
@@ -314,7 +314,7 @@ class PostSettings {
 			->result();
 
 		$overview = [
-			'total'                 => count( $posts ),
+			'total'                 => 0,
 			'needsImprovement'      => 0,
 			'okay'                  => 0,
 			'good'                  => 0,
@@ -322,6 +322,12 @@ class PostSettings {
 		];
 
 		foreach ( $posts as $post ) {
+			if ( ! aioseo()->helpers->isPageAnalysisEligible( $post->ID ) ) {
+				continue;
+			}
+
+			$overview['total']++;
+
 			if ( empty( $post->keyphrases ) || strpos( $post->keyphrases, '{"focus":{"keyphrase":""' ) === 0 ) {
 				$overview['withoutFocusKeyphrase']++;
 

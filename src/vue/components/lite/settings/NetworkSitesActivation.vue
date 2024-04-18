@@ -62,7 +62,7 @@
 						{{ strings.ctaHeader }}
 					</template>
 					<template #description>
-						<!-- <required-plans addon="aioseo-redirects" /> -->
+						<required-plans :core-feature="[ 'tools', 'network-tools-site-activation' ]" />
 						{{ strings.networkDatabaseToolsDescription }}
 					</template>
 				</cta>
@@ -76,9 +76,11 @@ import { Network } from '@/vue/mixins/Network'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Cta from '@/vue/components/common/cta/Index'
 import SvgCircleCheckSolid from '@/vue/components/common/svg/circle/CheckSolid'
+import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans.vue'
 export default {
 	mixins     : [ Network ],
 	components : {
+		RequiredPlans,
 		CoreWpTable,
 		Cta,
 		SvgCircleCheckSolid

@@ -2,8 +2,8 @@ import {
 	useTagsStore
 } from '@/vue/stores'
 
-import { decode } from 'he'
 import { customFieldValue } from '@/vue/plugins/tru-seo/components/customFields'
+import { sanitizeString } from '@/vue/utils/strings'
 
 export const Tags = {
 	methods : {
@@ -54,7 +54,8 @@ export const Tags = {
 			// Since we added a delimiter, let's remove all of that now.
 			string = string.replace(/%\|%/g, '')
 
-			return decode(decode(string.replace(/<(?:.|\n)*?>/gm, ' ').replace(/\s/g, ' ')))
+			// Sanitize the string to prevent JS from being injected.
+			return sanitizeString(string)
 		}
 	}
 }

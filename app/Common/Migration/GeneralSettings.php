@@ -649,6 +649,7 @@ class GeneralSettings {
 			'soundcloud.com' => 'soundCloudUrl',
 			'wikipedia.org'  => 'wikipediaUrl',
 			'myspace.com'    => 'myspaceUrl',
+			'wordpress.org'  => 'wordpressUrl',
 		];
 
 		$found = false;

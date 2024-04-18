@@ -58,6 +58,7 @@ class SocialMeta {
 			'seopress_social_accounts_myspace'    => [ 'type' => 'string', 'newOption' => [ 'social', 'profiles', 'urls', 'myspaceUrl' ] ],
 			'seopress_social_accounts_soundcloud' => [ 'type' => 'string', 'newOption' => [ 'social', 'profiles', 'urls', 'soundCloudUrl' ] ],
 			'seopress_social_accounts_tumblr'     => [ 'type' => 'string', 'newOption' => [ 'social', 'profiles', 'urls', 'tumblrUrl' ] ],
+			'seopress_social_accounts_wordpress'  => [ 'type' => 'string', 'newOption' => [ 'social', 'profiles', 'urls', 'wordPressUrl' ] ],
 		];
 
 		aioseo()->importExport->seoPress->helpers->mapOldToNew( $settings, $this->options );

@@ -1,6 +1,7 @@
 <template>
 	<div class="aioseo-avada-integration">
 		<core-score-button
+			:show-score="truSeoShouldAnalyze()"
 			:score="currentPost.seo_score"
 			:class="[
 				isSidebarActive ? 'aioseo-score-button--active' : '',
@@ -18,6 +19,7 @@
 import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePostEditorStore } from '@/vue/stores'
+import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
 import emitter from 'tiny-emitter/instance'
 import CoreScoreButton from '@/vue/components/common/core/ScoreButton'
 import SvgAioseoLogoGear from '@/vue/components/common/svg/aioseo/LogoGear'
@@ -64,10 +66,6 @@ onMounted(() => {
 	> .aioseo-score-button {
 		margin-left: 15px;
 		cursor: pointer;
-
-		&--active {
-			border-color: transparent;
-		}
 	}
 }
 </style>

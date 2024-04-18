@@ -195,7 +195,8 @@ trait Vue {
 				'hasUrlTrailingSlash' => '/' === user_trailingslashit( '' ),
 				'permalinkStructure'  => get_option( 'permalink_structure' ),
 				'dateFormat'          => get_option( 'date_format' ),
-				'timeFormat'          => get_option( 'time_format' )
+				'timeFormat'          => get_option( 'time_format' ),
+				'siteName'            => aioseo()->helpers->getWebsiteName()
 			],
 			'user'              => [
 				'canManage'      => aioseo()->access->canManage(),
@@ -276,11 +277,9 @@ trait Vue {
 			'title'                          => ! empty( $post->title ) ? $post->title : aioseo()->meta->title->getPostTypeTitle( $postTypeObj->name ),
 			'description'                    => ! empty( $post->description ) ? $post->description : aioseo()->meta->description->getPostTypeDescription( $postTypeObj->name ),
 			'descriptionIncludeCustomFields' => apply_filters( 'aioseo_description_include_custom_fields', true, $post ),
-			'keywords'                       => ! empty( $post->keywords ) ? $post->keywords : wp_json_encode( [] ),
+			'keywords'                       => ! empty( $post->keywords ) ? $post->keywords : [],
 			'keyphrases'                     => Models\Post::getKeyphrasesDefaults( $post->keyphrases ),
-			'page_analysis'                  => ! empty( $post->page_analysis )
-				? json_decode( $post->page_analysis )
-				: Models\Post::getPageAnalysisDefaults(),
+			'page_analysis'                  => Models\Post::getPageAnalysisDefaults( $post->page_analysis ),
 			'loading'                        => [
 				'focus'      => false,
 				'additional' => [],
@@ -290,6 +289,7 @@ trait Vue {
 			'postStatus'                     => get_post_status( $postId ),
 			'postAuthor'                     => (int) $wpPost->post_author,
 			'isSpecialPage'                  => $this->isSpecialPage( $postId ),
+			'isPageAnalysisEligible'         => $this->isPageAnalysisEligible( $postId ),
 			'isStaticPostsPage'              => aioseo()->helpers->isStaticPostsPage(),
 			'isHomePage'                     => $postId === $staticHomePage,
 			'isWooCommercePageWithoutSchema' => $this->isWooCommercePageWithoutSchema( $postId ),
@@ -317,7 +317,7 @@ trait Vue {
 			'og_image_type'                  => ! empty( $post->og_image_type ) ? $post->og_image_type : 'default',
 			'og_video'                       => ! empty( $post->og_video ) ? $post->og_video : '',
 			'og_article_section'             => ! empty( $post->og_article_section ) ? $post->og_article_section : '',
-			'og_article_tags'                => ! empty( $post->og_article_tags ) ? $post->og_article_tags : wp_json_encode( [] ),
+			'og_article_tags'                => ! empty( $post->og_article_tags ) ? $post->og_article_tags : [],
 			'twitter_use_og'                 => ( (int) $post->twitter_use_og ) === 0 ? false : true,
 			'twitter_card'                   => $post->twitter_card,
 			'twitter_image_custom_url'       => $post->twitter_image_custom_url,
@@ -325,9 +325,7 @@ trait Vue {
 			'twitter_image_type'             => $post->twitter_image_type,
 			'twitter_title'                  => $post->twitter_title,
 			'twitter_description'            => $post->twitter_description,
-			'schema'                         => ( ! empty( $post->schema ) )
-				? Models\Post::getDefaultSchemaOptions( $post->schema, aioseo()->helpers->getPost( $postId ) )
-				: Models\Post::getDefaultSchemaOptions( '', aioseo()->helpers->getPost( $postId ) ),
+			'schema'                         => Models\Post::getDefaultSchemaOptions( $post->schema, aioseo()->helpers->getPost( $postId ) ),
 			'metaDefaults'                   => [
 				'title'       => aioseo()->meta->title->getPostTypeTitle( $postTypeObj->name ),
 				'description' => aioseo()->meta->description->getPostTypeDescription( $postTypeObj->name )

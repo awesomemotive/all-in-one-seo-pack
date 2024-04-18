@@ -89,7 +89,7 @@
 
 <script>
 import { debounce } from '@/vue/utils/debounce'
-import 'vue-multiselect/dist/vue3-multiselect.css'
+import 'vue-multiselect/dist/vue-multiselect.css'
 import Multiselect from 'vue-multiselect'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgClose from '@/vue/components/common/svg/Close'

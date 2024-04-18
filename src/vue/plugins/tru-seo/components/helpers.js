@@ -22,17 +22,11 @@ import TruSeo from '@/vue/plugins/tru-seo'
 
 export const truSeoShouldAnalyze = () => {
 	const postEditorStore = usePostEditorStore()
-	if (!postEditorStore.currentPost?.id) {
+	if (!postEditorStore?.currentPost?.id) {
 		return false
 	}
 
-	const optionsStore = useOptionsStore()
-	return (
-		optionsStore.options.advanced?.truSeo &&
-		!postEditorStore.currentPost.isSpecialPage &&
-		'attachment' !== postEditorStore.currentPost.postType &&
-		shouldShowMetaBox()
-	)
+	return !!postEditorStore.currentPost?.isPageAnalysisEligible || false
 }
 
 export const shouldShowTruSeoScore = () => {

@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import { escapeRegExp } from 'lodash-es'
+import { sanitizeString } from '@/vue/utils/strings'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import SvgExternal from '@/vue/components/common/svg/External'
 export default {
@@ -67,10 +69,10 @@ export default {
 	methods : {
 		getOptionTitle (title) {
 			// First, sanitize the title and URL. We must do this as we'll be using the result of this method in a v-html directive.
-			title     = title.replace(/<\/?[^>]+(>|$)/g, '')
-			const url = this.url.replace(/<\/?[^>]+(>|$)/g, '')
+			title     = sanitizeString(title)
+			const url = sanitizeString(this.url)
 
-			const regex = new RegExp(`(${url})`, 'gi')
+			const regex = new RegExp(`(${escapeRegExp(url)})`, 'gi')
 			return title.replace(regex, '<span class="search-term">$1</span>')
 		},
 		getStatusLabel (status) {

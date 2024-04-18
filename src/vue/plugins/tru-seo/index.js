@@ -6,13 +6,13 @@ import {
 } from '@/vue/stores'
 
 import { markRaw } from 'vue'
-import { decode } from 'he'
 
+import { sanitizeString } from '@/vue/utils/strings'
 import { getPostEditedContent } from '@/vue/plugins/tru-seo/components/postContent'
 import { getPostEditedPermalink } from '@/vue/plugins/tru-seo/components/postPermalink'
 import { getPostEditedTitle } from '@/vue/plugins/tru-seo/components/postTitle'
 import { isBlockEditor } from '@/vue/utils/context'
-import { shouldShowTruSeoScore } from '@/vue/plugins/tru-seo/components/helpers'
+import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
 
 import TruSeoWorker from '@/app/tru-seo/analyzer/main.js?worker'
 
@@ -63,7 +63,7 @@ class TruSeo {
 		}
 
 		const aioseoGlobals = {
-			separator : decode(optionsStore.options.searchAppearance.global.separator)
+			separator : sanitizeString(optionsStore.options.searchAppearance.global.separator)
 		}
 
 		const rootStore = useRootStore()
@@ -140,15 +140,13 @@ class TruSeo {
 	dispatchActions (dispatch, analysisData) {
 		const postEditorStore = usePostEditorStore()
 		dispatch.forEach(d => {
-			if ('updateState' === d.action) {
+			if (
+				'updateState' === d.action &&
+				analysisData.postEditedTitle &&
+				truSeoShouldAnalyze()
+			) {
 				// Update the sidebar score.
-				if (
-					'attachment' !== postEditorStore.currentPost.postType &&
-					shouldShowTruSeoScore() &&
-					analysisData.postEditedTitle
-				) {
-					this.setSidebarButtonScore(d.data.seo_score)
-				}
+				this.setSidebarButtonScore(d.data.seo_score)
 			}
 
 			postEditorStore[d.action](d.data)

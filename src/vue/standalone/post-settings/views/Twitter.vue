@@ -290,6 +290,11 @@ export default {
 		},
 		handleImageUpdate () {
 			this.setImageUrl('twitter')
+		},
+		updateImagePreview (param) {
+			if ('facebook' === param.social) {
+				this.facebookImageUrl = param.image
+			}
 		}
 	},
 	watch : {
@@ -304,20 +309,18 @@ export default {
 		}
 	},
 	mounted () {
-		window.aioseoBus.$on('updateSocialImagePreview', (param) => {
-			if ('facebook' === param.social) {
-				this.facebookImageUrl = param.image
-			}
-		})
+		window.aioseoBus.$on('updateSocialImagePreview', this.updateImagePreview)
+		window.aioseoBus.$on('updateFeaturedImage', this.handleImageUpdate)
 
 		this.scrollToElement()
-		this.setImageUrl('facebook')
-		this.setImageUrl('twitter')
 
-		window.aioseoBus.$on('updateFeaturedImage', this.handleImageUpdate)
+		this.setImageUrl('facebook').then(() => {
+			this.setImageUrl('twitter')
+		})
 	},
 	beforeUnmount () {
 		window.aioseoBus.$off('updateFeaturedImage', this.handleImageUpdate)
+		window.aioseoBus.$off('updateSocialImagePreview', this.updateImagePreview)
 	}
 }
 </script>

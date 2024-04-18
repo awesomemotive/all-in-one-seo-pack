@@ -94,7 +94,7 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
-import { decode } from 'he'
+import { sanitizeString } from '@/vue/utils/strings'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 export default {
@@ -164,7 +164,7 @@ export default {
 				return
 			}
 
-			this.$emit('update:separator', decode(newVal))
+			this.$emit('update:separator', sanitizeString(newVal))
 
 			if (this.separators.concat(this.moreSeparators).concat(this.decodedSeparators).concat(this.decodedMoreSeparators).includes(newVal)) {
 				this.customSeparator = null
@@ -178,13 +178,13 @@ export default {
 				: null
 		},
 		decodedSeparators () {
-			return this.separators.map(separator => decode(separator))
+			return this.separators.map(separator => sanitizeString(separator))
 		},
 		decodedMoreSeparators () {
-			return this.moreSeparators.map(separator => decode(separator))
+			return this.moreSeparators.map(separator => sanitizeString(separator))
 		},
 		decodedCustomSeparator () {
-			return decode(this.hiddenSeparator)
+			return sanitizeString(this.hiddenSeparator)
 		}
 	},
 	methods : {

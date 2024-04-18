@@ -1,4 +1,4 @@
-import { decode } from 'he'
+import { sanitizeString } from '@/vue/utils/strings'
 
 export const useDirtyOptions = () => {
 	const replacer = (key, value) => {
@@ -16,7 +16,7 @@ export const useDirtyOptions = () => {
 		}
 
 		if ('separator' === key) {
-			value = decode(value)
+			value = sanitizeString(value)
 		}
 
 		return null === value ? '' : value

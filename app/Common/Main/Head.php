@@ -75,7 +75,7 @@ class Head {
 	 */
 	public function __construct() {
 		add_action( 'wp', [ $this, 'registerTitleHooks' ], 1000 );
-		add_action( 'wp_head', [ $this, 'init' ], 1 );
+		add_action( 'wp_head', [ $this, 'wpHead' ], 1 );
 
 		$this->title        = new Title();
 		$this->links        = new Meta\Links();
@@ -110,13 +110,14 @@ class Head {
 	}
 
 	/**
-	 * Initializes the class.
+	 * Outputs the head.
 	 *
 	 * @since 4.0.5
+	 * @version 4.6.1
 	 *
 	 * @return void
 	 */
-	public function init() {
+	public function wpHead() {
 		$included = new Meta\Included();
 		if ( is_admin() || wp_doing_ajax() || wp_doing_cron() || ! $included->isIncluded() ) {
 			return;

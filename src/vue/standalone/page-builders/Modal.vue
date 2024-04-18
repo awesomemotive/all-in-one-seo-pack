@@ -14,7 +14,7 @@
 				<div class="aioseo-pagebuilder-modal-header-title">{{ strings.header }}</div>
 
 				<core-score-button
-					v-if="score"
+					v-if="score && truSeoShouldAnalyze()"
 					:score="score"
 					class="aioseo-score-button--active"
 				/>
@@ -35,12 +35,18 @@
 </template>
 
 <script>
+import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
 import CoreScoreButton from '@/vue/components/common/core/ScoreButton'
 import PostSettings from '@/vue/standalone/post-settings/App'
 import SvgClose from '@/vue/components/common/svg/Close'
 import UtilDraggable from '@/vue/components/common/util/Draggable'
 
 export default {
+	setup () {
+		return {
+			truSeoShouldAnalyze
+		}
+	},
 	emits      : [ 'update:is-open' ],
 	components : {
 		CoreScoreButton,

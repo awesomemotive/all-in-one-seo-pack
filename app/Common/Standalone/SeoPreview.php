@@ -39,7 +39,7 @@ class SeoPreview {
 	 */
 	public function __construct() {
 		// Hook into `wp` in order to have access to the WP queried object.
-		add_action( 'wp', [ $this, 'init' ] );
+		add_action( 'wp', [ $this, 'init' ], 20 );
 	}
 
 	/**
@@ -136,7 +136,7 @@ class SeoPreview {
 						'attachment' !== $templateType
 					) {
 						$aioseoPost   = Models\Post::getPost( $wpObject->ID );
-						$pageAnalysis = ! empty( $aioseoPost->page_analysis ) ? json_decode( $aioseoPost->page_analysis ) : [ 'analysis' => [] ];
+						$pageAnalysis = Models\Post::getPageAnalysisDefaults( $aioseoPost->page_analysis );
 						$keyphrases   = Models\Post::getKeyphrasesDefaults( $aioseoPost->keyphrases );
 					}
 				}
@@ -175,13 +175,13 @@ class SeoPreview {
 		}
 
 		return [
-			'editGoogleSnippetUrl'   => isset( $editGoogleSnippetUrl ) ? $editGoogleSnippetUrl : '',
-			'editFacebookSnippetUrl' => isset( $editFacebookSnippetUrl ) ? $editFacebookSnippetUrl : '',
-			'editTwitterSnippetUrl'  => isset( $editTwitterSnippetUrl ) ? $editTwitterSnippetUrl : '',
-			'editObjectBtnText'      => isset( $editObjectBtnText ) ? $editObjectBtnText : '',
-			'editObjectUrl'          => isset( $editObjectUrl ) ? $editObjectUrl : '',
-			'keyphrases'             => isset( $keyphrases ) ? $keyphrases : '',
-			'page_analysis'          => isset( $pageAnalysis ) ? $pageAnalysis : '',
+			'editGoogleSnippetUrl'   => $editGoogleSnippetUrl ?? '',
+			'editFacebookSnippetUrl' => $editFacebookSnippetUrl ?? '',
+			'editTwitterSnippetUrl'  => $editTwitterSnippetUrl ?? '',
+			'editObjectBtnText'      => $editObjectBtnText ?? '',
+			'editObjectUrl'          => $editObjectUrl ?? '',
+			'keyphrases'             => $keyphrases ?? '',
+			'page_analysis'          => $pageAnalysis ?? '',
 			'urls'                   => [
 				'home'        => home_url(),
 				'domain'      => aioseo()->helpers->getSiteDomain(),
@@ -189,7 +189,8 @@ class SeoPreview {
 			],
 			'mainAssetCssQueue'      => aioseo()->core->assets->getJsAssetCssQueue( $this->mainAssetRelativeFilename ),
 			'data'                   => [
-				'isDev' => aioseo()->helpers->isDev()
+				'isDev'    => aioseo()->helpers->isDev(),
+				'siteName' => aioseo()->helpers->getWebsiteName()
 			]
 		];
 	}

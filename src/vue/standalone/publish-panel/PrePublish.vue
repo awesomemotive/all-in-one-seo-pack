@@ -66,7 +66,7 @@ import {
 } from '@/vue/stores'
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
-
+import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
 import { ImagePreview } from '@/vue/mixins/Image'
 import { Tags } from '@/vue/mixins/Tags'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
@@ -137,7 +137,7 @@ export default {
 				return this.allowed(tip.access) && (
 					// Exclude items which require TruSEO to be enabled.
 					'aioseo_page_analysis' !== tip.access ||
-					this.optionsStore.options.advanced.truSeo
+					truSeoShouldAnalyze()
 				)
 			})
 
@@ -326,6 +326,7 @@ export default {
 			display: flex;
 			align-items: center;
 			margin-bottom: 12px;
+			line-height: normal;
 		}
 
 		.icon {

@@ -1,4 +1,5 @@
 import Quill from 'quill'
+import { decode } from 'he'
 
 class Counter {
 	constructor (quill, options) {
@@ -29,7 +30,8 @@ class Counter {
 					const aioTag  = n.querySelector('.aioseo-tag .tag-name')
 					if (aioTag) {
 						const tag     = this.options.tags.find(t => t.name === aioTag.textContent)
-						const newNode = document.createTextNode(this.decodeHtmlEntities(tag.valueText))
+						const value   = 'string' === typeof tag.valueText ? decode(tag.valueText) : tag.valueText
+						const newNode = document.createTextNode(value)
 						fragNew.appendChild(newNode)
 					}
 				}
@@ -45,7 +47,7 @@ class Counter {
 		div.appendChild(fragNew.cloneNode(true))
 
 		html = div.innerHTML.replace(/&nbsp;/gi, ' ').replace(/<br\s*[/]?>/gi, this.single ? '' : '\n').trim()
-		return { length: this.decodeHtmlEntities(html).length, text: html }
+		return { length: decode(html).length, text: html }
 	}
 
 	update () {
@@ -58,18 +60,6 @@ class Counter {
 		if (this.container) {
 			this.container.innerText = length + ' ' + label
 		}
-	}
-
-	decodeHtmlEntities (string) {
-		const element = document.createElement('div')
-		if (string && 'string' === typeof string) {
-			// strip script/html tags
-			string              = string.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '')
-			string              = string.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '')
-			element.innerHTML   = string
-			string              = element.textContent
-		}
-		return string
 	}
 }
 

@@ -2,6 +2,7 @@
 	<div class="aioseo-wpbakery-integration">
 		<core-score-button
 			v-if="isFrontendEditor"
+			:show-score="truSeoShouldAnalyze()"
 			:score="currentPost.seo_score"
 			:class="[
 				isModalOpen ? 'aioseo-score-button--active' : ''
@@ -36,6 +37,7 @@
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePostEditorStore } from '@/vue/stores'
+import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
 import Modal from '../Modal.vue'
 import CoreScoreButton from '@/vue/components/common/core/ScoreButton'
 import SvgAioseoLogoGear from '@/vue/components/common/svg/aioseo/LogoGear'

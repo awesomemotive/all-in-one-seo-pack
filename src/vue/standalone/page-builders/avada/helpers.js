@@ -44,6 +44,28 @@ const getPermalink = () => {
 }
 
 /**
+ * Gets the featured image.
+ *
+ * @returns {string} The featured image.
+ */
+const getFeaturedImage = async () => {
+	const { wp, FusionApp } = window
+
+	if (!wp || !FusionApp || !FusionApp.getDynamicPost('post_meta')._thumbnail_id) {
+		return ''
+	}
+
+	const attachment  = wp.media.attachment(FusionApp.getDynamicPost('post_meta')._thumbnail_id)
+	let featuredImage = ''
+
+	await attachment.fetch().then(() => {
+		featuredImage = attachment.get('url')
+	})
+
+	return featuredImage
+}
+
+/**
  * Gets the data that is specific to this editor.
  *
  * @returns {Object} The editorData object.
@@ -55,6 +77,6 @@ export const getEditorData = () => {
 		excerpt       : '',
 		slug          : getSlug(),
 		permalink     : getPermalink(),
-		featuredImage : ''
+		featuredImage : getFeaturedImage()
 	}
 }

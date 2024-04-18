@@ -29,9 +29,9 @@ class Post extends Model {
 	 * @var array
 	 */
 	protected $jsonFields = [
-		// 'keywords',
+		'keywords',
 		// 'keyphrases',
-		// 'page_analysis',
+		'page_analysis',
 		'schema',
 		// 'schema_type_options',
 		'images',
@@ -39,7 +39,8 @@ class Post extends Model {
 		'open_ai',
 		'options',
 		'local_seo',
-		'primary_term'
+		'primary_term',
+		'og_article_tags'
 	];
 
 	/**
@@ -410,11 +411,11 @@ class Post extends Model {
 		$thePost->title                       = ! empty( $data['title'] ) ? sanitize_text_field( $data['title'] ) : null;
 		$thePost->description                 = ! empty( $data['description'] ) ? sanitize_text_field( $data['description'] ) : null;
 		$thePost->canonical_url               = ! empty( $data['canonicalUrl'] ) ? esc_url_raw( $data['canonicalUrl'] ) : null;
-		$thePost->keywords                    = ! empty( $data['keywords'] ) ? sanitize_text_field( $data['keywords'] ) : null;
+		$thePost->keywords                    = ! empty( $data['keywords'] ) ? aioseo()->helpers->sanitize( $data['keywords'] ) : null;
 		$thePost->pillar_content              = isset( $data['pillar_content'] ) ? rest_sanitize_boolean( $data['pillar_content'] ) : 0;
 		// TruSEO
 		$thePost->keyphrases                  = ! empty( $data['keyphrases'] ) ? wp_json_encode( self::sanitizeKeyphrases( $data['keyphrases'] ) ) : null;
-		$thePost->page_analysis               = ! empty( $data['page_analysis'] ) ? wp_json_encode( self::sanitizePageAnalysis( $data['page_analysis'] ) ) : null;
+		$thePost->page_analysis               = ! empty( $data['page_analysis'] ) ? self::sanitizePageAnalysis( $data['page_analysis'] ) : null;
 		$thePost->seo_score                   = ! empty( $data['seo_score'] ) ? sanitize_text_field( $data['seo_score'] ) : 0;
 		// Sitemap
 		$thePost->priority                    = isset( $data['priority'] ) ? ( 'default' === sanitize_text_field( $data['priority'] ) ? null : (float) $data['priority'] ) : null;
@@ -443,7 +444,7 @@ class Post extends Model {
 		$thePost->og_image_custom_fields      = ! empty( $data['og_image_custom_fields'] ) ? sanitize_text_field( $data['og_image_custom_fields'] ) : null;
 		$thePost->og_video                    = ! empty( $data['og_video'] ) ? sanitize_text_field( $data['og_video'] ) : '';
 		$thePost->og_article_section          = ! empty( $data['og_article_section'] ) ? sanitize_text_field( $data['og_article_section'] ) : null;
-		$thePost->og_article_tags             = ! empty( $data['og_article_tags'] ) ? sanitize_text_field( $data['og_article_tags'] ) : null;
+		$thePost->og_article_tags             = ! empty( $data['og_article_tags'] ) ? aioseo()->helpers->sanitize( $data['og_article_tags'] ) : null;
 		// Twitter Meta
 		$thePost->twitter_title               = ! empty( $data['twitter_title'] ) ? sanitize_text_field( $data['twitter_title'] ) : null;
 		$thePost->twitter_description         = ! empty( $data['twitter_description'] ) ? sanitize_text_field( $data['twitter_description'] ) : null;
@@ -454,14 +455,10 @@ class Post extends Model {
 		$thePost->twitter_image_custom_url    = ! empty( $data['twitter_image_custom_url'] ) ? esc_url_raw( $data['twitter_image_custom_url'] ) : null;
 		$thePost->twitter_image_custom_fields = ! empty( $data['twitter_image_custom_fields'] ) ? sanitize_text_field( $data['twitter_image_custom_fields'] ) : null;
 		// Schema
-		$thePost->schema                      = ! empty( $data['schema'] )
-			? wp_json_encode( self::getDefaultSchemaOptions( $data['schema'] ) )
-			: wp_json_encode( self::getDefaultSchemaOptions() );
+		$thePost->schema                      = ! empty( $data['schema'] ) ? self::getDefaultSchemaOptions( $data['schema'] ) : null;
 		$thePost->local_seo                   = ! empty( $data['local_seo'] ) ? $data['local_seo'] : null;
 		$thePost->limit_modified_date         = isset( $data['limit_modified_date'] ) ? rest_sanitize_boolean( $data['limit_modified_date'] ) : 0;
-		$thePost->open_ai                     = ! empty( $data['open_ai'] )
-			? wp_json_encode( self::getDefaultOpenAiOptions( $data['open_ai'] ) )
-			: wp_json_encode( self::getDefaultOpenAiOptions() );
+		$thePost->open_ai                     = ! empty( $data['open_ai'] ) ? self::getDefaultOpenAiOptions( $data['open_ai'] ) : null;
 		$thePost->updated                     = gmdate( 'Y-m-d H:i:s' );
 		$thePost->primary_term                = ! empty( $data['primary_term'] ) ? $data['primary_term'] : null;
 
@@ -572,9 +569,10 @@ class Post extends Model {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return object The default values.
+	 * @param  object|null $pageAnalysis The page analysis object.
+	 * @return object                    The default values.
 	 */
-	public static function getPageAnalysisDefaults() {
+	public static function getPageAnalysisDefaults( $pageAnalysis = null ) {
 		$defaults = [
 			'analysis' => [
 				'basic'       => [
@@ -601,7 +599,11 @@ class Post extends Model {
 			]
 		];
 
-		return json_decode( wp_json_encode( $defaults ) );
+		if ( empty( $pageAnalysis ) ) {
+			return json_decode( wp_json_encode( $defaults ) );
+		}
+
+		return $pageAnalysis;
 	}
 
 	/**

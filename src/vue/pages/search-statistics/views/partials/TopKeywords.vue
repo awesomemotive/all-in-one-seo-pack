@@ -32,14 +32,14 @@
 							</div>
 
 							<core-tooltip v-if="shouldLimitText(keywords[i-1].keyword)">
-								<span class="limit-line">{{ decode(keywords[i-1].keyword) }}</span>
+								<span class="limit-line">{{ sanitizeString(keywords[i-1].keyword) }}</span>
 
 								<template #tooltip>
-									{{ decode(keywords[i-1].keyword) }}
+									{{ sanitizeString(keywords[i-1].keyword) }}
 								</template>
 							</core-tooltip>
 
-							<span v-else>{{ decode(keywords[i-1].keyword) }}</span>
+							<span v-else>{{ sanitizeString(keywords[i-1].keyword) }}</span>
 
 							<statistic
 								type="clicks"
@@ -63,7 +63,7 @@ import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
-import { decode } from 'he'
+import { sanitizeString } from '@/vue/utils/strings'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Statistic from './Statistic'
@@ -96,9 +96,9 @@ export default {
 		}
 	},
 	methods : {
-		decode,
+		sanitizeString,
 		shouldLimitText (line) {
-			return 60 < decode(line).length
+			return 60 < sanitizeString(line).length
 		}
 	}
 }

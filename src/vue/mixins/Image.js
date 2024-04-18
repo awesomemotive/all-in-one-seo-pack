@@ -16,7 +16,7 @@ export const ImageSourceOptions = {
 		return {
 			excludedTermOptions        : [ 'featured', 'attach', 'content', 'author', 'auto' ],
 			excludedAttachmentOptions  : [ 'featured', 'content', 'author' ],
-			excludedPageBuilderOptions : [ 'featured', 'auto' ]
+			excludedPageBuilderOptions : [ 'auto' ]
 		}
 	},
 	computed : {
@@ -50,9 +50,14 @@ export const ImageSourceOptions = {
 
 			const rootStore = useRootStore()
 			if (rootStore.aioseo.integration) {
-				if ('seedprod' === rootStore.aioseo.integration) {
-					this.excludedPageBuilderOptions.push('featured', 'custom')
+				// Exclude the "featured" option for page builders that do not support it.
+				if (
+					'seedprod' === rootStore.aioseo.integration ||
+					('wpbakery' === rootStore.aioseo.integration && 'admin_frontend_editor' === window.vc_mode)
+				) {
+					this.excludedPageBuilderOptions.push('featured')
 				}
+
 				return options.filter(option => !this.excludedPageBuilderOptions.includes(option.value))
 			}
 			return options
@@ -199,6 +204,10 @@ export const ImagePreview = {
 				default:
 					this.imageUrl = optionsStore.options.social[tab].general.defaultImagePosts
 					break
+			}
+
+			if (!this.imageUrl && optionsStore.options.social[tab].general.defaultImagePosts) {
+				this.imageUrl = optionsStore.options.social[tab].general.defaultImagePosts
 			}
 
 			const rootStore = useRootStore()

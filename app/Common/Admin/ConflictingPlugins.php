@@ -108,7 +108,10 @@ class ConflictingPlugins {
 	 * @return array        An array of conflicting plugins.
 	 */
 	public function getConflictingPlugins( $type ) {
-		$activePlugins = get_option( 'active_plugins' );
+		$activePlugins = wp_get_active_and_valid_plugins();
+		if ( is_multisite() ) {
+			$activePlugins = array_merge( $activePlugins, wp_get_active_network_plugins() );
+		}
 
 		$conflictingPlugins = [];
 		switch ( $type ) {
@@ -133,7 +136,16 @@ class ConflictingPlugins {
 				break;
 		}
 
-		return array_intersect( $conflictingPlugins, $activePlugins );
+		$activeConflictingPlugins = [];
+		foreach ( $activePlugins as $pluginFilePath ) {
+			foreach ( $conflictingPlugins as $index => $pluginPath ) {
+				if ( false !== strpos( $pluginFilePath, $pluginPath ) ) {
+					$activeConflictingPlugins[ $index ] = $pluginPath;
+				}
+			}
+		}
+
+		return $activeConflictingPlugins;
 	}
 
 	/**

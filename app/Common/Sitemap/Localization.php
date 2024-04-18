@@ -50,8 +50,16 @@ class Localization {
 	 * @return array               The entry.
 	 */
 	public function localizeEntry( $entry, $entryId, $objectName, $objectType ) {
-		$translationGroupId = apply_filters( 'wpml_element_trid', null, $entryId );
-		$translations       = apply_filters( 'wpml_get_element_translations', null, $translationGroupId, $objectName );
+		$elementId   = $entryId;
+		$elementType = 'post_' . $objectName;
+		if ( 'term' === $objectType ) {
+			$term        = get_term( $entryId, $objectName );
+			$elementId   = $term->term_taxonomy_id;
+			$elementType = 'tax_' . $objectName;
+		}
+
+		$translationGroupId = apply_filters( 'wpml_element_trid', null, $elementId, $elementType );
+		$translations       = apply_filters( 'wpml_get_element_translations', null, $translationGroupId, $elementType );
 		if ( empty( $translations ) ) {
 			return $entry;
 		}
@@ -67,7 +75,7 @@ class Localization {
 				continue;
 			}
 
-			if ( (int) $entryId === (int) $translation->element_id ) {
+			if ( (int) $elementId === (int) $translation->element_id ) {
 				$entry['language'] = $translation->language_code;
 				continue;
 			}
@@ -80,17 +88,21 @@ class Localization {
 				continue;
 			}
 
-			$permalink = get_permalink( $translatedObjectId );
+			if ( 'post' === $objectType ) {
+				$permalink = get_permalink( $translatedObjectId );
 
-			// Special treatment for the home page translations.
-			if ( 'page' === get_option( 'show_on_front' ) && aioseo()->helpers->wpmlIsHomePage( $entryId ) ) {
-				$permalink = aioseo()->helpers->wpmlHomeUrl( $translation->language_code );
+				// Special treatment for the home page translations.
+				if ( 'page' === get_option( 'show_on_front' ) && aioseo()->helpers->wpmlIsHomePage( $entryId ) ) {
+					$permalink = aioseo()->helpers->wpmlHomeUrl( $translation->language_code );
+				}
+			} else {
+				$permalink = get_term_link( $translatedObjectId, $objectName );
 			}
 
 			$currentLanguage = ! empty( self::$wpml['activeLanguages'][ $translation->language_code ] ) ? self::$wpml['activeLanguages'][ $translation->language_code ] : null;
 			$languageCode    = ! empty( $currentLanguage['tag'] ) ? $currentLanguage['tag'] : $translation->language_code;
 
-			if ( $languageCode && $permalink ) {
+			if ( ! empty( $languageCode ) && ! empty( $permalink ) ) {
 				$entry['languages'][] = [
 					'language' => $languageCode,
 					'location' => $permalink
@@ -196,21 +208,21 @@ class Localization {
 			return true;
 		}
 
+		// Now, we must also check for noindex.
+		$term = get_term( $termId );
+		if ( ! is_a( $term, 'WP_Term' ) ) {
+			return true;
+		}
+
 		// At least one post must be assigned to the term.
 		$posts = aioseo()->core->db->start( 'term_relationships' )
 			->select( 'object_id' )
-			->where( 'term_taxonomy_id =', $termId )
+			->where( 'term_taxonomy_id =', $term->term_taxonomy_id )
 			->limit( 1 )
 			->run()
 			->result();
 
 		if ( empty( $posts ) ) {
-			return true;
-		}
-
-		// Now, we must also check for noindex.
-		$term = get_term( $termId );
-		if ( ! is_a( $term, 'WP_Term' ) ) {
 			return true;
 		}
 

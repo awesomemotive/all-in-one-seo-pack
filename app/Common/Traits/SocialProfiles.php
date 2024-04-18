@@ -31,7 +31,8 @@ trait SocialProfiles {
 		'yelpPageUrl'     => 'https://yelp.com/biz/',
 		'soundCloudUrl'   => 'https://soundcloud.com/',
 		'wikipediaUrl'    => 'https://en.wikipedia.org/wiki/',
-		'myspaceUrl'      => 'https://myspace.com/'
+		'myspaceUrl'      => 'https://myspace.com/',
+		'wordPressUrl'    => 'https://profiles.wordpress.org/',
 	];
 
 	/**
@@ -54,7 +55,8 @@ trait SocialProfiles {
 			'yelpPageUrl'     => aioseo()->options->social->profiles->urls->yelpPageUrl,
 			'soundCloudUrl'   => aioseo()->options->social->profiles->urls->soundCloudUrl,
 			'wikipediaUrl'    => aioseo()->options->social->profiles->urls->wikipediaUrl,
-			'myspaceUrl'      => aioseo()->options->social->profiles->urls->myspaceUrl
+			'myspaceUrl'      => aioseo()->options->social->profiles->urls->myspaceUrl,
+			'wordPressUrl'    => aioseo()->options->social->profiles->urls->wordPressUrl,
 		];
 
 		if ( aioseo()->options->social->profiles->sameUsername->enable ) {

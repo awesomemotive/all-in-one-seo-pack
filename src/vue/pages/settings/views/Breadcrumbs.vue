@@ -245,7 +245,6 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { decode } from 'he'
 import { sanitizeString } from '@/vue/utils/strings'
 import { useWidgets } from '@/vue/composables'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
@@ -362,7 +361,7 @@ export default {
 			return [
 				this.optionsStore.options.breadcrumbs.breadcrumbPrefix ? this.optionsStore.options.breadcrumbs.breadcrumbPrefix : '',
 				this.optionsStore.options.breadcrumbs.homepageLink ? homepageLabel : ''
-			].filter(item => !!item).map(item => decode(item))
+			].filter(item => !!item).map(item => sanitizeString(item))
 		},
 		getPostPreview () {
 			return [ ...this.getRootPreview(), ...[
@@ -370,22 +369,22 @@ export default {
 				this.strings.category,
 				this.strings.subcategory,
 				this.strings.articleTitle
-			] ].filter(item => !!item).map(item => decode(item))
+			] ].filter(item => !!item).map(item => sanitizeString(item))
 		},
 		getArchivePreview () {
 			return [ ...this.getRootPreview(), ...[
 				this.getArchivesOfText
-			] ].filter(item => !!item).map(item => decode(item))
+			] ].filter(item => !!item).map(item => sanitizeString(item))
 		},
 		getSearchPreview () {
 			return [ ...this.getRootPreview(), ...[
 				this.getSearchForText
-			] ].filter(item => !!item).map(item => decode(item))
+			] ].filter(item => !!item).map(item => sanitizeString(item))
 		},
 		get404Preview () {
 			return [ ...this.getRootPreview(), ...[
 				this.optionsStore.options.breadcrumbs.errorFormat404
-			] ].filter(item => !!item).map(item => decode(item))
+			] ].filter(item => !!item).map(item => sanitizeString(item))
 		},
 		sanitizeString
 	},

@@ -73,7 +73,7 @@ class Access {
 	 */
 	public function __construct() {
 		// First load the roles so that we can pull the roles from the other plugins.
-		$this->setRoles();
+		add_action( 'plugins_loaded', [ $this, 'setRoles' ], 999 );
 
 		// Load later again so that we can pull the roles lately registered.
 		// This needs to run before 1000 so that our update migrations and other hook callbacks can pull the roles.

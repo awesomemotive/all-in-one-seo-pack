@@ -77,9 +77,9 @@
 				<base-select
 					multiple
 					taggable
-					:options="getJsonValue(postEditorStore.currentPost.keywords) || []"
-					:modelValue="getJsonValue(postEditorStore.currentPost.keywords) || []"
-					@update:modelValue="values => postEditorStore.currentPost.keywords = setJsonValue(values)"
+					:options="[]"
+					:modelValue="postEditorStore.currentPost.keywords || []"
+					@update:modelValue="values => postEditorStore.currentPost.keywords = values"
 					:tag-placeholder="strings.tagPlaceholder"
 				/>
 			</template>
@@ -93,7 +93,6 @@ import {
 	usePostEditorStore
 } from '@/vue/stores'
 
-import { JsonValues } from '@/vue/mixins/JsonValues'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreSingleRobotsMeta from '@/vue/components/common/core/SingleRobotsMeta'
@@ -110,8 +109,7 @@ export default {
 		CoreSettingsRow,
 		CoreSingleRobotsMeta
 	},
-	mixins : [ JsonValues ],
-	props  : {
+	props : {
 		disabled : {
 			type : Boolean,
 			default () {

@@ -4,7 +4,7 @@ import {
 } from '@/vue/stores'
 
 import { shouldShowMetaBox } from '@/vue/utils/metabox'
-import { shouldShowTruSeoScore } from '@/vue/plugins/tru-seo/components/helpers'
+import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
 import { isBlockEditor } from '@/vue/utils/context'
 import { __ } from '@wordpress/i18n'
 
@@ -31,10 +31,10 @@ export default function registerScoreToggler () {
 	const score                     = postEditorStore.currentPost.seo_score
 	const naString                  = __('N/A', td)
 	const scoreClass                = function (score) {
-		if (!analysisCapability || !shouldShowTruSeoScore()) {
+		if (!analysisCapability || !truSeoShouldAnalyze()) {
 			return 'score-disabled'
 		}
-		return 80 < score ? 'score-green' : 50 < score ? 'score-orange' : 1 < score ? 'score-red' : 'score-disabled'
+		return 80 < score ? 'score-green' : (50 < score ? 'score-orange' : (1 < score ? 'score-red' : 'score-disabled'))
 	}
 
 	const AioseoIcon = el('svg',

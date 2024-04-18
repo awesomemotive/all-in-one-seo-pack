@@ -1,5 +1,5 @@
 <template>
-	<div class="aioseo-tools-database-tools">
+	<div class="aioseo-tools-database-tools-lite">
 		<core-card
 			slug="databaseTools"
 			:header-text="strings.resetRestoreSettings"
@@ -30,7 +30,7 @@
 					{{ strings.ctaHeader }}
 				</template>
 				<template #description>
-					<!-- <required-plans addon="aioseo-redirects" /> -->
+					<required-plans :core-feature="[ 'tools', 'network-tools-database' ]" />
 					{{ strings.networkDatabaseToolsDescription }}
 				</template>
 			</cta>
@@ -45,9 +45,11 @@ import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreResetSettings from '@/vue/components/common/core/ResetSettings'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import Cta from '@/vue/components/common/cta/Index'
+import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans.vue'
 export default {
 	mixins     : [ Network ],
 	components : {
+		RequiredPlans,
 		CoreBlur,
 		CoreCard,
 		CoreResetSettings,
@@ -82,7 +84,11 @@ export default {
 </script>
 
 <style lang="scss">
-.aioseo-tools-database-tools {
+.aioseo-tools-database-tools-lite {
+	.aioseo-card .content {
+		padding-bottom: 120px;
+	}
+
 	.clear-log {
 		svg {
 			width: 12px;

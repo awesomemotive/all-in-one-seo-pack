@@ -176,9 +176,9 @@
 					<base-select
 						multiple
 						taggable
-						:options="getJsonValue(postEditorStore.currentPost.og_article_tags) || []"
-						:modelValue="getJsonValue(postEditorStore.currentPost.og_article_tags) || []"
-						@update:modelValue="values => postEditorStore.currentPost.og_article_tags = setJsonValue(values)"
+						:options="[]"
+						:modelValue="postEditorStore.currentPost.og_article_tags || []"
+						@update:modelValue="values => postEditorStore.currentPost.og_article_tags = values"
 						:tag-placeholder="strings.tagPlaceholder"
 					/>
 				</template>
@@ -195,7 +195,6 @@ import {
 } from '@/vue/stores'
 
 import { ImageSourceOptions, ImagePreview } from '@/vue/mixins/Image'
-import { JsonValues } from '@/vue/mixins/JsonValues'
 import { MaxCounts } from '@/vue/mixins/MaxCounts'
 import { Tags } from '@/vue/mixins/Tags'
 import { objectType } from '@/vue/mixins/PostSocial'
@@ -222,7 +221,7 @@ export default {
 		CoreImageUploader,
 		CoreSettingsRow
 	},
-	mixins : [ ImageSourceOptions, ImagePreview, JsonValues, MaxCounts, Tags, objectType ],
+	mixins : [ ImageSourceOptions, ImagePreview, MaxCounts, Tags, objectType ],
 	props  : {
 		isMobilePreview : {
 			type : Boolean,

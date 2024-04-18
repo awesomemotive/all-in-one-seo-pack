@@ -12,7 +12,7 @@
 				class="aioseo-breadcrumb-separator"
 				v-if="1 < previewLength && index > 0 && index < previewLength"
 			>
-				{{ decode(optionsStore.options.breadcrumbs.separator) }}
+				{{ sanitizeString(optionsStore.options.breadcrumbs.separator) }}
 			</span>
 
 			<span
@@ -36,7 +36,7 @@ import {
 } from '@/vue/stores'
 
 import { decode } from 'he'
-import { softSanitizeHtml } from '@/vue/utils/strings'
+import { sanitizeString, softSanitizeHtml } from '@/vue/utils/strings'
 
 export default {
 	setup () {
@@ -68,7 +68,7 @@ export default {
 			}
 			return crumbs
 		},
-		decode
+		sanitizeString
 	}
 }
 </script>

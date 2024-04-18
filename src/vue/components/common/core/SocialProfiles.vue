@@ -128,6 +128,7 @@ import SvgIconSoundCloud from '@/vue/components/common/svg/icon/SoundCloud'
 import SvgIconTumblr from '@/vue/components/common/svg/icon/Tumblr'
 import SvgIconTwitter from '@/vue/components/common/svg/icon/Twitter'
 import SvgIconWikipedia from '@/vue/components/common/svg/icon/Wikipedia'
+import SvgIconWordPress from '@/vue/components/common/svg/icon/WordPress'
 import SvgIconYelp from '@/vue/components/common/svg/icon/Yelp'
 import SvgIconYoutube from '@/vue/components/common/svg/icon/Youtube'
 
@@ -155,6 +156,7 @@ export default {
 		SvgIconTumblr,
 		SvgIconTwitter,
 		SvgIconWikipedia,
+		SvgIconWordPress,
 		SvgIconYelp,
 		SvgIconYoutube
 	},
@@ -327,6 +329,16 @@ export default {
 					validation : [
 						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?myspace\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your MySpace URL is invalid. Please check the format and try again.', this.$td)
 					]
+				},
+				{
+					key        : 'wordPressUrl',
+					name       : 'WordPress',
+					label      : 'WordPress URL',
+					url        : 'https://profiles.wordpress.org',
+					svg        : 'svg-icon-word-press',
+					validation : [
+						v => /^https:\/\/profiles\.wordpress\.org\/[a-zA-Z0-9-]+\/?$/.test(v) || this.$t.__('Your WordPress URL is invalid. Please check the format and try again.', this.$td)
+					]
 				}
 			]
 		}
@@ -452,7 +464,7 @@ export default {
 			> .aioseo-settings-row {
 				margin: 16px 0 0 24px;
 				flex-direction: column;
-				max-width: 570px;
+				max-width: 720px;
 				gap: 4px;
 				flex-wrap: nowrap;
 
@@ -466,7 +478,7 @@ export default {
 
 				--aioseo-gutter: 12px;
 
-				@include aioseoGrid(4, 130px);
+				@include aioseoGrid(5, 130px);
 
 				.aioseo-col {
 					max-width: none;

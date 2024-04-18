@@ -67,7 +67,8 @@ class SocialMeta {
 			'myspace_url'   => [ 'type' => 'string', 'newOption' => [ 'social', 'profiles', 'urls', 'myspaceUrl' ] ],
 			'pinterest_url' => [ 'type' => 'string', 'newOption' => [ 'social', 'profiles', 'urls', 'pinterestUrl' ] ],
 			'youtube_url'   => [ 'type' => 'string', 'newOption' => [ 'social', 'profiles', 'urls', 'youtubeUrl' ] ],
-			'wikipedia_url' => [ 'type' => 'string', 'newOption' => [ 'social', 'profiles', 'urls', 'wikipediaUrl' ] ]
+			'wikipedia_url' => [ 'type' => 'string', 'newOption' => [ 'social', 'profiles', 'urls', 'wikipediaUrl' ] ],
+			'wordpress_url' => [ 'type' => 'string', 'newOption' => [ 'social', 'profiles', 'urls', 'wordPressUrl' ] ],
 		];
 
 		if ( ! empty( $this->options['twitter_site'] ) ) {

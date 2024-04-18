@@ -225,12 +225,15 @@ class Keywords {
 	/**
 	 * Extract keywords and then return as a string.
 	 *
-	 * @param  string $keywords A json encoded string of keywords.
-	 * @return string           A string of keywords that were extracted.
+	 * @since 4.0.0
+	 *
+	 * @param  array|string $keywords An array of keywords or a json string.
+	 * @return array                  An array of keywords that were extracted.
 	 */
 	public function extractMetaKeywords( $keywords ) {
 		$extracted = [];
-		$keywords  = ! empty( $keywords ) ? json_decode( $keywords ) : null;
+
+		$keywords = is_string( $keywords ) ? json_decode( $keywords ) : $keywords;
 
 		if ( ! empty( $keywords ) ) {
 			foreach ( $keywords as $keyword ) {

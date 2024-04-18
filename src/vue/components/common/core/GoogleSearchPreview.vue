@@ -255,7 +255,7 @@ export default {
 			type : String,
 			default () {
 				const rootStore = useRootStore()
-				return rootStore.aioseo.urls.domain
+				return rootStore.aioseo.data.siteName || rootStore.aioseo.urls.domain
 			}
 		},
 		url : {

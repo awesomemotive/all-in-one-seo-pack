@@ -2,9 +2,10 @@ import {
 	usePostEditorStore
 } from '@/vue/stores'
 
-import { isBlockEditor, isClassicEditor, isClassicNoEditor, isElementorEditor, isDiviEditor } from '@/vue/utils/context'
+import { isBlockEditor, isClassicEditor, isClassicNoEditor, isElementorEditor, isDiviEditor, isAvadaEditor } from '@/vue/utils/context'
 import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
 import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
+import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
 
 /**
  * Get the Classic Editor featured image.
@@ -105,6 +106,10 @@ export const getPostEditedFeaturedImage = async () => {
 
 	if (isDiviEditor()) {
 		return getDiviData().featuredImage
+	}
+
+	if (isAvadaEditor()) {
+		return getAvadaData().featuredImage
 	}
 
 	return ''

@@ -34,11 +34,11 @@
 							href="#"
 							@click.prevent="editRow(index); toggleRow(index)"
 						>
-							{{ decode(row.keyword) }}
+							{{ sanitizeString(row.keyword) }}
 						</a>
 
 						<template #tooltip>
-							{{ decode(row.keyword) }}
+							{{ sanitizeString(row.keyword) }}
 						</template>
 					</core-tooltip>
 
@@ -47,7 +47,7 @@
 						href="#"
 						@click.prevent="editRow(index); toggleRow(index)"
 					>
-						{{ decode(row.keyword) }}
+						{{ sanitizeString(row.keyword) }}
 					</a>
 				</div>
 			</template>
@@ -145,8 +145,8 @@ import {
 
 import numbers from '@/vue/utils/numbers'
 import { clone } from 'lodash-es'
-import { decode } from 'he'
 import { WpTable } from '@/vue/mixins/WpTable'
+import { sanitizeString } from '@/vue/utils/strings'
 import PostTypesMixin from '@/vue/mixins/PostTypes.js'
 import Table from '../../mixins/Table.js'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
@@ -326,7 +326,7 @@ export default {
 		}
 	},
 	methods : {
-		decode,
+		sanitizeString,
 		isRowActive (index) {
 			return index === this.activeRow
 		},
@@ -359,7 +359,7 @@ export default {
 			return !!this.$slots[name]
 		},
 		shouldLimitText (line) {
-			return 120 < decode(line).length
+			return 120 < sanitizeString(line).length
 		},
 		maybePreloadPages () {
 			if (!this.searchStatisticsStore.isConnected || this.isPreloading) {

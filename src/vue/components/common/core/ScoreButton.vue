@@ -6,7 +6,9 @@
 	>
 		<slot name="icon" />
 
-		{{ (score === 0) ? 'N/A' : `${score}/100` }}
+		<template v-if="showScore">
+			{{ (score === 0) ? 'N/A' : `${score}/100` }}
+		</template>
 	</div>
 </template>
 
@@ -14,6 +16,10 @@
 import { computed } from 'vue'
 
 const props = defineProps({
+	showScore : {
+		type    : Boolean,
+		default : true
+	},
 	score : {
 		type    : Number,
 		default : 0
@@ -29,6 +35,10 @@ const buttonId = computed(() => {
 })
 
 const scoreClass = computed(() => {
+	if (!props.showScore) {
+		return 'score-disabled'
+	}
+
 	if (80 < props.score) {
 		return 'score-green'
 	}
@@ -71,7 +81,7 @@ const scoreClass = computed(() => {
 	font-weight: 700;
 	line-height: 125%;
 	color: #a1a1a1;
-	border: 1px solid #a1a1a1;
+	border: 1px solid currentcolor;
 	border-radius: 2px;
 
 	svg {
@@ -79,40 +89,37 @@ const scoreClass = computed(() => {
 		vertical-align: middle;
 	}
 
-	&.score-red,
-	&.score-none {
-		border-color: $red;
+	&.score-red {
 		color: $red !important;
 	}
 
 	&.score-orange {
-		border-color: $orange;
 		color: $orange !important;
 	}
 
 	&.score-green {
-		border-color: $green;
 		color: $green !important;
 	}
 
 	&--active {
-		&.score-red,
-		&.score-none {
+		&.score-red {
 			background: $red !important;
 			color: $white !important;
-			border-color: $white;
 		}
 
 		&.score-orange {
 			background: $orange !important;
 			color: $white !important;
-			border-color: $white;
 		}
 
 		&.score-green {
 			background: $green !important;
 			color: $white !important;
-			border-color: $white;
+		}
+
+		&.score-disabled {
+			background: $blue !important;
+			color: $white !important;
 		}
 	}
 

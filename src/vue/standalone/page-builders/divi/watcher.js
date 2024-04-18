@@ -65,17 +65,19 @@ export default ({ wp, addEventListener }) => {
 		'et.builder.store.setting.update',
 		'aioseo',
 		(value, setting) => {
-			if (value) {
-				switch (setting) {
-					case 'et_pb_post_settings_title':
-						set(ETBuilderBackendDynamic, 'postTitle', value)
-						debounce(handleEditorChange, 1000)
-						break
-					case 'et_pb_post_settings_excerpt':
-						set(ETBuilderBackendDynamic, 'postMeta.post_excerpt', value)
-						debounce(handleEditorChange, 1000)
-						break
-				}
+			switch (setting) {
+				case 'et_pb_post_settings_title':
+					set(ETBuilderBackendDynamic, 'postTitle', value)
+					debounce(handleEditorChange, 1000)
+					break
+				case 'et_pb_post_settings_excerpt':
+					set(ETBuilderBackendDynamic, 'postMeta.post_excerpt', value)
+					debounce(handleEditorChange, 1000)
+					break
+				case 'et_pb_post_settings_image':
+					set(ETBuilderBackendDynamic, 'currentPage.thumbnailId', value)
+					debounce(handleEditorChange, 1000)
+					break
 			}
 			return value
 		}

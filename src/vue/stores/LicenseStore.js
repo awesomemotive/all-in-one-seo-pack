@@ -75,6 +75,8 @@ export const useLicenseStore = defineStore('LicenseStore', {
 						})
 						this.license = response.body.license
 
+						rootStore.aioseo.data.isNetworkLicensed = rootStore.aioseo.data.isNetworkAdmin
+
 						this.clearLicenseNotices()
 					}
 

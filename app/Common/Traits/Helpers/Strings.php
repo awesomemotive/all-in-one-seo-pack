@@ -355,11 +355,11 @@ trait Strings {
 	 * @return string       The comma separated values.
 	 */
 	public function jsonTagsToCommaSeparatedList( $tags ) {
-		$tags = json_decode( $tags );
+		$tags = is_string( $tags ) ? json_decode( $tags ) : $tags;
 
 		$values = [];
 		foreach ( $tags as $k => $tag ) {
-			$values[ $k ] = $tag->value;
+			$values[ $k ] = is_object( $tag ) ? $tag->value : $tag['value'];
 		}
 
 		return implode( ',', $values );

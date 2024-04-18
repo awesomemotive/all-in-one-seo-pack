@@ -252,14 +252,18 @@ trait WpMultisite {
 	 * @since 4.2.5
 	 *
 	 * @param  int  $blogId The blog ID to switch to.
-	 * @return bool         Always returns true.
+	 * @return bool         Whether the blog was switched to or not.
 	 */
 	public function switchToBlog( $blogId ) {
 		if ( ! is_multisite() ) {
-			return true;
+			return false;
 		}
 
-		return switch_to_blog( $blogId );
+		switch_to_blog( $blogId );
+
+		aioseo()->core->db->init();
+
+		return true;
 	}
 
 	/**
@@ -267,14 +271,18 @@ trait WpMultisite {
 	 *
 	 * @since 4.2.5
 	 *
-	 * @return bool True on success, false if we're already on the current blog or not in a multisite environment.
+	 * @return bool Whether the blog was restored or not.
 	 */
 	public function restoreCurrentBlog() {
 		if ( ! is_multisite() ) {
 			return false;
 		}
 
-		return restore_current_blog();
+		restore_current_blog();
+
+		aioseo()->core->db->init();
+
+		return true;
 	}
 
 	/**

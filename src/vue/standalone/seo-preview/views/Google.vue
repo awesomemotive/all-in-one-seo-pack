@@ -8,7 +8,6 @@
         <core-google-search-preview
 			:focus-keyphrase="rootStore.aioseo?.keyphrases?.focus?.keyphrase ?? ''"
             :device="device"
-            :hostname="googleData.hostname"
             :url="googleData.url"
             :title="googleData.title"
             :description="googleData.description"

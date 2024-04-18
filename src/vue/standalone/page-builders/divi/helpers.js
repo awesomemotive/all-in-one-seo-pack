@@ -1,5 +1,5 @@
 /* globals ETBuilderBackendDynamic, ET_Builder */
-import { get } from 'lodash-es'
+import { get, set } from 'lodash-es'
 import { getText, getImages } from '@/vue/utils/html'
 
 /**
@@ -73,6 +73,30 @@ export const getPermalink = () => {
 }
 
 /**
+ * Gets the featured image.
+ *
+ * @returns {string} The featured image.
+ */
+const getFeaturedImage = async () => {
+	const { wp } = window
+
+	const thumbId = get(ETBuilderBackendDynamic, 'currentPage.thumbnailId', 0)
+	if (!wp || 0 === thumbId) {
+		return ''
+	}
+
+	const attachment  = wp.media.attachment(thumbId)
+	let featuredImage = ''
+
+	await attachment.fetch().then(() => {
+		featuredImage = attachment.get('url')
+		set(ETBuilderBackendDynamic, 'currentPage.thumbnailUrl', featuredImage)
+	})
+
+	return featuredImage
+}
+
+/**
  * Gets the data that is specific to this editor.
  *
  * @returns {Object} The editorData object.
@@ -84,6 +108,6 @@ export const getEditorData = () => {
 		excerpt       : get(ETBuilderBackendDynamic, 'postMeta.post_excerpt', ''),
 		slug          : get(ETBuilderBackendDynamic, 'postMeta.post_name', ''),
 		permalink     : getPermalink(),
-		featuredImage : get(ETBuilderBackendDynamic, 'currentPage.thumbnailUrl', '')
+		featuredImage : getFeaturedImage()
 	}
 }

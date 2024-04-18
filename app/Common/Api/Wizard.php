@@ -223,6 +223,10 @@ class Wizard {
 					if ( ! empty( $urls['googlePlacesUrl'] ) ) {
 						$options->social->profiles->urls->googlePlacesUrl = $urls['googlePlacesUrl'];
 					}
+
+					if ( ! empty( $urls['wordPressUrl'] ) ) {
+						$options->social->profiles->urls->wordPressUrl = $urls['wordPressUrl'];
+					}
 				}
 			}
 

@@ -60,7 +60,8 @@ export const useSetupWizardStore = defineStore('SetupWizardStore', {
 						soundCloudUrl   : null,
 						wikipediaUrl    : null,
 						myspaceUrl      : null,
-						googlePlacesUrl : null
+						googlePlacesUrl : null,
+						wordPressUrl    : null
 					}
 				}
 			}

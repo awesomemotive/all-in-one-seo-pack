@@ -223,7 +223,7 @@ class Helpers {
 			$keywords[] = $keyword;
 		}
 
-		return wp_json_encode( $keywords );
+		return $keywords;
 	}
 
 	/**

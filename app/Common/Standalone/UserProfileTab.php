@@ -167,7 +167,8 @@ class UserProfileTab {
 			'yelpPageUrl'     => '',
 			'soundCloudUrl'   => '',
 			'wikipediaUrl'    => '',
-			'myspaceUrl'      => ''
+			'myspaceUrl'      => '',
+			'wordPressUrl'    => '',
 		];
 	}
 }
