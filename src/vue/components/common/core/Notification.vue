@@ -1,6 +1,7 @@
 <template>
 	<transition-slide
 		class="aioseo-notification"
+		:class="[ `aioseo-notification-${notification.notification_name}` ]"
 		:active="active"
 	>
 		<div>
@@ -28,7 +29,8 @@
 					<base-button
 						v-if="notification.button1_label && notification.button1_action"
 						size="small"
-						type="gray"
+						:type="getButtonType(1)"
+						class="aioseo-button1"
 						:tag="getTagType(notification.button1_action)"
 						:href="getHref(notification.button1_action)"
 						:target="getTarget(notification.button1_action)"
@@ -41,7 +43,8 @@
 					<base-button
 						v-if="notification.button2_label && notification.button2_action"
 						size="small"
-						type="gray"
+						:type="getButtonType(2)"
+						class="aioseo-button2"
 						:tag="getTagType(notification.button2_action)"
 						:href="getHref(notification.button2_action)"
 						:target="getTarget(notification.button2_action)"
@@ -129,6 +132,15 @@ export default {
 			this.active = false
 			this.notificationsStore.dismissNotifications([ this.notification.slug ])
 			this.$emit('dismissed-notification')
+		},
+		getButtonType () {
+			switch (this.notification.notification_name) {
+				case 'search-console-site-not-connected':
+				case 'search-console-site-not-verified':
+					return 'blue'
+				default:
+					return 'gray'
+			}
 		}
 	}
 }

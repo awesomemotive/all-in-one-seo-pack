@@ -565,14 +565,16 @@ TEMPLATE
 	 * @return void
 	 */
 	public function sanitizeAndSave( $options ) {
-		$sitemapOptions           = ! empty( $options['sitemap']['general'] ) ? $options['sitemap']['general'] : null;
-		$oldSitemapOptions        = aioseo()->options->sitemap->general->all();
-		$deprecatedSitemapOptions = ! empty( $options['deprecated']['sitemap']['general'] )
+		$sitemapOptions                  = ! empty( $options['sitemap'] ) ? $options['sitemap'] : null;
+		$oldSitemapOptions               = aioseo()->options->sitemap->all();
+		$generalSitemapOptions           = ! empty( $options['sitemap']['general'] ) ? $options['sitemap']['general'] : null;
+		$oldGeneralSitemapOptions        = aioseo()->options->sitemap->general->all();
+		$deprecatedGeneralSitemapOptions = ! empty( $options['deprecated']['sitemap']['general'] )
 				? $options['deprecated']['sitemap']['general']
 				: null;
-		$oldDeprecatedSitemapOptions = aioseo()->options->deprecated->sitemap->general->all();
-		$oldPhoneOption              = aioseo()->options->searchAppearance->global->schema->phone;
-		$phoneNumberOptions          = isset( $options['searchAppearance']['global']['schema']['phone'] )
+		$oldDeprecatedGeneralSitemapOptions = aioseo()->options->deprecated->sitemap->general->all();
+		$oldPhoneOption                     = aioseo()->options->searchAppearance->global->schema->phone;
+		$phoneNumberOptions                 = isset( $options['searchAppearance']['global']['schema']['phone'] )
 				? $options['searchAppearance']['global']['schema']['phone']
 				: null;
 		$oldHtmlSitemapUrl = aioseo()->options->sitemap->html->pageUrl;
@@ -645,16 +647,16 @@ TEMPLATE
 
 		// If sitemap settings were changed, static files need to be regenerated.
 		if (
-			! empty( $deprecatedSitemapOptions ) &&
-			! empty( $sitemapOptions )
+			! empty( $deprecatedGeneralSitemapOptions ) &&
+			! empty( $generalSitemapOptions )
 		) {
 			if (
 				(
-					aioseo()->helpers->arraysDifferent( $oldSitemapOptions, $sitemapOptions ) ||
-					aioseo()->helpers->arraysDifferent( $oldDeprecatedSitemapOptions, $deprecatedSitemapOptions )
+					aioseo()->helpers->arraysDifferent( $oldGeneralSitemapOptions, $generalSitemapOptions ) ||
+					aioseo()->helpers->arraysDifferent( $oldDeprecatedGeneralSitemapOptions, $deprecatedGeneralSitemapOptions )
 				) &&
-				$sitemapOptions['advancedSettings']['enable'] &&
-				! $deprecatedSitemapOptions['advancedSettings']['dynamic']
+				$generalSitemapOptions['advancedSettings']['enable'] &&
+				! $deprecatedGeneralSitemapOptions['advancedSettings']['dynamic']
 			) {
 				aioseo()->sitemap->scheduleRegeneration();
 			}
@@ -663,6 +665,10 @@ TEMPLATE
 		// Add or remove schedule for clearing crawl cleanup logs.
 		if ( ! empty( $logsRetention ) && $oldLogsRetention !== $logsRetention ) {
 			aioseo()->crawlCleanup->scheduleClearingLogs();
+		}
+
+		if ( ! empty( $sitemapOptions ) ) {
+			aioseo()->searchStatistics->sitemap->maybeSync( $oldSitemapOptions, $sitemapOptions );
 		}
 
 		// This is required in order for the Pro options to be refreshed before they save data again.

@@ -19,6 +19,7 @@ export const useSetupWizardStore = defineStore('SetupWizardStore', {
 			'features',
 			'search-appearance',
 			'smart-recommendations',
+			'search-console',
 			'license-key'
 		],
 		importers : [],

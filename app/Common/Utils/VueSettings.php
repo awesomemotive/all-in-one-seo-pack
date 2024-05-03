@@ -125,7 +125,9 @@ class VueSettings {
 			'overviewPostType'              => 'post',
 		],
 		'dismissedAlerts' => [
-			'searchStatisticsContentRankings' => false
+			'searchStatisticsContentRankings' => false,
+			'searchConsoleNotConnected'       => false,
+			'searchConsoleSitemapErrors'      => false
 		],
 		'internalTabs'    => [
 			'authorArchives'    => 'title-description',

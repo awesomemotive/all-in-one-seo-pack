@@ -36,7 +36,9 @@ class Api {
 			'post'                                        => [ 'callback' => [ 'PostsTerms', 'getPostData' ], 'access' => 'everyone' ],
 			'post/(?P<postId>[\d]+)/first-attached-image' => [ 'callback' => [ 'PostsTerms', 'getFirstAttachedImage' ], 'access' => 'aioseo_page_social_settings' ],
 			'user/(?P<userId>[\d]+)/image'                => [ 'callback' => [ 'User', 'getUserImage' ], 'access' => 'aioseo_page_social_settings' ],
-			'tags'                                        => [ 'callback' => [ 'Tags', 'getTags' ], 'access' => 'everyone' ]
+			'tags'                                        => [ 'callback' => [ 'Tags', 'getTags' ], 'access' => 'everyone' ],
+			'search-statistics/url/auth'                  => [ 'callback' => [ 'SearchStatistics', 'getAuthUrl' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings', 'aioseo_setup_wizard' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+			'search-statistics/url/reauth'                => [ 'callback' => [ 'SearchStatistics', 'getReauthUrl' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ]
 		],
 		'POST'   => [
 			'htaccess'                                              => [ 'callback' => [ 'Tools', 'saveHtaccess' ], 'access' => 'aioseo_tools_settings' ],
@@ -90,7 +92,8 @@ class Api {
 			'plugins/install'                                       => [ 'callback' => [ 'Plugins', 'installPlugins' ], 'access' => [ 'install_plugins', 'aioseo_feature_manager_settings' ] ],
 			'plugins/upgrade'                                       => [ 'callback' => [ 'Plugins', 'upgradePlugins' ], 'access' => [ 'update_plugins', 'aioseo_feature_manager_settings' ] ],
 			'reset-settings'                                        => [ 'callback' => [ 'Settings', 'resetSettings' ], 'access' => 'aioseo_tools_settings' ],
-			'settings/export'                                       => [ 'callback' => [ 'Settings', 'exportSettings' ], 'access' => 'aioseo_tools_settings' ],
+			'search-statistics/sitemap/delete'                      => [ 'callback' => [ 'SearchStatistics', 'deleteSitemap' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+			'search-statistics/sitemap/ignore'                      => [ 'callback' => [ 'SearchStatistics', 'ignoreSitemap' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 			'settings/hide-setup-wizard'                            => [ 'callback' => [ 'Settings', 'hideSetupWizard' ], 'access' => 'any' ],
 			'settings/hide-upgrade-bar'                             => [ 'callback' => [ 'Settings', 'hideUpgradeBar' ], 'access' => 'any' ],
 			'settings/import'                                       => [ 'callback' => [ 'Settings', 'importSettings' ], 'access' => 'aioseo_tools_settings' ],
@@ -141,7 +144,8 @@ class Api {
 			],
 		],
 		'DELETE' => [
-			'backup' => [ 'callback' => [ 'Tools', 'deleteBackup' ], 'access' => 'aioseo_tools_settings' ]
+			'backup'                 => [ 'callback' => [ 'Tools', 'deleteBackup' ], 'access' => 'aioseo_tools_settings' ],
+			'search-statistics/auth' => [ 'callback' => [ 'SearchStatistics', 'deleteAuth' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ]
 		]
 		// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 	];

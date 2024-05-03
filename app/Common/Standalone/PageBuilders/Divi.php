@@ -221,21 +221,4 @@ class Divi extends Base {
 
 		return ! empty( $_REQUEST['options']['conditional_tags']['aioseo_limit_modified_date'] );
 	}
-
-	/**
-	 * Returns the processed page builder content.
-	 *
-	 * @since 4.6.1
-	 *
-	 * @param  int    $postId  The post id.
-	 * @param  string $content The raw content.
-	 * @return string          The processed content.
-	 */
-	public function processContent( $postId, $content = '' ) {
-		if ( function_exists( 'et_builder_add_main_elements' ) && ! did_action( 'et_builder_ready' ) ) {
-			et_builder_add_main_elements();
-		}
-
-		return parent::processContent( $postId, $content );
-	}
 }

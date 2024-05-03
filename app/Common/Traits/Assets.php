@@ -371,7 +371,10 @@ trait Assets {
 		}
 
 		$manifestJson = ''; // This is set in the view.
-		require $this->manifestFile;
+
+		if ( file_exists( $this->manifestFile ) ) {
+			require_once $this->manifestFile;
+		}
 
 		$file = json_decode( $manifestJson, true );
 

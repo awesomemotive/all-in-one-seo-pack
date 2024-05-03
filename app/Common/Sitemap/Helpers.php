@@ -459,7 +459,8 @@ class Helpers {
 	/**
 	 * Returns the URLs of all active sitemaps.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.6.2 Removed the prefix from the list of URLs.
 	 *
 	 * @return array $urls The sitemap URLs.
 	 */
@@ -481,6 +482,19 @@ class Helpers {
 		if ( aioseo()->options->sitemap->rss->enable ) {
 			$urls[] = $this->getUrl( 'rss' );
 		}
+
+		return $urls;
+	}
+
+	/**
+	 * Returns the URLs of all active sitemaps with the 'Sitemap: ' prefix.
+	 *
+	 * @since 4.6.2
+	 *
+	 * @return array $urls The sitemap URLs.
+	 */
+	public function getSitemapUrlsPrefixed() {
+		$urls = $this->getSitemapUrls();
 
 		foreach ( $urls as &$url ) {
 			$url = 'Sitemap: ' . $url;

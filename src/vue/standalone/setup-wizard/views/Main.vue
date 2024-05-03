@@ -6,6 +6,7 @@
 import {
 	useLicenseStore,
 	useOptionsStore,
+	useSearchStatisticsStore,
 	useSetupWizardStore
 } from '@/vue/stores'
 
@@ -15,6 +16,7 @@ import Features from './Features'
 import Import from './Import'
 import LicenseKey from './LicenseKey'
 import SearchAppearance from './SearchAppearance'
+import SearchConsole from './SearchConsole'
 import SmartRecommendations from './SmartRecommendations'
 import Success from './Success'
 import Welcome from './Welcome'
@@ -22,9 +24,10 @@ import Welcome from './Welcome'
 export default {
 	setup () {
 		return {
-			licenseStore     : useLicenseStore(),
-			optionsStore     : useOptionsStore(),
-			setupWizardStore : useSetupWizardStore()
+			licenseStore          : useLicenseStore(),
+			optionsStore          : useOptionsStore(),
+			searchStatisticsStore : useSearchStatisticsStore(),
+			setupWizardStore      : useSetupWizardStore()
 		}
 	},
 	components : {
@@ -34,6 +37,7 @@ export default {
 		Import,
 		LicenseKey,
 		SearchAppearance,
+		SearchConsole,
 		SmartRecommendations,
 		Success,
 		Welcome
@@ -63,6 +67,10 @@ export default {
 
 		if (!this.licenseStore.isUnlicensed) {
 			this.deleteStage('license-key')
+		}
+
+		if (this.searchStatisticsStore.isConnected) {
+			this.deleteStage('search-console')
 		}
 
 		if (this.$isPro) {

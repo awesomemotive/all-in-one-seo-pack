@@ -274,10 +274,10 @@ class Post extends Model {
 		}
 
 		$thePost = self::getPost( $postId );
-		// Before setting the data, we check if the title/description are the same as the defaults and clear them if so.
-		$data = self::checkForDefaultFormat( $postId, $thePost, $data );
+		$data    = apply_filters( 'aioseo_save_post', $data, $thePost );
 
-		$thePost = apply_filters( 'aioseo_save_post', $thePost );
+		// Before setting the data, we check if the title/description are the same as the defaults and clear them if so.
+		$data    = self::checkForDefaultFormat( $postId, $thePost, $data );
 		$thePost = self::sanitizeAndSetDefaults( $postId, $thePost, $data );
 
 		// Update traditional post meta so that it can be used by multilingual plugins.

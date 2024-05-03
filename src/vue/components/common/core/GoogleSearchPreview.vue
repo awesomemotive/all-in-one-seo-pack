@@ -24,7 +24,7 @@
 
 				<div
 					class="url text-truncate"
-					v-html="urlBreadcrumbs.substring(0, 35).trim() + (urlBreadcrumbs.length > 35 ? '...' : '')"
+					v-html="urlBreadcrumbs"
 				/>
 			</div>
 
@@ -177,7 +177,10 @@ export default {
 			try {
 				const url = new URL(this.url)
 
-				return `${url.protocol}//${url.hostname}` + url.pathname.replace(/\/$/, '').replaceAll('/', ' &rsaquo; ')
+				let out = url.hostname + url.pathname.replace(/\/$/, '')
+				out = out.substring(0, 50).trim() + (50 < out.length ? '...' : '')
+
+				return `${url.protocol}//` + out.replaceAll('/', ' &rsaquo; ')
 			} catch (_e) {
 				return ''
 			}

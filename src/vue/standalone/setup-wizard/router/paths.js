@@ -65,6 +65,15 @@ export default [
 		}
 	},
 	{
+		path      : '/search-console',
+		name      : 'search-console',
+		component : loadView('Main'),
+		meta      : {
+			access : 'aioseo_setup_wizard',
+			name   : __('Search Console', td)
+		}
+	},
+	{
 		path      : '/smart-recommendations',
 		name      : 'smart-recommendations',
 		component : loadView('Main'),

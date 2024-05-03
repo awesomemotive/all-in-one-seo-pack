@@ -38,7 +38,7 @@ class SiteVerification {
 		$metaArray = [];
 		foreach ( $this->webmasterTools as $key => $metaName ) {
 			$value = aioseo()->options->webmasterTools->$key;
-			if ( $value ) {
+			if ( ! empty( $value ) ) {
 				$metaArray[ $metaName ] = $value;
 			}
 		}

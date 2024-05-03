@@ -211,7 +211,7 @@ class RobotsTxt {
 	 */
 	private function getSitemapRules() {
 		$defaultSitemaps = $this->extractSitemapUrls( aioseo()->robotsTxt->getDefaultRobotsTxtContent() );
-		$sitemapRules    = aioseo()->sitemap->helpers->getSitemapUrls();
+		$sitemapRules    = aioseo()->sitemap->helpers->getSitemapUrlsPrefixed();
 
 		return array_diff( $sitemapRules, $defaultSitemaps );
 	}

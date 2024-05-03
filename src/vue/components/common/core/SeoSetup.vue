@@ -40,6 +40,7 @@ import {
 	useLicenseStore,
 	useOptionsStore,
 	useRootStore,
+	useSearchStatisticsStore,
 	useSetupWizardStore
 } from '@/vue/stores'
 
@@ -49,10 +50,11 @@ import SvgSeo from '@/vue/components/common/svg/Seo'
 export default {
 	setup () {
 		return {
-			licenseStore     : useLicenseStore(),
-			optionsStore     : useOptionsStore(),
-			rootStore        : useRootStore(),
-			setupWizardStore : useSetupWizardStore()
+			licenseStore          : useLicenseStore(),
+			optionsStore          : useOptionsStore(),
+			rootStore             : useRootStore(),
+			searchStatisticsStore : useSearchStatisticsStore(),
+			setupWizardStore      : useSetupWizardStore()
 		}
 	},
 	components : {
@@ -116,6 +118,10 @@ export default {
 
 		if (!this.licenseStore.isUnlicensed) {
 			this.deleteStage('license-key')
+		}
+
+		if (this.searchStatisticsStore.isConnected) {
+			this.deleteStage('search-console')
 		}
 
 		if (this.$isPro) {

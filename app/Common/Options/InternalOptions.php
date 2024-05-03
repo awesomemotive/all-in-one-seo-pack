@@ -66,7 +66,16 @@ class InternalOptions {
 			'searchStatistics'  => [
 				'profile'    => [ 'type' => 'array', 'default' => [] ],
 				'trustToken' => [ 'type' => 'string' ],
-				'rolling'    => [ 'type' => 'string', 'default' => 'last28Days' ]
+				'rolling'    => [ 'type' => 'string', 'default' => 'last28Days' ],
+				'site'       => [
+					'verified'  => [ 'type' => 'boolean', 'default' => false ],
+					'lastFetch' => [ 'type' => 'number', 'default' => 0 ]
+				],
+				'sitemap'    => [
+					'list'      => [ 'type' => 'array', 'default' => [] ],
+					'ignored'   => [ 'type' => 'array', 'default' => [] ],
+					'lastFetch' => [ 'type' => 'number', 'default' => 0 ]
+				]
 			]
 		],
 		'integrations' => [

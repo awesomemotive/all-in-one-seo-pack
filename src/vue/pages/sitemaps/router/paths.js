@@ -20,6 +20,15 @@ export default [
 		}
 	},
 	{
+		path      : '/rss-sitemap',
+		name      : 'rss-sitemap',
+		component : loadView('Main'),
+		meta      : {
+			access : 'aioseo_sitemap_settings',
+			name   : __('RSS Sitemap', td)
+		}
+	},
+	{
 		path      : '/video-sitemap',
 		name      : 'video-sitemap',
 		component : loadView('Main'),
@@ -46,15 +55,6 @@ export default [
 		meta      : {
 			access : 'aioseo_sitemap_settings',
 			name   : __('HTML Sitemap', td)
-		}
-	},
-	{
-		path      : '/rss-sitemap',
-		name      : 'rss-sitemap',
-		component : loadView('Main'),
-		meta      : {
-			access : 'aioseo_sitemap_settings',
-			name   : __('RSS Sitemap', td)
 		}
 	}
 ]

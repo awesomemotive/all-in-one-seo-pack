@@ -39,6 +39,10 @@ class SiteHealth {
 			'label' => 'AIOSEO Site Info',
 			'test'  => [ $this, 'testCheckSiteInfo' ],
 		];
+		$tests['direct']['aioseo_google_search_console'] = [
+			'label' => 'AIOSEO Google Search Console',
+			'test'  => [ $this, 'testCheckGoogleSearchConsole' ],
+		];
 		$tests['direct']['aioseo_plugin_update'] = [
 			'label' => 'AIOSEO Plugin Update',
 			'test'  => [ $this, 'testCheckPluginUpdate' ],
@@ -163,6 +167,34 @@ class SiteHealth {
 				__( 'Great! These are required for %1$s\'s schema markup and are often used as fallback values for various other features.', 'all-in-one-seo-pack' ),
 				AIOSEO_PLUGIN_SHORT_NAME
 			)
+		);
+	}
+
+	/**
+	 * Checks whether Google Search Console is connected.
+	 *
+	 * @since 4.6.2
+	 *
+	 * @return array The test result.
+	 */
+	public function testCheckGoogleSearchConsole() {
+		$googleSearchConsole = aioseo()->searchStatistics->api->auth->isConnected();
+
+		if ( ! $googleSearchConsole ) {
+			return $this->result(
+				'aioseo_google_search_console',
+				'recommended',
+				__( 'Connect Your Site with Google Search Console', 'all-in-one-seo-pack' ),
+				__( 'Sync your site with Google Search Console and get valuable insights right inside your WordPress dashboard. Track keyword rankings and search performance for individual posts with actionable insights to help you rank higher in search results!', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+				$this->actionLink( admin_url( 'admin.php?page=aioseo-settings&aioseo-scroll=google-search-console-settings&aioseo-highlight=google-search-console-settings#/webmaster-tools?activetool=googleSearchConsole' ), __( 'Connect to Google Search Console', 'all-in-one-seo-pack' ) ) // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+			);
+		}
+
+		return $this->result(
+			'aioseo_google_search_console',
+			'good',
+			__( 'Google Search Console is Connected', 'all-in-one-seo-pack' ),
+			__( 'Awesome! Google Search Console is connected to your site. This will help you monitor and maintain your site\'s presence in Google Search results.', 'all-in-one-seo-pack' )
 		);
 	}
 

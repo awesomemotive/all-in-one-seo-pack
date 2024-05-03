@@ -362,7 +362,7 @@ export default {
 			return 120 < sanitizeString(line).length
 		},
 		maybePreloadPages () {
-			if (!this.searchStatisticsStore.isConnected || this.isPreloading) {
+			if (!this.$isPro || this.licenseStore.isUnlicensed || !this.searchStatisticsStore.isConnected || this.isPreloading) {
 				return
 			}
 

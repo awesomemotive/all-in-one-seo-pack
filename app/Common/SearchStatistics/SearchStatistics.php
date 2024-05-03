@@ -13,6 +13,54 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class SearchStatistics {
 	/**
+	 * Holds the instance of the API class.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @var Api\Api
+	 */
+	public $api;
+
+	/**
+	 * Holds the instance of the Site class.
+	 *
+	 * @since 4.6.2
+	 *
+	 * @var Site
+	 */
+	public $site;
+
+	/**
+	 * Holds the instance of the Sitemap class.
+	 *
+	 * @since 4.6.2
+	 *
+	 * @var Sitemap
+	 */
+	public $sitemap;
+
+	/**
+	 * Holds the instance of the Notices class.
+	 *
+	 * @since 4.6.2
+	 *
+	 * @var Notices
+	 */
+	public $notices;
+
+	/**
+	 * Class constructor.
+	 *
+	 * @since 4.3.0
+	 */
+	public function __construct() {
+		$this->api     = new Api\Api();
+		$this->site    = new Site();
+		$this->sitemap = new Sitemap();
+		$this->notices = new Notices();
+	}
+
+	/**
 	 * Returns the data for Vue.
 	 *
 	 * @since 4.3.0
@@ -21,11 +69,12 @@ class SearchStatistics {
 	 */
 	public function getVueData() {
 		$data = [
-			'isConnected'         => false,
+			'isConnected'         => aioseo()->searchStatistics->api->auth->isConnected(),
 			'latestAvailableDate' => null,
 			'range'               => [],
 			'rolling'             => aioseo()->internalOptions->internal->searchStatistics->rolling,
-			'authedSite'          => null,
+			'authedSite'          => aioseo()->searchStatistics->api->auth->getAuthedSite(),
+			'sitemapsWithErrors'  => aioseo()->searchStatistics->sitemap->getSitemapsWithErrors(),
 			'data'                => [
 				'seoStatistics'   => $this->getSeoOverviewData(),
 				'keywords'        => $this->getKeywordsData(),
@@ -34,6 +83,21 @@ class SearchStatistics {
 		];
 
 		return $data;
+	}
+
+	/**
+	 * Resets the Search Statistics.
+	 *
+	 * @since 4.6.2
+	 *
+	 * @return void
+	 */
+	public function reset() {
+		aioseo()->internalOptions->searchStatistics->sitemap->reset();
+		aioseo()->internalOptions->searchStatistics->site->reset();
+
+		// Clear the cache for the Search Statistics.
+		aioseo()->searchStatistics->clearCache();
 	}
 
 	/**
@@ -1047,5 +1111,46 @@ class SearchStatistics {
 				'verdict' => $verdicts[ array_rand( $verdicts ) ],
 			]
 		];
+	}
+
+	/**
+	 * Clears the Search Statistics cache.
+	 *
+	 * @since   4.5.0
+	 * @version 4.6.2 Moved from Pro to Common.
+	 *
+	 * @return void
+	 */
+	public function clearCache() {
+		aioseo()->core->cache->clearPrefix( 'aioseo_search_statistics_' );
+		aioseo()->core->cache->clearPrefix( 'search_statistics_' );
+	}
+
+	/**
+	 * Returns all scheduled Search Statistics related actions.
+	 *
+	 * @since 4.6.2
+	 *
+	 * @return array The Search Statistics actions.
+	 */
+	protected function getActionSchedulerActions() {
+		return [
+			$this->site->action,
+			$this->sitemap->action
+		];
+	}
+
+	/**
+	 * Cancels all scheduled Search Statistics related actions.
+	 *
+	 * @since   4.3.3
+	 * @version 4.6.2 Moved from Pro to Common.
+	 *
+	 * @return void
+	 */
+	public function cancelActions() {
+		foreach ( $this->getActionSchedulerActions() as $actionName ) {
+			as_unschedule_all_actions( $actionName );
+		}
 	}
 }

@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { defineProps, ref } from 'vue'
+import { ref } from 'vue'
 import { __ } from '@wordpress/i18n'
 
 import CoreCopyBlock from '@/vue/components/common/core/CopyBlock'

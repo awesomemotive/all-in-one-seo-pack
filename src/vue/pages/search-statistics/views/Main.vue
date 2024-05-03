@@ -33,7 +33,7 @@
 				<cta
 					cta-button-action
 					@cta-button-click="connect"
-					:cta-button-loading="loadingConnect"
+					:cta-button-loading="loading"
 					:show-link="false"
 					:button-text="strings.ctaButtonText"
 					:alignTop="true"
@@ -70,6 +70,7 @@ import {
 
 import license from '@/vue/utils/license'
 import { DateTime } from 'luxon'
+import { GoogleSearchConsole } from '@/vue/mixins/GoogleSearchConsole'
 import AuthenticationAlert from './partials/AuthenticationAlert'
 import BaseDatePicker from '@/vue/components/common/base/DatePicker'
 import CoreBlur from '@/vue/components/common/core/Blur'
@@ -102,12 +103,12 @@ export default {
 		Settings,
 		SeoStatistics
 	},
+	mixins : [ GoogleSearchConsole ],
 	data () {
 		return {
-			maxDate        : null,
-			minDate        : null,
-			loadingConnect : false,
-			strings        : {
+			maxDate : null,
+			minDate : null,
+			strings : {
 				pageName       : this.$t.__('Search Statistics', this.$td),
 				ctaHeaderText  : this.$t.__('Connect your website to Google Search Console', this.$td),
 				ctaDescription : this.$t.__('Connect your site to Google Search Console to receive insights on how content is being discovered. Identify areas for improvement and drive traffic to your website.', this.$td),
@@ -142,7 +143,10 @@ export default {
 			return ((license.hasCoreFeature('search-statistics') && !this.searchStatisticsStore.isConnected) || this.searchStatisticsStore.unverifiedSite) && !this.isSettings
 		},
 		showDatePicker () {
-			return ![ 'settings', 'content-rankings' ].includes(this.$route.name) && this.searchStatisticsStore.isConnected && !this.searchStatisticsStore.unverifiedSite
+			const isConnected  = this.searchStatisticsStore.isConnected && !this.searchStatisticsStore.unverifiedSite
+			const hasDateRange = this.searchStatisticsStore.range.start && this.searchStatisticsStore.range.end
+
+			return ![ 'settings', 'content-rankings' ].includes(this.$route.name) && isConnected && hasDateRange
 		},
 		containerClasses () {
 			const classes = []
@@ -201,13 +205,6 @@ export default {
 				dateRange,
 				rolling
 			})
-		},
-		connect () {
-			this.loadingConnect = true
-			this.searchStatisticsStore.getAuthUrl()
-				.then(url => {
-					window.location = url
-				})
 		},
 		highlightShortcut (rolling) {
 			if (!rolling) {

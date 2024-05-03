@@ -1,5 +1,7 @@
 <template>
 	<div class="aioseo-general-sitemap">
+		<search-console v-if="optionsStore.options.sitemap.general.enable" />
+
 		<core-card
 			slug="generalSitemap"
 			:header-text="strings.general"
@@ -18,6 +20,8 @@
 					<base-toggle
 						v-model="optionsStore.options.sitemap.general.enable"
 					/>
+
+					<search-console-inline v-if="optionsStore.options.sitemap.general.enable" />
 				</template>
 			</core-settings-row>
 
@@ -399,6 +403,8 @@ import CoreExcludePosts from '@/vue/components/common/core/ExcludePosts'
 import CorePostTypeOptions from '@/vue/components/common/core/PostTypeOptions'
 import CorePriorityScore from '@/vue/components/common/core/PriorityScore'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
+import SearchConsole from './partials/SearchConsole'
+import SearchConsoleInline from './partials/SearchConsoleInline'
 import SvgExternal from '@/vue/components/common/svg/External'
 
 export default {
@@ -421,6 +427,8 @@ export default {
 		CorePostTypeOptions,
 		CorePriorityScore,
 		CoreSettingsRow,
+		SearchConsole,
+		SearchConsoleInline,
 		SvgExternal
 	},
 	data () {

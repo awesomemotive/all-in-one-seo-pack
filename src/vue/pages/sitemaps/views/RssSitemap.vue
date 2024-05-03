@@ -1,5 +1,7 @@
 <template>
 	<div class="aioseo-rss-sitemap">
+		<search-console v-if="optionsStore.options.sitemap.rss.enable" />
+
 		<core-card
 			slug="rssSitemap"
 			:header-text="strings.rss"
@@ -18,6 +20,8 @@
 					<base-toggle
 						v-model="optionsStore.options.sitemap.rss.enable"
 					/>
+
+					<search-console-inline v-if="optionsStore.options.sitemap.rss.enable" />
 				</template>
 			</core-settings-row>
 
@@ -122,6 +126,8 @@ import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreCard from '@/vue/components/common/core/Card'
 import CorePostTypeOptions from '@/vue/components/common/core/PostTypeOptions'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
+import SearchConsole from './partials/SearchConsole'
+import SearchConsoleInline from './partials/SearchConsoleInline'
 import SvgExternal from '@/vue/components/common/svg/External'
 export default {
 	setup () {
@@ -138,6 +144,8 @@ export default {
 		CoreCard,
 		CorePostTypeOptions,
 		CoreSettingsRow,
+		SearchConsole,
+		SearchConsoleInline,
 		SvgExternal
 	},
 	data () {

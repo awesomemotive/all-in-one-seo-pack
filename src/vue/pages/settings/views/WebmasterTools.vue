@@ -1,5 +1,31 @@
 <template>
 	<div class="aioseo-webmaster-tools">
+		<core-alert-actionable
+			v-if="!searchStatisticsStore.isConnected && !settingsStore.settings.dismissedAlerts?.searchConsoleNotConnected"
+			:title="strings.gsc.haveYouConnected"
+			:text="strings.gsc.aioseoCanNowVerify"
+			:button="strings.gsc.connectTo"
+			type="yellow"
+			size="small"
+			button-type="link"
+			show-close
+			@click="openSearchConsoleSettings"
+			@close-alert="() => settingsStore.dismissAlert('searchConsoleNotConnected')"
+		/>
+
+		<core-alert-actionable
+			v-if="showGscSiteDisconnectedAlert && !settingsStore.settings.dismissedAlerts?.searchConsoleNotConnected"
+			:title="strings.gsc.siteRemoved"
+			:text="strings.gsc.weDetected"
+			:button="strings.gsc.reconnect"
+			type="yellow"
+			size="small"
+			button-type="button"
+			show-close
+			@click="openSearchConsoleSettings"
+			@close-alert="() => settingsStore.dismissAlert('searchConsoleNotConnected')"
+		/>
+
 		<core-card
 			slug="webmasterTools"
 			:header-text="strings.webmasterToolsVerification"
@@ -90,15 +116,19 @@ import {
 	useIndexNowStore,
 	useOptionsStore,
 	usePluginsStore,
-	useRootStore
+	useRootStore,
+	useSettingsStore,
+	useSearchStatisticsStore
 } from '@/vue/stores'
 
 import { MetaTag } from '@/vue/mixins/MetaTag'
+import { GoogleSearchConsole } from '@/vue/mixins/GoogleSearchConsole'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseEditor from '@/vue/components/common/base/Editor'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import BaseTextarea from '@/vue/components/common/base/Textarea'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
+import CoreAlertActionable from '@/vue/components/common/core/alert/Actionable'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreAlertUnfilteredHtml from '@/vue/components/common/core/alert/UnfilteredHtml'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
@@ -123,10 +153,12 @@ import TransitionSlide from '@/vue/components/common/transition/Slide'
 export default {
 	setup () {
 		return {
-			indexNowStore : useIndexNowStore(),
-			optionsStore  : useOptionsStore(),
-			pluginsStore  : usePluginsStore(),
-			rootStore     : useRootStore()
+			indexNowStore         : useIndexNowStore(),
+			optionsStore          : useOptionsStore(),
+			pluginsStore          : usePluginsStore(),
+			rootStore             : useRootStore(),
+			settingsStore         : useSettingsStore(),
+			searchStatisticsStore : useSearchStatisticsStore()
 		}
 	},
 	components : {
@@ -135,6 +167,7 @@ export default {
 		BaseRadioToggle,
 		BaseTextarea,
 		CoreAlert,
+		CoreAlertActionable,
 		CoreAlertUnfilteredHtml,
 		CoreCard,
 		CoreSettingsRow,
@@ -157,7 +190,7 @@ export default {
 		ToolSettings,
 		TransitionSlide
 	},
-	mixins : [ MetaTag ],
+	mixins : [ MetaTag, GoogleSearchConsole ],
 	data () {
 		return {
 			heightOkay    : false,
@@ -176,7 +209,19 @@ export default {
 					// Translators: 1 - Learn more link.
 					this.$t.__('Your user account role does not have access to edit this field. %1$s', this.$td),
 					this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'unfilteredHtml', true)
-				)
+				),
+				gsc : {
+					haveYouConnected   : this.$t.__('Have you connected your site to Google Search Console?', this.$td),
+					aioseoCanNowVerify : this.$t.sprintf(
+						// Translators: 1 - The plugin short name ("AIOSEO").
+						this.$t.__('%1$s can now verify whether your site is correctly verified with Google Search Console and that your sitemaps have been submitted correctly. Connect with Google Search Console now to ensure your content is being added to Google as soon as possible for increased rankings.', this.$td),
+						import.meta.env.VITE_SHORT_NAME
+					),
+					connectTo   : this.$t.__('Connect to Google Search Console', this.$td),
+					siteRemoved : this.$t.__('Your site was removed from Google Search Console.', this.$td),
+					weDetected  : this.$t.__('We detected that your site has been removed from Google Search Console. If this was done in error, click below to re-sync and resolve this issue.', this.$td),
+					reconnect   : this.$t.__('Reconnect Google Search Console', this.$td)
+				}
 			}
 		}
 	},
@@ -323,6 +368,14 @@ export default {
 					]
 				}
 			]
+		},
+		showGscSiteDisconnectedAlert () {
+			// Early bail if the site was not checked yet.
+			if (0 === this.optionsStore.internalOptions.internal.searchStatistics.site.lastFetch) {
+				return false
+			}
+
+			return this.searchStatisticsStore.isConnected && !this.optionsStore.internalOptions.internal.searchStatistics.site.verified
 		}
 	},
 	methods : {
@@ -379,7 +432,19 @@ export default {
 				return this.optionsStore.options.deprecated?.webmasterTools?.googleAnalytics[tool.settings[0].option] && !this.pluginsStore.plugins.miLite.activated
 			}
 
+			if ('googleSearchConsole' === tool.slug) {
+				return this.searchStatisticsStore.isConnected
+			}
+
 			return !!this.optionsStore.options.webmasterTools[tool.settings[0].option]
+		},
+		openSearchConsoleSettings () {
+			if ('googleSearchConsole' !== this.activeTool) {
+				this.activeTool = 'googleSearchConsole'
+				return
+			}
+
+			this.connect()
 		}
 	},
 	beforeUnmount () {
@@ -392,6 +457,10 @@ export default {
 			this.getOrder(tool)
 			this.getOrder(tool, true)
 		}))
+
+		if (this.$route.query.activetool) {
+			this.activeTool = this.$route.query.activetool
+		}
 
 		window.addEventListener('resize', this.maybeChangeColumnsPerRow)
 	}

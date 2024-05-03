@@ -3,6 +3,10 @@ import dateFormat from '@/vue/utils/dateFormat'
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 
+import {
+	useOptionsStore
+} from '@/vue/stores'
+
 export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 	state : () => ({
 		isConnected         : false,
@@ -11,13 +15,14 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 		unverifiedSite      : false,
 		authedSite          : null,
 		quotaExceeded       : {},
+		rolling             : null,
+		sitemapsWithErrors  : [],
 		range               : {
 			start        : null,
 			end          : null,
 			compareStart : null,
 			compareEnd   : null
 		},
-		rolling : null,
 		loading : {
 			seoStatistics           : false,
 			keywords                : false,
@@ -120,14 +125,16 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 		}
 	}),
 	actions : {
-		getAuthUrl () {
+		getAuthUrl ({ returnTo }) {
 			return http.get(links.restUrl('search-statistics/url/auth'))
+				.query({ returnTo })
 				.then(response => {
 					return response.body.url
 				})
 		},
-		getReauthUrl () {
+		getReauthUrl ({ returnTo }) {
 			return http.get(links.restUrl('search-statistics/url/reauth'))
+				.query({ returnTo })
 				.then(response => {
 					return response.body.url
 				})
@@ -332,6 +339,24 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 			return http.get(links.restUrl('search-statistics/pagespeed'))
 				.query(payload)
 				.then(response => response)
+		},
+		deleteSitemap ({ sitemap }) {
+			return http.post(links.restUrl('search-statistics/sitemap/delete'))
+				.send({ sitemap })
+				.then(response => {
+					const optionsStore = useOptionsStore()
+					optionsStore.updateOption('internalOptions', { groups: [ 'internal', 'searchStatistics' ], key: 'sitemap', value: response.body.data.internalOptions })
+					this.sitemapsWithErrors = response.body.data.sitemapsWithErrors
+				})
+		},
+		ignoreSitemap ({ sitemap }) {
+			return http.post(links.restUrl('search-statistics/sitemap/ignore'))
+				.send({ sitemap })
+				.then(response => {
+					const optionsStore = useOptionsStore()
+					optionsStore.updateOption('internalOptions', { groups: [ 'internal', 'searchStatistics' ], key: 'sitemap', value: response.body.data.internalOptions })
+					this.sitemapsWithErrors = response.body.data.sitemapsWithErrors
+				})
 		},
 		updateSeoRevision (revision) {
 			const markers = this.data.postDetail.seoStatistics.timelineMarkers

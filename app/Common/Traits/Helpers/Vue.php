@@ -228,6 +228,10 @@ trait Vue {
 			'integration'       => $this->args['integration'],
 			'theme'             => [
 				'features' => aioseo()->helpers->getThemeFeatures()
+			],
+			'searchStatistics'  => [
+				'isConnected'        => aioseo()->searchStatistics->api->auth->isConnected(),
+				'sitemapsWithErrors' => aioseo()->searchStatistics->sitemap->getSitemapsWithErrors()
 			]
 		];
 	}
@@ -404,6 +408,8 @@ trait Vue {
 			return;
 		}
 
+		$this->data['data']['sitemapUrls'] = aioseo()->sitemap->helpers->getSitemapUrls();
+
 		try {
 			if ( as_next_scheduled_action( 'aioseo_static_sitemap_regeneration' ) ) {
 				$this->data['scheduledActions']['sitemap'][] = 'staticSitemapRegeneration';
@@ -520,7 +526,7 @@ trait Vue {
 				'defaultRules'      => $this->args['page'] ? aioseo()->robotsTxt->extractRules( aioseo()->robotsTxt->getDefaultRobotsTxtContent() ) : [],
 				'hasPhysicalRobots' => aioseo()->robotsTxt->hasPhysicalRobotsTxt(),
 				'rewriteExists'     => aioseo()->robotsTxt->rewriteRulesExist(),
-				'sitemapUrls'       => array_merge( aioseo()->sitemap->helpers->getSitemapUrls(), aioseo()->sitemap->helpers->extractSitemapUrlsFromRobotsTxt() )
+				'sitemapUrls'       => array_merge( aioseo()->sitemap->helpers->getSitemapUrlsPrefixed(), aioseo()->sitemap->helpers->extractSitemapUrlsFromRobotsTxt() )
 			];
 			$this->data['data']['logSizes']       = [
 				'badBotBlockerLog' => $this->convertFileSize( aioseo()->badBotBlocker->getLogSize() )
