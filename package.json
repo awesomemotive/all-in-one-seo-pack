@@ -45,7 +45,7 @@
 		"pinia": "^2.1.7",
 		"popper.js": "1.15.0",
 		"quill": "1.3.7",
-		"superagent": "8.1.2",
+		"superagent": "9.0.2",
 		"tiny-emitter": "2.1.0",
 		"tokenizer2": "2.0.1",
 		"vue": "3.4.21",

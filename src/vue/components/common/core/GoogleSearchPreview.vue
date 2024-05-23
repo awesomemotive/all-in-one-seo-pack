@@ -164,9 +164,9 @@ export default {
 				}
 			}
 
-			reviewSnippet.price     = parseFloat(reviewSnippet.price) ? parseFloat(reviewSnippet.price).toFixed(2) : null
-			reviewSnippet.priceFrom = parseFloat(reviewSnippet.priceFrom) ? parseFloat(reviewSnippet.priceFrom).toFixed(2) : null
-			reviewSnippet.priceTo   = parseFloat(reviewSnippet.priceTo) ? parseFloat(reviewSnippet.priceTo).toFixed(2) : null
+			reviewSnippet.price = !isNaN(parseFloat(reviewSnippet.price)) ? parseFloat(reviewSnippet.price).toFixed(2) : null
+			reviewSnippet.priceFrom = !isNaN(parseFloat(reviewSnippet.priceFrom)) ? parseFloat(reviewSnippet.priceFrom).toFixed(2) : null
+			reviewSnippet.priceTo = !isNaN(parseFloat(reviewSnippet.priceTo)) ? parseFloat(reviewSnippet.priceTo).toFixed(2) : null
 
 			return reviewSnippet
 		},

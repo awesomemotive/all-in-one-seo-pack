@@ -44,7 +44,7 @@
 					v-if="failed"
 					type="red"
 				>
-					{{ strings.activateError }}
+					{{ strings.requestFailed }}
 				</core-alert>
 			</div>
 		</div>
@@ -69,11 +69,12 @@
 					{{ strings.version }} {{ addon.installedVersion }}
 				</span>
 				<span class="status">
-					{{ addon.isActive ? strings.activated : (addon.installed || addon.canInstall ? strings.deactivated : strings.notInstalled) }}
+					{{ statusLabel }}
 				</span>
 				<base-toggle
 					v-if="addon.installed || addon.canInstall"
 					:modelValue="addon.isActive"
+					:disabled="loading"
 					@update:modelValue="value => processStatusChange(value)"
 				/>
 			</div>
@@ -138,7 +139,7 @@
 						class="close"
 						@click.stop="closeNetworkModal(false)"
 					>
-						<svg-close @click.stop="closeNetworkModal(false)" />
+						<svg-close />
 					</button>
 
 					<h3>{{ strings.areYouSureNetworkChange }}</h3>
@@ -223,15 +224,17 @@ export default {
 	data () {
 		return {
 			addons,
-			addon            : {},
-			showNetworkModal : false,
-			failed           : false,
-			loading          : false,
-			featureUpgrading : false,
-			strings          : {
+			addon                 : {},
+			showNetworkModal      : false,
+			changeStatusOnNetwork : false,
+			failed                : false,
+			loading               : false,
+			featureUpgrading      : false,
+			strings               : {
 				version           : this.$t.__('Version', this.$td),
 				updateToVersion   : this.$t.__('Update to version', this.$td),
 				activated         : this.$t.__('Activated', this.$td),
+				networkActivated  : this.$t.__('Network Activated', this.$td),
 				deactivated       : this.$t.__('Deactivated', this.$td),
 				notInstalled      : this.$t.__('Not Installed', this.$td),
 				upgradeToPro      : this.$t.__('Upgrade to Pro', this.$td),
@@ -239,7 +242,7 @@ export default {
 				updateFeature     : this.$t.__('Update Addon', this.$td),
 				permissionWarning : this.$t.__('You currently don\'t have permission to update this addon. Please ask a site administrator to update.', this.$td),
 				manage            : this.$t.__('Manage', this.$td),
-				activateError     : this.$t.__('An error occurred while activating the addon. Please upload it manually or contact support for more information.', this.$td),
+				requestFailed     : this.$t.__('An error occurred while changing the addon status. Please try again or contact support for more information.', this.$td),
 				updateRequired    : this.$t.sprintf(
 					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - Pro.
 					this.$t.__('An update is required for this addon to continue to work with %1$s %2$s.', this.$td),
@@ -260,16 +263,23 @@ export default {
 			}
 
 			return this.$t.__('Are you sure you want to activate this addon across the network?', this.$td)
+		},
+		statusLabel () {
+			if (this.addon.isActive) {
+				return !this.rootStore.aioseo.data.isNetworkAdmin && this.addon.isNetworkActive
+					? this.strings.networkActivated
+					: this.strings.activated
+			}
+
+			return this.addon.installed || this.addon.canInstall
+				? this.strings.deactivated
+				: this.strings.notInstalled
 		}
 	},
 	methods : {
-		closeNetworkModal (changeStatus = false) {
-			this.addon.isActive = !changeStatus
+		closeNetworkModal (changeStatus) {
+			this.changeStatusOnNetwork = changeStatus
 			this.showNetworkModal = false
-
-			if (changeStatus) {
-				this.actuallyProcessStatusChange(changeStatus)
-			}
 		},
 		processStatusChange (activated) {
 			this.addon.isActive = activated
@@ -285,7 +295,7 @@ export default {
 			this.loading = true
 
 			// The action is reversed because we already swapped it earlier.
-			const action   = this.addon.isActive ? 'installPlugins' : 'deactivatePlugins'
+			const action = this.addon.isActive ? 'installPlugins' : 'deactivatePlugins'
 			this.pluginsStore[action]([ { plugin: this.addon.basename } ])
 				.then(response => {
 					this.loading = false
@@ -295,7 +305,7 @@ export default {
 					}
 				})
 				.catch(() => {
-					this.loading   = false
+					this.loading = false
 					this.addon.isActive = !this.addon.isActive
 				})
 		},
@@ -317,6 +327,22 @@ export default {
 					this.featureUpgrading = false
 					this.addon.isActive = false
 				})
+		}
+	},
+	watch : {
+		showNetworkModal (value) {
+			if (value) {
+				this.changeStatusOnNetwork = false
+				return
+			}
+
+			if (!this.changeStatusOnNetwork) {
+				this.addon.isActive = !this.addon.isActive
+			}
+
+			if (this.changeStatusOnNetwork) {
+				this.actuallyProcessStatusChange()
+			}
 		}
 	},
 	mounted () {

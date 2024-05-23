@@ -45,7 +45,7 @@ export const Tags = {
 				}
 
 				const matches = string.match(regex)
-				const value   = (tagsStore.liveTags[tag.id] || tag.value)
+				const value   = (tagsStore.liveTags[tag.id] ?? tag.value)
 				if (matches) {
 					string = string.replace(regex, '%|%' + value)
 				}

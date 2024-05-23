@@ -50,7 +50,7 @@ class Site {
 	}
 
 	/**
-	 * Check whether the site is verified on Google Search Console.
+	 * Check whether the site is verified on Google Search Console and verifies it if needed.
 	 *
 	 * @since 4.6.2
 	 *
@@ -61,28 +61,15 @@ class Site {
 			return;
 		}
 
-		$siteStatus = $this->check();
+		$siteStatus = $this->checkStatus();
 		if ( empty( $siteStatus ) ) {
 			// If it failed to communicate with the server, try again in a few hours.
-			aioseo()->actionScheduler->scheduleSingle( $this->action, wp_rand( HOUR_IN_SECONDS, 4 * HOUR_IN_SECONDS ) );
+			aioseo()->actionScheduler->scheduleSingle( $this->action, wp_rand( HOUR_IN_SECONDS, 2 * HOUR_IN_SECONDS ), [], true );
 
 			return;
 		}
 
-		switch ( $siteStatus['code'] ) {
-			case 'site_verified':
-				aioseo()->internalOptions->searchStatistics->site->verified  = true;
-				aioseo()->internalOptions->searchStatistics->site->lastFetch = time();
-				break;
-			case 'verification_needed':
-				$this->verify( $siteStatus['data'] );
-				break;
-			case 'site_not_found':
-			case 'couldnt_get_token':
-			default:
-				aioseo()->internalOptions->searchStatistics->site->verified  = false;
-				aioseo()->internalOptions->searchStatistics->site->lastFetch = time();
-		}
+		$this->processStatus( $siteStatus );
 
 		// Schedule a new check for the next week.
 		aioseo()->actionScheduler->scheduleSingle( $this->action, WEEK_IN_SECONDS + wp_rand( 0, 3 * DAY_IN_SECONDS ), [], true );
@@ -100,20 +87,12 @@ class Site {
 			return;
 		}
 
-		$siteStatus = $this->check();
+		$siteStatus = $this->checkStatus();
 		if ( empty( $siteStatus ) ) {
 			return;
 		}
 
-		switch ( $siteStatus['code'] ) {
-			case 'site_verified':
-				aioseo()->internalOptions->searchStatistics->site->verified  = true;
-				aioseo()->internalOptions->searchStatistics->site->lastFetch = time();
-				break;
-			case 'verification_needed':
-				$this->verify( $siteStatus['data'] );
-				break;
-		}
+		$this->processStatus( $siteStatus );
 	}
 
 	/**
@@ -123,7 +102,7 @@ class Site {
 	 *
 	 * @return array The site status.
 	 */
-	private function check() {
+	private function checkStatus() {
 		$api      = new Api\Request( 'google-search-console/site/check/' );
 		$response = $api->request();
 
@@ -132,6 +111,31 @@ class Site {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * Processes the site status.
+	 *
+	 * @since 4.6.3
+	 *
+	 * @param  array $siteStatus The site status.
+	 * @return void
+	 */
+	private function processStatus( $siteStatus ) {
+		switch ( $siteStatus['code'] ) {
+			case 'site_verified':
+				aioseo()->internalOptions->searchStatistics->site->verified  = true;
+				aioseo()->internalOptions->searchStatistics->site->lastFetch = time();
+				break;
+			case 'verification_needed':
+				$this->verify( $siteStatus['data'] );
+				break;
+			case 'site_not_found':
+			case 'couldnt_get_token':
+			default:
+				aioseo()->internalOptions->searchStatistics->site->verified  = false;
+				aioseo()->internalOptions->searchStatistics->site->lastFetch = time();
+		}
 	}
 
 	/**

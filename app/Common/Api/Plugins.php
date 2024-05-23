@@ -158,10 +158,10 @@ class Plugins {
 				], 400 );
 			}
 
-			// Activate the plugin silently.
-			$activated = deactivate_plugins( $plugin['plugin'], false, $network );
+			deactivate_plugins( $plugin['plugin'], false, $network );
 
-			if ( is_wp_error( $activated ) ) {
+			$stillActive = $network ? is_plugin_active_for_network( $plugin['plugin'] ) : is_plugin_active( $plugin['plugin'] );
+			if ( $stillActive ) {
 				$failed[] = $plugin['plugin'];
 			}
 

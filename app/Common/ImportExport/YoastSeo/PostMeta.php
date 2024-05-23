@@ -46,7 +46,7 @@ class PostMeta {
 	 * @return void
 	 */
 	public function importPostMeta() {
-		$postsPerAction  = 100;
+		$postsPerAction  = apply_filters( 'aioseo_import_yoast_seo_posts_per_action', 100 );
 		$publicPostTypes = implode( "', '", aioseo()->helpers->getPublicPostTypes( true ) );
 		$timeStarted     = gmdate( 'Y-m-d H:i:s', aioseo()->core->cache->get( 'import_post_meta_yoast_seo' ) );
 

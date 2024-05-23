@@ -14,7 +14,8 @@ const refreshWoocommerceStore = () => {
 	let productSku   = '',
 		productPrice = '',
 		productBrand = '',
-		brands       = []
+		brands       = [],
+		productCatLabel = ''
 
 	const tagsStore       = useTagsStore()
 	const postEditorStore = usePostEditorStore()
@@ -62,13 +63,18 @@ const refreshWoocommerceStore = () => {
 		tagsStore.updateWooCommerceBrand('')
 	}
 
-	// Set product category if primary term is set.
+	const productCats = document.querySelectorAll('#post input[name="tax_input[product_cat][]"]:checked')
+	if (productCats.length) {
+		productCatLabel = productCats[0].parentNode.innerText
+	}
+
+	// The primary term label takes precedence.
 	if (postEditorStore.currentPost?.primary_term?.product_cat) {
 		const productCategory = document.getElementById(`in-product_cat-${postEditorStore.currentPost.primary_term.product_cat}`)
-		if (productCategory?.parentNode?.innerText) {
-			tagsStore.updateTaxonomyTitle(productCategory.parentNode.innerText)
-		}
+		productCatLabel = productCategory?.parentNode?.innerText || ''
 	}
+
+	tagsStore.updateTaxonomyTitle(productCatLabel)
 }
 
 window.addEventListener('DOMContentLoaded', () => {

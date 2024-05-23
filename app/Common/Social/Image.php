@@ -57,14 +57,14 @@ class Image {
 	 *
 	 * @param  string        $type        The type ("Facebook" or "Twitter").
 	 * @param  string        $imageSource The image source.
-	 * @param  \WP_Post      $post        The post object.
+	 * @param  \WP_Post|null $post        The post object.
 	 * @return string|array               The image data.
 	 */
-	public function getImage( $type, $imageSource, $post ) {
+	public function getImage( $type, $imageSource, $post = null ) {
 		$this->type          = $type;
 		$this->post          = $post;
 		$this->thumbnailSize = apply_filters( 'aioseo_thumbnail_size', 'fullsize' );
-		$hash                = md5( $this->type . $imageSource );
+		$hash                = md5( wp_json_encode( [ $type, $imageSource, $post ] ) );
 
 		static $images = [];
 		if ( isset( $images[ $hash ] ) ) {

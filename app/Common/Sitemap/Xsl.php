@@ -30,6 +30,9 @@ class Xsl {
 		preg_match( '/\/(.*?)-?sitemap([0-9]*)\.xml/', $sitemapPath, $sitemapInfo );
 		$sitemapName = ! empty( $sitemapInfo[1] ) ? strtoupper( $sitemapInfo[1] ) : '';
 
+		// Remove everything after ? from sitemapPath to avoid caching issues.
+		$sitemapPath = wp_parse_url( $sitemapPath, PHP_URL_PATH ) ?: '';
+
 		if ( ! empty( $sitemapInfo[1] ) ) {
 			switch ( $sitemapInfo[1] ) {
 				case 'addl':

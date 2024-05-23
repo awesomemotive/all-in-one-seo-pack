@@ -28,7 +28,7 @@ class Sitemap {
 	 */
 	public function __construct() {
 		add_action( 'admin_init', [ $this, 'init' ] );
-		add_action( $this->action, [ $this, 'sync' ] );
+		add_action( $this->action, [ $this, 'worker' ] );
 	}
 
 	/**
@@ -41,12 +41,42 @@ class Sitemap {
 	public function init() {
 		if (
 			! aioseo()->searchStatistics->api->auth->isConnected() ||
+			! aioseo()->internalOptions->searchStatistics->site->verified ||
 			aioseo()->actionScheduler->isScheduled( $this->action )
 		) {
 			return;
 		}
 
 		aioseo()->actionScheduler->scheduleAsync( $this->action );
+	}
+
+	/**
+	 * Sync the sitemap.
+	 *
+	 * @since 4.6.3
+	 *
+	 * @return void
+	 */
+	public function worker() {
+		if ( ! $this->canSync() ) {
+			return;
+		}
+
+		$api      = new Api\Request( 'google-search-console/sitemap/sync/', [ 'sitemaps' => aioseo()->sitemap->helpers->getSitemapUrls() ] );
+		$response = $api->request();
+
+		if ( is_wp_error( $response ) ) {
+			// If it failed to communicate with the server, try again in a few hours.
+			aioseo()->actionScheduler->scheduleSingle( $this->action, wp_rand( HOUR_IN_SECONDS, 2 * HOUR_IN_SECONDS ), [], true );
+
+			return;
+		}
+
+		aioseo()->internalOptions->searchStatistics->sitemap->list      = $response['data'];
+		aioseo()->internalOptions->searchStatistics->sitemap->lastFetch = time();
+
+		// Schedule a new sync for the next week.
+		aioseo()->actionScheduler->scheduleSingle( $this->action, WEEK_IN_SECONDS + wp_rand( 0, 3 * DAY_IN_SECONDS ), [], true );
 	}
 
 	/**
@@ -89,31 +119,7 @@ class Sitemap {
 		}
 
 		aioseo()->actionScheduler->unschedule( $this->action );
-		$this->sync();
-	}
-
-	/**
-	 * Sync the sitemap.
-	 *
-	 * @since 4.6.2
-	 *
-	 * @return void
-	 */
-	public function sync() {
-		if ( ! $this->canSync() ) {
-			return;
-		}
-
-		$api      = new Api\Request( 'google-search-console/sitemap/sync/', [ 'sitemaps' => aioseo()->sitemap->helpers->getSitemapUrls() ] );
-		$response = $api->request();
-
-		if ( ! is_wp_error( $response ) ) {
-			aioseo()->internalOptions->searchStatistics->sitemap->list      = $response['data'];
-			aioseo()->internalOptions->searchStatistics->sitemap->lastFetch = time();
-		}
-
-		// Schedule a new sync.
-		aioseo()->actionScheduler->scheduleSingle( $this->action, WEEK_IN_SECONDS + wp_rand( 1, 3 * DAY_IN_SECONDS ), [], true );
+		aioseo()->actionScheduler->scheduleAsync( $this->action );
 	}
 
 	/**
@@ -130,18 +136,14 @@ class Sitemap {
 			return [];
 		}
 
-		$errors = [];
+		$errors         = [];
+		$pluginSitemaps = aioseo()->sitemap->helpers->getSitemapUrls();
 		foreach ( $sitemaps as $sitemap ) {
-			if ( empty( $sitemap['errors'] ) ) {
-				continue;
-			}
-
-			// Skip user-ignored sitemaps.
-			if ( in_array( $sitemap['path'], $ignored, true ) ) {
-				continue;
-			}
-
-			if ( in_array( $sitemap['path'], aioseo()->sitemap->helpers->getSitemapUrls(), true ) ) {
+			if (
+				empty( $sitemap['errors'] ) ||
+				in_array( $sitemap['path'], $ignored, true ) || // Skip user-ignored sitemaps.
+				in_array( $sitemap['path'], $pluginSitemaps, true ) // Skip plugin sitemaps.
+			) {
 				continue;
 			}
 

@@ -1040,8 +1040,9 @@ class Tags {
 	 * @return string          The category title.
 	 */
 	private function getTaxonomyTitle( $postId = null ) {
-		$title = '';
-		if ( aioseo()->helpers->isWooCommerceActive() && is_product_category() ) {
+		$isWcActive = aioseo()->helpers->isWooCommerceActive();
+		$title      = '';
+		if ( $isWcActive && is_product_category() ) {
 			$title = single_cat_title( '', false );
 		} elseif ( is_category() ) {
 			$title = single_cat_title( '', false );
@@ -1058,6 +1059,8 @@ class Tags {
 		}
 
 		if ( $postId ) {
+			$currentScreen  = aioseo()->helpers->getCurrentScreen();
+			$isProduct      = $isWcActive && ( is_product() || 'product' === ( $currentScreen->post_type ?? '' ) );
 			$post           = aioseo()->helpers->getPost( $postId );
 			$postTaxonomies = get_object_taxonomies( $post, 'objects' );
 			$postTerms      = [];
@@ -1066,24 +1069,21 @@ class Tags {
 					continue;
 				}
 
-				$primaryTerm = aioseo()->standalone->primaryTerm->getPrimaryTerm( $postId, $taxonomySlug );
+				$taxonomySlug = $isProduct ? 'product_cat' : $taxonomySlug;
+				$primaryTerm  = aioseo()->standalone->primaryTerm->getPrimaryTerm( $postId, $taxonomySlug );
 				if ( $primaryTerm ) {
 					$postTerms[] = get_term( $primaryTerm, $taxonomySlug );
-					continue;
+					break;
 				}
 
 				$postTaxonomyTerms = get_the_terms( $postId, $taxonomySlug );
 				if ( is_array( $postTaxonomyTerms ) ) {
 					$postTerms = array_merge( $postTerms, $postTaxonomyTerms );
+					break;
 				}
 			}
 
 			$title = $postTerms ? $postTerms[0]->name : '';
-
-			if ( aioseo()->helpers->isWooCommerceActive() && is_product() ) {
-				$terms = get_the_terms( $postId, 'product_cat' );
-				$title = $terms ? $terms[0]->name : '';
-			}
 		}
 
 		return wp_strip_all_tags( (string) $title );

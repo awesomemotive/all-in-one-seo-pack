@@ -48,7 +48,7 @@ class Facebook {
 
 		// Since we could be on an archive page, let's check again for that default image.
 		if ( ! $image ) {
-			$image = aioseo()->social->image->getImage( 'facebook', 'default', null );
+			$image = aioseo()->social->image->getImage( 'facebook', 'default' );
 		}
 
 		if ( ! $image ) {

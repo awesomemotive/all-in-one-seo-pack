@@ -94,6 +94,7 @@ class Api {
 			'reset-settings'                                        => [ 'callback' => [ 'Settings', 'resetSettings' ], 'access' => 'aioseo_tools_settings' ],
 			'search-statistics/sitemap/delete'                      => [ 'callback' => [ 'SearchStatistics', 'deleteSitemap' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 			'search-statistics/sitemap/ignore'                      => [ 'callback' => [ 'SearchStatistics', 'ignoreSitemap' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+			'settings/export'                                       => [ 'callback' => [ 'Settings', 'exportSettings' ], 'access' => 'aioseo_tools_settings' ],
 			'settings/hide-setup-wizard'                            => [ 'callback' => [ 'Settings', 'hideSetupWizard' ], 'access' => 'any' ],
 			'settings/hide-upgrade-bar'                             => [ 'callback' => [ 'Settings', 'hideUpgradeBar' ], 'access' => 'any' ],
 			'settings/import'                                       => [ 'callback' => [ 'Settings', 'importSettings' ], 'access' => 'aioseo_tools_settings' ],

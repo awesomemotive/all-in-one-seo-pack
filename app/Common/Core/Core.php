@@ -24,6 +24,7 @@ class Core {
 	 */
 	private $aioseoTables = [
 		'aioseo_cache',
+		'aioseo_crawl_cleanup_logs',
 		'aioseo_links',
 		'aioseo_links_suggestions',
 		'aioseo_notifications',
