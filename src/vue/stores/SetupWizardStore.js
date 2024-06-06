@@ -30,17 +30,16 @@ export const useSetupWizardStore = defineStore('SetupWizardStore', {
 			metaDescription : ''
 		},
 		additionalInformation : {
-			siteRepresents    : 'organization',
-			person            : null,
-			organizationName  : null,
-			organizationLogo  : null,
-			personName        : null,
-			personLogo        : null,
-			phone             : null,
-			contactType       : null,
-			contactTypeManual : null,
-			socialShareImage  : null,
-			social            : {
+			siteRepresents          : 'organization',
+			person                  : null,
+			organizationName        : null,
+			orgnaizationDescription : null,
+			organizationLogo        : null,
+			personName              : null,
+			personLogo              : null,
+			phone                   : null,
+			socialShareImage        : null,
+			social                  : {
 				profiles : {
 					sameUsername : {
 						enable   : true,

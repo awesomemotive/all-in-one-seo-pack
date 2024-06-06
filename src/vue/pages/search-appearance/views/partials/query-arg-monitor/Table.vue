@@ -423,7 +423,7 @@ export default {
 					this.fetchData()
 				})
 				.catch(error => {
-					console.log(error)
+					console.error(error)
 				})
 		},
 		openAlert (message, type = 'green') {
@@ -499,7 +499,7 @@ export default {
 						this.fetchData()
 					})
 					.catch(error => {
-						console.log(error)
+						console.error(error)
 					})
 			}
 			if ('unblocked' === this.selectedFilters.slug) {
@@ -518,7 +518,7 @@ export default {
 						this.fetchData()
 					})
 					.catch(error => {
-						console.log(error)
+						console.error(error)
 					})
 			}
 		},

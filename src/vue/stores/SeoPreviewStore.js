@@ -13,14 +13,13 @@ export const useSeoPreviewStore = defineStore('SeoPreviewStore', {
 	getters : {
 		// Get the rich results for the admin preview.
 		richResults () {
+			const schemaStore          = useSchemaStore()
 			const tableOfContentsStore = useTableOfContentsStore()
+
 			let anchorLinks = (flattenHeadings(tableOfContentsStore.headings, 4) || [])?.map(h => h?.content || '')
 			if (!Array.isArray(anchorLinks) || !anchorLinks.length) {
 				anchorLinks = []
 			}
-
-			const schemaStore = useSchemaStore()
-			schemaStore.updateSchemaOutput()
 
 			return {
 				anchorLinks   : anchorLinks.filter((c) => !!c),

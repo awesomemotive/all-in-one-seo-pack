@@ -960,7 +960,7 @@ trait WpContext {
 	 */
 	public function getWebsiteName() {
 		return aioseo()->options->searchAppearance->global->schema->websiteName
-			? aioseo()->options->searchAppearance->global->schema->websiteName
+			? aioseo()->tags->replaceTags( aioseo()->options->searchAppearance->global->schema->websiteName )
 			: aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
 	}
 }

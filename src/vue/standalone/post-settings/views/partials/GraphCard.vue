@@ -15,7 +15,10 @@
 </template>
 
 <script>
+import { useSchema } from '@/vue/standalone/post-settings/composables/schema'
+
 import GraphsMixin from '../mixins/Graphs'
+
 export default {
 	mixins : [ GraphsMixin ],
 	props  : {
@@ -23,25 +26,38 @@ export default {
 		customGraph  : Boolean,
 		defaultGraph : String
 	},
+	setup () {
+		const { childGraphs, graphs } = useSchema()
+
+		return {
+			childGraphs,
+			graphs
+		}
+	},
 	computed : {
 		graphLabel () {
 			if (this.customGraph) {
 				return (this.$t.__('Custom Schema', this.$td) + ' - ' + this.graph.graphName)
 			}
+
 			if (this.defaultGraph) {
 				return this.formatDefaultGraphName(this.defaultGraph)
 			}
-			if (this.graph.label) {
+
+			if (this.graph?.label) {
 				return this.graph.label
 			}
 
-			const slug = this.graph.slug.toLowerCase()
-			return this.graphs.find(x => x.slug === slug).label
+			const slug       = this.graph?.slug?.toLowerCase()
+			const graphLabel = this.graphs.find(x => x.slug === slug)?.label
+
+			return graphLabel || this.$t.__('Parsing Block Data...', this.$td)
 		},
 		graphIcon () {
 			if (this.customGraph) {
 				return 'svg-custom-schema'
 			}
+
 			if (this.defaultGraph) {
 				const parentGraphSlug = this.getParentGraphSlug(this.defaultGraph)
 				if (parentGraphSlug) {
@@ -49,6 +65,7 @@ export default {
 				}
 				return 'svg-custom-schema'
 			}
+
 			return 'svg-' + this.graph.slug
 		}
 	},
@@ -115,8 +132,13 @@ export default {
 .aioseo-modal.aioseo-post-schema-modal,
 .aioseo-modal.aioseo-post-schema-modal-cta {
 	.graph-container {
-		flex: 0 1 32.22%;
+		flex: 1 30%;
 		max-width: 309.33px;
+
+		@media (max-width: 430px) {
+			flex: 1 100%;
+			max-width: 100%;
+		}
 
 		.graph {
 			height: 40px;
@@ -197,6 +219,11 @@ export default {
 							&.aioseo-trash {
 								width: 9.4px;
 								height: 12px;
+							}
+
+							&.aioseo-eye {
+								width: 11px;
+
 							}
 						}
 					}

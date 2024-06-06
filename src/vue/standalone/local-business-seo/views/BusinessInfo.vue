@@ -157,14 +157,27 @@ export default {
 	.aioseo-multiselect {
 		max-width: 480px;
 	}
+
 	.field-description {
 		font-size: 14px;
 	}
+
 	.info-businessaddress-row .columns {
 		display: flex;
 		flex: 0 1 auto;
 		flex-direction: row;
 		flex-wrap: wrap;
+	}
+
+	&.aioseo-tab-content{
+		svg {
+			&.aioseo-circle-question-mark {
+				width: 17px;
+				height: 17px;
+				color: #8C8F9A;
+				transition: background-color 0.2s ease;
+			}
+		}
 	}
 }
 </style>

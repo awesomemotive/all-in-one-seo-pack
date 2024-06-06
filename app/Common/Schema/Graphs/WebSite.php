@@ -26,7 +26,7 @@ class WebSite extends Graph {
 			'@id'           => $homeUrl . '#website',
 			'url'           => $homeUrl,
 			'name'          => aioseo()->helpers->getWebsiteName(),
-			'alternateName' => aioseo()->options->searchAppearance->global->schema->websiteAlternateName,
+			'alternateName' => aioseo()->tags->replaceTags( aioseo()->options->searchAppearance->global->schema->websiteAlternateName ),
 			'description'   => aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'description' ) ),
 			'inLanguage'    => aioseo()->helpers->currentLanguageCodeBCP47(),
 			'publisher'     => [ '@id' => $homeUrl . '#' . aioseo()->options->searchAppearance->global->schema->siteRepresents ]

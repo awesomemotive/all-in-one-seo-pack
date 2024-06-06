@@ -124,6 +124,10 @@ class Wizard {
 				$options->searchAppearance->global->schema->organizationName = $additionalInformation['organizationName'];
 			}
 
+			if ( ! empty( $additionalInformation['organizationDescription'] ) ) {
+				$options->searchAppearance->global->schema->organizationDescription = $additionalInformation['organizationDescription'];
+			}
+
 			if ( ! empty( $additionalInformation['phone'] ) ) {
 				$options->searchAppearance->global->schema->phone = $additionalInformation['phone'];
 			}
@@ -138,14 +142,6 @@ class Wizard {
 
 			if ( ! empty( $additionalInformation['personLogo'] ) ) {
 				$options->searchAppearance->global->schema->personLogo = $additionalInformation['personLogo'];
-			}
-
-			if ( ! empty( $additionalInformation['contactType'] ) ) {
-				$options->searchAppearance->global->schema->contactType = $additionalInformation['contactType'];
-			}
-
-			if ( ! empty( $additionalInformation['contactTypeManual'] ) ) {
-				$options->searchAppearance->global->schema->contactTypeManual = $additionalInformation['contactTypeManual'];
 			}
 
 			if ( ! empty( $additionalInformation['socialShareImage'] ) ) {

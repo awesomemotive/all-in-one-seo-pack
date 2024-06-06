@@ -77,6 +77,7 @@ export default {
 .aioseo-app .aioseo-phone-number.m-phone-number-input {
 	--maz-color-text: #141B38;
 	--maz-color-muted: #8C8F9A;
+	--maz-color-success-600: #8C8F9A;
 	--maz-border-radius: 3px;
 	--maz-color-bg: #fff;
 	--maz-border-width: 1px;
@@ -84,16 +85,7 @@ export default {
 	max-width: 600px;
 
 	input {
-		&.m-select-list__search-input,
-		&.m-phone-number-input__select,
-		&.m-phone-number-input__input {
-			font-size: 14px;
-
-			&:focus {
-				border: none;
-				box-shadow: none;
-			}
-		}
+		font-size: 14px;
 	}
 
 	.m-input-wrapper {
@@ -102,6 +94,39 @@ export default {
 
 		.m-input-label {
 			font-size: 14px;
+		}
+	}
+
+	> div:first-of-type {
+		input:focus {
+			border: none;
+			box-shadow: none;
+		}
+
+		.m-input-wrapper {
+			border-top: 1px solid $input-border;
+			border-bottom: 1px solid $input-border;
+			border-left: 1px solid $input-border;
+			border-right: none;
+			border-radius: 3px;
+
+			.m-input-label {
+				font-size: 14px;
+			}
+		}
+	}
+
+	> div:last-of-type.--is-focused {
+		z-index: 10;
+
+		> div {
+			border: 2px solid $blue;
+			border-radius: 3px;
+		}
+
+		input {
+			border: none;
+			box-shadow: none;
 		}
 	}
 
@@ -114,9 +139,10 @@ export default {
 	}
 
 	.m-select {
-
-		.m-select-list-item {
-
+		.m-phone-number-input__select__item {
+			display: flex;
+			align-items: center;
+			gap: 6px;
 				&.--is-selected.--primary {
 				background-color: $blue;
 				color: $white;

@@ -9,6 +9,9 @@ import {
 	useLicenseStore
 } from '@/vue/stores'
 
+import { useSchema } from '@/vue/standalone/post-settings/composables/schema'
+
+import { escapeRegex } from '@/vue/utils/regex'
 import { isBlockEditor } from '@/vue/utils/context'
 
 export const useSchemaStore = defineStore('SchemaStore', {
@@ -34,7 +37,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			generator : 'schema-templates',
 			templates : 'schema-catalog'
 		},
-		templateName : ''
+		templateName              : '',
+		previousOutputRequestData : null
 	}),
 	actions : {
 		getCustomObject () {
@@ -76,8 +80,6 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.graphCardsKey    = this.graphCardsKey + 1
 			this.modalOpenMetabox = false
 			this.modalOpenSidebar = false
-
-			this.updateSchemaOutput()
 		},
 		addCustomAsTemplate () {
 			const postEditorStore = usePostEditorStore()
@@ -112,8 +114,6 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.graphCardsKey    = this.graphCardsKey + 1
 			this.modalOpenMetabox = false
 			this.modalOpenSidebar = false
-
-			this.updateSchemaOutput()
 		},
 		addDefaultGraph () {
 			const postEditorStore = usePostEditorStore()
@@ -124,8 +124,6 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.graphCardsKey    = this.graphCardsKey + 1
 			this.modalOpenMetabox = false
 			this.modalOpenSidebar = false
-
-			this.updateSchemaOutput()
 		},
 		addGraph () {
 			const postEditorStore = usePostEditorStore()
@@ -140,12 +138,16 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.graphCardsKey    = this.graphCardsKey + 1
 			this.modalOpenMetabox = false
 			this.modalOpenSidebar = false
-
-			this.updateSchemaOutput()
 		},
 		addGraphAsTemplate () {
+			const schema = useSchema()
+
 			// First, set the name the user entered for the template.
-			this.graph.label = this.graph.graphName + ' - ' + this.templateName
+			if (this.graph?.properties?.type && this.graph.properties.type !== this.graph.graphName) {
+				this.graph.label = schema.getGraphObject(this.graph, true)?.label + ' - ' + schema.getGraphObject(this.graph)?.label + ' - ' + this.templateName
+			} else {
+				this.graph.label = schema.getGraphObject(this.graph, true)?.label + ' - ' + this.templateName
+			}
 
 			const template = JSON.parse(JSON.stringify(this.graph))
 
@@ -166,14 +168,22 @@ export const useSchemaStore = defineStore('SchemaStore', {
 					}
 				})
 		},
-		addTemplateAsGraph (templateIndex) {
+		addTemplateAsGraph (templateIndex, searchTerm = '') {
 			const optionsStore = useOptionsStore()
-			if (undefined === templateIndex) {
-				// If we don't have a template index, then we're adding the template from the edit screen. In that case, we just need to grab it from the session.
-				templateIndex = optionsStore.internalOptions.internal.schema.templates.findIndex(x => x.id === this.graph.id)
+
+			// First, filter the templates based on the search term.
+			let templates = optionsStore.internalOptions.internal.schema.templates
+			if (searchTerm) {
+				const pattern = new RegExp(escapeRegex(searchTerm).replace(/\s/g, '\\s'), 'i')
+				templates = templates.filter(x => x.label.match(pattern))
 			}
 
-			const template = JSON.parse(JSON.stringify(optionsStore.internalOptions.internal.schema.templates[templateIndex]))
+			if (undefined === templateIndex) {
+				// If we don't have a template index, then we're adding the template from the edit screen. In that case, we just need to grab it from the session.
+				templateIndex = templates.findIndex(x => x.id === this.graph.id)
+			}
+
+			const template = JSON.parse(JSON.stringify(templates[templateIndex]))
 
 			// Add a random suffix to the ID to prevent duplicate keys in case the same graph has been added twice.
 			template.id = template.id + new Date().getTime().toString(18)
@@ -198,8 +208,6 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.graphCardsKey    = this.graphCardsKey + 1
 			this.modalOpenMetabox = false
 			this.modalOpenSidebar = false
-
-			this.updateSchemaOutput()
 		},
 		deleteCustomGraph (graphIndex) {
 			const postEditorStore = usePostEditorStore()
@@ -215,8 +223,6 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.graphCardsKey    = this.graphCardsKey + 1
 			this.modalOpenMetabox = false
 			this.modalOpenSidebar = false
-
-			this.updateSchemaOutput()
 		},
 		deleteDefaultGraph () {
 			const postEditorStore = usePostEditorStore()
@@ -227,8 +233,6 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.graphCardsKey    = this.graphCardsKey + 1
 			this.modalOpenMetabox = false
 			this.modalOpenSidebar = false
-
-			this.updateSchemaOutput()
 		},
 		deleteGraph (graphIndex) {
 			const postEditorStore = usePostEditorStore()
@@ -244,8 +248,6 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.graphCardsKey    = this.graphCardsKey + 1
 			this.modalOpenMetabox = false
 			this.modalOpenSidebar = false
-
-			this.updateSchemaOutput()
 		},
 		deleteTemplate (templateIndex) {
 			const templateId   = this.graph.id
@@ -326,10 +328,18 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			// Turn off the isDirty flag since we JUST opened up the edit modal.
 			this.isDirty = false
 		},
-		async editTemplate (templateIndex) {
+		async editTemplate (templateIndex, searchTerm = '') {
+			const optionsStore = useOptionsStore()
+
+			// First, filter the templates based on the search term.
+			let templates = optionsStore.internalOptions.internal.schema.templates
+			if (searchTerm) {
+				const pattern = new RegExp(escapeRegex(searchTerm).replace(/\s/g, '\\s'), 'i')
+				templates = templates.filter(x => x.label.match(pattern))
+			}
+
 			// It's important to create a clone so that we're not editing the existing template object.
-			const optionsStore   = useOptionsStore()
-			const editedTemplate = JSON.parse(JSON.stringify(optionsStore.internalOptions.internal.schema.templates[templateIndex]))
+			const editedTemplate = JSON.parse(JSON.stringify(templates[templateIndex]))
 
 			this.graph = editedTemplate
 
@@ -370,8 +380,6 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.graphCardsKey    = this.graphCardsKey + 1
 			this.modalOpenMetabox = false
 			this.modalOpenSidebar = false
-
-			this.updateSchemaOutput()
 		},
 		updateDefaultGraph () {
 			const postEditorStore = usePostEditorStore()
@@ -382,8 +390,6 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.graphCardsKey    = this.graphCardsKey + 1
 			this.modalOpenMetabox = false
 			this.modalOpenSidebar = false
-
-			this.updateSchemaOutput()
 		},
 		updateGraph () {
 			const postEditorStore = usePostEditorStore()
@@ -403,8 +409,6 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.graphCardsKey    = this.graphCardsKey + 1
 			this.modalOpenMetabox = false
 			this.modalOpenSidebar = false
-
-			this.updateSchemaOutput()
 		},
 		updateSchemaOutput () {
 			const postEditorStore = usePostEditorStore()
@@ -423,14 +427,22 @@ export const useSchemaStore = defineStore('SchemaStore', {
 				return
 			}
 
+			const data = {
+				postId       : postId,
+				graphs       : postEditorStore.currentPost.schema.graphs,
+				customGraphs : postEditorStore.currentPost.schema.customGraphs,
+				default      : postEditorStore.currentPost.schema.default,
+				blockGraphs  : postEditorStore.currentPost.schema.blockGraphs
+			}
+
+			if (JSON.stringify(data) === this.previousOutputRequestData) {
+				return
+			}
+
+			this.previousOutputRequestData = JSON.stringify(data)
+
 			http.post(links.restUrl('schema/validator/output'))
-				.send({
-					postId       : postId,
-					graphs       : postEditorStore.currentPost.schema.graphs,
-					customGraphs : postEditorStore.currentPost.schema.customGraphs,
-					defaultGraph : postEditorStore.currentPost.schema.defaultGraph,
-					blockGraphs  : postEditorStore.currentPost.schema.blockGraphs
-				})
+				.send(data)
 				.then((response) => {
 					if (response.body.success && response.body.output) {
 						let output = null

@@ -66,7 +66,7 @@ class WebPage extends Graphs\Graph {
 
 		if ( is_singular() ) {
 			if ( ! isset( aioseo()->schema->context['object'] ) || ! aioseo()->schema->context['object'] ) {
-				$data = $this->getAddonData( $data );
+				$data = $this->getAddonData( $data, 'webPage' );
 
 				return $data;
 			}
@@ -85,7 +85,7 @@ class WebPage extends Graphs\Graph {
 			$data['datePublished'] = mysql2date( DATE_W3C, $post->post_date, false );
 			$data['dateModified']  = mysql2date( DATE_W3C, $post->post_modified, false );
 
-			$data = $this->getAddonData( $data );
+			$data = $this->getAddonData( $data, 'webPage' );
 
 			return $data;
 		}
@@ -94,28 +94,7 @@ class WebPage extends Graphs\Graph {
 			$data['about'] = [ '@id' => trailingslashit( home_url() ) . '#' . aioseo()->options->searchAppearance->global->schema->siteRepresents ];
 		}
 
-		$data = $this->getAddonData( $data );
-
-		return $data;
-	}
-
-	/**
-	 * Merges in data from our addon plugins.
-	 *
-	 * @since 4.5.6
-	 *
-	 * @param  array $data The graph data.
-	 * @return array       The graph data.
-	 */
-	protected function getAddonData( $data ) {
-		$addonData = array_filter( aioseo()->addons->doAddonFunction( 'webPage', 'get', [
-			'postId' => get_the_ID(),
-			'data'   => $data
-		] ) );
-
-		foreach ( $addonData as $addonGraphData ) {
-			$data = array_merge( $data, $addonGraphData );
-		}
+		$data = $this->getAddonData( $data, 'webPage' );
 
 		return $data;
 	}

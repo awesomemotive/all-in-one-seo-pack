@@ -1,7 +1,8 @@
 import {
 	useOptionsStore,
 	usePostEditorStore,
-	useRootStore
+	useRootStore,
+	useSchemaStore
 } from '@/vue/stores'
 
 import { debounce } from '@/vue/utils/debounce'
@@ -46,6 +47,9 @@ export const shouldShowTruSeoScore = () => {
 
 export const maybeUpdatePost = async (time = 900, run = true) => {
 	debounce(async () => {
+		const schemaStore     = useSchemaStore()
+		const postEditorStore = usePostEditorStore()
+
 		await maybeUpdatePostTitle(false)
 		await maybeUpdatePostContent(false)
 		await maybeUpdatePostExcerpt(false)
@@ -55,7 +59,8 @@ export const maybeUpdatePost = async (time = 900, run = true) => {
 		maybeUpdateTerm(false)
 		maybeUpdateAttachment(false)
 
-		const postEditorStore = usePostEditorStore()
+		debounce(schemaStore.updateSchemaOutput, Math.max(time * 2, 1800))
+
 		if (run) {
 			(new TruSeo()).runAnalysis({ postId: postEditorStore.currentPost.id })
 		}

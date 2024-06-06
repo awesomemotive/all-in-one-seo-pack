@@ -31,14 +31,18 @@ class ProfilePage extends WebPage {
 	public function get() {
 		$data = parent::get();
 
+		$post   = aioseo()->helpers->getPost();
 		$author = get_queried_object();
-		if ( ! is_a( $author, 'WP_User' ) ) {
+		if (
+			! is_a( $author, 'WP_User' ) &&
+			( is_singular() && ! is_a( $post, 'WP_Post' ) )
+		) {
 			return [];
 		}
 
 		global $wp_query;
 		$articles = [];
-		$authorId = $author->ID;
+		$authorId = $author->ID ?? $post->post_author ?? 0;
 		foreach ( $wp_query->posts as $post ) {
 			if ( $post->post_author !== $authorId ) {
 				continue;

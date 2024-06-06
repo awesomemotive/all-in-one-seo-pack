@@ -171,7 +171,6 @@ class Updates {
 		}
 
 		if ( version_compare( $lastActiveVersion, '4.2.4', '<' ) ) {
-			$this->migrateContactTypes();
 			$this->addNotificationsAddonColumn();
 		}
 
@@ -941,42 +940,6 @@ class Updates {
 			SET `meta_key` = 'aioseo_twitter_url'
 			WHERE `meta_key` = 'aioseo_twitter'"
 		);
-	}
-
-	/**
-	 * Migrates some older values in the Knowledge Panel contact type setting that were removed.
-	 *
-	 * @since 4.2.4
-	 *
-	 * @return void
-	 */
-	public function migrateContactTypes() {
-		$oldValue          = aioseo()->options->searchAppearance->global->schema->contactType;
-		$oldValueLowerCase = strtolower( (string) $oldValue );
-
-		// Return if there is no value set or manual input is being used.
-		if ( ! $oldValue || 'manual' === $oldValueLowerCase ) {
-			return;
-		}
-
-		switch ( $oldValueLowerCase ) {
-			case 'billing support':
-			case 'customer support':
-			case 'reservations':
-			case 'sales':
-			case 'technical support':
-				// If we still support the value, do nothing.
-				return;
-			default:
-				// Otherwise, migrate the existing value to the manual input field.
-				if ( 'bagage tracking' === $oldValueLowerCase ) {
-					// Let's also fix this old typo.
-					$oldValue = 'Baggage Tracking';
-				}
-
-				aioseo()->options->searchAppearance->global->schema->contactType       = 'manual';
-				aioseo()->options->searchAppearance->global->schema->contactTypeManual = $oldValue;
-		}
 	}
 
 	/**

@@ -1378,6 +1378,19 @@ export const UPSELL_FEATURE_LIST = [
 
 export const DISCOUNT_PERCENTAGE = '60%'
 
+export const COURSE_MODE_LIST = [
+	{ label: __('Online', td), value: 'Online' },
+	{ label: __('Onsite', td), value: 'Onsite' },
+	{ label: __('Blended', td), value: 'Blended' }
+]
+
+export const COURSE_REPEAT_FREQUENCY = [
+	{ label: __('Daily', td), value: 'Daily' },
+	{ label: __('Weekly', td), value: 'Weekly' },
+	{ label: __('Monthly', td), value: 'Monthly' },
+	{ label: __('Yearly', td), value: 'Yearly' }
+]
+
 export const EVENT_TYPE_LIST = [
 	{ label: __('Business Event', td), value: 'BusinessEvent' },
 	{ label: __('Childrens Event', td), value: 'ChildrensEvent' },
@@ -1406,6 +1419,13 @@ export const EVENT_STATUS_LIST = [
 	{ label: __('Postponed', td), value: 'EventPostponed' },
 	{ label: __('Rescheduled', td), value: 'EventRescheduled' },
 	{ label: __('Moved Online', td), value: 'EventMovedOnline' }
+]
+
+export const OFFER_PRICING_CATEGORY_LIST = [
+	{ label: __('Paid', td), value: 'Paid' },
+	{ label: __('Subscription', td), value: 'Subscription' },
+	{ label: __('Free', td), value: 'Free' },
+	{ label: __('Partially Free', td), value: 'Partially Free' }
 ]
 
 export const WEBPAGE_TYPE_LIST = [

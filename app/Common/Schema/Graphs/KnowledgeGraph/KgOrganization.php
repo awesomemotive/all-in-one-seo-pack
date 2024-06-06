@@ -22,14 +22,44 @@ class KgOrganization extends Graphs\Graph {
 	 * @return array $data The graph data.
 	 */
 	public function get() {
-		$homeUrl          = trailingslashit( home_url() );
-		$organizationName = aioseo()->options->searchAppearance->global->schema->organizationName;
-		$data    = [
-			'@type' => 'Organization',
-			'@id'   => $homeUrl . '#organization',
-			'name'  => $organizationName ? $organizationName : aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) ),
-			'url'   => $homeUrl,
+		$homeUrl                 = trailingslashit( home_url() );
+		$organizationName        = aioseo()->tags->replaceTags( aioseo()->options->searchAppearance->global->schema->organizationName );
+		$organizationDescription = aioseo()->tags->replaceTags( aioseo()->options->searchAppearance->global->schema->organizationDescription );
+
+		$data = [
+			'@type'        => 'Organization',
+			'@id'          => $homeUrl . '#organization',
+			'name'         => $organizationName ? $organizationName : aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) ),
+			'description'  => $organizationDescription,
+			'url'          => $homeUrl,
+			'email'        => aioseo()->options->searchAppearance->global->schema->email,
+			'telephone'    => aioseo()->options->searchAppearance->global->schema->phone,
+			'foundingDate' => aioseo()->options->searchAppearance->global->schema->foundingDate
 		];
+
+		$numberOfEmployeesData = aioseo()->options->searchAppearance->global->schema->numberOfEmployees->all();
+
+		if (
+			$numberOfEmployeesData['isRange'] &&
+			! empty( $numberOfEmployeesData['from'] ) &&
+			! empty( $numberOfEmployeesData['to'] )
+		) {
+			$data['numberOfEmployees'] = [
+				'@type'    => 'QuantitativeValue',
+				'minValue' => $numberOfEmployeesData['from'],
+				'maxValue' => $numberOfEmployeesData['to']
+			];
+		}
+
+		if (
+			! $numberOfEmployeesData['isRange'] &&
+			! empty( $numberOfEmployeesData['number'] )
+		) {
+			$data['numberOfEmployees'] = [
+				'@type' => 'QuantitativeValue',
+				'value' => $numberOfEmployeesData['number']
+			];
+		}
 
 		$logo = $this->logo();
 		if ( ! empty( $logo ) ) {
@@ -42,20 +72,7 @@ class KgOrganization extends Graphs\Graph {
 			$data['sameAs'] = $socialUrls;
 		}
 
-		$phone       = aioseo()->options->searchAppearance->global->schema->phone;
-		$contactType = aioseo()->options->searchAppearance->global->schema->contactType;
-		if ( $phone && $contactType ) {
-			if ( 'manual' === $contactType ) {
-				$contactType = aioseo()->options->searchAppearance->global->schema->contactTypeManual;
-			}
-			if ( $contactType ) {
-				$data['contactPoint'] = [
-					'@type'       => 'ContactPoint',
-					'telephone'   => $phone,
-					'contactType' => $contactType,
-				];
-			}
-		}
+		$data = $this->getAddonData( $data, 'kgOrganization' );
 
 		return $data;
 	}

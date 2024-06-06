@@ -242,17 +242,24 @@ TEMPLATE
 				'metaDescription' => [ 'type' => 'string', 'localized' => true, 'default' => '#tagline' ],
 				'keywords'        => [ 'type' => 'string', 'localized' => true ],
 				'schema'          => [
-					'websiteName'          => [ 'type' => 'string' ],
-					'websiteAlternateName' => [ 'type' => 'string' ],
-					'siteRepresents'       => [ 'type' => 'string', 'default' => 'organization' ],
-					'person'               => [ 'type' => 'string' ],
-					'organizationName'     => [ 'type' => 'string' ],
-					'organizationLogo'     => [ 'type' => 'string' ],
-					'personName'           => [ 'type' => 'string' ],
-					'personLogo'           => [ 'type' => 'string' ],
-					'phone'                => [ 'type' => 'string' ],
-					'contactType'          => [ 'type' => 'string' ],
-					'contactTypeManual'    => [ 'type' => 'string' ]
+					'websiteName'             => [ 'type' => 'string', 'default' => '#site_title' ],
+					'websiteAlternateName'    => [ 'type' => 'string' ],
+					'siteRepresents'          => [ 'type' => 'string', 'default' => 'organization' ],
+					'person'                  => [ 'type' => 'string' ],
+					'organizationName'        => [ 'type' => 'string', 'default' => '#site_title' ],
+					'organizationDescription' => [ 'type' => 'string', 'default' => '#tagline' ],
+					'organizationLogo'        => [ 'type' => 'string' ],
+					'personName'              => [ 'type' => 'string' ],
+					'personLogo'              => [ 'type' => 'string' ],
+					'phone'                   => [ 'type' => 'string' ],
+					'email'                   => [ 'type' => 'string' ],
+					'foundingDate'            => [ 'type' => 'string' ],
+					'numberOfEmployees'       => [
+						'isRange' => [ 'type' => 'boolean' ],
+						'from'    => [ 'type' => 'number' ],
+						'to'      => [ 'type' => 'number' ],
+						'number'  => [ 'type' => 'number' ]
+					]
 				]
 			],
 			'advanced' => [
@@ -518,12 +525,9 @@ TEMPLATE
 
 		$hasInitialized = true;
 
-		$this->defaults['searchAppearance']['global']['schema']['organizationName']['default'] = aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
 		$this->defaults['deprecated']['tools']['blocker']['custom']['bots']['default']         = implode( "\n", aioseo()->badBotBlocker->getBotList() );
 		$this->defaults['deprecated']['tools']['blocker']['custom']['referer']['default']      = implode( "\n", aioseo()->badBotBlocker->getRefererList() );
 
-		$this->defaults['searchAppearance']['global']['schema']['organizationName']['default'] = aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
-		$this->defaults['searchAppearance']['global']['schema']['websiteName']['default']      = aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
 		$this->defaults['searchAppearance']['global']['schema']['organizationLogo']['default'] = aioseo()->helpers->getSiteLogoUrl() ? aioseo()->helpers->getSiteLogoUrl() : '';
 	}
 

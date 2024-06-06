@@ -82,10 +82,6 @@ class SocialMeta {
 
 		aioseo()->options->searchAppearance->global->schema->siteRepresents = $type;
 
-		if ( ! empty( $this->options['seopress_social_knowledge_contact_type'] ) ) {
-			aioseo()->options->searchAppearance->global->schema->contactType = ucwords( $this->options['seopress_social_knowledge_contact_type'] );
-		}
-
 		$settings = [
 			'seopress_social_knowledge_img'   => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', $type . 'Logo' ] ],
 			'seopress_social_knowledge_name'  => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', $type . 'Name' ] ],

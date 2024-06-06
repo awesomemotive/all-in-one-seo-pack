@@ -83,9 +83,33 @@
 					<div class="settings-name">
 						<div class="name small-margin">{{ strings.organizationName }}</div>
 					</div>
-					<base-input
-						size="medium"
+
+					<core-html-tags-editor
 						v-model="setupWizardStore.additionalInformation.organizationName"
+						:line-numbers="false"
+						tags-context="knowledgeGraph"
+						:default-tags="[
+							'site_title'
+						]"
+					/>
+				</div>
+
+				<div
+					v-if="'organization' === setupWizardStore.additionalInformation.siteRepresents"
+					class="schema-graph-name aioseo-settings-row no-border no-margin"
+				>
+					<div class="settings-name">
+						<div class="name small-margin">{{ strings.organizationDescription }}</div>
+					</div>
+
+					<core-html-tags-editor
+						v-model="setupWizardStore.additionalInformation.organizationDescription"
+						:line-numbers="false"
+						description
+						tags-context="knowledgeGraph"
+						:default-tags="[
+							'tagline'
+						]"
 					/>
 				</div>
 
@@ -111,38 +135,6 @@
 					</div>
 					<base-phone
 						v-model="setupWizardStore.additionalInformation.phone"
-					/>
-				</div>
-
-				<div
-					v-if="'organization' === setupWizardStore.additionalInformation.siteRepresents"
-					class="schema-graph-contact-type aioseo-settings-row no-border no-margin"
-				>
-					<div class="settings-name">
-						<div class="name small-margin">{{ strings.contactType }}</div>
-					</div>
-					<base-select
-						size="medium"
-						:options="$constants.CONTACT_TYPES"
-						:placeholder="strings.chooseContactType"
-						:modelValue="getContactTypeOptions(setupWizardStore.additionalInformation.contactType)"
-						@update:modelValue="value => setupWizardStore.additionalInformation.contactType = value.value"
-					/>
-					<div class="aioseo-description">
-						{{ strings.contactTypeDescription }}
-					</div>
-				</div>
-
-				<div
-					v-if="'organization' === setupWizardStore.additionalInformation.siteRepresents && 'manual' === setupWizardStore.additionalInformation.contactType"
-					class="schema-graph-contact-type-manual aioseo-settings-row no-border no-margin"
-				>
-					<div class="settings-name">
-						<div class="name small-margin">{{ strings.contactType }}</div>
-					</div>
-					<base-input
-						size="medium"
-						v-model="setupWizardStore.additionalInformation.contactTypeManual"
 					/>
 				</div>
 
@@ -240,6 +232,7 @@ import { MaxCounts } from '@/vue/mixins/MaxCounts'
 import { Wizard } from '@/vue/mixins/Wizard'
 import BasePhone from '@/vue/components/common/base/Phone'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
+import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 import CoreSocialProfiles from '@/vue/components/common/core/SocialProfiles'
 import WizardBody from '@/vue/components/common/wizard/Body'
@@ -261,6 +254,7 @@ export default {
 	components : {
 		BasePhone,
 		BaseRadioToggle,
+		CoreHtmlTagsEditor,
 		CoreImageUploader,
 		CoreSocialProfiles,
 		WizardBody,
@@ -285,10 +279,8 @@ export default {
 				personOrOrganizationDescription : this.$t.__('Choose whether the site represents a person or an organization.', this.$td),
 				name                            : this.$t.__('Name', this.$td),
 				organizationName                : this.$t.__('Organization Name', this.$td),
+				organizationDescription         : this.$t.__('Organization Description', this.$td),
 				phone                           : this.$t.__('Phone Number', this.$td),
-				chooseContactType               : this.$t.__('Choose a Contact Type', this.$td),
-				contactType                     : this.$t.__('Contact Type', this.$td),
-				contactTypeDescription          : this.$t.__('Select which team or department the phone number belongs to.', this.$td),
 				logo                            : this.$t.__('Logo', this.$td),
 				defaultSocialShareImage         : this.$t.__('Default Social Share Image', this.$td),
 				yourSocialProfiles              : this.$t.__('Your Social Profiles', this.$td),
@@ -320,9 +312,6 @@ export default {
 		getPersonOptions (option) {
 			return this.users.find(u => u.value === option)
 		},
-		getContactTypeOptions (option) {
-			return this.$constants.CONTACT_TYPES.find(t => t.value === option)
-		},
 		saveAndContinue () {
 			this.loading = true
 			this.setupWizardStore.saveWizard('additionalInformation')
@@ -334,24 +323,21 @@ export default {
 			this.showOtherSocialNetworks = !this.showOtherSocialNetworks
 		}
 	},
-	mounted () {
-		this.$nextTick(() => {
-			const searchAppearance = JSON.parse(JSON.stringify(this.optionsStore.options.searchAppearance))
-			const social           = JSON.parse(JSON.stringify(this.optionsStore.options.social))
+	beforeMount () {
+		const searchAppearance = JSON.parse(JSON.stringify(this.optionsStore.options.searchAppearance))
+		const social           = JSON.parse(JSON.stringify(this.optionsStore.options.social))
 
-			this.setupWizardStore.additionalInformation.social.profiles   = JSON.parse(JSON.stringify(social.profiles))
-			this.setupWizardStore.additionalInformation.socialShareImage  = social.facebook.general.defaultImagePosts
-			this.setupWizardStore.additionalInformation.siteRepresents    = searchAppearance.global.schema.siteRepresents
-			this.setupWizardStore.additionalInformation.person            = searchAppearance.global.schema.person
-			this.setupWizardStore.additionalInformation.organizationName  = searchAppearance.global.schema.organizationName
-			this.setupWizardStore.additionalInformation.organizationLogo  = searchAppearance.global.schema.organizationLogo
-			this.setupWizardStore.additionalInformation.personName        = searchAppearance.global.schema.personName
-			this.setupWizardStore.additionalInformation.personLogo        = searchAppearance.global.schema.personLogo
-			this.setupWizardStore.additionalInformation.phone             = searchAppearance.global.schema.phone
-			this.setupWizardStore.additionalInformation.contactType       = searchAppearance.global.schema.contactType
-			this.setupWizardStore.additionalInformation.contactTypeManual = searchAppearance.global.schema.contactTypeManual
-			this.loaded = true
-		})
+		this.setupWizardStore.additionalInformation.social.profiles         = JSON.parse(JSON.stringify(social.profiles))
+		this.setupWizardStore.additionalInformation.socialShareImage        = social.facebook.general.defaultImagePosts
+		this.setupWizardStore.additionalInformation.siteRepresents          = searchAppearance.global.schema.siteRepresents
+		this.setupWizardStore.additionalInformation.person                  = searchAppearance.global.schema.person
+		this.setupWizardStore.additionalInformation.organizationName        = searchAppearance.global.schema.organizationName
+		this.setupWizardStore.additionalInformation.organizationDescription = searchAppearance.global.schema.organizationDescription
+		this.setupWizardStore.additionalInformation.organizationLogo        = searchAppearance.global.schema.organizationLogo
+		this.setupWizardStore.additionalInformation.personName              = searchAppearance.global.schema.personName
+		this.setupWizardStore.additionalInformation.personLogo              = searchAppearance.global.schema.personLogo
+		this.setupWizardStore.additionalInformation.phone                   = searchAppearance.global.schema.phone
+		this.loaded                                                         = true
 	}
 }
 </script>

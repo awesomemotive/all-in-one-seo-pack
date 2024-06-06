@@ -97,5 +97,9 @@ export default {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+
+	div:nth-of-type(2) {
+		display: flex;
+	}
 }
 </style>

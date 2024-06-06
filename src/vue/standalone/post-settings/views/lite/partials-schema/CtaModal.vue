@@ -89,6 +89,8 @@
 </template>
 
 <script>
+import { useSchema } from '@/vue/standalone/post-settings/composables/schema'
+
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreModal from '@/vue/components/common/core/modal/Index'
@@ -109,6 +111,13 @@ export default {
 		Cta,
 		GraphCard,
 		SvgCirclePlus
+	},
+	setup () {
+		const { graphs } = useSchema()
+
+		return {
+			graphs
+		}
 	},
 	data () {
 		return {
