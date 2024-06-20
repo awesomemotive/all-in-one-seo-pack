@@ -191,7 +191,7 @@ export default {
 
 		.modal-container {
 			width: 100%;
-			max-width: 800px;
+			max-width: 840px;
 			max-height: 90vh;
 			overflow-y: hidden;
 			overflow-x: hidden;
@@ -307,10 +307,8 @@ export default {
 			}
 		}
 	}
-}
 
-.allow-overflow {
-	.modal-mask {
+	&.allow-overflow {
 		.modal-container {
 			overflow: visible;
 

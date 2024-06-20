@@ -111,7 +111,7 @@ class LimitModifiedDate {
 			return $sanitizedData;
 		}
 
-		$shouldReset = false;
+		static $shouldReset = false;
 
 		// Handle the REST API request from the Block Editor.
 		if ( aioseo()->helpers->isRestApiRequest() ) {
@@ -151,7 +151,7 @@ class LimitModifiedDate {
 			}
 		}
 
-		if ( $shouldReset ) {
+		if ( $shouldReset && isset( $unsanitizedData['post_modified'], $unsanitizedData['post_modified_gmt'] ) ) {
 			$sanitizedData['post_modified']     = $unsanitizedData['post_modified'];
 			$sanitizedData['post_modified_gmt'] = $unsanitizedData['post_modified_gmt'];
 		}

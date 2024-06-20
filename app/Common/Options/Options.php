@@ -38,7 +38,6 @@ class Options {
 			'miscellaneousVerification' => [ 'type' => 'html' ]
 		],
 		'breadcrumbs'      => [
-			'enable'                => [ 'type' => 'boolean', 'default' => true ],
 			'separator'             => [ 'type' => 'string', 'default' => '&raquo;' ],
 			'homepageLink'          => [ 'type' => 'boolean', 'default' => true ],
 			'homepageLabel'         => [ 'type' => 'string', 'default' => 'Home' ],
@@ -412,6 +411,9 @@ TEMPLATE
 			]
 		],
 		'deprecated'       => [
+			'breadcrumbs'      => [
+				'enable' => [ 'type' => 'boolean', 'default' => true ]
+			],
 			'searchAppearance' => [
 				'global'   => [
 					'descriptionFormat' => [ 'type' => 'string' ],

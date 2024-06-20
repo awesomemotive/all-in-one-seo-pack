@@ -483,6 +483,10 @@ export default {
 					> .aioseo-select:first-child {
 						width: 100%;
 						max-width: 250px;
+
+						.aioseo-modal & {
+							max-width: 200px;
+						}
 					}
 
 					> * {

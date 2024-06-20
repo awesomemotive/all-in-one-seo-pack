@@ -208,7 +208,7 @@ export default {
 			return this.userProfiles || this.optionsStore.options.social.profiles
 		},
 		profiles () {
-			// We use a set of alternative keys for the User Profile Tab as we otherwise would need to migrate old, existing links for Facebook and Twitter.
+			// We use a set of alternative keys for the User Profile Tab as we otherwise would need to migrate old, existing links for Facebook and X (Twitter).
 			return [
 				{
 					key        : 'facebookPageUrl',
@@ -227,7 +227,7 @@ export default {
 					url        : 'https://x.com',
 					svg        : 'svg-icon-twitter',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?twitter\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your X (Twitter) URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?(twitter|x)\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your X (Twitter) URL is invalid. Please check the format and try again.', this.$td)
 					]
 				},
 				{

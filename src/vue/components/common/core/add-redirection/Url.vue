@@ -283,11 +283,7 @@ export default {
 	},
 	methods : {
 		updateSourceUrl (value) {
-			if (!value) {
-				return
-			}
-
-			if (!this.disableSource) {
+			if (!this.disableSource && value) {
 				// First, let's format the URL for duplicate slashes.
 				if (value) {
 					value = value.replace(/(https?:\/)(\/)+|(\/)+/g, '$1$2$3')
@@ -315,6 +311,9 @@ export default {
 		},
 		searchChange () {
 			if (!this.url.url || this.url.regex) {
+				this.isLoading = false
+				this.showResults = false
+				this.results = []
 				return
 			}
 
@@ -326,6 +325,8 @@ export default {
 				this.url.url.startsWith('https:')
 			) {
 				this.isLoading = false
+				this.showResults = false
+				this.results = []
 				return
 			}
 
@@ -333,6 +334,8 @@ export default {
 			debounce(() => {
 				if (!this.url.url) {
 					this.isLoading = false
+					this.showResults = false
+					this.results = []
 					return
 				}
 

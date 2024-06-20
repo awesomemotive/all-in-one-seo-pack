@@ -82,10 +82,10 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.modalOpenSidebar = false
 		},
 		addCustomAsTemplate () {
-			const postEditorStore = usePostEditorStore()
-			const template        = JSON.parse(JSON.stringify(this.getCustomObject()))
+			const optionsStore = useOptionsStore()
+			const template     = JSON.parse(JSON.stringify(this.getCustomObject()))
 
-			postEditorStore.internalOptions.internal.schema.templates.push(this.getCustomObject())
+			optionsStore.internalOptions.internal.schema.templates.push(this.getCustomObject())
 
 			this.resetSessionState()
 

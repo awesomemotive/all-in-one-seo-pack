@@ -205,16 +205,18 @@ export default {
 				return
 			}
 
-			this.competitorUrl     = null
-			this.competitorResults = this.analyzerStore.getCompetitorSiteAnalysisResults
-			this.toggleFirstCard()
-
 			this.$nextTick(() => {
-				const keys   = Object.keys(this.competitorResults)
-				const header = document.querySelector('.aioseo-header')
-				const offset = header.offsetHeight + header.offsetTop + 30
+				this.competitorResults = this.analyzerStore.getCompetitorSiteAnalysisResults // get results first so that we can get proper index for card
 
-				this.$scrollTo('#aioseo-competitor-results' + this.hashCode(keys[0]), { offset: -offset })
+				const keys   	= Object.keys(this.competitorResults)
+				const header 	= document.querySelector('.aioseo-header')
+				const offset 	= header.offsetHeight + header.offsetTop + 30
+				const keyIndex 	= -1 === keys.indexOf(this.competitorUrl) ? 0 : keys.indexOf(this.competitorUrl)
+
+				this.toggleCard(keyIndex)
+				this.$scrollTo('#aioseo-competitor-results' + this.hashCode(keys[keyIndex]), { offset: -offset })
+
+				this.competitorUrl     = null
 			})
 		},
 		startDeleteSite (site) {
@@ -233,9 +235,9 @@ export default {
 				this.settingsStore.closeCard('analyzeCompetitorSite' + key)
 			})
 		},
-		toggleFirstCard () {
+		toggleCard (index) {
 			const keys = Object.keys(this.competitorResults)
-			this.settingsStore.toggleCard({ slug: 'analyzeCompetitorSite' + keys[0] })
+			this.settingsStore.toggleCard({ slug: 'analyzeCompetitorSite' + keys[index] })
 		},
 		hashCode (string) {
 			if (!string) {
@@ -254,7 +256,7 @@ export default {
 		this.analyzerStore.analyzeError = false
 		this.competitorResults          = this.analyzerStore.getCompetitorSiteAnalysisResults
 
-		this.toggleFirstCard()
+		this.toggleCard(0)
 	}
 }
 </script>

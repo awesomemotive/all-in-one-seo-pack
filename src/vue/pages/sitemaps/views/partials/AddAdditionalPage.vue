@@ -145,8 +145,7 @@
 						<p v-html="strings.modalDescription" />
 
 						<a
-							download="aioseo-additional-pages-sample.csv"
-							:href="'data:text/csv;charset=utf-8,' + sampleCSVData"
+							@click.stop="downloadSampleCSV"
 						>
 							{{strings.downloadSampleFile}}
 						</a>
@@ -457,6 +456,15 @@ export default {
 		},
 		isDisabledDate (date) {
 			return date > DateTime.now()
+		},
+		downloadSampleCSV () {
+			this.showDownloadSample = false
+			const data = new Blob([ this.sampleCSVData ], { type: 'text/csv' })
+			const url = URL.createObjectURL(data)
+			const link = document.createElement('a')
+			link.href = url
+			link.download = 'aioseo-additional-pages-sample.csv'
+			link.click()
 		}
 	},
 	computed : {
@@ -620,13 +628,14 @@ export default {
 			border: 1px solid $orange;
 			border-radius: 4px;
 			margin-bottom: 12px;
+			font-size: 14px;
 
 			p {
 				margin: 0 0 20px;
 			}
 
-			p, a {
-				font-size: 14px;
+			a {
+				cursor: pointer;
 			}
 		}
 	}

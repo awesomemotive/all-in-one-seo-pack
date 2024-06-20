@@ -38,7 +38,7 @@
 			</template>
 		</div>
 
-		<template v-if="!gaActivated && showMiPromo && !gaDeprecated">
+		<template v-if="!gaActivated && showMiPromo">
 			<div
 				v-for="(setting, index) in filteredSettings"
 				:key="index"
@@ -191,10 +191,6 @@ export default {
 				'<strong>',
 				'</strong>'
 			)
-		},
-		gaDeprecated () {
-			return !this.optionsStore.internalOptions.internal.deprecatedOptions.includes('googleAnalytics') &&
-				!this.optionsStore.options.deprecated.webmasterTools.googleAnalytics.gtmContainerId
 		},
 		filteredSettings () {
 			return this.tool.settings.filter(setting => this.shouldDisplaySetting(setting))

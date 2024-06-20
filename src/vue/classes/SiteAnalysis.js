@@ -2,7 +2,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { sanitizeString } from '@/vue/utils/strings'
+import { softSanitizeHtml } from '@/vue/utils/strings'
 import { __, sprintf } from '@wordpress/i18n'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
@@ -216,7 +216,7 @@ class SiteAnalysis {
 	noImgAltAttsBody = result => {
 		const rootStore = useRootStore()
 		const body      = {
-			codeAlt    : 'image-missing-alt' !== result.error ? null : result.value.map(tag => sanitizeString(tag)).join('\n'),
+			codeAlt    : 'image-missing-alt' !== result.error ? null : result.value.map(tag => softSanitizeHtml(tag)).join('\n'),
 			message    : __('Make sure every image has an alt tag, and add useful descriptions to each image. Add your keywords or synonyms - but do it in a natural way.', td),
 			buttonText : __('Edit Your Page', td),
 			buttonLink : rootStore.aioseo.data.staticHomePage ? rootStore.aioseo.urls.staticHomePage : null

@@ -320,7 +320,7 @@ export default {
 				localSeo               : this.$t.__('Local SEO', this.$td),
 				manageLocalSeo         : this.$t.__('Improve local SEO rankings with schema for business address, open hours, contact, and more.', this.$td),
 				socialNetworks         : this.$t.__('Social Networks', this.$td),
-				manageSocialNetworks   : this.$t.__('Setup Open Graph for Facebook, Twitter, etc. to show the right content / thumbnail preview.', this.$td),
+				manageSocialNetworks   : this.$t.__('Setup Open Graph for Facebook, X (Twitter), etc. to show the right content / thumbnail preview.', this.$td),
 				tools                  : this.$t.__('Tools', this.$td),
 				manageTools            : this.$t.__('Fine-tune your site with our powerful tools including Robots.txt editor, import/export and more.', this.$td),
 				sitemap                : this.$t.__('Sitemaps', this.$td),

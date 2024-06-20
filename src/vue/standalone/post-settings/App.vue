@@ -1,6 +1,6 @@
 <template>
 	<!-- @click.stop is a Vue directive that prevents the click event from propagating further up the DOM tree. This is required inside Elementor. -->
-	<div @click.stop>
+	<div @click.stop id="main-settings-cont">
 		<alert v-if="'sidebar' !== this.$root._data.screenContext" />
 
 		<main-view

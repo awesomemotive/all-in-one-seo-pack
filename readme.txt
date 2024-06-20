@@ -1,10 +1,10 @@
 === All in One SEO – Powerful SEO Plugin to Boost SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
-Tested up to: 6.5.3
+Tested up to: 6.5.4
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.6.4
+Stable tag: 4.6.5
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -227,6 +227,31 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.6.5**
+
+* Updated: Preloaded the redirect suggestion modal when a post is moved to the trash, ensuring a smoother user experience.
+* Updated: The word “step” has been added to the list of exceptions for consecutive sentences in TruSEO.
+* Updated: Deprecated the enable breadcrumbs toggle setting.
+* Updated: Changed all instances of “Twitter” to “X”.
+* Updated: Declaration for AIOSEO and its addons to follow the Consent API, resolving incompatibility with the WP Consent API plugin and Compliance recommendation on the Site Health screen.
+* Fixed: Reanalyzing a competitor site now opens the correct site based on its position in the list.
+* Fixed: Redirects modal did not close when clicking outside in the Post Editor.
+* Fixed: Redirects source URL could not be left empty.
+* Fixed: Console log error in user profile Author SEO tab.
+* Fixed: Breadcrumbs block not properly displaying when a dollar sign is used.
+* Fixed: License required alert for multisite network activations has been updated to reflect the correct license plan requirement for the Domain Activations feature.
+* Fixed: RSS sitemap style sheet now correctly says it is an RSS sitemap instead of an XML one.
+* Fixed: Index Status request fired off for non-licensed users.
+* Fixed: TruSEO “No alt attribute” check was not showing any data after expanding the check.
+* Fixed: Minor styling issues in the SERP Preview.
+* Fixed: Legacy Keywords feature now correctly generates a new SEO revision when updated.
+* Fixed: Prevent Avada from outputting social meta tags.
+* Fixed: Non-admin users are no longer able to accidentally reset the license key.
+* Fixed: Plugin conflict with Recipe Blocks plugin.
+* Fixed: CSV sample file downloads now work again in Firefox.
+* Fixed: Crawl Cleanup table install error when using the MyISAM database engine.
+* Fixed: Schema template would sometimes not save correctly.
+
 **New in Version 4.6.4**
 
 * New: Added support for Course Info schema and integrated it with various membership plugins including MemberPress, MemberMouse and Wishlist Member.
@@ -410,6 +435,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.6.4 =
+= 4.6.5 =
 
 This update adds major improvements and bug fixes.

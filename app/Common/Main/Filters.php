@@ -90,6 +90,28 @@ abstract class Filters {
 		}
 
 		add_action( 'after_setup_theme', [ $this, 'removeHelloElementorDescriptionTag' ] );
+		add_action( 'wp', [ $this, 'removeAvadaOgTags' ] );
+		add_action( 'init', [ $this, 'declareAioseoFollowingConsentApi' ] );
+	}
+
+	/**
+	 * Declares AIOSEO and its addons as following the Consent API.
+	 *
+	 * @since 4.6.5
+	 *
+	 * @return void
+	 */
+	public function declareAioseoFollowingConsentApi() {
+		add_filter( 'wp_consent_api_registered_all-in-one-seo-pack/all_in_one_seo_pack.php', '__return_true' );
+		add_filter( 'wp_consent_api_registered_all-in-one-seo-pack-pro/all_in_one_seo_pack.php', '__return_true' );
+
+		foreach ( aioseo()->addons->getAddons() as $addon ) {
+			if ( ! $addon->installed ) {
+				continue;
+			}
+
+			add_filter( 'wp_consent_api_registered_' . $addon->basename, '__return_true' );
+		}
 	}
 
 	/**
@@ -483,6 +505,22 @@ abstract class Filters {
 	 */
 	public function removeHelloElementorDescriptionTag() {
 		remove_action( 'wp_head', 'hello_elementor_add_description_meta_tag' );
+	}
+
+	/**
+	 * Removes the Avada OG tags.
+	 *
+	 * @since 4.6.5
+	 *
+	 * @return void
+	 */
+	public function removeAvadaOgTags() {
+		if ( function_exists( 'Avada' ) ) {
+			$avada = Avada();
+			if ( is_object( $avada->head ?? null ) ) {
+				remove_action( 'wp_head', [ $avada->head, 'insert_og_meta' ], 5 );
+			}
+		}
 	}
 
 	/**

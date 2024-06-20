@@ -21,7 +21,7 @@ trait SocialProfiles {
 	 */
 	private $baseUrls = [
 		'facebookPageUrl' => 'https://facebook.com/',
-		'twitterUrl'      => 'https://twitter.com/',
+		'twitterUrl'      => 'https://x.com/',
 		'instagramUrl'    => 'https://instagram.com/',
 		'tiktokUrl'       => 'https://tiktok.com/@',
 		'pinterestUrl'    => 'https://pinterest.com/',

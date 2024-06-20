@@ -213,6 +213,10 @@ class Updates {
 			$this->deprecateNoPaginationForCanonicalUrlsSetting();
 		}
 
+		if ( version_compare( $lastActiveVersion, '4.6.5', '<' ) ) {
+			$this->deprecateBreadcrumbsEnabledSetting();
+		}
+
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
 
 		// Always clear the cache if the last active version is different from our current.
@@ -1581,7 +1585,7 @@ class Updates {
 					`key` text,
 					`value` text,
 					`key_value_hash` varchar(40),
-					`regex` varchar(255),
+					`regex` varchar(150),
 					`hits` int(20) NOT NULL DEFAULT 0,
 					`created` datetime NOT NULL,
 					`updated` datetime NOT NULL,
@@ -1647,5 +1651,27 @@ class Updates {
 		}
 
 		aioseo()->options->deprecated->searchAppearance->advanced->noPaginationForCanonical = true;
+	}
+
+	/**
+	 * Deprecates the "Breadcrumbs enabled" setting.
+	 *
+	 * @since 4.6.5
+	 *
+	 * @return void
+	 */
+	public function deprecateBreadcrumbsEnabledSetting() {
+		$options = $this->getRawOptions();
+		if ( ! isset( $options['breadcrumbs']['enable'] ) || 1 === intval( $options['breadcrumbs']['enable'] ) ) {
+			return;
+		}
+
+		$deprecatedOptions = aioseo()->internalOptions->deprecatedOptions;
+		if ( ! in_array( 'breadcrumbsEnable', $deprecatedOptions, true ) ) {
+			$deprecatedOptions[]                         = 'breadcrumbsEnable';
+			aioseo()->internalOptions->deprecatedOptions = $deprecatedOptions;
+		}
+
+		aioseo()->options->deprecated->breadcrumbs->enable = false;
 	}
 }

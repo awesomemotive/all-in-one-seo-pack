@@ -21,6 +21,7 @@ import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/div
 import { getEditorData as getSeedProdData } from '@/vue/standalone/page-builders/seedprod/helpers'
 import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders/wpbakery/helpers'
 import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
+import { getText } from '@/vue/utils/html'
 
 /**
  * Retrieves the excerpt from the given content.
@@ -35,19 +36,9 @@ const excerptFromContent = (content) => {
 		return ''
 	}
 
-	const cleanupPatterns = [
-		/\[.*?\]/g, // WordPress shortcode tags.
-		/<\/?[a-z][^>]*?>/gi, // HTML tags.
-		/<!--[\s\S]*?-->/g, // HTML comments.
-		/(\r\n|\n|\r)/g // Line breaks.
-	]
-
-	// Remove linebreak.
 	content = content.replaceAll(/\n\n/g, ' ')
-
-	cleanupPatterns.forEach(regex => {
-		content = content.replace(regex, '')
-	})
+	content = getText(content, false, 'innerText') // Get the visible text from the content.
+	content = content.replace(/\[.*?]/g, '') // Remove WordPress shortcode tags.
 
 	return content.trim()
 }

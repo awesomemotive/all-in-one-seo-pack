@@ -25,18 +25,24 @@ export const createElement = (html, element = 'div') => {
 /**
  * Get the text from an HTML piece.
  *
- * @since 4.2.1
+ * @since   4.2.1
+ * @version 4.6.5 Added the `removeBreaks` and `prop` parameters.
  *
- * @param {string|Object} html The HTML to retrieve text.
- * @returns {string}           The text.
+ * @param 	{string|Object} html 		 The HTML to retrieve text.
+ * @param 	{boolean} 	  	removeBreaks Whether to remove line breaks.
+ * @param 	{string} 		prop 		 The property to get the text from.
+ * @returns {string}           		     The text.
  */
-export const getText = (html) => {
+export const getText = (html, removeBreaks = true, prop = 'textContent') => {
 	if ('string' === typeof html) {
-		html = createElement(html.replace(/[\t|\n]/gm, ''))
+		if (removeBreaks) {
+			html = html.replace(/[\t|\n]/gm, '')
+		}
+		html = createElement(html)
 	}
 
 	// Return the text inside the HTML.
-	return html.textContent || html.innerText || ''
+	return html[prop] || html.textContent || html.innerText || ''
 }
 
 /**
@@ -179,7 +185,7 @@ export const getFacebookSnippetData = () => {
 /**
  * Extract the Twitter card data from DOM.
  *
- * @link https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards
+ * @link https://developer.x.com/en/docs/twitter-for-websites/cards/overview/abouts-cards
  *
  * @since 4.2.8
  *

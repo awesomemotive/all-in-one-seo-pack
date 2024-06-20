@@ -46,7 +46,7 @@ const removeTags = (originalPhrase, modifiedPhrase) => {
 const dissectPhrase = originalPhrase => {
 	const tagPattern        = new RegExp(/(<[^<>]*>)/)
 	const closingTagPattern = new RegExp(/<\s?\/[^<>]*>/)
-	const tagNamePattern    = new RegExp(/<\s?\/?([^<\s>]*).*>/)
+	const tagNamePattern    = new RegExp(/<\s?\/?([^<\s>]*).*?>/, 's')
 
 	// Split the phrase with HTML tags as the delimiters.
 	const nodes = originalPhrase.split(tagPattern)

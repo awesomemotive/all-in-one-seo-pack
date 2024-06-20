@@ -15,23 +15,24 @@
 
 			<core-settings-row
 				:name="strings.enableBreadcrumbs"
+				v-if="optionsStore.internalOptions.internal.deprecatedOptions.includes('breadcrumbsEnable')"
 			>
 				<template #content>
 					<base-toggle
-						v-model="optionsStore.options.breadcrumbs.enable"
+						v-model="optionsStore.options.deprecated.breadcrumbs.enable"
 					/>
 				</template>
 			</core-settings-row>
 
 			<core-ui-element-slider
-				v-if="optionsStore.options.breadcrumbs.enable"
+				v-if="!hasDeprecatedEnable || isDeprecatedEnable"
 				:label="strings.showBreadcrumbsOnYourWebsite"
 				:options="displayInfo"
 			/>
 		</core-card>
 
 		<core-card
-			v-if="optionsStore.options.breadcrumbs.enable"
+			v-if="!hasDeprecatedEnable || isDeprecatedEnable"
 			slug="breadcrumbSettings"
 			:header-text="strings.breadcrumbSettings"
 		>
@@ -233,7 +234,7 @@
 		/>
 
 		<breadcrumbs
-			v-if="optionsStore.options.breadcrumbs.enable && !licenseStore.isUnlicensed"
+			v-if="!licenseStore.isUnlicensed && ( !hasDeprecatedEnable || isDeprecatedEnable )"
 		/>
 	</div>
 </template>
@@ -405,6 +406,12 @@ export default {
 				{ label: 'Search', preview: this.getSearchPreview() },
 				{ label: '404', preview: this.get404Preview() }
 			]
+		},
+		hasDeprecatedEnable () {
+			return this.optionsStore.internalOptions.internal.deprecatedOptions.includes('breadcrumbsEnable')
+		},
+		isDeprecatedEnable () {
+			return this.hasDeprecatedEnable && this.optionsStore.options.deprecated.breadcrumbs.enable
 		}
 	}
 }

@@ -97,9 +97,9 @@ const getProcessedBlockContent = (content, prefix) => {
 		if (prefix.includes(block.name.split('/')[0])) {
 			const element = document.getElementById('block-' + block.clientId)
 
-			if (element && element.innerHTML) {
-				const pattern = `<!-- wp:${block.name}.*?-->`
-				content = content.replace(new RegExp(pattern), element.innerHTML)
+			if (element && element.innerText) {
+				const pattern = `(<!-- wp:${block.name}.*?/wp:${block.name} -->)|(<!-- wp:${block.name}.*?/-->)`
+				content = content.replace(new RegExp(pattern, 's'), element.innerText)
 			}
 		}
 	})

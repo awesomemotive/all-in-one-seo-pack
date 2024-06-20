@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'awesomemotive/all-in-one-seo-pack-pro',
-        'pretty_version' => 'dev-develop',
-        'version' => 'dev-develop',
-        'reference' => 'c1bae5de6c56c74c4fb4cc7e4bf1f70b6fef46b0',
+        'pretty_version' => '1.0.0+no-version-set',
+        'version' => '1.0.0.0',
+        'reference' => null,
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'awesomemotive/all-in-one-seo-pack-pro' => array(
-            'pretty_version' => 'dev-develop',
-            'version' => 'dev-develop',
-            'reference' => 'c1bae5de6c56c74c4fb4cc7e4bf1f70b6fef46b0',
+            'pretty_version' => '1.0.0+no-version-set',
+            'version' => '1.0.0.0',
+            'reference' => null,
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

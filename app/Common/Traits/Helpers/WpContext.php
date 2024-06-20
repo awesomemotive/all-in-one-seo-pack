@@ -262,6 +262,8 @@ trait WpContext {
 			$postContent = aioseo()->standalone->pageBuilderIntegrations[ $pageBuilder ]->processContent( $post->ID, $postContent );
 		}
 
+		$postContent = is_string( $postContent ) ? $postContent : '';
+
 		$content[ $post->ID ] = $this->theContent( $postContent );
 
 		if ( apply_filters( 'aioseo_description_include_custom_fields', true, $post ) ) {

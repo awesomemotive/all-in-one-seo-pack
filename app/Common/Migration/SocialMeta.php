@@ -346,7 +346,7 @@ class SocialMeta {
 		) {
 			$username = ltrim( $this->oldOptions['modules']['aiosp_opengraph_options']['aiosp_opengraph_twitter_site'], '@' );
 			aioseo()->options->social->profiles->urls->twitterUrl =
-				esc_url( 'https://twitter.com/' . aioseo()->social->twitter->prepareUsername( aioseo()->helpers->sanitizeOption( $username ), false ) );
+				esc_url( 'https://x.com/' . aioseo()->social->twitter->prepareUsername( aioseo()->helpers->sanitizeOption( $username ), false ) );
 		}
 	}
 

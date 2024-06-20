@@ -11,6 +11,8 @@ export default function () {
 		// Numbers 1-10:
 		'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
 		// Demonstrative pronouns:
-		'this', 'that', 'these', 'those'
+		'this', 'that', 'these', 'those',
+		// Additional words:
+		'step'
 	]
 }

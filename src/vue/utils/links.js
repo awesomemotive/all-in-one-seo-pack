@@ -107,8 +107,8 @@ const docLinks      = {
 	cornerstoneContent            : `${marketingSite}docs/cornerstone-content/`,
 	eeat                          : `${marketingSite}docs/adding-author-seo-e-e-a-t-to-your-site/`,
 	eeatAuthorBioInjection        : `${marketingSite}docs/adding-author-seo-e-e-a-t-to-your-site/#aioseo-automatically-displaying-the-author-excerpt`,
-	businessPhoneNumber           : `${marketingSite}docs/best-business-phone-services`,
-	queryArgMonitor               : `${marketingSite}docs/query-arg-monitor/`
+	queryArgMonitor               : `${marketingSite}docs/using-the-query-arg-monitoring-in-all-in-one-seo/`,
+	businessPhoneNumber           : `${marketingSite}docs/best-business-phone-services`
 }
 
 const upsellLinks = {

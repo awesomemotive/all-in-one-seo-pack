@@ -27,7 +27,7 @@ import {
 import SvgFacebookRounded from '@/vue/components/common/svg/facebook/Rounded'
 import SvgLinkedinRounded from '@/vue/components/common/svg/LinkedinRounded'
 import SvgPinterestRounded from '@/vue/components/common/svg/PinterestRounded'
-import SvgTwitterRounded from '@/vue/components/common/svg/TwitterRounded'
+import SvgIconTwitter from '@/vue/components/common/svg/icon/Twitter'
 export default {
 	setup () {
 		return {
@@ -38,7 +38,7 @@ export default {
 		SvgFacebookRounded,
 		SvgLinkedinRounded,
 		SvgPinterestRounded,
-		SvgTwitterRounded
+		SvgIconTwitter
 	},
 	data () {
 		return {
@@ -52,8 +52,8 @@ export default {
 		socialNetworks () {
 			return [
 				{
-					icon : 'svg-twitter-rounded',
-					link : 'https://twitter.com/share?url='
+					icon : 'svg-icon-twitter',
+					link : 'https://x.com/share?url='
 				},
 				{
 					icon : 'svg-facebook-rounded',
@@ -102,8 +102,10 @@ export default {
 		}
 	}
 
-	.aioseo-twitter-rounded {
-		color: #1DA1F2;
+	.aioseo-icon-twitter {
+		width: 32px;
+		height: 32px;
+		color: $black;
 	}
 
 	.aioseo-facebook-rounded {

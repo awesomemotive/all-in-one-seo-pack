@@ -17,6 +17,7 @@
 				'aioseo-warning' : warnings.length
 			}"
 		>
+
 			<template #append-icon>
 				<div class="append-icon">
 					<template
@@ -118,6 +119,9 @@ export default {
 		},
 		searchChange () {
 			if (!this.value) {
+				this.isLoading = false
+				this.showResults = false
+				this.results = []
 				return
 			}
 
@@ -128,6 +132,8 @@ export default {
 				this.value.startsWith('https:')
 			) {
 				this.isLoading = false
+				this.showResults = false
+				this.results = []
 				return
 			}
 
@@ -135,6 +141,8 @@ export default {
 			debounce(() => {
 				if (!this.value) {
 					this.isLoading = false
+					this.showResults = false
+					this.results = []
 					return
 				}
 
@@ -170,9 +178,29 @@ export default {
 	},
 	mounted () {
 		document.addEventListener('click', this.documentClick)
+
+		const modalWrapper = document.querySelector('#aioseo-modal-portal .modal-wrapper')
+		if (modalWrapper) {
+			modalWrapper.addEventListener('click', this.documentClick)
+		}
+
+		const mainSettingsCont = document.querySelector('#main-settings-cont')
+		if (mainSettingsCont) {
+			mainSettingsCont.addEventListener('click', this.documentClick)
+		}
 	},
 	beforeUnmount () {
 		document.removeEventListener('click', this.documentClick)
+
+		const modalWrapper = document.querySelector('#aioseo-modal-portal .modal-wrapper')
+		if (modalWrapper) {
+			modalWrapper.removeEventListener('click', this.documentClick)
+		}
+
+		const mainSettingsCont = document.querySelector('#main-settings-cont')
+		if (mainSettingsCont) {
+			mainSettingsCont.removeEventListener('click', this.documentClick)
+		}
 	}
 }
 </script>

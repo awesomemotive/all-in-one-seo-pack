@@ -159,7 +159,14 @@ class Frontend {
 	 * @return string|void       A html breadcrumb.
 	 */
 	public function display( $echo = true ) {
-		if ( ! aioseo()->options->breadcrumbs->enable || ! apply_filters( 'aioseo_breadcrumbs_output', true ) ) {
+		if (
+			in_array( 'breadcrumbsEnable', aioseo()->internalOptions->deprecatedOptions, true ) &&
+			! aioseo()->options->deprecated->breadcrumbs->enable
+		) {
+			return;
+		}
+
+		if ( ! apply_filters( 'aioseo_breadcrumbs_output', true ) ) {
 			return;
 		}
 

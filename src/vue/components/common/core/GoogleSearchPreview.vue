@@ -202,7 +202,7 @@ export default {
 			return faviconUrl
 		},
 		parseDescription () {
-			const output = getText(this.description.substring(0, 160).trim() + (160 < this.description.length ? ' ...' : ''))
+			const output = getText(this.description.substring(0, 160).trim() + (160 < this.description.length ? ' ...' : ''), false)
 			if (!this.focusKeyphrase) {
 				return output
 			}

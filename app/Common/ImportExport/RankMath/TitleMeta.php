@@ -478,7 +478,7 @@ class TitleMeta extends ImportExport\SearchAppearance {
 
 		if ( ! empty( $this->options['twitter_author_names'] ) ) {
 			aioseo()->options->social->profiles->urls->twitterUrl =
-				'https://twitter.com/' . aioseo()->helpers->sanitizeOption( $this->options['twitter_author_names'] );
+				'https://x.com/' . aioseo()->helpers->sanitizeOption( $this->options['twitter_author_names'] );
 		}
 
 		if ( ! empty( $this->options['twitter_card_type'] ) ) {

@@ -2217,8 +2217,8 @@ $generated_i18n_strings = [
 	__( 'Domain Activations', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/components/lite/settings/NetworkSitesActivation.vue:28
-	// Translators: 1 - "PRO".
-	__( 'Domain Activations is a %1$s Feature', 'all-in-one-seo-pack' ),
+	// Translators: 1 - "Elite".
+	__( 'Domain Activations is an %1$s Feature', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/pages/link-assistant/router/paths.js:46
 	__( 'Domains Report', 'all-in-one-seo-pack' ),
@@ -2758,7 +2758,7 @@ $generated_i18n_strings = [
 	__( 'Focus keyphrase used in the URL.', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/standalone/setup-wizard/views/Success.vue:56
-	__( 'Follow on Twitter', 'all-in-one-seo-pack' ),
+	__( 'Follow on X (Twitter)', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/standalone/setup-wizard/views/Success.vue:57
 	__( 'Follow on YouTube', 'all-in-one-seo-pack' ),
@@ -5988,7 +5988,7 @@ $generated_i18n_strings = [
 	__( 'Setup %1$s', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/pages/dashboard/views/Main.vue:116
-	__( 'Setup Open Graph for Facebook, Twitter, etc. to show the right content / thumbnail preview.', 'all-in-one-seo-pack' ),
+	__( 'Setup Open Graph for Facebook, X (Twitter), etc. to show the right content / thumbnail preview.', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/standalone/setup-wizard/views/SmartRecommendations.vue:53
 	__( 'Setup Site Analyzer + Smart Recommendations', 'all-in-one-seo-pack' ),

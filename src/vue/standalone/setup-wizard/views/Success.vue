@@ -39,7 +39,7 @@
 								:href="$links.utmUrl('wizard-success', null, 'https://aioseo.com/plugin/twitter/')"
 								target="_blank"
 								size="small"
-							><svg-twitter /> {{ strings.followOnTwitter }}</base-button>
+							><svg-icon-twitter /> {{ strings.followOnTwitter }}</base-button>
 
 							<base-button
 								class="social-button youtube"
@@ -148,10 +148,10 @@ import GridRow from '@/vue/components/common/grid/Row'
 import SvgBook from '@/vue/components/common/svg/Book'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgFacebook from '@/vue/components/common/svg/facebook/Index'
-import SvgYoutube from '@/vue/components/common/svg/Youtube'
+import SvgIconTwitter from '@/vue/components/common/svg/icon/TwitterWithoutCircle'
 import SvgPeopleOutline from '@/vue/components/common/svg/PeopleOutline'
-import SvgTwitter from '@/vue/components/common/svg/Twitter'
 import SvgVideoCamera from '@/vue/components/common/svg/VideoCamera'
+import SvgYoutube from '@/vue/components/common/svg/Youtube'
 import WizardBody from '@/vue/components/common/wizard/Body'
 import WizardContainer from '@/vue/components/common/wizard/Container'
 import WizardHeader from '@/vue/components/common/wizard/Header'
@@ -172,10 +172,10 @@ export default {
 		SvgBook,
 		SvgCircleCheck,
 		SvgFacebook,
-		SvgYoutube,
+		SvgIconTwitter,
 		SvgPeopleOutline,
-		SvgTwitter,
 		SvgVideoCamera,
+		SvgYoutube,
 		WizardBody,
 		WizardContainer,
 		WizardHeader
@@ -191,7 +191,7 @@ export default {
 				heresWhatToDoNext  : this.$t.__('Here\'s what to do next:', this.$td),
 				joinOurCommunity   : this.$t.__('Join our Community', this.$td),
 				joinOnFacebook     : this.$t.__('Join on Facebook', this.$td),
-				followOnTwitter    : this.$t.__('Follow on Twitter', this.$td),
+				followOnTwitter    : this.$t.__('Follow on X (Twitter)', this.$td),
 				followOnYouTube    : this.$t.__('Follow on YouTube', this.$td),
 				readOurStepByStep  : this.$t.__('Read our Step By Step Guide to Improve your SEO Rankings', this.$td),
 				watchOurGuidedTour : this.$t.sprintf(
@@ -282,6 +282,12 @@ export default {
 						width: 14px;
 						height: 14px;
 						margin-right: 10px;
+
+						&.aioseo-icon-twitter {
+							width: 14px;
+							height: 14px;
+							color: black;
+						}
 					}
 
 					&.facebook {
@@ -289,7 +295,7 @@ export default {
 					}
 
 					&.twitter {
-						background-color: #1DA1F2;
+						background-color: $black;
 					}
 
 					&.youtube {

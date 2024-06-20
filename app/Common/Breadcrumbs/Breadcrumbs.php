@@ -184,6 +184,7 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 				array_pop( $this->breadcrumbs );
 			}
 
+			// Remove empty crumbs.
 			$this->breadcrumbs = array_filter( $this->breadcrumbs );
 
 			return $this->breadcrumbs;

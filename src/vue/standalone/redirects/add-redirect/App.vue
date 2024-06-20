@@ -7,6 +7,7 @@
 			:show="display"
 			:classes="[ 'aioseo-redirects' ]"
 			@close="display = false"
+			allow-overflow
 		>
 			<template #headerTitle>
 				{{ strings.modalHeader }}
@@ -144,7 +145,7 @@ export default {
 				this.display = true
 
 				// Url not loaded yet?
-				if (isEmpty(this.url)) {
+				if (isEmpty(this.urls)) {
 					this.loadRedirect(this.getElementRedirectHash(this.target))
 				}
 			}
@@ -160,7 +161,9 @@ export default {
 		this.watchClicks()
 
 		window.aioseoBus.$on('wp-core-notice-created', () => {
-			this.preloadRedirect()
+			this.$nextTick(() => {
+				this.preloadRedirect()
+			})
 		})
 	}
 }

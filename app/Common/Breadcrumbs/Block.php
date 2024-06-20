@@ -75,7 +75,10 @@ class Block {
 			remove_filter( 'aioseo_post_primary_term', [ $this, 'changePrimaryTerm' ], 10 );
 			remove_filter( 'get_object_terms', [ $this, 'temporarilyAddTerm' ], 10 );
 
-			if ( ! aioseo()->options->breadcrumbs->enable ) {
+			if (
+				in_array( 'breadcrumbsEnable', aioseo()->internalOptions->deprecatedOptions, true ) &&
+				! aioseo()->options->deprecated->breadcrumbs->enable
+			) {
 				return '<p>' .
 						sprintf(
 							// Translators: 1 - The plugin short name ("AIOSEO"), 2 - Opening HTML link tag, 3 - Closing HTML link tag.
