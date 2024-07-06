@@ -75,20 +75,22 @@ trait Shortcodes {
 	/**
 	 * Returns the content with only the allowed shortcodes and wildcards replaced.
 	 *
-	 * @since 4.1.2
+	 * @since   4.1.2
+	 * @version 4.6.6 Added the $allowedTags parameter.
 	 *
-	 * @param  string $content The content.
-	 * @param  int    $postId  The post ID (optional).
-	 * @return string          The content with shortcodes replaced.
+	 * @param  string $content     The content.
+	 * @param  int    $postId      The post ID (optional).
+	 * @param  array  $allowedTags The shortcode tags to allow (optional).
+	 * @return string              The content with shortcodes replaced.
 	 */
-	public function doAllowedShortcodes( $content, $postId = null ) {
+	public function doAllowedShortcodes( $content, $postId = null, $allowedTags = [] ) {
 		// Extract list of shortcodes from the post content.
 		$tags = $this->getShortcodeTags( $content );
 		if ( ! count( $tags ) ) {
 			return $content;
 		}
 
-		$allowedTags  = apply_filters( 'aioseo_allowed_shortcode_tags', [] );
+		$allowedTags  = apply_filters( 'aioseo_allowed_shortcode_tags', $allowedTags );
 		$tagsToRemove = array_diff( $tags, $allowedTags );
 
 		$content = $this->doShortcodesHelper( $content, $tagsToRemove, $postId );

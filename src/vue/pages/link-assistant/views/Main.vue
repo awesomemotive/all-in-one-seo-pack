@@ -347,10 +347,6 @@ export default {
 	}
 }
 
-.aioseo-link-suggestions div.links-bottom {
-	margin: 16px 0 0 0;
-}
-
 .aioseo-link-assistant-overview {
 	position: relative;
 }

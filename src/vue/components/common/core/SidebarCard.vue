@@ -143,7 +143,7 @@ export default {
 		'settingsStore.metaBoxTabs.mainSidebar' : {
 			deep : true,
 			handler (mainSidebar) {
-				if ('sidebar' === this.$root._data.screenContext) {
+				if ('sidebar' === this.$root.$data.screenContext) {
 					this.openCard(mainSidebar.card)
 				}
 			}

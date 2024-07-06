@@ -75,7 +75,7 @@ export default {
 					})
 				},
 				input (_event, editorView) {
-					context.$emit('input', editorView.viewState.state.doc.toString())
+					context.$emit('change', editorView.viewState.state.doc.toString())
 				}
 			}),
 			placeholder(context.placeholder)

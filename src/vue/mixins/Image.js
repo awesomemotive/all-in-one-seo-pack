@@ -49,6 +49,7 @@ export const ImageSourceOptions = {
 			}
 
 			const rootStore = useRootStore()
+			const optionsStore = useOptionsStore()
 			if (rootStore.aioseo.integration) {
 				// Exclude the "featured" option for page builders that do not support it.
 				if (
@@ -56,6 +57,11 @@ export const ImageSourceOptions = {
 					('wpbakery' === rootStore.aioseo.integration && 'admin_frontend_editor' === window.vc_mode)
 				) {
 					this.excludedPageBuilderOptions.push('featured')
+				}
+
+				// Remove the "content" option for SiteOrigin Page Builder if run shortcodes is disabled, since it depends on shortcodes.
+				if ('siteorigin' === rootStore.aioseo.integration && !optionsStore.options.searchAppearance.advanced.runShortcodes) {
+					this.excludedPageBuilderOptions.push('content')
 				}
 
 				return options.filter(option => !this.excludedPageBuilderOptions.includes(option.value))

@@ -39,6 +39,19 @@ export const isAvadaEditor = () => {
 	return (window.FusionApp || window.FusionPageBuilderApp)?.builderActive
 }
 
+export const isThriveArchitectEditor = () => {
+	return !!(window.TVE && window.TVE.Editor_Page)
+}
+
+export const isSiteOriginEditor = () => {
+	const visible = (el) => !!(el?.offsetWidth || el?.offsetHeight || el?.getClientRects().length)
+
+	const isBlockEditorPanelsEnabled   = document.querySelectorAll('.block-editor-page').length && 'undefined' !== typeof window.soPanelsBuilderView
+	const isClassicEditorPanelsEnabled = visible(document.querySelector('#so-panels-panels.attached-to-editor'))
+
+	return isBlockEditorPanelsEnabled || isClassicEditorPanelsEnabled
+}
+
 export const isWooCommerceProduct = () => {
 	const postEditorStore = usePostEditorStore()
 	const rootStore       = useRootStore()
@@ -51,7 +64,15 @@ export const isWooCommerceProduct = () => {
 }
 
 export const isPageBuilderEditor = () => {
-	return isElementorEditor() || isDiviEditor() || isSeedProdEditor() || isWPBakeryEditor() || isAvadaEditor()
+	return (
+		isElementorEditor() ||
+		isDiviEditor() ||
+		isSeedProdEditor() ||
+		isWPBakeryEditor() ||
+		isAvadaEditor() ||
+		isSiteOriginEditor() ||
+		isThriveArchitectEditor()
+	)
 }
 
 export const canLoadBlocks = () => {

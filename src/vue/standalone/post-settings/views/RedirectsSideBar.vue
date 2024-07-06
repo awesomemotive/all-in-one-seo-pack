@@ -1,7 +1,7 @@
 <template>
 	<div class="aioseo-redirects-sidebar">
 		<core-settings-row
-			v-if="'sidebar' === $root._data.screenContext"
+			v-if="'sidebar' === $root.$data.screenContext"
 			class="snippet-description-row open-redirects-copy"
 		>
 			<template #content>

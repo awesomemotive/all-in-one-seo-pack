@@ -1,4 +1,3 @@
-import '@/vue/utils/vue2.js'
 import { isRTL } from '@wordpress/i18n'
 import { h, createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'

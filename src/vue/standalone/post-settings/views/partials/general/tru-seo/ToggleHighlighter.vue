@@ -8,7 +8,7 @@
 	>
 		<core-tooltip
 			v-if="truSeoHighlighterStore.highlightAnalyzer !== analyzer"
-			:offset="'sidebar' === $root._data.screenContext ? '-200px,0' : ''"
+			:offset="'sidebar' === $root.$data.screenContext ? '-200px,0' : ''"
 			type="action"
 		>
 			<svg-eye

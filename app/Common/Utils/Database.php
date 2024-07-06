@@ -1245,6 +1245,7 @@ class Database {
 		// Pull the result from the in-memory cache if everything checks out.
 		if (
 			! $this->shouldResetCache &&
+			! in_array( $this->statement, [ 'INSERT', 'REPLACE', 'UPDATE', 'DELETE' ], true ) &&
 			isset( $this->cache[ $cacheTableName ][ $queryHash ][ $return ] ) &&
 			empty( $this->join )
 		) {

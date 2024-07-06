@@ -7,7 +7,6 @@ import { mapStores } from 'pinia'
 import { debounce, random } from 'lodash-es'
 import { getOuterText } from '@/vue/utils/html'
 import { escapeRegex } from '@/vue/utils/regex'
-import { getMostReadableColor } from '@wordpress/block-editor/src/components/colors/utils'
 import {
 	isBlockEditor,
 	isClassicEditor,
@@ -28,25 +27,7 @@ export const TruSeoHighlighter = {
 		}
 	},
 	computed : {
-		...mapStores(useTruSeoHighlighterStore),
-		markBgColor () {
-			const defaultBgColor = '#cce0ff'
-			if ('function' !== typeof getMostReadableColor) {
-				return defaultBgColor
-			}
-
-			const node = this.getEditorNode('first-block')?.parentElement || {}
-			const color = Object.values(node).length ? document.defaultView.getComputedStyle(node)?.backgroundColor : ''
-			if (color && !color.match(/(fffff|255,\s?255,\s?255|rgba)/gi)) {
-				return getMostReadableColor([
-					{ color: '#e6f0ff' }, // Lighter.
-					{ color: defaultBgColor }, // Original.
-					{ color: '#b3d1ff' }// Darker.
-				], color)
-			}
-
-			return defaultBgColor
-		}
+		...mapStores(useTruSeoHighlighterStore)
 	},
 	data () {
 		return {
@@ -56,10 +37,7 @@ export const TruSeoHighlighter = {
 			isClassicEditor   : isClassicEditor(),
 			tinymceEditor     : null,
 			selectBlockEditor : window?.wp?.data?.select('core/block-editor'),
-			selectEditPost    : window?.wp?.data?.select('core/edit-post'),
-			strings           : {
-				highlightSections : this.$t.__('Highlight sections in the Editor', this.$td)
-			}
+			selectEditPost    : window?.wp?.data?.select('core/edit-post')
 		}
 	},
 	methods : {
@@ -570,7 +548,7 @@ export const TruSeoHighlighter = {
 			if (-1 !== findIndex) {
 				this.truSeoHighlighterStore.highlightMarks[findIndex].node = node
 
-				node.style.backgroundColor = this.markBgColor
+				node.style.backgroundColor = '#cce0ff'
 			}
 		},
 		setHighlightMarks ({ block, node }) {

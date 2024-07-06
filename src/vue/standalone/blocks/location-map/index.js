@@ -1,4 +1,3 @@
-import '@/vue/utils/vue2.js'
 import { h, createApp } from 'vue'
 
 import loadPlugins from '@/vue/plugins'
@@ -42,6 +41,7 @@ const icon = el('svg',
 
 const vueInitialState = {}
 const locationMapSidebarApps = []
+const locationMapSidebarWatcherApps = []
 
 export const name = 'aioseo/locationmap'
 export const settings = {
@@ -201,6 +201,8 @@ export const settings = {
 				parent  : document.querySelector('.block-editor'),
 				subtree : true,
 				done    : function (el) {
+					maybeDeleteBlockVueApp(clientId, locationMapSidebarWatcherApps)
+
 					let app = createApp({
 						name : 'Blocks/LocationMapWatcher',
 						data : function () {
@@ -222,6 +224,8 @@ export const settings = {
 					app = loadPlugins(app)
 
 					app.mount(el)
+
+					locationMapSidebarWatcherApps.push({ clientId, app })
 				}
 			})
 		}

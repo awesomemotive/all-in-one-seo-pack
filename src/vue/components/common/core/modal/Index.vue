@@ -85,7 +85,7 @@ export default {
 		allowOverflow : Boolean,
 		show          : Boolean,
 		modalName     : String,
-		teleportTo   	: {
+		teleportTo    : {
 			type : String,
 			default () {
 				return '#aioseo-modal-portal'
@@ -98,7 +98,7 @@ export default {
 				this.startListening()
 				this.scrollToElement()
 
-				this.rootStore.setActiveModal(this.modalName || this._uid)
+				this.rootStore.setActiveModal(this.modalName || this.$.uid)
 
 				return
 			}
@@ -128,13 +128,13 @@ export default {
 			}, 10)
 		},
 		escapeListener (event) {
-			if ('Escape' === event.key && (this.modalName || this._uid) === this.rootStore.modals.active) {
+			if ('Escape' === event.key && (this.modalName || this.$.uid) === this.rootStore.modals.active) {
 				event.stopPropagation()
 				this.closeModal()
 			}
 		},
 		maybeCloseModal (event) {
-			if (this.allowBgClose && event.target.classList.contains('modal-wrapper') && (this.modalName || this._uid) === this.rootStore.modals.active) {
+			if (this.allowBgClose && event.target.classList.contains('modal-wrapper') && (this.modalName || this.$.uid) === this.rootStore.modals.active) {
 				this.closeModal()
 			}
 		},
@@ -146,7 +146,7 @@ export default {
 		},
 		closeModal () {
 			this.$emit('close')
-			this.rootStore.unsetActiveModal(this.modalName || this._uid)
+			this.rootStore.unsetActiveModal(this.modalName || this.$.uid)
 		}
 	}
 }

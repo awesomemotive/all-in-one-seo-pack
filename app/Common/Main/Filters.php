@@ -376,7 +376,8 @@ abstract class Filters {
 			'fusion_element', // Avada
 			'elementor_library',
 			'redirect_rule', // Safe Redirect Manager
-			'seedprod'
+			'seedprod',
+			'tcb_lightbox'
 		];
 
 		foreach ( $postTypes as $index => $postType ) {

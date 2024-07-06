@@ -1,4 +1,3 @@
-import '@/vue/utils/vue2.js'
 import { h, createApp } from 'vue'
 
 import loadPlugins from '@/vue/plugins'
@@ -41,6 +40,7 @@ const icon = el('svg',
 
 const vueInitialState = {}
 const openingHoursSidebarApps = []
+const openingHoursSidebarWatcherApps = []
 
 export const name = 'aioseo/openinghours'
 export const settings = {
@@ -218,6 +218,8 @@ export const settings = {
 				parent  : document.querySelector('.block-editor'),
 				subtree : true,
 				done    : function (el) {
+					maybeDeleteBlockVueApp(clientId, openingHoursSidebarWatcherApps)
+
 					let app = createApp({
 						name : 'Blocks/OpeningHoursWatcher',
 						data : function () {
@@ -237,6 +239,8 @@ export const settings = {
 					app = loadPlugins(app)
 
 					app.mount(el)
+
+					openingHoursSidebarWatcherApps.push({ clientId, app })
 				}
 			})
 		}

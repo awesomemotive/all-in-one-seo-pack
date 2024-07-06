@@ -1,6 +1,6 @@
 <template>
 	<div
-		v-if="'metabox' === $root._data.screenContext"
+		v-if="'metabox' === $root.$data.screenContext"
 		class="aioseo-seo-revisions-metabox"
 	>
 		<core-blur>
@@ -11,7 +11,7 @@
 	</div>
 
 	<div
-		v-else-if="'sidebar' === $root._data.screenContext"
+		v-else-if="'sidebar' === $root.$data.screenContext"
 		class="aioseo-seo-revisions-sidebar"
 	>
 		<core-modal

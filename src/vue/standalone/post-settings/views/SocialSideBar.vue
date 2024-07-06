@@ -1,7 +1,7 @@
 <template>
 	<core-settings-row
 		:name="strings.metaDescription"
-		v-if="'sidebar' === $root._data.screenContext"
+		v-if="'sidebar' === $root.$data.screenContext"
 		class="snippet-description-row open-social-copy"
 	>
 		<template #content>

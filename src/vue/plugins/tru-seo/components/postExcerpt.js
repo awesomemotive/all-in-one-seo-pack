@@ -14,13 +14,18 @@ import {
 	isDiviEditor,
 	isSeedProdEditor,
 	isWPBakeryEditor,
-	isAvadaEditor
+	isAvadaEditor,
+	isSiteOriginEditor,
+	isThriveArchitectEditor
 } from '@/vue/utils/context'
+
 import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
 import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
 import { getEditorData as getSeedProdData } from '@/vue/standalone/page-builders/seedprod/helpers'
 import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders/wpbakery/helpers'
 import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
+import { getEditorData as getSiteOriginData } from '@/vue/standalone/page-builders/siteorigin/helpers'
+import { getEditorData as getThriveArchitectData } from '@/vue/standalone/page-builders/thrive-architect/helpers'
 import { getText } from '@/vue/utils/html'
 
 /**
@@ -66,6 +71,12 @@ const getEditorExcerpt = () => {
 			break
 		case isAvadaEditor():
 			postExcerpt = getAvadaData().excerpt
+			break
+		case isSiteOriginEditor():
+			postExcerpt = getSiteOriginData().excerpt
+			break
+		case isThriveArchitectEditor():
+			postExcerpt = getThriveArchitectData().excerpt
 			break
 	}
 

@@ -134,7 +134,7 @@ export default {
 	},
 	props : {
 		linkingOpportunities : {
-			type     : Array,
+			type     : Object,
 			required : true
 		}
 	},

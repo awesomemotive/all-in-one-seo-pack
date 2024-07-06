@@ -1,10 +1,10 @@
 === All in One SEO – Powerful SEO Plugin to Boost SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
-Tested up to: 6.5.4
+Tested up to: 6.5.5
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.6.5
+Stable tag: 4.6.6
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -224,8 +224,12 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * All in 1 SEO (incorrect)
 * AISEO (incorrect)
 
-
 == Changelog ==
+
+**New in Version 4.6.6**
+
+* New: Integrations with SiteOrigin and Thrive Architect - Control your SEO and optimize your content directly from the SiteOrigin and Thrive Architect visual page builders.
+* Fixed: Updated editor component to fix usage of deprecated DOMNodeInserted events.
 
 **New in Version 4.6.5**
 
@@ -330,30 +334,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * Fixed: PHP error sometimes thrown on multisites because SECURE_AUTH_COOKIE constant not set due to loading WordPress pluggables too soon.
 * Fixed: PHP error sometimes thrown in update migration due to invalid old options data.
 
-**New in Version 4.5.9**
-
-* Updated: Various improvements and behind-the-scenes bug fixes for the SEO Analyzer to increase result accuracy.
-* Updated: Added a filter to skip logging for redirects and 404 URLs.
-* Updated: Deprecated the No Pagination for Canonical URLs setting for new users.
-* Fixed: Product schema is now correctly output again for virtual, downloadable and free WooCommerce products.
-* Fixed: Unspecified type for organization image causing an error in schema validation tools.
-* Fixed: `max-video-preview` robots meta value not output when set to 0.
-* Fixed: Search Statistics is now able to find the correct matching post when permalink has no trailing slash.
-* Fixed: Avada builder styles no longer leak into Author SEO (E-E-A-T) blocks.
-* Fixed: SeedProd builder styles no longer leak into AIOSEO Metabox.
-* Fixed: Canonical URL no longer strip the "/amp" slug when the page is not a valid AMP page.
-* Fixed: PHP error when WPBakery plugin is not activated.
-* Fixed: PHP error when the `wp_get_current_user` function is not declared yet in rare cases.
-* Fixed: PHP error caused by the capability variable being an array instead of a string in rare cases.
-* Fixed: PHP warnings for object properties in Image SEO addon.
-* Fixed: Redirects CSV Import was not showing some URLs that failed to import.
-
-**New in Version 4.5.8**
-
-* New: Query Arg Monitor - Monitor the query args that are used on your site and block them. This prevents search engines from crawling every variation of your pages with unrecognized query arguments and helps save crawl quota.
-* Updated: Compatibility with new ACF image data format.
-* Fixed: TruSEO sometimes freezes when used with particular languages.
-
 **See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) for previous releases.**
 
 == Frequently Asked Questions ==
@@ -435,6 +415,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.6.5 =
+= 4.6.6 =
 
 This update adds major improvements and bug fixes.

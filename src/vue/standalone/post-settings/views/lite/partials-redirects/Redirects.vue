@@ -1,13 +1,13 @@
 <template>
 	<div>
 		<redirects-lite
-			v-if="'metabox' === $root._data.screenContext"
+			v-if="'metabox' === $root.$data.screenContext"
 			:noCoreCard="true"
 			:parentComponentContext="parentComponentContext"
 		/>
 
 		<core-modal
-			:show="postEditorStore.currentPost.redirects.modalOpen && 'sidebar' === $root._data.screenContext"
+			:show="postEditorStore.currentPost.redirects.modalOpen && 'sidebar' === $root.$data.screenContext"
 			:classes="[ 'aioseo-redirects' ]"
 			@close="postEditorStore.currentPost.redirects.modalOpen = false"
 		>

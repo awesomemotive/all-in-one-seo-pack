@@ -142,8 +142,8 @@ export default {
 		}
 	},
 	created () {
-		if (this.$root._data.locations) {
-			this.$root._data.locations.forEach(location => {
+		if (this.$root.$data.locations) {
+			this.$root.$data.locations.forEach(location => {
 				this.locationsList.push({
 					value : location.id,
 					label : location.title.rendered

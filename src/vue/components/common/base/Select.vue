@@ -467,6 +467,7 @@ export default {
 					&:after {
 						background-color: $blue;
 						color: #fff;
+						font-size: 12px;
 					}
 				}
 

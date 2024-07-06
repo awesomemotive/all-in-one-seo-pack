@@ -1,7 +1,7 @@
 <template>
 	<div class="aioseo-link-assistant-sidebar">
 		<core-settings-row
-			v-if="'sidebar' === $root._data.screenContext"
+			v-if="'sidebar' === $root.$data.screenContext"
 			class="snippet-description-row open-link-assistant-copy"
 		>
 			<template #content>

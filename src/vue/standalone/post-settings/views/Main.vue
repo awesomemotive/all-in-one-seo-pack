@@ -7,7 +7,7 @@
 			internal
 			disableMobile
 			@changed="value => processChangeTab(value)"
-			v-if="'sidebar' !== $root._data.screenContext"
+			v-if="'sidebar' !== $root.$data.screenContext"
 		>
 			<template #var-tab-icon="{ tab }">
 				<component
@@ -23,7 +23,7 @@
 
 		<transition name="route-fade" mode="out-in">
 			<div
-				v-if="'sidebar' === $root._data.screenContext && null === activeTab"
+				v-if="'sidebar' === $root.$data.screenContext && null === activeTab"
 				class="aioseo-sidepanel"
 			>
 				<a
@@ -58,7 +58,7 @@
 				:class="{ 'is-page-builder': !!rootStore.aioseo.integration }"
 			>
 				<div
-					v-if="'sidebar' === $root._data.screenContext"
+					v-if="'sidebar' === $root.$data.screenContext"
 					class="aioseo-tab-title"
 				>
 					<span>{{ getTabName(activeTab) }}</span>
@@ -66,7 +66,7 @@
 					<svg-close @click="processChangeTab(null)"/>
 				</div>
 
-				<alert v-if="'sidebar' === this.$root._data.screenContext" />
+				<alert v-if="'sidebar' === this.$root.$data.screenContext" />
 
 				<component
 					:is="activeTab"
@@ -77,7 +77,7 @@
 		</transition>
 
 		<core-modal
-			:show="postEditorStore.currentPost.modalOpen && 'sidebar' === $root._data.screenContext"
+			:show="postEditorStore.currentPost.modalOpen && 'sidebar' === $root.$data.screenContext"
 			@close="closeModal"
 			:classes="[ 'aioseo-post-settings-modal' ]"
 			modal-name="preview-snippet-editor"
@@ -202,7 +202,7 @@ export default {
 		'settingsStore.metaBoxTabs.mainSidebar' : {
 			deep : true,
 			handler (mainSidebar) {
-				if ('sidebar' !== this.$root._data.screenContext) {
+				if ('sidebar' !== this.$root.$data.screenContext) {
 					return
 				}
 
@@ -305,7 +305,7 @@ export default {
 				return
 			}
 
-			switch (this.$root._data.screenContext) {
+			switch (this.$root.$data.screenContext) {
 				case 'sidebar' :
 					// Change the WordPress components panel header to static if there's a tab open.
 					document.querySelectorAll('.components-panel__header').forEach(el => {
@@ -319,7 +319,7 @@ export default {
 					break
 			}
 
-			if ('sidebar' !== this.$root._data.screenContext) {
+			if ('sidebar' !== this.$root.$data.screenContext) {
 				return
 			}
 
@@ -363,7 +363,7 @@ export default {
 				return
 			}
 
-			if ('sidebar' !== this.$root._data.screenContext) {
+			if ('sidebar' !== this.$root.$data.screenContext) {
 				return
 			}
 
@@ -406,7 +406,7 @@ export default {
 			})
 		})
 
-		switch (this.$root._data.screenContext) {
+		switch (this.$root.$data.screenContext) {
 			case 'sidebar' :
 				this.activeTab = null
 				break

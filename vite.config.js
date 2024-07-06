@@ -76,7 +76,9 @@ const getStandalones = () => {
 		'divi-admin'             : './src/vue/standalone/page-builders/divi-admin/main.js',
 		elementor                : './src/vue/standalone/page-builders/elementor/main.js',
 		seedprod                 : './src/vue/standalone/page-builders/seedprod/main.js',
-		wpbakery                 : './src/vue/standalone/page-builders/wpbakery/main.js'
+		siteorigin               : './src/vue/standalone/page-builders/siteorigin/main.js',
+		wpbakery                 : './src/vue/standalone/page-builders/wpbakery/main.js',
+		'thrive-architect'       : './src/vue/standalone/page-builders/thrive-architect/main.js'
 	}
 }
 
@@ -222,10 +224,6 @@ export default ({ mode }) => {
 				{
 					find        : '$',
 					replacement : path.resolve(__dirname, 'src')
-				},
-				{
-					find        : 'vue',
-					replacement : '@vue/compat'
 				}
 			],
 			extensions : [

@@ -32,7 +32,7 @@
 		<base-input
 			v-if="$isPro && licenseStore.license.isActive"
 			size="medium"
-			:class="`add-keyphrase-${this.$root._data.screenContext}-input`"
+			:class="`add-keyphrase-${this.$root.$data.screenContext}-input`"
 			@keydown.enter="pressEnter"
 		/>
 		<base-button
@@ -136,7 +136,7 @@ export default {
 			}, 300)
 		},
 		addKeyphraseEv () {
-			const keyphraseInputComponent = document.getElementsByClassName(`add-keyphrase-${this.$root._data.screenContext}-input`)
+			const keyphraseInputComponent = document.getElementsByClassName(`add-keyphrase-${this.$root.$data.screenContext}-input`)
 			const keyphraseInput          = keyphraseInputComponent[0].querySelector('.medium')
 			if (keyphraseInput.value) {
 				const newKeyphrase      = { keyphrase: keyphraseInput.value, score: 0 }

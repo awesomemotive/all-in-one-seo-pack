@@ -1,0 +1,153 @@
+.tcb-editor-main {
+	.aioseo-app {
+		color: $black !important;
+
+		input[type=color],
+		input[type=date],
+		input[type=datetime],
+		input[type=datetime-local],
+		input[type=email],
+		input[type=month],
+		input[type=number],
+		input[type=password],
+		input[type=search],
+		input[type=tel],
+		input[type=text],
+		input[type=time],
+		input[type=url],
+		input[type=week],
+		input:not([type]),
+		textarea,
+		input:not([type]),
+		select,
+		.settings {
+			color: $black;
+			font-family: inherit;
+			font-size: inherit;
+			height: initial;
+			text-indent: initial;
+		}
+
+		.aioseo-redirects {
+			input,
+			select {
+				width: auto;
+			}
+		}
+
+		h1, h2, h3, h4, h5, h6 {
+			font-weight: 600;
+		}
+
+		.loading {
+			&::before,
+			&::after {
+				display: none;
+			}
+		}
+	}
+
+	.aioseo-thrive-score-button {
+		cursor: pointer;
+	}
+
+	#aioseo-score-btn-header {
+		display: none;
+
+		.aioseo-thrive-score-button {
+			margin-top: 2px;
+		}
+	}
+
+	&.aioseo-settings-enabled {
+		#aioseo-score-btn-header {
+			display: block;
+		}
+	}
+
+	&.aioseo-settings-active {
+		#sidebar-right .drawer.active {
+			width: 295px;
+		}
+	}
+
+	#aioseo-score-btn-settings {
+		display: inline-block;
+		vertical-align: middle;
+		margin-right: 6px;
+
+		& + button {
+			vertical-align: middle;
+		}
+	}
+
+	#tcb-sidebar-top-right {
+		display: flex;
+	}
+
+	.tcb-sidebar-icon-aioseo {
+		svg {
+			width: 22px;
+			height: 22px;
+		}
+	}
+
+	#aioseo-panel {
+		position: absolute;
+		background-color: #fff;
+		height: 100%;
+		width: 100%;
+		overflow-y: auto;
+		overflow-x: hidden;
+		right: 250px;
+		transition: right 0.1s ease-in;
+
+		/* Override Thrive Styles */
+		.header {
+			padding: 12px;
+			height: auto;
+
+			.text {
+				font-size: 14px;
+				font-weight: 600;
+				color: $black;
+			}
+		}
+	}
+
+	.settings.active #aioseo-panel {
+		right: 0px;
+	}
+
+	#settings-action-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 4px;
+		background-color: #fff;
+		border: 1px solid #50565F;
+		width: 23px;
+		height: 24px;
+		padding: 0;
+
+		.when-active {
+			display: none;
+		}
+
+		&.active {
+			background-color: #50565F;
+
+			.when-active {
+				display: block;
+			}
+
+			.when-inactive {
+				display: none;
+			}
+		}
+	}
+
+	.aioseo-thrive-sidebar__content {
+		overflow: visible;
+	}
+}

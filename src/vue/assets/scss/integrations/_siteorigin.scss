@@ -1,0 +1,34 @@
+.siteorigin-panels-builder {
+	.aioseo-live-editor-item {
+		display: none;
+
+		@at-root .so-live-editor-builder & {
+			display: block;
+		}
+	}
+}
+
+.aioseo-site-origin-sidebar--active {
+	#aioseo-modal-portal {
+		z-index: 999999;
+		position: relative;
+	}
+
+	.el-popper.el-picker__popper {
+		z-index: 999999 !important;
+	}
+
+	.aioseo-site-origin-sidebar__content {
+		overflow: visible;
+	}
+}
+
+.so-panels-live-editor {
+	.live-editor-collapse {
+		z-index: 100001 !important;
+	}
+
+	.so-sidebar-tools {
+		z-index: 100000 !important;
+	}
+}

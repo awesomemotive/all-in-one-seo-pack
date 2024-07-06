@@ -10,7 +10,7 @@
 					<span>{{ strings.serpPreview }}</span>
 
 					<core-tooltip
-						:offset="'sidebar' === $root._data.screenContext && 'metabox' === parentComponentContext ? '10px,0' : '50px,0'"
+						:offset="'sidebar' === $root.$data.screenContext && 'metabox' === parentComponentContext ? '10px,0' : '50px,0'"
 						:placement="'bottom'"
 					>
 						<svg-circle-question-mark/>
@@ -22,7 +22,7 @@
 				</div>
 
 				<base-radio-toggle
-					v-if="'metabox' === $root._data.screenContext || 'modal' === parentComponentContext"
+					v-if="'metabox' === $root.$data.screenContext || 'modal' === parentComponentContext"
 					:modelValue="postEditorStore.currentPost.generalMobilePrev"
 					@update:modelValue="isMobilePreviewEv"
 					name="previewGeneralIsMobile"
@@ -44,7 +44,7 @@
 			<template #content>
 				<core-google-search-preview
 					:focus-keyphrase="postEditorStore.currentPost?.keyphrases?.focus?.keyphrase ?? ''"
-					:device="'sidebar' === $root._data.screenContext && 'metabox' === parentComponentContext ? 'mobile' : (postEditorStore.currentPost.generalMobilePrev ? 'mobile' : 'desktop')"
+					:device="'sidebar' === $root.$data.screenContext && 'metabox' === parentComponentContext ? 'mobile' : (postEditorStore.currentPost.generalMobilePrev ? 'mobile' : 'desktop')"
 					:url="tagsStore.liveTags.permalink"
 					:title="parseTags(postEditorStore.currentPost.title || postEditorStore.currentPost.tags.title || '#post_title #separator_sa #site_title')"
 					:description="parseTags(postEditorStore.currentPost.description || postEditorStore.currentPost.tags.description || '#post_content')"
@@ -52,7 +52,7 @@
 				/>
 
 				<base-button
-					v-if="'sidebar' === $root._data.screenContext && 'modal' !== parentComponentContext"
+					v-if="'sidebar' === $root.$data.screenContext && 'modal' !== parentComponentContext"
 					class="edit-snippet gray small"
 					@click="editSnippetEv"
 				>
@@ -65,7 +65,7 @@
 		<core-settings-row
 			id="aioseo-post-settings-post-title-row"
 			class="snippet-title-row"
-			v-if="('metabox' === $root._data.screenContext || 'modal' === parentComponentContext) && allowed('aioseo_page_general_settings')"
+			v-if="('metabox' === $root.$data.screenContext || 'modal' === parentComponentContext) && allowed('aioseo_page_general_settings')"
 			:name="title"
 			:key="titleKey"
 		>
@@ -102,7 +102,7 @@
 		<core-settings-row
 			id="aioseo-post-settings-meta-description-row"
 			class="snippet-description-row"
-			v-if="('metabox' === $root._data.screenContext || 'modal' === parentComponentContext) && allowed('aioseo_page_general_settings')"
+			v-if="('metabox' === $root.$data.screenContext || 'modal' === parentComponentContext) && allowed('aioseo_page_general_settings')"
 			:name="strings.metaDescription"
 			:key="descriptionKey"
 		>
@@ -145,7 +145,7 @@
 
 		<core-settings-row
 			v-if="
-				'metabox' === $root._data.screenContext &&
+				'metabox' === $root.$data.screenContext &&
 				'post' === postEditorStore.currentPost.context &&
 				'attachment' !== postEditorStore.currentPost.postType &&
 				!isPageBuilderEditor()
@@ -239,7 +239,7 @@
 		</core-settings-row>
 
 		<core-sidebar-card
-			v-if="'sidebar' === $root._data.screenContext && !isPageBuilderEditor() && 'modal' !== this.parentComponentContext"
+			v-if="'sidebar' === $root.$data.screenContext && !isPageBuilderEditor() && 'modal' !== this.parentComponentContext"
 			class="card-cornerstone-content"
 			slug="cornerstoneContent"
 			:header-text="strings.cornerstoneContent"
@@ -259,7 +259,7 @@
 				<span>{{ strings.focusKeyphrase }}</span>
 
 				<core-tooltip
-					:offset="isPageBuilderEditor() ? '35px,0' : '0,0'"
+					:offset="getFocusKeyphraseTooltipOffset()"
 				>
 					<svg-circle-question-mark />
 
@@ -333,7 +333,7 @@ import { Tags } from '@/vue/mixins/Tags'
 import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
 import { TruSeoHighlighter } from '@/vue/mixins/TruSeoHighlighter'
 import { debounce } from '@/vue/utils/debounce'
-import { isPageBuilderEditor } from '@/vue/utils/context'
+import { isPageBuilderEditor, isThriveArchitectEditor } from '@/vue/utils/context'
 import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
 import AdditionalKeyphrases from './partials/general/AdditionalKeyphrases'
 import AiGenerator from './partials/general/ai/Generator'
@@ -473,13 +473,13 @@ export default {
 			return 1 === this.postEditorStore.currentPost.pillar_content
 		},
 		displayTruSeoMetaboxCard () {
-			return truSeoShouldAnalyze() && 'metabox' === this.$root._data.screenContext && 'post' === this.postEditorStore.currentPost.context && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.isForum
+			return truSeoShouldAnalyze() && 'metabox' === this.$root.$data.screenContext && 'post' === this.postEditorStore.currentPost.context && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.isForum
 		},
 		displayTruSeoSidebarKeyphraseCard () {
-			return truSeoShouldAnalyze() && 'sidebar' === this.$root._data.screenContext && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.isForum
+			return truSeoShouldAnalyze() && 'sidebar' === this.$root.$data.screenContext && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.isForum
 		},
 		displayTruSeoSidebarAnalysisCard () {
-			return truSeoShouldAnalyze() && 'sidebar' === this.$root._data.screenContext && this.postEditorStore.currentPost.page_analysis && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.isForum
+			return truSeoShouldAnalyze() && 'sidebar' === this.$root.$data.screenContext && this.postEditorStore.currentPost.page_analysis && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.isForum
 		},
 		isForum () {
 			return this.rootStore.aioseo.data.isBBPressActive &&
@@ -561,6 +561,17 @@ export default {
 							'taxonomy_description'
 						]
 			}
+		},
+		getFocusKeyphraseTooltipOffset () {
+			if (isThriveArchitectEditor()) {
+				return '-15px,0'
+			}
+
+			if (isPageBuilderEditor()) {
+				return '35px,0'
+			}
+
+			return '0,0'
 		}
 	},
 	mounted () {

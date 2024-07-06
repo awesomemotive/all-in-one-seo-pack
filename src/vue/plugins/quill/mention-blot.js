@@ -3,8 +3,8 @@ import Quill from 'quill'
 const Embed = Quill.import('blots/embed')
 
 class MentionBlot extends Embed {
-	constructor (domNode) {
-		super(domNode)
+	constructor (scroll, domNode) {
+		super(scroll, domNode)
 
 		// Bind our click handler to the class.
 		this.clickHandler = this.clickHandler.bind(this)
@@ -63,7 +63,7 @@ class MentionBlot extends Embed {
 				name.parentNode.insertBefore(customValue, name.nextSibling)
 			}
 
-			customValue.innerText = ' - ' + (data.customValue || '')
+			customValue.innerHTML = '&nbsp;-&nbsp;' + (data.customValue || '')
 		}
 
 		setTimeout(() => {

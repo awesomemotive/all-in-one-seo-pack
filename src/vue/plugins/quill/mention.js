@@ -4,15 +4,16 @@ import {
 	getMentionCharIndex,
 	hasValidChars,
 	hasValidMentionCharIndex
-} from './quill-mention-utils'
-import './quill-mention-blot'
+} from './mention-utils'
+import './mention-blot'
 
 const Keys = {
-	TAB    : 9,
-	ENTER  : 13,
-	ESCAPE : 27,
-	UP     : 38,
-	DOWN   : 40
+	TAB    : 'Tab',
+	ENTER  : 'Enter',
+	ESCAPE : 'Escape',
+	UP     : 'ArrowUp',
+	DOWN   : 'ArrowDown',
+	SPACE  : ' '
 }
 
 class Mention {
@@ -63,7 +64,8 @@ class Mention {
 			listItemClass         : 'ql-mention-list-item',
 			mentionContainerClass : 'ql-mention-list-container',
 			mentionListClass      : 'ql-mention-list',
-			spaceAfterInsert      : true
+			spaceAfterInsert      : true,
+			selectKeys            : [ Keys.ENTER ]
 		}
 
 		Object.assign(this.options, options, {
@@ -128,7 +130,7 @@ class Mention {
 						name.parentNode.insertBefore(customValue, name.nextSibling)
 					}
 
-					customValue.innerText = event.target.value ? ' - ' + event.target.value : ''
+					customValue.innerHTML = event.target.value ? '&nbsp;-&nbsp;' + event.target.value : ''
 					// this.currentNode.dataset.customValue = event.target.value
 
 					this.currentBlot = Quill.find(this.currentNode)
@@ -138,17 +140,18 @@ class Mention {
 		}
 
 		this.customFieldInput.addEventListener('keydown', event => {
-			if (13 === event.keyCode) {
+			if (Keys.ENTER === event.key) {
+				this.hideMentionList()
+				this.removeOrphanedMentionChar()
+				event.preventDefault()
+			}
+
+			if (Keys.ESCAPE === event.key) {
 				this.hideMentionList()
 				this.removeOrphanedMentionChar()
 			}
 
-			if (27 === event.keyCode) {
-				this.hideMentionList()
-				this.removeOrphanedMentionChar()
-			}
-
-			if (32 === event.keyCode) {
+			if (Keys.SPACE === event.key) {
 				event.preventDefault()
 			}
 		})
@@ -157,19 +160,20 @@ class Mention {
 			this.activeElement = event.target
 		})
 		this.mentionSearch.addEventListener('keydown', event => {
-			if (40 === event.keyCode) {
+			if (Keys.DOWN === event.key) {
 				this.nextItem()
 			}
 
-			if (38 === event.keyCode) {
+			if (Keys.UP === event.key) {
 				this.prevItem()
 			}
 
-			if (13 === event.keyCode) {
+			if (Keys.ENTER === event.key) {
 				this.selectItem()
+				event.preventDefault()
 			}
 
-			if (27 === event.keyCode) {
+			if (Keys.ESCAPE === event.key) {
 				this.hideMentionList()
 			}
 		})
@@ -195,7 +199,11 @@ class Mention {
 			})
 		}
 
-		this.mentionList = document.createElement('ul')
+		this.mentionList    = document.createElement('ul')
+		this.mentionList.id = 'quill-mention-list'
+
+		quill.root.setAttribute('aria-owns', 'quill-mention-list')
+
 		this.mentionList.className = this.options.mentionListClass
 			? this.options.mentionListClass
 			: ''
@@ -216,6 +224,15 @@ class Mention {
 		quill.on('text-change', this.onTextChange.bind(this))
 		quill.on('selection-change', this.onSelectionChange.bind(this))
 
+		// Pasting doesn't fire selection-change after the pasted text is
+		// inserted, so here we manually trigger one.
+		quill.container.addEventListener('paste', () => {
+			setTimeout(() => {
+				const range = quill.getSelection()
+				this.onSelectionChange(range)
+			})
+		})
+
 		quill.keyboard.addBinding(
 			{
 				key : Keys.TAB
@@ -226,12 +243,14 @@ class Mention {
 			quill.keyboard.bindings[Keys.TAB].pop()
 		)
 
-		quill.keyboard.addBinding(
-			{
-				key : Keys.ENTER
-			},
-			this.selectHandler.bind(this)
-		)
+		for (const selectKey of this.options.selectKeys ?? []) {
+			quill.keyboard.addBinding(
+				{
+					key : selectKey
+				},
+				this.selectHandler.bind(this)
+			)
+		}
 		quill.keyboard.bindings[Keys.ENTER].unshift(
 			quill.keyboard.bindings[Keys.ENTER].pop()
 		)
@@ -383,7 +402,7 @@ class Mention {
 			const customInput = this.customFieldInput && this.customFieldInput.querySelector('input')
 			const customValue = this.currentNode.querySelector('.tag-custom')
 			if (customInput && customValue) {
-				customInput.value = customValue.innerText.replace(' - ', '')
+				customInput.value = customValue.innerHTML.replace('&nbsp;-&nbsp;', '').trim()
 			}
 		}
 
@@ -426,23 +445,32 @@ class Mention {
 		}
 
 		for (let i = 0; i < this.mentionList.childNodes.length; i += 1) {
-			this.mentionList.childNodes[i].classList.remove('selected')
+			const element = this.mentionList.childNodes[i]
+			if (element instanceof HTMLElement) {
+				element.classList.remove('selected')
+			}
 		}
-		this.mentionList.childNodes[this.itemIndex].classList.add('selected')
+
+		const elementAtItemIndex = this.mentionList.childNodes[this.itemIndex]
+		if (-1 === this.itemIndex || 'true' === elementAtItemIndex.dataset.disabled) {
+			return
+		}
+
+		elementAtItemIndex.classList.add('selected')
+		this.quill.root.setAttribute('aria-activedescendant', elementAtItemIndex.id)
 
 		if (scrollItemInView) {
-			const itemHeight = this.mentionList.childNodes[this.itemIndex]
-				.offsetHeight
-			const itemPos = this.itemIndex * itemHeight
-			const containerTop = this.mentionContainer.scrollTop
-			const containerBottom = containerTop + this.mentionContainer.offsetHeight
+			const itemHeight      = elementAtItemIndex.offsetHeight
+			const itemPos         = elementAtItemIndex.offsetTop - this.mentionSearch.offsetHeight
+			const containerTop    = this.mentionList.scrollTop
+			const containerBottom = containerTop + this.mentionList.offsetHeight
 
 			if (itemPos < containerTop) {
 				// Scroll up if the item is above the top of the container
-				this.mentionContainer.scrollTop = itemPos
+				this.mentionList.scrollTop = itemPos
 			} else if (itemPos > containerBottom - itemHeight) {
 				// scroll down if any part of the element is below the bottom of the container
-				this.mentionContainer.scrollTop += itemPos - containerBottom + itemHeight
+				this.mentionList.scrollTop += itemPos - containerBottom + itemHeight
 			}
 		}
 	}
@@ -721,10 +749,10 @@ class Mention {
 	}
 
 	getTextBeforeCursor () {
-		const startPos = Math.max(0, this.cursorPos - this.options.maxChars)
+		const startPos = Math.max(0, (this.cursorPos ?? 0) - this.options.maxChars)
 		const textBeforeCursorPos = this.quill.getText(
 			startPos,
-			this.cursorPos - startPos
+			(this.cursorPos ?? 0) - startPos
 		)
 		return textBeforeCursorPos
 	}
@@ -773,7 +801,7 @@ class Mention {
 
 	onTextChange (delta, oldDelta, source) {
 		if ('user' === source) {
-			this.onSomethingChange()
+			setTimeout(this.onSomethingChange.bind(this), 0)
 		}
 	}
 
@@ -783,7 +811,7 @@ class Mention {
 		} else {
 			setTimeout(() => {
 				if (!this.activeElement) {
-					this.hideMentionList()
+					this.hideMentionList.bind(this)
 				} else {
 					if (!this.activeElement.classList.contains('aioseo-tag-custom')) {
 						this.activeElement = null

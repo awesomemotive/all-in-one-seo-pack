@@ -102,6 +102,7 @@ export default {
 	},
 	data () {
 		return {
+			separator             : undefined,
 			searchPreviewHostname : '',
 			searchPreviewUrl      : '',
 			strings               : {

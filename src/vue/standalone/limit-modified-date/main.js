@@ -1,4 +1,3 @@
-import '@/vue/utils/vue2.js'
 import { createApp } from 'vue'
 
 import loadPlugins from '@/vue/plugins'

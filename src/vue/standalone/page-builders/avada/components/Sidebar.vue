@@ -2,7 +2,7 @@
 	<div class="edit-post-sidebar aioseo-avada-sidebar">
 		<div class="aioseo-avada-sidebar__header">
 			<div class="aioseo-avada-sidebar__header-title">
-				AIOSEO Settings
+				{{ strings.headerTitle }}
 			</div>
 
 			<core-score-button
@@ -24,8 +24,18 @@ import { usePostEditorStore } from '@/vue/stores'
 import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
 import CoreScoreButton from '@/vue/components/common/core/ScoreButton'
 import PostSettings from '@/vue/standalone/post-settings/App'
+import { __, sprintf } from '@wordpress/i18n'
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const { currentPost } = storeToRefs(usePostEditorStore())
+
+const strings = {
+	headerTitle : sprintf(
+		// Translators: 1 - Plugin short name ("AIOSEO").
+		__('%1$s Settings', td),
+		import.meta.env.VITE_SHORT_NAME
+	)
+}
 </script>
 
 <style lang="scss">

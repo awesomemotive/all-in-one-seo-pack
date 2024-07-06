@@ -9,7 +9,7 @@ CustomToolbar.DEFAULTS.handlers.autoLink = function () {
 	const delta    = this.quill.getContents()
 
 	delta.ops.forEach(op => {
-		if (op.attributes && op.attributes.link) {
+		if (op?.attributes?.link) {
 			delete op.attributes.link
 		}
 	})

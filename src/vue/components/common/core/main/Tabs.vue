@@ -45,7 +45,7 @@
 						</span>
 
 						<span
-							v-if="tab.warning && 'sidebar' !== $root._data.screenContext"
+							v-if="tab.warning && 'sidebar' !== $root.$data.screenContext"
 							class="warning"
 						>
 							<svg-circle-information
@@ -84,14 +84,15 @@
 					<template
 						v-if="!active"
 					>
-						<router-link
+						<component
+							:is="!active ? 'router-link' : 'a'"
 							v-for="(tab, index) in filteredTabs"
 							:key="index"
 							:to="tab.url"
 							@click.native="showMobileTabs = false"
 						>
 							{{ tab.name }}
-						</router-link>
+						</component>
 					</template>
 
 					<template
@@ -101,7 +102,7 @@
 							href="#"
 							v-for="(tab, index) in filteredTabs"
 							:key="index"
-							@click.prevent="$emit('changed', tab.slug) && (showMobileTabs = false)"
+							@click.prevent="clickMobileTabs(tab.slug)"
 						>
 							{{ tab.name }}
 						</a>
@@ -218,6 +219,10 @@ export default {
 		}
 	},
 	methods : {
+		clickMobileTabs (slug) {
+			this.$emit('changed', slug)
+			this.showMobileTabs = false
+		},
 		maybeChangeTab (id) {
 			if (this.active) {
 				this.$emit('changed', id)

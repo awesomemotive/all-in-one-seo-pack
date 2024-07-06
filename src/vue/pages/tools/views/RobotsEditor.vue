@@ -175,7 +175,7 @@
 								<draggable
 									handle=".aioseo-drag-wrapper"
 									v-model="tableRules"
-									:item-key="_uid.toString()"
+									:item-key="$.uid.toString()"
 									class="draggable-rules"
 								>
 									<template #item="{element:rule, index}">

@@ -1,6 +1,4 @@
-import '@/vue/utils/vue2.js'
 import { h, createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
 
 import loadPlugins from '@/vue/plugins'
 
@@ -25,28 +23,12 @@ import AppLocalBusiness from '../local-business-seo/App.vue'
 
 initWatcher()
 
-// Router placeholder to prevent errors when using router-link.
-const router = createRouter({
-	history : createWebHistory(),
-	routes  : [
-		{
-			path      : '/',
-			component : App
-		}
-	]
-})
-
 const localCreateApp = (app) => {
 	app = loadPlugins(app)
 	app = loadComponents(app)
 	app = loadVersionedComponents(app)
 
-	app.use(router)
-
-	router.app = app
-
-	// Use the pinia store.
-	loadPiniaStores(app, router)
+	loadPiniaStores(app)
 
 	// The code below requires Pinia to be loaded.
 	new RedirectsSlugMonitor()

@@ -118,16 +118,16 @@ import {
 } from '@/vue/stores'
 
 import tags from '@/vue/utils/tags'
-import { addTags, removeTags } from '@/vue/plugins/quill/quill-auto-tagger'
+import { addTags, removeTags } from '@/vue/plugins/quill/auto-tagger'
 import Quill from 'quill'
-import '@/vue/plugins/quill/quill-line-numbers'
-import '@/vue/plugins/quill/quill-mention'
+import '@/vue/plugins/quill/mention'
+import '@/vue/plugins/quill/auto-link'
+import '@/vue/plugins/quill/character-counter'
+import '@/vue/plugins/quill/clipboard'
+import '@/vue/plugins/quill/line-numbers'
+import '@/vue/plugins/quill/phrase-editor-formats'
+import '@/vue/plugins/quill/preserve-whitespace'
 import 'quill/dist/quill.snow.css'
-import '@/vue/plugins/quill/quill-clipboard'
-import '@/vue/plugins/quill/quill-character-counter'
-import '@/vue/plugins/quill/quill-auto-link'
-import '@/vue/plugins/quill/quill-phrase-editor-formats'
-import '@/vue/plugins/quill/quill-preserve-whitespace'
 import BaseInput from '@/vue/components/common/base/Input'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgPlus from '@/vue/components/common/svg/Plus'
@@ -142,7 +142,7 @@ export default {
 			tagsStore       : useTagsStore()
 		}
 	},
-	emits      : [ 'counter', 'selection-change', 'updateEditor', 'focus', 'blur', 'update:modelValue' ],
+	emits      : [ 'counter', 'selection-change', 'updateEditor', 'focus', 'blur', 'update:modelValue', 'paste' ],
 	components : {
 		BaseInput,
 		SvgCaret,
@@ -197,9 +197,9 @@ export default {
 	watch : {
 		disabled () {
 			if (this.disabled) {
-				QuillEditor[this._uid].disable()
+				QuillEditor[this.$.uid].disable()
 			} else {
-				QuillEditor[this._uid].enable()
+				QuillEditor[this.$.uid].enable()
 			}
 		},
 		modelValue () {
@@ -211,7 +211,7 @@ export default {
 			deep : true,
 			handler () {
 				this.localTags       = this.getTags()
-				const counter        = QuillEditor[this._uid].getModule('counter')
+				const counter        = QuillEditor[this.$.uid].getModule('counter')
 				if (counter) {
 					counter.options.tags = this.localTags
 					this.$emit('counter', counter.calculate())
@@ -251,11 +251,11 @@ export default {
 		},
 		update () {
 			if (this.allowTags) {
-				const counter = QuillEditor[this._uid].getModule('counter')
+				const counter = QuillEditor[this.$.uid].getModule('counter')
 				this.$emit('counter', counter.calculate())
 			}
 
-			let html = QuillEditor[this._uid].getText() ? QuillEditor[this._uid].root.innerHTML : ''
+			let html = QuillEditor[this.$.uid].getText() ? QuillEditor[this.$.uid].root.innerHTML : ''
 
 			const frag    = document.createRange().createContextualFragment(html)
 			const fragNew = document.createRange().createContextualFragment('')
@@ -280,7 +280,7 @@ export default {
 								if (tag.custom) {
 									const custom = aioTag.querySelector('.tag-custom')
 									if (custom) {
-										const newNode = document.createTextNode(`#${tag.id}-${custom.innerText.replace(' - ', '')}`)
+										const newNode = document.createTextNode(`#${tag.id}-${custom.innerHTML.replace('&nbsp;-&nbsp;', '')}`)
 										fragNew.appendChild(newNode)
 										return
 									}
@@ -308,13 +308,13 @@ export default {
 			this.$emit('update:modelValue', html)
 		},
 		insertToCursor (text) {
-			QuillEditor[this._uid].focus()
+			QuillEditor[this.$.uid].focus()
 
-			QuillEditor[this._uid].insertText(QuillEditor[this._uid].getSelection().index, text, Quill.sources.USER)
-			QuillEditor[this._uid].setSelection(QuillEditor[this._uid].getSelection().index + text.length, Quill.sources.USER)
+			QuillEditor[this.$.uid].insertText(QuillEditor[this.$.uid].getSelection().index, text, Quill.sources.USER)
+			QuillEditor[this.$.uid].setSelection(QuillEditor[this.$.uid].getSelection().index + text.length, Quill.sources.USER)
 		},
 		insertTag (tagId) {
-			const mention = QuillEditor[this._uid].getModule('mention')
+			const mention = QuillEditor[this.$.uid].getModule('mention')
 			mention.removeOrphanedMentionChar()
 
 			const textBefore = mention.getTextBeforeCursor()
@@ -322,7 +322,7 @@ export default {
 			const tag  = tagId ? this.localTags.find(t => t.id === tagId) : null
 			let   text = tag ? `#${tag.id}` : '#' === textBefore.charAt(textBefore.length - 1) ? '' : '#'
 
-			const delta = QuillEditor[this._uid].getContents(0, mention.cursorPos)
+			const delta = QuillEditor[this.$.uid].getContents(0, mention.cursorPos)
 			if (
 				delta.ops.length &&
 				(
@@ -335,19 +335,19 @@ export default {
 				text = ' ' + text
 			}
 
-			QuillEditor[this._uid].focus()
+			QuillEditor[this.$.uid].focus()
 
 			if (tagId) {
 				mention.removeOrphanedMentionChar()
 			}
 
-			QuillEditor[this._uid].insertText(QuillEditor[this._uid].getSelection().index, text, Quill.sources.USER)
-			QuillEditor[this._uid].setSelection(QuillEditor[this._uid].getSelection().index + text.length, Quill.sources.USER)
+			QuillEditor[this.$.uid].insertText(QuillEditor[this.$.uid].getSelection().index, text, Quill.sources.USER)
+			QuillEditor[this.$.uid].setSelection(QuillEditor[this.$.uid].getSelection().index + text.length, Quill.sources.USER)
 			this.insertExact = false
 
 			if (!tagId) {
 				setTimeout(() => {
-					mention.mentionCharPos = QuillEditor[this._uid].getSelection().index - 1
+					mention.mentionCharPos = QuillEditor[this.$.uid].getSelection().index - 1
 					mention.silentInsert   = true
 					mention.showMentionList()
 				}, 0)
@@ -373,7 +373,7 @@ export default {
 				return
 			}
 
-			const mention = QuillEditor[this._uid].getModule('mention')
+			const mention = QuillEditor[this.$.uid].getModule('mention')
 			if (mention.isOpen) {
 				mention.hideMentionList()
 				mention.removeOrphanedMentionChar()
@@ -384,10 +384,10 @@ export default {
 				return
 			}
 
-			QuillEditor[this._uid] = this.startQuill()
+			QuillEditor[this.$.uid] = this.startQuill()
 
 			if (reset) {
-				QuillEditor[this._uid].setText('')
+				QuillEditor[this.$.uid].setText('')
 			}
 
 			let value = this.modelValue
@@ -410,16 +410,16 @@ export default {
 				)
 				: value
 
-			const delta = QuillEditor[this._uid].clipboard.convert(value)
-			QuillEditor[this._uid].setContents(delta)
+			const delta = QuillEditor[this.$.uid].clipboard.convert({ html: value, text: '' })
+			QuillEditor[this.$.uid].setContents(delta)
 
-			const mention = QuillEditor[this._uid].getModule('mention')
+			const mention = QuillEditor[this.$.uid].getModule('mention')
 			if (mention) {
 				mention.removeOrphanedMentionChar(true)
 			}
 
 			if (this.allowTags) {
-				const counter = QuillEditor[this._uid].getModule('counter')
+				const counter = QuillEditor[this.$.uid].getModule('counter')
 				this.$emit('counter', counter.calculate())
 			}
 
@@ -429,16 +429,16 @@ export default {
 			await this.$nextTick()
 
 			// We will add the update event here
-			QuillEditor[this._uid].on('text-change', () => this.update())
-			QuillEditor[this._uid].on('selection-change', (range, oldRange, source) => {
+			QuillEditor[this.$.uid].on('text-change', () => this.update())
+			QuillEditor[this.$.uid].on('selection-change', (range, oldRange, source) => {
 				if ('api' === source) {
 					this.update()
 				}
 
 				if (!range) {
-					this.$emit('blur', QuillEditor[this._uid])
+					this.$emit('blur', QuillEditor[this.$.uid])
 				} else {
-					this.$emit('focus', QuillEditor[this._uid])
+					this.$emit('focus', QuillEditor[this.$.uid])
 				}
 
 				this.$emit('selection-change', {
@@ -451,11 +451,11 @@ export default {
 			document.addEventListener('click', this.maybeCloseMenu)
 
 			if (this.disabled) {
-				QuillEditor[this._uid].disable()
+				QuillEditor[this.$.uid].disable()
 			}
 
 			if (!reset) {
-				QuillEditor[this._uid].history.clear()
+				QuillEditor[this.$.uid].history.clear()
 			}
 		},
 		startQuill () {
@@ -535,7 +535,7 @@ export default {
 					preserveWhiteSpace : this.preserveWhitespace
 				},
 				theme   : 'snow',
-				formats : !this.showToolbar ? [ 'mention' ] : [ 'bold', 'underline', 'italic', 'link', 'list', 'autoLink', 'aioseoInline' ]
+				formats : !this.showToolbar ? [ 'mention' ] : [ 'bold', 'underline', 'italic', 'link', 'list', 'aioseoInline' ]
 			})
 		},
 		setPhrase (value) {
@@ -545,17 +545,17 @@ export default {
 			value = addTags(value)
 			value = value.replace(/<span([^>]*)>/g, '<aioseo-inline$1>').replace(/<\/span>/g, '</aioseo-inline>')
 
-			const delta = QuillEditor[this._uid].clipboard.convert(value)
-			QuillEditor[this._uid].setContents(delta)
+			const delta = QuillEditor[this.$.uid].clipboard.convert({ html: value, text: '' })
+			QuillEditor[this.$.uid].setContents(delta)
 		},
 		getPhrase () {
-			return QuillEditor[this._uid].getText()
+			return QuillEditor[this.$.uid].getText()
 		},
 		getPhraseWithFormats () {
-			return QuillEditor[this._uid].getContents()
+			return QuillEditor[this.$.uid].getContents()
 		},
 		getPhraseHtml () {
-			let value = QuillEditor[this._uid].root.childNodes[0].innerHTML
+			let value = QuillEditor[this.$.uid].root.childNodes[0].innerHTML
 
 			value = value.replace(/<aioseo-inline([^>]*)>/g, '<span$1>').replace(/<\/aioseo-inline>/g, '</span>')
 			value = removeTags(this.cachedPhrase, value)
@@ -576,7 +576,7 @@ export default {
 
 		if (this.tagsContext) {
 			window.aioseoBus.$on('updateEditor' + this.tagsContext, (uid) => {
-				if (uid !== this._uid) {
+				if (uid !== this.$.uid) {
 					this.startup(true)
 				}
 			})
@@ -587,7 +587,7 @@ export default {
 	},
 	unmounted () {
 		if (this.tagsContext) {
-			window.aioseoBus.$emit('updateEditor' + this.tagsContext, this._uid)
+			window.aioseoBus.$emit('updateEditor' + this.tagsContext, this.$.uid)
 		}
 	}
 }

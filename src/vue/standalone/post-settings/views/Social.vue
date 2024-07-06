@@ -1,7 +1,7 @@
 <template>
 	<div class="aioseo-tab-content aioseo-post-social">
 		<core-settings-row
-			v-if="'metabox' === $root._data.screenContext || 'modal' === parentComponentContext"
+			v-if="'metabox' === $root.$data.screenContext || 'modal' === parentComponentContext"
 			no-border
 		>
 			<template #content>
@@ -17,7 +17,7 @@
 		</core-settings-row>
 
 		<transition
-			v-if="'metabox' === $root._data.screenContext || 'modal' === parentComponentContext"
+			v-if="'metabox' === $root.$data.screenContext || 'modal' === parentComponentContext"
 			name="route-fade"
 			mode="out-in"
 		>

@@ -7,7 +7,7 @@
 	>
 		<div>
 			<div
-				v-if="'edit' === $root._data.screen.base && !isSpecialPage"
+				v-if="'edit' === $root.$data.screen.base && !isSpecialPage"
 				class="edit-row scores"
 			>
 				<index-status
@@ -184,7 +184,7 @@
 
 			<div>
 				<core-tooltip
-					v-if="'upload' === $root._data.screen.base && post.showMedia"
+					v-if="'upload' === $root.$data.screen.base && post.showMedia"
 					class="aioseo-details-column__tooltip"
 					:disabled="showEditImageTitle"
 				>
@@ -246,7 +246,7 @@
 
 			<div>
 				<core-tooltip
-					v-if="'upload' === $root._data.screen.base && post.showMedia"
+					v-if="'upload' === $root.$data.screen.base && post.showMedia"
 					class="aioseo-details-column__tooltip"
 					:disabled="showEditImageAltTag"
 				>
@@ -426,7 +426,7 @@ export default {
 					this.post.titleParsed       = response.body.title
 					this.post.descriptionParsed = response.body.description
 
-					if ('upload' !== this.$root._data.screen.base) {
+					if ('upload' !== this.$root.$data.screen.base) {
 						this.runAnalysis(this.post.id)
 					}
 				})

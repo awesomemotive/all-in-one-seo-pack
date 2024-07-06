@@ -350,7 +350,8 @@ trait WpContext {
 			return $content[ $post->ID ];
 		}
 
-		$postContent = $this->getPostContent( $post );
+		$postContent = (string) $this->getPostContent( $post );
+
 		// Strip images, captions and WP oembed wrappers (e.g. YouTube URLs) from the post content.
 		$postContent          = preg_replace( '/(<figure.*?\/figure>|<img.*?\/>|<div.*?class="wp-block-embed__wrapper".*?>.*?<\/div>)/s', '', $postContent );
 		$postContent          = str_replace( ']]>', ']]&gt;', $postContent );

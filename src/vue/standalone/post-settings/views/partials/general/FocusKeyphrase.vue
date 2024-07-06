@@ -3,12 +3,12 @@
 		<base-input
 			v-if="!postEditorStore.currentPost.keyphrases.focus || !postEditorStore.currentPost.keyphrases.focus.keyphrase"
 			size="medium"
-			:class="`add-focus-keyphrase-${this.$root._data.screenContext}-input`"
+			:class="`add-focus-keyphrase-${this.$root.$data.screenContext}-input`"
 			@keydown.enter="pressEnter"
 		/>
 
 		<div
-			:class="`add-focus-keyphrase-${this.$root._data.screenContext}-button`"
+			:class="`add-focus-keyphrase-${this.$root.$data.screenContext}-button`"
 		>
 			<base-button
 				v-if="!postEditorStore.currentPost.keyphrases.focus || !postEditorStore.currentPost.keyphrases.focus.keyphrase"
@@ -566,7 +566,7 @@ export default {
 			this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 		},
 		addKeyphraseEv () {
-			const keyphraseInputComponent = document.getElementsByClassName(`add-focus-keyphrase-${this.$root._data.screenContext}-input`)
+			const keyphraseInputComponent = document.getElementsByClassName(`add-focus-keyphrase-${this.$root.$data.screenContext}-input`)
 			const keyphraseInput          = keyphraseInputComponent[0].querySelector('.medium')
 			if (keyphraseInput.value) {
 				const newKeyphrase = { keyphrase: keyphraseInput.value, score: 0, analysis: {} }
@@ -670,6 +670,10 @@ export default {
 
 			.disabled-button {
 				display: flex;
+			}
+
+			@at-root .is-page-builder & div:nth-child(2) {
+				display: block;
 			}
 		}
 	}

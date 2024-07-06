@@ -76,7 +76,7 @@ export default {
 				this.startListening()
 				this.positionInModal()
 
-				this.rootStore.setActiveModal(this.modalName || this._uid)
+				this.rootStore.setActiveModal(this.modalName || this.$.uid)
 
 				return
 			}
@@ -195,7 +195,7 @@ export default {
 		},
 		closePicker () {
 			this.$emit('update:show', false)
-			this.rootStore.unsetActiveModal(this.modalName || this._uid)
+			this.rootStore.unsetActiveModal(this.modalName || this.$.uid)
 		},
 		documentClick (event) {
 			if (!this.show) {

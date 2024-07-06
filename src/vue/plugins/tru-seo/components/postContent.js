@@ -15,6 +15,8 @@ import {
 	isSeedProdEditor,
 	isWPBakeryEditor,
 	isAvadaEditor,
+	isSiteOriginEditor,
+	isThriveArchitectEditor,
 	isPageBuilderEditor
 } from '@/vue/utils/context'
 import { isTinyMceEmpty } from '@/vue/standalone/post-settings/utils/classicEditor'
@@ -23,6 +25,8 @@ import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/div
 import { getEditorData as getSeedProdData } from '@/vue/standalone/page-builders/seedprod/helpers'
 import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders/wpbakery/helpers'
 import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
+import { getEditorData as getSiteOriginData } from '@/vue/standalone/page-builders/siteorigin/helpers'
+import { getEditorData as getThriveArchitectData } from '@/vue/standalone/page-builders/thrive-architect/helpers'
 
 const base64regex            = /base64,(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)/g
 const blockPrefixesToProcess = [ 'acf', 'aioseo' ]
@@ -50,6 +54,12 @@ const getEditorContent = () => {
 			break
 		case isAvadaEditor():
 			postContent = getAvadaData().content
+			break
+		case isSiteOriginEditor():
+			postContent = getSiteOriginData().content
+			break
+		case isThriveArchitectEditor():
+			postContent = getThriveArchitectData().content
 			break
 	}
 
@@ -138,7 +148,7 @@ export const getPostContent = () => {
 		postContent = getProcessedBlockContent(postContent, blockPrefixesToProcess)
 	}
 
-	if (!postContent) {
+	if (isPageBuilderEditor()) {
 		postContent = getEditorContent()
 	}
 
@@ -182,7 +192,7 @@ export const getPostEditedContent = () => {
 		postContent = getProcessedBlockContent(postContent, blockPrefixesToProcess)
 	}
 
-	if (!postContent) {
+	if (isPageBuilderEditor()) {
 		postContent = getEditorContent()
 	}
 

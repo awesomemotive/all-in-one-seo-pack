@@ -314,6 +314,8 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 		},
 		linksReportDeleteAll ({ postId }) {
 			return http.delete(links.restUrl(`link-assistant/links-report/post/${postId}`))
+				// Prevents a console error after a successful deletion.
+				.then(() => {})
 		},
 		domainsReportBulk ({ action, rowIndexes }) {
 			const hostnames = []

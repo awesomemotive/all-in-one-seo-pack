@@ -9,7 +9,7 @@
 		:list="headings"
 		@update:modelValue="(value) => $emit('update:modelValue', value)"
 		@change="(value) => setReorder(value)"
-		:item-key="_uid.toString()"
+		:item-key="$.uid.toString()"
 	>
 		<template #item="{element}">
 			<li

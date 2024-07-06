@@ -1,6 +1,6 @@
 <template>
 	<div class="aioseo-tab-content aioseo-link-assistant">
-		<div v-if="'metabox' === $root._data.screenContext">
+		<div v-if="'metabox' === $root.$data.screenContext">
 			<core-blur>
 				<core-main-tabs
 					class="link-tabs"
@@ -50,7 +50,7 @@
 		</div>
 
 		<core-modal
-			:show="postEditorStore.currentPost.linkAssistant.modalOpen && 'sidebar' === $root._data.screenContext"
+			:show="postEditorStore.currentPost.linkAssistant.modalOpen && 'sidebar' === $root.$data.screenContext"
 			:classes="[ 'aioseo-link-assistant-modal' ]"
 			@close="postEditorStore.currentPost.linkAssistant.modalOpen = false"
 		>

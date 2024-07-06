@@ -30,7 +30,7 @@
 					>
 						<template #buttons>
 							<core-tooltip
-								:offset="isSidebar ? '-70px,0' : '0,0'"
+								:offset="getDefaultSchemaTooltipOffset()"
 							>
 								<base-button
 									class="small no-hover"
@@ -94,6 +94,7 @@ import {
 	usePostEditorStore
 } from '@/vue/stores'
 
+import { isPageBuilderEditor } from '@/vue/utils/context'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
@@ -134,7 +135,20 @@ export default {
 	},
 	computed : {
 		isSidebar () {
-			return 'sidebar' === this.$root._data.screenContext
+			return 'sidebar' === this.$root.$data.screenContext
+		}
+	},
+	methods : {
+		getDefaultSchemaTooltipOffset () {
+			if (isPageBuilderEditor()) {
+				return '-120px,0'
+			}
+
+			if (this.isSidebar) {
+				return '-70px,0'
+			}
+
+			return '0,0'
 		}
 	}
 }
