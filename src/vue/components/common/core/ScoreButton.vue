@@ -39,11 +39,11 @@ const scoreClass = computed(() => {
 		return 'score-disabled'
 	}
 
-	if (80 < props.score) {
+	if (70 <= props.score) {
 		return 'score-green'
 	}
 
-	if (50 < props.score) {
+	if (40 < props.score) {
 		return 'score-orange'
 	}
 

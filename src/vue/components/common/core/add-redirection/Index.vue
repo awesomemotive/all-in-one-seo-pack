@@ -167,6 +167,7 @@
 				:active="showAdvancedSettings"
 			>
 				<custom-rules
+					:key="customRules"
 					:edit-custom-rules="customRules"
 					@redirects-custom-rule-error="value => this.customRulesError = value"
 				/>
@@ -260,18 +261,12 @@ export default {
 	data () {
 		return {
 			REDIRECT_TYPES,
-			genericError         : false,
-			showAdvancedSettings : false,
-			addingRedirect       : false,
-			targetUrl            : null,
-			targetUrlErrors      : [],
-			targetUrlWarnings    : [],
-			sourceUrls           : [],
-			redirectType         : null,
-			queryParam           : null,
-			customRules          : [],
-			customRulesError     : false,
-			strings              : {
+			genericError      : false,
+			addingRedirect    : false,
+			targetUrlErrors   : [],
+			targetUrlWarnings : [],
+			customRulesError  : false,
+			strings           : {
 				redirectType         : this.$t.__('Redirect Type:', this.$td),
 				targetUrl            : this.$t.__('Target URL', this.$td),
 				targetUrlDescription : this.$t.__('Enter a URL or start by typing a page or post title, slug or ID.', this.$td),
@@ -288,7 +283,16 @@ export default {
 				genericErrorMessage       : this.$t.__('An error occurred while adding your redirects. Please try again later.', this.$td),
 				sourceUrlSetOncePublished : this.$t.__('source url set once post is published', this.$td)
 			},
-			sourceDisabled : false
+			sourceDisabled  : false,
+			editing         : false,
+			editingRedirect : {
+				sourceUrls           : [],
+				targetUrl            : null,
+				redirectType         : null,
+				queryParam           : null,
+				customRules          : [],
+				showAdvancedSettings : false
+			}
 		}
 	},
 	watch : {
@@ -300,6 +304,54 @@ export default {
 		}
 	},
 	computed : {
+		sourceUrls : {
+			get () {
+				return this.editing ? this.editingRedirect.sourceUrls : this.redirectsStore.addNewRedirect.sourceUrls
+			},
+			set (value) {
+				this.editing ? this.editingRedirect.sourceUrls = value : this.redirectsStore.addNewRedirect.sourceUrls = value
+			}
+		},
+		targetUrl : {
+			get () {
+				return this.editing ? this.editingRedirect.targetUrl : this.redirectsStore.addNewRedirect.targetUrl
+			},
+			set (value) {
+				this.editing ? this.editingRedirect.targetUrl = value : this.redirectsStore.addNewRedirect.targetUrl = value
+			}
+		},
+		redirectType : {
+			get () {
+				return this.editing ? this.editingRedirect.redirectType : this.redirectsStore.addNewRedirect.redirectType
+			},
+			set (value) {
+				this.editing ? this.editingRedirect.redirectType = value : this.redirectsStore.addNewRedirect.redirectType = value
+			}
+		},
+		queryParam : {
+			get () {
+				return this.editing ? this.editingRedirect.queryParam : this.redirectsStore.addNewRedirect.queryParam
+			},
+			set (value) {
+				this.editing ? this.editingRedirect.queryParam = value : this.redirectsStore.addNewRedirect.queryParam = value
+			}
+		},
+		customRules : {
+			get () {
+				return this.editing ? this.editingRedirect.customRules : this.redirectsStore.addNewRedirect.customRules
+			},
+			set (value) {
+				this.editing ? this.editingRedirect.customRules = value : this.redirectsStore.addNewRedirect.customRules = value
+			}
+		},
+		showAdvancedSettings : {
+			get () {
+				return this.editing ? this.editingRedirect.showAdvancedSettings : this.redirectsStore.addNewRedirect.showAdvancedSettings
+			},
+			set (value) {
+				this.editing ? this.editingRedirect.showAdvancedSettings = value : this.redirectsStore.addNewRedirect.showAdvancedSettings = value
+			}
+		},
 		saveIsDisabled () {
 			return !!this.sourceUrls.filter(url => !url.url).length ||
 				!!this.sourceUrls.filter(url => 0 < url.errors.length).length ||
@@ -586,12 +638,17 @@ export default {
 		}
 	},
 	mounted () {
-		this.sourceUrls = this.getDefaultSourceUrls
+		if (!this.sourceUrls.length) {
+			this.sourceUrls = this.getDefaultSourceUrls
+		}
+
 		if (this.url) {
+			this.editing = true
 			this.sourceUrls = [ { ...this.getDefaultSourceUrl, ...this.url } ]
 		}
 
 		if (this.urls && this.urls.length) {
+			this.editing = true
 			this.sourceUrls = this.urls.map(url => ({ ...this.getDefaultSourceUrl, ...url }))
 		}
 
@@ -611,19 +668,12 @@ export default {
 			this.targetUrl = this.target
 		}
 
-		if (this.rules) {
+		if (this.rules && 0 !== this.rules.length) {
 			this.customRules = this.rules
 		}
 
-		const redirectType = REDIRECT_TYPES.find(t => t.value === this.type) || this.getDefaultRedirectType
-		if (redirectType) {
-			this.redirectType = redirectType
-		}
-
-		const queryParam = REDIRECT_QUERY_PARAMS.find(t => t.value === this.query) || this.getDefaultQueryParam
-		if (queryParam) {
-			this.queryParam = queryParam
-		}
+		this.redirectType = REDIRECT_TYPES.find(t => t.value === this.type) || this.redirectType || this.getDefaultRedirectType
+		this.queryParam = REDIRECT_QUERY_PARAMS.find(t => t.value === this.query) || this.queryParam || this.getDefaultQueryParam
 	}
 }
 </script>

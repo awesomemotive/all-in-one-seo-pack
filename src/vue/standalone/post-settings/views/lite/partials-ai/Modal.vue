@@ -29,6 +29,7 @@
 							size="medium"
 							tag="a"
 							:href="$links.getPricingUrl('post-settings', 'general', 'open-ai')"
+							target="_blank"
 						>
 							{{ strings.upgradeToPro }}
 						</base-button>
@@ -69,7 +70,7 @@ export default {
 		return {
 			OpenAiImage,
 			strings : {
-				upgradeToPro  : this.$t.__('Upgrade to Pro Today', this.$td),
+				upgradeToPro  : this.$t.__('Unlock AI Generator', this.$td),
 				learnMoreLink : this.$t.sprintf(
 					'<a class="feature-link" href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a> %3$s',
 					// Translators: 1 - "Learn More" link.

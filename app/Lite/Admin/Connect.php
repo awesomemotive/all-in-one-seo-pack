@@ -222,9 +222,6 @@ class Connect {
 		$active = activate_plugin( 'all-in-one-seo-pack-pro/all_in_one_seo_pack_pro', false, false, true );
 
 		if ( ! is_wp_error( $active ) ) {
-			// Deactivate plugin.
-			deactivate_plugins( plugin_basename( AIOSEO_FILE ), false, false );
-
 			return [
 				'error' => esc_html__( 'Pro version is already installed.', 'all-in-one-seo-pack' )
 			];
@@ -343,8 +340,6 @@ class Connect {
 			// Because the regular activation hooks won't run, we need to add capabilities for the installing user so that he doesn't run into an error on the first request.
 			aioseo()->activate->addCapabilitiesOnUpgrade();
 
-			deactivate_plugins( plugin_basename( AIOSEO_FILE ), false, $network );
-
 			wp_send_json_success( $success );
 		}
 
@@ -392,8 +387,6 @@ class Connect {
 
 		// Because the regular activation hooks won't run, we need to add capabilities for the installing user so that he doesn't run into an error on the first request.
 		aioseo()->activate->addCapabilitiesOnUpgrade();
-
-		deactivate_plugins( plugin_basename( AIOSEO_FILE ), false, $network );
 
 		wp_send_json_success( $success );
 	}

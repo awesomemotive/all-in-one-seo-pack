@@ -23,6 +23,7 @@
 				<path d="M18.3 5.6L9.9 16.9l-4.6-3.4-.9 1.2 5.8 4.3 9.3-12.6z" />
 			</svg>
 		</span>
+
 		<label class="components-checkbox-control__label" for="aioseo-limit-modified-date-input">{{ strings.label }}</label>
 	</div>
 </template>
@@ -72,3 +73,19 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss">
+#aioseo-limit-modified-date {
+	margin-top: 6px;
+
+	.components-checkbox-control__input-container {
+		height: 20px;
+		width: 20px;
+
+		input {
+			height: 20px;
+			width: 20px;
+		}
+	}
+}
+</style>

@@ -1,6 +1,8 @@
 <template>
 	<core-popper
-		class="aioseo-tooltip"
+		:classes="[
+			'aioseo-tooltip'
+		]"
 		:trigger="trigger"
 		:force-show="forceShow"
 		:disabled="disabled"

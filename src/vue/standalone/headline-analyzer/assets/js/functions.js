@@ -35,3 +35,9 @@ export const restUrl = (path) => {
 	path = rootStore.aioseo.data.hasUrlTrailingSlash ? trailingSlashIt(path) : unTrailingSlashIt(path)
 	return trailingSlashIt(rootStore.aioseo.urls.restUrl) + trailingSlashIt('aioseo/v1') + unForwardSlashIt(path)
 }
+
+export const decodeHtml = html => {
+	const txt = document.createElement('textarea')
+	txt.innerHTML = html
+	return txt.value
+}

@@ -22,7 +22,8 @@ export default {
 	height: 35px;
 	position: absolute;
 
-	.edit-post-sidebar & {
+	.edit-post-sidebar &,
+	.editor-sidebar & {
 		margin-left: auto;
 		margin-right: auto;
 	}

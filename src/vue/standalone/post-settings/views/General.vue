@@ -844,7 +844,8 @@ export default {
 			}
 		}
 
-		.edit-post-sidebar & {
+		.edit-post-sidebar &,
+		.editor-sidebar & {
 			padding-bottom: 0 !important;
 			border-bottom: none;
 		}
@@ -870,7 +871,8 @@ export default {
 	}
 }
 
-.edit-post-sidebar {
+.edit-post-sidebar,
+.editor-sidebar {
 	.aioseo-button.edit-snippet {
 		display: inline-flex;
 	}

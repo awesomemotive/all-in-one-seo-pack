@@ -96,10 +96,11 @@ class Standalone {
 
 		aioseo()->pro ? new ProStandalone\DetailsColumn() : new DetailsColumn();
 
-		new UserProfileTab();
-		new PublishPanel();
+		new AdminBarNoindexWarning();
 		new LimitModifiedDate();
 		new Notifications();
+		new PublishPanel();
+		new UserProfileTab();
 		new WpCode();
 
 		$this->pageBuilderIntegrations = [

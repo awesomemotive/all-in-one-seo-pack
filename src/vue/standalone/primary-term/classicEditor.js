@@ -1,15 +1,16 @@
-import { isClassicEditor } from '@/vue/utils/context'
+import { isClassicEditor, isClassicNoEditor } from '@/vue/utils/context'
 import { getTaxonomies } from './helpers'
 import {
 	loadPiniaStores
 } from '@/vue/stores'
 
-if (isClassicEditor()) {
+if (isClassicEditor() || isClassicNoEditor()) {
 	// We need to load the Pinia here since we are using the store outside an App.
 	// So when using getTaxonomies, it will throw an error because the store wasn't initialized.
 	loadPiniaStores()
 	getTaxonomies().forEach(taxonomyData => {
-		const metaboxTaxonomyDiv = document.querySelector(`#${taxonomyData.name}div .inside`)
+		// Use `getElementById` and `querySelector` together to avoid errors thrown from IDs starting with a number.
+		const metaboxTaxonomyDiv = document.getElementById(`${taxonomyData.name}div`)?.querySelector('.inside')
 		if (!metaboxTaxonomyDiv) {
 			return
 		}

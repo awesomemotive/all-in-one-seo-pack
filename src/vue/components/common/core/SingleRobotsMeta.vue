@@ -270,7 +270,8 @@ export default {
 	}
 }
 
-.edit-post-sidebar {
+.edit-post-sidebar,
+.editor-sidebar {
 	.global-robots-settings {
 		padding-top: 12px;
 

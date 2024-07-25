@@ -295,10 +295,6 @@ export default {
 				box-shadow: 0 0 0 1px $blue;
 			}
 
-			&::placeholder {
-				color: $placeholder-color;
-			}
-
 			&.prepend {
 				padding-left: 50px;
 			}

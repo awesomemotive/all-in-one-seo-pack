@@ -19,7 +19,6 @@
 
 	.components-panel__body {
 		svg.components-panel__arrow {
-			transform: rotate(-90deg);
 			top: 50%;
 			margin-top: -12px;
 			transition: .3s;
@@ -65,6 +64,10 @@
 
 	.red-bg {
 		background: #df2a4a;
+	}
+
+	.gray-bg {
+		background: #a1a1a1;
 	}
 
 	.components-panel__body-toggle.components-button {
@@ -341,14 +344,7 @@
 
 	.components-panel__body {
 		&.aioseo-headline-analyzer-panel-has-icon {
-		.components-panel__body-toggle {
-			.components-panel__icon {
-				position: absolute;
-				right: 52px;
-				top: 50%;
-				margin-top: -10px;
-			}
-		}
+		
 
 		&.red {
 			.components-panel__body-toggle .components-panel__icon path {
@@ -710,15 +706,35 @@
 	}
 }
 
-.edit-post-header__settings {
-	button.components-button[aioseo-button-color] {
-		display: flex;
-		align-items: center;
+.edit-post-header__settings,
+.editor-header__settings {
+	button.components-button[aria-label*="SEO Headline Analyzer"] {
+
+		background: #fff;
+		border: none;
+		width: auto !important;
+		padding: 6px !important;
+		max-width: 160px;
+		min-width: 82px !important;
+		display: none;
+		svg {
+			path {
+				fill: #fff
+			}
+		}		
+
+		#aioseo-headline-analyzer-sidebar-button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 4px;
+			width: 100%;
+		}
 
 		svg {
 			max-width: 22px;
 			max-height: 20px;
-			margin-right: 8px;
+			// margin-right: 8px;
 		}
 
 		span {
@@ -791,9 +807,33 @@
 			}
 		}
 
+		&[aioseo-button-color="gray"] {
+			border: 1px solid #a1a1a1;
+			&:active,
+			&.is-pressed {
+				background: #a1a1a1 !important;
+				svg {
+					path {
+						fill: #fff;
+					}
+				}
+			}
+
+			svg {
+				path {
+					fill: #a1a1a1;
+				}
+			}
+
+			span {
+				color: #a1a1a1;
+			}
+		}
+
 		&[aioseo-button-color="red"],
 		&[aioseo-button-color="green"],
-		&[aioseo-button-color="orange"] {
+		&[aioseo-button-color="orange"],
+		&[aioseo-button-color="gray"] {
 			&:active,
 			&.is-pressed {
 				box-shadow: none !important;
@@ -814,7 +854,8 @@
 	}
 }
 
-.edit-post-sidebar {
+.edit-post-sidebar,
+.editor-sidebar {
 	scroll-behavior: smooth;
 }
 

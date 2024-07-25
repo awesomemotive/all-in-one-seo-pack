@@ -20,7 +20,10 @@ export const WpTable = {
 			this.wpTableLoading = true
 
 			return this.processFetchTableData()
-				.then(() => (this.wpTableLoading = false))
+				.then(() => {
+					this.wpTableLoading = false
+					this.$refs.table.editRow(null)
+				})
 		},
 		processAdditionalFilters ({ filters }) {
 			this.wpTableLoading = true

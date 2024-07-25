@@ -82,8 +82,15 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.modalOpenSidebar = false
 		},
 		addCustomAsTemplate () {
-			const optionsStore = useOptionsStore()
-			const template     = JSON.parse(JSON.stringify(this.getCustomObject()))
+			const optionsStore      = useOptionsStore()
+			const customObjectGraph = {
+				...this.getCustomObject()
+			}
+
+			const template = {
+				...JSON.parse(JSON.stringify(customObjectGraph)),
+				label : 'Custom Schema - ' + customObjectGraph.graphName
+			}
 
 			optionsStore.internalOptions.internal.schema.templates.push(this.getCustomObject())
 
@@ -93,7 +100,7 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			http.post(links.restUrl('schema/templates'))
 				.send({
-					template : template
+					template
 				})
 				.then((response) => {
 					if (response.body.success && response.body.templates) {
@@ -175,7 +182,7 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			let templates = optionsStore.internalOptions.internal.schema.templates
 			if (searchTerm) {
 				const pattern = new RegExp(escapeRegex(searchTerm).replace(/\s/g, '\\s'), 'i')
-				templates = templates.filter(x => x.label.match(pattern))
+				templates = templates.filter(x => x?.label?.match(pattern))
 			}
 
 			if (undefined === templateIndex) {

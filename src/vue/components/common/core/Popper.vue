@@ -1,5 +1,10 @@
 <template>
-	<component :is="tagName" :class="{'popper-active': showPopper}">
+	<component
+		:is="tagName"
+		:class="[
+			...cssClasses
+		]"
+	>
 		<transition
 			:name="transition"
 			:enter-active-class="enterActiveClass"
@@ -102,6 +107,12 @@ export default {
 		rootClass : {
 			type    : String,
 			default : ''
+		},
+		classes : {
+			type : Array,
+			default () {
+				return []
+			}
 		}
 	},
 	data () {
@@ -143,6 +154,17 @@ export default {
 			if (value) {
 				this.showPopper = false
 			}
+		}
+	},
+	computed : {
+		cssClasses () {
+			const classes = Array.isArray(this.classes) ? this.classes : []
+
+			if (this.showPopper) {
+				classes.push('popper-active')
+			}
+
+			return Array.isArray(this.classes) ? this.classes : []
 		}
 	},
 	created () {

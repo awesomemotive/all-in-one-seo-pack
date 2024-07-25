@@ -1228,7 +1228,12 @@ class Updates {
 							'preparation' => ! empty( $schemaTypeOptions->recipe->preparationTime ) ? $schemaTypeOptions->recipe->preparationTime : '',
 							'cooking'     => ! empty( $schemaTypeOptions->recipe->cookingTime ) ? $schemaTypeOptions->recipe->cookingTime : ''
 						],
-						'instructions' => []
+						'instructions' => [],
+						'rating'       => [
+							'minimum' => 1,
+							'maximum' => 5
+						],
+						'reviews'      => []
 					]
 				];
 
@@ -1244,6 +1249,23 @@ class Updates {
 							'name'  => '',
 							'text'  => $instructionData->content,
 							'image' => ''
+						];
+					}
+				}
+
+				$reviews = ! empty( $schemaTypeOptions->recipe->reviews ) ? $schemaTypeOptions->recipe->reviews : [];
+				if ( ! empty( $reviews ) ) {
+					foreach ( $reviews as $reviewData ) {
+						$reviewData = json_decode( $reviewData );
+						if ( empty( $reviewData ) ) {
+							continue;
+						}
+
+						$graph['properties']['reviews'][] = [
+							'rating'   => $reviewData->rating,
+							'headline' => $reviewData->headline,
+							'content'  => $reviewData->content,
+							'author'   => $reviewData->author
 						];
 					}
 				}

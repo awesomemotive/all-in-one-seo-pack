@@ -350,7 +350,7 @@ class PostSettings {
 			}
 		}
 
-		aioseo()->core->cache->update( $postType . '_overview_data', $overview, WEEK_IN_SECONDS );
+		aioseo()->core->cache->update( $postType . '_overview_data', $overview, HOUR_IN_SECONDS );
 
 		return $overview;
 	}

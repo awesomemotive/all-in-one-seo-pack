@@ -192,6 +192,9 @@ class Auth {
 		aioseo()->searchStatistics->api->auth->deleteProfile();
 		aioseo()->searchStatistics->reset();
 
+		// Resets the results for the Google meta tag.
+		aioseo()->options->webmasterTools->google = '';
+
 		return true;
 	}
 }

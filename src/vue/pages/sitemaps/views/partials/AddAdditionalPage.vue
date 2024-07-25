@@ -18,6 +18,7 @@
 				<base-input
 					:modelValue="page.url"
 					@keyup="editPage('url', $event.target.value)"
+					@input="updateUrl($event.target.value)"
 					size="medium"
 					:placeholder="strings.placeholder"
 					:class="this.errors.url.invalid && 'aioseo-error' || this.page.url && this.errors.url.exists && 'aioseo-warning' || this.page.url && 'aioseo-active' "
@@ -344,6 +345,18 @@ export default {
 				this.$emit('process-page-edit', this.page)
 			}
 		},
+		updateUrl (value) {
+			this.page.url = ''
+			this.page.url = this.decodeUrl(value)
+		},
+		decodeUrl (url) {
+			try {
+				return decodeURIComponent(url)
+			} catch (error) {
+				// If an error occurs during decoding, do nothing
+				return url
+			}
+		},
 		updatePage (index) {
 			const pages = this.optionsStore.options.sitemap.general.additionalPages.pages
 			pages[this.getPaginatedIndex(index)] = JSON.stringify(this.page)
@@ -395,9 +408,12 @@ export default {
 
 			page.forEach(prop => {
 				try {
-					if (isUrl(prop) && !this.pageExists(prop)) {
-						preparedPage.url = prop
-						return
+					if (isUrl(prop)) {
+						const decodedUrl = this.decodeUrl(prop)
+						if (!this.pageExists(decodedUrl)) {
+							preparedPage.url = decodedUrl
+							return
+						}
 					}
 
 					if (this.priorityOptionsValues.includes(prop)) {

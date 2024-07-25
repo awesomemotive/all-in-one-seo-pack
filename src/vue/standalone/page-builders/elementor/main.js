@@ -117,7 +117,7 @@ const initAioseoEditor = (selector) => {
 	const wrapper = document.querySelector(selector)
 
 	// Add the class to the wrapper.
-	wrapper.classList.add('edit-post-sidebar', 'aioseo-elementor-panel')
+	wrapper.classList.add('edit-post-sidebar', 'editor-sidebar', 'aioseo-elementor-panel')
 
 	// Add the div that will contain our Vue component.
 	wrapper.appendChild(document.createElement('div'))

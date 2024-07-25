@@ -571,6 +571,8 @@ TEMPLATE
 	 * @return void
 	 */
 	public function sanitizeAndSave( $options ) {
+		// Decode urls for additional pages to fix localization issues.
+		$options                         = $this->decodeAdditionalPagesUrl( $options );
 		$sitemapOptions                  = ! empty( $options['sitemap'] ) ? $options['sitemap'] : null;
 		$oldSitemapOptions               = aioseo()->options->sitemap->all();
 		$generalSitemapOptions           = ! empty( $options['sitemap']['general'] ) ? $options['sitemap']['general'] : null;
@@ -741,5 +743,25 @@ TEMPLATE
 			flush_rewrite_rules();
 			delete_option( 'aioseo_flush_rewrite_rules_flag' );
 		}
+	}
+
+	/**
+	 * Decode the URLs for additional pages to fix Unicode characters.
+	 *
+	 * @since 4.6.7
+	 *
+	 * @param array  $options The options array.
+	 * @return array $options The options array with the decoded URLs.
+	 */
+	public function decodeAdditionalPagesUrl( $options ) {
+		if ( ! empty( $options['sitemap']['general']['additionalPages']['pages'] ) ) {
+			foreach ( $options['sitemap']['general']['additionalPages']['pages'] as &$page ) {
+				$page        = json_decode( $page, true );
+				$page['url'] = aioseo()->helpers->decodeUrl( $page['url'] );
+				$page        = wp_json_encode( $page, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+			}
+		}
+
+		return $options;
 	}
 }

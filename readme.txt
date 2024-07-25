@@ -1,10 +1,10 @@
 === All in One SEO – Powerful SEO Plugin to Boost SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
-Tested up to: 6.5.5
+Tested up to: 6.6
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.6.6
+Stable tag: 4.6.7.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,6 +226,31 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.6.7.1**
+
+* Updated: Added a new notice in the admin bar for when the site is noindexed, improving visibility for users.
+* Updated: Added review & rating support to Recipe schema.
+* Updated: Organization schema employee range now has a minimum value of 0.
+* Fixed: Data filled into Add New Redirect section no longer cleared when switching tabs.
+* Fixed: Yoast Duplicate Post now correctly carries over SEO meta when published a scheduled republished post.
+* Fixed: Chinese and Unicode special characters encoding issue for Additional Sitemap Pages.
+* Fixed: Google Search Console verification code still output in source code not removed after disconnecting from Google Search Console.
+* Fixed: Javascript console error after disconnecting Google Search Console.
+* Fixed: Shipping Schema changing the Country field value in User Profile when updating a WooCommerce Product.
+* Fixed: Added scroll functionality for Schema Generator template list.
+* Fixed: Plugin conflict with the Facebook for WooCommerce plugin.
+* Fixed: Plugin conflict with 3D Flipbook plugin related to Primary Category.
+* Fixed: Removed ‘Cornerstone Content’ field from SEO revisions for attachment pages.
+* Fixed: Title and alt field columns not showing up in the media gallery for webp images.
+* Fixed: Various styling fixes for our Extra theme & Divi page builder integrations.
+* Fixed: Changing the Primary Term value did not trigger the generation of a new SEO Revision.
+* Fixed: Chrome and Firefox converted URLs with Unicode characters to encoded form in AIOSEO.
+* Fixed: Link Assistant would sometimes break block attributes when inserting a link if they used single quotes.
+* Fixed: Robots.txt rule overlap when there are two identical user agents.
+* Fixed: EEAT author bio field editor would sometimes not render when switching between tabs.
+* Fixed: Error in post schema when FAQ has no question.
+* Fixed: Error caused by a redirect duplicated rule.
+
 **New in Version 4.6.6**
 
 * New: Integrations with SiteOrigin and Thrive Architect - Control your SEO and optimize your content directly from the SiteOrigin and Thrive Architect visual page builders.
@@ -415,6 +440,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.6.6 =
+= 4.6.7.1 =
 
 This update adds major improvements and bug fixes.

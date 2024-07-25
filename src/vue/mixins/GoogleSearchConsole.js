@@ -3,13 +3,15 @@ import {
 } from '@/vue/stores'
 
 export const GoogleSearchConsole = {
-	data : {
-		forceDisconnect : false,
-		showModal       : false,
-		showAlert       : false,
-		loading         : false,
-		alertMessage    : '',
-		returnTo        : 'search-statistics'
+	data () {
+		return {
+			forceDisconnect : false,
+			showModal       : false,
+			showAlert       : false,
+			loading         : false,
+			alertMessage    : '',
+			returnTo        : 'search-statistics'
+		}
 	},
 	methods : {
 		connect () {

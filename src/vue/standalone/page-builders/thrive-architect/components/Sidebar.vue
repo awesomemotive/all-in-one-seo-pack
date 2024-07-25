@@ -1,5 +1,5 @@
 <template>
-	<div class="edit-post-sidebar aioseo-thrive-sidebar">
+	<div class="edit-post-sidebar editor-sidebar aioseo-thrive-sidebar">
 		<div class="aioseo-thrive-sidebar__header">
 			<div class="aioseo-thrive-sidebar__header-title">
 				{{ strings.headerTitle }}

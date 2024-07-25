@@ -31,6 +31,15 @@ $settings-bar-height: 90px;
 		height: 0;
 		width: 0;
 		overflow: visible;
+
+		.aioseo-pagebuilder-modal {
+			.add-focus-keyphrase-sidebar-button {
+				.popper {
+					/* We need this as popper adds styles inline dynamically and that has the highest specificity */
+					left: 40px !important; 
+				}
+			}
+		}
 	}
 
 	&.aioseo-settings-bar-is {
@@ -172,6 +181,29 @@ $settings-bar-height: 90px;
 
 	.aioseo-app,
 	.el-popper {
+
+		.el-input {
+			&__inner {
+				&::placeholder {
+					font-weight: inherit;
+					text-transform: none;
+					letter-spacing: inherit;
+					color: $placeholder-color;
+				}
+			}
+		}
+	
+		.el-picker-panel__icon-btn {
+			padding: 1px 6px;
+			background: inherit;
+	
+			&:hover {
+				color: var(--el-datepicker-hover-text-color);
+				background: inherit;
+				text-shadow: inherit;
+			}
+		}
+
 		.aioseo-cta {
 			a.learn-more,
 			a.learn-more:hover {
@@ -179,9 +211,18 @@ $settings-bar-height: 90px;
 			}
 		}
 
+		.custom-rules-table {
+			border: none;
+
+			td {
+				border: none;
+			}
+		}
+
 		button,
 		.aioseo-button {
 			text-transform: initial;
+			display: inline-flex;
 
 			&:hover {
 				&.blue {
@@ -189,6 +230,19 @@ $settings-bar-height: 90px;
 				}
 			}
 		}
+
+		&.aioseo-post-schema-confirmation-modal {
+			h3 {
+				text-transform: inherit;
+			}
+		}
+
+		.aioseo-settings-row {
+			p.description {
+				margin: inherit;
+			}
+		}
+		
 
 		.input,
 		.textarea,
@@ -199,9 +253,17 @@ $settings-bar-height: 90px;
 		input[type="text"],
 		select,
 		textarea {
-			&:focus {
-				background: initial;
+			transition: inherit;
+			-webkit-transition: inherit;
+			background: $white;
+
+			&::placeholder {
+				font-weight: inherit;
+				text-transform: none;
+				letter-spacing: inherit;
+				color: $placeholder-color;
 			}
+
 		}
 	}
 }

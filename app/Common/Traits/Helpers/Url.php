@@ -241,4 +241,21 @@ trait Url {
 
 		return $domain;
 	}
+
+	/**
+	 * Returns a decoded URL string.
+	 *
+	 * @since 4.6.7
+	 *
+	 * @param  string $url The URL string.
+	 * @return string      The decoded URL.
+	 */
+	public function decodeUrl( $url ) {
+		// Check if URL was encoded multiple times.
+		while ( rawurldecode( $url ) !== $url ) {
+			$url = rawurldecode( $url );
+		}
+
+		return $url;
+	}
 }

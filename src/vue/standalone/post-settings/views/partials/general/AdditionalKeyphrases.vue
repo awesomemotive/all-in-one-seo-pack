@@ -170,7 +170,8 @@ export default {
 	margin: 0 0 12px;
 }
 
-.edit-post-sidebar .aioseo-app {
+.edit-post-sidebar .aioseo-app,
+.editor-sidebar .aioseo-app {
 	.aioseo-description.additional-keyphrases-description {
 		margin: 0 0 12px;
 	}

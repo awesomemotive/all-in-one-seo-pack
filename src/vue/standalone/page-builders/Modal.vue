@@ -27,7 +27,7 @@
 				</div>
 			</div>
 
-			<div class="aioseo-pagebuilder-modal-body edit-post-sidebar">
+			<div class="aioseo-pagebuilder-modal-body edit-post-sidebar editor-sidebar">
 				<PostSettings />
 			</div>
 		</div>

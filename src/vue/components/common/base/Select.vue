@@ -297,6 +297,12 @@ export default {
 			font-size: 14px;
 			line-height: 20px;
 
+			&::placeholder {
+				font-weight: inherit;
+				text-transform: none;
+				letter-spacing: inherit;
+			}
+
 			&:focus {
 				outline: 0;
 				box-shadow: none;

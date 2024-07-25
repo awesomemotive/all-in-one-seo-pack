@@ -50,35 +50,37 @@ const getPages = () => {
 // Standalone Vue scripts.
 const getStandalones = () => {
 	return {
-		app                      : './src/vue/standalone/app/main.js',
-		blocks                   : './src/vue/standalone/blocks/main.js',
-		connect                  : './src/vue/standalone/connect/main.js',
-		'connect-pro'            : './src/vue/standalone/connect-pro/main.js',
-		'dashboard-widgets'      : './src/vue/standalone/dashboard-widgets/main.js',
-		'flyout-menu'            : './src/vue/standalone/flyout-menu/main.js',
-		'footer-links'           : './src/vue/standalone/footer-links/main.js',
-		'limit-modified-date'    : './src/vue/standalone/limit-modified-date/main.js',
-		'link-format'            : './src/vue/standalone/link-format/main.js',
-		'local-business-seo'     : './src/vue/standalone/local-business-seo/main.js',
-		notifications            : './src/vue/standalone/notifications/main.js',
-		'post-settings'          : './src/vue/standalone/post-settings/main.js',
-		'primary-term'           : './src/vue/standalone/primary-term/main.js',
-		'posts-table'            : './src/vue/standalone/posts-table/main.js',
-		'publish-panel'          : './src/vue/standalone/publish-panel/main.js',
-		'redirects-add-redirect' : './src/vue/standalone/redirects/add-redirect/main.js',
-		'seo-preview'            : './src/vue/standalone/seo-preview/main.js',
-		'setup-wizard'           : './src/vue/standalone/setup-wizard/main.js',
-		'user-profile-tab'       : './src/vue/standalone/user-profile-tab/main.js',
-		'wp-notices'             : './src/vue/standalone/wp-notices/main.js',
+		'admin-bar-noindex-warning' : './src/vue/standalone/admin-bar-noindex-warning/main.js',
+		app                         : './src/vue/standalone/app/main.js',
+		blocks                      : './src/vue/standalone/blocks/main.js',
+		connect                     : './src/vue/standalone/connect/main.js',
+		'connect-pro'               : './src/vue/standalone/connect-pro/main.js',
+		'dashboard-widgets'         : './src/vue/standalone/dashboard-widgets/main.js',
+		'flyout-menu'               : './src/vue/standalone/flyout-menu/main.js',
+		'footer-links'              : './src/vue/standalone/footer-links/main.js',
+		'headline-analyzer'         : './src/vue/standalone/headline-analyzer/main.js',
+		'limit-modified-date'       : './src/vue/standalone/limit-modified-date/main.js',
+		'link-format'               : './src/vue/standalone/link-format/main.js',
+		'local-business-seo'        : './src/vue/standalone/local-business-seo/main.js',
+		notifications               : './src/vue/standalone/notifications/main.js',
+		'post-settings'             : './src/vue/standalone/post-settings/main.js',
+		'primary-term'              : './src/vue/standalone/primary-term/main.js',
+		'posts-table'               : './src/vue/standalone/posts-table/main.js',
+		'publish-panel'             : './src/vue/standalone/publish-panel/main.js',
+		'redirects-add-redirect'    : './src/vue/standalone/redirects/add-redirect/main.js',
+		'seo-preview'               : './src/vue/standalone/seo-preview/main.js',
+		'setup-wizard'              : './src/vue/standalone/setup-wizard/main.js',
+		'user-profile-tab'          : './src/vue/standalone/user-profile-tab/main.js',
+		'wp-notices'                : './src/vue/standalone/wp-notices/main.js',
 		// Page builder integrations.
-		avada                    : './src/vue/standalone/page-builders/avada/main.js',
-		divi                     : './src/vue/standalone/page-builders/divi/main.js',
-		'divi-admin'             : './src/vue/standalone/page-builders/divi-admin/main.js',
-		elementor                : './src/vue/standalone/page-builders/elementor/main.js',
-		seedprod                 : './src/vue/standalone/page-builders/seedprod/main.js',
-		siteorigin               : './src/vue/standalone/page-builders/siteorigin/main.js',
-		wpbakery                 : './src/vue/standalone/page-builders/wpbakery/main.js',
-		'thrive-architect'       : './src/vue/standalone/page-builders/thrive-architect/main.js'
+		avada                       : './src/vue/standalone/page-builders/avada/main.js',
+		divi                        : './src/vue/standalone/page-builders/divi/main.js',
+		'divi-admin'                : './src/vue/standalone/page-builders/divi-admin/main.js',
+		elementor                   : './src/vue/standalone/page-builders/elementor/main.js',
+		seedprod                    : './src/vue/standalone/page-builders/seedprod/main.js',
+		siteorigin                  : './src/vue/standalone/page-builders/siteorigin/main.js',
+		wpbakery                    : './src/vue/standalone/page-builders/wpbakery/main.js',
+		'thrive-architect'          : './src/vue/standalone/page-builders/thrive-architect/main.js'
 	}
 }
 
@@ -93,10 +95,7 @@ const getNonVueStandalones = () => {
 		// Native JS.
 		plugins                    : './src/app/plugins/main.js',
 		'follow-up-emails-nav-bar' : './src/vue/standalone/user-profile-tab/follow-up-emails-nav-bar.js',
-		'tru-seo-analyzer'         : './src/app/tru-seo/analyzer/main.js',
-
-		// React.
-		'headline-analyzer' : './src/react/headline-analyzer/main.js'
+		'tru-seo-analyzer'         : './src/app/tru-seo/analyzer/main.js'
 	}
 }
 

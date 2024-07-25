@@ -285,7 +285,7 @@ class RobotsTxt {
 				}
 
 				$userAgent           = $value;
-				$rules[ $userAgent ] = [];
+				$rules[ $userAgent ] = ! empty( $rules[ $userAgent ] ) ? $rules[ $userAgent ] : [];
 			} else {
 				$rules[ $userAgent ][] = "$directive: $value";
 				if ( $siblingsUserAgents ) {

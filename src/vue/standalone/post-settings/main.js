@@ -58,7 +58,14 @@ const loadSidebarApp = () => {
 		render : () => h(App)
 	})
 
+	// unmount headlineAnalyzerSidebarApp if it exists
+	if (window.aioseo.headlineAnalyzerSidebarApp) {
+		window.aioseo.headlineAnalyzerSidebarApp.unmount()
+	}
+
 	localCreateApp(sidebarApp).mount('#aioseo-post-settings-sidebar-vue')
+
+	window.aioseo.postSettingsSidebarApp = sidebarApp
 }
 
 if (window.aioseo.currentPost) {

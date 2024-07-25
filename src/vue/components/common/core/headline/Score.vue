@@ -40,7 +40,7 @@ export default {
 					'<strong>',
 					'</strong>',
 					70,
-					90
+					100
 				),
 				forBestResults : this.$t.sprintf(
 					// Translators: 1 - Opening bold HTML tag, 2 - Closing bold HTML tag, 3 - Score.

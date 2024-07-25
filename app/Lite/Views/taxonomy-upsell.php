@@ -1,3 +1,6 @@
+<?php
+// phpcs:disable Generic.Files.LineLength.MaxExceeded
+?>
 <style>
 	#poststuff.aioseo-taxonomy-upsell {
 		min-width: auto;
@@ -8,7 +11,7 @@
 	<div id="advanced-sortables" class="meta-box-sortables">
 		<div id="aioseo-tabbed" class="postbox ">
 			<h2 class="hndle">
-				<span>AIOSEO Settings</span>
+				<span><?php esc_html_e( 'AIOSEO Settings', 'all-in-one-seo-pack' ); ?></span>
 			</h2>
 			<div>
 				<div class="aioseo-app aioseo-post-settings">
@@ -27,9 +30,12 @@
 											<span class="label">Redirects</span>
 										</div>
 										<div class="var-tab var--box var-tab--inactive var-tab--horizontal">
+											<span class="label">SEO Revisions</span>
+										</div>
+										<div class="var-tab var--box var-tab--inactive var-tab--horizontal">
 											<span class="label">Advanced</span>
 										</div>
-										<div class="var-tabs__indicator var-tabs--layout-horizontal-indicator" style="width: 102px; transform: translateX(0px);"><div class="var-tabs__indicator-inner var-tabs--layout-horizontal-indicator-inner"></div>
+									<div class="var-tabs__indicator var-tabs--layout-horizontal-indicator" style="width: 102px; transform: translateX(0px);"><div class="var-tabs__indicator-inner var-tabs--layout-horizontal-indicator-inner"></div>
 									</div>
 								</div>
 							</div>
@@ -828,7 +834,38 @@
 						</div>
 					</div>
 
-					<div class="aioseo-cta floating" style="max-width: 630px;"><div class="aioseo-cta-background"><div class="type-1"><div class="header-text"> This feature is only available for licensed AIOSEO Pro users. </div><div class="description"> AIOSEO Pro allows you to set custom SEO titles and descriptions for taxonomies as well as social meta and Open Graph data for search engines. </div><div class="feature-list aioseo-row "><div class="aioseo-col col-xs-12 col-md-6 text-xs-left"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aioseo-circle-check"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM10 14.17L16.59 7.58L18 9L10 17L6 13L7.41 11.59L10 14.17Z" fill="currentColor"></path></svg> Social Meta </div><div class="aioseo-col col-xs-12 col-md-6 text-xs-left"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aioseo-circle-check"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM10 14.17L16.59 7.58L18 9L10 17L6 13L7.41 11.59L10 14.17Z" fill="currentColor"></path></svg> SEO Title/Description </div></div><a type="" to="" class="aioseo-button green" href="https://aioseo.com/pricing/?utm_source=WordPress&amp;utm_campaign=liteplugin&amp;utm_medium=taxonomies-upsell&amp;features[]=taxonomies" target="_blank"> Upgrade to Pro and Unlock Custom Taxonomies </a><a href="https://aioseo.com/?utm_source=WordPress&amp;utm_campaign=liteplugin&amp;utm_medium=taxonomies-upsell&amp;features[]=taxonomies" target="_blank" class="learn-more"> Learn more about all features </a></div></div></div>
+					<div class="aioseo-cta floating" style="max-width: 630px;">
+						<div class="aioseo-cta-background">
+							<div class="type-1">
+								<div class="header-text"><?php esc_html_e( 'Custom Taxonomies are a PRO Feature', 'all-in-one-seo-pack' ); ?></div>
+								<div class="description"><?php esc_html_e( 'Set custom SEO meta, social meta and more for individual terms.', 'all-in-one-seo-pack' ); ?></div>
+								<div class="feature-list aioseo-row ">
+									<div class="aioseo-col col-xs-12 col-md-6 text-xs-left">
+										<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aioseo-circle-check">
+											<path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM10 14.17L16.59 7.58L18 9L10 17L6 13L7.41 11.59L10 14.17Z" fill="currentColor"></path>
+										</svg> SEO Title/Description
+									</div>
+									<div class="aioseo-col col-xs-12 col-md-6 text-xs-left">
+										<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aioseo-circle-check">
+											<path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM10 14.17L16.59 7.58L18 9L10 17L6 13L7.41 11.59L10 14.17Z" fill="currentColor"></path>
+										</svg> Social Meta
+									</div>
+								</div>
+								<div class="actions">
+									<a type="" to="" class="aioseo-button green" href="<?php echo esc_attr( aioseo()->helpers->utmUrl( AIOSEO_MARKETING_URL . 'lite-upgrade/', 'taxonomies-upsell', 'features=[]=taxonomies', false ) ); ?>" target="_blank"><?php esc_html_e( 'Unlock Custom Taxonomies', 'all-in-one-seo-pack' ); ?></a>
+									<a href="https://aioseo.com/?utm_source=WordPress&amp;utm_campaign=liteplugin&amp;utm_medium=taxonomies-upsell&amp;features[]=taxonomies" target="_blank" class="learn-more"><?php esc_html_e( 'Learn more about all features', 'all-in-one-seo-pack' ); ?></a>
+								</div>
+
+
+								<div class="aioseo-alert yellow medium bonus-alert"> 🎁 <span>
+									<strong><?php esc_html_e( 'Bonus:', 'all-in-one-seo-pack' ); ?></strong>
+									<?php esc_html_e( 'You can upgrade to the Pro plan today and ', 'all-in-one-seo-pack' ); ?>
+									<strong><?php esc_html_e( 'save 60% off', 'all-in-one-seo-pack' ); ?></strong>
+									<?php esc_html_e( '(discount auto-applied)', 'all-in-one-seo-pack' ); ?>.</span>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

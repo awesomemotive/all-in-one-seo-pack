@@ -389,7 +389,7 @@
 							size="medium"
 							v-model="optionsStore.options.searchAppearance.global.schema.numberOfEmployees.from"
 							step="1"
-							min="1"
+							min="0"
 							:max="optionsStore.options.searchAppearance.global.schema.numberOfEmployees.to"
 							@blur="value => updateMinimumEmployees(value)"
 						/>

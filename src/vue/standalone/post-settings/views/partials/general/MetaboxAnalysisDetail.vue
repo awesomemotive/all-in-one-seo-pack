@@ -113,7 +113,8 @@ export default {
 				font-weight: 700;
 				margin-right: 6px;
 
-				.edit-post-sidebar & {
+				.edit-post-sidebar &,
+				.editor-sidebar & {
 					flex: 1;
 				}
 			}

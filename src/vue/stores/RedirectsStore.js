@@ -57,7 +57,15 @@ export const useRedirectsStore = defineStore('RedirectsStore', {
 			logs404   : false
 		},
 		protectedPaths : [],
-		path           : ''
+		path           : '',
+		addNewRedirect : {
+			sourceUrls           : [],
+			targetUrl            : null,
+			redirectType         : null,
+			queryParam           : null,
+			customRules          : [],
+			showAdvancedSettings : false
+		}
 	}),
 	actions : {
 		bulk ({ action, rowIds }) {

@@ -57,7 +57,7 @@ class HeadlineAnalyzer {
 		}
 		require AIOSEO_DIR . $path;
 
-		aioseo()->core->assets->load( 'src/react/headline-analyzer/main.js' );
+		aioseo()->core->assets->load( 'src/vue/standalone/headline-analyzer/main.js' );
 	}
 
 	/**
@@ -69,7 +69,7 @@ class HeadlineAnalyzer {
 	 * @return array         The result.
 	 */
 	public function getResult( $title ) {
-		$result = $this->getHeadlineScore( $title );
+		$result = $this->getHeadlineScore( html_entity_decode( $title ) );
 
 		if ( ! empty( $result->err ) ) {
 			return false;

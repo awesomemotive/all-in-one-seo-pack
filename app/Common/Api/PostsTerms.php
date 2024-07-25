@@ -264,7 +264,9 @@ class PostsTerms {
 
 		$posts = [];
 		foreach ( $ids as $postId ) {
-			$headlineResult = aioseo()->standalone->headlineAnalyzer->getResult( html_entity_decode( get_the_title( $postId ) ) );
+			$postTitle      = get_the_title( $postId );
+			$headline       = ! empty( $postTitle ) ? sanitize_text_field( $postTitle ) : ''; // We need this to achieve consistency for the score when using special characters in titles
+			$headlineResult = aioseo()->standalone->headlineAnalyzer->getResult( $headline );
 
 			$posts[] = [
 				'id'                => $postId,

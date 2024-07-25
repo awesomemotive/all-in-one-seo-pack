@@ -41,18 +41,21 @@
 		}
 	}
 }
+
 body.block-editor-page {
 	#aioseo-settings .inside {
 		border: 1px solid $border;
 		border-top: none;
 	}
-	.edit-post-sidebar .aioseo-app {
 
+	.edit-post-sidebar .aioseo-app,
+	.editor-sidebar .aioseo-app {
 		textarea {
 			font-size: 16px;
 		}
 	}
 }
+
 #aioseo-post-settings-sidebar-button {
 	display: flex;
 	flex-direction: row;
@@ -206,8 +209,7 @@ button[aria-label="AIOSEO"]:hover {
 		height: 36px;
 
 		&.is-compact.has-icon {
-			&[aria-label*="AIOSEO"],
-			&[aria-label*="SEO Headline Analyzer"] {
+			&[aria-label*="AIOSEO"] {
 				width: auto;
 				padding: 6px;
 			}

@@ -41,8 +41,9 @@ class KgOrganization extends Graphs\Graph {
 
 		if (
 			$numberOfEmployeesData['isRange'] &&
-			! empty( $numberOfEmployeesData['from'] ) &&
-			! empty( $numberOfEmployeesData['to'] )
+			isset( $numberOfEmployeesData['from'] ) &&
+			isset( $numberOfEmployeesData['to'] ) &&
+			0 < $numberOfEmployeesData['to']
 		) {
 			$data['numberOfEmployees'] = [
 				'@type'    => 'QuantitativeValue',

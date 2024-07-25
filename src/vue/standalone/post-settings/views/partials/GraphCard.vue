@@ -134,6 +134,7 @@ export default {
 	.graph-container {
 		flex: 1 30%;
 		max-width: 309.33px;
+		color: $font-color;
 
 		@media (max-width: 430px) {
 			flex: 1 100%;

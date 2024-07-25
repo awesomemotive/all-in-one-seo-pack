@@ -457,7 +457,7 @@ class Notices {
 			return;
 		}
 
-		if ( $notification->exists() ) {
+		if ( $notification->exists() || ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 

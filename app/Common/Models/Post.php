@@ -219,6 +219,11 @@ class Post extends Model {
 		// is correctly propagated on the frontend after changing it.
 		$post->schema = self::getDefaultSchemaOptions( $post->schema );
 
+		// Filter out null or empty graphs.
+		$post->schema->graphs = array_filter( $post->schema->graphs, function( $graph ) {
+			return ! empty( $graph );
+		} );
+
 		foreach ( $post->schema->graphs as $graph ) {
 			// If the first character of the graph ID isn't a pound, add one.
 			// We have to do this because the schema migration in 4.2.5 didn't add the pound for custom graphs.

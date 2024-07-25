@@ -21,6 +21,18 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 		currentPost : {},
 		openAiError : null
 	}),
+	getters : {
+		newHeadlineAnaylzerData () {
+			const newTitle = this.currentPost.headlineAnalyzer?.newData?.headline ? this.currentPost.headlineAnalyzer.newData.headline : ''
+			let newResult = this.currentPost.headlineAnalyzer?.newData?.data[Object.keys(this.currentPost.headlineAnalyzer.newData.data)?.[0]] ? this.currentPost.headlineAnalyzer.newData.data[Object.keys(this.currentPost.headlineAnalyzer.newData.data)?.[0]] : null
+		    newResult = newResult ? JSON.parse(newResult) : null
+
+			return {
+				newTitle,
+				newResult
+			}
+		}
+	},
 	actions : {
 		updateTitle (title) {
 			this.currentPost.title = title
@@ -31,6 +43,73 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 			this.currentPost.description = description
 
 			window.aioseoBus.$emit('updateDescriptionKey')
+		},
+		updatePostHeadlineAnalyzerData (data, headline) {
+			this.currentPost.headlineAnalyzer = this.currentPost.headlineAnalyzer || {}
+			this.currentPost.headlineAnalyzer.data = data
+			this.currentPost.headlineAnalyzer.headline = headline
+
+			if (!this.currentPost.headlineAnalyzer.previousHeadlines) {
+				this.currentPost.headlineAnalyzer.previousHeadlines = []
+			}
+
+			// Add previous scores but don't add duplicates
+			if (this.currentPost.headlineAnalyzer.data[Object.keys(this.currentPost.headlineAnalyzer.data)?.[0]]) {
+				let currentResult = this.currentPost.headlineAnalyzer.data[Object.keys(this.currentPost.headlineAnalyzer.data)?.[0]]
+				currentResult = JSON.parse(currentResult)
+
+				const headlineExists = this.currentPost.headlineAnalyzer.previousHeadlines.some(item => item.headline === headline)
+
+				if (!headlineExists) {
+					this.currentPost.headlineAnalyzer.previousHeadlines.push({
+						headline : headline,
+						result   : currentResult,
+						score    : currentResult.score
+					})
+
+					// save latest score
+					this.currentPost.headlineAnalyzer.latestScore = currentResult.score
+				}
+			}
+		},
+		updateLatestScore (score) {
+			this.currentPost.headlineAnalyzer.latestScore = score
+		},
+		shouldShowPrevScores () {
+			this.currentPost.headlineAnalyzer.showPrevScores = true
+		},
+		updateNewHeadlineAnalyzerData (data, headline) {
+			this.currentPost.headlineAnalyzer.newData = this.currentPost.headlineAnalyzer.newData || {}
+			this.currentPost.headlineAnalyzer.newData.data = data
+			this.currentPost.headlineAnalyzer.newData.headline = headline
+			this.currentPost.headlineAnalyzer.newData.showPreview = true
+
+			// Add new Headline tested data to the previous headlines list
+			if (!this.currentPost.headlineAnalyzer.previousHeadlines) {
+				this.currentPost.headlineAnalyzer.previousHeadlines = []
+			}
+
+			let currentResult = this.currentPost.headlineAnalyzer.newData.data[Object.keys(this.currentPost.headlineAnalyzer.newData.data)?.[0]]
+			currentResult = JSON.parse(currentResult)
+
+			const headlineExists = this.currentPost.headlineAnalyzer.previousHeadlines.some(item => item.headline === headline)
+
+			if (!headlineExists) {
+				this.currentPost.headlineAnalyzer.previousHeadlines.push({
+					headline : headline,
+					result   : currentResult,
+					score    : currentResult.score
+				})
+
+				// save latest score
+				this.currentPost.headlineAnalyzer.latestScore = currentResult.score
+			}
+		},
+		toggleShowNewHeadlineAnalyzerData (show) {
+			this.currentPost.headlineAnalyzer.showNewData = show
+		},
+		toggleShowNewHeadlineAnalyzerPreview (show) {
+			this.currentPost.headlineAnalyzer.newData.showPreview = show
 		},
 		changeGeneralPreview (value) {
 			this.currentPost.generalMobilePrev = value

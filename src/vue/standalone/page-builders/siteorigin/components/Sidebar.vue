@@ -1,5 +1,5 @@
 <template>
-	<div class="edit-post-sidebar aioseo-site-origin-sidebar">
+	<div class="edit-post-sidebar editor-sidebar aioseo-site-origin-sidebar">
 		<div class="aioseo-site-origin-sidebar__header">
 			<div class="aioseo-site-origin-sidebar__header-title">
 				{{ strings.headerTitle }}
