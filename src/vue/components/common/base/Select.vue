@@ -226,6 +226,8 @@ export default {
 
 <style lang="scss">
 .aioseo-select {
+	height: 48px;
+
 	&.multiselect--disabled {
 		.multiselect__select {
 			background: none;
@@ -374,8 +376,6 @@ export default {
 		}
 	}
 
-	height: 48px;
-
 	&.small {
 		height: 30px;
 		min-height: 30px;
@@ -405,7 +405,7 @@ export default {
 		}
 	}
 
-	&.medium {
+&.medium {
 		height: 40px;
 
 		.multiselect__tags {
@@ -418,6 +418,7 @@ export default {
 	}
 
 	&.multiple {
+		height: auto;
 		min-height: 48px;
 
 		&.small {
@@ -427,8 +428,6 @@ export default {
 		&.medium {
 			min-height: 40px;
 		}
-
-		height: auto;
 	}
 
 	&.multiselect--above {

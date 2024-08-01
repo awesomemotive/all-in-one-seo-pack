@@ -1,5 +1,6 @@
 import Article from '../AIOSEO_VERSION/partials-schema/graphs/Article'
 import Book from '../AIOSEO_VERSION/partials-schema/graphs/Book'
+import Car from '../AIOSEO_VERSION/partials-schema/graphs/Car'
 import Course from '../AIOSEO_VERSION/partials-schema/graphs/Course'
 import Dataset from '../AIOSEO_VERSION/partials-schema/graphs/Dataset'
 import Event from '../AIOSEO_VERSION/partials-schema/graphs/Event'
@@ -11,6 +12,7 @@ import Movie from '../AIOSEO_VERSION/partials-schema/graphs/Movie'
 import Music from '../AIOSEO_VERSION/partials-schema/graphs/Music'
 import Person from '../AIOSEO_VERSION/partials-schema/graphs/Person'
 import Product from '../AIOSEO_VERSION/partials-schema/graphs/Product'
+import ProductReview from '../AIOSEO_VERSION/partials-schema/graphs/ProductReview'
 import Recipe from '../AIOSEO_VERSION/partials-schema/graphs/Recipe'
 import Service from '../AIOSEO_VERSION/partials-schema/graphs/Service'
 import SoftwareApplication from '../AIOSEO_VERSION/partials-schema/graphs/SoftwareApplication'
@@ -19,6 +21,7 @@ import WebPage from '../AIOSEO_VERSION/partials-schema/graphs/WebPage'
 
 import SvgArticle from '@/vue/components/common/svg/schema/Article'
 import SvgBook from '@/vue/components/common/svg/schema/Book'
+import SvgCar from '@/vue/components/common/svg/schema/Car'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import SvgCustomSchema from '@/vue/components/common/svg/schema/CustomSchema'
 import SvgCopy from '@/vue/components/common/svg/Copy'
@@ -38,6 +41,7 @@ import SvgMusic from '@/vue/components/common/svg/schema/Music'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
 import SvgPerson from '@/vue/components/common/svg/schema/Person'
 import SvgProduct from '@/vue/components/common/svg/schema/Product'
+import SvgProductReview from '@/vue/components/common/svg/schema/ProductReview'
 import SvgRecipe from '@/vue/components/common/svg/schema/Recipe'
 import SvgService from '@/vue/components/common/svg/schema/Service'
 import SvgSoftwareApplication from '@/vue/components/common/svg/schema/SoftwareApplication'
@@ -50,6 +54,7 @@ export default {
 	components : {
 		Article,
 		Book,
+		Car,
 		Course,
 		Dataset,
 		Event,
@@ -61,6 +66,7 @@ export default {
 		Music,
 		Person,
 		Product,
+		ProductReview,
 		Recipe,
 		Service,
 		SoftwareApplication,
@@ -68,6 +74,7 @@ export default {
 		WebPage,
 		SvgArticle,
 		SvgBook,
+		SvgCar,
 		SvgCircleQuestionMark,
 		SvgCustomSchema,
 		SvgCopy,
@@ -87,6 +94,7 @@ export default {
 		SvgPencil,
 		SvgPerson,
 		SvgProduct,
+		SvgProductReview,
 		SvgRecipe,
 		SvgService,
 		SvgSoftwareApplication,

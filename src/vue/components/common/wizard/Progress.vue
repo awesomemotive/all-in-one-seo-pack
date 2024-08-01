@@ -45,13 +45,13 @@ export default {
 
 <style lang="scss">
 .aioseo-wizard-progress {
-	@media screen and (max-width: 782px) {
-		display: none;
-	}
-
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	@media screen and (max-width: 782px) {
+		display: none;
+	}
 
 	.circle {
 		background-color: $gray;

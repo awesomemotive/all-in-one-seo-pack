@@ -7,13 +7,20 @@ import { shouldShowMetaBox } from '@/vue/utils/metabox'
 import { isBlockEditor } from '@/vue/utils/context'
 
 (function (wp) {
-	if (!isBlockEditor() || !shouldShowMetaBox() || !wp.editPost.PluginDocumentSettingPanel) {
+	if (
+		!isBlockEditor() ||
+		!shouldShowMetaBox() ||
+		(
+			!window.wp?.editor?.PluginDocumentSettingPanel &&
+			!window.wp?.editPost?.PluginDocumentSettingPanel
+		)
+	) {
 		return
 	}
 
-	const PluginDocumentSettingPanel = wp.editPost.PluginDocumentSettingPanel
-	const PluginPrePublishPanel      = wp.editPost.PluginPrePublishPanel
-	const PluginPostPublishPanel     = wp.editPost.PluginPostPublishPanel
+	const PluginDocumentSettingPanel = window?.editor?.PluginDocumentSettingPanel || window.wp?.editPost?.PluginDocumentSettingPanel
+	const PluginPrePublishPanel      = window?.editor?.PluginPrePublishPanel || window.wp?.editPost?.PluginPrePublishPanel
+	const PluginPostPublishPanel     = window?.editor?.PluginPostPublishPanel || window.wp?.editPost?.PluginPostPublishPanel
 	const registerPlugin             = wp.plugins.registerPlugin
 
 	// We need to load the Pinia here since we are using the store outside an App.

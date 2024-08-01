@@ -22,7 +22,7 @@ export const WpTable = {
 			return this.processFetchTableData()
 				.then(() => {
 					this.wpTableLoading = false
-					this.$refs.table.editRow(null)
+					this.$refs?.table?.editRow(null)
 				})
 		},
 		processAdditionalFilters ({ filters }) {

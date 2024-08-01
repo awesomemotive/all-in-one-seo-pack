@@ -1,10 +1,10 @@
 === All in One SEO – Powerful SEO Plugin to Boost SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
-Tested up to: 6.6
+Tested up to: 6.6.1
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.6.7.1
+Stable tag: 4.6.8.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,6 +226,18 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.6.8.1**
+
+* Fixed: Block Editor sidebar components not loading in post editor for older WordPress versions.
+
+**New in Version 4.6.8**
+
+* New: Product Review schema - make your editorial product review pages stand out in search results by listing the product's pros and cons.
+* New: Vehicle Listing schema - display your car inventory in rich search snippets and allow users to easily search, filter and learn about your vehicles that are for sale.
+* New: Table of Contents schema - our Table of Contents block now automatically outputs schema to help search engines understand how your posts are structured.
+* Updated: Our Product schema has been updated to match Google's latest specifications for product variations and grouped products.
+* Fixed: The Schema Validator code editor field would sometimes not render due to a dependency error.
+
 **New in Version 4.6.7.1**
 
 * Updated: Added a new notice in the admin bar for when the site is noindexed, improving visibility for users.
@@ -325,40 +337,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 * Fixed: Conflict with MonsterInsights Dimensions Addon.
 
-**New in Version 4.6.1**
-
-* Updated: Optimized redirect & 404 logs for improved performance.
-* Updated: TruSEO Score no longer calculated for ineligible pages like the WooCommerce's account, cart and checkout pages.
-* Updated: SERP Preview now favours using the Knowledge Graph Website Name instead of the site hostname.
-* Updated: New Local SEO Business Info block fax icon.
-* Updated: Added WordPress as a new option to our list of supported social profiles under Social Networks and the user profile settings.
-* Updated: Security hardening for all smart tag fields and the HTML Sitemap shortcode.
-* Fixed: Various multisite licensing issues, including the removal of conflicting plugin notices on subsites and immediate license status updates across the network.
-* Fixed: Missing "Featured Image" option in social settings for page builders.
-* Fixed: Default image for social posts not correctly displayed if no image URL is provided.
-* Fixed: Rare issue where Google throws errors related to the sitelinks schema when the "Russian" version of the page served for Yandex gets cached.
-* Fixed: Post Index Status not revalidated if the post is noindexed or has no valid results.
-* Fixed: Refactored permalink generation in Localization.php to use get_term_link for terms.
-* Fixed: Access Control now correctly loads roles after all plugins are fully loaded to prevent errors from undefined WP functions.
-* Fixed: Redirects CSV sample file not downloading correctly when using Mozilla Firefox.
-* Fixed: Console error caused by adding a question mark to the source or target URL in a redirect.
-* Fixed: Plugin conflict with AMP plugins.
-
-**New in Version 4.6.0**
-
-* New: Redirects Integration with Broken Link Checker - If you're using both AIOSEO Redirects and BLC, you can now easily add redirects for any of your (broken) links inside the links report.
-* Updated: Compatibility with Broken Link Checker 1.2.0 and AIOSEO Redirects 1.3.9.
-* Fixed: Localized a number of strings that previously could not correctly be translated.
-
-**New in Version 4.5.9.2**
-
-* Updated: Compatibility fixes for WordPress 6.5.
-
-**New in Version 4.5.9.1**
-
-* Fixed: PHP error sometimes thrown on multisites because SECURE_AUTH_COOKIE constant not set due to loading WordPress pluggables too soon.
-* Fixed: PHP error sometimes thrown in update migration due to invalid old options data.
-
 **See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) for previous releases.**
 
 == Frequently Asked Questions ==
@@ -440,6 +418,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.6.7.1 =
+= 4.6.8.1 =
 
 This update adds major improvements and bug fixes.

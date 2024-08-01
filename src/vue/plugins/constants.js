@@ -1154,6 +1154,11 @@ export const SCHEMA_AVAILABILITY = [
 	{ label: 'In Store Only', value: 'https://schema.org/InStoreOnly' }
 ]
 
+export const SCHEMA_VEHICLE_AVAILABILITY = [
+	{ label: 'In Stock', value: 'https://schema.org/InStock' },
+	{ label: 'Out of Stock', value: 'https://schema.org/OutOfStock' }
+]
+
 export const SCHEMA_PRODUCT_IDENTIFIERS = [
 	{ label: 'None', value: 'none' },
 	{ label: 'GTIN8', value: 'gtin8' },
@@ -1486,4 +1491,28 @@ export const SCHEMA_ENERGY_RATING = [
 	{ label: 'E', value: 'https://schema.org/EUEnergyEfficiencyCategoryE' },
 	{ label: 'F', value: 'https://schema.org/EUEnergyEfficiencyCategoryF' },
 	{ label: 'G', value: 'https://schema.org/EUEnergyEfficiencyCategoryG' }
+]
+
+export const SCHEMA_OFFER_ITEM_CONDITION = [
+	{ label: __('New', td), value: 'https://schema.org/NewCondition' },
+	{ label: __('Used', td), value: 'https://schema.org/UsedCondition' },
+	{ label: __('Refurbished', td), value: 'https://schema.org/RefurbishedCondition' },
+	{ label: __('Damaged', td), value: 'https://schema.org/DamagedCondition' }
+]
+
+export const SCHEMA_VEHICLE_OFFER_ITEM_CONDITION = [
+	{ label: __('New', td), value: 'https://schema.org/NewCondition' },
+	{ label: __('Used', td), value: 'https://schema.org/UsedCondition' }
+]
+
+export const SCHEMA_DRIVE_WHEEL_CONFIGURATION = [
+	{ label: __('All Wheel Drive', td), value: 'https://schema.org/AllWheelDriveConfiguration' },
+	{ label: __('Four Wheel Drive', td), value: 'https://schema.org/FourWheelDriveConfiguration' },
+	{ label: __('Front Wheel Drive', td), value: 'https://schema.org/FrontWheelDriveConfiguration' },
+	{ label: __('Rear Wheel Drive', td), value: 'https://schema.org/RearWheelDriveConfiguration' }
+]
+
+export const SCHEMA_DISTANCE_UNIT = [
+	{ label: __('Miles', td), value: 'SMI' },
+	{ label: __('Kilometers', td), value: 'KMT' }
 ]

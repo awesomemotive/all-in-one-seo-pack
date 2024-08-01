@@ -20,8 +20,8 @@ export default function registerHeadlineAnalyzer () {
 	rootStore.aioseo.registerHeadlineAnalyzerSet = true
 
 	const registerPlugin            = window.wp.plugins.registerPlugin
-	const PluginSidebarMoreMenuItem = window.wp.editPost.PluginSidebarMoreMenuItem
-	const PluginSidebar             = window.wp.editPost.PluginSidebar
+	const PluginSidebarMoreMenuItem = window?.editor?.PluginSidebarMoreMenuItem || window.wp?.editPost?.PluginSidebarMoreMenuItem
+	const PluginSidebar             = window?.editor?.PluginSidebar || window.wp?.editPost?.PluginSidebar
 	const Fragment                  = window.wp.element.Fragment
 	const el                        = window.wp.element.createElement
 	const useEffect                 = window.wp.element.useEffect

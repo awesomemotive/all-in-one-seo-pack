@@ -72,6 +72,16 @@ export const useSchema = () => {
 			label     : __('Product', td)
 		},
 		{
+			slug      : 'product-review',
+			graphName : 'ProductReview',
+			label     : __('Product Review', td)
+		},
+		{
+			slug      : 'car',
+			graphName : 'Car',
+			label     : __('Car', td)
+		},
+		{
 			slug      : 'recipe',
 			graphName : 'Recipe',
 			label     : __('Recipe', td)

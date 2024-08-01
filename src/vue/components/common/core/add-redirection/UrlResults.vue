@@ -157,11 +157,11 @@ export default {
 			color: $black;
 
 			> div {
+				margin-right: 5px;
+
 				&:first-of-type {
 					display: inline-block;
 				}
-
-				margin-right: 5px;
 			}
 
 			.search-term {

@@ -837,4 +837,65 @@ trait Wp {
 
 		return false;
 	}
+
+	/**
+	 * Parses blocks for a given post.
+	 *
+	 * @since 4.6.8
+	 *
+	 * @param  \WP_Post|int $post          The post or post ID.
+	 * @param  bool         $flattenBlocks Whether to flatten the blocks.
+	 * @return array                       The parsed blocks.
+	 */
+	public function parseBlocks( $post, $flattenBlocks = true ) {
+		if ( ! is_a( $post, 'WP_Post' ) ) {
+			$post = aioseo()->helpers->getPost( $post );
+		}
+
+		static $parsedBlocks = [];
+		if ( isset( $parsedBlocks[ $post->ID ] ) ) {
+			return $parsedBlocks[ $post->ID ];
+		}
+
+		$parsedBlocks = parse_blocks( $post->post_content );
+
+		if ( $flattenBlocks ) {
+			$parsedBlocks = $this->flattenBlocks( $parsedBlocks );
+		}
+
+		$parsedBlocks[ $post->ID ] = $parsedBlocks;
+
+		return $parsedBlocks[ $post->ID ];
+	}
+
+	/**
+	 * Flattens the given blocks.
+	 *
+	 * @since 4.6.8
+	 *
+	 * @param  array $blocks The blocks.
+	 * @return array         The flattened blocks.
+	 */
+	public function flattenBlocks( $blocks ) {
+		$flattenedBlocks = [];
+
+		foreach ( $blocks as $block ) {
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				// Flatten inner blocks first.
+				$innerBlocks = $this->flattenBlocks( $block['innerBlocks'] );
+				unset( $block['innerBlocks'] );
+
+				// Add the current block to the result.
+				$flattenedBlocks[] = $block;
+
+				// Add the flattened inner blocks to the result.
+				$flattenedBlocks = array_merge( $flattenedBlocks, $innerBlocks );
+			} else {
+				// If no inner blocks, just add the block to the result.
+				$flattenedBlocks[] = $block;
+			}
+		}
+
+		return $flattenedBlocks;
+	}
 }

@@ -246,7 +246,8 @@ export default {
 			return { ...result, icon: this.getIcon(result.type) }
 		},
 		openSidebar (tipName) {
-			const { closePublishSidebar, openGeneralSidebar } = window.wp.data.dispatch('core/edit-post')
+			const openGeneralSidebar  = window.wp?.editor ? window.wp?.editor?.openGeneralSidebar : window.wp?.editPost?.openGeneralSidebar
+			const closePublishSidebar = window.wp?.editor ? window.wp?.editor?.closePublishSidebar : window.wp?.editPost?.closePublishSidebar
 
 			closePublishSidebar()
 			openGeneralSidebar('aioseo-post-settings-sidebar/aioseo-post-settings-sidebar')

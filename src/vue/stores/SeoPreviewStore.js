@@ -31,13 +31,30 @@ export const useSeoPreviewStore = defineStore('SeoPreviewStore', {
 	actions : {
 		extractReviewSnippet (schemaOutput) {
 			let reviewSnippet = {}
-			const typesToCheck = [ 'Movie', 'Product', 'SoftwareApplication' ]
+			const typesToCheck = [ 'Movie', 'Product', 'SoftwareApplication', 'Car', 'ProductReview' ]
 			for (const type of typesToCheck) {
 				const foundType = parseSchemaByType(type, schemaOutput)
 				if (foundType) {
 					const aggregateRating = foundType?.aggregateRating || null
-					const offers = foundType?.offers || null
-					const prices = arrayUnique(Array.isArray(offers) ? arrayColumn(offers, 'price') : [])
+					const offers          = foundType?.offers || null
+					const prices          = arrayUnique(Array.isArray(offers) ? arrayColumn(offers, 'price') : [])
+
+					let prosConsNotes = []
+					if (foundType?.review) {
+						if (Array.isArray(foundType?.review)) {
+							prosConsNotes = foundType.review.map(review => {
+								const positiveNotesArray = Array.isArray(review?.positiveNotes?.itemListElement) ? review.positiveNotes.itemListElement.map(item => item.name) : []
+								const negativeNotesArray = Array.isArray(review?.negativeNotes?.itemListElement) ? review.negativeNotes.itemListElement.map(item => item.name) : []
+
+								return positiveNotesArray.concat(negativeNotesArray)
+							}).flat()
+						} else {
+							const positiveNotesArray = Array.isArray(foundType.review.positiveNotes?.itemListElement) ? foundType.review.positiveNotes.itemListElement.map(item => item.name) : []
+							const negativeNotesArray = Array.isArray(foundType.review.negativeNotes?.itemListElement) ? foundType.review.negativeNotes.itemListElement.map(item => item.name) : []
+
+							prosConsNotes = positiveNotesArray.concat(negativeNotesArray)
+						}
+					}
 
 					prices.sort((a, b) => a - b)
 
@@ -53,7 +70,8 @@ export const useSeoPreviewStore = defineStore('SeoPreviewStore', {
 							price         : prices[0] ?? offers.price ?? null,
 							priceFrom     : prices[0] ?? null,
 							priceTo       : prices[prices.length - 1] ?? null
-						})
+						}),
+						prosConsNotes
 					}
 
 					break

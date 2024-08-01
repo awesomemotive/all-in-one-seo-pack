@@ -87,7 +87,7 @@ const { select } = window.wp.data
 
 function attachEventListener (element) {
 	if (!isPinBtnEventAttached) {
-		element.addEventListener('click', () => {
+		element?.addEventListener('click', () => {
 			HeadlineCurrentScore()
 		})
 
@@ -100,12 +100,14 @@ window.wp.data.subscribe(() => {
 
 	if (activeSidebarName) {
 		const sidebarParent = document.querySelector('.interface-interface-skeleton__sidebar')
+
 		if (headlineSidebar !== activeSidebarName) {
 			// Unmount when opening other sidebars
 			if (window.aioseo.headlineAnalyzerSidebarApp) {
 				window.aioseo.headlineAnalyzerSidebarApp.unmount()
 			}
 		}
+
 		attachEventListener(sidebarParent)
 	}
 })

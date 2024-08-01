@@ -646,6 +646,8 @@ class Post extends Model {
 					'Movie'               => [],
 					'Person'              => [],
 					'Product'             => [],
+					'ProductReview'       => [],
+					'Car'                 => [],
 					'Recipe'              => [],
 					'Service'             => [],
 					'SoftwareApplication' => [],

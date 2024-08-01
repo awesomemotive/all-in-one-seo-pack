@@ -84,6 +84,7 @@ import SvgSearch from '@/vue/components/common/svg/Search'
 
 import SvgArticle from '@/vue/components/common/svg/schema/Article'
 import SvgBook from '@/vue/components/common/svg/schema/Book'
+import SvgCar from '@/vue/components/common/svg/schema/Car'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import SvgCustomSchema from '@/vue/components/common/svg/schema/CustomSchema'
 import SvgCopy from '@/vue/components/common/svg/Copy'
@@ -102,6 +103,7 @@ import SvgMusic from '@/vue/components/common/svg/schema/Music'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
 import SvgPerson from '@/vue/components/common/svg/schema/Person'
 import SvgProduct from '@/vue/components/common/svg/schema/Product'
+import SvgProductReview from '@/vue/components/common/svg/schema/ProductReview'
 import SvgRecipe from '@/vue/components/common/svg/schema/Recipe'
 import SvgRestaurant from '@/vue/components/common/svg/schema/Restaurant'
 import SvgService from '@/vue/components/common/svg/schema/Service'
@@ -115,6 +117,7 @@ export default {
 	emits      : [ 'append-icon-click', 'blur', 'change', 'focus', 'keydown', 'update:modelValue' ],
 	components : {
 		CoreAlert,
+		SvgCar,
 		SvgCircleCheck,
 		SvgCircleClose,
 		SvgSearch,
@@ -138,6 +141,7 @@ export default {
 		SvgPencil,
 		SvgPerson,
 		SvgProduct,
+		SvgProductReview,
 		SvgRecipe,
 		SvgRestaurant,
 		SvgService,
@@ -293,6 +297,10 @@ export default {
 			&:focus {
 				border-color: $blue;
 				box-shadow: 0 0 0 1px $blue;
+			}
+
+			&::placeholder {
+				color: $placeholder-color;
 			}
 
 			&.prepend {

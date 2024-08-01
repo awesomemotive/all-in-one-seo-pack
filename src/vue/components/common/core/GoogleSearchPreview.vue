@@ -38,6 +38,23 @@
 			/>
 		</div>
 
+		<div class="aioseo-google-search-preview__pros-cons" v-if="(reviewSnippet.prosConsNotes || [])?.length">
+			{{ strings.prosCons }}:
+			<template
+				v-for="(item, index) in reviewSnippet.prosConsNotes.slice(0, 10)"
+				:key="`pros-cons-${index}`"
+			>
+				<span class="aioseo-google-search-preview__pros-cons__description">{{ item }}</span>
+
+				<span>&nbsp;</span>
+				<span class="bullet" />
+			</template>
+
+			<span class="aioseo-google-search-preview__pros-cons__view-full-list">
+				{{ strings.viewFullList }}
+			</span>
+		</div>
+
 		<div
 			v-if="Object.values(reviewSnippet).length"
 			class="aioseo-google-search-preview__review-snippet"
@@ -140,7 +157,8 @@ export default {
 				priceCurrency : null,
 				price         : null,
 				priceFrom     : null,
-				priceTo       : null
+				priceTo       : null,
+				prosConsNotes : []
 			}
 
 			const reviewSnippet = {
@@ -164,9 +182,9 @@ export default {
 				}
 			}
 
-			reviewSnippet.price = !isNaN(parseFloat(reviewSnippet.price)) ? parseFloat(reviewSnippet.price).toFixed(2) : null
+			reviewSnippet.price     = !isNaN(parseFloat(reviewSnippet.price)) ? parseFloat(reviewSnippet.price).toFixed(2) : null
 			reviewSnippet.priceFrom = !isNaN(parseFloat(reviewSnippet.priceFrom)) ? parseFloat(reviewSnippet.priceFrom).toFixed(2) : null
-			reviewSnippet.priceTo = !isNaN(parseFloat(reviewSnippet.priceTo)) ? parseFloat(reviewSnippet.priceTo).toFixed(2) : null
+			reviewSnippet.priceTo   = !isNaN(parseFloat(reviewSnippet.priceTo)) ? parseFloat(reviewSnippet.priceTo).toFixed(2) : null
 
 			return reviewSnippet
 		},
@@ -275,8 +293,10 @@ export default {
 	data () {
 		return {
 			strings : {
-				free   : this.$t.__('Free', this.$td),
-				rating : this.$t.__('Rating', this.$td)
+				free         : this.$t.__('Free', this.$td),
+				rating       : this.$t.__('Rating', this.$td),
+				prosCons     : this.$t.__('Pros and cons include', this.$td),
+				viewFullList : this.$t.__('View full list', this.$td)
 			}
 		}
 	}
@@ -285,6 +305,14 @@ export default {
 
 <style lang="scss" scoped>
 .aioseo-google-search-preview {
+	.bullet {
+		&::before {
+			content: '•';
+			margin: 0 5px 0 0;
+			font-size: 10px;
+		}
+	}
+
 	&--mobile {
 		.aioseo-google-search-preview {
 			&__review-snippet {
@@ -293,11 +321,11 @@ export default {
 				}
 
 				&__rating {
+					order: 1;
+
 					span {
 						display: none;
 					}
-
-					order: 1;
 				}
 
 				&__count.bullet::before {
@@ -385,6 +413,7 @@ export default {
 		margin-top: 4px;
 	}
 
+	.aioseo-google-search-preview__pros-cons,
 	&__description {
 		color: #4E5156;
 		font-size: 14px;
@@ -399,6 +428,26 @@ export default {
 
 		:deep(strong) {
 			font-weight: 600;
+		}
+	}
+
+	&__pros-cons {
+		font-size: 14px;
+		font-weight: 500;
+		display: block;
+
+		&__description {
+			font-weight: 400;
+			color: #70757a;
+		}
+
+		&__view-full-list {
+			cursor: pointer;
+			color: #70757a;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 
@@ -437,14 +486,6 @@ export default {
 
 		&__price {
 			order: 4;
-		}
-
-		.bullet {
-			&::before {
-				content: '•';
-				margin: 0 5px 0 0;
-				font-size: 10px;
-			}
 		}
 	}
 

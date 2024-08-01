@@ -26,11 +26,12 @@
     "node": ">= 8.0.0"
   },
   "dependenciesComments": {
+    "@codemirror/view":"This cannot be updated higher than 6.26.2, breaks JSON highlighting.",
     "@varlet/ui": "This cannot be updated to 3.3.5, breaks an import."
   },
   "dependencies": {
     "@codemirror/lang-json": "6.0.1",
-    "@codemirror/view": "6.28.2",
+    "@codemirror/view": "6.26.2",
     "@emoji-mart/data": "1.2.1",
     "@popperjs/core": "2.11.8",
     "@varlet/ui": "3.3.1",

@@ -165,11 +165,14 @@ body[class*="page_aioseo"] {
 
 .aioseo-app,
 #aioseo-user-profile-tab {
-	--aioseo-gutter: 20px;
-
 	font-family: $font-family;
 	font-size: $font-md;
 	color-scheme: light;
+
+	box-sizing: border-box;
+	position: relative;
+
+	--aioseo-gutter: 20px;
 
 	@media only screen and (max-width: 782px) {
 		--aioseo-gutter: 16px;
@@ -201,9 +204,6 @@ body[class*="page_aioseo"] {
 	.route-fade-leave-active {
 		transform: translateX(-30px);
 	}
-
-	box-sizing: border-box;
-	position: relative;
 
 	*,
 	:after,

@@ -338,7 +338,7 @@ class ThirdParty {
 			return [];
 		}
 
-		$blocks = parse_blocks( $this->post->post_content );
+		$blocks = aioseo()->helpers->parseBlocks( $this->post );
 
 		foreach ( $blocks as $block ) {
 			if ( 'kadence/advancedgallery' === $block['blockName'] && ! empty( $block['attrs']['ids'] ) ) {
