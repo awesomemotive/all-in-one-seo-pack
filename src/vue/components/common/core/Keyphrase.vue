@@ -78,10 +78,15 @@ export default {
 			this.$emit('selectedKeyphrase', panel)
 		},
 		closeEdit (event) {
-			const value = event.target.value
+			const value = event.target?.value.trim()
 			const index = this.index
-			this.$emit('saved', { index, value })
-			this.edit = false
+
+			if (value) {
+				this.edit = false
+				this.$emit('saved', { index, value })
+			} else {
+				this.deleteKeyphraseEv(index)
+			}
 		},
 		pressEnter (event) {
 			event.preventDefault()

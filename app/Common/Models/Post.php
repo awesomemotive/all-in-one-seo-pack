@@ -30,7 +30,7 @@ class Post extends Model {
 	 */
 	protected $jsonFields = [
 		'keywords',
-		// 'keyphrases',
+		'keyphrases',
 		'page_analysis',
 		'schema',
 		// 'schema_type_options',
@@ -430,7 +430,7 @@ class Post extends Model {
 		$thePost->keywords                    = ! empty( $data['keywords'] ) ? aioseo()->helpers->sanitize( $data['keywords'] ) : null;
 		$thePost->pillar_content              = isset( $data['pillar_content'] ) ? rest_sanitize_boolean( $data['pillar_content'] ) : 0;
 		// TruSEO
-		$thePost->keyphrases                  = ! empty( $data['keyphrases'] ) ? wp_json_encode( self::sanitizeKeyphrases( $data['keyphrases'] ) ) : null;
+		$thePost->keyphrases                  = ! empty( $data['keyphrases'] ) ? self::sanitizeKeyphrases( $data['keyphrases'] ) : null;
 		$thePost->page_analysis               = ! empty( $data['page_analysis'] ) ? self::sanitizePageAnalysis( $data['page_analysis'] ) : null;
 		$thePost->seo_score                   = ! empty( $data['seo_score'] ) ? sanitize_text_field( $data['seo_score'] ) : 0;
 		// Sitemap
@@ -686,12 +686,11 @@ class Post extends Model {
 	 *
 	 * @since 4.1.7
 	 *
-	 * @param  string $keyphrases The database keyphrases.
-	 * @return object             The defaults.
+	 * @param  null|object $keyphrases The database keyphrases.
+	 * @return object                  The defaults.
 	 */
-	public static function getKeyphrasesDefaults( $keyphrases = '' ) {
-		$keyphrases = json_decode( (string) $keyphrases );
-		$defaults   = [
+	public static function getKeyphrasesDefaults( $keyphrases = null ) {
+		$defaults = [
 			'focus'      => [
 				'keyphrase' => '',
 				'score'     => 0,

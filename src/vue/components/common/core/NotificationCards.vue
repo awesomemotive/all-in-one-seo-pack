@@ -98,10 +98,13 @@ export default {
 		display: flex;
 		align-items: center;
 		flex-direction: column;
-		padding-top: 100px;
 		font-size: 14px;
 		line-height: 22px;
 		color: $placeholder-color;
+
+		@media (min-height: 500px) {
+			padding-top: 100px;
+		}
 
 		img {
 			width: 30%;

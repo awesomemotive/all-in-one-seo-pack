@@ -122,7 +122,8 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 					}
 				}
 			}
-		}
+		},
+		shouldShowSampleReports : false
 	}),
 	actions : {
 		getAuthUrl ({ returnTo }) {
@@ -391,6 +392,9 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 			})
 
 			this.data.postDetail.seoStatistics.timelineMarkers = markers
+		},
+		showSampleReports () {
+			this.shouldShowSampleReports = true
 		}
 	}
 })

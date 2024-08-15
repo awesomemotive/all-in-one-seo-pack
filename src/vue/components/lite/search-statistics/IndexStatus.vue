@@ -4,6 +4,10 @@
 	</div>
 </template>
 
+<script setup>
+import SvgCircleCheckSolid from '@/vue/components/common/svg/circle/CheckSolid'
+</script>
+
 <style lang="scss">
 .aioseo-index-status {
 	display: inline-flex;

@@ -12,12 +12,16 @@
 				:strings="strings"
 				:feature-list="featureList"
 				:cta-button-visible="ctaButtonVisible"
+				:cta-second-button-visible="ctaSecondButtonVisible"
 				:cta-button-loading="ctaButtonLoading"
 				:cta-button-visible-warning="ctaButtonVisibleWarning"
 				:cta-link="ctaLink"
 				:target="target"
 				:button-text="buttonText"
+				:second-button-text="secondButtonText"
 				:cta-button-click="ctaButtonClick"
+				:cta-second-button-click="ctaSecondButtonClick"
+				:cta-second-button-new-badge="ctaSecondButtonNewBadge"
 				:show-link="showLink"
 				:learn-more-link="learnMoreLink"
 				:hide-bonus="hideBonus"
@@ -49,7 +53,7 @@ import Type3 from '@/vue/components/common/cta/Type/3'
 import Type4 from '@/vue/components/common/cta/Type/4'
 import Type5 from '@/vue/components/common/cta/Type/5'
 export default {
-	emits      : [ 'cta-button-click' ],
+	emits      : [ 'cta-button-click', 'cta-second-button-click' ],
 	components : {
 		Type1,
 		Type2,
@@ -67,11 +71,12 @@ export default {
 				return [ 1, 2, 3, 4, 5 ].includes(value)
 			}
 		},
-		featureList      : Array,
-		sameTab          : Boolean,
-		ctaButtonAction  : Boolean,
-		ctaButtonLoading : Boolean,
-		ctaLink          : {
+		featureList           : Array,
+		sameTab               : Boolean,
+		ctaButtonAction       : Boolean,
+		ctaSecondButtonAction : Boolean,
+		ctaButtonLoading      : Boolean,
+		ctaLink               : {
 			type     : String,
 			required : false
 		},
@@ -80,6 +85,10 @@ export default {
 			required : false
 		},
 		buttonText : {
+			type     : String,
+			required : false
+		},
+		secondButtonText : {
 			type     : String,
 			required : false
 		},
@@ -102,6 +111,13 @@ export default {
 			}
 		},
 		ctaButtonVisibleWarning : String,
+		ctaSecondButtonVisible  : {
+			type : Boolean,
+			default () {
+				return false
+			}
+		},
+		ctaSecondButtonNewBadge : Boolean,
 		alignTop                : {
 			type : Boolean,
 			default () {
@@ -145,6 +161,12 @@ export default {
 			if (this.ctaButtonAction) {
 				event.preventDefault()
 				this.$emit('cta-button-click')
+			}
+		},
+		ctaSecondButtonClick (event) {
+			if (this.ctaSecondButtonAction) {
+				event.preventDefault()
+				this.$emit('cta-second-button-click')
 			}
 		}
 	},

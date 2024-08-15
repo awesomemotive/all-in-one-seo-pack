@@ -353,7 +353,7 @@ export default {
 		},
 		setUrl (url) {
 			this.showResults = false
-			this.updateOption('url', url.replace(this.rootStore.aioseo.urls.mainSiteUrl, '', url))
+			this.updateOption('url', url.replace(this.rootStore.aioseo.urls.home, '', url))
 		},
 		documentClick (event) {
 			if (!this.showResults) {

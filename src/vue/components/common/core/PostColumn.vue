@@ -21,7 +21,7 @@
 
 				<core-tooltip
 					type="action"
-					v-if="optionsStore.options.advanced.headlineAnalyzer"
+					v-if="showHeadlineAnalyzer"
 				>
 					<core-score-button
 						:score="post.headlineScore"
@@ -404,6 +404,14 @@ export default {
 			const isAllowed   = this.allowed('aioseo_search_statistics_settings')
 
 			return isVerified && isConnected && isAllowed
+		},
+		showHeadlineAnalyzer () {
+			// We don't want to show the headline analyzer for products.
+			if ('product' === this.post.postType) {
+				return false
+			}
+
+			return this.optionsStore.options.advanced.headlineAnalyzer
 		}
 	},
 	methods : {

@@ -1,19 +1,20 @@
 <template>
 	<div>
 		<keywords-graph
-			v-if="shouldShowMain('search-statistics', 'keyword-rankings') || licenseStore.isUnlicensed"
+			v-if="(shouldShowMain('search-statistics', 'keyword-rankings') || licenseStore.isUnlicensed || searchStatisticsStore.shouldShowSampleReports)"
 			legend-style="simple"
 		/>
 
 		<upgrade
-			v-if="shouldShowUpgrade('search-statistics', 'keyword-rankings')"
+			v-if="shouldShowUpgrade('search-statistics', 'keyword-rankings') && !searchStatisticsStore.shouldShowSampleReports"
 		/>
 	</div>
 </template>
 
 <script>
 import {
-	useLicenseStore
+	useLicenseStore,
+	useSearchStatisticsStore
 } from '@/vue/stores'
 
 import KeywordsGraph from './keywords-graph/KeywordsGraph'
@@ -22,7 +23,8 @@ import { LicenseConditions } from '@/vue/mixins/LicenseConditions'
 export default {
 	setup () {
 		return {
-			licenseStore : useLicenseStore()
+			licenseStore          : useLicenseStore(),
+			searchStatisticsStore : useSearchStatisticsStore()
 		}
 	},
 	mixins : [ LicenseConditions ],

@@ -53,6 +53,24 @@
 								height="15"
 							/>
 						</span>
+
+						<template
+							v-if="tab.label"
+						>
+							<span
+								v-if="'pro' === tab.label"
+								class="label pro-badge"
+							>
+								<core-pro-badge />
+							</span>
+
+							<span
+								v-if="'new' === tab.label"
+								class="label new"
+							>
+								{{ strings.new }}
+							</span>
+						</template>
 					</slot>
 				</var-tab>
 			</var-tabs>
@@ -146,6 +164,7 @@ import { SaveChanges } from '@/vue/mixins/SaveChanges'
 import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
 
 import BaseButton from '@/vue/components/common/base/Button'
+import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleInformation from '@/vue/components/common/svg/circle/Information'
@@ -166,6 +185,7 @@ export default {
 	emits      : [ 'changed' ],
 	components : {
 		BaseButton,
+		CoreProBadge,
 		SvgCaret,
 		SvgCircleCheck,
 		SvgCircleInformation,
@@ -198,7 +218,8 @@ export default {
 			calculateWidth : false,
 			showMobileTabs : false,
 			strings        : merge(this.composableStrings, {
-				saveChanges : this.$t.__('Save Changes', this.$td)
+				saveChanges : this.$t.__('Save Changes', this.$td),
+				new         : this.$t.__('NEW!', this.$td)
 			})
 		}
 	},
@@ -393,6 +414,18 @@ export default {
 				transform: scale(0);
 				animation: aioseo-ripple 600ms linear;
 				background-color: rgba(0, 0, 0, 0.3);
+			}
+
+			span.label {
+				padding-left: 5px;
+
+				&.new {
+					color: $red;
+					vertical-align: super;
+					font-size: 10px;
+					display: inline-block;
+					margin-top: -5px;
+				}
 			}
 
 			@keyframes aioseo-ripple {

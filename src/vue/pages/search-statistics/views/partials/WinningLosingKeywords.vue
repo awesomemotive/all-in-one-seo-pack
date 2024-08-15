@@ -96,7 +96,7 @@ export default {
 			strings : {
 				winning    : this.$t.__('Top Winning', this.$td),
 				losing     : this.$t.__('Top Losing', this.$td),
-				noKeywords : this.$t.__('You don\'t yet have any keywords.', this.$td)
+				noKeywords : this.$t.__('You don\'t have any keywords yet.', this.$td)
 			}
 		}
 	},

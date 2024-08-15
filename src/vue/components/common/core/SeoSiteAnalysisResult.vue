@@ -31,16 +31,20 @@
 					v-if="getBody.code"
 					class="result-code"
 				>
-					<pre><code
-						v-html="getBody.code"
-					/></pre>
+					<pre>
+						<code
+							v-html="getBody.code.trim()"
+						/>
+					</pre>
 				</div>
 
 				<div
 					v-if="getBody.codeAlt"
 					class="result-code-alt"
 				>
-					<pre><code>{{ getBody.codeAlt }}</code></pre>
+					<pre>
+						<code>{{ getBody.codeAlt.trim() }}</code>
+					</pre>
 				</div>
 
 				<div
@@ -60,7 +64,9 @@
 						type="blue"
 						size="medium"
 						:loading="loading"
-					>{{ getBody.buttonText }}</base-button>
+					>
+						{{ getBody.buttonText }}
+					</base-button>
 				</div>
 			</div>
 		</transition-slide>
@@ -217,6 +223,7 @@ export default {
 		.result-code,
 		.result-code-alt {
 			pre {
+				display: flex;
 				background: $background;
 				border-radius: 3px;
 				max-width: 100%;
@@ -232,7 +239,7 @@ export default {
 
 		.result-code {
 			pre {
-				white-space: pre-wrap;
+				white-space: pre-line;
 			}
 		}
 

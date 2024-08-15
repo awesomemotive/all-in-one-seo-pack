@@ -109,7 +109,7 @@ abstract class Filters {
 		add_filter( 'wp_consent_api_registered_all-in-one-seo-pack-pro/all_in_one_seo_pack.php', '__return_true' );
 
 		foreach ( aioseo()->addons->getAddons() as $addon ) {
-			if ( ! $addon->installed ) {
+			if ( empty( $addon->installed ) || empty( $addon->basename ) ) {
 				continue;
 			}
 

@@ -7,7 +7,7 @@
 			:columns="tableColumns"
 			:rows="Object.values(posts.rows)"
 			:totals="posts.totals"
-			:filters="posts.filters"
+			:filters="getFilters"
 			:additional-filters="posts.additionalFilters"
 			:selected-filters="selectedFilters"
 			:loading="isLoading"
@@ -17,7 +17,7 @@
 			:show-header="showHeader"
 			:show-bulk-actions="false"
 			:show-table-footer="showTableFooter"
-			:show-items-per-page="showItemsPerPage"
+			:show-items-per-page="showItemsPerPage && !searchStatisticsStore.shouldShowSampleReports"
 			show-pagination
 			:blur-rows="showUpsell"
 			@filter-table="processFilter"
@@ -37,7 +37,7 @@
 			<template #postTitle="{ row }">
 				<div class="object-title">
 					<a
-						v-if="row.objectId && 'post' === row.objectType"
+						v-if="row.objectId && 'post' === row.objectType && searchStatisticsStore.isConnected"
 						href="#"
 						@click.prevent="openPostDetail(row)"
 					>
@@ -64,7 +64,7 @@
 							:href="row.context.permalink"
 							target="_blank"
 						>
-							<span>{{ viewPost(row.context.postType.singular) }}</span>
+							<span>{{ viewPost(row.context.postType?.singular) }}</span>
 						</a> |
 					</span>
 
@@ -74,7 +74,7 @@
 							:href="row.context.editLink"
 							target="_blank"
 						>
-							<span>{{ editPost(row.context.postType.singular) }}</span>
+							<span>{{ editPost(row.context.postType?.singular) }}</span>
 						</a>
 					</span>
 				</div>
@@ -90,6 +90,14 @@
 
 			<template #indexStatus="{ row }">
 				<index-status
+					v-if="!searchStatisticsStore.shouldShowSampleReports"
+					:result="row.inspectionResult?.indexStatusResult"
+					:result-link="row.inspectionResult?.inspectionResultLink"
+					:loading="row.inspectionResultLoading"
+				/>
+
+				<index-status-pro
+					v-if="searchStatisticsStore.shouldShowSampleReports"
 					:result="row.inspectionResult?.indexStatusResult"
 					:result-link="row.inspectionResult?.inspectionResultLink"
 					:loading="row.inspectionResultLoading"
@@ -195,6 +203,7 @@ import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Cta from '@/vue/components/common/cta/Index'
 import GraphDecay from './GraphDecay'
 import IndexStatus from '@/vue/components/AIOSEO_VERSION/search-statistics/IndexStatus'
+import IndexStatusPro from '@/vue/components/pro/search-statistics/IndexStatus'
 import ObjectActions from './AIOSEO_VERSION/ObjectActions'
 import PostTypesMixin from '@/vue/mixins/PostTypes.js'
 import Statistic from './Statistic'
@@ -214,6 +223,7 @@ export default {
 		Cta,
 		GraphDecay,
 		IndexStatus,
+		IndexStatusPro,
 		ObjectActions,
 		Statistic
 	},
@@ -280,6 +290,14 @@ export default {
 		}
 	},
 	computed : {
+		getFilters () {
+			// If these are the sample reports, let's hide all the filters.
+			if (this.searchStatisticsStore.shouldShowSampleReports) {
+				return []
+			}
+
+			return this.posts.filters
+		},
 		allColumns () {
 			const columns = clone(this.columns)
 
@@ -370,11 +388,11 @@ export default {
 				}
 			].filter(column => {
 				if (column.coreFeature) {
-					if (!this.$isPro || this.licenseStore.isUnlicensed) {
+					if ((!this.$isPro || this.licenseStore.isUnlicensed) && !this.searchStatisticsStore.shouldShowSampleReports) {
 						return false
 					}
 
-					if (!this.license.hasCoreFeature('search-statistics', column.coreFeature)) {
+					if (!this.license.hasCoreFeature('search-statistics', column.coreFeature) && !this.searchStatisticsStore.shouldShowSampleReports) {
 						return false
 					}
 				}

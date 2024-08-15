@@ -68,6 +68,7 @@ class File {
 					continue;
 				}
 
+				// Decode Additional Page Url to properly show Unicode Characters.
 				$additionalPages[] = $additionalPage;
 			}
 		}
@@ -121,6 +122,7 @@ class File {
 				if ( ! $posts ) {
 					continue;
 				}
+
 				$total = aioseo()->sitemap->query->posts( $postType, [ 'count' => true ] );
 
 				// We need to temporarily reset the linksPerIndex count here so that we can properly chunk.
@@ -155,6 +157,7 @@ class File {
 				if ( ! $terms ) {
 					continue;
 				}
+
 				$total = aioseo()->sitemap->query->terms( $taxonomy, [ 'count' => true ] );
 
 				// We need to temporarily reset the linksPerIndex count here so that we can properly chunk.

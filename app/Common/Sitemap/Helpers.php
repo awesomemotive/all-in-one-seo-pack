@@ -585,4 +585,30 @@ class Helpers {
 
 		return apply_filters( 'aioseo_sitemap_author_post_types', $postTypes );
 	}
+
+	/**
+	 * Decode the Urls from Posts and Terms so they properly show in the Sitemap.
+	 *
+	 * @since 4.6.9
+	 *
+	 * @param  mixed $data   The data to decode.
+	 * @return array $result The converted data with decoded URLs.
+	 */
+	public function decodeSitemapEntries( $data ) {
+		$result = [];
+		// Decode Url to properly show Unicode Characters.
+		foreach ( $data as $item ) {
+			if ( isset( $item['loc'] ) ) {
+				$item['loc'] = aioseo()->helpers->decodeUrl( $item['loc'] );
+			}
+			// This is for the RSS Sitemap.
+			if ( isset( $item['guid'] ) ) {
+				$item['guid'] = aioseo()->helpers->decodeUrl( $item['guid'] );
+			}
+
+			$result[] = $item;
+		}
+
+		return $result;
+	}
 }

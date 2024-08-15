@@ -305,11 +305,6 @@ class PostsTerms {
 		$aioseoPost = Models\Post::getPost( $postId );
 		$aioseoData = json_decode( wp_json_encode( $aioseoPost ), true );
 
-		// Decode these below because `savePost()` expects them to be an array.
-		if ( ! empty( $aioseoData['keyphrases'] ) ) {
-			$aioseoData['keyphrases'] = json_decode( $aioseoData['keyphrases'], true );
-		}
-
 		if ( $isMedia ) {
 			wp_update_post(
 				[

@@ -296,10 +296,6 @@ class PostMeta {
 				$meta['twitter_title']  = $title;
 			}
 
-			if ( ! empty( $meta['keyphrases'] ) && is_array( $meta['keyphrases'] ) ) {
-				$meta['keyphrases'] = wp_json_encode( $meta['keyphrases'] );
-			}
-
 			$aioseoPost = Models\Post::getPost( (int) $post->ID );
 			$aioseoPost->set( $meta );
 			$aioseoPost->save();

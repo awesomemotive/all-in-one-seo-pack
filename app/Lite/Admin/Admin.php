@@ -29,7 +29,7 @@ class Admin extends CommonAdmin\Admin {
 	 * @since 4.0.0
 	 */
 	public function __construct() {
-		if ( ! wp_doing_ajax() && ! wp_doing_cron() ) {
+		if ( ! wp_doing_cron() ) {
 			parent::__construct();
 		}
 

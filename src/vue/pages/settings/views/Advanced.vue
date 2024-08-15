@@ -502,7 +502,7 @@ export default {
 			return !this.licenseStore.isUnlicensed ? this.optionsStore.options.advanced.dashboardWidgets.includes(widget.key) : true
 		},
 		validateOpenAiKey () {
-			if (this.optionsStore.options.advanced.openAiKey && null === this.optionsStore.options.advanced.openAiKey.match(/^sk-(proj-)?[a-zA-Z0-9]{48}$/)) {
+			if (this.optionsStore.options.advanced.openAiKey && null === this.optionsStore.options.advanced.openAiKey.match(/^sk-.*/)) {
 				this.openAiKeyInvalid = true
 			} else {
 				this.openAiKeyInvalid = false

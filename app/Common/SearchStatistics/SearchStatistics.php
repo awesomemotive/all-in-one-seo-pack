@@ -332,6 +332,49 @@ class SearchStatistics {
 			]
 		];
 
+		// Get the 10 most recent posts.
+		$recentPosts = aioseo()->db->db->get_results(
+			sprintf(
+				'SELECT ID, post_title FROM %1$s WHERE post_status = "publish" AND post_type = "post" ORDER BY post_date DESC LIMIT 10',
+				aioseo()->db->db->posts
+			)
+		);
+
+		// Loop through the default page rows and update the key with the permalink from the most recent posts.
+		$i = 0;
+		foreach ( $pageRows as $key => $pageRow ) {
+			// Get the permalink of the recent post that matches the $i index.
+			$permalink = isset( $recentPosts[ $i ] ) ? get_permalink( $recentPosts[ $i ]->ID ) : '';
+
+			// If we don't have a permalink, continue to the next row.
+			if ( empty( $permalink ) ) {
+				continue;
+			}
+
+			// Remove the domain from the permalink by parsing the URL and getting the path.
+			$permalink = wp_parse_url( $permalink, PHP_URL_PATH );
+
+			// If the permalink already exists, continue to the next row.
+			if ( isset( $pageRows[ $permalink ] ) ) {
+				// Update the objectId and objectTitle with the recent post ID and title.
+				$pageRows[ $permalink ]['objectId']    = $recentPosts[ $i ]->ID;
+				$pageRows[ $permalink ]['objectTitle'] = $recentPosts[ $i ]->post_title;
+
+				continue;
+			}
+
+			$pageRows[ $permalink ] = $pageRows[ $key ];
+
+			// Remove the old key.
+			unset( $pageRows[ $key ] );
+
+			// Update the objectId and objectTitle with the recent post ID and title.
+			$pageRows[ $permalink ]['objectId']    = $recentPosts[ $i ]->ID;
+			$pageRows[ $permalink ]['objectTitle'] = $recentPosts[ $i ]->post_title;
+
+			$i++;
+		}
+
 		return [
 			'statistics' => [
 				'ctr'         => '0.74',
@@ -448,8 +491,8 @@ class SearchStatistics {
 					'rows'              => $pageRows,
 					'totals'            => [
 						'page'  => 1,
-						'pages' => 292,
-						'total' => 2914
+						'pages' => 1,
+						'total' => 10
 					],
 					'filters'           => [
 						[
@@ -481,10 +524,10 @@ class SearchStatistics {
 					]
 				],
 				'topLosing'  => [
-					'rows' => []
+					'rows' => $pageRows
 				],
 				'topWinning' => [
-					'rows' => []
+					'rows' => $pageRows
 				]
 			]
 		];
@@ -647,8 +690,8 @@ class SearchStatistics {
 				'rows'    => $keywordsRows,
 				'totals'  => [
 					'page'  => 1,
-					'pages' => 2500,
-					'total' => 25000
+					'pages' => 1,
+					'total' => 10
 				],
 				'filters' => [
 					[
@@ -668,8 +711,8 @@ class SearchStatistics {
 					]
 				]
 			],
-			'topLosing'             => [],
-			'topWinning'            => [],
+			'topLosing'             => $keywordsRows,
+			'topWinning'            => $keywordsRows,
 			'topKeywords'           => $keywordsRows,
 			'distribution'          => [
 				'top3'       => '6.86',
@@ -1074,8 +1117,8 @@ class SearchStatistics {
 				],
 				'totals'            => [
 					'page'  => 1,
-					'pages' => 215,
-					'total' => 4296
+					'pages' => 1,
+					'total' => 10
 				],
 				'additionalFilters' => [
 					[

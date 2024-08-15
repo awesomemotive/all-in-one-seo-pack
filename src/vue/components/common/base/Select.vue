@@ -175,8 +175,14 @@ export default {
 					value : originalTag
 				}
 
-				this.options.push(tag)
-				this.modelValue.push(tag)
+				// Add only if there are no duplicates.
+				if (!this.options.some(option => option.value === tag.value)) {
+					this.options.push(tag)
+				}
+
+				if (!this.modelValue.some(model => model.value === tag.value)) {
+					this.modelValue.push(tag)
+				}
 			})
 
 			this.$emit('update:modelValue', this.modelValue)

@@ -218,4 +218,25 @@ class Elementor extends Base {
 
 		return ! empty( $_REQUEST['aioseo_limit_modified_date'] );
 	}
+
+	/**
+	 * Get the post ID.
+	 *
+	 * @since 4.6.9
+	 *
+	 * @return int|null The post ID or null.
+	 */
+	public function getPostId() {
+		// phpcs:disable HM.Security.NonceVerification.Recommended
+		if ( aioseo()->helpers->isAjaxCronRestRequest() ) {
+			foreach ( [ 'editor_post_id', 'initial_document_id' ] as $key ) {
+				if ( ! empty( $_REQUEST[ $key ] ) ) {
+					return (int) $_REQUEST[ $key ];
+				}
+			}
+		}
+		// phpcs:enable
+
+		return parent::getPostId();
+	}
 }

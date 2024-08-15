@@ -1,10 +1,18 @@
 <template>
 	<div class="aioseo-search-statistics-dashboard">
-		<blur />
+		<blur
+			v-if="!searchStatisticsStore.shouldShowSampleReports"
+		/>
 
 		<cta
+			v-if="!searchStatisticsStore.shouldShowSampleReports"
+			cta-second-button-action
+			@cta-second-button-click="searchStatisticsStore.showSampleReports"
 			:cta-link="$links.getPricingUrl('search-statistics', 'search-statistics-upsell', 'dashboard')"
 			:button-text="strings.ctaButtonText"
+			:second-button-text="strings.ctaSecondButtonText"
+			cta-second-button-new-badge
+			cta-second-button-visible
 			:learn-more-link="$links.getUpsellUrl('search-statistics', 'dashboard', $isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="[
 				strings.feature1,
@@ -27,44 +35,20 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import {
-	useLicenseStore
+	useLicenseStore,
+	useSearchStatisticsStore
 } from '@/vue/stores'
 
 import Blur from './Blur'
 import Cta from '@/vue/components/common/cta/Index'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
-export default {
-	setup () {
-		return {
-			licenseStore : useLicenseStore()
-		}
-	},
-	components : {
-		Blur,
-		Cta,
-		RequiredPlans
-	},
-	data () {
-		return {
-			strings : {
-				ctaButtonText : this.$t.__('Unlock Search Statistics', this.$td),
-				ctaHeader     : this.$t.sprintf(
-					// Translators: 1 - "PRO".
-					this.$t.__('Search Statistics is a %1$s Feature', this.$td),
-					'PRO'
-				),
-				ctaDescription      : this.$t.__('Connect your site to Google Search Console to receive insights on how content is being discovered. Identify areas for improvement and drive traffic to your website.', this.$td),
-				thisFeatureRequires : this.$t.__('This feature requires one of the following plans:', this.$td),
-				feature1            : this.$t.__('Search traffic insights', this.$td),
-				feature2            : this.$t.__('Track page rankings', this.$td),
-				feature3            : this.$t.__('Track keyword rankings', this.$td),
-				feature4            : this.$t.__('Speed tests for individual pages/posts', this.$td)
-			}
-		}
-	}
-}
+import { useCta } from '@/vue/pages/search-statistics/composables/Cta'
+
+const { strings }           = useCta()
+const licenseStore          = useLicenseStore()
+const searchStatisticsStore = useSearchStatisticsStore()
 </script>
 
 <style lang="scss">

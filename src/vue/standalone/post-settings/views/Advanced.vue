@@ -77,7 +77,7 @@
 				<base-select
 					multiple
 					taggable
-					:options="[]"
+					:options="postEditorStore.currentPost.keywords || []"
 					:modelValue="postEditorStore.currentPost.keywords || []"
 					@update:modelValue="values => postEditorStore.currentPost.keywords = values"
 					:tag-placeholder="strings.tagPlaceholder"

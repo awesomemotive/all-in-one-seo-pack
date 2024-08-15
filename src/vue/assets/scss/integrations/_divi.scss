@@ -192,17 +192,29 @@ $settings-bar-height: 90px;
 				}
 			}
 		}
-	
-		.el-picker-panel__icon-btn {
-			padding: 1px 6px;
-			background: inherit;
-	
-			&:hover {
-				color: var(--el-datepicker-hover-text-color);
+		/* Datepicker Fixes */
+		.el-date-picker, 
+		.el-date-range-picker {
+			table.el-date-table {
+				border: inherit;
+
+				td {
+					border: unset;
+				}
+			}
+
+			.el-picker-panel__icon-btn {
+				padding: 1px 6px;
 				background: inherit;
-				text-shadow: inherit;
+		
+				&:hover {
+					color: var(--el-datepicker-hover-text-color);
+					background: inherit;
+					text-shadow: inherit;
+				}
 			}
 		}
+		
 
 		.aioseo-cta {
 			a.learn-more,
@@ -223,17 +235,35 @@ $settings-bar-height: 90px;
 		.aioseo-button {
 			text-transform: initial;
 			display: inline-flex;
+			
 
-			&:hover {
-				&.blue {
-					color: $white;
+			&:disabled {
+				color: inherit;
+			}
+
+			&:not(:disabled) {
+				&:hover {
+					&.blue, &.black , &.green{
+						color: $white;
+					}
+				}
+			}			
+		}
+		
+		.aioseo-modal-body {
+			@for $i from 1 through 6 {
+				h#{$i} {
+					text-transform: inherit;
 				}
 			}
-		}
+		}	
+		
 
 		&.aioseo-post-schema-confirmation-modal {
-			h3 {
-				text-transform: inherit;
+			@for $i from 1 through 6 {
+				h#{$i} {
+					text-transform: inherit;
+				}
 			}
 		}
 

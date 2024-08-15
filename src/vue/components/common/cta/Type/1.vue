@@ -45,6 +45,19 @@
 				{{ buttonText }}
 			</base-button>
 
+			<base-button
+				v-if="ctaSecondButtonVisible"
+				type="blue"
+				tag="a"
+				:href="ctaSecondLink"
+				:target="target"
+				@click.native="ctaSecondButtonClick"
+				:loading="ctaSecondButtonLoading"
+				:new-badge="ctaSecondButtonNewBadge"
+			>
+				{{ secondButtonText }}
+			</base-button>
+
 			<a
 				v-if="showLink"
 				class="learn-more"
@@ -93,11 +106,17 @@ defineProps({
 	featureList             : Array,
 	ctaButtonVisible        : Boolean,
 	ctaButtonLoading        : Boolean,
+	ctaSecondButtonLoading  : Boolean,
+	ctaSecondButtonVisible  : Boolean,
 	ctaButtonVisibleWarning : String,
 	ctaLink                 : String,
+	ctaSecondLink           : String,
 	target                  : String,
 	buttonText              : String,
+	secondButtonText        : String,
 	ctaButtonClick          : Function,
+	ctaSecondButtonClick    : Function,
+	ctaSecondButtonNewBadge : Boolean,
 	showLink                : Boolean,
 	learnMoreLink           : String,
 	hideBonus               : Boolean

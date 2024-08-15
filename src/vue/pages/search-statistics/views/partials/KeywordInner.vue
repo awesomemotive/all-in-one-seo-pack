@@ -22,14 +22,14 @@
 						href="#"
 						@click.prevent="openPostDetail(row)"
 					>
-						{{ row.postTitle }}
+						{{ row.objectTitle }}
 					</a>
 
 					<span
 						v-else
 						class="post-title"
 					>
-						{{ row.postTitle }}
+						{{ row.objectTitle }}
 					</span>
 				</div>
 				<div

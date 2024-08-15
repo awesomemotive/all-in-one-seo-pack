@@ -50,7 +50,7 @@ trait WpUri {
 			$objectId = aioseo()->helpers->getPostId();
 
 			if ( $canonical ) {
-				$url = wp_get_canonical_url( $objectId );
+				$url = aioseo()->helpers->wpGetCanonicalUrl( $objectId );
 			}
 
 			if ( ! $url ) {
@@ -477,5 +477,49 @@ trait WpUri {
 	 */
 	public function excludeHomePath( $path ) {
 		return preg_replace( '@^' . $this->getHomePath() . '@', '/', $path );
+	}
+
+	/**
+	 * Get the canonical URL for a post.
+	 * This is a duplicate of wp_get_canonical_url() with a fix for issue #6372 where
+	 * posts with paginated comment pages return the wrong canonical URL due to how WordPress sets the cpage var.
+	 * We can remove this once trac ticket 60806 is resolved.
+	 *
+	 * @since 4.6.9
+	 *
+	 * @param  \WP_Post|int|null $post The post object or ID.
+	 * @return string|false            The post's canonical URL, or false if the post is not published.
+	 */
+	public function wpGetCanonicalUrl( $post = null ) {
+		$post = get_post( $post );
+
+		if ( ! $post ) {
+			return false;
+		}
+
+		if ( 'publish' !== $post->post_status ) {
+			return false;
+		}
+
+		$canonical_url = get_permalink( $post );
+
+		// If a canonical is being generated for the current page, make sure it has pagination if needed.
+		if ( get_queried_object_id() === $post->ID ) {
+			$page = get_query_var( 'page', 0 );
+			if ( $page >= 2 ) {
+				if ( ! get_option( 'permalink_structure' ) ) {
+					$canonical_url = add_query_arg( 'page', $page, $canonical_url );
+				} else {
+					$canonical_url = trailingslashit( $canonical_url ) . user_trailingslashit( $page, 'single_paged' );
+				}
+			}
+
+			$cpage = aioseo()->helpers->getCommentPageNumber(); // We're calling our own function here to get the correct cpage number.
+			if ( $cpage ) {
+				$canonical_url = get_comments_pagenum_link( $cpage );
+			}
+		}
+
+		return apply_filters( 'get_canonical_url', $canonical_url, $post );
 	}
 }

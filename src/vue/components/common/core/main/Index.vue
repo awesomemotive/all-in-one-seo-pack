@@ -154,7 +154,7 @@ export default {
 						name   : route.meta.name,
 						url    : { name: route.name },
 						access : route.meta.access,
-						pro    : !!route.meta.pro
+						label  : route.meta.label
 					}
 				})
 		},

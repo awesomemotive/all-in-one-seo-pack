@@ -81,11 +81,6 @@ class Analyze {
 
 		$results = $responseBody[ $analyzeOrHomeUrl ]->results;
 
-		// Image alt attributes get stripped by sanitize_text_field, so we need to adjust the way they are stored to keep them intact.
-		if ( ! empty( $results->basic->noImgAltAtts->value ) ) {
-			$results->basic->noImgAltAtts->value = array_map( 'htmlentities', $results->basic->noImgAltAtts->value );
-		}
-
 		aioseo()->internalOptions->internal->siteAnalysis->results = wp_json_encode( $results );
 		aioseo()->internalOptions->internal->siteAnalysis->score   = $responseBody[ $analyzeOrHomeUrl ]->score;
 

@@ -49,6 +49,19 @@ export default {
 				'meta[name^="twitter:"][content]'
 			)
 
+			// Add meta keywords if any
+			let keywordsMetaContent = document.querySelector('meta[name="keywords"]')?.content || ''
+			if (keywordsMetaContent) {
+				// Add space after each comma
+				keywordsMetaContent = keywordsMetaContent.split(',').join(', ')
+
+				// Add it to the third position in the basicTags array
+				basicTags.splice(2, 0, {
+					label : this.$t.__('Meta Keywords', this.$td),
+					value : keywordsMetaContent
+				})
+			}
+
 			basicTags.forEach((tag) => {
 				if (tag.value) {
 					output.push({

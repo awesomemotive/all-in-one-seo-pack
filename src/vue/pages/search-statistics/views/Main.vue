@@ -22,20 +22,68 @@
 		<div>
 			<authentication-alert />
 
+			<template
+				v-if="searchStatisticsStore.shouldShowSampleReports"
+			>
+				<core-alert
+					class="description sample-data-alert"
+					type="yellow"
+					@close-alert="() => {}"
+				>
+					{{ strings.sampleDataAlert }}
+
+					<br />
+					<br />
+
+					<base-button
+						v-if="showSampleDataUnlockCta"
+						type="green"
+						size="small"
+						@click="connect"
+						:loading="loading"
+					>
+						{{ strings.ctaButtonText }}
+					</base-button>
+
+					<base-button
+						v-if="!showSampleDataUnlockCta"
+						tag="a"
+						:href="$links.getPricingUrl('search-statistics', 'search-statistics-demo-upsell', $route.name)"
+						target="_blank"
+						type="green"
+						size="small"
+						@click="searchStatisticsStore.showSampleReports"
+						:loading="loading"
+					>
+						{{ strings.ctaUnlockButtonText }}
+					</base-button>
+				</core-alert>
+
+				<component :is="$route.name" />
+			</template>
+
 			<div
 				v-if="showConnectCta"
 				class="connect-cta"
 			>
-				<core-blur>
+				<core-blur
+					v-if="!searchStatisticsStore.shouldShowSampleReports"
+				>
 					<component :is="$route.name" />
 				</core-blur>
 
 				<cta
+					v-if="!searchStatisticsStore.shouldShowSampleReports"
 					cta-button-action
+					cta-second-button-action
 					@cta-button-click="connect"
+					@cta-second-button-click="searchStatisticsStore.showSampleReports"
 					:cta-button-loading="loading"
 					:show-link="false"
 					:button-text="strings.ctaButtonText"
+					:second-button-text="strings.ctaSecondButtonText"
+					cta-second-button-new-badge
+					cta-second-button-visible
 					:alignTop="true"
 					:hideBonus="true"
 					:feature-list="[
@@ -55,7 +103,7 @@
 			</div>
 
 			<component
-				v-if="!showConnectCta"
+				v-if="!showConnectCta && !searchStatisticsStore.shouldShowSampleReports"
 				:is="$route.name"
 			/>
 		</div>
@@ -72,7 +120,9 @@ import license from '@/vue/utils/license'
 import { DateTime } from 'luxon'
 import { GoogleSearchConsole } from '@/vue/mixins/GoogleSearchConsole'
 import AuthenticationAlert from './partials/AuthenticationAlert'
+import BaseButton from '@/vue/components/common/base/Button'
 import BaseDatePicker from '@/vue/components/common/base/DatePicker'
+import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreMain from '@/vue/components/common/core/main/Index'
 import ContentRankings from './ContentRankings'
@@ -92,7 +142,9 @@ export default {
 	emits      : [ 'rolling' ],
 	components : {
 		AuthenticationAlert,
+		BaseButton,
 		BaseDatePicker,
+		CoreAlert,
 		CoreBlur,
 		CoreMain,
 		ContentRankings,
@@ -109,14 +161,17 @@ export default {
 			maxDate : null,
 			minDate : null,
 			strings : {
-				pageName       : this.$t.__('Search Statistics', this.$td),
-				ctaHeaderText  : this.$t.__('Connect your website to Google Search Console', this.$td),
-				ctaDescription : this.$t.__('Connect your site to Google Search Console to receive insights on how content is being discovered. Identify areas for improvement and drive traffic to your website.', this.$td),
-				ctaButtonText  : this.$t.__('Connect to Google Search Console', this.$td),
-				feature1       : this.$t.__('Search traffic insights', this.$td),
-				feature2       : this.$t.__('Improved visibility', this.$td),
-				feature3       : this.$t.__('Track page and keyword rankings', this.$td),
-				feature4       : this.$t.__('Speed tests for individual pages/posts', this.$td)
+				pageName            : this.$t.__('Search Statistics', this.$td),
+				sampleDataAlert     : this.$t.__('Sample data is available for you to explore. Connect your site to Google Search Console to receive insights on how content is being discovered. Identify areas for improvement and drive traffic to your website.', this.$td),
+				ctaHeaderText       : this.$t.__('Connect your website to Google Search Console', this.$td),
+				ctaDescription      : this.$t.__('Connect your site to Google Search Console to receive insights on how content is being discovered. Identify areas for improvement and drive traffic to your website.', this.$td),
+				ctaButtonText       : this.$t.__('Connect to Google Search Console', this.$td),
+				ctaUnlockButtonText : this.$t.__('Unlock Search Statistics', this.$td),
+				ctaSecondButtonText : this.$t.__('Explore Sample Reports', this.$td),
+				feature1            : this.$t.__('Search traffic insights', this.$td),
+				feature2            : this.$t.__('Improved visibility', this.$td),
+				feature3            : this.$t.__('Track page and keyword rankings', this.$td),
+				feature4            : this.$t.__('Speed tests for individual pages/posts', this.$td)
 			}
 		}
 	},
@@ -138,6 +193,9 @@ export default {
 		},
 		isSettings () {
 			return 'settings' === this.$route.name
+		},
+		showSampleDataUnlockCta () {
+			return (license.hasCoreFeature('search-statistics') && !this.searchStatisticsStore.isConnected) || this.searchStatisticsStore.unverifiedSite
 		},
 		showConnectCta () {
 			return ((license.hasCoreFeature('search-statistics') && !this.searchStatisticsStore.isConnected) || this.searchStatisticsStore.unverifiedSite) && !this.isSettings
@@ -259,6 +317,10 @@ export default {
 
 <style lang="scss">
 .aioseo-app {
+	.sample-data-alert {
+		margin-bottom: 20px;
+	}
+
 	.aioseo-card {
 		margin: 0 0 20px;
 

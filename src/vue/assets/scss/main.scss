@@ -94,6 +94,7 @@ body[class*="page_aioseo"] {
 
 	&.aioseo-flyout-menu-enabled {
 		.aioseo-app {
+			overflow: auto;
 			padding-bottom: 40px;
 		}
 	}

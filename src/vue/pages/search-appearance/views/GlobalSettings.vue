@@ -375,8 +375,8 @@
 						type="number"
 						size="medium"
 						v-model="optionsStore.options.searchAppearance.global.schema.numberOfEmployees.number"
-						step="1"
-						min="1"
+						:step="1"
+						:min="1"
 					/>
 
 					<div
@@ -388,8 +388,8 @@
 							type="number"
 							size="medium"
 							v-model="optionsStore.options.searchAppearance.global.schema.numberOfEmployees.from"
-							step="1"
-							min="0"
+							:step="1"
+							:min="0"
 							:max="optionsStore.options.searchAppearance.global.schema.numberOfEmployees.to"
 							@blur="value => updateMinimumEmployees(value)"
 						/>
@@ -399,7 +399,7 @@
 							type="number"
 							size="medium"
 							v-model="optionsStore.options.searchAppearance.global.schema.numberOfEmployees.to"
-							step="1"
+							:step="1"
 							:min="optionsStore.options.searchAppearance.global.schema.numberOfEmployees.from"
 							@blur="value => updateMaximumEmployees(value)"
 						/>

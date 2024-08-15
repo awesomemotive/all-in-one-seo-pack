@@ -160,7 +160,7 @@ export default {
 		},
 		setUrl (url) {
 			this.showResults = false
-			this.value       = url.replace(this.rootStore.aioseo.urls.mainSiteUrl, '', url)
+			this.value       = url.replace(this.rootStore.aioseo.urls.home, '', url)
 			this.$emit('update:modelValue', this.value)
 		},
 		documentClick (event) {

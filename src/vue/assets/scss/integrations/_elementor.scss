@@ -6,8 +6,10 @@
 }
 
 .elementor-tab-control-aioseo {
-	a::before {
+	span::before {
 		@include icon;
+		color: inherit;
+		background-color: currentColor;
 		height: 16px;
 		width: 16px;
 	}

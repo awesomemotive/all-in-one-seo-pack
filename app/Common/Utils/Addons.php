@@ -124,7 +124,8 @@ class Addons {
 	public function getAddons( $flushCache = false ) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-		$addons = aioseo()->core->cache->get( 'addons' );
+		$addons        = aioseo()->core->cache->get( 'addons' );
+		$defaultAddons = $this->getDefaultAddons();
 		if ( null === $addons || $flushCache ) {
 			$response = aioseo()->helpers->wpRemoteGet( $this->getAddonsUrl() );
 			if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
@@ -132,7 +133,7 @@ class Addons {
 			}
 
 			if ( ! $addons || ! empty( $addons->error ) ) {
-				$addons = $this->getDefaultAddons();
+				$addons = $defaultAddons;
 			}
 
 			aioseo()->core->cache->update( 'addons', $addons );
@@ -153,7 +154,65 @@ class Addons {
 			$addons[ $key ]->capability        = $this->getManageCapability( $addon->sku );
 			$addons[ $key ]->minimumVersion    = '0.0.0';
 			$addons[ $key ]->hasMinimumVersion = false;
+			$addons[ $key ]->featured          = $this->setFeatured( $addon );
 		}
+
+		return $this->sortAddons( $addons );
+	}
+
+	/**
+	 * Set the featured status for an addon.
+	 *
+	 * @since 4.6.9
+	 *
+	 * @param  object $addon The addon.
+	 * @return bool          The featured status.
+	 */
+	protected function setFeatured( $addon ) {
+		$defaultAddons = $this->getDefaultAddons();
+		$featured      = false;
+
+		// Find the addon in the default addons list and get the featured status.
+		foreach ( $defaultAddons as $defaultAddon ) {
+			if ( $addon->sku !== $defaultAddon->sku ) {
+				continue;
+			}
+
+			$featured = ! empty( $addon->featured )
+				? $addon->featured
+				: (
+					! empty( $defaultAddon->featured )
+						? $defaultAddon->featured
+						: $featured
+					);
+			break;
+		}
+
+		return $featured;
+	}
+
+	/**
+	 * Sort the addons by moving the featured ones to the top.
+	 *
+	 * @since 4.6.9
+	 *
+	 * @param  array $addons The addons to sort.
+	 * @return array         The sorted addons.
+	 */
+	protected function sortAddons( $addons ) {
+		// Sort the addons by moving the featured ones to the top.
+		usort( $addons, function( $a, $b ) {
+			// Sort by featured value. It can be false, or numerical. If it's false, it will be moved to the bottom.
+			// If it's numerical, it will be moved to the top. Numbers will be sorted in descending order.
+			$featuredA = ! empty( $a->featured ) ? $a->featured : 0;
+			$featuredB = ! empty( $b->featured ) ? $b->featured : 0;
+
+			if ( $featuredA === $featuredB ) {
+				return 0;
+			}
+
+			return $featuredA > $featuredB ? -1 : 1;
+		} );
 
 		return $addons;
 	}
@@ -633,7 +692,8 @@ class Addons {
 				'canUpdate'          => false,
 				'capability'         => $this->getManageCapability( 'aioseo-eeat' ),
 				'minimumVersion'     => '0.0.0',
-				'hasMinimumVersion'  => false
+				'hasMinimumVersion'  => false,
+				'featured'           => 300
 			],
 			[
 				'sku'                => 'aioseo-redirects',
@@ -665,7 +725,8 @@ class Addons {
 				'canUpdate'          => false,
 				'capability'         => $this->getManageCapability( 'aioseo-redirects' ),
 				'minimumVersion'     => '0.0.0',
-				'hasMinimumVersion'  => false
+				'hasMinimumVersion'  => false,
+				'featured'           => 200
 			],
 			[
 				'sku'                => 'aioseo-link-assistant',
@@ -696,7 +757,8 @@ class Addons {
 				'canUpdate'          => false,
 				'capability'         => $this->getManageCapability( 'aioseo-link-assistant' ),
 				'minimumVersion'     => '0.0.0',
-				'hasMinimumVersion'  => false
+				'hasMinimumVersion'  => false,
+				'featured'           => 100
 			],
 			[
 				'sku'                => 'aioseo-video-sitemap',

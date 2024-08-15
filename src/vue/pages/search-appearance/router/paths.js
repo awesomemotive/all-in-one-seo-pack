@@ -52,7 +52,8 @@ export default [
 		component : loadView('Main'),
 		meta      : {
 			access : 'aioseo_search_appearance_settings',
-			name   : __('Author SEO', td)
+			name   : __('Author SEO', td),
+			label  : 'new'
 		}
 	},
 	{

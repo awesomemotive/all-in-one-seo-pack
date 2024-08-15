@@ -61,7 +61,7 @@ class ConflictingPlugins {
 	public function showNotice() {
 		$type = ! empty( aioseo()->conflictingPlugins->getConflictingPlugins( 'seo' ) ) ? 'SEO' : 'sitemap';
 		?>
-		<div class="notice notice-error aioseo-conflicting-plugins-notice is-dismissible">
+		<div class="notice notice-error aioseo-conflicting-plugin-notice is-dismissible">
 			<p>
 				<?php
 				echo wp_kses(
@@ -113,7 +113,7 @@ class ConflictingPlugins {
 					deactivateBtn
 
 				// Add an event listener to the dismiss button.
-				dismissBtn = document.querySelector('.aioseo-conflicting-plugins-notice .notice-dismiss')
+				dismissBtn = document.querySelector('.aioseo-conflicting-plugin-notice .notice-dismiss')
 				dismissBtn.addEventListener('click', function (event) {
 					var httpRequest = new XMLHttpRequest(),
 						postData    = ''
@@ -127,7 +127,7 @@ class ConflictingPlugins {
 					httpRequest.send(postData)
 				})
 
-				deactivateBtn = document.querySelector('.aioseo-conflicting-plugins-notice .deactivate-conflicting-plugins')
+				deactivateBtn = document.querySelector('.aioseo-conflicting-plugin-notice .deactivate-conflicting-plugins')
 				deactivateBtn.addEventListener('click', function (event) {
 					event.preventDefault()
 

@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.6.1
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.6.8.1
+Stable tag: 4.6.9.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,6 +226,34 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.6.9.1**
+
+* Fixed: Author SEO for E-E-A-T popup sometimes not dismissable.
+
+**New in Version 4.6.9**
+
+* Updated: Added support for Meta Keywords to frontend SEO Preview.
+* Updated: Added support for newer OpenAI API key formats.
+* Updated: AI Title/Description Generator will use WooCommerce's Product Short Description if no Product Description is present.
+* Updated: "aioseo_crawl_cleanup_blocked_args" table is now dropped when plugin is uninstalled.
+* Fixed: Local SEO multiple locations slug preview and redirect source/target URL now correctly support subdirectory sites/languages.
+* Fixed: Elementor integration menu now displays the correct AIOSEO icon again.
+* Fixed: Blank title column in Search Statistics Keyword Performance table.
+* Fixed: Review schema should not be output if rating value is 0.
+* Fixed: "isFamilyFriendly" property not output for Video schema if set to false.
+* Fixed: Date format in Video schema now matches ISO 8601 format.
+* Fixed: Links not added when pressing ENTER key in the post editor.
+* Fixed: Metabox in Divi page builder would close after using any date picker field.
+* Fixed: Various UI compatibility issues with the Extra theme.
+* Fixed: AIOSEO Overview widget now correctly updates when a Focus Keyphrase is removed from a post.
+* Fixed: Keyword tags list search would sometimes appear empty.
+* Fixed: Compatibility between AIOSEO Redirects and B2B King plugin.
+* Fixed: Removing a Focus Keyphrase would sometimes keep the UI in a loading state.
+* Fixed: Last modified date for terms incorrect in rare cases when site DB fills up previously dropped IDs.
+* Fixed: Sitemap stylesheets now properly display non-English characters.
+* Fixed: Canonical URL for posts with paginated comment pages no longer incorrectly refers to comment pages when using a block theme.
+* Fixed: Redirects support for WPML urls in subdirectories.
+
 **New in Version 4.6.8.1**
 
 * Fixed: Block Editor sidebar components not loading in post editor for older WordPress versions.
@@ -418,6 +446,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.6.8.1 =
+= 4.6.9.1 =
 
 This update adds major improvements and bug fixes.

@@ -7,7 +7,7 @@
 			:columns="tableColumns"
 			:rows="Object.values(keywords.rows)"
 			:totals="keywords.totals"
-			:filters="keywords.filters"
+			:filters="getFilters"
 			:additional-filters="keywords.additionalFilters"
 			:loading="loading"
 			:initial-page-number="pageNumber"
@@ -16,7 +16,7 @@
 			:show-header="showHeader"
 			:show-bulk-actions="false"
 			:show-table-footer="showTableFooter"
-			:show-items-per-page="showItemsPerPage"
+			:show-items-per-page="showItemsPerPage && !searchStatisticsStore.shouldShowSampleReports"
 			show-pagination
 			:blur-rows="showUpsell"
 			@filter-table="processFilter"
@@ -241,6 +241,14 @@ export default {
 		}
 	},
 	computed : {
+		getFilters () {
+			// If these are the sample reports, let's hide all the filters.
+			if (this.searchStatisticsStore.shouldShowSampleReports) {
+				return []
+			}
+
+			return this.keywords.filters
+		},
 		changeItemsPerPageSlug () {
 			if (this.postDetail) {
 				return 'searchStatisticsPostDetailKeywords'
@@ -320,6 +328,7 @@ export default {
 
 					return column
 				})
+				.filter(column => !this.searchStatisticsStore.shouldShowSampleReports || 'buttons' !== column.slug)
 		},
 		isSortable () {
 			return 'all' === this.filter && (this.$isPro && !this.licenseStore.isUnlicensed)

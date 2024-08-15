@@ -561,17 +561,22 @@ export default {
 			this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 		},
 		onDeleted () {
-			this.postEditorStore.currentPost.keyphrases.focus.keyphrase = null
+			this.postEditorStore.currentPost.keyphrases.focus.keyphrase = ''
 			this.postEditorStore.isDirty                = true
 			this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 		},
 		addKeyphraseEv () {
 			const keyphraseInputComponent = document.getElementsByClassName(`add-focus-keyphrase-${this.$root.$data.screenContext}-input`)
 			const keyphraseInput          = keyphraseInputComponent[0].querySelector('.medium')
-			if (keyphraseInput.value) {
-				const newKeyphrase = { keyphrase: keyphraseInput.value, score: 0, analysis: {} }
-				this.postEditorStore.currentPost.keyphrases.focus = newKeyphrase
+			const keyphraseInputValue     = keyphraseInput?.value.trim()
+			if (keyphraseInputValue) {
+				this.postEditorStore.currentPost.keyphrases.focus = {
+					keyphrase : keyphraseInputValue,
+					score     : 0,
+					analysis  : {}
+				}
 				this.postEditorStore.currentPost.loading.focus = true
+
 				keyphraseInput.value = ''
 				keyphraseInput.blur()
 

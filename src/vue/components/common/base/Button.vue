@@ -24,51 +24,64 @@
 		</slot>
 
 		<slot></slot>
+
+		<span
+			v-if="newBadge && !loading"
+			class="new-badge"
+		>
+			{{ strings.newBadge }}
+		</span>
 	</component>
 </template>
 
-<script>
+<script setup>
 import CoreLoader from '@/vue/components/common/core/Loader'
-export default {
-	name       : 'base-button',
-	components : {
-		CoreLoader
+import { __ } from '@wordpress/i18n'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
+defineProps({
+	color : String,
+	tag   : {
+		type        : String,
+		default     : 'button',
+		description : 'Button html tag'
 	},
-	props : {
-		color : String,
-		tag   : {
-			type        : String,
-			default     : 'button',
-			description : 'Button html tag'
-		},
-		block    : Boolean,
-		loading  : Boolean,
-		wide     : Boolean,
-		disabled : Boolean,
-		type     : {
-			type        : String,
-			default     : 'default',
-			description : 'Button type (blue|black|green|red|gray|wp-blue)'
-		},
-		nativeType : {
-			type        : String,
-			default     : 'button',
-			description : 'Button native type (e.g button, input etc)'
-		},
-		size : {
-			type        : String,
-			default     : '',
-			description : 'Button size (small-table|small|medium|large)'
-		},
-		link : {
-			type        : Boolean,
-			description : 'Whether button is a link (no borders or background)'
-		},
-		to : {
-			type        : [ Object, String ],
-			description : 'The router link object or string'
-		}
+	block    : Boolean,
+	loading  : Boolean,
+	wide     : Boolean,
+	disabled : Boolean,
+	type     : {
+		type        : String,
+		default     : 'default',
+		description : 'Button type (blue|black|green|red|gray|wp-blue)'
+	},
+	nativeType : {
+		type        : String,
+		default     : 'button',
+		description : 'Button native type (e.g button, input etc)'
+	},
+	size : {
+		type        : String,
+		default     : '',
+		description : 'Button size (small-table|small|medium|large)'
+	},
+	link : {
+		type        : Boolean,
+		description : 'Whether button is a link (no borders or background)'
+	},
+	to : {
+		type        : [ Object, String ],
+		description : 'The router link object or string'
+	},
+	newBadge : {
+		type        : Boolean,
+		description : 'Whether to show the new badge'
 	}
+})
+
+const strings = {
+	newBadge : __('NEW!', td)
 }
 </script>
 
@@ -88,7 +101,6 @@ export default {
 	height: 48px;
 	transition: background-color 0.2s ease;
 	position: relative;
-	overflow: hidden;
 	text-decoration: none;
 	color: $black;
 	white-space: nowrap;
@@ -226,6 +238,8 @@ export default {
 	}
 
 	&.loading {
+		overflow: hidden;
+
 		&.blue {
 			border-color: $blue3;
 			background-color: $blue3;
@@ -318,6 +332,18 @@ export default {
 
 	&.disabled {
 		pointer-events: none;
+	}
+
+	.new-badge {
+		position: absolute;
+		right: -10px;
+		top: -10px;
+		background: $red;
+		text-align: center;
+		border-radius: 5px;
+		color: #fff;
+		padding: 5px;
+		font-size: 10px;
 	}
 }
 </style>

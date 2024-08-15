@@ -39,7 +39,9 @@
 					@toggle-dismissed="dismissed = !dismissed"
 				/>
 
-				<div class="notification-footer">
+				<div
+					v-if="totalPages > 1 || (!dismissed && notifications.length)"
+					class="notification-footer">
 					<div
 						class="pagination"
 					>

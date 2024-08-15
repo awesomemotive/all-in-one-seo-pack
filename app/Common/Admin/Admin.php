@@ -99,6 +99,8 @@ class Admin {
 
 		add_action( 'aioseo_unslash_escaped_data_posts', [ $this, 'unslashEscapedDataPosts' ] );
 
+		add_action( 'wp_ajax_aioseo-dismiss-active-menu-tooltip', [ $this, 'dismissActiveMenuTooltips' ] );
+
 		if ( wp_doing_ajax() || wp_doing_cron() ) {
 			return;
 		}
@@ -108,6 +110,8 @@ class Admin {
 		add_action( 'sanitize_comment_cookies', [ $this, 'init' ], 20 );
 
 		add_action( 'admin_menu', [ $this, 'deactivationSurvey' ], 100 );
+
+		add_action( 'in_admin_header', [ $this, 'addActiveMenuTooltips' ] );
 	}
 
 	/**
@@ -1244,5 +1248,121 @@ class Admin {
 		echo wp_kses_post( '<div id="aioseo-footer-links"></div>' );
 
 		aioseo()->core->assets->load( 'src/vue/standalone/footer-links/main.js' );
+	}
+
+	/**
+	 * Adds the active menu tooltips.
+	 *
+	 * @since 4.6.9
+	 *
+	 * @return void
+	 */
+	public function addActiveMenuTooltips() {
+		// This pointer slug is set here so we can scale later if we add other pointers.
+		$pointer = 'author-seo';
+
+		// If the user has already dismissed this tooltip, don't show it again.
+		if ( get_user_meta( get_current_user_id(), "_aioseo-$pointer-dismissed", true ) ) {
+			return;
+		}
+
+		// If the Author SEO addon is already loaded, don't show the tooltip.
+		if ( aioseo()->addons->getLoadedAddon( 'eeat' ) ) {
+			return;
+		}
+
+		// If the user cannot access the menu page or activate plugins, bail.
+		if (
+			! current_user_can( 'aioseo_search_appearance_settings' ) ||
+			! current_user_can( 'activate_plugins' )
+		) {
+			return;
+		}
+
+		// If the user is activating the Author SEO addon, dismiss the tooltip.
+		if ( ! empty( $_GET['aioseo-action'] ) && 'activate-author-seo' === wp_unslash( $_GET['aioseo-action'] ) ) { // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized, HM.Security.NonceVerification.Recommended, Generic.Files.LineLength.MaxExceeded
+			update_user_meta( get_current_user_id(), "_aioseo-$pointer-dismissed", true );
+
+			return;
+		}
+
+		// If we are already on the search appearance page, don't show the tooltip.
+		if ( 'all-in-one-seo_page_aioseo-search-appearance' === aioseo()->helpers->getCurrentScreen()->id ) {
+			return;
+		}
+
+		// Enqueue the pointer scripts and styles.
+		wp_enqueue_style( 'wp-pointer' );
+		wp_enqueue_script( 'wp-pointer' );
+
+		// Output the pointer script.
+		$nonce    = wp_create_nonce( 'aioseo-dismiss-active-menu-tooltip' );
+		$title    = esc_html__( 'NEW! Author SEO for E-E-A-T', 'all-in-one-seo-pack' );
+		$subtitle = esc_html__( 'Boost your E-E-A-T with our latest Author SEO addon!', 'all-in-one-seo-pack' );
+		$content  = esc_html__( 'Optimize your site for Google\'s E-E-A-T ranking factor by proving your writer\'s expertise through author schema markup and new UI elements.', 'all-in-one-seo-pack' ); // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+		$button   = sprintf(
+			'<p><a class=\"button button-primary\" href=\"%s\">%s</a></p>',
+			admin_url( 'admin.php?aioseo-action=activate-author-seo&page=aioseo-search-appearance#author-seo' ),
+			esc_html__( 'Activate Author SEO', 'all-in-one-seo-pack' )
+		);
+		?>
+		<script>
+			jQuery( document ).ready( function( $ ) {
+				var isClosed = false;
+				var pointer = $( '#toplevel_page_aioseo > a' ).pointer( {
+					content : "<h3><?php echo $title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><\/h3>" +
+						"<h4><?php echo $subtitle; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><\/h4>" +
+						"<p><?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>" +
+						"<?php echo $button; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>",
+					position : {
+						edge  : <?php echo is_rtl() ? "'right'" : "'left'"; ?>,
+						align : 'center'
+					},
+					pointerWidth : 420,
+					close : function() {
+						isClosed = true;
+						jQuery.post(
+							ajaxurl,
+							{
+								pointer     : '<?php echo esc_js( $pointer ); ?>',
+								action      : 'aioseo-dismiss-active-menu-tooltip',
+								_ajax_nonce : '<?php echo esc_js( $nonce ); ?>'
+							}
+						);
+					}
+				} ).pointer('open');
+
+				// Reposition the pointer when the window is resized.
+				window.addEventListener( 'scroll', function() {
+					if ( isClosed ) {
+						return;
+					}
+
+					pointer.pointer( 'reposition' );
+				} );
+			} );
+		</script>
+		<?php
+	}
+
+	/**
+	 * Dismisses the active menu tooltips.
+	 *
+	 * @since 4.6.9
+	 *
+	 * @return void
+	 */
+	public function dismissActiveMenuTooltips() {
+		// Bail if the request is not an AJAX request or the action is not the one we expect.
+		if ( ! isset( $_POST['action'] ) || 'aioseo-dismiss-active-menu-tooltip' !== $_POST['action'] || empty( $_POST['pointer'] ) ) {
+			return;
+		}
+
+		// Check the nonce.
+		check_ajax_referer( 'aioseo-dismiss-active-menu-tooltip', 'nonce' );
+
+		// Permanently dismiss the tooltip for the current user.
+		$pointer = sanitize_text_field( wp_unslash( $_POST['pointer'] ) );
+		update_user_meta( get_current_user_id(), "_aioseo-$pointer-dismissed", true );
 	}
 }

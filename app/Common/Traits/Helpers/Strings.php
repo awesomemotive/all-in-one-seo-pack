@@ -351,8 +351,8 @@ trait Strings {
 	 *
 	 * @since 4.1.0
 	 *
-	 * @param  string $tags The JSON formatted data tags.
-	 * @return string       The comma separated values.
+	 * @param  string|array $tags The Array or JSON formatted data tags.
+	 * @return string             The comma separated values.
 	 */
 	public function jsonTagsToCommaSeparatedList( $tags ) {
 		$tags = is_string( $tags ) ? json_decode( $tags ) : $tags;

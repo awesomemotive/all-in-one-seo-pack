@@ -133,7 +133,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { stripTags } from '@/vue/utils/strings'
+import { stripTags, softSanitizeHtml } from '@/vue/utils/strings'
 import { getText, truncate } from '@/vue/utils/html'
 import { CURRENCY_LIST } from '@/vue/plugins/constants'
 import SvgCaret from '@/vue/components/common/svg/Caret'
@@ -220,7 +220,8 @@ export default {
 			return faviconUrl
 		},
 		parseDescription () {
-			const output = getText(this.description.substring(0, 160).trim() + (160 < this.description.length ? ' ...' : ''), false)
+			let output = getText(this.description.substring(0, 160).trim() + (160 < this.description.length ? ' ...' : ''), false)
+			output = softSanitizeHtml(output)
 			if (!this.focusKeyphrase) {
 				return output
 			}
@@ -283,7 +284,7 @@ export default {
 			type : String,
 			default () {
 				const rootStore = useRootStore()
-				return rootStore.aioseo.urls.mainSiteUrl
+				return rootStore.aioseo.urls.home
 			}
 		},
 		title       : String,

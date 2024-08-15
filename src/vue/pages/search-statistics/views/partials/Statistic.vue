@@ -49,6 +49,7 @@ import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
+import { DateTime } from 'luxon'
 import numbers from '@/vue/utils/numbers'
 import StatisticMixin from '../../mixins/Statistic.js'
 import dateFormat from '@/vue/utils/dateFormat'
@@ -113,8 +114,15 @@ export default {
 				? this.$t.__('Up', this.$td)
 				: this.$t.__('Down', this.$td)
 
-			const compareStart = new Date(`${this.searchStatisticsStore.range.compareStart} 00:00:00`)
-			const compareEnd   = new Date(`${this.searchStatisticsStore.range.compareEnd} 00:00:00`)
+			const startDate = this.searchStatisticsStore.shouldShowSampleReports
+				? DateTime.now().minus({ days: 14 }).toFormat('yyyy-MM-dd')
+				: this.searchStatisticsStore.range.compareStart
+			const endDate = this.searchStatisticsStore.shouldShowSampleReports
+				? DateTime.now().minus({ days: 7 }).toFormat('yyyy-MM-dd')
+				: this.searchStatisticsStore.range.compareEnd
+
+			const compareStart = new Date(`${startDate} 00:00:00`)
+			const compareEnd   = new Date(`${endDate} 00:00:00`)
 
 			return this.$t.sprintf(
 				// Translators: 1 - The direction (up or down), 2 - The difference, 3 - "in search results", 4 - The first date, 5 - The second date.

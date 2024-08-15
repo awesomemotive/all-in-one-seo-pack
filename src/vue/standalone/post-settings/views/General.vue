@@ -961,7 +961,6 @@ export default {
 		}
 
 		&.selected {
-			border: 2px solid $border;
 
 			&:before,
 			&:after {

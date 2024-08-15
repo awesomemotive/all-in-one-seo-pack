@@ -157,7 +157,7 @@ class PostMeta {
 						$keyphraseArray['additional'][] = [ 'keyphrase' => aioseo()->helpers->sanitizeOption( $keyphrase ) ];
 					}
 
-					$meta['keyphrases'] = wp_json_encode( $keyphraseArray );
+					$meta['keyphrases'] = $keyphraseArray;
 					break;
 				case '_seopress_robots_snippet':
 				case '_seopress_robots_archive':
