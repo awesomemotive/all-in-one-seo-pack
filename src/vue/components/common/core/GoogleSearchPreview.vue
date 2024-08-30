@@ -258,8 +258,12 @@ export default {
 					? this.$t._n('vote', 'votes', count, this.$td)
 					: this.$t._n('review', 'reviews', count, this.$td)
 
-				// Translators: 1 - Amount of reviews, 2 - "vote(s)" or "review(s)".
-				return this.$t.sprintf(this.$t.__('%1$s %2$s', this.$td), count, suffix)
+				return this.$t.sprintf(
+					// Translators: 1 - Amount of reviews, 2 - "vote(s)" or "review(s)".
+					this.$t.__('%1$s %2$s', this.$td),
+					count,
+					suffix
+				)
 			}
 
 			return `(${this.reviewSnippet.ratingCount || this.reviewSnippet.reviewCount})`

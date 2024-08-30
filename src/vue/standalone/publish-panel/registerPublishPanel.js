@@ -18,9 +18,9 @@ import { isBlockEditor } from '@/vue/utils/context'
 		return
 	}
 
-	const PluginDocumentSettingPanel = window?.editor?.PluginDocumentSettingPanel || window.wp?.editPost?.PluginDocumentSettingPanel
-	const PluginPrePublishPanel      = window?.editor?.PluginPrePublishPanel || window.wp?.editPost?.PluginPrePublishPanel
-	const PluginPostPublishPanel     = window?.editor?.PluginPostPublishPanel || window.wp?.editPost?.PluginPostPublishPanel
+	const PluginDocumentSettingPanel = window?.wp?.editor?.PluginDocumentSettingPanel || window.wp?.editPost?.PluginDocumentSettingPanel
+	const PluginPrePublishPanel      = window?.wp?.editor?.PluginPrePublishPanel || window.wp?.editPost?.PluginPrePublishPanel
+	const PluginPostPublishPanel     = window?.wp?.editor?.PluginPostPublishPanel || window.wp?.editPost?.PluginPostPublishPanel
 	const registerPlugin             = wp.plugins.registerPlugin
 
 	// We need to load the Pinia here since we are using the store outside an App.

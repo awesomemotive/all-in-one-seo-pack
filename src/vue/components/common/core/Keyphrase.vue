@@ -7,6 +7,13 @@
 			<span class="keyphrase-edit" @click="editKeyphraseEv(index)">
 				<svg-pencil />
 			</span>
+			<a
+				href="#"
+				@click.prevent.exact="keywordRankTrackerStore.modalOpenPostEdit = true"
+				class="btn-keyword-rank-tracker"
+			>
+				<svg-statistics width="20"/>
+			</a>
 			<span class="keyphrase-score" :class="scoreClass" @click="toggleKeyphrasesPanel(index)">{{ score }}/100</span>
 		</span>
 		<span class="aioseo-edit-keyphrase-tag" v-if="edit">
@@ -31,14 +38,25 @@
 </template>
 
 <script>
+import {
+	useKeywordRankTrackerStore
+} from '@/vue/stores'
+
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
+import SvgStatistics from '@/vue/components/common/svg/Statistics'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 export default {
+	setup () {
+		return {
+			keywordRankTrackerStore : useKeywordRankTrackerStore()
+		}
+	},
 	emits      : [ 'selectedKeyphrase', 'deleted', 'saved' ],
 	components : {
 		CoreTooltip,
 		SvgPencil,
+		SvgStatistics,
 		SvgTrash
 	},
 	props : {
@@ -100,7 +118,6 @@ export default {
 <style lang="scss">
 .aioseo-keyphrase-tag {
 	.keyphrase-delete {
-
 		.aioseo-tooltip {
 			display: flex;
 			margin: 0;
@@ -112,6 +129,29 @@ export default {
 		}
 	}
 
+	.btn-keyword-rank-tracker {
+		--gutter: 16px;
+
+		display: inline-flex;
+		margin: 0 calc(var(--gutter) * 2) 0 var(--gutter);
+		position: relative;
+		vertical-align: middle;
+
+		&:after {
+			background: $input-border;
+			content: '';
+			height: 20px;
+			position: absolute;
+			right: calc(var(--gutter) * -1);
+			top: 50%;
+			transform: translateY(-50%);
+			width: 1px;
+		}
+
+		&:hover {
+			opacity: 0.8;
+		}
+	}
 }
 
 </style>

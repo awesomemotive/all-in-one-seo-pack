@@ -1,59 +1,77 @@
 <template>
 	<div class="aioseo-search-statistics-keywords">
-		<grid-row>
-			<grid-column>
-				<core-card
-					slug="keywordPositions"
-					:header-text="strings.keywordPositionsCard"
-					:toggles="false"
-					no-slide
-				>
+		<core-settings-row
+			:name="strings.chooseYourKeywords"
+			left-size="12"
+			right-size="12"
+			class="aioseo-settings-row--positions"
+		>
+			<template #name>
+				{{ strings.keywordPositionsCard }}
+
+				<core-tooltip>
+					<svg-circle-question-mark/>
+
 					<template #tooltip>
-						<span v-html="strings.keywordPositionsTooltip" />
+						<span v-html="strings.keywordPositionsTooltip"/>
 					</template>
+				</core-tooltip>
+			</template>
 
-					<seo-statistics-overview
-						:statistics="[ 'keywords', 'impressions', 'position' ]"
-						:show-graph="false"
-						view="side-by-side"
-					/>
+			<template #content>
+				<seo-statistics-overview
+					:statistics="[ 'keywords', 'impressions', 'position' ]"
+					:show-graph="false"
+					view="side-by-side"
+				/>
 
-					<grid-row>
-						<grid-column md="6">
-							<keywords-graph legend-style="simple" />
-						</grid-column>
+				<grid-row>
+					<grid-column md="6">
+						<keywords-graph legend-style="simple"/>
+					</grid-column>
 
-						<grid-column md="6">
-							<keywords-distribution-graph />
-						</grid-column>
-					</grid-row>
-				</core-card>
+					<grid-column md="6">
+						<keywords-distribution-graph/>
+					</grid-column>
+				</grid-row>
+			</template>
+		</core-settings-row>
 
-				<core-card
-					slug="keywordPerformance"
-					:header-text="strings.keywordPerformanceCard"
-					:toggles="false"
-					no-slide
-				>
+		<core-settings-row
+			:name="strings.keywordPerformanceCard"
+			left-size="12"
+			right-size="12"
+			no-vertical-margin
+			no-border
+			class="aioseo-settings-row--performance"
+		>
+			<template #name>
+				{{ strings.keywordPerformanceCard }}
+
+				<core-tooltip>
+					<svg-circle-question-mark/>
+
 					<template #tooltip>
-						<span v-html="strings.keywordPerformanceTooltip" />
+						<span v-html="strings.keywordPerformanceTooltip"/>
 					</template>
+				</core-tooltip>
+			</template>
 
-					<keywords-table
-						:keywords="searchStatisticsStore.data?.keywords?.paginated || defaultKeywords"
-						:loading="searchStatisticsStore.loading.keywords"
-						:columns="[ 'keywordSortable', 'clicksSortable', 'ctrSortable', 'impressionsSortable', 'positionSortable', 'buttons' ]"
-						:append-columns="{
+			<template #content>
+				<keywords-table
+					:keywords="searchStatisticsStore.data?.keywords?.paginated || defaultKeywords"
+					:loading="searchStatisticsStore.loading.keywords"
+					:columns="[ 'keywordSortable', 'clicksSortable', 'ctrSortable', 'impressionsSortable', 'positionSortable', 'buttons' ]"
+					:append-columns="{
 							all        : 'diffPosition',
 							topLosing  : 'diffDecay',
 							topWinning : 'diffDecay'
 						}"
-						show-items-per-page
-						show-table-footer
-					/>
-				</core-card>
-			</grid-column>
-		</grid-row>
+					show-items-per-page
+					show-table-footer
+				/>
+			</template>
+		</core-settings-row>
 	</div>
 </template>
 
@@ -62,13 +80,16 @@ import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
-import CoreCard from '@/vue/components/common/core/Card'
+import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
+import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import KeywordsDistributionGraph from '../partials/KeywordsDistributionGraph'
 import KeywordsGraph from '../partials/KeywordsGraph'
 import KeywordsTable from '../partials/KeywordsTable'
 import SeoStatisticsOverview from '../partials/SeoStatisticsOverview'
+import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
+
 export default {
 	setup () {
 		return {
@@ -76,13 +97,15 @@ export default {
 		}
 	},
 	components : {
-		CoreCard,
+		CoreSettingsRow,
+		CoreTooltip,
 		GridColumn,
 		GridRow,
 		KeywordsDistributionGraph,
 		KeywordsGraph,
 		KeywordsTable,
-		SeoStatisticsOverview
+		SeoStatisticsOverview,
+		SvgCircleQuestionMark
 	},
 	data () {
 		return {
@@ -112,6 +135,21 @@ export default {
 
 <style lang="scss">
 .aioseo-search-statistics-keywords {
+	.aioseo-settings-row {
+		&--positions {
+			margin-bottom: 24px;
+			padding-bottom: 24px;
+		}
+
+		&--performance {
+			--aioseo-gutter: 0;
+		}
+
+		.settings-name .name {
+			--font-size: 16px;
+		}
+	}
+
 	.track-keyword {
 		&--tracked {
 			color: $green;

@@ -78,7 +78,7 @@ const refreshWoocommerceStore = () => {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-	if (!isUnlicensed()) {
+	if ('customize' !== window?.aioseo?.screen?.base && !isUnlicensed()) {
 		refreshWoocommerceStore()
 	}
 })

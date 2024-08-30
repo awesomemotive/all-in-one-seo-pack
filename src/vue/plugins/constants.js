@@ -30,6 +30,7 @@ export const GLOBAL_STRINGS = {
 	cancel    : __('Cancel', td),
 	delete    : __('Delete', td),
 	disabled  : __('Disabled', td),
+	edit      : __('Edit', td),
 	enabled   : __('Enabled', td),
 	hide      : __('Hide', td),
 	import    : __('Import', td),
@@ -1491,13 +1492,6 @@ export const SCHEMA_ENERGY_RATING = [
 	{ label: 'E', value: 'https://schema.org/EUEnergyEfficiencyCategoryE' },
 	{ label: 'F', value: 'https://schema.org/EUEnergyEfficiencyCategoryF' },
 	{ label: 'G', value: 'https://schema.org/EUEnergyEfficiencyCategoryG' }
-]
-
-export const SCHEMA_OFFER_ITEM_CONDITION = [
-	{ label: __('New', td), value: 'https://schema.org/NewCondition' },
-	{ label: __('Used', td), value: 'https://schema.org/UsedCondition' },
-	{ label: __('Refurbished', td), value: 'https://schema.org/RefurbishedCondition' },
-	{ label: __('Damaged', td), value: 'https://schema.org/DamagedCondition' }
 ]
 
 export const SCHEMA_VEHICLE_OFFER_ITEM_CONDITION = [

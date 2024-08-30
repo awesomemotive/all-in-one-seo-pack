@@ -192,7 +192,6 @@ export default {
 		.modal-container {
 			width: 100%;
 			max-width: 840px;
-			max-height: 90vh;
 			overflow-y: hidden;
 			overflow-x: hidden;
 			margin: 0 auto;
@@ -229,7 +228,8 @@ export default {
 				button.close {
 					background-color: #fff;
 					border: none;
-					line-height: 1;
+					cursor: pointer;
+					line-height: 14px;
 					margin: 0;
 					opacity: 1;
 					outline: none;
@@ -238,11 +238,17 @@ export default {
 					right: 20px;
 					top: 50%;
 					transform: translate(0, -50%);
+					width: 14px;
+					height: 14px;
+
+					&:focus {
+						outline: 1px solid $blue;
+						outline-offset: 2px;
+					}
 
 					svg.aioseo-close {
-						cursor: pointer;
-						width: 14px;
-						height: 14px;
+						width: inherit;
+						height: inherit;
 					}
 				}
 			}
@@ -250,7 +256,7 @@ export default {
 			.modal-body {
 				overflow-y: auto;
 				overflow-x: hidden;
-				max-height: 80vh;
+				max-height: 75vh;
 				padding: 0;
 				position: relative;
 

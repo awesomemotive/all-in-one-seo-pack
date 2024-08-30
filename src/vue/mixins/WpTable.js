@@ -25,9 +25,11 @@ export const WpTable = {
 					this.$refs?.table?.editRow(null)
 				})
 		},
-		processAdditionalFilters ({ filters }) {
+		processAdditionalFilters ({ filters, searchTerm = null, pageNumber = null }) {
 			this.wpTableLoading = true
 			this.selectedFilters = filters
+			this.searchTerm = searchTerm ?? this.searchTerm
+			this.pageNumber = pageNumber ?? this.pageNumber
 
 			this.processFetchTableData(filters)
 				.then(() => (this.wpTableLoading = false))
@@ -81,7 +83,7 @@ export const WpTable = {
 			this.orderDir       = this.orderBy !== column.slug ? column.sortDir : ('asc' === column.sortDir ? 'desc' : 'asc')
 			this.wpTableLoading = true
 
-			this.processFetchTableData()
+			return this.processFetchTableData()
 				.then(() => (this.wpTableLoading = false))
 		},
 		processFetchTableData (additionalFilters) {

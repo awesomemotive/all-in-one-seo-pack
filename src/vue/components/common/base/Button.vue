@@ -223,17 +223,13 @@ const strings = {
 
 	&.red {
 		border: 1px solid $red;
-		background-color: #fff;
-		color: $red;
+		background-color: $red;
+		color: #fff;
 
-		&:hover {
-			background-color: $red;
-			color: #fff;
-		}
-
+		&:hover,
 		&:active {
-			border-color: $red2;
 			background-color: $red2;
+			border-color: $red2;
 		}
 	}
 

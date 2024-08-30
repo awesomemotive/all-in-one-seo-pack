@@ -22,8 +22,8 @@ export default function registerScoreToggler () {
 	rootStore.aioseo.registerScoreTogglerSet = true
 
 	const registerPlugin            = window.wp.plugins.registerPlugin
-	const PluginSidebarMoreMenuItem = window?.editor?.PluginSidebarMoreMenuItem || window.wp?.editPost?.PluginSidebarMoreMenuItem
-	const PluginSidebar             = window?.editor?.PluginSidebar || window.wp?.editPost?.PluginSidebar
+	const PluginSidebarMoreMenuItem = window?.wp?.editor?.PluginSidebarMoreMenuItem || window.wp?.editPost?.PluginSidebarMoreMenuItem
+	const PluginSidebar             = window?.wp?.editor?.PluginSidebar || window.wp?.editPost?.PluginSidebar
 	const Fragment                  = window.wp.element.Fragment
 	const el                        = window.wp.element.createElement
 	const analysisCapability        = rootStore.aioseo.user.capabilities.aioseo_page_analysis

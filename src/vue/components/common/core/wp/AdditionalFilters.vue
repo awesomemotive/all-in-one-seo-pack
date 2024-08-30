@@ -4,10 +4,7 @@
 			v-for="(filter, index) in additionalFilters"
 			:key="index"
 		>
-			<label
-				for="filter-by-date"
-				class="screen-reader-text"
-			>{{ filter.label }}</label>
+			<label class="screen-reader-text">{{ filter.label }}</label>
 
 			<select
 				:name="filter.name"

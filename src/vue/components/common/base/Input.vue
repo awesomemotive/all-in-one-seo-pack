@@ -35,6 +35,8 @@
 				:max="'number' === type ? max : null"
 				:min="'number' === type ? min : null"
 				:step="'number' === type ? step : null"
+				:accept="accept"
+				:maxlength="maxlength"
 				@input="$emit('update:modelValue', $event.target.value)"
 				@blur="$emit('blur', $event.target.value); validate($event.target.value)"
 				@change="$emit('change', $event.target.value)"
@@ -195,6 +197,8 @@ export default {
 			type     : Number,
 			required : false
 		},
+		accept     : String,
+		maxlength  : Number,
 		validation : {
 			type : String,
 			default () {
@@ -248,6 +252,7 @@ export default {
 		width: 100%;
 
 		&.file {
+			overflow: hidden;
 			position: absolute;
 			top: 0;
 			right: 0;

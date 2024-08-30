@@ -452,6 +452,7 @@ export default {
 
 <style lang="scss">
 .aioseo-search-statistics-keywords-table {
+	position: relative;
 
 	.limit-line {
 		overflow: hidden;

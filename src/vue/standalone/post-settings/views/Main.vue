@@ -90,6 +90,11 @@
 				<modal-content />
 			</template>
 		</core-modal>
+
+		<keyword-rank-tracker
+			:modal-open="keywordRankTrackerStore.modalOpenPostEdit"
+			@update:modal-open="keywordRankTrackerStore.modalOpenPostEdit = $event"
+		/>
 	</div>
 </template>
 
@@ -100,7 +105,8 @@ import {
 	useRedirectsStore,
 	useRootStore,
 	useSettingsStore,
-	useSeoRevisionsStore
+	useSeoRevisionsStore,
+	useKeywordRankTrackerStore
 } from '@/vue/stores'
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
@@ -113,6 +119,7 @@ import Alert from './partials/Alert'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import General from './General'
+import KeywordRankTracker from './KeywordRankTracker'
 import LinkAssistant from './Links'
 import ModalContent from './ModalContent'
 import Redirects from './Redirects'
@@ -134,12 +141,13 @@ import SvgShare from '@/vue/components/common/svg/Share'
 export default {
 	setup () {
 		return {
-			licenseStore      : useLicenseStore(),
-			postEditorStore   : usePostEditorStore(),
-			redirectsStore    : useRedirectsStore(),
-			rootStore         : useRootStore(),
-			settingsStore     : useSettingsStore(),
-			seoRevisionsStore : useSeoRevisionsStore()
+			licenseStore            : useLicenseStore(),
+			postEditorStore         : usePostEditorStore(),
+			redirectsStore          : useRedirectsStore(),
+			rootStore               : useRootStore(),
+			settingsStore           : useSettingsStore(),
+			seoRevisionsStore       : useSeoRevisionsStore(),
+			keywordRankTrackerStore : useKeywordRankTrackerStore()
 		}
 	},
 	components : {
@@ -148,6 +156,7 @@ export default {
 		CoreMainTabs,
 		CoreModal,
 		General,
+		KeywordRankTracker,
 		LinkAssistant,
 		ModalContent,
 		Redirects,

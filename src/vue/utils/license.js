@@ -38,7 +38,12 @@ const hasCoreFeature = (sectionSlug, feature) => {
 			return true
 		}
 
-		if (sectionSlug === section && features[section].includes(feature)) {
+		if (
+			sectionSlug === section &&
+			(
+				features[section].find(f => f === feature || -1 < f.indexOf(feature))
+			)
+		) {
 			return true
 		}
 	}

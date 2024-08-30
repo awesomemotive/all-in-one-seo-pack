@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.6.1
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.6.9.1
+Stable tag: 4.7.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,6 +226,11 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.7.0**
+
+* New: Keyword Rank Tracker - Track your most important keywords and add them to groups to see how your site is performing for key topics in Google search results.
+* Fixed: AIOSEO Pro and all AIOSEO addon plugins should now auto-update correctly (if enabled) after a new update is released.
+
 **New in Version 4.6.9.1**
 
 * Fixed: Author SEO for E-E-A-T popup sometimes not dismissable.
@@ -335,38 +340,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * Fixed: Saved templates not showing their graph subtype (if applicable) in the schema templates overview.
 * Fixed: Label of phone number input fields no longer turns green when phone number is valid.
 
-**New in Version 4.6.3**
-
-* Updated: New filters have been added to adjust the number of posts per action during the import process from other SEO plugins.
-* Updated: Added a filter to whitelist user IDs for the Author SEO tab in user profile settings for users without post editing permissions.
-* Updated: OpenAI support for Project API keys.
-* Updated: Improved scanning for sitemaps to prevent race conditions.
-* Fixed: AIOSEO addons can now be activated on subsites even when the license key was activated on a network level.
-* Fixed: Local SEO information not showing up on Validate Schema feature.
-* Fixed: SERP Preview breadcrumbs were not displaying correctly if the trail was too large.
-* Fixed: “Free” label was missing for zero-priced products in rich snippets on SEO/SERP Preview.
-* Fixed: Primary term and SEO Preview conflict with the plugin Perfect Brands for WooCommerce.
-* Fixed: Redirect’s custom rule tooltip UI when testing a redirect.
-* Fixed: Redirects now allow importing 4xx and 5xx types via the JSON importer.
-* Fixed: Posts from the REST API posts were returning the same canonical URL due to internal caching.
-* Fixed: Sitemap URL count and Last updated date when the sitemap URL has a query string.
-* Fixed: Fixed Divi page builder conflict.
-* Fixed: Deleting a redirect now instantly clears the redirect cache.
-* Fixed: Link Assistant UI would sometimes not work with orphaned posts.
-* Fixed: Scheduled Posts now display the appropriate Published Date in the Sitemap instead of the Scheduled Date.
-* Fixed: Export Settings API route was missing.
-
-**New in Version 4.6.2**
-
-* New: Automatic Site Verification & Sitemap Submission to Google Search Console - You can now automatically verify & connect your site with Google Search Console and submit your sitemaps in just a few clicks!
-* Fixed: Plugin conflict with Divi addon modules that sometimes causes a fatal error when editing a post.
-
-**New in Version 4.6.1.1**
-
-* Fixed: Conflict with MonsterInsights Dimensions Addon.
-
-**See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) for previous releases.**
-
 == Frequently Asked Questions ==
 
 Please visit our [complete AIOSEO documentation](https://aioseo.com/docs/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) before requesting support for SEO from the AIOSEO team.
@@ -446,6 +419,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.6.9.1 =
+= 4.7.0 =
 
 This update adds major improvements and bug fixes.

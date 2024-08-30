@@ -697,7 +697,6 @@ export default {
 			border: 1px solid $background;
 			border-radius: 3px;
 			background: $background;
-			cursor: pointer;
 
 			&.hidden {
 				opacity: 0;

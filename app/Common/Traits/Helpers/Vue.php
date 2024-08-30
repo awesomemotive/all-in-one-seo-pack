@@ -228,10 +228,6 @@ trait Vue {
 			'integration'       => $this->args['integration'],
 			'theme'             => [
 				'features' => aioseo()->helpers->getThemeFeatures()
-			],
-			'searchStatistics'  => [
-				'isConnected'        => aioseo()->searchStatistics->api->auth->isConnected(),
-				'sitemapsWithErrors' => aioseo()->searchStatistics->sitemap->getSitemapsWithErrors()
 			]
 		];
 	}
@@ -388,12 +384,20 @@ trait Vue {
 	 * @return void
 	 */
 	private function setSearchStatisticsData() {
-		if ( 'search-statistics' !== $this->args['page'] ) {
-			return;
+		$this->data['searchStatistics'] = [
+			'isConnected'        => aioseo()->searchStatistics->api->auth->isConnected(),
+			'sitemapsWithErrors' => aioseo()->searchStatistics->sitemap->getSitemapsWithErrors(),
+		];
+
+		if ( 'post' === $this->args['page'] ) {
+			$this->data['keywordRankTracker'] = aioseo()->searchStatistics->keywordRankTracker->getVueDataEdit();
 		}
 
-		$this->data['seoOverview']      = aioseo()->postSettings->getPostTypesOverview();
-		$this->data['searchStatistics'] = aioseo()->searchStatistics->getVueData();
+		if ( 'search-statistics' === $this->args['page'] ) {
+			$this->data['seoOverview']        = aioseo()->postSettings->getPostTypesOverview();
+			$this->data['searchStatistics']   = array_merge( $this->data['searchStatistics'], aioseo()->searchStatistics->getVueData() );
+			$this->data['keywordRankTracker'] = aioseo()->searchStatistics->keywordRankTracker->getVueData();
+		}
 	}
 
 	/**

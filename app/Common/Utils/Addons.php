@@ -501,7 +501,12 @@ class Addons {
 	 * @return bool True if yes, false if not.
 	 */
 	public function canInstall() {
-		if ( ! current_user_can( 'install_plugins' ) ) {
+		if (
+			function_exists( 'wp_get_current_user' ) &&
+			is_user_logged_in() &&
+			! current_user_can( 'install_plugins' ) &&
+			! aioseo()->helpers->isDoingWpCli()
+		) {
 			return false;
 		}
 
@@ -521,7 +526,12 @@ class Addons {
 	 * @return bool True if yes, false if not.
 	 */
 	public function canUpdate() {
-		if ( ! current_user_can( 'update_plugins' ) && ! aioseo()->helpers->isDoingWpCli() ) {
+		if (
+			function_exists( 'wp_get_current_user' ) &&
+			is_user_logged_in() &&
+			! current_user_can( 'update_plugins' ) &&
+			! aioseo()->helpers->isDoingWpCli()
+		) {
 			return false;
 		}
 
@@ -541,7 +551,12 @@ class Addons {
 	 * @return bool True if yes, false if not.
 	 */
 	public function canActivate() {
-		if ( ! current_user_can( 'activate_plugins' ) ) {
+		if (
+			function_exists( 'wp_get_current_user' ) &&
+			is_user_logged_in() &&
+			! current_user_can( 'activate_plugins' ) &&
+			! aioseo()->helpers->isDoingWpCli()
+		) {
 			return false;
 		}
 

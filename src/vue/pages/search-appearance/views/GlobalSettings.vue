@@ -540,6 +540,7 @@ export default {
 				personName                      : this.$t.__('Person Name', this.$td),
 				phone                           : this.$t.__('Phone Number', this.$td),
 				phoneDescription                : this.$t.sprintf(
+					// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag.
 					this.$t.__('Enter the primary phone number for your business. Don’t have a business phone number? %1$sSee this guide on how to get one.%2$s', this.$td),
 					`<a href="${this.$links.getDocUrl('businessPhoneNumber')}" target="_blank">`,
 					'</a>'

@@ -4,7 +4,10 @@
 			v-if="showHeader"
 			class="aioseo-wp-table-header"
 		>
-			<ul class="subsubsub">
+			<ul
+				v-if="!$slots.filters"
+				class="subsubsub"
+			>
 				<li
 					v-for="(filter, index) in filters"
 					:key="index"
@@ -82,6 +85,24 @@
 					@change="value => $emit('additional-filter-option-selected', value)"
 					@process-additional-filters="processAdditionalFilters"
 				/>
+
+				<div
+					v-if="$slots.filters && filters.length"
+					class="alignleft"
+				>
+					<a
+						v-for="(filter, index) in filters"
+						:key="index"
+						@click.prevent.stop="processFilter(filter)"
+						href="#"
+						:tabindex="filter.active ? -1 : 0"
+					>
+						<slot
+							name="filters"
+							v-bind="filter"
+						/>
+					</a>
+				</div>
 
 				<core-wp-pagination
 					v-if="showPagination"
@@ -523,7 +544,9 @@ export default {
 
 			this.editRow(-1)
 			this.$emit('process-additional-filters', {
-				filters
+				filters,
+				searchTerm : this.searchTerm,
+				pageNumber : this.pageNumber
 			})
 		},
 		selectedItems () {
@@ -542,9 +565,6 @@ export default {
 			if (checked) {
 				checked.forEach(c => (c.checked = false))
 			}
-		},
-		setPageNumber (newPageNumber) {
-			this.pageNumber = newPageNumber
 		}
 	},
 	computed : {
@@ -771,7 +791,6 @@ export default {
 		padding: 0 16px 16px 16px;
 
 		.wp-table {
-			border: 1px solid #D0D1D7;
 			box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.04);
 		}
 

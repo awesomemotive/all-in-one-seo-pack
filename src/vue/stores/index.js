@@ -7,6 +7,7 @@ import { useConnectStore } from '@/vue/stores/ConnectStore'
 import { useDirtyOptionsStore } from '@/vue/stores/DirtyOptionsStore'
 import { useHelpPanelStore } from '@/vue/stores/HelpPanelStore'
 import { useIndexNowStore } from '@/vue/stores/IndexNowStore'
+import { useKeywordRankTrackerStore } from '@/vue/stores/KeywordRankTrackerStore'
 import { useLicenseStore } from '@/vue/stores/LicenseStore'
 import { useLinkAssistantStore } from '@/vue/stores/LinkAssistantStore'
 import { useLocalSeoStore } from '@/vue/stores/LocalSeoStore'
@@ -54,25 +55,26 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 	const aioseo = JSON.parse(JSON.stringify(window.aioseo || {}))
 
 	// Pinia stores.
-	const addonsStore           = useAddonsStore()
-	const backupsStore          = useBackupsStore()
-	const dirtyOptionsStore     = useDirtyOptionsStore()
-	const helpPanelStore        = useHelpPanelStore()
-	const indexNowStore         = useIndexNowStore()
-	const licenseStore          = useLicenseStore()
-	const linkAssistantStore    = useLinkAssistantStore()
-	const localSeoStore         = useLocalSeoStore()
-	const networkStore          = useNetworkStore()
-	const notificationsStore    = useNotificationsStore()
-	const optionsStore          = useOptionsStore()
-	const pluginsStore          = usePluginsStore()
-	const postEditorStore       = usePostEditorStore()
-	const redirectsStore        = useRedirectsStore()
-	const searchStatisticsStore = useSearchStatisticsStore()
-	const seoRevisionsStore     = useSeoRevisionsStore()
-	const settingsStore         = useSettingsStore()
-	const tagsStore             = useTagsStore()
-	const wpCodeStore           = useWpCodeStore()
+	const addonsStore             = useAddonsStore()
+	const backupsStore            = useBackupsStore()
+	const dirtyOptionsStore       = useDirtyOptionsStore()
+	const helpPanelStore          = useHelpPanelStore()
+	const indexNowStore           = useIndexNowStore()
+	const keywordRankTrackerStore = useKeywordRankTrackerStore()
+	const licenseStore            = useLicenseStore()
+	const linkAssistantStore      = useLinkAssistantStore()
+	const localSeoStore           = useLocalSeoStore()
+	const networkStore            = useNetworkStore()
+	const notificationsStore      = useNotificationsStore()
+	const optionsStore            = useOptionsStore()
+	const pluginsStore            = usePluginsStore()
+	const postEditorStore         = usePostEditorStore()
+	const redirectsStore          = useRedirectsStore()
+	const searchStatisticsStore   = useSearchStatisticsStore()
+	const seoRevisionsStore       = useSeoRevisionsStore()
+	const settingsStore           = useSettingsStore()
+	const tagsStore               = useTagsStore()
+	const wpCodeStore             = useWpCodeStore()
 
 	// Initial network data.
 	const networkData = {
@@ -88,24 +90,25 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 	optionsStore.networkOptions         = merge({ ...optionsStore.networkOptions }, { ...aioseo.networkOptions || {} })
 
 	// Other stores.
-	addonsStore.addons           = merge([ ...addonsStore.addons ], [ ...aioseo.addons || [] ])
-	backupsStore.backups         = merge([ ...backupsStore.backups ], [ ...aioseo.backups || [] ])
-	backupsStore.networkBackups  = merge({ ...backupsStore.networkBackups }, { ...aioseo.data?.network?.backups || {} })
-	helpPanelStore.$state        = merge({ ...helpPanelStore.$state }, { ...aioseo.helpPanel || {} })
-	indexNowStore.$state         = merge({ ...indexNowStore.$state }, { ...aioseo.indexNow || {} })
-	licenseStore.license         = merge({ ...licenseStore.license }, { ...aioseo.license || {} })
-	linkAssistantStore.$state    = merge({ ...linkAssistantStore.$state }, { ...aioseo.linkAssistant || {} })
-	localSeoStore.$state         = merge({ ...localSeoStore.$state }, { ...aioseo.localBusiness || {} })
-	networkStore.networkData     = merge({ ...networkStore.networkData }, { ...networkData })
-	notificationsStore.$state    = merge({ ...notificationsStore.$state }, { ...aioseo.notifications || {} })
-	pluginsStore.plugins         = merge({ ...pluginsStore.plugins }, { ...aioseo.plugins || {} })
-	postEditorStore.currentPost  = merge({ ...postEditorStore.currentPost }, { ...aioseo.currentPost || {} })
-	redirectsStore.$state        = merge({ ...redirectsStore.$state }, { ...aioseo.redirects || {} })
-	searchStatisticsStore.$state = merge({ ...searchStatisticsStore.$state }, { ...aioseo.searchStatistics || {} })
-	seoRevisionsStore.$state     = merge({ ...seoRevisionsStore.$state }, { ...aioseo.seoRevisions || {} })
-	settingsStore.settings       = merge({ ...settingsStore.settings }, { ...aioseo.settings || {} })
-	settingsStore.userProfile    = merge({ ...settingsStore.userProfile }, { ...aioseo.userProfile || {} })
-	tagsStore.$state             = merge({ ...tagsStore.$state }, { ...aioseo.tags || {} })
+	addonsStore.addons             = merge([ ...addonsStore.addons ], [ ...aioseo.addons || [] ])
+	backupsStore.backups           = merge([ ...backupsStore.backups ], [ ...aioseo.backups || [] ])
+	backupsStore.networkBackups    = merge({ ...backupsStore.networkBackups }, { ...aioseo.data?.network?.backups || {} })
+	helpPanelStore.$state          = merge({ ...helpPanelStore.$state }, { ...aioseo.helpPanel || {} })
+	indexNowStore.$state           = merge({ ...indexNowStore.$state }, { ...aioseo.indexNow || {} })
+	keywordRankTrackerStore.$state = merge({ ...keywordRankTrackerStore.$state }, { ...aioseo.keywordRankTracker || {} })
+	licenseStore.license           = merge({ ...licenseStore.license }, { ...aioseo.license || {} })
+	linkAssistantStore.$state      = merge({ ...linkAssistantStore.$state }, { ...aioseo.linkAssistant || {} })
+	localSeoStore.$state           = merge({ ...localSeoStore.$state }, { ...aioseo.localBusiness || {} })
+	networkStore.networkData       = merge({ ...networkStore.networkData }, { ...networkData })
+	notificationsStore.$state      = merge({ ...notificationsStore.$state }, { ...aioseo.notifications || {} })
+	pluginsStore.plugins           = merge({ ...pluginsStore.plugins }, { ...aioseo.plugins || {} })
+	postEditorStore.currentPost    = merge({ ...postEditorStore.currentPost }, { ...aioseo.currentPost || {} })
+	redirectsStore.$state          = merge({ ...redirectsStore.$state }, { ...aioseo.redirects || {} })
+	searchStatisticsStore.$state   = merge({ ...searchStatisticsStore.$state }, { ...aioseo.searchStatistics || {} })
+	seoRevisionsStore.$state       = merge({ ...seoRevisionsStore.$state }, { ...aioseo.seoRevisions || {} })
+	settingsStore.settings         = merge({ ...settingsStore.settings }, { ...aioseo.settings || {} })
+	settingsStore.userProfile      = merge({ ...settingsStore.userProfile }, { ...aioseo.userProfile || {} })
+	tagsStore.$state               = merge({ ...tagsStore.$state }, { ...aioseo.tags || {} })
 
 	// Integration stores.
 	if (aioseo.integrations?.wpcode) {
@@ -123,6 +126,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 	delete aioseo.indexNow
 	delete aioseo.internalNetworkOptions
 	delete aioseo.internalOptions
+	delete aioseo.keywordRankTracker
 	delete aioseo.license
 	delete aioseo.linkAssistant
 	delete aioseo.networkOptions
@@ -207,6 +211,7 @@ export {
 	useDirtyOptionsStore,
 	useHelpPanelStore,
 	useIndexNowStore,
+	useKeywordRankTrackerStore,
 	useLicenseStore,
 	useLinkAssistantStore,
 	useLocalSeoStore,

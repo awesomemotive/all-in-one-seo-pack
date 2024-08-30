@@ -341,6 +341,9 @@ namespace AIOSEO\Plugin {
 			}
 
 			if ( wp_doing_cron() ) {
+				// We need to allow the auto-update cron job to check for updates.
+				$this->addons->registerUpdateCheck();
+
 				return;
 			}
 

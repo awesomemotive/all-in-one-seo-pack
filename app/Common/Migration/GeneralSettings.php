@@ -399,7 +399,7 @@ class GeneralSettings {
 				! in_array( $name, array_keys( $settings ), true ) &&
 				preg_match( '#aiosp_(.*)_title_format#', $name, $slug )
 			) {
-				if ( empty( $slug ) && empty( $slug[1] ) ) {
+				if ( empty( $slug[1] ) ) {
 					continue;
 				}
 

@@ -3,9 +3,7 @@ import dateFormat from '@/vue/utils/dateFormat'
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 
-import {
-	useOptionsStore
-} from '@/vue/stores'
+import { useKeywordRankTrackerStore, useOptionsStore } from '@/vue/stores'
 
 export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 	state : () => ({
@@ -152,26 +150,23 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 				})
 		},
 		setDateRange (payload) {
-			const dateRange = {
+			const keywordRankTrackerStore = useKeywordRankTrackerStore()
+
+			this.range   = {
 				start : dateFormat(payload.dateRange[0], 'Y-m-d'),
 				end   : dateFormat(payload.dateRange[1], 'Y-m-d')
 			}
-			this.range   = dateRange
 			this.rolling = payload.rolling
 
-			this.updateSeoStatistics({
-				filter     : 'all',
-				searchTerm : ''
-			})
+			const promises = [
+				() => this.updateSeoStatistics({ filter: 'all', searchTerm: '' }),
+				() => this.updateKeywords({ filter: 'all', searchTerm: '' }),
+				() => this.updateContentRankings({ searchTerm: '' }),
+				() => keywordRankTrackerStore.maybeUpdateKeywords(),
+				() => keywordRankTrackerStore.maybeUpdateGroups()
+			]
 
-			this.updateKeywords({
-				filter     : 'all',
-				searchTerm : ''
-			})
-
-			this.updateContentRankings({
-				searchTerm : ''
-			})
+			return Promise.all(promises.map(task => task()))
 		},
 		loadInitialData () {
 			if (this.hasInitialized) {

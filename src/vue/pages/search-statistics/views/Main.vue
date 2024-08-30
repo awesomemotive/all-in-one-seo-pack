@@ -72,34 +72,7 @@
 					<component :is="$route.name" />
 				</core-blur>
 
-				<cta
-					v-if="!searchStatisticsStore.shouldShowSampleReports"
-					cta-button-action
-					cta-second-button-action
-					@cta-button-click="connect"
-					@cta-second-button-click="searchStatisticsStore.showSampleReports"
-					:cta-button-loading="loading"
-					:show-link="false"
-					:button-text="strings.ctaButtonText"
-					:second-button-text="strings.ctaSecondButtonText"
-					cta-second-button-new-badge
-					cta-second-button-visible
-					:alignTop="true"
-					:hideBonus="true"
-					:feature-list="[
-						strings.feature1,
-						strings.feature2,
-						strings.feature3,
-						strings.feature4
-					]"
-				>
-					<template #header-text>
-						{{ strings.ctaHeaderText }}
-					</template>
-					<template #description>
-						{{ strings.ctaDescription }}
-					</template>
-				</cta>
+				<connect-cta v-if="!searchStatisticsStore.shouldShowSampleReports" />
 			</div>
 
 			<component
@@ -122,13 +95,14 @@ import { GoogleSearchConsole } from '@/vue/mixins/GoogleSearchConsole'
 import AuthenticationAlert from './partials/AuthenticationAlert'
 import BaseButton from '@/vue/components/common/base/Button'
 import BaseDatePicker from '@/vue/components/common/base/DatePicker'
+import ConnectCta from './partials/pro/ConnectCta'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreMain from '@/vue/components/common/core/main/Index'
 import ContentRankings from './ContentRankings'
 import Cta from '@/vue/components/common/cta/Index'
 import Dashboard from './Dashboard'
-import KeywordRankings from './KeywordRankings'
+import KeywordRankTracker from './KeywordRankTracker'
 import PostDetail from './AIOSEO_VERSION/PostDetail'
 import SeoStatistics from './SeoStatistics'
 import Settings from './AIOSEO_VERSION/Settings'
@@ -144,13 +118,14 @@ export default {
 		AuthenticationAlert,
 		BaseButton,
 		BaseDatePicker,
+		ConnectCta,
 		CoreAlert,
 		CoreBlur,
 		CoreMain,
 		ContentRankings,
 		Cta,
 		Dashboard,
-		KeywordRankings,
+		KeywordRankTracker,
 		PostDetail,
 		Settings,
 		SeoStatistics
@@ -163,15 +138,8 @@ export default {
 			strings : {
 				pageName            : this.$t.__('Search Statistics', this.$td),
 				sampleDataAlert     : this.$t.__('Sample data is available for you to explore. Connect your site to Google Search Console to receive insights on how content is being discovered. Identify areas for improvement and drive traffic to your website.', this.$td),
-				ctaHeaderText       : this.$t.__('Connect your website to Google Search Console', this.$td),
-				ctaDescription      : this.$t.__('Connect your site to Google Search Console to receive insights on how content is being discovered. Identify areas for improvement and drive traffic to your website.', this.$td),
 				ctaButtonText       : this.$t.__('Connect to Google Search Console', this.$td),
-				ctaUnlockButtonText : this.$t.__('Unlock Search Statistics', this.$td),
-				ctaSecondButtonText : this.$t.__('Explore Sample Reports', this.$td),
-				feature1            : this.$t.__('Search traffic insights', this.$td),
-				feature2            : this.$t.__('Improved visibility', this.$td),
-				feature3            : this.$t.__('Track page and keyword rankings', this.$td),
-				feature4            : this.$t.__('Speed tests for individual pages/posts', this.$td)
+				ctaUnlockButtonText : this.$t.__('Unlock Search Statistics', this.$td)
 			}
 		}
 	},

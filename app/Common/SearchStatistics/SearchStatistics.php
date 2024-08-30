@@ -49,15 +49,25 @@ class SearchStatistics {
 	public $notices;
 
 	/**
+	 * Holds the instance of the Keyword Rank Tracker class.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @var KeywordRankTracker
+	 */
+	public $keywordRankTracker;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.3.0
 	 */
 	public function __construct() {
-		$this->api     = new Api\Api();
-		$this->site    = new Site();
-		$this->sitemap = new Sitemap();
-		$this->notices = new Notices();
+		$this->api                = new Api\Api();
+		$this->site               = new Site();
+		$this->sitemap            = new Sitemap();
+		$this->notices            = new Notices();
+		$this->keywordRankTracker = new KeywordRankTracker();
 	}
 
 	/**

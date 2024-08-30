@@ -96,27 +96,52 @@ export default {
 				{
 					name    : 'impressions',
 					label   : this.$t.__('Search Impressions', this.$td),
-					tooltip : this.$t.__('This graph shows the <strong>total number of times your website appeared in the search results</strong> within the selected timeframe.', this.$td)
+					tooltip : this.$t.sprintf(
+						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
+						this.$t.__('The %1$stotal number of times your website appeared in search results%2$s within the selected timeframe.', this.$td),
+						'<strong>',
+						'</strong>'
+					)
 				},
 				{
 					name    : 'clicks',
 					label   : this.$t.__('Total Clicks', this.$td),
-					tooltip : this.$t.__('This graph shows the <strong>total number of clicks that your website received from the search results</strong> within the selected timeframe.', this.$td)
+					tooltip : this.$t.sprintf(
+						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
+						this.$t.__('The %1$stotal number of clicks that your website received from search results%2$s within the selected timeframe.', this.$td),
+						'<strong>',
+						'</strong>'
+					)
 				},
 				{
 					name    : 'ctr',
 					label   : this.$t.__('Avg. CTR', this.$td),
-					tooltip : this.$t.__('This graph shows the <strong>average click-through rate of your content in the search results</strong> within the selected timeframe.', this.$td)
+					tooltip : this.$t.sprintf(
+						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
+						this.$t.__('The %1$saverage click-through rate of your content in search results%2$s within the selected timeframe.', this.$td),
+						'<strong>',
+						'</strong>'
+					)
 				},
 				{
 					name    : 'position',
 					label   : this.$t.__('Avg. Position', this.$td),
-					tooltip : this.$t.__('This graph shows the <strong>average position of your content in the search results</strong> within the selected timeframe.', this.$td)
+					tooltip : this.$t.sprintf(
+						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
+						this.$t.__('The %1$saverage position of your content in search results%2$s within the selected timeframe.', this.$td),
+						'<strong>',
+						'</strong>'
+					)
 				},
 				{
 					name    : 'keywords',
 					label   : this.$t.__('Total Keywords', this.$td),
-					tooltip : this.$t.__('This graph shows the <strong>total number of keywords that your website ranks for in search results</strong> within the selected timeframe.', this.$td)
+					tooltip : this.$t.sprintf(
+						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
+						this.$t.__('The %1$stotal number of keywords that your website ranks for in search results%2$s within the selected timeframe.', this.$td),
+						'<strong>',
+						'</strong>'
+					)
 				}
 			]
 		}

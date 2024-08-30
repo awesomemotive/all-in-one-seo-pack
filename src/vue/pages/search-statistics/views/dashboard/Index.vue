@@ -54,7 +54,7 @@
 						<component :is="activeKeywordsTab"/>
 					</transition>
 
-					<card-footer buttonTarget="keyword-rankings" />
+					<card-footer buttonTarget="keyword-rank-tracker" />
 				</core-card>
 			</grid-column>
 
@@ -76,7 +76,7 @@
 
 					<keywords-graph legend-style="simple" />
 
-					<card-footer buttonTarget="keyword-rankings" />
+					<card-footer buttonTarget="keyword-rank-tracker" />
 				</core-card>
 
 				<core-card

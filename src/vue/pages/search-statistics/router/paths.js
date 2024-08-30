@@ -32,13 +32,14 @@ export default [
 		}
 	},
 	{
-		path      : '/keyword-rankings',
-		name      : 'keyword-rankings',
+		path      : '/keyword-rank-tracker',
+		name      : 'keyword-rank-tracker',
 		component : loadView('Main'),
 		meta      : {
 			access         : 'aioseo_search_statistics_settings',
-			name           : __('Keyword Rankings', td),
-			hideSaveButton : true
+			name           : __('Keyword Rank Tracker', td),
+			hideSaveButton : true,
+			label          : 'new'
 		}
 	},
 	{

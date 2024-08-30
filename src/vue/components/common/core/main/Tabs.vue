@@ -420,7 +420,7 @@ export default {
 				padding-left: 5px;
 
 				&.new {
-					color: $red;
+					color: #df2a4a;
 					vertical-align: super;
 					font-size: 10px;
 					display: inline-block;

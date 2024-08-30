@@ -224,6 +224,11 @@ class Robots {
 		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
 		$term           = is_a( $term, 'WP_Term' ) ? $term : get_queried_object();
 
+		// Misbehaving themes/plugins can manipulate the loop and make archives return a post as the queried object.
+		if ( ! is_a( $term, 'WP_Term' ) ) {
+			return;
+		}
+
 		if ( $dynamicOptions->searchAppearance->taxonomies->has( $term->taxonomy ) ) {
 			$this->globalValues( [ 'taxonomies', $term->taxonomy ], true );
 
