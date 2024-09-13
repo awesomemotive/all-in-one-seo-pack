@@ -10,8 +10,8 @@
 					<base-radio-toggle
 						name="autogenerate"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.enabled, value: true }
+							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.enabled, value: true }
 						]"
 					/>
 				</template>
@@ -42,8 +42,8 @@
 					<base-radio-toggle
 						name="stripPunctuation"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.enabled, value: true }
+							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.enabled, value: true }
 						]"
 					/>
 
@@ -78,7 +78,7 @@
 					<base-radio-toggle
 						name="casing"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.disabled, value: '', activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.disabled, value: '', activeClass: 'dark' },
 							{ label: casings.lowerCase.label, value: 'lower' },
 							{ label: casings.titleCase.label, value: 'title' },
 							{ label: casings.sentenceCase.label, value: 'sentence' }
@@ -106,6 +106,7 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreBlur from '@/vue/components/common/core/Blur'
@@ -113,6 +114,10 @@ import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	components : {
@@ -124,37 +129,41 @@ export default {
 		GridColumn,
 		GridRow
 	},
+	props : {
+		activeTab : Object
+	},
 	data () {
 		return {
+			GLOBAL_STRINGS,
 			stripPunctuationSettings : [
-				{ value: 'dashes', label: this.$t.__('Dashes (-)', this.$td) },
-				{ value: 'underscores', label: this.$t.__('Underscores (_)', this.$td) },
-				{ value: 'numbers', label: this.$t.__('Numbers (0-9)', this.$td) },
-				{ value: 'plus', label: this.$t.__('Plus (+)', this.$td) },
-				{ value: 'apostrophe', label: this.$t.__('Apostrophe (\')', this.$td) },
-				{ value: 'pound', label: this.$t.__('Pound (#)', this.$td) },
-				{ value: 'ampersand', label: this.$t.__('Ampersand (&)', this.$td) }
+				{ value: 'dashes', label: __('Dashes (-)', td) },
+				{ value: 'underscores', label: __('Underscores (_)', td) },
+				{ value: 'numbers', label: __('Numbers (0-9)', td) },
+				{ value: 'plus', label: __('Plus (+)', td) },
+				{ value: 'apostrophe', label: __('Apostrophe (\')', td) },
+				{ value: 'pound', label: __('Pound (#)', td) },
+				{ value: 'ampersand', label: __('Ampersand (&)', td) }
 			],
 			strings : {
-				attributeFormat : this.$t.sprintf(
+				attributeFormat : sprintf(
 					// Translators: 1 - The type of format ("Title", "Alt Tag", "Caption" or "Description").
-					this.$t.__('%1$s Format', this.$td),
-					this.$t.__('Title', this.$td)
+					__('%1$s Format', td),
+					__('Title', td)
 				),
-				clickToAddTags : this.$t.sprintf(
+				clickToAddTags : sprintf(
 					// Translators: 1 - The name of the image attribute ("Title", "Alt Tag", "Caption" or "Description").
-					this.$t.__('Click on the tags below to insert variables into your %1$s attribute.', this.$td),
-					this.$t.__('Title', this.$td).toLowerCase()
+					__('Click on the tags below to insert variables into your %1$s attribute.', td),
+					__('Title', td).toLowerCase()
 				),
-				stripPunctuation            : this.$t.__('Strip Punctuation', this.$td),
-				punctuationCharactersToKeep : this.$t.__('Punctuation Characters to Keep:', this.$td),
-				casing                      : this.$t.__('Casing', this.$td),
-				casingDescription           : this.$t.__('Choose which casing should be applied to the attribute.', this.$td),
-				wordsToStrip                : this.$t.__('Words to Strip', this.$td),
-				autogenerate                : this.$t.sprintf(
+				stripPunctuation            : __('Strip Punctuation', td),
+				punctuationCharactersToKeep : __('Punctuation Characters to Keep:', td),
+				casing                      : __('Casing', td),
+				casingDescription           : __('Choose which casing should be applied to the attribute.', td),
+				wordsToStrip                : __('Words to Strip', td),
+				autogenerate                : sprintf(
 					// Translators: 1 - The image attribute name ("Caption" or "Description").
-					this.$t.__('Autogenerate %1$s on Upload', this.$td),
-					this.$t.__('Title', this.$td)
+					__('Autogenerate %1$s on Upload', td),
+					__('Title', td)
 				)
 			},
 			tags : {
@@ -193,22 +202,19 @@ export default {
 			},
 			casings : {
 				lowerCase : {
-					label       : this.$t.__('Lower Case', this.$td),
-					description : this.$t.__('All letters are converted to lower case (small) letters.', this.$td)
+					label       : __('Lower Case', td),
+					description : __('All letters are converted to lower case (small) letters.', td)
 				},
 				titleCase : {
-					label       : this.$t.__('Title Case', this.$td),
-					description : this.$t.__('Major words are capitalized and minor words remain in their original casing.', this.$td)
+					label       : __('Title Case', td),
+					description : __('Major words are capitalized and minor words remain in their original casing.', td)
 				},
 				sentenceCase : {
-					label       : this.$t.__('Sentence Case', this.$td),
-					description : this.$t.__('The first word of each sentence starts with a capital.', this.$td)
+					label       : __('Sentence Case', td),
+					description : __('The first word of each sentence starts with a capital.', td)
 				}
 			}
 		}
-	},
-	props : {
-		activeTab : Object
 	}
 }
 </script>

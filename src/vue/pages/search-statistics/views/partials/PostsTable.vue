@@ -22,7 +22,7 @@
 			:blur-rows="showUpsell"
 			@filter-table="processFilter"
 			@process-additional-filters="processAdditionalFilters"
-			@additional-filter-option-selected="processAdditionaFilterOptionSelected"
+			@additional-filter-option-selected="processAdditionalFilterOptionSelected"
 			@paginate="processPagination"
 			@process-change-items-per-page="processChangeItemsPerPage"
 			@search="processSearch"
@@ -172,9 +172,9 @@
 			<template #cta>
 				<cta
 					v-if="showUpsell"
-					:cta-link="$links.getPricingUrl('search-statistics', 'search-statistics-upsell')"
+					:cta-link="links.getPricingUrl('search-statistics', 'search-statistics-upsell')"
 					:button-text="strings.ctaButtonText"
-					:learn-more-link="$links.getUpsellUrl('search-statistics', 'search-statistics-upsell', $isPro ? 'pricing' : 'liteUpgrade')"
+					:learn-more-link="links.getUpsellUrl('search-statistics', 'search-statistics-upsell', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 					:hide-bonus="!licenseStore.isUnlicensed"
 				>
 					<template #header-text>
@@ -187,17 +187,26 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import {
 	useLicenseStore,
+	useOptionsStore,
+	useRootStore,
 	useSearchStatisticsStore,
-	useSettingsStore,
-	useOptionsStore
+	useSettingsStore
 } from '@/vue/stores'
+
+import links from '@/vue/utils/links'
+
+import { usePostTypes } from '@/vue/composables/PostTypes'
+import { useTable } from '@/vue/pages/search-statistics/composables/Table'
+import { useWpTable } from '@/vue/composables/WpTable'
 
 import license from '@/vue/utils/license'
 import numbers from '@/vue/utils/numbers'
 import { clone } from 'lodash-es'
-import { WpTable } from '@/vue/mixins/WpTable'
+
 import CoreScoreButton from '@/vue/components/common/core/ScoreButton'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Cta from '@/vue/components/common/cta/Index'
@@ -205,16 +214,97 @@ import GraphDecay from './GraphDecay'
 import IndexStatus from '@/vue/components/AIOSEO_VERSION/search-statistics/IndexStatus'
 import IndexStatusPro from '@/vue/components/pro/search-statistics/IndexStatus'
 import ObjectActions from './AIOSEO_VERSION/ObjectActions'
-import PostTypesMixin from '@/vue/mixins/PostTypes.js'
 import Statistic from './Statistic'
-import Table from '../../mixins/Table.js'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	setup () {
+	setup (props) {
+		const {
+			editPost,
+			viewPost
+		} = usePostTypes()
+
+		const searchStatisticsStore = useSearchStatisticsStore()
+
+		const processAdditionalFilterOptionSelected = ({ name, selectedValue }) => {
+			selectedFilters[name] = selectedValue
+		}
+
+		const resetSelectedFilters = () => {
+			selectedFilters.value.postType = ''
+			processAdditionalFilterOptionSelected({ name: 'postType', selectedValue: '' })
+		}
+		const fetchData = (payload) => {
+			if ('function' === typeof searchStatisticsStore[props.updateAction]) {
+				return searchStatisticsStore[props.updateAction](payload)
+			}
+		}
+
+		const selectedFilters = ref({})
+		const showUpsell      = ref(false)
+		const {
+			openPostDetail,
+			orderBy,
+			orderDir,
+			processFilter,
+			resultsPerPage
+		} = useTable({
+			processFilterTable : (tableFilter) => processFilterTable(tableFilter),
+			showUpsell
+		})
+
+		const changeItemsPerPageSlug = 'searchStatisticsSeoStatistics'
+		const tableId                = 'aioseo-search-statistics-post-table'
+		const {
+			filter,
+			pageNumber,
+			processAdditionalFilters,
+			processChangeItemsPerPage,
+			processFilterTable,
+			processPagination,
+			processSearch,
+			processSort,
+			searchTerm
+		} = useWpTable({
+			changeItemsPerPageSlug,
+			fetchData,
+			orderBy,
+			orderDir,
+			resetSelectedFilters,
+			resultsPerPage,
+			selectedFilters,
+			tableId
+		})
+
 		return {
-			licenseStore          : useLicenseStore(),
-			searchStatisticsStore : useSearchStatisticsStore(),
-			settingsStore         : useSettingsStore(),
-			optionsStore          : useOptionsStore()
+			changeItemsPerPageSlug,
+			editPost,
+			filter,
+			licenseStore  : useLicenseStore(),
+			links,
+			openPostDetail,
+			optionsStore  : useOptionsStore(),
+			orderBy,
+			orderDir,
+			pageNumber,
+			processAdditionalFilterOptionSelected,
+			processAdditionalFilters,
+			processChangeItemsPerPage,
+			processFilter,
+			processPagination,
+			processSearch,
+			processSort,
+			rootStore     : useRootStore(),
+			searchStatisticsStore,
+			searchTerm,
+			selectedFilters,
+			settingsStore : useSettingsStore(),
+			showUpsell,
+			tableId,
+			viewPost
 		}
 	},
 	components : {
@@ -226,26 +316,6 @@ export default {
 		IndexStatusPro,
 		ObjectActions,
 		Statistic
-	},
-	mixins : [ PostTypesMixin, WpTable, Table ],
-	data () {
-		return {
-			numbers,
-			tableId                : 'aioseo-search-statistics-post-table',
-			changeItemsPerPageSlug : 'searchStatisticsSeoStatistics',
-			showUpsell             : false,
-			sortableColumns        : [],
-			strings                : {
-				position      : this.$t.__('Position', this.$td),
-				ctaButtonText : this.$t.__('Unlock Post Tracking', this.$td),
-				ctaHeader     : this.$t.sprintf(
-					// Translators: 1 - "PRO".
-					this.$t.__('Post Tracking is a %1$s Feature', this.$td),
-					'PRO'
-				)
-			},
-			license
-		}
 	},
 	props : {
 		posts      : Object,
@@ -289,6 +359,31 @@ export default {
 			}
 		}
 	},
+	data () {
+		return {
+			numbers,
+			sortableColumns : [],
+			strings         : {
+				position      : __('Position', td),
+				ctaButtonText : __('Unlock Post Tracking', td),
+				ctaHeader     : sprintf(
+					// Translators: 1 - "PRO".
+					__('Post Tracking is a %1$s Feature', td),
+					'PRO'
+				)
+			},
+			license
+		}
+	},
+	watch : {
+		isLoading (loading) {
+			if (!loading) {
+				this.$nextTick(() => {
+					this.loadInspectionResult()
+				})
+			}
+		}
+	},
 	computed : {
 		getFilters () {
 			// If these are the sample reports, let's hide all the filters.
@@ -327,68 +422,68 @@ export default {
 				},
 				{
 					slug  : 'postTitle',
-					label : this.$t.__('Title', this.$td),
+					label : __('Title', td),
 					width : '100%'
 				},
 				{
 					slug  : 'seoScore',
-					label : this.$t.__('TruSEO Score', this.$td),
+					label : __('TruSEO Score', td),
 					width : '130px'
 				},
 				{
 					slug        : 'indexStatus',
-					label       : this.$t.__('Indexed', this.$td),
+					label       : __('Indexed', td),
 					width       : '80px',
 					coreFeature : 'index-status'
 				},
 				{
 					slug  : 'clicks',
-					label : this.$t.__('Clicks', this.$td),
+					label : __('Clicks', td),
 					width : '80px'
 				},
 				{
 					slug  : 'impressions',
-					label : this.$t.__('Impressions', this.$td),
+					label : __('Impressions', td),
 					width : '110px'
 				},
 				{
 					slug  : 'position',
-					label : this.$t.__('Position', this.$td),
+					label : __('Position', td),
 					width : '90px'
 				},
 				{
 					slug  : 'lastUpdated',
-					label : this.$t.__('Last Updated On', this.$td),
+					label : __('Last Updated On', td),
 					width : '160px'
 				},
 				{
 					slug  : 'decay',
-					label : this.$t.__('Loss', this.$td),
+					label : __('Loss', td),
 					width : '140px'
 				},
 				{
 					slug  : 'decayPercent',
-					label : this.$t.__('Drop (%)', this.$td),
+					label : __('Drop (%)', td),
 					width : '120px'
 				},
 				{
 					slug  : 'performance',
-					label : this.$t.__('Performance Score', this.$td),
+					label : __('Performance Score', td),
 					width : '150px'
 				},
 				{
 					slug  : 'diffDecay',
-					label : this.$t.__('Diff', this.$td),
+					label : __('Diff', td),
 					width : '95px'
 				},
 				{
 					slug  : 'diffPosition',
-					label : this.$t.__('Diff', this.$td),
+					label : __('Diff', td),
 					width : '80px'
 				}
 			].filter(column => {
 				if (column.coreFeature) {
-					if ((!this.$isPro || this.licenseStore.isUnlicensed) && !this.searchStatisticsStore.shouldShowSampleReports) {
+					if ((!this.rootStore.isPro || this.licenseStore.isUnlicensed) && !this.searchStatisticsStore.shouldShowSampleReports) {
 						return false
 					}
 
@@ -414,28 +509,10 @@ export default {
 			})
 		},
 		isSortable () {
-			return 'all' === this.filter && (this.$isPro && !this.licenseStore.isUnlicensed)
-		}
-	},
-	watch : {
-		isLoading (loading) {
-			if (!loading) {
-				this.$nextTick(() => {
-					this.loadInspectionResult()
-				})
-			}
+			return 'all' === this.filter && (this.rootStore.isPro && !this.licenseStore.isUnlicensed)
 		}
 	},
 	methods : {
-		resetSelectedFilters () {
-			this.selectedFilters.postType = ''
-			this.processAdditionaFilterOptionSelected({ name: 'postType', selectedValue: '' })
-		},
-		fetchData (payload) {
-			if ('function' === typeof this.searchStatisticsStore[this.updateAction]) {
-				return this.searchStatisticsStore[this.updateAction](payload)
-			}
-		},
 		loadInspectionResult () {
 			if (!this.posts?.rows || this.searchStatisticsStore.quotaExceeded.urlInspection) {
 				return
@@ -474,6 +551,9 @@ export default {
 		}
 
 		this.loadInspectionResult()
+
+		this.orderBy  = this.defaultSorting?.orderBy || this.orderBy
+		this.orderDir = this.defaultSorting?.orderDir || this.orderDir
 	}
 }
 </script>

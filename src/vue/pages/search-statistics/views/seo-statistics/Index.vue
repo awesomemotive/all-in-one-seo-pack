@@ -67,8 +67,12 @@ import Graph from '../partials/Graph'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import PostsTable from '../partials/PostsTable'
-import PostTypesMixin from '@/vue/mixins/PostTypes.js'
 import SeoStatisticsOverview from '../partials/SeoStatisticsOverview'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -83,15 +87,14 @@ export default {
 		PostsTable,
 		SeoStatisticsOverview
 	},
-	mixins : [ PostTypesMixin ],
 	data () {
 		return {
 			initialTableFilter : '',
 			strings            : {
-				seoStatisticsCard    : this.$t.__('SEO Statistics', this.$td),
-				seoStatisticsTooltip : this.$t.__('The following SEO Statistics graphs are useful metrics for understanding the visibility of your website or pages in search results and can help you identify trends or changes over time.<br /><br />Note: This data is capped at the top 100 keywords per day to speed up processing and to help you prioritize your SEO efforts, so while the data may seem inconsistent with Google Search Console, this is intentional.', this.$td),
-				contentCard          : this.$t.__('Content Performance', this.$td),
-				postsTooltip         : this.$t.__('These lists can be useful for understanding the performance of specific pages or posts and identifying opportunities for improvement. For example, the top winning content may be good candidates for further optimization or promotion, while the top losing may need to be reevaluated and potentially updated.', this.$td)
+				seoStatisticsCard    : __('SEO Statistics', td),
+				seoStatisticsTooltip : __('The following SEO Statistics graphs are useful metrics for understanding the visibility of your website or pages in search results and can help you identify trends or changes over time.<br /><br />Note: This data is capped at the top 100 keywords per day to speed up processing and to help you prioritize your SEO efforts, so while the data may seem inconsistent with Google Search Console, this is intentional.', td),
+				contentCard          : __('Content Performance', td),
+				postsTooltip         : __('These lists can be useful for understanding the performance of specific pages or posts and identifying opportunities for improvement. For example, the top winning content may be good candidates for further optimization or promotion, while the top losing may need to be reevaluated and potentially updated.', td)
 			},
 			defaultPages : {
 				rows   : [],
@@ -111,14 +114,14 @@ export default {
 
 			return [
 				{
-					name   : this.$t.__('Search Impressions', this.$td),
+					name   : __('Search Impressions', td),
 					data   : this.searchStatisticsStore.data.seoStatistics.intervals.map((tick) => ({ x: tick.date, y: tick.impressions })),
 					legend : {
 						total : this.searchStatisticsStore.data.seoStatistics.statistics.impressions
 					}
 				},
 				{
-					name   : this.$t.__('Search Clicks', this.$td),
+					name   : __('Search Clicks', td),
 					data   : this.searchStatisticsStore.data.seoStatistics.intervals.map((tick) => ({ x: tick.date, y: tick.clicks })),
 					legend : {
 						total : this.searchStatisticsStore.data.seoStatistics.statistics.clicks

@@ -42,7 +42,13 @@ import {
 import addons from '@/vue/utils/addons'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import Cta from '@/vue/components/common/cta/Index'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'addon-activated' ],
 	setup () {
 		return {
 			addonsStore  : useAddonsStore(),
@@ -50,7 +56,6 @@ export default {
 			rootStore    : useRootStore()
 		}
 	},
-	emits      : [ 'addon-activated' ],
 	components : {
 		CoreAlert,
 		Cta
@@ -80,8 +85,8 @@ export default {
 		return {
 			addons,
 			strings : {
-				activateError     : this.$t.__('An error occurred while activating the addon. Please upload it manually or contact support for more information.', this.$td),
-				permissionWarning : this.$t.__('You currently don\'t have permission to activate this addon. Please ask a site administrator to activate first.', this.$td)
+				activateError     : __('An error occurred while activating the addon. Please upload it manually or contact support for more information.', td),
+				permissionWarning : __('You currently don\'t have permission to activate this addon. Please ask a site administrator to activate first.', td)
 			},
 			failed            : false,
 			activationLoading : false
@@ -105,6 +110,8 @@ export default {
 					Promise.all(promises)
 						.then(() => {
 							if (this.preventGlobalAddonUpdate) {
+								this.$emit('addon-activated', addon)
+
 								return
 							}
 
@@ -112,9 +119,7 @@ export default {
 							addon.hasMinimumVersion = true
 							addon.isActive          = true
 							this.addonsStore.updateAddon(addon)
-						})
-						.then(() => {
-							// Emit event to do any post processing.
+
 							this.$emit('addon-activated', addon)
 						})
 				})

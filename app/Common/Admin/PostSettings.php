@@ -221,7 +221,7 @@ class PostSettings {
 		}
 
 		// Security check.
-		if ( ! isset( $_POST['PostSettingsNonce'] ) || ! wp_verify_nonce( $_POST['PostSettingsNonce'], 'aioseoPostSettingsNonce' ) ) {
+		if ( ! isset( $_POST['PostSettingsNonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['PostSettingsNonce'] ) ), 'aioseoPostSettingsNonce' ) ) {
 			return;
 		}
 
@@ -235,7 +235,7 @@ class PostSettings {
 			return;
 		}
 
-		$currentPost = json_decode( stripslashes( $_POST['aioseo-post-settings'] ), true ); // phpcs:ignore HM.Security.ValidatedSanitizedInput
+		$currentPost = json_decode( sanitize_text_field( wp_unslash( ( $_POST['aioseo-post-settings'] ) ) ), true );
 
 		// If there is no data, there likely was an error, e.g. if the hidden field wasn't populated on load and the user saved the post without making changes in the metabox.
 		// In that case we should return to prevent a complete reset of the data.
@@ -396,6 +396,32 @@ class PostSettings {
 		$clauses['join']  .= " LEFT JOIN {$prefix}aioseo_posts AS aioseo_p ON ({$postsTable}.ID = aioseo_p.post_id) ";
 		$clauses['where'] .= $whereClause;
 
+		add_action( 'wp', [ $this, 'filterPostsAfterChangingClauses' ] );
+
 		return $clauses;
+	}
+
+	/**
+	 * Filter the posts array to remove the ones that are not eligible for page analysis.
+	 * Hooked into `wp` action hook.
+	 *
+	 * @since 4.7.1
+	 *
+	 * @return void
+	 */
+	public function filterPostsAfterChangingClauses() {
+		remove_action( 'wp', [ $this, 'filterPostsAfterChangingClauses' ] );
+
+		global $wp_query;
+		if ( ! empty( $wp_query->posts ) && is_array( $wp_query->posts ) ) {
+			$wp_query->posts = array_filter( $wp_query->posts, function ( $post ) {
+				return aioseo()->helpers->isPageAnalysisEligible( $post->ID );
+			} );
+
+			// Update `post_count` for pagination.
+			if ( isset( $wp_query->post_count ) ) {
+				$wp_query->post_count = count( $wp_query->posts );
+			}
+		}
 	}
 }

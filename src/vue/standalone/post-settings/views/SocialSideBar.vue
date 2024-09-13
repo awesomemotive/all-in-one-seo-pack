@@ -28,6 +28,11 @@ import {
 
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -42,9 +47,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				title       : this.$t.__('Social Media', this.$td),
-				sidebarCopy : this.$t.__('Here you can view and edit the thumbnail, title and description that will be displayed when your site is shared on social media. Click on the button below to view and edit the preview.', this.$td),
-				editSnippet : this.$t.__('Preview & Edit', this.$td)
+				title       : __('Social Media', td),
+				sidebarCopy : __('Here you can view and edit the thumbnail, title and description that will be displayed when your site is shared on social media. Click on the button below to view and edit the preview.', td),
+				editSnippet : __('Preview & Edit', td)
 			}
 		}
 	},

@@ -26,6 +26,11 @@ import {
 
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgRightArrowShort from '@/vue/components/common/svg/right-arrow/Short'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -39,9 +44,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				title       : this.$t.__('Link Assistant', this.$td),
-				description : this.$t.__('Here you can view an overview of your existing links as well as find suggestions for new internal links. Click on the button below to view the Link Assistant panel.', this.$td),
-				button      : this.$t.__('Open Link Assistant', this.$td)
+				title       : __('Link Assistant', td),
+				description : __('Here you can view an overview of your existing links as well as find suggestions for new internal links. Click on the button below to view the Link Assistant panel.', td),
+				button      : __('Open Link Assistant', td)
 			}
 		}
 	}

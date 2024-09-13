@@ -69,9 +69,10 @@ import {
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useWizard, useSearchConsole } from '@/vue/composables'
-import { Wizard } from '@/vue/mixins/Wizard'
-import { GoogleSearchConsole } from '@/vue/mixins/GoogleSearchConsole'
+
+import { useGoogleSearchConsole } from '@/vue/composables/GoogleSearchConsole'
+import { useWizard } from '@/vue/composables/Wizard'
+
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgConnectGoogleSearchConsole from '@/vue/components/common/svg/ConnectGoogleSearchConsole'
 import WizardBody from '@/vue/components/common/wizard/Body'
@@ -81,13 +82,23 @@ import WizardHeader from '@/vue/components/common/wizard/Header'
 import WizardSteps from '@/vue/components/common/wizard/Steps'
 export default {
 	setup () {
-		const wizard        = useWizard()
-		const searchConsole = useSearchConsole()
+		const { strings: wizardStrings } = useWizard({
+			stage : 'search-console'
+		})
+		const {
+			connect,
+			loading,
+			strings: searchConsoleStrings
+		} = useGoogleSearchConsole({
+			returnTo : 'setup-wizard'
+		})
 
 		return {
+			composableStrings : merge(wizardStrings, searchConsoleStrings),
+			connect,
+			loading,
 			optionsStore      : useOptionsStore(),
-			setupWizardStore  : useSetupWizardStore(),
-			composableStrings : merge(wizard.strings, searchConsole.strings)
+			setupWizardStore  : useSetupWizardStore()
 		}
 	},
 	components : {
@@ -99,12 +110,9 @@ export default {
 		WizardHeader,
 		WizardSteps
 	},
-	mixins : [ Wizard, GoogleSearchConsole ],
 	data () {
 		return {
-			stage    : 'search-console',
-			returnTo : 'setup-wizard',
-			strings  : merge(this.composableStrings, {})
+			strings : merge(this.composableStrings, {})
 		}
 	},
 	methods : {

@@ -2,7 +2,7 @@
 	<div>
 		<core-api-bar v-if="!rootStore.pong"/>
 
-		<core-license-key-bar v-if="$isPro && licenseStore.isUnlicensed && rootStore.pong" />
+		<core-license-key-bar v-if="rootStore.isPro && licenseStore.isUnlicensed && rootStore.pong" />
 	</div>
 </template>
 

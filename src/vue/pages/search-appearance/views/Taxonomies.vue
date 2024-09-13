@@ -74,16 +74,27 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
+import { usePostTypes } from '@/vue/composables/PostTypes'
+
 import Advanced from './partials/Advanced'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
-import PostTypesMixin from '@/vue/mixins/PostTypes'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import TitleDescription from './partials/TitleDescription'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getPostIconClass
+		} = usePostTypes()
+
 		return {
+			getPostIconClass,
 			optionsStore  : useOptionsStore(),
 			rootStore     : useRootStore(),
 			settingsStore : useSettingsStore()
@@ -97,37 +108,36 @@ export default {
 		SvgCircleQuestionMark,
 		TitleDescription
 	},
-	mixins : [ PostTypesMixin ],
 	data () {
 		return {
 			internalDebounce : null,
 			strings          : {
-				label          : this.$t.__('Label:', this.$td),
-				name           : this.$t.__('Slug:', this.$td),
-				postTypes      : this.$t.__('Post Types:', this.$td),
-				ctaButtonText  : this.$t.__('Unlock Custom Taxonomies', this.$td),
-				ctaDescription : this.$t.sprintf(
+				label          : __('Label:', td),
+				name           : __('Slug:', td),
+				postTypes      : __('Post Types:', td),
+				ctaButtonText  : __('Unlock Custom Taxonomies', td),
+				ctaDescription : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('%1$s %2$s lets you set the SEO title and description for custom taxonomies. You can also control all of the robots meta and other options just like the default category and tags taxonomies.', this.$td),
+					__('%1$s %2$s lets you set the SEO title and description for custom taxonomies. You can also control all of the robots meta and other options just like the default category and tags taxonomies.', td),
 					import.meta.env.VITE_SHORT_NAME,
 					'Pro'
 				),
-				ctaHeader : this.$t.sprintf(
+				ctaHeader : sprintf(
 					// Translators: 1 - "PRO".
-					this.$t.__('Custom Taxonomy Support is a %1$s Feature', this.$td),
+					__('Custom Taxonomy Support is a %1$s Feature', td),
 					'PRO'
 				)
 			},
 			tabs : [
 				{
 					slug   : 'title-description',
-					name   : this.$t.__('Title & Description', this.$td),
+					name   : __('Title & Description', td),
 					access : 'aioseo_search_appearance_settings',
 					pro    : false
 				},
 				{
 					slug   : 'advanced',
-					name   : this.$t.__('Advanced', this.$td),
+					name   : __('Advanced', td),
 					access : 'aioseo_search_appearance_settings',
 					pro    : false
 				}

@@ -56,7 +56,7 @@ class CrawlCleanup {
 			return;
 		}
 
-		$date = date( 'Y-m-d H:i:s', strtotime( '-1 ' . $optionLength ) );
+		$date = gmdate( 'Y-m-d H:i:s', strtotime( '-1 ' . $optionLength ) );
 		aioseo()->core->db
 			->delete( 'aioseo_crawl_cleanup_logs' )
 			->where( 'updated <', $date )

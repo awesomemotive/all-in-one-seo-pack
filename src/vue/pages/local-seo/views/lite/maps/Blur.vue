@@ -40,6 +40,11 @@
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreUiElementSlider from '@/vue/components/common/core/ui-element-slider/Index'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreBlur,
@@ -49,9 +54,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				description : this.$t.__('Integrating with Google Maps will allow your users to find exactly where your business is located. Our interactive maps let them see your Google Reviews and get directions directly from your site. Create multiple maps for use with multiple locations.', this.$td),
-				apiKey      : this.$t.__('API Key', this.$td),
-				mapPreview  : this.$t.__('Map Preview', this.$td)
+				description : __('Integrating with Google Maps will allow your users to find exactly where your business is located. Our interactive maps let them see your Google Reviews and get directions directly from your site. Create multiple maps for use with multiple locations.', td),
+				apiKey      : __('API Key', td),
+				mapPreview  : __('Map Preview', td)
 			},
 			displayInfo : {
 				block : {

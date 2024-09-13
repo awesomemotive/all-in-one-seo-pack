@@ -14,24 +14,20 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import Cta from './AIOSEO_VERSION/video-sitemap/Cta'
 import Lite from './lite/video-sitemap/VideoSitemap'
 import VideoSitemap from './AIOSEO_VERSION/video-sitemap/VideoSitemap'
-import { AddonConditions } from '@/vue/mixins/AddonConditions'
-export default {
-	mixins     : [ AddonConditions ],
-	components : {
-		Cta,
-		Lite,
-		VideoSitemap
-	},
-	data () {
-		return {
-			addonSlug : 'aioseo-video-sitemap'
-		}
-	}
-}
+import { useAddonConditions } from '@/vue/composables/AddonConditions'
+
+const {
+	shouldShowActivate,
+	shouldShowLite,
+	shouldShowMain,
+	shouldShowUpdate
+} = useAddonConditions({
+	addonSlug : 'aioseo-video-sitemap'
+})
 </script>
 
 <style lang="scss">

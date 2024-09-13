@@ -1,7 +1,8 @@
 import { powerWords } from '../researches/config/powerWords'
 import { indexOf } from 'lodash-es'
 import { __, sprintf } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const scores = {
 	noPowerWords       : 5,

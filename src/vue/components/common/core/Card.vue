@@ -90,12 +90,12 @@ import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMa
 import SvgClose from '@/vue/components/common/svg/Close'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 export default {
+	emits : [ 'close-card', 'toggle-card' ],
 	setup () {
 		return {
 			settingsStore : useSettingsStore()
 		}
 	},
-	emits      : [ 'close-card', 'toggle-card' ],
 	components : {
 		CoreTooltip,
 		SvgCaret,

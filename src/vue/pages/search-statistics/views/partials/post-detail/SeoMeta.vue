@@ -65,6 +65,11 @@
 <script>
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreTooltip,
@@ -82,14 +87,14 @@ export default {
 	data () {
 		return {
 			strings : {
-				title                : this.$t.__('Title', this.$td),
-				description          : this.$t.__('Description', this.$td),
-				schema               : this.$t.__('Schema', this.$td),
-				canonicalUrl         : this.$t.__('Canonical URL', this.$td),
-				robots               : this.$t.__('Robots Meta', this.$td),
-				robotsNoIndex        : this.$t.__('This post is currently set to noindex which will prevent search engines from including it in search results.', this.$td),
-				additionalKeywords   : this.$t.__('Additional Keyphrases', this.$td),
-				addAdditionalKeyword : this.$t.__('Add Additional Keyphrase', this.$td)
+				title                : __('Title', td),
+				description          : __('Description', td),
+				schema               : __('Schema', td),
+				canonicalUrl         : __('Canonical URL', td),
+				robots               : __('Robots Meta', td),
+				robotsNoIndex        : __('This post is currently set to noindex which will prevent search engines from including it in search results.', td),
+				additionalKeywords   : __('Additional Keyphrases', td),
+				addAdditionalKeyword : __('Add Additional Keyphrase', td)
 			}
 		}
 	},

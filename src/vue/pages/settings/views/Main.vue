@@ -18,6 +18,11 @@ import CoreMain from '@/vue/components/common/core/main/Index'
 import GeneralSettings from './GeneralSettings'
 import RssContent from './RssContent'
 import WebmasterTools from './WebmasterTools'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -37,8 +42,8 @@ export default {
 		return {
 			strings : {
 				pageName : this.rootStore.aioseo.data.isNetworkAdmin
-					? this.$t.__('Network Settings', this.$td)
-					: this.$t.__('General Settings', this.$td)
+					? __('Network Settings', td)
+					: __('General Settings', td)
 			}
 		}
 	}

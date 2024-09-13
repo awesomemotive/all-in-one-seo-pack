@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 
-import App from './App.vue'
+import App from './App'
 
 if (document.getElementById('aioseo-admin')) {
 	const app = createApp({ ...App, name: 'Standalone/App' })

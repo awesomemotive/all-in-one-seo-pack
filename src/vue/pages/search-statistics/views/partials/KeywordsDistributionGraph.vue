@@ -14,6 +14,11 @@ import {
 } from '@/vue/stores'
 
 import Graph from './Graph'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -32,24 +37,24 @@ export default {
 			const data = this.searchStatisticsStore.data.keywords.distribution
 
 			return [ {
-				name : this.$t.__('Keywords', this.$td),
+				name : __('Keywords', td),
 				data : [ {
-					x         : this.$t.__('Top 3 Position', this.$td),
+					x         : __('Top 3 Position', td),
 					y         : data.top3,
 					fillColor : '#005AE0'
 				},
 				{
-					x         : this.$t.__('4-10 Position', this.$td),
+					x         : __('4-10 Position', td),
 					y         : data.top10,
 					fillColor : '#00AA63'
 				},
 				{
-					x         : this.$t.__('11-50 Position', this.$td),
+					x         : __('11-50 Position', td),
 					y         : data.top50,
 					fillColor : '#F18200'
 				},
 				{
-					x         : this.$t.__('50-100 Position', this.$td),
+					x         : __('50-100 Position', td),
 					y         : data.top100,
 					fillColor : '#DF2A4A'
 				} ]

@@ -61,15 +61,26 @@ import {
 	useRootStore
 } from '$/vue/stores'
 
+import { usePostTypes } from '@/vue/composables/PostTypes'
+
 import BaseHighlightToggle from '@/vue/components/common/base/HighlightToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
-import PostTypesMixin from '@/vue/mixins/PostTypes'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getPostIconClass
+		} = usePostTypes()
+
 		return {
+			getPostIconClass,
 			rootStore : useRootStore()
 		}
 	},
@@ -80,8 +91,7 @@ export default {
 		GridColumn,
 		GridRow
 	},
-	mixins : [ PostTypesMixin ],
-	props  : {
+	props : {
 		type : {
 			type     : String,
 			required : true
@@ -101,12 +111,12 @@ export default {
 	data () {
 		return {
 			strings : {
-				label                   : this.$t.__('Label:', this.$td),
-				name                    : this.$t.__('Slug:', this.$td),
-				noPostTypes             : this.$t.__('No post types available.', this.$td),
-				noTaxonomies            : this.$t.__('No taxonomies available.', this.$td),
-				noPostTypesDescription  : this.$t.__('All post types are set to noindex or your site does not have any post types registered that are supported by this feature.', this.$td),
-				noTaxonomiesDescription : this.$t.__('All taxonomies are set to noindex or your site does not have any taxonomies registered that are supported by this feature.', this.$td)
+				label                   : __('Label:', td),
+				name                    : __('Slug:', td),
+				noPostTypes             : __('No post types available.', td),
+				noTaxonomies            : __('No taxonomies available.', td),
+				noPostTypesDescription  : __('All post types are set to noindex or your site does not have any post types registered that are supported by this feature.', td),
+				noTaxonomiesDescription : __('All taxonomies are set to noindex or your site does not have any taxonomies registered that are supported by this feature.', td)
 			}
 		}
 	},

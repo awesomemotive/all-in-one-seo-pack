@@ -43,30 +43,32 @@ import PieChart from './partials/PieChart'
 
 import { usePostEditorStore } from '@/vue/stores'
 import { decodeHtml } from '../assets/js/functions'
+import { __, sprintf } from '@/vue/plugins/translations'
 
-const { sprintf } = window.wp.i18n
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	components : {
+		Accordion,
+		PieChart
+	},
 	data () {
 		return {
 			veryGoodScore : sprintf(
 				// Translators: 1 - Initial score range, 2 - Final score range.
-				this.$t.__('A very good score is between %1$d and %2$d.', this.$td),
+				__('A very good score is between %1$d and %2$d.', td),
 				70,
 				100
 			),
 			forBetterResults : sprintf(
 				// Translators: 1 - Score.
-				this.$t.__('For best results, you should strive for %1$d and above.', this.$td),
+				__('For best results, you should strive for %1$d and above.', td),
 				70
 			),
-			textPanelTitle   : this.$t.__('New Score', this.$td),
-			textCurrentScore : this.$t.__('Current Score', this.$td),
+			textPanelTitle   : __('New Score', td),
+			textCurrentScore : __('Current Score', td),
 			postEditorStore  : usePostEditorStore()
 		}
-	},
-	components : {
-		Accordion,
-		PieChart
 	},
 	computed : {
 		postTitle () {
@@ -106,19 +108,19 @@ export default {
 		},
 		statusOnScore () {
 			if (25 > this.newScore) {
-				return this.$t.__('Not Looking Great', this.$td)
+				return __('Not Looking Great', td)
 			}
 			if (50 > this.newScore) {
-				return this.$t.__('Could Be Better', this.$td)
+				return __('Could Be Better', td)
 			}
 			if (60 > this.newScore) {
-				return this.$t.__('Getting There', this.$td)
+				return __('Getting There', td)
 			}
 			if (75 > this.newScore) {
-				return this.$t.__('Looks Good! 👍👍', this.$td)
+				return __('Looks Good! 👍👍', td)
 			}
 			if (75 <= this.newScore) {
-				return this.$t.__('Super! 🔥🔥🔥', this.$td)
+				return __('Super! 🔥🔥🔥', td)
 			}
 			return false
 		}

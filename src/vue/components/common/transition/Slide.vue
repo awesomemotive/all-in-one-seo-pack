@@ -45,13 +45,6 @@ export default {
 			})
 		}
 	},
-	mounted () {
-		this.layout()
-		this.initial = true
-	},
-	created () {
-		this.hidden = !this.active
-	},
 	computed : {
 		el () {
 			return this.$refs.container && this.$refs.container.$el ? this.$refs.container.$el : this.$refs.container || null
@@ -108,6 +101,13 @@ export default {
 				this.$emit('close-end')
 			}
 		}
+	},
+	mounted () {
+		this.layout()
+		this.initial = true
+	},
+	created () {
+		this.hidden = !this.active
 	}
 }
 </script>

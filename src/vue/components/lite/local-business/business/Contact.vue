@@ -22,6 +22,11 @@
 
 <script>
 import BasePhone from '@/vue/components/common/base/Phone'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		BasePhone
@@ -29,9 +34,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				emailAddress : this.$t.__('Email Address', this.$td),
-				phoneNumber  : this.$t.__('Phone Number', this.$td),
-				faxNumber    : this.$t.__('Fax Number', this.$td)
+				emailAddress : __('Email Address', td),
+				phoneNumber  : __('Phone Number', td),
+				faxNumber    : __('Fax Number', td)
 			}
 		}
 	}

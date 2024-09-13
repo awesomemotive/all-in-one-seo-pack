@@ -3,7 +3,8 @@ import { inRange } from 'lodash-es'
 import findTransitionWords from '../researches/findTransitionWords'
 import formatNumber from '../researches/helpers/formatNumber'
 import { __, sprintf } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 function calculateTransitionWordPercentage (sentences) {
 	if (0 === sentences.transitionWordSentences || 0 === sentences.totalSentences) {
@@ -39,6 +40,7 @@ function transitionWords (content, locale) {
 	const transitionWordSentences = findTransitionWords(content, locale)
 	const percentage = calculateTransitionWordPercentage(transitionWordSentences)
 	const score = calculateScoreFromPercentage(percentage)
+
 	if (7 > score && 0 === percentage) {
 		return {
 			title       : __('Transition words', td),

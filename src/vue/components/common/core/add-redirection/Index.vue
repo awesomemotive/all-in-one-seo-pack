@@ -169,7 +169,7 @@
 				<custom-rules
 					:key="customRules"
 					:edit-custom-rules="customRules"
-					@redirects-custom-rule-error="value => this.customRulesError = value"
+					@redirects-custom-rule-error="value => customRulesError = value"
 				/>
 			</transition-slide>
 			<div
@@ -202,13 +202,20 @@
 
 <script>
 import {
+	REDIRECT_QUERY_PARAMS,
+	REDIRECT_TYPES
+} from '@/vue/plugins/constants'
+
+import {
 	useRedirectsStore
 } from '@/vue/stores'
 
-import { REDIRECT_TYPES, REDIRECT_QUERY_PARAMS  } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import { debounce } from '@/vue/utils/debounce'
-import { JsonValues } from '@/vue/mixins/JsonValues'
 import { sanitizeString } from '@/vue/utils/strings'
+
+import { useJsonValues } from '@/vue/composables/JsonValues'
+import { useRedirect } from '@/vue/composables/redirects/Redirect'
 
 import BaseButton from '@/vue/components/common/base/Button'
 import BaseSelect from '@/vue/components/common/base/Select'
@@ -218,15 +225,28 @@ import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CustomRules from './CustomRules'
 import SvgRightArrow from '@/vue/components/common/svg/right-arrow/Index'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
-import Redirect from '@/vue/mixins/redirects/Redirect'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
+	emits : [ 'cancel', 'added-redirect' ],
 	setup () {
+		const {
+			getJsonValue
+		} = useJsonValues()
+
+		const {
+			redirectHasUnPublishedPost
+		} = useRedirect()
+
 		return {
+			getJsonValue,
+			redirectHasUnPublishedPost,
 			redirectsStore : useRedirectsStore()
 		}
 	},
-	emits      : [ 'cancel', 'added-redirect' ],
 	components : {
 		BaseButton,
 		BaseSelect,
@@ -237,8 +257,7 @@ export default {
 		SvgRightArrow,
 		TransitionSlide
 	},
-	mixins : [ JsonValues, Redirect ],
-	props  : {
+	props : {
 		edit          : Boolean,
 		log404        : Boolean,
 		disableSource : Boolean,
@@ -267,21 +286,21 @@ export default {
 			targetUrlWarnings : [],
 			customRulesError  : false,
 			strings           : {
-				redirectType         : this.$t.__('Redirect Type:', this.$td),
-				targetUrl            : this.$t.__('Target URL', this.$td),
-				targetUrlDescription : this.$t.__('Enter a URL or start by typing a page or post title, slug or ID.', this.$td),
-				addUrl               : this.$t.__('Add URL', this.$td),
-				sourceUrlDescription : this.$t.sprintf(
+				redirectType         : __('Redirect Type:', td),
+				targetUrl            : __('Target URL', td),
+				targetUrlDescription : __('Enter a URL or start by typing a page or post title, slug or ID.', td),
+				addUrl               : __('Add URL', td),
+				sourceUrlDescription : sprintf(
 					// Translators: 1 - Oening link tag, 2 - Closing link tag.
-					this.$t.__('Enter a relative URL to redirect from or start by typing in page or post title, slug or ID. You can also use regex (%1$s)', this.$td),
-					this.$links.getDocLink(this.$t.__('what\'s this?', this.$td), 'redirectManagerRegex')
+					__('Enter a relative URL to redirect from or start by typing in page or post title, slug or ID. You can also use regex (%1$s)', td),
+					links.getDocLink(__('what\'s this?', td), 'redirectManagerRegex')
 				),
-				advancedSettings          : this.$t.__('Advanced Settings', this.$td),
-				queryParams               : this.$t.__('Query Parameters:', this.$td),
-				saveChanges               : this.$t.__('Save Changes', this.$td),
-				cancel                    : this.$t.__('Cancel', this.$td),
-				genericErrorMessage       : this.$t.__('An error occurred while adding your redirects. Please try again later.', this.$td),
-				sourceUrlSetOncePublished : this.$t.__('source url set once post is published', this.$td)
+				advancedSettings          : __('Advanced Settings', td),
+				queryParams               : __('Query Parameters:', td),
+				saveChanges               : __('Save Changes', td),
+				cancel                    : __('Cancel', td),
+				genericErrorMessage       : __('An error occurred while adding your redirects. Please try again later.', td),
+				sourceUrlSetOncePublished : __('source url set once post is published', td)
 			},
 			sourceDisabled  : false,
 			editing         : false,
@@ -368,10 +387,10 @@ export default {
 			return null
 		},
 		sourceUrl () {
-			return 1 < this.sourceUrls.length ? this.$t.__('Source URLs', this.$td) : this.$t.__('Source URL', this.$td)
+			return 1 < this.sourceUrls.length ? __('Source URLs', td) : __('Source URL', td)
 		},
 		addRedirect () {
-			return 1 < this.sourceUrls.length ? this.$t.__('Add Redirects', this.$td) : this.$t.__('Add Redirect', this.$td)
+			return 1 < this.sourceUrls.length ? __('Add Redirects', td) : __('Add Redirect', td)
 		},
 		hasTargetUrlErrors () {
 			if (!this.targetUrl) {
@@ -382,7 +401,7 @@ export default {
 			const sanitizedTargetUrl = sanitizeString(this.targetUrl)
 
 			if (!sanitizedTargetUrl) {
-				errors.push(this.$t.__('Your target URL is not valid.', this.$td))
+				errors.push(__('Your target URL is not valid.', td))
 				return errors
 			}
 
@@ -392,9 +411,9 @@ export default {
 				!this.beginsWith(this.targetUrl, 'http://') &&
 				'/' !== this.targetUrl.substr(0, 1)
 			) {
-				errors.push(this.$t.sprintf(
+				errors.push(sprintf(
 					// Translators: 1 - Adds a html tag with an option like: <code>^</code>, 2 - Adds a html tag with an option like: <code>^</code>.
-					this.$t.__('Your target URL should be an absolute URL like %1$s or start with a slash %2$s.', this.$td),
+					__('Your target URL should be an absolute URL like %1$s or start with a slash %2$s.', td),
 					'<code>https://domain.com/' + sanitizedTargetUrl + '</code>',
 					'<code>/' + sanitizedTargetUrl + '</code>'
 				))
@@ -405,9 +424,9 @@ export default {
 				// Let's make sure that all URLs have regex enabled or else we fail.
 				const regex = this.sourceUrls.map(u => u.regex)
 				if (!regex.every(a => a)) {
-					errors.push(this.$t.sprintf(
+					errors.push(sprintf(
 						// Translators: 1 - Adds a html tag with an option like: <code>^</code>.
-						this.$t.__('Your target URL contains the invalid character(s) %1$s', this.$td),
+						__('Your target URL contains the invalid character(s) %1$s', td),
 						'<code>' + matches + '</code>'
 					))
 				}
@@ -422,9 +441,9 @@ export default {
 
 			const warnings = []
 			if (this.getRelativeAbsolute) {
-				warnings.push(this.$t.sprintf(
+				warnings.push(sprintf(
 					// Translators: 1 - Domain URL, 2 - Domain URL.
-					this.$t.__('Your URL appears to contain a domain inside the path: %1$s. Did you mean to use %2$s instead?', this.$td),
+					__('Your URL appears to contain a domain inside the path: %1$s. Did you mean to use %2$s instead?', td),
 					'<code>' + this.getRelativeAbsolute + '</code>',
 					'<code>https:/' + this.getRelativeAbsolute + '</code>'
 				))
@@ -567,7 +586,7 @@ export default {
 
 			const urlIndexes          = []
 			const failed              = error.response.body.failed
-			const genericErrorMessage = this.$t.__('A redirect already exists for this source URL. To make changes, edit the original instead.', this.$td)
+			const genericErrorMessage = __('A redirect already exists for this source URL. To make changes, edit the original instead.', td)
 			failed.forEach(f => {
 				const urlIndex = this.sourceUrls.findIndex(u => u.url === f.url || f)
 				if (-1 !== urlIndex) {
@@ -609,8 +628,8 @@ export default {
 			this.targetUrl         = null
 			this.targetUrlErrors   = []
 			this.targetUrlWarnings = []
-			this.redirectType      = redirectType || { label: '301 ' + this.$t.__('Moved Permanently', this.$td), value: 301 }
-			this.queryParam        = queryParam || { label: this.$t.__('Ignore all parameters', this.$td), value: 'ignore' }
+			this.redirectType      = redirectType || { label: '301 ' + __('Moved Permanently', td), value: 301 }
+			this.queryParam        = queryParam || { label: __('Ignore all parameters', td), value: 'ignore' }
 			this.customRules       = []
 		},
 		checkForDuplicates () {
@@ -624,7 +643,7 @@ export default {
 				if (
 					urls.includes(u.url.replace(/\/$/, ''))
 				) {
-					this.sourceUrls[i].errors.push(this.$t.__('This is a duplicate of a URL you are already adding. You can only add unique source URLs.', this.$td))
+					this.sourceUrls[i].errors.push(__('This is a duplicate of a URL you are already adding. You can only add unique source URLs.', td))
 					return
 				}
 

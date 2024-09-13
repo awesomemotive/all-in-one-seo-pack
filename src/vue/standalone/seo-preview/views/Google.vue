@@ -1,21 +1,21 @@
 <template>
-  <div class="preview-wrapper">
-    <google-serp-wireframe
-        :device="device"
-        :search-text="rootStore.aioseo?.keyphrases?.focus?.keyphrase ?? ''"
-    >
-      <template #serp-snippet>
-        <core-google-search-preview
-			:focus-keyphrase="rootStore.aioseo?.keyphrases?.focus?.keyphrase ?? ''"
-            :device="device"
-            :url="googleData.url"
-            :title="googleData.title"
-            :description="googleData.description"
-            :rich-results="richResults"
-        />
-      </template>
-    </google-serp-wireframe>
-  </div>
+	<div class="preview-wrapper">
+		<google-serp-wireframe
+			:device="device"
+			:search-text="rootStore.aioseo?.keyphrases?.focus?.keyphrase ?? ''"
+		>
+		<template #serp-snippet>
+			<core-google-search-preview
+				:focus-keyphrase="rootStore.aioseo?.keyphrases?.focus?.keyphrase ?? ''"
+				:device="device"
+				:url="googleData.url"
+				:title="googleData.title"
+				:description="googleData.description"
+				:rich-results="richResults"
+			/>
+		</template>
+		</google-serp-wireframe>
+	</div>
 </template>
 
 <script>
@@ -39,6 +39,17 @@ export default {
 		CoreGoogleSearchPreview,
 		GoogleSerpWireframe
 	},
+	props : {
+		device : {
+			type    : String,
+			default : 'desktop'
+		}
+	},
+	data () {
+		return {
+			googleData : getDomGoogleSerpData()
+		}
+	},
 	computed : {
 		// Get rich results for the front-end preview.
 		richResults () {
@@ -58,17 +69,6 @@ export default {
 				faq           : this.seoPreviewStore.extractFaq(schemaOutput)
 			}
 		}
-	},
-	props : {
-		device : {
-			type    : String,
-			default : 'desktop'
-		}
-	},
-	data () {
-		return {
-			googleData : getDomGoogleSerpData()
-		}
 	}
 }
 </script>
@@ -76,11 +76,11 @@ export default {
 <style lang="scss" scoped>
 .preview-wrapper {
   .google-serp-wireframe-wrapper {
-    margin: 20px;
+	margin: 20px;
 
-    &--mobile {
-      margin: 0 20px 0;
-    }
+	&--mobile {
+	  margin: 0 20px 0;
+	}
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
 	<div class="additional-keyphrases-panel">
-		<div v-if="postEditorStore.currentPost.keyphrases.additional && postEditorStore.currentPost.keyphrases.additional.length && ($isPro && licenseStore.license.isActive)">
+		<div v-if="postEditorStore.currentPost.keyphrases.additional && postEditorStore.currentPost.keyphrases.additional.length && (rootStore.isPro && licenseStore.license.isActive)">
 			<core-keyphrase
 				v-for="(keyphrase, index) in postEditorStore.currentPost.keyphrases.additional"
 				:key="index"
@@ -16,27 +16,27 @@
 			<div class="analysis-wrapper">
 				<core-loader
 					class="analysis-loading"
-					v-if="postEditorStore.currentPost.loading.additional[this.selectedKeyphrase] &&
-						postEditorStore.currentPost.keyphrases.additional[this.selectedKeyphrase] &&
-						postEditorStore.currentPost.keyphrases.additional[this.selectedKeyphrase].keyphrase"
+					v-if="postEditorStore.currentPost.loading.additional[selectedKeyphrase] &&
+						postEditorStore.currentPost.keyphrases.additional[selectedKeyphrase] &&
+						postEditorStore.currentPost.keyphrases.additional[selectedKeyphrase].keyphrase"
 					dark
 				/>
 				<metaboxAnalysisDetail
-					v-if="!postEditorStore.currentPost.loading.additional[this.selectedKeyphrase] &&
-						postEditorStore.currentPost.keyphrases.additional[this.selectedKeyphrase] &&
-						postEditorStore.currentPost.keyphrases.additional[this.selectedKeyphrase].keyphrase"
-					:analysisItems="postEditorStore.currentPost.keyphrases.additional[this.selectedKeyphrase].analysis"
+					v-if="!postEditorStore.currentPost.loading.additional[selectedKeyphrase] &&
+						postEditorStore.currentPost.keyphrases.additional[selectedKeyphrase] &&
+						postEditorStore.currentPost.keyphrases.additional[selectedKeyphrase].keyphrase"
+					:analysisItems="postEditorStore.currentPost.keyphrases.additional[selectedKeyphrase].analysis"
 				/>
 			</div>
 		</div>
 		<base-input
-			v-if="$isPro && licenseStore.license.isActive"
+			v-if="rootStore.isPro && licenseStore.license.isActive"
 			size="medium"
-			:class="`add-keyphrase-${this.$root.$data.screenContext}-input`"
+			:class="`add-keyphrase-${$root.$data.screenContext}-input`"
 			@keydown.enter="pressEnter"
 		/>
 		<base-button
-			v-if="$isPro && licenseStore.license.isActive"
+			v-if="rootStore.isPro && licenseStore.license.isActive"
 			id="add-additional-keyphrase"
 			class="add-keyphrase gray medium"
 			@click="addKeyphraseEv"
@@ -46,7 +46,7 @@
 		</base-button>
 
 		<template
-			v-if="!$isPro || !licenseStore.license.isActive"
+			v-if="!rootStore.isPro || !licenseStore.license.isActive"
 		>
 			<div class="aioseo-description additional-keyphrases-description">
 				{{ strings.keyphraseDocumentation }}
@@ -63,21 +63,33 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
-	usePostEditorStore
+	usePostEditorStore,
+	useRootStore
 } from '@/vue/stores'
+
+import TruSeo from '@/vue/plugins/tru-seo'
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreKeyphrase from '@/vue/components/common/core/Keyphrase'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import metaboxAnalysisDetail from './MetaboxAnalysisDetail'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
 			licenseStore    : useLicenseStore(),
-			postEditorStore : usePostEditorStore()
+			postEditorStore : usePostEditorStore(),
+			rootStore       : useRootStore(),
+			truSeo          : new TruSeo()
 		}
 	},
 	components : {
@@ -91,14 +103,14 @@ export default {
 		return {
 			selectedKeyphrase : 0,
 			strings           : {
-				additional             : this.$t.__('Additional Keyphrases', this.$td),
-				addKeyphrase           : this.$t.__('Add Additional Keyphrases', this.$td),
-				keyphraseDocumentation : this.$t.__('Improve your SEO rankings with additional keyphrases.', this.$td),
-				upsell                 : this.$t.sprintf(
+				additional             : __('Additional Keyphrases', td),
+				addKeyphrase           : __('Add Additional Keyphrases', td),
+				keyphraseDocumentation : __('Improve your SEO rankings with additional keyphrases.', td),
+				upsell                 : sprintf(
 					// Translators: 1 - "Pro" string, 2 - "Learn more link".
-					this.$t.__('Additional Keyphrases are a %1$s feature. %2$s', this.$td),
+					__('Additional Keyphrases are a %1$s feature. %2$s', td),
 					'PRO',
-					this.$links.getUpsellLink('post-settings', this.$constants.GLOBAL_STRINGS.learnMore, 'additional-keywords', true)
+					links.getUpsellLink('post-settings', GLOBAL_STRINGS.learnMore, 'additional-keywords', true)
 				)
 			}
 		}
@@ -121,7 +133,7 @@ export default {
 			this.postEditorStore.currentPost.loading.additional[index] = true
 
 			this.postEditorStore.isDirty = true
-			this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
+			this.truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 			this.selectedKeyphrase = index
 		},
 		onDeleted (index) {
@@ -132,7 +144,7 @@ export default {
 			setTimeout(() => {
 				this.postEditorStore.currentPost.keyphrases.additional = additionalCopy
 				this.postEditorStore.isDirty           = true
-				this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
+				this.truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 			}, 300)
 		},
 		addKeyphraseEv () {
@@ -148,7 +160,7 @@ export default {
 
 				this.postEditorStore.isDirty = true
 				keyphrasePanel[newKeyphraseIndex]?.click()
-				this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
+				this.truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 			}
 		},
 		pressEnter (event) {

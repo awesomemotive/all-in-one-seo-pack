@@ -106,12 +106,13 @@
 		<div
 			v-show="false"
 			ref="documentation-div"
-			v-html="$links.getDocLink(strings.learnMoreSmartTags, 'smartTags', true)"
+			v-html="links.getDocLink(strings.learnMoreSmartTags, 'smartTags', true)"
 		/>
 	</div>
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	usePostEditorStore,
 	useTagsStore
@@ -133,16 +134,20 @@ import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgPlus from '@/vue/components/common/svg/Plus'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 const QuillEditor = []
 
 export default {
+	emits : [ 'counter', 'selection-change', 'updateEditor', 'focus', 'blur', 'update:modelValue', 'paste' ],
 	setup () {
 		return {
 			postEditorStore : usePostEditorStore(),
-			tagsStore       : useTagsStore()
+			tagsStore       : useTagsStore(),
+			links
 		}
 	},
-	emits      : [ 'counter', 'selection-change', 'updateEditor', 'focus', 'blur', 'update:modelValue', 'paste' ],
 	components : {
 		BaseInput,
 		SvgCaret,
@@ -187,10 +192,10 @@ export default {
 			insertExact  : false,
 			cachedPhrase : '',
 			strings      : {
-				searchPlaceholder    : this.$t.__('Search for an item...', this.$td),
-				enterCustomFieldName : this.$t.__('Enter a custom field/taxonomy name...', this.$td),
-				learnMoreSmartTags   : this.$t.__('Learn more about Smart Tags', this.$td),
-				removeSmartTag       : this.$t.__('Remove Smart Tag', this.$td)
+				searchPlaceholder    : __('Search for an item...', td),
+				enterCustomFieldName : __('Enter a custom field/taxonomy name...', td),
+				learnMoreSmartTags   : __('Learn more about Smart Tags', td),
+				removeSmartTag       : __('Remove Smart Tag', td)
 			}
 		}
 	},

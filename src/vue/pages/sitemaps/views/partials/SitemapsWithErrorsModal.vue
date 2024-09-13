@@ -19,7 +19,7 @@
 					/>
 
 					<core-wp-table
-						id="sitemapErrorsTable"
+						:id="tableId"
 						:columns="columns"
 						:rows="rows"
 						:bulk-options="bulkOptions"
@@ -82,30 +82,51 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
+import { useGoogleSearchConsole } from '@/vue/composables/GoogleSearchConsole'
+import { useWpTable } from '@/vue/composables/WpTable'
+
 import { escUrl } from '@/vue/utils/formatting'
-import { WpTable } from '@/vue/mixins/WpTable'
-import { useSearchConsole } from '@/vue/composables'
 import { merge } from 'lodash-es'
+
 import CoreAlertActionable from '@/vue/components/common/core/alert/Actionable'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		const {
 			strings
-		} = useSearchConsole()
+		} = useGoogleSearchConsole()
+
+		const tableId = 'sitemapErrorsTable'
+		const {
+			pageNumber,
+			processPagination,
+			resultsPerPage
+		} = useWpTable({
+			changeItemsPerPageSlug : 'searchConsoleSitemapErrors',
+			fetchData              : () => Promise.resolve(),
+			resultsPerPage         : 5,
+			tableId
+		})
 
 		return {
+			composableStrings     : strings,
 			optionsStore          : useOptionsStore(),
-			searchStatisticsStore : useSearchStatisticsStore(),
+			pageNumber,
+			processPagination,
+			resultsPerPage,
 			rootStore             : useRootStore(),
+			searchStatisticsStore : useSearchStatisticsStore(),
 			settingsStore         : useSettingsStore(),
-			composableStrings     : strings
+			tableId
 		}
 	},
-	mixins     : [ WpTable ],
 	components : {
 		CoreAlertActionable,
 		CoreModal,
@@ -124,32 +145,57 @@ export default {
 	},
 	data () {
 		return {
-			resultsPerPage : 5,
-			pageNumber     : 1,
-			loading        : false,
-			bulkOptions    : [
+			loading     : false,
+			bulkOptions : [
 				{
-					label : this.$t.__('Remove', this.$td),
+					label : __('Remove', td),
 					value : 'remove'
 				},
 				{
-					label : this.$t.__('Ignore', this.$td),
+					label : __('Ignore', td),
 					value : 'ignore'
 				}
 			],
 			strings : merge(this.composableStrings, {
-				aioseoHasFoundSomeErrorsInSitemaps : this.$t.sprintf(
+				aioseoHasFoundSomeErrorsInSitemaps : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('%1$s has found some errors in sitemaps that were previously submitted to Google Search Console. Since %1$s manages your sitemaps, these additional sitemaps can be removed.', this.$td),
+					__('%1$s has found some errors in sitemaps that were previously submitted to Google Search Console. Since %1$s manages your sitemaps, these additional sitemaps can be removed.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				allErrorsResolved          : this.$t.__('All errors have been resolved', this.$td),
-				removeSitemap              : this.$t.__('Remove', this.$td),
-				ignoreSitemap              : this.$t.__('Ignore', this.$td),
-				viewDetails                : this.$t.__('Details', this.$td),
-				sitemapErrors              : this.$t.__('Sitemap Errors', this.$td),
-				thereAreSitemapsWithErrors : this.$t.__('There are sitemaps with errors', this.$td)
+				allErrorsResolved          : __('All errors have been resolved', td),
+				removeSitemap              : __('Remove', td),
+				ignoreSitemap              : __('Ignore', td),
+				viewDetails                : __('Details', td),
+				sitemapErrors              : __('Sitemap Errors', td),
+				thereAreSitemapsWithErrors : __('There are sitemaps with errors', td)
 			})
+		}
+	},
+	computed : {
+		totals () {
+			return {
+				page  : 1,
+				pages : Math.ceil(this.searchStatisticsStore.sitemapsWithErrors.length / this.resultsPerPage),
+				total : this.searchStatisticsStore.sitemapsWithErrors.length
+			}
+		},
+		rows () {
+			const offset = 1 === this.pageNumber ? 0 : (this.pageNumber - 1) * this.resultsPerPage
+
+			return this.searchStatisticsStore.sitemapsWithErrors.slice(offset, offset + this.resultsPerPage)
+		},
+		columns () {
+			return [
+				{
+					slug  : 'sitemap',
+					label : __('Sitemap', td)
+				},
+				{
+					slug  : 'actions',
+					label : __('Actions', td),
+					width : '220px'
+				}
+			]
 		}
 	},
 	methods : {
@@ -211,33 +257,6 @@ export default {
 			const internalSitemaps = this.rootStore.aioseo.data.sitemapUrls
 
 			return !internalSitemaps.includes(sitemap.path)
-		}
-	},
-	computed : {
-		totals () {
-			return {
-				page  : 1,
-				pages : Math.ceil(this.searchStatisticsStore.sitemapsWithErrors.length / this.resultsPerPage),
-				total : this.searchStatisticsStore.sitemapsWithErrors.length
-			}
-		},
-		rows () {
-			const offset = 1 === this.pageNumber ? 0 : (this.pageNumber - 1) * this.resultsPerPage
-
-			return this.searchStatisticsStore.sitemapsWithErrors.slice(offset, offset + this.resultsPerPage)
-		},
-		columns () {
-			return [
-				{
-					slug  : 'sitemap',
-					label : this.$t.__('Sitemap', this.$td)
-				},
-				{
-					slug  : 'actions',
-					label : this.$t.__('Actions', this.$td),
-					width : '220px'
-				}
-			]
 		}
 	}
 }

@@ -157,7 +157,8 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
-import { WpTable } from '@/vue/mixins/WpTable'
+import { useWpTable } from '@/vue/composables/WpTable'
+
 import AddAdditionalPage from './partials/AddAdditionalPage'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -165,15 +166,46 @@ import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const tableId = 'sitemap-additional-pages'
+
+		const {
+			pageNumber,
+			processChangeItemsPerPage,
+			processPagination,
+			processSort,
+			resultsPerPage,
+			searchTerm,
+			wpTableKey,
+			wpTableLoading
+		} = useWpTable({
+			changeItemsPerPageSlug : 'sitemapAdditionalPages',
+			fetchData              : () => Promise.resolve(),
+			slug                   : 'additionalPages',
+			resultsPerPage         : 10,
+			tableId
+		})
+
 		return {
 			optionsStore  : useOptionsStore(),
+			pageNumber,
+			processChangeItemsPerPage,
+			processPagination,
+			processSort,
+			resultsPerPage,
 			rootStore     : useRootStore(),
-			settingsStore : useSettingsStore()
+			searchTerm,
+			settingsStore : useSettingsStore(),
+			tableId,
+			wpTableKey,
+			wpTableLoading
 		}
 	},
-	mixins     : [ WpTable ],
 	components : {
 		AddAdditionalPage,
 		CoreWpTable,
@@ -184,33 +216,30 @@ export default {
 	},
 	data () {
 		return {
-			tableId                : 'sitemap-additional-pages',
-			changeItemsPerPageSlug : 'sitemapAdditionalPages',
-			page                   : {},
-			editedPage             : {},
-			resultsPerPage         : 10,
-			searchResults          : null,
-			deletingRow            : false,
-			activeRow              : -1,
-			showDeleteModal        : false,
-			shouldDeleteURL        : null,
-			selectedRows           : null,
-			bulkOptions            : [
-				{ label: this.$t.__('Delete', this.$td), value: 'delete' }
+			page            : {},
+			editedPage      : {},
+			searchResults   : null,
+			deletingRow     : false,
+			activeRow       : -1,
+			showDeleteModal : false,
+			shouldDeleteURL : null,
+			selectedRows    : null,
+			bulkOptions     : [
+				{ label: __('Delete', td), value: 'delete' }
 			],
 			strings : {
-				searchUrls             : this.$t.__('Search URLs', this.$td),
-				edit                   : this.$t.__('Edit', this.$td),
-				delete                 : this.$t.__('Delete', this.$td),
-				additionalPages        : this.$t.__('Additional Pages', this.$td),
-				additionalPagesTooltip : this.$t.__('You can use this section to add any URLs to your sitemap which aren\'t a part of your WordPress installation. For example, if you have a contact form that you would like to be included on your sitemap you can enter the information manually.', this.$td),
-				areYouSureDeleteLink   : this.$t.__('Are you sure you want to delete this page?', this.$td),
-				areYouSureDeleteLinks  : this.$t.__('Are you sure you want to delete these pages?', this.$td),
-				thisWillRemoveLink     : this.$t.__('This will permanently remove this page from the additional pages sitemap.', this.$td),
-				thisWillRemoveLinks    : this.$t.__('This will permanently remove the selected pages from the additional pages sitemap.', this.$td),
-				yesDeleteLink          : this.$t.__('Delete Page', this.$td),
-				yesDeleteLinks         : this.$t.__('Delete Selected Pages', this.$td),
-				noChangedMind          : this.$t.__('No, I changed my mind', this.$td)
+				searchUrls             : __('Search URLs', td),
+				edit                   : __('Edit', td),
+				delete                 : __('Delete', td),
+				additionalPages        : __('Additional Pages', td),
+				additionalPagesTooltip : __('You can use this section to add any URLs to your sitemap which aren\'t a part of your WordPress installation. For example, if you have a contact form that you would like to be included on your sitemap you can enter the information manually.', td),
+				areYouSureDeleteLink   : __('Are you sure you want to delete this page?', td),
+				areYouSureDeleteLinks  : __('Are you sure you want to delete these pages?', td),
+				thisWillRemoveLink     : __('This will permanently remove this page from the additional pages sitemap.', td),
+				thisWillRemoveLinks    : __('This will permanently remove the selected pages from the additional pages sitemap.', td),
+				yesDeleteLink          : __('Delete Page', td),
+				yesDeleteLinks         : __('Delete Selected Pages', td),
+				noChangedMind          : __('No, I changed my mind', td)
 			}
 		}
 	},
@@ -239,21 +268,21 @@ export default {
 			return [
 				{
 					slug  : 'url',
-					label : this.$t.__('Page URL', this.$td)
+					label : __('Page URL', td)
 				},
 				{
 					slug  : 'priority',
-					label : this.$t.__('Priority', this.$td),
+					label : __('Priority', td),
 					width : '90px'
 				},
 				{
 					slug  : 'frequency',
-					label : this.$t.__('Frequency', this.$td),
+					label : __('Frequency', td),
 					width : '90px'
 				},
 				{
 					slug  : 'lastModified',
-					label : this.$t.__('Last Modified', this.$td),
+					label : __('Last Modified', td),
 					width : '180px'
 				},
 				{
@@ -274,10 +303,6 @@ export default {
 		}
 	},
 	methods : {
-		// Placeholder method.
-		fetchData () {
-			return Promise.resolve()
-		},
 		processSearch (searchTerm) {
 			this.$refs.table.editRow(null)
 			this.pageNumber = 1

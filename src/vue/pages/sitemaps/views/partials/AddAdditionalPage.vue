@@ -21,7 +21,7 @@
 					@input="updateUrl($event.target.value)"
 					size="medium"
 					:placeholder="strings.placeholder"
-					:class="this.errors.url.invalid && 'aioseo-error' || this.page.url && this.errors.url.exists && 'aioseo-warning' || this.page.url && 'aioseo-active' "
+					:class="errors.url.invalid && 'aioseo-error' || page.url && errors.url.exists && 'aioseo-warning' || page.url && 'aioseo-active' "
 				>
 					<template #append-icon>
 						<div class="append-icon">
@@ -45,7 +45,7 @@
 				</base-input>
 
 				<core-alert
-					v-if="this.errors.url.invalid"
+					v-if="errors.url.invalid"
 					type="red"
 					size="small"
 				>
@@ -53,7 +53,7 @@
 				</core-alert>
 
 				<core-alert
-					v-if="this.errors.url.exists"
+					v-if="errors.url.exists"
 					type="yellow"
 					size="small"
 				>
@@ -66,7 +66,7 @@
 					size="medium"
 					:modelValue="page.priority"
 					@update:modelValue="editPage('priority', $event)"
-					:options="$constants.PRIORITY_OPTIONS"
+					:options="PRIORITY_OPTIONS"
 				/>
 			</div>
 
@@ -75,7 +75,7 @@
 					size="medium"
 					:modelValue="page.frequency"
 					@update:modelValue="editPage('frequency', $event)"
-					:options="$constants.FREQUENCY_OPTIONS"
+					:options="FREQUENCY_OPTIONS"
 				/>
 			</div>
 
@@ -92,7 +92,7 @@
 		</div>
 
 		<div class="page-input-footer">
-			 <div v-if="inTable">
+			<div v-if="inTable">
 				<base-button
 					type="blue"
 					size="medium"
@@ -210,13 +210,21 @@
 
 <script>
 import {
+	FREQUENCY_OPTIONS,
+	PRIORITY_OPTIONS
+} from '@/vue/plugins/constants'
+import {
 	useOptionsStore,
 	useRootStore
 } from '@/vue/stores'
 
+import {
+	dateJsToLocal,
+	dateStringToLocalJs
+} from '@/vue/utils/date'
+
 import { DateTime } from 'luxon'
-import { Date } from '@/vue/mixins/Date'
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@/vue/plugins/translations'
 import { getAssetUrl, isUrl, cloneObject } from '@/vue/utils/helpers'
 import csvFileImage from '@/vue/assets/images/sitemap/import-from-csv.png'
 
@@ -227,6 +235,7 @@ import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation'
 
+const td = import.meta.env.VITE_TEXTDOMAIN
 const defaults = {
 	page : {
 		url          : null,
@@ -237,14 +246,17 @@ const defaults = {
 }
 
 export default {
+	emits : [ 'cancel', 'process-page-add-and-update', 'process-page-edit' ],
 	setup () {
 		return {
+			FREQUENCY_OPTIONS,
+			PRIORITY_OPTIONS,
+			dateJsToLocal,
+			dateStringToLocalJs,
 			optionsStore : useOptionsStore(),
 			rootStore    : useRootStore()
 		}
 	},
-	emits      : [ 'cancel', 'process-page-add-and-update', 'process-page-edit' ],
-	mixins     : [ Date ],
 	components : {
 		BaseDatePicker,
 		CoreAlert,
@@ -252,6 +264,25 @@ export default {
 		SvgCircleCheck,
 		SvgCircleClose,
 		SvgCircleExclamation
+	},
+	props : {
+		inTable           : Boolean,
+		row               : Object,
+		index             : Number,
+		getPaginatedIndex : Function,
+		getParsedPages    : Function,
+		rowPage           : {
+			type : Object,
+			default () {
+				return {}
+			}
+		},
+		editedPage : {
+			type : Object,
+			default () {
+				return {}
+			}
+		}
 	},
 	data () {
 		return {
@@ -272,42 +303,47 @@ export default {
 			},
 			isLoading : false,
 			strings   : {
-				placeholder : this.$t.sprintf(
+				placeholder : sprintf(
 					// Translators: 1 - An example URL (e.g. https://aioseo.com/example).
-					this.$t.__('Enter a page URL, e.g. %1$s', this.$td),
+					__('Enter a page URL, e.g. %1$s', td),
 					`${this.rootStore.aioseo.urls.home}/new-page`
 				),
-				pageUrl               : this.$t.__('Page URL', this.$td),
-				priority              : this.$t.__('Priority', this.$td),
-				frequency             : this.$t.__('Frequency', this.$td),
-				lastModified          : this.$t.__('Last Modified', this.$td),
-				addPage               : this.$t.__('Add Page', this.$td),
-				importFromCSV         : this.$t.__('Import from CSV', this.$td),
-				saveChanges           : this.$t.__('Update Page', this.$td),
-				cancel                : this.$t.__('Cancel', this.$td),
-				importAdditionalPages : this.$t.__('Import Additional Pages', this.$td),
-				modalDescription      : this.$t.sprintf(
+				pageUrl               : __('Page URL', td),
+				priority              : __('Priority', td),
+				frequency             : __('Frequency', td),
+				lastModified          : __('Last Modified', td),
+				addPage               : __('Add Page', td),
+				importFromCSV         : __('Import from CSV', td),
+				saveChanges           : __('Update Page', td),
+				cancel                : __('Cancel', td),
+				importAdditionalPages : __('Import Additional Pages', td),
+				modalDescription      : sprintf(
 					// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
-					this.$t.__('You can import additional page URL\'s to your sitemap using a CSV file. The following 4 columns are required: %1$sPage URL, Priority, Frequency, Date Modified.%2$s', this.$td),
+					__('You can import additional page URL\'s to your sitemap using a CSV file. The following 4 columns are required: %1$sPage URL, Priority, Frequency, Date Modified.%2$s', td),
 					'<strong>',
 					'</strong>'
 				),
-				downloadSampleFile    : this.$t.__('Download Sample CSV File', this.$td),
-				imgAltText            : this.$t.__('CSV example file', this.$td),
-				fileUploadPlaceholder : this.$t.__('Import from CSV file...', this.$td),
-				chooseAFile           : this.$t.__('Choose a File', this.$td),
-				import                : this.$t.__('Import', this.$td),
-				csvFileTypeRequired   : this.$t.__('The file that you\'ve currently selected is not a CSV file.', this.$td),
-				invalidCSV            : this.$t.__('Unable to read CSV file. Please check if the file is valid and try again.', this.$td),
+				downloadSampleFile    : __('Download Sample CSV File', td),
+				imgAltText            : __('CSV example file', td),
+				fileUploadPlaceholder : __('Import from CSV file...', td),
+				chooseAFile           : __('Choose a File', td),
+				import                : __('Import', td),
+				csvFileTypeRequired   : __('The file that you\'ve currently selected is not a CSV file.', td),
+				invalidCSV            : __('Unable to read CSV file. Please check if the file is valid and try again.', td),
 				errors                : {
 					url : {
-						invalid : this.$t.__('Please enter a valid URL.', this.$td),
-						exists  : this.$t.__('URL already exists.', this.$td)
+						invalid : __('Please enter a valid URL.', td),
+						exists  : __('URL already exists.', td)
 					}
 				}
 			},
 			sampleCSVData :
 				('Page URL,Priority,Frequency,Date Modified\r\nhttps://aioseo.com/pricing/,0.0,weekly,01/30/2022')
+		}
+	},
+	computed : {
+		importValidated () {
+			return 'text/csv' === this.file.type
 		}
 	},
 	methods : {
@@ -406,6 +442,11 @@ export default {
 		prepareAdditionalPage (page) {
 			const preparedPage = cloneObject(defaults.page)
 
+			const dateFormats = [
+				'MM/dd/yyyy'
+				// Add more formats if needed
+			]
+
 			page.forEach(prop => {
 				try {
 					if (isUrl(prop)) {
@@ -415,8 +456,7 @@ export default {
 							return
 						}
 					}
-
-					if (this.priorityOptionsValues.includes(prop)) {
+					if (this.priorityOptionsValues.includes(parseFloat(prop))) {
 						preparedPage.priority.label = preparedPage.priority.value = prop
 						return
 					}
@@ -425,10 +465,13 @@ export default {
 						preparedPage.frequency.label = preparedPage.frequency.value = prop.toLowerCase()
 						return
 					}
-
-					if (!isNaN(Date.parse(prop))) {
-						preparedPage.lastModified = prop
-					}
+					// Check for valid date format
+					dateFormats.forEach(format => {
+						const dateTime = DateTime.fromFormat(prop, format)
+						if (dateTime.isValid) {
+							preparedPage.lastModified = prop
+						}
+					})
 				} catch {
 					// Do nothing.
 					// Somehow the script terminates if Date.parse() is called on a non-date string,
@@ -483,33 +526,9 @@ export default {
 			link.click()
 		}
 	},
-	computed : {
-		importValidated () {
-			return 'text/csv' === this.file.type
-		}
-	},
-	props : {
-		inTable           : Boolean,
-		row               : Object,
-		index             : Number,
-		getPaginatedIndex : Function,
-		getParsedPages    : Function,
-		rowPage           : {
-			type : Object,
-			default () {
-				return {}
-			}
-		},
-		editedPage : {
-			type : Object,
-			default () {
-				return {}
-			}
-		}
-	},
 	mounted () {
-		this.priorityOptionsValues  = this.$constants.PRIORITY_OPTIONS.map(o => o.value)
-		this.frequencyOptionsValues = this.$constants.FREQUENCY_OPTIONS.map(o => o.value)
+		this.priorityOptionsValues  = PRIORITY_OPTIONS.map(o => o.value)
+		this.frequencyOptionsValues = FREQUENCY_OPTIONS.map(o => o.value)
 
 		if (!this.inTable) return
 		this.page = this.rowPage !== this.editedPage ? this.rowPage : this.editedPage

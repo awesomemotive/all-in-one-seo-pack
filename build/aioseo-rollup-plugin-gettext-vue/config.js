@@ -9,10 +9,10 @@ const LOCALEDIRMAP = {
 }
 
 const calleeNames = {
-	__  : [ '__', '$t.__', '[this].$t.__' ],
-	_x  : [ '_x', '$t._x', '[this].$t._x' ],
-	_n  : [ '_n', '$t._n', '[this].$t._n' ],
-	_nx : [ '_nx', '$t._nx', '[this].$t._nx' ]
+	__  : [ '__' ],
+	_x  : [ '_x' ],
+	_n  : [ '_n' ],
+	_nx : [ '_nx' ]
 }
 
 const PLURAL = function () {

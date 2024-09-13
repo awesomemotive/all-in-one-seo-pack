@@ -7,7 +7,7 @@
 			<div class="aioseo-settings-row aioseo-section-description">
 				{{ strings.description }}
 				<span
-					v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'twitter', true)"
+					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'twitter', true)"
 				/>
 			</div>
 
@@ -150,8 +150,8 @@
 						v-model="optionsStore.options.social.twitter.general.showAuthor"
 						name="showTwitterAuthor"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
 				</template>
@@ -167,8 +167,8 @@
 						v-model="optionsStore.options.social.twitter.general.additionalData"
 						name="additionalData"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.enabled, value: true }
+							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.enabled, value: true }
 						]"
 					/>
 
@@ -188,8 +188,8 @@
 						v-model="optionsStore.options.social.twitter.general.useOgData"
 						name="useOgData"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
 					<div class="aioseo-description">
@@ -211,7 +211,7 @@
 				<span v-html="strings.homePageDisabledDescription" />
 				&nbsp;
 				<span
-					v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'staticHomePageTwitter', true)"
+					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'staticHomePageTwitter', true)"
 				/>
 			</div>
 
@@ -220,7 +220,7 @@
 			>
 
 			<core-settings-row
-				:name="$constants.GLOBAL_STRINGS.preview"
+				:name="GLOBAL_STRINGS.preview"
 			>
 				<template #content>
 					<core-twitter-preview
@@ -272,7 +272,7 @@
 						v-model="optionsStore.options.social.twitter.homePage.title"
 						:line-numbers="false"
 						single
-						@counter="count => updateCount(count, 'titleCount')"
+						@counter="count => titleCount = count.length"
 						tags-context="homePage"
 						:default-tags="[
 							'site_title',
@@ -301,7 +301,7 @@
 						class="twitter-meta-input"
 						v-model="optionsStore.options.social.twitter.homePage.description"
 						:line-numbers="false"
-						@counter="count => updateCount(count, 'descriptionCount')"
+						@counter="count => descriptionCount = count.length"
 						tags-context="homePage"
 						:default-tags="[
 							'site_title',
@@ -325,16 +325,18 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	useOptionsStore,
 	useRootStore
 } from '@/vue/stores'
 
-import { ImageSourceOptions } from '@/vue/mixins/Image'
-import { JsonValues } from '@/vue/mixins/JsonValues'
-import { MaxCounts } from '@/vue/mixins/MaxCounts'
-import { Tags } from '@/vue/mixins/Tags'
+import { useImage } from '@/vue/composables/Image'
+import { useMaxCounts } from '@/vue/composables/MaxCounts'
+import { useTags } from '@/vue/composables/Tags'
+
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -343,11 +345,38 @@ import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreTwitterPreview from '@/vue/components/common/core/TwitterPreview'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getImageSourceOption,
+			getTermImageSourceOptions,
+			imageSourceOptions
+		} = useImage()
+
+		const {
+			maxRecommendedCount
+		} = useMaxCounts()
+
+		const {
+			parseTags
+		} = useTags({
+			separator : undefined
+		})
+
 		return {
+			GLOBAL_STRINGS,
+			getImageSourceOption,
+			getTermImageSourceOptions,
+			imageSourceOptions,
 			licenseStore : useLicenseStore(),
+			links,
+			maxRecommendedCount,
 			optionsStore : useOptionsStore(),
+			parseTags,
 			rootStore    : useRootStore()
 		}
 	},
@@ -360,56 +389,54 @@ export default {
 		CoreSettingsRow,
 		CoreTwitterPreview
 	},
-	mixins : [ ImageSourceOptions, JsonValues, MaxCounts, Tags ],
 	data () {
 		return {
-			separator        : undefined,
 			titleCount       : 0,
 			descriptionCount : 0,
 			option           : null,
 			pagePostOptions  : [],
 			strings          : {
-				twitterCardSettings           : this.$t.__('X (Twitter) Card Settings', this.$td),
-				description                   : this.$t.__('Enable this feature if you want X to display a preview card with images and a text excerpt when a link to your site is shared.', this.$td),
-				enableTwitterCard             : this.$t.__('Enable X Card', this.$td),
-				useDataFromFacebook           : this.$t.__('Use Data from Facebook Tab', this.$td),
-				useOgDataDescription          : this.$t.__('Choose whether you want to use the OG data from the Facebook tab in your individual pages/posts by default.', this.$td),
-				defaultCardType               : this.$t.__('Default Card Type', this.$td),
-				summary                       : this.$t.__('Summary', this.$td),
-				summaryLarge                  : this.$t.__('Summary with Large Image', this.$td),
-				defaultImageSourcePosts       : this.$t.__('Default Post Image Source', this.$td),
-				defaultImageSourceTerms       : this.$t.__('Default Term Image Source', this.$td),
-				width                         : this.$t.__('Width', this.$td),
-				height                        : this.$t.__('Height', this.$td),
-				postCustomFieldName           : this.$t.__('Post Custom Field Name', this.$td),
-				termsCustomFieldName          : this.$t.__('Term Custom Field Name', this.$td),
-				defaultTwitterImagePosts      : this.$t.__('Default Post X Image', this.$td),
-				defaultTwitterImageTerms      : this.$t.__('Default Term X Image', this.$td),
-				minimumSizeSummary            : this.$t.__('Minimum size: 144px x 144px, ideal ratio 1:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', this.$td),
-				minimumSizeSummaryWithLarge   : this.$t.__('Minimum size: 300px x 157px, ideal ratio 2:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', this.$td),
-				homePageSettings              : this.$t.__('Home Page Settings', this.$td),
-				homePageImage                 : this.$t.__('Home Page Image', this.$td),
-				homePageTitle                 : this.$t.__('Home Page Title', this.$td),
-				useHomePageTitle              : this.$t.__('Use the home page title', this.$td),
-				clickToAddHomePageTitle       : this.$t.__('Click on the tags below to insert variables into your home page title.', this.$td),
-				homePageDescription           : this.$t.__('Description', this.$td),
-				useHomePageDescription        : this.$t.__('Use the home page description', this.$td),
-				clickToAddHomePageDescription : this.$t.__('Click on the tags below to insert variables into your description.', this.$td),
-				showTwitterAuthor             : this.$t.__('Show X Author', this.$td),
-				homePageDisabledDescription   : this.$t.sprintf(
+				twitterCardSettings           : __('X (Twitter) Card Settings', td),
+				description                   : __('Enable this feature if you want X to display a preview card with images and a text excerpt when a link to your site is shared.', td),
+				enableTwitterCard             : __('Enable X Card', td),
+				useDataFromFacebook           : __('Use Data from Facebook Tab', td),
+				useOgDataDescription          : __('Choose whether you want to use the OG data from the Facebook tab in your individual pages/posts by default.', td),
+				defaultCardType               : __('Default Card Type', td),
+				summary                       : __('Summary', td),
+				summaryLarge                  : __('Summary with Large Image', td),
+				defaultImageSourcePosts       : __('Default Post Image Source', td),
+				defaultImageSourceTerms       : __('Default Term Image Source', td),
+				width                         : __('Width', td),
+				height                        : __('Height', td),
+				postCustomFieldName           : __('Post Custom Field Name', td),
+				termsCustomFieldName          : __('Term Custom Field Name', td),
+				defaultTwitterImagePosts      : __('Default Post X Image', td),
+				defaultTwitterImageTerms      : __('Default Term X Image', td),
+				minimumSizeSummary            : __('Minimum size: 144px x 144px, ideal ratio 1:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', td),
+				minimumSizeSummaryWithLarge   : __('Minimum size: 300px x 157px, ideal ratio 2:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', td),
+				homePageSettings              : __('Home Page Settings', td),
+				homePageImage                 : __('Home Page Image', td),
+				homePageTitle                 : __('Home Page Title', td),
+				useHomePageTitle              : __('Use the home page title', td),
+				clickToAddHomePageTitle       : __('Click on the tags below to insert variables into your home page title.', td),
+				homePageDescription           : __('Description', td),
+				useHomePageDescription        : __('Use the home page description', td),
+				clickToAddHomePageDescription : __('Click on the tags below to insert variables into your description.', td),
+				showTwitterAuthor             : __('Show X Author', td),
+				homePageDisabledDescription   : sprintf(
 					// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag.
-					this.$t.__('You are using a static home page which is found under Pages. You can %1$sedit your home page settings%2$s directly to change the title, meta description and image.', this.$td),
+					__('You are using a static home page which is found under Pages. You can %1$sedit your home page settings%2$s directly to change the title, meta description and image.', td),
 					`<a href="${this.rootStore.aioseo.urls.staticHomePage}&aioseo-tab=social&social-tab=twitter&aioseo-scroll=aioseo-post-settings-twitter&aioseo-highlight=aioseo-post-settings-twitter">`,
 					'</a>'
 				),
-				cardType                     : this.$t.__('Card Type', this.$td),
-				additionalData               : this.$t.__('Additional Data', this.$td),
-				additionalDataDescription    : this.$t.__('Enable this option to show additional X data on your posts and pages (i.e., who the post was written by and how long it might take to read the article).', this.$td),
-				defaultTermImageSourceUpsell : this.$t.sprintf(
+				cardType                     : __('Card Type', td),
+				additionalData               : __('Additional Data', td),
+				additionalDataDescription    : __('Enable this option to show additional X data on your posts and pages (i.e., who the post was written by and how long it might take to read the article).', td),
+				defaultTermImageSourceUpsell : sprintf(
 					// Translators: 1 - "PRO", 2 - Learn more link.
-					this.$t.__('Default Term Image Source is a %1$s feature. %2$s', this.$td),
+					__('Default Term Image Source is a %1$s feature. %2$s', td),
 					'PRO',
-					this.$links.getUpsellLink('general-facebook-settings', this.$constants.GLOBAL_STRINGS.learnMore, 'default-term-image-source', true)
+					links.getUpsellLink('general-facebook-settings', GLOBAL_STRINGS.learnMore, 'default-term-image-source', true)
 				)
 			}
 		}

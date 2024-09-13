@@ -13,6 +13,11 @@ import HtmlSitemap from './HtmlSitemap'
 import NewsSitemap from './NewsSitemap'
 import RssSitemap from './RssSitemap'
 import VideoSitemap from './VideoSitemap'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreMain,
@@ -25,7 +30,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				pageName : this.$t.__('Sitemaps', this.$td)
+				pageName : __('Sitemaps', td)
 			}
 		}
 	}

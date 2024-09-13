@@ -47,7 +47,13 @@ import {
 import addons from '@/vue/utils/addons'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import Cta from '@/vue/components/common/cta/Index'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'addon-activated' ],
 	setup () {
 		return {
 			addonsStore  : useAddonsStore(),
@@ -55,7 +61,6 @@ export default {
 			rootStore    : useRootStore()
 		}
 	},
-	emits      : [ 'addon-activated' ],
 	components : {
 		CoreAlert,
 		Cta
@@ -88,11 +93,11 @@ export default {
 		return {
 			addons,
 			strings : {
-				activateError     : this.$t.__('An error occurred while activating the addon. Please upload it manually or contact support for more information.', this.$td),
-				permissionWarning : this.$t.__('You currently don\'t have permission to activate this addon. Please ask a site administrator to activate first.', this.$td),
-				updateRequired    : this.$t.sprintf(
+				activateError     : __('An error occurred while activating the addon. Please upload it manually or contact support for more information.', td),
+				permissionWarning : __('You currently don\'t have permission to activate this addon. Please ask a site administrator to activate first.', td),
+				updateRequired    : sprintf(
 					// Translators: 1 - Plugin Short Name ("AIOSEO"), 2 - Pro, 3 - Version Number (e.g. "1.0.0"), 4 - Addon name (e.g. "Redirection Manager"), 5 - Version Number (e.g. "1.0.0").
-					this.$t.__('This addon requires an update. %1$s %2$s requires a minimum version of %3$s for the %4$s addon. You currently have %5$s installed.', this.$td),
+					__('This addon requires an update. %1$s %2$s requires a minimum version of %3$s for the %4$s addon. You currently have %5$s installed.', td),
 					import.meta.env.VITE_SHORT_NAME,
 					'Pro',
 					addons.getAddon(this.addonSlug).minimumVersion,
@@ -131,9 +136,7 @@ export default {
 							addon.isActive          = true
 							addon.installedVersion  = updatedAddon.installedVersion
 							this.addonsStore.updateAddon(addon)
-						})
-						.then(() => {
-							// Emit event to do any post processing.
+
 							this.$emit('addon-activated', addon)
 						})
 				})

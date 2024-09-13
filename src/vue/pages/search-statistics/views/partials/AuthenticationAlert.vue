@@ -15,6 +15,11 @@ import {
 } from '@/vue/stores'
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -27,7 +32,7 @@ export default {
 	},
 	data () {
 		return {
-			error : this.$t.__('Your connection with Google Search Console has expired or is invalid. Please check that your site is verified in Google Search Console and try to reconnect. If the problem persists, please contact our support team.', this.$td)
+			error : __('Your connection with Google Search Console has expired or is invalid. Please check that your site is verified in Google Search Console and try to reconnect. If the problem persists, please contact our support team.', td)
 		}
 	},
 	computed : {

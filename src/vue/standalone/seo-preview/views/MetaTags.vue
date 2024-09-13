@@ -11,8 +11,8 @@
 
 				<dd>
 					<a v-if="isUrl(item.value)"
-					   :href="item.value"
-					   target="_blank"
+						:href="item.value"
+						target="_blank"
 					>
 						{{ item.value }}
 					</a>
@@ -26,21 +26,25 @@
 <script>
 import { isUrl } from '@/vue/utils/helpers'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	computed : {
 		metaTags () {
 			const output = []
 			const basicTags = [
 				{
-					label : this.$t.__('Title', this.$td),
+					label : __('Title', td),
 					value : document.title || ''
 				},
 				{
-					label : this.$t.__('Description', this.$td),
+					label : __('Description', td),
 					value : document.querySelector('meta[name="description"]')?.content || ''
 				},
 				{
-					label : this.$t.__('Canonical URL', this.$td),
+					label : __('Canonical URL', td),
 					value : document.querySelector('link[rel="canonical"]')?.href || ''
 				}
 			]
@@ -57,7 +61,7 @@ export default {
 
 				// Add it to the third position in the basicTags array
 				basicTags.splice(2, 0, {
-					label : this.$t.__('Meta Keywords', this.$td),
+					label : __('Meta Keywords', td),
 					value : keywordsMetaContent
 				})
 			}

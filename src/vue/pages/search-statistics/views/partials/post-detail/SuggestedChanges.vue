@@ -37,29 +37,17 @@ import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Lottie from '@/vue/components/common/core/Lottie'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreTooltip,
 		Lottie,
 		SvgCircleClose,
 		SvgCircleQuestionMark
-	},
-	data () {
-		return {
-			strings : {
-				youCrushed : this.$t.__('Woohoo! You crushed the SEO for this post.', this.$td),
-				weWillLet  : this.$t.__('We\'ll let you know if anything changes. Keep up the great work!', this.$td),
-				tooltip    : this.$t.sprintf(
-					// Translators: 1 - Opening link tag, 2 - Closing link tag.
-					this.$t.__('To learn more about this suggestion, %1$sclick here%2$s.', this.$td),
-					'<a href="' + this.editUrl + '" target="_blank">',
-					'</a>'
-				)
-			},
-			lottieOptions : {
-				animationData : rollingCheckMark
-			}
-		}
 	},
 	props : {
 		suggestedChanges : {
@@ -69,6 +57,23 @@ export default {
 			}
 		},
 		editUrl : String
+	},
+	data () {
+		return {
+			strings : {
+				youCrushed : __('Woohoo! You crushed the SEO for this post.', td),
+				weWillLet  : __('We\'ll let you know if anything changes. Keep up the great work!', td),
+				tooltip    : sprintf(
+					// Translators: 1 - Opening link tag, 2 - Closing link tag.
+					__('To learn more about this suggestion, %1$sclick here%2$s.', td),
+					'<a href="' + this.editUrl + '" target="_blank">',
+					'</a>'
+				)
+			},
+			lottieOptions : {
+				animationData : rollingCheckMark
+			}
+		}
 	}
 }
 </script>

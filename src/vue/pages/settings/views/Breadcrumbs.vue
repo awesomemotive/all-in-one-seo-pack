@@ -10,7 +10,7 @@
 
 			<div class="aioseo-settings-row aioseo-section-description">
 				{{ strings.description }}
-				<span v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'breadcrumbsDisplay', true)"/>
+				<span v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'breadcrumbsDisplay', true)"/>
 			</div>
 
 			<core-settings-row
@@ -41,7 +41,7 @@
 			</template>
 
 			<core-settings-row
-				:name="$constants.GLOBAL_STRINGS.preview"
+				:name="GLOBAL_STRINGS.preview"
 			>
 				<template #content>
 					<div class="previews-box main-preview">
@@ -79,8 +79,8 @@
 							v-model="optionsStore.options.breadcrumbs.homepageLink"
 							name="homepageLink"
 							:options="[
-								{ label: $constants.GLOBAL_STRINGS.off, value: false, activeClass: 'dark' },
-								{ label: $constants.GLOBAL_STRINGS.on, value: true }
+								{ label: GLOBAL_STRINGS.off, value: false, activeClass: 'dark' },
+								{ label: GLOBAL_STRINGS.on, value: true }
 							]"
 						/>
 
@@ -127,8 +127,8 @@
 						v-model="optionsStore.options.breadcrumbs.showBlogHome"
 						name="showBlogHome"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.off, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.on, value: true }
+							{ label: GLOBAL_STRINGS.off, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.on, value: true }
 						]"
 					/>
 				</template>
@@ -240,6 +240,8 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	useOptionsStore,
@@ -247,7 +249,9 @@ import {
 } from '@/vue/stores'
 
 import { sanitizeString } from '@/vue/utils/strings'
-import { useWidgets } from '@/vue/composables'
+
+import { useWidgets } from '@/vue/composables/Widgets'
+
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import Breadcrumbs from './AIOSEO_VERSION/Breadcrumbs'
 import BreadcrumbsLite from './lite/Breadcrumbs'
@@ -257,6 +261,11 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreSettingsSeparator from '@/vue/components/common/core/SettingsSeparator'
 import CoreUiElementSlider from '@/vue/components/common/core/ui-element-slider/Index'
 import Preview from './partials/Breadcrumbs/Preview'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		const { strings } = useWidgets({ name: 'breadcrumbs' })
@@ -265,7 +274,9 @@ export default {
 			licenseStore      : useLicenseStore(),
 			optionsStore      : useOptionsStore(),
 			rootStore         : useRootStore(),
-			composableStrings : strings
+			composableStrings : strings,
+			GLOBAL_STRINGS,
+			links
 		}
 	},
 	components : {
@@ -284,76 +295,101 @@ export default {
 			displayInfo : {
 				block : {
 					copy : '',
-					desc : this.$t.sprintf(
+					desc : sprintf(
 						// Translators: 1 - The plugin short name ("AIOSEO"), 2 - "Learn More" link.
-						this.$t.__('To add this block, edit a page or post and search for the "%1$s - Breadcrumbs" block. %2$s', this.$td),
+						__('To add this block, edit a page or post and search for the "%1$s - Breadcrumbs" block. %2$s', td),
 						import.meta.env.VITE_SHORT_NAME,
-						this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'breadcrumbsDisplay', true)
+						links.getDocLink(GLOBAL_STRINGS.learnMore, 'breadcrumbsDisplay', true)
 					)
 				},
 				shortcode : {
 					copy : '[aioseo_breadcrumbs]',
-					desc : this.$t.sprintf(
+					desc : sprintf(
 						// Translators: 1 - Learn more link.
-						this.$t.__('Use the following shortcode to display the current breadcrumbs. %1$s', this.$td),
-						this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'breadcrumbsShortcode', true)
+						__('Use the following shortcode to display the current breadcrumbs. %1$s', td),
+						links.getDocLink(GLOBAL_STRINGS.learnMore, 'breadcrumbsShortcode', true)
 					)
 				},
 				widget : {
 					copy : '',
-					desc : `${this.composableStrings.visitWidgetsPage} ${this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'breadcrumbsDisplay', true)}`
+					desc : `${this.composableStrings.visitWidgetsPage} ${links.getDocLink(GLOBAL_STRINGS.learnMore, 'breadcrumbsDisplay', true)}`
 				},
 				php : {
 					copy : '<?php if( function_exists( \'aioseo_breadcrumbs\' ) ) aioseo_breadcrumbs(); ?>',
-					desc : this.$t.sprintf(
+					desc : sprintf(
 						// Translators: 1 - Learn more link.
-						this.$t.__('Use the following PHP code anywhere in your theme (in the loop) to display the breadcrumbs. %1$s', this.$td),
-						this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'breadcrumbsFunction', true)
+						__('Use the following PHP code anywhere in your theme (in the loop) to display the breadcrumbs. %1$s', td),
+						links.getDocLink(GLOBAL_STRINGS.learnMore, 'breadcrumbsFunction', true)
 					)
 				}
 			},
 			strings : {
-				description : this.$t.sprintf(
+				description : sprintf(
 					// Translators: 1 - The plugin name ("AIOSEO").
-					this.$t.__('Breadcrumbs are an essential part of SEO. By default %1$s will automatically add breadcrumbs to the schema markup that we add to your site and you don\'t need to make any changes for that to work. Breadcrumbs can also be used as a secondary navigation system that tells users where they are on a website relative to the homepage.', this.$td), import.meta.env.VITE_SHORT_NAME
+					__('Breadcrumbs are an essential part of SEO. By default %1$s will automatically add breadcrumbs to the schema markup that we add to your site and you don\'t need to make any changes for that to work. Breadcrumbs can also be used as a secondary navigation system that tells users where they are on a website relative to the homepage.', td), import.meta.env.VITE_SHORT_NAME
 				),
-				descriptionTooltip           : this.$t.__('The purpose of breadcrumb navigation is to help users navigate around your website. It also helps search engines understand the structure and hierarchy of links on a web page.', this.$td),
-				breadcrumbs                  : this.$t.__('Breadcrumbs', this.$td),
-				enableBreadcrumbs            : this.$t.__('Enable Breadcrumbs', this.$td),
-				showBreadcrumbsOnYourWebsite : this.$t.__('Show Breadcrumbs on Your Website', this.$td),
-				breadcrumbSettings           : this.$t.__('Breadcrumb Settings', this.$td),
-				breadcrumbTooltip            : this.$t.sprintf(
+				descriptionTooltip           : __('The purpose of breadcrumb navigation is to help users navigate around your website. It also helps search engines understand the structure and hierarchy of links on a web page.', td),
+				breadcrumbs                  : __('Breadcrumbs', td),
+				enableBreadcrumbs            : __('Enable Breadcrumbs', td),
+				showBreadcrumbsOnYourWebsite : __('Show Breadcrumbs on Your Website', td),
+				breadcrumbSettings           : __('Breadcrumb Settings', td),
+				breadcrumbTooltip            : sprintf(
 					// Translators: 1 - The plugin name ("AIOSEO").
-					this.$t.__('These settings will affect all the breadcrumbs displayed by %1$s throughout your site.', this.$td), import.meta.env.VITE_SHORT_NAME
+					__('These settings will affect all the breadcrumbs displayed by %1$s throughout your site.', td), import.meta.env.VITE_SHORT_NAME
 				),
-				separator                     : this.$t.__('Separator', this.$td),
-				homepageLink                  : this.$t.__('Homepage Link', this.$td),
-				homepageLabel                 : this.$t.__('Homepage label', this.$td),
-				homepageDescription           : this.$t.__('Label used for homepage link (first item) in breadcrumbs.', this.$td),
-				breadcrumbPrefix              : this.$t.__('Breadcrumb Prefix', this.$td),
-				breadcrumbPrefixDescription   : this.$t.__('Prefix for breadcrumb path.', this.$td),
-				archiveFormat                 : this.$t.__('Archive Format', this.$td),
-				archiveFormatDescription      : this.$t.__('Format the label used for archives page.', this.$td),
-				searchResultFormat            : this.$t.__('Search Result Format', this.$td),
-				searchResultFormatDescription : this.$t.__('Format the label used for the search results page.', this.$td),
-				errorFormat404                : this.$t.__('404 Error Format', this.$td),
-				errorFormat404Description     : this.$t.__('Format the label used for the 404 error page.', this.$td),
-				currentItem                   : this.$t.__('Current Item', this.$td),
-				showCurrentItem               : this.$t.__('Show current item', this.$td),
-				linkCurrentItem               : this.$t.__('Link current item', this.$td),
-				home                          : this.$t.__('Home', this.$td),
-				category                      : this.$t.__('Category', this.$td),
-				subcategory                   : this.$t.__('Subcategory', this.$td),
-				articleTitle                  : this.$t.__('Article Title', this.$td),
-				searchKeyword                 : this.$t.__('search key word goes here', this.$td),
-				categoryName                  : this.$t.__('Category Name', this.$td),
-				breadcrumbTemplates           : this.$t.__('Breadcrumb Templates', this.$td),
-				categoryHierarchy             : this.$t.__('Category Hierarchy', this.$td),
-				categoryHierarchyDescription  : this.$t.__('Display complete category hierarchy even if not selected on each individual post.', this.$td),
-				blog                          : this.$t.__('Blog', this.$td),
-				blogCrumb                     : this.$t.__('Blog Page Title', this.$td),
-				showBlogHome                  : this.$t.__('Show Blog Home', this.$td)
+				separator                     : __('Separator', td),
+				homepageLink                  : __('Homepage Link', td),
+				homepageLabel                 : __('Homepage label', td),
+				homepageDescription           : __('Label used for homepage link (first item) in breadcrumbs.', td),
+				breadcrumbPrefix              : __('Breadcrumb Prefix', td),
+				breadcrumbPrefixDescription   : __('Prefix for breadcrumb path.', td),
+				archiveFormat                 : __('Archive Format', td),
+				archiveFormatDescription      : __('Format the label used for archives page.', td),
+				searchResultFormat            : __('Search Result Format', td),
+				searchResultFormatDescription : __('Format the label used for the search results page.', td),
+				errorFormat404                : __('404 Error Format', td),
+				errorFormat404Description     : __('Format the label used for the 404 error page.', td),
+				currentItem                   : __('Current Item', td),
+				showCurrentItem               : __('Show current item', td),
+				linkCurrentItem               : __('Link current item', td),
+				home                          : __('Home', td),
+				category                      : __('Category', td),
+				subcategory                   : __('Subcategory', td),
+				articleTitle                  : __('Article Title', td),
+				searchKeyword                 : __('search key word goes here', td),
+				categoryName                  : __('Category Name', td),
+				breadcrumbTemplates           : __('Breadcrumb Templates', td),
+				categoryHierarchy             : __('Category Hierarchy', td),
+				categoryHierarchyDescription  : __('Display complete category hierarchy even if not selected on each individual post.', td),
+				blog                          : __('Blog', td),
+				blogCrumb                     : __('Blog Page Title', td),
+				showBlogHome                  : __('Show Blog Home', td)
 			}
+		}
+	},
+	computed : {
+		getSearchForText () {
+			return this.optionsStore.options.breadcrumbs.searchResultFormat.replace(new RegExp('#breadcrumb_search_string', 'g'), `<strong>${this.strings.searchKeyword}</strong>`)
+		},
+		getArchivesOfText () {
+			return this.optionsStore.options.breadcrumbs.archiveFormat.replace(new RegExp('#breadcrumb_archive_post_type_name', 'g'), `<strong>${this.strings.categoryName}</strong>`)
+		},
+		getPagedText () {
+			return this.optionsStore.options.breadcrumbs.pagedFormat.replace(new RegExp('#breadcrumb_format_page_number', 'g'), '<strong>2</strong>')
+		},
+		previews () {
+			return [
+				{ label: 'Post', preview: this.getPostPreview() },
+				{ label: 'Archive', preview: this.getArchivePreview() },
+				{ label: 'Search', preview: this.getSearchPreview() },
+				{ label: '404', preview: this.get404Preview() }
+			]
+		},
+		hasDeprecatedEnable () {
+			return this.optionsStore.internalOptions.internal.deprecatedOptions.includes('breadcrumbsEnable')
+		},
+		isDeprecatedEnable () {
+			return this.hasDeprecatedEnable && this.optionsStore.options.deprecated.breadcrumbs.enable
 		}
 	},
 	methods : {
@@ -388,31 +424,6 @@ export default {
 			] ].filter(item => !!item).map(item => sanitizeString(item))
 		},
 		sanitizeString
-	},
-	computed : {
-		getSearchForText () {
-			return this.optionsStore.options.breadcrumbs.searchResultFormat.replace(new RegExp('#breadcrumb_search_string', 'g'), `<strong>${this.strings.searchKeyword}</strong>`)
-		},
-		getArchivesOfText () {
-			return this.optionsStore.options.breadcrumbs.archiveFormat.replace(new RegExp('#breadcrumb_archive_post_type_name', 'g'), `<strong>${this.strings.categoryName}</strong>`)
-		},
-		getPagedText () {
-			return this.optionsStore.options.breadcrumbs.pagedFormat.replace(new RegExp('#breadcrumb_format_page_number', 'g'), '<strong>2</strong>')
-		},
-		previews () {
-			return [
-				{ label: 'Post', preview: this.getPostPreview() },
-				{ label: 'Archive', preview: this.getArchivePreview() },
-				{ label: 'Search', preview: this.getSearchPreview() },
-				{ label: '404', preview: this.get404Preview() }
-			]
-		},
-		hasDeprecatedEnable () {
-			return this.optionsStore.internalOptions.internal.deprecatedOptions.includes('breadcrumbsEnable')
-		},
-		isDeprecatedEnable () {
-			return this.hasDeprecatedEnable && this.optionsStore.options.deprecated.breadcrumbs.enable
-		}
 	}
 }
 </script>

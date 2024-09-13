@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 import { td } from '@/vue/plugins/constants'
 
 export function dateSqlToLocal (date, format = 'yyyy-MM-dd HH:mm:ss') {

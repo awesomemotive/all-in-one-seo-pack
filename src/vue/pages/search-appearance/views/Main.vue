@@ -15,6 +15,11 @@ import CoreMain from '@/vue/components/common/core/main/Index'
 import GlobalSettings from './GlobalSettings'
 import Media from './Media'
 import Taxonomies from './Taxonomies'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		Advanced,
@@ -29,7 +34,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				pageName : this.$t.__('Search Appearance', this.$td)
+				pageName : __('Search Appearance', td)
 			}
 		}
 	}

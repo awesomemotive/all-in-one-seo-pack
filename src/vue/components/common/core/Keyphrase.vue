@@ -46,13 +46,18 @@ import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
 import SvgStatistics from '@/vue/components/common/svg/Statistics'
 import SvgTrash from '@/vue/components/common/svg/Trash'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'selectedKeyphrase', 'deleted', 'saved' ],
 	setup () {
 		return {
 			keywordRankTrackerStore : useKeywordRankTrackerStore()
 		}
 	},
-	emits      : [ 'selectedKeyphrase', 'deleted', 'saved' ],
 	components : {
 		CoreTooltip,
 		SvgPencil,
@@ -74,7 +79,7 @@ export default {
 		return {
 			edit    : false,
 			strings : {
-				delete : this.$t.__('Delete', this.$td)
+				delete : __('Delete', td)
 			}
 		}
 	},

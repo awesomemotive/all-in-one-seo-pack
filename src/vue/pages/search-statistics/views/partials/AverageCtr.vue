@@ -33,6 +33,11 @@ import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Statistic from './Statistic'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -48,8 +53,8 @@ export default {
 	data () {
 		return {
 			strings : {
-				title   : this.$t.__('Average CTR', this.$td),
-				tooltip : this.$t.__('Average CTR (click-through rate), is the ratio of clicks to impressions for your site content, and it measures how well the website or page is performing in terms of attracting clicks from the search results.', this.$td)
+				title   : __('Average CTR', td),
+				tooltip : __('Average CTR (click-through rate), is the ratio of clicks to impressions for your site content, and it measures how well the website or page is performing in terms of attracting clicks from the search results.', td)
 			}
 		}
 	}

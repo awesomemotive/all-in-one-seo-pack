@@ -362,7 +362,7 @@ class Content {
 			->whereRaw( "
 			( `p`.`ID` IN
 				(
-					SELECT `tr`.`object_id`
+					SELECT CONVERT(`tr`.`object_id`, unsigned)
 					FROM `$termRelationshipsTable` as tr
 					JOIN `$termTaxonomyTable` as tt ON `tr`.`term_taxonomy_id` = `tt`.`term_taxonomy_id`
 					WHERE `tt`.`term_id` = '$termId'

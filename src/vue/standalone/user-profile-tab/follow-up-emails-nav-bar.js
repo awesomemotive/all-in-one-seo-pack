@@ -1,5 +1,5 @@
 import { elemLoaded } from '@/vue/utils/elemLoaded'
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 
 elemLoaded('#fue_user_report', 'navBarLoaded')
 

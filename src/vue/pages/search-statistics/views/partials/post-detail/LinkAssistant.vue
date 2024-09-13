@@ -19,40 +19,32 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import {
 	useLicenseStore
 } from '@/vue/stores'
 
 import addons from '@/vue/utils/addons'
-import { AddonConditions } from '@/vue/mixins/AddonConditions'
+import { useAddonConditions } from '@/vue/composables/AddonConditions'
 import Activate from './link-assistant/Activate'
 import LinkAssistant from './link-assistant/LinkAssistant'
 import Update from './link-assistant/Update'
 import Upgrade from './link-assistant/Upgrade'
-export default {
-	setup () {
-		return {
-			licenseStore : useLicenseStore()
-		}
-	},
-	mixins     : [ AddonConditions ],
-	components : {
-		Activate,
-		LinkAssistant,
-		Update,
-		Upgrade
-	},
-	props : {
-		links : Object
-	},
-	data () {
-		return {
-			addons,
-			addonSlug : 'aioseo-link-assistant'
-		}
-	}
-}
+
+const licenseStore = useLicenseStore()
+
+const addonSlug = 'aioseo-link-assistant'
+const {
+	shouldShowActivate,
+	shouldShowMain,
+	shouldShowUpdate
+} = useAddonConditions({
+	addonSlug
+})
+
+defineProps({
+	links : Object
+})
 </script>
 
 <style lang="scss">

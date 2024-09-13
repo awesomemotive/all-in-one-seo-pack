@@ -87,7 +87,7 @@ class DeprecatedWordPress {
 						'<strong>',
 						'</strong>',
 						'AIOSEO',
-						date( 'Y' ),
+						gmdate( 'Y' ),
 						'<a href="https://aioseo.com/docs/update-wordpress/?utm_source=WordPress&utm_medium=' . $medium . '&utm_campaign=outdated-wordpress-notice" target="_blank" rel="noopener noreferrer">', // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 						'</a>'
 					),
@@ -106,7 +106,7 @@ class DeprecatedWordPress {
 
 		<?php
 		// In case this is on plugin activation.
-		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
+		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 			unset( $_GET['activate'] );
 		}
 	}

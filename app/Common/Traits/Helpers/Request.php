@@ -53,7 +53,7 @@ trait Request {
 		$host = $this->getRequestServerName();
 
 		if ( isset( $_SERVER['SERVER_NAME'] ) ) {
-			$host = wp_unslash( $_SERVER['SERVER_NAME'] ); // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
+			$host = sanitize_text_field( wp_unslash( $_SERVER['SERVER_NAME'] ) ); // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
 		return $host;
@@ -70,7 +70,7 @@ trait Request {
 		$host = '';
 
 		if ( isset( $_SERVER['HTTP_HOST'] ) ) {
-			$host = $_SERVER['HTTP_HOST'];
+			$host = sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) );
 		}
 
 		return $host;
@@ -87,9 +87,9 @@ trait Request {
 		$url = '';
 
 		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
-			$url = $_SERVER['REQUEST_URI'];
+			$url = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 		}
 
-		return rawurldecode( stripslashes( $url ) );
+		return rawurldecode( $url );
 	}
 }

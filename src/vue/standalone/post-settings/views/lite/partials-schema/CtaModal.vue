@@ -71,9 +71,9 @@
 			</core-blur>
 
 			<cta
-				:cta-link="$links.getPricingUrl('schema-generator', 'schema-generator-upsell')"
+				:cta-link="links.getPricingUrl('schema-generator', 'schema-generator-upsell')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="$links.getUpsellUrl('schema-generator', null, $isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('schema-generator', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 				:feature-list="features"
 			>
 				<template #header-text>
@@ -88,7 +88,14 @@
 	</core-modal>
 </template>
 
-<script>
+<script setup>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+
+import {
+	useRootStore
+} from '@/vue/stores'
+
+import links from '@/vue/utils/links'
 import { useSchema } from '@/vue/standalone/post-settings/composables/schema'
 
 import CoreBlur from '@/vue/components/common/core/Blur'
@@ -97,85 +104,73 @@ import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Cta from '@/vue/components/common/cta/Index'
 import GraphCard from '../../partials/GraphCard'
-import GraphsMixin from '../../mixins/Graphs'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
+import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
+import SvgFile from '@/vue/components/common/svg/File'
+import SvgFileEdit from '@/vue/components/common/svg/schema/FileEdit'
+import SvgTerminal from '@/vue/components/common/svg/schema/Terminal'
 
-export default {
-	emits      : [ 'close' ],
-	mixins     : [ GraphsMixin ],
-	components : {
-		CoreBlur,
-		CoreMainTabs,
-		CoreModal,
-		CoreTooltip,
-		Cta,
-		GraphCard,
-		SvgCirclePlus
-	},
-	setup () {
-		const { graphs } = useSchema()
+import { __, sprintf } from '@/vue/plugins/translations'
 
-		return {
-			graphs
-		}
-	},
-	data () {
-		return {
-			strings : {
-				schemaGenerator : this.$t.__('Schema Generator', this.$td),
-				headerTooltip   : this.$t.sprintf(
-					// Translators: 1 - Learn more link.
-					this.$t.__('Use our powerful Schema Generator to configure Schema Markup for your content. Search Engines use structured data to better understand what your site is about as well as to display rich snippets in search results. %1$s', this.$td),
-					this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'schema', true)
-				),
-				searchSchema   : this.$t.__('Search Schema', this.$td),
-				ctaDescription : this.$t.__('Easily generate unlimited schema markup for your content to help you rank higher in search results. Our schema validator ensures your schema works out of the box.', this.$td),
-				ctaButtonText  : this.$t.__('Unlock Schema Generator', this.$td),
-				ctaHeader      : this.$t.sprintf(
-					// Translators: 1 - "PRO".
-					this.$t.__('Schema Generator is a %1$s Feature', this.$td),
-					'PRO'
-				)
-			},
-			features : [
-				this.$t.__('Unlimited Schema', this.$td),
-				this.$t.__('Validate with Google', this.$td),
-				this.$t.__('Increase Rankings', this.$td),
-				this.$t.__('Additional Schema Types', this.$td)
-			],
-			tabs : [
-				{
-					slug      : 'schema-templates',
-					icon      : 'svg-file',
-					name      : this.$t.__('Schema Templates', this.$td),
-					component : 'templates'
-				},
-				{
-					slug      : 'custom-schema',
-					icon      : 'svg-file-edit',
-					name      : this.$t.__('Custom Schema', this.$td),
-					component : 'custom'
-				},
-				{
-					slug      : 'schema-validation',
-					icon      : 'svg-terminal',
-					name      : this.$t.__('Schema Validation', this.$td),
-					component : 'validation'
-				}
-			],
-			templatesTabs : [
-				{
-					slug : 'schema-catalog',
-					name : this.$t.__('Schema Catalog', this.$td)
-				},
-				{
-					slug : 'your-templates',
-					name : this.$t.__('Your Templates', this.$td)
-				}
-			]
-		}
-	}
+const td = import.meta.env.VITE_TEXTDOMAIN
+
+const { graphs } = useSchema()
+
+const rootStore = useRootStore()
+
+const strings = {
+	schemaGenerator : __('Schema Generator', td),
+	headerTooltip   : sprintf(
+		// Translators: 1 - Learn more link.
+		__('Use our powerful Schema Generator to configure Schema Markup for your content. Search Engines use structured data to better understand what your site is about as well as to display rich snippets in search results. %1$s', td),
+		links.getDocLink(GLOBAL_STRINGS.learnMore, 'schema', true)
+	),
+	searchSchema   : __('Search Schema', td),
+	ctaDescription : __('Easily generate unlimited schema markup for your content to help you rank higher in search results. Our schema validator ensures your schema works out of the box.', td),
+	ctaButtonText  : __('Unlock Schema Generator', td),
+	ctaHeader      : sprintf(
+		// Translators: 1 - "PRO".
+		__('Schema Generator is a %1$s Feature', td),
+		'PRO'
+	)
 }
+
+const features = [
+	__('Unlimited Schema', td),
+	__('Validate with Google', td),
+	__('Increase Rankings', td),
+	__('Additional Schema Types', td)
+]
+const tabs = [
+	{
+		slug      : 'schema-templates',
+		icon      : SvgFile,
+		name      : __('Schema Templates', td),
+		component : 'templates'
+	},
+	{
+		slug      : 'custom-schema',
+		icon      : SvgFileEdit,
+		name      : __('Custom Schema', td),
+		component : 'custom'
+	},
+	{
+		slug      : 'schema-validation',
+		icon      : SvgTerminal,
+		name      : __('Schema Validation', td),
+		component : 'validation'
+	}
+]
+const templatesTabs = [
+	{
+		slug : 'schema-catalog',
+		name : __('Schema Catalog', td)
+	},
+	{
+		slug : 'your-templates',
+		name : __('Your Templates', td)
+	}
+]
 </script>
 
 <style lang="scss">

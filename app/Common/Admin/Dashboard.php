@@ -55,7 +55,8 @@ class Dashboard {
 		if (
 			$this->canShowWidget( 'seoOverview' ) &&
 			apply_filters( 'aioseo_show_seo_overview', true ) &&
-			( aioseo()->access->isAdmin() || aioseo()->access->hasCapability( 'aioseo_page_analysis' ) )
+			( aioseo()->access->isAdmin() || aioseo()->access->hasCapability( 'aioseo_page_analysis' ) ) &&
+			aioseo()->options->advanced->truSeo
 		) {
 			wp_add_dashboard_widget(
 				'aioseo-overview',

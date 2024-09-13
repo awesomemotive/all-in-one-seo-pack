@@ -14,24 +14,20 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import Cta from './AIOSEO_VERSION/news-sitemap/Cta'
 import Lite from './lite/news-sitemap/NewsSitemap'
 import NewsSitemap from './AIOSEO_VERSION/news-sitemap/NewsSitemap'
-import { AddonConditions } from '@/vue/mixins/AddonConditions'
-export default {
-	mixins     : [ AddonConditions ],
-	components : {
-		Cta,
-		Lite,
-		NewsSitemap
-	},
-	data () {
-		return {
-			addonSlug : 'aioseo-news-sitemap'
-		}
-	}
-}
+import { useAddonConditions } from '@/vue/composables/AddonConditions'
+
+const {
+	shouldShowActivate,
+	shouldShowLite,
+	shouldShowMain,
+	shouldShowUpdate
+} = useAddonConditions({
+	addonSlug : 'aioseo-news-sitemap'
+})
 </script>
 
 <style lang="scss">

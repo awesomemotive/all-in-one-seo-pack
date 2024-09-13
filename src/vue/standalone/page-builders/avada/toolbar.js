@@ -3,8 +3,8 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import { loadPiniaStores } from '@/vue/stores'
 
-import Button from './components/Button.vue'
-import LimitModifiedDate from './components/LimitModifiedDate.vue'
+import Button from './components/Button'
+import LimitModifiedDate from './components/LimitModifiedDate'
 
 import { buttonSettings as lmdButtonSettings } from './limit-modified-date'
 

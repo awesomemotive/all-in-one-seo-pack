@@ -11,7 +11,7 @@ import {
 } from '@/vue/stores'
 
 import { observeElement } from '@/vue/utils/helpers'
-import { __, sprintf } from '@wordpress/i18n'
+import { __, sprintf } from '@/vue/plugins/translations'
 
 import { maybeDeleteBlockVueApp } from '@/vue/standalone/blocks/utils'
 

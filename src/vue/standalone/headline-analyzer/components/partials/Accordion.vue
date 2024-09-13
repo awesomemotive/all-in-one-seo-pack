@@ -1,15 +1,15 @@
 <template>
-    <div
+	<div
 		class='components-panel__body'
 		:class="[componentClass, { 'is-opened': localOpenedState }, { 'aioseo-headline-analyzer-panel-has-icon': hasIcon }, iconColor]">
-        <h2 class='components-panel__body-title'>
-            <button
+		<h2 class='components-panel__body-title'>
+			<button
 				@click="toggleAccordion"
 				type="button"
 				:aria-expanded="localOpenedState ? 'true' : 'false'"
 				class="components-button components-panel__body-toggle">
-                <span aria-hidden="true">
-                    <svg
+				<span aria-hidden="true">
+					<svg
 						viewBox="0 0 24 24"
 						xmlns="http://www.w3.org/2000/svg"
 						width="24"
@@ -25,21 +25,16 @@
 						<slot name="icon" v-if="hasIcon"></slot>
 						<slot name="extraTxt" v-if="hasExtraTxt"></slot>
 					</div>
-            </button>
-        </h2>
-        <div class='components-panel__row' v-if="localOpenedState">
-            <slot />
-        </div>
-    </div>
+			</button>
+		</h2>
+		<div class='components-panel__row' v-if="localOpenedState">
+			<slot />
+		</div>
+	</div>
 </template>
 
 <script>
 export default {
-	data () {
-		return {
-			localOpenedState : this.openedState
-		}
-	},
 	props : {
 		title : {
 			type     : String,
@@ -67,6 +62,11 @@ export default {
 			default : ''
 		}
 	},
+	data () {
+		return {
+			localOpenedState : this.openedState
+		}
+	},
 	methods : {
 		toggleAccordion () {
 			this.localOpenedState = !this.localOpenedState
@@ -76,10 +76,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-    .components-panel__body-title {
-        transition: background-color 0.2s ease;
-        background-color: white;
-        margin-top: 0;
+	.components-panel__body-title {
+		transition: background-color 0.2s ease;
+		background-color: white;
+		margin-top: 0;
 
 		.title-flex {
 			display: flex;
@@ -87,27 +87,27 @@ export default {
 			align-items: center;
 			width: 100%;
 		}
-    }
-    .components-panel__body-title:hover {
-        background-color: #e8e8eb;
-    }
-    .components-panel__body {
-        svg.components-panel__arrow {
-            transform: rotate(-270deg);
-        }
+	}
+	.components-panel__body-title:hover {
+		background-color: #e8e8eb;
+	}
+	.components-panel__body {
+		svg.components-panel__arrow {
+			transform: rotate(-270deg);
+		}
 
-        &.is-opened {
-            svg.components-panel__arrow {
-                transform: rotate(0deg);
-            }
-            .components-panel__body-title {
-                margin-bottom: 16px !important;
-            }
-        }
+		&.is-opened {
+			svg.components-panel__arrow {
+				transform: rotate(0deg);
+			}
+			.components-panel__body-title {
+				margin-bottom: 16px !important;
+			}
+		}
 
-        .components-panel__body-title {
-            margin-bottom: 0 !important;
-        }
-    }
+		.components-panel__body-title {
+			margin-bottom: 0 !important;
+		}
+	}
 
 </style>

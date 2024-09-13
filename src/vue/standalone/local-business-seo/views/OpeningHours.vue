@@ -10,8 +10,8 @@
 						name="useDefaults"
 						v-model="postEditorStore.currentPost.local_seo.openingHours.useDefaults"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+							{ label: GLOBAL_STRINGS.no, value: false },
+							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
 				</div>
@@ -29,8 +29,8 @@
 							name="openingHours"
 							v-model="postEditorStore.currentPost.local_seo.openingHours.show"
 							:options="[
-								{ label: $constants.GLOBAL_STRINGS.no, value: false },
-								{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+								{ label: GLOBAL_STRINGS.no, value: false },
+								{ label: GLOBAL_STRINGS.yes, value: true }
 							]"
 						/>
 					</div>
@@ -121,7 +121,7 @@
 									<base-select
 										:disabled="getWeekDay(index).open24h || getWeekDay(index).closed"
 										size="medium"
-										:options="postEditorStore.currentPost.local_seo.openingHours.use24hFormat ? $constants.HOURS_24H_FORMAT : $constants.HOURS_12H_FORMAT"
+										:options="postEditorStore.currentPost.local_seo.openingHours.use24hFormat ? HOURS_24H_FORMAT : HOURS_12H_FORMAT"
 										:modelValue="getSelectOptions(getWeekDay(index).openTime)"
 										@update:modelValue="value => saveDay(index, 'openTime', value.value)"
 									/>
@@ -129,7 +129,7 @@
 									<base-select
 										:disabled="getWeekDay(index).open24h || getWeekDay(index).closed"
 										size="medium"
-										:options="postEditorStore.currentPost.local_seo.openingHours.use24hFormat ? $constants.HOURS_24H_FORMAT : $constants.HOURS_12H_FORMAT"
+										:options="postEditorStore.currentPost.local_seo.openingHours.use24hFormat ? HOURS_24H_FORMAT : HOURS_12H_FORMAT"
 										:modelValue="getSelectOptions(getWeekDay(index).closeTime)"
 										@update:modelValue="value => saveDay(index, 'closeTime', value.value)"
 									/>
@@ -161,16 +161,29 @@
 
 <script>
 import {
+	GLOBAL_STRINGS,
+	HOURS_12H_FORMAT,
+	HOURS_24H_FORMAT
+} from '@/vue/plugins/constants'
+import {
 	usePostEditorStore
 } from '@/vue/stores'
 
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
-			postEditorStore : usePostEditorStore()
+			postEditorStore : usePostEditorStore(),
+			GLOBAL_STRINGS,
+			HOURS_12H_FORMAT,
+			HOURS_24H_FORMAT
 		}
 	},
 	components : {
@@ -181,35 +194,35 @@ export default {
 	data () {
 		return {
 			selectTimezone : [
-				{ value: 'none', label: this.$t.__('Select your timezone', this.$td) }
+				{ value: 'none', label: __('Select your timezone', td) }
 			],
 			strings : {
-				pageName         : this.$t.__('Opening Hours', this.$td),
-				useDefaults      : this.$t.__('Use Defaults', this.$td),
-				useDefaultsDesc  : this.$t.__('Will default opening hours set globally', this.$td),
-				showOpeningHours : this.$t.__('Show Opening Hours', this.$td),
-				labels           : this.$t.__('Labels', this.$td),
-				closedLabel      : this.$t.__('Closed', this.$td),
-				closedLabelDesc  : this.$t.__('Displayed when the business is closed.', this.$td),
-				closed           : this.$t.__('Closed', this.$td),
-				settings         : this.$t.__('Settings', this.$td),
-				open24h          : this.$t.__('Open 24h', this.$td),
-				open24Label      : this.$t.__('Open 24h', this.$td),
-				open24LabelDesc  : this.$t.__('Displayed when the business is open all day long.', this.$td),
-				alwaysOpen       : this.$t.__('Open 24/7', this.$td),
-				use24hFormat     : this.$t.__('Use 24h format', this.$td),
-				twoSets          : this.$t.__('I have two sets of opening hours per day', this.$td),
-				timezone         : this.$t.__('Timezone', this.$td),
-				hours            : this.$t.__('Hours', this.$td)
+				pageName         : __('Opening Hours', td),
+				useDefaults      : __('Use Defaults', td),
+				useDefaultsDesc  : __('Will default opening hours set globally', td),
+				showOpeningHours : __('Show Opening Hours', td),
+				labels           : __('Labels', td),
+				closedLabel      : __('Closed', td),
+				closedLabelDesc  : __('Displayed when the business is closed.', td),
+				closed           : __('Closed', td),
+				settings         : __('Settings', td),
+				open24h          : __('Open 24h', td),
+				open24Label      : __('Open 24h', td),
+				open24LabelDesc  : __('Displayed when the business is open all day long.', td),
+				alwaysOpen       : __('Open 24/7', td),
+				use24hFormat     : __('Use 24h format', td),
+				twoSets          : __('I have two sets of opening hours per day', td),
+				timezone         : __('Timezone', td),
+				hours            : __('Hours', td)
 			},
 			weekdays : {
-				monday    : this.$t.__('Monday', this.$td),
-				tuesday   : this.$t.__('Tuesday', this.$td),
-				wednesday : this.$t.__('Wednesday', this.$td),
-				thursday  : this.$t.__('Thursday', this.$td),
-				friday    : this.$t.__('Friday', this.$td),
-				saturday  : this.$t.__('Saturday', this.$td),
-				sunday    : this.$t.__('Sunday', this.$td)
+				monday    : __('Monday', td),
+				tuesday   : __('Tuesday', td),
+				wednesday : __('Wednesday', td),
+				thursday  : __('Thursday', td),
+				friday    : __('Friday', td),
+				saturday  : __('Saturday', td),
+				sunday    : __('Sunday', td)
 			}
 		}
 	},
@@ -232,8 +245,8 @@ export default {
 	methods : {
 		getSelectOptions (option) {
 			return this.postEditorStore.currentPost.local_seo.openingHours.use24hFormat
-				? this.$constants.HOURS_24H_FORMAT.find(h => h.value === option)
-				: this.$constants.HOURS_12H_FORMAT.find(h => h.value === option)
+				? HOURS_24H_FORMAT.find(h => h.value === option)
+				: HOURS_12H_FORMAT.find(h => h.value === option)
 		},
 		saveDay (day, hour, value) {
 			this.postEditorStore.currentPost.local_seo.openingHours.days[day][hour] = value

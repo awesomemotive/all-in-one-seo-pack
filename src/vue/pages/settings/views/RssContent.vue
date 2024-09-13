@@ -12,7 +12,7 @@
 				{{ strings.description }}
 
 				<span
-					v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'rssContent', true)"
+					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'rssContent', true)"
 				/>
 
 				<core-alert
@@ -23,7 +23,7 @@
 			</div>
 
 			<core-settings-row
-				:name="$constants.GLOBAL_STRINGS.preview"
+				:name="GLOBAL_STRINGS.preview"
 			>
 				<template #content>
 					<base-button
@@ -90,6 +90,8 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useOptionsStore,
 	useRootStore
@@ -100,11 +102,18 @@ import CoreCard from '@/vue/components/common/core/Card'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgExternal from '@/vue/components/common/svg/External'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
 			optionsStore : useOptionsStore(),
-			rootStore    : useRootStore()
+			rootStore    : useRootStore(),
+			GLOBAL_STRINGS,
+			links
 		}
 	},
 	components : {
@@ -117,25 +126,25 @@ export default {
 	data () {
 		return {
 			strings : {
-				tooltip         : this.$t.__('Automatically add content to your site\'s RSS feed.', this.$td),
-				description     : this.$t.__('This feature is used to automatically add content to your site\'s RSS feed. More specifically, it allows you to add links back to your blog and your blog posts so scrapers will automatically add these links too. This helps search engines identify you as the original source of the content.', this.$td),
-				learnMore       : this.$t.__('Learn more', this.$td),
-				rssFeedDisabled : this.$t.sprintf(
+				tooltip         : __('Automatically add content to your site\'s RSS feed.', td),
+				description     : __('This feature is used to automatically add content to your site\'s RSS feed. More specifically, it allows you to add links back to your blog and your blog posts so scrapers will automatically add these links too. This helps search engines identify you as the original source of the content.', td),
+				learnMore       : __('Learn more', td),
+				rssFeedDisabled : sprintf(
 					// Translators: 1 - Opening link tag, 2 - Closing link tag.
-					this.$t.__('Your RSS feed has been disabled. Disabling the global RSS feed is NOT recommended. This will prevent users from subscribing to your content and can hurt your SEO rankings. You can re-enable the global RSS feed in the %1$scrawl content settings%2$s.', this.$td),
+					__('Your RSS feed has been disabled. Disabling the global RSS feed is NOT recommended. This will prevent users from subscribing to your content and can hurt your SEO rankings. You can re-enable the global RSS feed in the %1$scrawl content settings%2$s.', td),
 					'<a href="' + this.rootStore.aioseo.urls.aio.searchAppearance + '&aioseo-scroll=crawl-content-global-feed&aioseo-highlight=crawl-content-global-feed#/advanced">',
 					'</a>'
 				),
-				rssContent           : this.$t.__('RSS Content Settings', this.$td),
-				openYourRssFeed      : this.$t.__('Open Your RSS Feed', this.$td),
-				rssBeforeContent     : this.$t.__('RSS Before Content', this.$td),
-				rssAfterContent      : this.$t.__('RSS After Content', this.$td),
-				beforeRssDescription : this.$t.__('Add content before each post in your site feed.', this.$td),
-				afterRssDescription  : this.$t.__('Add content after each post in your site feed.', this.$td),
-				unfilteredHtmlError  : this.$t.sprintf(
+				rssContent           : __('RSS Content Settings', td),
+				openYourRssFeed      : __('Open Your RSS Feed', td),
+				rssBeforeContent     : __('RSS Before Content', td),
+				rssAfterContent      : __('RSS After Content', td),
+				beforeRssDescription : __('Add content before each post in your site feed.', td),
+				afterRssDescription  : __('Add content after each post in your site feed.', td),
+				unfilteredHtmlError  : sprintf(
 					// Translators: 1 - Learn more link.
-					this.$t.__('Your user account role does not have access to edit this field. %1$s', this.$td),
-					this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'unfilteredHtml', true)
+					__('Your user account role does not have access to edit this field. %1$s', td),
+					links.getDocLink(GLOBAL_STRINGS.learnMore, 'unfilteredHtml', true)
 				)
 			}
 		}

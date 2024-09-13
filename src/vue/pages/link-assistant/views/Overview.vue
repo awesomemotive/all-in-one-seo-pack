@@ -14,22 +14,18 @@
 	</div>
 </template>
 
-<script>
-import { AddonConditions } from '@/vue/mixins/AddonConditions'
+<script setup>
+import { useAddonConditions } from '@/vue/composables/AddonConditions'
 import Cta from './AIOSEO_VERSION/overview/Cta'
 import Lite from './lite/overview/Overview'
 import Overview from './AIOSEO_VERSION/overview/Overview'
-export default {
-	mixins     : [ AddonConditions ],
-	components : {
-		Cta,
-		Lite,
-		Overview
-	},
-	data () {
-		return {
-			addonSlug : 'aioseo-link-assistant'
-		}
-	}
-}
+
+const {
+	shouldShowActivate,
+	shouldShowLite,
+	shouldShowMain,
+	shouldShowUpdate
+} = useAddonConditions({
+	addonSlug : 'aioseo-link-assistant'
+})
 </script>

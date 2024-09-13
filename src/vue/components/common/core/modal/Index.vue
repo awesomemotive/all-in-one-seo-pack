@@ -61,12 +61,12 @@ import {
 
 import SvgClose from '@/vue/components/common/svg/Close'
 export default {
+	emits : [ 'close' ],
 	setup () {
 		return {
 			rootStore : useRootStore()
 		}
 	},
-	emits      : [ 'close' ],
 	components : {
 		SvgClose
 	},

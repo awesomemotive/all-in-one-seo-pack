@@ -10,8 +10,8 @@
 					v-model="options.show"
 					:name="`${object.name}ShowInSearch`"
 					:options="[
-						{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-						{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+						{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+						{ label: GLOBAL_STRINGS.yes, value: true }
 					]"
 				/>
 
@@ -20,8 +20,8 @@
 					:modelValue="true"
 					:name="`${object.name}ShowInSearch`"
 					:options="[
-						{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-						{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+						{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+						{ label: GLOBAL_STRINGS.yes, value: true }
 					]"
 				/>
 
@@ -40,7 +40,7 @@
 
 		<core-settings-row
 			v-if="edit"
-			:name="$constants.GLOBAL_STRINGS.preview"
+			:name="GLOBAL_STRINGS.preview"
 		>
 			<template #content>
 				<core-google-search-preview
@@ -113,15 +113,33 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
 import tags from '@/vue/utils/tags'
-import { MaxCounts } from '@/vue/mixins/MaxCounts'
-import { Tags } from '@/vue/mixins/Tags'
+
+import { useTags } from '@/vue/composables/Tags'
+
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	setup (props) {
+		const {
+			parseTags
+		} = useTags({
+			separator : props.separator
+		})
+
+		return {
+			parseTags
+		}
+	},
 	components : {
 		BaseRadioToggle,
 		CoreAlert,
@@ -129,8 +147,7 @@ export default {
 		CoreHtmlTagsEditor,
 		CoreSettingsRow
 	},
-	mixins : [ MaxCounts, Tags ],
-	props  : {
+	props : {
 		type : {
 			type     : String,
 			required : true
@@ -156,14 +173,15 @@ export default {
 	},
 	data () {
 		return {
+			GLOBAL_STRINGS,
 			tags,
 			titleCount       : 0,
 			descriptionCount : 0,
 			strings          : {
-				showInSearchResults   : this.$t.__('Show in Search Results', this.$td),
-				clickToAddTitle       : this.$t.__('Click on the tags below to insert variables into your title.', this.$td),
-				metaDescription       : this.$t.__('Meta Description', this.$td),
-				clickToAddDescription : this.$t.__('Click on the tags below to insert variables into your meta description.', this.$td)
+				showInSearchResults   : __('Show in Search Results', td),
+				clickToAddTitle       : __('Click on the tags below to insert variables into your title.', td),
+				metaDescription       : __('Meta Description', td),
+				clickToAddDescription : __('Click on the tags below to insert variables into your meta description.', td)
 			}
 		}
 	},
@@ -195,9 +213,9 @@ export default {
 	},
 	computed : {
 		title () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The type of page (Post, Page, Category, Tag, etc.).
-				this.$t.__('%1$s Title', this.$td),
+				__('%1$s Title', td),
 				this.object.singular
 			)
 		},
@@ -205,16 +223,16 @@ export default {
 			return this.options.show
 		},
 		noIndexDescription () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The plural name of the content type (e.g. "Posts" or "Categories").
-				this.$t.__('Choose whether your %1$s should be included in search results. If you select "No", then your %1$s will be noindexed and excluded from the sitemap so that search engines ignore them.', this.$td),
+				__('Choose whether your %1$s should be included in search results. If you select "No", then your %1$s will be noindexed and excluded from the sitemap so that search engines ignore them.', td),
 				this.object.label
 			)
 		},
 		noindexAlertDescription () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The plural name of the content type (e.g. "Posts" or "Categories").
-				this.$t.__('Your %1$s will be noindexed and excluded from the sitemap so that search engines ignore them. You can still control how their page title looks like below.', this.$td),
+				__('Your %1$s will be noindexed and excluded from the sitemap so that search engines ignore them. You can still control how their page title looks like below.', td),
 				this.object.label
 			)
 		}

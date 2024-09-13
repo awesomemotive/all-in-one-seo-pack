@@ -173,7 +173,14 @@ export default ({ mode }) => {
 							to   : `dist/${version}/manifest.php`
 						}
 					])
-				]
+				],
+				// This is a workaround for an issue with rollup that won't be fixed any time soon. See: https://github.com/vitejs/vite/issues/15012
+				onLog (level, log, handler) {
+					if (log.cause && 'Can\'t resolve original location of error.' === log.cause.message) {
+						return
+					}
+					handler(level, log)
+				}
 			}
 		},
 		optimizeDeps : {
@@ -181,6 +188,7 @@ export default ({ mode }) => {
 			include : [
 				'@codemirror/lang-json',
 				'@codemirror/view',
+				'@varlet/ui',
 				'animate-vanilla-js',
 				'clipboard/dist/clipboard.min.js',
 				'codemirror',
@@ -188,16 +196,18 @@ export default ({ mode }) => {
 				'element-plus/dist/locale/en.mjs',
 				'element-plus/es/components/date-picker/style/css',
 				'emoji-mart',
+				'emoji-mart/dist/browser',
 				'libphonenumber-js',
 				'lodash-es',
 				'lottie-web',
 				'luxon',
 				'maz-ui/components/MazPhoneNumberInput',
+				'popper.js',
 				'quill',
 				'superagent',
-				'vue3-apexcharts',
 				'vue-multiselect',
-				'vue-scrollto'
+				'vue-router',
+				'vue3-apexcharts'
 			],
 			exclude : [
 				'@/vue/plugins/constants'
@@ -290,7 +300,8 @@ const getPlugins = version => {
 		replace({
 			preventAssignment : true,
 			values            : {
-				AIOSEO_VERSION : version.toLowerCase()
+				AIOSEO_VERSION                                                                      : version.toLowerCase(),
+				'eval(\'[function _expression_function(){\' + val + \';scoped_bm_rt=$bm_rt}]\')[0]' : '(new Function(\'scoped_bm_rt\', val + \';return $bm_rt;\'))()'
 			}
 		}),
 		vue(),
@@ -318,7 +329,6 @@ const getTextDomains = version => {
 		output  : './languages/aioseo-pro.php',
 		domain  : 'aioseo-pro',
 		matches : [
-			'this.$tdPro',
 			'tdPro',
 			'({}).VITE_TEXTDOMAIN_PRO',
 			'define_import_meta_env_default.VITE_TEXTDOMAIN'
@@ -332,7 +342,6 @@ const getTextDomains = version => {
 			output  : './languages/aioseo-lite.php',
 			domain  : 'all-in-one-seo-pack',
 			matches : [
-				'this.$td',
 				'td',
 				'({}).VITE_TEXTDOMAIN',
 				'define_import_meta_env_default.VITE_TEXTDOMAIN'

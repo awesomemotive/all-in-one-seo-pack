@@ -21,15 +21,29 @@ import { usePostEditorStore } from '@/vue/stores'
 
 import { decodeHtml } from '../assets/js/functions'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	components : {
+		Accordion
+	},
 	data () {
 		return {
-			previousScoresText : this.$t.__('Previous Scores', this.$td),
+			previousScoresText : __('Previous Scores', td),
 			postEditorStore    : usePostEditorStore()
 		}
 	},
-	components : {
-		Accordion
+	computed : {
+		postTitle () {
+			return this.postEditorStore.currentPost?.headlineAnalyzer?.headline ? this.postEditorStore.currentPost.headlineAnalyzer.headline : ''
+		},
+		previousScores () {
+			const headlines = JSON.parse(JSON.stringify(this.postEditorStore?.currentPost?.headlineAnalyzer?.previousHeadlines || []))
+			headlines.pop()
+			return headlines.reverse()
+		}
 	},
 	methods : {
 		classOnScore (score) {
@@ -75,16 +89,6 @@ export default {
 		},
 		decodeHtml (html) {
 			return decodeHtml(html)
-		}
-	},
-	computed : {
-		postTitle () {
-			return this.postEditorStore.currentPost?.headlineAnalyzer?.headline ? this.postEditorStore.currentPost.headlineAnalyzer.headline : ''
-		},
-		previousScores () {
-			const headlines = JSON.parse(JSON.stringify(this.postEditorStore?.currentPost?.headlineAnalyzer?.previousHeadlines || []))
-			headlines.pop()
-			return headlines.reverse()
 		}
 	}
 }

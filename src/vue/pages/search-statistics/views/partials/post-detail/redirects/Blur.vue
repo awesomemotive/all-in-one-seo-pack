@@ -6,6 +6,8 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
+
 import CoreBlur from '@/vue/components/common/core/Blur'
 import Redirects from './Redirects'
 export default {
@@ -16,9 +18,9 @@ export default {
 	computed : {
 		redirects () {
 			const from = [
-				this.$links.docLinks.home,
-				this.$links.docLinks.googleSearchConsole,
-				this.$links.docLinks.googleAnalytics
+				links.docLinks.home,
+				links.docLinks.googleSearchConsole,
+				links.docLinks.googleAnalytics
 			]
 
 			return { from }

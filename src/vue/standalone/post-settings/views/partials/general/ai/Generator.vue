@@ -39,6 +39,11 @@ import {
 import AiModal from '../../../AIOSEO_VERSION/partials-ai/Modal'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgAiRobot from '@/vue/components/common/svg/ai/Robot'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -59,7 +64,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				useAiGenerator : this.$t.__('Use AI Generator', this.$td)
+				useAiGenerator : __('Use AI Generator', td)
 			}
 		}
 	}

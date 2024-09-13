@@ -22,7 +22,7 @@
 							v-model="optionsStore.dynamicOptions.searchAppearance.postTypes.attachment.redirectAttachmentUrls"
 							name="redirectAttachmentUrls"
 							:options="[
-								{ label: $constants.GLOBAL_STRINGS.disabled, value: 'disabled', activeClass: 'dark' },
+								{ label: GLOBAL_STRINGS.disabled, value: 'disabled', activeClass: 'dark' },
 								{ label: strings.attachment, value: 'attachment' },
 								{ label: strings.attachmentParent, value: 'attachment_parent' }
 							]"
@@ -100,13 +100,16 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
 import {
 	useOptionsStore,
 	useRootStore,
 	useSettingsStore
 } from '@/vue/stores'
 
-import { AddonConditions } from '@/vue/mixins/AddonConditions'
+import { useAddonConditions } from '@/vue/composables/AddonConditions'
+import { usePostTypes } from '@/vue/composables/PostTypes'
+
 import Advanced from './partials/Advanced'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -117,19 +120,40 @@ import Cta from './AIOSEO_VERSION/image-seo/Cta'
 import CustomFields from './partials/AIOSEO_VERSION/CustomFields'
 import ImageSeo from './AIOSEO_VERSION/image-seo/ImageSeo'
 import Lite from './lite/image-seo/ImageSeo'
-import PostTypesMixin from '@/vue/mixins/PostTypes'
 import Schema from './partials/Schema'
 import TitleDescription from './partials/TitleDescription'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			shouldShowActivate,
+			shouldShowLite,
+			shouldShowMain,
+			shouldShowUpdate
+		} = useAddonConditions({
+			addonSlug : 'aioseo-image-seo'
+		})
+
+		const {
+			getPostIconClass
+		} = usePostTypes()
+
 		return {
+			GLOBAL_STRINGS,
+			getPostIconClass,
 			optionsStore  : useOptionsStore(),
 			rootStore     : useRootStore(),
-			settingsStore : useSettingsStore()
+			settingsStore : useSettingsStore(),
+			shouldShowActivate,
+			shouldShowLite,
+			shouldShowMain,
+			shouldShowUpdate
 		}
 	},
-	mixins     : [ AddonConditions, PostTypesMixin ],
 	components : {
 		Advanced,
 		BaseRadioToggle,
@@ -147,38 +171,37 @@ export default {
 	data () {
 		return {
 			imageSeoKey       : 0,
-			addonSlug         : 'aioseo-image-seo',
 			internalDebounce  : false,
 			imageSeoActiveTab : {
 				slug : 'title',
-				name : this.$t.__('Title', this.$td),
+				name : __('Title', td),
 				pro  : true
 			},
 			strings : {
-				redirectAttachmentUrls    : this.$t.__('Redirect Attachment URLs', this.$td),
-				attachment                : this.$t.__('Attachment', this.$td),
-				attachmentParent          : this.$t.__('Attachment Parent', this.$td),
-				attachmentUrlsDescription : this.$t.__('We recommended redirecting attachment URLs back to the attachment since the default WordPress attachment pages have little SEO value.', this.$td),
-				imageSeo                  : this.$t.__('Image SEO', this.$td),
-				advancedSettings          : this.$t.__('Advanced Settings', this.$td)
+				redirectAttachmentUrls    : __('Redirect Attachment URLs', td),
+				attachment                : __('Attachment', td),
+				attachmentParent          : __('Attachment Parent', td),
+				attachmentUrlsDescription : __('We recommended redirecting attachment URLs back to the attachment since the default WordPress attachment pages have little SEO value.', td),
+				imageSeo                  : __('Image SEO', td),
+				advancedSettings          : __('Advanced Settings', td)
 			},
 			tabs : {
 				attachments : [
 					{
 						slug   : 'title-description',
-						name   : this.$t.__('Title & Description', this.$td),
+						name   : __('Title & Description', td),
 						access : 'aioseo_search_appearance_settings',
 						pro    : false
 					},
 					{
 						slug   : 'Schema',
-						name   : this.$t.__('Schema Markup', this.$td),
+						name   : __('Schema Markup', td),
 						access : 'aioseo_search_appearance_settings',
 						pro    : true
 					},
 					{
 						slug   : 'advanced',
-						name   : this.$t.__('Advanced', this.$td),
+						name   : __('Advanced', td),
 						access : 'aioseo_search_appearance_settings',
 						pro    : false
 					}
@@ -186,27 +209,27 @@ export default {
 				imageSeo : [
 					{
 						slug : 'title',
-						name : this.$t.__('Title', this.$td),
+						name : __('Title', td),
 						pro  : true
 					},
 					{
 						slug : 'altTag',
-						name : this.$t.__('Alt Tag', this.$td),
+						name : __('Alt Tag', td),
 						pro  : true
 					},
 					{
 						slug : 'caption',
-						name : this.$t.__('Caption', this.$td),
+						name : __('Caption', td),
 						pro  : true
 					},
 					{
 						slug : 'description',
-						name : this.$t.__('Description', this.$td),
+						name : __('Description', td),
 						pro  : true
 					},
 					{
 						slug : 'filename',
-						name : this.$t.__('Filename', this.$td),
+						name : __('Filename', td),
 						pro  : true
 					}
 				]

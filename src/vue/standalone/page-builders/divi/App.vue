@@ -6,7 +6,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import Modal from '../Modal.vue'
+import Modal from '../Modal'
 
 const isModalOpen = ref(false)
 

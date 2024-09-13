@@ -4,9 +4,9 @@
 
 		<cta
 			class="aioseo-link-assistant-cta"
-			:cta-link="$links.getPricingUrl('link-assistant', 'link-assistant-upsell', 'overview')"
+			:cta-link="links.getPricingUrl('link-assistant', 'link-assistant-upsell', 'overview')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="$links.getUpsellUrl('link-assistant', 'overview', $isPro ? 'pricing' : 'liteUpgrade')"
+			:learn-more-link="links.getUpsellUrl('link-assistant', 'overview', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="[
 				strings.linkOpportunities,
 				strings.domainReports,
@@ -29,17 +29,26 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
-	useLicenseStore
+	useLicenseStore,
+	useRootStore
 } from '@/vue/stores'
 
 import Blur from './Blur'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 import Cta from '@/vue/components/common/cta/Index'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
-			licenseStore : useLicenseStore()
+			licenseStore : useLicenseStore(),
+			rootStore    : useRootStore(),
+			links
 		}
 	},
 	components : {
@@ -50,17 +59,17 @@ export default {
 	data () {
 		return {
 			strings : {
-				ctaButtonText : this.$t.__('Unlock Link Assistant', this.$td),
-				ctaHeader     : this.$t.sprintf(
+				ctaButtonText : __('Unlock Link Assistant', td),
+				ctaHeader     : sprintf(
 					// Translators: 1 - "PRO".
-					this.$t.__('Link Assistant is a %1$s Feature', this.$td),
+					__('Link Assistant is a %1$s Feature', td),
 					'PRO'
 				),
-				linkAssistantDescription : this.$t.__('Get relevant suggestions for adding internal links to all your content as well as finding any orphaned posts that have no internal links.', this.$td),
-				linkOpportunities        : this.$t.__('Actionable Link Suggestions', this.$td),
-				orphanedPosts            : this.$t.__('See Orphaned Posts', this.$td),
-				affiliateLinks           : this.$t.__('See Affiliate Links', this.$td),
-				domainReports            : this.$t.__('Top Domain Reports', this.$td)
+				linkAssistantDescription : __('Get relevant suggestions for adding internal links to all your content as well as finding any orphaned posts that have no internal links.', td),
+				linkOpportunities        : __('Actionable Link Suggestions', td),
+				orphanedPosts            : __('See Orphaned Posts', td),
+				affiliateLinks           : __('See Affiliate Links', td),
+				domainReports            : __('Top Domain Reports', td)
 			}
 		}
 	}

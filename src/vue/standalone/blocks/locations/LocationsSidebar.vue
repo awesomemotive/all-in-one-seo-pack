@@ -5,8 +5,8 @@
 			<base-select
 				size="medium"
 				:options="locationCategories"
-				:modelValue="getCategoryOptions(this.$root.$data.categoryId)"
-				@update:modelValue="values => this.$root.$data.categoryId = values.value"
+				:modelValue="getCategoryOptions($root.$data.categoryId)"
+				@update:modelValue="values => $root.$data.categoryId = values.value"
 				track-by="value"
 			/>
 		</div>

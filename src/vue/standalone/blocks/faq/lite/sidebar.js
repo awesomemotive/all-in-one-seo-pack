@@ -1,6 +1,7 @@
 import { html } from '@/vue/standalone/blocks/utils'
 import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
 import links from '@/vue/utils/links'
+import { __ } from '@/vue/plugins/translations'
 
 const {
 	RichText,
@@ -15,7 +16,6 @@ const InspectorControls =
 	window.wp.blockEditor.InspectorControls ||
 	window.wp.editor.InspectorControls
 
-const { __ } = window.wp.i18n
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 const TEMPLATE = [

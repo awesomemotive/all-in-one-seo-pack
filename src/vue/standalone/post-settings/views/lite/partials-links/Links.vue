@@ -27,9 +27,9 @@
 			</core-blur>
 
 			<cta
-				:cta-link="$links.getPricingUrl('link-assistant', 'link-assistant-upsell', 'metabox')"
+				:cta-link="links.getPricingUrl('link-assistant', 'link-assistant-upsell', 'metabox')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="$links.getUpsellUrl('link-assistant', 'metabox', $isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('link-assistant', 'metabox', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 				:feature-list="[
 					strings.linkOpportunities,
 					strings.domainReports,
@@ -85,9 +85,9 @@
 				</core-blur>
 
 				<cta
-					:cta-link="$links.getPricingUrl('link-assistant', 'link-assistant-upsell', 'metabox')"
+					:cta-link="links.getPricingUrl('link-assistant', 'link-assistant-upsell', 'metabox')"
 					:button-text="strings.ctaButtonText"
-					:learn-more-link="$links.getUpsellUrl('link-assistant', 'metabox', $isPro ? 'pricing' : 'liteUpgrade')"
+					:learn-more-link="links.getUpsellUrl('link-assistant', 'metabox', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 					:feature-list="[
 						strings.linkOpportunities,
 						strings.domainReports,
@@ -108,14 +108,16 @@
 			</template>
 		</core-modal>
 
-		<links-side-bar v-if="'modal' !== this.parentComponentContext" />
+		<links-side-bar v-if="'modal' !== parentComponentContext" />
 	</div>
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
-	usePostEditorStore
+	usePostEditorStore,
+	useRootStore
 } from '@/vue/stores'
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
@@ -131,11 +133,18 @@ import SvgLinkExternal from '@/vue/components/common/svg/link/External'
 import SvgLinkInternalInbound from '@/vue/components/common/svg/link/InternalInbound'
 import SvgLinkInternalOutbound from '@/vue/components/common/svg/link/InternalOutbound'
 import SvgLinkSuggestion from '@/vue/components/common/svg/link/Suggestion'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
 			licenseStore    : useLicenseStore(),
-			postEditorStore : usePostEditorStore()
+			postEditorStore : usePostEditorStore(),
+			rootStore       : useRootStore(),
+			links
 		}
 	},
 	components : {
@@ -275,18 +284,18 @@ export default {
 				}
 			},
 			strings : {
-				ctaButtonText : this.$t.__('Unlock Link Assistant', this.$td),
-				ctaHeader     : this.$t.sprintf(
+				ctaButtonText : __('Unlock Link Assistant', td),
+				ctaHeader     : sprintf(
 					// Translators: 1 - "PRO".
-					this.$t.__('Link Assistant is a %1$s Feature', this.$td),
+					__('Link Assistant is a %1$s Feature', td),
 					'PRO'
 				),
-				linkAssistantDescription : this.$t.__('Get relevant suggestions for adding internal links to all your content as well as finding any orphaned posts that have no internal links.', this.$td),
-				thisFeatureRequires      : this.$t.__('This feature requires one of the following plans:', this.$td),
-				linkOpportunities        : this.$t.__('Actionable Link Suggestions', this.$td),
-				orphanedPosts            : this.$t.__('See Orphaned Posts', this.$td),
-				affiliateLinks           : this.$t.__('See Affiliate Links', this.$td),
-				domainReports            : this.$t.__('Top Domain Reports', this.$td)
+				linkAssistantDescription : __('Get relevant suggestions for adding internal links to all your content as well as finding any orphaned posts that have no internal links.', td),
+				thisFeatureRequires      : __('This feature requires one of the following plans:', td),
+				linkOpportunities        : __('Actionable Link Suggestions', td),
+				orphanedPosts            : __('See Orphaned Posts', td),
+				affiliateLinks           : __('See Affiliate Links', td),
+				domainReports            : __('Top Domain Reports', td)
 			}
 		}
 	},
@@ -299,54 +308,54 @@ export default {
 				{
 					slug : 'inbound-internal',
 					icon : 'svg-link-internal-inbound',
-					name : this.$t.sprintf(
+					name : sprintf(
 						'%1$s %2$s',
 						this.mockedPostData.links.inboundInternal.totals.total,
-						this.$t.__('Inbound Internal', this.$td)
+						__('Inbound Internal', td)
 					)
 				},
 				{
 					slug : 'outbound-internal',
 					icon : 'svg-link-internal-outbound',
-					name : this.$t.sprintf(
+					name : sprintf(
 						'%1$s %2$s',
 						this.mockedPostData.links.outboundInternal.totals.total,
-						this.$t.__('Outbound Internal', this.$td)
+						__('Outbound Internal', td)
 					)
 				},
 				{
 					slug : 'affiliate',
 					icon : 'svg-link-affiliate',
-					name : this.$t.sprintf(
+					name : sprintf(
 						'%1$s %2$s',
 						this.mockedPostData.links.affiliate.totals.total,
-						this.$t.__('Affiliate', this.$td)
+						__('Affiliate', td)
 					)
 				},
 				{
 					slug : 'external',
 					icon : 'svg-link-external',
-					name : this.$t.sprintf(
+					name : sprintf(
 						'%1$s %2$s',
 						this.mockedPostData.links.external.totals.total,
-						this.$t.__('External', this.$td)
+						__('External', td)
 					)
 				},
 				{
 					slug : 'link-suggestions',
 					icon : 'svg-link-suggestion',
-					name : this.$t.sprintf(
+					name : sprintf(
 						'%1$s %2$s',
 						this.mockedPostData.links.suggestionsOutbound.totals.total + this.mockedPostData.links.suggestionsInbound.totals.total,
-						this.$t.__('Link Suggestions', this.$td)
+						__('Link Suggestions', td)
 					)
 				}
 			]
 		},
 		modalHeader () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The post title.
-				this.$t.__('Links & Suggestions for "%1$s"', this.$td),
+				__('Links & Suggestions for "%1$s"', td),
 				window.wp.data.select('core/editor').getEditedPostAttribute('title')
 			)
 		}

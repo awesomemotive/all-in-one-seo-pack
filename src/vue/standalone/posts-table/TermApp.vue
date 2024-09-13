@@ -125,12 +125,15 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import http from '@/vue/utils/http'
 import { merge } from 'lodash-es'
-import { useTruSeoScore } from '@/vue/composables'
-import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
+
+import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
+
 import { truncate } from '@/vue/utils/html'
 import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
+
 import BaseButton from '@/vue/components/common/base/Button'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreLoader from '@/vue/components/common/core/Loader'
@@ -138,9 +141,15 @@ import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
 import '@/vue/assets/scss/main.scss'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const { strings } = useTruSeoScore()
+		const {
+			strings
+		} = useTruSeoScore()
 
 		return {
 			composableStrings : strings
@@ -153,8 +162,7 @@ export default {
 		CoreTooltip,
 		SvgPencil
 	},
-	mixins : [ TruSeoScore ],
-	props  : {
+	props : {
 		term  : Object,
 		terms : Array,
 		index : Number
@@ -172,10 +180,10 @@ export default {
 			showTruSeo          : false,
 			termLoading         : false,
 			strings             : merge(this.composableStrings, {
-				title          : this.$t.__('Title', this.$td),
-				description    : this.$t.__('Description', this.$td),
-				saveChanges    : this.$t.__('Save Changes', this.$td),
-				discardChanges : this.$t.__('Discard Changes', this.$td)
+				title          : __('Title', td),
+				description    : __('Description', td),
+				saveChanges    : __('Save Changes', td),
+				discardChanges : __('Discard Changes', td)
 			})
 		}
 	},
@@ -187,7 +195,7 @@ export default {
 			this.term.description    = this.termDescription
 			this.termLoading         = true
 
-			http.post(this.$links.restUrl('terms-list/update-details-column'))
+			http.post(links.restUrl('terms-list/update-details-column'))
 				.send({
 					termId      : this.term.id,
 					title       : this.term.title,

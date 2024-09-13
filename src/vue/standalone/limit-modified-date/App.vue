@@ -35,18 +35,33 @@ import {
 
 import { isBlockEditor } from '@/vue/utils/context'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'standalone-update-post' ],
 	setup () {
 		return {
 			postEditorStore : usePostEditorStore()
 		}
 	},
-	emits : [ 'standalone-update-post' ],
 	data () {
 		return {
 			strings : {
-				label : this.$t.__('Don\'t update the modified date', this.$td)
+				label : __('Don\'t update the modified date', td)
 			}
+		}
+	},
+	watch : {
+		'postEditorStore.currentPost.limit_modified_date' (newVal) {
+			// Update the hidden aioseo-post-settings field.
+			window.aioseoBus.$emit('standalone-update-post', { limit_modified_date: newVal })
+		}
+	},
+	computed : {
+		canShowSvg () {
+			return isBlockEditor() && this.postEditorStore.currentPost.limit_modified_date
 		}
 	},
 	methods : {
@@ -58,17 +73,6 @@ export default {
 			window.wp.data.dispatch('core/editor').editPost({
 				aioseo_limit_modified_date : this.postEditorStore.currentPost.limit_modified_date
 			})
-		}
-	},
-	computed : {
-		canShowSvg () {
-			return isBlockEditor() && this.postEditorStore.currentPost.limit_modified_date
-		}
-	},
-	watch : {
-		'postEditorStore.currentPost.limit_modified_date' (newVal) {
-			// Update the hidden aioseo-post-settings field.
-			window.aioseoBus.$emit('standalone-update-post', { limit_modified_date: newVal })
 		}
 	}
 }

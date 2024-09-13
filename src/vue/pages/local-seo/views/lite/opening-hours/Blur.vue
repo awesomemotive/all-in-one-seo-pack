@@ -12,8 +12,8 @@
 							name="openingHours"
 							:modelValue="true"
 							:options="[
-								{ label: $constants.GLOBAL_STRINGS.no, value: false },
-								{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+								{ label: GLOBAL_STRINGS.no, value: false },
+								{ label: GLOBAL_STRINGS.yes, value: true }
 							]"
 						/>
 					</div>
@@ -45,13 +45,13 @@
 							<div class="aioseo-col-hours text-xs-left">
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="09:00"
 								/>
 								<span class="separator">-</span>
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="17:00"
 								/>
 							</div>
@@ -78,13 +78,13 @@
 							<div class="aioseo-col-hours text-xs-left">
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="09:00"
 								/>
 								<span class="separator">-</span>
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="17:00"
 								/>
 							</div>
@@ -111,13 +111,13 @@
 							<div class="aioseo-col-hours text-xs-left">
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="09:00"
 								/>
 								<span class="separator">-</span>
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="17:00"
 								/>
 							</div>
@@ -144,13 +144,13 @@
 							<div class="aioseo-col-hours text-xs-left">
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="09:00"
 								/>
 								<span class="separator">-</span>
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="17:00"
 								/>
 							</div>
@@ -177,13 +177,13 @@
 							<div class="aioseo-col-hours text-xs-left">
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="09:00"
 								/>
 								<span class="separator">-</span>
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="17:00"
 								/>
 							</div>
@@ -210,13 +210,13 @@
 							<div class="aioseo-col-hours text-xs-left">
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="09:00"
 								/>
 								<span class="separator">-</span>
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="17:00"
 								/>
 							</div>
@@ -243,13 +243,13 @@
 							<div class="aioseo-col-hours text-xs-left">
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="09:00"
 								/>
 								<span class="separator">-</span>
 								<base-select
 									size="medium"
-									:options="$constants.HOURS_24H_FORMAT"
+									:options="HOURS_24H_FORMAT"
 									modelValue="17:00"
 								/>
 							</div>
@@ -276,10 +276,19 @@
 </template>
 
 <script>
+import {
+	GLOBAL_STRINGS,
+	HOURS_24H_FORMAT
+} from '@/vue/plugins/constants'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		BaseCheckbox,
@@ -289,24 +298,26 @@ export default {
 	},
 	data () {
 		return {
+			GLOBAL_STRINGS,
+			HOURS_24H_FORMAT,
 			strings : {
-				showOpeningHours    : this.$t.__('Show Opening Hours', this.$td),
-				displayOpeningHours : this.$t.__('Display Opening Hours', this.$td),
-				labels              : this.$t.__('Labels', this.$td),
-				open247             : this.$t.__('Open 24/7', this.$td),
-				use24hFormat        : this.$t.__('Use 24h format', this.$td),
-				timezone            : this.$t.__('Timezone', this.$td),
-				selectTimeZone      : this.$t.__('Select your timezone:', this.$td),
-				hours               : this.$t.__('Opening Hours', this.$td),
-				monday              : this.$t.__('Monday', this.$td),
-				tuesday             : this.$t.__('Tuesday', this.$td),
-				wednesday           : this.$t.__('Wednesday', this.$td),
-				thursday            : this.$t.__('Thursday', this.$td),
-				friday              : this.$t.__('Friday', this.$td),
-				saturday            : this.$t.__('Saturday', this.$td),
-				sunday              : this.$t.__('Sunday', this.$td),
-				open24h             : this.$t.__('Open 24h', this.$td),
-				closed              : this.$t.__('Closed', this.$td)
+				showOpeningHours    : __('Show Opening Hours', td),
+				displayOpeningHours : __('Display Opening Hours', td),
+				labels              : __('Labels', td),
+				open247             : __('Open 24/7', td),
+				use24hFormat        : __('Use 24h format', td),
+				timezone            : __('Timezone', td),
+				selectTimeZone      : __('Select your timezone:', td),
+				hours               : __('Opening Hours', td),
+				monday              : __('Monday', td),
+				tuesday             : __('Tuesday', td),
+				wednesday           : __('Wednesday', td),
+				thursday            : __('Thursday', td),
+				friday              : __('Friday', td),
+				saturday            : __('Saturday', td),
+				sunday              : __('Sunday', td),
+				open24h             : __('Open 24h', td),
+				closed              : __('Closed', td)
 			}
 		}
 	}

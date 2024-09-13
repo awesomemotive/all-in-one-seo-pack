@@ -105,7 +105,7 @@ class Admin extends CommonAdmin\Admin {
 		];
 
 		foreach ( $mappedUrls as $queryArg => $redirectUrl ) {
-			if ( isset( $_GET[ $queryArg ] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
+			if ( isset( $_GET[ $queryArg ] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 				wp_redirect( $redirectUrl );
 			}
 		}

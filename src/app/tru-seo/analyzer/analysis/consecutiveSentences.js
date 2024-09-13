@@ -1,7 +1,8 @@
 import { partition } from 'lodash-es'
 import getSentenceBeginnings from '../researches/helpers/getSentenceBeginnings'
 import { __, sprintf } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 function parseSentenceBeginnings (sentenceBeginnings) {
 	const [ tooOften ] = partition(sentenceBeginnings, word => 2 < word.count)

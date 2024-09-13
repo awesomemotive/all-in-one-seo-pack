@@ -90,16 +90,16 @@ import CoreAddTemplateTag from '@/vue/components/common/core/AddTemplateTag'
 import CoreAlertUnfilteredHtml from '@/vue/components/common/core/alert/UnfilteredHtml'
 import CoreEmoji from '@/vue/components/common/core/Emoji'
 
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
+	emits : [ 'counter', 'update:modelValue' ],
 	setup () {
 		return {
 			rootStore : useRootStore()
 		}
 	},
-	emits      : [ 'counter', 'update:modelValue' ],
 	components : {
 		BaseEditor,
 		CoreAddTemplateTag,

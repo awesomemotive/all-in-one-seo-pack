@@ -21,8 +21,8 @@
 					v-model="options.advanced.bulkEditing"
 					:name="`${object.name}BulkEditing`"
 					:options="[
-						{ label: $constants.GLOBAL_STRINGS.disabled, value: 'disabled' },
-						{ label: $constants.GLOBAL_STRINGS.enabled, value: 'enabled' },
+						{ label: GLOBAL_STRINGS.disabled, value: 'disabled' },
+						{ label: GLOBAL_STRINGS.enabled, value: 'enabled' },
 						{ label: strings.readOnly, value: 'read-only' },
 					]"
 				/>
@@ -30,34 +30,19 @@
 		</core-settings-row>
 
 		<core-settings-row
+			:name="strings.removeCategoryBase"
 			v-if="'taxonomies' === type && 'category' === object.name"
 			align
 		>
-			<template #name>
-				{{ strings.removeCatBase }}
-				<core-pro-badge
-					v-if="licenseStore.isUnlicensed"
-				/>
-			</template>
-
 			<template #content>
 				<base-radio-toggle
-					:disabled="licenseStore.isUnlicensed"
-					v-model="removeCatBase"
-					name="removeCatBase"
+					v-model="optionsStore.options.searchAppearance.advanced.removeCategoryBase"
+					name="removeCategoryBase"
 					:options="[
-						{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-						{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+						{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+						{ label: GLOBAL_STRINGS.yes, value: true }
 					]"
 				/>
-
-				<core-alert
-					class="inline-upsell"
-					v-if="licenseStore.isUnlicensed"
-					type="blue"
-				>
-					<div v-html="strings.removeCatBaseUpsell" />
-				</core-alert>
 			</template>
 		</core-settings-row>
 
@@ -110,36 +95,46 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+
 import {
 	useLicenseStore,
-	useOptionsStore
+	useOptionsStore,
+	useRootStore
 } from '@/vue/stores'
 
-import { JsonValues } from '@/vue/mixins/JsonValues'
-import { MaxCounts } from '@/vue/mixins/MaxCounts'
+import { useJsonValues } from '@/vue/composables/JsonValues'
 
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
-import CoreAlert from '@/vue/components/common/core/alert/Index'
-import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import CoreRobotsMeta from '@/vue/components/common/core/RobotsMeta'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getJsonValue,
+			setJsonValue
+		} = useJsonValues()
+
 		return {
+			GLOBAL_STRINGS,
+			getJsonValue,
 			licenseStore : useLicenseStore(),
-			optionsStore : useOptionsStore()
+			optionsStore : useOptionsStore(),
+			rootStore    : useRootStore(),
+			setJsonValue
 		}
 	},
 	components : {
 		BaseRadioToggle,
-		CoreAlert,
-		CoreProBadge,
 		CoreRobotsMeta,
 		CoreSettingsRow
 	},
-	mixins : [ JsonValues, MaxCounts ],
-	props  : {
+	props : {
 		type : {
 			type     : String,
 			required : true
@@ -161,49 +156,35 @@ export default {
 			titleCount       : 0,
 			descriptionCount : 0,
 			strings          : {
-				robotsSetting           : this.$t.__('Robots Meta Settings', this.$td),
-				bulkEditing             : this.$t.__('Bulk Editing', this.$td),
-				readOnly                : this.$t.__('Read Only', this.$td),
-				otherOptions            : this.$t.__('Other Options', this.$td),
-				showDateInGooglePreview : this.$t.__('Show Date in Google Preview', this.$td),
-				keywords                : this.$t.__('Keywords', this.$td),
-				removeCatBase           : this.$t.__('Remove Category Base Prefix', this.$td),
-				removeCatBaseUpsell     : this.$t.sprintf(
-					// Translators: 1 - "PRO", 2 - "Learn more".
-					this.$t.__('Remove Category Base Prefix is a %1$s feature. %2$s', this.$td),
-					'PRO',
-					this.$links.getUpsellLink('search-appearance-advanced', this.$constants.GLOBAL_STRINGS.learnMore, 'remove-category-base-prefix', true)
-				)
+				robotsSetting           : __('Robots Meta Settings', td),
+				bulkEditing             : __('Bulk Editing', td),
+				readOnly                : __('Read Only', td),
+				otherOptions            : __('Other Options', td),
+				showDateInGooglePreview : __('Show Date in Google Preview', td),
+				keywords                : __('Keywords', td),
+				removeCategoryBase      : __('Remove Category Base Prefix', td)
 			}
 		}
 	},
 	computed : {
-		removeCatBase : {
-			get () {
-				return this.$isPro ? this.optionsStore.options.searchAppearance.advanced.removeCatBase : false
-			},
-			set (newValue) {
-				this.optionsStore.options.searchAppearance.advanced.removeCatBase = newValue
-			}
-		},
 		title () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The type of page (Post, Page, Category, Tag, etc.).
-				this.$t.__('%1$s Title', this.$td),
+				__('%1$s Title', td),
 				this.object.singular
 			)
 		},
 		showPostThumbnailInSearch () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The type of page (Post, Page, Category, Tag, etc.).
-				this.$t.__('Show %1$s Thumbnail in Google Custom Search', this.$td),
+				__('Show %1$s Thumbnail in Google Custom Search', td),
 				this.object.singular
 			)
 		},
 		showMetaBox () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The plugin name ("All in One SEO")
-				this.$t.__('Show %1$s Meta Box', this.$td),
+				__('Show %1$s Meta Box', td),
 				import.meta.env.VITE_SHORT_NAME
 			)
 		}

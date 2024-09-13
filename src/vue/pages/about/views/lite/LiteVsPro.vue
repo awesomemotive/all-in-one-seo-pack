@@ -10,7 +10,7 @@
 			<base-button
 				type="green"
 				tag="a"
-				:href="$links.utmUrl('about-us-page', 'header-button')"
+				:href="links.utmUrl('about-us-page', 'header-button')"
 				target="_blank"
 			>
 				{{ strings.cta.button }}
@@ -61,7 +61,7 @@
 			<base-button
 				type="green"
 				tag="a"
-				:href="$links.utmUrl('about-us-page', 'footer-button')"
+				:href="links.utmUrl('about-us-page', 'footer-button')"
 				target="_blank"
 			>
 				{{ strings.cta.button }}
@@ -78,9 +78,16 @@
 </template>
 
 <script>
+import { DISCOUNT_PERCENTAGE } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgClose from '@/vue/components/common/svg/Close'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreAlert,
@@ -89,222 +96,223 @@ export default {
 	},
 	data () {
 		return {
+			links,
 			strings : {
 				header : {
-					title : this.$t.sprintf(
+					title : sprintf(
 						// Translators: 1 - The abbreviated plugin name ("AIOSEO").
-						this.$t.__('%1$s Lite vs. Pro', this.$td),
+						__('%1$s Lite vs. Pro', td),
 						import.meta.env.VITE_SHORT_NAME
 					),
-					description : this.$t.sprintf(
+					description : sprintf(
 						// Translators: 1 - The plugin name ("All in One SEO").
-						this.$t.__('Get the most out of %1$s by upgrading to Pro and unlocking all of the powerful features.', this.$td),
+						__('Get the most out of %1$s by upgrading to Pro and unlocking all of the powerful features.', td),
 						import.meta.env.VITE_NAME
 					)
 				},
 				grid : {
-					features : this.$t.__('Features:', this.$td)
+					features : __('Features:', td)
 				},
 				cta : {
-					title       : this.$t.__('Upgrade to Pro to Unlock Powerful SEO Features', this.$td),
-					description : this.$t.sprintf(
+					title       : __('Upgrade to Pro to Unlock Powerful SEO Features', td),
+					description : sprintf(
 						// Translators: 1 - Plugin name ("All in One SEO"), 2 - The number of active users, 3 - Plugin short name ("AIOSEO").
-						this.$t.__('%1$s is the best WordPress SEO plugin. Join over %2$s Professionals who are already using %3$s to improve their website search rankings.', this.$td),
+						__('%1$s is the best WordPress SEO plugin. Join over %2$s Professionals who are already using %3$s to improve their website search rankings.', td),
 						import.meta.env.VITE_NAME,
 						'3,000,000+',
 						import.meta.env.VITE_SHORT_NAME
 					),
-					button : this.$t.sprintf(
+					button : sprintf(
 						// Translators: 1 - "Pro".
-						this.$t.__('Upgrade to %1$s Today', this.$td),
+						__('Upgrade to %1$s Today', td),
 						'Pro'
 					),
-					bonus : this.$t.sprintf(
+					bonus : sprintf(
 						// Translators: 1 - Opening bold tag, 2 - Closing bold tag, 3 - "Pro", 4 - Opening bold tag, 5 - A discount percentage (e.g. "50%"), 6 - Closing bold tag.
-						this.$t.__('%1$sBonus:%2$s You can upgrade to the %3$s plan today and %4$ssave %5$s off%6$s (discount auto-applied).', this.$td),
+						__('%1$sBonus:%2$s You can upgrade to the %3$s plan today and %4$ssave %5$s off%6$s (discount auto-applied).', td),
 						'<strong>',
 						'</strong>',
 						'Pro',
 						'<strong>',
-						this.$constants.DISCOUNT_PERCENTAGE,
+						DISCOUNT_PERCENTAGE,
 						'</strong>'
 					)
 				}
 			},
 			features : {
 				seo : {
-					name : this.$t.__('Search Engine Optimization (SEO)', this.$td),
+					name : __('Search Engine Optimization (SEO)', td),
 					lite : {
-						title       : this.$t.__('Limited Support', this.$td),
-						description : this.$t.__('Posts, Pages and custom Post Types only', this.$td)
+						title       : __('Limited Support', td),
+						description : __('Posts, Pages and custom Post Types only', td)
 					},
 					pro : {
-						title       : this.$t.__('Complete Support', this.$td),
-						description : this.$t.__('Posts, Pages, custom Post Types + Categories, Tags and custom Taxonomies', this.$td)
+						title       : __('Complete Support', td),
+						description : __('Posts, Pages, custom Post Types + Categories, Tags and custom Taxonomies', td)
 					}
 				},
 				socialMeta : {
-					name : this.$t.__('Social Meta (Open Graph Markup)', this.$td),
+					name : __('Social Meta (Open Graph Markup)', td),
 					lite : {
-						title       : this.$t.__('Limited Support', this.$td),
-						description : this.$t.__('Posts, Pages and custom Post Types only', this.$td)
+						title       : __('Limited Support', td),
+						description : __('Posts, Pages and custom Post Types only', td)
 					},
 					pro : {
-						title       : this.$t.__('Complete Support', this.$td),
-						description : this.$t.__('Posts, Pages, custom Post Types + Categories, Tags and custom Taxonomies', this.$td)
+						title       : __('Complete Support', td),
+						description : __('Posts, Pages, custom Post Types + Categories, Tags and custom Taxonomies', td)
 					}
 				},
 				searchStatistics : {
-					name : this.$t.__('Google Search Console Integration', this.$td),
+					name : __('Google Search Console Integration', td),
 					lite : {
-						title : this.$t.__('Not Available', this.$td)
+						title : __('Not Available', td)
 					},
 					pro : {
-						title       : this.$t.__('Included as Pro Feature', this.$td),
-						description : this.$t.__('Connect with Google Search Console to track how your site is performing in search rankings and generate reports with actionable insights that help you get the most out of your content. (Elite plan only)', this.$td)
+						title       : __('Included as Pro Feature', td),
+						description : __('Connect with Google Search Console to track how your site is performing in search rankings and generate reports with actionable insights that help you get the most out of your content. (Elite plan only)', td)
 					}
 				},
 				openai : {
-					name : this.$t.__('Open AI Integration', this.$td),
+					name : __('Open AI Integration', td),
 					lite : {
-						title : this.$t.__('Not Available', this.$td)
+						title : __('Not Available', td)
 					},
 					pro : {
-						title       : this.$t.__('Included as Pro Feature', this.$td),
-						description : this.$t.__('Use the power of ChatGPT to generate engaging SEO titles and meta descriptions for your posts.', this.$td)
+						title       : __('Included as Pro Feature', td),
+						description : __('Use the power of ChatGPT to generate engaging SEO titles and meta descriptions for your posts.', td)
 					}
 				},
 				wooCommerce : {
-					name : this.$t.__('WooCommerce Integration', this.$td),
+					name : __('WooCommerce Integration', td),
 					lite : {
-						title       : this.$t.__('Limited Support', this.$td),
-						description : this.$t.__('WooCommerce Products only', this.$td)
+						title       : __('Limited Support', td),
+						description : __('WooCommerce Products only', td)
 					},
 					pro : {
-						title       : this.$t.__('Complete Support', this.$td),
-						description : this.$t.__('WooCommerce Products, Product Categories, Product Tags, Product Attributes + WooCommerce smart tags (price, brand, etc.)', this.$td)
+						title       : __('Complete Support', td),
+						description : __('WooCommerce Products, Product Categories, Product Tags, Product Attributes + WooCommerce smart tags (price, brand, etc.)', td)
 					}
 				},
 				schema : {
-					name : this.$t.__('Schema Rich Snippets', this.$td),
+					name : __('Schema Rich Snippets', td),
 					lite : {
-						title       : this.$t.__('Limited Support', this.$td),
-						description : this.$t.__('Posts, Pages, Categories and Tags only', this.$td)
+						title       : __('Limited Support', td),
+						description : __('Posts, Pages, Categories and Tags only', td)
 					},
 					pro : {
-						title       : this.$t.__('Complete Support', this.$td),
-						description : this.$t.__('Posts, Pages, Categories, Tags + Breadcrumb Navigation + advanced graphs (Product, FAQ Page, Recipe, etc.)', this.$td)
+						title       : __('Complete Support', td),
+						description : __('Posts, Pages, Categories, Tags + Breadcrumb Navigation + advanced graphs (Product, FAQ Page, Recipe, etc.)', td)
 					}
 				},
 				breadcrumbs : {
-					name : this.$t.__('Visual Breadcrumb Trails', this.$td),
+					name : __('Visual Breadcrumb Trails', td),
 					lite : {
-						title       : this.$t.__('Limited Support', this.$td),
-						description : this.$t.__('Default template for all pages.', this.$td)
+						title       : __('Limited Support', td),
+						description : __('Default template for all pages.', td)
 					},
 					pro : {
-						title       : this.$t.__('Complete Support', this.$td),
-						description : this.$t.__('Granular control over the template for each post type, taxonomy and archive.', this.$td)
+						title       : __('Complete Support', td),
+						description : __('Granular control over the template for each post type, taxonomy and archive.', td)
 					}
 				},
 				sitemap : {
-					name : this.$t.__('XML Sitemap', this.$td),
+					name : __('XML Sitemap', td),
 					lite : {
-						title       : this.$t.__('Limited Support', this.$td),
-						description : this.$t.__('Control the priority & frequency per Post Type/Taxonomy', this.$td)
+						title       : __('Limited Support', td),
+						description : __('Control the priority & frequency per Post Type/Taxonomy', td)
 					},
 					pro : {
-						title       : this.$t.__('Complete Support', this.$td),
-						description : this.$t.__('Control the priority & frequency of each Post, Page, Category, Tag, etc.', this.$td)
+						title       : __('Complete Support', td),
+						description : __('Control the priority & frequency of each Post, Page, Category, Tag, etc.', td)
 					}
 				},
 				videoSitemap : {
-					name : this.$t.__('Video Sitemap', this.$td),
+					name : __('Video Sitemap', td),
 					lite : {
-						title : this.$t.__('Not Available', this.$td)
+						title : __('Not Available', td)
 					},
 					pro : {
-						title       : this.$t.__('Available as Addon Plugin', this.$td),
-						description : this.$t.__('Submit your videos to search engines (Pro & Elite plans only)', this.$td)
+						title       : __('Available as Addon Plugin', td),
+						description : __('Submit your videos to search engines (Pro & Elite plans only)', td)
 					}
 				},
 				newsSitemap : {
-					name : this.$t.__('News Sitemap', this.$td),
+					name : __('News Sitemap', td),
 					lite : {
-						title : this.$t.__('Not Available', this.$td)
+						title : __('Not Available', td)
 					},
 					pro : {
-						title       : this.$t.__('Available as Addon Plugin', this.$td),
-						description : this.$t.__('Submit your latest news stories to Google News (Pro & Elite plans only)', this.$td)
+						title       : __('Available as Addon Plugin', td),
+						description : __('Submit your latest news stories to Google News (Pro & Elite plans only)', td)
 					}
 				},
 				imageSeo : {
-					name : this.$t.__('Image SEO', this.$td),
+					name : __('Image SEO', td),
 					lite : {
-						title : this.$t.__('Not Available', this.$td)
+						title : __('Not Available', td)
 					},
 					pro : {
-						title       : this.$t.__('Available as Addon Plugin', this.$td),
-						description : this.$t.__('Control the title, alt tag, caption, description and filename of your images (Plus, Pro & Elite plans only)', this.$td)
+						title       : __('Available as Addon Plugin', td),
+						description : __('Control the title, alt tag, caption, description and filename of your images (Plus, Pro & Elite plans only)', td)
 					}
 				},
 				localSeo : {
-					name : this.$t.__('Local SEO', this.$td),
+					name : __('Local SEO', td),
 					lite : {
-						title : this.$t.__('Not Available', this.$td)
+						title : __('Not Available', td)
 					},
 					pro : {
-						title       : this.$t.__('Available as Addon Plugin', this.$td),
-						description : this.$t.__('Local Business schema (multiple locations supported) + Business Info & Location blocks, widgets & shortcodes (Plus, Pro & Elite plans only)', this.$td)
+						title       : __('Available as Addon Plugin', td),
+						description : __('Local Business schema (multiple locations supported) + Business Info & Location blocks, widgets & shortcodes (Plus, Pro & Elite plans only)', td)
 					}
 				},
 				redirectionManager : {
-					name : this.$t.__('Redirection Manager', this.$td),
+					name : __('Redirection Manager', td),
 					lite : {
-						title : this.$t.__('Not Available', this.$td)
+						title : __('Not Available', td)
 					},
 					pro : {
-						title       : this.$t.__('Available as Addon Plugin', this.$td),
-						description : this.$t.__('Create, manage and monitor redirects for 404\'s or modified posts + server redirects, full site redirects and site aliases (Pro & Elite plans only)', this.$td)
+						title       : __('Available as Addon Plugin', td),
+						description : __('Create, manage and monitor redirects for 404\'s or modified posts + server redirects, full site redirects and site aliases (Pro & Elite plans only)', td)
 					}
 				},
 				linkAssistant : {
-					name : this.$t.__('Link Assistant', this.$td),
+					name : __('Link Assistant', td),
 					lite : {
-						title : this.$t.__('Not Available', this.$td)
+						title : __('Not Available', td)
 					},
 					pro : {
-						title       : this.$t.__('Available as Addon Plugin', this.$td),
-						description : this.$t.__('View detailed link & domain reports, manage existing links and discover new internal linking opportunities through smart suggestions (Pro & Elite plans only)', this.$td)
+						title       : __('Available as Addon Plugin', td),
+						description : __('View detailed link & domain reports, manage existing links and discover new internal linking opportunities through smart suggestions (Pro & Elite plans only)', td)
 					}
 				},
 				seoRevisions : {
-					name : this.$t.__('SEO Revisions', this.$td),
+					name : __('SEO Revisions', td),
 					lite : {
-						title : this.$t.__('Not Available', this.$td)
+						title : __('Not Available', td)
 					},
 					pro : {
-						title       : this.$t.__('Included as Pro Feature', this.$td),
-						description : this.$t.__('SEO Revisions provide a historical record of SEO updates, allowing you to monitor the effectiveness of your SEO efforts and make informed decisions. (Plus, Pro & Elite plans only)', this.$td)
+						title       : __('Included as Pro Feature', td),
+						description : __('SEO Revisions provide a historical record of SEO updates, allowing you to monitor the effectiveness of your SEO efforts and make informed decisions. (Plus, Pro & Elite plans only)', td)
 					}
 				},
 				restApi : {
-					name : this.$t.__('REST API', this.$td),
+					name : __('REST API', td),
 					lite : {
-						title : this.$t.__('Not Available', this.$td)
+						title : __('Not Available', td)
 					},
 					pro : {
-						title       : this.$t.__('Available as Addon Plugin', this.$td),
-						description : this.$t.__('Manage your post and term SEO meta via the WordPress REST API. This addon also works seamlessly with headless WordPress installs. (Plus, Pro & Elite plans only)', this.$td)
+						title       : __('Available as Addon Plugin', td),
+						description : __('Manage your post and term SEO meta via the WordPress REST API. This addon also works seamlessly with headless WordPress installs. (Plus, Pro & Elite plans only)', td)
 					}
 				},
 				support : {
-					name : this.$t.__('Customer Support', this.$td),
+					name : __('Customer Support', td),
 					lite : {
-						title : this.$t.__('Limited Support', this.$td)
+						title : __('Limited Support', td)
 					},
 					pro : {
-						title : this.$t.__('Priority Support', this.$td)
+						title : __('Priority Support', td)
 					}
 				}
 			}

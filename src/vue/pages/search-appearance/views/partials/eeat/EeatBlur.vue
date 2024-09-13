@@ -17,8 +17,8 @@
 							value="true"
 							name="authorBioInjection"
 							:options="[
-								{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-								{ label: $constants.GLOBAL_STRINGS.enabled, value: true }
+								{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
+								{ label: GLOBAL_STRINGS.enabled, value: true }
 							]"
 						/>
 
@@ -26,7 +26,7 @@
 							{{ strings.authorBioInjectionDescription }}
 
 							<span
-								v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'eeatAuthorBioInjection', true)"
+								v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'eeatAuthorBioInjection', true)"
 							/>
 						</div>
 					</template>
@@ -174,8 +174,12 @@
 </template>
 
 <script setup>
-import { useJsonValues } from '@/vue/composables'
-import { __, sprintf } from '@wordpress/i18n'
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
+
+import { useJsonValues } from '@/vue/composables/JsonValues'
+
+import { __, sprintf } from '@/vue/plugins/translations'
 
 import BaseButton from '@/vue/components/common/base/Button'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'

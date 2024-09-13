@@ -2,7 +2,7 @@
 	<draggable
 		class="aioseo-toc-list"
 		:class="[
-			{ 'orderable' : this.allowReorder }
+			{ 'orderable' : allowReorder }
 		]"
 		v-bind="dragOptions"
 		handle=".aioseo-drag-handle"
@@ -94,24 +94,30 @@
 
 <script>
 import {
+	useRootStore,
 	useTableOfContentsStore
 } from '@/vue/stores'
 
+import { cleanHtml, deepCopy } from '@/vue/standalone/blocks/utils'
 import { cleanForSlug } from '@/vue/utils/cleanForSlug'
-import { deepCopy, cleanHtml } from '@/vue/standalone/blocks/utils'
 import { formatHeadingList, orderHeadings } from '../helpers'
 
 import BaseInput from '@/vue/components/common/base/Input'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
-import Draggable from 'vuedraggable'
 import SvgClose from '@/vue/components/common/svg/Close'
 import SvgDrag from '@/vue/components/common/svg/Drag'
 import SvgEye from '@/vue/components/common/svg/Eye'
 import SvgEyeOff from '@/vue/components/common/svg/EyeOff'
 import SvgInfo from '@/vue/components/common/svg/Info'
 import SvgTocLink from '@/vue/components/common/svg/Link'
+import Draggable from 'vuedraggable'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
+	name : 'List',
 	setup () {
 		const tableOfContentsStore = useTableOfContentsStore()
 
@@ -119,7 +125,6 @@ export default {
 			tableOfContentsStore
 		}
 	},
-	name       : 'List',
 	components : {
 		BaseInput,
 		CoreTooltip,
@@ -148,10 +153,10 @@ export default {
 		return {
 			showAnchorField : -1,
 			strings         : {
-				tooltipHeader      : this.$t.__('Edit HTML Anchor:', this.$td),
-				tooltipDescription : this.$t.sprintf(
+				tooltipHeader      : __('Edit HTML Anchor:', td),
+				tooltipDescription : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('The HTML anchor allows %1$s to link directly to your header from this table of contents block. Feel free to edit if you want, but an anchor is required. For headings without an anchor, %1$s will automatically generate them.', this.$td),
+					__('The HTML anchor allows %1$s to link directly to your header from this table of contents block. Feel free to edit if you want, but an anchor is required. For headings without an anchor, %1$s will automatically generate them.', td),
 					import.meta.env.VITE_SHORT_NAME
 				)
 			}
@@ -189,7 +194,8 @@ export default {
 		setAnchor : function (newValue, heading) {
 			heading.anchor = cleanForSlug(newValue)
 			if (!newValue) {
-				heading.anchor = 'aioseo-' + cleanForSlug(heading.content)
+				const rootStore = useRootStore()
+				heading.anchor = rootStore.aioseo.data.blocks.toc.hashPrefix + cleanForSlug(heading.content)
 			}
 
 			const clientId = heading.blockClientId

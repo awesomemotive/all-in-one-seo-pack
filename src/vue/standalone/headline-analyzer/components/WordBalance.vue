@@ -93,25 +93,30 @@
 import Accordion from './partials/Accordion'
 import WordsBlock from './partials/WordsBlock'
 import { usePostEditorStore } from '@/vue/stores'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	data () {
-		return {
-			title              : this.$t.__('Word Balance', this.$td),
-			textGuideline      : this.$t.__('Compare the percentages of your results to the goal for each category and adjust as necessary.', this.$td),
-			textCommonWords    : this.$t.__('Common Words', this.$td),
-			textTwentyThirty   : this.$t.__('20-30%', this.$td),
-			textUnCommonWords  : this.$t.__('Uncommon Words', this.$td),
-			textTenTwenty      : this.$t.__('10-20%', this.$td),
-			textEmotionalWords : this.$t.__('Emotional Words', this.$td),
-			textTenFifteen     : this.$t.__('10-15%', this.$td),
-			textPowerWords     : this.$t.__('Power Words', this.$td),
-			textLeastOne       : this.$t.__('At least one', this.$td),
-			postEditorStore    : usePostEditorStore()
-		}
-	},
 	components : {
 		Accordion,
 		WordsBlock
+	},
+	data () {
+		return {
+			title              : __('Word Balance', td),
+			textGuideline      : __('Compare the percentages of your results to the goal for each category and adjust as necessary.', td),
+			textCommonWords    : __('Common Words', td),
+			textTwentyThirty   : __('20-30%', td),
+			textUnCommonWords  : __('Uncommon Words', td),
+			textTenTwenty      : __('10-20%', td),
+			textEmotionalWords : __('Emotional Words', td),
+			textTenFifteen     : __('10-15%', td),
+			textPowerWords     : __('Power Words', td),
+			textLeastOne       : __('At least one', td),
+			postEditorStore    : usePostEditorStore()
+		}
 	},
 	computed : {
 		currentResult () {
@@ -143,8 +148,8 @@ export default {
 		},
 		guideLineOnCommonWords () {
 			return 0.2 > this.currentResult.result?.commonWordsPercentage
-				? this.$t.__('Your headline would be more likely to get clicks if it had more common words.', this.$td)
-				: this.$t.__('Headlines with 20-30% common words are more likely to get clicks.', this.$td)
+				? __('Your headline would be more likely to get clicks if it had more common words.', td)
+				: __('Headlines with 20-30% common words are more likely to get clicks.', td)
 		},
 		classOnUnCommonWords () {
 			return 0 === this.currentResult.result?.uncommonWordsPercentage
@@ -162,8 +167,8 @@ export default {
 		},
 		guideLineOnUnCommonWords () {
 			return 0.1 > this.currentResult.result?.uncommonWordsPercentage
-				? this.$t.__('Your headline would be more likely to get clicks if it had more uncommon words.', this.$td)
-				: this.$t.__('Headlines with uncommon words are more likely to get clicks.', this.$td)
+				? __('Your headline would be more likely to get clicks if it had more uncommon words.', td)
+				: __('Headlines with uncommon words are more likely to get clicks.', td)
 		},
 		classOnEmotionalWords () {
 			return 0 === this.currentResult.result?.emotionalWordsPercentage
@@ -180,7 +185,7 @@ export default {
 					: 'green-bg'
 		},
 		guideLineOnEmotionalWords () {
-			return this.$t.__('Emotionally triggered headlines are likely to drive more clicks.', this.$td)
+			return __('Emotionally triggered headlines are likely to drive more clicks.', td)
 		},
 		classOnPowerWords () {
 			return 0 === this.currentResult.result?.powerWords.length ? 'orange' : 'green'
@@ -189,23 +194,23 @@ export default {
 			return 0 === this.currentResult.result?.powerWords.length ? 'orange' : 'green-bg'
 		},
 		guideLineOnPowerWords () {
-			return this.$t.__('Headlines with power words are more likely to get clicks.', this.$td)
+			return __('Headlines with power words are more likely to get clicks.', td)
 		},
 		scoreStatus () {
 			if (25 > this.currentScore) {
-				return this.$t.__('Not Looking Great', this.$td)
+				return __('Not Looking Great', td)
 			}
 			if (50 > this.currentScore) {
-				return this.$t.__('Could Be Better', this.$td)
+				return __('Could Be Better', td)
 			}
 			if (60 > this.currentScore) {
-				return this.$t.__('Getting There', this.$td)
+				return __('Getting There', td)
 			}
 			if (75 > this.currentScore) {
-				return this.$t.__('Looks Good! 👍👍', this.$td)
+				return __('Looks Good! 👍👍', td)
 			}
 			if (75 < this.currentScore) {
-				return this.$t.__('Super! 🔥🔥🔥', this.$td)
+				return __('Super! 🔥🔥🔥', td)
 			}
 			return false
 		}

@@ -3,78 +3,99 @@
 		<core-main
 			:page-name="strings.pageName"
 			:exclude-tabs="excludedTabs"
-			:showTabs="'post-report' !== $route.name"
+			:showTabs="'post-report' !== route.name"
 		>
-			<component :is="$route.name" />
+			<component :is="getRoute" />
 		</core-main>
 	</div>
 </template>
 
-<script>
+<script setup>
+import { useRoute, useRouter } from 'vue-router'
+import { computed, onMounted } from 'vue'
+
 import {
-	useLinkAssistantStore
+	useLinkAssistantStore,
+	useRootStore
 } from '@/vue/stores'
 
 import addons from '@/vue/utils/addons'
-import { RequiresActivation } from '@/vue/mixins/RequiresActivation'
-import { RequiresUpdate } from '@/vue/mixins/RequiresUpdate'
+
+import { useRequiresActivation } from '@/vue/composables/RequiresActivation'
+import { useRequiresUpdate } from '@/vue/composables/RequiresUpdate'
+
 import CoreMain from '@/vue/components/common/core/main/Index'
-import CoreProcessingPopup from '@/vue/components/common/core/ProcessingPopup'
 import DomainsReport from './AIOSEO_VERSION/DomainsReport'
 import LinksReport from './AIOSEO_VERSION/LinksReport'
 import Overview from './Overview'
 import PostReport from './AIOSEO_VERSION/PostReport'
 import Settings from './AIOSEO_VERSION/Settings'
-export default {
-	setup () {
-		return {
-			linkAssistantStore : useLinkAssistantStore()
-		}
-	},
-	components : {
-		CoreMain,
-		CoreProcessingPopup,
-		DomainsReport,
-		LinksReport,
-		Overview,
-		PostReport,
-		Settings
-	},
-	mixins : [ RequiresActivation, RequiresUpdate ],
-	data () {
-		return {
-			strings : {
-				pageName : this.$t.__('Link Assistant', this.$td)
-			}
-		}
-	},
-	computed : {
-		excludedTabs () {
-			const excludedTabs = (
-				!addons.isActive('aioseo-link-assistant')
-					? this.getExcludedActivationTabs('aioseo-link-assistant')
-					: this.getExcludedUpdateTabs('aioseo-link-assistant')
-			) || []
-			excludedTabs.push('post-report')
-			return excludedTabs
-		}
-	},
-	mounted () {
-		window.aioseoBus.$on('changes-saved', () => {
-			this.linkAssistantStore.getMenuData()
-		})
 
-		if (
-			this.$isPro &&
-			100 !== this.linkAssistantStore.suggestionsScan.percent &&
-			addons.isActive('aioseo-link-assistant') &&
-			!addons.requiresUpgrade('aioseo-link-assistant') &&
-			addons.hasMinimumVersion('aioseo-link-assistant')
-		) {
-			this.linkAssistantStore.pollSuggestionsScan()
-		}
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
+const route  = useRoute()
+const router = useRouter()
+const getRoute = computed(() => {
+	if ('overview' === route.name) {
+		return Overview
 	}
+	if ('domains-report' === route.name) {
+		return DomainsReport
+	}
+	if ('links-report' === route.name) {
+		return LinksReport
+	}
+	if ('post-report' === route.name) {
+		return PostReport
+	}
+	if ('settings' === route.name) {
+		return Settings
+	}
+
+	return Overview
+})
+
+const {
+	getExcludedActivationTabs
+} = useRequiresActivation()
+
+const {
+	getExcludedUpdateTabs
+} = useRequiresUpdate()
+
+const strings = {
+	pageName : __('Link Assistant', td)
 }
+
+const excludedTabs = computed(() => {
+	const tabs = (
+		!addons.isActive('aioseo-link-assistant')
+			? getExcludedActivationTabs(router, 'aioseo-link-assistant')
+			: getExcludedUpdateTabs(router, 'aioseo-link-assistant')
+	) || []
+	tabs.push('post-report')
+	return tabs
+})
+
+const linkAssistantStore = useLinkAssistantStore()
+const rootStore          = useRootStore()
+onMounted(() => {
+	window.aioseoBus.$on('changes-saved', () => {
+		linkAssistantStore.getMenuData()
+	})
+
+	if (
+		rootStore.isPro &&
+		100 !== linkAssistantStore.suggestionsScan.percent &&
+		addons.isActive('aioseo-link-assistant') &&
+		!addons.requiresUpgrade('aioseo-link-assistant') &&
+		addons.hasMinimumVersion('aioseo-link-assistant')
+	) {
+		linkAssistantStore.pollSuggestionsScan()
+	}
+})
 </script>
 
 <style lang="scss">

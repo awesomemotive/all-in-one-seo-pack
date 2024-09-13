@@ -3,7 +3,7 @@
 		<core-main-tabs
 			:tabs="tabs"
 			:active="activeTab"
-			@changed="value => { $emit('update:activeTab', value) }"
+			@changed="value => { emit('update:activeTab', value) }"
 		>
 			<template #button>
 				<base-button
@@ -38,20 +38,19 @@
 </template>
 
 <script setup>
-import { defineEmits, defineProps, inject } from 'vue'
-
 import {
 	useKeywordRankTrackerStore
 } from '@/vue/stores'
 
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 
-const $t = inject('$t')
-const $td = inject('$td')
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const keywordRankTrackerStore = useKeywordRankTrackerStore()
 
-defineEmits([ 'update:activeTab' ])
+const emit = defineEmits([ 'update:activeTab' ])
 
 defineProps({
 	activeTab : {
@@ -61,17 +60,17 @@ defineProps({
 })
 
 const strings = {
-	addKeywords : $t.__('Add Keywords', $td),
-	createGroup : $t.__('Create Group', $td)
+	addKeywords : __('Add Keywords', td),
+	createGroup : __('Create Group', td)
 }
 const tabs = [
 	{
 		slug : 'keywords',
-		name : $t.__('Keywords', $td)
+		name : __('Keywords', td)
 	},
 	{
 		slug : 'groups',
-		name : $t.__('Groups', $td)
+		name : __('Groups', td)
 	}
 ]
 </script>

@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import { DISCOUNT_PERCENTAGE } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useConnectStore,
 	useRootStore
@@ -49,6 +51,11 @@ import {
 
 import { popup } from '@/vue/utils/popup'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -63,66 +70,66 @@ export default {
 		return {
 			licenseKey : null,
 			strings    : {
-				boldText : this.$t.sprintf(
+				boldText : sprintf(
 					'<strong>%1$s %2$s</strong>',
 					import.meta.env.VITE_SHORT_NAME,
 					'Lite'
 				),
-				purchasedBoldText : this.$t.sprintf(
+				purchasedBoldText : sprintf(
 					'<strong>%1$s %2$s</strong>',
 					import.meta.env.VITE_SHORT_NAME,
 					'Pro'
 				),
-				linkText : this.$t.sprintf(
+				linkText : sprintf(
 					// Translators: 1 - "Pro".
-					this.$t.__('upgrading to %1$s', this.$td),
+					__('upgrading to %1$s', td),
 					'Pro'
 				),
-				moreBoldText : this.$t.sprintf(
+				moreBoldText : sprintf(
 					'<strong>%1$s</strong>',
 					// Translators: This refers to a discount (e.g. "As a valued user you receive 50%, automatically applied at checkout!").
-					this.$constants.DISCOUNT_PERCENTAGE + ' ' + this.$t.__('off', this.$td)
+					DISCOUNT_PERCENTAGE + ' ' + __('off', td)
 				),
-				licenseKey            : this.$t.__('License Key', this.$td),
-				licenseKeyDescription : this.$t.__('Your license key provides access to updates and addons.', this.$td),
-				placeholder           : this.$t.__('Paste your license key here', this.$td),
-				connect               : this.$t.__('Connect', this.$td)
+				licenseKey            : __('License Key', td),
+				licenseKeyDescription : __('Your license key provides access to updates and addons.', td),
+				placeholder           : __('Paste your license key here', td),
+				connect               : __('Connect', td)
 			}
 		}
 	},
 	computed : {
 		link () {
-			return this.$t.sprintf(
+			return sprintf(
 				'<strong><a href="%1$s" target="_blank">%2$s</a></strong>',
-				this.$links.utmUrl('general-settings', 'license-box'),
+				links.utmUrl('general-settings', 'license-box'),
 				this.strings.linkText
 			)
 		},
 		tooltipText () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - "upgrading to Pro".
-				this.$t.__('To unlock more features, consider %1$s.', this.$td),
+				__('To unlock more features, consider %1$s.', td),
 				this.link
 			)
 		},
 		moreToolTipText () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - "50% off".
-				this.$t.__('As a valued user you receive %1$s, automatically applied at checkout!', this.$td),
+				__('As a valued user you receive %1$s, automatically applied at checkout!', td),
 				this.strings.moreBoldText
 			)
 		},
 		noLicenseNeeded () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The plugin name ("All in One SEO").
-				this.$t.__('You\'re using %1$s - no license needed. Enjoy!', this.$td) + ' 🙂',
+				__('You\'re using %1$s - no license needed. Enjoy!', td) + ' 🙂',
 				this.strings.boldText
 			)
 		},
 		alreadyPurchased () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The plugin name ("All in One SEO").
-				this.$t.__('Already purchased? Simply enter your license key below to connect with %1$s!', this.$td),
+				__('Already purchased? Simply enter your license key below to connect with %1$s!', td),
 				this.strings.purchasedBoldText
 			)
 		}

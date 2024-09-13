@@ -31,7 +31,7 @@
 				</div>
 
 				<div
-					v-if="!$isPro"
+					v-if="!rootStore.isPro"
 					class="aioseo-settings-row no-border no-margin small-padding"
 				>
 					<div class="settings-name">
@@ -150,14 +150,17 @@
 </template>
 
 <script>
+import { DISCOUNT_PERCENTAGE } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useRootStore,
 	useSetupWizardStore
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useWizard } from '@/vue/composables'
-import { Wizard } from '@/vue/mixins/Wizard'
+
+import { useWizard } from '@/vue/composables/Wizard'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreModal from '@/vue/components/common/core/modal/Index'
@@ -171,14 +174,29 @@ import WizardCloseAndExit from '@/vue/components/common/wizard/CloseAndExit'
 import WizardContainer from '@/vue/components/common/wizard/Container'
 import WizardHeader from '@/vue/components/common/wizard/Header'
 import WizardSteps from '@/vue/components/common/wizard/Steps'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const { strings } = useWizard()
+		const {
+			getSelectedUpsellFeatures,
+			needsUpsell,
+			features,
+			strings
+		} = useWizard({
+			stage : 'smart-recommendations'
+		})
 
 		return {
+			composableStrings : strings,
+			features,
+			getSelectedUpsellFeatures,
+			needsUpsell,
 			rootStore         : useRootStore(),
-			setupWizardStore  : useSetupWizardStore(),
-			composableStrings : strings
+			setupWizardStore  : useSetupWizardStore()
 		}
 	},
 	components : {
@@ -196,49 +214,47 @@ export default {
 		WizardHeader,
 		WizardSteps
 	},
-	mixins : [ Wizard ],
 	data () {
 		return {
 			loading      : false,
-			stage        : 'smart-recommendations',
 			showModal    : false,
 			loadingModal : false,
 			strings      : merge(this.composableStrings, {
-				setupSiteAnalyzer : this.$t.__('Setup Site Analyzer + Smart Recommendations', this.$td),
-				description       : this.$t.sprintf(
+				setupSiteAnalyzer : __('Setup Site Analyzer + Smart Recommendations', td),
+				description       : sprintf(
 					// Translators: 1 - Plugin short name ("AIOSEO").
-					this.$t.__('Get helpful suggestions from %1$s on how to optimize your website content, so you can rank higher in search results.', this.$td),
+					__('Get helpful suggestions from %1$s on how to optimize your website content, so you can rank higher in search results.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				yourEmailAddress     : this.$t.__('Your Email Address', this.$td),
-				yourEmailIsNeeded    : this.$t.__('Your email is needed so you can receive SEO recommendations. This email will also be used to connect your site with our SEO API.', this.$td),
-				helpMakeAioseoBetter : this.$t.sprintf(
+				yourEmailAddress     : __('Your Email Address', td),
+				yourEmailIsNeeded    : __('Your email is needed so you can receive SEO recommendations. This email will also be used to connect your site with our SEO API.', td),
+				helpMakeAioseoBetter : sprintf(
 					// Translators: 1 - Plugin short name ("AIOSEO").
-					this.$t.__('Help make %1$s better for everyone', this.$td),
+					__('Help make %1$s better for everyone', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				yesCountMeIn              : this.$t.__('Yes, count me in', this.$td),
-				wouldYouLikeToPurchase    : this.$t.__('Would you like to purchase and install the following features now?', this.$td),
-				theseFeaturesAreAvailable : this.$t.__('An upgrade is required to unlock the following features.', this.$td),
-				youWontHaveAccess         : this.$t.__('You won\'t have access to this functionality until the extensions have been purchased and installed.', this.$td),
-				illDoItLater              : this.$t.__('I\'ll do it later', this.$td),
-				purchaseAndInstallNow     : this.$t.__('Purchase and Install Now', this.$td),
-				bonusText                 : this.$t.sprintf(
+				yesCountMeIn              : __('Yes, count me in', td),
+				wouldYouLikeToPurchase    : __('Would you like to purchase and install the following features now?', td),
+				theseFeaturesAreAvailable : __('An upgrade is required to unlock the following features.', td),
+				youWontHaveAccess         : __('You won\'t have access to this functionality until the extensions have been purchased and installed.', td),
+				illDoItLater              : __('I\'ll do it later', td),
+				purchaseAndInstallNow     : __('Purchase and Install Now', td),
+				bonusText                 : sprintf(
 					// Translators: 1 - Opening bold tag, 2 - Closing bold tag, 3 - "Pro", 4 - Opening bold tag, 5 - A discount percentage (e.g. "50%"), 6 - Closing bold tag.
-					this.$t.__('%1$sBonus:%2$s You can upgrade to the %3$s plan today and %4$ssave %5$s off%6$s (discount auto-applied).', this.$td),
+					__('%1$sBonus:%2$s You can upgrade to the %3$s plan today and %4$ssave %5$s off%6$s (discount auto-applied).', td),
 					'<strong>',
 					'</strong>',
 					'Pro',
 					'<strong>',
-					this.$constants.DISCOUNT_PERCENTAGE,
+					DISCOUNT_PERCENTAGE,
 					'</strong>'
 				),
-				usageTrackingTooltip : this.$t.sprintf(
+				usageTrackingTooltip : sprintf(
 					// Translators: 1 - Opening HTML link and bold tag, 2 - Closing HTML link and bold tag.
-					this.$t.__('Complete documentation on usage tracking is available %1$shere%2$s.', this.$td),
-					this.$t.sprintf(
+					__('Complete documentation on usage tracking is available %1$shere%2$s.', td),
+					sprintf(
 						'<strong><a href="%1$s" target="_blank">',
-						this.$links.getDocUrl('usageTracking')
+						links.getDocUrl('usageTracking')
 					),
 					'</a></strong>'
 				)

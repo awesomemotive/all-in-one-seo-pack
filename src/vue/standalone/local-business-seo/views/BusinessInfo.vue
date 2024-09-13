@@ -17,10 +17,10 @@
 		>
 			<template #content>
 				<local-business-business-type />
-      </template>
-    </core-settings-row>
+			</template>
+		</core-settings-row>
 
-    <core-settings-row
+		<core-settings-row
 			class="info-business-image"
 			:name="strings.image"
 			align
@@ -113,6 +113,11 @@ import LocalBusinessMap from '@/vue/components/AIOSEO_VERSION/local-business/map
 import LocalBusinessName from '@/vue/components/AIOSEO_VERSION/local-business/Name'
 import LocalBusinessPaymentInfo from '@/vue/components/AIOSEO_VERSION/local-business/PaymentInfo'
 // import LocalBusinessUrls from '@/vue/components/AIOSEO_VERSION/local-business/Urls'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreSettingsRow,
@@ -130,20 +135,20 @@ export default {
 	data () {
 		return {
 			strings : {
-				pageName        : this.$t.__('Business Info', this.$td),
-				name            : this.$t.__('Name', this.$td),
-				businessType    : this.$t.__('Type', this.$td),
-				image           : this.$t.__('Image', this.$td),
-				urls            : this.$t.__('URLs', this.$td),
-				websiteDesc     : this.$t.__('Website URL', this.$td),
-				aboutDesc       : this.$t.__('About Page URL', this.$td),
-				contactDesc     : this.$t.__('Contact Page URL', this.$td),
-				businessAddress : this.$t.__('Address', this.$td),
-				businessContact : this.$t.__('Contact Info', this.$td),
-				businessIDs     : this.$t.__('IDs', this.$td),
-				paymentInfo     : this.$t.__('Payment Info', this.$td),
-				areaServed      : this.$t.__('Area Served', this.$td),
-				map             : this.$t.__('Map', this.$td)
+				pageName        : __('Business Info', td),
+				name            : __('Name', td),
+				businessType    : __('Type', td),
+				image           : __('Image', td),
+				urls            : __('URLs', td),
+				websiteDesc     : __('Website URL', td),
+				aboutDesc       : __('About Page URL', td),
+				contactDesc     : __('Contact Page URL', td),
+				businessAddress : __('Address', td),
+				businessContact : __('Contact Info', td),
+				businessIDs     : __('IDs', td),
+				paymentInfo     : __('Payment Info', td),
+				areaServed      : __('Area Served', td),
+				map             : __('Map', td)
 			}
 		}
 	}

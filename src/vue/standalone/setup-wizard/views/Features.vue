@@ -82,8 +82,9 @@ import {
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useWizard } from '@/vue/composables'
-import { Wizard } from '@/vue/mixins/Wizard'
+
+import { useWizard } from '@/vue/composables/Wizard'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import GridColumn from '@/vue/components/common/grid/Column'
@@ -93,13 +94,26 @@ import WizardCloseAndExit from '@/vue/components/common/wizard/CloseAndExit'
 import WizardContainer from '@/vue/components/common/wizard/Container'
 import WizardHeader from '@/vue/components/common/wizard/Header'
 import WizardSteps from '@/vue/components/common/wizard/Steps'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const { strings } = useWizard()
+		const {
+			features,
+			needsUpsell,
+			strings
+		} = useWizard({
+			stage : 'features'
+		})
 
 		return {
-			setupWizardStore  : useSetupWizardStore(),
-			composableStrings : strings
+			composableStrings : strings,
+			features,
+			needsUpsell,
+			setupWizardStore  : useSetupWizardStore()
 		}
 	},
 	components : {
@@ -113,19 +127,17 @@ export default {
 		WizardHeader,
 		WizardSteps
 	},
-	mixins : [ Wizard ],
 	data () {
 		return {
 			loading : false,
-			stage   : 'features',
 			strings : merge(this.composableStrings, {
-				whichFeatures : this.$t.__(
+				whichFeatures : __(
 					'Which SEO features do you want to enable?',
-					this.$td
+					td
 				),
-				description : this.$t.__(
+				description : __(
 					'We have already selected our recommended features based on your site category, but you can use the following features to fine-tune your site.',
-					this.$td
+					td
 				)
 			})
 		}
@@ -187,26 +199,26 @@ export default {
 		},
 		getPluginsText () {
 			if (this.showPluginsOnly) {
-				return this.$t.sprintf(
+				return sprintf(
 					// Translators: 1 - A list of plugin names.
-					this.$t.__('The following plugins will be installed: %1$s', this.$td),
+					__('The following plugins will be installed: %1$s', td),
 					this.getPluginNames
 				)
 			}
 
 			if (this.showPluginsAddons) {
-				return this.$t.sprintf(
+				return sprintf(
 					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - A list of plugin names.
-					this.$t.__('The following %1$s addons will be installed: %2$s', this.$td),
+					__('The following %1$s addons will be installed: %2$s', td),
 					import.meta.env.VITE_SHORT_NAME,
 					this.getPluginNames
 				)
 			}
 
 			if (this.showPluginsAll) {
-				return this.$t.sprintf(
+				return sprintf(
 					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - A list of plugin names.
-					this.$t.__('The following plugins and %1$s addons will be installed: %2$s', this.$td),
+					__('The following plugins and %1$s addons will be installed: %2$s', td),
 					import.meta.env.VITE_SHORT_NAME,
 					this.getPluginNames
 				)
@@ -225,9 +237,9 @@ export default {
 			// Separate the last plugin with an "and" if there is more than one.
 			let lastPlugin = ''
 			if (1 < pluginNames.length) {
-				lastPlugin = this.$t.sprintf(
+				lastPlugin = sprintf(
 					// Translators: 1 - A plugin's name (e.g. "OptinMonster", "Broken Link Checker").
-					this.$t.__(' and %1$s', this.$td),
+					__(' and %1$s', td),
 					pluginNames[pluginNames.length - 1]
 				)
 			} else {

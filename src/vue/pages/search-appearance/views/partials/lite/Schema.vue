@@ -34,9 +34,9 @@
 		</core-blur>
 
 			<cta
-				:cta-link="$links.getPricingUrl('schema-markup', 'schema-markup-upsell')"
+				:cta-link="links.getPricingUrl('schema-markup', 'schema-markup-upsell')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="$links.getUpsellUrl('schema-markup', null, $isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('schema-markup', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 				:feature-list="features"
 			>
 				<template #header-text>
@@ -51,11 +51,26 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
+import links from '@/vue/utils/links'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import Cta from '@/vue/components/common/cta/Index'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		BaseRadioToggle,
 		CoreBlur,
@@ -74,29 +89,30 @@ export default {
 	},
 	data () {
 		return {
+			links,
 			schemaTypes : [
-				{ value: 'none', label: this.$t.__('None', this.$td) },
-				{ value: 'Article', label: this.$t.__('Article', this.$td) }
+				{ value: 'none', label: __('None', td) },
+				{ value: 'Article', label: __('Article', td) }
 			],
 			strings : {
-				schemaType     : this.$t.__('Schema Type', this.$td),
-				articleType    : this.$t.__('Article Type', this.$td),
-				article        : this.$t.__('Article', this.$td),
-				blogPost       : this.$t.__('Blog Post', this.$td),
-				newsArticle    : this.$t.__('News Article', this.$td),
-				ctaDescription : this.$t.__('Easily generate unlimited schema markup for your content to help you rank higher in search results. Our schema validator ensures your schema works out of the box.', this.$td),
-				ctaButtonText  : this.$t.__('Unlock Schema Markup Generator', this.$td),
-				ctaHeader      : this.$t.sprintf(
+				schemaType     : __('Schema Type', td),
+				articleType    : __('Article Type', td),
+				article        : __('Article', td),
+				blogPost       : __('Blog Post', td),
+				newsArticle    : __('News Article', td),
+				ctaDescription : __('Easily generate unlimited schema markup for your content to help you rank higher in search results. Our schema validator ensures your schema works out of the box.', td),
+				ctaButtonText  : __('Unlock Schema Markup Generator', td),
+				ctaHeader      : sprintf(
 					// Translators: 1 - "PRO".
-					this.$t.__('Schema Markup Generator is a %1$s Feature', this.$td),
+					__('Schema Markup Generator is a %1$s Feature', td),
 					'PRO'
 				)
 			},
 			features : [
-				this.$t.__('Unlimited Schema', this.$td),
-				this.$t.__('Validate with Google', this.$td),
-				this.$t.__('Increase Rankings', this.$td),
-				this.$t.__('Additional Schema Types', this.$td)
+				__('Unlimited Schema', td),
+				__('Validate with Google', td),
+				__('Increase Rankings', td),
+				__('Additional Schema Types', td)
 			]
 		}
 	},

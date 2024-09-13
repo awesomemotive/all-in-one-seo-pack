@@ -115,6 +115,10 @@ import SvgTrash from '@/vue/components/common/svg/Trash'
 import SvgVideo from '@/vue/components/common/svg/schema/Video'
 import SvgWebPage from '@/vue/components/common/svg/schema/WebPage'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	emits      : [ 'append-icon-click', 'blur', 'change', 'focus', 'keydown', 'update:modelValue' ],
 	components : {
@@ -210,7 +214,7 @@ export default {
 		return {
 			error   : '',
 			strings : {
-				urlInvalid : this.$t.__('Your URL is invalid. Please check the format and try again.', this.$td)
+				urlInvalid : __('Your URL is invalid. Please check the format and try again.', td)
 			}
 		}
 	},

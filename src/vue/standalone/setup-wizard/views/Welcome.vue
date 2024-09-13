@@ -26,7 +26,7 @@
 					<wizard-close-and-exit>
 						<template #links>
 							<a
-								v-if="$isPro || optionsStore.options.advanced.usageTracking"
+								v-if="rootStore.isPro || optionsStore.options.advanced.usageTracking"
 								:href="rootStore.aioseo.urls.aio.dashboard"
 								class="no-underline"
 							>&larr;</a>
@@ -38,7 +38,7 @@
 							>&larr;</a>
 							&nbsp;
 							<a
-								v-if="$isPro || optionsStore.options.advanced.usageTracking"
+								v-if="rootStore.isPro || optionsStore.options.advanced.usageTracking"
 								:href="rootStore.aioseo.urls.aio.dashboard"
 							>
 								{{ strings.goBack }}
@@ -66,14 +66,23 @@ import {
 	useSetupWizardStore
 } from '@/vue/stores'
 import { merge } from 'lodash-es'
-import { useWizard } from '@/vue/composables'
-import { Wizard } from '@/vue/mixins/Wizard'
+
+import { useWizard } from '@/vue/composables/Wizard'
+
 import SvgAioseoLogo from '@/vue/components/common/svg/aioseo/Logo'
 import SvgGiantGear from '@/vue/components/common/svg/GiantGear'
 import WizardCloseAndExit from '@/vue/components/common/wizard/CloseAndExit'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const { strings } = useWizard()
+		const { strings } = useWizard({
+			stage : 'welcome'
+		})
+
 		return {
 			optionsStore      : useOptionsStore(),
 			rootStore         : useRootStore(),
@@ -86,23 +95,21 @@ export default {
 		SvgGiantGear,
 		WizardCloseAndExit
 	},
-	mixins : [ Wizard ],
 	data () {
 		return {
-			stage   : 'welcome',
 			strings : merge(this.composableStrings, {
-				welcome : this.$t.sprintf(
+				welcome : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('Welcome to the %1$s Setup Wizard!', this.$td),
+					__('Welcome to the %1$s Setup Wizard!', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				description : this.$t.sprintf(
+				description : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('%1$s makes it easy to configure your site\'s SEO settings without the need to hire an expert. And it takes less than 10 minutes too!', this.$td),
+					__('%1$s makes it easy to configure your site\'s SEO settings without the need to hire an expert. And it takes less than 10 minutes too!', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				letsGetStarted : this.$t.__('Let\'s Get Started', this.$td),
-				goBack         : this.$t.__('Go back to the Dashboard', this.$td)
+				letsGetStarted : __('Let\'s Get Started', td),
+				goBack         : __('Go back to the Dashboard', td)
 			})
 		}
 	}

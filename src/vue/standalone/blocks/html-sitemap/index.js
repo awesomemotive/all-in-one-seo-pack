@@ -8,7 +8,7 @@ import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 import { loadPiniaStores } from '@/vue/stores'
 
 import { observeElement } from '@/vue/utils/helpers'
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 
 import { maybeDeleteBlockVueApp } from '@/vue/standalone/blocks/utils'
 

@@ -7,6 +7,7 @@ export const useRootStore = defineStore('RootStore', {
 		pong     : true,
 		loaded   : false,
 		loading  : false,
+		isPro    : 'pro' === import.meta.env.VITE_VERSION.toLowerCase(),
 		aioseo   : {},
 		navigate : {
 			scroll    : null,

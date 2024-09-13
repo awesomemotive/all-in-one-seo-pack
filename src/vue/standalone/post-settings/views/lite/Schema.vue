@@ -20,7 +20,7 @@
 
 						<p
 							class="description"
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'schema', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'schema', true)"
 						/>
 					</div>
 
@@ -90,6 +90,8 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	usePostEditorStore
 } from '@/vue/stores'
@@ -102,10 +104,16 @@ import CtaModal from './partials-schema/CtaModal'
 import GraphCard from '../partials/GraphCard'
 import SvgEye from '@/vue/components/common/svg/Eye'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
-			postEditorStore : usePostEditorStore()
+			postEditorStore : usePostEditorStore(),
+			GLOBAL_STRINGS,
+			links
 		}
 	},
 	components : {
@@ -124,12 +132,12 @@ export default {
 			modalOpenMetabox : false,
 			modalOpenSidebar : false,
 			strings          : {
-				sidebarDescription  : this.$t.__('Configure Schema Markup for your content. Search engines use structured data to display rich results in SERPs.', this.$td),
-				noGraphs            : this.$t.__('You have not added any schema yet. You can add any schema graphs you like via the Schema Generator below.', this.$td),
-				schemaInUse         : this.$t.__('Schema In Use', this.$td),
-				generateSchema      : this.$t.__('Generate Schema', this.$td),
-				validateSchema      : this.$t.__('Validate Schema', this.$td),
-				defaultGraphTooltip : this.$t.__('This is the default graph for this post type. All data for this graph will be automatically generated.', this.$td)
+				sidebarDescription  : __('Configure Schema Markup for your content. Search engines use structured data to display rich results in SERPs.', td),
+				noGraphs            : __('You have not added any schema yet. You can add any schema graphs you like via the Schema Generator below.', td),
+				schemaInUse         : __('Schema In Use', td),
+				generateSchema      : __('Generate Schema', td),
+				validateSchema      : __('Validate Schema', td),
+				defaultGraphTooltip : __('This is the default graph for this post type. All data for this graph will be automatically generated.', td)
 			}
 		}
 	},

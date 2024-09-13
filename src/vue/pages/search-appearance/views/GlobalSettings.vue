@@ -5,7 +5,7 @@
 			:header-text="strings.titleSeparator"
 		>
 			<core-settings-row
-				:name="$constants.GLOBAL_STRINGS.preview"
+				:name="GLOBAL_STRINGS.preview"
 			>
 				<template #content>
 					<core-google-search-preview
@@ -40,12 +40,12 @@
 				<span v-html="strings.homePageDisabledDescription" />
 				&nbsp;
 				<span
-					v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'staticHomePage', true)"
+					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'staticHomePage', true)"
 				/>
 			</div>
 
 			<core-settings-row
-				:name="$constants.GLOBAL_STRINGS.preview"
+				:name="GLOBAL_STRINGS.preview"
 			>
 				<template #content>
 					<core-google-search-preview
@@ -72,7 +72,7 @@
 						v-model="optionsStore.options.searchAppearance.global.siteTitle"
 						:line-numbers="false"
 						single
-						@counter="count => updateCount(count, 'titleCount')"
+						@counter="count => titleCount = count.length"
 						tags-context="homePage"
 						:default-tags="[
 							'site_title',
@@ -102,7 +102,7 @@
 						v-model="optionsStore.options.searchAppearance.global.metaDescription"
 						:line-numbers="false"
 						description
-						@counter="count => updateCount(count, 'descriptionCount')"
+						@counter="count => descriptionCount = count.length"
 						tags-context="homePage"
 						:default-tags="[
 							'site_title',
@@ -158,8 +158,8 @@
 						v-model="optionsStore.options.deprecated.searchAppearance.global.schema.enableSchemaMarkup"
 						name="enableSchemaMarkup"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.off, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.on, value: true }
+							{ label: GLOBAL_STRINGS.off, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.on, value: true }
 						]"
 					/>
 				</template>
@@ -294,7 +294,7 @@
 						v-model="optionsStore.options.searchAppearance.global.schema.organizationDescription"
 						:line-numbers="false"
 						description
-						@counter="count => updateCount(count, 'descriptionCount')"
+						@counter="count => descriptionCount = count.length"
 						tags-context="knowledgeGraph"
 						:default-tags="[
 							'tagline'
@@ -415,6 +415,7 @@
 				<template #content>
 					<core-image-uploader
 						v-model="optionsStore.options.searchAppearance.global.schema.organizationLogo"
+						:description="strings.logoDescription"
 					/>
 				</template>
 			</core-settings-row>
@@ -462,6 +463,8 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	useOptionsStore,
@@ -469,11 +472,14 @@ import {
 } from '@/vue/stores'
 
 import addons from '@/vue/utils/addons'
+import {
+	dateJsToLocal,
+	dateStringToLocalJs
+} from '@/vue/utils/date'
 
-import { Date as DateMixin } from '@/vue/mixins/Date'
-import { JsonValues } from '@/vue/mixins/JsonValues'
-import { MaxCounts } from '@/vue/mixins/MaxCounts'
-import { Tags } from '@/vue/mixins/Tags'
+import { useJsonValues } from '@/vue/composables/JsonValues'
+import { useMaxCounts } from '@/vue/composables/MaxCounts'
+import { useTags } from '@/vue/composables/Tags'
 
 import BaseDatePicker from '@/vue/components/common/base/DatePicker'
 import BasePhone from '@/vue/components/common/base/Phone'
@@ -486,13 +492,41 @@ import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreSettingsSeparator from '@/vue/components/common/core/SettingsSeparator'
 import SvgLocalSeo from '@/vue/components/common/svg/local/Seo'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getJsonValue,
+			setJsonValue
+		} = useJsonValues()
+
+		const {
+			maxRecommendedCount
+		} = useMaxCounts()
+
+		const {
+			parseTags
+		} = useTags({
+			separator : undefined
+		})
+
 		return {
+			GLOBAL_STRINGS,
 			addons,
+			dateJsToLocal,
+			dateStringToLocalJs,
+			getJsonValue,
 			licenseStore : useLicenseStore(),
+			links,
+			maxRecommendedCount,
 			optionsStore : useOptionsStore(),
-			rootStore    : useRootStore()
+			parseTags,
+			rootStore    : useRootStore(),
+			setJsonValue
 		}
 	},
 	components : {
@@ -508,65 +542,68 @@ export default {
 		CoreSettingsSeparator,
 		SvgLocalSeo
 	},
-	mixins : [ DateMixin, JsonValues, MaxCounts, Tags ],
 	data () {
 		return {
 			titleCount       : 0,
 			descriptionCount : 0,
-			separator        : undefined,
 			strings          : {
-				titleSeparator              : this.$t.__('Title Separator', this.$td),
-				separatorCharacter          : this.$t.__('Separator Character', this.$td),
-				homePageDisabledDescription : this.$t.sprintf(
+				titleSeparator              : __('Title Separator', td),
+				separatorCharacter          : __('Separator Character', td),
+				homePageDisabledDescription : sprintf(
 					// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag.
-					this.$t.__('You are using a static home page which is found under Pages. You can %1$sedit your home page settings%2$s directly to change the title and description.', this.$td),
+					__('You are using a static home page which is found under Pages. You can %1$sedit your home page settings%2$s directly to change the title and description.', td),
 					`<a href="${this.rootStore.aioseo.urls.staticHomePage}&aioseo-scroll=aioseo-post-settings-post-title-row&aioseo-highlight=aioseo-post-settings-post-title-row,aioseo-post-settings-meta-description-row">`,
 					'</a>'
 				),
-				homePage                        : this.$t.__('Home Page', this.$td),
-				siteTitle                       : this.$t.__('Site Title', this.$td),
-				clickToAddSiteTitle             : this.$t.__('Click on the tags below to insert variables into your site title.', this.$td),
-				metaDescription                 : this.$t.__('Meta Description', this.$td),
-				clickToAddSiteDescription       : this.$t.__('Click on the tags below to insert variables into your meta description.', this.$td),
-				knowledgeGraph                  : this.$t.__('Knowledge Graph', this.$td),
-				knowledgeGraphDescription       : this.$t.__('Google, Bing and other search engines use specific data from your schema markup to output data in their Knowledge Panels. This data is known as the Knowledge Graph. Use these settings to change how that data looks.', this.$td),
-				personOrOrganization            : this.$t.__('Person or Organization', this.$td),
-				person                          : this.$t.__('Person', this.$td),
-				organization                    : this.$t.__('Organization', this.$td),
-				personOrOrganizationDescription : this.$t.__('Choose whether the site represents a person or an organization.', this.$td),
-				choosePerson                    : this.$t.__('Choose a Person', this.$td),
-				organizationName                : this.$t.__('Organization Name', this.$td),
-				organizationDescription         : this.$t.__('Organization Description', this.$td),
-				personName                      : this.$t.__('Person Name', this.$td),
-				phone                           : this.$t.__('Phone Number', this.$td),
-				phoneDescription                : this.$t.sprintf(
+				homePage                        : __('Home Page', td),
+				siteTitle                       : __('Site Title', td),
+				clickToAddSiteTitle             : __('Click on the tags below to insert variables into your site title.', td),
+				metaDescription                 : __('Meta Description', td),
+				clickToAddSiteDescription       : __('Click on the tags below to insert variables into your meta description.', td),
+				knowledgeGraph                  : __('Knowledge Graph', td),
+				knowledgeGraphDescription       : __('Google, Bing and other search engines use specific data from your schema markup to output data in their Knowledge Panels. This data is known as the Knowledge Graph. Use these settings to change how that data looks.', td),
+				personOrOrganization            : __('Person or Organization', td),
+				person                          : __('Person', td),
+				organization                    : __('Organization', td),
+				personOrOrganizationDescription : __('Choose whether the site represents a person or an organization.', td),
+				choosePerson                    : __('Choose a Person', td),
+				organizationName                : __('Organization Name', td),
+				organizationDescription         : __('Organization Description', td),
+				personName                      : __('Person Name', td),
+				phone                           : __('Phone Number', td),
+				phoneDescription                : sprintf(
 					// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag.
-					this.$t.__('Enter the primary phone number for your business. Don’t have a business phone number? %1$sSee this guide on how to get one.%2$s', this.$td),
-					`<a href="${this.$links.getDocUrl('businessPhoneNumber')}" target="_blank">`,
+					__('Enter the primary phone number for your business. Don’t have a business phone number? %1$sSee this guide on how to get one.%2$s', td),
+					`<a href="${links.getDocUrl('businessPhoneNumber')}" target="_blank">`,
 					'</a>'
 				),
-				email        : this.$t.__('Email Address', this.$td),
-				logo         : this.$t.__('Logo', this.$td),
-				goToLocalSeo : this.$t.sprintf(
+				email           : __('Email Address', td),
+				logo            : __('Logo', td),
+				logoDescription : sprintf(
+					'%1$s<br/>%2$s',
+					__('Minimum size: 112px x 112px, The image must be in JPG, PNG, GIF, SVG, or WEBP format.', td),
+					__('Google recommends you making sure that the image looks how you intend it to look on a purely white background.', td)
+				),
+				goToLocalSeo : sprintf(
 					// Translators: 1 - Opening HTML bold tag, 2 - Closing HTML bold tag.
-					this.$t.__('Our Local SEO addon enables you to tell Google about your business (name, address, opening hours, contact info & more) and further enhances your Knowledge Graph schema markup.', this.$td),
+					__('Our Local SEO addon enables you to tell Google about your business (name, address, opening hours, contact info & more) and further enhances your Knowledge Graph schema markup.', td),
 					 '<strong>',
 					'</strong>'
 				),
-				goToLocalSeoSettings            : this.$t.__('Configure Local SEO', this.$td),
-				unlockLocalSeo                  : this.$t.__('Unlock Local SEO', this.$td),
-				enableSchemaMarkup              : this.$t.__('Enable Schema Markup', this.$td),
-				keywords                        : this.$t.__('Keywords', this.$td),
-				tagPlaceholder                  : this.$t.__('Press enter to create a keyword', this.$td),
-				websiteName                     : this.$t.__('Website Name', this.$td),
-				websiteNameDescription          : this.$t.__('A name that Google may use for your homepage in mobile search results. This will default to the WordPress site title if left blank.', this.$td),
-				websiteAlternateName            : this.$t.__('Alternate Website Name', this.$td),
-				websiteAlternateNameDescription : this.$t.__('An alternate name for your site. This could be an acronym or shorter version of your website name.', this.$td),
-				foundingDate                    : this.$t.__('Founding Date', this.$td),
-				numberOfEmployees               : this.$t.__('Number of Employees', this.$td),
-				useRange                        : this.$t.__('Use Range', this.$td),
-				from                            : this.$t.__('From', this.$td),
-				to                              : this.$t.__('To', this.$td)
+				goToLocalSeoSettings            : __('Configure Local SEO', td),
+				unlockLocalSeo                  : __('Unlock Local SEO', td),
+				enableSchemaMarkup              : __('Enable Schema Markup', td),
+				keywords                        : __('Keywords', td),
+				tagPlaceholder                  : __('Press enter to create a keyword', td),
+				websiteName                     : __('Website Name', td),
+				websiteNameDescription          : __('A name that Google may use for your homepage in mobile search results. This will default to the WordPress site title if left blank.', td),
+				websiteAlternateName            : __('Alternate Website Name', td),
+				websiteAlternateNameDescription : __('An alternate name for your site. This could be an acronym or shorter version of your website name.', td),
+				foundingDate                    : __('Founding Date', td),
+				numberOfEmployees               : __('Number of Employees', td),
+				useRange                        : __('Use Range', td),
+				from                            : __('From', td),
+				to                              : __('To', td)
 			}
 		}
 	},
@@ -580,7 +617,7 @@ export default {
 		},
 		users () {
 			return [ {
-				label : this.$t.__('Manually Enter Person', this.$td),
+				label : __('Manually Enter Person', td),
 				value : 'manual'
 			} ].concat(this.rootStore.aioseo.users.map(u => ({
 				label    : `${u.displayName} (${u.email})`,

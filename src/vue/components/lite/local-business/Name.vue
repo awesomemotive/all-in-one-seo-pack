@@ -9,12 +9,16 @@
 </template>
 
 <script>
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	data () {
 		return {
 			strings : {
-				name     : this.$t.__('name', this.$td),
-				nameDesc : this.$t.__('Your name or company name.', this.$td)
+				name     : __('name', td),
+				nameDesc : __('Your name or company name.', td)
 			}
 		}
 	}

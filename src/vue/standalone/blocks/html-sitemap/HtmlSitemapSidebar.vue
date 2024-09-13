@@ -76,8 +76,8 @@
 				<base-select
 					size="medium"
 					:options="sortOrders"
-					:modelValue="getSortOrder(this.$root.$data.order_by)"
-					@update:modelValue="values => this.$root.$data.order_by = values.value"
+					:modelValue="getSortOrder($root.$data.order_by)"
+					@update:modelValue="values => $root.$data.order_by = values.value"
 					track-by="value"
 				/>
 			</div>
@@ -87,8 +87,8 @@
 				<base-select
 					size="medium"
 					:options="sortDirections"
-					:modelValue="getSortDirection(this.$root.$data.order)"
-					@update:modelValue="values => this.$root.$data.order = values.value"
+					:modelValue="getSortDirection($root.$data.order)"
+					@update:modelValue="values => $root.$data.order = values.value"
 					track-by="value"
 				/>
 			</div>
@@ -121,6 +121,11 @@
 <script>
 import HtmlSitemapExcludeObjects from '@/vue/components/common/html-sitemap/ExcludeObjects'
 import HtmlSitemapIncludedObjects from '@/vue/components/common/html-sitemap/IncludedObjects'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		HtmlSitemapExcludeObjects,
@@ -129,29 +134,29 @@ export default {
 	data () {
 		return {
 			sortDirections : [
-				{ label: this.$t.__('Ascending', this.$td), value: 'asc' },
-				{ label: this.$t.__('Descending', this.$td), value: 'desc' }
+				{ label: __('Ascending', td), value: 'asc' },
+				{ label: __('Descending', td), value: 'desc' }
 			],
 			sortOrders : [
-				{ label: this.$t.__('Publish Date', this.$td), value: 'publish_date' },
-				{ label: this.$t.__('Last Updated', this.$td), value: 'last_updated' },
-				{ label: this.$t.__('Alphabetical', this.$td), value: 'alphabetical' },
-				{ label: this.$t.__('Post/Term ID', this.$td), value: 'id' }
+				{ label: __('Publish Date', td), value: 'publish_date' },
+				{ label: __('Last Updated', td), value: 'last_updated' },
+				{ label: __('Alphabetical', td), value: 'alphabetical' },
+				{ label: __('Post/Term ID', td), value: 'id' }
 			],
 			strings : {
-				useDefault           : this.$t.__('Use Default Settings', this.$td),
-				postTypes            : this.$t.__('Post Types', this.$td),
-				taxonomies           : this.$t.__('Taxonomies', this.$td),
-				includeAllPostTypes  : this.$t.__('Include All Post Types', this.$td),
-				includeAllTaxonomies : this.$t.__('Include All Taxonomies', this.$td),
-				showLabel            : this.$t.__('Show Labels', this.$td),
-				publicationDate      : this.$t.__('Show Publication Date', this.$td),
-				// nofollow        : this.$t.__('No Follow Links', this.$td),
-				archives             : this.$t.__('Compact Archives', this.$td),
-				sortOrder            : this.$t.__('Sort Order', this.$td),
-				sortDirection        : this.$t.__('Sort Direction', this.$td),
-				excludePostsPages    : this.$t.__('Exclude Posts / Pages', this.$td),
-				excludeTerms         : this.$t.__('Exclude Terms', this.$td)
+				useDefault           : __('Use Default Settings', td),
+				postTypes            : __('Post Types', td),
+				taxonomies           : __('Taxonomies', td),
+				includeAllPostTypes  : __('Include All Post Types', td),
+				includeAllTaxonomies : __('Include All Taxonomies', td),
+				showLabel            : __('Show Labels', td),
+				publicationDate      : __('Show Publication Date', td),
+				// nofollow        : __('No Follow Links', td),
+				archives             : __('Compact Archives', td),
+				sortOrder            : __('Sort Order', td),
+				sortDirection        : __('Sort Direction', td),
+				excludePostsPages    : __('Exclude Posts / Pages', td),
+				excludeTerms         : __('Exclude Terms', td)
 			}
 		}
 	},

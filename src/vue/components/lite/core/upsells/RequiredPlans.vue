@@ -16,6 +16,11 @@ import {
 import addons from '@/vue/utils/addons'
 import license from '@/vue/utils/license'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -43,8 +48,8 @@ export default {
 	data () {
 		return {
 			strings : {
-				thisFeatureRequires         : this.$t.__('This feature requires one of the following plans:', this.$td),
-				thisFeatureRequiresSingular : this.$t.__('This feature requires the following plan:', this.$td)
+				thisFeatureRequires         : __('This feature requires one of the following plans:', td),
+				thisFeatureRequiresSingular : __('This feature requires the following plan:', td)
 			}
 		}
 	},

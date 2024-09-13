@@ -28,6 +28,10 @@ import OpeningHours from './OpeningHours'
 import Maps from './Maps'
 import SvgSettings from '@/vue/components/common/svg/Settings'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -41,14 +45,6 @@ export default {
 		Maps,
 		SvgSettings
 	},
-	watch : {
-		'postEditorStore.currentPost' : {
-			deep : true,
-			handler () {
-				debounce(this.postEditorStore.savePostState, 250)
-			}
-		}
-	},
 	data () {
 		return {
 			tab  : 'business-info',
@@ -56,19 +52,27 @@ export default {
 				{
 					slug : 'business-info',
 					icon : 'svg-settings',
-					name : this.$t.__('Business Info', this.$td)
+					name : __('Business Info', td)
 				},
 				{
 					slug : 'opening-hours',
 					icon : 'svg-settings',
-					name : this.$t.__('Opening Hours', this.$td)
+					name : __('Opening Hours', td)
 				},
 				{
 					slug : 'maps',
 					icon : 'svg-settings',
-					name : this.$t.__('Maps', this.$td)
+					name : __('Maps', td)
 				}
 			]
+		}
+	},
+	watch : {
+		'postEditorStore.currentPost' : {
+			deep : true,
+			handler () {
+				debounce(this.postEditorStore.savePostState, 250)
+			}
 		}
 	},
 	methods : {

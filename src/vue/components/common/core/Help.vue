@@ -1,11 +1,11 @@
 <template>
 	<div id="aioseo-help-modal" class="aioseo-help">
 		<core-upgrade-bar
-			v-if="!$isPro && settingsStore.settings.showUpgradeBar && rootStore.pong"
+			v-if="!rootStore.isPro && settingsStore.settings.showUpgradeBar && rootStore.pong"
 		/>
 
 		<core-license-key-bar
-			v-if="$isPro && licenseStore.isUnlicensed && rootStore.pong"
+			v-if="rootStore.isPro && licenseStore.isUnlicensed && rootStore.pong"
 		/>
 
 		<core-api-bar
@@ -16,7 +16,7 @@
 			<div class="logo">
 				<a
 					v-if="licenseStore.isUnlicensed"
-					:href="$links.utmUrl('header-logo')"
+					:href="links.utmUrl('header-logo')"
 					target="_blank"
 
 				>
@@ -55,7 +55,7 @@
 						:key="index"
 					>
 						<span class="icon"><svg-description /></span>
-						<a :href="$links.utmUrl('help-panel-doc', '', doc.url)" rel="noopener noreferrer" target="_blank">{{ doc.title }}</a>
+						<a :href="links.utmUrl('help-panel-doc', '', doc.url)" rel="noopener noreferrer" target="_blank">{{ doc.title }}</a>
 					</li>
 				</ul>
 			</div>
@@ -78,7 +78,7 @@
 								:key="index"
 							>
 								<span class="icon"><svg-description /></span>
-								<a :href="$links.utmUrl('help-panel-doc', '', doc.url)" rel="noopener noreferrer" target="_blank">{{ doc.title }}</a>
+								<a :href="links.utmUrl('help-panel-doc', '', doc.url)" rel="noopener noreferrer" target="_blank">{{ doc.title }}</a>
 							</li>
 							<div class="aioseo-help-additional-docs">
 								<li
@@ -86,7 +86,7 @@
 									:key="index"
 								>
 									<span class="icon"><svg-description /></span>
-									<a :href="$links.utmUrl('help-panel-doc', '', doc.url)" rel="noopener noreferrer" target="_blank">{{ doc.title }}</a>
+									<a :href="links.utmUrl('help-panel-doc', '', doc.url)" rel="noopener noreferrer" target="_blank">{{ doc.title }}</a>
 								</li>
 							</div>
 							<base-button
@@ -102,7 +102,7 @@
 			</div>
 			<div id="aioseo-help-footer">
 				<div class="aioseo-help-footer-block">
-					<a :href="$links.utmUrl('help-panel-all-docs', '', 'https://aioseo.com/docs/')" rel="noopener noreferrer" target="_blank">
+					<a :href="links.utmUrl('help-panel-all-docs', '', 'https://aioseo.com/docs/')" rel="noopener noreferrer" target="_blank">
 						<svg-description />
 						<h3>{{ strings.viewDocumentation }}</h3>
 						<p>{{ strings.browseDocumentation }}</p>
@@ -116,9 +116,9 @@
 
 				<div class="aioseo-help-footer-block">
 					<a
-						:href="!$isPro || !licenseStore.license.isActive
-							? $links.getUpsellUrl('help-panel', 'get-support', 'liteUpgrade')
-							: $links.utmUrl('help-panel-support', '', 'https://aioseo.com/account/support/')
+						:href="!rootStore.isPro || !licenseStore.license.isActive
+							? links.getUpsellUrl('help-panel', 'get-support', 'liteUpgrade')
+							: links.utmUrl('help-panel-support', '', 'https://aioseo.com/account/support/')
 						"
 						rel="noopener noreferrer"
 						target="_blank"
@@ -128,13 +128,13 @@
 						<p>{{ strings.submitTicket }}</p>
 						<base-button
 							class="aioseo-help-docs-support blue small"
-							v-if="$isPro && licenseStore.license.isActive"
+							v-if="rootStore.isPro && licenseStore.license.isActive"
 						>
 							{{ strings.submitSupportTicket }}
 						</base-button>
 						<base-button
 							class="aioseo-help-docs-support green small"
-							v-if="!$isPro || !licenseStore.license.isActive"
+							v-if="!rootStore.isPro || !licenseStore.license.isActive"
 						>
 							{{ strings.upgradeToPro }}
 						</base-button>
@@ -146,6 +146,7 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	useHelpPanelStore,
 	useLicenseStore,
@@ -162,13 +163,19 @@ import SvgClose from '@/vue/components/common/svg/Close'
 import SvgDescription from '@/vue/components/common/svg/Description'
 import SvgFolderOpen from '@/vue/components/common/svg/FolderOpen'
 import SvgSupport from '@/vue/components/common/svg/Support'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
 			licenseStore   : useLicenseStore(),
 			rootStore      : useRootStore(),
 			helpPanelStore : useHelpPanelStore(),
-			settingsStore  : useSettingsStore()
+			settingsStore  : useSettingsStore(),
+			links
 		}
 	},
 	components : {
@@ -185,21 +192,21 @@ export default {
 		return {
 			searchItem : null,
 			strings    : {
-				close               : this.$t.__('Close', this.$td),
-				search              : this.$t.__('Search', this.$td),
-				viewAll             : this.$t.__('View All', this.$td),
-				docs                : this.$t.__('Docs', this.$td),
-				viewDocumentation   : this.$t.__('View Documentation', this.$td),
-				browseDocumentation : this.$t.sprintf(
+				close               : __('Close', td),
+				search              : __('Search', td),
+				viewAll             : __('View All', td),
+				docs                : __('Docs', td),
+				viewDocumentation   : __('View Documentation', td),
+				browseDocumentation : sprintf(
 					// Translators: 1 - The plugin short name ("AIOEO").
-					this.$t.__('Browse documentation, reference material, and tutorials for %1$s.', this.$td),
+					__('Browse documentation, reference material, and tutorials for %1$s.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				viewAllDocumentation : this.$t.__('View All Documentation', this.$td),
-				getSupport           : this.$t.__('Get Support', this.$td),
-				submitTicket         : this.$t.__('Submit a ticket and our world class support team will be in touch soon.', this.$td),
-				submitSupportTicket  : this.$t.__('Submit a Support Ticket', this.$td),
-				upgradeToPro         : this.$t.__('Upgrade to Pro', this.$td)
+				viewAllDocumentation : __('View All Documentation', td),
+				getSupport           : __('Get Support', td),
+				submitTicket         : __('Submit a ticket and our world class support team will be in touch soon.', td),
+				submitSupportTicket  : __('Submit a Support Ticket', td),
+				upgradeToPro         : __('Upgrade to Pro', td)
 			}
 		}
 	},

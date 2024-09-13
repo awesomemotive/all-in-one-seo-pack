@@ -27,6 +27,7 @@ class Options extends CommonOptions\Options {
 	private $liteDefaults = [
 		// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 		'advanced' => [
+			'autoUpdates'   => [ 'type' => 'string', 'default' => 'none' ],
 			'usageTracking' => [ 'type' => 'boolean', 'default' => false ]
 		]
 		// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound

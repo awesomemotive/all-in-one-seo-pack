@@ -66,7 +66,7 @@
 					<svg-close @click="processChangeTab(null)"/>
 				</div>
 
-				<alert v-if="'sidebar' === this.$root.$data.screenContext" />
+				<alert v-if="'sidebar' === $root.$data.screenContext" />
 
 				<component
 					:is="activeTab"
@@ -99,6 +99,8 @@
 </template>
 
 <script>
+import { ref, nextTick } from 'vue'
+
 import {
 	useLicenseStore,
 	usePostEditorStore,
@@ -113,7 +115,7 @@ import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { getParams, removeParam } from '@/vue/utils/params'
 import { debounceContext } from '@/vue/utils/debounce'
 import { isBlockEditor, isPageBuilderEditor } from '@/vue/utils/context'
-import { ObjectRevisions } from '@/vue/mixins/seo-revisions/SeoRevisions'
+
 import Advanced from './Advanced'
 import Alert from './partials/Alert'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
@@ -138,16 +140,48 @@ import SvgRedirectCrossedArrows from '@/vue/components/common/svg/redirect/Cross
 import SvgSettings from '@/vue/components/common/svg/Settings'
 import SvgShare from '@/vue/components/common/svg/Share'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const seoRevisionsStore    = useSeoRevisionsStore()
+		const updatingSeoRevisions = ref(false)
+		const updateSeoRevisions = () => {
+			if (
+				window.wp.data.select('core/editor').isSavingPost() &&
+				!window.wp.data.select('core/editor').isAutosavingPost()
+			) {
+				updatingSeoRevisions.value = true
+
+				setTimeout(() => {
+					seoRevisionsStore.fetch().finally(() => {
+						updatingSeoRevisions.value = false
+					})
+				}, 2500)
+			}
+		}
+
+		const watchObjectRevisionsOnSavePost = async () => {
+			await nextTick()
+
+			window.wp.data.subscribe(() => {
+				if (!updatingSeoRevisions.value) {
+					updateSeoRevisions()
+				}
+			})
+		}
+
 		return {
+			keywordRankTrackerStore : useKeywordRankTrackerStore(),
 			licenseStore            : useLicenseStore(),
 			postEditorStore         : usePostEditorStore(),
 			redirectsStore          : useRedirectsStore(),
 			rootStore               : useRootStore(),
+			seoRevisionsStore,
 			settingsStore           : useSettingsStore(),
-			seoRevisionsStore       : useSeoRevisionsStore(),
-			keywordRankTrackerStore : useKeywordRankTrackerStore()
+			watchObjectRevisionsOnSavePost
 		}
 	},
 	components : {
@@ -181,7 +215,7 @@ export default {
 			modal     : false,
 			strings   : {
 				pageName   : 'General',
-				modalTitle : this.$t.__('Preview Snippet Editor', this.$td)
+				modalTitle : __('Preview Snippet Editor', td)
 			},
 			activeMainSidebarTab : '',
 			isPageBuilderEditor
@@ -231,35 +265,35 @@ export default {
 				{
 					slug : 'general',
 					icon : 'svg-settings',
-					name : this.$t.__('General', this.$td)
+					name : __('General', td)
 				},
 				{
 					slug : 'social',
 					icon : 'svg-share',
-					name : this.$t.__('Social', this.$td)
+					name : __('Social', td)
 				},
 				{
 					slug : 'schema',
 					icon : 'svg-receipt',
-					name : this.$t.__('Schema', this.$td)
+					name : __('Schema', td)
 				},
 				{
 					slug       : 'redirects',
 					icon       : 'svg-redirect-crossed-arrows',
-					name       : this.$t.__('Redirects', this.$td),
+					name       : __('Redirects', td),
 					warning    : (0 < this.redirectsStore.rows.filter(row => !!row.enabled).length),
 					permission : 'aioseo_page_redirects_manage'
 				},
 				{
 					slug  : 'seoRevisions',
 					icon  : 'svg-backup',
-					name  : this.$t.__('SEO Revisions', this.$td),
+					name  : __('SEO Revisions', td),
 					badge : 'seo-revisions-count-badge'
 				},
 				{
 					slug : 'advanced',
 					icon : 'svg-build',
-					name : this.$t.__('Advanced', this.$td)
+					name : __('Advanced', td)
 				}
 			]
 
@@ -272,7 +306,7 @@ export default {
 				tabs.splice(3, 0, {
 					slug : 'linkAssistant',
 					icon : 'svg-link-suggestion',
-					name : this.$t.__('Link Assistant', this.$td)
+					name : __('Link Assistant', td)
 				})
 			}
 
@@ -392,7 +426,6 @@ export default {
 			return tab?.name
 		}
 	},
-	mixins : [ ObjectRevisions ],
 	created () {
 		this.modal = getParams()['aioseo-modaltab'] || this.modal
 		if (this.modal) {

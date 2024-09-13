@@ -45,7 +45,7 @@
 		<cta
 			v-if="!showSnippets && wpCodeStore.snippets.length"
 			:button-text="ctaButtonText"
-			:learn-more-link="$links.getDocUrl('wpcode')"
+			:learn-more-link="links.getDocUrl('wpcode')"
 			:cta-button-loading="activationLoading"
 			@cta-button-click="processUpdateOrActivate"
 			same-tab
@@ -76,21 +76,28 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	usePluginsStore,
 	useWpCodeStore
 } from '@/vue/stores'
 
 import { decode } from 'he'
-import Cta from '@/vue/components/common/cta/Index.vue'
-import CoreAlert from '@/vue/components/common/core/alert/Index.vue'
+import Cta from '@/vue/components/common/cta/Index'
+import CoreAlert from '@/vue/components/common/core/alert/Index'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
 			pluginsStore : usePluginsStore(),
-			wpCodeStore  : useWpCodeStore()
+			wpCodeStore  : useWpCodeStore(),
+			links
 		}
 	},
 	components : {
@@ -105,14 +112,14 @@ export default {
 			failed            : false,
 			activationLoading : false,
 			strings           : {
-				codesnippets      : this.$t.__('Code Snippets', this.$td),
-				installSnippet    : this.$t.__('Use Snippet', this.$td),
-				editSnippet       : this.$t.__('Edit Snippet', this.$td),
-				ctaDescription    : this.$t.__('Using WPCode you can install AIOSEO code snippets with 1-click directly from this page or the WPCode library inside the WordPress admin.', this.$td),
-				ctaLearnMoreText  : this.$t.__('Learn More about WPCode Snippets', this.$td),
-				noSnippets        : this.$t.__('We encountered an error loading the code snippets, please try again later.', this.$td),
-				activateError     : this.$t.__('An error occurred while activating the addon. Please upload it manually or contact support for more information.', this.$td),
-				permissionWarning : this.$t.__('You currently don\'t have permission to activate this addon. Please ask a site administrator to activate first.', this.$td)
+				codesnippets      : __('Code Snippets', td),
+				installSnippet    : __('Use Snippet', td),
+				editSnippet       : __('Edit Snippet', td),
+				ctaDescription    : __('Using WPCode you can install AIOSEO code snippets with 1-click directly from this page or the WPCode library inside the WordPress admin.', td),
+				ctaLearnMoreText  : __('Learn More about WPCode Snippets', td),
+				noSnippets        : __('We encountered an error loading the code snippets, please try again later.', td),
+				activateError     : __('An error occurred while activating the addon. Please upload it manually or contact support for more information.', td),
+				permissionWarning : __('You currently don\'t have permission to activate this addon. Please ask a site administrator to activate first.', td)
 			}
 		}
 	},
@@ -125,25 +132,25 @@ export default {
 		},
 		ctaTitle () {
 			if (this.wpCodeStore.pluginNeedsUpdate) {
-				return this.$t.__('Please Update WPCode to load the AIOSEO Snippet Library', this.$td)
+				return __('Please Update WPCode to load the AIOSEO Snippet Library', td)
 			} else if (!this.wpCodeStore.pluginInstalled) {
-				return this.$t.__('Please Install WPCode to load the AIOSEO Snippet Library', this.$td)
+				return __('Please Install WPCode to load the AIOSEO Snippet Library', td)
 			} else if (!this.wpCodeStore.pluginActive) {
-				return this.$t.__('Please Activate WPCode to load the AIOSEO Snippet Library', this.$td)
+				return __('Please Activate WPCode to load the AIOSEO Snippet Library', td)
 			}
 
-			return this.$t.__('Please Install WPCode to load the AIOSEO Snippet Library', this.$td)
+			return __('Please Install WPCode to load the AIOSEO Snippet Library', td)
 		},
 		ctaButtonText () {
 			if (this.wpCodeStore.pluginNeedsUpdate) {
-				return this.$t.__('Update WPCode', this.$td)
+				return __('Update WPCode', td)
 			} else if (!this.wpCodeStore.pluginInstalled) {
-				return this.$t.__('Install WPCode', this.$td)
+				return __('Install WPCode', td)
 			} else if (!this.wpCodeStore.pluginActive) {
-				return this.$t.__('Activate WPCode', this.$td)
+				return __('Activate WPCode', td)
 			}
 
-			return this.$t.__('Install WPCode', this.$td)
+			return __('Install WPCode', td)
 		}
 	},
 	methods : {
@@ -177,7 +184,7 @@ export default {
 
 				Promise.all(promises)
 					.then(() => {
-						this.activationLoading  = false
+						this.activationLoading = false
 					})
 			})
 				.catch(error => {

@@ -50,6 +50,10 @@ import CoreSocialProfiles from '@/vue/components/common/core/SocialProfiles'
 import EeatCta from './EeatCta'
 import SvgLogoGear from '@/vue/components/common/svg/aioseo/LogoGear'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -67,9 +71,36 @@ export default {
 		return {
 			activeTabIndex : 0,
 			strings        : {
-				socialProfiles : this.$t.__('Social Profiles', this.$td),
-				description    : this.$t.__('To let search engines know which profiles are associated with this user, enter them below:', this.$td)
+				socialProfiles : __('Social Profiles', td),
+				description    : __('To let search engines know which profiles are associated with this user, enter them below:', td)
 			}
+		}
+	},
+	computed : {
+		tabs () {
+			const tabs = [
+				{
+					label : __('Personal Options', td),
+					slug  : 'personal-options'
+				},
+				{
+					label : __('Author SEO', td),
+					slug  : 'author-seo',
+					svg   : 'svg-logo-gear'
+				}
+			]
+
+			if (this.settingsStore.userProfile.isWooCommerceFollowupEmailsActive) {
+				tabs.push({
+					label : __('Customer Data', td),
+					slug  : 'customer-data'
+				})
+			}
+
+			return tabs
+		},
+		activeTabObject () {
+			return this.tabs[this.activeTabIndex]
 		}
 	},
 	methods : {
@@ -114,33 +145,6 @@ export default {
 		},
 		updateHiddenInputField (newSocialProfiles) {
 			document.getElementById('aioseo-user-social-profiles').value = JSON.stringify(newSocialProfiles)
-		}
-	},
-	computed : {
-		tabs () {
-			const tabs = [
-				{
-					label : this.$t.__('Personal Options', this.$td),
-					slug  : 'personal-options'
-				},
-				{
-					label : this.$t.__('Author SEO', this.$td),
-					slug  : 'author-seo',
-					svg   : 'svg-logo-gear'
-				}
-			]
-
-			if (this.settingsStore.userProfile.isWooCommerceFollowupEmailsActive) {
-				tabs.push({
-					label : this.$t.__('Customer Data', this.$td),
-					slug  : 'customer-data'
-				})
-			}
-
-			return tabs
-		},
-		activeTabObject () {
-			return this.tabs[this.activeTabIndex]
 		}
 	},
 	async created () {

@@ -37,7 +37,7 @@
 						<svg-book />
 						<a
 							class="text-white"
-							:href="$links.getDocUrl('quickStartGuide')"
+							:href="links.getDocUrl('quickStartGuide')"
 							target="_blank"
 						>
 							{{ strings.readSetupGuide }}
@@ -73,6 +73,7 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	useRootStore,
 	useSettingsStore
@@ -84,11 +85,17 @@ import SvgBook from '@/vue/components/common/svg/Book'
 import SvgClose from '@/vue/components/common/svg/Close'
 import SvgRocket from '@/vue/components/common/svg/Rocket'
 import SvgSetupWizardBg from '@/vue/components/common/svg/SetupWizardBg'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
 			rootStore     : useRootStore(),
-			settingsStore : useSettingsStore()
+			settingsStore : useSettingsStore(),
+			links
 		}
 	},
 	components : {
@@ -105,19 +112,19 @@ export default {
 	data () {
 		return {
 			strings : {
-				howToGetStarted : this.$t.__('How to Get Started', this.$td),
-				welcomeToAio    : this.$t.sprintf(
+				howToGetStarted : __('How to Get Started', td),
+				welcomeToAio    : sprintf(
 					// Translators: 1 - The plugin name ("All in One SEO").
-					this.$t.__('Welcome to %1$s', this.$td),
+					__('Welcome to %1$s', td),
 					import.meta.env.VITE_NAME
 				),
-				welcomeText : this.$t.sprintf(
+				welcomeText : sprintf(
 					// Translators: 1 - The plugin name ("All in One SEO").
-					this.$t.__('Thank you for choosing the best WordPress SEO plugin. %1$s default settings works great out of the box. We created the setup wizard to guide you through some important configuration settings & custom-tailored SEO best practices for your site to help you improve rankings.', this.$td),
+					__('Thank you for choosing the best WordPress SEO plugin. %1$s default settings works great out of the box. We created the setup wizard to guide you through some important configuration settings & custom-tailored SEO best practices for your site to help you improve rankings.', td),
 					import.meta.env.VITE_NAME
 				),
-				launchSetupWizard : this.$t.__('Launch the Setup Wizard', this.$td),
-				readSetupGuide    : this.$t.__('Read the Setup Guide', this.$td)
+				launchSetupWizard : __('Launch the Setup Wizard', td),
+				readSetupGuide    : __('Read the Setup Guide', td)
 			}
 		}
 	}

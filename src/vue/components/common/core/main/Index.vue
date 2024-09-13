@@ -37,7 +37,7 @@
 						type="blue"
 						size="medium"
 						:loading="rootStore.loading"
-						@click="processSaveChanges"
+						@click="processSaveChanges(route.name)"
 					>
 						{{ strings.saveChanges }}
 					</base-button>
@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import { useRoute } from 'vue-router'
+
 import {
 	useHelpPanelStore,
 	useNotificationsStore,
@@ -60,24 +62,37 @@ import {
 } from '@/vue/stores'
 
 import license from '@/vue/utils/license'
+import links from '@/vue/utils/links'
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import '@/vue/assets/scss/main.scss'
 
 import { getParams, removeParam } from '@/vue/utils/params'
-import { SaveChanges } from '@/vue/mixins/SaveChanges'
+
+import { useSaveChanges } from '@/vue/composables/SaveChanges'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreHeader from '@/vue/components/common/core/Header'
 import CoreHelp from '@/vue/components/common/core/Help'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreNotifications from '@/vue/components/common/core/Notifications'
 import GridContainer from '@/vue/components/common/grid/Container'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const route = useRoute()
+		const { processSaveChanges } = useSaveChanges()
+
 		return {
 			helpPanelStore     : useHelpPanelStore(),
 			notificationsStore : useNotificationsStore(),
+			optionsStore       : useOptionsStore(),
+			processSaveChanges,
 			rootStore          : useRootStore(),
-			optionsStore       : useOptionsStore()
+			route
 		}
 	},
 	components : {
@@ -88,8 +103,7 @@ export default {
 		CoreNotifications,
 		GridContainer
 	},
-	mixins : [ SaveChanges ],
-	props  : {
+	props : {
 		pageName : {
 			type     : String,
 			required : true
@@ -123,7 +137,7 @@ export default {
 		return {
 			tabsKey : 0,
 			strings : {
-				saveChanges : this.$t.__('Save Changes', this.$td)
+				saveChanges : __('Save Changes', td)
 			}
 		}
 	},
@@ -139,10 +153,10 @@ export default {
 				.filter(route => allowed(route.meta.access))
 				.filter(route => !route.meta.license || license.hasMinimumLevel(route.meta.license))
 				.filter(route => {
-					if ('lite' === route.meta.display && this.$isPro) {
+					if ('lite' === route.meta.display && this.rootStore.isPro) {
 						return false
 					}
-					if ('pro' === route.meta.display && !this.$isPro) {
+					if ('pro' === route.meta.display && !this.rootStore.isPro) {
 						return false
 					}
 					return true
@@ -168,12 +182,12 @@ export default {
 			return this.showSaveButton
 		},
 		errorSaving () {
-			const url = this.$isPro ? 'https://aioseo.com/plugin/pro-support' : 'https://aioseo.com/plugin/lite-support'
+			const url = this.roootStore.isPro ? 'https://aioseo.com/plugin/pro-support' : 'https://aioseo.com/plugin/lite-support'
 
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - Opening link tag, 2 - Closing link tag.
-				this.$t.__('Oops! It looks like an error occurred while saving the changes. Please try again or %1$scontact our support team%2$s.', this.$td),
-				'<a href="' + this.$links.utmUrl('error-saving', this.rootStore.aioseo.page, url) + '" target="_blank">',
+				__('Oops! It looks like an error occurred while saving the changes. Please try again or %1$scontact our support team%2$s.', td),
+				'<a href="' + links.utmUrl('error-saving', this.rootStore.aioseo.page, url) + '" target="_blank">',
 				'</a>'
 			)
 		}

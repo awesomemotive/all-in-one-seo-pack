@@ -41,23 +41,30 @@
 			<span class="field-description mt-8">{{ strings.country }}</span>
 			<base-select
 				size="medium"
-				:options="$constants.COUNTRY_LIST"
+				:options="COUNTRY_LIST"
 			/>
 		</div>
 	</div>
 </template>
 
 <script>
+import { COUNTRY_LIST } from '@/vue/plugins/constants'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	data () {
 		return {
+			COUNTRY_LIST,
 			strings : {
-				streetAddress  : this.$t.__('Address Line 1', this.$td),
-				streetAddress2 : this.$t.__('Address Line 2', this.$td),
-				zipCode        : this.$t.__('Zip Code', this.$td),
-				city           : this.$t.__('City', this.$td),
-				state          : this.$t.__('State', this.$td),
-				country        : this.$t.__('Country', this.$td)
+				streetAddress  : __('Address Line 1', td),
+				streetAddress2 : __('Address Line 2', td),
+				zipCode        : __('Zip Code', td),
+				city           : __('City', td),
+				state          : __('State', td),
+				country        : __('Country', td)
 			}
 		}
 	}

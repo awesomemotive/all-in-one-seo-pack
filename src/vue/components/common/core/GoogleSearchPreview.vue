@@ -82,18 +82,18 @@
 		</div>
 
 		<div
-			v-if="this.richResults?.anchorLinks?.length"
+			v-if="richResults?.anchorLinks?.length"
 			class="aioseo-google-search-preview__anchor"
 		>
 			<template
-				v-for="(item, index) in this.richResults.anchorLinks"
+				v-for="(item, index) in richResults.anchorLinks"
 				:key="`anchor-${index}`"
 			>
 				<span class="aioseo-google-search-preview__anchor__link">{{ truncate(item, 30) }}</span>
 
 				<span
 					class="aioseo-google-search-preview__anchor__bullet"
-					v-if="index !== this.richResults.anchorLinks.length - 1"
+					v-if="index !== richResults.anchorLinks.length - 1"
 				> &bull; </span>
 			</template>
 		</div>
@@ -138,9 +138,48 @@ import { getText, truncate } from '@/vue/utils/html'
 import { CURRENCY_LIST } from '@/vue/plugins/constants'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 
+import { __, _n, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		SvgCaret
+	},
+	props : {
+		focusKeyphrase : String,
+		device         : {
+			type    : String,
+			default : 'desktop'
+		},
+		favicon  : String,
+		hostname : {
+			type : String,
+			default () {
+				const rootStore = useRootStore()
+				return rootStore.aioseo.data.siteName || rootStore.aioseo.urls.domain
+			}
+		},
+		url : {
+			type : String,
+			default () {
+				const rootStore = useRootStore()
+				return rootStore.aioseo.urls.home
+			}
+		},
+		title       : String,
+		description : String,
+		richResults : Object
+	},
+	data () {
+		return {
+			strings : {
+				free         : __('Free', td),
+				rating       : __('Rating', td),
+				prosCons     : __('Pros and cons include', td),
+				viewFullList : __('View full list', td)
+			}
+		}
 	},
 	computed : {
 		faq () {
@@ -255,12 +294,12 @@ export default {
 			if ('desktop' === this.device) {
 				const count = this.reviewSnippet.ratingCount || this.reviewSnippet.reviewCount
 				const suffix = this.reviewSnippet.ratingCount
-					? this.$t._n('vote', 'votes', count, this.$td)
-					: this.$t._n('review', 'reviews', count, this.$td)
+					? _n('vote', 'votes', count, td)
+					: _n('review', 'reviews', count, td)
 
-				return this.$t.sprintf(
+				return sprintf(
 					// Translators: 1 - Amount of reviews, 2 - "vote(s)" or "review(s)".
-					this.$t.__('%1$s %2$s', this.$td),
+					__('%1$s %2$s', td),
 					count,
 					suffix
 				)
@@ -269,41 +308,6 @@ export default {
 			return `(${this.reviewSnippet.ratingCount || this.reviewSnippet.reviewCount})`
 		},
 		truncate
-	},
-	props : {
-		focusKeyphrase : String,
-		device         : {
-			type    : String,
-			default : 'desktop'
-		},
-		favicon  : String,
-		hostname : {
-			type : String,
-			default () {
-				const rootStore = useRootStore()
-				return rootStore.aioseo.data.siteName || rootStore.aioseo.urls.domain
-			}
-		},
-		url : {
-			type : String,
-			default () {
-				const rootStore = useRootStore()
-				return rootStore.aioseo.urls.home
-			}
-		},
-		title       : String,
-		description : String,
-		richResults : Object
-	},
-	data () {
-		return {
-			strings : {
-				free         : this.$t.__('Free', this.$td),
-				rating       : this.$t.__('Rating', this.$td),
-				prosCons     : this.$t.__('Pros and cons include', this.$td),
-				viewFullList : this.$t.__('View full list', this.$td)
-			}
-		}
 	}
 }
 </script>

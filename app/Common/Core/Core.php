@@ -141,24 +141,27 @@ class Core {
 
 		// Delete all our custom tables.
 		global $wpdb;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery
 		foreach ( $this->getDbTables() as $tableName ) {
-			$wpdb->query( 'DROP TABLE IF EXISTS ' . $tableName ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %s', $tableName ) );
 		}
 
 		// Delete all AIOSEO Locations and Location Categories.
-		$wpdb->query( "DELETE FROM {$wpdb->posts} WHERE post_type = 'aioseo-location'" );
-		$wpdb->query( "DELETE FROM {$wpdb->term_taxonomy} WHERE taxonomy = 'aioseo-location-category'" );
+		$wpdb->delete( $wpdb->posts, [ 'post_type' => 'aioseo-location' ], [ '%s' ] );
+		$wpdb->delete( $wpdb->term_taxonomy, [ 'taxonomy' => 'aioseo-location-category' ], [ '%s' ] );
 
 		// Delete all the plugin settings.
-		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'aioseo\_%'" );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 'aioseo\_%' ) );
 
 		// Remove any transients we've left behind.
-		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_aioseo\_%'" );
-		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'aioseo\_%'" );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '\_aioseo\_%' ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 'aioseo\_%' ) );
 
 		// Delete all entries from the action scheduler table.
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}actionscheduler_actions WHERE hook LIKE 'aioseo\_%'" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}actionscheduler_groups WHERE slug = 'aioseo'" );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}actionscheduler_actions WHERE hook LIKE %s", 'aioseo\_%' ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}actionscheduler_groups WHERE slug = %s", 'aioseo' ) );
+		// phpcs:enable
 	}
 
 	/**

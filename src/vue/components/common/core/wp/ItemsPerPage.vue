@@ -18,6 +18,10 @@
 </template>
 
 <script>
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	props : {
 		modelValue   : Number,
@@ -28,7 +32,7 @@ export default {
 			items        : [ 5, 10, 20, 25, 50, 100 ],
 			itemsPerPage : 20,
 			strings      : {
-				itemsPerPage : this.$t.__('items per page', this.$td)
+				itemsPerPage : __('items per page', td)
 			}
 		}
 	},

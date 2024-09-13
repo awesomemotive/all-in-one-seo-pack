@@ -4,7 +4,7 @@ import {
 
 import { shouldShowMetaBox } from '@/vue/utils/metabox'
 import { isBlockEditor } from '@/vue/utils/context'
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 
 export default function registerHeadlineAnalyzer () {
 	const td = import.meta.env.VITE_TEXTDOMAIN
@@ -24,8 +24,6 @@ export default function registerHeadlineAnalyzer () {
 	const PluginSidebar             = window?.wp?.editor?.PluginSidebar || window.wp?.editPost?.PluginSidebar
 	const Fragment                  = window.wp.element.Fragment
 	const el                        = window.wp.element.createElement
-	const useEffect                 = window.wp.element.useEffect
-	// const useState                  = window.wp.element.useState
 
 	const HeadlineAnalyzerIcon = el('svg',
 		{
@@ -58,6 +56,7 @@ export default function registerHeadlineAnalyzer () {
 			}
 		)
 	)
+
 	const HeadlineAnalyzerButton = el('div',
 		{ id: 'aioseo-headline-analyzer-sidebar-button' },
 		HeadlineAnalyzerIcon,
@@ -69,7 +68,7 @@ export default function registerHeadlineAnalyzer () {
 
 	const user = rootStore.aioseo.user
 
-	registerPlugin('aioseo-headline-analyzer', {
+	registerPlugin('aioseo-headline-analyzer-sidebar', {
 		render : () => {
 			if (
 				!user.capabilities.aioseo_page_analysis &&
@@ -81,27 +80,31 @@ export default function registerHeadlineAnalyzer () {
 				return null
 			}
 
-			useEffect(() => {
-
-			})
-
 			return el(Fragment, {},
 				el(PluginSidebarMoreMenuItem,
 					{
-						target : 'aioseo-headline-analyzer',
+						target : 'aioseo-headline-analyzer-sidebar',
 						icon   : HeadlineAnalyzerIcon
 					},
-					__('SEO Headline Analyzer', td)
+					__('Headline Analyzer', td)
 				),
 				el(PluginSidebar,
 					{
-						name      : 'aioseo-headline-analyzer',
-						icon      : HeadlineAnalyzerButton,
-						title     : __('SEO Headline Analyzer', td),
-						className : 'aioseo-headline-analyzer-wrapper'
+						name  : 'aioseo-headline-analyzer-sidebar',
+						icon  : HeadlineAnalyzerButton,
+						title : 'Headline Analyzer' // Don't translate this as we need to target it in CSS.
 					},
-					el('div',
-						{ id: 'aioseo-headline-analyzer-sidebar-vue', className: 'aioseo-headline-analyzer-sidebar-vue' }
+					el('section',
+						{
+							id        : 'aioseo-headline-analyzer-sidebar',
+							className : 'aioseo-headline-analyzer-sidebar'
+						},
+						el('div',
+							{
+								id        : 'aioseo-headline-analyzer-sidebar-vue',
+								className : 'aioseo-headline-analyzer-sidebar-vue'
+							}
+						)
 					)
 				)
 			)

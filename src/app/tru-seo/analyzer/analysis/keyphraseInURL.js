@@ -1,7 +1,8 @@
 import { includes } from 'lodash-es'
 import { __ } from '@wordpress/i18n'
 import { cleanForSlug } from '@/vue/utils/cleanForSlug'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const scores = {
 	noMatches : 1,

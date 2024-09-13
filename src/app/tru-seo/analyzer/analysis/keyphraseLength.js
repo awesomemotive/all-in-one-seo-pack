@@ -2,7 +2,8 @@ import { count } from '@/vue/plugins/wordcount'
 import { inRange } from 'lodash-es'
 import getKeyphraseType from '../researches/helpers/getKeyphraseType'
 import { __, sprintf } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const parameters = {
 	recommendedMinimum : 1,

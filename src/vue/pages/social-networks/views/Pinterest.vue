@@ -8,7 +8,7 @@
 				{{ strings.description }}
 
 				<span
-					v-html="$links.getDocLink(strings.learnHowToGetPinterestTag, 'pinterestSiteVerification', true)"
+					v-html="links.getDocLink(strings.learnHowToGetPinterestTag, 'pinterestSiteVerification', true)"
 				/>
 
 				<br>
@@ -34,33 +34,43 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	useOptionsStore
 } from '@/vue/stores'
 
-import { MetaTag } from '@/vue/mixins/MetaTag'
+import { useMetaTags } from '@/vue/composables/MetaTags'
+
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const { maybeUpdateId } = useMetaTags()
+
 		return {
-			optionsStore : useOptionsStore()
+			maybeUpdateId,
+			optionsStore : useOptionsStore(),
+			links
 		}
 	},
 	components : {
 		CoreCard,
 		CoreSettingsRow
 	},
-	mixins : [ MetaTag ],
 	data () {
 		return {
 			pagePostOptions : [],
 			strings         : {
-				pinterest                 : this.$t.__('Pinterest', this.$td),
-				description               : this.$t.__('Pinterest uses Open Graph metadata just like Facebook, so be sure to keep Open Graph enabled on the Facebook tab checked if you want to optimize your site for Pinterest.', this.$td),
-				learnHowToGetPinterestTag : this.$t.__('Learn how to get your Pinterest Verification Code', this.$td),
-				skipStep                  : this.$t.__('If you have already confirmed your website with Pinterest, you can skip the step below.', this.$td),
-				pinterestVerificationCode : this.$t.__('Pinterest Verification Code', this.$td)
+				pinterest                 : __('Pinterest', td),
+				description               : __('Pinterest uses Open Graph metadata just like Facebook, so be sure to keep Open Graph enabled on the Facebook tab checked if you want to optimize your site for Pinterest.', td),
+				learnHowToGetPinterestTag : __('Learn how to get your Pinterest Verification Code', td),
+				skipStep                  : __('If you have already confirmed your website with Pinterest, you can skip the step below.', td),
+				pinterestVerificationCode : __('Pinterest Verification Code', td)
 			}
 		}
 	}

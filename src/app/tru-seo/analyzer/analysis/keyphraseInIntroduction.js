@@ -3,7 +3,8 @@ import wordMatch from '../researches/stringProcessing/matchTextWithWord'
 import { reject, isEmpty } from 'lodash-es'
 import getKeyphraseType from '../researches/helpers/getKeyphraseType'
 import { __, sprintf } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const scores = {
 	noContent : 0,

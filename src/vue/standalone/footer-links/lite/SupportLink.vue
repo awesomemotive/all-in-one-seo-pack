@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 import { getUtmLink } from '../composables/utmLink'
 
 const td = import.meta.env.VITE_TEXTDOMAIN

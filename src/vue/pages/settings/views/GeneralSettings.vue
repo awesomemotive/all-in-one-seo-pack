@@ -9,7 +9,7 @@
 			:header-text="strings.license"
 		>
 			<template
-				v-if="!$isPro"
+				v-if="!rootStore.isPro"
 				#tooltip
 			>
 				<div v-html="tooltipText" />
@@ -60,6 +60,8 @@
 </template>
 
 <script>
+import { DISCOUNT_PERCENTAGE } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	useRootStore,
@@ -76,6 +78,11 @@ import LiteSettingsNetworkSitesActivation from '@/vue/components/lite/settings/N
 import SettingsLicenseKey from '@/vue/components/AIOSEO_VERSION/settings/LicenseKey'
 import SettingsNetworkSitesActivation from '@/vue/components/AIOSEO_VERSION/settings/NetworkSitesActivation'
 import SvgRocket from '@/vue/components/common/svg/Rocket'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -98,57 +105,57 @@ export default {
 			allowed,
 			license,
 			strings : {
-				license  : this.$t.__('License', this.$td),
-				boldText : this.$t.sprintf(
+				license  : __('License', td),
+				boldText : sprintf(
 					'<strong>%1$s %2$s</strong>',
 					import.meta.env.VITE_NAME,
-					this.$t.__('Free', this.$td)
+					__('Free', td)
 				),
-				purchasedBoldText : this.$t.sprintf(
+				purchasedBoldText : sprintf(
 					'<strong>%1$s %2$s</strong>',
 					import.meta.env.VITE_NAME,
 					'Pro'
 				),
-				linkText : this.$t.sprintf(
+				linkText : sprintf(
 					// Translators: 1 - "Pro".
-					this.$t.__('upgrading to %1$s', this.$td),
+					__('upgrading to %1$s', td),
 					'Pro'
 				),
-				moreBoldText : this.$t.sprintf(
+				moreBoldText : sprintf(
 					'<strong>%1$s</strong>',
 					// Translators: This refers to a discount (e.g. "As a valued user you receive 50%, automatically applied at checkout!").
-					this.$constants.DISCOUNT_PERCENTAGE + ' ' + this.$t.__('off', this.$td)
+					DISCOUNT_PERCENTAGE + ' ' + __('off', td)
 				),
-				setupWizard         : this.$t.__('Setup Wizard', this.$td),
-				relaunchSetupWizard : this.$t.__('Relaunch Setup Wizard', this.$td),
-				setupWizardText     : this.$t.sprintf(
+				setupWizard         : __('Setup Wizard', td),
+				relaunchSetupWizard : __('Relaunch Setup Wizard', td),
+				setupWizardText     : sprintf(
 					// Translators: 1 - The plugin name ("All in One SEO")
-					this.$t.__('Use our configuration wizard to properly set up %1$s with your WordPress website.', this.$td),
+					__('Use our configuration wizard to properly set up %1$s with your WordPress website.', td),
 					import.meta.env.VITE_NAME
 				),
-				domainActivations : this.$t.__('Domain Activations', this.$td)
+				domainActivations : __('Domain Activations', td)
 			}
 		}
 	},
 	computed : {
 		link () {
-			return this.$t.sprintf(
+			return sprintf(
 				'<strong><a href="%1$s" target="_blank">%2$s</a></strong>',
-				this.$links.utmUrl('general-settings', 'license-box-tooltip'),
+				links.utmUrl('general-settings', 'license-box-tooltip'),
 				this.strings.linkText
 			)
 		},
 		tooltipText () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - "upgrading to Pro".
-				this.$t.__('To unlock more features, consider %1$s.', this.$td),
+				__('To unlock more features, consider %1$s.', td),
 				this.link
 			)
 		},
 		moreToolTipText () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - "50% off".
-				this.$t.__('As a valued user you receive %1$s, automatically applied at checkout!', this.$td),
+				__('As a valued user you receive %1$s, automatically applied at checkout!', td),
 				this.strings.moreBoldText
 			)
 		}

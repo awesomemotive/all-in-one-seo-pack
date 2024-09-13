@@ -5,8 +5,8 @@
 			<base-select
 				size="medium"
 				:options="locationsList"
-				:modelValue="getLocationOptions(this.$root.$data.locationId)"
-				@update:modelValue="values => this.$root.$data.locationId = values.value"
+				:modelValue="getLocationOptions($root.$data.locationId)"
+				@update:modelValue="values => $root.$data.locationId = values.value"
 				track-by="value"
 			/>
 		</div>
@@ -78,6 +78,10 @@ import BaseSelect from '@/vue/components/common/base/Select'
 import BaseToggle from '@/vue/components/common/base/Toggle'
 import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -96,20 +100,20 @@ export default {
 			locationsList : [],
 			strings       : {
 				selectLocation : this.rootStore.aioseo.localBusiness.postTypeSingleLabel,
-				showLabel      : this.$t.__('Show label', this.$td),
-				showIcon       : this.$t.__('Show icon', this.$td),
-				businessInfo   : this.$t.__('Business Info', this.$td),
-				mapDisplay     : this.$t.__('Map Display', this.$td),
-				width          : this.$t.__('Width', this.$td),
-				height         : this.$t.__('Height', this.$td),
-				customMarker   : this.$t.__('Custom Marker', this.$td),
-				minimumSize    : this.$t.sprintf(
+				showLabel      : __('Show label', td),
+				showIcon       : __('Show icon', td),
+				businessInfo   : __('Business Info', td),
+				mapDisplay     : __('Map Display', td),
+				width          : __('Width', td),
+				height         : __('Height', td),
+				customMarker   : __('Custom Marker', td),
+				minimumSize    : sprintf(
 					// Translators: 1 - Strong tag, 2 - Close strong tag.
-					this.$t.__('%1$sThe custom marker should be: 100x100 px.%2$s If the image exceeds those dimensions it could (partially) cover the info popup.', this.$td),
+					__('%1$sThe custom marker should be: 100x100 px.%2$s If the image exceeds those dimensions it could (partially) cover the info popup.', td),
 					'<strong>',
 					'</strong>'
 				),
-				label : this.$t.__('Label', this.$td)
+				label : __('Label', td)
 			}
 		}
 	},

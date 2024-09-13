@@ -33,6 +33,7 @@
 					:id="'aioseo-competitor-results' + hashCode(site)"
 					:slug="'analyzeCompetitorSite' + site"
 					:save-toggle-status="false"
+					class="aioseo-competitor-results-wrapper"
 				>
 					<template #header>
 						<core-analyze-score
@@ -71,15 +72,19 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useAnalyzerStore,
 	useSettingsStore
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useSeoSiteScore } from '@/vue/composables'
-import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
+import { useScrollTo } from '@/vue/composables/ScrollTo'
+import { useSeoSiteScore } from '@/vue/composables/SeoSiteScore'
+
 import { isUrl } from '@/vue/utils/helpers'
+
 import CoreAnalyze from '@/vue/components/common/core/analyze/Index'
 import CoreAnalyzeScore from '@/vue/components/common/core/analyze/Score'
 import CoreAnalyzeCompetitorSiteHeader from '@/vue/components/AIOSEO_VERSION/core/analyze/CompetitorSiteHeader'
@@ -87,14 +92,24 @@ import CoreCard from '@/vue/components/common/core/Card'
 import CoreSeoSiteAnalysisResults from '@/vue/components/common/core/SeoSiteAnalysisResults'
 import CoreSiteScoreCompetitor from '@/vue/components/common/core/site-score/Competitor'
 import SvgTrash from '@/vue/components/common/svg/Trash'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const { strings } = useSeoSiteScore()
+		const {
+			strings
+		} = useSeoSiteScore()
+
+		const { scrollTo } = useScrollTo()
 
 		return {
 			analyzerStore     : useAnalyzerStore(),
 			settingsStore     : useSettingsStore(),
-			composableStrings : strings
+			composableStrings : strings,
+			scrollTo
 		}
 	},
 	components : {
@@ -106,20 +121,18 @@ export default {
 		CoreSiteScoreCompetitor,
 		SvgTrash
 	},
-	mixins : [ SeoSiteScore ],
 	data () {
 		return {
-			score             : 0,
 			competitorUrl     : null,
 			isAnalyzing       : false,
 			inputError        : false,
 			competitorResults : {},
 			analyzeTime       : 8,
 			strings           : merge(this.composableStrings, {
-				enterCompetitorUrl     : this.$t.__('Enter Competitor URL', this.$td),
-				performInDepthAnalysis : this.$t.__('Perform in-depth SEO Analysis of your competitor\'s website.', this.$td),
-				analyze                : this.$t.__('Analyze', this.$td),
-				pleaseEnterValidUrl    : this.$t.__('Please enter a valid URL.', this.$td)
+				enterCompetitorUrl     : __('Enter Competitor URL', td),
+				performInDepthAnalysis : __('Perform in-depth SEO Analysis of your competitor\'s website.', td),
+				analyze                : __('Analyze', td),
+				pleaseEnterValidUrl    : __('Please enter a valid URL.', td)
 			})
 		}
 	},
@@ -134,17 +147,17 @@ export default {
 		getError () {
 			switch (this.analyzerStore.analyzeError) {
 				case 'invalid-url':
-					return this.$t.__('The URL provided is invalid.', this.$td)
+					return __('The URL provided is invalid.', td)
 				case 'missing-content':
-					return this.$t.sprintf(
+					return sprintf(
 						'%1$s %2$s',
-						this.$t.__('We were unable to parse the content for this site.', this.$td),
-						this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'seoAnalyzerIssues', true)
+						__('We were unable to parse the content for this site.', td),
+						links.getDocLink(GLOBAL_STRINGS.learnMore, 'seoAnalyzerIssues', true)
 					)
 				case 'invalid-token':
-					return this.$t.sprintf(
+					return sprintf(
 						// Translators: 1 - The plugin short name ('AIOSEO').
-						this.$t.__('Your site is not connected. Please connect to %1$s, then try again.', this.$td),
+						__('Your site is not connected. Please connect to %1$s, then try again.', td),
 						import.meta.env.VITE_SHORT_NAME
 					)
 			}
@@ -208,15 +221,13 @@ export default {
 			this.$nextTick(() => {
 				this.competitorResults = this.analyzerStore.getCompetitorSiteAnalysisResults // get results first so that we can get proper index for card
 
-				const keys   	= Object.keys(this.competitorResults)
-				const header 	= document.querySelector('.aioseo-header')
-				const offset 	= header.offsetHeight + header.offsetTop + 30
-				const keyIndex 	= -1 === keys.indexOf(this.competitorUrl) ? 0 : keys.indexOf(this.competitorUrl)
+				const keys     = Object.keys(this.competitorResults)
+				const keyIndex = -1 === keys.indexOf(this.competitorUrl) ? 0 : keys.indexOf(this.competitorUrl)
 
 				this.toggleCard(keyIndex)
-				this.$scrollTo('#aioseo-competitor-results' + this.hashCode(keys[keyIndex]), { offset: -offset })
+				this.scrollTo('aioseo-competitor-results' + this.hashCode(keys[keyIndex]))
 
-				this.competitorUrl     = null
+				this.competitorUrl = null
 			})
 		},
 		startDeleteSite (site) {
@@ -273,6 +284,10 @@ export default {
 		&:hover {
 			color: $black2;
 		}
+	}
+
+	.aioseo-competitor-results-wrapper {
+		scroll-margin-top: 92px;
 	}
 
 	.competitor-results-main {

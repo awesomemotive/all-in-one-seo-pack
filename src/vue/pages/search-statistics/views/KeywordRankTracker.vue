@@ -11,28 +11,22 @@
 	/>
 </template>
 
-<script>
+<script setup>
 import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
-import { LicenseConditions } from '@/vue/mixins/LicenseConditions'
-
 import KeywordRankTracker from './keyword-rank-tracker/Index'
 import Lite from './lite/keyword-rank-tracker/Index'
 
-export default {
-	setup () {
-		return {
-			searchStatisticsStore : useSearchStatisticsStore()
-		}
-	},
-	mixins     : [ LicenseConditions ],
-	components : {
-		KeywordRankTracker,
-		Lite
-	}
-}
+import { useLicense } from '@/vue/composables/License'
+
+const searchStatisticsStore = useSearchStatisticsStore()
+
+const {
+	shouldShowLite,
+	shouldShowUpgrade
+} = useLicense()
 </script>
 
 <style lang="scss">

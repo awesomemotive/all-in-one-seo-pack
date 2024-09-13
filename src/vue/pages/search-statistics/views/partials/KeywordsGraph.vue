@@ -11,7 +11,7 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import {
 	useLicenseStore,
 	useSearchStatisticsStore
@@ -19,23 +19,16 @@ import {
 
 import KeywordsGraph from './keywords-graph/KeywordsGraph'
 import Upgrade from './keywords-graph/Upgrade'
-import { LicenseConditions } from '@/vue/mixins/LicenseConditions'
-export default {
-	setup () {
-		return {
-			licenseStore          : useLicenseStore(),
-			searchStatisticsStore : useSearchStatisticsStore()
-		}
-	},
-	mixins : [ LicenseConditions ],
-	props  : {
-		redirects : Object
-	},
-	components : {
-		KeywordsGraph,
-		Upgrade
-	}
-}
+
+import { useLicense } from '@/vue/composables/License'
+
+const {
+	shouldShowMain,
+	shouldShowUpgrade
+} = useLicense()
+
+const licenseStore          = useLicenseStore()
+const searchStatisticsStore = useSearchStatisticsStore()
 </script>
 
 <style lang="scss">

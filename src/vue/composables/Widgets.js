@@ -2,7 +2,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { __, sprintf } from '@wordpress/i18n'
+import { __, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 

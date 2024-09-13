@@ -62,7 +62,7 @@ import BaseToggle from '@/vue/components/common/base/Toggle'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 const strings = {

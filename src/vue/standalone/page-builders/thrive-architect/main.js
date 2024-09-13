@@ -7,13 +7,11 @@ import loadComponents from '@/vue/components/common'
 
 import { loadPiniaStores } from '@/vue/stores'
 
-import TruSeo from '@/vue/plugins/tru-seo'
-
 import initWatcher from './watcher'
 import initPanel from './settings-panel'
 import initLimitModifiedDate from './limit-modified-date'
-import Sidebar from './components/Sidebar.vue'
-import Button from './components/Button.vue'
+import Sidebar from './components/Sidebar'
+import Button from './components/Button'
 
 const mountPostSettings = () => {
 	// Router placeholder to prevent errors when using router-link.
@@ -47,8 +45,6 @@ const mountPostSettings = () => {
 
 	// Use the pinia store.
 	loadPiniaStores(app, router)
-
-	app.config.globalProperties.$truSeo = new TruSeo()
 
 	app.mount('#aioseo-panel')
 }

@@ -21,7 +21,7 @@ trait DateTime {
 	 * @return string       The date formatted in ISO8601 format.
 	 */
 	public function dateToIso8601( $date ) {
-		return date( 'Y-m-d', strtotime( $date ) );
+		return date( 'Y-m-d', strtotime( $date ) ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 	}
 
 	/**
@@ -33,7 +33,7 @@ trait DateTime {
 	 * @return string           The date formatted in ISO8601 format.
 	 */
 	public function dateTimeToIso8601( $dateTime ) {
-		return gmdate( 'c', strtotime( $dateTime ) );
+		return date( 'c', strtotime( $dateTime ) ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 	}
 
 	/**
@@ -45,7 +45,7 @@ trait DateTime {
 	 * @return string           The date formatted in RFC-822 format.
 	 */
 	public function dateTimeToRfc822( $dateTime ) {
-		return gmdate( 'D, d M Y H:i:s O', strtotime( $dateTime ) );
+		return date( 'D, d M Y H:i:s O', strtotime( $dateTime ) ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 	}
 
 	/**
@@ -113,6 +113,6 @@ trait DateTime {
 	public function timeToMysql( $time ) {
 		$time = is_string( $time ) ? strtotime( $time ) : $time;
 
-		return date( 'Y-m-d H:i:s', $time );
+		return date( 'Y-m-d H:i:s', $time ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 	}
 }

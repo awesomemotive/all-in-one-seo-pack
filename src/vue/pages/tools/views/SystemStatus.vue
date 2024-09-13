@@ -118,6 +118,11 @@ import SvgCopy from '@/vue/components/common/svg/Copy'
 import SvgDownload from '@/vue/components/common/svg/Download'
 import TableColumn from '@/vue/components/common/table/Column'
 import TableRow from '@/vue/components/common/table/Row'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -142,18 +147,18 @@ export default {
 			emailAddress : null,
 			sendingEmail : false,
 			strings      : {
-				systemStatusInfo       : this.$t.__('System Status Info', this.$td),
-				downloadSystemInfoFile : this.$t.__('Download System Info File', this.$td),
-				copyToClipboard        : this.$t.__('Copy to Clipboard', this.$td),
-				emailDebugInformation  : this.$t.__('Email Debug Information', this.$td),
-				submit                 : this.$t.__('Submit', this.$td),
-				wordPress              : this.$t.__('WordPress', this.$td),
-				serverInfo             : this.$t.__('Server Info', this.$td),
-				activeTheme            : this.$t.__('Active Theme', this.$td),
-				muPlugins              : this.$t.__('Must-Use Plugins', this.$td),
-				activePlugins          : this.$t.__('Active Plugins', this.$td),
-				inactivePlugins        : this.$t.__('Inactive Plugins', this.$td),
-				copied                 : this.$t.__('Copied!', this.$td)
+				systemStatusInfo       : __('System Status Info', td),
+				downloadSystemInfoFile : __('Download System Info File', td),
+				copyToClipboard        : __('Copy to Clipboard', td),
+				emailDebugInformation  : __('Email Debug Information', td),
+				submit                 : __('Submit', td),
+				wordPress              : __('WordPress', td),
+				serverInfo             : __('Server Info', td),
+				activeTheme            : __('Active Theme', td),
+				muPlugins              : __('Must-Use Plugins', td),
+				activePlugins          : __('Active Plugins', td),
+				inactivePlugins        : __('Inactive Plugins', td),
+				copied                 : __('Copied!', td)
 			}
 		}
 	},

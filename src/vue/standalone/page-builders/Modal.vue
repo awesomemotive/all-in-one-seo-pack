@@ -41,13 +41,17 @@ import PostSettings from '@/vue/standalone/post-settings/App'
 import SvgClose from '@/vue/components/common/svg/Close'
 import UtilDraggable from '@/vue/components/common/util/Draggable'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'update:is-open' ],
 	setup () {
 		return {
 			truSeoShouldAnalyze
 		}
 	},
-	emits      : [ 'update:is-open' ],
 	components : {
 		CoreScoreButton,
 		PostSettings,
@@ -67,9 +71,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				header : this.$t.sprintf(
+				header : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('%1$s Settings', this.$td),
+					__('%1$s Settings', td),
 					import.meta.env.VITE_SHORT_NAME
 				)
 			}

@@ -48,7 +48,7 @@
 					<base-button
 						v-if="!showSampleDataUnlockCta"
 						tag="a"
-						:href="$links.getPricingUrl('search-statistics', 'search-statistics-demo-upsell', $route.name)"
+						:href="links.getPricingUrl('search-statistics', 'search-statistics-demo-upsell', $route.name)"
 						target="_blank"
 						type="green"
 						size="small"
@@ -91,7 +91,11 @@ import {
 
 import license from '@/vue/utils/license'
 import { DateTime } from 'luxon'
-import { GoogleSearchConsole } from '@/vue/mixins/GoogleSearchConsole'
+
+import { useGoogleSearchConsole } from '@/vue/composables/GoogleSearchConsole'
+
+import links from '@/vue/utils/links'
+
 import AuthenticationAlert from './partials/AuthenticationAlert'
 import BaseButton from '@/vue/components/common/base/Button'
 import BaseDatePicker from '@/vue/components/common/base/DatePicker'
@@ -106,14 +110,27 @@ import KeywordRankTracker from './KeywordRankTracker'
 import PostDetail from './AIOSEO_VERSION/PostDetail'
 import SeoStatistics from './SeoStatistics'
 import Settings from './AIOSEO_VERSION/Settings'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'rolling' ],
 	setup () {
+		const {
+			connect,
+			loading
+		} = useGoogleSearchConsole()
+
 		return {
+			connect,
 			licenseStore          : useLicenseStore(),
+			links,
+			loading,
 			searchStatisticsStore : useSearchStatisticsStore()
 		}
 	},
-	emits      : [ 'rolling' ],
 	components : {
 		AuthenticationAlert,
 		BaseButton,
@@ -130,16 +147,15 @@ export default {
 		Settings,
 		SeoStatistics
 	},
-	mixins : [ GoogleSearchConsole ],
 	data () {
 		return {
 			maxDate : null,
 			minDate : null,
 			strings : {
-				pageName            : this.$t.__('Search Statistics', this.$td),
-				sampleDataAlert     : this.$t.__('Sample data is available for you to explore. Connect your site to Google Search Console to receive insights on how content is being discovered. Identify areas for improvement and drive traffic to your website.', this.$td),
-				ctaButtonText       : this.$t.__('Connect to Google Search Console', this.$td),
-				ctaUnlockButtonText : this.$t.__('Unlock Search Statistics', this.$td)
+				pageName            : __('Search Statistics', td),
+				sampleDataAlert     : __('Sample data is available for you to explore. Connect your site to Google Search Console to receive insights on how content is being discovered. Identify areas for improvement and drive traffic to your website.', td),
+				ctaButtonText       : __('Connect to Google Search Console', td),
+				ctaUnlockButtonText : __('Unlock Search Statistics', td)
 			}
 		}
 	},
@@ -195,21 +211,21 @@ export default {
 		datepickerShortcuts () {
 			return [
 				{
-					text  : this.$t.__('Last 7 Days', this.$td),
+					text  : __('Last 7 Days', td),
 					value : () => {
 						window.aioseoBus.$emit('rolling', 'last7Days')
 						return [ this.getOriginalMaxDate.plus({ days: -6 }).toJSDate(), this.getOriginalMaxDate.toJSDate() ]
 					}
 				},
 				{
-					text  : this.$t.__('Last 28 Days', this.$td),
+					text  : __('Last 28 Days', td),
 					value : () => {
 						window.aioseoBus.$emit('rolling', 'last28Days')
 						return [ this.getOriginalMaxDate.plus({ days: -27 }).toJSDate(), this.getOriginalMaxDate.toJSDate() ]
 					}
 				},
 				{
-					text  : this.$t.__('Last 3 Months', this.$td),
+					text  : __('Last 3 Months', td),
 					value : () => {
 						window.aioseoBus.$emit('rolling', 'last3Months')
 						return [ this.getOriginalMaxDate.plus({ days: -89 }).toJSDate(), this.getOriginalMaxDate.toJSDate() ]
@@ -240,28 +256,28 @@ export default {
 			const shortcutButtons = document.querySelectorAll('.el-picker-panel__shortcut')
 			shortcutButtons.forEach((button) => {
 				switch (button.innerText) {
-					case this.$t.__('Last 7 Days', this.$td) :
+					case __('Last 7 Days', td) :
 						if ('last7Days' === rolling) {
 							button.classList.add('active')
 						} else {
 							button.classList.remove('active')
 						}
 						break
-					case this.$t.__('Last 28 Days', this.$td) :
+					case __('Last 28 Days', td) :
 						if ('last28Days' === rolling) {
 							button.classList.add('active')
 						} else {
 							button.classList.remove('active')
 						}
 						break
-					case this.$t.__('Last 3 Months', this.$td) :
+					case __('Last 3 Months', td) :
 						if ('last3Months' === rolling) {
 							button.classList.add('active')
 						} else {
 							button.classList.remove('active')
 						}
 						break
-					case this.$t.__('Last 6 Months', this.$td) :
+					case __('Last 6 Months', td) :
 						if ('last6Months' === rolling) {
 							button.classList.add('active')
 						} else {

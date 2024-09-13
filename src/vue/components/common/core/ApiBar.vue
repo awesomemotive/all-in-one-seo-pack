@@ -9,35 +9,50 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
+import links from '@/vue/utils/links'
 import SvgAioseoLogoGear from '@/vue/components/common/svg/aioseo/LogoGear'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		SvgAioseoLogoGear
 	},
 	data () {
 		return {
 			strings : {
-				boldText : this.$t.sprintf(
+				boldText : sprintf(
 					'<strong>%1$s %2$s</strong>',
 					import.meta.env.VITE_SHORT_NAME,
-					this.$isPro ? 'Pro' : ''
+					this.rootStore.isPro ? 'Pro' : ''
 				),
-				linkText : this.$t.__('Click here to learn more', this.$td)
+				linkText : __('Click here to learn more', td)
 			}
 		}
 	},
 	computed : {
 		link () {
-			return this.$t.sprintf(
+			return sprintf(
 				'<strong><a href="%1$s" target="_blank" class="text-white">%2$s</a></strong>',
-				this.$links.getDocUrl('restApi'),
+				links.getDocUrl('restApi'),
 				this.strings.linkText
 			)
 		},
 		upgradeText () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The plugin name ("All in One SEO"), 2 - "upgrading to Pro".
-				this.$t.__('%1$s relies on the WordPress Rest API and your site might have it disabled. %2$s.', this.$td),
+				__('%1$s relies on the WordPress Rest API and your site might have it disabled. %2$s.', td),
 				this.strings.boldText,
 				this.link
 			)

@@ -130,8 +130,9 @@ import {
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useWizard } from '@/vue/composables'
-import { Wizard } from '@/vue/mixins/Wizard'
+
+import { useWizard } from '@/vue/composables/Wizard'
+
 import BaseHighlightToggle from '@/vue/components/common/base/HighlightToggle'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import GridColumn from '@/vue/components/common/grid/Column'
@@ -148,9 +149,16 @@ import WizardCloseAndExit from '@/vue/components/common/wizard/CloseAndExit'
 import WizardContainer from '@/vue/components/common/wizard/Container'
 import WizardHeader from '@/vue/components/common/wizard/Header'
 import WizardSteps from '@/vue/components/common/wizard/Steps'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const { strings } = useWizard()
+		const { strings } = useWizard({
+			stage : 'category'
+		})
 
 		return {
 			optionsStore      : useOptionsStore(),
@@ -177,30 +185,28 @@ export default {
 		WizardHeader,
 		WizardSteps
 	},
-	mixins : [ Wizard ],
 	data () {
 		return {
 			loaded           : false,
 			titleCount       : 0,
 			descriptionCount : 0,
 			loading          : false,
-			stage            : 'category',
 			strings          : merge(this.composableStrings, {
-				category        : this.$t.__('Which category best describes your website?', this.$td),
-				selectCategory  : this.$t.__('Select a category to help us narrow down the SEO options that work best for you and your site.', this.$td),
-				enterYourAnswer : this.$t.__('Enter your answer', this.$td),
-				siteTitle       : this.$t.__('Home Page Title', this.$td),
-				metaDescription : this.$t.__('Home Page Meta Description', this.$td)
+				category        : __('Which category best describes your website?', td),
+				selectCategory  : __('Select a category to help us narrow down the SEO options that work best for you and your site.', td),
+				enterYourAnswer : __('Enter your answer', td),
+				siteTitle       : __('Home Page Title', td),
+				metaDescription : __('Home Page Meta Description', td)
 			}),
 			categories : [
-				{ value: 'blog', name: this.$t.__('Blog', this.$td), icon: 'svg-blog' },
-				{ value: 'news-channel', name: this.$t.__('News Channel', this.$td), icon: 'svg-news-channel' },
-				{ value: 'online-store', name: this.$t.__('Online Store', this.$td), icon: 'svg-online-store' },
-				{ value: 'small-offline-business', name: this.$t.__('Small Offline Business', this.$td), icon: 'svg-local-business' },
-				{ value: 'corporation', name: this.$t.__('Corporation', this.$td), icon: 'svg-corporation' },
-				{ value: 'portfolio', name: this.$t.__('Portfolio', this.$td), icon: 'svg-image-seo' }
+				{ value: 'blog', name: __('Blog', td), icon: 'svg-blog' },
+				{ value: 'news-channel', name: __('News Channel', td), icon: 'svg-news-channel' },
+				{ value: 'online-store', name: __('Online Store', td), icon: 'svg-online-store' },
+				{ value: 'small-offline-business', name: __('Small Offline Business', td), icon: 'svg-local-business' },
+				{ value: 'corporation', name: __('Corporation', td), icon: 'svg-corporation' },
+				{ value: 'portfolio', name: __('Portfolio', td), icon: 'svg-image-seo' }
 			],
-			otherCategory : { value: 'other', name: this.$t.__('Other:', this.$td), icon: 'svg-pencil', valueInput: null },
+			otherCategory : { value: 'other', name: __('Other:', td), icon: 'svg-pencil', valueInput: null },
 			selected      : []
 		}
 	},

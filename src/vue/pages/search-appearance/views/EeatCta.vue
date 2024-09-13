@@ -6,24 +6,18 @@
 	</div>
 </template>
 
-<script>
-import EeatCta from './AIOSEO_VERSION/eeat/EeatCta.vue'
-import EeatCtaLite from './lite/eeat/EeatCta.vue'
-import { AddonConditions } from '@/vue/mixins/AddonConditions'
+<script setup>
+import EeatCta from './AIOSEO_VERSION/eeat/EeatCta'
+import EeatCtaLite from './lite/eeat/EeatCta'
+import { useAddonConditions } from '@/vue/composables/AddonConditions'
 
-export default {
-	// TODO: Rewrite this to composition API once we've converted the mixin to a composable.
-	components : {
-		EeatCta,
-		EeatCtaLite
-	},
-	mixins : [ AddonConditions ],
-	data () {
-		return {
-			addonSlug : 'aioseo-eeat'
-		}
-	}
-}
+const {
+	shouldShowActivate,
+	shouldShowLite,
+	shouldShowUpdate
+} = useAddonConditions({
+	addonSlug : 'aioseo-eeat'
+})
 </script>
 
 <style>

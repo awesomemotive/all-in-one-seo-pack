@@ -8,8 +8,6 @@ import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
 import { loadPiniaStores } from '@/vue/stores'
 
-import TruSeo from '@/vue/plugins/tru-seo'
-
 import initWatcher from './watcher'
 import initIntroduction from './introduction'
 import initLimitModifiedDate from './limit-modified-date'
@@ -157,8 +155,6 @@ const initAioseoEditor = (selector) => {
 
 	// Initialize the editor data watcher.
 	initWatcher()
-
-	app.config.globalProperties.$truSeo = new TruSeo()
 
 	app.mount(`${selector} > div`)
 

@@ -9,7 +9,7 @@
 			<div class="aioseo-settings-row aioseo-section-description">
 				{{ strings.description }}
 				<span
-					v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'rssSitemaps', true)"
+					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'rssSitemaps', true)"
 				/>
 			</div>
 
@@ -27,7 +27,7 @@
 
 			<core-settings-row
 				v-if="optionsStore.options.sitemap.rss.enable"
-				:name="$constants.GLOBAL_STRINGS.preview"
+				:name="GLOBAL_STRINGS.preview"
 			>
 				<template #content>
 					<div class="aioseo-sitemap-preview">
@@ -48,7 +48,7 @@
 						{{ strings.doYou404 }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
 						/>
 					</div>
 				</template>
@@ -78,7 +78,7 @@
 						{{ strings.maxLinks }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'maxLinksRss', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'maxLinksRss', true)"
 						/>
 					</div>
 				</template>
@@ -106,7 +106,7 @@
 						{{ strings.selectPostTypes }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'selectPostTypesRss', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypesRss', true)"
 						/>
 					</div>
 				</template>
@@ -116,12 +116,15 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useOptionsStore,
 	useRootStore
 } from '@/vue/stores'
 
-import { useCommonSitemap } from '@/vue/pages/sitemaps/composables'
+import { useCommonSitemap } from '@/vue/pages/sitemaps/composables/CommonSitemap'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreCard from '@/vue/components/common/core/Card'
 import CorePostTypeOptions from '@/vue/components/common/core/PostTypeOptions'
@@ -129,6 +132,11 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SearchConsole from './partials/SearchConsole'
 import SearchConsoleInline from './partials/SearchConsoleInline'
 import SvgExternal from '@/vue/components/common/svg/External'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		const { validateLinksPerIndex } = useCommonSitemap()
@@ -136,7 +144,9 @@ export default {
 		return {
 			optionsStore : useOptionsStore(),
 			rootStore    : useRootStore(),
-			validateLinksPerIndex
+			validateLinksPerIndex,
+			GLOBAL_STRINGS,
+			links
 		}
 	},
 	components : {
@@ -152,28 +162,28 @@ export default {
 		return {
 			pagePostOptions : [],
 			strings         : {
-				rss                            : this.$t.__('RSS Sitemap', this.$td),
-				description                    : this.$t.__('This option will generate a separate RSS Sitemap which can be submitted to Google, Bing and any other search engines that support this type of sitemap. The RSS Sitemap contains an RSS feed of the latest updates to your site content. It is not a full sitemap of all your content.', this.$td),
-				enableSitemap                  : this.$t.__('Enable Sitemap', this.$td),
-				sitemapSettings                : this.$t.__('Sitemap Settings', this.$td),
-				enableSitemapIndexes           : this.$t.__('Enable Sitemap Indexes', this.$td),
-				sitemapIndexes                 : this.$t.__('Organize sitemap entries into distinct files in your sitemap. We recommend you enable this setting if your sitemap contains more than 1,000 URLs.', this.$td),
-				linksPerSitemap                : this.$t.__('Number of Posts', this.$td),
-				noIndexDisplayed               : this.$t.__('Noindexed content will not be displayed in your sitemap.', this.$td),
-				doYou404                       : this.$t.__('Do you get a blank sitemap or 404 error?', this.$td),
-				openSitemap                    : this.$t.__('Open RSS Sitemap', this.$td),
-				maxLinks                       : this.$t.__('Allows you to specify the maximum number of posts for the RSS Sitemap. We recommend an amount of 50 posts.', this.$td),
-				automaticallyPingSearchEngines : this.$t.__('Automatically Ping Search Engines', this.$td),
-				postTypes                      : this.$t.__('Post Types', this.$td),
-				taxonomies                     : this.$t.__('Taxonomies', this.$td),
-				dateArchiveSitemap             : this.$t.__('Date Archive Sitemap', this.$td),
-				includeDateArchives            : this.$t.__('Include Date Archives in your sitemap.', this.$td),
-				authorSitemap                  : this.$t.__('Author Sitemap', this.$td),
-				includeAuthorArchives          : this.$t.__('Include Author Archives in your sitemap.', this.$td),
-				includeAllPostTypes            : this.$t.__('Include All Post Types', this.$td),
-				selectPostTypes                : this.$t.__('Select which Post Types appear in your sitemap.', this.$td),
-				includeAllTaxonomies           : this.$t.__('Include All Taxonomies', this.$td),
-				selectTaxonomies               : this.$t.__('Select which Taxonomies appear in your sitemap.', this.$td)
+				rss                            : __('RSS Sitemap', td),
+				description                    : __('This option will generate a separate RSS Sitemap which can be submitted to Google, Bing and any other search engines that support this type of sitemap. The RSS Sitemap contains an RSS feed of the latest updates to your site content. It is not a full sitemap of all your content.', td),
+				enableSitemap                  : __('Enable Sitemap', td),
+				sitemapSettings                : __('Sitemap Settings', td),
+				enableSitemapIndexes           : __('Enable Sitemap Indexes', td),
+				sitemapIndexes                 : __('Organize sitemap entries into distinct files in your sitemap. We recommend you enable this setting if your sitemap contains more than 1,000 URLs.', td),
+				linksPerSitemap                : __('Number of Posts', td),
+				noIndexDisplayed               : __('Noindexed content will not be displayed in your sitemap.', td),
+				doYou404                       : __('Do you get a blank sitemap or 404 error?', td),
+				openSitemap                    : __('Open RSS Sitemap', td),
+				maxLinks                       : __('Allows you to specify the maximum number of posts for the RSS Sitemap. We recommend an amount of 50 posts.', td),
+				automaticallyPingSearchEngines : __('Automatically Ping Search Engines', td),
+				postTypes                      : __('Post Types', td),
+				taxonomies                     : __('Taxonomies', td),
+				dateArchiveSitemap             : __('Date Archive Sitemap', td),
+				includeDateArchives            : __('Include Date Archives in your sitemap.', td),
+				authorSitemap                  : __('Author Sitemap', td),
+				includeAuthorArchives          : __('Include Author Archives in your sitemap.', td),
+				includeAllPostTypes            : __('Include All Post Types', td),
+				selectPostTypes                : __('Select which Post Types appear in your sitemap.', td),
+				includeAllTaxonomies           : __('Include All Taxonomies', td),
+				selectTaxonomies               : __('Select which Taxonomies appear in your sitemap.', td)
 			}
 		}
 	},

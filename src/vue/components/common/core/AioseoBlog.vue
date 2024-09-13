@@ -14,7 +14,7 @@
 			</li>
 		</ul>
 		<a
-			:href="$links.utmUrl(medium, null, 'blog/')"
+			:href="links.utmUrl(medium, null, 'blog/')"
 			class="aioseo-blog-read-more"
 			target="_blank"
 		>
@@ -24,15 +24,22 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	useRootStore
 } from '@/vue/stores'
 
 import SvgExternal from '@/vue/components/common/svg/External'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
-			rootStore : useRootStore()
+			rootStore : useRootStore(),
+			links
 		}
 	},
 	components : {
@@ -49,7 +56,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				readMore : this.$t.__('Read more like this on our SEO blog', this.$td)
+				readMore : __('Read more like this on our SEO blog', td)
 			}
 		}
 	}

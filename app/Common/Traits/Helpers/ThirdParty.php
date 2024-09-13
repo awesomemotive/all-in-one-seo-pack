@@ -108,7 +108,11 @@ trait ThirdParty {
 			return is_shop();
 		}
 
-		$id = ! $id && ! empty( $_GET['post'] ) ? (int) wp_unslash( $_GET['post'] ) : (int) $id; // phpcs:ignore HM.Security.ValidatedSanitizedInput, HM.Security.NonceVerification.Recommended
+		// phpcs:disable HM.Security.ValidatedSanitizedInput, HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
+		$id = ! $id && ! empty( $_GET['post'] )
+			? (int) sanitize_text_field( wp_unslash( $_GET['post'] ) )
+			: (int) $id;
+		// phpcs:enable
 
 		return $id && wc_get_page_id( 'shop' ) === $id;
 	}
@@ -130,7 +134,11 @@ trait ThirdParty {
 			return is_cart();
 		}
 
-		$id = ! $id && ! empty( $_GET['post'] ) ? (int) wp_unslash( $_GET['post'] ) : (int) $id; // phpcs:ignore HM.Security.ValidatedSanitizedInput, HM.Security.NonceVerification.Recommended
+		// phpcs:disable HM.Security.ValidatedSanitizedInput, HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
+		$id = ! $id && ! empty( $_GET['post'] )
+			? (int) sanitize_text_field( wp_unslash( $_GET['post'] ) )
+			: (int) $id;
+		// phpcs:enable
 
 		return $id && wc_get_page_id( 'cart' ) === $id;
 	}
@@ -152,7 +160,11 @@ trait ThirdParty {
 			return is_checkout();
 		}
 
-		$id = ! $id && ! empty( $_GET['post'] ) ? (int) wp_unslash( $_GET['post'] ) : (int) $id; // phpcs:ignore HM.Security.ValidatedSanitizedInput, HM.Security.NonceVerification.Recommended
+		// phpcs:disable HM.Security.ValidatedSanitizedInput, HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
+		$id = ! $id && ! empty( $_GET['post'] )
+			? (int) sanitize_text_field( wp_unslash( $_GET['post'] ) )
+			: (int) $id;
+		// phpcs:enable
 
 		return $id && wc_get_page_id( 'checkout' ) === $id;
 	}
@@ -174,7 +186,11 @@ trait ThirdParty {
 			return is_account_page();
 		}
 
-		$id = ! $id && ! empty( $_GET['post'] ) ? (int) wp_unslash( $_GET['post'] ) : (int) $id; // phpcs:ignore HM.Security.ValidatedSanitizedInput, HM.Security.NonceVerification.Recommended
+		// phpcs:disable HM.Security.ValidatedSanitizedInput, HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
+		$id = ! $id && ! empty( $_GET['post'] )
+			? (int) sanitize_text_field( wp_unslash( $_GET['post'] ) )
+			: (int) $id;
+		// phpcs:enable
 
 		return $id && wc_get_page_id( 'myaccount' ) === $id;
 	}
@@ -726,6 +742,6 @@ trait ThirdParty {
 			return false;
 		}
 
-		return preg_match( '#.*Yandex.*#', $_SERVER['HTTP_USER_AGENT'] );
+		return preg_match( '#.*Yandex.*#', sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) );
 	}
 }

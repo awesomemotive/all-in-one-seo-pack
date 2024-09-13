@@ -161,33 +161,221 @@
 	</div>
 </template>
 
-<script>
-import { HeadlineResult } from '@/vue/mixins/HeadlineResult'
-import { useHeadlineResult } from '@/vue/composables'
-import CoreTooltip from '@/vue/components/common/core/Tooltip'
-import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
-import SvgSeoSiteScore from '@/vue/components/common/svg/seo-site-score/Index'
-export default {
-	setup () {
-		const { strings } = useHeadlineResult()
+<script setup>
+import { computed } from 'vue'
 
-		return {
-			strings
-		}
-	},
-	components : {
-		CoreTooltip,
-		SvgCircleQuestionMark,
-		SvgSeoSiteScore
-	},
-	mixins : [ HeadlineResult ],
-	props  : {
-		result : {
-			type     : Object,
-			required : true
+import CoreTooltip from '@/vue/components/common/core/Tooltip'
+import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
+import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
+import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation'
+import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
+import SvgFaceNegative from '@/vue/components/common/svg/face/Negative'
+import SvgFaceNeutral from '@/vue/components/common/svg/face/Neutral'
+import SvgFaceSmile from '@/vue/components/common/svg/face/Smile'
+import SvgList from '@/vue/components/common/svg/List'
+import SvgSeoSiteScore from '@/vue/components/common/svg/seo-site-score/Index'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
+const strings = {
+	wordBalance    : __('Word balance', td),
+	characterCount : __('Character Count', td),
+	sentiment      : __('Sentiment', td),
+	wordCount      : __('Word Count', td),
+	headlineType   : __('Headline Type', td),
+	goal           : __('Goal: ', td)
+}
+
+const props = defineProps({
+	result : {
+		type     : Object,
+		required : true
+	}
+})
+
+const wordBalance = computed(() => {
+	const result = props.result
+
+	const words = {
+		common : {
+			title   : __('Common Words', td),
+			help    : __('Headlines with 20-30% common words are more likely to get clicks.', td),
+			class   : 0 === result.commonWordsPercentage ? 'red' : 0.2 > result.commonWordsPercentage ? 'orange' : 'green',
+			words   : result.commonWords,
+			percent : Math.round(result.commonWordsPercentage * 100),
+			bar     : (100 * result.commonWordsPercentage) / 0.3,
+			goal    : __('20-30%', td)
+		},
+		uncommon : {
+			title   : __('Uncommon Words', td),
+			help    : __('Your headline would be more likely to get clicks if it had more uncommon words.', td),
+			class   : 0 === result.uncommonWordsPercentage ? 'red' : 0.1 > result.uncommonWordsPercentage ? 'orange' : 'green',
+			words   : result.uncommonWords,
+			percent : Math.round(result.uncommonWordsPercentage * 100),
+			bar     : (100 * result.uncommonWordsPercentage) / 0.2,
+			goal    : __('10-20%', td)
+		},
+		emotional : {
+			title   : __('Emotional Words', td),
+			help    : __('Emotionally triggered headlines are likely to drive more clicks.', td),
+			class   : 0 === result.emotionalWordsPercentage ? 'red' : 0.1 > result.emotionalWordsPercentage ? 'orange' : 'green',
+			words   : result.emotionWords,
+			percent : Math.round(result.emotionalWordsPercentage * 100),
+			bar     : (100 * result.emotionalWordsPercentage) / 0.15,
+			goal    : __('10-15%', td)
+		},
+		power : {
+			title   : __('Power Words', td),
+			help    : __('Headlines with power words are more likely to get clicks.', td),
+			class   : 0 === result.powerWordsPercentage ? 'red' : 'green',
+			words   : result.powerWords,
+			percent : Math.round(result.powerWordsPercentage * 100),
+			bar     : (100 * result.powerWordsPercentage) / 0.1,
+			goal    : __('at least one', td)
 		}
 	}
-}
+
+	const allGood = Object.values(words).every(word => 'green' === word.class)
+
+	return {
+		result : allGood ? __('All good', td) : __('Needs improvement', td),
+		icon   : allGood ? SvgCircleCheck : SvgCircleExclamation,
+		class  : allGood ? 'green' : 'orange',
+		words
+	}
+})
+
+const characterCount = computed(() => {
+	let color, result, icon, guideline
+	const length  = props.result.length
+	const percent = Math.round((100 * length) / 65) // 65 is the limit for a good grade.
+
+	switch (true) {
+		case 19 >= length:
+		case 80 <= length:
+			color = 'red'
+			icon  = SvgCircleClose
+			break
+		case 20 <= length && 34 >= length:
+		case 67 <= length && 79 >= length:
+			color = 'orange'
+			icon  = SvgCircleExclamation
+			break
+		case 35 <= length && 66 >= length:
+			color = 'green'
+			icon  = SvgCircleCheck
+			break
+	}
+
+	switch (true) {
+		case 34 >= length:
+			result = __('Too Short', td)
+			guideline = __('You have space to add more keywords and power words to boost your rankings and click-through rate.', td)
+			break
+		case 35 <= length && 66 >= length:
+			result = __('Good', td)
+			guideline = __('Headlines that are about 55 characters long will display fully in search results and tend to get more clicks.', td)
+			break
+		case 67 <= length:
+			result = __('Too Long', td)
+			guideline = __('At this length, it will get cut off in search results. Try reducing it to about 55 characters.', td)
+			break
+	}
+
+	return {
+		result,
+		icon,
+		percent,
+		guideline,
+		class : color
+	}
+})
+
+const wordCount = computed(() => {
+	const wordCountResult = props.result.wordCount
+	const percent         = Math.round((100 * wordCountResult) / 9) // 9 is the limit for a good grade.
+
+	switch (true) {
+		case 4 >= wordCountResult:
+			return {
+				result    : __('Not Enough Words', td),
+				percent   : percent,
+				class     : 'red',
+				icon      : SvgCircleClose,
+				guideline : __('Your headline doesn’t use enough words. You have more space to add keywords and power words to improve your SEO and get more engagement.', td)
+			}
+		case 5 <= wordCountResult && 9 >= wordCountResult:
+			return {
+				result    : __('Good', td),
+				percent   : percent,
+				class     : 'green',
+				icon      : SvgCircleCheck,
+				guideline : __('Your headline has the right amount of words. Headlines are more likely to be clicked on in search results if they have about 6 words.', td)
+			}
+		case 10 <= wordCountResult && 11 >= wordCountResult:
+			return {
+				result    : __('Reduce Word Count', td),
+				percent   : percent,
+				class     : 'orange',
+				icon      : SvgCircleExclamation,
+				guideline : __('Headlines are more likely to be clicked on in search results if they have about 6 words.', td)
+			}
+		default:
+			return {
+				result    : __('Too Many Words', td),
+				percent   : percent,
+				class     : 'red',
+				icon      : SvgCircleClose,
+				guideline : __('Your headline has too many words. Long headlines will get cut off in search results and won’t get as many clicks.', td)
+			}
+	}
+})
+
+const sentiment = computed(() => {
+	switch (props.result.sentiment) {
+		case 'neu':
+			return {
+				result    : __('Neutral', td),
+				icon      : SvgFaceNeutral,
+				class     : 'orange',
+				headline  : __('Your headline has a neutral sentiment.', td),
+				guideline : __('Headlines that are strongly positive or negative tend to get more engagement than neutral ones.', td)
+			}
+		case 'pos':
+			return {
+				result    : __('Positive', td),
+				icon      : SvgFaceSmile,
+				class     : 'green',
+				headline  : __('Your headline has a positive sentiment.', td),
+				guideline : __('Positive headlines tend to get better engagement than neutral or negative ones.', td)
+			}
+		default:
+			return {
+				result    : __('Negative', td),
+				icon      : SvgFaceNegative,
+				class     : 'red',
+				headline  : __('Your headline has a negative sentiment.', td),
+				guideline : __('Negative headlines are attention-grabbing and tend to perform better than neutral ones.', td)
+			}
+	}
+})
+
+const headlineTypes = computed(() => {
+	return {
+		result    : props.result.headlineTypes.join(', '),
+		icon      : SvgList,
+		class     : 'blue',
+		guideline : sprintf(
+			// Translators: 1 - HTML line break tag, 2 - Opening HTML link tag, 3 - Closing HTML link tag.
+			__('Headlines that are lists and how-to get more engagement on average than other types of headlines. %1$s%2$sLearn More%3$s →', td),
+			'<br/><br/>',
+			'<a href="https://optinmonster.com/why-these-21-headlines-went-viral-and-how-you-can-copy-their-success/" target="_blank" className="aioseo-headline-analyzer-link"><span>',
+			'</span></a>'
+		)
+	}
+})
 </script>
 
 <style lang="scss">

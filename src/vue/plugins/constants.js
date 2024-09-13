@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 
 export const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -290,8 +290,7 @@ export const COUNTRY_LIST = [
 	{ value: 'KZ', label: 'Kazakhstan' },
 	{ value: 'KE', label: 'Kenya' },
 	{ value: 'KI', label: 'Kiribati' },
-	{ value: 'KP', label: 'South Korea' },
-	{ value: 'KR', label: 'North Korea' },
+	{ value: 'KR', label: 'South Korea' },
 	{ value: 'KW', label: 'Kuwait' },
 	{ value: 'KG', label: 'Kyrgyzstan' },
 	{ value: 'LA', label: 'Lao People\'s Democratic Republic' },

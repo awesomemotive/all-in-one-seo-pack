@@ -86,7 +86,7 @@ import BaseButton from '@/vue/components/common/base/Button'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
-import { __, sprintf } from '@wordpress/i18n'
+import { __, sprintf } from '@/vue/plugins/translations'
 import * as constants from '@/vue/plugins/constants'
 
 const td           = import.meta.env.VITE_TEXTDOMAIN

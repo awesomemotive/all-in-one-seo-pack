@@ -52,6 +52,11 @@ import BaseHighlightToggle from '@/vue/components/common/base/HighlightToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -84,12 +89,12 @@ export default {
 	data () {
 		return {
 			strings : {
-				label                     : this.$t.__('Label:', this.$td),
-				name                      : this.$t.__('Status:', this.$td),
-				noPostStatuses            : this.$t.__('No post statuses available.', this.$td),
-				noTaxonomies              : this.$t.__('No taxonomies available.', this.$td),
-				noPostStatusesDescription : this.$t.__('All post statuses are set to noindex or your site does not have any post statuses registered that are supported by this feature.', this.$td),
-				noTaxonomiesDescription   : this.$t.__('All taxonomies are set to noindex or your site does not have any taxonomies registered that are supported by this feature.', this.$td)
+				label                     : __('Label:', td),
+				name                      : __('Status:', td),
+				noPostStatuses            : __('No post statuses available.', td),
+				noTaxonomies              : __('No taxonomies available.', td),
+				noPostStatusesDescription : __('All post statuses are set to noindex or your site does not have any post statuses registered that are supported by this feature.', td),
+				noTaxonomiesDescription   : __('All taxonomies are set to noindex or your site does not have any taxonomies registered that are supported by this feature.', td)
 			}
 		}
 	},

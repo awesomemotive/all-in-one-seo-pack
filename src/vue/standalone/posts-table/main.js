@@ -10,12 +10,11 @@ import {
 	useOptionsStore
 } from '@/vue/stores'
 
-import TruSeo from '@/vue/plugins/tru-seo'
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 
-import App from './App.vue'
-import TermApp from './TermApp.vue'
+import App from './App'
+import TermApp from './TermApp'
 
 import './AIOSEO_VERSION/urlInspection.js'
 
@@ -30,8 +29,6 @@ const localCreateApp = (app) => {
 
 	// Use the pinia store.
 	loadPiniaStores(app)
-
-	app.config.globalProperties.$truSeo = new TruSeo()
 
 	return app
 }

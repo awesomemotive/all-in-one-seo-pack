@@ -155,8 +155,8 @@ class PostMeta {
 					case '_yoast_wpseo_meta-robots-noindex':
 					case '_yoast_wpseo_meta-robots-nofollow':
 						if ( (bool) $value ) {
-							$meta[ $mappedMeta[ $name ] ]       = ! empty( $value );
-							$meta['robots_default'] = false;
+							$meta[ $mappedMeta[ $name ] ] = $value;
+							$meta['robots_default']       = false;
 						}
 						break;
 					case '_yoast_wpseo_meta-robots-adv':

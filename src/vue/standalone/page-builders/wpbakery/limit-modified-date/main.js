@@ -1,13 +1,13 @@
 import { createApp } from 'vue'
 import emitter from 'tiny-emitter/instance'
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 
 import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
 import { loadPiniaStores } from '@/vue/stores'
-import App from './App.vue'
+import App from './App'
 
 const buttonSettings = {
 	id    : 'aioseo-limit-modified-date-wpbakery',

@@ -12,15 +12,16 @@ import { elemLoaded } from '@/vue/utils/elemLoaded'
 import HeadLineAnalyzer from './registerHeadlineAnalyzer'
 import { HeadlineCurrentScore } from './assets/js/HeadlineCurrentScore'
 
-import App from './App.vue'
+import App from './App'
 
 // import scss
 import './assets/scss/main.scss'
 
 // Register Headline Analyzer Plugin
 HeadLineAnalyzer()
+
 const vueAppId        = '#aioseo-headline-analyzer-sidebar-vue'
-const headlineSidebar = 'aioseo-headline-analyzer/aioseo-headline-analyzer'
+const headlineSidebar = 'aioseo-headline-analyzer-sidebar/aioseo-headline-analyzer-sidebar'
 
 let app, isPinBtnEventAttached = false
 const localCreateApp = () => {
@@ -102,7 +103,7 @@ window.wp.data.subscribe(() => {
 		const sidebarParent = document.querySelector('.interface-interface-skeleton__sidebar')
 
 		if (headlineSidebar !== activeSidebarName) {
-			// Unmount when opening other sidebars
+			// Unmount when opening other sidebars.
 			if (window.aioseo.headlineAnalyzerSidebarApp) {
 				window.aioseo.headlineAnalyzerSidebarApp.unmount()
 			}

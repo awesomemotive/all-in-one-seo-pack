@@ -6,7 +6,7 @@ import loadComponents from '@/vue/components/common'
 
 import { loadPiniaStores } from '@/vue/stores'
 
-import App from './App.vue'
+import App from './App'
 
 const elemDiv = document.createElement('div')
 elemDiv.id    = 'aioseo-redirects-add-redirect-standalone'

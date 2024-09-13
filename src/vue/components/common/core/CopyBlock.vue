@@ -35,6 +35,11 @@
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCircleCheckSolid from '@/vue/components/common/svg/circle/CheckSolid'
 import SvgCopy from '@/vue/components/common/svg/Copy'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreTooltip,
@@ -54,7 +59,7 @@ export default {
 	},
 	computed : {
 		copyText () {
-			return this.copied ? this.$t.__('Copied!', this.$td) : this.$t.__('Click to Copy', this.$td)
+			return this.copied ? __('Copied!', td) : __('Click to Copy', td)
 		}
 	},
 	methods : {

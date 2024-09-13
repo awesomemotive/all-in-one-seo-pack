@@ -295,8 +295,8 @@ class Review {
 		}
 
 		check_ajax_referer( 'aioseo-dismiss-review', 'nonce' );
-		$delay = isset( $_POST['delay'] ) ? 'true' === wp_unslash( $_POST['delay'] ) : false; // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
-		$relay = isset( $_POST['relay'] ) ? 'true' === wp_unslash( $_POST['relay'] ) : false; // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
+		$delay = isset( $_POST['delay'] ) ? 'true' === sanitize_text_field( wp_unslash( $_POST['delay'] ) ) : false;
+		$relay = isset( $_POST['relay'] ) ? 'true' === sanitize_text_field( wp_unslash( $_POST['relay'] ) ) : false;
 
 		if ( ! $delay ) {
 			update_user_meta( get_current_user_id(), '_aioseo_plugin_review_dismissed', $relay ? '4' : '3' );

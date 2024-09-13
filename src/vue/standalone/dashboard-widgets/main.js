@@ -6,8 +6,8 @@ import loadComponents from '@/vue/components/common'
 
 import { loadPiniaStores } from '@/vue/stores'
 
-import SeoSetup from './SeoSetup.vue'
-import Overview from './Overview.vue'
+import SeoSetup from './SeoSetup'
+import Overview from './Overview'
 
 import { elemLoaded } from '@/vue/utils/elemLoaded'
 import camelCase from 'lodash/camelCase'

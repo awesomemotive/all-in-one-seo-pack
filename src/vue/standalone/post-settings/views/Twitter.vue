@@ -52,7 +52,7 @@
 						v-model="postEditorStore.currentPost.twitter_title"
 						:line-numbers="false"
 						single
-						@counter="count => updateCount(count, 'titleCount')"
+						@counter="count => titleCount = count.length"
 						@update:modelValue="postEditorStore.isDirty = true"
 						:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Title`"
 						:default-tags="tags.getDefaultTags('term' === postEditorStore.currentPost.context ? 'taxonomies' : null, null, 'title')"
@@ -78,7 +78,7 @@
 						v-model="postEditorStore.currentPost.twitter_description"
 						:line-numbers="false"
 						description
-						@counter="count => updateCount(count, 'descriptionCount')"
+						@counter="count => descriptionCount = count.length"
 						@update:modelValue="postEditorStore.isDirty = true"
 						:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Description`"
 						:default-tags="tags.getDefaultTags('term' === postEditorStore.currentPost.context ? 'taxonomies' : null, null, 'description')"
@@ -168,22 +168,58 @@ import {
 } from '@/vue/stores'
 
 import tags from '@/vue/utils/tags'
-import { ImageSourceOptions, ImagePreview } from '@/vue/mixins/Image'
-import { MaxCounts } from '@/vue/mixins/MaxCounts'
-import { Tags } from '@/vue/mixins/Tags'
-import { twitterCard } from '@/vue/mixins/PostSocial'
+
+import { useImage } from '@/vue/composables/Image'
+import { useMaxCounts } from '@/vue/composables/MaxCounts'
+import { usePostSocial } from '@/vue/composables/PostSocial'
+import { useTags } from '@/vue/composables/Tags'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreTwitterPreview from '@/vue/components/common/core/TwitterPreview'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getImageSourceOptionFiltered,
+			imageSourceOptionsFiltered,
+			imageUrl,
+			loading,
+			setImageUrl
+		} = useImage()
+
+		const {
+			maxRecommendedCount
+		} = useMaxCounts()
+
+		const {
+			twitterCardOptions
+		} = usePostSocial()
+
+		const {
+			parseTags
+		} = useTags({
+			separator : undefined
+		})
+
 		return {
+			getImageSourceOptionFiltered,
+			imageSourceOptionsFiltered,
+			imageUrl,
+			loading,
+			maxRecommendedCount,
 			optionsStore    : useOptionsStore(),
+			parseTags,
 			postEditorStore : usePostEditorStore(),
-			rootStore       : useRootStore()
+			rootStore       : useRootStore(),
+			setImageUrl,
+			twitterCardOptions
 		}
 	},
 	components : {
@@ -193,8 +229,7 @@ export default {
 		CoreSettingsRow,
 		CoreTwitterPreview
 	},
-	mixins : [ ImageSourceOptions, ImagePreview, MaxCounts, Tags, twitterCard ],
-	props  : {
+	props : {
 		isMobilePreview : {
 			type : Boolean,
 			default () {
@@ -205,33 +240,43 @@ export default {
 	data () {
 		return {
 			tags,
-			separator        : undefined,
 			titleCount       : 0,
 			descriptionCount : 0,
 			facebookImageUrl : '',
 			strings          : {
-				twitterPreview              : this.$t.__('X (Twitter) Preview', this.$td),
-				twitterPreviewDescription   : this.$t.__('X cards by default will use the data defined below. If no data is set, X will instead pick up the data set on the Facebook tab.', this.$td),
-				useFB                       : this.$t.__('Use Data from Facebook Tab', this.$td),
-				imageSource                 : this.$t.__('Image Source', this.$td),
-				customFieldsName            : this.$t.__('Custom Field Name', this.$td),
-				twitterImage                : this.$t.__('X Image', this.$td),
-				twitterTitle                : this.$t.__('X Title', this.$td),
-				twitterDescription          : this.$t.__('X Description', this.$td),
-				twitterCardType             : this.$t.__('X Card Type', this.$td),
-				minimumSizeSummary          : this.$t.__('Minimum size: 144px x 144px, ideal ratio 1:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', this.$td),
-				minimumSizeSummaryWithLarge : this.$t.__('Minimum size: 300px x 157px, ideal ratio 2:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', this.$td),
-				twitterDisabled             : this.$t.sprintf(
+				twitterPreview              : __('X (Twitter) Preview', td),
+				twitterPreviewDescription   : __('X cards by default will use the data defined below. If no data is set, X will instead pick up the data set on the Facebook tab.', td),
+				useFB                       : __('Use Data from Facebook Tab', td),
+				imageSource                 : __('Image Source', td),
+				customFieldsName            : __('Custom Field Name', td),
+				twitterImage                : __('X Image', td),
+				twitterTitle                : __('X Title', td),
+				twitterDescription          : __('X Description', td),
+				twitterCardType             : __('X Card Type', td),
+				minimumSizeSummary          : __('Minimum size: 144px x 144px, ideal ratio 1:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', td),
+				minimumSizeSummaryWithLarge : __('Minimum size: 300px x 157px, ideal ratio 2:1, 5MB max. JPG, PNG, WEBP and GIF formats only.', td),
+				twitterDisabled             : sprintf(
 					// Translators: 1 - "Open Graph", 2 - "Go to Social Networks ->".
-					this.$t.__('No %1$s markup will be output for your post because it is currently disabled. You can enable %1$s markup in the Social Networks settings. %2$s', this.$td),
-					this.$t.__('X (Twitter)', this.$td),
-					this.$t.sprintf(
+					__('No %1$s markup will be output for your post because it is currently disabled. You can enable %1$s markup in the Social Networks settings. %2$s', td),
+					__('X (Twitter)', td),
+					sprintf(
 						'<a href="%1$s" target="_blank">%2$s<span class="link-right-arrow">&nbsp;&rarr;</span></a>',
 						this.rootStore.aioseo.urls.aio.socialNetworks + '#twitter',
-						this.$t.__('Go to Social Networks', this.$td)
+						__('Go to Social Networks', td)
 					)
 				)
 			}
+		}
+	},
+	watch : {
+		'postEditorStore.currentPost.twitter_use_og' () {
+			this.handleImageUpdate()
+		},
+		'postEditorStore.currentPost.twitter_image_type' () {
+			this.handleImageUpdate()
+		},
+		'postEditorStore.currentPost.twitter_image_custom_url' () {
+			this.handleImageUpdate()
 		}
 	},
 	computed : {
@@ -295,17 +340,6 @@ export default {
 			if ('facebook' === param.social) {
 				this.facebookImageUrl = param.image
 			}
-		}
-	},
-	watch : {
-		'postEditorStore.currentPost.twitter_use_og' () {
-			this.handleImageUpdate()
-		},
-		'postEditorStore.currentPost.twitter_image_type' () {
-			this.handleImageUpdate()
-		},
-		'postEditorStore.currentPost.twitter_image_custom_url' () {
-			this.handleImageUpdate()
 		}
 	},
 	mounted () {

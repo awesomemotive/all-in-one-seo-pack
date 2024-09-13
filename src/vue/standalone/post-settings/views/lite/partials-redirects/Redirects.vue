@@ -25,7 +25,7 @@
 			</template>
 		</core-modal>
 
-		<redirects-side-bar v-if="'modal' !== this.parentComponentContext" />
+		<redirects-side-bar v-if="'modal' !== parentComponentContext" />
 	</div>
 </template>
 
@@ -37,6 +37,11 @@ import {
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import RedirectsSideBar from './../../RedirectsSideBar'
 import RedirectsLite from '@/vue/pages/redirects/views/lite/redirects/Redirects'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -54,7 +59,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				modalHeader : this.$t.__('Redirects', this.$td)
+				modalHeader : __('Redirects', td)
 			}
 		}
 	}

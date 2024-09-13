@@ -34,6 +34,11 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import Preview from './Preview'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -50,8 +55,13 @@ export default {
 	data () {
 		return {
 			strings : {
-				useDefaultTemplate : this.$t.__('Use a default template', this.$td)
+				useDefaultTemplate : __('Use a default template', td)
 			}
+		}
+	},
+	computed : {
+		postTypes () {
+			return this.rootStore.aioseo.postData.postTypes
 		}
 	},
 	methods : {
@@ -93,11 +103,6 @@ export default {
 		getPostTypeTaxonomy (postType) {
 			const taxonomies = this.rootStore.aioseo.postData.taxonomies.filter(taxData => postType.taxonomies.includes(taxData.name))
 			return 0 < taxonomies.length ? taxonomies[0] : []
-		}
-	},
-	computed : {
-		postTypes () {
-			return this.rootStore.aioseo.postData.postTypes
 		}
 	}
 }

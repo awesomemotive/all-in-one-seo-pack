@@ -20,17 +20,17 @@ export default {
 	components : {
 		SvgClose
 	},
-	data () {
-		return {
-			markerColors : [ '#005AE0', '#00AA63', '#F18200', '#DF2A4A', '#8B5CF6' ]
-		}
-	},
 	props : {
 		items : {
 			type : Array,
 			default () {
 				return []
 			}
+		}
+	},
+	data () {
+		return {
+			markerColors : [ '#005AE0', '#00AA63', '#F18200', '#DF2A4A', '#8B5CF6' ]
 		}
 	}
 }

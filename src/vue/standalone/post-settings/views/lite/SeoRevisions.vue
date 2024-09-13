@@ -71,6 +71,10 @@ import SeoRevisionsList from './partials-seo-revisions/List'
 import SeoRevisionsUpsell from '@/vue/components/common/seo-revisions/Upsell'
 import SvgRightArrowShort from '@/vue/components/common/svg/right-arrow/Short'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -88,9 +92,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				button       : this.$t.__('Open SEO Revisions', this.$td),
-				description  : this.$t.__('With our powerful revisions feature for all your SEO data, never lose the exact SEO title or description (and more!) that helped you rank higher in search results and restore it back in a single click.', this.$td),
-				seoRevisions : this.$t.__('SEO Revisions', this.$td)
+				button       : __('Open SEO Revisions', td),
+				description  : __('With our powerful revisions feature for all your SEO data, never lose the exact SEO title or description (and more!) that helped you rank higher in search results and restore it back in a single click.', td),
+				seoRevisions : __('SEO Revisions', td)
 			}
 		}
 	}

@@ -93,6 +93,11 @@ import 'vue-multiselect/dist/vue-multiselect.css'
 import Multiselect from 'vue-multiselect'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgClose from '@/vue/components/common/svg/Close'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	emits      : [ 'open', 'close', 'update:modelValue' ],
 	components : {
@@ -158,7 +163,7 @@ export default {
 		return {
 			isLoading : false,
 			strings   : {
-				searchPlaceholder : this.$t.__('Type to search...', this.$td)
+				searchPlaceholder : __('Type to search...', td)
 			}
 		}
 	},

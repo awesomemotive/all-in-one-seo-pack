@@ -39,6 +39,10 @@ import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgEye from '@/vue/components/common/svg/Eye'
 import SvgEyeFilled from '@/vue/components/common/svg/EyeFilled'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -56,8 +60,8 @@ export default {
 	data () {
 		return {
 			strings : {
-				highlightSections      : this.$t.__('Highlight sections in the Editor', this.$td),
-				highlightingIsDisabled : this.$t.__('Highlighting is disabled for current view', this.$td)
+				highlightSections      : __('Highlight sections in the Editor', td),
+				highlightingIsDisabled : __('Highlighting is disabled for current view', td)
 			}
 		}
 	},

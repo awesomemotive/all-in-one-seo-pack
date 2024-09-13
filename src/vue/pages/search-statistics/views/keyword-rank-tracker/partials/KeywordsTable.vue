@@ -12,7 +12,6 @@
 		:key="wpTableKey"
 		:loading="tableLoading"
 		:rows="paginatedKeywords.rows"
-		:selected-filters="selectedFilters"
 		show-bulk-actions
 		:show-header="showHeader"
 		:show-table-footer="showTableFooter"
@@ -85,7 +84,7 @@
 						href="#"
 						@click.prevent.exact="keywordRankTrackerStore.toggleModal({modal: 'modalOpenDeleteKeywords', open: true, keywords: [row], fetchKeywordsCallback: fetchData})"
 					>
-						{{ $constants.GLOBAL_STRINGS.delete }}
+						{{ GLOBAL_STRINGS.delete }}
 					</a>
 				</span>
 			</div>
@@ -146,35 +145,77 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+
 import {
 	useKeywordRankTrackerStore,
 	useSettingsStore
 } from '@/vue/stores'
 
 import numbers from '@/vue/utils/numbers'
-import { WpTable } from '@/vue/mixins/WpTable'
+
+import { useWpTable } from '@/vue/composables/WpTable'
 
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Graph from '../../partials/Graph'
 import SvgStar from '@/vue/components/common/svg/Star'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	setup () {
+	emits : [],
+	setup (props) {
+		const changeItemsPerPageSlug = 'searchStatisticsKeywordRankTracker'
+		const tableId                = 'keyword-rank-tracker-keywords-table'
+		const {
+			orderBy,
+			orderDir,
+			pageNumber,
+			processAdditionalFilters,
+			processChangeItemsPerPage,
+			processFilterTable,
+			processPagination,
+			processSearch,
+			processSort,
+			searchTerm,
+			wpTableKey,
+			wpTableLoading
+		} = useWpTable({
+			changeItemsPerPageSlug,
+			fetchData : props.fetchData,
+			tableId
+		})
+
 		return {
+			GLOBAL_STRINGS,
+			changeItemsPerPageSlug,
 			keywordRankTrackerStore : useKeywordRankTrackerStore(),
-			settingsStore           : useSettingsStore()
+			orderBy,
+			orderDir,
+			pageNumber,
+			processAdditionalFilters,
+			processChangeItemsPerPage,
+			processFilterTable,
+			processPagination,
+			processSearch,
+			processSort,
+			searchTerm,
+			settingsStore           : useSettingsStore(),
+			tableId,
+			wpTableKey,
+			wpTableLoading
 		}
 	},
-	emits      : [],
 	components : {
 		CoreLoader,
 		CoreWpTable,
 		Graph,
 		SvgStar
 	},
-	mixins : [ WpTable ],
-	props  : {
+	props : {
 		paginatedKeywords : Object,
 		showTableFooter   : {
 			type : Boolean,
@@ -196,17 +237,28 @@ export default {
 			}
 		}
 	},
+	data () {
+		return {
+			selectedRows       : null,
+			btnFavoriteLoading : [],
+			strings            : {
+				addToGroup : __('Add to Group', td),
+				editGroup  : __('Edit Group', td),
+				position   : __('Position', td)
+			}
+		}
+	},
 	computed : {
 		tableAdditionalFilters () {
 			const options = [
-				{ label: this.$t.__('All Groups', this.$td), value: 'all' }
+				{ label: __('All Groups', td), value: 'all' }
 			]
 
 			options.push(...this.keywordRankTrackerStore.groups.all.rows)
 
 			return [
 				{
-					label   : this.$t.__('Filter by Group', this.$td),
+					label   : __('Filter by Group', td),
 					name    : 'group',
 					options : options
 				}
@@ -215,7 +267,7 @@ export default {
 		tableBulkOptions () {
 			return [
 				{
-					label : this.$constants.GLOBAL_STRINGS.delete,
+					label : GLOBAL_STRINGS.delete,
 					value : 'delete'
 				},
 				{
@@ -247,14 +299,14 @@ export default {
 				},
 				{
 					slug     : 'name',
-					label    : this.$t.__('Keyword', this.$td),
+					label    : __('Keyword', td),
 					sortable : 1 < this.paginatedKeywords.totals.total,
 					sortDir  : 'name' === this.orderBy ? this.orderDir : 'asc',
 					sorted   : 'name' === this.orderBy
 				},
 				{
 					slug     : 'clicks',
-					label    : this.$t.__('Clicks', this.$td),
+					label    : __('Clicks', td),
 					sortable : 1 < this.paginatedKeywords.totals.total,
 					sortDir  : 'clicks' === this.orderBy ? this.orderDir : 'asc',
 					sorted   : 'clicks' === this.orderBy,
@@ -262,7 +314,7 @@ export default {
 				},
 				{
 					slug     : 'ctr',
-					label    : this.$t.__('Avg. CTR', this.$td),
+					label    : __('Avg. CTR', td),
 					sortable : 1 < this.paginatedKeywords.totals.total,
 					sortDir  : 'ctr' === this.orderBy ? this.orderDir : 'asc',
 					sorted   : 'ctr' === this.orderBy,
@@ -270,7 +322,7 @@ export default {
 				},
 				{
 					slug     : 'impressions',
-					label    : this.$t.__('Impressions', this.$td),
+					label    : __('Impressions', td),
 					sortable : 1 < this.paginatedKeywords.totals.total,
 					sortDir  : 'impressions' === this.orderBy ? this.orderDir : 'asc',
 					sorted   : 'impressions' === this.orderBy,
@@ -278,7 +330,7 @@ export default {
 				},
 				{
 					slug     : 'position',
-					label    : this.$t.__('Position', this.$td),
+					label    : __('Position', td),
 					sortable : 1 < this.paginatedKeywords.totals.total,
 					sortDir  : 'position' === this.orderBy ? this.orderDir : 'asc',
 					sorted   : 'position' === this.orderBy,
@@ -286,27 +338,13 @@ export default {
 				},
 				{
 					slug  : 'history',
-					label : this.$t.__('Position History', this.$td),
+					label : __('Position History', td),
 					width : '140px'
 				}
 			]
 		},
 		tableLoading () {
 			return this.wpTableLoading
-		}
-	},
-	data () {
-		return {
-			tableId                : 'keyword-rank-tracker-keywords-table',
-			changeItemsPerPageSlug : 'searchStatisticsKeywordRankTracker',
-			selectedRows           : null,
-			selectedFilters        : {},
-			btnFavoriteLoading     : [],
-			strings                : {
-				addToGroup : this.$t.__('Add to Group', this.$td),
-				editGroup  : this.$t.__('Edit Group', this.$td),
-				position   : this.$t.__('Position', this.$td)
-			}
 		}
 	},
 	methods : {

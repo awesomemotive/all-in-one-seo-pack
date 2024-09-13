@@ -85,34 +85,23 @@ import dateFormat from '@/vue/utils/dateFormat'
 import SvgDesktop from '@/vue/components/common/svg/Desktop'
 import SvgMobile from '@/vue/components/common/svg/Mobile'
 import SvgRefresh from '@/vue/components/common/svg/Refresh'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'refresh' ],
 	setup () {
 		return {
 			rootStore : useRootStore()
 		}
 	},
-	emits      : [ 'refresh' ],
 	components : {
 		Lottie,
 		SvgDesktop,
 		SvgMobile,
 		SvgRefresh
-	},
-	data () {
-		return {
-			loadTime      : 10,
-			lottieOptions : {
-				animationData : rocketAnimation
-			},
-			strings : {
-				refresh           : this.$t.__('Refresh', this.$td),
-				desktop           : this.$t.__('Desktop', this.$td),
-				mobile            : this.$t.__('Mobile', this.$td),
-				loading           : this.$t.__('Running speed test...', this.$td),
-				unableToCalculate : this.$t.__('We were unable to calculate the speed of this post.', this.$td),
-				pleaceMakeSure    : this.$t.__('Please make sure this post is publicly accessible.', this.$td)
-			}
-		}
 	},
 	props : {
 		pageSpeed : {
@@ -125,6 +114,22 @@ export default {
 			type : Boolean,
 			default () {
 				return false
+			}
+		}
+	},
+	data () {
+		return {
+			loadTime      : 10,
+			lottieOptions : {
+				animationData : rocketAnimation
+			},
+			strings : {
+				refresh           : __('Refresh', td),
+				desktop           : __('Desktop', td),
+				mobile            : __('Mobile', td),
+				loading           : __('Running speed test...', td),
+				unableToCalculate : __('We were unable to calculate the speed of this post.', td),
+				pleaceMakeSure    : __('Please make sure this post is publicly accessible.', td)
 			}
 		}
 	},

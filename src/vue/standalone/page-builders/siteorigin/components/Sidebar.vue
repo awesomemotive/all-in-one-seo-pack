@@ -24,12 +24,12 @@ import PostSettings from '@/vue/standalone/post-settings/App'
 import SvgClose from '@/vue/components/common/svg/Close'
 import emitter from 'tiny-emitter/instance'
 
-import { __, sprintf } from '@wordpress/i18n'
+import { __, sprintf } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 const strings = {
 	headerTitle : sprintf(
-		// Translators: 1 - Plugin short name ("AIOSEO").
+		// Translators: 1 - The plugin short name ("AIOSEO").
 		__('%1$s Settings', td),
 		import.meta.env.VITE_SHORT_NAME
 	)

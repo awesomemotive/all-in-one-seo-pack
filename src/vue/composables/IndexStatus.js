@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n'
+import { __, sprintf } from '@/vue/plugins/translations'
 import { useRootStore } from '@/vue/stores'
 import dateFormat from '@/vue/utils/dateFormat'
 

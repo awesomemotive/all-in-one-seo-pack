@@ -7,12 +7,10 @@ import loadComponents from '@/vue/components/common'
 
 import { loadPiniaStores } from '@/vue/stores'
 
-import TruSeo from '@/vue/plugins/tru-seo'
-
 import initSettingsBar from './settings-bar'
 import initWatcher from './watcher'
 import initLimitModifiedDate from './limit-modified-date/main'
-import App from './App.vue'
+import App from './App'
 
 let aioseoApp = null
 
@@ -53,8 +51,6 @@ const mountPostSettings = () => {
 
 	// Use the pinia store.
 	loadPiniaStores(app, router)
-
-	app.config.globalProperties.$truSeo = new TruSeo()
 
 	app.mount('#aioseo-app-modal > div')
 

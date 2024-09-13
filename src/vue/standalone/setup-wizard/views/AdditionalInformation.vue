@@ -227,9 +227,9 @@ import {
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useWizard } from '@/vue/composables'
-import { MaxCounts } from '@/vue/mixins/MaxCounts'
-import { Wizard } from '@/vue/mixins/Wizard'
+
+import { useWizard } from '@/vue/composables/Wizard'
+
 import BasePhone from '@/vue/components/common/base/Phone'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
@@ -240,9 +240,16 @@ import WizardCloseAndExit from '@/vue/components/common/wizard/CloseAndExit'
 import WizardContainer from '@/vue/components/common/wizard/Container'
 import WizardHeader from '@/vue/components/common/wizard/Header'
 import WizardSteps from '@/vue/components/common/wizard/Steps'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const { strings } = useWizard()
+		const { strings } = useWizard({
+			stage : 'additional-information'
+		})
 
 		return {
 			optionsStore      : useOptionsStore(),
@@ -263,28 +270,26 @@ export default {
 		WizardHeader,
 		WizardSteps
 	},
-	mixins : [ MaxCounts, Wizard ],
 	data () {
 		return {
 			showOtherSocialNetworks : false,
 			loaded                  : false,
 			loading                 : false,
-			stage                   : 'additional-information',
 			strings                 : merge(this.composableStrings, {
-				additionalSiteInformation       : this.$t.__('Additional Site Information', this.$td),
-				personOrOrganization            : this.$t.__('Person or Organization', this.$td),
-				choosePerson                    : this.$t.__('Choose a Person', this.$td),
-				person                          : this.$t.__('Person', this.$td),
-				organization                    : this.$t.__('Organization', this.$td),
-				personOrOrganizationDescription : this.$t.__('Choose whether the site represents a person or an organization.', this.$td),
-				name                            : this.$t.__('Name', this.$td),
-				organizationName                : this.$t.__('Organization Name', this.$td),
-				organizationDescription         : this.$t.__('Organization Description', this.$td),
-				phone                           : this.$t.__('Phone Number', this.$td),
-				logo                            : this.$t.__('Logo', this.$td),
-				defaultSocialShareImage         : this.$t.__('Default Social Share Image', this.$td),
-				yourSocialProfiles              : this.$t.__('Your Social Profiles', this.$td),
-				showMore                        : this.$t.__('Show more', this.$td)
+				additionalSiteInformation       : __('Additional Site Information', td),
+				personOrOrganization            : __('Person or Organization', td),
+				choosePerson                    : __('Choose a Person', td),
+				person                          : __('Person', td),
+				organization                    : __('Organization', td),
+				personOrOrganizationDescription : __('Choose whether the site represents a person or an organization.', td),
+				name                            : __('Name', td),
+				organizationName                : __('Organization Name', td),
+				organizationDescription         : __('Organization Description', td),
+				phone                           : __('Phone Number', td),
+				logo                            : __('Logo', td),
+				defaultSocialShareImage         : __('Default Social Share Image', td),
+				yourSocialProfiles              : __('Your Social Profiles', td),
+				showMore                        : __('Show more', td)
 			})
 		}
 	},
@@ -299,7 +304,7 @@ export default {
 	computed : {
 		users () {
 			return [ {
-				label : this.$t.__('Manually Enter Person', this.$td),
+				label : __('Manually Enter Person', td),
 				value : 'manual'
 			} ].concat(this.rootStore.aioseo.users.map(u => ({
 				label    : `${u.displayName} (${u.email})`,

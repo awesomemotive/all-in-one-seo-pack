@@ -13,21 +13,23 @@ export async function HeadlineCurrentScore (reload = false) {
 	const postEditorStore = usePostEditorStore()
 
 	const fetchAndUpdate = async () => {
-		const response = await fetchData()
-		const seoButton = document.querySelector('button[aria-controls="aioseo-headline-analyzer:aioseo-headline-analyzer"]')
-		const btnScore = document.querySelector('#aioseo-headline-analyzer-sidebar-button-score')
+		const response                      = await fetchData()
+		const headlineAnalyzerButtonWrapper = document.querySelector('button[aria-label="Headline Analyzer"]')
+		const headlineAnalyzerButton        = document.getElementById('aioseo-headline-analyzer-sidebar-button')
+		const headlineScore                 = document.getElementById('aioseo-headline-analyzer-sidebar-button-score')
 
 		if (response) {
 			const headlineResult = JSON.parse(response.data[Object.keys(response.data)[0]])
 
 			if (!headlineResult) {
-				if (seoButton) {
-					seoButton.style.display = 'block'
-					seoButton.setAttribute('aioseo-button-color', 'gray')
+				if (headlineAnalyzerButton) {
+					headlineAnalyzerButtonWrapper.style.display = 'flex'
+					headlineAnalyzerButton.style.display        = 'flex'
+					headlineAnalyzerButton.setAttribute('aioseo-button-color', 'gray')
 				}
 
-				if (btnScore) {
-					btnScore.innerHTML = 'N/A'
+				if (headlineScore) {
+					headlineScore.innerHTML = 'N/A'
 				}
 				return
 			}
@@ -40,24 +42,26 @@ export async function HeadlineCurrentScore (reload = false) {
 
 			// Set latest score
 			postEditorStore.updateLatestScore(currentScore)
-			if (seoButton) {
-				seoButton.style.display = 'block'
-				seoButton.setAttribute('aioseo-button-color', classOnScore)
+			if (headlineAnalyzerButton) {
+				headlineAnalyzerButtonWrapper.style.display = 'flex'
+				headlineAnalyzerButton.style.display        = 'flex'
+				headlineAnalyzerButton.setAttribute('aioseo-button-color', classOnScore)
 			}
 
-			if (btnScore) {
-				btnScore.innerHTML = `${currentScore}/100`
+			if (headlineScore) {
+				headlineScore.innerHTML = `${currentScore}/100`
 			}
 		} else {
 			postEditorStore.updatePostHeadlineAnalyzerData({}, '')
 
-			if (seoButton) {
-				seoButton.style.display = 'block'
-				seoButton.setAttribute('aioseo-button-color', 'gray')
+			if (headlineAnalyzerButton) {
+				headlineAnalyzerButtonWrapper.style.display = 'flex'
+				headlineAnalyzerButton.style.display        = 'flex'
+				headlineAnalyzerButton.setAttribute('aioseo-button-color', 'gray')
 			}
 
-			if (btnScore) {
-				btnScore.innerHTML = 'N/A'
+			if (headlineScore) {
+				headlineScore.innerHTML = 'N/A'
 			}
 		}
 	}

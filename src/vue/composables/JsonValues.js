@@ -22,8 +22,8 @@ export const useJsonValues = () => {
 
 	return {
 		getJsonValue,
-		setJsonValue,
 		getJsonValues,
+		setJsonValue,
 		setJsonValues
 	}
 }

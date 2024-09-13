@@ -159,10 +159,10 @@ abstract class Base {
 	 * @return int|null The post ID or null.
 	 */
 	public function getPostId() {
-		// phpcs:disable HM.Security.NonceVerification.Recommended
+		// phpcs:disable HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 		foreach ( [ 'id', 'post', 'post_id' ] as $key ) {
 			if ( ! empty( $_GET[ $key ] ) ) {
-				return (int) $_GET[ $key ];
+				return (int) sanitize_text_field( wp_unslash( $_GET[ $key ] ) );
 			}
 		}
 		// phpcs:enable

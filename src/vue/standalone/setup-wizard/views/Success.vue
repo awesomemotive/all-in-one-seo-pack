@@ -28,7 +28,7 @@
 							<base-button
 								class="social-button facebook"
 								tag="a"
-								:href="$links.utmUrl('wizard-success', null, 'https://aioseo.com/plugin/facebook/')"
+								:href="links.utmUrl('wizard-success', null, 'https://aioseo.com/plugin/facebook/')"
 								target="_blank"
 								size="small"
 							><svg-facebook /> {{ strings.joinOnFacebook }}</base-button>
@@ -36,7 +36,7 @@
 							<base-button
 								class="social-button twitter"
 								tag="a"
-								:href="$links.utmUrl('wizard-success', null, 'https://aioseo.com/plugin/twitter/')"
+								:href="links.utmUrl('wizard-success', null, 'https://aioseo.com/plugin/twitter/')"
 								target="_blank"
 								size="small"
 							><svg-icon-twitter /> {{ strings.followOnTwitter }}</base-button>
@@ -44,7 +44,7 @@
 							<base-button
 								class="social-button youtube"
 								tag="a"
-								:href="$links.utmUrl('wizard-success', null, 'https://aioseo.com/plugin/youtube/')"
+								:href="links.utmUrl('wizard-success', null, 'https://aioseo.com/plugin/youtube/')"
 								target="_blank"
 								size="small"
 							><svg-youtube /> {{ strings.followOnYouTube }}</base-button>
@@ -55,7 +55,7 @@
 							<svg-book />
 						</div>
 						<div class="content">
-							<div><a :href="$links.getDocUrl('ultimateGuide')" target="_blank">{{ strings.readOurStepByStep }}</a></div>
+							<div><a :href="links.getDocUrl('ultimateGuide')" target="_blank">{{ strings.readOurStepByStep }}</a></div>
 						</div>
 					</div>
 
@@ -64,7 +64,7 @@
 							<svg-video-camera />
 						</div>
 						<div class="content">
-							<div><a :href="$links.utmUrl('wizard-success', null, 'https://aioseo.com/plugin/guided-tour/')" target="_blank">{{ strings.watchOurGuidedTour }}</a></div>
+							<div><a :href="links.utmUrl('wizard-success', null, 'https://aioseo.com/plugin/guided-tour/')" target="_blank">{{ strings.watchOurGuidedTour }}</a></div>
 						</div>
 					</div>
 				</div>
@@ -82,7 +82,7 @@
 						<grid-row class="feature-list">
 							<grid-column
 								md="6"
-								v-for="(feature, index) in $constants.UPSELL_FEATURE_LIST"
+								v-for="(feature, index) in UPSELL_FEATURE_LIST"
 								:key="index"
 							>
 								<svg-circle-check />
@@ -93,7 +93,7 @@
 						<base-button
 							type="green"
 							tag="a"
-							:href="$links.utmUrl('onboarding-wizard', 'success')"
+							:href="links.utmUrl('onboarding-wizard', 'success')"
 							target="_blank"
 						>
 							{{ strings.ctaButton }}
@@ -135,13 +135,19 @@
 
 <script>
 import {
+	DISCOUNT_PERCENTAGE,
+	UPSELL_FEATURE_LIST
+} from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
+import {
 	useLicenseStore,
 	useRootStore
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useWizard } from '@/vue/composables'
-import { Wizard } from '@/vue/mixins/Wizard'
+
+import { useWizard } from '@/vue/composables/Wizard'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
@@ -155,14 +161,23 @@ import SvgYoutube from '@/vue/components/common/svg/Youtube'
 import WizardBody from '@/vue/components/common/wizard/Body'
 import WizardContainer from '@/vue/components/common/wizard/Container'
 import WizardHeader from '@/vue/components/common/wizard/Header'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const { strings } = useWizard()
+		const { strings } = useWizard({
+			stage : 'success'
+		})
 
 		return {
 			licenseStore      : useLicenseStore(),
 			rootStore         : useRootStore(),
-			composableStrings : strings
+			composableStrings : strings,
+			UPSELL_FEATURE_LIST,
+			links
 		}
 	},
 	components : {
@@ -180,48 +195,46 @@ export default {
 		WizardContainer,
 		WizardHeader
 	},
-	mixins : [ Wizard ],
 	data () {
 		return {
 			loading : false,
-			stage   : 'success',
 			strings : merge(this.composableStrings, {
-				congratulations    : this.$t.__('Congratulations, your site is now SEO ready!', this.$td),
-				finishSetup        : this.$t.__('Finish Setup and Go to the Dashboard', this.$td),
-				heresWhatToDoNext  : this.$t.__('Here\'s what to do next:', this.$td),
-				joinOurCommunity   : this.$t.__('Join our Community', this.$td),
-				joinOnFacebook     : this.$t.__('Join on Facebook', this.$td),
-				followOnTwitter    : this.$t.__('Follow on X (Twitter)', this.$td),
-				followOnYouTube    : this.$t.__('Follow on YouTube', this.$td),
-				readOurStepByStep  : this.$t.__('Read our Step By Step Guide to Improve your SEO Rankings', this.$td),
-				watchOurGuidedTour : this.$t.sprintf(
+				congratulations    : __('Congratulations, your site is now SEO ready!', td),
+				finishSetup        : __('Finish Setup and Go to the Dashboard', td),
+				heresWhatToDoNext  : __('Here\'s what to do next:', td),
+				joinOurCommunity   : __('Join our Community', td),
+				joinOnFacebook     : __('Join on Facebook', td),
+				followOnTwitter    : __('Follow on X (Twitter)', td),
+				followOnYouTube    : __('Follow on YouTube', td),
+				readOurStepByStep  : __('Read our Step By Step Guide to Improve your SEO Rankings', td),
+				watchOurGuidedTour : sprintf(
 					// Translators: 1 - Plugin short name ("AIOSEO").
-					this.$t.__('Watch our Guided Tour of %1$s', this.$td),
+					__('Watch our Guided Tour of %1$s', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				seeAdvancedSettings : this.$t.__('See Advanced Settings', this.$td),
-				setupWebmasterTools : this.$t.__('Setup Webmaster Tools', this.$td),
-				bonusText           : this.$t.sprintf(
+				seeAdvancedSettings : __('See Advanced Settings', td),
+				setupWebmasterTools : __('Setup Webmaster Tools', td),
+				bonusText           : sprintf(
 					// Translators: 1 - Opening bold tag, 2 - Closing bold tag, 3 - "Pro", 4 - Opening bold tag, 5 - A discount percentage (e.g. "50%"), 6 - Closing bold tag.
-					this.$t.__('%1$sBonus:%2$s You can upgrade to the %3$s plan today and %4$ssave %5$s off%6$s (discount auto-applied).', this.$td),
+					__('%1$sBonus:%2$s You can upgrade to the %3$s plan today and %4$ssave %5$s off%6$s (discount auto-applied).', td),
 					'<strong>',
 					'</strong>',
 					'Pro',
 					'<strong>',
-					this.$constants.DISCOUNT_PERCENTAGE,
+					DISCOUNT_PERCENTAGE,
 					'</strong>'
 				),
-				upgradeToProToUnlock : this.$t.__('Upgrade to Pro to Unlock Powerful SEO Features', this.$td),
-				ctaDescription       : this.$t.sprintf(
+				upgradeToProToUnlock : __('Upgrade to Pro to Unlock Powerful SEO Features', td),
+				ctaDescription       : sprintf(
 					// Translators: 1 - Plugin name ("All in One SEO"), 2 - The number of active users, 3 - Plugin short name ("AIOSEO").
-					this.$t.__('%1$s is the best WordPress SEO plugin. Join over %2$s Professionals who are already using %3$s to improve their website search rankings.', this.$td),
+					__('%1$s is the best WordPress SEO plugin. Join over %2$s Professionals who are already using %3$s to improve their website search rankings.', td),
 					import.meta.env.VITE_NAME,
 					'3,000,000+',
 					import.meta.env.VITE_SHORT_NAME
 				),
-				ctaButton : this.$t.sprintf(
+				ctaButton : sprintf(
 					// Translators: 1 - "Pro".
-					this.$t.__('Upgrade to %1$s Today', this.$td),
+					__('Upgrade to %1$s Today', td),
 					'Pro'
 				)
 			})

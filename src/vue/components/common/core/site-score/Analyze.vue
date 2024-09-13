@@ -26,7 +26,7 @@
 				<svg-book />
 
 				<a
-					:href="$links.getDocUrl('ultimateGuide')"
+					:href="links.getDocUrl('ultimateGuide')"
 					target="_blank"
 				>{{ strings.readUltimateSeoGuide }}</a>
 			</div>
@@ -62,11 +62,14 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
+import links from '@/vue/utils/links'
 import {
 	useAnalyzerStore
 } from '@/vue/stores'
 
-import { useSeoSiteScore } from '@/vue/composables'
+import { useSeoSiteScore } from '@/vue/composables/SeoSiteScore'
 
 import { merge } from 'lodash-es'
 
@@ -74,14 +77,24 @@ import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
 import SvgBook from '@/vue/components/common/svg/Book'
 import SvgDannieLab from '@/vue/components/common/svg/dannie/Lab'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	setup () {
-		const seoSiteScore = useSeoSiteScore()
+	setup (props) {
+		const {
+			errorObject,
+			strings
+		} = useSeoSiteScore({
+			score : ref(props.score)
+		})
 
 		return {
 			analyzerStore     : useAnalyzerStore(),
-			composableStrings : seoSiteScore.strings,
-			errorObject       : seoSiteScore.errorObject
+			composableStrings : strings,
+			errorObject,
+			links
 		}
 	},
 	components : {
@@ -103,23 +116,23 @@ export default {
 	data () {
 		return {
 			strings : merge({
-				yourOverallSiteScore : this.$t.__('Your Overall Site Score', this.$td),
-				goodResult           : this.$t.sprintf(
+				yourOverallSiteScore : __('Your Overall Site Score', td),
+				goodResult           : sprintf(
 					// Translators: 1 - Opening bold HTML tag, 2 - Closing bold HTML tag, 3 - Initial score range, 4 - Final score range.
-					this.$t.__('A very good score is between %1$s%3$d and %4$d%2$s.', this.$td),
+					__('A very good score is between %1$s%3$d and %4$d%2$s.', td),
 					'<strong>',
 					'</strong>',
 					50,
 					75
 				),
-				forBestResults : this.$t.sprintf(
+				forBestResults : sprintf(
 					// Translators: 1 - Opening bold HTML tag, 2 - Closing bold HTML tag, 3 - Score.
-					this.$t.__('For best results, you should strive for %1$s%3$d and above%2$s.', this.$td),
+					__('For best results, you should strive for %1$s%3$d and above%2$s.', td),
 					'<strong>',
 					'</strong>',
 					70
 				),
-				readUltimateSeoGuide : this.$t.__('Read the Ultimate WordPress SEO Guide', this.$td)
+				readUltimateSeoGuide : __('Read the Ultimate WordPress SEO Guide', td)
 			}, this.composableStrings)
 		}
 	}

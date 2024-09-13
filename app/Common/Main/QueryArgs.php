@@ -48,7 +48,7 @@ class QueryArgs {
 			is_admin() ||
 			is_robots() ||
 			get_query_var( 'aiosp_sitemap_path' ) ||
-			empty( $_GET ) // phpcs:ignore HM.Security.NonceVerification.Recommended
+			empty( $_GET ) // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended	
 		) {
 			return false;
 		}
@@ -59,8 +59,11 @@ class QueryArgs {
 
 			// Leave the preview query arguments intact.
 			if (
-				isset( $_GET['preview'] ) && // phpcs:ignore HM.Security.NonceVerification.Recommended
-				isset( $_GET['preview_nonce'] ) && // phpcs:ignore HM.Security.NonceVerification.Recommended
+				// phpcs:disable phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
+				isset( $_GET['preview'] ) &&
+				isset( $_GET['preview_nonce'] ) &&
+				// phpcs:enable
+				wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['preview_nonce'] ) ), 'post_preview_' . $thePost->ID ) &&
 				current_user_can( 'edit_post', $thePost->ID )
 			) {
 				return false;

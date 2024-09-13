@@ -16,9 +16,9 @@
 					strings.setPublicationName,
 					strings.exclude
 				]"
-				:cta-link="$links.getPricingUrl('news-sitemap', 'news-sitemap-upsell')"
+				:cta-link="links.getPricingUrl('news-sitemap', 'news-sitemap-upsell')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="$links.getUpsellUrl('news-sitemap', null, $isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('news-sitemap', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 				:hide-bonus="!licenseStore.isUnlicensed"
 			>
 				<template #header-text>
@@ -35,11 +35,14 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
-	useLicenseStore
+	useLicenseStore,
+	useRootStore
 } from '@/vue/stores'
 
-import { useNewsSitemap } from '@/vue/pages/sitemaps/composables'
+import { useNewsSitemap } from '@/vue/pages/sitemaps/composables/NewsSitemap'
+
 import Blur from './Blur'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
@@ -51,6 +54,8 @@ export default {
 
 		return {
 			licenseStore : useLicenseStore(),
+			rootStore    : useRootStore(),
+			links,
 			strings
 		}
 	},

@@ -1,4 +1,4 @@
-.aioseo-headline-analyzer-wrapper {
+.aioseo-headline-analyzer-sidebar {
 	position: relative;
 	font-size: 14px;
 
@@ -706,35 +706,39 @@
 	}
 }
 
-.edit-post-header__settings,
-.editor-header__settings {
-	button.components-button[aria-label*="SEO Headline Analyzer"] {
+button.has-icon[aria-label="Headline Analyzer"],
+button.has-icon[aria-label="Headline Analyzer"]:hover {
+	background: none !important;
+	box-shadow: none !important;
 
+	&[aria-pressed="false"] {
+		display: none; // We'll make it visible once the score has been calculated.
+	}
+
+	#aioseo-headline-analyzer-sidebar-button {
+		display: none;
+		align-items: center;
+		justify-content: center;
+		gap: 4px;
 		background: #fff;
-		border: none;
-		width: auto !important;
+		border-radius: 3px;
+		height: 36px;
+		min-width: 36px;
+		width: 100% !important;
 		padding: 6px !important;
 		max-width: 160px;
 		min-width: 82px !important;
-		display: none;
+		font-weight: bold;
+
 		svg {
 			path {
 				fill: #fff
 			}
-		}		
-
-		#aioseo-headline-analyzer-sidebar-button {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			gap: 4px;
-			width: 100%;
 		}
 
 		svg {
 			max-width: 22px;
 			max-height: 20px;
-			// margin-right: 8px;
 		}
 
 		span {
@@ -744,20 +748,13 @@
 
 		&[aioseo-button-color="red"] {
 			border: 1px solid #df2a4a;
-			&:active,
-			&.is-pressed {
-				background: #df2a4a !important;
-				svg {
-					path {
-						fill: #fff;
-					}
-				}
-			}
+
 			svg {
 				path {
 					fill: #df2a4a;
 				}
 			}
+
 			span {
 				color: #df2a4a;
 			}
@@ -765,20 +762,13 @@
 
 		&[aioseo-button-color="orange"] {
 			border: 1px solid #f18200;
-			&:active,
-			&.is-pressed {
-				background: #f18200 !important;
-				svg {
-					path {
-						fill: #fff;
-					}
-				}
-			}
+
 			svg {
 				path {
 					fill: #f08629;
 				}
 			}
+
 			span {
 				color: #f18200;
 			}
@@ -786,15 +776,6 @@
 
 		&[aioseo-button-color="green"] {
 			border: 1px solid #1ec185;
-			&:active,
-			&.is-pressed {
-				background: #1ec185 !important;
-				svg {
-					path {
-						fill: #fff;
-					}
-				}
-			}
 
 			svg {
 				path {
@@ -809,15 +790,6 @@
 
 		&[aioseo-button-color="gray"] {
 			border: 1px solid #a1a1a1;
-			&:active,
-			&.is-pressed {
-				background: #a1a1a1 !important;
-				svg {
-					path {
-						fill: #fff;
-					}
-				}
-			}
 
 			svg {
 				path {
@@ -829,26 +801,48 @@
 				color: #a1a1a1;
 			}
 		}
+	}
 
-		&[aioseo-button-color="red"],
-		&[aioseo-button-color="green"],
-		&[aioseo-button-color="orange"],
-		&[aioseo-button-color="gray"] {
-			&:active,
-			&.is-pressed {
-				box-shadow: none !important;
-				svg {
-					path {
-						fill: #fff !important;
+	&:focus {
+		#aioseo-headline-analyzer-sidebar-button[aioseo-button-color="red"] {
+			box-shadow: none !important;
+		}
+	}
+
+	&:active,
+	&.is-pressed {
+		#aioseo-headline-analyzer-sidebar-button {
+			&[aioseo-button-color="red"],
+			&[aioseo-button-color="green"],
+			&[aioseo-button-color="orange"],
+			&[aioseo-button-color="gray"] {
+					box-shadow: none !important;
+
+					svg {
+						path {
+							fill: #fff !important;
+						}
+					}
+
+					span {
+						color: #fff;
 					}
 				}
-				span {
-					color: #fff;
-				}
+
+			&[aioseo-button-color="red"] {
+				background: #df2a4a !important;
 			}
 
-			&:focus {
-				box-shadow: none !important;
+			&[aioseo-button-color="orange"] {
+				background: #f18200 !important;
+			}
+
+			&[aioseo-button-color="green"] {
+				background: #1ec185 !important;
+			}
+
+			&[aioseo-button-color="gray"] {
+				background: #a1a1a1 !important;
 			}
 		}
 	}
@@ -866,11 +860,11 @@
 }
 
 .aioseo-headline-analyzer-bottom-notice {
-    padding: 8px;
-    background: #E6EEFC;
-    margin: 16px;
-    border-radius: 3px;
-    color: #141B38;
+	padding: 8px;
+	background: #E6EEFC;
+	margin: 16px;
+	border-radius: 3px;
+	color: #141B38;
 
 	p {
 		text-align: start;
@@ -896,5 +890,18 @@
 		animation: aioseo-seo-site-score-fill 1s reverse;
 		transform: rotate( -180deg );
 		transform-origin: center;
+	}
+}
+
+.interface-pinned-items {
+	button.components-button {
+		height: 36px;
+
+		&.is-compact.has-icon {
+			&[aria-label*="Headline Analyzer"] {
+				width: auto;
+				padding: 6px;
+			}
+		}
 	}
 }

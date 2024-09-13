@@ -92,7 +92,7 @@ class DetailsColumn {
 	public function addPostColumnsAjax() {
 		if (
 			! isset( $_POST['_inline_edit'], $_POST['post_ID'], $_POST['aioseo-has-details-column'] ) ||
-			! wp_verify_nonce( $_POST['_inline_edit'], 'inlineeditnonce' )
+			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_inline_edit'] ) ), 'inlineeditnonce' )
 		) {
 			return;
 		}

@@ -3,7 +3,7 @@
 		<div class="aioseo-settings-row aioseo-section-description">
 			{{ strings.extendedDescription }}
 			<span
-				v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'videoSitemaps', true)"
+				v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'videoSitemaps', true)"
 			/>
 		</div>
 
@@ -18,7 +18,7 @@
 		</core-settings-row>
 
 		<core-settings-row
-			:name="$constants.GLOBAL_STRINGS.preview"
+			:name="GLOBAL_STRINGS.preview"
 		>
 			<template #content>
 				<div class="aioseo-sitemap-preview">
@@ -37,7 +37,7 @@
 					{{ strings.doYou404 }}
 
 					<span
-						v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
+						v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
 					/>
 				</div>
 			</template>
@@ -50,8 +50,8 @@
 				<base-radio-toggle
 					name="sitemapIndexes"
 					:options="[
-							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.enabled, value: true }
+							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.enabled, value: true }
 						]"
 				/>
 
@@ -59,7 +59,7 @@
 					{{ strings.sitemapIndexes }}
 
 					<span
-						v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'sitemapIndexes', true)"
+						v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'sitemapIndexes', true)"
 					/>
 				</div>
 			</template>
@@ -81,7 +81,7 @@
 					{{ strings.maxLinks }}
 
 					<span
-						v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'maxLinks', true)"
+						v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'maxLinks', true)"
 					/>
 				</div>
 			</template>
@@ -91,7 +91,11 @@
 </template>
 
 <script>
-import { useVideoSitemap } from '@/vue/pages/sitemaps/composables'
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
+
+import { useVideoSitemap } from '@/vue/pages/sitemaps/composables/VideoSitemap'
+
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgExternal from '@/vue/components/common/svg/External'
@@ -101,7 +105,9 @@ export default {
 		const { strings } = useVideoSitemap()
 
 		return {
-			strings
+			strings,
+			GLOBAL_STRINGS,
+			links
 		}
 	},
 	components : {

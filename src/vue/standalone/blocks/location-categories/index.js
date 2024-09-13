@@ -3,7 +3,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { __, sprintf } from '@wordpress/i18n'
+import { __, sprintf } from '@/vue/plugins/translations'
 
 const wp = window.wp
 const el = wp.element.createElement

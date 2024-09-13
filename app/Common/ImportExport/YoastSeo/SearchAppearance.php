@@ -336,7 +336,7 @@ class SearchAppearance {
 	 * @return void
 	 */
 	private function migrateStripCategoryBase() {
-		aioseo()->options->searchAppearance->advanced->removeCatBase = empty( $this->options['stripcategorybase'] ) ? false : true;
+		aioseo()->options->searchAppearance->advanced->removeCategoryBase = empty( $this->options['stripcategorybase'] ) ? false : true;
 	}
 
 	/**

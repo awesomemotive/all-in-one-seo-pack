@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 
 import SiteAnalysis from '@/vue/classes/SiteAnalysis'
 

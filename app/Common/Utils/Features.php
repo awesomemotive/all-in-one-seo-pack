@@ -34,7 +34,7 @@ class Features {
 		if ( null === $features || $flushCache ) {
 			$response = aioseo()->helpers->wpRemoteGet( $this->getFeaturesUrl() );
 			if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
-				$features = json_decode( wp_remote_retrieve_body( $response ) );
+				$features = json_decode( wp_remote_retrieve_body( $response ), true );
 			}
 
 			if ( ! $features || ! empty( $features->error ) ) {
@@ -43,6 +43,10 @@ class Features {
 
 			aioseo()->core->networkCache->update( 'license_features', $features );
 		}
+
+		// Convert the features array to objects using JSON. This is essential because we have lots of features that rely on this to be an object, and changing it to an array would break them.
+		// See: https://github.com/awesomemotive/aioseo/issues/5966
+		$features = json_decode( wp_json_encode( $features ) );
 
 		return $features;
 	}
@@ -167,7 +171,7 @@ class Features {
 				'section'       => 'search-statistics',
 				'feature'       => 'index-status'
 			]
-		] ) );
+		] ), true );
 	}
 
 	/**

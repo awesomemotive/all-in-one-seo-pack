@@ -315,7 +315,7 @@ class Robots {
 			$this->attributes['notranslate'] = 'notranslate';
 		}
 		$maxSnippet = $robotsMeta['maxSnippet'];
-		if ( ! $noSnippet && $maxSnippet && intval( $maxSnippet ) ) {
+		if ( ! $noSnippet && is_numeric( $maxSnippet ) ) {
 			$this->attributes['max-snippet'] = "max-snippet:$maxSnippet";
 		}
 		$maxImagePreview = $robotsMeta['maxImagePreview'];
@@ -362,7 +362,7 @@ class Robots {
 		if ( $metaData->robots_notranslate ) {
 			$this->attributes['notranslate'] = 'notranslate';
 		}
-		if ( ! $metaData->robots_nosnippet && $metaData->robots_max_snippet && intval( $metaData->robots_max_snippet ) ) {
+		if ( ! $metaData->robots_nosnippet && isset( $metaData->robots_max_snippet ) && is_numeric( $metaData->robots_max_snippet ) ) {
 			$this->attributes['max-snippet'] = "max-snippet:$metaData->robots_max_snippet";
 		}
 		if ( ! $metaData->robots_noimageindex && $metaData->robots_max_imagepreview && in_array( $metaData->robots_max_imagepreview, [ 'none', 'standard', 'large' ], true ) ) {

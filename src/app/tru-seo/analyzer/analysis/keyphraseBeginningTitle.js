@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 function keyphraseInBeginningTitle (title, keyphrase) {
 	if (!title) {

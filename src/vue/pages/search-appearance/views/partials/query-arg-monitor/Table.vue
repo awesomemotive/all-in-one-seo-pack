@@ -187,8 +187,11 @@ import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import SvgClose from '@/vue/components/common/svg/Close'
-import { Date } from '@/vue/mixins/Date'
 import { debounce } from '@/vue/utils/debounce'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	setup () {
@@ -197,7 +200,6 @@ export default {
 			settingsStore : useSettingsStore()
 		}
 	},
-	mixins     : [ Date ],
 	components : {
 		CoreAlert,
 		CoreModal,
@@ -234,45 +236,45 @@ export default {
 			alertDescription : null,
 			alertType        : null,
 			strings          : {
-				delete                 : this.$t.__('Delete', this.$td),
-				regex                  : this.$t.__('Regex', this.$td),
-				key                    : this.$t.__('Key', this.$td),
-				value                  : this.$t.__('Value', this.$td),
-				yes                    : this.$t.__('Yes', this.$td),
-				no                     : this.$t.__('No', this.$td),
-				at                     : this.$t.__('at', this.$td),
-				blockKey               : this.$t.__('Block Key', this.$td),
-				blockKeyValue          : this.$t.__('Block Key & Value', this.$td),
-				unblock                : this.$t.__('Unblock', this.$td),
-				success                : this.$t.__('The query arg has been successfully added to the blocklist.', this.$td),
-				unsuccess              : this.$t.__('An error occurred while trying to add the query arg to the blocklist. Please try again later.', this.$td),
-				unblockSuccess         : this.$t.__('The query arg has been successfully unblocked.', this.$td),
-				unblockUnsuccess       : this.$t.__('An error occurred while trying to remove the query arg from the blocklist. Please try again later.', this.$td),
-				deleteSuccess          : this.$t.__('The query arg has been successfully deleted.', this.$td),
-				deleteUnsuccess        : this.$t.__('An error occurred while trying to delete the query arg. Please try again later.', this.$td),
-				sureDeleteQuery        : this.$t.__('Are you sure you want to delete this query arg?', this.$td),
-				sureDeleteQueries      : this.$t.__('Are you sure you want to delete these query args?', this.$td),
-				sureBlockQuery         : this.$t.__('Are you sure you want to block this query arg?', this.$td),
-				sureBlockQueries       : this.$t.__('Are you sure you want to block these query args?', this.$td),
-				sureUnblockQuery       : this.$t.__('Are you sure you want to unblock this query arg?', this.$td),
-				sureUnblockQueries     : this.$t.__('Are you sure you want to unblock these query args?', this.$td),
-				thisWillRemoveQuery    : this.$t.__('This action will permanently remove this query arg.', this.$td),
-				thisWillRemoveQueries  : this.$t.__('This action will permanently remove the selected query args.', this.$td),
-				thisWillBlockQuery     : this.$t.__('This action will block this query arg.', this.$td),
-				thisWillBlockQueries   : this.$t.__('This action will block the selected query args.', this.$td),
-				thisWillUnblockQuery   : this.$t.__('This action will unblock this query arg.', this.$td),
-				thisWillUnblockQueries : this.$t.__('This action will unblock the selected query args.', this.$td),
-				yesDeleteQuery         : this.$t.__('Delete Query Arg', this.$td),
-				yesDeleteQueries       : this.$t.__('Delete Query Args', this.$td),
-				yesBlockQuery          : this.$t.__('Block Query Arg', this.$td),
-				yesBlockQueries        : this.$t.__('Block Query Args', this.$td),
-				yesUnblockQuery        : this.$t.__('Unblock Query Arg', this.$td),
-				yesUnblockQueries      : this.$t.__('Unblock Query Args', this.$td),
-				noChangedMind          : this.$t.__('No, I changed my mind', this.$td),
-				actions                : this.$t.__('Actions', this.$td),
-				crawlCleanupTooltip    : this.$t.__('The "Block key" blocks both the key and all of its values, while "Block Key & values" lets you selectively block only certain values, without blocking the entire key.', this.$td),
-				blockedArgExists       : this.$t.__('The query arg you\'ve entered is already being blocked.', this.$td),
-				blockedByRegex         : this.$t.__('Blocked by regex: ', this.$td)
+				delete                 : __('Delete', td),
+				regex                  : __('Regex', td),
+				key                    : __('Key', td),
+				value                  : __('Value', td),
+				yes                    : __('Yes', td),
+				no                     : __('No', td),
+				at                     : __('at', td),
+				blockKey               : __('Block Key', td),
+				blockKeyValue          : __('Block Key & Value', td),
+				unblock                : __('Unblock', td),
+				success                : __('The query arg has been successfully added to the blocklist.', td),
+				unsuccess              : __('An error occurred while trying to add the query arg to the blocklist. Please try again later.', td),
+				unblockSuccess         : __('The query arg has been successfully unblocked.', td),
+				unblockUnsuccess       : __('An error occurred while trying to remove the query arg from the blocklist. Please try again later.', td),
+				deleteSuccess          : __('The query arg has been successfully deleted.', td),
+				deleteUnsuccess        : __('An error occurred while trying to delete the query arg. Please try again later.', td),
+				sureDeleteQuery        : __('Are you sure you want to delete this query arg?', td),
+				sureDeleteQueries      : __('Are you sure you want to delete these query args?', td),
+				sureBlockQuery         : __('Are you sure you want to block this query arg?', td),
+				sureBlockQueries       : __('Are you sure you want to block these query args?', td),
+				sureUnblockQuery       : __('Are you sure you want to unblock this query arg?', td),
+				sureUnblockQueries     : __('Are you sure you want to unblock these query args?', td),
+				thisWillRemoveQuery    : __('This action will permanently remove this query arg.', td),
+				thisWillRemoveQueries  : __('This action will permanently remove the selected query args.', td),
+				thisWillBlockQuery     : __('This action will block this query arg.', td),
+				thisWillBlockQueries   : __('This action will block the selected query args.', td),
+				thisWillUnblockQuery   : __('This action will unblock this query arg.', td),
+				thisWillUnblockQueries : __('This action will unblock the selected query args.', td),
+				yesDeleteQuery         : __('Delete Query Arg', td),
+				yesDeleteQueries       : __('Delete Query Args', td),
+				yesBlockQuery          : __('Block Query Arg', td),
+				yesBlockQueries        : __('Block Query Args', td),
+				yesUnblockQuery        : __('Unblock Query Arg', td),
+				yesUnblockQueries      : __('Unblock Query Args', td),
+				noChangedMind          : __('No, I changed my mind', td),
+				actions                : __('Actions', td),
+				crawlCleanupTooltip    : __('The "Block key" blocks both the key and all of its values, while "Block Key & values" lets you selectively block only certain values, without blocking the entire key.', td),
+				blockedArgExists       : __('The query arg you\'ve entered is already being blocked.', td),
+				blockedByRegex         : __('Blocked by regex: ', td)
 			},
 			showModal        : false,
 			showDeleteModal  : false,
@@ -283,7 +285,7 @@ export default {
 			filters          : [],
 			selectedFilters  : {
 				slug   : 'unblocked',
-				name   : this.$t.__('Unblocked', this.$td),
+				name   : __('Unblocked', td),
 				count  : 0,
 				active : true
 			},
@@ -302,36 +304,47 @@ export default {
 			modalMessageDescription : null
 		}
 	},
+	watch : {
+		showAlert (showAlert) {
+			if (!showAlert) {
+				return
+			}
+
+			debounce(() => {
+				this.showAlert = false
+			}, 5000)
+		}
+	},
 	computed : {
 		columns () {
 			const columns = [
 				{
 					slug  : 'slug',
-					label : this.$t.__('URL', this.$td),
+					label : __('URL', td),
 					with  : '100%'
 				}
 			]
 			if ('blocked' === this.selectedFilters.slug) {
 				columns.push({
 					slug  : 'regex',
-					label : this.$t.__('Regex', this.$td),
+					label : __('Regex', td),
 					width : '60px'
 				})
 			}
 
 			columns.push({
 				slug  : 'hits',
-				label : this.$t.__('Hits', this.$td),
+				label : __('Hits', td),
 				width : '110px'
 			},
 			{
 				slug  : 'updated',
-				label : this.$t.__('Last Accessed', this.$td),
+				label : __('Last Accessed', td),
 				width : '250px'
 			},
 			{
 				slug  : 'actions',
-				label : this.$t.__('Actions', this.$td),
+				label : __('Actions', td),
 				width : this.isBlockedSelected ? '100px' : '220px'
 			})
 
@@ -344,15 +357,15 @@ export default {
 			const options = []
 
 			if ('unblocked' === this.selectedFilters.slug) {
-				options.push({ label: this.$t.__('Block Key', this.$td), value: 'block-key' })
-				options.push({ label: this.$t.__('Block Key & Value', this.$td), value: 'block-key-value' })
+				options.push({ label: __('Block Key', td), value: 'block-key' })
+				options.push({ label: __('Block Key & Value', td), value: 'block-key-value' })
 			}
 
 			if ('blocked' === this.selectedFilters.slug) {
-				options.push({ label: this.$t.__('Unblock', this.$td), value: 'unblock' })
+				options.push({ label: __('Unblock', td), value: 'unblock' })
 			}
 
-			options.push({ label: this.$t.__('Delete', this.$td), value: 'delete' })
+			options.push({ label: __('Delete', td), value: 'delete' })
 
 			return options
 		},
@@ -560,17 +573,6 @@ export default {
 				return this.regexMatches[logID]
 			}
 			return false
-		}
-	},
-	watch : {
-		showAlert (showAlert) {
-			if (!showAlert) {
-				return
-			}
-
-			debounce(() => {
-				this.showAlert = false
-			}, 5000)
 		}
 	},
 	mounted () {

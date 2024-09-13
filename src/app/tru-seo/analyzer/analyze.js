@@ -16,6 +16,7 @@ const supportedLanguages = [
 	// 'ca',
 	'nl',
 	'en',
+	'es',
 	'fr',
 	'de',
 	'he',

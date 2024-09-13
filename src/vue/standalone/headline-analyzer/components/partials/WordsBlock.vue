@@ -1,50 +1,49 @@
 <template>
-    <div class="aioseo-headline-analyzer-words-block">
-        <h5>{{ title }}</h5>
-        <div class="aioseo-headline-analyzer-words-block-data">
-            <span
-                class='aioseo-headline-analyzer-words-block-percentage'
-                :class="classOnScore"
-            >
-                {{ value }}%
-            </span>
-            <span class='aioseo-headline-analyzer-words-block-percentage-right-column'
-                :class="classOnScore"
-            >
-                <span class="aioseo-headline-analyzer-words-block-goal">
-                    {{ textGoal }} {{ goalValue }}
-                </span>
-                <span class="aioseo-headline-analyzer-words-block-progressbar">
-                    <span class="aioseo-headline-analyzer-progressbar-bg"></span>
-                    <span
-                        class='aioseo-headline-analyzer-progressbar-part'
-                        :class="classOnScoreBg"
-                        :style="progressBarStyle"
-                    ></span>
-                </span>
-            </span>
-        </div>
-        <ul class="aioseo-headline-analyzer-words-tag-list">
-            <li
-                v-for="(word, index) in words"
-                :key="index"
-            >
-                {{ word }}
-            </li>
-        </ul>
-        <p class="aioseo-headline-analyzer-words-guideline">
-            {{ guideLine }}
-        </p>
-    </div>
+	<div class="aioseo-headline-analyzer-words-block">
+		<h5>{{ title }}</h5>
+		<div class="aioseo-headline-analyzer-words-block-data">
+			<span
+				class='aioseo-headline-analyzer-words-block-percentage'
+				:class="classOnScore"
+			>
+				{{ value }}%
+			</span>
+			<span class='aioseo-headline-analyzer-words-block-percentage-right-column'
+				:class="classOnScore"
+			>
+				<span class="aioseo-headline-analyzer-words-block-goal">
+					{{ textGoal }} {{ goalValue }}
+				</span>
+				<span class="aioseo-headline-analyzer-words-block-progressbar">
+					<span class="aioseo-headline-analyzer-progressbar-bg"></span>
+					<span
+						class='aioseo-headline-analyzer-progressbar-part'
+						:class="classOnScoreBg"
+						:style="progressBarStyle"
+					></span>
+				</span>
+			</span>
+		</div>
+		<ul class="aioseo-headline-analyzer-words-tag-list">
+			<li
+				v-for="(word, index) in words"
+				:key="index"
+			>
+				{{ word }}
+			</li>
+		</ul>
+		<p class="aioseo-headline-analyzer-words-guideline">
+			{{ guideLine }}
+		</p>
+	</div>
 </template>
 
 <script>
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	data () {
-		return {
-			textGoal : this.$t.__('Goal:', this.$td)
-		}
-	},
 	props : {
 		title : {
 			type     : String,
@@ -77,6 +76,11 @@ export default {
 		guideLine : {
 			type    : String,
 			default : ''
+		}
+	},
+	data () {
+		return {
+			textGoal : __('Goal:', td)
 		}
 	},
 	computed : {

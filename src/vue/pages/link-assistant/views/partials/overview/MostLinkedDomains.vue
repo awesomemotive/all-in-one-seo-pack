@@ -79,6 +79,11 @@ import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import CoreDonutChartWithLegend from '@/vue/components/common/core/DonutChartWithLegend'
 import TableColumn from '@/vue/components/common/table/Column'
 import TableRow from '@/vue/components/common/table/Row'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreCard,
@@ -101,13 +106,13 @@ export default {
 		return {
 			numbers,
 			strings : {
-				mostLinkedDomains  : this.$t.__('Most Linked to Domains', this.$td),
-				totalExternalLinks : this.$t.__('Total External Links', this.$td),
-				noResults          : this.$t.__('No items found.', this.$td),
-				link               : this.$t.sprintf(
+				mostLinkedDomains  : __('Most Linked to Domains', td),
+				totalExternalLinks : __('Total External Links', td),
+				noResults          : __('No items found.', td),
+				link               : sprintf(
 					'<a href="%1$s">%2$s</a><a href="%1$s"> <span>&rarr;</span></a>',
 					'#/domains-report?fullReport=1',
-					this.$t.__('See a Full Domains Report', this.$td)
+					__('See a Full Domains Report', td)
 				)
 			}
 		}
@@ -138,7 +143,7 @@ export default {
 
 			if (otherDomainsCount) {
 				parts.push({
-					name  : this.$t.__('other domains', this.$td),
+					name  : __('other domains', td),
 					color : '#E8E8EB',
 					count : otherDomainsCount,
 					ratio : (otherDomainsCount / this.totals.externalLinks) * 100,
@@ -173,11 +178,11 @@ export default {
 			return [
 				{
 					slug  : 'name',
-					label : this.$t.__('Domain', this.$td)
+					label : __('Domain', td)
 				},
 				{
 					slug  : 'count',
-					label : this.$t.__('# of Links', this.$td)
+					label : __('# of Links', td)
 				}
 			]
 		}

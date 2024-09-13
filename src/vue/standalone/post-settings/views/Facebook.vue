@@ -34,7 +34,7 @@
 						v-model="postEditorStore.currentPost.og_title"
 						:line-numbers="false"
 						single
-						@counter="count => updateCount(count, 'titleCount')"
+						@counter="count => titleCount = count.length"
 						@update:modelValue="postEditorStore.isDirty = true"
 						:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Title`"
 						:default-tags="tags.getDefaultTags('term' === postEditorStore.currentPost.context ? 'taxonomies' : null, null, 'title')"
@@ -61,7 +61,7 @@
 						v-model="postEditorStore.currentPost.og_description"
 						:line-numbers="false"
 						description
-						@counter="count => updateCount(count, 'descriptionCount')"
+						@counter="count => descriptionCount = count.length"
 						@update:modelValue="postEditorStore.isDirty = true"
 						:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Description`"
 						:default-tags="tags.getDefaultTags('term' === postEditorStore.currentPost.context ? 'taxonomies' : null, null, 'description')"
@@ -176,7 +176,7 @@
 					<base-select
 						multiple
 						taggable
-						:options="[]"
+						:options="postEditorStore.currentPost.og_article_tags || []"
 						:modelValue="postEditorStore.currentPost.og_article_tags || []"
 						@update:modelValue="values => postEditorStore.currentPost.og_article_tags = values"
 						:tag-placeholder="strings.tagPlaceholder"
@@ -194,10 +194,10 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { ImageSourceOptions, ImagePreview } from '@/vue/mixins/Image'
-import { MaxCounts } from '@/vue/mixins/MaxCounts'
-import { Tags } from '@/vue/mixins/Tags'
-import { objectType } from '@/vue/mixins/PostSocial'
+import { useImage } from '@/vue/composables/Image'
+import { useMaxCounts } from '@/vue/composables/MaxCounts'
+import { usePostSocial } from '@/vue/composables/PostSocial'
+import { useTags } from '@/vue/composables/Tags'
 
 import tags from '@/vue/utils/tags'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
@@ -206,12 +206,48 @@ import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getImageSourceOptionFiltered,
+			getTermImageSourceOptions,
+			imageSourceOptionsFiltered,
+			imageUrl,
+			loading,
+			setImageUrl
+		} = useImage()
+
+		const {
+			maxRecommendedCount
+		} = useMaxCounts()
+
+		const {
+			objectTypeOptions
+		} = usePostSocial()
+
+		const {
+			parseTags
+		} = useTags({
+			separator : undefined
+		})
+
 		return {
+			getImageSourceOptionFiltered,
+			getTermImageSourceOptions,
+			imageSourceOptionsFiltered,
+			imageUrl,
+			loading,
+			maxRecommendedCount,
+			objectTypeOptions,
 			optionsStore    : useOptionsStore(),
+			parseTags,
 			postEditorStore : usePostEditorStore(),
-			rootStore       : useRootStore()
+			rootStore       : useRootStore(),
+			setImageUrl
 		}
 	},
 	components : {
@@ -221,8 +257,7 @@ export default {
 		CoreImageUploader,
 		CoreSettingsRow
 	},
-	mixins : [ ImageSourceOptions, ImagePreview, MaxCounts, Tags, objectType ],
-	props  : {
+	props : {
 		isMobilePreview : {
 			type : Boolean,
 			default () {
@@ -233,37 +268,44 @@ export default {
 	data () {
 		return {
 			tags,
-			separator        : undefined,
 			titleCount       : 0,
 			descriptionCount : 0,
 			strings          : {
-				tabName                       : this.$t.__('Facebook Preview', this.$td),
-				imageSource                   : this.$t.__('Image Source', this.$td),
-				customFieldsName              : this.$t.__('Custom Field Name', this.$td),
-				video                         : this.$t.__('Video URL', this.$td),
-				width                         : this.$t.__('Width', this.$td),
-				height                        : this.$t.__('Height', this.$td),
-				facebookObjectType            : this.$t.__('Object Type', this.$td),
-				facebookImage                 : this.$t.__('Facebook Image', this.$td),
-				facebookTitle                 : this.$t.__('Facebook Title', this.$td),
-				facebookDescription           : this.$t.__('Facebook Description', this.$td),
-				minimumSize                   : this.$t.__('Minimum size: 200px x 200px, ideal ratio 1.91:1, 5MB max. (eg: 1640px x 856px or 3280px x 1712px for Retina screens). JPG, PNG, WEBP and GIF formats only.', this.$td),
-				clickToAddSiteName            : this.$t.__('Click on the tags below to insert variables into your site name.', this.$td),
-				clickToAddHomePageDescription : this.$t.__('Click on the tags below to insert variables into your meta description.', this.$td),
-				articleSection                : this.$t.__('Article Section', this.$td),
-				articleTags                   : this.$t.__('Article Tags', this.$td),
-				tagPlaceholder                : this.$t.__('Press enter to create an article tag', this.$td),
-				facebookDisabled              : this.$t.sprintf(
+				tabName                       : __('Facebook Preview', td),
+				imageSource                   : __('Image Source', td),
+				customFieldsName              : __('Custom Field Name', td),
+				video                         : __('Video URL', td),
+				width                         : __('Width', td),
+				height                        : __('Height', td),
+				facebookObjectType            : __('Object Type', td),
+				facebookImage                 : __('Facebook Image', td),
+				facebookTitle                 : __('Facebook Title', td),
+				facebookDescription           : __('Facebook Description', td),
+				minimumSize                   : __('Minimum size: 200px x 200px, ideal ratio 1.91:1, 5MB max. (eg: 1640px x 856px or 3280px x 1712px for Retina screens). JPG, PNG, WEBP and GIF formats only.', td),
+				clickToAddSiteName            : __('Click on the tags below to insert variables into your site name.', td),
+				clickToAddHomePageDescription : __('Click on the tags below to insert variables into your meta description.', td),
+				articleSection                : __('Article Section', td),
+				articleTags                   : __('Article Tags', td),
+				tagPlaceholder                : __('Press enter to create an article tag', td),
+				facebookDisabled              : sprintf(
 					// Translators: 1 - "Open Graph", 2 - "Go to Social Networks ->".
-					this.$t.__('No %1$s markup will be output for your post because it is currently disabled. You can enable %1$s markup in the Social Networks settings. %2$s', this.$td),
-					this.$t.__('Open Graph', this.$td),
-					this.$t.sprintf(
+					__('No %1$s markup will be output for your post because it is currently disabled. You can enable %1$s markup in the Social Networks settings. %2$s', td),
+					__('Open Graph', td),
+					sprintf(
 						'<a href="%1$s" target="_blank">%2$s<span class="link-right-arrow">&nbsp;&rarr;</span></a>',
 						this.rootStore.aioseo.urls.aio.socialNetworks + '#facebook',
-						this.$t.__('Go to Social Networks', this.$td)
+						__('Go to Social Networks', td)
 					)
 				)
 			}
+		}
+	},
+	watch : {
+		'postEditorStore.currentPost.og_image_type' () {
+			this.handleImageUpdate()
+		},
+		'postEditorStore.currentPost.og_image_custom_url' () {
+			this.handleImageUpdate()
 		}
 	},
 	computed : {
@@ -316,14 +358,6 @@ export default {
 		},
 		handleImageUpdate () {
 			this.setImageUrl('facebook')
-		}
-	},
-	watch : {
-		'postEditorStore.currentPost.og_image_type' () {
-			this.handleImageUpdate()
-		},
-		'postEditorStore.currentPost.og_image_custom_url' () {
-			this.handleImageUpdate()
 		}
 	},
 	mounted () {

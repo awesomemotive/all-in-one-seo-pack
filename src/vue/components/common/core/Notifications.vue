@@ -88,35 +88,48 @@
 <script>
 import { useNotificationsStore } from '$/vue/stores'
 
-import { useNotifications } from '@/vue/composables'
 import { merge } from 'lodash-es'
-import { Notifications } from '@/vue/mixins/Notifications'
+
+import { useNotifications } from '@/vue/composables/Notifications'
+
 import CoreNotificationCards from '@/vue/components/common/core/NotificationCards'
 import SvgClose from '@/vue/components/common/svg/Close'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const notificationStore = useNotificationsStore()
-		const { strings }       = useNotifications()
+		const {
+			dismissed,
+			notificationTitle,
+			notifications,
+			notificationsCount,
+			strings
+		} = useNotifications()
 
 		return {
-			notificationsStore : notificationStore,
-			composableStrings  : strings
+			composableStrings  : strings,
+			dismissed,
+			notificationsStore : useNotificationsStore(),
+			notificationTitle,
+			notifications,
+			notificationsCount
 		}
 	},
 	components : {
 		CoreNotificationCards,
 		SvgClose
 	},
-	mixins : [ Notifications ],
 	data () {
 		return {
-			dismissed        : false,
 			maxNotifications : Number.MAX_SAFE_INTEGER,
 			currentPage      : 0,
 			totalPages       : 1,
 			strings          : merge(this.composableStrings, {
-				dismissedNotifications : this.$t.__('Dismissed Notifications', this.$td),
-				dismissAll             : this.$t.__('Dismiss All', this.$td)
+				dismissedNotifications : __('Dismissed Notifications', td),
+				dismissAll             : __('Dismiss All', td)
 			})
 		}
 	},

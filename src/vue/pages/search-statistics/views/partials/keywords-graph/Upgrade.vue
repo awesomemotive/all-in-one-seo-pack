@@ -14,8 +14,15 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
+
 import Blur from './Blur'
 import Cta from '@/vue/components/common/cta/Index'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		Blur,
@@ -24,15 +31,15 @@ export default {
 	data () {
 		return {
 			strings : {
-				ctaHeader : this.$t.sprintf(
+				ctaHeader : sprintf(
 					// Translators: 1 - Opening HTML link tag, 2 - Plugin short name ("AIOSEO"), 3 - "Pro", 4 - Closing HTML link tag.
-					this.$t.__('%1$sUpgrade your %2$s %3$s%4$s plan to see Keyword Positions', this.$td),
-					`<a href="${this.$links.getPricingUrl('search-statistics', 'search-statistics-upsell')}" target="_blank">`,
+					__('%1$sUpgrade your %2$s %3$s%4$s plan to see Keyword Positions', td),
+					`<a href="${links.getPricingUrl('search-statistics', 'search-statistics-upsell')}" target="_blank">`,
 					import.meta.env.VITE_SHORT_NAME,
 					'Pro',
 					'</a>'
 				),
-				ctaDescription : this.$t.__('Track how well keywords are ranking in search results over time based on their position and average CTR. This can help you understand the performance of keywords and identify any trends or fluctuations.', this.$td)
+				ctaDescription : __('Track how well keywords are ranking in search results over time based on their position and average CTR. This can help you understand the performance of keywords and identify any trends or fluctuations.', td)
 			}
 		}
 	}

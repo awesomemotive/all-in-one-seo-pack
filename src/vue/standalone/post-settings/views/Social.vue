@@ -23,7 +23,7 @@
 		>
 			<component :is="initTab" />
 		</transition>
-		<social-side-bar v-if="'modal' !== this.parentComponentContext" />
+		<social-side-bar v-if="'modal' !== parentComponentContext" />
 	</div>
 </template>
 
@@ -40,6 +40,10 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import Facebook from './Facebook'
 import Twitter from './Twitter'
 import SocialSideBar from './SocialSideBar'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	setup () {
@@ -62,16 +66,16 @@ export default {
 	data () {
 		return {
 			strings : {
-				pageName : this.$t.__('Social', this.$td)
+				pageName : __('Social', td)
 			},
 			tabs : [
 				{
 					slug : 'facebook',
-					name : this.$t.__('Facebook', this.$td)
+					name : __('Facebook', td)
 				},
 				{
 					slug : 'twitter',
-					name : this.$t.__('X (Twitter)', this.$td)
+					name : __('X (Twitter)', td)
 				}
 			]
 		}
@@ -86,15 +90,6 @@ export default {
 			return initTab
 		}
 	},
-	mounted () {
-		if (getParams()['social-tab']) {
-			this.processChangeTab(getParams()['social-tab'])
-
-			setTimeout(() => {
-				removeParam('social-tab')
-			}, 500)
-		}
-	},
 	methods : {
 		processChangeTab (newTabValue) {
 			if ('modal' === this.parentComponentContext) {
@@ -102,6 +97,15 @@ export default {
 			} else {
 				this.settingsStore.changeTabSettings({ setting: 'social', value: newTabValue })
 			}
+		}
+	},
+	mounted () {
+		if (getParams()['social-tab']) {
+			this.processChangeTab(getParams()['social-tab'])
+
+			setTimeout(() => {
+				removeParam('social-tab')
+			}, 500)
 		}
 	}
 }

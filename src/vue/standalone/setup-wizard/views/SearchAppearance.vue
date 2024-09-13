@@ -63,7 +63,7 @@
 							v-model="setupWizardStore.category.siteTitle"
 							:line-numbers="false"
 							single
-							@counter="count => updateCount(count, 'titleCount')"
+							@counter="count => titleCount = count.length"
 							tags-context="homePage"
 							:default-tags="[
 								'site_title',
@@ -89,7 +89,7 @@
 						<core-html-tags-editor
 							v-model="setupWizardStore.category.metaDescription"
 							:line-numbers="false"
-							@counter="count => updateCount(count, 'descriptionCount')"
+							@counter="count => descriptionCount = count.length"
 							tags-context="homePage"
 							:default-tags="[
 								'site_title',
@@ -180,8 +180,8 @@
 						name="multipleAuthors"
 						class="small"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
 				</div>
@@ -201,8 +201,8 @@
 						name="redirectAttachmentPages"
 						class="small"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
 				</div>
@@ -232,16 +232,18 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
 import {
 	useOptionsStore,
 	useSetupWizardStore
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useWizard } from '@/vue/composables'
-import { MaxCounts } from '@/vue/mixins/MaxCounts'
-import { Tags } from '@/vue/mixins/Tags'
-import { Wizard } from '@/vue/mixins/Wizard'
+
+import { useMaxCounts } from '@/vue/composables/MaxCounts'
+import { useTags } from '@/vue/composables/Tags'
+import { useWizard } from '@/vue/composables/Wizard'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
@@ -252,14 +254,34 @@ import WizardCloseAndExit from '@/vue/components/common/wizard/CloseAndExit'
 import WizardContainer from '@/vue/components/common/wizard/Container'
 import WizardHeader from '@/vue/components/common/wizard/Header'
 import WizardSteps from '@/vue/components/common/wizard/Steps'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const { strings } = useWizard()
+		const {
+			parseTags
+		} = useTags({
+			separator : undefined
+		})
+
+		const {
+			maxRecommendedCount
+		} = useMaxCounts()
+
+		const { strings } = useWizard({
+			stage : 'search-appearance'
+		})
 
 		return {
+			GLOBAL_STRINGS,
+			composableStrings : strings,
+			maxRecommendedCount,
 			optionsStore      : useOptionsStore(),
-			setupWizardStore  : useSetupWizardStore(),
-			composableStrings : strings
+			parseTags,
+			setupWizardStore  : useSetupWizardStore()
 		}
 	},
 	components : {
@@ -274,33 +296,30 @@ export default {
 		WizardHeader,
 		WizardSteps
 	},
-	mixins : [ MaxCounts, Tags, Wizard ],
 	data () {
 		return {
-			separator        : undefined,
 			loaded           : false,
 			titleCount       : 0,
 			descriptionCount : 0,
 			showHoverClass   : false,
 			editing          : false,
 			loading          : false,
-			stage            : 'search-appearance',
 			strings          : merge(this.composableStrings, {
-				searchAppearance          : this.$t.__('Search Appearance', this.$td),
-				description               : this.$t.__('The way your site is displayed in search results is very important. Take some time to look over these settings and tweak as needed.', this.$td),
-				serpPreview               : this.$t.__('SERP Preview', this.$td),
-				editTitleAndDescription   : this.$t.__('Edit Title and Description', this.$td),
-				clickToAddSiteTitle       : this.$t.__('Click on the tags below to insert variables into your site title.', this.$td),
-				clickToAddSiteDescription : this.$t.__('Click on the tags below to insert variables into your meta description.', this.$td),
-				siteTitle                 : this.$t.__('Home Page Title', this.$td),
-				metaDescription           : this.$t.__('Meta Description', this.$td),
-				isSiteUnderConstruction   : this.$t.__('Is the site under construction or live (ready to be indexed)?', this.$td),
-				underConstruction         : this.$t.__('Under Construction', this.$td),
-				liveSite                  : this.$t.__('Live Site', this.$td),
-				includeAllPostTypes       : this.$t.__('Include All Post Types', this.$td),
-				enableSitemap             : this.$t.__('Enable Sitemap', this.$td),
-				doYouHaveMultipleAuthors  : this.$t.__('Do you have multiple authors?', this.$td),
-				redirectAttachmentPages   : this.$t.__('Redirect attachment pages?', this.$td)
+				searchAppearance          : __('Search Appearance', td),
+				description               : __('The way your site is displayed in search results is very important. Take some time to look over these settings and tweak as needed.', td),
+				serpPreview               : __('SERP Preview', td),
+				editTitleAndDescription   : __('Edit Title and Description', td),
+				clickToAddSiteTitle       : __('Click on the tags below to insert variables into your site title.', td),
+				clickToAddSiteDescription : __('Click on the tags below to insert variables into your meta description.', td),
+				siteTitle                 : __('Home Page Title', td),
+				metaDescription           : __('Meta Description', td),
+				isSiteUnderConstruction   : __('Is the site under construction or live (ready to be indexed)?', td),
+				underConstruction         : __('Under Construction', td),
+				liveSite                  : __('Live Site', td),
+				includeAllPostTypes       : __('Include All Post Types', td),
+				enableSitemap             : __('Enable Sitemap', td),
+				doYouHaveMultipleAuthors  : __('Do you have multiple authors?', td),
+				redirectAttachmentPages   : __('Redirect attachment pages?', td)
 			})
 		}
 	},

@@ -8,12 +8,10 @@ import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
 import { loadPiniaStores } from '@/vue/stores'
 
-import TruSeo from '@/vue/plugins/tru-seo'
-
 import initWatcher from './watcher'
 import initLimitModifiedDate from './limit-modified-date'
 
-import App from '@/vue/standalone/post-settings/App.vue'
+import App from '@/vue/standalone/post-settings/App'
 
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
 
@@ -62,8 +60,6 @@ const mountComponent = (seedprodApp) => {
 
 			// Use the pinia store.
 			loadPiniaStores(app, router)
-
-			app.config.globalProperties.$truSeo = new TruSeo()
 
 			app.mount('#seedprod-preview-wrapper .seedprod-settings-page-wrapper')
 

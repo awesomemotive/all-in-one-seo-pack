@@ -1,5 +1,5 @@
 /* globals TVE */
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 
 const buttonSettings = {
 	id    : 'aioseo-limit-modified-date-thrive',

@@ -30,6 +30,7 @@
 			:id="'aioseo-headline-result' + hashCode(headline)"
 			:slug="'analyzeHeadline' + headline"
 			:save-toggle-status="false"
+			class="aioseo-headline-result-wrapper"
 		>
 			<template #header>
 				<core-analyze-score
@@ -64,6 +65,7 @@ import {
 	useAnalyzerStore,
 	useSettingsStore
 } from '@/vue/stores'
+import { useScrollTo } from '@/vue/composables/ScrollTo'
 
 import CoreAnalyze from '@/vue/components/common/core/analyze/Index'
 import CoreAnalyzeScore from '@/vue/components/common/core/analyze/Score'
@@ -71,11 +73,19 @@ import CoreCard from '@/vue/components/common/core/Card'
 import CoreHeadlineResult from '@/vue/components/common/core/headline/Result'
 import CoreHeadlineScore from '@/vue/components/common/core/headline/Score'
 import SvgTrash from '@/vue/components/common/svg/Trash'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const { scrollTo } = useScrollTo()
+
 		return {
 			analyzerStore : useAnalyzerStore(),
-			settingsStore : useSettingsStore()
+			settingsStore : useSettingsStore(),
+			scrollTo
 		}
 	},
 	components : {
@@ -93,14 +103,14 @@ export default {
 			isAnalyzing : false,
 			analyzeTime : 2,
 			strings     : {
-				enterYourHeadline             : this.$t.__('Enter Your Headline', this.$td),
-				placeholder                   : this.$t.__('Top 10 Ways to Increase Traffic', this.$td),
-				writeIrresistibleSEOHeadlines : this.$t.sprintf(
+				enterYourHeadline             : __('Enter Your Headline', td),
+				placeholder                   : __('Top 10 Ways to Increase Traffic', td),
+				writeIrresistibleSEOHeadlines : sprintf(
 					// Translators: 1 - HTML Line break tag.
-					this.$t.__('Our Headline Analyzer tool enables you to write irresistible SEO headlines%1$sthat drive traffic, shares, and rank better in search results.', this.$td),
+					__('Our Headline Analyzer tool enables you to write irresistible SEO headlines%1$sthat drive traffic, shares, and rank better in search results.', td),
 					'<br>'
 				),
-				analyze : this.$t.__('Analyze', this.$td)
+				analyze : __('Analyze', td)
 			}
 		}
 	},
@@ -152,11 +162,9 @@ export default {
 			this.toggleFirstCard()
 
 			this.$nextTick(() => {
-				const keys   = Object.keys(this.headlines)
-				const header = document.querySelector('.aioseo-header')
-				const offset = header.offsetHeight + header.offsetTop + 30
+				const keys = Object.keys(this.headlines)
 
-				this.$scrollTo('#aioseo-headline-result' + this.hashCode(keys[0]), { offset: -offset })
+				this.scrollTo('aioseo-headline-result' + this.hashCode(keys[0]))
 			})
 		},
 		startDeleteheadline (headline) {
@@ -213,6 +221,10 @@ export default {
 		&:hover {
 			color: $black2;
 		}
+	}
+
+	.aioseo-headline-result-wrapper {
+		scroll-margin-top: 92px;
 	}
 
 	.headline-result-main {

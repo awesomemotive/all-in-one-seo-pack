@@ -2,7 +2,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { sprintf } from '@wordpress/i18n'
+import { sprintf } from '@/vue/plugins/translations'
 const marketingSite = 'https://aioseo.com/'
 const docLinks      = {
 	home                          : `${marketingSite}docs/`,

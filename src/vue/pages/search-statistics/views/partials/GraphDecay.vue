@@ -22,6 +22,11 @@
 import numbers from '@/vue/utils/numbers'
 import { DateTime } from 'luxon'
 import VueApexCharts from 'vue3-apexcharts'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		apexchart : VueApexCharts
@@ -53,8 +58,8 @@ export default {
 	data () {
 		return {
 			strings : {
-				recovering : this.$t.__('Slowly Recovering', this.$td),
-				peak       : this.$t.__('Peak', this.$td)
+				recovering : __('Slowly Recovering', td),
+				peak       : __('Peak', td)
 			}
 		}
 	},
@@ -123,9 +128,9 @@ export default {
 					},
 					y : {
 						formatter : (seriesName) => {
-							const points = this.$t.sprintf(
+							const points = sprintf(
 								// Translators: 1 - The number of points.
-								this.$t.__('%1$s points', this.$td),
+								__('%1$s points', td),
 								numbers.numberFormat(seriesName, 0)
 							)
 

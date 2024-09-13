@@ -51,6 +51,11 @@ import CoreNotification from '@/vue/components/common/core/Notification'
 import NotificationsReview from '@/vue/components/common/notifications/Review'
 import NotificationsReview2 from '$/vue/components/common/notifications/Review2'
 import NotificationsUnlicensedAddons from '@/vue/components/common/notifications/UnlicensedAddons'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	emits      : [ 'toggle-dismissed', 'dismissed-notification' ],
 	components : {
@@ -73,9 +78,9 @@ export default {
 		return {
 			dannieDetectiveImg,
 			strings : {
-				greatScott         : this.$t.__('Great Scott! Where\'d they all go?', this.$td),
-				noNewNotifications : this.$t.__('You have no new notifications.', this.$td),
-				seeDismissed       : this.$t.__('See Dismissed Notifications', this.$td)
+				greatScott         : __('Great Scott! Where\'d they all go?', td),
+				noNewNotifications : __('You have no new notifications.', td),
+				seeDismissed       : __('See Dismissed Notifications', td)
 			}
 		}
 	},

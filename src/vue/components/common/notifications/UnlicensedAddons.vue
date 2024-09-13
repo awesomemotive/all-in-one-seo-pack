@@ -23,7 +23,7 @@
 						size="small"
 						type="green"
 						tag="a"
-						:href="$links.utmUrl('notification-unlicensed-addons')"
+						:href="links.utmUrl('notification-unlicensed-addons')"
 						target="_blank"
 					>
 						{{ strings.upgrade }}
@@ -35,8 +35,15 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
+
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		SvgCircleClose,
@@ -50,15 +57,16 @@ export default {
 	},
 	data () {
 		return {
+			links,
 			active  : true,
 			strings : {
-				title : this.$t.sprintf(
+				title : sprintf(
 					// Translators: 1 - Plugin short name ("AIOSEO").
-					this.$t.__('%1$s Addons Not Configured Properly', this.$td),
+					__('%1$s Addons Not Configured Properly', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				learnMore : this.$t.__('Learn More', this.$td),
-				upgrade   : this.$t.__('Upgrade', this.$td)
+				learnMore : __('Learn More', td),
+				upgrade   : __('Upgrade', td)
 			}
 		}
 	},

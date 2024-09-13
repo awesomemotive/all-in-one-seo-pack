@@ -6,8 +6,8 @@
 			<base-select
 				size="medium"
 				:options="locationsList"
-				:modelValue="getLocationOptions(this.$root.$data.locationId)"
-				@update:modelValue="values => this.$root.$data.locationId = values.value"
+				:modelValue="getLocationOptions($root.$data.locationId)"
+				@update:modelValue="values => $root.$data.locationId = values.value"
 				track-by="value"
 			/>
 		</div>
@@ -164,6 +164,10 @@ import BaseInput from '@/vue/components/common/base/Input'
 import BaseSelect from '@/vue/components/common/base/Select'
 import BaseToggle from '@/vue/components/common/base/Toggle'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -181,24 +185,24 @@ export default {
 			locationsList : [],
 			strings       : {
 				selectLocation : this.rootStore.aioseo.localBusiness.postTypeSingleLabel,
-				showLabels     : this.$t.__('Show labels', this.$td),
-				showIcons      : this.$t.__('Show icons', this.$td),
-				businessInfo   : this.$t.__('Business Info', this.$td),
-				showName       : this.$t.__('Name', this.$td),
-				address        : this.$t.__('Address', this.$td),
-				phoneNumber    : this.$t.__('Phone Number', this.$td),
-				faxNumber      : this.$t.__('Fax Number', this.$td),
-				emailAddress   : this.$t.__('Email Address', this.$td),
-				showVat        : this.$t.__('Show VAT ID', this.$td),
-				showTax        : this.$t.__('Show Tax ID', this.$td),
-				countryCode    : this.$t.__('Phone/Fax Country Code', this.$td),
-				labels         : this.$t.__('Labels', this.$td),
-				addressLabel   : this.$t.__('Address', this.$td),
-				vatIdLabel     : this.$t.__('Vat ID', this.$td),
-				taxIdLabel     : this.$t.__('Tax ID', this.$td),
-				phoneLabel     : this.$t.__('Phone', this.$td),
-				faxLabel       : this.$t.__('Fax', this.$td),
-				emailLabel     : this.$t.__('Email', this.$td)
+				showLabels     : __('Show labels', td),
+				showIcons      : __('Show icons', td),
+				businessInfo   : __('Business Info', td),
+				showName       : __('Name', td),
+				address        : __('Address', td),
+				phoneNumber    : __('Phone Number', td),
+				faxNumber      : __('Fax Number', td),
+				emailAddress   : __('Email Address', td),
+				showVat        : __('Show VAT ID', td),
+				showTax        : __('Show Tax ID', td),
+				countryCode    : __('Phone/Fax Country Code', td),
+				labels         : __('Labels', td),
+				addressLabel   : __('Address', td),
+				vatIdLabel     : __('Vat ID', td),
+				taxIdLabel     : __('Tax ID', td),
+				phoneLabel     : __('Phone', td),
+				faxLabel       : __('Fax', td),
+				emailLabel     : __('Email', td)
 			}
 		}
 	},

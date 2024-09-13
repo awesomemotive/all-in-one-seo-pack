@@ -34,6 +34,11 @@ import General from './General'
 import Social from './Social'
 import SvgSettings from '@/vue/components/common/svg/Settings'
 import SvgShare from '@/vue/components/common/svg/Share'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -51,18 +56,18 @@ export default {
 	data () {
 		return {
 			strings : {
-				pageName : this.$t.__('Modal Content', this.$td)
+				pageName : __('Modal Content', td)
 			},
 			tabs : [
 				{
 					slug : 'general',
 					icon : 'svg-settings',
-					name : this.$t.__('General', this.$td)
+					name : __('General', td)
 				},
 				{
 					slug : 'social',
 					icon : 'svg-share',
-					name : this.$t.__('Social', this.$td)
+					name : __('Social', td)
 				}
 			]
 		}

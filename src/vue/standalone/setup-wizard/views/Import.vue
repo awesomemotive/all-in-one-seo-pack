@@ -77,8 +77,9 @@ import {
 
 import { getAssetUrl } from '@/vue/utils/helpers'
 import { merge } from 'lodash-es'
-import { useWizard } from '@/vue/composables'
-import { Wizard } from '@/vue/mixins/Wizard'
+
+import { useWizard } from '@/vue/composables/Wizard'
+
 import yoastSeoImg from '@/vue/assets/images/plugins/yoast-logo-small.png'
 import rankMathSeoImg from '@/vue/assets/images/plugins/rank-math-seo-logo-small.png'
 import seopressImg from '@/vue/assets/images/plugins/seopress-free-logo-small.svg'
@@ -91,14 +92,21 @@ import WizardCloseAndExit from '@/vue/components/common/wizard/CloseAndExit'
 import WizardContainer from '@/vue/components/common/wizard/Container'
 import WizardHeader from '@/vue/components/common/wizard/Header'
 import WizardSteps from '@/vue/components/common/wizard/Steps'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const { strings } = useWizard()
+		const { strings } = useWizard({
+			stage : 'import'
+		})
 
 		return {
+			composableStrings : strings,
 			rootStore         : useRootStore(),
-			setupWizardStore  : useSetupWizardStore(),
-			composableStrings : strings
+			setupWizardStore  : useSetupWizardStore()
 		}
 	},
 	components : {
@@ -111,19 +119,17 @@ export default {
 		WizardHeader,
 		WizardSteps
 	},
-	mixins : [ Wizard ],
 	data () {
 		return {
 			loading : false,
-			stage   : 'import',
 			strings : merge(this.composableStrings, {
-				importData     : this.$t.__('Import data from your current plugins', this.$td),
-				weHaveDetected : this.$t.sprintf(
+				importData     : __('Import data from your current plugins', td),
+				weHaveDetected : sprintf(
 					// Translators: 1 - Plugin short name ("AIOSEO").
-					this.$t.__('We have detected other SEO plugins installed on your website. Select which plugins you would like to import data to %1$s.', this.$td),
+					__('We have detected other SEO plugins installed on your website. Select which plugins you would like to import data to %1$s.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				importDataAndContinue : this.$t.__('Import Data and Continue', this.$td)
+				importDataAndContinue : __('Import Data and Continue', td)
 			}),
 			pluginImages : {
 				'yoast-seo'         : getAssetUrl(yoastSeoImg),

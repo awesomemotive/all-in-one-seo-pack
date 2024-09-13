@@ -19,40 +19,32 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import {
 	useLicenseStore
 } from '@/vue/stores'
 
 import addons from '@/vue/utils/addons'
-import { AddonConditions } from '@/vue/mixins/AddonConditions'
+import { useAddonConditions } from '@/vue/composables/AddonConditions'
 import Activate from './redirects/Activate'
 import Redirects from './redirects/Redirects'
 import Update from './redirects/Update'
 import Upgrade from './redirects/Upgrade'
-export default {
-	setup () {
-		return {
-			licenseStore : useLicenseStore()
-		}
-	},
-	mixins     : [ AddonConditions ],
-	components : {
-		Activate,
-		Redirects,
-		Update,
-		Upgrade
-	},
-	props : {
-		redirects : Object
-	},
-	data () {
-		return {
-			addons,
-			addonSlug : 'aioseo-redirects'
-		}
-	}
-}
+
+const licenseStore = useLicenseStore()
+
+const addonSlug = 'aioseo-redirects'
+const {
+	shouldShowActivate,
+	shouldShowMain,
+	shouldShowUpdate
+} = useAddonConditions({
+	addonSlug
+})
+
+defineProps({
+	redirects : Object
+})
 </script>
 
 <style lang="scss">

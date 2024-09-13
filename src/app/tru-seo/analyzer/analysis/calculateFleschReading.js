@@ -2,7 +2,8 @@ import { inRange } from 'lodash-es'
 import calculateFlesch from '../researches/helpers/calculateFleschReading'
 import getLanguageAvailability from '../researches/helpers/getLanguageAvailability'
 import { __, sprintf } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const availableLanguages = [ 'en', 'nl', 'de', 'it', 'ru', 'fr', 'es', 'pt' ]
 const borders = {

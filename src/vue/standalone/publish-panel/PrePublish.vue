@@ -67,24 +67,45 @@ import {
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
-import { ImagePreview } from '@/vue/mixins/Image'
-import { Tags } from '@/vue/mixins/Tags'
+import { versionCompare } from '@/vue/utils/helpers'
+
+import { useImage } from '@/vue/composables/Image'
+import { useTags } from '@/vue/composables/Tags'
+
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation'
 import SvgExternal from '@/vue/components/common/svg/External'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
+
+import { __, _n, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			imageUrl,
+			setImageUrl
+		} = useImage()
+
+		const {
+			parseTags
+		} = useTags({
+			separator : undefined
+		})
+
 		return {
+			imageUrl,
 			optionsStore    : useOptionsStore(),
+			parseTags,
 			postEditorStore : usePostEditorStore(),
+			setImageUrl,
 			settingsStore   : useSettingsStore(),
 			tagsStore       : useTagsStore()
 		}
 	},
-	mixins     : [ Tags, ImagePreview ],
 	components : {
 		CoreGoogleSearchPreview,
 		SvgCircleCheck,
@@ -96,12 +117,11 @@ export default {
 	data () {
 		return {
 			allowed,
-			separator      : undefined,
 			socialImage    : null,
 			socialImageKey : 0,
 			strings        : {
-				serpPreview  : this.$t.__('SERP Preview', this.$td),
-				canonicalUrl : this.$t.__('Canonical URL', this.$td)
+				serpPreview  : __('SERP Preview', td),
+				canonicalUrl : __('Canonical URL', td)
 			}
 		}
 	},
@@ -109,27 +129,27 @@ export default {
 		tips () {
 			let tips = [
 				{
-					label  : this.$t.__('Visibility', this.$td),
+					label  : __('Visibility', td),
 					name   : 'visibility',
 					access : 'aioseo_page_advanced_settings'
 				},
 				{
-					label  : this.$t.__('SEO Analysis', this.$td),
+					label  : __('SEO Analysis', td),
 					name   : 'seoAnalysis',
 					access : 'aioseo_page_analysis'
 				},
 				{
-					label  : this.$t.__('Readability', this.$td),
+					label  : __('Readability', td),
 					name   : 'readabilityAnalysis',
 					access : 'aioseo_page_analysis'
 				},
 				{
-					label  : this.$t.__('Focus Keyphrase', this.$td),
+					label  : __('Focus Keyphrase', td),
 					name   : 'focusKeyphrase',
 					access : 'aioseo_page_analysis'
 				},
 				{
-					label  : this.$t.__('Social', this.$td),
+					label  : __('Social', td),
 					name   : 'social',
 					access : 'aioseo_page_social_settings'
 				}
@@ -172,7 +192,7 @@ export default {
 			const result = {}
 
 			if ('visibility' === tipName) {
-				result.value = this.$t.__('Good!', this.$td)
+				result.value = __('Good!', td)
 				result.type  = 'success'
 
 				const value = this.postEditorStore.currentPost.default
@@ -183,13 +203,13 @@ export default {
 					)
 					: this.postEditorStore.currentPost.noindex
 				if (value) {
-					result.value = this.$t.__('Blocked!', this.$td)
+					result.value = __('Blocked!', td)
 					result.type  = 'error'
 				}
 			}
 
 			if ('seoAnalysis' === tipName) {
-				result.value = this.$t.__('N/A', this.$td)
+				result.value = __('N/A', td)
 				result.type  = 'error'
 
 				const value = this.postEditorStore.currentPost.seo_score
@@ -200,14 +220,14 @@ export default {
 			}
 
 			if ('readabilityAnalysis' === tipName) {
-				result.value = this.$t.__('Good!', this.$td)
+				result.value = __('Good!', td)
 				result.type  = 'success'
 
 				const value = this.postEditorStore.currentPost.page_analysis.analysis.readability.errors
 				if (value && 0 < value) {
-					result.value = this.$t.sprintf(
+					result.value = sprintf(
 						// Translators: 1 - How many errors were found.
-						this.$t._n('%1$s error found!', '%1$s errors found!', value, this.$td),
+						_n('%1$s error found!', '%1$s errors found!', value, td),
 						value
 					)
 					result.type  = 'error'
@@ -215,7 +235,7 @@ export default {
 			}
 
 			if ('focusKeyphrase' === tipName) {
-				result.value = this.$t.__('No focus keyphrase!', this.$td)
+				result.value = __('No focus keyphrase!', td)
 				result.type  = 'error'
 
 				const value = this.postEditorStore.currentPost.keyphrases.focus
@@ -226,7 +246,7 @@ export default {
 			}
 
 			if ('social' === tipName) {
-				result.value = this.$t.__('Good!', this.$td)
+				result.value = __('Good!', td)
 				result.type  = 'success'
 
 				// We're just putting the social image key here to force the computed property to recompute when the key is updated.
@@ -238,7 +258,7 @@ export default {
 				const socialImage       = this.socialImage
 
 				if (!socialTitle || !socialDescription || !socialImage) {
-					result.value = this.$t.__('Missing social markup!', this.$td)
+					result.value = __('Missing social markup!', td)
 					result.type  = 'error'
 				}
 			}
@@ -246,8 +266,12 @@ export default {
 			return { ...result, icon: this.getIcon(result.type) }
 		},
 		openSidebar (tipName) {
-			const openGeneralSidebar  = window.wp?.editor ? window.wp?.editor?.openGeneralSidebar : window.wp?.editPost?.openGeneralSidebar
-			const closePublishSidebar = window.wp?.editor ? window.wp?.editor?.closePublishSidebar : window.wp?.editPost?.closePublishSidebar
+			const { openGeneralSidebar }  = window.wp.data.dispatch('core/edit-post')
+			const { closePublishSidebar } = window.wp.data.dispatch(
+				versionCompare(window.aioseo.wpVersion, '6.6', '<')
+					? 'core/edit-post'
+					: 'core/editor'
+			)
 
 			closePublishSidebar()
 			openGeneralSidebar('aioseo-post-settings-sidebar/aioseo-post-settings-sidebar')
@@ -293,8 +317,8 @@ export default {
 			const menuItem = document.querySelector('.aioseo-pre-publish .editor-post-publish-panel__link')
 			if (menuItem) {
 				menuItem.innerHTML = this.canImprove
-					? this.$t.__('Your post needs improvement!', this.$td)
-					: this.$t.__('You\'re good to go!', this.$td)
+					? __('Your post needs improvement!', td)
+					: __('You\'re good to go!', td)
 			}
 		})
 	}

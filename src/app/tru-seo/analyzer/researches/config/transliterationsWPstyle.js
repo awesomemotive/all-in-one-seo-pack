@@ -689,13 +689,13 @@ const transliterationsPerLanguage = {
 	/*
 	 * Language: Danish.
 	 * |   Code   | Glyph | Replacement |               Description               |
-     * | -------- | ----- | ----------- | --------------------------------------- |
-     * | U+00C6   | Æ     | Ae          | Latin capital letter AE                 |
-     * | U+00E6   | æ     | ae          | Latin small letter ae                   |
-     * | U+00D8   | Ø     | Oe          | Latin capital letter O with stroke      |
-     * | U+00F8   | ø     | oe          | Latin small letter o with stroke        |
-     * | U+00C5   | Å     | Aa          | Latin capital letter A with ring above  |
-     * | U+00E5   | å     | aa          | Latin small letter a with ring above    |
+	 * | -------- | ----- | ----------- | --------------------------------------- |
+	 * | U+00C6   | Æ     | Ae          | Latin capital letter AE                 |
+	 * | U+00E6   | æ     | ae          | Latin small letter ae                   |
+	 * | U+00D8   | Ø     | Oe          | Latin capital letter O with stroke      |
+	 * | U+00F8   | ø     | oe          | Latin small letter o with stroke        |
+	 * | U+00C5   | Å     | Aa          | Latin capital letter A with ring above  |
+	 * | U+00E5   | å     | aa          | Latin small letter a with ring above    |
 	 */
 	da : [
 		{ letter: /[\u00C6]/g, alternative: 'Ae' },
@@ -709,8 +709,8 @@ const transliterationsPerLanguage = {
 	/*
 	 * Language: Catalan.
 	 * |   Code   | Glyph | Replacement |               Description               |
-     * | -------- | ----- | ----------- | --------------------------------------- |
-     * | U+00B7   | l·l   | ll          | Flown dot (between two Ls)              |
+	 * | -------- | ----- | ----------- | --------------------------------------- |
+	 * | U+00B7   | l·l   | ll          | Flown dot (between two Ls)              |
 	 */
 	ca : [
 		{ letter: /[\u00B7]/g, alternative: 'll' }
@@ -719,9 +719,9 @@ const transliterationsPerLanguage = {
 	/*
 	 * Language: Serbian and Bosnian.
 	 * |   Code   | Glyph | Replacement |               Description               |
-     * | -------- | ----- | ----------- | --------------------------------------- |
-     * | U+0110   | Đ     | DJ          | Latin capital letter D with stroke      |
-     * | U+0111   | đ     | dj          | Latin small letter d with stroke        |
+	 * | -------- | ----- | ----------- | --------------------------------------- |
+	 * | U+0110   | Đ     | DJ          | Latin capital letter D with stroke      |
+	 * | U+0111   | đ     | dj          | Latin small letter d with stroke        |
 	 */
 	srAndBs : [
 		{ letter: /[\u0110]/g, alternative: 'DJ' },

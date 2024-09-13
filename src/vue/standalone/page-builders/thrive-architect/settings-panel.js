@@ -1,5 +1,5 @@
 /* globals TVE */
-import { isRTL } from '@wordpress/i18n'
+import { isRTL } from '@/vue/plugins/translations'
 
 let isAioseoSettingsEnabled = false
 

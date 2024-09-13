@@ -16,6 +16,11 @@
 <script>
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreSocialProfiles from '@/vue/components/common/core/SocialProfiles'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreCard,
@@ -25,8 +30,8 @@ export default {
 		return {
 			strings : {
 				// Translators: This refers to social media profiles.
-				socialProfiles : this.$t.__('Social Profiles', this.$td),
-				description    : this.$t.__('To let search engines know which profiles are associated with this site, enter them below:', this.$td)
+				socialProfiles : __('Social Profiles', td),
+				description    : __('To let search engines know which profiles are associated with this site, enter them below:', td)
 			}
 		}
 	}

@@ -31,28 +31,30 @@
 	</grid-column>
 </template>
 
-<script>
+<script setup>
 import {
 	useOptionsStore
 } from '@/vue/stores'
 
-import { useWebmasterTools } from '@/vue/composables'
-import { WebmasterTools } from '@/vue/pages/settings/mixins'
+import { useMetaTags } from '@/vue/composables/MetaTags'
+
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
-export default {
-	setup () {
-		const { strings } = useWebmasterTools()
 
-		return {
-			optionsStore : useOptionsStore(),
-			strings
+const optionsStore = useOptionsStore()
+
+const { maybeUpdateId } = useMetaTags()
+
+defineProps({
+	tool : {
+		type     : Object,
+		required : true
+	},
+	isConnected : {
+		type : Boolean,
+		default () {
+			return false
 		}
-	},
-	components : {
-		CoreSettingsRow,
-		GridColumn
-	},
-	mixins : [ WebmasterTools ]
-}
+	}
+})
 </script>

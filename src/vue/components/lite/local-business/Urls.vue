@@ -25,13 +25,17 @@
 </template>
 
 <script>
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	data () {
 		return {
 			strings : {
-				websiteDesc : this.$t.__('Website URL:', this.$td),
-				aboutDesc   : this.$t.__('About Page URL:', this.$td),
-				contactDesc : this.$t.__('Contact Page URL:', this.$td)
+				websiteDesc : __('Website URL:', td),
+				aboutDesc   : __('About Page URL:', td),
+				contactDesc : __('Contact Page URL:', td)
 			}
 		}
 	}

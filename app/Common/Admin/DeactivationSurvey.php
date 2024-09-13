@@ -106,7 +106,7 @@ class DeactivationSurvey {
 
 		?>
 		<script type="text/javascript">
-		document.addEventListener("DOMContentLoaded", function() {
+		window.addEventListener("load", function() {
 			var deactivateLink = document.querySelector('#the-list [data-slug="<?php echo esc_html( $this->plugin ); ?>"] span.deactivate a') ||
 				document.querySelector('#deactivate-<?php echo esc_html( $this->plugin ); ?>'),
 				overlay = document.querySelector('#am-deactivate-survey-<?php echo esc_html( $this->plugin ); ?>'),
@@ -169,7 +169,7 @@ class DeactivationSurvey {
 					headers: { 'Content-Type': 'application/json' }
 				});
 
-				submitSurvey.then(function() {
+				submitSurvey.finally(function() {
 					window.location.href = deactivateLink.getAttribute('href');
 				});
 			});

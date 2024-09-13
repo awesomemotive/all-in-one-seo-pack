@@ -5,15 +5,15 @@
 		/>
 
 		<cta
+			:cta-link="links.getPricingUrl('search-statistics', 'search-statistics-upsell', 'seo-statistics')"
+			:button-text="strings.ctaButtonText"
+			:learn-more-link="links.getUpsellUrl('search-statistics', 'seo-statistics', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 			v-if="!searchStatisticsStore.shouldShowSampleReports"
 			cta-second-button-action
 			@cta-second-button-click="searchStatisticsStore.showSampleReports"
-			:cta-link="$links.getPricingUrl('search-statistics', 'search-statistics-upsell', 'dashboard')"
-			:button-text="strings.ctaButtonText"
 			:second-button-text="strings.ctaSecondButtonText"
 			cta-second-button-new-badge
 			cta-second-button-visible
-			:learn-more-link="$links.getUpsellUrl('search-statistics', 'dashboard', $isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="[
 				strings.feature1,
 				strings.feature2,
@@ -38,17 +38,22 @@
 <script setup>
 import {
 	useLicenseStore,
-	useSearchStatisticsStore
+	useSearchStatisticsStore,
+	useRootStore
 } from '@/vue/stores'
+
+import links from '@/vue/utils/links'
+
+import { useCta } from '@/vue/pages/search-statistics/composables/Cta'
 
 import Blur from './Blur'
 import Cta from '@/vue/components/common/cta/Index'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
-import { useCta } from '@/vue/pages/search-statistics/composables/Cta'
 
 const { strings }           = useCta()
 const licenseStore          = useLicenseStore()
 const searchStatisticsStore = useSearchStatisticsStore()
+const rootStore             = useRootStore()
 </script>
 
 <style>

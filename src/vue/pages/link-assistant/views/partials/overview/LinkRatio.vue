@@ -15,11 +15,16 @@
 </template>
 
 <script>
+import { merge } from 'lodash-es'
+import { useSeoSiteScore } from '@/vue/composables/SeoSiteScore'
+
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreDonutChartWithLegend from '@/vue/components/common/core/DonutChartWithLegend'
-import { merge } from 'lodash-es'
-import { useSeoSiteScore } from '@/vue/composables'
-import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		const { strings } = useSeoSiteScore()
@@ -32,8 +37,7 @@ export default {
 		CoreCard,
 		CoreDonutChartWithLegend
 	},
-	mixins : [ SeoSiteScore ],
-	props  : {
+	props : {
 		totals : {
 			type     : Object,
 			required : true
@@ -41,14 +45,13 @@ export default {
 	},
 	data () {
 		return {
-			score   : 0,
 			strings : merge(this.composableStrings, {
-				header          : this.$t.__('Internal vs External vs Affiliate Links', this.$td),
-				totalLinks      : this.$t.__('Total Links', this.$td),
-				linksReportLink : this.$t.sprintf(
+				header          : __('Internal vs External vs Affiliate Links', td),
+				totalLinks      : __('Total Links', td),
+				linksReportLink : sprintf(
 					'<a href="%1$s">%2$s</a><a href="%1$s"> <span>&rarr;</span></a>',
 					'#/links-report?fullReport=1',
-					this.$t.__('See a Full Links Report', this.$td)
+					__('See a Full Links Report', td)
 				)
 			})
 		}
@@ -58,17 +61,17 @@ export default {
 			return [
 				{
 					slug  : 'external',
-					name  : this.$t.__('External Links', this.$td),
+					name  : __('External Links', td),
 					count : this.totals.externalLinks
 				},
 				{
 					slug  : 'affiliate',
-					name  : this.$t.__('Affiliate Links', this.$td),
+					name  : __('Affiliate Links', td),
 					count : this.totals.affiliateLinks
 				},
 				{
 					slug  : 'internal',
-					name  : this.$t.__('Internal Links', this.$td),
+					name  : __('Internal Links', td),
 					count : this.totals.internalLinks
 				}
 			]

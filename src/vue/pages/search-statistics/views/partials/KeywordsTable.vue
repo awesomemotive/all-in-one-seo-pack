@@ -118,9 +118,9 @@
 			<template #cta>
 				<cta
 					v-if="showUpsell"
-					:cta-link="$links.getPricingUrl('search-statistics', 'search-statistics-upsell')"
+					:cta-link="links.getPricingUrl('search-statistics', 'search-statistics-upsell')"
 					:button-text="strings.ctaButtonText"
-					:learn-more-link="$links.getUpsellUrl('search-statistics', 'search-statistics-upsell', $isPro ? 'pricing' : 'liteUpgrade')"
+					:learn-more-link="links.getUpsellUrl('search-statistics', 'search-statistics-upsell', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 					:hide-bonus="!licenseStore.isUnlicensed"
 				>
 					<template #header-text>
@@ -137,30 +137,116 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue'
+
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
+	useRootStore,
 	useSearchStatisticsStore,
 	useSettingsStore
 } from '@/vue/stores'
 
 import numbers from '@/vue/utils/numbers'
 import { clone } from 'lodash-es'
-import { WpTable } from '@/vue/mixins/WpTable'
+
+import { useTable } from '@/vue/pages/search-statistics/composables/Table'
+import { useWpTable } from '@/vue/composables/WpTable'
+
 import { sanitizeString } from '@/vue/utils/strings'
-import PostTypesMixin from '@/vue/mixins/PostTypes.js'
-import Table from '../../mixins/Table.js'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Cta from '@/vue/components/common/cta/Index'
 import KeywordInner from './KeywordInner'
 import Statistic from './Statistic'
 import SvgCaret from '@/vue/components/common/svg/Caret'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	setup () {
+	setup (props) {
+		const tableId = 'aioseo-search-statistics-keywords-table'
+		const changeItemsPerPageSlug = computed(() => {
+			if (props.postDetail) {
+				return 'searchStatisticsPostDetailKeywords'
+			}
+
+			return 'searchStatisticsKeywordRankings'
+		})
+
+		const isPreloading = ref(false)
+		const isFetching   = ref(false)
+		const searchStatisticsStore = useSearchStatisticsStore()
+		const fetchData = (payload) => {
+			isPreloading.value = false
+			isFetching.value   = true
+
+			if ('' !== props.page) {
+				payload = { ...payload, page: props.page }
+			}
+
+			if (props.postDetail) {
+				return searchStatisticsStore.updatePostDetailKeywords(payload).finally(() => {
+					isFetching.value = false
+				})
+			}
+
+			return searchStatisticsStore.updateKeywords(payload).finally(() => {
+				isFetching.value = false
+			})
+		}
+
+		const showUpsell = ref(false)
+		const {
+			orderBy,
+			orderDir,
+			processFilter
+		} = useTable({
+			processFilterTable : (tableFilter) => processFilterTable(tableFilter),
+			showUpsell
+		})
+
+		const {
+			filter,
+			pageNumber,
+			processAdditionalFilters,
+			processChangeItemsPerPage,
+			processFilterTable,
+			processPagination,
+			processSearch,
+			processSort,
+			searchTerm
+		} = useWpTable({
+			changeItemsPerPageSlug : changeItemsPerPageSlug.value,
+			fetchData,
+			orderBy,
+			orderDir,
+			tableId
+		})
+
 		return {
-			licenseStore          : useLicenseStore(),
-			searchStatisticsStore : useSearchStatisticsStore(),
-			settingsStore         : useSettingsStore()
+			changeItemsPerPageSlug,
+			filter,
+			isPreloading,
+			licenseStore  : useLicenseStore(),
+			links,
+			orderBy,
+			orderDir,
+			pageNumber,
+			processAdditionalFilters,
+			processChangeItemsPerPage,
+			processFilter,
+			processPagination,
+			processSearch,
+			processSort,
+			rootStore     : useRootStore(),
+			searchStatisticsStore,
+			searchTerm,
+			settingsStore : useSettingsStore(),
+			showUpsell,
+			tableId
 		}
 	},
 	components : {
@@ -170,28 +256,6 @@ export default {
 		KeywordInner,
 		Statistic,
 		SvgCaret
-	},
-	mixins : [ PostTypesMixin, WpTable, Table ],
-	data () {
-		return {
-			numbers,
-			tableId         : 'aioseo-search-statistics-keywords-table',
-			activeRow       : -1,
-			showUpsell      : false,
-			isPreloading    : false,
-			isFetching      : false,
-			interval        : null,
-			sortableColumns : [],
-			strings         : {
-				position      : this.$t.__('Position', this.$td),
-				ctaButtonText : this.$t.__('Unlock Keyword Tracking', this.$td),
-				ctaHeader     : this.$t.sprintf(
-					// Translators: 1 - "PRO".
-					this.$t.__('Keyword Tracking is a %1$s Feature', this.$td),
-					'PRO'
-				)
-			}
-		}
 	},
 	props : {
 		keywords : Object,
@@ -240,6 +304,23 @@ export default {
 			}
 		}
 	},
+	data () {
+		return {
+			numbers,
+			activeRow       : -1,
+			interval        : null,
+			sortableColumns : [],
+			strings         : {
+				position      : __('Position', td),
+				ctaButtonText : __('Unlock Keyword Tracking', td),
+				ctaHeader     : sprintf(
+					// Translators: 1 - "PRO".
+					__('Keyword Tracking is a %1$s Feature', td),
+					'PRO'
+				)
+			}
+		}
+	},
 	computed : {
 		getFilters () {
 			// If these are the sample reports, let's hide all the filters.
@@ -248,13 +329,6 @@ export default {
 			}
 
 			return this.keywords.filters
-		},
-		changeItemsPerPageSlug () {
-			if (this.postDetail) {
-				return 'searchStatisticsPostDetailKeywords'
-			}
-
-			return 'searchStatisticsKeywordRankings'
 		},
 		allColumns () {
 			const columns = clone(this.columns)
@@ -280,36 +354,36 @@ export default {
 			return [
 				{
 					slug  : 'keyword',
-					label : this.$t.__('Keyword', this.$td)
+					label : __('Keyword', td)
 				},
 				{
 					slug  : 'clicks',
-					label : this.$t.__('Clicks', this.$td),
+					label : __('Clicks', td),
 					width : '80px'
 				},
 				{
 					slug  : 'ctr',
-					label : this.$t.__('Avg. CTR', this.$td),
+					label : __('Avg. CTR', td),
 					width : '100px'
 				},
 				{
 					slug  : 'impressions',
-					label : this.$t.__('Impressions', this.$td),
+					label : __('Impressions', td),
 					width : '120px'
 				},
 				{
 					slug  : 'position',
-					label : this.$t.__('Position', this.$td),
+					label : __('Position', td),
 					width : '85px'
 				},
 				{
 					slug  : 'diffDecay',
-					label : this.$t.__('Diff', this.$td),
+					label : __('Diff', td),
 					width : '95px'
 				},
 				{
 					slug  : 'diffPosition',
-					label : this.$t.__('Diff', this.$td),
+					label : __('Diff', td),
 					width : '80px'
 				},
 				{
@@ -331,7 +405,7 @@ export default {
 				.filter(column => !this.searchStatisticsStore.shouldShowSampleReports || 'buttons' !== column.slug)
 		},
 		isSortable () {
-			return 'all' === this.filter && (this.$isPro && !this.licenseStore.isUnlicensed)
+			return 'all' === this.filter && (this.rootStore.isPro && !this.licenseStore.isUnlicensed)
 		}
 	},
 	methods : {
@@ -346,24 +420,6 @@ export default {
 			}
 			this.activeRow = index
 		},
-		fetchData (payload) {
-			this.isPreloading = false
-			this.isFetching   = true
-
-			if ('' !== this.page) {
-				payload = { ...payload, page: this.page }
-			}
-
-			if (this.postDetail) {
-				return this.searchStatisticsStore.updatePostDetailKeywords(payload).finally(() => {
-					this.isFetching = false
-				})
-			}
-
-			return this.searchStatisticsStore.updateKeywords(payload).finally(() => {
-				this.isFetching = false
-			})
-		},
 		hasSlot (name = 'default') {
 			return !!this.$slots[name]
 		},
@@ -371,7 +427,7 @@ export default {
 			return 120 < sanitizeString(line).length
 		},
 		maybePreloadPages () {
-			if (!this.$isPro || this.licenseStore.isUnlicensed || !this.searchStatisticsStore.isConnected || this.isPreloading) {
+			if (!this.rootStore.isPro || this.licenseStore.isUnlicensed || !this.searchStatisticsStore.isConnected || this.isPreloading) {
 				return
 			}
 
@@ -443,6 +499,9 @@ export default {
 	},
 	mounted () {
 		this.maybePreloadPages()
+
+		this.orderBy  = this.defaultSorting?.orderBy || this.orderBy
+		this.orderDir = this.defaultSorting?.orderDir || this.orderDir
 	},
 	updated () {
 		this.maybePreloadPages()

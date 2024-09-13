@@ -21,7 +21,7 @@
 import { ref } from 'vue'
 import { usePostEditorStore } from '@/vue/stores'
 import { isBlockEditor } from '@/vue/utils/context'
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 
 const td = import.meta.env.VITE_TEXTDOMAIN

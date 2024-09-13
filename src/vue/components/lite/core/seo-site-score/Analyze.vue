@@ -29,7 +29,9 @@
 	</div>
 </template>
 
-<script>
+<script setup>
+import { ref, watch, computed, onMounted } from 'vue'
+
 import {
 	useAnalyzerStore,
 	useConnectStore,
@@ -38,79 +40,71 @@ import {
 } from '@/vue/stores'
 
 import { popup } from '@/vue/utils/popup'
-import { useSeoSiteScore } from '@/vue/composables'
-import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
+import { useSeoSiteScore } from '@/vue/composables/SeoSiteScore'
+
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreSiteScoreAnalyze from '@/vue/components/common/core/site-score/Analyze'
-export default {
-	setup () {
-		const { strings } = useSeoSiteScore()
 
-		return {
-			analyzerStore : useAnalyzerStore(),
-			connectStore  : useConnectStore(),
-			optionsStore  : useOptionsStore(),
-			rootStore     : useRootStore(),
-			strings
-		}
-	},
-	components : {
-		CoreBlur,
-		CoreSiteScoreAnalyze
-	},
-	mixins : [ SeoSiteScore ],
-	data () {
-		return {
-			score : 0
-		}
-	},
-	watch : {
-		'optionsStore.internalOptions.internal.siteAnalysis.score' (newVal) {
-			this.score = newVal
-		}
-	},
-	computed : {
-		getSummary () {
-			return {
-				recommended : this.analyzerStore.recommendedCount(),
-				critical    : this.analyzerStore.criticalCount(),
-				good        : this.analyzerStore.goodCount()
-			}
-		}
-	},
-	methods : {
-		openPopup (url) {
-			popup(
-				url,
-				this.connectWithAioseo,
-				600,
-				630,
-				true,
-				[ 'token' ],
-				this.completedCallback,
-				this.closedCallback
-			)
-		},
-		completedCallback (payload) {
-			return this.connectStore.saveConnectToken(payload.token)
-		},
-		closedCallback (reload) {
-			if (reload) {
-				this.analyzerStore.runSiteAnalyzer()
-			}
+const score = ref(0)
 
-			this.analyzerStore.analyzing = true
-		}
-	},
-	mounted () {
-		if (!this.optionsStore.internalOptions.internal.siteAnalysis.score && this.optionsStore.internalOptions.internal.siteAnalysis.connectToken) {
-			this.analyzerStore.analyzing = true
-			this.analyzerStore.runSiteAnalyzer()
-		}
+const {
+	connectWithAioseo,
+	description,
+	strings
+} = useSeoSiteScore({
+	score
+})
 
-		this.score = this.optionsStore.internalOptions.internal.siteAnalysis.score
+const analyzerStore = useAnalyzerStore()
+const connectStore  = useConnectStore()
+const optionsStore  = useOptionsStore()
+const rootStore     = useRootStore()
+
+watch(() => optionsStore.internalOptions.internal.siteAnalysis.score, (newVal) => {
+	score.value = newVal
+})
+
+const getSummary = computed(() => {
+	return {
+		recommended : analyzerStore.recommendedCount(),
+		critical    : analyzerStore.criticalCount(),
+		good        : analyzerStore.goodCount()
 	}
+})
+
+const openPopup = (url) => {
+	popup(
+		url,
+		connectWithAioseo,
+		600,
+		630,
+		true,
+		[ 'token' ],
+		completedCallback,
+		closedCallback
+	)
 }
+
+const completedCallback = (payload) => {
+	return connectStore.saveConnectToken(payload.token)
+}
+
+const closedCallback = (reload) => {
+	if (reload) {
+		analyzerStore.runSiteAnalyzer()
+	}
+
+	analyzerStore.analyzing = true
+}
+
+onMounted(() => {
+	if (!optionsStore.internalOptions.internal.siteAnalysis.score && optionsStore.internalOptions.internal.siteAnalysis.connectToken) {
+		analyzerStore.analyzing = true
+		analyzerStore.runSiteAnalyzer()
+	}
+
+	score.value = optionsStore.internalOptions.internal.siteAnalysis.score
+})
 </script>
 
 <style lang="scss">

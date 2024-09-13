@@ -99,13 +99,15 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+
 import {
 	useKeywordRankTrackerStore,
 	useRootStore,
 	useSettingsStore
 } from '@/vue/stores'
 
-import { WpTable } from '@/vue/mixins/WpTable'
+import { useWpTable } from '@/vue/composables/WpTable'
 
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
@@ -113,18 +115,57 @@ import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Graph from '@/vue/pages/search-statistics/views/partials/Graph'
 import SvgEye from '@/vue/components/common/svg/Eye'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [],
 	setup () {
 		const keywordRankTrackerStore = useKeywordRankTrackerStore()
 
+		const changeItemsPerPageSlug = 'searchStatisticsKeywordRankTracker'
+		const tableId                = 'keyword-rank-tracker-keywords-table'
+		const {
+			orderBy,
+			orderDir,
+			pageNumber,
+			processAdditionalFilters,
+			processChangeItemsPerPage,
+			processFilterTable,
+			processPagination,
+			processSearch,
+			processSort,
+			searchTerm,
+			wpTableKey,
+			wpTableLoading
+		} = useWpTable({
+			changeItemsPerPageSlug,
+			fetchData : keywordRankTrackerStore.fetchKeywords,
+			tableId
+		})
+
 		return {
+			GLOBAL_STRINGS,
+			changeItemsPerPageSlug,
 			keywordRankTrackerStore,
+			orderBy,
+			orderDir,
+			pageNumber,
+			processAdditionalFilters,
+			processChangeItemsPerPage,
+			processFilterTable,
+			processPagination,
+			processSearch,
+			processSort,
 			rootStore     : useRootStore(),
+			searchTerm,
 			settingsStore : useSettingsStore(),
-			fetchData     : keywordRankTrackerStore.fetchKeywords
+			tableId,
+			wpTableKey,
+			wpTableLoading
 		}
 	},
-	emits      : [],
 	components : {
 		CoreLoader,
 		CoreTooltip,
@@ -132,15 +173,25 @@ export default {
 		Graph,
 		SvgEye
 	},
-	mixins : [ WpTable ],
-	props  : {
+	props : {
 		keywords : Object
+	},
+	data () {
+		return {
+			selectedRows       : null,
+			btnTrackingLoading : [],
+			strings            : {
+				openInKeywordRankTracker : __('Open in Keyword Rank Tracker', td),
+				position                 : __('Position', td),
+				openInKrt                : __('Open in Keyword Rank Tracker', td)
+			}
+		}
 	},
 	computed : {
 		tableBulkOptions () {
 			return [
 				{
-					label : this.$constants.GLOBAL_STRINGS.delete,
+					label : GLOBAL_STRINGS.delete,
 					value : 'delete'
 				},
 				{
@@ -153,14 +204,14 @@ export default {
 			return [
 				{
 					slug     : 'name',
-					label    : this.$t.__('Keyword', this.$td),
+					label    : __('Keyword', td),
 					sortable : true,
 					sortDir  : 'name' === this.orderBy ? this.orderDir : 'asc',
 					sorted   : 'name' === this.orderBy
 				},
 				{
 					slug     : 'position',
-					label    : this.$t.__('Position', this.$td),
+					label    : __('Position', td),
 					sortable : true,
 					sortDir  : 'position' === this.orderBy ? this.orderDir : 'asc',
 					sorted   : 'position' === this.orderBy,
@@ -168,12 +219,12 @@ export default {
 				},
 				{
 					slug  : 'history',
-					label : this.$t.__('Position History', this.$td),
+					label : __('Position History', td),
 					width : '150px'
 				},
 				{
 					slug  : 'tracking',
-					label : this.$t.__('Tracking', this.$td),
+					label : __('Tracking', td),
 					width : '100px'
 				},
 				{
@@ -182,19 +233,6 @@ export default {
 					width : '40px'
 				}
 			]
-		}
-	},
-	data () {
-		return {
-			tableId                : 'keyword-rank-tracker-keywords-table',
-			changeItemsPerPageSlug : 'searchStatisticsKeywordRankTracker',
-			selectedRows           : null,
-			btnTrackingLoading     : [],
-			strings                : {
-				openInKeywordRankTracker : this.$t.__('Open in Keyword Rank Tracker', this.$td),
-				position                 : this.$t.__('Position', this.$td),
-				openInKrt                : this.$t.__('Open in Keyword Rank Tracker', this.$td)
-			}
 		}
 	},
 	methods : {

@@ -129,7 +129,7 @@ class Addons {
 		if ( null === $addons || $flushCache ) {
 			$response = aioseo()->helpers->wpRemoteGet( $this->getAddonsUrl() );
 			if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
-				$addons = json_decode( wp_remote_retrieve_body( $response ) );
+				$addons = json_decode( wp_remote_retrieve_body( $response ), true );
 			}
 
 			if ( ! $addons || ! empty( $addons->error ) ) {
@@ -138,6 +138,9 @@ class Addons {
 
 			aioseo()->core->cache->update( 'addons', $addons );
 		}
+
+		// Convert the addons array to objects using JSON. This is essential because we have lots of addons that rely on this to be an object, and changing it to an array would break them.
+		$addons = json_decode( wp_json_encode( $addons ) );
 
 		$installedPlugins = array_keys( get_plugins() );
 		foreach ( $addons as $key => $addon ) {
@@ -174,15 +177,15 @@ class Addons {
 
 		// Find the addon in the default addons list and get the featured status.
 		foreach ( $defaultAddons as $defaultAddon ) {
-			if ( $addon->sku !== $defaultAddon->sku ) {
+			if ( $addon->sku !== $defaultAddon['sku'] ) {
 				continue;
 			}
 
 			$featured = ! empty( $addon->featured )
 				? $addon->featured
 				: (
-					! empty( $defaultAddon->featured )
-						? $defaultAddon->featured
+					! empty( $defaultAddon['featured'] )
+						? $defaultAddon['featured']
 						: $featured
 					);
 			break;
@@ -660,7 +663,7 @@ class Addons {
 		$addons = $this->getDefaultAddons();
 		$addon  = [];
 		foreach ( $addons as $a ) {
-			if ( $a->sku === $sku ) {
+			if ( $a['sku'] === $sku ) {
 				$addon = $a;
 			}
 		}
@@ -979,7 +982,7 @@ class Addons {
 				'minimumVersion'     => '0.0.0',
 				'hasMinimumVersion'  => false
 			]
-		] ) );
+		] ), true );
 	}
 
 	/**

@@ -280,6 +280,8 @@ class Image {
 			$image = get_post_meta( $this->post->ID, $customField, true );
 
 			if ( ! empty( $image ) ) {
+				$image = is_array( $image ) ? $image[0] : $image;
+
 				return is_numeric( $image )
 					? wp_get_attachment_image_src( $image, $this->thumbnailSize )
 					: $image;

@@ -7,7 +7,7 @@ import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
 import { loadPiniaStores } from '@/vue/stores'
 
-import App from './App.vue'
+import App from './App'
 
 /**
  * Mount the Alert component inside each tab of the SEO settings from Divi.

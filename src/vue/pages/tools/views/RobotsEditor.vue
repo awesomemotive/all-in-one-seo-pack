@@ -22,7 +22,7 @@
 			</div>
 
 			<div class="aioseo-settings-row">
-				<core-alert v-if="'network' === this.currentSite?.blog_id">
+				<core-alert v-if="'network' === currentSite?.blog_id">
 					{{
 						licenseStore.isUnlicensed || !license.hasCoreFeature('tools', 'network-tools-robots')
 							? strings.networkAlertLite
@@ -37,7 +37,7 @@
 				<p class="description">
 					{{ strings.description2 }}
 
-					<span v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'robotsEditor', true)"/>
+					<span v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'robotsEditor', true)"/>
 				</p>
 			</div>
 
@@ -77,7 +77,7 @@
 							@click="onClickBtnDeleteRobotsTxt"
 							:loading="loading.btnDeleteRobotsTxt"
 						>
-							{{ $constants.GLOBAL_STRINGS.delete }}
+							{{ GLOBAL_STRINGS.delete }}
 						</base-button>
 					</p>
 				</core-alert>
@@ -94,7 +94,7 @@
 			</div>
 
 			<template v-if="isValidRobotsSite">
-				<core-settings-row :name="$constants.GLOBAL_STRINGS.preview">
+				<core-settings-row :name="GLOBAL_STRINGS.preview">
 					<template #content>
 						<base-button
 							size="medium"
@@ -129,7 +129,7 @@
 									<div class="robots-editor-table__column">#</div>
 									<div class="robots-editor-table__column">{{ strings.userAgent }}</div>
 									<div class="robots-editor-table__column">{{ strings.directive }}</div>
-									<div class="robots-editor-table__column">{{ $constants.GLOBAL_STRINGS.value }}</div>
+									<div class="robots-editor-table__column">{{ GLOBAL_STRINGS.value }}</div>
 									<div class="robots-editor-table__column"></div>
 								</div>
 							</div>
@@ -271,7 +271,7 @@
 									>
 										<svg-upload width="14"/>
 
-										{{ $constants.GLOBAL_STRINGS.import }}
+										{{ GLOBAL_STRINGS.import }}
 									</base-button>
 								</div>
 							</div>
@@ -337,7 +337,7 @@
 
 					<div
 						class="aioseo-settings-row aioseo-settings-row--or"
-						:data-or="$constants.GLOBAL_STRINGS.or"
+						:data-or="GLOBAL_STRINGS.or"
 					>
 						<div class="settings-name">
 							<div class="name small-margin">
@@ -399,7 +399,7 @@
 							type="gray"
 							size="medium"
 						>
-							{{ $constants.GLOBAL_STRINGS.cancel }}
+							{{ GLOBAL_STRINGS.cancel }}
 						</base-button>
 
 						<base-button
@@ -409,7 +409,7 @@
 							type="blue"
 							size="medium"
 						>
-							{{ $constants.GLOBAL_STRINGS.import }}
+							{{ GLOBAL_STRINGS.import }}
 						</base-button>
 					</div>
 				</template>
@@ -426,6 +426,8 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	useNetworkStore,
@@ -437,8 +439,9 @@ import {
 import license from '@/vue/utils/license'
 import { arrayColumn, arrayUnique } from '@/vue/utils/helpers'
 import { groupRulesByUserAgent, stringifyRuleset, validateRuleset } from '@/vue/utils/robots'
-import { Network } from '@/vue/mixins/Network'
-import { SaveChanges } from '@/vue/mixins/SaveChanges'
+
+import { useNetwork } from '@/vue/composables/Network'
+
 import BaseButton from '@/vue/components/common/base/Button'
 import BaseEditor from '@/vue/components/common/base/Editor'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
@@ -456,14 +459,25 @@ import SvgTrash from '@/vue/components/common/svg/Trash'
 import SvgUpload from '@/vue/components/common/svg/Upload'
 import SvgDrag from '@/vue/components/common/svg/Drag'
 
+import { __, _n, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			isMainSite
+		} = useNetwork()
+
 		return {
 			licenseStore       : useLicenseStore(),
 			networkStore       : useNetworkStore(),
 			notificationsStore : useNotificationsStore(),
 			optionsStore       : useOptionsStore(),
-			rootStore          : useRootStore()
+			rootStore          : useRootStore(),
+			GLOBAL_STRINGS,
+			isMainSite,
+			links
 		}
 	},
 	components : {
@@ -484,7 +498,6 @@ export default {
 		SvgTrash,
 		SvgUpload
 	},
-	mixins : [ Network, SaveChanges ],
 	data () {
 		return {
 			currentSite      : {},
@@ -515,44 +528,44 @@ export default {
 			},
 			showImportModal : false,
 			strings         : {
-				addRule             : this.$t.__('Add Rule', this.$td),
-				allow               : this.$t.__('Allow', this.$td),
-				customRobotsPreview : this.$t.__('Custom Robots.txt Preview', this.$td),
-				deleteRule          : this.$t.__('Delete Rule', this.$td),
-				description         : this.$t.sprintf(
+				addRule             : __('Add Rule', td),
+				allow               : __('Allow', td),
+				customRobotsPreview : __('Custom Robots.txt Preview', td),
+				deleteRule          : __('Delete Rule', td),
+				description         : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - The plugin short name ("AIOSEO").
-					this.$t.__('The robots.txt editor in %1$s allows you to set up a robots.txt file for your site that will override the default robots.txt file that WordPress creates. By creating a robots.txt file with %2$s you have greater control over the instructions you give web crawlers about your site.', this.$td),
+					__('The robots.txt editor in %1$s allows you to set up a robots.txt file for your site that will override the default robots.txt file that WordPress creates. By creating a robots.txt file with %2$s you have greater control over the instructions you give web crawlers about your site.', td),
 					import.meta.env.VITE_SHORT_NAME,
 					import.meta.env.VITE_SHORT_NAME
 				),
-				description2 : this.$t.sprintf(
+				description2 : sprintf(
 					// Translators: 1 - The plugin name ("All in One SEO").
-					this.$t.__('Just like WordPress, %1$s generates a dynamic file so there is no static file to be found on your server.  The content of the robots.txt file is stored in your WordPress database.', this.$td),
+					__('Just like WordPress, %1$s generates a dynamic file so there is no static file to be found on your server.  The content of the robots.txt file is stored in your WordPress database.', td),
 					import.meta.env.VITE_NAME
 				),
-				directive           : this.$t.__('Directive', this.$td),
-				disallow            : this.$t.__('Disallow', this.$td),
-				enableCustomRobots  : this.$t.__('Enable Custom Robots.txt', this.$td),
-				importAndDelete     : this.$t.__('Import and Delete', this.$td),
-				importFromUrl       : this.$t.__('Import from URL', this.$td),
-				importRobots        : this.$t.__('Import Robots.txt', this.$td),
-				networkAlert        : this.$t.__('These custom robots.txt rules will apply globally to your entire network. To adjust the robots.txt rules for an individual site, please choose it in the list above.', this.$td),
-				networkAlertLite    : this.$t.__('These custom robots.txt rules will apply globally to your entire network. To adjust the robots.txt rules for an individual site, please visit the dashboard for that site directly and update the settings there.', this.$td),
-				invalidRobotsTxtUrl : this.$t.__('Invalid robots.txt URL.', this.$td),
-				openRobotsTxt       : this.$t.__('Open Robots.txt', this.$td),
-				pasteRobotsText     : this.$t.__('Paste Robots.txt text', this.$td),
-				userAgentNotFound   : this.$t.__('No User-agent found in the content beginning.', this.$td),
+				directive           : __('Directive', td),
+				disallow            : __('Disallow', td),
+				enableCustomRobots  : __('Enable Custom Robots.txt', td),
+				importAndDelete     : __('Import and Delete', td),
+				importFromUrl       : __('Import from URL', td),
+				importRobots        : __('Import Robots.txt', td),
+				networkAlert        : __('These custom robots.txt rules will apply globally to your entire network. To adjust the robots.txt rules for an individual site, please choose it in the list above.', td),
+				networkAlertLite    : __('These custom robots.txt rules will apply globally to your entire network. To adjust the robots.txt rules for an individual site, please visit the dashboard for that site directly and update the settings there.', td),
+				invalidRobotsTxtUrl : __('Invalid robots.txt URL.', td),
+				openRobotsTxt       : __('Open Robots.txt', td),
+				pasteRobotsText     : __('Paste Robots.txt text', td),
+				userAgentNotFound   : __('No User-agent found in the content beginning.', td),
 				// Translators: This domain is just a placeholder, please translate "any-domain" to your language so the user understands that they can add any domain here.
-				pasteUrl            : this.$t.__('https://any-domain.com/robots.txt', this.$td),
-				physicalRobotsFound : this.$t.sprintf(
+				pasteUrl            : __('https://any-domain.com/robots.txt', td),
+				physicalRobotsFound : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - The plugin short name ("AIOSEO").
-					this.$t.__('%1$s has detected a physical robots.txt file in the root folder of your WordPress installation. We recommend removing this file as it could cause conflicts with WordPress\' dynamically generated one. %2$s can import this file and delete it, or you can simply delete it.', this.$td),
+					__('%1$s has detected a physical robots.txt file in the root folder of your WordPress installation. We recommend removing this file as it could cause conflicts with WordPress\' dynamically generated one. %2$s can import this file and delete it, or you can simply delete it.', td),
 					import.meta.env.VITE_SHORT_NAME,
 					import.meta.env.VITE_SHORT_NAME
 				),
-				robotsEditor : this.$t.__('Robots.txt Editor', this.$td),
-				selectSite   : this.$t.__('Select Site', this.$td),
-				userAgent    : this.$t.__('User Agent', this.$td)
+				robotsEditor : __('Robots.txt Editor', td),
+				selectSite   : __('Select Site', td),
+				userAgent    : __('User Agent', td)
 			}
 		}
 	},
@@ -618,22 +631,22 @@ export default {
 			return this.rootStore.aioseo.data.subdomain || 'network' === this.currentSite?.blog_id || this.isMainSite(this.currentSite.domain, this.currentSite.path) || (!this.rootStore.aioseo.data.isNetworkAdmin && this.rootStore.aioseo.data.mainSite)
 		},
 		missingRewriteRules () {
-			const string1 = this.$t.__('It looks like you are missing the proper rewrite rules for the robots.txt file.', this.$td)
+			const string1 = __('It looks like you are missing the proper rewrite rules for the robots.txt file.', td)
 			let string2 = ''
 			if (this.rootStore.aioseo.data.server.match(/apache|litespeed/)) {
 				const serverName = 'apache' === this.rootStore.aioseo.data.server ? 'Apache' : 'LiteSpeed'
-				string2 = this.$t.sprintf(
+				string2 = sprintf(
 					// Translators: 1 - Server name, 2 - Opening link tag, 3 - Closing link tag.
-					this.$t.__('It appears that your server is running on %1$s, so the fix should be as simple as checking the %2$scorrect .htaccess implementation on wordpress.org%3$s.', this.$td),
+					__('It appears that your server is running on %1$s, so the fix should be as simple as checking the %2$scorrect .htaccess implementation on wordpress.org%3$s.', td),
 					serverName,
 					'<a href="https://wordpress.org/support/article/htaccess/" target="_blank">',
 					'</a>'
 				)
 			} else if ('nginx' === this.rootStore.aioseo.data.server) {
-				string2 = this.$t.sprintf(
+				string2 = sprintf(
 					// Translators: 1 - Opening link tag, 2 - Closing link tag.
-					this.$t.__('It appears that your server is running on nginx, so the fix will most likely require adding the correct rewrite rules to our nginx configuration. %1$sCheck our documentation for more information%2$s.', this.$td),
-					'<a href="' + this.$links.getDocUrl('robotsRewrite') + '" target="_blank">',
+					__('It appears that your server is running on nginx, so the fix will most likely require adding the correct rewrite rules to our nginx configuration. %1$sCheck our documentation for more information%2$s.', td),
+					'<a href="' + links.getDocUrl('robotsRewrite') + '" target="_blank">',
 					'</a>'
 				)
 			}
@@ -696,9 +709,9 @@ export default {
 
 			const previewIndexes = arrayColumn(redErrors, 'previewIndex')
 			const previewIndexesCount = arrayUnique(previewIndexes).length
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The amount of errors.
-				this.$t._n('%1$s Error', '%1$s Errors', previewIndexesCount, this.$td),
+				_n('%1$s Error', '%1$s Errors', previewIndexesCount, td),
 				previewIndexesCount
 			)
 		},
@@ -711,14 +724,14 @@ export default {
 		},
 		subdirectoryAlert () {
 			if (this.isNetworkSite) {
-				return this.$t.sprintf(
+				return sprintf(
 					// Translators: 1 - The url to the main site.
-					this.$t.__('This site is running in a sub-directory of your main site located at %1$s. Your robots.txt file should only appear in the root directory of that site.', this.$td),
+					__('This site is running in a sub-directory of your main site located at %1$s. Your robots.txt file should only appear in the root directory of that site.', td),
 					'<a href="' + this.rootStore.aioseo.urls.mainSiteUrl + '" target="_blank"><strong>' + this.rootStore.aioseo.urls.mainSiteUrl + '</strong></a>'
 				)
 			}
 
-			return this.$t.__('This site runs in a sub-directory. The robots.txt file must be located at the root of the website host to which it applies.', this.$td)
+			return __('This site runs in a sub-directory. The robots.txt file must be located at the root of the website host to which it applies.', td)
 		},
 		showRobotsDetectedAlert () {
 			return this.getOptions.robotsDetected || this.forceRobotsDetectedAlert

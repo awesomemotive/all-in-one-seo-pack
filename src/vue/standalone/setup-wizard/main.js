@@ -7,7 +7,7 @@ import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
 import { loadPiniaStores } from '@/vue/stores'
 
-import App from './App.vue'
+import App from './App'
 import startRouter from '@/vue/router'
 import paths from '@/vue/standalone/setup-wizard/router/paths'
 

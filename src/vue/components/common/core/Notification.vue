@@ -71,21 +71,45 @@ import {
 	useNotificationsStore
 } from '@/vue/stores'
 
-import { Url } from '@/vue/mixins/Url'
-import { Date } from '@/vue/mixins/Date'
+import {
+	dateSqlToLocalRelative
+} from '@/vue/utils/date'
+
+import { useUrl } from '@/vue/composables/Url'
+
 import BaseButton from '@/vue/components/common/base/Button'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation'
 import SvgGear from '@/vue/components/common/svg/Gear'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'dismissed-notification' ],
 	setup () {
+		const {
+			button1Loading,
+			button2Loading,
+			getHref,
+			getTagType,
+			getTarget,
+			processButtonClick
+		} = useUrl()
+
 		return {
-			notificationsStore : useNotificationsStore()
+			button1Loading,
+			button2Loading,
+			getHref,
+			getTagType,
+			getTarget,
+			notificationsStore : useNotificationsStore(),
+			processButtonClick
 		}
 	},
-	emits      : [ 'dismissed-notification' ],
 	components : {
 		BaseButton,
 		SvgCircleCheck,
@@ -94,8 +118,7 @@ export default {
 		SvgGear,
 		TransitionSlide
 	},
-	mixins : [ Url, Date ],
-	props  : {
+	props : {
 		notification : {
 			type     : Object,
 			required : true
@@ -105,7 +128,7 @@ export default {
 		return {
 			active  : true,
 			strings : {
-				dismiss : this.$t.__('Dismiss', this.$td)
+				dismiss : __('Dismiss', td)
 			}
 		}
 	},
@@ -124,7 +147,7 @@ export default {
 			}
 		},
 		getDate () {
-			return this.dateSqlToLocalRelative(this.notification.start)
+			return dateSqlToLocalRelative(this.notification.start)
 		}
 	},
 	methods : {

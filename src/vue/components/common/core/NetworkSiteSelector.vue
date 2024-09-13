@@ -14,17 +14,28 @@ import {
 } from '@/vue/stores'
 
 import { addParam, getParams, removeParam } from '@/vue/utils/params'
-import { Network } from '@/vue/mixins/Network'
+
+import { useNetwork } from '@/vue/composables/Network'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
+	emits : [ 'selected-site' ],
 	setup () {
+		const {
+			getSites,
+			getUniqueSiteId
+		} = useNetwork()
+
 		return {
-			rootStore : useRootStore()
+			rootStore : useRootStore(),
+			getSites,
+			getUniqueSiteId
 		}
 	},
-	emits  : [ 'selected-site' ],
-	mixins : [ Network ],
-	props  : {
+	props : {
 		followSelectedSite : Boolean,
 		showNetwork        : Boolean
 	},
@@ -33,7 +44,7 @@ export default {
 			site    : null,
 			network : {
 				value : 'network',
-				label : this.$t.__('Network Admin (no site)', this.$td)
+				label : __('Network Admin (no site)', td)
 			}
 		}
 	},

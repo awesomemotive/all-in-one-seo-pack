@@ -97,13 +97,18 @@ import {
 import { sanitizeString } from '@/vue/utils/strings'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'update:separator' ],
 	setup () {
 		return {
 			settingsStore : useSettingsStore()
 		}
 	},
-	emits      : [ 'update:separator' ],
 	components : {
 		GridColumn,
 		GridRow
@@ -121,9 +126,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				custom   : this.$t.__('Custom separator:', this.$td),
-				showMore : this.$t.__('Show More', this.$td),
-				showLess : this.$t.__('Show Less', this.$td)
+				custom   : __('Custom separator:', td),
+				showMore : __('Show More', td),
+				showLess : __('Show Less', td)
 			},
 			showMoreSeparators : false,
 			showMoreInitial    : true,

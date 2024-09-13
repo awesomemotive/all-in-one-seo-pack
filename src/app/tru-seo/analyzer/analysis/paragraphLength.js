@@ -1,6 +1,7 @@
 import getParagraphs from '../researches/helpers/getParagraphs'
 import { __ } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const scores = {
 	incorrect     : 0,

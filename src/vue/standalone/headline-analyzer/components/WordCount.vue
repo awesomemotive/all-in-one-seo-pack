@@ -65,15 +65,19 @@
 import Accordion from './partials/Accordion'
 import { usePostEditorStore } from '@/vue/stores'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	data () {
-		return {
-			textWordCount   : this.$t.__('Word Count', this.$td),
-			postEditorStore : usePostEditorStore()
-		}
-	},
 	components : {
 		Accordion
+	},
+	data () {
+		return {
+			textWordCount   : __('Word Count', td),
+			postEditorStore : usePostEditorStore()
+		}
 	},
 	computed : {
 		currentResult () {
@@ -111,13 +115,13 @@ export default {
 			let statusOnLength = ''
 
 			if (4 >= this.wordLength) {
-				statusOnLength = this.$t.__('Not Enough Words 🙃', this.$td)
+				statusOnLength = __('Not Enough Words 🙃', td)
 			} else if (5 <= this.wordLength && 9 >= this.wordLength) {
-				statusOnLength = this.$t.__('Good 🙂', this.$td)
+				statusOnLength = __('Good 🙂', td)
 			} else if (10 <= this.wordLength && 11 >= this.wordLength) {
-				statusOnLength = this.$t.__('Reduce Word Count 🙂', this.$td)
+				statusOnLength = __('Reduce Word Count 🙂', td)
 			} else {
-				statusOnLength = this.$t.__('Too Many Words 😑', this.$td)
+				statusOnLength = __('Too Many Words 😑', td)
 			}
 
 			return statusOnLength
@@ -126,11 +130,11 @@ export default {
 			let descOnWordLength = ''
 
 			if (4 >= this.wordLength) {
-				descOnWordLength = this.$t.__('Your headline doesn’t use enough words. You have more space to add keywords and power words to improve your SEO and get more engagement.', this.$td)
+				descOnWordLength = __('Your headline doesn’t use enough words. You have more space to add keywords and power words to improve your SEO and get more engagement.', td)
 			} else if (5 <= this.wordLength && 9 >= this.wordLength) {
-				descOnWordLength = this.$t.__('Your headline has the right amount of words. Headlines are more likely to be clicked on in search results if they have about 6 words.', this.$td)
+				descOnWordLength = __('Your headline has the right amount of words. Headlines are more likely to be clicked on in search results if they have about 6 words.', td)
 			} else {
-				descOnWordLength = this.$t.__('Your headline has too many words. Long headlines will get cut off in search results and won’t get as many clicks.', this.$td)
+				descOnWordLength = __('Your headline has too many words. Long headlines will get cut off in search results and won’t get as many clicks.', td)
 			}
 
 			return descOnWordLength

@@ -3,9 +3,9 @@
 		<blur />
 
 		<cta
-			:cta-link="$links.getPricingUrl('image-seo', 'image-seo-upsell')"
+			:cta-link="links.getPricingUrl('image-seo', 'image-seo-upsell')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="$links.getUpsellUrl('image-seo', null, $isPro ? 'pricing' : 'liteUpgrade')"
+			:learn-more-link="links.getUpsellUrl('image-seo', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="features"
 			:hide-bonus="!licenseStore.isUnlicensed"
 		>
@@ -23,17 +23,26 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
-	useLicenseStore
+	useLicenseStore,
+	useRootStore
 } from '@/vue/stores'
 
 import Blur from './Blur'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 import Cta from '@/vue/components/common/cta/Index'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
-			licenseStore : useLicenseStore()
+			licenseStore : useLicenseStore(),
+			rootStore    : useRootStore(),
+			links
 		}
 	},
 	components : {
@@ -44,20 +53,20 @@ export default {
 	data () {
 		return {
 			strings : {
-				titleAttributeFormat : this.$t.__('Title Attribute Format', this.$td),
-				ctaDescription       : this.$t.__('The Image SEO module is a premium feature that enables you to globally control the title, alt tag, caption, description and filename of the images on your site.', this.$td),
-				ctaButtonText        : this.$t.__('Unlock Image SEO', this.$td),
-				ctaHeader            : this.$t.sprintf(
+				titleAttributeFormat : __('Title Attribute Format', td),
+				ctaDescription       : __('The Image SEO module is a premium feature that enables you to globally control the title, alt tag, caption, description and filename of the images on your site.', td),
+				ctaButtonText        : __('Unlock Image SEO', td),
+				ctaHeader            : sprintf(
 					// Translators: 1 - "PRO".
-					this.$t.__('Image SEO is a %1$s Feature', this.$td),
+					__('Image SEO is a %1$s Feature', td),
 					'PRO'
 				)
 			},
 			features : [
-				this.$t.__('Autogenerate image attributes', this.$td),
-				this.$t.__('Clean uploaded image filenames', this.$td),
-				this.$t.__('Strip punctuation from image attributes', this.$td),
-				this.$t.__('Convert casing of image attributes', this.$td)
+				__('Autogenerate image attributes', td),
+				__('Clean uploaded image filenames', td),
+				__('Strip punctuation from image attributes', td),
+				__('Convert casing of image attributes', td)
 			]
 		}
 	}

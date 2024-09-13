@@ -1,8 +1,8 @@
 <template>
 	<cta
-		:cta-link="$links.getPricingUrl('seo-revisions', 'seo-revisions', parentComponentContext)"
+		:cta-link="links.getPricingUrl('seo-revisions', 'seo-revisions', parentComponentContext)"
 		:button-text="strings.ctaButtonText"
-		:learn-more-link="$links.getUpsellUrl('seo-revisions', parentComponentContext, $isPro ? 'pricing' : 'liteUpgrade')"
+		:learn-more-link="links.getUpsellUrl('seo-revisions', parentComponentContext, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 		:feature-list="strings.ctaFeatures"
 		:hide-bonus="!licenseStore.isUnlicensed"
 	>
@@ -19,17 +19,25 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
-	useLicenseStore
+	useLicenseStore,
+	useRootStore
 } from '@/vue/stores'
 
 import Cta from '@/vue/components/common/cta/Index'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
-			licenseStore : useLicenseStore()
+			licenseStore : useLicenseStore(),
+			rootStore    : useRootStore(),
+			links
 		}
 	},
 	components : {
@@ -42,19 +50,19 @@ export default {
 	data () {
 		return {
 			strings : {
-				ctaHeader : this.$t.sprintf(
+				ctaHeader : sprintf(
 					// Translators: 1 - "PRO".
-					this.$t.__('SEO Revisions is a %1$s Feature', this.$td),
+					__('SEO Revisions is a %1$s Feature', td),
 					'PRO'
 				),
-				ctaDescription : this.$t.__('Our powerful revisions feature provides a valuable record of SEO updates, allowing you to monitor the effectiveness of your SEO efforts and make informed decisions.', this.$td),
+				ctaDescription : __('Our powerful revisions feature provides a valuable record of SEO updates, allowing you to monitor the effectiveness of your SEO efforts and make informed decisions.', td),
 				ctaFeatures    : [
-					this.$t.__('Improved SEO strategy', this.$td),
-					this.$t.__('Easy to manage revisions', this.$td),
-					this.$t.__('Greater transparency and accountability', this.$td),
-					this.$t.__('Historical record of optimization efforts', this.$td)
+					__('Improved SEO strategy', td),
+					__('Easy to manage revisions', td),
+					__('Greater transparency and accountability', td),
+					__('Historical record of optimization efforts', td)
 				],
-				ctaButtonText : this.$t.__('Unlock SEO Revisions', this.$td)
+				ctaButtonText : __('Unlock SEO Revisions', td)
 			}
 		}
 	}

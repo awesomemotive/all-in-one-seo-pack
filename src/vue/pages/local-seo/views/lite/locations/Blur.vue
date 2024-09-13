@@ -109,6 +109,11 @@
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreBlur,
@@ -118,27 +123,27 @@ export default {
 	data () {
 		return {
 			strings : {
-				description : this.$t.sprintf(
+				description : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('Whether your business has multiple locations, or just one, %1$s makes it easy to configure and display relevant information about your local business. You can use the custom-built tools below, or you can use the Locations custom post type (multiple locations only) to generate relevant and necessary information for search engines or for your customers.', this.$td),
+					__('Whether your business has multiple locations, or just one, %1$s makes it easy to configure and display relevant information about your local business. You can use the custom-built tools below, or you can use the Locations custom post type (multiple locations only) to generate relevant and necessary information for search engines or for your customers.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				name                : this.$t.__('name', this.$td),
-				nameDesc            : this.$t.__('Your name or company name.', this.$td),
-				businessType        : this.$t.__('Type', this.$td),
-				urls                : this.$t.__('URLs', this.$td),
-				image               : this.$t.__('Image', this.$td),
-				uploadOrSelectImage : this.$t.__('Upload or Select Image', this.$td),
-				pasteYourImageUrl   : this.$t.__('Paste your image URL or select a new image', this.$td),
-				minimumSize         : this.$t.__('Minimum size: 112px x 112px, The image must be in JPG, PNG, GIF, SVG, or WEBP format.', this.$td),
-				remove              : this.$t.__('Remove', this.$td),
-				websiteDesc         : this.$t.__('Website URL:', this.$td),
-				aboutDesc           : this.$t.__('About Page URL:', this.$td),
-				contactDesc         : this.$t.__('Contact Page URL:', this.$td)
+				name                : __('name', td),
+				nameDesc            : __('Your name or company name.', td),
+				businessType        : __('Type', td),
+				urls                : __('URLs', td),
+				image               : __('Image', td),
+				uploadOrSelectImage : __('Upload or Select Image', td),
+				pasteYourImageUrl   : __('Paste your image URL or select a new image', td),
+				minimumSize         : __('Minimum size: 112px x 112px, The image must be in JPG, PNG, GIF, SVG, or WEBP format.', td),
+				remove              : __('Remove', td),
+				websiteDesc         : __('Website URL:', td),
+				aboutDesc           : __('About Page URL:', td),
+				contactDesc         : __('Contact Page URL:', td)
 			},
 			businessTypes : [
-				{ label: this.$t.__('default', this.$td), value: 'LocalBusiness' },
-				{ label: this.$t.__('Animal Shelter', this.$td), value: 'Animal Shelter' }
+				{ label: __('default', td), value: 'LocalBusiness' },
+				{ label: __('Animal Shelter', td), value: 'Animal Shelter' }
 			]
 		}
 	}

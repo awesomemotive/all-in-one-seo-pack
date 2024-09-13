@@ -24,6 +24,10 @@
 </template>
 
 <script>
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	emits : [ 'process-bulk-action' ],
 	props : {
@@ -37,8 +41,8 @@ export default {
 		return {
 			bulkAction : '-1',
 			strings    : {
-				bulkActions : this.$t.__('Bulk Actions', this.$td),
-				apply       : this.$t.__('Apply', this.$td)
+				bulkActions : __('Bulk Actions', td),
+				apply       : __('Apply', td)
 			}
 		}
 	},

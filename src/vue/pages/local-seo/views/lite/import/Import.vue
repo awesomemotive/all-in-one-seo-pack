@@ -17,9 +17,9 @@
 		<blur />
 
 		<cta
-			:cta-link="$links.getPricingUrl('local-seo', 'local-seo-upsell', 'import')"
+			:cta-link="links.getPricingUrl('local-seo', 'local-seo-upsell', 'import')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="$links.getUpsellUrl('local-seo', null, 'home')"
+			:learn-more-link="links.getUpsellUrl('local-seo', null, 'home')"
 			:feature-list="features"
 		>
 			<template #header-text>
@@ -35,12 +35,19 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
+
 import Blur from './Blur'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import Cta from '@/vue/components/common/cta/Index'
-import SvgDownload from '@/vue/components/common/svg/Download.vue'
+import SvgDownload from '@/vue/components/common/svg/Download'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		SvgDownload,
@@ -52,25 +59,26 @@ export default {
 	},
 	data () {
 		return {
+			links,
 			importSuccess : false,
 			importError   : false,
 			options       : {},
 			plugin        : null,
 			loading       : false,
 			strings       : {
-				importLocalSeoFromOtherPlugins : this.$t.__('Import Local SEO From Other Plugins', this.$td),
-				ctaButtonText                  : this.$t.__('Unlock Local SEO', this.$td),
-				ctaHeader                      : this.$t.sprintf(
+				importLocalSeoFromOtherPlugins : __('Import Local SEO From Other Plugins', td),
+				ctaButtonText                  : __('Unlock Local SEO', td),
+				ctaHeader                      : sprintf(
 					// Translators: 1 - "PRO".
-					this.$t.__('Local SEO is a %1$s Feature', this.$td),
+					__('Local SEO is a %1$s Feature', td),
 					'PRO'
 				),
-				ctaDescription : this.$t.__('Import your Local SEO settings and locations from other plugins.', this.$td)
+				ctaDescription : __('Import your Local SEO settings and locations from other plugins.', td)
 			},
 			features : [
-				this.$t.__('Yoast SEO', this.$td),
-				this.$t.__('Rank Math SEO', this.$td),
-				this.$t.__('SEOPress', this.$td)
+				__('Yoast SEO', td),
+				__('Rank Math SEO', td),
+				__('SEOPress', td)
 			]
 		}
 	},

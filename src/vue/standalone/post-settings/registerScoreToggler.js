@@ -6,7 +6,7 @@ import {
 import { shouldShowMetaBox } from '@/vue/utils/metabox'
 import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
 import { isBlockEditor } from '@/vue/utils/context'
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 
 export default function registerScoreToggler () {
 	const td = import.meta.env.VITE_TEXTDOMAIN
@@ -95,12 +95,16 @@ export default function registerScoreToggler () {
 					{
 						name  : 'aioseo-post-settings-sidebar',
 						icon  : AioseoButton,
-						title : 'AIOSEO'
+						title : 'AIOSEO' // Don't translate this as we need to target it in CSS.
 					},
 					el('div',
-						{ id: 'aioseo-post-settings-sidebar', className: 'aioseo-post-settings-sidebar' },
+						{
+							id : 'aioseo-post-settings-sidebar', className : 'aioseo-post-settings-sidebar'
+						},
 						el('div',
-							{ id: 'aioseo-post-settings-sidebar-vue', className: 'aioseo-post-settings-sidebar-vue' },
+							{
+								id : 'aioseo-post-settings-sidebar-vue', className : 'aioseo-post-settings-sidebar-vue'
+							},
 							el('div',
 								{
 									className : 'aioseo-loading-spinner dark',

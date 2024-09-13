@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 
 const wp = window.wp
 const el = wp.element.createElement

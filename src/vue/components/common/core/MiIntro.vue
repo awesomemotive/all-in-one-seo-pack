@@ -109,7 +109,7 @@ import {
 } from '@/vue/stores'
 
 import { getAssetUrl } from '@/vue/utils/helpers'
-import { __, sprintf } from '@wordpress/i18n'
+import { __, sprintf } from '@/vue/plugins/translations'
 
 import CoreCard from '@/vue/components/common/core/Card'
 import SvgAioseoLogoGear from '@/vue/components/common/svg/aioseo/LogoGear'

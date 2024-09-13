@@ -43,25 +43,40 @@
 
 <script>
 import {
+	FREQUENCY_OPTIONS,
+	PRIORITY_OPTIONS
+} from '@/vue/plugins/constants'
+import {
 	useOptionsStore
 } from '@/vue/stores'
 
-import { JsonValues } from '@/vue/mixins/JsonValues'
+import { useJsonValues } from '@/vue/composables/JsonValues'
+
 import TableColumn from '@/vue/components/common/table/Column'
 import TableRow from '@/vue/components/common/table/Row'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getJsonValue,
+			setJsonValue
+		} = useJsonValues()
+
 		return {
-			optionsStore : useOptionsStore()
+			getJsonValue,
+			optionsStore : useOptionsStore(),
+			setJsonValue
 		}
 	},
 	components : {
 		TableColumn,
 		TableRow
 	},
-	mixins : [ JsonValues ],
-	props  : {
+	props : {
 		priority : {
 			type     : Object,
 			required : true
@@ -80,22 +95,22 @@ export default {
 	data () {
 		return {
 			strings : {
-				postTypes  : this.$t.__('Post Types', this.$td),
-				taxonomies : this.$t.__('Taxonomies', this.$td),
-				priority   : this.$t.__('Priority', this.$td),
-				frequency  : this.$t.__('Frequency', this.$td),
-				homePage   : this.$t.__('Home Page', this.$td),
-				archive    : this.$t.__('Date Archive Pages', this.$td),
-				author     : this.$t.__('Author Pages', this.$td)
+				postTypes  : __('Post Types', td),
+				taxonomies : __('Taxonomies', td),
+				priority   : __('Priority', td),
+				frequency  : __('Frequency', td),
+				homePage   : __('Home Page', td),
+				archive    : __('Date Archive Pages', td),
+				author     : __('Author Pages', td)
 			}
 		}
 	},
 	computed : {
 		getFrequencyOptions () {
-			return [ { label: this.$t.__('default', this.$td), value: 'default' } ].concat(this.$constants.FREQUENCY_OPTIONS)
+			return [ { label: __('default', td), value: 'default' } ].concat(FREQUENCY_OPTIONS)
 		},
 		getPriorityOptions () {
-			return [ { label: this.$t.__('default', this.$td), value: 'default' } ].concat(this.$constants.PRIORITY_OPTIONS)
+			return [ { label: __('default', td), value: 'default' } ].concat(PRIORITY_OPTIONS)
 		},
 		filteredRows () {
 			let filteredRows = this.rows

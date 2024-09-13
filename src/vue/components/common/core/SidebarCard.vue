@@ -90,8 +90,8 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
-import { useTruSeoScore } from '@/vue/composables'
-import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
+import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
+
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
@@ -100,9 +100,17 @@ import SvgEllipse from '@/vue/components/common/svg/Ellipse'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 export default {
 	setup () {
-		const { strings } = useTruSeoScore()
+		const {
+			getErrorClass,
+			getErrorDisplay,
+			getScoreClass,
+			strings
+		} = useTruSeoScore()
 
 		return {
+			getErrorClass,
+			getErrorDisplay,
+			getScoreClass,
 			settingsStore : useSettingsStore(),
 			strings
 		}
@@ -115,8 +123,7 @@ export default {
 		SvgEllipse,
 		TransitionSlide
 	},
-	mixins : [ TruSeoScore ],
-	props  : {
+	props : {
 		slug : {
 			type     : String,
 			required : true

@@ -7,7 +7,7 @@
 			:toggles="false"
 		>
 			<component
-				:is="!optionsStore.internalOptions.internal.siteAnalysis.connectToken ? 'core-blur' : 'div'"
+				:is="!optionsStore.internalOptions.internal.siteAnalysis.connectToken ? CoreBlur : 'div'"
 			>
 				<slot />
 			</component>
@@ -31,7 +31,7 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import {
 	useConnectStore,
 	useOptionsStore,
@@ -39,47 +39,33 @@ import {
 } from '@/vue/stores'
 
 import { popup } from '@/vue/utils/popup'
-import { useSeoSiteScore } from '@/vue/composables'
-import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
+import { useSeoSiteScore } from '@/vue/composables/SeoSiteScore'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreCard from '@/vue/components/common/core/Card'
-export default {
-	setup () {
-		const { strings } = useSeoSiteScore()
 
-		return {
-			connectStore : useConnectStore(),
-			optionsStore : useOptionsStore(),
-			rootStore    : useRootStore(),
-			strings
-		}
-	},
-	components : {
-		CoreBlur,
-		CoreCard
-	},
-	mixins : [ SeoSiteScore ],
-	data () {
-		return {
-			score : 0
-		}
-	},
-	methods : {
-		openPopup (url) {
-			popup(
-				url,
-				this.connectWithAioseo,
-				600,
-				630,
-				true,
-				[ 'token' ],
-				this.completedCallback,
-				() => {}
-			)
-		},
-		completedCallback (payload) {
-			return this.connectStore.saveConnectToken(payload.token)
-		}
-	}
+const {
+	connectWithAioseo,
+	strings
+} = useSeoSiteScore()
+
+const optionsStore = useOptionsStore()
+const rootStore    = useRootStore()
+
+const openPopup = (url) => {
+	popup(
+		url,
+		connectWithAioseo,
+		600,
+		630,
+		true,
+		[ 'token' ],
+		completedCallback,
+		() => {}
+	)
+}
+
+const connectStore = useConnectStore()
+const completedCallback = (payload) => {
+	return connectStore.saveConnectToken(payload.token)
 }
 </script>

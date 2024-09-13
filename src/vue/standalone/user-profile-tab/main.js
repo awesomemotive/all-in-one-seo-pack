@@ -7,7 +7,7 @@ import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
 import { loadPiniaStores } from '@/vue/stores'
 
-import App from './App.vue'
+import App from './App'
 
 import { elemLoaded } from '@/vue/utils/elemLoaded'
 

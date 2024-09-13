@@ -2,7 +2,7 @@
 	<div class="aioseo-wizard-close-and-exit">
 		<slot name="links">
 			<a
-				v-if="$isPro || optionsStore.options.advanced.usageTracking"
+				v-if="rootStore.isPro || optionsStore.options.advanced.usageTracking"
 				:href="rootStore.aioseo.urls.aio.dashboard"
 			>
 				{{ strings.closeAndExit }}
@@ -18,7 +18,7 @@
 		</slot>
 
 		<core-modal
-			:show="setupWizardStore.showUsageTrackingModal && !$isPro"
+			:show="setupWizardStore.showUsageTrackingModal && !rootStore.isPro"
 			@close="setupWizardStore.showUsageTrackingModal = false"
 			:classes="[ 'aioseo-close-and-exit-modal' ]"
 		>
@@ -71,7 +71,7 @@ import {
 	useSetupWizardStore
 } from '@/vue/stores'
 
-import { useWizard } from '@/vue/composables'
+import { useWizard } from '@/vue/composables/Wizard'
 
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import SvgClose from '@/vue/components/common/svg/Close'

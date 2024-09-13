@@ -99,6 +99,7 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	useNotificationsStore,
@@ -108,7 +109,13 @@ import {
 
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'dismissed-notification' ],
 	setup () {
 		return {
 			licenseStore       : useLicenseStore(),
@@ -117,7 +124,6 @@ export default {
 			rootStore          : useRootStore()
 		}
 	},
-	emits      : [ 'dismissed-notification' ],
 	components : {
 		SvgCircleCheck,
 		TransitionSlide
@@ -133,13 +139,13 @@ export default {
 			step    : 1,
 			active  : true,
 			strings : {
-				dismiss        : this.$t.__('Dismiss', this.$td),
-				yesILoveIt     : this.$t.__('Yes, I love it!', this.$td),
-				notReally      : this.$t.__('Not Really...', this.$td),
-				okYouDeserveIt : this.$t.__('Ok, you deserve it', this.$td),
-				nopeMaybeLater : this.$t.__('Nope, maybe later', this.$td),
-				giveFeedback   : this.$t.__('Give feedback', this.$td),
-				noThanks       : this.$t.__('No thanks', this.$td)
+				dismiss        : __('Dismiss', td),
+				yesILoveIt     : __('Yes, I love it!', td),
+				notReally      : __('Not Really...', td),
+				okYouDeserveIt : __('Ok, you deserve it', td),
+				nopeMaybeLater : __('Nope, maybe later', td),
+				giveFeedback   : __('Give feedback', td),
+				noThanks       : __('No thanks', td)
 			}
 		}
 	},
@@ -147,13 +153,13 @@ export default {
 		title () {
 			switch (this.step) {
 				case 2:
-					return this.$t.__('That\'s Awesome!', this.$td)
+					return __('That\'s Awesome!', td)
 				case 3:
-					return this.$t.__('Help us improve', this.$td)
+					return __('Help us improve', td)
 				default:
-					return this.$t.sprintf(
+					return sprintf(
 						// Translators: 1 - The plugin short name ("AIOSEO").
-						this.$t.__('Are you enjoying %1$s?', this.$td),
+						__('Are you enjoying %1$s?', td),
 						import.meta.env.VITE_SHORT_NAME
 					)
 			}
@@ -161,11 +167,11 @@ export default {
 		content () {
 			switch (this.step) {
 				case 2:
-					return this.$t.__('Could you please do us a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?', this.$td)
+					return __('Could you please do us a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?', td)
 				case 3:
-					return this.$t.sprintf(
+					return sprintf(
 						// Translators: 1 - The plugin name ("All in One SEO").
-						this.$t.__('We\'re sorry to hear you aren\'t enjoying %1$s. We would love a chance to improve. Could you take a minute and let us know what we can do better?', this.$td),
+						__('We\'re sorry to hear you aren\'t enjoying %1$s. We would love a chance to improve. Could you take a minute and let us know what we can do better?', td),
 						import.meta.env.VITE_NAME
 					)
 				default:
@@ -174,8 +180,8 @@ export default {
 		},
 		feedbackUrl () {
 			const key = this.optionsStore.options.general && this.licenseStore.licenseKey ? this.licenseStore.licenseKey : ''
-			const pro = this.$isPro ? 'pro' : 'lite'
-			return this.$links.utmUrl(
+			const pro = this.rootStore.isPro ? 'pro' : 'lite'
+			return links.utmUrl(
 				'notification-review-notice',
 				this.rootStore.aioseo.version,
 				'https://aioseo.com/plugin-feedback/' +

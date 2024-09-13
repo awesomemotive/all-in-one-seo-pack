@@ -86,16 +86,29 @@ import {
 	useOptionsStore
 } from '$/vue/stores'
 
-import { JsonValues } from '@/vue/mixins/JsonValues'
+import { useJsonValues } from '@/vue/composables/JsonValues'
+
 import BaseButton from '@/vue/components/common/base/Button'
 import BaseSelect from '@/vue/components/common/base/Select'
 import SvgAddPlus from '@/vue/components/common/svg/AddPlus'
 import SvgClose from '@/vue/components/common/svg/Close'
 import SvgExternal from '@/vue/components/common/svg/External'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getJsonValues,
+			setJsonValues
+		} = useJsonValues()
+
 		return {
-			optionsStore : useOptionsStore()
+			getJsonValues,
+			optionsStore : useOptionsStore(),
+			setJsonValues
 		}
 	},
 	components : {
@@ -105,8 +118,7 @@ export default {
 		SvgClose,
 		SvgExternal
 	},
-	mixins : [ JsonValues ],
-	props  : {
+	props : {
 		options : {
 			type     : Object,
 			required : true
@@ -120,13 +132,13 @@ export default {
 		return {
 			excludeOptions : [],
 			strings        : {
-				typeToSearch   : this.$t.__('Type to search...', this.$td),
-				noOptionsPosts : this.$t.__('Begin typing a post ID, title or slug to search...', this.$td),
-				noOptionsTerms : this.$t.__('Begin typing a term ID or name to search...', this.$td),
-				noResult       : this.$t.__('No results found for your search. Try again!', this.$td),
-				clear          : this.$t.__('Clear', this.$td),
-				id             : this.$t.__('ID', this.$td),
-				type           : this.$t.__('Type', this.$td)
+				typeToSearch   : __('Type to search...', td),
+				noOptionsPosts : __('Begin typing a post ID, title or slug to search...', td),
+				noOptionsTerms : __('Begin typing a term ID or name to search...', td),
+				noResult       : __('No results found for your search. Try again!', td),
+				clear          : __('Clear', td),
+				id             : __('ID', td),
+				type           : __('Type', td)
 			}
 		}
 	},

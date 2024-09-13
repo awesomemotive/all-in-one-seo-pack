@@ -62,14 +62,25 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
+import { usePostTypes } from '@/vue/composables/PostTypes'
+
 import BaseHighlightToggle from '@/vue/components/common/base/HighlightToggle'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
-import PostTypesMixin from '@/vue/mixins/PostTypes'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getPostIconClass
+		} = usePostTypes()
+
 		return {
+			getPostIconClass,
 			rootStore : useRootStore()
 		}
 	},
@@ -79,8 +90,7 @@ export default {
 		GridColumn,
 		GridRow
 	},
-	mixins : [ PostTypesMixin ],
-	props  : {
+	props : {
 		type : {
 			type     : String,
 			required : true
@@ -95,10 +105,10 @@ export default {
 	data () {
 		return {
 			strings : {
-				label                : this.$t.__('Label:', this.$td),
-				name                 : this.$t.__('Slug:', this.$td),
-				includeAllPostTypes  : this.$t.__('Include All Post Types', this.$td),
-				includeAllTaxonomies : this.$t.__('Include All Taxonomies', this.$td)
+				label                : __('Label:', td),
+				name                 : __('Slug:', td),
+				includeAllPostTypes  : __('Include All Post Types', td),
+				includeAllTaxonomies : __('Include All Taxonomies', td)
 			}
 		}
 	},

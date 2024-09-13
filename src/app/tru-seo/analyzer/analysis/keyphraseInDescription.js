@@ -1,7 +1,8 @@
 import wordMatch from '../researches/stringProcessing/matchTextWithWord'
 import getKeyphraseType from '../researches/helpers/getKeyphraseType'
 import { __, sprintf } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const scores = {
 	noMatches : 3,

@@ -14,7 +14,9 @@ import {
 	VisuallyHidden,
 	createSlotFill
 } from '@wordpress/components'
+
 import { __, sprintf } from '@wordpress/i18n'
+
 import {
 	useRef,
 	useCallback,

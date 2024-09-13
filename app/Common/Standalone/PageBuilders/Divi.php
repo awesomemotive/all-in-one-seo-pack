@@ -210,7 +210,7 @@ class Divi extends Base {
 	 */
 	public function limitModifiedDate( $postId ) {
 		// This method is supposed to be used in the `wp_ajax_et_fb_ajax_save` action.
-		if ( empty( $_REQUEST['et_fb_save_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_REQUEST['et_fb_save_nonce'] ), 'et_fb_save_nonce' ) ) {
+		if ( empty( $_REQUEST['et_fb_save_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['et_fb_save_nonce'] ) ), 'et_fb_save_nonce' ) ) {
 			return false;
 		}
 

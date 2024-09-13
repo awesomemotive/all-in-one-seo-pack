@@ -48,14 +48,25 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
+import { usePostTypes } from '@/vue/composables/PostTypes'
+
 import Advanced from './partials/Advanced'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
-import PostTypesMixin from '@/vue/mixins/PostTypes'
 import TitleDescription from './partials/TitleDescription'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getPostIconClass
+		} = usePostTypes()
+
 		return {
+			getPostIconClass,
 			optionsStore  : useOptionsStore(),
 			rootStore     : useRootStore(),
 			settingsStore : useSettingsStore()
@@ -67,20 +78,19 @@ export default {
 		CoreMainTabs,
 		TitleDescription
 	},
-	mixins : [ PostTypesMixin ],
 	data () {
 		return {
 			internalDebounce : null,
 			tabs             : [
 				{
 					slug   : 'title-description',
-					name   : this.$t.__('Title & Description', this.$td),
+					name   : __('Title & Description', td),
 					access : 'aioseo_search_appearance_settings',
 					pro    : false
 				},
 				{
 					slug   : 'advanced',
-					name   : this.$t.__('Advanced', this.$td),
+					name   : __('Advanced', td),
 					access : 'aioseo_search_appearance_settings',
 					pro    : false
 				}

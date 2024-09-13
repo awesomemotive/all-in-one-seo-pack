@@ -102,6 +102,11 @@ import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreNetworkSiteSelector from '@/vue/components/common/core/NetworkSiteSelector'
 import SvgDownload from '@/vue/components/common/svg/Download'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -125,22 +130,22 @@ export default {
 			uploadSuccess : false,
 			loading       : false,
 			strings       : {
-				selectSite                  : this.$t.__('Select Site', this.$td),
-				importRestoreAioseoSettings : this.$t.sprintf(
+				selectSite                  : __('Select Site', td),
+				importRestoreAioseoSettings : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('Import / Restore %1$s Settings', this.$td),
+					__('Import / Restore %1$s Settings', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				fileUploadPlaceholder    : this.$t.__('Import from a JSON or INI file...', this.$td),
-				chooseAFile              : this.$t.__('Choose a File', this.$td),
-				fileUploadDescription    : this.$t.__('Imported settings will overwrite existing settings and will not be merged.', this.$td),
-				import                   : this.$t.__('Import', this.$td),
-				jsonFileTypeRequired     : this.$t.__('A JSON or INI file is required to import settings.', this.$td),
-				fileUploadedSuccessfully : this.$t.__('Success! Your settings have been imported.', this.$td),
-				fileUploadFailed         : this.$t.__('There was an error importing your settings. Please make sure you are uploading the correct file or it is in the proper format.', this.$td),
-				v3ImportWarning          : this.$t.sprintf(
+				fileUploadPlaceholder    : __('Import from a JSON or INI file...', td),
+				chooseAFile              : __('Choose a File', td),
+				fileUploadDescription    : __('Imported settings will overwrite existing settings and will not be merged.', td),
+				import                   : __('Import', td),
+				jsonFileTypeRequired     : __('A JSON or INI file is required to import settings.', td),
+				fileUploadedSuccessfully : __('Success! Your settings have been imported.', td),
+				fileUploadFailed         : __('There was an error importing your settings. Please make sure you are uploading the correct file or it is in the proper format.', td),
+				v3ImportWarning          : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('Please note that if you are importing post/term meta from %1$s v3.7.1 or below, this will only be successful if the post/term IDs of this site are identical to those of the source site.', this.$td),
+					__('Please note that if you are importing post/term meta from %1$s v3.7.1 or below, this will only be successful if the post/term IDs of this site are identical to those of the source site.', td),
 					import.meta.env.VITE_SHORT_NAME
 				)
 			}

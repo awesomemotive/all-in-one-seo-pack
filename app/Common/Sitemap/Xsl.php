@@ -89,6 +89,8 @@ class Xsl {
 		$dateFormat = get_option( 'date_format' );
 		$timeFormat = get_option( 'time_format' );
 
+		$entries = aioseo()->sitemap->helpers->decodeSitemapEntries( $entries );
+
 		foreach ( $entries as $index ) {
 			$url = ! empty( $index['guid'] ) ? $index['guid'] : $index['loc'];
 

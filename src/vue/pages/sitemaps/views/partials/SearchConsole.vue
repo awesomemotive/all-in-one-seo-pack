@@ -43,17 +43,21 @@ import {
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useSearchConsole } from '@/vue/composables'
+import { useGoogleSearchConsole } from '@/vue/composables/GoogleSearchConsole'
 import { getParams } from '@/vue/utils/params'
 import CoreAlertActionable from '@/vue/components/common/core/alert/Actionable'
 import SitemapsWithErrorsModal from './SitemapsWithErrorsModal'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	setup () {
 		const {
 			strings,
 			redirectToGscSettings
-		} = useSearchConsole()
+		} = useGoogleSearchConsole()
 
 		return {
 			searchStatisticsStore : useSearchStatisticsStore(),
@@ -71,7 +75,7 @@ export default {
 		return {
 			showErrorsModal : false,
 			strings         : merge(this.composableStrings, {
-				yourSiteIsConnected : this.$t.__('Your site is connected directly to Google Search Console and your sitemaps are in sync.', this.$td)
+				yourSiteIsConnected : __('Your site is connected directly to Google Search Console and your sitemaps are in sync.', td)
 			})
 		}
 	},

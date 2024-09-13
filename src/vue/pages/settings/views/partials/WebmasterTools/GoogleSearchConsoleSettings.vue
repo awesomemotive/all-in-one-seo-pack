@@ -28,7 +28,7 @@
 								size="medium"
 								type="blue"
 								tag="button"
-								@click.stop="reconnect()"
+								@click.stop="reconnect"
 								:loading="loading"
 							>
 								{{ strings.reconnect }}&nbsp;&rarr;
@@ -52,7 +52,7 @@
 								size="medium"
 								type="blue"
 								tag="button"
-								@click.stop="connect()"
+								@click.stop="connect"
 								:loading="loading"
 							>
 								{{ strings.connectToGoogleSearchConsole }}&nbsp;&rarr;
@@ -95,7 +95,7 @@
 								type="green"
 								tag="a"
 								size="medium"
-								:href="$links.utmUrl('general-settings', 'google-search-console')"
+								:href="links.utmUrl('general-settings', 'google-search-console')"
 								target="_blank"
 							>
 								{{ strings.upgradeButton }}
@@ -108,67 +108,70 @@
 			<disconnect-modal
 				:show-modal="showModal"
 				:loading="loading"
-				@continue="disconnect()"
+				@continue="disconnect"
 				@cancel="showModal = false"
 			/>
 		</div>
 	</grid-column>
 </template>
 
-<script>
-import {
-	useOptionsStore,
-	useRootStore
-} from '@/vue/stores'
+<script setup>
+import { computed } from 'vue'
 
 import license from '@/vue/utils/license'
+import links from '@/vue/utils/links'
 import { merge } from 'lodash-es'
-import { useSearchConsole } from '@/vue/composables'
-import { WebmasterTools } from '@/vue/pages/settings/mixins'
-import { GoogleSearchConsole } from '@/vue/mixins/GoogleSearchConsole'
+
+import { useGoogleSearchConsole } from '@/vue/composables/GoogleSearchConsole'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import GridColumn from '@/vue/components/common/grid/Column'
 import DisconnectModal from '@/vue/pages/search-statistics/views/partials/DisconnectModal'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgConnectGoogleSearchConsole from '@/vue/components/common/svg/ConnectGoogleSearchConsole'
-export default {
-	setup () {
-		const { strings } = useSearchConsole()
 
-		return {
-			optionsStore      : useOptionsStore(),
-			rootStore         : useRootStore(),
-			composableStrings : strings
-		}
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
+const {
+	alertMessage,
+	connect,
+	disconnect,
+	loading,
+	reconnect,
+	strings : composableStrings,
+	showAlert,
+	showModal
+} = useGoogleSearchConsole({
+	returnTo : 'webmaster-tools'
+})
+
+const props = defineProps({
+	tool : {
+		type     : Object,
+		required : true
 	},
-	components : {
-		CoreAlert,
-		DisconnectModal,
-		GridColumn,
-		SvgCircleCheck,
-		SvgConnectGoogleSearchConsole
-	},
-	mixins : [ WebmasterTools, GoogleSearchConsole ],
-	data () {
-		return {
-			returnTo : 'webmaster-tools',
-			strings  : merge(this.composableStrings, {
-				connectYourSite : this.$t.__('Connect Your Site to Google Search Console', this.$td),
-				connected       : this.$t.__('Google Search Console is Connected.', this.$td),
-				reconnect       : this.$t.__('Reconnect', this.$td),
-				disconnect      : this.$t.__('Disconnect', this.$td),
-				connectText     : this.$t.__('Quickly verify ownership in Google Search Console and automatically submit sitemaps with one click. Speed up indexing, increase visibility and optimize your site\'s performance to effortlessly attract more organic traffic.', this.$td),
-				upgradeButton   : this.$t.__('Unlock Search Statistics', this.$td)
-			}),
-			license
-		}
-	},
-	computed : {
-		showUpgradeCta () {
-			return !this.license.hasCoreFeature('search-statistics') && !this.isConnected
+	isConnected : {
+		type : Boolean,
+		default () {
+			return false
 		}
 	}
-}
+})
+
+const strings = merge(composableStrings, {
+	connectYourSite : __('Connect Your Site to Google Search Console', td),
+	connected       : __('Google Search Console is Connected.', td),
+	reconnect       : __('Reconnect', td),
+	disconnect      : __('Disconnect', td),
+	connectText     : __('Quickly verify ownership in Google Search Console and automatically submit sitemaps with one click. Speed up indexing, increase visibility and optimize your site\'s performance to effortlessly attract more organic traffic.', td),
+	upgradeButton   : __('Unlock Search Statistics', td)
+})
+
+const showUpgradeCta = computed(() => {
+	return !license.hasCoreFeature('search-statistics') && !props.isConnected
+})
 </script>
 
 <style lang="scss">

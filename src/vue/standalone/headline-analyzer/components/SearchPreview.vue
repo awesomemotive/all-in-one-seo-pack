@@ -11,8 +11,8 @@
 					</a>
 				</p>
 				<h4
-					v-if="this.postEditorStore?.newHeadlineAnaylzerData?.newResult
-						&& this.postEditorStore?.currentPost?.headlineAnalyzer?.newData.showPreview"
+					v-if="postEditorStore?.newHeadlineAnaylzerData?.newResult
+						&& postEditorStore?.currentPost?.headlineAnalyzer?.newData.showPreview"
 				>
 					{{ newTitle }}
 				</h4>
@@ -30,19 +30,22 @@ import Accordion from './partials/Accordion'
 import { usePostEditorStore } from '@/vue/stores'
 import { decodeHtml } from '../assets/js/functions'
 
+import { __ } from '@/vue/plugins/translations'
+
 const { select } = window.wp.data
+const td         = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
+	components : {
+		Accordion
+	},
 	data () {
 		return {
-			panelTitle      : this.$t.__('Search Preview', this.$td),
-			descText        : this.$t.__('Here is how your headline will look like in Google search results page.', this.$td),
+			panelTitle      : __('Search Preview', td),
+			descText        : __('Here is how your headline will look like in Google search results page.', td),
 			postUrl         : select('core/editor').getPermalink(),
 			postEditorStore : usePostEditorStore()
 		}
-	},
-	components : {
-		Accordion
 	},
 	computed : {
 		currentResult () {

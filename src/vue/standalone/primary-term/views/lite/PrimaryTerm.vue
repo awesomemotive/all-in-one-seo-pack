@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	usePostEditorStore
 } from '@/vue/stores'
@@ -20,6 +21,10 @@ import {
 import { getSelectedTerms } from '@/vue/standalone/primary-term/helpers'
 import SvgCircleInformation from '@/vue/components/common/svg/circle/Information'
 import SvgClose from '@/vue/components/common/svg/Close'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	setup () {
@@ -31,32 +36,27 @@ export default {
 		SvgCircleInformation,
 		SvgClose
 	},
+	props : {
+		taxonomy : String
+	},
 	data () {
 		return {
 			selectedTerms : [],
 			strings       : {
-				didYouKnow : this.$t.sprintf(
+				didYouKnow : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - Opening strong tag, 3 - Closing strong tag.
-					this.$t.__('Did you know that %1$s Pro allows you to choose a %2$sprimary category%3$s for your posts? This feature works hand in hand with our powerful Breadcrumbs template to give you full navigational control to help improve your search rankings!', this.$td),
+					__('Did you know that %1$s Pro allows you to choose a %2$sprimary category%3$s for your posts? This feature works hand in hand with our powerful Breadcrumbs template to give you full navigational control to help improve your search rankings!', td),
 					import.meta.env.VITE_SHORT_NAME,
 					'<strong>',
 					'</strong>'
 				),
-				learnMoreLink : this.$t.sprintf(
+				learnMoreLink : sprintf(
 					// Translators: 1 - "Learn More" link.
 					'<a href="%1$s" target="_blank" rel="noreferrer nofollow">%2$s<span class="link-right-arrow">&nbsp;&rarr;</span></a>',
-					this.$links.getDocUrl('primaryTerm'),
-					this.$t.__('Learn more', this.$td)
+					links.getDocUrl('primaryTerm'),
+					__('Learn more', td)
 				)
 			}
-		}
-	},
-	props : {
-		taxonomy : String
-	},
-	methods : {
-		updateSelectedTerms () {
-			this.selectedTerms = getSelectedTerms(this.taxonomy)
 		}
 	},
 	computed : {
@@ -65,6 +65,11 @@ export default {
 			const productEducationDismissed = options.primaryTerm.productEducationDismissed
 
 			return !productEducationDismissed && 1 < this.selectedTerms.length
+		}
+	},
+	methods : {
+		updateSelectedTerms () {
+			this.selectedTerms = getSelectedTerms(this.taxonomy)
 		}
 	},
 	mounted () {

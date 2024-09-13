@@ -9,7 +9,7 @@
 			<div class="aioseo-settings-row aioseo-section-description">
 				{{ strings.description }}
 				<span
-					v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'xmlSitemaps', true)"
+					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'xmlSitemaps', true)"
 				/>
 			</div>
 
@@ -27,7 +27,7 @@
 
 			<core-settings-row
 				v-if="optionsStore.options.sitemap.general.enable"
-				:name="$constants.GLOBAL_STRINGS.preview"
+				:name="GLOBAL_STRINGS.preview"
 			>
 				<template #content>
 					<div class="aioseo-sitemap-preview">
@@ -48,7 +48,7 @@
 						{{ strings.doYou404 }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
 						/>
 					</div>
 
@@ -76,8 +76,8 @@
 						v-model="optionsStore.options.sitemap.general.indexes"
 						name="sitemapIndexes"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.enabled, value: true }
+							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.enabled, value: true }
 						]"
 					/>
 
@@ -85,7 +85,7 @@
 						{{ strings.sitemapIndexes }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'sitemapIndexes', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'sitemapIndexes', true)"
 						/>
 					</div>
 				</template>
@@ -110,7 +110,7 @@
 						{{ strings.maxLinks }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'maxLinks', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'maxLinks', true)"
 						/>
 					</div>
 
@@ -145,7 +145,7 @@
 						{{ strings.selectPostTypes }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'selectPostTypes', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypes', true)"
 						/>
 					</div>
 				</template>
@@ -172,7 +172,7 @@
 						{{ strings.selectTaxonomies }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'selectPostTypes', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypes', true)"
 						/>
 					</div>
 				</template>
@@ -186,8 +186,8 @@
 						v-model="optionsStore.options.sitemap.general.date"
 						name="dateArchiveSitemap"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.enabled, value: true }
+							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.enabled, value: true }
 						]"
 					/>
 
@@ -195,7 +195,7 @@
 						{{ strings.includeDateArchives }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'includeArchivePages', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'includeArchivePages', true)"
 						/>
 					</div>
 				</template>
@@ -209,8 +209,8 @@
 						v-model="optionsStore.options.sitemap.general.author"
 						name="authorSitemap"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.enabled, value: true }
+							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.enabled, value: true }
 						]"
 					/>
 
@@ -218,7 +218,7 @@
 						{{ strings.includeAuthorArchives }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'includeArchivePages', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'includeArchivePages', true)"
 						/>
 					</div>
 				</template>
@@ -345,8 +345,8 @@
 						v-model="optionsStore.options.deprecated.sitemap.general.advancedSettings.dynamic"
 						name="dynamic"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
 
@@ -354,7 +354,7 @@
 						{{ strings.dynamicallyGenerateDescription }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'dynamicallyGenerate', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'dynamicallyGenerate', true)"
 						/>
 					</div>
 				</template>
@@ -368,8 +368,8 @@
 						v-model="optionsStore.options.sitemap.general.advancedSettings.excludeImages"
 						name="excludeImages"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
 
@@ -377,7 +377,7 @@
 						{{ strings.excludeImagesDescription }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'excludeImages', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'excludeImages', true)"
 						/>
 					</div>
 				</template>
@@ -387,12 +387,14 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useOptionsStore,
 	useRootStore
 } from '@/vue/stores'
 
-import { useCommonSitemap } from '@/vue/pages/sitemaps/composables'
+import { useCommonSitemap } from '@/vue/pages/sitemaps/composables/CommonSitemap'
 
 import AdditionalPages from './AdditionalPages'
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
@@ -407,6 +409,10 @@ import SearchConsole from './partials/SearchConsole'
 import SearchConsoleInline from './partials/SearchConsoleInline'
 import SvgExternal from '@/vue/components/common/svg/External'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		const { validateLinksPerIndex } = useCommonSitemap()
@@ -414,7 +420,9 @@ export default {
 		return {
 			optionsStore : useOptionsStore(),
 			rootStore    : useRootStore(),
-			validateLinksPerIndex
+			validateLinksPerIndex,
+			GLOBAL_STRINGS,
+			links
 		}
 	},
 	components : {
@@ -435,46 +443,46 @@ export default {
 		return {
 			pagePostOptions : [],
 			strings         : {
-				general     : this.$t.__('General Sitemap', this.$td),
-				description : this.$t.sprintf(
+				general     : __('General Sitemap', td),
+				description : sprintf(
 					// Translators: 1 - The plugin name ("All in One SEO").
-					this.$t.__('An XML Sitemap is a list of all your content that search engines use when they crawl your site. This is an essential part of SEO because it contains some important pieces of information that search engines need when crawling your site. The XML Sitemap created by %1$s tells search engines where to find all of the content on your site.', this.$td),
+					__('An XML Sitemap is a list of all your content that search engines use when they crawl your site. This is an essential part of SEO because it contains some important pieces of information that search engines need when crawling your site. The XML Sitemap created by %1$s tells search engines where to find all of the content on your site.', td),
 					import.meta.env.VITE_NAME
 				),
-				enableSitemap                  : this.$t.__('Enable Sitemap', this.$td),
-				sitemapSettings                : this.$t.__('Sitemap Settings', this.$td),
-				enableSitemapIndexes           : this.$t.__('Enable Sitemap Indexes', this.$td),
-				sitemapIndexes                 : this.$t.__('Organize sitemap entries into distinct files in your sitemap. We recommend you enable this setting if your sitemap contains more than 1,000 URLs.', this.$td),
-				linksPerSitemap                : this.$t.__('Links Per Sitemap', this.$td),
-				noIndexDisplayed               : this.$t.__('Noindexed content will not be displayed in your sitemap.', this.$td),
-				doYou404                       : this.$t.__('Do you get a blank sitemap or 404 error?', this.$td),
-				openSitemap                    : this.$t.__('Open Sitemap', this.$td),
-				maxLinks                       : this.$t.__('Allows you to specify the maximum number of posts in a sitemap (up to 50,000).', this.$td),
-				automaticallyPingSearchEngines : this.$t.__('Automatically Ping Search Engines', this.$td),
-				postTypes                      : this.$t.__('Post Types', this.$td),
-				taxonomies                     : this.$t.__('Taxonomies', this.$td),
-				dateArchiveSitemap             : this.$t.__('Date Archive Sitemap', this.$td),
-				includeDateArchives            : this.$t.__('Include Date Archives in your sitemap.', this.$td),
-				authorSitemap                  : this.$t.__('Author Sitemap', this.$td),
-				includeAuthorArchives          : this.$t.__('Include Author Archives in your sitemap.', this.$td),
-				includeAllPostTypes            : this.$t.__('Include All Post Types', this.$td),
-				selectPostTypes                : this.$t.__('Select which Post Types appear in your sitemap.', this.$td),
-				includeAllTaxonomies           : this.$t.__('Include All Taxonomies', this.$td),
-				selectTaxonomies               : this.$t.__('Select which Taxonomies appear in your sitemap.', this.$td),
-				advancedSettings               : this.$t.__('Advanced Settings', this.$td),
-				excludePostsPages              : this.$t.__('Exclude Posts / Pages', this.$td),
-				excludeTerms                   : this.$t.__('Exclude Terms', this.$td),
-				excludeTermsDescription        : this.$t.__('Any posts that are assigned to these terms will also be excluded from your sitemap.', this.$td),
-				priorityScore                  : this.$t.__('Priority Score', this.$td),
-				grouped                        : this.$t.__('Grouped', this.$td),
-				priorityScorePostTypes         : this.$t.__('Post Type Priority Score', this.$td),
-				priorityScoreTaxonomies        : this.$t.__('Taxonomy Priority Score', this.$td),
-				excludeImages                  : this.$t.__('Exclude Images', this.$td),
-				excludeImagesDescription       : this.$t.__('Exclude Images from your sitemap.', this.$td),
-				dynamicallyGenerate            : this.$t.__('Dynamically Generate', this.$td),
-				dynamicallyGenerateDescription : this.$t.__('Dynamically creates the XML Sitemap instead of using a static file.', this.$td),
-				warningLinksPerSitemap         : this.$t.__('We recommend setting the amount of URLs per sitemap index to 1,000 or less. The more links, the longer it will take for the sitemap to load.', this.$td),
-				warningStaticRegeneration      : this.$t.__('Your static sitemap is currently being regenerated. This may take some time based on the size of your site. This may also cause the sitemap content to look outdated.', this.$td)
+				enableSitemap                  : __('Enable Sitemap', td),
+				sitemapSettings                : __('Sitemap Settings', td),
+				enableSitemapIndexes           : __('Enable Sitemap Indexes', td),
+				sitemapIndexes                 : __('Organize sitemap entries into distinct files in your sitemap. We recommend you enable this setting if your sitemap contains more than 1,000 URLs.', td),
+				linksPerSitemap                : __('Links Per Sitemap', td),
+				noIndexDisplayed               : __('Noindexed content will not be displayed in your sitemap.', td),
+				doYou404                       : __('Do you get a blank sitemap or 404 error?', td),
+				openSitemap                    : __('Open Sitemap', td),
+				maxLinks                       : __('Allows you to specify the maximum number of posts in a sitemap (up to 50,000).', td),
+				automaticallyPingSearchEngines : __('Automatically Ping Search Engines', td),
+				postTypes                      : __('Post Types', td),
+				taxonomies                     : __('Taxonomies', td),
+				dateArchiveSitemap             : __('Date Archive Sitemap', td),
+				includeDateArchives            : __('Include Date Archives in your sitemap.', td),
+				authorSitemap                  : __('Author Sitemap', td),
+				includeAuthorArchives          : __('Include Author Archives in your sitemap.', td),
+				includeAllPostTypes            : __('Include All Post Types', td),
+				selectPostTypes                : __('Select which Post Types appear in your sitemap.', td),
+				includeAllTaxonomies           : __('Include All Taxonomies', td),
+				selectTaxonomies               : __('Select which Taxonomies appear in your sitemap.', td),
+				advancedSettings               : __('Advanced Settings', td),
+				excludePostsPages              : __('Exclude Posts / Pages', td),
+				excludeTerms                   : __('Exclude Terms', td),
+				excludeTermsDescription        : __('Any posts that are assigned to these terms will also be excluded from your sitemap.', td),
+				priorityScore                  : __('Priority Score', td),
+				grouped                        : __('Grouped', td),
+				priorityScorePostTypes         : __('Post Type Priority Score', td),
+				priorityScoreTaxonomies        : __('Taxonomy Priority Score', td),
+				excludeImages                  : __('Exclude Images', td),
+				excludeImagesDescription       : __('Exclude Images from your sitemap.', td),
+				dynamicallyGenerate            : __('Dynamically Generate', td),
+				dynamicallyGenerateDescription : __('Dynamically creates the XML Sitemap instead of using a static file.', td),
+				warningLinksPerSitemap         : __('We recommend setting the amount of URLs per sitemap index to 1,000 or less. The more links, the longer it will take for the sitemap to load.', td),
+				warningStaticRegeneration      : __('Your static sitemap is currently being regenerated. This may take some time based on the size of your site. This may also cause the sitemap content to look outdated.', td)
 			}
 		}
 	},

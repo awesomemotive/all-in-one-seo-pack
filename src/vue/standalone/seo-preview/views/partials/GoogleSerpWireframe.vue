@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import GoogleSerpSnippetPlaceholder from './GoogleSerpSnippetPlaceholder.vue'
+import GoogleSerpSnippetPlaceholder from './GoogleSerpSnippetPlaceholder'
 import SvgDannieProfile from '@/vue/components/common/svg/dannie/Profile'
 import SvgIconGoogleSearch from '@/vue/components/common/svg/icon/GoogleSearch'
 import SvgIconSettings from '@/vue/components/common/svg/Settings'
@@ -97,6 +97,10 @@ import SvgLogoGoogle from '@/vue/components/common/svg/logo/Google'
 import SvgMobileDeviceFrame from '@/vue/components/common/svg/seo-preview/MobileDeviceFrame'
 import SvgPadlock from '@/vue/components/common/svg/Padlock'
 import SvgSearch from '@/vue/components/common/svg/Search'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	components : {
@@ -122,8 +126,8 @@ export default {
 	data () {
 		return {
 			strings : {
-				all     : this.$t.__('All', this.$td),
-				results : this.$t.__('About 61,000,000,000 results (0.40 seconds)', this.$td)
+				all     : __('All', td),
+				results : __('About 61,000,000,000 results (0.40 seconds)', td)
 			}
 		}
 	}

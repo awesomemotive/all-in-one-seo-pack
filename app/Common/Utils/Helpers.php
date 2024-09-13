@@ -79,7 +79,7 @@ class Helpers {
 	 * @return boolean True if we are, false if not.
 	 */
 	public function isDev() {
-		return aioseo()->isDev || isset( $_REQUEST['aioseo-dev'] ); // phpcs:ignore HM.Security.NonceVerification.Recommended
+		return aioseo()->isDev || isset( $_REQUEST['aioseo-dev'] ); // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -246,20 +246,18 @@ class Helpers {
 	 *
 	 * @since 4.1.0.2
 	 *
-	 * @param  string       $string The string.
-	 * @return string|array         The string or unserialized data.
+	 * @param  string        $string         The string.
+	 * @param  array|boolean $allowedClasses The allowed classes for unserialize.
+	 * @return string|array                  The string or unserialized data.
 	 */
-	public function maybeUnserialize( $string ) {
+	public function maybeUnserialize( $string, $allowedClasses = false ) {
 		if ( ! is_string( $string ) ) {
 			return $string;
 		}
 
 		$string = trim( $string );
-		if ( is_serialized( $string ) && ! $this->stringContains( $string, 'O:' ) ) {
-			// We want to add extra hardening for PHP versions greater than 5.6.
-			return version_compare( PHP_VERSION, '7.0', '<' )
-				? @unserialize( $string )
-				: @unserialize( $string, [ 'allowed_classes' => false ] ); // phpcs:disable PHPCompatibility.FunctionUse.NewFunctionParameters.unserialize_optionsFound
+		if ( is_serialized( $string ) ) {
+			return @unserialize( $string, [ 'allowed_classes' => $allowedClasses ] ); // phpcs:disable PHPCompatibility.FunctionUse.NewFunctionParameters.unserialize_optionsFound
 		}
 
 		return $string;

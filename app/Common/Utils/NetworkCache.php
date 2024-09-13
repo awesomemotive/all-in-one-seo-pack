@@ -17,16 +17,17 @@ class NetworkCache extends Cache {
 	 *
 	 * @since 4.2.5
 	 *
-	 * @param  string $key The cache key name. Use a '%' for a like query.
-	 * @return mixed       The value or null if the cache does not exist.
+	 * @param  string     $key            The cache key name. Use a '%' for a like query.
+	 * @param  bool|array $allowedClasses Whether to allow objects to be returned.
+	 * @return mixed                      The value or null if the cache does not exist.
 	 */
-	public function get( $key ) {
+	public function get( $key, $allowedClasses = false ) {
 		if ( ! is_multisite() ) {
-			return parent::get( $key );
+			return parent::get( $key, $allowedClasses );
 		}
 
 		aioseo()->helpers->switchToBlog( aioseo()->helpers->getNetworkId() );
-		$value = parent::get( $key );
+		$value = parent::get( $key, $allowedClasses );
 		aioseo()->helpers->restoreCurrentBlog();
 
 		return $value;

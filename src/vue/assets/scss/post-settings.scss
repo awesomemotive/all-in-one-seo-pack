@@ -164,8 +164,9 @@ body.block-editor-page {
 }
 button[aria-label="AIOSEO"],
 button[aria-label="AIOSEO"]:hover {
-	background: none!important;
-	box-shadow: none!important;
+	background: none !important;
+	box-shadow: none !important;
+
 	&.is-pressed > #aioseo-post-settings-sidebar-button {
 		&.score-green {
 			color: #fff;

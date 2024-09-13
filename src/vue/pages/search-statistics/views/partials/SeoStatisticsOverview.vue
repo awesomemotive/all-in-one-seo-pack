@@ -68,16 +68,25 @@ import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
-import StatisticMixin from '../../mixins/Statistic.js'
+import { useStatistic } from '@/vue/pages/search-statistics/composables/Statistic'
+
 import dateFormat from '@/vue/utils/dateFormat'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Graph from './Graph'
 import Statistic from './Statistic'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const { formatStatistic } = useStatistic()
+
 		return {
+			formatStatistic,
 			rootStore             : useRootStore(),
 			searchStatisticsStore : useSearchStatisticsStore()
 		}
@@ -88,63 +97,6 @@ export default {
 		Graph,
 		Statistic,
 		SvgCircleQuestionMark
-	},
-	mixins : [ StatisticMixin ],
-	data () {
-		return {
-			statisticsStrings : [
-				{
-					name    : 'impressions',
-					label   : this.$t.__('Search Impressions', this.$td),
-					tooltip : this.$t.sprintf(
-						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
-						this.$t.__('The %1$stotal number of times your website appeared in search results%2$s within the selected timeframe.', this.$td),
-						'<strong>',
-						'</strong>'
-					)
-				},
-				{
-					name    : 'clicks',
-					label   : this.$t.__('Total Clicks', this.$td),
-					tooltip : this.$t.sprintf(
-						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
-						this.$t.__('The %1$stotal number of clicks that your website received from search results%2$s within the selected timeframe.', this.$td),
-						'<strong>',
-						'</strong>'
-					)
-				},
-				{
-					name    : 'ctr',
-					label   : this.$t.__('Avg. CTR', this.$td),
-					tooltip : this.$t.sprintf(
-						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
-						this.$t.__('The %1$saverage click-through rate of your content in search results%2$s within the selected timeframe.', this.$td),
-						'<strong>',
-						'</strong>'
-					)
-				},
-				{
-					name    : 'position',
-					label   : this.$t.__('Avg. Position', this.$td),
-					tooltip : this.$t.sprintf(
-						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
-						this.$t.__('The %1$saverage position of your content in search results%2$s within the selected timeframe.', this.$td),
-						'<strong>',
-						'</strong>'
-					)
-				},
-				{
-					name    : 'keywords',
-					label   : this.$t.__('Total Keywords', this.$td),
-					tooltip : this.$t.sprintf(
-						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
-						this.$t.__('The %1$stotal number of keywords that your website ranks for in search results%2$s within the selected timeframe.', this.$td),
-						'<strong>',
-						'</strong>'
-					)
-				}
-			]
-		}
 	},
 	props : {
 		statistics : {
@@ -166,6 +118,62 @@ export default {
 		showGraph : {
 			type    : Boolean,
 			default : true
+		}
+	},
+	data () {
+		return {
+			statisticsStrings : [
+				{
+					name    : 'impressions',
+					label   : __('Search Impressions', td),
+					tooltip : sprintf(
+						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
+						__('The %1$stotal number of times your website appeared in search results%2$s within the selected timeframe.', td),
+						'<strong>',
+						'</strong>'
+					)
+				},
+				{
+					name    : 'clicks',
+					label   : __('Total Clicks', td),
+					tooltip : sprintf(
+						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
+						__('The %1$stotal number of clicks that your website received from search results%2$s within the selected timeframe.', td),
+						'<strong>',
+						'</strong>'
+					)
+				},
+				{
+					name    : 'ctr',
+					label   : __('Avg. CTR', td),
+					tooltip : sprintf(
+						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
+						__('The %1$saverage click-through rate of your content in search results%2$s within the selected timeframe.', td),
+						'<strong>',
+						'</strong>'
+					)
+				},
+				{
+					name    : 'position',
+					label   : __('Avg. Position', td),
+					tooltip : sprintf(
+						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
+						__('The %1$saverage position of your content in search results%2$s within the selected timeframe.', td),
+						'<strong>',
+						'</strong>'
+					)
+				},
+				{
+					name    : 'keywords',
+					label   : __('Total Keywords', td),
+					tooltip : sprintf(
+						// Translators: 1 - Opening HTML strong tag, 2 - Closing HTML strong tag.
+						__('The %1$stotal number of keywords that your website ranks for in search results%2$s within the selected timeframe.', td),
+						'<strong>',
+						'</strong>'
+					)
+				}
+			]
 		}
 	},
 	computed : {

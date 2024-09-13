@@ -16,9 +16,9 @@
 					strings.customFieldSupport,
 					strings.exclude
 				]"
-				:cta-link="$links.getPricingUrl('video-sitemap', 'video-sitemap-upsell')"
+				:cta-link="links.getPricingUrl('video-sitemap', 'video-sitemap-upsell')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="$links.getUpsellUrl('video-sitemap', null, $isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('video-sitemap', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 				:hide-bonus="!licenseStore.isUnlicensed"
 			>
 				<template #header-text>
@@ -35,11 +35,14 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
-	useLicenseStore
+	useLicenseStore,
+	useRootStore
 } from '@/vue/stores'
 
-import { useVideoSitemap } from '@/vue/pages/sitemaps/composables'
+import { useVideoSitemap } from '@/vue/pages/sitemaps/composables/VideoSitemap'
+
 import Blur from './Blur'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -51,6 +54,8 @@ export default {
 
 		return {
 			licenseStore : useLicenseStore(),
+			rootStore    : useRootStore(),
+			links,
 			strings
 		}
 	},

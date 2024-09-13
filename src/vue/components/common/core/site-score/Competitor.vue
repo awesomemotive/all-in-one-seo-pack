@@ -52,30 +52,42 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import {
 	useAnalyzerStore
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useSeoSiteScore } from '@/vue/composables'
-import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
+import { useSeoSiteScore } from '@/vue/composables/SeoSiteScore'
+
 import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
 import SvgRefresh from '@/vue/components/common/svg/Refresh'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	setup () {
-		const { strings } = useSeoSiteScore()
+	setup (props) {
+		const {
+			description,
+			strings
+		} = useSeoSiteScore({
+			score : ref(props.score)
+		})
 
 		return {
 			analyzerStore     : useAnalyzerStore(),
-			composableStrings : strings
+			composableStrings : strings,
+			description
 		}
 	},
 	components : {
 		CoreSiteScore,
 		SvgRefresh
 	},
-	mixins : [ SeoSiteScore ],
-	props  : {
+	props : {
 		score   : Number,
 		loading : Boolean,
 		site    : {
@@ -94,13 +106,13 @@ export default {
 		return {
 			isAnalyzing : false,
 			strings     : merge(this.composableStrings, {
-				criticalIssues             : this.$t.__('Important Issues', this.$td),
-				warnings                   : this.$t.__('Warnings', this.$td),
-				recommendedImprovements    : this.$t.__('Recommended Improvements', this.$td),
-				goodResults                : this.$t.__('Good Results', this.$td),
-				completeSiteAuditChecklist : this.$t.__('Complete Site Audit Checklist', this.$td),
-				refreshResults             : this.$t.__('Refresh Results', this.$td),
-				mobileSnapshot             : this.$t.__('Mobile Snapshot', this.$td)
+				criticalIssues             : __('Important Issues', td),
+				warnings                   : __('Warnings', td),
+				recommendedImprovements    : __('Recommended Improvements', td),
+				goodResults                : __('Good Results', td),
+				completeSiteAuditChecklist : __('Complete Site Audit Checklist', td),
+				refreshResults             : __('Refresh Results', td),
+				mobileSnapshot             : __('Mobile Snapshot', td)
 			})
 		}
 	},

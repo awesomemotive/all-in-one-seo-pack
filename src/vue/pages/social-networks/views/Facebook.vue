@@ -9,7 +9,7 @@
 			>
 				{{ strings.description }}
 				<span
-					v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'facebook', true)"
+					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'facebook', true)"
 				/>
 			</div>
 
@@ -213,8 +213,8 @@
 						v-model="optionsStore.options.social.facebook.general.showAuthor"
 						name="showFacebookAuthor"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
 				</template>
@@ -231,7 +231,7 @@
 						v-model="optionsStore.options.social.facebook.general.siteName"
 						:line-numbers="false"
 						single
-						@counter="count => updateCount(count, 'siteNameCount')"
+						@counter="count => siteNameCount = count.length"
 						tags-context="homePage"
 						:default-tags="[
 							'site_title',
@@ -264,12 +264,12 @@
 				<span v-html="strings.homePageDisabledDescription" />
 				&nbsp;
 				<span
-					v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'staticHomePageFacebook', true)"
+					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'staticHomePageFacebook', true)"
 				/>
 			</div>
 
 			<core-settings-row
-				:name="$constants.GLOBAL_STRINGS.preview"
+				:name="GLOBAL_STRINGS.preview"
 			>
 				<template #content>
 					<core-facebook-preview
@@ -304,7 +304,7 @@
 						v-model="optionsStore.options.social.facebook.homePage.title"
 						:line-numbers="false"
 						single
-						@counter="count => updateCount(count, 'titleCount')"
+						@counter="count => titleCount = count.length"
 						tags-context="homePage"
 						:default-tags="[
 							'site_title',
@@ -334,7 +334,7 @@
 						class="facebook-meta-input"
 						v-model="optionsStore.options.social.facebook.homePage.description"
 						:line-numbers="false"
-						@counter="count => updateCount(count, 'descriptionCount')"
+						@counter="count => descriptionCount = count.length"
 						tags-context="homePage"
 						:default-tags="[
 							'site_title',
@@ -403,13 +403,13 @@
 					<div class="aioseo-description how-to">
 						<a
 							class="no-underline"
-							:href="$links.getDocUrl('facebookAdminId')"
+							:href="links.getDocUrl('facebookAdminId')"
 							target="_blank"
 						>
 							<svg-book />
 						</a>
 						<a
-							:href="$links.getDocUrl('facebookAdminId')"
+							:href="links.getDocUrl('facebookAdminId')"
 							target="_blank"
 						>
 							{{ strings.howToGetAdminId }}
@@ -435,13 +435,13 @@
 					<div class="aioseo-description how-to">
 						<a
 							class="no-underline"
-							:href="$links.getDocUrl('facebookAppId')"
+							:href="links.getDocUrl('facebookAppId')"
 							target="_blank"
 						>
 							<svg-book />
 						</a>
 						<a
-							:href="$links.getDocUrl('facebookAppId')"
+							:href="links.getDocUrl('facebookAppId')"
 							target="_blank"
 						>
 							{{ strings.howToGetAppId }}
@@ -467,13 +467,13 @@
 					<div class="aioseo-description how-to">
 						<a
 							class="no-underline"
-							:href="$links.getDocUrl('facebookAuthorUrl')"
+							:href="links.getDocUrl('facebookAuthorUrl')"
 							target="_blank"
 						>
 							<svg-book />
 						</a>
 						<a
-							:href="$links.getDocUrl('facebookAuthorUrl')"
+							:href="links.getDocUrl('facebookAuthorUrl')"
 							target="_blank"
 						>
 							{{ strings.howToGetAuthorUrl }}
@@ -491,8 +491,8 @@
 						v-model="optionsStore.options.social.facebook.advanced.generateArticleTags"
 						name="generateArticleTags"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
 				</template>
@@ -508,8 +508,8 @@
 						v-model="optionsStore.options.social.facebook.advanced.useKeywordsInTags"
 						name="useKeywordsInTags"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
 				</template>
@@ -525,8 +525,8 @@
 						v-model="optionsStore.options.social.facebook.advanced.useCategoriesInTags"
 						name="useCategoriesInTags"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
 				</template>
@@ -542,8 +542,8 @@
 						v-model="optionsStore.options.social.facebook.advanced.usePostTagsInTags"
 						name="usePostTagsInTags"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.yes, value: true }
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
 				</template>
@@ -554,14 +554,20 @@
 
 <script>
 import {
+	GLOBAL_STRINGS,
+	OG_TYPE_OPTIONS
+} from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
+import {
 	useLicenseStore,
 	useOptionsStore,
 	useRootStore
 } from '@/vue/stores'
 
-import { ImageSourceOptions } from '@/vue/mixins/Image'
-import { MaxCounts } from '@/vue/mixins/MaxCounts'
-import { Tags } from '@/vue/mixins/Tags'
+import { useImage } from '@/vue/composables/Image'
+import { useMaxCounts } from '@/vue/composables/MaxCounts'
+import { useTags } from '@/vue/composables/Tags'
+
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -573,11 +579,38 @@ import SvgBook from '@/vue/components/common/svg/Book'
 import TableColumn from '@/vue/components/common/table/Column'
 import TableRow from '@/vue/components/common/table/Row'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getImageSourceOption,
+			getTermImageSourceOptions,
+			imageSourceOptions
+		} = useImage()
+
+		const {
+			maxRecommendedCount
+		} = useMaxCounts()
+
+		const {
+			parseTags
+		} = useTags({
+			separator : undefined
+		})
+
 		return {
-			optionsStore : useOptionsStore(),
+			GLOBAL_STRINGS,
+			getImageSourceOption,
+			getTermImageSourceOptions,
+			imageSourceOptions,
 			licenseStore : useLicenseStore(),
+			links,
+			maxRecommendedCount,
+			optionsStore : useOptionsStore(),
+			parseTags,
 			rootStore    : useRootStore()
 		}
 	},
@@ -593,86 +626,84 @@ export default {
 		TableColumn,
 		TableRow
 	},
-	mixins : [ ImageSourceOptions, MaxCounts, Tags ],
 	data () {
 		return {
-			separator        : undefined,
 			siteNameCount    : 0,
 			titleCount       : 0,
 			descriptionCount : 0,
 			option           : null,
 			pagePostOptions  : [],
 			strings          : {
-				generalFacebookSettings   : this.$t.__('General Facebook Settings', this.$td),
-				description               : this.$t.__('Enable this feature if you want Facebook and other social media to display a preview with images and a text excerpt when a link to your site is shared.', this.$td),
-				enableOpenGraph           : this.$t.__('Enable Open Graph Markup', this.$td),
-				defaultImageSourcePosts   : this.$t.__('Default Post Image Source', this.$td),
-				defaultImageSourceTerms   : this.$t.__('Default Term Image Source', this.$td),
-				width                     : this.$t.__('Width', this.$td),
-				height                    : this.$t.__('Height', this.$td),
-				postCustomFieldName       : this.$t.__('Post Custom Field Name', this.$td),
-				termsCustomFieldName      : this.$t.__('Term Custom Field Name', this.$td),
-				defaultFacebookImagePosts : this.$t.__('Default Post Facebook Image', this.$td),
-				defaultFacebookImageTerms : this.$t.__('Default Term Facebook Image', this.$td),
-				minimumSize               : this.$t.__('Minimum size: 200px x 200px, ideal ratio 1.91:1, 8MB max. (eg: 1640px x 856px or 3280px x 1712px for Retina screens). JPG, PNG, WEBP and GIF formats only.', this.$td),
-				homePageSettings          : this.$t.__('Home Page Settings', this.$td),
-				exampleSiteTitle          : this.$t.__('The Title of the Page or Site you are Sharing', this.$td),
-				exampleSiteDescription    : this.$t.sprintf(
+				generalFacebookSettings   : __('General Facebook Settings', td),
+				description               : __('Enable this feature if you want Facebook and other social media to display a preview with images and a text excerpt when a link to your site is shared.', td),
+				enableOpenGraph           : __('Enable Open Graph Markup', td),
+				defaultImageSourcePosts   : __('Default Post Image Source', td),
+				defaultImageSourceTerms   : __('Default Term Image Source', td),
+				width                     : __('Width', td),
+				height                    : __('Height', td),
+				postCustomFieldName       : __('Post Custom Field Name', td),
+				termsCustomFieldName      : __('Term Custom Field Name', td),
+				defaultFacebookImagePosts : __('Default Post Facebook Image', td),
+				defaultFacebookImageTerms : __('Default Term Facebook Image', td),
+				minimumSize               : __('Minimum size: 200px x 200px, ideal ratio 1.91:1, 8MB max. (eg: 1640px x 856px or 3280px x 1712px for Retina screens). JPG, PNG, WEBP and GIF formats only.', td),
+				homePageSettings          : __('Home Page Settings', td),
+				exampleSiteTitle          : __('The Title of the Page or Site you are Sharing', td),
+				exampleSiteDescription    : sprintf(
 					// Translators: 1 - The plugin name ("All in One SEO").
-					this.$t.__('This is what your page configured with %1$s will look like when shared via Facebook. The site title and description will be automatically added.', this.$td),
+					__('This is what your page configured with %1$s will look like when shared via Facebook. The site title and description will be automatically added.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				homePageImage                 : this.$t.__('Image', this.$td),
-				siteName                      : this.$t.__('Site Name', this.$td),
-				homePageTitle                 : this.$t.__('Title', this.$td),
-				useHomePageTitle              : this.$t.__('Use the home page title', this.$td),
-				clickToAddSiteName            : this.$t.__('Click on the tags below to insert variables into your site name.', this.$td),
-				clickToAddHomePageTitle       : this.$t.__('Click on the tags below to insert variables into your home page title.', this.$td),
-				homePageDescription           : this.$t.__('Description', this.$td),
-				useHomePageDescription        : this.$t.__('Use the home page description', this.$td),
-				clickToAddHomePageDescription : this.$t.__('Click on the tags below to insert variables into your description.', this.$td),
-				advancedSettings              : this.$t.__('Advanced Settings', this.$td),
-				facebookAdminId               : this.$t.__('Facebook Admin ID', this.$td),
-				facebookAppId                 : this.$t.__('Facebook App ID', this.$td),
-				facebookAuthorUrl             : this.$t.__('Facebook Author URL', this.$td),
-				facebookAdminIdDescription    : this.$t.__('Enter your Facebook Admin ID here. You can enter multiple Facebook Admin IDs by separating them with a comma.', this.$td),
-				facebookAppIdDescription      : this.$t.__('The Facebook App ID of the site\'s app. In order to use Facebook Insights, you must add the App ID to your page. Insights lets you view analytics for traffic to your site from Facebook. Find the App ID in your App Dashboard.', this.$td),
-				facebookAuthorUrlDescription  : this.$t.__('Will be overriden if the Facebook author URL is present in the individual User Profile.', this.$td),
-				howToGetAdminId               : this.$t.__('How to get your Facebook Admin ID', this.$td),
-				howToGetAppId                 : this.$t.__('How to get your Facebook App ID', this.$td),
-				howToGetAuthorUrl             : this.$t.__('How to get your Facebook Author URL', this.$td),
-				showFacebookAuthor            : this.$t.__('Show Facebook Author', this.$td),
-				postTypeObjectTypes           : this.$t.__('Default Post Type Object Types', this.$td),
-				taxonomyObjectTypes           : this.$t.__('Default Taxonomy Object Types', this.$td),
-				taxonomyObjectTypesUpsell     : this.$t.sprintf(
+				homePageImage                 : __('Image', td),
+				siteName                      : __('Site Name', td),
+				homePageTitle                 : __('Title', td),
+				useHomePageTitle              : __('Use the home page title', td),
+				clickToAddSiteName            : __('Click on the tags below to insert variables into your site name.', td),
+				clickToAddHomePageTitle       : __('Click on the tags below to insert variables into your home page title.', td),
+				homePageDescription           : __('Description', td),
+				useHomePageDescription        : __('Use the home page description', td),
+				clickToAddHomePageDescription : __('Click on the tags below to insert variables into your description.', td),
+				advancedSettings              : __('Advanced Settings', td),
+				facebookAdminId               : __('Facebook Admin ID', td),
+				facebookAppId                 : __('Facebook App ID', td),
+				facebookAuthorUrl             : __('Facebook Author URL', td),
+				facebookAdminIdDescription    : __('Enter your Facebook Admin ID here. You can enter multiple Facebook Admin IDs by separating them with a comma.', td),
+				facebookAppIdDescription      : __('The Facebook App ID of the site\'s app. In order to use Facebook Insights, you must add the App ID to your page. Insights lets you view analytics for traffic to your site from Facebook. Find the App ID in your App Dashboard.', td),
+				facebookAuthorUrlDescription  : __('Will be overriden if the Facebook author URL is present in the individual User Profile.', td),
+				howToGetAdminId               : __('How to get your Facebook Admin ID', td),
+				howToGetAppId                 : __('How to get your Facebook App ID', td),
+				howToGetAuthorUrl             : __('How to get your Facebook Author URL', td),
+				showFacebookAuthor            : __('Show Facebook Author', td),
+				postTypeObjectTypes           : __('Default Post Type Object Types', td),
+				taxonomyObjectTypes           : __('Default Taxonomy Object Types', td),
+				taxonomyObjectTypesUpsell     : sprintf(
 					// Translators: 1 - "PRO", 2 - Learn more link.
-					this.$t.__('Default Taxonomy Object Types is a %1$s feature. %2$s', this.$td),
+					__('Default Taxonomy Object Types is a %1$s feature. %2$s', td),
 					'PRO',
-					this.$links.getUpsellLink('general-facebook-settings', this.$constants.GLOBAL_STRINGS.learnMore, 'default-taxonomy-object-types', true)
+					links.getUpsellLink('general-facebook-settings', GLOBAL_STRINGS.learnMore, 'default-taxonomy-object-types', true)
 				),
-				defaultTermImageSourceUpsell : this.$t.sprintf(
+				defaultTermImageSourceUpsell : sprintf(
 					// Translators: 1 - "PRO", 2 - Learn more link.
-					this.$t.__('Default Term Image Source is a %1$s feature. %2$s', this.$td),
+					__('Default Term Image Source is a %1$s feature. %2$s', td),
 					'PRO',
-					this.$links.getUpsellLink('general-facebook-settings', this.$constants.GLOBAL_STRINGS.learnMore, 'default-term-image-source', true)
+					links.getUpsellLink('general-facebook-settings', GLOBAL_STRINGS.learnMore, 'default-term-image-source', true)
 				),
-				generateArticleTags         : this.$t.__('Automatically Generate Article Tags', this.$td),
-				useKeywordsInTags           : this.$t.__('Use Keywords in Article Tags', this.$td),
-				useCategoriesInTags         : this.$t.__('Use Categories in Article Tags', this.$td),
-				usePostTagsInTags           : this.$t.__('Use Post Tags in Article Tags', this.$td),
-				homePageDisabledDescription : this.$t.sprintf(
+				generateArticleTags         : __('Automatically Generate Article Tags', td),
+				useKeywordsInTags           : __('Use Keywords in Article Tags', td),
+				useCategoriesInTags         : __('Use Categories in Article Tags', td),
+				usePostTagsInTags           : __('Use Post Tags in Article Tags', td),
+				homePageDisabledDescription : sprintf(
 					// Translators: 1 - Opening HTML link tag, 2 - Closing HTML link tag.
-					this.$t.__('You are using a static home page which is found under Pages. You can %1$sedit your home page settings%2$s directly to change the title, meta description and image.', this.$td),
+					__('You are using a static home page which is found under Pages. You can %1$sedit your home page settings%2$s directly to change the title, meta description and image.', td),
 					`<a href="${this.rootStore.aioseo.urls.staticHomePage}&aioseo-tab=social&social-tab=facebook&aioseo-scroll=aioseo-post-settings-facebook&aioseo-highlight=aioseo-post-settings-facebook">`,
 					'</a>'
 				),
-				objectType : this.$t.__('Object Type', this.$td)
+				objectType : __('Object Type', td)
 			}
 		}
 	},
 	computed : {
 		objectTypeOptions () {
-			return this.$constants.OG_TYPE_OPTIONS
+			return OG_TYPE_OPTIONS
 		},
 		previewTitle () {
 			if (this.rootStore.aioseo.data.staticHomePage) {

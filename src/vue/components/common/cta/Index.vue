@@ -52,6 +52,11 @@ import Type2 from '@/vue/components/common/cta/Type/2'
 import Type3 from '@/vue/components/common/cta/Type/3'
 import Type4 from '@/vue/components/common/cta/Type/4'
 import Type5 from '@/vue/components/common/cta/Type/5'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	emits      : [ 'cta-button-click', 'cta-second-button-click' ],
 	components : {
@@ -130,24 +135,24 @@ export default {
 		return {
 			target  : '_blank',
 			strings : {
-				upgradeToPro : this.$t.sprintf(
+				upgradeToPro : sprintf(
 					// Translators: 1 - "Pro".
-					this.$t.__('Upgrade to %1$s', this.$td),
+					__('Upgrade to %1$s', td),
 					'Pro'
 				),
-				ctaHeader : this.$t.sprintf(
+				ctaHeader : sprintf(
 					// Translators: 1 - "PRO".
-					this.$t.__('This is a %1$s Feature', this.$td),
+					__('This is a %1$s Feature', td),
 					'PRO'
 				),
-				ctaDescription : this.$t.sprintf(
+				ctaDescription : sprintf(
 					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('%1$s %2$s comes with many additional features to help take your site\'s SEO to the next level!', this.$td),
+					__('%1$s %2$s comes with many additional features to help take your site\'s SEO to the next level!', td),
 					import.meta.env.VITE_SHORT_NAME,
 					'Pro'
 				),
-				learnMoreAllFeatures : this.$t.__('Learn more about all features', this.$td),
-				seeAllFeatures       : this.$t.__('See all features', this.$td)
+				learnMoreAllFeatures : __('Learn more about all features', td),
+				seeAllFeatures       : __('See all features', td)
 			}
 		}
 	},
@@ -236,7 +241,6 @@ export default {
 
 				.aioseo-alert {
 					margin-bottom: 16px;
-					text-align: left;
 				}
 			}
 

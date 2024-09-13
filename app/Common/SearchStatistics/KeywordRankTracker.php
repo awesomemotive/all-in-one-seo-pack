@@ -150,27 +150,27 @@ class KeywordRankTracker {
 				'position'    => wp_rand( 1, 100 ),
 				'history'     => [
 					[
-						'date'     => date( 'Y-m-d', strtotime( '-30 days' ) ),
+						'date'     => gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
 						'position' => wp_rand( 1, 15 ),
 						'clicks'   => wp_rand( 10, 100 ),
 					],
 					[
-						'date'     => date( 'Y-m-d', strtotime( '-23 days' ) ),
+						'date'     => gmdate( 'Y-m-d', strtotime( '-23 days' ) ),
 						'position' => wp_rand( 1, 15 ),
 						'clicks'   => wp_rand( 10, 100 ),
 					],
 					[
-						'date'     => date( 'Y-m-d', strtotime( '-16 days' ) ),
+						'date'     => gmdate( 'Y-m-d', strtotime( '-16 days' ) ),
 						'position' => wp_rand( 1, 15 ),
 						'clicks'   => wp_rand( 10, 100 ),
 					],
 					[
-						'date'     => date( 'Y-m-d', strtotime( '-9 days' ) ),
+						'date'     => gmdate( 'Y-m-d', strtotime( '-9 days' ) ),
 						'position' => wp_rand( 1, 15 ),
 						'clicks'   => wp_rand( 10, 100 ),
 					],
 					[
-						'date'     => date( 'Y-m-d', strtotime( '-2 days' ) ),
+						'date'     => gmdate( 'Y-m-d', strtotime( '-2 days' ) ),
 						'position' => wp_rand( 1, 15 ),
 						'clicks'   => wp_rand( 10, 100 ),
 					]

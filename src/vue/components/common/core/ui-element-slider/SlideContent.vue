@@ -49,7 +49,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 
 import CoreCopyBlock from '@/vue/components/common/core/CopyBlock'
 import TransitionSlide from '@/vue/components/common/transition/Slide'

@@ -32,6 +32,11 @@
 import CoreLoader from '@/vue/components/common/core/Loader'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import SvgSeoSiteScore from '@/vue/components/common/svg/seo-site-score/Index'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreLoader,
@@ -47,6 +52,27 @@ export default {
 			}
 		}
 	},
+	computed : {
+		seoScores () {
+			if (!this.scores) {
+				return []
+			}
+
+			return [ {
+				title : __('Headline Analysis', td),
+				score : this.scores.headline,
+				color : this.getColor(this.scores.headline)
+			}, /* { // TODO: Add this back in the next release.
+				title : __('SEO Analysis', td),
+				score : this.scores.seoAnalysis,
+				color : this.getColor(this.scores.seoAnalysis)
+			}, */ {
+				title : __('TruSEO Score', td),
+				score : this.scores.truSeo,
+				color : this.getColor(this.scores.truSeo)
+			} ]
+		}
+	},
 	methods : {
 		getColor (score) {
 			switch (true) {
@@ -57,27 +83,6 @@ export default {
 				default:
 					return 'green'
 			}
-		}
-	},
-	computed : {
-		seoScores () {
-			if (!this.scores) {
-				return []
-			}
-
-			return [ {
-				title : this.$t.__('Headline Analysis', this.$td),
-				score : this.scores.headline,
-				color : this.getColor(this.scores.headline)
-			}, /* { // TODO: Add this back in the next release.
-				title : this.$t.__('SEO Analysis', this.$td),
-				score : this.scores.seoAnalysis,
-				color : this.getColor(this.scores.seoAnalysis)
-			}, */ {
-				title : this.$t.__('TruSEO Score', this.$td),
-				score : this.scores.truSeo,
-				color : this.getColor(this.scores.truSeo)
-			} ]
 		}
 	}
 }

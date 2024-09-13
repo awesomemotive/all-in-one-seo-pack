@@ -7,8 +7,8 @@ import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
 import { loadPiniaStores } from '@/vue/stores'
 
-import PrePublish from './PrePublish.vue'
-import PostPublish from './PostPublish.vue'
+import PrePublish from './PrePublish'
+import PostPublish from './PostPublish'
 
 import './registerPublishPanel.js'
 import loadTruSeo from '@/vue/standalone/post-settings/loadTruSeo'

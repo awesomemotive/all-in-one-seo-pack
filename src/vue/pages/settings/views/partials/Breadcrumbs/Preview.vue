@@ -5,7 +5,7 @@
 		</span>
 
 		<template
-			v-for="(item,index) in this.getPreviewData()"
+			v-for="(item,index) in getPreviewData()"
 			:key="index"
 		>
 			<span

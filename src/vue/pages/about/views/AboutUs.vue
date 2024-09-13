@@ -114,6 +114,7 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	usePluginsStore,
 	useRootStore
@@ -149,6 +150,11 @@ import duplicatorImg from '@/vue/assets/images/about/plugins/duplicator.svg'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgExternal from '@/vue/components/common/svg/External'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -169,45 +175,45 @@ export default {
 			networkActivated : [],
 			strings          : {
 				welcome : {
-					p1 : this.$t.sprintf(
+					p1 : sprintf(
 						// Translators: 1 - The plugin name ("All in One SEO"), 2 - The plugin name ("All in One SEO").
-						this.$t.__('Welcome to %1$s, the original SEO plugin for WordPress. At %2$s, we build software that helps you rank your website in search results and gain organic traffic.', this.$td),
+						__('Welcome to %1$s, the original SEO plugin for WordPress. At %2$s, we build software that helps you rank your website in search results and gain organic traffic.', td),
 						import.meta.env.VITE_NAME,
 						import.meta.env.VITE_NAME
 					),
-					p2 : this.$t.__('Over the years, we found that most other WordPress SEO plugins were bloated, buggy, slow, and very hard to use. So we designed our plugin as an easy and powerful tool.', this.$td),
-					p3 : this.$t.__('Our goal is to take the pain out of optimizing your website for search engines.', this.$td),
-					p4 : this.$t.sprintf(
+					p2 : __('Over the years, we found that most other WordPress SEO plugins were bloated, buggy, slow, and very hard to use. So we designed our plugin as an easy and powerful tool.', td),
+					p3 : __('Our goal is to take the pain out of optimizing your website for search engines.', td),
+					p4 : sprintf(
 						// Translators: 1 - The plugin name ("All in One SEO"), 2 - Company name ("Awesome Motive").
-						this.$t.__('%1$s is brought to you by %2$s, the same team that’s behind the largest WordPress resource site, WPBeginner, the most popular lead-generation software, OptinMonster, the best WordPress analytics plugin, MonsterInsights and many more.', this.$td),
+						__('%1$s is brought to you by %2$s, the same team that’s behind the largest WordPress resource site, WPBeginner, the most popular lead-generation software, OptinMonster, the best WordPress analytics plugin, MonsterInsights and many more.', td),
 						import.meta.env.VITE_NAME,
 						'Awesome Motive'
 					),
-					p5           : this.$t.__('Yup, we know a thing or two about building awesome products that customers love.', this.$td),
-					imageCaption : this.$t.sprintf(
+					p5           : __('Yup, we know a thing or two about building awesome products that customers love.', td),
+					imageCaption : sprintf(
 						// Translators: 1 - Company name ("Awesome Motive").
-						this.$t.__('The %1$s Team', this.$td),
+						__('The %1$s Team', td),
 						'Awesome Motive'
 					)
 				},
 				plugins : {
 					actions : {
-						install  : this.$t.__('Install Free Plugin', this.$td),
-						activate : this.$t.__('Activate', this.$td),
-						manage   : this.$t.__('Manage', this.$td)
+						install  : __('Install Free Plugin', td),
+						activate : __('Activate', td),
+						manage   : __('Manage', td)
 					},
-					status   : this.$t.__('Status:', this.$td),
+					status   : __('Status:', td),
 					statuses : {
-						activated    : this.$t.__('Activated', this.$td),
-						deactivated  : this.$t.__('Deactivated', this.$td),
-						notInstalled : this.$t.__('Not Installed', this.$td)
+						activated    : __('Activated', td),
+						deactivated  : __('Deactivated', td),
+						notInstalled : __('Not Installed', td)
 					}
 				}
 			},
 			pluginData : {
 				brokenLinkChecker : {
 					name        : 'Broken Link Checker',
-					description : this.$t.__('Broken Link Checker by AIOSEO is an essential tool for ensuring that all internal and external links on your website are functioning correctly. Quickly check your site for broken links and easily fix them to improve SEO.', this.$td),
+					description : __('Broken Link Checker by AIOSEO is an essential tool for ensuring that all internal and external links on your website are functioning correctly. Quickly check your site for broken links and easily fix them to improve SEO.', td),
 					icon        : getAssetUrl(blcImg),
 					installed   : false,
 					canInstall  : false,
@@ -216,7 +222,7 @@ export default {
 				},
 				optinMonster : {
 					name        : 'OptinMonster',
-					description : this.$t.__('Instantly get more subscribers, leads, and sales with the #1 conversion optimization toolkit. Create high converting popups, announcement bars, spin a wheel, and more with smart targeting and personalization.', this.$td),
+					description : __('Instantly get more subscribers, leads, and sales with the #1 conversion optimization toolkit. Create high converting popups, announcement bars, spin a wheel, and more with smart targeting and personalization.', td),
 					icon        : getAssetUrl(omImg),
 					installed   : false,
 					canInstall  : false,
@@ -225,7 +231,7 @@ export default {
 				},
 				wpForms : {
 					name        : 'WPForms',
-					description : this.$t.__('The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 1000+ form templates. Trusted by over 6 million websites as the best forms plugin.', this.$td),
+					description : __('The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 1000+ form templates. Trusted by over 6 million websites as the best forms plugin.', td),
 					icon        : getAssetUrl(wpformsImg),
 					installed   : false,
 					canInstall  : false,
@@ -242,7 +248,7 @@ export default {
 				},
 				miLite : {
 					name        : 'MonsterInsights',
-					description : this.$t.__('The leading WordPress analytics plugin that shows you how people find and use your website, so you can make data driven decisions to grow your business. Properly set up Google Analytics without writing code.', this.$td),
+					description : __('The leading WordPress analytics plugin that shows you how people find and use your website, so you can make data driven decisions to grow your business. Properly set up Google Analytics without writing code.', td),
 					icon        : getAssetUrl(miImg),
 					installed   : false,
 					canInstall  : false,
@@ -259,7 +265,7 @@ export default {
 				},
 				emLite : {
 					name        : 'ExactMetrics',
-					description : this.$t.__('The ExactMetrics Google Analytics for WordPress plugin helps you properly setup all the powerful Google Analytics tracking features without writing any code or hiring a developer.', this.$td),
+					description : __('The ExactMetrics Google Analytics for WordPress plugin helps you properly setup all the powerful Google Analytics tracking features without writing any code or hiring a developer.', td),
 					icon        : getAssetUrl(emImg),
 					installed   : false,
 					canInstall  : false,
@@ -276,7 +282,7 @@ export default {
 				},
 				wpMail : {
 					name        : 'WP Mail SMTP',
-					description : this.$t.__('Improve your WordPress email deliverability and make sure that your website emails reach user’s inbox with the #1 SMTP plugin for WordPress. Over 3 million websites use it to fix WordPress email issues.', this.$td),
+					description : __('Improve your WordPress email deliverability and make sure that your website emails reach user’s inbox with the #1 SMTP plugin for WordPress. Over 3 million websites use it to fix WordPress email issues.', td),
 					icon        : getAssetUrl(smtpImg),
 					installed   : false,
 					canInstall  : false,
@@ -293,7 +299,7 @@ export default {
 				},
 				wpcode : {
 					name        : 'WPCode',
-					description : this.$t.__('Future proof your WordPress customizations with the most popular code snippet management plugin for WordPress. Trusted by over 1,500,000+ websites for easily adding code to WordPress right from the admin area.', this.$td),
+					description : __('Future proof your WordPress customizations with the most popular code snippet management plugin for WordPress. Trusted by over 1,500,000+ websites for easily adding code to WordPress right from the admin area.', td),
 					icon        : getAssetUrl(wpcodeImg),
 					installed   : false,
 					canInstall  : false,
@@ -310,7 +316,7 @@ export default {
 				},
 				seedProd : {
 					name        : 'SeedProd Coming Soon',
-					description : this.$t.__('The fastest drag & drop landing page builder for WordPress. Create custom landing pages without writing code, connect them with your CRM, collect subscribers, and grow your audience. Trusted by 1 million sites.', this.$td),
+					description : __('The fastest drag & drop landing page builder for WordPress. Create custom landing pages without writing code, connect them with your CRM, collect subscribers, and grow your audience. Trusted by 1 million sites.', td),
 					icon        : getAssetUrl(spImg),
 					installed   : false,
 					canInstall  : false,
@@ -327,7 +333,7 @@ export default {
 				},
 				trustPulse : {
 					name        : 'TrustPulse',
-					description : this.$t.__('Boost your sales and conversions by up to 15% with real-time social proof notifications. TrustPulse helps you show live user activity and purchases to help convince other users to purchase.', this.$td),
+					description : __('Boost your sales and conversions by up to 15% with real-time social proof notifications. TrustPulse helps you show live user activity and purchases to help convince other users to purchase.', td),
 					icon        : getAssetUrl(tpImg),
 					installed   : false,
 					canInstall  : false,
@@ -336,7 +342,7 @@ export default {
 				},
 				rafflePress : {
 					name        : 'RafflePress',
-					description : this.$t.__('Turn your website visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with the most powerful giveaways & contests plugin for WordPress.', this.$td),
+					description : __('Turn your website visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with the most powerful giveaways & contests plugin for WordPress.', td),
 					icon        : getAssetUrl(rafflepressImg),
 					installed   : false,
 					canInstall  : false,
@@ -353,7 +359,7 @@ export default {
 				},
 				facebookFeed : {
 					name        : 'Smash Balloon Facebook Feeds',
-					description : this.$t.__('Easily display Facebook content on your WordPress site without writing any code. Comes with multiple templates, ability to embed albums, group content, reviews, live videos, comments, and reactions.', this.$td),
+					description : __('Easily display Facebook content on your WordPress site without writing any code. Comes with multiple templates, ability to embed albums, group content, reviews, live videos, comments, and reactions.', td),
 					icon        : getAssetUrl(ffImg),
 					installed   : false,
 					canInstall  : false,
@@ -370,7 +376,7 @@ export default {
 				},
 				instagramFeed : {
 					name        : 'Smash Balloon Instagram Feeds',
-					description : this.$t.__('Easily display Instagram content on your WordPress site without writing any code. Comes with multiple templates, ability to show content from multiple accounts, hashtags, and more. Trusted by 1 million websites.', this.$td),
+					description : __('Easily display Instagram content on your WordPress site without writing any code. Comes with multiple templates, ability to show content from multiple accounts, hashtags, and more. Trusted by 1 million websites.', td),
 					icon        : getAssetUrl(ifImg),
 					installed   : false,
 					canInstall  : false,
@@ -387,7 +393,7 @@ export default {
 				},
 				twitterFeed : {
 					name        : 'Smash Balloon Twitter Feeds',
-					description : this.$t.__('Easily display Twitter content in WordPress without writing any code. Comes with multiple layouts, ability to combine multiple Twitter feeds, Twitter card support, tweet moderation, and more.', this.$td),
+					description : __('Easily display Twitter content in WordPress without writing any code. Comes with multiple layouts, ability to combine multiple Twitter feeds, Twitter card support, tweet moderation, and more.', td),
 					icon        : getAssetUrl(tfImg),
 					installed   : false,
 					canInstall  : false,
@@ -404,7 +410,7 @@ export default {
 				},
 				youTubeFeed : {
 					name        : 'Smash Balloon YouTube Feeds',
-					description : this.$t.__('Easily display YouTube videos on your WordPress site without writing any code. Comes with multiple layouts, ability to embed live streams, video filtering, ability to combine multiple channel videos, and more.', this.$td),
+					description : __('Easily display YouTube videos on your WordPress site without writing any code. Comes with multiple layouts, ability to embed live streams, video filtering, ability to combine multiple channel videos, and more.', td),
 					icon        : getAssetUrl(yfImg),
 					installed   : false,
 					canInstall  : false,
@@ -421,7 +427,7 @@ export default {
 				},
 				pushEngage : {
 					name        : 'PushEngage',
-					description : this.$t.__('Connect with your visitors after they leave your website with the leading web push notification software. Over 10,000+ businesses worldwide use PushEngage to send 15 billion notifications each month.', this.$td),
+					description : __('Connect with your visitors after they leave your website with the leading web push notification software. Over 10,000+ businesses worldwide use PushEngage to send 15 billion notifications each month.', td),
 					icon        : getAssetUrl(peImg),
 					installed   : false,
 					canInstall  : false,
@@ -430,27 +436,27 @@ export default {
 				},
 				searchWp : {
 					name        : 'SearchWP',
-					description : this.$t.__('The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.', this.$td),
+					description : __('The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.', td),
 					icon        : getAssetUrl(swpImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
 					loading     : false,
-					installUrl  : this.$links.utmUrl('aioseo', 'about-us', 'https://searchwp.com/')
+					installUrl  : links.utmUrl('aioseo', 'about-us', 'https://searchwp.com/')
 				},
 				affiliateWp : {
 					name        : 'AffiliateWP',
-					description : this.$t.__('The #1 affiliate management plugin for WordPress. Easily create an affiliate program for your eCommerce store or membership site within minutes and start growing your sales with the power of referral marketing.', this.$td),
+					description : __('The #1 affiliate management plugin for WordPress. Easily create an affiliate program for your eCommerce store or membership site within minutes and start growing your sales with the power of referral marketing.', td),
 					icon        : getAssetUrl(afwpImg),
 					installed   : false,
 					canInstall  : false,
 					activated   : false,
 					loading     : false,
-					installUrl  : this.$links.utmUrl('aioseo', 'about-us', 'https://affiliatewp.com/')
+					installUrl  : links.utmUrl('aioseo', 'about-us', 'https://affiliatewp.com/')
 				},
 				wpSimplePay : {
 					name        : 'WP Simple Pay',
-					description : this.$t.__('The #1 Stripe payments plugin for WordPress. Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required.', this.$td),
+					description : __('The #1 Stripe payments plugin for WordPress. Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required.', td),
 					icon        : getAssetUrl(wpspImg),
 					installed   : false,
 					canInstall  : false,
@@ -467,7 +473,7 @@ export default {
 				},
 				easyDigitalDownloads : {
 					name        : 'Easy Digital Downloads',
-					description : this.$t.__('The best WordPress eCommerce plugin for selling digital downloads. Start selling eBooks, software, music, digital art, and more within minutes. Accept payments, manage subscriptions, advanced access control, and more.', this.$td),
+					description : __('The best WordPress eCommerce plugin for selling digital downloads. Start selling eBooks, software, music, digital art, and more within minutes. Accept payments, manage subscriptions, advanced access control, and more.', td),
 					icon        : getAssetUrl(eddImg),
 					installed   : false,
 					canInstall  : false,
@@ -484,7 +490,7 @@ export default {
 				},
 				sugarCalendar : {
 					name        : 'Sugar Calendar',
-					description : this.$t.__('A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more.', this.$td),
+					description : __('A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more.', td),
 					icon        : getAssetUrl(scImg),
 					installed   : false,
 					canInstall  : false,
@@ -501,7 +507,7 @@ export default {
 				},
 				charitable : {
 					name        : 'WP Charitable',
-					description : this.$t.__('Top-rated WordPress donation and fundraising plugin. Over 10,000+ non-profit organizations and website owners use Charitable to create fundraising campaigns and raise more money online.', this.$td),
+					description : __('Top-rated WordPress donation and fundraising plugin. Over 10,000+ non-profit organizations and website owners use Charitable to create fundraising campaigns and raise more money online.', td),
 					icon        : getAssetUrl(charitableImg),
 					installed   : false,
 					canInstall  : false,
@@ -510,7 +516,7 @@ export default {
 				},
 				duplicator : {
 					name        : 'Duplicator - WordPress Migration & Backup Plugin',
-					description : this.$t.__('Leading WordPress backup & site migration plugin. Over 1,500,000+ smart website owners use Duplicator to make reliable and secure WordPress backups to protect their websites. It also makes website migration really easy.', this.$td),
+					description : __('Leading WordPress backup & site migration plugin. Over 1,500,000+ smart website owners use Duplicator to make reliable and secure WordPress backups to protect their websites. It also makes website migration really easy.', td),
 					icon        : getAssetUrl(duplicatorImg),
 					installed   : false,
 					canInstall  : false,
@@ -518,6 +524,18 @@ export default {
 					loading     : false
 				}
 			}
+		}
+	},
+	computed : {
+		plugins () {
+			// Get description and logo for premium versions from free versions.
+			Object.keys(this.localPlugins).forEach(pluginName => {
+				if (this.pluginData[pluginName].free) {
+					this.pluginData[pluginName].description = this.pluginData[this.pluginData[pluginName].free].description
+					this.pluginData[pluginName].icon        = this.pluginData[this.pluginData[pluginName].free].icon
+				}
+			})
+			return this.pluginData
 		}
 	},
 	methods : {
@@ -565,18 +583,6 @@ export default {
 			}
 
 			return plugin.networkAdminUrl
-		}
-	},
-	computed : {
-		plugins () {
-			// Get description and logo for premium versions from free versions.
-			Object.keys(this.localPlugins).forEach(pluginName => {
-				if (this.pluginData[pluginName].free) {
-					this.pluginData[pluginName].description = this.pluginData[this.pluginData[pluginName].free].description
-					this.pluginData[pluginName].icon        = this.pluginData[this.pluginData[pluginName].free].icon
-				}
-			})
-			return this.pluginData
 		}
 	},
 	mounted () {

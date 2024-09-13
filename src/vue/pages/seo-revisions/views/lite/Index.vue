@@ -54,6 +54,10 @@ import ItemMeta from './partials/ItemMeta'
 import ItemsDiff from './partials/ItemsDiff'
 import SeoRevisionsUpsell from '@/vue/components/common/seo-revisions/Upsell'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		Controls,
@@ -65,8 +69,8 @@ export default {
 	data () {
 		return {
 			strings : {
-				compareRevisionsOf : this.$t.__('Compare Revisions of', this.$td),
-				goToEditor         : this.$t.__('Go to editor', this.$td)
+				compareRevisionsOf : __('Compare Revisions of', td),
+				goToEditor         : __('Go to editor', td)
 			}
 		}
 	}

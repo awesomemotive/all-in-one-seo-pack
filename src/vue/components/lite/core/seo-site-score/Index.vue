@@ -29,7 +29,9 @@
 	</div>
 </template>
 
-<script>
+<script setup>
+import { computed, onMounted } from 'vue'
+
 import {
 	useAnalyzerStore,
 	useConnectStore,
@@ -38,72 +40,61 @@ import {
 } from '@/vue/stores'
 
 import { popup } from '@/vue/utils/popup'
-import { useSeoSiteScore } from '@/vue/composables'
-import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
+import { useSeoSiteScore } from '@/vue/composables/SeoSiteScore'
+
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreSiteScoreDashboard from '@/vue/components/common/core/site-score/Dashboard'
-export default {
-	setup () {
-		const { strings } = useSeoSiteScore()
 
-		return {
-			analyzerStore : useAnalyzerStore(),
-			connectStore  : useConnectStore(),
-			optionsStore  : useOptionsStore(),
-			rootStore     : useRootStore(),
-			strings
-		}
-	},
-	components : {
-		CoreBlur,
-		CoreSiteScoreDashboard
-	},
-	mixins : [ SeoSiteScore ],
-	data () {
-		return {
-			score : 0
-		}
-	},
-	computed : {
-		getSummary () {
-			return {
-				recommended : this.analyzerStore.recommendedCount(),
-				critical    : this.analyzerStore.criticalCount(),
-				good        : this.analyzerStore.goodCount()
-			}
-		}
-	},
-	methods : {
-		openPopup (url) {
-			popup(
-				url,
-				this.connectWithAioseo,
-				600,
-				630,
-				true,
-				[ 'token' ],
-				this.completedCallback,
-				this.closedCallback
-			)
-		},
-		completedCallback (payload) {
-			return this.connectStore.saveConnectToken(payload.token)
-		},
-		closedCallback (reload) {
-			if (reload) {
-				this.analyzerStore.runSiteAnalyzer()
-			}
+const {
+	connectWithAioseo,
+	description,
+	strings
+} = useSeoSiteScore()
 
-			this.analyzerStore.analyzing = true
-		}
-	},
-	mounted () {
-		if (!this.optionsStore.internalOptions.internal.siteAnalysis.score && this.optionsStore.internalOptions.internal.siteAnalysis.connectToken) {
-			this.analyzerStore.analyzing = true
-			this.analyzerStore.runSiteAnalyzer()
-		}
+const analyzerStore = useAnalyzerStore()
+const connectStore  = useConnectStore()
+const optionsStore  = useOptionsStore()
+const rootStore     = useRootStore()
+
+const getSummary = computed(() => {
+	return {
+		recommended : analyzerStore.recommendedCount(),
+		critical    : analyzerStore.criticalCount(),
+		good        : analyzerStore.goodCount()
 	}
+})
+
+const openPopup = (url) => {
+	popup(
+		url,
+		connectWithAioseo,
+		600,
+		630,
+		true,
+		[ 'token' ],
+		completedCallback,
+		closedCallback
+	)
 }
+
+const completedCallback = (payload) => {
+	return connectStore.saveConnectToken(payload.token)
+}
+
+const closedCallback = (reload) => {
+	if (reload) {
+		analyzerStore.runSiteAnalyzer()
+	}
+
+	analyzerStore.analyzing = true
+}
+
+onMounted(() => {
+	if (!optionsStore.internalOptions.internal.siteAnalysis.score && optionsStore.internalOptions.internal.siteAnalysis.connectToken) {
+		analyzerStore.analyzing = true
+		analyzerStore.runSiteAnalyzer()
+	}
+})
 </script>
 
 <style lang="scss">

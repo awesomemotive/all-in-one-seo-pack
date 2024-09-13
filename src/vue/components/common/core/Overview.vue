@@ -47,7 +47,7 @@
 			/>
 
 			<core-alert
-				v-if="!toHide.includes('upgradeAlert') && !$isPro"
+				v-if="!toHide.includes('upgradeAlert') && !rootStore.isPro"
 				type="yellow"
 				v-html="strings.upgradeToPro"
 			/>
@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	useRootStore,
 	useSettingsStore
@@ -93,6 +94,11 @@ import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreDonutChartWithLegend from '@/vue/components/common/core/DonutChartWithLegend'
 import SvgEditPaper from '@/vue/components/common/svg/EditPaper'
 import SvgOverview from '@/vue/components/common/svg/Overview'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -129,37 +135,37 @@ export default {
 	data () {
 		return {
 			strings : {
-				description    : this.$t.__('Below are the TruSEO scores of your published posts. Take some time to improve your TruSEO score to help increase your rankings.', this.$td),
-				choosePostType : this.$t.__('Choose a Post Type', this.$td),
-				upgradeToPro   : this.$t.sprintf(
+				description    : __('Below are the TruSEO scores of your published posts. Take some time to improve your TruSEO score to help increase your rankings.', td),
+				choosePostType : __('Choose a Post Type', td),
+				upgradeToPro   : sprintf(
 					// Translators: 1 - The upgrade call to action.
-					this.$t.__('Get additional keyphrases and many more modules! %1$s', this.$td), this.$links.getUpsellLink('dashboard-overview', this.$t.__('Upgrade to Pro Today!', this.$td), 'liteUpgrade', true)
+					__('Get additional keyphrases and many more modules! %1$s', td), links.getUpsellLink('dashboard-overview', __('Upgrade to Pro Today!', td), 'liteUpgrade', true)
 				),
-				invalidTitle       : this.$t.__('It looks like you haven\'t selected any post types yet!', this.$td),
-				invalidDescription : this.$t.__('TruSEO scoring can improve your search engine rankings. To see TruSEO scores for your published posts, enable at least one post type by turning on "Show in Search Results" in the Search Appearance settings.', this.$td),
-				invalidButton      : this.$t.__('Enable Post Types', this.$td)
+				invalidTitle       : __('It looks like you haven\'t selected any post types yet!', td),
+				invalidDescription : __('TruSEO scoring can improve your search engine rankings. To see TruSEO scores for your published posts, enable at least one post type by turning on "Show in Search Results" in the Search Appearance settings.', td),
+				invalidButton      : __('Enable Post Types', td)
 			},
 			postTypeInitial : true,
 			postType        : {},
 			parts           : [
 				{
 					slug  : 'needsImprovement',
-					name  : this.$t.__('Needs Improvement', this.$td),
+					name  : __('Needs Improvement', td),
 					color : '#DF2A4A'
 				},
 				{
 					slug  : 'okay',
-					name  : this.$t.__('Okay', this.$td),
+					name  : __('Okay', td),
 					color : '#F18200'
 				},
 				{
 					slug  : 'good',
-					name  : this.$t.__('Good', this.$td),
+					name  : __('Good', td),
 					color : '#00AA63'
 				},
 				{
 					slug  : 'withoutFocusKeyphrase',
-					name  : this.$t.__('Without a Focus Keyphrase', this.$td),
+					name  : __('Without a Focus Keyphrase', td),
 					color : '#E8E8EB'
 				}
 			]
@@ -192,9 +198,9 @@ export default {
 			return this.rootStore.aioseo.seoOverview[this.postType.value].total
 		},
 		totalPostsLabel () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The post type plural name.
-				this.$t.__('Total %1$s', this.$td),
+				__('Total %1$s', td),
 				this.postType.label
 			)
 		},

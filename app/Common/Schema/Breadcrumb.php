@@ -162,14 +162,14 @@ class Breadcrumb {
 					];
 					break;
 				case '%year%':
-					$dateName = date( 'Y', $timestamp );
+					$dateName = gmdate( 'Y', $timestamp );
 				case '%monthnum%':
 					if ( ! $dateName ) {
-						$dateName = date( 'F', $timestamp );
+						$dateName = gmdate( 'F', $timestamp );
 					}
 				case '%day%':
 					if ( ! $dateName ) {
-						$dateName = date( 'j', $timestamp );
+						$dateName = gmdate( 'j', $timestamp );
 					}
 					$breadcrumb = [
 						'name'        => $dateName,

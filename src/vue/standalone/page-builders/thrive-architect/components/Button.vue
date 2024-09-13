@@ -14,7 +14,6 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePostEditorStore } from '@/vue/stores'
 import CoreScoreButton from '@/vue/components/common/core/ScoreButton'

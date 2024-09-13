@@ -160,6 +160,11 @@ import SvgClose from '@/vue/components/common/svg/Close'
 import SvgHistory from '@/vue/components/common/svg/History'
 import SvgRefresh from '@/vue/components/common/svg/Refresh'
 import SvgTrash from '@/vue/components/common/svg/Trash'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -190,19 +195,19 @@ export default {
 			backupsRestoreSuccess : false,
 			loading               : false,
 			strings               : {
-				backupSettings             : this.$t.__('Backup Settings', this.$td),
-				areYouSureDeleteBackup     : this.$t.__('Are you sure you want to delete this backup?', this.$td),
-				areYouSureRestoreBackup    : this.$t.__('Are you sure you want to restore this backup?', this.$td),
-				yesDeleteBackup            : this.$t.__('Yes, I want to delete this backup', this.$td),
-				yesRestoreBackup           : this.$t.__('Yes, I want to restore this backup', this.$td),
-				noChangedMind              : this.$t.__('No, I changed my mind', this.$td),
-				actionCannotBeUndone       : this.$t.__('This action cannot be undone.', this.$td),
-				noBackups                  : this.$t.__('You have no saved backups.', this.$td),
-				createBackup               : this.$t.__('Create Backup', this.$td),
-				restore                    : this.$t.__('Restore', this.$td),
-				delete                     : this.$t.__('Delete', this.$td),
-				backupSuccessfullyDeleted  : this.$t.__('Success! The backup was deleted.', this.$td),
-				backupSuccessfullyRestored : this.$t.__('Success! The backup was restored.', this.$td)
+				backupSettings             : __('Backup Settings', td),
+				areYouSureDeleteBackup     : __('Are you sure you want to delete this backup?', td),
+				areYouSureRestoreBackup    : __('Are you sure you want to restore this backup?', td),
+				yesDeleteBackup            : __('Yes, I want to delete this backup', td),
+				yesRestoreBackup           : __('Yes, I want to restore this backup', td),
+				noChangedMind              : __('No, I changed my mind', td),
+				actionCannotBeUndone       : __('This action cannot be undone.', td),
+				noBackups                  : __('You have no saved backups.', td),
+				createBackup               : __('Create Backup', td),
+				restore                    : __('Restore', td),
+				delete                     : __('Delete', td),
+				backupSuccessfullyDeleted  : __('Success! The backup was deleted.', td),
+				backupSuccessfullyRestored : __('Success! The backup was restored.', td)
 			}
 		}
 	},
@@ -278,9 +283,9 @@ export default {
 		},
 		getBackupName (backup) {
 			const date = DateTime.fromMillis(backup * 1000).setZone(DateTime.local().zoneName)
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - Date, 2 - Timestamp.
-				this.$t.__('%1$s at %2$s', this.$td),
+				__('%1$s at %2$s', td),
 				'<strong>' + date.toFormat('MMMM d, yyyy') + '</strong>',
 				'<strong>' + date.toFormat('h:mma ZZZZ') + '</strong>'
 			)

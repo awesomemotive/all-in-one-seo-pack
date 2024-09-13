@@ -28,6 +28,7 @@ import {
 } from '@/vue/stores'
 
 export default {
+	name : 'ListRendered',
 	setup () {
 		const tableOfContentsStore = useTableOfContentsStore()
 
@@ -35,7 +36,6 @@ export default {
 			tableOfContentsStore
 		}
 	},
-	name  : 'ListRendered',
 	props : {
 		headings : {
 			required : true,

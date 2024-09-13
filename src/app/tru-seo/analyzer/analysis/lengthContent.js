@@ -1,7 +1,8 @@
 import { count } from '@/vue/plugins/wordcount'
 import { inRange } from 'lodash-es'
 import { __ } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const wordAssesment = {
 	recommendedMinimum   : 300,

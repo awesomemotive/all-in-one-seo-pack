@@ -112,6 +112,8 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useIndexNowStore,
 	useOptionsStore,
@@ -121,8 +123,8 @@ import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
-import { MetaTag } from '@/vue/mixins/MetaTag'
-import { GoogleSearchConsole } from '@/vue/mixins/GoogleSearchConsole'
+import { useGoogleSearchConsole } from '@/vue/composables/GoogleSearchConsole'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseEditor from '@/vue/components/common/base/Editor'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
@@ -150,15 +152,25 @@ import SvgLogoPinterest from '@/vue/components/common/svg/logo/Pinterest'
 import SvgLogoYandex from '@/vue/components/common/svg/logo/Yandex'
 import ToolSettings from './partials/WebmasterTools/ToolSettings'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			connect
+		} = useGoogleSearchConsole()
+
 		return {
+			connect,
 			indexNowStore         : useIndexNowStore(),
 			optionsStore          : useOptionsStore(),
 			pluginsStore          : usePluginsStore(),
 			rootStore             : useRootStore(),
-			settingsStore         : useSettingsStore(),
-			searchStatisticsStore : useSearchStatisticsStore()
+			searchStatisticsStore : useSearchStatisticsStore(),
+			settingsStore         : useSettingsStore()
 		}
 	},
 	components : {
@@ -190,37 +202,36 @@ export default {
 		ToolSettings,
 		TransitionSlide
 	},
-	mixins : [ MetaTag, GoogleSearchConsole ],
 	data () {
 		return {
 			heightOkay    : false,
 			activeTool    : null,
 			columnsPerRow : 4,
 			strings       : {
-				enterVerificationCode                : this.$t.__('Enter your verification codes below to activate webmaster tools.', this.$td),
-				miscellaneousVerification            : this.$t.__('Miscellaneous Verification', this.$td),
-				miscellaneousVerificationDescription : this.$t.sprintf(
+				enterVerificationCode                : __('Enter your verification codes below to activate webmaster tools.', td),
+				miscellaneousVerification            : __('Miscellaneous Verification', td),
+				miscellaneousVerificationDescription : sprintf(
 					// Translators: 1 - "<head></head>".
-					this.$t.__('The code above will be added between the %1$s tags on every page on your website.', this.$td),
+					__('The code above will be added between the %1$s tags on every page on your website.', td),
 					'<em>&lt;head&gt; &lt/head&gt;</em>'
 				),
-				webmasterToolsVerification : this.$t.__('Webmaster Tools Verification', this.$td),
-				unfilteredHtmlError        : this.$t.sprintf(
+				webmasterToolsVerification : __('Webmaster Tools Verification', td),
+				unfilteredHtmlError        : sprintf(
 					// Translators: 1 - Learn more link.
-					this.$t.__('Your user account role does not have access to edit this field. %1$s', this.$td),
-					this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'unfilteredHtml', true)
+					__('Your user account role does not have access to edit this field. %1$s', td),
+					links.getDocLink(GLOBAL_STRINGS.learnMore, 'unfilteredHtml', true)
 				),
 				gsc : {
-					haveYouConnected   : this.$t.__('Have you connected your site to Google Search Console?', this.$td),
-					aioseoCanNowVerify : this.$t.sprintf(
+					haveYouConnected   : __('Have you connected your site to Google Search Console?', td),
+					aioseoCanNowVerify : sprintf(
 						// Translators: 1 - The plugin short name ("AIOSEO").
-						this.$t.__('%1$s can now verify whether your site is correctly verified with Google Search Console and that your sitemaps have been submitted correctly. Connect with Google Search Console now to ensure your content is being added to Google as soon as possible for increased rankings.', this.$td),
+						__('%1$s can now verify whether your site is correctly verified with Google Search Console and that your sitemaps have been submitted correctly. Connect with Google Search Console now to ensure your content is being added to Google as soon as possible for increased rankings.', td),
 						import.meta.env.VITE_SHORT_NAME
 					),
-					connectTo   : this.$t.__('Connect to Google Search Console', this.$td),
-					siteRemoved : this.$t.__('Your site was removed from Google Search Console.', this.$td),
-					weDetected  : this.$t.__('We detected that your site has been removed from Google Search Console. If this was done in error, click below to re-sync and resolve this issue.', this.$td),
-					reconnect   : this.$t.__('Reconnect Google Search Console', this.$td)
+					connectTo   : __('Connect to Google Search Console', td),
+					siteRemoved : __('Your site was removed from Google Search Console.', td),
+					weDetected  : __('We detected that your site has been removed from Google Search Console. If this was done in error, click below to re-sync and resolve this issue.', td),
+					reconnect   : __('Reconnect Google Search Console', td)
 				}
 			}
 		}
@@ -230,98 +241,98 @@ export default {
 			return [
 				{
 					slug      : 'googleSearchConsole',
-					name      : this.$t.__('Google Search Console', this.$td),
+					name      : __('Google Search Console', td),
 					svg       : 'svg-logo-google',
 					component : 'GoogleSearchConsoleSettings',
 					settings  : [
 						{
 							option      : 'google',
-							label       : this.$t.__('Google Verification Code', this.$td),
-							description : this.$t.sprintf(
+							label       : __('Google Verification Code', td),
+							description : sprintf(
 								// Translators: 1 - "Google Search Console".
-								this.$t.__('Get your Google verification code in %1$s.', this.$td),
-								this.$links.getDocLink(this.$t.__('Google Search Console', this.$td), 'googleSearchConsole')
+								__('Get your Google verification code in %1$s.', td),
+								links.getDocLink(__('Google Search Console', td), 'googleSearchConsole')
 							)
 						}
 					]
 				},
 				{
 					slug     : 'bing',
-					name     : this.$t.__('Bing Webmaster Tools', this.$td),
+					name     : __('Bing Webmaster Tools', td),
 					svg      : 'svg-logo-microsoft-bing',
 					settings : [
 						{
 							option      : 'bing',
-							label       : this.$t.__('Bing Verification Code', this.$td),
-							description : this.$t.sprintf(
+							label       : __('Bing Verification Code', td),
+							description : sprintf(
 								// Translators: 1 - "Bing Webmaster Tools".
-								this.$t.__('Get your Bing verification code in %1$s.', this.$td),
-								this.$links.getDocLink(this.$t.__('Bing Webmaster Tools', this.$td), 'bingWebmasterVerification')
+								__('Get your Bing verification code in %1$s.', td),
+								links.getDocLink(__('Bing Webmaster Tools', td), 'bingWebmasterVerification')
 							)
 						}
 					]
 				},
 				{
 					slug     : 'yandex',
-					name     : this.$t.__('Yandex Webmaster Tools', this.$td),
+					name     : __('Yandex Webmaster Tools', td),
 					svg      : 'svg-logo-yandex',
 					settings : [
 						{
 							option      : 'yandex',
-							label       : this.$t.__('Yandex Verification Code', this.$td),
-							description : this.$t.sprintf(
+							label       : __('Yandex Verification Code', td),
+							description : sprintf(
 								// Translators: 1 - "Yandex Webmaster Tools".
-								this.$t.__('Get your Yandex verification code in %1$s.', this.$td),
-								this.$links.getDocLink(this.$t.__('Yandex Webmaster Tools', this.$td), 'yandexWebmasterVerification')
+								__('Get your Yandex verification code in %1$s.', td),
+								links.getDocLink(__('Yandex Webmaster Tools', td), 'yandexWebmasterVerification')
 							)
 						}
 					]
 				},
 				{
 					slug     : 'baidu',
-					name     : this.$t.__('Baidu Webmaster Tools', this.$td),
+					name     : __('Baidu Webmaster Tools', td),
 					svg      : 'svg-logo-baidu',
 					settings : [
 						{
 							option      : 'baidu',
-							label       : this.$t.__('Baidu Verification Code', this.$td),
-							description : this.$t.sprintf(
+							label       : __('Baidu Verification Code', td),
+							description : sprintf(
 								// Translators: 1 - "Baidu Webmaster Tools".
-								this.$t.__('Get your Baidu verification code in %1$s.', this.$td),
-								this.$links.getDocLink(this.$t.__('Baidu Webmaster Tools', this.$td), 'baiduWebmasterVerification')
+								__('Get your Baidu verification code in %1$s.', td),
+								links.getDocLink(__('Baidu Webmaster Tools', td), 'baiduWebmasterVerification')
 							)
 						}
 					]
 				},
 				{
 					slug     : 'pinterest',
-					name     : this.$t.__('Pinterest Site Verification', this.$td),
+					name     : __('Pinterest Site Verification', td),
 					svg      : 'svg-logo-pinterest',
 					settings : [
 						{
 							option      : 'pinterest',
-							label       : this.$t.__('Pinterest Verification Code', this.$td),
-							description : this.$t.sprintf(
+							label       : __('Pinterest Verification Code', td),
+							description : sprintf(
 								// Translators: 1 - "Pinterest account".
-								this.$t.__('Get your Pinterest verification code in your %1$s.', this.$td),
-								this.$links.getDocLink(this.$t.__('Pinterest account', this.$td), 'pinterestSiteVerification')
+								__('Get your Pinterest verification code in your %1$s.', td),
+								links.getDocLink(__('Pinterest account', td), 'pinterestSiteVerification')
 							)
 						}
 					]
 				},
 				{
 					slug      : 'indexNow',
-					name      : this.$t.__('IndexNow', this.$td),
+					name      : __('IndexNow', td),
 					svg       : 'svg-logo-index-now',
 					component : 'IndexNowSettings',
 					settings  : [
 						{
 							option      : 'apiKey',
-							label       : this.$t.__('IndexNow API Key', this.$td),
-							description : this.$t.sprintf(
+							label       : __('IndexNow API Key', td),
+							description : sprintf(
 								// Translators: 1 - Learn more link.
-								this.$t.__('You can manually set an API key here, but if left blank a new one will be auto-generated. %1$s', this.$td),
-								this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'indexNow', true)
+								__('You can manually set an API key here, but if left blank a new one will be auto-generated. %1$s', td),
+								links.getDocLink(GLOBAL_STRINGS.learnMore, 'indexNow', true)
 							)
 						}
 					]
@@ -334,35 +345,35 @@ export default {
 					settings  : [
 						{
 							option : 'microsoftClarityProjectId',
-							label  : this.$t.sprintf(
+							label  : sprintf(
 								// Translators: 1 - "Clarity".
-								this.$t.__('%1$s Project ID', this.$td),
+								__('%1$s Project ID', td),
 								'Clarity'
 							),
-							description : this.$t.sprintf(
+							description : sprintf(
 								// Translators: 1 - "Clarity", 2 - Learn more link.
-								this.$t.__('%1$s helps you understand how users interact with your website through heatmaps and session recordings. %2$s', this.$td),
+								__('%1$s helps you understand how users interact with your website through heatmaps and session recordings. %2$s', td),
 								'Clarity',
-								this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'microsoftClarityDocumentation', true)
+								links.getDocLink(GLOBAL_STRINGS.learnMore, 'microsoftClarityDocumentation', true)
 							)
 						}
 					]
 				},
 				{
 					slug      : 'googleAnalytics',
-					name      : this.$t.__('Google Analytics', this.$td),
+					name      : __('Google Analytics', td),
 					svg       : 'svg-logo-google-analytics',
 					component : 'GoogleAnalyticsSettings',
 					settings  : [
 						{
 							option      : 'gtmContainerId',
-							label       : this.$t.__('Google Tag Manager Container ID', this.$td),
+							label       : __('Google Tag Manager Container ID', td),
 							pro         : true,
 							placeholder : 'GTM-XXXXXX',
-							description : this.$t.sprintf(
+							description : sprintf(
 								// Translators: 1 - "Google Tag Manager account".
-								this.$t.__('Get your Google Tag Manager ID in your %1$s.', this.$td),
-								this.$links.getDocLink(this.$t.__('Google Tag Manager account', this.$td), 'gtmContainerId')
+								__('Get your Google Tag Manager ID in your %1$s.', td),
+								links.getDocLink(__('Google Tag Manager account', td), 'gtmContainerId')
 							)
 						}
 					]

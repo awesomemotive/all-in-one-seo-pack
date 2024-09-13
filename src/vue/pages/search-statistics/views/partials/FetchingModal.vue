@@ -27,6 +27,11 @@ import {
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import SvgCircleInformation from '@/vue/components/common/svg/circle/Information'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -41,8 +46,8 @@ export default {
 	data () {
 		return {
 			strings : {
-				title       : this.$t.__('Refreshing data', this.$td),
-				description : this.$t.__('Loading new report data...', this.$td)
+				title       : __('Refreshing data', td),
+				description : __('Loading new report data...', td)
 			}
 		}
 	}

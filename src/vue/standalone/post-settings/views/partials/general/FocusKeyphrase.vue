@@ -3,12 +3,12 @@
 		<base-input
 			v-if="!postEditorStore.currentPost.keyphrases.focus || !postEditorStore.currentPost.keyphrases.focus.keyphrase"
 			size="medium"
-			:class="`add-focus-keyphrase-${this.$root.$data.screenContext}-input`"
+			:class="`add-focus-keyphrase-${$root.$data.screenContext}-input`"
 			@keydown.enter="pressEnter"
 		/>
 
 		<div
-			:class="`add-focus-keyphrase-${this.$root.$data.screenContext}-button`"
+			:class="`add-focus-keyphrase-${$root.$data.screenContext}-button`"
 		>
 			<base-button
 				v-if="!postEditorStore.currentPost.keyphrases.focus || !postEditorStore.currentPost.keyphrases.focus.keyphrase"
@@ -61,7 +61,7 @@
 		/>
 
 		<core-tooltip
-			v-if="!postEditorStore.currentPost.loading.focus && postEditorStore.currentPost.keyphrases.focus && postEditorStore.currentPost.keyphrases.focus.keyphrase && $isPro && licenseStore.isUnlicensed"
+			v-if="!postEditorStore.currentPost.loading.focus && postEditorStore.currentPost.keyphrases.focus && postEditorStore.currentPost.keyphrases.focus.keyphrase && rootStore.isPro && licenseStore.isUnlicensed"
 		>
 			<div
 				class="disabled-button gray"
@@ -78,9 +78,9 @@
 		</core-tooltip>
 
 		<core-tooltip
-			v-if="!postEditorStore.currentPost.loading.focus && postEditorStore.currentPost.keyphrases.focus && postEditorStore.currentPost.keyphrases.focus.keyphrase && (!$isPro || !licenseStore.isUnlicensed)"
-			:disabled="!showSemrushTooltip || $isPro"
-			:force-show="showSemrushTooltip && !$isPro"
+			v-if="!postEditorStore.currentPost.loading.focus && postEditorStore.currentPost.keyphrases.focus && postEditorStore.currentPost.keyphrases.focus.keyphrase && (!rootStore.isPro || !licenseStore.isUnlicensed)"
+			:disabled="!showSemrushTooltip || rootStore.isPro"
+			:force-show="showSemrushTooltip && !rootStore.isPro"
 		>
 			<base-button
 				class="add-keyphrase gray medium"
@@ -282,6 +282,12 @@
 
 <script>
 import {
+	COUNTRY_LIST,
+	GLOBAL_STRINGS,
+	SEMRUSH_DATABASE
+} from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
+import {
 	useConnectStore,
 	useLicenseStore,
 	useOptionsStore,
@@ -292,6 +298,8 @@ import {
 
 import { popup } from '@/vue/utils/popup'
 import { getParams } from '@/vue/utils/params'
+
+import TruSeo from '@/vue/plugins/tru-seo'
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreKeyphrase from '@/vue/components/common/core/Keyphrase'
@@ -304,6 +312,11 @@ import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import SvgLogoSemrush from '@/vue/components/common/svg/logo/Semrush'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 import metaboxAnalysisDetail from './MetaboxAnalysisDetail'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -312,7 +325,8 @@ export default {
 			optionsStore    : useOptionsStore(),
 			postEditorStore : usePostEditorStore(),
 			rootStore       : useRootStore(),
-			semrushStore    : useSemrushStore()
+			semrushStore    : useSemrushStore(),
+			truSeo          : new TruSeo()
 		}
 	},
 	components : {
@@ -337,57 +351,57 @@ export default {
 			removingAdditionalKeyphrase : false,
 			semrushCountry              : { value: 'US', label: 'United States of America - US' },
 			strings                     : {
-				modalTitle : this.$t.sprintf(
+				modalTitle : sprintf(
 					// Translators: 1 - Semrush.
-					this.$t.__('Additional Keyphrases by %1$s', this.$td),
+					__('Additional Keyphrases by %1$s', td),
 					'Semrush'
 				),
-				addKeyphrase              : this.$t.__('Add Focus Keyphrase', this.$td),
-				getAdditionalKeyphrases   : this.$t.__('Get Additional Keyphrases', this.$td),
-				showResultsFor            : this.$t.__('Show Results For:', this.$td),
-				keyphrase                 : this.$t.__('Keyphrase', this.$td),
-				volume                    : this.$t.__('Volume', this.$td),
-				trend                     : this.$t.__('Trend', this.$td),
-				addAdditionalKeyphrase    : this.$t.__('Add Keyphrase', this.$td),
-				removeAdditionalKeyphrase : this.$t.__('Remove Keyphrase', this.$td),
-				noResults                 : this.$t.__('No results', this.$td),
-				upsell                    : this.$t.sprintf(
+				addKeyphrase              : __('Add Focus Keyphrase', td),
+				getAdditionalKeyphrases   : __('Get Additional Keyphrases', td),
+				showResultsFor            : __('Show Results For:', td),
+				keyphrase                 : __('Keyphrase', td),
+				volume                    : __('Volume', td),
+				trend                     : __('Trend', td),
+				addAdditionalKeyphrase    : __('Add Keyphrase', td),
+				removeAdditionalKeyphrase : __('Remove Keyphrase', td),
+				noResults                 : __('No results', td),
+				upsell                    : sprintf(
 					// Translators: 1 - Plugin short name + Pro "AIOSEO Pro", 2 - Semrush, 3 - Link to learn more.
-					this.$t.__('Analyzing your content with %1$s keywords is only available to licensed %2$s users. %3$s', this.$td),
+					__('Analyzing your content with %1$s keywords is only available to licensed %2$s users. %3$s', td),
 					'Semrush',
 					`<strong>${import.meta.env.VITE_SHORT_NAME} Pro</strong>`,
-					this.$links.getUpsellLink('semrush-keywords', this.$constants.GLOBAL_STRINGS.learnMore, null, true)
+					links.getUpsellLink('semrush-keywords', GLOBAL_STRINGS.learnMore, null, true)
 				),
-				semrushGetAdditionalKeyphrases : this.$t.sprintf(
+				semrushGetAdditionalKeyphrases : sprintf(
 					// Translators: 1 - Plugin short name "AIOSEO", 2 - Semrush.
-					this.$t.__('%1$s integrates directly with %2$s to provide you with actionable keyphrases to help you write better content.', this.$td),
+					__('%1$s integrates directly with %2$s to provide you with actionable keyphrases to help you write better content.', td),
 					import.meta.env.VITE_SHORT_NAME,
 					'Semrush'
 				),
-				pleaseAddFocusKeyphrase : this.$t.__('To use this feature, first add a focus keyphrase.', this.$td),
-				focusKeyphrase          : this.$t.__('Focus Keyphrase', this.$td),
-				delete                  : this.$t.__('Delete', this.$td),
-				semrushTooltip          : this.$t.sprintf(
+				pleaseAddFocusKeyphrase : __('To use this feature, first add a focus keyphrase.', td),
+				focusKeyphrase          : __('Focus Keyphrase', td),
+				delete                  : __('Delete', td),
+				semrushTooltip          : sprintf(
 					// Translators: 1 - Semrush.
-					this.$t.__('Get Additional Keyphrases with %1$s!', this.$td),
+					__('Get Additional Keyphrases with %1$s!', td),
 					'Semrush'
 				),
-				semrushTooltipLicenseKey : this.$t.sprintf(
+				semrushTooltipLicenseKey : sprintf(
 					// Translators: 1 - Opening link tag, 2 - Closing link tag, 3 - Semrush.
-					this.$t.__('%1$sA valid license key is required%2$s in order to connect with %3$s.', this.$td),
+					__('%1$sA valid license key is required%2$s in order to connect with %3$s.', td),
 					'<a href="' + this.rootStore.aioseo.urls.aio.settings + '">',
 					'</a>',
 					'Semrush'
 				),
-				youHaveExceededSemrush : this.$t.sprintf(
+				youHaveExceededSemrush : sprintf(
 					// Translators: 1 - Semrush.
-					this.$t.__('You have exceeded the number of requests allowed by your %1$s plan.', this.$td),
+					__('You have exceeded the number of requests allowed by your %1$s plan.', td),
 					'Semrush'
 				),
-				inOrderToUpgradeSemrush : this.$t.sprintf(
+				inOrderToUpgradeSemrush : sprintf(
 					// Translators: 1 - Link to learn more.
-					this.$t.__('In order to continue searching for additional keyphrases, you\'ll need to upgrade. %1$s', this.$td),
-					this.$links.getUpsellLink('semrush-pricing', this.$constants.GLOBAL_STRINGS.learnMore, 'semrushPricing', true)
+					__('In order to continue searching for additional keyphrases, you\'ll need to upgrade. %1$s', td),
+					links.getUpsellLink('semrush-pricing', GLOBAL_STRINGS.learnMore, 'semrushPricing', true)
 				)
 			}
 		}
@@ -403,13 +417,13 @@ export default {
 	computed : {
 		semrushError () {
 			if (this.semrushStore.error.includes('TOTAL LIMIT EXCEEDED')) {
-				return this.$t.__('You have exceeded the limit for requests. Please try again later.', this.$td)
+				return __('You have exceeded the limit for requests. Please try again later.', td)
 			}
 
-			return this.$t.__('An error occurred while fetching keyphrases. Please try again later.', this.$td)
+			return __('An error occurred while fetching keyphrases. Please try again later.', td)
 		},
 		semrushDatabase () {
-			return this.$constants.COUNTRY_LIST
+			return COUNTRY_LIST
 				.map(country => {
 					if ('GB' === country.value) {
 						country.value = 'UK'
@@ -422,7 +436,7 @@ export default {
 
 					return country
 				})
-				.filter(country => this.$constants.SEMRUSH_DATABASE.includes(country.value.toLowerCase()))
+				.filter(country => SEMRUSH_DATABASE.includes(country.value.toLowerCase()))
 				.map(country => {
 					country.label = country.label + ' - ' + country.value.toUpperCase()
 					return country
@@ -558,12 +572,12 @@ export default {
 			this.postEditorStore.currentPost.loading.focus = true
 
 			this.postEditorStore.isDirty = true
-			this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
+			this.truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 		},
 		onDeleted () {
 			this.postEditorStore.currentPost.keyphrases.focus.keyphrase = ''
 			this.postEditorStore.isDirty                = true
-			this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
+			this.truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 		},
 		addKeyphraseEv () {
 			const keyphraseInputComponent = document.getElementsByClassName(`add-focus-keyphrase-${this.$root.$data.screenContext}-input`)
@@ -581,7 +595,7 @@ export default {
 				keyphraseInput.blur()
 
 				this.postEditorStore.isDirty = true
-				this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
+				this.truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 			}
 		},
 		hasAdditionalKeyphrase (keyphrase) {
@@ -603,7 +617,7 @@ export default {
 			this.postEditorStore.currentPost.keyphrases.additional = additional
 
 			this.postEditorStore.isDirty = true
-			await this.$truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
+			await this.truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
 			await this.$nextTick()
 
 			if (keyphrasePanel[keyphraseIndex]) {

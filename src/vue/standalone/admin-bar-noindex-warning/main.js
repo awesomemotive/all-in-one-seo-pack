@@ -4,7 +4,7 @@ import loadPlugins from '@/vue/plugins'
 
 import { loadPiniaStores } from '@/vue/stores'
 
-import App from './App.vue'
+import App from './App'
 
 let app = createApp(App)
 app     = loadPlugins(app)

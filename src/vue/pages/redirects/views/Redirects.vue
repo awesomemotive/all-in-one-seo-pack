@@ -14,22 +14,18 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import Cta from './AIOSEO_VERSION/redirects/Cta'
 import Lite from './lite/redirects/Redirects'
 import Redirects from './AIOSEO_VERSION/redirects/Redirects'
-import { AddonConditions } from '@/vue/mixins/AddonConditions'
-export default {
-	mixins     : [ AddonConditions ],
-	components : {
-		Cta,
-		Lite,
-		Redirects
-	},
-	data () {
-		return {
-			addonSlug : 'aioseo-redirects'
-		}
-	}
-}
+import { useAddonConditions } from '@/vue/composables/AddonConditions'
+
+const {
+	shouldShowActivate,
+	shouldShowLite,
+	shouldShowMain,
+	shouldShowUpdate
+} = useAddonConditions({
+	addonSlug : 'aioseo-redirects'
+})
 </script>

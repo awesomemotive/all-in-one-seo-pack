@@ -33,18 +33,22 @@ import { usePostEditorStore } from '@/vue/stores'
 
 import { decodeHtml } from '../assets/js/functions'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	data () {
-		return {
-			textPanelTitle     : this.$t.__('Beginning & Ending Words', this.$td),
-			guideLineText      : this.$t.__('Most readers only look at the first and last 3 words of a headline before deciding whether to click.', this.$td),
-			begginingWordsText : this.$t.__('Beginning Words', this.$td),
-			endingWordsText    : this.$t.__('Ending Words', this.$td),
-			postEditorStore    : usePostEditorStore()
-		}
-	},
 	components : {
 		Accordion
+	},
+	data () {
+		return {
+			textPanelTitle     : __('Beginning & Ending Words', td),
+			guideLineText      : __('Most readers only look at the first and last 3 words of a headline before deciding whether to click.', td),
+			begginingWordsText : __('Beginning Words', td),
+			endingWordsText    : __('Ending Words', td),
+			postEditorStore    : usePostEditorStore()
+		}
 	},
 	computed : {
 		currentResult () {

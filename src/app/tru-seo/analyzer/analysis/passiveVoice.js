@@ -1,7 +1,8 @@
 import getPassiveVoice from '../researches/getPassiveVoice'
 import formatNumber from '../researches/helpers/formatNumber'
 import { __, sprintf } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 function passiveVoice (content, locale) {
 	if (!content) {
@@ -13,6 +14,17 @@ function passiveVoice (content, locale) {
 	const highlightSentences = []
 	const recommendedValue = 10
 	const passiveVoiceResult = getPassiveVoice(content, locale)
+
+	if (false === passiveVoiceResult) {
+		return {
+			title              : '', // Removing title so that it doesn't show up in the analysis.
+			description        : __('Passive voice is not supported in your current language.', td),
+			score              : 0,
+			maxScore           : 0,
+			error              : 0,
+			highlightSentences : highlightSentences
+		}
+	}
 
 	if (0 !== passiveVoiceResult.total) {
 		percentage = formatNumber((passiveVoiceResult.passives.length / passiveVoiceResult.total) * 100)

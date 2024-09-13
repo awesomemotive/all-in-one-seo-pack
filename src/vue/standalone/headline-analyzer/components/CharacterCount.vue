@@ -69,15 +69,19 @@
 import Accordion from './partials/Accordion'
 import { usePostEditorStore } from '@/vue/stores'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	data () {
-		return {
-			textPanelTitle  : this.$t.__('Character Count', this.$td),
-			postEditorStore : usePostEditorStore()
-		}
-	},
 	components : {
 		Accordion
+	},
+	data () {
+		return {
+			textPanelTitle  : __('Character Count', td),
+			postEditorStore : usePostEditorStore()
+		}
 	},
 	computed : {
 		currentResult () {
@@ -117,40 +121,40 @@ export default {
 		},
 		statusOnLength () {
 			if (34 >= this.characterLength) {
-				return this.$t.__('Too Short 🙃', this.$td)
+				return __('Too Short 🙃', td)
 			}
 			if (35 <= this.characterLength && 66 >= this.characterLength) {
-				return this.$t.__('Good 🙂', this.$td)
+				return __('Good 🙂', td)
 			}
 			if (67 <= this.characterLength) {
-				return this.$t.__('Too Long 😑', this.$td)
+				return __('Too Long 😑', td)
 			}
 
-			return this.$t.__('Too Short 🙃', this.$td)
+			return __('Too Short 🙃', td)
 		},
 		descOnCharLength () {
 			if (34 >= this.characterLength) {
-				return this.$t.__(
+				return __(
 					'You have space to add more keywords and power words to boost your rankings and click-through rate.',
-					this.$td
+					td
 				)
 			}
 			if (35 <= this.characterLength && 66 >= this.characterLength) {
-				return this.$t.__(
+				return __(
 					'Headlines that are about 55 characters long will display fully in search results and tend to get more clicks.',
-					this.$td
+					td
 				)
 			}
 			if (67 <= this.characterLength) {
-				return this.$t.__(
+				return __(
 					'At this length, it will get cut off in search results. Try reducing it to about 55 characters.',
-					this.$td
+					td
 				)
 			}
 
-			return this.$t.__(
+			return __(
 				'You have space to add more keywords and power words to boost your rankings and click-through rate.',
-				this.$td
+				td
 			)
 		},
 		characterDisplay () {

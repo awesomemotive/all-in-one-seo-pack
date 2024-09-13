@@ -120,17 +120,19 @@
 	</grid-column>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+
 import {
 	useLicenseStore,
 	useOptionsStore,
-	usePluginsStore,
-	useRootStore
+	usePluginsStore
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useWebmasterTools } from '@/vue/composables'
-import { MiOrEm, WebmasterTools } from '@/vue/pages/settings/mixins'
+
+import { useMiOrEm } from '@/vue/pages/settings/composables/MiOrEm'
+import { useWebmasterTools } from '@/vue/composables/WebmasterTools'
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreMiIntro from '@/vue/components/common/core/MiIntro'
@@ -138,86 +140,93 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import SvgExternal from '@/vue/components/common/svg/External'
 
-export default {
-	setup () {
-		const { strings } = useWebmasterTools()
+import { __, sprintf } from '@/vue/plugins/translations'
 
-		return {
-			licenseStore      : useLicenseStore(),
-			optionsStore      : useOptionsStore(),
-			pluginsStore      : usePluginsStore(),
-			rootStore         : useRootStore(),
-			composableStrings : strings
-		}
+const td = import.meta.env.VITE_TEXTDOMAIN
+
+const licenseStore = useLicenseStore()
+const optionsStore = useOptionsStore()
+const pluginsStore = usePluginsStore()
+
+const {
+	gaActivated,
+	installMi,
+	installingPlugin,
+	miInstalled,
+	prefersEm,
+	showMiPromo
+} = useMiOrEm()
+
+const { strings : composableStrings } = useWebmasterTools()
+
+const props = defineProps({
+	tool : {
+		type     : Object,
+		required : true
 	},
-	components : {
-		CoreAlert,
-		CoreMiIntro,
-		CoreSettingsRow,
-		GridColumn,
-		SvgExternal
-	},
-	mixins : [ MiOrEm, WebmasterTools ],
-	data () {
-		return {
-			strings : merge(this.composableStrings, {
-				miHandlesGa : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
-					this.$t.__('Google Analytics is now handled by %1$s.', this.$td),
-					'MonsterInsights'
-				),
-				emHandlesGa : this.$t.sprintf(
-					// Translators: 1 - The name of one of our partner plugins.
-					this.$t.__('Google Analytics is now handled by %1$s.', this.$td),
-					'ExactMetrics'
-				),
-				manageGa : this.$t.__('Manage Google Analytics', this.$td)
-			})
-		}
-	},
-	computed : {
-		miPromo () {
-			return this.$t.sprintf(
-				// Translators: 1 - Opening HTML bold tag, 2 - Closing HTML bold tag.
-				this.$t.__('We recommend using the %1$sFree MonsterInsights%2$s plugin to get the most out of Google Analytics.', this.$td),
-				'<strong>',
-				'</strong>'
-			)
-		},
-		emPromo () {
-			return this.$t.sprintf(
-				// Translators: 1 - Opening HTML bold tag, 2 - Closing HTML bold tag.
-				this.$t.__('We recommend using the %1$sFree ExactMetrics%2$s plugin to get the most out of Google Analytics.', this.$td),
-				'<strong>',
-				'</strong>'
-			)
-		},
-		filteredSettings () {
-			return this.tool.settings.filter(setting => this.shouldDisplaySetting(setting))
-		},
-		getGaAdminUrl () {
-			let url = this.pluginsStore.plugins.miLite.adminUrl
-
-			if (this.pluginsStore.plugins.miPro.activated) {
-				url = this.pluginsStore.plugins.miPro.adminUrl
-			}
-
-			if (this.pluginsStore.plugins.emLite.activated) {
-				url = this.pluginsStore.plugins.emLite.adminUrl
-			}
-
-			if (this.pluginsStore.plugins.emPro.activated) {
-				url = this.pluginsStore.plugins.emPro.adminUrl
-			}
-
-			return url
-		}
-	},
-	methods : {
-		shouldDisplaySetting (setting) {
-			return !(this.licenseStore.isUnlicensed && setting.pro)
+	isConnected : {
+		type : Boolean,
+		default () {
+			return false
 		}
 	}
+})
+
+const strings = merge(composableStrings, {
+	miHandlesGa : sprintf(
+		// Translators: 1 - The name of one of our partner plugins.
+		__('Google Analytics is now handled by %1$s.', td),
+		'MonsterInsights'
+	),
+	emHandlesGa : sprintf(
+		// Translators: 1 - The name of one of our partner plugins.
+		__('Google Analytics is now handled by %1$s.', td),
+		'ExactMetrics'
+	),
+	manageGa : __('Manage Google Analytics', td)
+})
+
+const miPromo = computed(() => {
+	return sprintf(
+		// Translators: 1 - Opening HTML bold tag, 2 - Closing HTML bold tag.
+		__('We recommend using the %1$sFree MonsterInsights%2$s plugin to get the most out of Google Analytics.', td),
+		'<strong>',
+		'</strong>'
+	)
+})
+
+const emPromo = computed(() => {
+	return sprintf(
+		// Translators: 1 - Opening HTML bold tag, 2 - Closing HTML bold tag.
+		__('We recommend using the %1$sFree ExactMetrics%2$s plugin to get the most out of Google Analytics.', td),
+		'<strong>',
+		'</strong>'
+	)
+})
+
+const filteredSettings = computed(() => {
+	return props.tool.settings.filter(setting => shouldDisplaySetting(setting))
+})
+
+const getGaAdminUrl = computed(() => {
+	let url = pluginsStore.plugins.miLite.adminUrl
+
+	if (pluginsStore.plugins.miPro.activated) {
+		url = pluginsStore.plugins.miPro.adminUrl
+	}
+
+	if (pluginsStore.plugins.emLite.activated) {
+		url = pluginsStore.plugins.emLite.adminUrl
+	}
+
+	if (pluginsStore.plugins.emPro.activated) {
+		url = pluginsStore.plugins.emPro.adminUrl
+	}
+
+	return url
+})
+const shouldDisplaySetting = (setting) => {
+	return !(licenseStore.isUnlicensed && setting.pro)
 }
 </script>
 

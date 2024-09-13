@@ -192,6 +192,7 @@ class Post extends Model {
 		$post = self::migrateRemovedQaSchema( $post );
 		$post = self::migrateImageTypes( $post );
 		$post = self::runDynamicSchemaMigration( $post );
+		$post = self::migrateKoreaCountryCodeSchemas( $post );
 
 		return $post;
 	}
@@ -445,7 +446,7 @@ class Post extends Model {
 		$thePost->robots_noimageindex         = isset( $data['noimageindex'] ) ? rest_sanitize_boolean( $data['noimageindex'] ) : 0;
 		$thePost->robots_nosnippet            = isset( $data['nosnippet'] ) ? rest_sanitize_boolean( $data['nosnippet'] ) : 0;
 		$thePost->robots_noodp                = isset( $data['noodp'] ) ? rest_sanitize_boolean( $data['noodp'] ) : 0;
-		$thePost->robots_max_snippet          = ! empty( $data['maxSnippet'] ) ? (int) sanitize_text_field( $data['maxSnippet'] ) : -1;
+		$thePost->robots_max_snippet          = isset( $data['maxSnippet'] ) && is_numeric( $data['maxSnippet'] ) ? (int) sanitize_text_field( $data['maxSnippet'] ) : -1;
 		$thePost->robots_max_videopreview     = isset( $data['maxVideoPreview'] ) && is_numeric( $data['maxVideoPreview'] ) ? (int) sanitize_text_field( $data['maxVideoPreview'] ) : -1;
 		$thePost->robots_max_imagepreview     = ! empty( $data['maxImagePreview'] ) ? sanitize_text_field( $data['maxImagePreview'] ) : 'large';
 		// Open Graph Meta
@@ -781,5 +782,49 @@ class Post extends Model {
 		$existingOptions = array_replace_recursive( $defaults, $existingOptions );
 
 		return json_decode( wp_json_encode( $existingOptions ) );
+	}
+
+		/**
+	 * Migrates update Korea country code for Person, Product, Event, and JobsPosting schemas.
+	 *
+	 * @since 4.7.1
+	 *
+	 * @param  Post $aioseoPost The post object.
+	 * @return Post             The modified post object.
+	 */
+	private static function migrateKoreaCountryCodeSchemas( $aioseoPost ) {
+		if ( empty( $aioseoPost->schema ) || empty( $aioseoPost->schema->graphs ) ) {
+			return $aioseoPost;
+		}
+
+		foreach ( $aioseoPost->schema->graphs as $key => $graph ) {
+			if ( isset( $aioseoPost->schema->graphs[ $key ]->properties->location->country ) ) {
+				$aioseoPost->schema->graphs[ $key ]->properties->location->country = self::invertKoreaCode( $graph->properties->location->country );
+			}
+
+			if ( isset( $aioseoPost->schema->graphs[ $key ]->properties->shippingDestinations ) ) {
+				$aioseoPost->schema->graphs[ $key ]->properties->shippingDestinations = array_map( function( $item ) {
+					$item->country = self::invertKoreaCode( $item->country );
+
+					return $item;
+				}, $graph->properties->shippingDestinations );
+			}
+		}
+
+		$aioseoPost->save();
+
+		return $aioseoPost;
+	}
+
+	/**
+	 * Utility function to invert the country code for Korea.
+	 *
+	 * @since 4.7.1
+	 *
+	 * @param  string $code country code.
+	 * @return string       country code.
+	 */
+	public static function invertKoreaCode( $code ) {
+		return 'KP' === $code ? 'KR' : $code;
 	}
 }

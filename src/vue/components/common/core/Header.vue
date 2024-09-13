@@ -1,11 +1,11 @@
 <template>
 	<div class="aioseo-header">
 		<core-upgrade-bar
-			v-if="!$isPro && settingsStore.settings.showUpgradeBar && upgradeBar && rootStore.pong"
+			v-if="!rootStore.isPro && settingsStore.settings.showUpgradeBar && upgradeBar && rootStore.pong"
 		/>
 
 		<core-license-key-bar
-			v-if="$isPro && licenseStore.isUnlicensed && rootStore.pong"
+			v-if="rootStore.isPro && licenseStore.isUnlicensed && rootStore.pong"
 		/>
 
 		<core-api-bar
@@ -19,7 +19,7 @@
 			<div class="aioseo-header-content">
 				<a
 					v-if="licenseStore.isUnlicensed"
-					:href="$links.utmUrl('header-logo')"
+					:href="links.utmUrl('header-logo')"
 					target="_blank"
 
 				>
@@ -88,7 +88,10 @@
 	</div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+
 import {
 	useHelpPanelStore,
 	useLicenseStore,
@@ -99,7 +102,10 @@ import {
 } from '@/vue/stores'
 
 import addons from '@/vue/utils/addons'
-import { ScrollAndHighlight } from '@/vue/mixins/ScrollAndHighlight'
+import links from '@/vue/utils/links'
+
+import { useScrollAndHighlight } from '@/vue/composables/ScrollAndHighlight'
+
 import CoreApiBar from '@/vue/components/common/core/ApiBar'
 import CoreLicenseKeyBar from '@/vue/components/AIOSEO_VERSION/core/LicenseKeyBar'
 import CorePercentCircle from '@/vue/components/common/core/PercentCircle'
@@ -109,135 +115,130 @@ import GridContainer from '@/vue/components/common/grid/Container'
 import SvgAioseoLogo from '@/vue/components/common/svg/aioseo/Logo'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import SvgNotifications from '@/vue/components/common/svg/Notifications'
-export default {
-	setup () {
-		return {
-			helpPanelStore     : useHelpPanelStore(),
-			licenseStore       : useLicenseStore(),
-			linkAssistantStore : useLinkAssistantStore(),
-			notificationsStore : useNotificationsStore(),
-			rootStore          : useRootStore(),
-			settingsStore      : useSettingsStore()
-		}
-	},
-	components : {
-		CoreApiBar,
-		CoreLicenseKeyBar,
-		CorePercentCircle,
-		CoreProcessingPopup,
-		CoreUpgradeBar,
-		GridContainer,
-		SvgAioseoLogo,
-		SvgCircleQuestionMark,
-		SvgNotifications
-	},
-	mixins : [ ScrollAndHighlight ],
-	props  : {
-		fullWidth : Boolean,
-		small     : Boolean,
-		pageName  : String,
-		actions   : {
-			type : Boolean,
-			default () {
-				return true
-			}
-		},
-		upgradeBar : {
-			type : Boolean,
-			default () {
-				return true
-			}
-		}
-	},
-	data () {
-		return {
-			activeScan : null,
-			strings    : {
-				linkAssistantPopup : {
-					header      : this.$t.__('Link suggestions are being processed.', this.$td),
-					description : this.$t.__('Depending on the number of posts being scanned, this process can take some time. You can safely leave this page and check back later.', this.$td)
-				},
-				searchStatisticsPopup : {
-					header      : this.$t.__('Search statistics are being fetched.', this.$td),
-					description : this.$t.__('Depending on the amount of content on your site, this process can take some time. You can safely leave this page and check back later.', this.$td)
-				}
-			}
-		}
-	},
-	computed : {
-		percentage () {
-			switch (this.activeScan) {
-				case 'linkAssistant':
-					return this.linkAssistantStore.suggestionsScan.percent
-				default:
-					return null
-			}
-		},
-		showPopup () {
-			switch (this.activeScan) {
-				case 'linkAssistant':
-					return this.linkAssistantStore.suggestionsScan.showProcessingPopup && 100 !== this.linkAssistantStore.suggestionsScan.percent
-				default:
-					return null
-			}
-		},
-		popupStrings () {
-			switch (this.activeScan) {
-				case 'linkAssistant':
-					return this.strings.linkAssistantPopup
-				default:
-					return null
-			}
-		}
-	},
-	methods : {
-		debounce (fn) {
-			let frame
-			return (...params) => {
-				if (frame) {
-					cancelAnimationFrame(frame)
-				}
-				frame = requestAnimationFrame(() => {
-					fn(...params)
-				})
-			}
-		},
-		storeScroll () {
-			document.documentElement.dataset.scroll = window.scrollY
-		},
-		toggleModal () {
-			const modal = document.getElementById('aioseo-help-modal')
-			modal.classList.toggle('visible')
-			document.body.classList.toggle('modal-open')
-		},
-		checkForActiveScan () {
-			if (
-				'link-assistant' === this.rootStore.aioseo.page &&
-				addons.isActive('aioseo-link-assistant') &&
-				!addons.requiresUpgrade('aioseo-link-assistant') &&
-				addons.hasMinimumVersion('aioseo-link-assistant') &&
-				('links-report' === this.$route.name || 'overview' === this.$route.name) &&
-				100 !== this.linkAssistantStore.suggestionsScan.percent
-			) {
-				this.activeScan = 'linkAssistant'
-			}
-		},
-		toggleCirclePopup () {
-			switch (this.activeScan) {
-				case 'linkAssistant':
-					return this.linkAssistantStore.toggleProcessingPopup()
-				default:
-					return null
-			}
-		}
-	},
-	mounted () {
-		this.storeScroll()
-		document.addEventListener('scroll', this.debounce(this.storeScroll), { passive: true })
 
-		this.checkForActiveScan()
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
+// We just need to call this to make sure the composable is used.
+useScrollAndHighlight()
+
+const helpPanelStore     = useHelpPanelStore()
+const licenseStore       = useLicenseStore()
+const linkAssistantStore = useLinkAssistantStore()
+const notificationsStore = useNotificationsStore()
+const rootStore          = useRootStore()
+const settingsStore      = useSettingsStore()
+
+defineProps({
+	fullWidth : Boolean,
+	small     : Boolean,
+	pageName  : String,
+	actions   : {
+		type : Boolean,
+		default () {
+			return true
+		}
+	},
+	upgradeBar : {
+		type : Boolean,
+		default () {
+			return true
+		}
+	}
+})
+
+const activeScan = ref(null)
+
+const strings = {
+	linkAssistantPopup : {
+		header      : __('Link suggestions are being processed.', td),
+		description : __('Depending on the number of posts being scanned, this process can take some time. You can safely leave this page and check back later.', td)
+	},
+	searchStatisticsPopup : {
+		header      : __('Search statistics are being fetched.', td),
+		description : __('Depending on the amount of content on your site, this process can take some time. You can safely leave this page and check back later.', td)
 	}
 }
+
+const percentage = computed(() => {
+	switch (activeScan.value) {
+		case 'linkAssistant':
+			return linkAssistantStore.suggestionsScan.percent
+		default:
+			return null
+	}
+})
+
+const showPopup = computed(() => {
+	switch (activeScan.value) {
+		case 'linkAssistant':
+			return linkAssistantStore.suggestionsScan.showProcessingPopup && 100 !== linkAssistantStore.suggestionsScan.percent
+		default:
+			return null
+	}
+})
+
+const popupStrings = computed(() => {
+	switch (activeScan.value) {
+		case 'linkAssistant':
+			return strings.linkAssistantPopup
+		default:
+			return null
+	}
+})
+
+const debounce = (fn) => {
+	let frame
+	return (...params) => {
+		if (frame) {
+			cancelAnimationFrame(frame)
+		}
+		frame = requestAnimationFrame(() => {
+			fn(...params)
+		})
+	}
+}
+
+const storeScroll = () => {
+	document.documentElement.dataset.scroll = window.scrollY
+}
+
+const toggleModal = () => {
+	const modal = document.getElementById('aioseo-help-modal')
+	modal.classList.toggle('visible')
+	document.body.classList.toggle('modal-open')
+}
+
+const route = useRoute()
+const checkForActiveScan = () => {
+	if (
+		'link-assistant' === rootStore.aioseo.page &&
+		addons.isActive('aioseo-link-assistant') &&
+		!addons.requiresUpgrade('aioseo-link-assistant') &&
+		addons.hasMinimumVersion('aioseo-link-assistant') &&
+		('links-report' === route.name || 'overview' === route.name) &&
+		100 !== linkAssistantStore.suggestionsScan.percent
+	) {
+		activeScan.value = 'linkAssistant'
+	}
+}
+
+const toggleCirclePopup = () => {
+	switch (activeScan.value) {
+		case 'linkAssistant':
+			return linkAssistantStore.toggleProcessingPopup()
+		default:
+			return null
+	}
+}
+
+onMounted(() => {
+	storeScroll()
+	document.addEventListener('scroll', debounce(storeScroll), { passive: true })
+
+	checkForActiveScan()
+})
 </script>
 
 <style lang="scss">

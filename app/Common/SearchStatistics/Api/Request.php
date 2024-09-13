@@ -221,8 +221,8 @@ class Request {
 			$body['time'] = time(); // Add a timestamp to avoid caching.
 		}
 
-		$body['timezone']        = date( 'e' );
-		$body['ip']              = ! empty( $_SERVER['SERVER_ADDR'] ) ? $_SERVER['SERVER_ADDR'] : '';
+		$body['timezone']        = gmdate( 'e' );
+		$body['ip']              = ! empty( $_SERVER['SERVER_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_ADDR'] ) ) : '';
 		$body['internalOptions'] = aioseo()->internalOptions->internal->searchStatistics->all();
 
 		// 2. SET HEADERS

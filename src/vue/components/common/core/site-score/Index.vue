@@ -38,6 +38,11 @@
 <script>
 import SvgSeoSiteScore from '@/vue/components/common/svg/seo-site-score/Index'
 import SvgSeoSiteScoreLoading from '@/vue/components/common/svg/seo-site-score/Loading'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		SvgSeoSiteScore,
@@ -57,7 +62,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				analyzing : this.$t.__('Analyzing...', this.$td)
+				analyzing : __('Analyzing...', td)
 			}
 		}
 	}

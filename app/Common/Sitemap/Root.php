@@ -350,7 +350,7 @@ class Root {
 			'product' === $postType
 		) {
 			$whereClause .= " AND p.ID NOT IN (
-				SELECT tr.object_id
+				SELECT CONVERT(tr.object_id, unsigned) AS object_id
 				FROM {$termRelationshipsTable} AS tr
 				JOIN {$termTaxonomyTable} AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
 				JOIN {$termsTable} AS t ON tt.term_id = t.term_id
@@ -534,7 +534,7 @@ class Root {
 					->whereRaw( "
 					( `p`.`ID` IN
 						(
-							SELECT `tr`.`object_id`
+							SELECT CONVERT(`tr`.`object_id`, unsigned)
 							FROM `$termRelationshipsTable` as tr
 							WHERE `tr`.`term_taxonomy_id` IN ( '$termIds' )
 						)

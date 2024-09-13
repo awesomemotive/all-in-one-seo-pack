@@ -42,6 +42,11 @@ import CoreAnimatedDannie from '@/vue/components/common/core/AnimatedDannie'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreHeader from '@/vue/components/common/core/Header'
 import GridContainer from '@/vue/components/common/grid/Container'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreAnimatedDannie,
@@ -52,7 +57,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				connecting : this.$t.__('Connecting...', this.$td)
+				connecting : __('Connecting...', td)
 			}
 		}
 	},

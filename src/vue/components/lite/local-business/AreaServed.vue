@@ -9,11 +9,15 @@
 </template>
 
 <script>
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	data () {
 		return {
 			strings : {
-				areaServedDescription : this.$t.__('The geographic area where a service or offered item is provided.', this.$td)
+				areaServedDescription : __('The geographic area where a service or offered item is provided.', td)
 			}
 		}
 	}

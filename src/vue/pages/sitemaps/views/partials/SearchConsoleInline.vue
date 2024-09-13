@@ -8,7 +8,7 @@
 			/>
 
 			<core-alert-actionable
-				v-if="searchStatisticsStore.sitemapsWithErrors.length > 0 && this.settingsStore.settings.dismissedAlerts?.searchConsoleSitemapErrors"
+				v-if="searchStatisticsStore.sitemapsWithErrors.length > 0 && settingsStore.settings.dismissedAlerts?.searchConsoleSitemapErrors"
 				:text="strings.aioseoHasFoundSomeErrorsInSitemaps"
 				:button="strings.fixSitemapErrors"
 				buttonType="link"
@@ -25,7 +25,7 @@
 		</template>
 
 		<core-alert-actionable
-			v-else-if="this.settingsStore.settings.dismissedAlerts?.searchConsoleNotConnected"
+			v-else-if="settingsStore.settings.dismissedAlerts?.searchConsoleNotConnected"
 			:text="strings.connectToGoogleToAddSitemaps"
 			:button="strings.connectToGoogleSearchConsole"
 			buttonType="link"
@@ -45,16 +45,20 @@ import {
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useSearchConsole } from '@/vue/composables'
+import { useGoogleSearchConsole } from '@/vue/composables/GoogleSearchConsole'
 import CoreAlertActionable from '@/vue/components/common/core/alert/Actionable'
 import SitemapsWithErrorsModal from './SitemapsWithErrorsModal'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	setup () {
 		const {
 			strings,
 			redirectToGscSettings
-		} = useSearchConsole()
+		} = useGoogleSearchConsole()
 
 		return {
 			optionsStore          : useOptionsStore(),
@@ -73,7 +77,7 @@ export default {
 		return {
 			showErrorsModal : false,
 			strings         : merge(this.composableStrings, {
-				yourSiteIsConnected : this.$t.__('Your site is connected directly to Google Search Console and your sitemaps are in sync.', this.$td)
+				yourSiteIsConnected : __('Your site is connected directly to Google Search Console and your sitemaps are in sync.', td)
 			})
 		}
 	},

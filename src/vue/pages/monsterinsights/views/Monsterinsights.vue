@@ -93,6 +93,11 @@ import {
 
 import CoreMiIntro from '@/vue/components/common/core/MiIntro'
 import SvgExternal from '@/vue/components/common/svg/External'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -109,75 +114,75 @@ export default {
 			installingPlugin : false,
 			justInstalled    : false,
 			strings          : {
-				miLink : this.$t.sprintf(
+				miLink : sprintf(
 					'<strong>%1$s</strong>',
-					this.$t.__('Click here', this.$td)
+					__('Click here', td)
 				),
-				installMi : this.$t.sprintf(
+				installMi : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('Install %1$s', this.$td),
+					__('Install %1$s', td),
 					'MonsterInsights'
 				),
-				activateMi : this.$t.sprintf(
+				activateMi : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('Activate %1$s', this.$td),
+					__('Activate %1$s', td),
 					'MonsterInsights'
 				),
-				activateEm : this.$t.sprintf(
+				activateEm : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('Activate %1$s', this.$td),
+					__('Activate %1$s', td),
 					'ExactMetrics'
 				),
-				miInstalled : this.$t.sprintf(
+				miInstalled : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('%1$s is Installed & Active', this.$td),
+					__('%1$s is Installed & Active', td),
 					'MonsterInsights'
 				),
-				emInstalled : this.$t.sprintf(
+				emInstalled : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('%1$s is Installed & Active', this.$td),
+					__('%1$s is Installed & Active', td),
 					'ExactMetrics'),
-				setupGA : this.$t.__('Launch Setup Wizard', this.$td
+				setupGA : __('Launch Setup Wizard', td
 				),
-				emInstallH : this.$t.sprintf(
+				emInstallH : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('Activate %1$s', this.$td),
+					__('Activate %1$s', td),
 					'ExactMetrics'
 				),
-				emInstallP : this.$t.sprintf(
+				emInstallP : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('%1$s shows you exactly which content gets the most visits, so you can analyze and optimize it for higher conversions.', this.$td),
+					__('%1$s shows you exactly which content gets the most visits, so you can analyze and optimize it for higher conversions.', td),
 					'ExactMetrics'
 				),
-				miemInstallH : this.$t.__('Install', this.$td),
-				miInstallH   : this.$t.sprintf(
+				miemInstallH : __('Install', td),
+				miInstallH   : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('Activate %1$s', this.$td),
+					__('Activate %1$s', td),
 					'MonsterInsights'
 				),
-				miInstallP : this.$t.sprintf(
+				miInstallP : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('%1$s shows you exactly which content gets the most visits, so you can analyze and optimize it for higher conversions.', this.$td),
+					__('%1$s shows you exactly which content gets the most visits, so you can analyze and optimize it for higher conversions.', td),
 					'MonsterInsights'
 				),
-				emWizardH : this.$t.sprintf(
+				emWizardH : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('Setup %1$s', this.$td),
+					__('Setup %1$s', td),
 					'ExactMetrics'
 				),
-				miWizardH : this.$t.sprintf(
+				miWizardH : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('Setup %1$s', this.$td),
+					__('Setup %1$s', td),
 					'MonsterInsights'
 				),
-				emWizardP : this.$t.sprintf(
+				emWizardP : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('%1$s has an intuitive setup wizard to guide you through the setup process.', this.$td),
+					__('%1$s has an intuitive setup wizard to guide you through the setup process.', td),
 					'ExactMetrics'
 				),
-				miWizardP : this.$t.sprintf(
+				miWizardP : sprintf(
 					// Translators: 1 - A plugin name (e.g. "MonsterInsights", "Broken Link Checker", etc.).
-					this.$t.__('%1$s has an intuitive setup wizard to guide you through the setup process.', this.$td),
+					__('%1$s has an intuitive setup wizard to guide you through the setup process.', td),
 					'MonsterInsights'
 				)
 			}

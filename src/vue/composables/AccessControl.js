@@ -1,4 +1,10 @@
-import { __, sprintf } from '@wordpress/i18n'
+import { computed } from 'vue'
+
+import {
+	useRootStore
+} from '@/vue/stores'
+
+import { __, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -76,8 +82,25 @@ export const useAccessControl = () => {
 		}
 	]
 
+	const getRoles = computed(() => {
+		const rootStore = useRootStore()
+		return roles.concat(Object.keys(rootStore.aioseo.user.customRoles).map(role => ({
+			label       : rootStore.aioseo.user.roles[role],
+			name        : role,
+			description : sprintf(
+				// Translators: 1 - The name of the WP role, 2 - Opening bold tag, 3 - Closing bold tag, 4 - Plugin Name ("All in One SEO").
+				__('By default the %1$s role %2$shas no access%3$s to %4$s settings.', td),
+				rootStore.aioseo.user.roles[role],
+				'<strong>',
+				'</strong>',
+				import.meta.env.VITE_NAME
+			),
+			dynamic : true
+		})))
+	})
+
 	return {
-		strings,
-		roles
+		getRoles,
+		strings
 	}
 }

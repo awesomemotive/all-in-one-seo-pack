@@ -6,8 +6,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import App from './App.vue'
-import translate from '@/vue/plugins/translations'
+import App from './App'
 import { merge } from 'lodash-es'
 
 // Router placeholder to prevent errors when using router-link.
@@ -32,9 +31,6 @@ loadPinia(app, router)
 const rootStore = useRootStore()
 const aioseo = JSON.parse(JSON.stringify(window.aioseoSeoPreview))
 rootStore.aioseo = merge({ ...rootStore.aioseo }, { ...aioseo || {} })
-
-app.$t  = app.config.globalProperties.$t  = translate
-app.$td = app.config.globalProperties.$td = import.meta.env.VITE_TEXTDOMAIN
 
 const elemDiv = document.createElement('div')
 elemDiv.setAttribute('id', 'aioseo-modal-portal')

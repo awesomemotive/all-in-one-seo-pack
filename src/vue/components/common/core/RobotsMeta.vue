@@ -75,6 +75,11 @@
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		BaseCheckbox,
@@ -92,28 +97,28 @@ export default {
 	data () {
 		return {
 			settings : [
-				{ value: 'noindex', label: this.$t.__('No Index', this.$td) },
-				{ value: 'nofollow', label: this.$t.__('No Follow', this.$td) },
-				{ value: 'noarchive', label: this.$t.__('No Archive', this.$td) },
-				{ value: 'notranslate', label: this.$t.__('No Translate', this.$td) },
-				{ value: 'noimageindex', label: this.$t.__('No Image Index', this.$td) },
-				{ value: 'nosnippet', label: this.$t.__('No Snippet', this.$td) },
-				{ value: 'noodp', label: this.$t.__('No ODP', this.$td) }
+				{ value: 'noindex', label: __('No Index', td) },
+				{ value: 'nofollow', label: __('No Follow', td) },
+				{ value: 'noarchive', label: __('No Archive', td) },
+				{ value: 'notranslate', label: __('No Translate', td) },
+				{ value: 'noimageindex', label: __('No Image Index', td) },
+				{ value: 'nosnippet', label: __('No Snippet', td) },
+				{ value: 'noodp', label: __('No ODP', td) }
 			],
 			globalSettings : [
-				{ value: 'noindexPaginated', label: this.$t.__('No Index Paginated', this.$td) },
-				{ value: 'nofollowPaginated', label: this.$t.__('No Follow Paginated', this.$td) },
-				{ value: 'noindexFeed', label: this.$t.__('No Index RSS Feeds', this.$td) }
+				{ value: 'noindexPaginated', label: __('No Index Paginated', td) },
+				{ value: 'nofollowPaginated', label: __('No Follow Paginated', td) },
+				{ value: 'noindexFeed', label: __('No Index RSS Feeds', td) }
 			],
 			strings : {
-				useDefaultSettings : this.$t.__('Use Default Settings', this.$td),
-				robotsMeta         : this.$t.__('Robots meta:', this.$td),
-				maxSnippet         : this.$t.__('Max Snippet', this.$td),
-				maxVideoPreview    : this.$t.__('Max Video Preview', this.$td),
-				maxImagePreview    : this.$t.__('Max Image Preview', this.$td),
-				standard           : this.$t.__('Standard', this.$td),
-				none               : this.$t.__('None', this.$td),
-				large              : this.$t.__('Large', this.$td)
+				useDefaultSettings : __('Use Default Settings', td),
+				robotsMeta         : __('Robots meta:', td),
+				maxSnippet         : __('Max Snippet', td),
+				maxVideoPreview    : __('Max Video Preview', td),
+				maxImagePreview    : __('Max Image Preview', td),
+				standard           : __('Standard', td),
+				none               : __('None', td),
+				large              : __('Large', td)
 			}
 		}
 	},

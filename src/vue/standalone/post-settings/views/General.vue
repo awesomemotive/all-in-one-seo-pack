@@ -74,7 +74,7 @@
 					v-model="postEditorStore.currentPost.title"
 					:line-numbers="false"
 					single
-					@counter="count => updateCount(count, 'titleCount')"
+					@counter="count => titleCount = count.length"
 					@update:modelValue="postEditorStore.isDirty = true"
 					:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Title`"
 					:defaultMenuOrientation="'modal' === parentComponentContext ? 'top' : 'bottom'"
@@ -118,7 +118,7 @@
 					v-model="postEditorStore.currentPost.description"
 					:line-numbers="false"
 					description
-					@counter="count => updateCount(count, 'descriptionCount')"
+					@counter="count => descriptionCount = count.length"
 					@update:modelValue="postEditorStore.isDirty = true"
 					:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Description`"
 					:defaultMenuOrientation="'modal' === parentComponentContext ? 'top' : 'bottom'"
@@ -239,7 +239,7 @@
 		</core-settings-row>
 
 		<core-sidebar-card
-			v-if="'sidebar' === $root.$data.screenContext && !isPageBuilderEditor() && 'modal' !== this.parentComponentContext"
+			v-if="'sidebar' === $root.$data.screenContext && !isPageBuilderEditor() && 'modal' !== parentComponentContext"
 			class="card-cornerstone-content"
 			slug="cornerstoneContent"
 			:header-text="strings.cornerstoneContent"
@@ -312,7 +312,10 @@
 		</core-sidebar-card>
 	</div>
 </template>
+
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	useOptionsStore,
@@ -326,12 +329,12 @@ import {
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { merge } from 'lodash-es'
-import { useTruSeoScore } from '@/vue/composables'
-import { MaxCounts } from '@/vue/mixins/MaxCounts'
-import { SaveChanges } from '@/vue/mixins/SaveChanges'
-import { Tags } from '@/vue/mixins/Tags'
-import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
-import { TruSeoHighlighter } from '@/vue/mixins/TruSeoHighlighter'
+
+import { useMaxCounts } from '@/vue/composables/MaxCounts'
+import { useTags } from '@/vue/composables/Tags'
+import { useTruSeoHighlighter } from '@/vue/composables/TruSeoHighlighter'
+import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
+
 import { debounce } from '@/vue/utils/debounce'
 import { isPageBuilderEditor, isThriveArchitectEditor } from '@/vue/utils/context'
 import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
@@ -354,24 +357,49 @@ import SvgDesktop from '@/vue/components/common/svg/Desktop'
 import SvgMobile from '@/vue/components/common/svg/Mobile'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
 import license from '@/vue/utils/license'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'changeTab' ],
 	setup () {
-		const { strings } = useTruSeoScore()
+		const {
+			parseTags
+		} = useTags({
+			separator : undefined
+		})
+
+		const {
+			maxRecommendedCount
+		} = useMaxCounts()
+
+		const {
+			watchHighlightSentences
+		} = useTruSeoHighlighter()
+
+		const {
+			runAnalysis,
+			strings
+		} = useTruSeoScore()
 
 		return {
+			composableStrings      : strings,
 			licenseStore           : useLicenseStore(),
+			maxRecommendedCount,
 			optionsStore           : useOptionsStore(),
+			parseTags,
 			postEditorStore        : usePostEditorStore(),
 			rootStore              : useRootStore(),
+			runAnalysis,
 			seoPreviewStore        : useSeoPreviewStore(),
 			settingsStore          : useSettingsStore(),
 			tagsStore              : useTagsStore(),
 			truSeoHighlighterStore : useTruSeoHighlighterStore(),
-			composableStrings      : strings
+			watchHighlightSentences
 		}
 	},
-	emits      : [ 'changeTab' ],
-	mixins     : [ MaxCounts, SaveChanges, Tags, TruSeoScore, TruSeoHighlighter ],
 	components : {
 		AdditionalKeyphrases,
 		AiGenerator,
@@ -405,7 +433,6 @@ export default {
 		return {
 			license,
 			allowed,
-			separator         : undefined,
 			isPageBuilderEditor,
 			titleCount        : 0,
 			descriptionCount  : 0,
@@ -417,35 +444,35 @@ export default {
 			titleKey          : 'title' + 0,
 			descriptionKey    : 'description' + 0,
 			strings           : merge(this.composableStrings, {
-				pageName                      : this.$t.__('General', this.$td),
-				serpPreview                   : this.$t.__('SERP Preview', this.$td),
-				serpPreviewDocumentation      : this.$t.__('SERP: Search Engine Results Page preview. Your site\'s potential appearance in Google search results. Final display may vary, but this preview closely resembles it.', this.$td),
-				editSnippet                   : this.$t.__('Edit Snippet', this.$td),
-				clickToAddTitle               : this.$t.__('Click on the tags below to insert variables into your title.', this.$td),
-				metaDescription               : this.$t.__('Meta Description', this.$td),
-				clickToAddDescription         : this.$t.__('Click on the tags below to insert variables into your meta description.', this.$td),
-				cornerstoneContent            : this.$t.__('Cornerstone Content', this.$td),
-				focusKeyphrase                : this.$t.__('Focus Keyphrase', this.$td),
-				additionalKeyphrases          : this.$t.__('Additional Keyphrases', this.$td),
-				pageAnalysis                  : this.$t.__('Page Analysis', this.$td),
-				basicSeo                      : this.$t.__('Basic SEO', this.$td),
-				title                         : this.$t.__('Title', this.$td),
-				readability                   : this.$t.__('Readability', this.$td),
-				lookingForMetaKeywords        : this.$t.__('Looking for meta keywords?', this.$td),
-				goToAdvancedTab               : this.$t.__('Go to the Advanced tab to add/edit meta keywords', this.$td),
-				autogenerateDescriptionsAlert : this.$t.sprintf(
+				pageName                      : __('General', td),
+				serpPreview                   : __('SERP Preview', td),
+				serpPreviewDocumentation      : __('SERP: Search Engine Results Page preview. Your site\'s potential appearance in Google search results. Final display may vary, but this preview closely resembles it.', td),
+				editSnippet                   : __('Edit Snippet', td),
+				clickToAddTitle               : __('Click on the tags below to insert variables into your title.', td),
+				metaDescription               : __('Meta Description', td),
+				clickToAddDescription         : __('Click on the tags below to insert variables into your meta description.', td),
+				cornerstoneContent            : __('Cornerstone Content', td),
+				focusKeyphrase                : __('Focus Keyphrase', td),
+				additionalKeyphrases          : __('Additional Keyphrases', td),
+				pageAnalysis                  : __('Page Analysis', td),
+				basicSeo                      : __('Basic SEO', td),
+				title                         : __('Title', td),
+				readability                   : __('Readability', td),
+				lookingForMetaKeywords        : __('Looking for meta keywords?', td),
+				goToAdvancedTab               : __('Go to the Advanced tab to add/edit meta keywords', td),
+				autogenerateDescriptionsAlert : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - A link to "Search Appearance > Advanced".
-					this.$t.__('Warning: You have disabled Autogenerate Descriptions and are using the default description format. %1$s will not output a description unless you enter a custom one. You can enable Autogenerate Descriptions under %2$s.', this.$td),
+					__('Warning: You have disabled Autogenerate Descriptions and are using the default description format. %1$s will not output a description unless you enter a custom one. You can enable Autogenerate Descriptions under %2$s.', td),
 					import.meta.env.VITE_SHORT_NAME,
-					this.$links.getPlainLink(
-						this.$t.__('Search Appearance > Advanced', this.$td),
+					links.getPlainLink(
+						__('Search Appearance > Advanced', td),
 						this.rootStore.aioseo.urls.aio.searchAppearance + '#/advanced'
 					)
 				),
-				keyphraseDocumentation : this.$t.sprintf(
+				keyphraseDocumentation : sprintf(
 					// Translators: 1 - "Learn more link".
-					this.$t.__('Not sure what keyphrases are used for? Check out our documentation for more information. %1$s', this.$td),
-					this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'useKeyphrasesTooltip', true)
+					__('Not sure what keyphrases are used for? Check out our documentation for more information. %1$s', td),
+					links.getDocLink(GLOBAL_STRINGS.learnMore, 'useKeyphrasesTooltip', true)
 				)
 			})
 		}
@@ -463,9 +490,9 @@ export default {
 	},
 	computed : {
 		title () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The type of page (Post, Page, Category, Tag, etc.).
-				this.$t.__('%1$s Title', this.$td),
+				__('%1$s Title', td),
 				this.postEditorStore.currentPost.type
 			)
 		},

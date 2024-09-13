@@ -1,7 +1,7 @@
 <template>
 	<grid-column class="tool-settings tool-settings-microsoft-clarity">
 		<div
-			v-for="(setting, index) in tool.settings"
+			v-for="(setting, index) in props.tool.settings"
 			:key="index"
 		>
 			<core-settings-row
@@ -97,69 +97,84 @@
 	</grid-column>
 </template>
 
-<script>
+<script setup>
+import { ref, watch } from 'vue'
+
 import {
 	useOptionsStore,
 	usePluginsStore
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useWebmasterTools } from '@/vue/composables'
-import { MiOrEm, WebmasterTools } from '@/vue/pages/settings/mixins'
+
+import { useMetaTags } from '@/vue/composables/MetaTags'
+import { useMiOrEm } from '@/vue/pages/settings/composables/MiOrEm'
+import { useWebmasterTools } from '@/vue/composables/WebmasterTools'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import SvgExternal from '@/vue/components/common/svg/External'
-export default {
-	setup () {
-		const { strings } = useWebmasterTools()
 
-		return {
-			optionsStore      : useOptionsStore(),
-			pluginsStore      : usePluginsStore(),
-			composableStrings : strings
-		}
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
+const { maybeUpdateId } = useMetaTags()
+const { strings : composableStrings } = useWebmasterTools()
+
+const {
+	gaActivated,
+	installMi,
+	installingPlugin,
+	miInstalled,
+	showMiPromo
+} = useMiOrEm()
+
+const optionsStore = useOptionsStore()
+const pluginsStore = usePluginsStore()
+
+const props = defineProps({
+	tool : {
+		type     : Object,
+		required : true
 	},
-	components : {
-		CoreAlert,
-		CoreSettingsRow,
-		GridColumn,
-		SvgExternal
-	},
-	mixins : [ MiOrEm, WebmasterTools ],
-	data () {
-		return {
-			promoKey : 1,
-			strings  : merge(this.composableStrings, {
-				dashboard   : this.$t.__('Dashboard', this.$td),
-				settings    : this.$t.__('Settings', this.$td),
-				description : this.$t.sprintf(
-					// Translators: 1 - "Clarity", 2 - Opening HTML link tag, 3 - Closing HTML link tag.
-					this.$t.__('If you don\'t already have a project on %1$s, create a project %2$shere%3$s.', this.$td),
-					'Clarity',
-					'<a target="_blank" href="https://clarity.microsoft.com/projects?snpf=1&utm_source=aioseo&utm_medium=partner&utm_campaign=growth">',
-					'</a>'
-				),
-				useMi    : this.$t.__('Great choice! Get started with MonsterInsights today to see how people find and use your website.', this.$td),
-				miPromo  : this.$t.__('Want to get the most out of Clarity? Integrate Clarity with Google Analytics using MonsterInsights today!', this.$td),
-				manageGa : this.$t.__('Manage Google Analytics', this.$td)
-			})
-		}
-	},
-	watch : {
-		// Reactivity is not working well with this prop, so forcing a key change resolves the issue.
-		isConnected () {
-			this.promoKey++
-		}
-	},
-	methods : {
-		clarityDashboardUrl (projectId) {
-			return `https://clarity.microsoft.com/projects/view/${projectId}/dashboard?date=Last%203%20days`
-		},
-		claritySettingsUrl (projectId) {
-			return `https://clarity.microsoft.com/projects/view/${projectId}/settings?date=Last%203%20days`
+	isConnected : {
+		type : Boolean,
+		default () {
+			return false
 		}
 	}
+})
+
+const promoKey = ref(1)
+
+const strings = merge(composableStrings, {
+	dashboard   : __('Dashboard', td),
+	settings    : __('Settings', td),
+	description : sprintf(
+		// Translators: 1 - "Clarity", 2 - Opening HTML link tag, 3 - Closing HTML link tag.
+		__('If you don\'t already have a project on %1$s, create a project %2$shere%3$s.', td),
+		'Clarity',
+		'<a target="_blank" href="https://clarity.microsoft.com/projects?snpf=1&utm_source=aioseo&utm_medium=partner&utm_campaign=growth">',
+		'</a>'
+	),
+	useMi    : __('Great choice! Get started with MonsterInsights today to see how people find and use your website.', td),
+	miPromo  : __('Want to get the most out of Clarity? Integrate Clarity with Google Analytics using MonsterInsights today!', td),
+	manageGa : __('Manage Google Analytics', td)
+})
+
+watch(() => props.isConnected, () => {
+	// Reactivity is not working well with this prop, so forcing a key change resolves the issue.
+	promoKey.value++
+})
+
+const clarityDashboardUrl = (projectId) => {
+	return `https://clarity.microsoft.com/projects/view/${projectId}/dashboard?date=Last%203%20days`
+}
+
+const claritySettingsUrl = (projectId) => {
+	return `https://clarity.microsoft.com/projects/view/${projectId}/settings?date=Last%203%20days`
 }
 </script>
 

@@ -85,6 +85,10 @@ import { deepCopy } from '@/vue/standalone/blocks/utils'
 import { flattenHeadings, formatHeadingList } from '../helpers'
 import { extraHeadingProperties } from '../constants'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		const tableOfContentsStore = useTableOfContentsStore()
@@ -104,20 +108,33 @@ export default {
 		return {
 			showModal : false,
 			strings   : {
-				header : this.$t.sprintf(
+				header : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('%1$s Table of Contents', this.$td),
+					__('%1$s Table of Contents', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				instructions           : this.$t.__('Add a heading block below to begin generating the Table of Contents.', this.$td),
-				tooltipMainDescription : this.$t.sprintf(
+				instructions           : __('Add a heading block below to begin generating the Table of Contents.', td),
+				tooltipMainDescription : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('%1$s can automatically output a table of contents based on your heading tags below. Search engines sometimes use table of contents in search results or rich snippets which can help you increase your rankings.', this.$td),
+					__('%1$s can automatically output a table of contents based on your heading tags below. Search engines sometimes use table of contents in search results or rich snippets which can help you increase your rankings.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				reorder : this.$t.__('Reorder', this.$td),
-				save    : this.$t.__('Save', this.$td),
-				done    : this.$t.__('Done', this.$td)
+				reorder : __('Reorder', td),
+				save    : __('Save', td),
+				done    : __('Done', td)
+			}
+		}
+	},
+	watch : {
+		'tableOfContentsStore.headings' : {
+			handler (headings) {
+				window.aioseoBus.$emit('setAttributes' + this.tableOfContentsStore.blockClientId, headings)
+			},
+			deep : true
+		},
+		'tableOfContentsStore.reOrdered' : {
+			handler (reOrdered) {
+				window.aioseoBus.$emit('setAttributes' + this.tableOfContentsStore.blockClientId, reOrdered)
 			}
 		}
 	},
@@ -189,19 +206,6 @@ export default {
 			newHeadings = formatHeadingList(newHeadings)
 
 			this.tableOfContentsStore.setHeadings(newHeadings)
-		}
-	},
-	watch : {
-		'tableOfContentsStore.headings' : {
-			handler (headings) {
-				window.aioseoBus.$emit('setAttributes' + this.tableOfContentsStore.blockClientId, headings)
-			},
-			deep : true
-		},
-		'tableOfContentsStore.reOrdered' : {
-			handler (reOrdered) {
-				window.aioseoBus.$emit('setAttributes' + this.tableOfContentsStore.blockClientId, reOrdered)
-			}
 		}
 	},
 	mounted () {

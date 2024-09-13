@@ -90,6 +90,11 @@ import BaseTextarea from '@/vue/components/common/base/Textarea'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -106,17 +111,17 @@ export default {
 	data () {
 		return {
 			strings : {
-				badBotBlocker         : this.$t.__('Bad Bot Blocker', this.$td),
-				blockBadBotsHttp      : this.$t.__('Block Bad Bots using HTTP', this.$td),
-				blockReferralSpamHttp : this.$t.__('Block Referral Spam using HTTP', this.$td),
-				trackBlockedBots      : this.$t.__('Track Blocked Bots', this.$td),
-				useCustomBlocklists   : this.$t.__('Use Custom Blocklists', this.$td),
-				userAgentBlocklist    : this.$t.__('User Agent Blocklist', this.$td),
-				refererBlockList      : this.$t.__('Referer Blocklist', this.$td),
-				blockedBotsLog        : this.$t.__('Blocked Bots Log', this.$td),
-				logLocation           : this.$t.sprintf(
+				badBotBlocker         : __('Bad Bot Blocker', td),
+				blockBadBotsHttp      : __('Block Bad Bots using HTTP', td),
+				blockReferralSpamHttp : __('Block Referral Spam using HTTP', td),
+				trackBlockedBots      : __('Track Blocked Bots', td),
+				useCustomBlocklists   : __('Use Custom Blocklists', td),
+				userAgentBlocklist    : __('User Agent Blocklist', td),
+				refererBlockList      : __('Referer Blocklist', td),
+				blockedBotsLog        : __('Blocked Bots Log', td),
+				logLocation           : sprintf(
 					// Translators: 1 - The location of the log file.
-					this.$t.__('The log for the blocked bots is located here: %1$s', this.$td),
+					__('The log for the blocked bots is located here: %1$s', td),
 					'<br><a href="' + this.rootStore.aioseo.urls.blockedBotsLogUrl + '" target="_blank">' + this.rootStore.aioseo.urls.blockedBotsLogUrl + '</a>'
 				)
 			}

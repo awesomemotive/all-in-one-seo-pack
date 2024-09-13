@@ -140,7 +140,7 @@ class SeedProd extends Base {
 			return false;
 		}
 
-		$settings = ! empty( $_REQUEST['settings'] ) ? json_decode( wp_unslash( $_REQUEST['settings'] ) ) : false;
+		$settings = ! empty( $_REQUEST['settings'] ) ? json_decode( sanitize_text_field( wp_unslash( $_REQUEST['settings'] ) ) ) : false;
 		if ( empty( $settings ) || empty( $settings->aioseo_limit_modified_date ) ) {
 			return false;
 		}

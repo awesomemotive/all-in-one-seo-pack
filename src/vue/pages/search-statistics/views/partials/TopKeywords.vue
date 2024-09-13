@@ -67,6 +67,11 @@ import { sanitizeString } from '@/vue/utils/strings'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Statistic from './Statistic'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -81,9 +86,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				keyword    : this.$t.__('Keyword', this.$td),
-				clicks     : this.$t.__('Clicks', this.$td),
-				noKeywords : this.$t.__('You don\'t have any keywords yet.', this.$td)
+				keyword    : __('Keyword', td),
+				clicks     : __('Clicks', td),
+				noKeywords : __('You don\'t have any keywords yet.', td)
 			}
 		}
 	},

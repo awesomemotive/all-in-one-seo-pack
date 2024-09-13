@@ -16,11 +16,11 @@
 					class="learn-more"
 				>
 					<a
-						:href="$links.utmUrl('feature-manager-addon-link', addon.sku, addon.learnMoreUrl)"
+						:href="links.utmUrl('feature-manager-addon-link', addon.sku, addon.learnMoreUrl)"
 						target="_blank"
-					>{{ $constants.GLOBAL_STRINGS.learnMore }}</a>
+					>{{ GLOBAL_STRINGS.learnMore }}</a>
 					<a
-						:href="$links.utmUrl('feature-manager-addon-link', addon.sku, addon.learnMoreUrl)"
+						:href="links.utmUrl('feature-manager-addon-link', addon.sku, addon.learnMoreUrl)"
 						class="no-underline"
 						target="_blank"
 					>&nbsp;&rarr;</a>
@@ -87,16 +87,16 @@
 					type="green"
 					size="medium"
 					tag="a"
-					:href="$links.getUpsellUrl('feature-manager-upgrade', addon.sku, $isPro ? 'pricing' : 'liteUpgrade')"
+					:href="links.getUpsellUrl('feature-manager-upgrade', addon.sku, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 					target="_blank"
 				>
-					<span v-if="$isPro">{{ strings.upgradeYourPlan }}</span>
-					<span v-if="!$isPro">{{ strings.upgradeToPro }}</span>
+					<span v-if="rootStore.isPro">{{ strings.upgradeYourPlan }}</span>
+					<span v-if="!rootStore.isPro">{{ strings.upgradeToPro }}</span>
 				</base-button>
 			</div>
 
 			<div
-				v-if="$isPro && !addon.requiresUpgrade && addon.installed && !addon.hasMinimumVersion"
+				v-if="rootStore.isPro && !addon.requiresUpgrade && addon.installed && !addon.hasMinimumVersion"
 				class="feature-card-upgrade-cta"
 			>
 				<core-tooltip
@@ -170,6 +170,8 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useAddonsStore,
 	useLicenseStore,
@@ -179,22 +181,35 @@ import {
 
 import addons from '@/vue/utils/addons'
 import { getParams } from '@/vue/utils/params'
-import { Url } from '@/vue/mixins/Url'
+
+import { useUrl } from '@/vue/composables/Url'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgClose from '@/vue/components/common/svg/Close'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getHref
+		} = useUrl()
+
 		return {
+			GLOBAL_STRINGS,
 			addonsStore  : useAddonsStore(),
+			getHref,
 			licenseStore : useLicenseStore(),
+			links,
 			pluginsStore : usePluginsStore(),
 			rootStore    : useRootStore()
 		}
 	},
-	mixins     : [ Url ],
 	components : {
 		CoreAlert,
 		CoreLoader,
@@ -231,27 +246,43 @@ export default {
 			loading               : false,
 			featureUpgrading      : false,
 			strings               : {
-				version           : this.$t.__('Version', this.$td),
-				updateToVersion   : this.$t.__('Update to version', this.$td),
-				activated         : this.$t.__('Activated', this.$td),
-				networkActivated  : this.$t.__('Network Activated', this.$td),
-				deactivated       : this.$t.__('Deactivated', this.$td),
-				notInstalled      : this.$t.__('Not Installed', this.$td),
-				upgradeToPro      : this.$t.__('Upgrade to Pro', this.$td),
-				upgradeYourPlan   : this.$t.__('Upgrade Your Plan', this.$td),
-				updateFeature     : this.$t.__('Update Addon', this.$td),
-				permissionWarning : this.$t.__('You currently don\'t have permission to update this addon. Please ask a site administrator to update.', this.$td),
-				manage            : this.$t.__('Manage', this.$td),
-				requestFailed     : this.$t.__('An error occurred while changing the addon status. Please try again or contact support for more information.', this.$td),
-				updateRequired    : this.$t.sprintf(
+				version           : __('Version', td),
+				updateToVersion   : __('Update to version', td),
+				activated         : __('Activated', td),
+				networkActivated  : __('Network Activated', td),
+				deactivated       : __('Deactivated', td),
+				notInstalled      : __('Not Installed', td),
+				upgradeToPro      : __('Upgrade to Pro', td),
+				upgradeYourPlan   : __('Upgrade Your Plan', td),
+				updateFeature     : __('Update Addon', td),
+				permissionWarning : __('You currently don\'t have permission to update this addon. Please ask a site administrator to update.', td),
+				manage            : __('Manage', td),
+				requestFailed     : __('An error occurred while changing the addon status. Please try again or contact support for more information.', td),
+				updateRequired    : sprintf(
 					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - Pro.
-					this.$t.__('An update is required for this addon to continue to work with %1$s %2$s.', this.$td),
+					__('An update is required for this addon to continue to work with %1$s %2$s.', td),
 					import.meta.env.VITE_SHORT_NAME,
 					'Pro'
 				),
-				areYouSureNetworkChange : this.$t.__('This is a network-wide change.', this.$td),
-				yesProcessNetworkChange : this.$t.__('Yes, process this network change', this.$td),
-				noChangedMind           : this.$t.__('No, I changed my mind', this.$td)
+				areYouSureNetworkChange : __('This is a network-wide change.', td),
+				yesProcessNetworkChange : __('Yes, process this network change', td),
+				noChangedMind           : __('No, I changed my mind', td)
+			}
+		}
+	},
+	watch : {
+		showNetworkModal (value) {
+			if (value) {
+				this.changeStatusOnNetwork = false
+				return
+			}
+
+			if (!this.changeStatusOnNetwork) {
+				this.addon.isActive = !this.addon.isActive
+			}
+
+			if (this.changeStatusOnNetwork) {
+				this.actuallyProcessStatusChange()
 			}
 		}
 	},
@@ -259,10 +290,10 @@ export default {
 		networkChangeMessage () {
 			// The logic is reversed here because the option has been toggled already.
 			if (!this.addon.isActive) {
-				return this.$t.__('Are you sure you want to deactivate this addon across the network?', this.$td)
+				return __('Are you sure you want to deactivate this addon across the network?', td)
 			}
 
-			return this.$t.__('Are you sure you want to activate this addon across the network?', this.$td)
+			return __('Are you sure you want to activate this addon across the network?', td)
 		},
 		statusLabel () {
 			if (this.addon.isActive) {
@@ -327,22 +358,6 @@ export default {
 					this.featureUpgrading = false
 					this.addon.isActive = false
 				})
-		}
-	},
-	watch : {
-		showNetworkModal (value) {
-			if (value) {
-				this.changeStatusOnNetwork = false
-				return
-			}
-
-			if (!this.changeStatusOnNetwork) {
-				this.addon.isActive = !this.addon.isActive
-			}
-
-			if (this.changeStatusOnNetwork) {
-				this.actuallyProcessStatusChange()
-			}
 		}
 	},
 	mounted () {

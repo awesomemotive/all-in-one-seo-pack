@@ -65,35 +65,46 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+
 import {
 	useAnalyzerStore,
 	useRootStore
 } from '@/vue/stores'
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
-import { useSeoSiteScore } from '@/vue/composables'
-import { SeoSiteScore } from '@/vue/mixins/SeoSiteScore'
+import { useSeoSiteScore } from '@/vue/composables/SeoSiteScore'
 
 import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
 import SvgDannieLab from '@/vue/components/common/svg/dannie/Lab'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	setup () {
-		const { errorObject, strings } = useSeoSiteScore()
+	setup (props) {
+		const {
+			description,
+			errorObject,
+			strings
+		} = useSeoSiteScore({
+			score : ref(props.score)
+		})
 
 		return {
 			analyzerStore     : useAnalyzerStore(),
-			rootStore         : useRootStore(),
 			composableStrings : strings,
-			errorObject
+			description,
+			errorObject,
+			rootStore         : useRootStore()
 		}
 	},
 	components : {
 		CoreSiteScore,
 		SvgDannieLab
 	},
-	mixins : [ SeoSiteScore ],
-	props  : {
+	props : {
 		score   : Number,
 		loading : Boolean,
 		summary : {
@@ -113,13 +124,13 @@ export default {
 		getError () {
 			switch (this.analyzerStore.analyzeError) {
 				case 'invalid-url':
-					return this.$t.__('The URL provided is invalid.', this.$td)
+					return __('The URL provided is invalid.', td)
 				case 'missing-content':
-					return this.$t.__('We were unable to parse the content for this site.', this.$td)
+					return __('We were unable to parse the content for this site.', td)
 				case 'invalid-token':
-					return this.$t.sprintf(
+					return sprintf(
 						// Translators: 1 - The plugin short name ('AIOSEO').
-						this.$t.__('Your site is not connected. Please connect to %1$s, then try again.', this.$td),
+						__('Your site is not connected. Please connect to %1$s, then try again.', td),
 						import.meta.env.VITE_SHORT_NAME
 					)
 			}

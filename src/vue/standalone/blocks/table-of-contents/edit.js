@@ -2,17 +2,17 @@ import { createApp } from 'vue'
 
 import {
 	loadPiniaStores,
+	useRootStore,
 	useTableOfContentsStore
 } from '@/vue/stores'
 
-import App from './vue/App.vue'
+import App from './vue/App'
 import { formatHeadingList, flattenHeadings } from './helpers'
 import { sidebarControls } from './sidebar-controls'
 import { html, isEqual, deepCopy, cleanHtml } from '@/vue/standalone/blocks/utils'
 import { observeElement } from '@/vue/utils/helpers'
 import { cleanForSlug } from '@/vue/utils/cleanForSlug'
 import { extraHeadingProperties } from './constants'
-import translate from '@/vue/plugins/translations'
 
 const { useSelect }    = window.wp.data
 const blockEditorStore = window.wp.blockEditor.store
@@ -38,9 +38,6 @@ export default function edit (props) {
 			subtree : true,
 			done    : function (el) {
 				const app = createApp({ ...App, name: 'Blocks/TableOfContents' })
-
-				app.$t  = app.config.globalProperties.$t  = translate
-				app.$td = app.config.globalProperties.$td = import.meta.env.VITE_TEXTDOMAIN
 
 				// Use the pinia store.
 				loadPiniaStores(app)
@@ -132,7 +129,8 @@ export default function edit (props) {
 				// If the heading already has an anchor, we don't want to overwrite it.
 				// If the user is typing, let them finish so the anchor isn't a partial word.
 				if (!hasAnchor && !isTyping()) {
-					headingAttributes.anchor = 'aioseo-' + cleanForSlug(headingContent)
+					const rootStore    				= useRootStore()
+					headingAttributes.anchor 	= rootStore.aioseo.data.blocks.toc.hashPrefix + cleanForSlug(headingContent)
 				}
 
 				headings.push({

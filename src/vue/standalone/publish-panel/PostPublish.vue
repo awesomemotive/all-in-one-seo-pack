@@ -28,6 +28,11 @@ import SvgFacebookRounded from '@/vue/components/common/svg/facebook/Rounded'
 import SvgLinkedinRounded from '@/vue/components/common/svg/LinkedinRounded'
 import SvgPinterestRounded from '@/vue/components/common/svg/PinterestRounded'
 import SvgIconTwitter from '@/vue/components/common/svg/icon/Twitter'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -43,8 +48,8 @@ export default {
 	data () {
 		return {
 			strings : {
-				title       : this.$t.__('Get out the word!', this.$td),
-				description : this.$t.__('Share your content on your favorite social media platforms to drive engagement and increase your SEO.', this.$td)
+				title       : __('Get out the word!', td),
+				description : __('Share your content on your favorite social media platforms to drive engagement and increase your SEO.', td)
 			}
 		}
 	},

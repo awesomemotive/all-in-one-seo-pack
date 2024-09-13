@@ -5,8 +5,8 @@
 			<base-select
 				size="medium"
 				:options="locationsList"
-				:modelValue="getLocationOptions(this.$root.$data.locationId)"
-				@update:modelValue="values => this.$root.$data.locationId = values.value"
+				:modelValue="getLocationOptions($root.$data.locationId)"
+				@update:modelValue="values => $root.$data.locationId = values.value"
 				track-by="value"
 			/>
 		</div>
@@ -93,6 +93,10 @@ import BaseInput from '@/vue/components/common/base/Input'
 import BaseSelect from '@/vue/components/common/base/Select'
 import BaseToggle from '@/vue/components/common/base/Toggle'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -110,16 +114,16 @@ export default {
 			locationsList : [],
 			strings       : {
 				selectLocation : this.rootStore.aioseo.localBusiness.postTypeSingleLabel,
-				showTitle      : this.$t.__('Show Title', this.$td),
-				showIcons      : this.$t.__('Show Icons', this.$td),
-				Monday         : this.$t.__('Monday', this.$td),
-				Tuesday        : this.$t.__('Tuesday', this.$td),
-				Wednesday      : this.$t.__('Wednesday', this.$td),
-				Thursday       : this.$t.__('Thursday', this.$td),
-				Friday         : this.$t.__('Friday', this.$td),
-				Saturday       : this.$t.__('Saturday', this.$td),
-				Sunday         : this.$t.__('Sunday', this.$td),
-				label          : this.$t.__('Label', this.$td)
+				showTitle      : __('Show Title', td),
+				showIcons      : __('Show Icons', td),
+				Monday         : __('Monday', td),
+				Tuesday        : __('Tuesday', td),
+				Wednesday      : __('Wednesday', td),
+				Thursday       : __('Thursday', td),
+				Friday         : __('Friday', td),
+				Saturday       : __('Saturday', td),
+				Sunday         : __('Sunday', td),
+				label          : __('Label', td)
 			}
 		}
 	},

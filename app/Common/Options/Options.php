@@ -314,7 +314,8 @@ TEMPLATE
 				'blockArgs'                    => [
 					'enable'        => [ 'type' => 'boolean', 'default' => false ],
 					'logsRetention' => [ 'type' => 'string', 'default' => '{"label":"1 week","value":"week"}' ]
-				]
+				],
+				'removeCategoryBase'           => [ 'type' => 'boolean', 'default' => false ]
 			],
 			'archives' => [
 				'author' => [
@@ -587,6 +588,10 @@ TEMPLATE
 		$logsRetention     = isset( $options['searchAppearance']['advanced']['blockArgs']['logsRetention'] ) ? $options['searchAppearance']['advanced']['blockArgs']['logsRetention'] : null;
 		$oldLogsRetention  = aioseo()->options->searchAppearance->advanced->blockArgs->logsRetention;
 
+		// Remove category base.
+		$removeCategoryBase    = isset( $options['searchAppearance']['advanced']['removeCategoryBase'] ) ? $options['searchAppearance']['advanced']['removeCategoryBase'] : null;
+		$removeCategoryBaseOld = aioseo()->options->searchAppearance->advanced->removeCategoryBase;
+
 		$options = $this->maybeRemoveUnfilteredHtmlFields( $options );
 
 		$this->init();
@@ -675,6 +680,13 @@ TEMPLATE
 
 		if ( ! empty( $sitemapOptions ) ) {
 			aioseo()->searchStatistics->sitemap->maybeSync( $oldSitemapOptions, $sitemapOptions );
+		}
+
+		if (
+			null !== $removeCategoryBase &&
+			$removeCategoryBase !== $removeCategoryBaseOld
+		) {
+			aioseo()->options->flushRewriteRules();
 		}
 
 		// This is required in order for the Pro options to be refreshed before they save data again.

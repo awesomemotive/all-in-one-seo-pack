@@ -6,14 +6,14 @@
 		/>
 
 		<cta
-			v-if="!$isPro"
+			v-if="!rootStore.isPro"
 			class="aioseo-getting-started-cta"
 			:type="2"
 			:floating="false"
 			:button-text="strings.cta.button"
-			:cta-link="$links.utmUrl('getting-started', 'main-cta')"
-			:learn-more-link="$links.getUpsellUrl('getting-started', 'main-cta', $isPro ? 'pricing' : 'liteUpgrade')"
-			:feature-list="$constants.UPSELL_FEATURE_LIST"
+			:cta-link="links.utmUrl('getting-started', 'main-cta')"
+			:learn-more-link="links.getUpsellUrl('getting-started', 'main-cta', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+			:feature-list="UPSELL_FEATURE_LIST"
 			:showLink="false"
 		>
 			<template #header-text>
@@ -126,6 +126,12 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
+import { UPSELL_FEATURE_LIST } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { getAssetUrl } from '@/vue/utils/helpers'
 import ctaImg from '@/vue/assets/images/upsells/news-sitemap.png'
@@ -135,7 +141,17 @@ import Cta from '@/vue/components/common/cta/Index'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgBook from '@/vue/components/common/svg/Book'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		CoreGettingStarted,
 		Cta,
@@ -145,116 +161,118 @@ export default {
 	},
 	data () {
 		return {
+			UPSELL_FEATURE_LIST,
+			links,
 			allowed,
 			ctaImg,
 			// thumbnailImg,
 			strings : {
 				cta : {
-					title : this.$t.sprintf(
+					title : sprintf(
 						// Translators: 1 - The plugin short name ("AIOSEO"), 2 - "Pro" string.
-						this.$t.__('Get %1$s %2$s and Unlock all the Powerful Features', this.$td),
+						__('Get %1$s %2$s and Unlock all the Powerful Features', td),
 						import.meta.env.VITE_SHORT_NAME,
 						'Pro'
 					),
-					header : this.$t.sprintf(
+					header : sprintf(
 						// Translators: 1 - The plugin short name ("AIOSEO"), 2 - "Pro" string.
-						this.$t.__('Get %1$s %2$s and Unlock all the Powerful Features.', this.$td),
+						__('Get %1$s %2$s and Unlock all the Powerful Features.', td),
 						import.meta.env.VITE_SHORT_NAME,
 						'Pro'
 					),
-					button : this.$t.sprintf(
+					button : sprintf(
 						// Translators: 1 - "Pro".
-						this.$t.__('Upgrade to %1$s Today', this.$td),
+						__('Upgrade to %1$s Today', td),
 						'Pro'
 					)
 				},
 				videos : {
-					title    : this.$t.__('Video Tutorials', this.$td),
-					linkText : this.$t.__('View all video tutorials', this.$td),
+					title    : __('Video Tutorials', td),
+					linkText : __('View all video tutorials', td),
 					linkUrl  : 'https://changeme'
 				},
 				documentation : {
-					title : this.$t.sprintf(
+					title : sprintf(
 						// Translators: 1 - The plugin short name ("AIOSEO").
-						this.$t.__('%1$s Documentation', this.$td),
+						__('%1$s Documentation', td),
 						import.meta.env.VITE_SHORT_NAME
 					),
-					linkText : this.$t.__('See our full documentation', this.$td),
-					linkUrl  : this.$links.getDocUrl('home')
+					linkText : __('See our full documentation', td),
+					linkUrl  : links.getDocUrl('home')
 				}
 			},
 			videos : {
 				video1 : {
-					title : this.$t.__('Basic Guide to Google Analytics', this.$td),
+					title : __('Basic Guide to Google Analytics', td),
 					url   : 'https://changeme'
 				},
 				video2 : {
-					title : this.$t.__('Basic Guide to Google Search Console', this.$td),
+					title : __('Basic Guide to Google Search Console', td),
 					url   : 'https://changeme'
 				},
 				video3 : {
-					title : this.$t.__('Best Practices for Domains and URLs', this.$td),
+					title : __('Best Practices for Domains and URLs', td),
 					url   : 'https://changeme'
 				},
 				video4 : {
-					title : this.$t.__('How to Control Search Results', this.$td),
+					title : __('How to Control Search Results', td),
 					url   : 'https://changeme'
 				},
 				video5 : {
-					title : this.$t.sprintf(
+					title : sprintf(
 						// Translators: 1 - The plugin short name ("AIOSEO Pro"), 2 - "Pro" string.
-						this.$t.__('Installing %1$s %2$s', this.$td),
+						__('Installing %1$s %2$s', td),
 						import.meta.env.VITE_SHORT_NAME,
 						'Pro'
 					),
 					url : 'https://changeme'
 				},
 				video6 : {
-					title : this.$t.__('Optimizing your Content Headings', this.$td),
+					title : __('Optimizing your Content Headings', td),
 					url   : 'https://changeme'
 				}
 			},
 			docs : {
 				doc1 : {
 					title : 'How do I get Google to show sitelinks for my site?',
-					url   : this.$links.getDocUrl('showSitelinks')
+					url   : links.getDocUrl('showSitelinks')
 				},
 				doc2 : {
 					title : 'How do I use your API code examples?',
-					url   : this.$links.getDocUrl('apiCodeExamples')
+					url   : links.getDocUrl('apiCodeExamples')
 				},
 				doc3 : {
 					title : 'What are media attachments and should I submit them to search engines?',
-					url   : this.$links.getDocUrl('whatAreMediaAttachments')
+					url   : links.getDocUrl('whatAreMediaAttachments')
 				},
 				doc4 : {
 					title : 'When to use NOINDEX or the robots.txt?',
-					url   : this.$links.getDocUrl('whenToUseNoindex')
+					url   : links.getDocUrl('whenToUseNoindex')
 				},
 				doc5 : {
 					title : 'How do I troubleshoot issues with AIOSEO?',
-					url   : this.$links.getDocUrl('troubleshootIssues')
+					url   : links.getDocUrl('troubleshootIssues')
 				},
 				doc6 : {
 					title : 'How does the import process for SEO data work?',
-					url   : this.$links.getDocUrl('importProcessSeoData')
+					url   : links.getDocUrl('importProcessSeoData')
 				},
 				doc7 : {
 					title : 'Installation instructions for AIOSEO Pro',
-					url   : this.$links.getDocUrl('installAioseoPro')
+					url   : links.getDocUrl('installAioseoPro')
 				},
 				doc8 : {
 					title : 'What are the minimum requirements for All in One SEO?',
-					url   : this.$links.getDocUrl('minimumRequirements')
+					url   : links.getDocUrl('minimumRequirements')
 				}
 			}
 		}
 	},
 	computed : {
 		upgradeToday () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-				this.$t.__('%1$s %2$s comes with many additional features to help take your site\'s SEO to the next level!', this.$td),
+				__('%1$s %2$s comes with many additional features to help take your site\'s SEO to the next level!', td),
 				import.meta.env.VITE_SHORT_NAME,
 				'Pro'
 			)

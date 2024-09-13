@@ -19,23 +19,26 @@
 import Accordion from './partials/Accordion'
 import { usePostEditorStore } from '@/vue/stores'
 
-const { sprintf } = window.wp.i18n
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	components : {
+		Accordion
+	},
 	data () {
 		return {
-			panelTitle   : this.$t.__('Headline Type', this.$td),
+			panelTitle   : __('Headline Type', td),
 			typeLinkText : sprintf(
 				// Translators: 1 - HTML line break tag, 2 - Opening HTML link tag, 3 - Closing HTML link tag.
-				this.$t.__('Headlines that are lists and how-to get more engagement on average than other types of headlines. %1$s%2$sLearn More%3$s →', this.$td),
+				__('Headlines that are lists and how-to get more engagement on average than other types of headlines. %1$s%2$sLearn More%3$s →', td),
 				'<br /><br />',
 				'<a href="https://optinmonster.com/why-these-21-headlines-went-viral-and-how-you-can-copy-their-success/" target="_blank" class="aioseo-headline-analyzer-link"><span>',
 				'</span></a>'
 			),
 			postEditorStore : usePostEditorStore()
 		}
-	},
-	components : {
-		Accordion
 	},
 	computed : {
 		currentResult () {

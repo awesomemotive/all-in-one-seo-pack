@@ -160,39 +160,6 @@ export default {
 			timelineMarkersDate : null
 		}
 	},
-	methods : {
-		handleTimelineMarkersTooltip (tooltip) {
-			tooltip.referenceElm?.classList.remove('active-point')
-
-			if (tooltip.showPopper) {
-				tooltip.referenceElm?.classList.add('active-point')
-			}
-		},
-		handleTimelineMarkersTooltipUpdate (args) {
-			const tooltip = this.$refs.timelineMarkersPopper
-			tooltip.updatePopper()
-
-			// Close the tooltip if the modal is open.
-			args.modal ? tooltip.doClose() : tooltip.doShow()
-
-			this.handleTimelineMarkersTooltip(tooltip)
-		},
-		showTimelineMarkersTooltip (reference) {
-			const tooltip = this.$refs.timelineMarkersPopper
-
-			tooltip.referenceElm?.classList.remove('active-point')
-			reference?.classList.add('active-point')
-
-			// If the reference element changed, we need to recreate the instance.
-			tooltip.destroyPopper()
-			tooltip.doDestroy()
-
-			tooltip.referenceElm = reference
-
-			tooltip.createPopper()
-			tooltip.doShow()
-		}
-	},
 	computed : {
 		getSeries () {
 			const series = this.series
@@ -573,6 +540,39 @@ export default {
 				`legend-${this.legendStyle}`,
 				`legend-columns-${legendColumns}`
 			].filter(n => n).map(className => 'aioseo-graph-' + className)
+		}
+	},
+	methods : {
+		handleTimelineMarkersTooltip (tooltip) {
+			tooltip.referenceElm?.classList.remove('active-point')
+
+			if (tooltip.showPopper) {
+				tooltip.referenceElm?.classList.add('active-point')
+			}
+		},
+		handleTimelineMarkersTooltipUpdate (args) {
+			const tooltip = this.$refs.timelineMarkersPopper
+			tooltip.updatePopper()
+
+			// Close the tooltip if the modal is open.
+			args.modal ? tooltip.doClose() : tooltip.doShow()
+
+			this.handleTimelineMarkersTooltip(tooltip)
+		},
+		showTimelineMarkersTooltip (reference) {
+			const tooltip = this.$refs.timelineMarkersPopper
+
+			tooltip.referenceElm?.classList.remove('active-point')
+			reference?.classList.add('active-point')
+
+			// If the reference element changed, we need to recreate the instance.
+			tooltip.destroyPopper()
+			tooltip.doDestroy()
+
+			tooltip.referenceElm = reference
+
+			tooltip.createPopper()
+			tooltip.doShow()
 		}
 	},
 	// The following was added to prevent errors when loading the post detail page in search statistics.

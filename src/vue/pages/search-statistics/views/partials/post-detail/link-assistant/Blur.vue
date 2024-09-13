@@ -8,6 +8,11 @@
 <script>
 import CoreBlur from '@/vue/components/common/core/Blur'
 import LinkAssistant from './LinkAssistant'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreBlur,
@@ -16,7 +21,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				title : this.$t.__('3 posts are redirecting to this post', this.$td)
+				title : __('3 posts are redirecting to this post', td)
 			}
 		}
 	},

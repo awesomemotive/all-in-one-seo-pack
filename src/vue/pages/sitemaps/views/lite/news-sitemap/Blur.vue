@@ -3,7 +3,7 @@
 		<div class="aioseo-settings-row aioseo-section-description">
 			{{ strings.description }} {{ strings.extendedDescription }}
 			<span
-				v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'newsSitemaps', true)"
+				v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'newsSitemaps', true)"
 			/>
 		</div>
 
@@ -18,7 +18,7 @@
 		</core-settings-row>
 
 		<core-settings-row
-			:name="$constants.GLOBAL_STRINGS.preview"
+			:name="GLOBAL_STRINGS.preview"
 		>
 			<template #content>
 				<div class="aioseo-sitemap-preview">
@@ -37,7 +37,7 @@
 					{{ strings.doYou404 }}
 
 					<span
-						v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
+						v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
 					/>
 				</div>
 			</template>
@@ -68,7 +68,7 @@
 					{{ strings.selectPostTypes }}
 
 					<span
-						v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'selectPostTypesNews', true)"
+						v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypesNews', true)"
 					/>
 				</div>
 			</template>
@@ -77,7 +77,11 @@
 </template>
 
 <script>
-import { useNewsSitemap } from '@/vue/pages/sitemaps/composables'
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
+
+import { useNewsSitemap } from '@/vue/pages/sitemaps/composables/NewsSitemap'
+
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgExternal from '@/vue/components/common/svg/External'
@@ -87,7 +91,9 @@ export default {
 		const { strings } = useNewsSitemap()
 
 		return {
-			strings
+			strings,
+			GLOBAL_STRINGS,
+			links
 		}
 	},
 	components : {

@@ -29,14 +29,20 @@
 </template>
 
 <script>
+import { CURRENCY_LIST } from '@/vue/plugins/constants'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	data () {
 		return {
-			currencies : this.$constants.CURRENCY_LIST,
+			currencies : CURRENCY_LIST,
 			strings    : {
-				priceIndicator     : this.$t.__('Price Indicator', this.$td),
-				currenciesAccepted : this.$t.__('Currencies Accepted', this.$td),
-				paymentMethods     : this.$t.__('Payment Methods Accepted', this.$td)
+				priceIndicator     : __('Price Indicator', td),
+				currenciesAccepted : __('Currencies Accepted', td),
+				paymentMethods     : __('Payment Methods Accepted', td)
 			}
 		}
 	}

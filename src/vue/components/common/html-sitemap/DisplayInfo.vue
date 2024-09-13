@@ -107,6 +107,7 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	useOptionsStore,
 	useRootStore
@@ -122,6 +123,11 @@ import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import SvgExternal from '@/vue/components/common/svg/External'
 import SvgFile from '@/vue/components/common/svg/File'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -158,37 +164,25 @@ export default {
 			showResults          : false,
 			showAdvancedSettings : false,
 			strings              : {
-				label       : this.$t.__('Display HTML Sitemap', this.$td),
-				page        : this.$t.__('Dedicated Page', this.$td),
-				placeholder : this.$t.sprintf(
+				label       : __('Display HTML Sitemap', td),
+				page        : __('Dedicated Page', td),
+				placeholder : sprintf(
 					// Translators: 1 - A URL.
-					this.$t.__('e.g. %1$s', this.$td),
+					__('e.g. %1$s', td),
 					`${this.rootStore.aioseo.urls.home}/new-page`
 				),
-				pageButton           : this.$t.__('Open HTML Sitemap', this.$td),
-				errorMessage         : this.$t.__('The page that you have entered is invalid or already exists. Please enter a page with a unique slug.', this.$td),
-				errorMessageDisabled : this.$t.sprintf(
+				pageButton           : __('Open HTML Sitemap', td),
+				errorMessage         : __('The page that you have entered is invalid or already exists. Please enter a page with a unique slug.', td),
+				errorMessageDisabled : sprintf(
 					// Translators: 1 - Opening link tag, 2 - Closing link tag.
-					this.$t.__('Dedicated HTML Sitemaps do not work while using "plain" permalinks. Please update your %1$spermalink structure%2$s to use this option.', this.$td),
+					__('Dedicated HTML Sitemaps do not work while using "plain" permalinks. Please update your %1$spermalink structure%2$s to use this option.', td),
 					'<a href="' + this.rootStore.aioseo.urls.home + '/wp-admin/options-permalink.php">',
 					'</a>'
 				),
-				editAndSaveFirst : this.$t.__('To view the sitemap, enter a URL and save changes.', this.$td),
-				saveFirst        : this.$t.__('To view the new sitemap, first save changes.', this.$td)
+				editAndSaveFirst : __('To view the sitemap, enter a URL and save changes.', td),
+				saveFirst        : __('To view the new sitemap, first save changes.', td)
 			}
 		}
-	},
-	created () {
-		this.pageUrl = this.dedicatedPageDisabled ?  '' : this.optionsStore.options.sitemap.html.pageUrl
-		this.addSiteUrl()
-
-		if (this.pageUrl) {
-			this.buttonLocked = false
-		}
-
-		window.aioseoBus.$on('changes-saved', () => {
-			this.processChangesSaved()
-		})
 	},
 	computed : {
 		sitemapButtonDisabled () {
@@ -229,7 +223,8 @@ export default {
 				this.buttonLocked = true
 			}
 
-			this.isLoading = true
+			this.currentPageUrl = this.pageUrl
+			this.isLoading      = true
 			debounce(() => {
 				// Throw an error if the URL contains any spaces.
 				if (/\s/.test(this.pageUrl)) {
@@ -238,7 +233,7 @@ export default {
 					return
 				}
 
-				http.post(this.$links.restUrl('sitemap/validate-html-sitemap-slug'))
+				http.post(links.restUrl('sitemap/validate-html-sitemap-slug'))
 					.send({
 						pageUrl : this.pageUrl
 					})
@@ -266,6 +261,18 @@ export default {
 			this.currentPageUrl = this.pageUrl
 			this.buttonLocked   = false
 		}
+	},
+	created () {
+		this.pageUrl = this.dedicatedPageDisabled ?  '' : this.optionsStore.options.sitemap.html.pageUrl
+		this.addSiteUrl()
+
+		if (this.pageUrl) {
+			this.buttonLocked = false
+		}
+
+		window.aioseoBus.$on('changes-saved', () => {
+			this.processChangesSaved()
+		})
 	}
 }
 </script>

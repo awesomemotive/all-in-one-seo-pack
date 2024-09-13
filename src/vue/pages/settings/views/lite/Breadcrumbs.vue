@@ -29,9 +29,9 @@
 						</transition>
 					</core-blur>
 					<cta
-						:cta-link="$links.getPricingUrl('breadcrumb-templates', 'breadcrumb-templates-upsell')"
+						:cta-link="links.getPricingUrl('breadcrumb-templates', 'breadcrumb-templates-upsell')"
 						:button-text="strings.ctaButtonText"
-						:learn-more-link="$links.getUpsellUrl('breadcrumb-templates', null, $isPro ? 'pricing' : 'liteUpgrade')"
+						:learn-more-link="links.getUpsellUrl('breadcrumb-templates', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 						:feature-list="features"
 					>
 						<template #header-text>
@@ -49,13 +49,29 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
+
+import links from '@/vue/utils/links'
+
 import ContentTypesLite from '../partials/Breadcrumbs/ContentTypesLite'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import Cta from '@/vue/components/common/cta/Index'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		ContentTypesLite,
 		CoreBlur,
@@ -66,46 +82,47 @@ export default {
 	},
 	data () {
 		return {
+			links,
 			strings : {
-				breadcrumbTemplates        : this.$t.__('Breadcrumb Templates', this.$td),
-				breadcrumbTemplatesTooltip : this.$t.__('Override the default template for breadcrumbs on your site using our easy-to-use template editor.', this.$td),
-				ctaButtonText              : this.$t.__('Unlock Breadcrumb Templates', this.$td),
-				ctaHeader1                 : this.$t.sprintf(
+				breadcrumbTemplates        : __('Breadcrumb Templates', td),
+				breadcrumbTemplatesTooltip : __('Override the default template for breadcrumbs on your site using our easy-to-use template editor.', td),
+				ctaButtonText              : __('Unlock Breadcrumb Templates', td),
+				ctaHeader1                 : sprintf(
 					// Translators: 1 - "PRO".
-					this.$t.__('Breadcrumb Templates is a %1$s Feature', this.$td),
+					__('Breadcrumb Templates is a %1$s Feature', td),
 					'PRO'
 				),
-				ctaDescription : this.$t.__('Our template editor will allow you to easily customize how breadcrumbs are displayed on your site based on each post type or taxonomy.', this.$td)
+				ctaDescription : __('Our template editor will allow you to easily customize how breadcrumbs are displayed on your site based on each post type or taxonomy.', td)
 			},
 			features : [
-				this.$t.__('Custom HTML templates', this.$td),
-				this.$t.__('Content Types', this.$td),
-				this.$t.__('Taxonomies', this.$td),
-				this.$t.__('Archives', this.$td)
+				__('Custom HTML templates', td),
+				__('Content Types', td),
+				__('Taxonomies', td),
+				__('Archives', td)
 			],
 			tab  : 'ContentTypesLite',
 			tabs : [
 				{
 					slug   : 'ContentTypesLite',
-					name   : this.$t.__('Content Types', this.$td),
+					name   : __('Content Types', td),
 					access : 'aioseo_general_settings',
 					pro    : true
 				},
 				{
 					slug   : 'Taxonomies',
-					name   : this.$t.__('Taxonomies', this.$td),
+					name   : __('Taxonomies', td),
 					access : 'aioseo_general_settings',
 					pro    : true
 				},
 				{
 					slug   : 'Archives',
-					name   : this.$t.__('Archives', this.$td),
+					name   : __('Archives', td),
 					access : 'aioseo_general_settings',
 					pro    : true
 				},
 				{
 					slug   : 'Advanced',
-					name   : this.$t.__('Advanced', this.$td),
+					name   : __('Advanced', td),
 					access : 'aioseo_general_settings',
 					pro    : true
 				}

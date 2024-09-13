@@ -23,11 +23,11 @@ if ( ! function_exists( 'aioseoMaybePluginIsDisabled' ) ) {
 			return true;
 		}
 
-		if ( ! defined( 'AIOSEO_DEV_VERSION' ) && ! isset( $_REQUEST['aioseo-dev'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
+		if ( ! defined( 'AIOSEO_DEV_VERSION' ) && ! isset( $_REQUEST['aioseo-dev'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 			return false;
 		}
 
-		if ( ! isset( $_REQUEST['aioseo-disable-plugin'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
+		if ( ! isset( $_REQUEST['aioseo-disable-plugin'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 			return false;
 		}
 

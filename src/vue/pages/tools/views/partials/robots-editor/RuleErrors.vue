@@ -25,9 +25,31 @@
 <script>
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : { CoreAlert },
-	computed   : {
+	props      : {
+		errors : {
+			type     : Array,
+			required : true
+		}
+	},
+	data () {
+		return {
+			strings : {
+				allowTakesPrecedence       : __('The "Allow" rule takes precedence.', td),
+				fromTheNetwork             : __('from the network level', td),
+				invalidCleanParam          : __('Clean-param must start with at least one param which is optionally followed by one path.', td),
+				invalidCrawlDelay          : __('Crawl-delay must be a number starting from 1.', td),
+				conflictingCrawlDelay      : __('For some crawlers, encountering conflicting "Crawl-delay" might lead to unpredictable behavior.', td),
+				networkRuleTakesPrecedence : __('The network rule takes precedence.', td)
+			}
+		}
+	},
+	computed : {
 		errorsByType () {
 			return this.errors.reduce((errorsByType, error) => {
 				if (!errorsByType[error.type]) {
@@ -43,27 +65,27 @@ export default {
 	methods : {
 		getErrorMessage (error) {
 			if ('duplicateRule' === error.message) {
-				return this.$t.sprintf(
+				return sprintf(
 					// Translators: 1 - The table row index, 2 - A message telling this index comes is on the network level.
-					this.$t.__('This rule is a duplicate of rule #%1$s%2$s.', this.$td),
+					__('This rule is a duplicate of rule #%1$s%2$s.', td),
 					error.duplicateIndex,
 					error.isNetworkIndex ? ` (${this.strings.fromTheNetwork})` : ''
 				)
 			}
 
 			if ('equivalentPath' === error.message) {
-				return this.$t.sprintf(
+				return sprintf(
 					// Translators: 1 - The table row index, 2 - A message telling this index comes is on the network level.
-					this.$t.__('Equivalent to rule #%1$s%2$s. The trailing wildcard is ignored.', this.$td),
+					__('Equivalent to rule #%1$s%2$s. The trailing wildcard is ignored.', td),
 					error.equivalentIndex,
 					error.isNetworkIndex ? ` (${this.strings.fromTheNetwork})` : ''
 				)
 			}
 
 			if ('conflictingPath' === error.message) {
-				return this.$t.sprintf(
-					// Translators: 1 - The table row index, 2 - Warn this index is on the network level, 3 - Warn about precedence.
-					this.$t.__('This rule conflicts with rule #%1$s%2$s.%3$s', this.$td),
+				return sprintf(
+					// Translators: 1 - The table row index, 2 - Warn this index is on the network level, 3 - Additional warnings.
+					__('This rule conflicts with rule #%1$s%2$s.%3$s', td),
 					error.conflictingIndex,
 					error.isNetworkIndex ? ` (${this.strings.fromTheNetwork})` : '',
 					error.isNetworkIndex ? ` ${this.strings.networkRuleTakesPrecedence}` : ` ${this.strings.allowTakesPrecedence}`
@@ -71,18 +93,18 @@ export default {
 			}
 
 			if ('defaultRuleOverride' === error.message) {
-				return this.$t.sprintf(
+				return sprintf(
 					// Translators: 1 - The table row index, 2 - A message telling this index comes is on the network level.
-					this.$t.__('This rule overrides the default rule #%1$s%2$s.', this.$td),
+					__('This rule overrides the default rule #%1$s%2$s.', td),
 					error.overriddenIndex,
 					error.isNetworkIndex ? ` (${this.strings.fromTheNetwork})` : ''
 				)
 			}
 
 			if ('conflictingCrawlDelay' === error.message) {
-				return this.$t.sprintf(
-					// Translators: 1 - The table row index, 2 - Warn this index is on the network level, 3 - Warn about unpredictable behavior.
-					this.$t.__('This rule conflicts with rule #%1$s%2$s.%3$s', this.$td),
+				return sprintf(
+					// Translators: 1 - The table row index, 2 - Warn this index is on the network level, 3 - Additional warnings.
+					__('This rule conflicts with rule #%1$s%2$s.%3$s', td),
 					error.conflictingIndex,
 					error.isNetworkIndex ? ` (${this.strings.fromTheNetwork})` : '',
 					` ${this.strings.conflictingCrawlDelay}`
@@ -90,24 +112,6 @@ export default {
 			}
 
 			return this.strings[error.message]
-		}
-	},
-	props : {
-		errors : {
-			type     : Array,
-			required : true
-		}
-	},
-	data () {
-		return {
-			strings : {
-				allowTakesPrecedence       : this.$t.__('The "Allow" rule takes precedence.', this.$td),
-				fromTheNetwork             : this.$t.__('from the network level', this.$td),
-				invalidCleanParam          : this.$t.__('Clean-param must start with at least one param which is optionally followed by one path.', this.$td),
-				invalidCrawlDelay          : this.$t.__('Crawl-delay must be a number starting from 1.', this.$td),
-				conflictingCrawlDelay      : this.$t.__('For some crawlers, encountering conflicting "Crawl-delay" might lead to unpredictable behavior.', this.$td),
-				networkRuleTakesPrecedence : this.$t.__('The network rule takes precedence.', this.$td)
-			}
 		}
 	}
 }

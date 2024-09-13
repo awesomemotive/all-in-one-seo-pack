@@ -35,7 +35,7 @@ export async function isApiKeyValid (apiKey) {
 
 export function isGoogleApiEnabled (apiKey, apiName, http) {
 	if (!apiKey || !apiName) {
-		return false
+		return Promise.resolve(false)
 	}
 
 	switch (apiName) {
@@ -54,7 +54,7 @@ export function isGoogleApiEnabled (apiKey, apiName, http) {
 					return false
 				})
 		default:
-			return false
+			return Promise.resolve(false)
 	}
 }
 

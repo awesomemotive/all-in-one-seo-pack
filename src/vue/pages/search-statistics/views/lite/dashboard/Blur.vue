@@ -125,6 +125,11 @@ import SvgStatistics from '@/vue/components/common/svg/Statistics'
 import SvgWeb from '@/vue/components/common/svg/Web'
 import TopKeywords from '../../partials/TopKeywords'
 import TopPages from '../../partials/TopPages'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CardFooter,
@@ -147,34 +152,34 @@ export default {
 	data () {
 		return {
 			strings : {
-				overallOptimizationCard : this.$t.__('Post Optimizations', this.$td),
-				keywordsCard            : this.$t.__('Keyword Rankings', this.$td),
-				keywordPositionsCard    : this.$t.__('Keyword Positions', this.$td),
-				statisticsCard          : this.$t.__('SEO Statistics', this.$td),
-				postRankingCard         : this.$t.__('Content Rankings', this.$td)
+				overallOptimizationCard : __('Post Optimizations', td),
+				keywordsCard            : __('Keyword Rankings', td),
+				keywordPositionsCard    : __('Keyword Positions', td),
+				statisticsCard          : __('SEO Statistics', td),
+				postRankingCard         : __('Content Rankings', td)
 			},
 			keywordsTabs : [
 				{
 					slug : 'TopKeywords',
-					name : this.$t.__('Top Keywords', this.$td)
+					name : __('Top Keywords', td)
 				},
 				{
 					slug : 'WinningLosingKeywords',
-					name : this.$t.__('Winning / Losing', this.$td)
+					name : __('Winning / Losing', td)
 				}
 			],
 			postRankingTabs : [
 				{
 					slug : 'TopPages',
-					name : this.$t.__('Top Pages', this.$td)
+					name : __('Top Pages', td)
 				},
 				{
 					slug : 'TopLosingPages',
-					name : this.$t.__('Top Losing', this.$td)
+					name : __('Top Losing', td)
 				},
 				{
 					slug : 'TopWinningPages',
-					name : this.$t.__('Top Winning', this.$td)
+					name : __('Top Winning', td)
 				}
 			]
 		}

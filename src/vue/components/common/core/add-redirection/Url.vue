@@ -124,6 +124,8 @@ import { debounce } from '@/vue/utils/debounce'
 import { sanitizeString } from '@/vue/utils/strings'
 import { makeUrlRelative } from '@/vue/utils/urls'
 
+import { useRedirect } from '@/vue/composables/redirects/Redirect'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseInput from '@/vue/components/common/base/Input'
 import CoreAddRedirectionUrlResults from '@/vue/components/common/core/add-redirection/UrlResults'
@@ -135,16 +137,24 @@ import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation
 import SvgGear from '@/vue/components/common/svg/Gear'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
-import Redirect from '@/vue/mixins/redirects/Redirect'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'updated-url', 'remove-url', 'updated-option' ],
 	setup () {
+		const {
+			validateRedirect
+		} = useRedirect()
+
 		return {
 			redirectsStore : useRedirectsStore(),
-			rootStore      : useRootStore()
+			rootStore      : useRootStore(),
+			validateRedirect
 		}
 	},
-	mixins     : [ Redirect ],
-	emits      : [ 'updated-url', 'remove-url', 'updated-option' ],
 	components : {
 		BaseCheckbox,
 		BaseInput,
@@ -184,9 +194,9 @@ export default {
 			isLoading   : false,
 			showOptions : false,
 			strings     : {
-				ignoreSlash : this.$t.__('Ignore Slash', this.$td),
-				ignoreCase  : this.$t.__('Ignore Case', this.$td),
-				regex       : this.$t.__('Regex', this.$td)
+				ignoreSlash : __('Ignore Slash', td),
+				ignoreCase  : __('Ignore Case', td),
+				regex       : __('Regex', td)
 			},
 			results : []
 		}
@@ -215,55 +225,55 @@ export default {
 
 			const warnings = []
 			if ('http' !== this.url.url.substr(0, 4) && '/' !== this.url.url.substr(0, 1) && 0 < this.url.url.length && !this.url.regex) {
-				warnings.push(this.$t.sprintf(
+				warnings.push(sprintf(
 					// Translators: 1 - Adds a html tag with an option like: <code>^/</code>
-					this.$t.__('The source URL should probably start with a %1$s', this.$td),
+					__('The source URL should probably start with a %1$s', td),
 					'<code>/</code>'
 				))
 			}
 
 			if (-1 !== this.url.url.indexOf('#')) {
-				warnings.push(this.$t.__('Anchor values are not sent to the server and cannot be redirected.', this.$td))
+				warnings.push(__('Anchor values are not sent to the server and cannot be redirected.', td))
 			}
 
 			if (!this.log404 && this.maybeRegex && !this.url.regex) {
-				warnings.push(this.$t.sprintf(
+				warnings.push(sprintf(
 					// Translators: 1 - Adds a html tag with an option like: <code>Regex</code>
-					this.$t.__('Remember to enable the %1$s option if this is a regular expression.', this.$td),
+					__('Remember to enable the %1$s option if this is a regular expression.', td),
 					'<code>Regex</code>'
 				))
 			}
 
 			if (this.url.regex) {
 				if (-1 === this.url.url.indexOf('^') && -1 === this.url.url.indexOf('$')) {
-					warnings.push(this.$t.sprintf(
+					warnings.push(sprintf(
 						// Translators: 1 - Adds a html tag with an option like: <code>^</code>, 2 - Adds a html tag with an option like: <code>^</code>.
-						this.$t.__('To prevent a greedy regular expression you can use %1$s to anchor it to the start of the URL. For example: %2$s', this.$td),
+						__('To prevent a greedy regular expression you can use %1$s to anchor it to the start of the URL. For example: %2$s', td),
 						'<code>^/</code>', '<code>^/' + sanitizeString(this.url.url.replace(/^\//, '')) + '</code>'
 					))
 				}
 
 				if (0 < this.url.url.indexOf('^')) {
-					warnings.push(this.$t.sprintf(
+					warnings.push(sprintf(
 						// Translators: 1 - Adds a html tag with an option like: <code>^</code>, 2 - Adds a html tag with an option like: <code>^</code>.
-						this.$t.__('The caret %1$s should be at the start. For example: %2$s', this.$td),
+						__('The caret %1$s should be at the start. For example: %2$s', td),
 						'<code>^/</code>',
 						'<code>^/' + sanitizeString(this.url.url.replace('^', '').replace(/^\//, '')) + '</code>'
 					))
 				}
 
 				if (0 === this.url.url.indexOf('^') && -1 === this.url.url.indexOf('^/')) {
-					warnings.push(this.$t.sprintf(
+					warnings.push(sprintf(
 						// Translators: 1 - Adds a html tag with an option like: <code>^/</code>
-						this.$t.__('The source URL should probably start with a %1$s', this.$td),
+						__('The source URL should probably start with a %1$s', td),
 						'<code>^/</code>'
 					))
 				}
 
 				if (this.url.url.length - 1 !== this.url.url.indexOf('$') && -1 !== this.url.url.indexOf('$')) {
-					warnings.push(this.$t.sprintf(
+					warnings.push(sprintf(
 						// Translators: 1 - The dollar symbol, 2 - Dollar symbol example.
-						this.$t.__('The dollar symbol %1$s should be at the end. For example: %2$s', this.$td),
+						__('The dollar symbol %1$s should be at the end. For example: %2$s', td),
 						'<code>$</code>',
 						'<code>' + sanitizeString(this.url.url.replace(/\$/g, '')) + '$</code>'
 					))
@@ -272,7 +282,7 @@ export default {
 
 			// Warning if a URL with a common file extension
 			if (null !== this.url.url.match(/(\.html|\.htm|\.php|\.pdf|\.jpg)$/)) {
-				warnings.push(this.$t.__('Some servers may be configured to serve file resources directly, preventing a redirect occurring.', this.$td))
+				warnings.push(__('Some servers may be configured to serve file resources directly, preventing a redirect occurring.', td))
 			}
 
 			return warnings

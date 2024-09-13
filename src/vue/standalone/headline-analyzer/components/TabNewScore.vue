@@ -1,5 +1,5 @@
 <template>
-    <accordion
+	<accordion
 		:title="textPanelTitle"
 		componentClass="aioseo-headline-analyzer-panel-tab-new-score-form"
 	>
@@ -27,18 +27,22 @@ import { fetchData } from '../assets/js/initAnalyzerData'
 
 import { usePostEditorStore } from '@/vue/stores'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	components : {
+		Accordion
+	},
 	data () {
 		return {
-			textPanelTitle            : this.$t.__('Try New Headline', this.$td),
-			textNewHeadlineInputLabel : this.$t.__('Enter a different headline than your post title to see how it compares.', this.$td),
-			textAnalyze               : this.$t.__('Analyze Headline', this.$td),
+			textPanelTitle            : __('Try New Headline', td),
+			textNewHeadlineInputLabel : __('Enter a different headline than your post title to see how it compares.', td),
+			textAnalyze               : __('Analyze Headline', td),
 			newHeadline               : '',
 			postEditorStore           : usePostEditorStore()
 		}
-	},
-	components : {
-		Accordion
 	},
 	methods : {
 		async fetchNewHeadlineData () {

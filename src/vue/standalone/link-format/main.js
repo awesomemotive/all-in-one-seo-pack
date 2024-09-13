@@ -9,7 +9,7 @@ import { loadPiniaStores } from '@/vue/stores'
 
 import { elemLoaded } from '@/vue/utils/elemLoaded'
 
-import App from './App.vue'
+import App from './App'
 
 const loadLaDidYouKnow = () => {
 	let app = createApp({ ...App, name: 'Standalone/LinkFormat' })

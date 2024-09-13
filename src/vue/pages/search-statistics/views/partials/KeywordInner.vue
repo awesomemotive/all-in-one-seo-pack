@@ -87,15 +87,28 @@ import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
+import { usePostTypes } from '@/vue/composables/PostTypes'
+
 import numbers from '@/vue/utils/numbers'
-import PostTypesMixin from '@/vue/mixins/PostTypes.js'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Statistic from './Statistic'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			editPost,
+			viewPost
+		} = usePostTypes()
+
 		return {
-			searchStatisticsStore : useSearchStatisticsStore()
+			editPost,
+			searchStatisticsStore : useSearchStatisticsStore(),
+			viewPost
 		}
 	},
 	components : {
@@ -103,8 +116,7 @@ export default {
 		CoreWpTable,
 		Statistic
 	},
-	mixins : [ PostTypesMixin ],
-	props  : {
+	props : {
 		index : {
 			type     : Number,
 			required : true
@@ -126,27 +138,27 @@ export default {
 			return [
 				{
 					slug  : 'post_title',
-					label : this.$t.__('Title', this.$td),
+					label : __('Title', td),
 					width : '100%'
 				},
 				{
 					slug  : 'clicks',
-					label : this.$t.__('Clicks', this.$td),
+					label : __('Clicks', td),
 					width : '120px'
 				},
 				{
 					slug  : 'ctr',
-					label : this.$t.__('Avg. CTR', this.$td),
+					label : __('Avg. CTR', td),
 					width : '120px'
 				},
 				{
 					slug  : 'impressions',
-					label : this.$t.__('Impressions', this.$td),
+					label : __('Impressions', td),
 					width : '120px'
 				},
 				{
 					slug  : 'position',
-					label : this.$t.__('Position', this.$td),
+					label : __('Position', td),
 					width : '120px'
 				}
 			]

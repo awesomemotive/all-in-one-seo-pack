@@ -21,6 +21,11 @@
 
 <script>
 import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreSiteScore
@@ -33,34 +38,34 @@ export default {
 		return {
 			isAnalyzing : false,
 			strings     : {
-				overallScore  : this.$t.__('Overall Score', this.$td),
-				veryGoodScore : this.$t.sprintf(
+				overallScore  : __('Overall Score', td),
+				veryGoodScore : sprintf(
 					// Translators: 1 - Opening bold HTML tag, 2 - Closing bold HTML tag, 3 - Initial score range, 4 - Final score range.
-					this.$t.__('A very good score is between %1$s%3$d and %4$d%2$s.', this.$td),
+					__('A very good score is between %1$s%3$d and %4$d%2$s.', td),
 					'<strong>',
 					'</strong>',
 					70,
 					100
 				),
-				forBestResults : this.$t.sprintf(
+				forBestResults : sprintf(
 					// Translators: 1 - Opening bold HTML tag, 2 - Closing bold HTML tag, 3 - Score.
-					this.$t.__('For best results, you should strive for %1$s%3$d and above%2$s.', this.$td),
+					__('For best results, you should strive for %1$s%3$d and above%2$s.', td),
 					'<strong>',
 					'</strong>',
 					70
 				),
-				weveGotWorkToDo : this.$t.sprintf(
+				weveGotWorkToDo : sprintf(
 					// Translators: 1 - HTML Line break tag.
-					this.$t.__('We\'ve got some%1$swork to do!', this.$td),
+					__('We\'ve got some%1$swork to do!', td),
 					'<br>'
 				),
-				needsImprovement : this.$t.sprintf(
+				needsImprovement : sprintf(
 					// Translators: 1 - HTML Line break tag.
-					this.$t.__('Needs%1$sImprovement!', this.$td),
+					__('Needs%1$sImprovement!', td),
 					'<br>'
 				),
-				veryGood  : this.$t.__('Very Good!', this.$td),
-				excellent : this.$t.__('Excellent!', this.$td)
+				veryGood  : __('Very Good!', td),
+				excellent : __('Excellent!', td)
 			}
 		}
 	},

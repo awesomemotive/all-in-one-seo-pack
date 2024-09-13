@@ -30,7 +30,7 @@
 
 		<div class="aioseo-feature-manager-addons">
 			<core-alert
-				v-if="$isPro && licenseStore.isUnlicensed"
+				v-if="rootStore.isPro && licenseStore.isUnlicensed"
 				type="red"
 			>
 				<strong>{{ yourLicenseIsText }}</strong>
@@ -51,7 +51,7 @@
 						size="small"
 						tag="a"
 						target="_blank"
-						:href="$links.getUpsellUrl('feature-manager-upgrade', 'no-license-key', 'pricing')"
+						:href="links.getUpsellUrl('feature-manager-upgrade', 'no-license-key', 'pricing')"
 					>
 						{{ strings.purchaseLicense }}
 					</base-button>
@@ -99,9 +99,9 @@
 			:type="2"
 			:button-text="strings.ctaButtonText"
 			:floating="false"
-			:cta-link="$links.utmUrl('feature-manager', 'main-cta')"
-			:learn-more-link="$links.getUpsellUrl('feature-manager', 'main-cta', $isPro ? 'pricing' : 'liteUpgrade')"
-			:feature-list="$constants.UPSELL_FEATURE_LIST"
+			:cta-link="links.utmUrl('feature-manager', 'main-cta')"
+			:learn-more-link="links.getUpsellUrl('feature-manager', 'main-cta', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+			:feature-list="UPSELL_FEATURE_LIST"
 		>
 			<template #header-text>
 				<span class="large">{{ strings.ctaHeaderText }}</span>
@@ -162,6 +162,8 @@
 </template>
 
 <script>
+import { UPSELL_FEATURE_LIST } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useAddonsStore,
 	useLicenseStore,
@@ -171,7 +173,8 @@ import {
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { getAssetUrl } from '@/vue/utils/helpers'
-import { License } from '@/vue/mixins/License'
+
+import { useLicense } from '@/vue/composables/License'
 
 import ctaImg from '@/vue/assets/images/upsells/news-sitemap.png'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
@@ -189,13 +192,24 @@ import SvgLocalBusiness from '@/vue/components/common/svg/local/Business'
 import SvgRedirect from '@/vue/components/common/svg/Redirect'
 import SvgSitemapsPro from '@/vue/components/common/svg/SitemapsPro'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			yourLicenseIsText
+		} = useLicense()
+
 		return {
+			UPSELL_FEATURE_LIST,
 			addonsStore  : useAddonsStore(),
 			licenseStore : useLicenseStore(),
+			links,
 			pluginsStore : usePluginsStore(),
-			rootStore    : useRootStore()
+			rootStore    : useRootStore(),
+			yourLicenseIsText
 		}
 	},
 	components : {
@@ -214,7 +228,6 @@ export default {
 		SvgRedirect,
 		SvgSitemapsPro
 	},
-	mixins : [ License ],
 	data () {
 		return {
 			allowed,
@@ -228,63 +241,63 @@ export default {
 				deactivateAll : false
 			},
 			strings : {
-				videoNewsSitemaps     : this.$t.__('Video and News Sitemaps', this.$td),
-				imageSeoOptimization  : this.$t.__('Image SEO Optimization', this.$td),
-				localBusinessSeo      : this.$t.__('Local Business SEO', this.$td),
-				advancedWooCommerce   : this.$t.__('Advanced WooCommerce', this.$td),
-				customTaxonomies      : this.$t.__('SEO for Categories, Tags and Custom Taxonomies', this.$td),
-				andMore               : this.$t.__('And many more...', this.$td),
-				activateAllFeatures   : this.$t.__('Activate All Features', this.$td),
-				deactivateAllFeatures : this.$t.__('Deactivate All Features', this.$td),
-				searchForFeatures     : this.$t.__('Search for Features...', this.$td),
-				ctaHeaderText         : this.$t.sprintf(
+				videoNewsSitemaps     : __('Video and News Sitemaps', td),
+				imageSeoOptimization  : __('Image SEO Optimization', td),
+				localBusinessSeo      : __('Local Business SEO', td),
+				advancedWooCommerce   : __('Advanced WooCommerce', td),
+				customTaxonomies      : __('SEO for Categories, Tags and Custom Taxonomies', td),
+				andMore               : __('And many more...', td),
+				activateAllFeatures   : __('Activate All Features', td),
+				deactivateAllFeatures : __('Deactivate All Features', td),
+				searchForFeatures     : __('Search for Features...', td),
+				ctaHeaderText         : sprintf(
 					// Translators: 1 - The plugin name ("All in One SEO").
-					this.$t.__('Upgrade %1$s to Pro and Unlock all Features!', this.$td),
+					__('Upgrade %1$s to Pro and Unlock all Features!', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				ctaButtonText           : this.$t.__('Unlock All Features', this.$td),
-				aValidLicenseIsRequired : this.$t.__('A valid license key is required in order to use our addons.', this.$td),
-				enterLicenseKey         : this.$t.__('Enter License Key', this.$td),
-				purchaseLicense         : this.$t.__('Purchase License', this.$td),
-				areYouSureNetworkChange : this.$t.__('This is a network-wide change.', this.$td),
-				yesProcessNetworkChange : this.$t.__('Yes, process this network change', this.$td),
-				noChangedMind           : this.$t.__('No, I changed my mind', this.$td)
+				ctaButtonText           : __('Unlock All Features', td),
+				aValidLicenseIsRequired : __('A valid license key is required in order to use our addons.', td),
+				enterLicenseKey         : __('Enter License Key', td),
+				purchaseLicense         : __('Purchase License', td),
+				areYouSureNetworkChange : __('This is a network-wide change.', td),
+				yesProcessNetworkChange : __('Yes, process this network change', td),
+				noChangedMind           : __('No, I changed my mind', td)
 			},
 			descriptions : {
 				aioseoEeat : {
-					description : this.$t.__('Optimize your site for Google\'s E-E-A-T ranking factor by proving your writer\'s expertise through author schema markup and new UI elements.', this.$td),
+					description : __('Optimize your site for Google\'s E-E-A-T ranking factor by proving your writer\'s expertise through author schema markup and new UI elements.', td),
 					version     : 0
 				},
 				aioseoImageSeo : {
-					description : this.$t.__('Globally control the Title attribute and Alt text for images in your content. These attributes are essential for both accessibility and SEO.', this.$td),
+					description : __('Globally control the Title attribute and Alt text for images in your content. These attributes are essential for both accessibility and SEO.', td),
 					version     : 0
 				},
 				aioseoIndexNow : {
-					description : this.$t.__('Add IndexNow support to instantly notify search engines when your content has changed. This helps the search engines to prioritize the changes on your website and helps you rank faster.', this.$td),
+					description : __('Add IndexNow support to instantly notify search engines when your content has changed. This helps the search engines to prioritize the changes on your website and helps you rank faster.', td),
 					version     : 0
 				},
 				aioseoLinkAssistant : {
-					description : this.$t.__('Super-charge your SEO with Link Assistant! Get relevant suggestions for adding internal links to older content as well as finding any orphaned posts that have no internal links. Use our reporting feature to see all link suggestions or add them directly from any page or post.', this.$td),
+					description : __('Super-charge your SEO with Link Assistant! Get relevant suggestions for adding internal links to older content as well as finding any orphaned posts that have no internal links. Use our reporting feature to see all link suggestions or add them directly from any page or post.', td),
 					version     : 0
 				},
 				aioseoLocalBusiness : {
-					description : this.$t.__('Local Business schema markup enables you to tell Google about your business, including your business name, address and phone number, opening hours and price range. This information may be displayed as a Knowledge Graph card or business carousel.', this.$td),
+					description : __('Local Business schema markup enables you to tell Google about your business, including your business name, address and phone number, opening hours and price range. This information may be displayed as a Knowledge Graph card or business carousel.', td),
 					version     : 0
 				},
 				aioseoNewsSitemap : {
-					description : this.$t.__('Our Google News Sitemap lets you control which content you submit to Google News and only contains articles that were published in the last 48 hours. In order to submit a News Sitemap to Google, you must have added your site to Google’s Publisher Center and had it approved.', this.$td),
+					description : __('Our Google News Sitemap lets you control which content you submit to Google News and only contains articles that were published in the last 48 hours. In order to submit a News Sitemap to Google, you must have added your site to Google’s Publisher Center and had it approved.', td),
 					version     : 0
 				},
 				aioseoRedirects : {
-					description : this.$t.__('Our Redirection Manager allows you to create and manage redirects for 404s or modified posts.', this.$td),
+					description : __('Our Redirection Manager allows you to create and manage redirects for 404s or modified posts.', td),
 					version     : 0
 				},
 				aioseoRestApi : {
-					description : this.$t.__('Manage your post and term SEO meta via the WordPress REST API. This addon also works seamlessly with headless WordPress installs.', this.$td),
+					description : __('Manage your post and term SEO meta via the WordPress REST API. This addon also works seamlessly with headless WordPress installs.', td),
 					version     : 0
 				},
 				aioseoVideoSitemap : {
-					description : this.$t.__('The Video Sitemap works in much the same way as the XML Sitemap module, it generates an XML Sitemap specifically for video content on your site. Search engines use this information to display rich snippet information in search results.', this.$td),
+					description : __('The Video Sitemap works in much the same way as the XML Sitemap module, it generates an XML Sitemap specifically for video content on your site. Search engines use this information to display rich snippet information in search results.', td),
 					version     : 0
 				}
 			}
@@ -292,9 +305,9 @@ export default {
 	},
 	computed : {
 		upgradeToday () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-				this.$t.__('%1$s %2$s comes with many additional features to help take your site\'s SEO to the next level!', this.$td),
+				__('%1$s %2$s comes with many additional features to help take your site\'s SEO to the next level!', td),
 				import.meta.env.VITE_SHORT_NAME,
 				'Pro'
 			)
@@ -305,10 +318,10 @@ export default {
 		},
 		networkChangeMessage () {
 			if (this.activated) {
-				return this.$t.__('Are you sure you want to deactivate these addons across the network?', this.$td)
+				return __('Are you sure you want to deactivate these addons across the network?', td)
 			}
 
-			return this.$t.__('Are you sure you want to activate these addons across the network?', this.$td)
+			return __('Are you sure you want to activate these addons across the network?', td)
 		}
 	},
 	methods : {
@@ -348,8 +361,8 @@ export default {
 		activateAllFeatures () {
 			// First, check to see if this user is licensed and has an active license.
 			// If not, we want to redirect the user to a new page with an upsell.
-			if (!this.$isPro || !this.licenseStore.license.isActive) {
-				return window.open(this.$links.utmUrl(this.rootStore.aioseo.data.isNetworkAdmin ? 'network-activate-all-features' : 'activate-all-features'))
+			if (!this.rootStore.isPro || !this.licenseStore.license.isActive) {
+				return window.open(links.utmUrl(this.rootStore.aioseo.data.isNetworkAdmin ? 'network-activate-all-features' : 'activate-all-features'))
 			}
 
 			if (this.rootStore.aioseo.data.isNetworkAdmin) {

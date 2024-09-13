@@ -89,7 +89,7 @@ class GeneralSettings {
 	 */
 	private function migrateStripCategoryBase() {
 		if ( isset( $this->options['strip_category_base'] ) ) {
-			aioseo()->options->searchAppearance->advanced->removeCatBase = 'on' === $this->options['strip_category_base'] ? true : false;
+			aioseo()->options->searchAppearance->advanced->removeCategoryBase = 'on' === $this->options['strip_category_base'] ? true : false;
 		}
 	}
 

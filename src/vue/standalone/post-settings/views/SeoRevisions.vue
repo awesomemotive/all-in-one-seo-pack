@@ -27,17 +27,17 @@ export default {
 			licenseStore : useLicenseStore()
 		}
 	},
-	data () {
-		return {
-			license
-		}
-	},
 	components : {
 		SeoRevisions,
 		SeoRevisionsLite
 	},
 	props : {
 		parentComponentContext : String
+	},
+	data () {
+		return {
+			license
+		}
 	}
 }
 </script>

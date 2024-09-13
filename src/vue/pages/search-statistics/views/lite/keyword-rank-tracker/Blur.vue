@@ -26,25 +26,24 @@
 </template>
 
 <script setup>
-import { inject } from 'vue'
-
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import KeywordRankTrackerTabs from '../../keyword-rank-tracker/partials/Tabs'
 import Keywords from '../../keyword-rank-tracker/partials/Keywords'
 
-const $t = inject('$t')
-const $td = inject('$td')
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const tabs = [
 	{
 		slug : 'rank-tracker',
-		name : $t.__('Rank Tracker', $td)
+		name : __('Rank Tracker', td)
 	},
 	{
 		slug : 'all-keywords',
-		name : $t.__('All Keywords', $td)
+		name : __('All Keywords', td)
 	}
 ]
 </script>

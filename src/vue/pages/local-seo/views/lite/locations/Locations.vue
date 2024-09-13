@@ -14,9 +14,9 @@
 			<blur />
 
 			<cta
-				:cta-link="$links.getPricingUrl('local-seo', 'local-seo-upsell', 'locations')"
+				:cta-link="links.getPricingUrl('local-seo', 'local-seo-upsell', 'locations')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="$links.getUpsellUrl('local-seo', null, $isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('local-seo', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 				:feature-list="features"
 				align-top
 				:hide-bonus="!licenseStore.isUnlicensed"
@@ -24,6 +24,7 @@
 				<template #header-text>
 					{{ strings.ctaHeader }}
 				</template>
+
 				<template #description>
 					<required-plans addon="aioseo-local-business" />
 
@@ -35,8 +36,10 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
-	useLicenseStore
+	useLicenseStore,
+	useRootStore
 } from '@/vue/stores'
 
 import Blur from './Blur'
@@ -44,10 +47,17 @@ import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import Cta from '@/vue/components/common/cta/Index'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
-			licenseStore : useLicenseStore()
+			licenseStore : useLicenseStore(),
+			rootStore    : useRootStore(),
+			links
 		}
 	},
 	components : {
@@ -60,18 +70,18 @@ export default {
 	data () {
 		return {
 			features : [
-				this.$t.__('Local Business Schema', this.$td),
-				this.$t.__('Multiple Locations', this.$td),
-				this.$t.__('Business Info and Location blocks, widgets and shortcodes', this.$td),
-				this.$t.__('Detailed Address, Contact and Payment Info', this.$td)
+				__('Local Business Schema', td),
+				__('Multiple Locations', td),
+				__('Business Info and Location blocks, widgets and shortcodes', td),
+				__('Detailed Address, Contact and Payment Info', td)
 			],
 			strings : {
-				locationInfo1 : this.$t.__('Local Business schema markup informs Google about your business details like name, address, phone number, hours, and price range, which can appear in a Knowledge Graph card or business carousel.', this.$td),
-				businessInfo  : this.$t.__('Business Info', this.$td),
-				ctaButtonText : this.$t.__('Unlock Local SEO', this.$td),
-				ctaHeader     : this.$t.sprintf(
+				locationInfo1 : __('Local Business schema markup informs Google about your business details like name, address, phone number, hours, and price range, which can appear in a Knowledge Graph card or business carousel.', td),
+				businessInfo  : __('Business Info', td),
+				ctaButtonText : __('Unlock Local SEO', td),
+				ctaHeader     : sprintf(
 					// Translators: 1 - "PRO".
-					this.$t.__('Local SEO is a %1$s Feature', this.$td),
+					__('Local SEO is a %1$s Feature', td),
 					'PRO'
 				)
 			}

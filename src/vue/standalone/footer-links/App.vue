@@ -18,13 +18,22 @@
 </template>
 
 <script>
-import { useRootStore } from '@/vue/stores'
+import links from '@/vue/utils/links'
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import SupportLink from './AIOSEO_VERSION/SupportLink'
 
 import FacebookSvg from '@/vue/components/common/svg/social/Facebook'
 import LinkedInSvg from '@/vue/components/common/svg/social/LinkedIn'
 import TwitterSvg from '@/vue/components/common/svg/social/Twitter'
 import YouTubeSvg from '@/vue/components/common/svg/social/YouTube'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -41,17 +50,17 @@ export default {
 	data () {
 		return {
 			strings : {
-				madeBy      : this.$t.__('Made with ♥ by the AIOSEO Team', this.$td),
-				support     : this.$t.__('Support', this.$td),
-				docs        : this.$t.__('Docs', this.$td),
-				freePlugins : this.$t.__('Free Plugins', this.$td)
+				madeBy      : __('Made with ♥ by the AIOSEO Team', td),
+				support     : __('Support', td),
+				docs        : __('Docs', td),
+				freePlugins : __('Free Plugins', td)
 			}
 		}
 	},
 	methods : {
 		getUtmLink (url, content) {
 			const page = this.rootStore.aioseo.page
-			return this.$links.utmUrl(`footer-${page}`, content, url)
+			return links.utmUrl(`footer-${page}`, content, url)
 		}
 	}
 }

@@ -51,6 +51,11 @@ import SvgLinkExternal from '@/vue/components/common/svg/link/External'
 import SvgLinkInternalInbound from '@/vue/components/common/svg/link/InternalInbound'
 import SvgLinkInternalOutbound from '@/vue/components/common/svg/link/InternalOutbound'
 import SvgLinkSuggestion from '@/vue/components/common/svg/link/Suggestion'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -75,14 +80,14 @@ export default {
 	data () {
 		return {
 			strings : {
-				inbound           : this.$t.__('Inbound Links', this.$td),
-				outbound          : this.$t.__('Outbound Links', this.$td),
-				affiliate         : this.$t.__('Affiliate', this.$td),
-				external          : this.$t.__('External', this.$td),
-				suggestions       : this.$t.__('Link Suggestions', this.$td),
-				linkOpportunities : this.$t.sprintf(
+				inbound           : __('Inbound Links', td),
+				outbound          : __('Outbound Links', td),
+				affiliate         : __('Affiliate', td),
+				external          : __('External', td),
+				suggestions       : __('Link Suggestions', td),
+				linkOpportunities : sprintf(
 					// Translators: 1 - Right arrow.
-					this.$t.__('Linking Opportunities %1$s', this.$td),
+					__('Linking Opportunities %1$s', td),
 					'<span>&rarr;</span>'
 				)
 			}

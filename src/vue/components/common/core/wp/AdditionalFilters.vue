@@ -31,6 +31,10 @@
 </template>
 
 <script>
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	emits : [ 'process-additional-filters', 'change' ],
 	props : {
@@ -48,15 +52,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				filter : this.$t.__('Filter', this.$td)
+				filter : __('Filter', td)
 			}
 		}
-	},
-	mounted () {
-		this.setInitialOptions()
-	},
-	updated () {
-		this.setInitialOptions()
 	},
 	methods : {
 		setInitialOptions () {
@@ -66,6 +64,12 @@ export default {
 				}
 			})
 		}
+	},
+	beforeMount () {
+		this.setInitialOptions()
+	},
+	updated () {
+		this.setInitialOptions()
 	}
 }
 </script>

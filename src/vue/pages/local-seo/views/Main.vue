@@ -12,6 +12,11 @@ import Locations from './Locations'
 import Maps from './Maps'
 import OpeningHours from './OpeningHours'
 import Import from './Import'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreMain,
@@ -23,7 +28,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				pageName : this.$t.__('Local SEO', this.$td)
+				pageName : __('Local SEO', td)
 			}
 		}
 	}

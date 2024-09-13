@@ -47,6 +47,11 @@ import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import PostsTable from '../partials/PostsTable'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -63,8 +68,8 @@ export default {
 	data () {
 		return {
 			strings : {
-				title : this.$t.__('Content Rankings', this.$td),
-				alert : this.$t.__('The Content Rankings report provides valuable insights into the performance of your content in search results and helps you optimize your posts for better results. This report is generated on a monthly basis, covering the past 12 months leading up to the current month. By regularly reviewing this report, you can identify trends in your post rankings and make informed decisions to improve your content\'s visibility and ultimately increase rankings in search results.', this.$td)
+				title : __('Content Rankings', td),
+				alert : __('The Content Rankings report provides valuable insights into the performance of your content in search results and helps you optimize your posts for better results. This report is generated on a monthly basis, covering the past 12 months leading up to the current month. By regularly reviewing this report, you can identify trends in your post rankings and make informed decisions to improve your content\'s visibility and ultimately increase rankings in search results.', td)
 			},
 			defaultPages : {
 				rows   : [],

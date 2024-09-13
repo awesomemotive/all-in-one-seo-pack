@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	usePostEditorStore,
@@ -27,6 +29,11 @@ import addons from '@/vue/utils/addons'
 import urlMethods from 'url'
 import SvgCircleInformation from '@/vue/components/common/svg/circle/Information'
 import SvgClose from '@/vue/components/common/svg/Close'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -45,10 +52,10 @@ export default {
 			disabled        : false,
 			url             : null,
 			strings         : {
-				upsell : this.$t.sprintf(
+				upsell : sprintf(
 					// Translators: 1 - Learn more link.
-					this.$t.__('Did you know you can automatically add internal links using Link Assistant? %1$s', this.$td),
-					this.$links.getPlainLink(this.$constants.GLOBAL_STRINGS.learnMore, this.rootStore.aioseo.urls.aio.linkAssistant, true)
+					__('Did you know you can automatically add internal links using Link Assistant? %1$s', td),
+					links.getPlainLink(GLOBAL_STRINGS.learnMore, this.rootStore.aioseo.urls.aio.linkAssistant, true)
 				)
 			}
 		}

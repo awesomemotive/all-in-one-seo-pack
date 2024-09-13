@@ -18,12 +18,16 @@
 </template>
 
 <script>
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	data () {
 		return {
 			strings : {
-				vatID : this.$t.__('VAT ID:', this.$td),
-				taxID : this.$t.__('Tax ID:', this.$td)
+				vatID : __('VAT ID:', td),
+				taxID : __('Tax ID:', td)
 			}
 		}
 	}

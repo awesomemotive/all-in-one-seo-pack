@@ -10,24 +10,21 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
 import Lite from './lite/dashboard/Index'
 import Dashboard from './dashboard/Index'
-import { LicenseConditions } from '@/vue/mixins/LicenseConditions'
-export default {
-	setup () {
-		return {
-			searchStatisticsStore : useSearchStatisticsStore()
-		}
-	},
-	mixins     : [ LicenseConditions ],
-	components : {
-		Dashboard,
-		Lite
-	}
-}
+
+import { useLicense } from '@/vue/composables/License'
+
+const searchStatisticsStore = useSearchStatisticsStore()
+
+const {
+	shouldShowLite,
+	shouldShowMain,
+	shouldShowUpgrade
+} = useLicense()
 </script>

@@ -16,25 +16,26 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import OpeningHours from './AIOSEO_VERSION/opening-hours/OpeningHours'
 import Cta from './AIOSEO_VERSION/partials/Cta'
 import Lite from './lite/opening-hours/OpeningHours'
-import { AddonConditions } from '@/vue/mixins/AddonConditions'
-export default {
-	mixins     : [ AddonConditions ],
-	components : {
-		OpeningHours,
-		Cta,
-		Lite
-	},
-	data () {
-		return {
-			addonSlug : 'aioseo-local-business',
-			strings   : {
-				openingHours : this.$t.__('Opening Hours Settings', this.$td)
-			}
-		}
-	}
+import { useAddonConditions } from '@/vue/composables/AddonConditions'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
+const {
+	shouldShowActivate,
+	shouldShowLite,
+	shouldShowMain,
+	shouldShowUpdate
+} = useAddonConditions({
+	addonSlug : 'aioseo-local-business'
+})
+
+const strings = {
+	openingHours : __('Opening Hours Settings', td)
 }
 </script>

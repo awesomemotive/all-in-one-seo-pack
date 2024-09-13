@@ -1,10 +1,10 @@
 === All in One SEO – Powerful SEO Plugin to Boost SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
-Tested up to: 6.6.1
+Tested up to: 6.6.2
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.7.0
+Stable tag: 4.7.1.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,6 +226,36 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.7.1.1**
+
+* New: Remove Category Base feature now available for free for AIOSEO Lite users!
+* Updated: Added additional TruSEO Spanish transition words for more accurate analysis.
+* Updated: The Overview dashboard widget is now hidden when TruSEO is disabled.
+* Updated: Improved DB performance of sitemap terms last modified date query for large sites using MariaDB.
+* Updated: Added filter to customize the Table of Contents block URL anchor prefix.
+* Updated: Updated redirects log cleanup to run hourly for more efficient log management.
+* Updated: Social meta image custom field option now supports ACF gallery fields.
+* Updated: Local SEO locations block now supports hierarchical locations.
+* Fixed: Permissions check for Redirects server test route.
+* Fixed: Deactivation survey would sometimes not open correctly.
+* Fixed: Schema now outputs the correct country code for South Korea.
+* Fixed: Custom headers for Redirects are no longer applied in Divi/Elementor builder pages.
+* Fixed: Headline Analyzer editor toolbar button not appearing in WordPress versions below 6.4.
+* Fixed: Removed the Headline Analyzer score from the All Products screen for WooCommerce Products.
+* Fixed: Dashboard widget now only displays posts eligible for page analysis.
+* Fixed: HTML Sitemap URL validation for subfolder installations.
+* Fixed: max-snippet tag is no longer removed when set to '0' in Global Robots Meta.
+* Fixed: Incorrect TruSEO results for content written in hebrew.
+* Fixed: Facebook article tags sometimes not rendered after page refresh.
+* Fixed: Misplacement of graph data when deleting repeatable graph sections in Schema Generator.
+* Fixed: Pre-Publish Panel edit icons sometimes not fully working correctly.
+* Fixed: Duplication of meta tags conflict with WPBakery 7.4 SEO toolkit.
+* Fixed: Date and Priority fields were not being imported correctly when importing CSV for Additional Pages for Sitemaps.
+* Fixed: Publish and Last Modified dates were not being displayed correctly for multilingual posts in sitemaps.
+* Fixed: Breadcrumbs trail with HTML tags in a post/page title not rendered correctly.
+* Fixed: Redirect's logs and 404 logs bulk actions would deselect all items when opening the confirmation modal.
+* Fixed: Addon updates sometimes not displayed on Plugins page.
+
 **New in Version 4.7.0**
 
 * New: Keyword Rank Tracker - Track your most important keywords and add them to groups to see how your site is performing for key topics in Google search results.
@@ -419,6 +449,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.7.0 =
+= 4.7.1.1 =
 
 This update adds major improvements and bug fixes.

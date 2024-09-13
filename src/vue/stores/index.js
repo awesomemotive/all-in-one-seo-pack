@@ -36,7 +36,7 @@ import { useSemrushStore } from '@/vue/stores/integrations/SemrushStore'
 import { useWpCodeStore } from '@/vue/stores/integrations/WpCodeStore'
 
 import { merge } from 'lodash-es'
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 import { markRaw } from 'vue'
 
 const pinia = createPinia()

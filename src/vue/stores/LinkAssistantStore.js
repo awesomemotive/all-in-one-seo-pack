@@ -88,7 +88,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 	}),
 	actions : {
 		linkDelete ({ postId, linkId, linksReport, postReport }) {
-			const slug = linksReport ? 'links-report-inner' : postReport ? 'post-report' : 'post-settings'
+			const slug = linksReport ? 'links-report-inner' : (postReport ? 'post-report' : 'post-settings')
 			return http.post(links.restUrl(`link-assistant/${slug}/links/delete`))
 				.send({
 					postId : postId,
@@ -118,7 +118,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		linksBulk ({ postId, action, linkType, linkIds, linksReport, postReport }) {
-			const slug = linksReport ? 'links-report-inner' : postReport ? 'post-report' : 'post-settings'
+			const slug = linksReport ? 'links-report-inner' : (postReport ? 'post-report' : 'post-settings')
 			return http.post(links.restUrl(`link-assistant/${slug}/links/bulk`))
 				.send({
 					postId   : postId,
@@ -150,7 +150,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		linksRefresh ({ postId, linksReport, postReport }) {
-			const slug = linksReport ? 'links-report-inner' : postReport ? 'post-report' : 'post-settings'
+			const slug = linksReport ? 'links-report-inner' : (postReport ? 'post-report' : 'post-settings')
 			return http.post(links.restUrl(`link-assistant/${slug}/refresh`))
 				.send({
 					postId : postId
@@ -192,7 +192,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 					}
 
 					if (linksReport) {
-						if (postIndex) {
+						if (postIndex || 0 === postIndex) {
 							this.linksReport.rows[postIndex].links = response.body.links
 						}
 
@@ -202,7 +202,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		suggestionsBulk ({ postId, action, suggestionType, suggestionRows, linksReport, postReport }) {
-			const slug = linksReport ? 'links-report-inner' : postReport ? 'post-report' : 'post-settings'
+			const slug = linksReport ? 'links-report-inner' : (postReport ? 'post-report' : 'post-settings')
 			return http.post(links.restUrl(`link-assistant/${slug}/suggestions/bulk`))
 				.send({
 					postId         : postId,
@@ -227,7 +227,6 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 					if (postReport) {
 						return
 					}
-
 					if (linksReport) {
 						this.setLinksReportCounts()
 					}
@@ -256,7 +255,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 					additionalFilters
 				})
 				.then(response => {
-					if (additionalFilters.postIndex) {
+					if (additionalFilters?.postIndex) {
 						this.linksReport.rows[additionalFilters.postIndex].links = response.body.links
 					}
 

@@ -55,6 +55,13 @@ class Tags {
 			$string = aioseo()->helpers->stripPunctuation( $string );
 		}
 
+		// Remove any remaining tags from the title attribute.
+		$string = preg_replace_callback( '/title="([^"]*)"/i', function ( $matches ) {
+			$sanitizedTitle = wp_strip_all_tags( html_entity_decode( $matches[1] ) );
+
+			return 'title="' . esc_attr( $sanitizedTitle ) . '"';
+		}, html_entity_decode( $string ) );
+
 		return preg_replace(
 			'/>thisisjustarandomplaceholder<(?![a-zA-Z0-9_])/im',
 			aioseo()->helpers->decodeHtmlEntities( aioseo()->options->searchAppearance->global->separator ),

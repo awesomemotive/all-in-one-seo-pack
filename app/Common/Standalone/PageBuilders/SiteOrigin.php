@@ -42,7 +42,7 @@ class SiteOrigin extends Base {
 	public function init() {
 		$postType = get_post_type( $this->getPostId() );
 		if ( empty( $postType ) ) {
-			$postType = ! empty( $_GET['post_type'] ) ? sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) : 'post'; // phpcs:ignore HM.Security.NonceVerification.Recommended
+			$postType = ! empty( $_GET['post_type'] ) ? sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) : 'post'; // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended, Generic.Files.LineLength.MaxExceeded
 		}
 
 		if ( ! aioseo()->postSettings->canAddPostSettingsMetabox( $postType ) ) {

@@ -4,11 +4,10 @@ import { debounce } from '@/vue/utils/debounce'
 import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import { loadPiniaStores } from '@/vue/stores'
-import TruSeo from '@/vue/plugins/tru-seo'
 
-import Button from './components/Button.vue'
-import Sidebar from './components/Sidebar.vue'
-import LimitModifiedDate from './components/LimitModifiedDate.vue'
+import Button from './components/Button'
+import Sidebar from './components/Sidebar'
+import LimitModifiedDate from './components/LimitModifiedDate'
 
 let btnApp = null,
 	sidebarApp = null,
@@ -50,8 +49,6 @@ const mountComponent = ({ id, component, name, rootProps, data }) => {
 
 	// Use the pinia store.
 	loadPiniaStores(app)
-
-	app.config.globalProperties.$truSeo = new TruSeo()
 
 	app.mount(id)
 

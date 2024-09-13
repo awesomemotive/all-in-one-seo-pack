@@ -45,6 +45,10 @@
 </template>
 
 <script>
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	emits : [ 'startAnalyzing' ],
 	props : {
@@ -74,7 +78,7 @@ export default {
 		return {
 			input   : null,
 			strings : {
-				analyze : this.$t.__('Analyze', this.$td)
+				analyze : __('Analyze', td)
 			}
 		}
 	},

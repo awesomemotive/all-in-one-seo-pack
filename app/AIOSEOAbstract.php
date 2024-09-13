@@ -349,9 +349,10 @@ abstract class AIOSEOAbstract {
 	/**
 	 * CategoryBase class instance.
 	 *
-	 * @since 4.2.7
+	 * @since   4.2.7
+	 * @version 4.7.1 Moved from Pro to Common.
 	 *
-	 * @var null|\AIOSEO\Plugin\Pro\Main\CategoryBase
+	 * @var null|\AIOSEO\Plugin\Common\Main\CategoryBase
 	 */
 	public $categoryBase = null;
 

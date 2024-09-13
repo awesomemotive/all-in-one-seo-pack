@@ -25,26 +25,27 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref } from 'vue'
 
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import KeywordRankings from '../keyword-rankings/Index'
 import RankTracker from './RankTracker'
 
-const $t = inject('$t')
-const $tdPro = inject('$tdPro')
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const activeTab = ref('rank-tracker')
 
 const tabs = [
 	{
 		slug : 'rank-tracker',
-		name : $t.__('Rank Tracker', $tdPro)
+		name : __('Rank Tracker', td)
 	},
 	{
 		slug : 'all-keywords',
-		name : $t.__('All Keywords', $tdPro)
+		name : __('All Keywords', td)
 	}
 ]
 </script>

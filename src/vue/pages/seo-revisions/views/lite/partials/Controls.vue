@@ -45,6 +45,10 @@
 <script>
 import SvgSliderHandle from '@/vue/components/common/svg/seo-revisions/SliderHandle'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		SvgSliderHandle
@@ -52,9 +56,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				compareTwoRevisions : this.$t.__('Compare any two revisions', this.$td),
-				next                : this.$t.__('Next', this.$td),
-				previous            : this.$t.__('Previous', this.$td)
+				compareTwoRevisions : __('Compare any two revisions', td),
+				next                : __('Next', td),
+				previous            : __('Previous', td)
 			}
 		}
 	}

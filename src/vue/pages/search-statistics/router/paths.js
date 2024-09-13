@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 import { RequiresUpgrade } from '@/vue/router/middleware'
 
 const td       = import.meta.env.VITE_TEXTDOMAIN

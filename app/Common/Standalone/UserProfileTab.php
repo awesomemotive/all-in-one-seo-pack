@@ -110,7 +110,7 @@ class UserProfileTab {
 	 * @return void
 	 */
 	public function updateUserSocialProfiles( $userId ) {
-		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'update-user_' . $userId ) ) {
+		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'update-user_' . $userId ) ) {
 			return;
 		}
 

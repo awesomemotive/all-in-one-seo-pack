@@ -15,7 +15,7 @@
 					:tabs="tabs"
 					:showSaveButton="false"
 					:active="activeTab"
-					@changed="value => this.activeTab = value"
+					@changed="value => activeTab = value"
 				>
 					<template #var-tab-icon="{ tab }">
 						<component :is="tab.icon" />
@@ -26,7 +26,7 @@
 					<div class="component-container">
 						<div
 							class="component-wrapper"
-							:class="'tab'+activeTab + ' ' + 'tab' + activeTab + '--' + device"
+							:class="'tab' + activeTab + ' ' + 'tab' + activeTab + '--' + device"
 						>
 							<component
 								:is="activeTab"
@@ -110,6 +110,10 @@ import ViewGoogle from './views/Google'
 import ViewSeoInspector from './views/SeoInspector'
 import ViewTwitter from './views/Twitter'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -131,6 +135,86 @@ export default {
 		ViewGoogle,
 		ViewSeoInspector,
 		ViewTwitter
+	},
+	data () {
+		return {
+			teleportTo                : this.getShadowRoot() ? this.getShadowRoot().querySelector('#aioseo-modal-portal') : '#aioseo-modal-portal',
+			activeTab                 : 'ViewGoogle',
+			device                    : 'desktop',
+			display                   : null,
+			loadingEditPreviewDataBtn : false,
+			strings                   : {
+				modalHeader : __('SEO Preview', td)
+			},
+			tabs : [
+				{
+					slug      : 'ViewGoogle',
+					icon      : 'svg-icon-google',
+					name      : 'Google',
+					component : 'ViewGoogle'
+				},
+				{
+					slug      : 'ViewFacebook',
+					icon      : 'svg-icon-facebook',
+					name      : 'Facebook',
+					component : 'ViewFacebook'
+				},
+				{
+					slug      : 'ViewTwitter',
+					icon      : 'svg-icon-twitter',
+					name      : 'X (Twitter)',
+					component : 'ViewTwitter'
+				},
+				{
+					slug      : 'ViewSeoInspector',
+					icon      : 'svg-icon-settings',
+					name      : __('SEO Inspector', td),
+					component : 'ViewSeoInspector'
+				}
+			]
+		}
+	},
+	computed : {
+		editSnippetData () {
+			const data = {
+				url     : '',
+				btnText : ''
+			}
+
+			if ('ViewGoogle' === this.activeTab) {
+				data.url     = this.rootStore.aioseo.editGoogleSnippetUrl || ''
+				data.btnText = __('Edit Snippet', td)
+
+				return data
+			}
+
+			if ('ViewFacebook' === this.activeTab) {
+				data.url     = this.rootStore.aioseo.editFacebookSnippetUrl || ''
+				data.btnText = __('Edit Facebook Meta Data', td)
+
+				return data
+			}
+
+			if ('ViewTwitter' === this.activeTab) {
+				data.url     = this.rootStore.aioseo.editTwitterSnippetUrl || ''
+				data.btnText = __('Edit X Meta Data', td)
+			}
+
+			return data
+		},
+		editObjectData () {
+			const data = {
+				url     : '',
+				btnText : ''
+			}
+
+			if ('ViewSeoInspector' === this.activeTab) {
+				data.url = this.rootStore.aioseo.editObjectUrl || ''
+				data.btnText = this.rootStore.aioseo.editObjectBtnText || ''
+			}
+
+			return data
+		}
 	},
 	methods : {
 		getShadowRoot () {
@@ -170,86 +254,6 @@ export default {
 			}
 		}
 	},
-	data () {
-		return {
-			teleportTo                : this.getShadowRoot() ? this.getShadowRoot().querySelector('#aioseo-modal-portal') : '#aioseo-modal-portal',
-			activeTab                 : 'ViewGoogle',
-			device                    : 'desktop',
-			display                   : null,
-			loadingEditPreviewDataBtn : false,
-			strings                   : {
-				modalHeader : this.$t.__('SEO Preview', this.$td)
-			},
-			tabs : [
-				{
-					slug      : 'ViewGoogle',
-					icon      : 'svg-icon-google',
-					name      : 'Google',
-					component : 'ViewGoogle'
-				},
-				{
-					slug      : 'ViewFacebook',
-					icon      : 'svg-icon-facebook',
-					name      : 'Facebook',
-					component : 'ViewFacebook'
-				},
-				{
-					slug      : 'ViewTwitter',
-					icon      : 'svg-icon-twitter',
-					name      : 'X (Twitter)',
-					component : 'ViewTwitter'
-				},
-				{
-					slug      : 'ViewSeoInspector',
-					icon      : 'svg-icon-settings',
-					name      : this.$t.__('SEO Inspector', this.$td),
-					component : 'ViewSeoInspector'
-				}
-			]
-		}
-	},
-	computed : {
-		editSnippetData () {
-			const data = {
-				url     : '',
-				btnText : ''
-			}
-
-			if ('ViewGoogle' === this.activeTab) {
-				data.url     = this.rootStore.aioseo.editGoogleSnippetUrl || ''
-				data.btnText = this.$t.__('Edit Snippet', this.$td)
-
-				return data
-			}
-
-			if ('ViewFacebook' === this.activeTab) {
-				data.url     = this.rootStore.aioseo.editFacebookSnippetUrl || ''
-				data.btnText = this.$t.__('Edit Facebook Meta Data', this.$td)
-
-				return data
-			}
-
-			if ('ViewTwitter' === this.activeTab) {
-				data.url     = this.rootStore.aioseo.editTwitterSnippetUrl || ''
-				data.btnText = this.$t.__('Edit X Meta Data', this.$td)
-			}
-
-			return data
-		},
-		editObjectData () {
-			const data = {
-				url     : '',
-				btnText : ''
-			}
-
-			if ('ViewSeoInspector' === this.activeTab) {
-				data.url = this.rootStore.aioseo.editObjectUrl || ''
-				data.btnText = this.rootStore.aioseo.editObjectBtnText || ''
-			}
-
-			return data
-		}
-	},
 	mounted () {
 		this.styleShadowDom()
 		this.watchClicks()
@@ -282,7 +286,6 @@ export default {
 		.modal-container {
 			display: flex;
 			flex-direction: column;
-			height: 720px;
 
 			.modal-header {
 				flex: 0 0 60px;
@@ -296,7 +299,7 @@ export default {
 			}
 
 			.modal-body {
-				flex: 1 1 100%;
+				flex: 1 1 600px;
 			}
 
 			&__footer {

@@ -152,20 +152,32 @@ import {
 	useToolsStore
 } from '@/vue/stores'
 
-import { Network } from '@/vue/mixins/Network'
+import { useNetwork } from '@/vue/composables/Network'
+
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreResetSettings from '@/vue/components/common/core/ResetSettings'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgCheckmark from '@/vue/components/common/svg/Checkmark'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getSites,
+			getUniqueSiteId
+		} = useNetwork()
+
 		return {
 			optionsStore : useOptionsStore(),
 			rootStore    : useRootStore(),
-			toolsStore   : useToolsStore()
+			toolsStore   : useToolsStore(),
+			getSites,
+			getUniqueSiteId
 		}
 	},
-	mixins     : [ Network ],
 	components : {
 		CoreCard,
 		CoreResetSettings,
@@ -183,17 +195,17 @@ export default {
 			},
 			loadingLog : null,
 			strings    : {
-				selectSite             : this.$t.__('Select Site', this.$td),
-				resetRestoreSettings   : this.$t.__('Reset / Restore Settings', this.$td),
-				logs                   : this.$t.__('Logs', this.$td),
-				badBotBlockerLogs      : this.$t.__('Bad Bot Blocker Logs', this.$td),
-				cleared                : this.$t.__('Cleared', this.$td),
-				clearBadBotBlockerLogs : this.$t.__('Clear Bad Bot Blocker Logs', this.$td),
-				logs404                : this.$t.__('404 Logs', this.$td),
-				clear404Logs           : this.$t.__('Clear 404 Logs', this.$td),
-				redirectLogs           : this.$t.__('Redirect Logs', this.$td),
-				clearRedirectLogs      : this.$t.__('Clear Redirect Logs', this.$td),
-				logsTooltip            : this.$t.__('Log sizes may fluctuate and not always be 100% accurate since the results can be cached. Also after clearing a log, it may not show as "0" since database tables also include additional information such as indexes that we don\'t clear.', this.$td)
+				selectSite             : __('Select Site', td),
+				resetRestoreSettings   : __('Reset / Restore Settings', td),
+				logs                   : __('Logs', td),
+				badBotBlockerLogs      : __('Bad Bot Blocker Logs', td),
+				cleared                : __('Cleared', td),
+				clearBadBotBlockerLogs : __('Clear Bad Bot Blocker Logs', td),
+				logs404                : __('404 Logs', td),
+				clear404Logs           : __('Clear 404 Logs', td),
+				redirectLogs           : __('Redirect Logs', td),
+				clearRedirectLogs      : __('Clear Redirect Logs', td),
+				logsTooltip            : __('Log sizes may fluctuate and not always be 100% accurate since the results can be cached. Also after clearing a log, it may not show as "0" since database tables also include additional information such as indexes that we don\'t clear.', td)
 			}
 		}
 	},

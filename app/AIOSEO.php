@@ -311,7 +311,7 @@ namespace AIOSEO\Plugin {
 			$this->sitemap            = $this->pro ? new Pro\Sitemap\Sitemap() : new Common\Sitemap\Sitemap();
 			$this->htmlSitemap        = new Common\Sitemap\Html\Sitemap();
 			$this->templates          = $this->pro ? new Pro\Utils\Templates() : new Common\Utils\Templates();
-			$this->categoryBase       = $this->pro ? new Pro\Main\CategoryBase() : null;
+			$this->categoryBase       = new Common\Main\CategoryBase();
 			$this->postSettings       = $this->pro ? new Pro\Admin\PostSettings() : new Lite\Admin\PostSettings();
 			$this->standalone         = new Common\Standalone\Standalone();
 			$this->searchStatistics   = $this->pro ? new Pro\SearchStatistics\SearchStatistics() : new Common\SearchStatistics\SearchStatistics();
@@ -334,31 +334,7 @@ namespace AIOSEO\Plugin {
 
 			$this->backwardsCompatibilityLoad();
 
-			if ( wp_doing_ajax() ) {
-				add_action( 'init', [ $this, 'loadAjaxInit' ], 999 );
-
-				return;
-			}
-
-			if ( wp_doing_cron() ) {
-				// We need to allow the auto-update cron job to check for updates.
-				$this->addons->registerUpdateCheck();
-
-				return;
-			}
-
 			add_action( 'init', [ $this, 'loadInit' ], 999 );
-		}
-
-		/**
-		 * Things that need to load after init, on AJAX requests.
-		 *
-		 * @since 4.2.4
-		 *
-		 * @return void
-		 */
-		public function loadAjaxInit() {
-			$this->addons->registerUpdateCheck();
 		}
 
 		/**
@@ -377,12 +353,6 @@ namespace AIOSEO\Plugin {
 
 			// We call this again to reset any post types/taxonomies that have not yet been set up.
 			$this->dynamicOptions->refresh();
-
-			if ( ! $this->pro ) {
-				return;
-			}
-
-			$this->addons->registerUpdateCheck();
 		}
 
 		/**

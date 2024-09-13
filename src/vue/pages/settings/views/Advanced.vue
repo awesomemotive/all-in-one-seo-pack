@@ -51,7 +51,7 @@
 						{{ strings.selectPostTypes }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'selectPostTypesColumns', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypesColumns', true)"
 						/>
 					</div>
 				</template>
@@ -92,7 +92,7 @@
 						{{ strings.selectTaxonomies }}
 
 						<span
-							v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'selectTaxonomiesColumns', true)"
+							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectTaxonomiesColumns', true)"
 						/>
 					</div>
 
@@ -120,8 +120,8 @@
 						v-model="adminBarMenu"
 						name="adminBarMenu"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.hide, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.show, value: true }
+							{ label: GLOBAL_STRINGS.hide, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.show, value: true }
 						]"
 					/>
 
@@ -192,8 +192,8 @@
 						v-model="optionsStore.options.advanced.announcements"
 						name="announcements"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.hide, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.show, value: true }
+							{ label: GLOBAL_STRINGS.hide, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.show, value: true }
 						]"
 					/>
 
@@ -227,7 +227,7 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="!$isPro"
+				v-if="!rootStore.isPro"
 			>
 				<template #name>
 					{{ strings.usageTracking }}
@@ -313,6 +313,8 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	useOptionsStore,
@@ -333,12 +335,18 @@ import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
 			licenseStore : useLicenseStore(),
 			optionsStore : useOptionsStore(),
-			rootStore    : useRootStore()
+			rootStore    : useRootStore(),
+			GLOBAL_STRINGS,
+			links
 		}
 	},
 	components : {
@@ -358,99 +366,99 @@ export default {
 		return {
 			openAiKeyInvalid : false,
 			strings          : {
-				advanced                    : this.$t.__('Advanced Settings', this.$td),
-				truSeo                      : this.$t.__('TruSEO Score & Content', this.$td),
-				truSeoDescription           : this.$t.__('Enable our TruSEO score to help you optimize your content for maximum traffic.', this.$td),
-				headlineAnalyzer            : this.$t.__('Headline Analyzer', this.$td),
-				headlineAnalyzerDescription : this.$t.__('Enable our Headline Analyzer to help you write irresistible headlines and rank better in search results.', this.$td),
-				seoAnalysis                 : this.$t.__('SEO Analysis', this.$td),
-				postTypeColumns             : this.$t.__('Post Type Columns', this.$td),
-				includeAllPostTypes         : this.$t.__('Include All Post Types', this.$td),
-				selectPostTypes             : this.$t.sprintf(
+				advanced                    : __('Advanced Settings', td),
+				truSeo                      : __('TruSEO Score & Content', td),
+				truSeoDescription           : __('Enable our TruSEO score to help you optimize your content for maximum traffic.', td),
+				headlineAnalyzer            : __('Headline Analyzer', td),
+				headlineAnalyzerDescription : __('Enable our Headline Analyzer to help you write irresistible headlines and rank better in search results.', td),
+				seoAnalysis                 : __('SEO Analysis', td),
+				postTypeColumns             : __('Post Type Columns', td),
+				includeAllPostTypes         : __('Include All Post Types', td),
+				selectPostTypes             : sprintf(
 					// Translators: 1 - Plugin Short Name ("AIOSEO").
-					this.$t.__('Select which Post Types you want to use the %1$s columns with.', this.$td),
+					__('Select which Post Types you want to use the %1$s columns with.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				usageTracking           : this.$t.__('Usage Tracking', this.$td),
-				adminBarMenu            : this.$t.__('Admin Bar Menu', this.$td),
-				adminBarMenuDescription : this.$t.sprintf(
+				usageTracking           : __('Usage Tracking', td),
+				adminBarMenu            : __('Admin Bar Menu', td),
+				adminBarMenuDescription : sprintf(
 					// Translators: 1 - Plugin Short Name ("AIOSEO").
-					this.$t.__('This adds %1$s to the admin toolbar for easy access to your SEO settings.', this.$td),
+					__('This adds %1$s to the admin toolbar for easy access to your SEO settings.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				dashboardWidgets            : this.$t.__('Dashboard Widgets', this.$td),
-				dashboardWidgetsDescription : this.$t.sprintf(
+				dashboardWidgets            : __('Dashboard Widgets', td),
+				dashboardWidgetsDescription : sprintf(
 					// Translators: 1 - Plugin Short Name ("AIOSEO").
-					this.$t.__('Select which %1$s widgets to display on the dashboard.', this.$td),
+					__('Select which %1$s widgets to display on the dashboard.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				announcements            : this.$t.__('Announcements', this.$td),
-				announcementsDescription : this.$t.__('This allows you to hide plugin announcements and update details in the Notification Center.', this.$td),
-				automaticUpdates         : this.$t.__('Automatic Updates', this.$td),
-				all                      : this.$t.__('All (recommended)', this.$td),
-				allDescription           : this.$t.__('You are getting the latest features, bugfixes, and security updates as they are released.', this.$td),
-				minor                    : this.$t.__('Minor Only', this.$td),
-				minorDescription         : this.$t.__('You are getting bugfixes and security updates, but not major features.', this.$td),
-				none                     : this.$t.__('None', this.$td),
-				noneDescription          : this.$t.__('You will need to manually update everything.', this.$td),
-				usageTrackingDescription : this.$t.__('By allowing us to track usage data we can better help you as we will know which WordPress configurations, themes and plugins we should test.', this.$td),
-				usageTrackingTooltip     : this.$t.sprintf(
+				announcements            : __('Announcements', td),
+				announcementsDescription : __('This allows you to hide plugin announcements and update details in the Notification Center.', td),
+				automaticUpdates         : __('Automatic Updates', td),
+				all                      : __('All (recommended)', td),
+				allDescription           : __('You are getting the latest features, bugfixes, and security updates as they are released.', td),
+				minor                    : __('Minor Only', td),
+				minorDescription         : __('You are getting bugfixes and security updates, but not major features.', td),
+				none                     : __('None', td),
+				noneDescription          : __('You will need to manually update everything.', td),
+				usageTrackingDescription : __('By allowing us to track usage data we can better help you as we will know which WordPress configurations, themes and plugins we should test.', td),
+				usageTrackingTooltip     : sprintf(
 					// Translators: 1 - Opening HTML link and bold tag, 2 - Closing HTML link and bold tag.
-					this.$t.__('Complete documentation on usage tracking is available %1$shere%2$s.', this.$td),
-					this.$t.sprintf(
+					__('Complete documentation on usage tracking is available %1$shere%2$s.', td),
+					sprintf(
 						'<strong><a href="%1$s" target="_blank">',
-						this.$links.getDocUrl('usageTracking')
+						links.getDocUrl('usageTracking')
 					),
 					'</a></strong>'
 				),
-				adminBarMenuUpsell : this.$t.sprintf(
+				adminBarMenuUpsell : sprintf(
 					// Translators: 1 - "PRO", 2 - "Learn more".
-					this.$t.__('Admin Bar Menu is a %1$s feature. %2$s', this.$td),
+					__('Admin Bar Menu is a %1$s feature. %2$s', td),
 					'PRO',
-					this.$links.getUpsellLink('general-settings-advanced', this.$constants.GLOBAL_STRINGS.learnMore, 'admin-bar-menu', true)
+					links.getUpsellLink('general-settings-advanced', GLOBAL_STRINGS.learnMore, 'admin-bar-menu', true)
 				),
-				dashboardWidgetsUpsell : this.$t.sprintf(
+				dashboardWidgetsUpsell : sprintf(
 					// Translators: 1 - "PRO", 2 - "Learn more".
-					this.$t.__('Dashboard Widgets is a %1$s feature. %2$s', this.$td),
+					__('Dashboard Widgets is a %1$s feature. %2$s', td),
 					'PRO',
-					this.$links.getUpsellLink('general-settings-advanced', this.$constants.GLOBAL_STRINGS.learnMore, 'dashboard-widget', true)
+					links.getUpsellLink('general-settings-advanced', GLOBAL_STRINGS.learnMore, 'dashboard-widget', true)
 				),
-				taxonomyColumns      : this.$t.__('Taxonomy Columns', this.$td),
-				includeAllTaxonomies : this.$t.__('Include All Taxonomies', this.$td),
-				selectTaxonomies     : this.$t.sprintf(
+				taxonomyColumns      : __('Taxonomy Columns', td),
+				includeAllTaxonomies : __('Include All Taxonomies', td),
+				selectTaxonomies     : sprintf(
 					// Translators: 1 - Plugin Short Name ("AIOSEO").
-					this.$t.__('Select which Taxonomies you want to use the %1$s columns with.', this.$td),
+					__('Select which Taxonomies you want to use the %1$s columns with.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				taxonomyColumnsUpsell : this.$t.sprintf(
+				taxonomyColumnsUpsell : sprintf(
 					// Translators: 1 - "PRO", 2 - "Learn more".
-					this.$t.__('Taxonomy Columns is a %1$s feature. %2$s', this.$td),
+					__('Taxonomy Columns is a %1$s feature. %2$s', td),
 					'PRO',
-					this.$links.getUpsellLink('general-settings-advanced', this.$constants.GLOBAL_STRINGS.learnMore, 'taxonomy-columns', true)
+					links.getUpsellLink('general-settings-advanced', GLOBAL_STRINGS.learnMore, 'taxonomy-columns', true)
 				),
-				uninstallAioseo : this.$t.sprintf(
+				uninstallAioseo : sprintf(
 					// Translators: 1 - Plugin Short Name ("AIOSEO").
-					this.$t.__('Uninstall %1$s', this.$td),
+					__('Uninstall %1$s', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				uninstallAioseoDescription : this.$t.sprintf(
+				uninstallAioseoDescription : sprintf(
 					// Translators: 1 - Plugin Short Name ("AIOSEO").
-					this.$t.__('Check this if you would like to remove ALL %1$s data upon plugin deletion. All settings and SEO data will be unrecoverable.', this.$td),
+					__('Check this if you would like to remove ALL %1$s data upon plugin deletion. All settings and SEO data will be unrecoverable.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				openAiKey            : this.$t.__('OpenAI API Key', this.$td),
-				openAiKeyDescription : this.$t.sprintf(
+				openAiKey            : __('OpenAI API Key', td),
+				openAiKeyDescription : sprintf(
 					// Translators: 1 - "Learn More" link.
-					this.$t.__('Enter an OpenAI API key in order to automatically generate SEO titles and meta descriptions for your pages. %1$s', this.$td),
-					this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'openAi', true)
+					__('Enter an OpenAI API key in order to automatically generate SEO titles and meta descriptions for your pages. %1$s', td),
+					links.getDocLink(GLOBAL_STRINGS.learnMore, 'openAi', true)
 				),
-				openAiKeyUpsell : this.$t.sprintf(
+				openAiKeyUpsell : sprintf(
 					// Translators: 1 - "PRO", 2 - "Learn more".
-					this.$t.__('OpenAI Integration is a %1$s feature. %2$s', this.$td),
+					__('OpenAI Integration is a %1$s feature. %2$s', td),
 					'PRO',
-					this.$links.getUpsellLink('general-settings-advanced', this.$constants.GLOBAL_STRINGS.learnMore, 'open-ai', true)
+					links.getUpsellLink('general-settings-advanced', GLOBAL_STRINGS.learnMore, 'open-ai', true)
 				),
-				openAiKeyInvalid : this.$t.__('The API key you have entered is invalid. Please check your API key and try again.', this.$td)
+				openAiKeyInvalid : __('The API key you have entered is invalid. Please check your API key and try again.', td)
 			}
 		}
 	},
@@ -467,18 +475,18 @@ export default {
 			return [
 				{
 					key     : 'seoSetup',
-					label   : this.$t.__('SEO Setup Wizard', this.$td),
-					tooltip : this.$t.__('Our SEO Setup Wizard dashboard widget helps you remember to finish setting up some initial crucial settings for your site to help you rank higher in search results. Once the setup wizard is completed this widget will automatically disappear.', this.$td)
+					label   : __('SEO Setup Wizard', td),
+					tooltip : __('Our SEO Setup Wizard dashboard widget helps you remember to finish setting up some initial crucial settings for your site to help you rank higher in search results. Once the setup wizard is completed this widget will automatically disappear.', td)
 				},
 				{
 					key     : 'seoOverview',
-					label   : this.$t.__('SEO Overview', this.$td),
-					tooltip : this.$t.__('Our SEO Overview widget helps you determine which posts or pages you should focus on for content updates to help you rank higher in search results.', this.$td)
+					label   : __('SEO Overview', td),
+					tooltip : __('Our SEO Overview widget helps you determine which posts or pages you should focus on for content updates to help you rank higher in search results.', td)
 				},
 				{
 					key     : 'seoNews',
-					label   : this.$t.__('SEO News', this.$td),
-					tooltip : this.$t.__('Our SEO News widget provides helpful links that enable you to get the most out of your SEO and help you continue to rank higher than your competitors in search results.', this.$td)
+					label   : __('SEO News', td),
+					tooltip : __('Our SEO News widget provides helpful links that enable you to get the most out of your SEO and help you continue to rank higher than your competitors in search results.', td)
 				}
 			]
 		}

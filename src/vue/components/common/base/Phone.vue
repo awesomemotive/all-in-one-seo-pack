@@ -14,9 +14,14 @@
 <script>
 import { DateTime } from 'luxon'
 import MazPhoneNumberInput from 'maz-ui/components/MazPhoneNumberInput'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	components : { MazPhoneNumberInput },
 	emits      : [ 'inputFormatted', 'update:modelValue' ],
+	components : { MazPhoneNumberInput },
 	props      : {
 		modelValue : String
 	},
@@ -27,12 +32,12 @@ export default {
 			isValidNumber   : false,
 			translations    : {
 				countrySelector : {
-					placeholder : this.$t.__('Country code', this.$td),
-					error       : this.$t.__('Choose country', this.$td)
+					placeholder : __('Country code', td),
+					error       : __('Choose country', td)
 				},
 				phoneInput : {
-					placeholder : this.$t.__('Phone number', this.$td),
-					example     : this.$t.__('Example', this.$td) + ':'
+					placeholder : __('Phone number', td),
+					example     : __('Example', td) + ':'
 				}
 			}
 		}

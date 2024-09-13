@@ -10,7 +10,7 @@
 				:floating="false"
 				:cta-link="links.utmUrl('toc-block')"
 				:button-text="'Unlock Reordering'"
-				:learn-more-link="links.getUpsellUrl('toc-block', null, $isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('toc-block', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 			>
 				<template #header-text>
 					{{strings.header}}
@@ -25,16 +25,26 @@
 </template>
 
 <script>
+import {
+	useRootStore
+} from '@/vue/stores'
 import links from '@/vue/utils/links'
 
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import Cta from '@/vue/components/common/cta/Index'
 
-const { __, sprintf } = window.wp.i18n
-const td              = import.meta.env.VITE_TEXTDOMAIN
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
-	emits      : [ 'closeModal' ],
+	emits : [ 'closeModal' ],
+	setup () {
+		return {
+			rootStore : useRootStore(),
+			links
+		}
+	},
 	components : {
 		CoreModal,
 		Cta
@@ -44,7 +54,6 @@ export default {
 	},
 	data () {
 		return {
-			links,
 			strings : {
 				header : sprintf(
 					// Translators: "PRO".

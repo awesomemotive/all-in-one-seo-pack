@@ -21,6 +21,11 @@ import ImportExport from './ImportExport'
 import RobotsEditor from './RobotsEditor'
 import SystemStatus from './SystemStatus'
 import WpCode from './WpCode'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -42,8 +47,8 @@ export default {
 		return {
 			strings : {
 				pageName : this.rootStore.aioseo.data.isNetworkAdmin
-					? this.$t.__('Network Tools', this.$td)
-					: this.$t.__('Tools', this.$td)
+					? __('Network Tools', td)
+					: __('Tools', td)
 			}
 		}
 	},

@@ -10,9 +10,9 @@
 		/>
 
 		<cta
-			:cta-link="$links.getPricingUrl('redirects', 'redirects-upsell', parentComponentContext ? parentComponentContext : null)"
+			:cta-link="links.getPricingUrl('redirects', 'redirects-upsell', parentComponentContext ? parentComponentContext : null)"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="$links.getUpsellUrl('redirects', parentComponentContext ? parentComponentContext : null, $isPro ? 'pricing' : 'liteUpgrade')"
+			:learn-more-link="links.getUpsellUrl('redirects', parentComponentContext ? parentComponentContext : null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="[
 				strings.serverRedirects,
 				strings.automaticRedirects,
@@ -36,17 +36,26 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
-	useLicenseStore
+	useLicenseStore,
+	useRootStore
 } from '@/vue/stores'
 
 import Blur from './Blur'
 import Cta from '@/vue/components/common/cta/Index'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
-			licenseStore : useLicenseStore()
+			licenseStore : useLicenseStore(),
+			rootStore    : useRootStore(),
+			links
 		}
 	},
 	components : {
@@ -61,19 +70,19 @@ export default {
 	data () {
 		return {
 			strings : {
-				ctaButtonText : this.$t.__('Unlock Redirects', this.$td),
-				ctaHeader     : this.$t.sprintf(
+				ctaButtonText : __('Unlock Redirects', td),
+				ctaHeader     : sprintf(
 					// Translators: 1 - "PRO".
-					this.$t.__('Redirects is a %1$s Feature', this.$td),
+					__('Redirects is a %1$s Feature', td),
 					'PRO'
 				),
-				serverRedirects      : this.$t.__('Fast Server Redirects', this.$td),
-				automaticRedirects   : this.$t.__('Automatic Redirects', this.$td),
-				redirectMonitoring   : this.$t.__('Redirect Monitoring', this.$td),
-				monitoring404        : this.$t.__('404 Monitoring', this.$td),
-				fullSiteRedirects    : this.$t.__('Full Site Redirects', this.$td),
-				siteAliases          : this.$t.__('Site Aliases', this.$td),
-				redirectsDescription : this.$t.__('Our Redirection Manager lets you easily create and manage redirects for broken links to avoid confusing search engines and users and prevents losing backlinks.', this.$td)
+				serverRedirects      : __('Fast Server Redirects', td),
+				automaticRedirects   : __('Automatic Redirects', td),
+				redirectMonitoring   : __('Redirect Monitoring', td),
+				monitoring404        : __('404 Monitoring', td),
+				fullSiteRedirects    : __('Full Site Redirects', td),
+				siteAliases          : __('Site Aliases', td),
+				redirectsDescription : __('Our Redirection Manager lets you easily create and manage redirects for broken links to avoid confusing search engines and users and prevents losing backlinks.', td)
 			}
 		}
 	}

@@ -110,6 +110,13 @@
 							@click.native="showMobileTabs = false"
 						>
 							{{ tab.name }}
+
+							<span
+								v-if="'new' === tab.label"
+								class="new"
+							>
+								{{ strings.new }}
+							</span>
 						</component>
 					</template>
 
@@ -139,7 +146,7 @@
 					type="blue"
 					size="medium"
 					:loading="rootStore.loading"
-					@click="processSaveChanges"
+					@click="processSaveChanges(route.name)"
 				>
 					{{ strings.saveChanges }}
 				</base-button>
@@ -153,15 +160,18 @@
 </template>
 
 <script>
+import { getCurrentInstance } from 'vue'
+import { useRoute } from 'vue-router'
+
 import {
 	usePostEditorStore,
 	useRootStore
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useTruSeoScore } from '@/vue/composables'
-import { SaveChanges } from '@/vue/mixins/SaveChanges'
-import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
+
+import { useSaveChanges } from '@/vue/composables/SaveChanges'
+import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
 
 import BaseButton from '@/vue/components/common/base/Button'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
@@ -172,17 +182,38 @@ import SvgEllipse from '@/vue/components/common/svg/Ellipse'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 import { Tab as VarTab, Tabs as VarTabs } from '@varlet/ui'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'changed' ],
 	setup () {
-		const { strings } = useTruSeoScore()
+		const app = getCurrentInstance()
+
+		let route = { name: '' }
+		if (!app?.root?.data?.screenContext) {
+			route = useRoute()
+		}
+
+		const { processSaveChanges } = useSaveChanges()
+
+		const {
+			getErrorClass,
+			getErrorDisplay,
+			strings
+		} = useTruSeoScore()
 
 		return {
+			composableStrings : strings,
+			getErrorClass,
+			getErrorDisplay,
 			postEditorStore   : usePostEditorStore(),
+			processSaveChanges,
 			rootStore         : useRootStore(),
-			composableStrings : strings
+			route
 		}
 	},
-	emits      : [ 'changed' ],
 	components : {
 		BaseButton,
 		CoreProBadge,
@@ -194,8 +225,7 @@ export default {
 		VarTab,
 		VarTabs
 	},
-	mixins : [ SaveChanges, TruSeoScore ],
-	props  : {
+	props : {
 		tabs : {
 			type     : Array,
 			required : true
@@ -218,8 +248,8 @@ export default {
 			calculateWidth : false,
 			showMobileTabs : false,
 			strings        : merge(this.composableStrings, {
-				saveChanges : this.$t.__('Save Changes', this.$td),
-				new         : this.$t.__('NEW!', this.$td)
+				saveChanges : __('Save Changes', td),
+				new         : __('NEW!', td)
 			})
 		}
 	},
@@ -559,6 +589,14 @@ export default {
 
 				&:hover {
 					color: $blue;
+				}
+
+				.new {
+					color: $red;
+					vertical-align: super;
+					font-size: 10px;
+					display: inline-block;
+					margin-top: -5px;
 				}
 			}
 		}

@@ -6,6 +6,7 @@
 import {
 	useLicenseStore,
 	useOptionsStore,
+	useRootStore,
 	useSearchStatisticsStore,
 	useSetupWizardStore
 } from '@/vue/stores'
@@ -26,6 +27,7 @@ export default {
 		return {
 			licenseStore          : useLicenseStore(),
 			optionsStore          : useOptionsStore(),
+			rootStore             : useRootStore(),
 			searchStatisticsStore : useSearchStatisticsStore(),
 			setupWizardStore      : useSetupWizardStore()
 		}
@@ -73,7 +75,7 @@ export default {
 			this.deleteStage('search-console')
 		}
 
-		if (this.$isPro) {
+		if (this.rootStore.isPro) {
 			this.deleteStage('smart-recommendations')
 		}
 	}

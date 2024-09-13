@@ -54,45 +54,20 @@ import BaseInput from '@/vue/components/common/base/Input'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 let customUploader = {}
 
 export default {
+	emits      : [ 'update:modelValue' ],
 	components : {
 		BaseButton,
 		BaseImg,
 		BaseInput,
 		SvgCirclePlus,
 		SvgTrash
-	},
-	emits   : [ 'update:modelValue' ],
-	methods : {
-		setImgSrc (src) {
-			this.$emit('update:modelValue', src)
-		},
-		openUploadModal () {
-			customUploader = window.wp.media({
-				title  : this.$t.__('Choose Image', this.$td),
-				button : {
-					text : this.$t.__('Choose Image', this.$td)
-				},
-				multiple : false
-			})
-
-			customUploader.on('select', () => {
-				const attachment = customUploader.state().get('selection').first().toJSON()
-
-				this.setImgSrc(attachment?.url || null)
-			})
-
-			customUploader.on('close', () => {
-				// Destroy the uploader HTML.
-				customUploader.detach()
-			})
-
-			this.$nextTick(() => {
-				customUploader.open()
-			})
-		}
 	},
 	props : {
 		baseSize : {
@@ -116,16 +91,45 @@ export default {
 	data () {
 		return {
 			strings : {
-				description         : this.$t.__('Minimum size: 112px x 112px, The image must be in JPG, PNG, GIF, SVG, or WEBP format.', this.$td),
-				pasteYourImageUrl   : this.$t.__('Paste your image URL or select a new image', this.$td),
-				remove              : this.$t.__('Remove', this.$td),
-				uploadOrSelectImage : this.$t.__('Upload or Select Image', this.$td)
+				description         : __('Minimum size: 112px x 112px, The image must be in JPG, PNG, GIF, SVG, or WEBP format.', td),
+				pasteYourImageUrl   : __('Paste your image URL or select a new image', td),
+				remove              : __('Remove', td),
+				uploadOrSelectImage : __('Upload or Select Image', td)
 			}
 		}
 	},
 	computed : {
 		iconWidth () {
 			return 'small' === this.baseSize ? '16' : '20'
+		}
+	},
+	methods : {
+		setImgSrc (src) {
+			this.$emit('update:modelValue', src)
+		},
+		openUploadModal () {
+			customUploader = window.wp.media({
+				title  : __('Choose Image', td),
+				button : {
+					text : __('Choose Image', td)
+				},
+				multiple : false
+			})
+
+			customUploader.on('select', () => {
+				const attachment = customUploader.state().get('selection').first().toJSON()
+
+				this.setImgSrc(attachment?.url || null)
+			})
+
+			customUploader.on('close', () => {
+				// Destroy the uploader HTML.
+				customUploader.detach()
+			})
+
+			this.$nextTick(() => {
+				customUploader.open()
+			})
 		}
 	}
 }

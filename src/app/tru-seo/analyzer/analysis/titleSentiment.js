@@ -1,7 +1,8 @@
 import Sentiment from 'sentiment'
 import { sentimentWords } from '../researches/config/sentimentWords'
 import { __ } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const scores = {
 	noSentimentWords       : 5,

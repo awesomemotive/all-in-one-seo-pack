@@ -44,6 +44,11 @@ import { escapeRegExp } from 'lodash-es'
 import { sanitizeString } from '@/vue/utils/strings'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import SvgExternal from '@/vue/components/common/svg/External'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	emits      : [ 'set-url' ],
 	components : {
@@ -60,9 +65,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				DRAFT   : this.$t.__('DRAFT', this.$td),
-				PENDING : this.$t.__('PENDING', this.$td),
-				FUTURE  : this.$t.__('FUTURE', this.$td)
+				DRAFT   : __('DRAFT', td),
+				PENDING : __('PENDING', td),
+				FUTURE  : __('FUTURE', td)
 			}
 		}
 	},

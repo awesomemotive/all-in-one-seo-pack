@@ -106,12 +106,12 @@
 				v-if="!searchStatisticsStore.shouldShowSampleReports"
 				cta-second-button-action
 				@cta-second-button-click="searchStatisticsStore.showSampleReports"
-				:cta-link="$links.getPricingUrl('search-statistics', 'search-statistics-upsell', 'keyword-rank-tracker')"
+				:cta-link="links.getPricingUrl('search-statistics', 'search-statistics-upsell', 'keyword-rank-tracker')"
 				:button-text="strings.ctaButtonText"
 				:second-button-text="strings.ctaSecondButtonText"
 				cta-second-button-new-badge
 				cta-second-button-visible
-				:learn-more-link="$links.getUpsellUrl('search-statistics', 'keyword-rank-tracker', $isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('search-statistics', 'keyword-rank-tracker', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 				:feature-list="[
 					strings.feature1,
 					strings.feature2,
@@ -135,11 +135,12 @@
 </template>
 
 <script setup>
-import { computed, inject } from 'vue'
+import { computed } from 'vue'
 
 import {
 	useKeywordRankTrackerStore,
 	useLicenseStore,
+	useRootStore,
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
@@ -150,26 +151,26 @@ import Cta from '@/vue/components/common/cta/Index'
 import Graph from '@/vue/pages/search-statistics/views/partials/Graph'
 import KeywordsTable from '../partials/keyword-rank-tracker/KeywordsTable'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
-import license from '@/vue/utils/license.js'
 
-const $t = inject('$t')
-const $td = inject('$td')
-const $links = inject('$links')
+import links from '@/vue/utils/links'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const keywordRankTrackerStore = useKeywordRankTrackerStore()
-const licenseStore = useLicenseStore()
-const searchStatisticsStore = useSearchStatisticsStore()
+const licenseStore            = useLicenseStore()
+const rootStore               = useRootStore()
+const searchStatisticsStore   = useSearchStatisticsStore()
 
-const learnMoreLink = $links.getDocLink($t.__('Learn More', $td), 'keywordRankTracker', true)
+const learnMoreLink = links.getDocLink(__('Learn More', td), 'keywordRankTracker', true)
+
 const strings = {
 	...useCta().strings,
-	withAioseo       : $t.__('Below you can track how your page is performing in search results based on your keyword(s).', $td),
-	keywordPositions : $t.__('Keyword Positions', $td)
+	withAioseo       : __('Below you can track how your page is performing in search results based on your keyword(s).', td),
+	keywordPositions : __('Keyword Positions', td)
 }
 
-const showConnectCta = computed(() => {
-	return ((license.hasCoreFeature('search-statistics') && !searchStatisticsStore.isConnected) || searchStatisticsStore.unverifiedSite)
-})
 const parsedKeywords = computed(() => {
 	return {
 		rows : keywordRankTrackerStore.keywords.all.rows.slice(0, 3).map((row) => {

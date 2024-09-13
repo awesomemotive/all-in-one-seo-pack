@@ -33,6 +33,10 @@ class PreUpdates {
 		if ( version_compare( $lastActiveVersion, '4.1.5', '<' ) ) {
 			$this->createCacheTable();
 		}
+
+		if ( version_compare( $lastActiveVersion, AIOSEO_VERSION, '<' ) ) {
+			aioseo()->core->cache->clear();
+		}
 	}
 
 	/**

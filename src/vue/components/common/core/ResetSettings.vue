@@ -118,7 +118,8 @@ import {
 	useToolsStore
 } from '@/vue/stores'
 
-import { ToolsSettings } from '@/vue/mixins/ToolsSettings'
+import { useToolsSettings } from '@/vue/composables/ToolsSettings'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreModal from '@/vue/components/common/core/modal/Index'
@@ -126,10 +127,18 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgClose from '@/vue/components/common/svg/Close'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const { toolsSettings } = useToolsSettings()
+
 		return {
 			rootStore  : useRootStore(),
+			toolsSettings,
 			toolsStore : useToolsStore()
 		}
 	},
@@ -142,8 +151,7 @@ export default {
 		GridRow,
 		SvgClose
 	},
-	mixins : [ ToolsSettings ],
-	props  : {
+	props : {
 		site : Object
 	},
 	data () {
@@ -153,22 +161,22 @@ export default {
 			loading     : false,
 			options     : {},
 			strings     : {
-				selectSettings        : this.$t.__('Select Settings', this.$td),
-				selectSettingsToReset : this.$t.__('Select settings that you would like to reset:', this.$td),
-				resetSelectedSettings : this.$t.__('Reset Selected Settings to Default', this.$td),
-				resetSuccess          : this.$t.__('Your settings have been reset successfully!', this.$td),
-				areYouSureReset       : this.$t.__('Are you sure you want to reset the selected settings to default?', this.$td),
-				actionCannotBeUndone  : this.$t.sprintf(
+				selectSettings        : __('Select Settings', td),
+				selectSettingsToReset : __('Select settings that you would like to reset:', td),
+				resetSelectedSettings : __('Reset Selected Settings to Default', td),
+				resetSuccess          : __('Your settings have been reset successfully!', td),
+				areYouSureReset       : __('Are you sure you want to reset the selected settings to default?', td),
+				actionCannotBeUndone  : sprintf(
 					// Translators: 1 - Opening bold tag, 2 - Closing bold tag.
-					this.$t.__('This action cannot be undone. Before taking this action, we recommend that you make a %1$sfull website backup first%2$s.', this.$td),
+					__('This action cannot be undone. Before taking this action, we recommend that you make a %1$sfull website backup first%2$s.', td),
 					'<strong>',
 					'</strong>'
 				),
-				yesIHaveBackup : this.$t.__('Yes, I have a backup and want to reset the settings', this.$td),
-				noBackup       : this.$t.__('No, I need to make a backup', this.$td),
-				allSettings    : this.$t.sprintf(
+				yesIHaveBackup : __('Yes, I have a backup and want to reset the settings', td),
+				noBackup       : __('No, I need to make a backup', td),
+				allSettings    : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('All %1$s Settings', this.$td),
+					__('All %1$s Settings', td),
 					import.meta.env.VITE_SHORT_NAME
 				)
 			}

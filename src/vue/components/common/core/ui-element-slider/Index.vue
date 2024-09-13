@@ -85,7 +85,7 @@ import SvgShortcode from '@/vue/components/common/svg/Shortcode'
 import SvgWidget from '@/vue/components/common/svg/Widget'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 export default {
 	components : {
@@ -136,6 +136,11 @@ export default {
 			}
 		}
 	},
+	watch : {
+		currentItem (newValue) {
+			this.currentItem = newValue
+		}
+	},
 	computed : {
 		boxToggleOptions () {
 			const boxOptions = Object.keys(this.options)
@@ -160,11 +165,6 @@ export default {
 			}
 
 			return item.slot
-		}
-	},
-	watch : {
-		currentItem (newValue) {
-			this.currentItem = newValue
 		}
 	}
 }

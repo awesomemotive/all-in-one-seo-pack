@@ -26,12 +26,6 @@
 
 <script>
 export default {
-	data () {
-		return {
-			pi : Math.PI,
-			vb : 34
-		}
-	},
 	props : {
 		scoreColor : String,
 		percent    : {
@@ -43,6 +37,12 @@ export default {
 			default () {
 				return 8
 			}
+		}
+	},
+	data () {
+		return {
+			pi : Math.PI,
+			vb : 34
 		}
 	},
 	computed : {

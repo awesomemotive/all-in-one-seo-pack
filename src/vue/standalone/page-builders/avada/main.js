@@ -1,4 +1,4 @@
-import { isRTL } from '@wordpress/i18n'
+import { isRTL } from '@/vue/plugins/translations'
 import { h, createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -8,12 +8,10 @@ import loadComponents from '@/vue/components/common'
 
 import { loadPiniaStores } from '@/vue/stores'
 
-import TruSeo from '@/vue/plugins/tru-seo'
-
 import initWatcher from './watcher'
 import initToolbar from './toolbar'
 import initLimitModifiedDate from './limit-modified-date'
-import Sidebar from './components/Sidebar.vue'
+import Sidebar from './components/Sidebar'
 
 const mountPostSettings = () => {
 	// Router placeholder to prevent errors when using router-link.
@@ -47,8 +45,6 @@ const mountPostSettings = () => {
 
 	// Use the pinia store.
 	loadPiniaStores(app, router)
-
-	app.config.globalProperties.$truSeo = new TruSeo()
 
 	app.mount('#fusion-builder-aioseo-sidebar')
 }

@@ -12,6 +12,11 @@ import AboutUs from './AboutUs'
 import CoreMain from '@/vue/components/common/core/main/Index'
 import GettingStarted from './GettingStarted'
 import LiteVsPro from './AIOSEO_VERSION/LiteVsPro'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		AboutUs,
@@ -22,7 +27,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				pageName : this.$t.__('About Us', this.$td)
+				pageName : __('About Us', td)
 			}
 		}
 	}

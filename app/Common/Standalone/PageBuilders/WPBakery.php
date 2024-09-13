@@ -40,6 +40,11 @@ class WPBakery extends Base {
 	 * @return void
 	 */
 	public function init() {
+		// Disable SEO meta tags from WP Bakery.
+		if ( defined( 'WPB_VC_VERSION' ) && version_compare( WPB_VC_VERSION, '7.4', '>=' ) ) {
+			add_filter( 'get_post_metadata', [ $this, 'maybeDisableWpBakeryMetaTags' ], 10, 3 );
+		}
+
 		if ( ! aioseo()->postSettings->canAddPostSettingsMetabox( get_post_type( $this->getPostId() ) ) ) {
 			return;
 		}
@@ -49,6 +54,24 @@ class WPBakery extends Base {
 
 		add_filter( 'vc_nav_front_controls', [ $this, 'addNavbarCotnrols' ] );
 		add_filter( 'vc_nav_controls', [ $this, 'addNavbarCotnrols' ] );
+	}
+
+	/**
+	 * Maybe disable WP Bakery meta tags.
+	 *
+	 * @since 4.7.1
+	 *
+	 * @param  mixed  $value    The value of the meta.
+	 * @param  int    $objectId The object ID.
+	 * @param  string $metaKey  The meta key.
+	 * @return mixed            The value of the meta.
+	 */
+	public function maybeDisableWpBakeryMetaTags( $value, $objectId, $metaKey ) {
+		if ( is_singular() && '_wpb_post_custom_seo_settings' === $metaKey ) {
+			return [];
+		}
+
+		return $value;
 	}
 
 	public function addNavbarCotnrols( $controlList ) {
@@ -87,7 +110,7 @@ class WPBakery extends Base {
 	 */
 	public function limitModifiedDate( $postId ) {
 		// This method is supposed to be used in the `saveAjaxFe` action.
-		if ( empty( $_REQUEST['_vcnonce'] ) || ! wp_verify_nonce( wp_unslash( $_REQUEST['_vcnonce'] ), 'vc-nonce-vc-admin-nonce' ) ) {
+		if ( empty( $_REQUEST['_vcnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_vcnonce'] ) ), 'vc-nonce-vc-admin-nonce' ) ) {
 			return false;
 		}
 

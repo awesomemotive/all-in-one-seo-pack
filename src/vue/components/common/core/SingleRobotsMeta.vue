@@ -160,6 +160,11 @@ import {
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -174,21 +179,21 @@ export default {
 	data () {
 		return {
 			strings : {
-				useDefaultSettings : this.$t.__('Use Default Settings', this.$td),
-				robotsMeta         : this.$t.__('Robots meta:', this.$td),
-				maxSnippet         : this.$t.__('Max Snippet', this.$td),
-				maxVideoPreview    : this.$t.__('Max Video Preview', this.$td),
-				maxImagePreview    : this.$t.__('Max Image Preview', this.$td),
-				standard           : this.$t.__('Standard', this.$td),
-				none               : this.$t.__('None', this.$td),
-				large              : this.$t.__('Large', this.$td),
-				noindex            : this.$t.__('No Index', this.$td),
-				nofollow           : this.$t.__('No Follow', this.$td),
-				noarchive          : this.$t.__('No Archive', this.$td),
-				notranslate        : this.$t.__('No Translate', this.$td),
-				noimageindex       : this.$t.__('No Image Index', this.$td),
-				nosnippet          : this.$t.__('No Snippet', this.$td),
-				noodp              : this.$t.__('No ODP', this.$td)
+				useDefaultSettings : __('Use Default Settings', td),
+				robotsMeta         : __('Robots meta:', td),
+				maxSnippet         : __('Max Snippet', td),
+				maxVideoPreview    : __('Max Video Preview', td),
+				maxImagePreview    : __('Max Image Preview', td),
+				standard           : __('Standard', td),
+				none               : __('None', td),
+				large              : __('Large', td),
+				noindex            : __('No Index', td),
+				nofollow           : __('No Follow', td),
+				noarchive          : __('No Archive', td),
+				notranslate        : __('No Translate', td),
+				noimageindex       : __('No Image Index', td),
+				nosnippet          : __('No Snippet', td),
+				noodp              : __('No ODP', td)
 			}
 		}
 	},

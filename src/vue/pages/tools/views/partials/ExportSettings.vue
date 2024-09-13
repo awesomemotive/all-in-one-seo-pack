@@ -128,17 +128,27 @@ import {
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { DateTime } from 'luxon'
-import { ToolsSettings } from '@/vue/mixins/ToolsSettings'
+
+import { useToolsSettings } from '@/vue/composables/ToolsSettings'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreNetworkSiteSelector from '@/vue/components/common/core/NetworkSiteSelector'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgUpload from '@/vue/components/common/svg/Upload'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const { toolsSettings } = useToolsSettings()
+
 		return {
 			rootStore  : useRootStore(),
+			toolsSettings,
 			toolsStore : useToolsStore()
 		}
 	},
@@ -150,7 +160,6 @@ export default {
 		GridRow,
 		SvgUpload
 	},
-	mixins : [ ToolsSettings ],
 	data () {
 		return {
 			allowed,
@@ -159,10 +168,10 @@ export default {
 			postOptions : {},
 			loading     : false,
 			strings     : {
-				selectSite     : this.$t.__('Select Site', this.$td),
-				exportSettings : this.$t.__('Export Settings', this.$td),
-				allSettings    : this.$t.__('Export All Settings', this.$td),
-				allPostTypes   : this.$t.__('Export All Post Types', this.$td)
+				selectSite     : __('Select Site', td),
+				exportSettings : __('Export Settings', td),
+				allSettings    : __('Export All Settings', td),
+				allPostTypes   : __('Export All Post Types', td)
 			}
 		}
 	},
@@ -196,7 +205,7 @@ export default {
 		processExportSettings () {
 			const settings = []
 			if (this.options.all) {
-				if (this.$isPro) {
+				if (this.rootStore.isPro) {
 					// Includes the license key.
 					settings.push('general')
 				}

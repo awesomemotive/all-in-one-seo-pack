@@ -34,6 +34,11 @@ import {
 
 import Blur from './Blur'
 import Cta from '@/vue/components/common/cta/Index'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -47,9 +52,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				ctaHeader           : this.$t.__('Enable Link Assistant on Your Site', this.$td),
-				ctaDescription      : this.$t.__('Get internal link suggestions for all your content including orphaned posts that have no internal links.', this.$td),
-				enableLinkAssistant : this.$t.__('Enable Link Assistant', this.$td)
+				ctaHeader           : __('Enable Link Assistant on Your Site', td),
+				ctaDescription      : __('Get internal link suggestions for all your content including orphaned posts that have no internal links.', td),
+				enableLinkAssistant : __('Enable Link Assistant', td)
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 <template>
-    <div class="cornerstone-content-panel">
+	<div class="cornerstone-content-panel">
 		<p class="cornerstone-content-text">
 			<span>
 				{{ strings.description }}
@@ -15,7 +15,7 @@
 				{{ strings.linkingRecommendations }}
 			</a>
 
-			<span v-html="this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'cornerstoneContent', true)"></span>
+			<span v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'cornerstoneContent', true)"></span>
 		</p>
 
 		<base-toggle
@@ -33,10 +33,12 @@
 		>
 			<div v-html="strings.upsell" />
 		</core-alert>
-    </div>
+	</div>
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	usePostEditorStore
@@ -45,31 +47,37 @@ import {
 import license from '@/vue/utils/license'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'changeTab' ],
 	setup () {
 		return {
 			licenseStore       : useLicenseStore(),
 			postEditorStore    : usePostEditorStore(),
-			hasRequiredFeature : license.hasCoreFeature('general', 'cornerstone-content')
+			hasRequiredFeature : license.hasCoreFeature('general', 'cornerstone-content'),
+			GLOBAL_STRINGS,
+			links
 		}
 	},
 	components : {
 		CoreAlert
 	},
-	emits : [ 'changeTab' ],
 	data () {
 		return {
 			license,
 			strings : {
-				description            : this.$t.__('Cornerstone content refers to the most  important and informative articles or pages on your website that serve as the foundation for your content strategy. AIOSEO uses cornerstone content for', this.$td),
-				linkingRecommendations : this.$t.__('internal linking recommendations in Link Assistant.', this.$td),
-				upsell                 : this.$t.sprintf(
+				description            : __('Cornerstone content refers to the most  important and informative articles or pages on your website that serve as the foundation for your content strategy. AIOSEO uses cornerstone content for', td),
+				linkingRecommendations : __('internal linking recommendations in Link Assistant.', td),
+				upsell                 : sprintf(
 					// Translators: 1 - "PRO", "Learn more".
-					this.$t.__('Cornerstone Content is a %1$s feature. %2$s', this.$td),
+					__('Cornerstone Content is a %1$s feature. %2$s', td),
 					'PRO',
-					this.$links.getUpsellLink('post-settings-general', this.$constants.GLOBAL_STRINGS.learnMore, 'cornerstone-content', true)
+					links.getUpsellLink('post-settings-general', GLOBAL_STRINGS.learnMore, 'cornerstone-content', true)
 				),
-				markAsCornerstone : this.$t.__('Mark as Cornerstone', this.$td)
+				markAsCornerstone : __('Mark as Cornerstone', td)
 			}
 		}
 	}

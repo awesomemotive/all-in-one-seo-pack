@@ -28,7 +28,7 @@
 							type="green"
 							size="medium"
 							tag="a"
-							:href="$links.getPricingUrl('post-settings', 'general', 'open-ai')"
+							:href="links.getPricingUrl('post-settings', 'general', 'open-ai')"
 							target="_blank"
 						>
 							{{ strings.upgradeToPro }}
@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	useSettingsStore
 } from '@/vue/stores'
@@ -50,11 +51,17 @@ import {
 import { getAssetUrl } from '@/vue/utils/helpers'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import OpenAiImage from '@/vue/assets/images/ai/open-ai.png'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
 			getAssetUrl,
-			settingsStore : useSettingsStore()
+			settingsStore : useSettingsStore(),
+			links
 		}
 	},
 	components : {
@@ -70,13 +77,13 @@ export default {
 		return {
 			OpenAiImage,
 			strings : {
-				upgradeToPro  : this.$t.__('Unlock AI Generator', this.$td),
-				learnMoreLink : this.$t.sprintf(
+				upgradeToPro  : __('Unlock AI Generator', td),
+				learnMoreLink : sprintf(
 					'<a class="feature-link" href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a> %3$s',
 					// Translators: 1 - "Learn More" link.
-					this.$links.getUpsellUrl('post-settings', 'general', 'open-ai'),
-					this.$t.__('Learn more about all the features', this.$td),
-					this.$links.getUpsellLink('post-settings', '', 'general', true)
+					links.getUpsellUrl('post-settings', 'general', 'open-ai'),
+					__('Learn more about all the features', td),
+					links.getUpsellLink('post-settings', '', 'general', true)
 				)
 			}
 		}
@@ -84,49 +91,49 @@ export default {
 	computed : {
 		headerTitle () {
 			if ('title' === this.type) {
-				return this.$t.sprintf(
+				return sprintf(
 					// Translators: 1 - "Title" or "Description".
-					this.$t.__('Generate New SEO %1$s', this.$td),
-					this.$t.__('Title', this.$td)
+					__('Generate New SEO %1$s', td),
+					__('Title', td)
 				)
 			}
 
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - "Title" or "Description".
-				this.$t.__('Generate New SEO %1$s', this.$td),
-				this.$t.__('Description', this.$td)
+				__('Generate New SEO %1$s', td),
+				__('Description', td)
 			)
 		},
 		ctaHeaderTitle () {
 			if ('title' === this.type) {
-				return this.$t.sprintf(
+				return sprintf(
 					// Translators: 1 - "Titles" or "Descriptions".
-					this.$t.__('Generating SEO %1$s is a Pro Feature', this.$td),
-					this.$t.__('Titles', this.$td)
+					__('Generating SEO %1$s is a Pro Feature', td),
+					__('Titles', td)
 				)
 			}
 
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - "Titles" or "Descriptions".
-				this.$t.__('Generating SEO %1$s is a Pro Feature', this.$td),
-				this.$t.__('Descriptions', this.$td)
+				__('Generating SEO %1$s is a Pro Feature', td),
+				__('Descriptions', td)
 			)
 		},
 		ctaDescription () {
 			if ('title' === this.type) {
-				return this.$t.sprintf(
+				return sprintf(
 					// Translators: 1 - "titles" or "meta descriptions", 2 - "title" or "meta description".
-					this.$t.__('With our Pro version, you now have access to the powerful feature that generates SEO optimized %1$s with just a click of a button. Say goodbye to manual %2$s creation and hello to increased online visibility.', this.$td),
-					this.$t.__('titles', this.$td),
-					this.$t.__('title', this.$td)
+					__('With our Pro version, you now have access to the powerful feature that generates SEO optimized %1$s with just a click of a button. Say goodbye to manual %2$s creation and hello to increased online visibility.', td),
+					__('titles', td),
+					__('title', td)
 				)
 			}
 
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - "titles" or "meta descriptions", 2 - "title" or "meta description".
-				this.$t.__('With our Pro version, you now have access to the powerful feature that generates SEO optimized %1$s with just a click of a button. Say goodbye to manual %2$s creation and hello to increased online visibility.', this.$td),
-				this.$t.__('meta descriptions', this.$td),
-				this.$t.__('description', this.$td)
+				__('With our Pro version, you now have access to the powerful feature that generates SEO optimized %1$s with just a click of a button. Say goodbye to manual %2$s creation and hello to increased online visibility.', td),
+				__('meta descriptions', td),
+				__('description', td)
 			)
 		}
 	}

@@ -49,6 +49,11 @@ import {
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import Graph from '../Graph'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -60,23 +65,23 @@ export default {
 		CoreLoader,
 		Graph
 	},
-	data () {
-		return {
-			loading   : false,
-			intervals : [],
-			strings   : {
-				focusKeyword       : this.$t.__('Focus Keyphrase', this.$td),
-				youDontHaveKeyword : this.$t.__('You don\'t yet have a Focus Keyphrase for this post. Add one to track trends and get suggested changes for your content to help you rank higher in search results.', this.$td),
-				addKeyword         : this.$t.__('Add Focus Keyphrase', this.$td)
-			}
-		}
-	},
 	props : {
 		focusKeyword : String,
 		editUrl      : {
 			type : String,
 			default () {
 				return ''
+			}
+		}
+	},
+	data () {
+		return {
+			loading   : false,
+			intervals : [],
+			strings   : {
+				focusKeyword       : __('Focus Keyphrase', td),
+				youDontHaveKeyword : __('You don\'t yet have a Focus Keyphrase for this post. Add one to track trends and get suggested changes for your content to help you rank higher in search results.', td),
+				addKeyword         : __('Add Focus Keyphrase', td)
 			}
 		}
 	},
@@ -91,7 +96,7 @@ export default {
 			}
 
 			return [ {
-				name : this.$t.__('Position', this.$td),
+				name : __('Position', td),
 				data : this.intervals.map((tick) => ({ x: tick.date, y: tick.position, label: tick.positionLabel }))
 			} ]
 		}

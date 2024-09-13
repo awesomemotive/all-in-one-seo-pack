@@ -47,6 +47,11 @@ import {
 import SvgProgressCircle from '@/vue/components/common/svg/ProgressCircle'
 import SvgRocket from '@/vue/components/common/svg/Rocket'
 import SvgSeo from '@/vue/components/common/svg/Seo'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -73,8 +78,8 @@ export default {
 	data () {
 		return {
 			strings : {
-				description : this.$t.__('You\'re almost there! Once you complete the SEO setup your site will be optimized to rank in search engine results!', this.$td),
-				improveSeo  : this.$t.__('Improve SEO Rankings', this.$td)
+				description : __('You\'re almost there! Once you complete the SEO setup your site will be optimized to rank in search engine results!', td),
+				improveSeo  : __('Improve SEO Rankings', td)
 			}
 		}
 	},
@@ -83,9 +88,9 @@ export default {
 			const currentHtml = `<strong>${this.setupWizardStore.getCurrentStageCount}</strong>`
 			const totalHtml   = `<strong>${this.setupWizardStore.getTotalStageCount}</strong>`
 
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The current step count. 2 - The total step count.
-				this.$t.__('Step %1$s of %2$s', this.$td),
+				__('Step %1$s of %2$s', td),
 				currentHtml,
 				totalHtml
 			)
@@ -124,7 +129,7 @@ export default {
 			this.deleteStage('search-console')
 		}
 
-		if (this.$isPro) {
+		if (this.rootStore.isPro) {
 			this.deleteStage('smart-recommendations')
 		}
 	}

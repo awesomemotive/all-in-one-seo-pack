@@ -132,13 +132,17 @@ import SvgIconWordPress from '@/vue/components/common/svg/icon/WordPress'
 import SvgIconYelp from '@/vue/components/common/svg/icon/Yelp'
 import SvgIconYoutube from '@/vue/components/common/svg/icon/Youtube'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'updated' ],
 	setup () {
 		return {
 			optionsStore : useOptionsStore()
 		}
 	},
-	emits      : [ 'updated' ],
 	components : {
 		BaseCheckbox,
 		BaseTextarea,
@@ -196,10 +200,18 @@ export default {
 			errors          : {},
 			errorsKey       : 0,
 			strings         : {
-				useSameUsername               : this.$t.__('Use the same username for multiple social networks', this.$td),
-				yourUsername                  : this.$t.__('Your Username:', this.$td),
-				additionalProfiles            : this.$t.__('Additional Profiles', this.$td),
-				additionalProfilesDescription : this.$t.__('You can add additional social profile URLs here, separated by a new line.', this.$td)
+				useSameUsername               : __('Use the same username for multiple social networks', td),
+				yourUsername                  : __('Your Username:', td),
+				additionalProfiles            : __('Additional Profiles', td),
+				additionalProfilesDescription : __('You can add additional social profile URLs here, separated by a new line.', td)
+			}
+		}
+	},
+	watch : {
+		userProfiles : {
+			deep : true,
+			handler () {
+				this.$emit('updated', this.userProfiles)
 			}
 		}
 	},
@@ -217,7 +229,7 @@ export default {
 					url        : 'https://facebook.com',
 					svg        : 'svg-icon-facebook',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?facebook\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your Facebook URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?facebook\.[a-z.]+\/.*$/.test(v) || __('Your Facebook URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -227,7 +239,7 @@ export default {
 					url        : 'https://x.com',
 					svg        : 'svg-icon-twitter',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?(twitter|x)\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your X (Twitter) URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?(twitter|x)\.[a-z.]+\/.*$/.test(v) || __('Your X (Twitter) URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -237,7 +249,7 @@ export default {
 					url        : 'https://instagram.com',
 					svg        : 'svg-icon-instagram',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?instagram\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your Instagram URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?instagram\.[a-z.]+\/.*$/.test(v) || __('Your Instagram URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -247,7 +259,7 @@ export default {
 					url        : 'https://tiktok.com/@',
 					svg        : 'svg-icon-tiktok',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?tiktok\.[a-z.]+\/@.*$/.test(v) || this.$t.__('Your TikTok URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?tiktok\.[a-z.]+\/@.*$/.test(v) || __('Your TikTok URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -257,7 +269,7 @@ export default {
 					url        : 'https://pinterest.com',
 					svg        : 'svg-icon-pinterest',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?pinterest\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your Pinterest URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?pinterest\.[a-z.]+\/.*$/.test(v) || __('Your Pinterest URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -267,7 +279,7 @@ export default {
 					url        : 'https://youtube.com',
 					svg        : 'svg-icon-youtube',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?youtube\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your YouTube URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?youtube\.[a-z.]+\/.*$/.test(v) || __('Your YouTube URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -277,7 +289,7 @@ export default {
 					url        : 'https://linkedin.com/in',
 					svg        : 'svg-icon-linkedin',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?linkedin\.[a-z.]+\/(?:in|company|school|groups|showcase)\/.*$/.test(v) || this.$t.__('Your LinkedIn URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?linkedin\.[a-z.]+\/(?:in|company|school|groups|showcase)\/.*$/.test(v) || __('Your LinkedIn URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -287,7 +299,7 @@ export default {
 					url        : 'https://{profile}.tumblr.com',
 					svg        : 'svg-icon-tumblr',
 					validation : [
-						v => /^https:\/\/([^/]+)\.tumblr\.[a-z.]+.*$/.test(v) || this.$t.__('Your Tumblr URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/([^/]+)\.tumblr\.[a-z.]+.*$/.test(v) || __('Your Tumblr URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -297,7 +309,7 @@ export default {
 					url        : 'https://yelp.com/biz',
 					svg        : 'svg-icon-yelp',
 					validation : [
-						v => /^https:\/\/(?:www\.)?yelp\.[a-z.]+\/biz\/.*$/.test(v) || this.$t.__('Your Yelp URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/(?:www\.)?yelp\.[a-z.]+\/biz\/.*$/.test(v) || __('Your Yelp URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -307,7 +319,7 @@ export default {
 					url        : 'https://soundcloud.com',
 					svg        : 'svg-icon-sound-cloud',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?soundcloud\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your SoundCloud URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?soundcloud\.[a-z.]+\/.*$/.test(v) || __('Your SoundCloud URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -317,7 +329,7 @@ export default {
 					url        : 'https://en.wikipedia.org/wiki',
 					svg        : 'svg-icon-wikipedia',
 					validation : [
-						v => /^https:\/\/([a-z-]+)\.wikipedia\.org\/wiki\/.*$/.test(v) || this.$t.__('Your Wikipedia URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/([a-z-]+)\.wikipedia\.org\/wiki\/.*$/.test(v) || __('Your Wikipedia URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -327,7 +339,7 @@ export default {
 					url        : 'https://myspace.com',
 					svg        : 'svg-icon-myspace',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?myspace\.[a-z.]+\/.*$/.test(v) || this.$t.__('Your MySpace URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?myspace\.[a-z.]+\/.*$/.test(v) || __('Your MySpace URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -337,7 +349,7 @@ export default {
 					url        : 'https://profiles.wordpress.org',
 					svg        : 'svg-icon-word-press',
 					validation : [
-						v => /^https:\/\/profiles\.wordpress\.org\/[a-zA-Z0-9-]+\/?$/.test(v) || this.$t.__('Your WordPress URL is invalid. Please check the format and try again.', this.$td)
+						v => /^https:\/\/profiles\.wordpress\.org\/[a-zA-Z0-9-]+\/?$/.test(v) || __('Your WordPress URL is invalid. Please check the format and try again.', td)
 					]
 				}
 			]
@@ -405,14 +417,6 @@ export default {
 		},
 		getKey (profileObject) {
 			return this.userProfiles ? profileObject.name.toLowerCase() : profileObject.value
-		}
-	},
-	watch : {
-		userProfiles : {
-			deep : true,
-			handler () {
-				this.$emit('updated', this.userProfiles)
-			}
 		}
 	},
 	mounted () {

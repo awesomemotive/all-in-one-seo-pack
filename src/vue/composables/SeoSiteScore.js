@@ -1,5 +1,5 @@
-import { __, sprintf } from '@wordpress/i18n'
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
+import { __, sprintf } from '@/vue/plugins/translations'
 
 import {
 	useAnalyzerStore,
@@ -9,7 +9,9 @@ import links from '@/vue/utils/links'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-export const useSeoSiteScore = () => {
+export const useSeoSiteScore = (params = {}) => {
+	const { score = ref(0) } = params
+
 	const analyzerStore = useAnalyzerStore()
 	const rootStore     = useRootStore()
 
@@ -105,7 +107,29 @@ export const useSeoSiteScore = () => {
 		}
 	})
 
+	const connectWithAioseo = sprintf(
+		// Translators: 1 - The plugin short name ("AIOSEO").
+		__('Connect with %1$s', td),
+		import.meta.env.VITE_SHORT_NAME
+	)
+
+	const description = computed(() => {
+		return 25 >= score.value
+			? strings.weveGotWorkToDo
+			: (
+				50 >= score.value
+					? strings.needsImprovement
+					: (
+						75 >= score.value
+							? strings.veryGood
+							: strings.excellent
+					)
+			)
+	})
+
 	return {
+		connectWithAioseo,
+		description,
 		errorObject,
 		strings
 	}

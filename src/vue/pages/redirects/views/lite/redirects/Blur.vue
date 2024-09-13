@@ -46,12 +46,22 @@
 </template>
 
 <script>
-import { GLOBAL_STRINGS, REDIRECT_TYPES, REDIRECT_QUERY_PARAMS, REDIRECT_GROUPS } from '@/vue/plugins/constants'
+import {
+	GLOBAL_STRINGS,
+	REDIRECT_GROUPS,
+	REDIRECT_QUERY_PARAMS,
+	REDIRECT_TYPES
+} from '@/vue/plugins/constants'
 
 import CoreAddRedirection from '@/vue/components/common/core/add-redirection/Index'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreAddRedirection,
@@ -67,8 +77,8 @@ export default {
 			REDIRECT_TYPES,
 			REDIRECT_QUERY_PARAMS,
 			strings : {
-				addNewRedirection : this.$t.__('Add New Redirection', this.$td),
-				searchUrls        : this.$t.__('Search URLs', this.$td)
+				addNewRedirection : __('Add New Redirection', td),
+				searchUrls        : __('Search URLs', td)
 			},
 			bulkOptions : [
 				{ label: '', value: '' }
@@ -80,25 +90,25 @@ export default {
 			const columns = [
 				{
 					slug  : 'source_url',
-					label : this.$t.__('Source URL', this.$td)
+					label : __('Source URL', td)
 				},
 				{
 					slug  : 'target_url',
-					label : this.$t.__('Target URL', this.$td)
+					label : __('Target URL', td)
 				},
 				{
 					slug  : 'hits',
-					label : this.$t.__('Hits', this.$td),
+					label : __('Hits', td),
 					width : '97px'
 				},
 				{
 					slug  : 'type',
-					label : this.$t.__('Type', this.$td),
+					label : __('Type', td),
 					width : '100px'
 				},
 				{
 					slug  : 'group',
-					label : this.$t.__('Group', this.$td),
+					label : __('Group', td),
 					width : '150px'
 				},
 				{
@@ -113,9 +123,9 @@ export default {
 		additionalFilters () {
 			return [
 				{
-					label   : this.$t.__('Filter by Group', this.$td),
+					label   : __('Filter by Group', td),
 					name    : 'group',
-					options : [ { label: this.$t.__('All Groups', this.$td), value: 'all' } ].concat(REDIRECT_GROUPS)
+					options : [ { label: __('All Groups', td), value: 'all' } ].concat(REDIRECT_GROUPS)
 				}
 			]
 		}

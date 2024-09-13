@@ -10,7 +10,7 @@
 		</core-card>
 
 		<core-card
-			v-if="(($isPro && licenseStore.licenseKey) || optionsStore.internalOptions.internal.siteAnalysis.connectToken) && optionsStore.internalOptions.internal.siteAnalysis.score"
+			v-if="((rootStore.isPro && licenseStore.licenseKey) || optionsStore.internalOptions.internal.siteAnalysis.connectToken) && optionsStore.internalOptions.internal.siteAnalysis.score"
 			slug="completeSeoChecklist"
 			no-slide
 			:toggles="false"
@@ -72,10 +72,13 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useAnalyzerStore,
 	useLicenseStore,
 	useOptionsStore,
+	useRootStore,
 	useSettingsStore
 } from '@/vue/stores'
 
@@ -86,12 +89,18 @@ import CoreSeoSiteScoreAnalyze from '@/vue/components/AIOSEO_VERSION/core/seo-si
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgRefresh from '@/vue/components/common/svg/Refresh'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
 			analyzerStore : useAnalyzerStore(),
 			licenseStore  : useLicenseStore(),
 			optionsStore  : useOptionsStore(),
+			rootStore     : useRootStore(),
 			settingsStore : useSettingsStore()
 		}
 	},
@@ -108,10 +117,10 @@ export default {
 		return {
 			internalDebounce : false,
 			strings          : {
-				completeSeoChecklist : this.$t.__('Complete SEO Checklist', this.$td),
-				refreshResults       : this.$t.__('Refresh Results', this.$td),
-				cardDescription      : this.$t.__('These are the results our SEO Analzyer has generated after analyzing the homepage of your website.', this.$td) +
-					' ' + this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'seoAnalyzer', true)
+				completeSeoChecklist : __('Complete SEO Checklist', td),
+				refreshResults       : __('Refresh Results', td),
+				cardDescription      : __('These are the results our SEO Analzyer has generated after analyzing the homepage of your website.', td) +
+					' ' + links.getDocLink(GLOBAL_STRINGS.learnMore, 'seoAnalyzer', true)
 			}
 		}
 	},
@@ -121,7 +130,7 @@ export default {
 			return [
 				{
 					slug    : 'all-items',
-					label   : this.$t.__('All Items', this.$td),
+					label   : __('All Items', td),
 					analyze : {
 						classColor : 'black',
 						count      : siteAnalysis.score
@@ -131,7 +140,7 @@ export default {
 				},
 				{
 					slug    : 'critical',
-					label   : this.$t.__('Important Issues', this.$td),
+					label   : __('Important Issues', td),
 					analyze : {
 						classColor : 'red',
 						count      : siteAnalysis.score
@@ -141,7 +150,7 @@ export default {
 				},
 				{
 					slug    : 'recommended-improvements',
-					label   : this.$t.__('Recommended Improvements', this.$td),
+					label   : __('Recommended Improvements', td),
 					analyze : {
 						classColor : 'blue',
 						count      : siteAnalysis.score
@@ -151,7 +160,7 @@ export default {
 				},
 				{
 					slug    : 'good-results',
-					label   : this.$t.__('Good Results', this.$td),
+					label   : __('Good Results', td),
 					analyze : {
 						classColor : 'green',
 						count      : siteAnalysis.score

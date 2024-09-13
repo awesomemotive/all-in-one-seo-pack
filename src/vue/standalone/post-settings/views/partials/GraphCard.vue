@@ -14,115 +14,179 @@
 	</div>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+
 import { useSchema } from '@/vue/standalone/post-settings/composables/schema'
 
-import GraphsMixin from '../mixins/Graphs'
+import SvgArticle from '@/vue/components/common/svg/schema/Article'
+import SvgBook from '@/vue/components/common/svg/schema/Book'
+import SvgCar from '@/vue/components/common/svg/schema/Car'
+import SvgCustomSchema from '@/vue/components/common/svg/schema/CustomSchema'
+import SvgCourse from '@/vue/components/common/svg/schema/Course'
+import SvgDataset from '@/vue/components/common/svg/schema/Dataset'
+import SvgEvent from '@/vue/components/common/svg/schema/Event'
+import SvgFaqPage from '@/vue/components/common/svg/schema/FaqPage'
+import SvgFactCheck from '@/vue/components/common/svg/schema/FactCheck'
+import SvgHowTo from '@/vue/components/common/svg/schema/HowTo'
+import SvgJobPosting from '@/vue/components/common/svg/schema/JobPosting'
+import SvgMovie from '@/vue/components/common/svg/schema/Movie'
+import SvgMusic from '@/vue/components/common/svg/schema/Music'
+import SvgPerson from '@/vue/components/common/svg/schema/Person'
+import SvgProduct from '@/vue/components/common/svg/schema/Product'
+import SvgProductReview from '@/vue/components/common/svg/schema/ProductReview'
+import SvgRecipe from '@/vue/components/common/svg/schema/Recipe'
+import SvgService from '@/vue/components/common/svg/schema/Service'
+import SvgSoftwareApplication from '@/vue/components/common/svg/schema/SoftwareApplication'
+import SvgVideo from '@/vue/components/common/svg/schema/Video'
+import SvgWebPage from '@/vue/components/common/svg/schema/WebPage'
 
-export default {
-	mixins : [ GraphsMixin ],
-	props  : {
-		graph        : Object,
-		customGraph  : Boolean,
-		defaultGraph : String
-	},
-	setup () {
-		const { childGraphs, graphs } = useSchema()
+import { __ } from '@/vue/plugins/translations'
 
-		return {
-			childGraphs,
-			graphs
+const td = import.meta.env.VITE_TEXTDOMAIN
+
+const props = defineProps({
+	graph        : Object,
+	customGraph  : Boolean,
+	defaultGraph : String
+})
+
+const { childGraphs, graphs } = useSchema()
+
+const graphLabel = computed(() => {
+	if (props.customGraph) {
+		return (__('Custom Schema', td) + ' - ' + props.graph.graphName)
+	}
+
+	if (props.defaultGraph) {
+		return formatDefaultGraphName(props.defaultGraph)
+	}
+
+	if (props.graph?.label) {
+		return props.graph.label
+	}
+
+	const slug  = props.graph?.slug?.toLowerCase()
+	const label = graphs.find(x => x.slug === slug)?.label
+
+	return label || __('Parsing Block Data...', td)
+})
+
+const graphIcon = computed(() => {
+	if (props.customGraph) {
+		return SvgCustomSchema
+	}
+
+	if (props.defaultGraph) {
+		const parentGraphSlug = getParentGraphSlug(props.defaultGraph)
+		if (parentGraphSlug) {
+			return findGraphIcon(parentGraphSlug)
 		}
-	},
-	computed : {
-		graphLabel () {
-			if (this.customGraph) {
-				return (this.$t.__('Custom Schema', this.$td) + ' - ' + this.graph.graphName)
+		return SvgCustomSchema
+	}
+
+	return findGraphIcon(props.graph.slug)
+})
+
+const getParentGraphSlug = (graphName) => {
+	// First check if the graph is a child.
+	Object.entries(childGraphs).forEach((gs) => {
+		const parentGraphName = gs[0]
+		gs[1].forEach((graphObject) => {
+			// If it is a child, use the graph name of the parent.
+			if (graphName === graphObject.childGraphName) {
+				graphName = parentGraphName
 			}
+		})
+	})
 
-			if (this.defaultGraph) {
-				return this.formatDefaultGraphName(this.defaultGraph)
-			}
-
-			if (this.graph?.label) {
-				return this.graph.label
-			}
-
-			const slug       = this.graph?.slug?.toLowerCase()
-			const graphLabel = this.graphs.find(x => x.slug === slug)?.label
-
-			return graphLabel || this.$t.__('Parsing Block Data...', this.$td)
-		},
-		graphIcon () {
-			if (this.customGraph) {
-				return 'svg-custom-schema'
-			}
-
-			if (this.defaultGraph) {
-				const parentGraphSlug = this.getParentGraphSlug(this.defaultGraph)
-				if (parentGraphSlug) {
-					return 'svg-' + parentGraphSlug
-				}
-				return 'svg-custom-schema'
-			}
-
-			return 'svg-' + this.graph.slug
+	// Now, find the slug.
+	let slug = ''
+	graphs.forEach((object) => {
+		if (object.graphName === graphName) {
+			slug = object.slug
 		}
-	},
-	methods : {
-		getParentGraphSlug (graphName) {
-			// First check if the graph is a child.
-			Object.entries(this.childGraphs).forEach((graphs) => {
-				const parentGraphName = graphs[0]
-				graphs[1].forEach((graphObject) => {
-					// If it is a child, use the graph name of the parent.
-					if (graphName === graphObject.childGraphName) {
-						graphName = parentGraphName
+	})
+
+	return slug
+}
+
+const formatDefaultGraphName = (graphName) => {
+	// First, check if the graph is a child.
+	let parentGraph = '',
+		childGraph  = graphName
+	Object.entries(childGraphs).forEach((gs) => {
+		const parentGraphName = gs[0]
+		gs[1].forEach((graphObject) => {
+			if (parentGraph) {
+				return
+			}
+
+			// If it is a child, grab the parent's label and also grab the child's label.
+			if (graphName === graphObject.childGraphName) {
+				parentGraph = parentGraphName
+				childGraph  = graphObject.label
+
+				graphs.forEach((go) => {
+					if (go.graphName === parentGraphName) {
+						parentGraph = go.label
 					}
 				})
-			})
-
-			// Now, find the slug.
-			let slug = ''
-			this.graphs.forEach((object) => {
-				if (object.graphName === graphName) {
-					slug = object.slug
-				}
-			})
-
-			return slug
-		},
-		formatDefaultGraphName (graphName) {
-			// First, check if the graph is a child.
-			let parentGraph = '',
-			 childGraph     = graphName
-			Object.entries(this.childGraphs).forEach((graphs) => {
-				const parentGraphName = graphs[0]
-				graphs[1].forEach((graphObject) => {
-					if (parentGraph) {
-						return
-					}
-
-					// If it is a child, grab the parent's label and also grab the child's label.
-					if (graphName === graphObject.childGraphName) {
-						parentGraph = parentGraphName
-						childGraph  = graphObject.label
-
-						this.graphs.forEach((graphObject) => {
-							if (graphObject.graphName === parentGraphName) {
-								parentGraph = graphObject.label
-							}
-						})
-					}
-				})
-			})
-
-			if (!parentGraph) {
-				return graphName + ' ' + this.$t.__('(Default)', this.$td)
 			}
+		})
+	})
 
-			return parentGraph + ' - ' + childGraph + ' ' + this.$t.__('(Default)', this.$td)
-		}
+	if (!parentGraph) {
+		return graphName + ' ' + __('(Default)', td)
+	}
+
+	return parentGraph + ' - ' + childGraph + ' ' + __('(Default)', td)
+}
+
+const findGraphIcon = (slug) => {
+	switch (slug) {
+		case 'article':
+			return SvgArticle
+		case 'book':
+			return SvgBook
+		case 'car':
+			return SvgCar
+		case 'course':
+			return SvgCourse
+		case 'dataset':
+			return SvgDataset
+		case 'event':
+			return SvgEvent
+		case 'faq-page':
+			return SvgFaqPage
+		case 'fact-check':
+			return SvgFactCheck
+		case 'how-to':
+			return SvgHowTo
+		case 'job-posting':
+			return SvgJobPosting
+		case 'movie':
+			return SvgMovie
+		case 'music':
+			return SvgMusic
+		case 'person':
+			return SvgPerson
+		case 'product':
+			return SvgProduct
+		case 'product-review':
+			return SvgProductReview
+		case 'recipe':
+			return SvgRecipe
+		case 'service':
+			return SvgService
+		case 'software-application':
+			return SvgSoftwareApplication
+		case 'video':
+			return SvgVideo
+		case 'web-page':
+			return SvgWebPage
+		default:
+			return SvgCustomSchema
 	}
 }
 </script>

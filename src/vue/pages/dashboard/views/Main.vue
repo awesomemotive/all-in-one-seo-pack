@@ -184,10 +184,10 @@
 							class="dashboard-cta"
 							:type="3"
 							:floating="false"
-							:cta-link="$links.utmUrl('dashboard-cta')"
-							:feature-list="$constants.UPSELL_FEATURE_LIST"
+							:cta-link="links.utmUrl('dashboard-cta')"
+							:feature-list="UPSELL_FEATURE_LIST"
 							:button-text="strings.ctaButton"
-							:learn-more-link="$links.getUpsellUrl('dashboard-cta', null, $isPro ? 'pricing' : 'liteUpgrade')"
+							:learn-more-link="links.getUpsellUrl('dashboard-cta', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 						>
 							<template #header-text>
 								{{ strings.ctaHeaderText }}
@@ -202,6 +202,11 @@
 
 <script>
 import {
+	DISCOUNT_PERCENTAGE,
+	UPSELL_FEATURE_LIST
+} from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
+import {
 	useLicenseStore,
 	useNotificationsStore,
 	useRootStore,
@@ -210,9 +215,9 @@ import {
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { merge } from 'lodash-es'
-import { useNotifications } from '@/vue/composables'
-import { Notifications } from '@/vue/mixins/Notifications'
-import { Url } from '@/vue/mixins/Url'
+
+import { useNotifications } from '@/vue/composables/Notifications'
+import { useUrl } from '@/vue/composables/Url'
 
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreFeatureCard from '@/vue/components/common/core/FeatureCard'
@@ -242,16 +247,37 @@ import SvgStatistics from '@/vue/components/common/svg/Statistics'
 import SvgTitleAndMeta from '@/vue/components/common/svg/TitleAndMeta'
 import SvgVideoCamera from '@/vue/components/common/svg/VideoCamera'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const { strings } = useNotifications()
+		const {
+			dismissed,
+			notificationTitle,
+			notifications,
+			notificationsCount,
+			strings
+		} = useNotifications()
+
+		const {
+			getHref
+		} = useUrl()
 
 		return {
+			UPSELL_FEATURE_LIST,
+			composableStrings  : strings,
+			dismissed,
+			getHref,
 			licenseStore       : useLicenseStore(),
+			links,
+			notificationTitle,
+			notifications,
+			notificationsCount,
 			notificationsStore : useNotificationsStore(),
 			rootStore          : useRootStore(),
-			settingsStore      : useSettingsStore(),
-			composableStrings  : strings
+			settingsStore      : useSettingsStore()
 		}
 	},
 	components : {
@@ -283,80 +309,78 @@ export default {
 		SvgTitleAndMeta,
 		SvgVideoCamera
 	},
-	mixins : [ Notifications, Url ],
 	data () {
 		return {
 			allowed,
-			dismissed            : false,
 			visibleNotifications : 2,
 			strings              : merge(this.composableStrings, {
-				pageName                     : this.$t.__('Dashboard', this.$td),
-				noNewNotificationsThisMoment : this.$t.__('There are no new notifications at this moment.', this.$td),
-				seeAllDismissedNotifications : this.$t.__('See all dismissed notifications.', this.$td),
-				seoSiteScore                 : this.$t.__('SEO Site Score', this.$td),
-				seoOverview                  : this.$t.sprintf(
+				pageName                     : __('Dashboard', td),
+				noNewNotificationsThisMoment : __('There are no new notifications at this moment.', td),
+				seeAllDismissedNotifications : __('See all dismissed notifications.', td),
+				seoSiteScore                 : __('SEO Site Score', td),
+				seoOverview                  : sprintf(
 					// Translators: 1 - The plugin shortname ("AIOSEO").
-					this.$t.__('%1$s Overview', this.$td),
+					__('%1$s Overview', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				seoSetup         : this.$t.__('SEO Setup', this.$td),
-				support          : this.$t.__('Support', this.$td),
-				readSeoUserGuide : this.$t.sprintf(
+				seoSetup         : __('SEO Setup', td),
+				support          : __('Support', td),
+				readSeoUserGuide : sprintf(
 					// Translators: 1 - The plugin name ("All in One SEO").
-					this.$t.__('Read the %1$s user guide', this.$td),
+					__('Read the %1$s user guide', td),
 					import.meta.env.VITE_NAME
 				),
-				accessPremiumSupport   : this.$t.__('Access our Premium Support', this.$td),
-				viewChangelog          : this.$t.__('View the Changelog', this.$td),
-				watchVideoTutorials    : this.$t.__('Watch video tutorials', this.$td),
-				gettingStarted         : this.$t.__('Getting started? Read the Beginners Guide', this.$td),
-				quicklinks             : this.$t.__('Quicklinks', this.$td),
-				quicklinksTooltip      : this.$t.__('You can use these quicklinks to quickly access our settings pages to adjust your site\'s SEO settings.', this.$td),
-				manage                 : this.$t.__('Manage', this.$td),
-				searchAppearance       : this.$t.__('Search Appearance', this.$td),
-				manageSearchAppearance : this.$t.__('Configure how your website content will look in Google, Bing and other search engines.', this.$td),
-				seoAnalysis            : this.$t.__('SEO Analysis', this.$td),
-				manageSeoAnalysis      : this.$t.__('Check how your site scores with our SEO analyzer and compare against your competitor\'s site.', this.$td),
-				localSeo               : this.$t.__('Local SEO', this.$td),
-				manageLocalSeo         : this.$t.__('Improve local SEO rankings with schema for business address, open hours, contact, and more.', this.$td),
-				socialNetworks         : this.$t.__('Social Networks', this.$td),
-				manageSocialNetworks   : this.$t.__('Setup Open Graph for Facebook, X (Twitter), etc. to show the right content / thumbnail preview.', this.$td),
-				tools                  : this.$t.__('Tools', this.$td),
-				manageTools            : this.$t.__('Fine-tune your site with our powerful tools including Robots.txt editor, import/export and more.', this.$td),
-				sitemap                : this.$t.__('Sitemaps', this.$td),
-				manageSitemap          : this.$t.__('Manage all of your sitemap settings, including XML, Video, News and more.', this.$td),
-				linkAssistant          : this.$t.__('Link Assistant', this.$td),
-				manageLinkAssistant    : this.$t.__('Manage existing links, get relevant suggestions for adding internal links to older content, discover orphaned posts and more.', this.$td),
-				redirects              : this.$t.__('Redirection Manager', this.$td),
-				manageRedirects        : this.$t.__('Easily create and manage redirects for your broken links to avoid confusing search engines and users, as well as losing valuable backlinks.', this.$td),
-				searchStatistics       : this.$t.__('Search Statistics', this.$td),
-				manageSearchStatistics : this.$t.__('Track how your site is performing in search rankings and generate reports with actionable insights.', this.$td),
-				ctaHeaderText          : this.$t.sprintf(
+				accessPremiumSupport   : __('Access our Premium Support', td),
+				viewChangelog          : __('View the Changelog', td),
+				watchVideoTutorials    : __('Watch video tutorials', td),
+				gettingStarted         : __('Getting started? Read the Beginners Guide', td),
+				quicklinks             : __('Quicklinks', td),
+				quicklinksTooltip      : __('You can use these quicklinks to quickly access our settings pages to adjust your site\'s SEO settings.', td),
+				manage                 : __('Manage', td),
+				searchAppearance       : __('Search Appearance', td),
+				manageSearchAppearance : __('Configure how your website content will look in Google, Bing and other search engines.', td),
+				seoAnalysis            : __('SEO Analysis', td),
+				manageSeoAnalysis      : __('Check how your site scores with our SEO analyzer and compare against your competitor\'s site.', td),
+				localSeo               : __('Local SEO', td),
+				manageLocalSeo         : __('Improve local SEO rankings with schema for business address, open hours, contact, and more.', td),
+				socialNetworks         : __('Social Networks', td),
+				manageSocialNetworks   : __('Setup Open Graph for Facebook, X (Twitter), etc. to show the right content / thumbnail preview.', td),
+				tools                  : __('Tools', td),
+				manageTools            : __('Fine-tune your site with our powerful tools including Robots.txt editor, import/export and more.', td),
+				sitemap                : __('Sitemaps', td),
+				manageSitemap          : __('Manage all of your sitemap settings, including XML, Video, News and more.', td),
+				linkAssistant          : __('Link Assistant', td),
+				manageLinkAssistant    : __('Manage existing links, get relevant suggestions for adding internal links to older content, discover orphaned posts and more.', td),
+				redirects              : __('Redirection Manager', td),
+				manageRedirects        : __('Easily create and manage redirects for your broken links to avoid confusing search engines and users, as well as losing valuable backlinks.', td),
+				searchStatistics       : __('Search Statistics', td),
+				manageSearchStatistics : __('Track how your site is performing in search rankings and generate reports with actionable insights.', td),
+				ctaHeaderText          : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - "Pro".
-					this.$t.__('Get more features in %1$s %2$s:', this.$td),
+					__('Get more features in %1$s %2$s:', td),
 					import.meta.env.VITE_SHORT_NAME,
 					'Pro'
 				),
-				ctaButton : this.$t.sprintf(
+				ctaButton : sprintf(
 					// Translators: 1 - "Pro", 2 - A discount percentage (e.g. "50%").
-					this.$t.__('Upgrade to %1$s and Save %2$s', this.$td),
+					__('Upgrade to %1$s and Save %2$s', td),
 					'Pro',
-					this.$constants.DISCOUNT_PERCENTAGE
+					DISCOUNT_PERCENTAGE
 				),
-				dismissAll          : this.$t.__('Dismiss All', this.$td),
-				relaunchSetupWizard : this.$t.__('Relaunch Setup Wizard', this.$td)
+				dismissAll          : __('Dismiss All', td),
+				relaunchSetupWizard : __('Relaunch Setup Wizard', td)
 			})
 		}
 	},
 	computed : {
 		moreNotifications () {
 			if (1 === this.remainingNotificationsCount) {
-				return this.$t.__('You have 1 more notification', this.$td)
+				return __('You have 1 more notification', td)
 			}
 
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The amount of remaining notifications.
-				this.$t.__('You have %1$s more notifications', this.$td),
+				__('You have %1$s more notifications', td),
 				this.remainingNotificationsCount
 			)
 		},
@@ -369,11 +393,11 @@ export default {
 		},
 		supportOptions () {
 			const options = [
-				{ icon: 'svg-book', text: this.strings.readSeoUserGuide, link: this.$links.utmUrl('dashboard-support-box', 'user-guide', 'doc-categories/getting-started/'), blank: true },
-				{ icon: 'svg-message', text: this.strings.accessPremiumSupport, link: this.$links.utmUrl('dashboard-support-box', 'premium-support', 'contact/'), blank: true },
-				{ icon: 'svg-history', text: this.strings.viewChangelog, link: this.$links.utmUrl('dashboard-support-box', 'changelog', 'changelog/'), blank: true },
-				// { icon: 'svg-video-camera', text: this.strings.watchVideoTutorials, link: this.$links.utmUrl('dashboard-support-box', 'video-tutorials', 'doc-type/videos/'), blank: true },
-				{ icon: 'svg-book', text: this.strings.gettingStarted, link: this.$links.utmUrl('dashboard-support-box', 'beginners-guide', 'docs/quick-start-guide/'), blank: true }
+				{ icon: 'svg-book', text: this.strings.readSeoUserGuide, link: links.utmUrl('dashboard-support-box', 'user-guide', 'doc-categories/getting-started/'), blank: true },
+				{ icon: 'svg-message', text: this.strings.accessPremiumSupport, link: links.utmUrl('dashboard-support-box', 'premium-support', 'contact/'), blank: true },
+				{ icon: 'svg-history', text: this.strings.viewChangelog, link: links.utmUrl('dashboard-support-box', 'changelog', 'changelog/'), blank: true },
+				// { icon: 'svg-video-camera', text: this.strings.watchVideoTutorials, link: links.utmUrl('dashboard-support-box', 'video-tutorials', 'doc-type/videos/'), blank: true },
+				{ icon: 'svg-book', text: this.strings.gettingStarted, link: links.utmUrl('dashboard-support-box', 'beginners-guide', 'docs/quick-start-guide/'), blank: true }
 			]
 
 			if (!allowed('aioseo_setup_wizard')) {

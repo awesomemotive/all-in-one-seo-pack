@@ -119,8 +119,9 @@ import {
 } from '@/vue/stores'
 
 import { merge } from 'lodash-es'
-import { useTruSeoScore } from '@/vue/composables'
-import { TruSeoScore } from '@/vue/mixins/TruSeoScore'
+
+import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import SvgIconPencil from '@/vue/components/common/svg/Pencil'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
@@ -128,11 +129,21 @@ import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import ViewMetaTags from './MetaTags'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
-		const { strings } = useTruSeoScore()
+		const {
+			getErrorClass,
+			getErrorDisplay,
+			strings
+		} = useTruSeoScore()
 
 		return {
+			getErrorClass,
+			getErrorDisplay,
 			rootStore         : useRootStore(),
 			composableStrings : strings
 		}
@@ -144,6 +155,21 @@ export default {
 		SvgCircleExclamation,
 		SvgCircleClose,
 		ViewMetaTags
+	},
+	data () {
+		return {
+			strings : merge(this.composableStrings, {
+				focusKeyphrase   : __('Focus Keyphrase', td),
+				pageAnalysis     : __('Page Analysis', td),
+				basicSeo         : __('Basic SEO', td),
+				readability      : __('Readability', td),
+				title            : __('Title', td),
+				metaTags         : __('Meta Tags', td),
+				noKeyphraseFound : __('No keyphrase found', td),
+				noDataYet        : __('No data yet', td),
+				visitAdmin       : __('You can edit the "Focus Keyphrase" and view information about "Page Analysis" on the admin side.', td)
+			})
+		}
 	},
 	computed : {
 		focusKeyphrase () {
@@ -187,22 +213,6 @@ export default {
 		},
 		isCheckEligible () {
 			return 'undefined' !== typeof this.rootStore.aioseo.page_analysis?.analysis
-		}
-	},
-	mixins : [ TruSeoScore ],
-	data () {
-		return {
-			strings : merge(this.composableStrings, {
-				focusKeyphrase   : this.$t.__('Focus Keyphrase', this.$td),
-				pageAnalysis     : this.$t.__('Page Analysis', this.$td),
-				basicSeo         : this.$t.__('Basic SEO', this.$td),
-				readability      : this.$t.__('Readability', this.$td),
-				title            : this.$t.__('Title', this.$td),
-				metaTags         : this.$t.__('Meta Tags', this.$td),
-				noKeyphraseFound : this.$t.__('No keyphrase found', this.$td),
-				noDataYet        : this.$t.__('No data yet', this.$td),
-				visitAdmin       : this.$t.__('You can edit the "Focus Keyphrase" and view information about "Page Analysis" on the admin side.', this.$td)
-			})
 		}
 	}
 }

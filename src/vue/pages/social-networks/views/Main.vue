@@ -12,6 +12,11 @@ import Facebook from './Facebook'
 import Pinterest from './Pinterest'
 import SocialProfiles from './SocialProfiles'
 import Twitter from './Twitter'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreMain,
@@ -23,7 +28,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				pageName : this.$t.__('Social Networks', this.$td)
+				pageName : __('Social Networks', td)
 			}
 		}
 	}

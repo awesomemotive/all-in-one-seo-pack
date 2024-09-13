@@ -2,7 +2,8 @@ import checkTooLongSentences from '../researches/stringProcessing/checkForTooLon
 import countSentencesFromText from '../researches/helpers/countSentencesFromText'
 import formatNumber from '../researches/helpers/formatNumber'
 import { __, sprintf } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const parameters = {
 	recommendedWordCount : 20,

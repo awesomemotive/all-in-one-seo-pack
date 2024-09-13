@@ -88,6 +88,12 @@
 </template>
 <script>
 import {
+	FREQUENCY_OPTIONS,
+	GLOBAL_STRINGS,
+	PRIORITY_OPTIONS
+} from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
+import {
 	useLicenseStore,
 	useOptionsStore,
 	usePostEditorStore
@@ -96,6 +102,11 @@ import {
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreSingleRobotsMeta from '@/vue/components/common/core/SingleRobotsMeta'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -128,31 +139,31 @@ export default {
 	data () {
 		return {
 			strings : {
-				pageName                : this.$t.__('Advanced', this.$td),
-				robotsSetting           : this.$t.__('Robots Setting', this.$td),
-				robotsToggle            : this.$t.__('Use Default Settings', this.$td),
-				canonicalUrl            : this.$t.__('Canonical URL', this.$td),
-				placeholder             : this.$t.__('Enter a URL to change the default Canonical URL', this.$td),
-				priorityScore           : this.$t.__('Priority Score', this.$td),
-				priority                : this.$t.__('Priority', this.$td),
-				frequency               : this.$t.__('Frequency', this.$td),
-				priorityFrequencyUpsell : this.$t.sprintf(
+				pageName                : __('Advanced', td),
+				robotsSetting           : __('Robots Setting', td),
+				robotsToggle            : __('Use Default Settings', td),
+				canonicalUrl            : __('Canonical URL', td),
+				placeholder             : __('Enter a URL to change the default Canonical URL', td),
+				priorityScore           : __('Priority Score', td),
+				priority                : __('Priority', td),
+				frequency               : __('Frequency', td),
+				priorityFrequencyUpsell : sprintf(
 					// Translators: 1 - "PRO", 2 - "Learn more".
-					this.$t.__('Priority Score is a %1$s feature. %2$s', this.$td),
+					__('Priority Score is a %1$s feature. %2$s', td),
 					'PRO',
-					this.$links.getUpsellLink('post-advanced', this.$constants.GLOBAL_STRINGS.learnMore, 'priority-frequency', true)
+					links.getUpsellLink('post-advanced', GLOBAL_STRINGS.learnMore, 'priority-frequency', true)
 				),
-				keywords       : this.$t.__('Keywords', this.$td),
-				tagPlaceholder : this.$t.__('Press enter to create a keyword', this.$td)
+				keywords       : __('Keywords', td),
+				tagPlaceholder : __('Press enter to create a keyword', td)
 			}
 		}
 	},
 	computed : {
 		getPriorityOptions () {
-			return [ { label: this.$t.__('default', this.$td), value: 'default' } ].concat(this.$constants.PRIORITY_OPTIONS)
+			return [ { label: __('default', td), value: 'default' } ].concat(PRIORITY_OPTIONS)
 		},
 		getFrequencyOptions () {
-			return [ { label: this.$t.__('default', this.$td), value: 'default' } ].concat(this.$constants.FREQUENCY_OPTIONS)
+			return [ { label: __('default', td), value: 'default' } ].concat(FREQUENCY_OPTIONS)
 		}
 	},
 	methods : {

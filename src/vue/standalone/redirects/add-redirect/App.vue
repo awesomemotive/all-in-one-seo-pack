@@ -31,6 +31,7 @@
 <script>
 import '@/vue/assets/scss/main.scss'
 
+import links from '@/vue/utils/links'
 import {
 	useRootStore
 } from '@/vue/stores'
@@ -40,6 +41,10 @@ import http from '@/vue/utils/http'
 import { isEmpty } from 'lodash-es'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreAddRedirection from '@/vue/components/common/core/add-redirection/Index'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	setup () {
@@ -59,10 +64,10 @@ export default {
 			target  : null,
 			loading : false,
 			strings : {
-				modalHeader   : this.$t.__('Add a Redirect', this.$td),
-				redirectAdded : this.$t.sprintf(
+				modalHeader   : __('Add a Redirect', td),
+				redirectAdded : sprintf(
 					// Translators: 1 - A internal link for Redirects, 2 - Open strong tag, 3 - Close strong tag.
-					this.$t.__('%2$sYour redirect was added and you may edit it <a href="%1$s" target="_blank">here</a>.%3$s', this.$td),
+					__('%2$sYour redirect was added and you may edit it <a href="%1$s" target="_blank">here</a>.%3$s', td),
 					this.rootStore.aioseo.urls.aio.redirects,
 					'<strong>',
 					'</strong>'
@@ -99,7 +104,7 @@ export default {
 		},
 		loadRedirect (manualUrlsHash) {
 			this.loading = true
-			http.get(this.$links.restUrl('redirects/manual-redirects/' + manualUrlsHash))
+			http.get(links.restUrl('redirects/manual-redirects/' + manualUrlsHash))
 				.then(response => {
 					this.urls = response.body.redirects
 					this.loading = false

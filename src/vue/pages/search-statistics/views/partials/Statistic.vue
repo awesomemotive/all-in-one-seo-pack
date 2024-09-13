@@ -51,13 +51,23 @@ import {
 
 import { DateTime } from 'luxon'
 import numbers from '@/vue/utils/numbers'
-import StatisticMixin from '../../mixins/Statistic.js'
 import dateFormat from '@/vue/utils/dateFormat'
+
+import { useStatistic } from '@/vue/pages/search-statistics/composables/Statistic'
+
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCaretSolid from '@/vue/components/common/svg/CaretSolid'
+
+import { __, _n, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const { formatStatistic } = useStatistic()
+
 		return {
+			formatStatistic,
 			rootStore             : useRootStore(),
 			searchStatisticsStore : useSearchStatisticsStore()
 		}
@@ -66,8 +76,7 @@ export default {
 		CoreTooltip,
 		SvgCaretSolid
 	},
-	mixins : [ StatisticMixin ],
-	props  : {
+	props : {
 		total       : [ Number, String ],
 		difference  : [ Number, String ],
 		showCurrent : {
@@ -111,8 +120,8 @@ export default {
 	methods : {
 		compareDescription (number, direction) {
 			const directionI18n = 'up' === direction
-				? this.$t.__('Up', this.$td)
-				: this.$t.__('Down', this.$td)
+				? __('Up', td)
+				: __('Down', td)
 
 			const startDate = this.searchStatisticsStore.shouldShowSampleReports
 				? DateTime.now().minus({ days: 14 }).toFormat('yyyy-MM-dd')
@@ -124,13 +133,13 @@ export default {
 			const compareStart = new Date(`${startDate} 00:00:00`)
 			const compareEnd   = new Date(`${endDate} 00:00:00`)
 
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The direction (up or down), 2 - The difference, 3 - "in search results", 4 - The first date, 5 - The second date.
-				this.$t.__('%1$s %2$s %3$s compared to the previous period (%4$s - %5$s)', this.$td),
+				__('%1$s %2$s %3$s compared to the previous period (%4$s - %5$s)', td),
 				directionI18n,
 				'<strong>' + this.points(number) + '</strong>',
 				'position' === this.type
-					? this.$t.__('in search results', this.$td)
+					? __('in search results', td)
 					: '',
 				'<strong>' + dateFormat(compareStart, this.rootStore.aioseo.data.dateFormat) + '</strong>',
 				'<strong>' + dateFormat(compareEnd, this.rootStore.aioseo.data.dateFormat) + '</strong>'
@@ -139,37 +148,37 @@ export default {
 		points (number) {
 			switch (this.type) {
 				case 'clicks':
-					return this.$t.sprintf(
+					return sprintf(
 						// Translators: 1 - The number of clicks.
-						this.$t._n('%s click', '%s clicks', parseInt(this.formatStatistic('clicks', number)), this.$td),
+						_n('%s click', '%s clicks', parseInt(this.formatStatistic('clicks', number)), td),
 						numbers.compactNumber(number)
 					)
 				case 'impressions':
-					return this.$t.sprintf(
+					return sprintf(
 						// Translators: 1 - The number of impressions.
-						this.$t._n('%s impression', '%s impressions', parseInt(this.formatStatistic('impressions', number)), this.$td),
+						_n('%s impression', '%s impressions', parseInt(this.formatStatistic('impressions', number)), td),
 						numbers.compactNumber(number)
 					)
 				case 'ctr':
 					return this.formatStatistic('ctr', number)
 				case 'position':
 					number = parseInt(Math.round(number))
-					return this.$t.sprintf(
+					return sprintf(
 						// Translators: 1 - The number of spots.
-						this.$t._n('%s spot', '%s spots', parseInt(this.formatStatistic('position', number)), this.$td),
+						_n('%s spot', '%s spots', parseInt(this.formatStatistic('position', number)), td),
 						number
 					)
 				case 'keywords':
-					return this.$t.sprintf(
+					return sprintf(
 						// Translators: 1 - The number of keywords.
-						this.$t._n('%s keyword', '%s keywords', parseInt(this.formatStatistic('keywords', number)), this.$td),
+						_n('%s keyword', '%s keywords', parseInt(this.formatStatistic('keywords', number)), td),
 						numbers.compactNumber(number)
 					)
 				case 'decay':
 				case 'diffDecay':
-					return this.$t.sprintf(
+					return sprintf(
 						// Translators: 1 - The number of points.
-						this.$t._n('%s point', '%s points', parseInt((this.formatStatistic('keywords', number))), this.$td),
+						_n('%s point', '%s points', parseInt((this.formatStatistic('keywords', number))), td),
 						numbers.compactNumber(number)
 					)
 				default:

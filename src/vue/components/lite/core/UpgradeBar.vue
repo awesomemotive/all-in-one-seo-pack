@@ -13,12 +13,18 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	useSettingsStore
 } from '@/vue/stores'
 
 import SvgAioseoLogoGear from '@/vue/components/common/svg/aioseo/LogoGear'
 import SvgClose from '@/vue/components/common/svg/Close'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -32,15 +38,15 @@ export default {
 	data () {
 		return {
 			strings : {
-				boldText : this.$t.sprintf(
+				boldText : sprintf(
 					'<strong>%1$s %2$s</strong>',
 					import.meta.env.VITE_NAME,
-					this.$t.__('Free', this.$td)
+					__('Free', td)
 				),
-				url      : this.$links.utmUrl('lite-upgrade-bar'),
-				linkText : this.$t.sprintf(
+				url      : links.utmUrl('lite-upgrade-bar'),
+				linkText : sprintf(
 					// Translators: 1 - "Pro".
-					this.$t.__('upgrading to %1$s', this.$td),
+					__('upgrading to %1$s', td),
 					'Pro'
 				)
 			}
@@ -48,16 +54,16 @@ export default {
 	},
 	computed : {
 		link () {
-			return this.$t.sprintf(
+			return sprintf(
 				'<strong><a href="%1$s" target="_blank" class="text-white">%2$s</a> <a href="%1$s" target="_blank" class="text-white upgrade-arrow">&rarr;</a></strong>',
 				this.strings.url,
 				this.strings.linkText
 			)
 		},
 		upgradeText () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The plugin name ("All in One SEO"), 2 - "upgrading to Pro".
-				this.$t.__('You\'re using %1$s. To unlock more features, consider %2$s', this.$td),
+				__('You\'re using %1$s. To unlock more features, consider %2$s', td),
 				this.strings.boldText,
 				this.link
 			)

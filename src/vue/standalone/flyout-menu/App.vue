@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	useRootStore
 } from '@/vue/stores'
@@ -47,6 +48,11 @@ import SvgLightBulb from '@/vue/components/common/svg/LightBulb'
 import SvgMessage from '@/vue/components/common/svg/Message'
 import SvgStar from '@/vue/components/common/svg/Star'
 import SvgSupport from '@/vue/components/common/svg/Support'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -67,7 +73,7 @@ export default {
 			willOpen : false,
 			hovering : null,
 			strings  : {
-				quickLinks : this.$t.__('Quick Links', this.$td)
+				quickLinks : __('Quick Links', td)
 			}
 		}
 	},
@@ -75,17 +81,17 @@ export default {
 		items () {
 			const items = [
 				{
-					label : this.$t.__('Support & Docs', this.$td),
-					url   : this.$links.utmUrl(
+					label : __('Support & Docs', td),
+					url   : links.utmUrl(
 						'flyout-menu',
 						'support-docs',
-						this.$links.docLinks.home
+						links.docLinks.home
 					),
 					icon : 'svg-support'
 				},
 				{
-					label : this.$t.__('Join Our Community', this.$td),
-					url   : this.$links.utmUrl(
+					label : __('Join Our Community', td),
+					url   : links.utmUrl(
 						'flyout-menu',
 						'join-our-community',
 						'plugin/facebook/'
@@ -93,8 +99,8 @@ export default {
 					icon : 'svg-message'
 				},
 				{
-					label : this.$t.__('Suggest a Feature', this.$td),
-					url   : this.$links.utmUrl(
+					label : __('Suggest a Feature', td),
+					url   : links.utmUrl(
 						'flyout-menu',
 						'suggest-a-feature',
 						'suggest-a-feature/'
@@ -103,15 +109,15 @@ export default {
 				}
 			]
 
-			if (!this.$isPro && this.rootStore.pong) {
+			if (!this.rootStore.isPro && this.rootStore.pong) {
 				items.unshift({
-					label : this.$t.sprintf(
+					label : sprintf(
 						// Translators: 1 - The plugin short name ("AIOSEO"), 2 - "Pro" string.
-						this.$t.__('Upgrade to %1$s %2$s', this.$td),
+						__('Upgrade to %1$s %2$s', td),
 						import.meta.env.VITE_SHORT_NAME,
 						'Pro'
 					),
-					url : this.$links.utmUrl(
+					url : links.utmUrl(
 						'flyout-menu',
 						'upgrade-to-pro'
 					),

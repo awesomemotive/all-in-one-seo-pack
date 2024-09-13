@@ -1150,11 +1150,11 @@ class Admin {
 			return $messages;
 		}
 
-		if ( empty( $_GET['ids'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
+		if ( empty( $_GET['ids'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended	
 			return $messages;
 		}
 
-		$ids = array_map( 'intval', explode( ',', wp_unslash( $_GET['ids'] ) ) ); // phpcs:ignore HM.Security.NonceVerification.Recommended, HM.Security.ValidatedSanitizedInput.InputNotSanitized
+		$ids = array_map( 'intval', explode( ',', sanitize_text_field( wp_unslash( $_GET['ids'] ) ) ) ); // phpcs:ignore HM.Security.NonceVerification.Recommended, HM.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended, Generic.Files.LineLength.MaxExceeded
 
 		$posts = [];
 		foreach ( $ids as $id ) {
@@ -1280,7 +1280,7 @@ class Admin {
 		}
 
 		// If the user is activating the Author SEO addon, dismiss the tooltip.
-		if ( ! empty( $_GET['aioseo-action'] ) && 'activate-author-seo' === wp_unslash( $_GET['aioseo-action'] ) ) { // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized, HM.Security.NonceVerification.Recommended, Generic.Files.LineLength.MaxExceeded
+		if ( ! empty( $_GET['aioseo-action'] ) && 'activate-author-seo' === sanitize_text_field( wp_unslash( $_GET['aioseo-action'] ) ) ) { // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized, HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended, Generic.Files.LineLength.MaxExceeded
 			update_user_meta( get_current_user_id(), "_aioseo-$pointer-dismissed", true );
 
 			return;
@@ -1319,6 +1319,10 @@ class Admin {
 						align : 'center'
 					},
 					pointerWidth : 420,
+					show: function(event, el) {
+						el.pointer.css({'position':'fixed'});
+						el.pointer.addClass('aioseo-wp-pointer');
+					},
 					close : function() {
 						isClosed = true;
 						jQuery.post(
@@ -1331,15 +1335,6 @@ class Admin {
 						);
 					}
 				} ).pointer('open');
-
-				// Reposition the pointer when the window is resized.
-				window.addEventListener( 'scroll', function() {
-					if ( isClosed ) {
-						return;
-					}
-
-					pointer.pointer( 'reposition' );
-				} );
 			} );
 		</script>
 		<?php

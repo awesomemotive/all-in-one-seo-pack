@@ -8,13 +8,17 @@
 </template>
 
 <script>
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	data () {
 		return {
 			interval : null,
 			display  : false,
 			strings  : {
-				newNotifications : this.$t.__('You have new notifications!', this.$td)
+				newNotifications : __('You have new notifications!', td)
 			}
 		}
 	},

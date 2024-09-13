@@ -78,17 +78,33 @@
 </template>
 
 <script>
-import { Tags } from '@/vue/mixins/Tags'
+import { useTags } from '@/vue/composables/Tags'
+
 import SiteAnalysis from '@/vue/classes/SiteAnalysis'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
 import CoreSeoSiteAnalysisResult from '@/vue/components/common/core/SeoSiteAnalysisResult'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	setup () {
+		const {
+			parseTags
+		} = useTags({
+			separator : undefined
+		})
+
+		return {
+			parseTags
+		}
+	},
 	components : {
 		CoreGoogleSearchPreview,
 		CoreSeoSiteAnalysisResult
 	},
-	mixins : [ Tags ],
-	props  : {
+	props : {
 		section : {
 			type     : String,
 			required : true
@@ -102,14 +118,13 @@ export default {
 	},
 	data () {
 		return {
-			separator             : undefined,
 			searchPreviewHostname : '',
 			searchPreviewUrl      : '',
 			strings               : {
-				basic       : this.$t.__('Basic SEO', this.$td),
-				advanced    : this.$t.__('Advanced SEO', this.$td),
-				performance : this.$t.__('Performance', this.$td),
-				security    : this.$t.__('Security', this.$td)
+				basic       : __('Basic SEO', td),
+				advanced    : __('Advanced SEO', td),
+				performance : __('Performance', td),
+				security    : __('Security', td)
 			}
 		}
 	},

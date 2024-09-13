@@ -28,6 +28,11 @@ import {
 
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import SvgRightArrowShort from '@/vue/components/common/svg/right-arrow/Short'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -41,9 +46,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				title       : this.$t.__('Redirects', this.$td),
-				description : this.$t.__('Here you can add a redirect or view your existing redirects from this page. Click on the button below to view the Redirects panel.', this.$td),
-				button      : this.$t.__('Open Redirects', this.$td)
+				title       : __('Redirects', td),
+				description : __('Here you can add a redirect or view your existing redirects from this page. Click on the button below to view the Redirects panel.', td),
+				button      : __('Open Redirects', td)
 			}
 		}
 	}

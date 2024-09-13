@@ -124,6 +124,7 @@
 </template>
 
 <script>
+import links from '@/vue/utils/links'
 import {
 	useRootStore,
 	useToolsStore
@@ -138,6 +139,8 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import DeprecatedOptions from './debug/DeprecatedOptions'
 import MigrationInfo from './debug/MigrationInfo'
 import SvgClose from '@/vue/components/common/svg/Close'
+
+import { sprintf } from '@/vue/plugins/translations'
 
 export default {
 	setup () {
@@ -182,7 +185,7 @@ export default {
 				yesDoAction    : 'Yes, run this action',
 				noChangedMind  : 'No, I changed my mind'
 			},
-			alertLink : this.$links.getPlainLink('Click here to open to the Scheduled Actions panel', this.rootStore.aioseo.urls.admin.scheduledActions, true)
+			alertLink : links.getPlainLink('Click here to open to the Scheduled Actions panel', this.rootStore.aioseo.urls.admin.scheduledActions, true)
 		}
 	},
 	computed : {
@@ -190,7 +193,7 @@ export default {
 			return `Are you sure you want to run the "${this.currentAction.label}" action?`
 		},
 		tabs () {
-			const scheduledActionsLink          = this.$t.sprintf('<a href="%1$s" target="_blank">Scheduled Actions</a>', this.rootStore.aioseo.urls.admin.scheduledActions)
+			const scheduledActionsLink          = sprintf('<a href="%1$s" target="_blank">Scheduled Actions</a>', this.rootStore.aioseo.urls.admin.scheduledActions)
 			const networkClearCache             = this.rootStore.aioseo.data.isNetworkAdmin ? '<br><strong>NOTE: If no site is selected, this will clear the network cache.</strong>' : ''
 			const networkPluginUpdatesTransient = this.rootStore.aioseo.data.isNetworkAdmin ? '<br><strong>NOTE: If no site is selected, this will clear the network plugin updates transient.</strong>' : ''
 			return [
@@ -238,7 +241,7 @@ export default {
 							label            : 'Clear Image Data',
 							slug             : 'clear-image-data',
 							shortDescription : 'This action removes all image data from the database, forcing a site-wide rescan via Action Scheduler.',
-							longDescription  : this.$t.sprintf(
+							longDescription  : sprintf(
 								'To speed up the image scan, go to %1$s and run the <code>aioseo_image_sitemap_scan</code> action.',
 								scheduledActionsLink
 							),
@@ -274,7 +277,7 @@ export default {
 							label            : 'Unescape Data',
 							slug             : 'unescape-data',
 							shortDescription : 'This action will clean <code>aioseo_posts</code> and <code>aioseo_term</code> records whose data is corrupted.',
-							longDescription  : this.$t.sprintf(
+							longDescription  : sprintf(
 								'The action will trigger a routine which runs in batches via Action Scheduler. It may take some time for this routine to complete, To speed up this process, go to %1$s and run the <code>aioseo_unslash_escaped_data_posts</code> or <code>aioseo_unslash_escaped_data_terms</code> action.',
 								scheduledActionsLink
 							),
@@ -369,12 +372,12 @@ export default {
 		if (this.rootStore.aioseo.data.v3Options) {
 			existingTabIndex = this.tabs.findIndex(existingTab => 'migrations' === existingTab.slug.toLowerCase())
 			if (-1 !== existingTabIndex) {
-				const scheduledActionsLink = this.$t.sprintf('<a href="%1$s" target="_blank">Scheduled Actions</a>', this.rootStore.aioseo.urls.admin.scheduledActions)
+				const scheduledActionsLink = sprintf('<a href="%1$s" target="_blank">Scheduled Actions</a>', this.rootStore.aioseo.urls.admin.scheduledActions)
 				this.tabs[existingTabIndex].actions.push({
 					label            : 'Rerun V3 Migration',
 					slug             : 'restart-v3-migration',
 					shortDescription : 'This action restarts the migration from V3 to V4.',
-					longDescription  : this.$t.sprintf(
+					longDescription  : sprintf(
 						'All settings will be migrated immediately. However, the post/term meta needs to be migrated via a routine which runs in batches via Action Scheduler. To speed up the post/term meta migration, go to %1$s and run the <code>aioseo_migrate_post_meta</code> or <code>aioseo_migrate_term_meta</code> action.',
 						scheduledActionsLink
 					),

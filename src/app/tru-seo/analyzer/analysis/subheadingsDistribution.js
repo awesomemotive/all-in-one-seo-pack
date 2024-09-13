@@ -3,7 +3,8 @@ import getSubheadingTexts from '../researches/stringProcessing/getSubheadingText
 import isTextTooLong from '../researches/helpers/isValueTooLong'
 import getWords from '../researches/stringProcessing/getWords'
 import { __, _n, sprintf } from '@wordpress/i18n'
-import { td } from '@/vue/plugins/constants'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const parameters = {
 	recommendedMaximumWordCount : 300,

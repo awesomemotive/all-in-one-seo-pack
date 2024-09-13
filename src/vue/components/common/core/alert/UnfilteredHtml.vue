@@ -6,12 +6,20 @@
 		v-html="strings.unfilteredHtmlError"
 	/>
 </template>
+
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useRootStore
 } from '@/vue/stores'
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -24,10 +32,10 @@ export default {
 	data () {
 		return {
 			strings : {
-				unfilteredHtmlError : this.$t.sprintf(
+				unfilteredHtmlError : sprintf(
 					// Translators: 1 - Learn more link.
-					this.$t.__('Your user account role does not have access to edit this field. %1$s', this.$td),
-					this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'unfilteredHtml', true)
+					__('Your user account role does not have access to edit this field. %1$s', td),
+					links.getDocLink(GLOBAL_STRINGS.learnMore, 'unfilteredHtml', true)
 				)
 			}
 		}

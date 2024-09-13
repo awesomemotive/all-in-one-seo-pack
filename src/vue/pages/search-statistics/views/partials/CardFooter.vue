@@ -10,21 +10,25 @@
 </template>
 
 <script>
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	props : {
+		buttonTarget : String,
+		query        : Object
+	},
 	data () {
 		return {
 			strings : {
-				openReport : this.$t.sprintf(
+				openReport : sprintf(
 					// Translators: 1 - Right arrow.
-					this.$t.__('Open Report %1$s', this.$td),
+					__('Open Report %1$s', td),
 					'<span>&rarr;</span>'
 				)
 			}
 		}
-	},
-	props : {
-		buttonTarget : String,
-		query        : Object
 	}
 }
 </script>

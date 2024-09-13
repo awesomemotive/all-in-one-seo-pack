@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { computed, inject } from 'vue'
+import { computed } from 'vue'
 
 import {
 	useKeywordRankTrackerStore
@@ -23,8 +23,9 @@ import {
 
 import Graph from '../../partials/Graph'
 
-const $t = inject('$t')
-const $td = inject('$td')
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const keywordRankTrackerStore = useKeywordRankTrackerStore()
 
@@ -38,19 +39,19 @@ const areaSeries = computed(() => {
 
 	return [
 		{
-			name : $t.__('Top 3 Position', $td),
+			name : __('Top 3 Position', td),
 			data : distributionIntervals.map((tick) => ({ x: tick.date, y: tick.top3 }))
 		},
 		{
-			name : $t.__('4-10 Position', $td),
+			name : __('4-10 Position', td),
 			data : distributionIntervals.map((tick) => ({ x: tick.date, y: tick.top10 }))
 		},
 		{
-			name : $t.__('11-50 Position', $td),
+			name : __('11-50 Position', td),
 			data : distributionIntervals.map((tick) => ({ x: tick.date, y: tick.top50 }))
 		},
 		{
-			name : $t.__('50-100 Position', $td),
+			name : __('50-100 Position', td),
 			data : distributionIntervals.map((tick) => ({ x: tick.date, y: tick.top100 }))
 		}
 	]
@@ -63,25 +64,25 @@ const barSeries = computed(() => {
 
 	return [
 		{
-			name : $t.__('Keywords', $td),
+			name : __('Keywords', td),
 			data : [
 				{
-					x         : $t.__('Top 3 Position', $td),
+					x         : __('Top 3 Position', td),
 					y         : distribution.top3,
 					fillColor : '#005AE0'
 				},
 				{
-					x         : $t.__('4-10 Position', $td),
+					x         : __('4-10 Position', td),
 					y         : distribution.top10,
 					fillColor : '#00AA63'
 				},
 				{
-					x         : $t.__('11-50 Position', $td),
+					x         : __('11-50 Position', td),
 					y         : distribution.top50,
 					fillColor : '#F18200'
 				},
 				{
-					x         : $t.__('50-100 Position', $td),
+					x         : __('50-100 Position', td),
 					y         : distribution.top100,
 					fillColor : '#DF2A4A'
 				}

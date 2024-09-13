@@ -59,6 +59,10 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
+import { __, _n, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -76,12 +80,12 @@ export default {
 	data () {
 		return {
 			strings : {
-				weCouldnt       : this.$t.__('We couldn\'t find any redirects for this post.', this.$td),
-				easilyCreate    : this.$t.__('Easily create and manage redirects for your broken links.', this.$td),
-				addRedirects    : this.$t.__('Add Redirect', this.$td),
-				manageRedirects : this.$t.sprintf(
+				weCouldnt       : __('We couldn\'t find any redirects for this post.', td),
+				easilyCreate    : __('Easily create and manage redirects for your broken links.', td),
+				addRedirects    : __('Add Redirect', td),
+				manageRedirects : sprintf(
 					// Translators: 1 - Right arrow.
-					this.$t.__('Manage Redirects %1$s', this.$td),
+					__('Manage Redirects %1$s', td),
 					'<span>&rarr;</span>'
 				)
 			}
@@ -91,16 +95,16 @@ export default {
 		redirectsFromString () {
 			const amount = this.redirects.from.length
 
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The amount of posts.
-				this.$t._n('%1$d post is redirecting to this post', '%1$d posts are redirecting to this post', amount, this.$td),
+				_n('%1$d post is redirecting to this post', '%1$d posts are redirecting to this post', amount, td),
 				amount
 			)
 		},
 		redirectsToString () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The redirect status code.
-				this.$t.__('This post has a %1$s redirect to:', this.$td),
+				__('This post has a %1$s redirect to:', td),
 				this.redirects.toCode
 			)
 		}

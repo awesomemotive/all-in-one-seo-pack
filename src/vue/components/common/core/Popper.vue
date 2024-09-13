@@ -167,40 +167,6 @@ export default {
 			return Array.isArray(this.classes) ? this.classes : []
 		}
 	},
-	created () {
-		this.appendedArrow = false
-		this.appendedToBody = false
-		this.popperOptions = Object.assign(this.popperOptions, this.options)
-	},
-	mounted () {
-		this.referenceElm = this.reference || this.$refs.reference.firstElementChild
-		this.popper = this.$refs.content.firstElementChild
-		switch (this.trigger) {
-			case 'clickToOpen':
-				on(this.referenceElm, 'click', this.doShow)
-				on(document, 'click', this.handleDocumentClick)
-				on(document, 'touchstart', this.handleDocumentClick)
-				break
-			case 'click': // Same as clickToToggle, provided for backwards compatibility.
-			case 'clickToToggle':
-				on(this.referenceElm, 'click', this.doToggle)
-				on(document, 'click', this.handleDocumentClick)
-				on(document, 'touchstart', this.handleDocumentClick)
-				break
-			case 'hover':
-				on(this.referenceElm, 'mouseover', this.onMouseOver)
-				on(this.popper, 'mouseover', this.onMouseOver)
-				on(this.referenceElm, 'mouseout', this.onMouseOut)
-				on(this.popper, 'mouseout', this.onMouseOut)
-				break
-			case 'focus':
-				on(this.referenceElm, 'focus', this.onMouseOver)
-				on(this.popper, 'focus', this.onMouseOver)
-				on(this.referenceElm, 'blur', this.onMouseOut)
-				on(this.popper, 'blur', this.onMouseOut)
-				break
-		}
-	},
 	methods : {
 		doToggle (event) {
 			if (this.stopPropagation) {
@@ -318,6 +284,40 @@ export default {
 				return elm.contains(otherElm)
 			}
 			return false
+		}
+	},
+	created () {
+		this.appendedArrow = false
+		this.appendedToBody = false
+		this.popperOptions = Object.assign(this.popperOptions, this.options)
+	},
+	mounted () {
+		this.referenceElm = this.reference || this.$refs.reference.firstElementChild
+		this.popper = this.$refs.content.firstElementChild
+		switch (this.trigger) {
+			case 'clickToOpen':
+				on(this.referenceElm, 'click', this.doShow)
+				on(document, 'click', this.handleDocumentClick)
+				on(document, 'touchstart', this.handleDocumentClick)
+				break
+			case 'click': // Same as clickToToggle, provided for backwards compatibility.
+			case 'clickToToggle':
+				on(this.referenceElm, 'click', this.doToggle)
+				on(document, 'click', this.handleDocumentClick)
+				on(document, 'touchstart', this.handleDocumentClick)
+				break
+			case 'hover':
+				on(this.referenceElm, 'mouseover', this.onMouseOver)
+				on(this.popper, 'mouseover', this.onMouseOver)
+				on(this.referenceElm, 'mouseout', this.onMouseOut)
+				on(this.popper, 'mouseout', this.onMouseOut)
+				break
+			case 'focus':
+				on(this.referenceElm, 'focus', this.onMouseOver)
+				on(this.popper, 'focus', this.onMouseOver)
+				on(this.referenceElm, 'blur', this.onMouseOut)
+				on(this.popper, 'blur', this.onMouseOut)
+				break
 		}
 	},
 	unmounted () {

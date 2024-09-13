@@ -1,12 +1,13 @@
-import * as translate from '@wordpress/i18n'
+import { setLocaleData } from '@wordpress/i18n'
 
 if (window.aioseoTranslations) {
-	translate.setLocaleData(window.aioseoTranslations.translations, import.meta.env.VITE_TEXTDOMAIN)
+	setLocaleData(window.aioseoTranslations.translations, import.meta.env.VITE_TEXTDOMAIN)
 
 	if (window.aioseoTranslationsPro && window.aioseoTranslationsPro.translationsPro) {
-		translate.setLocaleData(window.aioseoTranslationsPro.translationsPro, import.meta.env.VITE_TEXTDOMAIN_PRO)
+		setLocaleData(window.aioseoTranslationsPro.translationsPro, import.meta.env.VITE_TEXTDOMAIN_PRO)
 	}
 } else {
 	console.warn('Translations couldn\'t be loaded.')
 }
-export default translate
+
+export * from '@wordpress/i18n'

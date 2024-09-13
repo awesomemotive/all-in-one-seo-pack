@@ -29,6 +29,11 @@ import {
 
 import Blur from './Blur'
 import Cta from '@/vue/components/common/cta/Index'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -42,9 +47,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				ctaHeader       : this.$t.__('Update Redirects to the latest version', this.$td),
-				ctaDescription  : this.$t.__('Our Redirection Manager lets you easily create and manage redirects for broken links to avoid confusing search engines and users and prevents losing backlinks.', this.$td),
-				updateRedirects : this.$t.__('Update Redirects', this.$td)
+				ctaHeader       : __('Update Redirects to the latest version', td),
+				ctaDescription  : __('Our Redirection Manager lets you easily create and manage redirects for broken links to avoid confusing search engines and users and prevents losing backlinks.', td),
+				updateRedirects : __('Update Redirects', td)
 			}
 		}
 	}

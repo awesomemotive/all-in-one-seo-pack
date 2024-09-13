@@ -60,6 +60,11 @@
 
 <script>
 import numbers from '@/vue/utils/numbers'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	emits : [ 'paginate' ],
 	props : {
@@ -80,8 +85,8 @@ export default {
 			numbers,
 			pageNumber : 1,
 			strings    : {
-				of    : this.$t.__('of', this.$td),
-				items : this.$t.__('items', this.$td)
+				of    : __('of', td),
+				items : __('items', td)
 			}
 		}
 	},

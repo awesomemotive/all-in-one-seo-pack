@@ -84,11 +84,16 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
+import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
+
 import KeywordsDistributionGraph from '../partials/KeywordsDistributionGraph'
 import KeywordsGraph from '../partials/KeywordsGraph'
 import KeywordsTable from '../partials/KeywordsTable'
 import SeoStatisticsOverview from '../partials/SeoStatisticsOverview'
-import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	setup () {
@@ -110,10 +115,10 @@ export default {
 	data () {
 		return {
 			strings : {
-				keywordPositionsCard      : this.$t.__('Keyword Positions', this.$td),
-				keywordPositionsTooltip   : this.$t.__('This graph is a visual representation of how well <strong>keywords are ranking in search results over time</strong> based on their position and average CTR. This can help you understand the performance of keywords and identify any trends or fluctuations.', this.$td),
-				keywordPerformanceCard    : this.$t.__('Keyword Performance', this.$td),
-				keywordPerformanceTooltip : this.$t.__('This table displays the performance of keywords that your site ranks for over time, including metrics such as impressions, click-through rate, and average position in search results. It allows for easy analysis of how keywords are performing and identification of any underperforming keywords that may need to be optimized or replaced.', this.$td)
+				keywordPositionsCard      : __('Keyword Positions', td),
+				keywordPositionsTooltip   : __('This graph is a visual representation of how well <strong>keywords are ranking in search results over time</strong> based on their position and average CTR. This can help you understand the performance of keywords and identify any trends or fluctuations.', td),
+				keywordPerformanceCard    : __('Keyword Performance', td),
+				keywordPerformanceTooltip : __('This table displays the performance of keywords that your site ranks for over time, including metrics such as impressions, click-through rate, and average position in search results. It allows for easy analysis of how keywords are performing and identification of any underperforming keywords that may need to be optimized or replaced.', td)
 			},
 			defaultKeywords : {
 				rows   : [],

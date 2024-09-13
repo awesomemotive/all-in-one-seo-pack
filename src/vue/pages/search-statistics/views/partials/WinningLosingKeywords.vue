@@ -80,6 +80,11 @@ import { sanitizeString } from '@/vue/utils/strings'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Statistic from './Statistic'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -94,9 +99,9 @@ export default {
 	data () {
 		return {
 			strings : {
-				winning    : this.$t.__('Top Winning', this.$td),
-				losing     : this.$t.__('Top Losing', this.$td),
-				noKeywords : this.$t.__('You don\'t have any keywords yet.', this.$td)
+				winning    : __('Top Winning', td),
+				losing     : __('Top Losing', td),
+				noKeywords : __('You don\'t have any keywords yet.', td)
 			}
 		}
 	},

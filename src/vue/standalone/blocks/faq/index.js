@@ -2,8 +2,8 @@ import metadata from './block.json'
 import edit from './edit'
 import save from './save'
 import icon from './icon'
+import { __ } from '@/vue/plugins/translations'
 
-const { __ } = window.wp.i18n
 const td = import.meta.env.VITE_TEXTDOMAIN
 const {
 	name,

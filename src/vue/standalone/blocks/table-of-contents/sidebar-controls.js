@@ -3,7 +3,8 @@ import {
 } from '@/vue/stores'
 
 import { html } from '@/vue/standalone/blocks/utils'
-const { __ }                       = window.wp.i18n
+import { __ } from '@/vue/plugins/translations'
+
 const { InspectorControls }        = window.wp.blockEditor
 const { PanelBody, SelectControl } = window.wp.components
 const td                           = import.meta.env.VITE_TEXTDOMAIN

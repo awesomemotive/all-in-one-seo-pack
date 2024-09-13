@@ -196,7 +196,12 @@ trait Vue {
 				'permalinkStructure'  => get_option( 'permalink_structure' ),
 				'dateFormat'          => get_option( 'date_format' ),
 				'timeFormat'          => get_option( 'time_format' ),
-				'siteName'            => aioseo()->helpers->getWebsiteName()
+				'siteName'            => aioseo()->helpers->getWebsiteName(),
+				'blocks'              => [
+					'toc' => [
+						'hashPrefix' => apply_filters( 'aioseo_toc_hash_prefix', 'aioseo-' )
+					]
+				]
 			],
 			'user'              => [
 				'canManage'      => aioseo()->access->canManage(),

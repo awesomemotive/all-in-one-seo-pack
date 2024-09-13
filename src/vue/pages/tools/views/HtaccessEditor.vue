@@ -43,6 +43,11 @@ import BaseEditor from '@/vue/components/common/base/Editor'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -59,11 +64,11 @@ export default {
 	data () {
 		return {
 			strings : {
-				htaccessEditor : this.$t.__('.htaccess Editor', this.$td),
-				editHtaccess   : this.$t.__('Edit .htaccess', this.$td),
-				description    : this.$t.sprintf(
+				htaccessEditor : __('.htaccess Editor', td),
+				editHtaccess   : __('Edit .htaccess', td),
+				description    : sprintf(
 					// Translators: 1 - Opening bold tag, 2 - Closing bold tag.
-					this.$t.__('This allows you to edit the .htaccess file for your site. All WordPress sites on an Apache server have a .htaccess file and we have provided you with a convenient way of editing it. Care should always be taken when editing important files from within WordPress as an incorrect change could cause WordPress to become inaccessible. %1$sBe sure to make a backup before making changes and ensure that you have FTP access to your web server and know how to access and edit files via FTP.%2$s', this.$td),
+					__('This allows you to edit the .htaccess file for your site. All WordPress sites on an Apache server have a .htaccess file and we have provided you with a convenient way of editing it. Care should always be taken when editing important files from within WordPress as an incorrect change could cause WordPress to become inaccessible. %1$sBe sure to make a backup before making changes and ensure that you have FTP access to your web server and know how to access and edit files via FTP.%2$s', td),
 					'<strong>',
 					'</strong>'
 				)

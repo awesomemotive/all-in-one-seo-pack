@@ -69,14 +69,19 @@ import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import { ElDatePicker } from 'element-plus'
 import en from 'element-plus/dist/locale/en.mjs'
 import 'element-plus/theme-chalk/el-date-picker.css'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'change', 'updated' ],
 	setup () {
 		return {
 			rootStore : useRootStore(),
 			locale    : en
 		}
 	},
-	emits      : [ 'change', 'updated' ],
 	components : {
 		ElDatePicker,
 		SvgCalendar,
@@ -139,8 +144,8 @@ export default {
 			rolling : null,
 			value   : null,
 			strings : {
-				startDate : this.$t.__('Start Date', this.$td),
-				endDate   : this.$t.__('End Date', this.$td)
+				startDate : __('Start Date', td),
+				endDate   : __('End Date', td)
 			}
 		}
 	},

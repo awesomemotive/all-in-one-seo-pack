@@ -94,6 +94,10 @@ import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	emits      : [ 'blockArgAdded' ],
 	components : {
@@ -104,15 +108,15 @@ export default {
 	data () {
 		return {
 			strings : {
-				blockQuery   : this.$t.__('Block Query Arg', this.$td),
-				delete       : this.$t.__('Delete', this.$td),
-				add          : this.$t.__('Block Query Arg', this.$td),
-				regex        : this.$t.__('Regex', this.$td),
-				selectAValue : this.$t.__('Select a Value or Add a New One', this.$td),
-				key          : this.$t.__('Key', this.$td),
-				value        : this.$t.__('Enter one or multiple values', this.$td),
-				createValue  : this.$t.__('Press enter to create a value', this.$td),
-				invalidRegex : this.$t.__('The regex syntax is invalid.', this.$td)
+				blockQuery   : __('Block Query Arg', td),
+				delete       : __('Delete', td),
+				add          : __('Block Query Arg', td),
+				regex        : __('Regex', td),
+				selectAValue : __('Select a Value or Add a New One', td),
+				key          : __('Key', td),
+				value        : __('Enter one or multiple values', td),
+				createValue  : __('Press enter to create a value', td),
+				invalidRegex : __('The regex syntax is invalid.', td)
 			},
 			key          : null,
 			regex        : false,
@@ -120,6 +124,11 @@ export default {
 			isRegexValid : true,
 			valuesList   : [],
 			warnings     : []
+		}
+	},
+	watch : {
+		regexValue () {
+			this.warnings = this.testRegex()
 		}
 	},
 	computed : {
@@ -204,26 +213,26 @@ export default {
 
 			if (this.regex && null !== this.regexValue) {
 				if (-1 === this.regexValue.indexOf('^') && -1 === this.regexValue.indexOf('$')) {
-					warnings.push(this.$t.sprintf(
+					warnings.push(sprintf(
 						// Translators: 1 - To prevent a greedy regular expression you can use <code>^/</code>, 2 - to anchor it to the start of the Query Arg. For example: <code>^</code>.
-						this.$t.__('To prevent a greedy regular expression you can use %1$s to anchor it to the start of the Query Arg. For example: %2$s', this.$td),
+						__('To prevent a greedy regular expression you can use %1$s to anchor it to the start of the Query Arg. For example: %2$s', td),
 						'<code>^/</code>', '<code>^' + sanitizeString(this.regexValue.replace(/^\//, '')) + '</code>'
 					))
 				}
 
 				if (0 < this.regexValue.indexOf('^')) {
-					warnings.push(this.$t.sprintf(
+					warnings.push(sprintf(
 						// Translators: 1 - Adds a html tag with an option like: <code>^</code>, 2 - Adds a html tag with an option like: <code>^</code>.
-						this.$t.__('The caret %1$s should be at the start. For example: %2$s', this.$td),
+						__('The caret %1$s should be at the start. For example: %2$s', td),
 						'<code>^</code>',
 						'<code>^' + sanitizeString(this.regexValue.replace('^', '').replace(/^\//, '')) + '</code>'
 					))
 				}
 
 				if (this.regexValue.length - 1 !== this.regexValue.indexOf('$') && -1 !== this.regexValue.indexOf('$')) {
-					warnings.push(this.$t.sprintf(
+					warnings.push(sprintf(
 						// Translators: 1 - The dollar symbol, 2 - Dollar symbol example.
-						this.$t.__('The dollar symbol %1$s should be at the end. For example: %2$s', this.$td),
+						__('The dollar symbol %1$s should be at the end. For example: %2$s', td),
 						'<code>$</code>',
 						'<code>' + sanitizeString(this.regexValue.replace(/\$/g, '')) + '$</code>'
 					))
@@ -231,11 +240,6 @@ export default {
 			}
 
 			return warnings
-		}
-	},
-	watch : {
-		regexValue () {
-			this.warnings = this.testRegex()
 		}
 	}
 }

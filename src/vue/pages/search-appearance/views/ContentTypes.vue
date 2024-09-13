@@ -57,18 +57,29 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
+import { usePostTypes } from '@/vue/composables/PostTypes'
+
 import Advanced from './partials/Advanced'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import CustomFields from './partials/CustomFields'
-import PostTypesMixin from '@/vue/mixins/PostTypes'
 import Schema from './partials/Schema'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import TitleDescription from './partials/TitleDescription'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
+		const {
+			getPostIconClass
+		} = usePostTypes()
+
 		return {
+			getPostIconClass,
 			optionsStore  : useOptionsStore(),
 			rootStore     : useRootStore(),
 			settingsStore : useSettingsStore()
@@ -84,36 +95,35 @@ export default {
 		SvgCircleQuestionMark,
 		TitleDescription
 	},
-	mixins : [ PostTypesMixin ],
 	data () {
 		return {
 			internalDebounce : null,
 			strings          : {
-				label : this.$t.__('Label:', this.$td),
-				name  : this.$t.__('Slug:', this.$td)
+				label : __('Label:', td),
+				name  : __('Slug:', td)
 			},
 			tabs : [
 				{
 					slug   : 'title-description',
-					name   : this.$t.__('Title & Description', this.$td),
+					name   : __('Title & Description', td),
 					access : 'aioseo_search_appearance_settings',
 					pro    : false
 				},
 				{
 					slug   : 'schema',
-					name   : this.$t.__('Schema Markup', this.$td),
+					name   : __('Schema Markup', td),
 					access : 'aioseo_search_appearance_settings',
 					pro    : true
 				},
 				{
 					slug   : 'custom-fields',
-					name   : this.$t.__('Custom Fields', this.$td),
+					name   : __('Custom Fields', td),
 					access : 'aioseo_search_appearance_settings',
 					pro    : true
 				},
 				{
 					slug   : 'advanced',
-					name   : this.$t.__('Advanced', this.$td),
+					name   : __('Advanced', td),
 					access : 'aioseo_search_appearance_settings',
 					pro    : false
 				}
@@ -139,17 +149,6 @@ export default {
 			setTimeout(() => {
 				this.internalDebounce = false
 			}, 50)
-		},
-		getPostIconClass (icon) {
-			const defaultIcon = 'dashicons-admin-post'
-
-			// If the icon's name starts with 'dashicons-awb-', then it's a custom icon for Avada that
-			// we are not able to import.
-			if (icon?.startsWith('dashicons-awb-')) {
-				return defaultIcon
-			}
-
-			return icon || defaultIcon
 		}
 	}
 }

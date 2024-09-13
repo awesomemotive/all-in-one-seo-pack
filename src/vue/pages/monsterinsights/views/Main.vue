@@ -11,6 +11,11 @@
 <script>
 import CoreMain from '@/vue/components/common/core/main/Index'
 import Monsterinsights from './Monsterinsights'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreMain,
@@ -19,7 +24,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				pageName : this.$t.__('Analytics', this.$td)
+				pageName : __('Analytics', td)
 			}
 		}
 	}

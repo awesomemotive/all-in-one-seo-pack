@@ -44,13 +44,18 @@ import {
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
+	emits : [ 'update' ],
 	setup () {
 		return {
 			rootStore : useRootStore()
 		}
 	},
-	emits      : [ 'update' ],
 	components : {
 		BaseCheckbox,
 		GridColumn,
@@ -64,7 +69,7 @@ export default {
 		return {
 			options : {},
 			strings : {
-				updateOptions : this.$t.__('Update Options', this.$td)
+				updateOptions : __('Update Options', td)
 			}
 		}
 	},

@@ -54,9 +54,9 @@
 
 			<template #cta>
 				<cta
-					:cta-link="$links.getPricingUrl('network-tools', 'network-sites-activation')"
+					:cta-link="links.getPricingUrl('network-tools', 'network-sites-activation')"
 					:button-text="strings.ctaButtonText"
-					:learn-more-link="$links.getUpsellUrl('network-tools', 'network-sites-activation', $isPro ? 'pricing' : 'liteUpgrade')"
+					:learn-more-link="links.getUpsellUrl('network-tools', 'network-sites-activation', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 				>
 					<template #header-text>
 						{{ strings.ctaHeader }}
@@ -72,13 +72,26 @@
 </template>
 
 <script>
-import { Network } from '@/vue/mixins/Network'
+import {
+	useRootStore
+} from '@/vue/stores'
+
+import links from '@/vue/utils/links'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Cta from '@/vue/components/common/cta/Index'
 import SvgCircleCheckSolid from '@/vue/components/common/svg/circle/CheckSolid'
-import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans.vue'
+import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
-	mixins     : [ Network ],
+	setup () {
+		return {
+			rootStore : useRootStore()
+		}
+	},
 	components : {
 		RequiredPlans,
 		CoreWpTable,
@@ -87,22 +100,23 @@ export default {
 	},
 	data () {
 		return {
+			links,
 			bulkOptions : [
-				{ label: this.$t.__('Activate License', this.$td), value: 'activate-license' },
-				{ label: this.$t.__('Deactivate License', this.$td), value: 'deactivate-license' }
+				{ label: __('Activate License', td), value: 'activate-license' },
+				{ label: __('Deactivate License', td), value: 'deactivate-license' }
 			],
 			strings : {
-				activate   : this.$t.__('Activate', this.$td),
-				deactivate : this.$t.__('Deactivate', this.$td),
-				visitSite  : this.$t.__('Visit Site', this.$td),
-				dashboard  : this.$t.__('Dashboard', this.$td),
-				ctaHeader  : this.$t.sprintf(
+				activate   : __('Activate', td),
+				deactivate : __('Deactivate', td),
+				visitSite  : __('Visit Site', td),
+				dashboard  : __('Dashboard', td),
+				ctaHeader  : sprintf(
 					// Translators: 1 - "Elite".
-					this.$t.__('Domain Activations is an %1$s Feature', this.$td),
+					__('Domain Activations is an %1$s Feature', td),
 					'Elite'
 				),
-				ctaButtonText                   : this.$t.__('Unlock Domain Activations', this.$td),
-				networkDatabaseToolsDescription : this.$t.__('Unlock network-level tools to manage all your sites from one easy-to-use location. Manage your license key activations for each individual domain.', this.$td)
+				ctaButtonText                   : __('Unlock Domain Activations', td),
+				networkDatabaseToolsDescription : __('Unlock network-level tools to manage all your sites from one easy-to-use location. Manage your license key activations for each individual domain.', td)
 			}
 		}
 	},
@@ -111,19 +125,19 @@ export default {
 			return [
 				{
 					slug  : 'domain',
-					label : this.$t.__('Domain', this.$td)
+					label : __('Domain', td)
 				},
 				{
 					slug  : 'path',
-					label : this.$t.__('Path', this.$td)
+					label : __('Path', td)
 				},
 				{
 					slug  : 'primary_domain',
-					label : this.$t.__('Alias Of', this.$td)
+					label : __('Alias Of', td)
 				},
 				{
 					slug  : 'activated',
-					label : this.$t.__('Activated', this.$td),
+					label : __('Activated', td),
 					width : '90px'
 				}
 			]
@@ -150,15 +164,15 @@ export default {
 			return [
 				{
 					slug : 'all',
-					name : this.$t.__('All', this.$td)
+					name : __('All', td)
 				},
 				{
 					slug : 'activated',
-					name : this.$t.__('Activated', this.$td)
+					name : __('Activated', td)
 				},
 				{
 					slug : 'deactivated',
-					name : this.$t.__('Deactivated', this.$td)
+					name : __('Deactivated', td)
 				}
 			]
 		}

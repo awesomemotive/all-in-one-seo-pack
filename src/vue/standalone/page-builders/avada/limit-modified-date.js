@@ -1,5 +1,5 @@
 import emitter from 'tiny-emitter/instance'
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 
 export const buttonSettings = {
 	id    : 'aioseo-limit-modified-date-avada',

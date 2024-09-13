@@ -1,7 +1,7 @@
 <template>
 	<core-modal
 		:show="modalOpen"
-		@close="$emit('update:modalOpen', false)"
+		@close="emit('update:modalOpen', false)"
 		:classes="['keyword-rank-tracker-main']"
 	>
 		<template #headerTitle>
@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { defineEmits, defineProps, inject, computed } from 'vue'
+import { computed } from 'vue'
 
 import {
 	useLicenseStore,
@@ -36,20 +36,21 @@ import CoreModal from '@/vue/components/common/core/modal/Index'
 import KeywordRankTracker from './AIOSEO_VERSION/KeywordRankTracker'
 import KeywordRankTrackerLite from './lite/KeywordRankTracker'
 
-const $t = inject('$t')
-const $td = inject('$td')
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 
 const licenseStore = useLicenseStore()
 const searchStatisticsStore = useSearchStatisticsStore()
 
-defineEmits([ 'update:modalOpen' ])
+const emit = defineEmits([ 'update:modalOpen' ])
 
 defineProps({
 	modalOpen : Boolean
 })
 
 const strings = {
-	headerTitle : $t.__('Keyword Performance Tracking', $td)
+	headerTitle : __('Keyword Performance Tracking', td)
 }
 
 const showConnectCta = computed(() => {

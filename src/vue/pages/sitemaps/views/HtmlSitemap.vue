@@ -10,7 +10,7 @@
 			<div class="aioseo-settings-row aioseo-section-description">
 				{{ strings.description }}
 				<span
-					v-html="$links.getDocLink($constants.GLOBAL_STRINGS.learnMore, 'htmlSitemap', true)"
+					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'htmlSitemap', true)"
 				/>
 			</div>
 
@@ -127,8 +127,8 @@
 						v-model="optionsStore.options.sitemap.html.publicationDate"
 						name="publicationDate"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.hide, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.show, value: true }
+							{ label: GLOBAL_STRINGS.hide, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.show, value: true }
 						]"
 					/>
 
@@ -147,8 +147,8 @@
 						v-model="optionsStore.options.sitemap.html.compactArchives"
 						name="compactArchives"
 						:options="[
-							{ label: $constants.GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: $constants.GLOBAL_STRINGS.enabled, value: true }
+							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.enabled, value: true }
 						]"
 					/>
 
@@ -207,11 +207,14 @@
 </template>
 
 <script>
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useOptionsStore
 } from '@/vue/stores'
 
-import { useWidgets } from '@/vue/composables'
+import { useWidgets } from '@/vue/composables/Widgets'
+
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -220,13 +223,19 @@ import CorePostTypeOptions from '@/vue/components/common/core/PostTypeOptions'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import HtmlSitemapDisplayInfo from '@/vue/components/common/html-sitemap/DisplayInfo'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		const { strings } = useWidgets({ name: 'htmlSitemap' })
 
 		return {
 			optionsStore      : useOptionsStore(),
-			composableStrings : strings
+			composableStrings : strings,
+			GLOBAL_STRINGS,
+			links
 		}
 	},
 	components : {
@@ -242,51 +251,51 @@ export default {
 		const attributes = [
 			{
 				name        : 'post_types',
-				description : this.$t.__('The post types (by slug, comma-separated) that are included in the sitemap.', this.$td)
+				description : __('The post types (by slug, comma-separated) that are included in the sitemap.', td)
 			},
 			{
 				name        : 'taxonomies',
-				description : this.$t.__('The taxonomies (by slug, comma-separated) that are included in the sitemap.', this.$td)
+				description : __('The taxonomies (by slug, comma-separated) that are included in the sitemap.', td)
 			},
 			{
 				name        : 'label_tag',
-				description : this.$t.sprintf(
+				description : sprintf(
 					// Translators: 1 - The default value.
-					this.$t.__('The HTML tag that is used for the label of each section. Defaults to %1$s.', this.$td),
+					__('The HTML tag that is used for the label of each section. Defaults to %1$s.', td),
 					'<code>h4</code>'
 				)
 			},
 			{
 				name        : 'show_label',
-				description : this.$t.sprintf(
+				description : sprintf(
 					// Translators: 1 - The default value.
-					this.$t.__('Whether the labels should be shown or not. Defaults to %1$s.', this.$td),
+					__('Whether the labels should be shown or not. Defaults to %1$s.', td),
 					'<code>true</code>'
 				)
 			},
 			{
 				name        : 'publication_date',
-				description : this.$t.__('Whether the publication date of posts should be shown.', this.$td)
+				description : __('Whether the publication date of posts should be shown.', td)
 			},
 			{
 				name        : 'archives',
-				description : this.$t.__('Whether the regular sitemap or compact date archive sitemap is output.', this.$td)
+				description : __('Whether the regular sitemap or compact date archive sitemap is output.', td)
 			},
 			{
 				name        : 'order',
 				// Translators: 1 - "ASC", 2 - "DESC".
-				description : this.$t.sprintf(
+				description : sprintf(
 					// Translators: 1 - HTML code opening tag, 2 - HTML code closing tag.
-					this.$t.__('The sort direction. The supported values are %1$s and %2$s.', this.$td),
+					__('The sort direction. The supported values are %1$s and %2$s.', td),
 					'<code>ASC</code>',
 					'<code>DESC</code>'
 				)
 			},
 			{
 				name        : 'order_by',
-				description : this.$t.sprintf(
+				description : sprintf(
 					// Translators: 1 - HTML code opening tag, 2 - HTML code closing tag.
-					this.$t.__('The sort order. The supported values are %1$s, %2$s, %3$s and %4$s.', this.$td),
+					__('The sort order. The supported values are %1$s, %2$s, %3$s and %4$s.', td),
 					'<code>publish_date</code>',
 					'<code>last_updated</code>',
 					'<code>alphabetical</code>',
@@ -297,24 +306,24 @@ export default {
 
 		return {
 			sortOrders : [
-				{ label: this.$t.__('Publish Date', this.$td), value: 'publish_date' },
-				{ label: this.$t.__('Last Updated Date', this.$td), value: 'last_updated' },
-				{ label: this.$t.__('Alphabetical', this.$td), value: 'alphabetical' },
-				{ label: this.$t.__('Post/Term ID', this.$td), value: 'id' }
+				{ label: __('Publish Date', td), value: 'publish_date' },
+				{ label: __('Last Updated Date', td), value: 'last_updated' },
+				{ label: __('Alphabetical', td), value: 'alphabetical' },
+				{ label: __('Post/Term ID', td), value: 'id' }
 			],
 			sortDirections : [
-				{ label: this.$t.__('Ascending', this.$td), value: 'asc' },
-				{ label: this.$t.__('Descending', this.$td), value: 'desc' }
+				{ label: __('Ascending', td), value: 'asc' },
+				{ label: __('Descending', td), value: 'desc' }
 			],
 			displayOptions : {
 				extra : {
-					desc : this.$t.__('Display the sitemap on a dedicated page:', this.$td)
+					desc : __('Display the sitemap on a dedicated page:', td)
 				},
 				block : {
 					copy : '',
-					desc : this.$t.sprintf(
+					desc : sprintf(
 						// Translators: 1 - Opening HTML strong tag, 2 - The plugin short name ("AIOSEO"), 3 - Closing HTML strong tag.
-						this.$t.__('To add this block, edit a page or post and search for the %1$s"%2$s - HTML Sitemap"%3$s block.', this.$td),
+						__('To add this block, edit a page or post and search for the %1$s"%2$s - HTML Sitemap"%3$s block.', td),
 						'<strong>',
 						import.meta.env.VITE_SHORT_NAME,
 						'</strong>'
@@ -322,14 +331,14 @@ export default {
 				},
 				shortcode : {
 					copy : '[aioseo_html_sitemap]',
-					desc : this.$t.sprintf(
+					desc : sprintf(
 						// Translators: 1 - Learn more link.
-						this.$t.__('Use the following shortcode to display the HTML Sitemap. %1$s', this.$td),
-						this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'htmlSitemapShortcode', true)
+						__('Use the following shortcode to display the HTML Sitemap. %1$s', td),
+						links.getDocLink(GLOBAL_STRINGS.learnMore, 'htmlSitemapShortcode', true)
 					),
 					hasAdvanced           : true,
 					attributes            : attributes,
-					attributesDescription : this.$t.__('The following shortcode attributes can be used to override the default settings:', this.$td)
+					attributesDescription : __('The following shortcode attributes can be used to override the default settings:', td)
 				},
 				widget : {
 					copy : '',
@@ -337,42 +346,42 @@ export default {
 				},
 				php : {
 					copy : '<?php if( function_exists( \'aioseo_html_sitemap\' ) ) aioseo_html_sitemap(); ?>',
-					desc : this.$t.sprintf(
+					desc : sprintf(
 						// Translators: 1 - Learn more link.
-						this.$t.__('Use the following PHP code anywhere in your theme to display the sitemap. %1$s', this.$td),
-						this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'htmlSitemapFunction', true)
+						__('Use the following PHP code anywhere in your theme to display the sitemap. %1$s', td),
+						links.getDocLink(GLOBAL_STRINGS.learnMore, 'htmlSitemapFunction', true)
 					),
 					hasAdvanced           : true,
 					attributes            : attributes,
-					attributesDescription : this.$t.__('The function accepts an associative array with the following arguments that can be used to override the default settings:', this.$td)
+					attributesDescription : __('The function accepts an associative array with the following arguments that can be used to override the default settings:', td)
 				}
 			},
 			strings : {
-				title                      : this.$t.__('HTML Sitemap', this.$td),
-				enableSitemap              : this.$t.__('Enable Sitemap', this.$td),
-				settings                   : this.$t.__('HTML Sitemap Settings', this.$td),
-				description                : this.$t.__('Using the custom-built tools below, you can add an HTML sitemap to your website and help visitors discover all your content. Adding an HTML sitemap to your website may also help search engines find your content more easily.', this.$td),
-				displayLabel               : this.$t.__('Display HTML Sitemap', this.$td),
-				postTypes                  : this.$t.__('Post Types', this.$td),
-				taxonomies                 : this.$t.__('Taxonomies', this.$td),
-				includeAllPostTypes        : this.$t.__('Include All Post Types', this.$td),
-				selectPostTypes            : this.$t.__('Select which Post Types appear in your sitemap.', this.$td),
-				includeAllTaxonomies       : this.$t.__('Include All Taxonomies', this.$td),
-				selectTaxonomies           : this.$t.__('Select which Taxonomies appear in your sitemap.', this.$td),
-				sortOrder                  : this.$t.__('Sort Order', this.$td),
-				sortDirection              : this.$t.__('Sort Direction', this.$td),
-				publicationDate            : this.$t.__('Publication Date', this.$td),
-				publicationDateDescription : this.$t.__('This setting only applies to posts and pages.', this.$td),
-				compactArchives            : this.$t.__('Compact Archives', this.$td),
-				compactArchivesDescription : this.$t.sprintf(
+				title                      : __('HTML Sitemap', td),
+				enableSitemap              : __('Enable Sitemap', td),
+				settings                   : __('HTML Sitemap Settings', td),
+				description                : __('Using the custom-built tools below, you can add an HTML sitemap to your website and help visitors discover all your content. Adding an HTML sitemap to your website may also help search engines find your content more easily.', td),
+				displayLabel               : __('Display HTML Sitemap', td),
+				postTypes                  : __('Post Types', td),
+				taxonomies                 : __('Taxonomies', td),
+				includeAllPostTypes        : __('Include All Post Types', td),
+				selectPostTypes            : __('Select which Post Types appear in your sitemap.', td),
+				includeAllTaxonomies       : __('Include All Taxonomies', td),
+				selectTaxonomies           : __('Select which Taxonomies appear in your sitemap.', td),
+				sortOrder                  : __('Sort Order', td),
+				sortDirection              : __('Sort Direction', td),
+				publicationDate            : __('Publication Date', td),
+				publicationDateDescription : __('This setting only applies to posts and pages.', td),
+				compactArchives            : __('Compact Archives', td),
+				compactArchivesDescription : sprintf(
 					// Translators: 1 - "Learn More" link.
-					this.$t.__('This setting allows you to toggle between the regular sitemap or the compact date archive sitemap. %1$s', this.$td),
-					this.$links.getDocLink(this.$constants.GLOBAL_STRINGS.learnMore, 'htmlSitemapCompactArchives', true)
+					__('This setting allows you to toggle between the regular sitemap or the compact date archive sitemap. %1$s', td),
+					links.getDocLink(GLOBAL_STRINGS.learnMore, 'htmlSitemapCompactArchives', true)
 				),
-				advancedSettings  : this.$t.__('Advanced Settings', this.$td),
-				// nofollowLinks              : this.$t.__('No Follow Links', this.$td),
-				excludePostsPages : this.$t.__('Exclude Posts / Pages', this.$td),
-				excludeTerms      : this.$t.__('Exclude Terms', this.$td)
+				advancedSettings  : __('Advanced Settings', td),
+				// nofollowLinks              : __('No Follow Links', td),
+				excludePostsPages : __('Exclude Posts / Pages', td),
+				excludeTerms      : __('Exclude Terms', td)
 			}
 		}
 	},

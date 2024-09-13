@@ -32,6 +32,11 @@
 import CoreBlur from '@/vue/components/common/core/Blur'
 import BaseSelect from '@/vue/components/common/base/Select'
 import BaseButton from '@/vue/components/common/base/Button'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		BaseButton,
@@ -40,15 +45,16 @@ export default {
 	},
 	data () {
 		return {
+			plugin  : null,
 			strings : {
-				importOthersDescription : this.$t.sprintf(
+				importOthersDescription : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('Choose a plugin to import Local SEO directly into %1$s.', this.$td),
+					__('Choose a plugin to import Local SEO directly into %1$s.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				selectPlugin : this.$t.__('Select a plugin...', this.$td),
-				import       : this.$t.__('Import', this.$td),
-				notInstalled : this.$t.__('not installed', this.$td)
+				selectPlugin : __('Select a plugin...', td),
+				import       : __('Import', td),
+				notInstalled : __('not installed', td)
 			}
 		}
 	},

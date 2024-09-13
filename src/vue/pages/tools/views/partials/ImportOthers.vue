@@ -135,6 +135,11 @@ import CoreNetworkSiteSelector from '@/vue/components/common/core/NetworkSiteSel
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgDownload from '@/vue/components/common/svg/Download'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -160,17 +165,17 @@ export default {
 			plugin        : null,
 			loading       : false,
 			strings       : {
-				selectSite                     : this.$t.__('Select Site', this.$td),
-				importSettingsFromOtherPlugins : this.$t.__('Import Settings From Other Plugins', this.$td),
-				importOthersDescription        : this.$t.sprintf(
+				selectSite                     : __('Select Site', td),
+				importSettingsFromOtherPlugins : __('Import Settings From Other Plugins', td),
+				importOthersDescription        : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					this.$t.__('Choose a plugin to import SEO data directly into %1$s.', this.$td),
+					__('Choose a plugin to import SEO data directly into %1$s.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				selectPlugin : this.$t.__('Select a plugin...', this.$td),
-				import       : this.$t.__('Import', this.$td),
-				allSettings  : this.$t.__('All Settings', this.$td),
-				notInstalled : this.$t.__('not installed', this.$td)
+				selectPlugin : __('Select a plugin...', td),
+				import       : __('Import', td),
+				allSettings  : __('All Settings', td),
+				notInstalled : __('not installed', td)
 			}
 		}
 	},
@@ -184,12 +189,12 @@ export default {
 	computed : {
 		settings () {
 			const settings = [
-				{ value: 'settings', label: this.$t.__('SEO Settings', this.$td) },
-				{ value: 'postMeta', label: this.$t.__('Post Meta', this.$td) }
+				{ value: 'settings', label: __('SEO Settings', td) },
+				{ value: 'postMeta', label: __('Post Meta', td) }
 			]
 
-			if (this.$isPro) {
-				settings.push({ value: 'termMeta', label: this.$t.__('Term Meta', this.$td) })
+			if (this.rootStore.isPro) {
+				settings.push({ value: 'termMeta', label: __('Term Meta', td) })
 			}
 
 			return settings
@@ -220,16 +225,16 @@ export default {
 			return passed.some(a => a)
 		},
 		importSuccessful () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The name of the plugin being imported (e.g "Yoast SEO").
-				this.$t.__('%1$s was successfully imported!', this.$td),
+				__('%1$s was successfully imported!', td),
 				this.plugin.label
 			)
 		},
 		importErrorMessage () {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The name of the plugin being imported (e.g "Yoast SEO").
-				this.$t.__('An error occurred while importing %1$s. Please try again.', this.$td),
+				__('An error occurred while importing %1$s. Please try again.', td),
 				this.plugin.label
 			)
 		}
@@ -273,9 +278,9 @@ export default {
 				})
 		},
 		invalidVersion (plugin) {
-			return this.$t.sprintf(
+			return sprintf(
 				// Translators: 1 - The name of the plugin (e.g. "Yoast SEO"), 2 - The version of the plugin (e.g. "10.2.3").
-				this.$t.__('We do not support importing from the currently installed version of %1$s (%2$s). Please upgrade to the latest version and try again.', this.$td),
+				__('We do not support importing from the currently installed version of %1$s (%2$s). Please upgrade to the latest version and try again.', td),
 				plugin.label,
 				plugin.version
 			)

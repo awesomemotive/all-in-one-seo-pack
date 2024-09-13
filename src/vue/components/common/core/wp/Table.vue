@@ -349,7 +349,7 @@ import CoreWpPagination from './Pagination'
 import CoreWpTableHeaderFooter from './TableHeaderFooter'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
@@ -495,6 +495,20 @@ export default {
 			this.processChangeItemsPerPage()
 		}
 	},
+	computed : {
+		filteredColumns () {
+			return this.columns.filter((column) => {
+				if (false === 'show' in column) {
+					return true
+				}
+
+				return column.show
+			})
+		},
+		noResults () {
+			return this.noResultsLabel || this.strings.noResults
+		}
+	},
 	methods : {
 		showFilterCount (filter) {
 			return Object.prototype.hasOwnProperty.call(filter, 'count')
@@ -523,6 +537,12 @@ export default {
 			})
 
 			this.editRow(-1)
+
+			// Check if the current bulk action does not reset the table selection.
+			if (this.bulkOptions.find(option => option.value === bulkAction && false === option?.resetSelection)) {
+				return
+			}
+
 			this.resetSelectedItems()
 		},
 		processPaginate (page) {
@@ -567,20 +587,6 @@ export default {
 			}
 		}
 	},
-	computed : {
-		filteredColumns () {
-			return this.columns.filter((column) => {
-				if (false === 'show' in column) {
-					return true
-				}
-
-				return column.show
-			})
-		},
-		noResults () {
-			return this.noResultsLabel || this.strings.noResults
-		}
-	},
 	created () {
 		this.pageNumber   = this.initialPageNumber
 		this.searchTerm   = this.initialSearchTerm
@@ -591,6 +597,7 @@ export default {
 
 <style lang="scss">
 .aioseo-wp-table {
+	scroll-margin-top: 92px;
 
 	select,
 	input[type=search] {

@@ -10,7 +10,7 @@ import { loadPiniaStores } from '@/vue/stores'
 import { elemLoaded } from '@/vue/utils/elemLoaded'
 import { shouldShowMetaBox } from '@/vue/utils/metabox'
 
-import App from './App.vue'
+import App from './App'
 
 import './blockEditor'
 import './classicEditor'

@@ -16,25 +16,26 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import Maps from './AIOSEO_VERSION/maps/Maps'
 import Cta from './AIOSEO_VERSION/partials/Cta'
 import Lite from './lite/maps/Maps'
-import { AddonConditions } from '@/vue/mixins/AddonConditions'
-export default {
-	mixins     : [ AddonConditions ],
-	components : {
-		Maps,
-		Cta,
-		Lite
-	},
-	data () {
-		return {
-			addonSlug : 'aioseo-local-business',
-			strings   : {
-				googleMapsApiKey : this.$t.__('Google Maps API Key', this.$td)
-			}
-		}
-	}
+import { useAddonConditions } from '@/vue/composables/AddonConditions'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
+const {
+	shouldShowActivate,
+	shouldShowLite,
+	shouldShowMain,
+	shouldShowUpdate
+} = useAddonConditions({
+	addonSlug : 'aioseo-local-business'
+})
+
+const strings = {
+	googleMapsApiKey : __('Google Maps API Key', td)
 }
 </script>

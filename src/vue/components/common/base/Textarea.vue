@@ -36,10 +36,28 @@ export default {
 	data () {
 		return {
 			// data property for v-model binding with real textarea tag
-			val             : null,
+			val             : this.modelValue ?? null,
 			// works when content height becomes more then value of the maxHeight property
 			maxHeightScroll : false,
 			height          : 'auto'
+		}
+	},
+	watch : {
+		modelValue (val) {
+			this.val = val
+		},
+		val (val) {
+			this.$nextTick(this.resize)
+			this.$emit('update:modelValue', val)
+		},
+		minHeight () {
+			this.$nextTick(this.resize)
+		},
+		maxHeight () {
+			this.$nextTick(this.resize)
+		},
+		autosize (val) {
+			if (val) this.resize()
 		}
 	},
 	computed : {
@@ -66,24 +84,6 @@ export default {
 		isHeightImportant () {
 			const imp = this.important
 			return true === imp || (Array.isArray(imp) && imp.includes('height'))
-		}
-	},
-	watch : {
-		value (val) {
-			this.val = val
-		},
-		val (val) {
-			this.$nextTick(this.resize)
-			this.$emit('update:modelValue', val)
-		},
-		minHeight () {
-			this.$nextTick(this.resize)
-		},
-		maxHeight () {
-			this.$nextTick(this.resize)
-		},
-		autosize (val) {
-			if (val) this.resize()
 		}
 	},
 	methods : {

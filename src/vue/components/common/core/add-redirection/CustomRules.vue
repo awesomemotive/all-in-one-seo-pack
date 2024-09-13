@@ -135,11 +135,16 @@
 </template>
 
 <script>
+import { REDIRECTS_CUSTOM_RULES_LABELS } from '@/vue/plugins/constants'
+import links from '@/vue/utils/links'
 import {
 	useRootStore
 } from '@/vue/stores'
 
-import { Date as DateMixin } from '@/vue/mixins/Date'
+import {
+	dateStringToLocalJs
+} from '@/vue/utils/date'
+
 import { DateTime } from 'luxon'
 
 import BaseButton from '@/vue/components/common/base/Button'
@@ -151,6 +156,9 @@ import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
 const matchDefaults = {
 	type  : null,
 	key   : null,
@@ -161,6 +169,7 @@ export default {
 	emits : [ 'redirects-custom-rule-error' ],
 	setup () {
 		return {
+			dateStringToLocalJs,
 			rootStore : useRootStore()
 		}
 	},
@@ -177,123 +186,130 @@ export default {
 	props : {
 		editCustomRules : Array
 	},
-	mixins : [ DateMixin ],
 	data () {
 		return {
 			DateTime,
 			strings : {
-				customRules     : this.$t.__('Custom Rules', this.$td),
-				selectMatchRule : this.$t.__('Select Rule', this.$td),
-				delete          : this.$t.__('Delete', this.$td),
-				add             : this.$t.__('Add Custom Rule', this.$td),
-				regex           : this.$t.__('Regex', this.$td),
-				selectAValue    : this.$t.__('Select a Value or Add a New One', this.$td),
-				key             : this.$t.__('Key', this.$td),
-				value           : this.$t.__('Value', this.$td),
-				startDate       : this.$t.__('Start Date', this.$td),
-				endDate         : this.$t.__('End Date', this.$td)
+				customRules     : __('Custom Rules', td),
+				selectMatchRule : __('Select Rule', td),
+				delete          : __('Delete', td),
+				add             : __('Add Custom Rule', td),
+				regex           : __('Regex', td),
+				selectAValue    : __('Select a Value or Add a New One', td),
+				key             : __('Key', td),
+				value           : __('Value', td),
+				startDate       : __('Start Date', td),
+				endDate         : __('End Date', td)
 			},
 			customRules : [],
-			rulesErrors	: [],
+			rulesErrors : [],
 			types       : [
 				{
-					label     : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.schedule,
+					label     : REDIRECTS_CUSTOM_RULES_LABELS.schedule,
 					value     : 'schedule',
 					taggable  : false,
 					regex     : false,
 					dateRange : true
 				},
 				{
-					label       : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.login,
+					label       : REDIRECTS_CUSTOM_RULES_LABELS.login,
 					value       : 'login',
-					placeholder : this.$t.__('Select Status', this.$td),
+					placeholder : __('Select Status', td),
 					singleRule  : true,
 					options     : [
-						{ label: this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.loggedin, value: 'loggedin' },
-						{ label: this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.loggedout, value: 'loggedout' }
+						{ label: REDIRECTS_CUSTOM_RULES_LABELS.loggedin, value: 'loggedin' },
+						{ label: REDIRECTS_CUSTOM_RULES_LABELS.loggedout, value: 'loggedout' }
 					]
 				},
 				{
-					label       : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.role,
+					label       : REDIRECTS_CUSTOM_RULES_LABELS.role,
 					value       : 'role',
 					multiple    : true,
-					placeholder : this.$t.__('Select Roles', this.$td),
+					placeholder : __('Select Roles', td),
 					options     : Object.entries(this.rootStore.aioseo.user.roles).map((item) => {
 						return { label: item[1], value: item[0] }
 					})
 				},
 				{
-					label      : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.referrer,
+					label      : REDIRECTS_CUSTOM_RULES_LABELS.referrer,
 					value      : 'referrer',
 					regex      : true,
 					singleRule : true
 				},
 				{
-					label    : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.agent,
+					label    : REDIRECTS_CUSTOM_RULES_LABELS.agent,
 					value    : 'agent',
 					regex    : true,
 					taggable : true,
 					multiple : true,
 					options  : [
 						{
-							label   : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.mobile,
+							label   : REDIRECTS_CUSTOM_RULES_LABELS.mobile,
 							value   : 'mobile',
-							docLink : this.$links.getDocLink(this.$t.__('Learn more', this.$td), 'redirectCustomRulesUserAgent', true)
+							docLink : links.getDocLink(__('Learn more', td), 'redirectCustomRulesUserAgent', true)
 						},
 						{
-							label   : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.feeds,
+							label   : REDIRECTS_CUSTOM_RULES_LABELS.feeds,
 							value   : 'feeds',
-							docLink : this.$links.getDocLink(this.$t.__('Learn more', this.$td), 'redirectCustomRulesUserAgent', true)
+							docLink : links.getDocLink(__('Learn more', td), 'redirectCustomRulesUserAgent', true)
 						},
 						{
-							label   : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.libraries,
+							label   : REDIRECTS_CUSTOM_RULES_LABELS.libraries,
 							value   : 'libraries',
-							docLink : this.$links.getDocLink(this.$t.__('Learn more', this.$td), 'redirectCustomRulesUserAgent', true)
+							docLink : links.getDocLink(__('Learn more', td), 'redirectCustomRulesUserAgent', true)
 						}
 					]
 				},
 				{
-					label        : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.cookie,
+					label        : REDIRECTS_CUSTOM_RULES_LABELS.cookie,
 					value        : 'cookie',
 					keyValuePair : true,
 					regex        : true
 				},
 				{
-					label       : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.ip,
+					label       : REDIRECTS_CUSTOM_RULES_LABELS.ip,
 					value       : 'ip',
-					placeholder : this.$t.__('Enter an IP Address', this.$td),
+					placeholder : __('Enter an IP Address', td),
 					taggable    : true,
 					regex       : true,
 					singleRule  : true
 				},
 				{
-					label       : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.server,
+					label       : REDIRECTS_CUSTOM_RULES_LABELS.server,
 					value       : 'server',
-					placeholder : this.$t.__('Enter the Server Name', this.$td),
+					placeholder : __('Enter the Server Name', td),
 					regex       : true,
 					singleRule  : true
 				},
 				{
-					label        : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.header,
+					label        : REDIRECTS_CUSTOM_RULES_LABELS.header,
 					value        : 'header',
 					keyValuePair : true,
 					regex        : true
 				},
 				{
-					label       : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.wp_filter,
+					label       : REDIRECTS_CUSTOM_RULES_LABELS.wp_filter,
 					value       : 'wp_filter',
-					placeholder : this.$t.__('Enter a WordPress Filter Name', this.$td),
+					placeholder : __('Enter a WordPress Filter Name', td),
 					taggable    : true
 				},
 				{
-					label       : this.$constants.REDIRECTS_CUSTOM_RULES_LABELS.locale,
+					label       : REDIRECTS_CUSTOM_RULES_LABELS.locale,
 					value       : 'locale',
 					taggable    : true,
 					regex       : true,
-					placeholder : this.$t.__('Enter a Locale Code, e.g.: en_GB, es_ES', this.$td),
+					placeholder : __('Enter a Locale Code, e.g.: en_GB, es_ES', td),
 					singleRule  : true
 				}
 			]
+		}
+	},
+	watch : {
+		customRules : {
+			deep : true,
+			handler () {
+				this.validationError()
+			}
 		}
 	},
 	computed : {
@@ -416,12 +432,12 @@ export default {
 
 						if (start && end) {
 							if (start > end) {
-								this.rulesErrors[index] = this.$t.__('The Start Date must be lower than the End Date.', this.$td)
+								this.rulesErrors[index] = __('The Start Date must be lower than the End Date.', td)
 								hasError = true
 							}
 
 							if (start === end) {
-								this.rulesErrors[index] = this.$t.__('Start Date and End Date must be different.', this.$td)
+								this.rulesErrors[index] = __('Start Date and End Date must be different.', td)
 								hasError = true
 							}
 						}
@@ -441,14 +457,6 @@ export default {
 		}
 		if (!this.hasCustomRules) {
 			this.addRule(null)
-		}
-	},
-	watch : {
-		customRules : {
-			deep : true,
-			handler () {
-				this.validationError()
-			}
 		}
 	}
 }

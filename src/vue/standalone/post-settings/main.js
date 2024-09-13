@@ -8,9 +8,8 @@ import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 import { loadPiniaStores } from '@/vue/stores'
 
 import RedirectsSlugMonitor from '@/vue/plugins/redirects'
-import TruSeo from '@/vue/plugins/tru-seo'
 
-import App from './App.vue'
+import App from './App'
 import registerScoreToggler from './registerScoreToggler'
 import initWatcher from './watcher/main.js'
 import { elemLoaded } from '@/vue/utils/elemLoaded'
@@ -19,7 +18,7 @@ import loadTruSeo from '@/vue/standalone/post-settings/loadTruSeo'
 import LinkAssistantWatcher from './link-assistant/AIOSEO_VERSION'
 
 // Local Business.
-import AppLocalBusiness from '../local-business-seo/App.vue'
+import AppLocalBusiness from '../local-business-seo/App'
 
 initWatcher()
 
@@ -34,7 +33,6 @@ const localCreateApp = (app) => {
 	new RedirectsSlugMonitor()
 	new LinkAssistantWatcher()
 	registerScoreToggler()
-	app.config.globalProperties.$truSeo = new TruSeo()
 
 	window.addEventListener('load', () => loadTruSeo(app))
 

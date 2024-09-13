@@ -14,6 +14,11 @@ import {
 } from '@/vue/stores'
 
 import Graph from '../Graph'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
@@ -36,25 +41,25 @@ export default {
 			const graph = this.searchStatisticsStore.data.keywords.distributionIntervals
 
 			return [ {
-				name   : this.$t.__('Top 3 Position', this.$td),
+				name   : __('Top 3 Position', td),
 				data   : graph.map((tick) => ({ x: tick.date, y: tick.top3 })),
 				legend : {
 					total : data.top3 || '0'
 				}
 			}, {
-				name   : this.$t.__('4-10 Position', this.$td),
+				name   : __('4-10 Position', td),
 				data   : graph.map((tick) => ({ x: tick.date, y: tick.top10 })),
 				legend : {
 					total : data.top10 || '0'
 				}
 			}, {
-				name   : this.$t.__('11-50 Position', this.$td),
+				name   : __('11-50 Position', td),
 				data   : graph.map((tick) => ({ x: tick.date, y: tick.top50 })),
 				legend : {
 					total : data.top50 || '0'
 				}
 			}, {
-				name   : this.$t.__('50-100 Position', this.$td),
+				name   : __('50-100 Position', td),
 				data   : graph.map((tick) => ({ x: tick.date, y: tick.top100 })),
 				legend : {
 					total : data.top100 || '0'

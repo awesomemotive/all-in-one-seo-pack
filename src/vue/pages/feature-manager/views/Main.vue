@@ -11,6 +11,11 @@
 <script>
 import CoreMain from '@/vue/components/common/core/main/Index'
 import FeatureManager from './FeatureManager'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreMain,
@@ -19,7 +24,7 @@ export default {
 	data () {
 		return {
 			strings : {
-				pageName : this.$t.__('Feature Manager', this.$td)
+				pageName : __('Feature Manager', td)
 			}
 		}
 	}

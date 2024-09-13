@@ -42,6 +42,11 @@ import SvgLinkInternalInbound from '@/vue/components/common/svg/link/InternalInb
 import SvgLinkOrphaned from '@/vue/components/common/svg/link/Orphaned'
 import SvgSearch from '@/vue/components/common/svg/Search'
 import UtilAnimatedNumber from '@/vue/components/common/util/AnimatedNumber'
+
+import { __ } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreTooltip,
@@ -66,32 +71,32 @@ export default {
 	data () {
 		return {
 			strings : {
-				orphanedPostsDescription : this.$t.__('Orphaned posts are posts that have no inbound internal links yet and may be more difficult to find by search engines.', this.$td)
+				orphanedPostsDescription : __('Orphaned posts are posts that have no inbound internal links yet and may be more difficult to find by search engines.', td)
 			},
 			icons : [
 				{
 					type : 'posts',
-					name : this.$t.__('Posts Crawled', this.$td),
+					name : __('Posts Crawled', td),
 					icon : 'svg-search'
 				},
 				{
 					type : 'external',
-					name : this.$t.__('External Links', this.$td),
+					name : __('External Links', td),
 					icon : 'svg-link-external'
 				},
 				{
 					type : 'internal',
-					name : this.$t.__('Internal Links', this.$td),
+					name : __('Internal Links', td),
 					icon : 'svg-link-internal-inbound'
 				},
 				{
 					type : 'affiliate',
-					name : this.$t.__('Affiliate Links', this.$td),
+					name : __('Affiliate Links', td),
 					icon : 'svg-link-affiliate'
 				},
 				{
 					type : 'orphaned',
-					name : this.$t.__('Orphaned Posts', this.$td),
+					name : __('Orphaned Posts', td),
 					icon : 'svg-link-orphaned'
 				}
 			]

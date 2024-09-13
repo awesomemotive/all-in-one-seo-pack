@@ -1,7 +1,9 @@
 <template>
 	<!-- @click.stop is a Vue directive that prevents the click event from propagating further up the DOM tree. This is required inside Elementor. -->
 	<div @click.stop id="main-settings-cont">
-		<alert v-if="'sidebar' !== this.$root.$data.screenContext" />
+		<alert
+			v-if="'sidebar' !== $root.$data.screenContext"
+		/>
 
 		<main-view
 			v-if="postEditorStore.currentPost.id"
@@ -9,35 +11,25 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import '@/vue/assets/scss/main.scss'
 
 import {
 	usePostEditorStore
 } from '@/vue/stores'
 
+import { useScrollAndHighlight } from '@/vue/composables/ScrollAndHighlight'
+
 import MainView from './views/Main'
-import { ScrollAndHighlight } from '@/vue/mixins/ScrollAndHighlight'
 import Alert from './views/partials/Alert'
-export default {
-	setup () {
-		return {
-			postEditorStore : usePostEditorStore()
-		}
-	},
-	components : {
-		Alert,
-		MainView
-	},
-	mixins : [ ScrollAndHighlight ],
-	data () {
-		return {
-			scrollContainer           : '.interface-interface-skeleton__content',
-			scrollTimeout             : 1000,
-			ScrollAndHighlightTimeout : 2000
-		}
-	}
-}
+
+// We just need to call this to make sure the composable is used.
+useScrollAndHighlight({
+	scrollTimeout             : 1000,
+	scrollAndHighlightTimeout : 2000
+})
+
+const postEditorStore = usePostEditorStore()
 </script>
 
 <style lang="scss">

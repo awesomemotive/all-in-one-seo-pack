@@ -122,6 +122,11 @@ import SvgLinkInternalInbound from '@/vue/components/common/svg/link/InternalInb
 import SvgLinkInternalOutbound from '@/vue/components/common/svg/link/InternalOutbound'
 import TableColumn from '@/vue/components/common/table/Column'
 import TableRow from '@/vue/components/common/table/Row'
+
+import { __, sprintf } from '@/vue/plugins/translations'
+
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	components : {
 		CoreCard,
@@ -142,32 +147,32 @@ export default {
 		return {
 			activeTab : 'inbound',
 			strings   : {
-				linkingOpportunities : this.$t.__('Linking Opportunities', this.$td),
-				noResults            : this.$t.__('No items found.', this.$td)
+				linkingOpportunities : __('Linking Opportunities', td),
+				noResults            : __('No items found.', td)
 			},
-			link : this.$t.sprintf(
+			link : sprintf(
 				'<a class="links-report-link" href="%1$s">%2$s</a><a href="%1$s"> <span>&rarr;</span></a>',
 				'#/links-report?linkingOpportunities=1',
-				this.$t.__('See All Linking Opportunities', this.$td)
+				__('See All Linking Opportunities', td)
 			),
 			tabs : [
 				{
 					slug : 'inbound',
-					name : this.$t.__('Inbound Suggestions', this.$td)
+					name : __('Inbound Suggestions', td)
 				},
 				{
 					slug : 'outbound',
-					name : this.$t.__('Outbound Suggestions', this.$td)
+					name : __('Outbound Suggestions', td)
 				}
 			],
 			columns : [
 				{
 					slug  : 'post-title',
-					label : this.$t.__('Post Title', this.$td)
+					label : __('Post Title', td)
 				},
 				{
 					slug  : 'suggestions-count',
-					label : this.$t.__('Count', this.$td)
+					label : __('Count', td)
 				}
 			]
 		}
