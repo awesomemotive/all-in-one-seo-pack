@@ -98,6 +98,7 @@ import {
 	useToolsStore
 } from '@/vue/stores'
 
+import { debounce } from '@/vue/utils/debounce'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreNetworkSiteSelector from '@/vue/components/common/core/NetworkSiteSelector'
@@ -133,22 +134,32 @@ export default {
 				selectSite                  : __('Select Site', td),
 				importRestoreAioseoSettings : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
-					__('Import / Restore %1$s Settings', td),
+					__('Import / Restore %1$s Settings or Content', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				fileUploadPlaceholder    : __('Import from a JSON or INI file...', td),
+				fileUploadPlaceholder    : __('Import from a JSON, CSV or INI file...', td),
 				chooseAFile              : __('Choose a File', td),
-				fileUploadDescription    : __('Imported settings will overwrite existing settings and will not be merged.', td),
+				fileUploadDescription    : __('Imported will overwrite existing data and will not be merged.', td),
 				import                   : __('Import', td),
-				jsonFileTypeRequired     : __('A JSON or INI file is required to import settings.', td),
+				jsonFileTypeRequired     : __('A JSON, CSV or INI file is required to import.', td),
 				fileUploadedSuccessfully : __('Success! Your settings have been imported.', td),
-				fileUploadFailed         : __('There was an error importing your settings. Please make sure you are uploading the correct file or it is in the proper format.', td),
+				fileUploadFailed         : __('There was an error importing your file. Please make sure you are uploading the correct file or it is in the proper format.', td),
 				v3ImportWarning          : sprintf(
 					// Translators: 1 - The plugin short name ("AIOSEO").
 					__('Please note that if you are importing post/term meta from %1$s v3.7.1 or below, this will only be successful if the post/term IDs of this site are identical to those of the source site.', td),
 					import.meta.env.VITE_SHORT_NAME
 				)
 			}
+		}
+	},
+	watch : {
+		uploadError (uploadError) {
+			if (!uploadError) {
+				return
+			}
+			debounce(() => {
+				this.uploadError = false
+			}, 5000)
 		}
 	},
 	computed : {
@@ -161,7 +172,9 @@ export default {
 				return false
 			}
 
-			if ('application/json' !== this.file.type && !this.file.name.endsWith('.ini')) {
+			if ('application/json' !== this.file.type &&
+				'text/csv' !== this.file.type &&
+				!this.file.name.endsWith('.ini')) {
 				return false
 			}
 
@@ -187,15 +200,24 @@ export default {
 				filename : this.filename,
 				siteId   : this.site ? this.site.blog_id : null
 			})
-				.then(() => {
+				.then(response => {
+					this.loading = false
+					if (!response.body.success) {
+						this.uploadError = this.strings.fileUploadFailed
+						this.uploadSuccess = false
+						return
+					}
+
 					this.reset()
 					this.uploadSuccess = true
-					this.loading       = false
+
+					debounce(() => {
+						this.uploadSuccess = false
+					}, 5000)
 				})
 				.catch(() => {
-					this.reset()
-					this.loading     = false
 					this.uploadError = this.strings.fileUploadFailed
+					this.loading     = false
 				})
 		},
 		handleFileUpload () {
@@ -204,7 +226,9 @@ export default {
 			if (this.file) {
 				this.filename = this.file.name
 
-				if ('application/json' !== this.file.type && !this.file.name.endsWith('.ini')) {
+				if ('application/json' !== this.file.type &&
+					'text/csv' !== this.file.type &&
+					!this.file.name.endsWith('.ini')) {
 					this.uploadError = this.strings.jsonFileTypeRequired
 				}
 			}

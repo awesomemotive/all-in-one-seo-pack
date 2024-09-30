@@ -109,7 +109,7 @@ const docLinks      = {
 	eeatAuthorBioInjection        : `${marketingSite}docs/adding-author-seo-e-e-a-t-to-your-site/#aioseo-automatically-displaying-the-author-excerpt`,
 	queryArgMonitor               : `${marketingSite}docs/using-the-query-arg-monitoring-in-all-in-one-seo/`,
 	businessPhoneNumber           : `${marketingSite}docs/best-business-phone-services`,
-	keywordRankTracker            : `${marketingSite}docs/keyword-rank-tracker/`
+	keywordRankTracker            : `${marketingSite}docs/using-the-keyword-rank-tracker-feature-in-search-statistics/`
 }
 
 const upsellLinks = {

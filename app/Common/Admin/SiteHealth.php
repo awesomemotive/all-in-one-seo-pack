@@ -277,6 +277,26 @@ class SiteHealth {
 	}
 
 	/**
+	 * Checks if the plugin should be updated.
+	 *
+	 * @since 4.7.2
+	 *
+	 * @return bool Whether the plugin should be updated.
+	 */
+	public function shouldUpdate() {
+		$response = wp_remote_get( 'https://api.wordpress.org/plugins/info/1.0/all-in-one-seo-pack.json' );
+		$body     = wp_remote_retrieve_body( $response );
+		if ( ! $body ) {
+			// Something went wrong.
+			return false;
+		}
+
+		$pluginData = json_decode( $body );
+
+		return version_compare( AIOSEO_VERSION, $pluginData->version, '<' );
+	}
+
+	/**
 	 * Checks whether the required settings for our schema markup are set.
 	 *
 	 * @since 4.0.0
@@ -284,17 +304,7 @@ class SiteHealth {
 	 * @return array The test result.
 	 */
 	public function testCheckPluginUpdate() {
-		$response = wp_remote_get( 'https://api.wordpress.org/plugins/info/1.0/all-in-one-seo-pack.json' );
-		$body     = wp_remote_retrieve_body( $response );
-		if ( ! $body ) {
-			// Something went wrong.
-			return;
-		}
-
-		$pluginData   = json_decode( $body );
-		$shouldUpdate = version_compare( AIOSEO_VERSION, $pluginData->version, '<' );
-
-		if ( $shouldUpdate ) {
+		if ( $this->shouldUpdate() ) {
 			return $this->result(
 				'aioseo_plugin_update',
 				'critical',

@@ -63,10 +63,11 @@
 					:loading="searchStatisticsStore.loading.keywords"
 					:columns="[ 'keywordSortable', 'clicksSortable', 'ctrSortable', 'impressionsSortable', 'positionSortable', 'buttons' ]"
 					:append-columns="{
-							all        : 'diffPosition',
-							topLosing  : 'diffDecay',
-							topWinning : 'diffDecay'
-						}"
+						all        : 'diffPosition',
+						topLosing  : 'diffDecay',
+						topWinning : 'diffDecay'
+					}"
+					:initialFilter="initialTableFilter"
 					show-items-per-page
 					show-table-footer
 				/>
@@ -114,7 +115,8 @@ export default {
 	},
 	data () {
 		return {
-			strings : {
+			initialTableFilter : '',
+			strings            : {
 				keywordPositionsCard      : __('Keyword Positions', td),
 				keywordPositionsTooltip   : __('This graph is a visual representation of how well <strong>keywords are ranking in search results over time</strong> based on their position and average CTR. This can help you understand the performance of keywords and identify any trends or fluctuations.', td),
 				keywordPerformanceCard    : __('Keyword Performance', td),
@@ -128,6 +130,23 @@ export default {
 					total : 0
 				}
 			}
+		}
+	},
+	beforeMount () {
+		const filterMap = {
+			TopLosingKeywords  : 'topLosing',
+			TopWinningKeywords : 'topWinning'
+		}
+
+		if (this.$route?.query?.['table-filter']) {
+			this.initialTableFilter = filterMap[this.$route.query['table-filter']] || 'all'
+
+			this.$router.replace({
+				query : {
+					...this.$route.query,
+					'table-filter' : undefined
+				}
+			})
 		}
 	},
 	mounted () {

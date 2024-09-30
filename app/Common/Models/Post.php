@@ -85,6 +85,17 @@ class Post extends Model {
 	];
 
 	/**
+	 * Fields that should be float values.
+	 *
+	 * @since {next}
+	 *
+	 * @var array
+	 */
+	protected $floatFields = [
+		'priority'
+	];
+
+	/**
 	 * Returns a Post with a given ID.
 	 *
 	 * @since 4.0.0

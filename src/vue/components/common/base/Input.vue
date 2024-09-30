@@ -78,6 +78,8 @@
 </template>
 
 <script>
+import { isEmail } from '@/vue/utils/formatting'
+
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
@@ -238,6 +240,10 @@ export default {
 				if (!urlValid) {
 					this.error = this.strings.urlInvalid
 				}
+			}
+
+			if ('email' === this.validation && !isEmail(value)) {
+				this.error = __('Please enter a valid email.', td)
 			}
 		}
 	},

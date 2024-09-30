@@ -548,10 +548,10 @@ class SearchStatistics {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param  array $dateRange The date range.
-	 * @return array            The data for the Keywords.
+	 * @param  array $args The arguments.
+	 * @return array       The data for the Keywords.
 	 */
-	protected function getKeywordsData( $dateRange = [] ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+	public function getKeywordsData( $args = [] ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		$keywordsRows = [
 			[
 				'ctr'         => '4.89',
@@ -833,14 +833,25 @@ class SearchStatistics {
 	}
 
 	/**
+	 * Returns the content performance data.
+	 *
+	 * @since 4.7.2
+	 *
+	 * @return array The content performance data.
+	 */
+	public function getSeoStatisticsData( $args = [] ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+		return [];
+	}
+
+	/**
 	 * Returns the Content Rankings data.
 	 *
 	 * @since 4.3.6
 	 *
-	 * @param  array $dateRange The date range.
-	 * @return array            The Content Rankings data.
+	 * @param  array $args The arguments.
+	 * @return array       The Content Rankings data.
 	 */
-	protected function getContentRankingsData( $dateRange = [] ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+	public function getContentRankingsData( $args = [] ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		return [
 			'paginated' => [
 				'rows'              => [

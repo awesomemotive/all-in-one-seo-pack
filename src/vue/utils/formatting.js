@@ -64,3 +64,76 @@ export const escUrl = url => {
 
 	return url
 }
+
+/**
+ * Verifies that an email is valid. This is the same as the PHP function `is_email()`.
+ *
+ * @since 4.7.2
+ *
+ * @param 	{string} 		 email Email address to verify.
+ * @returns {string|boolean} 	   Valid email address on success, false on failure.
+ */
+export const isEmail = (email) => {
+	// Test for the minimum length the email can be.
+	if (6 > email.length) {
+		return false
+	}
+
+	// Test for an @ character after the first position.
+	if (-1 === email.indexOf('@', 1)) {
+		return false
+	}
+
+	// Split out the local and domain parts.
+	const parts  = email.split('@')
+	const local  = parts[0]
+	const domain = parts[1]
+
+	/*
+	 * LOCAL PART
+	 * Test for invalid characters.
+	 */
+	const localPattern = /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]+$/
+	if (!localPattern.test(local)) {
+		return false
+	}
+
+	/*
+	 * DOMAIN PART
+	 * Test for sequences of periods.
+	 */
+	if (/\.\./.test(domain)) {
+		return false
+	}
+
+	// Test for leading and trailing periods and whitespace.
+	if (domain.trim().replace(/^\./, '').replace(/\.$/, '') !== domain.trim()) {
+		return false
+	}
+
+	// Split the domain into subs.
+	const subs = domain.split('.')
+
+	// Assume the domain will have at least two subs.
+	if (2 > subs.length) {
+		return false
+	}
+
+	// Loop through each sub.
+	const subPattern = /^[a-z0-9-]+$/i
+	for (let i = 0; i < subs.length; i++) {
+		const sub = subs[i]
+		// Test for leading and trailing hyphens and whitespace.
+		if (sub.trim().replace(/^-|-$/, '') !== sub.trim()) {
+			return false
+		}
+
+		// Test for invalid characters.
+		if (!subPattern.test(sub)) {
+			return false
+		}
+	}
+
+	// Congratulations, your email made it!
+	return email
+}

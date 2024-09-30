@@ -41,13 +41,23 @@ class Model implements \JsonSerializable {
 	protected $booleanFields = [];
 
 	/**
-	 * Fields that should be numeric values.
+	 * Fields that should be integer values.
 	 *
-	 * @since 4.1.0
+	 * @since   4.1.0
+	 * @version {next} Renamed from numericFields to integerFields.
 	 *
 	 * @var array
 	 */
-	protected $numericFields = [];
+	protected $integerFields = [];
+
+	/**
+	 * Fields that should be float values.
+	 *
+	 * @since {next}
+	 *
+	 * @var array
+	 */
+	protected $floatFields = [];
 
 	/**
 	 * Fields that should be hidden when serialized.
@@ -192,8 +202,13 @@ class Model implements \JsonSerializable {
 				continue;
 			}
 
-			if ( in_array( $key, $this->numericFields, true ) ) {
+			if ( in_array( $key, $this->integerFields, true ) ) {
 				$this->$key = (int) $value;
+				continue;
+			}
+
+			if ( in_array( $key, $this->floatFields, true ) ) {
+				$this->$key = (float) $value;
 				continue;
 			}
 		}
@@ -234,6 +249,11 @@ class Model implements \JsonSerializable {
 	protected function transform( $data, $set = false ) {
 		foreach ( $this->nullFields as $field ) {
 			if ( isset( $data[ $field ] ) && empty( $data[ $field ] ) ) {
+				// Because sitemap prio can both be 0 and null, we need to make sure it's 0 if it's set.
+				if ( 'priority' === $field && 0.0 === $data[ $field ] ) {
+					continue;
+				}
+
 				$data[ $field ] = null;
 			}
 		}
@@ -250,7 +270,7 @@ class Model implements \JsonSerializable {
 			return $data;
 		}
 
-		foreach ( $this->numericFields as $field ) {
+		foreach ( $this->integerFields as $field ) {
 			if ( isset( $data[ $field ] ) ) {
 				$data[ $field ] = (int) $data[ $field ];
 			}

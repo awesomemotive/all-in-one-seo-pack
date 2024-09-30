@@ -25,7 +25,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onBeforeMount } from 'vue'
+import { useRoute } from 'vue-router'
 
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
@@ -48,4 +49,15 @@ const tabs = [
 		name : __('All Keywords', td)
 	}
 ]
+
+onBeforeMount(() => {
+	const route = useRoute()
+	if (route?.query?.tab) {
+		if ('AllKeywords' === route.query.tab) {
+			activeTab.value = 'all-keywords'
+		}
+
+		route.query.tab = undefined
+	}
+})
 </script>

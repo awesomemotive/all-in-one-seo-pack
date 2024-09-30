@@ -96,7 +96,6 @@
 
 <script>
 import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
-
 import {
 	useLicenseStore,
 	useOptionsStore,

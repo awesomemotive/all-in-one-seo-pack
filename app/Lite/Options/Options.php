@@ -32,4 +32,21 @@ class Options extends CommonOptions\Options {
 		]
 		// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 	];
+
+	/**
+	 * Sanitizes, then saves the options to the database.
+	 *
+	 * @since 4.7.2
+	 *
+	 * @param  array $options An array of options to sanitize, then save.
+	 * @return void
+	 */
+	public function sanitizeAndSave( $options ) {
+		if ( isset( $options['advanced']['emailSummary']['recipients'] ) ) {
+			$options['advanced']['emailSummary']['recipients']                 = [ array_shift( $options['advanced']['emailSummary']['recipients'] ) ];
+			$options['advanced']['emailSummary']['recipients'][0]['frequency'] = 'monthly';
+		}
+
+		parent::sanitizeAndSave( $options );
+	}
 }

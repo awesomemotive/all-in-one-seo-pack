@@ -9,7 +9,6 @@
 		<template #header-icon>
 			<svg-upload />
 		</template>
-
 		<div
 			class="aioseo-settings-row"
 			v-if="rootStore.aioseo.data.isNetworkAdmin"
@@ -22,98 +21,49 @@
 				@selected-site="site = $event"
 			/>
 		</div>
-
-		<div
-			class="export-settings"
-			:class="{'aioseo-settings-row' : canExportPostOptions}"
-		>
-			<grid-row>
-				<grid-column
-					class="export-all"
+		<grid-row>
+			<grid-column
+				class="export-all"
+			>
+				<base-checkbox
+					size="medium"
+					v-model="options.all"
+					:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
 				>
-					<base-checkbox
-						size="medium"
-						v-model="options.all"
-						:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
-					>
-						{{ strings.allSettings }}
-					</base-checkbox>
-				</grid-column>
-				<grid-column
-					v-for="(setting, index) in toolsSettings"
-					:key="index"
-					sm="6"
+					{{ strings.exportAllSettings }}
+				</base-checkbox>
+			</grid-column>
+			<grid-column
+				v-for="(setting, index) in toolsSettings"
+				:key="index"
+				sm="6"
+			>
+				<base-checkbox
+					v-if="!options.all"
+					size="medium"
+					v-model="options[setting.value]"
+					:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
 				>
-					<base-checkbox
-						v-if="!options.all"
-						size="medium"
-						v-model="options[setting.value]"
-						:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
-					>
-						{{ setting.label }}
-					</base-checkbox>
+					{{ setting.label }}
+				</base-checkbox>
 
-					<base-checkbox
-						v-if="'all' !== setting.value && options.all"
-						size="medium"
-						:modelValue="true"
-						disabled
-					>
-						{{ setting.label }}
-					</base-checkbox>
-				</grid-column>
-			</grid-row>
-		</div>
-
-		<div
-			v-if="canExportPostOptions"
-			class="export-post-types"
-		>
-			<grid-row>
-				<grid-column
-					class="export-all"
+				<base-checkbox
+					v-if="'all' !== setting.value && options.all"
+					size="medium"
+					:modelValue="true"
+					disabled
 				>
-					<base-checkbox
-						size="medium"
-						v-model="postOptions.all"
-						:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
-					>
-						{{ strings.allPostTypes }}
-					</base-checkbox>
-				</grid-column>
-				<grid-column
-					v-for="(postType, index) in rootStore.aioseo.postData.postTypes"
-					:key="index"
-					sm="6"
-				>
-					<base-checkbox
-						v-if="!postOptions.all"
-						size="medium"
-						v-model="postOptions[postType.name]"
-						:disabled="rootStore.aioseo.data.isNetworkAdmin && !site"
-					>
-						{{ postType.label }}
-					</base-checkbox>
-
-					<base-checkbox
-						v-if="'all' !== postType.name && postOptions.all"
-						size="medium"
-						:modelValue="true"
-						disabled
-					>
-						{{ postType.label }}
-					</base-checkbox>
-				</grid-column>
-			</grid-row>
-		</div>
-
+					{{ setting.label }}
+				</base-checkbox>
+			</grid-column>
+		</grid-row>
 		<base-button
 			type="blue"
 			size="medium"
 			class="import"
 			@click="processExportSettings"
-			:disabled="!canExport"
-			:loading="loading"
+			:disabled="!canExport(options)"
+			:loading="loadingSettings"
 		>
 			{{ strings.exportSettings }}
 		</base-button>
@@ -122,13 +72,13 @@
 
 <script>
 import {
+	useLicenseStore,
 	useRootStore,
 	useToolsStore
 } from '@/vue/stores'
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { DateTime } from 'luxon'
-
 import { useToolsSettings } from '@/vue/composables/ToolsSettings'
 
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
@@ -147,9 +97,10 @@ export default {
 		const { toolsSettings } = useToolsSettings()
 
 		return {
-			rootStore  : useRootStore(),
+			licenseStore : useLicenseStore(),
+			rootStore    : useRootStore(),
 			toolsSettings,
-			toolsStore : useToolsStore()
+			toolsStore   : useToolsStore()
 		}
 	},
 	components : {
@@ -163,45 +114,29 @@ export default {
 	data () {
 		return {
 			allowed,
-			site        : null,
-			options     : {},
-			postOptions : {},
-			loading     : false,
-			strings     : {
-				selectSite     : __('Select Site', td),
-				exportSettings : __('Export Settings', td),
-				allSettings    : __('Export All Settings', td),
-				allPostTypes   : __('Export All Post Types', td)
+			site            : null,
+			options         : {},
+			loadingSettings : false,
+			strings         : {
+				selectSite        : __('Select Site', td),
+				exportSettings    : __('Export Settings', td),
+				exportAllSettings : __('Export All Settings', td),
+				errorExport       : __('We had a problem when exporting data.', td)
 			}
 		}
 	},
-	computed : {
-		canExport () {
+	methods : {
+		canExport (options) {
 			if (this.rootStore.aioseo.data.isNetworkAdmin && !this.site) {
 				return false
 			}
 
 			const passed = []
-			Object.keys(this.options).forEach(key => {
-				passed.push(this.options[key])
-			})
-
-			Object.keys(this.postOptions).forEach(key => {
-				passed.push(this.postOptions[key])
+			Object.keys(options).forEach(key => {
+				passed.push(options[key])
 			})
 			return passed.some(a => a)
 		},
-		canExportPostOptions () {
-			return [
-				'aioseo_page_general_settings',
-				'aioseo_page_advanced_settings',
-				'aioseo_page_schema_settings',
-				'aioseo_page_social_settings',
-				'aioseo_page_local_seo_settings'
-			].some(capability => allowed(capability))
-		}
-	},
-	methods : {
 		processExportSettings () {
 			const settings = []
 			if (this.options.all) {
@@ -223,39 +158,37 @@ export default {
 				})
 			}
 
-			const postOptions = []
-			if (this.postOptions.all) {
-				this.rootStore.aioseo.postData.postTypes
-					.forEach(postType => {
-						postOptions.push(postType.name)
-					})
-			} else {
-				Object.keys(this.postOptions).forEach(key => {
-					if (this.postOptions[key]) {
-						postOptions.push(key)
-					}
-				})
-			}
-
 			const site = this.site ? `${this.site.domain}${this.site.path.replace('/', '-')}` : ''
-
-			this.loading = true
+			this.loadingSettings = true
 			this.toolsStore.exportSettings({
 				settings,
-				postOptions,
 				siteId : this.site ? this.site.blog_id : null
 			})
 				.then(response => {
-					this.loading     = false
-					this.options     = {}
-					this.postOptions = {}
-					const blob       = new Blob([ JSON.stringify(response.body.settings) ], { type: 'application/json' })
-					const link       = document.createElement('a')
-					link.href        = URL.createObjectURL(blob)
-					link.download    = `aioseo-export-settings-${site}${DateTime.now().toFormat('yyyy-MM-dd')}.json`
-					link.click()
-					URL.revokeObjectURL(link.href)
+					this.loadingSettings = false
+					this.options         = {}
+					this.prepareAfterResponse('settings', response.body.settings, site, 'json')
 				})
+		},
+		prepareAfterResponse (contentExporting, bodyContent, site, typeFile) {
+			const contentType = this.getFileType(typeFile)
+			const content     = ('json' === typeFile) ? JSON.stringify(bodyContent) : bodyContent
+			const blob        = new Blob([ content ], { type: contentType })
+
+			const link       = document.createElement('a')
+			link.href        = URL.createObjectURL(blob)
+			link.download    = `aioseo-export-${contentExporting}-${site}${DateTime.now().toFormat('yyyy-MM-dd')}.` + typeFile
+			link.click()
+			URL.revokeObjectURL(link.href)
+		},
+		getFileType (type) {
+			if ('csv' === type) {
+				return 'text/csv'
+			}
+			if ('json' === type) {
+				return 'application/json'
+			}
+			return false
 		}
 	}
 }
@@ -273,27 +206,13 @@ export default {
 	}
 
 	.aioseo-button.import {
-		margin-top: 24px;
+		margin-top: 16px;
 	}
 
-	.export-settings {
-		border-bottom-width: 0;
-
-		.export-all {
-			padding-bottom: 12px;
-			font-weight: $font-bold;
-			border-bottom: 1px solid $border;
-		}
-	}
-
-	.export-post-types {
-		border-bottom-width: 0;
-
-		.export-all {
-			padding-bottom: 12px;
-			font-weight: $font-bold;
-			border-bottom: 1px solid $border;
-		}
+	.export-all {
+		padding-bottom: 12px;
+		font-weight: $font-bold;
+		border-bottom: 1px solid $border;
 	}
 }
 </style>

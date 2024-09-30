@@ -111,7 +111,7 @@ export default {
 	computed : {
 		differenceRounded () {
 			if ('position' === this.type) {
-				return parseInt(Math.round(this.difference))
+				return parseInt(Math.round(this.difference)) * -1
 			}
 
 			return this.difference

@@ -421,7 +421,11 @@ export default {
 			return isVerified && isConnected && isAllowed
 		},
 		showHeadlineAnalyzer () {
-			// We don't want to show the headline analyzer for products.
+			if (this.rootStore.aioseo.data.isClassicEditorActive) {
+				return false
+			}
+
+			// We don't want to show the HA for products.
 			if ('product' === this.post.postType) {
 				return false
 			}

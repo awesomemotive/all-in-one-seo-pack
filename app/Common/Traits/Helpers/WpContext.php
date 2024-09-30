@@ -350,13 +350,13 @@ trait WpContext {
 			return $content[ $post->ID ];
 		}
 
-		$postContent = (string) $this->getPostContent( $post );
+		$postContent = $this->getPostContent( $post );
 
 		// Strip images, captions and WP oembed wrappers (e.g. YouTube URLs) from the post content.
-		$postContent          = preg_replace( '/(<figure.*?\/figure>|<img.*?\/>|<div.*?class="wp-block-embed__wrapper".*?>.*?<\/div>)/s', '', $postContent );
-		$postContent          = str_replace( ']]>', ']]&gt;', $postContent );
-		$postContent          = trim( wp_strip_all_tags( strip_shortcodes( $postContent ) ) );
-		$content[ $post->ID ] = wp_trim_words( $postContent, 55, '' );
+		$postContent          = preg_replace( '/(<figure.*?\/figure>|<img.*?\/>|<div.*?class="wp-block-embed__wrapper".*?>.*?<\/div>)/s', '', (string) $postContent );
+		$postContent          = str_replace( ']]>', ']]&gt;', (string) $postContent );
+		$postContent          = trim( wp_strip_all_tags( strip_shortcodes( (string) $postContent ) ) );
+		$content[ $post->ID ] = wp_trim_words( (string) $postContent, 55, '' );
 
 		return $content[ $post->ID ];
 	}

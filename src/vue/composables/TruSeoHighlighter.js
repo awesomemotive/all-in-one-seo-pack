@@ -228,7 +228,7 @@ export const useTruSeoHighlighter = () => {
 			return false
 		}
 
-		registerTinyMceAnnotator(tinymceEditor)
+		registerTinyMceAnnotator(tinymceEditor.value)
 
 		for (const node of editorChildren) {
 			setHighlightMarks({ block: null, node })
@@ -238,7 +238,7 @@ export const useTruSeoHighlighter = () => {
 			observeMarkParent(hm.parent, parseInt(index) === truSeoHighlighterStore.highlightMarks.length - 1)
 
 			// By adding the annotation texts the observer callback is triggered and the popover is appended.
-			annotateTinyMce(hm, tinymceEditor)
+			annotateTinyMce(hm, tinymceEditor.value)
 		}
 	}
 

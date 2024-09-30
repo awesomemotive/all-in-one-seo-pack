@@ -291,7 +291,6 @@ export default {
 
 <style lang="scss">
 .aioseo-import-others {
-	flex: 1;
 	font-size: 16px;
 
 	.import-success,

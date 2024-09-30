@@ -38,7 +38,7 @@ class CrawlCleanupBlockedArg extends CommonModels\Model {
 	 *
 	 * @var array
 	 */
-	protected $numericFields = [ 'id', 'hits' ];
+	protected $integerFields = [ 'id', 'hits' ];
 
 	/**
 	 * Field to count hits.

@@ -280,6 +280,10 @@ trait Strings {
 	 * @return string         The encoded string.
 	 */
 	public function encodeOutputHtml( $string ) {
+		if ( ! is_string( $string ) ) {
+			return '';
+		}
+
 		return htmlspecialchars( $string, ENT_COMPAT | ENT_HTML401, $this->getCharset(), false );
 	}
 
@@ -601,5 +605,34 @@ trait Strings {
 	 */
 	public function substring( $string, $startIndex, $length ) {
 		return function_exists( 'mb_substr' ) ? mb_substr( $string, $startIndex, $length, $this->getCharset() ) : substr( $string, $startIndex, $length );
+	}
+
+	/**
+	 * Strips emoji characters from a given string.
+	 *
+	 * @since {next}
+	 *
+	 * @param  string $string The string.
+	 * @return string         The string without emoji characters.
+	 */
+	public function stripEmoji( $string ) {
+		// First, decode HTML entities to convert them to actual Unicode characters.
+		$string = $this->decodeHtmlEntities( $string );
+
+		// Pattern to match emoji characters.
+		$emojiPattern = '/[\x{1F600}-\x{1F64F}' . // Emoticons
+						'\x{1F300}-\x{1F5FF}' . // Misc Symbols and Pictographs
+						'\x{1F680}-\x{1F6FF}' . // Transport and Map Symbols
+						'\x{1F1E0}-\x{1F1FF}' . // Flags (iOS)
+						'\x{2600}-\x{26FF}' . // Misc symbols
+						'\x{2700}-\x{27BF}' . // Dingbats
+						'\x{FE00}-\x{FE0F}' . // Variation Selectors
+						'\x{1F900}-\x{1F9FF}' . // Supplemental Symbols and Pictographs
+						']/u';
+
+		$filteredString = preg_replace( $emojiPattern, '', $string );
+
+		// Re-encode special characters to HTML entities.
+		return $this->encodeOutputHtml( $filteredString );
 	}
 }

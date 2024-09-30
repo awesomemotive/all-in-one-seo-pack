@@ -24,11 +24,22 @@ class Filters extends CommonMain\Filters {
 	 * @return array              List of action links.
 	 */
 	public function pluginRowMeta( $actions, $pluginFile = '' ) {
+		$reviewLabel = str_repeat( '<span class="dashicons dashicons-star-filled" style="font-size: 18px; width:16px; height: 16px; color: #ffb900;"></span>', 5 );
+
 		$actionLinks = [
-			'settings' => [
+			'suggest-feature' => [
 				// Translators: This is an action link users can click to open a feature request.
 				'label' => __( 'Suggest a Feature', 'all-in-one-seo-pack' ),
-				'url'   => aioseo()->helpers->utmUrl( AIOSEO_MARKETING_URL . 'suggest-a-feature/', 'plugin-row-meta', 'Feature' ),
+				'url'   => aioseo()->helpers->utmUrl( AIOSEO_MARKETING_URL . 'suggest-a-feature/', 'plugin-row-meta', 'feature' ),
+			],
+			'review'          => [
+				'label' => $reviewLabel,
+				'url'   => aioseo()->helpers->utmUrl( AIOSEO_MARKETING_URL . 'review-aioseo', 'plugin-row-meta', 'review' ),
+				'title' => sprintf(
+					// Translators: 1 - The plugin short name ("AIOSEO").
+					__( 'Rate %1$s', 'all-in-one-seo-pack' ),
+					'AIOSEO'
+				)
 			]
 		];
 

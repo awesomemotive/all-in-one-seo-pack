@@ -173,39 +173,15 @@ class Dashboard {
 			return;
 		}
 
-		include_once ABSPATH . WPINC . '/feed.php';
+		$rssItems = aioseo()->helpers->fetchAioseoArticles();
+		if ( ! $rssItems ) {
+			esc_html_e( 'Temporarily unable to load feed.', 'all-in-one-seo-pack' );
 
-		$rssItems = aioseo()->core->networkCache->get( 'rss_feed' );
-		if ( null === $rssItems ) {
-			$rss = fetch_feed( 'https://aioseo.com/feed/' );
-			if ( is_wp_error( $rss ) ) {
-				esc_html_e( 'Temporarily unable to load feed.', 'all-in-one-seo-pack' );
-
-				return;
-			}
-			$rssItems = $rss->get_items( 0, 4 ); // Show four items.
-			$cached   = [];
-			foreach ( $rssItems as $item ) {
-				$cached[] = [
-					'url'     => $item->get_permalink(),
-					'title'   => aioseo()->helpers->decodeHtmlEntities( $item->get_title() ),
-					'date'    => $item->get_date( get_option( 'date_format' ) ),
-					'content' => substr( wp_strip_all_tags( $item->get_content() ), 0, 128 ) . '...',
-				];
-			}
-			$rssItems = $cached;
-
-			aioseo()->core->networkCache->update( 'rss_feed', $cached, 12 * HOUR_IN_SECONDS );
+			return;
 		}
 		?>
 		<ul>
 			<?php
-			if ( false === $rssItems ) {
-				echo '<li>' . esc_html( __( 'No articles were found.', 'all-in-one-seo-pack' ) ) . '</li>';
-
-				return;
-			}
-
 			foreach ( $rssItems as $item ) {
 				?>
 				<li>

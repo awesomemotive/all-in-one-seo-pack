@@ -167,37 +167,39 @@ trait Vue {
 			'backups'           => [],
 			'importers'         => [],
 			'data'              => [
-				'server'              => aioseo()->helpers->getServerName(),
-				'robots'              => [
+				'server'                => aioseo()->helpers->getServerName(),
+				'robots'                => [
 					'defaultRules'      => [],
 					'hasPhysicalRobots' => null,
 					'rewriteExists'     => null,
 					'sitemapUrls'       => []
 				],
-				'logSizes'            => [
+				'logSizes'              => [
 					'badBotBlockerLog' => null
 				],
-				'status'              => [],
-				'htaccess'            => '',
-				'isMultisite'         => is_multisite(),
-				'isNetworkAdmin'      => is_network_admin(),
-				'currentBlogId'       => get_current_blog_id(),
-				'mainSite'            => is_main_site(),
-				'subdomain'           => $this->isSubdomain(),
-				'isWooCommerceActive' => $this->isWooCommerceActive(),
-				'isBBPressActive'     => class_exists( 'bbPress' ),
-				'staticHomePage'      => $isStaticHomePage ? $staticHomePage : false,
-				'staticBlogPage'      => $this->getBlogPageId(),
-				'staticBlogPageTitle' => get_the_title( $this->getBlogPageId() ),
-				'isDev'               => $this->isDev(),
-				'isLocal'             => $this->isLocalUrl( site_url() ),
-				'isSsl'               => is_ssl(),
-				'hasUrlTrailingSlash' => '/' === user_trailingslashit( '' ),
-				'permalinkStructure'  => get_option( 'permalink_structure' ),
-				'dateFormat'          => get_option( 'date_format' ),
-				'timeFormat'          => get_option( 'time_format' ),
-				'siteName'            => aioseo()->helpers->getWebsiteName(),
-				'blocks'              => [
+				'status'                => [],
+				'htaccess'              => '',
+				'isMultisite'           => is_multisite(),
+				'isNetworkAdmin'        => is_network_admin(),
+				'currentBlogId'         => get_current_blog_id(),
+				'mainSite'              => is_main_site(),
+				'subdomain'             => $this->isSubdomain(),
+				'isBBPressActive'       => class_exists( 'bbPress' ),
+				'isClassicEditorActive' => $this->isClassicEditorActive(),
+				'isWooCommerceActive'   => $this->isWooCommerceActive(),
+				'staticHomePage'        => $isStaticHomePage ? $staticHomePage : false,
+				'staticBlogPage'        => $this->getBlogPageId(),
+				'staticBlogPageTitle'   => get_the_title( $this->getBlogPageId() ),
+				'isDev'                 => $this->isDev(),
+				'isLocal'               => $this->isLocalUrl( site_url() ),
+				'isSsl'                 => is_ssl(),
+				'hasUrlTrailingSlash'   => '/' === user_trailingslashit( '' ),
+				'permalinkStructure'    => get_option( 'permalink_structure' ),
+				'dateFormat'            => get_option( 'date_format' ),
+				'timeFormat'            => get_option( 'time_format' ),
+				'siteName'              => aioseo()->helpers->getWebsiteName(),
+				'adminEmail'            => get_bloginfo( 'admin_email' ),
+				'blocks'                => [
 					'toc' => [
 						'hashPrefix' => apply_filters( 'aioseo_toc_hash_prefix', 'aioseo-' )
 					]
@@ -275,7 +277,7 @@ trait Vue {
 			'context'                        => 'post',
 			'tags'                           => aioseo()->tags->getDefaultPostTags( $postId ),
 			'id'                             => $postId,
-			'priority'                       => isset( $post->priority ) && 'default' !== $post->priority ? $post->priority : 'default',
+			'priority'                       => isset( $post->priority ) && null !== $post->priority ? (float) $post->priority : 'default',
 			'frequency'                      => ! empty( $post->frequency ) ? $post->frequency : 'default',
 			'permalink'                      => get_permalink( $postId ),
 			'editlink'                       => aioseo()->helpers->getPostEditLink( $postId ),

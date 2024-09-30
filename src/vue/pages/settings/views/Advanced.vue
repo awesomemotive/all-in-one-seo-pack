@@ -185,6 +185,15 @@
 			</core-settings-row>
 
 			<core-settings-row
+				:name="strings.emailSummaries"
+				id="aioseo-email-summary-row"
+			>
+				<template #content>
+					<email-summary />
+				</template>
+			</core-settings-row>
+
+			<core-settings-row
 				:name="strings.announcements"
 			>
 				<template #content>
@@ -331,6 +340,7 @@ import CorePostTypeOptions from '@/vue/components/common/core/PostTypeOptions'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
+import EmailSummary from './partials/Advanced/EmailSummary'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
@@ -358,6 +368,7 @@ export default {
 		CoreProBadge,
 		CoreSettingsRow,
 		CoreTooltip,
+		EmailSummary,
 		GridColumn,
 		GridRow,
 		SvgCircleQuestionMark
@@ -458,7 +469,8 @@ export default {
 					'PRO',
 					links.getUpsellLink('general-settings-advanced', GLOBAL_STRINGS.learnMore, 'open-ai', true)
 				),
-				openAiKeyInvalid : __('The API key you have entered is invalid. Please check your API key and try again.', td)
+				openAiKeyInvalid : __('The API key you have entered is invalid. Please check your API key and try again.', td),
+				emailSummaries   : __('Email Reports', td)
 			}
 		}
 	},

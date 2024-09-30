@@ -53,10 +53,16 @@ export const useToolsStore = defineStore('ToolsStore', {
 
 					const optionsStore   = useOptionsStore()
 					optionsStore.options = response.body.options
+
+					return response
 				})
 		},
 		exportSettings (payload) {
 			return http.post(links.restUrl('settings/export'))
+				.send(payload)
+		},
+		exportContent (payload) {
+			return http.post(links.restUrl('settings/export-content'))
 				.send(payload)
 		},
 		resetSettings ({ payload, siteId }) {

@@ -95,6 +95,7 @@ class Api {
 			'search-statistics/sitemap/delete'                      => [ 'callback' => [ 'SearchStatistics', 'deleteSitemap' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 			'search-statistics/sitemap/ignore'                      => [ 'callback' => [ 'SearchStatistics', 'ignoreSitemap' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 			'settings/export'                                       => [ 'callback' => [ 'Settings', 'exportSettings' ], 'access' => 'aioseo_tools_settings' ],
+			'settings/export-content'                               => [ 'callback' => [ 'Settings', 'exportContent' ], 'access' => 'aioseo_tools_settings' ],
 			'settings/hide-setup-wizard'                            => [ 'callback' => [ 'Settings', 'hideSetupWizard' ], 'access' => 'any' ],
 			'settings/hide-upgrade-bar'                             => [ 'callback' => [ 'Settings', 'hideUpgradeBar' ], 'access' => 'any' ],
 			'settings/import'                                       => [ 'callback' => [ 'Settings', 'importSettings' ], 'access' => 'aioseo_tools_settings' ],
@@ -143,6 +144,10 @@ class Api {
 				'callback' => [ 'CrawlCleanup', 'deleteLog', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
 				'access'   => [ 'aioseo_search_appearance_settings' ]
 			],
+			'email-summary/send'                                    => [
+				'callback' => [ 'EmailSummary', 'send' ],
+				'access'   => 'aioseo_page_advanced_settings'
+			],
 		],
 		'DELETE' => [
 			'backup'                 => [ 'callback' => [ 'Tools', 'deleteBackup' ], 'access' => 'aioseo_tools_settings' ],
@@ -152,7 +157,7 @@ class Api {
 	];
 
 	/**
-	 * Class contructor.
+	 * Class constructor.
 	 *
 	 * @since 4.0.0
 	 */

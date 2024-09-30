@@ -144,7 +144,7 @@ abstract class Usage {
 			'theme_version'                 => $themeData->version,
 			'user_count'                    => function_exists( 'get_user_count' ) ? get_user_count() : null,
 			'locale'                        => get_locale(),
-			'timezone_offset'               => aioseo()->helpers->getTimeZoneOffset(),
+			'timezone_offset'               => wp_timezone_string(),
 			'email'                         => get_bloginfo( 'admin_email' ),
 			// AIOSEO specific data.
 			'aioseo_version'                => AIOSEO_VERSION,

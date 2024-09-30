@@ -38,7 +38,7 @@ class SystemStatus {
 		$uploadsDir    = wp_upload_dir();
 		$version       = get_bloginfo( 'version' );
 		$updates       = get_site_transient( 'update_core' );
-		$updateVersion = ! empty( $updates->updates[0]->version ) ? $updates->updates[0]->version : null;
+		$updateVersion = ! empty( $updates->updates[0]->version ) ? $updates->updates[0]->version : '';
 		if ( version_compare( $version, $updateVersion, '<' ) ) {
 			$version .= ' (' . __( 'Latest version:', 'all-in-one-seo-pack' ) . ' ' . $updateVersion . ')';
 		}
@@ -64,7 +64,7 @@ class SystemStatus {
 				],
 				[
 					'header' => __( 'Timezone', 'all-in-one-seo-pack' ),
-					'value'  => aioseo()->helpers->getTimeZoneOffset()
+					'value'  => wp_timezone_string()
 				],
 				[
 					'header' => __( 'Home URL', 'all-in-one-seo-pack' ),

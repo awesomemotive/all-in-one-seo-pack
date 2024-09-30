@@ -302,7 +302,8 @@ export default {
 			default () {
 				return ''
 			}
-		}
+		},
+		initialFilter : String
 	},
 	data () {
 		return {
@@ -426,7 +427,7 @@ export default {
 		shouldLimitText (line) {
 			return 120 < sanitizeString(line).length
 		},
-		maybePreloadPages () {
+		async maybePreloadPages () {
 			if (!this.rootStore.isPro || this.licenseStore.isUnlicensed || !this.searchStatisticsStore.isConnected || this.isPreloading) {
 				return
 			}
@@ -443,7 +444,8 @@ export default {
 			}
 
 			this.isPreloading = true
-			this.preloadPages().then(() => {
+
+			return this.preloadPages().then(() => {
 				this.isPreloading = false
 			})
 		},
@@ -497,8 +499,14 @@ export default {
 			return Promise.all(promises)
 		}
 	},
-	mounted () {
-		this.maybePreloadPages()
+	async mounted () {
+		await this.maybePreloadPages()
+
+		if (this.initialFilter) {
+			this.processFilter({
+				slug : this.initialFilter
+			})
+		}
 
 		this.orderBy  = this.defaultSorting?.orderBy || this.orderBy
 		this.orderDir = this.defaultSorting?.orderDir || this.orderDir
