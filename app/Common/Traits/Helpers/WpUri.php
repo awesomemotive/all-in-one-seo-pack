@@ -17,10 +17,11 @@ trait WpUri {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return string The site's domain.
+	 * @param  bool   $unfiltered Whether to get the unfiltered value.
+	 * @return string             The site's domain.
 	 */
-	public function getSiteDomain() {
-		return wp_parse_url( home_url(), PHP_URL_HOST );
+	public function getSiteDomain( $unfiltered = false ) {
+		return wp_parse_url( $this->getHomeUrl( $unfiltered ), PHP_URL_HOST );
 	}
 
 	/**
@@ -30,10 +31,13 @@ trait WpUri {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return string The site's domain.
+	 * @param  bool   $unfiltered Whether to get the unfiltered value.
+	 * @return string             The site's domain.
 	 */
-	public function getSiteUrl() {
-		return wp_parse_url( home_url(), PHP_URL_SCHEME ) . '://' . wp_parse_url( home_url(), PHP_URL_HOST );
+	public function getSiteUrl( $unfiltered = false ) {
+		$homeUrl = $this->getHomeUrl( $unfiltered );
+
+		return wp_parse_url( $homeUrl, PHP_URL_SCHEME ) . '://' . wp_parse_url( $homeUrl, PHP_URL_HOST );
 	}
 
 	/**
@@ -107,6 +111,12 @@ trait WpUri {
 		if ( is_category() || is_tag() || is_tax() ) {
 			$metaData     = aioseo()->meta->metaData->getMetaData( $queriedObject );
 			$url[ $hash ] = get_term_link( $queriedObject, $queriedObject->taxonomy ?? '' );
+
+			// Add pagination to the URL. We need to do this here because get_term_link() doesn't handle pagination.
+			// We'll strip it further down if no pagination for canonical is enabled.
+			if ( $this->getPageNumber() > 1 ) {
+				$url[ $hash ] = user_trailingslashit( $url[ $hash ] . 'page/' . $this->getPageNumber() );
+			}
 		}
 
 		if ( $metaData && ! empty( $metaData->canonical_url ) ) {
@@ -382,7 +392,11 @@ trait WpUri {
 	 * @return string            The path without the home_url().
 	 */
 	public function getPermalinkPath( $permalink ) {
-		return $this->leadingSlashIt( str_replace( get_home_url(), '', $permalink ) );
+		// We want to get this value straight from the DB to prevent plugins like WPML from filtering it.
+		// This will otherwise mess with things like license activation requests and redirects.
+		$homeUrl = $this->getHomeUrl( true );
+
+		return $this->leadingSlashIt( str_replace( $homeUrl, '', $permalink ) );
 	}
 
 	/**
@@ -410,12 +424,32 @@ trait WpUri {
 	 *
 	 * @since 4.2.3
 	 *
-	 * @return string The home path.
+	 * @param  bool   $unfiltered Whether to get the unfiltered value.
+	 * @return string              The home path.
 	 */
-	public function getHomePath() {
-		$path = wp_parse_url( get_home_url(), PHP_URL_PATH );
+	public function getHomePath( $unfiltered = false ) {
+		$path = wp_parse_url( $this->getHomeUrl( $unfiltered ), PHP_URL_PATH );
 
 		return $path ? trailingslashit( $path ) : '/';
+	}
+
+	/**
+	 * Returns the home URL.
+	 *
+	 * @since 4.7.3
+	 *
+	 * @param  bool   $unfiltered Whether to get the unfiltered value.
+	 * @return string             The home URL.
+	 */
+	private function getHomeUrl( $unfiltered = false ) {
+		$homeUrl = home_url();
+		if ( $unfiltered ) {
+			// We want to get this value straight from the DB to prevent plugins like WPML from filtering it.
+			// This will otherwise mess with things like license activation requests and redirects.
+			$homeUrl = get_option( 'home' );
+		}
+
+		return $homeUrl;
 	}
 
 	/**

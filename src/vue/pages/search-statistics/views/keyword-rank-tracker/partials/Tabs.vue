@@ -21,7 +21,7 @@
 					class="btn-create-group"
 					size="small-table"
 					type="blue"
-					@click.exact="keywordRankTrackerStore.modalOpenCreateGroup = true"
+					@click.exact="keywordRankTrackerStore.toggleModal({modal: 'modalOpenCreateGroup', open: true})"
 				>
 					{{ strings.createGroup }}
 				</base-button>

@@ -93,7 +93,7 @@
 					<a
 						v-for="(filter, index) in filters"
 						:key="index"
-						@click.prevent.stop="processFilter(filter)"
+						@click.prevent="processFilter(filter)"
 						href="#"
 						:tabindex="filter.active ? -1 : 0"
 					>
@@ -133,6 +133,7 @@
 							v-if="showBulkActions"
 						>
 							<input
+								v-if="!shouldHideCheckbox"
 								type="checkbox"
 								:disabled="loading || disableTable"
 							/>
@@ -337,6 +338,8 @@
 </template>
 
 <script>
+import { useRootStore } from '$/vue/stores'
+
 import numbers from '@/vue/utils/numbers'
 import { debounce } from '@/vue/utils/debounce'
 
@@ -363,6 +366,13 @@ export default {
 		'process-additional-filters',
 		'additional-filter-option-selected'
 	],
+	setup () {
+		const rootStore = useRootStore()
+
+		return {
+			rootStore
+		}
+	},
 	components : {
 		CoreAlert,
 		CoreLoader,
@@ -507,6 +517,12 @@ export default {
 		},
 		noResults () {
 			return this.noResultsLabel || this.strings.noResults
+		},
+		shouldHideCheckbox () {
+			// We depend on the common.js admin script to handle our bulk checkbox toggle.
+			// This doesn't seem to work in the Block Editor for whatever reason. So, we need to hide the checkbox there.
+			// See "$body.on( 'click.wp-toggle-checkboxes', 'thead .check-column :checkbox, tfoot .check-column :checkbox') in common.js."
+			return this.rootStore?.aioseo?.screen?.blockEditor || this.rootStore?.aioseoBrokenLinkChecker?.screen?.blockEditor
 		}
 	},
 	methods : {

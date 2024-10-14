@@ -10,7 +10,7 @@
 		:initial-page-number="pageNumber"
 		:initial-search-term="paginatedKeywords?.searchTerm || searchTerm"
 		:key="wpTableKey"
-		:loading="tableLoading"
+		:loading="wpTableLoading"
 		:rows="paginatedKeywords.rows"
 		show-bulk-actions
 		:show-header="showHeader"
@@ -19,7 +19,7 @@
 		show-items-per-page
 		@filter-table="processFilterTable"
 		@paginate="processPagination"
-		@process-additional-filters="processAdditionalFilters"
+		@process-additional-filters="(args) => processAdditionalFilters({filters: args.filters, term: args.searchTerm, number: args.pageNumber})"
 		@process-bulk-action="processBulkAction"
 		@process-change-items-per-page="processChangeItemsPerPage"
 		@search="processSearch"
@@ -29,10 +29,10 @@
 			<button
 				type="button"
 				:class="[
-						`btn-filter-favorited button ${slug}`,
-						{ 'btn-filter-favorited--not-active': !active }
-					]"
-				:disabled="tableLoading"
+					`btn-filter-favorited button ${slug}`,
+					{ 'btn-filter-favorited--not-active': !active }
+				]"
+				:disabled="wpTableLoading"
 				tabindex="-1"
 			>
 				<svg-star :active="true"/>
@@ -144,280 +144,254 @@
 	</core-wp-table>
 </template>
 
-<script>
-import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+<script setup>
+import { ref, computed } from 'vue'
 
 import {
 	useKeywordRankTrackerStore,
 	useSettingsStore
 } from '@/vue/stores'
 
-import numbers from '@/vue/utils/numbers'
-
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import { __ } from '@/vue/plugins/translations'
 import { useWpTable } from '@/vue/composables/WpTable'
+
+import numbers from '@/vue/utils/numbers'
 
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Graph from '../../partials/Graph'
 import SvgStar from '@/vue/components/common/svg/Star'
 
-import { __ } from '@/vue/plugins/translations'
+const td                      = import.meta.env.VITE_TEXTDOMAIN
+const keywordRankTrackerStore = useKeywordRankTrackerStore()
+const settingsStore           = useSettingsStore()
+const changeItemsPerPageSlug  = 'searchStatisticsKeywordRankTracker'
+const tableId                 = 'keyword-rank-tracker-keywords-table'
+const strings                 = {
+	addToGroup : __('Add to Group', td),
+	editGroup  : __('Edit Group', td),
+	position   : __('Position', td)
+}
+const tableBulkOptions        = [
+	{
+		label : GLOBAL_STRINGS.delete,
+		value : 'delete'
+	},
+	{
+		label : strings.addToGroup,
+		value : 'assignGroup'
+	}
+]
 
-const td = import.meta.env.VITE_TEXTDOMAIN
+const props = defineProps({
+	paginatedKeywords     : Object,
+	showAdditionalFilters : {
+		type    : Boolean,
+		default : true
+	},
+	showTableFooter : {
+		type    : Boolean,
+		default : true
+	},
+	showHeader : {
+		type    : Boolean,
+		default : true
+	},
+	fetchData : {
+		type : Function,
+		default (args) {
+			const keywordRankTrackerStore = useKeywordRankTrackerStore()
+			return keywordRankTrackerStore.fetchKeywords(args)
+		}
+	}
+})
 
-export default {
-	emits : [],
-	setup (props) {
-		const changeItemsPerPageSlug = 'searchStatisticsKeywordRankTracker'
-		const tableId                = 'keyword-rank-tracker-keywords-table'
-		const {
-			orderBy,
-			orderDir,
-			pageNumber,
-			processAdditionalFilters,
-			processChangeItemsPerPage,
-			processFilterTable,
-			processPagination,
-			processSearch,
-			processSort,
-			searchTerm,
-			wpTableKey,
-			wpTableLoading
-		} = useWpTable({
-			changeItemsPerPageSlug,
-			fetchData : props.fetchData,
-			tableId
+const table = ref(null)
+const btnFavoriteLoading = ref([])
+
+const {
+	orderBy,
+	orderDir,
+	processAdditionalFilters,
+	processChangeItemsPerPage,
+	processFilterTable,
+	processPagination,
+	processSearch,
+	processSort,
+	searchTerm,
+	wpTableKey,
+	wpTableLoading
+} = useWpTable({
+	changeItemsPerPageSlug,
+	fetchData : props.fetchData,
+	tableId,
+	tableRef  : table.value
+})
+
+const pageNumber = computed(() => {
+	return props.paginatedKeywords.totals.page
+})
+
+const tableAdditionalFilters = computed(() => {
+	if (!props.showAdditionalFilters || !keywordRankTrackerStore.groups.count) {
+		return []
+	}
+
+	const options = [
+		{ label: __('All Groups', td), value: 'all' },
+		...keywordRankTrackerStore.groups.all.rows.map(r => {
+			return {
+				...r,
+				label : keywordRankTrackerStore.favoriteGroup?.label === r.label ? '&starf;' : r.label
+			}
 		})
+	]
 
-		return {
-			GLOBAL_STRINGS,
-			changeItemsPerPageSlug,
-			keywordRankTrackerStore : useKeywordRankTrackerStore(),
-			orderBy,
-			orderDir,
-			pageNumber,
-			processAdditionalFilters,
-			processChangeItemsPerPage,
-			processFilterTable,
-			processPagination,
-			processSearch,
-			processSort,
-			searchTerm,
-			settingsStore           : useSettingsStore(),
-			tableId,
-			wpTableKey,
-			wpTableLoading
+	return [
+		{
+			label   : __('Filter by Group', td),
+			name    : 'group',
+			options : options
 		}
+	]
+})
+
+const tableFilters = computed(() => [
+	{
+		slug   : 'all',
+		name   : 'All',
+		active : 'all' === props.paginatedKeywords.filter
 	},
-	components : {
-		CoreLoader,
-		CoreWpTable,
-		Graph,
-		SvgStar
-	},
-	props : {
-		paginatedKeywords : Object,
-		showTableFooter   : {
-			type : Boolean,
-			default () {
-				return true
-			}
+	{
+		slug   : 'favorited',
+		name   : 'Favorited',
+		active : 'favorited' === props.paginatedKeywords.filter
+	}
+])
+
+const tableColumns = computed(() => {
+	return [
+		{
+			slug  : 'favorited',
+			label : '',
+			width : '50px'
 		},
-		showHeader : {
-			type : Boolean,
-			default () {
-				return true
-			}
+		{
+			slug     : 'name',
+			label    : __('Keyword', td),
+			sortable : 1 < props.paginatedKeywords.totals.total,
+			sortDir  : 'name' === orderBy.value ? orderDir.value : 'asc',
+			sorted   : 'name' === orderBy.value
 		},
-		fetchData : {
-			type : Function,
-			default (args) {
-				const keywordRankTrackerStore = useKeywordRankTrackerStore()
-				return keywordRankTrackerStore.fetchKeywords(args)
-			}
+		{
+			slug     : 'clicks',
+			label    : __('Clicks', td),
+			sortable : 1 < props.paginatedKeywords.totals.total,
+			sortDir  : 'clicks' === orderBy.value ? orderDir.value : 'asc',
+			sorted   : 'clicks' === orderBy.value,
+			width    : '100px'
+		},
+		{
+			slug     : 'ctr',
+			label    : __('Avg. CTR', td),
+			sortable : 1 < props.paginatedKeywords.totals.total,
+			sortDir  : 'ctr' === orderBy.value ? orderDir.value : 'asc',
+			sorted   : 'ctr' === orderBy.value,
+			width    : '100px'
+		},
+		{
+			slug     : 'impressions',
+			label    : __('Impressions', td),
+			sortable : 1 < props.paginatedKeywords.totals.total,
+			sortDir  : 'impressions' === orderBy.value ? orderDir.value : 'asc',
+			sorted   : 'impressions' === orderBy.value,
+			width    : '110px'
+		},
+		{
+			slug     : 'position',
+			label    : __('Position', td),
+			sortable : 1 < props.paginatedKeywords.totals.total,
+			sortDir  : 'position' === orderBy.value ? orderDir.value : 'asc',
+			sorted   : 'position' === orderBy.value,
+			width    : '100px'
+		},
+		{
+			slug  : 'history',
+			label : __('Position History', td),
+			width : '140px'
 		}
-	},
-	data () {
-		return {
-			selectedRows       : null,
-			btnFavoriteLoading : [],
-			strings            : {
-				addToGroup : __('Add to Group', td),
-				editGroup  : __('Edit Group', td),
-				position   : __('Position', td)
-			}
-		}
-	},
-	computed : {
-		tableAdditionalFilters () {
-			const options = [
-				{ label: __('All Groups', td), value: 'all' }
-			]
+	]
+})
 
-			options.push(...this.keywordRankTrackerStore.groups.all.rows)
+const formatRowStatistic = (row, key) => {
+	let out = row.statistics?.[key] ?? ''
+	switch (key) {
+		case 'ctr':
+			out = ('' !== out ? numbers.compactNumber(out) + '%' : out)
+			break
+		case 'impressions':
+			out = '' !== out ? numbers.compactNumber(out) : out
+			break
+		case 'position':
+			out = '' !== out ? Math.round(out).toFixed(0) : out
+			break
+	}
 
-			return [
-				{
-					label   : __('Filter by Group', td),
-					name    : 'group',
-					options : options
-				}
-			]
-		},
-		tableBulkOptions () {
-			return [
-				{
-					label : GLOBAL_STRINGS.delete,
-					value : 'delete'
-				},
-				{
-					label : this.strings.addToGroup,
-					value : 'assignGroup'
-				}
-			]
-		},
-		tableFilters () {
-			return [
-				{
-					slug   : 'all',
-					name   : 'All',
-					active : 'all' === this.paginatedKeywords.filter
-				},
-				{
-					slug   : 'favorited',
-					name   : 'Favorited',
-					active : 'favorited' === this.paginatedKeywords.filter
-				}
-			]
-		},
-		tableColumns () {
-			return [
-				{
-					slug  : 'favorited',
-					label : '',
-					width : '50px'
-				},
-				{
-					slug     : 'name',
-					label    : __('Keyword', td),
-					sortable : 1 < this.paginatedKeywords.totals.total,
-					sortDir  : 'name' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'name' === this.orderBy
-				},
-				{
-					slug     : 'clicks',
-					label    : __('Clicks', td),
-					sortable : 1 < this.paginatedKeywords.totals.total,
-					sortDir  : 'clicks' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'clicks' === this.orderBy,
-					width    : '100px'
-				},
-				{
-					slug     : 'ctr',
-					label    : __('Avg. CTR', td),
-					sortable : 1 < this.paginatedKeywords.totals.total,
-					sortDir  : 'ctr' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'ctr' === this.orderBy,
-					width    : '100px'
-				},
-				{
-					slug     : 'impressions',
-					label    : __('Impressions', td),
-					sortable : 1 < this.paginatedKeywords.totals.total,
-					sortDir  : 'impressions' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'impressions' === this.orderBy,
-					width    : '110px'
-				},
-				{
-					slug     : 'position',
-					label    : __('Position', td),
-					sortable : 1 < this.paginatedKeywords.totals.total,
-					sortDir  : 'position' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'position' === this.orderBy,
-					width    : '100px'
-				},
-				{
-					slug  : 'history',
-					label : __('Position History', td),
-					width : '140px'
-				}
-			]
-		},
-		tableLoading () {
-			return this.wpTableLoading
-		}
-	},
-	methods : {
-		formatRowStatistic (row, key) {
-			let out = row.statistics?.[key] ?? ''
-			switch (key) {
-				case 'ctr':
-					out = ('' !== out ? numbers.compactNumber(out) + '%' : out)
-					break
-				case 'impressions':
-					out = '' !== out ? numbers.compactNumber(out) : out
-					break
-				case 'position':
-					out = '' !== out ? Math.round(out).toFixed(0) : out
-					break
-			}
+	return out
+}
 
-			return out
-		},
-		processBulkAction ({ action, selectedRows }) {
-			if (!selectedRows.length) {
-				return
-			}
+const processBulkAction = ({ action, selectedRows }) => {
+	if (!selectedRows.length) {
+		return
+	}
 
-			selectedRows = this.paginatedKeywords.rows.filter(v => selectedRows.includes(String(v.id)))
+	selectedRows = props.paginatedKeywords.rows.filter(v => selectedRows.includes(String(v.id)))
 
-			if ('delete' === action) {
-				this.keywordRankTrackerStore.toggleModal({
-					modal                 : 'modalOpenDeleteKeywords',
-					open                  : true,
-					keywords              : selectedRows,
-					fetchKeywordsCallback : this.fetchData
-				})
-			}
+	if ('delete' === action) {
+		keywordRankTrackerStore.toggleModal({
+			modal                 : 'modalOpenDeleteKeywords',
+			open                  : true,
+			keywords              : selectedRows,
+			fetchKeywordsCallback : props.fetchData
+		})
+	}
 
-			if ('assignGroup' === action) {
-				this.keywordRankTrackerStore.toggleModal({
-					modal                 : 'modalOpenAssignGroups',
-					open                  : true,
-					keywords              : selectedRows.map(r => ({ ...r, groups: [] })), // Force the assignment operation to be 'create' by eliminating groups.
-					fetchKeywordsCallback : this.fetchData
-				})
-			}
-		},
-		positionHistorySeries (row) {
-			return row.statistics?.history
-				? [ {
-					name : this.strings.position,
-					data : row.statistics.history.map(h => ({ x: h.date, y: h.position }))
-				} ]
-				: []
-		},
-		async toggleFavorite (row, index) {
-			this.btnFavoriteLoading[index] = true
+	if ('assignGroup' === action) {
+		keywordRankTrackerStore.toggleModal({
+			modal                 : 'modalOpenAssignGroups',
+			open                  : true,
+			keywords              : selectedRows.map(r => ({ ...r, groups: [] })), // Force the assignment operation to be 'create' by eliminating groups.
+			fetchKeywordsCallback : props.fetchData
+		})
+	}
+}
 
-			try {
-				await this.keywordRankTrackerStore.updateKeyword({
-					id      : row.id,
-					payload : { favorited: !row.favorited }
-				})
-				await this.fetchData()
-				this.keywordRankTrackerStore.fetchGroups()
-					.then(() => {
-						this.keywordRankTrackerStore.maybeFetchStatistics({
-							context : 'groups'
-						})
-					})
-			} catch (error) {
-				console.error(error)
-			} finally {
-				this.btnFavoriteLoading = []
-			}
-		}
+const positionHistorySeries = (row) => {
+	return row.statistics?.history
+		? [ {
+			name : strings.position,
+			data : row.statistics.history.map(h => ({ x: h.date, y: h.position }))
+		} ]
+		: []
+}
+
+const toggleFavorite = async (row, index) => {
+	btnFavoriteLoading.value[index] = true
+
+	try {
+		await keywordRankTrackerStore.updateKeyword({
+			id      : row.id,
+			payload : { favorited: !row.favorited }
+		})
+		await props.fetchData()
+		await keywordRankTrackerStore.fetchGroups()
+
+		keywordRankTrackerStore.maybeFetchStatistics({ context: 'groups' })
+	} catch (error) {
+		console.error(error)
+	} finally {
+		btnFavoriteLoading.value = []
 	}
 }
 </script>

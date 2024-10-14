@@ -296,7 +296,7 @@ trait Vue {
 			'postStatus'                     => get_post_status( $postId ),
 			'postAuthor'                     => (int) $wpPost->post_author,
 			'isSpecialPage'                  => $this->isSpecialPage( $postId ),
-			'isPageAnalysisEligible'         => $this->isPageAnalysisEligible( $postId ),
+			'isTruSeoEligible'               => $this->isTruSeoEligible( $postId ),
 			'isStaticPostsPage'              => aioseo()->helpers->isStaticPostsPage(),
 			'isHomePage'                     => $postId === $staticHomePage,
 			'isWooCommercePageWithoutSchema' => $this->isWooCommercePageWithoutSchema( $postId ),

@@ -817,7 +817,7 @@ class Tags {
 		$string = $this->parseTaxonomyNames( $string, $id );
 
 		// Custom fields are parsed separately.
-		$string = $this->parseCustomFields( $string );
+		$string = $this->parseCustomFields( $string, $id );
 
 		return preg_replace( '/%\|%/im', '', $string );
 	}
@@ -1145,11 +1145,15 @@ class Tags {
 	 * @since 4.0.0
 	 *
 	 * @param  string $string The string to parse customs fields out of.
+	 * @param  int    $postId The page or post ID.
 	 * @return mixed          The new title.
 	 */
-	public function parseCustomFields( $string ) {
+	public function parseCustomFields( $string, $postId = 0 ) {
 		$pattern = '/' . $this->denotationChar . 'custom_field-([a-zA-Z0-9_-]+)/im';
-		$string  = preg_replace_callback( $pattern, [ $this, 'replaceCustomField' ], $string );
+		$matches = [];
+		preg_match_all( $pattern, $string, $matches, PREG_SET_ORDER );
+
+		$string  = $this->replaceCustomField( $string, $matches, $postId );
 		$pattern = '/' . $this->denotationChar . 'custom_field(?![a-zA-Z0-9_-])/im';
 
 		return preg_replace( $pattern, '', $string );
@@ -1217,29 +1221,38 @@ class Tags {
 	 *
 	 * @since 4.0.0
 	 *
+	 * @param  string      $string  The string to parse customs fields out of.
 	 * @param  array       $matches Array of matched values.
+	 * @param  int         $postId  The page or post ID.
 	 * @return bool|string          New title/text.
 	 */
-	private function replaceCustomField( $matches ) {
-		$result = '';
-		if ( ! empty( $matches ) ) {
-			if ( ! empty( $matches[1] ) ) {
+	private function replaceCustomField( $string, $matches, $postId ) {
+		if ( empty( $matches ) ) {
+			return $string;
+		}
+
+		foreach ( $matches as $match ) {
+			$str = '';
+			if ( ! empty( $match[1] ) ) {
 				if ( function_exists( 'get_field' ) ) {
-					$result = get_field( $matches[1], get_queried_object() );
+					$str = get_field( $match[1], get_queried_object() ?? $postId );
 				}
-				if ( empty( $result ) ) {
+
+				if ( empty( $str ) ) {
 					global $post;
 					if ( ! empty( $post ) ) {
-						$result = get_post_meta( $post->ID, $matches[1], true );
+						$str = get_post_meta( $post->ID, $match[1], true );
 					}
 				}
 			} else {
-				$result = $matches[0];
+				$str = $match[0];
 			}
-		}
-		$result = wp_strip_all_tags( $result );
 
-		return '%|%' . $result;
+			$str = wp_strip_all_tags( $str );
+			$string = str_replace( $match[0], '%|%' . $str, $string );
+		}
+
+		return $string;
 	}
 
 	/**

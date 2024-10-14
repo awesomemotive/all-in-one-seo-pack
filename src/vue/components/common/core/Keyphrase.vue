@@ -9,7 +9,7 @@
 			</span>
 			<a
 				href="#"
-				@click.prevent.exact="keywordRankTrackerStore.modalOpenPostEdit = true"
+				@click.prevent.exact="keywordRankTrackerStore.toggleModal({modal:'modalOpenPostEdit', open: true})"
 				class="btn-keyword-rank-tracker"
 			>
 				<svg-statistics width="20"/>

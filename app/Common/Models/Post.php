@@ -87,7 +87,7 @@ class Post extends Model {
 	/**
 	 * Fields that should be float values.
 	 *
-	 * @since {next}
+	 * @since 4.7.3
 	 *
 	 * @var array
 	 */

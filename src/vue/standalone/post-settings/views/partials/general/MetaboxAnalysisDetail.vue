@@ -69,13 +69,9 @@ export default {
 	li {
 		padding-left: 24px;
 		position: relative;
-		margin-bottom: 0;
+		margin: 0 0 16px;
 		font-size: 14px;
 		line-height: 22px;
-
-		+ li {
-			margin-top: 16px;
-		}
 
 		p {
 			font-size: inherit;

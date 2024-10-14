@@ -16,7 +16,7 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 			paginated : {
 				rows   : [],
 				totals : {
-					page  : 0,
+					page  : 1,
 					pages : 0,
 					total : 0
 				},
@@ -34,7 +34,7 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 				paginated : {
 					rows   : [],
 					totals : {
-						page  : 0,
+						page  : 1,
 						pages : 0,
 						total : 0
 					},
@@ -56,7 +56,7 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 			paginated : {
 				rows   : [],
 				totals : {
-					page  : 0,
+					page  : 1,
 					pages : 0,
 					total : 0
 				},
@@ -96,15 +96,32 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 	},
 	actions : {
 		toggleModal (args) {
-			this.keywords.selected = []
 			this.fetchKeywordsCallback = args?.fetchKeywordsCallback || null
 
+			if ('modalOpenAddKeywords' === args.modal && args.open) {
+				this.keywords.selected = []
+			}
+
 			if ('modalOpenAssignGroups' === args.modal && args.open) {
-				this.keywords.selected = args?.keywords ?? this.keywords.selected
+				this.keywords.selected = args?.keywords ?? []
 			}
 
 			if ('modalOpenDeleteKeywords' === args.modal && args.open) {
-				this.keywords.selected = args?.keywords ?? this.keywords.selected
+				this.keywords.selected = args?.keywords ?? []
+			}
+
+			if ('modalOpenCreateGroup' === args.modal) {
+				this.errors.crud = null
+			}
+
+			if ('modalOpenUpdateGroup' === args.modal && args.open) {
+				this.errors.crud = null
+			}
+
+			if ('modalOpenPostEdit' === args.modal && !args.open) {
+				const searchStatisticsStore = useSearchStatisticsStore()
+
+				searchStatisticsStore.shouldShowSampleReports = false
 			}
 
 			this[args.modal] = args.open
@@ -166,7 +183,20 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 		deleteKeywords (ids) {
 			return http.delete(links.restUrl('search-statistics/keyword-rank-tracker/keywords'))
 				.send({ ids })
-				.then(response => response)
+				.then(response => {
+					const update = [ this.keywords.paginated, this.groups.tableKeywords.paginated ]
+
+					update.forEach((paginated) => {
+						const newOffset = Math.max(0, paginated.offset - response.body.rowsAffected)
+
+						// Round up or down the offset to the next multiple of `limit`.
+						paginated.offset = paginated.totals.total - response.body.rowsAffected <= paginated.offset
+							? Math.floor(newOffset / paginated.limit) * paginated.limit
+							: Math.ceil(newOffset / paginated.limit) * paginated.limit
+					})
+
+					return response
+				})
 				.catch(error => {
 					throw error
 				})
@@ -224,20 +254,17 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 					additionalFilters : this.groups.tableKeywords.paginated.additionalFilters,
 					startDate         : this.range.start,
 					endDate           : this.range.end,
-					'ids[]'           : payload?.ids || []
+					'ids[]'           : payload?.ids ? (payload.ids.length ? payload.ids : [ 0 ]) : []
 				})
-				.then(response => {
-					this.groups.tableKeywords.paginated.rows = response.body.paginated.rows
+				.then(async response => {
+					this.groups.tableKeywords.paginated.rows   = response.body.paginated.rows
 					this.groups.tableKeywords.paginated.totals = response.body.paginated.totals
 
-					this.keywords.paginated.rows = this.keywords.paginated.rows.map(keyword => {
-						const findRow = response.body.paginated.rows.find(row => row.id === keyword.id)
-						if (findRow) {
-							return findRow
-						}
+					if (payload?.updateKeywords) {
+						await this.fetchKeywords()
 
-						return keyword
-					})
+						this.maybeFetchStatistics({ context: 'keywords' })
+					}
 
 					return response
 				})
@@ -260,7 +287,16 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 		deleteGroups (ids) {
 			return http.delete(links.restUrl('search-statistics/keyword-rank-tracker/groups'))
 				.send({ ids })
-				.then(response => response)
+				.then(response => {
+					const newOffset = Math.max(0, this.groups.paginated.offset - response.body.rowsAffected)
+
+					// Round up or down the offset to the next multiple of `limit`.
+					this.groups.paginated.offset = this.groups.paginated.totals.total - response.body.rowsAffected <= this.groups.paginated.offset
+						? Math.floor(newOffset / this.groups.paginated.limit) * this.groups.paginated.limit
+						: Math.ceil(newOffset / this.groups.paginated.limit) * this.groups.paginated.limit
+
+					return response
+				})
 				.catch(error => {
 					throw error
 				})
@@ -299,9 +335,9 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 					this.isFetchingStatistics = false
 				})
 		},
-		maybeUpdateKeywords () {
+		maybeUpdateKeywords (payload = {}) {
 			if (this.keywords.count) {
-				return this.fetchKeywords()
+				return this.fetchKeywords(payload)
 					.then(() => this.maybeFetchStatistics({ context: 'keywords' }))
 			}
 		},
@@ -316,7 +352,7 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 				paginated : {
 					rows   : [],
 					totals : {
-						page  : 0,
+						page  : 1,
 						pages : 0,
 						total : 0
 					},

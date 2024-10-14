@@ -228,6 +228,8 @@ import { __, sprintf } from '@/vue/plugins/translations'
 import { getAssetUrl, isUrl, cloneObject } from '@/vue/utils/helpers'
 import csvFileImage from '@/vue/assets/images/sitemap/import-from-csv.png'
 
+import { useUrl } from '@/vue/composables/Url'
+
 import BaseDatePicker from '@/vue/components/common/base/DatePicker'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreModal from '@/vue/components/common/core/modal/Index'
@@ -248,11 +250,16 @@ const defaults = {
 export default {
 	emits : [ 'cancel', 'process-page-add-and-update', 'process-page-edit' ],
 	setup () {
+		const {
+			decodeUrl
+		} = useUrl()
+
 		return {
 			FREQUENCY_OPTIONS,
 			PRIORITY_OPTIONS,
 			dateJsToLocal,
 			dateStringToLocalJs,
+			decodeUrl,
 			optionsStore : useOptionsStore(),
 			rootStore    : useRootStore()
 		}
@@ -384,14 +391,6 @@ export default {
 		updateUrl (value) {
 			this.page.url = ''
 			this.page.url = this.decodeUrl(value)
-		},
-		decodeUrl (url) {
-			try {
-				return decodeURIComponent(url)
-			} catch (error) {
-				// If an error occurs during decoding, do nothing
-				return url
-			}
 		},
 		updatePage (index) {
 			const pages = this.optionsStore.options.sitemap.general.additionalPages.pages

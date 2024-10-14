@@ -87,6 +87,7 @@ class PostMeta {
 			'rank_math_twitter_image'        => 'twitter_image_custom_url',
 			'rank_math_twitter_card_type'    => 'twitter_card',
 			'rank_math_primary_category'     => 'primary_term',
+			'rank_math_pillar_content'       => 'pillar_content',
 		];
 
 		foreach ( $posts as $post ) {
@@ -99,7 +100,19 @@ class PostMeta {
 				->result();
 
 			$meta = [
-				'post_id' => $post->ID,
+				'post_id'             => $post->ID,
+				'robots_default'      => true,
+				'robots_noarchive'    => false,
+				'canonical_url'       => '',
+				'robots_nofollow'     => false,
+				'robots_noimageindex' => false,
+				'robots_noindex'      => false,
+				'robots_noodp'        => false,
+				'robots_nosnippet'    => false,
+				'keyphrases'          => [
+					'focus'      => [ 'keyphrase' => '' ],
+					'additional' => []
+				],
 			];
 
 			if ( ! $postMeta || ! count( $postMeta ) ) {
@@ -154,7 +167,14 @@ class PostMeta {
 					case 'rank_math_robots':
 						$value = aioseo()->helpers->maybeUnserialize( $value );
 						if ( ! empty( $value ) ) {
+							$supportedValues        = [ 'index', 'noindex', 'nofollow', 'noarchive', 'noimageindex', 'nosnippet' ];
 							$meta['robots_default'] = false;
+
+							foreach ( $supportedValues as $val ) {
+								$meta[ "robots_$val" ] = false;
+							}
+
+							// This is a separated foreach as we can import any and all values.
 							foreach ( $value as $robotsName ) {
 								$meta[ "robots_$robotsName" ] = true;
 							}
@@ -163,12 +183,15 @@ class PostMeta {
 					case 'rank_math_advanced_robots':
 						$value = aioseo()->helpers->maybeUnserialize( $value );
 						if ( isset( $value['max-snippet'] ) && is_numeric( $value['max-snippet'] ) ) {
+							$meta['robots_default']     = false;
 							$meta['robots_max_snippet'] = intval( $value['max-snippet'] );
 						}
 						if ( isset( $value['max-video-preview'] ) && is_numeric( $value['max-video-preview'] ) ) {
+							$meta['robots_default']          = false;
 							$meta['robots_max_videopreview'] = intval( $value['max-video-preview'] );
 						}
 						if ( ! empty( $value['max-image-preview'] ) ) {
+							$meta['robots_default']          = false;
 							$meta['robots_max_imagepreview'] = aioseo()->helpers->sanitizeOption( lcfirst( $value['max-image-preview'] ) );
 						}
 						break;
@@ -200,6 +223,12 @@ class PostMeta {
 							$value = aioseo()->helpers->pregReplace( '#%excerpt%#', '', $value );
 						}
 						$value = aioseo()->importExport->rankMath->helpers->macrosToSmartTags( $value );
+
+						$meta[ $mappedMeta[ $name ] ] = esc_html( wp_strip_all_tags( strval( $value ) ) );
+						break;
+					case 'rank_math_pillar_content':
+						$meta['pillar_content'] = 'on' === $value ? 1 : 0;
+						break;
 					default:
 						$meta[ $mappedMeta[ $name ] ] = esc_html( wp_strip_all_tags( strval( $value ) ) );
 						break;

@@ -84,7 +84,7 @@ class PostMeta {
 			'_yoast_wpseo_twitter-image'         => 'twitter_image_custom_url',
 			'_yoast_wpseo_schema_page_type'      => '',
 			'_yoast_wpseo_schema_article_type'   => '',
-			'_yoast_wpseo_primary_category'      => 'og_article_section'
+			'_yoast_wpseo_is_cornerstone'        => 'pillar_content'
 		];
 
 		foreach ( $posts as $post ) {
@@ -96,13 +96,29 @@ class PostMeta {
 				->run()
 				->result();
 
-			$categories    = aioseo()->helpers->getAllCategories( $post->ID );
 			$featuredImage = get_the_post_thumbnail_url( $post->ID );
 			$meta          = [
-				'post_id'            => (int) $post->ID,
-				'twitter_use_og'     => true,
-				'og_image_type'      => $featuredImage ? 'featured' : 'content',
-				'og_article_section' => ! empty( $categories ) ? $categories[0] : null
+				'post_id'                  => (int) $post->ID,
+				'twitter_use_og'           => true,
+				'og_image_type'            => $featuredImage ? 'featured' : 'content',
+				'pillar_content'           => 0,
+				'canonical_url'            => '',
+				'robots_default'           => true,
+				'robots_noarchive'         => false,
+				'robots_nofollow'          => false,
+				'robots_noimageindex'      => false,
+				'robots_noindex'           => false,
+				'robots_noodp'             => false,
+				'robots_nosnippet'         => false,
+				'title'                    => '',
+				'description'              => '',
+				'og_title'                 => '',
+				'og_description'           => '',
+				'og_image_custom_url'      => '',
+				'twitter_title'            => '',
+				'twitter_description'      => '',
+				'twitter_image_custom_url' => '',
+				'twitter_image_type'       => 'default'
 			];
 
 			if ( ! $postMeta || ! count( $postMeta ) ) {
@@ -141,17 +157,6 @@ class PostMeta {
 				}
 
 				switch ( $name ) {
-					case '_yoast_wpseo_primary_category':
-						$primaryCategory = get_cat_name( $value );
-						foreach ( $categories as $category ) {
-							if ( aioseo()->helpers->toLowerCase( $primaryCategory ) === aioseo()->helpers->toLowerCase( $category ) ) {
-								$meta[ $mappedMeta[ $name ] ] = $category;
-								break 2;
-							}
-						}
-
-						$meta[ $mappedMeta[ $name ] ] = ! empty( $categories ) ? $categories[0] : ( ! empty( $primaryCategory ) ? $primaryCategory : '' );
-						break;
 					case '_yoast_wpseo_meta-robots-noindex':
 					case '_yoast_wpseo_meta-robots-nofollow':
 						if ( (bool) $value ) {
@@ -160,8 +165,16 @@ class PostMeta {
 						}
 						break;
 					case '_yoast_wpseo_meta-robots-adv':
+						$supportedValues = [ 'index', 'noarchive', 'noimageindex', 'nosnippet' ];
+						foreach ( $supportedValues as $val ) {
+							$meta[ "robots_$val" ] = false;
+						}
+
+						// This is a separated foreach so we can import any and all values.
 						$values = explode( ',', $value );
 						if ( $values ) {
+							$meta['robots_default'] = false;
+
 							foreach ( $values as $value ) {
 								$meta[ "robots_$value" ] = true;
 							}
@@ -284,6 +297,12 @@ class PostMeta {
 						if ( '_yoast_wpseo_title' === $name ) {
 							$title = $value;
 						}
+
+						$meta[ $mappedMeta[ $name ] ] = esc_html( wp_strip_all_tags( strval( $value ) ) );
+						break;
+					case '_yoast_wpseo_is_cornerstone':
+						$meta['pillar_content'] = (bool) $value ? 1 : 0;
+						break;
 					default:
 						$meta[ $mappedMeta[ $name ] ] = esc_html( wp_strip_all_tags( strval( $value ) ) );
 						break;

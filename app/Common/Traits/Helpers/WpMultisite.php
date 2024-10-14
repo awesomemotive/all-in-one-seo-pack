@@ -59,8 +59,8 @@ trait WpMultisite {
 		}
 
 		return (object) [
-			'domain' => $this->getSiteDomain(),
-			'path'   => $this->getHomePath()
+			'domain' => $this->getSiteDomain( true ),
+			'path'   => $this->getHomePath( true )
 		];
 	}
 

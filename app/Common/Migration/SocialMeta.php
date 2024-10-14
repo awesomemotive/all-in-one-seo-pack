@@ -453,7 +453,7 @@ class SocialMeta {
 	 */
 	private function migrateProfileSocialUrls() {
 		$records = aioseo()->core->db
-			->start( 'usermeta' )
+			->start( aioseo()->core->db->db->usermeta, true )
 			->select( '*' )
 			->where( 'meta_key', 'facebook' )
 			->run()
@@ -472,7 +472,7 @@ class SocialMeta {
 		}
 
 		$records = aioseo()->core->db
-			->start( 'usermeta' )
+			->start( aioseo()->core->db->db->usermeta, true )
 			->select( '*' )
 			->where( 'meta_key', 'twitter' )
 			->run()

@@ -29,13 +29,13 @@
 
 		<create-group
 			:modal-open="keywordRankTrackerStore.modalOpenCreateGroup"
-			@update:modal-open="keywordRankTrackerStore.modalOpenCreateGroup = $event"
+			@update:modal-open="keywordRankTrackerStore.toggleModal({modal: 'modalOpenCreateGroup', open: $event})"
 		/>
 
 		<update-group
 			:group="keywordRankTrackerStore.groups.selected[0]"
 			:modal-open="keywordRankTrackerStore.modalOpenUpdateGroup"
-			@update:modal-open="keywordRankTrackerStore.modalOpenUpdateGroup = $event;"
+			@update:modal-open="keywordRankTrackerStore.toggleModal({modal: 'modalOpenUpdateGroup', open: $event})"
 		/>
 
 		<delete-groups
@@ -53,8 +53,6 @@ import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
-import { getParams } from '@/vue/utils/params'
-
 import AddKeywords from './partials/pro/AddKeywords'
 import AssignGroups from './partials/pro/AssignGroups'
 import CreateGroup from './partials/pro/CreateGroup'
@@ -66,21 +64,25 @@ import KeywordRankTrackerTabs from './partials/Tabs'
 import Keywords from './partials/Keywords'
 import UpdateGroup from './partials/pro/UpdateGroup'
 
+import { removeParam } from '@/vue/utils/params'
+
 const keywordRankTrackerStore = useKeywordRankTrackerStore()
-const searchStatisticsStore = useSearchStatisticsStore()
+const searchStatisticsStore   = useSearchStatisticsStore()
 
 const activeTab = ref('keywords')
 
-onBeforeMount(async () => {
+onBeforeMount(() => {
 	if (
 		searchStatisticsStore.isConnected &&
 		!searchStatisticsStore.shouldShowSampleReports &&
 		!keywordRankTrackerStore.keywords.all.rows.length
 	) {
 		try {
-			const search = getParams()?.search || ''
-			if (search) {
-				keywordRankTrackerStore.keywords.paginated.searchTerm = search
+			const params = new URLSearchParams(document.location.search) || {}
+			if (params?.get('search')) {
+				keywordRankTrackerStore.keywords.paginated.searchTerm = params.get('search')
+
+				removeParam('search')
 			}
 
 			keywordRankTrackerStore.maybeUpdateKeywords()

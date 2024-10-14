@@ -92,6 +92,16 @@ export const useUrl = () => {
 		}
 	}
 
+	const decodeUrl = (url) => {
+		if (!url) return null
+		try {
+			return decodeURIComponent(url)
+		} catch (error) {
+			// If an error occurs during decoding, do nothing
+			return url
+		}
+	}
+
 	return {
 		button1Loading,
 		button2Loading,
@@ -100,6 +110,7 @@ export const useUrl = () => {
 		getTarget,
 		processAction,
 		processButtonClick,
-		processRoute
+		processRoute,
+		decodeUrl
 	}
 }

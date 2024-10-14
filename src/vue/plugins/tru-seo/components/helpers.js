@@ -27,7 +27,7 @@ export const truSeoShouldAnalyze = () => {
 		return false
 	}
 
-	return !!postEditorStore.currentPost?.isPageAnalysisEligible || false
+	return !!postEditorStore.currentPost?.isTruSeoEligible || false
 }
 
 export const shouldShowTruSeoScore = () => {

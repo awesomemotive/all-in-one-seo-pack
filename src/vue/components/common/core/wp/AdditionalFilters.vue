@@ -15,9 +15,8 @@
 					v-for="(option, index) in filter.options"
 					:key="index"
 					:value="option.value"
-				>
-					{{ option.label }}
-				</option>
+					v-html="option.label"
+				/>
 			</select>
 		</template>
 

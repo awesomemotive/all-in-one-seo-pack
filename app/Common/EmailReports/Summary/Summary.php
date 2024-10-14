@@ -296,7 +296,7 @@ class Summary {
 	/**
 	 * Retrieves the date range data based on the frequency.
 	 *
-	 * @since {next}
+	 * @since 4.7.3
 	 *
 	 * @return array The date range data.
 	 */

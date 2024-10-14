@@ -192,7 +192,7 @@ const utmUrl = (medium, content = null, url = `${marketingSite}pricing/`) => {
 	let isUpgradeUrl = false
 	if (
 		(`${marketingSite}pricing/` === url || `${marketingSite}lite-upgrade/` === url) &&
-		'pro' !== import.meta.env.VITE_VERSION.toLowerCase()
+		'pro' !== import.meta.env?.VITE_VERSION.toLowerCase()
 	) {
 		const rootStore  = useRootStore()
 		const upgradeUrl = rootStore.aioseo.urls.upgradeUrl
@@ -205,7 +205,7 @@ const utmUrl = (medium, content = null, url = `${marketingSite}pricing/`) => {
 	// Generate the new arguments.
 	const args = [
 		{ key: 'utm_source', value: 'WordPress' },
-		{ key: 'utm_campaign', value: 'pro' === import.meta.env.VITE_VERSION.toLowerCase() ? 'proplugin' : 'liteplugin' },
+		{ key: 'utm_campaign', value: 'pro' === import.meta.env?.VITE_VERSION?.toLowerCase() ? 'proplugin' : 'liteplugin' },
 		{ key: 'utm_medium', value: medium }
 	]
 

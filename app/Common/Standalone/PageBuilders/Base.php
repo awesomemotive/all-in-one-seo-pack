@@ -107,7 +107,9 @@ abstract class Base {
 	public function isPluginActive() {
 		include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-		foreach ( $this->plugins as $basename ) {
+		$plugins = apply_filters( 'aioseo_page_builder_integration_plugins', $this->plugins, $this->integrationSlug );
+
+		foreach ( $plugins as $basename ) {
 			if ( is_plugin_active( $basename ) ) {
 				return true;
 			}
@@ -124,8 +126,10 @@ abstract class Base {
 	 * @return bool Whether or not the theme is active.
 	 */
 	public function isThemeActive() {
+		$themes = apply_filters( 'aioseo_page_builder_integration_themes', $this->themes, $this->integrationSlug );
+
 		$theme = wp_get_theme();
-		foreach ( $this->themes as $name ) {
+		foreach ( $themes as $name ) {
 			if ( $name === $theme->stylesheet || $name === $theme->template ) {
 				return true;
 			}

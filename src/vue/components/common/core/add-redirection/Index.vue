@@ -66,7 +66,7 @@
 
 					<div class="url">
 						<core-add-redirection-target-url
-							:url="targetUrl"
+							:url="decodeUrl(targetUrl)"
 							:errors="targetUrlErrors"
 							:warnings="targetUrlWarnings"
 							@update:modelValue="updateTargetUrl"
@@ -216,6 +216,7 @@ import { sanitizeString } from '@/vue/utils/strings'
 
 import { useJsonValues } from '@/vue/composables/JsonValues'
 import { useRedirect } from '@/vue/composables/redirects/Redirect'
+import { useUrl } from '@/vue/composables/Url'
 
 import BaseButton from '@/vue/components/common/base/Button'
 import BaseSelect from '@/vue/components/common/base/Select'
@@ -241,9 +242,14 @@ export default {
 			redirectHasUnPublishedPost
 		} = useRedirect()
 
+		const {
+			decodeUrl
+		} = useUrl()
+
 		return {
 			getJsonValue,
 			redirectHasUnPublishedPost,
+			decodeUrl,
 			redirectsStore : useRedirectsStore()
 		}
 	},

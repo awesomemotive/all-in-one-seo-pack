@@ -79,10 +79,10 @@ class Analyze {
 			return new \WP_REST_Response( $competitors, 200 );
 		}
 
-		$results = $responseBody[ $analyzeOrHomeUrl ]->results;
+		$results = $responseBody[ $analyzeOrHomeUrl ]['results'];
 
 		aioseo()->internalOptions->internal->siteAnalysis->results = wp_json_encode( $results );
-		aioseo()->internalOptions->internal->siteAnalysis->score   = $responseBody[ $analyzeOrHomeUrl ]->score;
+		aioseo()->internalOptions->internal->siteAnalysis->score   = $responseBody[ $analyzeOrHomeUrl ]['score'];
 
 		return new \WP_REST_Response( $responseBody[ $analyzeOrHomeUrl ], 200 );
 	}

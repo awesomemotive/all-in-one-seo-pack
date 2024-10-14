@@ -42,7 +42,7 @@ class UserMeta {
 		$offset         = aioseo()->core->cache->get( 'import_user_meta_yoast_seo' );
 
 		$usersMeta = aioseo()->core->db
-			->start( 'usermeta' . ' as um' )
+			->start( aioseo()->core->db->db->usermeta . ' as um', true )
 			->whereRaw( "um.meta_key IN ('facebook', 'twitter')" )
 			->whereRaw( "um.meta_value != ''" )
 			->limit( $offset . ',' . $usersPerAction )

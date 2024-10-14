@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.6.2
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.7.2
+Stable tag: 4.7.3
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,6 +226,30 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.7.3**
+
+* Updated: "?replytocom" query parameter for comment reply links now removed by default to optimize crawl quota.
+* Updated: Added support for Salient WPBakery plugin.
+* Updated: Added new filter to allow users to hide the WooCommerce shop page from the breadcrumbs trail.
+* Updated: Improved performance of the SEO Overview widget.
+* Updated: Various minor improvements and bug fixes for Keyword Rank Tracker.
+* Fixed: Canonical URLs for term archive pages correctly include the paginated part in the URL again.
+* Fixed: Headline Analyzer score removed from AIOSEO Details column in post list screen if the Classic Editor is active.
+* Fixed: Local SEO sometimes not importing all data from other plugins.
+* Fixed: Activating Pro license on secondary languages sections of WPML powered site no longer counts as a separate, additional activation.
+* Fixed: Sitemap priority score couldn't be saved as 0.0.
+* Fixed: Post meta import from other plugins not always importing the correct data.
+* Fixed: Opening the Notification Center drawer would sometimes freeze the page.
+* Fixed: Incorrect pagination and total item count in redirect logs when searching.
+* Fixed: Encoded characters in source URLs for redirects were displayed when selecting posts or pasting in URLs.
+* Fixed: Redirects compatibility with the TranslatePress Multilingual plugin.
+* Fixed: Redirect target URL with hash is no longer saved with a trailing slash.
+* Fixed: PHP warning when using the WPBakery page builder integration.
+* Fixed: PHP warnings when importing redirects from SEOPress.
+* Fixed: PHP warning after analyzing the site using the SEO Analyzer.
+* Fixed: Multisite user query not using the correct table prefix.
+* Fixed: EEAT reviewer dropdown sometimes not loading correctly.
+
 **New in Version 4.7.2**
 
 * New: SEO Email Reports - Get a weekly or monthly SEO performance report delivered to your inbox so you can dive into your top-performing pages and discover growth opportunities!
@@ -415,6 +439,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.7.2 =
+= 4.7.3 =
 
 This update adds major improvements and bug fixes.

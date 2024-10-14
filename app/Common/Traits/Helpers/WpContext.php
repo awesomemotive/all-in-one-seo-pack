@@ -402,71 +402,118 @@ trait WpContext {
 	 * @return bool         If the page is special or not.
 	 */
 	public function isSpecialPage( $postId = 0 ) {
-		if (
-			(int) get_option( 'page_for_posts' ) === (int) $postId ||
-			(int) get_option( 'wp_page_for_privacy_policy' ) === (int) $postId ||
-			$this->isBuddyPressPage( $postId ) ||
-			$this->isWooCommercePage( $postId )
-		) {
-			return true;
-		}
+		$specialPages = $this->getSpecialPageIds();
 
-		return false;
+		return in_array( (int) $postId, $specialPages, true );
 	}
 
 	/**
-	 * Returns whether a post is eligible for being analyzed by TruSeo.
+	 * Returns the ID of all special pages (e.g. homepage, blog page, WooCommerce, BuddyPress, etc.).
+	 * This cannot be cached because the plugins need to be loaded first.
 	 *
-	 * @since 4.6.1
+	 * @since 4.7.3
+	 *
+	 * @return array The IDs of all special pages.
+	 */
+	public function getSpecialPageIds() {
+		$pageForPostsId         = (int) get_option( 'page_for_posts' );
+		$pageForPrivacyPolicyId = (int) get_option( 'wp_page_for_privacy_policy' );
+		$buddyPressPageIds      = $this->getBuddyPressPageIds();
+		$wooCommercePageIds     = array_values( $this->getWooCommercePages() );
+
+		$specialPageIds = array_merge(
+			[
+				$pageForPostsId,
+				$pageForPrivacyPolicyId,
+			],
+			$buddyPressPageIds,
+			$wooCommercePageIds
+		);
+
+		// Ensure all values are integers.
+		$specialPageIds = array_map( 'intval', $specialPageIds );
+
+		return $specialPageIds;
+	}
+
+	/**
+	 * Returns whether a post is eligible for being analyzed by TruSEO.
+	 *
+	 * @since   4.6.1
+	 * @version 4.7.3 Renamed from "isPageAnalysisEligible" to "isTruSeoEligible" to make it more clear.
 	 *
 	 * @param  int  $postId Post ID.
-	 * @return bool         Whether a post is eligible for being analyzed by TruSeo.
+	 * @return bool         Whether a post is eligible for being analyzed by TruSEO.
 	 */
-	public function isPageAnalysisEligible( $postId ) {
-		if ( ! aioseo()->options->advanced->truSeo ) {
+	public function isTruSeoEligible( $postId ) {
+		static $isTruSeoEnabled = null;
+		if ( null === $isTruSeoEnabled ) {
+			$isTruSeoEnabled = aioseo()->options->advanced->truSeo;
+		}
+
+		if ( ! $isTruSeoEnabled ) {
 			return false;
 		}
 
-		static $eligible = [];
-		if ( isset( $eligible[ $postId ] ) ) {
-			return $eligible[ $postId ];
+		static $isPostEligible = [];
+		if ( isset( $isPostEligible[ $postId ] ) ) {
+			return $isPostEligible[ $postId ];
 		}
+
+		// Set the default to true.
+		$isPostEligible[ $postId ] = true;
 
 		$wpPost = $this->getPost( $postId );
-		if ( ! $wpPost ) {
-			$eligible[ $postId ] = false;
+		if ( ! is_a( $wpPost, 'WP_Post' ) ) {
+			$isPostEligible[ $postId ] = false;
 
 			return false;
 		}
 
-		$postType       = get_post_type_object( $wpPost->post_type );
-		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
-		$showMetabox    = $dynamicOptions->searchAppearance->postTypes->has( $wpPost->post_type, false ) && $dynamicOptions->{$wpPost->post_type}->advanced->showMetaBox;
+		$eligiblePostTypes = $this->getTruSeoEligiblePostTypes();
 		if (
-			! $showMetabox ||
-			empty( $postType->public ) ||
+			! in_array( $wpPost->post_type, $eligiblePostTypes, true ) ||
 			$this->isSpecialPage( $wpPost->ID )
 		) {
-			$eligible[ $postId ] = false;
-
-			return false;
+			$isPostEligible[ $postId ] = false;
 		}
 
-		$allowPostTypes = [];
-		foreach ( aioseo()->helpers->getPublicPostTypes() as $pt ) {
-			$excludedPostTypes = [ 'attachment', 'aioseo-location' ];
-			if ( class_exists( 'bbPress' ) ) {
-				$excludedPostTypes = array_merge( $excludedPostTypes, [ 'forum', 'topic', 'reply' ] );
+		return $isPostEligible[ $postId ];
+	}
+
+	/**
+	 * Returns the post types that are eligible for TruSEO analysis.
+	 *
+	 * @since 4.7.3
+	 *
+	 * @return array The post types that are eligible for TruSEO analysis.
+	 */
+	public function getTruSeoEligiblePostTypes() {
+		$allowedPostTypes  = aioseo()->helpers->getPublicPostTypes( true );
+		$excludedPostTypes = [ 'attachment', 'aioseo-location' ];
+		if ( class_exists( 'bbPress' ) ) {
+			$excludedPostTypes = array_merge( $excludedPostTypes, [ 'forum', 'topic', 'reply' ] );
+		}
+
+		// Remove the excluded post types from the allowed ones.
+		$allowedPostTypes = array_diff( $allowedPostTypes, $excludedPostTypes );
+
+		// Now, check if the metabox is enabled and that the post type is public for each of these.
+		foreach ( $allowedPostTypes as $postType ) {
+			$postObjectType = get_post_type_object( $postType );
+			if ( is_a( $postObjectType, 'WP_Post_Type' ) && ! $postObjectType->public ) {
+				unset( $allowedPostTypes[ $postType ] );
 			}
 
-			if ( ! in_array( $pt['name'], $excludedPostTypes, true ) ) {
-				$allowPostTypes[] = $pt['name'];
+			$dynamicOptions = aioseo()->dynamicOptions->noConflict();
+			if ( ! $dynamicOptions->searchAppearance->postTypes->has( $postType, false ) || ! $dynamicOptions->{$postType}->advanced->showMetaBox ) {
+				// If not, unset it.
+				unset( $allowedPostTypes[ $postType ] );
 			}
 		}
 
-		$eligible[ $postId ] = in_array( $wpPost->post_type, $allowPostTypes, true );
-
-		return $eligible[ $postId ];
+		// Considering post types get registered during various stages of the WP load process, we should not cache this.
+		return $allowedPostTypes;
 	}
 
 	/**

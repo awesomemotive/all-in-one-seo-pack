@@ -7,8 +7,8 @@
 			v-model="value"
 			@keyup="searchChange"
 			@focus="showResults = true"
-			@update:modelValue="$emit('update:modelValue', value)"
-			@blur="$emit('blur', value)"
+			@update:modelValue="$emit('update:modelValue', decodeUrl(value))"
+			@input="inputEventDecodeUrl($event.target.value)"
 			size="medium"
 			placeholder="/target-page/"
 			:class="{
@@ -59,6 +59,7 @@ import {
 } from '@/vue/stores'
 
 import { debounce } from '@/vue/utils/debounce'
+import { useUrl } from '@/vue/composables/Url'
 
 import BaseInput from '@/vue/components/common/base/Input'
 import CoreAddRedirectionUrlResults from '@/vue/components/common/core/add-redirection/UrlResults'
@@ -68,10 +69,15 @@ import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation'
 export default {
 	setup () {
+		const {
+			decodeUrl
+		} = useUrl()
+
 		return {
 			postEditorStore : usePostEditorStore(),
 			redirectsStore  : useRedirectsStore(),
-			rootStore       : useRootStore()
+			rootStore       : useRootStore(),
+			decodeUrl
 		}
 	},
 	components : {
@@ -162,6 +168,10 @@ export default {
 			this.showResults = false
 			this.value       = url.replace(this.rootStore.aioseo.urls.home, '', url)
 			this.$emit('update:modelValue', this.value)
+		},
+		inputEventDecodeUrl (value) {
+			this.value = ''
+			this.value = this.decodeUrl(value)
 		},
 		documentClick (event) {
 			if (!this.showResults) {

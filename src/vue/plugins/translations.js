@@ -7,7 +7,10 @@ if (window.aioseoTranslations) {
 		setLocaleData(window.aioseoTranslationsPro.translationsPro, import.meta.env.VITE_TEXTDOMAIN_PRO)
 	}
 } else {
-	console.warn('Translations couldn\'t be loaded.')
+	// Check if AIOSEO is present at all. If not, we might be in another plugin like BLC.
+	if (window.aioseo) {
+		console.warn('AIOSEO translations couldn\'t be loaded.')
+	}
 }
 
 export * from '@wordpress/i18n'

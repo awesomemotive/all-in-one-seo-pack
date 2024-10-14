@@ -17,10 +17,10 @@ trait ThirdParty {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return boolean Whether WooCommerce is active.
+	 * @return bool Whether WooCommerce is active.
 	 */
 	public function isWooCommerceActive() {
-		return class_exists( 'woocommerce' );
+		return class_exists( 'WooCommerce' );
 	}
 
 	/**
@@ -28,48 +28,42 @@ trait ThirdParty {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  int         $postId The post ID.
-	 * @return string|bool         The type of page or false if it isn't a WooCommerce page.
+	 * @param  int    $postId The post ID.
+	 * @return string         The type of page or an empty string if it isn't a WooCommerce page.
 	 */
 	public function isWooCommercePage( $postId = 0 ) {
+		$postId                  = $postId ? (int) $postId : get_the_ID();
+		$specialWooCommercePages = $this->getWooCommercePages();
+
+		if ( in_array( $postId, $specialWooCommercePages, true ) ) {
+			return array_search( $postId, $specialWooCommercePages, true );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Returns the WooCommerce pages.
+	 *
+	 * @since 4.7.3
+	 *
+	 * @return array An associative list of special WooCommerce pages.
+	 */
+	public function getWooCommercePages() {
 		if ( ! $this->isWooCommerceActive() ) {
-			return false;
+			$wooCommercePages = [];
+
+			return $wooCommercePages;
 		}
 
-		$postId = $postId ? $postId : get_the_ID();
+		$wooCommercePages = [
+			'cart'      => (int) get_option( 'woocommerce_cart_page_id' ),
+			'checkout'  => (int) get_option( 'woocommerce_checkout_page_id' ),
+			'myAccount' => (int) get_option( 'woocommerce_myaccount_page_id' ),
+			'terms'     => (int) get_option( 'woocommerce_terms_page_id' ),
+		];
 
-		static $cartPageId;
-		if ( ! $cartPageId ) {
-			$cartPageId = (int) get_option( 'woocommerce_cart_page_id' );
-		}
-
-		static $checkoutPageId;
-		if ( ! $checkoutPageId ) {
-			$checkoutPageId = (int) get_option( 'woocommerce_checkout_page_id' );
-		}
-
-		static $myAccountPageId;
-		if ( ! $myAccountPageId ) {
-			$myAccountPageId = (int) get_option( 'woocommerce_myaccount_page_id' );
-		}
-
-		static $termsPageId;
-		if ( ! $termsPageId ) {
-			$termsPageId = (int) get_option( 'woocommerce_terms_page_id' );
-		}
-
-		switch ( $postId ) {
-			case $cartPageId:
-				return 'cart';
-			case $checkoutPageId:
-				return 'checkout';
-			case $myAccountPageId:
-				return 'myAccount';
-			case $termsPageId:
-				return 'terms';
-			default:
-				return false;
-		}
+		return $wooCommercePages;
 	}
 
 	/**
@@ -271,6 +265,17 @@ trait ThirdParty {
 	}
 
 	/**
+	 * Checks if TranslatePress is active.
+	 *
+	 * @since 4.7.3
+	 *
+	 * @return bool True if it is, false if not.
+	 */
+	public function isTranslatePressActive() {
+		return class_exists( 'TRP_Translate_Press' );
+	}
+
+	/**
 	 * Localizes a given URL.
 	 *
 	 * This is required for compatibility with WPML.
@@ -330,37 +335,30 @@ trait ThirdParty {
 	 * @return bool         If the page is a BuddyPress page or not.
 	 */
 	public function isBuddyPressPage( $postId = 0 ) {
-		$bpPages = get_option( 'bp-pages' );
+		$bpPageIds = $this->getBuddyPressPageIds();
 
-		if ( empty( $bpPages ) ) {
-			return false;
-		}
-
-		foreach ( $bpPages as $page ) {
-			if ( (int) $page === (int) $postId ) {
-				return true;
-			}
-		}
-
-		return false;
+		return in_array( $postId, $bpPageIds, true );
 	}
 
 	/**
-	 * Check if is a BBpress post type.
+	 * Returns the BuddyPress pages.
 	 *
-	 * @since 4.2.8
+	 * @since 4.7.3
 	 *
-	 * @param  string $postType The post type to check.
-	 * @return bool             Whether this is a bbPress post type.
+	 * @return array A list of BuddyPress page IDs.
 	 */
-	public function isBBPressPostType( $postType ) {
-		if ( ! class_exists( 'bbPress' ) ) {
-			return false;
+	public function getBuddyPressPageIds() {
+		if ( ! $this->isBuddyPressActive() ) {
+			return [];
 		}
 
-		$bbPressPostTypes = [ 'forum', 'topic', 'reply' ];
+		static $bpPageIds = null;
+		if ( null === $bpPageIds ) {
+			$bpPageIds = (array) get_option( 'bp-pages' );
+			$bpPageIds = array_map( 'intval', $bpPageIds );
+		}
 
-		return in_array( $postType, $bbPressPostTypes, true );
+		return $bpPageIds;
 	}
 
 	/**
@@ -604,6 +602,23 @@ trait ThirdParty {
 			default:
 				return '';
 		}
+	}
+
+	/**
+	 * Returns the TranslatePress slugs code and slug.
+	 *
+	 * @since 4.7.3
+	 *
+	 * @return array The slugs.
+	 */
+	public function getTranslatePressUrlSlugs() {
+		if ( ! $this->isTranslatePressActive() ) {
+			return [];
+		}
+
+		$settings = maybe_unserialize( get_option( 'trp_settings', [] ) );
+
+		return isset( $settings['url-slugs'] ) ? $settings['url-slugs'] : [];
 	}
 
 	/**

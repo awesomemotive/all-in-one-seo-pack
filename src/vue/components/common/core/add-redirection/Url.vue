@@ -4,8 +4,8 @@
 		ref="redirect-source-url"
 	>
 		<base-input
-			:modelValue="url.url"
-			@update:modelValue="value => updateSourceUrl(value)"
+			:modelValue="decodeUrl(url.url)"
+			@update:modelValue="value => updateSourceUrl(decodeUrl(value))"
 			@keyup="searchChange"
 			@focus="showResults = true"
 			:disabled="log404 || disableSource"
@@ -125,6 +125,7 @@ import { sanitizeString } from '@/vue/utils/strings'
 import { makeUrlRelative } from '@/vue/utils/urls'
 
 import { useRedirect } from '@/vue/composables/redirects/Redirect'
+import { useUrl } from '@/vue/composables/Url'
 
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseInput from '@/vue/components/common/base/Input'
@@ -139,9 +140,7 @@ import SvgTrash from '@/vue/components/common/svg/Trash'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 
 import { __, sprintf } from '@/vue/plugins/translations'
-
 const td = import.meta.env.VITE_TEXTDOMAIN
-
 export default {
 	emits : [ 'updated-url', 'remove-url', 'updated-option' ],
 	setup () {
@@ -149,10 +148,15 @@ export default {
 			validateRedirect
 		} = useRedirect()
 
+		const {
+			decodeUrl
+		} = useUrl()
+
 		return {
 			redirectsStore : useRedirectsStore(),
 			rootStore      : useRootStore(),
-			validateRedirect
+			validateRedirect,
+			decodeUrl
 		}
 	},
 	components : {

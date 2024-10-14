@@ -904,7 +904,7 @@ trait Wp {
 	/**
 	 * Checks if the Classic eEditor is active and if the Block Editor is disabled in its settings.
 	 *
-	 * @since {next}
+	 * @since 4.7.3
 	 *
 	 * @return bool Whether the Classic Editor is active.
 	 */

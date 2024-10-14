@@ -44,7 +44,7 @@ class Model implements \JsonSerializable {
 	 * Fields that should be integer values.
 	 *
 	 * @since   4.1.0
-	 * @version {next} Renamed from numericFields to integerFields.
+	 * @version 4.7.3 Renamed from numericFields to integerFields.
 	 *
 	 * @var array
 	 */
@@ -53,7 +53,7 @@ class Model implements \JsonSerializable {
 	/**
 	 * Fields that should be float values.
 	 *
-	 * @since {next}
+	 * @since 4.7.3
 	 *
 	 * @var array
 	 */

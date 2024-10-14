@@ -141,6 +141,7 @@ class Title {
 
 		$title    = '';
 		$metaData = aioseo()->meta->metaData->getMetaData( $post );
+
 		if ( ! empty( $metaData->title ) && ! $default ) {
 			$title = $this->helpers->prepare( $metaData->title, $post->ID );
 		}

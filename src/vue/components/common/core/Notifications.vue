@@ -156,6 +156,11 @@ export default {
 			return notifications.splice(0 === this.currentPage ? 0 : this.currentPage * this.maxNotifications, this.maxNotifications)
 		},
 		pages () {
+			// Check if the number of total pages is valid. We do this to prevent the page from freezing up in rare cases - see #6542.
+			if ('number' !== typeof this.totalPages || !isFinite(this.totalPages) || 0 >= this.totalPages) {
+				return 1
+			}
+
 			const pages = []
 			for (let i = 0; i < this.totalPages; i++) {
 				pages.push({
@@ -231,37 +236,41 @@ export default {
 			this.maxNotifications     = Number.MAX_SAFE_INTEGER
 
 			this.$nextTick(async () => {
-				const totalHeight = []
-				const notificationCards = document.querySelectorAll('.notification-menu .aioseo-notification')
-				if (notificationCards) {
-					notificationCards.forEach(card => {
-						let height         = card.offsetHeight
-						const style        = window.getComputedStyle ? getComputedStyle(card, null) : card.currentStyle
-						const marginTop    = parseInt(style.marginTop) || 0
-						const marginBottom = parseInt(style.marginBottom) || 0
-						height            += marginTop + marginBottom
-						totalHeight.push(height)
-					})
-				}
+			// Get all notification cards and calculate their total height (including margins).
+				const notificationCards = Array.from(document.querySelectorAll('.notification-menu .aioseo-notification'))
+
+				const cardHeights = notificationCards.map(card => {
+					const style        = window.getComputedStyle ? getComputedStyle(card, null) : card.currentStyle
+					const marginTop    = parseInt(style.marginTop) || 0
+					const marginBottom = parseInt(style.marginBottom) || 0
+
+					return card.offsetHeight + marginTop + marginBottom
+				})
 
 				const container = document.querySelector('.notification-menu .aioseo-notification-cards')
-				if (container) {
+
+				if (container && 0 < cardHeights.length) {
 					let cardsVisible = 0,
-						cardsHeight  = 0
-					for (let i = 0; i < totalHeight.length; i++) {
-						cardsHeight += totalHeight[i]
-						if (cardsHeight > container.offsetHeight) {
+				 accumulatedHeight = 0
+
+					// Calculate the amout of cards that can fit within the container.
+					for (const height of cardHeights) {
+						accumulatedHeight += height
+						if (accumulatedHeight > container.offsetHeight) {
 							break
 						}
 						cardsVisible++
 					}
 
-					this.maxNotifications = cardsVisible || 1
+					this.maxNotifications = cardsVisible || 1 // Ensure at least 1 card is visible.
 
-					// Set the total number of pages.
-					this.totalPages = Math.ceil(totalHeight.length / cardsVisible)
+					// Calculate total pages, ensuring cardsVisible is finite and valid.
+					if (isFinite(cardsVisible) && 0 < cardsVisible) {
+						this.totalPages = Math.ceil(cardHeights.length / cardsVisible)
+					}
 				}
 
+				// Adjust current page to ensure it's within bounds of available pages.
 				this.currentPage = previousCurrentPage > (this.totalPages - 1)
 					? this.totalPages - 1
 					: previousCurrentPage

@@ -40,7 +40,10 @@ export const useRedirect = () => {
 			errors.push(__('Please enter a valid relative source URL.', td))
 		}
 
-		if (redirect.url.url.match(/%[a-zA-Z]+%/)) {
+		const placeholderRegex = /%[a-zA-Z_]+%/
+		const percentEncodedRegex = /%[0-9A-Fa-f]{2}/ // Allow unicode characters in the URL
+
+		if (redirect.url.url.match(placeholderRegex) && !redirect.url.url.match(percentEncodedRegex)) {
 			errors.push(__('Permalinks are not currently supported.', td))
 		}
 
@@ -54,6 +57,13 @@ export const useRedirect = () => {
 				compareTarget = redirect.url.ignoreSlash ? links.unTrailingSlashIt(redirect.targetUrl) : redirect.targetUrl
 			compareSource = redirect.url.ignoreCase ? compareSource.toLowerCase() : compareSource
 			compareTarget = redirect.url.ignoreCase ? compareTarget.toLowerCase() : compareTarget
+
+			// Remove hash from the URL.
+			if (!redirect.url.regex) {
+				compareSource = compareSource.replace(/#.*?$/, '')
+			}
+			compareTarget = compareTarget.replace(/#.*?$/, '')
+
 			if (compareSource === compareTarget ||
 				(
 					redirect.url.regex &&

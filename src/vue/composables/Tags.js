@@ -23,10 +23,18 @@ export const useTags = ({ separator: defaultSeparator }) => {
 
 		tagsStore.tags.forEach(tag => {
 			if ('custom_field' === tag.id) {
-				const customFieldRegex   = new RegExp(`#${tag.id}-([a-zA-Z0-9_-]+)`)
+				const customFieldRegex   = new RegExp(`#${tag.id}-([a-zA-Z0-9_-]+)`, 'g')
 				const customFieldMatches = string.match(customFieldRegex)
-				if (customFieldMatches && customFieldMatches[1]) {
-					string = string.replace(customFieldRegex, customFieldValue(customFieldMatches[1]))
+
+				if (customFieldMatches) {
+					customFieldMatches.forEach(customField => {
+						const tagRegex   = new RegExp(`#${tag.id}-([a-zA-Z0-9_-]+)`)
+						const tagMatches = customField.match(tagRegex)
+
+						if (tagMatches && tagMatches[1]) {
+							string = string.replace(tagRegex, customFieldValue(tagMatches[1]))
+						}
+					})
 				}
 				return
 			}
@@ -48,7 +56,8 @@ export const useTags = ({ separator: defaultSeparator }) => {
 			}
 
 			const matches = string.match(regex)
-			const value   = (tagsStore.liveTags[tag.id] ?? tag.value)
+			const value   = (tagsStore.liveTags[tag.id] || tag.value)
+
 			if (matches) {
 				string = string.replace(regex, '%|%' + value)
 			}

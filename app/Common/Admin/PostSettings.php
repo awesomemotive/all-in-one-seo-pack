@@ -271,24 +271,17 @@ class PostSettings {
 	 * @return array The list of post types with the overview.
 	 */
 	public function getPostTypesOverview() {
-		$postTypes      = [];
-		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
-
+		$overviewData      = [];
+		$eligiblePostTypes = aioseo()->helpers->getTruSeoEligiblePostTypes();
 		foreach ( aioseo()->helpers->getPublicPostTypes( true ) as $postType ) {
-			if (
-				! $dynamicOptions->searchAppearance->postTypes->has( $postType ) ||
-				! $dynamicOptions->searchAppearance->postTypes->$postType->show ||
-				! $dynamicOptions->searchAppearance->postTypes->$postType->advanced->showMetaBox ||
-				'attachment' === $postType ||
-				aioseo()->helpers->isBBPressPostType( $postType )
-			) {
+			if ( ! in_array( $postType, $eligiblePostTypes, true ) ) {
 				continue;
 			}
 
-			$postTypes[ $postType ] = $this->getPostTypeOverview( $postType );
+			$overviewData[ $postType ] = $this->getPostTypeOverview( $postType );
 		}
 
-		return $postTypes;
+		return $overviewData;
 	}
 
 	/**
@@ -297,62 +290,64 @@ class PostSettings {
 	 * @since 4.2.0
 	 *
 	 * @param  string $postType The post type name.
-	 * @return array            The overview for the given post type.
+	 * @return array            The overview data for the given post type.
 	 */
 	public function getPostTypeOverview( $postType ) {
-		$overview = aioseo()->core->cache->get( $postType . '_overview_data' );
-		if ( null !== $overview ) {
-			return $overview;
+		$overviewData = aioseo()->core->cache->get( $postType . '_overview_data' );
+		if ( null !== $overviewData ) {
+			return $overviewData;
 		}
 
-		$posts = aioseo()->core->db->start( 'posts as p' )
-			->select( 'p.ID, ap.seo_score, ap.keyphrases' )
-			->leftJoin( 'aioseo_posts as ap', 'ap.post_id = p.ID' )
-			->where( 'p.post_status', 'publish' )
-			->where( 'p.post_type', $postType )
-			->run()
-			->result();
-
-		$overview = [
-			'total'                 => 0,
-			'needsImprovement'      => 0,
-			'okay'                  => 0,
-			'good'                  => 0,
-			'withoutFocusKeyphrase' => 0,
-		];
-
-		foreach ( $posts as $post ) {
-			if ( ! aioseo()->helpers->isPageAnalysisEligible( $post->ID ) ) {
-				continue;
-			}
-
-			$overview['total']++;
-
-			if ( empty( $post->keyphrases ) || strpos( $post->keyphrases, '{"focus":{"keyphrase":""' ) === 0 ) {
-				$overview['withoutFocusKeyphrase']++;
-
-				// We skip to the next since we will just consider posts with focus keyphrase in the counts.
-				continue;
-			}
-
-			if ( 50 > $post->seo_score ) {
-				$overview['needsImprovement']++;
-				continue;
-			}
-
-			if ( 50 <= $post->seo_score && 80 >= $post->seo_score ) {
-				$overview['okay']++;
-				continue;
-			}
-
-			if ( 80 < $post->seo_score ) {
-				$overview['good']++;
-			}
+		$eligiblePostTypes = aioseo()->helpers->getTruSeoEligiblePostTypes();
+		if ( ! in_array( $postType, $eligiblePostTypes, true ) ) {
+			return [
+				'total'                 => 0,
+				'withoutFocusKeyphrase' => 0,
+				'needsImprovement'      => 0,
+				'okay'                  => 0,
+				'good'                  => 0
+			];
 		}
 
-		aioseo()->core->cache->update( $postType . '_overview_data', $overview, HOUR_IN_SECONDS );
+		$specialPageIds             = aioseo()->helpers->getSpecialPageIds();
+		$implodedPageIdPlaceholders = array_fill( 0, count( $specialPageIds ), '%d' );
+		$implodedPageIdPlaceholders = implode( ', ', $implodedPageIdPlaceholders );
 
-		return $overview;
+		global $wpdb;
+		$overviewData = $wpdb->get_row(
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+			$wpdb->prepare(
+				"SELECT 
+					COUNT(*) as total,
+					COALESCE( SUM(CASE WHEN ap.keyphrases = '' OR ap.keyphrases IS NULL OR ap.keyphrases LIKE %s THEN 1 ELSE 0 END), 0) as withoutFocusKeyphrase,
+					COALESCE( SUM(CASE WHEN ap.seo_score < 50 AND NOT (ap.keyphrases = '' OR ap.keyphrases IS NULL OR ap.keyphrases LIKE %s) THEN 1 ELSE 0 END), 0) as needsImprovement,
+					COALESCE( SUM(CASE WHEN ap.seo_score BETWEEN 50 AND 80 AND NOT (ap.keyphrases = '' OR ap.keyphrases IS NULL OR ap.keyphrases LIKE %s) THEN 1 ELSE 0 END), 0) as okay,
+					COALESCE( SUM(CASE WHEN ap.seo_score > 80 AND NOT (ap.keyphrases = '' OR ap.keyphrases IS NULL OR ap.keyphrases LIKE %s) THEN 1 ELSE 0 END), 0) as good
+				FROM {$wpdb->posts} as p
+				LEFT JOIN {$wpdb->prefix}aioseo_posts as ap ON ap.post_id = p.ID
+				WHERE p.post_status = 'publish'
+				AND p.post_type = %s
+				AND p.ID NOT IN ( $implodedPageIdPlaceholders )",
+				// phpcs:enable
+				'{"focus":{"keyphrase":""%',
+				'{"focus":{"keyphrase":""%',
+				'{"focus":{"keyphrase":""%',
+				'{"focus":{"keyphrase":""%',
+				$postType,
+				...$specialPageIds
+			),
+			ARRAY_A
+		);
+
+		// Ensure sure all the values are integers.
+		foreach ( $overviewData as $key => $value ) {
+			$overviewData[ $key ] = (int) $value;
+		}
+
+		// Give me the raw SQL of the query.
+		aioseo()->core->cache->update( $postType . '_overview_data', $overviewData, HOUR_IN_SECONDS );
+
+		return $overviewData;
 	}
 
 	/**
@@ -415,7 +410,7 @@ class PostSettings {
 		global $wp_query;
 		if ( ! empty( $wp_query->posts ) && is_array( $wp_query->posts ) ) {
 			$wp_query->posts = array_filter( $wp_query->posts, function ( $post ) {
-				return aioseo()->helpers->isPageAnalysisEligible( $post->ID );
+				return aioseo()->helpers->isTruSeoEligible( $post->ID );
 			} );
 
 			// Update `post_count` for pagination.

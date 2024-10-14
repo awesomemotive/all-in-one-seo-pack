@@ -93,7 +93,7 @@
 
 		<keyword-rank-tracker
 			:modal-open="keywordRankTrackerStore.modalOpenPostEdit"
-			@update:modal-open="keywordRankTrackerStore.modalOpenPostEdit = $event"
+			@update:modal-open="keywordRankTrackerStore.toggleModal({modal:'modalOpenPostEdit', open: $event})"
 		/>
 	</div>
 </template>

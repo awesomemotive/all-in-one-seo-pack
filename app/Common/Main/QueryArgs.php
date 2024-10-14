@@ -32,6 +32,8 @@ class QueryArgs {
 		}
 
 		add_action( 'template_redirect', [ $this, 'maybeRemoveQueryArgs' ], 1 );
+
+		$this->removeReplyToCom();
 	}
 
 	/**
@@ -48,7 +50,7 @@ class QueryArgs {
 			is_admin() ||
 			is_robots() ||
 			get_query_var( 'aiosp_sitemap_path' ) ||
-			empty( $_GET ) // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended	
+			empty( $_GET ) // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 		) {
 			return false;
 		}
@@ -138,6 +140,57 @@ class QueryArgs {
 		}
 	}
 
+	/**
+	 * Remove ?replytocom.
+	 *
+	 * @since 4.5.8
+	 *
+	 * @return void
+	 */
+	private function removeReplyToCom() {
+		if ( ! apply_filters( 'aioseo_remove_reply_to_com', true ) ) {
+			return;
+		}
+
+		add_filter( 'comment_reply_link', [ $this, 'removeReplyToComLink' ] );
+		add_action( 'template_redirect', [ $this, 'replyToComRedirect' ], 1 );
+	}
+
+	/**
+	 * Remove ?replytocom.
+	 *
+	 * @since 4.7.3
+	 *
+	 * @param  string $link The comment link as a string.
+	 * @return string       The modified link.
+	 */
+	public function removeReplyToComLink( $link ) {
+		return preg_replace( '`href=(["\'])(?:.*(?:\?|&|&#038;)replytocom=(\d+)#respond)`', 'href=$1#comment-$2', $link );
+	}
+
+	/**
+	 * Redirects out the ?replytocom variables.
+	 *
+	 * @since 4.7.3
+	 *
+	 * @return void
+	 */
+	public function replyToComRedirect() {
+		$replyToCom = absint( wp_unslash( $_GET['replytocom'] ?? null ) ); // phpcs:ignore HM.Security.NonceVerification.Recommended
+		if ( ! empty( $replyToCom ) && is_singular() ) {
+			$url = get_permalink( $GLOBALS['post']->ID );
+			if ( isset( $_SERVER['QUERY_STRING'] ) ) {
+				$queryString = remove_query_arg( 'replytocom', sanitize_text_field( wp_unslash( $_SERVER['QUERY_STRING'] ) ) );
+				if ( ! empty( $queryString ) ) {
+					$url = add_query_arg( [], $url ) . '?' . $queryString;
+				}
+			}
+			$url = add_query_arg( [], $url ) . '#comment-' . $replyToCom;
+
+			wp_safe_redirect( $url, 301, AIOSEO_PLUGIN_SHORT_NAME );
+			exit;
+		}
+	}
 
 	/**
 	 * Add query args log.

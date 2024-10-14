@@ -6,12 +6,12 @@
 		:bulk-options="tableBulkOptions"
 		:columns="tableColumns"
 		:filters="[]"
-		:initial-items-per-page="settingsStore.settings.tablePagination[changeItemsPerPageSlug]"
+		:initial-items-per-page="100"
 		:initial-page-number="pageNumber"
 		:initial-search-term="searchTerm"
 		:key="wpTableKey"
 		:loading="wpTableLoading"
-		:rows="keywords.rows"
+		:rows="paginatedKeywords.rows"
 		:selected-filters="{}"
 		:show-bulk-actions="false"
 		:show-header="false"
@@ -62,15 +62,13 @@
 		</template>
 
 		<template #tracking="{ row, index }">
-			<div class="tracking">
-				<core-loader v-if="!!btnTrackingLoading[index]" dark/>
+			<core-loader v-if="!!btnTrackingLoading[index]" dark/>
 
-				<base-toggle
-					v-model="row.tracking"
-					@update:modelValue="value => toggleTracking(row, index, value)"
-					:disabled="!!btnTrackingLoading[index]"
-				/>
-			</div>
+			<base-toggle
+				v-model="row.tracking"
+				@update:modelValue="value => toggleTracking(row, index, value)"
+				:disabled="!!btnTrackingLoading[index]"
+			/>
 		</template>
 
 		<template #view="{ row }">
@@ -98,15 +96,16 @@
 	</core-wp-table>
 </template>
 
-<script>
-import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+<script setup>
+import { ref, computed } from 'vue'
 
 import {
 	useKeywordRankTrackerStore,
-	useRootStore,
-	useSettingsStore
+	useRootStore
 } from '@/vue/stores'
 
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import { __ } from '@/vue/plugins/translations'
 import { useWpTable } from '@/vue/composables/WpTable'
 
 import CoreLoader from '@/vue/components/common/core/Loader'
@@ -115,182 +114,154 @@ import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Graph from '@/vue/pages/search-statistics/views/partials/Graph'
 import SvgEye from '@/vue/components/common/svg/Eye'
 
-import { __ } from '@/vue/plugins/translations'
+const td                      = import.meta.env.VITE_TEXTDOMAIN
+const keywordRankTrackerStore = useKeywordRankTrackerStore()
+const rootStore               = useRootStore()
+const tableId                 = 'keyword-rank-tracker-keywords-table'
+const strings                 = {
+	openInKeywordRankTracker : __('Open in Keyword Rank Tracker', td),
+	position                 : __('Position', td),
+	openInKrt                : __('Open in Keyword Rank Tracker', td)
+}
+const tableBulkOptions        = [
+	{
+		label : GLOBAL_STRINGS.delete,
+		value : 'delete'
+	},
+	{
+		label : strings.addToGroup,
+		value : 'assignGroup'
+	}
+]
 
-const td = import.meta.env.VITE_TEXTDOMAIN
+const props = defineProps({
+	paginatedKeywords : Object,
+	itemsPerPage      : Number
+})
 
-export default {
-	emits : [],
-	setup () {
-		const keywordRankTrackerStore = useKeywordRankTrackerStore()
+const table              = ref(null)
+const btnTrackingLoading = ref([])
 
-		const changeItemsPerPageSlug = 'searchStatisticsKeywordRankTracker'
-		const tableId                = 'keyword-rank-tracker-keywords-table'
-		const {
-			orderBy,
-			orderDir,
-			pageNumber,
-			processAdditionalFilters,
-			processChangeItemsPerPage,
-			processFilterTable,
-			processPagination,
-			processSearch,
-			processSort,
-			searchTerm,
-			wpTableKey,
-			wpTableLoading
-		} = useWpTable({
-			changeItemsPerPageSlug,
-			fetchData : keywordRankTrackerStore.fetchKeywords,
-			tableId
-		})
+const {
+	orderBy,
+	orderDir,
+	pageNumber,
+	processAdditionalFilters,
+	processChangeItemsPerPage,
+	processFilterTable,
+	processPagination,
+	processSearch,
+	processSort,
+	searchTerm,
+	wpTableKey,
+	wpTableLoading
+} = useWpTable({
+	fetchData      : keywordRankTrackerStore.fetchKeywords,
+	tableId,
+	tableRef       : table.value,
+	resultsPerPage : props.itemsPerPage
+})
 
-		return {
-			GLOBAL_STRINGS,
-			changeItemsPerPageSlug,
-			keywordRankTrackerStore,
-			orderBy,
-			orderDir,
-			pageNumber,
-			processAdditionalFilters,
-			processChangeItemsPerPage,
-			processFilterTable,
-			processPagination,
-			processSearch,
-			processSort,
-			rootStore     : useRootStore(),
-			searchTerm,
-			settingsStore : useSettingsStore(),
-			tableId,
-			wpTableKey,
-			wpTableLoading
+const tableColumns = computed(() => [
+	{
+		slug     : 'name',
+		label    : __('Keyword', td),
+		sortable : 1 < props.paginatedKeywords.rows.length,
+		sortDir  : 'name' === orderBy.value ? orderDir.value : 'asc',
+		sorted   : 'name' === orderBy.value
+	},
+	{
+		slug     : 'position',
+		label    : __('Position', td),
+		sortable : 1 < props.paginatedKeywords.rows.length,
+		sortDir  : 'position' === orderBy.value ? orderDir.value : 'asc',
+		sorted   : 'position' === orderBy.value,
+		width    : '100px'
+	},
+	{
+		slug  : 'history',
+		label : __('Position History', td),
+		width : '150px'
+	},
+	{
+		slug  : 'tracking',
+		label : __('Tracking', td),
+		width : '100px'
+	},
+	{
+		slug  : 'view',
+		label : '',
+		width : '40px'
+	}
+])
+
+const formatRowStatistic = (row, key) => {
+	let out = row.statistics?.[key] ?? ''
+	switch (key) {
+		case 'position':
+			out = '' !== out ? Math.round(out).toFixed(0) : out
+			break
+	}
+
+	return out
+}
+
+const positionHistorySeries = (row) => {
+	return row.statistics?.history
+		? [ {
+			name : strings.position,
+			data : row.statistics.history.map(h => ({ x: h.date, y: h.position, label: h.position }))
+		} ]
+		: []
+}
+
+const viewUrl = (row) => {
+	return rootStore.aioseo.urls.aio.searchStatistics +
+		`&search=${encodeURIComponent(row.name)}` +
+		'&aioseo-scroll=keyword-rank-tracker-keywords-table' +
+		'#/keyword-rank-tracker'
+}
+
+const toggleTracking = async (row, index) => {
+	btnTrackingLoading.value[index] = true
+
+	try {
+		if (row.id) {
+			await keywordRankTrackerStore.deleteKeywords([ row.id ])
+		} else {
+			await keywordRankTrackerStore.insertKeywords({ keywords: [ row.name ] })
+				.then(() => {
+					row.tracking = true
+				})
+				.catch(() => {
+					row.tracking = false
+				})
 		}
-	},
-	components : {
-		CoreLoader,
-		CoreTooltip,
-		CoreWpTable,
-		Graph,
-		SvgEye
-	},
-	props : {
-		keywords : Object
-	},
-	data () {
-		return {
-			selectedRows       : null,
-			btnTrackingLoading : [],
-			strings            : {
-				openInKeywordRankTracker : __('Open in Keyword Rank Tracker', td),
-				position                 : __('Position', td),
-				openInKrt                : __('Open in Keyword Rank Tracker', td)
-			}
-		}
-	},
-	computed : {
-		tableBulkOptions () {
-			return [
-				{
-					label : GLOBAL_STRINGS.delete,
-					value : 'delete'
-				},
-				{
-					label : this.strings.addToGroup,
-					value : 'assignGroup'
-				}
-			]
-		},
-		tableColumns () {
-			return [
-				{
-					slug     : 'name',
-					label    : __('Keyword', td),
-					sortable : true,
-					sortDir  : 'name' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'name' === this.orderBy
-				},
-				{
-					slug     : 'position',
-					label    : __('Position', td),
-					sortable : true,
-					sortDir  : 'position' === this.orderBy ? this.orderDir : 'asc',
-					sorted   : 'position' === this.orderBy,
-					width    : '100px'
-				},
-				{
-					slug  : 'history',
-					label : __('Position History', td),
-					width : '150px'
-				},
-				{
-					slug  : 'tracking',
-					label : __('Tracking', td),
-					width : '100px'
-				},
-				{
-					slug  : 'view',
-					label : '',
-					width : '40px'
-				}
-			]
-		}
-	},
-	methods : {
-		formatRowStatistic (row, key) {
-			let out = row.statistics?.[key] ?? ''
-			switch (key) {
-				case 'position':
-					out = '' !== out ? Math.round(out).toFixed(0) : out
-					break
-			}
 
-			return out
-		},
-		positionHistorySeries (row) {
-			return row.statistics?.history
-				? [ {
-					name : this.strings.position,
-					data : row.statistics.history.map(h => ({ x: h.date, y: h.position, label: h.position }))
-				} ]
-				: []
-		},
-		viewUrl (row) {
-			return this.rootStore.aioseo.urls.aio.searchStatistics +
-				`&search=${row.name}` +
-				'&aioseo-scroll=keyword-rank-tracker-keywords-table' +
-				'#/keyword-rank-tracker'
-		},
-		async toggleTracking (row, index, value) {
-			this.btnTrackingLoading[index] = true
-			row.tracking = !row.tracking
-
-			try {
-				if (row.id) {
-					await this.keywordRankTrackerStore.deleteKeywords([ row.id ])
-				} else {
-					await this.keywordRankTrackerStore.insertKeywords({ keywords: [ row.name ] })
-				}
-
-				await this.keywordRankTrackerStore.fetchKeywords()
-					.then(() => {
-						this.keywordRankTrackerStore.maybeFetchStatistics({ context: 'keywords' })
-					})
-			} catch (error) {
-				row.tracking = !value
-
-				console.error(error)
-			} finally {
-				this.btnTrackingLoading = []
-			}
-		}
+		// Pass the paginated keywords to prevent the toggle from being unchecked.
+		await keywordRankTrackerStore.fetchKeywords({ rows: props.paginatedKeywords.rows })
+			.then(() => {
+				keywordRankTrackerStore.maybeFetchStatistics({ context: 'keywords' })
+			})
+	} catch (error) {
+		console.error(error)
+	} finally {
+		btnTrackingLoading.value = []
 	}
 }
 </script>
 
 <style lang="scss">
 #keyword-rank-tracker-keywords-table {
-	tr.main-row td {
-		padding: 12px 10px;
+	table {
+		td {
+			position: relative;
+			vertical-align: middle;
+
+			&.tracking {
+				line-height: 1;
+			}
+		}
 	}
 
 	.btn-view {
@@ -316,8 +287,10 @@ export default {
 	}
 
 	.aioseo-loading-spinner {
-		height: 22px;
-		width: 22px;
+		height: 18px;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 18px;
 	}
 }
 </style>

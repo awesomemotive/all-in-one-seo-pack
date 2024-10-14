@@ -54,7 +54,7 @@ class Content {
 	/**
 	 * The featured image placeholder URL.
 	 *
-	 * @since {next}
+	 * @since 4.7.3
 	 *
 	 * @var string
 	 */
@@ -166,7 +166,7 @@ class Content {
 			$result['winning']['items'][] = [
 				'title'      => $row['objectTitle'],
 				'url'        => get_permalink( $postId ),
-				'tru_seo'    => aioseo()->helpers->isPageAnalysisEligible( $postId ) ? $this->parseSeoScore( $row['seoScore'] ?? 0 ) : [],
+				'tru_seo'    => aioseo()->helpers->isTruSeoEligible( $postId ) ? $this->parseSeoScore( $row['seoScore'] ?? 0 ) : [],
 				'clicks'     => $this->parseClicks( $row['clicks'] ),
 				'difference' => [
 					'clicks' => $this->parseDifference( $row['difference']['clicks'] ?? '' ),
@@ -181,7 +181,7 @@ class Content {
 			$result['losing']['items'][] = [
 				'title'      => $row['objectTitle'],
 				'url'        => get_permalink( $postId ),
-				'tru_seo'    => aioseo()->helpers->isPageAnalysisEligible( $postId ) ? $this->parseSeoScore( $row['seoScore'] ?? 0 ) : [],
+				'tru_seo'    => aioseo()->helpers->isTruSeoEligible( $postId ) ? $this->parseSeoScore( $row['seoScore'] ?? 0 ) : [],
 				'clicks'     => $this->parseClicks( $row['clicks'] ),
 				'difference' => [
 					'clicks' => $this->parseDifference( $row['difference']['clicks'] ?? '' ),
@@ -451,7 +451,7 @@ class Content {
 					'title'         => $row['objectTitle'],
 					'url'           => get_permalink( $postId ),
 					'image_url'     => $this->getThumbnailUrl( $postId ),
-					'tru_seo'       => aioseo()->helpers->isPageAnalysisEligible( $postId ) ? $this->parseSeoScore( $row['seoScore'] ?? 0 ) : [],
+					'tru_seo'       => aioseo()->helpers->isTruSeoEligible( $postId ) ? $this->parseSeoScore( $row['seoScore'] ?? 0 ) : [],
 					'decay_percent' => $this->parseDifference( $row['decayPercent'] ?? '', true ),
 					'issues'        => [
 						'url'   => $this->searchStatisticsUrl . "#/post-detail?postId=$postId",
@@ -491,7 +491,7 @@ class Content {
 	/**
 	 * Returns if Search Statistics content is allowed.
 	 *
-	 * @since {next}
+	 * @since 4.7.3
 	 *
 	 * @return bool Whether Search Statistics content is allowed.
 	 */
@@ -597,7 +597,7 @@ class Content {
 				'title'     => aioseo()->helpers->truncate( $item->post_title, 75 ),
 				'url'       => get_permalink( $item->ID ),
 				'image_url' => $this->getThumbnailUrl( $item->ID ),
-				'tru_seo'   => aioseo()->helpers->isPageAnalysisEligible( $item->ID ) ? $this->parseSeoScore( $item->seo_score ?? 0 ) : [],
+				'tru_seo'   => aioseo()->helpers->isTruSeoEligible( $item->ID ) ? $this->parseSeoScore( $item->seo_score ?? 0 ) : [],
 				'stats'     => []
 			];
 

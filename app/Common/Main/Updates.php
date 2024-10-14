@@ -932,7 +932,7 @@ class Updates {
 	 * @return void
 	 */
 	private function migrateUserContactMethods() {
-		$userMetaTableName = aioseo()->core->db->prefix . 'usermeta';
+		$userMetaTableName = aioseo()->core->db->db->usermeta;
 
 		aioseo()->core->db->execute(
 			"UPDATE `$userMetaTableName`

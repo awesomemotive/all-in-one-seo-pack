@@ -14,7 +14,7 @@
 				:class="{'keyword-rank-tracker-main__body--disable-click': searchStatisticsStore.shouldShowSampleReports}"
 			>
 				<keyword-rank-tracker
-					v-if="!licenseStore.isUnlicensed && license.hasCoreFeature('search-statistics', 'keyword-rank-tracker') && !showConnectCta"
+					v-if="!licenseStore.isUnlicensed && license.hasCoreFeature('search-statistics', 'keyword-rank-tracker') && isConnected"
 				/>
 
 				<keyword-rank-tracker-lite v-else/>
@@ -53,9 +53,7 @@ const strings = {
 	headerTitle : __('Keyword Performance Tracking', td)
 }
 
-const showConnectCta = computed(() => {
-	return ((license.hasCoreFeature('search-statistics') && !searchStatisticsStore.isConnected) || searchStatisticsStore.unverifiedSite)
-})
+const isConnected = computed(() => searchStatisticsStore.isConnected && !searchStatisticsStore.unverifiedSite)
 </script>
 
 <style lang="scss">

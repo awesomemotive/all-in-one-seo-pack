@@ -610,7 +610,7 @@ trait Strings {
 	/**
 	 * Strips emoji characters from a given string.
 	 *
-	 * @since {next}
+	 * @since 4.7.3
 	 *
 	 * @param  string $string The string.
 	 * @return string         The string without emoji characters.
