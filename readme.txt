@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.6.2
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.7.3
+Stable tag: 4.7.3.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,6 +226,10 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.7.3.1**
+
+* Fixed: Link format causing block errors in WP 6.4.5 and below.
+
 **New in Version 4.7.3**
 
 * Updated: "?replytocom" query parameter for comment reply links now removed by default to optimize crawl quota.
@@ -289,76 +293,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 * New: Keyword Rank Tracker - Track your most important keywords and add them to groups to see how your site is performing for key topics in Google search results.
 * Fixed: AIOSEO Pro and all AIOSEO addon plugins should now auto-update correctly (if enabled) after a new update is released.
-
-**New in Version 4.6.9.1**
-
-* Fixed: Author SEO for E-E-A-T popup sometimes not dismissable.
-
-**New in Version 4.6.9**
-
-* Updated: Added support for Meta Keywords to frontend SEO Preview.
-* Updated: Added support for newer OpenAI API key formats.
-* Updated: AI Title/Description Generator will use WooCommerce's Product Short Description if no Product Description is present.
-* Updated: "aioseo_crawl_cleanup_blocked_args" table is now dropped when plugin is uninstalled.
-* Fixed: Local SEO multiple locations slug preview and redirect source/target URL now correctly support subdirectory sites/languages.
-* Fixed: Elementor integration menu now displays the correct AIOSEO icon again.
-* Fixed: Blank title column in Search Statistics Keyword Performance table.
-* Fixed: Review schema should not be output if rating value is 0.
-* Fixed: "isFamilyFriendly" property not output for Video schema if set to false.
-* Fixed: Date format in Video schema now matches ISO 8601 format.
-* Fixed: Links not added when pressing ENTER key in the post editor.
-* Fixed: Metabox in Divi page builder would close after using any date picker field.
-* Fixed: Various UI compatibility issues with the Extra theme.
-* Fixed: AIOSEO Overview widget now correctly updates when a Focus Keyphrase is removed from a post.
-* Fixed: Keyword tags list search would sometimes appear empty.
-* Fixed: Compatibility between AIOSEO Redirects and B2B King plugin.
-* Fixed: Removing a Focus Keyphrase would sometimes keep the UI in a loading state.
-* Fixed: Last modified date for terms incorrect in rare cases when site DB fills up previously dropped IDs.
-* Fixed: Sitemap stylesheets now properly display non-English characters.
-* Fixed: Canonical URL for posts with paginated comment pages no longer incorrectly refers to comment pages when using a block theme.
-* Fixed: Redirects support for WPML urls in subdirectories.
-
-**New in Version 4.6.8.1**
-
-* Fixed: Block Editor sidebar components not loading in post editor for older WordPress versions.
-
-**New in Version 4.6.8**
-
-* New: Product Review schema - make your editorial product review pages stand out in search results by listing the product's pros and cons.
-* New: Vehicle Listing schema - display your car inventory in rich search snippets and allow users to easily search, filter and learn about your vehicles that are for sale.
-* New: Table of Contents schema - our Table of Contents block now automatically outputs schema to help search engines understand how your posts are structured.
-* Updated: Our Product schema has been updated to match Google's latest specifications for product variations and grouped products.
-* Fixed: The Schema Validator code editor field would sometimes not render due to a dependency error.
-
-**New in Version 4.6.7.1**
-
-* Updated: Added a new notice in the admin bar for when the site is noindexed, improving visibility for users.
-* Updated: Added review & rating support to Recipe schema.
-* Updated: Organization schema employee range now has a minimum value of 0.
-* Fixed: Data filled into Add New Redirect section no longer cleared when switching tabs.
-* Fixed: Yoast Duplicate Post now correctly carries over SEO meta when published a scheduled republished post.
-* Fixed: Chinese and Unicode special characters encoding issue for Additional Sitemap Pages.
-* Fixed: Google Search Console verification code still output in source code not removed after disconnecting from Google Search Console.
-* Fixed: Javascript console error after disconnecting Google Search Console.
-* Fixed: Shipping Schema changing the Country field value in User Profile when updating a WooCommerce Product.
-* Fixed: Added scroll functionality for Schema Generator template list.
-* Fixed: Plugin conflict with the Facebook for WooCommerce plugin.
-* Fixed: Plugin conflict with 3D Flipbook plugin related to Primary Category.
-* Fixed: Removed ‘Cornerstone Content’ field from SEO revisions for attachment pages.
-* Fixed: Title and alt field columns not showing up in the media gallery for webp images.
-* Fixed: Various styling fixes for our Extra theme & Divi page builder integrations.
-* Fixed: Changing the Primary Term value did not trigger the generation of a new SEO Revision.
-* Fixed: Chrome and Firefox converted URLs with Unicode characters to encoded form in AIOSEO.
-* Fixed: Link Assistant would sometimes break block attributes when inserting a link if they used single quotes.
-* Fixed: Robots.txt rule overlap when there are two identical user agents.
-* Fixed: EEAT author bio field editor would sometimes not render when switching between tabs.
-* Fixed: Error in post schema when FAQ has no question.
-* Fixed: Error caused by a redirect duplicated rule.
-
-**New in Version 4.6.6**
-
-* New: Integrations with SiteOrigin and Thrive Architect - Control your SEO and optimize your content directly from the SiteOrigin and Thrive Architect visual page builders.
-* Fixed: Updated editor component to fix usage of deprecated DOMNodeInserted events.
 
 == Frequently Asked Questions ==
 
@@ -439,6 +373,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.7.3 =
+= 4.7.3.1 =
 
 This update adds major improvements and bug fixes.
