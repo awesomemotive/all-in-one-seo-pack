@@ -252,7 +252,7 @@ trait Arrays {
 	/**
 	 * Sorts an array of arrays by a specific key.
 	 *
-	 * @since {next}
+	 * @since 4.7.4
 	 *
 	 * @param  array  $arr   The input array.
 	 * @param  string $key   The key to sort by.

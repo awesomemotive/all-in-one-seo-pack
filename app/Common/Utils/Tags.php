@@ -639,7 +639,7 @@ class Tags {
 			$context[ $postType['name'] . 'Description' ] = $context['postDescription'];
 
 			// Check if the post type has an excerpt.
-			if ( empty( $postType['hasExcerpt'] ) ) {
+			if ( empty( $postType['supports']['excerpt'] ) ) {
 				$phpTitleKey = array_search( 'post_excerpt', $context[ $postType['name'] . 'Title' ], true );
 				if ( false !== $phpTitleKey ) {
 					unset( $context[ $postType['name'] . 'Title' ][ $phpTitleKey ] );

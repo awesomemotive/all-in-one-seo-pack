@@ -37,6 +37,7 @@ class Access {
 		'aioseo_page_redirects_settings',
 		'aioseo_local_seo_settings',
 		'aioseo_page_local_seo_settings',
+		'aioseo_page_writing_assistant_settings',
 		'aioseo_about_us_page',
 		'aioseo_setup_wizard',
 		'aioseo_page_seo_revisions_settings'

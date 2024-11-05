@@ -86,6 +86,20 @@
 					@process-additional-filters="processAdditionalFilters"
 				/>
 
+				<span
+					class="export"
+					v-if="exportColumns.length"
+				>
+					<base-button
+						size="small"
+						type="gray"
+						@click.prevent="exportCsv()"
+					>
+						<svg-download/>
+						{{ strings.csv }}
+					</base-button>
+				</span>
+
 				<div
 					v-if="$slots.filters && filters.length"
 					class="alignleft"
@@ -157,10 +171,7 @@
 					</tr>
 				</thead>
 
-				<tbody
-					id="the-list"
-					v-if="rows"
-				>
+				<tbody v-if="rows">
 					<div
 						class="loader-overlay-table"
 						v-if="loading"
@@ -342,6 +353,8 @@ import { useRootStore } from '$/vue/stores'
 
 import numbers from '@/vue/utils/numbers'
 import { debounce } from '@/vue/utils/debounce'
+import { arrayToCsv } from '@/vue/utils/csv'
+import { downloadFile } from '@/vue/utils/download'
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreLoader from '@/vue/components/common/core/Loader'
@@ -351,6 +364,7 @@ import CoreWpItemsPerPage from './ItemsPerPage'
 import CoreWpPagination from './Pagination'
 import CoreWpTableHeaderFooter from './TableHeaderFooter'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
+import SvgDownload from '@/vue/components/common/svg/Download'
 
 import { __ } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
@@ -381,7 +395,8 @@ export default {
 		CoreWpItemsPerPage,
 		CoreWpPagination,
 		CoreWpTableHeaderFooter,
-		TransitionSlide
+		TransitionSlide,
+		SvgDownload
 	},
 	props : {
 		columns : {
@@ -464,7 +479,20 @@ export default {
 		itemsPerPageFilter : String,
 		blurRows           : Boolean,
 		disableTable       : Boolean,
-		showItemsPerPage   : Boolean
+		showItemsPerPage   : Boolean,
+		exportColumns      : {
+			type : Array,
+			default () {
+				return []
+			}
+		},
+		exportData : {
+			type : Array,
+			default () {
+				return []
+			}
+		},
+		exportFileName : String
 	},
 	data () {
 		return {
@@ -475,7 +503,8 @@ export default {
 			activeRow    : null,
 			strings      : {
 				items     : __('items', td),
-				noResults : __('No items found.', td)
+				noResults : __('No items found.', td),
+				csv       : __('CSV', td)
 			}
 		}
 	},
@@ -523,6 +552,11 @@ export default {
 			// This doesn't seem to work in the Block Editor for whatever reason. So, we need to hide the checkbox there.
 			// See "$body.on( 'click.wp-toggle-checkboxes', 'thead .check-column :checkbox, tfoot .check-column :checkbox') in common.js."
 			return this.rootStore?.aioseo?.screen?.blockEditor || this.rootStore?.aioseoBrokenLinkChecker?.screen?.blockEditor
+		},
+		getExportFileName () {
+			const exportName = this.exportFileName || 'entries.csv'
+
+			return exportName.replace('/.csv$|$/', '.csv')
 		}
 	},
 	methods : {
@@ -539,6 +573,7 @@ export default {
 		},
 		processSearch () {
 			debounce(() => {
+				this.pageNumber = 1
 				this.editRow(-1)
 				this.$emit('search', this.searchTerm)
 			}, 100)
@@ -601,6 +636,30 @@ export default {
 			if (checked) {
 				checked.forEach(c => (c.checked = false))
 			}
+		},
+		exportCsv () {
+			// Determine which columns to export.
+			const colsToExport = this.exportColumns || this.columns
+
+			// Map data to export same as exportColumns.
+			let exportData = this.exportData.length ? this.exportData : this.rows
+			exportData = exportData.map((row) => {
+				const newRow = []
+				colsToExport.forEach((col) => {
+					newRow[col.slug] = col?.value ? col.value(row) : row[col.slug]
+				})
+
+				return newRow
+			})
+
+			// Extract headers.
+			const header = colsToExport.map(col => col.label)
+
+			// Add headers and data.
+			exportData = [ header ].concat(exportData)
+
+			// Download.
+			downloadFile(arrayToCsv(exportData), this.getExportFileName)
 		}
 	},
 	created () {
@@ -978,6 +1037,16 @@ export default {
 					}
 				}
 			}
+		}
+	}
+
+	.export {
+		margin-left: auto;
+
+		svg {
+			width: 14px;
+			height: 14px;
+			margin-right: 5px;
 		}
 	}
 }

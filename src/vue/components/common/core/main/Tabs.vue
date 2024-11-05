@@ -24,25 +24,7 @@
 
 						<span class="tab-label">{{ tab.name }}</span>
 
-						<span
-							v-if="tab.errorCount >= 0"
-							class="tab-score"
-							:class="getErrorClass(postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors)"
-						>
-							<svg-ellipse
-								v-if="0 < postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors"
-								width="8"
-							/>
-
-							<svg-circle-check
-								v-if="0 === postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors"
-								width="12"
-							/>
-
-							<span
-								v-text="getErrorDisplay(postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors)"
-							/>
-						</span>
+						<slot name="after-label" :tab="tab"></slot>
 
 						<span
 							v-if="tab.warning && 'sidebar' !== $root.$data.screenContext"
@@ -168,17 +150,12 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { merge } from 'lodash-es'
-
 import { useSaveChanges } from '@/vue/composables/SaveChanges'
-import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
 
 import BaseButton from '@/vue/components/common/base/Button'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import SvgCaret from '@/vue/components/common/svg/Caret'
-import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleInformation from '@/vue/components/common/svg/circle/Information'
-import SvgEllipse from '@/vue/components/common/svg/Ellipse'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 import { Tab as VarTab, Tabs as VarTabs } from '@varlet/ui'
 
@@ -198,19 +175,10 @@ export default {
 
 		const { processSaveChanges } = useSaveChanges()
 
-		const {
-			getErrorClass,
-			getErrorDisplay,
-			strings
-		} = useTruSeoScore()
-
 		return {
-			composableStrings : strings,
-			getErrorClass,
-			getErrorDisplay,
-			postEditorStore   : usePostEditorStore(),
+			postEditorStore : usePostEditorStore(),
 			processSaveChanges,
-			rootStore         : useRootStore(),
+			rootStore       : useRootStore(),
 			route
 		}
 	},
@@ -218,9 +186,7 @@ export default {
 		BaseButton,
 		CoreProBadge,
 		SvgCaret,
-		SvgCircleCheck,
 		SvgCircleInformation,
-		SvgEllipse,
 		TransitionSlide,
 		VarTab,
 		VarTabs
@@ -247,10 +213,10 @@ export default {
 			showMobileMenu : true,
 			calculateWidth : false,
 			showMobileTabs : false,
-			strings        : merge(this.composableStrings, {
+			strings        : {
 				saveChanges : __('Save Changes', td),
 				new         : __('NEW!', td)
-			})
+			}
 		}
 	},
 	computed : {

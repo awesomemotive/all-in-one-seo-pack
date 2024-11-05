@@ -118,6 +118,8 @@ class VueSettings {
 			'404Settings'                  => true,
 			'userProfiles'                 => true,
 			'queryArgLogs'                 => true,
+			'writingAssistantSettings'     => true,
+			'writingAssistantCta'          => true
 		],
 		'toggledRadio'    => [
 			'breadcrumbsShowMoreSeparators' => false,

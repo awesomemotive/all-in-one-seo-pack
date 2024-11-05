@@ -454,6 +454,12 @@ TEMPLATE
 					]
 				]
 			]
+		],
+		'writingAssistant' => [
+			'postTypes' => [
+				'all'      => [ 'type' => 'boolean', 'default' => true ],
+				'included' => [ 'type' => 'array', 'default' => [ 'post', 'page' ] ],
+			]
 		]
 		// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 	];

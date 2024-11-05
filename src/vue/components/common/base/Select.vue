@@ -19,7 +19,7 @@
 		:filterable="filterable"
 		:internal-search="true"
 		:loading="isLoading"
-		:searchable="true"
+		:searchable="searchable"
 		:open-direction="openDirection"
 		:group-values="groupValues"
 		:group-label="groupLabel"
@@ -116,9 +116,15 @@ export default {
 				return 'value'
 			}
 		},
-		multiple    : Boolean,
-		taggable    : Boolean,
-		filterable  : Boolean,
+		multiple   : Boolean,
+		taggable   : Boolean,
+		filterable : Boolean,
+		searchable : {
+			type : Boolean,
+			default () {
+				return true
+			}
+		},
 		placeholder : {
 			type : String,
 			default () {
@@ -389,11 +395,10 @@ export default {
 
 	&.small {
 		height: 30px;
-		min-height: 30px;
 
 		.multiselect__tags {
-			min-height: 30px;
-			padding: 8px 38px 8px 8px;
+			height: 30px;
+			padding: 0 34px 0 8px;
 
 			.multiselect__placeholder {
 				font-size: 14px;
@@ -401,8 +406,8 @@ export default {
 		}
 
 		.multiselect__select {
-			height: 28px;
-			min-height: 28px;
+			height: 30px;
+			padding: 0 0 0 8px;
 		}
 
 		.multiselect__input {

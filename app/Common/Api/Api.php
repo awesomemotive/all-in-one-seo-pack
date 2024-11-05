@@ -38,7 +38,11 @@ class Api {
 			'user/(?P<userId>[\d]+)/image'                => [ 'callback' => [ 'User', 'getUserImage' ], 'access' => 'aioseo_page_social_settings' ],
 			'tags'                                        => [ 'callback' => [ 'Tags', 'getTags' ], 'access' => 'everyone' ],
 			'search-statistics/url/auth'                  => [ 'callback' => [ 'SearchStatistics', 'getAuthUrl' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings', 'aioseo_setup_wizard' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
-			'search-statistics/url/reauth'                => [ 'callback' => [ 'SearchStatistics', 'getReauthUrl' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ]
+			'search-statistics/url/reauth'                => [ 'callback' => [ 'SearchStatistics', 'getReauthUrl' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ],
+			'writing-assistant/keyword/(?P<postId>[\d]+)' => [ 'callback' => [ 'WritingAssistant', 'getPostKeyword' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
+			'writing-assistant/user-info'                 => [ 'callback' => [ 'WritingAssistant', 'getUserInfo' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
+			'writing-assistant/user-options'              => [ 'callback' => [ 'WritingAssistant', 'getUserOptions' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
+			'writing-assistant/report-history'            => [ 'callback' => [ 'WritingAssistant', 'getReportHistory' ], 'access' => 'aioseo_page_writing_assistant_settings' ]
 		],
 		'POST'   => [
 			'htaccess'                                              => [ 'callback' => [ 'Tools', 'saveHtaccess' ], 'access' => 'aioseo_tools_settings' ],
@@ -130,24 +134,44 @@ class Api {
 			],
 			'crawl-cleanup'                                         => [
 				'callback' => [ 'CrawlCleanup', 'fetchLogs', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
-				'access'   => [ 'aioseo_search_appearance_settings' ]
+				'access'   => 'aioseo_search_appearance_settings'
 			],
 			'crawl-cleanup/block'                                   => [
 				'callback' => [ 'CrawlCleanup', 'blockArg', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
-				'access'   => [ 'aioseo_search_appearance_settings' ]
+				'access'   => 'aioseo_search_appearance_settings'
 			],
 			'crawl-cleanup/delete-blocked'                          => [
 				'callback' => [ 'CrawlCleanup', 'deleteBlocked', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
-				'access'   => [ 'aioseo_search_appearance_settings' ]
+				'access'   => 'aioseo_search_appearance_settings'
 			],
 			'crawl-cleanup/delete-unblocked'                        => [
 				'callback' => [ 'CrawlCleanup', 'deleteLog', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
-				'access'   => [ 'aioseo_search_appearance_settings' ]
+				'access'   => 'aioseo_search_appearance_settings'
 			],
 			'email-summary/send'                                    => [
 				'callback' => [ 'EmailSummary', 'send' ],
 				'access'   => 'aioseo_page_advanced_settings'
 			],
+			'writing-assistant/process'                             => [
+				'callback' => [ 'WritingAssistant', 'processKeyword' ],
+				'access'   => 'aioseo_page_writing_assistant_settings'
+			],
+			'writing-assistant/content-analysis'                    => [
+				'callback' => [ 'WritingAssistant', 'getContentAnalysis' ],
+				'access'   => 'aioseo_page_writing_assistant_settings'
+			],
+			'writing-assistant/disconnect'                          => [
+				'callback' => [ 'WritingAssistant', 'disconnect' ],
+				'access'   => 'aioseo_page_writing_assistant_settings'
+			],
+			'writing-assistant/user-options'                        => [
+				'callback' => [ 'WritingAssistant', 'saveUserOptions' ],
+				'access'   => 'aioseo_page_writing_assistant_settings'
+			],
+			'writing-assistant/set-report-progress'                 => [
+				'callback' => [ 'WritingAssistant', 'setReportProgress' ],
+				'access'   => 'aioseo_page_writing_assistant_settings'
+			]
 		],
 		'DELETE' => [
 			'backup'                 => [ 'callback' => [ 'Tools', 'deleteBackup' ], 'access' => 'aioseo_tools_settings' ],

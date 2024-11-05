@@ -235,11 +235,11 @@ trait Wp {
 			'label'        => ucwords( $postTypeObject->label ),
 			'singular'     => ucwords( $postTypeObject->labels->singular_name ),
 			'icon'         => $postTypeObject->menu_icon,
-			'hasExcerpt'   => post_type_supports( $postTypeObject->name, 'excerpt' ),
 			'hasArchive'   => $postTypeObject->has_archive,
 			'hierarchical' => $postTypeObject->hierarchical,
 			'taxonomies'   => get_object_taxonomies( $name ),
-			'slug'         => isset( $postTypeObject->rewrite['slug'] ) ? $postTypeObject->rewrite['slug'] : $name
+			'slug'         => isset( $postTypeObject->rewrite['slug'] ) ? $postTypeObject->rewrite['slug'] : $name,
+			'supports'     => get_all_post_type_supports( $name )
 		];
 	}
 

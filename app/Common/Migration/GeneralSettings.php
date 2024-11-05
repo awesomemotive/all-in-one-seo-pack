@@ -475,7 +475,7 @@ class GeneralSettings {
 			empty( $this->oldOptions['aiosp_skip_excerpt'] )
 		) {
 			foreach ( aioseo()->helpers->getPublicPostTypes() as $postType ) {
-				if ( empty( $postType['hasExcerpt'] ) ) {
+				if ( empty( $postType['supports']['excerpt'] ) ) {
 					continue;
 				}
 

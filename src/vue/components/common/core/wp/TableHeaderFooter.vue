@@ -77,5 +77,29 @@ export default {
 			margin: 0;
 		}
 	}
+
+	&.sorted {
+		.sorting-indicator {
+			border-left: 4px solid transparent;
+			border-right: 4px solid transparent;
+			border-top: 4px solid;
+			display: inline-block;
+			height: 0;
+			margin-left: 5px;
+			vertical-align: middle;
+			width: 0;
+
+			&:before, &:after{
+				display: none;
+			}
+		}
+
+		&.asc {
+			.sorting-indicator {
+				border-top: none;
+				border-bottom: 4px solid;
+			}
+		}
+	}
 }
 </style>

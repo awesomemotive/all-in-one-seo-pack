@@ -177,7 +177,7 @@ class DynamicOptions {
 			}
 
 			$defaultTitle       = '#post_title #separator_sa #site_title';
-			$defaultDescription = $postType['hasExcerpt'] ? '#post_excerpt' : '#post_content';
+			$defaultDescription = ! empty( $postType['supports']['excerpt'] ) ? '#post_excerpt' : '#post_content';
 			$defaultSchemaType  = 'WebPage';
 			$defaultWebPageType = 'WebPage';
 			$defaultArticleType = 'BlogPosting';

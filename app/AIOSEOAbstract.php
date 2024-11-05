@@ -580,4 +580,13 @@ abstract class AIOSEOAbstract {
 	 * @var null|\AIOSEO\Plugin\Common\EmailReports\EmailReports
 	 */
 	public $emailReports = null;
+
+	/**
+	 * WritingAssistant class instance.
+	 *
+	 * @since 4.7.4
+	 *
+	 * @var null|\AIOSEO\Plugin\Common\WritingAssistant\WritingAssistant
+	 */
+	public $writingAssistant = null;
 }

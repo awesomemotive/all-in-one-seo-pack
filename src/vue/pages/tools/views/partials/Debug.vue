@@ -138,6 +138,7 @@ import CoreNetworkSiteSelector from '@/vue/components/common/core/NetworkSiteSel
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import DeprecatedOptions from './debug/DeprecatedOptions'
 import MigrationInfo from './debug/MigrationInfo'
+import WritingAssistant from './debug/WritingAssistant'
 import SvgClose from '@/vue/components/common/svg/Close'
 
 import { sprintf } from '@/vue/plugins/translations'
@@ -158,6 +159,7 @@ export default {
 		CoreSettingsRow,
 		DeprecatedOptions,
 		MigrationInfo,
+		WritingAssistant,
 		SvgClose
 	},
 	props : {
@@ -296,6 +298,20 @@ export default {
 							longDescription  : '<strong>These options are not guaranteed to work and all support has been dropped.</strong>',
 							showModal        : false,
 							component        : 'deprecated-options'
+						}
+					]
+				},
+				{
+					slug    : 'writing-assistant',
+					name    : 'Writing Assistant',
+					actions : [
+						{
+							label            : 'Writing Assistant',
+							slug             : 'writing-assistant',
+							shortDescription : 'Resets all users SEOBoost logins.',
+							longDescription  : '',
+							showModal        : false,
+							component        : 'writing-assistant'
 						}
 					]
 				}

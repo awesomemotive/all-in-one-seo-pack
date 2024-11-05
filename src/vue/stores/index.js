@@ -27,9 +27,11 @@ import { useSetupWizardStore } from '@/vue/stores/SetupWizardStore'
 import { useTagsStore } from '@/vue/stores/TagsStore'
 import { useToolsStore } from '@/vue/stores/ToolsStore'
 import { useTruSeoHighlighterStore } from '@/vue/stores/TruSeoHighlighterStore'
+import { useWritingAssistantSettingsStore } from '@/vue/stores/WritingAssistantSettingsStore'
 
-// Standolone stores.
+// Standalone stores.
 import { useTableOfContentsStore } from '@/vue/stores/standalones/TableOfContentsStore'
+import { useWritingAssistantStore } from '@/vue/stores/standalones/WritingAssistantStore'
 
 // Integration Stores.
 import { useSemrushStore } from '@/vue/stores/integrations/SemrushStore'
@@ -75,6 +77,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 	const settingsStore           = useSettingsStore()
 	const tagsStore               = useTagsStore()
 	const wpCodeStore             = useWpCodeStore()
+	const writingAssistantSettingsStore = useWritingAssistantSettingsStore()
 
 	// Initial network data.
 	const networkData = {
@@ -90,25 +93,26 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 	optionsStore.networkOptions         = merge({ ...optionsStore.networkOptions }, { ...aioseo.networkOptions || {} })
 
 	// Other stores.
-	addonsStore.addons             = merge([ ...addonsStore.addons ], [ ...aioseo.addons || [] ])
-	backupsStore.backups           = merge([ ...backupsStore.backups ], [ ...aioseo.backups || [] ])
-	backupsStore.networkBackups    = merge({ ...backupsStore.networkBackups }, { ...aioseo.data?.network?.backups || {} })
-	helpPanelStore.$state          = merge({ ...helpPanelStore.$state }, { ...aioseo.helpPanel || {} })
-	indexNowStore.$state           = merge({ ...indexNowStore.$state }, { ...aioseo.indexNow || {} })
-	keywordRankTrackerStore.$state = merge({ ...keywordRankTrackerStore.$state }, { ...aioseo.keywordRankTracker || {} })
-	licenseStore.license           = merge({ ...licenseStore.license }, { ...aioseo.license || {} })
-	linkAssistantStore.$state      = merge({ ...linkAssistantStore.$state }, { ...aioseo.linkAssistant || {} })
-	localSeoStore.$state           = merge({ ...localSeoStore.$state }, { ...aioseo.localBusiness || {} })
-	networkStore.networkData       = merge({ ...networkStore.networkData }, { ...networkData })
-	notificationsStore.$state      = merge({ ...notificationsStore.$state }, { ...aioseo.notifications || {} })
-	pluginsStore.plugins           = merge({ ...pluginsStore.plugins }, { ...aioseo.plugins || {} })
-	postEditorStore.currentPost    = merge({ ...postEditorStore.currentPost }, { ...aioseo.currentPost || {} })
-	redirectsStore.$state          = merge({ ...redirectsStore.$state }, { ...aioseo.redirects || {} })
-	searchStatisticsStore.$state   = merge({ ...searchStatisticsStore.$state }, { ...aioseo.searchStatistics || {} })
-	seoRevisionsStore.$state       = merge({ ...seoRevisionsStore.$state }, { ...aioseo.seoRevisions || {} })
-	settingsStore.settings         = merge({ ...settingsStore.settings }, { ...aioseo.settings || {} })
-	settingsStore.userProfile      = merge({ ...settingsStore.userProfile }, { ...aioseo.userProfile || {} })
-	tagsStore.$state               = merge({ ...tagsStore.$state }, { ...aioseo.tags || {} })
+	addonsStore.addons                     = merge([ ...addonsStore.addons ], [ ...aioseo.addons || [] ])
+	backupsStore.backups                   = merge([ ...backupsStore.backups ], [ ...aioseo.backups || [] ])
+	backupsStore.networkBackups            = merge({ ...backupsStore.networkBackups }, { ...aioseo.data?.network?.backups || {} })
+	helpPanelStore.$state                  = merge({ ...helpPanelStore.$state }, { ...aioseo.helpPanel || {} })
+	indexNowStore.$state                   = merge({ ...indexNowStore.$state }, { ...aioseo.indexNow || {} })
+	keywordRankTrackerStore.$state         = merge({ ...keywordRankTrackerStore.$state }, { ...aioseo.keywordRankTracker || {} })
+	licenseStore.license                   = merge({ ...licenseStore.license }, { ...aioseo.license || {} })
+	linkAssistantStore.$state              = merge({ ...linkAssistantStore.$state }, { ...aioseo.linkAssistant || {} })
+	localSeoStore.$state                   = merge({ ...localSeoStore.$state }, { ...aioseo.localBusiness || {} })
+	networkStore.networkData               = merge({ ...networkStore.networkData }, { ...networkData })
+	notificationsStore.$state              = merge({ ...notificationsStore.$state }, { ...aioseo.notifications || {} })
+	pluginsStore.plugins                   = merge({ ...pluginsStore.plugins }, { ...aioseo.plugins || {} })
+	postEditorStore.currentPost            = merge({ ...postEditorStore.currentPost }, { ...aioseo.currentPost || {} })
+	redirectsStore.$state                  = merge({ ...redirectsStore.$state }, { ...aioseo.redirects || {} })
+	searchStatisticsStore.$state           = merge({ ...searchStatisticsStore.$state }, { ...aioseo.searchStatistics || {} })
+	seoRevisionsStore.$state               = merge({ ...seoRevisionsStore.$state }, { ...aioseo.seoRevisions || {} })
+	settingsStore.settings                 = merge({ ...settingsStore.settings }, { ...aioseo.settings || {} })
+	settingsStore.userProfile              = merge({ ...settingsStore.userProfile }, { ...aioseo.userProfile || {} })
+	tagsStore.$state                       = merge({ ...tagsStore.$state }, { ...aioseo.tags || {} })
+	writingAssistantSettingsStore.$state   = merge({ ...writingAssistantSettingsStore.$state }, { ...aioseo.writingAssistantSettings || {} })
 
 	// Integration stores.
 	if (aioseo.integrations?.wpcode) {
@@ -233,5 +237,7 @@ export {
 	useTagsStore,
 	useToolsStore,
 	useTruSeoHighlighterStore,
+	useWritingAssistantStore,
+	useWritingAssistantSettingsStore,
 	useWpCodeStore
 }

@@ -18,6 +18,7 @@ import CoreMain from '@/vue/components/common/core/main/Index'
 import GeneralSettings from './GeneralSettings'
 import RssContent from './RssContent'
 import WebmasterTools from './WebmasterTools'
+import WritingAssistant from './WritingAssistant'
 
 import { __ } from '@/vue/plugins/translations'
 
@@ -36,7 +37,8 @@ export default {
 		CoreMain,
 		GeneralSettings,
 		RssContent,
-		WebmasterTools
+		WebmasterTools,
+		WritingAssistant
 	},
 	data () {
 		return {

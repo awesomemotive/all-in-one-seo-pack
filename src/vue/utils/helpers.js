@@ -25,7 +25,8 @@ export const decodeSpecialChars = string => {
 		'&amp;'  : '&',
 		'&lt;'   : '<',
 		'&gt;'   : '>',
-		'&quot;' : '"'
+		'&quot;' : '"',
+		'&nbsp;' : ' '
 	}
 
 	Object.entries(charMap).forEach(([ key, value ]) => {

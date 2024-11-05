@@ -88,6 +88,7 @@ class Admin {
 	 */
 	public function __construct() {
 		new SeoAnalysis();
+		new WritingAssistant();
 
 		include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		if (

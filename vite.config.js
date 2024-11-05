@@ -72,6 +72,7 @@ const getStandalones = () => {
 		'setup-wizard'              : './src/vue/standalone/setup-wizard/main.js',
 		'user-profile-tab'          : './src/vue/standalone/user-profile-tab/main.js',
 		'wp-notices'                : './src/vue/standalone/wp-notices/main.js',
+		'writing-assistant'         : './src/vue/standalone/writing-assistant/main.js',
 		// Page builder integrations.
 		avada                       : './src/vue/standalone/page-builders/avada/main.js',
 		divi                        : './src/vue/standalone/page-builders/divi/main.js',

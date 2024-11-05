@@ -170,9 +170,10 @@ export const getPostContent = () => {
 /**
  * Returns the edited post content.
  *
- * @returns {string} Post content
+ * @param   {boolean} ignoreCustomFields Whether to ignore custom fields.
+ * @returns {string}                     Post content
  */
-export const getPostEditedContent = () => {
+export const getPostEditedContent = (ignoreCustomFields = false) => {
 	let postContent = ''
 	if (isClassicEditor() && !isPageBuilderEditor()) {
 		if (window.tinyMCE || document.querySelector('#wp-content-wrap.html-active')) {
@@ -186,6 +187,7 @@ export const getPostEditedContent = () => {
 			}, 50)
 		}
 	}
+
 	if (isBlockEditor()) {
 		postContent = window.wp.data.select('core/editor').getEditedPostContent()
 		postContent = getReusableBlockContent(postContent)
@@ -197,7 +199,7 @@ export const getPostEditedContent = () => {
 	}
 
 	const postEditorStore = usePostEditorStore()
-	if (postEditorStore.currentPost.descriptionIncludeCustomFields) {
+	if (!ignoreCustomFields && postEditorStore.currentPost.descriptionIncludeCustomFields) {
 		postContent = postContent + customFieldsContent()
 	}
 

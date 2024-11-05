@@ -13,7 +13,25 @@
 			:active="initTab"
 			internal
 			@changed="value => processChangeTab(value)"
-		/>
+		>
+			<template #after-label="{ tab }">
+				<span
+					v-if="tab.errorCount >= 0"
+					class="tab-score"
+					:class="getErrorClass(postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors)"
+				>
+					<svg-ellipse
+						v-if="0 < postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors"
+						width="6"
+					/>
+					<svg-circle-check
+						v-if="0 === postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors"
+						width="12"
+					/>
+					{{ getErrorDisplay(postEditorStore.currentPost.page_analysis.analysis[tab.slug].errors) }}
+				</span>
+			</template>
+		</core-main-tabs>
 		<transition mode="out-in">
 			<metaboxAnalysisDetail
 				v-if="postEditorStore.currentPost.page_analysis"
@@ -33,6 +51,9 @@ import { isBlockEditor } from '@/vue/utils/context'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import metaboxAnalysisDetail from './MetaboxAnalysisDetail'
+import SvgEllipse from '@/vue/components/common/svg/Ellipse'
+import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
+import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
 
 import { __, sprintf } from '@/vue/plugins/translations'
 
@@ -40,15 +61,26 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	setup () {
+		const {
+			getErrorClass,
+			getErrorDisplay,
+			strings
+		} = useTruSeoScore()
+
 		return {
 			postEditorStore : usePostEditorStore(),
-			rootStore       : useRootStore()
+			rootStore       : useRootStore(),
+			getErrorClass,
+			getErrorDisplay,
+			strings
 		}
 	},
 	components : {
 		CoreAlert,
 		CoreMainTabs,
-		metaboxAnalysisDetail
+		metaboxAnalysisDetail,
+		SvgEllipse,
+		SvgCircleCheck
 	},
 	data () {
 		return {

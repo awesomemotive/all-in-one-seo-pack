@@ -196,7 +196,7 @@ onMounted(() => {
 		}
 	}
 
-	#the-list .aioseo-wp-table.link-assistant-inner-table {
+	.aioseo-wp-table.link-assistant-inner-table {
 		.wp-table table {
 			border: 0;
 

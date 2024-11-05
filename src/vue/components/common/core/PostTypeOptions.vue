@@ -106,6 +106,12 @@ export default {
 			default () {
 				return []
 			}
+		},
+		supports : {
+			type : Array,
+			default () {
+				return []
+			}
 		}
 	},
 	data () {
@@ -126,7 +132,12 @@ export default {
 		},
 		postTypes () {
 			return this.getRegisteredPostTypes[this.type].filter(postType => {
-				return !this.excluded.includes(postType.name)
+				let filtered = true
+				if (this.supports.length && postType.supports.length) {
+					filtered = this.supports.every(support => postType.supports.includes(support))
+				}
+
+				return filtered && !this.excluded.includes(postType.name)
 			})
 		}
 	},

@@ -635,10 +635,6 @@ export default {
 			border: none;
 		}
 
-		.aioseo-description {
-			margin: 0;
-		}
-
 		.route-fade {
 			&-enter-active,
 			&-leave-active {

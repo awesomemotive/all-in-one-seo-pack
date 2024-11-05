@@ -719,6 +719,9 @@ class Settings {
 				aioseo()->internalOptions->internal->deprecatedOptions = array_values( $enabledDeprecated );
 				aioseo()->internalOptions->save( true );
 				break;
+			case 'aioseo-reset-seoboost-logins':
+				aioseo()->writingAssistant->seoBoost->resetLogins();
+				break;
 			default:
 				aioseo()->helpers->restoreCurrentBlog();
 

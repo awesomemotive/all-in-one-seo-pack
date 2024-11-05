@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.6.2
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.7.3.1
+Stable tag: 4.7.4.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,6 +226,12 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.7.4.1**
+
+* New: Writing Assistant + SEOBoost: Elevate Your Content Strategy! Integrate seamlessly with SEOBoost via AIOSEO to supercharge your WordPress content. Harness the power of AI to optimize your content, drive organic traffic, and outrank competitors.
+* Fixed: Post Overview widget sometimes not loading on newer PHP versions.
+* Fixed: Post Excerpt tag sometimes not listed in list of available smart tags.
+
 **New in Version 4.7.3.1**
 
 * Fixed: Link format causing block errors in WP 6.4.5 and below.
@@ -373,6 +379,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.7.3.1 =
+= 4.7.4.1 =
 
 This update adds major improvements and bug fixes.

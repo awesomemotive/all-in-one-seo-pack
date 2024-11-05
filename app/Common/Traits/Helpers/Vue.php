@@ -76,6 +76,7 @@ trait Vue {
 		$this->setSeoRevisionsData();
 		$this->setToolsOrSettingsData();
 		$this->setPageBuilderData();
+		$this->setWritingAssistantData();
 
 		$this->cache[ $hash ] = $this->data;
 
@@ -627,6 +628,25 @@ trait Vue {
 		}
 
 		return $locale;
+	}
+
+	/**
+	 * Set Vue writing assistant data.
+	 *
+	 * @since 4.7.4
+	 *
+	 * @return void
+	 */
+	private function setWritingAssistantData() {
+		// Settings page or not a post screen.
+		if (
+			'settings' !== $this->args['page'] &&
+			! aioseo()->helpers->isScreenBase( 'post' )
+		) {
+			return;
+		}
+
+		$this->data['writingAssistantSettings'] = aioseo()->writingAssistant->helpers->getSettingsVueData();
 	}
 
 	/**

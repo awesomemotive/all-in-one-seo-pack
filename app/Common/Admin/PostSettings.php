@@ -334,7 +334,7 @@ class PostSettings {
 				'{"focus":{"keyphrase":""%',
 				'{"focus":{"keyphrase":""%',
 				$postType,
-				...$specialPageIds
+				...array_values( $specialPageIds )
 			),
 			ARRAY_A
 		);

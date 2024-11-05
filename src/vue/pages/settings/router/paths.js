@@ -50,6 +50,16 @@ export default [
 		}
 	},
 	{
+		path      : '/writing-assistant',
+		name      : 'writing-assistant',
+		component : loadView('Main'),
+		meta      : {
+			access : 'aioseo_page_writing_assistant_settings',
+			name   : __('Writing Assistant', td),
+			label  : 'new'
+		}
+	},
+	{
 		path      : '/access-control',
 		name      : 'access-control',
 		component : loadView('Main'),
