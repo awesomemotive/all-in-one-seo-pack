@@ -226,6 +226,11 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.7.4.2**
+
+* Updated: Compatibility with WordPress 6.7.
+* Fixed: AIOSEO metabox or setting pages sometimes not loading because WAFs or web server block JavaScript files from being loaded due to false-positives.
+
 **New in Version 4.7.4.1**
 
 * New: Writing Assistant + SEOBoost: Elevate Your Content Strategy! Integrate seamlessly with SEOBoost via AIOSEO to supercharge your WordPress content. Harness the power of AI to optimize your content, drive organic traffic, and outrank competitors.

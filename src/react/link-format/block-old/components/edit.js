@@ -123,6 +123,7 @@ class Edit extends Component {
 							activeAttributes={ activeAttributes }
 							value={ value }
 							onChange={ onChange }
+							contentRef={ this.props.contentRef }
 						/>
 
 					</Toolbar>

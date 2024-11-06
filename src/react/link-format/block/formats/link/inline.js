@@ -10,7 +10,7 @@ import { useMemo, useState } from '@wordpress/element'
 import { __ } from '@wordpress/i18n'
 import { withSpokenMessages, Popover } from '@wordpress/components'
 import { prependHTTP } from '@wordpress/url'
-import { create, insert, isCollapsed, applyFormat } from '@wordpress/rich-text'
+import { create, insert, isCollapsed, applyFormat, useAnchor } from '@wordpress/rich-text'
 import { versionCompare } from '../../../../../vue/utils/helpers'
 
 /**
@@ -18,6 +18,7 @@ import { versionCompare } from '../../../../../vue/utils/helpers'
  */
 import { LinkControl } from '../../components/index'
 import { createLinkFormat, isValidHref } from './utils'
+import { link as linkSettings } from './index'
 
 function InlineLinkUI ({
 	isActive,
@@ -26,7 +27,8 @@ function InlineLinkUI ({
 	value,
 	onChange,
 	speak,
-	stopAddingLink
+	stopAddingLink,
+	contentRef
 }) {
 	/**
 	 * A unique key is generated when switching between editing and not editing
@@ -56,6 +58,14 @@ function InlineLinkUI ({
 
 	// Set the selected text from the value string.
 	const selectedText = value.text.substring(value.start, value.end)
+
+	const anchor = useAnchor( {
+		editableContentElement: contentRef.current,
+		settings: {
+			...linkSettings,
+			isActive,
+		},
+	} )
 
 	const anchorRef = useMemo(() => {
 		const selection = window.getSelection()
@@ -170,11 +180,18 @@ function InlineLinkUI ({
 		}
 	}
 
+	let anchorValue = undefined
+	if ( versionCompare(window.aioseo.wpVersion, '6.1', '>=') ) {
+		anchorValue = anchorRef
+	}
+	if ( versionCompare(window.aioseo.wpVersion, '6.6', '>=') ) {
+		anchorValue = anchor
+	}
+
 	return (
 		<Popover
 			key={ mountingKey }
-			anchor={ versionCompare(window.aioseo.wpVersion, '6.1', '>=') ? anchorRef : undefined }
-			anchorRef={ versionCompare(window.aioseo.wpVersion, '6.1', '<') ? anchorRef : undefined }
+			anchor={ anchorValue }
 			focusOnMount={ addingLink ? 'firstElement' : false }
 			onClose={ stopAddingLink }
 		>

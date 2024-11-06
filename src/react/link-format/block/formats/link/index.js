@@ -11,6 +11,7 @@ import {
 	slice,
 	isCollapsed
 } from '@wordpress/rich-text'
+
 import { isURL, isEmail } from '@wordpress/url'
 import {
 	RichTextToolbarButton,
@@ -112,7 +113,8 @@ export const link = {
 					isActive,
 					activeAttributes,
 					value,
-					onChange
+					onChange,
+					contentRef
 				} = this.props
 
 				return (
@@ -158,6 +160,7 @@ export const link = {
 								activeAttributes={ activeAttributes }
 								value={ value }
 								onChange={ onChange }
+								contentRef={ contentRef }
 							/>
 						) }
 					</Fragment>

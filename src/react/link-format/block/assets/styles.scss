@@ -39,7 +39,9 @@
 		padding: 0;
 	}
 
-	.block-editor-url-input__input {
+	input.block-editor-url-input__input,
+	/* WordPress 6.7 */
+	input.components-input-control__input {
 		font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif;
 		box-shadow: 0 0 0 transparent;
 		transition: box-shadow .1s linear;
@@ -55,8 +57,24 @@
 
 		&:focus {
 			border-color: var(--wp-admin-theme-color);
-			box-shadow: 0 0 0 1px var(--wp-admin-theme-color);
+			box-shadow: none;
 			outline: 2px solid transparent;
+		}
+	}
+
+	/* WordPress 6.7 */
+	input.components-input-control__input {
+		margin: 16px 16px 8px 16px;
+	}
+
+	/* WordPress 6.7 */
+	.components-input-control__backdrop {
+		border: none;
+		box-shadow: none;
+
+		&:focus {
+			border: none;
+			box-shadow: none;
 		}
 	}
 

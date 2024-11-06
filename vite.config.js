@@ -137,7 +137,7 @@ export default ({ mode }) => {
 			rollupOptions     : {
 				input  : getInputs(version),
 				output : {
-					hashCharacters : 'base36',
+					hashCharacters : 'hex',
 					dir            : `dist/${version}/assets/`,
 					assetFileNames : assetInfo => {
 						const images = [
