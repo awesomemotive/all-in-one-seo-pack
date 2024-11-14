@@ -170,8 +170,18 @@ class DetailsColumn {
 
 		// Add this column/post to the localized array.
 		global $wp_scripts;
+		if (
+			! is_object( $wp_scripts ) ||
+			! method_exists( $wp_scripts, 'get_data' ) ||
+			! method_exists( $wp_scripts, 'add_data' )
+		) {
+			return;
+		}
 
-		$data = $wp_scripts->get_data( 'aioseo/js/' . $this->scriptSlug, 'data' );
+		$data = null;
+		if ( is_object( $wp_scripts ) ) {
+			$data = $wp_scripts->get_data( 'aioseo/js/' . $this->scriptSlug, 'data' );
+		}
 
 		if ( ! is_array( $data ) ) {
 			$data = json_decode( str_replace( 'var aioseo = ', '', substr( $data, 0, -1 ) ), true );
@@ -228,8 +238,10 @@ class DetailsColumn {
 			'nonce'              => $nonce,
 			'title'              => $thePost->title,
 			'defaultTitle'       => aioseo()->meta->title->getPostTypeTitle( $postType ),
+			'showTitle'          => apply_filters( 'aioseo_details_column_post_show_title', true, $postId ),
 			'description'        => $thePost->description,
 			'defaultDescription' => aioseo()->meta->description->getPostTypeDescription( $postType ),
+			'showDescription'    => apply_filters( 'aioseo_details_column_post_show_description', true, $postId ),
 			'value'              => ! empty( $thePost->seo_score ) ? (int) $thePost->seo_score : 0,
 			'showMedia'          => false,
 			'isSpecialPage'      => aioseo()->helpers->isSpecialPage( $postId ),

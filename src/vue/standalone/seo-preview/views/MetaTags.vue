@@ -14,7 +14,7 @@
 						:href="item.value"
 						target="_blank"
 					>
-						{{ item.value }}
+						{{ decodeUrl(item.value) }}
 					</a>
 					<template v-else>{{ item.value }}</template>
 				</dd>
@@ -25,12 +25,22 @@
 
 <script>
 import { isUrl } from '@/vue/utils/helpers'
+import { useUrl } from '@/vue/composables/Url'
 
 import { __ } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
+	setup () {
+		const {
+			decodeUrl
+		} = useUrl()
+
+		return {
+			decodeUrl
+		}
+	},
 	computed : {
 		metaTags () {
 			const output = []

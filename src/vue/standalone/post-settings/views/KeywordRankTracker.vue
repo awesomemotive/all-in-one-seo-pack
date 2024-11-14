@@ -58,6 +58,8 @@ const isConnected = computed(() => searchStatisticsStore.isConnected && !searchS
 
 <style lang="scss">
 .keyword-rank-tracker-main {
+	color: $black;
+
 	&__body {
 		padding: 20px;
 

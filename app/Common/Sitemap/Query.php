@@ -296,13 +296,13 @@ class Query {
 	}
 
 	/**
-	 * Returns all eligble sitemap entries for a given taxonomy.
+	 * Returns all eligible sitemap entries for a given taxonomy.
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string $taxonomy       The taxonomy.
-	 * @param  array  $additionalArgs Any additional arguments for the term query.
-	 * @return array|int              The term objects or the term count.
+	 * @param  string    $taxonomy       The taxonomy.
+	 * @param  array     $additionalArgs Any additional arguments for the term query.
+	 * @return array|int                 The term objects or the term count.
 	 */
 	public function terms( $taxonomy, $additionalArgs = [] ) {
 		// Set defaults.
@@ -313,7 +313,7 @@ class Query {
 		foreach ( $additionalArgs as $name => $value ) {
 			$$name = esc_sql( $value );
 			if ( 'root' === $name && $value ) {
-				$fields = 't.term_id';
+				$fields = 't.term_id, tt.count';
 			}
 			if ( 'count' === $name && $value ) {
 				$fields = 'count(t.term_id) as total';
@@ -322,16 +322,28 @@ class Query {
 
 		$termRelationshipsTable = aioseo()->core->db->db->prefix . 'term_relationships';
 		$termTaxonomyTable      = aioseo()->core->db->db->prefix . 'term_taxonomy';
+
+		// Include all terms that have assigned posts or whose children have assigned posts.
 		$query = aioseo()->core->db
 			->start( aioseo()->core->db->db->terms . ' as t', true )
 			->select( $fields )
+			->leftJoin( 'term_taxonomy as tt', '`tt`.`term_id` = `t`.`term_id`' )
 			->whereRaw( "
 			( `t`.`term_id` IN
 				(
 					SELECT `tt`.`term_id`
 					FROM `$termTaxonomyTable` as tt
 					WHERE `tt`.`taxonomy` = '$taxonomy'
-					AND `tt`.`count` > 0
+					AND 
+						(
+							`tt`.`count` > 0 OR
+							EXISTS (
+								SELECT 1
+								FROM `wp_term_taxonomy` as tt2
+								WHERE `tt2`.`parent` = `tt`.`term_id` 
+								AND `tt2`.`count` > 0
+							)
+						)
 				)
 			)" );
 

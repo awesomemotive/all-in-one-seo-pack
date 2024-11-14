@@ -349,7 +349,6 @@ namespace AIOSEO\Plugin {
 		public function loadInit() {
 			$this->settings = new Common\Utils\VueSettings( '_aioseo_settings' );
 			$this->sitemap->init();
-			$this->sitemap->ping->init();
 
 			$this->badBotBlocker->init();
 

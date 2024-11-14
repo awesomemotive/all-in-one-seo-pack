@@ -134,15 +134,27 @@ import {
 } from '@/vue/stores'
 
 import { stripTags, softSanitizeHtml } from '@/vue/utils/strings'
+import { escapeRegex } from '@/vue/utils/regex'
 import { getText, truncate } from '@/vue/utils/html'
 import { CURRENCY_LIST } from '@/vue/plugins/constants'
 import SvgCaret from '@/vue/components/common/svg/Caret'
+
+import { useUrl } from '@/vue/composables/Url'
 
 import { __, _n, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
+	setup () {
+		const {
+			decodeUrl
+		} = useUrl()
+
+		return {
+			decodeUrl
+		}
+	},
 	components : {
 		SvgCaret
 	},
@@ -233,8 +245,9 @@ export default {
 		urlBreadcrumbs () {
 			try {
 				const url = new URL(this.url)
+				const decodedPathname = this.decodeUrl(url.pathname)
 
-				let out = url.hostname + url.pathname.replace(/\/$/, '')
+				let out = url.hostname + decodedPathname.replace(/\/$/, '')
 				out = out.substring(0, 50).trim() + (50 < out.length ? '...' : '')
 
 				return `${url.protocol}//` + out.replaceAll('/', ' &rsaquo; ')
@@ -265,7 +278,7 @@ export default {
 				return output
 			}
 
-			const words = this.focusKeyphrase.split(' ')
+			const words = this.focusKeyphrase.split(' ').map(escapeRegex)
 			const regex = new RegExp('\\b' + words.join('\\b|\\b') + '\\b', 'gi')
 			return output.replace(regex, '<strong>$&</strong>')
 		}

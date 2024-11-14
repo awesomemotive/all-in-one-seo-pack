@@ -86,7 +86,7 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 		errors                  : {
 			crud : null
 		},
-		favoriteGroup : []
+		favoriteGroup : {}
 	}),
 	getters : {
 		range () {

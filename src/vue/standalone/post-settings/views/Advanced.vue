@@ -17,12 +17,23 @@
 		>
 			<template #content>
 				<base-input
+					ref="canonicalUrlInput"
 					type="text"
 					size="medium"
 					:placeholder="strings.placeholder"
 					v-model="postEditorStore.currentPost.canonicalUrl"
+					@input="inputEventDecodeUrl"
 					@update:modelValue="postEditorStore.isDirty = true"
 				/>
+
+				<core-alert
+					v-if="error"
+					class="cannonical-url-error"
+					type="red"
+					size="small">
+					{{ strings.validUrl }}
+				</core-alert>
+
 			</template>
 		</core-settings-row>
 
@@ -96,12 +107,15 @@ import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	useOptionsStore,
-	usePostEditorStore
+	usePostEditorStore,
+	useRootStore
 } from '@/vue/stores'
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreSingleRobotsMeta from '@/vue/components/common/core/SingleRobotsMeta'
+
+import { useUrl } from '@/vue/composables/Url'
 
 import { __, sprintf } from '@/vue/plugins/translations'
 
@@ -109,10 +123,16 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	setup () {
+		const {
+			decodeUrl
+		} = useUrl()
+
 		return {
 			licenseStore    : useLicenseStore(),
 			optionsStore    : useOptionsStore(),
-			postEditorStore : usePostEditorStore()
+			postEditorStore : usePostEditorStore(),
+			rootStore      	: useRootStore(),
+			decodeUrl
 		}
 	},
 	components : {
@@ -143,6 +163,7 @@ export default {
 				robotsSetting           : __('Robots Setting', td),
 				robotsToggle            : __('Use Default Settings', td),
 				canonicalUrl            : __('Canonical URL', td),
+				validUrl               	: __('Please enter a valid URL.', td),
 				placeholder             : __('Enter a URL to change the default Canonical URL', td),
 				priorityScore           : __('Priority Score', td),
 				priority                : __('Priority', td),
@@ -155,7 +176,8 @@ export default {
 				),
 				keywords       : __('Keywords', td),
 				tagPlaceholder : __('Press enter to create a keyword', td)
-			}
+			},
+			error : false
 		}
 	},
 	computed : {
@@ -181,6 +203,11 @@ export default {
 		saveFrequency (value) {
 			this.postEditorStore.currentPost.frequency   = value
 			this.postEditorStore.isDirty = true
+		},
+		inputEventDecodeUrl (event) {
+			const value = event.target.value
+			this.postEditorStore.currentPost.canonicalUrl = ''
+			this.postEditorStore.currentPost.canonicalUrl = this.decodeUrl(value)
 		}
 	}
 }
@@ -192,6 +219,9 @@ export default {
 		display: inline-flex;
 
 		margin-top: 12px;
+	}
+	.cannonical-url-error {
+		margin: 8px 0;
 	}
 	.selectbox-row {
 		display: flex;

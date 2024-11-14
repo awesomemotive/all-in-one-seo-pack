@@ -337,16 +337,16 @@ export default {
 		async sanitizeRecipients () {
 			await this.$nextTick()
 
-			this.optionsStore.options.advanced.emailSummary.recipients = this.optionsStore.options.advanced.emailSummary.recipients.filter(r => r.email)
+			const sanitized = []
 
-			this.optionsStore.options.advanced.emailSummary.recipients.forEach((recipient, index) => {
-				// Remove duplicate emails.
-				for (let i = index + 1; i < this.optionsStore.options.advanced.emailSummary.recipients.length; i++) {
-					if (recipient.email === this.optionsStore.options.advanced.emailSummary.recipients[i]?.email) {
-						this.deleteRecipient(i)
-					}
+			// Remove duplicate emails with the same frequency.
+			this.optionsStore.options.advanced.emailSummary.recipients.forEach(recipient => {
+				if (!sanitized.find(s => s.email === recipient.email && s.frequency === recipient.frequency)) {
+					sanitized.push(recipient)
 				}
 			})
+
+			this.optionsStore.options.advanced.emailSummary.recipients = sanitized.filter(s => s.email)
 		},
 		async updateRecipient (recipient, index, key, value) {
 			await this.$nextTick()

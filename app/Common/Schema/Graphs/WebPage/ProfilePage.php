@@ -69,6 +69,19 @@ class ProfilePage extends WebPage {
 
 		] );
 
+		// Add BuddyPress specific data
+		if ( aioseo()->schema->helpers->checkBuddyPressPage() ) {
+			// Ensure 'mainEntity' exists and populate it with the correct details.
+			if ( ! isset( $data['mainEntity'] ) ) {
+				$data['mainEntity'] = [];
+			}
+			$data['mainEntity']['@type'] = 'Person';
+			$data['mainEntity']['name']  = get_the_title();
+			if ( function_exists( 'bp_get_displayed_user_link' ) && bp_get_displayed_user_link() ) {
+				$data['mainEntity']['url'] = bp_get_displayed_user_link();
+			}
+		}
+
 		return $data;
 	}
 }

@@ -145,6 +145,7 @@ class SetupWizard {
 	public function enqueueScripts() {
 		// We don't want any plugin adding notices to our screens. Let's clear them out here.
 		remove_all_actions( 'admin_notices' );
+		remove_all_actions( 'network_admin_notices' );
 		remove_all_actions( 'all_admin_notices' );
 
 		aioseo()->core->assets->load( 'src/vue/standalone/setup-wizard/main.js', [], aioseo()->helpers->getVueData( 'setup-wizard' ) );

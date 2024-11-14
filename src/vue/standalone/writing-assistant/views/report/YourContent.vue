@@ -2,7 +2,7 @@
 	<div class="aioseo-writing-assistant__your-content">
 		<div class="aioseo-writing-assistant__your-content-title">{{ strings.yourContent }}:</div>
 		<div>
-			<GradeRound :grade="writingAssistantStore.getContentAnalysis.wordCount ? writingAssistantStore.getContentAnalysis.grade : '-'" />
+			<GradeRound :grade="writingAssistantStore.getContentAnalysis?.wordCount ? writingAssistantStore.getContentAnalysis.grade : '-'" />
 		</div>
 		<div class="aioseo-writing-assistant__your-content-stats">
 			<word-count :summary="writingAssistantStore.getContentAnalysis"/>

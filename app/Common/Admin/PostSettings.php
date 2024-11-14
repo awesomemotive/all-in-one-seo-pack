@@ -321,8 +321,8 @@ class PostSettings {
 					COUNT(*) as total,
 					COALESCE( SUM(CASE WHEN ap.keyphrases = '' OR ap.keyphrases IS NULL OR ap.keyphrases LIKE %s THEN 1 ELSE 0 END), 0) as withoutFocusKeyphrase,
 					COALESCE( SUM(CASE WHEN ap.seo_score < 50 AND NOT (ap.keyphrases = '' OR ap.keyphrases IS NULL OR ap.keyphrases LIKE %s) THEN 1 ELSE 0 END), 0) as needsImprovement,
-					COALESCE( SUM(CASE WHEN ap.seo_score BETWEEN 50 AND 80 AND NOT (ap.keyphrases = '' OR ap.keyphrases IS NULL OR ap.keyphrases LIKE %s) THEN 1 ELSE 0 END), 0) as okay,
-					COALESCE( SUM(CASE WHEN ap.seo_score > 80 AND NOT (ap.keyphrases = '' OR ap.keyphrases IS NULL OR ap.keyphrases LIKE %s) THEN 1 ELSE 0 END), 0) as good
+					COALESCE( SUM(CASE WHEN ap.seo_score BETWEEN 50 AND 79 AND NOT (ap.keyphrases = '' OR ap.keyphrases IS NULL OR ap.keyphrases LIKE %s) THEN 1 ELSE 0 END), 0) as okay,
+					COALESCE( SUM(CASE WHEN ap.seo_score >= 80 AND NOT (ap.keyphrases = '' OR ap.keyphrases IS NULL OR ap.keyphrases LIKE %s) THEN 1 ELSE 0 END), 0) as good
 				FROM {$wpdb->posts} as p
 				LEFT JOIN {$wpdb->prefix}aioseo_posts as ap ON ap.post_id = p.ID
 				WHERE p.post_status = 'publish'

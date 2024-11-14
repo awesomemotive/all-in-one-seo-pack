@@ -88,7 +88,6 @@ class Sitemap extends SitemapAbstract {
 		$this->query         = new Query();
 		$this->file          = new File();
 		$this->image         = new Image\Image();
-		$this->ping          = new Ping();
 		$this->priority      = new Priority();
 		$this->output        = new Output();
 		$this->helpers       = new Helpers();

@@ -70,6 +70,7 @@ import PostsTable from '../partials/PostsTable'
 import SeoStatisticsOverview from '../partials/SeoStatisticsOverview'
 
 import { __ } from '@/vue/plugins/translations'
+import { removeParam } from '@/vue/utils/params'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -131,8 +132,13 @@ export default {
 		}
 	},
 	beforeMount () {
-		if (Object.keys(this.$route?.query).includes('tab')) {
-			switch (this.$route.query.tab) {
+		const params = new URLSearchParams(window.location?.search || '') || {}
+		if (
+			params.has('table-filter') ||
+			this.$route?.query?.tab
+		) {
+			const tableFilter = params.get('table-filter') || this.$route.query.tab
+			switch (tableFilter) {
 				case 'TopLosingPages':
 					this.initialTableFilter = 'topLosing'
 					break
@@ -142,6 +148,10 @@ export default {
 				default:
 					this.initialTableFilter = 'all'
 			}
+
+			this.$route.query['table-filter'] = undefined
+
+			removeParam('table-filter')
 		}
 	},
 	mounted () {

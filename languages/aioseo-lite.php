@@ -775,12 +775,16 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/pages/search-appearance/views/lite/image-seo/Blur.vue:95
 	__( 'All letters are converted to lower case (small) letters.', 'all-in-one-seo-pack' ),
 
+	// Reference: /src/vue/components/common/core/PostStatusOptions.vue:46
+	__( 'All post statuses are set to noindex or your site does not have any post statuses registered that are supported by this feature.', 'all-in-one-seo-pack' ),
+
 	// Reference: /src/vue/components/common/core/PostTypeOptions.vue:59
 	__( 'All post types are set to noindex or your site does not have any post types registered that are supported by this feature.', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/pages/tools/views/partials/ImportOthers.vue:48
 	__( 'All Settings', 'all-in-one-seo-pack' ),
 
+	// Reference: /src/vue/components/common/core/PostStatusOptions.vue:47
 	// Reference: /src/vue/components/common/core/PostTypeOptions.vue:60
 	__( 'All taxonomies are set to noindex or your site does not have any taxonomies registered that are supported by this feature.', 'all-in-one-seo-pack' ),
 
@@ -2235,6 +2239,9 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/standalone/writing-assistant/views/partials/keyword/Examples.vue:22
 	__( 'desktop', 'all-in-one-seo-pack' ),
 
+	// Reference: /src/vue/pages/search-statistics/views/partials/post-detail/SpeedTest.vue:47
+	__( 'Desktop', 'all-in-one-seo-pack' ),
+
 	// Reference: /src/vue/composables/IndexStatus.js:84
 	__( 'Desktop user agent', 'all-in-one-seo-pack' ),
 
@@ -3363,9 +3370,6 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/standalone/writing-assistant/views/report/Overview.vue:29
 	__( 'Grade Summary', 'all-in-one-seo-pack' ),
 
-	// Reference: /src/vue/pages/about/views/lite/LiteVsPro.vue:132
-	__( 'Granular control over the template for each post type, taxonomy and archive.', 'all-in-one-seo-pack' ),
-
 	// Reference: /src/vue/pages/settings/views/lite/AccessControl.vue:31
 	__( 'Granular controls per role', 'all-in-one-seo-pack' ),
 
@@ -3428,6 +3432,9 @@ $generated_i18n_strings = [
 
 	// Reference: /src/vue/standalone/writing-assistant/views/sidebar/OptimizationWizard.vue:55
 	__( 'Heading Presence (Lowest)', 'all-in-one-seo-pack' ),
+
+	// Reference: /src/vue/pages/search-statistics/views/partials/post-detail/SeoScores.vue:28
+	__( 'Headline Analysis', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/pages/seo-analysis/router/paths.js:35
 	// Reference: /src/vue/pages/settings/views/Advanced.vue:54
@@ -4157,6 +4164,7 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/pages/settings/views/Breadcrumbs.vue:96
 	__( 'Label used for homepage link (first item) in breadcrumbs.', 'all-in-one-seo-pack' ),
 
+	// Reference: /src/vue/components/common/core/PostStatusOptions.vue:42
 	// Reference: /src/vue/components/common/core/PostTypeOptions.vue:55
 	// Reference: /src/vue/components/common/html-sitemap/IncludedObjects.vue:42
 	// Reference: /src/vue/pages/search-appearance/views/ContentTypes.vue:43
@@ -4887,6 +4895,9 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/pages/search-appearance/views/Advanced.vue:77
 	__( 'No Pagination for Canonical URLs', 'all-in-one-seo-pack' ),
 
+	// Reference: /src/vue/components/common/core/PostStatusOptions.vue:44
+	__( 'No post statuses available.', 'all-in-one-seo-pack' ),
+
 	// Reference: /src/vue/components/common/core/PostTypeOptions.vue:57
 	__( 'No post types available.', 'all-in-one-seo-pack' ),
 
@@ -4907,6 +4918,7 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/components/common/core/SingleRobotsMeta.vue:36
 	__( 'No Snippet', 'all-in-one-seo-pack' ),
 
+	// Reference: /src/vue/components/common/core/PostStatusOptions.vue:45
 	// Reference: /src/vue/components/common/core/PostTypeOptions.vue:58
 	__( 'No taxonomies available.', 'all-in-one-seo-pack' ),
 
@@ -5667,9 +5679,6 @@ $generated_i18n_strings = [
 	// Translators: 1 - "PRO", 2 - "Learn more".
 	__( 'Priority Score is a %1$s feature. %2$s', 'all-in-one-seo-pack' ),
 
-	// Reference: /src/vue/pages/about/views/lite/LiteVsPro.vue:232
-	__( 'Priority Support', 'all-in-one-seo-pack' ),
-
 	// Reference: /src/vue/stores/standalones/WritingAssistantStore.js:126
 	__( 'processing keyword', 'all-in-one-seo-pack' ),
 
@@ -5918,13 +5927,6 @@ $generated_i18n_strings = [
 
 	// Reference: /src/vue/standalone/blocks/table-of-contents/vue/App.vue:43
 	__( 'Reorder', 'all-in-one-seo-pack' ),
-
-	// Reference: /src/vue/standalone/blocks/table-of-contents/vue/lite/Reorder.vue:29
-	// Translators: "PRO".
-	__( 'Reordering Headings is a %1$s Feature', 'all-in-one-seo-pack' ),
-
-	// Reference: /src/vue/standalone/blocks/table-of-contents/vue/lite/Reorder.vue:32
-	__( 'Reordering the headings in the Table of Contents block is a feature that can only be used by Pro users. Upgrade to Pro to unlock this advanced functionality.', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/pages/settings/views/WritingAssistant.vue:54
 	__( 'Report Defaults', 'all-in-one-seo-pack' ),

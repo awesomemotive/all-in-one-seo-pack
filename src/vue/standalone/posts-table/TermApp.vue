@@ -7,7 +7,7 @@
 			}"
 		>
 			<div>
-				<div>
+				<div v-if="showTitle">
 					<core-tooltip class="aioseo-details-column__tooltip">
 						<div class="edit-row edit-title">
 							<strong>{{ strings.title }} </strong>
@@ -64,7 +64,7 @@
 					</base-button>
 				</div>
 
-				<div>
+				<div v-if="showDescription">
 					<core-tooltip class="aioseo-details-column__tooltip">
 						<div class="edit-row edit-description">
 							<strong>{{ strings.description }}</strong>
@@ -179,6 +179,8 @@ export default {
 			showEditDescription : false,
 			showTruSeo          : false,
 			termLoading         : false,
+			showTitle           : true,
+			showDescription     : true,
 			strings             : merge(this.composableStrings, {
 				title          : __('Title', td),
 				description    : __('Description', td),
@@ -207,6 +209,8 @@ export default {
 
 					this.term.titleParsed       = response.body.title
 					this.term.descriptionParsed = response.body.description
+					this.showTitle              = response.body.showTitle
+					this.showDescription        = response.body.showDescription
 				})
 				.catch(error => {
 					console.error(`Unable to update term with ID ${this.term.id}: ${error}`)
@@ -234,6 +238,8 @@ export default {
 		this.titleParsed       = this.term.titleParsed
 		this.termDescription   = this.term.description
 		this.descriptionParsed = this.term.descriptionParsed
+		this.showTitle         = this.term.showTitle
+		this.showDescription   = this.term.showDescription
 
 		// If the term data changed, we need to parse the title and description again.
 		// This can happen after using the quick-edit feature.

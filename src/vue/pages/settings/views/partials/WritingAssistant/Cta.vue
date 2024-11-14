@@ -96,7 +96,6 @@ import links from '@/vue/utils/links.js'
 
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreCard from '@/vue/components/common/core/Card'
-import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import Cta from '@/vue/components/common/cta/Index'
 import BaseSelect from '@/vue/components/common/base/Select'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'

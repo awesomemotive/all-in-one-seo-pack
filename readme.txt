@@ -1,10 +1,10 @@
 === All in One SEO – Powerful SEO Plugin to Boost SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
-Tested up to: 6.6.2
+Tested up to: 6.7
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.7.4.1
+Stable tag: 4.7.5
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,6 +226,31 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.7.5**
+
+* Updated: XML sitemaps now include parent terms without posts if they have any children with posts.
+* Updated: Prevent incorrect parsing of dates when importing a CSV file for additional sitemap pages.
+* Updated: Added "View in Google" link for keyword rows in Search Statistics.
+* Updated: Removed sitemap ping on post publish due to Google's deprecation of the feature.
+* Updated: Various improvements and bug fixes for SEO Email Reports.
+* Updated: Various improvements and bug fixes for Keyword Rank Tracker.
+* Updated: Added filter to show/hide title and description in AIOSEO Details column for post/term pages.
+* Updated: Added filters to enable/disable hyperlinks for phone numbers and email addresses in the Local SEO business info shortcode/block.
+* Updated: Semrush keyword integration now remembers the last country you've selected.
+* Fixed: Conflict with Learndash Notifications plugin.
+* Fixed: Conflict with Admin Notices Manager plugin.
+* Fixed: AIOSEO Details column in Media Library for Image SEO addon no longer highlights irrelevant tags and updates title correctly.
+* Fixed: Local SEO Map shortcode now renders correctly inside Elementor.
+* Fixed: Multilingual sitemap does not use correct language code from WPML in rare cases.
+* Fixed: Breadcrumb block now renders correctly when text contains ">" character.
+* Fixed: TruSEO generates different results/score when switching between Visual and Code editors.
+* Fixed: Consecutive sentence errors highlighting different text in Block Editor and Classic Editor.
+* Fixed: Link format UI breaking for older WordPress versions from 5.3 to 5.9.
+* Fixed: Priority score not updating for SEO Revisions when the user applies a score of 0.
+* Fixed: Searching for non-English strings in redirects/404 log tables returned no results.
+* Fixed: BuddyPress schema markup causing an error in Google Search Console.
+* Fixed: PHP error due to unpacking an array with string keys.
+
 **New in Version 4.7.4.2**
 
 * Updated: Compatibility with WordPress 6.7.
@@ -384,6 +409,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.7.4.1 =
+= 4.7.5 =
 
 This update adds major improvements and bug fixes.

@@ -59,13 +59,16 @@ function InlineLinkUI ({
 	// Set the selected text from the value string.
 	const selectedText = value.text.substring(value.start, value.end)
 
-	const anchor = useAnchor( {
-		editableContentElement: contentRef.current,
-		settings: {
-			...linkSettings,
-			isActive,
-		},
-	} )
+	let anchor = null
+	if (useAnchor) {
+		anchor = useAnchor({
+			editableContentElement : contentRef.current,
+			settings               : {
+				...linkSettings,
+				isActive
+			}
+		})
+	}
 
 	const anchorRef = useMemo(() => {
 		const selection = window.getSelection()
@@ -180,26 +183,27 @@ function InlineLinkUI ({
 		}
 	}
 
-	let anchorValue = undefined
-	if ( versionCompare(window.aioseo.wpVersion, '6.1', '>=') ) {
+	// eslint-disable-next-line one-var
+	let anchorValue
+	if (versionCompare(window.aioseo.wpVersion, '6.1', '>=')) {
 		anchorValue = anchorRef
 	}
-	if ( versionCompare(window.aioseo.wpVersion, '6.6', '>=') ) {
+	if (versionCompare(window.aioseo.wpVersion, '6.6', '>=')) {
 		anchorValue = anchor
 	}
 
 	return (
 		<Popover
-			key={ mountingKey }
-			anchor={ anchorValue }
-			focusOnMount={ addingLink ? 'firstElement' : false }
-			onClose={ stopAddingLink }
+			key={mountingKey}
+			anchor={anchorValue}
+			focusOnMount={addingLink ? 'firstElement' : false}
+			onClose={stopAddingLink}
 		>
 			<LinkControl
-				value={ linkValue }
-				onChange={ onChangeLink }
-				forceIsEditingLink={ addingLink }
-				selectedText={ selectedText }
+				value={linkValue}
+				onChange={onChangeLink}
+				forceIsEditingLink={addingLink}
+				selectedText={selectedText}
 			/>
 		</Popover>
 	)

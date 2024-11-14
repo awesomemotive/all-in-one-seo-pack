@@ -27,6 +27,8 @@ class WritingAssistant {
 	/**
 	 * Deletes the writing assistant post.
 	 *
+	 * @since 4.7.4
+	 *
 	 * @param  int  $postId The post id.
 	 * @return void
 	 */

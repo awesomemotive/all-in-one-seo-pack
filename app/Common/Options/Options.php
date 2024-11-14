@@ -731,11 +731,17 @@ TEMPLATE
 				continue;
 			}
 
-			// Remove duplicate emails.
-			$emails = array_column( $options['advanced']['emailSummary']['recipients'], 'email' );
-			$emails = array_count_values( $emails );
-			if ( $emails[ $recipient['email'] ] > 1 ) {
-				unset( $options['advanced']['emailSummary']['recipients'][ $k ] );
+			// Remove duplicate emails with the same frequency.
+			foreach ( $options['advanced']['emailSummary']['recipients'] as $k2 => $recipient2 ) {
+				if (
+					$k !== $k2 &&
+					$recipient['email'] === $recipient2['email'] &&
+					$recipient['frequency'] === $recipient2['frequency']
+				) {
+					unset( $options['advanced']['emailSummary']['recipients'][ $k ] );
+
+					break;
+				}
 			}
 		}
 	}

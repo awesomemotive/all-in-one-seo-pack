@@ -149,14 +149,18 @@ class Content {
 		$result = [
 			'winning' => [
 				'url'   => add_query_arg( [
-					'aioseo-scroll' => 'aioseo-search-statistics-post-table'
-				], $this->searchStatisticsUrl . '#/seo-statistics?tab=TopWinningPages' ),
+					'aioseo-scroll' => 'aioseo-search-statistics-post-table',
+					'aioseo-tab'    => 'seo-statistics',
+					'table-filter'  => 'TopWinningPages'
+				], $this->searchStatisticsUrl ),
 				'items' => []
 			],
 			'losing'  => [
 				'url'   => add_query_arg( [
-					'aioseo-scroll' => 'aioseo-search-statistics-post-table'
-				], $this->searchStatisticsUrl . '#/seo-statistics?tab=TopLosingPages' ),
+					'aioseo-scroll' => 'aioseo-search-statistics-post-table',
+					'aioseo-tab'    => 'seo-statistics',
+					'table-filter'  => 'TopLosingPages'
+				], $this->searchStatisticsUrl ),
 				'items' => []
 			]
 		];
@@ -235,11 +239,16 @@ class Content {
 			}
 
 			if ( false !== strpos( $message, '%1' ) ) {
-				$percentageDiff = 0 === absint( $currentData['impressions'] ) ? '100%' : round( ( absint( $intDifference ) / absint( $currentData['impressions'] ) ) * 100 ) . '%';
+				$percentageDiff = 0 === absint( $currentData['impressions'] )
+					? 100
+					: round( ( absint( $intDifference ) / absint( $currentData['impressions'] ) ) * 100, 2 );
+				$percentageDiff = false !== strpos( $percentageDiff, '.' )
+					? number_format_i18n( $percentageDiff, count( explode( '.', $percentageDiff ) ) )
+					: $percentageDiff;
 				$message        = sprintf(
 					$message,
 					'<strong>' . aioseo()->helpers->compactNumber( absint( $intDifference ) ) . '</strong>',
-					'<strong>' . $percentageDiff . '</strong>'
+					'<strong>' . $percentageDiff . '%</strong>'
 				);
 			}
 
@@ -266,11 +275,16 @@ class Content {
 			}
 
 			if ( false !== strpos( $message, '%1' ) ) {
-				$percentageDiff = 0 === absint( $currentData['clicks'] ) ? '100%' : round( ( absint( $intDifference ) / absint( $currentData['clicks'] ) ) * 100 ) . '%';
+				$percentageDiff = 0 === absint( $currentData['clicks'] )
+					? 100
+					: round( ( absint( $intDifference ) / absint( $currentData['clicks'] ) ) * 100, 2 );
+				$percentageDiff = false !== strpos( $percentageDiff, '.' )
+					? number_format_i18n( $percentageDiff, count( explode( '.', $percentageDiff ) ) )
+					: $percentageDiff;
 				$message        = sprintf(
 					$message,
 					'<strong>' . aioseo()->helpers->compactNumber( absint( $intDifference ) ) . '</strong>',
-					'<strong>' . $percentageDiff . '</strong>'
+					'<strong>' . $percentageDiff . '%</strong>'
 				);
 			}
 
@@ -326,11 +340,16 @@ class Content {
 			}
 
 			if ( false !== strpos( $message, '%1' ) ) {
-				$percentageDiff = 0 === absint( $currentData['keywords'] ) ? '100%' : round( ( absint( $intDifference ) / absint( $currentData['keywords'] ) ) * 100 ) . '%';
+				$percentageDiff = 0 === absint( $currentData['keywords'] )
+					? 100
+					: round( ( absint( $intDifference ) / absint( $currentData['keywords'] ) ) * 100, 2 );
+				$percentageDiff = false !== strpos( $percentageDiff, '.' )
+					? number_format_i18n( $percentageDiff, count( explode( '.', $percentageDiff ) ) )
+					: $percentageDiff;
 				$message        = sprintf(
 					$message,
 					'<strong>' . aioseo()->helpers->compactNumber( absint( $intDifference ) ) . '</strong>',
-					'<strong>' . $percentageDiff . '</strong>'
+					'<strong>' . $percentageDiff . '%</strong>'
 				);
 			}
 
@@ -360,14 +379,20 @@ class Content {
 		$result = [
 			'winning' => [
 				'url'   => add_query_arg( [
-					'aioseo-scroll' => 'aioseo-search-statistics-keywords-table'
-				], $this->searchStatisticsUrl . '#/keyword-rank-tracker?tab=AllKeywords&table-filter=TopWinningKeywords' ),
+					'aioseo-scroll' => 'aioseo-search-statistics-keywords-table',
+					'aioseo-tab'    => 'keyword-rank-tracker',
+					'tab'           => 'AllKeywords',
+					'table-filter'  => 'TopWinningKeywords'
+				], $this->searchStatisticsUrl ),
 				'items' => []
 			],
 			'losing'  => [
 				'url'   => add_query_arg( [
-					'aioseo-scroll' => 'aioseo-search-statistics-keywords-table'
-				], $this->searchStatisticsUrl . '#/keyword-rank-tracker?tab=AllKeywords&table-filter=TopLosingKeywords' ),
+					'aioseo-scroll' => 'aioseo-search-statistics-keywords-table',
+					'aioseo-tab'    => 'keyword-rank-tracker',
+					'tab'           => 'AllKeywords',
+					'table-filter'  => 'TopLosingKeywords'
+				], $this->searchStatisticsUrl ),
 				'items' => []
 			]
 		];
@@ -404,8 +429,9 @@ class Content {
 	 */
 	public function getAioPosts() {
 		$result = [
-			'publish' => [],
-			'cta'     => [
+			'publish'  => [],
+			'optimize' => [],
+			'cta'      => [
 				'text' => esc_html__( 'Create New Post', 'all-in-one-seo-pack' ),
 				'url'  => admin_url( 'post-new.php' )
 			],
@@ -454,7 +480,10 @@ class Content {
 					'tru_seo'       => aioseo()->helpers->isTruSeoEligible( $postId ) ? $this->parseSeoScore( $row['seoScore'] ?? 0 ) : [],
 					'decay_percent' => $this->parseDifference( $row['decayPercent'] ?? '', true ),
 					'issues'        => [
-						'url'   => $this->searchStatisticsUrl . "#/post-detail?postId=$postId",
+						'url'   => add_query_arg( [
+							'aioseo-tab' => 'post-detail',
+							'post'       => $postId
+						], $this->searchStatisticsUrl ),
 						'items' => []
 					]
 				];
@@ -466,7 +495,9 @@ class Content {
 			}
 
 			$result['optimize'] = [
-				'url'          => $this->searchStatisticsUrl . '#/content-rankings',
+				'url'          => add_query_arg( [
+					'aioseo-tab' => 'content-rankings',
+				], $this->searchStatisticsUrl ),
 				'items'        => $items,
 				'show_tru_seo' => ! empty( array_filter( array_column( $items, 'tru_seo' ) ) ),
 			];

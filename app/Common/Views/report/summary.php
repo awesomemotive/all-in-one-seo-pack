@@ -902,6 +902,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 					<?php } ?>
 
+					<?php if ( empty( $posts['publish']['items'] ) && empty( $posts['optimize']['items'] ) ) { ?>
+						<div style="font-size: 16px; font-weight: 400; text-align: center;">
+							<?php echo esc_html__( 'It seems there is no content yet to be displayed.', 'all-in-one-seo-pack' ) ?>
+						</div>
+					<?php } ?>
+
 					<div style="margin-top: 20px; text-align: center;">
 						<a
 								href="<?php echo esc_attr( $posts['cta']['url'] ); ?>"
@@ -1103,7 +1109,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 										style="border: none; box-sizing: border-box; display: inline-block; font-size: 14px; height: auto; line-height: 1; max-width: 100%; text-decoration: none; vertical-align: middle;"
 										width="82"
 										height="17"
-										src="https://static.aioseo.io/report/ste/text-logo.jpg"
+										src="https://static.aioseo.io/report/ste/text-logo.png"
 										alt="<?php echo esc_attr( AIOSEO_PLUGIN_SHORT_NAME ) ?>"
 								/>
 							</a>

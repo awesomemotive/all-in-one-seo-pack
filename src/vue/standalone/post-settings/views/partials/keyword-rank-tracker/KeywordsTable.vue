@@ -119,9 +119,8 @@ const keywordRankTrackerStore = useKeywordRankTrackerStore()
 const rootStore               = useRootStore()
 const tableId                 = 'keyword-rank-tracker-keywords-table'
 const strings                 = {
-	openInKeywordRankTracker : __('Open in Keyword Rank Tracker', td),
-	position                 : __('Position', td),
-	openInKrt                : __('Open in Keyword Rank Tracker', td)
+	position  : __('Position', td),
+	openInKrt : __('Open in Keyword Rank Tracker', td)
 }
 const tableBulkOptions        = [
 	{
@@ -254,9 +253,14 @@ const toggleTracking = async (row, index) => {
 <style lang="scss">
 #keyword-rank-tracker-keywords-table {
 	table {
+		th,
 		td {
-			position: relative;
 			vertical-align: middle;
+		}
+
+		td {
+			border: none;
+			position: relative;
 
 			&.tracking {
 				line-height: 1;
@@ -267,11 +271,14 @@ const toggleTracking = async (row, index) => {
 	.btn-view {
 		.aioseo-tooltip {
 			margin: 0;
+
+			.popper {
+				width: 200px;
+			}
 		}
 
 		a,
 		svg {
-			margin-top: 2px;
 			color: $black2;
 			height: 17px;
 			width: 17px;

@@ -58,7 +58,7 @@
 
 			<div>
 				<core-tooltip
-					v-if="allowed('aioseo_page_general_settings')"
+					v-if="allowed('aioseo_page_general_settings') && post.showTitle"
 					class="aioseo-details-column__tooltip"
 					:disabled="showEditTitle"
 				>
@@ -119,7 +119,7 @@
 
 			<div>
 				<core-tooltip
-					v-if="allowed('aioseo_page_general_settings')"
+					v-if="allowed('aioseo_page_general_settings') && post.showDescription"
 					class="aioseo-details-column__tooltip"
 					:disabled="showEditDescription"
 				>
@@ -221,10 +221,10 @@
 					v-model="imageTitle"
 					:line-numbers="false"
 					single
-					tags-context="attachmentTitle"
+					tags-context="imageSeoTitleColumn"
 					defaultMenuOrientation="bottom"
 					tagsDescription=''
-					:default-tags="[ 'image_title' ]"
+					:default-tags="[]"
 				/>
 
 				<base-button
@@ -238,7 +238,7 @@
 				<base-button
 					type="blue"
 					size="small"
-					@click.prevent="saveImage"
+					@click.prevent="saveColumn"
 				>
 					{{ strings.saveChanges }}
 				</base-button>
@@ -283,10 +283,10 @@
 					v-model="imageAltTag"
 					:line-numbers="false"
 					single
-					tags-context="attachmentDescription"
+					tags-context="imageSeoAltColumn"
 					defaultMenuOrientation="bottom"
 					tagsDescription=''
-					:default-tags="[ 'alt_tag' ]"
+					:default-tags="[]"
 				/>
 
 				<base-button
@@ -300,7 +300,7 @@
 				<base-button
 					type="blue"
 					size="small"
-					@click.prevent="saveImage"
+					@click.prevent="saveColumn"
 				>
 					{{ strings.saveChanges }}
 				</base-button>
@@ -464,13 +464,14 @@ export default {
 					this.postLoading = false
 				})
 		},
-		saveImage () {
+		saveColumn () {
 			this.showEditImageTitle  = false
 			this.showEditImageAltTag = false
 			this.post.title          = this.title
 			this.post.description    = this.postDescription
 			this.post.imageTitle     = this.imageTitle
 			this.post.imageAltTag    = this.imageAltTag
+
 			http.post(links.restUrl('posts-list/update-details-column'))
 				.send({
 					postId      : this.post.id,
@@ -480,7 +481,9 @@ export default {
 					imageTitle  : this.post.imageTitle,
 					imageAltTag : this.post.imageAltTag
 				})
-				.then(() => {})
+				.then(() => {
+					this.updatePostTitle(this.post.id, this.post.imageTitle)
+				})
 				.catch(error => {
 					console.error(`Unable to update attachment with ID ${this.post.id}: ${error}`)
 				})

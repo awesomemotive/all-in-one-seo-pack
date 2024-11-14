@@ -43,7 +43,9 @@ class SeoBoost {
 	public function __construct() {
 		$this->service = new Service();
 
-		$returnParam = isset( $_GET['aioseo-writing-assistant'] ) ? sanitize_text_field( wp_unslash( $_GET['aioseo-writing-assistant'] ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$returnParam = isset( $_GET['aioseo-writing-assistant'] ) // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
+			? sanitize_text_field( wp_unslash( $_GET['aioseo-writing-assistant'] ) ) // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
+			: null;
 		if ( 'auth_return' === $returnParam ) {
 			add_action( 'init', [ $this, 'checkToken' ], 50 );
 		}
@@ -196,7 +198,9 @@ class SeoBoost {
 	 * @return void
 	 */
 	public function checkToken() {
-		$authToken = isset( $_GET['token'] ) ? sanitize_key( wp_unslash( $_GET['token'] ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$authToken = isset( $_GET['token'] ) // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
+			? sanitize_key( wp_unslash( $_GET['token'] ) ) // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
+			: null;
 
 		if ( $authToken ) {
 			$accessToken = $this->service->getAccessToken( $authToken );
@@ -221,19 +225,21 @@ class SeoBoost {
 	}
 
 	/**
-     * Handles the marketing site return.
-     *
-     * @since 4.7.4
-     *
+	 * Handles the marketing site return.
+	 *
+	 * @since 4.7.4
+	 *
 	 * @return void
 	 */
-	public function marketingSiteReturn() { ?>
-        <script>
+	public function marketingSiteReturn() {
+		?>
+		<script>
 			// Send message to parent window.
 			window.opener.postMessage('seoboost-ms-logged-in', '*');
 			window.close();
-        </script>
-	<?php }
+		</script>
+		<?php
+	}
 
 	/**
 	 * Resets the logins.

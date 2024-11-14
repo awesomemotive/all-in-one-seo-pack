@@ -5,6 +5,7 @@ import {
 import { defineStore } from 'pinia'
 import { nextTick } from 'vue'
 import { getOuterText } from '@/vue/utils/html'
+import { normalizeWhitespaces } from '@/vue/plugins/tru-seo/components/helpers'
 
 export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 	state : () => ({
@@ -38,6 +39,8 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 						s = s.replace(/&[a-zA-Z0-9#]{2,};$/, '')
 						// Keep line breaks otherwise `getOuterText()` don't recognize them.
 						s = s.replace(/<br[^>]*>/gi, '\n')
+						// The sentences will be matched with the content, and the content will have normalized whitespaces.
+						s = normalizeWhitespaces(s)
 
 						return getOuterText(s)
 					})

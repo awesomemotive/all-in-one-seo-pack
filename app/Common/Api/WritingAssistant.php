@@ -178,6 +178,13 @@ class WritingAssistant {
 			], 200 );
 		}
 
+		if ( empty( $contentAnalysis['result'] ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'error'   => __( 'Empty response from service', 'all-in-one-seo-pack' )
+			], 200 );
+		}
+
 		// Update the post with the content analysis.
 		$writingAssistantPost->content_analysis      = $contentAnalysis['result'];
 		$writingAssistantPost->content_analysis_hash = $contentHash;

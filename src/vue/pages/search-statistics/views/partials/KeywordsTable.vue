@@ -49,6 +49,17 @@
 					>
 						{{ sanitizeString(row.keyword) }}
 					</a>
+
+					<div class="row-actions">
+						<a
+							class="view"
+							:href="viewInGoogleLink(row.keyword)"
+							target="_blank"
+						>
+							{{strings.viewInGoogle}}
+							<svg-external />
+						</a>
+					</div>
 				</div>
 			</template>
 
@@ -159,7 +170,9 @@ import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Cta from '@/vue/components/common/cta/Index'
 import KeywordInner from './KeywordInner'
 import Statistic from './Statistic'
+
 import SvgCaret from '@/vue/components/common/svg/Caret'
+import SvgExternal from '@/vue/components/common/svg/External'
 
 import { __, sprintf } from '@/vue/plugins/translations'
 
@@ -175,6 +188,10 @@ export default {
 
 			return 'searchStatisticsKeywordRankings'
 		})
+
+		const viewInGoogleLink = (keyword) => {
+			return `https://www.google.com/search?q=${encodeURIComponent(keyword)}`
+		}
 
 		const isPreloading = ref(false)
 		const isFetching   = ref(false)
@@ -246,7 +263,8 @@ export default {
 			searchTerm,
 			settingsStore : useSettingsStore(),
 			showUpsell,
-			tableId
+			tableId,
+			viewInGoogleLink
 		}
 	},
 	components : {
@@ -255,7 +273,8 @@ export default {
 		Cta,
 		KeywordInner,
 		Statistic,
-		SvgCaret
+		SvgCaret,
+		SvgExternal
 	},
 	props : {
 		keywords : Object,
@@ -312,6 +331,7 @@ export default {
 			interval        : null,
 			sortableColumns : [],
 			strings         : {
+				viewInGoogle  : __('View in Google', td),
 				position      : __('Position', td),
 				ctaButtonText : __('Unlock Keyword Tracking', td),
 				ctaHeader     : sprintf(
@@ -518,7 +538,7 @@ export default {
 </script>
 
 <style lang="scss">
-.aioseo-search-statistics-keywords-table {
+.aioseo-app .aioseo-search-statistics-keywords-table {
 	position: relative;
 
 	.limit-line {
@@ -583,6 +603,21 @@ export default {
 			width: 16px;
 			height: 16px;
 			margin-right: 5px;
+		}
+	}
+
+	tbody .keyword .row-actions {
+		a {
+			display: inline-flex;
+			align-items: center;
+			color: $blue;
+			font-weight: normal;
+
+			svg {
+				margin-left: 3px;
+				width: 12px;
+				height: 12px;
+			}
 		}
 	}
 

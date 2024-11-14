@@ -85,6 +85,7 @@ export default {
 	.components-checkbox-control__input-container {
 		height: 20px;
 		width: 20px;
+		margin-right: 12px;
 
 		input {
 			height: 20px;

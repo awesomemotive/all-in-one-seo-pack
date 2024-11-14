@@ -93,6 +93,7 @@ import KeywordsTable from '../partials/KeywordsTable'
 import SeoStatisticsOverview from '../partials/SeoStatisticsOverview'
 
 import { __ } from '@/vue/plugins/translations'
+import { removeParam } from '@/vue/utils/params'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -138,15 +139,18 @@ export default {
 			TopWinningKeywords : 'topWinning'
 		}
 
-		if (this.$route?.query?.['table-filter']) {
-			this.initialTableFilter = filterMap[this.$route.query['table-filter']] || 'all'
+		const params = new URLSearchParams(window.location?.search || '') || {}
+		if (
+			params.has('table-filter') ||
+			this.$route?.query?.['table-filter']
+		) {
+			const tableFilter = params.get('table-filter') || this.$route.query['table-filter'] || 'all'
 
-			this.$router.replace({
-				query : {
-					...this.$route.query,
-					'table-filter' : undefined
-				}
-			})
+			this.initialTableFilter = filterMap[tableFilter]
+
+			this.$route.query['table-filter'] = undefined
+
+			removeParam('table-filter')
 		}
 	},
 	mounted () {

@@ -102,7 +102,9 @@ class Content {
 		// Check if requested index has a dedicated method.
 		$methodName = aioseo()->helpers->dashesToCamelCase( aioseo()->sitemap->indexName );
 		if ( method_exists( $this, $methodName ) ) {
-			return count( $this->$methodName() );
+			$res = $this->$methodName();
+
+			return ! empty( $res ) ? count( $res ) : 0;
 		}
 
 		// Check if requested index is a registered post type.
@@ -331,7 +333,7 @@ class Content {
 		foreach ( $terms as $term ) {
 			$entry = [
 				'loc'        => get_term_link( $term->term_id ),
-				'lastmod'    => $this->getTermLastModified( $term->term_id ),
+				'lastmod'    => $this->getTermLastModified( $term ),
 				'changefreq' => aioseo()->sitemap->priority->frequency( 'taxonomies', $term, $taxonomy ),
 				'priority'   => aioseo()->sitemap->priority->priority( 'taxonomies', $term, $taxonomy ),
 				'images'     => aioseo()->sitemap->image->term( $term )
@@ -348,34 +350,62 @@ class Content {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  int    $termId The term ID.
-	 * @return string         The lastmod timestamp.
+	 * @param  int|object $term The term data object.
+	 * @return string           The lastmod timestamp.
 	 */
-	public function getTermLastModified( $termId ) {
+	public function getTermLastModified( $term ) {
 		$termRelationshipsTable = aioseo()->core->db->db->prefix . 'term_relationships';
 		$termTaxonomyTable      = aioseo()->core->db->db->prefix . 'term_taxonomy';
 
-		$lastModified = aioseo()->core->db
-			->start( aioseo()->core->db->db->posts . ' as p', true )
-			->select( 'MAX(`p`.`post_modified_gmt`) as last_modified' )
-			->where( 'p.post_status', 'publish' )
-			->whereRaw( "
-			( `p`.`ID` IN
-				(
-					SELECT CONVERT(`tr`.`object_id`, unsigned)
-					FROM `$termRelationshipsTable` as tr
-					JOIN `$termTaxonomyTable` as tt ON `tr`.`term_taxonomy_id` = `tt`.`term_taxonomy_id`
-					WHERE `tt`.`term_id` = '$termId'
-				)
-			)" )
-			->run()
-			->result();
-
-		if ( empty( $lastModified[0]->last_modified ) ) {
-			return '';
+		// If the term is an ID, get the term object.
+		if ( is_numeric( $term ) ) {
+			$term = get_term( $term );
 		}
 
-		return aioseo()->helpers->dateTimeToIso8601( $lastModified[0]->last_modified );
+		// First, check the count of the term. If it's 0, then we're dealing with a parent term that does not have
+		// posts assigned to it. In this case, we need to get the last modified date of all its children.
+		if ( empty( $term->count ) ) {
+			$lastModified = aioseo()->core->db
+				->start( aioseo()->core->db->db->posts . ' as p', true )
+				->select( 'MAX(`p`.`post_modified_gmt`) as last_modified' )
+				->where( 'p.post_status', 'publish' )
+				->whereRaw( "
+				( `p`.`ID` IN
+					(
+						SELECT CONVERT(`tr`.`object_id`, unsigned)
+						FROM `$termRelationshipsTable` as tr
+						JOIN `$termTaxonomyTable` as tt ON `tr`.`term_taxonomy_id` = `tt`.`term_taxonomy_id`
+						WHERE `tt`.`term_id` IN
+							(
+								SELECT `tt`.`term_id`
+								FROM `$termTaxonomyTable` as tt
+								WHERE `tt`.`parent` = '{$term->term_id}'
+							)
+					)
+				)" )
+				->run()
+				->result();
+		} else {
+			$lastModified = aioseo()->core->db
+				->start( aioseo()->core->db->db->posts . ' as p', true )
+				->select( 'MAX(`p`.`post_modified_gmt`) as last_modified' )
+				->where( 'p.post_status', 'publish' )
+				->whereRaw( "
+				( `p`.`ID` IN
+					(
+						SELECT CONVERT(`tr`.`object_id`, unsigned)
+						FROM `$termRelationshipsTable` as tr
+						JOIN `$termTaxonomyTable` as tt ON `tr`.`term_taxonomy_id` = `tt`.`term_taxonomy_id`
+						WHERE `tt`.`term_id` = '{$term->term_id}'
+					)
+				)" )
+				->run()
+				->result();
+		}
+
+		$lastModified = $lastModified[0]->last_modified ?? '';
+
+		return aioseo()->helpers->dateTimeToIso8601( $lastModified );
 	}
 
 	/**

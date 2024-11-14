@@ -105,4 +105,15 @@ class Helpers {
 
 		return $json;
 	}
+
+	/**
+	 * Checks if we're on a BuddyPress page.
+	 *
+	 * @since 4.7.5
+	 *
+	 * @return bool True if we're on a BuddyPress page, false otherwise.
+	 */
+	public function checkBuddyPressPage() {
+		return function_exists( 'bp_is_user' ) && bp_is_user();
+	}
 }

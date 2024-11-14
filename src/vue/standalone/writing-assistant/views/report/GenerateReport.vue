@@ -47,8 +47,8 @@ const strings = {
 }
 
 const props = defineProps({
-	'buttonSize'      : String,
-	'showReportsLeft' : {
+	buttonSize      : String,
+	showReportsLeft : {
 		type    : Boolean,
 		default : false
 	}

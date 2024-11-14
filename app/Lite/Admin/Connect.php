@@ -125,6 +125,7 @@ class Connect {
 	public function enqueueScripts() {
 		// We don't want any plugin adding notices to our screens. Let's clear them out here.
 		remove_all_actions( 'admin_notices' );
+		remove_all_actions( 'network_admin_notices' );
 		remove_all_actions( 'all_admin_notices' );
 
 		aioseo()->core->assets->load( 'src/vue/standalone/connect/main.js', [], aioseo()->helpers->getVueData() );
@@ -140,6 +141,7 @@ class Connect {
 	public function enqueueScriptsPro() {
 		// We don't want any plugin adding notices to our screens. Let's clear them out here.
 		remove_all_actions( 'admin_notices' );
+		remove_all_actions( 'network_admin_notices' );
 		remove_all_actions( 'all_admin_notices' );
 
 		aioseo()->core->assets->load( 'src/vue/standalone/connect-pro/main.js', [], aioseo()->helpers->getVueData() );

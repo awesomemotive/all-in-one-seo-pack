@@ -578,7 +578,7 @@ export const useTruSeoHighlighter = () => {
 					}
 					const highlightMarkExists = truSeoHighlighterStore.highlightMarks.find(hm => {
 						return node
-							? (hm.range.start === range.start || hm.range.end === range.end) && hm.parent.isEqualNode(node)
+							? (hm.range.start === range.start || hm.range.end === range.end) && hm.parent.isSameNode(node)
 							: (hm.range.start === range.start || hm.range.end === range.end) && hm.block.clientId === block.clientId
 					})
 					if (highlightMarkExists) {
@@ -677,10 +677,6 @@ export const useTruSeoHighlighter = () => {
 			)
 		) {
 			truSeoHighlighterStore.enabled = false
-		}
-
-		if (!truSeoHighlighterStore.enabled) {
-			return false
 		}
 	})
 

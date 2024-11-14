@@ -212,7 +212,9 @@
 				</template>
 			</core-settings-row>
 
-			<core-settings-row>
+			<core-settings-row
+				v-if="rootStore.isPro"
+			>
 				<template #name>
 					{{ strings.automaticUpdates }}
 				</template>

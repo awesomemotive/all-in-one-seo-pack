@@ -75,8 +75,11 @@ class Localization {
 				continue;
 			}
 
+			$currentLanguage = ! empty( self::$wpml['activeLanguages'][ $translation->language_code ] ) ? self::$wpml['activeLanguages'][ $translation->language_code ] : null;
+			$languageCode    = ! empty( $currentLanguage['tag'] ) ? $currentLanguage['tag'] : $translation->language_code;
+
 			if ( (int) $elementId === (int) $translation->element_id ) {
-				$entry['language'] = $translation->language_code;
+				$entry['language'] = $languageCode;
 				continue;
 			}
 
@@ -98,9 +101,6 @@ class Localization {
 			} else {
 				$permalink = get_term_link( $translatedObjectId, $objectName );
 			}
-
-			$currentLanguage = ! empty( self::$wpml['activeLanguages'][ $translation->language_code ] ) ? self::$wpml['activeLanguages'][ $translation->language_code ] : null;
-			$languageCode    = ! empty( $currentLanguage['tag'] ) ? $currentLanguage['tag'] : $translation->language_code;
 
 			if ( ! empty( $languageCode ) && ! empty( $permalink ) ) {
 				$entry['languages'][] = [

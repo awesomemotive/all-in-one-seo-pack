@@ -1,15 +1,32 @@
 import { __ } from '@/vue/plugins/translations'
 import { RequiresUpgrade } from '@/vue/router/middleware'
+import { removeParam } from '@/vue/utils/params'
 
-const td       = import.meta.env.VITE_TEXTDOMAIN
-const loadView = view => {
+const td         = import.meta.env.VITE_TEXTDOMAIN
+const loadView   = view => {
 	return () => import(`../views/${view}.vue`)
+}
+const initialTab = () => {
+	let output = 'dashboard'
+
+	try {
+		const params = new URLSearchParams(window.location?.search || '') || {}
+		if (params?.has('aioseo-tab')) {
+			output = params.get('aioseo-tab')
+
+			removeParam('aioseo-tab')
+		}
+	} catch (_e) {
+		// Do nothing.
+	}
+
+	return output
 }
 
 export default [
 	{
 		path     : '/:pathMatch(.*)*',
-		redirect : '/dashboard'
+		redirect : `/${initialTab()}`
 	},
 	{
 		path      : '/dashboard',

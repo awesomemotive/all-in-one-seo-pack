@@ -738,4 +738,23 @@ class Settings {
 			'success' => true
 		], 200 );
 	}
+
+	/**
+	 * Change Sem Rush Focus Keyphrase default country.
+	 *
+	 * @since 4.7.5
+	 *
+	 * @param  \WP_REST_Request  $request The REST Request
+	 * @return \WP_REST_Response          The response.
+	 */
+	public static function changeSemrushCountry( $request ) {
+		$body     = $request->get_json_params();
+		$country  = ! empty( $body['value'] ) ? sanitize_text_field( $body['value'] ) : 'US';
+
+		aioseo()->settings->semrushCountry = $country;
+
+		return new \WP_REST_Response( [
+			'success' => true
+		], 200 );
+	}
 }

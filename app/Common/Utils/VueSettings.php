@@ -152,7 +152,8 @@ class VueSettings {
 			'searchStatisticsPostDetailKeywords' => 20,
 			'searchStatisticsKeywordRankTracker' => 20,
 			'queryArgs'                          => 20
-		]
+		],
+		'semrushCountry'  => 'US'
 	];
 
 	/**

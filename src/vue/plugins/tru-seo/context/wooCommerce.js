@@ -41,27 +41,30 @@ const refreshWoocommerceStore = () => {
 	const parsedProductPrice = rootStore.aioseo.data?.wooCommerce?.currencySymbol || '$' + parseFloat(productPrice || 0).toFixed(2)
 	tagsStore.updateWooCommercePrice(parsedProductPrice)
 
-	brands = document.querySelectorAll('#post input[name="tax_input[product_brand][]"]:checked')
-	if (!brands.length) {
-		brands = document.querySelectorAll('#post input[name="tax_input[pwb-brand][]"]:checked') // Perfect Brands
-	}
+	const brandPluginSelector = [
+		'pwb-brand', // Perfect WooCommerce Brands
+		'product_brand' // WooCommerce Brands
+	]
 
-	if (brands.length) {
+	brandPluginSelector.forEach(brandPlugin => {
+		brands = document.querySelectorAll(`#post input[name="tax_input[${brandPlugin}][]"]:checked`)
+		if (!brands.length) {
+			return
+		}
+
 		if (productBrand !== brands[0].parentNode.innerText) {
 			productBrand = brands[0].parentNode.innerText
 			tagsStore.updateWooCommerceBrand(brands[0].parentNode.innerText)
 		}
 
 		// Set product brand if primary term is set.
-		if (postEditorStore.currentPost?.primary_term?.['pwb-brand']) {
-			const productBrandElement = document.getElementById(`in-pwb-brand-${postEditorStore.currentPost.primary_term['pwb-brand']}`)
+		if (postEditorStore.currentPost?.primary_term?.[brandPlugin]) {
+			const productBrandElement = document.querySelector(`#${brandPlugin}checklist input[value="${postEditorStore.currentPost.primary_term[brandPlugin]}"]`)
 			if (productBrandElement?.parentNode?.innerText) {
 				tagsStore.updateWooCommerceBrand(productBrandElement.parentNode.innerText)
 			}
 		}
-	} else {
-		tagsStore.updateWooCommerceBrand('')
-	}
+	})
 
 	const productCats = document.querySelectorAll('#post input[name="tax_input[product_cat][]"]:checked')
 	if (productCats.length) {
@@ -90,6 +93,14 @@ export const watchWooCommerce = () => {
 
 	window.addEventListener('change', (event) => {
 		if ('INPUT' !== event.target.tagName) {
+			return
+		}
+
+		refreshWoocommerceStore()
+	})
+
+	window.aioseoBus.$on('standalone-update-post', (param) => {
+		if (!param.primary_term) {
 			return
 		}
 

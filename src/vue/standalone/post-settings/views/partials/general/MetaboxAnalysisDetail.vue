@@ -1,11 +1,22 @@
 <template>
 	<ul class="aioseo-analysis-detail">
+		<li
+			v-if="isBlockCodeEditor()"
+			class="detail detail--pl-0"
+		>
+			<core-alert type="yellow">
+				{{ strings.switchToVisualEditor }}
+			</core-alert>
+		</li>
+
 		<template
+			v-else
 			v-for="(keyphrase, index) in analysisItems"
 			:key="index"
 		>
 			<li
 				v-if="keyphrase.title"
+				class="detail"
 			>
 				<p
 					class="title"
@@ -34,44 +45,54 @@
 	</ul>
 </template>
 
-<script>
+<script setup>
+import { defineProps } from 'vue'
+
+import { __ } from '@/vue/plugins/translations'
+import { isBlockCodeEditor } from '@/vue/utils/context'
+
+import CoreAlert from '@/vue/components/common/core/alert/Index'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import TruSeoToggleHighlighter from './tru-seo/ToggleHighlighter'
 
-export default {
-	components : {
-		SvgCaret,
-		SvgCircleCheck,
-		SvgCircleClose,
-		TruSeoToggleHighlighter
-	},
-	props : {
-		analysisItems : {
-			type : Object
-		}
-	},
-	methods : {
-		toggleDescriptionEv (ev) {
-			ev.target.parentElement.classList.toggle('toggled')
-		}
+const td      = import.meta.env.VITE_TEXTDOMAIN
+const strings = {
+	switchToVisualEditor : __('TruSEO cannot analyze the post while you are using the Code Editor. Please switch back to the Visual Editor to view your results.', td)
+}
+
+defineProps({
+	analysisItems : {
+		type : Object
 	}
+})
+
+const toggleDescriptionEv = (ev) => {
+	ev.target.parentElement.classList.toggle('toggled')
 }
 </script>
 
 <style lang="scss">
-.aioseo-analysis-detail {
-	margin: 0 0 16px;
+ul.aioseo-analysis-detail {
+	margin: 16px 0;
 	padding: 0;
 	list-style: none;
 
-	li {
+	li.detail {
 		padding-left: 24px;
 		position: relative;
 		margin: 0 0 16px;
 		font-size: 14px;
 		line-height: 22px;
+
+		+ li.detail {
+			margin-top: 16px;
+		}
+
+		&--pl-0 {
+			padding-left: 0 !important;
+		}
 
 		p {
 			font-size: inherit;

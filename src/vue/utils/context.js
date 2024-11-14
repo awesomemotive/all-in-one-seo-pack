@@ -79,3 +79,13 @@ export const canLoadBlocks = () => {
 	const wp = window.wp
 	return ('undefined' !== typeof wp && 'undefined' !== typeof wp.blocks && 'undefined' !== typeof wp.blockEditor)
 }
+
+export const isBlockCodeEditor = () => {
+	if (isBlockEditor()) {
+		const selectEditPost = window.wp?.data?.select('core/edit-post')
+
+		return 'text' === selectEditPost?.getEditorMode()
+	}
+
+	return false
+}

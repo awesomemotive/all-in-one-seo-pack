@@ -223,6 +223,10 @@ class Updates {
 			aioseo()->access->addCapabilities();
 		}
 
+		if ( version_compare( $lastActiveVersion, '4.7.5', '<' ) ) {
+			$this->cancelScheduledSitemapPings();
+		}
+
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
 
 		// Always clear the cache if the last active version is different from our current.
@@ -1761,5 +1765,18 @@ class Updates {
 				) {$charsetCollate};"
 			);
 		}
+	}
+
+	/**
+	 * Cancels all outstanding sitemap ping actions.
+	 * This is needed because we've removed the Ping class.
+	 *
+	 * @since 4.7.5
+	 *
+	 * @return void
+	 */
+	private function cancelScheduledSitemapPings() {
+		as_unschedule_all_actions( 'aioseo_sitemap_ping' );
+		as_unschedule_all_actions( 'aioseo_sitemap_ping_recurring' );
 	}
 }

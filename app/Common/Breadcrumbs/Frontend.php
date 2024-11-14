@@ -206,6 +206,7 @@ class Frontend {
 		}
 		$display .= '</div>';
 
+		// Final security cleaning.
 		$display = wp_kses_post( $display );
 
 		if ( $echo ) {
@@ -231,6 +232,13 @@ class Frontend {
 
 		// Do tags.
 		$templateItem['template'] = aioseo()->breadcrumbs->tags->replaceTags( $templateItem['template'], $item );
+		$templateItem['template'] = preg_replace_callback(
+			'/>(?![^<]*>)(?![^>]*")([^<]*?)>/',
+			function ( $matches ) {
+				return '>' . $matches[1] . '>';
+			},
+			htmlentities( $templateItem['template'] )
+		);
 
 		// Restore html.
 		$templateItem['template'] = aioseo()->helpers->decodeHtmlEntities( $templateItem['template'] );
@@ -242,9 +250,6 @@ class Frontend {
 
 		// Allow shortcodes to run in the final html.
 		$templateItem['template'] = do_shortcode( $templateItem['template'] );
-
-		// Final security cleaning.
-		$templateItem['template'] = wp_kses_post( $templateItem['template'] );
 
 		return $templateItem;
 	}

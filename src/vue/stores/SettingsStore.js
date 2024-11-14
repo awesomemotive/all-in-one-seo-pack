@@ -84,6 +84,15 @@ export const useSettingsStore = defineStore('SettingsStore', {
 			return http.post(links.restUrl('settings/hide-setup-wizard'))
 				.send({})
 				.then(() => {})
+		},
+		changeSemrushCountry ({ value }) {
+			this.settings.semrushCountry = value
+
+			return http.post(links.restUrl('settings/semrush-country'))
+				.send({
+					value
+				})
+				.then(() => {})
 		}
 	}
 })

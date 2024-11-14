@@ -109,6 +109,7 @@ class Api {
 			'settings/toggle-radio'                                 => [ 'callback' => [ 'Settings', 'toggleRadio' ], 'access' => 'any' ],
 			'settings/dismiss-alert'                                => [ 'callback' => [ 'Settings', 'dismissAlert' ], 'access' => 'any' ],
 			'settings/items-per-page'                               => [ 'callback' => [ 'Settings', 'changeItemsPerPage' ], 'access' => 'any' ],
+			'settings/semrush-country'                              => [ 'callback' => [ 'Settings', 'changeSemrushCountry' ], 'access' => 'any' ],
 			'settings/do-task'                                      => [ 'callback' => [ 'Settings', 'doTask' ], 'access' => 'aioseo_tools_settings' ],
 			'sitemap/deactivate-conflicting-plugins'                => [ 'callback' => [ 'Sitemaps', 'deactivateConflictingPlugins' ], 'access' => 'any' ],
 			'sitemap/delete-static-files'                           => [ 'callback' => [ 'Sitemaps', 'deleteStaticFiles' ], 'access' => 'aioseo_sitemap_settings' ],

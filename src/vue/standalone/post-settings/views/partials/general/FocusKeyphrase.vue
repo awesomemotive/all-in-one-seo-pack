@@ -123,7 +123,7 @@
 						<base-select
 							class="semrush-country-selector"
 							size="medium"
-							:options="semrushDatabase"
+							:options="semrushDatabase()"
 							:placeholder="strings.selectPriceIndicator"
 							v-model="semrushCountry"
 						/>
@@ -293,7 +293,8 @@ import {
 	useOptionsStore,
 	usePostEditorStore,
 	useRootStore,
-	useSemrushStore
+	useSemrushStore,
+	useSettingsStore
 } from '@/vue/stores'
 
 import { popup } from '@/vue/utils/popup'
@@ -343,13 +344,16 @@ export default {
 		metaboxAnalysisDetail
 	},
 	data () {
+		const settingsStore = useSettingsStore()
+
 		return {
 			showSemrushTooltip          : false,
 			loadingResults              : false,
 			semrushShowModal            : false,
 			addingAdditionalKeyphrase   : false,
 			removingAdditionalKeyphrase : false,
-			semrushCountry              : { value: 'US', label: 'United States of America - US' },
+			semrushCountry              : null,
+			settingsStore,
 			strings                     : {
 				modalTitle : sprintf(
 					// Translators: 1 - Semrush.
@@ -410,6 +414,7 @@ export default {
 		semrushCountry : {
 			deep : true,
 			handler () {
+				this.settingsStore.changeSemrushCountry(this.semrushCountry)
 				this.getKeyphrases()
 			}
 		}
@@ -421,9 +426,13 @@ export default {
 			}
 
 			return __('An error occurred while fetching keyphrases. Please try again later.', td)
-		},
+		}
+	},
+	methods : {
 		semrushDatabase () {
-			return COUNTRY_LIST
+			const list = JSON.parse(JSON.stringify(COUNTRY_LIST))
+
+			return list
 				.map(country => {
 					if ('GB' === country.value) {
 						country.value = 'UK'
@@ -441,9 +450,7 @@ export default {
 					country.label = country.label + ' - ' + country.value.toUpperCase()
 					return country
 				})
-		}
-	},
-	methods : {
+		},
 		getAdditionalKeyphrases () {
 			this.showSemrushTooltip = false
 			if (!this.connectStore.isConnected) {
@@ -503,6 +510,10 @@ export default {
 			this.getKeyphrases()
 		},
 		getKeyphrases () {
+			if (!this.postEditorStore.currentPost?.keyphrases?.focus?.keyphrase) {
+				return
+			}
+
 			this.loadingResults = true
 			this.semrushStore.getKeyphrases(this.semrushCountry.value)
 				.then(() => {
@@ -667,6 +678,11 @@ export default {
 		const promises = []
 		if (this.optionsStore.internalOptions.integrations.semrush.accessToken && this.semrushStore.expired) {
 			promises.push(this.semrushStore.refresh())
+		}
+
+		this.semrushCountry = {
+			value : this.settingsStore.settings.semrushCountry,
+			label : this.semrushDatabase().find(country => country.value === this.settingsStore.settings.semrushCountry)?.label
 		}
 	}
 }

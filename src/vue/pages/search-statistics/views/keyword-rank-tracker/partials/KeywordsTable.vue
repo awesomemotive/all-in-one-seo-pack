@@ -63,6 +63,15 @@
 			<div class="row-actions">
 				<span class="edit">
 					<a
+						class="view"
+						:href="viewInGoogleLink(row.name)"
+						target="_blank"
+					>
+						{{ strings.viewInGoogle }}
+						<svg-external />
+					</a> |
+
+					<a
 						v-if="row.groups.length"
 						href="#"
 						@click.prevent.exact="keywordRankTrackerStore.toggleModal({modal: 'modalOpenAssignGroups', open: true, keywords: [row], fetchKeywordsCallback: fetchData})"
@@ -161,6 +170,7 @@ import numbers from '@/vue/utils/numbers'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Graph from '../../partials/Graph'
+import SvgExternal from '@/vue/components/common/svg/External'
 import SvgStar from '@/vue/components/common/svg/Star'
 
 const td                      = import.meta.env.VITE_TEXTDOMAIN
@@ -169,9 +179,10 @@ const settingsStore           = useSettingsStore()
 const changeItemsPerPageSlug  = 'searchStatisticsKeywordRankTracker'
 const tableId                 = 'keyword-rank-tracker-keywords-table'
 const strings                 = {
-	addToGroup : __('Add to Group', td),
-	editGroup  : __('Edit Group', td),
-	position   : __('Position', td)
+	addToGroup   : __('Add to Group', td),
+	editGroup    : __('Edit Group', td),
+	position     : __('Position', td),
+	viewInGoogle : __('View in Google', td)
 }
 const tableBulkOptions        = [
 	{
@@ -207,7 +218,7 @@ const props = defineProps({
 	}
 })
 
-const table = ref(null)
+const table              = ref(null)
 const btnFavoriteLoading = ref([])
 
 const {
@@ -243,7 +254,7 @@ const tableAdditionalFilters = computed(() => {
 		...keywordRankTrackerStore.groups.all.rows.map(r => {
 			return {
 				...r,
-				label : keywordRankTrackerStore.favoriteGroup?.label === r.label ? '&starf;' : r.label
+				label : keywordRankTrackerStore.favoriteGroup.label === r.label ? '&starf;' : r.label
 			}
 		})
 	]
@@ -394,6 +405,10 @@ const toggleFavorite = async (row, index) => {
 		btnFavoriteLoading.value = []
 	}
 }
+
+const viewInGoogleLink = (keyword) => {
+	return `https://www.google.com/search?q=${encodeURIComponent(keyword)}`
+}
 </script>
 
 <style lang="scss">
@@ -421,6 +436,21 @@ const toggleFavorite = async (row, index) => {
 
 			&.favorited {
 				color: $placeholder-color;
+			}
+		}
+	}
+
+	tbody .name .row-actions {
+		.edit a.view {
+			display: inline-flex;
+			align-items: center;
+			color: $blue;
+			font-weight: normal;
+
+			svg {
+				margin-left: 3px;
+				width: 12px;
+				height: 12px;
 			}
 		}
 	}

@@ -150,8 +150,9 @@ export default {
 		addKeyphraseEv () {
 			const keyphraseInputComponent = document.getElementsByClassName(`add-keyphrase-${this.$root.$data.screenContext}-input`)
 			const keyphraseInput          = keyphraseInputComponent[0].querySelector('.medium')
-			if (keyphraseInput.value) {
-				const newKeyphrase      = { keyphrase: keyphraseInput.value, score: 0 }
+			const keyphraseInputValue     = keyphraseInput?.value.trim()
+			if (keyphraseInputValue) {
+				const newKeyphrase      = { keyphrase: keyphraseInputValue, score: 0 }
 				const newKeyphraseIndex = this.postEditorStore.currentPost.keyphrases.additional.push(newKeyphrase)
 				const keyphrasePanel    = document.getElementsByClassName('keyphrase-name')
 				this.postEditorStore.currentPost.loading.additional[0] = true

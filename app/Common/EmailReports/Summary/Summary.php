@@ -244,7 +244,7 @@ class Summary {
 			],
 		];
 		$links     = [
-			'disable'        => admin_url( 'admin.php?page=aioseo-settings&aioseo-scroll=aioseo-email-summary-row&aioseo-highlight=aioseo-email-summary-row#/advanced' ),
+			'disable'        => admin_url( 'admin.php?page=aioseo-settings&aioseo-scroll=aioseo-email-summary-row&aioseo-highlight=aioseo-email-summary-row&aioseo-tab=advanced' ),
 			'update'         => admin_url( 'update-core.php' ),
 			'marketing-site' => aioseo()->helpers->utmUrl( $mktUrl, $medium ),
 			'facebook'       => aioseo()->helpers->utmUrl( $mktUrl . 'plugin/facebook', $medium ),

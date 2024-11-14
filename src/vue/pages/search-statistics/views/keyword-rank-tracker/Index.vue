@@ -34,6 +34,7 @@ import KeywordRankings from '../keyword-rankings/Index'
 import RankTracker from './RankTracker'
 
 import { __ } from '@/vue/plugins/translations'
+import { removeParam } from '@/vue/utils/params'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -51,13 +52,20 @@ const tabs = [
 ]
 
 onBeforeMount(() => {
+	const params = new URLSearchParams(window.location?.search || '') || {}
 	const route = useRoute()
-	if (route?.query?.tab) {
-		if ('AllKeywords' === route.query.tab) {
+	if (
+		params.has('tab') ||
+		route?.query?.tab
+	) {
+		const tab = params.get('tab') || route.query.tab
+		if ('AllKeywords' === tab) {
 			activeTab.value = 'all-keywords'
 		}
 
 		route.query.tab = undefined
+
+		removeParam('tab')
 	}
 })
 </script>

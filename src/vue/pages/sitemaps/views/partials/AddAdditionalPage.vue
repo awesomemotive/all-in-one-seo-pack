@@ -445,7 +445,6 @@ export default {
 				'MM/dd/yyyy'
 				// Add more formats if needed
 			]
-
 			page.forEach(prop => {
 				try {
 					if (isUrl(prop)) {
@@ -455,7 +454,7 @@ export default {
 							return
 						}
 					}
-					if (this.priorityOptionsValues.includes(parseFloat(prop))) {
+					if (!isNaN(prop) && this.priorityOptionsValues.includes(parseFloat(prop))) {
 						preparedPage.priority.label = preparedPage.priority.value = prop
 						return
 					}
@@ -464,6 +463,7 @@ export default {
 						preparedPage.frequency.label = preparedPage.frequency.value = prop.toLowerCase()
 						return
 					}
+
 					// Check for valid date format
 					dateFormats.forEach(format => {
 						const dateTime = DateTime.fromFormat(prop, format)

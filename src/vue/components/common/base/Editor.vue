@@ -379,7 +379,7 @@ export default {
 			}
 
 			const mention = QuillEditor[this.$.uid].getModule('mention')
-			if (mention.isOpen) {
+			if (mention?.isOpen) {
 				mention.hideMentionList()
 				mention.removeOrphanedMentionChar()
 			}
@@ -513,7 +513,7 @@ export default {
 								return renderList(matches, searchTerm, returnItem, this.insertExact)
 							}
 						}
-						: {},
+						: null,
 					counter : this.allowTags
 						? {
 							tags : this.localTags

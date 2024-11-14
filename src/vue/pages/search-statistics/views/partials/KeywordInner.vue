@@ -76,6 +76,7 @@
 					type="position"
 					:total="row.position"
 					:difference="row.difference.position"
+					:tooltip-offset="'-150px,0'"
 				/>
 			</template>
 		</core-wp-table>

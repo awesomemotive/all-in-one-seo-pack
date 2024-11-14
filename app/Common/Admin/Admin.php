@@ -868,6 +868,7 @@ class Admin {
 
 			// We don't want any plugin adding notices to our screens. Let's clear them out here.
 			remove_all_actions( 'admin_notices' );
+			remove_all_actions( 'network_admin_notices' );
 			remove_all_actions( 'all_admin_notices' );
 			remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
 

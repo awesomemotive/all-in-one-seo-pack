@@ -58,15 +58,6 @@ abstract class SitemapAbstract {
 	public $image = null;
 
 	/**
-	 * Ping class instance.
-	 *
-	 * @since 4.2.7
-	 *
-	 * @var Ping
-	 */
-	public $ping = null;
-
-	/**
 	 * Priority class instance.
 	 *
 	 * @since 4.2.7
