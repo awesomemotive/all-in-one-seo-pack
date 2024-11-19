@@ -339,7 +339,7 @@ class Query {
 							`tt`.`count` > 0 OR
 							EXISTS (
 								SELECT 1
-								FROM `wp_term_taxonomy` as tt2
+								FROM `$termTaxonomyTable` as tt2
 								WHERE `tt2`.`parent` = `tt`.`term_id` 
 								AND `tt2`.`count` > 0
 							)

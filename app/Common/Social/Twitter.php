@@ -61,11 +61,7 @@ class Twitter {
 	 */
 	public function getCreator() {
 		$post = aioseo()->helpers->getPost();
-		if (
-			! is_a( $post, 'WP_Post' ) ||
-			! post_type_supports( $post->post_type, 'author' ) ||
-			! aioseo()->options->social->twitter->general->showAuthor
-		) {
+		if ( ! is_a( $post, 'WP_Post' ) || ! aioseo()->options->social->twitter->general->showAuthor ) {
 			return '';
 		}
 
@@ -252,7 +248,7 @@ class Twitter {
 			return $data;
 		}
 
-		if ( $post->post_author && post_type_supports( $post->post_type, 'author' ) ) {
+		if ( $post->post_author ) {
 			$data[] = [
 				'label' => __( 'Written by', 'all-in-one-seo-pack' ),
 				'value' => get_the_author_meta( 'display_name', $post->post_author )

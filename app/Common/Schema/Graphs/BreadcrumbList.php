@@ -50,19 +50,11 @@ class BreadcrumbList extends Graph {
 			}
 
 			if ( $trailLength > $breadcrumb['position'] ) {
-				$listItem['nextItem'] = [
-					'@type' => 'ListItem',
-					'@id'   => $breadcrumbs[ $breadcrumb['position'] ]['url'] . '#listItem',
-					'name'  => $breadcrumbs[ $breadcrumb['position'] ]['name'],
-				];
+				$listItem['nextItem'] = $breadcrumbs[ $breadcrumb['position'] ]['url'] . '#listItem';
 			}
 
 			if ( 1 < $breadcrumb['position'] ) {
-				$listItem['previousItem'] = [
-					'@type' => 'ListItem',
-					'@id'   => $breadcrumbs[ $breadcrumb['position'] - 2 ]['url'] . '#listItem',
-					'name'  => $breadcrumbs[ $breadcrumb['position'] - 2 ]['name'],
-				];
+				$listItem['previousItem'] = $breadcrumbs[ $breadcrumb['position'] - 2 ]['url'] . '#listItem';
 			}
 
 			$listItems[] = $listItem;

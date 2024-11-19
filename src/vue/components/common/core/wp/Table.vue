@@ -480,12 +480,6 @@ export default {
 		blurRows           : Boolean,
 		disableTable       : Boolean,
 		showItemsPerPage   : Boolean,
-		resetSelection     : {
-			type : Boolean,
-			default () {
-				return true
-			}
-		},
 		exportColumns      : {
 			type : Array,
 			default () {
@@ -600,9 +594,7 @@ export default {
 				return
 			}
 
-			if (this.resetSelection) {
-				this.resetSelectedItems()
-			}
+			this.resetSelectedItems()
 		},
 		processPaginate (page) {
 			this.pageNumber = page

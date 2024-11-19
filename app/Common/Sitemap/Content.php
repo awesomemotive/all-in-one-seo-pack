@@ -102,9 +102,7 @@ class Content {
 		// Check if requested index has a dedicated method.
 		$methodName = aioseo()->helpers->dashesToCamelCase( aioseo()->sitemap->indexName );
 		if ( method_exists( $this, $methodName ) ) {
-			$res = $this->$methodName();
-
-			return ! empty( $res ) ? count( $res ) : 0;
+			return count( $this->$methodName() );
 		}
 
 		// Check if requested index is a registered post type.

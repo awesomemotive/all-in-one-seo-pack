@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.7
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.7.5
+Stable tag: 4.7.5.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,6 +226,10 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.7.5.1**
+
+* Fixed: XML sitemap not including terms in some cases due to DB error.
+
 **New in Version 4.7.5**
 
 * Updated: XML sitemaps now include parent terms without posts if they have any children with posts.
@@ -250,6 +254,7 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * Fixed: Searching for non-English strings in redirects/404 log tables returned no results.
 * Fixed: BuddyPress schema markup causing an error in Google Search Console.
 * Fixed: PHP error due to unpacking an array with string keys.
+* Fixed: SEO Preview URL character encoding.
 
 **New in Version 4.7.4.2**
 
@@ -409,6 +414,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.7.5 =
+= 4.7.5.1 =
 
 This update adds major improvements and bug fixes.

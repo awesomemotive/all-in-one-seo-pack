@@ -194,16 +194,16 @@ function InlineLinkUI ({
 
 	return (
 		<Popover
-			key={mountingKey}
-			anchor={anchorValue}
-			focusOnMount={addingLink ? 'firstElement' : false}
-			onClose={stopAddingLink}
+			key={ mountingKey }
+			anchor={ anchorValue }
+			focusOnMount={ addingLink ? 'firstElement' : false }
+			onClose={ stopAddingLink }
 		>
 			<LinkControl
-				value={linkValue}
-				onChange={onChangeLink}
-				forceIsEditingLink={addingLink}
-				selectedText={selectedText}
+				value={ linkValue }
+				onChange={ onChangeLink }
+				forceIsEditingLink={ addingLink }
+				selectedText={ selectedText }
 			/>
 		</Popover>
 	)
