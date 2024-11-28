@@ -618,6 +618,7 @@ trait Vue {
 
 			foreach ( $entry->translations as $translation ) {
 				// If any of the translated strings contains an HTML line break, we need to ignore it. Otherwise, logging into the admin breaks.
+
 				if ( preg_match( '/<br[\s\/\\\\]*>/', $translation ) ) {
 					continue 2;
 				}

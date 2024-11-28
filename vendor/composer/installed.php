@@ -3,7 +3,7 @@
         'name' => 'awesomemotive/all-in-one-seo-pack-pro',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '4ef5dc6521626e2142c56c6190dc8eebd1828432',
+        'reference' => '79b7e505eeb13c96adf92d95bd1b9bed0b7ca4ed',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'awesomemotive/all-in-one-seo-pack-pro' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '4ef5dc6521626e2142c56c6190dc8eebd1828432',
+            'reference' => '79b7e505eeb13c96adf92d95bd1b9bed0b7ca4ed',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

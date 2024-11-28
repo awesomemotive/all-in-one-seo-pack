@@ -268,4 +268,21 @@ trait Arrays {
 			return 'asc' === $order ? $a[ $key ] <=> $b[ $key ] : $b[ $key ] <=> $a[ $key ];
 		} );
 	}
+
+	/**
+	 * Flattens a multidimensional array.
+	 *
+	 * @since 4.7.6
+	 *
+	 * @param  array $arr The input array.
+	 * @return array      The flattened array.
+	 */
+	public function flatten( $arr ) {
+		$result = [];
+		array_walk_recursive( $arr, function ( $value ) use ( &$result ) {
+			$result[] = $value;
+		} );
+
+		return $result;
+	}
 }

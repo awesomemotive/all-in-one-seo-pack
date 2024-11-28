@@ -48,15 +48,27 @@ class WritingAssistant {
 			return;
 		}
 
+		$postType = get_post_type();
 		if (
-			! aioseo()->options->writingAssistant->postTypes->all &&
-			! in_array( get_post_type(), aioseo()->options->writingAssistant->postTypes->included, true )
+			(
+				! aioseo()->options->writingAssistant->postTypes->all &&
+				! in_array( $postType, aioseo()->options->writingAssistant->postTypes->included, true )
+			) ||
+			! in_array( $postType, aioseo()->helpers->getPublicPostTypes( true ), true )
 		) {
 			return;
 		}
 
 		// Skip post types that do not support an editor.
-		if ( ! post_type_supports( get_post_type(), 'editor' ) ) {
+		if ( ! post_type_supports( $postType, 'editor' ) ) {
+			return;
+		}
+
+		// Ignore certain plugins.
+		if (
+			aioseo()->thirdParty->webStories->isPluginActive() &&
+			'web-story' === $postType
+		) {
 			return;
 		}
 

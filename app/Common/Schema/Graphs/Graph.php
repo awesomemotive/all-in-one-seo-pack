@@ -18,6 +18,15 @@ abstract class Graph {
 	use CommonTraits\SocialProfiles;
 
 	/**
+	 * The graph data to overwrite.
+	 *
+	 * @since 4.7.6
+	 *
+	 * @var array
+	 */
+	protected static $overwriteGraphData = [];
+
+	/**
 	 * Returns the graph data.
 	 *
 	 * @since 4.0.0
@@ -85,5 +94,17 @@ abstract class Graph {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * A way to overwrite the graph data.
+	 *
+	 * @since 4.7.6
+	 *
+	 * @param  array $data The data to overwrite.
+	 * @return void
+	 */
+	public static function setOverwriteGraphData( $data ) {
+		self::$overwriteGraphData[ static::class ] = $data;
 	}
 }

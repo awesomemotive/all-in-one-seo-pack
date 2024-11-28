@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIOSEO\Plugin\Common\Integrations\BuddyPress as BuddyPressIntegration;
+
 /**
  * Handles the (Open Graph) description.
  *
@@ -65,6 +67,10 @@ class Description {
 	 * @return string            The page description.
 	 */
 	public function getDescription( $post = null, $default = false ) {
+		if ( BuddyPressIntegration::isComponentPage() ) {
+			return aioseo()->standalone->buddyPress->component->getMeta( 'description' );
+		}
+
 		if ( is_home() ) {
 			return $this->getHomePageDescription();
 		}
@@ -111,10 +117,7 @@ class Description {
 		if ( is_post_type_archive() ) {
 			$postType = get_queried_object();
 			if ( is_a( $postType, 'WP_Post_Type' ) ) {
-				$dynamicOptions = aioseo()->dynamicOptions->noConflict();
-				if ( $dynamicOptions->searchAppearance->archives->has( $postType->name ) ) {
-					return $this->helpers->prepare( aioseo()->dynamicOptions->searchAppearance->archives->{ $postType->name }->metaDescription );
-				}
+				return $this->helpers->prepare( $this->getArchiveDescription( $postType->name ) );
 			}
 		}
 
@@ -190,6 +193,30 @@ class Description {
 		$posts[ $post->ID ] = $description ? $this->helpers->prepare( $description, $post->ID, $default ) : $this->helpers->prepare( term_description( '' ), $post->ID, $default );
 
 		return $posts[ $post->ID ];
+	}
+
+	/**
+	 * Retrieve the default description for the archive template.
+	 *
+	 * @since 4.7.6
+	 *
+	 * @param  string $postType The custom post type.
+	 * @return string           The description.
+	 */
+	public function getArchiveDescription( $postType ) {
+		static $archiveDescription = [];
+		if ( isset( $archiveDescription[ $postType ] ) ) {
+			return $archiveDescription[ $postType ];
+		}
+
+		$archiveDescription[ $postType ] = '';
+
+		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
+		if ( $dynamicOptions->searchAppearance->archives->has( $postType ) ) {
+			$archiveDescription[ $postType ] = aioseo()->dynamicOptions->searchAppearance->archives->{$postType}->metaDescription;
+		}
+
+		return $archiveDescription[ $postType ];
 	}
 
 	/**

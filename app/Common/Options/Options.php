@@ -488,7 +488,7 @@ TEMPLATE
 	 */
 	public function init() {
 		$this->setInitialDefaults();
-		$this->translateDefaults();
+		add_action( 'init', [ $this, 'translateDefaults' ] );
 
 		$this->setDbOptions();
 

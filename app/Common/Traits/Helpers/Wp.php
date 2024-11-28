@@ -1,12 +1,12 @@
 <?php
 namespace AIOSEO\Plugin\Common\Traits\Helpers;
 
-use AIOSEO\Plugin\Common\Utils;
-
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+use AIOSEO\Plugin\Common\Utils;
 
 /**
  * Contains all WP related helper methods.
@@ -167,9 +167,14 @@ trait Wp {
 	 * @param  bool  $namesOnly       Whether only the names should be returned.
 	 * @param  bool  $hasArchivesOnly Whether to only include post types which have archives.
 	 * @param  bool  $rewriteType     Whether to rewrite the type slugs.
+	 * @param  array $args            Additional arguments.
 	 * @return array                  List of public post types.
 	 */
-	public function getPublicPostTypes( $namesOnly = false, $hasArchivesOnly = false, $rewriteType = false ) {
+	public function getPublicPostTypes( $namesOnly = false, $hasArchivesOnly = false, $rewriteType = false, $args = [] ) {
+		$args = array_merge( [
+			'include' => [] // Post types to include.
+		], $args );
+
 		$postTypes   = [];
 		$postTypeObjects = get_post_types( [], 'objects' );
 		foreach ( $postTypeObjects as $postTypeObject ) {
@@ -183,7 +188,11 @@ trait Wp {
 			}
 		}
 
-		return apply_filters( 'aioseo_public_post_types', $postTypes, $namesOnly, $hasArchivesOnly );
+		if ( isset( aioseo()->standalone->buddyPress ) ) {
+			aioseo()->standalone->buddyPress->maybeAddPostTypes( $postTypes, $namesOnly, $hasArchivesOnly, $args );
+		}
+
+		return apply_filters( 'aioseo_public_post_types', $postTypes, $namesOnly, $hasArchivesOnly, $args );
 	}
 
 	/**
@@ -218,7 +227,11 @@ trait Wp {
 		}
 
 		if ( 'attachment' === $postTypeObject->name ) {
-			$postTypeObject->label = __( 'Attachments', 'all-in-one-seo-pack' );
+			// We have to check if the 'init' action has been fired to avoid a PHP notice
+			// in WP 6.7+ due to loading translations too early.
+			if ( did_action( 'init' ) ) {
+				$postTypeObject->label = __( 'Attachments', 'all-in-one-seo-pack' );
+			}
 		}
 
 		if ( 'product' === $postTypeObject->name && $this->isWooCommerceActive() ) {
@@ -472,10 +485,10 @@ trait Wp {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string $type The parent object type ("postTypes" or "taxonomies").
+	 * @param  string $type The parent object type ("postTypes", "archives", "taxonomies").
 	 * @return array        A list of noindexed objects types.
 	 */
-	private function getNoindexedObjects( $type ) {
+	public function getNoindexedObjects( $type ) {
 		$noindexed = [];
 		foreach ( aioseo()->dynamicOptions->searchAppearance->$type->all() as $name => $object ) {
 			if (

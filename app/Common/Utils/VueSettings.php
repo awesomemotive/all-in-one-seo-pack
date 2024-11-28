@@ -182,7 +182,7 @@ class VueSettings {
 	 * @return void
 	 */
 	private function addDynamicDefaults() {
-		$postTypes = aioseo()->helpers->getPublicPostTypes( false, false, true );
+		$postTypes = aioseo()->helpers->getPublicPostTypes( false, false, true, [ 'include' => [ 'buddypress' ] ] );
 		foreach ( $postTypes as $postType ) {
 			$this->defaults['toggledCards'][ $postType['name'] . 'SA' ] = true;
 			$this->defaults['internalTabs'][ $postType['name'] . 'SA' ] = 'title-description';
@@ -194,7 +194,7 @@ class VueSettings {
 			$this->defaults['internalTabs'][ $taxonomy['name'] . 'SA' ] = 'title-description';
 		}
 
-		$postTypes = aioseo()->helpers->getPublicPostTypes( false, true, true );
+		$postTypes = aioseo()->helpers->getPublicPostTypes( false, true, true, [ 'include' => [ 'buddypress' ] ] );
 		foreach ( $postTypes as $postType ) {
 			$this->defaults['toggledCards'][ $postType['name'] . 'ArchiveArchives' ] = true;
 			$this->defaults['internalTabs'][ $postType['name'] . 'ArchiveArchives' ] = 'title-description';

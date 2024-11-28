@@ -166,7 +166,7 @@ class Admin {
 			add_action( 'admin_init', [ $this, 'addPluginScripts' ] );
 
 			// Add redirects messages to trashed posts.
-			add_filter( 'bulk_post_updated_messages', [ $this, 'appendTrashedMessage' ] );
+			add_filter( 'bulk_post_updated_messages', [ $this, 'appendTrashedMessage' ], PHP_INT_MAX );
 
 			$this->registerLinkFormatHooks();
 
@@ -174,7 +174,8 @@ class Admin {
 		}
 
 		$this->loadTextDomain();
-		$this->setPages();
+
+		add_action( 'init', [ $this, 'setPages' ] );
 	}
 
 	/**
@@ -185,7 +186,7 @@ class Admin {
 	 *
 	 * @return void
 	 */
-	protected function setPages() {
+	public function setPages() {
 		// TODO: Remove this after a couple months.
 		$newIndicator = '<span class="aioseo-menu-new-indicator">&nbsp;NEW!</span>';
 
@@ -588,11 +589,16 @@ class Admin {
 			return;
 		}
 
+		$href = get_edit_post_link( $post->ID );
+		if ( ! $href ) {
+			return;
+		}
+
 		$this->adminBarMenuItems[] = [
 			'id'     => 'aioseo-edit-' . $post->ID,
 			'parent' => 'aioseo-main',
 			'title'  => esc_html__( 'Edit SEO', 'all-in-one-seo-pack' ),
-			'href'   => get_edit_post_link( $post->ID ) . '#aioseo-settings',
+			'href'   => $href . '#aioseo-settings',
 		];
 	}
 
@@ -1144,6 +1150,7 @@ class Admin {
 	 */
 	public function appendTrashedMessage( $messages ) {
 		// Let advanced users override this.
+
 		if ( apply_filters( 'aioseo_redirects_disable_trashed_posts_suggestions', false ) ) {
 			return $messages;
 		}
@@ -1152,7 +1159,7 @@ class Admin {
 			return $messages;
 		}
 
-		if ( empty( $_GET['ids'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended	
+		if ( empty( $_GET['ids'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended  
 			return $messages;
 		}
 
@@ -1186,8 +1193,12 @@ class Admin {
 		$url         = aioseo()->slugMonitor->manualRedirectUrl( $posts );
 		$addRedirect = _n( 'Add Redirect to improve SEO', 'Add Redirects to improve SEO', count( $posts ), 'all-in-one-seo-pack' );
 
-		$messages['post']['trashed'] = $messages['post']['trashed'] . '&nbsp;<a href="' . $url . '" class="aioseo-redirects-trashed-post">' . $addRedirect . '</a> |';
-		$messages['page']['trashed'] = $messages['page']['trashed'] . '&nbsp;<a href="' . $url . '" class="aioseo-redirects-trashed-post">' . $addRedirect . '</a> |';
+		$postType = get_post_type( $id );
+		if ( empty( $messages[ $postType ]['trashed'] ) ) {
+			$messages[ $postType ]['trashed'] = $messages['post']['trashed'];
+		}
+
+		$messages[ $postType ]['trashed'] = $messages[ $postType ]['trashed'] . '&nbsp;<a href="' . $url . '" class="aioseo-redirects-trashed-post">' . $addRedirect . '</a> |';
 
 		return $messages;
 	}

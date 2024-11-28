@@ -1,12 +1,12 @@
 <?php
 namespace AIOSEO\Plugin\Common\Sitemap;
 
-use AIOSEO\Plugin\Common\Utils as CommonUtils;
-
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+use AIOSEO\Plugin\Common\Utils as CommonUtils;
 
 /**
  * Handles all complex queries for the sitemap.

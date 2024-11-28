@@ -43,7 +43,7 @@ class NetworkAdmin extends Admin {
 	public function init() {
 		add_action( 'network_admin_menu', [ $this, 'addNetworkMenu' ] );
 
-		$this->setPages();
+		add_action( 'init', [ $this, 'setPages' ] );
 	}
 
 	/**

@@ -1,6 +1,7 @@
 <?php
 namespace AIOSEO\Plugin\Common\Meta;
 
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -11,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.1.2
  */
 class Helpers {
+	use Traits\Helpers\BuddyPress;
+
 	/**
 	 * The name of the class where this instance is constructed.
 	 *

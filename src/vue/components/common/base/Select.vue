@@ -396,6 +396,10 @@ export default {
 	&.small {
 		height: 30px;
 
+		&.multiselect {
+			height: auto;
+		}
+
 		.multiselect__tags {
 			height: 30px;
 			padding: 0 34px 0 8px;

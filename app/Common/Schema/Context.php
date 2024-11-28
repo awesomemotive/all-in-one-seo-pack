@@ -19,7 +19,7 @@ class Context {
 	 *
 	 * @var Breadcrumb
 	 */
-	private $breadcrumb = null;
+	public $breadcrumb = null;
 
 	/**
 	 * Class constructor.

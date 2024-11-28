@@ -142,6 +142,10 @@ class Root {
 			$indexes[] = $this->buildIndex( 'date', $result[0]->amountOfUrls );
 		}
 
+		if ( isset( aioseo()->standalone->buddyPress->sitemap ) ) {
+			$indexes = array_merge( $indexes, aioseo()->standalone->buddyPress->sitemap->indexes() );
+		}
+
 		return apply_filters( 'aioseo_sitemap_indexes', array_filter( $indexes ) );
 	}
 

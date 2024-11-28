@@ -17,23 +17,29 @@ class NewsArticle extends Article {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return object $graphData The graph data.
+	 * @param  object $graphData The graph data.
 	 * @return array             The parsed graph data.
 	 */
 	public function get( $graphData = null ) {
+		if ( ! empty( self::$overwriteGraphData[ __CLASS__ ] ) ) {
+			$graphData = json_decode( wp_json_encode( wp_parse_args( self::$overwriteGraphData[ __CLASS__ ], $graphData ) ) );
+		}
+
 		$data = parent::get( $graphData );
 		if ( ! $data ) {
 			return [];
 		}
 
-		$data['@type']    = 'NewsArticle';
-		$data['@id']      = ! empty( $graphData->id ) ? aioseo()->schema->context['url'] . $graphData->id : aioseo()->schema->context['url'] . '#newsarticle';
-		// Translators: 1 - The date the article was published on.
-		$data['dateline'] = ! empty( $graphData->properties->datePublished )
-			// Translators: 1 - A data (e.g. September 2, 2022).
-			? sprintf( __( 'Published on %1$s.', 'all-in-one-seo-pack' ), mysql2date( 'F j, Y', $graphData->properties->datePublished, false ) )
-			// Translators: 1 - A data (e.g. September 2, 2022).
-			: sprintf( __( 'Published on %1$s.', 'all-in-one-seo-pack' ), get_the_date( 'F j, Y' ) );
+		$data['@type'] = 'NewsArticle';
+		$data['@id']   = ! empty( $graphData->id ) ? aioseo()->schema->context['url'] . $graphData->id : aioseo()->schema->context['url'] . '#newsarticle';
+
+		$date = ! empty( $graphData->properties->datePublished )
+			? mysql2date( 'F j, Y', $graphData->properties->datePublished, false )
+			: get_the_date( 'F j, Y' );
+		if ( $date ) {
+			// Translators: 1 - A date (e.g. September 2, 2022).
+			$data['dateline'] = sprintf( __( 'Published on %1$s.', 'all-in-one-seo-pack' ), $date );
+		}
 
 		return $data;
 	}

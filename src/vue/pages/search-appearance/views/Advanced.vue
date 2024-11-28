@@ -539,7 +539,7 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="rootStore.aioseo.postData.archives.length"
+				v-if="getArchives.included.length"
 				:name="strings.postTypesFeed"
 			>
 				<template #content>
@@ -553,6 +553,7 @@
 					<core-post-type-options
 						v-if="!optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.archives.all"
 						:options="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds"
+						:excluded="getArchives.excluded"
 						type="archives"
 					/>
 
@@ -850,6 +851,25 @@ export default {
 				{ label: __('1 week', td), value: 'week' },
 				{ label: __('Forever', td), value: 'forever' }
 			]
+		}
+	},
+	computed : {
+		getArchives () {
+			const excluded = []
+			const included = this.rootStore.aioseo.postData.archives.filter(a => {
+				if (a.buddyPress && 'bp-activity' !== a.name) {
+					excluded.push(a.name)
+
+					return false
+				}
+
+				return true
+			})
+
+			return {
+				excluded,
+				included
+			}
 		}
 	}
 }

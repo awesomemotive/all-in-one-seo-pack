@@ -307,12 +307,24 @@ class Tags {
 	];
 
 	/**
-	 * Class Contructor.
+	 * Class constructor.
 	 *
 	 * @since 4.0.0
 	 */
 	public function __construct() {
-		$this->tags = [
+		// Tags need to be registered on wp_loaded instead of init to ensure these are available during block rendering.
+		add_action( 'wp_loaded', [ $this, 'registerTags' ] );
+	}
+
+	/**
+	 * Register the tags.
+	 *
+	 * @since 4.7.6
+	 *
+	 * @return void
+	 */
+	public function registerTags() {
+		$this->tags = array_merge( $this->tags, [
 			[
 				'id'          => 'alt_tag',
 				'name'        => __( 'Image Alt Tag', 'all-in-one-seo-pack' ),
@@ -585,7 +597,7 @@ class Tags {
 				'name'        => sprintf( __( '%1$s Title', 'all-in-one-seo-pack' ), 'Category' ),
 				'description' => __( 'The title of the primary term, first assigned term or the current term.', 'all-in-one-seo-pack' )
 			]
-		];
+		] );
 	}
 
 	/**
@@ -599,7 +611,9 @@ class Tags {
 	public function all( $sampleData = false ) {
 		$tags = $this->tags;
 		foreach ( $tags as $key => $tag ) {
-			$tags[ $key ]['value'] = $this->getTagValue( $tag, null, $sampleData );
+			$tags[ $key ]['value'] = ( $tag['instance'] ?? null )
+				? $tag['instance']->getTagValue( $tag, null, $sampleData )
+				: $this->getTagValue( $tag, null, $sampleData );
 		}
 
 		usort( $tags, function ( $a, $b ) {
@@ -626,7 +640,10 @@ class Tags {
 
 		// Post types including CPT's.
 		foreach ( aioseo()->helpers->getPublicPostTypes() as $postType ) {
-			if ( 'post' === $postType['name'] ) {
+			if (
+				'post' === $postType['name'] ||
+				! empty( $postType['buddyPress'] )
+			) {
 				continue;
 			}
 
@@ -794,7 +811,7 @@ class Tags {
 	 * @return string         The string with tags replaced.
 	 */
 	public function replaceTags( $string, $id = 0 ) {
-		if ( ! $string || ! preg_match( '/#/', $string ) ) {
+		if ( ! $string || ! preg_match( '/' . $this->denotationChar . '/', $string ) ) {
 			return $string;
 		}
 
@@ -827,10 +844,10 @@ class Tags {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string $tag        The tag to look for.
-	 * @param  int    $id         The post ID.
-	 * @param  bool   $sampleData Whether or not to fill empty values with sample data.
-	 * @return mixed              The value of the tag.
+	 * @param  array    $tag        The tag to look for.
+	 * @param  int|null $id         The post ID.
+	 * @param  bool     $sampleData Whether or not to fill empty values with sample data.
+	 * @return mixed                The value of the tag.
 	 */
 	public function getTagValue( $tag, $id, $sampleData = false ) {
 		$author   = new \WP_User();

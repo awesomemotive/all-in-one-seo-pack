@@ -280,8 +280,8 @@ class Image {
 		$thirdParty = new ThirdParty( $this->post, $parsedPostContent );
 		$images     = array_merge( $images, $thirdParty->extract() );
 
-		preg_match_all( '#<img[^>]+src="([^">]+)"#', $parsedPostContent, $matches );
-		foreach ( $matches[1] as $url ) {
+		preg_match_all( '#<(amp-)?img[^>]+src="([^">]+)"#', (string) $parsedPostContent, $matches );
+		foreach ( $matches[2] as $url ) {
 			$images[] = aioseo()->helpers->makeUrlAbsolute( $url );
 		}
 

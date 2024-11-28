@@ -1,12 +1,12 @@
 <?php
 namespace AIOSEO\Plugin\Common\QueryArgs;
 
-use AIOSEO\Plugin\Common\Models;
-
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+use AIOSEO\Plugin\Common\Models;
 
 /**
  * Class to control Crawl Cleanup.

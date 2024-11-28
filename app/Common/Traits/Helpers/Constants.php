@@ -1,6 +1,11 @@
 <?php
 namespace AIOSEO\Plugin\Common\Traits\Helpers;
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Contains constant specific helper methods.
  *

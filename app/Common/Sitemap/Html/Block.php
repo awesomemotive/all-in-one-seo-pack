@@ -18,7 +18,7 @@ class Block {
 	 * @since 4.1.1
 	 */
 	public function __construct() {
-		$this->register();
+		add_action( 'init', [ $this, 'register' ] );
 	}
 
 	/**

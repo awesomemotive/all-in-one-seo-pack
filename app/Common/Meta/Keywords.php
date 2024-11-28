@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIOSEO\Plugin\Common\Integrations\BuddyPress as BuddyPressIntegration;
+
 /**
  * Handles the keywords.
  *
@@ -22,6 +24,10 @@ class Keywords {
 	public function getKeywords() {
 		if ( ! aioseo()->options->searchAppearance->advanced->useKeywords ) {
 			return '';
+		}
+
+		if ( BuddyPressIntegration::isComponentPage() ) {
+			return aioseo()->standalone->buddyPress->component->getMeta( 'keywords' );
 		}
 
 		$isStaticArchive = aioseo()->helpers->isWooCommerceShopPage() || aioseo()->helpers->isStaticPostsPage();
@@ -56,18 +62,38 @@ class Keywords {
 				return $this->prepareKeywords( $keywords );
 			}
 
-			$postType       = get_queried_object();
-			$dynamicOptions = aioseo()->dynamicOptions->noConflict();
-			if ( $postType && $dynamicOptions->searchAppearance->archives->has( $postType->name ) ) {
-				$keywords = $this->extractMetaKeywords( aioseo()->dynamicOptions->searchAppearance->archives->{ $postType->name }->advanced->keywords );
+			$postType = get_queried_object();
 
-				return $this->prepareKeywords( $keywords );
-			}
-
-			return '';
+			return is_a( $postType, 'WP_Post_Type' )
+				? $this->prepareKeywords( $this->getArchiveKeywords( $postType->name ) )
+				: '';
 		}
 
 		return $this->prepareKeywords( $this->getAllKeywords() );
+	}
+
+	/**
+	 * Retrieves the default keywords for the archive template.
+	 *
+	 * @since 4.7.6
+	 *
+	 * @param  string $postType The post type.
+	 * @return array            The keywords.
+	 */
+	public function getArchiveKeywords( $postType ) {
+		static $archiveKeywords = [];
+		if ( isset( $archiveKeywords[ $postType ] ) ) {
+			return $archiveKeywords[ $postType ];
+		}
+
+		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
+		if ( $dynamicOptions->searchAppearance->archives->has( $postType ) ) {
+			$keywords = $this->extractMetaKeywords( aioseo()->dynamicOptions->searchAppearance->archives->{ $postType }->advanced->keywords );
+		}
+
+		$archiveKeywords[ $postType ] = empty( $keywords ) ? [] : $keywords;
+
+		return $archiveKeywords[ $postType ];
 	}
 
 	/**
@@ -129,7 +155,7 @@ class Keywords {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return string A comma-separated list of unique keywords.
+	 * @return array A list of unique keywords.
 	 */
 	public function getAllKeywords() {
 		$keywords = [];
@@ -160,7 +186,7 @@ class Keywords {
 	 * @param  array  $keywords Raw keywords.
 	 * @return string           A list of prepared keywords, comma-separated.
 	 */
-	protected function prepareKeywords( $keywords ) {
+	public function prepareKeywords( $keywords ) {
 		$keywords = $this->getUniqueKeywords( $keywords );
 		$keywords = trim( $keywords );
 		$keywords = aioseo()->helpers->internationalize( $keywords );
@@ -190,9 +216,9 @@ class Keywords {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  array   $keywords The keywords.
-	 * @param  boolean $toString Whether or not to turn it into a comma separated string.
-	 * @return string            The keywords string.
+	 * @param  array        $keywords The keywords.
+	 * @param  boolean      $toString Whether or not to turn it into a comma separated string.
+	 * @return string|array           The keywords.
 	 */
 	public function getUniqueKeywords( $keywords, $toString = true ) {
 		$keywords = $this->keywordsToLowerCase( $keywords );

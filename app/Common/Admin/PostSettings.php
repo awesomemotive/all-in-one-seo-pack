@@ -239,6 +239,7 @@ class PostSettings {
 
 		// If there is no data, there likely was an error, e.g. if the hidden field wasn't populated on load and the user saved the post without making changes in the metabox.
 		// In that case we should return to prevent a complete reset of the data.
+
 		if ( empty( $currentPost ) ) {
 			return;
 		}

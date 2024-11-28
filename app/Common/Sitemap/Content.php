@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIOSEO\Plugin\Common\Integrations\BuddyPress as BuddyPressIntegration;
+
 /**
  * Determines which content should be included in the sitemap.
  *
@@ -102,7 +104,9 @@ class Content {
 		// Check if requested index has a dedicated method.
 		$methodName = aioseo()->helpers->dashesToCamelCase( aioseo()->sitemap->indexName );
 		if ( method_exists( $this, $methodName ) ) {
-			return count( $this->$methodName() );
+			$res = $this->$methodName();
+
+			return ! empty( $res ) ? count( $res ) : 0;
 		}
 
 		// Check if requested index is a registered post type.
@@ -661,5 +665,172 @@ class Content {
 
 		// Get the date which is the latest.
 		return $lastModifiedDate > $publishDate ? $lastModifiedDate : $publishDate;
+	}
+
+	/**
+	 * Returns all entries for the BuddyPress Activity Sitemap.
+	 * This method is automagically called from {@see get()} if the current index name equals to 'bp-activity'
+	 *
+	 * @since 4.7.6
+	 *
+	 * @return array The sitemap entries.
+	 */
+	public function bpActivity() {
+		$entries = [];
+		if ( ! in_array( aioseo()->sitemap->indexName, aioseo()->sitemap->helpers->includedPostTypes(), true ) ) {
+			return $entries;
+		}
+
+		$postType = 'bp-activity';
+		$query    = aioseo()->core->db
+			->start( 'bp_activity as a' )
+			->select( '`a`.`id`, `a`.`date_recorded`' )
+			->whereRaw( "a.is_spam = 0 AND a.hide_sitewide = 0 AND a.type NOT IN ('activity_comment', 'last_activity')" )
+			->limit( aioseo()->sitemap->linksPerIndex, aioseo()->sitemap->offset )
+			->orderBy( '`a`.`date_recorded` DESC' );
+
+		$items = $query->run()
+						->result();
+
+		foreach ( $items as $item ) {
+			$entry = [
+				'loc'        => BuddyPressIntegration::getComponentSingleUrl( 'activity', $item->id ),
+				'lastmod'    => aioseo()->helpers->dateTimeToIso8601( $item->date_recorded ),
+				'changefreq' => aioseo()->sitemap->priority->frequency( 'postTypes', false, $postType ),
+				'priority'   => aioseo()->sitemap->priority->priority( 'postTypes', false, $postType ),
+			];
+
+			$entries[] = apply_filters( 'aioseo_sitemap_post', $entry, $item->id, $postType );
+		}
+
+		$archiveUrl = BuddyPressIntegration::getComponentArchiveUrl( 'activity' );
+		if (
+			aioseo()->helpers->isUrl( $archiveUrl ) &&
+			! in_array( $postType, aioseo()->helpers->getNoindexedObjects( 'archives' ), true )
+		) {
+			$lastMod = ! empty( $items[0] ) ? $items[0]->date_recorded : current_time( 'mysql' );
+			$entry   = [
+				'loc'        => $archiveUrl,
+				'lastmod'    => $lastMod,
+				'changefreq' => aioseo()->sitemap->priority->frequency( 'postTypes', false, $postType ),
+				'priority'   => aioseo()->sitemap->priority->priority( 'postTypes', false, $postType ),
+			];
+
+			array_unshift( $entries, $entry );
+		}
+
+		return apply_filters( 'aioseo_sitemap_posts', $entries, $postType );
+	}
+
+	/**
+	 * Returns all entries for the BuddyPress Group Sitemap.
+	 * This method is automagically called from {@see get()} if the current index name equals to 'bp-group'
+	 *
+	 * @since 4.7.6
+	 *
+	 * @return array The sitemap entries.
+	 */
+	public function bpGroup() {
+		$entries = [];
+		if ( ! in_array( aioseo()->sitemap->indexName, aioseo()->sitemap->helpers->includedPostTypes(), true ) ) {
+			return $entries;
+		}
+
+		$postType = 'bp-group';
+		$query    = aioseo()->core->db
+			->start( 'bp_groups as g' )
+			->select( '`g`.`id`, `g`.`date_created`, `gm`.`meta_value` as date_modified' )
+			->leftJoin( 'bp_groups_groupmeta as gm', 'g.id = gm.group_id' )
+			->whereRaw( "g.status = 'public' AND gm.meta_key = 'last_activity'" )
+			->limit( aioseo()->sitemap->linksPerIndex, aioseo()->sitemap->offset )
+			->orderBy( '`gm`.`meta_value` DESC, `g`.`date_created` DESC' );
+
+		$items = $query->run()
+						->result();
+
+		foreach ( $items as $item ) {
+			$lastMod = $item->date_modified ?: $item->date_created;
+			$entry   = [
+				'loc'        => BuddyPressIntegration::getComponentSingleUrl( 'group', BuddyPressIntegration::callFunc( 'bp_get_group_by', 'id', $item->id ) ),
+				'lastmod'    => aioseo()->helpers->dateTimeToIso8601( $lastMod ),
+				'changefreq' => aioseo()->sitemap->priority->frequency( 'postTypes', false, $postType ),
+				'priority'   => aioseo()->sitemap->priority->priority( 'postTypes', false, $postType ),
+			];
+
+			$entries[] = apply_filters( 'aioseo_sitemap_post', $entry, $item->id, $postType );
+		}
+
+		$archiveUrl = BuddyPressIntegration::getComponentArchiveUrl( 'group' );
+		if (
+			aioseo()->helpers->isUrl( $archiveUrl ) &&
+			! in_array( $postType, aioseo()->helpers->getNoindexedObjects( 'archives' ), true )
+		) {
+			$lastMod = ! empty( $items[0] ) ? $items[0]->date_modified : current_time( 'mysql' );
+			$entry   = [
+				'loc'        => $archiveUrl,
+				'lastmod'    => $lastMod,
+				'changefreq' => aioseo()->sitemap->priority->frequency( 'postTypes', false, $postType ),
+				'priority'   => aioseo()->sitemap->priority->priority( 'postTypes', false, $postType ),
+			];
+
+			array_unshift( $entries, $entry );
+		}
+
+		return apply_filters( 'aioseo_sitemap_posts', $entries, $postType );
+	}
+
+	/**
+	 * Returns all entries for the BuddyPress Member Sitemap.
+	 * This method is automagically called from {@see get()} if the current index name equals to 'bp-member'
+	 *
+	 * @since 4.7.6
+	 *
+	 * @return array The sitemap entries.
+	 */
+	public function bpMember() {
+		$entries = [];
+		if ( ! in_array( aioseo()->sitemap->indexName, aioseo()->sitemap->helpers->includedPostTypes(), true ) ) {
+			return $entries;
+		}
+
+		$postType = 'bp-member';
+		$query    = aioseo()->core->db
+			->start( 'bp_activity as a' )
+			->select( '`a`.`user_id` as id, `a`.`date_recorded`' )
+			->whereRaw( "a.component = 'members' AND a.type = 'last_activity'" )
+			->limit( aioseo()->sitemap->linksPerIndex, aioseo()->sitemap->offset )
+			->orderBy( '`a`.`date_recorded` DESC' );
+
+		$items = $query->run()
+						->result();
+
+		foreach ( $items as $item ) {
+			$entry = [
+				'loc'        => BuddyPressIntegration::getComponentSingleUrl( 'member', $item->id ),
+				'lastmod'    => aioseo()->helpers->dateTimeToIso8601( $item->date_recorded ),
+				'changefreq' => aioseo()->sitemap->priority->frequency( 'postTypes', false, $postType ),
+				'priority'   => aioseo()->sitemap->priority->priority( 'postTypes', false, $postType ),
+			];
+
+			$entries[] = apply_filters( 'aioseo_sitemap_post', $entry, $item->id, $postType );
+		}
+
+		$archiveUrl = BuddyPressIntegration::getComponentArchiveUrl( 'member' );
+		if (
+			aioseo()->helpers->isUrl( $archiveUrl ) &&
+			! in_array( $postType, aioseo()->helpers->getNoindexedObjects( 'archives' ), true )
+		) {
+			$lastMod = ! empty( $items[0] ) ? $items[0]->date_recorded : current_time( 'mysql' );
+			$entry   = [
+				'loc'        => $archiveUrl,
+				'lastmod'    => $lastMod,
+				'changefreq' => aioseo()->sitemap->priority->frequency( 'postTypes', false, $postType ),
+				'priority'   => aioseo()->sitemap->priority->priority( 'postTypes', false, $postType ),
+			];
+
+			array_unshift( $entries, $entry );
+		}
+
+		return apply_filters( 'aioseo_sitemap_posts', $entries, $postType );
 	}
 }

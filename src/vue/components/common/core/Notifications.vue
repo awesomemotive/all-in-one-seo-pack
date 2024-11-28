@@ -262,7 +262,7 @@ export default {
 						cardsVisible++
 					}
 
-					this.maxNotifications = cardsVisible || 1 // Ensure at least 1 card is visible.
+					this.maxNotifications = cardsVisible || 1 // Ensure at least one card is visible.
 
 					// Calculate total pages, ensuring cardsVisible is finite and valid.
 					if (isFinite(cardsVisible) && 0 < cardsVisible) {

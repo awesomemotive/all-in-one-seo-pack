@@ -41,6 +41,13 @@ class Xsl {
 				case 'post-archive':
 					$sitemapName = __( 'Post Archive', 'all-in-one-seo-pack' );
 					break;
+				case 'bp-activity':
+				case 'bp-group':
+				case 'bp-member':
+					$bpFakePostTypes = aioseo()->standalone->buddyPress->getFakePostTypes();
+					$labels          = array_column( wp_list_filter( $bpFakePostTypes, [ 'name' => $sitemapInfo[1] ] ), 'label' );
+					$sitemapName     = ! empty( $labels[0] ) ? $labels[0] : $sitemapName;
+					break;
 				default:
 					if ( post_type_exists( $sitemapInfo[1] ) ) {
 						$postTypeObject = get_post_type_object( $sitemapInfo[1] );

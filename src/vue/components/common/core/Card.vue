@@ -5,6 +5,7 @@
 			'disabled' : disabled,
 			...cardClass
 		}"
+		:id="cardId ? `aioseo-card-${cardId}` : null"
 	>
 		<div
 			v-if="!hideHeader"
@@ -130,7 +131,8 @@ export default {
 			default () {
 				return {}
 			}
-		}
+		},
+		cardId : String
 	},
 	watch : {
 		toggles (value) {

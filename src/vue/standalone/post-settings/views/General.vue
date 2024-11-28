@@ -86,7 +86,11 @@
 
 					<template #append-button>
 						<ai-generator
-							v-if="postEditorStore.currentPost.postType && !isPageBuilderEditor()"
+							v-if="
+								postEditorStore.currentPost.postType &&
+								'web-story' !== postEditorStore.currentPost.postType &&
+								!isPageBuilderEditor()
+							"
 							type="title"
 						/>
 					</template>
@@ -130,7 +134,11 @@
 
 					<template #append-button>
 						<ai-generator
-							v-if="postEditorStore.currentPost.postType && !isPageBuilderEditor()"
+							v-if="
+								postEditorStore.currentPost.postType &&
+								'web-story' !== postEditorStore.currentPost.postType &&
+								!isPageBuilderEditor()
+							"
 							type="description"
 						/>
 					</template>
@@ -147,7 +155,7 @@
 			v-if="
 				'metabox' === $root.$data.screenContext &&
 				'post' === postEditorStore.currentPost.context &&
-				'attachment' !== postEditorStore.currentPost.postType &&
+				!['attachment', 'web-story'].includes(postEditorStore.currentPost.postType) &&
 				!isPageBuilderEditor()
 			"
 			id="aioseo-post-settings-cornerstone-content-row"

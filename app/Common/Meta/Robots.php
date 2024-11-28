@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIOSEO\Plugin\Common\Integrations\BuddyPress as BuddyPressIntegration;
+
 /**
  * Handles the robots meta tag.
  *
@@ -100,6 +102,10 @@ class Robots {
 			$this->globalValues( [ 'archives', 'search' ] );
 
 			return $this->metaHelper();
+		}
+
+		if ( BuddyPressIntegration::isComponentPage() ) {
+			return aioseo()->standalone->buddyPress->component->getMeta( 'robots' );
 		}
 
 		if ( is_category() || is_tag() || is_tax() ) {
@@ -262,7 +268,7 @@ class Robots {
 	 * @param  boolean $isDynamicOption Whether this is for a dynamic option.
 	 * @return void
 	 */
-	protected function globalValues( $optionOrder = [], $isDynamicOption = false ) {
+	public function globalValues( $optionOrder = [], $isDynamicOption = false ) {
 		$robotsMeta = [];
 		if ( count( $optionOrder ) ) {
 			$options = $isDynamicOption

@@ -4,6 +4,7 @@
 			v-for="(archive, index) in getArchives"
 			:key="index"
 			:slug="`${archive.name}Archives`"
+			:card-id="`${archive.name}Archives`"
 		>
 			<template #header>
 				<div
@@ -122,7 +123,7 @@ export default {
 			return this.archives.concat(this.rootStore.aioseo.postData.archives.map(a => ({
 				label    : `${a.label} Archives`,
 				name     : `${a.name}Archive`,
-				icon     : 'dashicons-category',
+				icon     : a?.icon || 'dashicons-category',
 				singular : a.singular,
 				dynamic  : true
 			})))

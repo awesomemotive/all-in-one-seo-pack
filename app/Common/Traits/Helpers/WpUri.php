@@ -1,6 +1,8 @@
 <?php
 namespace AIOSEO\Plugin\Common\Traits\Helpers;
 
+use AIOSEO\Plugin\Common\Integrations\BuddyPress as BuddyPressIntegration;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -123,6 +125,10 @@ trait WpUri {
 			$url[ $hash ] = apply_filters( 'aioseo_canonical_url', $this->makeUrlAbsolute( $metaData->canonical_url ) );
 
 			return $url[ $hash ];
+		}
+
+		if ( BuddyPressIntegration::isComponentPage() ) {
+			$url[ $hash ] = aioseo()->standalone->buddyPress->component->getMeta( 'canonical' );
 		}
 
 		if ( empty( $url[ $hash ] ) || is_wp_error( $url[ $hash ] ) ) {

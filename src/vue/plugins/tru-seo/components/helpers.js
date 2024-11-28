@@ -32,7 +32,7 @@ export const truSeoShouldAnalyze = () => {
 
 export const shouldShowTruSeoScore = () => {
 	const rootStore = useRootStore()
-	if (!rootStore.aioseo.screen?.postType) {
+	if (!rootStore.aioseo.screen?.postType || 'web-story' === rootStore.aioseo.screen?.postType) {
 		return false
 	}
 

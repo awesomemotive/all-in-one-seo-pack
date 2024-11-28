@@ -93,6 +93,7 @@ class Blocks {
 			 * This is needed because this asset is not loaded on widgets and customizer screens,
 			 * {@see \AIOSEO\Plugin\Common\Admin\PostSettings::enqueuePostSettingsAssets}.
 			 *
+
 			 */
 			aioseo()->core->assets->load( $postSettingJsAsset, [], aioseo()->helpers->getVueData() );
 		}

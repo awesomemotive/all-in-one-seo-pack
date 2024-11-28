@@ -24,7 +24,8 @@ export const usePostTypes = () => {
 
 		// If the icon's name starts with 'dashicons-awb-', then it's a custom icon for Avada that
 		// we are not able to import.
-		if (icon?.startsWith('dashicons-awb-')) {
+		// Likewise, if it's a base64 encoded SVG, we should not import it either (e.g. Google Web Stories).
+		if (icon?.startsWith('dashicons-awb-') || icon?.includes('data:image/svg+xml;base64')) {
 			return defaultIcon
 		}
 

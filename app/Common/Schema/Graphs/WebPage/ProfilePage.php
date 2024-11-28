@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIOSEO\Plugin\Common\Integrations\BuddyPress as BuddyPressIntegration;
+
 /**
  * ProfilePage graph class.
  *
@@ -69,17 +71,17 @@ class ProfilePage extends WebPage {
 
 		] );
 
-		// Add BuddyPress specific data
-		if ( aioseo()->schema->helpers->checkBuddyPressPage() ) {
-			// Ensure 'mainEntity' exists and populate it with the correct details.
+		if (
+			BuddyPressIntegration::isComponentPage() &&
+			'bp-member_single' === aioseo()->standalone->buddyPress->component->templateType
+		) {
 			if ( ! isset( $data['mainEntity'] ) ) {
 				$data['mainEntity'] = [];
 			}
+
 			$data['mainEntity']['@type'] = 'Person';
-			$data['mainEntity']['name']  = get_the_title();
-			if ( function_exists( 'bp_get_displayed_user_link' ) && bp_get_displayed_user_link() ) {
-				$data['mainEntity']['url'] = bp_get_displayed_user_link();
-			}
+			$data['mainEntity']['name']  = aioseo()->standalone->buddyPress->component->author->display_name;
+			$data['mainEntity']['url']   = BuddyPressIntegration::getComponentSingleUrl( 'member', aioseo()->standalone->buddyPress->component->author->ID );
 		}
 
 		return $data;

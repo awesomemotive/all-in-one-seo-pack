@@ -1,13 +1,13 @@
 <?php
 namespace AIOSEO\Plugin\Common\Main;
 
-use AIOSEO\Plugin\Common\Models\CrawlCleanupLog;
-use AIOSEO\Plugin\Common\Models\CrawlCleanupBlockedArg;
-
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+use AIOSEO\Plugin\Common\Models\CrawlCleanupLog;
+use AIOSEO\Plugin\Common\Models\CrawlCleanupBlockedArg;
 
 /**
  * Query arguments class.

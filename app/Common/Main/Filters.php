@@ -1,12 +1,13 @@
 <?php
 namespace AIOSEO\Plugin\Common\Main;
 
-use AIOSEO\Plugin\Common\Models;
-
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+use AIOSEO\Plugin\Common\Models;
+use AIOSEO\Plugin\Common\Integrations\BuddyPress as BuddyPressIntegration;
 
 /**
  * Abstract class that Pro and Lite both extend.
@@ -135,6 +136,7 @@ abstract class Filters {
 	 * Resets the current user if bbPress is active.
 	 * We have to do this because our calls to wp_get_current_user() set the current user early and this breaks core functionality in bbPress.
 	 *
+
 	 *
 	 * @since 4.1.5
 	 *
@@ -150,6 +152,7 @@ abstract class Filters {
 	/**
 	 * Removes the bbPress title filter when adding a new reply with empty title to avoid fatal error.
 	 *
+
 	 *
 	 * @since 4.3.1
 	 *
@@ -401,7 +404,8 @@ abstract class Filters {
 			'elementor_library',
 			'redirect_rule', // Safe Redirect Manager
 			'seedprod',
-			'tcb_lightbox'
+			'tcb_lightbox',
+			BuddyPressIntegration::getEmailCptSlug()
 		];
 
 		foreach ( $postTypes as $index => $postType ) {

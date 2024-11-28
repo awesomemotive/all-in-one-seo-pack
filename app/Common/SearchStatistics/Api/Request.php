@@ -178,7 +178,7 @@ class Request {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @return mixed $value The response.
+	 * @return mixed The response.
 	 */
 	public function request() {
 		// Make sure we're not blocked.
@@ -223,7 +223,6 @@ class Request {
 
 		$body['timezone']        = gmdate( 'e' );
 		$body['ip']              = ! empty( $_SERVER['SERVER_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_ADDR'] ) ) : '';
-		$body['internalOptions'] = aioseo()->internalOptions->internal->searchStatistics->all();
 
 		// 2. SET HEADERS
 		$headers = array_merge( [
@@ -245,7 +244,6 @@ class Request {
 		];
 
 		// 4. EXECUTE REQUEST
-		$response = null;
 		if ( 'GET' === $this->method ) {
 			$queryString = http_build_query( $body, '', '&' );
 

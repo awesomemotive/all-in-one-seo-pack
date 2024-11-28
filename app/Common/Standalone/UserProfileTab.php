@@ -1,6 +1,11 @@
 <?php
 namespace AIOSEO\Plugin\Common\Standalone;
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use AIOSEO\Plugin\Pro\Standalone as ProStandalone;
 
 /**

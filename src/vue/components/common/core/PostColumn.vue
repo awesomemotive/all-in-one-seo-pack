@@ -425,8 +425,8 @@ export default {
 				return false
 			}
 
-			// We don't want to show the HA for products.
-			if ('product' === this.post.postType) {
+			// We don't want to show the HA for products or AMP web stories.
+			if ('product' === this.post.postType || 'web-story' === this.post.postType) {
 				return false
 			}
 

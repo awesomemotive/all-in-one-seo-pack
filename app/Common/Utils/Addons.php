@@ -140,6 +140,7 @@ class Addons {
 		}
 
 		// Convert the addons array to objects using JSON. This is essential because we have lots of addons that rely on this to be an object, and changing it to an array would break them.
+
 		$addons = json_decode( wp_json_encode( $addons ) );
 
 		$installedPlugins = array_keys( get_plugins() );

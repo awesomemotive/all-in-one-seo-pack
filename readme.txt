@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.7
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.7.5.1
+Stable tag: 4.7.6
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,6 +226,15 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.7.6**
+
+* New: BuddyPress Integration - You can now granularly control your SEO settings for all Activities, Groups and Members in BuddyPress. We've also added full sitemap support, new DiscussionForumPosting schema and many more features to optimize your BuddyPress content for search results.
+* New: Author SEO Improvements - We have added new fields to the user profile for Awards/Spoken Languages and the Author Bio URL so you can link to any custom author page that you like!
+* New: Google Web Stories Integration - Optimize your web stories with AIOSEO just like any other content type and automatically generate new AmpStory schema.
+* Updated: We now output a meta tag for the author in the source code of each post that supports authors.
+* Updated: All Author SEO block labels are now filterable.
+* Fixed: PHP notice due to loading translations too early in WordPress 6.7.
+
 **New in Version 4.7.5.1**
 
 * Fixed: XML sitemap not including terms in some cases due to DB error.
@@ -414,6 +423,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.7.5.1 =
+= 4.7.6 =
 
 This update adds major improvements and bug fixes.

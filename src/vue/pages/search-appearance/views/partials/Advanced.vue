@@ -47,24 +47,10 @@
 		</core-settings-row>
 
 		<core-settings-row
-			v-if="!noMetaBox && (!licenseStore.isUnlicensed || 'taxonomies' !== type)"
+			v-if="showOtherOptions"
 			:name="strings.otherOptions"
 		>
 			<template #content>
-				<!--div class="other-options">
-					<base-toggle
-						v-model="options.advanced.showDateInGooglePreview"
-					>
-						{{ strings.showDateInGooglePreview }}
-					</base-toggle>
-				</div>
-				<div class="other-options">
-					<base-toggle
-						v-model="options.advanced.showPostThumbnailInSearch"
-					>
-						{{ showPostThumbnailInSearch }}
-					</base-toggle>
-				</div-->
 				<div class="other-options">
 					<base-toggle
 						v-model="options.advanced.showMetaBox"
@@ -155,13 +141,12 @@ export default {
 			titleCount       : 0,
 			descriptionCount : 0,
 			strings          : {
-				robotsSetting           : __('Robots Meta Settings', td),
-				bulkEditing             : __('Bulk Editing', td),
-				readOnly                : __('Read Only', td),
-				otherOptions            : __('Other Options', td),
-				showDateInGooglePreview : __('Show Date in Google Preview', td),
-				keywords                : __('Keywords', td),
-				removeCategoryBase      : __('Remove Category Base Prefix', td)
+				robotsSetting      : __('Robots Meta Settings', td),
+				bulkEditing        : __('Bulk Editing', td),
+				readOnly           : __('Read Only', td),
+				otherOptions       : __('Other Options', td),
+				keywords           : __('Keywords', td),
+				removeCategoryBase : __('Remove Category Base Prefix', td)
 			}
 		}
 	},
@@ -182,10 +167,17 @@ export default {
 		},
 		showMetaBox () {
 			return sprintf(
-				// Translators: 1 - The plugin name ("All in One SEO")
+				// Translators: 1 - The plugin short name ("AIOSEO").
 				__('Show %1$s Meta Box', td),
 				import.meta.env.VITE_SHORT_NAME
 			)
+		},
+		showOtherOptions () {
+			if (this.object?.buddyPress) {
+				return false
+			}
+
+			return !this.noMetaBox && (!this.licenseStore.isUnlicensed || 'taxonomies' !== this.type)
 		}
 	}
 }

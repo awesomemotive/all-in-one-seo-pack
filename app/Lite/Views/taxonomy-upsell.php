@@ -1,5 +1,10 @@
 <?php
 // phpcs:disable Generic.Files.LineLength.MaxExceeded
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 <style>
 	#poststuff.aioseo-taxonomy-upsell {

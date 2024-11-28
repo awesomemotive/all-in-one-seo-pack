@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIOSEO\Plugin\Common\Integrations\BuddyPress as BuddyPressIntegration;
+
 /**
  * Builds our schema.
  *
@@ -180,6 +182,7 @@ class Schema {
 
 		// By determining the length of the array after every iteration, we are able to add additional graphs during runtime.
 		// e.g. The Article graph may require a Person graph to be output for the author.
+		$this->graphs = array_values( $this->graphs );
 		for ( $i = 0; $i < count( $this->graphs ); $i++ ) {
 			$namespace = $this->getGraphNamespace( $this->graphs[ $i ] );
 			if ( $namespace ) {
@@ -228,6 +231,12 @@ class Schema {
 		$contextInstance = new Context();
 		$this->context   = $contextInstance->defaults();
 
+		if ( BuddyPressIntegration::isComponentPage() ) {
+			aioseo()->standalone->buddyPress->component->determineSchemaGraphsAndContext( $contextInstance );
+
+			return;
+		}
+
 		if ( aioseo()->helpers->isDynamicHomePage() ) {
 			$this->graphs[] = 'CollectionPage';
 			$this->context  = $contextInstance->home();
@@ -244,6 +253,10 @@ class Schema {
 
 		if ( is_singular() ) {
 			$this->determineContextSingular( $contextInstance );
+
+			if ( is_singular( 'web-story' ) ) {
+				$this->graphs[] = 'AmpStory';
+			}
 		}
 
 		if ( is_category() || is_tag() || is_tax() ) {
@@ -294,11 +307,6 @@ class Schema {
 	 * @return void
 	 */
 	protected function determineContextSingular( $contextInstance ) {
-		// Check if we're on a BuddyPress member page.
-		if ( function_exists( 'bp_is_user' ) && bp_is_user() ) {
-			$this->graphs[] = 'ProfilePage';
-		}
-
 		// If the current request is for the validator, we can't include the default graph here.
 		// We need to include the default graph that the validator sent.
 		// Don't do this if we're in Pro since we then need to get it from the post meta.

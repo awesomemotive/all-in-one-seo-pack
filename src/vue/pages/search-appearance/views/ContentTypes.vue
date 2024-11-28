@@ -4,6 +4,7 @@
 			v-for="(postType, index) in postTypes"
 			:key="index"
 			:slug="`${postType.name}SA`"
+			:card-id="`${postType.name}SA`"
 		>
 			<template #header>
 				<div
@@ -29,7 +30,7 @@
 
 			<template #tabs>
 				<core-main-tabs
-					:tabs="tabs"
+					:tabs="filteredTabs(postType)"
 					:showSaveButton="false"
 					:active="settingsStore.settings.internalTabs[`${postType.name}SA`]"
 					internal
@@ -149,6 +150,21 @@ export default {
 			setTimeout(() => {
 				this.internalDebounce = false
 			}, 50)
+		},
+		filteredTabs (postType) {
+			const tabs = []
+			this.tabs.forEach(t => {
+				if (
+					(postType?.buddyPress && 'custom-fields' === t.slug) ||
+					('web-story' === postType.name && 'custom-fields' === t.slug)
+				) {
+					return
+				}
+
+				tabs.push(t)
+			})
+
+			return tabs
 		}
 	}
 }

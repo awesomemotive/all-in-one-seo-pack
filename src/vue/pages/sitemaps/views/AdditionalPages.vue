@@ -37,6 +37,7 @@
 				:search-label="strings.searchUrls"
 				:show-search="true"
 				:totals="totals"
+				:reset-selection="false"
 				show-items-per-page
 				@paginate="processPagination"
 				@process-bulk-action="processBulkAction"
@@ -238,7 +239,7 @@ export default {
 				thisWillRemoveLink     : __('This will permanently remove this page from the additional pages sitemap.', td),
 				thisWillRemoveLinks    : __('This will permanently remove the selected pages from the additional pages sitemap.', td),
 				yesDeleteLink          : __('Delete Page', td),
-				yesDeleteLinks         : __('Delete Selected Pages', td),
+				yesDeleteLinks         : __('Delete selected pages', td),
 				noChangedMind          : __('No, I changed my mind', td)
 			}
 		}
@@ -293,13 +294,16 @@ export default {
 			]
 		},
 		areYouSureDeleteLink () {
-			return Array.isArray(this.shouldDeleteURL) ? this.strings.areYouSureDeleteLinks : this.strings.areYouSureDeleteLink
+			// Check if we have selected multiple rows to show appropriate message
+			return Array.isArray(this.shouldDeleteURL) && (1 < this.shouldDeleteURL.length) ? this.strings.areYouSureDeleteLinks : this.strings.areYouSureDeleteLink
 		},
 		yesDeleteLink () {
-			return Array.isArray(this.shouldDeleteURL) ? this.strings.yesDeleteLinks : this.strings.yesDeleteLink
+			// Check if we have selected multiple rows to show appropriate message
+			return Array.isArray(this.shouldDeleteURL) && (1 < this.shouldDeleteURL.length) ? this.strings.yesDeleteLinks : this.strings.yesDeleteLink
 		},
 		thisWillRemoveLink () {
-			return Array.isArray(this.shouldDeleteURL) ? this.strings.thisWillRemoveLinks : this.strings.thisWillRemoveLink
+			// Check if we have selected multiple rows to show appropriate message
+			return Array.isArray(this.shouldDeleteURL) && (1 < this.shouldDeleteURL.length) ? this.strings.thisWillRemoveLinks : this.strings.thisWillRemoveLink
 		}
 	},
 	methods : {

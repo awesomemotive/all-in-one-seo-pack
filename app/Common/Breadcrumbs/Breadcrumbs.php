@@ -172,6 +172,9 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 					$this->addCrumbs( $this->getPostParentCrumbs( $reference ) );
 					$this->addCrumbs( $this->getPostCrumb( $reference ) );
 					break;
+				case 'buddypress':
+					$this->addCrumbs( aioseo()->standalone->buddyPress->component->getCrumbs() );
+					break;
 			}
 
 			// Paged crumb.
