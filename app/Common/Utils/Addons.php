@@ -204,6 +204,10 @@ class Addons {
 	 * @return array         The sorted addons.
 	 */
 	protected function sortAddons( $addons ) {
+		if ( ! is_array( $addons ) ) {
+			return $addons;
+		}
+
 		// Sort the addons by moving the featured ones to the top.
 		usort( $addons, function( $a, $b ) {
 			// Sort by featured value. It can be false, or numerical. If it's false, it will be moved to the bottom.
@@ -331,7 +335,7 @@ class Addons {
 
 		$keys = array_keys( $plugins );
 		foreach ( $keys as $key ) {
-			if ( preg_match( '|^' . $sku . '|', $key ) ) {
+			if ( preg_match( '|^' . $sku . '|', (string) $key ) ) {
 				return $key;
 			}
 		}

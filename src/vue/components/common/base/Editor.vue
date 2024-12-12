@@ -398,7 +398,7 @@ export default {
 			let value = this.modelValue
 			if (value && value.length && value.match(/#[^\s]*$/)) {
 				// If the value ends with a smart tag, append a space on startup to prevent weird input behaviour.
-
+				// https://github.com/awesomemotive/aioseo/issues/1351
 				value = value.trim() + '&nbsp;'
 			}
 

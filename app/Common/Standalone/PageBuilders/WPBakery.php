@@ -94,7 +94,7 @@ class WPBakery extends Base {
 	 */
 	public function isBuiltWith( $postId ) {
 		$postObj = get_post( $postId );
-		if ( ! empty( $postObj ) && preg_match( '/vc_row/', $postObj->post_content ) ) {
+		if ( ! empty( $postObj ) && preg_match( '/vc_row/', (string) $postObj->post_content ) ) {
 			return true;
 		}
 

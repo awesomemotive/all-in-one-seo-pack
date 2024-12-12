@@ -1,3 +1,6 @@
+@use '@/vue/assets/scss/app/variables.scss' as *;
+@use '@/vue/assets/scss/app/mixins.scss' as *;
+
 $settings-bar-height: 90px;
 
 .et-fb {
@@ -247,7 +250,7 @@ $settings-bar-height: 90px;
 						color: $white;
 					}
 				}
-			}			
+			}           
 		}
 		
 		.aioseo-modal-body {
@@ -256,7 +259,7 @@ $settings-bar-height: 90px;
 					text-transform: inherit;
 				}
 			}
-		}	
+		}   
 		
 
 		&.aioseo-post-schema-confirmation-modal {

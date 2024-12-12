@@ -52,8 +52,8 @@ class Links {
 		$next = '';
 		$page = aioseo()->helpers->getPageNumber();
 
-		global $wp_query;
-		$maxPage = $wp_query->max_num_pages;
+		global $wp_query; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		$maxPage = $wp_query->max_num_pages; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		if ( $page > 1 ) {
 			$prev = get_previous_posts_page_link();
 		}
@@ -139,7 +139,7 @@ class Links {
 	 * @return string          The URL.
 	 */
 	private function getLinkPage( $number ) {
-		global $wp_rewrite;
+		global $wp_rewrite; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		$post      = get_post();
 		$queryArgs = [];
 
@@ -149,7 +149,7 @@ class Links {
 			if ( ! get_option( 'permalink_structure' ) || in_array( $post->post_status, [ 'draft', 'pending' ], true ) ) {
 				$url = add_query_arg( 'page', $number, get_permalink() );
 			} elseif ( 'page' === get_option( 'show_on_front' ) && get_option( 'page_on_front' ) === $post->ID ) {
-				$url = trailingslashit( get_permalink() ) . user_trailingslashit( "$wp_rewrite->pagination_base/" . $number, 'single_paged' );
+				$url = trailingslashit( get_permalink() ) . user_trailingslashit( "$wp_rewrite->pagination_base/" . $number, 'single_paged' ); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			} else {
 				$url = trailingslashit( get_permalink() ) . user_trailingslashit( $number, 'single_paged' );
 			}

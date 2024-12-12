@@ -76,12 +76,12 @@ class Rss {
 		}
 
 		if ( is_feed() ) {
-			global $wp_query;
+			global $wp_query; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			$isHome = is_home();
 			if ( $isHome ) {
 				// If this feed is for the static blog page, we must temporarily set "is_home" to false.
 				// Otherwise any getPost() calls will return the blog page object for every post in the feed.
-				$wp_query->is_home = false;
+				$wp_query->is_home = false; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			}
 
 			$before = aioseo()->tags->replaceTags( aioseo()->options->rssContent->before, get_the_ID() );
@@ -95,7 +95,7 @@ class Rss {
 			}
 
 			// Set back to the original value.
-			$wp_query->is_home = $isHome;
+			$wp_query->is_home = $isHome; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		}
 
 		return $content;
@@ -243,7 +243,7 @@ class Rss {
 		// Paginated feed pages. This one is last since we are using a regular expression to validate.
 		if (
 			! aioseo()->options->searchAppearance->advanced->crawlCleanup->feeds->paginated &&
-			preg_match( '/(\d+\/|(?<=\/)page\/\d+\/)$/', sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) )
+			preg_match( '/(\d+\/|(?<=\/)page\/\d+\/)$/', (string) sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) )
 		) {
 			$this->redirectRssFeed( $homeUrl );
 		}

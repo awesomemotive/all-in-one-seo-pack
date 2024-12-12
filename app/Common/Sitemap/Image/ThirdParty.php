@@ -176,7 +176,7 @@ class ThirdParty {
 			}
 
 			// Capture the value if it's an image URL, but not the default thumbnail from ACF.
-			if ( is_string( $value ) && preg_match( aioseo()->sitemap->image->getImageExtensionRegexPattern(), $value ) && ! preg_match( '/media\/default\.png$/i', $value ) ) {
+			if ( is_string( $value ) && preg_match( aioseo()->sitemap->image->getImageExtensionRegexPattern(), (string) $value ) && ! preg_match( '/media\/default\.png$/i', (string) $value ) ) {
 				$images[] = $value;
 				continue;
 			}
@@ -211,7 +211,7 @@ class ThirdParty {
 
 		preg_match_all(
 			"/\[($regex)(?![\w-])([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*+(?:\[(?!\/\2\])[^\[]*+)*+)\[\/\2\])?)(\]?)/i",
-			$this->post->post_content,
+			(string) $this->post->post_content,
 			$matches,
 			PREG_SET_ORDER
 		);
@@ -269,7 +269,7 @@ class ThirdParty {
 			return;
 		}
 
-		preg_match_all( '/data-image-id=\"([0-9]*)\"/i', $this->parsedPostContent, $imageIds );
+		preg_match_all( '/data-image-id=\"([0-9]*)\"/i', (string) $this->parsedPostContent, $imageIds );
 		if ( ! empty( $imageIds[1] ) ) {
 			$this->images = array_merge( $this->images, $imageIds[1] );
 		}
@@ -279,7 +279,7 @@ class ThirdParty {
 		$contentWithBlocksParsed = do_blocks( $this->post->post_content );
 
 		$imageIds = [];
-		preg_match_all( '/\[ngg.*src="galleries" ids="(.*?)".*\]/i', $contentWithBlocksParsed, $shortcodes );
+		preg_match_all( '/\[ngg.*src="galleries" ids="(.*?)".*\]/i', (string) $contentWithBlocksParsed, $shortcodes );
 		if ( empty( $shortcodes[1] ) ) {
 			return;
 		}

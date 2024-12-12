@@ -185,7 +185,7 @@ class Description {
 			if ( in_array( 'descriptionFormat', aioseo()->internalOptions->deprecatedOptions, true ) ) {
 				$descriptionFormat = aioseo()->options->deprecated->searchAppearance->global->descriptionFormat;
 				if ( $descriptionFormat ) {
-					$description = preg_replace( '/#description/', $description, $descriptionFormat );
+					$description = preg_replace( '/#description/', $description, (string) $descriptionFormat );
 				}
 			}
 		}

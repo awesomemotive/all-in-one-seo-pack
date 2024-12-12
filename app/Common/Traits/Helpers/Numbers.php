@@ -32,6 +32,6 @@ trait Numbers {
 		}
 
 		// Remove trailing zeros.
-		return preg_replace( '/\D0+$/', '', number_format_i18n( $number, $decimals ) ) . $suffixes[ $suffixIndex ];
+		return preg_replace( '/\D0+$/', '', (string) number_format_i18n( $number, $decimals ) ) . $suffixes[ $suffixIndex ];
 	}
 }

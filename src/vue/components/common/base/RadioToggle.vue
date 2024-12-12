@@ -56,6 +56,8 @@ export default {
 </script>
 
 <style lang="scss">
+@use 'sass:color';
+
 .aioseo-radio-toggle {
 	display: flex;
 	align-items: center;
@@ -128,7 +130,7 @@ export default {
 		}
 
 		&:hover {
-			background-color: darken($border, 5%);
+			background-color: color.adjust($border, $lightness: -5%);
 			cursor: pointer;
 		}
 

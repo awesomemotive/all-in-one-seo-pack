@@ -57,9 +57,9 @@ class Filesystem {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		WP_Filesystem( $args );
 
-		global $wp_filesystem;
-		if ( is_object( $wp_filesystem ) ) {
-			$this->fs = $wp_filesystem;
+		global $wp_filesystem; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		if ( is_object( $wp_filesystem ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+			$this->fs = $wp_filesystem; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		}
 	}
 

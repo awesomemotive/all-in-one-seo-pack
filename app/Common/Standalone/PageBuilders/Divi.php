@@ -112,7 +112,7 @@ class Divi extends Base {
 
 		if ( in_array( $handle, $scriptHandles, true ) ) {
 			// These tags load in parent window only, not in Divi iframe.
-			return preg_replace( '/<script/', '<script class="et_fb_ignore_iframe"', $tag );
+			return preg_replace( '/<script/', '<script class="et_fb_ignore_iframe"', (string) $tag );
 		}
 
 		return $tag;

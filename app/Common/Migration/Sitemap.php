@@ -293,9 +293,9 @@ class Sitemap {
 
 			$type = false;
 			$slug = '';
-			if ( preg_match( '#aiosp_sitemap_prio_(.*)#', $name, $slug ) ) {
+			if ( preg_match( '#aiosp_sitemap_prio_(.*)#', (string) $name, $slug ) ) {
 				$type = 'priority';
-			} elseif ( preg_match( '#aiosp_sitemap_freq_(.*)#', $name, $slug ) ) {
+			} elseif ( preg_match( '#aiosp_sitemap_freq_(.*)#', (string) $name, $slug ) ) {
 				$type = 'frequency';
 			}
 
@@ -338,7 +338,7 @@ class Sitemap {
 			// If value is "Select Individual", set grouped to false.
 			$value = $this->oldOptions['modules']['aiosp_sitemap_options'][ $name ];
 			if ( 'sel' === $value ) {
-				if ( preg_match( '#post$#', $name ) ) {
+				if ( preg_match( '#post$#', (string) $name ) ) {
 					aioseo()->options->sitemap->general->advancedSettings->priority->postTypes->grouped = false;
 				} else {
 					aioseo()->options->sitemap->general->advancedSettings->priority->taxonomies->grouped = false;
@@ -395,7 +395,7 @@ class Sitemap {
 			$detectedFiles = [];
 			foreach ( $files as $filename ) {
 				// We don't want to delete the video sitemap here at all.
-				$isVideoSitemap = preg_match( '#.*video.*#', $filename ) ? true : false;
+				$isVideoSitemap = preg_match( '#.*video.*#', (string) $filename ) ? true : false;
 				if ( ! $isVideoSitemap ) {
 					$detectedFiles[] = $filename;
 				}

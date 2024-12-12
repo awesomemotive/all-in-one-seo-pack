@@ -85,7 +85,7 @@ export default {
 	},
 	computed : {
 		scoreClass () {
-			return 80 < this.score ? 'score-green' : 50 < this.score ? 'score-orange' : 1 < this.score ? 'score-red' : 'score-none'
+			return 79 < this.score ? 'score-green' : (49 < this.score ? 'score-orange' : (0 < this.score ? 'score-red' : 'score-none'))
 		}
 	},
 	methods : {

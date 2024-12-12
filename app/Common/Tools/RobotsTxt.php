@@ -140,7 +140,7 @@ class RobotsTxt {
 
 			foreach ( $rules1[ $userAgent ] as $rule1 ) {
 				$matches = [];
-				preg_match( "#^$otherDirective: $pattern$#", $rule1, $matches );
+				preg_match( "#^$otherDirective: $pattern$#", (string) $rule1, $matches );
 			}
 
 			if ( ! empty( $matches ) && ! $allowDuplicates ) {
@@ -342,14 +342,14 @@ class RobotsTxt {
 			return $value;
 		}
 
-		$value = preg_replace( '/[><]/', '', $value );
+		$value = preg_replace( '/[><]/', '', (string) $value );
 
 		if ( 'user-agent' === $directive ) {
-			$value = preg_replace( '/[^a-z0-9\-_*,.\s]/i', '', $value );
+			$value = preg_replace( '/[^a-z0-9\-_*,.\s]/i', '', (string) $value );
 		}
 
 		if ( 'allow' === $directive || 'disallow' === $directive ) {
-			$value = preg_replace( '/^\/+/', '/', $value );
+			$value = preg_replace( '/^\/+/', '/', (string) $value );
 		}
 
 		return $value;

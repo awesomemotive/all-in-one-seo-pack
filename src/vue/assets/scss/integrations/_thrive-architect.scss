@@ -1,3 +1,6 @@
+@use '@/vue/assets/scss/app/variables.scss' as *;
+@use '@/vue/assets/scss/app/mixins.scss' as *;
+
 .tcb-editor-main {
 	.aioseo-app {
 		color: $black !important;

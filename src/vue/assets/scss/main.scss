@@ -1,5 +1,5 @@
-@import 'app/variables.scss';
-@import 'app/table-widefat.scss';
+@use 'app/variables.scss' as *;
+@use 'app/table-widefat.scss' as *;
 
 // Inside the Dev environment.
 body.vue-build {

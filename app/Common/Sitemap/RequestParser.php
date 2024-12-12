@@ -105,7 +105,7 @@ class RequestParser {
 
 		if ( ! $indexesEnabled ) {
 			// If indexes are disabled, check for the root index.
-			if ( preg_match( "/^{$fileName}\.xml(\.gz)?$/i", $this->slug, $match ) ) {
+			if ( preg_match( "/^{$fileName}\.xml(\.gz)?$/i", (string) $this->slug, $match ) ) {
 				$this->setContext( 'general', $fileName );
 				aioseo()->sitemap->generate();
 			}
@@ -114,7 +114,7 @@ class RequestParser {
 		}
 
 		// First, check for the root index.
-		if ( preg_match( "/^{$fileName}\.xml(\.gz)?$/i", $this->slug, $match ) ) {
+		if ( preg_match( "/^{$fileName}\.xml(\.gz)?$/i", (string) $this->slug, $match ) ) {
 			$this->setContext( 'general', $fileName );
 			aioseo()->sitemap->generate();
 
@@ -123,8 +123,8 @@ class RequestParser {
 
 		if (
 			// Now, check for the other indexes.
-			preg_match( "/^(?P<objectName>.+)-{$fileName}\.xml(\.gz)?$/i", $this->slug, $match ) ||
-			preg_match( "/^(?P<objectName>.+)-{$fileName}(?P<pageNumber>\d+)\.xml(\.gz)?$/i", $this->slug, $match )
+			preg_match( "/^(?P<objectName>.+)-{$fileName}\.xml(\.gz)?$/i", (string) $this->slug, $match ) ||
+			preg_match( "/^(?P<objectName>.+)-{$fileName}(?P<pageNumber>\d+)\.xml(\.gz)?$/i", (string) $this->slug, $match )
 		) {
 			$pageNumber = ! empty( $match['pageNumber'] ) ? $match['pageNumber'] : 0;
 			$this->setContext( 'general', $fileName, $match['objectName'], $pageNumber );
@@ -140,7 +140,7 @@ class RequestParser {
 	 * @return void
 	 */
 	private function checkForRssSitemap() {
-		if ( ! preg_match( '/^sitemap(\.latest)?\.rss$/i', $this->slug, $match ) ) {
+		if ( ! preg_match( '/^sitemap(\.latest)?\.rss$/i', (string) $this->slug, $match ) ) {
 			return;
 		}
 
@@ -157,8 +157,8 @@ class RequestParser {
 	 */
 	protected function checkForXsl() {
 		// Trim off the URL params.
-		$newSlug = preg_replace( '/\?.*$/', '', $this->slug );
-		if ( preg_match( '/^default-sitemap\.xsl$/i', $newSlug ) ) {
+		$newSlug = preg_replace( '/\?.*$/', '', (string) $this->slug );
+		if ( preg_match( '/^default-sitemap\.xsl$/i', (string) $newSlug ) ) {
 			aioseo()->sitemap->xsl->generate();
 		}
 	}
@@ -209,19 +209,19 @@ class RequestParser {
 		$this->checkedForRedirects = true;
 
 		// The request includes our deprecated "aiosp_sitemap_path" URL param.
-		if ( preg_match( '/^\/\?aiosp_sitemap_path=root/i', $requestUri ) ) {
+		if ( preg_match( '/^\/\?aiosp_sitemap_path=root/i', (string) $requestUri ) ) {
 			wp_safe_redirect( home_url( 'sitemap.xml' ) );
 			exit;
 		}
 
 		// The request is for one of our sitemaps, but has a trailing slash.
-		if ( preg_match( '/\/(.*sitemap[0-9]*?\.xml(\.gz)?|.*sitemap(\.latest)?\.rss)\/$/i', $requestUri ) ) {
+		if ( preg_match( '/\/(.*sitemap[0-9]*?\.xml(\.gz)?|.*sitemap(\.latest)?\.rss)\/$/i', (string) $requestUri ) ) {
 			wp_safe_redirect( home_url() . untrailingslashit( $requestUri ) );
 			exit;
 		}
 
 		// The request is for the first index of a type, but has a page number.
-		if ( preg_match( '/.*sitemap(0|1){1}?\.xml(\.gz)?$/i', $requestUri ) ) {
+		if ( preg_match( '/.*sitemap(0|1){1}?\.xml(\.gz)?$/i', (string) $requestUri ) ) {
 			$pathWithoutNumber = preg_replace( '/(.*sitemap)(0|1){1}?(\.xml(\.gz)?)$/i', '$1$3', $requestUri );
 			wp_safe_redirect( home_url() . $pathWithoutNumber );
 			exit;
@@ -253,7 +253,7 @@ class RequestParser {
 
 		foreach ( $sitemapPatterns as $type => $patterns ) {
 			foreach ( $patterns as $pattern ) {
-				if ( preg_match( "/^$pattern$/i", $this->slug ) ) {
+				if ( preg_match( "/^$pattern$/i", (string) $this->slug ) ) {
 					wp_safe_redirect( aioseo()->sitemap->helpers->getUrl( $type ) );
 					exit;
 				}

@@ -29,7 +29,7 @@ import { getEditorData as getSiteOriginData } from '@/vue/standalone/page-builde
 import { getEditorData as getThriveArchitectData } from '@/vue/standalone/page-builders/thrive-architect/helpers'
 
 const base64regex            = /base64,(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)/g
-const blockPrefixesToProcess = [ 'acf', 'aioseo' ]
+const blockPrefixesToProcess = [ 'acf', 'aioseo', 'core' ]
 
 /**
  * Returns the post content from page builders.
@@ -104,11 +104,18 @@ const getReusableBlockContent = (content) => {
 const getProcessedBlockContent = (content, prefix) => {
 	const blocks = window.wp.data.select('core/block-editor').getBlocks()
 	blocks.forEach(block => {
-		if (prefix.includes(block.name.split('/')[0])) {
-			const element = document.getElementById('block-' + block.clientId)
+		const [ namePrefix, nameSuffix ] = block.name.split('/')
+		if (prefix.includes(namePrefix)) {
+			// Bail if it's a core block that's not a table.
+			if ('core' === namePrefix && 'table' !== nameSuffix) {
+				return
+			}
 
+			const element = document.getElementById('block-' + block.clientId)
 			if (element && element.innerText) {
-				const pattern = `(<!-- wp:${block.name}.*?/wp:${block.name} -->)|(<!-- wp:${block.name}.*?/-->)`
+				const blockName = 'core' === namePrefix ? nameSuffix : block.name
+				const pattern = `<!-- wp:${blockName}.*?/wp:${blockName} -->|<!-- wp:${blockName}.*?/-->`
+
 				content = content.replace(new RegExp(pattern, 's'), element.innerText)
 			}
 		}

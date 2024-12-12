@@ -28,7 +28,7 @@ class Helpers extends ImportExport\Helpers {
 	public function macrosToSmartTags( $string, $pageType = null ) {
 		$macros = $this->getMacros( $pageType );
 
-		if ( preg_match( '#%BLOGDESCLINK%#', $string ) ) {
+		if ( preg_match( '#%BLOGDESCLINK%#', (string) $string ) ) {
 			$blogDescriptionLink = '<a href="' .
 				aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'url' ) ) . '">' .
 				aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) ) . ' - ' .
@@ -37,13 +37,13 @@ class Helpers extends ImportExport\Helpers {
 			$string = str_replace( '%BLOGDESCLINK%', $blogDescriptionLink, $string );
 		}
 
-		if ( preg_match_all( '#%customfield\(([^%\s]*)\)%#', $string, $matches ) && ! empty( $matches[1] ) ) {
+		if ( preg_match_all( '#%customfield\(([^%\s]*)\)%#', (string) $string, $matches ) && ! empty( $matches[1] ) ) {
 			foreach ( $matches[1] as $name ) {
 				$string = aioseo()->helpers->pregReplace( "#%customfield\($name\)%#", "#custom_field-$name", $string );
 			}
 		}
 
-		if ( preg_match_all( '#%customterm\(([^%\s]*)\)%#', $string, $matches ) && ! empty( $matches[1] ) ) {
+		if ( preg_match_all( '#%customterm\(([^%\s]*)\)%#', (string) $string, $matches ) && ! empty( $matches[1] ) ) {
 			foreach ( $matches[1] as $name ) {
 				$string = aioseo()->helpers->pregReplace( "#%customterm\($name\)%#", "#tax_name-$name", $string );
 			}

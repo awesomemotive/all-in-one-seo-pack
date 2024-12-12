@@ -7,13 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * This class makes sure the action scheduler tables always exist.
+ * Handles all Action Scheduler related tasks.
  *
  * @since 4.0.0
  */
 class ActionScheduler {
 	/**
-	 * The action scheduler group.
+	 * The Action Scheduler group.
 	 *
 	 * @since   4.1.5
 	 * @version 4.2.7
@@ -23,11 +23,11 @@ class ActionScheduler {
 	private $actionSchedulerGroup = 'aioseo';
 
 	/**
-	 * Class Constructor.
+	 * Class constructor.
 	 *
 	 * @since 4.0.0
 	 */
-	public function __construct() { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+	public function __construct() {
 		add_action( 'action_scheduler_after_execute', [ $this, 'cleanup' ], 1000, 2 );
 
 		// Note: \ActionScheduler is first loaded on `plugins_loaded` action hook.
@@ -103,10 +103,12 @@ class ActionScheduler {
 		if (
 			// Bail if this isn't one of our actions or if we're in a dev environment.
 			'aioseo' !== $action->get_group() ||
-			defined( 'AIOSEO_DEV_VERSION' ) ||
+			( defined( 'WP_ENVIRONMENT_TYPE' ) && 'development' === WP_ENVIRONMENT_TYPE ) ||
 			// Bail if the tables don't exist.
 			! aioseo()->core->db->tableExists( 'actionscheduler_actions' ) ||
-			! aioseo()->core->db->tableExists( 'actionscheduler_groups' )
+			! aioseo()->core->db->tableExists( 'actionscheduler_groups' ) ||
+			// Bail if it hasn't been long enough since the last cleanup.
+			aioseo()->core->cache->get( 'action_scheduler_log_cleanup' )
 		) {
 			return;
 		}
@@ -117,35 +119,27 @@ class ActionScheduler {
 		aioseo()->core->db->execute(
 			"DELETE al FROM {$prefix}actionscheduler_logs as al
 			JOIN {$prefix}actionscheduler_actions as aa on `aa`.`action_id` = `al`.`action_id`
-			JOIN {$prefix}actionscheduler_groups as ag on `ag`.`group_id` = `aa`.`group_id`
-			WHERE `ag`.`slug` = 'aioseo'
-			AND `aa`.`status` IN ('complete', 'failed', 'canceled');"
+			LEFT JOIN {$prefix}actionscheduler_groups as ag on `ag`.`group_id` = `aa`.`group_id`
+			WHERE (
+				(`ag`.`slug` = '{$this->actionSchedulerGroup}' AND `aa`.`status` IN ('complete', 'failed', 'canceled'))
+				OR
+				(`aa`.`hook` LIKE 'aioseo_%' AND `aa`.`group_id` = 0 AND `aa`.`status` IN ('complete', 'failed', 'canceled'))
+			);"
 		);
 
 		// Clean up actions.
 		aioseo()->core->db->execute(
 			"DELETE aa FROM {$prefix}actionscheduler_actions as aa
-			JOIN {$prefix}actionscheduler_groups as ag on `ag`.`group_id` = `aa`.`group_id`
-			WHERE `ag`.`slug` = 'aioseo'
-			AND `aa`.`status` IN ('complete', 'failed', 'canceled');"
+			LEFT JOIN {$prefix}actionscheduler_groups as ag on `ag`.`group_id` = `aa`.`group_id`
+			WHERE (
+				(`ag`.`slug` = '{$this->actionSchedulerGroup}' AND `aa`.`status` IN ('complete', 'failed', 'canceled'))
+				OR
+				(`aa`.`hook` LIKE 'aioseo_%' AND `aa`.`group_id` = 0 AND `aa`.`status` IN ('complete', 'failed', 'canceled'))
+			);"
 		);
 
-		// Clean up logs where there was no group.
-		aioseo()->core->db->execute(
-			"DELETE al FROM {$prefix}actionscheduler_logs as al
-			JOIN {$prefix}actionscheduler_actions as aa on `aa`.`action_id` = `al`.`action_id`
-			WHERE `aa`.`hook` LIKE 'aioseo_%'
-			AND `aa`.`group_id` = 0
-			AND `aa`.`status` IN ('complete', 'failed', 'canceled');"
-		);
-
-		// Clean up actions that start with aioseo_ and have no group.
-		aioseo()->core->db->execute(
-			"DELETE aa FROM {$prefix}actionscheduler_actions as aa
-			WHERE `aa`.`hook` LIKE 'aioseo_%'
-			AND `aa`.`group_id` = 0
-			AND `aa`.`status` IN ('complete', 'failed', 'canceled');"
-		);
+		// Set a transient to prevent this from running again for a while.
+		aioseo()->core->cache->update( 'action_scheduler_log_cleanup', true, DAY_IN_SECONDS );
 	}
 
 	/**
@@ -185,30 +179,63 @@ class ActionScheduler {
 	 * @return boolean             Whether the action is already scheduled.
 	 */
 	public function isScheduled( $actionName, $args = [] ) {
-		// We need to check for pending actions specifically since we otherwise cannot schedule another action while one is running (e.g. image and video sitemap scans).
-		$pendingArgs = [
-			'hook'     => $actionName,
-			'status'   => \ActionScheduler_Store::STATUS_PENDING,
-			'per_page' => 1
-		];
+		$scheduledActions = $this->getScheduledActions();
 
-		$runningArgs = [
-			'hook'     => $actionName,
-			'status'   => \ActionScheduler_Store::STATUS_RUNNING,
-			'per_page' => 1
-		];
-
-		if ( ! empty( $args ) ) {
-			$pendingArgs['args'] = $args;
-			$runningArgs['args'] = $args;
+		$hooks = [];
+		foreach ( $scheduledActions as $action ) {
+			$hooks[] = $action->hook;
 		}
 
-		$actions = array_merge(
-			as_get_scheduled_actions( $pendingArgs ),
-			as_get_scheduled_actions( $runningArgs )
-		);
+		$isScheduled = in_array( $actionName, array_filter( $hooks ), true );
+		if ( empty( $args ) ) {
+			return $isScheduled;
+		}
 
-		return ! empty( $actions );
+		// If there are arguments, we need to check if the action is scheduled with the same arguments.
+		if ( $isScheduled ) {
+			foreach ( $scheduledActions as $action ) {
+				if ( $action->hook === $actionName ) {
+					foreach ( $args as $k => $v ) {
+						if ( ! isset( $action->args[ $k ] ) || $action->args[ $k ] !== $v ) {
+							continue;
+						}
+
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns all AIOSEO scheduled actions.
+	 *
+	 * @since 4.7.7
+	 *
+	 * @return array The scheduled actions.
+	 */
+	private function getScheduledActions() {
+		static $scheduledActions = null;
+		if ( null !== $scheduledActions ) {
+			return $scheduledActions;
+		}
+
+		$scheduledActions = aioseo()->core->db->start( 'actionscheduler_actions as aa' )
+			->select( 'aa.hook, aa.args' )
+			->join( 'actionscheduler_groups as ag', 'ag.group_id', 'aa.group_id' )
+			->where( 'ag.slug', $this->actionSchedulerGroup )
+			->whereIn( 'status', [ 'pending', 'in-progress' ] )
+			->run()
+			->result();
+
+		// Decode the args.
+		foreach ( $scheduledActions as $key => $action ) {
+			$scheduledActions[ $key ]->args = json_decode( $action->args, true );
+		}
+
+		return $scheduledActions;
 	}
 
 	/**

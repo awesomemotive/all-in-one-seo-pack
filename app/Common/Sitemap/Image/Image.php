@@ -222,7 +222,7 @@ class Image {
 			$idOrUrl  = $this->getImageIdOrUrl( $image );
 			$imageUrl = is_numeric( $idOrUrl ) ? wp_get_attachment_url( $idOrUrl ) : $idOrUrl;
 			$imageUrl = aioseo()->sitemap->helpers->formatUrl( $imageUrl );
-			if ( ! $imageUrl || ! preg_match( $this->getImageExtensionRegexPattern(), $imageUrl ) ) {
+			if ( ! $imageUrl || ! preg_match( $this->getImageExtensionRegexPattern(), (string) $imageUrl ) ) {
 				continue;
 			}
 
@@ -274,7 +274,7 @@ class Image {
 		// Now, get the remaining images from image tags in the post content.
 		$parsedPostContent = do_blocks( $this->post->post_content );
 		$parsedPostContent = aioseo()->helpers->doShortcodes( $parsedPostContent, true, $this->post->ID );
-		$parsedPostContent = preg_replace( '/\s\s+/u', ' ', trim( $parsedPostContent ) ); // Trim both internal and external whitespace.
+		$parsedPostContent = preg_replace( '/\s\s+/u', ' ', (string) trim( $parsedPostContent ) ); // Trim both internal and external whitespace.
 
 		// Get the images from any third-party plugins/themes that are active.
 		$thirdParty = new ThirdParty( $this->post, $parsedPostContent );
@@ -306,7 +306,7 @@ class Image {
 
 		// Now, get rid of them so that we don't process the shortcodes again.
 		$regex                    = get_shortcode_regex( [ 'gallery' ] );
-		$this->post->post_content = preg_replace( "/$regex/i", '', $this->post->post_content );
+		$this->post->post_content = preg_replace( "/$regex/i", '', (string) $this->post->post_content );
 
 		return $images;
 	}

@@ -341,17 +341,17 @@ class BadBotBlocker {
 			}
 			$ua  = ! empty( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '';
 			$uas = $this->prepareList( $botList );
-			if ( preg_match( '/' . $uas . '/i', $ua ) ) {
+			if ( preg_match( '/' . $uas . '/i', (string) $ua ) ) {
 				$ip           = ! empty( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 				$hostname     = gethostbyaddr( $ip );
 				$ipByHostName = gethostbyname( $hostname );
 				if ( $ipByHostName === $ip ) {
 					$hosts = array_values( $botList );
 					foreach ( $hosts as $k => $h ) {
-						$hosts[ $k ] = preg_quote( $h ) . '$';
+						$hosts[ $k ] = preg_quote( (string) $h ) . '$';
 					}
 					$hosts = join( '|', $hosts );
-					if ( preg_match( '/' . $hosts . '/i', $hostname ) ) {
+					if ( preg_match( '/' . $hosts . '/i', (string) $hostname ) ) {
 						return true;
 					}
 				}
@@ -379,7 +379,7 @@ class BadBotBlocker {
 			}
 			$ua  = ! empty( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '';
 			$uas = $this->prepareList( $botList );
-			if ( preg_match( '/' . $uas . '/i', $ua ) ) {
+			if ( preg_match( '/' . $uas . '/i', (string) $ua ) ) {
 				return true;
 			}
 		}
@@ -403,7 +403,7 @@ class BadBotBlocker {
 		if ( ! empty( $refererList ) && ! empty( $_SERVER ) && ! empty( $_SERVER['HTTP_REFERER'] ) ) {
 			$referer = esc_url_raw( sanitize_text_field( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) );
 			$regex   = $this->prepareList( $refererList );
-			if ( preg_match( '/' . $regex . '/i', $referer ) ) {
+			if ( preg_match( '/' . $regex . '/i', (string) $referer ) ) {
 				return true;
 			}
 		}
@@ -424,13 +424,13 @@ class BadBotBlocker {
 		$regex = '';
 		$cont  = 0;
 		foreach ( $list as $l ) {
-			$trim_l = trim( $l );
-			if ( ! empty( $trim_l ) ) {
+			$trim_l = trim( $l ); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+			if ( ! empty( $trim_l ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 				if ( $cont ) {
 					$regex .= '|';
 				}
 				$cont   = 1;
-				$regex .= preg_quote( trim( $l ), $quote );
+				$regex .= preg_quote( (string) trim( $l ), $quote );
 			}
 		}
 

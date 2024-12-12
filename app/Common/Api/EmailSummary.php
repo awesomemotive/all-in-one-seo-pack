@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIOSEO\Plugin\Common\Models;
+
 /**
  * Email Summary related REST API endpoint callbacks.
  *
@@ -43,5 +45,29 @@ class EmailSummary {
 				'message' => $e->getMessage()
 			], 200 );
 		}
+	}
+
+	/**
+	 * Enable email reports from notification.
+	 *
+	 * @since 4.7.7
+	 *
+	 * @return \WP_REST_Response The response.
+	 */
+	public static function enableEmailReports() {
+		// Update option.
+		aioseo()->options->advanced->emailSummary->enable = true;
+
+		// Remove notification.
+		$notification = Models\Notification::getNotificationByName( 'email-reports-enable-reminder' );
+		if ( $notification->exists() ) {
+			$notification->delete();
+		}
+
+		// Send a success response.
+		return new \WP_REST_Response( [
+			'success'       => true,
+			'notifications' => Models\Notification::getNotifications()
+		], 200 );
 	}
 }

@@ -34,7 +34,7 @@ export const useTruSeoHighlighter = () => {
 
 	const truSeoHighlighterStore = useTruSeoHighlighterStore()
 
-	const annotateBlock = (highlightMark) => {
+	const annotateBlock = async (highlightMark, selector = 'range') => {
 		let identifier = 'content' // E.g. "Paragraph" block.
 		if (highlightMark.block?.attributes?.caption) { // E.g. "Image" block.
 			identifier = 'caption'
@@ -44,13 +44,24 @@ export const useTruSeoHighlighter = () => {
 			identifier = 'citation'
 		}
 
-		truSeoHighlighterStore.dispatchAnnotations.__experimentalAddAnnotation({
-			id                 : highlightMark.id,
-			range              : highlightMark.range,
-			source             : truSeoHighlighterStore.source,
-			blockClientId      : highlightMark.block.clientId,
-			richTextIdentifier : identifier
-		})
+		highlightMark.annotatorSelector = selector
+
+		const options = 'block' === selector
+			? {
+				selector      : selector,
+				source        : truSeoHighlighterStore.source,
+				blockClientId : highlightMark.block.clientId
+			}
+			: {
+				selector           : selector,
+				id                 : highlightMark.id,
+				range              : highlightMark.range,
+				source             : truSeoHighlighterStore.source,
+				blockClientId      : highlightMark.block.clientId,
+				richTextIdentifier : identifier
+			}
+
+		return truSeoHighlighterStore.dispatchAnnotations.__experimentalAddAnnotation(options)
 	}
 
 	const annotateTinyMce = (highlightMark, editor) => {
@@ -141,6 +152,10 @@ export const useTruSeoHighlighter = () => {
 			content = node.outerText.replace(/\n\n/g, '\n')
 		} else if (block) {
 			content = block?.attributes?.content || block?.attributes?.caption || block?.attributes?.value || block?.attributes?.citation || ''
+			if ('core/table' === block.name) {
+				content = block?.originalContent || ''
+			}
+
 			// Keep line breaks otherwise `getOuterText()` don't recognize them.
 			content = content.replace(/<br[^>]*>/gi, '\n')
 			content = getOuterText(content)
@@ -210,16 +225,25 @@ export const useTruSeoHighlighter = () => {
 			setHighlightMarks({ block, node: null })
 		}
 
-		for (const [ index, hm ] of Object.entries(truSeoHighlighterStore.highlightMarks)) {
-			observeMarkParent(hm.parent, parseInt(index) === truSeoHighlighterStore.highlightMarks.length - 1)
+		truSeoHighlighterStore.highlightMarks.forEach(async (hm, index) => {
+			const lastMark = index === truSeoHighlighterStore.highlightMarks.length - 1
 
-			// By adding the annotation texts the observer callback is triggered and the popover is appended.
+			observeMarkParent(hm.parent, lastMark)
+
+			// By adding the annotation the observer callback is triggered and the popover is appended.
 			if ('core/freeform' === hm.block.name) {
 				annotateTinyMce(hm, window.tinymce.get(`editor-${hm.block.clientId}`))
 			} else {
-				annotateBlock(hm)
+				await annotateBlock(hm)
+
+				// Trigger the observer callback. Helpful in case all the blocks present couldn't be annotated using a range.
+				if (lastMark) {
+					setTimeout(() => {
+						truSeoHighlighterStore.highlightMarks.at(-1)?.parent.classList.add('is-hovered')
+					}, 100)
+				}
 			}
-		}
+		})
 	}
 
 	const highlightClassicEditor = () => {
@@ -234,12 +258,12 @@ export const useTruSeoHighlighter = () => {
 			setHighlightMarks({ block: null, node })
 		}
 
-		for (const [ index, hm ] of Object.entries(truSeoHighlighterStore.highlightMarks)) {
-			observeMarkParent(hm.parent, parseInt(index) === truSeoHighlighterStore.highlightMarks.length - 1)
+		truSeoHighlighterStore.highlightMarks.forEach((hm, index) => {
+			observeMarkParent(hm.parent, index === truSeoHighlighterStore.highlightMarks.length - 1)
 
-			// By adding the annotation texts the observer callback is triggered and the popover is appended.
+			// By adding the annotation the observer callback is triggered and the popover is appended.
 			annotateTinyMce(hm, tinymceEditor.value)
-		}
+		})
 	}
 
 	const incrementActiveMark = (increment) => {
@@ -345,6 +369,10 @@ export const useTruSeoHighlighter = () => {
 			obs.disconnect()
 
 			for (const mutation of list) {
+				if (mutation?.target?.classList.contains('is-hovered')) {
+					break
+				}
+
 				// Cover scenarios where nodes are just updated.
 				if (Object.values(mutation?.target?.classList || []).some(c => c.endsWith(truSeoHighlighterStore.source))) {
 					setHighlightMarkNode(mutation.target)
@@ -363,7 +391,20 @@ export const useTruSeoHighlighter = () => {
 			}
 
 			if (lastMark) {
-				nextTick().then(() => debounce(appendHighlightPopover, 250)())
+				truSeoHighlighterStore.highlightMarks.forEach(async (hm, index) => {
+					// Verify if the `<mark>` tag was actually added. If not, annotate the entire block.
+					if (!hm.node) {
+						observeMarkParent(hm.parent)
+
+						await annotateBlock(hm, 'block')
+					}
+
+					if (index === truSeoHighlighterStore.highlightMarks.length - 1) {
+						await nextTick()
+
+						debounce(appendHighlightPopover, 250)()
+					}
+				})
 			}
 		}
 
@@ -549,15 +590,30 @@ export const useTruSeoHighlighter = () => {
 	}
 
 	const setHighlightMarkNode = (node) => {
-		const findIndex = truSeoHighlighterStore.highlightMarks.findIndex(hm => {
-			return node.hasAttribute('data-mce-annotation-uid')
-				? -1 !== node.dataset.mceAnnotationUid.indexOf(hm.id)
-				: -1 !== node.id.indexOf(hm.id)
-		})
-		if (-1 !== findIndex) {
-			truSeoHighlighterStore.highlightMarks[findIndex].node = node
+		const findIndexes = []
+		truSeoHighlighterStore.highlightMarks.forEach((hm, i) => {
+			// For the Classic editor.
+			if (node.hasAttribute('data-mce-annotation-uid') && -1 !== node.dataset.mceAnnotationUid.indexOf(hm.id)) {
+				findIndexes.push(i)
 
-			node.style.backgroundColor = '#cce0ff'
+				return
+			}
+
+			// For the Block editor (when the whole block is annotated).
+			if (node.classList.contains(`is-annotated-by-${truSeoHighlighterStore.source}`) && hm.block.clientId === node.dataset.block) {
+				findIndexes.push(i)
+
+				return
+			}
+
+			// For the Block editor (when a range is annotated).
+			if (-1 !== node.id.indexOf(hm.id)) {
+				findIndexes.push(i)
+			}
+		})
+
+		if (findIndexes.length) {
+			findIndexes.forEach(i => { truSeoHighlighterStore.highlightMarks[i].node = node })
 		}
 	}
 
@@ -586,13 +642,15 @@ export const useTruSeoHighlighter = () => {
 					}
 
 					truSeoHighlighterStore.highlightMarks.push({
-						id            : random(1, 999999999),
-						range         : range,
-						block         : block,
-						parent        : node || document.getElementById(`block-${block.clientId}`),
-						node          : null, // Set later by the block observer.
-						active        : 0 === truSeoHighlighterStore.highlightMarks.length,
-						sentenceIndex : index
+						id                : random(1, 999999999),
+						range             : range,
+						block             : block,
+						parent            : node || document.getElementById(`block-${block.clientId}`),
+						active            : 0 === truSeoHighlighterStore.highlightMarks.length,
+						sentenceIndex     : index,
+						sentence       	  : sentence,
+						node              : null, // Set later by the block observer.
+						annotatorSelector : null // Set later by the annotator.
 					})
 				}
 			}
@@ -621,7 +679,6 @@ export const useTruSeoHighlighter = () => {
 			tinymceEditor.value.dom.addStyle(`
 				span.annotation-text.annotation-text-${truSeoHighlighterStore.source} {
 					background-color: #CCE0FF;
-					border-radius: 4px;
 					color: inherit;
 					display: inline;
 					font-size: inherit;

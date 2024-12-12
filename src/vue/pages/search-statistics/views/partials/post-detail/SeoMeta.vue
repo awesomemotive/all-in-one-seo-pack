@@ -111,6 +111,8 @@ export default {
 </script>
 
 <style lang="scss">
+@use 'sass:color';
+
 .aioseo-search-statistics-seo-meta {
 	list-style: none;
 	margin: 0;
@@ -152,7 +154,7 @@ export default {
 				transition: background-color 0.2s ease;
 
 				&:hover {
-					color: darken($red, 20%);
+					color: color.adjust($red, $lightness: -20%);
 				}
 			}
 		}

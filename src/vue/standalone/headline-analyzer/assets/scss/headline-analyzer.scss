@@ -1,3 +1,6 @@
+@use 'sass:color';
+@use '@/vue/assets/scss/app/variables.scss' as *;
+
 .aioseo-headline-analyzer-sidebar {
 	position: relative;
 	font-size: 14px;
@@ -300,7 +303,7 @@
 		line-height: 26px;
 		border-radius: 4px;
 		&.red {
-			background: lighten(#AB2039, 55%);
+			background: color.adjust(#AB2039, $lightness: 55%);
 		}
 		&.orange {
 			background: #FCFAE8;

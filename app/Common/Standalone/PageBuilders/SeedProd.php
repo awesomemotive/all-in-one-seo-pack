@@ -78,7 +78,7 @@ class SeedProd extends Base {
 	public function isBuilderScreen() {
 		$currentScreen = aioseo()->helpers->getCurrentScreen();
 
-		return $currentScreen && preg_match( '/seedprod.*?_builder$/i', $currentScreen->base );
+		return $currentScreen && preg_match( '/seedprod.*?_builder$/i', (string) $currentScreen->base );
 	}
 
 	/**
@@ -97,7 +97,6 @@ class SeedProd extends Base {
 
 		if ( $aioseoCommonHandle === $handle ) {
 			// All the *common.css links are removed from SeedProd.
-			// https://github.com/awesomemotive/seedprod-plugins/blob/32854442979bfa068aadf9b8a8a929e5f9f353e5/seedprod-pro/resources/views/builder.php#L406
 			$tag = str_ireplace( 'href=', 'data-href=', $tag );
 		}
 

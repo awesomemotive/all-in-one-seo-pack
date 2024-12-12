@@ -356,12 +356,14 @@ export default {
 				}
 
 				if (response.body?.postTypeData) {
-					this.prepareAfterResponse('post-types', response.body.postTypeData, site, this.exportType.value)
+					const name = 1 !== postOptions.length ? 'post-types' : postOptions[0]
+					this.prepareAfterResponse(name, response.body.postTypeData, site, this.exportType.value)
 					return
 				}
 
 				if (response.body?.taxonomiesData) {
-					this.prepareAfterResponse('taxonomies', response.body.taxonomiesData, site, this.exportType.value)
+					const name = 1 !== taxonomiesOptions.length ? 'taxonomies' : taxonomiesOptions[0]
+					this.prepareAfterResponse(name, response.body.taxonomiesData, site, this.exportType.value)
 					return
 				}
 
@@ -375,9 +377,9 @@ export default {
 			const content     = ('json' === typeFile) ? JSON.stringify(bodyContent) : bodyContent
 			const blob        = new Blob([ content ], { type: contentType })
 
-			const link       = document.createElement('a')
-			link.href        = URL.createObjectURL(blob)
-			link.download    = `aioseo-export-${contentExporting}-${site}${DateTime.now().toFormat('yyyy-MM-dd')}.` + typeFile
+			const link    = document.createElement('a')
+			link.href     = URL.createObjectURL(blob)
+			link.download = `aioseo-export-${contentExporting}-${site}${DateTime.now().toFormat('yyyy-MM-dd')}.` + typeFile
 			link.click()
 			URL.revokeObjectURL(link.href)
 		},

@@ -42,10 +42,10 @@ class ProfilePage extends WebPage {
 			return [];
 		}
 
-		global $wp_query;
+		global $wp_query; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		$articles = [];
 		$authorId = $author->ID ?? $post->post_author ?? 0;
-		foreach ( $wp_query->posts as $post ) {
+		foreach ( $wp_query->posts as $post ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			if ( $post->post_author !== $authorId ) {
 				continue;
 			}

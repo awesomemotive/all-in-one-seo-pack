@@ -132,6 +132,8 @@ export default {
 </script>
 
 <style lang="scss">
+@use 'sass:color';
+
 .aioseo-setup-wizard-container {
 	margin-block: var(--aioseo-gutter);
 	padding: calc(var(--aioseo-gutter) * 2);
@@ -291,7 +293,7 @@ export default {
 		justify-content: center;
 
 		&:hover {
-			color: darken(#fff, 20%);
+			color: color.adjust(#fff, $lightness: -20%);
 		}
 
 		svg.aioseo-close {

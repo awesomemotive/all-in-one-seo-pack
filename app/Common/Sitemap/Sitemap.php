@@ -155,17 +155,17 @@ class Sitemap extends SitemapAbstract {
 
 		$contents = aioseo()->helpers->decodeHtmlEntities( aioseo()->htaccess->getContents() );
 		if ( get_option( 'permalink_structure' ) ) {
-			if ( preg_match( '/All in One SEO Sitemap Rewrite Rules/i', $contents ) && ! aioseo()->core->cache->get( 'aioseo_sitemap_htaccess_rewrite_rules_remove' ) ) {
+			if ( preg_match( '/All in One SEO Sitemap Rewrite Rules/i', (string) $contents ) && ! aioseo()->core->cache->get( 'aioseo_sitemap_htaccess_rewrite_rules_remove' ) ) {
 				aioseo()->core->cache->update( 'aioseo_sitemap_htaccess_rewrite_rules_remove', time(), HOUR_IN_SECONDS );
 
-				$contents = preg_replace( "/$escapedRewriteRules/i", '', $contents );
+				$contents = preg_replace( "/$escapedRewriteRules/i", '', (string) $contents );
 				aioseo()->htaccess->saveContents( $contents );
 			}
 
 			return;
 		}
 
-		if ( preg_match( '/All in One SEO Sitemap Rewrite Rules/i', $contents ) || aioseo()->core->cache->get( 'aioseo_sitemap_htaccess_rewrite_rules_add' ) ) {
+		if ( preg_match( '/All in One SEO Sitemap Rewrite Rules/i', (string) $contents ) || aioseo()->core->cache->get( 'aioseo_sitemap_htaccess_rewrite_rules_add' ) ) {
 			return;
 		}
 
@@ -203,9 +203,9 @@ class Sitemap extends SitemapAbstract {
 		$detectedFiles = [];
 		if ( ! $isGeneralSitemapStatic ) {
 			foreach ( $files as $filename ) {
-				if ( preg_match( '#.*sitemap.*#', $filename ) ) {
+				if ( preg_match( '#.*sitemap.*#', (string) $filename ) ) {
 					// We don't want to delete the video sitemap here at all.
-					$isVideoSitemap = preg_match( '#.*video.*#', $filename ) ? true : false;
+					$isVideoSitemap = preg_match( '#.*video.*#', (string) $filename ) ? true : false;
 					if ( ! $isVideoSitemap ) {
 						$detectedFiles[] = $filename;
 					}
@@ -313,15 +313,15 @@ class Sitemap extends SitemapAbstract {
 		}
 
 		// This is a hack to prevent WordPress from running it's default stuff during our processing.
-		global $wp_query;
-		$wp_query->is_home = false;
+		global $wp_query; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		$wp_query->is_home = false; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
 		// This prevents the sitemap from including terms twice when WPML is active.
 		if ( class_exists( 'SitePress' ) ) {
-			global $sitepress_settings;
+			global $sitepress_settings; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			// Before building the sitemap make sure links aren't translated.
 			// The setting should not be updated in the DB.
-			$sitepress_settings['auto_adjust_ids'] = 0;
+			$sitepress_settings['auto_adjust_ids'] = 0; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		}
 
 		// If requested sitemap should be static and doesn't exist, then generate it.
@@ -414,8 +414,8 @@ class Sitemap extends SitemapAbstract {
 	 * @return void
 	 */
 	public function notFoundPage() {
-		global $wp_query;
-		$wp_query->set_404();
+		global $wp_query; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		$wp_query->set_404(); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		status_header( 404 );
 		include get_404_template();
 		exit;

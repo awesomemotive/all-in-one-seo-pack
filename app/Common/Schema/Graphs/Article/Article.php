@@ -111,7 +111,7 @@ class Article extends Graphs\Graph {
 			return $featuredImage;
 		}
 
-		preg_match_all( '#<img[^>]+src="([^">]+)"#', $post->post_content, $matches );
+		preg_match_all( '#<img[^>]+src="([^">]+)"#', (string) $post->post_content, $matches );
 		if ( isset( $matches[1] ) && isset( $matches[1][0] ) ) {
 			$url     = aioseo()->helpers->removeImageDimensions( $matches[1][0] );
 			$imageId = aioseo()->helpers->attachmentUrlToPostId( $url );

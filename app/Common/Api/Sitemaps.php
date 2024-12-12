@@ -35,9 +35,9 @@ class Sitemaps {
 		$detectedFiles = [];
 		if ( ! $isGeneralSitemapStatic ) {
 			foreach ( $files as $filename ) {
-				if ( preg_match( '#.*sitemap.*#', $filename ) ) {
+				if ( preg_match( '#.*sitemap.*#', (string) $filename ) ) {
 					// We don't want to delete the video sitemap here at all.
-					$isVideoSitemap = preg_match( '#.*video.*#', $filename ) ? true : false;
+					$isVideoSitemap = preg_match( '#.*video.*#', (string) $filename ) ? true : false;
 					if ( ! $isVideoSitemap ) {
 						$detectedFiles[] = $filename;
 					}

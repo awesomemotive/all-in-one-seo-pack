@@ -14,13 +14,14 @@ import {
 
 export const useOptionsStore = defineStore('OptionsStore', {
 	state : () => ({
-		dynamicOptions         : {},
-		internalNetworkOptions : {},
-		internalOptions        : {},
-		networkOptions         : {},
-		options                : {},
-		htaccessError          : null,
-		saveError              : null
+		dynamicOptions          : {},
+		internalNetworkOptions  : {},
+		internalOptions         : {},
+		networkOptions          : {},
+		options                 : {},
+		htaccessError           : null,
+		saveError               : null,
+		maxAdditionalKeyphrases : 10
 	}),
 	actions : {
 		saveChanges () {

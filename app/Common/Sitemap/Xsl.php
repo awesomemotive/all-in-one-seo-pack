@@ -27,7 +27,7 @@ class Xsl {
 		$sitemapPath = aioseo()->helpers->getPermalinkPath( $sitemapUrl );
 
 		// Figure out which sitemap we're serving.
-		preg_match( '/\/(.*?)-?sitemap([0-9]*)\.xml/', $sitemapPath, $sitemapInfo );
+		preg_match( '/\/(.*?)-?sitemap([0-9]*)\.xml/', (string) $sitemapPath, $sitemapInfo );
 		$sitemapName = ! empty( $sitemapInfo[1] ) ? strtoupper( $sitemapInfo[1] ) : '';
 
 		// Remove everything after ? from sitemapPath to avoid caching issues.

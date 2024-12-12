@@ -30,8 +30,8 @@ $end           = ( ( $currentPage - 1 ) * $linksPerIndex ) + $showing;
 
 $hasNextPage = $totalPages > $currentPage;
 $hasPrevPage = $currentPage > 1;
-$nextPageUri = $hasNextPage ? preg_replace( '/sitemap([0-9]*)\.xml/', 'sitemap' . ( $currentPage + 1 ) . '.xml', $data['sitemapUrl'] ) : '#';
-$prevPageUri = $hasPrevPage ? preg_replace( '/sitemap([0-9]*)\.xml/', 'sitemap' . ( $currentPage - 1 ) . '.xml', $data['sitemapUrl'] ) : '#';
+$nextPageUri = $hasNextPage ? preg_replace( '/sitemap([0-9]*)\.xml/', 'sitemap' . ( $currentPage + 1 ) . '.xml', (string) $data['sitemapUrl'] ) : '#';
+$prevPageUri = $hasPrevPage ? preg_replace( '/sitemap([0-9]*)\.xml/', 'sitemap' . ( $currentPage - 1 ) . '.xml', (string) $data['sitemapUrl'] ) : '#';
 ?>
 <div class="pagination">
 	<div class="label">

@@ -165,7 +165,7 @@ class QueryArgs {
 	 * @return string       The modified link.
 	 */
 	public function removeReplyToComLink( $link ) {
-		return preg_replace( '`href=(["\'])(?:.*(?:\?|&|&#038;)replytocom=(\d+)#respond)`', 'href=$1#comment-$2', $link );
+		return preg_replace( '`href=(["\'])(?:.*(?:\?|&|&#038;)replytocom=(\d+)#respond)`', 'href=$1#comment-$2', (string) $link );
 	}
 
 	/**

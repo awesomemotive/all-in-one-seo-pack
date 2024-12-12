@@ -1,3 +1,6 @@
+@use '@/vue/assets/scss/app/variables.scss' as *;
+@use '@/vue/assets/scss/app/mixins.scss' as *;
+
 .aioseo-elementor-panel {
 	.aioseo-app {
 		border-top: 2px solid #E8E8EB;

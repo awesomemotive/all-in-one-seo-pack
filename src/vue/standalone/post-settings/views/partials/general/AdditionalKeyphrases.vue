@@ -1,6 +1,6 @@
 <template>
 	<div class="additional-keyphrases-panel">
-		<div v-if="postEditorStore.currentPost.keyphrases.additional && postEditorStore.currentPost.keyphrases.additional.length && (rootStore.isPro && licenseStore.license.isActive)">
+		<div v-if="postEditorStore.currentPost.keyphrases.additional && postEditorStore.currentPost.keyphrases?.additional?.length && (rootStore.isPro && licenseStore.license.isActive)">
 			<core-keyphrase
 				v-for="(keyphrase, index) in postEditorStore.currentPost.keyphrases.additional"
 				:key="index"
@@ -35,8 +35,9 @@
 			:class="`add-keyphrase-${$root.$data.screenContext}-input`"
 			@keydown.enter="pressEnter"
 		/>
+
 		<base-button
-			v-if="rootStore.isPro && licenseStore.license.isActive"
+			v-if="rootStore.isPro && licenseStore.license.isActive && optionsStore.maxAdditionalKeyphrases > postEditorStore.currentPost.keyphrases?.additional?.length"
 			id="add-additional-keyphrase"
 			class="add-keyphrase gray medium"
 			@click="addKeyphraseEv"
@@ -44,6 +45,22 @@
 			<svg-circle-plus width="14" height="14" />
 			{{ strings.addKeyphrase }}
 		</base-button>
+
+		<core-tooltip v-if="rootStore.isPro && licenseStore.license.isActive && optionsStore.maxAdditionalKeyphrases <= postEditorStore.currentPost.keyphrases?.additional?.length">
+			<base-button
+				id="add-additional-keyphrase"
+				class="add-keyphrase gray medium"
+				:disabled="true"
+				@click="addKeyphraseEv"
+			>
+				<svg-circle-plus width="14" height="14" />
+				{{ strings.addKeyphrase }}
+			</base-button>
+
+			<template #tooltip>
+				<span>{{ strings.maxAmountReached }}</span>
+			</template>
+		</core-tooltip>
 
 		<template
 			v-if="!rootStore.isPro || !licenseStore.license.isActive"
@@ -68,7 +85,8 @@ import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	usePostEditorStore,
-	useRootStore
+	useRootStore,
+	useOptionsStore
 } from '@/vue/stores'
 
 import TruSeo from '@/vue/plugins/tru-seo'
@@ -76,6 +94,7 @@ import TruSeo from '@/vue/plugins/tru-seo'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreKeyphrase from '@/vue/components/common/core/Keyphrase'
 import CoreLoader from '@/vue/components/common/core/Loader'
+import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import metaboxAnalysisDetail from './MetaboxAnalysisDetail'
 
@@ -89,6 +108,7 @@ export default {
 			licenseStore    : useLicenseStore(),
 			postEditorStore : usePostEditorStore(),
 			rootStore       : useRootStore(),
+			optionsStore    : useOptionsStore(),
 			truSeo          : new TruSeo()
 		}
 	},
@@ -96,6 +116,7 @@ export default {
 		CoreAlert,
 		CoreKeyphrase,
 		CoreLoader,
+		CoreTooltip,
 		SvgCirclePlus,
 		metaboxAnalysisDetail
 	},
@@ -111,6 +132,11 @@ export default {
 					__('Additional Keyphrases are a %1$s feature. %2$s', td),
 					'PRO',
 					links.getUpsellLink('post-settings', GLOBAL_STRINGS.learnMore, 'additional-keywords', true)
+				),
+				maxAmountReached : sprintf(
+					// Translators: 1 - Number of maximum keywords.
+					__('You have reached the maximum of %1$s additional keyphrases.', td),
+					this.optionsStore.maxAdditionalKeyphrases
 				)
 			}
 		}
@@ -148,6 +174,10 @@ export default {
 			}, 300)
 		},
 		addKeyphraseEv () {
+			if (this.optionsStore.maxAdditionalKeyphrases <= this.postEditorStore.currentPost.keyphrases?.additional?.length) {
+				return
+			}
+
 			const keyphraseInputComponent = document.getElementsByClassName(`add-keyphrase-${this.$root.$data.screenContext}-input`)
 			const keyphraseInput          = keyphraseInputComponent[0].querySelector('.medium')
 			const keyphraseInputValue     = keyphraseInput?.value.trim()
@@ -187,6 +217,16 @@ export default {
 .editor-sidebar .aioseo-app {
 	.aioseo-description.additional-keyphrases-description {
 		margin: 0 0 12px;
+	}
+}
+
+.additional-keyphrases-panel {
+	.aioseo-tooltip {
+		margin-left: 0 !important;
+
+		svg {
+			cursor: pointer;
+		}
 	}
 }
 </style>

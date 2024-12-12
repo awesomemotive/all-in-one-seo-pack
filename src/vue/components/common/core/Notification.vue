@@ -156,11 +156,12 @@ export default {
 			this.notificationsStore.dismissNotifications([ this.notification.slug ])
 			this.$emit('dismissed-notification')
 		},
-		getButtonType () {
+		getButtonType (buttonNumber) {
 			switch (this.notification.notification_name) {
 				case 'search-console-site-not-connected':
 				case 'search-console-site-not-verified':
-					return 'blue'
+				case 'email-reports-enable-reminder':
+					return 1 === buttonNumber ? 'blue' : 'gray'
 				default:
 					return 'gray'
 			}

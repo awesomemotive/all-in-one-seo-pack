@@ -31,9 +31,9 @@ trait Wp {
 	 * @return array An array of user roles.
 	 */
 	public function getUserRoles() {
-		global $wp_roles;
+		global $wp_roles; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
-		$wpRoles = $wp_roles;
+		$wpRoles = $wp_roles; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		if ( ! is_object( $wpRoles ) ) {
 			// Don't assign this to the global because otherwise WordPress won't override it.
 			$wpRoles = new \WP_Roles();
@@ -303,9 +303,9 @@ trait Wp {
 				$name = '_aioseo_type';
 			}
 
-			global $wp_taxonomies;
-			$taxonomyPostTypes = ! empty( $wp_taxonomies[ $name ] )
-				? $wp_taxonomies[ $name ]->object_type
+			global $wp_taxonomies; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+			$taxonomyPostTypes = ! empty( $wp_taxonomies[ $name ] ) // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+				? $wp_taxonomies[ $name ]->object_type // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 				: [];
 
 			$taxonomies[] = [
@@ -841,9 +841,9 @@ trait Wp {
 	 * @return bool          Whether the legacy widget can be registered.
 	 */
 	public function canRegisterLegacyWidget( $idBase ) {
-		global $wp_version;
+		global $wp_version; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		if (
-			version_compare( $wp_version, '5.8', '<' ) ||
+			version_compare( $wp_version, '5.8', '<' ) || // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			is_active_widget( false, false, $idBase ) ||
 			aioseo()->standalone->pageBuilderIntegrations['elementor']->isPluginActive()
 		) {

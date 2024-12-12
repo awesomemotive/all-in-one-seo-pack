@@ -397,7 +397,7 @@ class GeneralSettings {
 		foreach ( $this->oldOptions as $name => $value ) {
 			if (
 				! in_array( $name, array_keys( $settings ), true ) &&
-				preg_match( '#aiosp_(.*)_title_format#', $name, $slug )
+				preg_match( '#aiosp_(.*)_title_format#', (string) $name, $slug )
 			) {
 				if ( empty( $slug[1] ) ) {
 					continue;
@@ -656,7 +656,7 @@ class GeneralSettings {
 		foreach ( $supportedNetworks as $url => $settingName ) {
 			$url = aioseo()->helpers->escapeRegex( $url );
 			foreach ( $socialUrls as $socialUrl ) {
-				if ( preg_match( "/.*$url.*/", $socialUrl ) ) {
+				if ( preg_match( "/.*$url.*/", (string) $socialUrl ) ) {
 					aioseo()->options->social->profiles->urls->$settingName = esc_url( wp_strip_all_tags( $socialUrl ) );
 					$found = true;
 				}
@@ -710,7 +710,7 @@ class GeneralSettings {
 		}
 
 		$phoneNumber = aioseo()->helpers->sanitizeOption( $this->oldOptions['aiosp_schema_phone_number'] );
-		if ( ! preg_match( '#\+\d+#', $phoneNumber ) ) {
+		if ( ! preg_match( '#\+\d+#', (string) $phoneNumber ) ) {
 			$notification = Models\Notification::getNotificationByName( 'v3-migration-schema-number' );
 			if ( $notification->notification_name ) {
 				return;

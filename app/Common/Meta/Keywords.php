@@ -104,7 +104,7 @@ class Keywords {
 	 * @return array An array of generated keywords.
 	 */
 	private function getGeneratedKeywords() {
-		global $posts, $wp_query;
+		global $posts, $wp_query; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
 		$keywords        = [];
 		$isStaticArchive = aioseo()->helpers->isWooCommerceShopPage() || aioseo()->helpers->isStaticPostsPage();
@@ -125,6 +125,7 @@ class Keywords {
 		}
 
 		// Turn off current query so we can get specific post data.
+		// phpcs:disable Squiz.NamingConventions.ValidVariableName
 		$originalTag      = $wp_query->is_tag;
 		$originalTax      = $wp_query->is_tax;
 		$originalCategory = $wp_query->is_category;
@@ -146,6 +147,7 @@ class Keywords {
 		$wp_query->is_tag      = $originalTag;
 		$wp_query->is_tax      = $originalTax;
 		$wp_query->is_category = $originalCategory;
+		// phpcs:enable Squiz.NamingConventions.ValidVariableName
 
 		return $keywords;
 	}

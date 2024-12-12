@@ -84,15 +84,16 @@ export const getImages = (html) => {
  *
  * @param {string} string The text.
  * @param {number} length Text max character length.
- * @returns {string}      The shortened string.
+ * @param {string} ellipsis The ellipsis to use.
+ * @returns {string} The shortened string.
  */
-export const truncate = (string, length = 200) => {
+export const truncate = (string, length = 200, ellipsis = '&hellip;') => {
 	if (!string) {
 		return string
 	}
 
 	if (length < string.length) {
-		string = string.substring(0, length).trim() + sanitizeString('&hellip;')
+		string = string.substring(0, length).trim() + sanitizeString(ellipsis)
 	}
 
 	return string

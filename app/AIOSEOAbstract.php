@@ -591,11 +591,11 @@ abstract class AIOSEOAbstract {
 	public $thirdParty = null;
 
 	/**
-		* WritingAssistant class instance.
-		*
-		* @since 4.7.4
-		*
-		* @var null|\AIOSEO\Plugin\Common\WritingAssistant\WritingAssistant
-		*/
+	 * WritingAssistant class instance.
+	 *
+	 * @since 4.7.4
+	 *
+	 * @var \AIOSEO\Plugin\Common\WritingAssistant\WritingAssistant
+	 */
 	public $writingAssistant = null;
 }

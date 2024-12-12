@@ -82,7 +82,7 @@ class Api {
 		$loggedInKey   = defined( 'LOGGED_IN_KEY' ) ? LOGGED_IN_KEY : '';
 
 		$siteIdentifier = $authKey . $secureAuthKey . $loggedInKey;
-		$siteIdentifier = preg_replace( '/[^a-zA-Z0-9]/', '', $siteIdentifier );
+		$siteIdentifier = preg_replace( '/[^a-zA-Z0-9]/', '', (string) $siteIdentifier );
 		$siteIdentifier = sanitize_text_field( $siteIdentifier );
 		$siteIdentifier = trim( $siteIdentifier );
 		$siteIdentifier = ( strlen( $siteIdentifier ) > 30 ) ? substr( $siteIdentifier, 0, 30 ) : $siteIdentifier;

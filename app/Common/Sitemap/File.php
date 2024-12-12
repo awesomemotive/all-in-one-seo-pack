@@ -277,7 +277,7 @@ class File {
 
 		$sitemapFiles = [];
 		foreach ( $files as $filename ) {
-			if ( preg_match( '#.*sitemap.*#', $filename ) ) {
+			if ( preg_match( '#.*sitemap.*#', (string) $filename ) ) {
 				$sitemapFiles[] = $filename;
 			}
 		}

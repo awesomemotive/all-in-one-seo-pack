@@ -75,7 +75,7 @@ TEMPLATE
 			],
 			'uninstall'        => [ 'type' => 'boolean', 'default' => false ],
 			'emailSummary'     => [
-				'enable'     => [ 'type' => 'boolean', 'default' => true ],
+				'enable'     => [ 'type' => 'boolean', 'default' => false ],
 				'recipients' => [ 'type' => 'array', 'default' => [] ]
 			]
 		],
@@ -637,7 +637,7 @@ TEMPLATE
 		);
 
 		if ( isset( $options['social']['profiles']['additionalUrls'] ) ) {
-			$dbOptions['social']['profiles']['additionalUrls'] = preg_replace( '/\h/', "\n", $options['social']['profiles']['additionalUrls'] );
+			$dbOptions['social']['profiles']['additionalUrls'] = preg_replace( '/\h/', "\n", (string) $options['social']['profiles']['additionalUrls'] );
 		}
 
 		$newOptions = ! empty( $options['sitemap']['html'] ) ? $options['sitemap']['html'] : null;

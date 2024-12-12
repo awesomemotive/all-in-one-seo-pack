@@ -29,7 +29,7 @@ class DeprecatedWordPress {
 	 * @return void
 	 */
 	public function maybeShowNotice() {
-		global $wp_version;
+		global $wp_version; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
 		$dismissed = get_option( '_aioseo_deprecated_wordpress_dismissed', true );
 		if ( '1' === $dismissed ) {
@@ -42,7 +42,7 @@ class DeprecatedWordPress {
 		}
 
 		// Only show if WordPress version is deprecated.
-		if ( version_compare( $wp_version, '5.3', '>=' ) ) {
+		if ( version_compare( $wp_version, '5.3', '>=' ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			return;
 		}
 

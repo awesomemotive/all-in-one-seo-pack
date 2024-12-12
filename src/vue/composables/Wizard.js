@@ -158,6 +158,14 @@ const features = [
 		required    : false,
 		pro         : true,
 		upgrade     : false
+	},
+	{
+		value       : 'email-reports',
+		name        : __('Email Reports', td),
+		description : __('Stay ahead in SEO with our new email digest! Get the latest tips, trends, and tools delivered right to your inbox, helping you optimize smarter and faster. Enable it today and never miss an update that can take your rankings to the next level.', td),
+		required    : false,
+		pro         : false,
+		upgrade     : false
 	}
 ]
 

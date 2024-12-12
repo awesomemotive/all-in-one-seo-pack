@@ -166,7 +166,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/vue/assets/scss/main.scss';
+@use '@/vue/assets/scss/main.scss' as *;
 
 // Hide the nav bar from WooCommerce Follow-up Emails.
 h2.woo-nav-tab-wrapper {

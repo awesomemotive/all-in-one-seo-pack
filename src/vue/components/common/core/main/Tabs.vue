@@ -362,9 +362,9 @@ export default {
 </script>
 
 <style lang="scss">
-.aioseo-app {
-	@import '@/vue/assets/scss/tabs';
+@use '@/vue/assets/scss/tabs';
 
+.aioseo-app {
 	.aioseo-tabs {
 		display: flex;
 		align-items: center;

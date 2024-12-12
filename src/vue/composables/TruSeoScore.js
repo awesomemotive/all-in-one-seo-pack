@@ -43,7 +43,7 @@ export const useTruSeoScore = () => {
 	}
 
 	const getScoreClass = (score) => {
-		return 80 < score ? 'green' : 50 < score ? 'orange' : 1 < score ? 'red' : 'none'
+		return 79 < score ? 'green' : (49 < score ? 'orange' : (0 < score ? 'red' : 'none'))
 	}
 
 	const runAnalysis = (postId) => {

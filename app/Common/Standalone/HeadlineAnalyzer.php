@@ -96,8 +96,8 @@ class HeadlineAnalyzer {
 		$result->originalExplodedHeadline = explode( ' ', wp_unslash( $title ) );
 
 		// Strip useless characters and whitespace.
-		$title = preg_replace( '/[^A-Za-z0-9 ]/', '', $title );
-		$title = preg_replace( '!\s+!', ' ', $title );
+		$title = preg_replace( '/[^A-Za-z0-9 ]/', '', (string) $title );
+		$title = preg_replace( '!\s+!', ' ', (string) $title );
 		$title = strtolower( $title );
 
 		$result->input = $title;
@@ -193,7 +193,7 @@ class HeadlineAnalyzer {
 		}
 
 		$listWords = array_intersect( $explodedHeadline, $this->numericalIndicators() );
-		if ( preg_match( '~[0-9]+~', $title ) || ! empty( $listWords ) ) {
+		if ( preg_match( '~[0-9]+~', (string) $title ) || ! empty( $listWords ) ) {
 			$headlineTypes[] = __( 'List', 'all-in-one-seo-pack' );
 			$totalScore      = $totalScore + 7;
 		}
@@ -229,7 +229,7 @@ class HeadlineAnalyzer {
 	public function matchWords( $headline, $explodedHeadline, $words ) {
 		$foundMatches = [];
 		foreach ( $words as $word ) {
-			$strippedWord = preg_replace( '/[^A-Za-z0-9 ]/', '', $word );
+			$strippedWord = preg_replace( '/[^A-Za-z0-9 ]/', '', (string) $word );
 
 			// Check if word is a phrase.
 			if ( strpos( $word, ' ' ) !== false ) {

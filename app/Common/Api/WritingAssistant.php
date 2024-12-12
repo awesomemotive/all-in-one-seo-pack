@@ -235,9 +235,6 @@ class WritingAssistant {
 	 */
 	public static function getUserOptions() {
 		$userOptions = aioseo()->writingAssistant->seoBoost->getUserOptions();
-		if ( empty( $userOptions ) ) {
-			aioseo()->writingAssistant->seoBoost->refreshUserOptions();
-		}
 
 		return new \WP_REST_Response( $userOptions, 200 );
 	}
@@ -270,7 +267,7 @@ class WritingAssistant {
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function disconnect() {
-		delete_user_meta( get_current_user_id(), 'seoboost_access_token' );
+		aioseo()->writingAssistant->seoBoost->setAccessToken( '' );
 
 		return new \WP_REST_Response( [ 'success' => true ], 200 );
 	}

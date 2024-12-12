@@ -34,7 +34,7 @@ class Migration {
 		$postTypes  = aioseo()->helpers->getPublicPostTypes( true );
 		$taxonomies = aioseo()->helpers->getPublicTaxonomies( true );
 		foreach ( $oldOptions as $k => $v ) {
-			if ( ! preg_match( '/^aiosp_([a-zA-Z]*)_title_format$/', $k, $match ) || ! empty( $v ) ) {
+			if ( ! preg_match( '/^aiosp_([a-zA-Z]*)_title_format$/', (string) $k, $match ) || ! empty( $v ) ) {
 				continue;
 			}
 

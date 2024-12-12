@@ -227,7 +227,7 @@ export default {
 
 			return {
 				total      : data[key] || 0,
-				difference : data.difference ? Math.abs(data.difference[key]) || 0 : 0,
+				difference : data.difference ? (Number(data.difference[key]) || 0) : 0,
 				direction  : data.difference && 0 > data.difference[key] ? 'down' : 'up',
 				chart      : this.searchStatisticsStore.data?.seoStatistics?.intervals?.map((tick) => ({
 					x : dateFormat(new Date(tick.date + ' 00:00:00'), this.rootStore.aioseo.data.dateFormat),

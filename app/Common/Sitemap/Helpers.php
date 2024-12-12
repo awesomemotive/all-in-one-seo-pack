@@ -594,6 +594,11 @@ class Helpers {
 	 */
 	public function decodeSitemapEntries( $data ) {
 		$result = [];
+
+		if ( empty( $data ) ) {
+			return $result;
+		}
+
 		// Decode Url to properly show Unicode Characters.
 		foreach ( $data as $item ) {
 			if ( isset( $item['loc'] ) ) {

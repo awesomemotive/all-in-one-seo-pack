@@ -67,7 +67,7 @@ class Helpers {
 		$value = aioseo()->helpers->decodeHtmlEntities( $value );
 
 		// Trim internal and external whitespace.
-		$value = preg_replace( '/[\s]+/u', ' ', trim( $value ) );
+		$value = preg_replace( '/[\s]+/u', ' ', (string) trim( $value ) );
 
 		return aioseo()->helpers->internationalize( $value );
 	}
@@ -109,7 +109,7 @@ class Helpers {
 	public function encodeExceptions( $string ) {
 		$exceptions = [ '<3' ];
 		foreach ( $exceptions as $exception ) {
-			$string = preg_replace( "/$exception/", aioseo()->helpers->encodeOutputHtml( $exception ), $string );
+			$string = preg_replace( "/$exception/", aioseo()->helpers->encodeOutputHtml( $exception ), (string) $string );
 		}
 
 		return $string;

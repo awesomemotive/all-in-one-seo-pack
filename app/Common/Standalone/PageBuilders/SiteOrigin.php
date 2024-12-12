@@ -65,8 +65,8 @@ class SiteOrigin extends Base {
 		if (
 			! empty( $postObj ) &&
 			(
-				preg_match( '/siteorigin_widget/', $postObj->post_content ) ||
-				preg_match( '/so-panel widget/', $postObj->post_content )
+				preg_match( '/siteorigin_widget/', (string) $postObj->post_content ) ||
+				preg_match( '/so-panel widget/', (string) $postObj->post_content )
 			)
 		) {
 			return true;

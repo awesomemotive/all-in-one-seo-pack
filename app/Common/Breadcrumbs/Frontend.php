@@ -315,7 +315,7 @@ TEMPLATE;
 	 * @return string       A crumb html without links.
 	 */
 	public function stripLink( $html ) {
-		return preg_replace( '/<a\s.*?>|<\/a>/is', '', $html );
+		return preg_replace( '/<a\s.*?>|<\/a>/is', '', (string) $html );
 	}
 
 	/**

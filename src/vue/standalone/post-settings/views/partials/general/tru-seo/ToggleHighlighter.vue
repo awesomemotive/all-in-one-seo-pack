@@ -97,7 +97,6 @@ export default {
 mark.annotation-text.annotation-text-aioseo-tru-seo-highlighter,
 span.annotation-text.annotation-text-aioseo-tru-seo-highlighter {
 	background-color: #cce0ff;
-	border-radius: 4px;
 	color: inherit;
 	display: inline;
 	font-size: inherit;
@@ -105,5 +104,10 @@ span.annotation-text.annotation-text-aioseo-tru-seo-highlighter {
 	letter-spacing: inherit;
 	line-height: inherit;
 	position: static;
+}
+
+.is-annotated-by-aioseo-tru-seo-highlighter {
+	background-color: #cce0ff;
+	outline: 2px solid #cce0ff;
 }
 </style>

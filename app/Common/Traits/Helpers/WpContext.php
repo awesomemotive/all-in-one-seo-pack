@@ -316,8 +316,8 @@ trait WpContext {
 
 		// Because do_blocks() and do_shortcodes() can trigger conflicts, we need to clone these objects and restore them afterwards.
 		// We need to clone deep to sever pointers/references because these have nested object properties.
-		global $wp_query, $post;
-		$this->originalQuery = $this->deepClone( $wp_query );
+		global $wp_query, $post; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		$this->originalQuery = $this->deepClone( $wp_query ); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		$this->originalPost  = is_a( $post, 'WP_Post' ) ? $this->deepClone( $post ) : null;
 
 		// The order of the function calls below is intentional and should NOT change.
@@ -549,11 +549,11 @@ trait WpContext {
 	public function getCommentPageNumber() {
 		$cpage = get_query_var( 'cpage', null );
 		if ( $this->isBlockTheme() ) {
-			global $wp_query;
+			global $wp_query; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
 			// For block themes we can't rely on `get_query_var()` because of {@see build_comment_query_vars_from_block()},
 			// so we need to check the query directly.
-			$cpage = $wp_query->query['cpage'] ?? null;
+			$cpage = $wp_query->query['cpage'] ?? null; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		}
 
 		return isset( $cpage ) ? (int) $cpage : false;
@@ -612,7 +612,7 @@ trait WpContext {
 	public function isValidAttachment( $url ) {
 		$uploadDirUrl = aioseo()->helpers->escapeRegex( $this->getWpContentUrl() );
 
-		return preg_match( "/$uploadDirUrl.*/", $url );
+		return preg_match( "/$uploadDirUrl.*/", (string) $url );
 	}
 
 	/**
@@ -686,9 +686,9 @@ trait WpContext {
 			return true;
 		}
 
-		global $wp_rewrite;
+		global $wp_rewrite; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
-		if ( empty( $wp_rewrite ) ) {
+		if ( empty( $wp_rewrite ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			return false;
 		}
 
@@ -854,7 +854,7 @@ trait WpContext {
 	public function isWpLoginPage() {
 		// We can't sanitize the filename using sanitize_file_name() here because it will cause issues with custom login pages and certain plugins/themes where this function is not defined.
 		$self = ! empty( $_SERVER['PHP_SELF'] ) ? sanitize_text_field( wp_unslash( $_SERVER['PHP_SELF'] ) ) : ''; // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
-		if ( preg_match( '/wp-login\.php$|wp-register\.php$/', $self ) ) {
+		if ( preg_match( '/wp-login\.php$|wp-register\.php$/', (string) $self ) ) {
 			return true;
 		}
 
@@ -919,7 +919,7 @@ trait WpContext {
 	 */
 	public function setWpQueryPost( $wpPost ) {
 		$wpPost = is_a( $wpPost, 'WP_Post' ) ? $wpPost : get_post( $wpPost );
-
+		// phpcs:disable Squiz.NamingConventions.ValidVariableName
 		global $wp_query, $post;
 		$this->originalQuery = $this->deepClone( $wp_query );
 		$this->originalPost  = is_a( $post, 'WP_Post' ) ? $this->deepClone( $post ) : null;
@@ -935,6 +935,7 @@ trait WpContext {
 		if ( 'page' === $wpPost->post_type ) {
 			$wp_query->is_page = true;
 		}
+		// phpcs:enable Squiz.NamingConventions.ValidVariableName
 
 		$post = $wpPost;
 	}
@@ -947,13 +948,13 @@ trait WpContext {
 	 * @return void
 	 */
 	public function restoreWpQuery() {
-		global $wp_query, $post;
+		global $wp_query, $post; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		if ( is_a( $this->originalQuery, 'WP_Query' ) ) {
 			// Loop over all properties and replace the ones that have changed.
 			// We want to avoid replacing the entire object because it can cause issues with other plugins.
 			foreach ( $this->originalQuery as $key => $value ) {
-				if ( $value !== $wp_query->{$key} ) {
-					$wp_query->{$key} = $value;
+				if ( $value !== $wp_query->{$key} ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+					$wp_query->{$key} = $value; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 				}
 			}
 		}
@@ -978,9 +979,9 @@ trait WpContext {
 	 * @return array List of theme features.
 	 */
 	public function getThemeFeatures() {
-		global $_wp_theme_features;
+		global $_wp_theme_features; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
-		return isset( $_wp_theme_features ) && is_array( $_wp_theme_features ) ? $_wp_theme_features : [];
+		return isset( $_wp_theme_features ) && is_array( $_wp_theme_features ) ? $_wp_theme_features : []; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 	}
 
 	/**

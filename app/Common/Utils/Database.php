@@ -520,12 +520,13 @@ class Database {
 				if ( count( $this->join ) > 0 ) {
 					foreach ( (array) $this->join as $join ) {
 						if ( is_array( $join[1] ) ) {
-							$join_on = [];
+							$join_on = []; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 							foreach ( (array) $join[1] as $left => $right ) {
-								$join_on[] = "$this->table.`$left` = `{$join[0]}`.`$right`";
+								$join_on[] = "$this->table.`$left` = `{$join[0]}`.`$right`"; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 							}
-
+							// phpcs:disable Squiz.NamingConventions.ValidVariableName
 							$clauses[] = "\t" . ( ( 'LEFT' === $join[2] || 'RIGHT' === $join[2] ) ? $join[2] . ' JOIN ' : 'JOIN ' ) . $join[0] . ' ON ' . implode( ' AND ', $join_on );
+							// phpcs:enable Squiz.NamingConventions.ValidVariableName
 						} else {
 							$clauses[] = "\t" . ( ( 'LEFT' === $join[2] || 'RIGHT' === $join[2] ) ? $join[2] . ' JOIN ' : 'JOIN ' ) . "{$join[0]} ON {$join[1]}";
 						}
@@ -586,12 +587,13 @@ class Database {
 				if ( ! empty( $this->join ) && count( $this->join ) > 0 ) {
 					foreach ( (array) $this->join as $join ) {
 						if ( is_array( $join[1] ) ) {
-							$join_on = [];
+							$join_on = []; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 							foreach ( (array) $join[1] as $left => $right ) {
-								$join_on[] = "$this->table.`$left` = `{$join[0]}`.`$right`";
+								$join_on[] = "$this->table.`$left` = `{$join[0]}`.`$right`"; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 							}
-
+							// phpcs:disable Squiz.NamingConventions.ValidVariableName
 							$clauses[] = "\t" . ( ( 'LEFT' === $join[2] || 'RIGHT' === $join[2] ) ? $join[2] . ' JOIN ' : 'JOIN ' ) . $join[0] . ' ON ' . implode( ' AND ', $join_on );
+							// phpcs:enable Squiz.NamingConventions.ValidVariableName
 						} else {
 							$clauses[] = "\t" . ( ( 'LEFT' === $join[2] || 'RIGHT' === $join[2] ) ? $join[2] . ' JOIN ' : 'JOIN ' ) . "{$join[0]} ON {$join[1]}";
 						}
@@ -622,7 +624,7 @@ class Database {
 				if ( count( $this->order ) > 0 ) {
 					$orderFragments = [];
 					foreach ( $this->escapeColNames( $this->order ) as $col ) {
-						$orderFragments[] = ( preg_match( '/ (ASC|DESC|RAND\(\))$/i', $col ) ) ? $col : "$col $this->orderDirection";
+						$orderFragments[] = ( preg_match( '/ (ASC|DESC|RAND\(\))$/i', (string) $col ) ) ? $col : "$col $this->orderDirection";
 					}
 
 					$clauses[] = 'ORDER BY ' . implode( ', ', $orderFragments );
@@ -642,7 +644,7 @@ class Database {
 		$this->query = str_replace( '%%d = %%d', '%d = %d', str_replace( '%', '%%', implode( "\n", $clauses ) ) );
 
 		// Flag queries with double quotes down, but not if the double quotes are contained within a string value (like JSON).
-		if ( aioseo()->isDev && preg_match( '/\{[^}]*\}(*SKIP)(*FAIL)|\[[^]]*\](*SKIP)(*FAIL)|\'[^\']*\'(*SKIP)(*FAIL)|\\"(*SKIP)(*FAIL)|"/i', $this->query ) ) {
+		if ( aioseo()->isDev && preg_match( '/\{[^}]*\}(*SKIP)(*FAIL)|\[[^]]*\](*SKIP)(*FAIL)|\'[^\']*\'(*SKIP)(*FAIL)|\\"(*SKIP)(*FAIL)|"/i', (string) $this->query ) ) {
 			error_log(
 				"Query with double quotes detected - this may cause isues when ANSI_QUOTES is enabled:\r\n" .
 				$this->query . "\r\n" . wp_debug_backtrace_summary()
@@ -793,7 +795,7 @@ class Database {
 		$criteria = $this->prepArgs( func_get_args() );
 
 		foreach ( (array) $criteria as $field => $value ) {
-			if ( ! preg_match( '/[\(\)<=>!]+/', $field ) && false === stripos( $field, ' IS ' ) ) {
+			if ( ! preg_match( '/[\(\)<=>!]+/', (string) $field ) && false === stripos( $field, ' IS ' ) ) {
 				$operator = ( is_null( $value ) ) ? 'IS' : '=';
 				$escaped  = $this->escapeColNames( $field );
 				$field    = array_pop( $escaped ) . ' ' . $operator;
@@ -857,7 +859,7 @@ class Database {
 
 		$or = [];
 		foreach ( (array) $criteria as $field => $value ) {
-			if ( ! preg_match( '/[\(\)<=>!]+/', $field ) && false === stripos( $field, ' IS ' ) ) {
+			if ( ! preg_match( '/[\(\)<=>!]+/', (string) $field ) && false === stripos( $field, ' IS ' ) ) {
 				$operator = ( is_null( $value ) ) ? 'IS' : '=';
 				$field    = $this->escapeColNames( $field );
 				$field    = array_pop( $field ) . ' ' . $operator;

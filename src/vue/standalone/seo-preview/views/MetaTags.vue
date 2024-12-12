@@ -55,7 +55,7 @@ export default {
 				},
 				{
 					label : __('Canonical URL', td),
-					value : document.querySelector('link[rel="canonical"]')?.href || ''
+					value : document.querySelector('link[rel="canonical"]').getAttribute('href') || ''
 				}
 			]
 			const socialMetaTags = document.querySelectorAll(

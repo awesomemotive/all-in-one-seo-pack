@@ -53,6 +53,9 @@ class SeoBoost {
 		if ( 'ms_logged_in' === $returnParam ) {
 			add_action( 'init', [ $this, 'marketingSiteReturn' ], 50 );
 		}
+
+		// Migrate user access token and options.
+		add_action( 'init', [ $this, 'migrateUserData' ], 10 );
 	}
 
 	/**
@@ -81,7 +84,8 @@ class SeoBoost {
 
 		$params = [
 			'oauth'    => true,
-			'redirect' => get_site_url() . '?' . build_query( [ 'aioseo-writing-assistant' => 'auth_return' ] )
+			'redirect' => get_site_url() . '?' . build_query( [ 'aioseo-writing-assistant' => 'auth_return' ] ),
+			'domain'   => aioseo()->helpers->getMultiSiteDomain()
 		];
 
 		return trailingslashit( $url ) . '?' . build_query( $params );
@@ -116,7 +120,9 @@ class SeoBoost {
 	 * @return string The access token.
 	 */
 	public function getAccessToken() {
-		return get_user_meta( get_current_user_id(), 'seoboost_access_token', true );
+		$metaKey = 'seoboost_access_token_' . get_current_blog_id();
+
+		return get_user_meta( get_current_user_id(), $metaKey, true );
 	}
 
 	/**
@@ -127,7 +133,8 @@ class SeoBoost {
 	 * @return void
 	 */
 	public function setAccessToken( $accessToken ) {
-		update_user_meta( get_current_user_id(), 'seoboost_access_token', $accessToken );
+		$metaKey = 'seoboost_access_token_' . get_current_blog_id();
+		update_user_meta( get_current_user_id(), $metaKey, $accessToken );
 		$this->refreshUserOptions();
 	}
 
@@ -136,15 +143,15 @@ class SeoBoost {
 	 *
 	 * @since 4.7.4
 	 *
-	 * @return void|\WP_Error
+	 * @return bool|\WP_Error|array The options array if refreshed.
 	 */
 	public function refreshUserOptions() {
 		$userOptions = $this->service->getUserOptions();
-		if ( is_wp_error( $userOptions ) ) {
-			return $userOptions;
+		if ( is_wp_error( $userOptions ) || ! empty( $userOptions['error'] ) ) {
+			return false;
 		}
 
-		$this->setUserOptions( $userOptions );
+		return $this->setUserOptions( $userOptions );
 	}
 
 	/**
@@ -154,8 +161,17 @@ class SeoBoost {
 	 *
 	 * @return array The user options.
 	 */
-	public function getUserOptions() {
-		return json_decode( get_user_meta( get_current_user_id(), 'seoboost_user_options', true ), true );
+	public function getUserOptions( $refresh = true ) {
+		$metaKey     = 'seoboost_user_options_' . get_current_blog_id();
+		$userOptions = get_user_meta( get_current_user_id(), $metaKey, true );
+
+		if ( empty( $userOptions ) && $refresh ) {
+			if ( $this->refreshUserOptions() ) {
+				return $this->getUserOptions( false );
+			}
+		}
+
+		return json_decode( $userOptions, true );
 	}
 
 	/**
@@ -171,10 +187,11 @@ class SeoBoost {
 			return [];
 		}
 
-		$userOptions = $this->getUserOptions() ?? [];
+		$userOptions = $this->getUserOptions( false ) ?? [];
 		$userOptions = array_merge( $userOptions, $options );
+		$metaKey     = 'seoboost_user_options_' . get_current_blog_id();
 
-		update_user_meta( get_current_user_id(), 'seoboost_user_options', wp_json_encode( $userOptions ) );
+		update_user_meta( get_current_user_id(), $metaKey, wp_json_encode( $userOptions ) );
 
 		return $userOptions;
 	}
@@ -250,7 +267,7 @@ class SeoBoost {
 	 */
 	public function resetLogins() {
 		// Delete access token and user options from the database.
-		aioseo()->core->db->delete( 'usermeta' )->where( 'meta_key', 'seoboost_access_token' )->run();
+		aioseo()->core->db->delete( 'usermeta' )->whereRaw( 'meta_key LIKE \'seoboost_access_token%\'' )->run();
 		aioseo()->core->db->delete( 'usermeta' )->where( 'meta_key', 'seoboost_user_options' )->run();
 	}
 
@@ -263,5 +280,26 @@ class SeoBoost {
 	 */
 	public function getReportHistory() {
 		return $this->service->getReportHistory();
+	}
+
+	/**
+	 * Migrate writing assistant access tokens.
+	 *
+	 * @since 4.7.7
+	 *
+	 * @return void
+	 */
+	public function migrateUserData() {
+		$userToken = get_user_meta( get_current_user_id(), 'seoboost_access_token', true );
+		if ( ! empty( $userToken ) ) {
+			$this->setAccessToken( $userToken );
+			delete_user_meta( get_current_user_id(), 'seoboost_access_token' );
+		}
+
+		$userOptions = get_user_meta( get_current_user_id(), 'seoboost_user_options', true );
+		if ( ! empty( $userOptions ) ) {
+			$this->setUserOptions( $userOptions );
+			delete_user_meta( get_current_user_id(), 'seoboost_user_options' );
+		}
 	}
 }

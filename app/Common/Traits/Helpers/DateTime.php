@@ -60,9 +60,9 @@ trait DateTime {
 		try {
 			$timezone = get_option( 'timezone_string' );
 			if ( $timezone ) {
-				$timezone_object = new \DateTimeZone( $timezone );
+				$timezone_object = new \DateTimeZone( $timezone ); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
-				return $timezone_object->getOffset( new \DateTime( 'now' ) );
+				return $timezone_object->getOffset( new \DateTime( 'now' ) ); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			}
 		} catch ( \Exception $e ) {
 			// Do nothing.

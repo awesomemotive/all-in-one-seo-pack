@@ -206,7 +206,7 @@ class TitleMeta extends ImportExport\SearchAppearance {
 			}
 
 			foreach ( $this->options as $name => $value ) {
-				if ( ! preg_match( "#^pt_{$postType}_(.*)$#", $name, $match ) || ! in_array( $match[1], $supportedSettings, true ) ) {
+				if ( ! preg_match( "#^pt_{$postType}_(.*)$#", (string) $name, $match ) || ! in_array( $match[1], $supportedSettings, true ) ) {
 					continue;
 				}
 
@@ -303,7 +303,7 @@ class TitleMeta extends ImportExport\SearchAppearance {
 
 		foreach ( aioseo()->helpers->getPublicPostTypes( true, true ) as $postType ) {
 			foreach ( $this->options as $name => $value ) {
-				if ( ! preg_match( "#^pt_{$postType}_archive_(.*)$#", $name, $match ) || ! in_array( $match[1], $supportedSettings, true ) ) {
+				if ( ! preg_match( "#^pt_{$postType}_archive_(.*)$#", (string) $name, $match ) || ! in_array( $match[1], $supportedSettings, true ) ) {
 					continue;
 				}
 
@@ -413,7 +413,7 @@ class TitleMeta extends ImportExport\SearchAppearance {
 		}
 
 		$phoneNumber = aioseo()->helpers->sanitizeOption( $this->options['phone'] );
-		if ( ! preg_match( '#\+\d+#', $phoneNumber ) ) {
+		if ( ! preg_match( '#\+\d+#', (string) $phoneNumber ) ) {
 			$notification = Models\Notification::getNotificationByName( 'v3-migration-schema-number' );
 			if ( $notification->notification_name ) {
 				return;

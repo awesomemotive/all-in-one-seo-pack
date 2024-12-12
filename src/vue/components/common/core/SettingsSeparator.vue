@@ -208,6 +208,8 @@ export default {
 </script>
 
 <style lang="scss">
+@use 'sass:color';
+
 .aioseo-separators {
 	--aioseo-gutter: 8px;
 
@@ -235,7 +237,7 @@ export default {
 			cursor: pointer;
 
 			&:hover {
-				background-color: darken($background, 5%);
+				background-color: color.adjust($background, $lightness: -5%);
 			}
 
 			&.active {

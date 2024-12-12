@@ -355,8 +355,8 @@ trait Vue {
 		if ( ! $post->exists() ) {
 			$oldPostMeta = aioseo()->migration->meta->getMigratedPostMeta( $postId );
 			foreach ( $oldPostMeta as $k => $v ) {
-				if ( preg_match( '#robots_.*#', $k ) ) {
-					$oldPostMeta[ preg_replace( '#robots_#', '', $k ) ] = $v;
+				if ( preg_match( '#robots_.*#', (string) $k ) ) {
+					$oldPostMeta[ preg_replace( '#robots_#', '', (string) $k ) ] = $v;
 					continue;
 				}
 				if ( 'canonical_url' === $k ) {

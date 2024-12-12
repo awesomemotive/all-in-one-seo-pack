@@ -1,2 +1,2 @@
-@import './global';
-@import './headline-analyzer';
+@use './global' as *;
+@use './headline-analyzer' as *;

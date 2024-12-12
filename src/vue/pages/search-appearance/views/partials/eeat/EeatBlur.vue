@@ -424,7 +424,7 @@ const uiElementSliderOptions = {
 </script>
 
 <style lang="scss">
-@import '@/vue/assets/scss/redirects/table.scss';
+@use '@/vue/assets/scss/redirects/table.scss' as *;
 
 .topics-table {
 	thead tr .tooltip-wrapper {

@@ -407,7 +407,7 @@ class PostSettings {
 	 */
 	public function filterPostsAfterChangingClauses() {
 		remove_action( 'wp', [ $this, 'filterPostsAfterChangingClauses' ] );
-
+		// phpcs:disable Squiz.NamingConventions.ValidVariableName
 		global $wp_query;
 		if ( ! empty( $wp_query->posts ) && is_array( $wp_query->posts ) ) {
 			$wp_query->posts = array_filter( $wp_query->posts, function ( $post ) {
@@ -419,5 +419,6 @@ class PostSettings {
 				$wp_query->post_count = count( $wp_query->posts );
 			}
 		}
+		// phpcs:enable Squiz.NamingConventions.ValidVariableName
 	}
 }

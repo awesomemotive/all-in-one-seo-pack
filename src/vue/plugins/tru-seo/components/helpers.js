@@ -142,7 +142,7 @@ export const getClosestNodeByPropertyValue = ({ element, property, value }) => {
 export const createHighlightPopoverNode = () => {
 	const el = document.createElement('div')
 
-	el.classList.add('tru-seo-highlight-popover-wrapper')
+	el.classList.add('aioseo-app')
 	el.style.position = 'absolute'
 	el.style.zIndex = '999'
 	el.style.display = 'flex'

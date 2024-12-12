@@ -202,7 +202,7 @@ class Twitter {
 		}
 
 		$profile = (string) $profile;
-		if ( preg_match( '/^(\@)?[A-Za-z0-9_]+$/', $profile ) ) {
+		if ( preg_match( '/^(\@)?[A-Za-z0-9_]+$/', (string) $profile ) ) {
 			if ( '@' !== $profile[0] && $includeAt ) {
 				$profile = '@' . $profile;
 			} elseif ( '@' === $profile[0] && ! $includeAt ) {

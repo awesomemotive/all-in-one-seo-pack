@@ -49,7 +49,7 @@ class MentionBlot extends Embed {
 		const node = super.create()
 		const denotationChar = document.createElement('span')
 		denotationChar.className = 'ql-mention-denotation-char'
-		denotationChar.innerHTML = data.denotationChar
+		denotationChar.innerHTML = data.denotationChar || '#'
 		node.appendChild(denotationChar)
 		node.innerHTML += data.value
 

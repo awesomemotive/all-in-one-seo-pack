@@ -114,6 +114,7 @@ export default () => {
 
 	TVE.$('html').attr('dir', isRTL() ? 'rtl' : 'ltr')
 	TVE.$('body').addClass('wp-core-ui')
+	TVE.$('html').removeClass('no-js').addClass('js')
 
 	initSettingsPanel()
 	initScoreButton()

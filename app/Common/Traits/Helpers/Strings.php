@@ -84,7 +84,7 @@ trait Strings {
 			if ( 65535 < $length ) {
 				$string = substr( $string, 0, 65534 );
 			}
-			$string = preg_replace( "#[^\pZ\pP]*.{{$excessLength}}$#", '', $string );
+			$string = preg_replace( "#[^\pZ\pP]*.{{$excessLength}}$#", '', (string) $string );
 			if ( $shouldHaveEllipsis ) {
 				$string = $string . ' ...';
 			}
@@ -107,7 +107,7 @@ trait Strings {
 		if ( isset( $escapeRegex[ $string ] ) ) {
 			return $escapeRegex[ $string ];
 		}
-		$escapeRegex[ $string ] = preg_quote( $string, $delimiter );
+		$escapeRegex[ $string ] = preg_quote( (string) $string, $delimiter );
 
 		return $escapeRegex[ $string ];
 	}
@@ -159,7 +159,7 @@ trait Strings {
 		// The caveat is that we'd need to first trim off slash delimiters and add them back later - otherwise they'd be escaped as well.
 
 		$replacement         = $this->escapeRegexReplacement( $replacement );
-		$pregReplace[ $key ] = preg_replace( $pattern, $replacement, $subject );
+		$pregReplace[ $key ] = preg_replace( $pattern, $replacement, (string) $subject );
 
 		return $pregReplace[ $key ];
 	}
@@ -264,11 +264,11 @@ trait Strings {
 		}
 
 		$string = aioseo()->helpers->decodeHtmlEntities( $string );
-		$string = preg_replace( "/{$characterRegexPattern}[\p{P}\d+]/u", '', $string );
+		$string = preg_replace( "/{$characterRegexPattern}[\p{P}\d+]/u", '', (string) $string );
 		$string = aioseo()->helpers->encodeOutputHtml( $string );
 
 		// Trim both internal and external whitespace.
-		return preg_replace( '/\s\s+/u', ' ', trim( $string ) );
+		return preg_replace( '/\s\s+/u', ' ', (string) trim( $string ) );
 	}
 
 	/**
@@ -583,7 +583,7 @@ trait Strings {
 	 * @return string         The converted string.
 	 */
 	public function toSentenceCase( $string ) {
-		$phrases = preg_split( '/([.?!]+)/', $string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+		$phrases = preg_split( '/([.?!]+)/', (string) $string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
 
 		$convertedString = '';
 		foreach ( $phrases as $index => $sentence ) {
@@ -630,7 +630,7 @@ trait Strings {
 						'\x{1F900}-\x{1F9FF}' . // Supplemental Symbols and Pictographs
 						']/u';
 
-		$filteredString = preg_replace( $emojiPattern, '', $string );
+		$filteredString = preg_replace( $emojiPattern, '', (string) $string );
 
 		// Re-encode special characters to HTML entities.
 		return $this->encodeOutputHtml( $filteredString );

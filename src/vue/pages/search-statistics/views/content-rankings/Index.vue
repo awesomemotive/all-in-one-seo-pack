@@ -90,6 +90,8 @@ export default {
 </script>
 
 <style lang="scss">
+@use 'sass:color';
+
 .aioseo-search-statistics-content-rankings {
 	&__title {
 		display: inline-flex;
@@ -114,7 +116,7 @@ export default {
 				transition: background-color 0.2s ease;
 
 				&:hover {
-					color: darken($placeholder-color, 20%);
+					color: color.adjust($placeholder-color, $lightness: -20%);
 				}
 			}
 		}

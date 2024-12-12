@@ -476,7 +476,7 @@ class Content {
 
 		if ( aioseo()->options->sitemap->general->indexes && $shouldChunk ) {
 			$entries = aioseo()->sitemap->helpers->chunkEntries( $entries );
-			$entries = $entries[ aioseo()->sitemap->pageNumber ];
+			$entries = $entries[ aioseo()->sitemap->pageNumber ] ?? [];
 		}
 
 		return $entries;

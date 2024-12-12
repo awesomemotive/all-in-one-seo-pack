@@ -44,6 +44,8 @@ export default {
 </script>
 
 <style lang="scss">
+@use 'sass:color';
+
 .aioseo-alert {
 	position: relative;
 	border-radius: 3px;
@@ -114,7 +116,7 @@ export default {
 
 	&.red {
 		border: 1px solid $red;
-		background-color: lighten($red2, 55%);
+		background-color: color.adjust($red2, $lightness: 55%);
 
 		.aioseo-alert-close {
 			background-color: $red;

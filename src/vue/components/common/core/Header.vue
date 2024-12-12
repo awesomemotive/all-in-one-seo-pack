@@ -242,6 +242,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+@use 'sass:color';
+
 html:not([data-scroll='0']) {
 	.aioseo-header {
 		box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
@@ -317,7 +319,7 @@ html:not([data-scroll='0']) {
 				}
 
 				&:hover {
-					background-color: darken($background, 5%);
+					background-color: color.adjust($background, $lightness: -5%);
 				}
 			}
 

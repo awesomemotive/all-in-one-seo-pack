@@ -148,9 +148,9 @@ class Helpers {
 			'%[^%]*_author_lastname%'  => '#author_last_name',
 		];
 
-		if ( preg_match_all( '#%cf_([^%]*)%#', $string, $matches ) && ! empty( $matches[1] ) ) {
+		if ( preg_match_all( '#%cf_([^%]*)%#', (string) $string, $matches ) && ! empty( $matches[1] ) ) {
 			foreach ( $matches[1] as $name ) {
-				if ( preg_match( '#\s#', $name ) ) {
+				if ( preg_match( '#\s#', (string) $name ) ) {
 					$notification = Models\Notification::getNotificationByName( 'v3-migration-custom-field' );
 					if ( ! $notification->notification_name ) {
 						Models\Notification::addNotification( [
@@ -177,9 +177,9 @@ class Helpers {
 			}
 		}
 
-		if ( preg_match_all( '#%tax_([^%]*)%#', $string, $matches ) && ! empty( $matches[1] ) ) {
+		if ( preg_match_all( '#%tax_([^%]*)%#', (string) $string, $matches ) && ! empty( $matches[1] ) ) {
 			foreach ( $matches[1] as $name ) {
-				if ( ! preg_match( '#\s#', $name ) ) {
+				if ( ! preg_match( '#\s#', (string) $name ) ) {
 					$string = aioseo()->helpers->pregReplace( "#%tax_$name%#", "#tax_name-$name", $string );
 				}
 			}
@@ -189,7 +189,7 @@ class Helpers {
 			$string = aioseo()->helpers->pregReplace( "#$macro(?![a-zA-Z0-9_])#im", $tag, $string );
 		}
 
-		$string = preg_replace( '/%([a-f0-9]{2}[^%]*)%/i', '#$1#', $string );
+		$string = preg_replace( '/%([a-f0-9]{2}[^%]*)%/i', '#$1#', (string) $string );
 
 		return $string;
 	}

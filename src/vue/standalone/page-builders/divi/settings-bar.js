@@ -246,11 +246,13 @@ const hideModalOnOutsideClick = (event) => {
 	const seoModalSelector     = '.aioseo-pagebuilder-modal'
 	const previewModalSelector = '.aioseo-app.aioseo-post-settings-modal'
 	const elPopperSelector     = '.el-popper'
+	const mediaModal           = '.media-modal'
 
 	if (
 		!elem.closest(seoModalSelector) &&
 		!elem.closest(previewModalSelector) &&
 		!elem.closest(elPopperSelector) &&
+		!elem.closest(mediaModal) &&
 		!(elem !== document.querySelector(seoModalSelector) && elem.contains(document.querySelector(seoModalSelector))) &&
 		(elem.getAttribute('class') && !elem.getAttribute('class').includes('aioseo')) &&
 		elem !== settingsBarRoot

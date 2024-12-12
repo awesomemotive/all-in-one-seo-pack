@@ -42,7 +42,7 @@ class Blocks {
 	 * @return \WP_Block_Type|false       The registered block type on success, or false on failure.
 	 */
 	public function registerBlock( $slug = '', $args = [] ) {
-		global $wp_version;
+		global $wp_version; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
 		if ( ! strpos( $slug, '/' ) ) {
 			$slug = 'aioseo/' . $slug;
@@ -53,7 +53,7 @@ class Blocks {
 		}
 
 		// Check if the block requires a minimum WP version.
-		if ( ! empty( $args['wp_min_version'] ) && version_compare( $wp_version, $args['wp_min_version'], '>' ) ) {
+		if ( ! empty( $args['wp_min_version'] ) && version_compare( $wp_version, $args['wp_min_version'], '>' ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			return false;
 		}
 

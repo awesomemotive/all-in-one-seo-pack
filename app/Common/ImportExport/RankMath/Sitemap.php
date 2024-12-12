@@ -61,7 +61,7 @@ class Sitemap {
 		$allowedPostTypes = array_values( array_diff( aioseo()->helpers->getPublicPostTypes( true ), aioseo()->helpers->getNoindexedPostTypes() ) );
 		foreach ( $allowedPostTypes as $postType ) {
 			foreach ( $this->options as $name => $value ) {
-				if ( preg_match( "#pt_{$postType}_sitemap$#", $name, $match ) && 'on' === $this->options[ $name ] ) {
+				if ( preg_match( "#pt_{$postType}_sitemap$#", (string) $name, $match ) && 'on' === $this->options[ $name ] ) {
 					$includedPostTypes[] = $postType;
 				}
 			}
@@ -70,7 +70,7 @@ class Sitemap {
 		$allowedTaxonomies = array_values( array_diff( aioseo()->helpers->getPublicTaxonomies( true ), aioseo()->helpers->getNoindexedTaxonomies() ) );
 		foreach ( $allowedTaxonomies as $taxonomy ) {
 			foreach ( $this->options as $name => $value ) {
-				if ( preg_match( "#tax_{$taxonomy}_sitemap$#", $name, $match ) && 'on' === $this->options[ $name ] ) {
+				if ( preg_match( "#tax_{$taxonomy}_sitemap$#", (string) $name, $match ) && 'on' === $this->options[ $name ] ) {
 					$includedTaxonomies[] = $taxonomy;
 				}
 			}

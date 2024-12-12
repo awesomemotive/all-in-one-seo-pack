@@ -486,7 +486,7 @@ export default {
 				return true
 			}
 		},
-		exportColumns      : {
+		exportColumns : {
 			type : Array,
 			default () {
 				return []

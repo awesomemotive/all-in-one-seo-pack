@@ -82,6 +82,15 @@ class Admin {
 	public $connect = null;
 
 	/**
+	 * Whether we're editing a post or term.
+	 *
+	 * @since 4.7.7
+	 *
+	 * @var bool
+	 */
+	private $isEditor = false;
+
+	/**
 	 * Construct method.
 	 *
 	 * @since 4.0.0
@@ -135,7 +144,7 @@ class Admin {
 	 * @return string         The possibly modified HTML language attribute.
 	 */
 	public function alwaysAddHtmlDirAttribute( $output ) {
-		if ( is_rtl() || preg_match( '/dir=[\'"](ltr|rtl|auto)[\'"]/i', $output ) ) {
+		if ( is_rtl() || preg_match( '/dir=[\'"](ltr|rtl|auto)[\'"]/i', (string) $output ) ) {
 			return $output;
 		}
 
@@ -276,8 +285,8 @@ class Admin {
 
 		add_action( 'wp_enqueue_editor', [ $this, 'addClassicLinkFormatScript' ], 999999 );
 
-		global $wp_version;
-		if ( version_compare( $wp_version, '5.3', '>=' ) || is_plugin_active( 'gutenberg/gutenberg.php' ) ) {
+		global $wp_version; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		if ( version_compare( $wp_version, '5.3', '>=' ) || is_plugin_active( 'gutenberg/gutenberg.php' ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			add_action( 'current_screen', [ $this, 'addGutenbergLinkFormatScript' ] );
 			add_action( 'enqueue_block_editor_assets', [ $this, 'enqueueBlockEditorLinkFormat' ] );
 		}
@@ -418,7 +427,6 @@ class Admin {
 	 */
 	public function adminBarMenu() {
 		if ( false === apply_filters( 'aioseo_show_in_admin_bar', true ) ) {
-			// API filter hook to disable showing SEO in admin bar.
 			return;
 		}
 
@@ -427,13 +435,13 @@ class Admin {
 			return;
 		}
 
-		$classes    = is_admin()
+		$classes           = is_admin()
 			? 'wp-core-ui wp-ui-notification aioseo-menu-notification-counter'
 			: 'aioseo-menu-notification-counter aioseo-menu-notification-counter-frontend';
-		$count      = count( Models\Notification::getAllActiveNotifications() );
-		$htmlCount  = 10 > $count ? $count : '!';
-		$htmlCount  = $htmlCount ? "<div class=\"{$classes}\">" . $htmlCount . '</div>' : '';
-		$htmlCount .= '<div id="aioseo-menu-new-notifications"></div>';
+		$notificationCount = count( Models\Notification::getAllActiveNotifications() );
+		$htmlCount         = 10 > $notificationCount ? $notificationCount : '!';
+		$htmlCount         = $htmlCount ? "<div class=\"{$classes}\">" . $htmlCount . '</div>' : '';
+		$htmlCount        .= '<div id="aioseo-menu-new-notifications"></div>';
 
 		$this->adminBarMenuItems[] = [
 			'id'    => 'aioseo-main',
@@ -441,7 +449,7 @@ class Admin {
 			'href'  => esc_url( admin_url( 'admin.php?page=' . $firstPageSlug ) )
 		];
 
-		if ( $count ) {
+		if ( $notificationCount ) {
 			$this->adminBarMenuItems[] = [
 				'parent' => 'aioseo-main',
 				'id'     => 'aioseo-notifications',
@@ -452,14 +460,22 @@ class Admin {
 
 		$this->adminBarMenuItems[] = aioseo()->standalone->seoPreview->getAdminBarMenuItemNode();
 
+		$currentScreen = aioseo()->helpers->getCurrentScreen();
+		if (
+			is_admin() &&
+			( 'post' === $currentScreen->base || 'term' === $currentScreen->base )
+		) {
+			$this->isEditor = true;
+		}
+
 		$htmlSitemapRequested = aioseo()->htmlSitemap->isDedicatedPage;
-		if ( ! is_admin() && ! $htmlSitemapRequested ) {
+		if ( $htmlSitemapRequested || ! is_admin() || $this->isEditor ) {
 			$this->addPageAnalyzerMenuItems();
 		}
 
 		if ( $htmlSitemapRequested ) {
-			global $wp_admin_bar;
-			$wp_admin_bar->remove_node( 'edit' );
+			global $wp_admin_bar; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+			$wp_admin_bar->remove_node( 'edit' ); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		}
 
 		$this->addSettingsMenuItems();
@@ -477,9 +493,9 @@ class Admin {
 	 * @return void
 	 */
 	protected function addAdminBarMenuItems() {
-		global $wp_admin_bar;
+		global $wp_admin_bar; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		foreach ( $this->adminBarMenuItems as $item ) {
-			$wp_admin_bar->add_menu( $item );
+			$wp_admin_bar->add_menu( $item ); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		}
 	}
 
@@ -491,9 +507,31 @@ class Admin {
 	 * @return void
 	 */
 	public function addPageAnalyzerMenuItems() {
-		global $wp;
-		// Make sure the trailing slash matches the site configuration.
-		$url = user_trailingslashit( home_url( $wp->request ) );
+		$url           = '';
+		$currentScreen = aioseo()->helpers->getCurrentScreen();
+		if (
+			is_singular() ||
+			( is_admin() && 'post' === $currentScreen->base )
+		) {
+			$post = aioseo()->helpers->getPost();
+			if ( is_a( $post, 'WP_Post' ) && 'publish' === $post->post_status && '' !== $post->post_name ) {
+				$url = get_permalink( $post->ID );
+			}
+		}
+
+		if (
+			is_category() ||
+			is_tag() ||
+			is_tax() ||
+			( is_admin() && 'term' === $currentScreen->base )
+		) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, HM.Security.NonceVerification.Recommended
+			$termId = ! empty( $_REQUEST['tag_ID'] ) ? intval( $_REQUEST['tag_ID'] ) : 0;
+			$term   = is_admin() && $termId ? get_term( $termId ) : get_queried_object();
+			if ( is_a( $term, 'WP_Term' ) ) {
+				$url = get_term_link( $term );
+			}
+		}
 
 		if ( ! $url ) {
 			return;
@@ -502,61 +540,51 @@ class Admin {
 		$this->adminBarMenuItems[] = [
 			'id'     => 'aioseo-analyze-page',
 			'parent' => 'aioseo-main',
-			'title'  => esc_html__( 'Analyze this page', 'all-in-one-seo-pack' ),
+			'title'  => esc_html__( 'Analyze this page', 'all-in-one-seo-pack' )
 		];
 
 		$url = urlencode( $url );
 
 		$submenuItems = [
 			[
-				'id'    => 'aioseo-analyze-page-inlinks',
-				'title' => esc_html__( 'Check links to this URL', 'all-in-one-seo-pack' ),
-				'href'  => 'https://search.google.com/search-console/links/drilldown?resource_id=' . urlencode( get_option( 'siteurl' ) ) . '&type=EXTERNAL&target=' . $url . '&domain=',
-			],
-			[
-				'id'    => 'aioseo-analyze-page-cache',
-				'title' => esc_html__( 'Check Google Cache', 'all-in-one-seo-pack' ),
-				'href'  => '//webcache.googleusercontent.com/search?strip=1&q=cache:' . $url,
+				'id'    => 'aioseo-analyze-page-pagespeed',
+				'title' => esc_html__( 'Google Page Speed Test', 'all-in-one-seo-pack' ),
+				'href'  => 'https://pagespeed.web.dev/report?url=' . $url
 			],
 			[
 				'id'    => 'aioseo-analyze-page-structureddata',
 				'title' => esc_html__( 'Google Rich Results Test', 'all-in-one-seo-pack' ),
-				'href'  => 'https://search.google.com/test/rich-results?url=' . $url,
+				'href'  => 'https://search.google.com/test/rich-results?url=' . $url
+			],
+			[
+				'id'    => 'aioseo-analyze-page-structureddata',
+				'title' => esc_html__( 'Schema.org Validator', 'all-in-one-seo-pack' ),
+				'href'  => 'https://validator.schema.org/?url=' . $url
+			],
+			[
+				'id'    => 'aioseo-analyze-page-inlinks',
+				'title' => esc_html__( 'Inbound Links', 'all-in-one-seo-pack' ),
+				'href'  => 'https://search.google.com/search-console/links/drilldown?resource_id=' . urlencode( get_option( 'siteurl' ) ) . '&type=EXTERNAL&target=' . $url . '&domain='
 			],
 			[
 				'id'    => 'aioseo-analyze-page-facebookdebug',
 				'title' => esc_html__( 'Facebook Debugger', 'all-in-one-seo-pack' ),
-				'href'  => 'https://developers.facebook.com/tools/debug/?q=' . $url,
-			],
-			[
-				'id'    => 'aioseo-analyze-page-pinterestvalidator',
-				'title' => esc_html__( 'Pinterest Rich Pins Validator', 'all-in-one-seo-pack' ),
-				'href'  => 'https://developers.pinterest.com/tools/url-debugger/?link=' . $url,
-			],
-			[
-				'id'    => 'aioseo-analyze-page-htmlvalidation',
-				'title' => esc_html__( 'HTML Validator', 'all-in-one-seo-pack' ),
-				'href'  => '//validator.w3.org/check?uri=' . $url,
-			],
-			[
-				'id'    => 'aioseo-analyze-page-cssvalidation',
-				'title' => esc_html__( 'CSS Validator', 'all-in-one-seo-pack' ),
-				'href'  => '//jigsaw.w3.org/css-validator/validator?uri=' . $url,
-			],
-			[
-				'id'    => 'aioseo-analyze-page-pagespeed',
-				'title' => esc_html__( 'Google Page Speed Test', 'all-in-one-seo-pack' ),
-				'href'  => 'https://pagespeed.web.dev/report?url=' . $url,
-			],
-			[
-				'id'    => 'aioseo-analyze-page-google-mobile-friendly',
-				'title' => esc_html__( 'Mobile-Friendly Test', 'all-in-one-seo-pack' ),
-				'href'  => 'https://www.google.com/webmasters/tools/mobile-friendly/?url=' . $url,
+				'href'  => 'https://developers.facebook.com/tools/debug/?q=' . $url
 			],
 			[
 				'id'    => 'aioseo-external-tools-linkedin-post-inspector',
 				'title' => esc_html__( 'LinkedIn Post Inspector', 'all-in-one-seo-pack' ),
 				'href'  => "https://www.linkedin.com/post-inspector/inspect/$url"
+			],
+			[
+				'id'    => 'aioseo-analyze-page-htmlvalidation',
+				'title' => esc_html__( 'HTML Validator', 'all-in-one-seo-pack' ),
+				'href'  => '//validator.w3.org/check?uri=' . $url
+			],
+			[
+				'id'    => 'aioseo-analyze-page-cssvalidation',
+				'title' => esc_html__( 'CSS Validator', 'all-in-one-seo-pack' ),
+				'href'  => '//jigsaw.w3.org/css-validator/validator?uri=' . $url
 			]
 		];
 
@@ -566,7 +594,7 @@ class Admin {
 				'id'     => $item['id'],
 				'title'  => $item['title'],
 				'href'   => $item['href'],
-				'meta'   => [ 'target' => '_blank' ],
+				'meta'   => [ 'target' => '_blank' ]
 			];
 		}
 	}
@@ -610,7 +638,7 @@ class Admin {
 	 * @return void
 	 */
 	protected function addSettingsMenuItems() {
-		if ( ! is_admin() ) {
+		if ( ! is_admin() || $this->isEditor ) {
 			$this->adminBarMenuItems[] = [
 				'id'     => 'aioseo-settings-main',
 				'parent' => 'aioseo-main',
@@ -619,7 +647,7 @@ class Admin {
 			];
 		}
 
-		$parent = is_admin() ? 'aioseo-main' : 'aioseo-settings-main';
+		$parent = is_admin() && ! $this->isEditor ? 'aioseo-main' : 'aioseo-settings-main';
 		foreach ( $this->pages as $id => $page ) {
 			// Remove page from admin bar menu.
 			if ( ! empty( $page['hide_admin_bar_menu'] ) ) {
@@ -791,9 +819,9 @@ class Admin {
 	 */
 	public function hooks() {
 		$currentScreen = aioseo()->helpers->getCurrentScreen();
-		global $admin_page_hooks;
+		global $admin_page_hooks; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
-		if ( ! is_object( $currentScreen ) || empty( $currentScreen->id ) || empty( $admin_page_hooks ) ) {
+		if ( ! is_object( $currentScreen ) || empty( $currentScreen->id ) || empty( $admin_page_hooks ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			return;
 		}
 
@@ -822,7 +850,7 @@ class Admin {
 				$addScripts = true;
 			}
 
-			if ( ! empty( $admin_page_hooks['aioseo'] ) && $currentScreen->id === $admin_page_hooks['aioseo'] ) {
+			if ( ! empty( $admin_page_hooks['aioseo'] ) && $currentScreen->id === $admin_page_hooks['aioseo'] ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 				$addScripts = true;
 			}
 
@@ -968,13 +996,13 @@ class Admin {
 		);
 
 		// Stop WP Core from outputting its version number and instead add both theirs & ours.
-		global $wp_version;
+		global $wp_version; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		printf(
 			wp_kses_post( '<p class="alignright">%1$s</p>' ),
 			sprintf(
 				// Translators: 1 - WP Core version number, 2 - AIOSEO version number.
 				esc_html__( 'WordPress %1$s | AIOSEO %2$s', 'all-in-one-seo-pack' ),
-				esc_html( $wp_version ),
+				esc_html( $wp_version ), // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 				esc_html( AIOSEO_VERSION )
 			)
 		);

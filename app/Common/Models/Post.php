@@ -246,7 +246,7 @@ class Post extends Model {
 			// If the graph has an old rating value, we need to migrate it to the review.
 			if (
 				property_exists( $graph, 'id' ) &&
-				preg_match( '/(movie|software-application)/', $graph->id ) &&
+				preg_match( '/(movie|software-application)/', (string) $graph->id ) &&
 				property_exists( $graph->properties, 'rating' ) &&
 				property_exists( $graph->properties->rating, 'value' )
 			) {

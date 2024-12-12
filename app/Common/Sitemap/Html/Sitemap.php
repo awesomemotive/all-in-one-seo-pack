@@ -115,7 +115,7 @@ namespace AIOSEO\Plugin\Common\Sitemap\Html {
 		 * @return void
 		 */
 		private function generatePage() {
-			global $wp_query, $wp, $post;
+			global $wp_query, $wp, $post; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
 			$postId     = -1337; // Set a negative ID to prevent conflicts with existing posts.
 			$sitemapUrl = aioseo()->options->sitemap->html->pageUrl;
@@ -141,6 +141,7 @@ namespace AIOSEO\Plugin\Common\Sitemap\Html {
 			$post = $postObject;
 
 			// We'll set as much properties on the WP_Query object as we can to prevent conflicts with other plugins/themes.
+			// phpcs:disable Squiz.NamingConventions.ValidVariableName
 			$wp_query->is_404            = false;
 			$wp_query->is_page           = true;
 			$wp_query->is_singular       = true;
@@ -154,11 +155,12 @@ namespace AIOSEO\Plugin\Common\Sitemap\Html {
 
 			unset( $wp_query->query['error'] );
 			$wp_query->query_vars['error'] = '';
+			// phpcs:enable Squiz.NamingConventions.ValidVariableName
 
 			// We need to add the post object to the cache so that get_post() calls don't trigger database calls.
 			wp_cache_add( $postId, $postObject, 'posts' );
 
-			$GLOBALS['wp_query'] = $wp_query;
+			$GLOBALS['wp_query'] = $wp_query; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			$wp->register_globals();
 
 			// Setting is_404 is not sufficient, so we still need to change the status code.

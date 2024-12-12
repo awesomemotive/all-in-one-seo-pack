@@ -1,2 +1,2 @@
-@import 'table-of-contents/editor.scss';
-@import 'faq/editor.scss';
+@use 'table-of-contents/editor.scss' as *;
+@use 'faq/editor.scss' as *;

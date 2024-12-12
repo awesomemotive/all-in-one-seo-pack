@@ -160,10 +160,10 @@ export const useRedirectsStore = defineStore('RedirectsStore', {
 		test ({ id, payload }) {
 			return http.post(links.restUrl(`redirects/${id}/test/`)).send(payload)
 		},
-		deleteLog ({ slug, urls }) {
+		deleteLog ({ slug, ids }) {
 			return http.delete(links.restUrl(`redirects/logs/${slug}`))
 				.send({
-					urls
+					ids
 				})
 		},
 		exportServerRedirects (server) {

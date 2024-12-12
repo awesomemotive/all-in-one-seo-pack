@@ -556,9 +556,9 @@ class Content {
 			'text'  => $score ? "$score/100" : esc_html__( 'N/A', 'all-in-one-seo-pack' ),
 		];
 
-		if ( $parsed['value'] > 80 ) {
+		if ( $parsed['value'] > 79 ) {
 			$parsed['color'] = '#00aa63';
-		} elseif ( $parsed['value'] > 50 ) {
+		} elseif ( $parsed['value'] > 49 ) {
 			$parsed['color'] = '#ff8c00';
 		} elseif ( $parsed['value'] > 0 ) {
 			$parsed['color'] = '#df2a4a';

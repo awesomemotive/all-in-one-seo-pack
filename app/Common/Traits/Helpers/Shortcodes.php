@@ -109,15 +109,15 @@ trait Shortcodes {
 	 * @return string               The content with shortcodes replaced.
 	 */
 	private function doShortcodesHelper( $content, $tagsToRemove = [], $postId = 0 ) {
-		global $shortcode_tags;
+		global $shortcode_tags; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		$conflictingShortcodes = array_merge( $tagsToRemove, $this->conflictingShortcodes );
 		$conflictingShortcodes = apply_filters( 'aioseo_conflicting_shortcodes', $conflictingShortcodes );
 
 		$tagsToRemove = [];
 		foreach ( $conflictingShortcodes as $shortcode ) {
 			$shortcodeTag = str_replace( [ '[', ']' ], '', $shortcode );
-			if ( array_key_exists( $shortcodeTag, $shortcode_tags ) ) {
-				$tagsToRemove[ $shortcodeTag ] = $shortcode_tags[ $shortcodeTag ];
+			if ( array_key_exists( $shortcodeTag, $shortcode_tags ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+				$tagsToRemove[ $shortcodeTag ] = $shortcode_tags[ $shortcodeTag ]; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			}
 		}
 
@@ -167,7 +167,7 @@ trait Shortcodes {
 	private function getShortcodeTags( $content ) {
 		$tags    = [];
 		$pattern = '\\[(\\[?)([^\s]*)(?![\\w-])([^\\]\\/]*(?:\\/(?!\\])[^\\]\\/]*)*?)(?:(\\/)\\]|\\](?:([^\\[]*+(?:\\[(?!\\/\\2\\])[^\\[]*+)*+)\\[\\/\\2\\])?)(\\]?)';
-		if ( preg_match_all( "#$pattern#s", $content, $matches ) && array_key_exists( 2, $matches ) ) {
+		if ( preg_match_all( "#$pattern#s", (string) $content, $matches ) && array_key_exists( 2, $matches ) ) {
 			$tags = array_unique( $matches[2] );
 		}
 

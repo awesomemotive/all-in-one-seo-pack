@@ -118,8 +118,8 @@ trait Assets {
 		$tag = str_replace( $src, $this->normalizeAssetsHost( $src ), $tag );
 
 		// Remove the type and re-add it as module.
-		$tag = preg_replace( '/type=[\'"].*?[\'"]/', '', $tag );
-		$tag = preg_replace( '/<script/', '<script type="module"', $tag );
+		$tag = preg_replace( '/type=[\'"].*?[\'"]/', '', (string) $tag );
+		$tag = preg_replace( '/<script/', '<script type="module"', (string) $tag );
 
 		return $tag;
 	}
@@ -133,18 +133,32 @@ trait Assets {
 	 * @return void
 	 */
 	private function jsPreloadImports( $asset ) {
+		static $urls = []; // Prevent script from being loaded multiple times.
+
 		$res = '';
 		foreach ( $this->importsUrls( $asset ) as $url ) {
+			if ( isset( $urls[ $url ] ) ) {
+				continue;
+			}
+
+			$urls[ $url ] = true;
+
 			$res .= '<link rel="modulepreload" href="' . $url . "\">\n";
 		}
 
 		if ( ! empty( $res ) ) {
-			add_action( 'admin_head', function () use ( &$res ) {
-				echo $res; // phpcs:ignore
-			} );
-			add_action( 'wp_head', function () use ( &$res ) {
-				echo $res; // phpcs:ignore
-			} );
+			if ( ! function_exists( 'wp_enqueue_script_module' ) ) {
+				add_action( 'admin_head', function () use ( &$res ) {
+					echo $res; // phpcs:ignore
+				} );
+				add_action( 'wp_head', function () use ( &$res ) {
+					echo $res; // phpcs:ignore
+				} );
+			} else {
+				add_action( 'admin_print_footer_scripts', function () use ( &$res ) {
+					echo $res; // phpcs:ignore
+				}, 1000 );
+			}
 		}
 	}
 
@@ -545,7 +559,7 @@ trait Assets {
 		// what's in site_url() for our assets or they won't load.
 		$siteUrl        = site_url();
 		$siteUrlEscaped = aioseo()->helpers->escapeRegex( $siteUrl );
-		if ( preg_match( "/^$siteUrlEscaped/i", $path ) ) {
+		if ( preg_match( "/^$siteUrlEscaped/i", (string) $path ) ) {
 			$paths[ $path ] = $path;
 
 			return apply_filters( 'aioseo_normalize_assets_host', $paths[ $path ] );
@@ -557,19 +571,19 @@ trait Assets {
 		$host           = aioseo()->helpers->escapeRegex( str_replace( 'www.', '', $siteUrlParsed['host'] ) );
 		$scheme         = aioseo()->helpers->escapeRegex( $siteUrlParsed['scheme'] );
 
-		$siteUrlHasWww = preg_match( "/^{$scheme}:\/\/www\.$host/", $siteUrl );
-		$pathHasWww    = preg_match( "/^{$scheme}:\/\/www\.$host/", $path );
+		$siteUrlHasWww = preg_match( "/^{$scheme}:\/\/www\.$host/", (string) $siteUrl );
+		$pathHasWww    = preg_match( "/^{$scheme}:\/\/www\.$host/", (string) $path );
 
 		// Check if the path contains www.
 		if ( $pathHasWww && ! $siteUrlHasWww ) {
 			// If the path contains www., we want to strip it out.
-			$newPath = preg_replace( "/^({$scheme}:\/\/)(www\.)($host)/", '$1$3', $path );
+			$newPath = preg_replace( "/^({$scheme}:\/\/)(www\.)($host)/", '$1$3', (string) $path );
 		}
 
 		// Check if the site_url contains www.
 		if ( $siteUrlHasWww && ! $pathHasWww ) {
 			// If the site_url contains www., we want to add it in to the path.
-			$newPath = preg_replace( "/^({$scheme}:\/\/)($host)/", '$1www.$2', $path );
+			$newPath = preg_replace( "/^({$scheme}:\/\/)($host)/", '$1www.$2', (string) $path );
 		}
 
 		$paths[ $path ] = $newPath;

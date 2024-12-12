@@ -72,12 +72,12 @@ class CategoryBase {
 	 * @return array The rewritten rules.
 	 */
 	public function categoryRewriteRules() {
-		global $wp_rewrite;
+		global $wp_rewrite; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
 		$categoryRewrite = $this->getCategoryRewriteRules();
 
 		// Redirect from the old base.
-		$categoryStructure = $wp_rewrite->get_category_permastruct();
+		$categoryStructure = $wp_rewrite->get_category_permastruct(); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		$categoryBase      = trim( str_replace( '%category%', '(.+)', $categoryStructure ), '/' ) . '$';
 
 		// Add the rewrite rules.
@@ -94,7 +94,7 @@ class CategoryBase {
 	 * @return array An array of category rewrite rules.
 	 */
 	private function getCategoryRewriteRules() {
-		global $wp_rewrite;
+		global $wp_rewrite; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
 		$categoryRewrite = [];
 		$categories      = get_categories( [ 'hide_empty' => false ] );
@@ -104,7 +104,7 @@ class CategoryBase {
 		}
 
 		$blogPrefix      = $this->getBlogPrefix();
-		$paginationBase = $wp_rewrite->pagination_base;
+		$paginationBase = $wp_rewrite->pagination_base; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		foreach ( $categories as $category ) {
 			$nicename        = $this->getCategoryParents( $category ) . $category->slug;
 			$categoryRewrite = $this->addCategoryRewrites( $categoryRewrite, $nicename, $blogPrefix, $paginationBase );
@@ -235,8 +235,8 @@ class CategoryBase {
 
 		$categoryBase = get_option( 'category_base' );
 		if ( empty( $categoryBase ) ) {
-			global $wp_rewrite;
-			$categoryStructure = $wp_rewrite->get_category_permastruct();
+			global $wp_rewrite; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+			$categoryStructure = $wp_rewrite->get_category_permastruct(); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			$categoryBase      = trim( str_replace( '%category%', '', $categoryStructure ), '/' );
 		}
 
@@ -247,7 +247,7 @@ class CategoryBase {
 
 		$categoryBase .= '/';
 
-		return preg_replace( '`' . preg_quote( $categoryBase, '`' ) . '`u', '', $link, 1 );
+		return preg_replace( '`' . preg_quote( (string) $categoryBase, '`' ) . '`u', '', (string) $link, 1 );
 	}
 
 	/**

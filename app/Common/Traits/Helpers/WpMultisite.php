@@ -309,4 +309,17 @@ trait WpMultisite {
 
 		return true;
 	}
+
+	/**
+	 * Returns the current site domain.
+	 *
+	 * @since 4.7.7
+	 *
+	 * @return string The site domain.
+	 */
+	public function getMultiSiteDomain() {
+		$site = aioseo()->helpers->getSite();
+
+		return $site->domain . $site->path;
+	}
 }

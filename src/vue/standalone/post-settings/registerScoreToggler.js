@@ -34,7 +34,7 @@ export default function registerScoreToggler () {
 		if (!analysisCapability || !truSeoShouldAnalyze()) {
 			return 'score-disabled'
 		}
-		return 80 < score ? 'score-green' : (50 < score ? 'score-orange' : (1 < score ? 'score-red' : 'score-disabled'))
+		return 79 < score ? 'score-green' : (49 < score ? 'score-orange' : (0 < score ? 'score-red' : 'score-disabled'))
 	}
 
 	const AioseoIcon = el('svg',

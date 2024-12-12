@@ -89,6 +89,8 @@ export default {
 </script>
 
 <style lang="scss">
+@use 'sass:color';
+
 .aioseo-copy-block {
 	display: inline-flex;
 
@@ -121,7 +123,7 @@ export default {
 
 		&:hover {
 			svg.aioseo-copy {
-				color: darken($gray2, 20%);
+				color: color.adjust($gray2, $lightness: -20%);
 			}
 		}
 

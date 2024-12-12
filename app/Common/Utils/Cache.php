@@ -64,7 +64,7 @@ class Cache {
 		}
 
 		// Are we searching for a group of keys?
-		$isLikeGet = preg_match( '/%/', $key );
+		$isLikeGet = preg_match( '/%/', (string) $key );
 
 		$result = aioseo()->core->db
 			->start( $this->table )

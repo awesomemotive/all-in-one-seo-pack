@@ -188,7 +188,7 @@
 
 				<div
 					v-if="!setupWizardStore.searchAppearance.underConstruction"
-					class="aioseo-settings-row no-border no-margin small-padding"
+					class="aioseo-settings-row no-border"
 				>
 					<div class="settings-name">
 						<div class="name small-margin">
@@ -199,6 +199,24 @@
 					<base-radio-toggle
 						v-model="setupWizardStore.searchAppearance.redirectAttachmentPages"
 						name="redirectAttachmentPages"
+						class="small"
+						:options="[
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.yes, value: true }
+						]"
+					/>
+				</div>
+
+				<div class="aioseo-settings-row no-border no-margin small-padding">
+					<div class="settings-name">
+						<div class="name small-margin">
+							{{ strings.emailReports }}
+						</div>
+					</div>
+
+					<base-radio-toggle
+						v-model="setupWizardStore.searchAppearance.emailReports"
+						name="emailReports"
 						class="small"
 						:options="[
 							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
@@ -319,7 +337,8 @@ export default {
 				includeAllPostTypes       : __('Include All Post Types', td),
 				enableSitemap             : __('Enable Sitemap', td),
 				doYouHaveMultipleAuthors  : __('Do you have multiple authors?', td),
-				redirectAttachmentPages   : __('Redirect attachment pages?', td)
+				redirectAttachmentPages   : __('Redirect attachment pages?', td),
+				emailReports              : __('Enable Email reports?', td)
 			})
 		}
 	},

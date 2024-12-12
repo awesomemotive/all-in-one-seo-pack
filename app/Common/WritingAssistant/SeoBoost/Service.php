@@ -48,7 +48,7 @@ class Service {
 			return $reportRequest;
 		}
 
-		if ( empty( $reportRequest ) ) {
+		if ( empty( $reportRequest ) || empty( $reportRequest['status'] ) ) {
 			return new \WP_Error( 'service-error', __( 'Empty response from service', 'all-in-one-seo-pack' ) );
 		}
 
@@ -171,6 +171,7 @@ class Service {
 		$requestData = [
 			'headers' => [
 				'X-SeoBoost-Access-Token' => aioseo()->writingAssistant->seoBoost->getAccessToken(),
+				'X-SeoBoost-Domain'       => aioseo()->helpers->getMultiSiteDomain(),
 				'Content-Type'            => 'application/json'
 			],
 			'timeout' => 60,

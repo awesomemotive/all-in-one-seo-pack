@@ -188,7 +188,7 @@ class Image {
 		}
 
 		$postContent = aioseo()->helpers->getPostContent( $this->post );
-		preg_match_all( '|<img.*?src=[\'"](.*?)[\'"].*?>|i', $postContent, $matches );
+		preg_match_all( '|<img.*?src=[\'"](.*?)[\'"].*?>|i', (string) $postContent, $matches );
 
 		// Ignore cover block background image - WP >= 5.7.
 		if ( ! empty( $matches[0] ) && apply_filters( 'aioseo_social_image_ignore_cover_block', true, $this->post, $matches ) ) {
@@ -211,7 +211,7 @@ class Image {
 	 */
 	private function getAuthorAvatar() {
 		$avatar = get_avatar( $this->post->post_author, 300 );
-		preg_match( "/src='(.*?)'/i", $avatar, $matches );
+		preg_match( "/src='(.*?)'/i", (string) $avatar, $matches );
 
 		return ! empty( $matches[1] ) ? $matches[1] : '';
 	}

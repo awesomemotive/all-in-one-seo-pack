@@ -81,7 +81,8 @@ export const useSetupWizardStore = defineStore('SetupWizardStore', {
 				}
 			},
 			multipleAuthors         : true,
-			redirectAttachmentPages : true
+			redirectAttachmentPages : true,
+			emailReports            : true
 		},
 		smartRecommendations : {
 			accountInfo   : null,

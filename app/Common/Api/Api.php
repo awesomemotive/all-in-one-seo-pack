@@ -78,8 +78,9 @@ class Api {
 			'email-debug-info'                                      => [ 'callback' => [ 'Tools', 'emailDebugInfo' ], 'access' => 'aioseo_tools_settings' ],
 			'migration/fix-blank-formats'                           => [ 'callback' => [ 'Migration', 'fixBlankFormats' ], 'access' => 'any' ],
 			'notification/blog-visibility-reminder'                 => [ 'callback' => [ 'Notifications', 'blogVisibilityReminder' ], 'access' => 'any' ],
-			'notification/description-format-reminder'              => [ 'callback' => [ 'Notifications', 'descriptionFormatReminder' ], 'access' => 'any' ],
 			'notification/conflicting-plugins-reminder'             => [ 'callback' => [ 'Notifications', 'conflictingPluginsReminder' ], 'access' => 'any' ],
+			'notification/description-format-reminder'              => [ 'callback' => [ 'Notifications', 'descriptionFormatReminder' ], 'access' => 'any' ],
+			'notification/email-reports-enable'                     => [ 'callback' => [ 'EmailSummary', 'enableEmailReports' ], 'access' => 'any' ],
 			'notification/install-addons-reminder'                  => [ 'callback' => [ 'Notifications', 'installAddonsReminder' ], 'access' => 'any' ],
 			'notification/install-aioseo-image-seo-reminder'        => [ 'callback' => [ 'Notifications', 'installImageSeoReminder' ], 'access' => 'any' ],
 			'notification/install-aioseo-local-business-reminder'   => [ 'callback' => [ 'Notifications', 'installLocalBusinessReminder' ], 'access' => 'any' ],
@@ -327,7 +328,7 @@ class Api {
 		if ( empty( $routeData ) ) {
 			foreach ( $this->getRoutes()[ $request->get_method() ] as $routeRegex => $routeInfo ) {
 				$routeRegex = str_replace( '@', '\@', $routeRegex );
-				if ( preg_match( "@{$routeRegex}@", $route ) ) {
+				if ( preg_match( "@{$routeRegex}@", (string) $route ) ) {
 					$routeData = $routeInfo;
 					break;
 				}

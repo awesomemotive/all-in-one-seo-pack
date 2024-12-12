@@ -296,6 +296,8 @@ export default {
 </script>
 
 <style lang="scss">
+@use 'sass:color';
+
 body.aioseo-show-notifications {
 	.aioseo-main {
 		pointer-events: none;
@@ -353,7 +355,7 @@ body.aioseo-show-notifications {
 				cursor: pointer;
 
 				&:hover {
-					color: darken(#fff, 20%)
+					color: color.adjust(#fff, $lightness: -20%);
 				}
 			}
 		}

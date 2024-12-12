@@ -215,7 +215,7 @@ export default {
 				const value = this.postEditorStore.currentPost.seo_score
 				if (Number.isInteger(value)) {
 					result.value = value + '/100'
-					result.type  = 80 < value ? 'success' : 50 < value ? 'warning' : 'error'
+					result.type  = 79 < value ? 'success' : 49 < value ? 'warning' : 'error'
 				}
 			}
 
@@ -241,7 +241,7 @@ export default {
 				const value = this.postEditorStore.currentPost.keyphrases.focus
 				if (value && value.keyphrase) {
 					result.value = value.score + '/100'
-					result.type  = 80 < value.score ? 'success' : 50 < value.score ? 'warning' : 'error'
+					result.type  = 79 < value.score ? 'success' : 49 < value.score ? 'warning' : 'error'
 				}
 			}
 

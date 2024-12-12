@@ -53,8 +53,8 @@ class UserProfileTab {
 			return;
 		}
 
-		global $user_id;
-		if ( ! intval( $user_id ) ) {
+		global $user_id; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		if ( ! intval( $user_id ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			return;
 		}
 
@@ -69,15 +69,15 @@ class UserProfileTab {
 	 * @return array
 	 */
 	public function getVueData() {
-		global $user_id;
+		global $user_id; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
 		$socialProfiles = $this->getSocialProfiles();
 		foreach ( $socialProfiles as $platformKey => $v ) {
 			$metaName                        = 'aioseo_' . aioseo()->helpers->toSnakeCase( $platformKey );
-			$socialProfiles[ $platformKey ] = get_user_meta( $user_id, $metaName, true );
+			$socialProfiles[ $platformKey ] = get_user_meta( $user_id, $metaName, true ); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		}
 
-		$sameUsername = get_user_meta( $user_id, 'aioseo_profiles_same_username', true );
+		$sameUsername = get_user_meta( $user_id, 'aioseo_profiles_same_username', true ); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 		if ( empty( $sameUsername ) ) {
 			$sameUsername = [
 				'enable'   => false,
@@ -86,11 +86,11 @@ class UserProfileTab {
 			];
 		}
 
-		$additionalurls = get_user_meta( $user_id, 'aioseo_profiles_additional_urls', true );
+		$additionalurls = get_user_meta( $user_id, 'aioseo_profiles_additional_urls', true ); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
 		$extraVueData = [
 			'userProfile' => [
-				'userData'                          => get_userdata( $user_id )->data,
+				'userData'                          => get_userdata( $user_id )->data, // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 				'profiles'                          => [
 					'sameUsername'   => $sameUsername,
 					'urls'           => $socialProfiles,
@@ -148,7 +148,7 @@ class UserProfileTab {
 		}
 
 		$additionalUrls          = sanitize_text_field( $data['additionalUrls'] );
-		$sanitizedAdditionalUrls = preg_replace( '/\h/', "\n", $additionalUrls );
+		$sanitizedAdditionalUrls = preg_replace( '/\h/', "\n", (string) $additionalUrls );
 		update_user_meta( $userId, 'aioseo_profiles_additional_urls', $sanitizedAdditionalUrls );
 	}
 

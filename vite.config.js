@@ -256,10 +256,12 @@ export default ({ mode }) => {
 			preprocessorOptions : {
 				scss : {
 					additionalData : [
-						'@import "./src/vue/assets/scss/app/variables.scss";',
-						'@import "./src/vue/assets/scss/app/mixins.scss";',
+						'@use "build/_version" as *;',
+						'@use "./src/vue/assets/scss/app/variables.scss" as *;',
+						'@use "./src/vue/assets/scss/app/mixins.scss" as *;',
 						''
-					].join('\n')
+					].join('\n'),
+					silenceDeprecations : [ 'legacy-js-api' ]
 				}
 			}
 		},

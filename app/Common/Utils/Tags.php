@@ -811,7 +811,7 @@ class Tags {
 	 * @return string         The string with tags replaced.
 	 */
 	public function replaceTags( $string, $id = 0 ) {
-		if ( ! $string || ! preg_match( '/' . $this->denotationChar . '/', $string ) ) {
+		if ( ! $string || ! preg_match( '/' . $this->denotationChar . '/', (string) $string ) ) {
 			return $string;
 		}
 
@@ -825,9 +825,9 @@ class Tags {
 			// This allows us to have tags like: #post_link and #post_link_alt
 			// and it will always replace the correct one.
 			$pattern = "/$tagId(?![a-zA-Z0-9_])/im";
-			if ( preg_match( $pattern, $string ) ) {
+			if ( preg_match( $pattern, (string) $string ) ) {
 				$tagValue = $this->getTagValue( $tag, $id );
-				$string   = preg_replace( $pattern, '%|%' . aioseo()->helpers->escapeRegexReplacement( $tagValue ), $string );
+				$string   = preg_replace( $pattern, '%|%' . aioseo()->helpers->escapeRegexReplacement( $tagValue ), (string) $string );
 			}
 		}
 
@@ -836,7 +836,7 @@ class Tags {
 		// Custom fields are parsed separately.
 		$string = $this->parseCustomFields( $string, $id );
 
-		return preg_replace( '/%\|%/im', '', $string );
+		return preg_replace( '/%\|%/im', '', (string) $string );
 	}
 
 	/**
@@ -1152,7 +1152,7 @@ class Tags {
 		$string  = preg_replace_callback( $pattern, [ $this, 'replaceTaxonomyName' ], $string );
 		$pattern = '/' . $this->denotationChar . 'tax_name(?![a-zA-Z0-9_-])/im';
 
-		return preg_replace( $pattern, '', $string );
+		return preg_replace( $pattern, '', (string) $string );
 	}
 
 	/**
@@ -1168,12 +1168,12 @@ class Tags {
 	public function parseCustomFields( $string, $postId = 0 ) {
 		$pattern = '/' . $this->denotationChar . 'custom_field-([a-zA-Z0-9_-]+)/im';
 		$matches = [];
-		preg_match_all( $pattern, $string, $matches, PREG_SET_ORDER );
+		preg_match_all( $pattern, (string) $string, $matches, PREG_SET_ORDER );
 
 		$string  = $this->replaceCustomField( $string, $matches, $postId );
 		$pattern = '/' . $this->denotationChar . 'custom_field(?![a-zA-Z0-9_-])/im';
 
-		return preg_replace( $pattern, '', $string );
+		return preg_replace( $pattern, '', (string) $string );
 	}
 
 	/**

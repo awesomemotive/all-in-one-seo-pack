@@ -188,7 +188,7 @@
 												v-if="keyphrase[0] !== postEditorStore.currentPost.keyphrases.focus.keyphrase.toLowerCase()"
 											>
 												<base-button
-													v-if="index !== removingAdditionalKeyphrase && (index === addingAdditionalKeyphrase || !hasAdditionalKeyphrase(keyphrase[0]))"
+													v-if="index !== removingAdditionalKeyphrase && (index === addingAdditionalKeyphrase || !hasAdditionalKeyphrase(keyphrase[0])) && optionsStore.maxAdditionalKeyphrases > postEditorStore.currentPost.keyphrases?.additional?.length"
 													type="gray"
 													size="medium"
 													@click="addAdditionalKeyphrase(keyphrase[0], index)"
@@ -196,6 +196,22 @@
 												>
 													{{ strings.addAdditionalKeyphrase }}
 												</base-button>
+
+												<core-tooltip v-if="index !== removingAdditionalKeyphrase && (index === addingAdditionalKeyphrase || !hasAdditionalKeyphrase(keyphrase[0])) && optionsStore.maxAdditionalKeyphrases <= postEditorStore.currentPost.keyphrases?.additional?.length">
+													<base-button
+														type="gray"
+														size="medium"
+														:disabled="true"
+														@click="addAdditionalKeyphrase(keyphrase[0], index)"
+														:loading="index === addingAdditionalKeyphrase"
+													>
+														{{ strings.addAdditionalKeyphrase }}
+													</base-button>
+
+													<template #tooltip>
+														<span>{{ strings.maxAmountReached }}</span>
+													</template>
+												</core-tooltip>
 
 												<div
 													class="remove-keyphrase"
@@ -406,6 +422,11 @@ export default {
 					// Translators: 1 - Link to learn more.
 					__('In order to continue searching for additional keyphrases, you\'ll need to upgrade. %1$s', td),
 					links.getUpsellLink('semrush-pricing', GLOBAL_STRINGS.learnMore, 'semrushPricing', true)
+				),
+				maxAmountReached : sprintf(
+					// Translators: 1 - Number of maximum keywords.
+					__('You have reached the maximum of %1$s additional keyphrases.', td),
+					this.optionsStore.maxAdditionalKeyphrases
 				)
 			}
 		}
@@ -618,9 +639,13 @@ export default {
 			return additional.find(k => k.keyphrase.toLowerCase() === keyphrase)
 		},
 		scoreClass (score) {
-			return 80 < score ? 'score-green' : 50 < score ? 'score-orange' : 1 < score ? 'score-red' : 'score-none'
+			return 79 < score ? 'score-green' : (49 < score ? 'score-orange' : (0 < score ? 'score-red' : 'score-none'))
 		},
 		async addAdditionalKeyphrase (keyphrase, index) {
+			if (this.optionsStore.maxAdditionalKeyphrases <= this.postEditorStore.currentPost.keyphrases?.additional?.length) {
+				return
+			}
+
 			this.addingAdditionalKeyphrase = index
 			const { additional }           = this.postEditorStore.currentPost.keyphrases
 			const keyphraseIndex           = additional.push({ keyphrase, score: 0 })

@@ -130,7 +130,7 @@ class PostMeta {
 
 				if (
 					! in_array( $post->post_type, [ 'page', 'attachment' ], true ) &&
-					preg_match( '#^rank_math_schema_([^\s]*)$#', $name, $match ) && ! empty( $match[1] )
+					preg_match( '#^rank_math_schema_([^\s]*)$#', (string) $name, $match ) && ! empty( $match[1] )
 				) {
 					switch ( $match[1] ) {
 						case 'Article':
@@ -204,7 +204,7 @@ class PostMeta {
 						$meta[ $mappedMeta[ $name ] ] = esc_url( $value );
 						break;
 					case 'rank_math_twitter_card_type':
-						preg_match( '#large#', $value, $match );
+						preg_match( '#large#', (string) $value, $match );
 						$meta[ $mappedMeta[ $name ] ] = ! empty( $match ) ? 'summary_large_image' : 'summary';
 						break;
 					case 'rank_math_twitter_use_facebook':

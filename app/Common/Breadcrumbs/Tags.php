@@ -33,21 +33,21 @@ class Tags {
 	 * @return string                    The string with tags replaced.
 	 */
 	public function replaceTags( $string, $item, $stripPunctuation = false ) {
-		if ( ! $string || ! preg_match( '/#/', $string ) ) {
+		if ( ! $string || ! preg_match( '/#/', (string) $string ) ) {
 			return $string;
 		}
 
 		// Replace separator tag so we don't strip it as punctuation.
 		$separatorTag = aioseo()->tags->denotationChar . 'separator_sa';
-		$string       = preg_replace( "/$separatorTag(?![a-zA-Z0-9_])/im", '>thisisjustarandomplaceholder<', $string );
+		$string       = preg_replace( "/$separatorTag(?![a-zA-Z0-9_])/im", '>thisisjustarandomplaceholder<', (string) $string );
 
 		// Replace custom breadcrumb tags.
 		foreach ( $this->getTags() as $tag ) {
 			$tagId   = aioseo()->tags->denotationChar . $tag['id'];
 			$pattern = "/$tagId(?![a-zA-Z0-9_])/im";
-			if ( preg_match( $pattern, $string ) ) {
+			if ( preg_match( $pattern, (string) $string ) ) {
 				$tagValue = str_replace( '$', '\$', $this->getTagValue( $tag, $item ) );
-				$string   = preg_replace( $pattern, $tagValue, $string );
+				$string   = preg_replace( $pattern, $tagValue, (string) $string );
 			}
 		}
 
@@ -65,7 +65,7 @@ class Tags {
 		return preg_replace(
 			'/>thisisjustarandomplaceholder<(?![a-zA-Z0-9_])/im',
 			aioseo()->helpers->decodeHtmlEntities( aioseo()->options->searchAppearance->global->separator ),
-			$string
+			(string) $string
 		);
 	}
 

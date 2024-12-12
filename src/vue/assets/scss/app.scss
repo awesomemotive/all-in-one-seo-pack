@@ -1,6 +1,6 @@
-@import 'app/admin-bar.scss';
-@import 'app/plugins.scss';
-@import 'app/link-format.scss';
+@use 'app/admin-bar.scss';
+@use 'app/plugins.scss';
+@use 'app/link-format.scss';
 
 .aioseo-menu-highlight {
 	color: #fff;

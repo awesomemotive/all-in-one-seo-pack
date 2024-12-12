@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1
+class ComposerStaticInitdd3358d07e8cb0eaae7958baae3505a5
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -166,6 +166,7 @@ class ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1
         'AIOSEO\\Plugin\\Common\\ImportExport\\YoastSeo\\SocialMeta' => __DIR__ . '/../..' . '/app/Common/ImportExport/YoastSeo/SocialMeta.php',
         'AIOSEO\\Plugin\\Common\\ImportExport\\YoastSeo\\UserMeta' => __DIR__ . '/../..' . '/app/Common/ImportExport/YoastSeo/UserMeta.php',
         'AIOSEO\\Plugin\\Common\\ImportExport\\YoastSeo\\YoastSeo' => __DIR__ . '/../..' . '/app/Common/ImportExport/YoastSeo/YoastSeo.php',
+        'AIOSEO\\Plugin\\Common\\Integrations\\BuddyPress' => __DIR__ . '/../..' . '/app/Common/Integrations/BuddyPress.php',
         'AIOSEO\\Plugin\\Common\\Integrations\\Semrush' => __DIR__ . '/../..' . '/app/Common/Integrations/Semrush.php',
         'AIOSEO\\Plugin\\Common\\Integrations\\WpCode' => __DIR__ . '/../..' . '/app/Common/Integrations/WpCode.php',
         'AIOSEO\\Plugin\\Common\\Main\\Activate' => __DIR__ . '/../..' . '/app/Common/Main/Activate.php',
@@ -189,6 +190,7 @@ class ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1
         'AIOSEO\\Plugin\\Common\\Meta\\Robots' => __DIR__ . '/../..' . '/app/Common/Meta/Robots.php',
         'AIOSEO\\Plugin\\Common\\Meta\\SiteVerification' => __DIR__ . '/../..' . '/app/Common/Meta/SiteVerification.php',
         'AIOSEO\\Plugin\\Common\\Meta\\Title' => __DIR__ . '/../..' . '/app/Common/Meta/Title.php',
+        'AIOSEO\\Plugin\\Common\\Meta\\Traits\\Helpers\\BuddyPress' => __DIR__ . '/../..' . '/app/Common/Meta/Traits/Helpers/BuddyPress.php',
         'AIOSEO\\Plugin\\Common\\Migration\\BadRobots' => __DIR__ . '/../..' . '/app/Common/Migration/BadRobots.php',
         'AIOSEO\\Plugin\\Common\\Migration\\GeneralSettings' => __DIR__ . '/../..' . '/app/Common/Migration/GeneralSettings.php',
         'AIOSEO\\Plugin\\Common\\Migration\\Helpers' => __DIR__ . '/../..' . '/app/Common/Migration/Helpers.php',
@@ -217,6 +219,7 @@ class ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1
         'AIOSEO\\Plugin\\Common\\Rss' => __DIR__ . '/../..' . '/app/Common/Rss.php',
         'AIOSEO\\Plugin\\Common\\Schema\\Breadcrumb' => __DIR__ . '/../..' . '/app/Common/Schema/Breadcrumb.php',
         'AIOSEO\\Plugin\\Common\\Schema\\Context' => __DIR__ . '/../..' . '/app/Common/Schema/Context.php',
+        'AIOSEO\\Plugin\\Common\\Schema\\Graphs\\AmpStory' => __DIR__ . '/../..' . '/app/Common/Schema/Graphs/AmpStory.php',
         'AIOSEO\\Plugin\\Common\\Schema\\Graphs\\Article\\Article' => __DIR__ . '/../..' . '/app/Common/Schema/Graphs/Article/Article.php',
         'AIOSEO\\Plugin\\Common\\Schema\\Graphs\\Article\\BlogPosting' => __DIR__ . '/../..' . '/app/Common/Schema/Graphs/Article/BlogPosting.php',
         'AIOSEO\\Plugin\\Common\\Schema\\Graphs\\Article\\NewsArticle' => __DIR__ . '/../..' . '/app/Common/Schema/Graphs/Article/NewsArticle.php',
@@ -281,6 +284,10 @@ class ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1
         'AIOSEO\\Plugin\\Common\\Standalone\\Blocks\\Blocks' => __DIR__ . '/../..' . '/app/Common/Standalone/Blocks/Blocks.php',
         'AIOSEO\\Plugin\\Common\\Standalone\\Blocks\\FaqPage' => __DIR__ . '/../..' . '/app/Common/Standalone/Blocks/FaqPage.php',
         'AIOSEO\\Plugin\\Common\\Standalone\\Blocks\\TableOfContents' => __DIR__ . '/../..' . '/app/Common/Standalone/Blocks/TableOfContents.php',
+        'AIOSEO\\Plugin\\Common\\Standalone\\BuddyPress\\BuddyPress' => __DIR__ . '/../..' . '/app/Common/Standalone/BuddyPress/BuddyPress.php',
+        'AIOSEO\\Plugin\\Common\\Standalone\\BuddyPress\\Component' => __DIR__ . '/../..' . '/app/Common/Standalone/BuddyPress/Component.php',
+        'AIOSEO\\Plugin\\Common\\Standalone\\BuddyPress\\Sitemap' => __DIR__ . '/../..' . '/app/Common/Standalone/BuddyPress/Sitemap.php',
+        'AIOSEO\\Plugin\\Common\\Standalone\\BuddyPress\\Tags' => __DIR__ . '/../..' . '/app/Common/Standalone/BuddyPress/Tags.php',
         'AIOSEO\\Plugin\\Common\\Standalone\\DetailsColumn' => __DIR__ . '/../..' . '/app/Common/Standalone/DetailsColumn.php',
         'AIOSEO\\Plugin\\Common\\Standalone\\FlyoutMenu' => __DIR__ . '/../..' . '/app/Common/Standalone/FlyoutMenu.php',
         'AIOSEO\\Plugin\\Common\\Standalone\\HeadlineAnalyzer' => __DIR__ . '/../..' . '/app/Common/Standalone/HeadlineAnalyzer.php',
@@ -301,6 +308,8 @@ class ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1
         'AIOSEO\\Plugin\\Common\\Standalone\\Standalone' => __DIR__ . '/../..' . '/app/Common/Standalone/Standalone.php',
         'AIOSEO\\Plugin\\Common\\Standalone\\UserProfileTab' => __DIR__ . '/../..' . '/app/Common/Standalone/UserProfileTab.php',
         'AIOSEO\\Plugin\\Common\\Standalone\\WpCode' => __DIR__ . '/../..' . '/app/Common/Standalone/WpCode.php',
+        'AIOSEO\\Plugin\\Common\\ThirdParty\\ThirdParty' => __DIR__ . '/../..' . '/app/Common/ThirdParty/ThirdParty.php',
+        'AIOSEO\\Plugin\\Common\\ThirdParty\\WebStories' => __DIR__ . '/../..' . '/app/Common/ThirdParty/WebStories.php',
         'AIOSEO\\Plugin\\Common\\Tools\\BadBotBlocker' => __DIR__ . '/../..' . '/app/Common/Tools/BadBotBlocker.php',
         'AIOSEO\\Plugin\\Common\\Tools\\Htaccess' => __DIR__ . '/../..' . '/app/Common/Tools/Htaccess.php',
         'AIOSEO\\Plugin\\Common\\Tools\\RobotsTxt' => __DIR__ . '/../..' . '/app/Common/Tools/RobotsTxt.php',
@@ -452,6 +461,7 @@ class ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1
         'AIOSEO\\Plugin\\Pro\\Schema\\Graphs\\Course\\MemberMouseCourse' => __DIR__ . '/../..' . '/app/Pro/Schema/Graphs/Course/MemberMouseCourse.php',
         'AIOSEO\\Plugin\\Pro\\Schema\\Graphs\\Course\\MemberPressCourse' => __DIR__ . '/../..' . '/app/Pro/Schema/Graphs/Course/MemberPressCourse.php',
         'AIOSEO\\Plugin\\Pro\\Schema\\Graphs\\Dataset' => __DIR__ . '/../..' . '/app/Pro/Schema/Graphs/Dataset.php',
+        'AIOSEO\\Plugin\\Pro\\Schema\\Graphs\\DiscussionForumPosting' => __DIR__ . '/../..' . '/app/Pro/Schema/Graphs/DiscussionForumPosting.php',
         'AIOSEO\\Plugin\\Pro\\Schema\\Graphs\\Event' => __DIR__ . '/../..' . '/app/Pro/Schema/Graphs/Event.php',
         'AIOSEO\\Plugin\\Pro\\Schema\\Graphs\\FAQPage' => __DIR__ . '/../..' . '/app/Pro/Schema/Graphs/FAQPage.php',
         'AIOSEO\\Plugin\\Pro\\Schema\\Graphs\\FactCheck' => __DIR__ . '/../..' . '/app/Pro/Schema/Graphs/FactCheck.php',
@@ -684,10 +694,10 @@ class ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitdd3358d07e8cb0eaae7958baae3505a5::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitdd3358d07e8cb0eaae7958baae3505a5::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitdd3358d07e8cb0eaae7958baae3505a5::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitdd3358d07e8cb0eaae7958baae3505a5::$classMap;
 
         }, null, ClassLoader::class);
     }

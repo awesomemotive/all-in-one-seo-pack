@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.7
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.7.6
+Stable tag: 4.7.7
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,6 +226,40 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.7.7**
+
+Updated: Writing Assistant now supports logins per site/subsite, allowing users to use different SEOBoost logins and workspaces.
+Updated: Added support for importing additional Knowledge Graph settings from Yoast SEO.
+Updated: Added support for importing additional SEO settings from SEOPress, including robots meta, X (Twitter) metadata and advanced redirection rules.
+Updated: BreadcrumbList schema semantic properties updated to align with Schema.org specifications.
+Updated: Performance improvements to speed up Action Scheduler.
+Updated: Added support for the "Analyze This Page" toolbar menu inside the post/term editor
+Updated: Removed discontinued helpful links under "Analyze This Page" toolbar menu.
+Updated: SEO Email Reports have been disabled for all users and are now disabled by default.
+Updated: Added filter hook to disable SEO Email Reports.
+Fixed: CSS conflict for the Thrive WordPress Content field.
+Fixed: Twitter meta tags output for CPTs that do not support authors.
+Fixed: TruSEO Highlighter was not highlighting sentences found in the "Custom HTML" block, although the eye icon indicated their presence.
+Fixed: Image SEO sometimes could not find images and captions within the post content.
+Fixed: TruSEO now limits additional keyphrases to prevent high page loads ( maximum 10 ).
+Fixed: CSV import/export file naming, primary category import and miscellaneous fixes.
+Fixed: Reviewer selector conflict with Secure Custom Fields plugin and switching between tabs in the Post Editor sidebar.
+Fixed: Focus keywords that are already being tracked in Keyword Rank Tracker are no longer displayed in the "Import Keywords" modal.
+Fixed: Inconsistency in TruSEO score color across different sections of the plugin.
+Fixed: SEO Statistics panel sometimes displayed incorrect upward/downward trend when clicks increased/decreased.
+Fixed: Conflict with Savoy theme where the side cart was automatically popping up on product pages.
+Fixed: Conflict with ARVE plugin.
+Fixed: Social profile URLs are now correctly imported from Yoast SEO.
+Fixed: Home URL was automatically appended to canonical URLs without scheme.
+Fixed: Homepage link and prefix were sometimes not working in the WooCommerce Product breadcrumb template.
+Fixed: 404 log entries with URLs containing special characters could not be deleted.
+Fixed: Redirects to file URLs or URLs with a hash were saved with a trailing slash.
+Fixed: AIOSEO Metabox no longer closes when opening the Media library in Divi/Extra page builders.
+Fixed: PHP deprecation warning related to sitemap image scan.
+Fixed: PHP warning when importing locations from Yoast SEO Local plugin.
+Fixed: PHP fatal error occurring when attempting to access a non-existent additional sitemap index.
+Fixed: PHP deprecation warning in PHP 8.3 for PHP PCRE functions.
+
 **New in Version 4.7.6**
 
 * New: BuddyPress Integration - You can now granularly control your SEO settings for all Activities, Groups and Members in BuddyPress. We've also added full sitemap support, new DiscussionForumPosting schema and many more features to optimize your BuddyPress content for search results.
@@ -423,6 +457,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.7.6 =
+= 4.7.7 =
 
 This update adds major improvements and bug fixes.

@@ -73,7 +73,7 @@ trait SocialProfiles {
 		}
 
 		if ( aioseo()->options->social->profiles->additionalUrls ) {
-			$additionalUrls = preg_split( '/\n|\r|\r\n/', aioseo()->options->social->profiles->additionalUrls );
+			$additionalUrls = preg_split( '/\n|\r|\r\n/', (string) aioseo()->options->social->profiles->additionalUrls );
 			$socialProfiles = array_merge( $socialProfiles, $additionalUrls );
 		}
 
@@ -116,7 +116,7 @@ trait SocialProfiles {
 
 		$additionalUrls = get_user_meta( $userId, 'aioseo_profiles_additional_urls', true );
 		if ( $additionalUrls ) {
-			$additionalUrls = preg_split( '/\n|\r|\r\n/', $additionalUrls );
+			$additionalUrls = preg_split( '/\n|\r|\r\n/', (string) $additionalUrls );
 			foreach ( $additionalUrls as $additionalUrl ) {
 				// We need to set a random key because otherwise we'll override the ones from the organization.
 				$socialProfiles[ uniqid() ] = $additionalUrl;

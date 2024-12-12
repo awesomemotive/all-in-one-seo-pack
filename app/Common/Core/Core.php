@@ -144,7 +144,7 @@ class Core {
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery
 		foreach ( $this->getDbTables() as $tableName ) {
-			$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %s', $tableName ) );
+			$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $tableName ) );
 		}
 
 		// Delete all AIOSEO Locations and Location Categories.

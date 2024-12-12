@@ -195,9 +195,12 @@ export default {
 			}
 
 			// Loop through the intervals and update the position from the reversedPositions array.
-			series[0].data.forEach((interval, index) => {
-				interval.label = interval.y
-				interval.y     = reversedPositions[index]
+			series[0].data = series[0].data.map((interval, index) => {
+				return {
+					...interval,
+					y     : reversedPositions[index],
+					label : interval.y
+				}
 			})
 
 			return series

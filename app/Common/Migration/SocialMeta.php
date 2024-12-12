@@ -305,7 +305,7 @@ class SocialMeta {
 
 		if (
 			! empty( $this->oldOptions['modules']['aiosp_opengraph_options']['aiosp_opengraph_dimg'] ) &&
-			! preg_match( '/default-user-image.png$/', $this->oldOptions['modules']['aiosp_opengraph_options']['aiosp_opengraph_dimg'] )
+			! preg_match( '/default-user-image.png$/', (string) $this->oldOptions['modules']['aiosp_opengraph_options']['aiosp_opengraph_dimg'] )
 		) {
 			$value = esc_url( wp_strip_all_tags( $this->oldOptions['modules']['aiosp_opengraph_options']['aiosp_opengraph_dimg'] ) );
 			aioseo()->options->social->facebook->general->defaultImagePosts = $value;

@@ -146,7 +146,7 @@ class CrawlCleanupBlockedArg extends CommonModels\Model {
 
 		foreach ( $regexBlockedArgs as $regexQueryArg ) {
 			$escapedRegex = str_replace( '@', '\@', $regexQueryArg->regex );
-			if ( preg_match( "@{$escapedRegex}@", $keyValue ) ) {
+			if ( preg_match( "@{$escapedRegex}@", (string) $keyValue ) ) {
 				return new CrawlCleanupBlockedArg( $regexQueryArg->id );
 			}
 		}

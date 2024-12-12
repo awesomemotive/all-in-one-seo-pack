@@ -171,7 +171,7 @@ class SearchAppearance {
 
 		foreach ( aioseo()->helpers->getPublicPostTypes( true ) as $postType ) {
 			foreach ( $this->options as $name => $value ) {
-				if ( ! preg_match( "#(.*)-$postType$#", $name, $match ) || ! in_array( $match[1], $supportedSettings, true ) ) {
+				if ( ! preg_match( "#(.*)-$postType$#", (string) $name, $match ) || ! in_array( $match[1], $supportedSettings, true ) ) {
 					continue;
 				}
 
@@ -251,7 +251,7 @@ class SearchAppearance {
 
 		foreach ( aioseo()->helpers->getPublicPostTypes( true, true ) as $postType ) {
 			foreach ( $this->options as $name => $value ) {
-				if ( ! preg_match( "#(.*)-ptarchive-$postType$#", $name, $match ) || ! in_array( $match[1], $supportedSettings, true ) ) {
+				if ( ! preg_match( "#(.*)-ptarchive-$postType$#", (string) $name, $match ) || ! in_array( $match[1], $supportedSettings, true ) ) {
 					continue;
 				}
 
@@ -295,9 +295,30 @@ class SearchAppearance {
 			'person_name'               => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'personName' ] ],
 			'company_name'              => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'organizationName' ] ],
 			'company_logo'              => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'organizationLogo' ] ],
+			'org-email'                 => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'email' ] ],
+			'org-phone'                 => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'phone' ] ],
+			'org-description'           => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'organizationDescription' ] ],
+			'org-founding-date'         => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'foundingDate' ] ],
 		];
 
 		aioseo()->importExport->yoastSeo->helpers->mapOldToNew( $settings, $this->options );
+
+		// Additional Info
+		// Reset data
+		aioseo()->options->noConflict()->searchAppearance->global->schema->numberOfEmployees->reset();
+
+		$numberOfEmployees = $this->options['org-number-employees'];
+		if ( ! empty( $numberOfEmployees ) ) {
+			list( $num1, $num2 ) = explode( '-', $numberOfEmployees );
+
+			if ( $num2 ) {
+				aioseo()->options->noConflict()->searchAppearance->global->schema->numberOfEmployees->isRange = true;
+				aioseo()->options->noConflict()->searchAppearance->global->schema->numberOfEmployees->from    = (int) $num1;
+				aioseo()->options->noConflict()->searchAppearance->global->schema->numberOfEmployees->to      = (int) $num2;
+			} else {
+				aioseo()->options->noConflict()->searchAppearance->global->schema->numberOfEmployees->number = (int) $num1;
+			}
+		}
 	}
 
 	/**
