@@ -293,6 +293,17 @@ class Helpers {
 		$dynamicOptions   = aioseo()->dynamicOptions->noConflict();
 		$publicTaxonomies = aioseo()->helpers->getPublicTaxonomies( true );
 		foreach ( $taxonomies as $taxonomy ) {
+			if (
+				aioseo()->helpers->isWooCommerceActive() &&
+				aioseo()->helpers->isWooCommerceProductAttribute( $taxonomy )
+			) {
+				$taxonomies = aioseo()->helpers->unsetValue( $taxonomies, $taxonomy );
+				if ( ! in_array( 'product_attributes', $taxonomies, true ) ) {
+					$taxonomies[] = 'product_attributes';
+				}
+				continue;
+			}
+
 			// Check if taxonomy is no longer registered.
 			if ( ! in_array( $taxonomy, $publicTaxonomies, true ) || ! $dynamicOptions->searchAppearance->taxonomies->has( $taxonomy ) ) {
 				$taxonomies = aioseo()->helpers->unsetValue( $taxonomies, $taxonomy );
@@ -350,7 +361,12 @@ class Helpers {
 	 * @return string The excluded IDs.
 	 */
 	public function excludedPosts() {
-		return $this->excludedObjectIds( 'excludePosts' );
+		static $excludedPosts = null;
+		if ( null === $excludedPosts ) {
+			$excludedPosts = $this->excludedObjectIds( 'excludePosts' );
+		}
+
+		return $excludedPosts;
 	}
 
 	/**
@@ -361,7 +377,12 @@ class Helpers {
 	 * @return string The excluded IDs.
 	 */
 	public function excludedTerms() {
-		return $this->excludedObjectIds( 'excludeTerms' );
+		static $excludedTerms = null;
+		if ( null === $excludedTerms ) {
+			$excludedTerms = $this->excludedObjectIds( 'excludeTerms' );
+		}
+
+		return $excludedTerms;
 	}
 
 	/**

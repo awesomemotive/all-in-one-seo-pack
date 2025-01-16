@@ -146,7 +146,14 @@ export default {
 	},
 	computed : {
 		taxonomies () {
-			return this.rootStore.aioseo.postData.taxonomies
+			// Filter out all real WooCommerce Product Attributes.
+			return this.rootStore.aioseo.postData.taxonomies.filter(taxonomy => {
+				// Check that the name doesn't start with "pa_" and that WooCommerce is active.
+				if (this.rootStore.aioseo.data.isWooCommerceActive) {
+					return !taxonomy.name.startsWith('pa_')
+				}
+				return true
+			})
 		}
 	},
 	methods : {

@@ -366,7 +366,7 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 			$termHierarchy = $this->getTermHierarchy( $term->term_id, $term->taxonomy );
 			if ( ! empty( $termHierarchy ) ) {
 				foreach ( $termHierarchy as $parentTermId ) {
-					$parentTerm = get_term( $parentTermId, $term->taxonomy );
+					$parentTerm = aioseo()->helpers->getTerm( $parentTermId, $term->taxonomy );
 					$crumbs[]   = $this->getTermTaxonomyCrumb( $parentTerm, 'parent' );
 				}
 			}
@@ -432,7 +432,7 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 			$termHierarchy = $this->getPostTaxTermHierarchy( $post, $taxonomy );
 			if ( ! empty( $termHierarchy['terms'] ) ) {
 				foreach ( $termHierarchy['terms'] as $termId ) {
-					$term     = get_term( $termId, $termHierarchy['taxonomy'] );
+					$term     = aioseo()->helpers->getTerm( $termId, $termHierarchy['taxonomy'] );
 					$crumbs[] = $this->makeCrumb( $term->name, get_term_link( $term, $termHierarchy['taxonomy'] ), 'taxonomy', $term, 'parent' );
 				}
 			}

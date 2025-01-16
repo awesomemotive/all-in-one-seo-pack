@@ -96,21 +96,22 @@ trait Vue {
 		$staticHomePage   = intval( get_option( 'page_on_front' ) );
 
 		$this->data = [
-			'page'              => $this->args['page'],
-			'screen'            => [
+			'page'               => $this->args['page'],
+			'screen'             => [
 				'base'        => isset( $screen->base ) ? $screen->base : '',
 				'postType'    => isset( $screen->post_type ) ? $screen->post_type : '',
 				'blockEditor' => isset( $screen->is_block_editor ) ? $screen->is_block_editor : false,
 				'new'         => isset( $screen->action ) && 'add' === $screen->action
 			],
-			'internalOptions'   => aioseo()->internalOptions->all(),
-			'options'           => aioseo()->options->all(),
-			'dynamicOptions'    => aioseo()->dynamicOptions->all(),
-			'deprecatedOptions' => aioseo()->internalOptions->getAllDeprecatedOptions( true ),
-			'settings'          => aioseo()->settings->all(),
-			'tags'              => aioseo()->tags->all( true ),
-			'nonce'             => wp_create_nonce( 'wp_rest' ),
-			'urls'              => [
+			'internalOptions'    => aioseo()->internalOptions->all(),
+			'options'            => aioseo()->options->all(),
+			'dynamicOptions'     => aioseo()->dynamicOptions->all(),
+			'deprecatedOptions'  => aioseo()->internalOptions->getAllDeprecatedOptions( true ),
+			'settings'           => aioseo()->settings->all(),
+			'additional_scripts' => apply_filters( 'aioseo_vue_additional_scripts_enabled', true ),
+			'tags'               => aioseo()->tags->all( true ),
+			'nonce'              => wp_create_nonce( 'wp_rest' ),
+			'urls'               => [
 				'domain'            => $this->getSiteDomain(),
 				'mainSiteUrl'       => $this->getSiteUrl(),
 				'siteLogo'          => aioseo()->helpers->getSiteLogoUrl(),
@@ -165,9 +166,9 @@ trait Vue {
 				],
 				'truSeoWorker'      => aioseo()->core->assets->jsUrl( 'src/app/tru-seo/analyzer/main.js' )
 			],
-			'backups'           => [],
-			'importers'         => [],
-			'data'              => [
+			'backups'            => [],
+			'importers'          => [],
+			'data'               => [
 				'server'                => aioseo()->helpers->getServerName(),
 				'robots'                => [
 					'defaultRules'      => [],
@@ -206,7 +207,7 @@ trait Vue {
 					]
 				]
 			],
-			'user'              => [
+			'user'               => [
 				'canManage'      => aioseo()->access->canManage(),
 				'capabilities'   => aioseo()->access->getAllCapabilities(),
 				'customRoles'    => $this->getCustomRoles(),
@@ -215,26 +216,27 @@ trait Vue {
 				'roles'          => $this->getUserRoles(),
 				'unfilteredHtml' => current_user_can( 'unfiltered_html' )
 			],
-			'plugins'           => $this->getPluginData(),
-			'postData'          => [
+			'plugins'            => $this->getPluginData(),
+			'postData'           => [
 				'postTypes'    => $this->getPublicPostTypes( false, false, true ),
 				'taxonomies'   => $this->getPublicTaxonomies( false, true ),
 				'archives'     => $this->getPublicPostTypes( false, true, true ),
 				'postStatuses' => $this->getPublicPostStatuses()
 			],
-			'notifications'     => array_merge( Models\Notification::getNotifications( false ), [
+			'notifications'      => array_merge( Models\Notification::getNotifications( false ), [
 				'force' => $this->showNotificationsDrawer()
 			] ),
-			'addons'            => aioseo()->addons->getAddons(),
-			'features'          => aioseo()->features->getFeatures(),
-			'version'           => AIOSEO_VERSION,
-			'wpVersion'         => get_bloginfo( 'version' ),
-			'helpPanel'         => aioseo()->help->getDocs(),
-			'scheduledActions'  => [
+			'addons'             => aioseo()->addons->getAddons(),
+			'features'           => aioseo()->features->getFeatures(),
+			'version'            => AIOSEO_VERSION,
+			'wpVersion'          => get_bloginfo( 'version' ),
+			'phpVersion'         => PHP_VERSION,
+			'helpPanel'          => aioseo()->help->getDocs(),
+			'scheduledActions'   => [
 				'sitemaps' => []
 			],
-			'integration'       => $this->args['integration'],
-			'theme'             => [
+			'integration'        => $this->args['integration'],
+			'theme'              => [
 				'features' => aioseo()->helpers->getThemeFeatures()
 			]
 		];
@@ -312,8 +314,8 @@ trait Vue {
 			'noimageindex'                   => ( (int) $post->robots_noimageindex ) === 0 ? false : true,
 			'noodp'                          => ( (int) $post->robots_noodp ) === 0 ? false : true,
 			'notranslate'                    => ( (int) $post->robots_notranslate ) === 0 ? false : true,
-			'maxSnippet'                     => null === $post->robots_max_snippet ? - 1 : (int) $post->robots_max_snippet,
-			'maxVideoPreview'                => null === $post->robots_max_videopreview ? - 1 : (int) $post->robots_max_videopreview,
+			'maxSnippet'                     => null === $post->robots_max_snippet ? -1 : (int) $post->robots_max_snippet,
+			'maxVideoPreview'                => null === $post->robots_max_videopreview ? -1 : (int) $post->robots_max_videopreview,
 			'maxImagePreview'                => $post->robots_max_imagepreview,
 			'modalOpen'                      => false,
 			'generalMobilePrev'              => false,
@@ -345,7 +347,8 @@ trait Vue {
 			'redirects'                      => [
 				'modalOpen' => false
 			],
-			'options'                        => $post->options
+			'options'                        => $post->options,
+			'maxAdditionalKeyphrases'        => 0,
 		];
 
 		if ( empty( $this->args['integration'] ) ) {
@@ -619,7 +622,7 @@ trait Vue {
 			foreach ( $entry->translations as $translation ) {
 				// If any of the translated strings contains an HTML line break, we need to ignore it. Otherwise, logging into the admin breaks.
 
-				if ( preg_match( '/<br[\s\/\\\\]*>/', $translation ) ) {
+				if ( preg_match( '/<br[\s\/\\\\]*>/', (string) $translation ) ) {
 					continue 2;
 				}
 			}

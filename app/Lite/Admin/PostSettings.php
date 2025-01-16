@@ -44,10 +44,20 @@ class PostSettings extends CommonAdmin\PostSettings {
 	 */
 	public function init() {
 		if ( is_admin() ) {
-			$taxonomies = aioseo()->helpers->getPublicTaxonomies();
+			// We don't call getPublicTaxonomies() here because we want to show the CTA for Product Attributes as well.
+			$taxonomies = get_taxonomies( [], 'objects' );
+			foreach ( $taxonomies as $taxObject ) {
+				if (
+					empty( $taxObject->label ) ||
+					! is_taxonomy_viewable( $taxObject )
+				) {
+					unset( $taxonomies[ $taxObject->name ] );
+				}
+			}
+
 			foreach ( $taxonomies as $taxonomy ) {
-				add_action( $taxonomy['name'] . '_edit_form', [ $this, 'addTaxonomyUpsell' ] );
-				add_action( 'after-' . $taxonomy['name'] . '-table', [ $this, 'addTaxonomyUpsell' ] );
+				add_action( $taxonomy->name . '_edit_form', [ $this, 'addTaxonomyUpsell' ] );
+				add_action( 'after-' . $taxonomy->name . '-table', [ $this, 'addTaxonomyUpsell' ] );
 			}
 		}
 	}

@@ -68,7 +68,8 @@ const loadSidebarApp = () => {
 
 if (window.aioseo.currentPost) {
 	const currentContext = window.aioseo.currentPost.context
-	const node = document.querySelector(`#aioseo-${currentContext}-settings-metabox`)
+	const node           = document.querySelector(`#aioseo-${currentContext}-settings-metabox`)
+
 	if (node && shouldShowMetaBox()) {
 		if (!window.wp.blockEditor && window.wp.blocks && window.wp.oldEditor) {
 			window.wp.blockEditor = window.wp.editor

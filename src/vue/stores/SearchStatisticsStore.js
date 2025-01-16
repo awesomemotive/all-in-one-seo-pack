@@ -149,7 +149,7 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 					return response.body
 				})
 		},
-		setDateRange (payload) {
+		async setDateRange (payload, refetch = true) {
 			const keywordRankTrackerStore = useKeywordRankTrackerStore()
 
 			this.range   = {
@@ -158,15 +158,17 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 			}
 			this.rolling = payload.rolling
 
-			const promises = [
-				() => this.updateSeoStatistics({ filter: 'all', searchTerm: '' }),
-				() => this.updateKeywords({ filter: 'all', searchTerm: '' }),
-				() => this.updateContentRankings({ searchTerm: '' }),
-				() => keywordRankTrackerStore.maybeUpdateKeywords(),
-				() => keywordRankTrackerStore.maybeUpdateGroups()
-			]
+			if (refetch) {
+				const promises = [
+					() => this.updateSeoStatistics({ filter: 'all', searchTerm: '' }),
+					() => this.updateKeywords({ filter: 'all', searchTerm: '' }),
+					() => this.updateContentRankings({ searchTerm: '' }),
+					() => keywordRankTrackerStore.maybeUpdateKeywords(),
+					() => keywordRankTrackerStore.maybeUpdateGroups()
+				]
 
-			return Promise.all(promises.map(task => task()))
+				await Promise.all(promises.map(task => task()))
+			}
 		},
 		loadInitialData () {
 			if (this.hasInitialized) {

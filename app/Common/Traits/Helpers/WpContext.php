@@ -228,6 +228,33 @@ trait WpContext {
 	}
 
 	/**
+	 * Returns the term object for the given ID or the one from the main query.
+	 *
+	 * @since 4.7.8
+	 *
+	 * @param  int    $termId   The term ID.
+	 * @param  string $taxonomy The taxonomy.
+	 * @return \WP_Term         The term object.
+	 */
+	public function getTerm( $termId = 0, $taxonomy = '' ) {
+		$term = null;
+		if ( $termId ) {
+			$term = get_term( $termId, $taxonomy );
+		} else {
+			$term = get_queried_object();
+		}
+
+		// If the term is a Product Attribute, set its parent taxonomy to our fake
+		// "product_attributes" taxonomy so we can use the default settings.
+		if ( is_a( $term, 'WP_Term' ) && $this->isWooCommerceProductAttribute( $term->taxonomy ) ) {
+			$term           = clone $term;
+			$term->taxonomy = 'product_attributes';
+		}
+
+		return $term;
+	}
+
+	/**
 	 * Returns the current post ID.
 	 *
 	 * @since 4.3.1

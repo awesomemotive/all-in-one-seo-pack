@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.7
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.7.7
+Stable tag: 4.7.8
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -25,7 +25,7 @@ We have AI SEO features that helps you optimize SEO rankings using ChatGPT (Open
 
 Here's why smart business owners, SEO experts, marketers, and developers love AIOSEO, and you will too!
 
-[youtube https://youtu.be/AZpXSrZDbW4]
+[youtube https://youtu.be/UbOYEEIvXvY]
 
 ### What Makes AIOSEO Better than Other WordPress SEO Plugins ###
 
@@ -226,39 +226,51 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.7.8**
+
+* New: Keyword Rank Tracker Improvements - Import your best performing keywords directly from Google Search Console and explore Related Keywords to discover new keyword opportunities!
+* New: WooCommerce Product Attributes Support - Per popular demand, you can now control the SEO of your product attributes and include them in your sitemap to increase discoverability.
+* Updated: Added filter to control maximum number of additional keywords per post.
+
+**New in Version 4.7.7.1**
+
+* Updated: Added localization for default options for Writing Assistant.
+* Fixed: Writing Assistant no longer sends consecutive requests to get default user options.
+* Fixed: Cache class tries to recreate the cache table if it doesn't exist.
+
 **New in Version 4.7.7**
 
-Updated: Writing Assistant now supports logins per site/subsite, allowing users to use different SEOBoost logins and workspaces.
-Updated: Added support for importing additional Knowledge Graph settings from Yoast SEO.
-Updated: Added support for importing additional SEO settings from SEOPress, including robots meta, X (Twitter) metadata and advanced redirection rules.
-Updated: BreadcrumbList schema semantic properties updated to align with Schema.org specifications.
-Updated: Performance improvements to speed up Action Scheduler.
-Updated: Added support for the "Analyze This Page" toolbar menu inside the post/term editor
-Updated: Removed discontinued helpful links under "Analyze This Page" toolbar menu.
-Updated: SEO Email Reports have been disabled for all users and are now disabled by default.
-Updated: Added filter hook to disable SEO Email Reports.
-Fixed: CSS conflict for the Thrive WordPress Content field.
-Fixed: Twitter meta tags output for CPTs that do not support authors.
-Fixed: TruSEO Highlighter was not highlighting sentences found in the "Custom HTML" block, although the eye icon indicated their presence.
-Fixed: Image SEO sometimes could not find images and captions within the post content.
-Fixed: TruSEO now limits additional keyphrases to prevent high page loads ( maximum 10 ).
-Fixed: CSV import/export file naming, primary category import and miscellaneous fixes.
-Fixed: Reviewer selector conflict with Secure Custom Fields plugin and switching between tabs in the Post Editor sidebar.
-Fixed: Focus keywords that are already being tracked in Keyword Rank Tracker are no longer displayed in the "Import Keywords" modal.
-Fixed: Inconsistency in TruSEO score color across different sections of the plugin.
-Fixed: SEO Statistics panel sometimes displayed incorrect upward/downward trend when clicks increased/decreased.
-Fixed: Conflict with Savoy theme where the side cart was automatically popping up on product pages.
-Fixed: Conflict with ARVE plugin.
-Fixed: Social profile URLs are now correctly imported from Yoast SEO.
-Fixed: Home URL was automatically appended to canonical URLs without scheme.
-Fixed: Homepage link and prefix were sometimes not working in the WooCommerce Product breadcrumb template.
-Fixed: 404 log entries with URLs containing special characters could not be deleted.
-Fixed: Redirects to file URLs or URLs with a hash were saved with a trailing slash.
-Fixed: AIOSEO Metabox no longer closes when opening the Media library in Divi/Extra page builders.
-Fixed: PHP deprecation warning related to sitemap image scan.
-Fixed: PHP warning when importing locations from Yoast SEO Local plugin.
-Fixed: PHP fatal error occurring when attempting to access a non-existent additional sitemap index.
-Fixed: PHP deprecation warning in PHP 8.3 for PHP PCRE functions.
+* Updated: Writing Assistant now supports logins per site/subsite, allowing users to use different SEOBoost logins and workspaces.
+* Updated: Added support for importing additional Knowledge Graph settings from Yoast SEO.
+* Updated: Added support for importing additional SEO settings from SEOPress, including robots meta, X (Twitter) metadata and advanced redirection rules.
+* Updated: BreadcrumbList schema semantic properties updated to align with Schema.org specifications.
+* Updated: Performance improvements to speed up Action Scheduler.
+* Updated: Added support for the "Analyze This Page" toolbar menu inside the post/term editor
+* Updated: Removed discontinued helpful links under "Analyze This Page" toolbar menu.
+* Updated: SEO Email Reports have been disabled for all users and are now disabled by default.
+* Updated: Added filter hook to disable SEO Email Reports.
+* Fixed: CSS conflict for the Thrive WordPress Content field.
+* Fixed: Twitter meta tags output for CPTs that do not support authors.
+* Fixed: TruSEO Highlighter was not highlighting sentences found in the "Custom HTML" block, although the eye icon indicated their presence.
+* Fixed: Image SEO sometimes could not find images and captions within the post content.
+* Fixed: TruSEO now limits additional keyphrases to prevent high page loads ( maximum 10 ).
+* Fixed: CSV import/export file naming, primary category import and miscellaneous fixes.
+* Fixed: Reviewer selector conflict with Secure Custom Fields plugin and switching between tabs in the Post Editor sidebar.
+* Fixed: Focus keywords that are already being tracked in Keyword Rank Tracker are no longer displayed in the "Import Keywords" modal.
+* Fixed: Inconsistency in TruSEO score color across different sections of the plugin.
+* Fixed: SEO Statistics panel sometimes displayed incorrect upward/downward trend when clicks increased/decreased.
+* Fixed: Conflict with Savoy theme where the side cart was automatically popping up on product pages.
+* Fixed: Conflict with ARVE plugin.
+* Fixed: Social profile URLs are now correctly imported from Yoast SEO.
+* Fixed: Home URL was automatically appended to canonical URLs without scheme.
+* Fixed: Homepage link and prefix were sometimes not working in the WooCommerce Product breadcrumb template.
+* Fixed: 404 log entries with URLs containing special characters could not be deleted.
+* Fixed: Redirects to file URLs or URLs with a hash were saved with a trailing slash.
+* Fixed: AIOSEO Metabox no longer closes when opening the Media library in Divi/Extra page builders.
+* Fixed: PHP deprecation warning related to sitemap image scan.
+* Fixed: PHP warning when importing locations from Yoast SEO Local plugin.
+* Fixed: PHP fatal error occurring when attempting to access a non-existent additional sitemap index.
+* Fixed: PHP deprecation warning in PHP 8.3 for PHP PCRE functions.
 
 **New in Version 4.7.6**
 
@@ -299,84 +311,7 @@ Fixed: PHP deprecation warning in PHP 8.3 for PHP PCRE functions.
 * Fixed: PHP error due to unpacking an array with string keys.
 * Fixed: SEO Preview URL character encoding.
 
-**New in Version 4.7.4.2**
-
-* Updated: Compatibility with WordPress 6.7.
-* Fixed: AIOSEO metabox or setting pages sometimes not loading because WAFs or web server block JavaScript files from being loaded due to false-positives.
-
-**New in Version 4.7.4.1**
-
-* New: Writing Assistant + SEOBoost: Elevate Your Content Strategy! Integrate seamlessly with SEOBoost via AIOSEO to supercharge your WordPress content. Harness the power of AI to optimize your content, drive organic traffic, and outrank competitors.
-* Fixed: Post Overview widget sometimes not loading on newer PHP versions.
-* Fixed: Post Excerpt tag sometimes not listed in list of available smart tags.
-
-**New in Version 4.7.3.1**
-
-* Fixed: Link format causing block errors in WP 6.4.5 and below.
-
-**New in Version 4.7.3**
-
-* Updated: "?replytocom" query parameter for comment reply links now removed by default to optimize crawl quota.
-* Updated: Added support for Salient WPBakery plugin.
-* Updated: Added new filter to allow users to hide the WooCommerce shop page from the breadcrumbs trail.
-* Updated: Improved performance of the SEO Overview widget.
-* Updated: Various minor improvements and bug fixes for Keyword Rank Tracker.
-* Fixed: Canonical URLs for term archive pages correctly include the paginated part in the URL again.
-* Fixed: Headline Analyzer score removed from AIOSEO Details column in post list screen if the Classic Editor is active.
-* Fixed: Local SEO sometimes not importing all data from other plugins.
-* Fixed: Activating Pro license on secondary languages sections of WPML powered site no longer counts as a separate, additional activation.
-* Fixed: Sitemap priority score couldn't be saved as 0.0.
-* Fixed: Post meta import from other plugins not always importing the correct data.
-* Fixed: Opening the Notification Center drawer would sometimes freeze the page.
-* Fixed: Incorrect pagination and total item count in redirect logs when searching.
-* Fixed: Encoded characters in source URLs for redirects were displayed when selecting posts or pasting in URLs.
-* Fixed: Redirects compatibility with the TranslatePress Multilingual plugin.
-* Fixed: Redirect target URL with hash is no longer saved with a trailing slash.
-* Fixed: PHP warning when using the WPBakery page builder integration.
-* Fixed: PHP warnings when importing redirects from SEOPress.
-* Fixed: PHP warning after analyzing the site using the SEO Analyzer.
-* Fixed: Multisite user query not using the correct table prefix.
-* Fixed: EEAT reviewer dropdown sometimes not loading correctly.
-
-**New in Version 4.7.2**
-
-* New: SEO Email Reports - Get a weekly or monthly SEO performance report delivered to your inbox so you can dive into your top-performing pages and discover growth opportunities!
-* New: Bulk CSV Import/Export - Due to popular demand, we've added support for importing/exporting your SEO data via CSV files so you can bulk-edit it in your favourite spreadsheet app and re-upload it to your site
-
-**New in Version 4.7.1.1**
-
-* New: Remove Category Base feature now available for free for AIOSEO Lite users!
-* Updated: Added additional TruSEO Spanish transition words for more accurate analysis.
-* Updated: The Overview dashboard widget is now hidden when TruSEO is disabled.
-* Updated: Improved DB performance of sitemap terms last modified date query for large sites using MariaDB.
-* Updated: Added filter to customize the Table of Contents block URL anchor prefix.
-* Updated: Updated redirects log cleanup to run hourly for more efficient log management.
-* Updated: Social meta image custom field option now supports ACF gallery fields.
-* Updated: Local SEO locations block now supports hierarchical locations.
-* Fixed: Permissions check for Redirects server test route.
-* Fixed: Deactivation survey would sometimes not open correctly.
-* Fixed: Schema now outputs the correct country code for South Korea.
-* Fixed: Custom headers for Redirects are no longer applied in Divi/Elementor builder pages.
-* Fixed: Headline Analyzer editor toolbar button not appearing in WordPress versions below 6.4.
-* Fixed: Removed the Headline Analyzer score from the All Products screen for WooCommerce Products.
-* Fixed: Dashboard widget now only displays posts eligible for page analysis.
-* Fixed: HTML Sitemap URL validation for subfolder installations.
-* Fixed: max-snippet tag is no longer removed when set to '0' in Global Robots Meta.
-* Fixed: Incorrect TruSEO results for content written in hebrew.
-* Fixed: Facebook article tags sometimes not rendered after page refresh.
-* Fixed: Misplacement of graph data when deleting repeatable graph sections in Schema Generator.
-* Fixed: Pre-Publish Panel edit icons sometimes not fully working correctly.
-* Fixed: Duplication of meta tags conflict with WPBakery 7.4 SEO toolkit.
-* Fixed: Date and Priority fields were not being imported correctly when importing CSV for Additional Pages for Sitemaps.
-* Fixed: Publish and Last Modified dates were not being displayed correctly for multilingual posts in sitemaps.
-* Fixed: Breadcrumbs trail with HTML tags in a post/page title not rendered correctly.
-* Fixed: Redirect's logs and 404 logs bulk actions would deselect all items when opening the confirmation modal.
-* Fixed: Addon updates sometimes not displayed on Plugins page.
-
-**New in Version 4.7.0**
-
-* New: Keyword Rank Tracker - Track your most important keywords and add them to groups to see how your site is performing for key topics in Google search results.
-* Fixed: AIOSEO Pro and all AIOSEO addon plugins should now auto-update correctly (if enabled) after a new update is released.
+**See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=aioseo) for previous releases.**
 
 == Frequently Asked Questions ==
 
@@ -457,6 +392,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.7.7 =
+= 4.7.8 =
 
 This update adds major improvements and bug fixes.

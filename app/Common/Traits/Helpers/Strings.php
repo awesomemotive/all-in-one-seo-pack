@@ -475,7 +475,7 @@ trait Strings {
 	 */
 	public function isValidRegex( $pattern ) {
 		// Set a custom error handler to prevent throwing errors on a bad Regular Expression.
-		set_error_handler( function() {}, E_WARNING );
+		set_error_handler( function() {}, E_WARNING ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler
 
 		$isValid = true;
 
@@ -634,5 +634,17 @@ trait Strings {
 
 		// Re-encode special characters to HTML entities.
 		return $this->encodeOutputHtml( $filteredString );
+	}
+
+	/**
+	 * Creates a sha1 hash from the given arguments.
+	 *
+	 * @since 4.7.8
+	 *
+	 * @param  mixed  ...$args The arguments to create a sha1 hash from.
+	 * @return string          The sha1 hash.
+	 */
+	public function createHash( ...$args ) {
+		return sha1( wp_json_encode( $args ) );
 	}
 }

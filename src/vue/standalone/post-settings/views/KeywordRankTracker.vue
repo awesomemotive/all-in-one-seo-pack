@@ -69,7 +69,7 @@ const isConnected = computed(() => searchStatisticsStore.isConnected && !searchS
 			label,
 			input[type="button"],
 			input[type="submit"] {
-				pointer-events: none !important;
+				pointer-events: none;
 			}
 		}
 	}

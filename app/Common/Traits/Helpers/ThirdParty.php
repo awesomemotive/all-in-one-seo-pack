@@ -762,4 +762,24 @@ trait ThirdParty {
 
 		return preg_match( '#.*Yandex.*#', (string) sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) );
 	}
+
+	/**
+	 * Checks whether the taxonomy is a WooCommerce product attribute.
+	 *
+	 * @since 4.7.8
+	 *
+	 * @param  mixed $taxonomy The taxonomy.
+	 * @return bool            Whether the taxonomy is a WooCommerce product attribute.
+	 */
+	public function isWooCommerceProductAttribute( $taxonomy ) {
+		$name = is_object( $taxonomy )
+			? $taxonomy->name
+			: (
+				is_array( $taxonomy )
+					? $taxonomy['name']
+					: $taxonomy
+			);
+
+		return ! empty( $name ) && 'pa_' === substr( $name, 0, 3 );
+	}
 }

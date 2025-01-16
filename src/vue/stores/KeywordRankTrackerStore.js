@@ -8,7 +8,8 @@ import {
 
 export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore', {
 	state : () => ({
-		groups : {
+		parentActiveTab : 'rank-tracker',
+		groups          : {
 			selected : [],
 			all      : {
 				rows : []
@@ -69,9 +70,28 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 				additionalFilters : {}
 			},
 			count      : 0,
-			statistics : null
+			statistics : null,
+			related    : {
+				selected  : [],
+				paginated : {
+					rows : []
+				}
+			},
+			rankingPages : {
+				paginated : {
+					rows   : [],
+					totals : {
+						page  : 1,
+						pages : 0,
+						total : 0
+					},
+					limit  : 5,
+					offset : 0
+				}
+			}
 		},
 		siteFocusKeywords       : [],
+		gscKeywords             : [],
 		options                 : {},
 		modalOpenAddKeywords    : false,
 		modalOpenCreateGroup    : false,
@@ -80,10 +100,13 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 		modalOpenUpdateGroup    : false,
 		modalOpenDeleteGroups   : false,
 		modalOpenPostEdit       : false,
-		isFetchingStatistics    : false,
-		fetchKeywordsCallback   : null,
-		keywordsLimit           : 0,
-		errors                  : {
+		isFetchingStatistics    : {
+			keywords : false,
+			groups   : false
+		},
+		fetchKeywordsCallback : null,
+		keywordsLimit         : 0,
+		errors                : {
 			crud : null
 		},
 		favoriteGroup : {}
@@ -99,7 +122,8 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 			this.fetchKeywordsCallback = args?.fetchKeywordsCallback || null
 
 			if ('modalOpenAddKeywords' === args.modal && args.open) {
-				this.keywords.selected = []
+				this.keywords.selected         = []
+				this.keywords.related.selected = args?.relatedKeywords ?? []
 			}
 
 			if ('modalOpenAssignGroups' === args.modal && args.open) {
@@ -156,15 +180,16 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 					startDate         : this.range.start,
 					endDate           : this.range.end,
 					'names[]'         : payload?.names || [],
-					'ids[]'           : payload?.ids || []
+					'ids[]'           : payload?.ids || [],
+					postId            : payload?.postId || 0
 				})
 				.then(response => {
-					this.keywords.paginated.rows = response.body.paginated.rows
-					this.keywords.paginated.totals = response.body.paginated.totals
-					this.keywords.paginated.orderBy = response.body.paginated.orderBy
+					this.keywords.paginated.rows     = response.body.paginated.rows
+					this.keywords.paginated.totals   = response.body.paginated.totals
+					this.keywords.paginated.orderBy  = response.body.paginated.orderBy
 					this.keywords.paginated.orderDir = response.body.paginated.orderDir
-					this.keywords.all.rows = response.body.all.rows
-					this.keywords.count = response.body.count
+					this.keywords.all.rows           = response.body.all.rows
+					this.keywords.count              = response.body.count
 
 					return response
 				})
@@ -229,10 +254,10 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 					endDate           : this.range.end
 				})
 				.then(response => {
-					this.groups.paginated.rows = response.body.paginated.rows
+					this.groups.paginated.rows   = response.body.paginated.rows
 					this.groups.paginated.totals = response.body.paginated.totals
-					this.groups.all.rows = response.body.all.rows
-					this.groups.count = response.body.count
+					this.groups.all.rows         = response.body.all.rows
+					this.groups.count            = response.body.count
 
 					return response
 				})
@@ -309,36 +334,38 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 					throw error
 				})
 		},
-		maybeFetchStatistics ({ context }) {
+		maybeFetchStatistics ({ context, postId = 0 }) {
 			if (!this[context].paginated.rows.length && !this[context].all.rows.length) {
 				return
 			}
 
-			this.isFetchingStatistics = true
+			this.isFetchingStatistics[context] = true
 
-			return http.post(links.restUrl(`search-statistics/keyword-rank-tracker/statistics/${context}`))
+			return http.post(links.restUrl('search-statistics/keyword-rank-tracker/statistics'))
 				.send({
+					context   : context,
 					startDate : this.range.start,
 					endDate   : this.range.end,
 					paginated : this[context].paginated,
-					all       : this[context].all
+					all       : this[context].all,
+					postId    : postId || 0
 				})
 				.then(response => {
 					this[context].paginated.rows = response.body.paginated.rows
-					this[context].all.rows = response.body.all.rows
-					this[context].statistics = response.body.statistics
+					this[context].all.rows       = response.body.all.rows
+					this[context].statistics     = response.body.statistics
 				})
 				.catch(error => {
 					throw error
 				})
 				.finally(() => {
-					this.isFetchingStatistics = false
+					this.isFetchingStatistics[context] = false
 				})
 		},
 		maybeUpdateKeywords (payload = {}) {
 			if (this.keywords.count) {
 				return this.fetchKeywords(payload)
-					.then(() => this.maybeFetchStatistics({ context: 'keywords' }))
+					.then(() => this.maybeFetchStatistics({ context: 'keywords', postId: payload?.postId }))
 			}
 		},
 		maybeUpdateGroups () {
@@ -365,6 +392,106 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 					additionalFilters : {}
 				}
 			}
+		},
+		resetRelatedKeywords () {
+			this.keywords.related = {
+				selected  : [],
+				paginated : {
+					rows : []
+				}
+			}
+		},
+		resetKeywordsRankingPages () {
+			this.keywords.rankingPages = {
+				paginated : {
+					rows   : [],
+					totals : {
+						page  : 1,
+						pages : 0,
+						total : 0
+					},
+					limit  : 5,
+					offset : 0
+				}
+			}
+		},
+		fetchGscKeywords () {
+			return http.get(links.restUrl('search-statistics/stats/keywords'))
+				.query({
+					startDate  : this.range.start,
+					endDate    : this.range.end,
+					filter     : 'all',
+					searchTerm : '',
+					limit      : 20
+				})
+				.then(response => {
+					if (response.body.success) {
+						this.gscKeywords = response.body.data.paginated.rows || []
+					}
+				})
+				.catch(error => {
+					throw error
+				})
+		},
+		fetchRelatedKeywords (keyword) {
+			return http.get(links.restUrl('search-statistics/keyword-rank-tracker/related-keywords'))
+				.query({
+					keyword   : keyword,
+					startDate : this.range.start,
+					endDate   : this.range.end
+				})
+				.then(response => {
+					this.keywords.related.paginated.rows = response.body.paginated.rows
+
+					return response
+				})
+				.catch(error => {
+					throw error
+				})
+		},
+		fetchKeywordsRankingPages (payload = {}) {
+			this.keywords.rankingPages.paginated = { ...this.keywords.rankingPages.paginated, ...payload }
+
+			const keywords = this.keywords.rankingPages.paginated.keywords
+
+			return http.post(links.restUrl('search-statistics/stats/keywords/posts'))
+				.send({
+					limit     : this.keywords.rankingPages.paginated.limit,
+					offset    : this.keywords.rankingPages.paginated.offset,
+					startDate : this.range.start,
+					endDate   : this.range.end,
+					keywords  : keywords
+				})
+				.then(response => {
+					if (response.body.success) {
+						const paginated = response.body?.data?.[keywords[0]].paginated || {}
+
+						this.keywords.rankingPages.paginated.rows   = Object.values(paginated?.rows || {})
+						this.keywords.rankingPages.paginated.totals = paginated?.totals || {}
+					}
+				})
+				.catch(error => {
+					throw error
+				})
+		},
+		maybeFetchRelatedKeywordsStatistics () {
+			if (this.keywords.related.paginated.rows.every(row => null !== row.statistics)) {
+				return
+			}
+
+			return http.post(links.restUrl('search-statistics/keyword-rank-tracker/statistics'))
+				.send({
+					context   : 'keywords',
+					startDate : this.range.start,
+					endDate   : this.range.end,
+					all       : this.keywords.related.paginated
+				})
+				.then(response => {
+					this.keywords.related.paginated.rows = response.body.all.rows
+				})
+				.catch(error => {
+					throw error
+				})
 		}
 	}
 })

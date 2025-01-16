@@ -60,8 +60,19 @@ class Content {
 		}
 
 		// Check if requested index is a registered taxonomy.
-		if ( in_array( aioseo()->sitemap->indexName, aioseo()->sitemap->helpers->includedTaxonomies(), true ) ) {
+		if (
+			in_array( aioseo()->sitemap->indexName, aioseo()->sitemap->helpers->includedTaxonomies(), true ) &&
+			'product_attributes' !== aioseo()->sitemap->indexName
+		) {
 			return $this->terms( aioseo()->sitemap->indexName );
+		}
+
+		if (
+			aioseo()->helpers->isWooCommerceActive() &&
+			in_array( aioseo()->sitemap->indexName, aioseo()->sitemap->helpers->includedTaxonomies(), true ) &&
+			'product_attributes' === aioseo()->sitemap->indexName
+		) {
+			return $this->productAttributes();
 		}
 
 		return [];
@@ -361,7 +372,7 @@ class Content {
 
 		// If the term is an ID, get the term object.
 		if ( is_numeric( $term ) ) {
-			$term = get_term( $term );
+			$term = aioseo()->helpers->getTerm( $term );
 		}
 
 		// First, check the count of the term. If it's 0, then we're dealing with a parent term that does not have
@@ -802,7 +813,7 @@ class Content {
 			->orderBy( '`a`.`date_recorded` DESC' );
 
 		$items = $query->run()
-						->result();
+			->result();
 
 		foreach ( $items as $item ) {
 			$entry = [
@@ -832,5 +843,62 @@ class Content {
 		}
 
 		return apply_filters( 'aioseo_sitemap_posts', $entries, $postType );
+	}
+
+	/**
+	 * Returns all entries for the WooCommerce Product Attributes sitemap.
+	 * Note: This sitemap does not support pagination.
+	 *
+	 * @since 4.7.8
+	 *
+	 * @param  bool  $count Whether to return the count of the entries. This is used to determine the indexes.
+	 * @return array        The sitemap entries.
+	 */
+	public function productAttributes( $count = false ) {
+		$aioseoTermsTable           = aioseo()->core->db->prefix . 'aioseo_terms';
+		$wcAttributeTaxonomiesTable = aioseo()->core->db->prefix . 'woocommerce_attribute_taxonomies';
+		$termTaxonomyTable          = aioseo()->core->db->prefix . 'term_taxonomy';
+
+		$selectClause = $count ? 'COUNT(*) as childProductAttributes' : 'tt.term_id, at.frequency, at.priority';
+		$whereClause  = aioseo()->pro ? 'AND (at.robots_noindex IS NULL OR at.robots_noindex = 0)' : '';
+		$limitClause  = $count ? '' : 'LIMIT 50000';
+
+		$result = aioseo()->core->db->execute(
+			"SELECT {$selectClause}
+			FROM {$termTaxonomyTable} AS tt
+			JOIN {$wcAttributeTaxonomiesTable} AS wat ON tt.taxonomy = CONCAT('pa_', wat.attribute_name)
+			LEFT JOIN {$aioseoTermsTable} AS at ON tt.term_id = at.term_id
+			WHERE wat.attribute_public = 1
+				{$whereClause}
+				AND tt.count > 0
+			{$limitClause};",
+			true
+		)->result();
+
+		if ( $count ) {
+			return ! empty( $result[0]->childProductAttributes ) ? (int) $result[0]->childProductAttributes : 0;
+		}
+
+		if ( empty( $result ) ) {
+			return [];
+		}
+
+		$entries = [];
+		foreach ( $result as $term ) {
+			$term   = (object) $term;
+			$termId = (int) $term->term_id;
+
+			$entry = [
+				'loc'        => get_term_link( $termId ),
+				'lastmod'    => $this->getTermLastModified( $termId ),
+				'changefreq' => aioseo()->sitemap->priority->frequency( 'taxonomies', $term, 'product_attributes' ),
+				'priority'   => aioseo()->sitemap->priority->priority( 'taxonomies', $term, 'product_attributes' ),
+				'images'     => aioseo()->sitemap->image->term( $term )
+			];
+
+			$entries[] = apply_filters( 'aioseo_sitemap_product_attributes', $entry, $termId );
+		}
+
+		return $entries;
 	}
 }

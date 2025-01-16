@@ -168,6 +168,14 @@ class Service {
 	 * @return array|\WP_Error              Returns the response body or WP_Error if the request failed.
 	 */
 	private function doRequest( $path, $requestBody = [] ) {
+		// Prevent API requests if no access token is present.
+		if (
+			'oauthaccess' !== $path && // Except if we're getting the access token.
+			empty( aioseo()->writingAssistant->seoBoost->getAccessToken() )
+		) {
+			return new \WP_Error( 'service-error', __( 'Missing access token', 'all-in-one-seo-pack' ) );
+		}
+
 		$requestData = [
 			'headers' => [
 				'X-SeoBoost-Access-Token' => aioseo()->writingAssistant->seoBoost->getAccessToken(),

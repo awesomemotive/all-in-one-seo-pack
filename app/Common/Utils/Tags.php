@@ -1027,9 +1027,27 @@ class Tags {
 			case 'tax_name':
 				return $sampleData ? __( 'Sample Taxonomy Name Value', 'all-in-one-seo-pack' ) : '';
 			case 'tax_parent_name':
-				$termObject       = get_term( $id );
-				$parentTermObject = ! empty( $termObject->parent ) ? get_term( $termObject->parent ) : '';
-				$name             = is_a( $parentTermObject, 'WP_Term' ) && ! empty( $parentTermObject->name ) ? $parentTermObject->name : '';
+				$termObject       = get_term( $id ); // Don't use the getTerm() helper here. We need the actual Product Attribute tax.
+				$parentTermObject = ! empty( $termObject->parent ) ? aioseo()->helpers->getTerm( $termObject->parent ) : '';
+				$name             = $parentTermObject->name ?? '';
+
+				if (
+					is_a( $termObject, 'WP_Term' ) &&
+					empty( $parentTermObject ) &&
+					aioseo()->helpers->isWooCommerceProductAttribute( $termObject->taxonomy )
+				) {
+					$wcAttributeTaxonomiesTable = aioseo()->core->db->prefix . 'woocommerce_attribute_taxonomies';
+					$attributeName              = str_replace( 'pa_', '', $termObject->taxonomy );
+
+					$result = aioseo()->core->db->db->get_row(
+						aioseo()->core->db->db->prepare(
+							"SELECT attribute_label FROM $wcAttributeTaxonomiesTable WHERE attribute_name = %s",
+							$attributeName
+						)
+					);
+
+					return $result->attribute_label ?? '';
+				}
 
 				return $sampleData ? __( 'Sample Parent Term Name', 'all-in-one-seo-pack' ) : $name;
 			case 'taxonomy_description':
@@ -1094,7 +1112,7 @@ class Tags {
 				$taxonomySlug = $isProduct ? 'product_cat' : $taxonomySlug;
 				$primaryTerm  = aioseo()->standalone->primaryTerm->getPrimaryTerm( $postId, $taxonomySlug );
 				if ( $primaryTerm ) {
-					$postTerms[] = get_term( $primaryTerm, $taxonomySlug );
+					$postTerms[] = aioseo()->helpers->getTerm( $primaryTerm, $taxonomySlug );
 					break;
 				}
 

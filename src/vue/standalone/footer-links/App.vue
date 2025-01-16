@@ -14,16 +14,20 @@
 			<a :href="getUtmLink('https://aioseo.com/plugin/twitter', 'twitter')"  target="_blank" rel="noreferrer noopener"><twitter-svg /></a>
 			<a :href="getUtmLink('https://aioseo.com/plugin/youtube', 'youtube')"  target="_blank" rel="noreferrer noopener"><you-tube-svg /></a>
 		</div>
+
+		<core-additional-js />
 	</div>
 </template>
 
-<script>
+<script setup>
 import links from '@/vue/utils/links'
 import {
 	useRootStore
 } from '@/vue/stores'
 
 import SupportLink from './AIOSEO_VERSION/SupportLink'
+
+import CoreAdditionalJs from '@/vue/components/AIOSEO_VERSION/core/AdditionalJs'
 
 import FacebookSvg from '@/vue/components/common/svg/social/Facebook'
 import LinkedInSvg from '@/vue/components/common/svg/social/LinkedIn'
@@ -34,35 +38,18 @@ import { __ } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-export default {
-	setup () {
-		return {
-			rootStore : useRootStore()
-		}
-	},
-	components : {
-		FacebookSvg,
-		LinkedInSvg,
-		TwitterSvg,
-		YouTubeSvg,
-		SupportLink
-	},
-	data () {
-		return {
-			strings : {
-				madeBy      : __('Made with ♥ by the AIOSEO Team', td),
-				support     : __('Support', td),
-				docs        : __('Docs', td),
-				freePlugins : __('Free Plugins', td)
-			}
-		}
-	},
-	methods : {
-		getUtmLink (url, content) {
-			const page = this.rootStore.aioseo.page
-			return links.utmUrl(`footer-${page}`, content, url)
-		}
-	}
+const rootStore = useRootStore()
+
+const strings = {
+	madeBy      : __('Made with ♥ by the AIOSEO Team', td),
+	support     : __('Support', td),
+	docs        : __('Docs', td),
+	freePlugins : __('Free Plugins', td)
+}
+
+const getUtmLink = (url, content) => {
+	const page = rootStore.aioseo.page
+	return links.utmUrl(`footer-${page}`, content, url)
 }
 </script>
 

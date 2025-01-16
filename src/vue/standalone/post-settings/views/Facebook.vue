@@ -320,7 +320,7 @@ export default {
 			return 'article' === this.postEditorStore.currentPost.og_object_type ||
 				(
 					'default' === this.postEditorStore.currentPost.og_object_type &&
-					'article' === this.optionsStore.dynamicOptions.social.facebook.general[context][this.postEditorStore.currentPost.postType || this.postEditorStore.currentPost.termType].objectType
+					'article' === this.optionsStore.dynamicOptions.social.facebook.general[context][this.postEditorStore.currentPost.postType || this.postEditorStore.currentPost.termType]?.objectType
 				)
 		}
 	},

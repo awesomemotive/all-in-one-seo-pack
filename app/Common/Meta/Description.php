@@ -90,7 +90,7 @@ class Description {
 		}
 
 		if ( is_category() || is_tag() || is_tax() ) {
-			$term = $post ? $post : get_queried_object();
+			$term = $post ? $post : aioseo()->helpers->getTerm();
 
 			return $this->getTermDescription( $term, $default );
 		}

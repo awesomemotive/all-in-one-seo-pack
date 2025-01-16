@@ -80,6 +80,7 @@
 						v-if="!optionsStore.options.sitemap.html.taxonomies.all"
 						:options="optionsStore.options.sitemap.html"
 						type="taxonomies"
+						:excluded="['product_attributes']"
 					/>
 
 					<div class="aioseo-description">

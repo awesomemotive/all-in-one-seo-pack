@@ -201,6 +201,10 @@ class Breadcrumb {
 	 * @return array          The breadcrumb trail.
 	 */
 	public function term( $term ) {
+		if ( 'product_attributes' === $term->taxonomy ) {
+			$term = get_term( $term->term_id );
+		}
+
 		$breadcrumbs = [];
 		do {
 			array_unshift(
@@ -214,7 +218,7 @@ class Breadcrumb {
 			);
 
 			if ( $term->parent ) {
-				$term = get_term( $term->parent, $term->taxonomy );
+				$term = aioseo()->helpers->getTerm( $term->parent, $term->taxonomy );
 			} else {
 				$term = false;
 			}

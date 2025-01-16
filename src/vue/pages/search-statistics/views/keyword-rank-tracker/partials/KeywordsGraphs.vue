@@ -29,7 +29,7 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 
 const keywordRankTrackerStore = useKeywordRankTrackerStore()
 
-const loading = computed(() => keywordRankTrackerStore.isFetchingStatistics)
+const loading = computed(() => keywordRankTrackerStore.isFetchingStatistics.keywords)
 const areaSeries = computed(() => {
 	const distribution = keywordRankTrackerStore.keywords.statistics?.distribution
 	const distributionIntervals = keywordRankTrackerStore.keywords.statistics?.distributionIntervals

@@ -65,7 +65,7 @@ class Sitemap {
 		$api      = new Api\Request( 'google-search-console/sitemap/sync/', [ 'sitemaps' => aioseo()->sitemap->helpers->getSitemapUrls() ] );
 		$response = $api->request();
 
-		if ( is_wp_error( $response ) ) {
+		if ( is_wp_error( $response ) || empty( $response['data'] ) ) {
 			// If it failed to communicate with the server, try again in a few hours.
 			aioseo()->actionScheduler->scheduleSingle( $this->action, wp_rand( HOUR_IN_SECONDS, 2 * HOUR_IN_SECONDS ), [], true );
 

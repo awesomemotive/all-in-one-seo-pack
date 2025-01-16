@@ -59,7 +59,7 @@ class WritingAssistantPost extends Model {
 	public static function getContentAnalysis( $postId ) {
 		$post = self::getPost( $postId );
 
-		return is_object( $post->content_analysis ) ? (array) $post->content_analysis : [];
+		return ! empty( $post->content_analysis ) && is_object( $post->content_analysis ) ? (array) $post->content_analysis : [];
 	}
 
 	/**

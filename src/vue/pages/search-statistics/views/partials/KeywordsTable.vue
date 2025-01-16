@@ -10,7 +10,7 @@
 			:filters="getFilters"
 			:additional-filters="keywords.additionalFilters"
 			:loading="loading"
-			:initial-page-number="pageNumber"
+			:initial-page-number="keywords.totals.page || 1"
 			:initial-search-term="searchTerm"
 			:initial-items-per-page="settingsStore.settings.tablePagination[changeItemsPerPageSlug]"
 			:show-header="showHeader"
@@ -52,12 +52,25 @@
 
 					<div class="row-actions">
 						<a
+							v-if="!keywordRankTrackerStore.keywords.all.rows.find(r => r.name === row.keyword)"
+							href="#"
+							@click.prevent.exact="maybeAddKeywords([row.keyword])"
+						>
+							{{ strings.addKeyword }}
+						</a>
+
+						<span v-else>
+							{{ strings.alreadyAdded }}
+						</span> |
+
+						<a
 							class="view"
 							:href="viewInGoogleLink(row.keyword)"
 							target="_blank"
 						>
-							{{strings.viewInGoogle}}
-							<svg-external />
+							{{ strings.viewInGoogle }}
+
+							<svg-external/>
 						</a>
 					</div>
 				</div>
@@ -68,7 +81,7 @@
 			</template>
 
 			<template #ctr="{ row }">
-				{{ numbers.compactNumber(row.ctr) }}%
+				{{ parseFloat(row.ctr) }}%
 			</template>
 
 			<template #impressions="{ row }">
@@ -152,6 +165,7 @@ import { ref, computed } from 'vue'
 
 import links from '@/vue/utils/links'
 import {
+	useKeywordRankTrackerStore,
 	useLicenseStore,
 	useRootStore,
 	useSearchStatisticsStore,
@@ -227,7 +241,6 @@ export default {
 
 		const {
 			filter,
-			pageNumber,
 			processAdditionalFilters,
 			processChangeItemsPerPage,
 			processFilterTable,
@@ -247,21 +260,21 @@ export default {
 			changeItemsPerPageSlug,
 			filter,
 			isPreloading,
-			licenseStore  : useLicenseStore(),
+			keywordRankTrackerStore : useKeywordRankTrackerStore(),
+			licenseStore            : useLicenseStore(),
 			links,
 			orderBy,
 			orderDir,
-			pageNumber,
 			processAdditionalFilters,
 			processChangeItemsPerPage,
 			processFilter,
 			processPagination,
 			processSearch,
 			processSort,
-			rootStore     : useRootStore(),
+			rootStore               : useRootStore(),
 			searchStatisticsStore,
 			searchTerm,
-			settingsStore : useSettingsStore(),
+			settingsStore           : useSettingsStore(),
 			showUpsell,
 			tableId,
 			viewInGoogleLink
@@ -331,6 +344,8 @@ export default {
 			interval        : null,
 			sortableColumns : [],
 			strings         : {
+				addKeyword    : __('Add to KRT', td),
+				alreadyAdded  : __('Added to KRT', td),
 				viewInGoogle  : __('View in Google', td),
 				position      : __('Position', td),
 				ctaButtonText : __('Unlock Keyword Tracking', td),
@@ -517,6 +532,14 @@ export default {
 			})
 
 			return Promise.all(promises)
+		},
+		maybeAddKeywords (keywords) {
+			this.keywordRankTrackerStore.parentActiveTab = 'rank-tracker'
+			this.keywordRankTrackerStore.toggleModal({
+				modal           : 'modalOpenAddKeywords',
+				open            : true,
+				relatedKeywords : keywords
+			})
 		}
 	},
 	async mounted () {

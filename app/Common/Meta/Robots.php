@@ -228,7 +228,7 @@ class Robots {
 	 */
 	public function term( $term = null ) {
 		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
-		$term           = is_a( $term, 'WP_Term' ) ? $term : get_queried_object();
+		$term           = is_a( $term, 'WP_Term' ) ? $term : aioseo()->helpers->getTerm();
 
 		// Misbehaving themes/plugins can manipulate the loop and make archives return a post as the queried object.
 		if ( ! is_a( $term, 'WP_Term' ) ) {
@@ -253,7 +253,7 @@ class Robots {
 	 */
 	private function archives() {
 		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
-		$postType       = get_queried_object();
+		$postType       = aioseo()->helpers->getTerm();
 		if ( ! empty( $postType->name ) && $dynamicOptions->searchAppearance->archives->has( $postType->name ) ) {
 			$this->globalValues( [ 'archives', $postType->name ], true );
 		}

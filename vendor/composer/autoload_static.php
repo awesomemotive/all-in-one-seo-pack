@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitdd3358d07e8cb0eaae7958baae3505a5
+class ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -487,6 +487,7 @@ class ComposerStaticInitdd3358d07e8cb0eaae7958baae3505a5
         'AIOSEO\\Plugin\\Pro\\SearchStatistics\\Markers' => __DIR__ . '/../..' . '/app/Pro/SearchStatistics/Markers.php',
         'AIOSEO\\Plugin\\Pro\\SearchStatistics\\Objects' => __DIR__ . '/../..' . '/app/Pro/SearchStatistics/Objects.php',
         'AIOSEO\\Plugin\\Pro\\SearchStatistics\\PageSpeed' => __DIR__ . '/../..' . '/app/Pro/SearchStatistics/PageSpeed.php',
+        'AIOSEO\\Plugin\\Pro\\SearchStatistics\\RelatedKeywords' => __DIR__ . '/../..' . '/app/Pro/SearchStatistics/RelatedKeywords.php',
         'AIOSEO\\Plugin\\Pro\\SearchStatistics\\SearchStatistics' => __DIR__ . '/../..' . '/app/Pro/SearchStatistics/SearchStatistics.php',
         'AIOSEO\\Plugin\\Pro\\SearchStatistics\\Stats\\Keywords' => __DIR__ . '/../..' . '/app/Pro/SearchStatistics/Stats/Keywords.php',
         'AIOSEO\\Plugin\\Pro\\SearchStatistics\\Stats\\Posts' => __DIR__ . '/../..' . '/app/Pro/SearchStatistics/Stats/Posts.php',
@@ -694,10 +695,10 @@ class ComposerStaticInitdd3358d07e8cb0eaae7958baae3505a5
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitdd3358d07e8cb0eaae7958baae3505a5::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitdd3358d07e8cb0eaae7958baae3505a5::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitdd3358d07e8cb0eaae7958baae3505a5::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitdd3358d07e8cb0eaae7958baae3505a5::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit7eb11f5f8ea46ec64cbb126389b52db1::$classMap;
 
         }, null, ClassLoader::class);
     }

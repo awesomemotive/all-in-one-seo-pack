@@ -29,19 +29,24 @@ export const shouldShowMetaBox = (postType = null) => {
 	if (!postEditor.currentPost?.id) {
 		return false
 	}
+
 	const pt       = postEditor.currentPost.postType
 	const taxonomy = postEditor.currentPost.termType
+
 	const showForPost = !!(
 		pt &&
 		'post' === postEditor.currentPost.context &&
 		optionsStore.dynamicOptions.searchAppearance.postTypes[pt] &&
 		optionsStore.dynamicOptions.searchAppearance.postTypes[pt]?.advanced?.showMetaBox
 	)
+
 	const showForTerm = !!(
 		taxonomy &&
 		'term' === postEditor.currentPost.context &&
-		optionsStore.dynamicOptions.searchAppearance.taxonomies[taxonomy] &&
-		optionsStore.dynamicOptions.searchAppearance.taxonomies[taxonomy]?.advanced?.showMetaBox
+		(
+			optionsStore.dynamicOptions.searchAppearance.taxonomies[taxonomy] &&
+			optionsStore.dynamicOptions.searchAppearance.taxonomies[taxonomy]?.advanced?.showMetaBox
+		)
 	)
 
 	return showForPost || showForTerm

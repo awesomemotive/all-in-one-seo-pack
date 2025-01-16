@@ -112,7 +112,7 @@ class Block {
 			return $terms;
 		}
 
-		$term = get_term( $this->primaryTerm[ $taxonomy ] );
+		$term = aioseo()->helpers->getTerm( $this->primaryTerm[ $taxonomy ] );
 		if ( is_a( $term, 'WP_Term' ) ) {
 			$terms[] = $term;
 		}
@@ -134,6 +134,6 @@ class Block {
 			return $term;
 		}
 
-		return get_term( $this->primaryTerm[ $taxonomy ], $taxonomy );
+		return aioseo()->helpers->getTerm( $this->primaryTerm[ $taxonomy ], $taxonomy );
 	}
 }

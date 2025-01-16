@@ -188,7 +188,7 @@
 												v-if="keyphrase[0] !== postEditorStore.currentPost.keyphrases.focus.keyphrase.toLowerCase()"
 											>
 												<base-button
-													v-if="index !== removingAdditionalKeyphrase && (index === addingAdditionalKeyphrase || !hasAdditionalKeyphrase(keyphrase[0])) && optionsStore.maxAdditionalKeyphrases > postEditorStore.currentPost.keyphrases?.additional?.length"
+													v-if="index !== removingAdditionalKeyphrase && (index === addingAdditionalKeyphrase || !hasAdditionalKeyphrase(keyphrase[0])) && postEditorStore.currentPost.maxAdditionalKeyphrases > postEditorStore.currentPost.keyphrases?.additional?.length"
 													type="gray"
 													size="medium"
 													@click="addAdditionalKeyphrase(keyphrase[0], index)"
@@ -197,7 +197,7 @@
 													{{ strings.addAdditionalKeyphrase }}
 												</base-button>
 
-												<core-tooltip v-if="index !== removingAdditionalKeyphrase && (index === addingAdditionalKeyphrase || !hasAdditionalKeyphrase(keyphrase[0])) && optionsStore.maxAdditionalKeyphrases <= postEditorStore.currentPost.keyphrases?.additional?.length">
+												<core-tooltip v-if="index !== removingAdditionalKeyphrase && (index === addingAdditionalKeyphrase || !hasAdditionalKeyphrase(keyphrase[0])) && postEditorStore.currentPost.maxAdditionalKeyphrases <= postEditorStore.currentPost.keyphrases?.additional?.length">
 													<base-button
 														type="gray"
 														size="medium"
@@ -426,7 +426,7 @@ export default {
 				maxAmountReached : sprintf(
 					// Translators: 1 - Number of maximum keywords.
 					__('You have reached the maximum of %1$s additional keyphrases.', td),
-					this.optionsStore.maxAdditionalKeyphrases
+					this.postEditorStore.currentPost.maxAdditionalKeyphrases
 				)
 			}
 		}
@@ -642,7 +642,7 @@ export default {
 			return 79 < score ? 'score-green' : (49 < score ? 'score-orange' : (0 < score ? 'score-red' : 'score-none'))
 		},
 		async addAdditionalKeyphrase (keyphrase, index) {
-			if (this.optionsStore.maxAdditionalKeyphrases <= this.postEditorStore.currentPost.keyphrases?.additional?.length) {
+			if (this.postEditorStore.currentPost.maxAdditionalKeyphrases <= this.postEditorStore.currentPost.keyphrases?.additional?.length) {
 				return
 			}
 

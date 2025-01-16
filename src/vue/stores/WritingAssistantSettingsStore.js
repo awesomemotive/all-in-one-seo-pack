@@ -18,35 +18,38 @@ export const useWritingAssistantSettingsStore = defineStore('WritingAssistantSet
 			return state.updating.userOptions
 		},
 		getCountriesOptions : (state) => {
-			const countries = []
-			if (!state.seoBoost.userOptions?.country_list) {
-				return countries
+			const countries     = state.seoBoost.userOptions?.countries || state.seoBoost.userOptions?.country_list || []
+			const searchEngines = state.seoBoost.userOptions?.searchEngines || state.seoBoost.userOptions?.search_engine_list || []
+			if (!countries || !searchEngines) {
+				return []
 			}
 
-			Object.keys(state.seoBoost.userOptions?.country_list).forEach(function (key) {
-				countries.push({
-					label : state.seoBoost.userOptions?.country_list[key] + ' (' + state.seoBoost.userOptions?.search_engine_list[key] + ')',
+			const countriesOptions = []
+			Object.keys(countries).forEach(function (key) {
+				countriesOptions.push({
+					label : countries[key] + ' (' + searchEngines[key] + ')',
 					value : key
 				})
 			})
-			return countries
+			return countriesOptions
 		},
 		userCountryOption : (state) => {
 			return state.getCountriesOptions.find(option => option.value === state.seoBoost.userOptions.country) || []
 		},
 		getLanguagesOptions : (state) => {
-			const languages = []
-			if (!state.seoBoost.userOptions?.language_list) {
-				return languages
+			const languages = state.seoBoost.userOptions?.languages || state.seoBoost.userOptions?.language_list || []
+			if (!languages) {
+				return []
 			}
 
-			Object.keys(state.seoBoost.userOptions?.language_list).forEach(function (key) {
-				languages.push({
-					label : state.seoBoost.userOptions?.language_list[key],
+			const languagesOptions = []
+			Object.keys(languages).forEach(function (key) {
+				languagesOptions.push({
+					label : languages[key],
 					value : key
 				})
 			})
-			return languages
+			return languagesOptions
 		},
 		userLanguageOption : (state) => {
 			return state.getLanguagesOptions.find(option => option.value === state.seoBoost.userOptions.language) || []

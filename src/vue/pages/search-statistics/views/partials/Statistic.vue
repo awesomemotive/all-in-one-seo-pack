@@ -1,9 +1,7 @@
 <template>
 	<div
 		class="statistic"
-		:class="[{
-			'no-margin' : !showCurrent
-		}, `statistic-${type}`]"
+		:class="`statistic-${type}`"
 	>
 		<span v-if="showCurrent && (total || showZeroValues)">
 			<span
@@ -202,13 +200,12 @@ export default {
 
 	.aioseo-tooltip {
 		margin-left: 0;
-		justify-content: flex-end;
 	}
 
 	&-direction {
 		display: flex;
 		align-items: center;
-		margin-left: 12px;
+		row-gap: 12px;
 		font-weight: 700;
 
 		&.up {
@@ -225,16 +222,6 @@ export default {
 		font-weight: 700;
 		font-size: 14px;
 		line-height: 22px;
-	}
-
-	&.no-margin {
-		.aioseo-tooltip {
-			justify-content: center;
-		}
-
-		.statistic-direction {
-			margin-left: 0;
-		}
 	}
 
 	svg {

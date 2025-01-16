@@ -105,6 +105,7 @@ defineProps({
 <style lang="scss">
 .aioseo-app,
 .aioseo-blc-app,
+.aioseo-duplicator-app,
 #aioseo-user-profile-tab {
 	.aioseo-cta {
 		.aioseo-cta-background {

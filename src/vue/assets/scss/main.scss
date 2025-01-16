@@ -380,6 +380,38 @@ body[class*="page_aioseo"] {
 	}
 }
 
+.post-type-product {
+	#aioseo_original {
+		width: 10%;
+	}
+
+	@media (min-width: 768px) and (max-width: 1024px) {
+
+		#name {
+			width: 19%;
+		}
+
+		#sku {
+			width: 12%;
+		}
+
+		#is_in_stock {
+			width: 5ch;
+		}
+
+		#price {
+			width: 8ch;
+		}
+
+		#date {
+			width: 18%;
+		}
+	}
+	
+	
+}
+
+
 .column-aioseo-details {
 	position: relative;
 	width: 20%;

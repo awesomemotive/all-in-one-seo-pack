@@ -90,7 +90,7 @@ trait WpUri {
 	 * @return string $url The canonical URL.
 	 */
 	public function canonicalUrl() {
-		$queriedObject = get_queried_object();
+		$queriedObject = get_queried_object(); // Don't use our getTerm helper here.
 		$hash          = md5( wp_json_encode( $queriedObject ?? [] ) );
 
 		static $url = [];

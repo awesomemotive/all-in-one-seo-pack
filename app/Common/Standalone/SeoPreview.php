@@ -134,7 +134,7 @@ class SeoPreview {
 			return array_merge( $data, aioseo()->standalone->buddyPress->getVueDataSeoPreview() );
 		}
 
-		$queriedObject = get_queried_object();
+		$queriedObject = get_queried_object(); // Don't use the getTerm helper here.
 		$templateType  = aioseo()->helpers->getTemplateType();
 		if (
 			'taxonomy' === $templateType ||

@@ -142,6 +142,17 @@ class Root {
 			$indexes[] = $this->buildIndex( 'date', $result[0]->amountOfUrls );
 		}
 
+		if (
+			aioseo()->helpers->isWooCommerceActive() &&
+			in_array( 'product_attributes', aioseo()->sitemap->helpers->includedTaxonomies(), true )
+		) {
+			$productAttributes = aioseo()->sitemap->content->productAttributes( true );
+
+			if ( ! empty( $productAttributes ) ) {
+				$indexes[] = $this->buildIndex( 'product_attributes', $productAttributes );
+			}
+		}
+
 		if ( isset( aioseo()->standalone->buddyPress->sitemap ) ) {
 			$indexes = array_merge( $indexes, aioseo()->standalone->buddyPress->sitemap->indexes() );
 		}

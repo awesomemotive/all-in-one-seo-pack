@@ -53,7 +53,7 @@ class Localization {
 		$elementId   = $entryId;
 		$elementType = 'post_' . $objectName;
 		if ( 'term' === $objectType ) {
-			$term        = get_term( $entryId, $objectName );
+			$term        = aioseo()->helpers->getTerm( $entryId, $objectName );
 			$elementId   = $term->term_taxonomy_id;
 			$elementType = 'tax_' . $objectName;
 		}
@@ -209,7 +209,7 @@ class Localization {
 		}
 
 		// Now, we must also check for noindex.
-		$term = get_term( $termId );
+		$term = aioseo()->helpers->getTerm( $termId );
 		if ( ! is_a( $term, 'WP_Term' ) ) {
 			return true;
 		}

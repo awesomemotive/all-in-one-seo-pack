@@ -63,7 +63,7 @@
 			</template>
 
 			<template #ctr="{ row }">
-				{{ row.ctr }}%
+				{{ parseFloat(row.ctr) }}%
 			</template>
 
 			<template #impressions="{ row }">

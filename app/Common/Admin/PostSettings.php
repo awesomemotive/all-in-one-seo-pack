@@ -50,7 +50,7 @@ class PostSettings {
 		// Add metabox.
 		add_action( 'add_meta_boxes', [ $this, 'addPostSettingsMetabox' ] );
 
-		// Add metabox to terms on init hook.
+		// Add metabox (upsell) to terms on init hook.
 		add_action( 'init', [ $this, 'init' ], 1000 );
 
 		// Save metabox.

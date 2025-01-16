@@ -117,7 +117,7 @@ class Context {
 	 * @return array The context data.
 	 */
 	public function term() {
-		$term = get_queried_object();
+		$term = aioseo()->helpers->getTerm();
 		if ( ! $term ) {
 			return [
 				'name'        => '',

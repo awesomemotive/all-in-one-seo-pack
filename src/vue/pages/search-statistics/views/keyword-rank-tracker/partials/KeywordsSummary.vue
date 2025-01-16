@@ -24,6 +24,13 @@
 				:class="{'keyword-rank-tracker-summary__vision__body--invisible' : loading && 'keywords' !== vision.name}"
 			>
 				{{ totals[vision.name] }}
+
+				<statistic
+					v-if="keywordRankTrackerStore.keywords.statistics?.difference?.[vision.name]"
+					:show-current="false"
+					:type="vision.name"
+					:difference="Number(keywordRankTrackerStore.keywords.statistics.difference[vision.name])"
+				/>
 			</div>
 		</div>
 	</div>
@@ -40,6 +47,7 @@ import numbers from '@/vue/utils/numbers'
 
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
+import Statistic from '../../partials/Statistic'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 
 import { __, sprintf } from '@wordpress/i18n'
@@ -91,8 +99,9 @@ const visions = [
 	}
 ]
 
-const loading = computed(() => keywordRankTrackerStore.isFetchingStatistics)
-const totals  = computed(() => {
+const loading = computed(() => keywordRankTrackerStore.isFetchingStatistics.keywords)
+
+const totals = computed(() => {
 	const rows = keywordRankTrackerStore.keywords.all.rows.filter(r => r.statistics)
 
 	const clicks = rows.length
@@ -148,6 +157,7 @@ const totals  = computed(() => {
 	&__vision__body {
 		align-items: center;
 		color: $black2-hover;
+		column-gap: 10px;
 		display: flex;
 		font-size: 28px;
 		font-weight: 700;

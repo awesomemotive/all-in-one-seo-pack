@@ -143,20 +143,27 @@ trait Assets {
 
 			$urls[ $url ] = true;
 
-			$res .= '<link rel="modulepreload" href="' . $url . "\">\n";
+			$res .= '<link rel="modulepreload" href="' . esc_attr( $url ) . "\">\n";
 		}
+
+		$allowedHtml = [
+			'link' => [
+				'rel'  => [],
+				'href' => []
+			]
+		];
 
 		if ( ! empty( $res ) ) {
 			if ( ! function_exists( 'wp_enqueue_script_module' ) ) {
-				add_action( 'admin_head', function () use ( &$res ) {
-					echo $res; // phpcs:ignore
+				add_action( 'admin_head', function () use ( &$res, $allowedHtml ) {
+					echo wp_kses( $res, $allowedHtml );
 				} );
-				add_action( 'wp_head', function () use ( &$res ) {
-					echo $res; // phpcs:ignore
+				add_action( 'wp_head', function () use ( &$res, $allowedHtml ) {
+					echo wp_kses( $res, $allowedHtml );
 				} );
 			} else {
-				add_action( 'admin_print_footer_scripts', function () use ( &$res ) {
-					echo $res; // phpcs:ignore
+				add_action( 'admin_print_footer_scripts', function () use ( &$res, $allowedHtml ) {
+					echo wp_kses( $res, $allowedHtml );
 				}, 1000 );
 			}
 		}
@@ -486,7 +493,7 @@ trait Assets {
 			return $this->shouldLoadDevScripts;
 		}
 
-		set_error_handler( function() {} );
+		set_error_handler( function() {} ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler
 		$connection = fsockopen( $this->domain, $this->port ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 		restore_error_handler();
 

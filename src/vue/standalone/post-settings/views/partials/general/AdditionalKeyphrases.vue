@@ -37,7 +37,7 @@
 		/>
 
 		<base-button
-			v-if="rootStore.isPro && licenseStore.license.isActive && optionsStore.maxAdditionalKeyphrases > postEditorStore.currentPost.keyphrases?.additional?.length"
+			v-if="rootStore.isPro && licenseStore.license.isActive && postEditorStore.currentPost.maxAdditionalKeyphrases > postEditorStore.currentPost.keyphrases?.additional?.length"
 			id="add-additional-keyphrase"
 			class="add-keyphrase gray medium"
 			@click="addKeyphraseEv"
@@ -46,7 +46,7 @@
 			{{ strings.addKeyphrase }}
 		</base-button>
 
-		<core-tooltip v-if="rootStore.isPro && licenseStore.license.isActive && optionsStore.maxAdditionalKeyphrases <= postEditorStore.currentPost.keyphrases?.additional?.length">
+		<core-tooltip v-if="rootStore.isPro && licenseStore.license.isActive && postEditorStore.currentPost.maxAdditionalKeyphrases <= postEditorStore.currentPost.keyphrases?.additional?.length">
 			<base-button
 				id="add-additional-keyphrase"
 				class="add-keyphrase gray medium"
@@ -85,8 +85,7 @@ import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	usePostEditorStore,
-	useRootStore,
-	useOptionsStore
+	useRootStore
 } from '@/vue/stores'
 
 import TruSeo from '@/vue/plugins/tru-seo'
@@ -108,7 +107,6 @@ export default {
 			licenseStore    : useLicenseStore(),
 			postEditorStore : usePostEditorStore(),
 			rootStore       : useRootStore(),
-			optionsStore    : useOptionsStore(),
 			truSeo          : new TruSeo()
 		}
 	},
@@ -136,7 +134,7 @@ export default {
 				maxAmountReached : sprintf(
 					// Translators: 1 - Number of maximum keywords.
 					__('You have reached the maximum of %1$s additional keyphrases.', td),
-					this.optionsStore.maxAdditionalKeyphrases
+					this.postEditorStore.currentPost.maxAdditionalKeyphrases
 				)
 			}
 		}
@@ -174,7 +172,7 @@ export default {
 			}, 300)
 		},
 		addKeyphraseEv () {
-			if (this.optionsStore.maxAdditionalKeyphrases <= this.postEditorStore.currentPost.keyphrases?.additional?.length) {
+			if (this.postEditorStore.currentPost.maxAdditionalKeyphrases <= this.postEditorStore.currentPost.keyphrases?.additional?.length) {
 				return
 			}
 

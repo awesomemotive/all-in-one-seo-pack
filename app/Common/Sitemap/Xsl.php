@@ -48,6 +48,9 @@ class Xsl {
 					$labels          = array_column( wp_list_filter( $bpFakePostTypes, [ 'name' => $sitemapInfo[1] ] ), 'label' );
 					$sitemapName     = ! empty( $labels[0] ) ? $labels[0] : $sitemapName;
 					break;
+				case 'product_attributes':
+					$sitemapName = __( 'Product Attributes', 'all-in-one-seo-pack' );
+					break;
 				default:
 					if ( post_type_exists( $sitemapInfo[1] ) ) {
 						$postTypeObject = get_post_type_object( $sitemapInfo[1] );

@@ -46,8 +46,6 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
-
 import { __ } from '@/vue/plugins/translations'
 import { isBlockCodeEditor } from '@/vue/utils/context'
 

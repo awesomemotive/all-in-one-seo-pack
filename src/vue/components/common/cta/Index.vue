@@ -186,6 +186,7 @@ export default {
 <style lang="scss">
 .aioseo-app,
 .aioseo-blc-app,
+.aioseo-duplicator-app,
 #aioseo-user-profile-tab {
 	.aioseo-cta {
 		margin-top: 30px;

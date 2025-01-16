@@ -49,6 +49,29 @@ class Cache {
 	protected $prefix = '';
 
 	/**
+	 * Class constructor.
+	 *
+	 * @since 4.7.7.1
+	 */
+	public function __construct() {
+		add_action( 'init', [ $this, 'checkIfTableExists' ] ); // This needs to run on init because the DB
+		// class gets instantiated along with the cache class.
+	}
+
+	/**
+	 * Checks if the cache table exists and creates it if it doesn't.
+	 *
+	 * @since 4.7.7.1
+	 *
+	 * @return void
+	 */
+	public function checkIfTableExists() {
+		if ( ! aioseo()->core->db->tableExists( $this->table ) ) {
+			aioseo()->preUpdates->createCacheTable();
+		}
+	}
+
+	/**
 	 * Returns the cache value for a key if it exists and is not expired.
 	 *
 	 * @since 4.1.5
@@ -185,6 +208,9 @@ class Cache {
 	 * @return void
 	 */
 	public function clear() {
+		// Bust the tableExists and columnExists cache.
+		aioseo()->internalOptions->database->installedTables = '';
+
 		if ( $this->prefix ) {
 			$this->clearPrefix( '' );
 
@@ -201,9 +227,6 @@ class Cache {
 		if ( $activationRedirect ) {
 			$this->update( 'activation_redirect', $activationRedirect, 30 );
 		}
-
-		// Bust the tableExists and columnExists cache.
-		aioseo()->internalOptions->database->installedTables = '';
 	}
 
 	/**

@@ -27,6 +27,7 @@ export const FREQUENCY_OPTIONS = [
 ]
 
 export const GLOBAL_STRINGS = {
+	add       : __('Add', td),
 	cancel    : __('Cancel', td),
 	delete    : __('Delete', td),
 	disabled  : __('Disabled', td),

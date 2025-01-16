@@ -113,8 +113,9 @@ abstract class Filters {
 			if ( empty( $addon->installed ) || empty( $addon->basename ) ) {
 				continue;
 			}
-
-			add_filter( 'wp_consent_api_registered_' . $addon->basename, '__return_true' );
+			if ( isset( $addon->basename ) ) {
+				add_filter( 'wp_consent_api_registered_' . $addon->basename, '__return_true' );
+			}
 		}
 	}
 

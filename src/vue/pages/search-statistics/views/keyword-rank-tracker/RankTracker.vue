@@ -11,37 +11,6 @@
 				/>
 			</template>
 		</keyword-rank-tracker-tabs>
-
-		<delete-keywords
-			:modal-open="keywordRankTrackerStore.modalOpenDeleteKeywords"
-			@update:modal-open="keywordRankTrackerStore.toggleModal({modal: 'modalOpenDeleteKeywords', open: $event})"
-		/>
-
-		<add-keywords
-			:modal-open="keywordRankTrackerStore.modalOpenAddKeywords"
-			@update:modal-open="keywordRankTrackerStore.toggleModal({modal: 'modalOpenAddKeywords', open: $event})"
-		/>
-
-		<assign-groups
-			:modal-open="keywordRankTrackerStore.modalOpenAssignGroups"
-			@update:modal-open="keywordRankTrackerStore.toggleModal({modal: 'modalOpenAssignGroups', open: $event})"
-		/>
-
-		<create-group
-			:modal-open="keywordRankTrackerStore.modalOpenCreateGroup"
-			@update:modal-open="keywordRankTrackerStore.toggleModal({modal: 'modalOpenCreateGroup', open: $event})"
-		/>
-
-		<update-group
-			:group="keywordRankTrackerStore.groups.selected[0]"
-			:modal-open="keywordRankTrackerStore.modalOpenUpdateGroup"
-			@update:modal-open="keywordRankTrackerStore.toggleModal({modal: 'modalOpenUpdateGroup', open: $event})"
-		/>
-
-		<delete-groups
-			:modal-open="keywordRankTrackerStore.modalOpenDeleteGroups"
-			@update:modal-open="keywordRankTrackerStore.modalOpenDeleteGroups = $event"
-		/>
 	</div>
 </template>
 
@@ -53,16 +22,10 @@ import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
-import AddKeywords from './partials/pro/AddKeywords'
-import AssignGroups from './partials/pro/AssignGroups'
-import CreateGroup from './partials/pro/CreateGroup'
-import DeleteGroups from './partials/pro/DeleteGroups'
-import DeleteKeywords from './partials/pro/DeleteKeywords'
 import EmptyState from './partials/pro/EmptyState'
 import Groups from './partials/pro/Groups'
 import KeywordRankTrackerTabs from './partials/Tabs'
 import Keywords from './partials/Keywords'
-import UpdateGroup from './partials/pro/UpdateGroup'
 
 import { removeParam } from '@/vue/utils/params'
 
