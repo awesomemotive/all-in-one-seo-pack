@@ -350,7 +350,7 @@ class Helpers {
 	 * @return string       The formatted datetime.
 	 */
 	public function lastModifiedAdditionalPage( $page ) {
-		return gmdate( 'c', strtotime( $page->lastModified ) );
+		return gmdate( 'c', strtotime( (string) $page->lastModified ) );
 	}
 
 	/**

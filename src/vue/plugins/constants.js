@@ -1480,6 +1480,21 @@ export const SCHEMA_GENDER = [
 	{ label: __('Unisex', td), value: 'Unisex' }
 ]
 
+export const SCHEMA_SUGGESTED_MIN_AGE = [
+	{ label: __('Adults', td), value: '13.0' },
+	{ label: __('Kids', td), value: '5.0' },
+	{ label: __('Toddlers', td), value: '1.0' },
+	{ label: __('Infants', td), value: '0.25' },
+	{ label: __('Newborns', td), value: '0.0' }
+]
+
+export const SCHEMA_SUGGESTED_MAX_AGE = [
+	{ label: __('Kids', td), value: '13.0' },
+	{ label: __('Toddlers', td), value: '5.0' },
+	{ label: __('Infants', td), value: '1.0' },
+	{ label: __('Newborns', td), value: '0.25' }
+]
+
 export const SCHEMA_ENERGY_RATING = [
 	{ label: __('N/A', td), value: '' },
 	{ label: 'AAA+', value: 'https://schema.org/EUEnergyEfficiencyCategoryA3Plus' },

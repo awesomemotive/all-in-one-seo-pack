@@ -131,6 +131,13 @@ class Analyze {
 
 		$result = aioseo()->standalone->headlineAnalyzer->getResult( $headline );
 
+		if ( ! $result['analysed'] ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => $result['result']->msg
+			], 400 );
+		}
+
 		$headlines = aioseo()->internalOptions->internal->headlineAnalysis->headlines;
 		$headlines = array_reverse( $headlines, true );
 

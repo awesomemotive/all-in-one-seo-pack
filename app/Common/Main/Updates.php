@@ -231,6 +231,11 @@ class Updates {
 			$this->disableEmailReports();
 		}
 
+		if ( version_compare( $lastActiveVersion, '4.7.9', '<' ) ) {
+			$this->fixSavedHeadlines();
+			$this->rescheduleEmailReport();
+		}
+
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
 
 		// Always clear the cache if the last active version is different from our current.
@@ -1797,5 +1802,39 @@ class Updates {
 
 		// Schedule a notification to remind the user to enable email reports in 2 weeks.
 		aioseo()->actionScheduler->scheduleSingle( 'aioseo_email_reports_enable_reminder', 2 * WEEK_IN_SECONDS );
+	}
+
+	/**
+	 * Cancels all occurrences of the report summary task.
+	 * This is needed in order to force the scheduled date to be reset.
+	 *
+	 * @since 4.7.9
+	 *
+	 * @return void
+	 */
+	private function rescheduleEmailReport() {
+		as_unschedule_all_actions( aioseo()->emailReports->summary->actionHook );
+	}
+
+	/**
+	 * Fixes headlines that could not be analyzed.
+	 *
+	 * @since 4.7.9
+	 *
+	 * @return void
+	 */
+	private function fixSavedHeadlines() {
+		$headlines = aioseo()->internalOptions->internal->headlineAnalysis->headlines;
+		if ( empty( $headlines ) ) {
+			return;
+		}
+
+		foreach ( $headlines as $key => $headline ) {
+			if ( ! json_decode( $headline ) ) {
+				unset( $headlines[ $key ] );
+			}
+		}
+
+		aioseo()->internalOptions->internal->headlineAnalysis->headlines = $headlines;
 	}
 }

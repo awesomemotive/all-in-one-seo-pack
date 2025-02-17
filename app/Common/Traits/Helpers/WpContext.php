@@ -406,7 +406,7 @@ trait WpContext {
 		$acfFields = $this->getAcfContent( $post );
 		foreach ( $keys as $key ) {
 			// Try ACF.
-			if ( isset( $acfFields[ $key ] ) ) {
+			if ( isset( $acfFields[ $key ] ) && is_scalar( $acfFields[ $key ] ) ) {
 				$customFieldContent .= "$acfFields[$key] ";
 				continue;
 			}

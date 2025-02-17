@@ -62,7 +62,7 @@ export default {
 			return this.postEditorStore.newHeadlineAnaylzerData.newResult
 		},
 		newTitle () {
-			return decodeHtml(this.newResult.sentence || '')
+			return decodeHtml(this.postEditorStore.newHeadlineAnaylzerData.newTitle || '')
 		},
 		encodedPostUrl () {
 			return this.postUrl ? encodeURI(this.postUrl) : '#'

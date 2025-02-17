@@ -7,8 +7,8 @@ import { __ } from '@wordpress/i18n'
 		return
 	}
 	const registerPlugin            = wp.plugins.registerPlugin
-	const PluginSidebarMoreMenuItem = wp.editPost.PluginSidebarMoreMenuItem
-	const PluginSidebar             = wp.editPost.PluginSidebar
+	const PluginSidebarMoreMenuItem = window?.wp?.editor?.PluginSidebarMoreMenuItem || window.wp?.editPost?.PluginSidebarMoreMenuItem
+	const PluginSidebar             = window?.wp?.editor?.PluginSidebar || window.wp?.editPost?.PluginSidebar
 	const Fragment                  = wp.element.Fragment
 	const el                        = wp.element.createElement
 

@@ -431,6 +431,13 @@ export default {
 				}
 			}
 		}
+
+		.var-tabs--layout-horizontal-indicator {
+			/*rtl:ignore*/
+			left: 0 !important;
+			/*rtl:ignore*/
+			right: initial !important;
+		}
 	}
 
 	.aioseo-tabs {

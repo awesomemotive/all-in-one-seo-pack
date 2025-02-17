@@ -14,7 +14,17 @@
 							<input class="components-text-control__input" type="text" id="inspector-text-control-0" v-model="newHeadline" />
 						</div>
 					</div>
-					<button type="submit" :disabled="!newHeadline" class="components-button aioseo-headline-analyzer-button">{{ textAnalyze }}</button>
+					<core-alert
+						v-if="analyzeError"
+						type="yellow"
+						size="smaller"
+						class="aioseo-headline-analyzer-alert"
+					>
+						{{ analyzeError }}
+					</core-alert>
+					<button type="submit" :disabled="!newHeadline" class="components-button aioseo-headline-analyzer-button">
+						{{ textAnalyze }}
+					</button>
 				</form>
 			</div>
 		</div>
@@ -23,6 +33,7 @@
 
 <script>
 import Accordion from './partials/Accordion'
+import CoreAlert from '@/vue/components/common/core/alert/Index'
 import { fetchData } from '../assets/js/initAnalyzerData'
 
 import { usePostEditorStore } from '@/vue/stores'
@@ -33,7 +44,8 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	components : {
-		Accordion
+		Accordion,
+		CoreAlert
 	},
 	data () {
 		return {
@@ -41,11 +53,13 @@ export default {
 			textNewHeadlineInputLabel : __('Enter a different headline than your post title to see how it compares.', td),
 			textAnalyze               : __('Analyze Headline', td),
 			newHeadline               : '',
-			postEditorStore           : usePostEditorStore()
+			postEditorStore           : usePostEditorStore(),
+			analyzeError              : false
 		}
 	},
 	methods : {
 		async fetchNewHeadlineData () {
+			this.analyzeError = false
 			let newHeadlineData = null
 
 			// Check if data already exists (memoization).
@@ -54,13 +68,15 @@ export default {
 			if (!newHeadlineData) {
 				// Fetch new headline data.
 				const fetchedData = await fetchData(this.newHeadline)
-				if (fetchedData) {
+				if (fetchedData?.data) {
 					// Save new data to store.
 					this.postEditorStore.updateNewHeadlineAnalyzerData(fetchedData.data, fetchedData.headline)
 					// Show new data.
 					this.postEditorStore.toggleShowNewHeadlineAnalyzerData(true)
 					// Reset the data.
 					this.newHeadline = ''
+				} else {
+					this.analyzeError = fetchedData?.error
 				}
 			} else {
 				const result = {
@@ -81,3 +97,8 @@ export default {
 	}
 }
 </script>
+<style scoped>
+.aioseo-headline-analyzer-alert {
+	margin-bottom: 10px;
+}
+</style>

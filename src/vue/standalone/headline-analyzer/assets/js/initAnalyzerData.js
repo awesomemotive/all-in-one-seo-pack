@@ -42,8 +42,7 @@ export const fetchData = async (newHeadline = null) => {
 			}
 		})
 		.catch(error => {
-			console.error('Couldn\'t fetch score for headline:', error)
-			return null
+			return { error: error.response.body?.message }
 		})
 }
 

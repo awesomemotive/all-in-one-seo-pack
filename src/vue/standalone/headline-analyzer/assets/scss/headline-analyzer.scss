@@ -193,7 +193,8 @@
 
 		.current-score {
 			border-top: 1px solid #E8E8EB;
-			padding-top: 24px;
+			padding-top: 16px;
+			margin: 16px 0;
 			display: flex;
 			align-items: center;
 			flex-direction: row;
@@ -219,7 +220,7 @@
 			}
 
 			p {
-				margin-top: 8px;
+				margin: 0;
 			}
 		}
 	}

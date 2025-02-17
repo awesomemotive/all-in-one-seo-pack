@@ -18,7 +18,7 @@ export async function HeadlineCurrentScore (reload = false) {
 		const headlineAnalyzerButton        = document.getElementById('aioseo-headline-analyzer-sidebar-button')
 		const headlineScore                 = document.getElementById('aioseo-headline-analyzer-sidebar-button-score')
 
-		if (response) {
+		if (response?.data) {
 			const headlineResult = JSON.parse(response.data[Object.keys(response.data)[0]])
 
 			if (!headlineResult) {

@@ -39,6 +39,11 @@ class SeoPreview {
 	 * @since 4.2.8
 	 */
 	public function __construct() {
+		// Allow users to disable SEO Preview.
+		if ( apply_filters( 'aioseo_seo_preview_disable', false ) ) {
+			return;
+		}
+
 		// Hook into `wp` in order to have access to the WP queried object.
 		add_action( 'wp', [ $this, 'init' ], 20 );
 	}

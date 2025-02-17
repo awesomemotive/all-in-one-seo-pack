@@ -28,7 +28,7 @@ class Semrush {
 		if ( false === $keyphrases ) {
 			return new \WP_REST_Response( [
 				'success' => false,
-				'message' => 'Tokens expired and could not be refreshed.'
+				'message' => 'You may have sent too many requests to Semrush. Please wait a few minutes and try again.'
 			], 400 );
 		}
 

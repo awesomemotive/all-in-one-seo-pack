@@ -71,10 +71,6 @@ class HeadlineAnalyzer {
 	public function getResult( $title ) {
 		$result = $this->getHeadlineScore( html_entity_decode( $title ) );
 
-		if ( ! empty( $result->err ) ) {
-			return false;
-		}
-
 		return [
 			'result'   => $result,
 			'analysed' => ! $result->err,

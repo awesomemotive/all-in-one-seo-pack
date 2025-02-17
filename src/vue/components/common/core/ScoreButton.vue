@@ -35,23 +35,11 @@ const buttonId = computed(() => {
 })
 
 const scoreClass = computed(() => {
-	if (!props.showScore) {
+	if (!props.showScore || 0 === props.score) {
 		return 'score-disabled'
 	}
 
-	if (79 < props.score) {
-		return 'score-green'
-	}
-
-	if (49 < props.score) {
-		return 'score-orange'
-	}
-
-	if (0 < props.score) {
-		return 'score-red'
-	}
-
-	return 'score-disabled'
+	return 40 > props.score ? 'score-red' : 70 > props.score ? 'score-orange' : 'score-green'
 })
 </script>
 

@@ -159,13 +159,16 @@ export default {
 
 			this.headline  = null
 			this.headlines = this.analyzerStore.getHeadlineAnalysisResults
-			this.toggleFirstCard()
 
-			this.$nextTick(() => {
-				const keys = Object.keys(this.headlines)
+			if (!this.analyzerStore.analyzeError) {
+				this.toggleFirstCard()
 
-				this.scrollTo('aioseo-headline-result' + this.hashCode(keys[0]))
-			})
+				this.$nextTick(() => {
+					const keys = Object.keys(this.headlines)
+
+					this.scrollTo('aioseo-headline-result' + this.hashCode(keys[0]))
+				})
+			}
 		},
 		startDeleteheadline (headline) {
 			this.closeAllCards()

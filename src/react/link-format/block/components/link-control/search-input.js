@@ -60,6 +60,7 @@ const LinkControlSearchInput = ({
 					__experimentalShowInitialSuggestions={
 						showInitialSuggestions
 					}
+					__nextHasNoMarginBottom={ true }
 					onSubmit={ () => onSelect(selectedSuggestion || { url: value }) }
 				/>
 				<div className="block-editor-link-control__search-actions">

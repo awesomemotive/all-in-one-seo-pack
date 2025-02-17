@@ -20,7 +20,7 @@ class Summary {
 	 *
 	 * @var string
 	 */
-	private $actionHook = 'aioseo_report_summary';
+	public $actionHook = 'aioseo_report_summary';
 
 	/**
 	 * Recipient for the email. Multiple recipients can be separated by a comma.
@@ -52,7 +52,7 @@ class Summary {
 		}
 
 		// No need to keep trying scheduling unless on admin.
-		add_action( 'admin_init', [ $this, 'maybeSchedule' ] );
+		add_action( 'admin_init', [ $this, 'maybeSchedule' ], 20 );
 
 		add_action( $this->actionHook, [ $this, 'cronTrigger' ] );
 	}
@@ -123,8 +123,13 @@ class Summary {
 	 */
 	public function maybeSchedule() {
 		$allowedFrequencies = $this->getAllowedFrequencies();
-		$addToStart         = HOUR_IN_SECONDS * 6; // Add 6 hours after the day starts, so the email is sent at 6 AM.
-		$addToStart         -= aioseo()->helpers->getTimeZoneOffset();
+
+		// Add at least 6 hours after the day starts.
+		$addToStart = HOUR_IN_SECONDS * 6;
+		// Add the timezone offset.
+		$addToStart -= aioseo()->helpers->getTimeZoneOffset();
+		// Add a random time offset to avoid all emails being sent at the same time. 1440 * 3 = 3 days range.
+		$addToStart += aioseo()->helpers->generateRandomTimeOffset( aioseo()->helpers->getSiteDomain( true ), 1440 * 3 ) * MINUTE_IN_SECONDS;
 
 		foreach ( $allowedFrequencies as $frequency => $data ) {
 			aioseo()->actionScheduler->scheduleRecurrent( $this->actionHook, $data['start'] + $addToStart, $data['interval'], compact( 'frequency' ) );

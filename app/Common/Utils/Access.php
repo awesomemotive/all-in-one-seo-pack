@@ -122,7 +122,7 @@ class Access {
 				$roleObject->add_cap( 'aioseo_manage_seo' );
 			}
 
-			if ( function_exists( 'wp_get_current_user' ) && current_user_can( 'edit_posts' ) ) {
+			if ( $roleObject->has_cap( 'edit_posts' ) ) {
 				$postCapabilities = [
 					'aioseo_page_analysis',
 					'aioseo_page_general_settings',

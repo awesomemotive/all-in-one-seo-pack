@@ -251,24 +251,26 @@ trait Strings {
 	 * Strips punctuation from a given string.
 	 *
 	 * @since 4.0.0
+	 * @version 4.7.9 Added the $keepSpaces parameter.
 	 *
 	 * @param  string $string           The string.
 	 * @param  array  $charactersToKeep The characters that can't be stripped (optional).
+	 * @param  bool   $keepSpaces       Whether to keep spaces.
 	 * @return string                   The string without punctuation.
 	 */
-	public function stripPunctuation( $string, $charactersToKeep = [] ) {
+	public function stripPunctuation( $string, $charactersToKeep = [], $keepSpaces = false ) {
 		$characterRegexPattern = '';
 		if ( ! empty( $charactersToKeep ) ) {
 			$characterString       = implode( '', $charactersToKeep );
 			$characterRegexPattern = "(?![$characterString])";
 		}
 
-		$string = aioseo()->helpers->decodeHtmlEntities( $string );
-		$string = preg_replace( "/{$characterRegexPattern}[\p{P}\d+]/u", '', (string) $string );
+		$string = aioseo()->helpers->decodeHtmlEntities( (string) $string );
+		$string = preg_replace( "/{$characterRegexPattern}[\p{P}\d+]/u", '', $string );
 		$string = aioseo()->helpers->encodeOutputHtml( $string );
 
 		// Trim both internal and external whitespace.
-		return preg_replace( '/\s\s+/u', ' ', (string) trim( $string ) );
+		return $keepSpaces ? $string : preg_replace( '/\s\s+/u', ' ', trim( $string ) );
 	}
 
 	/**

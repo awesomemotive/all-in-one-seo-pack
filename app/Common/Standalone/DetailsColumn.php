@@ -262,6 +262,11 @@ class DetailsColumn {
 	 * @return bool Whether the column should be registered.
 	 */
 	public function shouldRegisterColumn( $screen, $postType ) {
+		// Only allow users with the correct permissions to see the column.
+		if ( ! current_user_can( 'aioseo_page_general_settings' ) ) {
+			return false;
+		}
+
 		if ( 'type' === $postType ) {
 			$postType = '_aioseo_type';
 		}

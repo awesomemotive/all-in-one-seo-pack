@@ -403,6 +403,9 @@ export default {
 		pageExists (pageUrl) {
 			return this.getParsedPages().some(({ url }) => url === pageUrl)
 		},
+		findPageIndex (pageUrl) {
+			return this.getParsedPages().findIndex(({ url }) => url === pageUrl)
+		},
 		reset () {
 			this.errors.upload = false
 			this.filename      = ''
@@ -424,7 +427,12 @@ export default {
 					const preparedPage = this.prepareAdditionalPage(page)
 
 					if (preparedPage) {
-						pages.unshift(JSON.stringify(preparedPage))
+						if (this.pageExists(preparedPage.url)) {
+							const index = this.findPageIndex(preparedPage.url)
+							pages[index] = JSON.stringify(preparedPage)
+						} else {
+							pages.unshift(JSON.stringify(preparedPage))
+						}
 					}
 				})
 
@@ -449,10 +457,8 @@ export default {
 				try {
 					if (isUrl(prop)) {
 						const decodedUrl = this.decodeUrl(prop)
-						if (!this.pageExists(decodedUrl)) {
-							preparedPage.url = decodedUrl
-							return
-						}
+						preparedPage.url = decodedUrl
+						return
 					}
 					if (!isNaN(prop) && this.priorityOptionsValues.includes(parseFloat(prop))) {
 						preparedPage.priority.label = preparedPage.priority.value = prop

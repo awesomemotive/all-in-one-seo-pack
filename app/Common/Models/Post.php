@@ -253,6 +253,15 @@ class Post extends Model {
 				$graph->properties->review->rating = $graph->properties->rating->value;
 				unset( $graph->properties->rating->value );
 			}
+
+			// If the graph has audience data, we need to migrate it to the correct one.
+			if (
+				property_exists( $graph, 'id' ) &&
+				preg_match( '/(product|product-review)/', $graph->id ) &&
+				property_exists( $graph->properties, 'audience' )
+			) {
+				$graph->properties->audience = self::migratePostAudienceAgeSchema( $graph->properties->audience );
+			}
 		}
 
 		return $post;
@@ -795,7 +804,62 @@ class Post extends Model {
 		return json_decode( wp_json_encode( $existingOptions ) );
 	}
 
-		/**
+	/**
+	 * Migrates the post's audience age schema data when it is loaded.
+	 * Min age: [0 => newborns, 0.25 => infants, 1 => toddlers, 5 => kids, 13 => adults]
+	 * Max age: [0.25 => newborns, 1 => infants, 5 => toddlers, 13 => kids]
+	 *
+	 * @since 4.7.9
+	 *
+	 * @param  object $audience The audience data.
+	 * @return object
+	 */
+	public static function migratePostAudienceAgeSchema( $audience ) {
+		$ages = [ 0, 0.25, 1, 5, 13 ];
+
+		// converts variable to integer if it's a number otherwise is null.
+		$parsedMinAge = filter_var( $audience->minimumAge, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE );
+		$parsedMaxAge = filter_var( $audience->maximumAge, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE );
+
+		if ( null === $parsedMinAge && null === $parsedMaxAge ) {
+			return $audience;
+		}
+
+		$minAge = is_numeric( $parsedMinAge ) ? $parsedMinAge : 0;
+		$maxAge = is_numeric( $parsedMaxAge ) ? $parsedMaxAge : null;
+
+		// get the minimumAge if available or the nearest bigger one.
+		foreach ( $ages as $age ) {
+			if ( $age >= $minAge ) {
+				$audience->minimumAge = $age;
+				break;
+			}
+		}
+
+		// get the maximumAge if available or the nearest bigger one.
+		foreach ( $ages as $age ) {
+			if ( $age >= $maxAge ) {
+				$maxAge = $age;
+				break;
+			}
+		}
+
+		// makes sure the maximumAge is 13 below
+		if ( null !== $maxAge ) {
+			$audience->maximumAge = 13 < $maxAge ? 13 : $maxAge;
+		}
+
+		// Minimum age 13 is for adults.
+		// If minimumAge is still higher or equal 13 then it's for adults and maximumAge should be empty.
+		if ( 13 <= $audience->minimumAge ) {
+			$audience->minimumAge = 13;
+			$audience->maximumAge = null;
+		}
+
+		return $audience;
+	}
+
+	/**
 	 * Migrates update Korea country code for Person, Product, Event, and JobsPosting schemas.
 	 *
 	 * @since 4.7.1

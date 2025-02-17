@@ -113,4 +113,22 @@ trait DateTime {
 
 		return date( 'Y-m-d H:i:s', $time ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 	}
+
+	/**
+	 * Generates a random (yet unique per identifier) time offset based on a site identifier.
+	 *
+	 * @since 4.7.9
+	 *
+	 * @param  string $identifier       Data such as the site URL, site ID, or a combination of both to serve as the seed for generating a random time offset.
+	 * @param  int    $maxOffsetMinutes The range for the random offset in minutes.
+	 * @return int                      The random (yet unique per identifier) time offset in minutes.
+	 */
+	public function generateRandomTimeOffset( $identifier, $maxOffsetMinutes ) {
+		$hash = md5( strval( $identifier ) );
+
+		// Convert part of the hash to an integer.
+		$hashInteger = hexdec( substr( $hash, 0, 8 ) );
+
+		return $hashInteger % $maxOffsetMinutes;
+	}
 }

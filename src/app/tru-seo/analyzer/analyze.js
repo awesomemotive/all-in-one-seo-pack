@@ -7,8 +7,7 @@ import {
 	calculateScore,
 	hasAdditionalKeyphrases,
 	hasFocusKeyphrase,
-	hasKeyphrases,
-	parseTags
+	hasKeyphrases
 } from './utils'
 
 const supportedLanguages = [
@@ -44,16 +43,22 @@ class TruSeoAnalyzer {
 	aioseo                = {}
 	locale                = null
 	domain                = null
-	globalSeparator       = null
 	dispatch              = []
 
 	/**
 	 * Runs the content analysis.
 	 *
-	 * @param {int}    postId   The Post ID.
-	 * @param {Object} postData The postData of the currentPost.
-	 * @param {string} content  The post content.
-	 * @param {string} slug     The post slug.
+	 * @param {int}    postId   	  		 The Post ID.
+	 * @param {Object} postData 	  		 The postData of the currentPost.
+	 * @param {string} content  	  		 The post content.
+	 * @param {string} slug     	  		 The post slug.
+	 * @param {string} postEditedTitle		 The post live title.
+	 * @param {Object} aioseo 		  		 The aioseo object.
+	 * @param {Object} aioseoGlobals  		 The aioseoGlobals object.
+	 * @param {string} postTitle      		 The post title.
+	 * @param {string} postParsedTitle		 The post parsed title.
+	 * @param {string} postDescription 		 The post description.
+	 * @param {string} postParsedDescription The post parsed description.
 	 *
 	 * @returns {null} Returns nothing.
 	 */
@@ -65,7 +70,11 @@ class TruSeoAnalyzer {
 			slug,
 			postEditedTitle,
 			aioseo,
-			aioseoGlobals
+			aioseoGlobals,
+			postTitle,
+			postParsedTitle,
+			postDescription,
+			postParsedDescription
 		}
 	) {
 		let locale = aioseo.user.locale || 'en_US'
@@ -79,10 +88,10 @@ class TruSeoAnalyzer {
 		this.postContent           = removeScriptTag(content || '')
 		this.postParsedContent     = decodeSpecialChars(content || '')
 		this.postSlug              = slug
-		this.postTitle             = postData.title || postData.metaDefaults.title || '#post_title'
-		this.postParsedTitle       = decodeSpecialChars(parseTags(this.postTitle, this.aioseo.tags))
-		this.postDescription       = postData.description || postData.metaDefaults.description
-		this.postParsedDescription = decodeSpecialChars(parseTags(this.postDescription, this.aioseo.tags))
+		this.postTitle             = postTitle
+		this.postParsedTitle       = decodeSpecialChars(postParsedTitle)
+		this.postDescription       = postDescription
+		this.postParsedDescription = decodeSpecialChars(postParsedDescription)
 		this.keyphrases            = (postData.keyphrases) ? postData.keyphrases : null
 		this.postEditedTitle       = decodeSpecialChars(postEditedTitle)
 		this.locale                = locale

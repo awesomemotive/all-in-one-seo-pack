@@ -1181,7 +1181,7 @@ class Tags {
 	 *
 	 * @param  string $string The string to parse customs fields out of.
 	 * @param  int    $postId The page or post ID.
-	 * @return mixed          The new title.
+	 * @return string         The new title.
 	 */
 	public function parseCustomFields( $string, $postId = 0 ) {
 		$pattern = '/' . $this->denotationChar . 'custom_field-([a-zA-Z0-9_-]+)/im';
@@ -1266,25 +1266,31 @@ class Tags {
 			return $string;
 		}
 
+		$postId = get_queried_object() ?? $postId;
+
 		foreach ( $matches as $match ) {
-			$str = '';
+			$value = $match[0] ?? '';
 			if ( ! empty( $match[1] ) ) {
 				if ( function_exists( 'get_field' ) ) {
-					$str = get_field( $match[1], get_queried_object() ?? $postId );
-				}
-
-				if ( empty( $str ) ) {
-					global $post;
-					if ( ! empty( $post ) ) {
-						$str = get_post_meta( $post->ID, $match[1], true );
+					$value = get_field( $match[1], $postId );
+					if ( ! empty( $value['url'] ) && ! empty( $value['title'] ) ) {
+						$value = "<a href='{$value['url']}'>{$value['title']}</a>";
+					}
+					if ( empty( $value ) ) {
+						$value = aioseo()->helpers->getAcfFlexibleContentField( $match[1], $postId );
 					}
 				}
-			} else {
-				$str = $match[0];
+
+				if ( empty( $value ) ) {
+					global $post;
+					if ( ! empty( $post ) ) {
+						$value = get_post_meta( $post->ID, $match[1], true );
+					}
+				}
 			}
 
-			$str = wp_strip_all_tags( $str );
-			$string = str_replace( $match[0], '%|%' . $str, $string );
+			$value  = is_scalar( $value ) ? wp_strip_all_tags( $value ) : '';
+			$string = str_replace( $match[0], '%|%' . $value, $string );
 		}
 
 		return $string;

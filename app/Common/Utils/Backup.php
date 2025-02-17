@@ -46,13 +46,13 @@ class Backup {
 		$backupTime = time();
 		$options    = $this->getOptions();
 
-		update_option( $this->optionsName . '_' . $backupTime, wp_json_encode( $options ) );
+		update_option( $this->optionsName . '_' . $backupTime, wp_json_encode( $options ), 'no' );
 
 		$backups = $this->all();
 
 		$backups[] = $backupTime;
 
-		update_option( $this->optionsName, wp_json_encode( $backups ) );
+		update_option( $this->optionsName, wp_json_encode( $backups ), 'no' );
 	}
 
 	/**
@@ -73,7 +73,7 @@ class Backup {
 			}
 		}
 
-		update_option( $this->optionsName, wp_json_encode( array_values( $backups ) ) );
+		update_option( $this->optionsName, wp_json_encode( array_values( $backups ) ), 'no' );
 	}
 
 	/**

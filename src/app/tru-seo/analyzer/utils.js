@@ -48,28 +48,10 @@ const hasAdditionalKeyphrases = keyphrases => {
 	)
 }
 
-const parseTags = (string, tags) => {
-	if (!string) {
-		return string
-	}
-
-	tags.forEach(tag => {
-		// Pattern explained: Exact match of tag, not followed by any additional letter, number or underscore.
-		// This allows us to have tags like: #post_link and #post_link_alt
-		// and it will always replace the correct one.
-		const regex = new RegExp(`#${tag.id}(?![a-zA-Z0-9_])`, 'g')
-
-		string = string.replace(regex, tag.value)
-	})
-
-	return string.replace(/<(?:.|\n)*?>/gm, ' ').replace(/\s/g, ' ')
-}
-
 export {
 	calculateErrors,
 	calculateScore,
 	hasAdditionalKeyphrases,
 	hasFocusKeyphrase,
-	hasKeyphrases,
-	parseTags
+	hasKeyphrases
 }

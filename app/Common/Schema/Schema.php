@@ -83,11 +83,12 @@ class Schema {
 	 * @var array
 	 */
 	public $nullableFields = [
-		'price',       // Needs to be 0 if free for Software Application.
-		'ratingValue', // Needs to be 0 for 0 star ratings.
-		'value',       // Needs to be 0 if free for product shipping details.
-		'minValue',    // Needs to be 0 for product delivery time.
-		'maxValue'     // Needs to be 0 for product delivery time.
+		'price',          // Needs to be 0 if free for Software Application.
+		'ratingValue',    // Needs to be 0 for 0 star ratings.
+		'value',          // Needs to be 0 if free for product shipping details.
+		'minValue',       // Needs to be 0 for product delivery time.
+		'maxValue',       // Needs to be 0 for product delivery time.
+		'suggestedMinAge' // Needs to be 0 for PeopleAudience minimum age.
 	];
 
 	/**

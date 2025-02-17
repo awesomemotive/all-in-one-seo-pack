@@ -446,7 +446,7 @@ export default {
 				return __('You have exceeded the limit for requests. Please try again later.', td)
 			}
 
-			return __('An error occurred while fetching keyphrases. Please try again later.', td)
+			return this.semrushStore?.error || __('An error occurred while fetching keyphrases. Please try again later.', td)
 		}
 	},
 	methods : {

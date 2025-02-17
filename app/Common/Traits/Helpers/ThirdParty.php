@@ -102,10 +102,13 @@ trait ThirdParty {
 			return is_shop();
 		}
 
+		// Prevent non-numeric id.
+		$id = is_numeric( $id ) ? (int) $id : 0;
+
 		// phpcs:disable HM.Security.ValidatedSanitizedInput, HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 		$id = ! $id && ! empty( $_GET['post'] )
 			? (int) sanitize_text_field( wp_unslash( $_GET['post'] ) )
-			: (int) $id;
+			: $id;
 		// phpcs:enable
 
 		return $id && wc_get_page_id( 'shop' ) === $id;
@@ -391,7 +394,6 @@ trait ThirdParty {
 			'image',
 			'gallery',
 			'link',
-			// 'taxonomy',
 		];
 
 		$types        = wp_parse_args( $types, $allowedTypes );
@@ -451,6 +453,58 @@ trait ThirdParty {
 		}
 
 		return $acfFields;
+	}
+
+	/**
+	 * Retrieves the ACF Flexible Content field value for a given post.
+	 *
+	 * @since 4.7.9
+	 *
+	 * @param  string     $name The name of the field.
+	 * @param  int|object $post The post ID or object.
+	 * @return string           The field value.
+	 */
+	public function getAcfFlexibleContentField( $name, $post ) {
+		$output = '';
+		if ( ! function_exists( 'acf_get_raw_field' ) || ! function_exists( 'acf_get_field' ) ) {
+			return $output;
+		}
+
+		$parentTrace = [];
+		$field       = acf_get_raw_field( $name ) ?? [];
+		while ( ! empty( $field['parent'] ) && ! empty( $field['parent_layout'] ) ) {
+			$parentField   = acf_get_field( $field['parent'] );
+			$parentTrace[] = $parentField['name'] ?? '';
+			$field         = $parentField;
+		}
+
+		$parentTrace = array_filter( $parentTrace );
+		if ( empty( $parentTrace ) ) {
+			return $output;
+		}
+
+		$parentTrace        = array_reverse( $parentTrace );
+		$parentName         = array_shift( $parentTrace );
+		$highestParentField = get_field( $parentName, $post );
+
+		for ( $i = 0; $i <= count( $parentTrace ); $i++ ) {
+			$values = array_filter( array_column( $highestParentField, $name ), 'is_scalar' );
+			if ( $values ) {
+				return implode( ' ', $values );
+			}
+
+			$highestParentField = $highestParentField[0] ?? '';
+			if (
+				! is_array( $highestParentField ) ||
+				! isset( $parentTrace[ $i ] )
+			) {
+				break;
+			}
+
+			$highestParentField = $highestParentField[ $parentTrace[ $i ] ];
+		}
+
+		return $output;
 	}
 
 	/**

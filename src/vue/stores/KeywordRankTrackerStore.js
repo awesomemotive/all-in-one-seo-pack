@@ -422,7 +422,7 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 					endDate    : this.range.end,
 					filter     : 'all',
 					searchTerm : '',
-					limit      : 20
+					limit      : 50
 				})
 				.then(response => {
 					if (response.body.success) {

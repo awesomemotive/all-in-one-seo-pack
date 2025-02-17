@@ -859,7 +859,12 @@ class Content {
 		$wcAttributeTaxonomiesTable = aioseo()->core->db->prefix . 'woocommerce_attribute_taxonomies';
 		$termTaxonomyTable          = aioseo()->core->db->prefix . 'term_taxonomy';
 
-		$selectClause = $count ? 'COUNT(*) as childProductAttributes' : 'tt.term_id, at.frequency, at.priority';
+		$selectClause = 'COUNT(*) as childProductAttributes';
+		if ( ! $count ) {
+			$selectClause = aioseo()->pro ? 'tt.term_id, at.frequency, at.priority' : 'tt.term_id';
+		}
+
+		$joinClause   = aioseo()->pro ? "LEFT JOIN {$aioseoTermsTable} AS at ON tt.term_id = at.term_id" : '';
 		$whereClause  = aioseo()->pro ? 'AND (at.robots_noindex IS NULL OR at.robots_noindex = 0)' : '';
 		$limitClause  = $count ? '' : 'LIMIT 50000';
 
@@ -867,7 +872,7 @@ class Content {
 			"SELECT {$selectClause}
 			FROM {$termTaxonomyTable} AS tt
 			JOIN {$wcAttributeTaxonomiesTable} AS wat ON tt.taxonomy = CONCAT('pa_', wat.attribute_name)
-			LEFT JOIN {$aioseoTermsTable} AS at ON tt.term_id = at.term_id
+			{$joinClause}
 			WHERE wat.attribute_public = 1
 				{$whereClause}
 				AND tt.count > 0

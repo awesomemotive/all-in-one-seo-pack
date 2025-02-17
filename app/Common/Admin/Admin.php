@@ -715,14 +715,6 @@ class Admin {
 			];
 		}
 
-		if ( current_user_can( $this->getPageRequiredCapability( 'aioseo-search-statistics' ) ) ) {
-			$submenu['index.php'][] = [
-				esc_html__( 'SEO Statistics', 'all-in-one-seo-pack' ),
-				$this->getPageRequiredCapability( 'aioseo-search-statistics' ),
-				admin_url( '/admin.php?page=aioseo-search-statistics' )
-			];
-		}
-
 		if ( current_user_can( $this->getPageRequiredCapability( 'aioseo-search-appearance' ) ) ) {
 			$submenu['users.php'][] = [
 				esc_html__( 'Author SEO', 'all-in-one-seo-pack' ),

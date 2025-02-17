@@ -586,12 +586,28 @@ class Settings {
 
 				// Generate content to CSV or JSON.
 				if ( ! empty( $posts ) ) {
+					// Change the order of keys so the post_title shows up at the beginning.
+					$data = [];
+					foreach ( $posts as $p ) {
+						$item = [
+							'id'         => '',
+							'post_id'    => '',
+							'post_title' => '',
+							'title'      => ''
+						];
+
+						$p['title']      = aioseo()->helpers->decodeHtmlEntities( $p['title'] );
+						$p['post_title'] = aioseo()->helpers->decodeHtmlEntities( $p['post_title'] );
+
+						$data[] = array_merge( $item, $p );
+					}
+
 					if ( 'csv' === $typeFile ) {
-						$contentPostType = self::dataToCsv( $posts );
+						$contentPostType = self::dataToCsv( $data );
 					}
 
 					if ( 'json' === $typeFile ) {
-						$contentPostType['postOptions']['content']['posts'] = $posts;
+						$contentPostType['postOptions']['content']['posts'] = $data;
 					}
 				}
 			}
@@ -616,7 +632,7 @@ class Settings {
 	 */
 	private static function getPostTypesData( $postOptions, $notAllowedFields = [] ) {
 		$posts = aioseo()->core->db->start( 'aioseo_posts as ap' )
-			->select( 'ap.*' )
+			->select( 'ap.*, p.post_title' )
 			->join( 'posts as p', 'ap.post_id = p.ID' )
 			->whereIn( 'p.post_type', $postOptions )
 			->orderBy( 'ap.id' )

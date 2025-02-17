@@ -335,7 +335,7 @@ class Mention {
 			return
 		}
 
-		const regex = new RegExp(`${this.options.mentionDenotationChars.join('|')}[A-Za-z_-]+`, 'g')
+		const regex = new RegExp(`${this.options.mentionDenotationChars.join('|')}[A-Za-z0-9_-]+`, 'g')
 		const matches = node.data.match(regex)
 
 		if (matches && 0 < matches.length) {

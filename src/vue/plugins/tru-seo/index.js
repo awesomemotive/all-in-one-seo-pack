@@ -7,6 +7,7 @@ import {
 
 import { markRaw } from 'vue'
 
+import { useTags } from '@/vue/composables/Tags'
 import { sanitizeString } from '@/vue/utils/strings'
 import { getPostEditedContent } from '@/vue/plugins/tru-seo/components/postContent'
 import { getPostEditedPermalink } from '@/vue/plugins/tru-seo/components/postPermalink'
@@ -66,14 +67,16 @@ class TruSeo {
 			separator : sanitizeString(optionsStore.options.searchAppearance.global.separator)
 		}
 
-		const rootStore = useRootStore()
-		const tagsStore = useTagsStore()
-		const tags = tagsStore.tags.map(t => {
+		const { parseTags } = useTags({ separator: aioseoGlobals.separator })
+
+		const rootStore    = useRootStore()
+		const tagsStore    = useTagsStore()
+		const tags         = tagsStore.tags.map(t => {
 			return undefined !== tagsStore.liveTags[t.id] && t.value !== tagsStore.liveTags[t.id]
 				? { ...t, value: tagsStore.liveTags[t.id] }
 				: t
 		})
-		const aioseo    = {
+		const aioseo       = {
 			...markRaw(rootStore.aioseo),
 			tags        : markRaw(tags),
 			currentPost : markRaw(postEditorStore.currentPost)
@@ -84,8 +87,12 @@ class TruSeo {
 			content,
 			aioseo,
 			slug,
-			postEditedTitle : getPostEditedTitle(),
-			aioseoGlobals
+			aioseoGlobals,
+			postEditedTitle       : getPostEditedTitle(),
+			postTitle             : postData.title || postData.metaDefaults.title || '#post_title',
+			postParsedTitle       : parseTags(postData.title || postData.metaDefaults.title || '#post_title'),
+			postDescription       : postData.description || postData.metaDefaults.description,
+			postParsedDescription : parseTags(postData.description || postData.metaDefaults.description)
 		}))
 
 		let dispatch = []

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import http from '@/vue/utils/http'
-import links from '@/vue/utils/links'
+import linksUtil from '@/vue/utils/links'
 
 import {
 	usePostEditorStore
@@ -89,7 +89,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 	actions : {
 		linkDelete ({ postId, linkId, linksReport, postReport }) {
 			const slug = linksReport ? 'links-report-inner' : (postReport ? 'post-report' : 'post-settings')
-			return http.post(links.restUrl(`link-assistant/${slug}/links/delete`))
+			return http.post(linksUtil.restUrl(`link-assistant/${slug}/links/delete`))
 				.send({
 					postId : postId,
 					linkId : linkId
@@ -119,7 +119,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 		},
 		linksBulk ({ postId, action, linkType, linkIds, linksReport, postReport }) {
 			const slug = linksReport ? 'links-report-inner' : (postReport ? 'post-report' : 'post-settings')
-			return http.post(links.restUrl(`link-assistant/${slug}/links/bulk`))
+			return http.post(linksUtil.restUrl(`link-assistant/${slug}/links/bulk`))
 				.send({
 					postId   : postId,
 					action   : action,
@@ -151,7 +151,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 		},
 		linksRefresh ({ postId, linksReport, postReport }) {
 			const slug = linksReport ? 'links-report-inner' : (postReport ? 'post-report' : 'post-settings')
-			return http.post(links.restUrl(`link-assistant/${slug}/refresh`))
+			return http.post(linksUtil.restUrl(`link-assistant/${slug}/refresh`))
 				.send({
 					postId : postId
 				}).then(() => {
@@ -171,7 +171,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 			const postEditorStore = usePostEditorStore()
 			const postSlug        = postReport ? 'post-report' : 'post-settings'
 			const slug            = linksReport ? 'links-report-inner' : postSlug
-			return http.post(links.restUrl(`link-assistant/${slug}/suggestions/dismiss`))
+			return http.post(linksUtil.restUrl(`link-assistant/${slug}/suggestions/dismiss`))
 				.send({
 					postId       : postId || postEditorStore.currentPost.id,
 					suggestionId : suggestionId
@@ -203,7 +203,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 		},
 		suggestionsBulk ({ postId, action, suggestionType, suggestionRows, linksReport, postReport }) {
 			const slug = linksReport ? 'links-report-inner' : (postReport ? 'post-report' : 'post-settings')
-			return http.post(links.restUrl(`link-assistant/${slug}/suggestions/bulk`))
+			return http.post(linksUtil.restUrl(`link-assistant/${slug}/suggestions/bulk`))
 				.send({
 					postId         : postId,
 					action         : action,
@@ -233,7 +233,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		fetchLinksReport ({ orderBy, orderDir, limit, offset, searchTerm, filter, additionalFilters }) {
-			return http.post(links.restUrl(`link-assistant/links-report/${filter}`))
+			return http.post(linksUtil.restUrl(`link-assistant/links-report/${filter}`))
 				.send({
 					orderBy,
 					orderDir,
@@ -250,7 +250,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		fetchLinksReportInner ({ filter, additionalFilters }) {
-			return http.post(links.restUrl(`link-assistant/links-report-inner/${filter}`))
+			return http.post(linksUtil.restUrl(`link-assistant/links-report-inner/${filter}`))
 				.send({
 					additionalFilters
 				})
@@ -263,7 +263,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		fetchDomainsReport ({ orderBy, orderDir, limit, offset, searchTerm, filter, additionalFilters }) {
-			return http.post(links.restUrl(`link-assistant/domains-report/${filter}`))
+			return http.post(linksUtil.restUrl(`link-assistant/domains-report/${filter}`))
 				.send({
 					orderBy,
 					orderDir,
@@ -279,7 +279,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		fetchDomainsReportInner ({ orderBy, orderDir, offset, searchTerm, filter, additionalFilters }) {
-			return http.post(links.restUrl(`link-assistant/domains-report-inner/${filter}`))
+			return http.post(linksUtil.restUrl(`link-assistant/domains-report-inner/${filter}`))
 				.send({
 					orderBy,
 					orderDir,
@@ -288,13 +288,13 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 					additionalFilters
 				})
 				.then(response => {
-					this.domainsReport.rows[additionalFilters.domainIndex][additionalFilters.domain] = response.body.posts
+					this.domainsReport.rows[additionalFilters.domainIndex][additionalFilters.domain] = response.body.posts || []
 
 					this.getOverviewData()
 				})
 		},
 		fetchPostReport ({ orderBy, orderDir, limit, offset, searchTerm, filter, additionalFilters = {} }) {
-			return http.post(links.restUrl(`link-assistant/post-report/${filter}`))
+			return http.post(linksUtil.restUrl(`link-assistant/post-report/${filter}`))
 				.send({
 					orderBy,
 					orderDir,
@@ -312,7 +312,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		linksReportDeleteAll ({ postId }) {
-			return http.delete(links.restUrl(`link-assistant/links-report/post/${postId}`))
+			return http.delete(linksUtil.restUrl(`link-assistant/links-report/post/${postId}`))
 				// Prevents a console error after a successful deletion.
 				.then(() => {})
 		},
@@ -327,7 +327,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				hostnames.push(Object.keys(this.domainsReport.rows[rowIndexes])[0])
 			}
 
-			return http.post(links.restUrl(`link-assistant/domains-report/bulk/${action}`))
+			return http.post(linksUtil.restUrl(`link-assistant/domains-report/bulk/${action}`))
 				.send({
 					hostnames
 				}).then(() => {
@@ -352,7 +352,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 			}
 
-			return http.post(links.restUrl(`link-assistant/domains-report-inner/bulk/${action}`))
+			return http.post(linksUtil.restUrl(`link-assistant/domains-report-inner/bulk/${action}`))
 				.send({
 					searchTerm,
 					links,
@@ -362,7 +362,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		domainsReportInnerLinkUpdate ({ domain, link }) {
-			return http.put(links.restUrl('link-assistant/domains-report-inner/link'))
+			return http.put(linksUtil.restUrl('link-assistant/domains-report-inner/link'))
 				.send({
 					hostname : domain,
 					link     : link
@@ -372,7 +372,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 		},
 		domainsReportInnerLinkDelete ({ searchTerm, rows, postIndex, linkIndex, offset }) {
 			const linkObject = rows[postIndex].links[linkIndex]
-			return http.delete(links.restUrl('link-assistant/domains-report-inner/link'))
+			return http.delete(linksUtil.restUrl('link-assistant/domains-report-inner/link'))
 				.send({
 					searchTerm,
 					offset,
@@ -390,7 +390,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 			const postEditorStore = usePostEditorStore()
 
 			window.aioseoBus.$emit('updatingLinks', true)
-			return http.post(links.restUrl('link-assistant/post-settings/update'))
+			return http.post(linksUtil.restUrl('link-assistant/post-settings/update'))
 				.send({
 					postId      : postEditorStore.currentPost.id,
 					postContent : postContent
@@ -414,7 +414,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		getMenuData () {
-			return http.get(links.restUrl('link-assistant/data/menu'))
+			return http.get(linksUtil.restUrl('link-assistant/data/menu'))
 				.then(response => {
 					if (response.body.data) {
 						this.resetState(response.body.data)
@@ -422,7 +422,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		getOverviewData () {
-			return http.get(links.restUrl('link-assistant/data/overview'))
+			return http.get(linksUtil.restUrl('link-assistant/data/overview'))
 				.then(response => {
 					if (response.body.data) {
 						this.overview = response.body.data
@@ -432,7 +432,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 		getPostData () {
 			const postEditorStore = usePostEditorStore()
 			const postId          = postEditorStore.currentPost.id
-			return http.get(links.restUrl(`link-assistant/data/post/${postId}`))
+			return http.get(linksUtil.restUrl(`link-assistant/data/post/${postId}`))
 				.then(response => {
 					if (response.body.data) {
 						const currentPost               = postEditorStore.currentPost
@@ -445,7 +445,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		triggerScan () {
-			return http.get(links.restUrl('link-assistant/data/trigger-scan'))
+			return http.get(linksUtil.restUrl('link-assistant/data/trigger-scan'))
 				.then(response => {
 					if (response.body.data) {
 						this.resetState(response.body.data)
@@ -453,7 +453,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				})
 		},
 		pollSuggestionsScan () {
-			return http.get(links.restUrl('link-assistant/data/suggestions-scan-percent'))
+			return http.get(linksUtil.restUrl('link-assistant/data/suggestions-scan-percent'))
 				.then(response => {
 					if (response.body && 'percent' in response.body) {
 						if (this.suggestionsScan.percent !== response.body.percent) {

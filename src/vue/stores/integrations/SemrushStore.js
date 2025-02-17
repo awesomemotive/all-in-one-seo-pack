@@ -50,12 +50,14 @@ export const useSemrushStore = defineStore('SemrushStore', {
 					this.results = response.body.keyphrases.data.rows
 				})
 				.catch(error => {
-					if (!error?.response?.body?.message) {
+					this.results = []
+
+					if (!error?.response?.body?.message && !error?.response?.message) {
 						this.error = __('An unknown error occurred, please try again later.', td)
 						return
 					}
 
-					this.error = error.response.body.message
+					this.error = error?.response?.body?.message || error?.response?.message
 				})
 		},
 		authenticate (code) {

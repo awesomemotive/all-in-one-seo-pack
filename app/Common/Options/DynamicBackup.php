@@ -96,7 +96,7 @@ class DynamicBackup {
 		if ( $this->shouldBackup ) {
 			$this->shouldBackup = false;
 			$backup = aioseo()->dynamicOptions->convertOptionsToValues( $this->backup, 'value' );
-			update_option( $this->optionsName, wp_json_encode( $backup ) );
+			update_option( $this->optionsName, wp_json_encode( $backup ), 'no' );
 		}
 	}
 
@@ -114,7 +114,7 @@ class DynamicBackup {
 
 		$backup = json_decode( get_option( $this->optionsName ), true );
 		if ( empty( $backup ) ) {
-			update_option( $this->optionsName, '{}' );
+			update_option( $this->optionsName, '{}', 'no' );
 
 			return;
 		}

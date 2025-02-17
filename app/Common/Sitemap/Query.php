@@ -91,9 +91,42 @@ class Query {
 
 		$excludedPosts = aioseo()->sitemap->helpers->excludedPosts();
 
+		if ( $excludedPosts ) {
+			$query->whereRaw( "( `p`.`ID` NOT IN ( $excludedPosts ) OR post_id = $homePageId )" );
+		}
+
+		// Exclude posts assigned to excluded terms.
+		$excludedTerms = aioseo()->sitemap->helpers->excludedTerms();
+		if ( $excludedTerms ) {
+			$termRelationshipsTable = aioseo()->core->db->db->prefix . 'term_relationships';
+			$query->whereRaw("
+				( `p`.`ID` NOT IN
+					(
+						SELECT `tr`.`object_id`
+						FROM `$termRelationshipsTable` as tr
+						WHERE `tr`.`term_taxonomy_id` IN ( $excludedTerms )
+					)
+				)" );
+		}
+
+		if ( $maxAge ) {
+			$query->whereRaw( "( `p`.`post_date_gmt` >= '$maxAge' )" );
+		}
+
+		if (
+			'rss' === aioseo()->sitemap->type ||
+			(
+				aioseo()->sitemap->indexes &&
+				empty( $additionalArgs['root'] ) &&
+				empty( $additionalArgs['count'] )
+			)
+		) {
+			$query->limit( aioseo()->sitemap->linksPerIndex, aioseo()->sitemap->offset );
+		}
+
 		$isStaticHomepage = 'page' === get_option( 'show_on_front' );
 		if ( $isStaticHomepage ) {
-			$excludedPostIds = explode( ',', $excludedPosts );
+			$excludedPostIds = array_map( 'intval', explode( ',', $excludedPosts ) );
 			$blogPageId      = (int) get_option( 'page_for_posts' );
 
 			if ( in_array( 'page', $postTypesArray, true ) ) {
@@ -124,44 +157,11 @@ class Query {
 			}
 		}
 
-		if ( $excludedPosts ) {
-			$query->whereRaw( "( `p`.`ID` NOT IN ( $excludedPosts ) OR post_id = $homePageId )" );
-		}
-
-		// Exclude posts assigned to excluded terms.
-		$excludedTerms = aioseo()->sitemap->helpers->excludedTerms();
-		if ( $excludedTerms ) {
-			$termRelationshipsTable = aioseo()->core->db->db->prefix . 'term_relationships';
-			$query->whereRaw("
-				( `p`.`ID` NOT IN
-					(
-						SELECT `tr`.`object_id`
-						FROM `$termRelationshipsTable` as tr
-						WHERE `tr`.`term_taxonomy_id` IN ( $excludedTerms )
-					)
-				)" );
-		}
-
-		if ( $maxAge ) {
-			$query->whereRaw( "( `p`.`post_date_gmt` >= '$maxAge' )" );
-		}
-
-		if (
-			'rss' === aioseo()->sitemap->type ||
-			(
-				aioseo()->sitemap->indexes &&
-				empty( $additionalArgs['root'] ) &&
-				( empty( $additionalArgs['count'] ) || ! $additionalArgs['count'] )
-			)
-		) {
-			$query->limit( aioseo()->sitemap->linksPerIndex, aioseo()->sitemap->offset );
-		}
-
 		$query->orderBy( $orderBy );
 		$query = $this->filterPostQuery( $query, $postTypes );
 
 		// Return the total if we are just counting the posts.
-		if ( ! empty( $additionalArgs['count'] ) && $additionalArgs['count'] ) {
+		if ( ! empty( $additionalArgs['count'] ) ) {
 			return (int) $query->run( true, 'var' )
 				->result();
 		}
@@ -362,13 +362,13 @@ class Query {
 		if (
 			aioseo()->sitemap->indexes &&
 			empty( $additionalArgs['root'] ) &&
-			( empty( $additionalArgs['count'] ) || ! $additionalArgs['count'] )
+			empty( $additionalArgs['count'] )
 		) {
 			$query->limit( aioseo()->sitemap->linksPerIndex, $offset );
 		}
 
 		// Return the total if we are just counting the terms.
-		if ( ! empty( $additionalArgs['count'] ) && $additionalArgs['count'] ) {
+		if ( ! empty( $additionalArgs['count'] ) ) {
 			return (int) $query->run( true, 'var' )
 				->result();
 		}

@@ -67,7 +67,7 @@ export default {
 				// Fetch new headline data.
 				const fetchedData = await fetchData(headline)
 
-				if (fetchedData) {
+				if (fetchedData?.data) {
 					// Save new data to store.
 					this.postEditorStore.updateNewHeadlineAnalyzerData(fetchedData.data, fetchedData.headline)
 					// Show new data.

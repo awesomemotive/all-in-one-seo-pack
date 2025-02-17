@@ -137,7 +137,7 @@ class LimitModifiedDate {
 		}
 
 		// Handle post revision.
-		if ( ! empty( $GLOBALS['action'] ) && 'restore' === $GLOBALS['action'] ) {
+		if ( ! empty( $GLOBALS['action'] ) && in_array( $GLOBALS['action'], [ 'restore',  'inline-save' ], true ) ) {
 			$aioseoPost = Models\Post::getPost( $postArray['ID'] );
 			if ( $aioseoPost->exists() && $aioseoPost->limit_modified_date ) {
 				$shouldReset = true;

@@ -36,19 +36,9 @@ export const customFieldsContent = () => {
 	const fields         = []
 	const inputTypes     = [ 'INPUT', 'TEXTAREA', 'IMG' ]
 
-	// Check if a selector is valid CSS syntax.
-	const isSelectorValid = (selector) => {
-		try {
-			document.createDocumentFragment().querySelector(selector)
-		} catch {
-			return false
-		}
-		return true
-	}
-
 	truFieldsArray.forEach((truField) => {
 		truField = truField.trim()
-		const customField    = isSelectorValid(`#${truField}`) ? document.querySelector(`#${truField}`) : false
+		const customField    = document.getElementById(`${truField}`) || {}
 		const WpCustomFields = document.querySelectorAll('#the-list > tr')
 		const acfFields      = document.querySelectorAll('.acf-field')
 
@@ -69,7 +59,11 @@ export const customFieldsContent = () => {
 
 		// If we have an acf meta_box. Add the values.
 		acfFields.forEach((acfField) => {
-			if (truField !== acfField.dataset.name) {
+			if (
+				truField !== acfField.dataset.name ||
+				'repeater' === acfField.dataset.type ||
+				acfField.parentNode?.closest('.acf-repeater')
+			) {
 				return ''
 			}
 
@@ -193,7 +187,7 @@ export const customFieldValue = (fieldKey, inputTypes = [ 'INPUT', 'TEXTAREA', '
 		return ''
 	}
 
-	const customField    = document.querySelector(`#${fieldKey}`)
+	const customField    = document.getElementById(`${fieldKey}`)
 	const wpCustomFields = document.querySelectorAll('#the-list > tr')
 	const acfFields      = document.querySelectorAll('.acf-field')
 	let value            = ''
@@ -219,22 +213,28 @@ export const customFieldValue = (fieldKey, inputTypes = [ 'INPUT', 'TEXTAREA', '
 	}
 
 	if (acfFields.length) {
-		// We have an acf meta_box. Add the values.
+		const values = []
 		acfFields.forEach((acfField) => {
-			if (fieldKey !== acfField.dataset.name) {
+			if (
+				fieldKey !== acfField.dataset.name ||
+				'repeater' === acfField.dataset.type ||
+				acfField.parentNode?.closest('.acf-repeater')
+			) {
 				return
 			}
 
 			let acfFieldElement
 			inputTypes.forEach(type => {
-				const inputTag = type.toLowerCase()
+				const inputTag  = type.toLowerCase()
 				acfFieldElement = acfField.querySelector(`[data-key="${acfField.dataset.key}"] ${inputTag}`) || acfFieldElement
 			})
 
 			if (acfFieldElement) {
-				value = 'IMG' === acfFieldElement.tagName ? acfFieldElement.getAttribute('src') : acfFieldElement.value
+				values.push('IMG' === acfFieldElement.tagName ? acfFieldElement.getAttribute('src') : acfFieldElement.value)
 			}
 		})
+
+		value = values.join(' ')
 	}
 
 	return value

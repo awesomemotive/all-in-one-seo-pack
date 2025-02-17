@@ -66,6 +66,12 @@ export default {
 		line-height: 22px;
 	}
 
+	&.smaller {
+		padding: 6px;
+		font-size: 12px;
+		line-height: 18px;
+	}
+
 	.aioseo-alert-close {
 		cursor: pointer;
 		position: absolute;
