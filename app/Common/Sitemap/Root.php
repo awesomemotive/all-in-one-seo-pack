@@ -381,6 +381,16 @@ class Root {
 			)";
 		}
 
+		// Include the blog page in the posts post type unless manually excluded.
+		$blogPageId = (int) get_option( 'page_for_posts' );
+		if (
+			$blogPageId &&
+			! in_array( $blogPageId, $excludedPostIds, true ) &&
+			'post' === $postType
+		) {
+			$whereClause .= " OR `p`.`ID` = $blogPageId ";
+		}
+
 		$posts = aioseo()->core->db->execute(
 			aioseo()->core->db->db->prepare(
 				"SELECT ID, post_modified_gmt

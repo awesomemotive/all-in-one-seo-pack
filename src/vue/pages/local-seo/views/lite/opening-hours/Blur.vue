@@ -12,7 +12,7 @@
 							name="openingHours"
 							:modelValue="true"
 							:options="[
-								{ label: GLOBAL_STRINGS.no, value: false },
+								{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
 								{ label: GLOBAL_STRINGS.yes, value: true }
 							]"
 						/>

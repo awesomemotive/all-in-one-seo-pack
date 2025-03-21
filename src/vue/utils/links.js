@@ -50,7 +50,6 @@ const docLinks      = {
 	robotsEditor                  : `${marketingSite}docs/using-the-robots-txt-tool-in-all-in-one-seo/`,
 	robotsRewrite                 : `${marketingSite}docs/nginx-rewrite-rules-for-robots-txt/`,
 	useKeyphrasesTooltip          : `${marketingSite}docs/using-the-focus-keyphrase-to-analyze-your-content/`,
-	showSitelinks                 : `${marketingSite}docs/how-do-i-get-google-to-show-sitelinks-for-my-site/`,
 	whenToUseNoindex              : `${marketingSite}docs/when-to-use-noindex-or-the-robots-txt/`,
 	installAioseoPro              : `${marketingSite}docs/installing-all-in-one-seo-pro/`,
 	importProcessSeoData          : `${marketingSite}docs/importing-and-exporting-aioseo-settings-and-meta-data/`,

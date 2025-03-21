@@ -329,8 +329,7 @@ export default {
 				font-size: 14px;
 			}
 
-			.object-title,
-			.keyword {
+			.object-title {
 				a {
 					font-weight: bold;
 					color: $black;

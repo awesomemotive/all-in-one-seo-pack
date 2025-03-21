@@ -190,6 +190,7 @@ export default {
 				this.postEditorStore.isDirty = true
 				keyphrasePanel[newKeyphraseIndex]?.click()
 				this.truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
+				this.selectedKeyphrase = (newKeyphraseIndex - 1)
 			}
 		},
 		pressEnter (event) {
@@ -202,6 +203,9 @@ export default {
 				this.postEditorStore.currentPost.loading.additional[index] = false
 			})
 		}
+	},
+	mounted () {
+		this.selectedKeyphrase = (this.postEditorStore.currentPost.keyphrases.additional?.length - 1) ?? 0
 	}
 }
 </script>
@@ -218,6 +222,11 @@ export default {
 	}
 }
 
+.aioseo-row {
+	.aioseo-keyphrase-tag {
+		margin-bottom: 22px;
+	}
+}
 .additional-keyphrases-panel {
 	.aioseo-tooltip {
 		margin-left: 0 !important;

@@ -1,5 +1,8 @@
 <template>
-	<core-card noSlide>
+	<core-card
+		noSlide
+		slug="userProfiles"
+	>
 		<template #header>
 			<span>{{ strings.authorInfo }}</span>
 			<core-pro-badge />

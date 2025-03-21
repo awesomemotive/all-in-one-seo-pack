@@ -59,7 +59,7 @@ class SeoPreview {
 	public function init() {
 		if (
 			is_admin() ||
-			! is_admin_bar_showing() ||
+			! aioseo()->helpers->isAdminBarEnabled() ||
 			// If we're seeing the Divi theme Visual Builder.
 			( function_exists( 'et_core_is_fb_enabled' ) && et_core_is_fb_enabled() ) ||
 			aioseo()->helpers->isAmpPage()

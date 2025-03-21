@@ -13,14 +13,23 @@ let taxonomyTitle = '',
 // Update post data
 export const maybeUpdateTaxonomies = (run = true) => {
 	const tagsStore = useTagsStore()
+	const postEditorStore = usePostEditorStore()
 
 	if (isClassicEditor() || isClassicNoEditor()) {
 		const categories = document.querySelectorAll('#post input[name="post_category[]"]:checked')
+
 		if (categories.length) {
-			if (taxonomyTitle !== categories[0].parentNode.innerText) {
+			if (postEditorStore?.currentPost?.primary_term?.category) {
+				const categoryElement = document.querySelector(`#categorychecklist input[value="${postEditorStore.currentPost.primary_term.category}"]`)
+				if (categoryElement?.parentNode?.innerText) {
+					taxonomyTitle = categoryElement.parentNode.innerText
+					tagsStore.updateTaxonomyTitle(taxonomyTitle)
+				}
+			} else if (taxonomyTitle !== categories[0].parentNode.innerText) {
 				taxonomyTitle = categories[0].parentNode.innerText
-				tagsStore.updateTaxonomyTitle(taxonomyTitle)
+				tagsStore.updateTaxonomyTitle(categories[0].parentNode.innerText)
 			}
+
 			listOfCategories = Array.from(categories).map(category => category.parentNode.innerText).join(', ')
 			tagsStore.updateCategories(listOfCategories)
 		} else {
@@ -31,18 +40,20 @@ export const maybeUpdateTaxonomies = (run = true) => {
 			}
 		}
 	}
+
 	if (isBlockEditor()) {
 		let categories = [],
 			selected   = []
 
 		const rootStore = useRootStore()
-		if (rootStore.aioseo.user.data.allcaps?.manageCategories) {
+		if (rootStore.aioseo.user.data.allcaps?.manageCategories || rootStore.aioseo.user.data.allcaps?.manage_categories) {
 			categories = window.wp.data.select('core').getEntityRecords('taxonomy', 'category')
 			selected   = window.wp.data.select('core/editor').getEditedPostAttribute('categories')
 		}
 
 		if (selected && selected.length && categories) {
-			const category = categories.find(c => c.id === selected[0])
+			const selectedCategory = postEditorStore?.currentPost?.primary_term?.category || selected[0]
+			const category = categories.find(c => c.id === selectedCategory)
 			if (category && (taxonomyTitle !== category.name)) {
 				taxonomyTitle = category.name
 				tagsStore.updateTaxonomyTitle(taxonomyTitle)
@@ -58,7 +69,6 @@ export const maybeUpdateTaxonomies = (run = true) => {
 		}
 	}
 
-	const postEditorStore = usePostEditorStore()
 	if (run) {
 		(new TruSeo()).runAnalysis({ postId: postEditorStore.currentPost.id })
 	}

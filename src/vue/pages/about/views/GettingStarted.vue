@@ -234,34 +234,30 @@ export default {
 			},
 			docs : {
 				doc1 : {
-					title : 'How do I get Google to show sitelinks for my site?',
-					url   : links.getDocUrl('showSitelinks')
-				},
-				doc2 : {
 					title : 'How do I use your API code examples?',
 					url   : links.getDocUrl('apiCodeExamples')
 				},
-				doc3 : {
+				doc2 : {
 					title : 'What are media attachments and should I submit them to search engines?',
 					url   : links.getDocUrl('whatAreMediaAttachments')
 				},
-				doc4 : {
+				doc3 : {
 					title : 'When to use NOINDEX or the robots.txt?',
 					url   : links.getDocUrl('whenToUseNoindex')
 				},
-				doc5 : {
+				doc4 : {
 					title : 'How do I troubleshoot issues with AIOSEO?',
 					url   : links.getDocUrl('troubleshootIssues')
 				},
-				doc6 : {
+				doc5 : {
 					title : 'How does the import process for SEO data work?',
 					url   : links.getDocUrl('importProcessSeoData')
 				},
-				doc7 : {
+				doc6 : {
 					title : 'Installation instructions for AIOSEO Pro',
 					url   : links.getDocUrl('installAioseoPro')
 				},
-				doc8 : {
+				doc87 : {
 					title : 'What are the minimum requirements for All in One SEO?',
 					url   : links.getDocUrl('minimumRequirements')
 				}

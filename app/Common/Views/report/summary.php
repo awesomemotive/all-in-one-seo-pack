@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div style="margin: 0 auto; padding: 70px 0; width: 100%; max-width: 680px;">
 		<div style="background-color: #ffffff; border: 1px solid #e8e8eb;">
 			<div style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow-x: auto;">
-				<div style="margin-right: 12px; min-width: 100px; padding-top: 20px; display: inline-block; vertical-align: middle;">
+				<div style="padding-top: 20px;">
 					<img
 							style="border: none; box-sizing: border-box; display: inline-block; font-size: 14px; height: auto; line-height: 1; max-width: 100%; text-decoration: none; vertical-align: middle;"
 							width="100"
@@ -30,15 +30,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 					/>
 				</div>
 
-				<div style="max-width: 290px; padding-top: 20px; display: inline-block; vertical-align: middle; width: 100%;">
-					<p style="font-size: 16px; margin-bottom: 0; margin-top: 0; font-weight: 700;">
-						<span><?php echo $heading ?? ''; ?></span>
-					</p>
-				</div>
+				<table style="table-layout: fixed; border-collapse: collapse; text-align: left; vertical-align: middle; width: 100%;">
+					<thead>
+					<tr>
+						<th style="padding: 0; width: 60%; line-height: 1;"></th>
+						<th style="padding: 0; width: 40%; line-height: 1;"></th>
+					</tr>
+					</thead>
 
-				<div style="padding-top: 20px; display: inline-block; vertical-align: middle; font-size: 12px; text-align: right; float: right;">
-					<?php echo $dateRange['range'] ?? ''; ?>
-				</div>
+					<tbody>
+					<tr>
+						<td style="padding: 0; word-break: break-word;">
+							<div style="padding-top: 20px;">
+								<p style="font-size: 16px; margin-bottom: 0; margin-top: 0; font-weight: 700;"><?php echo $heading ?? ''; ?></p>
+							</div>
+						</td>
+
+						<td style="padding: 0; word-break: break-word;">
+							<div style="padding-top: 20px; font-size: 12px; text-align: right; line-height: 15px;"><?php echo $dateRange['range'] ?? ''; ?></div>
+						</td>
+					</tr>
+					</tbody>
+				</table>
 			</div>
 
 			<div style="background-color: #004f9d; padding-bottom: 20px;">

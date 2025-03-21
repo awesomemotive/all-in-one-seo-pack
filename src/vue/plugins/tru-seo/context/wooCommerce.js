@@ -67,14 +67,21 @@ const refreshWoocommerceStore = () => {
 	})
 
 	const productCats = document.querySelectorAll('#post input[name="tax_input[product_cat][]"]:checked')
+
 	if (productCats.length) {
 		productCatLabel = productCats[0].parentNode.innerText
 	}
 
 	// The primary term label takes precedence.
 	if (postEditorStore.currentPost?.primary_term?.product_cat) {
-		const productCategory = document.getElementById(`in-product_cat-${postEditorStore.currentPost.primary_term.product_cat}`)
-		productCatLabel = productCategory?.parentNode?.innerText || ''
+		const productCategory = document.getElementById(`in-product_cat-${postEditorStore.currentPost.primary_term.product_cat}`) ||
+			document.getElementById(`in-product_cat-${postEditorStore.currentPost.primary_term.product_cat}-1`)
+
+		productCatLabel = productCategory?.childNodes[0]?.innerText || ''
+		// Means that we are using an old version (such as WP 6.6.2)
+		if (!productCategory.hasChildNodes()) {
+			productCatLabel = productCategory?.parentNode?.innerText || ''
+		}
 	}
 
 	tagsStore.updateTaxonomyTitle(productCatLabel)

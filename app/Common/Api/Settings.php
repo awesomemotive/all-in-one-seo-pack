@@ -762,7 +762,7 @@ class Settings {
 				aioseo()->access->addCapabilities();
 				break;
 			case 'reset-data':
-				aioseo()->core->uninstallDb( true );
+				aioseo()->uninstall->dropData( true );
 				aioseo()->internalOptions->database->installedTables = '';
 				aioseo()->internalOptions->internal->lastActiveVersion = '4.0.0';
 				aioseo()->internalOptions->save( true );
@@ -777,6 +777,19 @@ class Settings {
 				aioseo()->internalOptions->database->installedTables   = '';
 				aioseo()->internalOptions->internal->lastActiveVersion = '4.0.0';
 				aioseo()->internalOptions->save( true );
+				break;
+			case 'rerun-addon-migrations':
+				aioseo()->internalOptions->database->installedTables = '';
+
+				foreach ( $data as $sku ) {
+					$convertedSku = aioseo()->helpers->dashesToCamelCase( $sku );
+					if (
+						function_exists( $convertedSku ) &&
+						isset( $convertedSku()->internalOptions )
+					) {
+						$convertedSku()->internalOptions->internal->lastActiveVersion = '0.0';
+					}
+				}
 				break;
 			case 'restart-v3-migration':
 				Migration\Helpers::redoMigration();

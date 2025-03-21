@@ -137,10 +137,11 @@ class SearchCleanup {
 			return;
 		}
 
-		if ( isset( $_SERVER['REQUEST_URI'] ) && stripos( $_SERVER['REQUEST_URI'], '/search/' ) === 0 ) {
+		$requestUri = aioseo()->helpers->getRequestUrl();
+		if ( stripos( $requestUri, '/search/' ) === 0 ) {
 			$args = [];
 
-			$parsed = wp_parse_url( $_SERVER['REQUEST_URI'] );
+			$parsed = wp_parse_url( $requestUri );
 			if ( ! empty( $parsed['query'] ) ) {
 				wp_parse_str( $parsed['query'], $args );
 			}

@@ -45,7 +45,7 @@ class UserMeta {
 			->start( aioseo()->core->db->db->usermeta . ' as um', true )
 			->whereRaw( "um.meta_key IN ('facebook', 'twitter', 'instagram', 'linkedin', 'myspace', 'pinterest', 'soundcloud', 'tumblr', 'wikipedia', 'youtube', 'mastodon')" )
 			->whereRaw( "um.meta_value != ''" )
-			->limit( $offset . ',' . $usersPerAction )
+			->limit( $usersPerAction, $offset )
 			->run()
 			->result();
 

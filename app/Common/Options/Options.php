@@ -282,7 +282,6 @@ TEMPLATE
 					'maxVideoPreview'   => [ 'type' => 'number', 'default' => -1 ],
 					'maxImagePreview'   => [ 'type' => 'string', 'default' => 'large' ]
 				],
-				'sitelinks'                    => [ 'type' => 'boolean', 'default' => true ],
 				'noIndexEmptyCat'              => [ 'type' => 'boolean', 'default' => true ],
 				'removeStopWords'              => [ 'type' => 'boolean', 'default' => false ],
 				'useKeywords'                  => [ 'type' => 'boolean', 'default' => false ],

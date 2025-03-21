@@ -51,7 +51,7 @@ class Main {
 	public function enqueueFrontEndAssets() {
 		$canManageSeo = apply_filters( 'aioseo_manage_seo', 'aioseo_manage_seo' );
 		if (
-			! is_admin_bar_showing() ||
+			! aioseo()->helpers->isAdminBarEnabled() ||
 			! ( current_user_can( $canManageSeo ) || aioseo()->access->canManage() )
 		) {
 			return;

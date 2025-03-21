@@ -14,12 +14,11 @@ export const useGoogleSearchConsole = (params = {}) => {
 		returnTo: defaultReturnTo = 'search-statistics'
 	} = params
 
-	const alertMessage    = ref('')
-	const forceDisconnect = ref(false)
-	const loading         = ref(false)
-	const returnTo        = ref(defaultReturnTo)
-	const showAlert       = ref(false)
-	const showModal       = ref(false)
+	const alertMessage = ref('')
+	const loading      = ref(false)
+	const returnTo     = ref(defaultReturnTo)
+	const showAlert    = ref(false)
+	const showModal    = ref(false)
 
 	const connect = () => {
 		loading.value = true
@@ -45,16 +44,13 @@ export const useGoogleSearchConsole = (params = {}) => {
 		loading.value = true
 
 		const searchStatisticsStore = useSearchStatisticsStore()
-		searchStatisticsStore.deleteAuth({
-			force : forceDisconnect.value
-		}).then(response => {
+		searchStatisticsStore.deleteAuth().then(response => {
 			showModal.value = false
 			showAlert.value = false
 
 			if (!response.success) {
-				forceDisconnect.value = true
-				showAlert.value       = true
-				alertMessage.value    = response.message
+				showAlert.value    = true
+				alertMessage.value = response.message
 			}
 		}).finally(() => {
 			loading.value = false
@@ -92,7 +88,6 @@ export const useGoogleSearchConsole = (params = {}) => {
 		alertMessage,
 		connect,
 		disconnect,
-		forceDisconnect,
 		loading,
 		reconnect,
 		redirectToGscSettings,

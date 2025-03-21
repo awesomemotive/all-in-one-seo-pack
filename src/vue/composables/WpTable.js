@@ -138,6 +138,7 @@ export const useWpTable = (params = {}) => {
 
 	return {
 		filter,
+		offset,
 		orderBy,
 		orderDir,
 		pageNumber,

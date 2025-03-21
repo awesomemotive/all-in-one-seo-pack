@@ -1269,7 +1269,7 @@ class Tags {
 		$postId = get_queried_object() ?? $postId;
 
 		foreach ( $matches as $match ) {
-			$value = $match[0] ?? '';
+			$value = '';
 			if ( ! empty( $match[1] ) ) {
 				if ( function_exists( 'get_field' ) ) {
 					$value = get_field( $match[1], $postId );

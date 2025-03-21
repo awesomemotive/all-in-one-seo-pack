@@ -1,5 +1,4 @@
 <?php
-
 namespace AIOSEO\Plugin\Common\Standalone\BuddyPress;
 
 // Exit if accessed directly.
@@ -195,7 +194,7 @@ class Component {
 	}
 
 	/**
-	 * Sets the component author.
+	 * Sets the component date.
 	 *
 	 * @since 4.7.6
 	 *
@@ -407,8 +406,6 @@ class Component {
 
 		switch ( $this->templateType ) {
 			case 'bp-activity_single':
-				aioseo()->schema->graphs[] = 'DiscussionForumPosting';
-
 				$datePublished = $this->activity['date_recorded'];
 				$contextUrl    = BuddyPressIntegration::getComponentSingleUrl( 'activity', $this->activity['id'] );
 

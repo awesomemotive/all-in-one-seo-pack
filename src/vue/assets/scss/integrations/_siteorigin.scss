@@ -8,7 +8,7 @@
 	}
 }
 
-.aioseo-site-origin-sidebar--active {
+.aioseo-site-origin-sidebar--active:not(.modal-open) {
 	#aioseo-modal-portal {
 		z-index: 999999;
 		position: relative;

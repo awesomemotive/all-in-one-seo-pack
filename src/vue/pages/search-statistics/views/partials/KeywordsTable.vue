@@ -27,7 +27,7 @@
 			@sort-column="processSort"
 		>
 			<template #keyword="{ row, index, editRow }">
-				<div class="keyword">
+				<div class="post-title">
 					<core-tooltip v-if="shouldLimitText(row.keyword)">
 						<a
 							class="limit-line"
@@ -49,30 +49,39 @@
 					>
 						{{ sanitizeString(row.keyword) }}
 					</a>
+				</div>
 
-					<div class="row-actions">
+				<div class="row-actions">
+					<span class="edit">
 						<a
-							v-if="!keywordRankTrackerStore.keywords.all.rows.find(r => r.name === row.keyword)"
-							href="#"
-							@click.prevent.exact="maybeAddKeywords([row.keyword])"
-						>
-							{{ strings.addKeyword }}
-						</a>
-
-						<span v-else>
-							{{ strings.alreadyAdded }}
-						</span> |
-
-						<a
-							class="view"
 							:href="viewInGoogleLink(row.keyword)"
 							target="_blank"
 						>
 							{{ strings.viewInGoogle }}
 
 							<svg-external/>
+						</a> |
+
+						<a
+							v-if="!isTrackingKeyword(row)"
+							href="#"
+							@click.prevent.exact="maybeTrackKeyword(row)"
+						>
+							{{ strings.addKeyword }}
 						</a>
-					</div>
+					</span>
+
+					<span
+						v-if="isTrackingKeyword(row)"
+						class="delete"
+					>
+						<a
+							href="#"
+							@click.prevent.exact="maybeUntrackKeyword(row)"
+						>
+							{{ strings.removeFromKrt }}
+						</a>
+					</span>
 				</div>
 			</template>
 
@@ -133,10 +142,7 @@
 			</template>
 
 			<template #edit-row="{ index }">
-				<keyword-inner
-					:index="index"
-					:postDetail="postDetail"
-				/>
+				<keyword-inner :paginated-rows="keywords.rows[index]"/>
 			</template>
 
 			<template #cta>
@@ -207,11 +213,9 @@ export default {
 			return `https://www.google.com/search?q=${encodeURIComponent(keyword)}`
 		}
 
-		const isPreloading = ref(false)
 		const isFetching   = ref(false)
 		const searchStatisticsStore = useSearchStatisticsStore()
 		const fetchData = (payload) => {
-			isPreloading.value = false
 			isFetching.value   = true
 
 			if ('' !== props.page) {
@@ -259,7 +263,6 @@ export default {
 		return {
 			changeItemsPerPageSlug,
 			filter,
-			isPreloading,
 			keywordRankTrackerStore : useKeywordRankTrackerStore(),
 			licenseStore            : useLicenseStore(),
 			links,
@@ -345,7 +348,7 @@ export default {
 			sortableColumns : [],
 			strings         : {
 				addKeyword    : __('Add to KRT', td),
-				alreadyAdded  : __('Added to KRT', td),
+				removeFromKrt : __('Remove from KRT', td),
 				viewInGoogle  : __('View in Google', td),
 				position      : __('Position', td),
 				ctaButtonText : __('Unlock Keyword Tracking', td),
@@ -445,6 +448,9 @@ export default {
 		}
 	},
 	methods : {
+		isTrackingKeyword (row) {
+			return this.keywordRankTrackerStore.keywords.all.rows.find(r => r.name === row.keyword)
+		},
 		sanitizeString,
 		isRowActive (index) {
 			return index === this.activeRow
@@ -462,89 +468,24 @@ export default {
 		shouldLimitText (line) {
 			return 120 < sanitizeString(line).length
 		},
-		async maybePreloadPages () {
-			if (!this.rootStore.isPro || this.licenseStore.isUnlicensed || !this.searchStatisticsStore.isConnected || this.isPreloading) {
-				return
-			}
-
-			if (this.isFetching && !this.interval) {
-				this.interval = setInterval(() => {
-					if (!this.isFetching) {
-						clearInterval(this.interval)
-						this.maybePreloadPages()
-					}
-				}, 100)
-
-				return
-			}
-
-			this.isPreloading = true
-
-			return this.preloadPages().then(() => {
-				this.isPreloading = false
-			})
-		},
-		preloadPages () {
-			let rows = this.searchStatisticsStore.data.keywords?.paginated?.rows || []
-			if (this.postDetail) {
-				rows = this.searchStatisticsStore.data.postDetail?.keywords?.paginated?.rows || []
-			}
-
-			const keywords = []
-			rows.forEach(row => {
-				if (row.pages) {
-					return
-				}
-
-				keywords.push(row.keyword)
-			})
-
-			const chunks = []
-			for (let i = 0; i < keywords.length; i += 10) {
-				chunks.push(keywords.slice(i, i + 10))
-			}
-
-			const promises = []
-			chunks.forEach(chunk => {
-				promises.push(
-					new Promise(resolve => {
-						this.searchStatisticsStore.getPagesByKeywords(chunk).then((data) => {
-							Object.entries(data).forEach((row) => {
-								const [ key, value ] = row
-								const rowIndex = rows.findIndex(row => row.keyword === key)
-								if (-1 === rowIndex) {
-									return
-								}
-
-								const pages = Object.values(value).slice(0, 10)
-
-								if (this.postDetail) {
-									this.searchStatisticsStore.data.postDetail.keywords.paginated.rows[rowIndex].pages = pages
-								} else {
-									this.searchStatisticsStore.data.keywords.paginated.rows[rowIndex].pages = pages
-								}
-							})
-						}).finally(() => {
-							resolve()
-						})
-					})
-				)
-			})
-
-			return Promise.all(promises)
-		},
-		maybeAddKeywords (keywords) {
+		maybeTrackKeyword (row) {
 			this.keywordRankTrackerStore.parentActiveTab = 'rank-tracker'
 			this.keywordRankTrackerStore.toggleModal({
 				modal           : 'modalOpenAddKeywords',
 				open            : true,
-				relatedKeywords : keywords
+				relatedKeywords : [ row.keyword ]
+			})
+		},
+		maybeUntrackKeyword (row) {
+			this.keywordRankTrackerStore.parentActiveTab = 'rank-tracker'
+			this.keywordRankTrackerStore.toggleModal({
+				modal    : 'modalOpenDeleteKeywords',
+				open     : true,
+				keywords : [ this.keywordRankTrackerStore.keywords.all.rows.find(r => r.name === row.keyword) ]
 			})
 		}
 	},
 	async mounted () {
-		await this.maybePreloadPages()
-
 		if (this.initialFilter) {
 			this.processFilter({
 				slug : this.initialFilter
@@ -553,9 +494,6 @@ export default {
 
 		this.orderBy  = this.defaultSorting?.orderBy || this.orderBy
 		this.orderDir = this.defaultSorting?.orderDir || this.orderDir
-	},
-	updated () {
-		this.maybePreloadPages()
 	}
 }
 </script>
@@ -580,13 +518,6 @@ export default {
 	.subsubsub {
 		position: absolute;
 		top: 65px;
-	}
-
-	thead {
-		tr th.manage-column,
-		tr td.manage-column  {
-			font-size: 13px;
-		}
 	}
 
 	.manage-column {
@@ -633,103 +564,12 @@ export default {
 		a {
 			display: inline-flex;
 			align-items: center;
-			color: $blue;
 			font-weight: normal;
 
 			svg {
 				margin-left: 3px;
 				width: 12px;
 				height: 12px;
-			}
-		}
-	}
-
-	tr.edit-row .edit-row-content {
-		padding: 0 !important;
-
-		.wrapper .border {
-			padding: 0 !important;
-		}
-	}
-
-	.keyword-inner {
-		.aioseo-wp-table {
-			margin: 0;
-			padding: 0;
-			border: 0;
-		}
-
-		.wp-table table {
-			border: 0;
-			padding: 0;
-			border-bottom: 1px solid $border !important;
-
-			thead {
-				tr:last-child {
-					th.manage-column,
-					td.manage-column {
-						border-bottom: 1px solid $input-border !important;
-					}
-
-					th {
-						font-weight: 700;
-
-						&:first-of-type {
-							padding-left: 15px !important;
-						}
-					}
-
-					td {
-						padding: 4px 0 0 8px !important;
-					}
-				}
-			}
-
-			tbody {
-				tr {
-					// These are set in WordPress Core but we need to reset them for the inner table; otherwise the row actions for all rows show on hover.
-					.row-actions {
-						position: relative;
-					}
-
-					&:hover {
-						.row-actions {
-							position : static;
-						}
-					}
-
-					th {
-						padding: 11px 0 0 8px;
-					}
-
-					td:first-of-type {
-						padding-left: 15px;
-					}
-
-					&:first-child td {
-						border-top: 1px solid $border;
-					}
-				}
-
-				.aioseo-tooltip {
-					display: inline-block;
-					margin-left: 0;
-				}
-
-				svg {
-					&.aioseo-trash {
-						width: 18px;
-						height: 22px;
-						color: $placeholder-color;
-						cursor: pointer;
-						transition: color 0.1s ease;
-						margin-top: 2px;
-
-						&:hover {
-							color: $red;
-						}
-					}
-				}
 			}
 		}
 	}

@@ -32,32 +32,6 @@ class WebSite extends Graph {
 			'publisher'     => [ '@id' => $homeUrl . '#' . aioseo()->options->searchAppearance->global->schema->siteRepresents ]
 		];
 
-		if ( is_front_page() && aioseo()->options->searchAppearance->advanced->sitelinks ) {
-			$defaultSearchAction = [
-				'@type'       => 'SearchAction',
-				'target'      => [
-					'@type'       => 'EntryPoint',
-					'urlTemplate' => $homeUrl . '?s={search_term_string}'
-				],
-				'query-input' => 'required name=search_term_string',
-			];
-
-			$data['potentialAction'] = $defaultSearchAction;
-
-			if ( aioseo()->helpers->isYandexUserAgent() ) {
-				// Yandex requires a different, older format. We'll output both so Google doesn't throw errors
-				// in case this version of the page gets cached.
-				$data['potentialAction'] = [
-					$defaultSearchAction,
-					[
-						'@type'  => 'SearchAction',
-						'target' => $homeUrl . '?s={search_term_string}',
-						'query'  => 'required'
-					]
-				];
-			}
-		}
-
 		return $data;
 	}
 }

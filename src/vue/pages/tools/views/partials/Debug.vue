@@ -104,7 +104,7 @@
 						<base-button
 							type="blue"
 							size="medium"
-							@click="doAction"
+							@click="doAction( currentData )"
 						>
 							{{ strings.yesDoAction }}
 						</base-button>
@@ -130,6 +130,7 @@ import {
 	useToolsStore
 } from '@/vue/stores'
 
+import AddonsList from './debug/AddonsList'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
@@ -138,8 +139,8 @@ import CoreNetworkSiteSelector from '@/vue/components/common/core/NetworkSiteSel
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import DeprecatedOptions from './debug/DeprecatedOptions'
 import MigrationInfo from './debug/MigrationInfo'
-import WritingAssistant from './debug/WritingAssistant'
 import SvgClose from '@/vue/components/common/svg/Close'
+import WritingAssistant from './debug/WritingAssistant'
 
 import { sprintf } from '@/vue/plugins/translations'
 
@@ -151,6 +152,7 @@ export default {
 		}
 	},
 	components : {
+		AddonsList,
 		CoreAlert,
 		CoreCard,
 		CoreMainTabs,
@@ -159,8 +161,8 @@ export default {
 		CoreSettingsRow,
 		DeprecatedOptions,
 		MigrationInfo,
-		WritingAssistant,
-		SvgClose
+		SvgClose,
+		WritingAssistant
 	},
 	props : {
 		extraActions : {
@@ -175,6 +177,7 @@ export default {
 			doingActionKey      : 0,
 			activeTab           : 'general',
 			currentAction       : '',
+			currentData         : {},
 			showAreYouSureModal : false,
 			doingAction         : [],
 			strings             : {
@@ -261,6 +264,14 @@ export default {
 							shortDescription : 'This action will rerun all update migrations since 4.0.0, excluding the V3 migration.',
 							longDescription  : '',
 							showModal        : true
+						},
+						{
+							label            : 'Rerun Migrations for Active Addons',
+							slug             : 'rerun-addon-migrations',
+							shortDescription : 'This action will rerun all update migrations for the selected addons.',
+							longDescription  : '',
+							showModal        : true,
+							component        : 'addons-list'
 						}
 					]
 				},
@@ -357,6 +368,7 @@ export default {
 		},
 		maybeDoAction (action, data) {
 			this.currentAction = action
+			this.currentData   = data
 			if (action.showModal) {
 				this.showAreYouSureModal = true
 				return

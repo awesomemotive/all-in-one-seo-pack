@@ -1,5 +1,4 @@
 <?php
-
 namespace AIOSEO\Plugin\Common\Integrations;
 
 // Exit if accessed directly.
@@ -39,29 +38,11 @@ class BuddyPress {
 	 */
 	public static function getEmailCptSlug() {
 		$slug = '';
-		if ( self::isPluginActive() ) {
+		if ( aioseo()->helpers->isPluginActive( 'buddypress' ) ) {
 			$slug = self::callFunc( 'bp_get_email_post_type' );
 		}
 
 		return is_scalar( $slug ) ? strval( $slug ) : '';
-	}
-
-	/**
-	 * Returns whether the BuddyPress plugin is active or not.
-	 *
-	 * @since 4.7.6
-	 *
-	 * @return bool Whether the BuddyPress plugin is active.
-	 */
-	public static function isPluginActive() {
-		static $output = null;
-		if ( isset( $output ) ) {
-			return $output;
-		}
-
-		$output = function_exists( 'is_plugin_active' ) && is_plugin_active( 'buddypress/bp-loader.php' );
-
-		return $output;
 	}
 
 	/**

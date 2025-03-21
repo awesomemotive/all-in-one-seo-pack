@@ -406,6 +406,35 @@ abstract class Filters {
 			'redirect_rule', // Safe Redirect Manager
 			'seedprod',
 			'tcb_lightbox',
+
+			// Thrive Themes internal post types.
+			'tva_module',
+			'tvo_display',
+			'tvo_capture',
+			'tva_module',
+			'tve_lead_1c_signup',
+			'tve_form_type',
+			'tvd_login_edit',
+			'tve_global_cond_set',
+			'tve_cond_display',
+			'tve_lead_2s_lightbox',
+			'tcb_symbol',
+			'td_nm_notification',
+			'tvd_content_set',
+			'tve_saved_lp',
+			'tve_notifications',
+			'tve_user_template',
+			'tve_video_data',
+			'tva_course_type',
+			'tva-acc-restriction',
+			'tva_course_overview',
+			'tve_ult_schedule',
+			'tqb_optin',
+			'tqb_splash',
+			'tva_certificate',
+			'tva_course_overview',
+
+			// BuddyPress post types.
 			BuddyPressIntegration::getEmailCptSlug()
 		];
 
@@ -432,15 +461,13 @@ abstract class Filters {
 	 * @return array[object]|array[string]             The filtered taxonomies.
 	 */
 	public function removeInvalidPublicTaxonomies( $taxonomies ) {
-		// Check if the Avada Builder plugin is enabled.
-		if ( ! defined( 'FUSION_BUILDER_VERSION' ) ) {
-			return $taxonomies;
-		}
-
 		$taxonomiesToRemove = [
 			'fusion_tb_category',
 			'element_category',
-			'template_category'
+			'template_category',
+
+			// Thrive Themes internal taxonomies.
+			'tcb_symbols_tax'
 		];
 
 		foreach ( $taxonomies as $index => $taxonomy ) {

@@ -1,230 +1,210 @@
 <template>
-	<div class="keyword-inner">
-		<div class="keyword-inner-loading" v-if="loading" >
-			<core-loader dark />
-		</div>
+	<core-wp-table
+		ref="table"
+		:id="tableId"
+		:additional-filters="[]"
+		:columns="tableColumns"
+		:filters="[]"
+		:initial-items-per-page="itemsPerPage"
+		:initial-page-number="pageNumber"
+		:initial-search-term="''"
+		:key="wpTableKey"
+		:loading="wpTableLoading"
+		:rows="paginatedRows.pages || []"
+		:show-bulk-actions="false"
+		:show-header="false"
+		:show-table-footer="true"
+		:totals="totals"
+		:show-items-per-page="true"
+		@paginate="processPagination"
+		:show-search="false"
+		:show-pagination="true"
+		@process-change-items-per-page="processChangeItemsPerPage"
+	>
+		<template #post_title="{ row }">
+			<div class="post-title">
+				<b>{{ row.objectTitle }}</b>
+			</div>
 
-		<core-wp-table
-			v-if="row.pages && ! loading"
-			ref="table"
-			class="posts-table"
-			:key="1"
-			:columns="postColumns"
-			:rows="row.pages"
-			:show-header="false"
-			:show-bulk-actions="false"
-			:show-table-footer="false"
-		>
-			<template #post_title="{ row }">
-				<div class="post-title">
+			<div
+				class="row-actions"
+				v-if="row?.objectId"
+			>
+				<span class="edit">
 					<a
-						v-if="row.postId"
-						href="#"
-						@click.prevent="openPostDetail(row)"
+						:href="row.context.permalink"
+						target="_blank"
 					>
-						{{ row.objectTitle }}
+						{{ viewPost(row.context.postType.singular) }}
+					</a> |
+
+					<a
+						:href="row.context.editLink"
+						target="_blank"
+					>
+						{{ editPost(row.context.postType.singular) }}
 					</a>
+				</span>
+			</div>
+		</template>
 
-					<span
-						v-else
-						class="post-title"
-					>
-						{{ row.objectTitle }}
-					</span>
-				</div>
-				<div
-					class="row-actions"
-					v-if="row.postId"
-				>
-					<span>
-						<a
-							class="view"
-							:href="row.context.permalink"
-							target="_blank"
-						>
-							<span>{{ viewPost(row.context.postType.singular) }}</span>
-						</a> |
-					</span>
+		<template #clicks="{ row }">
+			{{ numbers.compactNumber(row.clicks) }}
+		</template>
 
-					<span>
-						<a
-							class="edit"
-							:href="row.context.editLink"
-							target="_blank"
-						>
-							<span>{{ editPost(row.context.postType.singular) }}</span>
-						</a>
-					</span>
-				</div>
-			</template>
+		<template #ctr="{ row }">
+			{{ parseFloat(row.ctr) }}%
+		</template>
 
-			<template #clicks="{ row }">
-				{{ numbers.compactNumber(row.clicks) }}
-			</template>
+		<template #impressions="{ row }">
+			{{ numbers.compactNumber(row.impressions) }}
+		</template>
 
-			<template #ctr="{ row }">
-				{{ parseFloat(row.ctr) }}%
-			</template>
-
-			<template #impressions="{ row }">
-				{{ numbers.compactNumber(row.impressions) }}
-			</template>
-
-			<template #position="{ row }">
-				<statistic
-					v-if="row.difference.comparison"
-					type="position"
-					:total="row.position"
-					:difference="row.difference.position"
-					:tooltip-offset="'-150px,0'"
-				/>
-			</template>
-		</core-wp-table>
-	</div>
+		<template #position="{ row }">
+			<statistic
+				v-if="row.difference.comparison"
+				type="position"
+				:total="row.position"
+				:difference="row.difference.position"
+				:tooltip-offset="'-150px,0'"
+			/>
+		</template>
+	</core-wp-table>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+
+import { __ } from '@/vue/plugins/translations'
+import { usePostTypes } from '@/vue/composables/PostTypes'
+import { useWpTable } from '@/vue/composables/WpTable'
+
+import numbers from '@/vue/utils/numbers'
+
+import CoreWpTable from '@/vue/components/common/core/wp/Table'
+import Statistic from './Statistic'
 import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
-import { usePostTypes } from '@/vue/composables/PostTypes'
+const td                    = import.meta.env.VITE_TEXTDOMAIN
+const searchStatisticsStore = useSearchStatisticsStore()
+const tableId               = 'search-statistics-keywords-inner-table'
 
-import numbers from '@/vue/utils/numbers'
-import CoreLoader from '@/vue/components/common/core/Loader'
-import CoreWpTable from '@/vue/components/common/core/wp/Table'
-import Statistic from './Statistic'
+const props = defineProps({
+	paginatedRows : Object
+})
 
-import { __ } from '@/vue/plugins/translations'
+const itemsPerPage = ref(5)
+const table        = ref(null)
 
-const td = import.meta.env.VITE_TEXTDOMAIN
+const {
+	editPost,
+	viewPost
+} = usePostTypes()
 
-export default {
-	setup () {
-		const {
-			editPost,
-			viewPost
-		} = usePostTypes()
-
-		return {
-			editPost,
-			searchStatisticsStore : useSearchStatisticsStore(),
-			viewPost
-		}
-	},
-	components : {
-		CoreLoader,
-		CoreWpTable,
-		Statistic
-	},
-	props : {
-		index : {
-			type     : Number,
-			required : true
-		},
-		postDetail : {
-			type     : Boolean,
-			required : false,
-			default  : false
-		}
-	},
-	data () {
-		return {
-			numbers,
-			loading : false
-		}
-	},
-	computed : {
-		postColumns () {
-			return [
-				{
-					slug  : 'post_title',
-					label : __('Title', td),
-					width : '100%'
-				},
-				{
-					slug  : 'clicks',
-					label : __('Clicks', td),
-					width : '120px'
-				},
-				{
-					slug  : 'ctr',
-					label : __('Avg. CTR', td),
-					width : '120px'
-				},
-				{
-					slug  : 'impressions',
-					label : __('Impressions', td),
-					width : '120px'
-				},
-				{
-					slug  : 'position',
-					label : __('Position', td),
-					width : '120px'
-				}
-			]
-		},
-		keywords () {
-			if (this.postDetail) {
-				return this.searchStatisticsStore.data.postDetail.keywords.paginated.rows
-			}
-
-			return this.searchStatisticsStore.data.keywords.paginated.rows
-		},
-		row () {
-			return this.keywords[this.index]
-		}
-	},
-	methods : {
-		openPostDetail (post) {
-			this.$router.push({
-				path  : '/post-detail',
-				query : {
-					postId        : post.postId,
-					previousRoute : this.$route.name
-				}
-			})
-		}
-	},
-	mounted () {
-		if (!this.row || this.row?.pages?.length) {
-			return
-		}
-
-		this.loading = true
-		this.searchStatisticsStore.getPagesByKeywords([ this.row.keyword ]).then(data => {
-			this.loading = false
-
-			const pages = data[this.row.keyword]
-			if (!pages) {
-				return
-			}
-
-			if (this.postDetail) {
-				this.searchStatisticsStore.data.postDetail.keywords.paginated.rows[this.index].pages = Object.values(pages).slice(0, 10)
-			} else {
-				this.searchStatisticsStore.data.keywords.paginated.rows[this.index].pages = Object.values(pages).slice(0, 10)
-			}
+const {
+	offset,
+	processChangeItemsPerPage,
+	processPagination,
+	wpTableKey,
+	wpTableLoading
+} = useWpTable({
+	fetchData () {
+		return fetchRows({
+			keywords : [ props.paginatedRows.keyword ],
+			limit    : itemsPerPage.value,
+			offset   : offset.value
 		})
+			.catch(error => {
+				console.error(error)
+			})
+	},
+	tableId,
+	tableRef       : table.value,
+	resultsPerPage : itemsPerPage
+})
+
+const totals = computed(() => {
+	return props.paginatedRows.totals || {
+		page  : 1,
+		pages : 0,
+		total : 0
 	}
+})
+
+const pageNumber = computed(() => {
+	return totals.value.page
+})
+
+const tableColumns = computed(() => [
+	{
+		slug  : 'post_title',
+		label : __('Title', td),
+		width : '100%'
+	},
+	{
+		slug  : 'clicks',
+		label : __('Clicks', td),
+		width : '120px'
+	},
+	{
+		slug  : 'ctr',
+		label : __('Avg. CTR', td),
+		width : '120px'
+	},
+	{
+		slug  : 'impressions',
+		label : __('Impressions', td),
+		width : '120px'
+	},
+	{
+		slug  : 'position',
+		label : __('Position', td),
+		width : '120px'
+	}
+])
+
+const fetchRows = (payload) => {
+	return searchStatisticsStore.getPagesByKeywords(payload)
+		.catch(() => searchStatisticsStore.getPagesByKeywords(payload))
+		.catch(() => searchStatisticsStore.getPagesByKeywords(payload))
+		.then(paginated => {
+			props.paginatedRows.pages  = Object.values(paginated?.rows || {})
+			props.paginatedRows.totals = paginated?.totals || {}
+		})
 }
+
+onMounted(() => {
+	const keyword = props.paginatedRows.keyword
+
+	wpTableLoading.value = true
+
+	fetchRows({
+		keywords : [ keyword ],
+		limit    : itemsPerPage.value,
+		offset   : offset.value
+	})
+		.catch(error => {
+			console.error(error)
+		})
+		.finally(() => {
+			wpTableLoading.value = false
+		})
+})
 </script>
 
-<style lang="scss">
-.aioseo-search-statistics-keywords-table .keyword-inner {
-	&-loading {
-		padding: 20px;
+<style lang="scss" scoped>
+#search-statistics-keywords-inner-table {
+	padding: 0;
 
-		.aioseo-loading-spinner {
+	tr {
+		.row-actions {
 			position: relative;
-			margin: 0 auto;
 		}
-	}
 
-	.aioseo-wp-table .wp-table {
-		td.manage-column,
-		th.manage-column {
-			padding: 8px 10px;
+		&:hover .row-actions {
+			position: static;
 		}
 	}
 }

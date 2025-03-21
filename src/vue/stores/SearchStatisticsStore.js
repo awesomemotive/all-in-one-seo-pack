@@ -138,9 +138,9 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 					return response.body.url
 				})
 		},
-		deleteAuth ({ force }) {
+		deleteAuth () {
 			return http.delete(links.restUrl('search-statistics/auth'))
-				.send({ force })
+				.send()
 				.then(response => {
 					if (true === response.body.success) {
 						this.isConnected = false
@@ -265,14 +265,23 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 					return response.body.data
 				})
 		},
-		getPagesByKeywords (keywords) {
+		getPagesByKeywords (payload = {}) {
+			const keywords = payload.keywords
+
 			return http.post(links.restUrl('search-statistics/stats/keywords/posts'))
 				.send({
+					limit     : payload.limit,
+					offset    : payload.offset,
 					startDate : this.range.start,
 					endDate   : this.range.end,
 					keywords  : keywords
 				})
-				.then(response => response.body.data)
+				.then(response => {
+					return response.body?.data?.[keywords[0]].paginated || {}
+				})
+				.catch(error => {
+					throw error
+				})
 		},
 		getPostDetail (postId) {
 			return http.get(links.restUrl('search-statistics/post-detail'))

@@ -17,9 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $schema = aioseo()->schema->get();
 ?>
-<?php if ( ! aioseo()->options->searchAppearance->advanced->sitelinks ) : ?>
-		<meta name="google" content="nositelinkssearchbox" />
-<?php endif; ?>
 <?php if ( ! empty( $schema ) ) : ?>
 		<script type="application/ld+json" class="aioseo-schema">
 			<?php echo $schema . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

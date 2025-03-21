@@ -151,7 +151,7 @@ export default {
 	},
 	computed : {
 		format () {
-			return this.dateFormat || this.rootStore.aioseo.data.dateFormat
+			return this.rootStore.aioseo.data.dateFormat
 		},
 		label () {
 			if (!this.value) {

@@ -37,11 +37,12 @@ class CrawlCleanup {
 	 * @return void
 	 */
 	public function maybeRedirectUtmParameters() {
-		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+		$requestUri = aioseo()->helpers->getRequestUrl();
+		if ( empty( $requestUri ) ) {
 			return;
 		}
 
-		$parsed = wp_parse_url( $_SERVER['REQUEST_URI'] );
+		$parsed = wp_parse_url( $requestUri );
 		if ( empty( $parsed['query'] ) ) {
 			return;
 		}

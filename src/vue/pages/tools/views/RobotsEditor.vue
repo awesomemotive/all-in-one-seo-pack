@@ -545,8 +545,14 @@ export default {
 				btnImportRobotsTxt          : false,
 				cardOverlay                 : false
 			},
-			showImportModal : false,
-			strings         : {
+			showImportModal      : false,
+			previousUnwantedBots : {
+				googleAdsBot             : false,
+				googleGeminiVertexAiBots : false,
+				openAiGptBot             : false,
+				commonCrawlCcBot         : false
+			},
+			strings : {
 				addRule             : __('Add Rule', td),
 				allow               : __('Allow', td),
 				customRobotsPreview : __('Custom Robots.txt Preview', td),

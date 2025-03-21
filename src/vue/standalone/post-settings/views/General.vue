@@ -266,9 +266,7 @@
 			<template #header>
 				<span>{{ strings.focusKeyphrase }}</span>
 
-				<core-tooltip
-					:offset="getFocusKeyphraseTooltipOffset()"
-				>
+				<core-tooltip :offset="'-10px,0'">
 					<svg-circle-question-mark />
 
 					<template #tooltip>
@@ -711,19 +709,19 @@ export default {
 				position: absolute;
 				display: block;
 				z-index: 10;
-				bottom: -17px;
+				bottom: -15px;
 				border-style: solid;
 			}
 
 			&:before {
-				left: calc(50% - 6px);
+				left: calc(50% - 12px);
 				border-width: 0 10px 10px 10px;
-				border-color: transparent transparent $border transparent;
+				border-color: transparent transparent $blue transparent;
 			}
 
 			&:after {
-				left: calc(50% - 4px);
-				border-width: 0 8px 8px 8px;
+				left: calc(50% - 10px);
+				border-width: 0 9px 8px 8px;
 				border-color: transparent transparent #fff transparent;
 			}
 		}
@@ -874,10 +872,6 @@ export default {
 			.aioseo-radio-toggle {
 				gap: 10px;
 			}
-
-			.popper {
-				max-width: 260px;
-			}
 		}
 
 		.edit-post-sidebar &,
@@ -904,6 +898,10 @@ export default {
 		&.inline-upsell {
 			margin-top: 10px;
 		}
+	}
+
+	.popper {
+		max-width: 260px !important;
 	}
 }
 

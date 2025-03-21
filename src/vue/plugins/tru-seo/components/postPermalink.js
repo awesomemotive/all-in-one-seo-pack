@@ -24,6 +24,7 @@ import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders
 import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
 import { getEditorData as getSiteOriginData } from '@/vue/standalone/page-builders/siteorigin/helpers'
 import { getEditorData as getThriveArchitectData } from '@/vue/standalone/page-builders/thrive-architect/helpers'
+import { getPostEditedSlug } from '@/vue/plugins/tru-seo/components/postSlug'
 
 /**
  * Returns the post permalink from page builders.
@@ -106,12 +107,17 @@ export const getPostEditedPermalink = () => {
 	if (isClassicEditor() || isClassicNoEditor) {
 		const classicLink = document.querySelector('#edit-slug-box a')
 		if (classicLink && classicLink.href) {
-			postPermalink = classicLink.href
+			postPermalink = classicLink.href.search(/preview=true/) ? classicLink.textContent : classicLink.href
 		}
 	}
 
 	if (isBlockEditor()) {
-		postPermalink = window.wp.data.select('core/editor').getPermalink()
+		const permalinkParts = window.wp.data.select('core/editor').getPermalinkParts()
+		if ('auto-draft' === permalinkParts?.postName) {
+			permalinkParts.postName = getPostEditedSlug()
+		}
+
+		postPermalink = `${permalinkParts?.prefix}${permalinkParts?.postName}${permalinkParts?.suffix}`
 	}
 
 	if (!postPermalink) {

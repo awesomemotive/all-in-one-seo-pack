@@ -836,4 +836,29 @@ trait ThirdParty {
 
 		return ! empty( $name ) && 'pa_' === substr( $name, 0, 3 );
 	}
+
+	/**
+	 * Returns whether a plugin is active or not using abstraction.
+	 *
+	 * @since 4.8.1
+	 *
+	 * @param  string $slug The plugin slug.
+	 * @return bool         Whether the plugin is active.
+	 */
+	public function isPluginActive( $slug ) {
+		$mapped = [
+			'buddypress' => 'buddypress/bp-loader.php',
+			'bbpress'    => 'bbpress/bbpress.php'
+		];
+
+		static $output = [];
+		if ( isset( $output[ $slug ] ) ) {
+			return $output[ $slug ];
+		}
+
+		$mapped[ $slug ] = $mapped[ $slug ] ?? $slug;
+		$output[ $slug ] = function_exists( 'is_plugin_active' ) && is_plugin_active( $mapped[ $slug ] );
+
+		return $output[ $slug ];
+	}
 }

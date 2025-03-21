@@ -606,7 +606,7 @@ trait Vue {
 		$locale = [
 			'' => [
 				'domain' => $domain,
-				'lang'   => is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale(),
+				'lang'   => is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale()
 			],
 		];
 

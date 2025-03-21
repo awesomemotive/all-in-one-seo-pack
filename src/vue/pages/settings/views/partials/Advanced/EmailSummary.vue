@@ -48,7 +48,7 @@
 							class="aioseo-email-summary__input aioseo-email-summary__input--recipient"
 							type="email"
 							size="medium"
-							validation="email"
+							:validation="recipient.email ? 'email' : null"
 							@update:modelValue="value => { updateRecipient(recipient, index, 'email', value) }"
 							:modelValue="recipient.email"
 						>

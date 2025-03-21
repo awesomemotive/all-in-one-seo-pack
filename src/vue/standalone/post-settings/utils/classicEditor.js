@@ -31,16 +31,19 @@ const getClassicEditorSlug = () => {
 
 const isTinyMceEmpty = (editor) => {
 	// When tinyMce is empty the raw content seems to be: `<p><br data-mce-bogus="1"></p>`.
-	const body = editor.getBody()
-	if (1 < body.childNodes.length) {
+	const body       = editor.getBody() || {}
+	const childNodes = body?.childNodes || []
+	if (1 < childNodes.length) {
 		return false
-	} else if (0 === body.childNodes.length) {
+	} else if (0 === childNodes.length) {
 		return true
 	}
-	if (1 < body.childNodes[0].childNodes.length) {
+
+	if (1 < childNodes[0]?.childNodes.length) {
 		return false
 	}
-	return /^\n?$/.test(body.innerText || body.textContent)
+
+	return /^\n?$/.test(body?.innerText || body?.textContent || '')
 }
 
 export {

@@ -585,7 +585,7 @@ class Post extends Model {
 	 * @param  array $data   The data.
 	 * @return void
 	 */
-	private static function updatePostMeta( $postId, $data ) {
+	public static function updatePostMeta( $postId, $data ) {
 		// Update the post meta as well for localization.
 		$keywords      = ! empty( $data['keywords'] ) ? aioseo()->helpers->jsonTagsToCommaSeparatedList( $data['keywords'] ) : [];
 		$ogArticleTags = ! empty( $data['og_article_tags'] ) ? aioseo()->helpers->jsonTagsToCommaSeparatedList( $data['og_article_tags'] ) : [];

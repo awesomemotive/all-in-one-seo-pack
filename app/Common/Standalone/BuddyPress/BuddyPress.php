@@ -49,7 +49,7 @@ class BuddyPress {
 	public function __construct() {
 		if (
 			aioseo()->helpers->isAjaxCronRestRequest() ||
-			! BuddyPressIntegration::isPluginActive()
+			! aioseo()->helpers->isPluginActive( 'buddypress' )
 		) {
 			return;
 		}
@@ -67,7 +67,7 @@ class BuddyPress {
 	 */
 	public function maybeLoad() {
 		// If the BuddyPress version is below 12 we bail.
-		if ( ! function_exists( 'bp_get_version' ) || version_compare( BuddyPressIntegration::callFunc( 'bp_get_version' ), '12', '<' ) ) {
+		if ( ! function_exists( 'bp_get_version' ) || version_compare( bp_get_version(), '12', '<' ) ) {
 			return;
 		}
 

@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use AIOSEO\Plugin\Common\Integrations\BuddyPress as BuddyPressIntegration;
+use AIOSEO\Plugin\Common\Integrations\BbPress as BbPressIntegration;
 
 /**
  * Builds our schema.
@@ -234,6 +235,12 @@ class Schema {
 
 		if ( BuddyPressIntegration::isComponentPage() ) {
 			aioseo()->standalone->buddyPress->component->determineSchemaGraphsAndContext( $contextInstance );
+
+			return;
+		}
+
+		if ( BbPressIntegration::isComponentPage() ) {
+			aioseo()->standalone->bbPress->component->determineSchemaGraphsAndContext();
 
 			return;
 		}

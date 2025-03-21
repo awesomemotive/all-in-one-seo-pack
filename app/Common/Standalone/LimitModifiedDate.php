@@ -29,6 +29,7 @@ class LimitModifiedDate {
 		// Reset modified date when the post is updated.
 		add_filter( 'wp_insert_post_data', [ $this, 'resetModifiedDate' ], 99999, 2 );
 		add_filter( 'wp_insert_attachment_data', [ $this, 'resetModifiedDate' ], 99999, 2 );
+		add_action( 'woocommerce_before_product_object_save', [ $this, 'limitWooCommerceModifiedDate' ] );
 
 		add_action( 'rest_api_init', [ $this, 'registerRestHooks' ] );
 
@@ -159,6 +160,31 @@ class LimitModifiedDate {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Limits the modified date for WooCommerce products.
+	 *
+	 * @since 4.8.1
+	 *
+	 * @param  \WC_Product $product The WooCommerce product.
+	 * @return void
+	 */
+	public function limitWooCommerceModifiedDate( $product ) {
+		if ( ! isset( $_POST['PostSettingsNonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['PostSettingsNonce'] ) ), 'aioseoPostSettingsNonce' ) ) {
+			return;
+		}
+
+		if ( ! isset( $_POST['aioseo-post-settings'] ) ) {
+			return;
+		}
+
+		$aioseoData = json_decode( sanitize_text_field( wp_unslash( ( $_POST['aioseo-post-settings'] ) ) ) );
+		if ( empty( $aioseoData ) || empty( $aioseoData->limit_modified_date ) ) {
+			return;
+		}
+
+		$product->set_date_modified( get_post_field( 'post_modified', $product->get_id() ) );
 	}
 
 	/**

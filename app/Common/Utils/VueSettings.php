@@ -139,20 +139,22 @@ class VueSettings {
 			'seoAuditChecklist' => 'all-items'
 		],
 		'tablePagination' => [
-			'networkDomains'                     => 20,
-			'redirects'                          => 20,
-			'redirectLogs'                       => 20,
-			'redirect404Logs'                    => 20,
-			'sitemapAdditionalPages'             => 20,
-			'linkAssistantLinksReport'           => 20,
-			'linkAssistantPostsReport'           => 20,
-			'linkAssistantDomainsReport'         => 20,
-			'searchStatisticsSeoStatistics'      => 20,
-			'searchStatisticsKeywordRankings'    => 20,
-			'searchStatisticsContentRankings'    => 20,
-			'searchStatisticsPostDetailKeywords' => 20,
-			'searchStatisticsKeywordRankTracker' => 20,
-			'queryArgs'                          => 20
+			'networkDomains'                         => 20,
+			'redirects'                              => 20,
+			'redirectLogs'                           => 20,
+			'redirect404Logs'                        => 20,
+			'sitemapAdditionalPages'                 => 20,
+			'linkAssistantLinksReport'               => 20,
+			'linkAssistantPostsReport'               => 20,
+			'linkAssistantDomainsReport'             => 20,
+			'searchStatisticsSeoStatistics'          => 20,
+			'searchStatisticsKeywordRankings'        => 20,
+			'searchStatisticsContentRankings'        => 20,
+			'searchStatisticsPostDetailKeywords'     => 20,
+			'searchStatisticsKrtKeywords'            => 20,
+			'searchStatisticsKrtGroups'              => 20,
+			'searchStatisticsKrtGroupsTableKeywords' => 10,
+			'queryArgs'                              => 20
 		],
 		'semrushCountry'  => 'US'
 	];

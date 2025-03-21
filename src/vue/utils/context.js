@@ -24,7 +24,15 @@ export const isElementorEditor = () => {
 }
 
 export const isDiviEditor = () => {
-	return !!(document.body.classList.contains('et_pb_pagebuilder_layout') && window.ET_Builder)
+	 const body = document.body
+	 const hasBuilder = !!window.ET_Builder
+
+	 if (!hasBuilder) {
+		return false
+	 }
+
+	 return body.classList.contains('et_pb_pagebuilder_layout') ||
+		(body.classList.contains('et_divi_builder') && body.classList.contains('et-fb'))
 }
 
 export const isSeedProdEditor = () => {

@@ -62,7 +62,6 @@ class GeneralSettings {
 			'aiosp_schema_person_manual_name'  => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'personName' ] ],
 			'aiosp_schema_organization_logo'   => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'organizationLogo' ] ],
 			'aiosp_schema_person_manual_image' => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'personLogo' ] ],
-			'aiosp_schema_search_results_page' => [ 'type' => 'boolean', 'newOption' => [ 'searchAppearance', 'advanced', 'sitelinks' ] ],
 			'aiosp_togglekeywords'             => [ 'type' => 'boolean', 'newOption' => [ 'searchAppearance', 'advanced', 'useKeywords' ] ],
 			'aiosp_use_categories'             => [ 'type' => 'boolean', 'newOption' => [ 'searchAppearance', 'advanced', 'useCategoriesForMetaKeywords' ] ],
 			'aiosp_use_tags_as_keywords'       => [ 'type' => 'boolean', 'newOption' => [ 'searchAppearance', 'advanced', 'useTagsForMetaKeywords' ] ],

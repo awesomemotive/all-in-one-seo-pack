@@ -247,6 +247,15 @@ trait Assets {
 	public function registerJs( $asset, $dependencies = [], $data = null, $objectName = 'aioseo' ) {
 		$handle = $this->jsHandle( $asset );
 		if ( wp_script_is( $handle, 'registered' ) ) {
+			// If it's already registered let's add the data.
+			if ( ! empty( $data ) ) {
+				wp_localize_script(
+					$handle,
+					$objectName,
+					$data
+				);
+			}
+
 			return;
 		}
 

@@ -72,6 +72,15 @@ export const watchClassicEditor = () => {
 		})
 	}
 
+	// Primary category change.
+	window.aioseoBus.$on('standalone-update-post', (param) => {
+		if (!param.primary_term) {
+			return
+		}
+
+		maybeUpdateTaxonomies()
+	})
+
 	// Watch for switching between tinyMCE and the text editor.
 	const callback = function (mutationsList) {
 		mutationsList.forEach(mutation => {

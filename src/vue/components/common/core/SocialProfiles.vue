@@ -263,6 +263,16 @@ export default {
 					]
 				},
 				{
+					key        : 'linkedinUrl',
+					name       : 'LinkedIn',
+					label      : 'LinkedIn URL',
+					url        : 'https://linkedin.com/in',
+					svg        : 'svg-icon-linkedin',
+					validation : [
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?linkedin\.[a-z.]+\/(?:in|company|school|groups|showcase)\/.*$/.test(v) || __('Your LinkedIn URL is invalid. Please check the format and try again.', td)
+					]
+				},
+				{
 					key        : 'pinterestUrl',
 					name       : 'Pinterest',
 					label      : 'Pinterest URL',
@@ -280,16 +290,6 @@ export default {
 					svg        : 'svg-icon-youtube',
 					validation : [
 						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?youtube\.[a-z.]+\/.*$/.test(v) || __('Your YouTube URL is invalid. Please check the format and try again.', td)
-					]
-				},
-				{
-					key        : 'linkedinUrl',
-					name       : 'LinkedIn',
-					label      : 'LinkedIn URL',
-					url        : 'https://linkedin.com/in',
-					svg        : 'svg-icon-linkedin',
-					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?linkedin\.[a-z.]+\/(?:in|company|school|groups|showcase)\/.*$/.test(v) || __('Your LinkedIn URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{

@@ -395,7 +395,7 @@ export default {
 	.social-profiles {
 		&:not(.show-more) {
 			.aioseo-social-profile-list {
-				.aioseo-settings-row:nth-child(n+5) {
+				.aioseo-settings-row:nth-child(n+6) {
 					display: none;
 				}
 			}
@@ -406,7 +406,7 @@ export default {
 
 			.same-username .use-same {
 				.profiles {
-					.aioseo-col:nth-child(n+5) {
+					.aioseo-col:nth-child(n+6) {
 						display: none;
 					}
 				}

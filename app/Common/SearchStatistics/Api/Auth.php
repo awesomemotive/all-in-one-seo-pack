@@ -162,10 +162,9 @@ class Auth {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param  bool $force Whether we should force the deletion in case of errors.
-	 * @return bool        Whether the authentication data was deleted or not.
+	 * @return bool Whether the authentication data was deleted or not.
 	 */
-	public function delete( $force = false ) {
+	public function delete() {
 		if ( ! $this->isConnected() ) {
 			return false;
 		}
@@ -175,20 +174,14 @@ class Auth {
 			return false;
 		}
 
-		$request = new Request( "auth/delete/{$this->type}/", [
+		( new Request( "auth/delete/{$this->type}/", [
 			'tt'      => aioseo()->searchStatistics->api->trustToken->get(),
 			'key'     => $creds['key'],
 			'token'   => $creds['token'],
 			'testurl' => 'https://' . aioseo()->searchStatistics->api->getApiUrl() . '/v1/test/',
-		] );
-		$response = $request->request();
+		] ) )->request();
 
 		aioseo()->searchStatistics->api->trustToken->rotate();
-
-		if ( is_wp_error( $response ) && ! $force ) {
-			return false;
-		}
-
 		aioseo()->searchStatistics->api->auth->deleteProfile();
 		aioseo()->searchStatistics->reset();
 

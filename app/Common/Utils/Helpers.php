@@ -388,4 +388,17 @@ class Helpers {
 
 		return $cached;
 	}
+
+	/**
+	 * Returns if the admin bar is enabled.
+	 *
+	 * @since 4.8.1
+	 *
+	 * @return bool Whether the admin bar is enabled.
+	 */
+	public function isAdminBarEnabled() {
+		$showAdminBarMenu = aioseo()->options->advanced->adminBarMenu;
+
+		return is_admin_bar_showing() && ( $showAdminBarMenu ?? true );
+	}
 }

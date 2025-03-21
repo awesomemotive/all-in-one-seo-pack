@@ -10,7 +10,7 @@
 						name="useDefaults"
 						v-model="postEditorStore.currentPost.local_seo.openingHours.useDefaults"
 						:options="[
-							{ label: GLOBAL_STRINGS.no, value: false },
+							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
 							{ label: GLOBAL_STRINGS.yes, value: true }
 						]"
 					/>
@@ -29,7 +29,7 @@
 							name="openingHours"
 							v-model="postEditorStore.currentPost.local_seo.openingHours.show"
 							:options="[
-								{ label: GLOBAL_STRINGS.no, value: false },
+								{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
 								{ label: GLOBAL_STRINGS.yes, value: true }
 							]"
 						/>

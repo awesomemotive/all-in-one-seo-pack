@@ -50,8 +50,11 @@ class RobotsTxt {
 		$searchAppearanceRules = $this->extractSearchAppearanceRules();
 		$networkRules          = [];
 		if ( is_multisite() ) {
+			$searchAppearanceRules = array_merge(
+				$searchAppearanceRules,
+				$this->extractSearchAppearanceRules( aioseo()->networkOptions->tools->robots->rules )
+			);
 			$networkRules          = aioseo()->networkOptions->tools->robots->enable ? aioseo()->networkOptions->tools->robots->rules : [];
-			$searchAppearanceRules = $this->extractSearchAppearanceRules( aioseo()->networkOptions->tools->robots->rules );
 		}
 
 		$originalRules = $this->extractRules( $original );
@@ -221,7 +224,7 @@ class RobotsTxt {
 	/**
 	 * Extracts the Search Appearance related rules.
 	 *
-	 * @since {next}
+	 * @since 4.8.1
 	 *
 	 * @param  array $rules The rules to extract from.
 	 * @return array        The Search Appearance related rules.
@@ -644,7 +647,7 @@ class RobotsTxt {
 	/**
 	 * Reset the Search Appearance related rules.
 	 *
-	 * @since {next}
+	 * @since 4.8.1
 	 *
 	 * @return void
 	 */

@@ -10,7 +10,7 @@
 		:initial-page-number="pageNumber"
 		:initial-search-term="paginatedKeywords?.searchTerm || searchTerm"
 		:key="wpTableKey"
-		:loading="wpTableLoading"
+		:loading="wpTableLoading || loading"
 		:rows="paginatedKeywords.rows"
 		show-bulk-actions
 		:show-header="showHeader"
@@ -32,7 +32,7 @@
 					`btn-filter-favorited button ${slug}`,
 					{ 'btn-filter-favorited--not-active': !active }
 				]"
-				:disabled="wpTableLoading"
+				:disabled="wpTableLoading || loading"
 				tabindex="-1"
 			>
 				<svg-star :active="true"/>
@@ -68,7 +68,6 @@
 			<div class="row-actions">
 				<span class="edit">
 					<a
-						class="view"
 						:href="viewInGoogleLink(row.name)"
 						target="_blank"
 					>
@@ -120,7 +119,7 @@
 				<a
 					href="#"
 					:class="{'active': 'related-keywords-table' === innerTableComponent}"
-					@click.prevent="setInnerTableComponent('related-keywords-table')"
+					@click.prevent="setInnerTableComponent('related-keywords-table', row)"
 				>
 					{{ strings.relatedKeywords }}
 				</a>
@@ -140,12 +139,14 @@
 				v-if="'related-keywords-table' === innerTableComponent"
 				class="inner-table"
 				:paginated-rows="keywordRankTrackerStore.keywords.related.paginated"
+				:loading="wpInnerTableLoading"
 			/>
 
 			<keyword-ranking-pages-table
 				v-if="'keyword-ranking-pages-table' === innerTableComponent"
 				class="inner-table"
 				:paginated-rows="keywordRankTrackerStore.keywords.rankingPages.paginated"
+				:loading="wpInnerTableLoading"
 			/>
 		</template>
 
@@ -205,7 +206,7 @@
 			<base-button
 				@click="toggleRow(index, row, editRow)"
 				:type="table?.activeRow === index ? 'blue' : 'gray'"
-				:disabled="wpTableLoading"
+				:disabled="wpTableLoading || loading"
 				:class="{ 'active': table?.activeRow === index }"
 				class="btn-toggle-row"
 			>
@@ -216,7 +217,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 
 import {
 	useKeywordRankTrackerStore,
@@ -241,7 +242,6 @@ import SvgStar from '@/vue/components/common/svg/Star'
 const td                      = import.meta.env.VITE_TEXTDOMAIN
 const keywordRankTrackerStore = useKeywordRankTrackerStore()
 const settingsStore           = useSettingsStore()
-const changeItemsPerPageSlug  = 'searchStatisticsKeywordRankTracker'
 const tableId                 = 'keyword-rank-tracker-keywords-table'
 const strings                 = {
 	addToGroup          : __('Add to Group', td),
@@ -288,12 +288,18 @@ const props = defineProps({
 			return keywordRankTrackerStore.fetchKeywords(args)
 		}
 	},
-	outerGroup : Object
+	outerGroup             : Object,
+	loading                : Boolean,
+	changeItemsPerPageSlug : {
+		type    : String,
+		default : 'searchStatisticsKrtKeywords'
+	}
 })
 
 const table               = ref(null)
 const btnFavoriteLoading  = ref([])
 const innerTableComponent = ref('related-keywords-table')
+const wpInnerTableLoading = ref(false)
 
 const {
 	orderBy,
@@ -308,10 +314,10 @@ const {
 	wpTableKey,
 	wpTableLoading
 } = useWpTable({
-	changeItemsPerPageSlug,
-	fetchData : props.fetchData,
+	changeItemsPerPageSlug : props.changeItemsPerPageSlug,
+	fetchData              : props.fetchData,
 	tableId,
-	tableRef  : table.value
+	tableRef               : table.value
 })
 
 const pageNumber = computed(() => {
@@ -506,19 +512,26 @@ const viewInGoogleLink = (keyword) => {
 	return `https://www.google.com/search?q=${encodeURIComponent(keyword)}`
 }
 
-const setInnerTableComponent = async (component, row = null) => {
+const setInnerTableComponent = async (component, row) => {
+	keywordRankTrackerStore.resetRelatedKeywords()
+	keywordRankTrackerStore.resetKeywordsRankingPages()
+
+	wpInnerTableLoading.value = true
 	innerTableComponent.value = component
 
-	if ('keyword-ranking-pages-table' === component) {
-		wpTableLoading.value = true
-
-		try {
+	try {
+		if ('keyword-ranking-pages-table' === component) {
 			await keywordRankTrackerStore.fetchKeywordsRankingPages({ keywords: [ row.name ] })
-		} catch (error) {
-			console.error(error)
 		}
 
-		wpTableLoading.value = false
+		if ('related-keywords-table' === component) {
+			await keywordRankTrackerStore.fetchRelatedKeywords(row.name)
+			keywordRankTrackerStore.maybeFetchRelatedKeywordsStatistics()
+		}
+	} catch (error) {
+		console.error(error)
+	} finally {
+		wpInnerTableLoading.value = false
 	}
 }
 
@@ -532,26 +545,13 @@ const maybeDeleteRow = (row) => {
 }
 
 const toggleRow = async (index, row, editRow) => {
-	wpTableLoading.value = true
-
 	editRow(index)
 
-	await setInnerTableComponent('related-keywords-table')
-
-	keywordRankTrackerStore.resetRelatedKeywords()
-	keywordRankTrackerStore.resetKeywordsRankingPages()
+	await nextTick()
 
 	if (null !== table.value.activeRow) {
-		try {
-			await keywordRankTrackerStore.fetchRelatedKeywords(row.name).then(() => {
-				keywordRankTrackerStore.maybeFetchRelatedKeywordsStatistics()
-			})
-		} catch (error) {
-			console.error(error)
-		}
+		await setInnerTableComponent('related-keywords-table', row)
 	}
-
-	wpTableLoading.value = false
 }
 
 const unassignOuterGroup = async (keyword, outerGroup) => {
@@ -606,10 +606,9 @@ const unassignOuterGroup = async (keyword, outerGroup) => {
 	}
 
 	tbody .name .row-actions {
-		.edit a.view {
+		a {
 			display: inline-flex;
 			align-items: center;
-			color: $blue;
 			font-weight: normal;
 
 			svg {
@@ -661,8 +660,6 @@ const unassignOuterGroup = async (keyword, outerGroup) => {
 	}
 
 	&.inner-table {
-		padding: 0;
-
 		tr {
 			.row-actions {
 				position: relative;

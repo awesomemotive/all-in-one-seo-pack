@@ -115,6 +115,7 @@ import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { getParams, removeParam } from '@/vue/utils/params'
 import { debounceContext } from '@/vue/utils/debounce'
 import { isBlockEditor, isPageBuilderEditor } from '@/vue/utils/context'
+import { maybeUpdateTaxonomies } from '@/vue/plugins/tru-seo/components/taxonomies'
 
 import Advanced from './Advanced'
 import Alert from './partials/Alert'
@@ -446,6 +447,10 @@ export default {
 			Object.keys(param).forEach(option => {
 				this.postEditorStore.currentPost[option] = param[option]
 			})
+
+			if (param?.primary_term) {
+				maybeUpdateTaxonomies()
+			}
 		})
 
 		switch (this.$root.$data.screenContext) {

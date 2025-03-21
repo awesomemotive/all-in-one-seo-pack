@@ -27,8 +27,8 @@ if ( class_exists( 'ActionScheduler_QueueRunner' ) ) {
 	ActionScheduler_QueueRunner::instance()->unhook_dispatch_async_request();
 }
 
-// Drop our custom tables.
-aioseo()->core->uninstallDb();
+// Drop our custom tables and data.
+aioseo()->uninstall->dropData();
 
 // Remove translation files.
 global $wp_filesystem; // phpcs:ignore Squiz.NamingConventions.ValidVariableName

@@ -3,7 +3,8 @@ import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 
 import {
-	useSearchStatisticsStore
+	useSearchStatisticsStore,
+	useSettingsStore
 } from '@/vue/stores'
 
 export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore', {
@@ -92,6 +93,7 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 		},
 		siteFocusKeywords       : [],
 		gscKeywords             : [],
+		isFetchingGscKeywords   : false,
 		options                 : {},
 		modalOpenAddKeywords    : false,
 		modalOpenCreateGroup    : false,
@@ -266,7 +268,13 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 				})
 		},
 		fetchGroupsTableKeywords (payload = {}) {
-			this.groups.tableKeywords.paginated = { ...this.groups.tableKeywords.paginated, ...payload }
+			const settingsStore = useSettingsStore()
+
+			this.groups.tableKeywords.paginated = {
+				...this.groups.tableKeywords.paginated,
+				...payload,
+				limit : settingsStore.settings.tablePagination?.searchStatisticsKrtGroupsTableKeywords
+			}
 
 			return http.get(links.restUrl('search-statistics/keyword-rank-tracker/keywords'))
 				.query({
@@ -416,6 +424,8 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 			}
 		},
 		fetchGscKeywords () {
+			this.isFetchingGscKeywords = true
+
 			return http.get(links.restUrl('search-statistics/stats/keywords'))
 				.query({
 					startDate  : this.range.start,
@@ -431,6 +441,9 @@ export const useKeywordRankTrackerStore = defineStore('KeywordRankTrackerStore',
 				})
 				.catch(error => {
 					throw error
+				})
+				.finally(() => {
+					this.isFetchingGscKeywords = false
 				})
 		},
 		fetchRelatedKeywords (keyword) {

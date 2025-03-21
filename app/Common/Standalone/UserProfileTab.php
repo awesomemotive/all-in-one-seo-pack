@@ -24,8 +24,24 @@ class UserProfileTab {
 			return;
 		}
 
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueueTranslations' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueueScript' ] );
 		add_action( 'profile_update', [ $this, 'updateUserSocialProfiles' ] );
+	}
+
+	/**
+	 * Enqueues the translations separately so it can be called from anywhere.
+	 *
+	 * @since 4.8.1
+	 *
+	 * @return void
+	 */
+	public function enqueueTranslations() {
+		// This required changes in the Assets class as a registered script handle would not allow extra data to be added.
+		// This extra data was added by the enqueueScript function below.
+		aioseo()->core->assets->load( 'src/vue/standalone/user-profile-tab/main.js', [], [
+			'translations' => aioseo()->helpers->getJedLocaleData( 'aioseo-eeat' )
+		], 'eeat' );
 	}
 
 	/**

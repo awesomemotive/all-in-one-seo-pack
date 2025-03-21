@@ -651,6 +651,32 @@ trait Strings {
 	}
 
 	/**
+	 * Extracts URLs from a given string.
+	 *
+	 * @since 4.8.1
+	 *
+	 * @param  string $string The string.
+	 * @return array          The extracted URLs.
+	 */
+	public function extractUrls( $string ) {
+		$urls = wp_extract_urls( $string );
+
+		if ( empty( $urls ) ) {
+			return [];
+		}
+
+		$allUrls = [];
+
+		// Attempt to split multiple URLs. Elementor does not always separate them properly.
+		foreach ( $urls as $url ) {
+			$splitUrls = preg_split( '/(?=https?:\/\/)/', $url, - 1, PREG_SPLIT_NO_EMPTY );
+			$allUrls   = array_merge( $allUrls, $splitUrls );
+		}
+
+		return $allUrls;
+	}
+
+	/**
 	 * Determines if a text string contains an emoji or not.
 	 *
 	 * @since 4.8.0
