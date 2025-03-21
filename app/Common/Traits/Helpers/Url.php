@@ -281,4 +281,25 @@ trait Url {
 
 		return $url;
 	}
+
+	/**
+	 * Redirects to a specific URL.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @param string $url    The URL to redirect to.
+	 * @param int    $status The status code to use.
+	 * @param string $reason The reason for redirecting.
+	 *
+	 * @return void
+	 */
+	public function redirect( $url, $status = 301, $reason = '' ) {
+		$redirectBy = 'AIOSEO';
+		if ( ! empty( $reason ) ) {
+			$redirectBy .= ': ' . $reason;
+		}
+
+		wp_safe_redirect( $url, $status, $redirectBy );
+		exit;
+	}
 }

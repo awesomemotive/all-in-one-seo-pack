@@ -649,4 +649,29 @@ trait Strings {
 	public function createHash( ...$args ) {
 		return sha1( wp_json_encode( $args ) );
 	}
+
+	/**
+	 * Determines if a text string contains an emoji or not.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @param  string $string The text string to detect emoji in.
+	 * @return bool
+	 */
+	public function hasEmojis( $string ) {
+		$emojisRegexPattern = '/[\x{1F600}-\x{1F64F}' . // Emoticons
+							'\x{1F300}-\x{1F5FF}' . // Misc Symbols and Pictographs
+							'\x{1F680}-\x{1F6FF}' . // Transport and Map Symbols
+							'\x{1F1E0}-\x{1F1FF}' . // Flags (iOS)
+							'\x{2600}-\x{26FF}' . // Misc symbols
+							'\x{2700}-\x{27BF}' . // Dingbats
+							'\x{FE00}-\x{FE0F}' . // Variation Selectors
+							'\x{1F900}-\x{1F9FF}' . // Supplemental Symbols and Pictographs
+							'\x{1F018}-\x{1F270}' . // Various Asian characters
+							'\x{238C}-\x{2454}' . // Misc items
+							'\x{20D0}-\x{20FF}' . // Combining Diacritical Marks for Symbols
+							']/u';
+
+		return preg_match( $emojisRegexPattern, $string );
+	}
 }

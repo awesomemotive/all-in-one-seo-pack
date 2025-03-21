@@ -17,6 +17,9 @@ import Media from './Media'
 import Taxonomies from './Taxonomies'
 
 import { __ } from '@/vue/plugins/translations'
+import { useRobotsTxt } from '@/vue/composables/RobotsTxt'
+
+useRobotsTxt()
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 

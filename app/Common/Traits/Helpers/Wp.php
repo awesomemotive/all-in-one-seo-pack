@@ -945,4 +945,20 @@ trait Wp {
 
 		return 'classic' === get_option( 'classic-editor-replace' );
 	}
+
+	/**
+	 * Redirects to a 404 Not Found page if the sitemap is disabled.
+	 *
+	 * @since 4.0.0
+	 * @version 4.8.0 Moved from the Sitemap class.
+	 *
+	 * @return void
+	 */
+	public function notFoundPage() {
+		global $wp_query; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		$wp_query->set_404(); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		status_header( 404 );
+		include_once get_404_template();
+		exit;
+	}
 }

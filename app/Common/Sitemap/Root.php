@@ -348,6 +348,14 @@ class Root {
 			}, $excludedPostIds );
 		}
 
+		if ( 'page' === $postType ) {
+			$isStaticHomepage = 'page' === get_option( 'show_on_front' );
+			if ( $isStaticHomepage ) {
+				$blogPageId = (int) get_option( 'page_for_posts' );
+				$excludedPostIds[] = $blogPageId;
+			}
+		}
+
 		$whereClause         = '';
 		$excludedPostsString = aioseo()->sitemap->helpers->excludedPosts();
 		if ( ! empty( $excludedPostsString ) ) {

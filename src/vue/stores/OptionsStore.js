@@ -101,16 +101,20 @@ export const useOptionsStore = defineStore('OptionsStore', {
 			const dirtyOptionsStore = useDirtyOptionsStore()
 			const networkStore      = useNetworkStore()
 			const rootStore         = useRootStore()
+			const getOptions        = 'network' === networkStore.currentSite?.blog_id
+				? this.networkOptions
+				: this.options
 
 			const options      = {
-				enabled : 'network' === networkStore.networkRobots.siteId
+				enabled : 'network' === networkStore.currentSite?.blog_id
 					? this.networkOptions.tools.robots.enable
 					: this.options.tools.robots.enable,
-				network : rootStore.aioseo.data.isNetworkAdmin,
-				rules   : networkStore.networkRobots.rules
+				network          : rootStore.aioseo.data.isNetworkAdmin,
+				rules            : networkStore.networkRobots.rules,
+				searchAppearance : getOptions.searchAppearance
 			}
 
-			return http.post(links.restUrl(`network-robots/${networkStore.networkRobots.siteId}`))
+			return http.post(links.restUrl(`network-robots/${networkStore.currentSite?.blog_id}`))
 				.send(options)
 				.then(() => {
 					dirtyOptionsStore.updateOriginalOptions('options', this.options)

@@ -147,21 +147,25 @@ export const useTruSeoHighlighter = () => {
 	}
 
 	const formatBlockContent = ({ block, node }) => {
-		let content = ''
-		if (node) {
-			content = node.outerText.replace(/\n\n/g, '\n')
-		} else if (block) {
-			content = block?.attributes?.content || block?.attributes?.caption || block?.attributes?.value || block?.attributes?.citation || ''
-			if ('core/table' === block.name) {
-				content = block?.originalContent || ''
+		try {
+			let content = ''
+			if (node) {
+				content = node.outerText.replace(/\n\n/g, '\n')
+			} else if (block) {
+				content = block?.attributes?.content || block?.attributes?.caption || block?.attributes?.value || block?.attributes?.citation || ''
+				if ('core/table' === block.name) {
+					content = block?.originalContent || ''
+				}
+
+				// Keep line breaks otherwise `getOuterText()` don't recognize them.
+				content = content.replace(/<br[^>]*>/gi, '\n')
+				content = getOuterText(content)
 			}
 
-			// Keep line breaks otherwise `getOuterText()` don't recognize them.
-			content = content.replace(/<br[^>]*>/gi, '\n')
-			content = getOuterText(content)
+			return normalizeWhitespaces(content)
+		} catch (_e) {
+			return ''
 		}
-
-		return normalizeWhitespaces(content)
 	}
 
 	const getEditorNode = (which) => {

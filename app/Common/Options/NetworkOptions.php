@@ -36,7 +36,25 @@ class NetworkOptions {
 	 */
 	protected $defaults = [
 		// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-		'tools' => [
+		'searchAppearance' => [
+			'advanced' => [
+				'unwantedBots'  => [
+					'all'      => [ 'type' => 'boolean', 'default' => false ],
+					'settings' => [
+						'googleAdsBot'             => [ 'type' => 'boolean', 'default' => false ],
+						'openAiGptBot'             => [ 'type' => 'boolean', 'default' => false ],
+						'commonCrawlCcBot'         => [ 'type' => 'boolean', 'default' => false ],
+						'googleGeminiVertexAiBots' => [ 'type' => 'boolean', 'default' => false ]
+					]
+				],
+				'searchCleanup' => [
+					'settings' => [
+						'preventCrawling' => [ 'type' => 'boolean', 'default' => false ]
+					]
+				]
+			]
+		],
+		'tools'            => [
 			'robots' => [
 				'enable'         => [ 'type' => 'boolean', 'default' => false ],
 				'rules'          => [ 'type' => 'array', 'default' => [] ],

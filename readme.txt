@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.7.1
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.7.9.1
+Stable tag: 4.8.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -226,7 +226,12 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
-**New in Version 4.7.9**
+**New in Version 4.8.0**
+
+* New: Crawl Optimization Improvements - We've added even more features to Crawl Cleanup to help you block unwanted bots from indexing your site and prevent spammers from abusing your internal site search results.
+* Fixed: TruSEO Highlighter not always working correctly when post content contains an empty or reusable block.
+
+**New in Version 4.7.9.1**
 
 * Updated: Removed the Search Statistics menu item under Dashboard menu.
 
@@ -423,6 +428,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.7.9.1 =
+= 4.8.0 =
 
 This update adds major improvements and bug fixes.

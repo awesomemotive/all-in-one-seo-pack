@@ -44,6 +44,7 @@ export default {
 					'PRO'
 				),
 				ctaDescription : sprintf(
+					// Translators: 1 - The plugin short name ("AIOSEO").
 					__('%1$s allows you to fully control your SEO and social meta for custom taxonomies, including the ability to import/export them.', td),
 					import.meta.env.VITE_SHORT_NAME + ' Pro'
 				),

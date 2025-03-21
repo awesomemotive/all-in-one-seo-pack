@@ -49,6 +49,7 @@
 
 		<grid-column
 			:md="rightSize"
+			v-if="$slots.content"
 		>
 			<div class="settings-content">
 				<slot name="content" />

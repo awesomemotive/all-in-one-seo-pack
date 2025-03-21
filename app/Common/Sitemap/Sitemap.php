@@ -330,7 +330,7 @@ class Sitemap extends SitemapAbstract {
 
 		$options = aioseo()->options->noConflict();
 		if ( ! $options->sitemap->{aioseo()->sitemap->type}->enable ) {
-			$this->notFoundPage();
+			aioseo()->helpers->notFoundPage();
 
 			return;
 		}
@@ -404,21 +404,6 @@ class Sitemap extends SitemapAbstract {
 		$charset = aioseo()->helpers->getCharset();
 		header( "Content-Type: text/xml; charset=$charset", true );
 		header( 'X-Robots-Tag: noindex, follow', true );
-	}
-
-	/**
-	 * Redirects to a 404 Not Found page if the sitemap is disabled.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return void
-	 */
-	public function notFoundPage() {
-		global $wp_query; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
-		$wp_query->set_404(); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
-		status_header( 404 );
-		include get_404_template();
-		exit;
 	}
 
 	/**

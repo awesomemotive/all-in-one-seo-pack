@@ -33,6 +33,10 @@ class Localization {
 				'activeLanguages' => apply_filters( 'wpml_active_languages', null )
 			];
 
+			if ( apply_filters( 'aioseo_sitemap_localization_disable', '__return_false' ) ) {
+				return;
+			}
+
 			add_filter( 'aioseo_sitemap_term', [ $this, 'localizeEntry' ], 10, 4 );
 			add_filter( 'aioseo_sitemap_post', [ $this, 'localizeEntry' ], 10, 4 );
 		}

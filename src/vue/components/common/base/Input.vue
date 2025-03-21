@@ -117,7 +117,7 @@ import SvgTrash from '@/vue/components/common/svg/Trash'
 import SvgVideo from '@/vue/components/common/svg/schema/Video'
 import SvgWebPage from '@/vue/components/common/svg/schema/WebPage'
 
-import { __ } from '@/vue/plugins/translations'
+import { __, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -223,7 +223,8 @@ export default {
 	methods : {
 		validate (value) {
 			this.error = ''
-			if (!this.validation || !this.modelValue) {
+
+			if (!this.validation) {
 				return
 			}
 
@@ -244,6 +245,18 @@ export default {
 
 			if ('email' === this.validation && !isEmail(value)) {
 				this.error = __('Please enter a valid email.', td)
+			}
+
+			if ('number' === this.validation) {
+				const numberValue = parseFloat(value)
+				if (isNaN(numberValue) || (this.min > numberValue || this.max < numberValue)) {
+					this.error = sprintf(
+						// Translators: 1 - Minimum value, 2 - Maximum value.
+						__('Please enter a number between %1$s and %2$s.', td),
+						this.min,
+						this.max
+					)
+				}
 			}
 		}
 	},

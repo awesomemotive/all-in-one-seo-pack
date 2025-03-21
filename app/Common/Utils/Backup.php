@@ -85,6 +85,13 @@ class Backup {
 	 */
 	public function restore( $backupTime ) {
 		$backup = json_decode( get_option( $this->optionsName . '_' . $backupTime ), true );
+		if ( ! empty( $backup['options']['tools']['robots']['rules'] ) ) {
+			$backup['options']['tools']['robots']['rules'] = array_merge(
+				aioseo()->robotsTxt->extractSearchAppearanceRules(),
+				$backup['options']['tools']['robots']['rules']
+			);
+		}
+
 		aioseo()->options->sanitizeAndSave( $backup['options'] );
 		aioseo()->internalOptions->sanitizeAndSave( $backup['internalOptions'] );
 	}

@@ -3,11 +3,14 @@
 		:page-name="strings.pageName"
 		:show-save-button="showSaveButton"
 	>
-		<component :is="$route.name" />
+		<component :is="getRoute" />
 	</core-main>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+
 import {
 	useRootStore
 } from '@/vue/stores'
@@ -23,43 +26,46 @@ import SystemStatus from './SystemStatus'
 import WpCode from './WpCode'
 
 import { __ } from '@/vue/plugins/translations'
+import { useRobotsTxt } from '@/vue/composables/RobotsTxt'
+
+const rootStore = useRootStore()
+const route  = useRoute()
+const getRoute = computed(() => {
+	switch (route.name) {
+		case 'bad-bot-blocker':
+			return BadBotBlocker
+		case 'database-tools':
+			return DatabaseTools
+		case 'debug':
+			return Debug
+		case 'htaccess-editor':
+			return HtaccessEditor
+		case 'import-export':
+			return ImportExport
+		case 'system-status':
+			return SystemStatus
+		case 'wp-code':
+			return WpCode
+		default:
+			return RobotsEditor
+	}
+})
+
+useRobotsTxt()
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-export default {
-	setup () {
-		return {
-			rootStore : useRootStore()
-		}
-	},
-	components : {
-		BadBotBlocker,
-		CoreMain,
-		DatabaseTools,
-		Debug,
-		HtaccessEditor,
-		ImportExport,
-		RobotsEditor,
-		SystemStatus,
-		WpCode
-	},
-	data () {
-		return {
-			strings : {
-				pageName : this.rootStore.aioseo.data.isNetworkAdmin
-					? __('Network Tools', td)
-					: __('Tools', td)
-			}
-		}
-	},
-	computed : {
-		showSaveButton () {
-			return 'system-status' !== this.$route.name &&
-				'import-export' !== this.$route.name &&
-				'database-tools' !== this.$route.name &&
-				'debug' !== this.$route.name &&
-				'wp-code' !== this.$route.name
-		}
-	}
+const showSaveButton = computed(() => {
+	return 'system-status' !== route.name &&
+		'import-export' !== route.name &&
+		'database-tools' !== route.name &&
+		'debug' !== route.name &&
+		'wp-code' !== route.name
+})
+
+const strings = {
+	pageName : rootStore.aioseo.data.isNetworkAdmin
+		? __('Network Tools', td)
+		: __('Tools', td)
 }
 </script>

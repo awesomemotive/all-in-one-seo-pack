@@ -128,7 +128,7 @@ export default {
 				desktop           : __('Desktop', td),
 				mobile            : __('Mobile', td),
 				loading           : __('Running speed test...', td),
-				unableToCalculate : __('We were unable to calculate the speed of this post.', td),
+				unableToCalculate : __('We were unable to calculate the page speed of this post.', td),
 				pleaceMakeSure    : __('Please make sure this post is publicly accessible.', td)
 			}
 		}

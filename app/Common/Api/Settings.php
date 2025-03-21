@@ -214,11 +214,17 @@ class Settings {
 			switch ( $setting ) {
 				case 'robots':
 					aioseo()->options->tools->robots->reset();
+					aioseo()->options->searchAppearance->advanced->unwantedBots->reset();
+					aioseo()->options->searchAppearance->advanced->searchCleanup->settings->preventCrawling = false;
 					break;
 				case 'blocker':
 					aioseo()->options->deprecated->tools->blocker->reset();
 					break;
 				default:
+					if ( 'searchAppearance' === $setting ) {
+						aioseo()->robotsTxt->resetSearchAppearanceRules();
+					}
+
 					if ( aioseo()->options->has( $setting ) ) {
 						aioseo()->options->$setting->reset();
 					}
@@ -352,6 +358,10 @@ class Settings {
 		if ( ! empty( $settings['dynamic'] ) ) {
 			aioseo()->dynamicOptions->sanitizeAndSave( $settings['dynamic'] );
 			unset( $settings['dynamic'] );
+		}
+
+		if ( ! empty( $settings['tools']['robots']['rules'] ) ) {
+			$settings['tools']['robots']['rules'] = array_merge( aioseo()->robotsTxt->extractSearchAppearanceRules(), $settings['tools']['robots']['rules'] );
 		}
 
 		aioseo()->options->sanitizeAndSave( $settings );
@@ -519,6 +529,17 @@ class Settings {
 			switch ( $setting ) {
 				case 'robots':
 					$allSettings['settings']['tools']['robots'] = $options->tools->robots->all();
+					// Search Appearance settings that are also found in the robots settings.
+					if ( empty( $allSettings['settings']['searchAppearance']['advanced'] ) ) {
+						$allSettings['settings']['searchAppearance']['advanced'] = [
+							'unwantedBots'  => $options->searchAppearance->advanced->unwantedBots->all(),
+							'searchCleanup' => [
+								'settings' => [
+									'preventCrawling' => $options->searchAppearance->advanced->searchCleanup->settings->preventCrawling
+								]
+							]
+						];
+					}
 					break;
 				default:
 					if ( $options->has( $setting ) ) {

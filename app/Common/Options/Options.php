@@ -315,9 +315,29 @@ TEMPLATE
 						'paginated'      => [ 'type' => 'boolean', 'default' => false ]
 					]
 				],
+				'unwantedBots'                 => [
+					'all'      => [ 'type' => 'boolean', 'default' => false ],
+					'settings' => [
+						'googleAdsBot'             => [ 'type' => 'boolean', 'default' => false ],
+						'openAiGptBot'             => [ 'type' => 'boolean', 'default' => false ],
+						'commonCrawlCcBot'         => [ 'type' => 'boolean', 'default' => false ],
+						'googleGeminiVertexAiBots' => [ 'type' => 'boolean', 'default' => false ]
+					]
+				],
+				'searchCleanup'                => [
+					'enable'   => [ 'type' => 'boolean', 'default' => false ],
+					'settings' => [
+						'maxAllowedNumberOfChars' => [ 'type' => 'number', 'default' => 50 ],
+						'emojisAndSymbols'        => [ 'type' => 'boolean', 'default' => false ],
+						'commonPatterns'          => [ 'type' => 'boolean', 'default' => false ],
+						'redirectPrettyUrls'      => [ 'type' => 'boolean', 'default' => false ],
+						'preventCrawling'         => [ 'type' => 'boolean', 'default' => false ]
+					]
+				],
 				'blockArgs'                    => [
-					'enable'        => [ 'type' => 'boolean', 'default' => false ],
-					'logsRetention' => [ 'type' => 'string', 'default' => '{"label":"1 week","value":"week"}' ]
+					'enable'                => [ 'type' => 'boolean', 'default' => false ],
+					'optimizeUtmParameters' => [ 'type' => 'boolean', 'default' => false ],
+					'logsRetention'         => [ 'type' => 'string', 'default' => '{"label":"1 week","value":"week"}' ]
 				],
 				'removeCategoryBase'           => [ 'type' => 'boolean', 'default' => false ]
 			],

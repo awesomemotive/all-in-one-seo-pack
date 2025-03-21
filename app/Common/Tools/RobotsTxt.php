@@ -47,18 +47,20 @@ class RobotsTxt {
 			return $original;
 		}
 
-		$originalRules = $this->extractRules( $original );
-		$networkRules  = [];
-
+		$searchAppearanceRules = $this->extractSearchAppearanceRules();
+		$networkRules          = [];
 		if ( is_multisite() ) {
-			$networkRules = aioseo()->networkOptions->tools->robots->enable ? aioseo()->networkOptions->tools->robots->rules : [];
+			$networkRules          = aioseo()->networkOptions->tools->robots->enable ? aioseo()->networkOptions->tools->robots->rules : [];
+			$searchAppearanceRules = $this->extractSearchAppearanceRules( aioseo()->networkOptions->tools->robots->rules );
 		}
 
+		$originalRules = $this->extractRules( $original );
+		$ruleset       = $this->mergeRules( $originalRules, $this->groupRulesByUserAgent( $searchAppearanceRules ) );
 		if ( ! aioseo()->options->tools->robots->enable ) {
-			$ruleset = $this->mergeRules( $originalRules, $this->groupRulesByUserAgent( $networkRules ) );
+			$ruleset = $this->mergeRules( $ruleset, $this->groupRulesByUserAgent( $networkRules ) );
 		} else {
 			$ruleset = $this->mergeRules(
-				$originalRules,
+				$ruleset,
 				$this->mergeRules( $this->groupRulesByUserAgent( $networkRules ), $this->groupRulesByUserAgent( aioseo()->options->tools->robots->rules ) ),
 				true
 			);
@@ -217,6 +219,24 @@ class RobotsTxt {
 	}
 
 	/**
+	 * Extracts the Search Appearance related rules.
+	 *
+	 * @since {next}
+	 *
+	 * @param  array $rules The rules to extract from.
+	 * @return array        The Search Appearance related rules.
+	 */
+	public function extractSearchAppearanceRules( $rules = [] ) {
+		$currentRules = $rules ?: aioseo()->options->tools->robots->rules;
+
+		return array_filter( $currentRules, function ( $rule ) {
+			$parseRule = json_decode( $rule, true );
+
+			return ! empty( $parseRule['bot'] ) || ! empty( $parseRule['preventCrawling'] );
+		} );
+	}
+
+	/**
 	 * Parses the rules.
 	 *
 	 * @since   4.0.0
@@ -228,7 +248,7 @@ class RobotsTxt {
 	private function groupRulesByUserAgent( $rules ) {
 		$groups = [];
 		foreach ( $rules as $rule ) {
-			$r = json_decode( $rule, true );
+			$r = is_string( $rule ) ? json_decode( $rule, true ) : $rule;
 			if ( empty( $r['userAgent'] ) || empty( $r['fieldValue'] ) ) {
 				continue;
 			}
@@ -398,11 +418,11 @@ class RobotsTxt {
 	 * @since   4.0.0
 	 * @version 4.4.2
 	 *
-	 * @param  bool       $network True if inside WordPress network administration pages.
-	 * @throws \Exception          If request fails or file is not readable.
-	 * @return boolean             Whether or not the file imported correctly.
+	 * @param  int|string $blogId The blog ID or 'network'.
+	 * @throws \Exception         If request fails or file is not readable.
+	 * @return boolean            Whether the file imported correctly.
 	 */
-	public function importPhysicalRobotsTxt( $network = false ) {
+	public function importPhysicalRobotsTxt( $blogId ) {
 		try {
 			$fs = aioseo()->core->fs;
 			if ( ! $fs->isWpfsValid() ) {
@@ -419,7 +439,7 @@ class RobotsTxt {
 
 			$lines = trim( (string) $fs->getContents( $file ) );
 			if ( $lines ) {
-				$this->importRobotsTxtFromText( $lines, $network );
+				$this->importRobotsTxtFromText( $lines, $blogId );
 			}
 
 			return true;
@@ -433,26 +453,23 @@ class RobotsTxt {
 	 *
 	 * @since 4.4.2
 	 *
-	 * @param  string     $text    The text to import from.
-	 * @param  bool       $network True if inside WordPress network administration pages.
-	 * @throws \Exception          If no User-agent is found.
-	 * @return boolean             Whether the file imported correctly or not.
+	 * @param  string     $text   The text to import from.
+	 * @param  int|string $blogId The blog ID or 'network'.
+	 * @throws \Exception         If no User-agent is found.
+	 * @return boolean            Whether the file imported correctly or not.
 	 */
-	public function importRobotsTxtFromText( $text, $network ) {
-		$ruleset = $this->extractRules( $text );
-		if ( ! key( $ruleset ) ) {
+	public function importRobotsTxtFromText( $text, $blogId ) {
+		$newRules = $this->extractRules( $text );
+		if ( ! key( $newRules ) ) {
 			throw new \Exception( esc_html__( 'No User-agent found in the content beginning.', 'all-in-one-seo-pack' ) );
 		}
 
 		$options = aioseo()->options;
-		if ( $network ) {
+		if ( 'network' === $blogId ) {
 			$options = aioseo()->networkOptions;
 		}
 
-		$currentRules = $this->groupRulesByUserAgent( $options->tools->robots->rules );
-		$ruleset      = $this->mergeRules( $currentRules, $ruleset, false, true );
-
-		$options->tools->robots->rules = aioseo()->robotsTxt->prepareRobotsTxt( $ruleset );
+		$options->tools->robots->rules = array_unique( array_merge( $options->tools->robots->rules, $this->prepareRobotsTxt( $newRules ) ) );
 
 		return true;
 	}
@@ -462,12 +479,12 @@ class RobotsTxt {
 	 *
 	 * @since 4.4.2
 	 *
-	 * @param  string     $url     The URL to import from.
-	 * @param  bool       $network True if inside WordPress network administration pages.
-	 * @throws \Exception          If request fails.
-	 * @return bool                Whether the import was successful or not.
+	 * @param  string     $url    The URL to import from.
+	 * @param  int|string $blogId The blog ID or 'network'.
+	 * @throws \Exception         If request fails.
+	 * @return bool               Whether the import was successful or not.
 	 */
-	public function importRobotsTxtFromUrl( $url, $network ) {
+	public function importRobotsTxtFromUrl( $url, $blogId ) {
 		$request          = wp_remote_get( $url, [
 			'timeout'   => 10,
 			'sslverify' => false
@@ -478,15 +495,13 @@ class RobotsTxt {
 		}
 
 		$options = aioseo()->options;
-		if ( $network ) {
+		if ( 'network' === $blogId ) {
 			$options = aioseo()->networkOptions;
 		}
 
-		$newRules     = $this->extractRules( $robotsTxtContent );
-		$currentRules = $this->groupRulesByUserAgent( $options->tools->robots->rules );
-		$newRules     = $this->mergeRules( $currentRules, $newRules, false, true );
+		$newRules = $this->extractRules( $robotsTxtContent );
 
-		$options->tools->robots->rules = aioseo()->robotsTxt->prepareRobotsTxt( $newRules );
+		$options->tools->robots->rules = array_unique( array_merge( $options->tools->robots->rules, $this->prepareRobotsTxt( $newRules ) ) );
 
 		return true;
 	}
@@ -624,5 +639,25 @@ class RobotsTxt {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Reset the Search Appearance related rules.
+	 *
+	 * @since {next}
+	 *
+	 * @return void
+	 */
+	public function resetSearchAppearanceRules() {
+		$currentRules = aioseo()->options->tools->robots->rules;
+		$newRules     = [];
+		foreach ( ( $currentRules ?? [] ) as $rule ) {
+			$parseRule = json_decode( $rule, true );
+			if ( empty( $parseRule['bot'] ) && empty( $parseRule['preventCrawling'] ) ) {
+				$newRules[] = $rule;
+			}
+		}
+
+		aioseo()->options->tools->robots->rules = $newRules;
 	}
 }

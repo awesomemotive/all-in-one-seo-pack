@@ -86,6 +86,7 @@ class VueSettings {
 			'searchMediaAttachments'       => true,
 			'searchAdvanced'               => true,
 			'searchAdvancedCrawlCleanup'   => true,
+			'searchCleanup'                => true,
 			'authorArchives'               => true,
 			'dateArchives'                 => true,
 			'searchArchives'               => true,

@@ -66,9 +66,9 @@ class Notices {
 			'notification_name' => 'search-console-site-not-connected',
 			'title'             => __( 'Have you connected your site to Google Search Console?', 'all-in-one-seo-pack' ),
 			'content'           => sprintf(
-				// Translators: 1 - All in One SEO.
+				// Translators: 1 - The plugin short name ("AIOSEO").
 				__( '%1$s can now verify whether your site is correctly verified with Google Search Console and that your sitemaps have been submitted correctly. Connect with Google Search Console now to ensure your content is being added to Google as soon as possible for increased rankings.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
-				AIOSEO_PLUGIN_NAME
+				AIOSEO_PLUGIN_SHORT_NAME
 			),
 			'type'              => 'warning',
 			'level'             => [ 'all' ],

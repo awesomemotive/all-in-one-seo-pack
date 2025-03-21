@@ -573,6 +573,15 @@ abstract class AIOSEOAbstract {
 	public $crawlCleanup = null;
 
 	/**
+	 * Search Cleanup class instance.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @var \AIOSEO\Plugin\Common\SearchCleanup\SearchCleanup
+	 */
+	public $searchCleanup = null;
+
+	/**
 	 * EmailReports class instance.
 	 *
 	 * @since 4.7.2

@@ -14,7 +14,7 @@
 
 				<div class="settings-content">
 					<core-network-site-selector
-						@selected-site="currentSite = $event"
+						@selected-site="(site) => {networkStore.currentSite = site}"
 						follow-selected-site
 						show-network
 					/>
@@ -22,7 +22,7 @@
 			</div>
 
 			<div class="aioseo-settings-row">
-				<core-alert v-if="'network' === currentSite?.blog_id">
+				<core-alert v-if="'network' === networkStore.currentSite?.blog_id">
 					{{
 						licenseStore.isUnlicensed || !license.hasCoreFeature('tools', 'network-tools-robots')
 							? strings.networkAlertLite
@@ -147,7 +147,7 @@
 									<div class="robots-editor-table__column">
 										<base-input
 											:modelValue="rule.userAgent"
-											:disabled="true"
+											:disabled="rule.default"
 											size="medium"
 										/>
 									</div>
@@ -156,7 +156,7 @@
 										<base-select
 											:modelValue="directiveOptions.find(v => v.value === rule.directive)"
 											:options="[]"
-											:disabled="true"
+											:disabled="rule.default"
 											size="medium"
 										/>
 									</div>
@@ -164,7 +164,7 @@
 									<div class="robots-editor-table__column">
 										<base-input
 											:modelValue="rule.fieldValue"
-											:disabled="true"
+											:disabled="rule.default"
 											size="medium"
 										/>
 									</div>
@@ -177,11 +177,15 @@
 									v-model="tableRules"
 									:item-key="$.uid.toString()"
 									class="draggable-rules"
+									:draggable="'.robots-editor-table__row--draggable'"
 								>
 									<template #item="{element:rule, index}">
 										<div
 											class="robots-editor-table__row robots-editor-table__row--stripe"
-											:class="{'aioseo-error': hasTableRuleError(index + parsedDefaultRules.length + 1, rule)}"
+											:class="[
+												{'aioseo-error': hasTableRuleError(index + parsedDefaultRules.length + 1, rule)},
+												{'robots-editor-table__row--draggable': !rule.readOnly}
+											]"
 										>
 											<div class="robots-editor-table__column robots-editor-table__column--truncate">
 												{{ index + parsedDefaultRules.length + 1 }}
@@ -191,7 +195,7 @@
 												<base-input
 													v-model="rule.userAgent"
 													:spellcheck="false"
-													:disabled="!getOptions.enable"
+													:disabled="!getOptions.enable || rule.readOnly"
 													@change="updateRule(rule, 'userAgent', $event, index)"
 													size="medium"
 												/>
@@ -201,7 +205,7 @@
 												<base-select
 													:modelValue="directiveOptions.find(v => v.value === rule.directive)"
 													:options="directiveOptions"
-													:disabled="!getOptions.enable"
+													:disabled="!getOptions.enable || rule.readOnly"
 													@update:modelValue="updateRule(rule, 'directive', $event.value, index)"
 													size="medium"
 												/>
@@ -211,13 +215,16 @@
 												<base-input
 													v-model="rule.fieldValue"
 													:spellcheck="false"
-													:disabled="!getOptions.enable"
+													:disabled="!getOptions.enable || rule.readOnly"
 													@change="updateRule(rule, 'fieldValue', $event, index)"
 													size="medium"
 												/>
 											</div>
 
-											<div class="robots-editor-table__column robots-editor-table__column--actions">
+											<div
+												class="robots-editor-table__column robots-editor-table__column--actions"
+												v-if="!rule.readOnly"
+											>
 												<a
 													@click.prevent="deleteRow(index)"
 													href="#"
@@ -278,6 +285,15 @@
 						</div>
 					</div>
 				</div>
+
+				<div class="unwanted-bots-wrapper">
+					<unwanted-bots
+						:showAlert="false"
+						:showDescription="false"
+					/>
+				</div>
+
+				<prevent-crawling :showAlert="false"/>
 
 				<div class="aioseo-settings-row aioseo-settings-row--preview-robots no-margin">
 					<div class="settings-name">
@@ -451,13 +467,15 @@ import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreNetworkSiteSelector from '@/vue/components/common/core/NetworkSiteSelector'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import Draggable from 'vuedraggable'
+import PreventCrawling from '@/vue/pages/search-appearance/views/partials/crawl-cleanup/PreventCrawling'
 import RuleErrors from './partials/robots-editor/RuleErrors'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
+import SvgDrag from '@/vue/components/common/svg/Drag'
 import SvgEllipse from '@/vue/components/common/svg/Ellipse'
 import SvgExternal from '@/vue/components/common/svg/External'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 import SvgUpload from '@/vue/components/common/svg/Upload'
-import SvgDrag from '@/vue/components/common/svg/Drag'
+import UnwantedBots from '@/vue/pages/search-appearance/views/partials/crawl-cleanup/UnwantedBots'
 
 import { __, _n, sprintf } from '@/vue/plugins/translations'
 
@@ -466,8 +484,8 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 export default {
 	setup () {
 		const {
-			isMainSite
-		} = useNetwork()
+				  isMainSite
+			  } = useNetwork()
 
 		return {
 			licenseStore       : useLicenseStore(),
@@ -481,7 +499,6 @@ export default {
 		}
 	},
 	components : {
-		SvgDrag,
 		BaseButton,
 		BaseEditor,
 		CoreAlert,
@@ -491,16 +508,18 @@ export default {
 		CoreNetworkSiteSelector,
 		CoreSettingsRow,
 		Draggable,
+		PreventCrawling,
 		RuleErrors,
 		SvgCirclePlus,
+		SvgDrag,
 		SvgEllipse,
 		SvgExternal,
 		SvgTrash,
-		SvgUpload
+		SvgUpload,
+		UnwantedBots
 	},
 	data () {
 		return {
-			currentSite      : {},
 			defaultRules     : this.rootStore.aioseo.data.robots?.defaultRules || {},
 			directiveOptions : [
 				{ value: 'allow', label: 'Allow' },
@@ -570,24 +589,8 @@ export default {
 		}
 	},
 	watch : {
-		'networkStore.networkRobots' : {
-			deep : true,
-			handler () {
-				if ('network' === this.currentSite?.blog_id) {
-					this.optionsStore.networkOptions.tools.robots.rules = this.networkStore.networkRobots.rules
-				} else {
-					this.optionsStore.options.tools.robots.rules = this.networkStore.networkRobots.rules
-				}
-
-				this.$nextTick(() => {
-					this.validateRules()
-				})
-			}
-		},
-		currentSite (_newVal, oldVal) {
-			if (oldVal.blog_id) {
-				this.processFetchSiteRobots()
-			}
+		'networkStore.currentSite' () {
+			this.processFetchSiteRobots()
 		},
 		'getOptions.enable' () {
 			this.validateRules()
@@ -603,22 +606,23 @@ export default {
 			return this.errors.importRobotsTxtFromUrl || this.errors.pasteRobotsTxtText
 		},
 		getOptions () {
-			return 'network' === this.currentSite?.blog_id ? this.networkStore.getNetworkRobots : this.optionsStore.options.tools.robots
+			return 'network' === this.networkStore.currentSite?.blog_id ? this.networkStore.getNetworkRobots : this.optionsStore.options.tools.robots
 		},
 		inputCustomRobotsTxtPreview () {
+			let output = null
+			const sitemapUrls  = '\r\n' + this.rootStore.aioseo.data.robots.sitemapUrls.filter(url => 0 < url.length).join('\r\n')
 			const networkRules = this.isNetworkSite && this.optionsStore.networkOptions.tools.robots.enable ? groupRulesByUserAgent(this.networkStore.getNetworkRobots.rules) : {}
-			const customRules = groupRulesByUserAgent(this.networkStore.networkRobots.rules)
-			const sitemapUrls = '\r\n' + this.rootStore.aioseo.data.robots.sitemapUrls.filter(url => 0 < url.length).join('\r\n')
 
-			let output = this.getOptions.enable
-				? this.mergeRuleset(this.defaultRules, this.mergeRuleset(networkRules, customRules), true)
-				: this.mergeRuleset(this.defaultRules, networkRules)
+			output = this.getOptions.enable
+				? this.mergeRuleset(this.defaultRules, this.mergeRuleset(networkRules, groupRulesByUserAgent(this.networkStore.networkRobots.rules)), true)
+				: this.mergeRuleset(this.defaultRules, this.mergeRuleset(networkRules, groupRulesByUserAgent(this.readOnlyRules)))
+
 			output = stringifyRuleset(output) + sitemapUrls
 
 			return output.replace(/<[^>]*>/g, '')
 		},
 		isNetworkSite () {
-			return this.rootStore.aioseo.data.isMultisite && 'network' !== this.currentSite?.blog_id
+			return this.rootStore.aioseo.data.isMultisite && 'network' !== this.networkStore.currentSite?.blog_id
 		},
 		isValidRobotsSite () {
 			const parseRobotsTxtUrl = new URL(this.robotsTxtUrl)
@@ -628,7 +632,7 @@ export default {
 				return false
 			}
 
-			return this.rootStore.aioseo.data.subdomain || 'network' === this.currentSite?.blog_id || this.isMainSite(this.currentSite.domain, this.currentSite.path) || (!this.rootStore.aioseo.data.isNetworkAdmin && this.rootStore.aioseo.data.mainSite)
+			return this.rootStore.aioseo.data.subdomain || 'network' === this.networkStore.currentSite?.blog_id || this.isMainSite(this.networkStore.currentSite.domain, this.networkStore.currentSite.path) || (!this.rootStore.aioseo.data.isNetworkAdmin && this.rootStore.aioseo.data.mainSite)
 		},
 		missingRewriteRules () {
 			const string1 = __('It looks like you are missing the proper rewrite rules for the robots.txt file.', td)
@@ -716,8 +720,8 @@ export default {
 			)
 		},
 		robotsTxtUrl () {
-			if ('network' !== this.currentSite?.blog_id && (this.currentSite?.domain || null)) {
-				return `${this.rootStore.aioseo.data.isSsl ? 'https://' : 'http://'}${this.currentSite.domain}${this.currentSite.path}robots.txt`
+			if ('network' !== this.networkStore.currentSite?.blog_id && (this.networkStore.currentSite?.domain || null)) {
+				return `${this.rootStore.aioseo.data.isSsl ? 'https://' : 'http://'}${this.networkStore.currentSite.domain}${this.networkStore.currentSite.path}robots.txt`
 			}
 
 			return this.rootStore.aioseo.urls.robotsTxtUrl
@@ -744,13 +748,14 @@ export default {
 				const rawRules = []
 				newTableRules.forEach(parsedRule => {
 					rawRules.push(JSON.stringify({
-						userAgent  : parsedRule.userAgent,
-						directive  : parsedRule.directive,
-						fieldValue : parsedRule.fieldValue
+						...parsedRule
 					}))
 				})
 				this.networkStore.networkRobots.rules = rawRules
 			}
+		},
+		readOnlyRules () {
+			return this.networkStore.networkRobots.rules.filter(rule => JSON.parse(rule).readOnly)
 		}
 	},
 	methods : {
@@ -758,7 +763,8 @@ export default {
 			this.networkStore.networkRobots.rules.push(JSON.stringify({
 				userAgent  : null,
 				directive  : 'allow',
-				fieldValue : null
+				fieldValue : null,
+				readOnly   : false
 			}))
 
 			this.$nextTick(() => {
@@ -907,16 +913,15 @@ export default {
 		processFetchSiteRobots () {
 			this.loading.cardOverlay = true
 
-			this.networkStore.fetchSiteRobots(this.currentSite.blog_id)
+			this.networkStore.fetchSiteRobots(this.networkStore.currentSite.blog_id)
 				.then(() => (this.loading.cardOverlay = false))
 		},
 		processImportRobotsTxt (source) {
 			return this.networkStore.importRobotsTxt({
 				source,
-				url          : this.inputImportRobotsTxtFromUrl,
-				text         : this.inputPasteRobotsTxtText,
-				networkLevel : this.rootStore.aioseo.data.isNetworkAdmin,
-				blogId       : this.currentSite?.blog_id || null
+				url    : this.inputImportRobotsTxtFromUrl,
+				text   : this.inputPasteRobotsTxtText,
+				blogId : this.networkStore.currentSite?.blog_id || null
 			})
 		},
 		sanitizeDirectiveValue (rule, type, value) {
@@ -983,13 +988,16 @@ export default {
 			}
 		}
 	},
+	beforeUnmount () {
+		window.aioseoBus.$off('validate-robots-txt')
+	},
 	mounted () {
-		this.networkStore.networkRobots.rules = 'network' === this.currentSite?.blog_id
-			? this.networkStore.getNetworkRobots.rules
-			: this.optionsStore.options.tools.robots.rules
-
 		this.validateRules()
 		this.maybeForceRobotsDetectedAlert()
+
+		window.aioseoBus.$on('validate-robots-txt', () => {
+			this.validateRules()
+		})
 	}
 }
 </script>
@@ -1134,6 +1142,16 @@ export default {
 		width: 14px;
 		height: 14px;
 		margin-right: 10px;
+	}
+
+	.unwanted-bots-wrapper {
+		margin-bottom: 10px;
+		padding-bottom: 10px;
+	}
+
+	.unwanted-bots-settings {
+		padding: 0;
+		margin: 20px 0;
 	}
 }
 

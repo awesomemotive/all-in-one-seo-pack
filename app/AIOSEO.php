@@ -322,6 +322,7 @@ namespace AIOSEO\Plugin {
 			$this->ai                 = $this->pro ? new Pro\Ai\Ai() : null;
 			$this->filters            = $this->pro ? new Pro\Main\Filters() : new Lite\Main\Filters();
 			$this->crawlCleanup       = new Common\QueryArgs\CrawlCleanup();
+			$this->searchCleanup      = new Common\SearchCleanup\SearchCleanup();
 			$this->emailReports       = new Common\EmailReports\EmailReports();
 			$this->thirdParty         = new Common\ThirdParty\ThirdParty();
 			$this->writingAssistant   = new Common\WritingAssistant\WritingAssistant();

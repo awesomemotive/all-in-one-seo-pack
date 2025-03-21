@@ -12,9 +12,9 @@ export const useNetworkStore = defineStore('NetworkStore', {
 		activeSites   : [],
 		networkData   : {},
 		networkRobots : {
-			siteId : 'network',
-			rules  : []
-		}
+			rules : []
+		},
+		currentSite : {}
 	}),
 	getters : {
 		getNetworkRobots : () => {
@@ -50,8 +50,7 @@ export const useNetworkStore = defineStore('NetworkStore', {
 		fetchSiteRobots (blogId) {
 			return http.get(links.restUrl(`network-robots/${blogId}`))
 				.then(response => {
-					this.networkRobots.rules  = response.body.rules
-					this.networkRobots.siteId = blogId
+					this.networkRobots.rules = response.body.rules
 				})
 		},
 		getActiveSites (domains) {

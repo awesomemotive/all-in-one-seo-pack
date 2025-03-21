@@ -27,7 +27,7 @@ class Rss {
 		add_filter( 'the_content_feed', [ $this, 'addRssContent' ] );
 		add_filter( 'the_excerpt_rss', [ $this, 'addRssContentExcerpt' ] );
 
-		// If advanced RSS settings are not enabled, return early.
+		// If Crawl Cleanup is disabled, return early.
 		if ( ! aioseo()->options->searchAppearance->advanced->crawlCleanup->enable ) {
 			return;
 		}

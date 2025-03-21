@@ -21,11 +21,12 @@ class Network {
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function saveNetworkRobots( $request ) {
-		$isNetwork = 'network' === $request->get_param( 'siteId' );
-		$siteId    = $isNetwork ? aioseo()->helpers->getNetworkId() : (int) $request->get_param( 'siteId' );
-		$body      = $request->get_json_params();
-		$rules     = ! empty( $body['rules'] ) ? array_map( 'sanitize_text_field', $body['rules'] ) : [];
-		$enabled   = isset( $body['enabled'] ) ? boolval( $body['enabled'] ) : null;
+		$isNetwork        = 'network' === $request->get_param( 'siteId' );
+		$siteId           = $isNetwork ? aioseo()->helpers->getNetworkId() : (int) $request->get_param( 'siteId' );
+		$body             = $request->get_json_params();
+		$rules            = ! empty( $body['rules'] ) ? array_map( 'sanitize_text_field', $body['rules'] ) : [];
+		$enabled          = isset( $body['enabled'] ) ? boolval( $body['enabled'] ) : null;
+		$searchAppearance = ! empty( $body['searchAppearance'] ) ? $body['searchAppearance'] : [];
 
 		aioseo()->helpers->switchToBlog( $siteId );
 
@@ -33,12 +34,13 @@ class Network {
 		$enabled = null === $enabled ? $options->tools->robots->enable : $enabled;
 
 		$options->sanitizeAndSave( [
-			'tools' => [
+			'tools'            => [
 				'robots' => [
 					'enable' => $enabled,
 					'rules'  => $rules
 				]
-			]
+			],
+			'searchAppearance' => $searchAppearance
 		] );
 
 		return new \WP_REST_Response( [

@@ -295,6 +295,7 @@
 			:toggles="optionsStore.options.searchAppearance.advanced.crawlCleanup.enable"
 		>
 			<template #header>
+
 				<base-toggle
 					v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.enable"
 				/>
@@ -316,343 +317,23 @@
 				</core-tooltip>
 			</template>
 
-			<div class="aioseo-settings-row aioseo-section-description">
-				{{ strings.crawlCleanupDescription }}
-
-				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'crawlCleanup', true)"
+			<template #tabs>
+				<core-main-tabs
+					:tabs="tabs"
+					:showSaveButton="false"
+					:active="tab"
+					@changed="value => processChangeTab(value)"
+					internal
 				/>
-			</div>
 
-			<core-settings-row
-				id="crawl-content-global-feed"
-				:name="strings.globalFeed"
-				align
-			>
-				<template #content>
-					<base-radio-toggle
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.global"
-						name="global"
-						:options="[
-							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: GLOBAL_STRINGS.enabled, value: true }
-						]"
+				<transition name="route-fade" mode="out-in">
+					<component
+						:is="tab"
+						:active="tab"
 					/>
+				</transition>
+			</template>
 
-					<div class="aioseo-description"
-						v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.global"
-					>
-						{{ strings.globalFeedDescription }}
-						{{ strings.disableGlobalFeedAlert }}
-
-						<div class="rss-link">
-							<a
-								:href="rootStore.aioseo.urls.feeds.global"
-								target="_blank"
-							>{{ strings.openYourRssFeed }}</a>
-
-							<a
-								class="no-underline"
-								:href="rootStore.aioseo.urls.feeds.global"
-								target="_blank"
-							>&nbsp;<svg-external /></a>
-						</div>
-					</div>
-
-					<core-alert
-						v-if="!optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.global"
-						type="red"
-					>
-						{{ strings.disableGlobalFeedAlert }}
-					</core-alert>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
-				:name="strings.globalCommentsFeed"
-				align
-			>
-				<template #content>
-					<base-radio-toggle
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.globalComments"
-						name="globalComments"
-						:options="[
-							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: GLOBAL_STRINGS.enabled, value: true }
-						]"
-					/>
-
-					<div class="aioseo-description">
-						{{ strings.globalCommentsFeedDescription }}
-					</div>
-
-					<div class="aioseo-description"
-						v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.globalComments"
-					>
-						<a
-							:href="rootStore.aioseo.urls.feeds.globalComments"
-							target="_blank"
-						>{{ strings.openYourCommentsRssFeed }}</a>
-						<a
-							class="no-underline"
-							:href="rootStore.aioseo.urls.feeds.globalComments"
-							target="_blank"
-						>&nbsp;<svg-external /></a>
-					</div>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
-				v-if="rootStore.aioseo.data.staticBlogPage"
-				:name="strings.staticBlogPageFeed"
-				align
-			>
-				<template #content>
-					<base-radio-toggle
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.staticBlogPage"
-						name="staticBlogPage"
-						:options="[
-							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: GLOBAL_STRINGS.enabled, value: true }
-						]"
-					/>
-
-					<div class="aioseo-description">
-						{{ strings.staticBlogPageFeedDescription }}
-					</div>
-
-					<div class="aioseo-description"
-						v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.staticBlogPage"
-					>
-						<a
-							:href="rootStore.aioseo.urls.feeds.staticBlogPage"
-							target="_blank"
-						>{{ strings.openYourStaticBlogPageFeed }}</a>
-
-						<a
-							class="no-underline"
-							:href="rootStore.aioseo.urls.feeds.staticBlogPage"
-							target="_blank"
-						>&nbsp;<svg-external /></a>
-					</div>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
-				:name="strings.authorsFeed"
-				align
-			>
-				<template #content>
-					<base-radio-toggle
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.authors"
-						name="authors"
-						:options="[
-							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: GLOBAL_STRINGS.enabled, value: true }
-						]"
-					/>
-
-					<div class="aioseo-description">
-						{{ strings.authorsFeedDescription }}
-					</div>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
-				:name="strings.postCommentsFeed"
-				align
-			>
-				<template #content>
-					<base-radio-toggle
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.postComments"
-						name="postComments"
-						:options="[
-							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: GLOBAL_STRINGS.enabled, value: true }
-						]"
-					/>
-
-					<div class="aioseo-description">
-						{{ strings.postCommentsFeedDescription }}
-					</div>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
-				:name="strings.searchFeed"
-				align
-			>
-				<template #content>
-					<base-radio-toggle
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.search"
-						name="search"
-						:options="[
-							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: GLOBAL_STRINGS.enabled, value: true }
-						]"
-					/>
-
-					<div class="aioseo-description">
-						{{ strings.searchFeedDescription }}
-					</div>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
-				:name="strings.attachmentsFeed"
-				align
-			>
-				<template #content>
-					<base-radio-toggle
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.attachments"
-						name="attachments"
-						:options="[
-							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: GLOBAL_STRINGS.enabled, value: true }
-						]"
-					/>
-
-					<div class="aioseo-description">
-						{{ strings.attachmentsFeedDescription }}
-					</div>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
-				:name="strings.paginatedFeed"
-				align
-			>
-				<template #content>
-					<base-radio-toggle
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.paginated"
-						name="paginated"
-						:options="[
-							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: GLOBAL_STRINGS.enabled, value: true }
-						]"
-					/>
-
-					<div class="aioseo-description">
-						{{ strings.paginatedFeedDescription }}
-					</div>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
-				v-if="getArchives.included.length"
-				:name="strings.postTypesFeed"
-			>
-				<template #content>
-					<base-checkbox
-						size="medium"
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.archives.all"
-					>
-						{{ strings.includeAllPostTypes }}
-					</base-checkbox>
-
-					<core-post-type-options
-						v-if="!optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.archives.all"
-						:options="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds"
-						:excluded="getArchives.excluded"
-						type="archives"
-					/>
-
-					<div class="aioseo-description">
-						{{ strings.selectPostTypes }}
-					</div>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
-				:name="strings.taxonomiesFeed"
-			>
-				<template #content>
-					<base-checkbox
-						size="medium"
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.taxonomies.all"
-					>
-						{{ strings.includeAllTaxonomies }}
-					</base-checkbox>
-
-					<core-post-type-options
-						v-if="!optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.taxonomies.all"
-						:options="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds"
-						type="taxonomies"
-					/>
-
-					<div class="aioseo-description">
-						{{ strings.selectTaxonomies }}
-					</div>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
-				:name="strings.atomFeed"
-				align
-			>
-				<template #content>
-					<base-radio-toggle
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.atom"
-						name="atom"
-						:options="[
-							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: GLOBAL_STRINGS.enabled, value: true }
-						]"
-					/>
-
-					<div class="aioseo-description"
-						v-html="strings.atomFeedDescription"
-					/>
-
-					<div class="aioseo-description"
-						v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.atom"
-					>
-						<a
-							:href="rootStore.aioseo.urls.feeds.atom"
-							target="_blank"
-						>{{ strings.openYourAtomFeed }}</a>
-						<a
-							class="no-underline"
-							:href="rootStore.aioseo.urls.feeds.atom"
-							target="_blank"
-						>&nbsp;<svg-external /></a>
-					</div>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
-				:name="strings.rdfFeed"
-				align
-			>
-				<template #content>
-					<base-radio-toggle
-						v-model="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.rdf"
-						name="rdf"
-						:options="[
-							{ label: GLOBAL_STRINGS.disabled, value: false, activeClass: 'dark' },
-							{ label: GLOBAL_STRINGS.enabled, value: true }
-						]"
-					/>
-
-					<div class="aioseo-description"
-						v-html="strings.rdfFeedDescription"
-					/>
-
-					<div class="aioseo-description"
-						v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.rdf"
-					>
-						<a
-							:href="rootStore.aioseo.urls.feeds.rdf"
-							target="_blank"
-						>{{ strings.openYourRdfFeed }}</a>
-						<a
-							class="no-underline"
-							:href="rootStore.aioseo.urls.feeds.rdf"
-							target="_blank"
-						>&nbsp;<svg-external /></a>
-					</div>
-				</template>
-			</core-settings-row>
 		</core-card>
 
 		<core-card
@@ -674,6 +355,28 @@
 					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'queryArgMonitor', true)"
 				/>
 			</div>
+
+			<core-settings-row
+				id="search-cleanup-optimize-utm-parameters"
+				:name="strings.optimizeUtmParameters"
+				align
+			>
+				<template #content>
+					<base-radio-toggle
+						v-model="optionsStore.options.searchAppearance.advanced.blockArgs.optimizeUtmParameters"
+						name="optimizeUtmParameters"
+						:options="[
+							{ label: GLOBAL_STRINGS.off, value: false, activeClass: 'dark' },
+							{ label: GLOBAL_STRINGS.on, value: true }
+						]"
+					/>
+
+					<div class="aioseo-description">
+						<div v-html="strings.optimizeUtmParametersDescription"></div>
+					</div>
+				</template>
+			</core-settings-row>
+
 			<core-settings-row
 				:name="strings.logsRetention"
 				class="table-retention"
@@ -705,21 +408,22 @@ import {
 
 import { useJsonValues } from '@/vue/composables/JsonValues'
 
-import BaseCheckbox from '@/vue/components/common/base/Checkbox'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import BaseSelect from '@/vue/components/common/base/Select'
+import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreExcludePosts from '@/vue/components/common/core/ExcludePosts'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
-import CorePostTypeOptions from '@/vue/components/common/core/PostTypeOptions'
 import CoreRobotsMeta from '@/vue/components/common/core/RobotsMeta'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
-import SvgExternal from '@/vue/components/common/svg/External'
 import QueryArgMonitorBlockArg from './partials/query-arg-monitor/BlockArg'
 import QueryArgMonitorTable from './partials/query-arg-monitor/Table'
+import RssFeeds from './partials/crawl-cleanup/RssFeeds'
+import SearchCleanup from './partials/crawl-cleanup/SearchCleanup'
+import UnwantedBots from './partials/crawl-cleanup/UnwantedBots'
 
 import { __, sprintf } from '@/vue/plugins/translations'
 
@@ -742,21 +446,22 @@ export default {
 		}
 	},
 	components : {
-		BaseCheckbox,
 		BaseRadioToggle,
 		BaseSelect,
+		CoreMainTabs,
 		CoreAlert,
 		CoreCard,
 		CoreExcludePosts,
 		CoreHtmlTagsEditor,
-		CorePostTypeOptions,
 		CoreRobotsMeta,
 		CoreSettingsRow,
 		CoreTooltip,
 		SvgCircleQuestionMark,
-		SvgExternal,
 		QueryArgMonitorBlockArg,
-		QueryArgMonitorTable
+		QueryArgMonitorTable,
+		RssFeeds,
+		SearchCleanup,
+		UnwantedBots
 	},
 	data () {
 		return {
@@ -798,77 +503,57 @@ export default {
 					__('Choose whether %1$s should output the required schema markup that Google needs to generate a sitelinks search box.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				descriptionTagRequired        : __('A Description tag is required in order to properly display your meta descriptions on your site.', td),
-				crawlCleanup                  : __('Crawl Cleanup', td),
-				queryArgMonitoring            : __('Query Arg Monitoring', td),
-				logsRetention                 : __('Logs Retention', td),
-				crawlCleanupDescription       : __('Disabling unnecessary RSS feeds can help save search engine crawl quota and speed up content indexing for larger sites. If you choose to disable any feeds, those feed links will automatically redirect to your homepage or applicable archive page.', td),
-				queryArgMonitorDescription    : __('This feature allows you to log all query arguments that are used on your site and block them. This will help prevent search engines from crawling every variation of your pages with unrecognized query arguments and help save search engine crawl quota.', td),
-				globalFeed                    : __('Global RSS Feed', td),
-				globalFeedDescription         : __('The global RSS feed is how users subscribe to any new content that has been created on your site.', td),
-				openYourRssFeed               : __('Open Your RSS Feed', td),
-				disableGlobalFeedAlert        : __('Disabling the global RSS feed is NOT recommended. This will prevent users from subscribing to your content and can hurt your SEO rankings.', td),
-				globalCommentsFeed            : __('Global Comments RSS Feed', td),
-				globalCommentsFeedDescription : __('The global comments feed allows users to subscribe to any new comments added to your site.', td),
-				openYourCommentsRssFeed       : __('Open Your Comments RSS Feed', td),
-				staticBlogPageFeed            : __('Static Posts Page Feed', td),
-				staticBlogPageFeedDescription : __('The static posts page feed allows users to subscribe to any new content added to your blog page.', td),
-				openYourStaticBlogPageFeed    : __('Open Your Static Posts Page RSS Feed', td),
-				authorsFeed                   : __('Author Feeds', td),
-				authorsFeedDescription        : __('The authors feed allows your users to subscribe to any new content written by a specific author.', td),
-				postCommentsFeed              : __('Post Comment Feeds', td),
-				postCommentsFeedDescription   : __('The post comments feed allows your users to subscribe to any new comments on a specific page or post.', td),
-				searchFeed                    : __('Search Feed', td),
-				searchFeedDescription         : __('The search feed allows visitors to subscribe to your content based on a specific search term.', td),
-				attachmentsFeed               : __('Attachments Feed', td),
-				attachmentsFeedDescription    : __('The attachments feed allows users to subscribe to any changes to your site made to media file categories.', td),
-				postTypesFeed                 : __('Post Type Archive Feeds', td),
-				includeAllPostTypes           : __('Include All Post Type Archives', td),
-				selectPostTypes               : __('Select which post type archives should include an RSS feed. This only applies to post types that include an archive page.', td),
-				taxonomiesFeed                : __('Taxonomy Feeds', td),
-				includeAllTaxonomies          : __('Include All Taxonomies', td),
-				selectTaxonomies              : __('Select which Taxonomies should include an RSS feed.', td),
-				atomFeed                      : __('Atom Feed', td),
-				atomFeedDescription           : sprintf(
-					// Translators: 1 - Learn more link.
-					__('This is a global feed of your site output in the Atom format. %1$s', td),
-					links.getPlainLink(GLOBAL_STRINGS.learnMore, 'http://www.atomenabled.org/', true)
+				descriptionTagRequired           : __('A Description tag is required in order to properly display your meta descriptions on your site.', td),
+				crawlCleanup                     : __('Crawl Cleanup', td),
+				crawlCleanupDescription          : __('Disabling unnecessary features can help save search engine crawl quota and speed up content indexing for larger sites.', td),
+				queryArgMonitoring               : __('Query Arg Monitoring', td),
+				optimizeUtmParameters            : __('Optimize UTM Parameters', td),
+				optimizeUtmParametersDescription : sprintf(
+					// Translators: 1 - "utm", 2 - "#", 3 - "301", 4 - <br>, 5 - Example URL, 6 - Example URL.
+					__('Replaces %1$s tracking parameters for Google Analytics with the (more performant) %2$s equivalent, via a %3$s redirect. e.g., %4$s %5$s will be redirected to %6$s. This also helps to prevent duplicate URLs in search results.', td),
+					'<code>utm</code>',
+					'<code>#</code>',
+					'<code>301</code>',
+					'<br>',
+					'<code>https://example.com/?utm_medium=organic</code>',
+					'<code>https://example.com/#utm_medium=organic</code>'
 				),
-				openYourAtomFeed   : __('Open Your Atom Feed', td),
-				rdfFeed            : __('RDF/RSS 1.0 Feed', td),
-				rdfFeedDescription : sprintf(
-					// Translators: 1 - Learn more link.
-					__('This is a global feed of your site output in the RDF/RSS 1.0 format. %1$s', td),
-					links.getPlainLink(GLOBAL_STRINGS.learnMore, 'https://web.resource.org/rss/1.0/', true)
-				),
-				openYourRdfFeed          : __('Open Your RDF Feed', td),
-				paginatedFeed            : __('Paginated RSS Feeds', td),
-				paginatedFeedDescription : __('The paginated RSS feeds are for any posts or pages that are paginated.', td)
+				logsRetention              : __('Logs Retention', td),
+				queryArgMonitorDescription : __('This feature allows you to log all query arguments that are used on your site and block them. This will help prevent search engines from crawling every variation of your pages with unrecognized query arguments and help save search engine crawl quota.', td)
 			},
 			logsRetentionOptions : [
 				{ label: __('1 hour', td), value: 'hour' },
 				{ label: __('1 day', td), value: 'day' },
 				{ label: __('1 week', td), value: 'week' },
 				{ label: __('Forever', td), value: 'forever' }
+			],
+			tab  : 'rss-feeds',
+			tabs : [
+				{
+					slug   : 'rss-feeds',
+					name   : __('RSS Feeds', td),
+					access : 'aioseo_general_settings',
+					pro    : false
+				},
+				{
+					slug   : 'unwanted-bots',
+					name   : __('Unwanted Bots', td),
+					access : 'aioseo_general_settings',
+					pro    : false
+				},
+				{
+					slug   : 'search-cleanup',
+					name   : __('Internal Site Search Cleanup', td),
+					access : 'aioseo_general_settings',
+					pro    : false
+				}
 			]
 		}
 	},
-	computed : {
-		getArchives () {
-			const excluded = []
-			const included = this.rootStore.aioseo.postData.archives.filter(a => {
-				if (a.buddyPress && 'bp-activity' !== a.name) {
-					excluded.push(a.name)
-
-					return false
-				}
-
-				return true
-			})
-
-			return {
-				excluded,
-				included
+	methods : {
+		processChangeTab (newTabValue) {
+			if (newTabValue) {
+				this.tab = newTabValue
 			}
 		}
 	}
@@ -899,7 +584,7 @@ export default {
 	}
 
 	.aioseo-alert {
-		margin-top: 10px;
+		margin-top: 16px;
 	}
 
 	.aioseo-rss-content-advanced,

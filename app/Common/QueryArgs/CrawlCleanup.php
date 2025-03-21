@@ -23,6 +23,56 @@ class CrawlCleanup {
 	public function __construct() {
 		// Add action to clear crawl cleanup logs.
 		add_action( 'aioseo_crawl_cleanup_clear_logs', [ $this, 'clearLogs' ] );
+
+		if ( aioseo()->options->searchAppearance->advanced->blockArgs->optimizeUtmParameters ) {
+			add_action( 'template_redirect', [ $this, 'maybeRedirectUtmParameters' ], 50 );
+		}
+	}
+
+	/**
+	 * Redirects the UTM parameters to with (#) equivalent.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @return void
+	 */
+	public function maybeRedirectUtmParameters() {
+		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+			return;
+		}
+
+		$parsed = wp_parse_url( $_SERVER['REQUEST_URI'] );
+		if ( empty( $parsed['query'] ) ) {
+			return;
+		}
+
+		$args = [];
+		wp_parse_str( $parsed['query'], $args );
+
+		// Reset query to reconstruct without utm_ parameters.
+		$parsed['query'] = '';
+
+		// Initialize the fragment key if it's not set.
+		if ( ! isset( $parsed['fragment'] ) ) {
+			$parsed['fragment'] = '';
+		}
+
+		// Check if there are any utm_ parameters and redirect accordingly.
+		$utmFound = false;
+		foreach ( $args as $key => $value ) {
+			$keyValue = $key . '=' . $value;
+			if ( 0 === stripos( $key, 'utm_' ) ) {
+				$utmFound = true;
+				// Rebuild the URL with # instead of ?.
+				$parsed['fragment'] .= ! empty( $parsed['fragment'] ) ? '&' . $keyValue : $keyValue;
+			} else {
+				$parsed['query'] .= ! empty( $parsed['query'] ) ? '&' . $keyValue : $keyValue;
+			}
+		}
+
+		if ( $utmFound ) {
+			aioseo()->helpers->redirect( aioseo()->helpers->buildUrl( $parsed ), 301, 'Optimize UTM parameters' );
+		}
 	}
 
 	/**

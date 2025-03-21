@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Query {
 	/**
-	 * Returns all eligble sitemap entries for a given post type.
+	 * Returns all eligible sitemap entries for a given post type.
 	 *
 	 * @since 4.1.3
 	 *
@@ -35,6 +35,7 @@ class Query {
 				break;
 			case 'id':
 				$orderBy = 'ID';
+				break;
 			case 'publish_date':
 			default:
 				$orderBy = 'post_date_gmt';
