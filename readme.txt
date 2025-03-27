@@ -1,10 +1,10 @@
 === All in One SEO – Powerful SEO Plugin to Boost SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
-Tested up to: 6.7.1
+Tested up to: 6.7.2
 Requires at least: 5.3
 Requires PHP: 7.0
-Stable tag: 4.8.1
+Stable tag: 4.8.1.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -222,6 +222,10 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * AISEO (incorrect)
 
 == Changelog ==
+
+**New in Version 4.8.1.1**
+
+* Fixed: CSS style conflict with Woocommerce Memberships and Abandoned Carts.
 
 **New in Version 4.8.1**
 
@@ -455,6 +459,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.8.1 =
+= 4.8.1.1 =
 
 This update adds major improvements and bug fixes.
