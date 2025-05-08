@@ -485,7 +485,7 @@ class Updates {
 		$duplicates = aioseo()->core->db->start( 'aioseo_posts' )
 			->select( 'post_id, min(id) as id' )
 			->groupBy( 'post_id having count(post_id) > 1' )
-			->orderBy( 'count(post_id) DESC' )
+			->orderByRaw( 'count(post_id) DESC' )
 			->run()
 			->result();
 

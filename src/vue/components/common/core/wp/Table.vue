@@ -158,7 +158,7 @@
 							:key="index"
 							:column="column"
 							:disable-table="disableTable"
-							@sort-column="(column, event) => $emit('sort-column', column, event)"
+							@sort-column="(column, event) => processSortColumn(column, event)"
 							allow-tooltip-icon
 						>
 							<template v-if="$slots[column.slug + 'HeaderFooter']" #headerFooter>
@@ -302,7 +302,7 @@
 							:key="index"
 							:column="column"
 							:disable-table="disableTable"
-							@sort-column="(column, event) => $emit('sort-column', column, event)"
+							@sort-column="(column, event) => processSortColumn(column, event)"
 						>
 							<template v-if="$slots[column.slug + 'HeaderFooter']" #headerFooter>
 								<slot
@@ -576,6 +576,11 @@ export default {
 			}
 
 			this.activeRow = index
+		},
+		processSortColumn (column, event) {
+			this.editRow(-1)
+
+			this.$emit('sort-column', column, event)
 		},
 		processSearch () {
 			debounce(() => {

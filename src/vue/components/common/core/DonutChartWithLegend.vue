@@ -35,6 +35,7 @@
 					:href="part.link || null"
 					class="legend-label"
 					:class="{'is-link': part.link}"
+					@click="handleLabelClick($event, part)"
 				>
 					{{ part.name }}
 				</component>
@@ -54,6 +55,7 @@
 import CoreDonutChart from '@/vue/components/common/core/DonutChart'
 import UtilAnimatedNumber from '@/vue/components/common/util/AnimatedNumber'
 export default {
+	emits      : [ 'onLabelClick' ],
 	components : {
 		CoreDonutChart,
 		UtilAnimatedNumber
@@ -95,6 +97,15 @@ export default {
 			})
 
 			return clonedParts
+		}
+	},
+	methods : {
+		handleLabelClick (event, part) {
+			if (part?.emitValue) {
+				event.preventDefault()
+
+				this.$emit('onLabelClick', part.emitValue)
+			}
 		}
 	}
 }

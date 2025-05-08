@@ -49,8 +49,13 @@
 					<svg-pencil />
 				</span>
 			</p>
-			<a :href="postEditorStore.currentPost.canonicalUrl" target="_blank" rel="noopener noreferrer">
-				<span>{{ postEditorStore.currentPost.canonicalUrl }}</span>
+
+			<a
+				:href="sanitizeUrl(postEditorStore.currentPost.canonicalUrl)"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				<span>{{ sanitizeUrl(postEditorStore.currentPost.canonicalUrl) }}</span>
 				<svg-external />
 			</a>
 		</div>
@@ -71,6 +76,8 @@ import { versionCompare } from '@/vue/utils/helpers'
 
 import { useImage } from '@/vue/composables/Image'
 import { useTags } from '@/vue/composables/Tags'
+
+import { sanitizeUrl } from '@/vue/utils/strings'
 
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
@@ -101,6 +108,7 @@ export default {
 			optionsStore    : useOptionsStore(),
 			parseTags,
 			postEditorStore : usePostEditorStore(),
+			sanitizeUrl,
 			setImageUrl,
 			settingsStore   : useSettingsStore(),
 			tagsStore       : useTagsStore()

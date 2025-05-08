@@ -113,7 +113,7 @@
 				>
 					<span
 						class="text-truncate"
-						v-html="truncate(stripTags(item.question), 60)"
+						v-html="truncate(sanitizeString(item.question), 60)"
 					/>
 
 					<svg-caret width="20"/>
@@ -121,7 +121,7 @@
 
 				<span
 					class="aioseo-google-search-preview__faq__answer"
-					v-html="stripTags(item.answer)"
+					v-html="sanitizeString(item.answer)"
 				/>
 			</details>
 		</div>
@@ -133,7 +133,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { stripTags, softSanitizeHtml } from '@/vue/utils/strings'
+import { sanitizeString } from '@/vue/utils/strings'
 import { escapeRegex } from '@/vue/utils/regex'
 import { getText, truncate } from '@/vue/utils/html'
 import { CURRENCY_LIST } from '@/vue/plugins/constants'
@@ -152,7 +152,8 @@ export default {
 		} = useUrl()
 
 		return {
-			decodeUrl
+			decodeUrl,
+			sanitizeString
 		}
 	},
 	components : {
@@ -272,8 +273,9 @@ export default {
 			return faviconUrl
 		},
 		parseDescription () {
-			let output = getText(this.description.substring(0, 160).trim() + (160 < this.description.length ? ' ...' : ''), false)
-			output = softSanitizeHtml(output)
+			// Since the parseTags function strips tags, we don't need to preserve HTML tags.
+			// In the server-side Description class, we also strip tags, so we need to do the same here to keep things consistent.
+			const output = sanitizeString(getText(this.description.substring(0, 160).trim() + (160 < this.description.length ? ' ...' : ''), false))
 			if (!this.focusKeyphrase) {
 				return output
 			}
@@ -284,7 +286,6 @@ export default {
 		}
 	},
 	methods : {
-		stripTags,
 		getReviewSnippetPriceLabel () {
 			if (
 				0 === parseFloat(this.reviewSnippet.price) &&

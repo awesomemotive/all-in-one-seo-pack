@@ -154,6 +154,7 @@ class VueSettings {
 			'searchStatisticsKrtKeywords'            => 20,
 			'searchStatisticsKrtGroups'              => 20,
 			'searchStatisticsKrtGroupsTableKeywords' => 10,
+			'searchStatisticsIndexStatus'            => 20,
 			'queryArgs'                              => 20
 		],
 		'semrushCountry'  => 'US'

@@ -89,27 +89,27 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use 'sass:color';
 
 .aioseo-search-statistics-content-rankings {
 	&__title {
 		display: inline-flex;
 
+		h2 {
+			font-weight: 700;
+			font-size: 14px;
+			line-height: 125%;
+			color: $black2-hover;
+		}
+
 		.aioseo-tooltip {
-			.popper {
+			:deep(.popper) {
 				width: 600px;
 				max-width: 600px;
-
-				h2 {
-					font-weight: 700;
-					font-size: 14px;
-					line-height: 125%;
-					color: $black2-hover;
-				}
 			}
 
-			svg.aioseo-circle-question-mark {
+			:deep(svg) {
 				width: 17px;
 				height: 17px;
 				color: $placeholder-color;

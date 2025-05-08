@@ -176,7 +176,9 @@ class QueryArgs {
 	 * @return void
 	 */
 	public function replyToComRedirect() {
-		$replyToCom = absint( wp_unslash( $_GET['replytocom'] ?? null ) ); // phpcs:ignore HM.Security.NonceVerification.Recommended
+		// phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
+		$replyToCom = absint( sanitize_text_field( wp_unslash( $_GET['replytocom'] ?? null ) ) );
+
 		if ( ! empty( $replyToCom ) && is_singular() ) {
 			$url = get_permalink( $GLOBALS['post']->ID );
 			if ( isset( $_SERVER['QUERY_STRING'] ) ) {

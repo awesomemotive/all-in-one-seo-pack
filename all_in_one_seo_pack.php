@@ -5,7 +5,7 @@
  * Description: SEO for WordPress. Features like XML Sitemaps, SEO for custom post types, SEO for blogs, business sites, ecommerce sites, and much more. More than 100 million downloads since 2007.
  * Author:      All in One SEO Team
  * Author URI:  https://aioseo.com/
- * Version:     4.8.1.1
+ * Version:     4.8.2
  * Text Domain: all-in-one-seo-pack
  * Domain Path: /languages
  * License:     GPL-3.0+
@@ -27,7 +27,7 @@
  * @author    All in One SEO Team
  * @package   AIOSEO\Plugin
  * @license   GPL-3.0+
- * @copyright Copyright © 2024, All in One SEO
+ * @copyright Copyright © 2025, All in One SEO
  */
 
 // Exit if accessed directly.
@@ -85,7 +85,7 @@ if ( function_exists( 'aioseo' ) ) {
 	return;
 }
 
-// We will be deprecating these versions of PHP in the future, so let's let the user know.
+// We will be deprecating these versions of PHP in the future, so we'll let the user know.
 if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
 	add_action( 'admin_notices', 'aioseo_php_notice_deprecated' );
 }

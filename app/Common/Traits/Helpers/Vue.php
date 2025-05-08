@@ -408,6 +408,7 @@ trait Vue {
 			$this->data['seoOverview']        = aioseo()->postSettings->getPostTypesOverview();
 			$this->data['searchStatistics']   = array_merge( $this->data['searchStatistics'], aioseo()->searchStatistics->getVueData() );
 			$this->data['keywordRankTracker'] = aioseo()->searchStatistics->keywordRankTracker->getVueData();
+			$this->data['indexStatus']        = aioseo()->searchStatistics->indexStatus->getVueData();
 		}
 	}
 

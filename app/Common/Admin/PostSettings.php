@@ -315,8 +315,9 @@ class PostSettings {
 		$implodedPageIdPlaceholders = implode( ', ', $implodedPageIdPlaceholders );
 
 		global $wpdb;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		$overviewData = $wpdb->get_row(
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 			$wpdb->prepare(
 				"SELECT 
 					COUNT(*) as total,

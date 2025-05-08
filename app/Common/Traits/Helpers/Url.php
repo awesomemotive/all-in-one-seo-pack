@@ -274,12 +274,23 @@ trait Url {
 	 * @return string      The decoded URL.
 	 */
 	public function decodeUrl( $url ) {
-		// Check if URL was encoded multiple times.
-		while ( rawurldecode( $url ) !== $url ) {
-			$url = rawurldecode( $url );
+		// Ensure input is a string to prevent errors.
+		if ( ! is_string( $url ) ) {
+			return $url;
 		}
 
-		return $url;
+		// Set a reasonable iteration limit to prevent infinite loops.
+		$maxIterations = 10;
+		$iterations    = 0;
+
+		$decodedUrl = rawurldecode( $url );
+		while ( $decodedUrl !== $url && $iterations < $maxIterations ) {
+			$url        = $decodedUrl;
+			$decodedUrl = rawurldecode( $url );
+			$iterations++;
+		}
+
+		return $decodedUrl;
 	}
 
 	/**

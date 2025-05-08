@@ -959,7 +959,7 @@ class Tags {
 
 				$imageId = get_post_thumbnail_id( $postId );
 				$image   = (array) wp_get_attachment_image_src( $imageId, 'full' );
-				$image   = isset( $image[0] ) ? '<img src="' . $image[0] . '" style="display: block; margin: 1em auto">' : '';
+				$image   = isset( $image[0] ) ? '<img src="' . $image[0] . '" style="display: block; margin: 1em auto">' : ''; // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 
 				return $sampleData ? __( 'Sample featured image', 'all-in-one-seo-pack' ) : $image;
 			case 'page_number':

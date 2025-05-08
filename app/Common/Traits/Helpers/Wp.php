@@ -781,13 +781,13 @@ trait Wp {
 
 		$post = aioseo()->helpers->getPost( $postId );
 		if ( ! is_a( $post, 'WP_Post' ) ) {
-			$titles[ $postId ] = __( '(no title)' ); // phpcs:ignore AIOSEO.Wp.I18n.MissingArgDomain
+			$titles[ $postId ] = __( '(no title)', 'default' ); // phpcs:ignore AIOSEO.Wp.I18n.TextDomainMismatch, WordPress.WP.I18n.TextDomainMismatch
 
 			return $titles[ $postId ];
 		}
 
 		$title = $post->post_title;
-		$title = $title ? $title : __( '(no title)' ); // phpcs:ignore AIOSEO.Wp.I18n.MissingArgDomain
+		$title = $title ? $title : __( '(no title)', 'default' ); // phpcs:ignore AIOSEO.Wp.I18n.TextDomainMismatch, WordPress.WP.I18n.TextDomainMismatch
 
 		$titles[ $postId ] = aioseo()->helpers->decodeHtmlEntities( $title );
 
@@ -960,5 +960,27 @@ trait Wp {
 		status_header( 404 );
 		include_once get_404_template();
 		exit;
+	}
+
+	/**
+	 * Retrieves the post type labels for the given post type.
+	 *
+	 * @since 4.8.2
+	 *
+	 * @param  string $postType The name of a registered post type.
+	 * @return object           Object with all the labels as member variables.
+	 */
+	public function getPostTypeLabels( $postType ) {
+		static $postTypeLabels = [];
+		if ( ! isset( $postTypeLabels[ $postType ] ) ) {
+			$postTypeObject = get_post_type_object( $postType );
+			if ( ! is_a( $postTypeObject, 'WP_Post_Type' ) ) {
+				return null;
+			}
+
+			$postTypeLabels[ $postType ] = get_post_type_labels( $postTypeObject );
+		}
+
+		return $postTypeLabels[ $postType ];
 	}
 }

@@ -157,7 +157,7 @@ class Query {
 			}
 		}
 
-		$query->orderBy( $orderBy );
+		$query->orderByRaw( $orderBy );
 		$query = $this->filterPostQuery( $query, $postTypes );
 
 		// Return the total if we are just counting the posts.
@@ -373,7 +373,7 @@ class Query {
 				->result();
 		}
 
-		$terms = $query->orderBy( '`t`.`term_id` ASC' )
+		$terms = $query->orderBy( 't.term_id ASC' )
 			->run()
 			->result();
 

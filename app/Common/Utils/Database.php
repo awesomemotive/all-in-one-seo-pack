@@ -645,10 +645,12 @@ class Database {
 
 		// Flag queries with double quotes down, but not if the double quotes are contained within a string value (like JSON).
 		if ( aioseo()->isDev && preg_match( '/\{[^}]*\}(*SKIP)(*FAIL)|\[[^]]*\](*SKIP)(*FAIL)|\'[^\']*\'(*SKIP)(*FAIL)|\\"(*SKIP)(*FAIL)|"/i', (string) $this->query ) ) {
+			// phpcs:disable WordPress.PHP.DevelopmentFunctions
 			error_log(
 				"Query with double quotes detected - this may cause isues when ANSI_QUOTES is enabled:\r\n" .
 				$this->query . "\r\n" . wp_debug_backtrace_summary()
 			);
+			// phpcs:enable WordPress.PHP.DevelopmentFunctions
 		}
 
 		$this->lastQuery = $this->query;
@@ -1074,11 +1076,11 @@ class Database {
 		return $this;
 	}
 
-
 	/**
 	 * Adds am ORDER BY clause.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.8.2 Hardened against SQL injection.
 	 *
 	 * @return Database Returns the Database class which can be method chained for more query building.
 	 */
@@ -1089,16 +1091,56 @@ class Database {
 			$args = $args[0];
 		}
 
-		// Escape the order by clause.
-		$args = array_map( 'esc_sql', $args );
-
-		if ( ! empty( $args[0] ) && true !== $args[0] ) {
-			$this->order = array_merge( $this->order, $args );
-		} else {
-			// This allows for overwriting a preexisting order-by setting.
-			array_shift( $args );
-			$this->order = $args;
+		$orderBy = [];
+		// Separate commas to account for multiple orders.
+		foreach ( $args as $argComma ) {
+			$orderBy = array_map( 'trim', array_merge( $orderBy, explode( ',', $argComma ) ) );
 		}
+
+		// Validate and sanitize column names and sort directions.
+		$sanitizedOrderBy = [];
+		foreach ( $orderBy as $ordBy ) {
+			$parts     = explode( ' ', $ordBy );
+			$column    = str_replace( '`', '', $parts[0] ); // Strip existing ticks first.
+			$column    = preg_replace( '/[^a-zA-Z0-9_.]/', '', $column ); // Strip invalid characters from the column name.
+			$column    = $this->escapeColNames( $column )[0];
+			$direction = isset( $parts[1] ) ? strtoupper( $parts[1] ) : 'ASC';
+
+			// Validate the order direction.
+			if ( ! in_array( $direction, [ 'ASC', 'DESC' ], true ) ) {
+				$direction = 'ASC';
+			}
+
+			$sanitizedOrderBy[] = "$column $direction";
+		}
+
+		if ( ! empty( $sanitizedOrderBy ) ) {
+			if ( ! empty( $args[0] ) && true !== $args[0] ) {
+				$this->order = array_merge( $this->order, $sanitizedOrderBy );
+			} else {
+				// This allows for overwriting a preexisting order-by setting.
+				array_shift( $sanitizedOrderBy );
+				$this->order = $sanitizedOrderBy;
+			}
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Adds a raw ORDER BY clause.
+	 *
+	 * @since 4.8.2
+	 *
+	 * @return Database Returns the Database class which can be method chained for more query building.
+	 */
+	public function orderByRaw() {
+		$args = (array) func_get_args();
+		if ( count( $args ) === 1 && is_array( $args[0] ) ) {
+			$args = $args[0];
+		}
+
+		$this->order = array_merge( $this->order, $args );
 
 		return $this;
 	}
@@ -1126,12 +1168,18 @@ class Database {
 	 * @param  int      $offset The amount of rows the result of the query should be ofset with.
 	 * @return Database         Returns the Database class which can be method chained for more query building.
 	 */
-	public function limit( $limit = 0, $offset = -1 ) {
-		if ( ! $limit ) {
+	public function limit( $limit, $offset = -1 ) {
+		if ( ! is_numeric( $limit ) || $limit <= 0 ) {
 			return $this;
 		}
 
-		$this->limit = ( -1 === $offset ) ? $limit : "$offset, $limit";
+		if ( ! is_numeric( $offset ) ) {
+			$offset = -1;
+		}
+
+		$this->limit = ( -1 === $offset )
+			? intval( $limit )
+			: intval( $offset ) . ', ' . intval( $limit );
 
 		return $this;
 	}

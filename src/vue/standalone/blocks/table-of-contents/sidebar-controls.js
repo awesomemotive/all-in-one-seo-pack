@@ -24,6 +24,8 @@ export const sidebarControls = (props) => {
 					{ label: 'Numbers', value: 'ol' }
 				]}
 				value=${listStyle}
+				__next40pxDefaultSize=${true}
+				__nextHasNoMarginBottom=${true}
 				onChange=${(value) => {
 					tableOfContentsStore.listStyle = value
 					setAttributes({ listStyle: value })

@@ -91,15 +91,13 @@
 			<template #indexStatus="{ row }">
 				<index-status
 					v-if="!searchStatisticsStore.shouldShowSampleReports"
-					:result="row.inspectionResult?.indexStatusResult"
-					:result-link="row.inspectionResult?.inspectionResultLink"
+					:result="row.inspectionResult"
 					:loading="row.inspectionResultLoading"
 				/>
 
 				<index-status-pro
 					v-if="searchStatisticsStore.shouldShowSampleReports"
-					:result="row.inspectionResult?.indexStatusResult"
-					:result-link="row.inspectionResult?.inspectionResultLink"
+					:result="row.inspectionResult"
 					:loading="row.inspectionResultLoading"
 				/>
 			</template>
@@ -531,7 +529,7 @@ export default {
 				}
 			})
 
-			this.searchStatisticsStore.getInspectionResult(missingResults.map(post => post.page))
+			this.searchStatisticsStore.getInspectionResult({ paths: missingResults.map(post => post.page) })
 				.then(response => {
 					missingResults.forEach(post => {
 						const row = rowsArray.find(row => row.page === post.page)

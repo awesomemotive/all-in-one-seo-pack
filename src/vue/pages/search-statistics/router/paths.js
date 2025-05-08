@@ -55,8 +55,7 @@ export default [
 		meta      : {
 			access         : 'aioseo_search_statistics_settings',
 			name           : __('Keyword Rank Tracker', td),
-			hideSaveButton : true,
-			label          : 'new'
+			hideSaveButton : true
 		}
 	},
 	{
@@ -67,6 +66,17 @@ export default [
 			access         : 'aioseo_search_statistics_settings',
 			name           : __('Content Rankings', td),
 			hideSaveButton : true
+		}
+	},
+	{
+		path      : '/index-status',
+		name      : 'index-status',
+		component : loadView('Main'),
+		meta      : {
+			access         : 'aioseo_search_statistics_settings',
+			name           : __('Index Status', td),
+			hideSaveButton : true,
+			label          : 'new'
 		}
 	},
 	{

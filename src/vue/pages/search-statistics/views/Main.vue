@@ -100,12 +100,13 @@ import AuthenticationAlert from './partials/AuthenticationAlert'
 import BaseButton from '@/vue/components/common/base/Button'
 import BaseDatePicker from '@/vue/components/common/base/DatePicker'
 import ConnectCta from './partials/pro/ConnectCta'
+import ContentRankings from './ContentRankings'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreMain from '@/vue/components/common/core/main/Index'
-import ContentRankings from './ContentRankings'
 import Cta from '@/vue/components/common/cta/Index'
 import Dashboard from './Dashboard'
+import IndexStatus from './IndexStatus'
 import KeywordRankTracker from './KeywordRankTracker'
 import PostDetail from './AIOSEO_VERSION/PostDetail'
 import SeoStatistics from './SeoStatistics'
@@ -136,16 +137,17 @@ export default {
 		BaseButton,
 		BaseDatePicker,
 		ConnectCta,
+		ContentRankings,
 		CoreAlert,
 		CoreBlur,
 		CoreMain,
-		ContentRankings,
 		Cta,
 		Dashboard,
+		IndexStatus,
 		KeywordRankTracker,
 		PostDetail,
-		Settings,
-		SeoStatistics
+		SeoStatistics,
+		Settings
 	},
 	data () {
 		return {
@@ -188,7 +190,7 @@ export default {
 			const isConnected  = this.searchStatisticsStore.isConnected && !this.searchStatisticsStore.unverifiedSite
 			const hasDateRange = this.searchStatisticsStore.range.start && this.searchStatisticsStore.range.end
 
-			return ![ 'settings', 'content-rankings' ].includes(this.$route.name) && isConnected && hasDateRange
+			return ![ 'settings', 'content-rankings', 'index-status' ].includes(this.$route.name) && isConnected && hasDateRange
 		},
 		containerClasses () {
 			const classes = []

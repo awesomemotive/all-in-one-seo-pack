@@ -14,12 +14,30 @@ import { observeElement } from '@/vue/utils/helpers'
 import { cleanForSlug } from '@/vue/utils/cleanForSlug'
 import { extraHeadingProperties } from './constants'
 
-const { useSelect }    = window.wp.data
-const blockEditorStore = window.wp.blockEditor.store
-const { isTyping }     = window.wp.data.select(blockEditorStore) || { isTyping: () => null }
+const { select, subscribe, useSelect } = window.wp.data
+const blockEditorStore                 = window.wp.blockEditor.store
+const { isTyping }                     = window.wp.data.select(blockEditorStore) || { isTyping: () => null }
 
 const hasInitialized = []
-let latestHeadings   = []
+let latestHeadings   = [],
+	forceRendering   = false
+
+const initialPostEditorMode = select('core/edit-post').getEditorMode()
+
+subscribe(() => {
+	if (select('core/edit-post').getEditorMode() !== initialPostEditorMode) {
+		const clientId = Object.keys(hasInitialized)[0]
+		forceRendering = true
+
+		if (clientId) {
+			const el = document.querySelector(`[data-block="${clientId}"]`)
+			if (el) {
+				el.remove()
+			}
+		}
+	}
+})
+
 export default function edit (props) {
 	const { setAttributes, attributes, clientId, className, isSelected } = props
 
@@ -29,8 +47,11 @@ export default function edit (props) {
 	// The hasInitialized value is unique to this instance. Check if it's new.
 	// When a page is loaded with an existing block, check that the DOM has loaded the editors block HTML.
 	// When a block is first added, the DOM check would have already come back false. But isSelected will be true.
-	if (!hasInitialized.includes(clientId) && (isSelected || document.querySelector(`[data-block="${clientId}"]`))) {
-		hasInitialized.push(clientId)
+	if (forceRendering || (!hasInitialized.includes(clientId) && (isSelected || document.querySelector(`[data-block="${clientId}"]`)))) {
+		forceRendering = false
+		if (!hasInitialized.includes(clientId)) {
+			hasInitialized.push(clientId)
+		}
 
 		observeElement({
 			id      : targetElementId,
@@ -53,14 +74,14 @@ export default function edit (props) {
 				tableOfContentsStore.reOrdered     = attributes.reOrdered
 
 				// If headings were already saved previously, we need to sync up the new block client IDs.
-				if (tableOfContentsStore.headings?.length) {
+				if (tableOfContentsStore.headings?.length && 0 < latestHeadings?.length) {
 					const syncedHeadings = flattenHeadings(deepCopy(tableOfContentsStore.headings))
 					syncedHeadings.forEach((heading) => {
-						const matchingHeading = latestHeadings.find((x) => {
+						const matchingHeading = latestHeadings?.find((x) => {
 							return x.content === heading.content &&
-								   x.anchor  === heading.anchor  &&
-								   x.id      === heading.id      &&
-								   x.level   === heading.level
+								x.anchor === heading.anchor &&
+								x.id     === heading.id &&
+								x.level  === heading.level
 						})
 
 						if (matchingHeading) {
@@ -187,7 +208,7 @@ export default function edit (props) {
 
 			return null
 		},
-		[ clientId ]
+		[ clientId, latestHeadings ]
 	)
 
 	// If the headings changed, we need to update the state as soon as the user stops typing.

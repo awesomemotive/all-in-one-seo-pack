@@ -187,7 +187,8 @@ class Query {
 			->where( 'post_type', 'post' )
 			->where( 'post_status', 'publish' )
 			->whereRaw( "post_password=''" )
-			->orderBy( '`year` DESC, `month` DESC' )
+			->orderBy( 'year DESC' )
+			->orderBy( 'month DESC' )
 			->run()
 			->result();
 

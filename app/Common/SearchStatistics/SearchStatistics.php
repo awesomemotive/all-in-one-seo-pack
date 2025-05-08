@@ -58,6 +58,15 @@ class SearchStatistics {
 	public $keywordRankTracker;
 
 	/**
+	 * Holds the instance of the Index Status class.
+	 *
+	 * @since 4.8.2
+	 *
+	 * @var IndexStatus
+	 */
+	public $indexStatus;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.3.0
@@ -68,6 +77,7 @@ class SearchStatistics {
 		$this->sitemap            = new Sitemap();
 		$this->notices            = new Notices();
 		$this->keywordRankTracker = new KeywordRankTracker();
+		$this->indexStatus        = new IndexStatus();
 	}
 
 	/**

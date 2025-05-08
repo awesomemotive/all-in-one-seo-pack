@@ -254,15 +254,19 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 					this.loading.contentRankings = false
 				})
 		},
-		getInspectionResult (paths) {
+		getInspectionResult ({ paths, force }) {
 			return http.get(links.restUrl('search-statistics/inspection-result'))
 				.query({
-					'paths[]' : paths
+					'paths[]' : paths,
+					force     : force ?? false
 				})
 				.then(response => {
 					this.quotaExceeded.urlInspection = response.body.quotaExceeded
 
 					return response.body.data
+				})
+				.catch(error => {
+					throw error
 				})
 		},
 		getPagesByKeywords (payload = {}) {

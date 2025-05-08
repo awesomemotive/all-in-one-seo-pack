@@ -135,7 +135,10 @@
 			</slot>
 		</div>
 
-		<div class="tabs-extra">
+		<div
+			class="tabs-extra"
+			ref="tabs-extra"
+		>
 			<slot name="extra" />
 		</div>
 	</div>
@@ -269,16 +272,29 @@ export default {
 			let width           = 0
 			this.calculateWidth = true
 			this.$nextTick(() => {
-				width                   = this.$refs['tabs-scroller'].offsetWidth
-				this.calculateWidth     = false
-				let tabsButtonWidth     = 0
+				width               = this.$refs['tabs-scroller'].offsetWidth
+				this.calculateWidth = false
+
+				// Get tabs-button width.
+				let tabsButtonWidth     = 0,
+					tabsExtraWidth      = 0
 				const tabsButtonElement = this.$refs['tabs-button']
 				if (tabsButtonElement) {
 					const buttonElement = tabsButtonElement.querySelector('.aioseo-button')
-					tabsButtonWidth = buttonElement ? buttonElement.scrollWidth : 0
+					tabsButtonWidth     = buttonElement ? buttonElement.scrollWidth : 0
 				}
 
-				if ((width + tabsButtonWidth) > this.$refs['aioseo-tabs'].offsetWidth) {
+				// Get tabs-extra width.
+				const tabsExtraElement = this.$refs['tabs-extra']
+				if (tabsExtraElement) {
+					tabsExtraWidth = tabsExtraElement.offsetWidth
+				}
+
+				// Calculate the total width needed.
+				const totalWidth = width + tabsButtonWidth + tabsExtraWidth
+
+				// Check if total width exceeds available width.
+				if (totalWidth > this.$refs['aioseo-tabs'].offsetWidth) {
 					this.showMobileMenu = true
 					return
 				}

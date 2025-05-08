@@ -220,7 +220,39 @@ class Cache {
 		// If we find the activation redirect, we'll need to reset it after clearing.
 		$activationRedirect = $this->get( 'activation_redirect' );
 
-		aioseo()->core->db->truncate( $this->table )->run();
+		// Create a temporary table with the same structure.
+		$table    = aioseo()->core->db->prefix . $this->table;
+		$newTable = aioseo()->core->db->prefix . $this->table . '_new';
+		$oldTable = aioseo()->core->db->prefix . $this->table . '_old';
+
+		try {
+			// Drop the temp table if it exists from a previous failed attempt.
+			if ( false === aioseo()->core->db->execute( "DROP TABLE IF EXISTS {$newTable}" ) ) {
+				throw new \Exception( 'Failed to drop temporary table' );
+			}
+
+			// Create the new empty table with the same structure.
+			if ( false === aioseo()->core->db->execute( "CREATE TABLE {$newTable} LIKE {$table}" ) ) {
+				throw new \Exception( 'Failed to create temporary table' );
+			}
+
+			// Rename tables (atomic operation in MySQL).
+			if ( false === aioseo()->core->db->execute( "RENAME TABLE {$table} TO {$oldTable}, {$newTable} TO {$table}" ) ) {
+				throw new \Exception( 'Failed to rename tables' );
+			}
+
+			// Drop the old table.
+			if ( false === aioseo()->core->db->execute( "DROP TABLE {$oldTable}" ) ) {
+				throw new \Exception( 'Failed to drop old table' );
+			}
+		} catch ( \Exception $e ) {
+			// If something fails, ensure we clean up any temporary tables.
+			aioseo()->core->db->execute( "DROP TABLE IF EXISTS {$newTable}" );
+			aioseo()->core->db->execute( "DROP TABLE IF EXISTS {$oldTable}" );
+
+			// Truncate table to clear the cache.
+			aioseo()->core->db->truncate( $this->table )->run();
+		}
 
 		$this->clearStatic();
 

@@ -420,7 +420,7 @@ trait ThirdParty {
 					$imageUrl = is_array( $field['value'] ) ? $field['value']['url'] : $field['value'];
 					$imageUrl = is_numeric( $imageUrl ) ? wp_get_attachment_image_url( $imageUrl ) : $imageUrl;
 
-					$value = "<img src='$imageUrl' />";
+					$value = "<img src='$imageUrl' />"; // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 					break;
 				case 'gallery':
 					$imageUrl = $field['value'];
@@ -437,7 +437,7 @@ trait ThirdParty {
 					// Image ID format.
 					$imageUrl = is_numeric( $imageUrl ) ? wp_get_attachment_image_url( $imageUrl ) : $imageUrl;
 
-					$value = ! empty( $imageUrl ) ? "<img src='{$imageUrl}' />" : '';
+					$value = ! empty( $imageUrl ) ? "<img src='{$imageUrl}' />" : ''; // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 					break;
 				case 'link':
 					$value = make_clickable( $field['value']['url'] ?? $field['value'] ?? '' );

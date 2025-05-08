@@ -128,7 +128,11 @@ $medium    = false !== strpos( AIOSEO_PHP_VERSION_DIR, 'pro' ) ? 'proplugin' : '
 
 <div id="aioseo-settings-area">
 	<div id="aioseo-settings-error-loading-area">
-		<img id="aioseo-settings-logo" src="<?php echo esc_attr( $logoImage ); ?>" alt="<?php echo esc_attr( AIOSEO_PLUGIN_NAME ); ?>">
+		<img
+			id="aioseo-settings-logo"
+			src="<?php echo esc_attr( $logoImage ); // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>"
+			alt="<?php echo esc_attr( AIOSEO_PLUGIN_NAME ); ?>"
+		>
 
 		<div id="aioseo-error-js">
 			<h3><?php esc_html_e( 'Ooops! It Appears JavaScript Didn’t Load', 'all-in-one-seo-pack' ); ?></h3>

@@ -12,8 +12,7 @@
 			>
 				<index-status
 					v-if="showIndexStatus"
-					:result="inspectionResult?.indexStatusResult"
-					:result-link="inspectionResult?.inspectionResultLink"
+					:result="inspectionResult"
 					:loading="inspectionResultLoading"
 					:viewable="post.isPostVisible"
 					tooltip-offset="-150px,0"
@@ -388,7 +387,7 @@ export default {
 			showEditImageAltTag     : false,
 			showTruSeo              : false,
 			isSpecialPage           : false,
-			inspectionResult        : false,
+			inspectionResult        : {},
 			inspectionResultLoading : true,
 			postLoading             : false,
 			strings                 : merge(this.composableStrings, {
@@ -415,7 +414,7 @@ export default {
 			}
 
 			const isVerified  = !this.searchStatisticsStore.unverifiedSite
-			const isConnected = 'string' === typeof this.optionsStore.internalOptions.internal?.searchStatistics?.profile?.key
+			const isConnected = !!this.searchStatisticsStore.isConnected
 			const isAllowed   = this.allowed('aioseo_search_statistics_settings')
 
 			return isVerified && isConnected && isAllowed

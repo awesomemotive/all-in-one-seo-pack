@@ -115,6 +115,28 @@ trait DateTime {
 	}
 
 	/**
+	 * Formats a date in WordPress format.
+	 *
+	 * @since 4.8.2
+	 *
+	 * @param  string      $dateTime          Same as you'd pass to `strtotime()`.
+	 * @param  string      $dateTimeSeparator The separator between the date and time.
+	 * @return string|null                    The date formatted in WordPress format. Null if the passed date is invalid.
+	 */
+	public function dateToWpFormat( $dateTime, $dateTimeSeparator = ', ' ) {
+		static $format = null;
+		if ( ! isset( $format ) ) {
+			$dateFormat = get_option( 'date_format', 'd M' );
+			$timeFormat = get_option( 'time_format', 'H:i' );
+			$format     = $dateFormat . $dateTimeSeparator . $timeFormat;
+		}
+
+		$timestamp = strtotime( (string) $dateTime );
+
+		return $timestamp && 0 < $timestamp ? date_i18n( $format, $timestamp ) : null;
+	}
+
+	/**
 	 * Generates a random (yet unique per identifier) time offset based on a site identifier.
 	 *
 	 * @since 4.7.9

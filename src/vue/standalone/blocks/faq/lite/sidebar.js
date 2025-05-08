@@ -60,6 +60,8 @@ export const render = (className, attributes, setSchemaBlockAttributes) => {
 							{ label: 'H3', value: 'h3' },
 							{ label: 'H4', value: 'h4' }
 						]}
+						__next40pxDefaultSize=${true}
+						__nextHasNoMarginBottom=${true}
 						value=${tagName}
 						onChange=${value => setSchemaBlockAttributes({ tagName: value })}
 					/>
@@ -70,6 +72,7 @@ export const render = (className, attributes, setSchemaBlockAttributes) => {
 						label=${__('Display Block', td)}
 						help=${__('You can choose to hide this block on the front-end of your site so that visitors won\'t see it but search engines will still see it.', td)}
 						checked=${!hidden}
+						__nextHasNoMarginBottom=${true}
 						onChange=${() => setSchemaBlockAttributes({ hidden: !hidden })}
 						disabled
 					/>
