@@ -663,7 +663,7 @@ export default {
 		}
 	},
 	mounted () {
-		if (!this.sourceUrls.length) {
+		if (0 <= this.sourceUrls?.length) {
 			this.sourceUrls = this.getDefaultSourceUrls
 		}
 

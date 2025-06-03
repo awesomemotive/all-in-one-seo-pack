@@ -230,7 +230,7 @@ if ( '/sitemap.rss' === $sitemapPath ) {
 							</a>
 						</td>
 						<td class="datetime">
-							<?php 
+							<?php
 							if ( ! empty( $xslParams['datetime'] ) ) {
 								aioseo()->templates->getTemplate(
 									'sitemap/xsl/partials/date-time.php',
@@ -251,8 +251,9 @@ if ( '/sitemap.rss' === $sitemapPath ) {
 
 	<xsl:template name="sitemapTable">
 		<?php
-		$sitemapIndex = aioseo()->sitemap->helpers->filename( 'general' );
-		$sitemapIndex = $sitemapIndex ? $sitemapIndex : 'sitemap';
+		$sitemapIndex  = aioseo()->sitemap->helpers->filename( 'general' );
+		$sitemapIndex  = $sitemapIndex ?: 'sitemap';
+		$excludeImages = isset( $excludeImages ) ? $excludeImages : aioseo()->sitemap->helpers->excludeImages();
 		aioseo()->templates->getTemplate(
 			'sitemap/xsl/partials/breadcrumb.php',
 			[
@@ -270,7 +271,7 @@ if ( '/sitemap.rss' === $sitemapPath ) {
 						<th class="left">
 							<?php _e( 'URL', 'all-in-one-seo-pack' ); ?>
 						</th>
-						<?php if ( ! aioseo()->sitemap->helpers->excludeImages() ) : ?>
+						<?php if ( ! $excludeImages ) : ?>
 							<th>
 								<?php
 								aioseo()->templates->getTemplate(
@@ -388,7 +389,7 @@ if ( '/sitemap.rss' === $sitemapPath ) {
 								</xsl:if>
 							</xsl:for-each>
 						</td>
-						<?php if ( ! aioseo()->sitemap->helpers->excludeImages() ) : ?>
+						<?php if ( ! $excludeImages ) : ?>
 						<td>
 							<div class="item-count">
 								<xsl:value-of select="count(image:image)"/>
@@ -406,7 +407,7 @@ if ( '/sitemap.rss' === $sitemapPath ) {
 							</xsl:if>
 						</td>
 						<td class="datetime">
-							<?php 
+							<?php
 							if ( ! empty( $xslParams['datetime'] ) ) {
 								aioseo()->templates->getTemplate(
 									'sitemap/xsl/partials/date-time.php',

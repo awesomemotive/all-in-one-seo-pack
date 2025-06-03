@@ -36,13 +36,13 @@ class DeprecatedWordPress {
 			return;
 		}
 
-		// Only show to users that interact with our pluign.
+		// Show to users that interact with our pluign.
 		if ( ! current_user_can( 'publish_posts' ) ) {
 			return;
 		}
 
-		// Only show if WordPress version is deprecated.
-		if ( version_compare( $wp_version, '5.3', '>=' ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		// Show if WordPress version is deprecated.
+		if ( version_compare( $wp_version, '5.4', '>=' ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			return;
 		}
 
@@ -83,7 +83,7 @@ class DeprecatedWordPress {
 					sprintf(
 						// phpcs:ignore Generic.Files.LineLength.MaxExceeded
 						// Translators: 1 - Opening HTML bold tag, 2 - Closing HTML bold tag, 3 - The short plugin name ("AIOSEO"), 4 - The current year, 5 - Opening HTML link tag, 6 - Closing HTML link tag.
-						__( '%1$sNote:%2$s %3$s will be discontinuing support for WordPress versions older than version 5.3 by the end of %4$s. %5$sRead more for additional information.%6$s', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+						__( '%1$sNote:%2$s %3$s will be discontinuing support for WordPress versions older than version 5.7 by the end of %4$s. %5$sRead more for additional information.%6$s', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 						'<strong>',
 						'</strong>',
 						'AIOSEO',

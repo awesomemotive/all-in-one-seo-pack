@@ -73,18 +73,16 @@ export default {
 		return {
 			links,
 			strings : {
-				selectSite             : __('Select Site', td),
-				resetRestoreSettings   : __('Reset / Restore Settings', td),
-				logs                   : __('Logs', td),
-				badBotBlockerLogs      : __('Bad Bot Blocker Logs', td),
-				cleared                : __('Cleared', td),
-				clearBadBotBlockerLogs : __('Clear Bad Bot Blocker Logs', td),
-				logs404                : __('404 Logs', td),
-				clear404Logs           : __('Clear 404 Logs', td),
-				redirectLogs           : __('Redirect Logs', td),
-				clearRedirectLogs      : __('Clear Redirect Logs', td),
-				logsTooltip            : __('Log sizes may fluctuate and not always be 100% accurate since the results can be cached. Also after clearing a log, it may not show as "0" since database tables also include additional information such as indexes that we don\'t clear.', td),
-				ctaHeader              : sprintf(
+				selectSite           : __('Select Site', td),
+				resetRestoreSettings : __('Reset / Restore Settings', td),
+				logs                 : __('Logs', td),
+				cleared              : __('Cleared', td),
+				logs404              : __('404 Logs', td),
+				clear404Logs         : __('Clear 404 Logs', td),
+				redirectLogs         : __('Redirect Logs', td),
+				clearRedirectLogs    : __('Clear Redirect Logs', td),
+				logsTooltip          : __('Log sizes may fluctuate and not always be 100% accurate since the results can be cached. Also after clearing a log, it may not show as "0" since database tables also include additional information such as indexes that we don\'t clear.', td),
+				ctaHeader            : sprintf(
 					// Translators: 1 - "PRO".
 					__('Network Tools is a %1$s Feature', td),
 					'PRO'

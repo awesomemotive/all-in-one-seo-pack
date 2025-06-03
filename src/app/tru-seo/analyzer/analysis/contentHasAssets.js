@@ -2,7 +2,13 @@ import { __ } from '@wordpress/i18n'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-function getImages (content) {
+export function getImages (content) {
+	content = 'string' === typeof content
+		? content
+		: content instanceof HTMLImageElement
+			? content.outerHTML
+			: content?.innerHTML || ''
+
 	const images = [].concat(
 		match(content, '<img(?:[^>]+)?>'),
 		match(content, '\\[gallery( [^\\]]+?)?\\]')
@@ -11,7 +17,13 @@ function getImages (content) {
 	return images.length
 }
 
-function getVideos (content) {
+export function getVideos (content) {
+	content = 'string' === typeof content
+		? content
+		: content instanceof HTMLIFrameElement || content instanceof HTMLVideoElement
+			? content.outerHTML
+			: content?.innerHTML || ''
+
 	const videos = [].concat(
 		match(content, '<iframe(?:[^>]+)?>'),
 		match(content, '\\[video( [^\\]]+?)?\\]'),
@@ -22,7 +34,7 @@ function getVideos (content) {
 	return videos.length
 }
 
-function match (text, regexString) {
+export function match (text, regexString) {
 	const regex = new RegExp(regexString, 'ig')
 	const matches = text.match(regex)
 

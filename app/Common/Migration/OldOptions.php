@@ -69,7 +69,6 @@ class OldOptions {
 	 */
 	protected function doVersionUpdates( $oldVersion ) {
 		if ( version_compare( $oldVersion, '3.0', '<' ) ) {
-			$this->removeBadBots();
 			$this->sitemapExclTerms201905();
 		}
 
@@ -88,39 +87,6 @@ class OldOptions {
 			$this->updateArchiveNoIndexSettings20200413();
 			$this->updateArchiveTitleFormatSettings20200413();
 		}
-	}
-
-	/**
-	 * Removes various entries from the bad bots list.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return void
-	 */
-	protected function removeBadBots() {
-		if (
-			empty( $this->oldOptions['modules']['aiosp_bad_robots_options'] ) ||
-			empty( $this->oldOptions['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] )
-		) {
-			return;
-		}
-
-		$this->oldOptions['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist'] = str_replace(
-			[
-				"DOC\r\n",
-				"DOC\n",
-				"yandex\r\n",
-				"yandex\n",
-				"SeznamBot\r\n",
-				"SeznamBot\n",
-				"SemrushBot\r\n",
-				"SemrushBot\n",
-				"Exabot\r\n",
-				"Exabot\n",
-			],
-			'',
-			$this->oldOptions['modules']['aiosp_bad_robots_options']['aiosp_bad_robots_blocklist']
-		);
 	}
 
 	/**

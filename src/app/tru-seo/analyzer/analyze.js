@@ -154,8 +154,8 @@ class TruSeoAnalyzer {
 		focusAnalysis.keyphraseInDescription = analyzers.keyphraseInDescription(this.postParsedDescription, keyphrase, 'focus', this.locale)
 		focusAnalysis.keyphraseLength = analyzers.keyphraseLength(keyphrase, 'focus')
 
-		// Skip this if we're dealing with the static homepage.
-		if (postId !== this.aioseo.data.staticHomePage) {
+		// Skip keyphraseInURL if we're on a static homepage or if permalinks are not enabled.
+		if (postId !== this.aioseo.data.staticHomePage && this.aioseo.data.usingPermalinks) {
 			focusAnalysis.keyphraseInURL = analyzers.keyphraseInURL(this.postSlug, keyphrase)
 		}
 
@@ -234,8 +234,8 @@ class TruSeoAnalyzer {
 			basic.keyphraseInIntroduction = analyzers.keyphraseInIntroduction(this.postParsedContent, focusKeyphrase, 'focus', this.locale)
 			basic.keyphraseInDescription = analyzers.keyphraseInDescription(this.postParsedDescription, focusKeyphrase, 'focus', this.locale)
 
-			// Skip keyphraseInURL if we're on a static homepage.
-			if (currentPost.id !== this.aioseo.data.staticHomePage) {
+			// Skip keyphraseInURL if we're on a static homepage or if permalinks are not enabled.
+			if (currentPost.id !== this.aioseo.data.staticHomePage && this.aioseo.data.usingPermalinks) {
 				basic.keyphraseInURL = analyzers.keyphraseInURL(this.postSlug, focusKeyphrase)
 			}
 			basic.keyphraseLength = analyzers.keyphraseLength(focusKeyphrase, 'focus')

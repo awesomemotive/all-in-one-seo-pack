@@ -36,6 +36,9 @@ class Output {
 			$version = 'v' . $version;
 		}
 
+		// Clear all output buffers to avoid conflicts.
+		aioseo()->helpers->clearBuffers();
+
 		echo '<?xml version="1.0" encoding="' . esc_attr( $charset ) . "\"?>\r\n";
 		echo '<!-- ' . sprintf(
 			// Translators: 1 - "statically" or "dynamically", 2 - The date, 3 - The time, 4 - The plugin name ("All in One SEO"), 5 - Currently installed version.

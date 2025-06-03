@@ -59,6 +59,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 
 	// Pinia stores.
 	const addonsStore                   = useAddonsStore()
+	const analyzerStore                 = useAnalyzerStore()
 	const backupsStore                  = useBackupsStore()
 	const dirtyOptionsStore             = useDirtyOptionsStore()
 	const helpPanelStore                = useHelpPanelStore()
@@ -96,6 +97,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 
 	// Other stores.
 	addonsStore.addons                   = merge([ ...addonsStore.addons ], [ ...aioseo.addons || [] ])
+	analyzerStore.$state                 = merge({ ...analyzerStore.$state }, { ...aioseo.analyzer || {} })
 	backupsStore.backups                 = merge([ ...backupsStore.backups ], [ ...aioseo.backups || [] ])
 	backupsStore.networkBackups          = merge({ ...backupsStore.networkBackups }, { ...aioseo.data?.network?.backups || {} })
 	helpPanelStore.$state                = merge({ ...helpPanelStore.$state }, { ...aioseo.helpPanel || {} })
@@ -126,6 +128,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 
 	// Default AIOSEO root store without the above data.
 	delete aioseo.addons
+	delete aioseo.analyzer
 	delete aioseo.backups
 	delete aioseo.currentPost
 	delete aioseo.dynamicOptions

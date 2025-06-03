@@ -13,11 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait WpMultisite {
 	/**
-	 * Returns the network ID.
+	 * Returns the ID of the network's main site.
 	 *
 	 * @since 4.2.5
 	 *
-	 * @return int The integer of the blog/site id.
+	 * @return int The ID of the network's main site.
 	 */
 	public function getNetworkId() {
 		if ( is_multisite() ) {

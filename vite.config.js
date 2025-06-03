@@ -17,6 +17,8 @@ import i18n from './build/aioseo-rollup-plugin-gettext-vue'
 // Convert JSON to PHP.
 import jsonToPhp from './build/aioseo-rollup-plugin-json-to-php'
 
+const mainPluginPath = path.resolve(__dirname)
+
 // Pro only inputs.
 const proInput = {
 	'aioseo-gtm'          : './src/app/gtm/main.js',
@@ -224,6 +226,9 @@ export default ({ mode }) => {
 			hmr        : {
 				port : process.env.VITE_AIOSEO_DEV_PORT,
 				host : process.env.VITE_AIOSEO_DOMAIN
+			},
+			watch : {
+				ignored: ['**/src/**/node_modules/**']
 			}
 		},
 		resolve : {
@@ -255,12 +260,11 @@ export default ({ mode }) => {
 			},
 			preprocessorOptions : {
 				scss : {
-					additionalData : [
-						'@use "build/_version" as *;',
-						'@use "./src/vue/assets/scss/app/variables.scss" as *;',
-						'@use "./src/vue/assets/scss/app/mixins.scss" as *;',
-						''
-					].join('\n'),
+					additionalData : `
+						@use "${mainPluginPath}/build/_version" as *;
+						@use "${mainPluginPath}/src/vue/assets/scss/app/variables.scss" as *;
+						@use "${mainPluginPath}/src/vue/assets/scss/app/mixins.scss" as *;
+					`,
 					silenceDeprecations : [ 'legacy-js-api' ]
 				}
 			}

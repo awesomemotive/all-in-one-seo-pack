@@ -6,7 +6,12 @@ import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
-import { loadPiniaStores } from '@/vue/stores'
+import {
+	loadPiniaStores,
+	usePostEditorStore,
+	useRedirectsStore,
+	useSeoRevisionsStore
+} from '@/vue/stores'
 
 import initWatcher from './watcher'
 import initIntroduction from './introduction'
@@ -125,7 +130,7 @@ const initAioseoEditor = (selector) => {
 		history : createWebHistory(),
 		routes  : [
 			{
-				path      : '/',
+				path      : '/:pathMatch(.*)*', // Will match everything and prevent warnings.
 				component : App
 			}
 		]
@@ -139,7 +144,32 @@ const initAioseoEditor = (selector) => {
 				screenContext : 'sidebar'
 			}
 		},
-		render : () => h(App)
+		render : () => h(
+			App,
+			{
+				onBeforeMount () {
+					const postEditorStore   = usePostEditorStore()
+					const redirectsStore = useRedirectsStore()
+					const seoRevisionsStore = useSeoRevisionsStore()
+					const elementorPostId   = window.elementor?.config?.document?.id
+					if (elementorPostId && Number(postEditorStore.currentPost.id) !== Number(elementorPostId)) {
+						try {
+							postEditorStore.fetchPostData({
+								postId          : elementorPostId,
+								integrationSlug : 'elementor'
+							})
+								.then((response) => {
+									postEditorStore.updateState(response.body.data.currentPost)
+									redirectsStore.updateState(response.body.data?.redirects ?? null)
+									seoRevisionsStore.updateState(response.body.data?.seoRevisions ?? null)
+								})
+						} catch (error) {
+							console.error(error)
+						}
+					}
+				}
+			}
+		)
 	})
 
 	app = loadPlugins(app)

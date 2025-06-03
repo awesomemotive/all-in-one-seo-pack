@@ -25,7 +25,7 @@ function keywordDensity (text, keyword, type) {
 	const keywordMatches = (cleanTagsOnly(text).match(regex) || []).length
 	const density        = parseFloat(((keywordMatches / wordCount) * 100).toFixed(2))
 	const title          = sprintf(
-		// Translators: 1 - Focus Keyphrase or Keyphrase.
+		// Translators: 1 - Focus Keyword or Keyword.
 		__('%1$s density', td),
 		keywordType
 	)
@@ -34,8 +34,8 @@ function keywordDensity (text, keyword, type) {
 		return {
 			title       : title,
 			description : sprintf(
-				// Translators: 1 - Focus Keyphrase or Keyphrase, 2 - Keyphrase Density Number, 3 - Keyphrase Matches Number.
-				__('%1$s Density is low at %2$s, the Keyphrase appears %3$s times. For better results, try to aim for more than %4$s.', td),
+				// Translators: 1 - Focus Keyword or Keyword, 2 - Keyword Density Number, 3 - Keyword Matches Number.
+				__('%1$s Density is low at %2$s, the keyword appears %3$s times. For better results, try to aim for more than %4$s.', td),
 				keywordType,
 				`${density}%`,
 				keywordMatches,
@@ -52,8 +52,8 @@ function keywordDensity (text, keyword, type) {
 		return {
 			title       : title,
 			description : sprintf(
-				// Translators: 1 - Focus Keyphrase or Keyphrase, 2 - Keyphrase Density Number, 3 - Keyphrase Matches Number.
-				__('%1$s Density is high at %2$s, the Keyphrase appears %3$s times. For better results, try to aim for lower than %4$s.', td),
+				// Translators: 1 - Focus Keyword or Keyword, 2 - Keyword Density Number, 3 - Keyword Matches Number.
+				__('%1$s Density is high at %2$s, the keyword appears %3$s times. For better results, try to aim for lower than %4$s.', td),
 				keywordType,
 				`${density}%`,
 				keywordMatches,
@@ -69,8 +69,8 @@ function keywordDensity (text, keyword, type) {
 	return {
 		title       : title,
 		description : sprintf(
-			// Translators: 1 - Focus Keyphrase or Keyphrase, 2 - Keyphrase Density Number, 3 - Keyphrase Matches Number.
-			__('%1$s Density is %2$s, the Keyphrase appears %3$s times.', td),
+			// Translators: 1 - Focus Keyword or Keyword, 2 - Keyword Density Number, 3 - Keyword Matches Number.
+			__('%1$s Density is %2$s, the keyword appears %3$s times.', td),
 			keywordType,
 			`${density}%`,
 			keywordMatches

@@ -131,15 +131,6 @@ abstract class AIOSEOAbstract {
 	public $blocks = null;
 
 	/**
-	 * BadBotBlocker class instance.
-	 *
-	 * @since 4.2.7
-	 *
-	 * @var \AIOSEO\Plugin\Common\Tools\BadBotBlocker
-	 */
-	public $badBotBlocker = null;
-
-	/**
 	 * Breadcrumbs class instance.
 	 *
 	 * @since 4.2.7

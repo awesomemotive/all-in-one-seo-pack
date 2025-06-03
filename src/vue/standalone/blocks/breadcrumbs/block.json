@@ -18,5 +18,25 @@
 		"seo",
 		"trail"
 	],
+	"attributes": {
+		"primaryTerm": {
+			"type": "string",
+			"default": null
+		},
+		"breadcrumbSettings": {
+			"type": "object",
+			"default": {
+				"default": true,
+				"separator": "›",
+				"showHomeCrumb": true,
+				"showParentCrumbs": true,
+				"showTaxonomyCrumbs": true,
+				"template": "default",
+				"parentTemplate": "default",
+				"taxonomy": "",
+				"primaryTerm": null
+			}
+		}
+	},
 	"textdomain": "all-in-one-seo-pack"
 }

@@ -1,3 +1,4 @@
+import { cleanForSlug } from '@/vue/utils/cleanForSlug'
 /* global TVE */
 
 /**
@@ -62,7 +63,7 @@ export const getEditorData = () => {
 		content       : getContent(),
 		title         : getTitle(),
 		excerpt       : '',
-		slug          : getSlug(),
+		slug          : getSlug() || cleanForSlug(getTitle()),
 		permalink     : getPermalink(),
 		featuredImage : getFeaturedImage()
 	}

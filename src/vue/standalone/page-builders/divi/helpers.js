@@ -1,6 +1,8 @@
 /* globals ETBuilderBackendDynamic, ET_Builder */
 import { get, set } from 'lodash-es'
-import { getText, getImages } from '@/vue/utils/html'
+import { getText } from '@/vue/utils/html'
+import { cleanForSlug } from '@/vue/utils/cleanForSlug'
+import { getVideos, getImages } from '@/app/tru-seo/analyzer/analysis/contentHasAssets'
 
 /**
  * Gets the content area.
@@ -47,8 +49,8 @@ export const getContent = () => {
 			.replace(regex, '') // Remove unnecessary content for the analysis.
 			.replaceAll(/<p.*>(<img.*>)<\/p>/g, '$1') // Remove the wrapper <p> if there's just an image inside it.
 
-		// Skip if there's no text or images, just HTML markup.
-		if ('' === getText(html) && 0 === getImages(html).length) {
+		// Skip if there's no text, images or videos, just HTML markup.
+		if ('' === getText(html) && 0 === getImages(html) && 0 === getVideos(html)) {
 			continue
 		}
 
@@ -102,11 +104,13 @@ const getFeaturedImage = async () => {
  * @returns {Object} The editorData object.
  */
 export const getEditorData = () => {
+	const slug = get(ETBuilderBackendDynamic, 'postMeta.post_name', '') || cleanForSlug(get(ETBuilderBackendDynamic, 'postTitle', ''))
+
 	return {
 		content       : getContent(),
 		title         : get(ETBuilderBackendDynamic, 'postTitle', ''),
 		excerpt       : get(ETBuilderBackendDynamic, 'postMeta.post_excerpt', ''),
-		slug          : get(ETBuilderBackendDynamic, 'postMeta.post_name', ''),
+		slug          : slug,
 		permalink     : getPermalink(),
 		featuredImage : getFeaturedImage()
 	}

@@ -17,7 +17,7 @@ function keyphraseInDescription (description, keyphrase, type, locale) {
 	const keyphraseType = getKeyphraseType(type)
 	const keywordMatched = wordMatch(description, keyphrase, locale)
 	const title =  sprintf(
-		// Translators: 1 - Focus Keyphrase or Keyphrase.
+		// Translators: 1 - Focus Keyword or Keyword.
 		__('%1$s in meta description', td),
 		keyphraseType
 	)
@@ -26,7 +26,7 @@ function keyphraseInDescription (description, keyphrase, type, locale) {
 		return {
 			title       : title,
 			description : sprintf(
-				// Translators: 1 - Focus Keyphrase or Keyphrase.
+				// Translators: 1 - Focus Keyword or Keyword.
 				__('%1$s found in meta description.', td),
 				keyphraseType
 			),
@@ -39,7 +39,7 @@ function keyphraseInDescription (description, keyphrase, type, locale) {
 	return {
 		title       : title,
 		description : sprintf(
-			// Translators: 1 - Focus Keyphrase or Keyphrase.
+			// Translators: 1 - Focus Keyword or Keyword.
 			__('%1$s not found in meta description.', td),
 			keyphraseType
 		),

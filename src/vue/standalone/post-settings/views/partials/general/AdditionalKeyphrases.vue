@@ -122,18 +122,18 @@ export default {
 		return {
 			selectedKeyphrase : 0,
 			strings           : {
-				additional             : __('Additional Keyphrases', td),
-				addKeyphrase           : __('Add Additional Keyphrases', td),
-				keyphraseDocumentation : __('Improve your SEO rankings with additional keyphrases.', td),
+				additional             : __('Additional Keywords', td),
+				addKeyphrase           : __('Add Additional Keywords', td),
+				keyphraseDocumentation : __('Improve your SEO rankings with additional keywords.', td),
 				upsell                 : sprintf(
 					// Translators: 1 - "Pro" string, 2 - "Learn more link".
-					__('Additional Keyphrases are a %1$s feature. %2$s', td),
+					__('Additional Keywords are a %1$s feature. %2$s', td),
 					'PRO',
 					links.getUpsellLink('post-settings', GLOBAL_STRINGS.learnMore, 'additional-keywords', true)
 				),
 				maxAmountReached : sprintf(
 					// Translators: 1 - Number of maximum keywords.
-					__('You have reached the maximum of %1$s additional keyphrases.', td),
+					__('You have reached the maximum of %1$s additional keywords.', td),
 					this.postEditorStore.currentPost.maxAdditionalKeyphrases
 				)
 			}

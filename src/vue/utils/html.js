@@ -62,22 +62,6 @@ export const getOuterText = (html) => {
 }
 
 /**
- * Get the image list from an HTML piece.
- *
- * @since 4.2.1
- *
- * @param {string|Object} html The HTML to retrieve images.
- * @returns {NodeList}         The image list.
- */
-export const getImages = (html) => {
-	if ('string' === typeof html) {
-		html = createElement(html)
-	}
-
-	return html.querySelectorAll('img')
-}
-
-/**
  * Truncate a given string.
  *
  * @since 4.2.8

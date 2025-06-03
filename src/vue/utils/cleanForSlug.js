@@ -1,4 +1,4 @@
-import { deburr, trim } from 'lodash-es'
+import { deburr } from 'lodash-es'
 
 /**
  * Performs some basic cleanup of a string for use as a post slug.
@@ -21,12 +21,15 @@ export function cleanForSlug (string) {
 	if (!string) {
 		return ''
 	}
-	return trim(
-		deburr(string)
-			.replace(/[\s./]+/g, '-') // Convert each group of whitespace, periods, and forward slashes to a hyphen.
-			.replace(/[^\w-]+/g, '')  // Remove additional non-word characters.
-			.replace(/-+/g, '-')      // Replace multiple hyphens with a single hyphen.
-			.toLowerCase(),
-		'-'
-	)
+	return deburr(string)
+		// Convert each group of whitespace, periods, and forward slashes to a hyphen.
+		.replace(/[\s./]+/g, '-')
+		// Remove anything that's not a letter, number, underscore or hyphen.
+		.replace(/[^\p{L}\p{N}\p{M}_-]+/gu, '')
+		// Convert to lowercase
+		.toLowerCase()
+		// Replace multiple hyphens with a single one.
+		.replace(/-+/g, '-')
+		// Remove any remaining leading or trailing hyphens.
+		.replace(/(^-+)|(-+$)/g, '')
 }

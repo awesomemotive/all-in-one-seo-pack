@@ -217,9 +217,6 @@ class Settings {
 					aioseo()->options->searchAppearance->advanced->unwantedBots->reset();
 					aioseo()->options->searchAppearance->advanced->searchCleanup->settings->preventCrawling = false;
 					break;
-				case 'blocker':
-					aioseo()->options->deprecated->tools->blocker->reset();
-					break;
 				default:
 					if ( 'searchAppearance' === $setting ) {
 						aioseo()->robotsTxt->resetSearchAppearanceRules();

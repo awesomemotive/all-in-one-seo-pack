@@ -137,6 +137,31 @@ trait DateTime {
 	}
 
 	/**
+	 * Checks if a given string is a valid date.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @param  string $date   The date string to check.
+	 * @param  string $format The format of the date string.
+	 * @return bool           True if the string is a valid date, false otherwise.
+	 */
+	public function isValidDate( $date, $format = null ) {
+		if ( ! $date ) {
+			return false;
+		}
+
+		if ( $format ) {
+			$d = \DateTime::createFromFormat( $format, $date );
+
+			return $d && $d->format( $format ) === $date;
+		}
+
+		$timestamp = strtotime( $date );
+
+		return false !== $timestamp;
+	}
+
+	/**
 	 * Generates a random (yet unique per identifier) time offset based on a site identifier.
 	 *
 	 * @since 4.7.9

@@ -353,7 +353,7 @@ class Helpers {
 	 * @return string       The formatted datetime.
 	 */
 	public function lastModifiedAdditionalPage( $page ) {
-		return gmdate( 'c', strtotime( (string) $page->lastModified ) );
+		return aioseo()->helpers->isValidDate( $page->lastModified ) ? gmdate( 'c', strtotime( $page->lastModified ) ) : '';
 	}
 
 	/**

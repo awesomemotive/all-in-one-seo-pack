@@ -20,8 +20,8 @@ function keyphraseInURL (url, keyphrase) {
 
 	if (hasKeyword) {
 		return {
-			title       : __('Focus keyphrase in URL', td),
-			description : __('Focus keyphrase used in the URL.', td),
+			title       : __('Focus Keyword in URL', td),
+			description : __('Focus Keyword used in the URL.', td),
 			score       : scores.matches,
 			maxScore    : scores.matches,
 			error       : 0
@@ -29,8 +29,8 @@ function keyphraseInURL (url, keyphrase) {
 	}
 
 	return {
-		title       : __('Focus keyphrase in URL', td),
-		description : __('Focus keyphrase not found in the URL.', td),
+		title       : __('Focus Keyword in URL', td),
+		description : __('Focus Keyword not found in the URL.', td),
 		score       : scores.noMatches,
 		maxScore    : scores.matches,
 		error       : 1

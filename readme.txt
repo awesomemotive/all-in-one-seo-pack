@@ -2,9 +2,9 @@
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.8
-Requires at least: 5.3
-Requires PHP: 7.0
-Stable tag: 4.8.2
+Requires at least: 5.4
+Requires PHP: 7.1
+Stable tag: 4.8.3.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -223,6 +223,53 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.8.3.1**
+
+* New: Custom Breadcrumb Trails – Create custom breadcrumb trails for all your posts and terms to granularly control how they are displayed.
+* New: Added multilingual sitemap support for Weglot.
+* Updated: Breadcrumb schema markup is now directly tied to your visual breadcrumb trail.
+* Updated: Deprecated Bad Bot Blocker feature has now been fully removed from the plugin.
+* Updated: Image Sitemap now stores locally hosted images as relative URLs in order to facilitate seamless site migrations.
+* Updated: AIOSEO autoloaded option no longer stores SEO Analyzer results in order to improve performance.
+* Updated: Improved performance by no longer storing Writing Assistant's country and language data in user metadata.
+* Updated: Minor performance improvements for General, HTML, and RSS sitemaps by removing unnecessary fields from database queries.
+* Updated: Added additional caching to prevent sites from sending redundant concurrent requests to AIOSEO servers to check for new updates.
+* Updated: Added support to TruSEO for Elementor's Optimized DOM feature.
+* Updated: Added support to import post/term level redirects from the Rank Math SEO plugin.
+* Updated: Added support for Bluesky and Threads to Social Networks settings.
+* Updated: Unified the “Last Modified Date” checkbox design across WooCommerce Products and Classic Editor posts.
+* Updated: Improved UX for the AIOSEO Overview widget by showing TruSEO scores for all posts, regardless of whether they have a Focus Keyword.
+* Updated: “Keyword in URL” TruSEO check is now disabled when WordPress permalinks are not enabled.
+* Updated: Improved sitemap validation to only allow “inherit” post status for attachments.
+* Fixed: Dynamic backup for temporarily deregistered post types and taxonomies now works correctly again.
+* Fixed: Add redirects bulk action within the 404 Logs tab now works correctly again.
+* Fixed: Cache issue in multisite when sub-site is not network activated.
+* Fixed: Additional Pages sitemap index no longer shows the image column.
+* Fixed: SEO revision now shows the correct name for taxonomies other than category.
+* Fixed: AIOSEO popup overlap in Divi.
+* Fixed: News Sitemap title now outputs encoded versions of special characters (&, >, <, ‘, etc.).
+* Fixed: When deleting the modified date for an additional sitemap record, it now shows as empty instead of invalid.
+* Fixed: Sitemap would sometimes throw an error if another plugin/theme added content to the output, causing it to be parsed incorrectly.
+* Fixed: TruSEO would sometimes not be able to read Elementor's post content.
+* Fixed: Tumblr URL format in the social meta and schema markup are now always the same.
+* Fixed: Book schema markup now correctly outputs the book format.
+* Fixed: Fact Check schema now correctly outputs the claim author.
+* Fixed: Google Rich Results Test link now appears again in the toolbar menu.
+* Fixed: URL input validation no longer shows an error for empty values.
+* Fixed: Improved Link Assistant's ability to handle large amounts of text by increasing the text size limit for paragraphs and optimizing how text content is processed.
+* Fixed: SEO settings now properly update when switching between pages in the Elementor editor.
+* Fixed: SEO Title and Meta Description compatibility with Astra Pro Site Builder and SureForms plugins.
+* Fixed: Link Assistant Inner post report would sometimes fail to refresh.
+* Fixed: Compatibility with LearnDash Notifications while using Redirect's Advanced 404 feature.
+* Fixed: Resolved duplicate DB queries when loading notifications for the Notification Center.
+* Fixed: URLs in the sitemap are now properly encoded for non-English languages when using WPML.
+* Fixed: TruSEO settings not being updated depending on the content.
+* Fixed: PHP deprecation warning for PHP 8.4 in Action Scheduler.
+* Fixed: PHP warning for taxonomy sitemap indexes.
+* Fixed: PHP warning when using Divi and custom schema markup.
+* Fixed: PHP notice in Author SEO (E-E-A-T) addon due to translations loaded too early.
+* Fixed: SEO Site Score widget sometimes not displaying results.
+
 **New in Version 4.8.2**
 
 * New: Index Status Report - Quickly identify which posts are indexed by Google and why others aren’t—with granular details on crawl status, fetch results, robots.txt and structured data.
@@ -389,6 +436,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.8.2 =
+= 4.8.3.1 =
 
 This update adds major improvements and bug fixes.

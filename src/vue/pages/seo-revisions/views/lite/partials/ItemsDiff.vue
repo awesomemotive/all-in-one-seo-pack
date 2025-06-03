@@ -60,7 +60,7 @@
 			</table>
 		</div>
 
-		<h3>Focus Keyphrase</h3>
+		<h3>Focus Keyword</h3>
 		<div>
 			<table class="diff is-split-view">
 				<tbody>
@@ -88,7 +88,7 @@
 			</table>
 		</div>
 
-		<h3>Additional Keyphrases</h3>
+		<h3>Additional Keywords</h3>
 		<div>
 			<table class="diff is-split-view">
 				<tbody>

@@ -130,8 +130,9 @@ class SeoPreview {
 			],
 			'mainAssetCssQueue'      => aioseo()->core->assets->getJsAssetCssQueue( $this->mainAssetRelativeFilename ),
 			'data'                   => [
-				'isDev'    => aioseo()->helpers->isDev(),
-				'siteName' => aioseo()->helpers->getWebsiteName()
+				'isDev'           => aioseo()->helpers->isDev(),
+				'siteName'        => aioseo()->helpers->getWebsiteName(),
+				'usingPermalinks' => aioseo()->helpers->usingPermalinks()
 			]
 		];
 

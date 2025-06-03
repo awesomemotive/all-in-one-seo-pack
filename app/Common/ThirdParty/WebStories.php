@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Integrates with Google Web Stories plugin.
  *
- * @since {next)
+ * @since 4.8.3
  */
 class WebStories {
 	/**

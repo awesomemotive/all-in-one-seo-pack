@@ -22,6 +22,24 @@ class Block {
 	private $primaryTerm = [];
 
 	/**
+	 * The breadcrumb settings.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @var array
+	 */
+	private $breadcrumbSettings = [
+		'default'            => true,
+		'separator'          => '›',
+		'showHomeCrumb'      => true,
+		'showTaxonomyCrumbs' => true,
+		'showParentCrumbs'   => true,
+		'parentTemplate'     => 'default',
+		'template'           => 'default',
+		'taxonomy'           => ''
+	];
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.1.1
@@ -41,9 +59,13 @@ class Block {
 		aioseo()->blocks->registerBlock(
 			'aioseo/breadcrumbs', [
 				'attributes'      => [
-					'primaryTerm' => [
+					'primaryTerm'        => [
 						'type'    => 'string',
 						'default' => null
+					],
+					'breadcrumbSettings' => [
+						'type'    => 'object',
+						'default' => $this->breadcrumbSettings
 					]
 				],
 				'render_callback' => [ $this, 'render' ]
@@ -68,11 +90,15 @@ class Block {
 			$this->primaryTerm = json_decode( $blockAttributes['primaryTerm'], true );
 		}
 
+		if ( ! empty( $blockAttributes['breadcrumbSettings'] ) ) {
+			$this->breadcrumbSettings = $blockAttributes['breadcrumbSettings'];
+		}
+
+		aioseo()->breadcrumbs->setOverride( $this->getBlockOverrides() );
+
 		if ( aioseo()->blocks->isRenderingBlockInEditor() && ! empty( $postId ) ) {
-			add_filter( 'aioseo_post_primary_term', [ $this, 'changePrimaryTerm' ], 10, 2 );
 			add_filter( 'get_object_terms', [ $this, 'temporarilyAddTerm' ], 10, 3 );
 			$breadcrumbs = aioseo()->breadcrumbs->frontend->sideDisplay( false, 'post' === get_post_type( $postId ) ? 'post' : 'single', get_post( $postId ) );
-			remove_filter( 'aioseo_post_primary_term', [ $this, 'changePrimaryTerm' ], 10 );
 			remove_filter( 'get_object_terms', [ $this, 'temporarilyAddTerm' ], 10 );
 
 			if (
@@ -121,19 +147,34 @@ class Block {
 	}
 
 	/**
-	 * Changes the primary term.
+	 * Get the block overrides.
 	 *
-	 * @since 4.3.6
+	 * @since 4.8.3
 	 *
-	 * @param  \WP_Term $term     The term object.
-	 * @param  string   $taxonomy The taxonomy name.
-	 * @return \WP_Term           The term object.
+	 * @return array
 	 */
-	public function changePrimaryTerm( $term, $taxonomy ) {
-		if ( empty( $this->primaryTerm ) || empty( $this->primaryTerm[ $taxonomy ] ) ) {
-			return $term;
+	private function getBlockOverrides() {
+		$default = filter_var( $this->breadcrumbSettings['default'], FILTER_VALIDATE_BOOLEAN );
+		if ( true === $default || ! aioseo()->pro ) {
+			return [];
 		}
 
-		return aioseo()->helpers->getTerm( $this->primaryTerm[ $taxonomy ], $taxonomy );
+		return [
+			'default'            => false,
+			'taxonomy'           => $this->breadcrumbSettings['taxonomy'] ?? '',
+			'separator'          => $this->breadcrumbSettings['separator'] ?? '›',
+			'showHomeCrumb'      => filter_var( $this->breadcrumbSettings['showHomeCrumb'], FILTER_VALIDATE_BOOLEAN ),
+			'showTaxonomyCrumbs' => filter_var( $this->breadcrumbSettings['showTaxonomyCrumbs'], FILTER_VALIDATE_BOOLEAN ),
+			'showParentCrumbs'   => filter_var( $this->breadcrumbSettings['showParentCrumbs'], FILTER_VALIDATE_BOOLEAN ),
+			'template'           => empty( $this->breadcrumbSettings['template'] ) ? '' : [
+				'templateType' => 'custom',
+				'template'     => aioseo()->helpers->decodeHtmlEntities( aioseo()->helpers->encodeOutputHtml( $this->breadcrumbSettings['template'] ) )
+			],
+			'parentTemplate'     => empty( $this->breadcrumbSettings['parentTemplate'] ) ? '' : [
+				'templateType' => 'custom',
+				'template'     => aioseo()->helpers->decodeHtmlEntities( aioseo()->helpers->encodeOutputHtml( $this->breadcrumbSettings['parentTemplate'] ) )
+			],
+			'primaryTerm'        => ! empty( $this->primaryTerm[ $this->breadcrumbSettings['taxonomy'] ] ) ? $this->primaryTerm[ $this->breadcrumbSettings['taxonomy'] ] : null
+		];
 	}
 }

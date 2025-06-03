@@ -15,8 +15,8 @@ function keyphraseInBeginningTitle (title, keyphrase) {
 
 	if (startWithKeyword) {
 		return {
-			title       : __('Focus keyphrase at the beginning of SEO Title', td),
-			description : __('Focus keyphrase used at the beginning of SEO title.', td),
+			title       : __('Focus Keyword at the beginning of SEO Title', td),
+			description : __('Focus Keyword used at the beginning of SEO title.', td),
 			score       : 9,
 			maxScore    : 9,
 			error       : 0
@@ -24,8 +24,8 @@ function keyphraseInBeginningTitle (title, keyphrase) {
 	}
 
 	return {
-		title       : __('Focus keyphrase at the beginning of SEO Title', td),
-		description : __('Focus keyphrase doesn\'t appear at the beginning of SEO title.', td),
+		title       : __('Focus Keyword at the beginning of SEO Title', td),
+		description : __('Focus Keyword doesn\'t appear at the beginning of SEO title.', td),
 		score       : 3,
 		maxScore    : 9,
 		error       : 1

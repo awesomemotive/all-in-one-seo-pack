@@ -1,9 +1,9 @@
 <template>
 	<div v-if="postEditorStore.currentPost.id">
-		<span class="components-checkbox-control__input-container">
+		<span :class="{'components-checkbox-control__input-container--block-editor': isBlockEditor()}">
 			<input
 				id="aioseo-limit-modified-date-input"
-				class="components-checkbox-control__input"
+				:class="{'components-checkbox-control__input': isBlockEditor()}"
 				type="checkbox"
 				v-model="postEditorStore.currentPost.limit_modified_date"
 				@change="addLimitModifiedDateAttribute"
@@ -33,7 +33,7 @@ import {
 	usePostEditorStore
 } from '@/vue/stores'
 
-import { isBlockEditor } from '@/vue/utils/context'
+import { isBlockEditor, isWooCommerceProduct, isClassicEditor } from '@/vue/utils/context'
 
 import { __ } from '@/vue/plugins/translations'
 
@@ -61,7 +61,7 @@ export default {
 	},
 	computed : {
 		canShowSvg () {
-			return isBlockEditor() && this.postEditorStore.currentPost.limit_modified_date
+			return (isBlockEditor() && this.postEditorStore.currentPost.limit_modified_date)
 		}
 	},
 	methods : {
@@ -73,24 +73,48 @@ export default {
 			window.wp.data.dispatch('core/editor').editPost({
 				aioseo_limit_modified_date : this.postEditorStore.currentPost.limit_modified_date
 			})
-		}
+		},
+		isClassicEditor,
+		isWooCommerceProduct,
+		isBlockEditor
 	}
 }
 </script>
 
 <style lang="scss">
-#aioseo-limit-modified-date {
-	margin-top: 6px;
+#aioseo-limit-modified-date > div {
+	display: flex;
+	align-items: center;
+	gap: 4px;
 
 	.components-checkbox-control__input-container {
-		height: 20px;
-		width: 20px;
-		margin-right: 12px;
-
-		input {
+		&--block-editor {
 			height: 20px;
 			width: 20px;
+			margin-right: 8px;
+			position: relative;
+
+			input {
+				height: 20px;
+				width: 20px;
+
+				&[type="checkbox"] {
+					border-radius: 2px;
+
+					&:checked {
+						background: $blue5;
+					}
+
+					&:focus {
+						box-shadow: 0 0 0 2px $white, 0 0 0 4px $blue5;
+					}
+				}
+			}
 		}
+	}
+
+	label {
+		max-width: 100%;
 	}
 }
 </style>

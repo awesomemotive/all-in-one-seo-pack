@@ -131,7 +131,7 @@
 
 					<div class="results">
 						<table
-							aria-label="Additional Keyphrases"
+							aria-label="Additional Keywords"
 							class="additional-keyphrases-table"
 							cellpadding="0"
 							cellspacing="0"
@@ -373,17 +373,17 @@ export default {
 			strings                     : {
 				modalTitle : sprintf(
 					// Translators: 1 - Semrush.
-					__('Additional Keyphrases by %1$s', td),
+					__('Additional Keywords by %1$s', td),
 					'Semrush'
 				),
-				addKeyphrase              : __('Add Focus Keyphrase', td),
-				getAdditionalKeyphrases   : __('Get Additional Keyphrases', td),
+				addKeyphrase              : __('Add Focus Keyword', td),
+				getAdditionalKeyphrases   : __('Get Additional Keywords', td),
 				showResultsFor            : __('Show Results For:', td),
-				keyphrase                 : __('Keyphrase', td),
+				keyphrase                 : __('Keyword', td),
 				volume                    : __('Volume', td),
 				trend                     : __('Trend', td),
-				addAdditionalKeyphrase    : __('Add Keyphrase', td),
-				removeAdditionalKeyphrase : __('Remove Keyphrase', td),
+				addAdditionalKeyphrase    : __('Add Keyword', td),
+				removeAdditionalKeyphrase : __('Remove Keyword', td),
 				noResults                 : __('No results', td),
 				upsell                    : sprintf(
 					// Translators: 1 - Plugin short name + Pro "AIOSEO Pro", 2 - Semrush, 3 - Link to learn more.
@@ -394,16 +394,16 @@ export default {
 				),
 				semrushGetAdditionalKeyphrases : sprintf(
 					// Translators: 1 - Plugin short name "AIOSEO", 2 - Semrush.
-					__('%1$s integrates directly with %2$s to provide you with actionable keyphrases to help you write better content.', td),
+					__('%1$s integrates directly with %2$s to provide you with actionable keywords to help you write better content.', td),
 					import.meta.env.VITE_SHORT_NAME,
 					'Semrush'
 				),
-				pleaseAddFocusKeyphrase : __('To use this feature, first add a focus keyphrase.', td),
-				focusKeyphrase          : __('Focus Keyphrase', td),
+				pleaseAddFocusKeyphrase : __('To use this feature, first add a focus keyword.', td),
+				focusKeyphrase          : __('Focus Keyword', td),
 				delete                  : __('Delete', td),
 				semrushTooltip          : sprintf(
 					// Translators: 1 - Semrush.
-					__('Get Additional Keyphrases with %1$s!', td),
+					__('Get Additional Keywords with %1$s!', td),
 					'Semrush'
 				),
 				semrushTooltipLicenseKey : sprintf(
@@ -420,12 +420,12 @@ export default {
 				),
 				inOrderToUpgradeSemrush : sprintf(
 					// Translators: 1 - Link to learn more.
-					__('In order to continue searching for additional keyphrases, you\'ll need to upgrade. %1$s', td),
+					__('In order to continue searching for additional keywords, you\'ll need to upgrade. %1$s', td),
 					links.getUpsellLink('semrush-pricing', GLOBAL_STRINGS.learnMore, 'semrushPricing', true)
 				),
 				maxAmountReached : sprintf(
 					// Translators: 1 - Number of maximum keywords.
-					__('You have reached the maximum of %1$s additional keyphrases.', td),
+					__('You have reached the maximum of %1$s additional keywords.', td),
 					this.postEditorStore.currentPost.maxAdditionalKeyphrases
 				)
 			}
@@ -446,7 +446,7 @@ export default {
 				return __('You have exceeded the limit for requests. Please try again later.', td)
 			}
 
-			return this.semrushStore?.error || __('An error occurred while fetching keyphrases. Please try again later.', td)
+			return this.semrushStore?.error || __('An error occurred while fetching keywords. Please try again later.', td)
 		}
 	},
 	methods : {

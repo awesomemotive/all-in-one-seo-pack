@@ -60,7 +60,7 @@ const connectStore  = useConnectStore()
 const optionsStore  = useOptionsStore()
 const rootStore     = useRootStore()
 
-watch(() => optionsStore.internalOptions.internal.siteAnalysis.score, (newVal) => {
+watch(() => analyzerStore.homeResults.score, (newVal) => {
 	score.value = newVal
 })
 
@@ -98,12 +98,12 @@ const closedCallback = (reload) => {
 }
 
 onMounted(() => {
-	if (!optionsStore.internalOptions.internal.siteAnalysis.score && optionsStore.internalOptions.internal.siteAnalysis.connectToken) {
+	if (!analyzerStore.homeResults.score && optionsStore.internalOptions.internal.siteAnalysis.connectToken) {
 		analyzerStore.analyzing = true
 		analyzerStore.runSiteAnalyzer()
 	}
 
-	score.value = optionsStore.internalOptions.internal.siteAnalysis.score
+	score.value = analyzerStore.homeResults.score
 })
 </script>
 

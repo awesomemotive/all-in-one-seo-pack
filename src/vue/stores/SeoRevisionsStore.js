@@ -16,10 +16,11 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 		},
 		itemFrom              : {},
 		itemTo                : {},
+		itemContext           : '',
 		noteMaxLength         : 0,
 		itemsLimit            : 0,
 		itemsTotalCount       : 0,
-		seoRevisionsDiff      : {},
+		seoRevisionsDiff      : [],
 		seoRevisionsDiffCache : {},
 		modalOpenSidebar      : false,
 		error                 : null
@@ -34,6 +35,11 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 		}
 	},
 	actions : {
+		updateState (value = null) {
+			for (const key in (value || {})) {
+				this[key] = value[key]
+			}
+		},
 		delete (id) {
 			return http.delete(links.restUrl(`seo-revisions/${id}`))
 				.then((response) => {

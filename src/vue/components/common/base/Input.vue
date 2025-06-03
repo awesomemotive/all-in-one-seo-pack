@@ -224,7 +224,7 @@ export default {
 		validate (value) {
 			this.error = ''
 
-			if (!this.validation) {
+			if (!this.validation || !value) {
 				return
 			}
 

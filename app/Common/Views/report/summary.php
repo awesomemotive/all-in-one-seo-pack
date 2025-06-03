@@ -19,17 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<div style="margin: 0 auto; padding: 70px 0; width: 100%; max-width: 680px;">
 		<div style="background-color: #ffffff; border: 1px solid #e8e8eb;">
-			<div style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow-x: auto;">
-				<div style="padding-top: 20px;">
-					<img
-							style="border: none; box-sizing: border-box; display: inline-block; font-size: 14px; height: auto; line-height: 1; max-width: 100%; text-decoration: none; vertical-align: middle;"
-							width="100"
-							height="20"
-							src="https://static.aioseo.io/report/ste/text-logo.jpg"
-							alt="<?php echo esc_attr( AIOSEO_PLUGIN_SHORT_NAME ) ?>"
-					/>
-				</div>
-
+			<div style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px;">
 				<table style="table-layout: fixed; border-collapse: collapse; text-align: left; vertical-align: middle; width: 100%;">
 					<thead>
 					<tr>
@@ -40,14 +30,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 					<tbody>
 					<tr>
-						<td style="padding: 0; word-break: break-word;">
+						<td style="padding: 0;">
 							<div style="padding-top: 20px;">
-								<p style="font-size: 16px; margin-bottom: 0; margin-top: 0; font-weight: 700;"><?php echo $heading ?? ''; ?></p>
+								<img
+										style="border: none; box-sizing: border-box; display: inline-block; font-size: 14px; height: auto; line-height: 1; max-width: 100%; text-decoration: none;"
+										width="100"
+										height="20"
+										src="https://static.aioseo.io/report/ste/text-logo.jpg"
+										alt="<?php echo esc_attr( AIOSEO_PLUGIN_SHORT_NAME ) ?>"
+								/>
 							</div>
 						</td>
 
 						<td style="padding: 0; word-break: break-word;">
 							<div style="padding-top: 20px; font-size: 12px; text-align: right; line-height: 15px;"><?php echo $dateRange['range'] ?? ''; ?></div>
+						</td>
+					</tr>
+
+					<tr>
+						<td style="padding: 0; word-break: break-word;">
+							<div style="padding-top: 10px;">
+								<p style="font-size: 16px; margin-bottom: 0; margin-top: 0; font-weight: 700;"><?php echo $heading ?? ''; ?></p>
+							</div>
+						</td>
+
+						<td style="padding: 0; word-break: break-word;">
+							<div style="padding-top: 10px; font-size: 12px; text-align: right; line-height: 15px;">
+								<a
+										href="<?php echo site_url(); ?>"
+										style="color: #005ae0; font-weight: normal; text-decoration: none;"
+								><?php echo site_url(); ?></a>
+							</div>
 						</td>
 					</tr>
 					</tbody>

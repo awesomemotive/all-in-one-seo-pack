@@ -16,6 +16,7 @@ use AIOSEO\Plugin\Common\Traits\Helpers as TraitHelpers;
 class Helpers {
 	use TraitHelpers\Api;
 	use TraitHelpers\Arrays;
+	use TraitHelpers\Buffer;
 	use TraitHelpers\Constants;
 	use TraitHelpers\Deprecated;
 	use TraitHelpers\DateTime;

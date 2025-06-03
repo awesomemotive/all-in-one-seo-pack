@@ -70,12 +70,12 @@ trait WpUri {
 			return $url;
 		}
 
-		global $wp, $wp_rewrite; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		global $wp;
 		// Permalink url without the query string.
 		$url = user_trailingslashit( home_url( $wp->request ) );
 
 		// If permalinks are not being used we need to append the query string to the home url.
-		if ( ! $wp_rewrite->using_permalinks() ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		if ( ! $this->usingPermalinks() ) {
 			$url = home_url( ! empty( $wp->query_string ) ? '?' . $wp->query_string : '' );
 		}
 
@@ -145,9 +145,8 @@ trait WpUri {
 			in_array( 'noPaginationForCanonical', aioseo()->internalOptions->deprecatedOptions, true ) &&
 			aioseo()->options->deprecated->searchAppearance->advanced->noPaginationForCanonical
 		) {
-			global $wp_rewrite; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			if ( 1 < $pageNumber ) {
-				if ( $wp_rewrite->using_permalinks() ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+				if ( $this->usingPermalinks() ) {
 					// Replace /page/3 and /page/3/.
 					$url[ $hash ] = preg_replace( "@(?<=/)page/$pageNumber(/|)$@", '', (string) $url[ $hash ] );
 					// Replace /3 and /3/.
@@ -176,31 +175,6 @@ trait WpUri {
 		$url[ $hash ] = apply_filters( 'aioseo_canonical_url', $url[ $hash ] );
 
 		return $url[ $hash ];
-	}
-
-	/**
-	 * Formats a given URL as an absolute URL if it is relative.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  string $url The URL.
-	 * @return string $url The absolute URL.
-	 */
-	public function makeUrlAbsolute( $url ) {
-		if ( 0 !== strpos( $url, 'http' ) && '/' !== $url ) {
-			$url = $this->sanitizeDomain( $url );
-			if ( $this->isDomainWithPaths( $url ) ) {
-				$scheme = wp_parse_url( home_url(), PHP_URL_SCHEME );
-				$url    = $scheme . '://' . $url;
-			} elseif ( 0 === strpos( $url, '//' ) ) {
-				$scheme = wp_parse_url( home_url(), PHP_URL_SCHEME );
-				$url    = $scheme . ':' . $url;
-			} else {
-				$url = home_url( $url );
-			}
-		}
-
-		return $url;
 	}
 
 	/**
@@ -570,5 +544,18 @@ trait WpUri {
 		}
 
 		return apply_filters( 'get_canonical_url', $canonical_url, $post ); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+	}
+
+	/**
+	 * Checks if permalinks are enabled.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @return bool Whether permalinks are enabled.
+	 */
+	public function usingPermalinks() {
+		global $wp_rewrite; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+
+		return $wp_rewrite->using_permalinks();  // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 	}
 }

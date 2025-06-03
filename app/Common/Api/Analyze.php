@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIOSEO\Plugin\Common\Models\SeoAnalyzerResult;
+
 /**
  * Route class for the API.
  *
@@ -66,23 +68,22 @@ class Analyze {
 		}
 
 		if ( $analyzeUrl ) {
-			$competitors = aioseo()->internalOptions->internal->siteAnalysis->competitors;
-			$competitors = array_reverse( $competitors, true );
+			$results = $responseBody[ $analyzeOrHomeUrl ]['results'];
+			SeoAnalyzerResult::addResults( [
+				'results' => $results,
+				'score'   => $responseBody[ $analyzeOrHomeUrl ]['score']
+			], $analyzeUrl );
 
-			$competitors[ $analyzeUrl ] = wp_json_encode( $responseBody[ $analyzeOrHomeUrl ] );
+			$result = SeoAnalyzerResult::getCompetitorsResults();
 
-			$competitors = array_reverse( $competitors, true );
-
-			// Reset the competitors.
-			aioseo()->internalOptions->internal->siteAnalysis->competitors = $competitors;
-
-			return new \WP_REST_Response( $competitors, 200 );
+			return new \WP_REST_Response( $result, 200 );
 		}
 
 		$results = $responseBody[ $analyzeOrHomeUrl ]['results'];
-
-		aioseo()->internalOptions->internal->siteAnalysis->results = wp_json_encode( $results );
-		aioseo()->internalOptions->internal->siteAnalysis->score   = $responseBody[ $analyzeOrHomeUrl ]['score'];
+		SeoAnalyzerResult::addResults( [
+			'results' => $results,
+			'score'   => $responseBody[ $analyzeOrHomeUrl ]['score']
+		] );
 
 		return new \WP_REST_Response( $responseBody[ $analyzeOrHomeUrl ], 200 );
 	}
@@ -98,6 +99,8 @@ class Analyze {
 	public static function deleteSite( $request ) {
 		$body       = $request->get_json_params();
 		$analyzeUrl = ! empty( $body['url'] ) ? esc_url_raw( urldecode( $body['url'] ) ) : null;
+
+		SeoAnalyzerResult::deleteByUrl( $analyzeUrl );
 
 		$competitors = aioseo()->internalOptions->internal->siteAnalysis->competitors;
 
@@ -179,5 +182,37 @@ class Analyze {
 		aioseo()->internalOptions->internal->headlineAnalysis->headlines = $headlines;
 
 		return new \WP_REST_Response( $headlines, 200 );
+	}
+
+	/**
+	 * Get Homepage results.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @return \WP_REST_Response The response.
+	 */
+	public static function getHomeResults() {
+		$results = SeoAnalyzerResult::getResults();
+
+		return new \WP_REST_Response( [
+			'success' => true,
+			'result'  => $results,
+		], 200 );
+	}
+
+	/**
+	 * Get competitors results.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @return \WP_REST_Response The response.
+	 */
+	public static function getCompetitorsResults() {
+		$results = SeoAnalyzerResult::getCompetitorsResults();
+
+		return new \WP_REST_Response( [
+			'success' => true,
+			'result'  => $results,
+		], 200 );
 	}
 }

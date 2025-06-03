@@ -46,7 +46,7 @@ class Tags {
 			$tagId   = aioseo()->tags->denotationChar . $tag['id'];
 			$pattern = "/$tagId(?![a-zA-Z0-9_])/im";
 			if ( preg_match( $pattern, (string) $string ) ) {
-				$tagValue = str_replace( '$', '\$', $this->getTagValue( $tag, $item ) );
+				$tagValue = str_replace( '$', '\$', (string) $this->getTagValue( $tag, $item ) );
 				$string   = preg_replace( $pattern, $tagValue, (string) $string );
 			}
 		}

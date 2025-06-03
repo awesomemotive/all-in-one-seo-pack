@@ -1,11 +1,10 @@
 import { generateUniqueSchemaBlockId } from '@/vue/standalone/blocks/utils'
 import { render } from './AIOSEO_VERSION/sidebar.js'
 
-const { useSelect }    = window.wp.data
-const { useEffect }    = window.wp.element
-const blockEditorStore = window.wp.blockEditor.store
-const { serialize }    = window.wp.blocks
-const hasInitialized   = []
+const { useSelect }  = window.wp.data
+const { useEffect }  = window.wp.element
+const { serialize }  = window.wp.blocks
+const hasInitialized = []
 
 /**
  * Strips comments and unsafe attributes from HTML.
@@ -91,13 +90,18 @@ export default function edit (props) {
 
 	const closestFaqAttributes = useSelect(
 		select => {
+			const blockEditorStore = select('core/block-editor')
+			if (!blockEditorStore) {
+				return
+			}
+
 			const {
 				getAdjacentBlockClientId,
 				getBlockAttributes,
 				getBlockName,
 				getClientIdsWithDescendants,
 				getGlobalBlockCount
-			} = select(blockEditorStore)
+			} = blockEditorStore
 
 			if (hasInitialized.includes(clientId) || 2 > getGlobalBlockCount('aioseo/faq')) {
 				return null
@@ -149,9 +153,14 @@ export default function edit (props) {
 
 	const answer = useSelect(
 		select => {
+			const blockEditorStore = select('core/block-editor')
+			if (!blockEditorStore) {
+				return
+			}
+
 			const {
 				getBlocks
-			} = select(blockEditorStore)
+			} = blockEditorStore
 
 			const getInnerBlocksContent = (faqClientId) => {
 				const answerBlocks     = getBlocks(faqClientId)

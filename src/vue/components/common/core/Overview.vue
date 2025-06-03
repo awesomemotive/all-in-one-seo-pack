@@ -46,6 +46,8 @@
 				:animatedNumber="!isWpDashboard"
 			/>
 
+			<p v-html="withoutFocusKeyword" />
+
 			<core-alert
 				v-if="!toHide.includes('upgradeAlert') && !rootStore.isPro"
 				type="yellow"
@@ -95,7 +97,7 @@ import CoreDonutChartWithLegend from '@/vue/components/common/core/DonutChartWit
 import SvgEditPaper from '@/vue/components/common/svg/EditPaper'
 import SvgOverview from '@/vue/components/common/svg/Overview'
 
-import { __, sprintf } from '@/vue/plugins/translations'
+import { __, _n, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -139,7 +141,7 @@ export default {
 				choosePostType : __('Choose a Post Type', td),
 				upgradeToPro   : sprintf(
 					// Translators: 1 - The upgrade call to action.
-					__('Get additional keyphrases and many more modules! %1$s', td), links.getUpsellLink('dashboard-overview', __('Upgrade to Pro Today!', td), 'liteUpgrade', true)
+					__('Get additional keywords and many more modules! %1$s', td), links.getUpsellLink('dashboard-overview', __('Upgrade to Pro Today!', td), 'liteUpgrade', true)
 				),
 				invalidTitle       : __('It looks like you haven\'t selected any post types yet!', td),
 				invalidDescription : __('TruSEO scoring can improve your search engine rankings. To see TruSEO scores for your published posts, enable at least one post type by turning on "Show in Search Results" in the Search Appearance settings.', td),
@@ -164,8 +166,8 @@ export default {
 					color : '#00AA63'
 				},
 				{
-					slug  : 'withoutFocusKeyphrase',
-					name  : __('Without a Focus Keyphrase', td),
+					slug  : 'withoutTruSeoScore',
+					name  : __('No TruSEO Score Yet', td),
 					color : '#E8E8EB'
 				}
 			]
@@ -235,6 +237,25 @@ export default {
 		},
 		searchAppearanceUrl () {
 			return this.rootStore.aioseo.urls.aio.searchAppearance + '#/content-types'
+		},
+		withoutFocusKeyword () {
+			const withoutFocusKeyword = parseInt(this.rootStore.aioseo.seoOverview[this.postType.value].withoutFocusKeyword)
+			if (0 === withoutFocusKeyword) {
+				return ''
+			}
+
+			const link = `${this.rootStore.aioseo.urls.editScreen}?post_status=publish&post_type=${this.postType.value}&aioseo-filter=withoutFocusKeyword`
+
+			return sprintf(
+				// Translators: 1 - HTML opening link tag, 2 - The number of posts (e.g. "1 post", "2 posts"), 3 - HTML closing link tag.
+				__('You have %1$s%2$s without a Focus Keyword%3$s. Adding one can help you optimize your content for your target keyword.', td),
+				'<a href="' + link + '" rel="noopener noreferrer">',
+				sprintf(
+					_n('%1$d post', '%1$d posts', withoutFocusKeyword, td),
+					withoutFocusKeyword
+				),
+				'</a>'
+			)
 		}
 	},
 	mounted () {

@@ -401,12 +401,12 @@ class Database {
 	 * @return array         An array of custom AIOSEO tables.
 	 */
 	public function getColumns( $table ) {
-		$installedTables = json_decode( aioseo()->internalOptions->database->installedTables, true );
-		$table           = $this->prefix . $table;
-
-		if ( ! isset( $installedTables[ $table ] ) ) {
+		if ( ! $this->tableExists( $table ) ) {
 			return [];
 		}
+
+		$table           = $this->prefix . $table;
+		$installedTables = json_decode( aioseo()->internalOptions->database->installedTables, true );
 
 		if ( empty( $installedTables[ $table ] ) ) {
 			$installedTables[ $table ]                           = $this->db->get_col( 'SHOW COLUMNS FROM `' . $table . '`' );
@@ -426,7 +426,7 @@ class Database {
 	 */
 	public function tableExists( $table ) {
 		$table           = $this->prefix . $table;
-		$installedTables = json_decode( aioseo()->internalOptions->database->installedTables, true ) ?: [];
+		$installedTables = json_decode( aioseo()->internalOptions->database->installedTables ?? '[]', true ) ?: [];
 		if ( isset( $installedTables[ $table ] ) ) {
 			return true;
 		}
@@ -1846,5 +1846,42 @@ class Database {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Acquires a database lock with the given name.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @param  string  $lockName The name of the lock to acquire.
+	 * @param  integer $timeout  The timeout in seconds. Default is 0 which means it will return immediately if the lock cannot be acquired.
+	 * @return boolean           Whether the lock was acquired.
+	 */
+	public function acquireLock( $lockName, $timeout = 0 ) {
+		$lockResult = $this->db->get_var( $this->db->prepare( 'SELECT GET_LOCK(%s, %d)', $lockName, $timeout ) );
+		$acquired   = '1' === $lockResult;
+
+		if ( $acquired ) {
+			// Register a shutdown function to always release the lock even if a fatal error occurs.
+			register_shutdown_function( function () use ( $lockName ) {
+				$this->releaseLock( $lockName );
+			} );
+		}
+
+		return $acquired;
+	}
+
+	/**
+	 * Releases a database lock with the given name.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @param  string  $lockName The name of the lock to release.
+	 * @return boolean           Whether the lock was released.
+	 */
+	public function releaseLock( $lockName ) {
+		$releaseResult = $this->db->query( $this->db->prepare( 'SELECT RELEASE_LOCK(%s)', $lockName ) );
+
+		return false !== $releaseResult;
 	}
 }

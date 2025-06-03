@@ -1,4 +1,5 @@
 import { usePostEditorStore } from '@/vue/stores'
+import { cleanForSlug } from '@/vue/utils/cleanForSlug'
 
 /**
  * Gets the post content.
@@ -20,7 +21,7 @@ const getTitle = (mode) => {
 	if ('admin_frontend_editor' === mode) {
 		const { vc } = window
 
-		return vc.builder.getTitle()
+		return vc.builder.getTitle() || document.querySelector('#vc_page-title-field')?.value
 	}
 
 	return document.getElementById('#title')?.value || ''
@@ -37,7 +38,7 @@ const getSlug = (mode) => {
 		const { vc_iframe_src : src } = window
 		const pathParts = new URL(src).pathname.split('/').filter(n => n)
 
-		return pathParts[pathParts.length - 1]
+		return pathParts[pathParts.length - 1] || document.querySelector('#vc_post_name')?.value
 	}
 
 	return document.querySelector('#post_name')?.value || ''
@@ -66,12 +67,13 @@ const getPermalink = (mode) => {
  */
 export const getEditorData = () => {
 	const { vc_mode : vcMode } = window
+	const slug = getSlug(vcMode) || cleanForSlug(getTitle(vcMode))
 
 	return {
 		content       : getContent(),
 		title         : getTitle(vcMode),
 		excerpt       : '',
-		slug          : getSlug(vcMode),
+		slug          : slug,
 		permalink     : getPermalink(vcMode),
 		featuredImage : ''
 	}

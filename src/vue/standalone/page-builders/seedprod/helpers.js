@@ -1,6 +1,7 @@
 /* globals seedprod_data */
 import { get } from 'lodash-es'
-import { getText, getImages } from '@/vue/utils/html'
+import { getText } from '@/vue/utils/html'
+import { getVideos, getImages } from '@/app/tru-seo/analyzer/analysis/contentHasAssets'
 
 /**
  * Get the HTML for a given block object.
@@ -104,7 +105,7 @@ export const getContent = () => {
 					}
 
 					// Skip if there's no text or images, just HTML markup.
-					if ('' === getText(html) && 0 === getImages(html).length) {
+					if ('' === getText(html) && 0 === getImages(html) && 0 === getVideos(html)) {
 						return
 					}
 

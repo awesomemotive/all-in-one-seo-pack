@@ -25,8 +25,8 @@ const blockEditor = {
 
 		return response
 	},
-	getSelectedTerms : (taxName) => {
-		const taxonomyData = getTaxonomyData(taxName)
+	getSelectedTerms : (taxName, all = false) => {
+		const taxonomyData = getTaxonomyData(taxName, all)
 
 		return window.wp.data.select('core/editor').getEditedPostAttribute(taxonomyData.restBase) || []
 	}
@@ -52,9 +52,9 @@ const classicEditor = {
 			resolve(taxonomyTerms)
 		})
 	},
-	getSelectedTerms : (taxSlug) => {
+	getSelectedTerms : (taxSlug, all = false) => {
 		const selectedTerms = []
-		const taxonomyData  = getTaxonomyData(taxSlug)
+		const taxonomyData  = getTaxonomyData(taxSlug, all)
 		const taxonomyTerms = document.getElementById(`${taxonomyData.name}checklist`)?.querySelectorAll('input:checked') || []
 
 		taxonomyTerms.forEach(term => {
@@ -68,14 +68,19 @@ const classicEditor = {
 /**
  * Returns the taxonomies that have primary term support.
  *
+ * @param {boolean} all Should get all posts not only the ones that supports primary term..
  * @returns {Array} The taxonomies that have primary term support.
  */
-export const getTaxonomies = () => {
+export const getTaxonomies = (all = false) => {
 	// We need to load the Pinia here since we are using the store outside an App.
 	// So when using useRootStore, it will throw an error because the store wasn't initialized.
 	loadPiniaStores()
 	const rootStore = useRootStore()
 	const taxonomies = rootStore.aioseo.postData?.taxonomies || []
+
+	if (all) {
+		return taxonomies
+	}
 
 	return taxonomies.filter(taxonomy => {
 		return true === taxonomy.primaryTermSupport
@@ -98,10 +103,11 @@ export const taxonomyHasPrimaryTermSupport = (taxName) => {
  * Returns the taxonomy data.
  *
  * @param {string} taxName The taxonomy slug.
+ * @param {boolean} all Should get all posts not only the ones that supports primary term..
  * @returns {Object} The taxonomy data.
  */
-export const getTaxonomyData = (taxName) => {
-	const taxonomyData = getTaxonomies().filter(taxonomy => {
+export const getTaxonomyData = (taxName, all = false) => {
+	const taxonomyData = getTaxonomies(all).filter(taxonomy => {
 		return taxName === taxonomy.name
 	})
 
@@ -126,12 +132,13 @@ export const getTerms = (taxName) => {
  * Returns the selected terms for the taxonomy.
  *
  * @param {string} taxName The taxonomy slug.
+ * @param {boolean} all Should get all posts not only the ones that supports primary term..
  * @returns {Array} The selected terms for the taxonomy.
  */
-export const getSelectedTerms = (taxName) => {
+export const getSelectedTerms = (taxName, all = false) => {
 	if (isBlockEditor()) {
-		return blockEditor.getSelectedTerms(taxName)
+		return blockEditor.getSelectedTerms(taxName, all)
 	}
 
-	return classicEditor.getSelectedTerms(taxName)
+	return classicEditor.getSelectedTerms(taxName, all)
 }

@@ -5,9 +5,12 @@ import links from '@/vue/utils/links'
 export const useWritingAssistantSettingsStore = defineStore('WritingAssistantSettings', {
 	state : () => ({
 		seoBoost : {
-			isLoggedIn  : false,
-			loginUrl    : '',
-			userOptions : {}
+			isLoggedIn    : false,
+			loginUrl      : '',
+			userOptions   : {},
+			countries     : {},
+			languages     : {},
+			searchEngines : {}
 		},
 		updating : {
 			userOptions : false
@@ -18,8 +21,8 @@ export const useWritingAssistantSettingsStore = defineStore('WritingAssistantSet
 			return state.updating.userOptions
 		},
 		getCountriesOptions : (state) => {
-			const countries     = state.seoBoost.userOptions?.countries || state.seoBoost.userOptions?.country_list || []
-			const searchEngines = state.seoBoost.userOptions?.searchEngines || state.seoBoost.userOptions?.search_engine_list || []
+			const countries     = state.seoBoost?.countries || []
+			const searchEngines = state.seoBoost?.searchEngines || []
 			if (!countries || !searchEngines) {
 				return []
 			}
@@ -37,7 +40,7 @@ export const useWritingAssistantSettingsStore = defineStore('WritingAssistantSet
 			return state.getCountriesOptions.find(option => option.value === state.seoBoost.userOptions.country) || []
 		},
 		getLanguagesOptions : (state) => {
-			const languages = state.seoBoost.userOptions?.languages || state.seoBoost.userOptions?.language_list || []
+			const languages = state.seoBoost?.languages || []
 			if (!languages) {
 				return []
 			}

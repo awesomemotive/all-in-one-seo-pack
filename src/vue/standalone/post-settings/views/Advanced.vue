@@ -2,11 +2,21 @@
 	<div class="aioseo-tab-content aioseo-post-advanced">
 		<core-settings-row
 			id="aioseo-post-robots-setting"
-			:name="strings.robotsSetting"
+			:name="strings.robotsMeta"
 			align
 		>
 			<template #content>
 				<core-single-robots-meta />
+			</template>
+		</core-settings-row>
+
+		<core-settings-row
+			id="aioseo-post-breadcrumbs-setting"
+			:name="strings.breadcrumbs"
+			align
+		>
+			<template #content>
+				<breadcrumbs />
 			</template>
 		</core-settings-row>
 
@@ -107,10 +117,10 @@ import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	useOptionsStore,
-	usePostEditorStore,
-	useRootStore
+	usePostEditorStore
 } from '@/vue/stores'
 
+import Breadcrumbs from './Breadcrumbs'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CoreSingleRobotsMeta from '@/vue/components/common/core/SingleRobotsMeta'
@@ -131,11 +141,11 @@ export default {
 			licenseStore    : useLicenseStore(),
 			optionsStore    : useOptionsStore(),
 			postEditorStore : usePostEditorStore(),
-			rootStore      	: useRootStore(),
 			decodeUrl
 		}
 	},
 	components : {
+		Breadcrumbs,
 		CoreAlert,
 		CoreSettingsRow,
 		CoreSingleRobotsMeta
@@ -160,8 +170,8 @@ export default {
 		return {
 			strings : {
 				pageName                : __('Advanced', td),
-				robotsSetting           : __('Robots Setting', td),
-				robotsToggle            : __('Use Default Settings', td),
+				robotsMeta              : __('Robots Meta', td),
+				breadcrumbs             : __('Breadcrumbs', td),
 				canonicalUrl            : __('Canonical URL', td),
 				validUrl               	: __('Please enter a valid URL.', td),
 				placeholder             : __('Enter a URL to change the default Canonical URL', td),

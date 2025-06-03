@@ -152,7 +152,7 @@ export default {
 					access : 'aioseo_page_analysis'
 				},
 				{
-					label  : __('Focus Keyphrase', td),
+					label  : __('Focus Keyword', td),
 					name   : 'focusKeyphrase',
 					access : 'aioseo_page_analysis'
 				},
@@ -243,7 +243,7 @@ export default {
 			}
 
 			if ('focusKeyphrase' === tipName) {
-				result.value = __('No focus keyphrase!', td)
+				result.value = __('No Focus Keyword!', td)
 				result.type  = 'error'
 
 				const value = this.postEditorStore.currentPost.keyphrases.focus

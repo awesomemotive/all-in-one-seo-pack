@@ -73,7 +73,7 @@ function keyphraseInSubHeadings (content, keyphrase, locale) {
 
 	if (hasTooFewMatches()) {
 		return {
-			title       : __('Focus keyphrase in Subheadings', td),
+			title       : __('Focus Keyword in Subheadings', td),
 			description : sprintf(
 				// Translators: 1 - The percentage of headings.
 				__('Less than %1$s of your H2 and H3 subheadings reflect the topic of your copy. That\'s too few.', td),
@@ -86,7 +86,7 @@ function keyphraseInSubHeadings (content, keyphrase, locale) {
 	}
 	if (hasTooManyMatches()) {
 		return {
-			title       : __('Focus keyphrase in Subheadings', td),
+			title       : __('Focus Keyword in Subheadings', td),
 			description : sprintf(
 				// Translators: 1 - The percentage of headings.
 				__('More than %1$s of your H2 and H3 subheadings reflect the topic of your copy. That\'s too much. Don\'t over-optimize!', td),
@@ -99,7 +99,7 @@ function keyphraseInSubHeadings (content, keyphrase, locale) {
 	}
 	if (isOneOfOne()) {
 		return {
-			title       : __('Focus keyphrase in Subheadings', td),
+			title       : __('Focus Keyword in Subheadings', td),
 			description : __('Your H2 or H3 subheading reflects the topic of your copy. Good job!', td),
 			score       : scores.goodNumberOfMatches,
 			maxScore    : scores.goodNumberOfMatches,
@@ -108,7 +108,7 @@ function keyphraseInSubHeadings (content, keyphrase, locale) {
 	}
 	if (hasGoodNumberOfMatches()) {
 		return {
-			title       : __('Focus keyphrase in Subheadings', td),
+			title       : __('Focus Keyword in Subheadings', td),
 			description : __('Your H2 and H3 subheadings reflects the topic of your copy. Good job!', td),
 			score       : scores.goodNumberOfMatches,
 			maxScore    : scores.goodNumberOfMatches,
@@ -117,8 +117,8 @@ function keyphraseInSubHeadings (content, keyphrase, locale) {
 	}
 
 	return {
-		title       : __('Focus keyphrase in Subheadings', td),
-		description : __('Use your focus keyphrase more in your H2 and H3 subheadings.', td),
+		title       : __('Focus Keyword in Subheadings', td),
+		description : __('Use your Focus Keyword more in your H2 and H3 subheadings.', td),
 		score       : scores.noMatches,
 		maxScore    : scores.goodNumberOfMatches,
 		error       : 1

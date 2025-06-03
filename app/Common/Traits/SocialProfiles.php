@@ -33,6 +33,8 @@ trait SocialProfiles {
 		'wikipediaUrl'    => 'https://en.wikipedia.org/wiki/',
 		'myspaceUrl'      => 'https://myspace.com/',
 		'wordPressUrl'    => 'https://profiles.wordpress.org/',
+		'blueskyUrl'      => 'https://bsky.app/profile/',
+		'threadsUrl'      => 'https://threads.com/@',
 	];
 
 	/**
@@ -57,6 +59,8 @@ trait SocialProfiles {
 			'wikipediaUrl'    => aioseo()->options->social->profiles->urls->wikipediaUrl,
 			'myspaceUrl'      => aioseo()->options->social->profiles->urls->myspaceUrl,
 			'wordPressUrl'    => aioseo()->options->social->profiles->urls->wordPressUrl,
+			'blueskyUrl'      => aioseo()->options->social->profiles->urls->blueskyUrl,
+			'threadsUrl'      => aioseo()->options->social->profiles->urls->threadsUrl,
 		];
 
 		if ( aioseo()->options->social->profiles->sameUsername->enable ) {

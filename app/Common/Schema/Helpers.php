@@ -84,15 +84,18 @@ class Helpers {
 
 		// Sort the graphs alphabetically.
 		usort( $schema['@graph'], function ( $a, $b ) {
-			if ( is_array( $a['@type'] ) ) {
+			$typeA = $a['@type'] ?? null;
+			$typeB = $b['@type'] ?? null;
+
+			if ( is_null( $typeA ) || is_array( $typeA ) ) {
 				return 1;
 			}
 
-			if ( is_array( $b['@type'] ) ) {
+			if ( is_null( $typeB ) || is_array( $typeB ) ) {
 				return -1;
 			}
 
-			return strcmp( $a['@type'], $b['@type'] );
+			return strcmp( $typeA, $typeB );
 		} );
 
 		// Allow users to control the default json_encode flags.

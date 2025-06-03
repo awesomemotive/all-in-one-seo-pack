@@ -21,7 +21,7 @@ function keyphraseLength (keyphrase, type) {
 	const keyphraseType = getKeyphraseType(type)
 	const keyLength     = count(keyphrase, 'words')
 	const title         = sprintf(
-		// Translators: 1 - Focus Keyphrase or Keyphrase.
+		// Translators: 1 - Focus Keyword or Keyword.
 		__('%1$s length', td),
 		keyphraseType
 	)
@@ -30,7 +30,7 @@ function keyphraseLength (keyphrase, type) {
 		return {
 			title       : title,
 			description : sprintf(
-				// Translators: 1 - Focus Keyphrase or Keyphrase.
+				// Translators: 1 - Focus Keyword or Keyword.
 				__('No %1$s was set. Set a %1$s in order to calculate your SEO score.', td),
 				keyphraseType
 			),
@@ -54,7 +54,7 @@ function keyphraseLength (keyphrase, type) {
 		return {
 			title       : title,
 			description : sprintf(
-				// Translators: 1 - Focus Keyphrase or Keyphrase.
+				// Translators: 1 - Focus Keyword or Keyword.
 				__('%1$s is slightly long. Try to make it shorter.', td),
 				keyphraseType
 			),
@@ -67,7 +67,7 @@ function keyphraseLength (keyphrase, type) {
 	return {
 		title       : title,
 		description : sprintf(
-			// Translators: 1 - Focus Keyphrase or Keyphrase.
+			// Translators: 1 - Focus Keyword or Keyword.
 			__('%1$s is too long. Try to make it shorter.', td),
 			keyphraseType
 		),

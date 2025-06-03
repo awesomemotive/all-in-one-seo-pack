@@ -217,6 +217,14 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 				.then(response => {
 					this.currentPost.processedContent = response.body.content
 				})
+		},
+		fetchPostData (payload = {}) {
+			return http.get(links.restUrl('post'))
+				.query(payload)
+				.then(response => response)
+				.catch(error => {
+					throw error
+				})
 		}
 	}
 })

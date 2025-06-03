@@ -68,6 +68,11 @@ export const useRedirectsStore = defineStore('RedirectsStore', {
 		}
 	}),
 	actions : {
+		updateState (value = null) {
+			for (const key in (value || {})) {
+				this[key] = value[key]
+			}
+		},
 		bulk ({ action, rowIds }) {
 			// First, let's remove any rows that are already set to this action.
 			rowIds = rowIds.filter(rowId => {

@@ -29,15 +29,6 @@ export default [
 		}
 	},
 	{
-		path      : '/bad-bot-blocker',
-		name      : 'bad-bot-blocker',
-		component : loadView('Main'),
-		meta      : {
-			access : 'aioseo_tools_settings',
-			name   : __('Bad Bot Blocker', td)
-		}
-	},
-	{
 		path      : '/import-export',
 		name      : 'import-export',
 		component : loadView('Main'),

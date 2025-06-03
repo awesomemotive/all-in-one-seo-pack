@@ -15,8 +15,7 @@ import { cleanForSlug } from '@/vue/utils/cleanForSlug'
 import { extraHeadingProperties } from './constants'
 
 const { select, subscribe, useSelect } = window.wp.data
-const blockEditorStore                 = window.wp.blockEditor.store
-const { isTyping }                     = window.wp.data.select(blockEditorStore) || { isTyping: () => null }
+const { isTyping }                     = window.wp.data.select('core/block-editor') || { isTyping: () => null }
 
 const hasInitialized = []
 let latestHeadings   = [],
@@ -103,12 +102,17 @@ export default function edit (props) {
 	// First, let's grab all the headings and watch them.
 	latestHeadings = useSelect(
 		select => {
+			const editorStoreApi = select('core/block-editor')
+			if (!editorStoreApi) {
+				// The store might not be available yet.
+				return null
+			}
 			const {
 				getBlockAttributes,
 				getBlockIndex,
 				getBlockName,
 				getClientIdsWithDescendants
-			} = select(blockEditorStore)
+			} = editorStoreApi
 			const tableOfContentsIndex = getBlockIndex(clientId)
 
 			// First, we get all the headings in the editor.
@@ -208,13 +212,22 @@ export default function edit (props) {
 
 			return null
 		},
-		[ clientId, latestHeadings ]
+		[ clientId ]
 	)
 
 	// If the headings changed, we need to update the state as soon as the user stops typing.
-	if (null !== latestHeadings) {
-		const sorted = latestHeadings.sort((a, b) => a.editedOrder - b.editedOrder)
-		window.aioseoBus.$emit('updateHeadings' + clientId, sorted)
+	if (latestHeadings?.length) {
+		const tableOfContentsStore = useTableOfContentsStore()
+		const existingHeadings = flattenHeadings(deepCopy(tableOfContentsStore.headings))
+
+		// Check if the headings have actually changed before emitting the event.
+		if (!isEqual(
+			[ ...latestHeadings ].sort((a, b) => a.order - b.order),
+			[ ...existingHeadings ].sort((a, b) => a.order - b.order)
+		)) {
+			const sorted = latestHeadings.sort((a, b) => a.editedOrder - b.editedOrder)
+			window.aioseoBus.$emit('updateHeadings' + clientId, sorted)
+		}
 	}
 
 	return html`

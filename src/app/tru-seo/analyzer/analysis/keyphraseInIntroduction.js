@@ -19,7 +19,7 @@ function keyphraseInIntroduction (content, keyphrase, type, locale) {
 
 	const keyphraseType = getKeyphraseType(type)
 	const title =  sprintf(
-		// Translators: 1 - Focus Keyphrase or Keyphrase.
+		// Translators: 1 - Focus Keyword or Keyword.
 		__('%1$s in introduction', td),
 		keyphraseType
 	)
@@ -42,7 +42,7 @@ function keyphraseInIntroduction (content, keyphrase, type, locale) {
 		return {
 			title       : title,
 			description : sprintf(
-				// Translators: 1 - Focus Keyphrase or Keyphrase.
+				// Translators: 1 - Focus Keyword or Keyword.
 				__('Your %1$s appears in the first paragraph. Well done!', td),
 				keyphraseType
 			),
@@ -55,7 +55,7 @@ function keyphraseInIntroduction (content, keyphrase, type, locale) {
 	return {
 		title       : title,
 		description : sprintf(
-			// Translators: 1 - Focus Keyphrase or Keyphrase.
+			// Translators: 1 - Focus Keyword or Keyword.
 			__('Your %1$s does not appear in the first paragraph. Make sure the topic is clear immediately.', td),
 			keyphraseType
 		),

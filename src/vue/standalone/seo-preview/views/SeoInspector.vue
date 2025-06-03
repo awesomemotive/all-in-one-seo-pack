@@ -159,15 +159,15 @@ export default {
 	data () {
 		return {
 			strings : merge(this.composableStrings, {
-				focusKeyphrase   : __('Focus Keyphrase', td),
+				focusKeyphrase   : __('Focus Keyword', td),
 				pageAnalysis     : __('Page Analysis', td),
 				basicSeo         : __('Basic SEO', td),
 				readability      : __('Readability', td),
 				title            : __('Title', td),
 				metaTags         : __('Meta Tags', td),
-				noKeyphraseFound : __('No keyphrase found', td),
+				noKeyphraseFound : __('No keyword found', td),
 				noDataYet        : __('No data yet', td),
-				visitAdmin       : __('You can edit the "Focus Keyphrase" and view information about "Page Analysis" on the admin side.', td)
+				visitAdmin       : __('You can edit the "Focus Keyword" and view information about "Page Analysis" on the admin side.', td)
 			})
 		}
 	},

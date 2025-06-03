@@ -12,6 +12,8 @@
 </template>
 
 <script setup>
+import { onBeforeMount, defineEmits } from 'vue'
+
 import '@/vue/assets/scss/main.scss'
 
 import {
@@ -30,6 +32,11 @@ useScrollAndHighlight({
 })
 
 const postEditorStore = usePostEditorStore()
+const emit = defineEmits([ 'beforeMount' ])
+
+onBeforeMount(() => {
+	emit('beforeMount')
+})
 </script>
 
 <style lang="scss">

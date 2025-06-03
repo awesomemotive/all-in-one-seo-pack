@@ -106,7 +106,7 @@ export const getPostEditedSlug = () => {
 	let postSlug = ''
 
 	if (isClassicEditor() || isClassicNoEditor()) {
-		const postName    = document.querySelector('#post_name')?.value || document.querySelector('#editable-post-name')?.textContent
+		const postName    = document.querySelector('#post_name')?.value || document.querySelector('#editable-post-name-full')?.textContent
 		const classicSlug = postName || document.querySelector('#title').value
 		if (classicSlug) {
 			postSlug = cleanForSlug(classicSlug)
@@ -114,13 +114,10 @@ export const getPostEditedSlug = () => {
 	}
 
 	if (isBlockEditor()) {
-		postSlug = window.wp.data.select('core/editor').getEditedPostSlug()
-	}
-
-	if (isElementorEditor()) {
-		const postTitle = window.elementor.settings.page.model.get('post_title')
-		if (postTitle) {
-			postSlug = cleanForSlug(postTitle)
+		if ('function' === typeof window.wp?.data?.select('core/editor').getEditedPostSlug) {
+			postSlug = window.wp.data.select('core/editor').getEditedPostSlug()
+		} else {
+			postSlug = window.wp.data.select('core/editor').getEditedPostAttribute('slug')
 		}
 	}
 

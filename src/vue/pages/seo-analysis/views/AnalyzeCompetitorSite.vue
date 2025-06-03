@@ -37,7 +37,7 @@
 				>
 					<template #header>
 						<core-analyze-score
-							:score="parseResults(results).score"
+							:score="results.score"
 						/>
 
 						<span>{{ site }}</span>
@@ -51,16 +51,17 @@
 					<div class="competitor-results-main">
 						<core-site-score-competitor
 							:site="site"
-							:score="parseResults(results).score"
+							:score="results.score"
 							:loading="analyzerStore.analyzing"
-							:summary="getSummary(parseResults(results).results)"
-							:mobile-snapshot="parseResults(results).results.advanced.mobileSnapshot"
+							:summary="getSummary(results.results)"
+							:mobile-snapshot="results.results.advanced.mobileSnapshot"
+							@refresh="refresh"
 						/>
 
 						<div class="competitor-results-body">
 							<core-seo-site-analysis-results
 								section="all-items"
-								:all-results="parseResults(results).results"
+								:all-results="results.results"
 								show-google-preview
 							/>
 						</div>
@@ -166,9 +167,6 @@ export default {
 		}
 	},
 	methods : {
-		parseResults (results) {
-			return JSON.parse(results)
-		},
 		getSummary (results) {
 			return {
 				recommended : this.analyzerStore.recommendedCount(results),
@@ -218,8 +216,8 @@ export default {
 				return
 			}
 
-			this.$nextTick(() => {
-				this.competitorResults = this.analyzerStore.getCompetitorSiteAnalysisResults // get results first so that we can get proper index for card
+			this.$nextTick(async () => {
+				this.competitorResults = await this.analyzerStore.getCompetitorSiteAnalysisResults() // get results first so that we can get proper index for card
 
 				const keys     = Object.keys(this.competitorResults)
 				const keyIndex = -1 === keys.indexOf(this.competitorUrl) ? 0 : keys.indexOf(this.competitorUrl)
@@ -234,11 +232,7 @@ export default {
 			this.closeAllCards()
 
 			delete this.competitorResults[site]
-
 			this.analyzerStore.deleteCompetitorSite(site)
-				.then(() => {
-					this.competitorResults = this.analyzerStore.getCompetitorSiteAnalysisResults
-				})
 		},
 		closeAllCards () {
 			const keys = Object.keys(this.competitorResults)
@@ -261,13 +255,19 @@ export default {
 				hash |= 0 // Convert to 32bit integer
 			}
 			return hash
+		},
+		async refresh () {
+			this.competitorResults = await this.analyzerStore.getCompetitorSiteAnalysisResults()
 		}
 	},
-	mounted () {
+	async mounted () {
 		this.analyzerStore.analyzeError = false
-		this.competitorResults          = this.analyzerStore.getCompetitorSiteAnalysisResults
+		this.competitorResults          = this.analyzerStore.competitors
 
-		this.toggleCard(0)
+		const keys = Object.keys(this.competitorResults)
+		if (!this.settingsStore?.settings?.toggledCards[`analyzeCompetitorSite${keys[0]}`]) {
+			this.toggleCard(0)
+		}
 	}
 }
 </script>

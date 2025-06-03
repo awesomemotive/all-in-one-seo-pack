@@ -122,7 +122,8 @@ class PostsTerms {
 	/**
 	 * Get post data for fetch requests
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.8.3 Changes the return value to include only the Vue data.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
@@ -137,17 +138,9 @@ class PostsTerms {
 			], 400 );
 		}
 
-		$thePost = Models\Post::getPost( $args['postId'] );
-
 		return new \WP_REST_Response( [
-			'success'  => true,
-			'post'     => $thePost,
-			'postData' => [
-				'parsedTitle'       => aioseo()->tags->replaceTags( $thePost->title, $args['postId'] ),
-				'parsedDescription' => aioseo()->tags->replaceTags( $thePost->description, $args['postId'] ),
-				'content'           => aioseo()->helpers->theContent( self::getAnalysisContent( $args['postId'] ) ),
-				'slug'              => get_post_field( 'post_name', $args['postId'] )
-			]
+			'success' => true,
+			'data'    => aioseo()->helpers->getVueData( 'post', $args['postId'], $args['integrationSlug'] ?? null )
 		], 200 );
 	}
 

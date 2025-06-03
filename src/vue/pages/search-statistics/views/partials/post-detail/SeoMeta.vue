@@ -93,8 +93,8 @@ export default {
 				canonicalUrl         : __('Canonical URL', td),
 				robots               : __('Robots Meta', td),
 				robotsNoIndex        : __('This post is currently set to noindex which will prevent search engines from including it in search results.', td),
-				additionalKeywords   : __('Additional Keyphrases', td),
-				addAdditionalKeyword : __('Add Additional Keyphrase', td)
+				additionalKeywords   : __('Additional Keywords', td),
+				addAdditionalKeyword : __('Add Additional Keyword', td)
 			}
 		}
 	},

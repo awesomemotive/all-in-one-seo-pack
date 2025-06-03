@@ -118,6 +118,7 @@ import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
+import SvgIconBluesky from '@/vue/components/common/svg/icon/Bluesky'
 import SvgIconFacebook from '@/vue/components/common/svg/icon/Facebook'
 import SvgIconInstagram from '@/vue/components/common/svg/icon/Instagram'
 import SvgIconTiktok from '@/vue/components/common/svg/icon/Tiktok'
@@ -125,6 +126,7 @@ import SvgIconLinkedin from '@/vue/components/common/svg/icon/Linkedin'
 import SvgIconMyspace from '@/vue/components/common/svg/icon/Myspace'
 import SvgIconPinterest from '@/vue/components/common/svg/icon/Pinterest'
 import SvgIconSoundCloud from '@/vue/components/common/svg/icon/SoundCloud'
+import SvgIconThreads from '@/vue/components/common/svg/icon/Threads'
 import SvgIconTumblr from '@/vue/components/common/svg/icon/Tumblr'
 import SvgIconTwitter from '@/vue/components/common/svg/icon/Twitter'
 import SvgIconWikipedia from '@/vue/components/common/svg/icon/Wikipedia'
@@ -150,6 +152,7 @@ export default {
 		CoreSettingsRow,
 		GridColumn,
 		GridRow,
+		SvgIconBluesky,
 		SvgIconFacebook,
 		SvgIconInstagram,
 		SvgIconTiktok,
@@ -157,6 +160,7 @@ export default {
 		SvgIconMyspace,
 		SvgIconPinterest,
 		SvgIconSoundCloud,
+		SvgIconThreads,
 		SvgIconTumblr,
 		SvgIconTwitter,
 		SvgIconWikipedia,
@@ -296,10 +300,10 @@ export default {
 					key        : 'tumblrUrl',
 					name       : 'Tumblr',
 					label      : 'Tumblr URL',
-					url        : 'https://{profile}.tumblr.com',
+					url        : 'https://tumblr.com/{profile}',
 					svg        : 'svg-icon-tumblr',
 					validation : [
-						v => /^https:\/\/([^/]+)\.tumblr\.[a-z.]+.*$/.test(v) || __('Your Tumblr URL is invalid. Please check the format and try again.', td)
+						v => /^(https:\/\/(?:www\.)?([^/]+)\.tumblr\.[a-z.]+.*|https:\/\/(?:www\.)?tumblr\.com\/[^/]+.*)$/.test(v) || __('Your Tumblr URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -351,6 +355,26 @@ export default {
 					validation : [
 						v => /^https:\/\/profiles\.wordpress\.org\/[a-zA-Z0-9-]+\/?$/.test(v) || __('Your WordPress URL is invalid. Please check the format and try again.', td)
 					]
+				},
+				{
+					key        : 'blueskyUrl',
+					name       : 'Bluesky',
+					label      : 'Bluesky URL',
+					url        : 'https://bsky.app/profile',
+					svg        : 'svg-icon-bluesky',
+					validation : [
+						v => /^https:\/\/(?:www\.)?bsky\.app\/profile\/(?:[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*|[a-zA-Z0-9-]+\.bsky\.social)\/?$/.test(v) || __('Your Bluesky URL is invalid. Please check the format and try again.', td)
+					]
+				},
+				{
+					key        : 'threadsUrl',
+					name       : 'Threads',
+					label      : 'Threads URL',
+					url        : 'https://threads.com/@{profile}',
+					svg        : 'svg-icon-threads',
+					validation : [
+						v => /^https:\/\/(?:www\.)?threads\.(net|com)\/@[^/]+\/?$/.test(v) || __('Your Threads URL is invalid. Please check the format and try again.', td)
+					]
 				}
 			]
 		}
@@ -373,7 +397,7 @@ export default {
 		},
 		getUrl (profile) {
 			const username = this.profileData.sameUsername.username || ''
-			if ('tumblrUrl' === profile.key) {
+			if ('tumblrUrl' === profile.key || 'threadsUrl' === profile.key) {
 				return profile.url.replace('{profile}', username)
 			}
 			if ('tiktokUrl' === profile.key) {

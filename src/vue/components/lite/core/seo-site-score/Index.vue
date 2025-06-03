@@ -21,7 +21,7 @@
 
 		<core-site-score-dashboard
 			v-if="optionsStore.internalOptions.internal.siteAnalysis.connectToken"
-			:score="optionsStore.internalOptions.internal.siteAnalysis.score"
+			:score="analyzerStore.homeResults.score"
 			:description="description"
 			:loading="analyzerStore.analyzing"
 			:summary="getSummary"
@@ -90,7 +90,7 @@ const closedCallback = (reload) => {
 }
 
 onMounted(() => {
-	if (!optionsStore.internalOptions.internal.siteAnalysis.score && optionsStore.internalOptions.internal.siteAnalysis.connectToken) {
+	if (!analyzerStore.homeResults.score && optionsStore.internalOptions.internal.siteAnalysis.connectToken) {
 		analyzerStore.analyzing = true
 		analyzerStore.runSiteAnalyzer()
 	}

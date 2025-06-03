@@ -81,7 +81,7 @@ import List from './List'
 import ListRendered from './ListRendered'
 import Reorder from './AIOSEO_VERSION/Reorder'
 
-import { deepCopy } from '@/vue/standalone/blocks/utils'
+import { deepCopy, isEqual } from '@/vue/standalone/blocks/utils'
 import { flattenHeadings, formatHeadingList } from '../helpers'
 import { extraHeadingProperties } from '../constants'
 
@@ -127,14 +127,21 @@ export default {
 	},
 	watch : {
 		'tableOfContentsStore.headings' : {
-			handler (headings) {
-				window.aioseoBus.$emit('setAttributes' + this.tableOfContentsStore.blockClientId, headings)
+			handler (headings, oldHeadings) {
+				// Only emit the event if the headings have actually changed.
+				// Use deep comparison to avoid triggering on reference changes.
+				if (!isEqual(headings, oldHeadings)) {
+					window.aioseoBus.$emit('setAttributes' + this.tableOfContentsStore.blockClientId, headings)
+				}
 			},
 			deep : true
 		},
 		'tableOfContentsStore.reOrdered' : {
-			handler (reOrdered) {
-				window.aioseoBus.$emit('setAttributes' + this.tableOfContentsStore.blockClientId, reOrdered)
+			handler (reOrdered, oldReOrdered) {
+				// Only emit the event if the reOrdered state has actually changed.
+				if (reOrdered !== oldReOrdered) {
+					window.aioseoBus.$emit('setAttributes' + this.tableOfContentsStore.blockClientId, reOrdered)
+				}
 			}
 		}
 	},

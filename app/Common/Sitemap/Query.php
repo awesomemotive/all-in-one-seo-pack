@@ -38,34 +38,47 @@ class Query {
 		}
 
 		// Set defaults.
-		$fields  = '`p`.`ID`, `p`.`post_title`, `p`.`post_content`, `p`.`post_excerpt`, `p`.`post_type`, `p`.`post_password`, ';
-		$fields .= '`p`.`post_parent`, `p`.`post_date_gmt`, `p`.`post_modified_gmt`, `ap`.`priority`, `ap`.`frequency`';
-		$maxAge  = '';
+		$maxAge = '';
+		$fields = implode( ', ', [
+			'p.ID',
+			'p.post_excerpt',
+			'p.post_type',
+			'p.post_password',
+			'p.post_parent',
+			'p.post_date_gmt',
+			'p.post_modified_gmt',
+			'ap.priority',
+			'ap.frequency'
+		] );
 
-		if ( ! aioseo()->sitemap->helpers->excludeImages() ) {
-			$fields .= ', `ap`.`images`';
+		if ( in_array( aioseo()->sitemap->type, [ 'html', 'rss' ], true ) ) {
+			$fields .= ', p.post_title';
+		}
+
+		if ( 'general' !== aioseo()->sitemap->type || ! aioseo()->sitemap->helpers->excludeImages() ) {
+			$fields .= ', ap.images';
 		}
 
 		// Order by highest priority first (highest priority at the top),
 		// then by post modified date (most recently updated at the top).
-		$orderBy = '`ap`.`priority` DESC, `p`.`post_modified_gmt` DESC';
+		$orderBy = 'ap.priority DESC, p.post_modified_gmt DESC';
 
 		// Override defaults if passed as additional arg.
 		foreach ( $additionalArgs as $name => $value ) {
 			// Attachments need to be fetched with all their fields because we need to get their post parent further down the line.
 			$$name = esc_sql( $value );
 			if ( 'root' === $name && $value && 'attachment' !== $includedPostTypes ) {
-				$fields = '`p`.`ID`, `p`.`post_type`';
+				$fields = 'p.ID, p.post_type';
 			}
 			if ( 'count' === $name && $value ) {
-				$fields = 'count(`p`.`ID`) as total';
+				$fields = 'count(p.ID) as total';
 			}
 		}
 
 		$query = aioseo()->core->db
 			->start( aioseo()->core->db->db->posts . ' as p', true )
 			->select( $fields )
-			->leftJoin( 'aioseo_posts as ap', '`ap`.`post_id` = `p`.`ID`' )
+			->leftJoin( 'aioseo_posts as ap', 'ap.post_id = p.ID' )
 			->where( 'p.post_status', 'attachment' === $includedPostTypes ? 'inherit' : 'publish' )
 			->whereRaw( "p.post_type IN ( '$includedPostTypes' )" );
 

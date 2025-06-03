@@ -217,6 +217,13 @@ class Cache {
 			return;
 		}
 
+		// Try to acquire the lock.
+		if ( ! aioseo()->core->db->acquireLock( 'aioseo_cache_clear_lock', 0 ) ) {
+			// If we couldn't acquire the lock, exit early without doing anything.
+			// This means another process is already clearing the cache.
+			return;
+		}
+
 		// If we find the activation redirect, we'll need to reset it after clearing.
 		$activationRedirect = $this->get( 'activation_redirect' );
 

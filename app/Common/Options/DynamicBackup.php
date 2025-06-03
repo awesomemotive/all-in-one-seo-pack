@@ -40,13 +40,13 @@ class DynamicBackup {
 	protected $shouldBackup = false;
 
 	/**
-	 * The options from the DB.
+	 * The option defaults.
 	 *
 	 * @since 4.1.3
 	 *
 	 * @var array
 	 */
-	protected $options = [];
+	protected $defaultOptions = [];
 
 	/**
 	 * The public post types.
@@ -119,8 +119,8 @@ class DynamicBackup {
 			return;
 		}
 
-		$this->backup  = $backup;
-		$this->options = aioseo()->dynamicOptions->getDefaults();
+		$this->backup         = $backup;
+		$this->defaultOptions = aioseo()->dynamicOptions->getDefaults();
 
 		$this->restorePostTypes();
 		$this->restoreTaxonomies();
@@ -201,31 +201,45 @@ class DynamicBackup {
 	 * @since 4.1.3
 	 *
 	 * @param  array $backupOptions The options to be restored.
-	 * @param  array $groups        The group that the option should be restored.
+	 * @param  array $groups        The group that the option should be restored to.
 	 * @return void
 	 */
 	protected function restoreOptions( $backupOptions, $groups ) {
-		$groupPath = $this->options;
+		$defaultOptions = $this->defaultOptions;
 		foreach ( $groups as $group ) {
-			if ( ! isset( $groupPath[ $group ] ) ) {
-				return false;
+			if ( ! isset( $defaultOptions[ $group ] ) ) {
+				return;
 			}
-			$groupPath = $groupPath[ $group ];
+
+			$defaultOptions = $defaultOptions[ $group ];
 		}
 
-		$options = aioseo()->dynamicOptions->noConflict();
+		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
 		foreach ( $backupOptions as $setting => $value ) {
-			// Check if the option exists by checking if the type is defined.
-			$type = ! empty( $groupPath[ $setting ]['type'] ) ? $groupPath[ $setting ]['type'] : '';
+			// Check if the option exists before proceeding. If not, it might be a group.
+			$type = $defaultOptions[ $setting ]['type'] ?? '';
+			if (
+				! $type &&
+				is_array( $value ) &&
+				aioseo()->helpers->isArrayAssociative( $value )
+			) {
+				$nextGroups = array_merge( $groups, [ $setting ] );
+
+				$this->restoreOptions( $backupOptions[ $setting ], $nextGroups );
+
+				continue;
+			}
+
+			// If we still can't find the option, it might be a group.
 			if ( ! $type ) {
 				continue;
 			}
 
 			foreach ( $groups as $group ) {
-				$options = $options->$group;
+				$dynamicOptions = $dynamicOptions->$group;
 			}
 
-			$options->$setting = $value;
+			$dynamicOptions->$setting = $value;
 		}
 	}
 

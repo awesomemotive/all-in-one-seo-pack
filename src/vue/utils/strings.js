@@ -2,6 +2,13 @@ import DOMPurify from 'dompurify'
 import { decode } from 'he'
 import { isString } from 'lodash-es'
 
+function decodeHtml (string) {
+	while (string !== decode(string)) {
+		string = decode(string)
+	}
+	return string
+}
+
 /**
  * Sanitizes a string by stripping out everything that contains dangerous HTML to prevent XSS attacks.
  * In contrary to the `softSanitizeHtml` function, we strip the HTML tags completely.
@@ -17,7 +24,10 @@ export const sanitizeString = (string) => {
 		return ''
 	}
 
-	return DOMPurify.sanitize(decode(string), {
+	// Decode HTML entities to prevent XSS attacks.
+	string = decodeHtml(string)
+
+	return DOMPurify.sanitize(string, {
 		ALLOWED_TAGS      : [],
 		ALLOWED_ATTR      : [],
 		ALLOWED_URI_REGEX : []
@@ -39,7 +49,7 @@ export const softSanitizeHtml = (string) => {
 		return ''
 	}
 
-	return DOMPurify.sanitize(string)
+	return DOMPurify.sanitize(decodeHtml(string))
 }
 
 /**

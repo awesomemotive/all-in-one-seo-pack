@@ -1,19 +1,19 @@
 <template>
 	<div class="aioseo-site-score-dashboard">
 		<div
-			v-if="!analyzerStore.analyzeError"
+			v-if="!analyzerStore.analyzeError && (loading || score)"
 			class="aioseo-seo-site-score-score"
 		>
 			<core-site-score
 				:loading="loading"
 				:score="score"
-				:description="description"
+				:description="scoreDescription"
 				:strokeWidth="1.75"
 			/>
 		</div>
 
 		<div
-			v-if="!analyzerStore.analyzeError"
+			v-if="!analyzerStore.analyzeError && (loading || score)"
 			class="aioseo-seo-site-score-recommendations"
 		>
 			<div class="critical">
@@ -37,15 +37,15 @@
 
 		<div
 			class="seo-analysis-error"
-			v-if="analyzerStore.analyzeError && errorObject"
+			v-if="(!score && !loading) || (analyzerStore.analyzeError && errorObject)"
 		>
 			<svg-dannie-lab />
 
 			<p class="error-title">{{ strings.anErrorOccurred }}</p>
 
-			<p class="error-description" v-html="errorObject.description"/>
+			<p v-if="errorObject?.description" class="error-description" v-html="errorObject.description"/>
 
-			<div class="error-action-buttons">
+			<div v-if="errorObject?.buttons" class="error-action-buttons">
 				<base-button
 					v-for="(button, index) in errorObject.buttons"
 					:key="index"
@@ -117,7 +117,19 @@ export default {
 	data () {
 		return {
 			allowed,
-			strings : this.composableStrings
+			strings          : this.composableStrings,
+			scoreDescription :	this.description
+		}
+	},
+	watch : {
+		score : {
+			handler (newVal) {
+				const { description } = useSeoSiteScore({
+					score : ref(newVal)
+				})
+
+				this.scoreDescription = description
+			}
 		}
 	},
 	computed : {

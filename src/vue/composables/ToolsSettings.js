@@ -2,7 +2,6 @@ import { computed } from 'vue'
 
 import {
 	useLicenseStore,
-	useOptionsStore,
 	useRootStore
 } from '@/vue/stores'
 
@@ -57,15 +56,6 @@ export const useToolsSettings = () => {
 				access : 'aioseo_general_settings'
 			}
 		]
-
-		const optionsStore = useOptionsStore()
-		if (optionsStore.internalOptions.internal.deprecatedOptions.includes('badBotBlocker')) {
-			settings.push({
-				value  : 'blocker',
-				label  : __('Bad Bot Blocker', td),
-				access : 'aioseo_tools_settings'
-			})
-		}
 
 		const rootStore = useRootStore()
 		if (rootStore.isPro) {

@@ -326,7 +326,14 @@ TEMPLATE;
 	 * @return string The separator html.
 	 */
 	public function getSeparator() {
-		$separator = apply_filters( 'aioseo_breadcrumbs_separator_symbol', aioseo()->options->breadcrumbs->separator );
+		$separator = aioseo()->options->breadcrumbs->separator;
+
+		$separatorToOverride = aioseo()->breadcrumbs->getOverride( 'separator' );
+		if ( ! empty( $separatorToOverride ) ) {
+			$separator = $separatorToOverride;
+		}
+
+		$separator = apply_filters( 'aioseo_breadcrumbs_separator_symbol', $separator );
 
 		return apply_filters( 'aioseo_breadcrumbs_separator', '<span class="aioseo-breadcrumb-separator">' . esc_html( $separator ) . '</span>' );
 	}

@@ -69,10 +69,25 @@ class Updates {
 	 * @return void
 	 */
 	public function runUpdates() {
+		$lastActiveVersion = aioseo()->internalOptions->internal->lastActiveVersion;
+		// Don't run updates if the last active version is the same as the current version.
+		if ( aioseo()->version === $lastActiveVersion ) {
+			// Allow addons to run their updates.
+			do_action( 'aioseo_run_updates', $lastActiveVersion );
+
+			return;
+		}
+
+		// Try to acquire the lock.
+		if ( ! aioseo()->core->db->acquireLock( 'aioseo_run_updates_lock', 0 ) ) {
+			// If we couldn't acquire the lock, exit early without doing anything.
+			// This means another process is already running updates.
+			return;
+		}
+
 		// The dynamic options have not yet fully loaded, so let's refresh here to force that to happen.
 		aioseo()->dynamicOptions->refresh(); // TODO: Check if we still need this since it already runs on 999 in the main AIOSEO file.
 
-		$lastActiveVersion = aioseo()->internalOptions->internal->lastActiveVersion;
 		if ( version_compare( $lastActiveVersion, '4.0.5', '<' ) ) {
 			$this->addImageScanDateColumn();
 		}
@@ -234,6 +249,19 @@ class Updates {
 		if ( version_compare( $lastActiveVersion, '4.7.9', '<' ) ) {
 			$this->fixSavedHeadlines();
 			$this->rescheduleEmailReport();
+		}
+
+		if ( version_compare( $lastActiveVersion, '4.8.3', '<' ) ) {
+			$this->resetImageScanDate();
+			$this->addSeoAnalyzerResultsTable();
+			$this->migrateSeoAnalyzerResults();
+			$this->migrateSeoAnalyzerCompetitors();
+			$this->addBreadcrumbSettingsColumn();
+		}
+
+		if ( version_compare( $lastActiveVersion, '4.8.3.1', '<' ) ) {
+			aioseo()->core->cache->delete( 'analyze_site_code' );
+			aioseo()->core->cache->delete( 'analyze_site_body' );
 		}
 
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
@@ -433,6 +461,26 @@ class Updates {
 			aioseo()->core->db->execute(
 				"ALTER TABLE {$tableName}
 				ADD image_scan_date datetime DEFAULT NULL AFTER images"
+			);
+
+			// Reset the cache for the installed tables.
+			aioseo()->internalOptions->database->installedTables = '';
+		}
+	}
+
+	/**
+	 * Adds the breadcrumb settings column to our posts table.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @return void
+	 */
+	public function addBreadcrumbSettingsColumn() {
+		if ( ! aioseo()->core->db->columnExists( 'aioseo_posts', 'breadcrumb_settings' ) ) {
+			$tableName = aioseo()->core->db->db->prefix . 'aioseo_posts';
+			aioseo()->core->db->execute(
+				"ALTER TABLE {$tableName}
+				ADD `breadcrumb_settings` longtext DEFAULT NULL AFTER local_seo"
 			);
 
 			// Reset the cache for the installed tables.
@@ -1836,5 +1884,136 @@ class Updates {
 		}
 
 		aioseo()->internalOptions->internal->headlineAnalysis->headlines = $headlines;
+	}
+
+	/**
+	 * Resets the image scan date in order to force a new scan.
+	 * This is needed because we're now storing relative URLs in order to support site migrations.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @return void
+	 */
+	private function resetImageScanDate() {
+		aioseo()->core->db->update( 'aioseo_posts' )
+			->set(
+				[
+					'image_scan_date' => null
+				]
+			)
+			->run();
+	}
+
+	/**
+	 * Adds our custom table for the SeoAnalysis/SeoAnalyzer homepage and competitor results.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @return void
+	 */
+	private function addSeoAnalyzerResultsTable() {
+		$db             = aioseo()->core->db->db;
+		$charsetCollate = '';
+
+		if ( ! empty( $db->charset ) ) {
+			$charsetCollate .= "DEFAULT CHARACTER SET {$db->charset}";
+		}
+		if ( ! empty( $db->collate ) ) {
+			$charsetCollate .= " COLLATE {$db->collate}";
+		}
+
+		// Check for seo analyzer results table.
+		if ( ! aioseo()->core->db->tableExists( 'aioseo_seo_analyzer_results' ) ) {
+			$tableName = $db->prefix . 'aioseo_seo_analyzer_results';
+
+			aioseo()->core->db->execute(
+				"CREATE TABLE {$tableName} (
+					`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+					`data` text NOT NULL,
+					`score` varchar(255),
+					`competitor_url` varchar(255),
+					`created` datetime NOT NULL,
+					`updated` datetime NOT NULL,
+					PRIMARY KEY (id),
+					KEY ndx_aioseo_seo_analyzer_results_competitor_url (competitor_url)
+				) {$charsetCollate};"
+			);
+
+			// Reset the cache for the installed tables.
+			aioseo()->internalOptions->database->installedTables = '';
+		}
+	}
+
+	/**
+	 * Migrate the SeoAnalyzer homepage results from the Internal Optinos to the new table.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @return void
+	 */
+	private function migrateSeoAnalyzerResults() {
+		$internalOptions = $this->getRawInternalOptions();
+		$results         = ! empty( $internalOptions['internal']['siteAnalysis']['results'] ) ? $internalOptions['internal']['siteAnalysis']['results'] : [];
+		if ( empty( $results ) ) {
+			return;
+		}
+
+		$parsedData = [
+			'results' => is_string( $results ) ? json_decode( $results, true ) : $results,
+			'score'   => $internalOptions['internal']['siteAnalysis']['score'],
+		];
+
+		Models\SeoAnalyzerResult::addResults( $parsedData );
+
+		aioseo()->core->cache->delete( 'analyze_site_code' );
+		aioseo()->core->cache->delete( 'analyze_site_body' );
+	}
+
+	/**
+	 * Migrate the SeoAnalyzer competitors results from the Internal Optinos to the new table.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @return void
+	 */
+	private function migrateSeoAnalyzerCompetitors() {
+		$internalOptions = $this->getRawInternalOptions();
+		$competitors     = ! empty( $internalOptions['internal']['siteAnalysis']['competitors'] ) ? $internalOptions['internal']['siteAnalysis']['competitors'] : [];
+		if ( empty( $competitors ) ) {
+			return;
+		}
+
+		foreach ( $competitors as $url => $competitor ) {
+			$parsedData = is_string( $competitor ) ? json_decode( $competitor, true ) : $competitor;
+			$results    = empty( $parsedData['results'] ) ? [] : $parsedData['results'];
+			if ( empty( $results ) ) {
+				continue;
+			}
+
+			Models\SeoAnalyzerResult::addResults( [
+				'results' => $results,
+				'score'   => $parsedData['score'],
+			], $url );
+		}
+
+		aioseo()->core->cache->delete( 'analyze_site_code' );
+		aioseo()->core->cache->delete( 'analyze_site_body' );
+	}
+
+	/**
+	 * Returns the raw options from the database.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @return array
+	 */
+	private function getRawInternalOptions() {
+		// Options from the DB.
+		$internalOptions = json_decode( get_option( aioseo()->internalOptions->optionsName ), true );
+		if ( empty( $internalOptions ) ) {
+			$internalOptions = [];
+		}
+
+		return $internalOptions;
 	}
 }

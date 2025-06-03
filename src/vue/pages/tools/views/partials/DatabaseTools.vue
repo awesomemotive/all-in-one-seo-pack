@@ -104,43 +104,6 @@
 					</div>
 				</template>
 			</core-settings-row>
-
-			<core-settings-row
-				v-if="showBadBotBlockerLogs"
-				:name="strings.badBotBlockerLogs"
-				align
-			>
-				<template #content>
-					<base-button
-						class="clear-log"
-						type="gray"
-						size="medium"
-						:loading="'badBotBlockerLog' === loadingLog"
-						:disabled="disabledLog('badBotBlockerLog')"
-						@click="processClearLog('badBotBlockerLog')"
-					>
-						<span
-							v-if="disabledLog('badBotBlockerLog')"
-						>
-							<svg-checkmark />
-							{{ strings.cleared }}
-						</span>
-						<span
-							v-if="!disabledLog('badBotBlockerLog')"
-						>
-							{{ strings.clearBadBotBlockerLogs }}
-						</span>
-					</base-button>
-
-					<div class="log-size">
-						<span
-							class="size-dot"
-							:class="getSizeClass(rootStore.aioseo.data.logSizes.badBotBlockerLog.original)"
-						/>
-						{{ rootStore.aioseo.data.logSizes.badBotBlockerLog.readable }}
-					</div>
-				</template>
-			</core-settings-row>
 		</core-card>
 	</div>
 </template>
@@ -189,23 +152,20 @@ export default {
 			site         : null,
 			selectedSite : null,
 			clearedLogs  : {
-				badBotBlockerLogs : false,
-				redirectLogs      : false,
-				logs404           : false
+				redirectLogs : false,
+				logs404      : false
 			},
 			loadingLog : null,
 			strings    : {
-				selectSite             : __('Select Site', td),
-				resetRestoreSettings   : __('Reset / Restore Settings', td),
-				logs                   : __('Logs', td),
-				badBotBlockerLogs      : __('Bad Bot Blocker Logs', td),
-				cleared                : __('Cleared', td),
-				clearBadBotBlockerLogs : __('Clear Bad Bot Blocker Logs', td),
-				logs404                : __('404 Logs', td),
-				clear404Logs           : __('Clear 404 Logs', td),
-				redirectLogs           : __('Redirect Logs', td),
-				clearRedirectLogs      : __('Clear Redirect Logs', td),
-				logsTooltip            : __('Log sizes may fluctuate and not always be 100% accurate since the results can be cached. Also after clearing a log, it may not show as "0" since database tables also include additional information such as indexes that we don\'t clear.', td)
+				selectSite           : __('Select Site', td),
+				resetRestoreSettings : __('Reset / Restore Settings', td),
+				logs                 : __('Logs', td),
+				cleared              : __('Cleared', td),
+				logs404              : __('404 Logs', td),
+				clear404Logs         : __('Clear 404 Logs', td),
+				redirectLogs         : __('Redirect Logs', td),
+				clearRedirectLogs    : __('Clear Redirect Logs', td),
+				logsTooltip          : __('Log sizes may fluctuate and not always be 100% accurate since the results can be cached. Also after clearing a log, it may not show as "0" since database tables also include additional information such as indexes that we don\'t clear.', td)
 			}
 		}
 	},
@@ -225,13 +185,9 @@ export default {
 		showLogs () {
 			return !this.rootStore.aioseo.data.isNetworkAdmin &&
 				(
-					this.showBadBotBlockerLogs ||
-					this.rootStore.aioseo.data.logSizes.redirectLogs ||
-					this.rootStore.aioseo.data.logSizes.logs404
+					this.rootStore.aioseo.data.logSizes?.redirectLogs ||
+					this.rootStore.aioseo.data.logSizes?.logs404
 				)
-		},
-		showBadBotBlockerLogs () {
-			return this.optionsStore.internalOptions.internal.deprecatedOptions.includes('badBotBlocker')
 		},
 		sites () {
 			return this.getSites

@@ -252,30 +252,4 @@ class Tools {
 			'success' => true
 		], 200 );
 	}
-
-	/**
-	 * Clear the passed in log.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  \WP_REST_Request  $request The REST Request
-	 * @return \WP_REST_Response The response.
-	 */
-	public static function clearLog( $request ) {
-		$body = $request->get_json_params();
-		$log  = ! empty( $body['log'] ) ? $body['log'] : null;
-
-		$logSize = 0;
-		switch ( $log ) {
-			case 'badBotBlockerLog':
-				aioseo()->badBotBlocker->clearLog();
-				$logSize = aioseo()->badBotBlocker->getLogSize();
-				break;
-		}
-
-		return new \WP_REST_Response( [
-			'success' => true,
-			'logSize' => aioseo()->helpers->convertFileSize( $logSize )
-		], 200 );
-	}
 }

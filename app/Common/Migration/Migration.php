@@ -193,10 +193,6 @@ class Migration {
 			new RobotsTxt();
 		}
 
-		if ( ! empty( $this->oldOptions['modules']['aiosp_feature_manager_options']['aiosp_feature_manager_enable_bad_robots'] ) ) {
-			new BadRobots();
-		}
-
 		if ( aioseo()->helpers->isWpmlActive() ) {
 			new Wpml();
 		}

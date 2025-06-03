@@ -339,7 +339,7 @@ export default {
 		}
 	},
 	methods : {
-		async processChangeTab (newTabValue) {
+		async processChangeTab (newTabValue, contextOverride = null) {
 			// We need to check for null here explicitly because null values identify themselves as objects.
 			if (null !== newTabValue && 'object' === typeof newTabValue) {
 				this.processChangeTab(newTabValue.main)
@@ -349,21 +349,19 @@ export default {
 				return
 			}
 
-			switch (this.$root.$data.screenContext) {
-				case 'sidebar' :
-					// Change the WordPress components panel header to static if there's a tab open.
-					document.querySelectorAll('.components-panel__header').forEach(el => {
-						const position = null === newTabValue ? 'sticky' : 'static'
-						el.style.position = position
-					})
-					break
-				default :
-					this.activeTab = newTabValue
-					this.settingsStore.changeTabSettings({ setting: 'main', value: newTabValue })
-					break
+			const screenContext = contextOverride || this.$root.$data.screenContext
+			if ('sidebar' === screenContext) {
+				// Change the WordPress components panel header to static if there's a tab open.
+				document.querySelectorAll('.components-panel__header').forEach(el => {
+					const position = null === newTabValue ? 'sticky' : 'static'
+					el.style.position = position
+				})
+			} else {
+				this.activeTab = newTabValue
+				this.settingsStore.changeTabSettings({ setting: 'main', value: newTabValue })
 			}
 
-			if ('sidebar' !== this.$root.$data.screenContext) {
+			if ('sidebar' !== screenContext) {
 				return
 			}
 
@@ -477,6 +475,10 @@ export default {
 		}
 	},
 	mounted () {
+		window.aioseoBus.$on('do-post-settings-main-tab-change', ({ name, context }) => {
+			this.processChangeTab(name, context)
+		})
+
 		if (
 			isBlockEditor() &&
 			!this.licenseStore.isUnlicensed

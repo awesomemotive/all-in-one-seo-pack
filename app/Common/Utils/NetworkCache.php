@@ -22,7 +22,7 @@ class NetworkCache extends Cache {
 	 * @return mixed                      The value or null if the cache does not exist.
 	 */
 	public function get( $key, $allowedClasses = false ) {
-		if ( ! is_multisite() ) {
+		if ( ! aioseo()->helpers->isPluginNetworkActivated() ) {
 			return parent::get( $key, $allowedClasses );
 		}
 
@@ -44,7 +44,7 @@ class NetworkCache extends Cache {
 	 * @return void
 	 */
 	public function update( $key, $value, $expiration = DAY_IN_SECONDS ) {
-		if ( ! is_multisite() ) {
+		if ( ! aioseo()->helpers->isPluginNetworkActivated() ) {
 			parent::update( $key, $value, $expiration );
 
 			return;
@@ -64,7 +64,7 @@ class NetworkCache extends Cache {
 	 * @return void
 	 */
 	public function delete( $key ) {
-		if ( ! is_multisite() ) {
+		if ( ! aioseo()->helpers->isPluginNetworkActivated() ) {
 			parent::delete( $key );
 
 			return;
@@ -83,7 +83,7 @@ class NetworkCache extends Cache {
 	 * @return void
 	 */
 	public function clear() {
-		if ( ! is_multisite() ) {
+		if ( ! aioseo()->helpers->isPluginNetworkActivated() ) {
 			parent::clear();
 
 			return;
@@ -103,7 +103,7 @@ class NetworkCache extends Cache {
 	 * @return void
 	 */
 	public function clearPrefix( $prefix ) {
-		if ( ! is_multisite() ) {
+		if ( ! aioseo()->helpers->isPluginNetworkActivated() ) {
 			parent::clearPrefix( $prefix );
 
 			return;

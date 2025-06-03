@@ -111,6 +111,7 @@
 						:options="optionsStore.options.writingAssistant"
 						type="postTypes"
 						:supports="['editor']"
+						:excluded="['attachment']"
 					/>
 
 					<div class="aioseo-description">

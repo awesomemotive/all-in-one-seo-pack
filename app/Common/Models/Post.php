@@ -40,6 +40,7 @@ class Post extends Model {
 		'options',
 		'local_seo',
 		'primary_term',
+		'breadcrumb_settings',
 		'og_article_tags'
 	];
 
@@ -498,6 +499,7 @@ class Post extends Model {
 		$thePost->open_ai                     = ! empty( $data['open_ai'] ) ? self::getDefaultOpenAiOptions( $data['open_ai'] ) : null;
 		$thePost->updated                     = gmdate( 'Y-m-d H:i:s' );
 		$thePost->primary_term                = ! empty( $data['primary_term'] ) ? $data['primary_term'] : null;
+		$thePost->breadcrumb_settings         = isset( $data['breadcrumb_settings']['default'] ) && false === $data['breadcrumb_settings']['default'] ? $data['breadcrumb_settings'] : null;
 
 		// Before we determine the OG/Twitter image, we need to set the meta data cache manually because the changes haven't been saved yet.
 		aioseo()->meta->metaData->bustPostCache( $thePost->post_id, $thePost );
@@ -792,6 +794,41 @@ class Post extends Model {
 				'suggestions' => [],
 				'usage'       => 0
 			]
+		];
+
+		if ( empty( $existingOptions ) ) {
+			return json_decode( wp_json_encode( $defaults ) );
+		}
+
+		$existingOptions = json_decode( wp_json_encode( $existingOptions ), true );
+		$existingOptions = array_replace_recursive( $defaults, $existingOptions );
+
+		return json_decode( wp_json_encode( $existingOptions ) );
+	}
+
+	/**
+	 * Returns the default breadcrumb settings options.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @param  array  $postType        The post type.
+	 * @param  array  $existingOptions The existing options.
+	 * @return object                  The default options.
+	 */
+	public static function getDefaultBreadcrumbSettingsOptions( $postType, $existingOptions = [] ) {
+		$default       = aioseo()->dynamicOptions->breadcrumbs->postTypes->$postType->useDefaultTemplate ?? true;
+		$showHomeCrumb = $default ? aioseo()->options->breadcrumbs->homepageLink : aioseo()->dynamicOptions->breadcrumbs->postTypes->$postType->showHomeCrumb ?? true;
+
+		$defaults = [
+			'default'            => true,
+			'separator'          => aioseo()->options->breadcrumbs->separator,
+			'showHomeCrumb'      => $showHomeCrumb ?? true,
+			'showTaxonomyCrumbs' => aioseo()->dynamicOptions->breadcrumbs->postTypes->$postType->showTaxonomyCrumbs ?? true,
+			'showParentCrumbs'   => aioseo()->dynamicOptions->breadcrumbs->postTypes->$postType->showParentCrumbs ?? true,
+			'template'           => aioseo()->helpers->encodeOutputHtml( aioseo()->breadcrumbs->frontend->getDefaultTemplate( 'single' ) ),
+			'parentTemplate'     => aioseo()->helpers->encodeOutputHtml( aioseo()->breadcrumbs->frontend->getDefaultTemplate( 'single' ) ),
+			'taxonomy'           => aioseo()->dynamicOptions->breadcrumbs->postTypes->$postType->taxonomy ?? '',
+			'primaryTerm'        => null
 		];
 
 		if ( empty( $existingOptions ) ) {

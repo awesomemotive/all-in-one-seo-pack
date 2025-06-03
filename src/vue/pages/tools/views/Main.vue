@@ -15,7 +15,6 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import BadBotBlocker from './BadBotBlocker'
 import CoreMain from '@/vue/components/common/core/main/Index'
 import DatabaseTools from './DatabaseTools'
 import Debug from './AIOSEO_VERSION/Debug'
@@ -32,8 +31,6 @@ const rootStore = useRootStore()
 const route  = useRoute()
 const getRoute = computed(() => {
 	switch (route.name) {
-		case 'bad-bot-blocker':
-			return BadBotBlocker
 		case 'database-tools':
 			return DatabaseTools
 		case 'debug':

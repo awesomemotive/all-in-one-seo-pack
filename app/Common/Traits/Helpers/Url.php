@@ -313,4 +313,95 @@ trait Url {
 		wp_safe_redirect( $url, $status, $redirectBy );
 		exit;
 	}
+
+	/**
+	 * Checks if the given URL is external.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @param  string $url The URL to check.
+	 * @return bool        Whether the URL is external or not.
+	 */
+	public function isExternalUrl( $url ) {
+		$parsedUrl = wp_parse_url( $url );
+		if ( ! $parsedUrl ) {
+			return false;
+		}
+
+		static $parsedSiteUrl = null;
+		if ( ! $parsedSiteUrl ) {
+			$parsedSiteUrl = wp_parse_url( site_url() );
+		}
+
+		return $parsedSiteUrl['host'] !== $parsedUrl['host'];
+	}
+
+	/**
+	 * Checks if the given URL is relative.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @param  string $url The URL to check.
+	 * @return bool        Whether the URL is relative or not.
+	 */
+	public function isRelativeUrl( $url ) {
+		$parsedUrl = wp_parse_url( $url );
+		if ( ! $parsedUrl ) {
+			return false;
+		}
+
+		return empty( $parsedUrl['scheme'] ) && empty( $parsedUrl['host'] );
+	}
+
+	/**
+	 * Makes the given URL relative.
+	 *
+	 * @since 4.8.3
+	 *
+	 * @param  string $url The URL to make relative.
+	 * @return string      The relative URL.
+	 */
+	public function makeUrlRelative( $url ) {
+		$parsedUrl = wp_parse_url( $url );
+		if ( ! $parsedUrl ) {
+			return $url;
+		}
+
+		static $parsedSiteUrl = null;
+		if ( ! $parsedSiteUrl ) {
+			$parsedSiteUrl = wp_parse_url( site_url() );
+		}
+
+		if ( $parsedSiteUrl['host'] !== $parsedUrl['host'] ) {
+			return $url;
+		}
+
+		return ! empty( $parsedUrl['path'] ) ? $parsedUrl['path'] : $url;
+	}
+
+	/**
+	 * Formats a given URL as an absolute URL if it is relative.
+	 *
+	 * @since   4.0.0
+	 * @version 4.8.3 Moved from WpUri trait to Url trait.
+	 *
+	 * @param  string $url The URL.
+	 * @return string      The absolute URL.
+	 */
+	public function makeUrlAbsolute( $url ) {
+		if ( 0 !== strpos( $url, 'http' ) && '/' !== $url ) {
+			$url = $this->sanitizeDomain( $url );
+			if ( $this->isDomainWithPaths( $url ) ) {
+				$scheme = wp_parse_url( site_url(), PHP_URL_SCHEME );
+				$url    = $scheme . '://' . $url;
+			} elseif ( 0 === strpos( $url, '//' ) ) {
+				$scheme = wp_parse_url( site_url(), PHP_URL_SCHEME );
+				$url    = $scheme . ':' . $url;
+			} else {
+				$url = site_url( $url );
+			}
+		}
+
+		return $url;
+	}
 }

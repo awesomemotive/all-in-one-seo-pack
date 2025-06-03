@@ -43,7 +43,7 @@ class UserMeta {
 
 		$usersMeta = aioseo()->core->db
 			->start( aioseo()->core->db->db->usermeta . ' as um', true )
-			->whereRaw( "um.meta_key IN ('facebook', 'twitter', 'instagram', 'linkedin', 'myspace', 'pinterest', 'soundcloud', 'tumblr', 'wikipedia', 'youtube', 'mastodon')" )
+			->whereRaw( "um.meta_key IN ('facebook', 'twitter', 'instagram', 'linkedin', 'myspace', 'pinterest', 'soundcloud', 'tumblr', 'wikipedia', 'youtube', 'mastodon', 'bluesky', 'threads')" )
 			->whereRaw( "um.meta_value != ''" )
 			->limit( $usersPerAction, $offset )
 			->run()
@@ -66,7 +66,9 @@ class UserMeta {
 			'tumblr'     => 'aioseo_tumblr_url',
 			'wikipedia'  => 'aioseo_wikipedia_url',
 			'youtube'    => 'aioseo_youtube_url',
-			'mastodon'   => 'aioseo_profiles_additional_urls',
+			'bluesky'    => 'aioseo_bluesky_url',
+			'threads'    => 'aioseo_threads_url',
+			'mastodon'   => 'aioseo_profiles_additional_urls'
 		];
 
 		foreach ( $usersMeta as $meta ) {

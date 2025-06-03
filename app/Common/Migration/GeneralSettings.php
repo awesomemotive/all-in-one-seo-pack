@@ -649,6 +649,8 @@ class GeneralSettings {
 			'wikipedia.org'  => 'wikipediaUrl',
 			'myspace.com'    => 'myspaceUrl',
 			'wordpress.org'  => 'wordpressUrl',
+			'bsky.app'       => 'blueskyUrl',
+			'threads.net'    => 'threadsUrl'
 		];
 
 		$found = false;

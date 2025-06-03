@@ -291,7 +291,6 @@ namespace AIOSEO\Plugin {
 			$this->features           = $this->pro ? new Pro\Utils\Features() : new Common\Utils\Features();
 			$this->tags               = $this->pro ? new Pro\Utils\Tags() : new Common\Utils\Tags();
 			$this->blocks             = new Common\Utils\Blocks();
-			$this->badBotBlocker      = new Common\Tools\BadBotBlocker();
 			$this->breadcrumbs        = $this->pro ? new Pro\Breadcrumbs\Breadcrumbs() : new Common\Breadcrumbs\Breadcrumbs();
 			$this->dynamicBackup      = $this->pro ? new Pro\Options\DynamicBackup() : new Common\Options\DynamicBackup();
 			$this->options            = $this->pro ? new Pro\Options\Options() : new Lite\Options\Options();
@@ -361,8 +360,6 @@ namespace AIOSEO\Plugin {
 		public function loadInit() {
 			$this->settings = new Common\Utils\VueSettings( '_aioseo_settings' );
 			$this->sitemap->init();
-
-			$this->badBotBlocker->init();
 
 			// We call this again to reset any post types/taxonomies that have not yet been set up.
 			$this->dynamicOptions->refresh();

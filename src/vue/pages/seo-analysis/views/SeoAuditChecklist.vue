@@ -10,7 +10,7 @@
 		</core-card>
 
 		<core-card
-			v-if="((rootStore.isPro && licenseStore.licenseKey) || optionsStore.internalOptions.internal.siteAnalysis.connectToken) && optionsStore.internalOptions.internal.siteAnalysis.score"
+			v-if="((rootStore.isPro && licenseStore.licenseKey) || optionsStore.internalOptions.internal.siteAnalysis.connectToken) && homeResults?.score"
 			slug="completeSeoChecklist"
 			no-slide
 			:toggles="false"
@@ -63,8 +63,9 @@
 			</template>
 
 			<core-seo-site-analysis-results
+				v-if="null !== homeResults?.results"
 				:section="settingsStore.settings.internalTabs.seoAuditChecklist"
-				:all-results="analyzerStore.getSiteAnalysisResults"
+				:all-results="homeResults.results"
 				show-instructions
 			/>
 		</core-card>
@@ -116,7 +117,11 @@ export default {
 	data () {
 		return {
 			internalDebounce : false,
-			strings          : {
+			homeResults      : {
+				results : [],
+				score   : null
+			},
+			strings : {
 				completeSeoChecklist : __('Complete SEO Checklist', td),
 				refreshResults       : __('Refresh Results', td),
 				cardDescription      : __('These are the results our SEO Analzyer has generated after analyzing the homepage of your website.', td) +
@@ -126,14 +131,14 @@ export default {
 	},
 	computed : {
 		tabs () {
-			const siteAnalysis = this.optionsStore.internalOptions.internal.siteAnalysis
+			const score = this.homeResults?.score
 			return [
 				{
 					slug    : 'all-items',
 					label   : __('All Items', td),
 					analyze : {
 						classColor : 'black',
-						count      : siteAnalysis.score
+						count      : score
 							? this.analyzerStore.allItemsCount()
 							: 0
 					}
@@ -143,7 +148,7 @@ export default {
 					label   : __('Important Issues', td),
 					analyze : {
 						classColor : 'red',
-						count      : siteAnalysis.score
+						count      : score
 							? this.analyzerStore.criticalCount()
 							: 0
 					}
@@ -153,7 +158,7 @@ export default {
 					label   : __('Recommended Improvements', td),
 					analyze : {
 						classColor : 'blue',
-						count      : siteAnalysis.score
+						count      : score
 							? this.analyzerStore.recommendedCount()
 							: 0
 					}
@@ -163,7 +168,7 @@ export default {
 					label   : __('Good Results', td),
 					analyze : {
 						classColor : 'green',
-						count      : siteAnalysis.score
+						count      : score
 							? this.analyzerStore.goodCount()
 							: 0
 					}
@@ -185,12 +190,20 @@ export default {
 				this.internalDebounce = false
 			}, 50)
 		},
-		refresh () {
+		async refresh () {
 			this.analyzerStore.analyzing = true
-			this.analyzerStore.runSiteAnalyzer({
+			await this.analyzerStore.runSiteAnalyzer({
 				refresh : true
 			})
+
+			this.analyzerStore.getSiteAnalysisResults().then(() => {
+				this.homeResults = this.analyzerStore.homeResults
+				this.analyzerStore.analyzing = false
+			})
 		}
+	},
+	mounted () {
+		this.homeResults = this.analyzerStore.homeResults
 	}
 }
 </script>

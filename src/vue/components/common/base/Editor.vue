@@ -419,7 +419,10 @@ export default {
 			QuillEditor[this.$.uid].setContents(delta)
 
 			const mention = QuillEditor[this.$.uid].getModule('mention')
-			if (mention) {
+			if (mention?.isOpen) {
+				mention.hideMentionList()
+				mention.removeOrphanedMentionChar()
+			} else if (mention) {
 				mention.removeOrphanedMentionChar(true)
 			}
 

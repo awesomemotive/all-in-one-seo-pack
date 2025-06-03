@@ -223,6 +223,14 @@ class Wizard {
 					if ( ! empty( $urls['wordPressUrl'] ) ) {
 						$options->social->profiles->urls->wordPressUrl = $urls['wordPressUrl'];
 					}
+
+					if ( ! empty( $urls['blueskyUrl'] ) ) {
+						$options->social->profiles->urls->blueskyUrl = $urls['blueskyUrl'];
+					}
+
+					if ( ! empty( $urls['threadsUrl'] ) ) {
+						$options->social->profiles->urls->threadsUrl = $urls['threadsUrl'];
+					}
 				}
 			}
 

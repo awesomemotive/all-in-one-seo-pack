@@ -99,7 +99,6 @@ class VueSettings {
 			'localBusinessMapsApiKey'      => true,
 			'localBusinessMapsSettings'    => true,
 			'robotsEditor'                 => true,
-			'badBotBlocker'                => true,
 			'databaseTools'                => true,
 			'htaccessEditor'               => true,
 			'databaseToolsLogs'            => true,

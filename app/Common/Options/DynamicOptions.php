@@ -92,10 +92,6 @@ class DynamicOptions {
 			$this->addValueToValuesArray( $this->defaultsMerged, $dbOptions )
 		);
 
-		// Remove any post types/taxonomies that are stored in the DB but that aren't active currently.
-		// We only have to do this for the dynamic options.
-		$dbOptions = $this->filterOptions( $this->defaultsMerged, $dbOptions );
-
 		aioseo()->core->optionsCache->setOptions( $this->optionsName, $dbOptions );
 
 		// Get the localized options.

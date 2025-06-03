@@ -299,12 +299,15 @@ class Content {
 
 			$url = get_post_type_archive_link( $postType );
 			if ( $url ) {
-				$entries[] = [
+				$entry = [
 					'loc'        => $url,
 					'lastmod'    => aioseo()->sitemap->helpers->lastModifiedPostTime( $postType ),
 					'changefreq' => aioseo()->sitemap->priority->frequency( 'archive' ),
 					'priority'   => aioseo()->sitemap->priority->priority( 'archive' ),
 				];
+
+				// To be consistent with our other entry filters, we need to pass the entry ID as well, but as null in this case.
+				$entries[] = apply_filters( 'aioseo_sitemap_archive_entry', $entry, null, $postType, 'archive' );
 			}
 		}
 
@@ -543,13 +546,16 @@ class Content {
 
 		$entries = [];
 		foreach ( $authors as $authorData ) {
-			$nicename  = $authorData->nicename ? $authorData->nicename : null;
-			$entries[] = [
-				'loc'        => ! empty( $authorData->authorUrl ) ? $authorData->authorUrl : get_author_posts_url( $authorData->ID, $nicename ),
+			$entry = [
+				'loc'        => ! empty( $authorData->authorUrl )
+					? $authorData->authorUrl
+					: get_author_posts_url( $authorData->ID, $authorData->nicename ?: '' ),
 				'lastmod'    => aioseo()->helpers->dateTimeToIso8601( $authorData->lastModified ),
 				'changefreq' => aioseo()->sitemap->priority->frequency( 'author' ),
 				'priority'   => aioseo()->sitemap->priority->priority( 'author' )
 			];
+
+			$entries[] = apply_filters( 'aioseo_sitemap_author_entry', $entry, $authorData->ID, $authorData->nicename, 'author' );
 		}
 
 		return apply_filters( 'aioseo_sitemap_author_archives', $entries );
@@ -616,10 +622,11 @@ class Content {
 			if ( $year !== $date->year ) {
 				$year         = $date->year;
 				$entry['loc'] = get_year_link( $date->year );
-				$entries[]    = $entry;
+				$entries[]    = apply_filters( 'aioseo_sitemap_date_entry', $entry, $date, 'year', 'date' );
 			}
+
 			$entry['loc'] = get_month_link( $date->year, $date->month );
-			$entries[]    = $entry;
+			$entries[]    = apply_filters( 'aioseo_sitemap_date_entry', $entry, $date, 'month', 'date' );
 		}
 
 		return apply_filters( 'aioseo_sitemap_date_archives', $entries );
@@ -650,6 +657,18 @@ class Content {
 				'description' => get_post_field( 'post_excerpt', $post->ID ),
 				'pubDate'     => aioseo()->helpers->dateTimeToRfc822( $this->getLastModified( $post ) )
 			];
+
+			// If the entry is the homepage, we need to check if the permalink structure
+			// does not have a trailing slash. If so, we need to strip it because WordPress adds it
+			// regardless for the home_url() in get_page_link() which is used in the get_permalink() function.
+			static $homeId = null;
+			if ( null === $homeId ) {
+				$homeId = get_option( 'page_for_posts' );
+			}
+
+			if ( aioseo()->helpers->getHomePageId() === $post->ID ) {
+				$entry['guid'] = aioseo()->helpers->maybeRemoveTrailingSlash( $entry['guid'] );
+			}
 
 			$entries[] = apply_filters( 'aioseo_sitemap_post_rss', $entry, $post->ID, $post->post_type, 'post' );
 		}
@@ -862,7 +881,7 @@ class Content {
 
 		$selectClause = 'COUNT(*) as childProductAttributes';
 		if ( ! $count ) {
-			$selectClause = aioseo()->pro ? 'tt.term_id, at.frequency, at.priority' : 'tt.term_id';
+			$selectClause = aioseo()->pro ? 'tt.term_id, tt.taxonomy, at.frequency, at.priority' : 'tt.term_id, tt.taxonomy';
 		}
 
 		$joinClause   = aioseo()->pro ? "LEFT JOIN {$aioseoTermsTable} AS at ON tt.term_id = at.term_id" : '';
@@ -902,7 +921,7 @@ class Content {
 				'images'     => aioseo()->sitemap->image->term( $term )
 			];
 
-			$entries[] = apply_filters( 'aioseo_sitemap_product_attributes', $entry, $termId );
+			$entries[] = apply_filters( 'aioseo_sitemap_product_attributes', $entry, $termId, $term->taxonomy, 'term' );
 		}
 
 		return $entries;

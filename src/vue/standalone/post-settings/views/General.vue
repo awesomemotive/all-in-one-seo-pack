@@ -458,8 +458,8 @@ export default {
 				metaDescription               : __('Meta Description', td),
 				clickToAddDescription         : __('Click on the tags below to insert variables into your meta description.', td),
 				cornerstoneContent            : __('Cornerstone Content', td),
-				focusKeyphrase                : __('Focus Keyphrase', td),
-				additionalKeyphrases          : __('Additional Keyphrases', td),
+				focusKeyphrase                : __('Focus Keyword', td),
+				additionalKeyphrases          : __('Additional Keywords', td),
 				pageAnalysis                  : __('Page Analysis', td),
 				basicSeo                      : __('Basic SEO', td),
 				title                         : __('Title', td),
@@ -477,7 +477,7 @@ export default {
 				),
 				keyphraseDocumentation : sprintf(
 					// Translators: 1 - "Learn more link".
-					__('Not sure what keyphrases are used for? Check out our documentation for more information. %1$s', td),
+					__('Not sure what keywords are used for? Check out our documentation for more information. %1$s', td),
 					links.getDocLink(GLOBAL_STRINGS.learnMore, 'useKeyphrasesTooltip', true)
 				)
 			})

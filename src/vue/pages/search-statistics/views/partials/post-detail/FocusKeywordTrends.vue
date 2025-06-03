@@ -79,9 +79,9 @@ export default {
 			loading   : false,
 			intervals : [],
 			strings   : {
-				focusKeyword       : __('Focus Keyphrase', td),
-				youDontHaveKeyword : __('You don\'t yet have a Focus Keyphrase for this post. Add one to track trends and get suggested changes for your content to help you rank higher in search results.', td),
-				addKeyword         : __('Add Focus Keyphrase', td)
+				focusKeyword       : __('Focus Keyword', td),
+				youDontHaveKeyword : __('You don\'t yet have a Focus Keyword for this post. Add one to track trends and get suggested changes for your content to help you rank higher in search results.', td),
+				addKeyword         : __('Add Focus Keyword', td)
 			}
 		}
 	},

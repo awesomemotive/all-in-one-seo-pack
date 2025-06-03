@@ -98,15 +98,22 @@ class Notification extends Model {
 	 *
 	 * @since 4.1.3
 	 *
-	 * @param  boolean $reset Whether or not to reset the new notifications.
-	 * @return array          An array of notifications.
+	 * @param  bool  $reset Whether or not to reset the notifications.
+	 * @return array        An array of notifications.
 	 */
 	public static function getNotifications( $reset = true ) {
-		return [
+		static $notifications = null;
+		if ( null !== $notifications ) {
+			return $notifications;
+		}
+
+		$notifications = [
 			'active'    => self::getAllActiveNotifications(),
 			'new'       => self::getNewNotifications( $reset ),
 			'dismissed' => self::getAllDismissedNotifications()
 		];
+
+		return $notifications;
 	}
 
 	/**
@@ -117,10 +124,19 @@ class Notification extends Model {
 	 * @return array An array of active notifications.
 	 */
 	public static function getAllActiveNotifications() {
+		static $activeNotifications = null;
+		if ( null !== $activeNotifications ) {
+			return $activeNotifications;
+		}
+
 		$staticNotifications = self::getStaticNotifications();
 		$notifications       = array_values( json_decode( wp_json_encode( self::getActiveNotifications() ), true ) );
 
-		return ! empty( $staticNotifications ) ? array_merge( $staticNotifications, $notifications ) : $notifications;
+		$activeNotifications = ! empty( $staticNotifications )
+			? array_merge( $staticNotifications, $notifications )
+			: $notifications;
+
+		return $activeNotifications;
 	}
 
 	/**
@@ -130,11 +146,16 @@ class Notification extends Model {
 	 *
 	 * @since 4.1.3
 	 *
-	 * @param  boolean $reset Whether or not to reset the new notifications.
-	 * @return array          An array of new notifications if any exist.
+	 * @param  bool  $reset Whether or not to reset the new notifications.
+	 * @return array        An array of new notifications if any exist.
 	 */
 	public static function getNewNotifications( $reset = true ) {
-		$notifications = self::filterNotifications(
+		static $newNotifications = null;
+		if ( null !== $newNotifications ) {
+			return $newNotifications;
+		}
+
+		$newNotifications = self::filterNotifications(
 			aioseo()->core->db
 				->start( 'aioseo_notifications' )
 				->where( 'dismissed', 0 )
@@ -151,7 +172,7 @@ class Notification extends Model {
 			self::resetNewNotifications();
 		}
 
-		return $notifications;
+		return $newNotifications;
 	}
 
 	/**
@@ -238,7 +259,7 @@ class Notification extends Model {
 	 *
 	 * @return array An array of active notifications or empty.
 	 */
-	public static function getActiveNotifications() {
+	protected static function getActiveNotifications() {
 		return self::filterNotifications(
 			aioseo()->core->db
 				->start( 'aioseo_notifications' )
@@ -259,7 +280,7 @@ class Notification extends Model {
 	 *
 	 * @return array An array of dismissed notifications.
 	 */
-	public static function getAllDismissedNotifications() {
+	protected static function getAllDismissedNotifications() {
 		return array_values( json_decode( wp_json_encode( self::getDismissedNotifications() ), true ) );
 	}
 
@@ -270,8 +291,13 @@ class Notification extends Model {
 	 *
 	 * @return array An array of dismissed notifications or empty.
 	 */
-	public static function getDismissedNotifications() {
-		return self::filterNotifications(
+	protected static function getDismissedNotifications() {
+		static $dismissedNotifications = null;
+		if ( null !== $dismissedNotifications ) {
+			return $dismissedNotifications;
+		}
+
+		$dismissedNotifications = self::filterNotifications(
 			aioseo()->core->db
 				->start( 'aioseo_notifications' )
 				->where( 'dismissed', 1 )
@@ -279,6 +305,8 @@ class Notification extends Model {
 				->run()
 				->models( 'AIOSEO\\Plugin\\Common\\Models\\Notification' )
 		);
+
+		return $dismissedNotifications;
 	}
 
 	/**
@@ -339,7 +367,7 @@ class Notification extends Model {
 	 * @param  array $notifications          The notifications
 	 * @return array $remainingNotifications The remaining notifications.
 	 */
-	public static function filterNotifications( $notifications ) {
+	protected static function filterNotifications( $notifications ) {
 		$remainingNotifications = [];
 		foreach ( $notifications as $notification ) {
 			// If announcements are disabled and this is an announcement, skip adding it and move on.

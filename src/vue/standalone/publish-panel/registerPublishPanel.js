@@ -42,7 +42,6 @@ import { isBlockEditor } from '@/vue/utils/context'
 					PluginDocumentSettingPanel,
 					{
 						title     : import.meta.env.VITE_SHORT_NAME,
-						name      : 'aioseo-seo-overview',
 						className : 'aioseo-document-setting aioseo-seo-overview',
 						icon      : wp.element.Fragment
 					},

@@ -178,6 +178,8 @@ class UserProfileTab {
 			'wikipediaUrl'    => '',
 			'myspaceUrl'      => '',
 			'wordPressUrl'    => '',
+			'blueskyUrl'      => '',
+			'threadsUrl'      => ''
 		];
 	}
 }

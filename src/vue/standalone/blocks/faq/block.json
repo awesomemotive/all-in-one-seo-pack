@@ -3,7 +3,7 @@
 	"name": "aioseo/faq",
 	"title": "AIOSEO - FAQ",
 	"description": "Easily add an SEO-friendly Frequently Asked Question (FAQ) to your content.",
-	"category": "text",
+	"category": "aioseo",
 	"keywords": [
 		"accordion",
 		"answer",

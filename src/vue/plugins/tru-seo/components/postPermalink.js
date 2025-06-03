@@ -1,4 +1,5 @@
 import {
+	useRootStore,
 	usePostEditorStore,
 	useTagsStore
 } from '@/vue/stores'
@@ -102,29 +103,42 @@ export const getPostPermalink = () => {
  * @returns {string} Post permalink
  */
 export const getPostEditedPermalink = () => {
+	const rootStore = useRootStore()
 	let postPermalink
 
-	if (isClassicEditor() || isClassicNoEditor) {
+	if (isClassicEditor() || isClassicNoEditor()) {
 		const classicLink = document.querySelector('#edit-slug-box a')
 		if (classicLink && classicLink.href) {
-			postPermalink = classicLink.href.search(/preview=true/) ? classicLink.textContent : classicLink.href
+			postPermalink = classicLink.href
 		}
 	}
 
 	if (isBlockEditor()) {
-		const permalinkParts = window.wp.data.select('core/editor').getPermalinkParts()
-		if ('auto-draft' === permalinkParts?.postName) {
-			permalinkParts.postName = getPostEditedSlug()
-		}
-
-		postPermalink = `${permalinkParts?.prefix}${permalinkParts?.postName}${permalinkParts?.suffix}`
+		postPermalink = window.wp.data.select('core/editor').getPermalink()
 	}
 
 	if (!postPermalink) {
 		postPermalink = getEditorPermalink()
 	}
 
-	return postPermalink
+	if (postPermalink && rootStore.aioseo.data.usingPermalinks && getPostEditedSlug()) {
+		// Always replace the last part of the URL with the new slug being edited.
+		const parsedUrl = new URL(postPermalink)
+
+		// Split the pathname into segments, replace the last one, and join them back.
+		const paths = parsedUrl.pathname.split('/').filter(segment => '' !== segment)
+
+		paths[0 < paths.length ? paths.length - 1 : 0] = getPostEditedSlug()
+		parsedUrl.pathname = paths.join('/') + (parsedUrl.pathname.endsWith('/') ? '/' : '')
+
+		// Remove query string and hash fragment
+		parsedUrl.search = ''
+		parsedUrl.hash = ''
+
+		postPermalink = parsedUrl.toString()
+	}
+
+	return decodeURIComponent(postPermalink)
 }
 
 export const maybeUpdatePermalink = async (run = true) => {

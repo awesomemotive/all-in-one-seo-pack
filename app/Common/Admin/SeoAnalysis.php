@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIOSEO\Plugin\Common\Models\SeoAnalyzerResult;
+
 /**
  * Handles all admin code for the SEO Analysis menu.
  *
@@ -34,8 +36,8 @@ class SeoAnalysis {
 			return;
 		}
 
-		aioseo()->internalOptions->internal->siteAnalysis->score   = 0;
-		aioseo()->internalOptions->internal->siteAnalysis->results = null;
+		aioseo()->internalOptions->internal->siteAnalysis->score = 0;
+		SeoAnalyzerResult::deleteByUrl( null );
 
 		aioseo()->core->cache->delete( 'analyze_site_code' );
 		aioseo()->core->cache->delete( 'analyze_site_body' );

@@ -36,23 +36,14 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 	state : () => ({
 		analyzer     : null,
 		analyzing    : false,
-		analyzeError : null
+		analyzeError : null,
+		homeResults  : {
+			results : [],
+			score   : 0
+		},
+		competitors : {}
 	}),
 	getters : {
-		getSiteAnalysisResults : () => {
-			let value = {}
-			try {
-				const optionsStore = useOptionsStore()
-				value = JSON.parse(optionsStore.internalOptions.internal.siteAnalysis.results)
-			} catch (error) {
-				value = {}
-			}
-			return value
-		},
-		getCompetitorSiteAnalysisResults : () => {
-			const optionsStore = useOptionsStore()
-			return optionsStore.internalOptions.internal.siteAnalysis.competitors || {}
-		},
 		getHeadlineAnalysisResults : () => {
 			const optionsStore = useOptionsStore()
 			return optionsStore.internalOptions.internal.headlineAnalysis.headlines || {}
@@ -60,7 +51,7 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 		allItemsCount    : state => results => state.recommendedCount(results) + state.criticalCount(results) + state.goodCount(results),
 		recommendedCount : state => results => {
 			let total = 0
-			results = results || state.getSiteAnalysisResults || {}
+			results = results || state.homeResults?.results || {}
 
 			Object.keys(results).forEach(group => {
 				const groupResults = filterResults(results[group])
@@ -76,7 +67,7 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 		},
 		criticalCount : state => results => {
 			let total = 0
-			results   = results || state.getSiteAnalysisResults || {}
+			results   = results || state.homeResults?.results || {}
 
 			Object.keys(results).forEach(group => {
 				const groupResults = filterResults(results[group])
@@ -92,7 +83,7 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 		},
 		goodCount : state => results => {
 			let total = 0
-			results   = results || state.getSiteAnalysisResults || {}
+			results   = results || state.homeResults?.results || {}
 
 			Object.keys(results).forEach(group => {
 				const groupResults = filterResults(results[group])
@@ -108,6 +99,33 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 		}
 	},
 	actions : {
+		getSiteAnalysisResults () {
+			if (this.homeResults?.results?.length) {
+				return this.homeResults
+			}
+
+			this.analyzing = true
+
+			return http.get(links.restUrl('seo-analysis/homeresults'))
+				.then(response => {
+					this.homeResults = response.body.result
+
+					this.analyzing = false
+					return this.homeResults
+				})
+		},
+		getCompetitorSiteAnalysisResults () {
+			if (this.competitors?.length) {
+				return this.competitors
+			}
+
+			return http.get(links.restUrl('seo-analysis/competitors'))
+				.then(response => {
+					this.competitors = response.body.result
+
+					return this.competitors
+				})
+		},
 		runSiteAnalyzer (payload = {}) {
 			this.analyzing = true
 			this.analyzer  = 'competitor-site'
@@ -118,15 +136,12 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 					refresh : payload.refresh
 				})
 				.then(response => {
-					const optionsStore = useOptionsStore()
 					if (payload.url) {
-						optionsStore.updateOption('internalOptions', { groups: [ 'internal', 'siteAnalysis' ], key: 'competitors', value: response.body })
 						this.analyzing = false
 						return response
 					}
 
-					optionsStore.updateOption('internalOptions', { groups: [ 'internal', 'siteAnalysis' ], key: 'score', value: response.body.score })
-					optionsStore.updateOption('internalOptions', { groups: [ 'internal', 'siteAnalysis' ], key: 'results', value: JSON.stringify(response.body.results) })
+					this.homeResults = response.body
 					this.analyzing = false
 				})
 				.catch(error => {
@@ -166,9 +181,8 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 				.send({
 					url
 				})
-				.then(response => {
-					const optionsStore = useOptionsStore()
-					optionsStore.updateOption('internalOptions', { groups: [ 'internal', 'siteAnalysis' ], key: 'competitors', value: response.body })
+				.then(() => {
+					delete this.competitors[url]
 					this.analyzing = false
 				})
 		},

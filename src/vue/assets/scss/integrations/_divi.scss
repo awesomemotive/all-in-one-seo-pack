@@ -28,7 +28,7 @@ $settings-bar-height: 90px;
 
 	#aioseo-app-modal {
 		position: absolute;
-		z-index: 1;
+		z-index: 10;
 		top: 0;
 		left: 0;
 		height: 0;
@@ -39,7 +39,7 @@ $settings-bar-height: 90px;
 			.add-focus-keyphrase-sidebar-button {
 				.popper {
 					/* We need this as popper adds styles inline dynamically and that has the highest specificity */
-					left: 40px !important; 
+					left: 40px !important;
 				}
 			}
 		}
@@ -81,12 +81,12 @@ $settings-bar-height: 90px;
 						&-top-right {
 							top: calc(100% + 24px)
 						}
-						
+
 						&-bottom-left,
 						&-bottom-right {
 							bottom: calc(100% + 24px)
 						}
-						
+
 						&-left,
 						&-right {
 							top: calc(100% + 24px)
@@ -100,12 +100,12 @@ $settings-bar-height: 90px;
 						&-bottom-left {
 							left: calc(100% + 24px)
 						}
-						
+
 						&-top-right,
 						&-bottom-right {
 							right: calc(100% + 24px)
 						}
-						
+
 						&-left,
 						&-right {
 							top: calc(100% + 24px)
@@ -196,7 +196,7 @@ $settings-bar-height: 90px;
 			}
 		}
 		/* Datepicker Fixes */
-		.el-date-picker, 
+		.el-date-picker,
 		.el-date-range-picker {
 			table.el-date-table {
 				border: inherit;
@@ -209,7 +209,7 @@ $settings-bar-height: 90px;
 			.el-picker-panel__icon-btn {
 				padding: 1px 6px;
 				background: inherit;
-		
+
 				&:hover {
 					color: var(--el-datepicker-hover-text-color);
 					background: inherit;
@@ -217,7 +217,7 @@ $settings-bar-height: 90px;
 				}
 			}
 		}
-		
+
 
 		.aioseo-cta {
 			a.learn-more,
@@ -238,7 +238,7 @@ $settings-bar-height: 90px;
 		.aioseo-button {
 			text-transform: initial;
 			display: inline-flex;
-			
+
 
 			&:disabled {
 				color: inherit;
@@ -250,17 +250,17 @@ $settings-bar-height: 90px;
 						color: $white;
 					}
 				}
-			}           
+			}
 		}
-		
+
 		.aioseo-modal-body {
 			@for $i from 1 through 6 {
 				h#{$i} {
 					text-transform: inherit;
 				}
 			}
-		}   
-		
+		}
+
 
 		&.aioseo-post-schema-confirmation-modal {
 			@for $i from 1 through 6 {
@@ -275,7 +275,7 @@ $settings-bar-height: 90px;
 				margin: inherit;
 			}
 		}
-		
+
 
 		.input,
 		.textarea,

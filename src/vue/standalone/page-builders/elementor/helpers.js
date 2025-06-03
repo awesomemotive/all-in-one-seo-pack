@@ -1,5 +1,6 @@
 import { cleanForSlug } from '@/vue/utils/cleanForSlug'
-import { getText, getImages } from '@/vue/utils/html'
+import { getText } from '@/vue/utils/html'
+import { getVideos, getImages } from '@/app/tru-seo/analyzer/analysis/contentHasAssets'
 
 /**
  * Gets the post content.
@@ -14,12 +15,14 @@ export const getContent = () => {
 		return ''
 	}
 
-	editorDocument.$element.find('.elementor-widget-container').each((_index, element) => {
+	editorDocument.$element.find('.elementor-widget').each((_index, element) => {
 		const html = element.innerHTML.trim()
+			// Remove the wrapper div with class .elementor-widget-container. This is needed to support old Elementor versions where the Optimized DOM option is disabled or not supported.
+			.replaceAll(/<div class="elementor-widget-container">(.*)<\/div>/g, '$1')
 			.replaceAll(/<p.*>(<img.*>)<\/p>/g, '$1') // Remove the wrapper <p> if there's just an image inside it.
 
-		// Skip if there's no text or images, just HTML markup.
-		if ('' === getText(html) && 0 === getImages(html).length) {
+		// Skip if there's no text, images or videos, just HTML markup
+		if ('' === getText(html) && 0 === getImages(html) && 0 === getVideos(html)) {
 			return
 		}
 
