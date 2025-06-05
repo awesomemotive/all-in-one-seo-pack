@@ -41,9 +41,13 @@ class WebPage extends Graphs\Graph {
 			'name'        => aioseo()->meta->title->getTitle(),
 			'description' => aioseo()->schema->context['description'],
 			'inLanguage'  => aioseo()->helpers->currentLanguageCodeBCP47(),
-			'isPartOf'    => [ '@id' => $homeUrl . '#website' ],
-			'breadcrumb'  => [ '@id' => aioseo()->schema->context['url'] . '#breadcrumblist' ]
+			'isPartOf'    => [ '@id' => $homeUrl . '#website' ]
 		];
+
+		$breadcrumbs = aioseo()->breadcrumbs->frontend->getBreadcrumbs() ?? '';
+		if ( ! empty( $breadcrumbs ) ) {
+			$data['breadcrumb'] = [ '@id' => aioseo()->schema->context['url'] . '#breadcrumblist' ];
+		}
 
 		if ( is_singular() && 'page' !== get_post_type() ) {
 			$post = aioseo()->helpers->getPost();
@@ -66,9 +70,7 @@ class WebPage extends Graphs\Graph {
 
 		if ( is_singular() ) {
 			if ( ! isset( aioseo()->schema->context['object'] ) || ! aioseo()->schema->context['object'] ) {
-				$data = $this->getAddonData( $data, 'webPage' );
-
-				return $data;
+				return $this->getAddonData( $data, 'webPage' );
 			}
 
 			$post = aioseo()->schema->context['object'];
@@ -85,17 +87,13 @@ class WebPage extends Graphs\Graph {
 			$data['datePublished'] = mysql2date( DATE_W3C, $post->post_date, false );
 			$data['dateModified']  = mysql2date( DATE_W3C, $post->post_modified, false );
 
-			$data = $this->getAddonData( $data, 'webPage' );
-
-			return $data;
+			return $this->getAddonData( $data, 'webPage' );
 		}
 
 		if ( is_front_page() ) {
 			$data['about'] = [ '@id' => trailingslashit( home_url() ) . '#' . aioseo()->options->searchAppearance->global->schema->siteRepresents ];
 		}
 
-		$data = $this->getAddonData( $data, 'webPage' );
-
-		return $data;
+		return $this->getAddonData( $data, 'webPage' );
 	}
 }
