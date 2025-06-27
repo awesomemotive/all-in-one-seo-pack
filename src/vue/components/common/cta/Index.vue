@@ -14,6 +14,7 @@
 				:cta-button-visible="ctaButtonVisible"
 				:cta-second-button-visible="ctaSecondButtonVisible"
 				:cta-button-loading="ctaButtonLoading"
+				:cta-second-button-loading="ctaSecondButtonLoading"
 				:cta-button-visible-warning="ctaButtonVisibleWarning"
 				:cta-link="ctaLink"
 				:target="target"
@@ -34,6 +35,10 @@
 					<slot name="description" />
 				</template>
 
+				<template #actions-divider>
+					<slot name="actions-divider" />
+				</template>
+
 				<template #learn-more-text>
 					<slot name="learn-more-text" />
 				</template>
@@ -52,6 +57,7 @@ import Type2 from '@/vue/components/common/cta/Type/2'
 import Type3 from '@/vue/components/common/cta/Type/3'
 import Type4 from '@/vue/components/common/cta/Type/4'
 import Type5 from '@/vue/components/common/cta/Type/5'
+import Type6 from '@/vue/components/common/cta/Type/6'
 
 import { __, sprintf } from '@/vue/plugins/translations'
 
@@ -64,7 +70,8 @@ export default {
 		Type2,
 		Type3,
 		Type4,
-		Type5
+		Type5,
+		Type6
 	},
 	props : {
 		type : {
@@ -73,15 +80,16 @@ export default {
 				return 1
 			},
 			validator (value) {
-				return [ 1, 2, 3, 4, 5 ].includes(value)
+				return [ 1, 2, 3, 4, 5, 6 ].includes(value)
 			}
 		},
-		featureList           : Array,
-		sameTab               : Boolean,
-		ctaButtonAction       : Boolean,
-		ctaSecondButtonAction : Boolean,
-		ctaButtonLoading      : Boolean,
-		ctaLink               : {
+		featureList            : Array,
+		sameTab                : Boolean,
+		ctaButtonAction        : Boolean,
+		ctaSecondButtonAction  : Boolean,
+		ctaButtonLoading       : Boolean,
+		ctaSecondButtonLoading : Boolean,
+		ctaLink                : {
 			type     : String,
 			required : false
 		},

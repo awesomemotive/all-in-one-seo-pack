@@ -2,7 +2,6 @@
 	<div class="aioseo-percent-circle">
 		<transition name="fill-percent-circle">
 			<svg
-				class="aioseo-seo-site-score-svg"
 				viewBox="0 0 33.83098862 33.83098862"
 				xmlns="http://www.w3.org/2000/svg"
 			>

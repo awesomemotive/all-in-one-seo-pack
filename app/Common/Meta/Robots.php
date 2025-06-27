@@ -287,9 +287,13 @@ class Robots {
 				$this->attributes['noindex'] = 'noindex';
 			}
 
-			$robotsMeta = $options->advanced->robotsMeta->all();
-			if ( $robotsMeta['default'] ) {
+			if ( ! isset( $options->advanced->robotsMeta ) ) {
 				$robotsMeta = aioseo()->options->searchAppearance->advanced->globalRobotsMeta->all();
+			} else {
+				$robotsMeta = $options->advanced->robotsMeta->all();
+				if ( $robotsMeta['default'] ) {
+					$robotsMeta = aioseo()->options->searchAppearance->advanced->globalRobotsMeta->all();
+				}
 			}
 		} else {
 			$robotsMeta = aioseo()->options->searchAppearance->advanced->globalRobotsMeta->all();

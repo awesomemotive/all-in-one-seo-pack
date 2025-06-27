@@ -43,3 +43,6 @@ registerBlockType('aioseo/openinghours', {
 registerBlockType('aioseo/openinghours', {
 	title : 'AIOSEO - Reviewer Name (E-E-A-T)'
 })
+registerBlockType('aioseo/key-points', {
+	title : 'AIOSEO - Key Points (TLDR)'
+})

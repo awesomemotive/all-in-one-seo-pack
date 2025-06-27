@@ -401,6 +401,11 @@ class Helpers {
 	 */
 	private function excludedObjectIds( $option ) {
 		$type = aioseo()->sitemap->type;
+
+		if ( 'llms' === $type ) {
+			return '';
+		}
+
 		// The RSS Sitemap needs to exclude whatever is excluded in the general sitemap.
 		if ( 'rss' === $type ) {
 			$type = 'general';

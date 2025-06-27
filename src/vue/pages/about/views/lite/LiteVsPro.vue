@@ -172,16 +172,6 @@ export default {
 						description : __('Connect with Google Search Console to track how your site is performing in search rankings and generate reports with actionable insights that help you get the most out of your content. (Elite plan only)', td)
 					}
 				},
-				openai : {
-					name : __('Open AI Integration', td),
-					lite : {
-						title : __('Not Available', td)
-					},
-					pro : {
-						title       : __('Included as Pro Feature', td),
-						description : __('Use the power of ChatGPT to generate engaging SEO titles and meta descriptions for your posts.', td)
-					}
-				},
 				wooCommerce : {
 					name : __('WooCommerce Integration', td),
 					lite : {

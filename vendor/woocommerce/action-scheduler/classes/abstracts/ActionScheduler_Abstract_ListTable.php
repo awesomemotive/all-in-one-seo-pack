@@ -314,6 +314,24 @@ abstract class ActionScheduler_Abstract_ListTable extends WP_List_Table {
 	}
 
 	/**
+	 * Querystring arguments to persist between form submissions.
+	 *
+	 * @since 3.7.3
+	 *
+	 * @return string[]
+	 */
+	protected function get_request_query_args_to_persist() {
+		return array_merge(
+			$this->sort_by,
+			array(
+				'page',
+				'status',
+				'tab',
+			)
+		);
+	}
+
+	/**
 	 * Return the sortable column specified for this request to order the results by, if any.
 	 *
 	 * @return string
@@ -437,7 +455,7 @@ abstract class ActionScheduler_Abstract_ListTable extends WP_List_Table {
 	/**
 	 * Prepares the data to feed WP_Table_List.
 	 *
-	 * This has the core for selecting, sorting and filting data. To keep the code simple
+	 * This has the core for selecting, sorting and filtering data. To keep the code simple
 	 * its logic is split among many methods (get_items_query_*).
 	 *
 	 * Beside populating the items this function will also count all the records that matches
@@ -526,7 +544,7 @@ abstract class ActionScheduler_Abstract_ListTable extends WP_List_Table {
 
 	/**
 	 * Set the data for displaying. It will attempt to unserialize (There is a chance that some columns
-	 * are serialized). This can be override in child classes for futher data transformation.
+	 * are serialized). This can be override in child classes for further data transformation.
 	 *
 	 * @param array $items Items array.
 	 */
@@ -627,7 +645,7 @@ abstract class ActionScheduler_Abstract_ListTable extends WP_List_Table {
 	}
 
 	/**
-	 * Default column formatting, it will escape everythig for security.
+	 * Default column formatting, it will escape everything for security.
 	 *
 	 * @param array  $item The item array.
 	 * @param string $column_name Column name to display.
@@ -682,8 +700,8 @@ abstract class ActionScheduler_Abstract_ListTable extends WP_List_Table {
 
 		// Translated status labels.
 		$status_labels             = ActionScheduler_Store::instance()->get_status_labels();
-		$status_labels['all']      = _x( 'All', 'status labels', 'action-scheduler' );
-		$status_labels['past-due'] = _x( 'Past-due', 'status labels', 'action-scheduler' );
+		$status_labels['all']      = esc_html_x( 'All', 'status labels', 'action-scheduler' );
+		$status_labels['past-due'] = esc_html_x( 'Past-due', 'status labels', 'action-scheduler' );
 
 		foreach ( $this->status_counts as $status_slug => $count ) {
 
@@ -717,12 +735,15 @@ abstract class ActionScheduler_Abstract_ListTable extends WP_List_Table {
 	 */
 	protected function display_table() {
 		echo '<form id="' . esc_attr( $this->_args['plural'] ) . '-filter" method="get">';
-		foreach ( $_GET as $key => $value ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			if ( '_' === $key[0] || 'paged' === $key || 'ID' === $key ) {
+		foreach ( $this->get_request_query_args_to_persist() as $arg ) {
+			$arg_value = isset( $_GET[ $arg ] ) ? sanitize_text_field( wp_unslash( $_GET[ $arg ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( ! $arg_value ) {
 				continue;
 			}
-			echo '<input type="hidden" name="' . esc_attr( $key ) . '" value="' . esc_attr( $value ) . '" />';
+
+			echo '<input type="hidden" name="' . esc_attr( $arg ) . '" value="' . esc_attr( $arg_value ) . '" />';
 		}
+
 		if ( ! empty( $this->search_by ) ) {
 			echo $this->search_box( $this->get_search_box_button_text(), 'plugin' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}

@@ -238,13 +238,30 @@ export default {
 					const data = error.response.body.licenseData
 					if (data.invalid) {
 						this.error = __('The license key provided is invalid. Please use a different key to continue receiving automatic updates.', td)
-					} else if (data.disabled) {
-						this.error = __('The license key provided is disabled. Please use a different key to continue receiving automatic updates.', td)
-					} else if (data.expired) {
+						return
+					}
+
+					if (data.disabled) {
+						this.error = __('The license key provided has been suspended. Please use a different key to continue receiving automatic updates. (Error Code AH12BGDT45D9)', td)
+						return
+					}
+
+					if (data.domainDisabled) {
+						this.error = __('The license key provided cannot be used for this domain as it has been disabled. Please use a different key to continue receiving automatic updates, or contact our support team for more information. (Error Code RW94KXEO54I2)', td)
+						return
+					}
+
+					if (data.expired) {
 						this.error = this.licenseKeyExpired
-					} else if (data.activationsError) {
-						this.error = __('This license key has reached the maximum number of activations. Please deactivate it from another site or purchase a new license to continue receiving automatic updates.', td)
-					} else if (data.connectionError || data.requestError) {
+						return
+					}
+
+					if (data.activationsError) {
+						this.error = __('This license key has reached the maximum number of activations. Please deactivate it from another site, or upgrade your license to continue receiving automatic updates. (Error Code ZL53IPPJ80RF)', td)
+						return
+					}
+
+					if (data.connectionError || data.requestError) {
 						this.error = __('There was an error connecting to the licensing API. Please try again later.', td)
 					}
 				})

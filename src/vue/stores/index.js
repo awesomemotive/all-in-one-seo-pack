@@ -1,6 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia'
 
 import { useAddonsStore } from '@/vue/stores/AddonsStore'
+import { useAiStore } from '@/vue/stores/AiStore'
 import { useAnalyzerStore } from '@/vue/stores/AnalyzerStore'
 import { useBackupsStore } from '@/vue/stores/BackupsStore'
 import { useConnectStore } from '@/vue/stores/ConnectStore'
@@ -215,6 +216,7 @@ export {
 	loadPiniaStores,
 	// All the stores.
 	useAddonsStore,
+	useAiStore,
 	useAnalyzerStore,
 	useBackupsStore,
 	useConnectStore,

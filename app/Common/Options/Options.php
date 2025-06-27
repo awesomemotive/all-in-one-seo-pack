@@ -37,6 +37,12 @@ class Options {
 			'norton'                    => [ 'type' => 'string' ],
 			'miscellaneousVerification' => [ 'type' => 'html' ]
 		],
+		'aiContent'        => [
+			'country'  => [ 'type' => 'string', 'default' => 'us' ],
+			'language' => [ 'type' => 'string', 'default' => 'en' ],
+			'tone'     => [ 'type' => 'string', 'default' => 'formal' ],
+			'audience' => [ 'type' => 'string', 'default' => 'general' ]
+		],
 		'breadcrumbs'      => [
 			'separator'             => [ 'type' => 'string', 'default' => '&raquo;' ],
 			'homepageLink'          => [ 'type' => 'boolean', 'default' => true ],
@@ -62,6 +68,7 @@ TEMPLATE
 		'advanced'         => [
 			'truSeo'           => [ 'type' => 'boolean', 'default' => true ],
 			'headlineAnalyzer' => [ 'type' => 'boolean', 'default' => true ],
+			'llmsTxt'          => [ 'type' => 'boolean', 'default' => true ],
 			'seoAnalysis'      => [ 'type' => 'boolean', 'default' => true ],
 			'dashboardWidgets' => [ 'type' => 'array', 'default' => [ 'seoSetup', 'seoOverview', 'seoNews' ] ],
 			'announcements'    => [ 'type' => 'boolean', 'default' => true ],

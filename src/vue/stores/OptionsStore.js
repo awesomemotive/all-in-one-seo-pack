@@ -22,6 +22,11 @@ export const useOptionsStore = defineStore('OptionsStore', {
 		htaccessError          : null,
 		saveError              : null
 	}),
+	getters : {
+		aiCreditPercentage () {
+			return Math.round((this.internalOptions.internal.ai.credits.remaining / this.internalOptions.internal.ai.credits.total) * 100)
+		}
+	},
 	actions : {
 		saveChanges () {
 			const dirtyOptionsStore   = useDirtyOptionsStore()
@@ -136,6 +141,10 @@ export const useOptionsStore = defineStore('OptionsStore', {
 			groups.forEach(group => {
 				options = options[group]
 			})
+
+			if (undefined === options || undefined === options[key]) {
+				return
+			}
 
 			options[key] = value
 		}

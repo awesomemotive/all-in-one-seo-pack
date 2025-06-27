@@ -57,8 +57,7 @@ class ConflictingPlugins {
 	 * @return void
 	 */
 	public function init() {
-		// Only do this for users who can install/deactivate plugins.
-		if ( ! current_user_can( 'install_plugins' ) ) {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return;
 		}
 

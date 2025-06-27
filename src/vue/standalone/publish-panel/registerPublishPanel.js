@@ -41,6 +41,7 @@ import { isBlockEditor } from '@/vue/utils/context'
 				wp.element.createElement(
 					PluginDocumentSettingPanel,
 					{
+						name      : 'aioseo-publish-panel',
 						title     : import.meta.env.VITE_SHORT_NAME,
 						className : 'aioseo-document-setting aioseo-seo-overview',
 						icon      : wp.element.Fragment

@@ -328,13 +328,14 @@ namespace AIOSEO\Plugin {
 			$this->schema             = $this->pro ? new Pro\Schema\Schema() : new Common\Schema\Schema();
 			$this->actionScheduler    = new Common\Utils\ActionScheduler();
 			$this->seoRevisions       = $this->pro ? new Pro\SeoRevisions\SeoRevisions() : new Common\SeoRevisions\SeoRevisions();
-			$this->ai                 = $this->pro ? new Pro\Ai\Ai() : null;
+			$this->ai                 = $this->pro ? new Pro\Ai\Ai() : new Common\Ai\Ai();
 			$this->filters            = $this->pro ? new Pro\Main\Filters() : new Lite\Main\Filters();
 			$this->crawlCleanup       = new Common\QueryArgs\CrawlCleanup();
 			$this->searchCleanup      = new Common\SearchCleanup\SearchCleanup();
 			$this->emailReports       = new Common\EmailReports\EmailReports();
 			$this->thirdParty         = new Common\ThirdParty\ThirdParty();
 			$this->writingAssistant   = new Common\WritingAssistant\WritingAssistant();
+			$this->llms               = new Common\Llms\Llms();
 
 			if ( ! wp_doing_ajax() && ! wp_doing_cron() ) {
 				$this->rss       = new Common\Rss();

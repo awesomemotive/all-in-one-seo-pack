@@ -598,4 +598,13 @@ abstract class AIOSEOAbstract {
 	 * @var \AIOSEO\Plugin\Common\WritingAssistant\WritingAssistant
 	 */
 	public $writingAssistant = null;
+
+	/**
+	 * Llms class instance.
+	 *
+	 * @since 4.8.4
+	 *
+	 * @var \AIOSEO\Plugin\Common\Llms\Llms
+	 */
+	public $llms = null;
 }

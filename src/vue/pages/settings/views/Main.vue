@@ -13,6 +13,7 @@ import {
 
 import AccessControl from './AccessControl'
 import Advanced from './Advanced'
+import AiContent from './AiContent'
 import Breadcrumbs from './Breadcrumbs'
 import CoreMain from '@/vue/components/common/core/main/Index'
 import GeneralSettings from './GeneralSettings'
@@ -33,6 +34,7 @@ export default {
 	components : {
 		AccessControl,
 		Advanced,
+		AiContent,
 		Breadcrumbs,
 		CoreMain,
 		GeneralSettings,

@@ -49,6 +49,17 @@ export default [
 		}
 	},
 	{
+		path      : '/ai-content',
+		name      : 'ai-content',
+		component : loadView('Main'),
+		meta      : {
+			home   : 'ai-content',
+			access : 'aioseo_general_settings',
+			name   : __('AI Content', td),
+			label  : 'new'
+		}
+	},
+	{
 		path      : '/breadcrumbs',
 		name      : 'breadcrumbs',
 		component : loadView('Main'),
@@ -72,8 +83,7 @@ export default [
 		component : loadView('Main'),
 		meta      : {
 			access : 'aioseo_page_writing_assistant_settings',
-			name   : __('Writing Assistant', td),
-			label  : 'new'
+			name   : __('Writing Assistant', td)
 		}
 	},
 	{

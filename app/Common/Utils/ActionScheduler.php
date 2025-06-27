@@ -226,7 +226,7 @@ class ActionScheduler {
 			->select( 'aa.hook, aa.args' )
 			->join( 'actionscheduler_groups as ag', 'ag.group_id', 'aa.group_id' )
 			->where( 'ag.slug', $this->actionSchedulerGroup )
-			->whereIn( 'status', [ 'pending', 'in-progress' ] )
+			->whereIn( 'status', [ 'pending', 'in-progress', 'past-due' ] )
 			->run()
 			->result();
 

@@ -53,11 +53,10 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, ref, nextTick } from 'vue'
+import { computed, ref, nextTick } from 'vue'
 
 import {
-	useIndexStatusStore,
-	useSearchStatisticsStore
+	useIndexStatusStore
 } from '@/vue/stores'
 
 import CoreCard from '@/vue/components/common/core/Card'
@@ -68,8 +67,7 @@ import SvgGoogle from '@/vue/components/common/svg/logo/GoogleSmall'
 
 import { __ } from '@/vue/plugins/translations'
 
-const indexStatusStore      = useIndexStatusStore()
-const searchStatisticsStore = useSearchStatisticsStore()
+const indexStatusStore = useIndexStatusStore()
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -161,23 +159,6 @@ const changeSelectedStatus = async (status) => {
 
 	selectedStatus.value = ''
 }
-
-onBeforeMount(async () => {
-	if (
-		searchStatisticsStore.isConnected &&
-		!searchStatisticsStore.shouldShowSampleReports &&
-		!indexStatusStore.objects.paginated.rows.length
-	) {
-		try {
-			await Promise.all([
-				indexStatusStore.fetchIndexStatusOverview(),
-				indexStatusStore.fetchIndexStatusObjects()
-			])
-		} catch (error) {
-			console.error(error)
-		}
-	}
-})
 </script>
 
 <style lang="scss" scoped>

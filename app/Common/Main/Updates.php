@@ -264,10 +264,18 @@ class Updates {
 			aioseo()->core->cache->delete( 'analyze_site_body' );
 		}
 
+		if ( version_compare( $lastActiveVersion, '4.8.4', '<' ) ) {
+			$this->addAiColumn();
+		}
+
+		if ( version_compare( $lastActiveVersion, '4.8.4.1', '<' ) ) {
+			aioseo()->ai->updateCredits( true );
+		}
+
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
 
 		// Always clear the cache if the last active version is different from our current.
-
+		// https://github.com/awesomemotive/aioseo/issues/2920
 		if ( version_compare( $lastActiveVersion, AIOSEO_VERSION, '<' ) ) {
 			aioseo()->core->cache->clear();
 		}
@@ -1998,6 +2006,30 @@ class Updates {
 
 		aioseo()->core->cache->delete( 'analyze_site_code' );
 		aioseo()->core->cache->delete( 'analyze_site_body' );
+	}
+
+	/**
+	* Adds the AI column to our posts table.
+	*
+	* @since 4.8.4
+	*
+	* @return void
+	*/
+	public function addAiColumn() {
+		if ( ! aioseo()->core->db->columnExists( 'aioseo_posts', 'ai' ) ) {
+			$tableName = aioseo()->core->db->db->prefix . 'aioseo_posts';
+			if ( aioseo()->core->db->columnExists( 'aioseo_posts', 'open_ai' ) ) {
+				aioseo()->core->db->execute(
+					"ALTER TABLE {$tableName}
+					ADD ai longtext DEFAULT NULL AFTER open_ai"
+				);
+			} else {
+				aioseo()->core->db->execute(
+					"ALTER TABLE {$tableName}
+					ADD ai longtext DEFAULT NULL AFTER options"
+				);
+			}
+		}
 	}
 
 	/**

@@ -321,7 +321,7 @@ class Connect {
 		}
 
 		// Set the license key in a new option so we can get it when Pro is activated.
-		aioseo()->internalOptions->internal->validLicenseKey = $licenseKey;
+		aioseo()->internalOptions->internal->connectLicenseKey = $licenseKey;
 
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/class-wp-screen.php';

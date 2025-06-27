@@ -1,6 +1,6 @@
 <template>
 	<svg
-		class="aioseo-seo-site-score-svg"
+		class="aioseo-seo-site-score"
 		viewBox="0 0 34 34"
 		xmlns="http://www.w3.org/2000/svg"
 	>
@@ -93,6 +93,10 @@ export default {
 
 	&.stroke-green {
 		stroke: $green;
+	}
+
+	&.stroke-blue {
+		stroke: $blue;
 	}
 }
 

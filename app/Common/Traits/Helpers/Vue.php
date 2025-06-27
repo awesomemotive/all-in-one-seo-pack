@@ -124,7 +124,9 @@ trait Vue {
 				'assetsPath'        => aioseo()->core->assets->getAssetsPath(),
 				'generalSitemapUrl' => aioseo()->sitemap->helpers->getUrl( 'general' ),
 				'rssSitemapUrl'     => aioseo()->sitemap->helpers->getUrl( 'rss' ),
+				'llmsUrl'           => aioseo()->llms->getUrl(),
 				'robotsTxtUrl'      => $this->getSiteUrl() . '/robots.txt',
+				'marketingSiteUrl'  => $this->getMarketingSiteUrl(),
 				'upgradeUrl'        => apply_filters( 'aioseo_upgrade_link', AIOSEO_MARKETING_URL ),
 				'staticHomePage'    => 'page' === get_option( 'show_on_front' ) ? get_edit_post_link( get_option( 'page_on_front' ), 'url' ) : null,
 				'feeds'             => [
@@ -334,6 +336,7 @@ trait Vue {
 			'twitter_image_type'             => $post->twitter_image_type,
 			'twitter_title'                  => $post->twitter_title,
 			'twitter_description'            => $post->twitter_description,
+			'ai'                             => Models\Post::getDefaultAiOptions( $post->ai ),
 			'schema'                         => Models\Post::getDefaultSchemaOptions( $post->schema, aioseo()->helpers->getPost( $postId ) ),
 			'metaDefaults'                   => [
 				'title'       => aioseo()->meta->title->getPostTypeTitle( $postTypeObj->name ),
@@ -618,7 +621,7 @@ trait Vue {
 
 			foreach ( $entry->translations as $translation ) {
 				// If any of the translated strings contains an HTML line break, we need to ignore it. Otherwise, logging into the admin breaks.
-
+				// https://github.com/awesomemotive/aioseo/issues/2074
 				if ( preg_match( '/<br[\s\/\\\\]*>/', (string) $translation ) ) {
 					continue 2;
 				}
@@ -703,5 +706,20 @@ trait Vue {
 
 		$this->data['analyzer']['homeResults'] = Models\SeoAnalyzerResult::getResults();
 		$this->data['analyzer']['competitors'] = Models\SeoAnalyzerResult::getCompetitorsResults();
+	}
+
+	/**
+	 * Returns the marketing site URL.
+	 *
+	 * @since 4.8.4
+	 *
+	 * @return string The marketing site URL.
+	 */
+	private function getMarketingSiteUrl() {
+		if ( defined( 'AIOSEO_MARKETING_SITE_URL' ) && AIOSEO_MARKETING_SITE_URL ) {
+			return AIOSEO_MARKETING_SITE_URL;
+		}
+
+		return 'https://aioseo.com/';
 	}
 }

@@ -52,10 +52,10 @@ class RequestParser {
 	 * @return void
 	 */
 	public function checkRequest( $wp ) {
-		$this->slug = $wp->request ?? $this->cleanSlug( $wp->request );
+		$this->slug = $wp->request ?? aioseo()->helpers->cleanSlug( $wp->request );
 		if ( ! $this->slug && isset( $_SERVER['REQUEST_URI'] ) ) {
 			// We must fallback to the REQUEST URI in case the site uses plain permalinks.
-			$this->slug = $this->cleanSlug( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+			$this->slug = aioseo()->helpers->cleanSlug( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
 		}
 
 		if ( ! $this->slug ) {
@@ -74,22 +74,6 @@ class RequestParser {
 		if ( aioseo()->options->sitemap->rss->enable ) {
 			$this->checkForRssSitemap();
 		}
-	}
-
-	/**
-	 * Cleans the slug of the current request before we use it.
-	 *
-	 * @since 4.2.3
-	 *
-	 * @param  string $slug The slug.
-	 * @return string       The cleaned slug.
-	 */
-	public function cleanSlug( $slug ) {
-		$slug = strtolower( $slug );
-		$slug = aioseo()->helpers->unleadingSlashIt( $slug );
-		$slug = untrailingslashit( $slug );
-
-		return $slug;
 	}
 
 	/**

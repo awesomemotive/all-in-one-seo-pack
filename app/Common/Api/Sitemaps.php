@@ -81,7 +81,7 @@ class Sitemaps {
 	 */
 	public static function deactivateConflictingPlugins() {
 		$error = esc_html__( 'Deactivation failed. Please check permissions and try again.', 'all-in-one-seo-pack' );
-		if ( ! current_user_can( 'install_plugins' ) ) {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => $error

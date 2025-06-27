@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.8
 Requires at least: 5.4
 Requires PHP: 7.1
-Stable tag: 4.8.3.2
+Stable tag: 4.8.4.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -18,7 +18,7 @@ All in One SEO is the original WordPress SEO plugin started in 2007. Today, over
 
 Our users consistently rate [AIOSEO](https://aioseo.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin 'All in One SEO for WordPress') as the most comprehensive WordPress SEO plugin and marketing toolkit. It's the fastest way to optimize WordPress SEO settings, add schema markup, create XML sitemap, add local SEO, track SEO keyword rankings, automate internal linking, perform SEO audits, add Author SEO (EEAT), monitor SEO revisions, connect Google search console, and basically everything a SEO Pro would use to rank higher in search engines. 
 
-We have AI SEO features that helps you optimize SEO rankings using ChatGPT (OpenAI) and artificial intelligence.
+We have AI SEO features that help you optimize your posts for SEO by automatically generating SEO titles, meta descriptions, FAQs, key points, social media posts, and more.
 
 > <strong>AIOSEO Pro</strong><br />
 > This is the lite version of the All in One WordPress SEO Pro plugin that comes with all the powerful SEO features you will ever need to rank higher in search engines including **smart SEO schema markup, advanced SEO modules, powerful SEO sitemap suite, local SEO module, SEO keyword ranking tracking, automatic internal linking, WooCommerce SEO**, and tons more. [Click here to purchase the best premium WordPress SEO plugin now!](https://aioseo.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin 'All in One SEO for WordPress')
@@ -37,8 +37,8 @@ Our SEO setup wizard optimizes your website's SEO settings based on your unique 
 * **Smart Schema Markup (aka Rich Snippets)** 
 Get better click through rate (CTR) and Google rich featured snippets using advanced SEO schema markups like FAQ schema, product schema, recipe schema markup, and dozens more using our custom [Schema Generator](https://aioseo.com/features/rich-snippets-schema/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin 'Schema Generator').
 
-* **AI Title and Description Generator** 
-Save time by automatically generating SEO titles and meta descriptions using OpenAI ChatGPT.
+* **AI Content Generator** 
+Save time by automatically generating SEO titles, meta descriptions, FAQs, key points, social media posts, and more using our [AI Content Generator](https://aioseo.com/features/ai-content-generator/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin 'AI Content Generator').
 
 * **Unlimited SEO Keywords** 
 Optimize for unlimited SEO keywords using our SEO content analyzer. Our TruSEO score gives you detailed content & readability analysis, so you can get higher SEO rankings.
@@ -156,9 +156,6 @@ Improve your mobile SEO rankings with Google AMP SEO.
 * **Semrush SEO integration**
 See additional SEO keywords with Semrush SEO integration.
 
-* **OpenAI Integration**
-Use ChatGPT to write SEO titles and meta descriptions to improve SEO rankings.
-
 * **Microsoft Clarity Integration**
 See visitor interactions with heatmaps and session recordings.
 
@@ -171,12 +168,20 @@ Better Elementor SEO for landing pages.
 * **Divi SEO**
 Better Divi SEO for landing pages.
 
+* **Avada SEO**
+Better Avada SEO for landing pages.
+
+* **WP Bakery SEO**
+Better WP Bakery SEO for landing pages.
+
 * **SeedProd SEO**
 Optimize SeedProd landing pages for SEO.
 
+* **SiteOrigin SEO**
+Better SiteOrigin SEO for landing pages.
+
 * **Open Graph Support**
 Improve SEO rankings with open graph meta data.
-
 
 ### WordPress SEO Plugin Importer ###
 
@@ -222,6 +227,19 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * AISEO (incorrect)
 
 == Changelog ==
+
+**New in Version 4.8.4.1**
+
+* Fixed: PHP error for multisites when AI credits don't manage to update correctly.
+
+**New in Version 4.8.4**
+
+* New: AI Content - Use our new smart AI features to automatically generate FAQs, Key Points, social media posts and more, that perfectly fit your articles. 🤖
+* New: LLMs.txt File - The new llms.txt file helps AI engines discover your site's content more easily so your content can rank in AI search results.
+* Updated: Index Status Report now fetches index data from Google on-the-fly when it is missing or expired.
+* Fixed: Image SEO addon no longer incorrectly encodes HTML in captions.
+* Fixed: PHP notice when trying to format price of products in Product schema where no price is set.
+* Fixed: Added back missing $crumb param to aioseo_breadcrumbs_template filter hook for compatibility.
 
 **New in Version 4.8.3.2**
 
@@ -404,6 +422,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.8.3.2 =
+= 4.8.4 =
 
 This update adds major improvements and bug fixes.

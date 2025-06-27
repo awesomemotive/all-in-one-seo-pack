@@ -138,8 +138,9 @@ class Standalone {
 		];
 
 		$this->standaloneBlocks = [
-			'tocBlock' => new Blocks\TableOfContents(),
-			'faqBlock' => new Blocks\FaqPage()
+			'tocBlock'       => new Blocks\TableOfContents(),
+			'faqBlock'       => new Blocks\FaqPage(),
+			'keyPointsBlock' => new Blocks\KeyPoints()
 		];
 	}
 }

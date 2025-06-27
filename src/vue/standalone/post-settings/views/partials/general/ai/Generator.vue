@@ -6,17 +6,9 @@
 		>
 			<button
 				type="button"
-				@click="settingsStore.setModalState({
-					modalName : 'aiGenerator',
-					value : type
-				})"
+				@click="showModal = true"
 			>
-				<svg-ai-robot
-				@click="settingsStore.setModalState({
-					modalName : 'aiGenerator',
-					value : type
-				})"
-				/>
+				<svg-ai-content />
 			</button>
 
 			<template #tooltip>
@@ -24,9 +16,11 @@
 			</template>
 		</core-tooltip>
 
-		<ai-modal
-			:show="settingsStore.modals.aiGenerator === type"
-			:type="type"
+		<component
+			:is="`${feature.slug}-modal`"
+			:feature="feature"
+			:show="showModal"
+			@closeModal="showModal = false"
 		/>
 	</div>
 </template>
@@ -36,12 +30,13 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
-import AiModal from '../../../AIOSEO_VERSION/partials-ai/Modal'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
-import SvgAiRobot from '@/vue/components/common/svg/ai/Robot'
+import SvgAiContent from '@/vue/components/common/svg/ai/AiContent'
+
+import MetaTitleModal from '@/vue/standalone/post-settings/views/partials/ai-content/MetaTitleModal'
+import MetaDescriptionModal from '@/vue/standalone/post-settings/views/partials/ai-content/MetaDescriptionModal'
 
 import { __ } from '@/vue/plugins/translations'
-
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
@@ -51,13 +46,14 @@ export default {
 		}
 	},
 	components : {
-		AiModal,
 		CoreTooltip,
-		SvgAiRobot
+		SvgAiContent,
+		MetaTitleModal,
+		MetaDescriptionModal
 	},
 	props : {
-		type : {
-			type     : String,
+		feature : {
+			type     : Object,
 			required : true
 		}
 	},
@@ -65,7 +61,8 @@ export default {
 		return {
 			strings : {
 				useAiGenerator : __('Use AI Generator', td)
-			}
+			},
+			showModal : false
 		}
 	}
 }

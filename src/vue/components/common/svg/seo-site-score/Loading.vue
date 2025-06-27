@@ -1,6 +1,6 @@
 <template>
 	<svg
-		class="aioseo-seo-site-score-svg-loading"
+		class="aioseo-seo-site-score-loading"
 		viewBox="0 0 33.83098862 33.83098862"
 		xmlns="http://www.w3.org/2000/svg"
 	>
@@ -19,8 +19,8 @@
 </template>
 
 <style lang="scss">
-.aioseo-seo-site-score-svg-loading {
-	animation: 2s linear infinite aioseo-seo-site-score-svg-animation;
+.aioseo-seo-site-score-loading {
+	animation: 2s linear infinite aioseo-seo-site-score-animation;
 }
 
 .aioseo-seo-site-score-loading__circle {
@@ -30,7 +30,7 @@
 	stroke: $blue;
 }
 
-@keyframes aioseo-seo-site-score-svg-animation {
+@keyframes aioseo-seo-site-score-animation {
 	0% {
 		transform: rotateZ(0deg);
 	}

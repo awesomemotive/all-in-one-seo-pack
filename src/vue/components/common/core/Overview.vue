@@ -251,6 +251,7 @@ export default {
 				__('You have %1$s%2$s without a Focus Keyword%3$s. Adding one can help you optimize your content for your target keyword.', td),
 				'<a href="' + link + '" rel="noopener noreferrer">',
 				sprintf(
+					// Translators: 1 - The number of posts (e.g. "1 post", "2 posts").
 					_n('%1$d post', '%1$d posts', withoutFocusKeyword, td),
 					withoutFocusKeyword
 				),

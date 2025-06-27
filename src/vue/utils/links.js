@@ -100,7 +100,6 @@ const docLinks      = {
 	schema                        : `${marketingSite}docs/a-guide-to-schema-org-markup-for-rich-snippets/`,
 	schemaJsonLd                  : `${marketingSite}docs/a-guide-to-schema-org-markup-for-rich-snippets/#schema-markup-in-all-in-one-seo`,
 	smartTags                     : `${marketingSite}docs/using-the-smart-tags-in-titles-and-descriptions/`,
-	openAi                        : `${marketingSite}docs/using-openai-to-generate-seo-titles-and-meta-descriptions/`,
 	wpcode                        : `${marketingSite}docs/wpcode-snippet-library/`,
 	primaryTerm                   : `${marketingSite}docs/setting-the-primary-term-for-breadcrumbs/`,
 	cornerstoneContent            : `${marketingSite}docs/cornerstone-content/`,
@@ -109,13 +108,15 @@ const docLinks      = {
 	queryArgMonitor               : `${marketingSite}docs/using-the-query-arg-monitoring-in-all-in-one-seo/`,
 	businessPhoneNumber           : `${marketingSite}docs/best-business-phone-services`,
 	keywordRankTracker            : `${marketingSite}docs/using-the-keyword-rank-tracker-feature-in-search-statistics/`,
-	writingAssistantHowToUse      : `${marketingSite}docs/how-to-use-the-writing-assistant-in-aioseo/`
+	writingAssistantHowToUse      : `${marketingSite}docs/how-to-use-the-writing-assistant-in-aioseo/`,
+	aiContentGenerator            : `${marketingSite}docs/ai-content-generator/`
 }
 
 const upsellLinks = {
 	home           : marketingSite,
 	liteUpgrade    : `${marketingSite}lite-upgrade/`,
 	pricing        : `${marketingSite}pricing/`,
+	aiCredits      : `${marketingSite}pricing-ai-credits/`,
 	semrushPricing : `${marketingSite}semrush-pricing/`
 }
 

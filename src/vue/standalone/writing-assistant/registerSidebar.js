@@ -76,6 +76,7 @@ import { __ } from '@wordpress/i18n'
 					el('div',
 						{ id: 'aioseo-writing-assistant-sidebar' },
 						el('div',
+							{},
 							el('div',
 								{ className: 'aioseo-loading-spinner dark' },
 								el('div',

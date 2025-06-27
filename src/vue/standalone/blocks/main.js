@@ -7,6 +7,7 @@ import * as locationcategories from './location-categories'
 import * as locationmap from './location-map'
 import * as tableOfContents from './table-of-contents'
 import * as faq from './faq'
+import * as keyPoints from './key-points'
 import './schema'
 
 import { canLoadBlocks } from '@/vue/utils/context'
@@ -88,7 +89,8 @@ if (canLoadBlocks()) {
 			breadcrumbs,
 			htmlSitemap,
 			'post' === window?.aioseo?.screen?.base ? tableOfContents : null,
-			faq
+			faq,
+			keyPoints
 
 		].forEach(registerBlock)
 

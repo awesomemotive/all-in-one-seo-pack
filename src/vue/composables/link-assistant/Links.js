@@ -11,7 +11,6 @@ import { escapeRegex } from '@/vue/utils/regex'
 import { useCommon } from '@/vue/composables/link-assistant/Common'
 
 import { __ } from '@/vue/plugins/translations'
-
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export const useLinks = (params = {}) => {

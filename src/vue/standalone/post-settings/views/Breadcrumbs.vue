@@ -53,6 +53,8 @@ import Breadcrumbs from './AIOSEO_VERSION/Breadcrumbs'
 import BreadcrumbsLite from './lite/Breadcrumbs'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
 
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 const licenseStore = useLicenseStore()
 const showModal = ref(false)
 
@@ -61,8 +63,8 @@ defineProps({
 })
 
 const strings = {
-	editBreadcrumbsLabel : __('Edit Breadcrumbs', 'all-in-one-seo-pack-pro'),
-	modalTitle           : __('Breadcrumbs', 'all-in-one-seo-pack-pro')
+	editBreadcrumbsLabel : __('Edit Breadcrumbs', td),
+	modalTitle           : __('Breadcrumbs', td)
 }
 </script>
 

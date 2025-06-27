@@ -239,10 +239,6 @@ abstract class Usage {
 	 * @return array           The altered settings.
 	 */
 	private function filterPrivateSettings( $settings ) {
-		if ( ! empty( $settings['advanced']['openAiKey'] ) ) {
-			$settings['advanced']['openAiKey'] = true;
-		}
-
 		if ( ! empty( $settings['localBusiness']['maps']['apiKey'] ) ) {
 			$settings['localBusiness']['maps']['apiKey'] = true;
 		}

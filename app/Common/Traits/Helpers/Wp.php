@@ -983,4 +983,20 @@ trait Wp {
 
 		return $postTypeLabels[ $postType ];
 	}
+
+	/**
+	 * Cleans the slug of the current request before we use it.
+	 *
+	 * @since 4.8.4
+	 *
+	 * @param  string $slug The slug.
+	 * @return string       The cleaned slug.
+	 */
+	public function cleanSlug( $slug ) {
+		$slug = strtolower( $slug );
+		$slug = aioseo()->helpers->unleadingSlashIt( $slug );
+		$slug = untrailingslashit( $slug );
+
+		return $slug;
+	}
 }

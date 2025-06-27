@@ -19,9 +19,9 @@ class Query {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  mixed $postTypes      The post type(s). Either a singular string or an array of strings.
-	 * @param  array $additionalArgs Any additional arguments for the post query.
-	 * @return array|int             The post objects or the post count.
+	 * @param  mixed            $postTypes      The post type(s). Either a singular string or an array of strings.
+	 * @param  array            $additionalArgs Any additional arguments for the post query.
+	 * @return array[object|int]                The post objects or the post count.
 	 */
 	public function posts( $postTypes, $additionalArgs = [] ) {
 		$includedPostTypes = $postTypes;
@@ -51,7 +51,7 @@ class Query {
 			'ap.frequency'
 		] );
 
-		if ( in_array( aioseo()->sitemap->type, [ 'html', 'rss' ], true ) ) {
+		if ( in_array( aioseo()->sitemap->type, [ 'html', 'rss', 'llms' ], true ) ) {
 			$fields .= ', p.post_title';
 		}
 
@@ -313,14 +313,19 @@ class Query {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string    $taxonomy       The taxonomy.
-	 * @param  array     $additionalArgs Any additional arguments for the term query.
-	 * @return array|int                 The term objects or the term count.
+	 * @param  string           $taxonomy       The taxonomy.
+	 * @param  array            $additionalArgs Any additional arguments for the term query.
+	 * @return array[object|int]                The term objects or the term count.
 	 */
 	public function terms( $taxonomy, $additionalArgs = [] ) {
 		// Set defaults.
 		$fields  = 't.term_id';
 		$offset  = aioseo()->sitemap->offset;
+
+		// Include term name for llms sitemap type
+		if ( 'llms' === aioseo()->sitemap->type ) {
+			$fields .= ', t.name';
+		}
 
 		// Override defaults if passed as additional arg.
 		foreach ( $additionalArgs as $name => $value ) {

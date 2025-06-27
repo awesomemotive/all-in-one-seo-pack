@@ -47,7 +47,7 @@ class InternalOptions {
 	protected $defaults = [
 		// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 		'internal'     => [
-			'validLicenseKey'   => [ 'type' => 'string' ],
+			'connectLicenseKey' => [ 'type' => 'string' ],
 			'lastActiveVersion' => [ 'type' => 'string', 'default' => '0.0' ],
 			'migratedVersion'   => [ 'type' => 'string' ],
 			'siteAnalysis'      => [
@@ -72,6 +72,20 @@ class InternalOptions {
 					'list'      => [ 'type' => 'array', 'default' => [] ],
 					'ignored'   => [ 'type' => 'array', 'default' => [] ],
 					'lastFetch' => [ 'type' => 'number', 'default' => 0 ]
+				]
+			],
+			'ai'                => [
+				'accessToken'        => [ 'type' => 'string', 'default' => '' ],
+				'isTrialAccessToken' => [ 'type' => 'boolean', 'default' => false ],
+				'credits'            => [
+					'total'     => [ 'type' => 'number', 'default' => 0 ],
+					'remaining' => [ 'type' => 'number', 'default' => 0 ],
+					'orders'    => [ 'type' => 'array', 'default' => [] ],
+					'license'   => [
+						'total'     => [ 'type' => 'number', 'default' => 0 ],
+						'remaining' => [ 'type' => 'number', 'default' => 0 ],
+						'expires'   => [ 'type' => 'number', 'default' => 0 ]
+					]
 				]
 			]
 		],

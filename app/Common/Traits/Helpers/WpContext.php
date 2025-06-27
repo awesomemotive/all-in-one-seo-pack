@@ -222,7 +222,7 @@ trait WpContext {
 		$postId = apply_filters( 'aioseo_get_post_id', $postId );
 
 		// We need to check these conditions and cannot always return get_post() because we'll return the first post on archive pages (dynamic homepage, term pages, etc.).
-
+		// https://github.com/awesomemotive/aioseo/issues/2419
 		if (
 			$this->isScreenBase( 'post' ) ||
 			$postId ||

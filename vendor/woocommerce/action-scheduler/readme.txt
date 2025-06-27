@@ -1,9 +1,11 @@
 === Action Scheduler ===
 Contributors: Automattic, wpmuguru, claudiosanches, peterfabian1000, vedjain, jamosova, obliviousharmony, konamiman, sadowski, royho, barryhughes-1
 Tags: scheduler, cron
-Stable tag: 3.7.0
+Stable tag: 3.9.2
 License: GPLv3
-Tested up to: 6.4
+Requires at least: 6.5
+Tested up to: 6.7
+Requires PHP: 7.1
 
 Action Scheduler - Job Queue for WordPress
 
@@ -11,7 +13,7 @@ Action Scheduler - Job Queue for WordPress
 
 Action Scheduler is a scalable, traceable job queue for background processing large sets of actions in WordPress. It's specially designed to be distributed in WordPress plugins.
 
-Action Scheduler works by triggering an action hook to run at some time in the future. Each hook can be scheduled with unique data, to allow callbacks to perform operations on that data. The hook can also be scheduled to run on one or more occassions.
+Action Scheduler works by triggering an action hook to run at some time in the future. Each hook can be scheduled with unique data, to allow callbacks to perform operations on that data. The hook can also be scheduled to run on one or more occasions.
 
 Think of it like an extension to `do_action()` which adds the ability to delay and repeat a hook.
 
@@ -45,10 +47,62 @@ Collaboration is cool. We'd love to work with you to improve Action Scheduler. [
 
 == Changelog ==
 
+= 3.9.2 - 2025-02-03 =
+* Fixed fatal errors by moving version info methods to a new class and deprecating conflicting ones in ActionScheduler_Versions
+
+= 3.9.1 - 2025-01-21 =
+* A number of new WP CLI commands have been added, making it easier to manage actions in the terminal and from scripts.
+* New wp action-scheduler source command to help determine how Action Scheduler is being loaded.
+* Additional information about the active instance of Action Scheduler is now available in the Help pull-down drawer.
+* Make some other nullable parameters explicitly nullable.
+* Set option value to `no` rather than deleting.
+
+= 3.9.0 - 2024-11-14 =  
+* Minimum required version of PHP is now 7.1.  
+* Performance improvements for the `as_pending_actions_due()` function.  
+* Existing filter hook `action_scheduler_claim_actions_order_by` enhanced to provide callbacks with additional information.  
+* Improved compatibility with PHP 8.4, specifically by making implicitly nullable parameters explicitly nullable.  
+* A large number of coding standards-enhancements, to help reduce friction when submitting plugins to marketplaces and plugin directories. Special props @crstauf for this effort.  
+* Minor documentation tweaks and improvements.
+
+= 3.8.2 - 2024-09-12 =
+* Add missing parameter to the `pre_as_enqueue_async_action` hook.
+* Bump minimum PHP version to 7.0.
+* Bump minimum WordPress version to 6.4.
+* Make the batch size adjustable during processing.
+
+= 3.8.1 - 2024-06-20 =
+* Fix typos.
+* Improve the messaging in our unidentified action exceptions.
+
+= 3.8.0 - 2024-05-22 =
+* Documentation - Fixed typos in perf.md.
+* Update - We now require WordPress 6.3 or higher.
+* Update - We now require PHP 7.0 or higher.
+
+= 3.7.4 - 2024-04-05 =
+* Give a clear description of how the $unique parameter works.
+* Preserve the tab field if set.
+* Tweak - WP 6.5 compatibility.
+
+= 3.7.3 - 2024-03-20 =
+* Do not iterate over all of GET when building form in list table.
+* Fix a few issues reported by PCP (Plugin Check Plugin).
+* Try to save actions as unique even when the store doesn't support it.
+* Tweak - WP 6.4 compatibility.
+* Update "Tested up to" tag to WordPress 6.5.
+* update version in package-lock.json.
+
+= 3.7.2 - 2024-02-14 =
+* No longer user variables in `_n()` translation function.
+
+= 3.7.1 - 2023-12-13 =
+* update semver to 5.7.2 because of a security vulnerability in 5.7.1.
+
 = 3.7.0 - 2023-11-20 =
-* Add extended indexes for hook_status_scheduled_date_gmt and status_sheduled_date_gmt.
+* Important: starting with this release, Action Scheduler follows an L-2 version policy (WordPress, and consequently PHP).
+* Add extended indexes for hook_status_scheduled_date_gmt and status_scheduled_date_gmt.
 * Catch and log exceptions thrown when actions can't be created, e.g. under a corrupt database schema.
-* Release/3.6.4.
 * Tweak - WP 6.4 compatibility.
 * Update unit tests for upcoming dependency version policy.
 * make sure hook action_scheduler_failed_execution can access original exception object.
@@ -142,7 +196,7 @@ Collaboration is cool. We'd love to work with you to improve Action Scheduler. [
 * Dev - ActionScheduler_wcSystemStatus PHPCS fixes (props @ovidiul). #761
 * Dev - ActionScheduler_DBLogger.php PHPCS fixes (props @ovidiul). #768
 * Dev - Fixed phpcs for ActionScheduler_Schedule_Deprecated (props @ovidiul). #762
-* Dev - Improve actions table indicies (props @glagonikas). #774 & #777
+* Dev - Improve actions table indices (props @glagonikas). #774 & #777
 * Dev - PHPCS fixes for ActionScheduler_DBStore.php (props @ovidiul). #769 & #778
 * Dev - PHPCS Fixes for ActionScheduler_Abstract_ListTable (props @ovidiul). #763 & #779
 * Dev - Adds new filter action_scheduler_claim_actions_order_by to allow tuning of the claim query (props @glagonikas). #773

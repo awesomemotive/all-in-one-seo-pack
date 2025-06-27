@@ -114,6 +114,7 @@ class PostSettings {
 		$generalSettingsCapability      = aioseo()->access->hasCapability( 'aioseo_page_general_settings' );
 		$socialSettingsCapability       = aioseo()->access->hasCapability( 'aioseo_page_social_settings' );
 		$schemaSettingsCapability       = aioseo()->access->hasCapability( 'aioseo_page_schema_settings' );
+		$aiContentSettingsCapability    = aioseo()->access->hasCapability( 'aioseo_page_ai_content_settings' );
 		$linkAssistantCapability        = aioseo()->access->hasCapability( 'aioseo_page_link_assistant_settings' );
 		$redirectsCapability            = aioseo()->access->hasCapability( 'aioseo_page_redirects_manage' );
 		$advancedSettingsCapability     = aioseo()->access->hasCapability( 'aioseo_page_advanced_settings' );
@@ -127,6 +128,7 @@ class PostSettings {
 				empty( $generalSettingsCapability ) &&
 				empty( $socialSettingsCapability ) &&
 				empty( $schemaSettingsCapability ) &&
+				empty( $aiContentSettingsCapability ) &&
 				empty( $linkAssistantCapability ) &&
 				empty( $redirectsCapability ) &&
 				empty( $advancedSettingsCapability ) &&
@@ -240,7 +242,7 @@ class PostSettings {
 
 		// If there is no data, there likely was an error, e.g. if the hidden field wasn't populated on load and the user saved the post without making changes in the metabox.
 		// In that case we should return to prevent a complete reset of the data.
-
+		// https://github.com/awesomemotive/aioseo/issues/2254
 		if ( empty( $currentPost ) ) {
 			return;
 		}

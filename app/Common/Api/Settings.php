@@ -460,6 +460,7 @@ class Settings {
 		unset( $rows[0] );
 
 		$jsonFields = [
+			'ai',
 			'keywords',
 			'keyphrases',
 			'page_analysis',
@@ -467,7 +468,6 @@ class Settings {
 			'og_article_tags',
 			'schema',
 			'options',
-			'open_ai',
 			'videos'
 		];
 
@@ -596,7 +596,7 @@ class Settings {
 					'link_suggestions_scan_date' => '',
 					'local_seo'                  => '',
 					'options'                    => '',
-					'open_ai'                    => ''
+					'ai'                         => ''
 				];
 
 				$notAllowed = array_merge( aioseo()->access->getNotAllowedPageFields(), $fieldsToExclude );

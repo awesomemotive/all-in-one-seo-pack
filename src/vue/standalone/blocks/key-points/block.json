@@ -1,0 +1,16 @@
+{
+	"$schema": "https://schemas.wp.org/wp/5.8/block.json",
+	"name": "aioseo/key-points",
+	"title": "AIOSEO - Key Points",
+	"description": "Easily add an Too Long, Didn't Read (TLDR) to your content.",
+	"category": "text",
+	"keywords": [
+		"list",
+		"tldr",
+		"key points"
+	],
+	"textdomain": "all-in-one-seo-pack",
+	"supports": {
+		"html": false
+	}
+}

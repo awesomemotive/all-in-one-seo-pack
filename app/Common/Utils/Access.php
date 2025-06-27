@@ -15,32 +15,32 @@ class Access {
 	 * @var array
 	 */
 	protected $capabilities = [
+		'aioseo_about_us_page',
 		'aioseo_dashboard',
-		'aioseo_general_settings',
-		'aioseo_search_appearance_settings',
-		'aioseo_social_networks_settings',
-		'aioseo_sitemap_settings',
-		'aioseo_link_assistant_settings',
-		'aioseo_redirects_manage',
-		'aioseo_page_redirects_manage',
-		'aioseo_redirects_settings',
-		'aioseo_seo_analysis_settings',
-		'aioseo_search_statistics_settings',
-		'aioseo_tools_settings',
 		'aioseo_feature_manager_settings',
+		'aioseo_general_settings',
+		'aioseo_link_assistant_settings',
+		'aioseo_local_seo_settings',
+		'aioseo_page_advanced_settings',
+		'aioseo_page_ai_content_settings',
 		'aioseo_page_analysis',
 		'aioseo_page_general_settings',
-		'aioseo_page_advanced_settings',
-		'aioseo_page_schema_settings',
-		'aioseo_page_social_settings',
 		'aioseo_page_link_assistant_settings',
-		'aioseo_page_redirects_settings',
-		'aioseo_local_seo_settings',
 		'aioseo_page_local_seo_settings',
+		'aioseo_page_redirects_manage',
+		'aioseo_page_schema_settings',
+		'aioseo_page_seo_revisions_settings',
+		'aioseo_page_social_settings',
 		'aioseo_page_writing_assistant_settings',
-		'aioseo_about_us_page',
+		'aioseo_redirects_manage',
+		'aioseo_redirects_settings',
+		'aioseo_search_appearance_settings',
+		'aioseo_search_statistics_settings',
+		'aioseo_seo_analysis_settings',
 		'aioseo_setup_wizard',
-		'aioseo_page_seo_revisions_settings'
+		'aioseo_sitemap_settings',
+		'aioseo_social_networks_settings',
+		'aioseo_tools_settings'
 	];
 
 	/**
@@ -124,11 +124,12 @@ class Access {
 
 			if ( $roleObject->has_cap( 'edit_posts' ) ) {
 				$postCapabilities = [
+					'aioseo_page_advanced_settings',
+					'aioseo_page_ai_content_settings',
 					'aioseo_page_analysis',
 					'aioseo_page_general_settings',
-					'aioseo_page_advanced_settings',
 					'aioseo_page_schema_settings',
-					'aioseo_page_social_settings',
+					'aioseo_page_social_settings'
 				];
 
 				foreach ( $postCapabilities as $capability ) {

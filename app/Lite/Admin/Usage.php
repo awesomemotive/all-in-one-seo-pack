@@ -22,7 +22,7 @@ class Usage extends CommonAdmin\Usage {
 	public function __construct() {
 		parent::__construct();
 
-		$this->enabled = aioseo()->options->advanced->usageTracking;
+		$this->enabled = apply_filters( 'aioseo_usage_tracking_enable', aioseo()->options->advanced->usageTracking );
 	}
 
 	/**

@@ -33,15 +33,15 @@ class Post extends Model {
 		'keyphrases',
 		'page_analysis',
 		'schema',
-		// 'schema_type_options',
 		'images',
 		'videos',
-		'open_ai',
+		'ai',
 		'options',
 		'local_seo',
 		'primary_term',
 		'breadcrumb_settings',
-		'og_article_tags'
+		'og_article_tags',
+		'ai'
 	];
 
 	/**
@@ -496,7 +496,7 @@ class Post extends Model {
 		$thePost->schema                      = ! empty( $data['schema'] ) ? self::getDefaultSchemaOptions( $data['schema'] ) : null;
 		$thePost->local_seo                   = ! empty( $data['local_seo'] ) ? $data['local_seo'] : null;
 		$thePost->limit_modified_date         = isset( $data['limit_modified_date'] ) ? rest_sanitize_boolean( $data['limit_modified_date'] ) : 0;
-		$thePost->open_ai                     = ! empty( $data['open_ai'] ) ? self::getDefaultOpenAiOptions( $data['open_ai'] ) : null;
+		$thePost->ai                          = ! empty( $data['ai'] ) ? self::getDefaultAiOptions( $data['ai'] ) : null;
 		$thePost->updated                     = gmdate( 'Y-m-d H:i:s' );
 		$thePost->primary_term                = ! empty( $data['primary_term'] ) ? $data['primary_term'] : null;
 		$thePost->breadcrumb_settings         = isset( $data['breadcrumb_settings']['default'] ) && false === $data['breadcrumb_settings']['default'] ? $data['breadcrumb_settings'] : null;
@@ -777,36 +777,6 @@ class Post extends Model {
 	}
 
 	/**
-	 * Returns the default Open AI options.
-	 *
-	 * @since 4.3.2
-	 *
-	 * @param  array $existingOptions The existing options.
-	 * @return object                 The default options.
-	 */
-	public static function getDefaultOpenAiOptions( $existingOptions = [] ) {
-		$defaults = [
-			'title'       => [
-				'suggestions' => [],
-				'usage'       => 0
-			],
-			'description' => [
-				'suggestions' => [],
-				'usage'       => 0
-			]
-		];
-
-		if ( empty( $existingOptions ) ) {
-			return json_decode( wp_json_encode( $defaults ) );
-		}
-
-		$existingOptions = json_decode( wp_json_encode( $existingOptions ), true );
-		$existingOptions = array_replace_recursive( $defaults, $existingOptions );
-
-		return json_decode( wp_json_encode( $existingOptions ) );
-	}
-
-	/**
 	 * Returns the default breadcrumb settings options.
 	 *
 	 * @since 4.8.3
@@ -938,5 +908,37 @@ class Post extends Model {
 	 */
 	public static function invertKoreaCode( $code ) {
 		return 'KP' === $code ? 'KR' : $code;
+	}
+
+	/**
+	 * Returns the default AI options.
+	 *
+	 * @since 4.8.4
+	 *
+	 * @param  array $existingOptions The existing options.
+	 * @return object                 The default options.
+	 */
+	public static function getDefaultAiOptions( $existingOptions = [] ) {
+		$defaults = [
+			'faqs'         => [],
+			'keyPoints'    => [],
+			'titles'       => [],
+			'descriptions' => [],
+			'socialPosts'  => [
+				'email'     => [],
+				'linkedin'  => [],
+				'twitter'   => [],
+				'facebook'  => [],
+				'instagram' => []
+			]
+		];
+
+		if ( empty( $existingOptions ) ) {
+			return json_decode( wp_json_encode( $defaults ) );
+		}
+
+		$existingOptions = array_replace_recursive( $defaults, (array) $existingOptions );
+
+		return json_decode( wp_json_encode( $existingOptions ) );
 	}
 }

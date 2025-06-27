@@ -18,8 +18,7 @@ const prepareCachedCurrentPost = (currentPost) => {
 export const usePostEditorStore = defineStore('PostEditorStore', {
 	state : () => ({
 		isDirty     : false,
-		currentPost : {},
-		openAiError : null
+		currentPost : {}
 	}),
 	getters : {
 		newHeadlineAnaylzerData () {
@@ -172,29 +171,6 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 			return http.post(links.restUrl(`post/${this.currentPost.id}/update-internal-link-count`))
 				.send({
 					count
-				})
-		},
-		generateTitlesDescriptions (payload) {
-			return http.post(links.restUrl('ai/generate/'))
-				.send(payload)
-				.then((response) => {
-					if (!response.body.suggestions) {
-						if (response.body.error) {
-							this.openAiError = response.body.error
-						}
-						return
-					}
-
-					this.openAiError = null
-
-					this.currentPost.open_ai[payload.type].suggestions = response.body.suggestions
-					this.currentPost.open_ai[payload.type].usage       = response.body.usage
-				})
-		},
-		saveOpenAiApiKey (apiKey) {
-			return http.post(links.restUrl('ai/save-api-key'))
-				.send({
-					apiKey
 				})
 		},
 		getUserImage ({ userId }) {

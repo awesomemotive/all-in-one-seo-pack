@@ -118,6 +118,7 @@ class VueSettings {
 			'404Settings'                  => true,
 			'userProfiles'                 => true,
 			'queryArgLogs'                 => true,
+			'aiContentSettings'            => true,
 			'writingAssistantSettings'     => true,
 			'writingAssistantCta'          => true
 		],

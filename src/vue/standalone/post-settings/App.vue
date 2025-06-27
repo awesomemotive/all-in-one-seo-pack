@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { onBeforeMount, defineEmits } from 'vue'
+import { onBeforeMount } from 'vue'
 
 import '@/vue/assets/scss/main.scss'
 

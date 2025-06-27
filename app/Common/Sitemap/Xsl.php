@@ -39,7 +39,7 @@ class Xsl {
 		$advanced      = aioseo()->options->sitemap->general->advancedSettings->enable;
 		$excludeImages = aioseo()->sitemap->helpers->excludeImages();
 		$sitemapParams = aioseo()->helpers->getParametersFromUrl( $sitemapUrl );
-		$xslParams     = aioseo()->core->cache->get( 'aioseo_sitemap_' . aioseo()->sitemap->requestParser->cleanSlug( $sitemapPath ) );
+		$xslParams     = aioseo()->core->cache->get( 'aioseo_sitemap_' . aioseo()->helpers->cleanSlug( $sitemapPath ) );
 		// phpcs:enable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 
 		if ( ! empty( $sitemapInfo[1] ) ) {

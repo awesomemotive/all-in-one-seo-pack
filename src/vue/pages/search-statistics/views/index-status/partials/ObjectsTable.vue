@@ -57,7 +57,7 @@
 
 					<a
 						href="#"
-						@click.prevent.exact="refreshObjectStatus(row, index)"
+						@click.prevent.exact="refreshObjectStatus(row)"
 					>
 						{{ strings.refreshStatus }}
 					</a>
@@ -425,10 +425,7 @@
 		</template>
 
 		<template #verdict="{row}">
-			<div
-				v-if="row.lastCrawlTime"
-				:title="indexStatusItems.verdict.parseValue(row.verdict).value"
-			>
+			<div :title="indexStatusItems.verdict.parseValue(row.verdict).value">
 				<component
 					:is="indexStatusItems.verdict.getIcon(row.verdict)"
 					width="20"
@@ -513,7 +510,7 @@
 			</base-button>
 
 			<div
-				v-if="loadingRows.has(index)"
+				v-if="loadingRows.has(row.id)"
 				class="loader-overlay-table"
 			>
 				<core-loader />
@@ -523,7 +520,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onBeforeMount, watch } from 'vue'
 
 import {
 	useIndexStatusStore,
@@ -531,6 +528,7 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
+import { debounce } from 'lodash'
 import { __ } from '@/vue/plugins/translations'
 import { useIndexStatus } from '@/vue/composables/IndexStatus'
 import { usePostTypes } from '@/vue/composables/PostTypes'
@@ -695,17 +693,20 @@ const parseInnerRowValue = (row, key) => {
 	return `${parsed.value} <div class="inner-row__desc">${description}</div>`
 }
 
-const refreshObjectStatus = async (row, index) => {
+const refreshObjectStatus = async (row) => {
 	table.value.activeRow = null
 
-	loadingRows.value.add(index)
+	loadingRows.value.add(row.id)
 
 	try {
-		await searchStatisticsStore.getInspectionResult({ paths: row.path, force: true })
+		await searchStatisticsStore.getInspectionResult({
+			paths : row.path,
+			force : true
+		})
 	} catch (error) {
 		console.error(error)
 	} finally {
-		loadingRows.value.delete(index)
+		loadingRows.value.delete(row.id)
 
 		try {
 			// When "Refresh Status" runs on multiple rows, fetch objects only after all refreshes complete.
@@ -720,6 +721,57 @@ const refreshObjectStatus = async (row, index) => {
 		}
 	}
 }
+
+const maybeGetInspectionResults = debounce(async (rows) => {
+	try {
+		const paths = rows.map(row => {
+			loadingRows.value.add(row.id)
+
+			return row.path
+		})
+
+		await searchStatisticsStore.getInspectionResult({ paths })
+	} catch (error) {
+		console.error(error)
+	} finally {
+		rows.forEach(row => {
+			loadingRows.value.delete(row.id)
+		})
+
+		try {
+			await Promise.all([
+				indexStatusStore.fetchIndexStatusOverview(),
+				indexStatusStore.fetchIndexStatusObjects()
+			])
+		} catch (error) {
+			console.error(error)
+		}
+	}
+}, 2000)
+
+onBeforeMount(async () => {
+	if (
+		searchStatisticsStore.isConnected &&
+		!searchStatisticsStore.shouldShowSampleReports &&
+		!indexStatusStore.objects.paginated.rows.length
+	) {
+		try {
+			await Promise.all([
+				indexStatusStore.fetchIndexStatusOverview(),
+				indexStatusStore.fetchIndexStatusObjects()
+			])
+		} catch (error) {
+			console.error(error)
+		}
+	}
+})
+
+watch(() => props.paginatedRows.rows, (newVal) => {
+	const rows = newVal.filter(row => !row.isInspectionValid)
+	if (rows.length) {
+		maybeGetInspectionResults(rows)
+	}
+})
 </script>
 
 <style lang="scss">

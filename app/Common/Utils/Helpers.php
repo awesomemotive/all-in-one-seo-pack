@@ -237,6 +237,13 @@ class Helpers {
 				}
 
 				return $sanitized;
+			case 'object':
+				$sanitized = [];
+				foreach ( (array) $value as $key => $child ) {
+					$sanitized[ $key ] = aioseo()->helpers->sanitizeOption( $child );
+				}
+
+				return $sanitized;
 			default:
 				return false;
 		}

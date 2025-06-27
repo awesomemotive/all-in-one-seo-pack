@@ -100,7 +100,7 @@ export default {
 	align-items: center;
 	justify-content: center;
 
-	div:nth-of-type(2) {
+	> div:nth-of-type(2) {
 		display: flex;
 	}
 }

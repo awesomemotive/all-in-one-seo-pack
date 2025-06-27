@@ -35,7 +35,15 @@
 				>
 					<component class="icon" :is="tab.icon"/>
 
-					<div class="name">{{ tab.name }}</div>
+					<div class="name">
+						{{ tab.name }}
+						<span
+							v-if="tab.label === 'new'"
+							class="label new"
+						>
+							{{ strings.new }}
+						</span>
+					</div>
 
 					<component :is="tab.badge" />
 
@@ -119,6 +127,7 @@ import { maybeUpdateTaxonomies } from '@/vue/plugins/tru-seo/components/taxonomi
 
 import Advanced from './Advanced'
 import Alert from './partials/Alert'
+import AiContent from './AiContent'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import General from './General'
@@ -130,6 +139,7 @@ import Schema from './Schema'
 import SeoRevisions from './SeoRevisions'
 import SeoRevisionsCountBadge from './pro/partials-seo-revisions/CountBadge'
 import Social from './Social'
+import SvgAiContent from '@/vue/components/common/svg/ai/AiContent'
 import SvgBackup from '@/vue/components/common/svg/Backup'
 import SvgBuild from '@/vue/components/common/svg/Build'
 import SvgCaret from '@/vue/components/common/svg/Caret'
@@ -142,7 +152,6 @@ import SvgSettings from '@/vue/components/common/svg/Settings'
 import SvgShare from '@/vue/components/common/svg/Share'
 
 import { __ } from '@/vue/plugins/translations'
-
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
@@ -188,6 +197,7 @@ export default {
 	components : {
 		Advanced,
 		Alert,
+		AiContent,
 		CoreMainTabs,
 		CoreModal,
 		General,
@@ -199,6 +209,7 @@ export default {
 		SeoRevisions,
 		SeoRevisionsCountBadge,
 		Social,
+		SvgAiContent,
 		SvgBackup,
 		SvgBuild,
 		SvgCaret,
@@ -216,7 +227,8 @@ export default {
 			modal     : false,
 			strings   : {
 				pageName   : 'General',
-				modalTitle : __('Preview Snippet Editor', td)
+				modalTitle : __('Preview Snippet Editor', td),
+				new        : __('NEW!', td)
 			},
 			activeMainSidebarTab : '',
 			isPageBuilderEditor
@@ -264,19 +276,22 @@ export default {
 		tabs () {
 			const tabs = [
 				{
-					slug : 'general',
-					icon : 'svg-settings',
-					name : __('General', td)
+					slug       : 'general',
+					icon       : 'svg-settings',
+					name       : __('General', td),
+					permission : 'aioseo_page_general_settings'
 				},
 				{
-					slug : 'social',
-					icon : 'svg-share',
-					name : __('Social', td)
+					slug       : 'social',
+					icon       : 'svg-share',
+					name       : __('Social', td),
+					permission : 'aioseo_page_social_settings'
 				},
 				{
-					slug : 'schema',
-					icon : 'svg-receipt',
-					name : __('Schema', td)
+					slug       : 'schema',
+					icon       : 'svg-receipt',
+					name       : __('Schema', td),
+					permission : 'aioseo_page_schema_settings'
 				},
 				{
 					slug       : 'redirects',
@@ -286,29 +301,41 @@ export default {
 					permission : 'aioseo_page_redirects_manage'
 				},
 				{
-					slug  : 'seoRevisions',
-					icon  : 'svg-backup',
-					name  : __('SEO Revisions', td),
-					badge : 'seo-revisions-count-badge'
+					slug       : 'seoRevisions',
+					icon       : 'svg-backup',
+					name       : __('SEO Revisions', td),
+					badge      : 'seo-revisions-count-badge',
+					permission : 'aioseo_page_seo_revisions_settings'
 				},
 				{
-					slug : 'advanced',
-					icon : 'svg-build',
-					name : __('Advanced', td)
+					slug       : 'advanced',
+					icon       : 'svg-build',
+					name       : __('Advanced', td),
+					permission : 'aioseo_page_advanced_settings'
 				}
 			]
 
 			if (
 				!this.rootStore.aioseo.integration &&
 				!isPageBuilderEditor() &&
-				'post' === this.postEditorStore.currentPost.context &&
-				!this.postEditorStore.currentPost.linkAssistant?.isExcludedPost
+				'post' === this.postEditorStore?.currentPost?.context &&
+				!this.postEditorStore?.currentPost?.linkAssistant?.isExcludedPost &&
+				'attachment' !== this.postEditorStore?.currentPost?.postType
 			) {
-				tabs.splice(3, 0, {
-					slug : 'linkAssistant',
-					icon : 'svg-link-suggestion',
-					name : __('Link Assistant', td)
-				})
+				tabs.splice(4, 0,
+					{
+						slug       : 'aiContent',
+						icon       : 'svg-ai-content',
+						name       : __('AI Content', td),
+						permission : 'aioseo_page_ai_content_settings',
+						label      : 'new'
+					},
+					{
+						slug       : 'linkAssistant',
+						icon       : 'svg-link-suggestion',
+						name       : __('Link Assistant', td),
+						permission : 'aioseo_page_link_assistant_settings'
+					})
 			}
 
 			return tabs
@@ -319,7 +346,8 @@ export default {
 		getTabs () {
 			if ('term' === this.postEditorStore.currentPost.context || this.postEditorStore.currentPost.isWooCommercePageWithoutSchema) {
 				return this.tabs.filter((tab) => {
-					return 'schema' !== tab.slug && allowed(this.getTabPermission(tab.slug), true)
+					const excludedTabs = [ 'aiContent', 'schema' ]
+					return !excludedTabs.includes(tab.slug) && allowed(this.getTabPermission(tab.slug), true)
 				})
 			}
 
@@ -554,6 +582,14 @@ export default {
 				height: 24px;
 				cursor: pointer;
 				transform: rotate(-90deg);
+			}
+
+			.new {
+				color: #df2a4a;
+				vertical-align: super;
+				font-size: 10px;
+				display: inline-block;
+				margin-top: -5px;
 			}
 		}
 	}

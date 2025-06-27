@@ -80,6 +80,13 @@ export const useLicenseStore = defineStore('LicenseStore', {
 						this.clearLicenseNotices()
 					}
 
+					if (response.body.aiOptions) {
+						Object.keys(response.body.aiOptions).forEach(objectKey => {
+							const internalStore = rootStore.aioseo.data.isNetworkAdmin ? 'internalNetworkOptions' : 'internalOptions'
+							optionsStore.updateOption(internalStore, { groups: [ 'internal', 'ai' ], key: objectKey, value: response.body.aiOptions[objectKey] })
+						})
+					}
+
 					return response
 				})
 		},
@@ -124,6 +131,13 @@ export const useLicenseStore = defineStore('LicenseStore', {
 							optionsStore.updateOption(internalStore, { groups: [ 'internal', 'license' ], key, value: response.body.licenseData[key] })
 						})
 						this.license = response.body.license
+
+						if (response?.body?.aiData) {
+							Object.keys(response.body.aiData).forEach(key => {
+								const internalStore = rootStore.aioseo.data.isNetworkAdmin ? 'internalNetworkOptions' : 'internalOptions'
+								optionsStore.updateOption(internalStore, { groups: [ 'internal', 'ai' ], key, value: response.body.aiData[key] })
+							})
+						}
 
 						rootStore.aioseo.isUnlicensed = true
 

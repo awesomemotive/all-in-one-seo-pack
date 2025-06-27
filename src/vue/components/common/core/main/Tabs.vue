@@ -22,7 +22,12 @@
 					<slot name="var-tab" :tab="tab">
 						<slot name="var-tab-icon" :tab="tab" />
 
-						<span class="tab-label">{{ tab.name }}</span>
+						<span class="tab-label">
+							{{ tab.name }}
+							<!-- <template v-if="tab.new">
+								<span class="new">{{ strings.new }}</span>
+							</template> -->
+						</span>
 
 						<slot name="after-label" :tab="tab"></slot>
 
@@ -228,14 +233,14 @@ export default {
 				return this.active
 			}
 
-			if (this.$route && this.$route.name) {
-				return this.$route.name
+			if (this.route && this.route.name) {
+				return this.route.name
 			}
 
 			return this.tabs[0]?.slug
 		},
 		filteredTabs () {
-			return this.tabs.filter(t => t.slug !== (this.active ? this.active : (this.$route && this.$route.name ? this.$route.name : '')))
+			return this.tabs.filter(t => t.slug !== (this.active ? this.active : (this.route && this.route.name ? this.route.name : '')))
 		}
 	},
 	methods : {
@@ -256,7 +261,7 @@ export default {
 			}
 		},
 		getActiveTabName () {
-			const tab = this.tabs.find(t => t.slug === (this.active ? this.active : (this.$route && this.$route.name ? this.$route.name : '')))
+			const tab = this.tabs.find(t => t.slug === (this.active ? this.active : (this.route && this.route.name ? this.route.name : '')))
 			if (tab) {
 				return tab.name
 			}

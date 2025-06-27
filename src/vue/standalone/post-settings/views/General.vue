@@ -84,14 +84,15 @@
 						{{ strings.clickToAddTitle }}
 					</template>
 
-					<template #append-button>
+					<template v-if="
+						allowed('aioseo_page_ai_content_settings') &&
+						!postEditorStore.currentPost.isWooCommercePageWithoutSchema &&
+						postEditorStore.currentPost.postType &&
+						!['attachment', 'web-story'].includes(postEditorStore.currentPost.postType) &&
+						!isPageBuilderEditor()" #append-button
+					>
 						<ai-generator
-							v-if="
-								postEditorStore.currentPost.postType &&
-								'web-story' !== postEditorStore.currentPost.postType &&
-								!isPageBuilderEditor()
-							"
-							type="title"
+							:feature="features.metaTitle"
 						/>
 					</template>
 				</core-html-tags-editor>
@@ -132,14 +133,15 @@
 						{{ strings.clickToAddDescription }}
 					</template>
 
-					<template #append-button>
+					<template v-if="
+						allowed('aioseo_page_ai_content_settings') &&
+						!postEditorStore.currentPost.isWooCommercePageWithoutSchema &&
+						postEditorStore.currentPost.postType &&
+						!['attachment', 'web-story'].includes(postEditorStore.currentPost.postType) &&
+						!isPageBuilderEditor()" #append-button
+					>
 						<ai-generator
-							v-if="
-								postEditorStore.currentPost.postType &&
-								'web-story' !== postEditorStore.currentPost.postType &&
-								!isPageBuilderEditor()
-							"
-							type="description"
+							:feature="features.metaDescription"
 						/>
 					</template>
 				</core-html-tags-editor>
@@ -364,8 +366,9 @@ import SvgMobile from '@/vue/components/common/svg/Mobile'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
 import license from '@/vue/utils/license'
 
-import { __, sprintf } from '@/vue/plugins/translations'
+import { aiFeatures } from './partials/ai-content/utils'
 
+import { __, sprintf } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
@@ -480,7 +483,8 @@ export default {
 					__('Not sure what keywords are used for? Check out our documentation for more information. %1$s', td),
 					links.getDocLink(GLOBAL_STRINGS.learnMore, 'useKeyphrasesTooltip', true)
 				)
-			})
+			}),
+			features : aiFeatures
 		}
 	},
 	watch : {

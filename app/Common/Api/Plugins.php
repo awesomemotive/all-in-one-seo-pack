@@ -139,7 +139,7 @@ class Plugins {
 			], 400 );
 		}
 
-		if ( ! current_user_can( 'install_plugins' ) ) {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => $error
