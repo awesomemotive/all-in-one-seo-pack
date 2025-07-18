@@ -41,8 +41,25 @@ const localUnmountApp = (id) => {
 	}
 }
 
+// Checks if the app div target is already in the DOM. If not, it creates a new one.
+const localCheckAppTarget = (obj, type) => {
+	const $el = document.getElementById(`${obj.columnName}-${obj.id}`)
+	if (!$el) {
+		const $row = document.querySelector(`tr#${type}-${obj.id}`)
+		const $col = $row?.querySelector('.column-aioseo-details')
+
+		if ($col) {
+			const newApp = document.createElement('div')
+			newApp.id = `aioseo-details-${obj.id}`
+
+			$col.appendChild(newApp)
+		}
+	}
+}
+
 const loadPostsTable = (post) => {
 	localUnmountApp(`${post.columnName}-${post.id}`)
+	localCheckAppTarget(post, 'post')
 
 	const app = localCreateApp(createApp({
 		name : 'Standalone/PostsTable/' + post.id,
@@ -91,6 +108,7 @@ if (window.aioseo.posts && 0 < window.aioseo.posts.length) {
 
 const loadTermsTable = (term) => {
 	localUnmountApp(`${term.columnName}-${term.id}`)
+	localCheckAppTarget(term, 'tag')
 
 	const app = localCreateApp(createApp({
 		name : 'Standalone/TermsTable/' + term.id,

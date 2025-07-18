@@ -104,16 +104,14 @@ export const useOptionsStore = defineStore('OptionsStore', {
 		},
 		saveNetworkRobots () {
 			const dirtyOptionsStore = useDirtyOptionsStore()
-			const networkStore      = useNetworkStore()
-			const rootStore         = useRootStore()
-			const getOptions        = 'network' === networkStore.currentSite?.blog_id
-				? this.networkOptions
-				: this.options
+			const networkStore 		= useNetworkStore()
+			const rootStore 		= useRootStore()
 
-			const options      = {
-				enabled : 'network' === networkStore.currentSite?.blog_id
-					? this.networkOptions.tools.robots.enable
-					: this.options.tools.robots.enable,
+			const isNetwork = 'network' === networkStore.currentSite?.blog_id
+			const getOptions = isNetwork ? this.networkOptions : this.options
+
+			const options = {
+				enabled          : isNetwork ? this.networkOptions.tools.robots.enable : this.options.tools.robots.enable,
 				network          : rootStore.aioseo.data.isNetworkAdmin,
 				rules            : networkStore.networkRobots.rules,
 				searchAppearance : getOptions.searchAppearance
@@ -122,7 +120,7 @@ export const useOptionsStore = defineStore('OptionsStore', {
 			return http.post(links.restUrl(`network-robots/${networkStore.currentSite?.blog_id}`))
 				.send(options)
 				.then(() => {
-					dirtyOptionsStore.updateOriginalOptions('options', this.options)
+					dirtyOptionsStore.updateOriginalOptions(isNetwork ? 'networkOptions' : 'options', getOptions)
 				})
 		},
 		getObjects (payload) {
@@ -147,6 +145,18 @@ export const useOptionsStore = defineStore('OptionsStore', {
 			}
 
 			options[key] = value
+		},
+		fetchOptions (siteId) {
+			return http.get(links.restUrl('options'))
+				.query({ siteId: siteId })
+				.then(response => {
+					this.options = response.body.options
+
+					return response
+				})
+				.catch(error => {
+					throw error
+				})
 		}
 	}
 })

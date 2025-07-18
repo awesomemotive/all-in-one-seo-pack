@@ -14,7 +14,7 @@
 
 			<div class="body">
 				<div class="title">
-					<div>{{ notification.title }}</div>
+					<div>{{ sanitizeString(notification.title) }}</div>
 					<div class="date">
 						{{ getDate }}
 					</div>
@@ -76,6 +76,7 @@ import {
 } from '@/vue/utils/date'
 
 import { useUrl } from '@/vue/composables/Url'
+import { sanitizeString } from '@/vue/utils/strings'
 
 import BaseButton from '@/vue/components/common/base/Button'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
@@ -107,7 +108,8 @@ export default {
 			getTagType,
 			getTarget,
 			notificationsStore : useNotificationsStore(),
-			processButtonClick
+			processButtonClick,
+			sanitizeString
 		}
 	},
 	components : {

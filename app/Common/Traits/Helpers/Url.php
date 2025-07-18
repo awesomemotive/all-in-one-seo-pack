@@ -217,7 +217,7 @@ trait Url {
 	 */
 	private function isDomainWithPaths( $domain ) {
 		// In case there are unicode characters, convert it into IDNA ASCII URLs.
-		if ( function_exists( 'idn_to_ascii' ) ) {
+		if ( $domain && function_exists( 'idn_to_ascii' ) ) {
 			$domain = idn_to_ascii( $domain, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46 );
 		}
 
@@ -390,15 +390,14 @@ trait Url {
 	 */
 	public function makeUrlAbsolute( $url ) {
 		if ( 0 !== strpos( $url, 'http' ) && '/' !== $url ) {
-			$url = $this->sanitizeDomain( $url );
-			if ( $this->isDomainWithPaths( $url ) ) {
-				$scheme = wp_parse_url( site_url(), PHP_URL_SCHEME );
-				$url    = $scheme . '://' . $url;
-			} elseif ( 0 === strpos( $url, '//' ) ) {
-				$scheme = wp_parse_url( site_url(), PHP_URL_SCHEME );
-				$url    = $scheme . ':' . $url;
+			$scheme   = wp_parse_url( site_url(), PHP_URL_SCHEME );
+			$cleanUrl = untrailingslashit( preg_replace( '#^https?://#i', '', trim( $url ) ) );
+			if ( $this->isDomainWithPaths( $cleanUrl ) ) {
+				$url = $scheme . '://' . $cleanUrl;
+			} elseif ( 0 === strpos( $cleanUrl, '//' ) ) {
+				$url = $scheme . ':' . $cleanUrl;
 			} else {
-				$url = site_url( $url );
+				$url = site_url( $cleanUrl );
 			}
 		}
 

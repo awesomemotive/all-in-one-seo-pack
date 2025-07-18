@@ -7,7 +7,7 @@
 		]"
 		:modelValue="modelValue"
 		@update:modelValue="$emit('update:modelValue', $event)"
-		:options="options"
+		:options="effectiveOptions"
 		:multiple="multiple"
 		:taggable="taggable"
 		:placeholder="placeholder || strings.searchPlaceholder"
@@ -163,12 +163,19 @@ export default {
 			default () {
 				return false
 			}
+		},
+		preserveOptions : {
+			type : Boolean,
+			default () {
+				return true
+			}
 		}
 	},
 	data () {
 		return {
-			isLoading : false,
-			strings   : {
+			isLoading       : false,
+			internalOptions : [],
+			strings         : {
 				searchPlaceholder : __('Type to search...', td)
 			}
 		}
@@ -176,6 +183,25 @@ export default {
 	watch : {
 		options () {
 			this.resetFirstLastOption()
+		}
+	},
+	computed : {
+		effectiveOptions () {
+			if (this.preserveOptions) {
+				// Combine internal options with current options
+				const allOptions = [ ...this.internalOptions ]
+
+				// Add any new options that aren't in the internal list
+				this.options.forEach(option => {
+					if (!allOptions.some(internalOption => internalOption.value === option.value)) {
+						allOptions.push(option)
+					}
+				})
+
+				return allOptions
+			}
+
+			return this.options
 		}
 	},
 	methods : {
@@ -187,8 +213,16 @@ export default {
 				}
 
 				// Add only if there are no duplicates.
-				if (!this.options.some(option => option.value === tag.value)) {
-					this.options.push(tag)
+				if (this.preserveOptions) {
+					// Use internal options when preserveOptions is enabled
+					if (!this.internalOptions.some(option => option.value === tag.value)) {
+						this.internalOptions.push(tag)
+					}
+				} else {
+					// Original behavior
+					if (!this.options.some(option => option.value === tag.value)) {
+						this.options.push(tag)
+					}
 				}
 
 				if (!this.modelValue.some(model => model.value === tag.value)) {
@@ -237,6 +271,11 @@ export default {
 	},
 	mounted () {
 		this.resetFirstLastOption()
+
+		// Initialize internal options when preserveOptions is enabled
+		if (this.preserveOptions && 0 < this.options.length) {
+			this.internalOptions = [ ...this.options ]
+		}
 	}
 }
 </script>

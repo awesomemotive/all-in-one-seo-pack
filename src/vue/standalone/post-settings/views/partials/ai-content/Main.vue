@@ -82,6 +82,7 @@ export default {
 				aiContentGeneration : __('AI Content Generation', td),
 				noContentWarning    : __('Your post is too short to generate AI content. Please add some more content. For the best results, we recommend adding at least 200 words.', td),
 				trialWarning        : sprintf(
+					// Translators: 1 - "upgrade to Pro" link, 2 - "purchase PAYG credits" link.
 					__('You can try out our AI features for free, enjoy! To unlock additional AI credits, %1$s or %2$s.', td),
 					sprintf(
 						'<a href="%1$s" target="_blank">%2$s</a>',

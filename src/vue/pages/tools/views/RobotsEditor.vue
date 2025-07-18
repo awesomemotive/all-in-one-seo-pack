@@ -595,8 +595,19 @@ export default {
 		}
 	},
 	watch : {
-		'networkStore.currentSite' () {
-			this.processFetchSiteRobots()
+		async 'networkStore.currentSite' () {
+			this.loading.cardOverlay = true
+
+			try {
+				await Promise.all([
+					this.networkStore.fetchSiteRobots(this.networkStore.currentSite.blog_id),
+					this.optionsStore.fetchOptions(this.networkStore.currentSite.blog_id)
+				])
+			} catch (error) {
+				console.error(error)
+			} finally {
+				this.loading.cardOverlay = false
+			}
 		},
 		'getOptions.enable' () {
 			this.validateRules()
@@ -915,12 +926,6 @@ export default {
 					this.loading.btnImportRobotsTxt = false
 					this.errors.importRobotsTxt = error?.response?.body?.message || null
 				})
-		},
-		processFetchSiteRobots () {
-			this.loading.cardOverlay = true
-
-			this.networkStore.fetchSiteRobots(this.networkStore.currentSite.blog_id)
-				.then(() => (this.loading.cardOverlay = false))
 		},
 		processImportRobotsTxt (source) {
 			return this.networkStore.importRobotsTxt({

@@ -209,7 +209,7 @@ export default {
 			if (75 > this.currentScore) {
 				return __('Looks Good! 👍👍', td)
 			}
-			if (75 < this.currentScore) {
+			if (75 <= this.currentScore) {
 				return __('Super! 🔥🔥🔥', td)
 			}
 			return false

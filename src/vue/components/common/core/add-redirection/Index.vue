@@ -459,17 +459,23 @@ export default {
 		},
 		getDefaultRedirectType () {
 			let option = this.getJsonValue(this.redirectsStore.options.redirectDefaults.redirectType)
+			const defaultRedirect = REDIRECT_TYPES.find(t => parseInt(t.value) === parseInt(option?.value))
+
 			if (!option) {
 				option = REDIRECT_TYPES[0]
 			}
-			return option
+
+			return defaultRedirect || option
 		},
 		getDefaultQueryParam () {
 			let option = this.getJsonValue(this.redirectsStore.options.redirectDefaults.queryParam)
+			const defaultQueryParam = REDIRECT_QUERY_PARAMS.find(t => t.value === option?.value)
+
 			if (!option) {
 				option = REDIRECT_QUERY_PARAMS[0]
 			}
-			return option
+
+			return defaultQueryParam || option
 		},
 		getDefaultSlash () {
 			return this.redirectsStore.options.redirectDefaults.ignoreSlash

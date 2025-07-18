@@ -65,15 +65,10 @@ class Sitemap {
 		$api      = new Api\Request( 'google-search-console/sitemap/sync/', [ 'sitemaps' => aioseo()->sitemap->helpers->getSitemapUrls() ] );
 		$response = $api->request();
 
-		if ( is_wp_error( $response ) || empty( $response['data'] ) ) {
-			// If it failed to communicate with the server, try again in a few hours.
-			aioseo()->actionScheduler->scheduleSingle( $this->action, wp_rand( HOUR_IN_SECONDS, 2 * HOUR_IN_SECONDS ), [], true );
-
-			return;
+		if ( ! is_wp_error( $response ) && ! empty( $response['data'] ) ) {
+			aioseo()->internalOptions->searchStatistics->sitemap->list      = $response['data'];
+			aioseo()->internalOptions->searchStatistics->sitemap->lastFetch = time();
 		}
-
-		aioseo()->internalOptions->searchStatistics->sitemap->list      = $response['data'];
-		aioseo()->internalOptions->searchStatistics->sitemap->lastFetch = time();
 
 		// Schedule a new sync for the next week.
 		aioseo()->actionScheduler->scheduleSingle( $this->action, WEEK_IN_SECONDS + wp_rand( 0, 3 * DAY_IN_SECONDS ), [], true );

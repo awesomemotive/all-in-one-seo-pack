@@ -37,8 +37,13 @@ class Core {
 		'aioseo_redirects_logs',
 		'aioseo_terms',
 		'aioseo_search_statistics_objects',
+		'aioseo_search_statistics_keywords',
+		'aioseo_search_statistics_keyword_groups',
+		'aioseo_search_statistics_keyword_relationships',
 		'aioseo_revisions',
-		'aioseo_seo_analyzer_results'
+		'aioseo_seo_analyzer_results',
+		'aioseo_writing_assistant_keywords',
+		'aioseo_writing_assistant_posts'
 	];
 
 	/**

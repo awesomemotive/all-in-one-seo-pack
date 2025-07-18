@@ -11,6 +11,7 @@
 		<slot name="header" />
 
 		<grid-column
+			v-if="showLeftColumn"
 			:md="leftSize"
 		>
 			<div
@@ -98,6 +99,10 @@ export default {
 			default () {
 				return '9'
 			}
+		},
+		showLeftColumn : {
+			type    : Boolean,
+			default : true
 		}
 	}
 }

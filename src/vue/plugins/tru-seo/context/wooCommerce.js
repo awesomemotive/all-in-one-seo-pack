@@ -15,6 +15,7 @@ const refreshWoocommerceStore = () => {
 		productPrice = '',
 		productBrand = '',
 		brands       = [],
+		brandFound   = false,
 		productCatLabel = ''
 
 	const tagsStore       = useTagsStore()
@@ -46,10 +47,10 @@ const refreshWoocommerceStore = () => {
 		'product_brand' // WooCommerce Brands
 	]
 
-	brandPluginSelector.forEach(brandPlugin => {
+	for (const brandPlugin of brandPluginSelector) {
 		brands = document.querySelectorAll(`#post input[name="tax_input[${brandPlugin}][]"]:checked`)
 		if (!brands.length) {
-			return
+			continue
 		}
 
 		if (productBrand !== brands[0].parentNode.innerText) {
@@ -64,7 +65,14 @@ const refreshWoocommerceStore = () => {
 				tagsStore.updateWooCommerceBrand(productBrandElement.parentNode.innerText)
 			}
 		}
-	})
+
+		brandFound = true
+		break // Exit loop after first brand is found
+	}
+
+	if (!brandFound) {
+		tagsStore.updateWooCommerceBrand('')
+	}
 
 	const productCats = document.querySelectorAll('#post input[name="tax_input[product_cat][]"]:checked')
 

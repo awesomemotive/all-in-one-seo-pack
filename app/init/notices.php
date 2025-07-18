@@ -7,11 +7,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 // phpcs:disable Generic.Arrays.DisallowLongArraySyntax.Found
 if ( ! function_exists( 'aioseo_php_notice' ) ) {
 	/**
-	 * Display the notice after deactivation.
+	 * Displays a notice to users about unsupported PHP versions.
 	 *
 	 * @since 4.0.0
 	 */
 	function aioseo_php_notice() {
+		if ( ! current_user_can( 'administrator' ) ) {
+			return;
+		}
+
 		$medium = false !== strpos( AIOSEO_PHP_VERSION_DIR, 'pro' ) ? 'proplugin' : 'liteplugin';
 		?>
 		<div class="notice notice-error">
@@ -63,7 +67,7 @@ if ( ! function_exists( 'aioseo_php_notice' ) ) {
 
 		<?php
 		// In case this is on plugin activation.
-		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended	
+		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 			unset( $_GET['activate'] );
 		}
 	}
@@ -71,11 +75,15 @@ if ( ! function_exists( 'aioseo_php_notice' ) ) {
 
 if ( ! function_exists( 'aioseo_php_notice_deprecated' ) ) {
 	/**
-	 * Display the notice after deactivation.
+	 * Displays a notice to users about deprecated PHP versions.
 	 *
 	 * @since 4.0.0
 	 */
 	function aioseo_php_notice_deprecated() {
+		if ( ! current_user_can( 'administrator' ) ) {
+			return;
+		}
+
 		$medium = false !== strpos( AIOSEO_PHP_VERSION_DIR, 'pro' ) ? 'proplugin' : 'liteplugin';
 		?>
 		<div class="notice notice-error">
@@ -131,7 +139,7 @@ if ( ! function_exists( 'aioseo_php_notice_deprecated' ) ) {
 
 		<?php
 		// In case this is on plugin activation.
-		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended	
+		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 			unset( $_GET['activate'] );
 		}
 	}
@@ -139,11 +147,15 @@ if ( ! function_exists( 'aioseo_php_notice_deprecated' ) ) {
 
 if ( ! function_exists( 'aioseo_wordpress_notice' ) ) {
 	/**
-	 * Display the notice after deactivation.
+	 * Displays a notice to users about unsupported WordPress versions.
 	 *
 	 * @since 4.1.2
 	 */
 	function aioseo_wordpress_notice() {
+		if ( ! current_user_can( 'administrator' ) ) {
+			return;
+		}
+
 		$medium = false !== strpos( AIOSEO_PHP_VERSION_DIR, 'pro' ) ? 'proplugin' : 'liteplugin';
 		?>
 		<div class="notice notice-error">
@@ -191,7 +203,7 @@ if ( ! function_exists( 'aioseo_wordpress_notice' ) ) {
 
 		<?php
 		// In case this is on plugin activation.
-		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended	
+		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 			unset( $_GET['activate'] );
 		}
 	}
@@ -226,7 +238,7 @@ if ( ! function_exists( 'aioseo_lite_notice' ) ) {
 			sprintf( esc_html__( 'Your site already has %1$s activated. If you want to switch to %2$s, please first go to Plugins > Installed Plugins and deactivate %1$s. Then, you can activate %2$s.', 'all-in-one-seo-pack' ), 'AIOSEO Pro', 'AIOSEO Lite' ) // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 		);
 
-		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended	
+		if ( isset( $_GET['activate'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 			unset( $_GET['activate'] );
 		}
 

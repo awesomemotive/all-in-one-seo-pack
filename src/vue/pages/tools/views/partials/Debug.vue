@@ -46,6 +46,7 @@
 						<component
 							:is="action.component"
 							@update="data => maybeDoAction(action, data)"
+							@addons-selected="data => selectedAddonsNames = data"
 							:loading="doingAction[action.slug]"
 							:disabled="isActionDisabled(action)"
 						/>
@@ -94,7 +95,7 @@
 							<svg-close @click="showAreYouSureModal = false" />
 						</button>
 
-						<h3>{{ areYouSureTitle }}</h3>
+						<h3 v-html="areYouSureTitle"></h3>
 
 						<div
 							class="description"
@@ -180,6 +181,7 @@ export default {
 			currentData         : {},
 			showAreYouSureModal : false,
 			doingAction         : [],
+			selectedAddonsNames : [],
 			strings             : {
 				selectSite     : 'Select Site',
 				cardLabel      : 'Debug',
@@ -195,6 +197,14 @@ export default {
 	},
 	computed : {
 		areYouSureTitle () {
+			if ('rerun-addon-migrations' === this.currentAction.slug) {
+				return sprintf(
+					'Are you sure you want to run the "%1$s" action for the following addons?<div class="selected-addons-list">%2$s</div>',
+					this.currentAction.label,
+					`<ul>${this.selectedAddonsNames.map(name => `<li>${name}</li>`).join('')}</ul>`
+				)
+			}
+
 			return `Are you sure you want to run the "${this.currentAction.label}" action?`
 		},
 		tabs () {
@@ -468,6 +478,18 @@ export default {
 			font-size: 16px;
 			color: $black;
 			margin-bottom: 16px;
+		}
+
+		.selected-addons-list {
+			text-align: center;
+
+			ul {
+				display: inline-block;
+				text-align: center;
+				li {
+					margin: 4px 0;
+				}
+			}
 		}
 
 		button {

@@ -353,17 +353,16 @@ export default {
 				showCurrentItem               : __('Show current item', td),
 				linkCurrentItem               : __('Link current item', td),
 				home                          : __('Home', td),
-				category                      : __('Category', td),
-				subcategory                   : __('Subcategory', td),
-				articleTitle                  : __('Article Title', td),
-				searchKeyword                 : __('search key word goes here', td),
+				searchKeyword                 : __('search string', td),
 				categoryName                  : __('Category Name', td),
 				breadcrumbTemplates           : __('Breadcrumb Templates', td),
 				categoryHierarchy             : __('Category Hierarchy', td),
 				categoryHierarchyDescription  : __('Display complete category hierarchy even if not selected on each individual post.', td),
 				blog                          : __('Blog', td),
 				blogCrumb                     : __('Blog Page Title', td),
-				showBlogHome                  : __('Show Blog Home', td)
+				showBlogHome                  : __('Show Blog Home', td),
+				category                      : __('Category Parent', td),
+				articleTitle                  : __('Article Title', td)
 			}
 		}
 	},
@@ -404,7 +403,6 @@ export default {
 			return [ ...this.getRootPreview(), ...[
 				this.optionsStore.options.breadcrumbs.showBlogHome ? 'Blog Home' : '',
 				this.strings.category,
-				this.strings.subcategory,
 				this.strings.articleTitle
 			] ].filter(item => !!item).map(item => sanitizeString(item))
 		},

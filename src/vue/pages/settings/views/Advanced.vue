@@ -394,7 +394,7 @@ export default {
 				headlineAnalyzer            : __('Headline Analyzer', td),
 				headlineAnalyzerDescription : __('Enable our Headline Analyzer to help you write irresistible headlines and rank better in search results.', td),
 				llmsTxt                     : __('LLMs.txt', td),
-				llmsTxtDescription          : __('Generate an LLMs.txt file to help you AI engines discover the content on your site more easily.', td),
+				llmsTxtDescription          : __('Generate a LLMs.txt file to help AI engines discover the content on your site more easily.', td),
 				llmsTxtButton               : __('Open LLMs.txt', td),
 				llmsTxtTooltip              : __('To view the LLMs.txt file, first save changes.', td),
 				seoAnalysis                 : __('SEO Analysis', td),

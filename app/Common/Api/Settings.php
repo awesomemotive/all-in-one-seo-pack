@@ -25,17 +25,26 @@ class Settings {
 	public static $importFile = [];
 
 	/**
-	 * Update the settings.
+	 * Retrieves the plugin options.
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return \WP_REST_Response The response.
+	 * @param  \WP_REST_Request  $request The REST Request.
+	 * @return \WP_REST_Response          The response containing all plugin options.
 	 */
-	public static function getOptions() {
-		return new \WP_REST_Response( [
-			'options'  => aioseo()->options->all(),
-			'settings' => aioseo()->settings->all()
-		], 200 );
+	public static function getOptions( $request ) {
+		$siteId = (int) $request->get_param( 'siteId' );
+		if ( $siteId ) {
+			aioseo()->helpers->switchToBlog( $siteId );
+
+			// Re-initialize the options for this site.
+			aioseo()->options->init();
+		}
+
+		return new \WP_REST_Response([
+			'success' => true,
+			'options' => aioseo()->options->all()
+		], 200);
 	}
 
 	/**

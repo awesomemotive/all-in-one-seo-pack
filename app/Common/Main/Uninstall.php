@@ -40,6 +40,11 @@ class Uninstall {
 
 		// Delete all our custom capabilities.
 		$this->uninstallCapabilities();
+
+		// Delete data for the addons.
+		aioseo()->addons->doAddonFunction( 'uninstall', 'dropData', [
+			'force' => $force
+		] );
 	}
 
 	/**

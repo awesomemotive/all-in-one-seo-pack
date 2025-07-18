@@ -296,7 +296,6 @@ class PostsTerms {
 		}
 
 		$aioseoPost = Models\Post::getPost( $postId );
-		$aioseoData = json_decode( wp_json_encode( $aioseoPost ), true );
 
 		if ( $isMedia ) {
 			wp_update_post(
@@ -308,7 +307,13 @@ class PostsTerms {
 			update_post_meta( $postId, '_wp_attachment_image_alt', sanitize_text_field( $body['imageAltTag'] ) );
 		}
 
-		Models\Post::savePost( $postId, array_replace( $aioseoData, $body ) );
+		$aioseoPost->title       = $body['title'];
+		$aioseoPost->description = $body['description'];
+		$aioseoPost->updated     = gmdate( 'Y-m-d H:i:s' );
+		$aioseoPost->save();
+
+		// Trigger the action hook so we can create a revision.
+		do_action( 'aioseo_insert_post', $postId );
 
 		$lastError = aioseo()->core->db->lastError();
 		if ( ! empty( $lastError ) ) {

@@ -149,6 +149,11 @@ class Ai {
 		$body = wp_remote_retrieve_body( $response );
 		$data = json_decode( $body );
 		if ( empty( $data->success ) ) {
+			if ( ! empty( $data->code ) && 'invalid-token' === $data->code ) {
+				// Drop the access token in case it could not be found.
+				aioseo()->internalOptions->internal->ai->accessToken = '';
+			}
+
 			aioseo()->cache->update( 'ai-credits-error', true, HOUR_IN_SECONDS );
 
 			// Schedule another, one-time event in approx. 1 hour from now.

@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.8
 Requires at least: 5.4
 Requires PHP: 7.1
-Stable tag: 4.8.4.1
+Stable tag: 4.8.5
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -69,6 +69,9 @@ Automatic 404 error monitor helps you track and redirect 404 errors, so you don'
 
 * **Author SEO**
 Add [custom author profile pages, author bio box, and relevant author schema](https://aioseo.com/features/author-seo-google-e-e-a-t/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin 'Author SEO (E-E-A-T)') to boost Google EEAT score to help with Google's Helpful Content Update (HCU).
+
+* **LLMs.txt Generator**
+Generate an llms.txt file to help AI engines discover your site's content more easily so your content can rank in AI search results.
 
 * **SEO Audit Checklist**
 Improve your SEO ranking with our comprehensive SEO audit checklist.
@@ -228,6 +231,23 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.8.5**
+
+* Updated: Author SEO (E-E-A-T) addon and Writing Assistant data are now fully removed when uninstalling the plugin.
+* Updated: Product Schema now favours WooCommerce brand field over its own custom field.
+* Updated: PHP version notices are now only shown to Administrators.
+* Fixed: Breadcrumbs taxonomy preview now correctly refreshes when user toggles between using the default settings
+* Fixed: WooCommerce Brand smart tag not correctly converted to expected value in previews.
+* Fixed: AIOSEO Details column now correctly reloads after quick-editing a post.
+* Fixed: Image URLs are no longer forcefully converted to lowercase in the Image Sitemap.
+* Fixed: Focus Keyword now saves correctly again for Divi built posts.
+* Fixed: Image SEO no longer breaks Divi built posts in rare cases.
+* Fixed: Multisite subsites no longer incorrectly inherit the "Block AI Crawlers" and "Block Crawling of Internal Site Search URLs" setting values from the main site in the network. 
+* Fixed: Notifications no longer contain encoded HTML entities
+* Fixed: Default options for new redirects not localized.
+* Fixed: PHP error in rare cases when breadcrumb link is a WP_Error.
+* Fixed: PHP error due to plugin conflict with MasterStudy LMS.
+
 **New in Version 4.8.4.1**
 
 * Fixed: PHP error for multisites when AI credits don't manage to update correctly.
@@ -301,45 +321,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * Fixed: WP 6.8 deprecation warning for default Table of Contents and FAQ block styles.
 * Fixed: Potential page freeze issue when converting Table of Contents block from Group to Columns via block toolbar.
 * Fixed: Console error in Table of Contents block when switching between Visual and Code Editor in Block Editor.
-
-**New in Version 4.8.1.1**
-
-* Fixed: CSS style conflict with Woocommerce Memberships and Abandoned Carts.
-
-**New in Version 4.8.1**
-
-* Updated: DiscussionForumPosting schema is now output for bbPress forum topics and replies as well.
-* Updated: Improved the SEO Email Report header layout for dates in different languages.
-* Updated: Expiration date format in AIOSEO General Settings now reflects WordPress date format setting.
-* Updated: Various Keyword Rank Tracker UI/UX improvements.
-* Updated: The LinkedIn field in the Setup Wizard is now shown by default.
-* Updated: "Show post type archive link" setting for products has been removed from their breadcrumb template.
-* Updated: AIOSEO no longer loads its page builder integration for non-public Thrive Architect post types.
-* Fixed: Removed support for sitelinks schema as it is no longer supported by Google.
-* Fixed: YouTube embedded videos with additional parameters in the URL not being detected by the Video Sitemap addon.
-* Fixed: Uninstalling AIOSEO did not remove user role entries from the database as intended.
-* Fixed: Limit Modified Date feature sometimes not working for WooCommerce Products.
-* Fixed: Load admin bar assets on the frontend when logged in only if the admin bar is enabled for that user.
-* Fixed: Prevent unneeded popup warning on the user profile edit page when leaving without making edits.
-* Fixed: Restoring SEO revisions now updates meta keys to ensure localization.
-* Fixed: WPML translation to support admin pages in addition to Author/Reviewer Blocks.
-* Fixed: Additional keyphrases tooltip cutting off in page builders.
-* Fixed: Category in the permalink and breadcrumb did not match when the primary category is removed.
-* Fixed: "See Full Bio" link not correctly displaying for reviewers without posts, even when a custom author bio URL is set.
-* Fixed: Keyphrase in URL analysis didn't update correctly for auto-draft posts.
-* Fixed: Search Statistics now disconnects automatically if there's an authentication error.
-* Fixed: Phrase text missing from the Link Assistant's Link Suggestions table.
-* Fixed: SERP Preview update when changing primary term for a WooCommerce product.
-* Fixed: Updated SERP title to reflect selected primary term for the category when changed.
-* Fixed: SiteOrigin integration style conflict to prevent overlap with other modals.
-* Fixed: Images using the Post SEO Title smart tag were sometimes not parsed correctly.
-* Fixed: URL count for the root sitemap sometimes not entirely accurate.
-* Fixed: Robots.txt settings not correctly synced between multisite network and main site.
-
-**New in Version 4.8.0**
-
-* New: Crawl Optimization Improvements - We've added even more features to Crawl Cleanup to help you block unwanted bots from indexing your site and prevent spammers from abusing your internal site search results.
-* Fixed: TruSEO Highlighter not always working correctly when post content contains an empty or reusable block.
 
 **See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=aioseo) for previous releases.**
 
@@ -422,6 +403,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.8.4 =
+= 4.8.5 =
 
 This update adds major improvements and bug fixes.

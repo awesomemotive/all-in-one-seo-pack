@@ -18,7 +18,7 @@
 				<base-button
 					type="blue"
 					size="medium"
-					@click="$emit('update', selectedSkus)"
+					@click="$emit('update', selectedSkus), $emit('addons-selected', selectedAddonsNames)"
 					:loading="loading"
 					:disabled="disabled || selectedSkus.length === 0"
 				>
@@ -75,6 +75,9 @@ export default {
 		},
 		selectedSkus () {
 			return Object.keys(this.selectedAddons).filter(sku => this.selectedAddons[sku])
+		},
+		selectedAddonsNames () {
+			return this.activeAddons.filter(addon => this.selectedSkus.includes(addon.sku)).map(addon => addon.name)
 		}
 	}
 }

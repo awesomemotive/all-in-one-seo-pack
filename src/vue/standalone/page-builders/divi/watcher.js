@@ -83,6 +83,12 @@ export default ({ wp, addEventListener }) => {
 		}
 	)
 
-	// This hook will fire when the Save button is triggered.
-	document.querySelector('.et-fb-button--save-draft, .et-fb-button--publish').addEventListener('click', handleEditorSave)
+	const saveButtons = document.querySelectorAll('.et-fb-button--save-draft, .et-fb-button--publish')
+	if (saveButtons?.length) {
+		saveButtons.forEach(button => {
+			if (button) {
+				button.addEventListener('click', handleEditorSave)
+			}
+		})
+	}
 }
