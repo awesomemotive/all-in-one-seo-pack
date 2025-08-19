@@ -704,8 +704,7 @@ trait Vue {
 			return;
 		}
 
-		$this->data['analyzer']['homeResults'] = Models\SeoAnalyzerResult::getResults();
-		$this->data['analyzer']['competitors'] = Models\SeoAnalyzerResult::getCompetitorsResults();
+		$this->data['analyzer'] = aioseo()->seoAnalysis->getVueData();
 	}
 
 	/**

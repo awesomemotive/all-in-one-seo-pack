@@ -41,6 +41,8 @@ class Core {
 		'aioseo_search_statistics_keyword_groups',
 		'aioseo_search_statistics_keyword_relationships',
 		'aioseo_revisions',
+		'aioseo_seo_analyzer_objects',
+		'aioseo_seo_analyzer_results',
 		'aioseo_seo_analyzer_results',
 		'aioseo_writing_assistant_keywords',
 		'aioseo_writing_assistant_posts'

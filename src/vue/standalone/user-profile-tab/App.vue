@@ -45,6 +45,8 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
+import { getParams } from '@/vue/utils/params'
+
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreSocialProfiles from '@/vue/components/common/core/SocialProfiles'
 import EeatCta from './EeatCta'
@@ -158,7 +160,7 @@ export default {
 	},
 	mounted () {
 		const params = new URLSearchParams(window.location.search) || null
-		if (params?.get('author-seo') || location?.hash.includes('author-seo')) {
+		if (params?.get('author-seo') || location?.hash.includes('author-seo') || 'author-seo' === getParams()['aioseo-tab']) {
 			this.setActiveTab(1)
 		}
 	}

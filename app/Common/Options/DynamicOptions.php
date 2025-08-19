@@ -42,6 +42,22 @@ class DynamicOptions {
 			'postTypes'  => [],
 			'taxonomies' => [],
 			'archives'   => []
+		],
+		'seoAnalysis'      => [
+			'postTypes'    => [
+				'all'      => [ 'type' => 'boolean', 'default' => true ],
+				'included' => [ 'type' => 'array', 'default' => [ 'post', 'page' ] ],
+			],
+			'postStatuses' => [
+				'all'      => [ 'type' => 'boolean', 'default' => false ],
+				'included' => [ 'type' => 'array', 'default' => [ 'publish', 'draft', 'private' ] ],
+			],
+			'taxonomies'   => [
+				'all'      => [ 'type' => 'boolean', 'default' => true ],
+				'included' => [ 'type' => 'array', 'default' => [] ],
+			],
+			'excludePosts' => [ 'type' => 'array', 'default' => [] ],
+			'excludeTerms' => [ 'type' => 'array', 'default' => [] ]
 		]
 		// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 	];

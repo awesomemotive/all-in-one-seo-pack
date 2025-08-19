@@ -20,7 +20,7 @@ class BreadcrumbList extends Graph {
 	 * @return array The graph data.
 	 */
 	public function get() {
-		$breadcrumbs = aioseo()->breadcrumbs->frontend->getBreadcrumbs() ?? '';
+		$breadcrumbs = aioseo()->breadcrumbs->frontend->getBreadcrumbs() ?? [];
 		if ( ! $breadcrumbs ) {
 			return [];
 		}

@@ -1,11 +1,28 @@
 <template>
 	<div class="aioseo-donut-chart-with-legend">
 		<div class="chart-left">
+			<div
+				v-if="loading"
+				class="aioseo-donut-chart-with-legend__loading"
+			>
+				<svg-seo-site-score-loading />
+
+				<div
+					v-if="loadingText"
+					class="aioseo-donut-chart-with-legend__loading-text"
+				>
+					{{ loadingText }}
+				</div>
+			</div>
+
 			<core-donut-chart
+				v-else
 				:parts="parts"
 				:total="total"
 				:label="label"
 				:animatedNumber="animatedNumber"
+				:maxTotal="maxTotal"
+				is-label-colored
 			/>
 		</div>
 
@@ -54,11 +71,14 @@
 <script>
 import CoreDonutChart from '@/vue/components/common/core/DonutChart'
 import UtilAnimatedNumber from '@/vue/components/common/util/AnimatedNumber'
+import SvgSeoSiteScoreLoading from '@/vue/components/common/svg/seo-site-score/Loading'
+
 export default {
 	emits      : [ 'onLabelClick' ],
 	components : {
 		CoreDonutChart,
-		UtilAnimatedNumber
+		UtilAnimatedNumber,
+		SvgSeoSiteScoreLoading
 	},
 	props : {
 		parts : {
@@ -82,6 +102,18 @@ export default {
 			default () {
 				return true
 			}
+		},
+		maxTotal : {
+			type     : String,
+			required : false
+		},
+		loading : {
+			type     : Boolean,
+			required : false
+		},
+		loadingText : {
+			type     : String,
+			required : false
 		}
 	},
 	computed : {
@@ -118,6 +150,8 @@ export default {
 	color: $black;
 
 	.chart-left {
+		width: 100%;
+		height: 100%;
 		max-width: 200px;
 		max-height: 200px;
 		position: relative;
@@ -186,6 +220,33 @@ export default {
 					text-decoration: none;
 				}
 			}
+		}
+	}
+
+	&__loading {
+		display: flex;
+		position: relative;
+		width: 100%;
+		max-width: 200px;
+
+		svg {
+			width: 100%;
+			height: auto;
+		}
+
+		&-text {
+			font-size: 24px;
+			position: absolute;
+			left: 0;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			color: $black;
+			margin: 20px;
 		}
 	}
 

@@ -37,7 +37,7 @@
 				>
 					<template #header>
 						<core-analyze-score
-							:score="results.score"
+							:score="parseInt(results.score)"
 						/>
 
 						<span>{{ site }}</span>
@@ -51,16 +51,19 @@
 					<div class="competitor-results-main">
 						<core-site-score-competitor
 							:site="site"
-							:score="results.score"
+							:score="parseInt(results.score)"
 							:loading="analyzerStore.analyzing"
-							:summary="getSummary(results.results)"
-							:mobile-snapshot="results.results.advanced.mobileSnapshot"
+							:summary="getSummary(site)"
+							:mobile-snapshot="results.results?.advanced?.mobileSnapshot"
 							@refresh="refresh"
 						/>
 
-						<div class="competitor-results-body">
+						<div
+							v-if="results?.results"
+							class="competitor-results-body">
 							<core-seo-site-analysis-results
-								section="all-items"
+								section="all"
+								:site="site"
 								:all-results="results.results"
 								show-google-preview
 							/>
@@ -167,11 +170,11 @@ export default {
 		}
 	},
 	methods : {
-		getSummary (results) {
+		getSummary (site) {
 			return {
-				recommended : this.analyzerStore.recommendedCount(results),
-				critical    : this.analyzerStore.criticalCount(results),
-				good        : this.analyzerStore.goodCount(results)
+				recommended : this.analyzerStore.recommendedCount('competitor', site),
+				critical    : this.analyzerStore.criticalCount('competitor', site),
+				good        : this.analyzerStore.goodCount('competitor', site)
 			}
 		},
 		startAnalyzing (competitorUrl) {
@@ -187,7 +190,6 @@ export default {
 				return
 			}
 
-			this.analyzerStore.analyzing    = true
 			this.analyzerStore.analyzeError = false
 			this.analyzerStore.runSiteAnalyzer({
 				url : this.competitorUrl

@@ -3,28 +3,14 @@
 		<div
 			class="aioseo-seo-site-score-score"
 		>
-			<core-site-score
+			<core-donut-chart-with-legend
+				:parts="sortedParts"
+				:total="parseInt(score)"
+				:label="description"
+				maxTotal="100"
 				:loading="isAnalyzing || loading"
-				:score="score"
-				:description="description"
+				:loadingText="strings.analyzing"
 			/>
-		</div>
-
-		<div
-			class="aioseo-seo-site-score-recommendations"
-		>
-			<div class="critical">
-				<span class="round red">{{ summary.critical || 0 }}</span>
-				{{ strings.criticalIssues }}
-			</div>
-			<div class="recommended">
-				<span class="round blue">{{ summary.recommended || 0 }}</span>
-				{{ strings.recommendedImprovements }}
-			</div>
-			<div class="good">
-				<span class="round green">{{ summary.good || 0 }}</span>
-				{{ strings.goodResults }}
-			</div>
 		</div>
 
 		<base-button
@@ -43,10 +29,19 @@
 			class="mobile-snapshot"
 		>
 			<div>{{ strings.mobileSnapshot }}</div>
-			<img
-				alt="Mobile Snapshot"
-				:src="mobileSnapshot"
-			/>
+			<div class="mobile-snapshot-image">
+				<img
+					class="mobile-snapshot-image__frame"
+					:src="getAssetUrl(iphoneFrame)"
+					alt="Mobile Snapshot iPhone Frame"
+				/>
+
+				<img
+					class="mobile-snapshot-image__content"
+					alt="Mobile Snapshot"
+					:src="mobileSnapshot"
+				/>
+			</div>
 		</div>
 	</div>
 </template>
@@ -61,7 +56,11 @@ import {
 import { merge } from 'lodash-es'
 import { useSeoSiteScore } from '@/vue/composables/SeoSiteScore'
 
-import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
+import { getAssetUrl } from '@/vue/utils/helpers'
+import { getSortedParts } from '@/vue/pages/seo-analysis/utils'
+import iphoneFrame from '@/vue/assets/images/seo-analysis/iphone-frame.png'
+
+import CoreDonutChartWithLegend from '@/vue/components/common/core/DonutChartWithLegend'
 import SvgRefresh from '@/vue/components/common/svg/Refresh'
 
 import { __ } from '@/vue/plugins/translations'
@@ -80,11 +79,13 @@ export default {
 		return {
 			analyzerStore     : useAnalyzerStore(),
 			composableStrings : strings,
-			description
+			description,
+			iphoneFrame,
+			getAssetUrl
 		}
 	},
 	components : {
-		CoreSiteScore,
+		CoreDonutChartWithLegend,
 		SvgRefresh
 	},
 	props : {
@@ -106,14 +107,25 @@ export default {
 		return {
 			isAnalyzing : false,
 			strings     : merge(this.composableStrings, {
-				criticalIssues             : __('Important Issues', td),
-				warnings                   : __('Warnings', td),
-				recommendedImprovements    : __('Recommended Improvements', td),
-				goodResults                : __('Good Results', td),
-				completeSiteAuditChecklist : __('Complete Site Audit Checklist', td),
-				refreshResults             : __('Refresh Results', td),
-				mobileSnapshot             : __('Mobile Snapshot', td)
+				refreshResults : __('Refresh Results', td),
+				mobileSnapshot : __('Mobile Snapshot', td),
+				analyzing      : __('Analyzing...', td)
 			})
+		}
+	},
+	computed : {
+		sortedParts () {
+			const goodCount = this.summary.good || 0
+			const warningsCount = this.summary.recommended || 0
+			const criticalCount = this.summary.critical || 0
+			const totalCount = goodCount + warningsCount + criticalCount
+
+			return getSortedParts({
+				good     : goodCount,
+				warnings : warningsCount,
+				issues   : criticalCount,
+				total    : totalCount
+			}, 'competitor', false)
 		}
 	},
 	methods : {
@@ -143,58 +155,14 @@ export default {
 		position: relative;
 		width: 100%;
 		max-width: 200px;
-		margin-right: 1em;
 
-		svg {
-			width: 100%;
-			height: auto;
-		}
-	}
+		.aioseo-donut-chart-with-legend {
+			flex-direction: column !important;
+			gap: 20px;
+			margin-bottom: 16px;
 
-	.aioseo-seo-site-score-recommendations {
-		margin: 16px 0;
-
-		> div:not(.links) {
-			display: flex;
-			align-items: center;
-			font-size: 14px;
-			color: $black;
-			font-weight: 600;
-
-			+ div:not(.links) {
-				margin-top: 10px;
-			}
-
-			.round {
-				position: relative;
-				border-radius: 50%;
-				width: 24px;
-				min-width: 24px;
-				max-width: 24px;
-				height: 24px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				margin-right: 10px;
-				font-size: 12px;
-				color: #fff;
-				font-weight: 600;
-
-				&.red {
-					background-color: $red;
-				}
-
-				&.blue {
-					background-color: $blue;
-				}
-
-				&.orange {
-					background-color: $orange;
-				}
-
-				&.green {
-					background-color: $green;
-				}
+			.chart-right {
+				margin-left: 0;
 			}
 		}
 	}
@@ -208,18 +176,37 @@ export default {
 	}
 
 	.mobile-snapshot {
+		width: 250px;
+		max-width: 100%;
 		margin-top: 30px;
-		max-width: 250px;
+
+		&-image {
+			position: relative;
+			padding: 10px 4px 0;
+			width: 100%;
+			height: 445px;
+			overflow: hidden;
+			border-radius: 35px;
+
+			&__frame {
+				position: absolute;
+				z-index: 2;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+			}
+
+			&__content {
+				width: 100%;
+				height: auto;
+			}
+		}
 
 		div {
 			font-weight: 600;
 			font-size: 16px;
 			margin-bottom: 10px;
-		}
-
-		img {
-			width: 100%;
-			height: auto;
 		}
 	}
 }

@@ -64,12 +64,27 @@
 					<util-fit-text
 						:max="32"
 						:constrain-to-element="$el"
+						class="total-container"
+						:class="getClass"
 					>
 						<util-animated-number v-if="animatedNumber" :number="parseInt(total)" />
 						<div v-else v-html="parseInt(total)" />
+
+						<span
+							v-if="maxTotal"
+							class="total-max"
+						>
+							/ {{ parseInt(maxTotal) }}
+						</span>
 					</util-fit-text>
 				</div>
-				<div class="label">{{ label }}</div>
+
+				<div
+					class="label"
+					:class="{ [getColorClass] : isLabelColored }"
+				>
+					{{ label }}
+				</div>
 			</div>
 		</div>
 	</div>
@@ -101,6 +116,37 @@ export default {
 			default () {
 				return true
 			}
+		},
+		maxTotal : {
+			type     : String,
+			required : false
+		},
+		isLabelColored : {
+			type : Boolean,
+			default () {
+				return false
+			}
+		}
+	},
+	computed : {
+		getColorClass () {
+			if (!this.maxTotal) {
+				return ''
+			}
+
+			switch (true) {
+				case 33 >= this.total:
+					return 'red'
+				case 66 >= this.total:
+					return 'orange'
+				default:
+					return 'green'
+			}
+		},
+		getClass () {
+			const colorClass = this.getColorClass
+
+			return `total-container-large ${colorClass}`
 		}
 	}
 }
@@ -141,9 +187,58 @@ export default {
 				line-height: 40px;
 			}
 
+			.total-container {
+				display: flex;
+				align-items: baseline;
+				justify-content: center;
+				gap: 4px;
+
+				&.total-container-large {
+					> span,
+					> div {
+						font-size: 32px;
+						font-weight: 700;
+					}
+
+					&.red {
+						color: $red;
+					}
+
+					&.orange {
+						color: $orange;
+					}
+
+					&.green {
+						color: $green;
+					}
+				}
+
+				.total-max {
+					font-size: 13px !important;
+					font-weight: 600;
+					line-height: 150%;
+					color: $placeholder-color;
+				}
+			}
+
 			.label {
 				margin-top: 5px;
 				line-height: 150%;
+
+				&.red {
+					color: $red;
+					font-weight: bold;
+				}
+
+				&.orange {
+					color: $orange;
+					font-weight: bold;
+				}
+
+				&.green {
+					color: $green;
+					font-weight: bold;
+				}
 			}
 		}
 	}

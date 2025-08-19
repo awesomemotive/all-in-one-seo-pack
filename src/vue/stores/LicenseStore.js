@@ -37,8 +37,7 @@ export const useLicenseStore = defineStore('LicenseStore', {
 			isActive   : false,
 			isDisabled : false,
 			isExpired  : false,
-			isInvalid  : false,
-			features   : {}
+			isInvalid  : false
 		}
 	}),
 	getters : {
@@ -49,6 +48,27 @@ export const useLicenseStore = defineStore('LicenseStore', {
 			return rootStore.aioseo.data.isNetworkAdmin
 				? optionsStore.networkOptions.general.licenseKey
 				: optionsStore.options.general.licenseKey
+		},
+		counts : () => {
+			const rootStore    = useRootStore()
+			const optionsStore = useOptionsStore()
+			let counts = rootStore.aioseo.data.isNetworkAdmin
+				? optionsStore.internalNetworkOptions.internal.license?.counts
+				: optionsStore.internalOptions.internal.license?.counts
+
+			if (counts && 'string' === typeof counts) {
+				counts = JSON.parse(counts)
+			}
+
+			return counts
+		},
+		upgradeUrl : () => {
+			const rootStore    = useRootStore()
+			const optionsStore = useOptionsStore()
+
+			return rootStore.aioseo.data.isNetworkAdmin
+				? optionsStore.internalNetworkOptions.internal.license?.upgradeUrl
+				: optionsStore.internalOptions.internal.license?.upgradeUrl
 		}
 	},
 	actions : {
@@ -68,12 +88,22 @@ export const useLicenseStore = defineStore('LicenseStore', {
 
 					notificationsStore.updateNotifications(response.body.notifications)
 
+					// This data is determined on the PHP side so that we can take multisite licensing into account.
+					// We can't use getters based on the internal options on the JS side.
+					this.license = response.body.license
+
 					if (response.body.licenseData) {
+						if (response.body.licenseData?.counts) {
+							// Decode counts if it's a string so that the activation alert shows up.
+							if ('string' === typeof response.body.licenseData.counts) {
+								response.body.licenseData.counts = JSON.parse(response.body.licenseData.counts)
+							}
+						}
+
 						Object.keys(response.body.licenseData).forEach(objectKey => {
 							const internalStore = rootStore.aioseo.data.isNetworkAdmin ? 'internalNetworkOptions' : 'internalOptions'
 							optionsStore.updateOption(internalStore, { groups: [ 'internal', 'license' ], key: objectKey, value: response.body.licenseData[objectKey] })
 						})
-						this.license = response.body.license
 
 						rootStore.aioseo.data.isNetworkLicensed = rootStore.aioseo.data.isNetworkAdmin
 

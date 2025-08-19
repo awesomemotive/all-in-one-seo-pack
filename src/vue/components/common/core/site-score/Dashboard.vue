@@ -1,39 +1,15 @@
 <template>
 	<div class="aioseo-site-score-dashboard">
-		<div
+		<core-donut-chart-with-legend
 			v-if="!analyzerStore.analyzeError && (loading || score)"
-			class="aioseo-seo-site-score-score"
-		>
-			<core-site-score
-				:loading="loading"
-				:score="score"
-				:description="scoreDescription"
-				:strokeWidth="1.75"
-			/>
-		</div>
-
-		<div
-			v-if="!analyzerStore.analyzeError && (loading || score)"
-			class="aioseo-seo-site-score-recommendations"
-		>
-			<div class="critical">
-				<span class="round red">{{ summary.critical || 0 }}</span>
-				{{ strings.criticalIssues }}
-			</div>
-			<div class="recommended">
-				<span class="round blue">{{ summary.recommended || 0 }}</span>
-				{{ strings.recommendedImprovements }}
-			</div>
-			<div class="good">
-				<span class="round green">{{ summary.good || 0 }}</span>
-				{{ strings.goodResults }}
-			</div>
-
-			<div class="links" v-if="allowed('aioseo_seo_analysis_settings')">
-				<a :href="rootStore.aioseo.urls.aio.seoAnalysis">{{ strings.completeSiteAuditChecklist }}</a>
-				<a :href="rootStore.aioseo.urls.aio.seoAnalysis" class="no-underline">&rarr;</a>
-			</div>
-		</div>
+			:parts="sortedParts"
+			:total="parseInt(score)"
+			:label="scoreDescription"
+			maxTotal="100"
+			:link="chartLink"
+			:loading="loading"
+			:loadingText="strings.analyzing"
+		/>
 
 		<div
 			class="seo-analysis-error"
@@ -69,13 +45,15 @@ import { ref } from 'vue'
 
 import {
 	useAnalyzerStore,
-	useRootStore
+	useRootStore,
+	useLicenseStore
 } from '@/vue/stores'
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { useSeoSiteScore } from '@/vue/composables/SeoSiteScore'
+import { getSortedParts } from '@/vue/pages/seo-analysis/utils'
 
-import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
+import CoreDonutChartWithLegend from '@/vue/components/common/core/DonutChartWithLegend'
 import SvgDannieLab from '@/vue/components/common/svg/dannie/Lab'
 
 import { __, sprintf } from '@/vue/plugins/translations'
@@ -97,11 +75,12 @@ export default {
 			composableStrings : strings,
 			description,
 			errorObject,
-			rootStore         : useRootStore()
+			rootStore         : useRootStore(),
+			licenseStore      : useLicenseStore()
 		}
 	},
 	components : {
-		CoreSiteScore,
+		CoreDonutChartWithLegend,
 		SvgDannieLab
 	},
 	props : {
@@ -117,7 +96,10 @@ export default {
 	data () {
 		return {
 			allowed,
-			strings          : this.composableStrings,
+			strings : {
+				...this.composableStrings,
+				analyzing : __('Analyzing...', td)
+			},
 			scoreDescription :	this.description
 		}
 	},
@@ -148,6 +130,41 @@ export default {
 			}
 
 			return this.analyzerStore.analyzeError
+		},
+		sortedParts () {
+			// If loading, set all counts to 10 so the graph can load
+			const goodCount     = this.loading ? 10 : this.analyzerStore.goodCount('homepage')
+			const warningsCount = this.loading ? 10 : this.analyzerStore.recommendedCount('homepage')
+			const criticalCount = this.loading ? 10 : this.analyzerStore.criticalCount('homepage')
+			const totalCount    = goodCount + warningsCount + criticalCount
+
+			const sortedParts = getSortedParts({
+				good     : goodCount,
+				warnings : warningsCount,
+				issues   : criticalCount,
+				total    : totalCount
+			}, 'homepage')
+
+			// If loading, reset all counts to 0 after parsing/sorting, so the labels are correct.
+			if (this.loading) {
+				return sortedParts.map(part => {
+					part.count = 0
+
+					return part
+				})
+			}
+
+			return sortedParts
+		},
+		chartLink () {
+			if (!this.allowed('aioseo_seo_analysis_settings')) {
+				return ''
+			}
+
+			return `<div class="links">
+				<a href="${this.rootStore.aioseo.urls.aio.seoAnalysis}">${this.strings.completeSiteAuditChecklist}</a>
+				<a href="${this.rootStore.aioseo.urls.aio.seoAnalysis}" class="no-underline">&rarr;</a>
+			</div>`
 		}
 	}
 }
@@ -168,70 +185,10 @@ export default {
 		text-align: center;
 	}
 
-	.aioseo-seo-site-score-score {
-		position: relative;
-		width: 100%;
-		max-width: 200px;
-		margin-right: 1rem;
-
-		svg {
-			width: 100%;
-			height: auto;
-		}
-	}
-
-	.aioseo-seo-site-score-recommendations {
-		> div:not(.links) {
-			display: flex;
-			align-items: center;
-			font-size: 14px;
-			color: $black;
-			font-weight: 600;
-			margin-bottom: 10px;
-
-			.round {
-				position: relative;
-				border-radius: 50%;
-				width: 24px;
-				min-width: 24px;
-				max-width: 24px;
-				height: 24px;
-				line-height: 24px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				margin-right: 10px;
-				font-size: 12px;
-				color: #fff;
-				font-weight: 600;
-
-				&.red {
-					background-color: $red;
-				}
-
-				&.blue {
-					background-color: $blue;
-				}
-
-				&.orange {
-					background-color: $orange;
-				}
-
-				&.green {
-					background-color: $green;
-				}
-			}
-		}
-
-		.links {
-			margin-top: 18px;
-			font-size: 14px;
-			font-weight: 600;
-
-			.no-underline {
-				padding-left: 5px;
-			}
-		}
+	.links {
+		margin-top: 18px;
+		font-size: 14px;
+		font-weight: 600;
 	}
 
 	.seo-analysis-error {

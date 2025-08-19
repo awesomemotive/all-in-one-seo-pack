@@ -221,18 +221,12 @@ class Request {
 			$body['time'] = time(); // Add a timestamp to avoid caching.
 		}
 
-		$body['timezone']        = gmdate( 'e' );
-		$body['ip']              = ! empty( $_SERVER['SERVER_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_ADDR'] ) ) : '';
+		$body['timezone'] = gmdate( 'e' );
+		$body['ip']       = ! empty( $_SERVER['SERVER_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_ADDR'] ) ) : '';
 
 		// 2. SET HEADERS
 		$headers = array_merge( [
-			'Content-Type'      => 'application/json',
-			'Cache-Control'     => 'no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0',
-			'Pragma'            => 'no-cache',
-			'Expires'           => 0,
-			'AIOSEOAPI-Referer' => site_url(),
-			'AIOSEOAPI-Sender'  => 'WordPress',
-			'X-AIOSEO-Key'      => aioseo()->internalOptions->internal->siteAnalysis->connectToken,
+			'Content-Type' => 'application/json'
 		], aioseo()->helpers->getApiHeaders() );
 
 		// 3. COMPILE REQUEST DATA

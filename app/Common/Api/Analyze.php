@@ -29,6 +29,7 @@ class Analyze {
 		$analyzeOrHomeUrl = ! empty( $analyzeUrl ) ? $analyzeUrl : home_url();
 		$responseCode     = null === aioseo()->core->cache->get( 'analyze_site_code' ) ? [] : aioseo()->core->cache->get( 'analyze_site_code' );
 		$responseBody     = null === aioseo()->core->cache->get( 'analyze_site_body' ) ? [] : aioseo()->core->cache->get( 'analyze_site_body' );
+
 		if (
 			empty( $responseCode ) ||
 			empty( $responseCode[ $analyzeOrHomeUrl ] ) ||
@@ -74,18 +75,23 @@ class Analyze {
 				'score'   => $responseBody[ $analyzeOrHomeUrl ]['score']
 			], $analyzeUrl );
 
+			// Get all competitors results parsed and sanitized.
 			$result = SeoAnalyzerResult::getCompetitorsResults();
 
 			return new \WP_REST_Response( $result, 200 );
 		}
 
 		$results = $responseBody[ $analyzeOrHomeUrl ]['results'];
+
 		SeoAnalyzerResult::addResults( [
 			'results' => $results,
 			'score'   => $responseBody[ $analyzeOrHomeUrl ]['score']
 		] );
 
-		return new \WP_REST_Response( $responseBody[ $analyzeOrHomeUrl ], 200 );
+		// Get all results parsed and sanitized.
+		$allResults = SeoAnalyzerResult::getResults();
+
+		return new \WP_REST_Response( $allResults, 200 );
 	}
 
 	/**
@@ -182,22 +188,6 @@ class Analyze {
 		aioseo()->internalOptions->internal->headlineAnalysis->headlines = $headlines;
 
 		return new \WP_REST_Response( $headlines, 200 );
-	}
-
-	/**
-	 * Get Homepage results.
-	 *
-	 * @since 4.8.3
-	 *
-	 * @return \WP_REST_Response The response.
-	 */
-	public static function getHomeResults() {
-		$results = SeoAnalyzerResult::getResults();
-
-		return new \WP_REST_Response( [
-			'success' => true,
-			'result'  => $results,
-		], 200 );
 	}
 
 	/**

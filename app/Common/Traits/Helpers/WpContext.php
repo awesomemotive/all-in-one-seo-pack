@@ -1027,7 +1027,7 @@ trait WpContext {
 	 */
 	public function isBlockTheme() {
 		if ( function_exists( 'wp_is_block_theme' ) ) {
-			return wp_is_block_theme(); // phpcs:ignore AIOSEO.WpFunctionUse.NewFunctions.wp_is_block_themeFound
+			return wp_is_block_theme(); // phpcs:ignore AIOSEO.WpFunctionUse.NewFunctions.wp_is_block_themeFound, @wp-since ignore
 		}
 
 		return false;

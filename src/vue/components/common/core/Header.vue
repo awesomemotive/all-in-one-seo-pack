@@ -93,6 +93,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 import {
+	useAnalyzerStore,
 	useHelpPanelStore,
 	useLicenseStore,
 	useLinkAssistantStore,
@@ -123,6 +124,7 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 // We just need to call this to make sure the composable is used.
 useScrollAndHighlight()
 
+const analyzerStore      = useAnalyzerStore()
 const helpPanelStore     = useHelpPanelStore()
 const licenseStore       = useLicenseStore()
 const linkAssistantStore = useLinkAssistantStore()
@@ -158,6 +160,10 @@ const strings = {
 	searchStatisticsPopup : {
 		header      : __('Search statistics are being fetched.', td),
 		description : __('Depending on the amount of content on your site, this process can take some time. You can safely leave this page and check back later.', td)
+	},
+	seoAnalyzerPopup : {
+		header      : __('Site Audit is being processed.', td),
+		description : __('Depending on the amount of content on your site, this process can take some time. You can safely leave this page and check back later.', td)
 	}
 }
 
@@ -165,6 +171,8 @@ const percentage = computed(() => {
 	switch (activeScan.value) {
 		case 'linkAssistant':
 			return linkAssistantStore.suggestionsScan.percent
+		case 'seoAnalyzer':
+			return analyzerStore.objectsScan.percent
 		default:
 			return null
 	}
@@ -174,6 +182,8 @@ const showPopup = computed(() => {
 	switch (activeScan.value) {
 		case 'linkAssistant':
 			return linkAssistantStore.suggestionsScan.showProcessingPopup && 100 !== linkAssistantStore.suggestionsScan.percent
+		case 'seoAnalyzer':
+			return analyzerStore.objectsScan.showProcessingPopup && 100 !== analyzerStore.objectsScan.percent
 		default:
 			return null
 	}
@@ -183,6 +193,8 @@ const popupStrings = computed(() => {
 	switch (activeScan.value) {
 		case 'linkAssistant':
 			return strings.linkAssistantPopup
+		case 'seoAnalyzer':
+			return strings.seoAnalyzerPopup
 		default:
 			return null
 	}
@@ -222,12 +234,23 @@ const checkForActiveScan = () => {
 	) {
 		activeScan.value = 'linkAssistant'
 	}
+
+	if (
+		'seo-analysis' === rootStore.aioseo.page &&
+		rootStore.isPro &&
+		!licenseStore.isUnlicensed &&
+		100 !== analyzerStore.objectsScan.percent
+	) {
+		activeScan.value = 'seoAnalyzer'
+	}
 }
 
 const toggleCirclePopup = () => {
 	switch (activeScan.value) {
 		case 'linkAssistant':
 			return linkAssistantStore.toggleProcessingPopup()
+		case 'seoAnalyzer':
+			return analyzerStore.toggleProcessingPopup()
 		default:
 			return null
 	}

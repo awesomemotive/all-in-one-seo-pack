@@ -233,6 +233,7 @@ export default {
 				})
 				return part
 			})
+
 			return parts
 		},
 		searchAppearanceUrl () {

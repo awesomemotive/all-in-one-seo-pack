@@ -58,9 +58,9 @@ const rootStore     = useRootStore()
 
 const getSummary = computed(() => {
 	return {
-		recommended : analyzerStore.recommendedCount(),
-		critical    : analyzerStore.criticalCount(),
-		good        : analyzerStore.goodCount()
+		recommended : analyzerStore.recommendedCount('homepage'),
+		critical    : analyzerStore.criticalCount('homepage'),
+		good        : analyzerStore.goodCount('homepage')
 	}
 })
 
@@ -85,13 +85,10 @@ const closedCallback = (reload) => {
 	if (reload) {
 		analyzerStore.runSiteAnalyzer()
 	}
-
-	analyzerStore.analyzing = true
 }
 
 onMounted(() => {
 	if (!analyzerStore.homeResults.score && optionsStore.internalOptions.internal.siteAnalysis.connectToken) {
-		analyzerStore.analyzing = true
 		analyzerStore.runSiteAnalyzer()
 	}
 })

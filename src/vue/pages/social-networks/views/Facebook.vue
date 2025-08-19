@@ -24,6 +24,7 @@
 			</core-settings-row>
 
 			<core-settings-row
+				id="aioseo-facebook-default-image-source"
 				class="facebook-default-image-source"
 				v-if="optionsStore.options.social.facebook.general.enable"
 				:name="strings.defaultImageSourcePosts"

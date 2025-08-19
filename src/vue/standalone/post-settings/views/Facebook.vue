@@ -78,6 +78,7 @@
 			</core-settings-row>
 
 			<core-settings-row
+				id="aioseo-post-facebook-image-source"
 				class="facebook-image-source"
 				:name="strings.imageSource"
 				align

@@ -23,8 +23,9 @@
 			v-if="optionsStore.internalOptions.internal.siteAnalysis.connectToken"
 			:score="score"
 			:description="description"
-			:loading="analyzing"
+			:loading="analyzerStore.analyzing"
 			:summary="getSummary"
+			:parts="sortedParts"
 		/>
 	</div>
 </template>
@@ -41,7 +42,7 @@ import {
 
 import { popup } from '@/vue/utils/popup'
 import { useSeoSiteScore } from '@/vue/composables/SeoSiteScore'
-
+import { getSortedParts } from '@/vue/pages/seo-analysis/utils'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreSiteScoreAnalyze from '@/vue/components/common/core/site-score/Analyze'
 
@@ -64,12 +65,26 @@ watch(() => analyzerStore.homeResults.score, (newVal) => {
 	score.value = newVal
 })
 
+const goodCount     = computed(() => analyzerStore.goodCount('homepage'))
+const warningsCount = computed(() => analyzerStore.recommendedCount('homepage'))
+const criticalCount = computed(() => analyzerStore.criticalCount('homepage'))
+const totalCount    = computed(() => goodCount.value + warningsCount.value + criticalCount.value)
+
 const getSummary = computed(() => {
 	return {
-		recommended : analyzerStore.recommendedCount(),
-		critical    : analyzerStore.criticalCount(),
-		good        : analyzerStore.goodCount()
+		recommended : warningsCount.value,
+		critical    : criticalCount.value,
+		good        : goodCount.value
 	}
+})
+
+const sortedParts = computed(() => {
+	return getSortedParts({
+		good     : goodCount.value,
+		warnings : warningsCount.value,
+		issues   : criticalCount.value,
+		total    : totalCount.value
+	})
 })
 
 const openPopup = (url) => {
@@ -93,13 +108,10 @@ const closedCallback = (reload) => {
 	if (reload) {
 		analyzerStore.runSiteAnalyzer()
 	}
-
-	analyzerStore.analyzing = true
 }
 
 onMounted(() => {
 	if (!analyzerStore.homeResults.score && optionsStore.internalOptions.internal.siteAnalysis.connectToken) {
-		analyzerStore.analyzing = true
 		analyzerStore.runSiteAnalyzer()
 	}
 

@@ -999,4 +999,27 @@ trait Wp {
 
 		return $slug;
 	}
+
+	/**
+	 * Returns the scannable post types.
+	 *
+	 * @since 4.8.6
+	 *
+	 * @return array The scannable post types.
+	 */
+	public function getScannablePostTypes() {
+		static $scannablePostTypes = null;
+		if ( null !== $scannablePostTypes ) {
+			return $scannablePostTypes;
+		}
+
+		// We exclude these post types to optimize performance.
+		$nonSupportedPostTypes = [ 'attachment' ];
+		$scannablePostTypes    = array_diff(
+			$this->getPublicPostTypes( true ),
+			$nonSupportedPostTypes
+		);
+
+		return $scannablePostTypes;
+	}
 }

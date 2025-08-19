@@ -44,7 +44,7 @@ class WebPage extends Graphs\Graph {
 			'isPartOf'    => [ '@id' => $homeUrl . '#website' ]
 		];
 
-		$breadcrumbs = aioseo()->breadcrumbs->frontend->getBreadcrumbs() ?? '';
+		$breadcrumbs = aioseo()->breadcrumbs->frontend->getBreadcrumbs() ?? [];
 		if ( ! empty( $breadcrumbs ) ) {
 			$data['breadcrumb'] = [ '@id' => aioseo()->schema->context['url'] . '#breadcrumblist' ];
 		}

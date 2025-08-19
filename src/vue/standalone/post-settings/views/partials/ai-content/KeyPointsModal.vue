@@ -256,8 +256,8 @@ export default {
 			}
 
 			return _n(
-				__('Insert Key Points Block', td),
-				__('Insert Key Points Blocks', td),
+				'Insert Key Points Block',
+				'Insert Key Points Blocks',
 				selected.value.length,
 				td
 			)

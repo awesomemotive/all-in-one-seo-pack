@@ -196,7 +196,7 @@ class SeoAnalyzerResult extends Model {
 				];
 
 				if ( ! is_array( $result ) ) {
-					$fields['metadata'] = [ 'value' => $result ];
+					$fields['metadata'] = [ 'value' => sanitize_text_field( $result ) ];
 				} else {
 					$metadata = [];
 					foreach ( $result as $key => $value ) {

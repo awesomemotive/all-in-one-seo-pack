@@ -582,6 +582,15 @@ abstract class AIOSEOAbstract {
 	public $emailReports = null;
 
 	/**
+	 * SEO Analysis class instance.
+	 *
+	 * @since 4.8.6
+	 *
+	 * @var \AIOSEO\Plugin\Pro\SeoAnalysis\SeoAnalysis
+	 */
+	public $seoAnalysis = null;
+
+	/**
 	 * ThirdParty class instance.
 	 *
 	 * @since 4.7.6

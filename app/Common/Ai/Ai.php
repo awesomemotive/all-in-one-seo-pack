@@ -43,7 +43,7 @@ class Ai {
 		add_action( $this->creditFetchAction, [ $this, 'updateCredits' ] );
 
 		// If param is set, fetch credits but just once per 5 minutes to prevent abuse.
-		if ( isset( $_REQUEST['aioseo-ai-credits'] ) && ! aioseo()->core->cache->get( 'ai_get_credits' ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended
+		if ( isset( $_REQUEST['aioseo-ai-credits'] ) && ! aioseo()->core->cache->get( 'ai_get_credits' ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 			add_action( 'init', [ $this, 'updateCredits' ] );
 
 			aioseo()->core->cache->update( 'ai_get_credits', true, 5 * MINUTE_IN_SECONDS );

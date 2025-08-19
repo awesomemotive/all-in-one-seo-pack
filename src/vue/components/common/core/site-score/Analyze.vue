@@ -5,10 +5,21 @@
 			class="seo-analysis-score"
 		>
 			<core-site-score
-				:loading="loading"
-				:score="score"
+				v-if="loading"
+				:loading="true"
+				:score="parseInt(score)"
 				:description="description"
 				:strokeWidth="1.75"
+			/>
+
+			<core-donut-chart
+				v-else
+				:parts="sortedParts"
+				:total="parseInt(score)"
+				:label="description"
+				maxTotal="100"
+				:animatedNumber="false"
+				is-label-colored
 			/>
 		</div>
 
@@ -16,7 +27,13 @@
 			v-if="!analyzerStore.analyzeError"
 			class="seo-analysis-description"
 		>
-			<h2>{{ strings.yourOverallSiteScore }}</h2>
+			<h2>{{ strings.yourHomepageScore }}</h2>
+
+			<span v-if="rootStore?.aioseo?.urls?.home"
+				class="seo-analysis-homepage-url"
+			>
+				<a target="_blank" :href="rootStore.aioseo.urls.home">{{ rootStore.aioseo.urls.home }}</a>
+			</span>
 
 			<div v-html="strings.goodResult" />
 
@@ -29,6 +46,25 @@
 					:href="links.getDocUrl('ultimateGuide')"
 					target="_blank"
 				>{{ strings.readUltimateSeoGuide }}</a>
+			</div>
+		</div>
+
+		<div
+			v-if="!analyzerStore.analyzeError && analyzerStore.homeResults?.results?.advanced?.mobileSnapshot"
+			class="seo-analysis-mobile-snapshot"
+		>
+			<div class="mobile-snapshot-image">
+				<img
+					class="mobile-snapshot-image__frame"
+					:src="getAssetUrl(iphoneFrame)"
+					alt="Mobile Snapshot iPhone Frame"
+				/>
+
+				<img
+					class="mobile-snapshot-image__content"
+					alt="Mobile Snapshot"
+					:src="analyzerStore.homeResults?.results?.advanced?.mobileSnapshot"
+				/>
 			</div>
 		</div>
 
@@ -66,13 +102,19 @@ import { ref } from 'vue'
 
 import links from '@/vue/utils/links'
 import {
-	useAnalyzerStore
+	useAnalyzerStore,
+	useRootStore
 } from '@/vue/stores'
 
+import { getAssetUrl } from '@/vue/utils/helpers'
+import iphoneFrame from '@/vue/assets/images/seo-analysis/iphone-frame.png'
+
 import { useSeoSiteScore } from '@/vue/composables/SeoSiteScore'
+import { getSortedParts } from '@/vue/pages/seo-analysis/utils'
 
 import { merge } from 'lodash-es'
 
+import CoreDonutChart from '@/vue/components/common/core/DonutChart'
 import CoreSiteScore from '@/vue/components/common/core/site-score/Index'
 import SvgBook from '@/vue/components/common/svg/Book'
 import SvgDannieLab from '@/vue/components/common/svg/dannie/Lab'
@@ -92,18 +134,22 @@ export default {
 
 		return {
 			analyzerStore     : useAnalyzerStore(),
+			rootStore         : useRootStore(),
 			composableStrings : strings,
 			errorObject,
-			links
+			links,
+			getAssetUrl,
+			iphoneFrame
 		}
 	},
 	components : {
+		CoreDonutChart,
 		CoreSiteScore,
 		SvgBook,
 		SvgDannieLab
 	},
 	props : {
-		score       : Number,
+		score       : [ Number, String ],
 		loading     : Boolean,
 		description : String,
 		summary     : {
@@ -116,8 +162,8 @@ export default {
 	data () {
 		return {
 			strings : merge({
-				yourOverallSiteScore : __('Your Overall Site Score', td),
-				goodResult           : sprintf(
+				yourHomepageScore : __('Your Homepage Score:', td),
+				goodResult        : sprintf(
 					// Translators: 1 - Opening bold HTML tag, 2 - Closing bold HTML tag, 3 - Initial score range, 4 - Final score range.
 					__('A very good score is between %1$s%3$d and %4$d%2$s.', td),
 					'<strong>',
@@ -135,6 +181,16 @@ export default {
 				readUltimateSeoGuide : __('Read the Ultimate WordPress SEO Guide', td)
 			}, this.composableStrings)
 		}
+	},
+	computed : {
+		sortedParts () {
+			return getSortedParts({
+				good     : this.summary.good,
+				warnings : this.summary.warnings,
+				issues   : this.summary.issues,
+				total    : this.summary.total
+			})
+		}
 	}
 }
 </script>
@@ -146,15 +202,19 @@ export default {
 	flex: 1;
 	justify-content: center;
 	align-items: center;
+	gap: 40px;
 
 	.seo-analysis-score {
 		position: relative;
 		width: 100%;
 		max-width: 160px;
-		margin-right: 32px;
 
 		.aioseo-site-score {
 			display: flex;
+		}
+
+		.score-analyzing {
+			margin-top: 0 !important;
 		}
 
 		.aioseo-score-amount {
@@ -176,6 +236,49 @@ export default {
 			width: 100%;
 			height: auto;
 		}
+	}
+
+	.seo-analysis-mobile-snapshot {
+		display: none;
+		width: 245px;
+
+		@media screen and (min-width: 1042px) {
+			display: block;
+		}
+
+		.mobile-snapshot {
+			&-image {
+				position: relative;
+				padding: 10px 4px 0;
+				width: 100%;
+				height: 445px;
+				overflow: hidden;
+				border-radius: 35px;
+
+				&__frame {
+					position: absolute;
+					z-index: 2;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+				}
+
+				&__content {
+					width: 100%;
+					height: 100%;
+				}
+			}
+		}
+	}
+
+	.seo-analysis-homepage-url {
+		display: block;
+		padding: 8px 12px;
+		background-color: $background;
+		border-radius: 4px;
+		font-weight: bold;
+		margin-bottom: 12px;
 	}
 
 	.seo-analysis-description {

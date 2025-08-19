@@ -68,7 +68,7 @@
 				/>
 			</p>
 
-			<div class="tablenav top">
+			<div :class="`tablenav top ${hideTopPagination ? 'no-top-pagination' : ''}`">
 				<slot name="tablenav" />
 
 				<core-wp-bulk-actions
@@ -123,6 +123,7 @@
 					:totals="totals"
 					:initial-page-number="pageNumber"
 					:disable-table="disableTable"
+					:showLinks="!hideTopPagination"
 					@paginate="processPaginate"
 				/>
 				<br class="clear" />
@@ -319,7 +320,7 @@
 		</div>
 
 		<div
-			class="tablenav bottom"
+			:class="`tablenav bottom ${hideTopPagination ? 'no-top-pagination' : ''}`"
 			v-if="showTableFooter"
 		>
 			<core-wp-bulk-actions
@@ -480,7 +481,11 @@ export default {
 		blurRows           : Boolean,
 		disableTable       : Boolean,
 		showItemsPerPage   : Boolean,
-		resetSelection     : {
+		hideTopPagination  : {
+			type    : Boolean,
+			default : false
+		},
+		resetSelection : {
 			type : Boolean,
 			default () {
 				return true
@@ -776,6 +781,10 @@ export default {
 			> * {
 				margin: 0;
 			}
+
+			+ .tablenav.top.no-top-pagination {
+				margin-top: -45px;
+			}
 		}
 
 		.search {
@@ -849,10 +858,29 @@ export default {
 
 		&.top {
 			margin-bottom: 12px;
+
+			&.no-top-pagination {
+				pointer-events: none;
+
+				.tablenav-pages {
+					float: left;
+				}
+			}
 		}
 
 		&.bottom {
 			margin-top: 12px;
+
+			&.no-top-pagination {
+				.tablenav-pages {
+					@media screen and (min-width: 781px) {
+						width: 100%;
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+					}
+				}
+			}
 		}
 
 		.tablenav-paging-text {

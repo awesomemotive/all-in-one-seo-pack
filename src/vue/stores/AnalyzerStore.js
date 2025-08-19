@@ -3,37 +3,24 @@ import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 import { __ } from '@/vue/plugins/translations'
 
-import SiteAnalysis from '@/vue/classes/SiteAnalysis'
-
 import {
 	useOptionsStore
 } from '@/vue/stores'
 
+import SeoAnalysis from '@/vue/classes/SeoAnalysis/SeoAnalysis'
+import SiteAnalysis from '@/vue/classes/SiteAnalysis'
+
 const td = import.meta.env.VITE_TEXTDOMAIN
-
-const filterResults = (results) => {
-	// Drop all tests/results that do not have a matching title.
-	// If a test has no title, it means it is deprecated/not supported by this version of the plugin.
-	Object.keys(results).forEach(testName => {
-		const testResult = results[testName]
-		if (!SiteAnalysis.head(testName, testResult)) {
-			const exceptions = [
-				'searchPreview',
-				'mobileSearchPreview',
-				'mobileSnapshot'
-			]
-
-			if (!exceptions.includes(testName)) {
-				delete results[testName]
-			}
-		}
-	})
-
-	return results
-}
 
 export const useAnalyzerStore = defineStore('AnalyzerStore', {
 	state : () => ({
+		activeTab     : 'all-urls',
+		homepageAudit : {
+			activeTab : 'error'
+		},
+		siteAudit : {
+			activeTab : 'error'
+		},
 		analyzer     : null,
 		analyzing    : false,
 		analyzeError : null,
@@ -41,79 +28,83 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 			results : [],
 			score   : 0
 		},
-		competitors : {}
+		competitors   : {},
+		issuesResults : {
+			auditItems       : [],
+			auditItemResults : {},
+			isLoading        : true,
+			counts           : {
+				passed  : 0,
+				warning : 0,
+				error   : 0
+			}
+		},
+		allUrlsResults : {
+			rows      : [],
+			isLoading : true,
+			search    : '',
+			totals    : {
+				page  : 1,
+				pages : 1,
+				total : 1
+			},
+			auditItemResults : {}
+		},
+		allUrlsAdditionalFilters : {
+			content_type : 'all'
+		},
+		objectsScan : {
+			percent             : null,
+			showProcessingPopup : false
+		}
 	}),
 	getters : {
+		issueResultsTotalCounts    : state => state.issuesResults.counts.passed + state.issuesResults.counts.warning + state.issuesResults.counts.error,
 		getHeadlineAnalysisResults : () => {
 			const optionsStore = useOptionsStore()
 			return optionsStore.internalOptions.internal.headlineAnalysis.headlines || {}
 		},
-		allItemsCount    : state => results => state.recommendedCount(results) + state.criticalCount(results) + state.goodCount(results),
-		recommendedCount : state => results => {
-			let total = 0
-			results = results || state.homeResults?.results || {}
+		getAnalyzer : state => (type, site = null) => {
+			const result = {
+				factory : null,
+				results : null
+			}
 
-			Object.keys(results).forEach(group => {
-				const groupResults = filterResults(results[group])
-				Object.keys(groupResults).forEach(r => {
-					const result = groupResults[r]
-					if ('warning' === result.status) {
-						total++
-					}
-				})
-			})
+			switch (type) {
+				case 'homepage':
+					result.factory = SiteAnalysis
+					result.results = state.homeResults.results
+					break
+				case 'site':
+					result.factory = SeoAnalysis
+					result.results = state.issuesResults.auditItems
+					break
+				case 'competitor':
+					result.factory = SiteAnalysis
+					result.results = state.competitors[site]?.results || {}
+					break
+			}
 
-			return total
+			return result
 		},
-		criticalCount : state => results => {
-			let total = 0
-			results   = results || state.homeResults?.results || {}
+		allItemsCount    : state => type => state.recommendedCount(type) + state.criticalCount(type) + state.goodCount(type),
+		recommendedCount : state => (type, site) => {
+			const { factory, results } = state.getAnalyzer(type, site)
 
-			Object.keys(results).forEach(group => {
-				const groupResults = filterResults(results[group])
-				Object.keys(groupResults).forEach(r => {
-					const result = groupResults[r]
-					if ('error' === result.status) {
-						total++
-					}
-				})
-			})
-
-			return total
+			return factory?.getResultsCount(results, 'warning') || 0
 		},
-		goodCount : state => results => {
-			let total = 0
-			results   = results || state.homeResults?.results || {}
+		criticalCount : state => (type, site) => {
+			const { factory, results } = state.getAnalyzer(type, site)
 
-			Object.keys(results).forEach(group => {
-				const groupResults = filterResults(results[group])
-				Object.keys(groupResults).forEach(r => {
-					const result = groupResults[r]
-					if ('passed' === result.status) {
-						total++
-					}
-				})
-			})
+			return factory?.getResultsCount(results, 'error') || 0
+		},
+		goodCount : state => (type, site) => {
+			const { factory, results } = state.getAnalyzer(type, site)
 
-			return total
+			return factory?.getResultsCount(results, 'passed') || 0
 		}
 	},
 	actions : {
-		getSiteAnalysisResults () {
-			if (this.homeResults?.results?.length) {
-				return this.homeResults
-			}
-
-			this.analyzing = true
-
-			return http.get(links.restUrl('seo-analysis/homeresults'))
-				.then(response => {
-					this.homeResults = response.body.result
-
-					this.analyzing = false
-					return this.homeResults
-				})
-		},
 		getCompetitorSiteAnalysisResults () {
 			if (this.competitors?.length) {
 				return this.competitors
@@ -127,6 +118,10 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 				})
 		},
 		runSiteAnalyzer (payload = {}) {
+			if (this.analyzing) {
+				return
+			}
+
 			this.analyzing = true
 			this.analyzer  = 'competitor-site'
 
@@ -147,7 +142,7 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 				.catch(error => {
 					this.analyzing = false
 					let message = __('We couldn\'t connect to the site, please try again later.', td)
-					if (error.response.body.response?.error) {
+					if (error.response?.body?.response?.error) {
 						message = error.response.body.response.error
 					}
 
@@ -195,6 +190,114 @@ export const useAnalyzerStore = defineStore('AnalyzerStore', {
 					const optionsStore = useOptionsStore()
 					optionsStore.updateOption('internalOptions', { groups: [ 'internal', 'siteAnalysis' ], key: 'headlines', value: response.body })
 					this.analyzing = false
+				})
+		},
+		fetchPostsByIssue ({ filter, limit, offset, searchTerm }) {
+			const page = 0 === offset ? 1 : (offset / limit) + 1
+
+			// Get posts by issue code
+			return http.get(links.restUrl(`seo-analysis/objects/${filter}`))
+				.query({
+					search : searchTerm,
+					limit,
+					offset
+				})
+				.then(response => {
+					this.issuesResults.auditItemResults[filter] = { ...response.body.result, search: searchTerm, page }
+
+					return response
+				})
+		},
+		// filter = row item
+		fetchIssuesByObject ({ filter, limit, offset, searchTerm }) {
+			const page = 0 === offset ? 1 : (offset / limit) + 1
+			const { id, type } = filter
+			const key = `${id}-${type.toLowerCase()}`
+
+			if (
+				this.allUrlsResults.auditItemResults[key] &&
+				this.allUrlsResults.auditItemResults[key].search === searchTerm &&
+				this.allUrlsResults.auditItemResults[key].page === page
+			) {
+				return Promise.resolve()
+			}
+
+			// Get issues by object id and object tpye
+			return http.get(links.restUrl(`seo-analysis/issues/${type.toLowerCase()}/${id}`))
+				.query({
+					search : searchTerm,
+					limit,
+					offset
+				})
+				.then(response => {
+					this.allUrlsResults.auditItemResults[key] = { ...response.body.result, search: searchTerm, page }
+
+					return response
+				})
+		},
+		fetchAllUrls ({ limit, offset, searchTerm = '', additionalFilters = [] }) {
+			this.allUrlsResults.isLoading = true
+			return http.get(links.restUrl('seo-analysis/objects'))
+				.query({
+					search : searchTerm,
+					limit,
+					offset,
+					additionalFilters
+				})
+				.then(response => {
+					this.allUrlsResults = { ...response.body.result, search: searchTerm, auditItemResults: {}, isLoading: false }
+
+					return response
+				})
+		},
+		async fetchSitePagesAnalysisResults () {
+			this.issuesResults.isLoading = true
+			 return http.get(links.restUrl('seo-analysis/issues'))
+				.then(response => {
+					this.issuesResults.auditItems = response.body.result?.results
+					this.issuesResults.counts = response.body.result?.counts
+					this.issuesResults.isLoading = false
+				})
+		},
+		doIgnoreIssue (row, resultsGroup) {
+			const { issueId } = row
+
+			return http.post(links.restUrl(`seo-analysis/issues/${issueId}/ignore`))
+				.then(() => {
+					resultsGroup.rows = resultsGroup.rows.filter(row => row.issueId !== issueId)
+					resultsGroup.totals.total--
+				})
+		},
+		changeHomepageAuditTab (value) {
+			this.homepageAudit.activeTab = value
+		},
+		changeSiteAuditTab (value) {
+			this.siteAudit.activeTab = value
+		},
+		changeSeoAnalyzerTab (value) {
+			this.activeTab = value
+		},
+		doAddFocusKeyword (id, value) {
+			return http.post(links.restUrl(`seo-analysis/objects/${id}/keywords`))
+				.send({
+					keyphrase : value
+				})
+		},
+		toggleProcessingPopup () {
+			this.objectsScan.showProcessingPopup = !this.objectsScan.showProcessingPopup
+		},
+		async fetchObjectsScanPercent () {
+			return http.get(links.restUrl('seo-analysis/objects-scan-percent'))
+				.then(async response => {
+					if (response.body && 'percent' in response.body) {
+						this.objectsScan.percent = response.body.percent
+
+						if (100 !== response.body.percent) {
+							setTimeout(() => {
+								this.fetchObjectsScanPercent()
+							}, 10000)
+						}
+					}
 				})
 		}
 	}

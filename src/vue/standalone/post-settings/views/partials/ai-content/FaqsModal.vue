@@ -253,8 +253,8 @@ export default {
 			}
 
 			return _n(
-				__('Insert FAQ Block', td),
-				__('Insert FAQ Blocks', td),
+				'Insert FAQ Block',
+				'Insert FAQ Blocks',
 				selected.value.length,
 				td
 			)

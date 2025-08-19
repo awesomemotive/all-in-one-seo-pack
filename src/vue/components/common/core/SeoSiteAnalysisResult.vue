@@ -1,12 +1,10 @@
 <template>
 	<div class="aioseo-seo-site-analysis-result">
 		<div class="result-header">
-			<div class="result-icon">
-				<component
-					:is="getIcon"
-					:class="result.status"
-				/>
-			</div>
+			<span
+				class="result-status"
+				:class="result.status"
+			></span>
 
 			<div class="result-content">
 				{{ getTestTitle }}
@@ -15,8 +13,8 @@
 			<div
 				v-if="showInstructions || getBody.code ||getBody.codeAlt"
 				class="result-toggle"
-				:class="{ active : active }"
-				@click="active = !active"
+				:class="{ active : activeRow }"
+				@click="toggleActive"
 			>
 				<svg-caret />
 			</div>
@@ -24,7 +22,7 @@
 
 		<transition-slide
 			v-if="showInstructions || getBody.code ||getBody.codeAlt"
-			:active="active"
+			:active="activeRow"
 		>
 			<div class="result-body">
 				<div
@@ -33,7 +31,7 @@
 				>
 					<pre>
 						<code
-							v-html="getBody.code.trim()"
+							v-html="softSanitizeHtml(getBody.code.trim())"
 						/>
 					</pre>
 				</div>
@@ -43,7 +41,7 @@
 					class="result-code-alt"
 				>
 					<pre>
-						<code>{{ getBody.codeAlt.trim() }}</code>
+						<code>{{ softSanitizeHtml(getBody.codeAlt.trim()) }}</code>
 					</pre>
 				</div>
 
@@ -73,63 +71,41 @@
 	</div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue'
+import { softSanitizeHtml } from '@/vue/utils/strings'
+
 import SiteAnalysis from '@/vue/classes/SiteAnalysis'
 import SvgCaret from '@/vue/components/common/svg/Caret'
-import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
-import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
-import SvgCircleInformation from '@/vue/components/common/svg/circle/Information'
-import SvgGear from '@/vue/components/common/svg/Gear'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
-export default {
-	components : {
-		SvgCaret,
-		SvgCircleCheck,
-		SvgCircleClose,
-		SvgCircleInformation,
-		SvgGear,
-		TransitionSlide
+
+const emit = defineEmits([ 'toggleActive' ])
+const props = defineProps({
+	test : {
+		type     : String,
+		required : true
 	},
-	props : {
-		test : {
-			type     : String,
-			required : true
-		},
-		result : {
-			type     : Object,
-			required : true
-		},
-		showInstructions : Boolean
+	result : {
+		type     : Object,
+		required : true
 	},
-	data () {
-		return {
-			active  : false,
-			loading : false
-		}
+	showInstructions : {
+		type     : Boolean,
+		required : false
 	},
-	computed : {
-		getIcon () {
-			return 'passed' === this.result.status
-				? 'svg-circle-check'
-				: (
-					'error' === this.result.status
-						? 'svg-circle-close'
-						: (
-							'warning' === this.result.status
-								? 'svg-gear'
-								: 'svg-circle-information'
-						)
-				)
-		},
-		getTestTitle () {
-			SiteAnalysis.personalize = this.showInstructions
-			return SiteAnalysis.head(this.test, this.result)
-		},
-		getBody () {
-			SiteAnalysis.personalize = this.showInstructions
-			return SiteAnalysis.body(this.test, this.result)
-		}
+	activeRow : {
+		type     : Boolean,
+		required : false
 	}
+})
+
+const loading = ref(false)
+
+const getTestTitle = computed(() => SiteAnalysis.head(props.test, props.result))
+const getBody = computed(() => SiteAnalysis.body(props.test, props.result))
+
+function toggleActive () {
+	emit('toggleActive')
 }
 </script>
 
@@ -144,28 +120,22 @@ export default {
 		display: flex;
 		align-items: center;
 
-		.result-icon {
-			display: flex;
-			align-items: center;
+		.result-status {
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
 			margin-right: 14px;
 
-			svg {
-				width: 24px;
-				height: 24px;
-				color: $placeholder-color;
+			&.passed {
+				background-color: $green;
+			}
 
-				&.passed {
-					color: $green;
-				}
+			&.error {
+				background-color: $red;
+			}
 
-				&.error {
-					color: $red;
-				}
-
-				&.warning {
-					// color: $orange2;
-					color: $blue;
-				}
+			&.warning {
+				background-color: $orange;
 			}
 		}
 
@@ -188,7 +158,7 @@ export default {
 
 			&.active,
 			&:hover {
-				background-color: $black2;
+				background-color: $blue;
 
 				svg {
 					color: #fff;
@@ -205,7 +175,7 @@ export default {
 				width: 100%;
 				max-width: 20px;
 				height: auto;
-				color: $placeholder-color;
+				color: $black;
 				transform: rotate(-90deg);
 				transition: transform 0.3s;
 			}

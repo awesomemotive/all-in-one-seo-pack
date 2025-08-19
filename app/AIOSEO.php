@@ -333,6 +333,7 @@ namespace AIOSEO\Plugin {
 			$this->crawlCleanup       = new Common\QueryArgs\CrawlCleanup();
 			$this->searchCleanup      = new Common\SearchCleanup\SearchCleanup();
 			$this->emailReports       = new Common\EmailReports\EmailReports();
+			$this->seoAnalysis        = $this->pro ? new Pro\SeoAnalysis\SeoAnalysis() : new Common\SeoAnalysis\SeoAnalysis();
 			$this->thirdParty         = new Common\ThirdParty\ThirdParty();
 			$this->writingAssistant   = new Common\WritingAssistant\WritingAssistant();
 			$this->llms               = new Common\Llms\Llms();

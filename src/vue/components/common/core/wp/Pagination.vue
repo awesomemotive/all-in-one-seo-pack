@@ -1,7 +1,10 @@
 <template>
 	<div class="tablenav-pages pagination">
 		<span class="displaying-num">{{ numbers.numberFormat(totals.total) }} {{ strings.items }}</span>
-		<span class="pagination-links">
+		<span
+			v-if="showLinks"
+			class="pagination-links"
+		>
 			<component
 				href="#"
 				:is="pageNumber === 1 ? 'span' : 'a'"
@@ -78,7 +81,11 @@ export default {
 				return 1
 			}
 		},
-		disableTable : Boolean
+		disableTable : Boolean,
+		showLinks    : {
+			type    : Boolean,
+			default : true
+		}
 	},
 	data () {
 		return {
