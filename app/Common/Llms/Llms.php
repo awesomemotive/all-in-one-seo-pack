@@ -173,7 +173,7 @@ class Llms {
 			return '';
 		}
 
-		$sitemapUrl = site_url( 'sitemap.xml' );
+		$sitemapUrl = aioseo()->sitemap->helpers->getUrl( 'general' );
 
 		return "## Sitemaps\n\n- [XML Sitemap]({$sitemapUrl}): Contains all public/indexable URLs for this website.\n\n";
 	}
@@ -267,7 +267,7 @@ class Llms {
 	 * @return array The LLMs.txt URL if accessible, null otherwise.
 	 */
 	public function getUrl() {
-		$url          = site_url( '/llms.txt' );
+		$url          = home_url( '/llms.txt' );
 		$isAccessible = false;
 
 		if ( aioseo()->options->advanced->llmsTxt ) {

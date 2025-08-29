@@ -272,6 +272,10 @@ class Updates {
 			aioseo()->ai->updateCredits( true );
 		}
 
+		if ( version_compare( $lastActiveVersion, '4.8.7', '<' ) ) {
+			$this->addColumnIndexForCornerstoneContent();
+		}
+
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
 
 		// Always clear the cache if the last active version is different from our current.
@@ -2047,5 +2051,27 @@ class Updates {
 		}
 
 		return $internalOptions;
+	}
+
+	/**
+	 * Adds the column index for the cornerstone content table.
+	 *
+	 * @since 4.8.7
+	 *
+	 * @return void
+	 */
+	private function addColumnIndexForCornerstoneContent() {
+		if (
+			! aioseo()->core->db->columnExists( 'aioseo_posts', 'pillar_content' ) ||
+			aioseo()->core->db->indexExists( 'aioseo_posts', 'ndx_aioseo_posts_pillar_content' )
+		) {
+			return;
+		}
+
+		$tableName = aioseo()->core->db->db->prefix . 'aioseo_posts';
+		aioseo()->core->db->execute(
+			"ALTER TABLE {$tableName}
+			ADD INDEX ndx_aioseo_posts_pillar_content (pillar_content)"
+		);
 	}
 }

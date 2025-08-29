@@ -5,9 +5,9 @@
 		/>
 
 		<cta
-			:cta-link="links.getPricingUrl('search-statistics', 'search-statistics-upsell', 'keyword-rankings')"
+			:cta-link="links.getPricingUrl('search-statistics', 'search-statistics-upsell', 'keyword-rankings', 'liteUpgrade')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="links.getUpsellUrl('search-statistics', 'keyword-rankings', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+			:learn-more-link="links.getUpsellUrl('search-statistics', 'keyword-rankings', 'liteUpgrade')"
 			v-if="!searchStatisticsStore.shouldShowSampleReports"
 			cta-second-button-action
 			@cta-second-button-click="searchStatisticsStore.showSampleReports"
@@ -38,8 +38,7 @@
 <script setup>
 import {
 	useLicenseStore,
-	useSearchStatisticsStore,
-	useRootStore
+	useSearchStatisticsStore
 } from '@/vue/stores'
 
 import { useCta } from '@/vue/pages/search-statistics/composables/Cta'
@@ -51,7 +50,6 @@ import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 const { strings }           = useCta()
 const licenseStore          = useLicenseStore()
 const searchStatisticsStore = useSearchStatisticsStore()
-const rootStore             = useRootStore()
 </script>
 
 <style>

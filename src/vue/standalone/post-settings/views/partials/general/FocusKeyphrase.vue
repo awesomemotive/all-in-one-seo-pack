@@ -390,7 +390,7 @@ export default {
 					__('Analyzing your content with %1$s keywords is only available to licensed %2$s users. %3$s', td),
 					'Semrush',
 					`<strong>${import.meta.env.VITE_SHORT_NAME} Pro</strong>`,
-					links.getUpsellLink('semrush-keywords', GLOBAL_STRINGS.learnMore, null, true)
+					links.getUpsellLink('post-settings', 'semrush-keywords', GLOBAL_STRINGS.learnMore, 'liteUpgrade', true)
 				),
 				semrushGetAdditionalKeyphrases : sprintf(
 					// Translators: 1 - Plugin short name "AIOSEO", 2 - Semrush.
@@ -421,7 +421,7 @@ export default {
 				inOrderToUpgradeSemrush : sprintf(
 					// Translators: 1 - Link to learn more.
 					__('In order to continue searching for additional keywords, you\'ll need to upgrade. %1$s', td),
-					links.getUpsellLink('semrush-pricing', GLOBAL_STRINGS.learnMore, 'semrushPricing', true)
+					links.getUpsellLink('post-settings', 'semrush-pricing', GLOBAL_STRINGS.learnMore, 'semrushPricing', true)
 				),
 				maxAmountReached : sprintf(
 					// Translators: 1 - Number of maximum keywords.

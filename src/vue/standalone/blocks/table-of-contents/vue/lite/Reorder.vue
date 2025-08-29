@@ -8,9 +8,9 @@
 			<cta
 				:type="1"
 				:floating="false"
-				:cta-link="links.utmUrl('toc-block')"
+				:cta-link="links.getUpsellUrl('toc-block', null, 'liteUpgrade')"
 				:button-text="'Unlock Reordering'"
-				:learn-more-link="links.getUpsellUrl('toc-block', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('toc-block', 'reorder-all-features', 'liteUpgrade')"
 			>
 				<template #header-text>
 					{{strings.header}}
@@ -25,9 +25,6 @@
 </template>
 
 <script>
-import {
-	useRootStore
-} from '@/vue/stores'
 import links from '@/vue/utils/links'
 
 import CoreModal from '@/vue/components/common/core/modal/Index'
@@ -41,7 +38,6 @@ export default {
 	emits : [ 'closeModal' ],
 	setup () {
 		return {
-			rootStore : useRootStore(),
 			links
 		}
 	},

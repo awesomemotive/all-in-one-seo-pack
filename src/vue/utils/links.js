@@ -121,32 +121,40 @@ const upsellLinks = {
 }
 
 const getUpsellUrl = (medium, content = null, link) => {
+	// If the link is 'liteUpgrade', we need to check the root store to get the correct upgrade URL.
+	let newLink = upsellLinks[link] || link
+	if ('liteUpgrade' === link) {
+		const rootStore  = useRootStore()
+		const upgradeUrl = rootStore.aioseo.urls.upgradeUrl
+		newLink = upgradeUrl
+	}
+
 	if ('feature-manager-upgrade' === medium && 'no-license-key' !== content) {
 		const feature = 'aioseo-local-business' === content
 			? '&features[]=local-seo'
 			: '&features[]=' + (content ? content.replace('aioseo-', '') : '')
 
 		// This ensures that we only show plans on the pricing page that include the relevant addon.
-		return utmUrl(medium, content, upsellLinks[link]) + feature
+		return utmUrl(medium, content, newLink) + feature
 	}
 
-	return utmUrl(medium, content, upsellLinks[link])
+	return utmUrl(medium, content, newLink)
 }
 
 const getDocUrl = (link) => {
 	return utmUrl('documentation', link, docLinks[link])
 }
 
-const getUpsellLink = (medium, text, link, addArrow = false) => {
+const getUpsellLink = (medium, content, text, link, addArrow = false) => {
 	const arrow = addArrow
 		? sprintf(
 			'<a href="%1$s" class="no-underline" target="_blank">&nbsp;&rarr;</a>',
-			utmUrl(medium, link, upsellLinks[link])
+			getUpsellUrl(medium, content, link)
 		)
 		: ''
 	return sprintf(
 		'<a href="%1$s" target="_blank">%2$s</a>%3$s',
-		utmUrl(medium, link, upsellLinks[link]),
+		getUpsellUrl(medium, content, link),
 		text,
 		arrow
 	)
@@ -186,82 +194,91 @@ const getDocLink = (text, link, addArrow = false) => {
 }
 
 const getPricingUrl = (feature, medium, content, url = `${marketingSite}pricing/`) => {
-	return utmUrl(medium, content, url) + '&features[]=' + feature
+	return getUpsellUrl(medium, content, url) + '&features[]=' + feature
 }
 
 const utmUrl = (medium, content = null, url = `${marketingSite}pricing/`) => {
-	let isUpgradeUrl = false
-	if (
-		(`${marketingSite}pricing/` === url || `${marketingSite}lite-upgrade/` === url) &&
-		'pro' !== import.meta.env?.VITE_VERSION.toLowerCase()
-	) {
-		const rootStore  = useRootStore()
-		const upgradeUrl = rootStore.aioseo.urls.upgradeUrl
-		isUpgradeUrl = (upgradeUrl !== marketingSite)
-		url = `${marketingSite}lite-upgrade/`
+	// Check if this is a Affiliate URL
+	const isAffiliateUrl = url.includes('shareasale.com/r.cfm') && url.includes('urllink=')
+
+	if (isAffiliateUrl) {
+		return handleAffiliateUrl(url, medium, content)
 	}
 
+	// Handle regular URLs
+	return addUtmParametersToUrl(url, medium, content)
+}
+
+// Helper function to add UTM parameters to any URL
+const addUtmParametersToUrl = (url, medium, content) => {
 	const urlParts = url.split('#')
 
-	// Generate the new arguments.
+	// Generate the UTM arguments
 	const args = [
 		{ key: 'utm_source', value: 'WordPress' },
 		{ key: 'utm_campaign', value: 'pro' === import.meta.env?.VITE_VERSION?.toLowerCase() ? 'proplugin' : 'liteplugin' },
 		{ key: 'utm_medium', value: medium }
 	]
 
-	// Content is not used by default.
+	// Add content parameter if provided
 	if (content) {
 		args.push({ key: 'utm_content', value: content })
 	}
 
-	// Append the marketing site domain if this is a relative url.
+	// Append the marketing site domain if this is a relative URL
 	const pattern = /^https?:\/\//i
 	if (!pattern.test(urlParts[0])) {
 		urlParts[0] = marketingSite + urlParts[0]
 	}
 
-	// Build the new URL.
+	// Build the new URL with UTM parameters
 	const newUrlParts = urlParts[0].split('?')
-	urlParts[0]       = newUrlParts[0] + (newUrlParts[1] ? '?' + newUrlParts[1] + '&' : '?')
-	urlParts[0]      += args
+	urlParts[0] = newUrlParts[0] + (newUrlParts[1] ? '?' + newUrlParts[1] + '&' : '?')
+	urlParts[0] += args
 		.map(arg => `${arg.key}=${arg.value}`)
 		.join('&')
 
-	url = urlParts[0]
+	let finalUrl = urlParts[0]
 	if (urlParts[1]) {
-		url = url + '#' + urlParts[1]
+		finalUrl = finalUrl + '#' + urlParts[1]
 	}
 
-	if (isUpgradeUrl) {
-		const rootStore  = useRootStore()
-		const upgradeUrl = rootStore.aioseo.urls.upgradeUrl
-
-		url = upgradeUrl.replace('https%3A%2F%2Faioseo.com%2F', rawUrlEncode(url))
-	}
-	return url
+	return finalUrl
 }
 
-const rawUrlEncode = (url) => {
-	const histogram = {}
+// Helper function to handle Affiliate URLs
+const handleAffiliateUrl = (url, medium, content) => {
+	try {
+		// Parse the Affiliate URL to extract the urllink parameter
+		const urlObj = new URL(url)
+		const urlLinkParam = urlObj.searchParams.get('urllink')
 
-	histogram['\''] = '%27'
-	histogram['(']  = '%28'
-	histogram[')']  = '%29'
-	histogram['*']  = '%2A'
-	histogram['~']  = '%7E'
-	histogram['!']  = '%21'
+		if (!urlLinkParam) {
+			// If no urllink parameter found, treat as regular URL
+			return addUtmParametersToUrl(url, medium, content)
+		}
 
-	url = encodeURIComponent(url)
-	url = url.replace('%20', ' ')
+		// Decode the urllink parameter
+		const decodedUrlLink = decodeURIComponent(urlLinkParam)
 
-	for (const search in histogram) {
-		url = url.replace(search, histogram[search])
+		// Add UTM parameters to the decoded URL
+		const urlWithUtm = addUtmParametersToUrl(decodedUrlLink, medium, content)
+
+		// Encode the URL with UTM parameters (single encoding only)
+		const encodedUrlWithUtm = encodeURIComponent(urlWithUtm)
+
+		// Manually replace the urllink parameter to avoid double encoding
+		// Remove the old urllink parameter and rebuild the URL
+		urlObj.searchParams.delete('urllink')
+		const baseUrl = urlObj.toString()
+		const separator = baseUrl.includes('?') ? '&' : '?'
+
+		return baseUrl + separator + 'urllink=' + encodedUrlWithUtm
+	} catch (error) {
+		// If URL parsing fails, fallback to regular URL handling
+		console.warn('Failed to parse URL:', error)
+		return addUtmParametersToUrl(url, medium, content)
 	}
-
-	return url.replace(/(%([a-z0-9]{2}))/g, function (full, m1, m2) {
-		return '%' + m2.toUpperCase()
-	})
 }
 
 const unForwardSlashIt = str => {

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { __, sprintf } from '@/vue/plugins/translations'
+import { __, _n, sprintf } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 class BasicIssues {
@@ -16,7 +16,7 @@ class BasicIssues {
 			'title-too-long' : {
 				title : __('The SEO title is too long.', td),
 				text  : (result) => sprintf(
-					// Translator: 1: The length of the SEO title.
+					// Translators: 1 - The length of the SEO title.
 					__('The SEO title is %1$d characters long, which is higher than our recommended range of 40-60 characters.', td),
 					result?.length
 				),
@@ -31,7 +31,7 @@ class BasicIssues {
 					}
 
 					return sprintf(
-						// Translator: 1: The length of the SEO title.
+						// Translators: 1 - The length of the SEO title.
 						__('The SEO title is %1$d characters long, which is lower than our recommended range of 40-60 characters.', td),
 						result?.length
 					)
@@ -42,7 +42,7 @@ class BasicIssues {
 			'title-ok' : {
 				title : __('The SEO title is of good length.', td),
 				text  : (result) => sprintf(
-					// Translator: 1: The length of the SEO title.
+					// Translators: 1 - The length of the SEO title.
 					__('The SEO title is %1$d characters long, which is within our recommended range of 40-60 characters.', td),
 					result?.length
 				),
@@ -64,7 +64,7 @@ class BasicIssues {
 			'description-too-short' : {
 				title : __('The meta description is too short.', td),
 				text  : (result) => sprintf(
-					// Translator: 1: The length of the meta description.
+					// Translators: 1 - The length of the meta description.
 					__('The meta description is %1$d characters long, which is lower than our recommended range of 120-160 characters.', td),
 					result?.length
 				),
@@ -74,7 +74,7 @@ class BasicIssues {
 			'description-too-long' : {
 				title : __('The meta description is too long.', td),
 				text  : (result) => sprintf(
-					// Translator: 1: The length of the meta description.
+					// Translators: 1 - The length of the meta description.
 					__('The meta description is %1$d characters long, which is higher than our recommended range of 120-160 characters.', td),
 					result?.length
 				),
@@ -84,7 +84,7 @@ class BasicIssues {
 			'description-ok' : {
 				title : __('The meta description is of good length.', td),
 				text  : (result) => sprintf(
-					// Translator: 1: The length of the meta description.
+					// Translators: 1 - The length of the meta description.
 					__('The meta description is %1$d characters long, which is within our recommended range of 120-160 characters.', td),
 					result?.length
 				),
@@ -123,8 +123,13 @@ class BasicIssues {
 			'subheading-missing-focus-keyword' : {
 				title : __('Subheadings do not include your focus keyword.', td),
 				text  : (result) => sprintf(
-					// Translator: 1: The amount of the subheadings.
-					__('%1$d subheadings were found on the page but none of them have the focus keyword.', td),
+					// Translators: 1 - The amount of the subheadings.
+					_n(
+						'%1$d subheading was found on the page, but it does not include the focus keyword.',
+						'%1$d subheadings were found on the page, but none of them include the focus keyword.',
+						result?.length,
+						td
+					),
 					result?.length
 				),
 				description : __('Subheadings (H2, H3, H4, H5, H6, etc.) are important for SEO and user experience. They help break up the content and make it more readable. At least one subheading should have the focus keyword.', td)
@@ -132,8 +137,13 @@ class BasicIssues {
 			'subheading-ok' : {
 				title : __('Subheadings include your focus keyword.', td),
 				text  : (result) => sprintf(
-					// Translator: 1: The amount of the subheadings.
-					__('%1$d subheadings were found on the page.', td),
+					// Translators: 1 - The amount of the subheadings.
+					_n(
+						'%1$d subheading was found on the page.',
+						'%1$d subheadings were found on the page.',
+						result?.length,
+						td
+					),
 					result?.length
 				),
 				description : __('Subheadings (H2, H3, H4, H5, H6, etc.) are important for SEO and user experience. They help break up the content and make it more readable. At least one subheading should have the focus keyword.', td)
@@ -150,8 +160,13 @@ class BasicIssues {
 			'image-missing-alt' : {
 				title : __('Images have no alt text.', td),
 				text  : (result) => sprintf(
-					// Translator: 1: The amount of the images without alt attributes.
-					1 === result?.length ? __('%1$d image has no alt text.', td) : __('%1$d images have no alt text.', td),
+					// Translators: 1 - The amount of the images without alt attributes.
+					_n(
+						'%1$d image has no alt text.',
+						'%1$d images have no alt text.',
+						result?.length,
+						td
+					),
 					result?.length
 				),
 				content : (result) => 0 < result?.items?.length
@@ -177,8 +192,13 @@ class BasicIssues {
 			'internal-links-too-few' : {
 				title : __('Too few internal links found.', td),
 				text  : (result) => sprintf(
-					// Translator: 1: The amount of the internal links.
-					__('%1$d internal links were found, which is too few.', td),
+					// Translators: 1 - The amount of the internal links.
+					_n(
+						'%1$d internal link was found, which is too few.',
+						'%1$d internal links were found, which is too few.',
+						result?.length,
+						td
+					),
 					result?.length
 				),
 				description : __('Internal links are links that point to other pages on your site. They help search engines understand the structure of your site, discover new pages and improve your site\'s authority. We recommend adding at least 1 internal link per 500 words of content.', td)
@@ -213,7 +233,7 @@ class BasicIssues {
 					}
 
 					return sprintf(
-						// Translator: 1: The length of the content.
+						// Translators: 1 - The length of the content.
 						__('The content is %1$d words long, which is too short. We recommend adding at least 300 words of content.', td),
 						result?.length
 					)
@@ -316,7 +336,7 @@ class BasicIssues {
 			'url-length-too-long' : {
 				title : __('The URL is too long.', td),
 				text  : (result) => sprintf(
-					// Translator: 1: The length of the URL.
+					// Translators: 1 - The length of the URL.
 					__('The URL is %1$d characters long, it should be less than 50 characters.', td),
 					result?.length
 				),

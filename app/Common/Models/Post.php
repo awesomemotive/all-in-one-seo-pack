@@ -677,7 +677,7 @@ class Post extends Model {
 					'WebPage'             => []
 				],
 				'graphName' => $defaultGraphName,
-				'isEnabled' => true,
+				'isEnabled' => true
 			],
 			'graphs'       => []
 		];

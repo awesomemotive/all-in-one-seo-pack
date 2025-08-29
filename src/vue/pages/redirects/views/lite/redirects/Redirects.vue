@@ -10,7 +10,7 @@
 		/>
 
 		<cta
-			:cta-link="links.getPricingUrl('redirects', 'redirects-upsell', parentComponentContext ? parentComponentContext : null)"
+			:cta-link="links.getPricingUrl('redirects', 'redirects-upsell', parentComponentContext ? parentComponentContext : null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 			:button-text="strings.ctaButtonText"
 			:learn-more-link="links.getUpsellUrl('redirects', parentComponentContext ? parentComponentContext : null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="[

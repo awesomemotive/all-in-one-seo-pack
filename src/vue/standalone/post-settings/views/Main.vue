@@ -518,8 +518,8 @@ export default {
 </script>
 
 <style lang="scss">
-.aioseo-post-settings,
-.aioseo-metabox .aioseo-post-settings {
+.aioseo-app.aioseo-post-settings,
+.aioseo-metabox .aioseo-app.aioseo-post-settings {
 	background: #fff;
 	color: $black;
 
@@ -545,7 +545,7 @@ export default {
 	}
 
 	.aioseo-sidepanel {
-		.aioseo-sidepanel-button {
+		a.aioseo-sidepanel-button {
 			display: flex;
 			align-items: center;
 			padding: 12px;

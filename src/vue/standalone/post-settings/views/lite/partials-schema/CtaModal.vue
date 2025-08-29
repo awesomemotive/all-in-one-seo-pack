@@ -71,9 +71,9 @@
 			</core-blur>
 
 			<cta
-				:cta-link="links.getPricingUrl('schema-generator', 'schema-generator-upsell')"
+				:cta-link="links.getPricingUrl('schema-generator', 'schema-generator-upsell', null, 'liteUpgrade')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="links.getUpsellUrl('schema-generator', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('schema-generator', null, 'liteUpgrade')"
 				:feature-list="features"
 			>
 				<template #header-text>
@@ -90,10 +90,6 @@
 
 <script setup>
 import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
-
-import {
-	useRootStore
-} from '@/vue/stores'
 
 import links from '@/vue/utils/links'
 import { useSchema } from '@/vue/standalone/post-settings/composables/schema'
@@ -115,8 +111,6 @@ import { __, sprintf } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 const { graphs } = useSchema()
-
-const rootStore = useRootStore()
 
 const strings = {
 	schemaGenerator : __('Schema Generator', td),

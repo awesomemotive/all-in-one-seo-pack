@@ -95,7 +95,7 @@
 								type="green"
 								tag="a"
 								size="medium"
-								:href="links.utmUrl('general-settings', 'google-search-console')"
+								:href="links.getUpsellUrl('general-settings', 'google-search-console', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 								target="_blank"
 							>
 								{{ strings.upgradeButton }}
@@ -118,6 +118,10 @@
 <script setup>
 import { computed } from 'vue'
 
+import {
+	useRootStore
+} from '@/vue/stores'
+
 import license from '@/vue/utils/license'
 import links from '@/vue/utils/links'
 import { merge } from 'lodash-es'
@@ -133,6 +137,8 @@ import SvgConnectGoogleSearchConsole from '@/vue/components/common/svg/ConnectGo
 import { __ } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
+
+const rootStore = useRootStore()
 
 const {
 	alertMessage,

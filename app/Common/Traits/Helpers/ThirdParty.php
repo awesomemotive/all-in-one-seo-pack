@@ -98,7 +98,13 @@ trait ThirdParty {
 			return false;
 		}
 
-		if ( ! is_admin() && ! aioseo()->helpers->isAjaxCronRestRequest() && function_exists( 'is_shop' ) ) {
+		// If the id is empty, we want to check against the queried object.
+		if (
+			empty( $id ) &&
+			function_exists( 'is_shop' ) &&
+			! is_admin() &&
+			! aioseo()->helpers->isAjaxCronRestRequest()
+		) {
 			return is_shop();
 		}
 

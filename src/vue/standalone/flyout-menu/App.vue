@@ -117,9 +117,10 @@ export default {
 						import.meta.env.VITE_SHORT_NAME,
 						'Pro'
 					),
-					url : links.utmUrl(
+					url : links.getUpsellUrl(
 						'flyout-menu',
-						'upgrade-to-pro'
+						'upgrade-to-pro',
+						'liteUpgrade'
 					),
 					icon : 'svg-star'
 				})

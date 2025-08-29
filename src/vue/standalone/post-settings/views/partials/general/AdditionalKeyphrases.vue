@@ -129,7 +129,7 @@ export default {
 					// Translators: 1 - "Pro" string, 2 - "Learn more link".
 					__('Additional Keywords are a %1$s feature. %2$s', td),
 					'PRO',
-					links.getUpsellLink('post-settings', GLOBAL_STRINGS.learnMore, 'additional-keywords', true)
+					links.getUpsellLink('post-settings', 'additional-keywords', GLOBAL_STRINGS.learnMore, 'liteUpgrade', true)
 				),
 				maxAmountReached : sprintf(
 					// Translators: 1 - Number of maximum keywords.

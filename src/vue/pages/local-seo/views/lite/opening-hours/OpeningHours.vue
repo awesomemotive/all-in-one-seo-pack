@@ -13,9 +13,9 @@
 			<blur />
 
 			<cta
-				:cta-link="links.getPricingUrl('local-seo', 'local-seo-upsell', 'opening-hours')"
+				:cta-link="links.getPricingUrl('local-seo', 'local-seo-upsell', 'opening-hours', 'liteUpgrade')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="links.getUpsellUrl('local-seo', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('local-seo', null, 'liteUpgrade')"
 				:feature-list="features"
 				align-top
 				:hide-bonus="!licenseStore.isUnlicensed"
@@ -33,11 +33,10 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import links from '@/vue/utils/links'
 import {
-	useLicenseStore,
-	useRootStore
+	useLicenseStore
 } from '@/vue/stores'
 
 import Blur from './Blur'
@@ -50,40 +49,23 @@ import { __, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-export default {
-	setup () {
-		return {
-			licenseStore : useLicenseStore(),
-			rootStore    : useRootStore(),
-			links
-		}
-	},
-	components : {
-		Blur,
-		RequiredPlans,
-		CoreCard,
-		CoreProBadge,
-		Cta
-	},
-	data () {
-		return {
-			features : [
-				__('Show Opening Hours', td),
-				__('Multiple Locations', td),
-				__('Opening Hours block, widget and shortcode', td)
-			],
-			strings : {
-				locationInfo1 : __('Local Business schema markup informs Google about your business details like name, address, phone number, hours, and price range, which can appear in a Knowledge Graph card or business carousel.', td),
-				openingHours  : __('Opening Hours Settings', td),
-				ctaButtonText : __('Unlock Local SEO', td),
-				ctaHeader     : sprintf(
-					// Translators: 1 - "PRO".
-					__('Local SEO is a %1$s Feature', td),
-					'PRO'
-				)
-			}
-		}
-	}
+const licenseStore = useLicenseStore()
+
+const features = [
+	__('Show Opening Hours', td),
+	__('Multiple Locations', td),
+	__('Opening Hours block, widget and shortcode', td)
+]
+
+const strings = {
+	locationInfo1 : __('Local Business schema markup informs Google about your business details like name, address, phone number, hours, and price range, which can appear in a Knowledge Graph card or business carousel.', td),
+	openingHours  : __('Opening Hours Settings', td),
+	ctaButtonText : __('Unlock Local SEO', td),
+	ctaHeader     : sprintf(
+		// Translators: 1 - "PRO".
+		__('Local SEO is a %1$s Feature', td),
+		'PRO'
+	)
 }
 </script>
 

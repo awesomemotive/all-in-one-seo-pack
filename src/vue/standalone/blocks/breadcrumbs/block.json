@@ -23,6 +23,10 @@
 			"type": "string",
 			"default": null
 		},
+		"postTitle": {
+			"type": "string",
+			"default": null
+		},
 		"breadcrumbSettings": {
 			"type": "object",
 			"default": {

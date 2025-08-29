@@ -355,7 +355,7 @@ trait WpContext {
 		$this->originalPost  = is_a( $post, 'WP_Post' ) ? $this->deepClone( $post ) : null;
 
 		// The order of the function calls below is intentional and should NOT change.
-		$postContent = do_blocks( $postContent );
+		$postContent = $this->doBlocks( $postContent );
 		$postContent = wpautop( $postContent );
 		$postContent = $this->doShortcodes( $postContent );
 

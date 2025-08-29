@@ -173,7 +173,7 @@ export default {
 				robotsMeta              : __('Robots Meta', td),
 				breadcrumbs             : __('Breadcrumbs', td),
 				canonicalUrl            : __('Canonical URL', td),
-				validUrl               	: __('Please enter a valid URL.', td),
+				validUrl                : __('Please enter a valid URL.', td),
 				placeholder             : __('Enter a URL to change the default Canonical URL', td),
 				priorityScore           : __('Priority Score', td),
 				priority                : __('Priority', td),
@@ -182,7 +182,7 @@ export default {
 					// Translators: 1 - "PRO", 2 - "Learn more".
 					__('Priority Score is a %1$s feature. %2$s', td),
 					'PRO',
-					links.getUpsellLink('post-advanced', GLOBAL_STRINGS.learnMore, 'priority-frequency', true)
+					links.getUpsellLink('post-settings', 'priority-frequency', GLOBAL_STRINGS.learnMore, 'liteUpgrade', true)
 				),
 				keywords       : __('Keywords', td),
 				tagPlaceholder : __('Press enter to create a keyword', td)

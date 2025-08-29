@@ -43,9 +43,9 @@
 					strings.seoManagerRole,
 					strings.seoEditorRole
 				]"
-				:cta-link="links.getPricingUrl('access-control', 'access-control-upsell')"
+				:cta-link="links.getPricingUrl('access-control', 'access-control-upsell', null, 'liteUpgrade')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="links.getUpsellUrl('access-control', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('access-control', null, 'liteUpgrade')"
 				align-top
 			>
 				<template #header-text>
@@ -61,10 +61,6 @@
 
 <script setup>
 import { computed } from 'vue'
-
-import {
-	useRootStore
-} from '@/vue/stores'
 
 import links from '@/vue/utils/links'
 import { merge } from 'lodash-es'
@@ -84,8 +80,6 @@ const {
 	getRoles,
 	strings : composableStrings
 } = useAccessControl()
-
-const rootStore = useRootStore()
 
 const strings = merge(composableStrings, {
 	wpRoles         : __('WP Roles (Editor, Author)', td),

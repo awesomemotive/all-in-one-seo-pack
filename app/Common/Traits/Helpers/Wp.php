@@ -1022,4 +1022,32 @@ trait Wp {
 
 		return $scannablePostTypes;
 	}
+
+	/**
+	 * Returns the user data.
+	 *
+	 * @since 4.8.7
+	 *
+	 * @param  int $userId The user ID.
+	 * @return \WP_User|null The user data.
+	 */
+	public function getUserData( $userId ) {
+		$userData = get_userdata( $userId );
+		if ( ! is_a( $userData, 'WP_User' ) ) {
+			return null;
+		}
+
+		$toUnset = [
+			'user_pass',
+			'user_activation_key'
+		];
+
+		foreach ( $toUnset as $key ) {
+			if ( isset( $userData->$key ) ) {
+				unset( $userData->$key );
+			}
+		}
+
+		return $userData;
+	}
 }

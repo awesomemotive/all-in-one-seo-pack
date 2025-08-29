@@ -311,6 +311,32 @@ trait Strings {
 	}
 
 	/**
+	 * Recursively decode HTML entities until no more decoding is possible.
+	 *
+	 * @since 4.8.7
+	 *
+	 * @param  string $string        The string to decode.
+	 * @param  int    $maxIterations The maximum number of iterations.
+	 * @return string                The decoded string.
+	 */
+	public function decodeHtmlEntitiesRecursive( $string, $maxIterations = 10 ) {
+		if ( ! is_string( $string ) ) {
+			return '';
+		}
+
+		$decodedValue = $string;
+		$iterations   = 0;
+		do {
+			$previousValue = $decodedValue;
+			$decodedValue  = $this->decodeHtmlEntities( $decodedValue );
+
+			$iterations++;
+		} while ( $previousValue !== $decodedValue && $iterations < $maxIterations );
+
+		return $decodedValue;
+	}
+
+	/**
 	 * Returns the string with script tags stripped.
 	 *
 	 * @since 4.0.0

@@ -23,7 +23,7 @@
 						size="small"
 						type="green"
 						tag="a"
-						:href="links.utmUrl('notification-unlicensed-addons')"
+						:href="links.getUpsellUrl('notification-unlicensed-addons', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 						target="_blank"
 					>
 						{{ strings.upgrade }}
@@ -34,8 +34,13 @@
 	</transition-slide>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue'
+
 import links from '@/vue/utils/links'
+import {
+	useRootStore
+} from '@/vue/stores'
 
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
@@ -44,43 +49,35 @@ import { __, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-export default {
-	components : {
-		SvgCircleClose,
-		TransitionSlide
-	},
-	props : {
-		notification : {
-			type     : Object,
-			required : true
-		}
-	},
-	data () {
-		return {
-			links,
-			active  : true,
-			strings : {
-				title : sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO").
-					__('%1$s Addons Not Configured Properly', td),
-					import.meta.env.VITE_SHORT_NAME
-				),
-				learnMore : __('Learn More', td),
-				upgrade   : __('Upgrade', td)
-			}
-		}
-	},
-	computed : {
-		content () {
-			let addonsList = '<ul>'
-			this.notification.addons.forEach(addon => {
-				addonsList += '<li><strong>' + import.meta.env.VITE_SHORT_NAME + ' - ' + addon.name + '</strong></li>'
-			})
-			addonsList += '</ul>'
-			return this.notification.message + addonsList
-		}
+const props = defineProps({
+	notification : {
+		type     : Object,
+		required : true
 	}
+})
+
+const rootStore = useRootStore()
+
+const active = ref(true)
+
+const strings = {
+	title : sprintf(
+		// Translators: 1 - Plugin short name ("AIOSEO").
+		__('%1$s Addons Not Configured Properly', td),
+		import.meta.env.VITE_SHORT_NAME
+	),
+	learnMore : __('Learn More', td),
+	upgrade   : __('Upgrade', td)
 }
+
+const content = computed(() => {
+	let addonsList = '<ul>'
+	props.notification.addons.forEach(addon => {
+		addonsList += '<li><strong>' + import.meta.env.VITE_SHORT_NAME + ' - ' + addon.name + '</strong></li>'
+	})
+	addonsList += '</ul>'
+	return props.notification.message + addonsList
+})
 </script>
 
 <style lang="scss">

@@ -16,9 +16,9 @@
 					strings.customFieldSupport,
 					strings.exclude
 				]"
-				:cta-link="links.getPricingUrl('video-sitemap', 'video-sitemap-upsell')"
+				:cta-link="links.getPricingUrl('video-sitemap', 'video-sitemap-upsell', null, 'liteUpgrade')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="links.getUpsellUrl('video-sitemap', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('video-sitemap', null, 'liteUpgrade')"
 				:hide-bonus="!licenseStore.isUnlicensed"
 			>
 				<template #header-text>
@@ -34,11 +34,10 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import links from '@/vue/utils/links'
 import {
-	useLicenseStore,
-	useRootStore
+	useLicenseStore
 } from '@/vue/stores'
 
 import { useVideoSitemap } from '@/vue/pages/sitemaps/composables/VideoSitemap'
@@ -48,25 +47,9 @@ import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import Cta from '@/vue/components/common/cta/Index'
-export default {
-	setup () {
-		const { strings } = useVideoSitemap()
 
-		return {
-			licenseStore : useLicenseStore(),
-			rootStore    : useRootStore(),
-			links,
-			strings
-		}
-	},
-	components : {
-		Blur,
-		RequiredPlans,
-		CoreCard,
-		CoreProBadge,
-		Cta
-	}
-}
+const licenseStore = useLicenseStore()
+const { strings } = useVideoSitemap()
 </script>
 
 <style lang="scss">

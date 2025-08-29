@@ -82,7 +82,7 @@ export default ({ vc }) => {
 	})
 
 	// Listen for the editor being saved.
-	;[ '#vc_button-update', '#vc_button-save-draft', '#vc_button-save-as-pending' ].forEach(selector => {
-		document.querySelector(selector)?.addEventListener('click', handleEditorSave)
+	document.querySelectorAll('#vc_button-update, #vc_button-save-draft, #vc_button-save-as-pending').forEach(button => {
+		button.addEventListener('click', handleEditorSave)
 	})
 }

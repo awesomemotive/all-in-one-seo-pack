@@ -129,18 +129,33 @@ class PostsTerms {
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function getPostData( $request ) {
-		$args = $request->get_query_params();
+		$args   = $request->get_query_params();
+		$postId = $args['postId'] ?? null;
 
-		if ( empty( $args['postId'] ) ) {
+		if ( empty( $postId ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'No post ID was provided.'
 			], 400 );
 		}
 
+		if ( ! current_user_can( 'edit_post', $postId ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'You are not allowed to access the data for this post.'
+			], 403 );
+		}
+
+		$data = aioseo()->helpers->getVueData( 'post', $postId, $args['integrationSlug'] ?? null );
+
 		return new \WP_REST_Response( [
 			'success' => true,
-			'data'    => aioseo()->helpers->getVueData( 'post', $args['postId'], $args['integrationSlug'] ?? null )
+			'data'    => [
+				// We just send the minimum data that is needed for the post settings. See #7461
+				'currentPost'  => $data['currentPost'],
+				'redirects'    => ! empty( $data['redirects'] ) ? $data['redirects'] : null,
+				'seoRevisions' => ! empty( $data['seoRevisions'] ) ? $data['seoRevisions'] : null
+			]
 		], 200 );
 	}
 

@@ -154,6 +154,38 @@ class TruSeo {
 			) {
 				// Update the sidebar score.
 				this.setSidebarButtonScore(d.data.seo_score)
+
+				// RACE CONDITION FIX: Preserve user input during analysis.
+				// Only update analysis-related fields, not user-editable fields.
+				const analysisState = { ...d.data }
+
+				// Preserve focus keyphrase if it exists.
+				if ('string' === typeof postEditorStore.currentPost?.keyphrases?.focus?.keyphrase) {
+					postEditorStore.currentPost.keyphrases.focus = {
+						...analysisState.keyphrases.focus,
+						keyphrase : postEditorStore.currentPost.keyphrases.focus.keyphrase
+					}
+				}
+
+				// Preserve additional keyphrases if they exist.
+				if (0 < postEditorStore.currentPost?.keyphrases?.additional?.length) {
+					for (const i of postEditorStore.currentPost.keyphrases.additional.keys()) {
+						postEditorStore.currentPost.keyphrases.additional[i] = {
+							...analysisState.keyphrases.additional[i],
+							keyphrase : postEditorStore.currentPost.keyphrases.additional[i].keyphrase
+						}
+					}
+				}
+
+				// Only update analysis results and scores, not user input.
+				postEditorStore.updateState({
+					...postEditorStore.currentPost,
+					seo_score     : analysisState.seo_score,
+					page_analysis : analysisState.page_analysis,
+					loading       : analysisState.loading
+				})
+
+				return
 			}
 
 			postEditorStore[d.action](d.data)

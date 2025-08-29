@@ -21,7 +21,7 @@
 					<base-button
 						v-else
 						tag="a"
-						:href="links.getPricingUrl('search-statistics', 'search-statistics-upsell', 'keyword-rank-tracker')"
+						:href="links.getPricingUrl('search-statistics', 'search-statistics-upsell', 'keyword-rank-tracker', 'liteUpgrade')"
 						target="_blank"
 						type="green"
 						size="small"
@@ -98,12 +98,12 @@
 				v-else
 				cta-second-button-action
 				@cta-second-button-click="searchStatisticsStore.showSampleReports"
-				:cta-link="links.getPricingUrl('search-statistics', 'search-statistics-upsell', 'keyword-rank-tracker')"
+				:cta-link="links.getPricingUrl('search-statistics', 'search-statistics-upsell', 'keyword-rank-tracker', 'liteUpgrade')"
 				:button-text="strings.ctaButtonText"
 				:second-button-text="strings.ctaSecondButtonText"
 				cta-second-button-new-badge
 				cta-second-button-visible
-				:learn-more-link="links.getUpsellUrl('search-statistics', 'keyword-rank-tracker', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('search-statistics', 'keyword-rank-tracker', 'liteUpgrade')"
 				:feature-list="[
 					strings.feature1,
 					strings.feature2,
@@ -132,7 +132,6 @@ import { computed } from 'vue'
 import {
 	useKeywordRankTrackerStore,
 	useLicenseStore,
-	useRootStore,
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
@@ -154,7 +153,6 @@ import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 const td                      = import.meta.env.VITE_TEXTDOMAIN
 const keywordRankTrackerStore = useKeywordRankTrackerStore()
 const licenseStore            = useLicenseStore()
-const rootStore               = useRootStore()
 const searchStatisticsStore   = useSearchStatisticsStore()
 const learnMoreLink           = links.getDocLink(__('Learn More', td), 'keywordRankTracker', true)
 const graphHeight             = '320px'

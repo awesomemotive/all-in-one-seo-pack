@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 
 import {
+	useRootStore,
 	useSchemaStore
 } from '@/vue/stores'
 
@@ -34,11 +35,12 @@ export const useHelpers = () => {
 	})
 
 	const graphNotIncluded = computed(() => {
+		const rootStore = useRootStore()
 		const upgradeLink = links.getPricingUrl(
 			'graph-' + schemaStore.graph.graphName.toLowerCase(),
 			'schema-generator',
 			'graph-' + schemaStore.graph.graphName.toLowerCase(),
-			'pricing'
+			rootStore.isPro ? 'pricing' : 'liteUpgrade'
 		)
 
 		return __('This feature is not available in your current plan.', td) + ' ' +

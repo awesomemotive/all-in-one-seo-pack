@@ -1,7 +1,7 @@
 <template>
 	<div class="aioseo-tools-export-taxonomies">
 		<cta
-			:cta-link="links.getPricingUrl('taxonomies', 'taxonomies', 'export-taxonomies')"
+			:cta-link="links.getPricingUrl('taxonomies', 'taxonomies', 'export-taxonomies', 'liteUpgrade')"
 			:button-text="strings.ctaButtonText"
 			:learn-more-link="links.getUpsellUrl('taxonomies', 'export-taxonomies', 'liteUpgrade')"
 			:feature-list="strings.ctaFeatures"

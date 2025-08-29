@@ -214,7 +214,7 @@ export default {
 					// Translators: 1 - "PRO", 2 - "Learn more".
 					__('Sending summaries to additional email addresses is a %1$s feature. %2$s', td),
 					'PRO',
-					links.getUpsellLink('general-settings-advanced', GLOBAL_STRINGS.learnMore, 'email-summary', true)
+					links.getUpsellLink('general-settings', 'email-summary', GLOBAL_STRINGS.learnMore, 'liteUpgrade', true)
 				)
 			},
 			defaultFrequencyValue : 'monthly',

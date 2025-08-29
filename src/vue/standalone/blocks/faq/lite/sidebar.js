@@ -41,6 +41,7 @@ export const render = (className, attributes, setSchemaBlockAttributes) => {
 
 	const upgradeLink = links.getUpsellLink(
 		'faq-block',
+		null,
 		// Translators: The full string is "Click here to get AIOSEO Pro".
 		GLOBAL_STRINGS.learnMore,
 		'sidebar',

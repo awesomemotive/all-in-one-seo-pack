@@ -132,6 +132,10 @@ class Summary {
 		$addToStart += aioseo()->helpers->generateRandomTimeOffset( aioseo()->helpers->getSiteDomain( true ), 1440 * 3 ) * MINUTE_IN_SECONDS;
 
 		foreach ( $allowedFrequencies as $frequency => $data ) {
+			if ( aioseo()->actionScheduler->isScheduled( $this->actionHook, compact( 'frequency' ) ) ) {
+				continue;
+			}
+
 			aioseo()->actionScheduler->scheduleRecurrent( $this->actionHook, $data['start'] + $addToStart, $data['interval'], compact( 'frequency' ) );
 		}
 	}

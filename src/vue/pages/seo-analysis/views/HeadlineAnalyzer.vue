@@ -228,6 +228,20 @@ export default {
 
 	.aioseo-headline-result-wrapper {
 		scroll-margin-top: 92px;
+
+		> .header {
+			padding: 15px 20px;
+			height: auto;
+			min-height: 60px;
+
+			> .text {
+				flex: 1;
+			}
+
+			.header-title > span {
+				flex: 1;
+			}
+		}
 	}
 
 	.headline-result-main {

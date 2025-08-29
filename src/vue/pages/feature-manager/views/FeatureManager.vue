@@ -99,8 +99,8 @@
 			:type="2"
 			:button-text="strings.ctaButtonText"
 			:floating="false"
-			:cta-link="links.utmUrl('feature-manager', 'main-cta')"
-			:learn-more-link="links.getUpsellUrl('feature-manager', 'main-cta', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+			:cta-link="links.getUpsellUrl('feature-manager', 'main-cta', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+			:learn-more-link="links.getUpsellUrl('feature-manager', 'main-cta-all-features', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="UPSELL_FEATURE_LIST"
 		>
 			<template #header-text>
@@ -362,7 +362,7 @@ export default {
 			// First, check to see if this user is licensed and has an active license.
 			// If not, we want to redirect the user to a new page with an upsell.
 			if (!this.rootStore.isPro || !this.licenseStore.license.isActive) {
-				return window.open(links.utmUrl(this.rootStore.aioseo.data.isNetworkAdmin ? 'network-activate-all-features' : 'activate-all-features'))
+				return window.open(links.getUpsellUrl(this.rootStore.aioseo.data.isNetworkAdmin ? 'network-activate-all-features' : 'activate-all-features', 'liteUpgrade'))
 			}
 
 			if (this.rootStore.aioseo.data.isNetworkAdmin) {

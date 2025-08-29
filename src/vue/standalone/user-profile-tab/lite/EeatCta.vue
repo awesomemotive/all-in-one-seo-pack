@@ -11,9 +11,9 @@
 		<eeat-blur />
 
 		<cta
-			:cta-link="links.getPricingUrl('eeat', 'eeat-upsell')"
+			:cta-link="links.getPricingUrl('eeat', 'eeat-upsell', null, 'liteUpgrade')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="links.getUpsellUrl('eeat', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+			:learn-more-link="links.getUpsellUrl('eeat', null, 'liteUpgrade')"
 			:feature-list="features"
 		>
 			<template #header-text>
@@ -31,8 +31,7 @@
 
 <script>
 import {
-	useLicenseStore,
-	useRootStore
+	useLicenseStore
 } from '@/vue/stores'
 
 import { useEeatCta } from '@/vue/composables/EeatCta'
@@ -56,7 +55,6 @@ export default {
 			addonSlug,
 			features,
 			licenseStore : useLicenseStore(),
-			rootStore    : useRootStore(),
 			links,
 			strings
 		}

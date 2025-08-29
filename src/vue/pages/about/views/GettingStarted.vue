@@ -11,7 +11,7 @@
 			:type="2"
 			:floating="false"
 			:button-text="strings.cta.button"
-			:cta-link="links.utmUrl('getting-started', 'main-cta')"
+			:cta-link="links.getUpsellUrl('getting-started', 'main-cta', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 			:learn-more-link="links.getUpsellUrl('getting-started', 'main-cta', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 			:feature-list="UPSELL_FEATURE_LIST"
 			:showLink="false"

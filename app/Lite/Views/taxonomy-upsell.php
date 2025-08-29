@@ -875,7 +875,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<div class="aioseo-alert yellow medium bonus-alert"> 🎁 <span>
 									<strong><?php esc_html_e( 'Bonus:', 'all-in-one-seo-pack' ); ?></strong>
 									<?php esc_html_e( 'You can upgrade to the Pro plan today and ', 'all-in-one-seo-pack' ); ?>
-									<strong><?php esc_html_e( 'save 60% off', 'all-in-one-seo-pack' ); ?></strong>
+									<strong><?php esc_html_e( 'save 50% off', 'all-in-one-seo-pack' ); ?></strong>
 									<?php esc_html_e( '(discount auto-applied)', 'all-in-one-seo-pack' ); ?>.</span>
 								</div>
 							</div>

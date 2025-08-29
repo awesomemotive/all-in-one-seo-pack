@@ -138,7 +138,7 @@ class Activate {
 			? get_current_user_id() // If there is a logged in user, the user is switching from Lite to Pro via the Plugins menu.
 			: aioseo()->core->cache->get( 'connect_active_user' ); // If there is no logged in user, we're upgrading via AIOSEO Connect.
 
-		$user = get_userdata( $userId );
+		$user = aioseo()->helpers->getUserData( $userId );
 		if ( is_object( $user ) ) {
 			$capabilities = aioseo()->access->getCapabilityList();
 			foreach ( $capabilities as $capability ) {

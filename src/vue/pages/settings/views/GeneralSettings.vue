@@ -141,7 +141,7 @@ export default {
 		link () {
 			return sprintf(
 				'<strong><a href="%1$s" target="_blank">%2$s</a></strong>',
-				links.utmUrl('general-settings', 'license-box-tooltip'),
+				links.getUpsellUrl('general-settings', 'license-box-tooltip', 'liteUpgrade'),
 				this.strings.linkText
 			)
 		},

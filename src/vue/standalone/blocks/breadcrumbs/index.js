@@ -5,6 +5,8 @@ import { useRootStore } from '@/vue/stores'
 
 const wp = window.wp
 const el = wp.element.createElement
+const { useSelect } = wp.data
+const { useEffect } = wp.element
 const Fragment = wp.element.Fragment
 const InspectorControls = wp.blockEditor?.InspectorControls || wp.editor.InspectorControls
 const PanelBody = wp.components.PanelBody
@@ -46,6 +48,10 @@ export const settings = {
 			type    : 'string',
 			default : null
 		},
+		postTitle : {
+			type    : 'string',
+			default : null
+		},
 		breadcrumbSettings : {
 			type    : 'object',
 			default : {
@@ -65,6 +71,18 @@ export const settings = {
 		const { setAttributes, attributes, clientId } = props
 		const rootStore = useRootStore()
 		const sidebarSettingsId = `aioseo-${clientId}-settings`
+
+		const postTitle = useSelect((select) =>
+			select('core/editor').getEditedPostAttribute('title')
+		)
+
+		useEffect(() => {
+			setTimeout(() => {
+				if (postTitle !== attributes.postTitle) {
+					setAttributes({ postTitle })
+				}
+			}, 1000)
+		}, [ postTitle ])
 
 		window.aioseoBus.$on('standalone-update-post', (param) => {
 			if (!param?.primary_term && !param?.breadcrumb_settings) {
@@ -120,10 +138,11 @@ export const settings = {
 							'p',
 							{ className: 'aioseo-breadcrumbs-sidebar-text' },
 							[
-								__('You can customize your breadcrumb trail under ', td),
+								el('span', { key: 'text' }, __('You can customize your breadcrumb trail under ', td)),
 								el(
 									'a',
 									{
+										key     : 'link',
 										href    : '#',
 										onClick : () => openBreadcrumbConfig()
 									},
@@ -151,6 +170,7 @@ export const settings = {
 							block      : name,
 							attributes : {
 								primaryTerm        : attributes.primaryTerm,
+								postTitle          : attributes.postTitle,
 								breadcrumbSettings : { ...attributes.breadcrumbSettings, primaryTerm: primaryTerm }
 							}
 						}

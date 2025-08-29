@@ -201,6 +201,11 @@ class Semrush {
 			return $results;
 		}
 
+		$accessToken = aioseo()->internalOptions->integrations->semrush->accessToken;
+		if ( empty( $accessToken ) ) {
+			return false;
+		}
+
 		$params = [
 			'phrase'         => $keyphrase,
 			'export_columns' => 'Ph,Nq,Td',
@@ -209,13 +214,28 @@ class Semrush {
 			'display_offset' => 0,
 			'display_sort'   => 'nq_desc',
 			'display_filter' => '%2B|Nq|Lt|1000',
-			'access_token'   => aioseo()->internalOptions->integrations->semrush->accessToken
+			'access_token'   => $accessToken
 		];
 
 		$url = 'https://oauth.semrush.com/api/v1/keywords/phrase_fullsearch?' . http_build_query( $params );
 
-		$response = wp_remote_get( $url );
-		$body     = json_decode( wp_remote_retrieve_body( $response ) );
+		$response = wp_remote_get( $url, [
+			'timeout' => 30,
+			'headers' => [
+				'User-Agent' => 'AIOSEO/' . AIOSEO_VERSION
+			]
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			return false;
+		}
+
+		$responseCode = wp_remote_retrieve_response_code( $response );
+		if ( 200 !== $responseCode ) {
+			return false;
+		}
+
+		$body = json_decode( wp_remote_retrieve_body( $response ) );
 
 		aioseo()->core->cache->update( $transientKey, $body );
 

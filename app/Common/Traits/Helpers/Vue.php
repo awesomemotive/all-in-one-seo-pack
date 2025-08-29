@@ -17,33 +17,6 @@ use AIOSEO\Plugin\Common\Tools;
  */
 trait Vue {
 	/**
-	 * Holds the data for Vue.
-	 *
-	 * @since 4.4.9
-	 *
-	 * @var array
-	 */
-	private $data = [];
-
-	/**
-	 * Optional arguments for setting the data.
-	 *
-	 * @since 4.4.9
-	 *
-	 * @var array
-	 */
-	private $args = [];
-
-	/**
-	 * Holds the cached data.
-	 *
-	 * @since 4.5.1
-	 *
-	 * @var array
-	 */
-	private $cache = [];
-
-	/**
 	 * Returns the data for Vue.
 	 *
 	 * @since   4.0.0
@@ -127,7 +100,7 @@ trait Vue {
 				'llmsUrl'           => aioseo()->llms->getUrl(),
 				'robotsTxtUrl'      => $this->getSiteUrl() . '/robots.txt',
 				'marketingSiteUrl'  => $this->getMarketingSiteUrl(),
-				'upgradeUrl'        => apply_filters( 'aioseo_upgrade_link', AIOSEO_MARKETING_URL ),
+				'upgradeUrl'        => apply_filters( 'aioseo_upgrade_link', AIOSEO_MARKETING_URL . 'lite-upgrade/' ),
 				'staticHomePage'    => 'page' === get_option( 'show_on_front' ) ? get_edit_post_link( get_option( 'page_on_front' ), 'url' ) : null,
 				'feeds'             => [
 					'rdf'            => get_bloginfo( 'rdf_url' ),
@@ -206,7 +179,8 @@ trait Vue {
 					'toc' => [
 						'hashPrefix' => apply_filters( 'aioseo_toc_hash_prefix', 'aioseo-' )
 					]
-				]
+				],
+				'vueComponentsDefaults' => $this->getVueComponentsDefaults(),
 			],
 			'user'               => [
 				'canManage'      => aioseo()->access->canManage(),
@@ -720,5 +694,64 @@ trait Vue {
 		}
 
 		return 'https://aioseo.com/';
+	}
+
+	/**
+	 * Clean sensitive data.
+	 *
+	 * @since 4.8.7
+	 *
+	 * @return void
+	 */
+	protected function cleanSensitiveData() {
+		// Hide Semrush tokens.
+		if ( ! empty( $this->data['internalOptions']['integrations']['semrush']['accessToken'] ) ) {
+			$this->data['internalOptions']['integrations']['semrush']['accessToken'] = '*****************';
+		}
+
+		if ( ! empty( $this->data['internalOptions']['integrations']['semrush']['refreshToken'] ) ) {
+			$this->data['internalOptions']['integrations']['semrush']['refreshToken'] = '*****************';
+		}
+
+		// Hide AI tokens.
+		if ( ! empty( $this->data['internalOptions']['internal']['ai']['accessToken'] ) ) {
+			$this->data['internalOptions']['internal']['ai']['accessToken'] = '*****************';
+		}
+
+		// Hide Search Statistics tokens.
+		if ( ! empty( $this->data['internalOptions']['internal']['searchStatistics']['profile']['key'] ) ) {
+			$this->data['internalOptions']['internal']['searchStatistics']['profile']['key'] = '*****************';
+		}
+
+		if ( ! empty( $this->data['internalOptions']['internal']['searchStatistics']['profile']['token'] ) ) {
+			$this->data['internalOptions']['internal']['searchStatistics']['profile']['token'] = '*****************';
+		}
+
+		if ( ! empty( $this->data['internalOptions']['internal']['searchStatistics']['trustToken'] ) ) {
+			$this->data['internalOptions']['internal']['searchStatistics']['trustToken'] = '*****************';
+		}
+
+		// Hide connect token.
+		if ( ! empty( $this->data['internalOptions']['internal']['siteAnalysis']['connectToken'] ) ) {
+			$this->data['internalOptions']['internal']['siteAnalysis']['connectToken'] = '*****************';
+		}
+	}
+
+	/**
+	 * Returns default values and settings for Vue components. These settings can be customized
+	 * by a filter.
+	 *
+	 * @since 4.8.7
+	 *
+	 * @return array The default values for Vue components.
+	 */
+	private function getVueComponentsDefaults() {
+		$defaults = [
+			'fieldGroupRepeater' => [
+				'maxGroups' => 50
+			]
+		];
+
+		return apply_filters( 'aioseo_vue_components_defaults', $defaults );
 	}
 }

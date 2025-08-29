@@ -765,7 +765,7 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 				return $optionName ? null : [];
 			}
 
-			$value = $this->override[ $optionName ] ?? null;
+			$value = isset( $this->override[ $optionName ] ) ? $this->override[ $optionName ] : null;
 
 			return $optionName ? $value : $this->override;
 		}

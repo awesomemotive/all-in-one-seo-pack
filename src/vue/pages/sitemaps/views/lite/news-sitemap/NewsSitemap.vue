@@ -16,9 +16,9 @@
 					strings.setPublicationName,
 					strings.exclude
 				]"
-				:cta-link="links.getPricingUrl('news-sitemap', 'news-sitemap-upsell')"
+				:cta-link="links.getPricingUrl('news-sitemap', 'news-sitemap-upsell', null, 'liteUpgrade')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="links.getUpsellUrl('news-sitemap', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('news-sitemap', null, 'liteUpgrade')"
 				:hide-bonus="!licenseStore.isUnlicensed"
 			>
 				<template #header-text>
@@ -34,11 +34,10 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import links from '@/vue/utils/links'
 import {
-	useLicenseStore,
-	useRootStore
+	useLicenseStore
 } from '@/vue/stores'
 
 import { useNewsSitemap } from '@/vue/pages/sitemaps/composables/NewsSitemap'
@@ -48,25 +47,9 @@ import CoreCard from '@/vue/components/common/core/Card'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import Cta from '@/vue/components/common/cta/Index'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
-export default {
-	setup () {
-		const { strings } = useNewsSitemap()
 
-		return {
-			licenseStore : useLicenseStore(),
-			rootStore    : useRootStore(),
-			links,
-			strings
-		}
-	},
-	components : {
-		Blur,
-		CoreCard,
-		CoreProBadge,
-		Cta,
-		RequiredPlans
-	}
-}
+const licenseStore = useLicenseStore()
+const { strings } = useNewsSitemap()
 </script>
 
 <style lang="scss">

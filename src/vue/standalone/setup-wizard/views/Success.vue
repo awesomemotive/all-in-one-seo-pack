@@ -93,7 +93,7 @@
 						<base-button
 							type="green"
 							tag="a"
-							:href="links.utmUrl('onboarding-wizard', 'success')"
+							:href="links.getUpsellUrl('onboarding-wizard', 'success', 'liteUpgrade')"
 							target="_blank"
 						>
 							{{ strings.ctaButton }}

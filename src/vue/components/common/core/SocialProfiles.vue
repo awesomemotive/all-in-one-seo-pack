@@ -233,7 +233,7 @@ export default {
 					url        : 'https://facebook.com',
 					svg        : 'svg-icon-facebook',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?facebook\.[a-z.]+\/.*$/.test(v) || __('Your Facebook URL is invalid. Please check the format and try again.', td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+\.)?facebook\.[a-z.]+\/.*$/.test(v) || __('Your Facebook URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -243,7 +243,7 @@ export default {
 					url        : 'https://x.com',
 					svg        : 'svg-icon-twitter',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?(twitter|x)\.[a-z.]+\/.*$/.test(v) || __('Your X (Twitter) URL is invalid. Please check the format and try again.', td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9-]+\.)?(twitter|x)\.[a-z.]+\/.*$/.test(v) || __('Your X (Twitter) URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -253,7 +253,7 @@ export default {
 					url        : 'https://instagram.com',
 					svg        : 'svg-icon-instagram',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?instagram\.[a-z.]+\/.*$/.test(v) || __('Your Instagram URL is invalid. Please check the format and try again.', td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9-]+\.)?instagram\.[a-z.]+\/.*$/.test(v) || __('Your Instagram URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -263,7 +263,7 @@ export default {
 					url        : 'https://tiktok.com/@',
 					svg        : 'svg-icon-tiktok',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?tiktok\.[a-z.]+\/@.*$/.test(v) || __('Your TikTok URL is invalid. Please check the format and try again.', td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9-]+\.)?tiktok\.[a-z.]+\/@.*$/.test(v) || __('Your TikTok URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -273,7 +273,7 @@ export default {
 					url        : 'https://linkedin.com/in',
 					svg        : 'svg-icon-linkedin',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?linkedin\.[a-z.]+\/(?:in|company|school|groups|showcase)\/.*$/.test(v) || __('Your LinkedIn URL is invalid. Please check the format and try again.', td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9-]+\.)?linkedin\.[a-z.]+\/(?:in|company|school|groups|showcase)\/.*$/.test(v) || __('Your LinkedIn URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -283,7 +283,7 @@ export default {
 					url        : 'https://pinterest.com',
 					svg        : 'svg-icon-pinterest',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?pinterest\.[a-z.]+\/.*$/.test(v) || __('Your Pinterest URL is invalid. Please check the format and try again.', td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9-]+\.)?pinterest\.[a-z.]+\/.*$/.test(v) || __('Your Pinterest URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -293,7 +293,7 @@ export default {
 					url        : 'https://youtube.com',
 					svg        : 'svg-icon-youtube',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?youtube\.[a-z.]+\/.*$/.test(v) || __('Your YouTube URL is invalid. Please check the format and try again.', td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9-]+\.)?youtube\.[a-z.]+\/.*$/.test(v) || __('Your YouTube URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -303,7 +303,7 @@ export default {
 					url        : 'https://tumblr.com/{profile}',
 					svg        : 'svg-icon-tumblr',
 					validation : [
-						v => /^(https:\/\/(?:www\.)?([^/]+)\.tumblr\.[a-z.]+.*|https:\/\/(?:www\.)?tumblr\.com\/[^/]+.*)$/.test(v) || __('Your Tumblr URL is invalid. Please check the format and try again.', td)
+						v => /^(https:\/\/(?:www\.)?([^/]+)\.tumblr\.[a-z.]+.*|https:\/\/(?:www\.)?tumblr\.com\/[^/]+\.*)$/.test(v) || __('Your Tumblr URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -323,7 +323,7 @@ export default {
 					url        : 'https://soundcloud.com',
 					svg        : 'svg-icon-sound-cloud',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?soundcloud\.[a-z.]+\/.*$/.test(v) || __('Your SoundCloud URL is invalid. Please check the format and try again.', td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9-]+\.)?soundcloud\.[a-z.]+\/.*$/.test(v) || __('Your SoundCloud URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{
@@ -343,7 +343,7 @@ export default {
 					url        : 'https://myspace.com',
 					svg        : 'svg-icon-myspace',
 					validation : [
-						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9]+.)?myspace\.[a-z.]+\/.*$/.test(v) || __('Your MySpace URL is invalid. Please check the format and try again.', td)
+						v => /^https:\/\/(?:www\.)?(?:[a-zA-Z0-9-]+\.)?myspace\.[a-z.]+\/.*$/.test(v) || __('Your MySpace URL is invalid. Please check the format and try again.', td)
 					]
 				},
 				{

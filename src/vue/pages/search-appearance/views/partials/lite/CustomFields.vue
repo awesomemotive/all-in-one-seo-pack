@@ -18,9 +18,9 @@
 		</core-blur>
 
 		<cta
-			:cta-link="links.getPricingUrl('custom-fields', 'custom-fields-upsell', `${object.name}-post-type`)"
+			:cta-link="links.getPricingUrl('custom-fields', 'custom-fields-upsell', `${object.name}-post-type`, 'liteUpgrade')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="links.getUpsellUrl('custom-fields', object.name, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+			:learn-more-link="links.getUpsellUrl('custom-fields', object.name, 'liteUpgrade')"
 		>
 			<template #header-text>
 				{{ strings.ctaHeader }}
@@ -32,11 +32,7 @@
 	</div>
 </template>
 
-<script>
-import {
-	useRootStore
-} from '@/vue/stores'
-
+<script setup>
 import links from '@/vue/utils/links'
 import BaseTextarea from '@/vue/components/common/base/Textarea'
 import CoreBlur from '@/vue/components/common/core/Blur'
@@ -47,54 +43,32 @@ import { __, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-export default {
-	setup () {
-		return {
-			rootStore : useRootStore()
-		}
+defineProps({
+	type : {
+		type     : String,
+		required : true
 	},
-	components : {
-		BaseTextarea,
-		CoreBlur,
-		CoreSettingsRow,
-		Cta
-	},
-	props : {
-		type : {
-			type     : String,
-			required : true
-		},
-		object : {
-			type     : Object,
-			required : true
-		}
-	},
-	data () {
-		return {
-			links,
-			strings : {
-				customFields            : __('Custom Fields', td),
-				customFieldsDescription : __('List of custom field names to include as post content for tags and the SEO Page Analysis. Add one per line.', td),
-				ctaDescription          : sprintf(
-					// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
-					__('%1$s %2$s gives you advanced customizations for our page analysis feature, letting you add custom fields to analyze.', td),
-					import.meta.env.VITE_SHORT_NAME,
-					'Pro'
-				),
-				ctaButtonText : __('Unlock Custom Fields', td),
-				ctaHeader     : sprintf(
-					// Translators: 1 - "PRO".
-					__('Custom Fields is a %1$s Feature', td),
-					'PRO'
-				)
-			}
-		}
-	},
-	methods : {
-		getSchemaTypeOption (option) {
-			return this.schemaTypes.find(st => st.value === option)
-		}
+	object : {
+		type     : Object,
+		required : true
 	}
+})
+
+const strings = {
+	customFields            : __('Custom Fields', td),
+	customFieldsDescription : __('List of custom field names to include as post content for tags and the SEO Page Analysis. Add one per line.', td),
+	ctaDescription          : sprintf(
+		// Translators: 1 - Plugin short name ("AIOSEO"), 2 - "Pro".
+		__('%1$s %2$s gives you advanced customizations for our page analysis feature, letting you add custom fields to analyze.', td),
+		import.meta.env.VITE_SHORT_NAME,
+		'Pro'
+	),
+	ctaButtonText : __('Unlock Custom Fields', td),
+	ctaHeader     : sprintf(
+		// Translators: 1 - "PRO".
+		__('Custom Fields is a %1$s Feature', td),
+		'PRO'
+	)
 }
 </script>
 

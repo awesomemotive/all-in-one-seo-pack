@@ -17,10 +17,11 @@
 		<blur />
 
 		<cta
-			:cta-link="links.getPricingUrl('local-seo', 'local-seo-upsell', 'import')"
+			:cta-link="links.getPricingUrl('local-seo', 'local-seo-upsell', 'import', 'liteUpgrade')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="links.getUpsellUrl('local-seo', null, 'home')"
+			:learn-more-link="links.getUpsellUrl('local-seo', 'local-seo-upsell', 'liteUpgrade')"
 			:feature-list="features"
+			:hide-bonus="!licenseStore.isUnlicensed"
 		>
 			<template #header-text>
 				{{ strings.ctaHeader }}
@@ -37,6 +38,10 @@
 <script>
 import links from '@/vue/utils/links'
 
+import {
+	useLicenseStore
+} from '@/vue/stores'
+
 import Blur from './Blur'
 import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -49,6 +54,13 @@ import { __, sprintf } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
+	setup () {
+		const licenseStore = useLicenseStore()
+
+		return {
+			licenseStore
+		}
+	},
 	components : {
 		SvgDownload,
 		Blur,

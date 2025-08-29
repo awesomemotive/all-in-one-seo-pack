@@ -48,7 +48,7 @@
 					<base-button
 						v-if="!showSampleDataUnlockCta"
 						tag="a"
-						:href="links.getPricingUrl('search-statistics', 'search-statistics-demo-upsell', $route.name)"
+						:href="links.getPricingUrl('search-statistics', 'search-statistics-demo-upsell', $route.name, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 						target="_blank"
 						type="green"
 						size="small"
@@ -86,6 +86,7 @@
 <script>
 import {
 	useLicenseStore,
+	useRootStore,
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
@@ -127,6 +128,7 @@ export default {
 		return {
 			connect,
 			licenseStore          : useLicenseStore(),
+			rootStore             : useRootStore(),
 			links,
 			loading,
 			searchStatisticsStore : useSearchStatisticsStore()

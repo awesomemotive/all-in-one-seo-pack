@@ -50,6 +50,7 @@ class Helpers {
 	 * Sanitizes the title/description.
 	 *
 	 * @since 4.1.2
+	 * @since 4.8.7 Recursively decode HTML entities until no more decoding is possible.
 	 *
 	 * @param  string   $value       The value.
 	 * @param  int|bool $objectId    The post/term ID.
@@ -60,7 +61,7 @@ class Helpers {
 		$value = $replaceTags ? $value : aioseo()->tags->replaceTags( $value, $objectId );
 		$value = aioseo()->helpers->doShortcodes( $value );
 
-		$value = aioseo()->helpers->decodeHtmlEntities( $value );
+		$value = aioseo()->helpers->decodeHtmlEntitiesRecursive( $value );
 		$value = $this->encodeExceptions( $value );
 		$value = wp_strip_all_tags( strip_shortcodes( $value ) );
 		// Because we encoded the exceptions, we need to decode them again first to prevent double encoding later down the line.

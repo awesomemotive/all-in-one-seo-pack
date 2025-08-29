@@ -3,9 +3,9 @@
 		<blur />
 
 		<cta
-			:cta-link="links.getPricingUrl('image-seo', 'image-seo-upsell')"
+			:cta-link="links.getPricingUrl('image-seo', 'image-seo-upsell', null, 'liteUpgrade')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="links.getUpsellUrl('image-seo', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+			:learn-more-link="links.getUpsellUrl('image-seo', null, 'liteUpgrade')"
 			:feature-list="features"
 			:hide-bonus="!licenseStore.isUnlicensed"
 		>
@@ -22,11 +22,10 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import links from '@/vue/utils/links'
 import {
-	useLicenseStore,
-	useRootStore
+	useLicenseStore
 } from '@/vue/stores'
 
 import Blur from './Blur'
@@ -37,40 +36,25 @@ import { __, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-export default {
-	setup () {
-		return {
-			licenseStore : useLicenseStore(),
-			rootStore    : useRootStore(),
-			links
-		}
-	},
-	components : {
-		Blur,
-		RequiredPlans,
-		Cta
-	},
-	data () {
-		return {
-			strings : {
-				titleAttributeFormat : __('Title Attribute Format', td),
-				ctaDescription       : __('The Image SEO module is a premium feature that enables you to globally control the title, alt tag, caption, description and filename of the images on your site.', td),
-				ctaButtonText        : __('Unlock Image SEO', td),
-				ctaHeader            : sprintf(
-					// Translators: 1 - "PRO".
-					__('Image SEO is a %1$s Feature', td),
-					'PRO'
-				)
-			},
-			features : [
-				__('Autogenerate image attributes', td),
-				__('Clean uploaded image filenames', td),
-				__('Strip punctuation from image attributes', td),
-				__('Convert casing of image attributes', td)
-			]
-		}
-	}
+const licenseStore = useLicenseStore()
+
+const strings = {
+	titleAttributeFormat : __('Title Attribute Format', td),
+	ctaDescription       : __('The Image SEO module is a premium feature that enables you to globally control the title, alt tag, caption, description and filename of the images on your site.', td),
+	ctaButtonText        : __('Unlock Image SEO', td),
+	ctaHeader            : sprintf(
+		// Translators: 1 - "PRO".
+		__('Image SEO is a %1$s Feature', td),
+		'PRO'
+	)
 }
+
+const features = [
+	__('Autogenerate image attributes', td),
+	__('Clean uploaded image filenames', td),
+	__('Strip punctuation from image attributes', td),
+	__('Convert casing of image attributes', td)
+]
 </script>
 
 <style scoped lang="scss">

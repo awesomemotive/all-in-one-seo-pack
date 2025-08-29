@@ -43,7 +43,7 @@ export default {
 					import.meta.env.VITE_NAME,
 					__('Free', td)
 				),
-				url      : links.utmUrl('lite-upgrade-bar'),
+				url      : links.getUpsellUrl('lite-upgrade-bar', null, 'liteUpgrade'),
 				linkText : sprintf(
 					// Translators: 1 - "Pro".
 					__('upgrading to %1$s', td),

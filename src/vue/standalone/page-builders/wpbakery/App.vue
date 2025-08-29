@@ -23,10 +23,6 @@
 		<div
 			v-if="!isFrontendEditor"
 			class="aioseo-gear-icon"
-			v-scroll-to="{
-				el: '#aioseo-settings',
-				offset: -150,
-			}"
 		>
 			<svg-aioseo-logo-gear />
 		</div>

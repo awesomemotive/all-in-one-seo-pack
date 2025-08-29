@@ -27,9 +27,9 @@
 			</core-blur>
 
 			<cta
-				:cta-link="links.getPricingUrl('link-assistant', 'link-assistant-upsell', 'metabox')"
+				:cta-link="links.getPricingUrl('link-assistant', 'link-assistant-upsell', 'metabox', 'liteUpgrade')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="links.getUpsellUrl('link-assistant', 'metabox', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('link-assistant', 'metabox', 'liteUpgrade')"
 				:feature-list="[
 					strings.linkOpportunities,
 					strings.domainReports,
@@ -85,9 +85,9 @@
 				</core-blur>
 
 				<cta
-					:cta-link="links.getPricingUrl('link-assistant', 'link-assistant-upsell', 'metabox')"
+					:cta-link="links.getPricingUrl('link-assistant', 'link-assistant-upsell', 'metabox', 'liteUpgrade')"
 					:button-text="strings.ctaButtonText"
-					:learn-more-link="links.getUpsellUrl('link-assistant', 'metabox', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+					:learn-more-link="links.getUpsellUrl('link-assistant', 'metabox', 'liteUpgrade')"
 					:feature-list="[
 						strings.linkOpportunities,
 						strings.domainReports,
@@ -116,8 +116,7 @@
 import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
-	usePostEditorStore,
-	useRootStore
+	usePostEditorStore
 } from '@/vue/stores'
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
@@ -143,7 +142,6 @@ export default {
 		return {
 			licenseStore    : useLicenseStore(),
 			postEditorStore : usePostEditorStore(),
-			rootStore       : useRootStore(),
 			links
 		}
 	},

@@ -12,9 +12,9 @@
 			<blur />
 
 			<cta
-				:cta-link="links.getPricingUrl('local-seo', 'local-seo-upsell', 'maps')"
+				:cta-link="links.getPricingUrl('local-seo', 'local-seo-upsell', 'maps', 'liteUpgrade')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="links.getUpsellUrl('local-seo', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('local-seo', null, 'liteUpgrade')"
 				:feature-list="features"
 				:hide-bonus="!licenseStore.isUnlicensed"
 			>
@@ -31,11 +31,10 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import links from '@/vue/utils/links'
 import {
-	useLicenseStore,
-	useRootStore
+	useLicenseStore
 } from '@/vue/stores'
 
 import Blur from './Blur'
@@ -48,41 +47,24 @@ import { __, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-export default {
-	setup () {
-		return {
-			licenseStore : useLicenseStore(),
-			rootStore    : useRootStore(),
-			links
-		}
-	},
-	components : {
-		Blur,
-		RequiredPlans,
-		CoreCard,
-		CoreProBadge,
-		Cta
-	},
-	data () {
-		return {
-			features : [
-				__('Google Places Support', td),
-				__('Google Reviews', td),
-				__('Driving Directions', td),
-				__('Multiple Locations', td)
-			],
-			strings : {
-				googleMapsApiKey : __('Google Maps API Key', td),
-				ctaButtonText    : __('Unlock Local SEO', td),
-				ctaHeader        : sprintf(
-					// Translators: 1 - "PRO".
-					__('Local SEO is a %1$s Feature', td),
-					'PRO'
-				),
-				ctaDescription : __('Show your location to your visitors using an interactive Google Map. Create multiple maps for use with multiple locations.', td)
-			}
-		}
-	}
+const licenseStore = useLicenseStore()
+
+const features = [
+	__('Google Places Support', td),
+	__('Google Reviews', td),
+	__('Driving Directions', td),
+	__('Multiple Locations', td)
+]
+
+const strings = {
+	googleMapsApiKey : __('Google Maps API Key', td),
+	ctaButtonText    : __('Unlock Local SEO', td),
+	ctaHeader        : sprintf(
+		// Translators: 1 - "PRO".
+		__('Local SEO is a %1$s Feature', td),
+		'PRO'
+	),
+	ctaDescription : __('Show your location to your visitors using an interactive Google Map. Create multiple maps for use with multiple locations.', td)
 }
 </script>
 

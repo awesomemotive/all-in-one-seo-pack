@@ -24,9 +24,9 @@
 		</core-blur>
 
 		<cta
-			:cta-link="links.getPricingUrl('network-tools', 'import-export')"
+			:cta-link="links.getPricingUrl('network-tools', 'import-export', null, 'liteUpgrade')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="links.getUpsellUrl('network-tools', 'import-export', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+			:learn-more-link="links.getUpsellUrl('network-tools', 'import-export', 'liteUpgrade')"
 		>
 			<template #header-text>
 				{{ strings.ctaHeader }}
@@ -40,10 +40,6 @@
 </template>
 
 <script>
-import {
-	useRootStore
-} from '@/vue/stores'
-
 import links from '@/vue/utils/links'
 import BackupSettings from '../partials/BackupSettings'
 import CoreBlur from '@/vue/components/common/core/Blur'
@@ -60,11 +56,6 @@ import { __, sprintf } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
-	setup () {
-		return {
-			rootStore : useRootStore()
-		}
-	},
 	components : {
 		RequiredPlans,
 		BackupSettings,

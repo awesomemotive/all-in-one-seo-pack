@@ -122,7 +122,10 @@
 		},
 
 		open: function (editorId, url, text) {
-			if ('acf-link-textarea' === editorId) {
+			if (
+				'acf-link-textarea' === editorId ||
+				'vc-hidden-editor' === editorId // WPBakery
+			) {
 				$('.aioseo-link-target').hide();
 				$('.link-title-field').hide();
 			} else {

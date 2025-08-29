@@ -10,7 +10,7 @@
 			<base-button
 				type="green"
 				tag="a"
-				:href="links.utmUrl('about-us-page', 'header-button')"
+				:href="links.getUpsellUrl('about-us-page', 'header-button', 'liteUpgrade')"
 				target="_blank"
 			>
 				{{ strings.cta.button }}
@@ -61,7 +61,7 @@
 			<base-button
 				type="green"
 				tag="a"
-				:href="links.utmUrl('about-us-page', 'footer-button')"
+				:href="links.getUpsellUrl('about-us-page', 'footer-button', 'liteUpgrade')"
 				target="_blank"
 			>
 				{{ strings.cta.button }}

@@ -26,7 +26,7 @@
 
 			<a
 				class="aioseo-pro-upgrade-link"
-				:href="links.getPricingUrl('metabox', 'ai-content')"
+				:href="links.getPricingUrl('metabox', 'ai-content', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 				target="_blank"
 				rel="noopener noreferrer"
 			>
@@ -37,7 +37,10 @@
 </template>
 
 <script setup>
-import { useAiStore } from '@/vue/stores/AiStore'
+import {
+	useAiStore,
+	useRootStore
+} from '@/vue/stores'
 
 import { getAssetUrl } from '@/vue/utils/helpers'
 import links from '@/vue/utils/links'
@@ -55,7 +58,8 @@ const strings = {
 	proUpgradeLink       : __('Or upgrade to Pro to unlock additional AI credits.', td)
 }
 
-const aiStore = useAiStore()
+const aiStore   = useAiStore()
+const rootStore = useRootStore()
 </script>
 
 <style lang="scss">

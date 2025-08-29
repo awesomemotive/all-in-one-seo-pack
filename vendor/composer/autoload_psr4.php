@@ -10,7 +10,6 @@ return array(
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
     'PhpOption\\' => array($vendorDir . '/phpoption/phpoption/src/PhpOption'),
-    'InstituteWeb\\ComposerScripts\\' => array($vendorDir . '/instituteweb/composer-scripts/src'),
     'GrahamCampbell\\ResultType\\' => array($vendorDir . '/graham-campbell/result-type/src'),
     'Dotenv\\' => array($vendorDir . '/vlucas/phpdotenv/src'),
     'AIOSEO\\Plugin\\' => array($baseDir . '/app'),

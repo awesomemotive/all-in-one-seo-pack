@@ -34,9 +34,9 @@
 		</core-blur>
 
 			<cta
-				:cta-link="links.getPricingUrl('schema-markup', 'schema-markup-upsell')"
+				:cta-link="links.getPricingUrl('schema-markup', 'schema-markup-upsell', null, 'liteUpgrade')"
 				:button-text="strings.ctaButtonText"
-				:learn-more-link="links.getUpsellUrl('schema-markup', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+				:learn-more-link="links.getUpsellUrl('schema-markup', null, 'liteUpgrade')"
 				:feature-list="features"
 			>
 				<template #header-text>
@@ -51,10 +51,6 @@
 </template>
 
 <script>
-import {
-	useRootStore
-} from '@/vue/stores'
-
 import links from '@/vue/utils/links'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreBlur from '@/vue/components/common/core/Blur'
@@ -66,11 +62,6 @@ import { __, sprintf } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
-	setup () {
-		return {
-			rootStore : useRootStore()
-		}
-	},
 	components : {
 		BaseRadioToggle,
 		CoreBlur,

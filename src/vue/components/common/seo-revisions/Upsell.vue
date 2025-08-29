@@ -1,6 +1,6 @@
 <template>
 	<cta
-		:cta-link="links.getPricingUrl('seo-revisions', 'seo-revisions', parentComponentContext)"
+		:cta-link="links.getPricingUrl('seo-revisions', 'seo-revisions', parentComponentContext, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 		:button-text="strings.ctaButtonText"
 		:learn-more-link="links.getUpsellUrl('seo-revisions', parentComponentContext, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 		:feature-list="strings.ctaFeatures"

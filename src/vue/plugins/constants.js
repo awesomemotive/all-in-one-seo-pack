@@ -1382,7 +1382,7 @@ export const UPSELL_FEATURE_LIST = [
 	__('Ad free (no banner adverts)', td)
 ]
 
-export const DISCOUNT_PERCENTAGE = '60%'
+export const DISCOUNT_PERCENTAGE = '50%'
 
 export const COURSE_MODE_LIST = [
 	{ label: __('Online', td), value: 'Online' },

@@ -22,6 +22,15 @@ class Block {
 	private $primaryTerm = [];
 
 	/**
+	 * The post title.
+	 *
+	 * @since 4.8.7
+	 *
+	 * @var string
+	 */
+	private $postTitle = '';
+
+	/**
 	 * The breadcrumb settings.
 	 *
 	 * @since 4.8.3
@@ -63,6 +72,10 @@ class Block {
 						'type'    => 'string',
 						'default' => null
 					],
+					'postTitle'          => [
+						'type'    => 'string',
+						'default' => null
+					],
 					'breadcrumbSettings' => [
 						'type'    => 'object',
 						'default' => $this->breadcrumbSettings
@@ -89,6 +102,8 @@ class Block {
 		if ( ! empty( $blockAttributes['primaryTerm'] ) ) {
 			$this->primaryTerm = json_decode( $blockAttributes['primaryTerm'], true );
 		}
+
+		$this->postTitle = $blockAttributes['postTitle'] ?? null;
 
 		if ( ! empty( $blockAttributes['breadcrumbSettings'] ) ) {
 			$this->breadcrumbSettings = $blockAttributes['breadcrumbSettings'];
@@ -156,7 +171,9 @@ class Block {
 	private function getBlockOverrides() {
 		$default = filter_var( $this->breadcrumbSettings['default'], FILTER_VALIDATE_BOOLEAN );
 		if ( true === $default || ! aioseo()->pro ) {
-			return [];
+			return [
+				'postTitle' => ! empty( $this->postTitle ) ? $this->postTitle : null
+			];
 		}
 
 		return [
@@ -174,7 +191,8 @@ class Block {
 				'templateType' => 'custom',
 				'template'     => aioseo()->helpers->decodeHtmlEntities( aioseo()->helpers->encodeOutputHtml( $this->breadcrumbSettings['parentTemplate'] ) )
 			],
-			'primaryTerm'        => ! empty( $this->primaryTerm[ $this->breadcrumbSettings['taxonomy'] ] ) ? $this->primaryTerm[ $this->breadcrumbSettings['taxonomy'] ] : null
+			'primaryTerm'        => ! empty( $this->primaryTerm[ $this->breadcrumbSettings['taxonomy'] ] ) ? $this->primaryTerm[ $this->breadcrumbSettings['taxonomy'] ] : null,
+			'postTitle'          => ! empty( $this->postTitle ) ? $this->postTitle : null
 		];
 	}
 }

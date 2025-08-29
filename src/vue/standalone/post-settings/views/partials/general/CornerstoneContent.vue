@@ -75,7 +75,7 @@ export default {
 					// Translators: 1 - "PRO", "Learn more".
 					__('Cornerstone Content is a %1$s feature. %2$s', td),
 					'PRO',
-					links.getUpsellLink('post-settings-general', GLOBAL_STRINGS.learnMore, 'cornerstone-content', true)
+					links.getUpsellLink('post-settings-general', 'cornerstone-content', GLOBAL_STRINGS.learnMore, 'liteUpgrade', true)
 				),
 				markAsCornerstone : __('Mark as Cornerstone', td)
 			}

@@ -10,7 +10,7 @@
 					<span>{{ strings.serpPreview }}</span>
 
 					<core-tooltip
-						:offset="'sidebar' === $root.$data.screenContext && 'metabox' === parentComponentContext ? '10px,0' : '50px,0'"
+						:offset="'sidebar' === screenContext && 'metabox' === props.parentComponentContext ? '10px,0' : '50px,0'"
 						:placement="'bottom'"
 					>
 						<svg-circle-question-mark/>
@@ -22,7 +22,7 @@
 				</div>
 
 				<base-radio-toggle
-					v-if="'metabox' === $root.$data.screenContext || 'modal' === parentComponentContext"
+					v-if="'metabox' === screenContext || 'modal' === props.parentComponentContext"
 					:modelValue="postEditorStore.currentPost.generalMobilePrev"
 					@update:modelValue="isMobilePreviewEv"
 					name="previewGeneralIsMobile"
@@ -44,7 +44,7 @@
 			<template #content>
 				<core-google-search-preview
 					:focus-keyphrase="postEditorStore.currentPost?.keyphrases?.focus?.keyphrase ?? ''"
-					:device="'sidebar' === $root.$data.screenContext && 'metabox' === parentComponentContext ? 'mobile' : (postEditorStore.currentPost.generalMobilePrev ? 'mobile' : 'desktop')"
+					:device="'sidebar' === screenContext && 'metabox' === props.parentComponentContext ? 'mobile' : (postEditorStore.currentPost.generalMobilePrev ? 'mobile' : 'desktop')"
 					:url="tagsStore.liveTags.permalink"
 					:title="parseTags(postEditorStore.currentPost.title || postEditorStore.currentPost.tags.title || '#post_title #separator_sa #site_title')"
 					:description="parseTags(postEditorStore.currentPost.description || postEditorStore.currentPost.tags.description || '#post_content')"
@@ -52,7 +52,7 @@
 				/>
 
 				<base-button
-					v-if="'sidebar' === $root.$data.screenContext && 'modal' !== parentComponentContext"
+					v-if="'sidebar' === screenContext && 'modal' !== props.parentComponentContext"
 					class="edit-snippet gray small"
 					@click="editSnippetEv"
 				>
@@ -65,19 +65,18 @@
 		<core-settings-row
 			id="aioseo-post-settings-post-title-row"
 			class="snippet-title-row"
-			v-if="('metabox' === $root.$data.screenContext || 'modal' === parentComponentContext) && allowed('aioseo_page_general_settings')"
+			v-if="('metabox' === screenContext || 'modal' === props.parentComponentContext) && allowed('aioseo_page_general_settings')"
 			:name="title"
 			:key="titleKey"
 		>
 			<template #content>
 				<core-html-tags-editor
-					v-model="postEditorStore.currentPost.title"
 					:line-numbers="false"
 					single
 					@counter="count => titleCount = count.length"
-					@update:modelValue="postEditorStore.isDirty = true"
+					v-model="postEditorStore.currentPost.title"
 					:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Title`"
-					:defaultMenuOrientation="'modal' === parentComponentContext ? 'top' : 'bottom'"
+					:defaultMenuOrientation="'modal' === props.parentComponentContext ? 'top' : 'bottom'"
 					:default-tags="getDefaultTags('title')"
 				>
 					<template #tags-description>
@@ -92,7 +91,7 @@
 						!isPageBuilderEditor()" #append-button
 					>
 						<ai-generator
-							:feature="features.metaTitle"
+							:feature="aiFeatures.metaTitle"
 						/>
 					</template>
 				</core-html-tags-editor>
@@ -107,7 +106,7 @@
 		<core-settings-row
 			id="aioseo-post-settings-meta-description-row"
 			class="snippet-description-row"
-			v-if="('metabox' === $root.$data.screenContext || 'modal' === parentComponentContext) && allowed('aioseo_page_general_settings')"
+			v-if="('metabox' === screenContext || 'modal' === props.parentComponentContext) && allowed('aioseo_page_general_settings')"
 			:name="strings.metaDescription"
 			:key="descriptionKey"
 		>
@@ -120,13 +119,12 @@
 				</core-alert>
 
 				<core-html-tags-editor
-					v-model="postEditorStore.currentPost.description"
 					:line-numbers="false"
 					description
 					@counter="count => descriptionCount = count.length"
-					@update:modelValue="postEditorStore.isDirty = true"
+					v-model="postEditorStore.currentPost.description"
 					:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Description`"
-					:defaultMenuOrientation="'modal' === parentComponentContext ? 'top' : 'bottom'"
+					:defaultMenuOrientation="'modal' === props.parentComponentContext ? 'top' : 'bottom'"
 					:default-tags="getDefaultTags('description')"
 				>
 					<template #tags-description>
@@ -141,7 +139,7 @@
 						!isPageBuilderEditor()" #append-button
 					>
 						<ai-generator
-							:feature="features.metaDescription"
+							:feature="aiFeatures.metaDescription"
 						/>
 					</template>
 				</core-html-tags-editor>
@@ -155,7 +153,7 @@
 
 		<core-settings-row
 			v-if="
-				'metabox' === $root.$data.screenContext &&
+				'metabox' === screenContext &&
 				'post' === postEditorStore.currentPost.context &&
 				!['attachment', 'web-story'].includes(postEditorStore.currentPost.postType) &&
 				!isPageBuilderEditor()
@@ -249,7 +247,7 @@
 		</core-settings-row>
 
 		<core-sidebar-card
-			v-if="'sidebar' === $root.$data.screenContext && !isPageBuilderEditor() && 'modal' !== parentComponentContext"
+			v-if="'sidebar' === screenContext && !isPageBuilderEditor() && 'modal' !== props.parentComponentContext"
 			class="card-cornerstone-content"
 			slug="cornerstoneContent"
 			:header-text="strings.cornerstoneContent"
@@ -321,9 +319,9 @@
 	</div>
 </template>
 
-<script>
-import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
-import links from '@/vue/utils/links'
+<script setup>
+import { ref, computed, watch, defineEmits, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'
+
 import {
 	useLicenseStore,
 	useOptionsStore,
@@ -335,17 +333,21 @@ import {
 	useTruSeoHighlighterStore
 } from '@/vue/stores'
 
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import { __, sprintf } from '@/vue/plugins/translations'
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { merge } from 'lodash-es'
-
 import { useMaxCounts } from '@/vue/composables/MaxCounts'
 import { useTags } from '@/vue/composables/Tags'
 import { useTruSeoHighlighter } from '@/vue/composables/TruSeoHighlighter'
 import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
-
 import { debounce } from '@/vue/utils/debounce'
-import { isPageBuilderEditor, isThriveArchitectEditor } from '@/vue/utils/context'
+import { isPageBuilderEditor } from '@/vue/utils/context'
 import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
+import { aiFeatures } from './partials/ai-content/utils'
+
+import links from '@/vue/utils/links'
+
 import AdditionalKeyphrases from './partials/general/AdditionalKeyphrases'
 import AiGenerator from './partials/general/ai/Generator'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
@@ -364,272 +366,220 @@ import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMa
 import SvgDesktop from '@/vue/components/common/svg/Desktop'
 import SvgMobile from '@/vue/components/common/svg/Mobile'
 import SvgPencil from '@/vue/components/common/svg/Pencil'
-import license from '@/vue/utils/license'
 
-import { aiFeatures } from './partials/ai-content/utils'
+defineEmits([ 'changeTab' ])
 
-import { __, sprintf } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-export default {
-	emits : [ 'changeTab' ],
-	setup () {
-		const {
-			parseTags
-		} = useTags({
-			separator : undefined
-		})
-
-		const {
-			maxRecommendedCount
-		} = useMaxCounts()
-
-		const {
-			watchHighlightSentences
-		} = useTruSeoHighlighter()
-
-		const {
-			runAnalysis,
-			strings
-		} = useTruSeoScore()
-
-		return {
-			composableStrings      : strings,
-			licenseStore           : useLicenseStore(),
-			maxRecommendedCount,
-			optionsStore           : useOptionsStore(),
-			parseTags,
-			postEditorStore        : usePostEditorStore(),
-			rootStore              : useRootStore(),
-			runAnalysis,
-			seoPreviewStore        : useSeoPreviewStore(),
-			settingsStore          : useSettingsStore(),
-			tagsStore              : useTagsStore(),
-			truSeoHighlighterStore : useTruSeoHighlighterStore(),
-			watchHighlightSentences
+const props = defineProps({
+	disabled : {
+		type : Boolean,
+		default () {
+			return false
 		}
 	},
-	components : {
-		AdditionalKeyphrases,
-		AiGenerator,
-		BaseRadioToggle,
-		CoreAlert,
-		CoreGoogleSearchPreview,
-		CoreHtmlTagsEditor,
-		CoreSettingsRow,
-		CoreSidebarCard,
-		CoreTooltip,
-		CoreProBadge,
-		FocusKeyphrase,
-		MetaboxAnalysisDetail,
-		PageAnalysis,
-		CornerstoneContent,
-		SvgCircleQuestionMark,
-		SvgDesktop,
-		SvgMobile,
-		SvgPencil
-	},
-	props : {
-		disabled : {
-			type : Boolean,
-			default () {
-				return false
-			}
-		},
-		parentComponentContext : String
-	},
-	data () {
-		return {
-			license,
-			allowed,
-			isPageBuilderEditor,
-			titleCount        : 0,
-			descriptionCount  : 0,
-			keywords          : null,
-			keyphrases        : null,
-			selectedKeyphrase : 0,
-			editSnippet       : false,
-			truSeo            : null,
-			titleKey          : 'title' + 0,
-			descriptionKey    : 'description' + 0,
-			strings           : merge(this.composableStrings, {
-				pageName                      : __('General', td),
-				serpPreview                   : __('SERP Preview', td),
-				serpPreviewDocumentation      : __('SERP: Search Engine Results Page preview. Your site\'s potential appearance in Google search results. Final display may vary, but this preview closely resembles it.', td),
-				editSnippet                   : __('Edit Snippet', td),
-				clickToAddTitle               : __('Click on the tags below to insert variables into your title.', td),
-				metaDescription               : __('Meta Description', td),
-				clickToAddDescription         : __('Click on the tags below to insert variables into your meta description.', td),
-				cornerstoneContent            : __('Cornerstone Content', td),
-				focusKeyphrase                : __('Focus Keyword', td),
-				additionalKeyphrases          : __('Additional Keywords', td),
-				pageAnalysis                  : __('Page Analysis', td),
-				basicSeo                      : __('Basic SEO', td),
-				title                         : __('Title', td),
-				readability                   : __('Readability', td),
-				lookingForMetaKeywords        : __('Looking for meta keywords?', td),
-				goToAdvancedTab               : __('Go to the Advanced tab to add/edit meta keywords', td),
-				autogenerateDescriptionsAlert : sprintf(
-					// Translators: 1 - The plugin short name ("AIOSEO"), 2 - A link to "Search Appearance > Advanced".
-					__('Warning: You have disabled Autogenerate Descriptions and are using the default description format. %1$s will not output a description unless you enter a custom one. You can enable Autogenerate Descriptions under %2$s.', td),
-					import.meta.env.VITE_SHORT_NAME,
-					links.getPlainLink(
-						__('Search Appearance > Advanced', td),
-						this.rootStore.aioseo.urls.aio.searchAppearance + '#/advanced'
-					)
-				),
-				keyphraseDocumentation : sprintf(
-					// Translators: 1 - "Learn more link".
-					__('Not sure what keywords are used for? Check out our documentation for more information. %1$s', td),
-					links.getDocLink(GLOBAL_STRINGS.learnMore, 'useKeyphrasesTooltip', true)
-				)
-			}),
-			features : aiFeatures
-		}
-	},
-	watch : {
-		'postEditorStore.currentPost.title' () {
-			debounce(() => this.runAnalysis({ postId: this.postEditorStore.currentPost.id }), 750)
-		},
-		'postEditorStore.currentPost.description' () {
-			debounce(() => this.runAnalysis({ postId: this.postEditorStore.currentPost.id }), 750)
-		},
-		'truSeoHighlighterStore.highlightSentences' (value, oldValue) {
-			debounce(() => this.watchHighlightSentences(value, oldValue))
-		}
-	},
-	computed : {
-		title () {
-			return sprintf(
-				// Translators: 1 - The type of page (Post, Page, Category, Tag, etc.).
-				__('%1$s Title', td),
-				this.postEditorStore.currentPost.type
-			)
-		},
-		toggled : function () {
-			return 1 === this.postEditorStore.currentPost.pillar_content
-		},
-		displayTruSeoMetaboxCard () {
-			return truSeoShouldAnalyze() && 'metabox' === this.$root.$data.screenContext && 'post' === this.postEditorStore.currentPost.context && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.isForum
-		},
-		displayTruSeoSidebarKeyphraseCard () {
-			return truSeoShouldAnalyze() && 'sidebar' === this.$root.$data.screenContext && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.isForum
-		},
-		displayTruSeoSidebarAnalysisCard () {
-			return truSeoShouldAnalyze() && 'sidebar' === this.$root.$data.screenContext && this.postEditorStore.currentPost.page_analysis && 'modal' !== this.parentComponentContext && allowed('aioseo_page_analysis') && !this.isForum
-		},
-		isForum () {
-			return this.rootStore.aioseo.data.isBBPressActive &&
-				(
-					'forum' === this.postEditorStore.currentPost.postType ||
-					'topic' === this.postEditorStore.currentPost.postType ||
-					'reply' === this.postEditorStore.currentPost.postType
-				)
-		},
-		focusKeyphraseScore () {
-			if (!this.postEditorStore.currentPost.keyphrases.focus.keyphrase) {
-				return null
-			}
+	parentComponentContext : String
+})
 
-			return this.postEditorStore.currentPost.keyphrases.focus.score
-		},
-		showAutogenerateDescriptionsAlert () {
-			if (!this.optionsStore.internalOptions.internal.deprecatedOptions.includes('autogenerateDescriptions')) {
-				return false
-			}
+const licenseStore           = useLicenseStore()
+const optionsStore           = useOptionsStore()
+const postEditorStore        = usePostEditorStore()
+const rootStore              = useRootStore()
+const seoPreviewStore        = useSeoPreviewStore()
+const settingsStore          = useSettingsStore()
+const tagsStore              = useTagsStore()
+const truSeoHighlighterStore = useTruSeoHighlighterStore()
 
-			const defaultDescription = 'post' === this.postEditorStore.currentPost.context
-				? this.optionsStore.dynamicOptions.searchAppearance.postTypes[this.postEditorStore.currentPost.postType].metaDescription
-				: this.optionsStore.dynamicOptions.searchAppearance.taxonomies[this.postEditorStore.currentPost.termType].metaDescription
+const titleCount        = ref(0)
+const descriptionCount  = ref(0)
+const selectedKeyphrase = ref(0)
+const editSnippet       = ref(false)
+const titleKey          = ref('title' + 0)
+const descriptionKey    = ref('description' + 0)
 
-			return defaultDescription === this.postEditorStore.currentPost.description && !this.optionsStore.options.deprecated.searchAppearance.advanced.autogenerateDescriptions
-		}
-	},
-	methods : {
-		hideKeywordsLooking () {
-			this.optionsStore.options.searchAppearance.advanced.keywordsLooking = false
-			this.optionsStore.saveChanges()
-		},
-		isMobilePreviewEv (ev) {
-			this.postEditorStore.changeGeneralPreview(ev)
-		},
-		editSnippetEv () {
-			this.editSnippet = !this.editSnippet
-			this.settingsStore.changeTabSettings({ setting: 'modal', value: 'general' })
-			this.postEditorStore.currentPost.modalOpen = true
-		},
-		getDefaultTags (location) {
-			switch (location) {
-				case 'title':
-					return 'post' === this.postEditorStore.currentPost.context
+const { parseTags } = useTags({ separator: undefined })
+const { maxRecommendedCount } = useMaxCounts()
+const { watchHighlightSentences } = useTruSeoHighlighter()
+const {
+	runAnalysis,
+	strings : composableStrings
+} = useTruSeoScore()
+
+const strings = merge(composableStrings, {
+	pageName                      : __('General', td),
+	serpPreview                   : __('SERP Preview', td),
+	serpPreviewDocumentation      : __('SERP: Search Engine Results Page preview. Your site\'s potential appearance in Google search results. Final display may vary, but this preview closely resembles it.', td),
+	editSnippet                   : __('Edit Snippet', td),
+	clickToAddTitle               : __('Click on the tags below to insert variables into your title.', td),
+	metaDescription               : __('Meta Description', td),
+	clickToAddDescription         : __('Click on the tags below to insert variables into your meta description.', td),
+	cornerstoneContent            : __('Cornerstone Content', td),
+	focusKeyphrase                : __('Focus Keyword', td),
+	additionalKeyphrases          : __('Additional Keywords', td),
+	pageAnalysis                  : __('Page Analysis', td),
+	basicSeo                      : __('Basic SEO', td),
+	title                         : __('Title', td),
+	readability                   : __('Readability', td),
+	lookingForMetaKeywords        : __('Looking for meta keywords?', td),
+	goToAdvancedTab               : __('Go to the Advanced tab to add/edit meta keywords', td),
+	autogenerateDescriptionsAlert : sprintf(
+		// Translators: 1 - The plugin short name ("AIOSEO"), 2 - A link to "Search Appearance > Advanced".
+		__('Warning: You have disabled Autogenerate Descriptions and are using the default description format. %1$s will not output a description unless you enter a custom one. You can enable Autogenerate Descriptions under %2$s.', td),
+		import.meta.env.VITE_SHORT_NAME,
+		links.getPlainLink(
+			__('Search Appearance > Advanced', td),
+			rootStore.aioseo.urls.aio.searchAppearance + '#/advanced'
+		)
+	),
+	keyphraseDocumentation : sprintf(
+		// Translators: 1 - "Learn more link".
+		__('Not sure what keywords are used for? Check out our documentation for more information. %1$s', td),
+		links.getDocLink(GLOBAL_STRINGS.learnMore, 'useKeyphrasesTooltip', true)
+	)
+})
+
+const screenContext = computed(() => {
+	return getCurrentInstance().root.data.screenContext
+})
+
+const title = computed(() => {
+	return sprintf(
+		// Translators: 1 - The type of page (Post, Page, Category, Tag, etc.).
+		__('%1$s Title', td),
+		postEditorStore.currentPost.type
+	)
+})
+
+const displayTruSeoMetaboxCard = computed(() => {
+	return truSeoShouldAnalyze() && 'metabox' === screenContext.value && 'post' === postEditorStore.currentPost.context && 'modal' !== props.parentComponentContext && allowed('aioseo_page_analysis') && !isForum.value
+})
+
+const displayTruSeoSidebarKeyphraseCard = computed(() => {
+	return truSeoShouldAnalyze() && 'sidebar' === screenContext.value && 'modal' !== props.parentComponentContext && allowed('aioseo_page_analysis') && !isForum.value
+})
+
+const displayTruSeoSidebarAnalysisCard = computed(() => {
+	return truSeoShouldAnalyze() && 'sidebar' === screenContext.value && postEditorStore.currentPost.page_analysis && 'modal' !== props.parentComponentContext && allowed('aioseo_page_analysis') && !isForum.value
+})
+
+const isForum = computed(() => {
+	return rootStore.aioseo.data.isBBPressActive &&
+		(
+			'forum' === postEditorStore.currentPost.postType ||
+			'topic' === postEditorStore.currentPost.postType ||
+			'reply' === postEditorStore.currentPost.postType
+		)
+})
+
+const focusKeyphraseScore = computed(() => {
+	if (!postEditorStore.currentPost.keyphrases.focus.keyphrase) {
+		return null
+	}
+
+	return postEditorStore.currentPost.keyphrases.focus.score
+})
+
+const showAutogenerateDescriptionsAlert = computed(() => {
+	if (!optionsStore.internalOptions.internal.deprecatedOptions.includes('autogenerateDescriptions')) {
+		return false
+	}
+
+	const defaultDescription = 'post' === postEditorStore.currentPost.context
+		? optionsStore.dynamicOptions.searchAppearance.postTypes[postEditorStore.currentPost.postType].metaDescription
+		: optionsStore.dynamicOptions.searchAppearance.taxonomies[postEditorStore.currentPost.termType].metaDescription
+
+	return defaultDescription === postEditorStore.currentPost.description && !optionsStore.options.deprecated.searchAppearance.advanced.autogenerateDescriptions
+})
+
+const hideKeywordsLooking = () => {
+	optionsStore.options.searchAppearance.advanced.keywordsLooking = false
+	optionsStore.saveChanges()
+}
+
+const isMobilePreviewEv = (ev) => {
+	postEditorStore.changeGeneralPreview(ev)
+}
+
+const editSnippetEv = () => {
+	editSnippet.value = !editSnippet.value
+	settingsStore.changeTabSettings({ setting: 'modal', value: 'general' })
+	postEditorStore.currentPost.modalOpen = true
+}
+
+const getDefaultTags = (location) => {
+	switch (location) {
+		case 'title':
+			return 'post' === postEditorStore.currentPost.context
+				? [
+					'post_title',
+					'separator_sa',
+					'site_title'
+				]
+				: [
+					'taxonomy_title',
+					'separator_sa',
+					'site_title'
+				]
+		case 'description':
+			return 'post' === postEditorStore.currentPost.context
+				? (
+					'attachment' === postEditorStore.currentPost.postType
 						? [
-							'post_title',
+							'attachment_caption',
 							'separator_sa',
 							'site_title'
 						]
-						: [
-							'taxonomy_title',
-							'separator_sa',
-							'site_title'
-						]
-				case 'description':
-					return 'post' === this.postEditorStore.currentPost.context
-						? (
-							'attachment' === this.postEditorStore.currentPost.postType
-								? [
-									'attachment_caption',
-									'separator_sa',
-									'site_title'
-								]
-								: 'product' === this.postEditorStore.currentPost.postType
-									? [
-										'post_excerpt',
-										'post_content'
-									]
-									: [
-										'post_excerpt',
-										'post_content',
-										'separator_sa'
-									]
-						)
-						: [
-							'taxonomy_title',
-							'separator_sa',
-							'taxonomy_description'
-						]
-			}
-		},
-		getFocusKeyphraseTooltipOffset () {
-			if (isThriveArchitectEditor()) {
-				return '-15px,0'
-			}
-
-			if (isPageBuilderEditor()) {
-				return '35px,0'
-			}
-
-			return '0,0'
-		}
-	},
-	mounted () {
-		this.keyphrases = this.postEditorStore.currentPost.keyphrases
-		if ('post' === this.postEditorStore.currentPost.context && !this.postEditorStore.currentPost.keyphrases.length) {
-			this.selectedKeyphrase = -1
-		}
-
-		window.aioseoBus.$on('updateTitleKey', () => {
-			this.titleKey = 'title' + Math.random(0, 999)
-		})
-
-		window.aioseoBus.$on('updateDescriptionKey', () => {
-			this.descriptionKey = 'description' + Math.random(0, 999)
-		})
+						: 'product' === postEditorStore.currentPost.postType
+							? [
+								'post_excerpt',
+								'post_content'
+							]
+							: [
+								'post_excerpt',
+								'post_content',
+								'separator_sa'
+							]
+				)
+				: [
+					'taxonomy_title',
+					'separator_sa',
+					'taxonomy_description'
+				]
 	}
 }
+
+watch(() => postEditorStore.currentPost.title, () => {
+	debounce(() => { runAnalysis({ postId: postEditorStore.currentPost.id }) }, 750)
+})
+
+watch(() => postEditorStore.currentPost.description, () => {
+	debounce(() => runAnalysis({ postId: postEditorStore.currentPost.id }), 750)
+})
+
+watch(() => truSeoHighlighterStore.highlightSentences, (value, oldValue) => {
+	debounce(() => watchHighlightSentences(value, oldValue))
+})
+
+onMounted(() => {
+	if ('post' === postEditorStore.currentPost.context && !postEditorStore.currentPost.keyphrases.length) {
+		selectedKeyphrase.value = -1
+	}
+
+	window.aioseoBus.$on('updateTitleKey', () => {
+		titleKey.value = 'title' + Math.random(0, 999)
+	})
+
+	window.aioseoBus.$on('updateDescriptionKey', () => {
+		descriptionKey.value = 'description' + Math.random(0, 999)
+	})
+})
+
+onBeforeUnmount(() => {
+	window.aioseoBus.$off('updateTitleKey')
+	window.aioseoBus.$off('updateDescriptionKey')
+})
 </script>
 <style lang="scss">
-@use 'sass:color';
-
 .aioseo-post-general {
 	.aioseo-tooltip {
 		line-height: normal;
@@ -644,11 +594,6 @@ export default {
 		width: 17px;
 		height: 17px;
 		color: $placeholder-color;
-		transition: background-color 0.2s ease;
-
-		&:hover {
-			color: color.adjust($placeholder-color, $lightness: -20%);
-		}
 	}
 
 	svg.aioseo-pencil {
@@ -833,6 +778,7 @@ export default {
 	.analysis-loading {
 		position: relative;
 		margin-top: 16px;
+		margin-bottom: 16px;
 	}
 
 	.meta-keywords-alert {
@@ -840,7 +786,6 @@ export default {
 	}
 
 	.snippet-description-row {
-
 		.aioseo-modal-content & {
 			border: none;
 			margin-bottom: 0 !important;
@@ -954,7 +899,6 @@ export default {
 	}
 
 	.card-focus-keyphrase {
-
 		.aioseo-analysis-detail {
 			margin: 16px 0 !important;
 
@@ -971,7 +915,6 @@ export default {
 
 	.card-focus-keyphrase,
 	.card-additional-keyphrase {
-
 		.aioseo-analysis-detail {
 			margin: 0 0 16px !important;
 		}
@@ -999,7 +942,6 @@ export default {
 		}
 
 		&.selected {
-
 			&:before,
 			&:after {
 				content: none;
@@ -1021,7 +963,6 @@ export default {
 	.card-basic-seo,
 	.card-title-seo,
 	.card-readability-seo {
-
 		.aioseo-analysis-detail {
 			margin-top: 0;
 		}
@@ -1033,7 +974,6 @@ export default {
 }
 
 .aioseo-modal-content {
-
 	.aioseo-settings-row {
 		--aioseo-gutter: 10px;
 		row-gap: 12px;
@@ -1062,7 +1002,6 @@ export default {
 		}
 
 		.add-tags {
-
 			.aioseo-add-template-tag {
 				@media screen and (max-width: 520px) {
 					display: none;
@@ -1080,7 +1019,6 @@ export default {
 	}
 
 	.component-wrapper {
-
 		.aioseo-tabs .var-tab {
 			&:not(.var-tab--active) {
 				min-width: 72px!important;

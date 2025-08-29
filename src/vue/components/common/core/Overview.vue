@@ -141,10 +141,10 @@ export default {
 				choosePostType : __('Choose a Post Type', td),
 				upgradeToPro   : sprintf(
 					// Translators: 1 - The upgrade call to action.
-					__('Get additional keywords and many more modules! %1$s', td), links.getUpsellLink('dashboard-overview', __('Upgrade to Pro Today!', td), 'liteUpgrade', true)
+					__('Get additional keywords and many more modules! %1$s', td), links.getUpsellLink('dashboard', 'seo-overview', __('Upgrade to Pro Today!', td), 'liteUpgrade', true)
 				),
 				invalidTitle       : __('It looks like you haven\'t selected any post types yet!', td),
-				invalidDescription : __('TruSEO scoring can improve your search engine rankings. To see TruSEO scores for your published posts, enable at least one post type by turning on "Show in Search Results" in the Search Appearance settings.', td),
+				invalidDescription : __('TruSEO scoring can imrove your search engine rankings. To see TruSEO scores for your published posts, enable at least one post type by turning on "Show in Search Results" in the Search Appearance settings.', td),
 				invalidButton      : __('Enable Post Types', td)
 			},
 			postTypeInitial : true,

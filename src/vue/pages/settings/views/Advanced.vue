@@ -441,13 +441,13 @@ export default {
 					// Translators: 1 - "PRO", 2 - "Learn more".
 					__('Admin Bar Menu is a %1$s feature. %2$s', td),
 					'PRO',
-					links.getUpsellLink('general-settings-advanced', GLOBAL_STRINGS.learnMore, 'admin-bar-menu', true)
+					links.getUpsellLink('general-settings', 'admin-bar-menu', GLOBAL_STRINGS.learnMore, 'liteUpgrade', true)
 				),
 				dashboardWidgetsUpsell : sprintf(
 					// Translators: 1 - "PRO", 2 - "Learn more".
 					__('Dashboard Widgets is a %1$s feature. %2$s', td),
 					'PRO',
-					links.getUpsellLink('general-settings-advanced', GLOBAL_STRINGS.learnMore, 'dashboard-widget', true)
+					links.getUpsellLink('general-settings', 'dashboard-widget', GLOBAL_STRINGS.learnMore, 'liteUpgrade', true)
 				),
 				taxonomyColumns      : __('Taxonomy Columns', td),
 				includeAllTaxonomies : __('Include All Taxonomies', td),
@@ -460,7 +460,7 @@ export default {
 					// Translators: 1 - "PRO", 2 - "Learn more".
 					__('Taxonomy Columns is a %1$s feature. %2$s', td),
 					'PRO',
-					links.getUpsellLink('general-settings-advanced', GLOBAL_STRINGS.learnMore, 'taxonomy-columns', true)
+					links.getUpsellLink('general-settings', 'taxonomy-columns', GLOBAL_STRINGS.learnMore, 'liteUpgrade', true)
 				),
 				uninstallAioseo : sprintf(
 					// Translators: 1 - Plugin Short Name ("AIOSEO").

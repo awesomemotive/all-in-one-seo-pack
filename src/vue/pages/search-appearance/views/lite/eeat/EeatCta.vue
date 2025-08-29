@@ -3,9 +3,9 @@
 		<eeat-blur />
 
 		<cta
-			:cta-link="links.getPricingUrl('eeat', 'eeat-upsell')"
+			:cta-link="links.getPricingUrl('eeat', 'eeat-upsell', null, 'liteUpgrade')"
 			:button-text="strings.ctaButtonText"
-			:learn-more-link="links.getUpsellUrl('eeat', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+			:learn-more-link="links.getUpsellUrl('eeat', null, 'liteUpgrade')"
 			:feature-list="features"
 			alignTop
 		>
@@ -22,12 +22,7 @@
 	</div>
 </template>
 
-<script>
-import {
-	useLicenseStore,
-	useRootStore
-} from '@/vue/stores'
-
+<script setup>
 import { useEeatCta } from '@/vue/composables/EeatCta'
 
 import Cta from '@/vue/components/common/cta/Index'
@@ -36,28 +31,8 @@ import RequiredPlans from '@/vue/components/lite/core/upsells/RequiredPlans'
 
 import links from '@/vue/utils/links'
 
-export default {
-	setup () {
-		const {
-			addonSlug,
-			features,
-			strings
-		} = useEeatCta()
-
-		return {
-			addonSlug,
-			features,
-			licenseStore : useLicenseStore(),
-			rootStore    : useRootStore(),
-			links,
-			strings
-		}
-	},
-	components : {
-		Cta,
-		EeatBlur,
-		RequiredPlans
-	}
-
-}
+const {
+	features,
+	strings
+} = useEeatCta()
 </script>

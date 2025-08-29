@@ -31,12 +31,12 @@ class Api {
 	protected $routes = [
 		// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 		'GET'    => [
-			'options'                                     => [ 'callback' => [ 'Settings', 'getOptions' ], 'access' => 'everyone' ],
-			'ping'                                        => [ 'callback' => [ 'Ping', 'ping' ], 'access' => 'everyone' ],
-			'post'                                        => [ 'callback' => [ 'PostsTerms', 'getPostData' ], 'access' => 'everyone' ],
+			'options'                                     => [ 'callback' => [ 'Settings', 'getOptions' ], 'access' => 'any' ],
+			'ping'                                        => [ 'callback' => [ 'Ping', 'ping' ], 'access' => 'any' ],
+			'post'                                        => [ 'callback' => [ 'PostsTerms', 'getPostData' ], 'access' => 'any' ],
 			'post/(?P<postId>[\d]+)/first-attached-image' => [ 'callback' => [ 'PostsTerms', 'getFirstAttachedImage' ], 'access' => 'aioseo_page_social_settings' ],
 			'user/(?P<userId>[\d]+)/image'                => [ 'callback' => [ 'User', 'getUserImage' ], 'access' => 'aioseo_page_social_settings' ],
-			'tags'                                        => [ 'callback' => [ 'Tags', 'getTags' ], 'access' => 'everyone' ],
+			'tags'                                        => [ 'callback' => [ 'Tags', 'getTags' ], 'access' => 'any' ],
 			'search-statistics/url/auth'                  => [ 'callback' => [ 'SearchStatistics', 'getAuthUrl' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings', 'aioseo_setup_wizard' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 			'search-statistics/url/reauth'                => [ 'callback' => [ 'SearchStatistics', 'getReauthUrl' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ],
 			'writing-assistant/keyword/(?P<postId>[\d]+)' => [ 'callback' => [ 'WritingAssistant', 'getPostKeyword' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
@@ -74,7 +74,7 @@ class Api {
 			'terms-list/update-details-column'                      => [ 'callback' => [ 'PostsTerms', 'updateTermDetailsColumn' ], 'access' => 'aioseo_page_general_settings' ],
 			'keyphrases'                                            => [ 'callback' => [ 'PostsTerms', 'updatePostKeyphrases' ], 'access' => 'aioseo_page_analysis' ],
 			'analyze'                                               => [ 'callback' => [ 'Analyze', 'analyzeSite' ], 'access' => 'aioseo_seo_analysis_settings' ],
-			'analyze-headline'                                      => [ 'callback' => [ 'Analyze', 'analyzeHeadline' ], 'access' => 'everyone' ],
+			'analyze-headline'                                      => [ 'callback' => [ 'Analyze', 'analyzeHeadline' ], 'access' => 'any' ],
 			'analyze-headline/delete'                               => [ 'callback' => [ 'Analyze', 'deleteHeadline' ], 'access' => 'aioseo_seo_analysis_settings' ],
 			'analyze/delete-site'                                   => [ 'callback' => [ 'Analyze', 'deleteSite' ], 'access' => 'aioseo_seo_analysis_settings' ],
 			'clear-log'                                             => [ 'callback' => [ 'Tools', 'clearLog' ], 'access' => 'aioseo_tools_settings' ],
@@ -100,7 +100,7 @@ class Api {
 			'notification/v3-migration-schema-number-reminder'      => [ 'callback' => [ 'Notifications', 'migrationSchemaNumberReminder' ], 'access' => 'any' ],
 			'notifications/dismiss'                                 => [ 'callback' => [ 'Notifications', 'dismissNotifications' ], 'access' => 'any' ],
 			'objects'                                               => [ 'callback' => [ 'PostsTerms', 'searchForObjects' ], 'access' => [ 'aioseo_search_appearance_settings', 'aioseo_sitemap_settings' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
-			'options'                                               => [ 'callback' => [ 'Settings', 'saveChanges' ], 'access' => 'any' ],
+			'options'                                               => [ 'callback' => [ 'Settings', 'saveChanges' ], 'access' => 'options' ],
 			'plugins/deactivate'                                    => [ 'callback' => [ 'Plugins', 'deactivatePlugins' ], 'access' => 'aioseo_feature_manager_settings' ],
 			'plugins/install'                                       => [ 'callback' => [ 'Plugins', 'installPlugins' ], 'access' => [ 'install_plugins', 'aioseo_feature_manager_settings' ] ],
 			'plugins/upgrade'                                       => [ 'callback' => [ 'Plugins', 'upgradePlugins' ], 'access' => [ 'update_plugins', 'aioseo_feature_manager_settings' ] ],
@@ -308,9 +308,34 @@ class Api {
 		}
 
 		switch ( $routeData['access'] ) {
-			case 'everyone':
-				// Any user is able to access the route.
-				return true;
+			case 'any':
+				// The user has access if he has any of our capabilities.
+				$user       = wp_get_current_user();
+				$aioseoCaps = aioseo()->access->getCapabilityList();
+				foreach ( $user->get_role_caps() as $capability => $enabled ) {
+					if ( $enabled && in_array( $capability, $aioseoCaps, true ) ) {
+						return true;
+					}
+				}
+
+				return false;
+			case 'options':
+				// Check that user has access to any of the options pages.
+				$user       = wp_get_current_user();
+				$aioseoCaps = aioseo()->access->getCapabilityList();
+
+				// Remove all caps that start with aioseo_page_
+				$aioseoCaps = array_filter( $aioseoCaps, function( $capability ) {
+					return strpos( $capability, 'aioseo_page_' ) !== 0;
+				} );
+
+				foreach ( $user->get_role_caps() as $capability => $enabled ) {
+					if ( $enabled && in_array( $capability, $aioseoCaps, true ) ) {
+						return true;
+					}
+				}
+
+				return false;
 			default:
 				return aioseo()->access->hasCapability( $routeData['access'] );
 		}

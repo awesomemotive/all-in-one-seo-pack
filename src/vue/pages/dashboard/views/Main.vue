@@ -184,7 +184,7 @@
 							class="dashboard-cta"
 							:type="3"
 							:floating="false"
-							:cta-link="links.utmUrl('dashboard-cta')"
+							:cta-link="links.getUpsellUrl('dashboard-cta', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 							:feature-list="UPSELL_FEATURE_LIST"
 							:button-text="strings.ctaButton"
 							:learn-more-link="links.getUpsellUrl('dashboard-cta', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"

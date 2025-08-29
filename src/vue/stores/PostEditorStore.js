@@ -17,8 +17,9 @@ const prepareCachedCurrentPost = (currentPost) => {
 
 export const usePostEditorStore = defineStore('PostEditorStore', {
 	state : () => ({
-		isDirty     : false,
-		currentPost : {}
+		isDirty            : false,
+		currentPost        : {},
+		isFetchingPostData : false
 	}),
 	getters : {
 		newHeadlineAnaylzerData () {
@@ -195,11 +196,16 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 				})
 		},
 		fetchPostData (payload = {}) {
+			this.isFetchingPostData = true
+
 			return http.get(links.restUrl('post'))
 				.query(payload)
 				.then(response => response)
 				.catch(error => {
 					throw error
+				})
+				.finally(() => {
+					this.isFetchingPostData = false
 				})
 		}
 	}

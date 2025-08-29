@@ -36,7 +36,8 @@ class Image {
 		'png',
 		'svg',
 		'webp',
-		'ico'
+		'ico',
+		'avif',
 	];
 
 	/**

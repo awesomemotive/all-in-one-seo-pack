@@ -19,9 +19,8 @@
 			<div class="aioseo-header-content">
 				<a
 					v-if="licenseStore.isUnlicensed"
-					:href="links.utmUrl('header-logo')"
+					:href="links.getUpsellUrl('header-logo', null, 'liteUpgrade')"
 					target="_blank"
-
 				>
 					<svg-aioseo-logo />
 				</a>

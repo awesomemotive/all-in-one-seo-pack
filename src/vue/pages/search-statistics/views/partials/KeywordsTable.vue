@@ -148,7 +148,7 @@
 			<template #cta>
 				<cta
 					v-if="showUpsell"
-					:cta-link="links.getPricingUrl('search-statistics', 'search-statistics-upsell')"
+					:cta-link="links.getPricingUrl('search-statistics', 'search-statistics-upsell', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 					:button-text="strings.ctaButtonText"
 					:learn-more-link="links.getUpsellUrl('search-statistics', 'search-statistics-upsell', rootStore.isPro ? 'pricing' : 'liteUpgrade')"
 					:hide-bonus="!licenseStore.isUnlicensed"

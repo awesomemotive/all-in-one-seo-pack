@@ -31,6 +31,7 @@ class Output {
 		$excludeImages = aioseo()->sitemap->helpers->excludeImages();
 		$generation    = ! isset( aioseo()->sitemap->isStatic ) || aioseo()->sitemap->isStatic ? __( 'statically', 'all-in-one-seo-pack' ) : __( 'dynamically', 'all-in-one-seo-pack' );
 		$version       = aioseo()->helpers->getAioseoVersion();
+		$showCredits   = apply_filters( 'aioseo_sitemap_show_credits', true );
 
 		if ( ! empty( $version ) ) {
 			$version = 'v' . $version;
@@ -40,15 +41,17 @@ class Output {
 		aioseo()->helpers->clearBuffers();
 
 		echo '<?xml version="1.0" encoding="' . esc_attr( $charset ) . "\"?>\r\n";
-		echo '<!-- ' . sprintf(
-			// Translators: 1 - "statically" or "dynamically", 2 - The date, 3 - The time, 4 - The plugin name ("All in One SEO"), 5 - Currently installed version.
-			esc_html__( 'This sitemap was %1$s generated on %2$s at %3$s by %4$s %5$s - the original SEO plugin for WordPress.', 'all-in-one-seo-pack' ),
-			esc_html( $generation ),
-			esc_html( date_i18n( get_option( 'date_format' ) ) ),
-			esc_html( date_i18n( get_option( 'time_format' ) ) ),
-			esc_html( AIOSEO_PLUGIN_NAME ),
-			esc_html( $version )
-		) . ' -->';
+		if ( $showCredits ) {
+			echo '<!-- ' . sprintf(
+				// Translators: 1 - "statically" or "dynamically", 2 - The date, 3 - The time, 4 - The plugin name ("All in One SEO"), 5 - Currently installed version.
+				esc_html__( 'This sitemap was %1$s generated on %2$s at %3$s by %4$s %5$s - the original SEO plugin for WordPress.', 'all-in-one-seo-pack' ),
+				esc_html( $generation ),
+				esc_html( date_i18n( get_option( 'date_format' ) ) ),
+				esc_html( date_i18n( get_option( 'time_format' ) ) ),
+				esc_html( AIOSEO_PLUGIN_NAME ),
+				esc_html( $version )
+			) . ' -->';
+		}
 
 		if ( 'rss' === aioseo()->sitemap->type ) {
 			$xslUrl = home_url() . '/default-sitemap.xsl';
@@ -65,7 +68,10 @@ class Output {
 
 			$ttl = apply_filters( 'aioseo_sitemap_rss_ttl', 60 );
 
-			echo "\r\n\r\n<?xml-stylesheet type=\"text/xsl\" href=\"" . esc_url( $xslUrl ) . "\"?>\r\n";
+			if ( $showCredits ) {
+				echo "\r\n\r\n<?xml-stylesheet type=\"text/xsl\" href=\"" . esc_url( $xslUrl ) . "\"?>\r\n";
+			}
+
 			include_once AIOSEO_DIR . '/app/Common/Views/sitemap/xml/rss.php';
 
 			return;
@@ -74,7 +80,10 @@ class Output {
 		if ( 'root' === aioseo()->sitemap->indexName && aioseo()->sitemap->indexes ) {
 			$xslUrl = add_query_arg( 'sitemap', aioseo()->sitemap->indexName, home_url() . '/default-sitemap.xsl' );
 
-			echo "\r\n\r\n<?xml-stylesheet type=\"text/xsl\" href=\"" . esc_url( $xslUrl ) . "\"?>\r\n";
+			if ( $showCredits ) {
+				echo "\r\n\r\n<?xml-stylesheet type=\"text/xsl\" href=\"" . esc_url( $xslUrl ) . "\"?>\r\n";
+			}
+
 			include AIOSEO_DIR . '/app/Common/Views/sitemap/xml/root.php';
 
 			return;
@@ -82,7 +91,10 @@ class Output {
 
 		$xslUrl = add_query_arg( 'sitemap', aioseo()->sitemap->indexName, home_url() . '/default-sitemap.xsl' );
 
-		echo "\r\n\r\n<?xml-stylesheet type=\"text/xsl\" href=\"" . esc_url( $xslUrl ) . "\"?>\r\n";
+		if ( $showCredits ) {
+			echo "\r\n\r\n<?xml-stylesheet type=\"text/xsl\" href=\"" . esc_url( $xslUrl ) . "\"?>\r\n";
+		}
+
 		include AIOSEO_DIR . '/app/Common/Views/sitemap/xml/default.php';
 	}
 

@@ -33,18 +33,21 @@ class ProfilePage extends WebPage {
 	public function get() {
 		$data = parent::get();
 
-		$post   = aioseo()->helpers->getPost();
-		$author = get_queried_object();
+		$post          = aioseo()->helpers->getPost();
+		$queriedObject = get_queried_object();
 		if (
-			! is_a( $author, 'WP_User' ) &&
-			( is_singular() && ! is_a( $post, 'WP_Post' ) )
+			( is_singular() && ! is_a( $post, 'WP_Post' ) ) &&
+			! is_a( $queriedObject, 'WP_User' )
 		) {
 			return [];
 		}
 
+		$authorId = is_a( $queriedObject, 'WP_User' ) ? $queriedObject->ID : $post->post_author;
+		$author   = is_a( $queriedObject, 'WP_User' ) ? $queriedObject : get_user_by( 'id', $authorId );
+
 		global $wp_query; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+
 		$articles = [];
-		$authorId = $author->ID ?? $post->post_author ?? 0;
 		foreach ( $wp_query->posts as $post ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			if ( $post->post_author !== $authorId ) {
 				continue;

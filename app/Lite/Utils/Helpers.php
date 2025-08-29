@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use AIOSEO\Plugin\Common\Utils as CommonUtils;
+use AIOSEO\Plugin\Lite\Traits\Helpers as TraitHelpers;
 
 /**
  * Contains helper functions.
@@ -14,6 +15,8 @@ use AIOSEO\Plugin\Common\Utils as CommonUtils;
  * @since 4.2.4
  */
 class Helpers extends CommonUtils\Helpers {
+	use TraitHelpers\Vue;
+
 	/**
 	 * Get the headers for internal API requests.
 	 *

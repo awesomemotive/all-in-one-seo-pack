@@ -680,13 +680,13 @@ export default {
 					// Translators: 1 - "PRO", 2 - Learn more link.
 					__('Default Taxonomy Object Types is a %1$s feature. %2$s', td),
 					'PRO',
-					links.getUpsellLink('general-facebook-settings', GLOBAL_STRINGS.learnMore, 'default-taxonomy-object-types', true)
+					links.getUpsellLink('post-settings', 'default-taxonomy-object-types', GLOBAL_STRINGS.learnMore, 'liteUpgrade', true)
 				),
 				defaultTermImageSourceUpsell : sprintf(
 					// Translators: 1 - "PRO", 2 - Learn more link.
 					__('Default Term Image Source is a %1$s feature. %2$s', td),
 					'PRO',
-					links.getUpsellLink('general-facebook-settings', GLOBAL_STRINGS.learnMore, 'default-term-image-source', true)
+					links.getUpsellLink('post-settings', 'default-term-image-source', GLOBAL_STRINGS.learnMore, 'liteUpgrade', true)
 				),
 				generateArticleTags         : __('Automatically Generate Article Tags', td),
 				useKeywordsInTags           : __('Use Keywords in Article Tags', td),

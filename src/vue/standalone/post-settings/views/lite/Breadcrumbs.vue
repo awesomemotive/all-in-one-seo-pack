@@ -30,7 +30,7 @@ const strings = {
 		// Translators: 1 - "PRO", 2 - "Learn more".
 		__('Breadcrumbs is a %1$s feature. %2$s', td),
 		'PRO',
-		links.getUpsellLink('post-advanced', GLOBAL_STRINGS.learnMore, 'breadcrumbs', true)
+		links.getUpsellLink('post-settings', 'breadcrumbs', GLOBAL_STRINGS.learnMore, 'breadcrumbs', true)
 	)
 }
 </script>

@@ -132,7 +132,7 @@ const strings = merge(composableStrings, {
 		// Translators: 1 - "PRO", 2 - "Learn more".
 		__('IndexNow is a %1$s feature. %2$s', td),
 		'PRO',
-		links.getUpsellLink('webmaster-tools', GLOBAL_STRINGS.learnMore, 'index-now', true)
+		links.getUpsellLink('webmaster-tools', 'index-now', GLOBAL_STRINGS.learnMore, 'liteUpgrade', true)
 	),
 	activate            : __('Activate IndexNow', td),
 	activateDescription : __('The IndexNow addon is required to use this feature.', td),

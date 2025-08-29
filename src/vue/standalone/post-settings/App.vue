@@ -5,9 +5,13 @@
 			v-if="'sidebar' !== $root.$data.screenContext"
 		/>
 
-		<main-view
-			v-if="postEditorStore.currentPost.id"
+		<core-loader
+			v-if="postEditorStore.isFetchingPostData"
+			dark
+			class="aioseo-loading-spinner--post-settings"
 		/>
+
+		<main-view v-else />
 	</div>
 </template>
 
@@ -22,8 +26,9 @@ import {
 
 import { useScrollAndHighlight } from '@/vue/composables/ScrollAndHighlight'
 
-import MainView from './views/Main'
 import Alert from './views/partials/Alert'
+import CoreLoader from '@/vue/components/common/core/Loader'
+import MainView from './views/Main'
 
 // We just need to call this to make sure the composable is used.
 useScrollAndHighlight({
@@ -40,6 +45,16 @@ onBeforeMount(() => {
 </script>
 
 <style lang="scss">
+#main-settings-cont {
+	.aioseo-loading-spinner {
+		&--post-settings {
+			margin-left: auto;
+			margin-right: auto;
+			position: relative;
+		}
+	}
+}
+
 .aioseo-post-settings-sidebar-vue {
 	> div {
 		flex: 1;
@@ -47,6 +62,10 @@ onBeforeMount(() => {
 
 	.aioseo-loading-spinner {
 		margin-top: 30px;
+	}
+
+	.aioseo-button .aioseo-loading-spinner {
+		margin-top: 0;
 	}
 }
 </style>
