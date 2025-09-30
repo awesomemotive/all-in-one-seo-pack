@@ -177,6 +177,13 @@ class PostsTerms {
 			], 400 );
 		}
 
+		if ( ! current_user_can( 'read_post', $args['postId'] ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
+		}
+
 		// Disable the cache.
 		aioseo()->social->image->useCache = false;
 
@@ -225,6 +232,13 @@ class PostsTerms {
 			], 400 );
 		}
 
+		if ( ! aioseo()->access->hasCapability( 'aioseo_page_general_settings' ) || ! current_user_can( 'edit_post', $postId ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'You are not allowed to update the post settings.'
+			], 403 );
+		}
+
 		$body['id']                  = $postId;
 		$body['title']               = ! empty( $body['title'] ) ? sanitize_text_field( $body['title'] ) : null;
 		$body['description']         = ! empty( $body['description'] ) ? sanitize_text_field( $body['description'] ) : null;
@@ -270,6 +284,13 @@ class PostsTerms {
 			], 400 );
 		}
 
+		if ( ! current_user_can( 'read_post', $ids[0] ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
+		}
+
 		$posts = [];
 		foreach ( $ids as $postId ) {
 			$postTitle      = get_the_title( $postId );
@@ -308,6 +329,13 @@ class PostsTerms {
 				'success' => false,
 				'message' => 'Post ID is missing.'
 			], 400 );
+		}
+
+		if ( ! aioseo()->access->hasCapability( 'aioseo_page_general_settings' ) || ! current_user_can( 'edit_post', $postId ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'You are not allowed to update the post settings.'
+			], 403 );
 		}
 
 		$aioseoPost = Models\Post::getPost( $postId );
@@ -365,6 +393,13 @@ class PostsTerms {
 			], 400 );
 		}
 
+		if ( ! aioseo()->access->hasCapability( 'aioseo_page_general_settings' ) || ! current_user_can( 'edit_post', $postId ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'You are not allowed to update the post settings.'
+			], 403 );
+		}
+
 		$thePost = Models\Post::getPost( $postId );
 
 		$thePost->post_id = $postId;
@@ -412,6 +447,13 @@ class PostsTerms {
 			], 400 );
 		}
 
+		if ( ! current_user_can( 'edit_post', $args['postId'] ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
+		}
+
 		$thePost = Models\Post::getPost( $args['postId'] );
 		$thePost->options->primaryTerm->productEducationDismissed = true;
 		$thePost->save();
@@ -437,6 +479,13 @@ class PostsTerms {
 				'success' => false,
 				'message' => 'No post ID was provided.'
 			], 400 );
+		}
+
+		if ( ! current_user_can( 'edit_post', $args['postId'] ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
 		}
 
 		$thePost = Models\Post::getPost( $args['postId'] );
@@ -468,6 +517,13 @@ class PostsTerms {
 			], 400 );
 		}
 
+		if ( ! current_user_can( 'edit_post', $args['postId'] ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
+		}
+
 		$thePost = Models\Post::getPost( $args['postId'] );
 		$thePost->options->linkFormat->internalLinkCount = $count;
 		$thePost->save();
@@ -494,6 +550,13 @@ class PostsTerms {
 				'success' => false,
 				'message' => 'No post ID was provided.'
 			], 400 );
+		}
+
+		if ( ! current_user_can( 'read_post', $args['postId'] ) || post_password_required( $args['postId'] ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
 		}
 
 		// Check if we can process it using a page builder integration.

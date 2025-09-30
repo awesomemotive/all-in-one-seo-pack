@@ -84,11 +84,10 @@ class Api {
 			'backup'                                                => [ 'callback' => [ 'Tools', 'createBackup' ], 'access' => 'aioseo_tools_settings' ],
 			'backup/restore'                                        => [ 'callback' => [ 'Tools', 'restoreBackup' ], 'access' => 'aioseo_tools_settings' ],
 			'email-debug-info'                                      => [ 'callback' => [ 'Tools', 'emailDebugInfo' ], 'access' => 'aioseo_tools_settings' ],
-			'migration/fix-blank-formats'                           => [ 'callback' => [ 'Migration', 'fixBlankFormats' ], 'access' => 'any' ],
+			'notification/email-reports-enable'                     => [ 'callback' => [ 'EmailSummary', 'enableEmailReports' ], 'access' => 'aioseo_general_settings' ],
 			'notification/blog-visibility-reminder'                 => [ 'callback' => [ 'Notifications', 'blogVisibilityReminder' ], 'access' => 'any' ],
 			'notification/conflicting-plugins-reminder'             => [ 'callback' => [ 'Notifications', 'conflictingPluginsReminder' ], 'access' => 'any' ],
 			'notification/description-format-reminder'              => [ 'callback' => [ 'Notifications', 'descriptionFormatReminder' ], 'access' => 'any' ],
-			'notification/email-reports-enable'                     => [ 'callback' => [ 'EmailSummary', 'enableEmailReports' ], 'access' => 'any' ],
 			'notification/install-addons-reminder'                  => [ 'callback' => [ 'Notifications', 'installAddonsReminder' ], 'access' => 'any' ],
 			'notification/install-aioseo-image-seo-reminder'        => [ 'callback' => [ 'Notifications', 'installImageSeoReminder' ], 'access' => 'any' ],
 			'notification/install-aioseo-local-business-reminder'   => [ 'callback' => [ 'Notifications', 'installLocalBusinessReminder' ], 'access' => 'any' ],
@@ -120,7 +119,7 @@ class Api {
 			'settings/items-per-page'                               => [ 'callback' => [ 'Settings', 'changeItemsPerPage' ], 'access' => 'any' ],
 			'settings/semrush-country'                              => [ 'callback' => [ 'Settings', 'changeSemrushCountry' ], 'access' => 'any' ],
 			'settings/do-task'                                      => [ 'callback' => [ 'Settings', 'doTask' ], 'access' => 'aioseo_tools_settings' ],
-			'sitemap/deactivate-conflicting-plugins'                => [ 'callback' => [ 'Sitemaps', 'deactivateConflictingPlugins' ], 'access' => 'any' ],
+			'sitemap/deactivate-conflicting-plugins'                => [ 'callback' => [ 'Sitemaps', 'deactivateConflictingPlugins' ], 'access' => 'deactivate_plugins' ],
 			'sitemap/delete-static-files'                           => [ 'callback' => [ 'Sitemaps', 'deleteStaticFiles' ], 'access' => 'aioseo_sitemap_settings' ],
 			'sitemap/validate-html-sitemap-slug'                    => [ 'callback' => [ 'Sitemaps', 'validateHtmlSitemapSlug' ], 'access' => 'aioseo_sitemap_settings' ],
 			'tools/delete-robots-txt'                               => [ 'callback' => [ 'Tools', 'deleteRobotsTxt' ], 'access' => 'aioseo_tools_settings' ],
@@ -160,7 +159,7 @@ class Api {
 			],
 			'email-summary/send'                                    => [
 				'callback' => [ 'EmailSummary', 'send' ],
-				'access'   => 'aioseo_page_advanced_settings'
+				'access'   => 'aioseo_general_settings'
 			],
 			'writing-assistant/process'                             => [
 				'callback' => [ 'WritingAssistant', 'processKeyword' ],

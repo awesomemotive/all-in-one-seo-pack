@@ -68,11 +68,19 @@ class Ai {
 		$rephrase     = isset( $body['rephrase'] ) ? boolval( $body['rephrase'] ) : false;
 		$titles       = ! empty( $body['titles'] ) ? $body['titles'] : [];
 		$options      = $body['options'] ?? [];
+
 		if ( ! $postContent || empty( $options ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Missing required parameters.'
 			], 400 );
+		}
+
+		if ( ! current_user_can( 'edit_post', $postId ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
 		}
 
 		foreach ( $options as $k => $option ) {
@@ -153,11 +161,19 @@ class Ai {
 		$rephrase     = isset( $body['rephrase'] ) ? boolval( $body['rephrase'] ) : false;
 		$descriptions = ! empty( $body['descriptions'] ) ? $body['descriptions'] : [];
 		$options      = $body['options'] ?? [];
+
 		if ( ! $postContent || empty( $options ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Missing required parameters.'
 			], 400 );
+		}
+
+		if ( ! current_user_can( 'edit_post', $postId ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
 		}
 
 		foreach ( $options as $k => $option ) {
@@ -236,11 +252,19 @@ class Ai {
 		$postContent = ! empty( $body['postContent'] ) ? sanitize_text_field( $body['postContent'] ) : '';
 		$permalink   = ! empty( $body['permalink'] ) ? esc_url_raw( urldecode( $body['permalink'] ) ) : '';
 		$options     = $body['options'] ?? [];
+
 		if ( ! $postContent || ! $permalink || empty( $options['media'] ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Missing required parameters.'
 			], 400 );
+		}
+
+		if ( ! current_user_can( 'edit_post', $postId ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
 		}
 
 		foreach ( $options as $k => $option ) {
@@ -330,11 +354,19 @@ class Ai {
 		$rephrase    = isset( $body['rephrase'] ) ? boolval( $body['rephrase'] ) : false;
 		$faqs        = ! empty( $body['faqs'] ) ? $body['faqs'] : [];
 		$options     = $body['options'] ?? [];
+
 		if ( ! $postContent || empty( $options ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Missing required parameters.'
 			], 400 );
+		}
+
+		if ( ! current_user_can( 'edit_post', $postId ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
 		}
 
 		foreach ( $options as $k => $option ) {
@@ -415,11 +447,19 @@ class Ai {
 		$rephrase    = isset( $body['rephrase'] ) ? boolval( $body['rephrase'] ) : false;
 		$keyPoints   = ! empty( $body['keyPoints'] ) ? $body['keyPoints'] : [];
 		$options     = $body['options'] ?? [];
+
 		if ( ! $postContent || empty( $options ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Missing required parameters.'
 			], 400 );
+		}
+
+		if ( ! current_user_can( 'edit_post', $postId ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
 		}
 
 		foreach ( $options as $k => $option ) {

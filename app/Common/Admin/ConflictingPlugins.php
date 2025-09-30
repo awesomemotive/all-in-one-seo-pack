@@ -57,7 +57,7 @@ class ConflictingPlugins {
 	 * @return void
 	 */
 	public function init() {
-		if ( ! current_user_can( 'activate_plugins' ) ) {
+		if ( ! current_user_can( 'deactivate_plugins' ) ) {
 			return;
 		}
 
