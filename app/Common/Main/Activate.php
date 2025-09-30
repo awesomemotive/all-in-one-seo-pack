@@ -121,8 +121,8 @@ class Activate {
 	/**
 	 * Adds our capabilities to all roles on the next request and the installing user on the current request after upgrading to Pro.
 	 *
-	 * @link https://github.com/awesomemotive/aioseo/issues/2267
-	 * @link https://github.com/awesomemotive/aioseo/issues/2288
+
+
 	 *
 	 * @since 4.1.4.4
 	 *

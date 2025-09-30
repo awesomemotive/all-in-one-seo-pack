@@ -595,7 +595,7 @@ trait Vue {
 
 			foreach ( $entry->translations as $translation ) {
 				// If any of the translated strings contains an HTML line break, we need to ignore it. Otherwise, logging into the admin breaks.
-				// https://github.com/awesomemotive/aioseo/issues/2074
+
 				if ( preg_match( '/<br[\s\/\\\\]*>/', (string) $translation ) ) {
 					continue 2;
 				}

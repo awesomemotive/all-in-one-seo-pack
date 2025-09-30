@@ -1178,7 +1178,7 @@ class Admin {
 	 */
 	public function appendTrashedMessage( $messages ) {
 		// Let advanced users override this.
-		// https://github.com/awesomemotive/aioseo/issues/2331
+
 		if ( apply_filters( 'aioseo_redirects_disable_trashed_posts_suggestions', false ) ) {
 			return $messages;
 		}

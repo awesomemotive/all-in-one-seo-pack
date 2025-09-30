@@ -279,7 +279,7 @@ class Updates {
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
 
 		// Always clear the cache if the last active version is different from our current.
-		// https://github.com/awesomemotive/aioseo/issues/2920
+
 		if ( version_compare( $lastActiveVersion, AIOSEO_VERSION, '<' ) ) {
 			aioseo()->core->cache->clear();
 		}

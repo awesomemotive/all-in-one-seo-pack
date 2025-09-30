@@ -742,7 +742,7 @@ trait ThirdParty {
 		}
 
 		// AMP plugin requires the `wp` action to be called to function properly, otherwise, it will throw warnings.
-		// https://github.com/awesomemotive/aioseo/issues/6056
+
 		if ( did_action( 'wp' ) ) {
 			// Check for the "AMP" plugin.
 			if ( function_exists( 'amp_is_request' ) ) {
