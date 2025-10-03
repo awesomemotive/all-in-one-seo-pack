@@ -284,15 +284,19 @@ class PostsTerms {
 			], 400 );
 		}
 
-		if ( ! current_user_can( 'read_post', $ids[0] ) ) {
-			return new \WP_REST_Response( [
-				'success' => false,
-				'message' => 'Unauthorized.'
-			], 401 );
-		}
-
 		$posts = [];
 		foreach ( $ids as $postId ) {
+			if ( ! current_user_can( 'read_post', $postId ) || post_password_required( $postId ) ) {
+				$posts[] = [
+					'id'                => $postId,
+					'titleParsed'       => '',
+					'descriptionParsed' => '',
+					'headlineScore'     => null
+				];
+
+				continue;
+			}
+
 			$postTitle      = get_the_title( $postId );
 			$headline       = ! empty( $postTitle ) ? sanitize_text_field( $postTitle ) : ''; // We need this to achieve consistency for the score when using special characters in titles
 			$headlineResult = aioseo()->standalone->headlineAnalyzer->getResult( $headline );

@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.8
 Requires at least: 5.4
 Requires PHP: 7.2
-Stable tag: 4.8.7
+Stable tag: 4.8.7.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -234,6 +234,14 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.8.7.2**
+
+* Updated: Added additional hardening to REST API routes.
+
+**New in Version 4.8.7.1**
+
+* Fixed: WooCommerce products being automatically added to the cart.
+
 **New in Version 4.8.7**
 
 * Updated: Hardened API routes to prevent unauthorized access.
@@ -429,6 +437,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.8.7 =
+= 4.8.7.2 =
 
 This update adds major improvements and bug fixes.
