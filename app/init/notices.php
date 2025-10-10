@@ -115,7 +115,7 @@ if ( ! function_exists( 'aioseo_php_notice_deprecated' ) ) {
 					sprintf(
 						// phpcs:ignore Generic.Files.LineLength.MaxExceeded
 						// Translators: 1 - Opening HTML bold tag, 2 - Closing HTML bold tag, 3 - The PHP version, 4 - The current year, 5 - The short plugin name ("AIOSEO"), 6 - Opening HTML link tag, 7 - Closing HTML link tag.
-						__( '%1$sNote:%2$s Support for PHP %3$s will be discontinued in %4$s. After this, if no further action is taken, %5$s functionality will be disabled. %6$sRead more for additional information.%7$s', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+						__( '%1$sNote:%2$s Support for PHP %3$s will be discontinued in %4$s. After this, if no further action is taken, %5$s will be disabled. %6$sRead more for additional information.%7$s', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 						'<strong>',
 						'</strong>',
 						PHP_VERSION,
@@ -156,7 +156,6 @@ if ( ! function_exists( 'aioseo_wordpress_notice' ) ) {
 			return;
 		}
 
-		$medium = false !== strpos( AIOSEO_PHP_VERSION_DIR, 'pro' ) ? 'proplugin' : 'liteplugin';
 		?>
 		<div class="notice notice-error">
 			<p>
@@ -170,30 +169,6 @@ if ( ! function_exists( 'aioseo_wordpress_notice' ) ) {
 						'All in One SEO'
 					),
 					array(
-						'strong' => array(),
-					)
-				);
-				?>
-				<br><br>
-				<?php
-				echo wp_kses(
-					sprintf(
-						// phpcs:ignore Generic.Files.LineLength.MaxExceeded
-						// Translators: 1 - Opening HTML bold tag, 2 - Closing HTML bold tag, 3 - The short plugin name ("AIOSEO"), 4 - The current year, 5 - Opening HTML link tag, 6 - Closing HTML link tag.
-						__( '%1$sNote:%2$s %3$s will be discontinuing support for WordPress versions older than version 5.7 by the end of %4$s. %5$sRead more for additional information.%6$s', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
-						'<strong>',
-						'</strong>',
-						'AIOSEO',
-						gmdate( 'Y' ),
-						'<a href="https://aioseo.com/docs/update-wordpress/?utm_source=WordPress&utm_medium=' . $medium . '&utm_campaign=outdated-wordpress-notice" target="_blank" rel="noopener noreferrer">', // phpcs:ignore Generic.Files.LineLength.MaxExceeded
-						'</a>'
-					),
-					array(
-						'a'      => array(
-							'href'   => array(),
-							'target' => array(),
-							'rel'    => array(),
-						),
 						'strong' => array(),
 					)
 				);

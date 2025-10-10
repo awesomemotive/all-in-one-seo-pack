@@ -239,11 +239,6 @@ $settings-bar-height: 90px;
 			text-transform: initial;
 			display: inline-flex;
 
-
-			&:disabled {
-				color: inherit;
-			}
-
 			&:not(:disabled) {
 				&:hover {
 					&.blue, &.black , &.green{

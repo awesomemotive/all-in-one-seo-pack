@@ -1,6 +1,7 @@
 <template>
 	<teleport :to="teleportTo">
 		<div
+			v-if="shouldRender"
 			:show="show"
 			class="aioseo-app aioseo-modal"
 			:class="[
@@ -92,6 +93,11 @@ export default {
 			}
 		}
 	},
+	data () {
+		return {
+			shouldRender : true
+		}
+	},
 	watch : {
 		show (show) {
 			if (show) {
@@ -148,6 +154,22 @@ export default {
 			this.$emit('close')
 			this.rootStore.unsetActiveModal(this.modalName || this.$.uid)
 		}
+	},
+	beforeMount () {
+		if (!this.modalName) {
+			return
+		}
+
+		this.shouldRender = !this.rootStore.modals.rendered.has(this.modalName)
+
+		this.rootStore.modals.rendered.add(this.modalName)
+	},
+	beforeUnmount () {
+		if (!this.modalName) {
+			return
+		}
+
+		this.rootStore.modals.rendered.delete(this.modalName)
 	}
 }
 </script>

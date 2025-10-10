@@ -173,7 +173,7 @@ export const settings = {
 
 				app.mount(node)
 
-				locationMapSidebarApps.push({ clientId, app })
+				locationMapSidebarApps.push({ id: clientId, app })
 			}
 		}
 
@@ -225,7 +225,7 @@ export const settings = {
 
 					app.mount(el)
 
-					locationMapSidebarWatcherApps.push({ clientId, app })
+					locationMapSidebarWatcherApps.push({ id: clientId, app })
 				}
 			})
 		}

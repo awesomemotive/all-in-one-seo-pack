@@ -31,53 +31,6 @@
 			</core-settings-row>
 
 			<core-settings-row
-				:name="strings.llmsTxt"
-			>
-				<template #content>
-					<base-toggle v-model="optionsStore.options.advanced.llmsTxt"/>
-
-					<div class="aioseo-description aioseo-llms-txt-description">
-						<div>{{ strings.llmsTxtDescription }}</div>
-						<core-tooltip
-							v-if="(!(llmsTxtAccessible && optionsStore.options.advanced.llmsTxt) || (llmsButtonLocked && ! optionsStore.options.advanced.llmsTxt))"
-							type="action"
-							tag="div"
-							class="aioseo-llms-txt-tooltip"
-						>
-							<base-button
-								v-if="optionsStore.options.advanced.llmsTxt"
-								:disabled="true"
-								class="aioseo-llms-txt-button"
-								size="medium"
-								type="blue"
-								tag="button"
-							>
-									<svg-external />
-									{{ strings.llmsTxtButton }}
-							</base-button>
-
-							<template #tooltip>
-								{{ strings.llmsTxtTooltip }}
-							</template>
-						</core-tooltip>
-
-						<base-button
-							v-if="(! llmsButtonLocked && llmsTxtAccessible && optionsStore.options.advanced.llmsTxt) || ( llmsButtonLocked && llmsTxtAccessible && optionsStore.options.advanced.llmsTxt )"
-							class="aioseo-llms-txt-button"
-							size="medium"
-							type="blue"
-							tag="a"
-							:href="sanitizeUrl(rootStore.aioseo.urls.llmsUrl.url)"
-							target="_blank"
-						>
-								<svg-external />
-								{{ strings.llmsTxtButton }}
-						</base-button>
-					</div>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
 				:name="strings.postTypeColumns"
 			>
 				<template #content>
@@ -328,7 +281,6 @@
 
 <script>
 import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
-import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
@@ -350,10 +302,9 @@ import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import EmailSummary from './partials/Advanced/EmailSummary'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
-import SvgExternal from '@/vue/components/common/svg/External'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
-import { __, sprintf } from '@/vue/plugins/translations'
 
+import { __, sprintf } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
@@ -379,24 +330,17 @@ export default {
 		EmailSummary,
 		GridColumn,
 		GridRow,
-		SvgCircleQuestionMark,
-		SvgExternal
+		SvgCircleQuestionMark
 	},
 	data () {
 		return {
-			openAiKeyInvalid  : false,
-			llmsButtonLocked  : true,
-			llmsTxtAccessible : false,
-			strings           : {
+			openAiKeyInvalid : false,
+			strings          : {
 				advanced                    : __('Advanced Settings', td),
 				truSeo                      : __('TruSEO Score & Content', td),
 				truSeoDescription           : __('Enable our TruSEO score to help you optimize your content for maximum traffic.', td),
 				headlineAnalyzer            : __('Headline Analyzer', td),
 				headlineAnalyzerDescription : __('Enable our Headline Analyzer to help you write irresistible headlines and rank better in search results.', td),
-				llmsTxt                     : __('LLMs.txt', td),
-				llmsTxtDescription          : __('Generate a LLMs.txt file to help AI engines discover the content on your site more easily.', td),
-				llmsTxtButton               : __('Open LLMs.txt', td),
-				llmsTxtTooltip              : __('To view the LLMs.txt file, first save changes.', td),
 				seoAnalysis                 : __('SEO Analysis', td),
 				postTypeColumns             : __('Post Type Columns', td),
 				includeAllPostTypes         : __('Include All Post Types', td),
@@ -529,44 +473,10 @@ export default {
 			} else {
 				this.openAiKeyInvalid = false
 			}
-		},
-		processChangesSaved () {
-			this.llmsButtonLocked = false
-			this.checkLlmsTxtAccessibility()
-		},
-		checkLlmsTxtAccessibility () {
-			if (!this.optionsStore.options.advanced.llmsTxt) {
-				this.llmsTxtAccessible = false
-				return
-			}
-
-			if (this.rootStore.aioseo.urls.llmsUrl.isAccessible) {
-				this.llmsTxtAccessible = true
-			} else {
-				this.llmsTxtAccessible = false
-			}
 		}
 	},
 	beforeMount () {
 		this.validateOpenAiKey()
-	},
-	created () {
-		window.aioseoBus.$on('changes-saved', async () => {
-			this.processChangesSaved()
-			if (this.optionsStore.options.advanced.llmsTxt) {
-				try {
-					const response = await http.get(this.rootStore.aioseo.urls.llmsUrl.url)
-					if (200 === response.status) {
-						this.llmsTxtAccessible = true
-					}
-				} catch {
-					this.llmsTxtAccessible = false
-				}
-			}
-		})
-
-		// Check LLMs.txt accessibility on mount
-		this.checkLlmsTxtAccessibility()
 	}
 }
 </script>
@@ -581,25 +491,6 @@ export default {
 
 	.aioseo-input-container {
 		max-width: 500px;
-	}
-}
-
-.aioseo-llms-txt-description {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 8px;
-
-	.aioseo-llms-txt-tooltip {
-		margin: 0;
-	}
-
-	.aioseo-llms-txt-button {
-		svg.aioseo-external {
-			width: 14px;
-			height: 14px;
-			margin-right: 10px;
-		}
 	}
 }
 </style>

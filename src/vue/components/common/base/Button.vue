@@ -233,7 +233,7 @@ const strings = {
 		}
 	}
 
-	&.loading {
+	&[disabled].loading {
 		overflow: hidden;
 
 		&.blue {

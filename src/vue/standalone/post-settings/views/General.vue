@@ -87,8 +87,7 @@
 						allowed('aioseo_page_ai_content_settings') &&
 						!postEditorStore.currentPost.isWooCommercePageWithoutSchema &&
 						postEditorStore.currentPost.postType &&
-						!['attachment', 'web-story'].includes(postEditorStore.currentPost.postType) &&
-						!isPageBuilderEditor()" #append-button
+						!['attachment', 'web-story'].includes(postEditorStore.currentPost.postType)" #append-button
 					>
 						<ai-generator
 							:feature="aiFeatures.metaTitle"
@@ -135,8 +134,7 @@
 						allowed('aioseo_page_ai_content_settings') &&
 						!postEditorStore.currentPost.isWooCommercePageWithoutSchema &&
 						postEditorStore.currentPost.postType &&
-						!['attachment', 'web-story'].includes(postEditorStore.currentPost.postType) &&
-						!isPageBuilderEditor()" #append-button
+						!['attachment', 'web-story'].includes(postEditorStore.currentPost.postType)" #append-button
 					>
 						<ai-generator
 							:feature="aiFeatures.metaDescription"

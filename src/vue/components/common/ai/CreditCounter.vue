@@ -28,16 +28,8 @@
 							(optionsStore.internalOptions.internal.ai.credits.orders.length > 0 ||
 							optionsStore.internalOptions.internal.ai.credits.license.total > 0)
 						"
-						:offset="
-							'sidebar' === app.root.data.screenContext && 'metabox' === parentComponentContext
-								? '10px,0'
-								: '50px,0'
-						"
-						:placement="
-							'sidebar' === app.root.data.screenContext && 'metabox' === parentComponentContext
-								? 'left'
-								: 'right'
-						"
+						:offset="parsedTooltipOffset"
+						:placement="parsedTooltipPlacement"
 					>
 						<svg-circle-question-mark />
 
@@ -159,6 +151,7 @@ import links from '@/vue/utils/links'
 import { DateTime } from 'luxon'
 import dateFormat from '@/vue/utils/dateFormat'
 
+import BaseButton from '@/vue/components/common/base/Button'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgAiCredits from '@/vue/components/common/svg/ai/AiCredits'
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
@@ -216,6 +209,7 @@ export default {
 		}
 	},
 	components : {
+		BaseButton,
 		CoreTooltip,
 		SvgAiCredits,
 		SvgCircleQuestionMark
@@ -228,7 +222,9 @@ export default {
 		isSettingsPage : {
 			type    : Boolean,
 			default : false
-		}
+		},
+		tooltipOffset    : String,
+		tooltipPlacement : String
 	},
 	data () {
 		return {
@@ -256,6 +252,12 @@ export default {
 		}
 	},
 	computed : {
+		parsedTooltipOffset () {
+			return this.tooltipOffset || ('sidebar' === this.app.root.data.screenContext && 'metabox' === this.parentComponentContext ? '10px,0' : '50px,0')
+		},
+		parsedTooltipPlacement () {
+			return this.tooltipPlacement || ('sidebar' === this.app.root.data.screenContext && 'metabox' === this.parentComponentContext ? 'left' : 'right')
+		},
 		planLevel () {
 			if (this.licenseStore.isUnlicensed) {
 				return ''
@@ -318,8 +320,9 @@ export default {
 	flex-direction: row;
 
 	.counter-container-wrapper {
-		display: flex;
-		flex-direction: row;
+		display: grid;
+		grid-template-columns: 32px auto;
+		align-items: center;
 	}
 
 	svg {
@@ -327,7 +330,6 @@ export default {
 			width: 24px;
 			height: 24px;
 			margin-right: 8px;
-			margin-top: -2px;
 		}
 
 		&.aioseo-circle-question-mark {
@@ -339,13 +341,15 @@ export default {
 
 	div.counter-container {
 		display: flex;
-		flex-direction: column;
+		flex-wrap: wrap;
 
 		.counter {
-			display: flex;
-			margin-right: 12px;
+			margin-right: 8px;
+			display: inline-grid;
 			align-items: center;
 			font-size: 12px;
+			grid-template-columns: auto auto;
+			line-height: normal;
 
 			&-sidebar .aioseo-tooltip {
 				.popper {
@@ -367,6 +371,7 @@ export default {
 				margin-left: 8px;
 
 				hr {
+					border-color: $gray;
 					margin: 12px 0;
 				}
 
@@ -421,6 +426,7 @@ export default {
 
 			&.buy-credits {
 				font-weight: 600;
+				text-decoration: underline;
 			}
 		}
 	}

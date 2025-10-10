@@ -119,7 +119,7 @@
 			</core-settings-row>
 
 			<core-settings-row
-				v-if="0 < rootStore.aioseo.data.staticBlogPage"
+				v-if="hasStaticBlogHome"
 				:name="strings.showBlogHome"
 			>
 				<template #content>
@@ -389,6 +389,9 @@ export default {
 		},
 		isDeprecatedEnable () {
 			return this.hasDeprecatedEnable && this.optionsStore.options.deprecated.breadcrumbs.enable
+		},
+		hasStaticBlogHome () {
+			return 0 < this.rootStore.aioseo.data.staticBlogPage
 		}
 	},
 	methods : {
@@ -401,7 +404,7 @@ export default {
 		},
 		getPostPreview () {
 			return [ ...this.getRootPreview(), ...[
-				this.optionsStore.options.breadcrumbs.showBlogHome ? 'Blog Home' : '',
+				this.optionsStore.options.breadcrumbs.showBlogHome && this.hasStaticBlogHome ? 'Blog Home' : '',
 				this.strings.category,
 				this.strings.articleTitle
 			] ].filter(item => !!item).map(item => sanitizeString(item))

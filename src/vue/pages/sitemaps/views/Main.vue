@@ -13,6 +13,7 @@ import HtmlSitemap from './HtmlSitemap'
 import NewsSitemap from './NewsSitemap'
 import RssSitemap from './RssSitemap'
 import VideoSitemap from './VideoSitemap'
+import LlmsSitemap from './LlmsSitemap'
 
 import { __ } from '@/vue/plugins/translations'
 
@@ -25,7 +26,8 @@ export default {
 		HtmlSitemap,
 		NewsSitemap,
 		RssSitemap,
-		VideoSitemap
+		VideoSitemap,
+		LlmsSitemap
 	},
 	data () {
 		return {

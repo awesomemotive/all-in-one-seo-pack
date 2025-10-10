@@ -19,7 +19,7 @@ class Llms {
 	 *
 	 * @var string
 	 */
-	private $title;
+	protected $title;
 
 	/**
 	 * Site description
@@ -28,7 +28,7 @@ class Llms {
 	 *
 	 * @var string
 	 */
-	private $description;
+	protected $description;
 
 	/**
 	 * Site link
@@ -37,7 +37,7 @@ class Llms {
 	 *
 	 * @var string
 	 */
-	private $link;
+	protected $link;
 
 	/**
 	 * Plugin version
@@ -46,37 +46,76 @@ class Llms {
 	 *
 	 * @var string
 	 */
-	private $version;
+	protected $version;
 
+	/**
+	 * LLMS file recurrent action name.
+	 *
+	 * since 4.8.8
+	 *
+	 * @var string
+	 */
+	public $llmsTxtRecurrentAction = 'aioseo_generate_llms_txt';
+
+	/**
+	 * LLMS file single action name.
+	 *
+	 * since 4.8.8
+	 *
+	 * @var string
+	 */
+	public $llmsTxtSingleAction = 'aioseo_generate_llms_txt_single';
+
+	/**
+	 * Class constructor.
+	 *
+	 * @since 4.8.8
+	 *
+	 * @return void
+	 */
 	public function __construct() {
-		if ( is_admin() || ! aioseo()->options->advanced->llmsTxt ) {
-			return;
-		}
+		add_action( 'init', [ $this, 'scheduleRecurrentGenerationForLlmsTxt' ] );
+		add_action( $this->llmsTxtRecurrentAction, [ $this, 'generateLlmsTxt' ] );
 
-		add_action( 'parse_request', [ $this, 'checkRequest' ] );
+		add_action( 'wp_insert_post', [ $this, 'scheduleSingleGenerationForLlmsTxt' ] );
+		add_action( 'edited_term', [ $this, 'scheduleSingleGenerationForLlmsTxt' ] );
+		add_action( $this->llmsTxtSingleAction, [ $this, 'generateLlmsTxt' ] );
 	}
 
 	/**
-	 * Checks if the request is for the LLMS.txt file.
+	 * Schedules the LLMS file generation.
 	 *
-	 * @since 4.8.4
+	 * @since 4.8.8
 	 *
-	 * @param \WP   $wp The WordPress request object.
 	 * @return void
 	 */
-	public function checkRequest( $wp ) {
-		$slug = $wp->request ?? aioseo()->helpers->cleanSlug( $wp->request );
-		if ( ! $slug && isset( $_SERVER['REQUEST_URI'] ) ) {
-			// We must fallback to the REQUEST URI in case the site uses plain permalinks.
-			$slug = aioseo()->helpers->cleanSlug( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
-		}
-
-		if ( 'llms.txt' !== $slug ) {
+	public function scheduleRecurrentGenerationForLlmsTxt() {
+		if (
+			! aioseo()->options->sitemap->llms->enable ||
+			aioseo()->actionScheduler->isScheduled( $this->llmsTxtRecurrentAction )
+		) {
 			return;
 		}
 
-		$this->setSiteInfo();
-		$this->generate();
+		aioseo()->actionScheduler->scheduleRecurrent( $this->llmsTxtRecurrentAction, 10, DAY_IN_SECONDS );
+	}
+
+	/**
+	 * Schedules a single LLMS file generation.
+	 *
+	 * @since 4.8.8
+	 *
+	 * @return void
+	 */
+	public function scheduleSingleGenerationForLlmsTxt() {
+		if (
+			! aioseo()->options->sitemap->llms->enable ||
+			aioseo()->actionScheduler->isScheduled( $this->llmsTxtSingleAction )
+		) {
+			return;
+		}
+
+		aioseo()->actionScheduler->scheduleSingle( $this->llmsTxtSingleAction, 10 );
 	}
 
 	/**
@@ -86,17 +125,34 @@ class Llms {
 	 *
 	 * @return void
 	 */
-	private function setSiteInfo() {
+	protected function setSiteInfo() {
 		$isMultisite = is_multisite();
-		$this->title = $isMultisite
-			? get_blog_option( get_current_blog_id(), 'blogname' )
-			: get_bloginfo( 'name' );
-		$this->title = $this->title ?? aioseo()->meta->title->getHomePageTitle();
 
-		$this->description = $isMultisite
-			? get_blog_option( get_current_blog_id(), 'blogdescription' )
-			: get_bloginfo( 'description' );
-		$this->description = $this->description ?? aioseo()->meta->description->getHomePageDescription();
+		// Check for LLMS custom title setting
+		$llmsTitle = aioseo()->options->sitemap->llms->advancedSettings->title;
+		if ( ! empty( $llmsTitle ) ) {
+			// Use LLMS title with hashtag tag replacement
+			$this->title = aioseo()->tags->replaceTags( $llmsTitle );
+		} else {
+			// Fallback to default site title
+			$this->title = $isMultisite
+				? get_blog_option( get_current_blog_id(), 'blogname' )
+				: get_bloginfo( 'name' );
+			$this->title = $this->title ?? aioseo()->meta->title->getHomePageTitle();
+		}
+
+		// Check for LLMS custom description setting
+		$llmsDescription = aioseo()->options->sitemap->llms->advancedSettings->description;
+		if ( ! empty( $llmsDescription ) ) {
+			// Use LLMS description with hashtag tag replacement
+			$this->description = aioseo()->tags->replaceTags( $llmsDescription );
+		} else {
+			// Fallback to default site description
+			$this->description = $isMultisite
+				? get_blog_option( get_current_blog_id(), 'blogdescription' )
+				: get_bloginfo( 'description' );
+			$this->description = $this->description ?? aioseo()->meta->description->getHomePageDescription();
+		}
 
 		$this->link = $isMultisite
 			? get_blog_option( get_current_blog_id(), 'siteurl' )
@@ -112,16 +168,28 @@ class Llms {
 	 *
 	 * @return void
 	 */
-	private function generate() {
-		$this->headers();
+	public function generateLlmsTxt() {
+		if ( ! aioseo()->options->sitemap->llms->enable ) {
+			aioseo()->actionScheduler->unschedule( $this->llmsTxtSingleAction );
+			aioseo()->actionScheduler->unschedule( $this->llmsTxtRecurrentAction );
+			$this->deleteLlmsFile();
 
+			return;
+		}
+
+		$fs   = aioseo()->core->fs;
+		$file = ABSPATH . sanitize_file_name( 'llms.txt' );
+
+		// Generate the full content
+		$this->setSiteInfo();
 		$content  = $this->getHeader();
 		$content .= $this->getSiteDescription();
 		$content .= $this->getSitemapUrl();
-		$content .= $this->getRecentContent();
+		$content .= $this->getContent();
 
-		echo $content; #phpcs:ignore
-		exit;
+		// Add UTF-8 BOM to help browsers recognize the encoding
+		$content = "\xEF\xBB\xBF" . $content;
+		$fs->putContents( $file, $content );
 	}
 
 	/**
@@ -131,12 +199,15 @@ class Llms {
 	 *
 	 * @return string
 	 */
-	private function getHeader() {
+	protected function getHeader( $llmsFull = false ) {
+		$fileName = $llmsFull ? 'llms-full.txt' : 'llms.txt';
+
 		$introText = sprintf(
 			/* translators: 1 - The plugin name ("All in One SEO"), 2 - The version number */
-			esc_html__( 'Generated by %1$s v%2$s, this is an llms.txt file, used by LLMs to index the site.', 'all-in-one-seo-pack' ),
+			esc_html__( 'Generated by %1$s v%2$s, this is an %3$s file, used by LLMs to index the site.', 'all-in-one-seo-pack' ),
 			esc_html( AIOSEO_PLUGIN_NAME ),
-			esc_html( aioseo()->version )
+			esc_html( aioseo()->version ),
+			esc_html( $fileName )
 		);
 
 		if ( $this->title ) {
@@ -153,7 +224,7 @@ class Llms {
 	 *
 	 * @return string
 	 */
-	private function getSiteDescription() {
+	protected function getSiteDescription() {
 		if ( $this->description ) {
 			return "{$this->description}\n\n";
 		}
@@ -168,14 +239,14 @@ class Llms {
 	 *
 	 * @return string
 	 */
-	private function getSitemapUrl() {
+	protected function getSitemapUrl() {
 		if ( ! aioseo()->options->sitemap->general->enable ) {
 			return '';
 		}
 
 		$sitemapUrl = aioseo()->sitemap->helpers->getUrl( 'general' );
 
-		return "## Sitemaps\n\n- [XML Sitemap]({$sitemapUrl}): Contains all public/indexable URLs for this website.\n\n";
+		return "## Sitemaps\n\n- [XML Sitemap]({$sitemapUrl}): Contains all public & indexable URLs for this website.\n\n";
 	}
 
 	/**
@@ -183,40 +254,68 @@ class Llms {
 	 *
 	 * @since 4.8.4
 	 *
-	 * @return string
+	 * @param  bool   $llmsFull Whether to include the llms-full.txt file.
+	 * @return string           The content of the llms.txt file.
 	 */
-	private function getRecentContent() {
-		$content = '';
+	protected function getContent( $llmsFull = false ) {
+		// Get LLMS post types settings
+		$includeAllPostTypes   = aioseo()->options->sitemap->llms->advancedSettings->postTypes->all;
+		$includedPostTypes     = aioseo()->options->sitemap->llms->advancedSettings->postTypes->included;
+		$includeAllTaxonomies  = aioseo()->options->sitemap->llms->advancedSettings->taxonomies->all;
+		$includedTaxonomies    = aioseo()->options->sitemap->llms->advancedSettings->taxonomies->included;
 
-		$postTypes                       = array_filter( aioseo()->helpers->getPublicPostTypes( true ), function( $type ) {
-			return 'attachment' !== $type;
-		} );
-		$originalSitemapType             = aioseo()->sitemap->type;
-		$originalLinksPerIndex           = aioseo()->sitemap->linksPerIndex;
-		$originalIndexes                 = aioseo()->sitemap->indexes;
+		// Determine which post types to include
+		if ( $includeAllPostTypes ) {
+			// Include all public post types except attachments
+			$postTypes = array_filter( aioseo()->helpers->getPublicPostTypes( true ), function( $type ) {
+				return 'attachment' !== $type;
+			} );
+		} else {
+			// Only include the specifically selected post types, but still exclude attachments
+			$postTypes = array_filter( $includedPostTypes, function( $type ) {
+				return 'attachment' !== $type;
+			} );
+		}
+		if ( $includeAllTaxonomies ) {
+			$taxonomies = aioseo()->helpers->getPublicTaxonomies( true );
+		} else {
+			$taxonomies = $includedTaxonomies;
+		}
+		$originalSitemapType   = aioseo()->sitemap->type;
+		$originalLinksPerIndex = aioseo()->sitemap->linksPerIndex;
+		$originalIndexes       = aioseo()->sitemap->indexes;
 
 		aioseo()->sitemap->type          = 'llms';
-		aioseo()->sitemap->linksPerIndex = 20;
 		aioseo()->sitemap->indexes       = true;
+		aioseo()->sitemap->linksPerIndex = aioseo()->options->sitemap->llms->advancedSettings->linksPerPostTax
+			? aioseo()->options->sitemap->llms->advancedSettings->linksPerPostTax :
+			20;
 
+		$content = '';
 		foreach ( $postTypes as $postType ) {
 			$postTypeObject = get_post_type_object( $postType );
 			if ( ! $postTypeObject ) {
 				continue;
 			}
 
-			$recentPosts = aioseo()->sitemap->query->posts( $postType );
+			$posts = aioseo()->sitemap->query->posts( $postType );
 
-			if ( ! empty( $recentPosts ) ) {
+			if ( ! empty( $posts ) ) {
 				$content .= '## ' . $postTypeObject->labels->name . "\n\n";
-				foreach ( $recentPosts as $post ) {
-					$content .= '- [' . aioseo()->helpers->decodeHtmlEntities( $post->post_title ) . '](' . aioseo()->helpers->decodeUrl( get_permalink( $post->ID ) ) . ")\n";
+				foreach ( $posts as $post ) {
+					$content .= $this->getPostContent( $post, $llmsFull );
 				}
+
 				$content .= "\n";
 			}
 		}
 
-		$taxonomies = aioseo()->helpers->getPublicTaxonomies( true );
+		// Initialize sitemap settings again for terms
+		aioseo()->sitemap->type          = 'llms';
+		aioseo()->sitemap->indexes       = true;
+		aioseo()->sitemap->linksPerIndex = aioseo()->options->sitemap->llms->advancedSettings->linksPerPostTax
+			? aioseo()->options->sitemap->llms->advancedSettings->linksPerPostTax :
+			20;
 
 		// Get recent terms for each taxonomy using sitemap query
 		foreach ( $taxonomies as $taxonomy ) {
@@ -230,7 +329,11 @@ class Llms {
 			if ( ! empty( $terms ) ) {
 				$content .= '## ' . $taxonomyObject->labels->name . "\n\n";
 				foreach ( $terms as $term ) {
-					if ( is_object( $term ) && ! empty( $term->term_id ) && ! empty( $term->name ) ) {
+					if ( is_object( $term ) && ! empty( $term->term_id ) ) {
+						// get the term again in case it does not contain the name
+						if ( empty( $term->name ) ) {
+							$term = get_term( $term->term_id, $taxonomy );
+						}
 						$content .= '- [' . aioseo()->helpers->decodeHtmlEntities( $term->name ) . '](' . aioseo()->helpers->decodeUrl( get_term_link( $term->term_id, $taxonomy ) ) . ")\n";
 					}
 				}
@@ -247,37 +350,40 @@ class Llms {
 	}
 
 	/**
-	 * Sets the HTTP headers for the LLMS.txt.
+	 * Gets the post content section of the llms.txt file.
 	 *
-	 * @since 4.8.4
+	 * @since 4.8.8
 	 *
-	 * @return void
+	 * @param  \WP_Post $post     The post object.
+	 * @param  bool     $llmsFull Whether to include the llms-full.txt file.
+	 * @return string             The content of the llms.txt file.
 	 */
-	public function headers() {
-		$charset = aioseo()->helpers->getCharset();
-		header( "Content-Type: text/plain; charset=$charset", true );
-		header( 'X-Robots-Tag: noindex, follow', true );
+	protected function getPostContent( $post, $llmsFull = false ) { // phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+		$content = '- [' . aioseo()->helpers->decodeHtmlEntities( $post->post_title ) . '](' . aioseo()->helpers->decodeUrl( get_permalink( $post->ID ) ) . ')';
+
+		$description = aioseo()->meta->description->getPostDescription( $post->ID );
+
+		if ( ! empty( $description ) ) {
+			$content .= ' - ' . $description;
+		}
+
+		$content .= "\n";
+
+		return $content;
 	}
 
 	/**
-	 * Gets the LLMs.txt URL if accessible.
+	 * Deletes the LLMS.txt file.
 	 *
-	 * @since 4.8.4
+	 * @since 4.8.8
 	 *
-	 * @return array The LLMs.txt URL if accessible, null otherwise.
+	 * @return void
 	 */
-	public function getUrl() {
-		$url          = home_url( '/llms.txt' );
-		$isAccessible = false;
-
-		if ( aioseo()->options->advanced->llmsTxt ) {
-			$response     = wp_remote_head( $url );
-			$isAccessible = ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response );
+	public function deleteLlmsFile() {
+		$fs   = aioseo()->core->fs;
+		$file = ABSPATH . sanitize_file_name( 'llms.txt' );
+		if ( $fs->isWpfsValid() ) {
+			$fs->fs->delete( $file, false, 'f' );
 		}
-
-		return [
-			'url'          => $url,
-			'isAccessible' => $isAccessible
-		];
 	}
 }

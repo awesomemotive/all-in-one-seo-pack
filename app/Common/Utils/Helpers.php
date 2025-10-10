@@ -21,6 +21,7 @@ class Helpers {
 	use TraitHelpers\Constants;
 	use TraitHelpers\Deprecated;
 	use TraitHelpers\DateTime;
+	use TraitHelpers\Images;
 	use TraitHelpers\Language;
 	use TraitHelpers\Numbers;
 	use TraitHelpers\PostType;
@@ -382,7 +383,7 @@ class Helpers {
 	 */
 	public function fetchAioseoArticles( $fetchImage = false ) {
 		$items = aioseo()->core->networkCache->get( 'rss_feed' );
-		if ( null !== $items ) {
+		if ( is_array( $items ) ) {
 			return $items;
 		}
 
@@ -392,12 +393,16 @@ class Helpers {
 		];
 		$response = wp_remote_get( 'https://aioseo.com/wp-json/wp/v2/posts?per_page=4', $options );
 		$body     = wp_remote_retrieve_body( $response );
-		if ( ! $body ) {
-			return [];
+		$items    = ! empty( $body ) ? json_decode( $body, true ) : [];
+		$cached   = [];
+
+		if ( ! is_array( $items ) || empty( $items ) ) {
+			// Wait for at least 5 minutes before trying again.
+			aioseo()->core->networkCache->update( 'rss_feed', $cached, 5 * MINUTE_IN_SECONDS );
+
+			return $cached;
 		}
 
-		$cached = [];
-		$items  = json_decode( $body, true );
 		foreach ( $items as $k => $item ) {
 			$cached[ $k ] = [
 				'url'     => $item['link'],

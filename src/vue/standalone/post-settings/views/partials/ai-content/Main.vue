@@ -13,7 +13,7 @@
 		<template #content>
 			<core-alert
 				class="aioseo-ai-content-no-content-warning"
-				v-if="postContentLength < 500"
+				v-if="postContentLength < 200"
 				type="red"
 			>
 				{{ strings.noContentWarning }}
@@ -31,7 +31,7 @@
 					v-for="(feature, index) in features"
 					:key="index"
 					:feature="feature"
-					:buttonDisabled="postContentLength < 500"
+					:buttonDisabled="isButtonDisabled(feature)"
 				/>
 			</div>
 		</template>
@@ -47,7 +47,7 @@ import CreditCounter from '@/vue/components/common/ai/CreditCounter'
 import FeatureCard from './FeatureCard'
 
 import { getAiFeatures } from './utils'
-import { isBlockEditor, isClassicEditor } from '@/vue/utils/context'
+import { isBlockEditor, isClassicEditor, isPageBuilderEditor } from '@/vue/utils/context'
 import { getPostEditedContent } from '@/vue/plugins/tru-seo/components/postContent'
 
 import { debounce } from 'lodash-es'
@@ -55,6 +55,14 @@ import links from '@/vue/utils/links'
 
 import { __, sprintf } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
+
+const getCleanedContent = () => {
+	// Replace HTML tags with empty strings.
+	return getPostEditedContent()
+		.replace(/<\/?[a-z][^>]*?>/gi, '')
+		.replace(/<!--[\s\S]*?-->/g, '')
+		.trim()
+}
 
 export default {
 	setup () {
@@ -76,11 +84,12 @@ export default {
 	data () {
 		return {
 			getPostEditedContent,
+			getCleanedContent,
 			features          : getAiFeatures(),
 			postContentLength : 0,
 			strings           : {
 				aiContentGeneration : __('AI Content Generation', td),
-				noContentWarning    : __('Your post is too short to generate AI content. Please add some more content. For the best results, we recommend adding at least 200 words.', td),
+				noContentWarning    : __('Your post is too short to generate AI content. Please add more content. For the best results, we recommend adding at least 200 characters.', td),
 				trialWarning        : sprintf(
 					// Translators: 1 - "upgrade to Pro" link, 2 - "purchase PAYG credits" link.
 					__('You can try out our AI features for free, enjoy! To unlock additional AI credits, %1$s or %2$s.', td),
@@ -99,13 +108,20 @@ export default {
 		}
 	},
 	methods : {
+		isButtonDisabled (feature) {
+			if ('image-generator' === feature.slug) {
+				return false
+			}
+
+			return 500 > this.postContentLength
+		},
 		updateContentLength (length) {
 			this.postContentLength = length
 		},
 		watchBlockEditor () {
 			window.wp.data.subscribe(() => {
 				debounce(() => {
-					this.updateContentLength(this.getPostEditedContent().length)
+					this.updateContentLength(this.getCleanedContent().length)
 				}, 500)()
 			})
 		},
@@ -139,20 +155,27 @@ export default {
 				}
 			}
 		},
+		watchPageBuilderEditor () {
+			window.aioseoBus.$on('aioseo-content-changed', () => {
+				this.updateContentLength(this.getCleanedContent().length)
+			})
+		},
 		initWatchers () {
-			if (isBlockEditor()) {
+			if (isPageBuilderEditor()) {
+				this.watchPageBuilderEditor()
+			} else if (isBlockEditor()) {
 				this.watchBlockEditor()
-			}
-
-			if (isClassicEditor()) {
+			} else if (isClassicEditor()) {
 				this.watchClassicEditor()
 			}
 		}
 	},
 	beforeMount () {
-		this.updateContentLength(this.getPostEditedContent().length)
-
+		this.updateContentLength(this.getCleanedContent().length)
 		this.initWatchers()
+	},
+	beforeUnmount () {
+		window.aioseoBus.$off('aioseo-content-changed')
 	}
 }
 </script>

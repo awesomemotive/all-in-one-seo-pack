@@ -166,12 +166,12 @@ export const generateUniqueSchemaBlockId = () => {
 /**
  * Unmount app and prevent Vue from creating multiple instances of the same app.
  *
- * @param {string} clientId A block ID.
+ * @param {string} id The identifier of the app to unmount.
  * @param {Array} apps Array of Vue apps.
  * @returns {void}
  */
-export const maybeDeleteBlockVueApp = (clientId, apps) => {
-	const findAppIndex = apps.findIndex(a => a.clientId === clientId)
+export const maybeDeleteBlockVueApp = (id, apps) => {
+	const findAppIndex = apps.findIndex(a => a.id === id)
 	if (-1 !== findAppIndex) {
 		apps[findAppIndex].app.unmount()
 		apps.splice(findAppIndex, 1)

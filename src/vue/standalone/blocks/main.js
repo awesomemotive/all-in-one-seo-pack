@@ -8,6 +8,7 @@ import * as locationmap from './location-map'
 import * as tableOfContents from './table-of-contents'
 import * as faq from './faq'
 import * as keyPoints from './key-points'
+import * as aiAssistant from './ai-assistant'
 import './schema'
 
 import { canLoadBlocks } from '@/vue/utils/context'
@@ -90,7 +91,8 @@ if (canLoadBlocks()) {
 			htmlSitemap,
 			'post' === window?.aioseo?.screen?.base ? tableOfContents : null,
 			faq,
-			keyPoints
+			keyPoints,
+			aiAssistant
 
 		].forEach(registerBlock)
 

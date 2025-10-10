@@ -14,8 +14,9 @@ export const useRootStore = defineStore('RootStore', {
 			highlight : null
 		},
 		modals : {
-			active : null,
-			all    : []
+			active   : null,
+			all      : new Set(),
+			rendered : new Set()
 		}
 	}),
 	actions : {
@@ -28,24 +29,14 @@ export const useRootStore = defineStore('RootStore', {
 		setActiveModal (modal) {
 			this.modals.active = modal
 
-			// Only add the modal to the list of all modals if it is not already in the list.
-			if (!this.modals.all.includes(modal)) {
-				this.modals.all.push(modal)
-			}
+			this.modals.all.add(modal)
 		},
 		unsetActiveModal (activeModal) {
-			// If the active modal is not the modal we are trying to unset, do nothing.
-			if (!this.modals.all.includes(activeModal)) {
-				return
-			}
-
 			// Remove the active modal from the list of all modals.
-			this.modals.all = this.modals.all.filter((modal) => {
-				return modal !== activeModal
-			})
+			this.modals.all.delete(activeModal)
 
 			// Get the last modal in the list of all modals and set it as the active modal.
-			this.modals.active = this.modals.all[this.modals.all.length - 1] || null
+			this.modals.active = [ ...this.modals.all ].pop() || null
 		}
 	}
 })

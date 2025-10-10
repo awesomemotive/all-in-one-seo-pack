@@ -70,17 +70,16 @@ export default {
 
 <style lang="scss">
 .aioseo-post-general {
-
 	.aioseo-ai-generator {
-
 		button {
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			padding: 6px !important;
 
-			svg.aioseo-ai-robot {
-				width: 15px;
-				height: 13px;
+			svg {
+				width: 18px;
+				height: 18px;
 				color: $black;
 
 				&:hover {

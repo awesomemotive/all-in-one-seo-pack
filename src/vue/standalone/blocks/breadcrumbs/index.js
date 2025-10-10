@@ -1,12 +1,17 @@
 import { __ } from '@/vue/plugins/translations'
 
 import { getSelectedTerms } from '@/vue/standalone/primary-term/helpers'
-import { useRootStore } from '@/vue/stores'
+import {
+	useRootStore,
+	usePostEditorStore
+} from '@/vue/stores'
+
+const postEditorStore = usePostEditorStore()
 
 const wp = window.wp
+const { useEffect, useRef } = wp.element
 const el = wp.element.createElement
 const { useSelect } = wp.data
-const { useEffect } = wp.element
 const Fragment = wp.element.Fragment
 const InspectorControls = wp.blockEditor?.InspectorControls || wp.editor.InspectorControls
 const PanelBody = wp.components.PanelBody
@@ -55,15 +60,15 @@ export const settings = {
 		breadcrumbSettings : {
 			type    : 'object',
 			default : {
-				default            : window?.aioseo?.currentPost?.breadcrumb_settings?.default ?? true,
-				separator          : window?.aioseo?.currentPost?.breadcrumb_settings?.separator ?? '›',
-				showHomeCrumb      : window?.aioseo?.currentPost?.breadcrumb_settings?.showHomeCrumb ?? true,
-				showTaxonomyCrumbs : window?.aioseo?.currentPost?.breadcrumb_settings?.showTaxonomyCrumbs ?? true,
-				showParentCrumbs   : window?.aioseo?.currentPost?.breadcrumb_settings?.showParentCrumbs ?? true,
-				template           : window?.aioseo?.currentPost?.breadcrumb_settings?.template ?? 'default',
-				parentTemplate     : window?.aioseo?.currentPost?.breadcrumb_settings?.parentTemplate ?? 'default',
-				taxonomy           : window?.aioseo?.currentPost?.breadcrumb_settings?.taxonomy || defaultTaxonomy,
-				primaryTerm        : window?.aioseo?.currentPost?.breadcrumb_settings?.primaryTerm ?? null
+				default            : postEditorStore?.currentPost?.breadcrumb_settings?.default ?? true,
+				separator          : postEditorStore?.currentPost?.breadcrumb_settings?.separator ?? '›',
+				showHomeCrumb      : postEditorStore?.currentPost?.breadcrumb_settings?.showHomeCrumb ?? true,
+				showTaxonomyCrumbs : postEditorStore?.currentPost?.breadcrumb_settings?.showTaxonomyCrumbs ?? true,
+				showParentCrumbs   : postEditorStore?.currentPost?.breadcrumb_settings?.showParentCrumbs ?? true,
+				template           : postEditorStore?.currentPost?.breadcrumb_settings?.template ?? 'default',
+				parentTemplate     : postEditorStore?.currentPost?.breadcrumb_settings?.parentTemplate ?? 'default',
+				taxonomy           : postEditorStore?.currentPost?.breadcrumb_settings?.taxonomy || defaultTaxonomy,
+				primaryTerm        : postEditorStore?.currentPost?.breadcrumb_settings?.primaryTerm ?? null
 			}
 		}
 	},
@@ -71,6 +76,8 @@ export const settings = {
 		const { setAttributes, attributes, clientId } = props
 		const rootStore = useRootStore()
 		const sidebarSettingsId = `aioseo-${clientId}-settings`
+		const blockRef = useRef(null)
+		const hasRenderedRef = useRef(false)
 
 		const postTitle = useSelect((select) =>
 			select('core/editor').getEditedPostAttribute('title')
@@ -138,11 +145,15 @@ export const settings = {
 							'p',
 							{ className: 'aioseo-breadcrumbs-sidebar-text' },
 							[
-								el('span', { key: 'text' }, __('You can customize your breadcrumb trail under ', td)),
+								el(
+									'span',
+									{ key: 'breadcrumb-text' },
+									__('You can customize your breadcrumb trail under ', td)
+								),
 								el(
 									'a',
 									{
-										key     : 'link',
+										key     : 'breadcrumb-link',
 										href    : '#',
 										onClick : () => openBreadcrumbConfig()
 									},
@@ -156,11 +167,70 @@ export const settings = {
 		)
 
 		const user = rootStore.aioseo.user
+
+		const syncAttributesWithStore = () => {
+			const currentBreadcrumbSettings = postEditorStore?.currentPost?.breadcrumb_settings
+			if (currentBreadcrumbSettings) {
+				// Deep compare to avoid unnecessary updates
+				const currentAttributes = JSON.stringify(attributes.breadcrumbSettings)
+				const storeSettings = JSON.stringify(currentBreadcrumbSettings)
+
+				if (currentAttributes !== storeSettings) {
+					setAttributes({ breadcrumbSettings: currentBreadcrumbSettings })
+				}
+			}
+		}
+
+		const onBlockFirstRender = () => {
+			if (hasRenderedRef.current) {
+				return
+			}
+
+			hasRenderedRef.current = true
+			const breadcrumbElement = blockRef.current?.querySelector('.aioseo-breadcrumbs')
+			if (breadcrumbElement) {
+				syncAttributesWithStore()
+			}
+		}
+
+		useEffect(() => {
+			// Watch for ServerSideRender content to appear
+			if (!blockRef.current) {
+				return
+			}
+
+			const observer = new MutationObserver((mutations) => {
+				for (const mutation of mutations) {
+					// Check if ServerSideRender content was added
+					if ('childList' === mutation.type && 0 < mutation.addedNodes.length) {
+						const serverRenderElement = blockRef.current?.querySelector('.aioseo-breadcrumbs')
+
+						// Check if content actually exists (not just loading state)
+						if (serverRenderElement && serverRenderElement.innerHTML.trim() &&
+							!serverRenderElement.innerHTML.includes('Loading...') &&
+							!serverRenderElement.querySelector('.components-spinner')) {
+							onBlockFirstRender()
+							observer.disconnect()
+							break
+						}
+					}
+				}
+			})
+
+			observer.observe(blockRef.current, {
+				childList : true,
+				subtree   : true
+			})
+
+			// Cleanup observer on unmount
+			return () => observer.disconnect()
+		}, [])
+
 		return el(Fragment, {},
 			user.capabilities.aioseo_page_advanced_settings ? sidebar : null,
 			el(
 				'div',
-				{},
+				{ ref: blockRef },
 				el(
 					window.aioseo.options.breadcrumbs.enable ? Disabled : 'div',
 					null,

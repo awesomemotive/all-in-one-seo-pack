@@ -613,7 +613,7 @@ abstract class AIOSEOAbstract {
 	 *
 	 * @since 4.8.4
 	 *
-	 * @var \AIOSEO\Plugin\Common\Llms\Llms
+	 * @var \AIOSEO\Plugin\Common\Llms\Llms|\AIOSEO\Plugin\Pro\Llms\Llms
 	 */
 	public $llms = null;
 }

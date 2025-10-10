@@ -84,5 +84,9 @@ export default {
 			margin-bottom: 8px;
 		}
 	}
+
+	.aioseo-alert a {
+		text-decoration: underline;
+	}
 }
 </style>

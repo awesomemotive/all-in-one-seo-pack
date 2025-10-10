@@ -56,6 +56,16 @@ export const aiFeatures = {
 			buttonSubmit : __('Generate Meta Descriptions', td)
 		},
 		excludedPostTypes : []
+	},
+	imageGenerator : {
+		slug    : 'image-generator',
+		svg     : 'image-generator',
+		strings : {
+			name         : __('Image Generator', td),
+			description  : __('Generate AI-powered images from text prompts to visually enhance your content and capture attention.', td),
+			buttonSubmit : __('Generate Image', td)
+		},
+		excludedPostTypes : []
 	}
 }
 

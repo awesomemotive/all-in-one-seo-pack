@@ -87,9 +87,32 @@ trait Request {
 		$url = '';
 
 		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
-			$url = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+			$url = sanitize_url( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 		}
 
-		return rawurldecode( $url );
+		// Use the existing decodeUrl helper for proper non-Latin character handling
+		return aioseo()->helpers->decodeUrl( $url );
+	}
+
+	/**
+	 * Gets the LLMs URL if accessible.
+	 *
+	 * @since 4.8.8
+	 *
+	 * @param  bool   $full Whether to get the full version URL.
+	 * @return array        The LLMs URL if accessible, null otherwise.
+	 */
+	public function getLlmsUrl( $full = false ) {
+		$isAccessible = false;
+		$filename     = $full ? 'llms-full.txt' : 'llms.txt';
+
+		$fs           = aioseo()->core->fs;
+		$file         = ABSPATH . sanitize_file_name( $filename );
+		$isAccessible = $fs->exists( $file );
+
+		return [
+			'url'          => home_url( '/' . $filename ),
+			'isAccessible' => $isAccessible
+		];
 	}
 }

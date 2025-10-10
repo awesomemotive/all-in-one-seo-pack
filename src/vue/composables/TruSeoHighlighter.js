@@ -674,7 +674,7 @@ export const useTruSeoHighlighter = () => {
 
 		const interval = window.setInterval(() => {
 			tinymceEditor.value = window?.tinymce?.get('content') || null
-			if (!tinymceEditor.value) {
+			if (!tinymceEditor.value || !tinymceEditor.value.dom) {
 				return false
 			}
 

@@ -34,7 +34,7 @@ export const useAiStore = defineStore('AiStore', {
 			tone     : '',
 			audience : ''
 		},
-		isModalOpened : false
+		isModalOpened : null
 	}),
 	getters : {
 		isFreeAndOutOfCredits : (state) => {
@@ -61,6 +61,24 @@ export const useAiStore = defineStore('AiStore', {
 			return http.post(links.restUrl('ai/auth'))
 				.send({
 					accessToken
+				})
+				.then(response => {
+					if (response.body.error) {
+						console.error(response.body.error)
+
+						return
+					}
+
+					const optionsStore = useOptionsStore()
+					optionsStore.internalOptions.internal.ai = response.body.aiOptions
+
+					return response
+				})
+		},
+		getCredits (refresh = false) {
+			return http.post(links.restUrl('ai/credits'))
+				.send({
+					refresh : refresh
 				})
 				.then(response => {
 					if (response.body.error) {

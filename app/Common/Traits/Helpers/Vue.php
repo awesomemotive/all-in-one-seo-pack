@@ -97,7 +97,7 @@ trait Vue {
 				'assetsPath'        => aioseo()->core->assets->getAssetsPath(),
 				'generalSitemapUrl' => aioseo()->sitemap->helpers->getUrl( 'general' ),
 				'rssSitemapUrl'     => aioseo()->sitemap->helpers->getUrl( 'rss' ),
-				'llmsUrl'           => aioseo()->llms->getUrl(),
+				'llmsUrl'           => aioseo()->helpers->getLlmsUrl(),
 				'robotsTxtUrl'      => $this->getSiteUrl() . '/robots.txt',
 				'marketingSiteUrl'  => $this->getMarketingSiteUrl(),
 				'upgradeUrl'        => apply_filters( 'aioseo_upgrade_link', AIOSEO_MARKETING_URL . 'lite-upgrade/' ),

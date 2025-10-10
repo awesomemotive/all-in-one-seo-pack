@@ -72,48 +72,48 @@
 						</div>
 					</template>
 				</div>
+			</div>
+		</template>
 
-				<div class="aioseo-ai-content-feature-modal-body-footer">
-					<div class="footer-left">
-						<base-button
-							v-if="currentScreen === 'results'"
-							class="rephrase-button"
-							size="small"
-							type="gray"
-							@click="event => generate(true)"
-							:disabled="!aiContent.hasEnoughCredits(5) || postContentLength < 500"
-						>
-							<svg-rephrase />
+		<template #footer>
+			<div class="footer-left">
+				<base-button
+					v-if="currentScreen === 'results'"
+					class="rephrase-button"
+					size="small"
+					type="gray"
+					@click="event => generate(true)"
+					:disabled="!aiContent.hasEnoughCredits(5) || postContentLength < 500"
+				>
+					<svg-rephrase />
 
-							{{ strings.rephrase }}
-						</base-button>
+					{{ strings.rephrase }}
+				</base-button>
 
-						<credit-counter />
-					</div>
+				<credit-counter />
+			</div>
 
-					<div class="footer-right">
-						<base-button
-							v-if="currentScreen === 'settings' && 0 < postEditorStore.currentPost.ai.descriptions.length"
-							class="view-button"
-							size="small"
-							type="gray"
-							@click="event => currentScreen = 'results'"
-						>
-							<span>{{ strings.viewPreviousResults }}</span>
-						</base-button>
+			<div class="footer-right">
+				<base-button
+					v-if="currentScreen === 'settings' && 0 < postEditorStore.currentPost.ai.descriptions.length"
+					class="view-button"
+					size="small"
+					type="gray"
+					@click="event => currentScreen = 'results'"
+				>
+					<span>{{ strings.viewPreviousResults }}</span>
+				</base-button>
 
-						<base-button
-							v-if="currentScreen === 'settings'"
-							class="generate-button"
-							size="small"
-							type="blue"
-							@click="event => generate(false)"
-							:disabled="!aiContent.hasEnoughCredits(10) || postContentLength < 500"
-						>
-							{{ strings.generateButtonText }}
-						</base-button>
-					</div>
-				</div>
+				<base-button
+					v-if="currentScreen === 'settings'"
+					class="generate-button"
+					size="small"
+					type="blue"
+					@click="event => generate(false)"
+					:disabled="!aiContent.hasEnoughCredits(10) || postContentLength < 500"
+				>
+					{{ strings.generateButtonText }}
+				</base-button>
 			</div>
 		</template>
 	</core-modal>

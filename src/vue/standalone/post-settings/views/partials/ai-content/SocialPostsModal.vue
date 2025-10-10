@@ -60,7 +60,7 @@
 											size="medium"
 											:name="social.name"
 											type="checkbox"
-											:modelValue="false"
+											:modelValue="isSocialSelected(social)"
 											@update:modelValue="checked => updateSelectedSocials(checked, social)"
 										>
 											<component
@@ -104,61 +104,61 @@
 						</div>
 					</template>
 				</div>
+			</div>
+		</template>
 
-				<div class="aioseo-ai-content-feature-modal-body-footer">
-					<div class="footer-left">
-						<credit-counter />
-					</div>
+		<template #footer>
+			<div class="footer-left">
+				<credit-counter />
+			</div>
 
-					<div class="footer-right">
-						<base-button
-							v-if="shouldShowViewPreviousResults"
-							class="view-button"
-							size="small"
-							type="gray"
-							@click="event => currentScreen = 'results'"
-						>
-							<span>{{ strings.viewPreviousResults }}</span>
-						</base-button>
+			<div class="footer-right">
+				<base-button
+					v-if="shouldShowViewPreviousResults"
+					class="view-button"
+					size="small"
+					type="gray"
+					@click="event => currentScreen = 'results'"
+				>
+					<span>{{ strings.viewPreviousResults }}</span>
+				</base-button>
 
-						<base-button
-							v-if="currentScreen === 'settings'"
-							class="generate-button"
-							size="small"
-							type="blue"
-							@click="event => generate(false)"
-							:disabled="aiStore.socialPosts.selected.length < 1 || !aiContent.hasEnoughCredits(10 * aiStore.socialPosts.selected.length)"
-						>
-							{{ generateButtonText }}
-						</base-button>
+				<base-button
+					v-if="currentScreen === 'settings'"
+					class="generate-button"
+					size="small"
+					type="blue"
+					@click="event => generate(false)"
+					:disabled="aiStore.socialPosts.selected.length < 1 || !aiContent.hasEnoughCredits(10 * aiStore.socialPosts.selected.length)"
+				>
+					{{ generateButtonText }}
+				</base-button>
 
-						<base-button
-							v-if="currentScreen === 'results'"
-							class="copy-button"
-							size="small"
-							type="gray"
-							v-clipboard:copy="copyContent"
-							v-clipboard:success="onCopy"
-						>
-							<svg-copy
-								v-if="!justCopied"
-							/>
+				<base-button
+					v-if="currentScreen === 'results'"
+					class="copy-button"
+					size="small"
+					type="gray"
+					v-clipboard:copy="copyContent"
+					v-clipboard:success="onCopy"
+				>
+					<svg-copy
+						v-if="!justCopied"
+					/>
 
-							<svg-circle-check-solid
-								v-if="justCopied"
-							/>
+					<svg-circle-check-solid
+						v-if="justCopied"
+					/>
 
-							<span>{{ copyText }}</span>
-						</base-button>
-					</div>
-				</div>
+					<span>{{ copyText }}</span>
+				</base-button>
 			</div>
 		</template>
 	</core-modal>
 </template>
 
 <script>
-import { computed, ref, onUpdated } from 'vue'
+import { computed, ref } from 'vue'
 
 import {
 	useAiStore,
@@ -321,10 +321,6 @@ export default {
 				icon : 'svg-instagram'
 			}
 		]
-
-		onUpdated(() => {
-			aiStore.socialPosts.selected = []
-		})
 
 		return {
 			aiStore,
@@ -499,7 +495,8 @@ export default {
 	.results {
 		.aioseo-ai-content-social-post {
 			min-height: 400px;
-
+			font-weight: 400;
+			color: $font-color;
 			pointer-events: none;
 		}
 

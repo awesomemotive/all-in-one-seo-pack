@@ -50,10 +50,11 @@ export const observeElement = params => {
 		}
 
 		if (el) {
-			params.done(el)
 			if (!params.loop) {
 				obs.disconnect()
 			}
+
+			params.done(el)
 		}
 	}
 

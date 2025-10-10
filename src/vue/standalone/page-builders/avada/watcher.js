@@ -27,7 +27,7 @@ const handleEditorChange = () => {
 }
 
 /**
- * Save SEO Settings when WP Bakery editor is saved.
+ * Save SEO Settings when Avada editor is saved.
  *
  * @returns {void}.
  */
@@ -73,35 +73,130 @@ const enableSaveButton = () => {
 	FusionApp?.set('hasChange', true)
 }
 
-export default () => {
-	if (!(window.FusionApp || window.FusionPageBuilderApp)?.builderActive) {
-		return
+/**
+ * Initialize backend editor event listeners
+ *
+ * @returns {void}
+ */
+const initBackendListeners = () => {
+	// Wait for FusionPageBuilderEvents to be available
+	const checkForEvents = () => {
+		if (window.FusionPageBuilderEvents && 'function' === typeof window.FusionPageBuilderEvents.on) {
+			const backendEvents = [
+				'fusion-element-added',
+				'fusion-element-removed',
+				'fusion-element-cloned',
+				'fusion-element-sorted'
+			]
+
+			backendEvents.forEach(eventName => {
+				window.FusionPageBuilderEvents.on(eventName, () => {
+					debounce(processContent, 1000)
+				})
+			})
+
+			window.FusionPageBuilderEvents.on('fusion-settings-modal-open', () => {
+				debounce(processContent, 2000)
+			})
+
+			return true
+		}
+		return false
 	}
 
-	processContent()
+	// Try immediately, then retry with intervals
+	if (!checkForEvents()) {
+		let attempts = 0
+		const maxAttempts = 50 // 10 seconds max wait
 
-	const fusionEvents = window.FusionEvents || window.FusionPageBuilderEvents || {}
-	const changeEvents = [
-		'fusion-app-setup', // Triggers on first load.
-		'fusion-history-save-step',
+		const interval = setInterval(() => {
+			attempts++
+			if (checkForEvents() || attempts >= maxAttempts) {
+				clearInterval(interval)
+			}
+		}, 200) // Check every 200ms
+	}
+}
+
+/**
+ * Initialize frontend editor event listeners
+ *
+ * @returns {void}
+ */
+const initFrontendListeners = () => {
+	const frontendChangeEvents = [
+		'fusion-app-setup',
 		'fusion-element-added',
+		'fusion-element-edited',
 		'fusion-element-removed',
 		'fusion-element-cloned',
 		'fusion-content-changed',
 		'fusion-post_title-changed'
 	].join(' ')
 
-	fusionEvents.on(changeEvents, () => {
+	window.FusionEvents.on(frontendChangeEvents, () => {
 		debounce(processContent, 1000)
 	})
 
-	fusionEvents.on('fusion-app-saved', () => {
+	window.FusionEvents.on('fusion-app-saved', () => {
 		debounce(handleEditorSave, 100)
 	})
 
-	fusionEvents.on('fusion-sidebar-toggled', (isOpen) => {
+	window.FusionEvents.on('fusion-sidebar-toggled', (isOpen) => {
 		emitter.emit('fusionSidebarToggled', isOpen)
 	})
+}
+
+/**
+ * Wait for builder to be ready and then initialize appropriate listeners
+ *
+ * @returns {void}
+ */
+const waitForBuilderReady = () => {
+	const checkBuilderReady = () => {
+		const { FusionApp, FusionPageBuilderApp, FusionEvents } = window
+
+		// Check if any builder is active
+		const hasActiveBuilder = (FusionApp?.builderActive) ||
+							   (FusionPageBuilderApp?.builderActive) ||
+							   (FusionPageBuilderApp && document.querySelector('#fusion_builder_main_container'))
+
+		if (!hasActiveBuilder) {
+			return false
+		}
+
+		// Determine which editor type and initialize accordingly
+		if (FusionEvents && FusionApp?.builderActive) {
+			initFrontendListeners()
+
+			return true
+		} else if (FusionPageBuilderApp) {
+			initBackendListeners()
+
+			return true
+		}
+
+		return false
+	}
+
+	if (!checkBuilderReady()) {
+		window.jQuery(document).ready(() => {
+			if (!checkBuilderReady()) {
+				// Wait for window load as last resort
+				window.jQuery(window).on('load', () => {
+					setTimeout(checkBuilderReady, 500)
+				})
+			}
+		})
+	}
+}
+
+export default () => {
+	// Initial content processing
+	processContent()
+
+	// Wait for builder to be ready before setting up event listeners
+	waitForBuilderReady()
 
 	// This hook will fire when the AIOSEO settings are updated.
 	emitter.on('postSettingsUpdated', enableSaveButton)

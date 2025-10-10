@@ -10,7 +10,7 @@
       <span class="description">
         {{ strings.description }}
 
-        <span v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'aiContentGenerator', true)" />
+        <span v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'aiBuyingCredits', true)" />
       </span>
     </div>
 
@@ -43,6 +43,51 @@
 
         <div class="aioseo-description">
           {{ strings.audienceDescription }}
+        </div>
+      </template>
+    </core-settings-row>
+
+	<core-settings-row :name="aiContent.strings.imageQuality">
+      <template #content>
+        <base-select
+			size="medium"
+			:options="aiContent.imageQualityOptions"
+			:modelValue="aiContent.imageQualityOptions.find(o => o.value === optionsStore.options.aiContent.imageQuality)"
+			@update:modelValue="value => optionsStore.options.aiContent.imageQuality = value.value"
+		/>
+
+        <div class="aioseo-description">
+			{{ strings.imageQualityDescription }}
+        </div>
+      </template>
+    </core-settings-row>
+
+	<core-settings-row :name="aiContent.strings.imageStyle">
+      <template #content>
+        <base-select
+			size="medium"
+			:options="aiContent.imageStyleOptions"
+			:modelValue="aiContent.imageStyleOptions.find(o => o.value === optionsStore.options.aiContent.imageStyle)"
+			@update:modelValue="value => optionsStore.options.aiContent.imageStyle = value.value"
+		/>
+
+        <div class="aioseo-description">
+			{{ strings.imageStyleDescription }}
+        </div>
+      </template>
+    </core-settings-row>
+
+	<core-settings-row :name="aiContent.strings.imageAspectRatio">
+      <template #content>
+        <base-select
+			size="medium"
+			:options="aiContent.imageAspectRatioOptions"
+			:modelValue="aiContent.imageAspectRatioOptions.find(o => o.value === optionsStore.options.aiContent.imageAspectRatio)"
+			@update:modelValue="value => optionsStore.options.aiContent.imageAspectRatio = value.value"
+		  />
+
+        <div class="aioseo-description">
+			{{ strings.imageAspectRatioDescription }}
         </div>
       </template>
     </core-settings-row>
@@ -97,12 +142,15 @@ export default {
 			keyPointsSvg        : 'key-points',
 			repurposeContentSvg : 'repurpose-content',
 			strings             : {
-				description         : __('Get advanced AI suggestions for meta tags, social media posts, FAQs, key points, and more — all perfectly tailored to your content.', td),
-				tone                : __('Tone', td),
-				toneDescription     : __('The default tone that characterizes your content. This can be overridden while using the AI Content Generator.', td),
-				audience            : __('Audience', td),
-				audienceDescription : __('The default audience that usually reads your content. This can be overridden while using the AI Content Generator.', td),
-				connect             : __('Connect to AI Content', td)
+				description                 : __('Get advanced AI suggestions for meta tags, social media posts, FAQs, key points, and more — all perfectly tailored to your content.', td),
+				tone                        : __('Tone', td),
+				toneDescription             : __('The default tone that characterizes your content.', td),
+				audience                    : __('Audience', td),
+				audienceDescription         : __('The default audience that typically reads your content.', td),
+				imageQualityDescription     : __('The default image quality that is used by the AI Image Generator.', td),
+				imageStyleDescription       : __('The default image style that is used by the AI Image Generator.', td),
+				imageAspectRatioDescription : __('The default image aspect ratio that is used by the AI Image Generator.', td),
+				connect                     : __('Connect to AI Content', td)
 			}
 		}
 	},

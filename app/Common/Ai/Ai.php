@@ -14,6 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Ai {
 	/**
+	 * The image class.
+	 *
+	 * @since 4.8.8
+	 *
+	 * @var Image|null
+	 */
+	public $image = null;
+
+	/**
 	 * The base URL for the licensing server.
 	 *
 	 * @since 4.8.4
@@ -21,6 +30,16 @@ class Ai {
 	 * @var string
 	 */
 	private $licensingUrl = 'https://licensing.aioseo.com/v1/';
+
+	/**
+	 * The AI Generator API URL.
+	 *
+	 * @since   4.8.4
+	 * @version 4.8.8 Moved from {@see \AIOSEO\Plugin\Common\Api\Ai}.
+	 *
+	 * @var string
+	 */
+	private $aiGeneratorApiUrl = 'https://ai-generator.aioseo.com/v1/';
 
 	/**
 	 * The action name for fetching credits.
@@ -51,6 +70,8 @@ class Ai {
 
 			aioseo()->core->cache->update( 'ai_get_credits', true, 5 * MINUTE_IN_SECONDS );
 		}
+
+		$this->image = new Image();
 	}
 
 	/**
@@ -100,6 +121,9 @@ class Ai {
 
 		aioseo()->internalOptions->internal->ai->accessToken        = sanitize_text_field( $data->accessToken );
 		aioseo()->internalOptions->internal->ai->isTrialAccessToken = $data->isFree ?? false;
+
+		// Reset the manually connected flag when getting a new token automatically.
+		aioseo()->internalOptions->internal->ai->isManuallyConnected = false;
 
 		// Fetch the credit totals.
 		$this->updateCredits( true );
@@ -226,5 +250,17 @@ class Ai {
 		}
 
 		return $this->licensingUrl;
+	}
+
+	/**
+	 * Returns the AI Generator API URL.
+	 *
+	 * @since   4.8.4
+	 * @version 4.8.8 Moved from {@see \AIOSEO\Plugin\Common\Api\Ai}.
+	 *
+	 * @return string The AI Generator API URL.
+	 */
+	public function getAiGeneratorApiUrl() {
+		return defined( 'AIOSEO_AI_GENERATOR_URL' ) ? AIOSEO_AI_GENERATOR_URL : $this->aiGeneratorApiUrl;
 	}
 }

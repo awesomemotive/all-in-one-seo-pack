@@ -82,9 +82,8 @@
 				<div
 					class="label"
 					:class="{ [getColorClass] : isLabelColored }"
-				>
-					{{ label }}
-				</div>
+					v-html="label"
+				/>
 			</div>
 		</div>
 	</div>

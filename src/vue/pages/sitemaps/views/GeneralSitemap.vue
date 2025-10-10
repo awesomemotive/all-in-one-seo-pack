@@ -97,13 +97,12 @@
 			>
 				<template #content>
 					<base-input
-						v-model="optionsStore.options.sitemap.general.linksPerIndex"
+						v-model="linksPerIndexValue"
 						class="aioseo-links-per-site"
 						type="number"
 						size="medium"
 						:min="1"
 						:max="50000"
-						@keyup="validateLinksPerIndex"
 					/>
 
 					<div class="aioseo-description">
@@ -487,6 +486,15 @@ export default {
 		}
 	},
 	computed : {
+		linksPerIndexValue : {
+			get () {
+				return this.optionsStore.options.sitemap.general.linksPerIndex
+			},
+			set (value) {
+				const validatedValue = this.validateLinksPerIndex(value)
+				this.optionsStore.options.sitemap.general.linksPerIndex = validatedValue
+			}
+		},
 		getPostTypeRows () {
 			return this.rootStore.aioseo.postData.postTypes.map(p => p.name)
 		},

@@ -1,11 +1,20 @@
-export const useCommonSitemap = () => {
-	const validateLinksPerIndex = event => {
-		if (1 > event.target.value) {
-			event.target.value = 1
+export const useCommonSitemap = (minLinks = 1, maxLinks = 50000) => {
+	const validateLinksPerIndex = (value) => {
+		// Handle empty, null, undefined values immediately
+		if ('' === value || null === value || value === undefined) {
+			return minLinks
 		}
-		if (50000 < event.target.value) {
-			event.target.value = 50000
+
+		const numValue = parseInt(value, 10)
+
+		if (isNaN(numValue) || numValue < minLinks) {
+			return minLinks
 		}
+		if (numValue > maxLinks) {
+			return maxLinks
+		}
+
+		return numValue
 	}
 
 	return {

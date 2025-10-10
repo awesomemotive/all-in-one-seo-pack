@@ -109,7 +109,10 @@ const docLinks      = {
 	businessPhoneNumber           : `${marketingSite}docs/best-business-phone-services`,
 	keywordRankTracker            : `${marketingSite}docs/using-the-keyword-rank-tracker-feature-in-search-statistics/`,
 	writingAssistantHowToUse      : `${marketingSite}docs/how-to-use-the-writing-assistant-in-aioseo/`,
-	aiContentGenerator            : `${marketingSite}docs/ai-content-generator/`
+	aiContentGenerator            : `${marketingSite}docs/ai-content-generator/`,
+	aiDisclaimer                  : `${marketingSite}docs/using-the-ai-assistant-in-all-in-one-seo-to-create-content/#aioseo-ai-generated-content-disclaimer`,
+	aiBuyingCredits               : `${marketingSite}docs/buying-and-managing-credits-for-the-aioseo-ai-features/`,
+	llmsTxt                       : `${marketingSite}docs/how-to-create-an-llms-txt-using-all-in-one-seo/`
 }
 
 const upsellLinks = {

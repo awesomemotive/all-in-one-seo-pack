@@ -13,6 +13,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class DeprecatedWordPress {
 	/**
+	 * The new minimum version of WordPress.
+	 *
+	 * @since 4.8.8
+	 *
+	 * @var string
+	 */
+	private $newMinVersion = '6.0';
+
+	/**
 	 * Class Constructor.
 	 *
 	 * @since 4.1.2
@@ -29,9 +38,7 @@ class DeprecatedWordPress {
 	 * @return void
 	 */
 	public function maybeShowNotice() {
-		global $wp_version; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
-
-		$dismissed = get_option( '_aioseo_deprecated_wordpress_dismissed', true );
+		$dismissed = get_option( '_aioseo_deprecated_wordpress_dismissed_' . $this->newMinVersion, true );
 		if ( '1' === $dismissed ) {
 			return;
 		}
@@ -42,7 +49,8 @@ class DeprecatedWordPress {
 		}
 
 		// Show if WordPress version is deprecated.
-		if ( version_compare( $wp_version, '5.4', '>=' ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		global $wp_version; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		if ( ! version_compare( $wp_version, $this->newMinVersion, '<' ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			return;
 		}
 
@@ -82,11 +90,12 @@ class DeprecatedWordPress {
 				echo wp_kses(
 					sprintf(
 						// phpcs:ignore Generic.Files.LineLength.MaxExceeded
-						// Translators: 1 - Opening HTML bold tag, 2 - Closing HTML bold tag, 3 - The short plugin name ("AIOSEO"), 4 - The current year, 5 - Opening HTML link tag, 6 - Closing HTML link tag.
-						__( '%1$sNote:%2$s %3$s will be discontinuing support for WordPress versions older than version 5.7 by the end of %4$s. %5$sRead more for additional information.%6$s', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+						// Translators: 1 - Opening HTML bold tag, 2 - Closing HTML bold tag, 3 - The short plugin name ("AIOSEO"), 4 - The WordPress version, 5 - The current year, 6 - Opening HTML link tag, 7 - Closing HTML link tag.
+						__( '%1$sNote:%2$s %3$s will be discontinuing support for WordPress versions older than version %4$s by the end of %5$s. %6$sRead more for additional information.%7$s', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 						'<strong>',
 						'</strong>',
 						'AIOSEO',
+						$this->newMinVersion,
 						gmdate( 'Y' ),
 						'<a href="https://aioseo.com/docs/update-wordpress/?utm_source=WordPress&utm_medium=' . $medium . '&utm_campaign=outdated-wordpress-notice" target="_blank" rel="noopener noreferrer">', // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 						'</a>'
@@ -160,7 +169,7 @@ class DeprecatedWordPress {
 
 		check_ajax_referer( 'aioseo-dismiss-deprecated-wordpress', 'nonce' );
 
-		update_option( '_aioseo_deprecated_wordpress_dismissed', true );
+		update_option( '_aioseo_deprecated_wordpress_dismissed_' . $this->newMinVersion, true );
 
 		return wp_send_json_success();
 	}

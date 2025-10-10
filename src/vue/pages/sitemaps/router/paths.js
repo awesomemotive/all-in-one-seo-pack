@@ -56,5 +56,14 @@ export default [
 			access : 'aioseo_sitemap_settings',
 			name   : __('HTML Sitemap', td)
 		}
+	},
+	{
+		path      : '/llms-sitemap',
+		name      : 'llms-sitemap',
+		component : loadView('Main'),
+		meta      : {
+			access : 'aioseo_sitemap_settings',
+			name   : __('LLMs.txt', td)
+		}
 	}
 ]

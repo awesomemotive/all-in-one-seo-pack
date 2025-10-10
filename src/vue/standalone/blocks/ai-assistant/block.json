@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schemas.wp.org/wp/5.8/block.json",
+  "name": "aioseo/ai-assistant",
+  "title": "AIOSEO - AI Assistant",
+  "category": "aioseo",
+  "description": "Quickly generate content using Artificial Intelligence.",
+  "supports": {
+    "html": false,
+    "multiple": true,
+    "reusable": false,
+    "customClassName": false
+  },
+  "attributes": {
+    "content": {
+      "type": "string",
+      "default": ""
+    },
+    "userPrompt": {
+      "type": "string",
+      "default": ""
+    },
+    "messages": {
+      "type": "array",
+      "default": null
+    },
+    "isFetching": {
+      "type": "boolean",
+      "default": false
+    },
+    "tone": {
+      "type": "string",
+      "default": ""
+    },
+    "audience": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "keywords": [
+    "aioseo",
+    "ai",
+    "content",
+    "generator",
+    "generate",
+    "assistant",
+    "help",
+    "magic",
+    "intelligence"
+  ],
+  "textdomain": "all-in-one-seo-pack"
+}

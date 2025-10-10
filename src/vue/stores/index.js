@@ -1,6 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia'
 
 import { useAddonsStore } from '@/vue/stores/AddonsStore'
+
 import { useAiStore } from '@/vue/stores/AiStore'
 import { useAnalyzerStore } from '@/vue/stores/AnalyzerStore'
 import { useBackupsStore } from '@/vue/stores/BackupsStore'
@@ -32,6 +33,8 @@ import { useTruSeoHighlighterStore } from '@/vue/stores/TruSeoHighlighterStore'
 import { useWritingAssistantSettingsStore } from '@/vue/stores/WritingAssistantSettingsStore'
 
 // Standalone stores.
+import { useAiAssistantStore } from '@/vue/stores/standalones/AiAssistantStore'
+import { useAiImageGeneratorStore } from '@/vue/stores/standalones/AiImageGeneratorStore'
 import { useTableOfContentsStore } from '@/vue/stores/standalones/TableOfContentsStore'
 import { useWritingAssistantStore } from '@/vue/stores/standalones/WritingAssistantStore'
 
@@ -216,6 +219,8 @@ export {
 	loadPiniaStores,
 	// All the stores.
 	useAddonsStore,
+	useAiAssistantStore,
+	useAiImageGeneratorStore,
 	useAiStore,
 	useAnalyzerStore,
 	useBackupsStore,

@@ -27,6 +27,15 @@ class Localization {
 	 * @since 4.2.1
 	 */
 	public function __construct() {
+		add_action( 'init', [ $this, 'init' ] );
+	}
+
+	/**
+	 * Registers our hooks.
+	 *
+	 * @since 4.8.8
+	 */
+	public function init() {
 		if ( apply_filters( 'aioseo_sitemap_localization_disable', false ) ) {
 			return;
 		}

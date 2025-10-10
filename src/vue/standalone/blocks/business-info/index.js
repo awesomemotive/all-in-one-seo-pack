@@ -209,7 +209,7 @@ export const settings = {
 
 				app.mount(node)
 
-				businessInfoSidebarApps.push({ clientId, app })
+				businessInfoSidebarApps.push({ id: clientId, app })
 			}
 		}
 
@@ -259,7 +259,7 @@ export const settings = {
 
 					app.mount(el)
 
-					businessInfoSidebarWatcherApps.push({ clientId, app })
+					businessInfoSidebarWatcherApps.push({ id: clientId, app })
 				}
 			})
 		}

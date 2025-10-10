@@ -137,16 +137,18 @@ export default {
 					position: absolute;
 					top: 4px;
 					right: 4px;
-					width: 32px;
-					height: 32px;
+					width: 32px !important;
+					height: 32px !important;
 					background-color: $background;
 					border: 1px solid $input-border;
 					border-radius: 4px;
 					cursor: pointer;
+					padding: 0 !important;
 
 					svg {
-						width: 14px;
-						height: 14px;
+						width: 14px !important;
+						height: 14px !important;
+						color: $black !important;
 					}
 				}
 			}

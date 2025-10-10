@@ -29,8 +29,7 @@ export const useSchemaStore = defineStore('SchemaStore', {
 		isEditingDefaultGraph   : false,
 		isEditingGraph          : false,
 		isEditingTemplate       : false,
-		modalOpenMetabox        : false,
-		modalOpenSidebar        : false,
+		modalOpen               : false,
 		output                  : '',
 		outputKey               : 0,
 		tabs                    : {
@@ -77,9 +76,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			this.resetSessionState()
 
-			this.graphCardsKey    = this.graphCardsKey + 1
-			this.modalOpenMetabox = false
-			this.modalOpenSidebar = false
+			this.graphCardsKey = this.graphCardsKey + 1
+			this.modalOpen     = false
 		},
 		addCustomAsTemplate () {
 			const optionsStore      = useOptionsStore()
@@ -118,9 +116,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			this.resetSessionState()
 
-			this.graphCardsKey    = this.graphCardsKey + 1
-			this.modalOpenMetabox = false
-			this.modalOpenSidebar = false
+			this.graphCardsKey = this.graphCardsKey + 1
+			this.modalOpen     = false
 		},
 		addDefaultGraph () {
 			const postEditorStore = usePostEditorStore()
@@ -128,9 +125,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			this.resetSessionState()
 
-			this.graphCardsKey    = this.graphCardsKey + 1
-			this.modalOpenMetabox = false
-			this.modalOpenSidebar = false
+			this.graphCardsKey = this.graphCardsKey + 1
+			this.modalOpen     = false
 		},
 		addGraph () {
 			const postEditorStore = usePostEditorStore()
@@ -142,9 +138,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			this.resetSessionState()
 
-			this.graphCardsKey    = this.graphCardsKey + 1
-			this.modalOpenMetabox = false
-			this.modalOpenSidebar = false
+			this.graphCardsKey = this.graphCardsKey + 1
+			this.modalOpen     = false
 		},
 		addGraphAsTemplate () {
 			const schema = useSchema()
@@ -212,9 +207,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			this.resetSessionState()
 
-			this.graphCardsKey    = this.graphCardsKey + 1
-			this.modalOpenMetabox = false
-			this.modalOpenSidebar = false
+			this.graphCardsKey = this.graphCardsKey + 1
+			this.modalOpen     = false
 		},
 		deleteCustomGraph (graphIndex) {
 			const postEditorStore = usePostEditorStore()
@@ -227,9 +221,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			this.resetSessionState()
 
-			this.graphCardsKey    = this.graphCardsKey + 1
-			this.modalOpenMetabox = false
-			this.modalOpenSidebar = false
+			this.graphCardsKey = this.graphCardsKey + 1
+			this.modalOpen     = false
 		},
 		deleteDefaultGraph () {
 			const postEditorStore = usePostEditorStore()
@@ -237,9 +230,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			this.resetSessionState()
 
-			this.graphCardsKey    = this.graphCardsKey + 1
-			this.modalOpenMetabox = false
-			this.modalOpenSidebar = false
+			this.graphCardsKey = this.graphCardsKey + 1
+			this.modalOpen     = false
 		},
 		deleteGraph (graphIndex) {
 			const postEditorStore = usePostEditorStore()
@@ -252,9 +244,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			this.resetSessionState()
 
-			this.graphCardsKey    = this.graphCardsKey + 1
-			this.modalOpenMetabox = false
-			this.modalOpenSidebar = false
+			this.graphCardsKey = this.graphCardsKey + 1
+			this.modalOpen     = false
 		},
 		deleteTemplate (templateIndex) {
 			const templateId   = this.graph.id
@@ -281,7 +272,7 @@ export const useSchemaStore = defineStore('SchemaStore', {
 					}
 				})
 		},
-		editCustomGraph ({ customGraphIndex, isSidebar }) {
+		editCustomGraph ({ customGraphIndex }) {
 			// It's important to create a clone so that we're not editing the existing graph object.
 			const postEditorStore   = usePostEditorStore()
 			const editedCustomGraph = JSON.parse(JSON.stringify(postEditorStore.currentPost.schema.customGraphs[customGraphIndex]))
@@ -290,13 +281,9 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			this.tabs.generator = 'custom-schema'
 
-			if (isSidebar) {
-				this.modalOpenSidebar = true
-			} else {
-				this.modalOpenMetabox = true
-			}
+			this.modalOpen = true
 		},
-		editDefaultGraph ({ isSidebar, parentGraphName }) {
+		editDefaultGraph ({ parentGraphName }) {
 			this.defaultGraphParent = parentGraphName
 
 			// First, check the default graph already has properties set.
@@ -308,13 +295,9 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.isEditingDefaultGraph = true
 			this.tabs.generator = 'schema-templates'
 
-			if (isSidebar) {
-				this.modalOpenSidebar = true
-			} else {
-				this.modalOpenMetabox = true
-			}
+			this.modalOpen = true
 		},
-		async editGraph ({ graphIndex, isSidebar }) {
+		async editGraph ({ graphIndex }) {
 			// It's important to create a clone so that we're not editing the existing graph object.
 			const postEditorStore = usePostEditorStore()
 			const editedGraph     = JSON.parse(JSON.stringify(postEditorStore.currentPost.schema.graphs[graphIndex]))
@@ -323,11 +306,7 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.isEditingGraph = true
 			this.tabs.generator = 'schema-templates'
 
-			if (isSidebar) {
-				this.modalOpenSidebar = true
-			} else {
-				this.modalOpenMetabox = true
-			}
+			this.modalOpen = true
 
 			// We need to wait for the next tick so that the modal is open before we turn off the isDirty flag.
 			await nextTick()
@@ -384,9 +363,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			this.resetSessionState()
 
-			this.graphCardsKey    = this.graphCardsKey + 1
-			this.modalOpenMetabox = false
-			this.modalOpenSidebar = false
+			this.graphCardsKey = this.graphCardsKey + 1
+			this.modalOpen     = false
 		},
 		updateDefaultGraph () {
 			const postEditorStore = usePostEditorStore()
@@ -394,9 +372,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			this.resetSessionState()
 
-			this.graphCardsKey    = this.graphCardsKey + 1
-			this.modalOpenMetabox = false
-			this.modalOpenSidebar = false
+			this.graphCardsKey = this.graphCardsKey + 1
+			this.modalOpen     = false
 		},
 		updateGraph () {
 			const postEditorStore = usePostEditorStore()
@@ -413,9 +390,8 @@ export const useSchemaStore = defineStore('SchemaStore', {
 
 			this.resetSessionState()
 
-			this.graphCardsKey    = this.graphCardsKey + 1
-			this.modalOpenMetabox = false
-			this.modalOpenSidebar = false
+			this.graphCardsKey = this.graphCardsKey + 1
+			this.modalOpen     = false
 		},
 		updateSchemaOutput () {
 			const postEditorStore = usePostEditorStore()
@@ -516,18 +492,14 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			const optionsStore = useOptionsStore()
 			optionsStore.internalOptions.internal.schema.templates = templates
 		},
-		setModalOpen ({ isOpen, initialTab, isSidebar }) {
+		setModalOpen ({ isOpen, initialTab }) {
 			if (!isOpen) {
 				this.resetSessionState()
 
 				this.setTabTemplates('schema-catalog')
 			}
 
-			if (isSidebar) {
-				this.modalOpenSidebar = isOpen
-			} else {
-				this.modalOpenMetabox = isOpen
-			}
+			this.modalOpen = isOpen
 
 			if (initialTab) {
 				this.tabs.generator = initialTab

@@ -526,10 +526,31 @@ trait Options {
 
 			$keys[]         = $key;
 			$values[ $key ] = $this->resetValues( $value, $defaults, $keys );
+
+			if ( 'llms' === $key ) {
+				$this->handleLlmsReset();
+			}
+
 			array_pop( $keys );
 		}
 
 		return $values;
+	}
+
+	/**
+	 * Handles LLMS reset operations.
+	 *
+	 * @since 4.8.8
+	 *
+	 * @return void
+	 */
+	protected function handleLlmsReset() {
+		// Add LLMS cleanup when doing a full reset
+		aioseo()->actionScheduler->unschedule( aioseo()->llms->llmsTxtSingleAction );
+		aioseo()->actionScheduler->unschedule( aioseo()->llms->llmsTxtRecurrentAction );
+
+		// Regenerate the LLMS files after reset
+		aioseo()->llms->generateLlmsTxt();
 	}
 
 	/**

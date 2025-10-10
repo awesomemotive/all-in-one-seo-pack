@@ -26,7 +26,7 @@
 
 			<a
 				class="aioseo-pro-upgrade-link"
-				:href="links.getPricingUrl('metabox', 'ai-content', null, rootStore.isPro ? 'pricing' : 'liteUpgrade')"
+				:href="links.getPricingUrl('metabox', 'ai-content', null, 'liteUpgrade')"
 				target="_blank"
 				rel="noopener noreferrer"
 			>

@@ -11,7 +11,7 @@
 			size="small"
 			type="blue"
 			:disabled="!optionsStore.internalOptions.internal.ai.credits.remaining || buttonDisabled"
-			@click="openModal"
+			@click="aiStore.isModalOpened = feature.slug"
 		>
 			{{ feature.strings.buttonSubmit }}
 		</base-button>
@@ -19,8 +19,9 @@
 		<component
 			:is="`${feature.slug}-modal`"
 			:feature="feature"
-			:show="showModal"
-			@closeModal="closeModal"
+			:show="aiStore.isModalOpened === feature.slug"
+			@closeModal="aiStore.isModalOpened = null"
+			:modal-name="`ai-content-${feature.slug}-modal`"
 		/>
 	</div>
 </template>
@@ -34,15 +35,17 @@ import {
 } from '@/vue/stores'
 
 import FaqsModal from './FaqsModal'
+import ImageGeneratorModal from './ImageGeneratorModal'
 import KeyPointsModal from './KeyPointsModal'
-import MetaTitleModal from './MetaTitleModal'
 import MetaDescriptionModal from './MetaDescriptionModal'
+import MetaTitleModal from './MetaTitleModal'
 import SocialPostsModal from './SocialPostsModal'
 
 import SvgFaq from '@/vue/components/common/svg/ai/Faq'
+import SvgImageGenerator from '@/vue/components/common/svg/ai/ImageGenerator'
 import SvgKeyPoints from '@/vue/components/common/svg/ai/KeyPoints'
-import SvgMetaTitle from '@/vue/components/common/svg/ai/MetaTitle'
 import SvgMetaDescription from '@/vue/components/common/svg/ai/MetaDescription'
+import SvgMetaTitle from '@/vue/components/common/svg/ai/MetaTitle'
 import SvgRepurposeContent from '@/vue/components/common/svg/ai/RepurposeContent'
 
 export default {
@@ -55,14 +58,16 @@ export default {
 	},
 	components : {
 		FaqsModal,
+		ImageGeneratorModal,
 		KeyPointsModal,
-		MetaTitleModal,
 		MetaDescriptionModal,
+		MetaTitleModal,
 		SocialPostsModal,
 		SvgFaq,
+		SvgImageGenerator,
 		SvgKeyPoints,
-		SvgMetaTitle,
 		SvgMetaDescription,
+		SvgMetaTitle,
 		SvgRepurposeContent
 	},
 	props : {
@@ -73,21 +78,6 @@ export default {
 		buttonDisabled : {
 			type     : Boolean,
 			required : false
-		}
-	},
-	data () {
-		return {
-			showModal : false
-		}
-	},
-	methods : {
-		openModal () {
-			this.showModal = true
-			this.aiStore.isModalOpened = true
-		},
-		closeModal () {
-			this.showModal = false
-			this.aiStore.isModalOpened = false
 		}
 	}
 }
@@ -131,6 +121,8 @@ export default {
 }
 
 .aioseo-modal.aioseo-ai-content-feature-modal {
+	color: $font-color;
+
 	.modal-wrapper .modal-container {
 		max-width: 900px;
 	}
@@ -171,62 +163,61 @@ export default {
 		.aioseo-ai-content-feature-modal-body-main {
 			padding: 20px;
 		}
+	}
 
-		.aioseo-ai-content-feature-modal-body-footer {
+	.modal-container__footer {
+		display: flex;
+		flex-direction: row;
+		padding: 12px 20px;
+		justify-content: space-between;
+		align-items: center;
+
+		.button-icon {
+			width: 20px;
+			height: 20px;
+			margin-right: 8px;
+		}
+
+		.footer-left {
 			display: flex;
 			flex-direction: row;
-			padding: 12px 20px;
-			border-top: 1px solid $border;
-			justify-content: space-between;
-			align-items: center;
+			gap: 12px;
 
-			.button-icon {
-				width: 20px;
-				height: 20px;
-				margin-right: 8px;
-			}
-
-			.footer-left {
+			.aioseo-ai-credit-counter {
 				display: flex;
-				flex-direction: row;
-				gap: 12px;
+				align-items: center;
 
-				.aioseo-ai-credit-counter {
+				.counter-container {
 					display: flex;
+					flex-direction: row;
 					align-items: center;
+					line-height: 22px;
 
-					.counter-container {
-						display: flex;
-						flex-direction: row;
-						align-items: center;
-						line-height: 22px;
-
-						.aioseo-tooltip {
-							display: none;
-						}
-					}
-				}
-
-				.rephrase-button {
-					svg.aioseo-ai-rephrase {
-						width: 20px;
-						height: 20px;
-						margin-right: 4px;
+					.aioseo-tooltip {
+						display: none;
 					}
 				}
 			}
 
-			.footer-right {
-				display: flex;
-				flex-direction: row;
-				gap: 12px;
+			.rephrase-button {
+				svg.aioseo-ai-rephrase {
+					width: 20px;
+					height: 20px;
+					margin-right: 4px;
+				}
+			}
+		}
 
-				.copy-button {
-					svg {
-						width: 20px;
-						height: 20px;
-						margin-right: 4px;
-					}
+		.footer-right {
+			display: flex;
+			flex-direction: row;
+			gap: 12px;
+
+			.copy-button {
+				svg {
+					width: 20px;
+					height: 20px;
+					margin-right: 4px;
 				}
 			}
 		}

@@ -259,7 +259,12 @@ trait WpUri {
 	* @param  string|array $postType The post type(s) to check against.
 	* @return object|false           The post or false on failure.
 	*/
-	public function getPostByPath( $path, $output = OBJECT, $postType = 'page' ) {
+	public function getPostByPath( $path, $output = OBJECT, $postType = null ) {
+		// If no post type specified, use all public post types
+		if ( null === $postType ) {
+			$postType = $this->getPublicPostTypes( true );
+		}
+
 		$lastChanged = wp_cache_get_last_changed( 'aioseo_posts_by_path' );
 		$hash        = md5( $path . serialize( $postType ) );
 		$cacheKey    = "get_page_by_path:$hash:$lastChanged";
@@ -281,26 +286,41 @@ trait WpUri {
 		$reversedParts = array_reverse( $parts );
 		$postNames     = "'" . implode( "','", $parts ) . "'";
 
-		$postTypes = is_array( $postType ) ? $postType : [ $postType, 'attachment' ];
+		$postTypes = is_array( $postType ) ? $postType : [ $postType ];
 		$postTypes = "'" . implode( "','", $postTypes ) . "'";
 
 		$posts = aioseo()->core->db->start( 'posts' )
 			->select( 'ID, post_name, post_parent, post_type' )
 			->whereRaw( "post_name in ( $postNames )" )
 			->whereRaw( "post_type in ( $postTypes )" )
+			->whereRaw( "post_status = 'publish'" )
 			->run()
 			->result();
 
+		if ( empty( $posts ) ) {
+			wp_cache_set( $cacheKey, 0, 'aioseo_posts_by_path' );
+
+			return false;
+		}
+
+		// Create a lookup array for posts by ID for efficient parent lookups
+		$postsById = [];
+		foreach ( $posts as $post ) {
+			$postsById[ $post->ID ] = $post;
+		}
+
 		$foundId = 0;
+		$targetPostTypes = is_array( $postType ) ? $postType : [ $postType ];
+
 		foreach ( $posts as $post ) {
 			if ( $post->post_name === $reversedParts[0] ) {
 				$count = 0;
 				$p     = $post;
 
 				// Loop through the given path parts from right to left, ensuring each matches the post ancestry.
-				while ( 0 !== (int) $p->post_parent && isset( $posts[ $p->post_parent ] ) ) {
+				while ( 0 !== (int) $p->post_parent && isset( $postsById[ $p->post_parent ] ) ) {
 					$count++;
-					$parent = $posts[ $p->post_parent ];
+					$parent = $postsById[ $p->post_parent ];
 					if ( ! isset( $reversedParts[ $count ] ) || $parent->post_name !== $reversedParts[ $count ] ) {
 						break;
 					}
@@ -313,7 +333,13 @@ trait WpUri {
 					$p->post_name === $reversedParts[ $count ]
 				) {
 					$foundId = $post->ID;
-					if ( $post->post_type === $postType ) {
+
+					// If we're looking for specific post types, prefer exact matches
+					if ( ! is_array( $postType ) && $post->post_type === $postType ) {
+						break;
+					}
+					// If we're looking for multiple post types, any match is good
+					if ( is_array( $postType ) && in_array( $post->post_type, $targetPostTypes, true ) ) {
 						break;
 					}
 				}

@@ -140,7 +140,8 @@ class Standalone {
 		$this->standaloneBlocks = [
 			'tocBlock'       => new Blocks\TableOfContents(),
 			'faqBlock'       => new Blocks\FaqPage(),
-			'keyPointsBlock' => new Blocks\KeyPoints()
+			'keyPointsBlock' => new Blocks\KeyPoints(),
+			'aiAssistant'    => new Blocks\AiAssistant()
 		];
 	}
 }

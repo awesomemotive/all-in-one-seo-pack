@@ -140,7 +140,7 @@ export const settings = {
 
 				app.mount(node)
 
-				htmlSitemapSidebarApps.push({ clientId, app })
+				htmlSitemapSidebarApps.push({ id: clientId, app })
 			}
 		}
 

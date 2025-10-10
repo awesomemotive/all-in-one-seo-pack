@@ -190,7 +190,7 @@ export const settings = {
 
 				app.mount(node)
 
-				openingHoursSidebarApps.push({ clientId, app })
+				openingHoursSidebarApps.push({ id: clientId, app })
 			}
 		}
 
@@ -240,7 +240,7 @@ export const settings = {
 
 					app.mount(el)
 
-					openingHoursSidebarWatcherApps.push({ clientId, app })
+					openingHoursSidebarWatcherApps.push({ id: clientId, app })
 				}
 			})
 		}

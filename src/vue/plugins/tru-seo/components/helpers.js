@@ -61,6 +61,8 @@ export const maybeUpdatePost = async (time = 900, run = true) => {
 
 		debounce(schemaStore.updateSchemaOutput, Math.max(time * 2, 1800))
 
+		window.aioseoBus.$emit('aioseo-content-changed')
+
 		if (run) {
 			(new TruSeo()).runAnalysis({ postId: postEditorStore.currentPost.id })
 		}

@@ -61,7 +61,7 @@
 					<base-button
 						class="medium"
 						type="blue"
-						@click="modalOpenMetabox = true; modalOpenSidebar = true"
+						@click="modalOpen = true"
 					>
 						{{strings.generateSchema}}
 					</base-button>
@@ -69,20 +69,16 @@
 					<base-button
 						class="medium"
 						type="gray"
-						@click="modalOpenMetabox = true; modalOpenSidebar = true"
+						@click="modalOpen = true"
 					>
 						{{strings.validateSchema}}
 					</base-button>
 				</div>
 
 				<cta-modal
-					:show="!isSidebar && modalOpenMetabox"
-					@close="modalOpenMetabox = false"
-				/>
-
-				<cta-modal
-					:show="isSidebar && modalOpenSidebar"
-					@close="modalOpenSidebar = false"
+					:show="modalOpen"
+					@close="modalOpen = false"
+					modal-name="schema-cta-modal"
 				/>
 			</template>
 		</core-settings-row>
@@ -129,9 +125,8 @@ export default {
 	},
 	data () {
 		return {
-			modalOpenMetabox : false,
-			modalOpenSidebar : false,
-			strings          : {
+			modalOpen : false,
+			strings   : {
 				sidebarDescription  : __('Configure Schema Markup for your content. Search engines use structured data to display rich results in SERPs.', td),
 				noGraphs            : __('You have not added any schema yet. You can add any schema graphs you like via the Schema Generator below.', td),
 				schemaInUse         : __('Schema In Use', td),

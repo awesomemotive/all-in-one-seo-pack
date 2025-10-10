@@ -63,6 +63,11 @@ class Query {
 		// then by post modified date (most recently updated at the top).
 		$orderBy = 'ap.priority DESC, p.post_modified_gmt DESC';
 
+		// For llms sitemap type, prioritize posts with pillar_content = 1
+		if ( 'llms' === aioseo()->sitemap->type ) {
+			$orderBy = 'ap.pillar_content DESC, ' . $orderBy;
+		}
+
 		// Override defaults if passed as additional arg.
 		foreach ( $additionalArgs as $name => $value ) {
 			// Attachments need to be fetched with all their fields because we need to get their post parent further down the line.
@@ -346,24 +351,18 @@ class Query {
 			->start( aioseo()->core->db->db->terms . ' as t', true )
 			->select( $fields )
 			->leftJoin( 'term_taxonomy as tt', '`tt`.`term_id` = `t`.`term_id`' )
+			->where( 'tt.taxonomy', $taxonomy )
 			->whereRaw( "
-			( `t`.`term_id` IN
 				(
-					SELECT `tt`.`term_id`
-					FROM `$termTaxonomyTable` as tt
-					WHERE `tt`.`taxonomy` = '$taxonomy'
-					AND 
-						(
-							`tt`.`count` > 0 OR
-							EXISTS (
-								SELECT 1
-								FROM `$termTaxonomyTable` as tt2
-								WHERE `tt2`.`parent` = `tt`.`term_id` 
-								AND `tt2`.`count` > 0
-							)
-						)
+					`tt`.`count` > 0 OR
+					EXISTS (
+						SELECT 1
+						FROM `$termTaxonomyTable` as tt2
+						WHERE `tt2`.`parent` = `tt`.`term_id` 
+						AND `tt2`.`count` > 0
+					)
 				)
-			)" );
+			" );
 
 		$excludedTerms = aioseo()->sitemap->helpers->excludedTerms();
 		if ( $excludedTerms ) {

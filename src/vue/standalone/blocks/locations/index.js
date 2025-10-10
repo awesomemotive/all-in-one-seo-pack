@@ -131,7 +131,7 @@ export const settings = {
 
 				app.mount(node)
 
-				locationsSidebarApps.push({ clientId, app })
+				locationsSidebarApps.push({ id: clientId, app })
 			}
 		}
 

@@ -402,13 +402,34 @@ class Helpers {
 	private function excludedObjectIds( $option ) {
 		$type = aioseo()->sitemap->type;
 
-		if ( 'llms' === $type ) {
-			return '';
-		}
-
 		// The RSS Sitemap needs to exclude whatever is excluded in the general sitemap.
 		if ( 'rss' === $type ) {
 			$type = 'general';
+		}
+
+		// For LLMS sitemap, use LLMS-specific settings
+		if ( 'llms' === $type ) {
+			// Handle LLMS-specific excluded items
+			$excluded = aioseo()->options->sitemap->llms->advancedSettings->{$option};
+
+			if ( empty( $excluded ) ) {
+				return '';
+			}
+
+			$ids = [];
+			foreach ( $excluded as $object ) {
+				if ( is_int( $object ) ) {
+					$ids[] = (int) $object;
+					continue;
+				}
+
+				$object = json_decode( $object );
+				if ( is_int( $object->value ) ) {
+					$ids[] = $object->value;
+				}
+			}
+
+			return count( $ids ) ? esc_sql( implode( ', ', $ids ) ) : '';
 		}
 
 		// Allow WPML to filter out hidden language posts/terms.

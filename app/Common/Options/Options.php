@@ -38,10 +38,13 @@ class Options {
 			'miscellaneousVerification' => [ 'type' => 'html' ]
 		],
 		'aiContent'        => [
-			'country'  => [ 'type' => 'string', 'default' => 'us' ],
-			'language' => [ 'type' => 'string', 'default' => 'en' ],
-			'tone'     => [ 'type' => 'string', 'default' => 'formal' ],
-			'audience' => [ 'type' => 'string', 'default' => 'general' ]
+			'country'          => [ 'type' => 'string', 'default' => 'us' ],
+			'language'         => [ 'type' => 'string', 'default' => 'en' ],
+			'tone'             => [ 'type' => 'string', 'default' => 'formal' ],
+			'audience'         => [ 'type' => 'string', 'default' => 'general' ],
+			'imageQuality'     => [ 'type' => 'string', 'default' => 'medium' ],
+			'imageStyle'       => [ 'type' => 'string', 'default' => 'auto' ],
+			'imageAspectRatio' => [ 'type' => 'string', 'default' => 'landscape' ]
 		],
 		'breadcrumbs'      => [
 			'separator'             => [ 'type' => 'string', 'default' => '&raquo;' ],
@@ -68,7 +71,6 @@ TEMPLATE
 		'advanced'         => [
 			'truSeo'           => [ 'type' => 'boolean', 'default' => true ],
 			'headlineAnalyzer' => [ 'type' => 'boolean', 'default' => true ],
-			'llmsTxt'          => [ 'type' => 'boolean', 'default' => true ],
 			'seoAnalysis'      => [ 'type' => 'boolean', 'default' => true ],
 			'dashboardWidgets' => [ 'type' => 'array', 'default' => [ 'seoSetup', 'seoOverview', 'seoNews' ] ],
 			'announcements'    => [ 'type' => 'boolean', 'default' => true ],
@@ -168,6 +170,25 @@ TEMPLATE
 					'nofollowLinks' => [ 'type' => 'boolean', 'default' => false ],
 					'excludePosts'  => [ 'type' => 'array', 'default' => [] ],
 					'excludeTerms'  => [ 'type' => 'array', 'default' => [] ]
+				]
+			],
+			'llms'    => [
+				'enable'           => [ 'type' => 'boolean', 'default' => true ],
+				'convertToMd'      => [ 'type' => 'boolean', 'default' => true ],
+				'advancedSettings' => [
+					'title'           => [ 'type' => 'string', 'localized' => true, 'default' => '#site_title' ],
+					'description'     => [ 'type' => 'string', 'localized' => true, 'default' => '#tagline' ],
+					'linksPerPostTax' => [ 'type' => 'number', 'default' => 1000 ],
+					'postTypes'       => [
+						'all'      => [ 'type' => 'boolean', 'default' => true ],
+						'included' => [ 'type' => 'array', 'default' => [ 'post', 'page', 'product' ] ]
+					],
+					'taxonomies'      => [
+						'all'      => [ 'type' => 'boolean', 'default' => true ],
+						'included' => [ 'type' => 'array', 'default' => [] ],
+					],
+					'excludePosts'    => [ 'type' => 'array', 'default' => [] ],
+					'excludeTerms'    => [ 'type' => 'array', 'default' => [] ]
 				]
 			],
 		],
@@ -618,6 +639,9 @@ TEMPLATE
 		$logsRetention     = isset( $options['searchAppearance']['advanced']['blockArgs']['logsRetention'] ) ? $options['searchAppearance']['advanced']['blockArgs']['logsRetention'] : null;
 		$oldLogsRetention  = aioseo()->options->searchAppearance->advanced->blockArgs->logsRetention;
 
+		$oldLlmsOptions = aioseo()->options->sitemap->llms->all();
+		$llmsOptions    = isset( $options['sitemap']['llms'] ) ? $options['sitemap']['llms'] : null;
+
 		// Remove category base.
 		$removeCategoryBase    = isset( $options['searchAppearance']['advanced']['removeCategoryBase'] ) ? $options['searchAppearance']['advanced']['removeCategoryBase'] : null;
 		$removeCategoryBaseOld = aioseo()->options->searchAppearance->advanced->removeCategoryBase;
@@ -702,6 +726,25 @@ TEMPLATE
 				! $deprecatedGeneralSitemapOptions['advancedSettings']['dynamic']
 			) {
 				aioseo()->sitemap->scheduleRegeneration();
+			}
+		}
+
+		if (
+			! empty( $llmsOptions ) &&
+			aioseo()->helpers->arraysDifferent( $oldLlmsOptions, $llmsOptions )
+		) {
+			if ( $llmsOptions['enable'] ) {
+				if ( $oldLlmsOptions['enable'] ) {
+					// If it was enabled before, we need to schedule a single generation.
+					aioseo()->llms->scheduleSingleGenerationForLlmsTxt();
+				} else {
+					// Otherwise we need to schedule a recurrent generation.
+					aioseo()->llms->scheduleRecurrentGenerationForLlmsTxt();
+				}
+			} else {
+				aioseo()->actionScheduler->unschedule( aioseo()->llms->llmsTxtSingleAction );
+				aioseo()->actionScheduler->unschedule( aioseo()->llms->llmsTxtRecurrentAction );
+				aioseo()->llms->deleteLlmsFile();
 			}
 		}
 

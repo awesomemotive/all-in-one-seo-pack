@@ -335,7 +335,7 @@ namespace AIOSEO\Plugin {
 			$this->seoAnalysis        = $this->pro ? new Pro\SeoAnalysis\SeoAnalysis() : new Common\SeoAnalysis\SeoAnalysis();
 			$this->thirdParty         = new Common\ThirdParty\ThirdParty();
 			$this->writingAssistant   = new Common\WritingAssistant\WritingAssistant();
-			$this->llms               = new Common\Llms\Llms();
+			$this->llms               = $this->pro ? new Pro\Llms\Llms() : new Common\Llms\Llms();
 
 			if ( ! wp_doing_ajax() && ! wp_doing_cron() ) {
 				$this->rss       = new Common\Rss();
