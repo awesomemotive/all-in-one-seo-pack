@@ -83,6 +83,6 @@ class Title {
 		$pageTitle = aioseo()->helpers->escapeRegexReplacement( aioseo()->head->getTitle() );
 
 		// Return new output with our new title tag included in our own comment block.
-		return preg_replace( '/(<!--\sAll\sin\sOne\sSEO[a-z0-9\s.]+\s-\saioseo\.com\s-->)/i', "$1\r\n\t\t<title>$pageTitle</title>", (string) $content, 1 );
+		return preg_replace( '/(<!--\s*All\sin\sOne\sSEO.*?aioseo\.com\s*-->)/i', "$1\r\n\t\t<title>$pageTitle</title>", (string) $content, 1 );
 	}
 }

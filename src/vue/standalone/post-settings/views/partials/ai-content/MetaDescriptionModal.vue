@@ -90,7 +90,7 @@
 					{{ strings.rephrase }}
 				</base-button>
 
-				<credit-counter />
+				<credit-counter parent-component-context="modal" />
 			</div>
 
 			<div class="footer-right">

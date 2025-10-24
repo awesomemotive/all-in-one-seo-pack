@@ -69,7 +69,7 @@ class HeadlineAnalyzer {
 	 * @return array         The result.
 	 */
 	public function getResult( $title ) {
-		$result = $this->getHeadlineScore( html_entity_decode( $title ) );
+		$result = $this->getHeadlineScore( aioseo()->helpers->decodeHtmlEntities( $title ) );
 
 		return [
 			'result'   => $result,

@@ -172,7 +172,8 @@ class Block {
 		$default = filter_var( $this->breadcrumbSettings['default'], FILTER_VALIDATE_BOOLEAN );
 		if ( true === $default || ! aioseo()->pro ) {
 			return [
-				'postTitle' => ! empty( $this->postTitle ) ? $this->postTitle : null
+				'postTitle'   => ! empty( $this->postTitle ) ? $this->postTitle : null,
+				'primaryTerm' => ! empty( $this->primaryTerm[ $this->breadcrumbSettings['taxonomy'] ] ) ? $this->primaryTerm[ $this->breadcrumbSettings['taxonomy'] ] : null
 			];
 		}
 

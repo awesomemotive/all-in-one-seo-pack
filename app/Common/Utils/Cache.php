@@ -208,9 +208,6 @@ class Cache {
 	 * @return void
 	 */
 	public function clear() {
-		// Bust the tableExists and columnExists cache.
-		aioseo()->internalOptions->database->installedTables = '';
-
 		if ( $this->prefix ) {
 			$this->clearPrefix( '' );
 

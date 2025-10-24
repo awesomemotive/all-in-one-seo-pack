@@ -48,6 +48,12 @@ const clickHandler = ($el, options = {}) => {
 }
 
 export const extendImageBlockToolbar = () => {
+	const aiImageGeneratorStore = useAiImageGeneratorStore()
+
+	if (!aiImageGeneratorStore.extend.imageBlockToolbar) {
+		return
+	}
+
 	// Prevent duplicate filter registrations.
 	if (isImageBlockToolbarExtended) {
 		return
@@ -97,6 +103,12 @@ export const extendImageBlockToolbar = () => {
 }
 
 export const extendImageBlockPlaceholder = () => {
+	const aiImageGeneratorStore = useAiImageGeneratorStore()
+
+	if (!aiImageGeneratorStore.extend.imageBlockPlaceholder) {
+		return
+	}
+
 	const selectedBlock = select('core/block-editor').getSelectedBlock()
 	if (
 		!selectedBlock ||
@@ -147,6 +159,12 @@ export const extendImageBlockPlaceholder = () => {
 }
 
 export const extendFeaturedImageButton = () => {
+	const aiImageGeneratorStore = useAiImageGeneratorStore()
+
+	if (!aiImageGeneratorStore.extend.featuredImageButton) {
+		return
+	}
+
 	if ('edit-post/document' !== select('core/edit-post').getActiveGeneralSidebarName()) {
 		return
 	}

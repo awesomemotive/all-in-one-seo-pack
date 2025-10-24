@@ -12,64 +12,52 @@ import {
 import { useAiContent } from '@/vue/composables/AiContent'
 
 export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
-	state : () => {
-		const optionsStore = useOptionsStore()
-
-		const {
-			imageQualityOptions,
-			imageStyleOptions,
-			imageAspectRatioOptions
-		} = useAiContent()
-
-		const defaultQuality     = imageQualityOptions.find(o => o.value === optionsStore.options.aiContent.imageQuality)
-		const defaultStyle       = imageStyleOptions.find(o => o.value === optionsStore.options.aiContent.imageStyle)
-		const defaultAspectRatio = imageAspectRatioOptions.find(o => o.value === optionsStore.options.aiContent.imageAspectRatio)
-
-		return {
-			currentScreen : 'generate',
-			form          : {
-				prompt : {
-					value     : '',
-					id        : 'aioseo-ai-image-generator-input-prompt',
-					maxlength : 1000,
-					minlength : 5
-				},
-				quality : {
-					defaultValue : defaultQuality,
-					value        : defaultQuality,
-					id           : 'aioseo-ai-image-generator-input-quality'
-				},
-				style : {
-					defaultValue : defaultStyle,
-					value        : defaultStyle,
-					id           : 'aioseo-ai-image-generator-input-style'
-				},
-				aspectRatio : {
-					defaultValue : defaultAspectRatio,
-					value        : defaultAspectRatio,
-					id           : 'aioseo-ai-image-generator-input-aspect-ratio'
-				},
-				isGenerating          : false,
-				generationElapsedTime : null
+	state : () => ({
+		currentScreen : 'generate',
+		extend        : {
+			imageBlockToolbar     : true,
+			imageBlockPlaceholder : true,
+			featuredImageButton   : true
+		},
+		form : {
+			prompt : {
+				value     : '',
+				id        : 'aioseo-ai-image-generator-input-prompt',
+				maxlength : 1000,
+				minlength : 5
 			},
-			errors : {
-				api : null
+			quality : {
+				value : null,
+				id    : 'aioseo-ai-image-generator-input-quality'
 			},
-			images : {
-				isFetching : false,
-				selected   : [],
-				all        : {
-					rows : []
-				},
-				count : null // The null as an initial value is used to indicate the count was not yet fetched.
+			style : {
+				value : null,
+				id    : 'aioseo-ai-image-generator-input-style'
 			},
-			modalOpenDeleteImages : false,
-			initiator             : {
-				slug    : null,
-				wpMedia : null
-			}
+			aspectRatio : {
+				value : null,
+				id    : 'aioseo-ai-image-generator-input-aspect-ratio'
+			},
+			isGenerating          : false,
+			generationElapsedTime : null
+		},
+		errors : {
+			api : null
+		},
+		images : {
+			isFetching : false,
+			selected   : [],
+			all        : {
+				rows : []
+			},
+			count : null // The null as an initial value is used to indicate the count was not yet fetched.
+		},
+		modalOpenDeleteImages : false,
+		initiator             : {
+			slug    : null,
+			wpMedia : null
 		}
-	},
+	}),
 	getters : {
 		formPrompt : state => {
 			return (state.form.prompt.value || '').trim()
@@ -88,7 +76,7 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 			return state.images.selected?.length ? state.images.selected[0] : null
 		},
 		generationPrice : state => {
-			switch (state.form.quality.value.value) {
+			switch (state.form.quality.value?.value) {
 				case 'low':
 					return 250
 				case 'medium':
@@ -115,11 +103,14 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 				imageAspectRatioOptions
 			} = useAiContent()
 
-			this.images.selected        = [ image ]
+			const optionsStore = useOptionsStore()
+
+			this.images.selected = [ image ]
+
 			this.form.prompt.value      = image?.prompt || ''
-			this.form.quality.value     = imageQualityOptions.find(o => o.value === image?.quality) || this.form.quality.defaultValue
-			this.form.style.value       = imageStyleOptions.find(o => o.value === image?.style) || this.form.style.defaultValue
-			this.form.aspectRatio.value = imageAspectRatioOptions.find(o => o.value === image?.aspectRatio) || this.form.aspectRatio.defaultValue
+			this.form.quality.value     = imageQualityOptions.find(o => o.value === image?.quality) || imageQualityOptions.find(o => o.value === optionsStore.options.aiContent.imageQuality)
+			this.form.style.value       = imageStyleOptions.find(o => o.value === image?.style) || imageStyleOptions.find(o => o.value === optionsStore.options.aiContent.imageStyle)
+			this.form.aspectRatio.value = imageAspectRatioOptions.find(o => o.value === image?.aspectRatio) || imageAspectRatioOptions.find(o => o.value === optionsStore.options.aiContent.imageAspectRatio)
 		},
 		generateImage () {
 			const aiStore = useAiStore()
@@ -210,6 +201,19 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 				slug    : null,
 				wpMedia : null
 			}
+		},
+		setFormDefaults () {
+			const optionsStore = useOptionsStore()
+
+			const {
+				imageQualityOptions,
+				imageStyleOptions,
+				imageAspectRatioOptions
+			} = useAiContent()
+
+			this.form.quality.value     = imageQualityOptions.find(o => o.value === optionsStore.options.aiContent.imageQuality)
+			this.form.style.value       = imageStyleOptions.find(o => o.value === optionsStore.options.aiContent.imageStyle)
+			this.form.aspectRatio.value = imageAspectRatioOptions.find(o => o.value === optionsStore.options.aiContent.imageAspectRatio)
 		}
 	}
 })

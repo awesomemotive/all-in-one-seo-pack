@@ -784,6 +784,17 @@ class Admin {
 			return;
 		}
 
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended, HM.Security.NonceVerification.Recommended
+		// Don't hide it if we're on the Scheduled Actions menu page.
+		$page = isset( $_GET['page'] )
+			? sanitize_text_field( wp_unslash( $_GET['page'] ) )
+			: '';
+		// phpcs:enable
+
+		if ( 'action-scheduler' === $page || aioseo()->helpers->isDev() ) {
+			return;
+		}
+
 		foreach ( $submenu['tools.php'] as $index => $props ) {
 			if ( ! empty( $props[2] ) && 'action-scheduler' === $props[2] ) {
 				unset( $submenu['tools.php'][ $index ] );

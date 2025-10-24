@@ -30,7 +30,7 @@
 
 		<template #footer>
 			<div class="footer-left">
-				<credit-counter />
+				<credit-counter parent-component-context="modal" />
 			</div>
 
 			<div class="footer-right">

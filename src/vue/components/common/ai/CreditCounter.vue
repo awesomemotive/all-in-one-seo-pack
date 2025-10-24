@@ -1,6 +1,9 @@
 <template>
 	<div
 		class="aioseo-ai-credit-counter"
+		:class="{
+			'aioseo-ai-credit-counter--metabox': 'metabox' === parentComponentContext
+		}"
 	>
 		<div class="counter-container-wrapper">
 			<svg-ai-credits />
@@ -316,6 +319,10 @@ export default {
 
 <style lang="scss">
 .aioseo-ai-credit-counter {
+	&--metabox {
+		--counter-font-size: 14px;
+	}
+
 	display: flex;
 	flex-direction: row;
 
@@ -330,6 +337,7 @@ export default {
 			width: 24px;
 			height: 24px;
 			margin-right: 8px;
+			align-self: start;
 		}
 
 		&.aioseo-circle-question-mark {
@@ -342,14 +350,14 @@ export default {
 	div.counter-container {
 		display: flex;
 		flex-wrap: wrap;
+		line-height: 22px;
 
 		.counter {
+			font-size: var(--counter-font-size, 12px);
 			margin-right: 8px;
 			display: inline-grid;
 			align-items: center;
-			font-size: 12px;
 			grid-template-columns: auto auto;
-			line-height: normal;
 
 			&-sidebar .aioseo-tooltip {
 				.popper {
@@ -375,14 +383,9 @@ export default {
 					margin: 12px 0;
 				}
 
-				.counter {
-					font-size: 14px;
-				}
-
 				.credit-heading {
 					display: block;
 					font-weight: bold;
-					font-size: 14px;
 					margin-bottom: 8px;
 				}
 
@@ -393,7 +396,6 @@ export default {
 					.credit-order {
 						display: block;
 						line-height: 22px;
-						font-size: 14px;
 						margin: 6px 0;
 
 						&:first-of-type {
@@ -407,7 +409,6 @@ export default {
 
 				.license-expiration {
 					display: block;
-					font-size: 14px;
 					margin-top: 8px;
 				}
 			}
@@ -415,7 +416,7 @@ export default {
 	}
 
 	.purchase-credits {
-		font-size: 12px;
+		font-size: var(--counter-font-size, 12px);
 
 		p {
 			margin: 8px 0 0 0;
@@ -425,8 +426,9 @@ export default {
 			margin-top: 8px;
 
 			&.buy-credits {
-				font-weight: 600;
-				text-decoration: underline;
+				font-style: normal;
+				font-weight: 700;
+				text-decoration: none;
 			}
 		}
 	}

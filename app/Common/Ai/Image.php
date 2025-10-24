@@ -31,6 +31,26 @@ class Image {
 	}
 
 	/**
+	 * Returns the data for Vue.
+	 *
+	 * @since 4.8.9
+	 *
+	 * @param  int|null $objectId The object ID.
+	 * @return array              The data.
+	 */
+	public function getVueDataEdit( $objectId = null ) {
+		$objectId = $objectId ?: absint( get_the_ID() );
+
+		return [
+			'extend' => [
+				'imageBlockToolbar'     => apply_filters( 'aioseo_ai_image_generator_extend_image_block_toolbar', true, $objectId ),
+				'imageBlockPlaceholder' => apply_filters( 'aioseo_ai_image_generator_extend_image_block_placeholder', true, $objectId ),
+				'featuredImageButton'   => apply_filters( 'aioseo_ai_image_generator_extend_featured_image_button', true, $objectId ),
+			]
+		];
+	}
+
+	/**
 	 * Creates a WordPress attachment from base64 image data.
 	 *
 	 * @since 4.8.8

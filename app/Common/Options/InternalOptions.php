@@ -97,9 +97,6 @@ class InternalOptions {
 				'expires'      => [ 'type' => 'string' ],
 				'refreshToken' => [ 'type' => 'string' ]
 			]
-		],
-		'database'     => [
-			'installedTables' => [ 'type' => 'string' ]
 		]
 		// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 	];

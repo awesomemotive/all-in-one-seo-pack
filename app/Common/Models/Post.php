@@ -788,6 +788,8 @@ class Post extends Model {
 	public static function getDefaultBreadcrumbSettingsOptions( $postType, $existingOptions = [] ) {
 		$default       = aioseo()->dynamicOptions->breadcrumbs->postTypes->$postType->useDefaultTemplate ?? true;
 		$showHomeCrumb = $default ? aioseo()->options->breadcrumbs->homepageLink : aioseo()->dynamicOptions->breadcrumbs->postTypes->$postType->showHomeCrumb ?? true;
+		$allTaxonomies = get_object_taxonomies( $postType, 'objects' );
+		$taxonomy      = aioseo()->dynamicOptions->breadcrumbs->postTypes->$postType->taxonomy ?? array_values( $allTaxonomies )[0]->name ?? '';
 
 		$defaults = [
 			'default'            => true,
@@ -797,7 +799,7 @@ class Post extends Model {
 			'showParentCrumbs'   => aioseo()->dynamicOptions->breadcrumbs->postTypes->$postType->showParentCrumbs ?? true,
 			'template'           => aioseo()->helpers->encodeOutputHtml( aioseo()->breadcrumbs->frontend->getDefaultTemplate( 'single' ) ),
 			'parentTemplate'     => aioseo()->helpers->encodeOutputHtml( aioseo()->breadcrumbs->frontend->getDefaultTemplate( 'single' ) ),
-			'taxonomy'           => aioseo()->dynamicOptions->breadcrumbs->postTypes->$postType->taxonomy ?? '',
+			'taxonomy'           => $taxonomy,
 			'primaryTerm'        => null
 		];
 

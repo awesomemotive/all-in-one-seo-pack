@@ -53,7 +53,7 @@
 
 				<div
 					class="result-action"
-					v-if="getBody.buttonLink && showInstructions"
+					v-if="getBody.buttonLink && showInstructions && rootStore.aioseo.user.data.allcaps?.edit_pages"
 				>
 					<base-button
 						:href="getBody.buttonLink"
@@ -75,9 +75,13 @@
 import { ref, computed } from 'vue'
 import { softSanitizeHtml } from '@/vue/utils/strings'
 
+import { useRootStore } from '@/vue/stores'
+
 import SiteAnalysis from '@/vue/classes/SiteAnalysis'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
+
+const rootStore = useRootStore()
 
 const emit = defineEmits([ 'toggleActive' ])
 const props = defineProps({
@@ -100,7 +104,6 @@ const props = defineProps({
 })
 
 const loading = ref(false)
-
 const getTestTitle = computed(() => SiteAnalysis.head(props.test, props.result))
 const getBody = computed(() => SiteAnalysis.body(props.test, props.result))
 

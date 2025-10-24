@@ -98,7 +98,7 @@ class Frontend {
 
 			if ( is_search() ) {
 				$type      = 'search';
-				$reference = htmlspecialchars( sanitize_text_field( get_search_query() ) );
+				$reference = htmlspecialchars( sanitize_text_field( get_search_query() ), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 );
 			}
 
 			if ( is_404() ) {
@@ -245,7 +245,7 @@ class Frontend {
 			function ( $matches ) {
 				return '>' . $matches[1] . '>';
 			},
-			htmlentities( $templateItem['template'] )
+			htmlentities( $templateItem['template'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 )
 		);
 
 		// Restore html.

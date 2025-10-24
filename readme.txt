@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.8
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 4.8.8
+Stable tag: 4.8.9
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -234,6 +234,19 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.8.9**
+
+* Updated: Improved user permission checks to display Site Audit action buttons.
+* Updated: Added filter to disable AI Image Generator buttons in the block editor.
+* Fixed: Conflict with Avada theme where post content was disappearing in backend editor.
+* Fixed: Elementor Side Cart automatically opening even when the cart is empty on single product pages.
+* Fixed: Category title missing from meta descriptions on new sites.
+* Fixed: Redundant schema queries when database schema cache fails to update.
+* Fixed: JS error when accessing string offsets in SEO revisions data processing.
+* Fixed: Keyword Rank Tracker button broke in the Post editor if the Spectra or Starter Templates plugin was activated.
+* Fixed: Homepage meta description character counter breaks when the site is set as an Organization.
+* Fixed: New feature popups rendering outside the viewport on smaller screens.
+
 **New in Version 4.8.8**
 
 * New: AI Assistant Block - Generate any type of content right inside the post editor: blog articles, summaries, comparison tables, and more. Whatever you need, the AI Assistant block makes it happen.
@@ -302,19 +315,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * Fixed: Default options for new redirects not localized.
 * Fixed: PHP error in rare cases when breadcrumb link is a WP_Error.
 * Fixed: PHP error due to plugin conflict with MasterStudy LMS.
-
-**New in Version 4.8.4.1**
-
-* Fixed: PHP error for multisites when AI credits don't manage to update correctly.
-
-**New in Version 4.8.4**
-
-* New: AI Content - Use our new smart AI features to automatically generate FAQs, Key Points, social media posts and more, that perfectly fit your articles. 🤖
-* New: LLMs.txt File - The new llms.txt file helps AI engines discover your site's content more easily so your content can rank in AI search results.
-* Updated: Index Status Report now fetches index data from Google on-the-fly when it is missing or expired.
-* Fixed: Image SEO addon no longer incorrectly encodes HTML in captions.
-* Fixed: PHP notice when trying to format price of products in Product schema where no price is set.
-* Fixed: Added back missing $crumb param to aioseo_breadcrumbs_template filter hook for compatibility.
 
 **See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=aioseo) for previous releases.**
 
@@ -397,6 +397,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.8.8 =
+= 4.8.9 =
 
 This update adds major improvements and bug fixes.

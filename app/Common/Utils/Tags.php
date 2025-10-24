@@ -1082,6 +1082,9 @@ class Tags {
 	private function getTaxonomyTitle( $postId = null ) {
 		$isWcActive = aioseo()->helpers->isWooCommerceActive();
 		$title      = '';
+
+		// First try to get the title from various WordPress archive/taxonomy pages
+		// This handles cases where we're not on a singular post/page
 		if ( $isWcActive && is_product_category() ) {
 			$title = single_cat_title( '', false );
 		} elseif ( is_category() ) {
@@ -1098,12 +1101,17 @@ class Tags {
 			$title = get_the_archive_title();
 		}
 
-		if ( $postId ) {
-			$currentScreen  = aioseo()->helpers->getCurrentScreen();
-			$isProduct      = $isWcActive && ( is_product() || 'product' === ( $currentScreen->post_type ?? '' ) );
-			$post           = aioseo()->helpers->getPost( $postId );
+		// If we still don't have a title and we have a post ID,
+		// try to get the title from the post's primary term or first hierarchical taxonomy term
+		if ( ! $title && $postId ) {
+			$currentScreen = aioseo()->helpers->getCurrentScreen();
+			$isProduct     = $isWcActive && ( is_product() || 'product' === ( $currentScreen->post_type ?? '' ) );
+			$post          = aioseo()->helpers->getPost( $postId );
+
+			// Get all taxonomies for this post type
 			$postTaxonomies = get_object_taxonomies( $post, 'objects' );
 			$postTerms      = [];
+
 			foreach ( $postTaxonomies as $taxonomySlug => $taxonomy ) {
 				if ( ! $taxonomy->hierarchical ) {
 					continue;

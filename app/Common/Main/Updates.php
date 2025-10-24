@@ -176,7 +176,7 @@ class Updates {
 		}
 
 		if ( version_compare( $lastActiveVersion, '4.2.2', '<' ) ) {
-			aioseo()->internalOptions->database->installedTables = '';
+			aioseo()->core->cache->delete( 'db_schema' );
 
 			$this->addOptionsColumn();
 			$this->removeTabsColumn();
@@ -317,7 +317,7 @@ class Updates {
 		aioseo()->internalOptions->internal->lastActiveVersion = aioseo()->version;
 
 		// Bust the tableExists and columnExists cache.
-		aioseo()->internalOptions->database->installedTables = '';
+		aioseo()->core->cache->delete( 'db_schema' );
 
 		// Bust the DB cache so we can make sure that everything is fresh.
 		aioseo()->core->db->bustCache();
@@ -438,7 +438,7 @@ class Updates {
 		}
 
 		// Reset the cache for the installed tables.
-		aioseo()->internalOptions->database->installedTables = '';
+		aioseo()->core->cache->delete( 'db_schema' );
 	}
 
 	/**
@@ -476,7 +476,7 @@ class Updates {
 			);
 
 			// Reset the cache for the installed tables.
-			aioseo()->internalOptions->database->installedTables = '';
+			aioseo()->core->cache->delete( 'db_schema' );
 		}
 	}
 
@@ -496,7 +496,7 @@ class Updates {
 			);
 
 			// Reset the cache for the installed tables.
-			aioseo()->internalOptions->database->installedTables = '';
+			aioseo()->core->cache->delete( 'db_schema' );
 		}
 	}
 
@@ -620,7 +620,7 @@ class Updates {
 			);
 
 			// Reset the cache for the installed tables.
-			aioseo()->internalOptions->database->installedTables = '';
+			aioseo()->core->cache->delete( 'db_schema' );
 
 			aioseo()->core->db
 				->update( 'aioseo_notifications' )
@@ -863,7 +863,7 @@ class Updates {
 			}
 
 			// Reset the cache for the installed tables.
-			aioseo()->internalOptions->database->installedTables = '';
+			aioseo()->core->cache->delete( 'db_schema' );
 		}
 	}
 
@@ -883,7 +883,7 @@ class Updates {
 			);
 
 			// Reset the cache for the installed tables.
-			aioseo()->internalOptions->database->installedTables = '';
+			aioseo()->core->cache->delete( 'db_schema' );
 		}
 	}
 
@@ -982,7 +982,7 @@ class Updates {
 			);
 
 			// Reset the cache for the installed tables.
-			aioseo()->internalOptions->database->installedTables = '';
+			aioseo()->core->cache->delete( 'db_schema' );
 		}
 	}
 
@@ -1042,7 +1042,7 @@ class Updates {
 			);
 
 			// Reset the cache for the installed tables.
-			aioseo()->internalOptions->database->installedTables = '';
+			aioseo()->core->cache->delete( 'db_schema' );
 		}
 	}
 
@@ -1952,7 +1952,7 @@ class Updates {
 			);
 
 			// Reset the cache for the installed tables.
-			aioseo()->internalOptions->database->installedTables = '';
+			aioseo()->core->cache->delete( 'db_schema' );
 		}
 	}
 

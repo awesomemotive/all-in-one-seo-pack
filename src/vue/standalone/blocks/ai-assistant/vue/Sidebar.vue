@@ -2,7 +2,8 @@
 	<div class="aioseo-ai-assistant-sidebar">
 		<credit-counter
 			tooltip-placement="bottom"
-			tooltip-offset="-80px,0"
+			tooltip-offset="-90px,0"
+			parent-component-context="sidebar"
 		/>
 
 		<div class="aioseo-ai-assistant-sidebar-cost">

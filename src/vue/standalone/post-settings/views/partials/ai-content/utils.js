@@ -7,6 +7,38 @@ import { __ } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export const aiFeatures = {
+	aiAssistant : {
+		slug    : 'ai-assistant',
+		svg     : 'ai-content',
+		strings : {
+			name         : __('AI Assistant', td),
+			description  : __('Leverage AI to generate high-quality, relevant content for your post quickly and efficiently.', td),
+			buttonSubmit : __('Generate Content', td)
+		},
+		excludedPostTypes : [],
+		isPopular         : true,
+		clickCallback     : () => {
+			const { wp } = window
+			const insertionPoint = wp.data.select('core/block-editor').getBlockInsertionPoint() || {}
+
+			wp.data.dispatch('core/block-editor').insertBlock(
+				wp.blocks.createBlock('aioseo/ai-assistant'),
+				insertionPoint.index,
+				insertionPoint.rootClientId
+			)
+		}
+	},
+	imageGenerator : {
+		slug    : 'image-generator',
+		svg     : 'image-generator',
+		strings : {
+			name         : __('Image Generator', td),
+			description  : __('Generate AI-powered images from text prompts to visually enhance your content and capture attention.', td),
+			buttonSubmit : __('Generate Image', td)
+		},
+		excludedPostTypes : [],
+		isPopular         : true
+	},
 	socialPosts : {
 		slug    : 'social-posts',
 		svg     : 'repurpose-content',
@@ -56,16 +88,6 @@ export const aiFeatures = {
 			buttonSubmit : __('Generate Meta Descriptions', td)
 		},
 		excludedPostTypes : []
-	},
-	imageGenerator : {
-		slug    : 'image-generator',
-		svg     : 'image-generator',
-		strings : {
-			name         : __('Image Generator', td),
-			description  : __('Generate AI-powered images from text prompts to visually enhance your content and capture attention.', td),
-			buttonSubmit : __('Generate Image', td)
-		},
-		excludedPostTypes : []
 	}
 }
 
@@ -75,7 +97,13 @@ export const getAiFeatures = () => {
 		return Object.values(aiFeatures)
 	}
 
-	return Object.values(aiFeatures).filter(feature => !feature.excludedPostTypes.includes(postEditorStore.currentPost.postType))
+	return Object.values(aiFeatures).filter(feature => {
+		if (feature.excludedPostTypes.includes(postEditorStore.currentPost.postType)) {
+			return false
+		}
+
+		return !('ai-assistant' === feature.slug && !isBlockEditor())
+	})
 }
 
 export const copyContent = (content) => {

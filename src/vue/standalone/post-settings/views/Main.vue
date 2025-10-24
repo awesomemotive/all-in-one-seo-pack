@@ -76,7 +76,7 @@
 
 				<component
 					:is="turnSlugIntoComponent(activeTab)"
-					parentComponentContext="metabox"
+					:parent-component-context="'sidebar' === screenContext ? 'sidebar' : 'metabox'"
 					@changeTab="newTab => processChangeTab(newTab)"
 				/>
 			</div>

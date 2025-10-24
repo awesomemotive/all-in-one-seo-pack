@@ -8,7 +8,10 @@
 				type="button"
 				@click="showModal = true"
 			>
-				<svg-ai-content />
+				<svg-ai-content
+					width="18"
+					height="18"
+				/>
 			</button>
 
 			<template #tooltip>

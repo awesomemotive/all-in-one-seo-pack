@@ -88,6 +88,7 @@
 						md="6"
 					>
 						<core-card
+							v-if="allowed('aioseo_seo_analysis_settings')"
 							slug="dashboardSeoSiteScore"
 							:header-text="strings.seoSiteScore"
 						>

@@ -169,7 +169,7 @@ class Llms {
 	 * @return void
 	 */
 	public function generateLlmsTxt() {
-		if ( ! aioseo()->options->sitemap->llms->enable ) {
+		if ( isset( aioseo()->options->sitemap->llms->enable ) && ! aioseo()->options->sitemap->llms->enable ) {
 			aioseo()->actionScheduler->unschedule( $this->llmsTxtSingleAction );
 			aioseo()->actionScheduler->unschedule( $this->llmsTxtRecurrentAction );
 			$this->deleteLlmsFile();

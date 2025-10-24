@@ -8,15 +8,36 @@
 
 #toplevel_page_aioseo {
 	.aioseo-submenu-highlight {
-		background-color: #1DA867;
-
 		&.red {
-			background-color: #DF2A4A;
+			a {
+				background-color: #DF2A4A;
+
+				&:hover,
+				&:active,
+				&:focus {
+					background-color: #e3314f;
+					box-shadow: none;
+				}
+			}
 		}
 
 		a {
+			background-color: #1DA867;
+			font-weight: 600;
+			margin: 3px 6px 0;
+			display: block;
+			text-align: center;
+			border-radius: 3px;
+			transition: all .3s;
 			color: #fff;
 			font-weight: 600;
+
+			&:hover,
+			&:active,
+			&:focus {
+				background-color: #1ab56c;
+				box-shadow: none;
+			}
 		}
 	}
 }

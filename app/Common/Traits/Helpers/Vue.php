@@ -52,6 +52,7 @@ trait Vue {
 		$this->setWritingAssistantData();
 		$this->setBreadcrumbsData();
 		$this->setSeoAnalyzerData();
+		$this->setAiImageGeneratorData();
 
 		$this->cache[ $hash ] = $this->data;
 
@@ -679,6 +680,19 @@ trait Vue {
 		}
 
 		$this->data['analyzer'] = aioseo()->seoAnalysis->getVueData();
+	}
+
+	/**
+	 * Set Vue AI Image Generator data.
+	 *
+	 * @since 4.8.9
+	 *
+	 * @return void
+	 */
+	private function setAiImageGeneratorData() {
+		if ( 'post' === $this->args['page'] ) {
+			$this->data['aiImageGenerator'] = aioseo()->ai->image->getVueDataEdit( $this->args['staticPostId'] ?? null );
+		}
 	}
 
 	/**

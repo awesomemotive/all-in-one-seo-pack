@@ -1,16 +1,26 @@
 <template>
-	<core-settings-row
-		align
+	<div
+		class="aioseo-ai-content-main"
+		:class="{
+			'aioseo-ai-content-main--sidebar': 'sidebar' === parentComponentContext
+		}"
 	>
-		<template #name>
-			<div class="name align">
+		<div class="aioseo-ai-content-main-header">
+			<div
+				v-if="'sidebar' !== parentComponentContext"
+				class="aioseo-ai-content-main-header-title"
+			>
 				{{ strings.aiContentGeneration }}
 			</div>
 
-			<credit-counter :parentComponentContext="parentComponentContext" />
-		</template>
+			<credit-counter
+				:parent-component-context="parentComponentContext"
+				:tooltip-placement="'bottom'"
+				:tooltip-offset="'-60px, 0'"
+			/>
+		</div>
 
-		<template #content>
+		<div class="aioseo-ai-content-main-body">
 			<core-alert
 				class="aioseo-ai-content-no-content-warning"
 				v-if="postContentLength < 200"
@@ -32,17 +42,17 @@
 					:key="index"
 					:feature="feature"
 					:buttonDisabled="isButtonDisabled(feature)"
+					:parent-component-context="parentComponentContext"
 				/>
 			</div>
-		</template>
-	</core-settings-row>
+		</div>
+	</div>
 </template>
 
 <script>
 import { useOptionsStore } from '@/vue/stores'
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
-import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import CreditCounter from '@/vue/components/common/ai/CreditCounter'
 import FeatureCard from './FeatureCard'
 
@@ -74,7 +84,6 @@ export default {
 	},
 	components : {
 		CoreAlert,
-		CoreSettingsRow,
 		CreditCounter,
 		FeatureCard
 	},
@@ -109,7 +118,10 @@ export default {
 	},
 	methods : {
 		isButtonDisabled (feature) {
-			if ('image-generator' === feature.slug) {
+			if (
+				'image-generator' === feature.slug ||
+				'ai-assistant' === feature.slug
+			) {
 				return false
 			}
 
@@ -141,7 +153,7 @@ export default {
 					this.updateContentLength(contentLength)
 				})
 			} else {
-			// No TinyMCE. Look for a proper #content textarea.
+				// No TinyMCE. Look for a proper #content textarea.
 				const textEditor = document.querySelector('textarea#content')
 				if (textEditor) {
 					textEditor.addEventListener('keyup', () => {
@@ -184,6 +196,28 @@ export default {
 .aioseo-ai-content-no-content-warning,
 .aioseo-ai-content-trial-warning {
 	margin-bottom: 12px;
-	max-width: 880px;
+}
+
+.aioseo-ai-content-main {
+	&--sidebar {
+		--main-header-padding: 12px 16px;
+	}
+
+	.aioseo-ai-content-main-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		background-color: #F3F4F5;
+		padding: var(--main-header-padding, 16px 20px);
+		border-radius: 4px;
+		margin-bottom: 12px;
+		flex-wrap: wrap;
+        gap: 12px;
+	}
+
+	.aioseo-ai-content-main-header-title {
+		font-weight: 700;
+		font-size: 18px;
+	}
 }
 </style>

@@ -353,10 +353,10 @@ class SearchStatistics {
 		];
 
 		// Get the 10 most recent posts.
-		$recentPosts = aioseo()->db->db->get_results(
+		$recentPosts = aioseo()->core->db->db->get_results(
 			sprintf(
 				'SELECT ID, post_title FROM %1$s WHERE post_status = "publish" AND post_type = "post" ORDER BY post_date DESC LIMIT 10',
-				aioseo()->db->db->posts
+				aioseo()->core->db->db->posts
 			)
 		);
 

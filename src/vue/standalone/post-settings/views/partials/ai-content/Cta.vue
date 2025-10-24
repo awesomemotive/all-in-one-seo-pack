@@ -38,8 +38,7 @@
 
 <script setup>
 import {
-	useAiStore,
-	useRootStore
+	useAiStore
 } from '@/vue/stores'
 
 import { getAssetUrl } from '@/vue/utils/helpers'
@@ -59,7 +58,6 @@ const strings = {
 }
 
 const aiStore   = useAiStore()
-const rootStore = useRootStore()
 </script>
 
 <style lang="scss">

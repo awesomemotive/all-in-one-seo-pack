@@ -152,7 +152,7 @@ class SeoBoost {
 		if ( is_wp_error( $userOptions ) || ! empty( $userOptions['error'] ) ) {
 			$userOptions = $this->getDefaultUserOptions();
 
-			aioseo()->cache->update( 'seoboost_get_user_options_error', time() + DAY_IN_SECONDS, MONTH_IN_SECONDS );
+			aioseo()->core->cache->update( 'seoboost_get_user_options_error', time() + DAY_IN_SECONDS, MONTH_IN_SECONDS );
 		}
 
 		$this->setUserOptions( $userOptions );
@@ -323,9 +323,9 @@ class SeoBoost {
 	 * @return void
 	 */
 	public function refreshUserOptionsAfterError() {
-		$userOptionsFetchError = aioseo()->cache->get( 'seoboost_get_user_options_error' );
+		$userOptionsFetchError = aioseo()->core->cache->get( 'seoboost_get_user_options_error' );
 		if ( $userOptionsFetchError && time() > $userOptionsFetchError ) {
-			aioseo()->cache->delete( 'seoboost_get_user_options_error' );
+			aioseo()->core->cache->delete( 'seoboost_get_user_options_error' );
 
 			$this->refreshUserOptions();
 		}

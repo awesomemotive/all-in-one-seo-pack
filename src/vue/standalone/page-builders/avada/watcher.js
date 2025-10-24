@@ -47,12 +47,8 @@ const handleEditorSave = () => {
 const processContent = async () => {
 	const {
 		FusionApp,
-		fusionBuilderGetContent,
-		FusionPageBuilderApp
+		fusionBuilderGetContent
 	} = window
-
-	// Convert builder to shortcodes.
-	FusionPageBuilderApp?.builderToShortcodes()
 
 	const rawContent      = FusionApp?.getPost('post_content') || fusionBuilderGetContent('content') || ''
 	const postEditorStore = usePostEditorStore()

@@ -365,7 +365,7 @@ class Api {
 		if ( empty( $routeData ) ) {
 			foreach ( $this->getRoutes()[ $request->get_method() ] as $routeRegex => $routeInfo ) {
 				$routeRegex = str_replace( '@', '\@', $routeRegex );
-				if ( preg_match( "@{$routeRegex}@", (string) $route ) ) {
+				if ( preg_match( "@^{$routeRegex}$@", (string) $route ) ) {
 					$routeData = $routeInfo;
 					break;
 				}

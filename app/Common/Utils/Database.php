@@ -320,20 +320,8 @@ class Database {
 	}
 
 	/**
-	 * Gets all AIOSEO installed tables.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return array An array of custom AIOSEO tables.
-	 */
-	public function getInstalledTables() {
-		$results = $this->db->get_results( 'SHOW TABLES', 'ARRAY_N' );
-
-		return ! empty( $results ) ? wp_list_pluck( $results, 0 ) : [];
-	}
-
-	/**
 	 * Get all the database info such as data size, index size, table list.
+	 * This is used for our Tools menu.
 	 *
 	 * @since 4.4.5
 	 *
@@ -395,70 +383,102 @@ class Database {
 	/**
 	 * Gets all columns from a table.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.8.9 Refactored logic.
 	 *
 	 * @param  string $table The name of the table to lookup columns for.
 	 * @return array         An array of custom AIOSEO tables.
 	 */
 	public function getColumns( $table ) {
-		if ( ! $this->tableExists( $table ) ) {
-			return [];
+		// Ensure the table name has the DB prefix.
+		if ( 0 !== strpos( $table, $this->prefix ) ) {
+			$table = $this->prefix . $table;
 		}
 
-		$table           = $this->prefix . $table;
-		$installedTables = json_decode( aioseo()->internalOptions->database->installedTables, true );
-
-		if ( empty( $installedTables[ $table ] ) ) {
-			$installedTables[ $table ]                           = $this->db->get_col( 'SHOW COLUMNS FROM `' . $table . '`' );
-			aioseo()->internalOptions->database->installedTables = wp_json_encode( $installedTables );
+		// If the table is not an AIOSEO one, get it from the DB.
+		if ( 0 !== strpos( $table, $this->prefix . 'aioseo_' ) ) {
+			return $this->db->get_col( 'SHOW COLUMNS FROM `' . $table . '`' );
 		}
 
-		return $installedTables[ $table ];
+		$schema = $this->getAioseoTablesWithColumns();
+
+		return $schema[ $table ];
 	}
 
 	/**
 	 * Checks if a table exists.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.8.9 Refactored logic.
 	 *
 	 * @param  string $table The name of the table.
 	 * @return bool          Whether or not the table exists.
 	 */
 	public function tableExists( $table ) {
-		$table           = $this->prefix . $table;
-		$installedTables = json_decode( aioseo()->internalOptions->database->installedTables ?? '[]', true ) ?: [];
-		if ( isset( $installedTables[ $table ] ) ) {
-			return true;
+		// Ensure the table name has the DB prefix.
+		if ( 0 !== strpos( $table, $this->prefix ) ) {
+			$table = $this->prefix . $table;
 		}
 
-		$results = $this->db->get_results( "SHOW TABLES LIKE '" . $table . "'" );
-		if ( empty( $results ) ) {
-			return false;
-		}
+		$tables = $this->getAioseoTablesWithColumns();
 
-		$installedTables[ $table ]                           = [];
-		aioseo()->internalOptions->database->installedTables = wp_json_encode( $installedTables );
-
-		return true;
+		return isset( $tables[ $table ] );
 	}
 
 	/**
 	 * Checks if a column exists on a given table.
 	 *
-	 * @since 4.0.5
+	 * @since   4.0.5
+	 * @version 4.8.9 Refactored logic.
 	 *
 	 * @param  string $table  The name of the table.
 	 * @param  string $column The name of the column.
 	 * @return bool           Whether or not the column exists.
 	 */
 	public function columnExists( $table, $column ) {
-		if ( ! $this->tableExists( $table ) ) {
-			return false;
+		// Ensure the table name has the DB prefix.
+		if ( 0 !== strpos( $table, $this->prefix ) ) {
+			$table = $this->prefix . $table;
 		}
 
-		$columns = $this->getColumns( $table );
+		$tables = $this->getAioseoTablesWithColumns();
 
-		return in_array( $column, $columns, true );
+		return isset( $tables[ $table ] ) && in_array( $column, $tables[ $table ], true );
+	}
+
+	/**
+	 * Get all AIOSEO tables with their columns.
+	 *
+	 * @since 4.8.9
+	 *
+	 * @return array List of AIOSEO tables with their columns.
+	 */
+	public function getAioseoTablesWithColumns() {
+		$tables = aioseo()->core->cache->get( 'db_schema' );
+		if ( ! empty( $tables ) ) {
+			return $tables;
+		}
+
+		$dbPrefix = $this->db->prefix;
+		$schema   = $this->db->get_results(
+			"SELECT TABLE_NAME, COLUMN_NAME
+			FROM INFORMATION_SCHEMA.COLUMNS
+			WHERE TABLE_SCHEMA = DATABASE()
+			AND TABLE_NAME LIKE '{$dbPrefix}aioseo_%';"
+		);
+
+		$tables = [];
+		foreach ( $schema as $row ) {
+			if ( ! isset( $tables[ $row->TABLE_NAME ] ) ) {
+				$tables[ $row->TABLE_NAME ] = [];
+			}
+
+			$tables[ $row->TABLE_NAME ][] = $row->COLUMN_NAME;
+		}
+
+		aioseo()->core->cache->update( 'db_schema', $tables, DAY_IN_SECONDS );
+
+		return $tables;
 	}
 
 	/**

@@ -221,44 +221,14 @@ namespace AIOSEO\Plugin {
 		private function preLoad() {
 			$this->core = new Common\Core\Core();
 
-			$this->backwardsCompatibility();
-
 			// Internal Options.
-			$this->helpers                = $this->pro ? new Pro\Utils\Helpers() : new Lite\Utils\Helpers();
+			$this->helpers                = $this->pro ? new Pro\Utils\Helpers() : new Lite\Utils\Helpers(); // Needs to load before preUpdates.
 			$this->internalNetworkOptions = ( $this->pro && $this->helpers->isPluginNetworkActivated() ) ? new Pro\Options\InternalNetworkOptions() : new Common\Options\InternalNetworkOptions();
 			$this->internalOptions        = $this->pro ? new Pro\Options\InternalOptions() : new Lite\Options\InternalOptions();
 			$this->uninstall              = new Common\Main\Uninstall();
 
 			// Run pre-updates.
 			$this->preUpdates = $this->pro ? new Pro\Main\PreUpdates() : new Common\Main\PreUpdates();
-		}
-
-		/**
-		 * To prevent errors and bugs from popping up,
-		 * we will run this backwards compatibility method.
-		 *
-		 * @since 4.1.9
-		 *
-		 * @return void
-		 */
-		private function backwardsCompatibility() {
-			$this->db           = $this->core->db;
-			$this->cache        = $this->core->cache;
-			$this->transients   = $this->cache;
-			$this->cachePrune   = $this->core->cachePrune;
-			$this->optionsCache = $this->core->optionsCache;
-		}
-
-		/**
-		 * To prevent errors and bugs from popping up,
-		 * we will run this backwards compatibility method.
-		 *
-		 * @since 4.2.0
-		 *
-		 * @return void
-		 */
-		private function backwardsCompatibilityLoad() {
-			$this->postSettings->integrations = $this->standalone->pageBuilderIntegrations;
 		}
 
 		/**
@@ -345,8 +315,6 @@ namespace AIOSEO\Plugin {
 				$this->api       = $this->pro ? new Pro\Api\Api() : new Lite\Api\Api();
 				$this->help      = new Common\Help\Help();
 			}
-
-			$this->backwardsCompatibilityLoad();
 
 			add_action( 'init', [ $this, 'loadInit' ], 999 );
 		}

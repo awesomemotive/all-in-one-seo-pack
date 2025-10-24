@@ -212,7 +212,7 @@ class CrawlCleanup {
 						$where .= ' OR ';
 					}
 
-					$where .= aioseo()->db->db->prepare( " $comparison LIKE %s ", '%' . $s . '%' );
+					$where .= aioseo()->core->db->db->prepare( " $comparison LIKE %s ", '%' . $s . '%' );
 				}
 			}
 

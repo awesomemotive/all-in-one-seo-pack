@@ -25,17 +25,14 @@ class PreUpdates {
 		}
 
 		$lastActiveVersion = aioseo()->internalOptions->internal->lastActiveVersion;
-		if ( aioseo()->version !== $lastActiveVersion ) {
-			// Bust the table/columns cache so that we can start the update migrations with a fresh slate.
-			aioseo()->internalOptions->database->installedTables = '';
-		}
-
 		if ( version_compare( $lastActiveVersion, '4.1.5', '<' ) ) {
 			$this->createCacheTable();
 		}
 
-		if ( version_compare( $lastActiveVersion, AIOSEO_VERSION, '<' ) ) {
-			aioseo()->core->cache->clear();
+		// This should be executed AFTER the cache table is created.
+		if ( aioseo()->version !== $lastActiveVersion ) {
+			// Bust the table/columns cache so that we can start the update migrations with a fresh slate.
+			aioseo()->core->cache->delete( 'db_schema' );
 		}
 	}
 
@@ -57,9 +54,11 @@ class PreUpdates {
 			$charsetCollate .= " COLLATE {$db->collate}";
 		}
 
-		$tableName = aioseo()->core->cache->getTableName();
-		if ( ! aioseo()->core->db->tableExists( $tableName ) ) {
-			$tableName = $db->prefix . $tableName;
+		// Check if the cache table exists with SQL. We don't want to use our own helper method here because
+		// it relies on the cache table being created.
+		$result = $db->get_var( "SHOW TABLES LIKE '{$db->prefix}aioseo_cache'" );
+		if ( empty( $result ) ) {
+			$tableName = $db->prefix . 'aioseo_cache';
 
 			aioseo()->core->db->execute(
 				"CREATE TABLE {$tableName} (

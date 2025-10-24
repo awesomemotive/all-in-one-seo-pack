@@ -225,7 +225,7 @@ class Model implements \JsonSerializable {
 	protected function filter( $keys ) {
 		$fields    = [];
 		$skip      = [ 'created', 'updated' ];
-		$dbColumns = aioseo()->db->getColumns( $this->table );
+		$dbColumns = aioseo()->core->db->getColumns( $this->table );
 
 		foreach ( $dbColumns as $column ) {
 			if ( ! in_array( $column, $skip, true ) && array_key_exists( $column, $keys ) ) {

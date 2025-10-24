@@ -23,6 +23,8 @@ import Results from './views/Results'
 
 const aiImageGeneratorStore = useAiImageGeneratorStore()
 
+aiImageGeneratorStore.setFormDefaults()
+
 onMounted(() => {
 	if (null === aiImageGeneratorStore.images.count) {
 		try {

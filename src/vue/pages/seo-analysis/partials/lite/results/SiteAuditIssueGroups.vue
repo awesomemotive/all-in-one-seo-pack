@@ -106,6 +106,14 @@ function groupName (group) {
 			justify-content: flex-end;
 			text-align: end;
 			gap: 12px;
+
+			.aioseo-tooltip {
+				margin-left: 0 !important;
+			}
+
+			.aioseo-button.disabled {
+				pointer-events: all !important;
+			}
 		}
 
 		&__header {

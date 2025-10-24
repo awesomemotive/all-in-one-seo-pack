@@ -1,16 +1,12 @@
 <template>
 	<div class="aioseo-ai-content-standalone aioseo-tab-content">
-		<core-blur
-			v-if="aiStore.isFreeAndOutOfCredits"
-		>
-			<ai-content-main
-				:parentComponentContext="props.parentComponentContext"
-			/>
+		<core-blur v-if="aiStore.isFreeAndOutOfCredits">
+			<ai-content-main :parent-component-context="props.parentComponentContext" />
 		</core-blur>
 
 		<ai-content-main
 			v-else
-			:parentComponentContext="props.parentComponentContext"
+			:parent-component-context="props.parentComponentContext"
 		/>
 
 		<ai-content-cta v-if="aiStore.isFreeAndOutOfCredits" />
@@ -42,17 +38,9 @@ const aiStore = useAiStore()
 	}
 
 	.aioseo-ai-content-features {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		gap: 20px;
-	}
-}
-
-.aioseo-post-settings-sidebar {
-	.aioseo-ai-content-features {
-		display: flex;
-		flex-direction: column;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+		gap: 16px;
 	}
 }
 </style>

@@ -294,7 +294,6 @@
 						v-model="optionsStore.options.searchAppearance.global.schema.organizationDescription"
 						:line-numbers="false"
 						description
-						@counter="count => descriptionCount = count.length"
 						tags-context="knowledgeGraph"
 						:default-tags="[
 							'tagline'

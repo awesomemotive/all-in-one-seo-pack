@@ -213,6 +213,7 @@ import {
 import links from '@/vue/utils/links'
 import { debounce } from '@/vue/utils/debounce'
 import { sanitizeString } from '@/vue/utils/strings'
+import { isBlockEditor } from '@/vue/utils/context'
 
 import { useJsonValues } from '@/vue/composables/JsonValues'
 import { useRedirect } from '@/vue/composables/redirects/Redirect'
@@ -532,6 +533,18 @@ export default {
 		addRedirects () {
 			this.genericError   = false
 			this.addingRedirect = true
+
+			if (isBlockEditor()) {
+				const slug = window.wp.data.select('core/editor').getCurrentPostAttribute('slug')
+
+				if (slug) {
+					this.sourceUrls.map(url => {
+						url.url = `/${slug}`
+
+						return url
+					})
+				}
+			}
 
 			this.sourceUrls.map(url => {
 				if ('http' !== url.url.substr(0, 4) && '/' !== url.url.substr(0, 1) && 0 < url.url.length && !url.regex) {

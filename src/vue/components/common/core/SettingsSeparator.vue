@@ -178,7 +178,8 @@ export default {
 	},
 	computed : {
 		hiddenSeparator () {
-			return this.optionsSeparator === this.customSeparator || this.decodedMoreSeparators.includes(this.optionsSeparator)
+			const decodedCustomSeparator = this.customSeparator ? sanitizeString(this.customSeparator) : null
+			return this.optionsSeparator === decodedCustomSeparator || this.decodedMoreSeparators.includes(this.optionsSeparator)
 				? this.optionsSeparator
 				: null
 		},

@@ -115,6 +115,49 @@
 		font-size: 9px;
 		padding-left: 2px;
 	}
+
+	.aioseo-wp-pointer {
+		position: absolute !important;
+		top: unset !important;
+		left: 100% !important;
+		bottom: -60px !important;
+		color: #3c434a;
+		pointer-events: auto;
+
+		a {
+			display: inline-block;
+			box-shadow: none !important;
+
+			&.close {
+				color: #2271b1;
+				padding: 0 0 0 3px;
+				background: transparent;
+			}
+
+			&:not(.close) {
+				text-decoration: none;
+				padding: 0 10px;
+				line-height: 30px;
+
+				&:hover {
+					color: #f0f0f1 !important;
+				}
+			}
+		}
+
+		.wp-pointer-arrow {
+			top: unset !important;
+			bottom: 65px !important;
+		}
+	}
+
+	&.aioseo-pointer-active {
+		pointer-events: none;
+
+		.wp-submenu {
+			display: none !important;
+		}
+	}
 }
 
 @keyframes aioseo-menu-notification-indicator-pulse {

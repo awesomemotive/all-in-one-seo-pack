@@ -1,22 +1,54 @@
 <template>
-	<div class="aioseo-ai-content-feature-card">
-		<component
-			 :is="`svg-${feature.svg}`"
-		/>
+	<div
+		class="aioseo-ai-content-feature-card"
+		:class="{
+			'aioseo-ai-content-feature-card--metabox': 'metabox' === parentComponentContext
+		}"
+	>
+		<div class="aioseo-ai-content-feature-card-header">
+			<div class="aioseo-ai-content-feature-card-header-title">
+				<component :is="`svg-${feature.svg}`" />
 
-		<span class="header">{{ feature.strings.name }}</span>
-		<span class="description">{{ feature.strings.description }}</span>
+				<span class="aioseo-ai-content-feature-card-header-title-text">{{ feature.strings.name }}</span>
+			</div>
 
-		<base-button
-			size="small"
-			type="blue"
-			:disabled="!optionsStore.internalOptions.internal.ai.credits.remaining || buttonDisabled"
-			@click="aiStore.isModalOpened = feature.slug"
+			<div
+				v-if="feature.isPopular"
+			    class="popular-badge"
+			>
+				<span v-if="'sidebar' !== parentComponentContext">Popular</span>
+
+				<svg-star-outline
+					v-else
+					width="15"
+					height="15"
+				/>
+			</div>
+		</div>
+
+		<div
+			v-if="'sidebar' !== parentComponentContext"
+			class="aioseo-ai-content-feature-card-description"
 		>
-			{{ feature.strings.buttonSubmit }}
-		</base-button>
+			{{ feature.strings.description }}
+		</div>
+
+		<div>
+			<base-button
+				size="small"
+				type="blue"
+				:disabled="!optionsStore.internalOptions.internal.ai.credits.remaining || buttonDisabled"
+				@click="feature?.clickCallback ? feature.clickCallback() : (aiStore.isModalOpened = feature.slug)"
+				class="aioseo-ai-content-feature-card-btn"
+			>
+				<span v-if="'sidebar' !== parentComponentContext">{{ feature.strings.buttonSubmit }}</span>
+
+				<span v-else>&rarr;</span>
+			</base-button>
+		</div>
 
 		<component
+		    v-if="!feature.clickCallback"
 			:is="`${feature.slug}-modal`"
 			:feature="feature"
 			:show="aiStore.isModalOpened === feature.slug"
@@ -41,12 +73,14 @@ import MetaDescriptionModal from './MetaDescriptionModal'
 import MetaTitleModal from './MetaTitleModal'
 import SocialPostsModal from './SocialPostsModal'
 
+import SvgAiContent from '@/vue/components/common/svg/ai/AiContent'
 import SvgFaq from '@/vue/components/common/svg/ai/Faq'
 import SvgImageGenerator from '@/vue/components/common/svg/ai/ImageGenerator'
 import SvgKeyPoints from '@/vue/components/common/svg/ai/KeyPoints'
 import SvgMetaDescription from '@/vue/components/common/svg/ai/MetaDescription'
 import SvgMetaTitle from '@/vue/components/common/svg/ai/MetaTitle'
 import SvgRepurposeContent from '@/vue/components/common/svg/ai/RepurposeContent'
+import SvgStarOutline from '@/vue/components/common/svg/StarOutline'
 
 export default {
 	setup () {
@@ -63,15 +97,18 @@ export default {
 		MetaDescriptionModal,
 		MetaTitleModal,
 		SocialPostsModal,
+		SvgAiContent,
 		SvgFaq,
 		SvgImageGenerator,
 		SvgKeyPoints,
 		SvgMetaDescription,
 		SvgMetaTitle,
-		SvgRepurposeContent
+		SvgRepurposeContent,
+		SvgStarOutline
 	},
 	props : {
-		feature : {
+		parentComponentContext : String,
+		feature                : {
 			type     : Object,
 			required : true
 		},
@@ -85,38 +122,68 @@ export default {
 
 <style lang="scss">
 .aioseo-ai-content-feature-card {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+	&--metabox {
+		--feature-card-grid-template-columns: 1fr;
+		--feature-card-padding: 12px;
+		--feature-card-header-title-text-font-size: 14px;
+		--feature-card-header-title-svg-size: 20px;
+		--feature-card-header-justify-content: space-between;
+		--feature-card-popular-badge-padding: 3px 8px;
+		--feature-card-btn-width: auto;
+	}
 
-	padding: 12px;
+	display: grid;
+	grid-template-columns: var(--feature-card-grid-template-columns, auto auto);
+	justify-content: space-between;
+	gap: 12px;
+	padding: var(--feature-card-padding, 5px 5px 5px 12px);
 	border: 1px solid $border;
 	border-radius: 4px;
-	max-width: 280px;
+	width: 100%;
 
-	svg {
-		margin: 8px 0;
-		width: 28px;
-		height: 28px;
+	.aioseo-ai-content-feature-card-header {
+		display: flex;
+		align-items: center;
+		justify-content: var(--feature-card-header-justify-content, flex-start);
+		gap: 8px;
+	}
 
-		&.aioseo-ai-meta-title,
-		&.aioseo-ai-meta-description {
-			width: 24px;
-			height: 24px;
+	.aioseo-ai-content-feature-card-header-title {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		svg {
+			color: #8C8F9A;
+			width: var(--feature-card-header-title-svg-size, 18px);
+			height: var(--feature-card-header-title-svg-size, 18px);
 		}
 	}
 
-	.header {
-		font-size: 16px;
-		font-weight: 600;
+	.aioseo-ai-content-feature-card-header-title-text {
+		font-size: var(--feature-card-header-title-text-font-size, 12px);
+		font-weight: 700;
 		color: $black;
-		margin-bottom: 12px;
 	}
 
-	.description {
-		text-align: center;
+	.aioseo-ai-content-feature-card-description {
 		font-size: 14px;
-		margin-bottom: 12px;
+	}
+
+	.popular-badge {
+		background: #FEF3C7;
+		border: 1px solid #FBBF24;
+		border-radius: 4px;
+		display: inline-flex;
+		padding: var(--feature-card-popular-badge-padding, 2px);
+		font-weight: 700;
+		font-size: 12px;
+		line-height: normal;
+		color: #D4790D;
+	}
+
+	.aioseo-ai-content-feature-card-btn {
+		width: var(--feature-card-btn-width, 32px);
 	}
 }
 
@@ -143,13 +210,12 @@ export default {
 					width: 26px;
 					height: 26px;
 					padding-right: 10px;
-
 					border-right: 1px solid $border;
 					margin-right: 10px;
 					cursor: pointer;
 				}
 
-				&.aioseo-ai-content-feature-modal-icon{
+				&.aioseo-ai-content-feature-modal-icon {
 					width: 25px;
 					height: 25px;
 					margin-right: 10px;
@@ -191,7 +257,6 @@ export default {
 					display: flex;
 					flex-direction: row;
 					align-items: center;
-					line-height: 22px;
 
 					.aioseo-tooltip {
 						display: none;

@@ -82,8 +82,8 @@ class Pointers {
 		?>
 		<script>
 			jQuery( document ).ready( function( $ ) {
-				var isClosed = false;
-				var pointer  = $( '#toplevel_page_aioseo > a' ).pointer( {
+				const $menuItem = $( '#toplevel_page_aioseo' );
+				const $pointer  = $menuItem.pointer( {
 					content :
 						"<h3><?php esc_html_e( $args['title'], 'all-in-one-seo-pack' ); ?><\/h3>" +
 						"<h4><?php esc_html_e( $args['subtitle'], 'all-in-one-seo-pack' ); ?><\/h4>" +
@@ -99,13 +99,15 @@ class Pointers {
 						edge  : <?php echo is_rtl() ? "'right'" : "'left'"; ?>,
 						align : 'center'
 					},
-					pointerWidth : 420,
+					pointerWidth: 420,
 					show: function(event, el) {
-						el.pointer.css({'position':'fixed'});
 						el.pointer.addClass('aioseo-wp-pointer');
+						$menuItem.addClass('aioseo-pointer-active');
 					},
 					close : function() {
-						isClosed = true;
+						setTimeout(() => {
+							$menuItem.removeClass('aioseo-pointer-active');
+						}, 300);
 						jQuery.get(
 							window.location.href,
 							{
@@ -115,6 +117,8 @@ class Pointers {
 						);
 					}
 				} ).pointer('open');
+
+				$menuItem.append($('body .wp-pointer.aioseo-wp-pointer'));
 			} );
 		</script>
 		<?php

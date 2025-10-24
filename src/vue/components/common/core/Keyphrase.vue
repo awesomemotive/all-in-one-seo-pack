@@ -12,7 +12,10 @@
 				@click.prevent.exact="keywordRankTrackerStore.toggleModal({modal:'modalOpenPostEdit', open: true})"
 				class="btn-keyword-rank-tracker"
 			>
-				<svg-statistics width="20"/>
+				<svg-statistics
+					width="20"
+					height="19"
+				/>
 			</a>
 			<span class="keyphrase-score" :class="scoreClass" @click="toggleKeyphrasesPanel(index)">{{ score }}/100</span>
 		</span>
@@ -155,6 +158,10 @@ export default {
 
 		&:hover {
 			opacity: 0.8;
+		}
+
+		svg {
+			flex: 0 0 20px;
 		}
 	}
 }

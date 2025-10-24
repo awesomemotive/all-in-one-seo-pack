@@ -109,7 +109,7 @@
 
 		<template #footer>
 			<div class="footer-left">
-				<credit-counter />
+				<credit-counter parent-component-context="modal" />
 			</div>
 
 			<div class="footer-right">
@@ -389,7 +389,7 @@ export default {
 			aiStore.socialPosts.selected = aiStore.socialPosts.selected.filter(item => item.slug !== social.slug)
 		},
 		isSocialSelected (social) {
-			return this.aiStore.socialPosts.selected.includes(social)
+			return this.aiStore.socialPosts.selected.some(item => item.slug === social.slug)
 		},
 		generate () {
 			this.error         = false

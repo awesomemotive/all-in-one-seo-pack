@@ -174,10 +174,12 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
 import links from '@/vue/utils/links'
 
 import { useJsonValues } from '@/vue/composables/JsonValues'
+import license from '@/vue/utils/license'
 
 import { __, sprintf } from '@/vue/plugins/translations'
 
@@ -246,181 +248,193 @@ const strings = {
 	selectPostTypes     : __('Select the post types for which you want to automatically inject an author bio.', td)
 }
 
-const uiElementSliderOptions = {
-	block : {
-		desc : sprintf(
+const uiElementSliderOptions = computed(() => {
+	const result = {
+		block : {
+			desc : sprintf(
+				'<p>The following blocks are available in the Block Editor:</p><ul style="list-style:disc; margin-left: 24px;"><li>AIOSEO - Author Bio</li><li>AIOSEO - Author Name</li></ul>'
+			)
+		},
+		shortcode : {
+			multiple : [
+				{
+					copy        : '[aioseo_eeat_author_bio]',
+					desc        : __('Use the following shortcode to display the author bio.', td),
+					hasAdvanced : true,
+					attributes  : [
+						{
+							name        : 'compact',
+							description : sprintf(
+								// Translators: 1 - The default value.
+								__('Whether the compact author bio should be output or not. Defaults to %1$s.', td),
+								'<code>true</code>'
+							)
+						}
+					],
+					attributesDescription : __('The following shortcode attributes can be used to override the default settings:', td)
+				},
+				{
+					copy        : '[aioseo_eeat_author_tooltip]',
+					desc        : __('Use the following shortcode to display the author name.', td),
+					hasAdvanced : true,
+					attributes  : [
+						{
+							name        : 'show-label',
+							description : sprintf(
+								// Translators: 1 - The default value.
+								__('Whether to display the "Written By" label or not. Defaults to %1$s.', td),
+								'<code>true</code>'
+							)
+						},
+						{
+							name        : 'show-image',
+							description : sprintf(
+								// Translators: 1 - The default value.
+								__('Whether to display the author image or not. Defaults to %1$s.', td),
+								'<code>true</code>'
+							)
+						},
+						{
+							name        : 'show-tooltip',
+							description : sprintf(
+								// Translators: 1 - The default value.
+								__('Whether to display the popup when someone hovers over the name or not. Defaults to %1$s.', td),
+								'<code>true</code>'
+							)
+						}
+					],
+					attributesDescription : __('The following shortcode attributes can be used to override the default settings:', td)
+				}
+			]
+		},
+		php : {
+			multiple : [
+				{
+					copy        : '<?php if( function_exists( \'aioseo_eeat_author_bio\' ) ) aioseo_eeat_author_bio(); ?>',
+					desc        : __('Use the following PHP code anywhere in your theme\'s post templates or author archive template to display a bio for the author.', td),
+					hasAdvanced : true,
+					attributes  : [
+						{
+							name        : '$compact',
+							description : sprintf(
+								// Translators: 1 - The default value.
+								__('Whether the compact author bio should be output or not. Defaults to %1$s.', td),
+								'<code>true</code>'
+							)
+						}
+					],
+					attributesDescription : __('The following function arguments can be used to override the default settings:', td)
+				},
+				{
+					copy        : '<?php if( function_exists( \'aioseo_eeat_author_tooltip\' ) ) aioseo_eeat_author_tooltip(); ?>',
+					desc        : __('Use the following PHP code anywhere in your theme\'s post templates to display a bio for the post author.', td),
+					hasAdvanced : true,
+					attributes  : [
+						{
+							name        : '$showLabel',
+							description : sprintf(
+								// Translators: 1 - The default value.
+								__('Whether to display the "Written By" label or not. Defaults to %1$s.', td),
+								'<code>true</code>'
+							)
+						},
+						{
+							name        : '$showImage',
+							description : sprintf(
+								// Translators: 1 - The default value.
+								__('Whether to display the author image or not. Defaults to %1$s.', td),
+								'<code>true</code>'
+							)
+						},
+						{
+							name        : '$showTooltip',
+							description : sprintf(
+								// Translators: 1 - The default value.
+								__('Whether to display the popup when someone hovers over the name or not. Defaults to %1$s.', td),
+								'<code>true</code>'
+							)
+						}
+					],
+					attributesDescription : __('The following function arguments can be used to override the default settings:', td)
+				}
+			]
+		}
+	}
+
+	if (license.hasAddonFeature('aioseo-eeat', 'post-reviewer')) {
+		result.block.desc = sprintf(
 			'<p>The following blocks are available in the Block Editor:</p><ul style="list-style:disc; margin-left: 24px;"><li>AIOSEO - Author Bio</li><li>AIOSEO - Author Name</li><li>AIOSEO - Reviewer Name</li></ul>'
 		)
-	},
-	shortcode : {
-		multiple : [
-			{
-				copy        : '[aioseo_eeat_author_bio]',
-				desc        : __('Use the following shortcode to display the author bio.', td),
-				hasAdvanced : true,
-				attributes  : [
-					{
-						name        : 'compact',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether the compact author bio should be output or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					}
-				],
-				attributesDescription : __('The following shortcode attributes can be used to override the default settings:', td)
-			},
-			{
-				copy        : '[aioseo_eeat_author_tooltip]',
-				desc        : __('Use the following shortcode to display the author name.', td),
-				hasAdvanced : true,
-				attributes  : [
-					{
-						name        : 'show-label',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether to display the "Written By" label or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					},
-					{
-						name        : 'show-image',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether to display the author image or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					},
-					{
-						name        : 'show-tooltip',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether to display the popup when someone hovers over the name or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					}
-				],
-				attributesDescription : __('The following shortcode attributes can be used to override the default settings:', td)
-			},
-			{
-				copy        : '[aioseo_eeat_reviewer_tooltip]',
-				desc        : __('Use the following shortcode to display the reviewer name.', td),
-				hasAdvanced : true,
-				attributes  : [
-					{
-						name        : 'show-label',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether to display the "Reviewed By" label or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					},
-					{
-						name        : 'show-image',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether to display the reviewer image or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					},
-					{
-						name        : 'show-tooltip',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether to display the popup when someone hovers over the name or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					}
-				],
-				attributesDescription : __('The following shortcode attributes can be used to override the default settings:', td)
-			}
-		]
-	},
-	php : {
-		multiple : [
-			{
-				copy        : '<?php if( function_exists( \'aioseo_eeat_author_bio\' ) ) aioseo_eeat_author_bio(); ?>',
-				desc        : __('Use the following PHP code anywhere in your theme\'s post templates or author archive template to display a bio for the author.', td),
-				hasAdvanced : true,
-				attributes  : [
-					{
-						name        : '$compact',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether the compact author bio should be output or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					}
-				],
-				attributesDescription : __('The following function arguments can be used to override the default settings:', td)
-			},
-			{
-				copy        : '<?php if( function_exists( \'aioseo_eeat_author_tooltip\' ) ) aioseo_eeat_author_tooltip(); ?>',
-				desc        : __('Use the following PHP code anywhere in your theme\'s post templates to display a bio for the post author.', td),
-				hasAdvanced : true,
-				attributes  : [
-					{
-						name        : '$showLabel',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether to display the "Written By" label or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					},
-					{
-						name        : '$showImage',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether to display the author image or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					},
-					{
-						name        : '$showTooltip',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether to display the popup when someone hovers over the name or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					}
-				],
-				attributesDescription : __('The following function arguments can be used to override the default settings:', td)
-			},
-			{
-				copy        : '<?php if( function_exists( \'aioseo_eeat_reviewer_tooltip\' ) ) aioseo_eeat_reviewer_tooltip(); ?>',
-				desc        : __('Use the following PHP code anywhere in your theme\'s post templates to display a bio for the post reviewer.', td),
-				hasAdvanced : true,
-				attributes  : [
-					{
-						name        : '$showLabel',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether to display the "Reviewed By" label or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					},
-					{
-						name        : '$showImage',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether to display the reviewer image or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					},
-					{
-						name        : '$showTooltip',
-						description : sprintf(
-							// Translators: 1 - The default value.
-							__('Whether to display the popup when someone hovers over the name or not. Defaults to %1$s.', td),
-							'<code>true</code>'
-						)
-					}
-				],
-				attributesDescription : __('The following function arguments can be used to override the default settings:', td)
-			}
-		]
+
+		result.shortcode.multiple.push({
+			copy        : '[aioseo_eeat_reviewer_tooltip]',
+			desc        : __('Use the following shortcode to display the reviewer name.', td),
+			hasAdvanced : true,
+			attributes  : [
+				{
+					name        : 'show-label',
+					description : sprintf(
+						// Translators: 1 - The default value.
+						__('Whether to display the "Reviewed By" label or not. Defaults to %1$s.', td),
+						'<code>true</code>'
+					)
+				},
+				{
+					name        : 'show-image',
+					description : sprintf(
+						// Translators: 1 - The default value.
+						__('Whether to display the reviewer image or not. Defaults to %1$s.', td),
+						'<code>true</code>'
+					)
+				},
+				{
+					name        : 'show-tooltip',
+					description : sprintf(
+						// Translators: 1 - The default value.
+						__('Whether to display the popup when someone hovers over the name or not. Defaults to %1$s.', td),
+						'<code>true</code>'
+					)
+				}
+			],
+			attributesDescription : __('The following shortcode attributes can be used to override the default settings:', td)
+		})
+
+		result.php.multiple.push({
+			copy        : '<?php if( function_exists( \'aioseo_eeat_reviewer_tooltip\' ) ) aioseo_eeat_reviewer_tooltip(); ?>',
+			desc        : __('Use the following PHP code anywhere in your theme\'s post templates to display a bio for the post reviewer.', td),
+			hasAdvanced : true,
+			attributes  : [
+				{
+					name        : '$showLabel',
+					description : sprintf(
+						// Translators: 1 - The default value.
+						__('Whether to display the "Reviewed By" label or not. Defaults to %1$s.', td),
+						'<code>true</code>'
+					)
+				},
+				{
+					name        : '$showImage',
+					description : sprintf(
+						// Translators: 1 - The default value.
+						__('Whether to display the reviewer image or not. Defaults to %1$s.', td),
+						'<code>true</code>'
+					)
+				},
+				{
+					name        : '$showTooltip',
+					description : sprintf(
+						// Translators: 1 - The default value.
+						__('Whether to display the popup when someone hovers over the name or not. Defaults to %1$s.', td),
+						'<code>true</code>'
+					)
+				}
+			],
+			attributesDescription : __('The following function arguments can be used to override the default settings:', td)
+		})
 	}
-}
+
+	return result
+})
 </script>
 
 <style lang="scss">

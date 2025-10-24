@@ -2,6 +2,7 @@ import { createPinia, setActivePinia } from 'pinia'
 
 import { useAddonsStore } from '@/vue/stores/AddonsStore'
 
+import { useAiImageGeneratorStore } from '@/vue/stores/AiImageGeneratorStore'
 import { useAiStore } from '@/vue/stores/AiStore'
 import { useAnalyzerStore } from '@/vue/stores/AnalyzerStore'
 import { useBackupsStore } from '@/vue/stores/BackupsStore'
@@ -34,7 +35,6 @@ import { useWritingAssistantSettingsStore } from '@/vue/stores/WritingAssistantS
 
 // Standalone stores.
 import { useAiAssistantStore } from '@/vue/stores/standalones/AiAssistantStore'
-import { useAiImageGeneratorStore } from '@/vue/stores/standalones/AiImageGeneratorStore'
 import { useTableOfContentsStore } from '@/vue/stores/standalones/TableOfContentsStore'
 import { useWritingAssistantStore } from '@/vue/stores/standalones/WritingAssistantStore'
 
@@ -63,6 +63,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 
 	// Pinia stores.
 	const addonsStore                   = useAddonsStore()
+	const aiImageGeneratorStore         = useAiImageGeneratorStore()
 	const analyzerStore                 = useAnalyzerStore()
 	const backupsStore                  = useBackupsStore()
 	const dirtyOptionsStore             = useDirtyOptionsStore()
@@ -101,6 +102,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 
 	// Other stores.
 	addonsStore.addons                   = merge([ ...addonsStore.addons ], [ ...aioseo.addons || [] ])
+	aiImageGeneratorStore.$state         = merge({ ...aiImageGeneratorStore.$state }, { ...aioseo.aiImageGenerator || {} })
 	analyzerStore.$state                 = merge({ ...analyzerStore.$state }, { ...aioseo.analyzer || {} })
 	backupsStore.backups                 = merge([ ...backupsStore.backups ], [ ...aioseo.backups || [] ])
 	backupsStore.networkBackups          = merge({ ...backupsStore.networkBackups }, { ...aioseo.data?.network?.backups || {} })
@@ -132,6 +134,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 
 	// Default AIOSEO root store without the above data.
 	delete aioseo.addons
+	delete aioseo.aiImageGenerator
 	delete aioseo.analyzer
 	delete aioseo.backups
 	delete aioseo.currentPost
