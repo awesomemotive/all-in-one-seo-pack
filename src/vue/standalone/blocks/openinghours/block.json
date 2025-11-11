@@ -1,0 +1,69 @@
+{
+	"$schema": "https://schemas.wp.org/wp/5.8/block.json",
+	"name": "aioseo/openinghours",
+	"title": "AIOSEO Local - Opening Hours",
+	"description": "Displays the opening hours info.",
+	"category": "aioseo",
+	"attributes": {
+		"locationId" : {
+			"type"    : "number",
+			"default" : 0
+		},
+		"layout" : {
+			"type"    : "string",
+			"default" : "classic"
+		},
+		"showTitle" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showIcons" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showMonday" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showTuesday" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showWednesday" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showThursday" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showFriday" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showSaturday" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showSunday" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"label" : {
+			"type"    : "string",
+			"default" : null
+		},
+		"dataObject" : {
+			"type"    : "string",
+			"default" : null
+		},
+		"updated" : {
+			"type"    : "string",
+			"default" : null
+		}
+	},
+	"textdomain": "all-in-one-seo-pack",
+	"supports": {
+		"html": false
+	}
+}

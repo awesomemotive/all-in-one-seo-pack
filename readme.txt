@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.8
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 4.8.9
+Stable tag: 4.9.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -234,6 +234,14 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.9.0**
+
+* New: Table of Contents Block 2.0 - Our revamped Table of Contents block now supports multiple blocks on the same page, with a standalone or synced mode. We also added accordion support so you can collapse or expand it.
+* New: Recipe Block - Highlight your best recipes with a new block that also comes with schema markup to get your recipes featured in search results.
+* New: Products Block - Showcase your products with granular controls and Product schema markup to drive more organic traffic to your page.
+* Fixed: Rare PHP error when action scheduler arguments are not a JSON object.
+* Fixed: DB lock issue when checking table schema in MariaDB.
+
 **New in Version 4.8.9**
 
 * Updated: Improved user permission checks to display Site Audit action buttons.
@@ -397,6 +405,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.8.9 =
+= 4.9.0 =
 
 This update adds major improvements and bug fixes.

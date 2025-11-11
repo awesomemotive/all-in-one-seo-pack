@@ -160,7 +160,7 @@ export default {
 		cssClasses () {
 			const classes = Array.isArray(this.classes) ? this.classes : []
 
-			if (this.showPopper) {
+			if (this.showPopper && !classes.includes('popper-active')) {
 				classes.push('popper-active')
 			}
 

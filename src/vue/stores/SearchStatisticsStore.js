@@ -213,6 +213,19 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 						this.data.seoStatistics = response.body.data
 					}
 				})
+				.catch(error => {
+					// Handle error response - superagent rejects on 4xx/5xx status codes
+					// but the response body is still accessible in error.response
+					if (error.response && error.response.body) {
+						if (error.response.body.range) {
+							this.range = error.response.body.range
+						}
+						// Set data to false if the API returned an error
+						if (error.response.body.success === false) {
+							this.data.seoStatistics = false
+						}
+					}
+				})
 				.finally(() => {
 					this.loading.seoStatistics = false
 				})
@@ -233,6 +246,17 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 						this.data.keywords = response.body.data
 					}
 				})
+				.catch(error => {
+					// Handle error response - superagent rejects on 4xx/5xx status codes
+					if (error.response && error.response.body) {
+						if (error.response.body.range) {
+							this.range = error.response.body.range
+						}
+						if (error.response.body.success === false) {
+							this.data.keywords = false
+						}
+					}
+				})
 				.finally(() => {
 					this.loading.keywords = false
 				})
@@ -248,6 +272,14 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 				.then(response => {
 					if (response.body.success) {
 						this.data.contentRankings = response.body.data
+					}
+				})
+				.catch(error => {
+					// Handle error response - superagent rejects on 4xx/5xx status codes
+					if (error.response && error.response.body) {
+						if (error.response.body.success === false) {
+							this.data.contentRankings = false
+						}
 					}
 				})
 				.finally(() => {

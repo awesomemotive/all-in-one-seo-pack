@@ -24,7 +24,9 @@ import {
 	useSeoPreviewStore
 } from '@/vue/stores'
 
-import { getDomGoogleSerpData, truncate } from '@/vue/utils/html'
+import { arrayUnique } from '@/vue/utils/helpers'
+
+import { getDomGoogleSerpData } from '@/vue/utils/html'
 import CoreGoogleSearchPreview from '@/vue/components/common/core/GoogleSearchPreview'
 import GoogleSerpWireframe from './partials/GoogleSerpWireframe'
 
@@ -53,18 +55,19 @@ export default {
 	computed : {
 		// Get rich results for the front-end preview.
 		richResults () {
-			let anchorLinks = document.querySelector('[class*="aioseo-table-of-contents"] ul')
+			let anchorLinks = document.querySelectorAll('.aioseo-toc-item')
+			const items = []
+
 			if (anchorLinks) {
-				anchorLinks = anchorLinks.innerText.split('\n')
-					.slice(0, 4)
-					.map(item => truncate(item.trim(), 30))
-					.filter(item => item)
+				anchorLinks?.forEach(i => {
+					items.push(i.innerText)
+				})
 			}
 
 			const schemaOutput = (document.querySelector('script.aioseo-schema') || {})?.textContent || ''
 
 			return {
-				anchorLinks   : anchorLinks || [],
+				anchorLinks   : arrayUnique(items) || [],
 				reviewSnippet : this.seoPreviewStore.extractReviewSnippet(schemaOutput),
 				faq           : this.seoPreviewStore.extractFaq(schemaOutput)
 			}

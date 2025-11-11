@@ -183,15 +183,6 @@ trait Vue {
 				],
 				'vueComponentsDefaults' => $this->getVueComponentsDefaults(),
 			],
-			'user'               => [
-				'canManage'      => aioseo()->access->canManage(),
-				'capabilities'   => aioseo()->access->getAllCapabilities(),
-				'customRoles'    => $this->getCustomRoles(),
-				'data'           => wp_get_current_user(),
-				'locale'         => function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale(),
-				'roles'          => $this->getUserRoles(),
-				'unfilteredHtml' => current_user_can( 'unfiltered_html' )
-			],
 			'plugins'            => $this->getPluginData(),
 			'postData'           => [
 				'postTypes'    => array_values( $this->getPublicPostTypes( false, false, true ) ),
@@ -215,6 +206,18 @@ trait Vue {
 			'theme'              => [
 				'features' => aioseo()->helpers->getThemeFeatures()
 			]
+		];
+
+		$userData           = wp_get_current_user();
+		$this->data['user'] = [
+			'emailAddress'   => $userData->user_email,
+			'roles'          => $userData->roles,
+			'capabilities'   => $userData->allcaps,
+			'customRoles'    => $this->getCustomRoles(),
+			'userRoles'      => aioseo()->helpers->getUserRoles(),
+			'locale'         => function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale(),
+			'unfilteredHtml' => current_user_can( 'unfiltered_html' ),
+			'canManage'      => aioseo()->access->canManage()
 		];
 	}
 

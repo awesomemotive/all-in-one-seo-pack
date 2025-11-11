@@ -20,6 +20,6 @@ class KeyPoints extends Blocks {
 	 * @return void
 	 */
 	public function register() {
-		aioseo()->blocks->registerBlock( 'aioseo/key-points' );
+		aioseo()->blocks->registerBlock( 'key-points' );
 	}
 }

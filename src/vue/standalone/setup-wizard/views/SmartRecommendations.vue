@@ -301,7 +301,7 @@ export default {
 		}
 	},
 	mounted () {
-		this.setupWizardStore.smartRecommendations.accountInfo = this.rootStore.aioseo.user.data.data.user_email
+		this.setupWizardStore.smartRecommendations.accountInfo = this.rootStore.aioseo.user.emailAddress
 	}
 }
 </script>

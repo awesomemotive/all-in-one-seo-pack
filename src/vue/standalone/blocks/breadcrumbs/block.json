@@ -1,4 +1,5 @@
 {
+	"$schema": "https://schemas.wp.org/wp/5.8/block.json",
 	"name": "aioseo/breadcrumbs",
 	"title": "AIOSEO - Breadcrumbs",
 	"description": "Displays the breadcrumb trail for the current page.",
@@ -42,5 +43,8 @@
 			}
 		}
 	},
-	"textdomain": "all-in-one-seo-pack"
+	"textdomain": "all-in-one-seo-pack",
+	"supports": {
+		"html": false
+	}
 }

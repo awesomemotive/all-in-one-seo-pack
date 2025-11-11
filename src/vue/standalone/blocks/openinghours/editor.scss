@@ -1,0 +1,16 @@
+.aioseo-opening-hours-sidebar {
+  .sidebar-row {
+    margin-bottom: 16px;
+    .title {
+      font-weight: $font-bold;
+    }
+
+    &.labels {
+
+      label {
+        display: block;
+        margin-bottom: 4px;
+      }
+    }
+  }
+}

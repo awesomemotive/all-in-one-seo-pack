@@ -357,7 +357,7 @@ trait WpContext {
 		// The order of the function calls below is intentional and should NOT change.
 		$postContent = $this->doBlocks( $postContent );
 		$postContent = wpautop( $postContent );
-		$postContent = $this->doShortcodes( $postContent );
+		$postContent = @$this->doShortcodes( $postContent );
 
 		$this->restoreWpQuery();
 

@@ -144,7 +144,8 @@ export default {
 </script>
 
 <style lang="scss">
-.aioseo-app .aioseo-donut-chart-with-legend {
+.aioseo-app .aioseo-donut-chart-with-legend,
+.aioseo-blc-app .aioseo-donut-chart-with-legend {
 	display: flex;
 	font-size: 14px;
 	color: $black;

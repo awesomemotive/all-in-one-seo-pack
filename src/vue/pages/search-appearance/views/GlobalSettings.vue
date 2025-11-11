@@ -462,8 +462,6 @@
 </template>
 
 <script>
-import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
-import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	useOptionsStore,
@@ -471,11 +469,14 @@ import {
 } from '@/vue/stores'
 
 import addons from '@/vue/utils/addons'
+import links from '@/vue/utils/links'
+
 import {
 	dateJsToLocal,
 	dateStringToLocalJs
 } from '@/vue/utils/date'
 
+import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
 import { useJsonValues } from '@/vue/composables/JsonValues'
 import { useMaxCounts } from '@/vue/composables/MaxCounts'
 import { useTags } from '@/vue/composables/Tags'

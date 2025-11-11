@@ -32,13 +32,3 @@ const strings = {
 	)
 }
 </script>
-
-<style lang="scss" scoped>
-	.aioseo-ai-assistant-sidebar {
-		.aioseo-ai-assistant-sidebar-cost {
-			margin-top: 20px;
-			font-size: 13px;
-			color: $black;
-		}
-	}
-</style>

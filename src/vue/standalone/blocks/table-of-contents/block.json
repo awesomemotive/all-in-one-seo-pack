@@ -18,6 +18,26 @@
 			"type": "string",
 			"default": "ul"
 		},
+		"collapsibleType": {
+			"type": "string",
+			"default": "off"
+		},
+		"collapsed": {
+			"type": "boolean",
+			"default": false
+		},
+		"collapsedTitle": {
+			"type": "string",
+			"default": "Show Table of Contents"
+		},
+		"expandedTitle": {
+			"type": "string",
+			"default": "Hide Table of Contents"
+		},
+		"mode" : {
+			"type": "string",
+			"default": null
+		},
 		"headings": {
 			"type": "array",
 			"items": {
@@ -31,8 +51,9 @@
 		}
 	},
 	"supports": {
-		"multiple": false,
+		"multiple": true,
 		"html": false,
+		"reusable": false,
 		"align": [
 			"wide",
 			"full"

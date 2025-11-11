@@ -1,0 +1,26 @@
+.aioseo-location-map-sidebar {
+  .sidebar-row {
+    margin-bottom: 16px;
+  
+    .title {
+      font-weight: $font-bold;
+    }
+  
+    &.dimensions {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-left: -10px;
+      margin-right: -10px;
+  
+      > div {
+        padding: 0 10px;
+      }
+  
+      label {
+        display: block;
+        padding-bottom: 8px;
+      }
+    }
+  }
+}

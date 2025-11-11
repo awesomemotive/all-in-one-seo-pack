@@ -309,6 +309,7 @@ export default {
 	}
 
 	.multiselect__tags {
+		pointer-events: none !important;
 		border: 1px solid $input-border;
 		border-radius: 3px;
 		display: flex;

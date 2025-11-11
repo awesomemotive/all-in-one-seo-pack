@@ -721,7 +721,7 @@ export default {
 
 	.aioseo-wp-table-header {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: 1.5fr 1fr;
 		align-items: start;
 		gap: 8px;
 

@@ -52,7 +52,7 @@ if ('post' === window.aioseo.currentPost?.context) {
 
 			// Any block attribute that we aren't watching could get updated to its previous value when we set our blockGraphs.
 			// These are known attributes that we don't need.
-			const attsToOmit = [
+			const attributesToIgnore = [
 				'backgroundColor',
 				'textColor',
 				'fontSize',
@@ -60,8 +60,15 @@ if ('post' === window.aioseo.currentPost?.context) {
 			]
 
 			// Remove the irrelevant attributes before setting our blockGraphs.
-			attsToOmit.forEach(att => {
+			attributesToIgnore.forEach(att => {
 				delete blockAttributes[att]
+			})
+
+			// Decode all JSON properties so that we can process them in the backend.
+			Object.keys(blockAttributes).forEach((key) => {
+				if ('string' === typeof blockAttributes[key] && blockAttributes[key].match(/^({.*}|\[.*\])$/)) {
+					blockAttributes[key] = JSON.parse(blockAttributes[key])
+				}
 			})
 
 			// If a block was found, let's update it.
@@ -72,6 +79,13 @@ if ('post' === window.aioseo.currentPost?.context) {
 		blocks.forEach((block) => {
 			const blockGraphIndex = blockGraphs.findIndex(blockGraph => blockGraph?.schemaBlockId === block?.attributes?.schemaBlockId)
 			if (-1 === blockGraphIndex && block?.attributes) {
+				// Decode all JSON properties so that we can process them in the backend.
+				Object.keys(block?.attributes).forEach((key) => {
+					if ('string' === typeof block.attributes[key] && block.attributes[key].match(/^({.*}|\[.*\])$/)) {
+						block.attributes[key] = JSON.parse(block.attributes[key])
+					}
+				})
+
 				blockGraphs.push(block.attributes)
 			}
 		})

@@ -112,12 +112,12 @@
 </template>
 
 <script>
-import links from '@/vue/utils/links'
 import {
 	usePostEditorStore,
 	useTagsStore
 } from '@/vue/stores'
 
+import links from '@/vue/utils/links'
 import tags from '@/vue/utils/tags'
 import { addTags, removeTags } from '@/vue/plugins/quill/auto-tagger'
 import Quill from 'quill'
@@ -143,9 +143,9 @@ export default {
 	emits : [ 'counter', 'selection-change', 'updateEditor', 'focus', 'blur', 'update:modelValue', 'paste' ],
 	setup () {
 		return {
+			links,
 			postEditorStore : usePostEditorStore(),
-			tagsStore       : useTagsStore(),
-			links
+			tagsStore       : useTagsStore()
 		}
 	},
 	components : {
@@ -249,8 +249,8 @@ export default {
 				return {
 					...item,
 					valueText : value,
-					value     : this.$refs['select-template'][index] ? this.$refs['select-template'][index].innerHTML : '',
-					menuHtml  : this.$refs['menu-template'][index] ? this.$refs['menu-template'][index].innerHTML : ''
+					value     : this.$refs['select-template']?.[index]?.innerHTML || '',
+					menuHtml  : this.$refs['menu-template']?.[index]?.innerHTML || ''
 				}
 			})
 		},
@@ -813,6 +813,7 @@ export default {
 				max-width: 24px;
 				height: 24px;
 				margin-left: 12px;
+				pointer-events: auto !important;
 
 				&:hover {
 					cursor: pointer;

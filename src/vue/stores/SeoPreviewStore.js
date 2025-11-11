@@ -16,7 +16,7 @@ export const useSeoPreviewStore = defineStore('SeoPreviewStore', {
 			const schemaStore          = useSchemaStore()
 			const tableOfContentsStore = useTableOfContentsStore()
 
-			let anchorLinks = (flattenHeadings(tableOfContentsStore.headings, 4) || [])?.map(h => h?.content || '')
+			let anchorLinks = arrayUnique((flattenHeadings(tableOfContentsStore?.headings) || [])?.map(h => h?.content || ''))
 			if (!Array.isArray(anchorLinks) || !anchorLinks.length) {
 				anchorLinks = []
 			}

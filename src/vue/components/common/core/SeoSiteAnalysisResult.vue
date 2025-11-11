@@ -53,7 +53,7 @@
 
 				<div
 					class="result-action"
-					v-if="getBody.buttonLink && showInstructions && rootStore.aioseo.user.data.allcaps?.edit_pages"
+					v-if="getBody.buttonLink && showInstructions && rootStore.aioseo.user.capabilities?.edit_pages"
 				>
 					<base-button
 						:href="getBody.buttonLink"

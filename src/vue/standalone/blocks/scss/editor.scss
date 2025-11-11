@@ -1,0 +1,355 @@
+// Styles for the editor that are reused in multiples blocks
+// In order to avoid duplication, we have created a separate file for these styles
+@use "../../../../vue/assets/scss/app/variables.scss" as *;
+
+.block-editor-block-list__block.wp-block {
+  &[data-type="aioseo/product"] {
+    @media (min-width: 1024px) {
+      min-width: 800px;
+    }
+  }
+
+  &[data-type="aioseo/product"],
+  &[data-type="aioseo/recipe"] {
+    &:not(.is-selected) {
+      min-width: auto !important;
+
+      .aioseo-block-editor__container:not(.aioseo-block-editor__placeholder) {
+        display: none;
+      }
+    }
+
+    &.is-selected .aioseo-block-editor__preview {
+      display: none;
+    }
+  }
+}
+
+.block-editor-block-list__layout .block-editor-block-list__block:not([contenteditable]):focus::after {
+  z-index: 0;
+}
+
+.aioseo-cta {
+  padding: 10px 12px;
+  height: auto;
+  font-size: 12px;
+  border: 1px solid $gray;
+  background-color: $box-background;
+  cursor: pointer;
+  box-shadow: none !important;
+  border-radius: 4px;
+  font-weight: 600;
+  color: $black2-hover !important;
+  transition: background-color 0.2s ease;
+  text-decoration: none !important;
+
+  &:hover {
+    background-color: $white;
+  }
+}
+
+.aioseo-block-editor {
+  &__container {
+    background: $background;
+    border-radius: 2px;
+    padding: 16px;
+    margin-bottom: 0 !important;
+
+    .aioseo-editor,
+    .aioseo-add-template-tag {
+      background: white;
+    }
+
+    .aioseo-settings-row {
+      padding: 16px 0;
+
+      .aioseo-view-all-tags {
+        color: #005ae0;
+        border-bottom: 1px solid;
+        box-shadow: none;
+        text-decoration: none !important;
+      }
+
+      .aioseo-html-tags-editor .add-tags {
+        flex-wrap: wrap;
+      }
+
+      &:last-of-type {
+        border: none;
+      }
+    }
+
+    .aioseo-datepicker-picker {
+      box-sizing: border-box;
+    }
+
+    .multiselect__content-wrapper {
+      .multiselect__content {
+        padding: 0px !important;
+        margin: 0px !important;
+      }
+    }
+
+    .settings-content .aioseo-description {
+      line-height: 24px;
+      margin-top: 4px;
+    }
+
+    .aioseo-tab-separator {
+      margin: 0px 7px;
+      color: $input-border;
+    }
+
+    .aioseo-tab-headers {
+      display: flex;
+      flex-wrap: wrap;
+      padding-bottom: 16px;
+      border-bottom: 1px solid $gray;
+
+      .aioseo-tab-header {
+        border: none;
+        outline: none;
+        background: transparent;
+        cursor: pointer;
+        color: $blue;
+        font-size: 14px;
+        font-weight: 400;
+        padding: 0px;
+
+        &:not(:last-child) {
+          margin-right: 5px;
+        }
+
+        &:not(:first-child) {
+          margin-left: 5px;
+        }
+
+        &-active {
+          color: $black;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .aioseo-schema-field-group-repeater {
+      border: none !important;
+      padding-top: 16px;
+
+      > .header {
+        display: none;
+      }
+
+      > .fields {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        > .header {
+          padding-bottom: 16px;
+
+          .header-title {
+            margin-bottom: 0 !important;
+          }
+        }
+
+        > .aioseo-schema-field-group-repeater-inner {
+          border: 1px solid $gray;
+          border-radius: 4px;
+          background-color: transparent;
+        }
+      }
+
+      > .footer {
+        justify-content: flex-start;
+
+        > a {
+          @extend .aioseo-cta;
+        }
+      }
+    }
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none !important;
+    padding-bottom: 15px;
+
+    &-title {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      h2 {
+        margin: 0 !important;
+        font-size: 24px;
+        color: $black2-hover;
+        font-weight: 700;
+
+        &:before {
+          display: none !important;
+        }
+      }
+    }
+
+    &-actions {
+      display: flex;
+      justify-content: right;
+      align-items: center;
+      gap: 8px;
+
+      .aioseo-button {
+        @extend .aioseo-cta;
+
+        &.disabled:not(.loading) {
+          opacity: 0.7;
+          pointer-events: none;
+          cursor: default;
+        }
+      }
+
+      .aiseo-button-trash {
+        padding: 8px;
+        box-shadow: none;
+        background-color: $box-background;
+
+        svg {
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+
+    &-icon {
+      display: flex;
+    }
+  }
+
+  .aioseo-tab-item-content {
+    .settings-area {
+      .aioseo-col.col-xs-12.col-md-3 {
+        width: 20%;
+      }
+    }
+  }
+
+  .aioseo-tooltip {
+    display: block;
+
+    svg {
+      flex: 1 0 auto;
+      height: 24px;
+      width: 24px;
+
+      &.aioseo-circle-check {
+        color: $green;
+      }
+
+      &.aioseo-circle-information {
+        color: $placeholder-color;
+      }
+
+      &.aioseo-circle-exclamation {
+        color: $red;
+      }
+    }
+
+    .popper {
+      z-index: 100;
+      width: 300px;
+      text-align: left;
+      padding: 20px;
+      line-height: 1.3;
+      font-size: 13px;
+      background-color: $white;
+      border-width: 0;
+      box-shadow: 0px 3px 4.8px rgba(32, 71, 102, 0.27);
+    }
+  }
+
+  .aioseo-select {
+    font-size: 14px;
+
+    .multiselect__option {
+      font-size: 14px;
+
+      .option-title,
+      .option-details {
+        font-size: 14px;
+      }
+    }
+
+    input,
+    input::placeholder,
+    .multiselect__placeholder {
+      font-size: 14px;
+    }
+
+    .multiselect__tags {
+      padding: 7px 36px 7px 11px !important;
+
+      .multiselect__tags-wrap {
+        .multiselect__tag {
+          margin: 5px 3px 0 0;
+        }
+      }
+    }
+  }
+}
+
+.aioseo-confirmation-modal {
+  .modal-container {
+    max-width: 620px !important;
+  }
+
+  .aioseo-modal-body {
+    padding: 20px 40px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+
+    h3 {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .reset-description {
+      font-size: 16px;
+      color: $black;
+      margin-bottom: 16px;
+      text-align: center;
+      max-width: 515px;
+      line-height: 1.6;
+    }
+
+    button.close {
+      position: absolute;
+      right: 11px;
+      top: 11px;
+      width: 24px;
+      height: 24px;
+      background-color: #fff;
+      border: none;
+      display: flex;
+      align-items: center;
+
+      svg.aioseo-close {
+        cursor: pointer;
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    .aioseo-description {
+      max-width: 510px;
+      text-align: center;
+    }
+
+    .aioseo-button:not(.close) {
+      margin-top: 16px;
+    }
+  }
+}

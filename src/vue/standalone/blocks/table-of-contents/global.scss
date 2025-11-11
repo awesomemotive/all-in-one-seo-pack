@@ -1,0 +1,67 @@
+.aioseo-toc-header {
+    width: 100%;
+    position: relative;
+
+    // if has a child aioseo-toc-header-area class, then add flex-direction: column.
+    &:has(.aioseo-toc-header-area) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .aioseo-toc-header-title {
+        align-items: center;
+        color: $black2;
+        display: flex;
+        flex: 1 0 auto;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 125%;
+        max-width: 100%;
+        gap: 8px;
+
+        .aioseo-toc-header-collapsible {
+            display: flex;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            background-color: #E5F0FF;
+            padding: 8px 0px 8px 10px;
+            box-sizing: border-box;
+            justify-content: center;
+            align-items: center;
+
+            svg {
+                width: 14px;
+                height: 14px;
+                margin-right: 10px;
+            }
+        }
+    }
+
+    .aioseo-toc-header-instructions {
+        color: $black2-hover;
+        font-size: 16px;
+        margin-bottom: 0;
+        margin-top: 16px;
+    }
+
+    .aioseo-toc-header-buttons {
+        flex: 0 1 auto;
+    }
+}
+
+.aioseo-toc-contents {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform-origin: top;
+    display: block;
+    opacity: 1;
+    transform: scaleY(1);
+    padding-top: 12px;
+}
+
+.aioseo-toc-collapsed {
+    opacity: 0;
+    transform: scaleY(0);
+    height: 0;
+    overflow: hidden;
+}

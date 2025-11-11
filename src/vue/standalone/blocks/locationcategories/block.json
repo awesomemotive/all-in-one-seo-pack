@@ -1,0 +1,11 @@
+{
+	"$schema": "https://schemas.wp.org/wp/5.8/block.json",
+	"name": "aioseo/locationcategories",
+	"title": "AIOSEO Local - Location Categories",
+	"description": "Displays location categories.",
+	"category": "aioseo",
+	"textdomain": "all-in-one-seo-pack",
+	"supports": {
+		"html": false
+	}
+}

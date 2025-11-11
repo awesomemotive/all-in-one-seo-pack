@@ -1,9 +1,9 @@
 {
+	"$schema": "https://schemas.wp.org/wp/5.8/block.json",
 	"name": "aioseo/html-sitemap",
 	"title": "AIOSEO - HTML Sitemap",
 	"description": "Displays a sitemap with your site's posts and terms.",
 	"category": "widgets",
-	"icon": "list-view",
 	"keywords": [
 		"html sitemap",
 		"link",
@@ -20,20 +20,23 @@
 		"sitemap",
 		"visual sitemap"
 	],
+	"textdomain": "all-in-one-seo-pack",
 	"attributes": {
 		"default": {
 			"type": "boolean",
 			"default": true
 		},
 		"post_types": {
-			"type": "string"
+			"type": "string",
+			"default": "[\"post\", \"page\"]"
 		},
 		"post_types_all": {
 			"type": "boolean",
 			"default": true
 		},
 		"taxonomies": {
-			"type": "string"
+			"type": "string",
+			"default" : "[\"category\", \"post_tag\"]"
 		},
 		"taxonomies_all": {
 			"type": "boolean",
@@ -73,7 +76,9 @@
 		},
 		"is_admin": {
 			"type": "boolean"
-		},
-		"textdomain": "all-in-one-seo-pack"
+		}
+	},
+	"supports": {
+		"html": false
 	}
 }

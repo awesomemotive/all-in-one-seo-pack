@@ -34,6 +34,8 @@ import { useTruSeoHighlighterStore } from '@/vue/stores/TruSeoHighlighterStore'
 import { useWritingAssistantSettingsStore } from '@/vue/stores/WritingAssistantSettingsStore'
 
 // Standalone stores.
+import { useRecipeStore } from '@/vue/stores/standalones/RecipeStore'
+import { useProductStore } from '@/vue/stores/standalones/ProductStore'
 import { useAiAssistantStore } from '@/vue/stores/standalones/AiAssistantStore'
 import { useTableOfContentsStore } from '@/vue/stores/standalones/TableOfContentsStore'
 import { useWritingAssistantStore } from '@/vue/stores/standalones/WritingAssistantStore'
@@ -251,6 +253,8 @@ export {
 	useSettingsStore,
 	useSetupWizardStore,
 	useTableOfContentsStore,
+	useRecipeStore,
+	useProductStore,
 	useTagsStore,
 	useToolsStore,
 	useTruSeoHighlighterStore,

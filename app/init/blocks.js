@@ -7,6 +7,9 @@
 
 /* eslint-disable no-undef */
 
+registerBlockType('aioseo/ai-assistant', {
+	title : 'AIOSEO - AI Assistant'
+})
 registerBlockType('aioseo/breadcrumbs', {
 	title : 'AIOSEO - Breadcrumbs'
 })
@@ -45,4 +48,10 @@ registerBlockType('aioseo/openinghours', {
 })
 registerBlockType('aioseo/key-points', {
 	title : 'AIOSEO - Key Points (TLDR)'
+})
+registerBlockType('aioseo/recipe', {
+	title : 'AIOSEO - Recipe'
+})
+registerBlockType('aioseo/product', {
+	title : 'AIOSEO - Product'
 })

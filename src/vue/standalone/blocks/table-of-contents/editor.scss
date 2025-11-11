@@ -1,6 +1,20 @@
 [data-type="aioseo/table-of-contents"] {
-	&:not(.is-selected) .aioseo-toc-menu:not(.aioseo-toc-placeholder) {
+	* {
+		box-sizing: border-box !important;
+	}
+
+	.aioseo-toc-rendered {
 		display: none;
+	}
+
+	&:not(.is-selected) {
+		.aioseo-toc-menu:not(.aioseo-toc-placeholder) {
+			display: none;
+		}
+
+		.aioseo-toc-rendered {
+			display: block;
+		}
 	}
 
 	&.is-selected .aioseo-toc-list--rendered {
@@ -16,6 +30,15 @@
 
 .wp-block-aioseo-table-of-contents {
 
+	.aioseo-toc-list-nested,
+	.aioseo-toc-list-nested--rendered {
+		> ul,
+		> ol {
+			padding-left: 30px;
+			width: 100%;
+		}
+	}
+
 	.aioseo-toc-placeholder .aioseo-toc-header {
 		margin-bottom: 0 !important;
 	}
@@ -23,4 +46,546 @@
 
 .block-editor-block-list__layout .block-editor-block-list__block[data-type="aioseo/table-of-contents"]:not([contenteditable]):focus::after {
 	z-index: 0;
+}
+
+.wp-block-aioseo-table-of-contents .aioseo-toc-menu,
+.aioseo-modal.aioseo-toc-modal .modal-body {
+	font-family: $font-family;
+	background-color: $background;
+	padding: 20px;
+	min-height: 70px;
+	border-radius: 2px;
+
+	// Since our element selectors are susceptible to theme styles, we need to do a little reset.
+	a, p, li, button, input, header {
+		font-family: inherit;
+		padding: unset;
+		margin: unset;
+		font-size: inherit;
+	}
+
+	.aioseo-toc-header {
+		display: flex;
+		align-items: center;
+		margin-bottom: 25px;
+		flex-wrap: wrap;
+
+		.aioseo-toc-header-info {
+			display: flex;
+		}
+
+		.aioseo-toc-header-title {
+			align-items: center;
+			color: $black2;
+			display: flex;
+			flex: 1 0 auto;
+			font-size: 24px;
+			font-weight: 700;
+			line-height: 125%;
+			max-width: 100%;
+			gap: 8px;
+
+			.aioseo-toc-header-collapsible {
+				display: flex;
+				border-radius: 2px;
+				cursor: pointer;
+				transition: transform 0.3s ease;
+				background-color: #E5F0FF;
+				height: 34px;
+				width: 40px;
+				padding: 8px 0px 8px 10px;
+				box-sizing: border-box;
+				justify-content: center;
+				align-items: center;
+
+				svg {
+					width: 14px;
+					height: 14px;
+					margin-right: 10px;
+				}
+			}
+		}
+
+		.aioseo-toc-header-instructions {
+			color: $black2-hover;
+			font-size: 16px;
+			margin-bottom: 0;
+			margin-top: 16px;
+		}
+
+		.aioseo-toc-header-buttons {
+			display: flex;
+			justify-content: right;
+      align-items: center;
+      gap: 12px;
+			flex: 0 1 auto;
+		}
+	}
+
+	a.aioseo-button-link {
+		padding: 10px 12px;
+		height: auto;
+		font-size: 12px;
+		line-height: 14px;
+		border: 1px solid $gray;
+		text-decoration: none;
+		background-color: $box-background;
+		cursor: pointer;
+		box-shadow: none;
+		border-radius: 4px;
+		font-weight: 600;
+		color: $black2-hover !important;
+		transition: background-color .2s ease;
+
+		&:hover {
+			background-color: $white;
+		}
+	}
+}
+
+.aioseo-modal.aioseo-toc-modal {
+
+	.modal-wrapper {
+		font-family: inherit;
+
+		.modal-body {
+			padding: 20px 28px 20px 10px;
+
+			> header {
+				padding-left: 10px;
+			}
+		}
+	}
+}
+
+.wp-block-aioseo-table-of-contents .aioseo-toc-menu,
+.aioseo-modal.aioseo-toc-modal {
+
+	.aioseo-toc-list {
+		margin: 0;
+		padding: 0;
+
+		li.aioseo-toc-list-item {
+			margin: 0;
+
+			&.heading-hidden {
+				display: block;
+			}
+		}
+	}
+
+	svg {
+		width: 24px;
+		height: 24px;
+		fill: currentColor;
+	}
+
+	button.has-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		height: 48px;
+		width: 40px;
+		cursor: pointer;
+		text-decoration: none;
+		text-shadow: none;
+		outline: 1px solid transparent;
+		border-width: 0;
+		color: $placeholder-color;
+		padding: 0;
+		background: none;
+	}
+
+	button.aioseo-hide-heading-toggle {
+		background-color: transparent;
+	}
+
+	.aioseo-toc-list-item {
+
+		.aioseo-toc-list-nested:is(ul, ol) {
+			padding-left: 30px;
+			width: 100%;
+		}
+
+		.aioseo-toc-list-item__inner {
+			display: flex;
+			flex-wrap: wrap;
+			position: relative;
+		}
+
+		> .aioseo-toc-list-item__inner > :not(.aioseo-toc-list) {
+			margin-block: 4px;
+		}
+
+		.row-input {
+			position: relative;
+			width: 100%;
+			max-width: calc(100% - 40px);
+			transition: opacity 0.2s;
+
+			&:not(:hover, :focus-within) {
+				overflow: hidden;
+			}
+
+			input {
+				color: $black;
+				font-size: 16px;
+				line-height: 1.25;
+				padding: 15px;
+				transition: background-color, border-color, opacity 0.3s;
+			}
+
+			&.row-input--anchor {
+				position: absolute;
+				right: 40px;
+				z-index: -1;
+
+				input {
+					animation: anchorInputOut 0.3s ease-out;
+				}
+			}
+
+			.append-icon {
+				display: flex;
+				align-content: center;
+				justify-content: end;
+				position: absolute;
+				top: 1px;
+				right: 1px;
+				padding-left: 14px;
+				padding-right: 16px;
+				width: fit-content;
+				max-height: calc(100% - 2px);
+				border-radius: 0 3px 3px 0;
+				background-image: linear-gradient(to right, transparent, rgb(255, 255, 255) 8px);
+				opacity: 1;
+
+				.aioseo-tooltip {
+					margin-left: 0;
+
+					div {
+						display: flex;
+					}
+				}
+
+				svg {
+					color: $placeholder-color;
+					width: 24px;
+					height: 24px;
+					cursor: pointer;
+
+					&.aioseo-close {
+						width: 14px;
+						height: 14px;
+						margin-right: 5px;
+						margin-left: 12px
+					}
+				}
+			}
+		}
+
+		&.anchor-edit {
+
+			> .aioseo-toc-list-item__inner > .row-input {
+
+				&.row-input--content {
+					z-index: 0;
+				}
+
+				&.row-input--anchor {
+					z-index: 1;
+
+					input {
+						padding-right: 78px;
+						animation: anchorInputIn 0.3s ease-in;
+					}
+				}
+			}
+		}
+
+		&.anchor-is-animating {
+
+			> .aioseo-toc-list-item__inner > .row-input {
+				overflow: hidden;
+
+				.append-icon {
+					opacity: 0;
+					transition: none;
+				}
+			}
+
+			> .aioseo-toc-list-item__inner > .row-input--anchor {
+					z-index: 1;
+			}
+
+			&.anchor-edit {
+				> .aioseo-toc-list-item__inner > .row-input--content {
+
+					input {
+						animation: contentInputOut 0.3s ease-out;
+					}
+				}
+			}
+
+			&:not(.anchor-edit) {
+				> .aioseo-toc-list-item__inner > .row-input--content {
+
+					input {
+						animation: contentInputIn 0.3s ease-in;
+					}
+				}
+			}
+		}
+	}
+
+	.heading-hidden {
+
+		> .aioseo-toc-list-item__inner > .row-input {
+			pointer-events: none;
+
+			input {
+				opacity: 0.5;
+			}
+
+			.append-icon {
+				display: none;
+			}
+		}
+	}
+
+	.aioseo-tooltip {
+		.popper {
+			z-index: 100;
+			width: 300px;
+			text-align: left;
+			padding: 20px;
+			line-height: 1.3;
+			font-size: 13px;
+			background-color: #fff;
+			border-width: 0;
+			box-shadow: 0px 3px 4.8px rgba(32, 71, 102, 0.27);
+
+			p {
+				margin: 0;
+				line-height: 1.3;
+				font-size: 13px;
+			}
+
+			.aioseo-tooltip__header {
+				font-weight: bold;
+				margin: 0;
+
+				+ p {
+					margin-top: 1em;
+				}
+			}
+		}
+
+		svg {
+			color: $placeholder-color;
+			cursor: pointer;
+		}
+	}
+
+	.aioseo-toc-content > .aioseo-toc-list:not(.orderable) {
+
+		.row-input--content input {
+			padding-right: 48px;
+		}
+
+		&:not(.aioseo-toc-list-nested) {
+			margin-left: 24px;
+		}
+	}
+}
+
+.is-highlighted > .wp-block-aioseo-table-of-contents .aioseo-toc-list-item,
+.wp-block-aioseo-table-of-contents .aioseo-toc-list-item.anchor-edit.done:not(:focus-within) {
+
+	> .aioseo-toc-list-item__inner > .row-input input {
+		animation-duration: 0s!important;
+	}
+}
+
+.aioseo-modal.aioseo-toc-modal .modal-body {
+
+	.heading-hidden {
+		display: none;
+	}
+
+	li.aioseo-toc-list-item {
+		list-style: none;
+
+		.row-input input {
+			pointer-events: none;
+		}
+	}
+
+	.aioseo-drag-ghost {
+
+		input {
+			color: $blue3!important;
+			background: $box-background;
+			border-color: transparent;
+			outline-color: transparent;
+			overflow: hidden;
+		}
+
+		.aioseo-drag {
+			opacity: 0;
+		}
+
+		.aioseo-drag-handle {
+			color: $blue3!important;
+			opacity: 1!important;
+		}
+	}
+
+	.aioseo-dragging {
+		input {
+			display: none;
+		}
+	}
+
+	.aioseo-drag-handle {
+		cursor: grab!important;
+	}
+}
+
+@keyframes anchorInputIn {
+	0% {
+		transform: translateX(100%);
+	}
+
+	100% {
+		transform: translateX(0);
+	}
+}
+
+@keyframes anchorInputOut {
+	0% {
+		transform: translateX(0);
+	}
+
+	100% {
+		transform: translateX(100%);
+	}
+}
+
+@keyframes contentInputIn {
+	0% {
+		transform: scale(.95);
+		opacity: 0.3;
+	}
+
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+@keyframes contentInputOut {
+	0% {
+		transform: scale(1);
+		opacity: 1;
+	}
+
+	100% {
+		transform: scale(.95);
+		opacity: 0.3;
+	}
+}
+
+.aioseo-modal.aioseo-toc-modal-lite {
+	.aioseo-cta {
+		border: none;
+		box-shadow: none;
+		margin: 0;
+	}
+
+	.modal-wrapper .modal-container .modal-header {
+		height: 0;
+		border: none;
+
+		button.close {
+			top: 30px;
+		}
+	}
+}
+
+.aioseo-toc-select-mode {
+	font-family: $font-family;
+	border: 1px solid $border;
+	padding: 20px;
+	min-height: 70px;
+	border-radius: 2px;
+
+	&__collapsible {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+
+		> div {
+			display: flex;
+			cursor: pointer;
+			padding: 10px 8px;
+			box-sizing: border-box;
+			background-color: #E5F0FF;
+			width: 40px;
+			height: 34px;
+			align-items: center;
+			justify-content: center;
+		}
+
+		svg {
+			width: 14px;
+			height: 2px;
+		}
+
+		p {
+			font-size: 23px;
+			color: #141B38;
+			font-weight: 700;
+			margin: 0 !important;
+		}
+	}
+
+	&__description {
+		margin-bottom: 20px;
+	}
+
+	&__selectors {
+		display: flex;
+		justify-content: center;
+		gap: 20px;
+	}
+
+	&__selector {
+		border: 2px solid $border;
+		border-radius: 4px;
+		padding: 20px;
+		text-align: center;
+		max-width: 304px;
+
+		&:hover {
+			border-color: $blue;
+		}
+	}
+
+	&__selector-icon {
+		margin-bottom: 20px;
+	}
+
+	&__selector-title {
+		font-weight: 600 !important;
+		font-size: 16px !important;
+		color: #141B38 !important;
+		margin-bottom: 8px !important;
+	}
+
+	&__selector-description {
+		font-size: 14px;
+		color: #141B38;
+		margin-bottom: 20px;
+	}
 }

@@ -171,10 +171,8 @@ export default {
 		color: $black;
 
 		.name {
-			--font-size: $font-md;
-
 			font-weight: $font-bold;
-			font-size: var(--font-size, 14px);
+			font-size: 14px;
 			line-height: 22px;
 			display: flex;
 			align-items: center;

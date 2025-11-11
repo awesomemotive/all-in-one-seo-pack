@@ -1,0 +1,89 @@
+{
+	"$schema": "https://schemas.wp.org/wp/5.8/block.json",
+	"name": "aioseo/businessinfo",
+	"title": "AIOSEO Local - Business Info",
+	"description": "Displays the business info.",
+	"category": "aioseo",
+	"attributes": {
+		"locationId" : {
+			"type"    : "number",
+			"default" : 0
+		},
+		"showLabels" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"addressLabel" : {
+			"type"    : "string",
+			"default" : null
+		},
+		"vatIdLabel" : {
+			"type"    : "string",
+			"default" : null
+		},
+		"taxIdLabel" : {
+			"type"    : "string",
+			"default" : null
+		},
+		"phoneLabel" : {
+			"type"    : "string",
+			"default" : null
+		},
+		"faxLabel" : {
+			"type"    : "string",
+			"default" : null
+		},
+		"emailLabel" : {
+			"type"    : "string",
+			"default" : null
+		},
+		"showIcons" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showName" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showAddress" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showPhone" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showFax" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showCountryCode" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showEmail" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showVat" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showTax" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"dataObject" : {
+			"type"    : "string",
+			"default" : null
+		},
+		"updated" : {
+			"type"    : "string",
+			"default" : null
+		}
+	},
+	"textdomain": "all-in-one-seo-pack",
+	"supports": {
+		"html": false
+	}
+}

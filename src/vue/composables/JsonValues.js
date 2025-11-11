@@ -1,5 +1,13 @@
 export const useJsonValues = () => {
 	const getJsonValue = (value, defaultValue = null) => {
+		if (!value) {
+			return defaultValue
+		}
+
+		if ('object' === typeof value) {
+			return value
+		}
+
 		try {
 			value = JSON.parse(value)
 		} catch (error) {

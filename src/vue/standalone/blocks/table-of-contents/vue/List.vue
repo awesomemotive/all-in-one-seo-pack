@@ -6,10 +6,9 @@
 		]"
 		v-bind="dragOptions"
 		handle=".aioseo-drag-handle"
-		:list="headings"
-		@update:modelValue="(value) => $emit('update:modelValue', value)"
+		:list="props.headings"
 		@change="(value) => setReorder(value)"
-		:item-key="$.uid.toString()"
+		:item-key="(element) => element?.id || element.blockClientId"
 	>
 		<template #item="{element}">
 			<li
@@ -18,7 +17,6 @@
 					{ 'heading-hidden' : element.hidden }
 				]"
 			>
-
 				<div class="aioseo-toc-list-item__inner">
 					<button
 						class="aioseo-drag-handle has-icon"
@@ -37,8 +35,9 @@
 							<div
 								class="append-icon"
 								v-if="!allowReorder"
+								@click.native="handleAnchorInput"
 							>
-								<svg-toc-link @click.native="handleAnchorInput" />
+								<svg-toc-link />
 							</div>
 						</template>
 					</base-input>
@@ -53,7 +52,9 @@
 						<template #append-icon>
 							<div class="append-icon">
 								<core-tooltip>
-									<svg-info />
+									<div>
+										<svg-info />
+									</div>
 
 									<template #tooltip>
 										<p class="aioseo-tooltip__header">{{strings.tooltipHeader}}</p>
@@ -62,7 +63,9 @@
 									</template>
 								</core-tooltip>
 
-								<svg-close @click.native="handleAnchorInput" />
+								<div @click.native="handleAnchorInput">
+									<svg-close />
+								</div>
 							</div>
 						</template>
 					</base-input>
@@ -84,7 +87,10 @@
 						v-if="element.headings"
 						class="aioseo-toc-list-nested"
 						:headings="element.headings"
+						:parent-block-id="element.blockClientId"
 						:allowReorder="allowReorder"
+						:client-id="clientId"
+						:group="element.anchor"
 					/>
 				</div>
 			</li>
@@ -92,15 +98,15 @@
 	</draggable>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted, nextTick } from 'vue'
 import {
-	useRootStore,
-	useTableOfContentsStore
+	useRootStore
 } from '@/vue/stores'
 
 import { cleanHtml, deepCopy } from '@/vue/standalone/blocks/utils'
 import { cleanForSlug } from '@/vue/utils/cleanForSlug'
-import { formatHeadingList, orderHeadings } from '../helpers'
+import { orderHeadings } from '../helpers'
 
 import BaseInput from '@/vue/components/common/base/Input'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
@@ -116,478 +122,168 @@ import { __, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-export default {
-	name : 'List',
-	setup () {
-		const tableOfContentsStore = useTableOfContentsStore()
-
-		return {
-			tableOfContentsStore
-		}
+const props = defineProps({
+	headings : {
+		required : true,
+		type     : Array
 	},
-	components : {
-		BaseInput,
-		CoreTooltip,
-		Draggable,
-		SvgClose,
-		SvgDrag,
-		SvgEye,
-		SvgEyeOff,
-		SvgInfo,
-		SvgTocLink
+	clientId : {
+		required : true,
+		type     : String
 	},
-	props : {
-		headings : {
-			required : true,
-			type     : Array
-		},
-		allowReorder : {
-			required : false,
-			type     : Boolean,
-			default () {
-				return false
-			}
-		}
+	allowReorder : {
+		required : false,
+		type     : Boolean,
+		default  : false
 	},
-	data () {
-		return {
-			showAnchorField : -1,
-			strings         : {
-				tooltipHeader      : __('Edit HTML Anchor:', td),
-				tooltipDescription : sprintf(
-					// Translators: 1 - The plugin short name ("AIOSEO").
-					__('The HTML anchor allows %1$s to link directly to your header from this table of contents block. Feel free to edit if you want, but an anchor is required. For headings without an anchor, %1$s will automatically generate them.', td),
-					import.meta.env.VITE_SHORT_NAME
-				)
-			}
-		}
+	group : {
+		required : false,
+		type     : String,
+		default  : 'description'
 	},
-	computed : {
-		dragOptions () {
-			return {
-				tag        : this.tableOfContentsStore.listStyle,
-				animation  : 300,
-				group      : 'description',
-				disabled   : !this.allowReorder,
-				ghostClass : 'aioseo-drag-ghost',
-				dragClass  : 'aioseo-dragging'
-			}
+	parentBlockId : {
+		required : false,
+		type     : String,
+		default  : ''
+	}
+})
+
+const rootStore = useRootStore()
+
+const blockAttributes = ref(window.wp.data.select('core/block-editor').getBlockAttributes(props.clientId))
+
+const strings = {
+	tooltipHeader      : __('Edit HTML Anchor:', td),
+	tooltipDescription : sprintf(
+		// Translators: 1 - The plugin short name ("AIOSEO").
+		__('The HTML anchor allows %1$s to link directly to your header from this table of contents block. Feel free to edit if you want, but an anchor is required. For headings without an anchor, %1$s will automatically generate them.', td),
+		import.meta.env.VITE_SHORT_NAME
+	)
+}
+
+const dragOptions = computed(() => ({
+	tag        : blockAttributes.value.listStyle,
+	animation  : 300,
+	group      : props.group,
+	disabled   : !props.allowReorder,
+	ghostClass : 'aioseo-drag-ghost',
+	dragClass  : 'aioseo-dragging'
+}))
+
+const setEditedContent = (newValue, heading) => {
+	heading.editedContent = newValue === heading.content ? '' : cleanHtml(newValue, true, false)
+
+	window.wp.data.dispatch('core/block-editor').updateBlockAttributes(props.clientId, {
+		...blockAttributes.value,
+		headings : props.headings
+	})
+}
+
+const replaceSortedHeadings = (heading) => {
+	if (heading.blockClientId === props.parentBlockId) {
+		heading.headings = orderHeadings(heading.headings, heading.editedOrder)
+	} else {
+		heading.headings.map(replaceSortedHeadings)
+	}
+
+	return heading
+}
+
+const setReorder = (value) => {
+	blockAttributes.value.reOrdered = true
+
+	const movedElement = value?.moved?.element
+	if (!movedElement) {
+		return
+	}
+
+	const copyHeadings = deepCopy(blockAttributes.value.headings)
+	const newHeadings = orderHeadings(copyHeadings.map(replaceSortedHeadings))
+	window.wp.data.dispatch('core/block-editor').updateBlockAttributes(props.clientId, {
+		...blockAttributes.value,
+		headings : newHeadings
+	})
+}
+
+const setAnchor = (newValue, heading) => {
+	const clientId = heading.blockClientId
+	const block    = window.wp.data.select('core/block-editor').getBlock(clientId)
+	if (!block) {
+		return
+	}
+
+	heading.anchor = cleanForSlug(newValue)
+	if (!newValue) {
+		const blockIndex = window.wp.data.select('core/block-editor').getBlockIndex(clientId)
+		heading.anchor   = rootStore.aioseo.data.blocks.toc.hashPrefix + cleanForSlug(`${heading.content}-${blockIndex}`)
+	}
+
+	window.wp.data.dispatch('core/block-editor').updateBlockAttributes(clientId, {
+		anchor : heading.anchor
+	})
+}
+
+const getHeadings = (headings, heading) => {
+	return headings?.map((h) => {
+		if (
+			h.content === heading.content &&
+			h.level === Number(heading.level) &&
+			h.anchor === heading.anchor
+		) {
+			return heading
+		} else {
+			return h.headings ? getHeadings(h.headings, heading) : h
 		}
-	},
-	methods : {
-		setEditedContent : function (newValue, heading) {
-			if (newValue === heading.content) {
-				heading.editedContent = ''
+	})
+}
 
-				return
-			}
+const setHiddenStatus = (heading) => {
+	heading.hidden = !heading.hidden
 
-			heading.editedContent = cleanHtml(newValue, true)
-		},
-		setReorder () {
-			this.tableOfContentsStore.reOrdered = true
-			const rearrangedList = orderHeadings(deepCopy(this.tableOfContentsStore.headings))
+	if ('nested' === props.group) {
+		window.wp.data.dispatch('core/block-editor').updateBlockAttributes(props.clientId, blockAttributes.value)
+		return
+	}
 
-			this.tableOfContentsStore.setHeadings(rearrangedList)
-			window.aioseoBus.$emit('updateHeadings' + this.tableOfContentsStore.blockClientId, rearrangedList)
-		},
-		setAnchor : function (newValue, heading) {
-			heading.anchor = cleanForSlug(newValue)
-			if (!newValue) {
-				const rootStore = useRootStore()
-				heading.anchor = rootStore.aioseo.data.blocks.toc.hashPrefix + cleanForSlug(heading.content)
-			}
+	window.wp.data.dispatch('core/block-editor').updateBlockAttributes(props.clientId, getHeadings(blockAttributes.value.headings, heading))
+}
 
-			const clientId = heading.blockClientId
-			const block    = window.wp.data.select('core/block-editor').getBlock(clientId)
-			if (!block) {
-				return
-			}
+const handleAnchorInput = (event) => {
+	const inputRow = event.target.closest('.aioseo-toc-list-item')
+	const anchorInput = inputRow?.querySelector('.row-input--anchor input')
 
-			window.wp.data.dispatch('core/block-editor').updateBlockAttributes(clientId, {
-				anchor : heading.anchor
-			})
-		},
-		setHiddenStatus (heading) {
-			heading.hidden = !heading.hidden
+	if (!anchorInput) {
+		return
+	}
 
-			if (9 === heading.editedLevel) {
-				heading.editedLevel = 0
-			} else {
-				heading.editedLevel = 9
-			}
-			this.tableOfContentsStore.setHeadings(formatHeadingList([ ...this.tableOfContentsStore.headings ]))
-		},
-		handleAnchorInput (event) {
-			const inputRow = event.target.closest('.aioseo-toc-list-item')
-			const anchorInput = inputRow?.querySelector('.row-input--anchor input')
+	if (!inputRow.classList.contains('anchor-edit')) {
+		anchorInput.focus({ preventScroll: true })
+		inputRow.classList.add('anchor-edit', 'anchor-is-animating')
 
-			if (!anchorInput) {
-				return
-			}
+		anchorInput.addEventListener('animationend', function anchorIn () {
+			inputRow.classList.remove('anchor-is-animating')
+			inputRow.classList.add('done')
 
-			if (!inputRow.classList.contains('anchor-edit')) {
-				anchorInput.focus({ preventScroll: true })
-				inputRow.classList.add('anchor-edit', 'anchor-is-animating')
+			anchorInput.removeEventListener('animationend', anchorIn, false)
+		})
+	} else {
+		inputRow.classList.add('anchor-is-animating')
+		inputRow.classList.remove('anchor-edit')
+		inputRow.classList.remove('done')
 
-				anchorInput.addEventListener('animationend', function anchorIn () {
-					inputRow.classList.remove('anchor-is-animating')
-					inputRow.classList.add('done')
+		anchorInput.addEventListener('animationend', function anchorOut () {
+			inputRow.classList.remove('anchor-is-animating')
 
-					anchorInput.removeEventListener('animationend', anchorIn, false)
-				})
-			} else {
-				inputRow.classList.add('anchor-is-animating')
-				inputRow.classList.remove('anchor-edit')
-				inputRow.classList.remove('done')
-
-				anchorInput.addEventListener('animationend', function anchorOut () {
-					inputRow.classList.remove('anchor-is-animating')
-
-					inputRow.removeEventListener('animationend', anchorOut, false)
-				})
-			}
-		}
+			inputRow.removeEventListener('animationend', anchorOut, false)
+		})
 	}
 }
+
+onMounted(() => {
+	nextTick(() => {
+		window.aioseoBus.$on('updateToc' + props.clientId, () => {
+			blockAttributes.value = window.wp.data.select('core/block-editor').getBlockAttributes(props.clientId)
+		})
+	})
+})
 </script>
-
-<style lang="scss">
-.wp-block-aioseo-table-of-contents .aioseo-toc-menu,
-.aioseo-modal.aioseo-toc-modal {
-
-	.aioseo-toc-list {
-		margin: 0;
-		padding: 0;
-
-		li.aioseo-toc-list-item {
-			margin: 0;
-
-			&.heading-hidden {
-				display: block;
-			}
-		}
-
-		.aioseo-toc-list-nested:is(ul, ol) {
-			padding-left: 30px;
-			width: 100%;
-		}
-	}
-
-	svg {
-		width: 24px;
-		height: 24px;
-		fill: currentColor;
-	}
-
-	button.has-icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		height: 48px;
-		width: 40px;
-		cursor: pointer;
-		text-decoration: none;
-		text-shadow: none;
-		outline: 1px solid transparent;
-		border-width: 0;
-		color: $placeholder-color;
-		padding: 0;
-		background: none;
-	}
-
-	button.aioseo-hide-heading-toggle {
-		background-color: $background;
-	}
-
-	.aioseo-toc-list-item {
-
-		.aioseo-toc-list-item__inner {
-			display: flex;
-			flex-wrap: wrap;
-			position: relative;
-		}
-
-		> .aioseo-toc-list-item__inner > :not(.aioseo-toc-list) {
-			margin-block: 4px;
-		}
-
-		.row-input {
-			position: relative;
-			width: 100%;
-			max-width: calc(100% - 40px);
-			transition: opacity 0.2s;
-
-			&:not(:hover, :focus-within) {
-				overflow: hidden;
-			}
-
-			input {
-				color: $black;
-				font-size: 16px;
-				line-height: 1.25;
-				padding: 15px;
-				transition: background-color, border-color, opacity 0.3s;
-			}
-
-			&.row-input--anchor {
-				position: absolute;
-				right: 40px;
-				z-index: -1;
-
-				input {
-					animation: anchorInputOut 0.3s ease-out;
-				}
-			}
-
-			.append-icon {
-				display: flex;
-				align-content: center;
-				justify-content: end;
-				position: absolute;
-				top: 1px;
-				right: 1px;
-				padding-left: 14px;
-				padding-right: 16px;
-				width: fit-content;
-				max-height: calc(100% - 2px);
-				border-radius: 0 3px 3px 0;
-				background-image: linear-gradient(to right, transparent, rgb(255, 255, 255) 8px);
-				opacity: 1;
-
-				.aioseo-tooltip {
-					margin-left: 0;
-
-					div {
-						display: flex;
-					}
-				}
-
-				svg {
-					color: $placeholder-color;
-					width: 24px;
-					height: 24px;
-					cursor: pointer;
-
-					&.aioseo-close {
-						width: 14px;
-						height: 14px;
-						margin-right: 5px;
-						margin-left: 12px
-					}
-				}
-			}
-		}
-
-		&.anchor-edit {
-
-			> .aioseo-toc-list-item__inner > .row-input {
-
-				&.row-input--content {
-					z-index: 0;
-				}
-
-				&.row-input--anchor {
-					z-index: 1;
-
-					input {
-						padding-right: 78px;
-						animation: anchorInputIn 0.3s ease-in;
-					}
-				}
-			}
-		}
-
-		&.anchor-is-animating {
-
-			> .aioseo-toc-list-item__inner > .row-input {
-				overflow: hidden;
-
-				.append-icon {
-					opacity: 0;
-					transition: none;
-				}
-			}
-
-			> .aioseo-toc-list-item__inner > .row-input--anchor {
-					z-index: 1;
-			}
-
-			&.anchor-edit {
-				> .aioseo-toc-list-item__inner > .row-input--content {
-
-					input {
-						animation: contentInputOut 0.3s ease-out;
-					}
-				}
-			}
-
-			&:not(.anchor-edit) {
-				> .aioseo-toc-list-item__inner > .row-input--content {
-
-					input {
-						animation: contentInputIn 0.3s ease-in;
-					}
-				}
-			}
-		}
-	}
-
-	.heading-hidden {
-
-		> .aioseo-toc-list-item__inner > .row-input {
-				pointer-events: none;
-
-			input {
-				opacity: 0.5;
-			}
-
-			.append-icon {
-				display: none;
-			}
-		}
-	}
-
-	.aioseo-tooltip {
-		.popper {
-			z-index: 100;
-			width: 300px;
-			text-align: left;
-			padding: 20px;
-			line-height: 1.3;
-			font-size: 13px;
-			background-color: #fff;
-			border-width: 0;
-			box-shadow: 0px 3px 4.8px rgba(32, 71, 102, 0.27);
-
-			p {
-				margin: 0;
-				line-height: 1.3;
-				font-size: 13px;
-			}
-
-			.aioseo-tooltip__header {
-				font-weight: bold;
-				margin: 0;
-
-				+ p {
-					margin-top: 1em;
-				}
-			}
-		}
-
-		svg {
-			color: $placeholder-color;
-			cursor: pointer;
-		}
-	}
-
-	.aioseo-toc-content > .aioseo-toc-list:not(.orderable) {
-
-		.row-input--content input {
-			padding-right: 48px;
-		}
-
-		&:not(.aioseo-toc-list-nested) {
-			margin-left: 24px;
-		}
-	}
-}
-
-.is-highlighted > .wp-block-aioseo-table-of-contents .aioseo-toc-list-item,
-.wp-block-aioseo-table-of-contents .aioseo-toc-list-item.anchor-edit.done:not(:focus-within) {
-
-	> .aioseo-toc-list-item__inner > .row-input input {
-		animation-duration: 0s!important;
-	}
-}
-
-.aioseo-modal.aioseo-toc-modal .modal-body {
-
-	.heading-hidden {
-		display: none;
-	}
-
-	li.aioseo-toc-list-item {
-		list-style: none;
-
-		.row-input input {
-			pointer-events: none;
-		}
-	}
-
-	.aioseo-drag-ghost {
-
-		input {
-			color: $blue3!important;
-			background: $box-background;
-			border-color: transparent;
-			outline-color: transparent;
-			overflow: hidden;
-		}
-
-		.aioseo-drag {
-			opacity: 0;
-		}
-
-		.aioseo-drag-handle {
-			color: $blue3!important;
-			opacity: 1!important;
-		}
-	}
-
-	.aioseo-dragging {
-		input {
-			display: none;
-		}
-	}
-
-	.aioseo-drag-handle {
-		cursor: grab!important;
-	}
-}
-
-@keyframes anchorInputIn {
-	0% {
-		transform: translateX(100%);
-	}
-
-	100% {
-		transform: translateX(0);
-	}
-}
-
-@keyframes anchorInputOut {
-	0% {
-		transform: translateX(0);
-	}
-
-	100% {
-		transform: translateX(100%);
-	}
-}
-
-@keyframes contentInputIn {
-	0% {
-		transform: scale(.95);
-		opacity: 0.3;
-	}
-
-	100% {
-		transform: scale(1);
-		opacity: 1;
-	}
-}
-
-@keyframes contentInputOut {
-	0% {
-		transform: scale(1);
-		opacity: 1;
-	}
-
-	100% {
-		transform: scale(.95);
-		opacity: 0.3;
-	}
-}
-</style>

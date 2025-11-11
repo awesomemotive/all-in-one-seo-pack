@@ -1,0 +1,49 @@
+{
+	"$schema": "https://schemas.wp.org/wp/5.8/block.json",
+	"name": "aioseo/locationmap",
+	"title": "AIOSEO Local - Map",
+	"description": "Displays a location map.",
+	"category": "aioseo",
+	"textdomain": "all-in-one-seo-pack",
+	"attributes": {
+		"locationId" : {
+			"type"    : "number",
+			"default" : 0
+		},
+		"showLabel" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"showIcon" : {
+			"type"    : "boolean",
+			"default" : true
+		},
+		"customMarker" : {
+			"type"    : "string",
+			"default" : null
+		},
+		"width" : {
+			"type"    : "string",
+			"default" : "100%"
+		},
+		"height" : {
+			"type"    : "string",
+			"default" : "450px"
+		},
+		"label" : {
+			"type"    : "string",
+			"default" : null
+		},
+		"dataObject" : {
+			"type"    : "string",
+			"default" : null
+		},
+		"updated" : {
+			"type"    : "string",
+			"default" : null
+		}
+	},
+	"supports": {
+		"html": false
+	}
+}

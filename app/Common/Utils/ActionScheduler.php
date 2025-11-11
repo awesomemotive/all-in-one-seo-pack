@@ -232,6 +232,10 @@ class ActionScheduler {
 
 		// Decode the args.
 		foreach ( $scheduledActions as $key => $action ) {
+			if ( is_array( $action->args ) || ! aioseo()->helpers->isJsonString( $action->args ) ) {
+				continue;
+			}
+
 			$scheduledActions[ $key ]->args = json_decode( $action->args, true );
 		}
 

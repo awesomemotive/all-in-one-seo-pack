@@ -26,7 +26,11 @@ const proInput = {
 }
 
 // Lite only inputs.
-const liteInput = {}
+const liteInput = {
+	// blocks
+	'product/main' : './src/vue/standalone/blocks/lite/product/main.jsx',
+	'recipe/main'  : './src/vue/standalone/blocks/lite/recipe/main.jsx'
+}
 
 // Vue settings pages.
 const getPages = () => {
@@ -54,7 +58,7 @@ const getStandalones = () => {
 	return {
 		'admin-bar-noindex-warning' : './src/vue/standalone/admin-bar-noindex-warning/main.js',
 		app                         : './src/vue/standalone/app/main.js',
-		blocks                      : './src/vue/standalone/blocks/main.js',
+		blocks                      : './src/vue/standalone/blocks/schema.js',
 		connect                     : './src/vue/standalone/connect/main.js',
 		'connect-pro'               : './src/vue/standalone/connect-pro/main.js',
 		'dashboard-widgets'         : './src/vue/standalone/dashboard-widgets/main.js',
@@ -83,7 +87,9 @@ const getStandalones = () => {
 		seedprod                    : './src/vue/standalone/page-builders/seedprod/main.js',
 		siteorigin                  : './src/vue/standalone/page-builders/siteorigin/main.js',
 		wpbakery                    : './src/vue/standalone/page-builders/wpbakery/main.js',
-		'thrive-architect'          : './src/vue/standalone/page-builders/thrive-architect/main.js'
+		'thrive-architect'          : './src/vue/standalone/page-builders/thrive-architect/main.js',
+		// Blocks
+		'table-of-contents'         : './src/vue/standalone/blocks/table-of-contents/frontend.js'
 	}
 }
 
@@ -91,14 +97,45 @@ const getStandalones = () => {
 const getNonVueStandalones = () => {
 	return {
 		// CSS only.
-		'admin-bar'     : './src/vue/assets/scss/app/admin-bar.scss',
-		integrations    : './src/vue/assets/scss/integrations/main.scss',
-		'blocks-editor' : './src/vue/assets/scss/blocks-editor.scss',
+		'admin-bar'  : './src/vue/assets/scss/app/admin-bar.scss',
+		integrations : './src/vue/assets/scss/integrations/main.scss',
 
 		// Native JS.
 		plugins                    : './src/app/plugins/main.js',
 		'follow-up-emails-nav-bar' : './src/vue/standalone/user-profile-tab/follow-up-emails-nav-bar.js',
-		'tru-seo-analyzer'         : './src/app/tru-seo/analyzer/main.js'
+		'tru-seo-analyzer'         : './src/app/tru-seo/analyzer/main.js',
+
+		// blocks
+		'breadcrumbs/main' : './src/vue/standalone/blocks/breadcrumbs/main.jsx',
+
+		'businessinfo/main'   : './src/vue/standalone/blocks/businessinfo/main.jsx',
+		'businessinfo/editor' : './src/vue/standalone/blocks/businessinfo/editor.scss',
+
+		'openinghours/main'   : './src/vue/standalone/blocks/openinghours/main.jsx',
+		'openinghours/editor' : './src/vue/standalone/blocks/openinghours/editor.scss',
+
+		'html-sitemap/main'   : './src/vue/standalone/blocks/html-sitemap/main.jsx',
+		'html-sitemap/editor' : './src/vue/standalone/blocks/html-sitemap/editor.scss',
+
+		'locations/main'   : './src/vue/standalone/blocks/locations/main.jsx',
+		'locations/editor' : './src/vue/standalone/blocks/locations/editor.scss',
+
+		'locationcategories/main' : './src/vue/standalone/blocks/locationcategories/main.jsx',
+
+		'locationmap/main'   : './src/vue/standalone/blocks/locationmap/main.jsx',
+		'locationmap/editor' : './src/vue/standalone/blocks/locationmap/editor.scss',
+
+		'faq/main'   : './src/vue/standalone/blocks/faq/main.jsx',
+		'faq/editor' : './src/vue/standalone/blocks/faq/editor.scss',
+
+		'table-of-contents/main'   : './src/vue/standalone/blocks/table-of-contents/main.jsx',
+		'table-of-contents/editor' : './src/vue/standalone/blocks/table-of-contents/editor.scss',
+		'table-of-contents/global' : './src/vue/standalone/blocks/table-of-contents/global.scss',
+
+		'key-points/main' : './src/vue/standalone/blocks/key-points/main.jsx',
+
+		'ai-assistant/main'   : './src/vue/standalone/blocks/ai-assistant/main.jsx',
+		'ai-assistant/editor' : './src/vue/standalone/blocks/ai-assistant/editor.scss'
 	}
 }
 
@@ -187,6 +224,9 @@ export default ({ mode }) => {
 				}
 			}
 		},
+		esbuild : {
+			loader : 'jsx' // This combined with the ESBuild options below allows combined usage of JS and JSX files for our blocks.
+		},
 		optimizeDeps : {
 			force   : true,
 			include : [
@@ -228,7 +268,7 @@ export default ({ mode }) => {
 				host : process.env.VITE_AIOSEO_DOMAIN
 			},
 			watch : {
-				ignored: ['**/src/**/node_modules/**']
+				ignored : [ '**/src/**/node_modules/**' ]
 			}
 		},
 		resolve : {
@@ -313,7 +353,9 @@ const getPlugins = version => {
 			}
 		}),
 		vue(),
-		react(),
+		react({
+			jsxRuntime : 'classic'
+		}),
 		ElementPlus()
 	]
 

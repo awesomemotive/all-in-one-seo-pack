@@ -43,29 +43,37 @@ export const maybeUpdateTaxonomies = (run = true) => {
 
 	if (isBlockEditor()) {
 		let categories = [],
-			selected   = []
+			selected   = [],
+			defaultCategoryId = null,
+			defaultCategory   = null
 
 		const rootStore = useRootStore()
-		if (rootStore.aioseo.user.data.allcaps?.manageCategories || rootStore.aioseo.user.data.allcaps?.manage_categories) {
+		if (rootStore.aioseo.user.capabilities?.manageCategories || rootStore.aioseo.user.capabilities?.manage_categories) {
 			categories = window.wp.data.select('core').getEntityRecords('taxonomy', 'category')
 			selected   = window.wp.data.select('core/editor').getEditedPostAttribute('categories')
+
+			defaultCategoryId = window.wp.data.select('core').getEntityRecord('root', 'site')?.default_category
+			defaultCategory   = window.wp.data.select('core').getEntityRecord('taxonomy', 'category', defaultCategoryId)
 		}
 
 		if (selected && selected.length && categories) {
-			const selectedCategory = postEditorStore?.currentPost?.primary_term?.category || selected[0]
-			const category = categories.find(c => c.id === selectedCategory)
-			if (category && (taxonomyTitle !== category.name)) {
-				taxonomyTitle = category.name
-				tagsStore.updateTaxonomyTitle(taxonomyTitle)
-			}
-			listOfCategories = categories.filter(c => selected.includes(c.id)).map(c => c.name).join(', ')
+			const selectedCategories = categories.filter(c => selected.includes(c.id))
+			listOfCategories = selectedCategories.map(c => c.name).join(', ')
 			tagsStore.updateCategories(listOfCategories)
-		} else {
-			if ('' !== taxonomyTitle) {
-				taxonomyTitle = listOfCategories = ''
-				tagsStore.updateTaxonomyTitle(taxonomyTitle)
-				tagsStore.updateCategories(listOfCategories)
+
+			const selectedCategory = postEditorStore?.currentPost?.primary_term?.category || selectedCategories[0]?.id
+			let category = selectedCategories.find(c => c.id === selectedCategory)
+
+			if (!category && defaultCategory && selected.includes(defaultCategoryId)) {
+				category = defaultCategory
 			}
+
+			taxonomyTitle = category?.name || ''
+			tagsStore.updateTaxonomyTitle(taxonomyTitle)
+		} else {
+			taxonomyTitle = ''
+			tagsStore.updateTaxonomyTitle('')
+			tagsStore.updateCategories('')
 		}
 	}
 

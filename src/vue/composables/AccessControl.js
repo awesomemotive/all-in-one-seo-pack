@@ -84,8 +84,9 @@ export const useAccessControl = () => {
 
 	const getRoles = computed(() => {
 		const rootStore = useRootStore()
-		return roles.concat(Object.keys(rootStore.aioseo.user.customRoles).map(role => ({
-			label       : rootStore.aioseo.user.roles[role],
+
+		const filteredRoles = roles.concat(Object.keys(rootStore.aioseo.user.customRoles).map(role => ({
+			label       : rootStore.aioseo.user.userRoles[role],
 			name        : role,
 			description : sprintf(
 				// Translators: 1 - The name of the WP role, 2 - Opening bold tag, 3 - Closing bold tag, 4 - Plugin Name ("All in One SEO").
@@ -97,6 +98,8 @@ export const useAccessControl = () => {
 			),
 			dynamic : true
 		})))
+
+		return filteredRoles
 	})
 
 	return {

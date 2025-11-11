@@ -303,7 +303,27 @@ class Tags {
 			'tax_parent_name',
 			'taxonomy_description',
 			'taxonomy_title'
-		]
+		],
+		'blocksContent'       => [
+			'author_first_name',
+			'author_last_name',
+			'author_name',
+			'author_url',
+			'current_date',
+			'current_day',
+			'current_month',
+			'current_year',
+			'custom_field',
+			'permalink',
+			'post_date',
+			'post_day',
+			'post_month',
+			'post_title',
+			'post_year',
+			'separator_sa',
+			'site_title',
+			'taxonomy_title'
+		],
 	];
 
 	/**

@@ -232,3 +232,15 @@ export const arrayColumn = (input, columnKey) => {
 export const arrayUnique = (array) => {
 	return Array.from(new Set(array))
 }
+
+export const decodeHTMLEntities = string => {
+	const element = document.createElement('div')
+	if (string && 'string' === typeof string) {
+		// strip script/html tags
+		string              = string.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '')
+		string              = string.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '')
+		element.innerHTML   = string
+		string              = element.textContent
+	}
+	return string
+}

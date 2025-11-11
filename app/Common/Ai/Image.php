@@ -200,6 +200,10 @@ class Image {
 	 */
 	public function deleteImages( $ids ) {
 		foreach ( $ids as $id ) {
+			if ( ! current_user_can( 'delete_post', $id ) ) {
+				continue;
+			}
+
 			$deleted = wp_delete_attachment( $id, true );
 			if ( ! $deleted ) {
 				continue;

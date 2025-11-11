@@ -1,0 +1,17 @@
+{
+	"$schema": "https://schemas.wp.org/wp/5.8/block.json",
+	"name": "aioseo/locations",
+	"title": "AIOSEO Local - Locations",
+	"description": "Displays locations.",
+	"category": "aioseo",
+	"textdomain": "all-in-one-seo-pack",
+	"attributes": {
+		"categoryId": {
+			"type": "number",
+			"default": 0
+		}
+	},
+	"supports": {
+		"html": false
+	}
+}

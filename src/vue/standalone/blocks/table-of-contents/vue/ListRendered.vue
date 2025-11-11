@@ -1,46 +1,51 @@
 <template>
-	<component
-		class="aioseo-toc-list--rendered"
-		:is="tableOfContentsStore.listStyle"
-	>
-		<li
-			class="aioseo-toc-list-item--rendered"
-			:class="[
-				{ 'hidden' : heading.hidden }
-			]"
-			v-for="(heading, index) in headings"
-			:key="index"
+	<div>
+		<component
+			class="aioseo-toc-list--rendered"
+			:is="blockAttributes.listStyle"
 		>
-			<a :href="`#${heading.anchor}`">{{ heading.editedContent || heading.content }}</a>
+			<li
+				class="aioseo-toc-list-item--rendered"
+				:class="[
+					{ 'hidden' : heading.hidden }
+				]"
+				v-for="(heading, index) in headings"
+				:key="index"
+			>
+				<a :href="`#${heading.anchor}`">{{ heading.editedContent || heading.content }}</a>
 
-			<ListRendered
-				class="aioseo-toc-list-nested--rendered"
-				v-if="heading.headings"
-				:headings="heading.headings"
-			/>
-		</li>
-	</component>
+				<ListRendered
+					class="aioseo-toc-list-nested--rendered"
+					v-if="heading.headings"
+					:headings="heading.headings"
+					:client-id="clientId"
+				/>
+			</li>
+		</component>
+	</div>
 </template>
 
-<script>
-import {
-	useTableOfContentsStore
-} from '@/vue/stores'
+<script setup>
+import { ref, onMounted, nextTick } from 'vue'
 
-export default {
-	name : 'ListRendered',
-	setup () {
-		const tableOfContentsStore = useTableOfContentsStore()
-
-		return {
-			tableOfContentsStore
-		}
+const props = defineProps({
+	headings : {
+		required : true,
+		type     : Array
 	},
-	props : {
-		headings : {
-			required : true,
-			type     : Array
-		}
+	clientId : {
+		required : true,
+		type     : String
 	}
-}
+})
+
+const blockAttributes = ref(window.wp.data.select('core/block-editor').getBlockAttributes(props.clientId))
+
+onMounted(() => {
+	nextTick(() => {
+		window.aioseoBus.$on('updateToc' + props.clientId, () => {
+			blockAttributes.value = window.wp.data.select('core/block-editor').getBlockAttributes(props.clientId)
+		})
+	})
+})
 </script>

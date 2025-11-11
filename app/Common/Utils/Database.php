@@ -400,7 +400,7 @@ class Database {
 			return $this->db->get_col( 'SHOW COLUMNS FROM `' . $table . '`' );
 		}
 
-		$schema = $this->getAioseoTablesWithColumns();
+		$schema = $this->getTablesWithColumns();
 
 		return $schema[ $table ];
 	}
@@ -420,7 +420,7 @@ class Database {
 			$table = $this->prefix . $table;
 		}
 
-		$tables = $this->getAioseoTablesWithColumns();
+		$tables = $this->getTablesWithColumns();
 
 		return isset( $tables[ $table ] );
 	}
@@ -441,7 +441,7 @@ class Database {
 			$table = $this->prefix . $table;
 		}
 
-		$tables = $this->getAioseoTablesWithColumns();
+		$tables = $this->getTablesWithColumns();
 
 		return isset( $tables[ $table ] ) && in_array( $column, $tables[ $table ], true );
 	}
@@ -453,18 +453,16 @@ class Database {
 	 *
 	 * @return array List of AIOSEO tables with their columns.
 	 */
-	public function getAioseoTablesWithColumns() {
+	public function getTablesWithColumns() {
 		$tables = aioseo()->core->cache->get( 'db_schema' );
 		if ( ! empty( $tables ) ) {
 			return $tables;
 		}
 
-		$dbPrefix = $this->db->prefix;
-		$schema   = $this->db->get_results(
-			"SELECT TABLE_NAME, COLUMN_NAME
+		$schema = $this->db->get_results(
+			'SELECT TABLE_NAME, COLUMN_NAME
 			FROM INFORMATION_SCHEMA.COLUMNS
-			WHERE TABLE_SCHEMA = DATABASE()
-			AND TABLE_NAME LIKE '{$dbPrefix}aioseo_%';"
+			WHERE TABLE_SCHEMA = DATABASE();'
 		);
 
 		$tables = [];

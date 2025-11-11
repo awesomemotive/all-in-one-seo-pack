@@ -552,6 +552,13 @@ class Ai {
 		$params = $request->get_params();
 		$ids    = (array) ( $params['ids'] ?? [] );
 
+		if ( ! current_user_can( 'delete_posts' ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
+		}
+
 		if ( empty( $ids ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,

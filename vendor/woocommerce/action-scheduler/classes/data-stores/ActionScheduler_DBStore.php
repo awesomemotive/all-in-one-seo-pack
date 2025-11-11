@@ -931,16 +931,8 @@ AND `group_id` = %d
 		 * @var \wpdb $wpdb
 		 */
 		global $wpdb;
-
 		$now  = as_get_datetime_object();
 		$date = is_null( $before_date ) ? $now : clone $before_date;
-		// can't use $wpdb->update() because of the <= condition.
-		$update = "UPDATE {$wpdb->actionscheduler_actions} SET claim_id=%d, last_attempt_gmt=%s, last_attempt_local=%s";
-		$params = array(
-			$claim_id,
-			$now->format( 'Y-m-d H:i:s' ),
-			current_time( 'mysql' ),
-		);
 
 		// Set claim filters.
 		if ( ! empty( $hooks ) ) {
@@ -954,14 +946,16 @@ AND `group_id` = %d
 			$group = $this->get_claim_filter( 'group' );
 		}
 
-		$where    = 'WHERE claim_id = 0 AND scheduled_date_gmt <= %s AND status=%s';
-		$params[] = $date->format( 'Y-m-d H:i:s' );
-		$params[] = self::STATUS_PENDING;
+		$where        = 'WHERE claim_id = 0 AND scheduled_date_gmt <= %s AND status=%s';
+		$where_params = array(
+			$date->format( 'Y-m-d H:i:s' ),
+			self::STATUS_PENDING,
+		);
 
 		if ( ! empty( $hooks ) ) {
 			$placeholders = array_fill( 0, count( $hooks ), '%s' );
-			$where       .= ' AND hook IN (' . join( ', ', $placeholders ) . ')';
-			$params       = array_merge( $params, array_values( $hooks ) );
+			$where        .= ' AND hook IN (' . join( ', ', $placeholders ) . ')';
+			$where_params = array_merge( $where_params, array_values( $hooks ) );
 		}
 
 		$group_operator = 'IN';
@@ -996,23 +990,32 @@ AND `group_id` = %d
 		/**
 		 * Sets the order-by clause used in the action claim query.
 		 *
-		 * @since 3.4.0
-		 * @since 3.8.3 Made $claim_id and $hooks available.
-		 *
 		 * @param string $order_by_sql
 		 * @param string $claim_id Claim Id.
-		 * @param array  $hooks Hooks to filter for.
+		 * @param array  $hooks    Hooks to filter for.
+		 *
+		 * @since 3.8.3 Made $claim_id and $hooks available.
+		 * @since 3.4.0
 		 */
-		$order    = apply_filters( 'action_scheduler_claim_actions_order_by', 'ORDER BY priority ASC, attempts ASC, scheduled_date_gmt ASC, action_id ASC', $claim_id, $hooks );
-		$params[] = $limit;
+		$order       = apply_filters( 'action_scheduler_claim_actions_order_by', 'ORDER BY priority ASC, attempts ASC, scheduled_date_gmt ASC, action_id ASC', $claim_id, $hooks );
+		$skip_locked = $this->db_supports_skip_locked() ? ' SKIP LOCKED' : '';
 
-		$sql           = $wpdb->prepare( "{$update} {$where} {$order} LIMIT %d", $params ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders
-		$rows_affected = $wpdb->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// Selecting the action_ids that we plan to claim, while skipping any locked rows to avoid deadlocking.
+		$select_sql = $wpdb->prepare( "SELECT action_id from {$wpdb->actionscheduler_actions} {$where} {$order} LIMIT %d FOR UPDATE{$skip_locked}", array_merge( $where_params, array( $limit ) ) );
+
+		// Now place it into an UPDATE statement by joining the result sets, allowing for the SKIP LOCKED behavior to take effect.
+		$update_sql    = "UPDATE {$wpdb->actionscheduler_actions} t1 JOIN ( $select_sql ) t2 ON t1.action_id = t2.action_id SET claim_id=%d, last_attempt_gmt=%s, last_attempt_local=%s";
+		$update_params = array(
+			$claim_id,
+			$now->format( 'Y-m-d H:i:s' ),
+			current_time( 'mysql' ),
+		);
+
+		$rows_affected = $wpdb->query( $wpdb->prepare( $update_sql, $update_params ) );
 		if ( false === $rows_affected ) {
 			$error = empty( $wpdb->last_error )
 				? _x( 'unknown', 'database error', 'action-scheduler' )
 				: $wpdb->last_error;
-
 			throw new \RuntimeException(
 				sprintf(
 					/* translators: %s database error. */
@@ -1023,6 +1026,43 @@ AND `group_id` = %d
 		}
 
 		return (int) $rows_affected;
+	}
+
+	/**
+	 * Determines whether the database supports using SKIP LOCKED. This logic mimicks the $wpdb::has_cap() logic.
+	 *
+	 * SKIP_LOCKED support was added to MariaDB in 10.6.0 and to MySQL in 8.0.1
+	 *
+	 * @return bool
+	 */
+	private function db_supports_skip_locked() {
+		global $wpdb;
+		$db_version     = $wpdb->db_version();
+		$db_server_info = $wpdb->db_server_info();
+		$is_mariadb     = ( false !== strpos( $db_server_info, 'MariaDB' ) );
+
+		if ( $is_mariadb &&
+		     '5.5.5' === $db_version &&
+		     PHP_VERSION_ID < 80016 // PHP 8.0.15 or older.
+		) {
+			/*
+			 * Account for MariaDB version being prefixed with '5.5.5-' on older PHP versions.
+			 */
+			$db_server_info = preg_replace( '/^5\.5\.5-(.*)/', '$1', $db_server_info );
+			$db_version     = preg_replace( '/[^0-9.].*/', '', $db_server_info );
+		}
+
+		$is_supported = ( $is_mariadb && version_compare( $db_version, '10.6.0', '>=' ) ) ||
+		                ( ! $is_mariadb && version_compare( $db_version, '8.0.1', '>=' ) );
+
+		/**
+		 * Filter whether the database supports the SKIP LOCKED modifier for queries.
+		 *
+		 * @param bool $is_supported Whether SKIP LOCKED is supported.
+		 *
+		 * @since 3.9.3
+		 */
+		return apply_filters( 'action_scheduler_db_supports_skip_locked', $is_supported );
 	}
 
 	/**
@@ -1094,7 +1134,7 @@ AND `group_id` = %d
 	}
 
 	/**
-	 * Release actions from a claim and delete the claim.
+	 * Release pending actions from a claim and delete the claim.
 	 *
 	 * @param ActionScheduler_ActionClaim $claim Claim object.
 	 * @throws \RuntimeException When unable to release actions from claim.
@@ -1107,14 +1147,21 @@ AND `group_id` = %d
 		 */
 		global $wpdb;
 
+		if ( 0 === intval( $claim->get_id() ) ) {
+			// Verify that the claim_id is valid before attempting to release it.
+			return;
+		}
+
 		/**
 		 * Deadlock warning: This function modifies actions to release them from claims that have been processed. Earlier, we used to it in a atomic query, i.e. we would update all actions belonging to a particular claim_id with claim_id = 0.
 		 * While this was functionally correct, it would cause deadlock, since this update query will hold a lock on the claim_id_.. index on the action table.
 		 * This allowed the possibility of a race condition, where the claimer query is also running at the same time, then the claimer query will also try to acquire a lock on the claim_id_.. index, and in this case if claim release query has already progressed to the point of acquiring the lock, but have not updated yet, it would cause a deadlock.
 		 *
 		 * We resolve this by getting all the actions_id that we want to release claim from in a separate query, and then releasing the claim on each of them. This way, our lock is acquired on the action_id index instead of the claim_id index. Note that the lock on claim_id will still be acquired, but it will only when we actually make the update, rather than when we select the actions.
+		 *
+		 * We only release pending actions in order for them to be claimed by another process.
 		 */
-		$action_ids = $wpdb->get_col( $wpdb->prepare( "SELECT action_id FROM {$wpdb->actionscheduler_actions} WHERE claim_id = %d", $claim->get_id() ) );
+		$action_ids = $wpdb->get_col( $wpdb->prepare( "SELECT action_id FROM {$wpdb->actionscheduler_actions} WHERE claim_id = %d AND status = %s", $claim->get_id(), self::STATUS_PENDING ) );
 
 		$row_updates = 0;
 		if ( count( $action_ids ) > 0 ) {

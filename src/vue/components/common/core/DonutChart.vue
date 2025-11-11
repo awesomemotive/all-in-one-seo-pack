@@ -152,7 +152,8 @@ export default {
 </script>
 
 <style lang="scss">
-.aioseo-app .aioseo-donut-chart {
+.aioseo-app .aioseo-donut-chart,
+.aioseo-blc-app .aioseo-donut-chart {
 	position: relative;
 	display: flex;
 

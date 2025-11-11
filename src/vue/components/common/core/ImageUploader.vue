@@ -43,6 +43,7 @@
 		<base-img
 			class="image-preview"
 			:src="modelValue"
+			:debounce="useDebounce"
 		/>
 	</div>
 </template>
@@ -86,6 +87,10 @@ export default {
 		modelValue  : {
 			type    : String,
 			default : ''
+		},
+		useDebounce : {
+			type    : Boolean,
+			default : true
 		}
 	},
 	data () {

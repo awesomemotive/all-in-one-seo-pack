@@ -20,6 +20,6 @@ class AiAssistant extends Blocks {
 	 * @return void
 	 */
 	public function register() {
-		aioseo()->blocks->registerBlock( 'aioseo/ai-assistant' );
+		aioseo()->blocks->registerBlock( 'ai-assistant' );
 	}
 }

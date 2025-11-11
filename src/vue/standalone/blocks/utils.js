@@ -1,4 +1,8 @@
 import htm from 'htm'
+import { useTagsStore } from '@/vue/stores'
+import { customFieldValue } from '@/vue/plugins/tru-seo/components/customFields'
+import { canLoadBlocks } from '@/vue/utils/context'
+import { decodeHTMLEntities } from '@/vue/utils/helpers'
 
 /**
  * Use standard JavaScript Tagged Template Literals in place of WPs JSX
@@ -130,9 +134,10 @@ export const deepCopy = (obj) => {
  *
  * @param {string} htmlString HTML to sanitize.
  * @param {boolean} stripTags Should HTML be removed and only text returned.
+ * @param {boolean} trim Should the string be trimmed.
  * @returns {string} The sanitized HTML.
  */
-export const cleanHtml = (htmlString, stripTags = false) => {
+export const cleanHtml = (htmlString, stripTags = false, trim = true) => {
 	const { body } = document.implementation.createHTMLDocument('')
 	body.innerHTML = htmlString
 	const elements = body.getElementsByTagName('*')
@@ -156,11 +161,79 @@ export const cleanHtml = (htmlString, stripTags = false) => {
 		}
 	}
 
-	return stripTags ? body.textContent.trim() : body.innerHTML
+	const result = stripTags ? body.textContent : body.innerHTML
+
+	return trim ? result.trim() : result
 }
 
 export const generateUniqueSchemaBlockId = () => {
 	return 'aioseo-' + new Date().getTime().toString(36)
+}
+
+export const parseTags = (string, keepFormatting = false) => {
+	const tagsStore = useTagsStore()
+
+	if (!string) {
+		return string
+	}
+
+	if (!tagsStore.tags) {
+		return string
+	}
+
+	tagsStore.tags.forEach(tag => {
+		if ('custom_field' === tag.id) {
+			const customFieldRegex   = new RegExp(`#${tag.id}-([a-zA-Z0-9_-]+)`, 'g')
+
+			string = string.replace(customFieldRegex, (match, fieldName) => {
+				return customFieldValue(fieldName)
+			})
+			return
+		}
+
+		if ('tax_name' === tag.id) {
+			const taxNameRegex = new RegExp(`#${tag.id}-([a-zA-Z0-9_-]+)`, 'g')
+			string             = string.replace(taxNameRegex, `[${tag.name} - $1]`)
+			return
+		}
+
+		// Pattern explained: Exact match of tag, not followed by any additional letter, number or underscore.
+		// This allows us to have tags like: #post_link and #post_link_alt
+		// and it will always replace the correct one.
+		const regex = new RegExp(`#${tag.id}(?![a-zA-Z0-9_])`, 'g')
+
+		const matches = string.match(regex)
+		const value   = (tagsStore.liveTags[tag.id] || tag.value)
+		if (matches) {
+			string = string.replace(regex, '%|%' + value)
+		}
+	})
+
+	// Since we added a delimiter, let's remove all of that now.
+	string = string.replace(/%\|%/g, '').replace(/<(?:.|\n)*?>/gm, ' ')
+
+	if (!keepFormatting) {
+		string = string.replace(/\s/g, ' ')
+	}
+
+	// Make sure to return the processed `string` at the end.
+	return decodeHTMLEntities(decodeHTMLEntities(string))
+}
+
+export const formatCurrency = (amount, currency) => {
+	// Ensure the correct number of decimal places
+	amount = parseFloat(amount || '').toFixed(2)
+
+	// Return if no amount or if the amount is not a number.
+	if (isNaN(amount)) {
+		return ''
+	}
+
+	// Format the number with commas and the currency symbol.
+	return new Intl.NumberFormat('en-US', {
+		style    : 'currency',
+		currency : currency || 'USD'
+	}).format(amount)
 }
 
 /**
@@ -176,4 +249,37 @@ export const maybeDeleteBlockVueApp = (id, apps) => {
 		apps[findAppIndex].app.unmount()
 		apps.splice(findAppIndex, 1)
 	}
+}
+
+const {
+	registerBlockCollection,
+	registerBlockType
+} = window.wp.blocks
+
+export const registerBlock = (block) => {
+	if (!block || !canLoadBlocks()) {
+		return
+	}
+
+	const { name, settings } = block
+
+	if (settings?.icon && !settings?.icon?.foreground) {
+		const colorIcon = {
+			foreground : '#141B38',
+			src        : settings.icon
+		}
+		settings.icon = colorIcon
+	}
+
+	// If we're using a Collection for our blocks, we can use the category for something else.
+	if ('function' === typeof registerBlockCollection && 'aioseo' === settings.category) {
+		settings.category = 'widgets'
+	}
+
+	// If Collections aren't supported, ensure all our blocks have the aioseo category.
+	if ('function' !== typeof registerBlockCollection && 'aioseo' !== settings.category) {
+		settings.category = 'aioseo'
+	}
+
+	registerBlockType(name, settings)
 }

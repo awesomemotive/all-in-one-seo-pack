@@ -116,7 +116,8 @@ import { ref, computed, getCurrentInstance, onMounted, onBeforeUnmount, nextTick
 
 import {
 	useAiAssistantStore,
-	useAiStore
+	useAiStore,
+	usePostEditorStore
 } from '@/vue/stores'
 
 import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
@@ -143,6 +144,7 @@ const {
 
 const aiAssistantStore = useAiAssistantStore()
 const aiStore          = useAiStore()
+const postEditorStore  = usePostEditorStore()
 
 const contentElement = ref(null)
 const controller     = ref({})
@@ -326,12 +328,6 @@ const getPostContent = () => {
 		if (postContent && 10000 < postContent.length) {
 			postContent = postContent.substring(0, 10000)
 		}
-
-		// Prepend the post title to the post content.
-		const postTitle = (getPostEditedTitle() || '').trim()
-		if (postTitle) {
-			postContent = postTitle + '\n\n' + postContent
-		}
 	} catch (error) {
 		console.warn('Could not retrieve post content for context:', error)
 		postContent = ''
@@ -341,7 +337,7 @@ const getPostContent = () => {
 		})
 	}
 
-	return postContent
+	return postContent.trim()
 }
 
 const initFetch = (args = {}) => {
@@ -374,10 +370,12 @@ const initFetch = (args = {}) => {
 		},
 		method : 'POST',
 		body   : JSON.stringify({
-			messages    : app.root.data.messages,
-			tone        : toneOptions.find(t => t.value === getBlock().attributes.tone).label,
-			audience    : audienceOptions.find(a => a.value === getBlock().attributes.audience).label,
-			postContent : getPostContent().trim()
+			messages     : app.root.data.messages,
+			tone         : toneOptions.find(t => t.value === getBlock().attributes.tone).label,
+			audience     : audienceOptions.find(a => a.value === getBlock().attributes.audience).label,
+			postContent  : getPostContent(),
+			postTitle    : (getPostEditedTitle() || '').trim(),
+			focusKeyword : (postEditorStore.currentPost?.keyphrases?.focus?.keyphrase || '').trim()
 		}),
 		cache          : 'no-store',
 		openWhenHidden : true,
@@ -466,116 +464,3 @@ onBeforeUnmount(() => {
 	window.aioseoBus.$off('aiAssistantImproveChange')
 })
 </script>
-
-<style lang="scss" scoped>
-.aioseo-ai-assistant-block {
-	@mixin input-reset() {
-		background-color: #fff;
-		border-radius: 0;
-		border: none;
-		box-shadow: none;
-		color: $black;
-		outline: none;
-
-		&::placeholder {
-			color: #8C8F9A;
-		}
-	}
-
-	position: relative;
-
-	&__body {
-		padding: 5px;
-		position: sticky;
-		bottom: 0;
-	}
-
-	&__input-container {
-		background-color: #fff;
-		border: 1px solid #D0D1D7;
-		border-radius: 4px;
-		box-shadow: 0 4px 8px 0 rgba(44, 50, 76, 0.1);
-		padding: 1px;
-
-		&.is-selected {
-			border: 1px solid $blue;
-		}
-	}
-
-	&__input-row {
-		display: flex;
-		padding: 12px;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: 8px;
-
-		&--gray {
-			background-color: #F3F4F5;
-			border-radius: 4px;
-			padding: 6px 12px;
-		}
-	}
-
-	&__input-col {
-		&--grow {
-			flex: 1 1 auto;
-		}
-
-		&--disclaimer {
-			color: #434960;
-			font-size: 12px;
-		}
-	}
-
-	&__input {
-		@include input-reset();
-
-		font-size: 14px;
-		font-weight: 400;
-		line-height: 20px;
-		margin: 0;
-		max-height: 300px;
-		padding: 0;
-		resize: none;
-		width: 100%;
-
-		&:focus {
-			@include input-reset();
-		}
-	}
-
-	&__controls {
-		align-items: center;
-		display: flex;
-		gap: 8px;
-	}
-
-	&__btn {
-		&:disabled {
-			cursor: not-allowed;
-		}
-	}
-
-	&__content {
-		overflow-x: auto;
-
-		:deep(table) {
-			border-collapse: collapse;
-			width: 100%;
-
-			thead {
-				border-bottom: 3px solid;
-			}
-
-			tfoot {
-				border-top: 3px solid;
-			}
-
-			td, th {
-				border: 1px solid;
-				padding: 8px;
-			}
-		}
-	}
-}
-</style>
