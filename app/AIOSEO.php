@@ -221,14 +221,14 @@ namespace AIOSEO\Plugin {
 
 			$this->backwardsCompatibility();
 
-			// Internal Options.
-			$this->helpers                = $this->pro ? new Pro\Utils\Helpers() : new Lite\Utils\Helpers();
-			$this->internalNetworkOptions = ( $this->pro && $this->helpers->isPluginNetworkActivated() ) ? new Pro\Options\InternalNetworkOptions() : new Common\Options\InternalNetworkOptions();
-			$this->internalOptions        = $this->pro ? new Pro\Options\InternalOptions() : new Lite\Options\InternalOptions();
+			// Internal Options - Always use Lite classes (independent plugin with Pro features)
+			$this->helpers                = new Lite\Utils\Helpers();
+			$this->internalNetworkOptions = new Common\Options\InternalNetworkOptions();
+			$this->internalOptions        = new Lite\Options\InternalOptions();
 			$this->uninstall              = new Common\Main\Uninstall();
 
-			// Run pre-updates.
-			$this->preUpdates = $this->pro ? new Pro\Main\PreUpdates() : new Common\Main\PreUpdates();
+			// Run pre-updates - Always use Common (independent plugin)
+			$this->preUpdates = new Common\Main\PreUpdates();
 		}
 
 		/**
@@ -267,88 +267,75 @@ namespace AIOSEO\Plugin {
 		 * @return void
 		 */
 		public function load() {
-			// Load external translations if this is a Pro install.
-			if ( $this->pro ) {
-				$translations = new Pro\Main\Translations(
-					'plugin',
-					'all-in-one-seo-pack',
-					'https://aioseo.com/aioseo-plugin/all-in-one-seo-pack/packages.json'
-				);
-				$translations->init();
+		// Disabled: Pro translations - independent plugin
+		// External translations loading removed as we don't connect to AIOSEO servers
 
-				$translations = new Pro\Main\Translations(
-					'plugin',
-					'aioseo-pro',
-					'https://aioseo.com/aioseo-plugin/aioseo-pro/packages.json'
-				);
-				$translations->init();
-			}
+		// Always use Lite/Common classes - independent plugin with Pro features enabled
+		$this->addons             = new Common\Utils\Addons();
+		$this->features           = new Common\Utils\Features();
+		$this->tags               = new Common\Utils\Tags();
+		$this->blocks             = new Common\Utils\Blocks();
+		$this->badBotBlocker      = new Common\Tools\BadBotBlocker();
+		$this->breadcrumbs        = new Common\Breadcrumbs\Breadcrumbs();
+		$this->dynamicBackup      = new Common\Options\DynamicBackup();
+		$this->options            = new Lite\Options\Options();
+		$this->networkOptions     = new Common\Options\NetworkOptions();
+		$this->dynamicOptions     = new Common\Options\DynamicOptions();
+		$this->backup             = new Common\Utils\Backup();
+		$this->access             = new Common\Utils\Access();
+		$this->usage              = new Lite\Admin\Usage();
+		$this->siteHealth         = new Common\Admin\SiteHealth();
+		$this->networkLicense     = null; // Disabled - no licensing needed
+		$this->license            = null; // Disabled - no licensing needed
+		$this->autoUpdates        = null; // Disabled - independent plugin
+		$this->updates            = new Common\Main\Updates();
+		$this->meta               = new Common\Meta\Meta();
+		$this->social             = new Common\Social\Social();
+		$this->robotsTxt          = new Common\Tools\RobotsTxt();
+		$this->htaccess           = new Common\Tools\Htaccess();
+		$this->term               = null; // Pro-only feature not needed
+		$this->notices            = new Lite\Admin\Notices\Notices();
+		$this->wpNotices          = new Common\Admin\Notices\WpNotices();
+		$this->admin              = new Lite\Admin\Admin();
+		$this->networkAdmin       = $this->helpers->isPluginNetworkActivated() ? new Common\Admin\NetworkAdmin() : null;
+		$this->activate           = new Common\Main\Activate();
+		$this->conflictingPlugins = new Common\Admin\ConflictingPlugins();
+		$this->migration          = new Common\Migration\Migration();
+		$this->importExport       = new Common\ImportExport\ImportExport();
+		$this->sitemap            = new Common\Sitemap\Sitemap();
+		$this->htmlSitemap        = new Common\Sitemap\Html\Sitemap();
+		$this->templates          = new Common\Utils\Templates();
+		$this->categoryBase       = new Common\Main\CategoryBase();
+		$this->postSettings       = new Lite\Admin\PostSettings();
+		$this->standalone         = new Common\Standalone\Standalone();
+		$this->searchStatistics   = new Common\SearchStatistics\SearchStatistics();
+		$this->slugMonitor        = new Common\Admin\SlugMonitor();
+		$this->schema             = new Common\Schema\Schema();
+		$this->actionScheduler    = new Common\Utils\ActionScheduler();
+		$this->seoRevisions       = new Common\SeoRevisions\SeoRevisions();
+		$this->ai                 = null; // Pro Ai not needed - we use aiManager instead
+		$this->aiManager          = new Common\Ai\AiManager();
+		$this->filters            = new Lite\Main\Filters();
+		$this->crawlCleanup       = new Common\QueryArgs\CrawlCleanup();
+		$this->searchCleanup      = new Common\SearchCleanup\SearchCleanup();
+		$this->emailReports       = new Common\EmailReports\EmailReports();
+		$this->thirdParty         = new Common\ThirdParty\ThirdParty();
+		$this->writingAssistant   = new Common\WritingAssistant\WritingAssistant();
+		$this->elementorAi        = new Common\Integrations\Elementor();
 
-			$this->addons             = $this->pro ? new Pro\Utils\Addons() : new Common\Utils\Addons();
-			$this->features           = $this->pro ? new Pro\Utils\Features() : new Common\Utils\Features();
-			$this->tags               = $this->pro ? new Pro\Utils\Tags() : new Common\Utils\Tags();
-			$this->blocks             = new Common\Utils\Blocks();
-			$this->badBotBlocker      = new Common\Tools\BadBotBlocker();
-			$this->breadcrumbs        = $this->pro ? new Pro\Breadcrumbs\Breadcrumbs() : new Common\Breadcrumbs\Breadcrumbs();
-			$this->dynamicBackup      = $this->pro ? new Pro\Options\DynamicBackup() : new Common\Options\DynamicBackup();
-			$this->options            = $this->pro ? new Pro\Options\Options() : new Lite\Options\Options();
-			$this->networkOptions     = ( $this->pro && $this->helpers->isPluginNetworkActivated() ) ? new Pro\Options\NetworkOptions() : new Common\Options\NetworkOptions();
-			$this->dynamicOptions     = $this->pro ? new Pro\Options\DynamicOptions() : new Common\Options\DynamicOptions();
-			$this->backup             = new Common\Utils\Backup();
-			$this->access             = $this->pro ? new Pro\Utils\Access() : new Common\Utils\Access();
-			$this->usage              = $this->pro ? new Pro\Admin\Usage() : new Lite\Admin\Usage();
-			$this->siteHealth         = $this->pro ? new Pro\Admin\SiteHealth() : new Common\Admin\SiteHealth();
-			$this->networkLicense     = $this->pro && $this->helpers->isPluginNetworkActivated() ? new Pro\Admin\NetworkLicense() : null;
-			$this->license            = $this->pro ? new Pro\Admin\License() : null;
-			$this->autoUpdates        = $this->pro ? new Pro\Admin\AutoUpdates() : null;
-			$this->updates            = $this->pro ? new Pro\Main\Updates() : new Common\Main\Updates();
-			$this->meta               = $this->pro ? new Pro\Meta\Meta() : new Common\Meta\Meta();
-			$this->social             = $this->pro ? new Pro\Social\Social() : new Common\Social\Social();
-			$this->robotsTxt          = new Common\Tools\RobotsTxt();
-			$this->htaccess           = new Common\Tools\Htaccess();
-			$this->term               = $this->pro ? new Pro\Admin\Term() : null;
-			$this->notices            = $this->pro ? new Pro\Admin\Notices\Notices() : new Lite\Admin\Notices\Notices();
-			$this->wpNotices          = new Common\Admin\Notices\WpNotices();
-			$this->admin              = $this->pro ? new Pro\Admin\Admin() : new Lite\Admin\Admin();
-			$this->networkAdmin       = $this->helpers->isPluginNetworkActivated() ? ( $this->pro ? new Pro\Admin\NetworkAdmin() : new Common\Admin\NetworkAdmin() ) : null;
-			$this->activate           = $this->pro ? new Pro\Main\Activate() : new Common\Main\Activate();
-			$this->conflictingPlugins = $this->pro ? new Pro\Admin\ConflictingPlugins() : new Common\Admin\ConflictingPlugins();
-			$this->migration          = $this->pro ? new Pro\Migration\Migration() : new Common\Migration\Migration();
-			$this->importExport       = $this->pro ? new Pro\ImportExport\ImportExport() : new Common\ImportExport\ImportExport();
-			$this->sitemap            = $this->pro ? new Pro\Sitemap\Sitemap() : new Common\Sitemap\Sitemap();
-			$this->htmlSitemap        = new Common\Sitemap\Html\Sitemap();
-			$this->templates          = $this->pro ? new Pro\Utils\Templates() : new Common\Utils\Templates();
-			$this->categoryBase       = new Common\Main\CategoryBase();
-			$this->postSettings       = $this->pro ? new Pro\Admin\PostSettings() : new Lite\Admin\PostSettings();
-			$this->standalone         = new Common\Standalone\Standalone();
-			$this->searchStatistics   = $this->pro ? new Pro\SearchStatistics\SearchStatistics() : new Common\SearchStatistics\SearchStatistics();
-			$this->slugMonitor        = new Common\Admin\SlugMonitor();
-			$this->schema             = $this->pro ? new Pro\Schema\Schema() : new Common\Schema\Schema();
-			$this->actionScheduler    = new Common\Utils\ActionScheduler();
-			$this->seoRevisions       = $this->pro ? new Pro\SeoRevisions\SeoRevisions() : new Common\SeoRevisions\SeoRevisions();
-			$this->ai                 = $this->pro ? new Pro\Ai\Ai() : null;
-			$this->aiManager          = new Common\Ai\AiManager();
-			$this->filters            = $this->pro ? new Pro\Main\Filters() : new Lite\Main\Filters();
-			$this->crawlCleanup       = new Common\QueryArgs\CrawlCleanup();
-			$this->searchCleanup      = new Common\SearchCleanup\SearchCleanup();
-			$this->emailReports       = new Common\EmailReports\EmailReports();
-			$this->thirdParty         = new Common\ThirdParty\ThirdParty();
-			$this->writingAssistant   = new Common\WritingAssistant\WritingAssistant();
-			$this->elementorAi        = new Common\Integrations\Elementor();
-
-			if ( ! wp_doing_ajax() && ! wp_doing_cron() ) {
-				$this->rss       = new Common\Rss();
-				$this->main      = $this->pro ? new Pro\Main\Main() : new Common\Main\Main();
-				$this->head      = $this->pro ? new Pro\Main\Head() : new Common\Main\Head();
-				$this->dashboard = $this->pro ? new Pro\Admin\Dashboard() : new Common\Admin\Dashboard();
-				$this->api       = $this->pro ? new Pro\Api\Api() : new Lite\Api\Api();
-				$this->help      = new Common\Help\Help();
-			}
-
-			$this->backwardsCompatibilityLoad();
-
-			add_action( 'init', [ $this, 'loadInit' ], 999 );
+		if ( ! wp_doing_ajax() && ! wp_doing_cron() ) {
+			$this->rss       = new Common\Rss();
+			$this->main      = new Common\Main\Main();
+			$this->head      = new Common\Main\Head();
+			$this->dashboard = new Common\Admin\Dashboard();
+			$this->api       = new Lite\Api\Api();
+			$this->help      = new Common\Help\Help();
 		}
+
+		$this->backwardsCompatibilityLoad();
+
+		add_action( 'init', [ $this, 'loadInit' ], 999 );
+	}
 
 		/**
 		 * Things that need to load after init.
