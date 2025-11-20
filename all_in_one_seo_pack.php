@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: All in One SEO
+ * Plugin Name: All in One SEO - AI Powered
  * Plugin URI:  https://aioseo.com/
- * Description: SEO for WordPress. Features like XML Sitemaps, SEO for custom post types, SEO for blogs, business sites, ecommerce sites, and much more. More than 100 million downloads since 2007.
+ * Description: SEO for WordPress with AI-Powered Content Generation, SEO Analysis, Keyword Research & AEO Optimization. Supports OpenAI, Claude, and Google Gemini. Features XML Sitemaps, SEO for custom post types, Elementor integration, and much more.
  * Author:      All in One SEO Team
  * Author URI:  https://aioseo.com/
- * Version:     4.8.2
+ * Version:     4.9.0
  * Text Domain: all-in-one-seo-pack
  * Domain Path: /languages
  * License:     GPL-3.0+
