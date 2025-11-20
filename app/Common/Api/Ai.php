@@ -319,4 +319,78 @@ class Ai {
 			'error'   => $result['error'] ?? null,
 		], 200 );
 	}
+
+	/**
+	 * Get AI usage statistics.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param  \WP_REST_Request  $request The REST Request.
+	 * @return \WP_REST_Response          The response.
+	 */
+	public static function getStats( $request ) {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'aioseo_ai_interactions';
+
+		// Check if table exists
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table}'" ) !== $table ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'error'   => __( 'AI interactions table not found', 'all-in-one-seo-pack' ),
+			], 404 );
+		}
+
+		// Total requests
+		$total = $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
+
+		// Successful requests
+		$successful = $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE success = 1" );
+
+		// Total tokens
+		$tokens = $wpdb->get_var( "SELECT SUM(tokens_used) FROM {$table} WHERE tokens_used IS NOT NULL" );
+
+		// Last 30 days
+		$last30Days = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$table} WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
+			)
+		);
+
+		// By provider
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$byProvider = $wpdb->get_results(
+			"SELECT provider, COUNT(*) as count FROM {$table} GROUP BY provider",
+			ARRAY_A
+		);
+
+		$providerStats = [];
+		foreach ( $byProvider as $row ) {
+			$providerStats[ $row['provider'] ] = (int) $row['count'];
+		}
+
+		// By action
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$byAction = $wpdb->get_results(
+			"SELECT action, COUNT(*) as count FROM {$table} GROUP BY action",
+			ARRAY_A
+		);
+
+		$actionStats = [];
+		foreach ( $byAction as $row ) {
+			$actionStats[ $row['action'] ] = (int) $row['count'];
+		}
+
+		return new \WP_REST_Response( [
+			'success'    => true,
+			'stats'      => [
+				'total'       => (int) $total,
+				'successful'  => (int) $successful,
+				'tokens'      => (int) $tokens,
+				'last30Days'  => (int) $last30Days,
+				'byProvider'  => $providerStats,
+				'byAction'    => $actionStats,
+			],
+		], 200 );
+	}
 }

@@ -44,7 +44,8 @@ class Api {
 			'writing-assistant/user-options'              => [ 'callback' => [ 'WritingAssistant', 'getUserOptions' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
 			'writing-assistant/report-history'            => [ 'callback' => [ 'WritingAssistant', 'getReportHistory' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
 			'ai/providers'                                => [ 'callback' => [ 'Ai', 'getProviders' ], 'access' => 'aioseo_general_settings' ],
-			'ai/history'                                  => [ 'callback' => [ 'Ai', 'getHistory' ], 'access' => 'aioseo_page_analysis' ]
+			'ai/history'                                  => [ 'callback' => [ 'Ai', 'getHistory' ], 'access' => 'aioseo_page_analysis' ],
+			'ai/stats'                                    => [ 'callback' => [ 'Ai', 'getStats' ], 'access' => 'aioseo_general_settings' ]
 		],
 		'POST'   => [
 			'htaccess'                                              => [ 'callback' => [ 'Tools', 'saveHtaccess' ], 'access' => 'aioseo_tools_settings' ],

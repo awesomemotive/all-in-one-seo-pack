@@ -36,40 +36,57 @@ class Elementor {
 	 * @return void
 	 */
 	public function enqueueEditorScripts() {
-		wp_enqueue_script(
-			'aioseo-elementor-ai',
-			AIOSEO_URL . 'dist/elementor-ai.js',
-			[ 'jquery', 'elementor-editor' ],
-			AIOSEO_VERSION,
-			true
-		);
+		// Check if file exists before enqueueing
+		$jsPath  = AIOSEO_DIR . '/dist/src/vue/standalone/elementor-ai/main.js';
+		$cssPath = AIOSEO_DIR . '/dist/src/vue/assets/scss/elementor-ai.css';
 
-		wp_localize_script(
-			'aioseo-elementor-ai',
-			'aioseoElementorAi',
-			[
-				'restUrl'   => rest_url( 'aioseo/v1/' ),
-				'nonce'     => wp_create_nonce( 'wp_rest' ),
-				'enabled'   => aioseo()->options->ai->enabled,
-				'providers' => $this->getAvailableProviders(),
-				'i18n'      => [
-					'generateContent' => __( 'Generate Content with AI', 'all-in-one-seo-pack' ),
-					'optimizeSeo'     => __( 'Optimize for SEO', 'all-in-one-seo-pack' ),
-					'optimizeAeo'     => __( 'Optimize for AEO', 'all-in-one-seo-pack' ),
-					'researchKeywords' => __( 'Research Keywords', 'all-in-one-seo-pack' ),
-					'generating'      => __( 'Generating...', 'all-in-one-seo-pack' ),
-					'error'           => __( 'Error', 'all-in-one-seo-pack' ),
-					'success'         => __( 'Success', 'all-in-one-seo-pack' ),
-				],
-			]
-		);
+		// For development, use src files
+		if ( ! file_exists( $jsPath ) ) {
+			$jsPath = AIOSEO_DIR . '/src/vue/standalone/elementor-ai/main.js';
+		}
 
-		wp_enqueue_style(
-			'aioseo-elementor-ai',
-			AIOSEO_URL . 'dist/elementor-ai.css',
-			[],
-			AIOSEO_VERSION
-		);
+		if ( ! file_exists( $cssPath ) ) {
+			$cssPath = AIOSEO_DIR . '/src/vue/assets/scss/elementor-ai.scss';
+		}
+
+		if ( file_exists( $jsPath ) ) {
+			wp_enqueue_script(
+				'aioseo-elementor-ai',
+				str_replace( AIOSEO_DIR, AIOSEO_URL, $jsPath ),
+				[ 'jquery', 'elementor-editor' ],
+				AIOSEO_VERSION,
+				true
+			);
+
+			wp_localize_script(
+				'aioseo-elementor-ai',
+				'aioseoElementorAi',
+				[
+					'restUrl'   => rest_url( 'aioseo/v1/' ),
+					'nonce'     => wp_create_nonce( 'wp_rest' ),
+					'enabled'   => aioseo()->options->ai->enabled,
+					'providers' => $this->getAvailableProviders(),
+					'i18n'      => [
+						'generateContent'  => __( 'Generate Content with AI', 'all-in-one-seo-pack' ),
+						'optimizeSeo'      => __( 'Optimize for SEO', 'all-in-one-seo-pack' ),
+						'optimizeAeo'      => __( 'Optimize for AEO', 'all-in-one-seo-pack' ),
+						'researchKeywords' => __( 'Research Keywords', 'all-in-one-seo-pack' ),
+						'generating'       => __( 'Generating...', 'all-in-one-seo-pack' ),
+						'error'            => __( 'Error', 'all-in-one-seo-pack' ),
+						'success'          => __( 'Success', 'all-in-one-seo-pack' ),
+					],
+				]
+			);
+		}
+
+		if ( file_exists( $cssPath ) ) {
+			wp_enqueue_style(
+				'aioseo-elementor-ai',
+				str_replace( AIOSEO_DIR, AIOSEO_URL, $cssPath ),
+				[],
+				AIOSEO_VERSION
+			);
+		}
 	}
 
 	/**
