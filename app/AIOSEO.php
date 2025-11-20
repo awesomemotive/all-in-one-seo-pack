@@ -35,6 +35,7 @@ namespace AIOSEO\Plugin {
 		/**
 		 * Paid returns true, free (Lite) returns false.
 		 * Set to true - independent plugin with all features enabled.
+		 * Note: We use Lite directory structure but enable Pro features.
 		 *
 		 * @since 4.0.0
 		 *
@@ -44,13 +45,13 @@ namespace AIOSEO\Plugin {
 
 		/**
 		 * Returns 'Pro' or 'Lite'.
-		 * Set to 'Pro' - independent plugin with all features enabled.
+		 * Set to 'Lite' - we use Lite directory structure with Pro features enabled.
 		 *
 		 * @since 4.0.0
 		 *
-		 * @var boolean
+		 * @var string
 		 */
-		public $versionPath = 'Pro';
+		public $versionPath = 'Lite';
 
 		/**
 		 * Whether we're in a dev environment.
@@ -176,41 +177,35 @@ namespace AIOSEO\Plugin {
 
 		/**
 		 * Load the version of the plugin we are currently using.
+		 * Modified for independent plugin: Always enable Pro features with Lite directory structure.
 		 *
 		 * @since 4.1.9
 		 *
 		 * @return void
 		 */
 		private function loadVersion() {
-			$proDir = is_dir( plugin_dir_path( AIOSEO_FILE ) . 'app/Pro' );
+			// Independent plugin: Always enable Pro features with Lite directory structure
+			$this->pro         = true;
+			$this->versionPath = 'Lite';
 
+			// Load dev environment if available
 			if (
-				! class_exists( '\Dotenv\Dotenv' ) ||
-				! file_exists( AIOSEO_DIR . '/build/.env' )
+				class_exists( '\Dotenv\Dotenv' ) &&
+				file_exists( AIOSEO_DIR . '/build/.env' )
 			) {
-				$this->pro         = $proDir;
-				$this->versionPath = $proDir ? 'Pro' : 'Lite';
+				$dotenv = \Dotenv\Dotenv::createUnsafeImmutable( AIOSEO_DIR, '/build/.env' );
+				$dotenv->load();
 
-				return;
-			}
+				$version = defined( 'AIOSEO_DEV_VERSION' )
+					? strtolower( AIOSEO_DEV_VERSION )
+					: strtolower( getenv( 'VITE_VERSION' ) );
+				if ( ! empty( $version ) ) {
+					$this->isDev = true;
 
-			$dotenv = \Dotenv\Dotenv::createUnsafeImmutable( AIOSEO_DIR, '/build/.env' );
-			$dotenv->load();
-
-			$version = defined( 'AIOSEO_DEV_VERSION' )
-				? strtolower( AIOSEO_DEV_VERSION )
-				: strtolower( getenv( 'VITE_VERSION' ) );
-			if ( ! empty( $version ) ) {
-				$this->isDev = true;
-
-				if ( file_exists( AIOSEO_DIR . '/build/filters.php' ) ) {
-					require_once AIOSEO_DIR . '/build/filters.php';
+					if ( file_exists( AIOSEO_DIR . '/build/filters.php' ) ) {
+						require_once AIOSEO_DIR . '/build/filters.php';
+					}
 				}
-			}
-
-			if ( $proDir && 'pro' === $version ) {
-				$this->pro         = true;
-				$this->versionPath = 'Pro';
 			}
 		}
 

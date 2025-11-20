@@ -16,6 +16,7 @@ use AIOSEO\Plugin\Common\Admin as CommonAdmin;
 class Admin extends CommonAdmin\Admin {
 	/**
 	 * Connect class instance.
+	 * Disabled for independent plugin - no longer needed.
 	 *
 	 * @since 4.2.7
 	 *
@@ -33,7 +34,8 @@ class Admin extends CommonAdmin\Admin {
 			parent::__construct();
 		}
 
-		$this->connect = new Connect();
+		// Disabled: Connect to AIOSEO Pro - independent plugin doesn't need this
+		// $this->connect = new Connect();
 	}
 
 	/**
@@ -44,20 +46,7 @@ class Admin extends CommonAdmin\Admin {
 	 * @return void
 	 */
 	protected function addAdminBarMenuItems() {
-		// Add an upsell to Pro.
-		if ( current_user_can( $this->getPageRequiredCapability( '' ) ) ) {
-			$this->adminBarMenuItems['aioseo-pro-upgrade'] = [
-				'parent' => 'aioseo-main',
-				'title'  => '<span class="aioseo-menu-highlight lite">' . __( 'Upgrade to Pro', 'all-in-one-seo-pack' ) . '</span>',
-				'id'     => 'aioseo-pro-upgrade',
-				'href'   => apply_filters(
-					'aioseo_upgrade_link',
-					esc_url( admin_url( 'admin.php?page=aioseo-tools&aioseo-redirect-upgrade=1' ) )
-				),
-				'meta'   => [ 'target' => '_blank' ],
-			];
-		}
-
+		// Removed: Upgrade to Pro upsell - independent plugin with all features enabled
 		parent::addAdminBarMenuItems();
 	}
 
@@ -71,20 +60,7 @@ class Admin extends CommonAdmin\Admin {
 	public function addMenu() {
 		parent::addMenu();
 
-		$capability = $this->getPageRequiredCapability( '' );
-
-		// We use the global submenu, because we are adding an external link here.
-		if ( current_user_can( $capability ) ) {
-			global $submenu;
-			$submenu[ $this->pageSlug ][] = [
-				'<span class="aioseo-menu-highlight lite">' . esc_html__( 'Upgrade to Pro', 'all-in-one-seo-pack' ) . '</span>',
-				$capability,
-				apply_filters(
-					'aioseo_upgrade_link',
-					esc_url( admin_url( 'admin.php?page=aioseo-tools&aioseo-redirect-upgrade=1' ) )
-				)
-			];
-		}
+		// Removed: Upgrade to Pro menu item - independent plugin with all features enabled
 	}
 
 	/**
@@ -95,19 +71,6 @@ class Admin extends CommonAdmin\Admin {
 	 * @return void
 	 */
 	protected function checkForRedirects() {
-		$mappedUrls = [
-			// Added to resolve an issue with the open_basedir in the IIS.
-
-			'aioseo-redirect-upgrade' => apply_filters(
-				'aioseo_upgrade_link',
-				aioseo()->helpers->utmUrl( AIOSEO_MARKETING_URL . 'lite-upgrade/', 'admin-bar', null, false )
-			)
-		];
-
-		foreach ( $mappedUrls as $queryArg => $redirectUrl ) {
-			if ( isset( $_GET[ $queryArg ] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
-				wp_redirect( $redirectUrl );
-			}
-		}
+		// Removed: Upgrade redirect - independent plugin doesn't need external upgrade links
 	}
 }

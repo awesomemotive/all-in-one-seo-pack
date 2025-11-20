@@ -23,29 +23,16 @@ export const useConnectStore = defineStore('ConnectStore', {
 	},
 	actions : {
 		getConnectUrl ({ key, wizard }) {
-			return http.post(links.restUrl('connect-url'))
-				.send({
-					licenseKey : key.trim(),
-					wizard
-				})
+			// Disabled: Connect to Pro functionality - independent plugin doesn't need this
+			return Promise.resolve({ body: { success: false, message: 'Connect functionality disabled - independent plugin' } })
 		},
 		processConnect (payload) {
-			const setupWizardStore = useSetupWizardStore()
-			return http.post(links.restUrl('connect-pro'))
-				.send({
-					downloadUrl : payload.file,
-					token       : payload.token,
-					wizard      : payload.wizard ? JSON.stringify(setupWizardStore.wizard.$state) : null
-				})
+			// Disabled: Connect to Pro functionality - independent plugin doesn't need this
+			return Promise.resolve({ body: { success: false, message: 'Connect functionality disabled - independent plugin' } })
 		},
 		saveConnectToken (token) {
-			const optionsStore = useOptionsStore()
-			optionsStore.updateOption('internalOptions', { groups: [ 'internal', 'siteAnalysis' ], key: 'connectToken', value: token })
-
-			return http.post(links.restUrl('connect'))
-				.send({
-					token
-				})
+			// Disabled: Connect token functionality - independent plugin doesn't need this
+			return Promise.resolve({ body: { success: true } })
 		}
 	}
 })

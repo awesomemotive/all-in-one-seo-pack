@@ -275,8 +275,8 @@ export default {
 	},
 	methods : {
 		purchase () {
-			const redirect = `&license-redirect=${btoa(this.rootStore.aioseo.urls.aio.wizard)}#/license-key`
-			window.open('https://aioseo.com/pricing/?features[]=' + this.getSelectedUpsellFeatures.map(f => f.value).join('&features[]=') + redirect)
+			// Disabled: Purchase/upgrade functionality - independent plugin with all features enabled
+			// Just proceed to next step
 			this.$router.push(this.setupWizardStore.getNextLink)
 		},
 		saveAndContinue () {
