@@ -330,12 +330,14 @@ namespace AIOSEO\Plugin {
 			$this->actionScheduler    = new Common\Utils\ActionScheduler();
 			$this->seoRevisions       = $this->pro ? new Pro\SeoRevisions\SeoRevisions() : new Common\SeoRevisions\SeoRevisions();
 			$this->ai                 = $this->pro ? new Pro\Ai\Ai() : null;
+			$this->aiManager          = new Common\Ai\AiManager();
 			$this->filters            = $this->pro ? new Pro\Main\Filters() : new Lite\Main\Filters();
 			$this->crawlCleanup       = new Common\QueryArgs\CrawlCleanup();
 			$this->searchCleanup      = new Common\SearchCleanup\SearchCleanup();
 			$this->emailReports       = new Common\EmailReports\EmailReports();
 			$this->thirdParty         = new Common\ThirdParty\ThirdParty();
 			$this->writingAssistant   = new Common\WritingAssistant\WritingAssistant();
+			$this->elementorAi        = new Common\Integrations\Elementor();
 
 			if ( ! wp_doing_ajax() && ! wp_doing_cron() ) {
 				$this->rss       = new Common\Rss();

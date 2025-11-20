@@ -397,6 +397,33 @@ class Updates {
 			);
 		}
 
+		// Create AI interactions table.
+		if ( ! aioseo()->core->db->tableExists( 'aioseo_ai_interactions' ) ) {
+			$tableName = $db->prefix . 'aioseo_ai_interactions';
+
+			aioseo()->core->db->execute(
+				"CREATE TABLE {$tableName} (
+					id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+					action varchar(100) NOT NULL,
+					provider varchar(50) NOT NULL,
+					user_id bigint(20) unsigned NOT NULL,
+					post_id bigint(20) unsigned DEFAULT NULL,
+					prompt text,
+					data longtext,
+					response longtext,
+					success tinyint(1) DEFAULT 1,
+					tokens_used int DEFAULT NULL,
+					created_at datetime NOT NULL,
+					PRIMARY KEY (id),
+					KEY action (action),
+					KEY provider (provider),
+					KEY user_id (user_id),
+					KEY post_id (post_id),
+					KEY created_at (created_at)
+				) {$charsetCollate};"
+			);
+		}
+
 		// Reset the cache for the installed tables.
 		aioseo()->internalOptions->database->installedTables = '';
 	}

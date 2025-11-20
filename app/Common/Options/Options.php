@@ -421,6 +421,29 @@ TEMPLATE
 				'included' => [ 'type' => 'array', 'default' => [ 'post', 'page' ] ],
 			]
 		],
+		'ai'               => [
+			'enabled'          => [ 'type' => 'boolean', 'default' => false ],
+			'defaultProvider'  => [ 'type' => 'string', 'default' => 'openai' ],
+			'openaiApiKey'     => [ 'type' => 'string', 'default' => '' ],
+			'openaiModel'      => [ 'type' => 'string', 'default' => 'gpt-4o' ],
+			'claudeApiKey'     => [ 'type' => 'string', 'default' => '' ],
+			'claudeModel'      => [ 'type' => 'string', 'default' => 'claude-3-5-sonnet-20241022' ],
+			'geminiApiKey'     => [ 'type' => 'string', 'default' => '' ],
+			'geminiModel'      => [ 'type' => 'string', 'default' => 'gemini-1.5-pro' ],
+			'temperature'      => [ 'type' => 'number', 'default' => 0.7 ],
+			'maxTokens'        => [ 'type' => 'number', 'default' => 2000 ],
+			'features'         => [
+				'contentGeneration' => [ 'type' => 'boolean', 'default' => true ],
+				'seoAnalysis'       => [ 'type' => 'boolean', 'default' => true ],
+				'keywordResearch'   => [ 'type' => 'boolean', 'default' => true ],
+				'aeoOptimization'   => [ 'type' => 'boolean', 'default' => true ],
+				'elementorIntegration' => [ 'type' => 'boolean', 'default' => true ],
+			],
+			'elementor'        => [
+				'enableAiWidgets'   => [ 'type' => 'boolean', 'default' => true ],
+				'autoSuggestions'   => [ 'type' => 'boolean', 'default' => true ],
+			],
+		],
 		'tools'            => [
 			'robots'       => [
 				'enable'         => [ 'type' => 'boolean', 'default' => false ],

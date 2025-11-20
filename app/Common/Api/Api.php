@@ -42,7 +42,9 @@ class Api {
 			'writing-assistant/keyword/(?P<postId>[\d]+)' => [ 'callback' => [ 'WritingAssistant', 'getPostKeyword' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
 			'writing-assistant/user-info'                 => [ 'callback' => [ 'WritingAssistant', 'getUserInfo' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
 			'writing-assistant/user-options'              => [ 'callback' => [ 'WritingAssistant', 'getUserOptions' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
-			'writing-assistant/report-history'            => [ 'callback' => [ 'WritingAssistant', 'getReportHistory' ], 'access' => 'aioseo_page_writing_assistant_settings' ]
+			'writing-assistant/report-history'            => [ 'callback' => [ 'WritingAssistant', 'getReportHistory' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
+			'ai/providers'                                => [ 'callback' => [ 'Ai', 'getProviders' ], 'access' => 'aioseo_general_settings' ],
+			'ai/history'                                  => [ 'callback' => [ 'Ai', 'getHistory' ], 'access' => 'aioseo_page_analysis' ]
 		],
 		'POST'   => [
 			'htaccess'                                              => [ 'callback' => [ 'Tools', 'saveHtaccess' ], 'access' => 'aioseo_tools_settings' ],
@@ -173,6 +175,26 @@ class Api {
 			'writing-assistant/set-report-progress'                 => [
 				'callback' => [ 'WritingAssistant', 'setReportProgress' ],
 				'access'   => 'aioseo_page_writing_assistant_settings'
+			],
+			'ai/generate-content'                                   => [
+				'callback' => [ 'Ai', 'generateContent' ],
+				'access'   => [ 'aioseo_page_general_settings', 'aioseo_page_analysis' ]
+			],
+			'ai/analyze-seo'                                        => [
+				'callback' => [ 'Ai', 'analyzeSeo' ],
+				'access'   => [ 'aioseo_page_analysis', 'aioseo_seo_analysis_settings' ]
+			],
+			'ai/research-keywords'                                  => [
+				'callback' => [ 'Ai', 'researchKeywords' ],
+				'access'   => [ 'aioseo_page_analysis', 'aioseo_seo_analysis_settings' ]
+			],
+			'ai/optimize-aeo'                                       => [
+				'callback' => [ 'Ai', 'optimizeAeo' ],
+				'access'   => [ 'aioseo_page_general_settings', 'aioseo_page_analysis' ]
+			],
+			'ai/validate-api-key'                                   => [
+				'callback' => [ 'Ai', 'validateApiKey' ],
+				'access'   => 'aioseo_general_settings'
 			]
 		],
 		'DELETE' => [

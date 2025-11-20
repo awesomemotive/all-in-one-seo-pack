@@ -248,6 +248,15 @@ abstract class AIOSEOAbstract {
 	public $htaccess = null;
 
 	/**
+	 * AI Manager class instance.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @var \AIOSEO\Plugin\Common\Ai\AiManager
+	 */
+	public $aiManager = null;
+
+	/**
 	 * Term class instance.
 	 *
 	 * @since 4.2.7
