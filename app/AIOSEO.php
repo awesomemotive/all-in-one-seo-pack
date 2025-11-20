@@ -34,21 +34,23 @@ namespace AIOSEO\Plugin {
 
 		/**
 		 * Paid returns true, free (Lite) returns false.
+		 * Set to true - independent plugin with all features enabled.
 		 *
 		 * @since 4.0.0
 		 *
 		 * @var boolean
 		 */
-		public $pro = false;
+		public $pro = true;
 
 		/**
 		 * Returns 'Pro' or 'Lite'.
+		 * Set to 'Pro' - independent plugin with all features enabled.
 		 *
 		 * @since 4.0.0
 		 *
 		 * @var boolean
 		 */
-		public $versionPath = 'Lite';
+		public $versionPath = 'Pro';
 
 		/**
 		 * Whether we're in a dev environment.

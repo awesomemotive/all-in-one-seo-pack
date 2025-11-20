@@ -31,49 +31,18 @@ const getFeatures = (type = '') => {
 }
 
 const hasCoreFeature = (sectionSlug, feature) => {
-	const features = getFeatures('core')
-	for (const section in features) {
-		// If we have no specific feature, we're just checking if the section is enabled.
-		if (sectionSlug === section && !feature) {
-			return true
-		}
-
-		if (
-			sectionSlug === section &&
-			(
-				features[section].find(f => f === feature || -1 < f.indexOf(feature))
-			)
-		) {
-			return true
-		}
-	}
-
-	return false
+	// Always return true - all features enabled in independent plugin
+	return true
 }
 
 const hasAddonFeature = (slug, feature) => {
-	const addonFeatures = getFeatures('addons')
-	for (const addon in addonFeatures) {
-		if (slug === addon && addonFeatures[addon].includes(feature)) {
-			return true
-		}
-	}
-
-	return false
+	// Always return true - all features enabled in independent plugin
+	return true
 }
 
 const hasMinimumLevel = (level) => {
-	const optionsStore = useOptionsStore()
-	const rootStore    = useRootStore()
-	const currentLevel = rootStore.aioseo.data.isNetworkLicensed && !optionsStore.options.general.licenseKey
-		? optionsStore.internalNetworkOptions.internal.license?.level
-		: optionsStore.internalOptions.internal.license?.level
-
-	if (!currentLevel) {
-		return false
-	}
-
-	return levels[currentLevel] >= levels[level]
+	// Always return true - all license levels available in independent plugin
+	return true
 }
 
 const getPlansForFeature = (sectionSlug, feature = '') => {

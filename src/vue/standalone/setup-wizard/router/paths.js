@@ -82,15 +82,16 @@ export default [
 			name   : __('Smart Recommendations', td)
 		}
 	},
-	{
-		path      : '/license-key',
-		name      : 'license-key',
-		component : loadView('Main'),
-		meta      : {
-			access : 'aioseo_setup_wizard',
-			name   : __('License Key', td)
-		}
-	},
+	// Removed: License key screen - independent plugin doesn't need licensing
+	// {
+	// 	path      : '/license-key',
+	// 	name      : 'license-key',
+	// 	component : loadView('Main'),
+	// 	meta      : {
+	// 		access : 'aioseo_setup_wizard',
+	// 		name   : __('License Key', td)
+	// 	}
+	// },
 	{
 		path      : '/success',
 		name      : 'success',

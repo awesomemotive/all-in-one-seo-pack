@@ -73,9 +73,10 @@ class Api {
 			'analyze-headline/delete'                               => [ 'callback' => [ 'Analyze', 'deleteHeadline' ], 'access' => 'aioseo_seo_analysis_settings' ],
 			'analyze/delete-site'                                   => [ 'callback' => [ 'Analyze', 'deleteSite' ], 'access' => 'aioseo_seo_analysis_settings' ],
 			'clear-log'                                             => [ 'callback' => [ 'Tools', 'clearLog' ], 'access' => 'aioseo_tools_settings' ],
-			'connect'                                               => [ 'callback' => [ 'Connect', 'saveConnectToken' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
-			'connect-pro'                                           => [ 'callback' => [ 'Connect', 'processConnect' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
-			'connect-url'                                           => [ 'callback' => [ 'Connect', 'getConnectUrl' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
+			// Removed: Connect/Pro upgrade functionality - independent plugin
+			// 'connect'                                               => [ 'callback' => [ 'Connect', 'saveConnectToken' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
+			// 'connect-pro'                                           => [ 'callback' => [ 'Connect', 'processConnect' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
+			// 'connect-url'                                           => [ 'callback' => [ 'Connect', 'getConnectUrl' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
 			'backup'                                                => [ 'callback' => [ 'Tools', 'createBackup' ], 'access' => 'aioseo_tools_settings' ],
 			'backup/restore'                                        => [ 'callback' => [ 'Tools', 'restoreBackup' ], 'access' => 'aioseo_tools_settings' ],
 			'email-debug-info'                                      => [ 'callback' => [ 'Tools', 'emailDebugInfo' ], 'access' => 'aioseo_tools_settings' ],

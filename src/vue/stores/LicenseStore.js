@@ -34,7 +34,7 @@ export const useLicenseStore = defineStore('LicenseStore', {
 	state : () => ({
 		license : {
 			expires    : 0,
-			isActive   : false,
+			isActive   : true, // Always active - no license required
 			isDisabled : false,
 			isExpired  : false,
 			isInvalid  : false,
@@ -42,96 +42,24 @@ export const useLicenseStore = defineStore('LicenseStore', {
 		}
 	}),
 	getters : {
-		isUnlicensed : state => 'pro' !== import.meta.env.VITE_VERSION.toLowerCase() || !state.license.isActive,
+		isUnlicensed : state => false, // Always licensed - independent plugin
 		licenseKey   : () => {
-			const rootStore = useRootStore()
-			const optionsStore = useOptionsStore()
-			return rootStore.aioseo.data.isNetworkAdmin
-				? optionsStore.networkOptions.general.licenseKey
-				: optionsStore.options.general.licenseKey
+			return '' // No license key needed
 		}
 	},
 	actions : {
 		activate (key) {
-			const notificationsStore = useNotificationsStore()
-			const rootStore          = useRootStore()
-
-			return http.post(links.restUrl('activate'))
-				.send({
-					licenseKey : key.trim(),
-					network    : rootStore.aioseo.data.isNetworkAdmin
-				})
-				.then(response => {
-					const optionsStore = useOptionsStore()
-					const store        = rootStore.aioseo.data.isNetworkAdmin ? 'networkOptions' : 'options'
-					optionsStore.updateOption(store, { groups: [ 'general' ], key: 'licenseKey', value: key })
-
-					notificationsStore.updateNotifications(response.body.notifications)
-
-					if (response.body.licenseData) {
-						Object.keys(response.body.licenseData).forEach(objectKey => {
-							const internalStore = rootStore.aioseo.data.isNetworkAdmin ? 'internalNetworkOptions' : 'internalOptions'
-							optionsStore.updateOption(internalStore, { groups: [ 'internal', 'license' ], key: objectKey, value: response.body.licenseData[objectKey] })
-						})
-						this.license = response.body.license
-
-						rootStore.aioseo.data.isNetworkLicensed = rootStore.aioseo.data.isNetworkAdmin
-
-						this.clearLicenseNotices()
-					}
-
-					return response
-				})
+			// No-op: No license activation needed - independent plugin
+			this.clearLicenseNotices()
+			return Promise.resolve({ body: { success: true } })
 		},
 		multisite (sites) {
-			const notificationsStore = useNotificationsStore()
-			const rootStore          = useRootStore()
-
-			return http.post(links.restUrl('multisite'))
-				.send({
-					network : rootStore.aioseo.data.isNetworkAdmin,
-					sites
-				})
-				.then(response => {
-					rootStore.aioseo.data = {
-						...rootStore.aioseo.data,
-						...{
-							network : { ...rootStore.aioseo.data.network }
-						}
-					}
-
-					notificationsStore.updateNotifications(response.body.notifications)
-				})
+			// No-op: No license needed - independent plugin
+			return Promise.resolve({ body: { success: true } })
 		},
 		deactivate () {
-			const notificationsStore = useNotificationsStore()
-			const rootStore          = useRootStore()
-
-			return http.post(links.restUrl('deactivate'))
-				.send({
-					network : rootStore.aioseo.data.isNetworkAdmin
-				})
-				.then(response => {
-					const optionsStore = useOptionsStore()
-					const store        = rootStore.aioseo.data.isNetworkAdmin ? 'networkOptions' : 'options'
-					optionsStore.updateOption(store, { groups: [ 'general' ], key: 'licenseKey', value: null })
-
-					notificationsStore.updateNotifications(response.body.notifications)
-
-					if (response.body.licenseData) {
-						Object.keys(response.body.licenseData).forEach(key => {
-							const internalStore = rootStore.aioseo.data.isNetworkAdmin ? 'internalNetworkOptions' : 'internalOptions'
-							optionsStore.updateOption(internalStore, { groups: [ 'internal', 'license' ], key, value: response.body.licenseData[key] })
-						})
-						this.license = response.body.license
-
-						rootStore.aioseo.isUnlicensed = true
-
-						this.addLicenseNotices()
-					}
-
-					return response
-				})
+			// No-op: No license deactivation needed - independent plugin
+			return Promise.resolve({ body: { success: true } })
 		},
 		clearLicenseNotices () {
 			const addLicenseKey1 = document.querySelector('.aioseo-submenu-highlight')

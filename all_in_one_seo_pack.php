@@ -1,33 +1,36 @@
 <?php
 /**
- * Plugin Name: All in One SEO - AI Powered
- * Plugin URI:  https://aioseo.com/
- * Description: SEO for WordPress with AI-Powered Content Generation, SEO Analysis, Keyword Research & AEO Optimization. Supports OpenAI, Claude, and Google Gemini. Features XML Sitemaps, SEO for custom post types, Elementor integration, and much more.
- * Author:      All in One SEO Team
- * Author URI:  https://aioseo.com/
- * Version:     4.9.0
+ * Plugin Name: SEO AI Pro - Independent Edition
+ * Plugin URI:  https://github.com/bestroofingnow/all-in-one-seo-pack
+ * Description: Independent SEO plugin with AI-Powered Content Generation, SEO Analysis, Keyword Research & AEO Optimization. Supports OpenAI, Claude, and Google Gemini. Features XML Sitemaps, SEO for custom post types, Elementor integration, and much more. No license required - fully independent.
+ * Author:      Your Company
+ * Author URI:  https://yourwebsite.com/
+ * Version:     1.0.0
  * Text Domain: all-in-one-seo-pack
  * Domain Path: /languages
  * License:     GPL-3.0+
  *
- * All in One SEO is free software: you can redistribute it and/or modify
+ * This plugin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  *
- * All in One SEO is distributed in the hope that it will be useful,
+ * This plugin is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with AIOSEO. If not, see <https://www.gnu.org/licenses/>.
+ * along with this plugin. If not, see <https://www.gnu.org/licenses/>.
  *
- * @since     4.0.0
- * @author    All in One SEO Team
+ * This is an independent fork based on the GPL-licensed All in One SEO Pack.
+ * Original source: https://wordpress.org/plugins/all-in-one-seo-pack/
+ *
+ * @since     1.0.0
+ * @author    Your Company
  * @package   AIOSEO\Plugin
  * @license   GPL-3.0+
- * @copyright Copyright © 2025, All in One SEO
+ * @copyright Copyright © 2025, Your Company
  */
 
 // Exit if accessed directly.
