@@ -337,7 +337,6 @@ export default {
 			width: 24px;
 			height: 24px;
 			margin-right: 8px;
-			align-self: start;
 		}
 
 		&.aioseo-circle-question-mark {
@@ -348,13 +347,15 @@ export default {
 	}
 
 	div.counter-container {
+		align-items: center;
 		display: flex;
 		flex-wrap: wrap;
 		line-height: 22px;
+		row-gap: 4px;
+		column-gap: 8px;
 
 		.counter {
 			font-size: var(--counter-font-size, 12px);
-			margin-right: 8px;
 			display: inline-grid;
 			align-items: center;
 			grid-template-columns: auto auto;
@@ -423,23 +424,11 @@ export default {
 		}
 
 		a {
-			margin-top: 8px;
-
 			&.buy-credits {
 				font-style: normal;
 				font-weight: 700;
 				text-decoration: none;
 			}
-		}
-	}
-}
-
-.aioseo-modal .aioseo-ai-credit-counter {
-	.counter-container-wrapper {
-		align-items: center;
-
-		a {
-			margin-top: 0;
 		}
 	}
 }

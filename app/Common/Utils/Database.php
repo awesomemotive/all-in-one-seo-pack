@@ -488,6 +488,13 @@ class Database {
 	 * @return int           The size of the table in bytes.
 	 */
 	public function getTableSize( $table ) {
+		// Check if table has any rows
+		$rowCount = $this->db->get_var( 'SELECT COUNT(*) FROM ' . $this->prefix . $table );
+
+		if ( 0 === (int) $rowCount ) {
+			return 0;
+		}
+
 		$this->db->query( 'ANALYZE TABLE ' . $this->prefix . $table );
 		$results = $this->db->get_results( '
 			SELECT

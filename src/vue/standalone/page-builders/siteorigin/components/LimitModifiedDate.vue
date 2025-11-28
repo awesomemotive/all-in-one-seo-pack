@@ -35,6 +35,10 @@ const toggleOptions = () => {
 const save = () => {
 	showOptions.value = false
 	postEditorStore.currentPost.limit_modified_date = true
+
+	// Clear isDirty flag as soon as save is initiated.
+	postEditorStore.isDirty = false
+
 	postEditorStore.savePostState()
 
 	if (isBlockEditor()) {

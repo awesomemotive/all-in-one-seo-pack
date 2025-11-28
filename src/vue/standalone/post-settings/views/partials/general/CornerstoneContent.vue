@@ -20,7 +20,6 @@
 
 		<base-toggle
 			v-model="postEditorStore.currentPost.pillar_content"
-			@update:modelValue="postEditorStore.isDirty = true"
 			:disabled="!hasRequiredFeature"
 		>
 			{{ strings.markAsCornerstone }}

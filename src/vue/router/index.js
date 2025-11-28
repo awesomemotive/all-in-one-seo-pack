@@ -54,7 +54,6 @@ export default (paths, app) => {
 		rootStore.ping()
 
 		const access = to.meta.access
-
 		if (!allowed(access)) {
 			return to.meta.home !== from.name ? router.replace({ name: to.meta.home }) : null
 		}

@@ -87,6 +87,11 @@ class Activate {
 	 */
 	public function deactivate() {
 		aioseo()->access->removeCapabilities();
+
+		// Added cache clear because we changed the cache structure on version 4.9.1
+		// now we store as string and have a is_object column to differentiate between array and objects.
+		// This will prevent errors when deactivating the PRO plugin but keeping an old version of the LITE plugin.
+		aioseo()->core->cache->clear();
 	}
 
 	/**

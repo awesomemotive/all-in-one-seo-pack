@@ -154,6 +154,10 @@ const errors         = ref({
 	api : null
 })
 
+// Store event handler references to properly remove only our specific listeners.
+let onTranslateChange = null,
+	onImproveChange   = null
+
 const app = getCurrentInstance()
 
 const strings = {
@@ -438,21 +442,24 @@ const initFetch = (args = {}) => {
 onMounted(() => {
 	updateParsedContent()
 
-	window.aioseoBus.$on('aiAssistantTranslateChange', (payload) => {
+	onTranslateChange = (payload) => {
 		if (!payload || payload.clientId !== blockId.value || !payload.translate) {
 			return
 		}
 
 		initFetch({ translate: payload.translate })
-	})
+	}
 
-	window.aioseoBus.$on('aiAssistantImproveChange', (payload) => {
+	onImproveChange = (payload) => {
 		if (!payload || payload.clientId !== blockId.value || !payload.improve) {
 			return
 		}
 
 		initFetch({ improve: payload.improve })
-	})
+	}
+
+	window.aioseoBus.$on('aiAssistantTranslateChange', onTranslateChange)
+	window.aioseoBus.$on('aiAssistantImproveChange', onImproveChange)
 
 	nextTick(() => {
 		inputElement.value?.focus()
@@ -460,7 +467,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-	window.aioseoBus.$off('aiAssistantTranslateChange')
-	window.aioseoBus.$off('aiAssistantImproveChange')
+	window.aioseoBus.$off('aiAssistantTranslateChange', onTranslateChange)
+	window.aioseoBus.$off('aiAssistantImproveChange', onImproveChange)
 })
 </script>

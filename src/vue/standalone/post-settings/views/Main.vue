@@ -109,6 +109,7 @@
 import { computed, getCurrentInstance, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 import {
+	useAiAssistantStore,
 	useKeywordRankTrackerStore,
 	useLicenseStore,
 	usePostEditorStore,
@@ -124,6 +125,7 @@ import { getParams, removeParam } from '@/vue/utils/params'
 import { debounceContext } from '@/vue/utils/debounce'
 import { isBlockEditor, isPageBuilderEditor } from '@/vue/utils/context'
 import { maybeUpdateTaxonomies } from '@/vue/plugins/tru-seo/components/taxonomies'
+import { extendEmptyEditorPlaceholder, checkAiAssistantShortcut, extendBlockEditorInserterButton } from '@/vue/standalone/blocks/extend-paragraph-block'
 
 import Advanced from './Advanced'
 import AiContent from './AiContent'
@@ -153,6 +155,7 @@ import SvgShare from '@/vue/components/common/svg/Share'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
+const aiAssistantStore        = useAiAssistantStore()
 const keywordRankTrackerStore = useKeywordRankTrackerStore()
 const licenseStore            = useLicenseStore()
 const postEditorStore         = usePostEditorStore()
@@ -466,6 +469,10 @@ onMounted(async () => {
 			extendImageBlockToolbar()
 		}
 
+		if (aiAssistantStore.hasPermission) {
+			extendEmptyEditorPlaceholder()
+		}
+
 		watchBlockEditor.value = window.wp.data.subscribe(() => {
 			if (!licenseStore.isUnlicensed && !updatingSeoRevisions.value) {
 				updateSeoRevisions()
@@ -474,6 +481,11 @@ onMounted(async () => {
 			if (hasAiContentTab) {
 				extendImageBlockPlaceholder()
 				extendFeaturedImageButton()
+			}
+
+			if (aiAssistantStore.hasPermission) {
+				checkAiAssistantShortcut()
+				extendBlockEditorInserterButton({ aiAssistantStore })
 			}
 		})
 	}
@@ -675,11 +687,6 @@ switch (screenContext.value) {
 			}
 		}
 
-		.aioseo-tab:not(.is-page-builder) {
-			position: relative;
-			top: -45px;
-		}
-
 		.aioseo-textarea-autosize {
 			border: 1px solid $input-border;
 		}
@@ -790,6 +797,16 @@ switch (screenContext.value) {
 
 	.modal-wrapper .modal-container {
 		max-width: 1000px;
+	}
+}
+
+#editor {
+	.block-editor-inserter:has(.aioseo-ai-assistant-inserter-btn) {
+		width: max-content;
+
+		.block-editor-inserter__toggle {
+			display: inline-flex;
+		}
 	}
 }
 </style>

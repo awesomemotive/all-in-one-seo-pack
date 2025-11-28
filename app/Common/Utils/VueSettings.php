@@ -123,6 +123,7 @@ class VueSettings {
 			'writingAssistantCta'          => true,
 			'llmsSitemap'                  => true,
 			'llmsSitemapAdvancedSettings'  => true,
+			'redirectLogsSettings'         => true,
 		],
 		'toggledRadio'    => [
 			'breadcrumbsShowMoreSeparators' => false,

@@ -86,6 +86,10 @@ export const useSemrushStore = defineStore('SemrushStore', {
 					const optionsStore = useOptionsStore()
 					optionsStore.updateOption('internalOptions', { groups: [ 'integrations' ], key: 'semrush', value: response.body.semrush }, { root: true })
 					optionsStore.internalOptions.integrations.semrush = response.body.semrush
+				}).catch(_error => { // eslint-disable-line no-unused-vars
+					const optionsStore = useOptionsStore()
+					optionsStore.updateOption('internalOptions', { groups: [ 'integrations' ], key: 'semrush', value: '' }, { root: true })
+					optionsStore.internalOptions.integrations.semrush = ''
 				})
 		}
 	}

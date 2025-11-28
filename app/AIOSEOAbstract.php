@@ -616,4 +616,13 @@ abstract class AIOSEOAbstract {
 	 * @var \AIOSEO\Plugin\Common\Llms\Llms|\AIOSEO\Plugin\Pro\Llms\Llms
 	 */
 	public $llms = null;
+
+	/**
+	 * Redirects class instance.
+	 *
+	 * @since 4.9.1
+	 *
+	 * @var \AIOSEO\Plugin\Pro\Redirects\Redirects
+	 */
+	public $redirects = null;
 }

@@ -76,7 +76,17 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 			return state.images.selected?.length ? state.images.selected[0] : null
 		},
 		generationPrice : state => {
-			switch (state.form.quality.value?.value) {
+			const optionsStore        = useOptionsStore()
+			const costPerFeature      = optionsStore.internalOptions?.internal?.ai?.costPerFeature || {}
+			const imageGeneratorCosts = costPerFeature.imageGenerator || {}
+
+			const quality = state.form.quality.value?.value
+			if (quality && imageGeneratorCosts[quality]) {
+				return imageGeneratorCosts[quality]
+			}
+
+			// Fallback to hardcoded values.
+			switch (quality) {
 				case 'low':
 					return 250
 				case 'medium':

@@ -171,11 +171,11 @@ export default {
 	svg.aioseo-circle-question-mark {
 		width: 17px;
 		height: 17px;
-		color: $placeholder-color;
+		color: $placeholder-color !important;
 		transition: background-color 0.2s ease;
 
 		&:hover {
-			color: color.adjust($placeholder-color, $lightness: -20%);
+			color: color.adjust($placeholder-color, $lightness: -20%) !important;
 		}
 	}
 
@@ -207,7 +207,7 @@ export default {
 				svg {
 					width: 24px;
 					height: 24px;
-					margin-right: 16px;
+					margin-right: 8px;
 				}
 			}
 

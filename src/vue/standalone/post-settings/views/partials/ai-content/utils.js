@@ -19,13 +19,43 @@ export const aiFeatures = {
 		isPopular         : true,
 		clickCallback     : () => {
 			const { wp } = window
-			const insertionPoint = wp.data.select('core/block-editor').getBlockInsertionPoint() || {}
+			const blockEditorSelect   = wp.data.select('core/block-editor')
+			const blockEditorDispatch = wp.data.dispatch('core/block-editor')
+			const insertionPoint      = blockEditorSelect.getBlockInsertionPoint() || {}
 
-			wp.data.dispatch('core/block-editor').insertBlock(
-				wp.blocks.createBlock('aioseo/ai-assistant'),
-				insertionPoint.index,
+			// Check if we can insert the block at the current insertion point.
+			// This may fail for blocks that only accept specific children (e.g., list blocks).
+			const canInsertAtPoint = blockEditorSelect.canInsertBlockType(
+				'aioseo/ai-assistant',
 				insertionPoint.rootClientId
 			)
+
+			if (canInsertAtPoint) {
+				blockEditorDispatch.insertBlock(
+					wp.blocks.createBlock('aioseo/ai-assistant'),
+					insertionPoint.index,
+					insertionPoint.rootClientId
+				)
+				return
+			}
+
+			// Can't insert at the current point (e.g., inside a list block).
+			// Find the top-level block and insert after it.
+			const selectedBlockClientId = blockEditorSelect.getSelectedBlockClientId()
+			if (selectedBlockClientId) {
+				const rootBlockClientId = blockEditorSelect.getBlockHierarchyRootClientId(selectedBlockClientId)
+				const rootBlockIndex    = blockEditorSelect.getBlockIndex(rootBlockClientId)
+
+				blockEditorDispatch.insertBlock(
+					wp.blocks.createBlock('aioseo/ai-assistant'),
+					rootBlockIndex + 1
+				)
+			} else {
+				// No selection, insert at the end.
+				blockEditorDispatch.insertBlock(
+					wp.blocks.createBlock('aioseo/ai-assistant')
+				)
+			}
 		}
 	},
 	imageGenerator : {

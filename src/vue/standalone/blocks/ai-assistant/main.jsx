@@ -193,11 +193,15 @@ export const settings = {
 
 		const defaultTone = toneOptions.find(t => t.value === optionsStore.options.aiContent.tone) || toneOptions[0]
 		if (!attributes.tone) {
+			// Mark as non-persistent to avoid corrupting the undo history on block insertion.
+			wp.data.dispatch('core/block-editor').__unstableMarkNextChangeAsNotPersistent?.()
 			setAttributes({ tone: defaultTone.value })
 		}
 
 		const defaultAudience = audienceOptions.find(a => a.value === optionsStore.options.aiContent.audience) || audienceOptions[0]
 		if (!attributes.audience) {
+			// Mark as non-persistent to avoid corrupting the undo history on block insertion.
+			wp.data.dispatch('core/block-editor').__unstableMarkNextChangeAsNotPersistent?.()
 			setAttributes({ audience: defaultAudience.value })
 		}
 

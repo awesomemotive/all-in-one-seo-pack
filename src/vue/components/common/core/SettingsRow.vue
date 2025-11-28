@@ -52,7 +52,7 @@
 			:md="rightSize"
 			v-if="$slots.content"
 		>
-			<div class="settings-content">
+			<div class="aioseo-settings-content">
 				<slot name="content" />
 			</div>
 		</grid-column>
@@ -199,7 +199,7 @@ export default {
 		}
 	}
 
-	.settings-content {
+	.aioseo-settings-content {
 		font-size: $font-md;
 		line-height: 22px;
 	}

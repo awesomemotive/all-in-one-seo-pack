@@ -46,6 +46,8 @@ abstract class Usage {
 	 */
 	public function __construct() {
 		add_action( 'init', [ $this, 'init' ], 2 );
+
+		add_action( 'aioseo_send_usage_data', [ $this, 'process' ] );
 	}
 
 	/**
@@ -63,9 +65,6 @@ abstract class Usage {
 
 				return;
 			}
-
-			// Register the action handler.
-			add_action( $action, [ $this, 'process' ] );
 
 			if ( ! as_next_scheduled_action( $action ) ) {
 				as_schedule_recurring_action( $this->generateStartDate(), WEEK_IN_SECONDS, $action, [], 'aioseo' );

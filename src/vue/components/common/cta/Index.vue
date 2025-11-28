@@ -201,6 +201,7 @@ export default {
 		width: 100%;
 
 		&.floating {
+			z-index: 1;
 			margin-top: 0;
 			position: absolute;
 			max-width: 850px;

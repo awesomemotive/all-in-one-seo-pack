@@ -176,11 +176,12 @@ class Settings {
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function saveChanges( $request ) {
-		$body           = $request->get_json_params();
-		$options        = ! empty( $body['options'] ) ? $body['options'] : [];
-		$dynamicOptions = ! empty( $body['dynamicOptions'] ) ? $body['dynamicOptions'] : [];
-		$network        = ! empty( $body['network'] ) ? (bool) $body['network'] : false;
-		$networkOptions = ! empty( $body['networkOptions'] ) ? $body['networkOptions'] : [];
+		$body            = $request->get_json_params();
+		$options         = ! empty( $body['options'] ) ? $body['options'] : [];
+		$dynamicOptions  = ! empty( $body['dynamicOptions'] ) ? $body['dynamicOptions'] : [];
+		$network         = ! empty( $body['network'] ) ? (bool) $body['network'] : false;
+		$networkOptions  = ! empty( $body['networkOptions'] ) ? $body['networkOptions'] : [];
+		$redirectOptions = ! empty( $body['redirectOptions'] ) ? $body['redirectOptions'] : [];
 
 		// If this is the network admin, reset the options.
 		if ( $network ) {
@@ -188,6 +189,10 @@ class Settings {
 		} else {
 			aioseo()->options->sanitizeAndSave( $options );
 			aioseo()->dynamicOptions->sanitizeAndSave( $dynamicOptions );
+
+			if ( ! empty( aioseo()->redirects->isActive ) ) {
+				aioseo()->redirects->options->sanitizeAndSave( $redirectOptions );
+			}
 		}
 
 		// Re-initialize notices.
@@ -225,6 +230,11 @@ class Settings {
 					aioseo()->options->tools->robots->reset();
 					aioseo()->options->searchAppearance->advanced->unwantedBots->reset();
 					aioseo()->options->searchAppearance->advanced->searchCleanup->settings->preventCrawling = false;
+					break;
+				case 'redirects':
+					if ( ! empty( aioseo()->redirects->isActive ) ) {
+						aioseo()->redirects->options->reset();
+					}
 					break;
 				default:
 					if ( 'searchAppearance' === $setting ) {

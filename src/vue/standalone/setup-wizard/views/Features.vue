@@ -156,7 +156,6 @@ export default {
 				this.setupWizardStore.features.includes('aioseo-link-assistant') ||
 				this.setupWizardStore.features.includes('aioseo-local-business') ||
 				this.setupWizardStore.features.includes('aioseo-news-sitemap') ||
-				this.setupWizardStore.features.includes('aioseo-redirects') ||
 				this.setupWizardStore.features.includes('aioseo-rest-api') ||
 				this.setupWizardStore.features.includes('aioseo-video-sitemap')
 			)
@@ -174,7 +173,6 @@ export default {
 				this.setupWizardStore.features.includes('aioseo-link-assistant') ||
 				this.setupWizardStore.features.includes('aioseo-local-business') ||
 				this.setupWizardStore.features.includes('aioseo-news-sitemap') ||
-				this.setupWizardStore.features.includes('aioseo-redirects') ||
 				this.setupWizardStore.features.includes('aioseo-rest-api') ||
 				this.setupWizardStore.features.includes('aioseo-video-sitemap')
 			)
@@ -192,7 +190,6 @@ export default {
 				!this.setupWizardStore.features.includes('aioseo-link-assistant') &&
 				!this.setupWizardStore.features.includes('aioseo-local-business') &&
 				!this.setupWizardStore.features.includes('aioseo-news-sitemap') &&
-				!this.setupWizardStore.features.includes('aioseo-redirects') &&
 				!this.setupWizardStore.features.includes('aioseo-rest-api') &&
 				!this.setupWizardStore.features.includes('aioseo-video-sitemap')
 			)

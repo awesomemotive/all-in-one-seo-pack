@@ -5,7 +5,7 @@ import links from '@/vue/utils/links'
 let cachedCurrentPost = null
 
 const prepareCachedCurrentPost = (currentPost) => {
-	const ignore = [ 'modalOpen', 'seo_score', 'page_analysis' ]
+	const ignore = [ 'modalOpen', 'seo_score', 'page_analysis', 'headlineAnalyzer', 'loading' ]
 	const copy   = JSON.parse(JSON.stringify(currentPost))
 
 	ignore.forEach((property) => {
@@ -140,6 +140,10 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 
 			// If the currentPost changed, emit a global event.
 			if (cachedCurrentPost !== prepareCachedCurrentPost(this.currentPost)) {
+				this.isDirty = true
+
+				cachedCurrentPost = prepareCachedCurrentPost(this.currentPost)
+
 				window.aioseoBus.$emit('postSettingsUpdated')
 			}
 

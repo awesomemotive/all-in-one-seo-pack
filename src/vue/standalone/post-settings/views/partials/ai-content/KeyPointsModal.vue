@@ -110,8 +110,8 @@
 					class="generate-button"
 					size="small"
 					type="blue"
-					@click="event => generate(false)"
-					:disabled="!aiContent.hasEnoughCredits(10)"
+					@click="_event => generate(false)"
+					:disabled="!aiContent.hasEnoughCredits(aiContent.getFeatureCost('keyPoints'))"
 				>
 					{{ strings.generateButtonText }}
 				</base-button>
@@ -177,7 +177,7 @@ import SvgKeyPoints from '@/vue/components/common/svg/ai/KeyPoints'
 import SvgRephrase from '@/vue/components/common/svg/ai/Rephrase'
 import SvgArrowBack from '@/vue/components/common/svg/ArrowBack'
 
-import { __, _n } from '@/vue/plugins/translations'
+import { __, _n, sprintf } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
@@ -334,10 +334,14 @@ export default {
 		}
 
 		const strings = {
-			copy                : __('Copy', td),
-			copied              : __('Copied!', td),
-			settingsHeader      : __('Select tone and audience', td),
-			generateButtonText  : __('Generate Key Points (10 credits)', td),
+			copy               : __('Copy', td),
+			copied             : __('Copied!', td),
+			settingsHeader     : __('Select tone and audience', td),
+			generateButtonText : sprintf(
+				// Translators: 1 - Number of credits.
+				__('Generate Key Points (%1$d credits)', td),
+				aiContent.getFeatureCost('keyPoints')
+			),
 			rephrase            : __('Regenerate (5 credits)', td),
 			viewPreviousResults : __('View Previous Results', td)
 		}

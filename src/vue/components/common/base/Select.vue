@@ -327,6 +327,10 @@ export default {
 			}
 		}
 
+		.multiselect__tag-remove {
+			pointer-events: auto !important;
+		}
+
 		.multiselect__single {
 			display: inline-flex;
 			margin: 0;
@@ -403,6 +407,7 @@ export default {
 					background-color: $background;
 					display: flex;
 					align-items: center;
+					pointer-events: all !important;
 
 					&:hover {
 						background-color: $black2;

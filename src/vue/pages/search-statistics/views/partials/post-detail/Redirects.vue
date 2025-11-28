@@ -1,46 +1,27 @@
 <template>
 	<div>
 		<redirects
-			v-if="shouldShowMain || licenseStore.isUnlicensed"
+			v-if="!licenseStore.isUnlicensed && rootStore.isPro"
 			:redirects="redirects"
 		/>
 
-		<activate
-			v-if="shouldShowActivate"
-		/>
-
-		<update
-			v-if="shouldShowUpdate"
-		/>
-
 		<upgrade
-			v-if="addons.requiresUpgrade(addonSlug)"
+			v-if="licenseStore.isUnlicensed || !rootStore.isPro"
 		/>
 	</div>
 </template>
 
 <script setup>
 import {
+	useRootStore,
 	useLicenseStore
 } from '@/vue/stores'
 
-import addons from '@/vue/utils/addons'
-import { useAddonConditions } from '@/vue/composables/AddonConditions'
-import Activate from './redirects/Activate'
 import Redirects from './redirects/Redirects'
-import Update from './redirects/Update'
 import Upgrade from './redirects/Upgrade'
 
-const licenseStore = useLicenseStore()
-
-const addonSlug = 'aioseo-redirects'
-const {
-	shouldShowActivate,
-	shouldShowMain,
-	shouldShowUpdate
-} = useAddonConditions({
-	addonSlug
-})
+const rootStore     = useRootStore()
+const licenseStore  = useLicenseStore()
 
 defineProps({
 	redirects : Object

@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="aioseo-redirects-add-redirect-standalone"
-		v-if="addons.isActive('aioseo-redirects')"
+		v-if="!licenseStore.isUnlicensed && rootStore.isPro"
 	>
 		<core-modal
 			:show="display"
@@ -18,7 +18,7 @@
 					<core-add-redirection
 						v-if="!loading"
 						:urls="urls"
-						:target="urls[0].target ? urls[0].target : '/'"
+						:target="urls[0]?.target ? urls[0]?.target : '/'"
 						:disableSource="true"
 						@added-redirect="reload"
 					/>
@@ -33,10 +33,10 @@ import '@/vue/assets/scss/main.scss'
 
 import links from '@/vue/utils/links'
 import {
-	useRootStore
+	useRootStore,
+	useLicenseStore
 } from '@/vue/stores'
 
-import addons from '@/vue/utils/addons'
 import http from '@/vue/utils/http'
 import { isEmpty } from 'lodash-es'
 import CoreModal from '@/vue/components/common/core/modal/Index'
@@ -49,7 +49,8 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 export default {
 	setup () {
 		return {
-			rootStore : useRootStore()
+			rootStore    : useRootStore(),
+			licenseStore : useLicenseStore()
 		}
 	},
 	components : {
@@ -58,7 +59,6 @@ export default {
 	},
 	data () {
 		return {
-			addons,
 			urls    : [],
 			display : false,
 			target  : null,

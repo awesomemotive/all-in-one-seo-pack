@@ -12,7 +12,7 @@
 					<div class="name small-margin">{{ strings.selectSite }}</div>
 				</div>
 
-				<div class="settings-content">
+				<div class="aioseo-settings-content">
 					<core-network-site-selector
 						@selected-site="(site) => {networkStore.currentSite = site}"
 						follow-selected-site
@@ -122,7 +122,7 @@
 				</core-settings-row>
 
 				<div class="aioseo-settings-row">
-					<div class="settings-content">
+					<div class="aioseo-settings-content">
 						<div class="robots-editor-table">
 							<div class="robots-editor-table__header">
 								<div class="robots-editor-table__row">
@@ -311,7 +311,7 @@
 						</div>
 					</div>
 
-					<div class="settings-content">
+					<div class="aioseo-settings-content">
 						<base-editor
 							:modelValue="inputCustomRobotsTxtPreview"
 							:line-numbers="true"
@@ -361,7 +361,7 @@
 							</div>
 						</div>
 
-						<div class="settings-content settings-content--gap">
+						<div class="aioseo-settings-content aioseo-settings-content--gap">
 							<base-input
 								:modelValue="inputImportRobotsTxtFromUrl"
 								@update:modelValue="v => onChangeInputImportRobotsTxtFromUrl(v)"
@@ -386,7 +386,7 @@
 							<div class="name small-margin">{{ strings.pasteRobotsText }}</div>
 						</div>
 
-						<div class="settings-content settings-content--gap">
+						<div class="aioseo-settings-content aioseo-settings-content--gap">
 							<base-editor
 								:modelValue="inputPasteRobotsTxtText"
 								@update:modelValue="v => onChangeInputPasteRobotsTxtText(v)"
@@ -1226,7 +1226,7 @@ export default {
 				}
 			}
 
-			.settings-content {
+			.aioseo-settings-content {
 				&--gap {
 					display: grid;
 					gap: 10px;

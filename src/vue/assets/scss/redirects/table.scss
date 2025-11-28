@@ -50,6 +50,8 @@
 			}
 
 			&.arrow-col {
+				width: 40px;
+
 				div {
 					display: flex;
 					height: 100%;
@@ -60,16 +62,17 @@
 
 			&.actions {
 				width: 20px;
+				padding-left: 24px !important;
 			}
 
 			&.aliased-domain {
-				width: 100%;
+				width: 48%;
 			}
 		}
 
 		&.even {
 			td {
-				background-color: $box-background;
+				background-color: $background;
 			}
 		}
 	}
@@ -146,18 +149,21 @@
 	}
 
 	svg {
-		color: $gray2;
+		color: $placeholder-color;
+
 		&.aioseo-trash {
-			width: 20px;
-			height: 20px;
+			width: 24px;
+			height: 24px;
 			cursor: pointer;
+
 			&:hover {
 				color: $red;
 			}
 		}
 
 		&.aioseo-right-arrow {
-			width: 26px;
+			width: 24px;
+			height: 42px;
 			color: $placeholder-color;
 		}
 	}

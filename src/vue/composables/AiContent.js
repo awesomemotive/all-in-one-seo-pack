@@ -90,8 +90,16 @@ export const useAiContent = () => {
 		)
 	}
 
+	const getFeatureCost = (featureName) => {
+		const costPerFeature = optionsStore.internalOptions?.internal?.ai?.costPerFeature || {}
+
+		// Return cost from API or fallback to a hardcoded value of 10.
+		return costPerFeature[featureName] || 10
+	}
+
 	return {
 		audienceOptions,
+		getFeatureCost,
 		hasEnoughCredits,
 		imageAspectRatioOptions,
 		imageQualityOptions,

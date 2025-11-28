@@ -93,7 +93,7 @@
 					v-model="title"
 					:line-numbers="false"
 					single
-					tags-context="postTitle"
+					:tags-context="getTagText('post', post?.postType, 'Title')"
 					defaultMenuOrientation="bottom"
 					tagsDescription=''
 					:default-tags="[ 'post_title' ]"
@@ -156,7 +156,7 @@
 				<core-html-tags-editor
 					v-model="postDescription"
 					:line-numbers="false"
-					tags-context="postDescription"
+					:tags-context="getTagText('post', post?.postType, 'Description')"
 					defaultMenuOrientation="bottom"
 					tagsDescription=''
 					:default-tags="[ 'post_excerpt' ]"
@@ -323,6 +323,7 @@ import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
 import { truncate } from '@/vue/utils/html'
 import license from '@/vue/utils/license'
 import links from '@/vue/utils/links'
+import tags from '@/vue/utils/tags'
 
 import { shouldShowTruSeoScore } from '@/vue/plugins/tru-seo/components/helpers'
 import BaseButton from '@/vue/components/common/base/Button'
@@ -351,7 +352,8 @@ export default {
 			optionsStore          : useOptionsStore(),
 			rootStore             : useRootStore(),
 			runAnalysis,
-			searchStatisticsStore : useSearchStatisticsStore()
+			searchStatisticsStore : useSearchStatisticsStore(),
+			getTagText            : tags.getTagText
 		}
 	},
 	components : {

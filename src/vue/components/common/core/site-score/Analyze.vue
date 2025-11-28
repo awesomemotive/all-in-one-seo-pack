@@ -186,9 +186,9 @@ export default {
 		sortedParts () {
 			return getSortedParts({
 				good     : this.summary.good,
-				warnings : this.summary.warnings,
-				issues   : this.summary.issues,
-				total    : this.summary.total
+				warnings : this.summary?.warnings || this.summary?.recommended,
+				issues   : this.summary?.issues || this.summary?.critical,
+				total    : this.summary?.total || this.summary?.good + this.summary?.recommended + this.summary?.critical
 			})
 		}
 	}

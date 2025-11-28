@@ -68,26 +68,23 @@ export default {
 		overflow: hidden;
 
 		&:checked + label {
-			background-color: #fff;
-			box-shadow: 0px 5px 10px rgba(0, 90, 224, 0.1);
-			border: 2px solid $blue;
+			background-color: $border;
+			border: 1px solid $blue;
 			font-weight: 600;
 		}
 	}
 
 	label {
-		background-color: $box-background;
+		background-color: $background;
 		color: $black;
 		font-size: 16px;
-		line-height: 1;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
-		border: 2px solid transparent;
-		box-shadow: 0 0 0 1px $border;
+		border: 1px solid $gray;
 		transition: all 0.1s ease-in-out;
-		border-radius: 3px;
+		border-radius: 4px;
 		height: 165px;
 		position: relative;
 
@@ -98,11 +95,15 @@ export default {
 		}
 
 		p {
+			width: 100%;
 			font-size: $font-md;
+			margin: 0;
 			line-height: 22px;
 			position: relative;
-			bottom: unset;
-			margin: 0 0 12px;
+			text-align: center;
+			background-color: $white;
+			padding: 10px;
+			border-radius: 0 0 4px 4px;
 		}
 
 		&:hover {

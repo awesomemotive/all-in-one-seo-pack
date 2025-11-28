@@ -10,7 +10,8 @@ import { debounce } from '@/vue/utils/debounce'
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
 import { getEditorData } from './helpers'
 
-let editorData = {}
+let editorData = {},
+	diviHasUnsavedChanges = false
 
 /**
  * Run TruSEO analysis when content updates.
@@ -39,6 +40,13 @@ const handleEditorChange = () => {
  */
 const handleEditorSave = () => {
 	const postEditorStore = usePostEditorStore()
+
+	// Clear Divi unsaved changes flag.
+	diviHasUnsavedChanges = false
+
+	// Clear isDirty flag as soon as save is initiated.
+	postEditorStore.isDirty = false
+
 	postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
 		const licenseStore      = useLicenseStore()
 		const seoRevisionsStore = useSeoRevisionsStore()
@@ -52,11 +60,10 @@ export default ({ wp, addEventListener }) => {
 	// First load and analyze the content.
 	handleEditorChange()
 
-	// This hook will fire when the Divi content changes.
 	addEventListener('message', (event) => {
-		const etEvent = event.data.eventType
-		if ('et_fb_section_content_change' === etEvent) {
+		if ('et_fb_section_content_change' === event.data.eventType) {
 			debounce(handleEditorChange, 1000)
+			diviHasUnsavedChanges = true
 		}
 	})
 
@@ -91,4 +98,7 @@ export default ({ wp, addEventListener }) => {
 			}
 		})
 	}
+
+	// Expose state checker globally for beforeunload handler.
+	window.aioseoPageBuilderHasUnsavedChanges = () => diviHasUnsavedChanges
 }

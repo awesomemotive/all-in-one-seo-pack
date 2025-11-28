@@ -10,16 +10,6 @@ import {
 
 export const useToolsStore = defineStore('ToolsStore', {
 	actions : {
-		clearLog (log) {
-			return http.post(links.restUrl('clear-log'))
-				.send({
-					log
-				})
-				.then(response => {
-					const rootStore = useRootStore()
-					rootStore.aioseo.data.logSizes[log] = response.body.logSize
-				})
-		},
 		emailDebugInfo (emailAddress) {
 			return http.post(links.restUrl('email-debug-info'))
 				.send({

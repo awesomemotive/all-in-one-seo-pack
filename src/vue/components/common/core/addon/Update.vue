@@ -96,7 +96,7 @@ export default {
 				activateError     : __('An error occurred while activating the addon. Please upload it manually or contact support for more information.', td),
 				permissionWarning : __('You currently don\'t have permission to activate this addon. Please ask a site administrator to activate first.', td),
 				updateRequired    : sprintf(
-					// Translators: 1 - Plugin Short Name ("AIOSEO"), 2 - Pro, 3 - Version Number (e.g. "1.0.0"), 4 - Addon name (e.g. "Redirection Manager"), 5 - Version Number (e.g. "1.0.0").
+					// Translators: 1 - Plugin Short Name ("AIOSEO"), 2 - Pro, 3 - Version Number (e.g. "1.0.0"), 4 - Addon name (e.g. "Link Assistant"), 5 - Version Number (e.g. "1.0.0").
 					__('This addon requires an update. %1$s %2$s requires a minimum version of %3$s for the %4$s addon. You currently have %5$s installed.', td),
 					import.meta.env.VITE_SHORT_NAME,
 					'Pro',

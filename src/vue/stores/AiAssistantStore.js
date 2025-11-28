@@ -2,6 +2,10 @@ import { defineStore } from 'pinia'
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 
+import {
+	useOptionsStore
+} from '@/vue/stores'
+
 import MarkdownIt from 'markdown-it'
 import markdownItFootnote from 'markdown-it-footnote'
 import markdownItMark from 'markdown-it-mark'
@@ -24,9 +28,17 @@ export const useAiAssistantStore = defineStore('AiAssistantStore', {
 				}
 			}
 		},
-		generationPrice : 50
+		extend : {
+			blockEditorInserterButton : true
+		}
 	}),
 	getters : {
-		hasPermission : (state) => allowed(state.capability)
+		hasPermission   : (state) => allowed(state.capability),
+		generationPrice : () => {
+			const optionsStore   = useOptionsStore()
+			const costPerFeature = optionsStore.internalOptions?.internal?.ai?.costPerFeature || {}
+
+			return costPerFeature.aiAssistant || 50
+		}
 	}
 })

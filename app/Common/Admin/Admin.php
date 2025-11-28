@@ -204,7 +204,6 @@ class Admin {
 	 * @return void
 	 */
 	public function setPages() {
-		// TODO: Remove this after a couple months.
 		$newIndicator = '<span class="aioseo-menu-new-indicator">&nbsp;NEW!</span>';
 
 		$this->pages = [
@@ -239,6 +238,11 @@ class Admin {
 				'menu_title' => esc_html__( 'Redirects', 'all-in-one-seo-pack' ),
 				'parent'     => $this->pageSlug
 			],
+			'aioseo-ai-insights'       => [
+				'menu_title' => esc_html__( 'AI Insights', 'all-in-one-seo-pack' ) . $newIndicator,
+				'page_title' => esc_html__( 'AI Insights', 'all-in-one-seo-pack' ),
+				'parent'     => $this->pageSlug
+			],
 			'aioseo-local-seo'         => [
 				'menu_title' => esc_html__( 'Local SEO', 'all-in-one-seo-pack' ),
 				'parent'     => $this->pageSlug
@@ -248,8 +252,7 @@ class Admin {
 				'parent'     => $this->pageSlug
 			],
 			'aioseo-search-statistics' => [
-				'menu_title' => esc_html__( 'Search Statistics', 'all-in-one-seo-pack' ) . $newIndicator,
-				'page_title' => esc_html__( 'Search Statistics', 'all-in-one-seo-pack' ),
+				'menu_title' => esc_html__( 'Search Statistics', 'all-in-one-seo-pack' ),
 				'parent'     => $this->pageSlug
 			],
 			'aioseo-tools'             => [
@@ -844,6 +847,7 @@ class Admin {
 			'sitemaps',
 			'link-assistant',
 			'redirects',
+			'ai-insights',
 			'local-seo',
 			'seo-analysis',
 			'search-statistics',
@@ -1194,11 +1198,11 @@ class Admin {
 			return $messages;
 		}
 
-		if ( function_exists( 'aioseoRedirects' ) && aioseoRedirects()->options->monitor->trash ) {
+		if ( ! empty( aioseo()->redirects->options ) && aioseo()->redirects->options->monitor->trash ) {
 			return $messages;
 		}
 
-		if ( empty( $_GET['ids'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended  
+		if ( empty( $_GET['ids'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 			return $messages;
 		}
 

@@ -55,7 +55,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									</div>
 								</div>
 								<div class="aioseo-col col-xs-12 col-md-9 text-xs-left">
-									<div class="settings-content">
+									<div class="aioseo-settings-content">
 										<div class="aioseo-radio-toggle circle">
 											<div><input id="id_previewGeneralIsMobile_0" name="previewGeneralIsMobile"
 													type="radio"><label for="id_previewGeneralIsMobile_0" class="dark"><svg
@@ -86,7 +86,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									</div>
 								</div>
 								<div class="aioseo-col col-xs-12 col-md-9 text-xs-left">
-									<div class="settings-content">
+									<div class="aioseo-settings-content">
 										<div class="aioseo-google-search-preview">
 											<div class="domain"> https://aioseo.com/category/uncategorized/ </div>
 											<div class="site-title">Taxonomy Title | aioseo.com</div>
@@ -102,7 +102,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									</div>
 								</div>
 								<div class="aioseo-col col-xs-12 col-md-9 text-xs-left">
-									<div class="settings-content">
+									<div class="aioseo-settings-content">
 										<div class="aioseo-html-tags-editor">
 
 											<div>
@@ -475,7 +475,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									</div>
 								</div>
 								<div class="aioseo-col col-xs-12 col-md-9 text-xs-left">
-									<div class="settings-content">
+									<div class="aioseo-settings-content">
 										<div class="aioseo-html-tags-editor">
 											<!---->
 											<div>

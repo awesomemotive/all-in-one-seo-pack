@@ -1,9 +1,6 @@
 <template>
 	<div class="aioseo-robots-meta">
-		<base-toggle
-			v-model="postEditorStore.currentPost.default"
-			@update:modelValue="postEditorStore.isDirty = true"
-		>
+		<base-toggle v-model="postEditorStore.currentPost.default">
 			{{ strings.useDefaultSettings }}
 		</base-toggle>
 
@@ -24,7 +21,6 @@
 					<base-checkbox
 						size="medium"
 						v-model="postEditorStore.currentPost.noindex"
-						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.noindex }}
 					</base-checkbox>
@@ -37,7 +33,6 @@
 					<base-checkbox
 						size="medium"
 						v-model="postEditorStore.currentPost.nofollow"
-						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.nofollow }}
 					</base-checkbox>
@@ -50,7 +45,6 @@
 					<base-checkbox
 						size="medium"
 						v-model="postEditorStore.currentPost.noarchive"
-						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.noarchive }}
 					</base-checkbox>
@@ -63,7 +57,6 @@
 					<base-checkbox
 						size="medium"
 						v-model="postEditorStore.currentPost.notranslate"
-						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.notranslate }}
 					</base-checkbox>
@@ -76,7 +69,6 @@
 					<base-checkbox
 						size="medium"
 						v-model="postEditorStore.currentPost.noimageindex"
-						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.noimageindex }}
 					</base-checkbox>
@@ -89,7 +81,6 @@
 				<base-checkbox
 						size="medium"
 						v-model="postEditorStore.currentPost.nosnippet"
-						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.nosnippet }}
 					</base-checkbox>
@@ -102,7 +93,6 @@
 					<base-checkbox
 						size="medium"
 						v-model="postEditorStore.currentPost.noodp"
-						@update:modelValue="postEditorStore.isDirty = true"
 					>
 						{{ strings.noodp }}
 					</base-checkbox>
@@ -119,7 +109,6 @@
 						type="number"
 						size="medium"
 						v-model="postEditorStore.currentPost.maxSnippet"
-						@update:modelValue="postEditorStore.isDirty = true"
 					/>
 				</div>
 
@@ -131,7 +120,6 @@
 						type="number"
 						size="medium"
 						v-model="postEditorStore.currentPost.maxVideoPreview"
-						@update:modelValue="postEditorStore.isDirty = true"
 					/>
 				</div>
 
@@ -144,7 +132,7 @@
 						size="medium"
 						:options="imagePreviewOptions"
 						:modelValue="getImagePreview(postEditorStore.currentPost.maxImagePreview)"
-						@update:modelValue="value => saveImagePreview(value.value)"
+						@update:modelValue="value => {postEditorStore.currentPost.maxImagePreview = value.value}"
 					/>
 				</div>
 			</div>
@@ -209,10 +197,6 @@ export default {
 	methods : {
 		getImagePreview (option) {
 			return this.imagePreviewOptions.find(h => h.value === option)
-		},
-		saveImagePreview (value) {
-			this.postEditorStore.currentPost.maxImagePreview = value
-			this.postEditorStore.isDirty                     = true
 		}
 	}
 }

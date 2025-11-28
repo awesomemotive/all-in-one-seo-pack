@@ -13,12 +13,13 @@
 		>
 			{{ strings.genericErrorMessage }}
 		</core-alert>
+
 		<div class="urls">
 			<div class="source">
 				<div class="aioseo-settings-row no-border no-margin small-padding">
 					<div class="settings-name">
 						<div class="name small-margin">
-							{{ sourceUrl }}:
+							{{ sourceUrl }}
 						</div>
 					</div>
 
@@ -53,14 +54,16 @@
 					</base-button>
 				</div>
 			</div>
+
 			<div class="url-arrow" v-if="redirectTypeHasTarget()">
 				<svg-right-arrow />
 			</div>
+
 			<div class="target" v-if="redirectTypeHasTarget()">
 				<div class="aioseo-settings-row no-border no-margin small-padding">
 					<div class="settings-name">
 						<div class="name small-margin">
-							{{ strings.targetUrl }}:
+							{{ strings.targetUrl }}
 						</div>
 					</div>
 
@@ -125,14 +128,34 @@
 			</template>
 		</div>
 
+		<hr class="aioseo-add-redirection__separator" />
+
 		<div
-			class="settings"
+			class="aioseo-add-redirection__settings"
 			:class="{ advanced : showAdvancedSettings }"
 		>
+			<base-toggle
+				:modelValue="showAdvancedSettings"
+				@update:modelValue="value => showAdvancedSettings = !showAdvancedSettings"
+			/>
+
+			<span>{{ strings.advancedSettings }}</span>
+		</div>
+
+		<hr
+			v-if="!showAdvancedSettings"
+			class="aioseo-add-redirection__separator"
+		/>
+
+		<div
+			v-if="showAdvancedSettings"
+			class="settings advanced"
+		>
 			<div class="all-settings">
-				<div class="all-settings-content">
+				<div class="all-aioseo-settings-content">
 					<div class="redirect-type">
-						{{ strings.redirectType }}
+						<span class="redirect-type__label">{{ strings.redirectType }}</span>
+
 						<base-select
 							:options="REDIRECT_TYPES"
 							v-model="redirectType"
@@ -145,7 +168,18 @@
 						:active="showAdvancedSettings"
 					>
 						<div class="query-params">
-							{{ strings.queryParams }}
+							<div class="query-params__label">
+								<span>{{ strings.queryParams }}</span>
+
+								<core-tooltip>
+									<svg-circle-question-mark />
+
+									<template #tooltip>
+										{{ strings.queryParamsTooltip }}
+									</template>
+								</core-tooltip>
+							</div>
+
 							<base-select
 								:options="redirectQueryParams"
 								v-model="queryParam"
@@ -162,6 +196,7 @@
 					>{{ strings.advancedSettings }}</a>
 				</div>
 			</div>
+
 			<transition-slide
 				class="advanced-settings"
 				:active="showAdvancedSettings"
@@ -172,30 +207,31 @@
 					@redirects-custom-rule-error="value => customRulesError = value"
 				/>
 			</transition-slide>
-			<div
-				class="actions"
-				:class="{ advanced : showAdvancedSettings }"
-			>
-				<base-button
-					size="medium"
-					type="blue"
-					@click="edit ? saveChanges() : addRedirects()"
-					:loading="addingRedirect"
-					:disabled="saveIsDisabled"
-				>
-					{{ edit ? strings.saveChanges : addRedirect }}
-				</base-button>
+		</div>
 
-				<base-button
-					v-if="edit"
-					size="medium"
-					type="gray"
-					@click="$emit('cancel', true)"
-					class="cancel-edit-row"
-				>
-					{{ strings.cancel }}
-				</base-button>
-			</div>
+		<div
+			class="aioseo-add-redirection__actions"
+			:class="{ advanced : showAdvancedSettings }"
+		>
+			<base-button
+				size="medium"
+				type="blue"
+				@click="edit ? saveChanges() : addRedirects()"
+				:loading="addingRedirect"
+				:disabled="saveIsDisabled"
+			>
+				{{ edit ? strings.saveChanges : addRedirect }}
+			</base-button>
+
+			<base-button
+				v-if="edit"
+				size="medium"
+				type="gray"
+				@click="$emit('cancel', true)"
+				class="cancel-edit-row"
+			>
+				{{ strings.cancel }}
+			</base-button>
 		</div>
 	</div>
 </template>
@@ -225,7 +261,9 @@ import CoreAddRedirectionTargetUrl from '@/vue/components/common/core/add-redire
 import CoreAddRedirectionUrl from '@/vue/components/common/core/add-redirection/Url'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CustomRules from './CustomRules'
+import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import SvgRightArrow from '@/vue/components/common/svg/right-arrow/Index'
+import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 
 import { __, sprintf } from '@/vue/plugins/translations'
@@ -262,7 +300,9 @@ export default {
 		CoreAlert,
 		CustomRules,
 		SvgRightArrow,
-		TransitionSlide
+		SvgCircleQuestionMark,
+		TransitionSlide,
+		CoreTooltip
 	},
 	props : {
 		edit          : Boolean,
@@ -293,7 +333,7 @@ export default {
 			targetUrlWarnings : [],
 			customRulesError  : false,
 			strings           : {
-				redirectType         : __('Redirect Type:', td),
+				redirectType         : __('Redirect Type', td),
 				targetUrl            : __('Target URL', td),
 				targetUrlDescription : __('Enter a URL or start by typing a page or post title, slug or ID.', td),
 				addUrl               : __('Add URL', td),
@@ -303,7 +343,8 @@ export default {
 					links.getDocLink(__('what\'s this?', td), 'redirectManagerRegex')
 				),
 				advancedSettings          : __('Advanced Settings', td),
-				queryParams               : __('Query Parameters:', td),
+				queryParams               : __('Query Parameters', td),
+				queryParamsTooltip        : __('Query parameters are the parameters that are passed to the target URL. You can ignore all parameters, ignore exact parameters, or include all parameters.', td),
 				saveChanges               : __('Save Changes', td),
 				cancel                    : __('Cancel', td),
 				genericErrorMessage       : __('An error occurred while adding your redirects. Please try again later.', td),
@@ -330,6 +371,11 @@ export default {
 		}
 	},
 	computed : {
+		isUsingAdvancedSettings () {
+			return this.redirectType?.value !== this.getDefaultRedirectType?.value ||
+				this.queryParam?.value !== this.getDefaultQueryParam?.value ||
+				(0 < this.customRules.length && this.customRules.some(rule => 0 < rule.value?.length))
+		},
 		sourceUrls : {
 			get () {
 				return this.editing ? this.editingRedirect.sourceUrls : this.redirectsStore.addNewRedirect.sourceUrls
@@ -535,11 +581,11 @@ export default {
 			this.addingRedirect = true
 
 			if (isBlockEditor()) {
-				const slug = window.wp.data.select('core/editor').getCurrentPostAttribute('slug')
+				const slug = this.urls?.[0]?.url ?? window.wp.data.select('core/editor').getCurrentPostAttribute('slug')
 
 				if (slug) {
 					this.sourceUrls.map(url => {
-						url.url = `/${slug}`
+						url.url = slug.startsWith('/') ? slug : `/${slug}`
 
 						return url
 					})
@@ -718,6 +764,8 @@ export default {
 
 		this.redirectType = REDIRECT_TYPES.find(t => t.value === this.type) || this.redirectType || this.getDefaultRedirectType
 		this.queryParam = REDIRECT_QUERY_PARAMS.find(t => t.value === this.query) || this.queryParam || this.getDefaultQueryParam
+
+		this.editingRedirect.showAdvancedSettings = this.isUsingAdvancedSettings
 	}
 }
 </script>
@@ -730,7 +778,30 @@ export default {
 		padding: 20px;
 	}
 }
+
 .aioseo-add-redirection {
+	&__separator {
+		width: 100%;
+		margin: 20px 0;
+		background-color: $border;
+	}
+
+	&__settings {
+		width: 100%;
+		display: flex;
+
+		span {
+			font-weight: 600;
+		}
+	}
+
+	&__actions {
+		display: flex;
+		width: 100%;
+		justify-content: flex-end;
+		gap: 16px;
+	}
+
 	&.edit-url {
 		.urls {
 			align-items: flex-start;
@@ -857,7 +928,7 @@ export default {
 	.settings {
 		display: flex;
 		flex-direction: row;
-		margin-top: 20px;
+		margin: 20px 0;
 
 		&.advanced {
 			flex-direction: column;
@@ -866,7 +937,7 @@ export default {
 		.all-settings {
 			flex-grow: 1;
 
-			.all-settings-content {
+			.all-aioseo-settings-content {
 				display: flex;
 				align-items: center;
 				flex-wrap: wrap;
@@ -916,6 +987,17 @@ export default {
 			.aioseo-select {
 				margin-top: 5px;
 			}
+
+			&__label {
+				display: flex;
+				align-items: center;
+				gap: 5px;
+				font-weight: 600;
+
+				svg {
+					color: $placeholder-color !important;
+				}
+			}
 		}
 
 		.query-params {
@@ -924,12 +1006,7 @@ export default {
 
 		.redirect-type {
 			width: 300px;
-			margin-right: 24px;
-			font-weight: $font-bold;
-
-			> * {
-				font-weight: 400;
-			}
+			margin-right: 16px;
 		}
 
 		.aioseo-button {

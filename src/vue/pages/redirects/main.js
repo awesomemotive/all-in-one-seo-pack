@@ -16,12 +16,7 @@ app     = loadPlugins(app)
 app     = loadComponents(app)
 app     = loadVersionedComponents(app)
 
-const filteredPaths = paths
-	.filter(p => !p.name || ('undefined' !== typeof p.meta && window.aioseo.user.capabilities[p.meta.access]))
-
-filteredPaths[0].redirect = filteredPaths[1].path
-
-const router = startRouter(filteredPaths, app)
+const router = startRouter(paths, app)
 
 // Give the router access to the app.
 router.app = app

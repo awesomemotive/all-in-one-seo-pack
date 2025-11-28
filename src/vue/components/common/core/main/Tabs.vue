@@ -57,6 +57,20 @@
 							>
 								{{ strings.new }}
 							</span>
+
+							<span
+								v-if="'beta' === tab.label"
+								class="label beta"
+							>
+								{{ strings.beta }}
+							</span>
+
+							<span
+								v-if="'coming-soon' === tab.label"
+								class="label coming-soon"
+							>
+								{{ strings.comingSoon }}
+							</span>
 						</template>
 					</slot>
 				</var-tab>
@@ -213,7 +227,8 @@ export default {
 			}
 		},
 		internal      : Boolean,
-		disableMobile : Boolean
+		disableMobile : Boolean,
+		disableTabs   : Boolean
 	},
 	data () {
 		return {
@@ -223,7 +238,9 @@ export default {
 			showMobileTabs : false,
 			strings        : {
 				saveChanges : __('Save Changes', td),
-				new         : __('NEW!', td)
+				new         : __('NEW!', td),
+				beta        : __('BETA!', td),
+				comingSoon  : __('COMING SOON!', td)
 			}
 		}
 	},
@@ -249,6 +266,10 @@ export default {
 			this.showMobileTabs = false
 		},
 		maybeChangeTab (id) {
+			if (this.disableTabs) {
+				return
+			}
+
 			if (this.active) {
 				this.$emit('changed', id)
 
@@ -436,12 +457,25 @@ export default {
 			span.label {
 				padding-left: 5px;
 
-				&.new {
-					color: #df2a4a;
+				&.new,
+				&.beta,
+				&.coming-soon {
 					vertical-align: super;
 					font-size: 10px;
 					display: inline-block;
 					margin-top: -5px;
+				}
+
+				&.new {
+					color: #df2a4a;
+				}
+
+				&.beta {
+					color: #d57201;
+				}
+
+				&.coming-soon {
+					color: $blue;
 				}
 			}
 

@@ -82,8 +82,6 @@ export default {
 	},
 	methods : {
 		setSuggestion (value) {
-			this.postEditorStore.isDirty = true
-
 			if ('title' === this.type) {
 				this.postEditorStore.updateTitle(value)
 				this.$emit('closeModal')

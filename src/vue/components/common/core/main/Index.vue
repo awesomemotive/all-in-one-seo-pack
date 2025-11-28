@@ -19,6 +19,7 @@
 					:key="tabsKey"
 					:tabs="tabs"
 					:showSaveButton="shouldShowSaveButton"
+					:disable-tabs="disableTabs"
 				>
 					<template #extra>
 						<slot name="extra" />
@@ -130,6 +131,12 @@ export default {
 			type : Array,
 			default () {
 				return []
+			}
+		},
+		disableTabs : {
+			type : Boolean,
+			default () {
+				return false
 			}
 		}
 	},

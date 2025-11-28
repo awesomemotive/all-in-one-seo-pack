@@ -32,6 +32,10 @@ const handleEditorChange = () => {
  */
 const handleEditorSave = () => {
 	const postEditorStore = usePostEditorStore()
+
+	// Clear isDirty flag as soon as save is initiated.
+	postEditorStore.isDirty = false
+
 	postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
 		const seoRevisionsStore = useSeoRevisionsStore()
 		seoRevisionsStore.fetch()

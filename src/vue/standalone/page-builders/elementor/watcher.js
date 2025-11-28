@@ -59,6 +59,9 @@ const handleEditorSave = () => {
 	* This would result in AIOSEO data being live while saving a draft.
 	*/
 	if (window.elementor.config.document.id === window.elementor.config.document.revisions.current_id) {
+		// Clear isDirty flag as soon as save is initiated.
+		postEditorStore.isDirty = false
+
 		postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
 			const licenseStore      = useLicenseStore()
 			const seoRevisionsStore = useSeoRevisionsStore()

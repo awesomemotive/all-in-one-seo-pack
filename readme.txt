@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.8
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 4.9.0
+Stable tag: 4.9.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -16,7 +16,7 @@ AIOSEO is the most powerful WordPress SEO plugin. Improve SEO rankings and traff
 
 All in One SEO is the original WordPress SEO plugin started in 2007. Today, over 3 million website owners and SEO experts use AIOSEO for higher SEO rankings.
 
-Our users consistently rate [AIOSEO](https://aioseo.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin 'All in One SEO for WordPress') as the most comprehensive WordPress SEO plugin and marketing toolkit. It's the fastest way to optimize WordPress SEO settings, add schema markup, create XML sitemap, add local SEO, track SEO keyword rankings, automate internal linking, perform SEO audits, add Author SEO (EEAT), monitor SEO revisions, connect Google search console, and basically everything a SEO Pro would use to rank higher in search engines. 
+Our users consistently rate [AIOSEO](https://aioseo.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin 'All in One SEO for WordPress') as the most comprehensive WordPress SEO plugin and marketing toolkit. It's the fastest way to optimize WordPress SEO settings, add schema markup, create XML sitemap, add local SEO, track SEO keyword rankings, automate internal linking, perform SEO audits, add Author SEO (EEAT), monitor SEO revisions, connect Google search console, and basically everything a SEO Pro would use to rank higher in search engines.
 
 We have AI SEO features that help you optimize your posts for SEO by automatically generating SEO titles, meta descriptions, FAQs, key points, social media posts, and more.
 
@@ -34,13 +34,13 @@ AIOSEO is leading the innovation in WordPress SEO space, and our SEO features wi
 * **Easy SEO Setup Wizard**
 Our SEO setup wizard optimizes your website's SEO settings based on your unique industry needs in less than 5 minutes.
 
-* **Smart Schema Markup (aka Rich Snippets)** 
+* **Smart Schema Markup (aka Rich Snippets)**
 Get better click through rate (CTR) and Google rich featured snippets using advanced SEO schema markups like FAQ schema, product schema, recipe schema markup, and dozens more using our custom [Schema Generator](https://aioseo.com/features/rich-snippets-schema/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin 'Schema Generator').
 
-* **AI Content** 
+* **AI Content**
 Create anything you need, such as blog articles and tables, with our AI Assistant block. Generate stunning visuals instantly with the built-in AI Image Generator. Save time by automatically generating SEO titles, meta descriptions, FAQs, key points, social media posts, and more with our [AI Content Generator](https://aioseo.com/features/ai-content/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin 'AI Content').
 
-* **Unlimited SEO Keywords** 
+* **Unlimited SEO Keywords**
 Optimize for unlimited SEO keywords using our SEO content analyzer. Our TruSEO score gives you detailed content & readability analysis, so you can get higher SEO rankings.
 
 * **Google Keyword Rank Tracking**
@@ -63,9 +63,6 @@ Never lose traffic to competitors. Quickly detect which content is losing traffi
 
 * **Smart XML Sitemap**
 Advanced XML sitemaps to boost your SEO rankings (with easy setup inside Google Search Console). Also includes Video SEO XML sitemap, News SEO XML sitemap, RSS sitemap, and HTML sitemap.
-
-* **Smart SEO Redirects**
-The most powerful [SEO Redirection manager](https://aioseo.com/features/redirection-manager/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin 'Redirection Manager') for setting up advanced SEO redirects including 301 redirects, 302, 307, 410, 404 redirection, REGEX redirects, and more.
 
 * **404 Error Monitor**
 Automatic 404 error monitor helps you track and redirect 404 errors, so you don't lose SEO rankings.
@@ -234,6 +231,30 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.9.1**
+
+* New: AI Insights - Our new AI-powered Keyword Report tool lets you see which brands are ranking for search queries in AI search results. Now 100% free for a limited time only!
+* New: Basic & Plus plan AIOSEO Pro users can now create redirects and control HTTP headers!
+* Updated: Switched from PHP serialization to JSON for caching to prevent cache misses due to charset mismatches.
+* Updated: Translations are no longer fetched when the site and all users are using the English locale.
+* Updated: Latest available date for Google Search Console data is now fetched in the background.
+* Updated: Improved error handling and performance for Semrush integration.
+* Updated: Added a filter to customize the Site Audit scan interval.
+* Updated: Added new shortcuts to the AI Assistant block to tweak content length, structure and tone.
+* Updated: Improved HTML parsing for Site Audit.
+* Fixed: Smart tag names now correctly refer to the current post type.
+* Fixed: Some multisite network admins were unable to analyze competitor URLs in SEO Analysis.
+* Fixed: Browser "unsaved changes" alert now properly triggers when SEO settings are modified in post editor.
+* Fixed: Styling for breadcrumb separator settings in Thrive Architect page builder.
+* Fixed: Incorrect character count calculation for the Product Short Description smart tag.
+* Fixed: PHP warnings triggered when Search Statistics processed incomplete or malformed data from Google Search Console.
+* Fixed: Conflict with the Pro Mail SMTP plugin causing some AIOSEO fields to be inaccessible.
+* Fixed: TruSEO was not detecting links present in the FAQ Block.
+* Fixed: Video sitemap scan now properly handles numeric post IDs when triggered by WP Cron, preventing posts from being skipped during automated scans.
+* Fixed: PHP warning shown on the custom login page of Theme My Login plugin when AIOSEO was active.
+* Fixed: Scheduled actions for clearing redirect logs failing due to unregistered callbacks.
+* Fixed: Some users not being able to access Redirect menu in Lite.
+
 **New in Version 4.9.0**
 
 * New: Table of Contents Block 2.0 - Our revamped Table of Contents block now supports multiple blocks on the same page, with a standalone or synced mode. We also added accordion support so you can collapse or expand it.
@@ -306,23 +327,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * New: Site Audit - Get a detailed report of SEO issues for all posts and terms on your site, discover why these issues are important and how you can fix them. 🔨
 * Fixed: Multisite subsite requests to Search Statistics server sometimes fail due to missing license.
 * Fixed: Rare PHP error when breadcrumbs cannot be determined for non-standard pages.
-
-**New in Version 4.8.5**
-
-* Updated: Author SEO (E-E-A-T) addon and Writing Assistant data are now fully removed when uninstalling the plugin.
-* Updated: Product Schema now favours WooCommerce brand field over its own custom field.
-* Updated: PHP version notices are now only shown to Administrators.
-* Fixed: Breadcrumbs taxonomy preview now correctly refreshes when user toggles between using the default settings
-* Fixed: WooCommerce Brand smart tag not correctly converted to expected value in previews.
-* Fixed: AIOSEO Details column now correctly reloads after quick-editing a post.
-* Fixed: Image URLs are no longer forcefully converted to lowercase in the Image Sitemap.
-* Fixed: Focus Keyword now saves correctly again for Divi built posts.
-* Fixed: Image SEO no longer breaks Divi built posts in rare cases.
-* Fixed: Multisite subsites no longer incorrectly inherit the "Block AI Crawlers" and "Block Crawling of Internal Site Search URLs" setting values from the main site in the network. 
-* Fixed: Notifications no longer contain encoded HTML entities
-* Fixed: Default options for new redirects not localized.
-* Fixed: PHP error in rare cases when breadcrumb link is a WP_Error.
-* Fixed: PHP error due to plugin conflict with MasterStudy LMS.
 
 **See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=aioseo) for previous releases.**
 
@@ -405,6 +409,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.9.0 =
+= 4.9.1 =
 
 This update adds major improvements and bug fixes.

@@ -190,7 +190,8 @@ export default {
 		allowDelete   : Boolean,
 		targetUrl     : String,
 		log404        : Boolean,
-		disableSource : Boolean
+		disableSource : Boolean,
+		disableSearch : Boolean
 	},
 	data () {
 		return {
@@ -324,6 +325,10 @@ export default {
 			this.$emit('updated-option', this.url)
 		},
 		searchChange () {
+			if (this.disableSearch) {
+				return
+			}
+
 			if (!this.url.url || this.url.regex) {
 				this.isLoading = false
 				this.showResults = false
@@ -411,7 +416,7 @@ export default {
 
 			svg {
 				max-width: 16px;
-				margin-right: 5px;
+				margin-right: 8px;
 
 				&:last-of-type {
 					margin-right: 0;
@@ -457,7 +462,10 @@ export default {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 8px 30px;
-		margin: 10px 0;
+
+		&[aria-expanded="true"] {
+			margin: 12px 0;
+		}
 	}
 }
 </style>

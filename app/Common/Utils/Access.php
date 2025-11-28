@@ -34,6 +34,7 @@ class Access {
 		'aioseo_page_writing_assistant_settings',
 		'aioseo_redirects_manage',
 		'aioseo_redirects_settings',
+		'aioseo_ai_insights_settings',
 		'aioseo_search_appearance_settings',
 		'aioseo_search_statistics_settings',
 		'aioseo_seo_analysis_settings',

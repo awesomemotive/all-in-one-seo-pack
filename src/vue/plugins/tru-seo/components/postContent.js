@@ -111,6 +111,11 @@ const getProcessedBlockContent = (content, prefix) => {
 				return
 			}
 
+			// Bail if it's an aioseo faq block.
+			if ('aioseo' === namePrefix && 'faq' === nameSuffix) {
+				return
+			}
+
 			const element = document.getElementById('block-' + block.clientId)
 			if (element && element.innerText) {
 				const blockName = 'core' === namePrefix ? nameSuffix : block.name
@@ -182,6 +187,7 @@ export const getPostContent = () => {
  */
 export const getPostEditedContent = (ignoreCustomFields = false) => {
 	let postContent = ''
+
 	if (isClassicEditor() && !isPageBuilderEditor()) {
 		if (window.tinyMCE || document.querySelector('#wp-content-wrap.html-active')) {
 			postContent = classicContent()

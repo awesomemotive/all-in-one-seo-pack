@@ -34,7 +34,7 @@
 				</base-checkbox>
 			</grid-column>
 			<grid-column
-				v-for="(setting, index) in toolsSettings"
+				v-for="(setting, index) in toolsExportSettings"
 				:key="index"
 				sm="6"
 			>
@@ -94,12 +94,12 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	setup () {
-		const { toolsSettings } = useToolsSettings()
+		const { toolsExportSettings } = useToolsSettings()
 
 		return {
 			licenseStore : useLicenseStore(),
 			rootStore    : useRootStore(),
-			toolsSettings,
+			toolsExportSettings,
 			toolsStore   : useToolsStore()
 		}
 	},
@@ -145,7 +145,7 @@ export default {
 					settings.push('general')
 				}
 				settings.push('internal')
-				this.toolsSettings
+				this.toolsExportSettings
 					.filter(setting => 'all' !== setting.value)
 					.forEach(setting => {
 						settings.push(setting.value)

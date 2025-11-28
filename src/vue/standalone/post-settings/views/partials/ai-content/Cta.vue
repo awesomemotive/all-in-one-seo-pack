@@ -61,13 +61,16 @@ const aiStore   = useAiStore()
 </script>
 
 <style lang="scss">
-.aioseo-app.aioseo-post-settings,
 .aioseo-ai-content-settings {
 	.aioseo-cta {
 		.description {
 			margin-block: 0;
 		}
-
+	}
+}
+.aioseo-app.aioseo-post-settings,
+.aioseo-ai-content-settings {
+	.aioseo-cta {
 		.aioseo-buy-or-connect {
 			margin: 12px auto 24px auto;
 		}

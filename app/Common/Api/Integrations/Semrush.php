@@ -25,10 +25,17 @@ class Semrush {
 	public static function semrushGetKeyphrases( $request ) {
 		$body       = $request->get_json_params();
 		$keyphrases = SemrushIntegration::getKeyphrases( $body['keyphrase'], $body['database'] );
-		if ( false === $keyphrases ) {
+		if ( is_bool( $keyphrases ) && false === $keyphrases ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'You may have sent too many requests to Semrush. Please wait a few minutes and try again.'
+			], 400 );
+		}
+
+		if ( is_array( $keyphrases ) && isset( $keyphrases['success'] ) && false === $keyphrases['success'] ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => $keyphrases['message']
 			], 400 );
 		}
 

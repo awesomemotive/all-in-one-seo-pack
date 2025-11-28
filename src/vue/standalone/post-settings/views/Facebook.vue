@@ -35,7 +35,6 @@
 						:line-numbers="false"
 						single
 						@counter="count => titleCount = count.length"
-						@update:modelValue="postEditorStore.isDirty = true"
 						:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Title`"
 						:default-tags="tags.getDefaultTags('term' === postEditorStore.currentPost.context ? 'taxonomies' : null, null, 'title')"
 					>
@@ -62,7 +61,6 @@
 						:line-numbers="false"
 						description
 						@counter="count => descriptionCount = count.length"
-						@update:modelValue="postEditorStore.isDirty = true"
 						:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Description`"
 						:default-tags="tags.getDefaultTags('term' === postEditorStore.currentPost.context ? 'taxonomies' : null, null, 'description')"
 					>
@@ -104,7 +102,6 @@
 						size="medium"
 						:placeholder="strings.placeholder"
 						v-model="postEditorStore.currentPost.og_image_custom_fields"
-						@update:modelValue="postEditorStore.isDirty = true"
 					/>
 				</template>
 			</core-settings-row>
@@ -336,7 +333,6 @@ export default {
 		},
 		saveImageType (value) {
 			this.postEditorStore.currentPost.og_image_type = value
-			this.postEditorStore.isDirty                   = true
 		},
 		getObjectTypeOptions (savedOption) {
 			let option = null
@@ -351,7 +347,6 @@ export default {
 		},
 		setObjectType (option) {
 			this.postEditorStore.currentPost.og_object_type = option
-			this.postEditorStore.isDirty                    = true
 		},
 		updateImage (imageUrl) {
 			this.postEditorStore.currentPost.og_image_custom_url = imageUrl

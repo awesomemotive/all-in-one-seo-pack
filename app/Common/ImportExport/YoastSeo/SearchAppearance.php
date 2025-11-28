@@ -309,7 +309,8 @@ class SearchAppearance {
 
 		$numberOfEmployees = $this->options['org-number-employees'];
 		if ( ! empty( $numberOfEmployees ) ) {
-			list( $num1, $num2 ) = explode( '-', $numberOfEmployees );
+			$num1 = is_array( $numberOfEmployees ) && isset( $numberOfEmployees[0] ) ? $numberOfEmployees[0] : $numberOfEmployees;
+			$num2 = is_array( $numberOfEmployees ) && isset( $numberOfEmployees[1] ) ? $numberOfEmployees[1] : 0;
 
 			if ( $num2 ) {
 				aioseo()->options->noConflict()->searchAppearance->global->schema->numberOfEmployees->isRange = true;

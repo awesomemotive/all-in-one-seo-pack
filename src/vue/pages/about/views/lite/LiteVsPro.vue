@@ -256,16 +256,6 @@ export default {
 						description : __('Local Business schema (multiple locations supported) + Business Info & Location blocks, widgets & shortcodes (Plus, Pro & Elite plans only)', td)
 					}
 				},
-				redirectionManager : {
-					name : __('Redirection Manager', td),
-					lite : {
-						title : __('Not Available', td)
-					},
-					pro : {
-						title       : __('Available as Addon Plugin', td),
-						description : __('Create, manage and monitor redirects for 404\'s or modified posts + server redirects, full site redirects and site aliases (Pro & Elite plans only)', td)
-					}
-				},
 				linkAssistant : {
 					name : __('Link Assistant', td),
 					lite : {

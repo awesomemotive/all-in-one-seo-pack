@@ -306,6 +306,7 @@ namespace AIOSEO\Plugin {
 			$this->thirdParty         = new Common\ThirdParty\ThirdParty();
 			$this->writingAssistant   = new Common\WritingAssistant\WritingAssistant();
 			$this->llms               = $this->pro ? new Pro\Llms\Llms() : new Common\Llms\Llms();
+			$this->redirects          = $this->pro ? new Pro\Redirects\Redirects() : null;
 
 			if ( ! wp_doing_ajax() && ! wp_doing_cron() ) {
 				$this->rss       = new Common\Rss();

@@ -27,6 +27,16 @@ export const useRedirectsStore = defineStore('RedirectsStore', {
 			logs    : 'desc',
 			logs404 : 'desc'
 		},
+		logSizes : {
+			logs404 : {
+				original : 0,
+				readable : 0
+			},
+			redirectLogs : {
+				original : 0,
+				readable : 0
+			}
+		},
 		totals : {
 			main : {
 				total : 0,
@@ -273,6 +283,15 @@ export const useRedirectsStore = defineStore('RedirectsStore', {
 			}
 
 			this.totals = totals
+		},
+		clearLog (log) {
+			return http.post(links.restUrl('clear-log'))
+				.send({
+					log
+				})
+				.then(response => {
+					this.logSizes[log] = response.body.logSize
+				})
 		}
 	}
 })

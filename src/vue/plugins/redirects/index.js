@@ -1,5 +1,4 @@
 import {
-	useAddonsStore,
 	useRedirectsStore,
 	useRootStore
 } from '@/vue/stores'
@@ -15,16 +14,11 @@ export default class RedirectsSlugMonitor {
 	updatingRedirects = false
 
 	constructor () {
-		const addonsStore = useAddonsStore()
-		const rootStore   = useRootStore()
-		const addon       = addonsStore.addons.find(item => 'aioseo-redirects' === item.sku)
-		if (
-			!rootStore.aioseo.currentPost ||
-			!addon ||
-			!addon.isActive
-		) {
+		if (!window.aioseo.currentPost && !window.aioseo.redirects) {
 			return
 		}
+
+		const rootStore = useRootStore()
 
 		if (!rootStore.aioseo.redirectsWatcherSet) {
 			this.initWatchers()

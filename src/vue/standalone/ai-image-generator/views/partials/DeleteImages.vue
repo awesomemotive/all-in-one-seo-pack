@@ -81,7 +81,7 @@ const initDelete = async () => {
 	btnDeleteLoading.value = true
 
 	try {
-		await aiImageGeneratorStore.deleteImages([ aiImageGeneratorStore.images.selected.map(image => image.id) ])
+		await aiImageGeneratorStore.deleteImages(aiImageGeneratorStore.images.selected.map(image => image.id))
 		await aiImageGeneratorStore.fetchImages()
 
 		aiImageGeneratorStore.images.selected = []

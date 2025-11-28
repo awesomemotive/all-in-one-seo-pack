@@ -382,13 +382,14 @@ class Ai {
 			CURLOPT_FOLLOWLOCATION => true,
 			CURLOPT_USERAGENT      => aioseo()->helpers->getApiUserAgent(),
 			CURLOPT_ENCODING       => '',
-			CURLOPT_HTTPHEADER     => array_merge(
-				[ 'Accept: application/json' ],
-				array_map( function( $key, $value ) {
+			CURLOPT_HTTPHEADER     => array_map(
+				function ( $key, $value ) {
 					return $key . ': ' . $value;
-				}, array_keys( $requestHeaders ), $requestHeaders )
+				},
+				array_keys( $requestHeaders ),
+				$requestHeaders
 			),
-			CURLOPT_WRITEFUNCTION  => function( $_ch, $data ) {
+			CURLOPT_WRITEFUNCTION  => function ( $_ch, $data ) {
 				$lines = explode( "\n", $data );
 				foreach ( $lines as $line ) {
 					if ( strpos( $line, 'data: ' ) !== 0 ) {
@@ -417,8 +418,6 @@ class Ai {
 
 		$result = curl_exec( $ch );
 		$error  = curl_error( $ch );
-
-		curl_close( $ch );
 		// phpcs:enable WordPress.WP.AlternativeFunctions
 
 		if ( false === $result || ! empty( $error ) ) {
@@ -503,9 +502,8 @@ class Ai {
 			}
 
 			return new \WP_REST_Response( [
-				'success'   => true,
-				'data'      => $attachment,
-				'aiOptions' => aioseo()->internalOptions->internal->ai->all()
+				'success' => true,
+				'data'    => $attachment
 			], 200 );
 		} catch ( \Exception $e ) {
 			$responseCode = isset( $response ) ? wp_remote_retrieve_response_code( $response ) : null;
@@ -566,10 +564,17 @@ class Ai {
 			], 400 );
 		}
 
-		aioseo()->ai->image->deleteImages( $ids );
+		$failedIds = aioseo()->ai->image->deleteImages( $ids );
+		if ( count( $failedIds ) === count( $ids ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Failed to delete all images.'
+			], 400 );
+		}
 
 		return new \WP_REST_Response( [
-			'success' => true
+			'success'   => true,
+			'failedIds' => $failedIds
 		], 200 );
 	}
 
@@ -781,6 +786,10 @@ class Ai {
 			aioseo()->internalOptions->internal->ai->credits->license->remaining = (int) $responseBody->license->remaining ?? 0;
 			aioseo()->internalOptions->internal->ai->credits->license->expires   = (int) $responseBody->license->expires ?? 0;
 		}
+
+		if ( ! empty( $responseBody->costPerFeature ) ) {
+			aioseo()->internalOptions->internal->ai->costPerFeature = json_decode( wp_json_encode( $responseBody->costPerFeature ), true );
+		}
 	}
 
 	/**
@@ -790,7 +799,7 @@ class Ai {
 	 *
 	 * @return array The default request headers.
 	 */
-	protected static function getRequestHeaders() {
+	public static function getRequestHeaders() {
 		$headers = [
 			'Content-Type'       => 'application/json',
 			'X-AIOSEO-Ai-Token'  => aioseo()->internalOptions->internal->ai->accessToken,

@@ -222,7 +222,6 @@ export default {
 			const features = [
 				'aioseo-eeat',
 				'aioseo-image-seo',
-				'aioseo-redirects',
 				'analytics',
 				'broken-link-checker',
 				'conversion-tools',

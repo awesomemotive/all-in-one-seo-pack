@@ -42,6 +42,7 @@ const getPages = () => {
 		'local-seo'         : './src/vue/pages/local-seo/main.js',
 		monsterinsights     : './src/vue/pages/monsterinsights/main.js',
 		redirects           : './src/vue/pages/redirects/main.js',
+		'ai-insights'       : './src/vue/pages/ai-insights/main.js',
 		'search-appearance' : './src/vue/pages/search-appearance/main.js',
 		'seo-analysis'      : './src/vue/pages/seo-analysis/main.js',
 		'search-statistics' : './src/vue/pages/search-statistics/main.js',

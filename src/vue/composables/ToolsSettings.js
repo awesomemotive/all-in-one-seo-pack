@@ -67,6 +67,15 @@ export const useToolsSettings = () => {
 		}
 
 		const licenseStore = useLicenseStore()
+
+		if (rootStore.isPro && !licenseStore.isUnlicensed) {
+			settings.push({
+				value  : 'redirects',
+				label  : __('Redirects', td),
+				access : 'aioseo_redirects_settings'
+			})
+		}
+
 		if (!licenseStore.isUnlicensed && showAddonReset('aioseo-image-seo')) {
 			settings.push({
 				value  : 'image',
@@ -80,14 +89,6 @@ export const useToolsSettings = () => {
 				value  : 'localBusiness',
 				label  : __('Local Business SEO', td),
 				access : 'aioseo_local_seo_settings'
-			})
-		}
-
-		if (!licenseStore.isUnlicensed && showAddonReset('aioseo-redirects')) {
-			settings.push({
-				value  : 'redirects',
-				label  : __('Redirects', td),
-				access : 'aioseo_redirects_settings'
 			})
 		}
 
@@ -115,7 +116,12 @@ export const useToolsSettings = () => {
 		return addon && addon.isActive && !addon.requiresUpgrade
 	}
 
+	const toolsExportSettings = computed(() => {
+		return toolsSettings.value.filter(setting => 'redirects' !== setting.value)
+	})
+
 	return {
-		toolsSettings
+		toolsSettings,
+		toolsExportSettings
 	}
 }

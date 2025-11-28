@@ -55,7 +55,7 @@ export default {
 	computed : {
 		// Get rich results for the front-end preview.
 		richResults () {
-			let anchorLinks = document.querySelectorAll('.aioseo-toc-item')
+			const anchorLinks = document.querySelectorAll('.aioseo-toc-item')
 			const items = []
 
 			if (anchorLinks) {

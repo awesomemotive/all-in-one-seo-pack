@@ -29,7 +29,7 @@
   z-index: 0;
 }
 
-.aioseo-cta {
+.aioseo-custom-cta {
   padding: 10px 12px;
   height: auto;
   font-size: 12px;
@@ -163,7 +163,7 @@
         justify-content: flex-start;
 
         > a {
-          @extend .aioseo-cta;
+          @extend .aioseo-custom-cta;
         }
       }
     }
@@ -200,7 +200,7 @@
       gap: 8px;
 
       .aioseo-button {
-        @extend .aioseo-cta;
+        @extend .aioseo-custom-cta;
 
         &.disabled:not(.loading) {
           opacity: 0.7;

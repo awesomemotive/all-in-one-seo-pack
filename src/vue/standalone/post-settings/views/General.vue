@@ -151,6 +151,7 @@
 
 		<core-settings-row
 			v-if="
+				'modal' !== props.parentComponentContext &&
 				'metabox' === screenContext &&
 				'post' === postEditorStore.currentPost.context &&
 				!['attachment', 'web-story'].includes(postEditorStore.currentPost.postType) &&

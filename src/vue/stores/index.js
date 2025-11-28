@@ -2,6 +2,7 @@ import { createPinia, setActivePinia } from 'pinia'
 
 import { useAddonsStore } from '@/vue/stores/AddonsStore'
 
+import { useAiAssistantStore } from '@/vue/stores/AiAssistantStore'
 import { useAiImageGeneratorStore } from '@/vue/stores/AiImageGeneratorStore'
 import { useAiStore } from '@/vue/stores/AiStore'
 import { useAnalyzerStore } from '@/vue/stores/AnalyzerStore'
@@ -36,7 +37,6 @@ import { useWritingAssistantSettingsStore } from '@/vue/stores/WritingAssistantS
 // Standalone stores.
 import { useRecipeStore } from '@/vue/stores/standalones/RecipeStore'
 import { useProductStore } from '@/vue/stores/standalones/ProductStore'
-import { useAiAssistantStore } from '@/vue/stores/standalones/AiAssistantStore'
 import { useTableOfContentsStore } from '@/vue/stores/standalones/TableOfContentsStore'
 import { useWritingAssistantStore } from '@/vue/stores/standalones/WritingAssistantStore'
 
@@ -45,7 +45,6 @@ import { useSemrushStore } from '@/vue/stores/integrations/SemrushStore'
 import { useWpCodeStore } from '@/vue/stores/integrations/WpCodeStore'
 
 import { merge } from 'lodash-es'
-import { __ } from '@/vue/plugins/translations'
 import { markRaw } from 'vue'
 
 const pinia = createPinia()
@@ -65,6 +64,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 
 	// Pinia stores.
 	const addonsStore                   = useAddonsStore()
+	const aiAssistantStore              = useAiAssistantStore()
 	const aiImageGeneratorStore         = useAiImageGeneratorStore()
 	const analyzerStore                 = useAnalyzerStore()
 	const backupsStore                  = useBackupsStore()
@@ -104,6 +104,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 
 	// Other stores.
 	addonsStore.addons                   = merge([ ...addonsStore.addons ], [ ...aioseo.addons || [] ])
+	aiAssistantStore.$state              = merge({ ...aiAssistantStore.$state }, { ...aioseo.aiAssistant || {} })
 	aiImageGeneratorStore.$state         = merge({ ...aiImageGeneratorStore.$state }, { ...aioseo.aiImageGenerator || {} })
 	analyzerStore.$state                 = merge({ ...analyzerStore.$state }, { ...aioseo.analyzer || {} })
 	backupsStore.backups                 = merge([ ...backupsStore.backups ], [ ...aioseo.backups || [] ])
@@ -118,7 +119,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 	networkStore.networkData             = merge({ ...networkStore.networkData }, { ...networkData })
 	notificationsStore.$state            = merge({ ...notificationsStore.$state }, { ...aioseo.notifications || {} })
 	pluginsStore.plugins                 = merge({ ...pluginsStore.plugins }, { ...aioseo.plugins || {} })
-	postEditorStore.currentPost          = merge({ ...postEditorStore.currentPost }, { ...aioseo.currentPost || {} })
+	postEditorStore.currentPost          = merge({ ...postEditorStore.currentPost }, { ...aioseo?.redirects?.currentPost }, { ...aioseo.currentPost || {} })
 	redirectsStore.$state                = merge({ ...redirectsStore.$state }, { ...aioseo.redirects || {} })
 	searchStatisticsStore.$state         = merge({ ...searchStatisticsStore.$state }, { ...aioseo.searchStatistics || {} })
 	seoRevisionsStore.$state             = merge({ ...seoRevisionsStore.$state }, { ...aioseo.seoRevisions || {} })
@@ -136,6 +137,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 
 	// Default AIOSEO root store without the above data.
 	delete aioseo.addons
+	delete aioseo.aiAssistant
 	delete aioseo.aiImageGenerator
 	delete aioseo.analyzer
 	delete aioseo.backups
@@ -189,13 +191,25 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 	isDirtyWatcher = true
 
 	window.addEventListener('beforeunload', event => {
-		if (!dirtyOptionsStore.isDirty) {
-			return undefined
+		// Check if any page builder has unsaved changes (set by individual page builder integrations)
+		const pageBuilderHasChanges = 'function' === typeof window.aioseoPageBuilderHasUnsavedChanges
+			? window.aioseoPageBuilderHasUnsavedChanges()
+			: false
+
+		// If page builder has unsaved changes, let it handle the warning
+		if (pageBuilderHasChanges) {
+			return
 		}
 
-		const message = __('Are you sure you want to leave? you have unsaved changes!', import.meta.env.VITE_TEXTDOMAIN);
-		(event || window.event).returnValue = message
-		return message
+		if (
+			dirtyOptionsStore.isDirty ||
+			postEditorStore.isDirty
+		) {
+			event.preventDefault()
+
+			// Included for legacy support, e.g., Chrome/Edge < 119
+			event.returnValue = true
+		}
 	})
 
 	return pinia

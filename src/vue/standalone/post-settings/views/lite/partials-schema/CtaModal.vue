@@ -236,7 +236,7 @@ const templatesTabs = [
 						line-height: 22px;
 					}
 
-					div.settings-content {
+					div.aioseo-settings-content {
 						font-size: 14px;
 						line-height: 22px;
 

@@ -7,128 +7,147 @@
 			aria-label="Custom Rules"
 		>
 			<thead>
-			<tr>
-				<td colspan="2">{{ strings.customRules }}</td>
-			</tr>
-			</thead>
-			<tbody>
-			<tr
-				class="rule"
-				v-for="(match, index) in customRules"
-				:class="{ even: 0 === index % 2 }"
-				:key="index"
-			>
-				<td class="rule-settings">
-					<div class="rule-row">
-						<div class="rule-option">
-							<base-select
-								:options="filteredTypes"
-								size="medium"
-								:placeholder="strings.selectMatchRule"
-								:modelValue="getRuleValue('type', index)"
-								@update:modelValue="updateRule('type', $event, index)"
-							/>
-							<base-select
-								v-if="getType(index, 'options') || getType(index, 'taggable')"
-								:options="getType(index, 'options') || []"
-								size="medium"
-								:modelValue="getRuleValue('value', index)"
-								@update:modelValue="updateRule('value', $event, index)"
-								:multiple="getType(index, 'multiple') || getType(index, 'taggable')"
-								:taggable="getType(index, 'taggable')"
-								:placeholder="getType(index, 'placeholder') || strings.selectAValue"
-							/>
-							<!-- Key field when there's a key/value pair. -->
-							<base-input
-								v-if="getType(index, 'keyValuePair')"
-								:modelValue="getRuleValue('key', index)"
-								@update:modelValue="updateRule('key', $event, index)"
-								size="medium"
-								:placeholder="getType(index, 'placeholderKey') || strings.key"
-							/>
-							<!-- Key field when there's a key/value pair. -->
-							<!-- Value field if there are no options and the option is not taggable -->
-							<base-input
-								v-if="!getType(index, 'options') && !getType(index, 'taggable') && !getType(index, 'dateRange')"
-								:modelValue="getRuleValue('value', index)"
-								@update:modelValue="updateRule('value', $event, index)"
-								size="medium"
-								:placeholder="getType(index, 'placeholder') || strings.value"
-								:disabled="!getType(index)"
-							/>
-							<div
-								v-if="getType(index, 'dateRange')"
-								class="date-range"
-							>
-								<base-date-picker
-									type="datetime"
-									size="large"
-									:placeholder="strings.startDate"
-									:dateFormat="rootStore.aioseo.data.dateFormat + ' - ' + rootStore.aioseo.data.timeFormat"
-									:defaultValue="dateStringToLocalJs(getRuleValue('scheduleStart', index))"
-									@change="value => updateDate(value, 'scheduleStart', index)"
-									:isDisabledDate="isDisabledStartDate"
-								/>
-								<base-date-picker
-									type="datetime"
-									size="large"
-									:placeholder="strings.endDate"
-									:dateFormat="rootStore.aioseo.data.dateFormat + ' - ' + rootStore.aioseo.data.timeFormat"
-									:defaultValue="dateStringToLocalJs(getRuleValue('scheduleEnd', index))"
-									@change="value => updateDate(value, 'scheduleEnd', index)"
-									:isDisabledDate="(date) => isDisabledEndDate(date, index)"
-								/>
-							</div>
-							<!-- Value field if there are no options and the option is not taggable/multiple -->
-							<base-toggle
-								v-if="getType(index, 'regex')"
-								:modelValue="getRuleValue('regex', index)"
-								@update:modelValue="updateRule('regex', $event, index)"
-							>
-								{{ strings.regex }}
-							</base-toggle>
-						</div>
-						<div
-							class="rule-error"
-							v-if="!!rulesErrors[index]">
-							<core-alert
-								type="red"
-								size="small"
-							>
-								{{ rulesErrors[index] }}
-							</core-alert>
-						</div>
-					</div>
-				</td>
-				<td class="actions">
-					<core-tooltip
-						class="action"
-						type="action"
-					>
-						<svg-trash
-							@click.native="removeRule(index)"
-						/>
+				<tr>
+					<td colspan="2">
+						<div class="custom-rules__label">
+							<span>{{ strings.customRules }}</span>
 
-						<template #tooltip>
-							{{ strings.delete }}
-						</template>
-					</core-tooltip>
-				</td>
-			</tr>
+							<core-tooltip :offset="'200px,0'">
+									<svg-circle-question-mark />
+
+									<template #tooltip>
+										{{ strings.customRulesTooltip }}
+									</template>
+								</core-tooltip>
+						</div></td>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr
+					class="rule"
+					v-for="(match, index) in customRules"
+					:class="{ even: 0 === index % 2 }"
+					:key="index"
+				>
+					<td class="rule-settings">
+						<div class="rule-row">
+							<div class="rule-option">
+								<base-select
+									:options="filteredTypes"
+									size="medium"
+									:placeholder="strings.selectMatchRule"
+									:modelValue="getRuleValue('type', index)"
+									@update:modelValue="updateRule('type', $event, index)"
+								/>
+
+								<base-select
+									v-if="getType(index, 'options') || getType(index, 'taggable')"
+									:key="`rule-${index}-${getRuleValue('type', index)?.value || 'no-type'}`"
+									:options="getType(index, 'options') || []"
+									size="medium"
+									:modelValue="getRuleValue('value', index)"
+									@update:modelValue="updateRule('value', $event, index)"
+									:multiple="getType(index, 'multiple') || getType(index, 'taggable')"
+									:taggable="getType(index, 'taggable')"
+									:placeholder="getType(index, 'placeholder') || strings.selectAValue"
+								/>
+
+								<!-- Key field when there's a key/value pair. -->
+								<base-input
+									v-if="getType(index, 'keyValuePair')"
+									:modelValue="getRuleValue('key', index)"
+									@update:modelValue="updateRule('key', $event, index)"
+									size="medium"
+									:placeholder="getType(index, 'placeholderKey') || strings.key"
+								/>
+
+								<!-- Key field when there's a key/value pair. -->
+								<!-- Value field if there are no options and the option is not taggable -->
+								<base-input
+									v-if="!getType(index, 'options') && !getType(index, 'taggable') && !getType(index, 'dateRange')"
+									:modelValue="getRuleValue('value', index)"
+									@update:modelValue="updateRule('value', $event, index)"
+									size="medium"
+									:placeholder="getType(index, 'placeholder') || strings.value"
+									:disabled="!getType(index)"
+								/>
+								<div
+									v-if="getType(index, 'dateRange')"
+									class="date-range"
+								>
+									<base-date-picker
+										type="datetime"
+										size="large"
+										:placeholder="strings.startDate"
+										:dateFormat="rootStore.aioseo.data.dateFormat + ' - ' + rootStore.aioseo.data.timeFormat"
+										:defaultValue="dateStringToLocalJs(getRuleValue('scheduleStart', index))"
+										@change="value => updateDate(value, 'scheduleStart', index)"
+										:isDisabledDate="isDisabledStartDate"
+									/>
+									<base-date-picker
+										type="datetime"
+										size="large"
+										:placeholder="strings.endDate"
+										:dateFormat="rootStore.aioseo.data.dateFormat + ' - ' + rootStore.aioseo.data.timeFormat"
+										:defaultValue="dateStringToLocalJs(getRuleValue('scheduleEnd', index))"
+										@change="value => updateDate(value, 'scheduleEnd', index)"
+										:isDisabledDate="(date) => isDisabledEndDate(date, index)"
+									/>
+								</div>
+								<!-- Value field if there are no options and the option is not taggable/multiple -->
+								<base-toggle
+									v-if="getType(index, 'regex')"
+									:modelValue="getRuleValue('regex', index)"
+									@update:modelValue="updateRule('regex', $event, index)"
+								>
+									{{ strings.regex }}
+								</base-toggle>
+							</div>
+
+							<div
+								class="rule-error"
+								v-if="!!rulesErrors[index]">
+								<core-alert
+									type="red"
+									size="small"
+								>
+									{{ rulesErrors[index] }}
+								</core-alert>
+							</div>
+						</div>
+					</td>
+
+					<td class="actions">
+						<core-tooltip
+							class="action"
+							type="action"
+						>
+							<svg-trash
+								@click.native="removeRule(index)"
+							/>
+
+							<template #tooltip>
+								{{ strings.delete }}
+							</template>
+						</core-tooltip>
+					</td>
+				</tr>
 			</tbody>
+
 			<tfoot>
-			<tr>
-				<td colspan="2">
-					<base-button
-						size="small-table"
-						type="black"
-						@click="addRule(null)"
-					>
-						<svg-circle-plus />
-						{{ strings.add }}
-					</base-button>
-				</td>
-			</tr>
+				<tr>
+					<td colspan="2">
+						<base-button
+							size="small-table"
+							type="black"
+							@click="addRule(null)"
+						>
+							<svg-circle-plus />
+							{{ strings.add }}
+						</base-button>
+					</td>
+				</tr>
 			</tfoot>
 		</table>
 	</div>
@@ -153,6 +172,7 @@ import BaseInput from '@/vue/components/common/base/Input'
 import BaseSelect from '@/vue/components/common/base/Select'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
+import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
 import SvgTrash from '@/vue/components/common/svg/Trash'
 
@@ -180,6 +200,7 @@ export default {
 		BaseSelect,
 		CoreAlert,
 		CoreTooltip,
+		SvgCircleQuestionMark,
 		SvgCirclePlus,
 		SvgTrash
 	},
@@ -190,16 +211,17 @@ export default {
 		return {
 			DateTime,
 			strings : {
-				customRules     : __('Custom Rules', td),
-				selectMatchRule : __('Select Rule', td),
-				delete          : __('Delete', td),
-				add             : __('Add Custom Rule', td),
-				regex           : __('Regex', td),
-				selectAValue    : __('Select a Value or Add a New One', td),
-				key             : __('Key', td),
-				value           : __('Value', td),
-				startDate       : __('Start Date', td),
-				endDate         : __('End Date', td)
+				customRules        : __('Custom Rules', td),
+				customRulesTooltip : __('Custom rules allow you to create redirects based on specific criteria. You can use these rules to redirect users based on their IP address, browser, or other criteria.', td),
+				selectMatchRule    : __('Select Rule', td),
+				delete             : __('Delete', td),
+				add                : __('Add Custom Rule', td),
+				regex              : __('Regex', td),
+				selectAValue       : __('Select a Value or Add a New One', td),
+				key                : __('Key', td),
+				value              : __('Value', td),
+				startDate          : __('Start Date', td),
+				endDate            : __('End Date', td)
 			},
 			customRules : [],
 			rulesErrors : [],
@@ -226,7 +248,7 @@ export default {
 					value       : 'role',
 					multiple    : true,
 					placeholder : __('Select Roles', td),
-					options     : Object.entries(this.rootStore.aioseo.user.roles).map((item) => {
+					options     : Object.entries(this.rootStore.aioseo.user.userRoles).map((item) => {
 						return { label: item[1], value: item[0] }
 					})
 				},
@@ -318,11 +340,10 @@ export default {
 		},
 		filteredTypes () {
 			return this.types.map(type => {
-				type.$isDisabled = false
-				if (type.singleRule && this.customRules.find(rule => type.value === rule.type)) {
-					type.$isDisabled = true
+				return {
+					...type,
+					$isDisabled : type.singleRule && this.customRules.find(rule => type.value === rule.type)
 				}
-				return type
 			})
 		}
 	},
@@ -466,6 +487,13 @@ export default {
 .custom-rules {
 	width: 100%;
 	margin-top: 14px;
+
+	&__label {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+	}
+
 	.rule {
 		.rule-settings {
 			display: flex;
@@ -512,10 +540,11 @@ export default {
 			}
 		}
 
-		.actions{
+		.actions {
 			flex: 0;
 			vertical-align: top !important;
-			padding-top: 27px !important;
+			padding-top: 24px !important;
+			padding-left: 24px !important;
 		}
 
 		.logical {
@@ -529,9 +558,9 @@ export default {
 		cursor: pointer;
 
 		&.aioseo-trash {
-			color: $gray2;
-			width: 20px;
-			height: 20px;
+			color: $placeholder-color;
+			width: 24px;
+			height: 24px;
 
 			&:hover {
 				color: $red;

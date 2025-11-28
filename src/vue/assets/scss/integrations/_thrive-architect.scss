@@ -48,6 +48,31 @@
 				display: none;
 			}
 		}
+
+		&.aioseo-modal {
+			.aioseo-post-breadcrumbs {
+				.aioseo-breadcrumbs-settings {
+			
+					.aioseo-separators {
+						.aioseo-col {
+							padding: 0;
+						}
+
+						.aioseo-col.col-xs-4.text-xs-left {
+							flex: 1;
+						}
+					}
+			
+					:where(.aioseo-row) {
+						--aioseo-gutter: 8px;
+
+						.aioseo-col {
+							padding: 0;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	.aioseo-thrive-score-button {

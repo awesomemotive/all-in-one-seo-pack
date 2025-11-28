@@ -221,7 +221,7 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 							this.range = error.response.body.range
 						}
 						// Set data to false if the API returned an error
-						if (error.response.body.success === false) {
+						if (false === error.response.body.success) {
 							this.data.seoStatistics = false
 						}
 					}
@@ -252,7 +252,7 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 						if (error.response.body.range) {
 							this.range = error.response.body.range
 						}
-						if (error.response.body.success === false) {
+						if (false === error.response.body.success) {
 							this.data.keywords = false
 						}
 					}
@@ -277,7 +277,7 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 				.catch(error => {
 					// Handle error response - superagent rejects on 4xx/5xx status codes
 					if (error.response && error.response.body) {
-						if (error.response.body.success === false) {
+						if (false === error.response.body.success) {
 							this.data.contentRankings = false
 						}
 					}

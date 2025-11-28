@@ -14,6 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Ai {
 	/**
+	 * The assistant class.
+	 *
+	 * @since 4.9.1
+	 *
+	 * @var Assistant|null
+	 */
+	public $assistant = null;
+
+	/**
 	 * The image class.
 	 *
 	 * @since 4.8.8
@@ -42,6 +51,15 @@ class Ai {
 	private $aiGeneratorApiUrl = 'https://ai-generator.aioseo.com/v1/';
 
 	/**
+	 * The action name for getting the access token.
+	 *
+	 * @since 4.9.1
+	 *
+	 * @var string
+	 */
+	protected $getAccessTokenAction = 'aioseo_ai_get_access_token';
+
+	/**
 	 * The action name for fetching credits.
 	 *
 	 * @since 4.8.4
@@ -56,9 +74,10 @@ class Ai {
 	 * @since 4.8.4
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'getAccessToken' ] );
-
+		add_action( 'init', [ $this, 'scheduleGetAccessToken' ] );
 		add_action( 'init', [ $this, 'scheduleCreditFetchAction' ] );
+
+		add_action( $this->getAccessTokenAction, [ $this, 'getAccessToken' ] );
 		add_action( $this->creditFetchAction, [ $this, 'updateCredits' ] );
 
 		// If param is set, fetch credits but just once per 5 minutes to prevent abuse.
@@ -71,7 +90,25 @@ class Ai {
 			aioseo()->core->cache->update( 'ai_get_credits', true, 5 * MINUTE_IN_SECONDS );
 		}
 
-		$this->image = new Image();
+		$this->assistant = new Assistant();
+		$this->image     = new Image();
+	}
+
+	/**
+	 * Schedules the initial access token fetch action if no access token is set.
+	 *
+	 * @since 4.9.1
+	 *
+	 * @return void
+	 */
+	public function scheduleGetAccessToken() {
+		if ( aioseo()->internalOptions->internal->ai->accessToken ) {
+			return;
+		}
+
+		if ( ! aioseo()->actionScheduler->isScheduled( $this->getAccessTokenAction ) ) {
+			aioseo()->actionScheduler->scheduleSingle( $this->getAccessTokenAction, 0, [], true );
+		}
 	}
 
 	/**
@@ -218,6 +255,10 @@ class Ai {
 			aioseo()->internalOptions->internal->ai->credits->license->expires   = intval( $data->license->expires );
 		} else {
 			aioseo()->internalOptions->internal->ai->credits->license->reset();
+		}
+
+		if ( ! empty( $data->costPerFeature ) ) {
+			aioseo()->internalOptions->internal->ai->costPerFeature = json_decode( wp_json_encode( $data->costPerFeature ), true );
 		}
 	}
 

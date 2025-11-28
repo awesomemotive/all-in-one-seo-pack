@@ -69,15 +69,6 @@ class Addons {
 	private $newsSitemap = null;
 
 	/**
-	 * The main Redirects addon class.
-	 *
-	 * @since 4.4.2
-	 *
-	 * @var \AIOSEO\Plugin\Addon\Redirects\Redirects
-	 */
-	private $redirects = null;
-
-	/**
 	 * The main REST API addon class.
 	 *
 	 * @since 4.4.2
@@ -142,6 +133,14 @@ class Addons {
 		// Convert the addons array to objects using JSON. This is essential because we have lots of addons that rely on this to be an object, and changing it to an array would break them.
 
 		$addons = json_decode( wp_json_encode( $addons ) );
+
+		if ( is_string( $addons ) ) {
+			$addons = json_decode( $addons );
+		}
+
+		$addons = array_filter( $addons, function( $addon ) {
+			return ! is_object( $addon ) || 'aioseo-redirects' !== $addon->sku;
+		} );
 
 		$installedPlugins = array_keys( get_plugins() );
 		foreach ( $addons as $key => $addon ) {
@@ -243,9 +242,6 @@ class Addons {
 			case 'aioseo-video-sitemap':
 			case 'aioseo-news-sitemap':
 				$capability = 'aioseo_sitemap_settings';
-				break;
-			case 'aioseo-redirects':
-				$capability = 'aioseo_redirects_settings';
 				break;
 			case 'aioseo-local-business':
 				$capability = 'aioseo_local_seo_settings';
@@ -717,39 +713,6 @@ class Addons {
 				'minimumVersion'     => '0.0.0',
 				'hasMinimumVersion'  => false,
 				'featured'           => 300
-			],
-			[
-				'sku'                => 'aioseo-redirects',
-				'name'               => 'Redirection Manager',
-				'version'            => '1.0.0',
-				'image'              => null,
-				'icon'               => 'svg-redirect',
-				'levels'             => [
-					'agency',
-					'business',
-					'pro',
-					'elite'
-				],
-				'currentLevels'      => [
-					'pro',
-					'elite'
-				],
-				'requiresUpgrade'    => true,
-				'description'        => '<p>Our Redirection Manager allows you to easily create and manage redirects for your broken links to avoid confusing search engines and users, as well as losing valuable backlinks. It even automatically sends users and search engines from your old URLs to your new ones.</p>', // phpcs:ignore Generic.Files.LineLength.MaxExceeded
-				'descriptionVersion' => 0,
-				'productUrl'         => 'https://aioseo.com/features/redirection-manager/',
-				'learnMoreUrl'       => 'https://aioseo.com/features/redirection-manager/',
-				'manageUrl'          => 'https://route#aioseo-redirects:redirects',
-				'basename'           => 'aioseo-redirects/aioseo-redirects.php',
-				'installed'          => false,
-				'isActive'           => false,
-				'canInstall'         => false,
-				'canActivate'        => false,
-				'canUpdate'          => false,
-				'capability'         => $this->getManageCapability( 'aioseo-redirects' ),
-				'minimumVersion'     => '0.0.0',
-				'hasMinimumVersion'  => false,
-				'featured'           => 200
 			],
 			[
 				'sku'                => 'aioseo-link-assistant',

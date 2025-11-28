@@ -29,6 +29,10 @@ export default (app, populateHiddenField = true) => {
 
 	const postEditorStore = usePostEditorStore()
 	if ('term' === postEditorStore.currentPost.context) {
+		(document.querySelector('#edittag') || {})?.addEventListener('submit', () => {
+			postEditorStore.isDirty = false
+		})
+
 		maybeUpdateTerm()
 	} else {
 		// Make sure the API is available.
@@ -53,6 +57,10 @@ export default (app, populateHiddenField = true) => {
 			}
 
 			if (isClassicEditor() || isClassicNoEditor()) {
+				(document.querySelector('#post') || {})?.addEventListener('submit', () => {
+					postEditorStore.isDirty = false
+				})
+
 				watchClassicEditor()
 			}
 

@@ -192,7 +192,28 @@ const getDefaultTags = (type, name, location) => {
 	}
 }
 
+/**
+ * Constructs the tag text based on the provided parameters.
+ *
+ * @param   {string}           fallback The fallback type, such as post, taxonomy, product, etc.
+ * @param   {string|undefined} type     The type of tag, such as post, product, product_cat, post_tag, etc.
+ * @param   {string}           postfix  The postfix to append, such as Title, Description.
+ * @returns {string}                    The constructed tag text.
+ */
+const getTagText = (fallback, type, postfix) => {
+	const tagsStore = useTagsStore()
+
+	if (!type) {
+		return `${fallback}${postfix}`
+	}
+
+	const ctx = `${type}${postfix}`
+
+	return Object.prototype.hasOwnProperty.call(tagsStore.context, ctx) ? ctx : `${fallback}${postfix}`
+}
+
 export default {
 	context,
-	getDefaultTags
+	getDefaultTags,
+	getTagText
 }

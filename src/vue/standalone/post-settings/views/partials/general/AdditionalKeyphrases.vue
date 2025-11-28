@@ -1,87 +1,30 @@
 <template>
 	<div class="additional-keyphrases-panel">
-		<div v-if="postEditorStore.currentPost.keyphrases.additional && postEditorStore.currentPost.keyphrases?.additional?.length && (rootStore.isPro && licenseStore.license.isActive)">
-			<core-keyphrase
-				v-for="(keyphrase, index) in postEditorStore.currentPost.keyphrases.additional"
-				:key="index"
-				:index="index"
-				:keyphrase="keyphrase.keyphrase"
-				:score="keyphrase.score"
-				@saved="onSaved"
-				@deleted="onDeleted"
-				@selectedKeyphrase="onSelectedKeyphrase"
-				class="aioseo-keyphrase-tag additional-keyphrase"
-				:class="(selectedKeyphrase === index) ? 'selected' : null"
-			/>
-			<div class="analysis-wrapper">
-				<core-loader
-					class="analysis-loading"
-					v-if="postEditorStore.currentPost.loading.additional[selectedKeyphrase] &&
-						postEditorStore.currentPost.keyphrases.additional[selectedKeyphrase] &&
-						postEditorStore.currentPost.keyphrases.additional[selectedKeyphrase].keyphrase"
-					dark
-				/>
-				<metaboxAnalysisDetail
-					v-if="!postEditorStore.currentPost.loading.additional[selectedKeyphrase] &&
-						postEditorStore.currentPost.keyphrases.additional[selectedKeyphrase] &&
-						postEditorStore.currentPost.keyphrases.additional[selectedKeyphrase].keyphrase"
-					:analysisItems="postEditorStore.currentPost.keyphrases.additional[selectedKeyphrase].analysis"
-				/>
-			</div>
-		</div>
-		<base-input
-			v-if="rootStore.isPro && licenseStore.license.isActive"
-			size="medium"
-			:class="`add-keyphrase-${$root.$data.screenContext}-input`"
-			@keydown.enter="pressEnter"
+		<additional-keyphrases-display
+			v-if="hasLicense"
+			:keyphrases="postEditorStore.currentPost.keyphrases.additional"
+			:selected-keyphrase="selectedKeyphrase"
+			:loading="postEditorStore.currentPost.loading.additional"
+			@saved="handleSaved"
+			@deleted="handleDeleted"
+			@selected="handleSelectedKeyphrase"
 		/>
 
-		<base-button
-			v-if="rootStore.isPro && licenseStore.license.isActive && postEditorStore.currentPost.maxAdditionalKeyphrases > postEditorStore.currentPost.keyphrases?.additional?.length"
-			id="add-additional-keyphrase"
-			class="add-keyphrase gray medium"
-			@click="addKeyphraseEv"
-		>
-			<svg-circle-plus width="14" height="14" />
-			{{ strings.addKeyphrase }}
-		</base-button>
+		<additional-keyphrase-input
+			v-if="hasLicense"
+			:screen-context="$root.$data.screenContext"
+			:max-reached="maxReached"
+			:max-additional-keyphrases="postEditorStore.currentPost.maxAdditionalKeyphrases"
+			@add="handleAdd"
+		/>
 
-		<core-tooltip v-if="rootStore.isPro && licenseStore.license.isActive && postEditorStore.currentPost.maxAdditionalKeyphrases <= postEditorStore.currentPost.keyphrases?.additional?.length">
-			<base-button
-				id="add-additional-keyphrase"
-				class="add-keyphrase gray medium"
-				:disabled="true"
-				@click="addKeyphraseEv"
-			>
-				<svg-circle-plus width="14" height="14" />
-				{{ strings.addKeyphrase }}
-			</base-button>
-
-			<template #tooltip>
-				<span>{{ strings.maxAmountReached }}</span>
-			</template>
-		</core-tooltip>
-
-		<template
-			v-if="!rootStore.isPro || !licenseStore.license.isActive"
-		>
-			<div class="aioseo-description additional-keyphrases-description">
-				{{ strings.keyphraseDocumentation }}
-			</div>
-
-			<core-alert
-				class="inline-upsell"
-				type="blue"
-			>
-				<div v-html="strings.upsell" />
-			</core-alert>
-		</template>
+		<additional-keyphrases-upsell
+			v-if="!hasLicense"
+		/>
 	</div>
 </template>
 
 <script>
-import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
-import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	usePostEditorStore,
@@ -90,16 +33,15 @@ import {
 
 import TruSeo from '@/vue/plugins/tru-seo'
 
-import CoreAlert from '@/vue/components/common/core/alert/Index'
-import CoreKeyphrase from '@/vue/components/common/core/Keyphrase'
-import CoreLoader from '@/vue/components/common/core/Loader'
-import CoreTooltip from '@/vue/components/common/core/Tooltip'
-import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
-import metaboxAnalysisDetail from './MetaboxAnalysisDetail'
+import {
+	updateAdditionalKeyphrase,
+	deleteAdditionalKeyphraseByIndex,
+	addAdditionalKeyphraseFromInput
+} from '@/vue/utils/additionalKeyphrasesManager'
 
-import { __, sprintf } from '@/vue/plugins/translations'
-
-const td = import.meta.env.VITE_TEXTDOMAIN
+import AdditionalKeyphrasesDisplay from './additional-keyphrases/AdditionalKeyphrasesDisplay'
+import AdditionalKeyphraseInput from './additional-keyphrases/AdditionalKeyphraseInput'
+import AdditionalKeyphrasesUpsell from './additional-keyphrases/AdditionalKeyphrasesUpsell'
 
 export default {
 	setup () {
@@ -111,32 +53,13 @@ export default {
 		}
 	},
 	components : {
-		CoreAlert,
-		CoreKeyphrase,
-		CoreLoader,
-		CoreTooltip,
-		SvgCirclePlus,
-		metaboxAnalysisDetail
+		AdditionalKeyphrasesDisplay,
+		AdditionalKeyphraseInput,
+		AdditionalKeyphrasesUpsell
 	},
 	data () {
 		return {
-			selectedKeyphrase : 0,
-			strings           : {
-				additional             : __('Additional Keywords', td),
-				addKeyphrase           : __('Add Additional Keywords', td),
-				keyphraseDocumentation : __('Improve your SEO rankings with additional keywords.', td),
-				upsell                 : sprintf(
-					// Translators: 1 - "Pro" string, 2 - "Learn more link".
-					__('Additional Keywords are a %1$s feature. %2$s', td),
-					'PRO',
-					links.getUpsellLink('post-settings', 'additional-keywords', GLOBAL_STRINGS.learnMore, 'liteUpgrade', true)
-				),
-				maxAmountReached : sprintf(
-					// Translators: 1 - Number of maximum keywords.
-					__('You have reached the maximum of %1$s additional keywords.', td),
-					this.postEditorStore.currentPost.maxAdditionalKeyphrases
-				)
-			}
+			selectedKeyphrase : 0
 		}
 	},
 	watch : {
@@ -146,62 +69,50 @@ export default {
 			}
 		}
 	},
-	methods : {
-		onSelectedKeyphrase (panel) {
-			this.selectedKeyphrase = panel
+	computed : {
+		hasLicense () {
+			return this.rootStore.isPro && this.licenseStore.license.isActive
 		},
-		onSaved (payload) {
-			const { index, value } = payload
-			this.postEditorStore.currentPost.keyphrases.additional[index].keyphrase = value
-			this.postEditorStore.currentPost.keyphrases.additional[index].score = 0
-			this.postEditorStore.currentPost.loading.additional[index] = true
-
-			this.postEditorStore.isDirty = true
-			this.truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
+		maxReached () {
+			return this.postEditorStore.currentPost.maxAdditionalKeyphrases <= (this.postEditorStore.currentPost.keyphrases?.additional?.length || 0)
+		}
+	},
+	methods : {
+		handleSelectedKeyphrase (index) {
 			this.selectedKeyphrase = index
 		},
-		onDeleted (index) {
-			const additionalCopy = [ ...this.postEditorStore.currentPost.keyphrases.additional ]
-			additionalCopy.splice(index, 1)
-			this.postEditorStore.currentPost.keyphrases.additional = null
-
-			setTimeout(() => {
-				this.postEditorStore.currentPost.keyphrases.additional = additionalCopy
-				this.postEditorStore.isDirty           = true
-				this.truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
-			}, 300)
-		},
-		addKeyphraseEv () {
-			if (this.postEditorStore.currentPost.maxAdditionalKeyphrases <= this.postEditorStore.currentPost.keyphrases?.additional?.length) {
-				return
-			}
-
-			const keyphraseInputComponent = document.getElementsByClassName(`add-keyphrase-${this.$root.$data.screenContext}-input`)
-			const keyphraseInput          = keyphraseInputComponent[0].querySelector('.medium')
-			const keyphraseInputValue     = keyphraseInput?.value.trim()
-			if (keyphraseInputValue) {
-				const newKeyphrase      = { keyphrase: keyphraseInputValue, score: 0 }
-				const newKeyphraseIndex = this.postEditorStore.currentPost.keyphrases.additional.push(newKeyphrase)
-				const keyphrasePanel    = document.getElementsByClassName('keyphrase-name')
-				this.postEditorStore.currentPost.loading.additional[0] = true
-				keyphraseInput.value = ''
-				keyphraseInput.blur()
-
-				this.postEditorStore.isDirty = true
-				keyphrasePanel[newKeyphraseIndex]?.click()
-				this.truSeo.runAnalysis({ postId: this.postEditorStore.currentPost.id, postData: this.postEditorStore.currentPost })
-				this.selectedKeyphrase = (newKeyphraseIndex - 1)
-			}
-		},
-		pressEnter (event) {
-			const addButon = document.getElementById('add-additional-keyphrase')
-			event.preventDefault()
-			addButon.click()
-		},
-		created () {
-			this.postEditorStore.currentPost.keyphrases.forEach((keyphrase, index) => {
-				this.postEditorStore.currentPost.loading.additional[index] = false
+		handleSaved (payload) {
+			const { index, value } = payload
+			updateAdditionalKeyphrase({
+				postEditorStore : this.postEditorStore,
+				truSeo          : this.truSeo,
+				index           : index,
+				value           : value,
+				onSuccess       : (updatedIndex) => {
+					this.selectedKeyphrase = updatedIndex
+				}
 			})
+		},
+		handleDeleted (index) {
+			deleteAdditionalKeyphraseByIndex({
+				postEditorStore : this.postEditorStore,
+				truSeo          : this.truSeo,
+				index           : index
+			})
+		},
+		handleAdd () {
+			const index = addAdditionalKeyphraseFromInput({
+				postEditorStore : this.postEditorStore,
+				truSeo          : this.truSeo,
+				screenContext   : this.$root.$data.screenContext,
+				onSuccess       : (newIndex) => {
+					this.selectedKeyphrase = newIndex
+				}
+			})
+
+			if (null !== index) {
+				this.selectedKeyphrase = index
+			}
 		}
 	},
 	mounted () {
@@ -227,6 +138,7 @@ export default {
 		margin-bottom: 22px;
 	}
 }
+
 .additional-keyphrases-panel {
 	.aioseo-tooltip {
 		margin-left: 0 !important;

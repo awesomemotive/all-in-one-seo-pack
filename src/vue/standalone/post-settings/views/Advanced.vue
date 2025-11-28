@@ -33,7 +33,6 @@
 					:placeholder="strings.placeholder"
 					v-model="postEditorStore.currentPost.canonicalUrl"
 					@input="inputEventDecodeUrl"
-					@update:modelValue="postEditorStore.isDirty = true"
 				/>
 
 				<core-alert
@@ -204,15 +203,13 @@ export default {
 			return this.getPriorityOptions.find(h => h.value === option)
 		},
 		savePriority (value) {
-			this.postEditorStore.currentPost.priority    = value
-			this.postEditorStore.isDirty = true
+			this.postEditorStore.currentPost.priority = value
 		},
 		getFrequency (option) {
 			return this.getFrequencyOptions.find(h => h.value === option)
 		},
 		saveFrequency (value) {
-			this.postEditorStore.currentPost.frequency   = value
-			this.postEditorStore.isDirty = true
+			this.postEditorStore.currentPost.frequency = value
 		},
 		inputEventDecodeUrl (event) {
 			const value = event.target.value

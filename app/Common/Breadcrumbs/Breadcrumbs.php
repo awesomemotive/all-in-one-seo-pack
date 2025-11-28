@@ -718,13 +718,13 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 		 * @since 4.1.1
 		 *
 		 * @param  int|\WP_Post $post An ID or a WP_Post object.
-		 * @return array              The post parent hierarchy.
+		 * @return array              The post parent hierarchy. Empty array if the post ID is empty.
 		 */
 		public function getPostHierarchy( $post ) {
-			$postId = ! empty( $post->ID ) ? $post->ID : $post;
+			$postId = is_object( $post ) ? ( $post->ID ?? 0 ) : $post;
 
 			// Return a top to bottom hierarchy.
-			return array_reverse( get_ancestors( $postId, '', 'post_type' ) );
+			return ! empty( $postId ) ? array_reverse( get_ancestors( $postId, '', 'post_type' ) ) : [];
 		}
 
 		/**

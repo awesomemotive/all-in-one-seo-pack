@@ -1,5 +1,6 @@
 import Quill from 'quill'
 import { decode } from 'he'
+import { getText } from '@/vue/utils/html'
 
 class Counter {
 	constructor (quill, options) {
@@ -30,7 +31,9 @@ class Counter {
 					const aioTag  = n.querySelector('.aioseo-tag .tag-name')
 					if (aioTag) {
 						const tag     = this.options.tags.find(t => t.name === aioTag.textContent)
-						const value   = 'string' === typeof tag.valueText ? decode(tag.valueText) : tag.valueText
+						let value     = 'string' === typeof tag.valueText ? decode(tag.valueText) : tag.valueText
+						// Strip HTML tags from the value to get accurate character count.
+						value         = getText(value, false)
 						const newNode = document.createTextNode(value)
 						fragNew.appendChild(newNode)
 					}

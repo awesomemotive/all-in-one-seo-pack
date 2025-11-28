@@ -31,8 +31,14 @@
 					href="#"
 					@click.prevent="event => $emit('sort-column', column, event)"
 				>
-					<span>{{ column.label }}</span>
-					<span class="sorting-indicator" />
+					<template v-if="$slots.headerFooter">
+						<slot name="headerFooter"/>
+						<span class="sorting-indicator" />
+					</template>
+					<template v-else>
+						<span>{{ column.label }}</span>
+						<span class="sorting-indicator" />
+					</template>
 				</a>
 			</template>
 

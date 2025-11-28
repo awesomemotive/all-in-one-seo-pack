@@ -467,7 +467,7 @@ export default {
 		}
 	}
 
-	.settings-content > div:not(.previews-box) > .aioseo-preview-box {
+	.aioseo-settings-content > div:not(.previews-box) > .aioseo-preview-box {
 		padding: 12px;
 		border: 1px solid $input-border;
 		border-radius: 4px;

@@ -112,16 +112,6 @@ const features = [
 		upgrade     : 'aioseo-news-sitemap'
 	},
 	{
-		value       : 'aioseo-redirects',
-		name        : __('Smart Redirects + 404 Detection', td),
-		pluginName  : __('Redirects', td),
-		description : __('Create and manage redirects for your broken links.', td),
-		installs    : __('Installs AIOSEO Redirects', td),
-		required    : false,
-		pro         : true,
-		upgrade     : 'aioseo-redirects'
-	},
-	{
 		value       : 'aioseo-link-assistant',
 		name        : __('Link Assistant', td),
 		pluginName  : __('Link Assistant', td),

@@ -89,9 +89,10 @@ export default {
 		SvgCircleExclamation
 	},
 	props : {
-		url      : String,
-		errors   : Array,
-		warnings : Array
+		url           : String,
+		errors        : Array,
+		warnings      : Array,
+		disableSearch : Boolean
 	},
 	data () {
 		return {
@@ -124,6 +125,10 @@ export default {
 			}, 150)
 		},
 		searchChange () {
+			if (this.disableSearch) {
+				return
+			}
+
 			if (!this.value) {
 				this.isLoading = false
 				this.showResults = false

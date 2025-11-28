@@ -33,10 +33,7 @@
 				class="use-facebook"
 			>
 				<template #content>
-					<base-toggle
-						v-model="postEditorStore.currentPost.twitter_use_og"
-						@update:modelValue="postEditorStore.isDirty = true"
-					/>
+					<base-toggle v-model="postEditorStore.currentPost.twitter_use_og" />
 				</template>
 			</core-settings-row>
 
@@ -53,7 +50,6 @@
 						:line-numbers="false"
 						single
 						@counter="count => titleCount = count.length"
-						@update:modelValue="postEditorStore.isDirty = true"
 						:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Title`"
 						:default-tags="tags.getDefaultTags('term' === postEditorStore.currentPost.context ? 'taxonomies' : null, null, 'title')"
 					>
@@ -79,7 +75,6 @@
 						:line-numbers="false"
 						description
 						@counter="count => descriptionCount = count.length"
-						@update:modelValue="postEditorStore.isDirty = true"
 						:tags-context="`${postEditorStore.currentPost.postType || postEditorStore.currentPost.termType}Description`"
 						:default-tags="tags.getDefaultTags('term' === postEditorStore.currentPost.context ? 'taxonomies' : null, null, 'description')"
 					>
@@ -123,7 +118,6 @@
 						size="medium"
 						:placeholder="strings.placeholder"
 						v-model="postEditorStore.currentPost.twitter_image_custom_fields"
-						@update:modelValue="postEditorStore.isDirty = true"
 					/>
 				</template>
 			</core-settings-row>
@@ -315,7 +309,6 @@ export default {
 		},
 		cardSelect (option) {
 			this.postEditorStore.currentPost.twitter_card = option
-			this.postEditorStore.isDirty                  = true
 		},
 		scrollToElement () {
 			const container = document.getElementsByClassName('component-wrapper')[0]
@@ -327,7 +320,6 @@ export default {
 		},
 		saveTwitterImageType (value) {
 			this.postEditorStore.currentPost.twitter_image_type = value
-			this.postEditorStore.isDirty                        = true
 		},
 		updateImage (imageUrl) {
 			this.postEditorStore.currentPost.twitter_image_custom_url = imageUrl

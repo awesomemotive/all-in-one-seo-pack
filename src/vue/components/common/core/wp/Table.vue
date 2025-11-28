@@ -726,15 +726,17 @@ export default {
 		gap: 8px;
 
 		.subsubsub {
+			display: flex;
+			align-items: center;
+			margin: 11px 0;
+			min-height: 30px;
 			grid-column: 1;
 			grid-row: 1;
 			float: none;
-			display: inline-block;
 			color: $gray3;
 			font-size: $font-md;
 			line-height: 18px;
 			font-weight: 600;
-			margin: 0;
 
 			&:empty {
 				display: none !important;

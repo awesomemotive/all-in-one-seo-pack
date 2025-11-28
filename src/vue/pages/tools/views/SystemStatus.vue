@@ -78,7 +78,7 @@
 							<div class="name">{{ group.label }}</div>
 						</div>
 
-						<div class="settings-content">
+						<div class="aioseo-settings-content">
 							<div class="system-status-table">
 								<table-row
 									v-for="(row, index) in group.results"
@@ -275,7 +275,7 @@ export default {
 	.aioseo-settings-row {
 		.settings-group {
 			&--database {
-				.settings-content {
+				.aioseo-settings-content {
 					overflow: auto;
 					max-height: 500px;
 
@@ -290,7 +290,7 @@ export default {
 				}
 			}
 
-			.settings-content {
+			.aioseo-settings-content {
 				margin-top: 16px;
 			}
 

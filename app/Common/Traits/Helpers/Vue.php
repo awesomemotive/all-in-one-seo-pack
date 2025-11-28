@@ -52,7 +52,9 @@ trait Vue {
 		$this->setWritingAssistantData();
 		$this->setBreadcrumbsData();
 		$this->setSeoAnalyzerData();
+		$this->setAiAssistantData();
 		$this->setAiImageGeneratorData();
+		$this->setAiInsightsData();
 
 		$this->cache[ $hash ] = $this->data;
 
@@ -208,11 +210,25 @@ trait Vue {
 			]
 		];
 
-		$userData           = wp_get_current_user();
+		// In multisite, super admins may not have explicit roles on subsites.
+		// Ensure they have administrator role and capabilities for proper access.
+		$userData     = wp_get_current_user();
+		$roles        = $userData->roles;
+		$capabilities = $userData->allcaps;
+
+		// If the user is a network admin, and doesn't have a user on the subsite, give him admin role/caps.
+		if ( is_multisite() && is_super_admin() && empty( $roles ) ) {
+			$roles     = [ 'administrator' ];
+			$adminRole = get_role( 'administrator' );
+			if ( is_a( $adminRole, 'WP_Role' ) ) {
+				$capabilities = $adminRole->capabilities;
+			}
+		}
+
 		$this->data['user'] = [
 			'emailAddress'   => $userData->user_email,
-			'roles'          => $userData->roles,
-			'capabilities'   => $userData->allcaps,
+			'roles'          => $roles,
+			'capabilities'   => $capabilities,
 			'customRoles'    => $this->getCustomRoles(),
 			'userRoles'      => aioseo()->helpers->getUserRoles(),
 			'locale'         => function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale(),
@@ -686,6 +702,19 @@ trait Vue {
 	}
 
 	/**
+	 * Set Vue AI Assistant data.
+	 *
+	 * @since 4.9.1
+	 *
+	 * @return void
+	 */
+	private function setAiAssistantData() {
+		if ( 'post' === $this->args['page'] ) {
+			$this->data['aiAssistant'] = aioseo()->ai->assistant->getVueDataEdit( $this->args['staticPostId'] ?? null );
+		}
+	}
+
+	/**
 	 * Set Vue AI Image Generator data.
 	 *
 	 * @since 4.8.9
@@ -770,5 +799,24 @@ trait Vue {
 		];
 
 		return apply_filters( 'aioseo_vue_components_defaults', $defaults );
+	}
+
+	/**
+	 * Set Vue AI Insights data.
+	 *
+	 * @since 4.9.1
+	 *
+	 * @return void
+	 */
+	private function setAiInsightsData() {
+		if ( 'ai-insights' !== $this->args['page'] ) {
+			return;
+		}
+
+		$rateLimit = aioseo()->core->cache->get( 'ai_insights_rate_limit' );
+
+		$this->data['aiInsights'] = [
+			'rateLimit' => ! empty( $rateLimit ) ? $rateLimit : null
+		];
 	}
 }

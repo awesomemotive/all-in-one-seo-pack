@@ -112,7 +112,9 @@ const docLinks      = {
 	aiContentGenerator            : `${marketingSite}docs/ai-content-generator/`,
 	aiDisclaimer                  : `${marketingSite}docs/using-the-ai-assistant-in-all-in-one-seo-to-create-content/#aioseo-ai-generated-content-disclaimer`,
 	aiBuyingCredits               : `${marketingSite}docs/buying-and-managing-credits-for-the-aioseo-ai-features/`,
-	llmsTxt                       : `${marketingSite}docs/how-to-create-an-llms-txt-using-all-in-one-seo/`
+	llmsTxt                       : `${marketingSite}docs/how-to-create-an-llms-txt-using-all-in-one-seo/`,
+	redirectLogs                  : `${marketingSite}docs/logging-redirects-in-all-in-one-seo/`,
+	redirect404Logs               : `${marketingSite}docs/redirecting-404-content-not-found-using-all-in-one-seo/`
 }
 
 const upsellLinks = {

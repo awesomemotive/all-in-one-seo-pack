@@ -109,8 +109,8 @@
 					class="generate-button"
 					size="small"
 					type="blue"
-					@click="event => generate(false)"
-					:disabled="!aiContent.hasEnoughCredits(10) || postContentLength < 500"
+					@click="_event => generate(false)"
+					:disabled="!aiContent.hasEnoughCredits(aiContent.getFeatureCost('titles')) || postContentLength < 500"
 				>
 					{{ strings.generateButtonText }}
 				</base-button>
@@ -147,7 +147,7 @@ import SvgRephrase from '@/vue/components/common/svg/ai/Rephrase'
 
 import { getPostEditedContent } from '@/vue/plugins/tru-seo/components/postContent'
 
-import { __ } from '@/vue/plugins/translations'
+import { __, sprintf } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
@@ -174,8 +174,12 @@ export default {
 		}
 
 		const strings = {
-			settingsHeader      : __('Select tone and audience', td),
-			generateButtonText  : __('Generate SEO Titles (10 credits)', td),
+			settingsHeader     : __('Select tone and audience', td),
+			generateButtonText : sprintf(
+				// Translators: 1 - Number of credits.
+				__('Generate SEO Titles (%1$d credits)', td),
+				aiContent.getFeatureCost('titles')
+			),
 			rephrase            : __('Regenerate (5 credits)', td),
 			viewPreviousResults : __('View Previous Results', td),
 			noContentWarning    : __('Your post is too short to generate AI content. Please add more content. For the best results, we recommend adding at least 200 words.', td)

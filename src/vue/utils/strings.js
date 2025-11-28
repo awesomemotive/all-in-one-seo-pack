@@ -16,10 +16,11 @@ function decodeHtml (string) {
  * @since   ?
  * @version 4.8.2 Refactored to use DOMPurify.
  *
- * @param   {string} string The string to sanitize.
- * @returns {string}        Returns the sanitized string.
+ * @param   {string} string       The string to sanitize.
+ * @param   {boolean} decodeFinal Whether to decode the final string if requested.
+ * @returns {string} 		      Returns the sanitized string.
  */
-export const sanitizeString = (string) => {
+export const sanitizeString = (string, decodeFinal = false) => {
 	if (!isString(string)) {
 		return ''
 	}
@@ -27,11 +28,14 @@ export const sanitizeString = (string) => {
 	// Decode HTML entities to prevent XSS attacks.
 	string = decodeHtml(string)
 
-	return DOMPurify.sanitize(string, {
+	const sanitized = DOMPurify.sanitize(string, {
 		ALLOWED_TAGS      : [],
 		ALLOWED_ATTR      : [],
 		ALLOWED_URI_REGEX : []
 	})
+
+	// DOMPurify re-encodes entities for HTML safety, so decode the result to get plain text if requested.
+	return decodeFinal ? decode(sanitized) : sanitized
 }
 
 /**

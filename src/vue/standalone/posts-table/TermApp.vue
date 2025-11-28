@@ -41,7 +41,7 @@
 						v-model="title"
 						:line-numbers="false"
 						single
-						tags-context="taxonomyTitle"
+						:tags-context="getTagText('taxonomy', term?.taxonomy, 'Title')"
 						defaultMenuOrientation="bottom"
 						tagsDescription=''
 						:default-tags="[ 'taxonomy_title' ]"
@@ -97,7 +97,7 @@
 					<core-html-tags-editor
 						v-model="termDescription"
 						:line-numbers="false"
-						tags-context="taxonomyDescription"
+						:tags-context="getTagText('taxonomy', term?.taxonomy, 'Description')"
 						defaultMenuOrientation="bottom"
 						tagsDescription=''
 						:default-tags="[ 'taxonomy_description' ]"
@@ -128,6 +128,7 @@
 import links from '@/vue/utils/links'
 import http from '@/vue/utils/http'
 import { merge } from 'lodash-es'
+import tags from '@/vue/utils/tags'
 
 import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
 
@@ -152,7 +153,8 @@ export default {
 		} = useTruSeoScore()
 
 		return {
-			composableStrings : strings
+			composableStrings : strings,
+			getTagText        : tags.getTagText
 		}
 	},
 	components : {

@@ -128,8 +128,8 @@
 					class="generate-button"
 					size="small"
 					type="blue"
-					@click="event => generate(false)"
-					:disabled="aiStore.socialPosts.selected.length < 1 || !aiContent.hasEnoughCredits(10 * aiStore.socialPosts.selected.length)"
+					@click="_event => generate(false)"
+					:disabled="aiStore.socialPosts.selected.length < 1 || !aiContent.hasEnoughCredits(aiContent.getFeatureCost('socialPosts') * aiStore.socialPosts.selected.length)"
 				>
 					{{ generateButtonText }}
 				</base-button>
@@ -204,6 +204,7 @@ export default {
 		})
 
 		const aiStore         = useAiStore()
+		const aiContent       = useAiContent()
 		const postEditorStore = usePostEditorStore()
 		const activeTab       = ref('linkedin')
 		const currentScreen   = ref(hasSocialPosts.value ? 'results' : 'settings')
@@ -246,6 +247,8 @@ export default {
 				return __('Generate Social Posts', td)
 			}
 
+			const totalCredits = aiStore.socialPosts.selected.length * aiContent.getFeatureCost('socialPosts')
+
 			return sprintf(
 				'%1$s (%2$s)',
 				__('Generate Social Posts', td),
@@ -254,10 +257,10 @@ export default {
 					_n(
 						'%1$d credit',
 						'%1$d credits',
-						aiStore.socialPosts.selected.length * 10,
+						totalCredits,
 						td
 					),
-					aiStore.socialPosts.selected.length * 10
+					totalCredits
 				)
 			)
 		})
@@ -274,7 +277,7 @@ export default {
 			const activeTabObject = getActiveTabObject()
 			const content         = 'email' === activeTabObject.slug ? postEditorStore.currentPost.ai.socialPosts?.email.content : postEditorStore.currentPost.ai.socialPosts[activeTabObject.slug]
 
-			return sanitizeString(content)
+			return sanitizeString(content, true)
 		})
 
 		const onCopy = () => {
@@ -324,7 +327,7 @@ export default {
 
 		return {
 			aiStore,
-			aiContent       : useAiContent(),
+			aiContent,
 			postEditorStore : usePostEditorStore(),
 			activeTab,
 			tabs,

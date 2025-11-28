@@ -30,8 +30,9 @@ const getFeatures = (type = '') => {
 	return allFeatures
 }
 
-const hasCoreFeature = (sectionSlug, feature) => {
+const hasCoreFeature = (sectionSlug, feature = null) => {
 	const features = getFeatures('core')
+
 	for (const section in features) {
 		// If we have no specific feature, we're just checking if the section is enabled.
 		if (sectionSlug === section && !feature) {
