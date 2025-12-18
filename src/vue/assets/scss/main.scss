@@ -257,10 +257,6 @@ body[class*="page_aioseo"] {
 			@media screen and (min-width: 601px) {
 				margin-top: var(--aioseo-header-height);
 			}
-
-			> .aioseo-tabs .aioseo-mobile-tabs {
-				margin-top: 0;
-			}
 		}
 
 		.save-changes {
@@ -407,10 +403,7 @@ body[class*="page_aioseo"] {
 			width: 18%;
 		}
 	}
-	
-	
 }
-
 
 .column-aioseo-details {
 	position: relative;

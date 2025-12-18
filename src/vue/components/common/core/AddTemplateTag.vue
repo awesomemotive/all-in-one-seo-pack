@@ -16,6 +16,7 @@ export default {
 
 <style lang="scss">
 .aioseo-add-template-tag {
+	background-color: #fff;
 	display: flex;
 	align-items: center;
 	border-radius: 3px;

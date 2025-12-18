@@ -118,8 +118,10 @@ class ThirdParty {
 	public function extract() {
 		$integrations = [
 			'acf',
+			'bricks',
 			'divi',
 			'nextGen',
+			'oxygen',
 			'wooCommerce',
 			'kadenceBlocks'
 		];
@@ -192,6 +194,48 @@ class ThirdParty {
 		}
 
 		return $images;
+	}
+
+	/**
+	 * Extracts images from Bricks Builder content.
+	 *
+	 * Bricks stores content in post meta, not in post_content.
+	 * We need to render the Bricks content and extract images from the rendered HTML.
+	 *
+	 * @since 4.9.2
+	 *
+	 * @return void
+	 */
+	private function bricks() {
+		$bricksIntegration = aioseo()->standalone->pageBuilderIntegrations['bricks'] ?? null;
+		if ( empty( $bricksIntegration ) || ! $bricksIntegration->isBuiltWith( $this->post->ID ) ) {
+			return;
+		}
+
+		// Process the Bricks content to get rendered HTML.
+		$renderedContent = $bricksIntegration->processContent( $this->post->ID );
+		if ( empty( $renderedContent ) ) {
+			return;
+		}
+
+		// Extract image URLs from img tags in the rendered content.
+		$urls = [];
+		preg_match_all( '#<img[^>]+src=["\']([^"\'>]+)["\']#i', (string) $renderedContent, $matches );
+		if ( ! empty( $matches[1] ) ) {
+			foreach ( $matches[1] as $url ) {
+				$urls[] = aioseo()->helpers->makeUrlAbsolute( $url );
+			}
+		}
+
+		// Also extract background images from inline styles.
+		preg_match_all( '/background(?:-image)?:\s*url\(["\']?([^"\')]+)["\']?\)/i', (string) $renderedContent, $bgMatches );
+		if ( ! empty( $bgMatches[1] ) ) {
+			foreach ( $bgMatches[1] as $url ) {
+				$urls[] = aioseo()->helpers->makeUrlAbsolute( $url );
+			}
+		}
+
+		$this->images = array_merge( $this->images, $urls );
 	}
 
 	/**
@@ -303,6 +347,48 @@ class ThirdParty {
 		}
 
 		$this->images = array_merge( $this->images, $imageIds );
+	}
+
+	/**
+	 * Extracts images from Oxygen Builder content.
+	 *
+	 * Oxygen (via Breakdance engine) stores content in its own data structure.
+	 * We need to render the content and extract images from the rendered HTML.
+	 *
+	 * @since 4.9.2
+	 *
+	 * @return void
+	 */
+	private function oxygen() {
+		$oxygenIntegration = aioseo()->standalone->pageBuilderIntegrations['oxygen'] ?? null;
+		if ( empty( $oxygenIntegration ) || ! $oxygenIntegration->isBuiltWith( $this->post->ID ) ) {
+			return;
+		}
+
+		// Process the Oxygen content to get rendered HTML.
+		$renderedContent = $oxygenIntegration->processContent( $this->post->ID );
+		if ( empty( $renderedContent ) ) {
+			return;
+		}
+
+		// Extract image URLs from img tags in the rendered content.
+		$urls = [];
+		preg_match_all( '#<img[^>]+src=["\']([^"\'>]+)["\']#i', (string) $renderedContent, $matches );
+		if ( ! empty( $matches[1] ) ) {
+			foreach ( $matches[1] as $url ) {
+				$urls[] = aioseo()->helpers->makeUrlAbsolute( $url );
+			}
+		}
+
+		// Also extract background images from inline styles.
+		preg_match_all( '/background(?:-image)?:\s*url\(["\']?([^"\')]+)["\']?\)/i', (string) $renderedContent, $bgMatches );
+		if ( ! empty( $bgMatches[1] ) ) {
+			foreach ( $bgMatches[1] as $url ) {
+				$urls[] = aioseo()->helpers->makeUrlAbsolute( $url );
+			}
+		}
+
+		$this->images = array_merge( $this->images, $urls );
 	}
 
 	/**

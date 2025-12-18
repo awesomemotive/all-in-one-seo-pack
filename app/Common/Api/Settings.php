@@ -190,7 +190,7 @@ class Settings {
 			aioseo()->options->sanitizeAndSave( $options );
 			aioseo()->dynamicOptions->sanitizeAndSave( $dynamicOptions );
 
-			if ( ! empty( aioseo()->redirects->isActive ) ) {
+			if ( ! empty( aioseo()->redirects ) ) {
 				aioseo()->redirects->options->sanitizeAndSave( $redirectOptions );
 			}
 		}
@@ -232,7 +232,7 @@ class Settings {
 					aioseo()->options->searchAppearance->advanced->searchCleanup->settings->preventCrawling = false;
 					break;
 				case 'redirects':
-					if ( ! empty( aioseo()->redirects->isActive ) ) {
+					if ( ! empty( aioseo()->redirects ) ) {
 						aioseo()->redirects->options->reset();
 					}
 					break;

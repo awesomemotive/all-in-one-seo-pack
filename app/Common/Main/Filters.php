@@ -398,8 +398,8 @@ abstract class Filters {
 	 *
 	 * @since 4.1.9
 	 *
-	 * @param  array[object]|array[string] $postTypes The post types.
-	 * @return array[object]|array[string]            The filtered post types.
+	 * @param  object[]|string[] $postTypes The post types.
+	 * @return array                        The filtered post types.
 	 */
 	public function removeInvalidPublicPostTypes( $postTypes ) {
 		$postTypesToRemove = [
@@ -408,6 +408,7 @@ abstract class Filters {
 			'redirect_rule', // Safe Redirect Manager
 			'seedprod',
 			'tcb_lightbox',
+			'bricks_template', // Bricks Builder
 
 			// Thrive Themes internal post types.
 			'tva_module',
@@ -459,14 +460,18 @@ abstract class Filters {
 	 *
 	 * @since 4.2.4
 	 *
-	 * @param  array[object]|array[string] $taxonomies The taxonomies.
-	 * @return array[object]|array[string]             The filtered taxonomies.
+	 * @param  object[]|string[] $taxonomies The taxonomies.
+	 * @return array                         The filtered taxonomies.
 	 */
 	public function removeInvalidPublicTaxonomies( $taxonomies ) {
 		$taxonomiesToRemove = [
 			'fusion_tb_category',
 			'element_category',
 			'template_category',
+
+			// Bricks Builder internal taxonomies.
+			'template_tag',
+			'template_bundle',
 
 			// Thrive Themes internal taxonomies.
 			'tcb_symbols_tax'

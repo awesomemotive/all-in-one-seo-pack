@@ -85,7 +85,7 @@ export const updateAdditionalKeyphrase = ({ postEditorStore, truSeo, index, valu
 export const deleteAdditionalKeyphraseByIndex = ({ postEditorStore, truSeo, index, onSuccess }) => {
 	const additionalCopy = [ ...postEditorStore.currentPost.keyphrases.additional ]
 	additionalCopy.splice(index, 1)
-	postEditorStore.currentPost.keyphrases.additional = null
+	postEditorStore.currentPost.keyphrases.additional = []
 
 	setTimeout(() => {
 		postEditorStore.currentPost.keyphrases.additional = additionalCopy

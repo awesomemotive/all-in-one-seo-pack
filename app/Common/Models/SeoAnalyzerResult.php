@@ -99,7 +99,7 @@ class SeoAnalyzerResult extends Model {
 	public static function getCompetitorsResults() {
 		$results = aioseo()->core->db->start( 'aioseo_seo_analyzer_results' )
 			->select( '*' )
-			->whereRaw( 'competitor_url IS NOT NULL' )
+			->where( 'competitor_url IS NOT', null )
 			->orderBy( 'updated DESC' )
 			->run()
 			->result();

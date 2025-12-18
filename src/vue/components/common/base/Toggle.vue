@@ -41,6 +41,7 @@ export default {
 
 <style lang="scss">
 .aioseo-toggle {
+	color: $black;
 	display: inline-flex;
 	align-items: center;
 	vertical-align: middle;

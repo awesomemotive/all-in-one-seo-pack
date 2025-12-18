@@ -1,3 +1,5 @@
+import { iframeRef } from '@/vue/standalone/page-builders/helpers'
+
 /**
  * Detach the element from its parent.
  *
@@ -29,19 +31,6 @@ const initSettingsBar = () => {
 	removePositionalClassNames(document.body, 'aioseo-settings-bar-is')
 	document.body.classList.add(`aioseo-settings-bar-is-${position}`)
 	attachSettingsBar(position)
-}
-
-/**
- * Get the DOM node for the iframe
- *
- * @param   {string} iframeId The DOM ID for the iframe.
- * @returns {Object}          The DOM node.
- */
-const iframeRef = iframeId => {
-	const frameRef = document.getElementById(iframeId)
-	return frameRef.contentWindow
-		? frameRef.contentWindow.document
-		: frameRef.contentDocument
 }
 
 /**

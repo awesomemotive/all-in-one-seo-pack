@@ -2,18 +2,47 @@ import { h, createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 import loadPlugins from '@/vue/plugins'
-
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
-import { loadPiniaStores } from '@/vue/stores'
+import {
+	loadPiniaStores
+} from '@/vue/stores'
 
+import PageBuilderIntegration from '../PageBuilderIntegration'
 import initWatcher from './watcher'
 import initLimitModifiedDate from './limit-modified-date'
 
 import App from '@/vue/standalone/post-settings/App'
+import Button from './components/Button'
 
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
+
+const initAioseoButton = async () => {
+	const integration = new PageBuilderIntegration({
+		scoreBtn : {
+			component : Button,
+			appName   : 'Standalone/SeedProd/Button',
+			node      : {
+				$wrapper   : document.querySelector('#sp-builder-top-main-nav'),
+				tag        : 'div',
+				attributes : {
+					id    : 'aioseo-seedprod-toolbar-button',
+					style : 'align-content: center; margin-left: 10px; cursor: pointer; display: block;',
+					role  : 'button'
+				}
+			}
+		}
+	})
+
+	await integration.mount()
+
+	document.addEventListener('aioseo-pagebuilder-toggle-modal', () => {
+		window.seedprod_app.$router.push({
+			name : 'setup_settings_seo'
+		})
+	})
+}
 
 /**
  * Mount our Component inside the SEO tab.
@@ -30,7 +59,7 @@ const mountComponent = (seedprodApp) => {
 				history : createWebHistory(),
 				routes  : [
 					{
-						path      : '/',
+						path      : '/:pathMatch(.*)*', // Will match everything and prevent warnings.
 						component : App
 					}
 				]
@@ -91,6 +120,9 @@ const fixStyleTag = () => {
  * @returns {void}
  */
 const init = (seedprodApp) => {
+	// Initialize the AIOSEO score button.
+	initAioseoButton()
+
 	// Mount our Vue component in the SEO tab.
 	mountComponent(seedprodApp)
 

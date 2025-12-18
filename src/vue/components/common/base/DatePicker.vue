@@ -202,6 +202,7 @@ export default {
 
 <style lang="scss">
 .el-popper {
+	--aioseo-datepicker-z-index: 9999;
 	--el-datepicker-inrange-bg-color: #E6EEFC;
 	--el-datepicker-active-color: #{$blue};
 	--el-color-primary: #{$blue};
@@ -288,7 +289,7 @@ export default {
 			&.el-picker__popper {
 				border: 1px solid $input-border;
 				box-shadow: 0 4px 26px rgba(44, 50, 76, 0.12);
-				z-index: 9998 !important; /* Needs to override the .modal-mask */
+				z-index: var(--aioseo-datepicker-z-index) !important; /* Needs to override the .modal-mask */
 			}
 		}
 

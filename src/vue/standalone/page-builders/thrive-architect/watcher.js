@@ -1,13 +1,9 @@
 /* global TVE */
-import {
-	usePostEditorStore,
-	useSeoRevisionsStore
-} from '@/vue/stores'
-
 import { isEqual } from 'lodash-es'
 import { debounce } from '@/vue/utils/debounce'
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
 import { getEditorData } from './helpers'
+import { handleEditorSave } from '@/vue/standalone/page-builders/helpers'
 
 let editorData = {}
 
@@ -24,23 +20,6 @@ const handleEditorChange = () => {
 		editorData = data
 		updatePostData()
 	}
-}
-
-/**
- * Save SEO Settings when WP Bakery editor is saved.
- *
- * @returns {void}.
- */
-const handleEditorSave = () => {
-	const postEditorStore = usePostEditorStore()
-
-	// Clear isDirty flag as soon as save is initiated.
-	postEditorStore.isDirty = false
-
-	postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
-		const seoRevisionsStore = useSeoRevisionsStore()
-		seoRevisionsStore.fetch()
-	})
 }
 
 export default () => {

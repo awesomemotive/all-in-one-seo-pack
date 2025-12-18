@@ -110,17 +110,21 @@ export default {
 			})
 		},
 		pageBuilderAlert () {
-			if (!isBlockEditor() || ![ 'elementor', 'divi' ].includes(this.rootStore.aioseo.integration)) {
+			const integration = this.rootStore.aioseo.integration
+			const editLink    = this.postEditorStore.currentPost?.editlink
+
+			// Only show the alert if we're in the block editor, a page builder is detected, and we have a valid edit link.
+			if (!isBlockEditor() || !integration || !editLink) {
 				return false
 			}
 
-			const pageBuilderName = this.rootStore.aioseo.integration.charAt(0).toUpperCase() + this.rootStore.aioseo.integration.slice(1)
+			const pageBuilderName = integration.charAt(0).toUpperCase() + integration.slice(1)
 
 			return sprintf(
 				// Translators: 1 - The Page Builder name, 2 - HTML code opening tag, 3 - HTML code closing tag.
 				__('We have detected that you are currently using the %1$s Page Builder. Please click %2$shere%3$s to use the %1$s editor for a most accurate result.', td),
 				pageBuilderName,
-				'<a href="' + this.postEditorStore.currentPost.editlink + '">',
+				'<a href="' + editLink + '">',
 				'</a>'
 			)
 		}

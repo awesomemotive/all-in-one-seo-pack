@@ -1096,11 +1096,11 @@ class Admin {
 	 */
 	public function unslashEscapedDataPosts() {
 		$postsToUnslash = apply_filters( 'aioseo_debug_unslash_escaped_posts', 200 );
-		$timeStarted    = gmdate( 'Y-m-d H:i:s', aioseo()->core->cache->get( 'unslash_escaped_data_posts' ) );
+		$timeStarted    = esc_sql( gmdate( 'Y-m-d H:i:s', aioseo()->core->cache->get( 'unslash_escaped_data_posts' ) ) );
 
 		$posts = aioseo()->core->db->start( 'aioseo_posts' )
 			->select( '*' )
-			->whereRaw( "updated < '$timeStarted'" )
+			->where( 'updated <', $timeStarted )
 			->orderBy( 'updated ASC' )
 			->limit( $postsToUnslash )
 			->run()

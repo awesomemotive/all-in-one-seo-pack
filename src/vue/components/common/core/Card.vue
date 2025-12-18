@@ -172,11 +172,6 @@ export default {
 		width: 17px;
 		height: 17px;
 		color: $placeholder-color !important;
-		transition: background-color 0.2s ease;
-
-		&:hover {
-			color: color.adjust($placeholder-color, $lightness: -20%) !important;
-		}
 	}
 
 	> .header {

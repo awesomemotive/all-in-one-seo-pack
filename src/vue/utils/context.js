@@ -71,6 +71,23 @@ export const isWooCommerceProduct = () => {
 	)
 }
 
+export const isBricksEditor = () => {
+	try {
+		const builderParam = window?.bricksData?.builderParam
+		return !!builderParam && new URLSearchParams(window.location.search).has(builderParam)
+	} catch {
+		return false
+	}
+}
+
+export const isOxygenEditor = () => {
+	try {
+		return !!(window?.OxygenFrontend?.utils?.isBuilder() || false)
+	} catch {
+		return false
+	}
+}
+
 export const isPageBuilderEditor = () => {
 	return (
 		isElementorEditor() ||
@@ -79,7 +96,9 @@ export const isPageBuilderEditor = () => {
 		isWPBakeryEditor() ||
 		isAvadaEditor() ||
 		isSiteOriginEditor() ||
-		isThriveArchitectEditor()
+		isThriveArchitectEditor() ||
+		isBricksEditor() ||
+		isOxygenEditor()
 	)
 }
 

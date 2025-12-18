@@ -92,11 +92,6 @@ class PreUpdates {
 		$db = aioseo()->core->db->db;
 		$tableName = $db->prefix . 'aioseo_cache';
 
-		// Try to acquire a lock to prevent race conditions (0 timeout = don't wait)
-		if ( ! aioseo()->core->db->acquireLock( 'aioseo_add_is_object_column', 0 ) ) {
-			return;
-		}
-
 		// Check if column exists using raw SQL (bypass cache completely), otherwise we will get errors
 		$columnExists = $db->get_var(
 			$db->prepare(
@@ -110,6 +105,11 @@ class PreUpdates {
 		);
 
 		if ( empty( $columnExists ) ) {
+			// Try to acquire a lock to prevent race conditions (0 timeout = don't wait)
+			if ( ! aioseo()->core->db->acquireLock( 'aioseo_add_is_object_column', 0 ) ) {
+				return;
+			}
+
 			aioseo()->core->db->execute(
 				"ALTER TABLE {$tableName}
 				ADD `is_object` TINYINT(1) DEFAULT 0 AFTER `value`"
@@ -120,8 +120,8 @@ class PreUpdates {
 
 			// Reset the cache for the installed tables.
 			aioseo()->core->cache->delete( 'db_schema' );
-		}
 
-		aioseo()->core->db->releaseLock( 'aioseo_add_is_object_column' );
+			aioseo()->core->db->releaseLock( 'aioseo_add_is_object_column' );
+		}
 	}
 }

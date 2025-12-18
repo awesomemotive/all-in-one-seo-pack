@@ -93,16 +93,16 @@ class PostMeta {
 	 * @return array                 The posts to be imported.
 	 */
 	protected function getPostsToImport( $postsPerAction = 100 ) {
-		$publicPostTypes = implode( "', '", aioseo()->helpers->getPublicPostTypes( true ) );
-		$timeStarted     = gmdate( 'Y-m-d H:i:s', aioseo()->core->cache->get( 'import_post_meta_rank_math' ) );
+		$publicPostTypes = aioseo()->helpers->getPublicPostTypes( true );
+		$timeStarted     = esc_sql( gmdate( 'Y-m-d H:i:s', aioseo()->core->cache->get( 'import_post_meta_rank_math' ) ) );
 
 		$posts = aioseo()->core->db
 			->start( 'posts' . ' as p' )
 			->select( 'p.ID, p.post_type' )
 			->join( 'postmeta as pm', '`p`.`ID` = `pm`.`post_id`' )
 			->leftJoin( 'aioseo_posts as ap', '`p`.`ID` = `ap`.`post_id`' )
-			->whereRaw( "pm.meta_key LIKE 'rank_math_%'" )
-			->whereRaw( "( p.post_type IN ( '$publicPostTypes' ) )" )
+			->whereLike( 'pm.meta_key', 'rank_math_%', true )
+			->whereIn( 'p.post_type', $publicPostTypes )
 			->whereRaw( "( ap.post_id IS NULL OR ap.updated < '$timeStarted' )" )
 			->orderBy( 'p.ID DESC' )
 			->groupBy( 'p.ID' )
@@ -134,7 +134,7 @@ class PostMeta {
 				->start( 'postmeta' . ' as pm' )
 				->select( 'pm.meta_key, pm.meta_value' )
 				->where( 'pm.post_id', $post->ID )
-				->whereRaw( "`pm`.`meta_key` LIKE 'rank_math_%'" )
+				->whereLike( 'pm.meta_key', 'rank_math_%', true )
 				->run()
 				->result();
 

@@ -29,8 +29,6 @@ const aiStore = useAiStore()
 
 <style lang="scss">
 .aioseo-app.aioseo-post-settings .aioseo-ai-content-standalone {
-	min-height: 600px;
-
 	.settings-name .name {
 		flex-direction: column;
 		align-items: flex-start;

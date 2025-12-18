@@ -132,6 +132,7 @@ export default {
 		--feature-card-btn-width: auto;
 	}
 
+	background: #fff;
 	display: grid;
 	grid-template-columns: var(--feature-card-grid-template-columns, auto auto);
 	justify-content: space-between;

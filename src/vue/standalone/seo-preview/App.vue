@@ -386,10 +386,6 @@ export default {
 				text-transform: none;
 			}
 		}
-
-		.aioseo-mobile-tabs {
-			margin-top: 0;
-		}
 	}
 
 	.btn-edit-preview-data-wrapper {

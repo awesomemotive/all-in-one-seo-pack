@@ -1,6 +1,6 @@
 <template>
 	<div class="cornerstone-content-panel">
-		<p class="cornerstone-content-text">
+		<div class="cornerstone-content-text">
 			<span>
 				{{ strings.description }}
 			</span>
@@ -16,7 +16,7 @@
 			</a>
 
 			<span v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'cornerstoneContent', true)"></span>
-		</p>
+		</div>
 
 		<base-toggle
 			v-model="postEditorStore.currentPost.pillar_content"
@@ -85,6 +85,8 @@ export default {
 <style lang="scss">
 .cornerstone-content-panel {
 	.cornerstone-content-text {
+		margin-bottom: 14px;
+
 		> a {
 			padding-inline: 4px;
 		}

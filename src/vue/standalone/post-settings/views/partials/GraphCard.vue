@@ -234,7 +234,6 @@ const findGraphIcon = (slug) => {
 				svg {
 					min-width: 15px;
 					max-width: 15px;
-
 					color: $black;
 					margin-right: 10px;
 				}

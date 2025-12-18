@@ -10,12 +10,16 @@
 
 .aioseo-site-origin-sidebar--active:not(.modal-open) {
 	#aioseo-modal-portal {
-		z-index: 999999;
+		z-index: 999998;
 		position: relative;
 	}
 
-	.el-popper.el-picker__popper {
-		z-index: 999999 !important;
+	.aioseo-modal {
+		--aioseo-modal-z-index: 999998;
+	}
+
+	.el-popper {
+		--aioseo-datepicker-z-index: 999999;
 	}
 
 	.aioseo-site-origin-sidebar__content {

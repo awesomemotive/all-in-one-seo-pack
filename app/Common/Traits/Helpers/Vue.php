@@ -676,10 +676,12 @@ trait Vue {
 	 * @return void
 	 */
 	private function setBreadcrumbsData() {
-		$isPostOrTermPage              = aioseo()->helpers->isScreenBase( 'post' ) || aioseo()->helpers->isScreenBase( 'term' );
-		$isCurrentPageUsingPageBuilder = 'post' === $this->args['page'] && ! empty( $this->args['integration'] );
-		$isSettingsPage                = ! empty( $this->args['page'] ) && 'settings' === $this->args['page'];
-		if ( ! $isSettingsPage && ! $isCurrentPageUsingPageBuilder && ! $isPostOrTermPage ) {
+		if (
+			! empty( $this->args['page'] ) &&
+			'settings' !== $this->args['page'] &&
+			'post' !== $this->args['page'] &&
+			! aioseo()->helpers->isScreenBase( 'term' )
+		) {
 			return;
 		}
 

@@ -1,13 +1,10 @@
-import {
-	useAiAssistantStore
-} from '@/vue/stores'
-
 import aiAssistantIcon from '@/vue/standalone/blocks/ai-assistant/icon'
 
 import { __ } from '@/vue/plugins/translations'
 
 import { Button } from '@wordpress/components'
 import { createElement, createRoot, flushSync } from '@wordpress/element'
+import { createHigherOrderComponent } from '@wordpress/compose'
 
 const td      = import.meta.env.VITE_TEXTDOMAIN
 const strings = {
@@ -16,51 +13,58 @@ const strings = {
 
 let $cachedAiAssistantButton = null
 
-const { addFilter } = window.wp?.hooks || {}
-if (addFilter) {
-	addFilter(
-		'blocks.registerBlockType',
-		'aioseo/paragraph-placeholder',
-		(settings, name) => {
-			if ('core/paragraph' !== name) {
-				return settings
-			}
-
-			const aiAssistantStore = useAiAssistantStore()
-			if (!aiAssistantStore.hasPermission) {
-				return settings
-			}
-
-			return {
-				...settings,
-				attributes : {
-					...settings.attributes,
-					placeholder : {
-						type    : 'string',
-						default : strings.placeholder
-					}
-				}
-			}
-		}
+/**
+ * Check if a block is a root-level paragraph block.
+ *
+ * @param {Object} block       The block object to check.
+ * @param {Object} blockEditor The block editor selector object.
+ *
+ * @returns {boolean} True if the block is a root-level paragraph block.
+ */
+const isRootLevelParagraphBlock = (block, blockEditor) => {
+	return (
+		block &&
+		'core/paragraph' === block.name &&
+		!blockEditor.getBlockRootClientId(block.clientId)
 	)
 }
 
 /**
- * Update the empty editor placeholder (when no blocks exist yet).
+ * Extend the paragraph block placeholder for root-level blocks only.
+ * Uses a HOC to modify the placeholder prop without changing stored attributes.
  *
  * @returns {void}
  */
-export const extendEmptyEditorPlaceholder = () => {
-	const { dispatch } = window.wp?.data || {}
-	if (!dispatch) {
+export const extendParagraphPlaceholder = () => {
+	const { addFilter } = window.wp?.hooks || {}
+	const { select }    = window.wp?.data || {}
+	if (!addFilter || !select) {
 		return
 	}
 
-	setTimeout(() => {
-		dispatch('core/editor').updateEditorSettings({
-			bodyPlaceholder : strings.placeholder
-		})
-	})
+	addFilter(
+		'editor.BlockEdit',
+		'aioseo/paragraph-placeholder',
+		createHigherOrderComponent(
+			(BlockEdit) => (props) => {
+				const blockEditor = select('core/block-editor')
+
+				// Only modify root-level paragraph blocks.
+				if (!isRootLevelParagraphBlock(props, blockEditor)) {
+					return createElement(BlockEdit, props)
+				}
+
+				return createElement(BlockEdit, {
+					...props,
+					attributes : {
+						...props.attributes,
+						placeholder : props.attributes.placeholder || strings.placeholder
+					}
+				})
+			},
+			'aioseoExtendParagraphPlaceholder'
+		)
+	)
 }
 
 /**
@@ -75,8 +79,11 @@ export const checkAiAssistantShortcut = () => {
 		return
 	}
 
-	const selectedBlock = select('core/block-editor').getSelectedBlock()
-	if ('core/paragraph' !== selectedBlock?.name) {
+	const blockEditor   = select('core/block-editor')
+	const selectedBlock = blockEditor.getSelectedBlock()
+
+	// Only trigger for root-level paragraph blocks.
+	if (!isRootLevelParagraphBlock(selectedBlock, blockEditor)) {
 		return
 	}
 
@@ -84,7 +91,7 @@ export const checkAiAssistantShortcut = () => {
 
 	// Only trigger if the content is "//" and the cursor is at the end (position 2).
 	if ('//' === content.trim()) {
-		const selectionEnd = select('core/block-editor')?.getSelectionEnd()
+		const selectionEnd = blockEditor.getSelectionEnd()
 		if (2 === selectionEnd?.offset) {
 			const aiAssistantBlock = createBlock('aioseo/ai-assistant')
 
@@ -126,6 +133,7 @@ export const extendBlockEditorInserterButton = ({ aiAssistantStore }) => {
 						verticalAlign   : 'top',
 						padding         : '0',
 						minWidth        : 'auto',
+						width           : '24px',
 						backgroundColor : '#fff',
 						display         : 'inline-flex'
 					}
@@ -139,27 +147,29 @@ export const extendBlockEditorInserterButton = ({ aiAssistantStore }) => {
 			e.preventDefault()
 			e.stopPropagation()
 
-			const { select, dispatch } = window.wp?.data || {}
-			const { createBlock }      = window.wp?.blocks || {}
-			if (!select || !dispatch || !createBlock) {
+			const wpSelect      = window.wp?.data?.select
+			const wpDispatch    = window.wp?.data?.dispatch
+			const { createBlock } = window.wp?.blocks || {}
+			if (!wpSelect || !wpDispatch || !createBlock) {
 				return
 			}
 
 			const aiAssistantBlock = createBlock('aioseo/ai-assistant')
-			const selectedBlock    = select('core/block-editor').getSelectedBlock()
+			const wpBlockEditor    = wpSelect('core/block-editor')
+			const currentBlock     = wpBlockEditor.getSelectedBlock()
 
 			if (
-				'core/paragraph' === selectedBlock?.name &&
-				!selectedBlock?.attributes?.content?.trim()
+				isRootLevelParagraphBlock(currentBlock, wpBlockEditor) &&
+				!currentBlock?.attributes?.content?.trim()
 			) {
-				dispatch('core/block-editor').replaceBlock(
-					selectedBlock.clientId,
+				wpDispatch('core/block-editor').replaceBlock(
+					currentBlock.clientId,
 					aiAssistantBlock
 				)
 			} else {
-				const insertionPoint = select('core/block-editor').getBlockInsertionPoint() || {}
+				const insertionPoint = wpBlockEditor.getBlockInsertionPoint() || {}
 
-				dispatch('core/block-editor').insertBlock(
+				wpDispatch('core/block-editor').insertBlock(
 					aiAssistantBlock,
 					insertionPoint.index,
 					insertionPoint.rootClientId
@@ -170,18 +180,34 @@ export const extendBlockEditorInserterButton = ({ aiAssistantStore }) => {
 		$tempContainer.remove()
 	}
 
+	const { select } = window.wp?.data || {}
+	if (!select) {
+		return
+	}
+
+	const $editor = document.getElementById('editor')
+	if (!$editor) {
+		return
+	}
+
+	const blockEditor     = select('core/block-editor')
+	const selectedBlock   = blockEditor.getSelectedBlock()
+	const $existingButton = $editor.querySelector('.aioseo-ai-assistant-inserter-btn')
+
+	// Remove the button immediately if the selected block is not a root-level paragraph block.
+	if (!isRootLevelParagraphBlock(selectedBlock, blockEditor)) {
+		$existingButton?.remove()
+		return
+	}
+
 	setTimeout(() => {
-		const $editor = document.getElementById('editor')
-		if (!$editor) {
+		// Don't add the button if it already exists.
+		if ($editor.querySelector('.aioseo-ai-assistant-inserter-btn')) {
 			return
 		}
 
 		const $addBlockButton = $editor.querySelector('.block-editor-inserter__toggle')
-		if (
-			!$addBlockButton ||
-			$addBlockButton.closest('.is-vertical') ||
-			$editor.querySelector('.aioseo-ai-assistant-inserter-btn')
-		) {
+		if (!$addBlockButton || $addBlockButton.closest('.is-vertical')) {
 			return
 		}
 

@@ -16,7 +16,9 @@ import {
 	isWPBakeryEditor,
 	isAvadaEditor,
 	isSiteOriginEditor,
-	isThriveArchitectEditor
+	isThriveArchitectEditor,
+	isBricksEditor,
+	isOxygenEditor
 } from '@/vue/utils/context'
 import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
 import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
@@ -25,40 +27,34 @@ import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders
 import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
 import { getEditorData as getSiteOriginData } from '@/vue/standalone/page-builders/siteorigin/helpers'
 import { getEditorData as getThriveArchitectData } from '@/vue/standalone/page-builders/thrive-architect/helpers'
+import { getEditorData as getBricksData } from '@/vue/standalone/page-builders/bricks/helpers'
+import { getEditorData as getOxygenData } from '@/vue/standalone/page-builders/oxygen/helpers'
 
 /**
- * Returns the post title from page builders.
+ * Retrieves the title from the active page builder editor.
  *
- * @returns {string} Post Title.
+ * @returns {string} The title from the active page builder editor.
  */
 const getEditorTitle = () => {
-	let postTitle = ''
+	const editorMap = [
+		{ isEditor: isElementorEditor, getData: getElementorData },
+		{ isEditor: isDiviEditor, getData: getDiviData },
+		{ isEditor: isSeedProdEditor, getData: getSeedProdData },
+		{ isEditor: isWPBakeryEditor, getData: getWPBakeryData },
+		{ isEditor: isAvadaEditor, getData: getAvadaData },
+		{ isEditor: isSiteOriginEditor, getData: getSiteOriginData },
+		{ isEditor: isThriveArchitectEditor, getData: getThriveArchitectData },
+		{ isEditor: isBricksEditor, getData: getBricksData },
+		{ isEditor: isOxygenEditor, getData: getOxygenData }
+	]
 
-	switch (true) {
-		case isElementorEditor():
-			postTitle = getElementorData().title
-			break
-		case isDiviEditor():
-			postTitle = getDiviData().title
-			break
-		case isSeedProdEditor():
-			postTitle = getSeedProdData().title
-			break
-		case isWPBakeryEditor():
-			postTitle = getWPBakeryData().title
-			break
-		case isAvadaEditor():
-			postTitle = getAvadaData().title
-			break
-		case isSiteOriginEditor():
-			postTitle = getSiteOriginData().title
-			break
-		case isThriveArchitectEditor():
-			postTitle = getThriveArchitectData().title
-			break
+	for (const editor of editorMap) {
+		if (editor.isEditor()) {
+			return editor.getData()?.title ?? ''
+		}
 	}
 
-	return postTitle
+	return ''
 }
 
 /**

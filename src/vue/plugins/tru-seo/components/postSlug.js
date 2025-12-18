@@ -17,7 +17,9 @@ import {
 	isWPBakeryEditor,
 	isAvadaEditor,
 	isSiteOriginEditor,
-	isThriveArchitectEditor
+	isThriveArchitectEditor,
+	isBricksEditor,
+	isOxygenEditor
 } from '@/vue/utils/context'
 import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
 import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
@@ -26,40 +28,34 @@ import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders
 import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
 import { getEditorData as getSiteOriginData } from '@/vue/standalone/page-builders/siteorigin/helpers'
 import { getEditorData as getThriveArchitectData } from '@/vue/standalone/page-builders/thrive-architect/helpers'
+import { getEditorData as getBricksData } from '@/vue/standalone/page-builders/bricks/helpers'
+import { getEditorData as getOxygenData } from '@/vue/standalone/page-builders/oxygen/helpers'
 
 /**
- * Returns the post slug from page builders.
+ * Retrieves the slug from the active page builder editor.
  *
- * @returns {string} Post Slug.
+ * @returns {string} The slug from the active page builder editor.
  */
 const getEditorSlug = () => {
-	let postSlug = ''
+	const editorMap = [
+		{ isEditor: isElementorEditor, getData: getElementorData },
+		{ isEditor: isDiviEditor, getData: getDiviData },
+		{ isEditor: isSeedProdEditor, getData: getSeedProdData },
+		{ isEditor: isWPBakeryEditor, getData: getWPBakeryData },
+		{ isEditor: isAvadaEditor, getData: getAvadaData },
+		{ isEditor: isSiteOriginEditor, getData: getSiteOriginData },
+		{ isEditor: isThriveArchitectEditor, getData: getThriveArchitectData },
+		{ isEditor: isBricksEditor, getData: getBricksData },
+		{ isEditor: isOxygenEditor, getData: getOxygenData }
+	]
 
-	switch (true) {
-		case isElementorEditor():
-			postSlug = getElementorData().slug
-			break
-		case isDiviEditor():
-			postSlug = getDiviData().slug
-			break
-		case isSeedProdEditor():
-			postSlug = getSeedProdData().slug
-			break
-		case isWPBakeryEditor():
-			postSlug = getWPBakeryData().slug
-			break
-		case isAvadaEditor():
-			postSlug = getAvadaData().slug
-			break
-		case isSiteOriginEditor():
-			postSlug = getSiteOriginData().slug
-			break
-		case isThriveArchitectEditor():
-			postSlug = getThriveArchitectData().slug
-			break
+	for (const editor of editorMap) {
+		if (editor.isEditor()) {
+			return editor.getData()?.slug ?? ''
+		}
 	}
 
-	return postSlug
+	return ''
 }
 
 /**

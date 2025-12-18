@@ -130,7 +130,7 @@ class Ai {
 			return;
 		}
 
-		$response = wp_remote_post( $this->getApiUrl() . 'ai/auth/', [
+		$response = aioseo()->helpers->wpRemotePost( $this->getApiUrl() . 'ai/auth/', [
 			'body' => [
 				'domain' => aioseo()->helpers->getSiteDomain()
 			]

@@ -100,6 +100,7 @@ onMounted(() => {
 		}
 
 		&__title {
+			color: $black;
 			margin: 0;
 			font-size: 16px;
 			font-weight: 600;
@@ -107,6 +108,7 @@ onMounted(() => {
 
 		&__label {
 			align-items: center;
+			color: $font-color;
 			display: flex;
 			font-size: 14px;
 			font-weight: 600;

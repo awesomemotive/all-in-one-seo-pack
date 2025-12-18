@@ -534,14 +534,13 @@ class Root {
 				$ids = array_map( function( $post ) {
 					return $post->ID;
 				}, $chunk );
-				$ids = implode( "', '", $ids );
 
 				$lastModified = null;
 				if ( ! apply_filters( 'aioseo_sitemap_lastmod_disable', false ) ) {
 					$lastModified = aioseo()->core->db
 						->start( aioseo()->core->db->db->posts . ' as p', true )
 						->select( 'MAX(`p`.`post_modified_gmt`) as last_modified' )
-						->whereRaw( "( `p`.`ID` IN ( '$ids' ) )" )
+						->whereIn( 'p.ID', $ids )
 						->run()
 						->result();
 				}

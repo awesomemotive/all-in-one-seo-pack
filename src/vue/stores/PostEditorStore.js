@@ -5,14 +5,10 @@ import links from '@/vue/utils/links'
 let cachedCurrentPost = null
 
 const prepareCachedCurrentPost = (currentPost) => {
-	const ignore = [ 'modalOpen', 'seo_score', 'page_analysis', 'headlineAnalyzer', 'loading' ]
-	const copy   = JSON.parse(JSON.stringify(currentPost))
+	// Ignore UI state and analysis-related properties at any nesting level.
+	const ignore = new Set([ 'modalOpen', 'seo_score', 'page_analysis', 'headlineAnalyzer', 'loading', 'score', 'analysis' ])
 
-	ignore.forEach((property) => {
-		delete copy[property]
-	})
-
-	return JSON.stringify(copy)
+	return JSON.stringify(currentPost, (key, value) => ignore.has(key) ? undefined : value)
 }
 
 export const usePostEditorStore = defineStore('PostEditorStore', {
@@ -190,13 +186,17 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 			return http.get(links.restUrl(`media/${mediaId}`, 'wp/v2'))
 				.then(response => 200 === response.statusCode ? response.body : {})
 		},
-		processContent ({ content }) {
+		processContent ({ content, integration }) {
 			return http.post(links.restUrl(`post/${this.currentPost.id}/process-content`))
 				.send({
-					content
+					content,
+					integration
 				})
 				.then(response => {
 					this.currentPost.processedContent = response.body.content
+				})
+				.catch(error => {
+					throw error
 				})
 		},
 		fetchPostData (payload = {}) {

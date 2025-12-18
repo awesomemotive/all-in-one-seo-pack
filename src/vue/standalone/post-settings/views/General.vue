@@ -7,11 +7,11 @@
 		>
 			<template #name>
 				<div>
-					<span>{{ strings.serpPreview }}</span>
+					<span class="snippet-preview-row-label">{{ strings.serpPreview }}</span>
 
 					<core-tooltip
-						:offset="'sidebar' === screenContext && 'metabox' === props.parentComponentContext ? '10px,0' : '50px,0'"
-						:placement="'bottom'"
+						offset="0,0"
+						placement="bottom"
 					>
 						<svg-circle-question-mark/>
 
@@ -265,7 +265,7 @@
 			<template #header>
 				<span>{{ strings.focusKeyphrase }}</span>
 
-				<core-tooltip :offset="'-10px,0'">
+				<core-tooltip :offset="'0,0'">
 					<svg-circle-question-mark />
 
 					<template #tooltip>
@@ -726,6 +726,8 @@ onBeforeUnmount(() => {
 			position: relative;
 
 			> input {
+				color: $black;
+				line-height: 1.5;
 				width: 100%;
 				padding: 8px 10px;
 				border: 1px solid $border;
@@ -793,6 +795,10 @@ onBeforeUnmount(() => {
 	}
 
 	.snippet-preview-row {
+		.snippet-preview-row-label {
+			vertical-align: middle;
+		}
+
 		.aioseo-google-search-preview {
 			border: 1px solid $input-border;
 			border-radius: 3px;

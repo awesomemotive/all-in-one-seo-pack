@@ -65,16 +65,16 @@ class PostMeta {
 	 */
 	public function importPostMeta() {
 		$postsPerAction  = apply_filters( 'aioseo_import_seopress_posts_per_action', 100 );
-		$publicPostTypes = implode( "', '", aioseo()->helpers->getPublicPostTypes( true ) );
-		$timeStarted     = gmdate( 'Y-m-d H:i:s', aioseo()->core->cache->get( 'import_post_meta_seopress' ) );
+		$publicPostTypes = aioseo()->helpers->getPublicPostTypes( true );
+		$timeStarted     = esc_sql( gmdate( 'Y-m-d H:i:s', aioseo()->core->cache->get( 'import_post_meta_seopress' ) ) );
 
 		$posts = aioseo()->core->db
 			->start( 'posts as p' )
 			->select( 'p.ID, p.post_type' )
 			->join( 'postmeta as pm', '`p`.`ID` = `pm`.`post_id`' )
 			->leftJoin( 'aioseo_posts as ap', '`p`.`ID` = `ap`.`post_id`' )
-			->whereRaw( "pm.meta_key LIKE '_seopress_%'" )
-			->whereRaw( "( p.post_type IN ( '$publicPostTypes' ) )" )
+			->whereLike( 'pm.meta_key', '_seopress_%', true )
+			->whereIn( 'p.post_type', $publicPostTypes )
 			->whereRaw( "( ap.post_id IS NULL OR ap.updated < '$timeStarted' )" )
 			->groupBy( 'p.ID' )
 			->orderBy( 'p.ID DESC' )
@@ -93,7 +93,7 @@ class PostMeta {
 				->start( 'postmeta' . ' as pm' )
 				->select( 'pm.meta_key, pm.meta_value' )
 				->where( 'pm.post_id', $post->ID )
-				->whereRaw( "`pm`.`meta_key` LIKE '_seopress_%'" )
+				->whereLike( 'pm.meta_key', '_seopress_%', true )
 				->run()
 				->result();
 

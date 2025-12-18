@@ -5,6 +5,7 @@
 			'aioseo-ai-content-feature-modal',
 			'aioseo-ai-content-faq-modal'
 		]"
+		:allow-overflow="currentScreen === 'settings'"
 		@close="$emit('closeModal', true)"
 	>
 		<template #header>

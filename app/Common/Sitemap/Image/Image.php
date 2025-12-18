@@ -118,15 +118,15 @@ class Image {
 		}
 
 		$postsPerScan = apply_filters( 'aioseo_image_sitemap_posts_per_scan', 10 );
-		$postTypes    = implode( "', '", aioseo()->helpers->getPublicPostTypes( true ) );
+		$postTypes    = aioseo()->helpers->getPublicPostTypes( true );
 
 		$posts = aioseo()->core->db
 			->start( aioseo()->core->db->db->posts . ' as p', true )
 			->select( '`p`.`ID`, `p`.`post_type`, `p`.`post_content`, `p`.`post_excerpt`, `p`.`post_modified_gmt`' )
 			->leftJoin( 'aioseo_posts as ap', '`ap`.`post_id` = `p`.`ID`' )
 			->whereRaw( '( `ap`.`id` IS NULL OR `p`.`post_modified_gmt` > `ap`.`image_scan_date` OR `ap`.`image_scan_date` IS NULL )' )
-			->whereRaw( "`p`.`post_status` IN ( 'publish', 'inherit' )" )
-			->whereRaw( "`p`.`post_type` IN ( '$postTypes' )" )
+			->whereIn( 'p.post_status', [ 'publish', 'inherit' ] )
+			->whereIn( 'p.post_type', $postTypes )
 			->limit( $postsPerScan )
 			->run()
 			->result();

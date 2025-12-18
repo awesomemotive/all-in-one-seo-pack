@@ -323,6 +323,7 @@ export default {
 		--counter-font-size: 14px;
 	}
 
+	color: $black;
 	display: flex;
 	flex-direction: row;
 

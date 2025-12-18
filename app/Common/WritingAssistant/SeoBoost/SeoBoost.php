@@ -277,7 +277,7 @@ class SeoBoost {
 	 */
 	public function resetLogins() {
 		// Delete access token and user options from the database.
-		aioseo()->core->db->delete( 'usermeta' )->whereRaw( 'meta_key LIKE \'seoboost_access_token%\'' )->run();
+		aioseo()->core->db->delete( 'usermeta' )->whereLike( 'meta_key', 'seoboost_access_token%', true )->run();
 		aioseo()->core->db->delete( 'usermeta' )->where( 'meta_key', 'seoboost_user_options' )->run();
 	}
 

@@ -5,6 +5,7 @@
 			'aioseo-ai-content-feature-modal',
 			'aioseo-ai-content-social-posts-modal'
 		]"
+		:allow-overflow="currentScreen === 'settings'"
 		@close="$emit('closeModal', true)"
 	>
 		<template #header>
@@ -70,7 +71,7 @@
 										</base-highlight-toggle>
 									</div>
 
-									<p class="credit-disclaimer">{{ strings.creditDisclaimer }}</p>
+									<div class="credit-disclaimer">{{ strings.creditDisclaimer }}</div>
 								</div>
 							</div>
 						</div>

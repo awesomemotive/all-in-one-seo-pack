@@ -121,7 +121,7 @@ class GeneralSettings {
 			->start( 'postmeta' . ' as pm' )
 			->select( 'pm.meta_key, pm.meta_value' )
 			->where( 'pm.post_id', $post->ID )
-			->whereRaw( "`pm`.`meta_key` LIKE '_aioseop_%'" )
+			->whereLike( 'pm.meta_key', '_aioseop_%', true )
 			->run()
 			->result();
 

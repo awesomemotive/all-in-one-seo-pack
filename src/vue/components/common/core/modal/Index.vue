@@ -20,6 +20,7 @@
 					v-if="show"
 					class="modal-wrapper"
 					@click.stop="maybeCloseModal"
+					@contextmenu.stop
 				>
 					<div class="modal-container">
 						<div
@@ -33,7 +34,11 @@
 									type="button"
 									@click.stop="closeModal"
 								>
-									<svg-close @click="closeModal" />
+									<svg-close
+										width="14"
+										height="14"
+										@click="closeModal"
+									/>
 								</button>
 							</slot>
 						</div>
@@ -87,7 +92,7 @@ export default {
 		show          : Boolean,
 		modalName     : String,
 		teleportTo    : {
-			type : String,
+			type : [ String, HTMLElement ],
 			default () {
 				return '#aioseo-modal-portal'
 			}
@@ -115,13 +120,13 @@ export default {
 	},
 	computed : {
 		cssClasses () {
-			const classes = Array.isArray(this.classes) ? this.classes : []
+			const classes = Array.isArray(this.classes) ? [ ...this.classes ] : []
 
 			if (this.allowOverflow) {
 				classes.push('allow-overflow')
 			}
 
-			return Array.isArray(this.classes) ? this.classes : []
+			return classes
 		}
 	},
 	methods : {
@@ -176,9 +181,11 @@ export default {
 
 <style lang="scss">
 .aioseo-modal {
+	--aioseo-modal-z-index: 9998;
+
 	.modal-mask {
 		position: fixed;
-		z-index: 9998;
+		z-index: var(--aioseo-modal-z-index);
 		top: 0;
 		left: 0;
 		width: 100%;
@@ -195,7 +202,7 @@ export default {
 
 	.modal-wrapper {
 		position: fixed;
-		z-index: 9998;
+		z-index: var(--aioseo-modal-z-index);
 		top: 0;
 		left: 0;
 		width: 100%;
@@ -249,6 +256,7 @@ export default {
 
 				button.close {
 					background-color: #fff;
+					color: $black;
 					border: none;
 					cursor: pointer;
 					line-height: 14px;

@@ -559,11 +559,12 @@ class Updates {
 		}
 
 		foreach ( $duplicates as $duplicate ) {
-			$postId        = $duplicate->post_id;
-			$firstRecordId = $duplicate->id;
+			$postId        = esc_sql( $duplicate->post_id );
+			$firstRecordId = esc_sql( $duplicate->id );
 
 			aioseo()->core->db->delete( 'aioseo_posts' )
-				->whereRaw( "( id > $firstRecordId AND post_id = $postId )" )
+				->where( 'id >', $firstRecordId )
+				->where( 'post_id', $postId )
 				->run();
 		}
 	}
@@ -1093,7 +1094,7 @@ class Updates {
 	public function migratePostSchema() {
 		$posts = aioseo()->core->db->start( 'aioseo_posts' )
 			->select( '*' )
-			->whereRaw( '`schema` IS NULL' )
+			->where( 'schema', null )
 			->limit( 40 )
 			->run()
 			->models( 'AIOSEO\\Plugin\\Common\\Models\\Post' );
@@ -1130,7 +1131,7 @@ class Updates {
 	 * @return void
 	 */
 	public function migratePostSchemaDefault() {
-		$migrationStartDate = aioseo()->core->cache->get( 'v4_migrate_post_schema_default_date' );
+		$migrationStartDate = esc_sql( aioseo()->core->cache->get( 'v4_migrate_post_schema_default_date' ) );
 		if ( ! $migrationStartDate ) {
 			return;
 		}
@@ -1138,7 +1139,7 @@ class Updates {
 		$posts = aioseo()->core->db->start( 'aioseo_posts' )
 			->select( '*' )
 			->where( 'schema_type =', 'default' )
-			->whereRaw( "updated < '$migrationStartDate'" )
+			->where( 'updated <', $migrationStartDate )
 			->limit( 40 )
 			->run()
 			->models( 'AIOSEO\\Plugin\\Common\\Models\\Post' );

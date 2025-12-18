@@ -16,7 +16,9 @@ import {
 	isWPBakeryEditor,
 	isAvadaEditor,
 	isSiteOriginEditor,
-	isThriveArchitectEditor
+	isThriveArchitectEditor,
+	isBricksEditor,
+	isOxygenEditor
 } from '@/vue/utils/context'
 import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
 import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
@@ -26,40 +28,34 @@ import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/av
 import { getEditorData as getSiteOriginData } from '@/vue/standalone/page-builders/siteorigin/helpers'
 import { getEditorData as getThriveArchitectData } from '@/vue/standalone/page-builders/thrive-architect/helpers'
 import { getPostEditedSlug } from '@/vue/plugins/tru-seo/components/postSlug'
+import { getEditorData as getBricksData } from '@/vue/standalone/page-builders/bricks/helpers'
+import { getEditorData as getOxygenData } from '@/vue/standalone/page-builders/oxygen/helpers'
 
 /**
- * Returns the post permalink from page builders.
+ * Retrieves the permalink from the active page builder editor.
  *
- * @returns {string} Post Permalink.
+ * @returns {string} The permalink from the active page builder editor.
  */
 const getEditorPermalink = () => {
-	let postPermalink = ''
+	const editorMap = [
+		{ isEditor: isElementorEditor, getData: getElementorData },
+		{ isEditor: isDiviEditor, getData: getDiviData },
+		{ isEditor: isSeedProdEditor, getData: getSeedProdData },
+		{ isEditor: isWPBakeryEditor, getData: getWPBakeryData },
+		{ isEditor: isAvadaEditor, getData: getAvadaData },
+		{ isEditor: isSiteOriginEditor, getData: getSiteOriginData },
+		{ isEditor: isThriveArchitectEditor, getData: getThriveArchitectData },
+		{ isEditor: isBricksEditor, getData: getBricksData },
+		{ isEditor: isOxygenEditor, getData: getOxygenData }
+	]
 
-	switch (true) {
-		case isElementorEditor():
-			postPermalink = getElementorData().permalink
-			break
-		case isDiviEditor():
-			postPermalink = getDiviData().permalink
-			break
-		case isSeedProdEditor():
-			postPermalink = getSeedProdData().permalink
-			break
-		case isWPBakeryEditor():
-			postPermalink = getWPBakeryData().permalink
-			break
-		case isAvadaEditor():
-			postPermalink = getAvadaData().permalink
-			break
-		case isSiteOriginEditor():
-			postPermalink = getSiteOriginData().permalink
-			break
-		case isThriveArchitectEditor():
-			postPermalink = getThriveArchitectData().permalink
-			break
+	for (const editor of editorMap) {
+		if (editor.isEditor()) {
+			return editor.getData()?.permalink ?? ''
+		}
 	}
 
-	return postPermalink
+	return ''
 }
 
 /**

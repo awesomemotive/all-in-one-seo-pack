@@ -114,6 +114,12 @@ export default {
 	padding-bottom: var(--aioseo-gutter);
 	border-bottom: 1px solid $border;
 
+	&:last-child {
+		border-bottom: 0;
+		margin-bottom: 0;
+		padding-bottom: 0;
+	}
+
 	@media only screen and (min-width: 912px) {
 
 		> .col-md-3:first-child {

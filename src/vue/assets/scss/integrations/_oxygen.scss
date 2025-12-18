@@ -1,0 +1,23 @@
+.aioseo-app {
+    line-height: 1.4em;
+
+    .aioseo-tabs {
+        .aioseo-oxygen-modal & {
+            --tab-padding: 16px;
+
+            .tabs-scroller {
+                flex-grow: 1;
+            }
+        }
+    }
+}
+
+// Override modal and datepicker z-index for Oxygen Builder.
+// Oxygen uses high z-index values, so we need to go higher.
+.aioseo-modal {
+    --aioseo-modal-z-index: 10198;
+}
+
+.el-popper {
+    --aioseo-datepicker-z-index: 10199;
+}

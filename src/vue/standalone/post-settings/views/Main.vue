@@ -125,7 +125,11 @@ import { getParams, removeParam } from '@/vue/utils/params'
 import { debounceContext } from '@/vue/utils/debounce'
 import { isBlockEditor, isPageBuilderEditor } from '@/vue/utils/context'
 import { maybeUpdateTaxonomies } from '@/vue/plugins/tru-seo/components/taxonomies'
-import { extendEmptyEditorPlaceholder, checkAiAssistantShortcut, extendBlockEditorInserterButton } from '@/vue/standalone/blocks/extend-paragraph-block'
+import {
+	extendParagraphPlaceholder,
+	checkAiAssistantShortcut,
+	extendBlockEditorInserterButton
+} from '@/vue/standalone/blocks/extend-paragraph-block'
 
 import Advanced from './Advanced'
 import AiContent from './AiContent'
@@ -470,7 +474,7 @@ onMounted(async () => {
 		}
 
 		if (aiAssistantStore.hasPermission) {
-			extendEmptyEditorPlaceholder()
+			extendParagraphPlaceholder()
 		}
 
 		watchBlockEditor.value = window.wp.data.subscribe(() => {
@@ -531,7 +535,7 @@ switch (screenContext.value) {
 		activeTab.value = null
 		break
 	default :
-		activeTab.value = getParams()['aioseo-tab'] || initTab.value
+		activeTab.value = getParams()['aioseo-tab'] || settingsStore.metaBoxTabs.main || initTab.value
 		settingsStore.changeTabSettings({ setting: 'main', value: activeTab.value })
 		setTimeout(() => {
 			removeParam('aioseo-tab')
@@ -545,6 +549,10 @@ switch (screenContext.value) {
 .aioseo-metabox .aioseo-app.aioseo-post-settings {
 	background: #fff;
 	color: $black;
+
+	&:has(.route-fade-enter-active) {
+		overflow: hidden;
+	}
 
 	.aioseo-tabs {
 		--tabs-item-horizontal-height: 50px;

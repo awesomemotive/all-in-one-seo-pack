@@ -2,7 +2,6 @@ import { h, createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 import loadPlugins from '@/vue/plugins'
-
 import loadComponents from '@/vue/components/common'
 import loadVersionedComponents from '@/vue/components/AIOSEO_VERSION'
 
@@ -13,18 +12,22 @@ import {
 	useSeoRevisionsStore
 } from '@/vue/stores'
 
+import PageBuilderIntegration from '../PageBuilderIntegration'
 import initWatcher from './watcher'
 import initIntroduction from './introduction'
 import initLimitModifiedDate from './limit-modified-date'
+import { registerElementorUIHookAfter } from './hooks'
 
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
+
 import App from '@/vue/standalone/post-settings/App'
+import Button from './components/Button'
 
 let aioseoApp = null,
 	preload   = false
 
 /**
- * Add to the body a class to identify the Elementor color schema.
+ * Adds body class for Elementor color scheme (dark/light).
  *
  * @returns {void}
  */
@@ -34,7 +37,6 @@ const addBodyClass = () => {
 		theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 	}
 
-	// Remove the class if was already added.
 	document.body.classList.forEach(className => {
 		if (className.startsWith('aioseo-elementor-')) {
 			document.body.classList.remove(className)
@@ -45,16 +47,86 @@ const addBodyClass = () => {
 }
 
 /**
- * Mount our Component inside the Elementor tab.
+ * Checks if the current document is a post or page (not Site Settings, etc.).
+ *
+ * @returns {boolean} True if editing a post or page.
+ */
+const isPostOrPage = () => {
+	const currentDocument = window.elementor?.documents?.getCurrent()
+	return [ 'wp-post', 'wp-page' ].includes(currentDocument?.config?.type)
+}
+
+/**
+ * Registers the AIOSEO tab in Elementor's panel if not already registered.
+ *
+ * @param {Object} $e Elementor's $e object.
+ * @returns {void}
+ */
+const registerAioseoTab = ($e) => {
+	const elementsComponent = $e.components.get('panel/elements')
+	if (elementsComponent && !elementsComponent.tabs?.aioseo) {
+		elementsComponent.addTab('aioseo', {
+			title : 'AIOSEO'
+		})
+	}
+}
+
+/**
+ * Opens the AIOSEO panel in Elementor's page settings.
+ *
+ * @param {Object}        root0    The window object.
+ * @param {Object}        root0.$e Elementor's $e object.
+ * @returns {void}
+ */
+const runAioseoRoute = ({ $e }) => {
+	if (!isPostOrPage()) {
+		return
+	}
+
+	registerAioseoTab($e)
+
+	try {
+		$e.routes.run('panel/page-settings/aioseo')
+	} catch (_error) {
+		// Page settings must be visited first before we can open the AIOSEO tab.
+		$e.routes.run('panel/page-settings/settings')
+		$e.routes.run('panel/page-settings/aioseo')
+	}
+}
+
+const initAioseoButton = async () => {
+	const integration = new PageBuilderIntegration({
+		scoreBtn : {
+			component : Button,
+			appName   : 'Standalone/Elementor/Button',
+			node      : {
+				$wrapper   : document.querySelector('#elementor-editor-wrapper-v2 .MuiGrid-container:first-child .MuiStack-root:last-child'),
+				tag        : 'span',
+				attributes : {
+					id    : 'aioseo-elementor-toolbar-button',
+					style : 'cursor: pointer;',
+					role  : 'button'
+				}
+			}
+		}
+	})
+
+	await integration.mount()
+
+	document.addEventListener('aioseo-pagebuilder-toggle-modal', () => {
+		runAioseoRoute(window)
+	})
+}
+
+/**
+ * Sets up Elementor hooks, routes and panel regions for AIOSEO.
  *
  * @returns {void}
  */
 const initElementorHooks = ({ elementor, $e, Marionette }) => {
-	// Check whether the route to our tab is active. If so, render our Vue component.
 	$e.routes.on('run:after', function (_component, route) {
 		addBodyClass()
 
-		// Initialize our Vue component.
 		if ('panel/page-settings/aioseo' === route) {
 			aioseoApp?.unmount()
 			aioseoApp = initAioseoEditor('#elementor-panel-page-settings-controls')
@@ -67,24 +139,21 @@ const initElementorHooks = ({ elementor, $e, Marionette }) => {
 		title    : import.meta.env.VITE_NAME,
 		type     : 'page',
 		callback : () => {
-			try {
-				$e.routes.run('panel/page-settings/aioseo')
-			} catch (error) {
-				// The AIOSEO tab is only available if the page settings have been visited.
-				$e.routes.run('panel/page-settings/settings')
-				$e.routes.run('panel/page-settings/aioseo')
-			}
+			runAioseoRoute(window)
 		}
 	}, 'more')
 
 	elementor.once('preview:loaded', function () {
-		// Add our tab to the Elementor Page Settings.
-		$e.components.get('panel/elements').addTab('aioseo', {
-			title : 'AIOSEO'
-		})
+		registerAioseoTab($e)
 	})
 
-	// Add AIOSEO region to the Elementor Region Views.
+	// Re-register the tab after returning from Site Settings.
+	registerElementorUIHookAfter('editor/documents/attach-preview', 'aioseo-register-tab-on-document-switch', () => {
+		if (isPostOrPage()) {
+			registerAioseoTab($e)
+		}
+	})
+
 	elementor.hooks.addFilter('panel/elements/regionViews', (regionViews) => {
 		regionViews.aioseo = {
 			region : regionViews.global.region,
@@ -110,27 +179,21 @@ const initElementorHooks = ({ elementor, $e, Marionette }) => {
 }
 
 /**
- * Mount our Component inside the Elementor tab.
+ * Mounts the AIOSEO Vue app inside the Elementor panel.
  *
- * @param {string} selector The selector of the element where we will mount our Vue component.
- * @returns {void}
+ * @param {string} selector Container selector.
+ * @returns {Object} The Vue app instance.
  */
 const initAioseoEditor = (selector) => {
-	// Get the target element.
 	const wrapper = document.querySelector(selector)
-
-	// Add the class to the wrapper.
 	wrapper.classList.add('edit-post-sidebar', 'editor-sidebar', 'aioseo-elementor-panel')
-
-	// Add the div that will contain our Vue component.
 	wrapper.appendChild(document.createElement('div'))
 
-	// Router placeholder to prevent errors when using router-link.
 	const router = createRouter({
 		history : createWebHistory(),
 		routes  : [
 			{
-				path      : '/:pathMatch(.*)*', // Will match everything and prevent warnings.
+				path      : '/:pathMatch(.*)*',
 				component : App
 			}
 		]
@@ -180,33 +243,26 @@ const initAioseoEditor = (selector) => {
 
 	router.app = app
 
-	// Use the pinia store.
 	loadPiniaStores(app, router)
 
-	// Initialize the editor data watcher.
 	initWatcher()
 
 	app.mount(`${selector} > div`)
 
-	// Update the post data and run the analysis when our panel loads.
 	updatePostData()
 
 	return app
 }
 
 /**
- * Init the Elementor integration.
+ * Initializes the Elementor integration.
  *
  * @returns {void}
  */
 const init = () => {
-	// Create all the needed Elementor hooks to add our panel.
+	initAioseoButton()
 	initElementorHooks(window)
-
-	// Initialize the introduction.
 	initIntroduction(window)
-
-	// Initialize the Limit Modified Date integration.
 	initLimitModifiedDate(window)
 }
 

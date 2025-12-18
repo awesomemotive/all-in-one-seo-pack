@@ -153,9 +153,13 @@ const expandedProvider = ref(null)
 const strings = {
 	aiEngineResults  : __('AI Engine Results', td),
 	tooltip          : __('Results from different AI engines', td),
+	// Translators: 1 - Number of sources.
 	sourcesCount     : __('%1$s sources', td),
+	// Translators: 1 - Number of brands.
 	brandsCount      : __('%1$s brands', td),
+	// Translators: 1 - Number of web search sources.
 	webSearchSources : __('%1$s Web Search Sources', td),
+	// Translators: 1 - Rank number (e.g. #1, #2, #3, etc.).
 	positionNumber   : __('#%1$s', td)
 }
 

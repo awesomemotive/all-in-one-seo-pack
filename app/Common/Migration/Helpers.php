@@ -235,7 +235,7 @@ class Helpers {
 	 */
 	public static function redoMigration() {
 		aioseo()->core->db->delete( 'options' )
-			->whereRaw( "`option_name` LIKE 'aioseo_options_internal%'" )
+			->whereLike( 'option_name', 'aioseo_options_internal%', true )
 			->run();
 
 		aioseo()->core->cache->delete( 'v3_migration_in_progress_posts' );

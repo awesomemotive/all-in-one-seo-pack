@@ -17,6 +17,8 @@ import {
 	isAvadaEditor,
 	isSiteOriginEditor,
 	isThriveArchitectEditor,
+	isBricksEditor,
+	isOxygenEditor,
 	isPageBuilderEditor
 } from '@/vue/utils/context'
 import { isTinyMceEmpty } from '@/vue/standalone/post-settings/utils/classicEditor'
@@ -27,43 +29,37 @@ import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders
 import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
 import { getEditorData as getSiteOriginData } from '@/vue/standalone/page-builders/siteorigin/helpers'
 import { getEditorData as getThriveArchitectData } from '@/vue/standalone/page-builders/thrive-architect/helpers'
+import { getEditorData as getBricksData } from '@/vue/standalone/page-builders/bricks/helpers'
+import { getEditorData as getOxygenData } from '@/vue/standalone/page-builders/oxygen/helpers'
 
 const base64regex            = /base64,(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)/g
 const blockPrefixesToProcess = [ 'acf', 'aioseo', 'core' ]
 
 /**
- * Returns the post content from page builders.
+ * Retrieves the content from the active page builder editor.
  *
- * @returns {string} Post Content.
+ * @returns {string} The content from the active page builder editor.
  */
 const getEditorContent = () => {
-	let postContent = ''
+	const editorMap = [
+		{ isEditor: isElementorEditor, getData: getElementorData },
+		{ isEditor: isDiviEditor, getData: getDiviData },
+		{ isEditor: isSeedProdEditor, getData: getSeedProdData },
+		{ isEditor: isWPBakeryEditor, getData: getWPBakeryData },
+		{ isEditor: isAvadaEditor, getData: getAvadaData },
+		{ isEditor: isSiteOriginEditor, getData: getSiteOriginData },
+		{ isEditor: isThriveArchitectEditor, getData: getThriveArchitectData },
+		{ isEditor: isBricksEditor, getData: getBricksData },
+		{ isEditor: isOxygenEditor, getData: getOxygenData }
+	]
 
-	switch (true) {
-		case isElementorEditor():
-			postContent = getElementorData().content
-			break
-		case isDiviEditor():
-			postContent = getDiviData().content
-			break
-		case isSeedProdEditor():
-			postContent = getSeedProdData().content
-			break
-		case isWPBakeryEditor():
-			postContent = getWPBakeryData().content
-			break
-		case isAvadaEditor():
-			postContent = getAvadaData().content
-			break
-		case isSiteOriginEditor():
-			postContent = getSiteOriginData().content
-			break
-		case isThriveArchitectEditor():
-			postContent = getThriveArchitectData().content
-			break
+	for (const editor of editorMap) {
+		if (editor.isEditor()) {
+			return editor.getData()?.content ?? ''
+		}
 	}
 
-	return postContent
+	return ''
 }
 
 /**

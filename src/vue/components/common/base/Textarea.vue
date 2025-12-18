@@ -126,5 +126,9 @@ export default {
 	border-radius: 4px;
 	font-size: 14px;
 	padding: 12px;
+
+	&::placeholder {
+		color: $placeholder-color;
+	}
 }
 </style>

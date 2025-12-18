@@ -78,6 +78,7 @@ export default {
 		margin-bottom: 32px;
 
 		label {
+			color: $black;
 			display: block;
 			font-size: 14px;
 			font-weight: 600;

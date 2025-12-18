@@ -5,6 +5,7 @@
 			'aioseo-ai-content-feature-modal',
 			'aioseo-ai-content-key-points-modal'
 		]"
+		:allow-overflow="currentScreen === 'settings'"
 		@close="$emit('closeModal', true)"
 	>
 		<template #header>
@@ -421,17 +422,13 @@ export default {
 	}
 
 	.key-point {
-		margin-bottom: 20px;
-
-		.aioseo-checkbox {
-			.form-checkbox-wrapper {
-				margin-top: -2px;
-			}
+		+ .key-point {
+			margin-top: 20px;
 		}
 
 		.key-point-data {
-			margin-top: -5px;
 			margin-left: 10px;
+			margin-top: -2px;
 			cursor: pointer;
 
 			.title {

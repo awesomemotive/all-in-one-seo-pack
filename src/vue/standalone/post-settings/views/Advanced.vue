@@ -173,7 +173,7 @@ export default {
 				breadcrumbs             : __('Breadcrumbs', td),
 				canonicalUrl            : __('Canonical URL', td),
 				validUrl                : __('Please enter a valid URL.', td),
-				placeholder             : __('Enter a URL to change the default Canonical URL', td),
+				placeholder             : __('Enter custom canonical URL', td),
 				priorityScore           : __('Priority Score', td),
 				priority                : __('Priority', td),
 				frequency               : __('Frequency', td),

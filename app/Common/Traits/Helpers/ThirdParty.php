@@ -868,4 +868,21 @@ trait ThirdParty {
 
 		return $output[ $slug ];
 	}
+
+	/**
+	 * Call the callback given by the first parameter.
+	 *
+	 * @since 4.9.2
+	 *
+	 * @param  callable   $callback The function to be called.
+	 * @param  mixed      ...$args  Zero or more parameters to be passed to the function
+	 * @return mixed|null           The function result or null if the function is not callable.
+	 */
+	public function callFunc( $callback, ...$args ) {
+		if ( is_callable( $callback ) ) {
+			return call_user_func( $callback, ...$args );
+		}
+
+		return null;
+	}
 }

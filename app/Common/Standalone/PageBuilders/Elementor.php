@@ -55,12 +55,56 @@ class Elementor extends Base {
 		}
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'addInlineScript' ] );
 		add_action( 'elementor/documents/register_controls', [ $this, 'registerDocumentControls' ] );
 		add_action( 'elementor/editor/footer', [ $this, 'addContainers' ] );
 
 		// Add the SEO tab to the main Elementor panel.
 		add_action( 'elementor/editor/footer', [ $this, 'startCapturing' ], 0 );
 		add_action( 'elementor/editor/footer', [ $this, 'endCapturing' ], 999 );
+	}
+
+	/**
+	 * Add the inline script to the Elementor editor.
+	 * We do this because our scripts are loaded with the `type="module"` attribute.
+	 * This means that the script is not executed until the DOM is fully loaded.
+	 * This is a hack to add the button to the Elementor editor.
+	 *
+	 * @since 4.9.2
+	 *
+	 * @return void
+	 */
+	public function addInlineScript() {
+		$title  = esc_js( __( 'Save (Don\'t Modify Date)', 'all-in-one-seo-pack' ) );
+		$script = <<<JS
+(function($) {
+	$(window).on('elementor:init', () => {
+		if(!window?.elementorV2) {
+			return
+		}
+
+		window.elementorV2.editorAppBar.documentOptionsMenu.registerToggleAction({
+			priority : 10,
+			useProps : () => {
+				const currentDocument = window.elementor?.documents?.getCurrent() || null;
+				const isChanged = currentDocument?.editor?.isChanged ?? true;
+				const isSaving = currentDocument?.editor?.isSaving ?? false;
+
+				return {
+					title : '{$title}',
+					icon  : window.elementorV2.icons.CalendarIcon,
+					onClick : () => {
+						document.dispatchEvent(new Event('aioseo-limit-modified-date-save'))
+					},
+					disabled : !isChanged || isSaving
+				}
+			}
+		})
+	})
+})(window.jQuery)
+JS;
+
+		wp_add_inline_script( 'elementor-editor', $script, 'before' );
 	}
 
 	/**

@@ -82,9 +82,11 @@ const getStandalones = () => {
 		'writing-assistant'         : './src/vue/standalone/writing-assistant/main.js',
 		// Page builder integrations.
 		avada                       : './src/vue/standalone/page-builders/avada/main.js',
+		bricks                      : './src/vue/standalone/page-builders/bricks/main.js',
 		divi                        : './src/vue/standalone/page-builders/divi/main.js',
 		'divi-admin'                : './src/vue/standalone/page-builders/divi-admin/main.js',
 		elementor                   : './src/vue/standalone/page-builders/elementor/main.js',
+		oxygen                      : './src/vue/standalone/page-builders/oxygen/main.js',
 		seedprod                    : './src/vue/standalone/page-builders/seedprod/main.js',
 		siteorigin                  : './src/vue/standalone/page-builders/siteorigin/main.js',
 		wpbakery                    : './src/vue/standalone/page-builders/wpbakery/main.js',

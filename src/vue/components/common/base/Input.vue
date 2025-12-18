@@ -306,6 +306,7 @@ export default {
 		}
 
 		input {
+			color: $black;
 			height: 48px;
 			width: 100%;
 			background-color: #fff;

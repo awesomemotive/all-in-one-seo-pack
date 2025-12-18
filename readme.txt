@@ -1,10 +1,10 @@
 === All in One SEO – Powerful SEO Plugin to Boost SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
-Tested up to: 6.8
+Tested up to: 6.9
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 4.9.1
+Stable tag: 4.9.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -231,6 +231,20 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.9.2**
+
+* New: Page Builder Integrations for Bricks & Oxygen - You can now seamlessly control your SEO settings directly within the visual builders of Bricks and Oxygen and analyze their content with TruSEO.
+* Fixed: Browser alert incorrectly appearing in Classic Editor after page reload when Focus Keyword is set.
+
+**New in Version 4.9.1.1**
+
+* New: Users using AIOSEO, Broken Link Checker and Link Assistant now see their broken links count in the AIOSEO Details post column.
+* Updated: Compatibility with WordPress 6.9.
+* Updated: Various database performance improvements.
+* Updated: Hardened database queries against SQL attacks.
+* Fixed: Redirects would no longer work for AIOSEO Pro users on discontinued plans.
+* Fixed: AI Assistant shortcut no longer shown for paragraph blocks that are nested under a parent block.
+
 **New in Version 4.9.1**
 
 * New: AI Insights - Our new AI-powered Keyword Report tool lets you see which brands are ranking for search queries in AI search results. Now 100% free for a limited time only!
@@ -288,39 +302,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * Fixed: PHP error when Site Audit cannot scan post due to uninstantiated social class.
 * Fixed: PHP error when dashboard widget failed to fetch RSS news feed.
 
-**New in Version 4.8.7.2**
-
-* Updated: Added additional hardening to REST API routes.
-
-**New in Version 4.8.7.1**
-
-* Fixed: WooCommerce products being automatically added to the cart.
-
-**New in Version 4.8.7**
-
-* Updated: Hardened API routes to prevent unauthorized access.
-* Updated: Added support for tracking breadcrumb setting changes in SEO Revisions.
-* Updated: Added support for WooCommerce GTIN field to Product schema.
-* Updated: Added support for .avif images to Image Sitemap and Image SEO addon.
-* Updated: Review limit for Product schema can now be modified via a new filter hook.
-* Updated: Use site URL instead of home URL for llms.txt to handle WP installs in subdirectories.
-* Updated: Remove all user meta when AIOSEO is uninstalled.
-* Updated: Improved performance of Cornerstone Content filtering.
-* Fixed: Product shipping details schema clearing cart content in rare case where logged-in user adds a product to the cart and then edits a product in the admin panel.
-* Fixed: ProfilePage schema sometimes invalid due to incorrect author URL.
-* Fixed: Hide AIOSEO custom link fields inside the Edit Link modal in WPBakery visual builder to prevent plugin conflict.
-* Fixed: AIOSEO Settings not successfully saving before post is published in WPBakery visual builder.
-* Fixed: The SEO title and description were not persisting if the post content is too large.
-* Fixed: Theme conflict with Neve where the EDD Checkout block does not show if Run Shortcodes is enabled.
-* Fixed: Breadcrumb block not updating when changing the post title.
-* Fixed: If WooCommerce brand is selected as primary category, it is now correctly used in the URL.
-* Fixed: Headline Analyzer layout breaks when entering very long headlines.
-
-**New in Version 4.8.6.1**
-
-* Updated: Prevent potential plugin conflicts due to the loading of dependencies multiple times.
-* Updated: Local SEO render options for Opening Hours are now hidden when feature is disabled.
-* Fixed: Loading spinner for SEO Revisions in sidebar menu not aligned.
 
 **New in Version 4.8.6**
 
@@ -409,6 +390,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.9.1 =
+= 4.9.2 =
 
 This update adds major improvements and bug fixes.

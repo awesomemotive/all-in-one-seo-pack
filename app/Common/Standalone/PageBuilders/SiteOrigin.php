@@ -81,10 +81,10 @@ class SiteOrigin extends Base {
 	 * @since 4.6.6
 	 *
 	 * @param  int    $postId  The post id.
-	 * @param  string $content The raw content.
+	 * @param  mixed  $content The raw content.
 	 * @return string          The processed content.
 	 */
-	public function processContent( $postId, $content = '' ) {
+	public function processContent( $postId, $content = null ) {
 		// When performing a save_post action, we must execute the siteorigin_widget shortcodes if there are image widgets.
 		// This ensures that the getFirstImageInContent method can locate the images, as SiteOrigin uses shortcodes for images.
 		// We cache the first image in the content during post saving.

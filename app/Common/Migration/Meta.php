@@ -59,16 +59,16 @@ class Meta {
 		}
 
 		$postsPerAction  = 50;
-		$publicPostTypes = implode( "', '", aioseo()->helpers->getPublicPostTypes( true ) );
-		$timeStarted     = gmdate( 'Y-m-d H:i:s', aioseo()->core->cache->get( 'v3_migration_in_progress_posts' ) );
+		$publicPostTypes = aioseo()->helpers->getPublicPostTypes( true );
+		$timeStarted     = esc_sql( gmdate( 'Y-m-d H:i:s', aioseo()->core->cache->get( 'v3_migration_in_progress_posts' ) ) );
 
 		$postsToMigrate = aioseo()->core->db
 			->start( 'posts' . ' as p' )
 			->select( 'p.ID' )
 			->leftJoin( 'aioseo_posts as ap', '`p`.`ID` = `ap`.`post_id`' )
 			->whereRaw( "( ap.post_id IS NULL OR ap.updated < '$timeStarted' )" )
-			->whereRaw( "( p.post_type IN ( '$publicPostTypes' ) )" )
-			->whereRaw( 'p.post_status NOT IN( \'auto-draft\' )' )
+			->whereIn( 'p.post_type', $publicPostTypes )
+			->whereNotIn( 'p.post_status', [ 'auto-draft' ] )
 			->orderBy( 'p.ID DESC' )
 			->limit( $postsPerAction )
 			->run()
@@ -127,7 +127,7 @@ class Meta {
 			->start( 'postmeta' . ' as pm' )
 			->select( 'pm.meta_key, pm.meta_value' )
 			->where( 'pm.post_id', $postId )
-			->whereRaw( "`pm`.`meta_key` LIKE '_aioseop_%'" )
+			->whereLike( 'pm.meta_key', '_aioseop_%', true )
 			->run()
 			->result();
 

@@ -6,8 +6,8 @@
 	>
 		<div
 			class="tabs-scroller"
+			:class="{ 'visually-hidden': showMobileMenu }"
 			ref="tabs-scroller"
-			v-show="!showMobileMenu || calculateWidth"
 		>
 			<var-tabs
 				:active="activeTab"
@@ -24,9 +24,6 @@
 
 						<span class="tab-label">
 							{{ tab.name }}
-							<!-- <template v-if="tab.new">
-								<span class="new">{{ strings.new }}</span>
-							</template> -->
 						</span>
 
 						<slot name="after-label" :tab="tab"></slot>
@@ -233,8 +230,7 @@ export default {
 	data () {
 		return {
 			buttonLoading  : false,
-			showMobileMenu : true,
-			calculateWidth : false,
+			showMobileMenu : false,
 			showMobileTabs : false,
 			strings        : {
 				saveChanges : __('Save Changes', td),
@@ -242,6 +238,11 @@ export default {
 				beta        : __('BETA!', td),
 				comingSoon  : __('COMING SOON!', td)
 			}
+		}
+	},
+	watch : {
+		activeTab () {
+			this.$nextTick(() => this.maybeShowMobileMenu())
 		}
 	},
 	computed : {
@@ -290,43 +291,45 @@ export default {
 			return ''
 		},
 		maybeShowMobileMenu () {
-			if (window.matchMedia('(max-width: 782px)').matches && !this.disableMobile) {
+			if (this.disableMobile) {
+				return
+			}
+
+			if (window.matchMedia('(max-width: 782px)').matches) {
 				this.showMobileMenu = true
 				return
 			}
 
-			let width           = 0
-			this.calculateWidth = true
-			this.$nextTick(() => {
-				width               = this.$refs['tabs-scroller'].offsetWidth
-				this.calculateWidth = false
+			const tabsContainer = this.$refs['aioseo-tabs']
+			const tabsScroller  = this.$refs['tabs-scroller']
+			if (!tabsContainer || !tabsScroller) {
+				return
+			}
 
-				// Get tabs-button width.
-				let tabsButtonWidth     = 0,
-					tabsExtraWidth      = 0
-				const tabsButtonElement = this.$refs['tabs-button']
-				if (tabsButtonElement) {
-					const buttonElement = tabsButtonElement.querySelector('.aioseo-button')
-					tabsButtonWidth     = buttonElement ? buttonElement.scrollWidth : 0
-				}
+			// Get the full content width using scrollWidth (works even when clipped).
+			const tabsWidth = tabsScroller.scrollWidth
 
-				// Get tabs-extra width.
-				const tabsExtraElement = this.$refs['tabs-extra']
-				if (tabsExtraElement) {
-					tabsExtraWidth = tabsExtraElement.offsetWidth
-				}
+			let buttonWidth = 0,
+				extraWidth  = 0
 
-				// Calculate the total width needed.
-				const totalWidth = width + tabsButtonWidth + tabsExtraWidth
+			// Get button width.
+			const buttonElement = this.$refs['tabs-button']
+			if (buttonElement) {
+				const button = buttonElement.querySelector('.aioseo-button')
+				buttonWidth  = button ? button.offsetWidth : 0
+			}
 
-				// Check if total width exceeds available width.
-				if (totalWidth > this.$refs['aioseo-tabs'].offsetWidth) {
-					this.showMobileMenu = true
-					return
-				}
+			// Get extra slot width.
+			const extraElement = this.$refs['tabs-extra']
+			if (extraElement) {
+				extraWidth = extraElement.offsetWidth
+			}
 
-				this.showMobileMenu = false
-			})
+			// Check if content fits in container.
+			const totalNeeded    = tabsWidth + buttonWidth + extraWidth
+			const availableWidth = tabsContainer.offsetWidth
+
+			this.showMobileMenu = totalNeeded > availableWidth
 		},
 		createRipple (event) {
 			const button   = event.currentTarget
@@ -442,9 +445,12 @@ export default {
 
 		.var-tab {
 			font-weight: $font-bold;
-			white-space: pre;
 			position: relative;
 			overflow: hidden;
+
+			.tab-label {
+				flex-shrink: 0;
+			}
 
 			span.ripple {
 				position: absolute;
@@ -501,6 +507,18 @@ export default {
 		position: relative;
 		margin-bottom:var(--aioseo-gutter);
 
+		.tabs-scroller {
+			overflow: clip;
+			overflow-clip-margin: 2px;
+			min-width: 0;
+
+			&.visually-hidden {
+				visibility: hidden;
+				position: absolute;
+				pointer-events: none;
+			}
+		}
+
 		.button-right,
 		.tabs-extra {
 			position: absolute;
@@ -544,7 +562,6 @@ export default {
 		--mobile-font-size: 14px;
 
 		height: 40px;
-		margin-top: 20px;
 		position: relative;
 		user-select: none;
 		width: 100%;

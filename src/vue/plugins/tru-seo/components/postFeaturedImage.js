@@ -2,11 +2,47 @@ import {
 	usePostEditorStore
 } from '@/vue/stores'
 
-import { isBlockEditor, isClassicEditor, isClassicNoEditor, isElementorEditor, isDiviEditor, isAvadaEditor, isThriveArchitectEditor } from '@/vue/utils/context'
+import {
+	isBlockEditor,
+	isClassicEditor,
+	isClassicNoEditor,
+	isElementorEditor,
+	isDiviEditor,
+	isAvadaEditor,
+	isThriveArchitectEditor,
+	isBricksEditor,
+	isOxygenEditor
+} from '@/vue/utils/context'
 import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
 import { getEditorData as getDiviData } from '@/vue/standalone/page-builders/divi/helpers'
 import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
-import { getEditorData as getThriveData } from '@/vue/standalone/page-builders/thrive-architect/helpers'
+import { getEditorData as getThriveArchitectData } from '@/vue/standalone/page-builders/thrive-architect/helpers'
+import { getEditorData as getBricksData } from '@/vue/standalone/page-builders/bricks/helpers'
+import { getEditorData as getOxygenData } from '@/vue/standalone/page-builders/oxygen/helpers'
+
+/**
+ * Retrieves the featured image from the active page builder editor.
+ *
+ * @returns {string} The featured image from the active page builder editor.
+ */
+const getEditorFeaturedImage = () => {
+	const editorMap = [
+		{ isEditor: isElementorEditor, getData: getElementorData },
+		{ isEditor: isDiviEditor, getData: getDiviData },
+		{ isEditor: isAvadaEditor, getData: getAvadaData },
+		{ isEditor: isThriveArchitectEditor, getData: getThriveArchitectData },
+		{ isEditor: isBricksEditor, getData: getBricksData },
+		{ isEditor: isOxygenEditor, getData: getOxygenData }
+	]
+
+	for (const editor of editorMap) {
+		if (editor.isEditor()) {
+			return editor.getData()?.featuredImage ?? ''
+		}
+	}
+
+	return ''
+}
 
 /**
  * Get the Classic Editor featured image.
@@ -41,42 +77,6 @@ const getBlockEditorFeaturedMediaId = async (edited = false) => {
 }
 
 /**
- * Returns the featured image URL.
- *
- * @returns {string} The featured image
- */
-export const getPostFeaturedImage = async () => {
-	if (isClassicEditor() || isClassicNoEditor()) {
-		return getClassicEditorFeaturedImage()
-	}
-
-	if (isBlockEditor()) {
-		const mediaId = await getBlockEditorFeaturedMediaId()
-			.then(id => id)
-
-		if (isNaN(mediaId) || 0 === mediaId) {
-			return ''
-		}
-
-		const postEditorStore = usePostEditorStore()
-		return postEditorStore.getMediaData({ mediaId })
-			.then(media => {
-				return media.source_url
-			})
-	}
-
-	if (isElementorEditor()) {
-		return getElementorData().featuredImage
-	}
-
-	if (isDiviEditor()) {
-		return getDiviData().featuredImage
-	}
-
-	return ''
-}
-
-/**
  * Returns the edited featured image URL.
  *
  * @returns {string} The featured image
@@ -101,21 +101,5 @@ export const getPostEditedFeaturedImage = async () => {
 			})
 	}
 
-	if (isElementorEditor()) {
-		return getElementorData().featuredImage
-	}
-
-	if (isDiviEditor()) {
-		return getDiviData().featuredImage
-	}
-
-	if (isAvadaEditor()) {
-		return getAvadaData().featuredImage
-	}
-
-	if (isThriveArchitectEditor()) {
-		return getThriveData().featuredImage
-	}
-
-	return ''
+	return getEditorFeaturedImage()
 }

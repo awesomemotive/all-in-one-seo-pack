@@ -49,6 +49,8 @@
 </template>
 
 <script>
+import { useMediaUploader } from '@/vue/composables/MediaUploader'
+
 import BaseButton from '@/vue/components/common/base/Button'
 import BaseImg from '@/vue/components/common/base/Img'
 import BaseInput from '@/vue/components/common/base/Input'
@@ -59,10 +61,15 @@ import { __ } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-let customUploader = {}
-
 export default {
-	emits      : [ 'update:modelValue' ],
+	emits : [ 'update:modelValue' ],
+	setup () {
+		const { openMediaLibrary } = useMediaUploader()
+
+		return {
+			openMediaLibrary
+		}
+	},
 	components : {
 		BaseButton,
 		BaseImg,
@@ -113,27 +120,11 @@ export default {
 			this.$emit('update:modelValue', src)
 		},
 		openUploadModal () {
-			customUploader = window.wp.media({
-				title  : __('Choose Image', td),
-				button : {
-					text : __('Choose Image', td)
-				},
-				multiple : false
-			})
-
-			customUploader.on('select', () => {
-				const attachment = customUploader.state().get('selection').first().toJSON()
-
-				this.setImgSrc(attachment?.url || null)
-			})
-
-			customUploader.on('close', () => {
-				// Destroy the uploader HTML.
-				customUploader.detach()
-			})
-
-			this.$nextTick(() => {
-				customUploader.open()
+			this.openMediaLibrary({
+				title      : __('Choose Image', td),
+				buttonText : __('Choose Image', td),
+				type       : 'image',
+				onSelect   : (attachment) => this.setImgSrc(attachment?.url || null)
 			})
 		}
 	}

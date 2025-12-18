@@ -186,7 +186,7 @@ class Query {
 			->select( 'YEAR(post_date) AS year, MONTH(post_date) AS month' )
 			->where( 'post_type', 'post' )
 			->where( 'post_status', 'publish' )
-			->whereRaw( "post_password=''" )
+			->where( 'post_password', '' )
 			->orderBy( 'year DESC' )
 			->orderBy( 'month DESC' )
 			->run()

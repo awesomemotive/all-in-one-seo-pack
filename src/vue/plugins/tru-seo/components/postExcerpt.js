@@ -16,7 +16,9 @@ import {
 	isWPBakeryEditor,
 	isAvadaEditor,
 	isSiteOriginEditor,
-	isThriveArchitectEditor
+	isThriveArchitectEditor,
+	isBricksEditor,
+	isOxygenEditor
 } from '@/vue/utils/context'
 
 import { getEditorData as getElementorData } from '@/vue/standalone/page-builders/elementor/helpers'
@@ -26,6 +28,8 @@ import { getEditorData as getWPBakeryData } from '@/vue/standalone/page-builders
 import { getEditorData as getAvadaData } from '@/vue/standalone/page-builders/avada/helpers'
 import { getEditorData as getSiteOriginData } from '@/vue/standalone/page-builders/siteorigin/helpers'
 import { getEditorData as getThriveArchitectData } from '@/vue/standalone/page-builders/thrive-architect/helpers'
+import { getEditorData as getBricksData } from '@/vue/standalone/page-builders/bricks/helpers'
+import { getEditorData as getOxygenData } from '@/vue/standalone/page-builders/oxygen/helpers'
 import { getText } from '@/vue/utils/html'
 
 /**
@@ -49,38 +53,30 @@ const excerptFromContent = (content) => {
 }
 
 /**
- * Returns the post excerpt from page builders.
+ * Retrieves the excerpt from the active page builder editor.
  *
- * @returns {string} Post Excerpt.
+ * @returns {string} The excerpt from the active page builder editor.
  */
 const getEditorExcerpt = () => {
-	let postExcerpt = ''
+	const editorMap = [
+		{ isEditor: isElementorEditor, getData: getElementorData },
+		{ isEditor: isDiviEditor, getData: getDiviData },
+		{ isEditor: isSeedProdEditor, getData: getSeedProdData },
+		{ isEditor: isWPBakeryEditor, getData: getWPBakeryData },
+		{ isEditor: isAvadaEditor, getData: getAvadaData },
+		{ isEditor: isSiteOriginEditor, getData: getSiteOriginData },
+		{ isEditor: isThriveArchitectEditor, getData: getThriveArchitectData },
+		{ isEditor: isBricksEditor, getData: getBricksData },
+		{ isEditor: isOxygenEditor, getData: getOxygenData }
+	]
 
-	switch (true) {
-		case isElementorEditor():
-			postExcerpt = getElementorData().excerpt
-			break
-		case isDiviEditor():
-			postExcerpt = getDiviData().excerpt
-			break
-		case isSeedProdEditor():
-			postExcerpt = getSeedProdData().excerpt
-			break
-		case isWPBakeryEditor():
-			postExcerpt = getWPBakeryData().excerpt
-			break
-		case isAvadaEditor():
-			postExcerpt = getAvadaData().excerpt
-			break
-		case isSiteOriginEditor():
-			postExcerpt = getSiteOriginData().excerpt
-			break
-		case isThriveArchitectEditor():
-			postExcerpt = getThriveArchitectData().excerpt
-			break
+	for (const editor of editorMap) {
+		if (editor.isEditor()) {
+			return editor.getData()?.excerpt ?? ''
+		}
 	}
 
-	return postExcerpt
+	return ''
 }
 
 /**

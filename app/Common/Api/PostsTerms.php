@@ -564,7 +564,7 @@ class PostsTerms {
 		}
 
 		// Check if we can process it using a page builder integration.
-		$pageBuilder = aioseo()->helpers->getPostPageBuilderName( $args['postId'] );
+		$pageBuilder = $body['integration'] ?? aioseo()->helpers->getPostPageBuilderName( $args['postId'] );
 		if ( ! empty( $pageBuilder ) ) {
 			return new \WP_REST_Response( [
 				'success' => true,

@@ -166,7 +166,7 @@ class SlugMonitor {
 	 * @return bool             True if an automatic redirect was added.
 	 */
 	private function automaticRedirect( $postType, $before, $after ) {
-		if ( empty( aioseo()->redirects->isActive ) ) {
+		if ( empty( aioseo()->redirects ) ) {
 			return false;
 		}
 
@@ -182,7 +182,7 @@ class SlugMonitor {
 	 * @return string       The redirect link.
 	 */
 	public function manualRedirectUrl( $urls ) {
-		if ( empty( aioseo()->redirects->isActive ) ) {
+		if ( empty( aioseo()->redirects ) ) {
 			return admin_url( 'admin.php?page=aioseo-redirects' );
 		}
 

@@ -1,36 +1,4 @@
-import {
-	loadPiniaStores,
-	usePostEditorStore,
-	useSeoRevisionsStore,
-	useLicenseStore
-} from '@/vue/stores'
-
-import { isEmpty } from 'lodash-es'
-
-/**
- * Save SEO Settings when SeedProd editor is saved.
- *
- * @returns {void}.
- */
-const handleEditorSave = () => {
-	// We need to load the Pinia here since we are using the store outside an App.
-	loadPiniaStores()
-	const postEditorStore = usePostEditorStore()
-	if (isEmpty(postEditorStore.currentPost)) {
-		return
-	}
-
-	// Clear isDirty flag as soon as save is initiated.
-	postEditorStore.isDirty = false
-
-	postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
-		const licenseStore      = useLicenseStore()
-		const seoRevisionsStore = useSeoRevisionsStore()
-		if (!licenseStore.isUnlicensed) {
-			seoRevisionsStore.fetch()
-		}
-	})
-}
+import { handleEditorSave } from '@/vue/standalone/page-builders/helpers'
 
 export default () => {
 	// This hook will fire when the Save button is triggered.

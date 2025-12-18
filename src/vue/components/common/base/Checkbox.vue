@@ -79,6 +79,7 @@ export default {
 
 <style lang="scss">
 .aioseo-checkbox {
+	color: $black;
 	display: inline-flex;
 	align-items: center;
 
@@ -99,9 +100,7 @@ export default {
 	}
 
 	&.round {
-
 		.form-checkbox {
-
 			span {
 				border-radius: 50%;
 

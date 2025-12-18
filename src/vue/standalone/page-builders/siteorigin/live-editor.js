@@ -28,7 +28,7 @@ const mountComponent = ({ id, component, name, rootProps, data }) => {
 		history : createWebHistory(),
 		routes  : [
 			{
-				path      : '/',
+				path      : '/:pathMatch(.*)*', // Catch-all keeps Vue Router from warning about the current WP admin URL.
 				component : component
 			}
 		]

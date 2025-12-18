@@ -26,6 +26,16 @@ const setActiveButton = (hasChanges) => {
 	}
 }
 
+const save = () => {
+	const { elementorCommon, $e } = window
+	if (!elementorCommon || !$e) {
+		return
+	}
+
+	elementorCommon.ajax.requestConstants[buttonSettings.param] = true
+	$e.run('document/save/default')
+}
+
 /**
  * Initializes the Limit Modified Date integration.
  *
@@ -46,9 +56,7 @@ export default ({ elementor, elementorCommon, $e }) => {
 					return
 				}
 
-				// Before saving, set the request constant to true.
-				elementorCommon.ajax.requestConstants[buttonSettings.param] = true
-				$e.run('document/save/default')
+				save()
 			}
 		})
 	})
@@ -70,4 +78,6 @@ export default ({ elementor, elementorCommon, $e }) => {
 				break
 		}
 	})
+
+	document.addEventListener('aioseo-limit-modified-date-save', save)
 }

@@ -144,14 +144,14 @@ class WPBakery extends Base {
 	 * @since 4.5.2
 	 *
 	 * @param  int    $postId  The post id.
-	 * @param  string $content The raw content.
+	 * @param  mixed  $content The raw content.
 	 * @return string          The processed content.
 	 */
-	public function processContent( $postId, $content = '' ) {
+	public function processContent( $postId, $content = null ) {
 		if ( method_exists( '\WPBMap', 'addAllMappedShortcodes' ) ) {
 			\WPBMap::addAllMappedShortcodes();
 		}
 
-		return parent::processContent( $postId, $content );
+		return parent::processContent( $postId, $content ?? '' );
 	}
 }

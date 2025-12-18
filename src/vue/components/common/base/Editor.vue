@@ -717,6 +717,7 @@ export default {
 	}
 
 	.ql-editor {
+		background-color: #fff;
 		padding: 7px 10px;
 		border-radius: 3px;
 		font-size: $font-md;
