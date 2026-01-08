@@ -76,33 +76,33 @@ class Elementor extends Base {
 	 */
 	public function addInlineScript() {
 		$title  = esc_js( __( 'Save (Don\'t Modify Date)', 'all-in-one-seo-pack' ) );
-		$script = <<<JS
-(function($) {
-	$(window).on('elementor:init', () => {
-		if(!window?.elementorV2) {
-			return
-		}
+		$script = "
+			(function($) {
+				$(window).on('elementor:init', () => {
+					if(!window?.elementorV2) {
+						return
+					}
 
-		window.elementorV2.editorAppBar.documentOptionsMenu.registerToggleAction({
-			priority : 10,
-			useProps : () => {
-				const currentDocument = window.elementor?.documents?.getCurrent() || null;
-				const isChanged = currentDocument?.editor?.isChanged ?? true;
-				const isSaving = currentDocument?.editor?.isSaving ?? false;
+					window.elementorV2.editorAppBar.documentOptionsMenu.registerToggleAction({
+						priority : 10,
+						useProps : () => {
+							const currentDocument = window.elementor?.documents?.getCurrent() || null;
+							const isChanged = currentDocument?.editor?.isChanged ?? true;
+							const isSaving = currentDocument?.editor?.isSaving ?? false;
 
-				return {
-					title : '{$title}',
-					icon  : window.elementorV2.icons.CalendarIcon,
-					onClick : () => {
-						document.dispatchEvent(new Event('aioseo-limit-modified-date-save'))
-					},
-					disabled : !isChanged || isSaving
-				}
-			}
-		})
-	})
-})(window.jQuery)
-JS;
+							return {
+								title : '{$title}',
+								icon  : window.elementorV2.icons.CalendarIcon,
+								onClick : () => {
+									document.dispatchEvent(new Event('aioseo-limit-modified-date-save'))
+								},
+								disabled : !isChanged || isSaving
+							}
+						}
+					})
+				})
+			})(window.jQuery)
+		";
 
 		wp_add_inline_script( 'elementor-editor', $script, 'before' );
 	}

@@ -577,8 +577,9 @@ const props = defineProps({
 	}
 })
 
-const loadingRows = ref(new Set())
-const table       = ref(null)
+const loadingRows   = ref(new Set())
+const fetchedRowIds = ref(new Set())
+const table         = ref(null)
 
 const {
 	items: indexStatusItems,
@@ -723,6 +724,9 @@ const refreshObjectStatus = async (row) => {
 }
 
 const maybeGetInspectionResults = debounce(async (rows) => {
+	// Mark rows as processed to prevent re-fetching after table refresh.
+	rows.forEach(row => fetchedRowIds.value.add(row.id))
+
 	try {
 		const paths = rows.map(row => {
 			loadingRows.value.add(row.id)
@@ -767,7 +771,7 @@ onBeforeMount(async () => {
 })
 
 watch(() => props.paginatedRows.rows, (newVal) => {
-	const rows = newVal.filter(row => !row.isInspectionValid)
+	const rows = newVal.filter(row => !row.isInspectionValid && !fetchedRowIds.value.has(row.id))
 	if (rows.length) {
 		maybeGetInspectionResults(rows)
 	}

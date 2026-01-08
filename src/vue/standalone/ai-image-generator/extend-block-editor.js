@@ -72,7 +72,7 @@ export const extendImageBlockToolbar = () => {
 				}
 
 				const wpMedia = useSelect((select) => {
-					return select('core').getMedia(props.attributes.id) || null
+					return select('core').getEntityRecord('postType', 'attachment', props.attributes.id) || null
 				}, [ `media-${props.attributes.id}` ])
 
 				return html`

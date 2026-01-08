@@ -232,7 +232,7 @@ abstract class Base {
 		}
 
 		if ( aioseo()->helpers->isAjaxCronRestRequest() ) {
-			return apply_filters( 'the_content', $content );
+			return apply_filters( 'the_content', $content ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		}
 
 		return $content;

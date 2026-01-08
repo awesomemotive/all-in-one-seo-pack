@@ -974,6 +974,44 @@ trait WpContext {
 	}
 
 	/**
+	 * Sets the given term as the queried object of the main query.
+	 *
+	 * @since 4.9.3
+	 *
+	 * @param  \WP_Term|int $wpTerm   The term object or ID.
+	 * @param  string       $taxonomy The taxonomy name. Required if $wpTerm is an ID.
+	 * @return void
+	 */
+	public function setWpQueryTerm( $wpTerm, $taxonomy = '' ) {
+		$wpTerm = is_a( $wpTerm, 'WP_Term' ) ? $wpTerm : get_term( $wpTerm, $taxonomy );
+		if ( ! is_a( $wpTerm, 'WP_Term' ) ) {
+			return;
+		}
+
+		// phpcs:disable Squiz.NamingConventions.ValidVariableName
+		global $wp_query;
+		$this->originalQuery = $this->deepClone( $wp_query );
+
+		$wp_query->queried_object    = $wpTerm;
+		$wp_query->queried_object_id = (int) $wpTerm->term_id;
+		$wp_query->is_archive        = true;
+
+		// Set the appropriate taxonomy flag.
+		switch ( $wpTerm->taxonomy ) {
+			case 'category':
+				$wp_query->is_category = true;
+				break;
+			case 'post_tag':
+				$wp_query->is_tag = true;
+				break;
+			default:
+				$wp_query->is_tax = true;
+				break;
+		}
+		// phpcs:enable Squiz.NamingConventions.ValidVariableName
+	}
+
+	/**
 	 * Restores the main query back to the original query.
 	 *
 	 * @since 4.3.0

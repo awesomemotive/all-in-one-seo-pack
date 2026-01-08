@@ -311,17 +311,17 @@ class Tags {
 			case 'post_day':
 				$out = $sampleData
 					? date_i18n( 'd' )
-					: date( 'd', aioseo()->standalone->buddyPress->component->date );
+					: date_i18n( 'd', aioseo()->standalone->buddyPress->component->date );
 				break;
 			case 'post_month':
 				$out = $sampleData
 					? date_i18n( 'F' )
-					: date( 'F', aioseo()->standalone->buddyPress->component->date );
+					: date_i18n( 'F', aioseo()->standalone->buddyPress->component->date );
 				break;
 			case 'post_year':
 				$out = $sampleData
 					? date_i18n( 'Y' )
-					: date( 'Y', aioseo()->standalone->buddyPress->component->date );
+					: date_i18n( 'Y', aioseo()->standalone->buddyPress->component->date );
 				break;
 			case 'archive_title':
 				$out = $sampleData

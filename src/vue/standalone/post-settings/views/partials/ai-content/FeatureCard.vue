@@ -34,7 +34,30 @@
 		</div>
 
 		<div>
+			<core-tooltip
+				v-if="isAiAssistantHiddenByUser"
+				type="action"
+				placement="top"
+				:offset="'sidebar' === parentComponentContext ? '-80px, 0' : '25px, 0'"
+			>
+				<base-button
+					size="small"
+					type="blue"
+					disabled
+					class="aioseo-ai-content-feature-card-btn"
+				>
+					<span v-if="'sidebar' !== parentComponentContext">{{ feature.strings.buttonSubmit }}</span>
+
+					<span v-else>&rarr;</span>
+				</base-button>
+
+				<template #tooltip>
+					{{ strings.blockHiddenWarning }}
+				</template>
+			</core-tooltip>
+
 			<base-button
+				v-else
 				size="small"
 				type="blue"
 				:disabled="!optionsStore.internalOptions.internal.ai.credits.remaining || buttonDisabled"
@@ -62,10 +85,12 @@
 import { useAiContent } from '@/vue/composables/AiContent'
 
 import {
+	useAiAssistantStore,
 	useAiStore,
 	useOptionsStore
 } from '@/vue/stores'
 
+import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import FaqsModal from './FaqsModal'
 import ImageGeneratorModal from './ImageGeneratorModal'
 import KeyPointsModal from './KeyPointsModal'
@@ -82,15 +107,20 @@ import SvgMetaTitle from '@/vue/components/common/svg/ai/MetaTitle'
 import SvgRepurposeContent from '@/vue/components/common/svg/ai/RepurposeContent'
 import SvgStarOutline from '@/vue/components/common/svg/StarOutline'
 
+import { __, sprintf } from '@/vue/plugins/translations'
+const td = import.meta.env.VITE_TEXTDOMAIN
+
 export default {
 	setup () {
 		return {
-			aiContent    : useAiContent(),
-			aiStore      : useAiStore(),
-			optionsStore : useOptionsStore()
+			aiAssistantStore : useAiAssistantStore(),
+			aiContent        : useAiContent(),
+			aiStore          : useAiStore(),
+			optionsStore     : useOptionsStore()
 		}
 	},
 	components : {
+		CoreTooltip,
 		FaqsModal,
 		ImageGeneratorModal,
 		KeyPointsModal,
@@ -115,6 +145,19 @@ export default {
 		buttonDisabled : {
 			type     : Boolean,
 			required : false
+		}
+	},
+	data () {
+		return {
+			strings : {
+				// Translators: 1 - The word "Preferences" from WordPress core translations.
+				blockHiddenWarning : sprintf(__('Block hidden in %1$s.', td), __('Preferences'))
+			}
+		}
+	},
+	computed : {
+		isAiAssistantHiddenByUser () {
+			return 'ai-assistant' === this.feature.slug && this.aiAssistantStore.isBlockHiddenByUser
 		}
 	}
 }
@@ -185,6 +228,10 @@ export default {
 
 	.aioseo-ai-content-feature-card-btn {
 		width: var(--feature-card-btn-width, 32px);
+	}
+
+	.aioseo-tooltip {
+		margin: 0;
 	}
 }
 

@@ -28,6 +28,21 @@ class Network {
 		$enabled          = isset( $body['enabled'] ) ? boolval( $body['enabled'] ) : null;
 		$searchAppearance = ! empty( $body['searchAppearance'] ) ? $body['searchAppearance'] : [];
 
+		// Ensure the user has access to the target site.
+		if (
+			$siteId &&
+			is_multisite() &&
+			(
+				! is_user_member_of_blog( get_current_user_id(), $siteId ) &&
+				! is_super_admin()
+			)
+		) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'You do not have permission to access this site.'
+			], 403 );
+		}
+
 		aioseo()->helpers->switchToBlog( $siteId );
 
 		$options = $isNetwork ? aioseo()->networkOptions : aioseo()->options;

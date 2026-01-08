@@ -1,7 +1,9 @@
 import { getSelectedTerms } from '@/vue/standalone/primary-term/helpers'
+import { createApp } from 'vue'
 import {
 	useRootStore,
-	usePostEditorStore
+	usePostEditorStore,
+	loadPiniaStores
 } from '@/vue/stores'
 import { registerBlock } from '../utils'
 import { Sidebar } from './Sidebar'
@@ -19,8 +21,6 @@ const ServerSideRender = wp.serverSideRender || wp.components.ServerSideRender
 const postType = window?.aioseo?.currentPost?.postType ?? ''
 let defaultTaxonomy = ''
 const findDefaultTaxonomy = window?.aioseo?.postData?.postTypes.find(t => t.name === postType)
-
-const postEditorStore = usePostEditorStore()
 
 if (findDefaultTaxonomy && 0 < findDefaultTaxonomy.taxonomies.length) {
 	defaultTaxonomy = findDefaultTaxonomy.taxonomies[0]
@@ -51,21 +51,22 @@ export const settings = {
 		breadcrumbSettings : {
 			type    : 'object',
 			default : {
-				default            : postEditorStore?.currentPost?.breadcrumb_settings?.default ?? true,
-				separator          : postEditorStore?.currentPost?.breadcrumb_settings?.separator ?? '›',
-				showHomeCrumb      : postEditorStore?.currentPost?.breadcrumb_settings?.showHomeCrumb ?? true,
-				showTaxonomyCrumbs : postEditorStore?.currentPost?.breadcrumb_settings?.showTaxonomyCrumbs ?? true,
-				showParentCrumbs   : postEditorStore?.currentPost?.breadcrumb_settings?.showParentCrumbs ?? true,
-				template           : postEditorStore?.currentPost?.breadcrumb_settings?.template ?? 'default',
-				parentTemplate     : postEditorStore?.currentPost?.breadcrumb_settings?.parentTemplate ?? 'default',
-				taxonomy           : postEditorStore?.currentPost?.breadcrumb_settings?.taxonomy || defaultTaxonomy,
-				primaryTerm        : postEditorStore?.currentPost?.breadcrumb_settings?.primaryTerm ?? null
+				default            : window?.aioseo?.currentPost?.breadcrumb_settings?.default ?? true,
+				separator          : window?.aioseo?.currentPost?.breadcrumb_settings?.separator ?? '›',
+				showHomeCrumb      : window?.aioseo?.currentPost?.breadcrumb_settings?.showHomeCrumb ?? true,
+				showTaxonomyCrumbs : window?.aioseo?.currentPost?.breadcrumb_settings?.showTaxonomyCrumbs ?? true,
+				showParentCrumbs   : window?.aioseo?.currentPost?.breadcrumb_settings?.showParentCrumbs ?? true,
+				template           : window?.aioseo?.currentPost?.breadcrumb_settings?.template ?? 'default',
+				parentTemplate     : window?.aioseo?.currentPost?.breadcrumb_settings?.parentTemplate ?? 'default',
+				taxonomy           : window?.aioseo?.currentPost?.breadcrumb_settings?.taxonomy || defaultTaxonomy,
+				primaryTerm        : window?.aioseo?.currentPost?.breadcrumb_settings?.primaryTerm ?? null
 			}
 		}
 	},
 	edit : function (props) {
 		const { setAttributes, attributes, clientId } = props
 		const rootStore = useRootStore()
+		const postEditorStore = usePostEditorStore()
 		const blockRef = useRef(null)
 		const hasRenderedRef = useRef(false)
 
@@ -204,6 +205,8 @@ export const settings = {
 	}
 }
 
+const app = createApp({})
+loadPiniaStores(app)
 registerBlock({
 	name,
 	settings

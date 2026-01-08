@@ -333,6 +333,7 @@ const formatBrandsMentioned = (count) => {
 	const num = parseInt(count, 10)
 
 	return sprintf(
+		// Translators: 1 - Number of brands mentioned.
 		_n('%1$s brand mentioned', '%1$s brands mentioned', num, td),
 		num
 	)

@@ -126,7 +126,7 @@ class Review {
 			<div class="step-3" style="display:none;">
 				<p><?php echo esc_html( $string7 ); ?></p>
 				<p>
-					<a href="https://wordpress.org/support/plugin/all-in-one-seo-pack/reviews/?filter=5#new-post" class="aioseo-dismiss-review-notice" target="_blank" rel="noopener noreferrer">
+					<a href="https://aioseo.com/aioseo-wordpress-rating" class="aioseo-dismiss-review-notice" target="_blank" rel="noopener noreferrer">
 						<?php echo esc_html( $string9 ); ?>
 					</a>&nbsp;&bull;&nbsp;
 					<a href="#" class="aioseo-dismiss-review-notice-delay" target="_blank" rel="noopener noreferrer">
@@ -165,7 +165,7 @@ class Review {
 			<div class="step-3">
 				<p><?php echo $string1; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 				<p>
-					<a href="https://wordpress.org/support/plugin/all-in-one-seo-pack/reviews/?filter=5#new-post" class="aioseo-dismiss-review-notice" target="_blank" rel="noopener noreferrer">
+					<a href="https://aioseo.com/aioseo-wordpress-rating" class="aioseo-dismiss-review-notice" target="_blank" rel="noopener noreferrer">
 						<?php echo esc_html( $string9 ); ?>
 					</a>&nbsp;&bull;&nbsp;
 					<a href="#" class="aioseo-dismiss-review-notice-delay" target="_blank" rel="noopener noreferrer">

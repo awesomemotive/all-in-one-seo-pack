@@ -5,7 +5,7 @@ import {
 import { isEqual } from 'lodash-es'
 import { debounce } from '@/vue/utils/debounce'
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
-import { getEditorData } from './helpers'
+import { getEditorData, getSaveButtons } from './helpers'
 import { handleEditorSave } from '@/vue/standalone/page-builders/helpers'
 
 let editorData = {}
@@ -69,7 +69,9 @@ export default ({ vc }) => {
 	})
 
 	// Listen for the editor being saved.
-	document.querySelectorAll('#vc_button-update, #vc_button-save-draft, #vc_button-save-as-pending').forEach(button => {
-		button.addEventListener('click', handleEditorSave)
+	getSaveButtons().forEach($button => {
+		$button.addEventListener('click', () => {
+			setTimeout(handleEditorSave)
+		})
 	})
 }

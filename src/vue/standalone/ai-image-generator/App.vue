@@ -54,9 +54,11 @@ onMounted(() => {
 		}
 
 		const selectedImage = aiImageGeneratorStore.images.all.rows.find(image => image.id === imageId) || {
-			id  : imageId,
-			url : attributes.url,
-			alt : attributes.alt
+			id     : imageId,
+			url    : attributes.url,
+			alt    : attributes.alt,
+			width  : aiImageGeneratorStore.initiator.wpMedia?.media_details?.width,
+			height : aiImageGeneratorStore.initiator.wpMedia?.media_details?.height
 		}
 
 		aiImageGeneratorStore.selectImage(selectedImage)

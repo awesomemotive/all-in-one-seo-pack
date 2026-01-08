@@ -133,7 +133,7 @@ class Bricks extends Base {
 	 */
 	public function limitModifiedDate( $postId ) {
 		// This method is supposed to be used in the `bricks_save_post` action.
-		if ( ! isset( $_REQUEST['nonce'] ) || ! wp_verify_nonce( $_REQUEST['nonce'], 'bricks-nonce-builder' ) ) {
+		if ( ! isset( $_REQUEST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['nonce'] ) ), 'bricks-nonce-builder' ) ) {
 			return false;
 		}
 

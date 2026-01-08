@@ -169,7 +169,7 @@ class Oxygen extends Base {
 	public function limitModifiedDate( $postId ) {
 		// This method is supposed to be used in the `breakdance_save` action.
 		$action = function_exists( '\Breakdance\AJAX\get_nonce_key_for_ajax_requests' ) ? \Breakdance\AJAX\get_nonce_key_for_ajax_requests() : 'breakdance_ajax';
-		if ( ! isset( $_REQUEST['_ajax_nonce'] ) || ! wp_verify_nonce( $_REQUEST['_ajax_nonce'], $action ) ) {
+		if ( ! isset( $_REQUEST['_ajax_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_ajax_nonce'] ) ), $action ) ) {
 			return false;
 		}
 

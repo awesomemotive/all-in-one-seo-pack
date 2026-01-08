@@ -54,8 +54,11 @@ class PostMeta {
 			->start( 'posts' . ' as p' )
 			->select( 'p.ID, p.post_type' )
 			->leftJoin( 'aioseo_posts as ap', '`p`.`ID` = `ap`.`post_id`' )
-			->whereRaw( "( ap.post_id IS NULL OR ap.updated < '$timeStarted' )" )
+			->join( 'postmeta as pm', '`p`.`ID` = `pm`.`post_id`' )
 			->whereIn( 'p.post_type', $publicPostTypes )
+			->whereRaw( "( ap.post_id IS NULL OR ap.updated < '$timeStarted' )" )
+			->whereLike( 'pm.meta_key', '_yoast_wpseo_%', true )
+			->groupBy( 'p.ID' )
 			->orderBy( 'p.ID DESC' )
 			->limit( $postsPerAction )
 			->run()
@@ -96,6 +99,11 @@ class PostMeta {
 				->run()
 				->result();
 
+			if ( ! $postMeta || ! count( $postMeta ) ) {
+				// Skip posts with no Yoast meta (shouldn't happen with our query filter, but defensive check).
+				continue;
+			}
+
 			$featuredImage = get_the_post_thumbnail_url( $post->ID );
 			$meta          = [
 				'post_id'                  => (int) $post->ID,
@@ -120,15 +128,6 @@ class PostMeta {
 				'twitter_image_custom_url' => '',
 				'twitter_image_type'       => 'default'
 			];
-
-			if ( ! $postMeta || ! count( $postMeta ) ) {
-				$aioseoPost = Models\Post::getPost( (int) $post->ID );
-				$aioseoPost->set( $meta );
-				$aioseoPost->save();
-
-				aioseo()->migration->meta->migrateAdditionalPostMeta( $post->ID );
-				continue;
-			}
 
 			$title = '';
 			foreach ( $postMeta as $record ) {
@@ -327,7 +326,7 @@ class PostMeta {
 
 		if ( count( $posts ) === $postsPerAction ) {
 			try {
-				as_schedule_single_action( time() + 5, aioseo()->importExport->yoastSeo->postActionName, [], 'aioseo' );
+				as_schedule_single_action( time() + 30, aioseo()->importExport->yoastSeo->postActionName, [], 'aioseo' );
 			} catch ( \Exception $e ) {
 				// Do nothing.
 			}

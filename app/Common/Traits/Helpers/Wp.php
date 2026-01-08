@@ -973,7 +973,7 @@ trait Wp {
 				return null;
 			}
 
-			$postTypeLabels[ $postType ] = get_post_type_labels( $postTypeObject );
+			$postTypeLabels[ $postType ] = $postTypeObject->labels;
 		}
 
 		return $postTypeLabels[ $postType ];

@@ -158,7 +158,8 @@ class SeoPreview {
 				$wpObject = aioseo()->helpers->getPost();
 
 				if ( is_a( $wpObject, 'WP_Post' ) ) {
-					$labels                = get_post_type_labels( get_post_type_object( $wpObject->post_type ) );
+					$postTypeObject        = get_post_type_object( $wpObject->post_type );
+					$labels                = $postTypeObject->labels;
 					$data['editObjectUrl'] = get_edit_post_link( $wpObject, 'url' );
 
 					if (

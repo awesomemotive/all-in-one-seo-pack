@@ -138,6 +138,11 @@ class PostMeta {
 				->run()
 				->result();
 
+			if ( ! $postMeta || ! count( $postMeta ) ) {
+				// Skip posts with no Rank Math meta (shouldn't happen with our query filter, but defensive check).
+				continue;
+			}
+
 			$meta = array_merge( [
 				'post_id' => (int) $post->ID,
 			], $this->getMetaData( $postMeta, $post ) );
@@ -154,7 +159,7 @@ class PostMeta {
 
 		if ( count( $posts ) === $postsPerAction ) {
 			try {
-				as_schedule_single_action( time() + 5, $this->postActionName, [], 'aioseo' );
+				as_schedule_single_action( time() + 30, $this->postActionName, [], 'aioseo' );
 			} catch ( \Exception $e ) {
 				// Do nothing.
 			}

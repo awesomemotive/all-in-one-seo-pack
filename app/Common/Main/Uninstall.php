@@ -61,7 +61,7 @@ class Uninstall {
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery
 		foreach ( aioseo()->core->getDbTables() as $tableName ) {
-			$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $tableName ) );
+			$wpdb->query( "DROP TABLE IF EXISTS `" . esc_sql( $tableName ) . "`" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		}
 
 		// Delete all AIOSEO Locations and Location Categories.

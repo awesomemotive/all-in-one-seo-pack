@@ -1,5 +1,6 @@
 import { isBlockEditor, isClassicEditor } from '@/vue/utils/context'
 import {
+	useAiAssistantStore,
 	usePostEditorStore
 } from '@/vue/stores'
 
@@ -122,17 +123,23 @@ export const aiFeatures = {
 }
 
 export const getAiFeatures = () => {
-	const postEditorStore = usePostEditorStore()
-	if (!postEditorStore?.currentPost?.postType) {
-		return Object.values(aiFeatures)
-	}
+	const aiAssistantStore = useAiAssistantStore()
+	const postEditorStore  = usePostEditorStore()
 
 	return Object.values(aiFeatures).filter(feature => {
-		if (feature.excludedPostTypes.includes(postEditorStore.currentPost.postType)) {
-			return false
+		// Exclude AI Assistant if disabled via filter or not in block editor.
+		// Note: We still show it if hidden by user, but FeatureCard will show a warning.
+		if ('ai-assistant' === feature.slug) {
+			return aiAssistantStore.isBlockEnabled && isBlockEditor()
 		}
 
-		return !('ai-assistant' === feature.slug && !isBlockEditor())
+		if (postEditorStore?.currentPost?.postType) {
+			if (feature.excludedPostTypes.includes(postEditorStore.currentPost.postType)) {
+				return false
+			}
+		}
+
+		return true
 	})
 }
 

@@ -94,7 +94,7 @@ class PageBuilderIntegration {
 					if (!$wrapper.querySelector(`#${this.limitModifiedDate.node.attributes.id}`)) {
 						$wrapper.insertAdjacentElement('beforeend', createElement(this.limitModifiedDate.node.tag, {
 							...this.limitModifiedDate.node.attributes,
-							class : $wrapper.querySelector('[role="menuitem"]')?.classList.value
+							class : this.limitModifiedDate.node.attributes?.class || $wrapper.querySelector('[role="menuitem"]')?.classList.value
 						}))
 					}
 
@@ -102,7 +102,8 @@ class PageBuilderIntegration {
 					aioseoLimitModifiedDateApp = this.mountComponent({
 						name          : this.limitModifiedDate.appName,
 						component     : this.limitModifiedDate.component,
-						rootContainer : $wrapper.querySelector(`#${this.limitModifiedDate.node.attributes.id}`)
+						rootContainer : $wrapper.querySelector(`#${this.limitModifiedDate.node.attributes.id}`),
+						props         : this.limitModifiedDate?.props || {}
 					})
 				}
 

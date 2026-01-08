@@ -366,28 +366,20 @@ const deleteCount = computed(() => {
 })
 
 const areYouSureDeleteMessage = computed(() => {
-	return sprintf(
-		// Translators: 1 - Number of reports.
-		_n(
-			'Are you sure you want to delete this report?',
-			'Are you sure you want to delete %d reports?',
-			deleteCount.value,
-			td
-		),
-		deleteCount.value
+	return _n(
+		'Are you sure you want to delete this report?',
+		'Are you sure you want to delete these reports?',
+		deleteCount.value,
+		td
 	)
 })
 
 const yesDeleteMessage = computed(() => {
-	return sprintf(
-		// Translators: 1 - Number of reports.
-		_n(
-			'Yes, I want to delete this report',
-			'Yes, I want to delete %d reports',
-			deleteCount.value,
-			td
-		),
-		deleteCount.value
+	return _n(
+		'Yes, I want to delete this report',
+		'Yes, I want to delete these reports',
+		deleteCount.value,
+		td
 	)
 })
 

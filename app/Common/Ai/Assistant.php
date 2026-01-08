@@ -25,7 +25,9 @@ class Assistant {
 
 		return [
 			'extend' => [
+				'block'                     => aioseo()->standalone->standaloneBlocks['aiAssistant']->isEnabled(),
 				'blockEditorInserterButton' => apply_filters( 'aioseo_ai_assistant_extend_block_editor_inserter_button', true, $objectId ),
+				'paragraphPlaceholder'      => apply_filters( 'aioseo_ai_assistant_extend_paragraph_placeholder', true, $objectId )
 			]
 		];
 	}

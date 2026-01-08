@@ -276,6 +276,11 @@ class Tags {
 			'tax_name',
 			'taxonomy_title'
 		],
+		'schemaReviewAuthor'  => [
+			'author_first_name',
+			'author_last_name',
+			'author_name'
+		],
 		'searchDescription'   => [
 			'current_date',
 			'current_day',

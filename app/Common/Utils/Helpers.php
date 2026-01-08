@@ -407,7 +407,7 @@ class Helpers {
 			$cached[ $k ] = [
 				'url'     => $item['link'],
 				'title'   => $item['title']['rendered'],
-				'date'    => date( get_option( 'date_format' ), strtotime( $item['date'] ) ),
+				'date'    => date_i18n( get_option( 'date_format' ), strtotime( $item['date'] ) ),
 				'content' => wp_html_excerpt( $item['content']['rendered'], 128, '&hellip;' ),
 			];
 

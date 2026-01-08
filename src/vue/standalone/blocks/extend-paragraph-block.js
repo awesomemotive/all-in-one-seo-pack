@@ -33,9 +33,16 @@ const isRootLevelParagraphBlock = (block, blockEditor) => {
  * Extend the paragraph block placeholder for root-level blocks only.
  * Uses a HOC to modify the placeholder prop without changing stored attributes.
  *
+ * @param {Object} options                  Options object.
+ * @param {Object} options.aiAssistantStore The AI Assistant store instance.
+ *
  * @returns {void}
  */
-export const extendParagraphPlaceholder = () => {
+export const extendParagraphPlaceholder = ({ aiAssistantStore }) => {
+	if (!aiAssistantStore.extend.paragraphPlaceholder) {
+		return
+	}
+
 	const { addFilter } = window.wp?.hooks || {}
 	const { select }    = window.wp?.data || {}
 	if (!addFilter || !select) {
@@ -49,8 +56,8 @@ export const extendParagraphPlaceholder = () => {
 			(BlockEdit) => (props) => {
 				const blockEditor = select('core/block-editor')
 
-				// Only modify root-level paragraph blocks.
-				if (!isRootLevelParagraphBlock(props, blockEditor)) {
+				// Only modify root-level paragraph blocks when AI Assistant is available.
+				if (!aiAssistantStore.isBlockAvailable || !isRootLevelParagraphBlock(props, blockEditor)) {
 					return createElement(BlockEdit, props)
 				}
 
@@ -70,9 +77,16 @@ export const extendParagraphPlaceholder = () => {
 /**
  * Check for "//" shortcut and insert AI Assistant block if detected.
  *
+ * @param {Object} options                  Options object.
+ * @param {Object} options.aiAssistantStore The AI Assistant store instance.
+ *
  * @returns {void}
  */
-export const checkAiAssistantShortcut = () => {
+export const checkAiAssistantShortcut = ({ aiAssistantStore }) => {
+	if (!aiAssistantStore.extend.paragraphPlaceholder) {
+		return
+	}
+
 	const { select, dispatch } = window.wp?.data || {}
 	const { createBlock }      = window.wp?.blocks || {}
 	if (!select || !dispatch || !createBlock) {

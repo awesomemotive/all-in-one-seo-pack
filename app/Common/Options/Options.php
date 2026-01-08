@@ -63,9 +63,7 @@ class Options {
 			'before' => [ 'type' => 'html' ],
 			'after'  => [
 				'type'    => 'html',
-				'default' => <<<TEMPLATE
-&lt;p&gt;The post #post_link first appeared on #site_link.&lt;/p&gt;
-TEMPLATE
+				'default' => '&lt;p&gt;The post #post_link first appeared on #site_link.&lt;/p&gt;'
 			]
 		],
 		'advanced'         => [

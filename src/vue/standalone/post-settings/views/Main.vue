@@ -306,7 +306,8 @@ const turnSlugIntoComponent = (slug) => {
 const updateSeoRevisions = () => {
 	if (
 		window.wp.data.select('core/editor').isSavingPost() &&
-		!window.wp.data.select('core/editor').isAutosavingPost()
+		!window.wp.data.select('core/editor').isAutosavingPost() &&
+		seoRevisionsStore.hasPermission
 	) {
 		updatingSeoRevisions.value = true
 
@@ -473,8 +474,11 @@ onMounted(async () => {
 			extendImageBlockToolbar()
 		}
 
+		// Initialize and keep track of user's block visibility preference.
+		aiAssistantStore.updateBlockHiddenByUser()
+
 		if (aiAssistantStore.hasPermission) {
-			extendParagraphPlaceholder()
+			extendParagraphPlaceholder({ aiAssistantStore })
 		}
 
 		watchBlockEditor.value = window.wp.data.subscribe(() => {
@@ -487,8 +491,11 @@ onMounted(async () => {
 				extendFeaturedImageButton()
 			}
 
-			if (aiAssistantStore.hasPermission) {
-				checkAiAssistantShortcut()
+			// Update hidden state (only triggers reactivity if value changed).
+			aiAssistantStore.updateBlockHiddenByUser()
+
+			if (aiAssistantStore.isBlockAvailable && aiAssistantStore.hasPermission) {
+				checkAiAssistantShortcut({ aiAssistantStore })
 				extendBlockEditorInserterButton({ aiAssistantStore })
 			}
 		})

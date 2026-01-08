@@ -63,6 +63,21 @@ export const useAiContent = () => {
 		{ label: __('Square (1:1)', td), value: 'square' }
 	]
 
+	const getAspectRatioFromDimensions = (width, height) => {
+		if (!width || !height) {
+			return null
+		}
+
+		const ratio = width / height
+		if (1 < ratio) {
+			return 'landscape'
+		}
+		if (1 > ratio) {
+			return 'portrait'
+		}
+		return 'square'
+	}
+
 	const strings = {
 		credits          : __('Credits', td),
 		alertDescription : sprintf(
@@ -99,6 +114,7 @@ export const useAiContent = () => {
 
 	return {
 		audienceOptions,
+		getAspectRatioFromDimensions,
 		getFeatureCost,
 		hasEnoughCredits,
 		imageAspectRatioOptions,

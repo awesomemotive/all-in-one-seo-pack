@@ -354,8 +354,8 @@ class PostsTerms {
 			update_post_meta( $postId, '_wp_attachment_image_alt', sanitize_text_field( $body['imageAltTag'] ) );
 		}
 
-		$aioseoPost->title       = $body['title'];
-		$aioseoPost->description = $body['description'];
+		$aioseoPost->title       = ! empty( $body['title'] ) ? sanitize_text_field( $body['title'] ) : null;
+		$aioseoPost->description = ! empty( $body['description'] ) ? sanitize_textarea_field( $body['description'] ) : null;
 		$aioseoPost->updated     = gmdate( 'Y-m-d H:i:s' );
 		$aioseoPost->save();
 

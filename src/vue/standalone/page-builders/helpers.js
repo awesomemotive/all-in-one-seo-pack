@@ -65,7 +65,7 @@ export const handleEditorSave = (builder = null) => {
 		postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
 			const licenseStore      = useLicenseStore()
 			const seoRevisionsStore = useSeoRevisionsStore()
-			if (!licenseStore.isUnlicensed) {
+			if (!licenseStore.isUnlicensed && seoRevisionsStore.hasPermission) {
 				seoRevisionsStore.fetch()
 			}
 		})

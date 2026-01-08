@@ -53,6 +53,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import { useAiContent } from '@/vue/composables/AiContent'
 
 import {
 	useAiImageGeneratorStore
@@ -63,23 +64,17 @@ import SvgTrash from '@/vue/components/common/svg/Trash'
 
 const aiImageGeneratorStore = useAiImageGeneratorStore()
 
+const {
+	getAspectRatioFromDimensions
+} = useAiContent()
+
 const inputTag = ref(null)
 
 const props = defineProps({
 	image : Object
 })
 
-const parsedAspectRatio = computed(() => {
-	const result = props.image.width / props.image.height
-
-	if (1 < result) {
-		return 'landscape'
-	} else if (1 > result) {
-		return 'portrait'
-	}
-
-	return 'square'
-})
+const parsedAspectRatio = computed(() => getAspectRatioFromDimensions(props.image.width, props.image.height))
 
 const buttonStates = computed(() => {
 	return {

@@ -18,7 +18,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { __ } from '@wordpress/i18n'
+import { __ } from '@/vue/plugins/translations'
 import { getBricksVueGlobalProperties } from '../helpers'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 

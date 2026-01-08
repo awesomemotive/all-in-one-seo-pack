@@ -57,7 +57,7 @@ class CategoryBase {
 	public function maybeRedirectCategoryUrl( $queryVars ) {
 		if ( isset( $queryVars['aioseo_category_redirect'] ) ) {
 			$categoryUrl = trailingslashit( get_option( 'home' ) ) . user_trailingslashit( $queryVars['aioseo_category_redirect'], 'category' );
-			wp_redirect( $categoryUrl, 301, 'AIOSEO' );
+			wp_redirect( $categoryUrl, 301, 'AIOSEO' ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 			die;
 		}
 

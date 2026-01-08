@@ -15,6 +15,24 @@ use AIOSEO\Plugin\Common\Integrations\BuddyPress as BuddyPressIntegration;
  */
 class Content {
 	/**
+	 * Methods that can be called dynamically based on sitemap index name.
+	 * This prevents collisions with user-defined post type slugs that match internal method names.
+	 *
+	 * @since 4.9.3
+	 *
+	 * @var array
+	 */
+	private $dynamicIndexMethods = [
+		'addl',
+		'author',
+		'date',
+		'rss',
+		'bpActivity',
+		'bpGroup',
+		'bpMember'
+	];
+
+	/**
 	 * Returns the entries for the requested sitemap.
 	 *
 	 * @since 4.0.0
@@ -50,7 +68,11 @@ class Content {
 
 		// Check if requested index has a dedicated method.
 		$methodName = aioseo()->helpers->dashesToCamelCase( aioseo()->sitemap->indexName );
-		if ( method_exists( $this, $methodName ) ) {
+		if (
+			in_array( $methodName, $this->dynamicIndexMethods, true ) &&
+			method_exists( $this, $methodName ) &&
+			! in_array( aioseo()->sitemap->indexName, [ 'posts', 'terms' ], true ) // Skip posts and terms indexes because they are handled differently.
+		) {
 			return $this->$methodName();
 		}
 
@@ -114,7 +136,11 @@ class Content {
 
 		// Check if requested index has a dedicated method.
 		$methodName = aioseo()->helpers->dashesToCamelCase( aioseo()->sitemap->indexName );
-		if ( method_exists( $this, $methodName ) ) {
+		if (
+			in_array( $methodName, $this->dynamicIndexMethods, true ) &&
+			method_exists( $this, $methodName ) &&
+			! in_array( aioseo()->sitemap->indexName, [ 'posts', 'terms' ], true ) // Skip posts and terms indexes because they are handled differently.
+		) {
 			$res = $this->$methodName();
 
 			return ! empty( $res ) ? count( $res ) : 0;
@@ -600,7 +626,7 @@ class Content {
 			GROUP BY
 				YEAR(post_date),
 				MONTH(post_date)
-			ORDER BY post_date ASC 
+			ORDER BY post_date ASC
 			LIMIT 50000",
 			true
 		)->result();

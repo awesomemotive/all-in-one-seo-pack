@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.9
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 4.9.2
+Stable tag: 4.9.3
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -231,6 +231,26 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.9.3**
+
+* Updated: Added a new filter to disable the AI Assistant block and extensions.
+* Updated: Added new filters to customize the LLMs title and description.
+* Updated: Added review support to Book and Event schema types for rich search results.
+* Updated: Hardened API routes to prevent AI access token from being exposed.
+* Updated: Removed the "New feature" alert for Keyword Rank Tracker.
+* Updated: Incorrect link in the Add Focus Keyword button of Site Audit.
+* Updated: Refactored WPBakery page builder integration for improved maintainability.
+* Updated: Table of Contents script now only loads if the TOC block is present on the page.
+* Updated: Added input sanitization for editable fields in the post details column.
+* Fixed: Console errors when trying to edit a template with Site Editor.
+* Fixed: Duplicate entries in the Search Statistics objects table caused by inconsistent path hashing.
+* Fixed: Improved sitemap generation for custom post types and custom taxonomies.
+* Fixed: Javascript TypeError when expanding certain Site Audit issue rows in SEO Analysis.
+* Fixed: AI Image Generator now correctly detects aspect ratio when editing portrait or square images.
+* Fixed: Console errors that occurred when users without proper permissions attempted to publish or update posts.
+* Fixed: PHP fatal error when accessing sitemaps for Custom Post Types with slugs matching internal method names.
+* Fixed: SEO plugin imports (Yoast, Rank Math, SEOPress) now only process posts and terms with existing data, improving performance and preventing unnecessary database growth.
+
 **New in Version 4.9.2**
 
 * New: Page Builder Integrations for Bricks & Oxygen - You can now seamlessly control your SEO settings directly within the visual builders of Bricks and Oxygen and analyze their content with TruSEO.
@@ -390,6 +410,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.9.2 =
+= 4.9.3 =
 
 This update adds major improvements and bug fixes.

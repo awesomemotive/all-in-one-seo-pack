@@ -8,7 +8,7 @@ import loadComponents from '@/vue/components/common'
 import { loadPiniaStores } from '@/vue/stores'
 
 import initWatcher from './watcher'
-import initLimitModifiedDate from './limit-modified-date/main'
+import initLimitModifiedDate from './limit-modified-date'
 import App from './App'
 
 const { vc } = window
@@ -21,7 +21,7 @@ const mountPostSettings = () => {
 		history : createWebHistory(),
 		routes  : [
 			{
-				path      : '/',
+				path      : '/:pathMatch(.*)*', // Catch-all keeps Vue Router from warning about the current WP admin URL.
 				component : App
 			}
 		]

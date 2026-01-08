@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
+
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { arrayColumn } from '@/vue/utils/helpers'
+
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 
@@ -23,9 +26,11 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 		seoRevisionsDiff      : [],
 		seoRevisionsDiffCache : {},
 		modalOpenSidebar      : false,
-		error                 : null
+		error                 : null,
+		capability            : 'aioseo_page_seo_revisions_settings'
 	}),
 	getters : {
+		hasPermission : (state) => allowed(state.capability),
 		hasDiff () {
 			if (0 < this.seoRevisionsDiff.length) {
 				return 0 < arrayColumn(this.seoRevisionsDiff, 'diff').filter(v => v).length

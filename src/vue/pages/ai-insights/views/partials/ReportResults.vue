@@ -67,7 +67,7 @@
 									:key="brand.name"
 									class="brand-tag"
 								>
-									{{ brand.name }} ({{ sprintf(strings.positionNumber, brand.position) }})
+									{{ brand.name }} ({{ sprintf('#%1$s', brand.position) }})
 								</div>
 							</div>
 
@@ -151,16 +151,23 @@ const props = defineProps({
 const expandedProvider = ref(null)
 
 const strings = {
-	aiEngineResults  : __('AI Engine Results', td),
-	tooltip          : __('Results from different AI engines', td),
-	// Translators: 1 - Number of sources.
-	sourcesCount     : __('%1$s sources', td),
-	// Translators: 1 - Number of brands.
-	brandsCount      : __('%1$s brands', td),
-	// Translators: 1 - Number of web search sources.
-	webSearchSources : __('%1$s Web Search Sources', td),
-	// Translators: 1 - Rank number (e.g. #1, #2, #3, etc.).
-	positionNumber   : __('#%1$s', td)
+	aiEngineResults : __('AI Engine Results', td),
+	tooltip         : __('Results from different AI engines', td),
+	sourcesCount    : sprintf(
+		// Translators: 1 - Number of sources.
+		__('%1$s sources', td),
+		'%1$s'
+	),
+	brandsCount : sprintf(
+		// Translators: 1 - Number of brands.
+		__('%1$s brands', td),
+		'%1$s'
+	),
+	webSearchSources : sprintf(
+		// Translators: 1 - Number of web search sources.
+		__('%1$s Web Search Sources', td),
+		'%1$s'
+	)
 }
 
 const providers = computed(() => {

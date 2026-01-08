@@ -108,6 +108,7 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 	actions : {
 		selectImage (image) {
 			const {
+				getAspectRatioFromDimensions,
 				imageQualityOptions,
 				imageStyleOptions,
 				imageAspectRatioOptions
@@ -117,10 +118,13 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 
 			this.images.selected = [ image ]
 
-			this.form.prompt.value      = image?.prompt || ''
-			this.form.quality.value     = imageQualityOptions.find(o => o.value === image?.quality) || imageQualityOptions.find(o => o.value === optionsStore.options.aiContent.imageQuality)
-			this.form.style.value       = imageStyleOptions.find(o => o.value === image?.style) || imageStyleOptions.find(o => o.value === optionsStore.options.aiContent.imageStyle)
-			this.form.aspectRatio.value = imageAspectRatioOptions.find(o => o.value === image?.aspectRatio) || imageAspectRatioOptions.find(o => o.value === optionsStore.options.aiContent.imageAspectRatio)
+			this.form.prompt.value  = image?.prompt || ''
+			this.form.quality.value = imageQualityOptions.find(o => o.value === image?.quality) || imageQualityOptions.find(o => o.value === optionsStore.options.aiContent.imageQuality)
+			this.form.style.value   = imageStyleOptions.find(o => o.value === image?.style) || imageStyleOptions.find(o => o.value === optionsStore.options.aiContent.imageStyle)
+
+			const aspectRatioValue = image?.aspectRatio || getAspectRatioFromDimensions(image?.width, image?.height)
+
+			this.form.aspectRatio.value = imageAspectRatioOptions.find(o => o.value === aspectRatioValue) || imageAspectRatioOptions.find(o => o.value === optionsStore.options.aiContent.imageAspectRatio)
 		},
 		generateImage () {
 			const aiStore = useAiStore()

@@ -40,7 +40,12 @@ class Ai {
 
 		return new \WP_REST_Response( [
 			'success'   => true,
-			'aiOptions' => aioseo()->internalOptions->internal->ai->all()
+			'aiOptions' => [
+				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
+				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
+				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
+				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
+			]
 		], 200 );
 	}
 
@@ -60,7 +65,12 @@ class Ai {
 
 		return new \WP_REST_Response( [
 			'success'   => true,
-			'aiOptions' => aioseo()->internalOptions->internal->ai->all()
+			'aiOptions' => [
+				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
+				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
+				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
+				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
+			]
 		], 200 );
 	}
 
@@ -153,7 +163,12 @@ class Ai {
 		return new \WP_REST_Response( [
 			'success'   => true,
 			'titles'    => $titles,
-			'aiOptions' => aioseo()->internalOptions->internal->ai->all()
+			'aiOptions' => [
+				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
+				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
+				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
+				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
+			]
 		], 200 );
 	}
 
@@ -246,7 +261,12 @@ class Ai {
 		return new \WP_REST_Response( [
 			'success'      => true,
 			'descriptions' => $descriptions,
-			'aiOptions'    => aioseo()->internalOptions->internal->ai->all()
+			'aiOptions'    => [
+				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
+				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
+				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
+				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
+			]
 		], 200 );
 	}
 
@@ -347,7 +367,12 @@ class Ai {
 		return new \WP_REST_Response( [
 			'success'   => true,
 			'snippets'  => $aioseoPost->ai->socialPosts, // Return all the social posts, not just the new ones.
-			'aiOptions' => aioseo()->internalOptions->internal->ai->all()
+			'aiOptions' => [
+				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
+				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
+				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
+				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
+			]
 		], 200 );
 	}
 
@@ -667,7 +692,12 @@ class Ai {
 		return new \WP_REST_Response( [
 			'success'   => true,
 			'faqs'      => $faqs,
-			'aiOptions' => aioseo()->internalOptions->internal->ai->all()
+			'aiOptions' => [
+				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
+				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
+				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
+				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
+			]
 		], 200 );
 	}
 
@@ -760,7 +790,12 @@ class Ai {
 		return new \WP_REST_Response( [
 			'success'   => true,
 			'keyPoints' => $keyPoints,
-			'aiOptions' => aioseo()->internalOptions->internal->ai->all()
+			'aiOptions' => [
+				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
+				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
+				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
+				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
+			]
 		], 200 );
 	}
 
@@ -839,7 +874,12 @@ class Ai {
 
 		return new \WP_REST_Response( [
 			'success' => true,
-			'aiData'  => $internalOptions->internal->ai->all()
+			'aiData'  => [
+				'isTrialAccessToken'  => $internalOptions->internal->ai->isTrialAccessToken,
+				'isManuallyConnected' => $internalOptions->internal->ai->isManuallyConnected,
+				'credits'             => $internalOptions->internal->ai->credits->all(),
+				'costPerFeature'      => $internalOptions->internal->ai->costPerFeature
+			]
 		], 200 );
 	}
 }

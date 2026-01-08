@@ -81,7 +81,7 @@ class Image {
 		$style       = trim( $metadata['style'] ?? '' );
 		$aspectRatio = trim( $metadata['aspectRatio'] ?? '' );
 
-		$filenameContext = substr( $prompt, 0, 25 ) . '-' . $quality . '-' . $style . '-' . $aspectRatio . '-' . date( 'Ymd-His' );
+		$filenameContext = substr( $prompt, 0, 25 ) . '-' . $quality . '-' . $style . '-' . $aspectRatio . '-' . date_i18n( 'Ymd-His' );
 		$filename        = 'aioseo-ai-' . aioseo()->helpers->toLowerCase( sanitize_file_name( $filenameContext ) ) . '.' . $format;
 
 		$upload = wp_upload_bits( $filename, null, $imageData );

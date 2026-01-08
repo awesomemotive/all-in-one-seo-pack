@@ -237,7 +237,7 @@ class PostSettings {
 			return;
 		}
 
-		$currentPost = json_decode( wp_unslash( ( $_POST['aioseo-post-settings'] ) ), true );
+		$currentPost = json_decode( wp_unslash( ( $_POST['aioseo-post-settings'] ) ), true ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$currentPost = aioseo()->helpers->sanitize( $currentPost );
 
 		// If there is no data, there likely was an error, e.g. if the hidden field wasn't populated on load and the user saved the post without making changes in the metabox.

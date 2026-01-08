@@ -1,4 +1,7 @@
 import { defineStore } from 'pinia'
+
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 
@@ -25,9 +28,13 @@ export const useIndexStatusStore = defineStore('IndexStatusStore', {
 			},
 			fetching : false
 		},
-		overview : null,
-		options  : {}
+		overview   : null,
+		options    : {},
+		capability : 'aioseo_search_statistics_settings'
 	}),
+	getters : {
+		hasPermission : (state) => allowed(state.capability)
+	},
 	actions : {
 		fetchIndexStatusObjects (payload = {}) {
 			this.objects.fetching = true

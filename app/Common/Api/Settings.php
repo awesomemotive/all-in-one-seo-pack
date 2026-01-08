@@ -35,6 +35,20 @@ class Settings {
 	public static function getOptions( $request ) {
 		$siteId = (int) $request->get_param( 'siteId' );
 		if ( $siteId ) {
+			// Ensure the user has access to the target site.
+			if (
+				is_multisite() &&
+				(
+					! is_user_member_of_blog( get_current_user_id(), $siteId ) &&
+					! is_super_admin()
+				)
+			) {
+				return new \WP_REST_Response( [
+					'success' => false,
+					'message' => 'You do not have permission to access this site.'
+				], 403 );
+			}
+
 			aioseo()->helpers->switchToBlog( $siteId );
 
 			// Re-initialize the options for this site.
@@ -597,6 +611,20 @@ class Settings {
 		$contentPostType = null;
 		$return          = true;
 
+		// Ensure the user has access to the target site.
+		if (
+			is_multisite() &&
+			(
+				! is_user_member_of_blog( get_current_user_id(), $siteId ) &&
+				! is_super_admin()
+			)
+		) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'You do not have permission to export data for this site.'
+			], 403 );
+		}
+
 		try {
 			aioseo()->helpers->switchToBlog( $siteId );
 
@@ -753,6 +781,20 @@ class Settings {
 		$network       = ! empty( $body['network'] ) ? boolval( $body['network'] ) : false;
 		$siteId        = ! empty( $body['siteId'] ) ? intval( $body['siteId'] ) : false;
 		$siteOrNetwork = empty( $siteId ) ? aioseo()->helpers->getNetworkId() : $siteId; // If we don't have a siteId, we will use the networkId.
+
+		// Ensure the user has access to the target site.
+		if (
+			$siteId &&
+			is_multisite() &&
+			(
+				! is_user_member_of_blog( get_current_user_id(), $siteId ) &&
+				! is_super_admin()
+		) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'You do not have permission to access this site.'
+			], 403 );
+		}
 
 		// When on network admin page and no siteId, it is supposed to perform on network level.
 		if ( $network && 'clear-cache' === $action && empty( $siteId ) ) {

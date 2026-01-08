@@ -78,3 +78,13 @@ export const getEditorData = () => {
 		featuredImage : ''
 	}
 }
+
+export const getSaveButtons = (onlyVisible = false) => {
+	const buttons = Array.from(document.querySelectorAll('#vc_button-update, #vc_button-save-draft, #vc_button-save-as-pending'))
+
+	if (onlyVisible) {
+		return buttons.filter($button => $button.offsetParent && $button.offsetWidth && $button.offsetHeight)
+	}
+
+	return buttons
+}

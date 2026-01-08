@@ -97,19 +97,14 @@ class PostMeta {
 				->run()
 				->result();
 
+			if ( ! $postMeta || ! count( $postMeta ) ) {
+				// Skip posts with no SEOPress meta (shouldn't happen with our query filter, but defensive check).
+				continue;
+			}
+
 			$meta = array_merge( [
 				'post_id' => (int) $post->ID,
 			], $this->getMetaData( $postMeta, $post->ID ) );
-
-			if ( ! $postMeta || ! count( $postMeta ) ) {
-				$aioseoPost = Models\Post::getPost( (int) $post->ID );
-				$aioseoPost->set( $meta );
-				$aioseoPost->save();
-
-				aioseo()->migration->meta->migrateAdditionalPostMeta( $post->ID );
-
-				continue;
-			}
 
 			$aioseoPost = Models\Post::getPost( (int) $post->ID );
 			$aioseoPost->set( $meta );
@@ -122,7 +117,7 @@ class PostMeta {
 		}
 
 		if ( count( $posts ) === $postsPerAction ) {
-			aioseo()->actionScheduler->scheduleSingle( aioseo()->importExport->seoPress->postActionName, 5, [], true );
+			aioseo()->actionScheduler->scheduleSingle( aioseo()->importExport->seoPress->postActionName, 30, [], true );
 		} else {
 			aioseo()->core->cache->delete( 'import_post_meta_seopress' );
 		}

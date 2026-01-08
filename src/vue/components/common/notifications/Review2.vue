@@ -21,7 +21,7 @@
 				<div class="actions">
 					<base-button
 						tag="a"
-						href="https://wordpress.org/support/plugin/all-in-one-seo-pack/reviews/?filter=5#new-post"
+						href="https://aioseo.com/aioseo-wordpress-rating"
 						size="small"
 						type="blue"
 						target="_blank"

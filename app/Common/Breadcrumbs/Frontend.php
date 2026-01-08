@@ -299,11 +299,9 @@ class Frontend {
 	 * @return string            The default crumb template.
 	 */
 	public function getDefaultTemplate( $type = '', $reference = '' ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
-		return <<<TEMPLATE
-<span class="aioseo-breadcrumb">
-	<a href="#breadcrumb_link" title="#breadcrumb_label">#breadcrumb_label</a>
-</span>
-TEMPLATE;
+		return '<span class="aioseo-breadcrumb">
+			<a href="#breadcrumb_link" title="#breadcrumb_label">#breadcrumb_label</a>
+		</span>';
 	}
 
 	/**

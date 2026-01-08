@@ -47,6 +47,16 @@ class TableOfContents extends Blocks {
 	 * @return void
 	 */
 	public function enqueueBlockAssets() {
+		// Only enqueue if the block is present in the content.
+		if ( ! is_singular() ) {
+			return;
+		}
+
+		$post = get_post();
+		if ( ! $post || ! has_block( 'aioseo/table-of-contents', $post ) ) {
+			return;
+		}
+
 		aioseo()->core->assets->load( 'src/vue/standalone/blocks/table-of-contents/frontend.js' );
 	}
 
@@ -150,7 +160,7 @@ class TableOfContents extends Blocks {
 		$class3           = 'closed' === $attributes['collapsibleType'] ? 'aioseo-toc-collapsed' : '';
 		$blockCustomClass = isset( $attributes['className'] ) ? $attributes['className'] : '';
 
-		$fullHtmlString = '<div class="' . $blockCustomClass . '">
+		$fullHtmlString = '<div class="wp-block-aioseo-table-of-contents ' . $blockCustomClass . '">
 			<div class="aioseo-toc-header">
 				<header class="aioseo-toc-header-area">
 					<div class="aioseo-toc-header-title aioseo-toc-header-collapsible-closed ' . $class1 . '">
@@ -172,6 +182,8 @@ class TableOfContents extends Blocks {
 				</div>
 			</div>
 		</div>';
+
+		$htmlString = '<div class="wp-block-aioseo-table-of-contents">' . $htmlString . '</div>';
 
 		$fullHtmlString = 'off' === $attributes['collapsibleType'] ? $htmlString : $fullHtmlString;
 
