@@ -32,5 +32,15 @@ export default [
 			showSaveButton : false,
 			label          : 'coming-soon'
 		}
+	},
+	{
+		path      : '/ai-content',
+		name      : 'ai-content',
+		component : loadView('Main'),
+		meta      : {
+			access         : 'aioseo_ai_insights_settings',
+			name           : __('AI Content', td),
+			showSaveButton : true
+		}
 	}
 ]

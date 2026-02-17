@@ -6,22 +6,11 @@ import {
 	useOptionsStore
 } from '@/vue/stores'
 
-import MarkdownIt from 'markdown-it'
-import markdownItFootnote from 'markdown-it-footnote'
-import markdownItMark from 'markdown-it-mark'
-import markdownItSub from 'markdown-it-sub'
-import markdownItSup from 'markdown-it-sup'
-
 export const useAiAssistantStore = defineStore('AiAssistantStore', {
 	state : () => ({
-		markdownConverter : new MarkdownIt({ breaks: true })
-			.disable('image')
-			.use(markdownItFootnote)
-			.use(markdownItMark)
-			.use(markdownItSub)
-			.use(markdownItSup),
-		capability : 'aioseo_page_ai_content_settings',
-		options    : {
+		markdownConverter : null,
+		capability        : 'aioseo_page_ai_content_settings',
+		options           : {
 			input : {
 				userPrompt : {
 					maxlength : 1000
@@ -47,6 +36,32 @@ export const useAiAssistantStore = defineStore('AiAssistantStore', {
 		}
 	},
 	actions : {
+		async initMarkdownConverter () {
+			if (this.markdownConverter) {
+				return
+			}
+
+			const [
+				{ default: MarkdownIt },
+				{ default: markdownItFootnote },
+				{ default: markdownItMark },
+				{ default: markdownItSub },
+				{ default: markdownItSup }
+			] = await Promise.all([
+				import('markdown-it'),
+				import('markdown-it-footnote'),
+				import('markdown-it-mark'),
+				import('markdown-it-sub'),
+				import('markdown-it-sup')
+			])
+
+			this.markdownConverter = new MarkdownIt({ breaks: true })
+				.disable('image')
+				.use(markdownItFootnote)
+				.use(markdownItMark)
+				.use(markdownItSub)
+				.use(markdownItSup)
+		},
 		updateBlockHiddenByUser () {
 			const preferencesStore = window.wp?.data?.select('core/preferences')
 			if (!preferencesStore) {

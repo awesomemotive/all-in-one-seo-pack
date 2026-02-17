@@ -82,8 +82,8 @@ export const useAiContent = () => {
 		credits          : __('Credits', td),
 		alertDescription : sprintf(
 			// Translators: 1 - Link to the AI Content settings page.
-			__('You can manage your default settings under <a href="%1$s" target="_blank" rel="noopener noreferrer">General Settings > AI Content</a>.', td),
-			rootStore.aioseo.urls.aio.settings + '/#ai-content'
+			__('You can manage your default settings under <a href="%1$s" target="_blank" rel="noopener noreferrer">AI Suite > AI Content</a>.', td),
+			rootStore.aioseo.urls.aio.aiSuite + '#/ai-content'
 		),
 		audience         : __('Audience', td),
 		tone             : __('Tone', td),

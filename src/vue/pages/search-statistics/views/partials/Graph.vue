@@ -40,7 +40,7 @@ import {
 import numbers from '@/vue/utils/numbers'
 import { getAssetUrl } from '@/vue/utils/helpers'
 import dateFormat from '@/vue/utils/dateFormat'
-import VueApexCharts from 'vue3-apexcharts'
+import { defineAsyncComponent } from 'vue'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CorePopper from '@/vue/components/common/core/Popper'
 import GraphTimelineMarkers from './AIOSEO_VERSION/GraphTimelineMarkers'
@@ -54,7 +54,7 @@ export default {
 		}
 	},
 	components : {
-		apexchart : VueApexCharts,
+		apexchart : defineAsyncComponent(() => import('vue3-apexcharts')),
 		CoreLoader,
 		CorePopper,
 		GraphTimelineMarkers

@@ -123,10 +123,6 @@ class SystemStatus {
 			return [];
 		}
 
-		if ( ! aioseo()->helpers->isDev() ) {
-			return [];
-		}
-
 		$results = [];
 		$tables  = array_merge( $dbInfo['tables']['aioseo'], $dbInfo['tables']['other'] );
 		foreach ( $tables as $tableName => $tableData ) {

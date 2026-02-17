@@ -304,7 +304,7 @@ class Llms {
 				$content .= '## ' . $postTypeObject->labels->name . "\n\n";
 				foreach ( $posts as $postObject ) {
 					$post = get_post( $postObject->ID );
-					if ( is_wp_error( $post ) ) {
+					if ( ! is_a( $post, 'WP_Post' ) ) {
 						continue;
 					}
 

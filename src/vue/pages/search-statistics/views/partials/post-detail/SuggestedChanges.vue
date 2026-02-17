@@ -24,7 +24,7 @@
 		</div>
 
 		<div v-else class="all-good">
-			<lottie :options="lottieOptions" :width="60" :height="60" class="all-good-animation" />
+			<lottie v-if="lottieOptions.animationData" :options="lottieOptions" :width="60" :height="60" class="all-good-animation" />
 			<div class="all-good-title">{{ strings.youCrushed }}</div>
 			<p class="all-good-description">{{ strings.weWillLet }}</p>
 		</div>
@@ -32,7 +32,6 @@
 </template>
 
 <script>
-import * as rollingCheckMark from '@/vue/assets/lottie/rolling-check-mark.json'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Lottie from '@/vue/components/common/core/Lottie'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
@@ -71,9 +70,13 @@ export default {
 				)
 			},
 			lottieOptions : {
-				animationData : rollingCheckMark
+				animationData : null
 			}
 		}
+	},
+	async mounted () {
+		const module = await import('@/vue/assets/lottie/rolling-check-mark.json')
+		this.lottieOptions.animationData = module.default || module
 	}
 }
 </script>

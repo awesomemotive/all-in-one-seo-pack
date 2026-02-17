@@ -211,8 +211,8 @@ const strings = {
 	placeholder           : __('A cozy cottage in a snowy forest at sunset. A cute cat wearing a wizard hat, reading a spellbook… Unleash your imagination!', td),
 	manageDefaultSettings : sprintf(
 		// Translators: 1 - Link to the AI Content settings page.
-		__('You can manage your default settings under <a href="%1$s" target="_blank" rel="noopener noreferrer">General Settings > AI Content</a>.', td),
-		rootStore.aioseo.urls.aio.settings + '/#ai-content'
+		__('You can manage your default settings under <a href="%1$s" target="_blank" rel="noopener noreferrer">AI Suite > AI Content</a>.', td),
+		rootStore.aioseo.urls.aio.aiSuite + '#/ai-content'
 	),
 	editImage             : __('Edit Image', td),
 	regenerateDescription : __('Edit the selected image by describing the changes you want to make.', td),

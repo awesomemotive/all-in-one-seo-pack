@@ -1,7 +1,7 @@
 <template>
 	<div class="aioseo-search-statistics-speed-test">
 		<div v-if="loading" class="loading">
-			<lottie :options="lottieOptions" :width="60" :height="60" class="loading-animation" />
+			<lottie v-if="lottieOptions.animationData" :options="lottieOptions" :width="60" :height="60" class="loading-animation" />
 
 			<div class="loading-title">{{ strings.loading }}</div>
 
@@ -80,7 +80,6 @@ import {
 } from '@/vue/stores'
 
 import Lottie from '@/vue/components/common/core/Lottie'
-import * as rocketAnimation from '@/vue/assets/lottie/rocket-flighting.json'
 import dateFormat from '@/vue/utils/dateFormat'
 import SvgDesktop from '@/vue/components/common/svg/Desktop'
 import SvgMobile from '@/vue/components/common/svg/Mobile'
@@ -121,7 +120,7 @@ export default {
 		return {
 			loadTime      : 10,
 			lottieOptions : {
-				animationData : rocketAnimation
+				animationData : null
 			},
 			strings : {
 				refresh           : __('Refresh', td),
@@ -171,6 +170,10 @@ export default {
 					return 'green'
 			}
 		}
+	},
+	async mounted () {
+		const module = await import('@/vue/assets/lottie/rocket-flighting.json')
+		this.lottieOptions.animationData = module.default || module
 	}
 }
 </script>

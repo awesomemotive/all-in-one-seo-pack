@@ -109,6 +109,9 @@ class SearchStatistics {
 		aioseo()->searchStatistics->api->auth->delete();
 		aioseo()->searchStatistics->cancelActions();
 
+		// Mark SEO Checklist item as incomplete.
+		aioseo()->seoChecklist->uncompleteCheck( 'connectGoogleSearchConsole' );
+
 		return new \WP_REST_Response( [
 			'success' => true,
 			'message' => 'Successfully deauthenticated.'

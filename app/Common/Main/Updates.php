@@ -281,6 +281,10 @@ class Updates {
 			aioseo()->access->addCapabilities();
 		}
 
+		if ( version_compare( $lastActiveVersion, '4.9.4', '<' ) ) {
+			$this->addSeoChecklistToDashboardWidgets();
+		}
+
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
 
 		// Always clear the cache if the last active version is different from our current.
@@ -1488,6 +1492,32 @@ class Updates {
 			$widgets[] = 'seoOverview';
 			$widgets[] = 'seoSetup';
 		}
+
+		aioseo()->options->advanced->dashboardWidgets = $widgets;
+	}
+
+	/**
+	 * Adds the seoChecklist widget to existing dashboardWidgets arrays.
+	 *
+	 * @since 4.9.4
+	 *
+	 * @return void
+	 */
+	private function addSeoChecklistToDashboardWidgets() {
+		$rawOptions = $this->getRawOptions();
+
+		if ( empty( $rawOptions ) || ! isset( $rawOptions['advanced']['dashboardWidgets'] ) || ! is_array( $rawOptions['advanced']['dashboardWidgets'] ) ) {
+			return;
+		}
+
+		$widgets = $rawOptions['advanced']['dashboardWidgets'];
+
+		// If seoChecklist is already in the array, don't add it again.
+		if ( in_array( 'seoChecklist', $widgets, true ) ) {
+			return;
+		}
+
+		$widgets[] = 'seoChecklist';
 
 		aioseo()->options->advanced->dashboardWidgets = $widgets;
 	}

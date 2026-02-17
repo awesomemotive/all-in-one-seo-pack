@@ -97,21 +97,16 @@ import { useGoogleSearchConsole } from '@/vue/composables/GoogleSearchConsole'
 
 import links from '@/vue/utils/links'
 
+import { defineAsyncComponent } from 'vue'
+
 import AuthenticationAlert from './partials/AuthenticationAlert'
 import BaseButton from '@/vue/components/common/base/Button'
 import BaseDatePicker from '@/vue/components/common/base/DatePicker'
 import ConnectCta from './partials/pro/ConnectCta'
-import ContentRankings from './ContentRankings'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreMain from '@/vue/components/common/core/main/Index'
 import Cta from '@/vue/components/common/cta/Index'
-import Dashboard from './Dashboard'
-import IndexStatus from './IndexStatus'
-import KeywordRankTracker from './KeywordRankTracker'
-import PostDetail from './AIOSEO_VERSION/PostDetail'
-import SeoStatistics from './SeoStatistics'
-import Settings from './AIOSEO_VERSION/Settings'
 
 import { __ } from '@/vue/plugins/translations'
 
@@ -139,17 +134,17 @@ export default {
 		BaseButton,
 		BaseDatePicker,
 		ConnectCta,
-		ContentRankings,
+		ContentRankings    : defineAsyncComponent(() => import('./ContentRankings.vue')),
 		CoreAlert,
 		CoreBlur,
 		CoreMain,
 		Cta,
-		Dashboard,
-		IndexStatus,
-		KeywordRankTracker,
-		PostDetail,
-		SeoStatistics,
-		Settings
+		Dashboard          : defineAsyncComponent(() => import('./Dashboard.vue')),
+		IndexStatus        : defineAsyncComponent(() => import('./IndexStatus.vue')),
+		KeywordRankTracker : defineAsyncComponent(() => import('./KeywordRankTracker.vue')),
+		PostDetail         : defineAsyncComponent(() => import('./AIOSEO_VERSION/PostDetail.vue')),
+		SeoStatistics      : defineAsyncComponent(() => import('./SeoStatistics.vue')),
+		Settings           : defineAsyncComponent(() => import('./AIOSEO_VERSION/Settings.vue'))
 	},
 	data () {
 		return {
@@ -299,6 +294,23 @@ export default {
 		// This means that we can't allow the user to select a date range that is more than 16 months.
 		this.minDate = DateTime.now().plus({ months: -16 }).toJSDate()
 		this.maxDate = this.getOriginalMaxDate.toJSDate()
+
+		// Preload all route components in the background
+		const preloadComponents = () => {
+			import('./ContentRankings.vue')
+			import('./Dashboard.vue')
+			import('./IndexStatus.vue')
+			import('./KeywordRankTracker.vue')
+			import('./AIOSEO_VERSION/PostDetail.vue')
+			import('./SeoStatistics.vue')
+			import('./AIOSEO_VERSION/Settings.vue')
+		}
+
+		if ('requestIdleCallback' in window) {
+			requestIdleCallback(preloadComponents)
+		} else {
+			setTimeout(preloadComponents, 1)
+		}
 	}
 }
 </script>

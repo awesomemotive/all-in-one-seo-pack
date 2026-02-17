@@ -239,8 +239,8 @@ class Admin {
 				'parent'     => $this->pageSlug
 			],
 			'aioseo-ai-insights'       => [
-				'menu_title' => esc_html__( 'AI Insights', 'all-in-one-seo-pack' ) . $newIndicator,
-				'page_title' => esc_html__( 'AI Insights', 'all-in-one-seo-pack' ),
+				'menu_title' => esc_html__( 'AI Suite', 'all-in-one-seo-pack' ) . $newIndicator,
+				'page_title' => esc_html__( 'AI Suite', 'all-in-one-seo-pack' ),
 				'parent'     => $this->pageSlug
 			],
 			'aioseo-local-seo'         => [

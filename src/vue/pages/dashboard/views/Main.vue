@@ -26,6 +26,14 @@
 						</core-card>
 
 						<core-card
+							v-if="rootStore.aioseo.setupWizard.isCompleted"
+							slug="dashboardSeoChecklist"
+							:header-text="strings.seoChecklist"
+						>
+							<core-seo-checklist />
+						</core-card>
+
+						<core-card
 							slug="dashboardOverview"
 							:header-text="strings.seoOverview"
 						>
@@ -226,6 +234,7 @@ import CoreGettingStarted from '@/vue/components/common/core/GettingStarted'
 import CoreMain from '@/vue/components/common/core/main/Index'
 import CoreNotificationCards from '@/vue/components/common/core/NotificationCards'
 import CoreOverview from '@/vue/components/common/core/Overview'
+import CoreSeoChecklist from '@/vue/components/common/core/SeoChecklist'
 import CoreSeoSetup from '@/vue/components/common/core/SeoSetup'
 import CoreSeoSiteScore from '@/vue/components/AIOSEO_VERSION/core/seo-site-score/Index'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
@@ -288,6 +297,7 @@ export default {
 		CoreMain,
 		CoreNotificationCards,
 		CoreOverview,
+		CoreSeoChecklist,
 		CoreSeoSetup,
 		CoreSeoSiteScore,
 		CoreTooltip,
@@ -319,6 +329,7 @@ export default {
 				noNewNotificationsThisMoment : __('There are no new notifications at this moment.', td),
 				seeAllDismissedNotifications : __('See all dismissed notifications.', td),
 				seoSiteScore                 : __('SEO Site Score', td),
+				seoChecklist                 : __('SEO Checklist', td),
 				seoOverview                  : sprintf(
 					// Translators: 1 - The plugin shortname ("AIOSEO").
 					__('%1$s Overview', td),

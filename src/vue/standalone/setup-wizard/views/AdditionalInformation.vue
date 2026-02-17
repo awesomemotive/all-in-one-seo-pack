@@ -220,6 +220,8 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+
 import {
 	useOptionsStore,
 	useRootStore,
@@ -229,8 +231,6 @@ import {
 import { merge } from 'lodash-es'
 
 import { useWizard } from '@/vue/composables/Wizard'
-
-import BasePhone from '@/vue/components/common/base/Phone'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
 import CoreImageUploader from '@/vue/components/common/core/ImageUploader'
@@ -242,6 +242,8 @@ import WizardHeader from '@/vue/components/common/wizard/Header'
 import WizardSteps from '@/vue/components/common/wizard/Steps'
 
 import { __ } from '@/vue/plugins/translations'
+
+const BasePhone = defineAsyncComponent(() => import('@/vue/components/common/base/Phone'))
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 

@@ -25,6 +25,7 @@ import { useRedirectsStore } from '@/vue/stores/RedirectsStore'
 import { useRootStore } from '@/vue/stores/RootStore'
 import { useSchemaStore } from '@/vue/stores/SchemaStore'
 import { useSearchStatisticsStore } from '@/vue/stores/SearchStatisticsStore'
+import { useSeoChecklistStore } from '@/vue/stores/SeoChecklistStore'
 import { useSeoPreviewStore } from '@/vue/stores/SeoPreviewStore'
 import { useSeoRevisionsStore } from '@/vue/stores/SeoRevisionsStore'
 import { useSettingsStore } from '@/vue/stores/SettingsStore'
@@ -83,6 +84,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 	const postEditorStore               = usePostEditorStore()
 	const redirectsStore                = useRedirectsStore()
 	const searchStatisticsStore         = useSearchStatisticsStore()
+	const seoChecklistStore             = useSeoChecklistStore()
 	const seoRevisionsStore             = useSeoRevisionsStore()
 	const settingsStore                 = useSettingsStore()
 	const tagsStore                     = useTagsStore()
@@ -122,6 +124,12 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 	postEditorStore.currentPost          = merge({ ...postEditorStore.currentPost }, { ...aioseo?.redirects?.currentPost }, { ...aioseo.currentPost || {} })
 	redirectsStore.$state                = merge({ ...redirectsStore.$state }, { ...aioseo.redirects || {} })
 	searchStatisticsStore.$state         = merge({ ...searchStatisticsStore.$state }, { ...aioseo.searchStatistics || {} })
+	// Don't initialize seoChecklist rows from localized data to avoid flash of unfiltered content.
+	// The table will fetch filtered data on mount. Just initialize the overall counts for the progress bar.
+	if (aioseo.seoChecklist) {
+		seoChecklistStore.overallTotalCount     = aioseo.seoChecklist.length
+		seoChecklistStore.overallCompletedCount = aioseo.seoChecklist.filter(item => item.completed).length
+	}
 	seoRevisionsStore.$state             = merge({ ...seoRevisionsStore.$state }, { ...aioseo.seoRevisions || {} })
 	settingsStore.settings               = merge({ ...settingsStore.settings }, { ...aioseo.settings || {} })
 	settingsStore.userProfile            = merge({ ...settingsStore.userProfile }, { ...aioseo.userProfile || {} })
@@ -156,6 +164,7 @@ const loadPiniaStores = (app, router = null, loadStoresCallback = () => {}) => {
 	delete aioseo.plugins
 	delete aioseo.redirects
 	delete aioseo.searchStatistics
+	delete aioseo.seoChecklist
 	delete aioseo.seoRevisions
 	delete aioseo.settings
 	delete aioseo.tags
@@ -261,6 +270,7 @@ export {
 	useRootStore,
 	useSchemaStore,
 	useSearchStatisticsStore,
+	useSeoChecklistStore,
 	useSemrushStore,
 	useSeoPreviewStore,
 	useSeoRevisionsStore,

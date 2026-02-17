@@ -247,7 +247,7 @@ export default {
 			})
 		}
 	},
-	mounted () {
+	created () {
 		const countryOptions = getSemrushDatabaseOptions()
 		this.semrushCountry = {
 			value : this.settingsStore.settings.semrushCountry,

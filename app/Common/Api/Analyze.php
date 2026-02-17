@@ -88,6 +88,9 @@ class Analyze {
 			'score'   => $responseBody[ $analyzeOrHomeUrl ]['score']
 		] );
 
+		// Mark SEO Checklist item as completed.
+		aioseo()->seoChecklist->completeCheck( 'runHomepageAudit' );
+
 		// Get all results parsed and sanitized.
 		$allResults = SeoAnalyzerResult::getResults();
 

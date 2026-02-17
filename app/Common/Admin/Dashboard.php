@@ -51,6 +51,28 @@ class Dashboard {
 			);
 		}
 
+		// Add the SEO Checklist widget.
+		if (
+			$this->canShowWidget( 'seoChecklist' ) &&
+			apply_filters( 'aioseo_show_seo_checklist', true ) &&
+			( aioseo()->access->isAdmin() || aioseo()->access->hasCapability( 'aioseo_setup_wizard' ) ) &&
+			aioseo()->standalone->setupWizard->isCompleted()
+		) {
+			wp_add_dashboard_widget(
+				'aioseo-seo-checklist',
+				// Translators: 1 - The plugin short name ("AIOSEO").
+				sprintf( esc_html__( '%s Checklist', 'all-in-one-seo-pack' ), AIOSEO_PLUGIN_SHORT_NAME ),
+				[
+					$this,
+					'outputSeoChecklist',
+				],
+				null,
+				null,
+				'normal',
+				'high'
+			);
+		}
+
 		// Add the Overview widget.
 		if (
 			$this->canShowWidget( 'seoOverview' ) &&
@@ -108,6 +130,17 @@ class Dashboard {
 	 */
 	public function outputSeoSetup() {
 		$this->output( 'aioseo-seo-setup-app' );
+	}
+
+	/**
+	 * Output the SEO Checklist widget.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @return void
+	 */
+	public function outputSeoChecklist() {
+		$this->output( 'aioseo-seo-checklist-app' );
 	}
 
 	/**

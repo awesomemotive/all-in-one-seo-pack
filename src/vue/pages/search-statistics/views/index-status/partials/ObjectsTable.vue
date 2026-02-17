@@ -528,7 +528,7 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { __ } from '@/vue/plugins/translations'
 import { useIndexStatus } from '@/vue/composables/IndexStatus'
 import { usePostTypes } from '@/vue/composables/PostTypes'

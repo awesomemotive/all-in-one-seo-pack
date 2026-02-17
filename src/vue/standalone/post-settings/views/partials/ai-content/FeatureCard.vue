@@ -151,7 +151,11 @@ export default {
 		return {
 			strings : {
 				// Translators: 1 - The word "Preferences" from WordPress core translations.
-				blockHiddenWarning : sprintf(__('Block hidden in %1$s.', td), __('Preferences'))
+				blockHiddenWarning : sprintf(
+					// Translators: 1 - The word "Preferences" from WordPress core translations.
+					__('Block hidden in %1$s.', td),
+					__('Preferences', td)
+				)
 			}
 		}
 	},

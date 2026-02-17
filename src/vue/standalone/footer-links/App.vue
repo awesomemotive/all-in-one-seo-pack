@@ -8,7 +8,7 @@
 			<a :href="rootStore.aioseo.urls.aio.about" rel="noreferrer noopener">{{strings.freePlugins}}</a>
 		</div>
 
-		<div>
+		<div class="social-icons">
 			<a :href="getUtmLink('https://aioseo.com/plugin/facebook', 'facebook')" target="_blank" rel="noreferrer noopener"><facebook-svg /></a>
 			<a :href="getUtmLink('https://aioseo.com/plugin/linkedin', 'linkedin')" target="_blank" rel="noreferrer noopener"><linked-in-svg /></a>
 			<a :href="getUtmLink('https://aioseo.com/plugin/twitter', 'twitter')"  target="_blank" rel="noreferrer noopener"><twitter-svg /></a>
@@ -72,7 +72,7 @@ const getUtmLink = (url, content) => {
 			font-weight: 600;
 		}
 
-		&:last-of-type {
+		&.social-icons {
 			display: flex;
 			gap: 12px;
 		}

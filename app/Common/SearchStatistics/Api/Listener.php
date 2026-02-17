@@ -213,6 +213,9 @@ class Listener {
 		// Maybe verifies the site.
 		aioseo()->searchStatistics->site->maybeVerify();
 
+		// Mark SEO Checklist item as completed.
+		aioseo()->seoChecklist->completeCheck( 'connectGoogleSearchConsole' );
+
 		// Redirects to the original page.
 		wp_safe_redirect( $this->getRedirectUrl() );
 		exit;

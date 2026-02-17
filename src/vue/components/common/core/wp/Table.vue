@@ -72,7 +72,7 @@
 				<slot name="tablenav" />
 
 				<core-wp-bulk-actions
-					v-if="showBulkActions && bulkOptions && bulkOptions.length"
+					v-if="shouldShowBulkActions"
 					:bulk-options="bulkOptions"
 					@process-bulk-action="processBulkAction"
 					:disable-table="disableTable"
@@ -145,7 +145,7 @@
 					<tr>
 						<td
 							class="manage-column column-cb check-column"
-							v-if="showBulkActions"
+							v-if="shouldShowBulkActions"
 						>
 							<input
 								v-if="!shouldHideCheckbox"
@@ -205,7 +205,7 @@
 							<th
 								scope="row"
 								class="check-column"
-								v-if="showBulkActions"
+								v-if="shouldShowBulkActions"
 							>
 								<input
 									v-if="!row.preventBulkAction"
@@ -247,7 +247,7 @@
 							:class="{ even: 0 === index % 2 }"
 						>
 							<td
-								:colspan="showBulkActions ? columns.length + 1 : columns.length"
+								:colspan="shouldShowBulkActions ? columns.length + 1 : columns.length"
 								class="edit-row-content"
 							>
 								<transition-slide
@@ -278,7 +278,7 @@
 					</template>
 
 					<template v-if="!rows.length">
-						<td :colspan="showBulkActions ? columns.length + 1 : columns.length">
+						<td :colspan="shouldShowBulkActions ? columns.length + 1 : columns.length">
 							<div class="no-results">
 								<span v-if="!loading">{{noResults}}</span>
 							</div>
@@ -290,7 +290,7 @@
 					<tr>
 						<td
 							class="manage-column column-cb check-column"
-							v-if="showBulkActions"
+							v-if="shouldShowBulkActions"
 						>
 							<input
 								type="checkbox"
@@ -324,7 +324,7 @@
 			v-if="showTableFooter"
 		>
 			<core-wp-bulk-actions
-				v-if="showBulkActions && bulkOptions && bulkOptions.length"
+				v-if="shouldShowBulkActions"
 				:bulk-options="bulkOptions"
 				@process-bulk-action="processBulkAction"
 				:disable-table="disableTable"
@@ -543,6 +543,16 @@ export default {
 			}
 
 			this.processChangeItemsPerPage()
+		},
+		loading (newVal, oldVal) {
+			// When loading finishes, check if current page is empty but there are items on other pages
+			if (oldVal && !newVal) {
+				this.$nextTick(() => {
+					if (0 === this.rows.length && this.totals && 0 < this.totals.total && 1 < this.pageNumber) {
+						this.processPaginate(this.pageNumber - 1)
+					}
+				})
+			}
 		}
 	},
 	computed : {
@@ -563,6 +573,10 @@ export default {
 			// This doesn't seem to work in the Block Editor for whatever reason. So, we need to hide the checkbox there.
 			// See "$body.on( 'click.wp-toggle-checkboxes', 'thead .check-column :checkbox, tfoot .check-column :checkbox') in common.js."
 			return this.rootStore?.aioseo?.screen?.blockEditor || this.rootStore?.aioseoBrokenLinkChecker?.screen?.blockEditor
+		},
+		shouldShowBulkActions () {
+			// Only show bulk actions if enabled AND there are options available.
+			return this.showBulkActions && this.bulkOptions && 0 < this.bulkOptions.length
 		},
 		getExportFileName () {
 			const exportName = this.exportFileName || 'entries.csv'

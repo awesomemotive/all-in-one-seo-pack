@@ -66,9 +66,9 @@ import {
 import dateFormat from '@/vue/utils/dateFormat'
 import SvgCalendar from '@/vue/components/common/svg/Calendar'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
-import { ElDatePicker } from 'element-plus'
+import { ElDatePicker } from 'element-plus/es/components/date-picker/index.mjs'
 import en from 'element-plus/dist/locale/en.mjs'
-import 'element-plus/theme-chalk/el-date-picker.css'
+import 'element-plus/es/components/date-picker/style/css'
 
 import { __ } from '@/vue/plugins/translations'
 

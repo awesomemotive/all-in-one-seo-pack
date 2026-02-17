@@ -55,6 +55,7 @@ trait Vue {
 		$this->setAiAssistantData();
 		$this->setAiImageGeneratorData();
 		$this->setAiInsightsData();
+		$this->setGeneralSettingsData();
 
 		$this->cache[ $hash ] = $this->data;
 
@@ -120,6 +121,7 @@ trait Vue {
 				], defined( 'AIOSEO_CONNECT_URL' ) ? AIOSEO_CONNECT_URL : 'https://connect.aioseo.com' ),
 				'aio'               => [
 					'about'            => is_network_admin() ? network_admin_url( 'admin.php?page=aioseo-about' ) : admin_url( 'admin.php?page=aioseo-about' ),
+					'aiSuite'          => admin_url( 'admin.php?page=aioseo-ai-insights' ),
 					'dashboard'        => admin_url( 'admin.php?page=aioseo' ),
 					'featureManager'   => admin_url( 'admin.php?page=aioseo-feature-manager' ),
 					'linkAssistant'    => admin_url( 'admin.php?page=aioseo-link-assistant' ),
@@ -381,6 +383,8 @@ trait Vue {
 		$this->data['setupWizard']['isCompleted'] = aioseo()->standalone->setupWizard->isCompleted();
 		$this->data['seoOverview']                = aioseo()->postSettings->getPostTypesOverview();
 		$this->data['importers']                  = aioseo()->importExport->plugins();
+
+		$this->setSeoChecklistData();
 	}
 
 	/**
@@ -452,6 +456,8 @@ trait Vue {
 			'staticHomePageTitle'       => $isStaticHomePage ? aioseo()->meta->title->getTitle( $staticHomePage ) : '',
 			'staticHomePageDescription' => $isStaticHomePage ? aioseo()->meta->description->getDescription( $staticHomePage ) : '',
 		];
+
+		$this->setSeoChecklistData();
 	}
 
 	/**
@@ -820,5 +826,32 @@ trait Vue {
 		$this->data['aiInsights'] = [
 			'rateLimit' => ! empty( $rateLimit ) ? $rateLimit : null
 		];
+	}
+
+	/**
+	 * Set Vue General Settings data.
+	 *
+	 * @since 4.9.4
+	 *
+	 * @return void
+	 */
+	protected function setGeneralSettingsData() {
+		if ( 'settings' !== $this->args['page'] ) {
+			return;
+		}
+
+		$this->setSeoChecklistData();
+	}
+
+
+	/**
+	 * Set Vue SEO Checklist data.
+	 *
+	 * @since 4.9.4
+	 *
+	 * @return void
+	 */
+	protected function setSeoChecklistData() {
+		$this->data['seoChecklist'] = aioseo()->seoChecklist->getChecks();
 	}
 }

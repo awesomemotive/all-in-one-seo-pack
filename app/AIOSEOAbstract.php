@@ -625,4 +625,13 @@ abstract class AIOSEOAbstract {
 	 * @var \AIOSEO\Plugin\Pro\Redirects\Redirects
 	 */
 	public $redirects = null;
+
+	/**
+	 * SeoChecklist class instance.
+	 *
+	 * @since 4.9.4
+	 *
+	 * @var \AIOSEO\Plugin\Common\SeoChecklist\SeoChecklist|\AIOSEO\Plugin\Pro\SeoChecklist\SeoChecklist
+	 */
+	public $seoChecklist = null;
 }

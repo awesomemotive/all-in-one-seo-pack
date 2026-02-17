@@ -117,10 +117,8 @@ import {
 	useTagsStore
 } from '@/vue/stores'
 
-import links from '@/vue/utils/links'
-import tags from '@/vue/utils/tags'
-import { addTags, removeTags } from '@/vue/plugins/quill/auto-tagger'
 import Quill from 'quill'
+import 'quill/dist/quill.snow.css'
 import '@/vue/plugins/quill/mention'
 import '@/vue/plugins/quill/auto-link'
 import '@/vue/plugins/quill/character-counter'
@@ -128,7 +126,10 @@ import '@/vue/plugins/quill/clipboard'
 import '@/vue/plugins/quill/line-numbers'
 import '@/vue/plugins/quill/phrase-editor-formats'
 import '@/vue/plugins/quill/preserve-whitespace'
-import 'quill/dist/quill.snow.css'
+
+import links from '@/vue/utils/links'
+import tags from '@/vue/utils/tags'
+import { addTags, removeTags } from '@/vue/plugins/quill/auto-tagger'
 import BaseInput from '@/vue/components/common/base/Input'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgPlus from '@/vue/components/common/svg/Plus'
@@ -215,8 +216,9 @@ export default {
 		'tagsStore.liveTags' : {
 			deep : true,
 			handler () {
-				this.localTags       = this.getTags()
-				const counter        = QuillEditor[this.$.uid].getModule('counter')
+				this.localTags = this.getTags()
+
+				const counter = QuillEditor[this.$.uid].getModule('counter')
 				if (counter) {
 					counter.options.tags = this.localTags
 					this.$emit('counter', counter.calculate())
@@ -384,7 +386,7 @@ export default {
 				mention.removeOrphanedMentionChar()
 			}
 		},
-		async startup (reset = false) {
+		startup (reset = false) {
 			if (this.allowTags && !this.$refs['tag-search']) {
 				return
 			}
@@ -434,37 +436,37 @@ export default {
 			this.removeTrailingNewLine()
 
 			// This prevents the editor for turning dirty after we remove the trailing line.
-			await this.$nextTick()
+			this.$nextTick(() => {
+				// We will add the update event here
+				QuillEditor[this.$.uid].on('text-change', () => this.update())
+				QuillEditor[this.$.uid].on('selection-change', (range, oldRange, source) => {
+					if ('api' === source) {
+						this.update()
+					}
 
-			// We will add the update event here
-			QuillEditor[this.$.uid].on('text-change', () => this.update())
-			QuillEditor[this.$.uid].on('selection-change', (range, oldRange, source) => {
-				if ('api' === source) {
-					this.update()
-				}
+					if (!range) {
+						this.$emit('blur', QuillEditor[this.$.uid])
+					} else {
+						this.$emit('focus', QuillEditor[this.$.uid])
+					}
 
-				if (!range) {
-					this.$emit('blur', QuillEditor[this.$.uid])
-				} else {
-					this.$emit('focus', QuillEditor[this.$.uid])
-				}
-
-				this.$emit('selection-change', {
-					range,
-					oldRange,
-					source
+					this.$emit('selection-change', {
+						range,
+						oldRange,
+						source
+					})
 				})
+
+				document.addEventListener('click', this.maybeCloseMenu)
+
+				if (this.disabled) {
+					QuillEditor[this.$.uid].disable()
+				}
+
+				if (!reset) {
+					QuillEditor[this.$.uid].history.clear()
+				}
 			})
-
-			document.addEventListener('click', this.maybeCloseMenu)
-
-			if (this.disabled) {
-				QuillEditor[this.$.uid].disable()
-			}
-
-			if (!reset) {
-				QuillEditor[this.$.uid].history.clear()
-			}
 		},
 		startQuill () {
 			return new Quill(this.$refs.quill, {

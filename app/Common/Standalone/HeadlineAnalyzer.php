@@ -195,7 +195,7 @@ class HeadlineAnalyzer {
 		}
 
 		if ( in_array( $explodedHeadline[0], $this->primaryQuestionIndicators(), true ) ) {
-			if ( in_array( $explodedHeadline[1], $this->secondaryQuestionIndicators(), true ) ) {
+			if ( isset( $explodedHeadline[1] ) && in_array( $explodedHeadline[1], $this->secondaryQuestionIndicators(), true ) ) {
 				$headlineTypes[] = __( 'Question', 'all-in-one-seo-pack' );
 				$totalScore      = $totalScore + 7;
 			}

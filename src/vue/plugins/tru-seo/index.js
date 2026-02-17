@@ -96,12 +96,8 @@ class TruSeo {
 		}))
 
 		let dispatch = []
-		if (import.meta.env.PROD || import.meta.env.VITE_TRUSEO_WEB_WORKER) {
-			this.worker     = import.meta.env.PROD
-				? new TruSeoWorker()
-				: new Worker(rootStore.aioseo.urls.truSeoWorker, {
-					type : 'module'
-				})
+		if (import.meta.env.PROD) {
+			this.worker = new TruSeoWorker()
 
 			// Listen for a response and then terminate the worker.
 			this.worker.addEventListener('message', e => {

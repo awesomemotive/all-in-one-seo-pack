@@ -176,7 +176,8 @@ import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgCircleInformation from '@/vue/components/common/svg/circle/Information'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
-import { Tab as VarTab, Tabs as VarTabs } from '@varlet/ui'
+import VarTab from '@varlet/ui/es/tab'
+import VarTabs from '@varlet/ui/es/tabs'
 
 import { __ } from '@/vue/plugins/translations'
 

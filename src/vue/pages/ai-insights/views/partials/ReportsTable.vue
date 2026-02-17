@@ -154,7 +154,7 @@ import SvgClose from '@/vue/components/common/svg/Close'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import BaseButton from '@/vue/components/common/base/Button'
 
-import { __, _n, sprintf } from '@/vue/plugins/translations'
+import { __, _n } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 

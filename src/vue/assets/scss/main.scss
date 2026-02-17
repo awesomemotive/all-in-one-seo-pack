@@ -358,19 +358,20 @@ body[class*="page_aioseo"] {
 	}
 
 	.aioseo-row-highlight {
-		animation-name: color;
-		animation-duration: 0.5s;
-		animation-iteration-count: 2;
+		animation: aioseo-highlight-pulse 1.5s ease-in-out 3;
 
-		@keyframes color {
+		@keyframes aioseo-highlight-pulse {
 			0% {
-			  background-color: #FFF;
+				background-color: transparent;
+				box-shadow: 0 0 0 0 transparent;
 			}
 			50% {
-			  background-color: $green;
+				background-color: #DBEAFE;
+				box-shadow: 0 0 0 8px #DBEAFE;
 			}
 			100% {
-				background-color: #FFF;
+				background-color: transparent;
+				box-shadow: 0 0 0 0 transparent;
 			}
 		}
 	}

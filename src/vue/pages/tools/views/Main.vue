@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, defineAsyncComponent, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 import {
@@ -16,13 +16,6 @@ import {
 } from '@/vue/stores'
 
 import CoreMain from '@/vue/components/common/core/main/Index'
-import DatabaseTools from './DatabaseTools'
-import Debug from './AIOSEO_VERSION/Debug'
-import HtaccessEditor from './HtaccessEditor'
-import ImportExport from './ImportExport'
-import RobotsEditor from './RobotsEditor'
-import SystemStatus from './SystemStatus'
-import WpCode from './WpCode'
 
 import { __ } from '@/vue/plugins/translations'
 import { useRobotsTxt } from '@/vue/composables/RobotsTxt'
@@ -32,19 +25,19 @@ const route  = useRoute()
 const getRoute = computed(() => {
 	switch (route.name) {
 		case 'database-tools':
-			return DatabaseTools
+			return defineAsyncComponent(() => import('./DatabaseTools.vue'))
 		case 'debug':
-			return Debug
+			return defineAsyncComponent(() => import('./AIOSEO_VERSION/Debug.vue'))
 		case 'htaccess-editor':
-			return HtaccessEditor
+			return defineAsyncComponent(() => import('./HtaccessEditor.vue'))
 		case 'import-export':
-			return ImportExport
+			return defineAsyncComponent(() => import('./ImportExport.vue'))
 		case 'system-status':
-			return SystemStatus
+			return defineAsyncComponent(() => import('./SystemStatus.vue'))
 		case 'wp-code':
-			return WpCode
+			return defineAsyncComponent(() => import('./WpCode.vue'))
 		default:
-			return RobotsEditor
+			return defineAsyncComponent(() => import('./RobotsEditor.vue'))
 	}
 })
 
@@ -65,4 +58,43 @@ const strings = {
 		? __('Network Tools', td)
 		: __('Tools', td)
 }
+
+// Preload other route components in the background
+const preloadRouteComponents = () => {
+	const loadComponents = () => {
+		const currentRoute = route.name
+
+		if ('database-tools' !== currentRoute) {
+			import('./DatabaseTools.vue')
+		}
+		if ('debug' !== currentRoute) {
+			import('./AIOSEO_VERSION/Debug.vue')
+		}
+		if ('htaccess-editor' !== currentRoute) {
+			import('./HtaccessEditor.vue')
+		}
+		if ('import-export' !== currentRoute) {
+			import('./ImportExport.vue')
+		}
+		if ('system-status' !== currentRoute) {
+			import('./SystemStatus.vue')
+		}
+		if ('wp-code' !== currentRoute) {
+			import('./WpCode.vue')
+		}
+		if ('robots-editor' !== currentRoute) {
+			import('./RobotsEditor.vue')
+		}
+	}
+
+	if ('requestIdleCallback' in window) {
+		requestIdleCallback(loadComponents)
+	} else {
+		setTimeout(loadComponents, 1)
+	}
+}
+
+onMounted(() => {
+	preloadRouteComponents()
+})
 </script>

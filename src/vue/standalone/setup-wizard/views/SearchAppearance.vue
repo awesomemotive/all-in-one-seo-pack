@@ -357,8 +357,12 @@ export default {
 				})
 		},
 		skipStep () {
+			const nextLink = this.setupWizardStore.getNextLink
+			this.setupWizardStore.currentStage = nextLink.name
 			this.setupWizardStore.saveWizard()
-			this.$router.push(this.setupWizardStore.getNextLink)
+				.then(() => {
+					this.$router.push(nextLink)
+				})
 		}
 	},
 	mounted () {

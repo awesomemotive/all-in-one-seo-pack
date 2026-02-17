@@ -334,6 +334,11 @@ class Wizard {
 			}
 		}
 
+		// If the setup wizard is now completed, mark the SEO Checklist item.
+		if ( aioseo()->standalone->setupWizard->isCompleted() ) {
+			aioseo()->seoChecklist->completeCheck( 'finishSetupWizard' );
+		}
+
 		return new \WP_REST_Response( [
 			'success' => true,
 			'options' => aioseo()->options->all()

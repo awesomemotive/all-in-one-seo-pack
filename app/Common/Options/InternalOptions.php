@@ -89,6 +89,9 @@ class InternalOptions {
 					]
 				],
 				'costPerFeature'      => [ 'type' => 'array', 'default' => [] ]
+			],
+			'seoChecklist'      => [
+				'completed' => [ 'type' => 'array', 'default' => [] ]
 			]
 		],
 		'integrations' => [

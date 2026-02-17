@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+
 import {
 	useSettingsStore
 } from '@/vue/stores'
@@ -30,8 +32,6 @@ import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
-import General from './General'
-import Social from './Social'
 import SvgSettings from '@/vue/components/common/svg/Settings'
 import SvgShare from '@/vue/components/common/svg/Share'
 
@@ -48,8 +48,8 @@ export default {
 	components : {
 		CoreMainTabs,
 		CoreSettingsRow,
-		General,
-		Social,
+		General : defineAsyncComponent(() => import('./General')),
+		Social  : defineAsyncComponent(() => import('./Social')),
 		SvgSettings,
 		SvgShare
 	},

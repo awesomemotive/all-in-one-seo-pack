@@ -5,11 +5,11 @@ import react from '@vitejs/plugin-react'
 import liveReload from 'vite-plugin-live-reload'
 import postcssRTLCSS from 'postcss-rtlcss'
 import replace from '@rollup/plugin-replace'
+import { visualizer } from 'rollup-plugin-visualizer'
 import del from 'rollup-plugin-delete'
 import path from 'path'
 import fs from 'fs'
 import * as dotenv from 'dotenv'
-import ElementPlus from 'unplugin-element-plus/vite'
 
 // I18n parser.
 import i18n from './build/aioseo-rollup-plugin-gettext-vue'
@@ -106,7 +106,6 @@ const getNonVueStandalones = () => {
 		// Native JS.
 		plugins                    : './src/app/plugins/main.js',
 		'follow-up-emails-nav-bar' : './src/vue/standalone/user-profile-tab/follow-up-emails-nav-bar.js',
-		'tru-seo-analyzer'         : './src/app/tru-seo/analyzer/main.js',
 
 		// blocks
 		'breadcrumbs/main' : './src/vue/standalone/blocks/breadcrumbs/main.jsx',
@@ -169,16 +168,34 @@ export default ({ mode }) => {
 		plugins : getPlugins(version),
 		base    : '',
 		envDir  : './build',
-		build   : {
-			// minify            : false, // Uncomment this for debugging production builds.
+		worker  : {
+			format  : 'es',
+			plugins : () => [
+				replace({
+					preventAssignment : true,
+					values            : {
+						AIOSEO_VERSION : version.toLowerCase()
+					}
+				})
+			],
+			rollupOptions : {
+				output : {
+					// inlineDynamicImports : true  // Bundle everything into one file
+					chunkFileNames : 'worker-[name]-[hash].js'
+				}
+			}
+		},
+		build : {
+			chunkSizeWarningLimit : 750,
 			// sourcemap         : true, // Uncomment this for debugging production builds.
-			assetsInlineLimit : 0, // We need to disable this as it converts small images to base64 inline, but that breaks our inline image function that we use to dynamically set the image url.
-			manifest          : true, // We use a manifest to load our files inside of WordPress.
-			outDir            : `dist/${version}/`, // This is where we put the assets for the current build. Version is either 'Lite' or 'Pro'.
-			assetsDir         : '',
-			rollupOptions     : {
+			assetsInlineLimit     : 0, // We need to disable this as it converts small images to base64 inline, but that breaks our inline image function that we use to dynamically set the image url.
+			manifest              : true, // We use a manifest to load our files inside of WordPress.
+			outDir                : `dist/${version}/`, // This is where we put the assets for the current build. Version is either 'Lite' or 'Pro'.
+			assetsDir             : '',
+			rollupOptions         : {
 				input  : getInputs(version),
 				output : {
+					format         : 'es',
 					hashCharacters : 'hex',
 					dir            : `dist/${version}/assets/`,
 					assetFileNames : assetInfo => {
@@ -196,6 +213,96 @@ export default ({ mode }) => {
 						return '[ext]/[name].[hash][extname]'
 					},
 					chunkFileNames : 'js/[name].[hash].js',
+					manualChunks (id) {
+						// Split node_modules into smaller vendor chunks
+						if (id.includes('node_modules')) {
+							// Charts are heavy - separate them
+							if (id.includes('apex') || id.includes('chart') || id.includes('recharts')) {
+								return 'vendor-charts'
+							}
+
+							// Lodash is large
+							if (id.includes('lodash')) {
+								return 'vendor-lodash'
+							}
+
+							// Lottie animations
+							if (id.includes('lottie')) {
+								return 'vendor-lottie'
+							}
+
+							// Markdown converter (AI Assistant)
+							if (id.includes('markdown-it') || id.includes('linkify-it')) {
+								return 'vendor-markdown'
+							}
+
+							// Date/time libraries
+							if (id.includes('luxon') || id.includes('dayjs')) {
+								return 'vendor-datetime'
+							}
+
+							// Quill editor is large
+							if (id.includes('quill')) {
+								return 'vendor-quill'
+							}
+
+							// Prism code editor
+							if (id.includes('prism-code-editor')) {
+								return 'vendor-prism-editor'
+							}
+
+							// Phone number input
+							if (id.includes('maz-ui') || id.includes('libphonenumber')) {
+								return 'vendor-phone'
+							}
+
+							// Date picker
+							if (id.includes('element-plus')) {
+								return 'vendor-date-picker'
+							}
+
+							// Emoji picker
+							if (id.includes('emoji-mart')) {
+								return 'vendor-emoji'
+							}
+
+							// Vue Draggable
+							if (id.includes('vuedraggable') || id.includes('sortablejs')) {
+								return 'vendor-draggable'
+							}
+
+							// Core Vue ecosystem + UI libraries together to avoid circular deps
+							// Element Plus depends on Vue, so they must be in the same chunk
+							if (
+								id.includes('vue') ||
+								id.includes('pinia') ||
+								id.includes('vue-router') ||
+								id.includes('element-plus') ||
+								id.includes('@varlet')
+							) {
+								return 'vendor-vue-ui'
+							}
+
+							// Everything else from node_modules
+							return 'vendor-other'
+						}
+
+						// Group stores AND utils together to avoid circular dependencies from barrel exports
+						// Stores and utils cross-import each other (stores use utils, utils use stores)
+						// All stores are imported via @/vue/stores/index.js which re-exports them
+						// All utils are imported via @/vue/utils/AIOSEO_VERSION/index.js which re-exports them
+						// Keeping them in one chunk prevents: "module A exports -> index.js -> module B imports -> back to A"
+						if (
+							(id.includes('/stores/') || id.includes('/utils/')) &&
+							!id.includes('node_modules')
+						) {
+							return 'app-core'
+						}
+
+						// Don't manually chunk other shared code - let Vite handle it automatically
+						// This includes: components, composables, plugins
+						// Vite's automatic code splitting will create optimal chunks based on actual usage
+					},
 					
 				},
 				plugins : [
@@ -217,6 +324,13 @@ export default ({ mode }) => {
 							to   : `dist/${version}/manifest.php`
 						}
 					])
+					/* visualizer({
+						open       : true,              // Opens in browser automatically
+						filename   : 'dist/stats.html',  // Output file
+						gzipSize   : true,          // Show gzipped sizes
+						brotliSize : true,        // Show brotli sizes
+						template   : 'treemap'      // or 'sunburst', 'network'
+					}) */
 				],
 				// This is a workaround for an issue with rollup that won't be fixed any time soon. See: https://github.com/vitejs/vite/issues/15012
 				onLog (level, log, handler) {
@@ -233,15 +347,12 @@ export default ({ mode }) => {
 		optimizeDeps : {
 			force   : true,
 			include : [
-				'@codemirror/lang-json',
-				'@codemirror/view',
-				'@varlet/ui',
+				'@varlet/ui/es/tab',
+				'@varlet/ui/es/tabs',
 				'animate-vanilla-js',
 				'clipboard/dist/clipboard.min.js',
-				'codemirror',
-				'element-plus',
+				'element-plus/es/components/date-picker/index.mjs',
 				'element-plus/dist/locale/en.mjs',
-				'element-plus/es/components/date-picker/style/css',
 				'emoji-mart',
 				'emoji-mart/dist/browser',
 				'libphonenumber-js',
@@ -358,8 +469,7 @@ const getPlugins = version => {
 		vue(),
 		react({
 			jsxRuntime : 'classic'
-		}),
-		ElementPlus()
+		})
 	]
 
 	const reload = [

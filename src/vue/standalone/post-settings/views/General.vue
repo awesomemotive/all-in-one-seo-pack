@@ -319,7 +319,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, defineEmits, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'
 
 import {
 	useLicenseStore,

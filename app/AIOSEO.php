@@ -270,6 +270,7 @@ namespace AIOSEO\Plugin {
 			$this->usage              = $this->pro ? new Pro\Admin\Usage() : new Lite\Admin\Usage();
 			$this->siteHealth         = $this->pro ? new Pro\Admin\SiteHealth() : new Common\Admin\SiteHealth();
 			$this->networkLicense     = $this->pro && $this->helpers->isPluginNetworkActivated() ? new Pro\Admin\NetworkLicense() : null;
+			$this->seoChecklist       = $this->pro ? new Pro\SeoChecklist\SeoChecklist() : new Common\SeoChecklist\SeoChecklist();
 			$this->license            = $this->pro ? new Pro\Admin\License() : null;
 			$this->autoUpdates        = $this->pro ? new Pro\Admin\AutoUpdates() : null;
 			$this->updates            = $this->pro ? new Pro\Main\Updates() : new Common\Main\Updates();

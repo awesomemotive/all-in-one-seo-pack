@@ -437,6 +437,11 @@ export default {
 					tooltip : __('Our SEO Setup Wizard dashboard widget helps you remember to finish setting up some initial crucial settings for your site to help you rank higher in search results. Once the setup wizard is completed this widget will automatically disappear.', td)
 				},
 				{
+					key     : 'seoChecklist',
+					label   : __('SEO Checklist', td),
+					tooltip : __('Our SEO Checklist dashboard widget helps you stay focused on what matters most for SEO. Complete prioritized to-dos and track your progress as you optimize your site. This widget will automatically appear once the setup wizard is completed.', td)
+				},
+				{
 					key     : 'seoOverview',
 					label   : __('SEO Overview', td),
 					tooltip : __('Our SEO Overview widget helps you determine which posts or pages you should focus on for content updates to help you rank higher in search results.', td)

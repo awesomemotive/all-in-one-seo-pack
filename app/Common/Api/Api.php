@@ -46,7 +46,9 @@ class Api {
 			'seo-analysis/competitors'                    => [ 'callback' => [ 'Analyze', 'getCompetitorsResults' ], 'access' => 'aioseo_seo_analysis_settings' ],
 			'ai/image-generator'                          => [ 'callback' => [ 'Ai', 'fetchImages' ], 'access' => 'aioseo_page_ai_content_settings' ],
 			'ai/insights/reports'                         => [ 'callback' => [ 'AiInsights', 'getReports' ], 'access' => 'aioseo_ai_insights_settings' ],
-			'ai/insights/reports/(?P<uuid>[a-zA-Z0-9-]+)' => [ 'callback' => [ 'AiInsights', 'getReport' ], 'access' => 'aioseo_ai_insights_settings' ]
+			'ai/insights/reports/(?P<uuid>[a-zA-Z0-9-]+)' => [ 'callback' => [ 'AiInsights', 'getReport' ], 'access' => 'aioseo_ai_insights_settings' ],
+			'seo-checklist/'                              => [ 'callback' => [ 'SeoChecklist', 'getChecks' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
+			'seo-checklist/completed'                     => [ 'callback' => [ 'SeoChecklist', 'getCompletedChecks' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
 		],
 		'POST'   => [
 			'ai/auth'                                                => [ 'callback' => [ 'Ai', 'storeAccessToken' ], 'access' => 'aioseo_page_ai_content_settings' ],
@@ -187,10 +189,16 @@ class Api {
 				'callback' => [ 'WritingAssistant', 'setReportProgress' ],
 				'access'   => 'aioseo_page_writing_assistant_settings'
 			],
-			'ai/insights/reports'                                     => [ 'callback' => [ 'AiInsights', 'createReport' ], 'access' => 'aioseo_ai_insights_settings' ],
-			'ai/insights/reports/(?P<uuid>[a-zA-Z0-9-]+)/process'     => [ 'callback' => [ 'AiInsights', 'processReport' ], 'access' => 'aioseo_ai_insights_settings' ],
-			'ai/insights/reports/(?P<uuid>[a-zA-Z0-9-]+)/regenerate'  => [ 'callback' => [ 'AiInsights', 'regenerateReport' ], 'access' => 'aioseo_ai_insights_settings' ],
-			'ai/insights/brand-tracker/subscribe'                     => [ 'callback' => [ 'AiInsights', 'subscribeBrandTracker' ], 'access' => 'aioseo_ai_insights_settings' ]
+			'ai/insights/reports'                                    => [ 'callback' => [ 'AiInsights', 'createReport' ], 'access' => 'aioseo_ai_insights_settings' ],
+			'ai/insights/reports/(?P<uuid>[a-zA-Z0-9-]+)/process'    => [ 'callback' => [ 'AiInsights', 'processReport' ], 'access' => 'aioseo_ai_insights_settings' ],
+			'ai/insights/reports/(?P<uuid>[a-zA-Z0-9-]+)/regenerate' => [ 'callback' => [ 'AiInsights', 'regenerateReport' ], 'access' => 'aioseo_ai_insights_settings' ],
+			'ai/insights/brand-tracker/subscribe'                    => [ 'callback' => [ 'AiInsights', 'subscribeBrandTracker' ], 'access' => 'aioseo_ai_insights_settings' ],
+			'seo-checklist/complete'                                 => [ 'callback' => [ 'SeoChecklist', 'completeCheck' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
+			'seo-checklist/uncomplete'                               => [ 'callback' => [ 'SeoChecklist', 'uncompleteCheck' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
+			'seo-checklist/bulk-complete'                            => [ 'callback' => [ 'SeoChecklist', 'bulkCompleteChecks' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
+			'seo-checklist/bulk-uncomplete'                          => [ 'callback' => [ 'SeoChecklist', 'bulkUncompleteChecks' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
+			'seo-checklist/action'                                   => [ 'callback' => [ 'SeoChecklist', 'doAction' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ],
+			'seo-checklist/fetch'                                    => [ 'callback' => [ 'SeoChecklist', 'fetchChecks' ], 'access' => [ 'aioseo_general_settings', 'aioseo_setup_wizard' ] ]
 		],
 		'DELETE' => [
 			'backup'                                      => [ 'callback' => [ 'Tools', 'deleteBackup' ], 'access' => 'aioseo_tools_settings' ],

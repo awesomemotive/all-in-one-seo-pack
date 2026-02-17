@@ -1,5 +1,6 @@
 <template>
 	<core-settings-row
+		id="aioseo-license-key-row"
 		:name="strings.licenseKey"
 	>
 		<template #description>
@@ -22,6 +23,7 @@
 
 				<base-input
 					type="password"
+					size="medium"
 					:placeholder="strings.placeholder"
 					:append-icon="licenseKey ? 'circle-check' : null"
 					autocomplete="new-password"
@@ -30,6 +32,7 @@
 
 				<base-button
 					type="green"
+					size="medium"
 					:disabled="!licenseKey"
 					:loading="rootStore.loading"
 					@click="processGetConnectUrl"
@@ -91,9 +94,9 @@ export default {
 					DISCOUNT_PERCENTAGE + ' ' + __('off', td)
 				),
 				licenseKey            : __('License Key', td),
-				licenseKeyDescription : __('Your license key provides access to updates and addons.', td),
+				licenseKeyDescription : __('Your license key provides access Pro features, addons and updates.', td),
 				placeholder           : __('Paste your license key here', td),
-				connect               : __('Connect', td)
+				connect               : __('Activate', td)
 			}
 		}
 	},

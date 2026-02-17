@@ -1,6 +1,9 @@
 <template>
 	<div class="aioseo-ai-content-settings">
-		<core-card slug="aiContentSettings" :header-text="strings.aiContentSettings">
+		<core-card
+			slug="aiContentSettings"
+			:header-text="strings.aiContentSettings"
+		>
 			<core-blur v-if="aiStore.isFreeAndOutOfCredits">
 				<ai-content-main />
 			</core-blur>
@@ -15,12 +18,13 @@
 <script setup>
 import { useAiStore } from '@/vue/stores/AiStore'
 
-import AiContentMain from './partials/AiContent/Main'
+import AiContentMain from '@/vue/pages/settings/views/partials/AiContent/Main'
 import AiContentCta from '@/vue/standalone/post-settings/views/partials/ai-content/Cta'
 import CoreBlur from '@/vue/components/common/core/Blur'
 import CoreCard from '@/vue/components/common/core/Card'
 
 import { __ } from '@/vue/plugins/translations'
+
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 const strings = {

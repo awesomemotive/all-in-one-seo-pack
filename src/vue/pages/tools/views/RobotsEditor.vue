@@ -466,7 +466,7 @@ import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreNetworkSiteSelector from '@/vue/components/common/core/NetworkSiteSelector'
 import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
-import Draggable from 'vuedraggable'
+import { defineAsyncComponent } from 'vue'
 import PreventCrawling from '@/vue/pages/search-appearance/views/partials/crawl-cleanup/PreventCrawling'
 import RuleErrors from './partials/robots-editor/RuleErrors'
 import SvgCirclePlus from '@/vue/components/common/svg/circle/Plus'
@@ -478,6 +478,8 @@ import SvgUpload from '@/vue/components/common/svg/Upload'
 import UnwantedBots from '@/vue/pages/search-appearance/views/partials/crawl-cleanup/UnwantedBots'
 
 import { __, _n, sprintf } from '@/vue/plugins/translations'
+
+const Draggable = defineAsyncComponent(() => import('vuedraggable'))
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 

@@ -15,7 +15,6 @@
 </template>
 
 <script setup>
-import { defineEmits } from 'vue'
 import { storeToRefs } from 'pinia'
 import { truSeoShouldAnalyze } from '@/vue/plugins/tru-seo/components/helpers'
 

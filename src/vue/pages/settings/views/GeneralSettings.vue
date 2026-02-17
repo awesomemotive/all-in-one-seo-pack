@@ -7,6 +7,8 @@
 		<core-card
 			slug="license"
 			:header-text="strings.license"
+			:toggles="false"
+			no-slide
 		>
 			<template
 				v-if="!rootStore.isPro"
@@ -23,22 +25,24 @@
 			</template>
 
 			<settings-license-key />
+		</core-card>
 
+		<core-card
+			slug="aiCredits"
+			:header-text="strings.aiCredits"
+			:toggles="false"
+			no-slide
+		>
 			<core-settings-row
-				:name="strings.setupWizard"
-				v-if="!settingsStore.settings.showSetupWizard && allowed('aioseo_setup_wizard') && !rootStore.aioseo.data.isNetworkAdmin"
+				:name="strings.aiCreditsLabel"
+				class="aioseo-ai-content-settings__connect"
 			>
-				<template #content>
-					<base-button
-						type="blue"
-						size="medium"
-						tag="a"
-						:href="rootStore.aioseo.urls.aio.wizard"
-					>
-						<svg-rocket /> {{ strings.relaunchSetupWizard }}
-					</base-button>
+				<template #description>
+					{{ strings.aiCreditsDescription }}
+				</template>
 
-					<p class="aioseo-description">{{ strings.setupWizardText }}</p>
+				<template #content>
+					<buy-or-connect-actions />
 				</template>
 			</core-settings-row>
 		</core-card>
@@ -60,16 +64,18 @@
 </template>
 
 <script>
-import { DISCOUNT_PERCENTAGE } from '@/vue/plugins/constants'
-import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
 	useRootStore,
 	useSettingsStore
 } from '@/vue/stores'
 
+import links from '@/vue/utils/links'
 import license from '@/vue/utils/license'
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+import { DISCOUNT_PERCENTAGE } from '@/vue/plugins/constants'
+
+import BuyOrConnectActions from '@/vue/components/common/ai/BuyOrConnectButtons'
 
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreGettingStarted from '@/vue/components/common/core/GettingStarted'
@@ -77,7 +83,6 @@ import CoreSettingsRow from '@/vue/components/common/core/SettingsRow'
 import LiteSettingsNetworkSitesActivation from '@/vue/components/lite/settings/NetworkSitesActivation'
 import SettingsLicenseKey from '@/vue/components/AIOSEO_VERSION/settings/LicenseKey'
 import SettingsNetworkSitesActivation from '@/vue/components/AIOSEO_VERSION/settings/NetworkSitesActivation'
-import SvgRocket from '@/vue/components/common/svg/Rocket'
 
 import { __, sprintf } from '@/vue/plugins/translations'
 
@@ -92,13 +97,13 @@ export default {
 		}
 	},
 	components : {
+		BuyOrConnectActions,
 		CoreCard,
 		CoreGettingStarted,
 		CoreSettingsRow,
 		LiteSettingsNetworkSitesActivation,
 		SettingsLicenseKey,
-		SettingsNetworkSitesActivation,
-		SvgRocket
+		SettingsNetworkSitesActivation
 	},
 	data () {
 		return {
@@ -126,14 +131,10 @@ export default {
 					// Translators: This refers to a discount (e.g. "As a valued user you receive 50%, automatically applied at checkout!").
 					DISCOUNT_PERCENTAGE + ' ' + __('off', td)
 				),
-				setupWizard         : __('Setup Wizard', td),
-				relaunchSetupWizard : __('Relaunch Setup Wizard', td),
-				setupWizardText     : sprintf(
-					// Translators: 1 - The plugin name ("All in One SEO")
-					__('Use our configuration wizard to properly set up %1$s with your WordPress website.', td),
-					import.meta.env.VITE_NAME
-				),
-				domainActivations : __('Domain Activations', td)
+				domainActivations    : __('Domain Activations', td),
+				aiCredits            : __('AI Credits', td),
+				aiCreditsLabel       : __('AI Credits', td),
+				aiCreditsDescription : __('AI credits can be used to generate content, such as articles, images and more with AI.', td)
 			}
 		}
 	},
@@ -171,12 +172,6 @@ export default {
 
 	.more-tooltip-text strong {
 		color: $green;
-	}
-
-	svg.aioseo-setup-wizard {
-		width: 12px;
-		height: 12px;
-		margin-right: 10px;
 	}
 }
 </style>

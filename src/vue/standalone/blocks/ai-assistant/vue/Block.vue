@@ -273,7 +273,8 @@ const resizeInput = () => {
 	node.style.height = node.scrollHeight + 'px'
 }
 
-const updateParsedContent = () => {
+const updateParsedContent = async () => {
+	await aiAssistantStore.initMarkdownConverter()
 	parsedContent.value = aiAssistantStore.markdownConverter.render(app.root.data.content)
 
 	resizeInput()

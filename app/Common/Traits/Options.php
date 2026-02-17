@@ -516,6 +516,10 @@ trait Options {
 	 * @return array           The modified values.
 	 */
 	protected function resetValues( $values, $defaults, $keys = [], $include = [], $exclude = [] ) {
+		if ( ! is_array( $values ) ) {
+			return $values;
+		}
+
 		$values = $this->allFiltered( $values, $include, $exclude );
 		foreach ( $values as $key => $value ) {
 			$option = $this->isAnOption( $key, $defaults, $keys );

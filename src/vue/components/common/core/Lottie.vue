@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import lottie from 'lottie-web'
 export default {
 	emits : [ 'animCreated' ],
 	props : {
@@ -24,15 +23,17 @@ export default {
 		}
 	},
 	mounted () {
-		this.anim = lottie.loadAnimation({
-			container        : this.$refs.lavContainer,
-			renderer         : 'svg',
-			loop             : false !== this.options.loop,
-			autoplay         : false !== this.options.autoplay,
-			animationData    : { ...this.options.animationData },
-			rendererSettings : this.options.rendererSettings
+		import('lottie-web').then(({ default: lottie }) => {
+			this.anim = lottie.loadAnimation({
+				container        : this.$refs.lavContainer,
+				renderer         : 'svg',
+				loop             : false !== this.options.loop,
+				autoplay         : false !== this.options.autoplay,
+				animationData    : { ...this.options.animationData },
+				rendererSettings : this.options.rendererSettings
+			})
+			this.$emit('animCreated', this.anim)
 		})
-		this.$emit('animCreated', this.anim)
 	}
 }
 </script>

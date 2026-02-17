@@ -70,7 +70,7 @@ export const useScrollAndHighlight = (params = {}) => {
 						element.classList.add('aioseo-row-highlight')
 						setTimeout(() => {
 							element.classList.remove('aioseo-row-highlight')
-						}, 1500)
+						}, 4500)
 					})
 				}
 				removeParam('aioseo-highlight')

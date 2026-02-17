@@ -26,12 +26,26 @@
 					</template>
 				</core-main-tabs>
 
-				<transition name="route-fade" mode="out-in">
-					<slot />
-				</transition>
+				<div class="aioseo-tab-content">
+					<Suspense
+						@pending="isNavigating = true"
+						@resolve="isNavigating = false"
+					>
+						<template #default>
+							<transition name="route-fade" mode="out-in">
+								<slot />
+							</transition>
+						</template>
+						<template #fallback>
+							<div class="aioseo-loading-placeholder">
+								<core-loader dark />
+							</div>
+						</template>
+					</Suspense>
+				</div>
 
 				<div
-					v-if="shouldShowSaveButton"
+					v-if="shouldShowSaveButton && !isNavigating"
 					class="save-changes"
 				>
 					<base-button
@@ -74,6 +88,7 @@ import { useSaveChanges } from '@/vue/composables/SaveChanges'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreHeader from '@/vue/components/common/core/Header'
 import CoreHelp from '@/vue/components/common/core/Help'
+import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
 import CoreNotifications from '@/vue/components/common/core/Notifications'
 import GridContainer from '@/vue/components/common/grid/Container'
@@ -100,6 +115,7 @@ export default {
 		CoreAlert,
 		CoreHeader,
 		CoreHelp,
+		CoreLoader,
 		CoreMainTabs,
 		CoreNotifications,
 		GridContainer
@@ -142,8 +158,9 @@ export default {
 	},
 	data () {
 		return {
-			tabsKey : 0,
-			strings : {
+			tabsKey      : 0,
+			isNavigating : false,
+			strings      : {
 				saveChanges : __('Save Changes', td)
 			}
 		}
@@ -151,6 +168,13 @@ export default {
 	watch : {
 		excludeTabs () {
 			this.tabsKey += 1
+		},
+		'$route' () {
+			this.isNavigating = true
+			// Fallback: show button after transition completes if Suspense doesn't trigger.
+			setTimeout(() => {
+				this.isNavigating = false
+			}, 300)
 		}
 	},
 	computed : {
@@ -220,3 +244,17 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss" scoped>
+.aioseo-tab-content {
+	position: relative;
+}
+
+.aioseo-loading-placeholder {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 300px;
+	padding: 40px;
+}
+</style>

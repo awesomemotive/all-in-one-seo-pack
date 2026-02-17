@@ -22,7 +22,7 @@
 		<template #description>
 			<p>{{ strings.aiContentDescription }}</p>
 
-			<buy-or-connect-actions />
+			<buy-or-connect-actions buttons-only />
 
 			<a
 				class="aioseo-pro-upgrade-link"
@@ -97,6 +97,12 @@ const aiStore   = useAiStore()
 
 		.aioseo-buy-or-connect {
 			margin-top: 16px;
+
+			.aioseo-buy-or-connect__options.buttons-only {
+				flex-direction: column;
+				align-items: center;
+				gap: 8px;
+			}
 
 			.aioseo-buy-or-connect__actions {
 				flex-direction: column;

@@ -462,6 +462,8 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+
 import {
 	useLicenseStore,
 	useOptionsStore,
@@ -482,7 +484,6 @@ import { useMaxCounts } from '@/vue/composables/MaxCounts'
 import { useTags } from '@/vue/composables/Tags'
 
 import BaseDatePicker from '@/vue/components/common/base/DatePicker'
-import BasePhone from '@/vue/components/common/base/Phone'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import BaseToggle from '@/vue/components/common/base/Toggle'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -494,6 +495,7 @@ import CoreSettingsSeparator from '@/vue/components/common/core/SettingsSeparato
 import SvgLocalSeo from '@/vue/components/common/svg/local/Seo'
 
 import { __, sprintf } from '@/vue/plugins/translations'
+const BasePhone = defineAsyncComponent(() => import('@/vue/components/common/base/Phone'))
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 

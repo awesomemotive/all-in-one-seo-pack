@@ -12,7 +12,7 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted } from 'vue'
+import { computed, defineAsyncComponent, onMounted } from 'vue'
 
 import {
 	useLinkAssistantStore,
@@ -25,37 +25,64 @@ import { useRequiresActivation } from '@/vue/composables/RequiresActivation'
 import { useRequiresUpdate } from '@/vue/composables/RequiresUpdate'
 
 import CoreMain from '@/vue/components/common/core/main/Index'
-import DomainsReport from './AIOSEO_VERSION/DomainsReport'
-import LinksReport from './AIOSEO_VERSION/LinksReport'
-import Overview from './Overview'
-import PostReport from './AIOSEO_VERSION/PostReport'
-import Settings from './AIOSEO_VERSION/Settings'
 
 import { __ } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-const route  = useRoute()
-const router = useRouter()
+const route    = useRoute()
+const router   = useRouter()
 const getRoute = computed(() => {
 	if ('overview' === route.name) {
-		return Overview
+		return defineAsyncComponent(() => import('./Overview.vue'))
 	}
 	if ('domains-report' === route.name) {
-		return DomainsReport
+		return defineAsyncComponent(() => import('./AIOSEO_VERSION/DomainsReport.vue'))
 	}
 	if ('links-report' === route.name) {
-		return LinksReport
+		return defineAsyncComponent(() => import('./AIOSEO_VERSION/LinksReport.vue'))
 	}
 	if ('post-report' === route.name) {
-		return PostReport
+		return defineAsyncComponent(() => import('./AIOSEO_VERSION/PostReport.vue'))
 	}
 	if ('settings' === route.name) {
-		return Settings
+		return defineAsyncComponent(() => import('./AIOSEO_VERSION/Settings.vue'))
 	}
 
-	return Overview
+	return defineAsyncComponent(() => import('./Overview.vue'))
 })
+
+// Preload other route components in the background
+const preloadRouteComponents = () => {
+	// Use requestIdleCallback to load during idle time, or setTimeout as fallback
+	const loadComponents = () => {
+		// Get the current route to avoid reloading it
+		const currentRoute = route.name
+
+		// Preload all route components except the current one
+		if ('overview' !== currentRoute) {
+			import('./Overview.vue')
+		}
+		if ('domains-report' !== currentRoute) {
+			import('./AIOSEO_VERSION/DomainsReport.vue')
+		}
+		if ('links-report' !== currentRoute) {
+			import('./AIOSEO_VERSION/LinksReport.vue')
+		}
+		if ('post-report' !== currentRoute) {
+			import('./AIOSEO_VERSION/PostReport.vue')
+		}
+		if ('settings' !== currentRoute) {
+			import('./AIOSEO_VERSION/Settings.vue')
+		}
+	}
+
+	if ('requestIdleCallback' in window) {
+		requestIdleCallback(loadComponents)
+	} else {
+		setTimeout(loadComponents, 1)
+	}
+}
 
 const {
 	getExcludedActivationTabs
@@ -81,6 +108,7 @@ const excludedTabs = computed(() => {
 
 const linkAssistantStore = useLinkAssistantStore()
 const rootStore          = useRootStore()
+
 onMounted(() => {
 	window.aioseoBus.$on('changes-saved', () => {
 		linkAssistantStore.getMenuData()
@@ -95,6 +123,9 @@ onMounted(() => {
 	) {
 		linkAssistantStore.pollSuggestionsScan()
 	}
+
+	// Preload other routes after initial render
+	preloadRouteComponents()
 })
 </script>
 

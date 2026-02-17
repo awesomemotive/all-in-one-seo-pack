@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { merge } from 'lodash-es'
 
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
@@ -88,7 +89,11 @@ export const useAiStore = defineStore('AiStore', {
 					}
 
 					const optionsStore = useOptionsStore()
-					optionsStore.internalOptions.internal.ai = response.body.aiOptions
+					optionsStore.internalOptions.internal.ai = merge(
+						{},
+						optionsStore.internalOptions.internal.ai,
+						response.body.aiOptions
+					)
 
 					return response
 				})

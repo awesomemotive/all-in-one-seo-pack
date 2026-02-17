@@ -111,10 +111,15 @@ export const useLicenseStore = defineStore('LicenseStore', {
 					}
 
 					if (response.body.aiOptions) {
+						const internalStore = rootStore.aioseo.data.isNetworkAdmin ? 'internalNetworkOptions' : 'internalOptions'
 						Object.keys(response.body.aiOptions).forEach(objectKey => {
-							const internalStore = rootStore.aioseo.data.isNetworkAdmin ? 'internalNetworkOptions' : 'internalOptions'
 							optionsStore.updateOption(internalStore, { groups: [ 'internal', 'ai' ], key: objectKey, value: response.body.aiOptions[objectKey] })
 						})
+
+						// Directly set hasAccessToken since updateOption skips non-existing keys.
+						if (undefined !== response.body.aiOptions.hasAccessToken) {
+							optionsStore[internalStore].internal.ai.hasAccessToken = response.body.aiOptions.hasAccessToken
+						}
 					}
 
 					return response
@@ -162,11 +167,16 @@ export const useLicenseStore = defineStore('LicenseStore', {
 						})
 						this.license = response.body.license
 
-						if (response?.body?.aiData) {
-							Object.keys(response.body.aiData).forEach(key => {
-								const internalStore = rootStore.aioseo.data.isNetworkAdmin ? 'internalNetworkOptions' : 'internalOptions'
-								optionsStore.updateOption(internalStore, { groups: [ 'internal', 'ai' ], key, value: response.body.aiData[key] })
+						if (response?.body?.aiOptions) {
+							const internalStore = rootStore.aioseo.data.isNetworkAdmin ? 'internalNetworkOptions' : 'internalOptions'
+							Object.keys(response.body.aiOptions).forEach(key => {
+								optionsStore.updateOption(internalStore, { groups: [ 'internal', 'ai' ], key, value: response.body.aiOptions[key] })
 							})
+
+							// Directly set hasAccessToken since updateOption skips non-existing keys.
+							if (undefined !== response.body.aiOptions.hasAccessToken) {
+								optionsStore[internalStore].internal.ai.hasAccessToken = response.body.aiOptions.hasAccessToken
+							}
 						}
 
 						rootStore.aioseo.isUnlicensed = true

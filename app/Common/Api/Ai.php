@@ -38,14 +38,13 @@ class Ai {
 
 		aioseo()->ai->updateCredits( true );
 
+		// Build response manually since we know we just set a valid access token.
+		$aiOptions                   = self::getAiOptionsPayload();
+		$aiOptions['hasAccessToken'] = true;
+
 		return new \WP_REST_Response( [
 			'success'   => true,
-			'aiOptions' => [
-				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
-				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
-				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
-				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
-			]
+			'aiOptions' => $aiOptions
 		], 200 );
 	}
 
@@ -65,12 +64,7 @@ class Ai {
 
 		return new \WP_REST_Response( [
 			'success'   => true,
-			'aiOptions' => [
-				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
-				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
-				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
-				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
-			]
+			'aiOptions' => self::getAiOptionsPayload()
 		], 200 );
 	}
 
@@ -163,12 +157,7 @@ class Ai {
 		return new \WP_REST_Response( [
 			'success'   => true,
 			'titles'    => $titles,
-			'aiOptions' => [
-				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
-				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
-				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
-				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
-			]
+			'aiOptions' => self::getAiOptionsPayload()
 		], 200 );
 	}
 
@@ -261,12 +250,7 @@ class Ai {
 		return new \WP_REST_Response( [
 			'success'      => true,
 			'descriptions' => $descriptions,
-			'aiOptions'    => [
-				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
-				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
-				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
-				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
-			]
+			'aiOptions'    => self::getAiOptionsPayload()
 		], 200 );
 	}
 
@@ -367,12 +351,7 @@ class Ai {
 		return new \WP_REST_Response( [
 			'success'   => true,
 			'snippets'  => $aioseoPost->ai->socialPosts, // Return all the social posts, not just the new ones.
-			'aiOptions' => [
-				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
-				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
-				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
-				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
-			]
+			'aiOptions' => self::getAiOptionsPayload()
 		], 200 );
 	}
 
@@ -692,12 +671,7 @@ class Ai {
 		return new \WP_REST_Response( [
 			'success'   => true,
 			'faqs'      => $faqs,
-			'aiOptions' => [
-				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
-				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
-				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
-				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
-			]
+			'aiOptions' => self::getAiOptionsPayload()
 		], 200 );
 	}
 
@@ -790,12 +764,7 @@ class Ai {
 		return new \WP_REST_Response( [
 			'success'   => true,
 			'keyPoints' => $keyPoints,
-			'aiOptions' => [
-				'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
-				'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
-				'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
-				'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
-			]
+			'aiOptions' => self::getAiOptionsPayload()
 		], 200 );
 	}
 
@@ -874,12 +843,27 @@ class Ai {
 
 		return new \WP_REST_Response( [
 			'success' => true,
-			'aiData'  => [
-				'isTrialAccessToken'  => $internalOptions->internal->ai->isTrialAccessToken,
-				'isManuallyConnected' => $internalOptions->internal->ai->isManuallyConnected,
-				'credits'             => $internalOptions->internal->ai->credits->all(),
-				'costPerFeature'      => $internalOptions->internal->ai->costPerFeature
-			]
+			'aiData'  => self::getAiOptionsPayload()
 		], 200 );
+	}
+
+	/**
+	 * Returns the AI options payload for API responses.
+	 *
+	 * This helper ensures we never accidentally expose the access token
+	 * and maintains consistency across all AI API endpoints.
+	 *
+	 * @since 4.9.4
+	 *
+	 * @return array The AI options payload.
+	 */
+	public static function getAiOptionsPayload() {
+		return [
+			'hasAccessToken'      => ! empty( aioseo()->internalOptions->internal->ai->accessToken ),
+			'isTrialAccessToken'  => aioseo()->internalOptions->internal->ai->isTrialAccessToken,
+			'isManuallyConnected' => aioseo()->internalOptions->internal->ai->isManuallyConnected,
+			'credits'             => aioseo()->internalOptions->internal->ai->credits->all(),
+			'costPerFeature'      => aioseo()->internalOptions->internal->ai->costPerFeature
+		];
 	}
 }

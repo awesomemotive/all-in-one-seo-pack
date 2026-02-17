@@ -11,15 +11,9 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import AccessControl from './AccessControl'
-import Advanced from './Advanced'
-import AiContent from './AiContent'
-import Breadcrumbs from './Breadcrumbs'
+import { defineAsyncComponent } from 'vue'
+
 import CoreMain from '@/vue/components/common/core/main/Index'
-import GeneralSettings from './GeneralSettings'
-import RssContent from './RssContent'
-import WebmasterTools from './WebmasterTools'
-import WritingAssistant from './WritingAssistant'
 
 import { __ } from '@/vue/plugins/translations'
 
@@ -32,15 +26,15 @@ export default {
 		}
 	},
 	components : {
-		AccessControl,
-		Advanced,
-		AiContent,
-		Breadcrumbs,
+		AccessControl    : defineAsyncComponent(() => import('./AccessControl.vue')),
+		Advanced         : defineAsyncComponent(() => import('./Advanced.vue')),
+		Breadcrumbs      : defineAsyncComponent(() => import('./Breadcrumbs.vue')),
 		CoreMain,
-		GeneralSettings,
-		RssContent,
-		WebmasterTools,
-		WritingAssistant
+		GeneralSettings  : defineAsyncComponent(() => import('./GeneralSettings.vue')),
+		RssContent       : defineAsyncComponent(() => import('./RssContent.vue')),
+		SeoChecklist     : defineAsyncComponent(() => import('./SeoChecklist.vue')),
+		WebmasterTools   : defineAsyncComponent(() => import('./WebmasterTools.vue')),
+		WritingAssistant : defineAsyncComponent(() => import('./WritingAssistant.vue'))
 	},
 	data () {
 		return {
@@ -49,6 +43,25 @@ export default {
 					? __('Network Settings', td)
 					: __('General Settings', td)
 			}
+		}
+	},
+	mounted () {
+		// Preload all route components in the background
+		const preloadComponents = () => {
+			import('./AccessControl.vue')
+			import('./Advanced.vue')
+			import('./Breadcrumbs.vue')
+			import('./GeneralSettings.vue')
+			import('./RssContent.vue')
+			import('./SeoChecklist.vue')
+			import('./WebmasterTools.vue')
+			import('./WritingAssistant.vue')
+		}
+
+		if ('requestIdleCallback' in window) {
+			requestIdleCallback(preloadComponents)
+		} else {
+			setTimeout(preloadComponents, 1)
 		}
 	}
 }

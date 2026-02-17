@@ -99,7 +99,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick, defineAsyncComponent } from 'vue'
 import {
 	useRootStore
 } from '@/vue/stores'
@@ -116,9 +116,10 @@ import SvgEye from '@/vue/components/common/svg/Eye'
 import SvgEyeOff from '@/vue/components/common/svg/EyeOff'
 import SvgInfo from '@/vue/components/common/svg/Info'
 import SvgTocLink from '@/vue/components/common/svg/Link'
-import Draggable from 'vuedraggable'
 
 import { __, sprintf } from '@/vue/plugins/translations'
+
+const Draggable = defineAsyncComponent(() => import('vuedraggable'))
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 

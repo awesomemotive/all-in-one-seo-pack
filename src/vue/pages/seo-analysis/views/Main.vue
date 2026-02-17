@@ -14,11 +14,9 @@ import {
 	useLicenseStore
 } from '@/vue/stores'
 
-import AnalyzeCompetitorSite from './AnalyzeCompetitorSite'
+import { defineAsyncComponent } from 'vue'
+
 import CoreMain from '@/vue/components/common/core/main/Index'
-import SeoHomepageAudit from './SeoHomepageAudit'
-import SeoSiteAudit from './AIOSEO_VERSION/SeoSiteAudit'
-import HeadlineAnalyzer from './HeadlineAnalyzer'
 
 import { __ } from '@/vue/plugins/translations'
 
@@ -37,11 +35,11 @@ export default {
 		}
 	},
 	components : {
-		AnalyzeCompetitorSite,
+		AnalyzeCompetitorSite : defineAsyncComponent(() => import('./AnalyzeCompetitorSite.vue')),
 		CoreMain,
-		SeoHomepageAudit,
-		SeoSiteAudit,
-		HeadlineAnalyzer
+		SeoHomepageAudit      : defineAsyncComponent(() => import('./SeoHomepageAudit.vue')),
+		SeoSiteAudit          : defineAsyncComponent(() => import('./AIOSEO_VERSION/SeoSiteAudit.vue')),
+		HeadlineAnalyzer      : defineAsyncComponent(() => import('./HeadlineAnalyzer.vue'))
 	},
 	data () {
 		return {
@@ -57,6 +55,20 @@ export default {
 			100 !== this.analyzerStore.objectsScan.percent
 		) {
 			this.analyzerStore.fetchObjectsScanPercent()
+		}
+
+		// Preload all route components in the background
+		const preloadComponents = () => {
+			import('./AnalyzeCompetitorSite.vue')
+			import('./SeoHomepageAudit.vue')
+			import('./AIOSEO_VERSION/SeoSiteAudit.vue')
+			import('./HeadlineAnalyzer.vue')
+		}
+
+		if ('requestIdleCallback' in window) {
+			requestIdleCallback(preloadComponents)
+		} else {
+			setTimeout(preloadComponents, 1)
 		}
 	}
 }

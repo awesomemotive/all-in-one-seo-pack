@@ -5,6 +5,7 @@
 			class="ai-image-generator__form-waiting__encouraging-message"
 		>
 			<lottie
+				v-if="randomEncouragingMessage.lottie"
 				:options="{animationData: randomEncouragingMessage.lottie}"
 				:height="200"
 				:width="200"
@@ -25,7 +26,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 
 import { useAiImageGeneratorStore } from '@/vue/stores'
 
@@ -33,11 +34,6 @@ import { __ } from '@/vue/plugins/translations'
 
 import CoreLoader from '@/vue/components/common/core/Loader'
 import Lottie from '@/vue/components/common/core/Lottie'
-import * as LottieCuteBear from '@/vue/assets/lottie/cute-bear-dancing-animation.json'
-import * as LottieEnjoyingSloth from '@/vue/assets/lottie/enjoying-sloth-animation.json'
-import * as LottieKoalaEats from '@/vue/assets/lottie/koala-eats-leaves.json'
-import * as LottiePandaSleeping from '@/vue/assets/lottie/panda-sleeping-animation.json'
-import * as LottieCatPlaying from '@/vue/assets/lottie/cat-playing-animation.json'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -47,33 +43,36 @@ const strings = {
 	generatingImage : __('Generating Image', td)
 }
 
-const encouragingMessages = [
-	{
-		lottie : LottieCuteBear,
-		text   : __('Bear-ing down on your image... just a moment!', td)
-	},
-	{
-		lottie : LottieEnjoyingSloth,
-		text   : __('Your image is being generated... hang in there!', td)
-	},
-	{
-		lottie : LottieKoalaEats,
-		text   : __('Koala-ty pixels in progress… give us a moment.', td)
-	},
-	{
-		lottie : LottiePandaSleeping,
-		text   : __('Dreaming up something special… stay tuned!', td)
-	},
-	{
-		lottie : LottieCatPlaying,
-		text   : __('Pawsing for perfection… your image is coming!', td)
-	}
+const animationImports = [
+	() => import('@/vue/assets/lottie/cute-bear-dancing-animation.json'),
+	() => import('@/vue/assets/lottie/enjoying-sloth-animation.json'),
+	() => import('@/vue/assets/lottie/koala-eats-leaves.json'),
+	() => import('@/vue/assets/lottie/panda-sleeping-animation.json'),
+	() => import('@/vue/assets/lottie/cat-playing-animation.json')
 ]
 
-const randomEncouragingMessage = computed(() => {
-	const randomIndex = Math.floor(Math.random() * encouragingMessages.length)
+const messageTexts = [
+	__('Bear-ing down on your image... just a moment!', td),
+	__('Your image is being generated... hang in there!', td),
+	__('Koala-ty pixels in progress… give us a moment.', td),
+	__('Dreaming up something special… stay tuned!', td),
+	__('Pawsing for perfection… your image is coming!', td)
+]
 
-	return encouragingMessages[randomIndex]
+const loadedAnimation = ref(null)
+const selectedIndex   = ref(0)
+
+onMounted(async () => {
+	selectedIndex.value = Math.floor(Math.random() * animationImports.length)
+	const module = await animationImports[selectedIndex.value]()
+	loadedAnimation.value = module.default || module
+})
+
+const randomEncouragingMessage = computed(() => {
+	return {
+		lottie : loadedAnimation.value,
+		text   : messageTexts[selectedIndex.value]
+	}
 })
 </script>
 

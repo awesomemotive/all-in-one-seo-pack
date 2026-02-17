@@ -21,9 +21,11 @@
 </template>
 
 <script>
-import BasePhone from '@/vue/components/common/base/Phone'
+import { defineAsyncComponent } from 'vue'
 
 import { __ } from '@/vue/plugins/translations'
+
+const BasePhone = defineAsyncComponent(() => import('@/vue/components/common/base/Phone'))
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 

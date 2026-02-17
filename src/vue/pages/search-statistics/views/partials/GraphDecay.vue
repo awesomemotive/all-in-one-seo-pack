@@ -21,7 +21,7 @@
 <script>
 import numbers from '@/vue/utils/numbers'
 import { DateTime } from 'luxon'
-import VueApexCharts from 'vue3-apexcharts'
+import { defineAsyncComponent } from 'vue'
 
 import { __, sprintf } from '@/vue/plugins/translations'
 
@@ -29,7 +29,7 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	components : {
-		apexchart : VueApexCharts
+		apexchart : defineAsyncComponent(() => import('vue3-apexcharts'))
 	},
 	props : {
 		points : {

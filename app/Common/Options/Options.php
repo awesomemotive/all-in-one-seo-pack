@@ -70,7 +70,7 @@ class Options {
 			'truSeo'           => [ 'type' => 'boolean', 'default' => true ],
 			'headlineAnalyzer' => [ 'type' => 'boolean', 'default' => true ],
 			'seoAnalysis'      => [ 'type' => 'boolean', 'default' => true ],
-			'dashboardWidgets' => [ 'type' => 'array', 'default' => [ 'seoSetup', 'seoOverview', 'seoNews' ] ],
+			'dashboardWidgets' => [ 'type' => 'array', 'default' => [ 'seoSetup', 'seoChecklist', 'seoOverview', 'seoNews' ] ],
 			'announcements'    => [ 'type' => 'boolean', 'default' => true ],
 			'postTypes'        => [
 				'all'      => [ 'type' => 'boolean', 'default' => true ],
@@ -171,8 +171,8 @@ class Options {
 				]
 			],
 			'llms'    => [
-				'enable'           => [ 'type' => 'boolean', 'default' => true ],
-				'convertToMd'      => [ 'type' => 'boolean', 'default' => true ],
+				'enable'           => [ 'type' => 'boolean', 'default' => false ],
+				'convertToMd'      => [ 'type' => 'boolean', 'default' => false ],
 				'advancedSettings' => [
 					'title'           => [ 'type' => 'string', 'localized' => true, 'default' => '#site_title' ],
 					'description'     => [ 'type' => 'string', 'localized' => true, 'default' => '#tagline' ],

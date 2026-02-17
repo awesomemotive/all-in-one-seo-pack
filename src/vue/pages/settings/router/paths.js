@@ -36,7 +36,18 @@ export default [
 			hideSaveButton : true,
 			name           : window.aioseo.data.isNetworkAdmin
 				? __('Network Settings', td)
-				: __('General Settings', td)
+				: __('License', td)
+		}
+	},
+	{
+		path      : '/seo-checklist',
+		name      : 'seo-checklist',
+		component : loadView('Main'),
+		meta      : {
+			access         : 'aioseo_general_settings',
+			hideSaveButton : true,
+			name           : __('SEO Checklist', td),
+			label          : 'new'
 		}
 	},
 	{
@@ -46,17 +57,6 @@ export default [
 		meta      : {
 			access : 'aioseo_general_settings',
 			name   : __('Webmaster Tools', td)
-		}
-	},
-	{
-		path      : '/ai-content',
-		name      : 'ai-content',
-		component : loadView('Main'),
-		meta      : {
-			home   : 'ai-content',
-			access : 'aioseo_general_settings',
-			name   : __('AI Content', td),
-			label  : 'new'
 		}
 	},
 	{

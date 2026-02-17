@@ -2,7 +2,8 @@
 	<div
 		class="aioseo-ai-credit-counter"
 		:class="{
-			'aioseo-ai-credit-counter--metabox': 'metabox' === parentComponentContext
+			'aioseo-ai-credit-counter--metabox': 'metabox' === parentComponentContext,
+			'aioseo-ai-credit-counter--settings': isSettingsPage
 		}"
 	>
 		<div class="counter-container-wrapper">
@@ -236,18 +237,18 @@ export default {
 					// Translators: 1 - Upgrade to Pro link text. 2 - Purchase a Pay-As-You-Go bundle link text.
 					__('To unlock additional credits, %1$s or %2$s.', td),
 					`<a href="${links.getUpsellUrl('ai-content', 'credit-counter', 'liteUpgrade')}" target="_blank">${__('upgrade to Pro', td)}</a>`,
-					`<a href="${links.getUpsellUrl('ai-content', 'credit-counter', 'aiCredits')}" target="_blank">${__('purchase a Pay-As-You-Go bundle', td)}</a>`
+					`<a href="${links.getUpsellUrl('ai-content', 'credit-counter', 'aiCredits')}" target="_blank">${__('purchase a Pay-As-You-Go credit bundle', td)}</a>`
 				),
 				creditsLinksPro : sprintf(
 					// Translators: 1 - Upgrade to higher plan link text. 2 - Purchase a Pay-As-You-Go bundle link text.
 					__('To unlock additional credits, %1$s or %2$s.', td),
 					`<a href="${links.getUpsellUrl('ai-content', 'credit-counter', 'proUpgrade')}" target="_blank">${__('upgrade to higher plan', td)}</a>`,
-					`<a href="${links.getUpsellUrl('ai-content', 'credit-counter', 'aiCredits')}" target="_blank">${__('purchase a Pay-As-You-Go bundle', td)}</a>`
+					`<a href="${links.getUpsellUrl('ai-content', 'credit-counter', 'aiCredits')}" target="_blank">${__('purchase a Pay-As-You-Go credit bundle', td)}</a>`
 				),
 				creditsLinksElite : sprintf(
 					// Translators: 1 - Purchase a Pay-As-You-Go bundle link text.
 					__('To unlock additional credits, %1$s.', td),
-					`<a href="${links.getUpsellUrl('ai-content', 'credit-counter', 'aiCredits')}" target="_blank">${__('purchase a Pay-As-You-Go bundle', td)}</a>`
+					`<a href="${links.getUpsellUrl('ai-content', 'credit-counter', 'aiCredits')}" target="_blank">${__('purchase a Pay-As-You-Go credit bundle', td)}</a>`
 				),
 				buyCredits  : __('Buy Credits', td),
 				paygCredits : __('PAYG AI Credits', td)
@@ -321,6 +322,21 @@ export default {
 .aioseo-ai-credit-counter {
 	&--metabox {
 		--counter-font-size: 14px;
+	}
+
+	&--settings {
+		--counter-font-size: 14px;
+		flex-direction: column !important;
+		align-items: flex-start;
+
+		.counter-container-wrapper {
+			width: 100%;
+		}
+
+		.purchase-credits {
+			margin-top: 0;
+			margin-left: 0;
+		}
 	}
 
 	color: $black;

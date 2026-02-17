@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.9
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 4.9.3
+Stable tag: 4.9.4.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -231,6 +231,16 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.9.4.1**
+
+* Fixed: Smart tags sometimes not inserting into attached text area.
+
+**New in Version 4.9.4**
+
+* New: SEO Checklist - Our new checklist helps you get your site's SEO properly configured, with prioritized tasks that automatically complete as you configure settings and fix issues.
+* Updated: Menu pages and many other libraries are now lazy-loaded, significantly reducing the initial page load time.
+* Fixed: PHP warning in SEO Analyzer when URL does not have a valid path.
+
 **New in Version 4.9.3**
 
 * Updated: Added a new filter to disable the AI Assistant block and extensions.
@@ -322,13 +332,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * Fixed: PHP error when Site Audit cannot scan post due to uninstantiated social class.
 * Fixed: PHP error when dashboard widget failed to fetch RSS news feed.
 
-
-**New in Version 4.8.6**
-
-* New: Site Audit - Get a detailed report of SEO issues for all posts and terms on your site, discover why these issues are important and how you can fix them. 🔨
-* Fixed: Multisite subsite requests to Search Statistics server sometimes fail due to missing license.
-* Fixed: Rare PHP error when breadcrumbs cannot be determined for non-standard pages.
-
 **See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=aioseo) for previous releases.**
 
 == Frequently Asked Questions ==
@@ -410,6 +413,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.9.3 =
+= 4.9.4.1 =
 
 This update adds major improvements and bug fixes.

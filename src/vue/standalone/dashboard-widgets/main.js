@@ -7,13 +7,15 @@ import loadComponents from '@/vue/components/common'
 import { loadPiniaStores } from '@/vue/stores'
 
 import SeoSetup from './SeoSetup'
+import SeoChecklist from './SeoChecklist'
 import Overview from './Overview'
 
 import { elemLoaded } from '@/vue/utils/elemLoaded'
-import camelCase from 'lodash/camelCase'
+import { camelCase } from 'lodash-es'
 
 const dashboardWidgetsMap = [
 	{ id: 'aioseo-seo-setup-app', component: SeoSetup },
+	{ id: 'aioseo-seo-checklist-app', component: SeoChecklist },
 	{ id: 'aioseo-overview-app', component: Overview }
 ]
 
