@@ -52,7 +52,8 @@ class Image {
 	/**
 	 * Class constructor.
 	 *
-	 * @since 4.0.5
+	 * @since   4.0.5
+	 * @version 4.9.4.2 Remove is_admin() check to allow frontend scheduling and switch to recurring action.
 	 */
 	public function __construct() {
 		// Column may not have been created yet.
@@ -60,34 +61,16 @@ class Image {
 			return;
 		}
 
-		// NOTE: This needs to go above the is_admin check in order for it to run at all.
+		// After completion, the scan won't reschedule until someone is in the admin. That's fine for most cases since posts being created/updated happens in the admin.
+		add_action( 'admin_init', [ $this, 'scheduleScan' ], 3001 );
 		add_action( $this->imageScanAction, [ $this, 'scanPosts' ] );
-
-		// Don't schedule a scan if we are not in the admin.
-		if ( ! is_admin() ) {
-			return;
-		}
-
-		if ( wp_doing_ajax() || wp_doing_cron() ) {
-			return;
-		}
-
-		// Don't schedule a scan if an importer or the V3 migration is running.
-		// We'll do our scans there.
-		if (
-			aioseo()->importExport->isImportRunning() ||
-			aioseo()->migration->isMigrationRunning()
-		) {
-			return;
-		}
-		// Action Scheduler hooks.
-		add_action( 'init', [ $this, 'scheduleScan' ], 3001 );
 	}
 
 	/**
-	 * Schedules the image sitemap scan.
+	 * Schedules the image sitemap scan as a recurring action.
 	 *
-	 * @since 4.0.5
+	 * @since   4.0.5
+	 * @version 4.9.4.2 Switch to recurring action with cache-based idle state.
 	 *
 	 * @return void
 	 */
@@ -99,40 +82,71 @@ class Image {
 			return;
 		}
 
-		aioseo()->actionScheduler->scheduleSingle( $this->imageScanAction, 10 );
+		// If we're in idle mode (no posts to scan), unschedule and don't reschedule yet.
+		if ( aioseo()->core->cache->get( 'as_image_scan_idle' ) ) {
+			aioseo()->actionScheduler->unschedule( $this->imageScanAction );
+
+			return;
+		}
+
+		if ( aioseo()->actionScheduler->isScheduled( $this->imageScanAction ) ) {
+			return;
+		}
+
+		$scanInterval = apply_filters( 'aioseo_image_sitemap_scan_interval', MINUTE_IN_SECONDS );
+		aioseo()->actionScheduler->scheduleRecurrent( $this->imageScanAction, 10, $scanInterval );
 	}
 
 	/**
 	 * Scans posts for images.
 	 *
-	 * @since 4.0.5
+	 * @since   4.0.5
+	 * @version 4.9.4.2 Use recurring action with runtime lock and idle state.
 	 *
 	 * @return void
 	 */
 	public function scanPosts() {
+		// Runtime lock: Prevent concurrent execution of this action.
+		$lockKey = 'as_image_scan_running';
+		if ( aioseo()->core->cache->get( $lockKey ) ) {
+			return;
+		}
+
+		// Set lock with a safety timeout in case the action fails mid-execution.
+		aioseo()->core->cache->update( $lockKey, true, 2 * MINUTE_IN_SECONDS );
+
 		if (
 			! aioseo()->options->sitemap->general->enable ||
 			aioseo()->sitemap->helpers->excludeImages()
 		) {
+			aioseo()->core->cache->delete( $lockKey );
+
 			return;
 		}
 
 		$postsPerScan = apply_filters( 'aioseo_image_sitemap_posts_per_scan', 10 );
 		$postTypes    = aioseo()->helpers->getPublicPostTypes( true );
 
-		$posts = aioseo()->core->db
+		$query = aioseo()->core->db
 			->start( aioseo()->core->db->db->posts . ' as p', true )
 			->select( '`p`.`ID`, `p`.`post_type`, `p`.`post_content`, `p`.`post_excerpt`, `p`.`post_modified_gmt`' )
 			->leftJoin( 'aioseo_posts as ap', '`ap`.`post_id` = `p`.`ID`' )
 			->whereRaw( '( `ap`.`id` IS NULL OR `p`.`post_modified_gmt` > `ap`.`image_scan_date` OR `ap`.`image_scan_date` IS NULL )' )
 			->whereIn( 'p.post_status', [ 'publish', 'inherit' ] )
 			->whereIn( 'p.post_type', $postTypes )
-			->limit( $postsPerScan )
-			->run()
-			->result();
+			->limit( $postsPerScan );
+
+		$orderByClause = $this->getScanPostsOrderByClause( $postTypes );
+		if ( $orderByClause ) {
+			$query->orderByRaw( $orderByClause );
+		}
+
+		$posts = $query->run()->result();
 
 		if ( ! $posts ) {
-			aioseo()->actionScheduler->scheduleSingle( $this->imageScanAction, 15 * MINUTE_IN_SECONDS, [], true );
+			// No more posts to scan - set idle cache. The schedule method on the next init will unschedule.
+			aioseo()->core->cache->update( 'as_image_scan_idle', true, HOUR_IN_SECONDS );
+			aioseo()->core->cache->delete( $lockKey );
 
 			return;
 		}
@@ -141,7 +155,42 @@ class Image {
 			$this->scanPost( $post );
 		}
 
-		aioseo()->actionScheduler->scheduleSingle( $this->imageScanAction, 30, [], true );
+		aioseo()->core->cache->delete( $lockKey );
+	}
+
+	/**
+	 * Gets the ORDER BY clause for prioritizing included post types.
+	 * Prioritizes included sitemap post types before non-included ones.
+	 *
+	 * @since 4.9.5
+	 *
+	 * @param  array  $publicPostTypes All public post types.
+	 * @return string
+	 */
+	private function getScanPostsOrderByClause( $publicPostTypes ) {
+		if ( aioseo()->options->sitemap->general->postTypes->all ) {
+			return '';
+		}
+
+		$includedPostTypes = aioseo()->options->sitemap->general->postTypes->included;
+		if ( empty( $includedPostTypes ) ) {
+			return '';
+		}
+
+		// Filter out post types that are no longer registered.
+		$includedPostTypes = array_values( array_intersect( $includedPostTypes, $publicPostTypes ) );
+
+		if ( empty( $includedPostTypes ) ) {
+			return '';
+		}
+
+		$orderByClause = 'CASE';
+		foreach ( $includedPostTypes as $index => $postType ) {
+			$orderByClause .= " WHEN `p`.`post_type` = '" . esc_sql( $postType ) . "' THEN " . $index;
+		}
+		$orderByClause .= ' ELSE 9999 END ASC, `p`.`ID` ASC';
+
+		return $orderByClause;
 	}
 
 	/**

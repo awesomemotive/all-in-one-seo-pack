@@ -474,13 +474,36 @@ class Database {
 			WHERE TABLE_SCHEMA = DATABASE();'
 		);
 
+		// For multisites, only include tables for the current site and the main site.
+		// This prevents cache entries from containing data from other subsites' tables.
+		// Subsite tables follow the pattern {base_prefix}{blog_id}_ (e.g. wp_2_, wp_3_).
+		$siteTablesPrefix   = is_multisite() ? $this->db->get_blog_prefix( get_current_blog_id() ) : $this->prefix;
+		$subsitePrefixRegex = is_multisite() ? '/^' . preg_quote( $this->db->base_prefix, '/' ) . '\d/' : '';
+
 		$tables = [];
 		foreach ( $schema as $row ) {
-			if ( ! isset( $tables[ $row->TABLE_NAME ] ) ) {
-				$tables[ $row->TABLE_NAME ] = [];
+			$tableName = $row->TABLE_NAME;
+
+			// For multisites, exclude tables from other subsites (e.g. wp_2_*, wp_3_*).
+			// For the main site (blog_id = 1), also exclude all subsite tables since the main site prefix equals the base prefix.
+			if ( $subsitePrefixRegex && preg_match( $subsitePrefixRegex, $tableName ) ) {
+				// This is a subsite table. Only include it if it belongs to the current site.
+				// For the main site (where prefix = base_prefix), exclude all subsite tables.
+				if ( $siteTablesPrefix === $this->db->base_prefix || 0 !== strpos( $tableName, $siteTablesPrefix ) ) {
+					continue;
+				}
 			}
 
-			$tables[ $row->TABLE_NAME ][] = $row->COLUMN_NAME;
+			// Just cache tables that contain "aioseo" or "actionscheduler" to reduce cache size.
+			if ( false === strpos( $tableName, 'aioseo' ) && false === strpos( $tableName, 'actionscheduler' ) ) {
+				continue;
+			}
+
+			if ( ! isset( $tables[ $tableName ] ) ) {
+				$tables[ $tableName ] = [];
+			}
+
+			$tables[ $tableName ][] = $row->COLUMN_NAME;
 		}
 
 		aioseo()->core->cache->update( 'db_schema', $tables, DAY_IN_SECONDS );
@@ -756,6 +779,88 @@ class Database {
 		$this->ignore = true;
 
 		return $this->start( $table, $includesPrefix, 'INSERT' );
+	}
+
+	/**
+	 * Inserts multiple rows into a table in a single query.
+	 *
+	 * Handles all escaping and sanitization internally:
+	 * - esc_sql() for SQL safety (strings only; ints/floats pass through unquoted).
+	 * - Strips newlines, null bytes and invalid UTF-8 from string values.
+	 * - NULL values become literal NULL.
+	 *
+	 * @since 4.9.5
+	 *
+	 * @param  string $table   Table name (without prefix).
+	 * @param  array  $columns Column names.
+	 * @param  array  $rows    Array of row arrays (values in same order as $columns).
+	 * @param  array  $options Optional: 'onDuplicate' => ['col1', 'col2'], 'ignore' => true.
+	 * @return void
+	 */
+	public function bulkInsert( $table, $columns, $rows, $options = [] ) {
+		if ( empty( $rows ) ) {
+			return;
+		}
+
+		$tableName = $this->prefix . $table;
+
+		$valueSets = [];
+		foreach ( $rows as $row ) {
+			$values = [];
+			foreach ( $row as $value ) {
+				if ( null === $value ) {
+					$values[] = 'NULL';
+
+					continue;
+				}
+
+				if ( is_bool( $value ) ) {
+					$values[] = $value ? 1 : 0;
+
+					continue;
+				}
+
+				if ( is_int( $value ) || is_float( $value ) ) {
+					$values[] = $value;
+
+					continue;
+				}
+
+				if ( is_array( $value ) || is_object( $value ) ) {
+					$value = wp_json_encode( $value );
+				}
+
+				// Sanitize string values.
+				$value = str_replace( [ "\r\n", "\r", "\n" ], ' ', (string) $value );
+				$value = str_replace( "\0", '', $value );
+				$value = wp_check_invalid_utf8( $value, true );
+
+				$values[] = "'" . esc_sql( $value ) . "'";
+			}
+
+			$valueSets[] = '(' . implode( ', ', $values ) . ')';
+		}
+
+		$ignore         = ! empty( $options['ignore'] ) ? 'IGNORE ' : '';
+		$columnList     = '`' . implode( '`, `', $columns ) . '`';
+		$implodedValues = implode( ', ', $valueSets );
+
+		$sql = "INSERT {$ignore}INTO {$tableName} ({$columnList}) VALUES {$implodedValues}";
+
+		if ( ! empty( $options['onDuplicate'] ) ) {
+			$updates = [];
+			foreach ( $options['onDuplicate'] as $key => $col ) {
+				if ( is_int( $key ) ) {
+					$updates[] = "`{$col}` = VALUES(`{$col}`)";
+				} else {
+					$updates[] = "`{$key}` = {$col}";
+				}
+			}
+
+			$sql .= ' ON DUPLICATE KEY UPDATE ' . implode( ', ', $updates );
+		}
+
+		$this->execute( $sql );
 	}
 
 	/**

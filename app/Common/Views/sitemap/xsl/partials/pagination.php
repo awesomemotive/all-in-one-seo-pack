@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Don't allow pagination for now.
 return;
 
-// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 // Check if requires pagination.
 if ( $data['showing'] === $data['total'] ) {

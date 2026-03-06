@@ -100,7 +100,7 @@ export default function i18n (options = {}) {
 					return
 				}
 
-				let phpContents = '<?php\n// phpcs:ignore Generic.Files.LineLength.MaxExceeded\n/* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */\n$generated_i18n_strings = ['
+				let phpContents = '<?php\n// phpcs:disable\n/* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */\n$generated_i18n_strings = ['
 
 				output[tdKey].forEach(message => {
 					let newString    = '',

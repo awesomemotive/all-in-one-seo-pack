@@ -135,7 +135,7 @@ namespace AIOSEO\Plugin {
 
 			foreach ( $constants as $constant => $value ) {
 				if ( ! defined( $constant ) ) {
-					define( $constant, $value );
+					define( $constant, $value ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.VariableConstantNameFound
 				}
 			}
 
@@ -265,6 +265,7 @@ namespace AIOSEO\Plugin {
 			$this->options            = $this->pro ? new Pro\Options\Options() : new Lite\Options\Options();
 			$this->networkOptions     = ( $this->pro && $this->helpers->isPluginNetworkActivated() ) ? new Pro\Options\NetworkOptions() : new Common\Options\NetworkOptions();
 			$this->dynamicOptions     = $this->pro ? new Pro\Options\DynamicOptions() : new Common\Options\DynamicOptions();
+			$this->settings           = new Common\Utils\VueSettings( '_aioseo_settings' );
 			$this->backup             = new Common\Utils\Backup();
 			$this->access             = $this->pro ? new Pro\Utils\Access() : new Common\Utils\Access();
 			$this->usage              = $this->pro ? new Pro\Admin\Usage() : new Lite\Admin\Usage();
@@ -322,7 +323,7 @@ namespace AIOSEO\Plugin {
 		}
 
 		/**
-		 * Things that need to load after init.
+		 * Things that need to load on init.
 		 *
 		 * @since 4.0.0
 		 *
@@ -330,9 +331,10 @@ namespace AIOSEO\Plugin {
 		 */
 		public function loadInit() {
 			$this->settings = new Common\Utils\VueSettings( '_aioseo_settings' );
+
 			$this->sitemap->init();
 
-			// We call this again to reset any post types/taxonomies that have not yet been set up.
+			// We call this again to reset reload post types/taxonomies that had not yet been set up.
 			$this->dynamicOptions->refresh();
 		}
 

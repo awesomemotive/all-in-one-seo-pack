@@ -122,6 +122,15 @@ class Summary {
 	 * @return void
 	 */
 	public function maybeSchedule() {
+		// If the feature is disabled, unschedule both frequencies and bail.
+		if ( ! aioseo()->options->advanced->emailSummary->enable ) {
+			foreach ( array_keys( $this->getAllowedFrequencies() ) as $frequency ) {
+				aioseo()->actionScheduler->unschedule( $this->actionHook, compact( 'frequency' ) );
+			}
+
+			return;
+		}
+
 		$allowedFrequencies = $this->getAllowedFrequencies();
 
 		// Add at least 6 hours after the day starts.

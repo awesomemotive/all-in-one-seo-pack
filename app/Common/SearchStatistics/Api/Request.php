@@ -95,15 +95,6 @@ class Request {
 	private $plugin = false;
 
 	/**
-	 * URL to test connection with.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @var string
-	 */
-	private $testurl = '';
-
-	/**
 	 * The site URL.
 	 *
 	 * @since 4.3.0
@@ -170,7 +161,6 @@ class Request {
 		$this->plugin  = 'aioseo-' . strtolower( aioseo()->versionPath );
 		$this->version = aioseo()->version;
 		$this->sitei   = ! empty( $args['sitei'] ) ? $args['sitei'] : '';
-		$this->testurl = ! empty( $args['testurl'] ) ? $args['testurl'] : '';
 	}
 
 	/**
@@ -181,18 +171,6 @@ class Request {
 	 * @return mixed The response.
 	 */
 	public function request() {
-		// Make sure we're not blocked.
-		$blocked = $this->isBlocked( $this->url );
-		if ( is_wp_error( $blocked ) ) {
-			return new \WP_Error(
-				'api-error',
-				sprintf(
-					'The firewall of the server is blocking outbound calls. Please contact your hosting provider to fix this issue. %s',
-					$blocked->get_error_message()
-				)
-			);
-		}
-
 		// 1. BUILD BODY
 		$body = [];
 		if ( ! empty( $this->args ) ) {
@@ -224,28 +202,20 @@ class Request {
 		$body['timezone'] = gmdate( 'e' );
 		$body['ip']       = ! empty( $_SERVER['SERVER_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_ADDR'] ) ) : '';
 
-		// 2. SET HEADERS
-		$headers = array_merge( [
-			'Content-Type' => 'application/json'
-		], aioseo()->helpers->getApiHeaders() );
-
-		// 3. COMPILE REQUEST DATA
+		// 2. EXECUTE REQUEST
 		$data = [
-			'headers'    => $headers,
-			'body'       => wp_json_encode( $body ),
-			'timeout'    => 3000,
-			'user-agent' => aioseo()->helpers->getApiUserAgent()
+			'body'    => wp_json_encode( $body ),
+			'timeout' => 120
 		];
 
-		// 4. EXECUTE REQUEST
 		if ( 'GET' === $this->method ) {
 			$queryString = http_build_query( $body, '', '&' );
 
 			unset( $data['body'] );
 
-			$response = wp_remote_get( esc_url_raw( $this->url ) . '?' . $queryString, $data );
+			$response = aioseo()->helpers->wpRemoteGet( esc_url_raw( $this->url ) . '?' . $queryString, $data );
 		} else {
-			$response = wp_remote_post( esc_url_raw( $this->url ), $data );
+			$response = aioseo()->helpers->wpRemotePost( esc_url_raw( $this->url ), $data );
 		}
 
 		// 5. VALIDATE RESPONSE
@@ -322,68 +292,5 @@ class Request {
 	 */
 	public function setAdditionalData( array $data ) {
 		$this->additionalData = array_merge( $this->additionalData, $data );
-	}
-
-	/**
-	 * Checks if the given URL is blocked for a request.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @param  string         $url The URL to test against.
-	 * @return bool|\WP_Error      False or WP_Error if it is blocked.
-	 */
-	private function isBlocked( $url = '' ) {
-		// The below page is a test HTML page used for firewall/router login detection
-		// and for image linking purposes in Google Images. We use it to test outbound connections
-		// It's on Google's main CDN so it loads in most countries in 0.07 seconds or less. Perfect for our
-		// use case of testing outbound connections.
-		$testurl = ! empty( $this->testurl ) ? $this->testurl : 'https://www.google.com/blank.html';
-		if ( defined( 'WP_HTTP_BLOCK_EXTERNAL' ) && WP_HTTP_BLOCK_EXTERNAL ) {
-			if ( defined( 'WP_ACCESSIBLE_HOSTS' ) ) {
-				$wpHttp      = new \WP_Http();
-				$onBlacklist = $wpHttp->block_request( $url );
-				if ( $onBlacklist ) {
-					return new \WP_Error( 'api-error', 'The API was unreachable because the API url is on the WP HTTP blocklist.' );
-				} else {
-					$params = [
-						'sslverify'  => false,
-						'timeout'    => 2,
-						'user-agent' => aioseo()->helpers->getApiUserAgent(),
-						'body'       => ''
-					];
-
-					$response = wp_remote_get( $testurl, $params );
-					if ( ! is_wp_error( $response ) && $response['response']['code'] >= 200 && $response['response']['code'] < 300 ) {
-						return false;
-					} else {
-						if ( is_wp_error( $response ) ) {
-							return $response;
-						} else {
-							return new \WP_Error( 'api-error', 'The API was unreachable because the call to Google failed.' );
-						}
-					}
-				}
-			} else {
-				return new \WP_Error( 'api-error', 'The API was unreachable because no external hosts are allowed on this site.' );
-			}
-		} else {
-			$params = [
-				'sslverify'  => false,
-				'timeout'    => 2,
-				'user-agent' => aioseo()->helpers->getApiUserAgent(),
-				'body'       => ''
-			];
-
-			$response = wp_remote_get( $testurl, $params );
-			if ( ! is_wp_error( $response ) && $response['response']['code'] >= 200 && $response['response']['code'] < 300 ) {
-				return false;
-			} else {
-				if ( is_wp_error( $response ) ) {
-					return $response;
-				} else {
-					return new \WP_Error( 'api-error', 'The API was unreachable because the call to Google failed.' );
-				}
-			}
-		}
 	}
 }

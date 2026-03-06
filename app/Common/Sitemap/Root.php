@@ -127,7 +127,7 @@ class Root {
 			)
 		) {
 			$result = aioseo()->core->db->execute(
-				"SELECT count(*) as amountOfUrls FROM (
+				"SELECT (COUNT(DISTINCT YEAR(post_date)) + COUNT(*)) as amountOfUrls FROM (
 					SELECT post_date
 					FROM {$postsTable}
 					WHERE post_type = 'post' AND post_status = 'publish'
@@ -380,6 +380,9 @@ class Root {
 				WHERE t.name = 'exclude-from-catalog'
 			)";
 		}
+
+		// Exclude posts with custom canonical URLs pointing to different URLs.
+		$whereClause .= " AND (ap.canonical_url IS NULL OR ap.canonical_url = '')";
 
 		// Include the blog page in the posts post type unless manually excluded.
 		$blogPageId = (int) get_option( 'page_for_posts' );

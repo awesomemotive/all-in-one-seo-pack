@@ -51,15 +51,11 @@ class Migration {
 		// NOTE: This needs to go above the is_admin check in order for it to run at all.
 		add_action( 'aioseo_migrate_post_meta', [ $this->meta, 'migratePostMeta' ] );
 
-		if ( ! is_admin() ) {
-			return;
-		}
-
 		if ( wp_doing_ajax() || wp_doing_cron() ) {
 			return;
 		}
 
-		add_action( 'init', [ $this, 'init' ], 2000 );
+		add_action( 'admin_init', [ $this, 'init' ], 2000 );
 	}
 
 	/**

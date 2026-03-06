@@ -137,7 +137,7 @@ class WritingAssistant {
 	public static function getContentAnalysis( $request ) {
 		$title       = $request->get_param( 'title' );
 		$description = $request->get_param( 'description' );
-		$content     = apply_filters( 'the_content', $request->get_param( 'content' ) );
+		$content     = apply_filters( 'the_content', $request->get_param( 'content' ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$postId      = $request->get_param( 'postId' );
 		if ( empty( $content ) || empty( $postId ) ) {
 			return new \WP_REST_Response( [

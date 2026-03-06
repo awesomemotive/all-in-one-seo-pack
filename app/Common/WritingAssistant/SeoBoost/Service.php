@@ -179,20 +179,20 @@ class Service {
 		$requestData = [
 			'headers' => [
 				'X-SeoBoost-Access-Token' => aioseo()->writingAssistant->seoBoost->getAccessToken(),
-				'X-SeoBoost-Domain'       => aioseo()->helpers->getMultiSiteDomain(),
-				'Content-Type'            => 'application/json'
+				'X-SeoBoost-Domain'       => aioseo()->helpers->getMultiSiteDomain()
 			],
-			'timeout' => 60,
-			'method'  => 'GET'
+			'timeout' => 60
 		];
 
+		$path = trailingslashit( $this->getUrl() ) . trailingslashit( $path );
+
 		if ( ! empty( $requestBody ) ) {
-			$requestData['method'] = 'POST';
-			$requestData['body']   = wp_json_encode( $requestBody );
+			$requestData['body'] = wp_json_encode( $requestBody );
+			$response            = aioseo()->helpers->wpRemotePost( $path, $requestData );
+		} else {
+			$response = aioseo()->helpers->wpRemoteGet( $path, $requestData );
 		}
 
-		$path         = trailingslashit( $this->getUrl() ) . trailingslashit( $path );
-		$response     = wp_remote_request( $path, $requestData );
 		$responseBody = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( ! $responseBody ) {

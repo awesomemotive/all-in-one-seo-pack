@@ -149,7 +149,7 @@
 					/>
 
 					<div class="aioseo-description aioseo-llms-txt-description">
-						<div>{{ strings.llmsTxtConvertToMdDescription }}</div>
+						<div v-html="strings.llmsTxtConvertToMdDescription"></div>
 					</div>
 
 					<core-alert
@@ -410,7 +410,7 @@ const strings = {
 	llmsTxtFullButton                                  : __('Open llms-full.txt', td),
 	llmsTxtFullTooltip                                 : __('To view the llms-full.txt file, enable the setting, save changes and wait a minute for the file to be generated.', td),
 	llmsTxtConvertToMd                                 : __('Convert Posts to Markdown', td),
-	llmsTxtConvertToMdDescription                      : __('Generate a markdown version of your posts when `.md` is appended to their permalink. This provides AI engines with clean version of your pages that can be crawled more quickly.', td),
+	llmsTxtConvertToMdDescription                      : __('Generate a markdown version of your posts when <code>.md</code> is appended to their permalink. This provides AI engines with clean version of your pages that can be crawled more quickly.', td),
 	llmsAdvancedSettings                               : __('LLMs.txt Settings', td),
 	llmsAdvancedSettingsExcludePostsPages              : __('Exclude Posts / Pages', td),
 	llmsAdvancedSettingsExcludeTerms                   : __('Exclude Terms', td),

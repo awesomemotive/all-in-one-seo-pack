@@ -30,7 +30,7 @@ class NetworkAdmin extends Admin {
 			return;
 		}
 
-		add_action( 'sanitize_comment_cookies', [ $this, 'init' ], 21 );
+		add_action( 'init', [ $this, 'init' ], 21 );
 	}
 
 	/**
@@ -43,7 +43,11 @@ class NetworkAdmin extends Admin {
 	public function init() {
 		add_action( 'network_admin_menu', [ $this, 'addNetworkMenu' ] );
 
-		add_action( 'init', [ $this, 'setPages' ] );
+		if ( ! is_user_logged_in() ) {
+			return;
+		}
+
+		$this->setPages();
 	}
 
 	/**

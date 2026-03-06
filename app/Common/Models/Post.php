@@ -808,6 +808,10 @@ class Post extends Model {
 		}
 
 		$existingOptions = json_decode( wp_json_encode( $existingOptions ), true );
+		if ( ! is_array( $existingOptions ) ) {
+			return json_decode( wp_json_encode( $defaults ) );
+		}
+
 		$existingOptions = array_replace_recursive( $defaults, $existingOptions );
 
 		return json_decode( wp_json_encode( $existingOptions ) );

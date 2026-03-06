@@ -86,7 +86,7 @@ trait Vue {
 			'options'            => aioseo()->options->all(),
 			'dynamicOptions'     => aioseo()->dynamicOptions->all(),
 			'deprecatedOptions'  => aioseo()->internalOptions->getAllDeprecatedOptions( true ),
-			'settings'           => aioseo()->settings->all(),
+			'settings'           => aioseo()->settings ? aioseo()->settings->all() : [],
 			'additional_scripts' => apply_filters( 'aioseo_vue_additional_scripts_enabled', true ),
 			'tags'               => aioseo()->tags->all( true ),
 			'nonce'              => wp_create_nonce( 'wp_rest' ),
@@ -566,7 +566,7 @@ trait Vue {
 			is_network_admin()
 		) {
 			$this->data['data']['network'] = [
-				'sites'   => aioseo()->helpers->getSites( aioseo()->settings->tablePagination['networkDomains'] ),
+				'sites'   => aioseo()->helpers->getSites(),
 				'backups' => []
 			];
 		}

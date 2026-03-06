@@ -122,8 +122,7 @@ class SeoChecklist {
 		$this->checks[] = [
 			'name'                  => 'finishSetupWizard',
 			'title'                 => __( 'Complete the Setup Wizard', 'all-in-one-seo-pack' ),
-			'description'           => __( 'Configure essential SEO settings for your site through our guided setup process.
-', 'all-in-one-seo-pack' ),
+			'description'           => __( 'Configure essential SEO settings for your site through our guided setup process.', 'all-in-one-seo-pack' ),
 			'priority'              => 'high',
 			'time'                  => [
 				'label' => __( '10 minutes', 'all-in-one-seo-pack' ),
@@ -193,7 +192,7 @@ class SeoChecklist {
 
 		$this->checks[] = [
 			'name'        => 'deleteHelloWorld',
-			'title'       => __( 'Delete the "Hello World" post', 'all-in-one-seo-pack' ),
+			'title'       => __( 'Delete the "Hello world!" post', 'all-in-one-seo-pack' ),
 			'description' => __( 'Remove the default WordPress sample post that was created when your site was installed.', 'all-in-one-seo-pack' ),
 			'priority'    => 'medium',
 			'time'        => [
@@ -238,8 +237,7 @@ class SeoChecklist {
 		$this->checks[] = [
 			'name'        => 'fillKnowledgeGraph',
 			'title'       => __( 'Add Organization or Person Info', 'all-in-one-seo-pack' ),
-			'description' => __( 'Add details about your organization or personal brand to help search engines understand your site better.
-', 'all-in-one-seo-pack' ),
+			'description' => __( 'Add details about your organization or personal brand to help search engines understand your site better.', 'all-in-one-seo-pack' ),
 			'priority'    => 'medium',
 			'time'        => [
 				'label' => __( '10 minutes', 'all-in-one-seo-pack' ),
@@ -452,19 +450,53 @@ class SeoChecklist {
 	 * @return bool True if user can delete the hello world post.
 	 */
 	protected function canDeleteHelloWorld() {
-		$post = aioseo()->core->db->start( 'posts' )
-			->select( 'ID' )
-			->where( 'ID', 1 )
-			->run()
-			->result();
+		$post = get_post( 1 );
 
-		if ( empty( $post[0]->ID ) ) {
+		if ( empty( $post ) ) {
 			// If the post does not exist, return true.
 			// This means the post has been deleted. Otherwise, the task will be hidden.
 			return true;
 		}
 
+		// If the post has been modified from the default "Hello World", hide the task.
+		if ( ! $this->isDefaultHelloWorldPost( $post ) ) {
+			return false;
+		}
+
 		return current_user_can( 'delete_post', 1 );
+	}
+
+	/**
+	 * Check if a post is the default WordPress "Hello World" post.
+	 * Compares the title and slug against the English defaults and the current locale's translated defaults.
+	 *
+	 * @since 4.9.5
+	 *
+	 * @param  \WP_Post $post The post object with post_title and post_name properties.
+	 * @return bool           True if the post matches the default "Hello World" post.
+	 */
+	protected function isDefaultHelloWorldPost( $post ) {
+		// Ensure admin translations are loaded for install-related strings like "Hello world!".
+		// These strings live in admin-{locale}.mo, which isn't loaded during REST API requests.
+		static $adminTranslationsLoaded = false;
+		if ( ! $adminTranslationsLoaded ) {
+			$adminTranslationsLoaded = true;
+
+			$locale = determine_locale();
+			if ( 'en_US' !== $locale ) {
+				load_textdomain( 'default', WP_LANG_DIR . "/admin-{$locale}.mo" );
+			}
+		}
+
+		$defaultTitles = array_unique( [ 'Hello world!', __( 'Hello world!' ) ] ); // phpcs:ignore AIOSEO.Wp.I18n.MissingArgDomain
+		$defaultSlugs  = array_unique( [ 'hello-world', sanitize_title( _x( 'hello-world', 'Default post slug' ) ) ] ); // phpcs:ignore AIOSEO.Wp.I18n.MissingArgDomain
+
+		// WordPress appends "__trashed" to the post slug when a post is trashed (see wp_trash_post()).
+		$defaultSlugs = array_merge( $defaultSlugs, array_map( function ( $slug ) {
+			return $slug . '__trashed';
+		}, $defaultSlugs ) );
+
+		return in_array( $post->post_title, $defaultTitles, true ) && in_array( $post->post_name, $defaultSlugs, true );
 	}
 
 	/**
@@ -475,14 +507,9 @@ class SeoChecklist {
 	 * @return bool True if hello world post has been deleted.
 	 */
 	protected function checkDeleteHelloWorld() {
-		// Check if post with ID 1 exists.
-		$post = aioseo()->core->db->start( 'posts' )
-			->select( 'ID', 'post_status' )
-			->where( 'ID', 1 )
-			->run()
-			->result();
+		$post = get_post( 1 );
 
-		return empty( $post[0]->ID ) || ! empty( $post[0]->post_status ) && 'trash' === $post[0]->post_status;
+		return empty( $post->ID ) || ! empty( $post->post_status ) && 'trash' === $post->post_status;
 	}
 
 	/**
@@ -779,6 +806,13 @@ class SeoChecklist {
 	private function deleteHelloWorld() {
 		// Check if user has permission to delete the post.
 		if ( ! current_user_can( 'delete_post', 1 ) ) {
+			return false;
+		}
+
+		// Only delete if the post is still the default "Hello World" post.
+		$post = get_post( 1 );
+
+		if ( empty( $post ) || ! $this->isDefaultHelloWorldPost( $post ) ) {
 			return false;
 		}
 

@@ -328,11 +328,32 @@ export const edit = ({ setAttributes, attributes, clientId, className, isSelecte
 		}))
 
 		// Only update if headings have changed
-		if (JSON.stringify(normalizedNewHeadings) !== JSON.stringify(normalizedHeadings)) {
+		if (hasActualChanges(normalizedNewHeadings, normalizedHeadings)) {
 			setLocalHeadings(newHeadings)
 			setAttributes({ headings: newHeadings })
 			window.aioseoBus.$emit('updateToc' + clientId)
 		}
+	}
+
+	const hasActualChanges = (newHeadings, currentHeadings) => {
+    // Normalize both arrays for comparison
+    const normalize = (headings) => {
+			return headings.map(h => ({
+				content: h.content,
+				level: h.level,
+				anchor: h.anchor,
+				hidden: h.hidden,
+				editedContent: h.editedContent || '',
+				// Recursively normalize nested headings
+				headings: h.headings ? normalize(h.headings) : []
+			}))
+    }
+
+		const normalizedNew = normalize(newHeadings)
+		const normalizedCurrent = normalize(currentHeadings)
+
+		// Deep comparison of normalized arrays
+		return JSON.stringify(normalizedNew) !== JSON.stringify(normalizedCurrent)
 	}
 
 	const renderVueComponents = () => {

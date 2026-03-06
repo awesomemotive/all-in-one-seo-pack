@@ -86,7 +86,7 @@ class Updates {
 		}
 
 		// The dynamic options have not yet fully loaded, so let's refresh here to force that to happen.
-		aioseo()->dynamicOptions->refresh(); // TODO: Check if we still need this since it already runs on 999 in the main AIOSEO file.
+		aioseo()->dynamicOptions->refresh();
 
 		if ( version_compare( $lastActiveVersion, '4.0.5', '<' ) ) {
 			$this->addImageScanDateColumn();
@@ -130,7 +130,7 @@ class Updates {
 		if ( version_compare( $lastActiveVersion, '4.1.5', '<' ) ) {
 			aioseo()->actionScheduler->unschedule( 'aioseo_cleanup_action_scheduler' );
 			// Schedule routine to remove our old transients from the options table.
-			aioseo()->actionScheduler->scheduleSingle( aioseo()->core->cachePrune->getOptionCacheCleanAction(), MINUTE_IN_SECONDS );
+			aioseo()->actionScheduler->scheduleSingle( aioseo()->core->cache->getOptionCacheCleanAction(), MINUTE_IN_SECONDS );
 
 			// Refresh with new Redirects capability.
 			$this->accessControlNewCapabilities();

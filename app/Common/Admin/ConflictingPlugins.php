@@ -46,7 +46,7 @@ class ConflictingPlugins {
 			return;
 		}
 
-		add_action( 'init', [ $this, 'init' ], 20 );
+		add_action( 'admin_init', [ $this, 'init' ], 20 );
 	}
 
 	/**

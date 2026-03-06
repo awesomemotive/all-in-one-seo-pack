@@ -387,22 +387,31 @@ class Helpers {
 			return $items;
 		}
 
-		$options  = [
-			'timeout'   => 10,
-			'sslverify' => false,
-		];
-		$response = wp_remote_get( 'https://aioseo.com/wp-json/wp/v2/posts?per_page=4', $options );
-		$body     = wp_remote_retrieve_body( $response );
-		$items    = ! empty( $body ) ? json_decode( $body, true ) : [];
-		$cached   = [];
-
-		if ( ! is_array( $items ) || empty( $items ) ) {
-			// Wait for at least 5 minutes before trying again.
-			aioseo()->core->networkCache->update( 'rss_feed', $cached, 5 * MINUTE_IN_SECONDS );
-
-			return $cached;
+		$lockKey = 'rss_feed_fetch_lock';
+		if ( null !== aioseo()->core->cache->get( $lockKey ) ) {
+			return [];
 		}
 
+		aioseo()->core->cache->update( $lockKey, true, MINUTE_IN_SECONDS );
+		$response = aioseo()->helpers->wpRemoteGetExternal( 'https://aioseo.com/wp-json/wp/v2/posts?per_page=4' );
+		if ( is_wp_error( $response ) ) {
+			aioseo()->core->networkCache->update( 'rss_feed', [], 10 * MINUTE_IN_SECONDS );
+			aioseo()->core->cache->delete( $lockKey );
+
+			return [];
+		}
+
+		$body  = wp_remote_retrieve_body( $response );
+		$items = ! empty( $body ) ? json_decode( $body, true ) : [];
+
+		if ( ! is_array( $items ) || empty( $items ) ) {
+			aioseo()->core->networkCache->update( 'rss_feed', [], HOUR_IN_SECONDS );
+			aioseo()->core->cache->delete( $lockKey );
+
+			return [];
+		}
+
+		$cached = [];
 		foreach ( $items as $k => $item ) {
 			$cached[ $k ] = [
 				'url'     => $item['link'],
@@ -412,8 +421,17 @@ class Helpers {
 			];
 
 			if ( $fetchImage ) {
-				$response = wp_remote_get( $item['_links']['wp:featuredmedia'][0]['href'] ?? '', $options );
-				$body     = wp_remote_retrieve_body( $response );
+				$imageUrl = $item['_links']['wp:featuredmedia'][0]['href'] ?? '';
+				if ( empty( $imageUrl ) ) {
+					continue;
+				}
+
+				$response = aioseo()->helpers->wpRemoteGetExternal( $imageUrl );
+				if ( is_wp_error( $response ) ) {
+					continue;
+				}
+
+				$body = wp_remote_retrieve_body( $response );
 				if ( ! $body ) {
 					continue;
 				}
@@ -428,7 +446,8 @@ class Helpers {
 			}
 		}
 
-		aioseo()->core->networkCache->update( 'rss_feed', $cached, 24 * HOUR_IN_SECONDS );
+		aioseo()->core->networkCache->update( 'rss_feed', $cached, DAY_IN_SECONDS );
+		aioseo()->core->cache->delete( $lockKey );
 
 		return $cached;
 	}

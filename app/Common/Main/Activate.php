@@ -27,7 +27,7 @@ class Activate {
 		}
 
 		// This needs to run on at least 1000 because we load the roles in the Access class on 999.
-		add_action( 'init', [ $this, 'init' ], 1000 );
+		add_action( 'admin_init', [ $this, 'init' ], 1000 );
 	}
 
 	/**

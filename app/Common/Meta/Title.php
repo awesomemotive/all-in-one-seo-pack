@@ -64,7 +64,9 @@ class Title {
 		$title = aioseo()->options->searchAppearance->global->siteTitle;
 		if ( aioseo()->helpers->isWpmlActive() ) {
 			// Allow WPML to translate the title if the homepage is not static.
+			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$title = apply_filters( 'wpml_translate_single_string', $title, 'admin_texts_aioseo_options_localized', '[aioseo_options_localized]searchAppearance_global_siteTitle' );
+			// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		}
 
 		$title = $this->helpers->prepare( $title );

@@ -1,6 +1,8 @@
 <?php
 namespace AIOSEO\Plugin\Common\Sitemap;
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -731,15 +731,15 @@ trait Wp {
 		if ( version_compare( PHP_VERSION, '7.1', '>=' ) ) {
 			$originalPrecision          = ini_get( 'precision' );
 			$originalSerializePrecision = ini_get( 'serialize_precision' );
-			ini_set( 'precision', 17 );
-			ini_set( 'serialize_precision', -1 );
+			ini_set( 'precision', 17 ); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
+			ini_set( 'serialize_precision', -1 ); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
 		}
 
 		$json = wp_json_encode( $data, $flags );
 
 		if ( version_compare( PHP_VERSION, '7.1', '>=' ) ) {
-			ini_set( 'precision', $originalPrecision );
-			ini_set( 'serialize_precision', $originalSerializePrecision );
+			ini_set( 'precision', $originalPrecision ); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
+			ini_set( 'serialize_precision', $originalSerializePrecision ); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
 		}
 
 		return $json;

@@ -74,21 +74,11 @@ class Ai {
 	 * @since 4.8.4
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'scheduleGetAccessToken' ] );
-		add_action( 'init', [ $this, 'scheduleCreditFetchAction' ] );
+		add_action( 'admin_init', [ $this, 'scheduleGetAccessToken' ] );
+		add_action( 'admin_init', [ $this, 'scheduleCreditFetchAction' ] );
 
 		add_action( $this->getAccessTokenAction, [ $this, 'getAccessToken' ] );
 		add_action( $this->creditFetchAction, [ $this, 'updateCredits' ] );
-
-		// If param is set, fetch credits but just once per 5 minutes to prevent abuse.
-		if (
-			isset( $_REQUEST['aioseo-ai-credits'] ) && // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
-			! aioseo()->core->cache->get( 'ai_get_credits' )
-		) {
-			add_action( 'init', [ $this, 'updateCredits' ] );
-
-			aioseo()->core->cache->update( 'ai_get_credits', true, 5 * MINUTE_IN_SECONDS );
-		}
 
 		$this->assistant = new Assistant();
 		$this->image     = new Image();
@@ -131,9 +121,9 @@ class Ai {
 		}
 
 		$response = aioseo()->helpers->wpRemotePost( $this->getApiUrl() . 'ai/auth/', [
-			'body' => [
+			'body' => wp_json_encode( [
 				'domain' => aioseo()->helpers->getSiteDomain()
-			]
+			] )
 		] );
 
 		if ( is_wp_error( $response ) ) {
@@ -174,10 +164,17 @@ class Ai {
 	 * @return void
 	 */
 	public function scheduleCreditFetchAction() {
-		// If not set up, create a scheduled action to refresh the credits each day.
-		if ( ! aioseo()->actionScheduler->isScheduled( $this->creditFetchAction ) ) {
-			aioseo()->actionScheduler->scheduleRecurrent( $this->creditFetchAction, DAY_IN_SECONDS, DAY_IN_SECONDS, [] );
+		if ( apply_filters( 'aioseo_ai_disabled', false ) ) {
+			aioseo()->actionScheduler->unschedule( $this->creditFetchAction );
+
+			return;
 		}
+
+		if ( aioseo()->actionScheduler->isScheduled( $this->creditFetchAction ) ) {
+			return;
+		}
+
+		aioseo()->actionScheduler->scheduleRecurrent( $this->creditFetchAction, DAY_IN_SECONDS, DAY_IN_SECONDS, [] );
 	}
 
 	/**

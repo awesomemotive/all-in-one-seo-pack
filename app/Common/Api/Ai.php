@@ -60,6 +60,7 @@ class Ai {
 		$body    = $request->get_json_params();
 		$refresh = isset( $body['refresh'] ) ? boolval( $body['refresh'] ) : false;
 
+		aioseo()->ai->getAccessToken( $refresh );
 		aioseo()->ai->updateCredits( $refresh );
 
 		return new \WP_REST_Response( [
@@ -371,7 +372,17 @@ class Ai {
 			ob_end_flush();
 		}
 
-		$body           = $request->get_json_params();
+		$body          = $request->get_json_params();
+		$postId        = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
+		$sseDataPrefix = 'data: ';
+
+		if ( ! current_user_can( 'edit_post', $postId ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SSE format with JSON-encoded data.
+			echo $sseDataPrefix . wp_json_encode( [ 'error' => 'Unauthorized.' ] ) . "\n\n";
+			flush();
+			exit;
+		}
+
 		$requestHeaders = self::getRequestHeaders();
 
 		// phpcs:disable WordPress.WP.AlternativeFunctions
@@ -393,19 +404,20 @@ class Ai {
 				array_keys( $requestHeaders ),
 				$requestHeaders
 			),
-			CURLOPT_WRITEFUNCTION  => function ( $_ch, $data ) {
+			CURLOPT_WRITEFUNCTION  => function ( $ch, $data ) use ( $sseDataPrefix ) {
 				$lines = explode( "\n", $data );
 				foreach ( $lines as $line ) {
-					if ( strpos( $line, 'data: ' ) !== 0 ) {
+					if ( strpos( $line, $sseDataPrefix ) !== 0 ) {
 						continue;
 					}
 
-					$json = json_decode( substr( $line, 6 ), true ); // Decode and remove 'data: ' prefix.
+					$json = json_decode( substr( $line, strlen( $sseDataPrefix ) ), true );
 
 					$content = $json['content'] ?? null;
 					$content = $content ? strip_tags( $content ) : null;
 
-					echo 'data: ' . wp_json_encode( [
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SSE format with JSON-encoded data.
+					echo $sseDataPrefix . wp_json_encode( [
 						'content' => $content,
 						'error'   => $json['error'] ?? null
 					] ) . "\n\n";
@@ -425,7 +437,8 @@ class Ai {
 		// phpcs:enable WordPress.WP.AlternativeFunctions
 
 		if ( false === $result || ! empty( $error ) ) {
-			echo 'data: ' . wp_json_encode( [ 'error' => 'Connection error: ' . $error ] ) . "\n\n";
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SSE format with JSON-encoded data.
+			echo $sseDataPrefix . wp_json_encode( [ 'error' => 'Connection error: ' . $error ] ) . "\n\n";
 			flush();
 		}
 
@@ -449,6 +462,13 @@ class Ai {
 		$aspectRatio     = ! empty( $body['aspectRatio'] ) ? sanitize_text_field( $body['aspectRatio'] ) : '';
 		$postId          = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
 		$selectedImageId = ! empty( $body['selectedImageId'] ) ? (int) $body['selectedImageId'] : 0;
+
+		if ( ! current_user_can( 'edit_post', $postId ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
+		}
 
 		try {
 			if ( ! $prompt || ! $postId ) {
@@ -530,7 +550,15 @@ class Ai {
 	 */
 	public static function fetchImages( $request ) {
 		$params = $request->get_params();
-		$postId = ! empty( $params['postId'] ) ? $params['postId'] : 0;
+		$postId = ! empty( $params['postId'] ) ? (int) $params['postId'] : 0;
+
+		if ( ! current_user_can( 'edit_post', $postId ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'Unauthorized.'
+			], 401 );
+		}
+
 		$images = aioseo()->ai->image->getByPostId( $postId );
 
 		return new \WP_REST_Response( [
@@ -554,13 +582,6 @@ class Ai {
 		$params = $request->get_params();
 		$ids    = (array) ( $params['ids'] ?? [] );
 
-		if ( ! current_user_can( 'delete_posts' ) ) {
-			return new \WP_REST_Response( [
-				'success' => false,
-				'message' => 'Unauthorized.'
-			], 401 );
-		}
-
 		if ( empty( $ids ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
@@ -568,17 +589,30 @@ class Ai {
 			], 400 );
 		}
 
-		$failedIds = aioseo()->ai->image->deleteImages( $ids );
-		if ( count( $failedIds ) === count( $ids ) ) {
+		// Filter to only IDs the user can delete.
+		$authorizedIds   = [];
+		$unauthorizedIds = [];
+		foreach ( $ids as $id ) {
+			$id = (int) $id;
+			if ( current_user_can( 'delete_post', $id ) ) {
+				$authorizedIds[] = $id;
+			} else {
+				$unauthorizedIds[] = $id;
+			}
+		}
+
+		if ( empty( $authorizedIds ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
-				'message' => 'Failed to delete all images.'
-			], 400 );
+				'message' => 'Unauthorized.'
+			], 401 );
 		}
+
+		aioseo()->ai->image->deleteImages( $authorizedIds );
 
 		return new \WP_REST_Response( [
 			'success'   => true,
-			'failedIds' => $failedIds
+			'failedIds' => $unauthorizedIds
 		], 200 );
 	}
 

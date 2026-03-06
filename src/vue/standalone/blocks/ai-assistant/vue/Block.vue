@@ -375,6 +375,7 @@ const initFetch = (args = {}) => {
 		},
 		method : 'POST',
 		body   : JSON.stringify({
+			postId       : postEditorStore.currentPost?.id || 0,
 			messages     : app.root.data.messages,
 			tone         : toneOptions.find(t => t.value === getBlock().attributes.tone).label,
 			audience     : audienceOptions.find(a => a.value === getBlock().attributes.audience).label,

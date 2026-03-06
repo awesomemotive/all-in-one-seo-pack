@@ -26,6 +26,7 @@ class Content {
 		'addl',
 		'author',
 		'date',
+		'postArchive',
 		'rss',
 		'bpActivity',
 		'bpGroup',
@@ -915,7 +916,7 @@ class Content {
 		}
 
 		$joinClause   = aioseo()->pro ? "LEFT JOIN {$aioseoTermsTable} AS at ON tt.term_id = at.term_id" : '';
-		$whereClause  = aioseo()->pro ? 'AND (at.robots_noindex IS NULL OR at.robots_noindex = 0)' : '';
+		$whereClause  = aioseo()->pro ? "AND (at.robots_noindex IS NULL OR at.robots_noindex = 0) AND (at.canonical_url IS NULL OR at.canonical_url = '')" : '';
 		$limitClause  = $count ? '' : 'LIMIT 50000';
 
 		$result = aioseo()->core->db->execute(

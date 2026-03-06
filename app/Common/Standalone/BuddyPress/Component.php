@@ -245,7 +245,9 @@ class Component {
 			// The `content_rendered` is AIOSEO specific.
 			$this->activity['content_rendered'] = $this->activity['content'] ?? '';
 			if ( ! empty( $this->activity['content'] ) ) {
+				// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 				$this->activity['content_rendered'] = apply_filters( 'bp_get_activity_content', $this->activity['content'] );
+				// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			}
 
 			return;

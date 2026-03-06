@@ -36,14 +36,21 @@ class ProfilePage extends WebPage {
 		$post          = aioseo()->helpers->getPost();
 		$queriedObject = get_queried_object();
 		if (
-			( is_singular() && ! is_a( $post, 'WP_Post' ) ) &&
-			! is_a( $queriedObject, 'WP_User' )
+			( is_singular() && ! is_a( $post, 'WP_Post' ) ) ||
+			( ! is_singular() && ! is_a( $queriedObject, 'WP_User' ) )
 		) {
 			return [];
 		}
 
-		$authorId = is_a( $queriedObject, 'WP_User' ) ? $queriedObject->ID : $post->post_author;
-		$author   = is_a( $queriedObject, 'WP_User' ) ? $queriedObject : get_user_by( 'id', $authorId );
+		$isBuddyPressMemberPage = BuddyPressIntegration::isComponentPage() && 'bp-member_single' === aioseo()->standalone->buddyPress->component->templateType;
+
+		if ( $isBuddyPressMemberPage ) {
+			$author   = aioseo()->standalone->buddyPress->component->author;
+			$authorId = $author->ID;
+		} else {
+			$authorId = is_a( $queriedObject, 'WP_User' ) ? $queriedObject->ID : $post->post_author;
+			$author   = is_a( $queriedObject, 'WP_User' ) ? $queriedObject : get_user_by( 'id', $authorId );
+		}
 
 		global $wp_query; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
@@ -74,17 +81,10 @@ class ProfilePage extends WebPage {
 
 		] );
 
-		if (
-			BuddyPressIntegration::isComponentPage() &&
-			'bp-member_single' === aioseo()->standalone->buddyPress->component->templateType
-		) {
-			if ( ! isset( $data['mainEntity'] ) ) {
-				$data['mainEntity'] = [];
-			}
-
+		if ( $isBuddyPressMemberPage ) {
 			$data['mainEntity']['@type'] = 'Person';
-			$data['mainEntity']['name']  = aioseo()->standalone->buddyPress->component->author->display_name;
-			$data['mainEntity']['url']   = BuddyPressIntegration::getComponentSingleUrl( 'member', aioseo()->standalone->buddyPress->component->author->ID );
+			$data['mainEntity']['name']  = $author->display_name;
+			$data['mainEntity']['url']   = BuddyPressIntegration::getComponentSingleUrl( 'member', $authorId );
 		}
 
 		return $data;

@@ -47,7 +47,7 @@ class ActionScheduler {
 			return;
 		}
 
-		if ( ! apply_filters( 'action_scheduler_enable_recreate_data_store', true ) ) {
+		if ( ! apply_filters( 'action_scheduler_enable_recreate_data_store', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			return;
 		}
 
@@ -155,15 +155,28 @@ class ActionScheduler {
 	 * @return boolean                Whether the action was scheduled.
 	 */
 	public function scheduleSingle( $actionName, $time = 0, $args = [], $forceSchedule = false ) {
+		$lockKey = $this->getLockKey( $actionName, $args );
+
+		// Skip if another request is currently scheduling this action.
+		if ( get_transient( $lockKey ) ) {
+			return false;
+		}
+
+		// Set lock for 5 seconds.
+		set_transient( $lockKey, 1, 5 );
+
 		try {
 			if ( $forceSchedule || ! $this->isScheduled( $actionName, $args ) ) {
 				as_schedule_single_action( time() + $time, $actionName, $args, $this->actionSchedulerGroup );
+				delete_transient( $lockKey );
 
 				return true;
 			}
 		} catch ( \RuntimeException $e ) {
 			// Nothing needs to happen.
 		}
+
+		delete_transient( $lockKey );
 
 		return false;
 	}
@@ -173,80 +186,32 @@ class ActionScheduler {
 	 *
 	 * @since   4.0.13
 	 * @version 4.2.7
+	 * @version 4.9.4.2 Refactored to check all arguments.
+	 * @version 4.9.4.2  Use as_has_scheduled_action() for improved performance.
 	 *
 	 * @param  string  $actionName The action name.
 	 * @param  array   $args       Args passed down to the action.
 	 * @return boolean             Whether the action is already scheduled.
 	 */
 	public function isScheduled( $actionName, $args = [] ) {
-		$scheduledActions = $this->getScheduledActions();
-
-		$hooks = [];
-		foreach ( $scheduledActions as $action ) {
-			$hooks[] = $action->hook;
+		if ( ! function_exists( 'as_has_scheduled_action' ) ) { // In case site is loading older AS version.
+			return as_next_scheduled_action( $actionName, $args, $this->actionSchedulerGroup );
 		}
 
-		$isScheduled = in_array( $actionName, array_filter( $hooks ), true );
-		if ( empty( $args ) ) {
-			return $isScheduled;
-		}
-
-		// If there are arguments, we need to check if the action is scheduled with the same arguments.
-		if ( $isScheduled ) {
-			foreach ( $scheduledActions as $action ) {
-				if ( $action->hook === $actionName ) {
-					foreach ( $args as $k => $v ) {
-						if ( ! isset( $action->args[ $k ] ) || $action->args[ $k ] !== $v ) {
-							continue;
-						}
-
-						return true;
-					}
-				}
-			}
-		}
-
-		return false;
+		// Use Action Scheduler's optimized existence check.
+		// as_has_scheduled_action() was introduced in Action Scheduler 3.3.0.
+		return as_has_scheduled_action( $actionName, $args, $this->actionSchedulerGroup );
 	}
 
 	/**
-	 * Returns all AIOSEO scheduled actions.
+	 * Unschedule all pending instances of an action.
 	 *
-	 * @since 4.7.7
-	 *
-	 * @return array The scheduled actions.
-	 */
-	private function getScheduledActions() {
-		static $scheduledActions = null;
-		if ( null !== $scheduledActions ) {
-			return $scheduledActions;
-		}
-
-		$scheduledActions = aioseo()->core->db->start( 'actionscheduler_actions as aa' )
-			->select( 'aa.hook, aa.args' )
-			->join( 'actionscheduler_groups as ag', 'ag.group_id', 'aa.group_id' )
-			->where( 'ag.slug', $this->actionSchedulerGroup )
-			->whereIn( 'status', [ 'pending', 'in-progress', 'past-due' ] )
-			->run()
-			->result();
-
-		// Decode the args.
-		foreach ( $scheduledActions as $key => $action ) {
-			if ( is_array( $action->args ) || ! aioseo()->helpers->isJsonString( $action->args ) ) {
-				continue;
-			}
-
-			$scheduledActions[ $key ]->args = json_decode( $action->args, true );
-		}
-
-		return $scheduledActions;
-	}
-
-	/**
-	 * Unschedule an action.
+	 * Uses as_unschedule_all_actions() to ensure recurring actions are fully stopped,
+	 * since as_unschedule_action() only cancels the next occurrence.
 	 *
 	 * @since   4.1.4
 	 * @version 4.2.7
+	 * @version 4.9.4.2 Use as_unschedule_all_actions() to properly stop recurring actions.
 	 *
 	 * @param  string $actionName The action name to unschedule.
 	 * @param  array  $args       Args passed down to the action.
@@ -254,9 +219,7 @@ class ActionScheduler {
 	 */
 	public function unschedule( $actionName, $args = [] ) {
 		try {
-			if ( as_next_scheduled_action( $actionName, $args ) ) {
-				as_unschedule_action( $actionName, $args, $this->actionSchedulerGroup );
-			}
+			as_unschedule_all_actions( $actionName, $args, $this->actionSchedulerGroup );
 		} catch ( \Exception $e ) {
 			// Do nothing.
 		}
@@ -275,15 +238,28 @@ class ActionScheduler {
 	 * @return boolean             Whether the action was scheduled.
 	 */
 	public function scheduleRecurrent( $actionName, $time, $interval = 60, $args = [] ) {
+		$lockKey = $this->getLockKey( $actionName, $args );
+
+		// Skip if another request is currently scheduling this action.
+		if ( get_transient( $lockKey ) ) {
+			return false;
+		}
+
+		// Set lock for 5 seconds.
+		set_transient( $lockKey, 1, 5 );
+
 		try {
 			if ( ! $this->isScheduled( $actionName, $args ) ) {
 				as_schedule_recurring_action( time() + $time, $interval, $actionName, $args, $this->actionSchedulerGroup );
+				delete_transient( $lockKey );
 
 				return true;
 			}
 		} catch ( \RuntimeException $e ) {
 			// Nothing needs to happen.
 		}
+
+		delete_transient( $lockKey );
 
 		return false;
 	}
@@ -292,18 +268,46 @@ class ActionScheduler {
 	 * Schedule a single async action.
 	 *
 	 * @since   4.1.6
-	 * @version 4.2.7
+	 * @version 4.9.4.2 Added check for duplicates.
 	 *
 	 * @param  string $actionName The name of the action.
 	 * @param  array  $args       Any relevant arguments.
 	 * @return void
 	 */
 	public function scheduleAsync( $actionName, $args = [] ) {
+		$lockKey = $this->getLockKey( $actionName, $args );
+
+		// Skip if another request is currently scheduling this action.
+		if ( get_transient( $lockKey ) ) {
+			return;
+		}
+
+		// Set lock for 5 seconds.
+		set_transient( $lockKey, 1, 5 );
+
 		try {
-			// Run the task immediately using an async action.
-			as_enqueue_async_action( $actionName, $args, $this->actionSchedulerGroup );
+			// Only schedule if not already scheduled to prevent duplicate actions.
+			if ( ! $this->isScheduled( $actionName, $args ) ) {
+				// Run the task immediately using an async action.
+				as_enqueue_async_action( $actionName, $args, $this->actionSchedulerGroup );
+			}
 		} catch ( \Exception $e ) {
 			// Do nothing.
 		}
+
+		delete_transient( $lockKey );
+	}
+
+	/**
+	 * Returns a transient lock key for the given action name and args.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @param  string $actionName The action name.
+	 * @param  array  $args       The action arguments.
+	 * @return string             The lock key.
+	 */
+	private function getLockKey( $actionName, $args = [] ) {
+		return 'aioseo_as_lock_' . md5( $actionName . wp_json_encode( $args ) );
 	}
 }

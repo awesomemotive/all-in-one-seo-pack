@@ -64,6 +64,8 @@ class Help {
 		$request = aioseo()->helpers->wpRemoteGet( $this->getUrl() );
 		if ( is_wp_error( $request ) ) {
 			aioseo()->core->networkCache->update( 'admin_help_docs', [], DAY_IN_SECONDS );
+
+			return [];
 		}
 
 		$helpDocs = wp_remote_retrieve_body( $request );

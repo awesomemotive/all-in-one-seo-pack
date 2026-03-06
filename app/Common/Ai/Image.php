@@ -196,21 +196,11 @@ class Image {
 	 * @since 4.8.8
 	 *
 	 * @param  array $ids The attachment IDs.
-	 * @return array      The attachment IDs that failed to be deleted.
+	 * @return void
 	 */
 	public function deleteImages( $ids ) {
-		$failed = [];
 		foreach ( $ids as $id ) {
-			if ( ! current_user_can( 'delete_post', $id ) ) {
-				$failed[] = $id;
-				continue;
-			}
-
-			$deleted = wp_delete_attachment( $id, true );
-			if ( ! $deleted ) {
-				$failed[] = $id;
-				continue;
-			}
+			wp_delete_attachment( $id, true );
 
 			// Update all images post meta that have the parent image id set to the deleted image id.
 			$attachmentIds = get_posts( [
@@ -227,8 +217,6 @@ class Image {
 				delete_post_meta( $attachmentId, '_aioseo_ai_parent' );
 			}
 		}
-
-		return $failed;
 	}
 
 	/**

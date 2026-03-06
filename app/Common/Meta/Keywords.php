@@ -88,7 +88,12 @@ class Keywords {
 
 		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
 		if ( $dynamicOptions->searchAppearance->archives->has( $postType ) ) {
-			$keywords = $this->extractMetaKeywords( aioseo()->dynamicOptions->searchAppearance->archives->{ $postType }->advanced->keywords );
+			$allArchives    = aioseo()->dynamicOptions->searchAppearance->archives->all();
+			$archiveOptions = $allArchives[ $postType ] ?? [];
+
+			if ( ! empty( $archiveOptions['advanced']['keywords'] ) ) {
+				$keywords = $this->extractMetaKeywords( $archiveOptions['advanced']['keywords'] );
+			}
 		}
 
 		$archiveKeywords[ $postType ] = empty( $keywords ) ? [] : $keywords;
@@ -135,12 +140,14 @@ class Keywords {
 		$wp_query->is_category = false;
 
 		foreach ( $wpPosts as $post ) {
-			$metaData    = aioseo()->meta->metaData->getMetaData( $post );
+			$metaData = aioseo()->meta->metaData->getMetaData( $post );
+			if ( empty( $metaData->keywords ) ) {
+				continue;
+			}
+
 			$tmpKeywords = $this->extractMetaKeywords( $metaData->keywords );
-			if ( count( $tmpKeywords ) ) {
-				foreach ( $tmpKeywords as $keyword ) {
-					$keywords[] = $keyword;
-				}
+			foreach ( $tmpKeywords as $keyword ) {
+				$keywords[] = $keyword;
 			}
 		}
 

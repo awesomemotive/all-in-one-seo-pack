@@ -24,7 +24,8 @@ class Sitemap {
 	/**
 	 * Class constructor.
 	 *
-	 * @since 4.6.2
+	 * @since   4.6.2
+	 * @version 4.9.4.2 Change admin_init to init to allow frontend scheduling.
 	 */
 	public function __construct() {
 		add_action( 'admin_init', [ $this, 'init' ] );
@@ -32,33 +33,49 @@ class Sitemap {
 	}
 
 	/**
-	 * Initialize the class.
+	 * Initialize the class and schedule the weekly recurring sync.
 	 *
-	 * @since 4.6.2
+	 * @since   4.6.2
+	 * @version 4.9.4.2 Switch to weekly recurring action.
 	 *
 	 * @return void
 	 */
 	public function init() {
 		if (
 			! aioseo()->searchStatistics->api->auth->isConnected() ||
-			! aioseo()->internalOptions->searchStatistics->site->verified ||
-			aioseo()->actionScheduler->isScheduled( $this->action )
+			! aioseo()->internalOptions->searchStatistics->site->verified
 		) {
 			return;
 		}
 
-		aioseo()->actionScheduler->scheduleAsync( $this->action );
+		if ( aioseo()->actionScheduler->isScheduled( $this->action ) ) {
+			return;
+		}
+
+		aioseo()->actionScheduler->scheduleRecurrent( $this->action, 10, WEEK_IN_SECONDS );
 	}
 
 	/**
 	 * Sync the sitemap.
 	 *
-	 * @since 4.6.3
+	 * @since   4.6.3
+	 * @version 4.9.4.2 Add runtime lock; remove self-scheduling (now handled by recurring action).
 	 *
 	 * @return void
 	 */
 	public function worker() {
+		// Runtime lock: Prevent concurrent execution of this action.
+		$lockKey = 'as_sitemap_sync_running';
+		if ( aioseo()->core->cache->get( $lockKey ) ) {
+			return;
+		}
+
+		// Set lock with a safety timeout in case the action fails mid-execution.
+		aioseo()->core->cache->update( $lockKey, true, 5 * MINUTE_IN_SECONDS );
+
 		if ( ! $this->canSync() ) {
+			aioseo()->core->cache->delete( $lockKey );
+
 			return;
 		}
 
@@ -70,8 +87,7 @@ class Sitemap {
 			aioseo()->internalOptions->searchStatistics->sitemap->lastFetch = time();
 		}
 
-		// Schedule a new sync for the next week.
-		aioseo()->actionScheduler->scheduleSingle( $this->action, WEEK_IN_SECONDS + wp_rand( 0, 3 * DAY_IN_SECONDS ), [], true );
+		aioseo()->core->cache->delete( $lockKey );
 	}
 
 	/**

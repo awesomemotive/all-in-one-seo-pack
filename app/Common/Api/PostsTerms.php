@@ -577,7 +577,7 @@ class PostsTerms {
 
 		return new \WP_REST_Response( [
 			'success' => true,
-			'content' => apply_filters( 'the_content', $content ),
+			'content' => apply_filters( 'the_content', $content ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		], 200 );
 	}
 }

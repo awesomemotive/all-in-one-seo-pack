@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// phpcs:disable Generic.WhiteSpace.ScopeIndent
+// phpcs:disable Generic.WhiteSpace.ScopeIndent, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 // Set context for meta class to social meta.
 $facebookMeta = aioseo()->social->output->getFacebookMeta();

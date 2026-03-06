@@ -30,7 +30,7 @@ class RobotsTxt {
 			return;
 		}
 
-		add_action( 'init', [ $this, 'checkForPhysicalFiles' ] );
+		add_action( 'admin_init', [ $this, 'checkForPhysicalFiles' ] );
 	}
 
 	/**
@@ -488,10 +488,11 @@ class RobotsTxt {
 	 * @return bool               Whether the import was successful or not.
 	 */
 	public function importRobotsTxtFromUrl( $url, $blogId ) {
-		$request          = wp_remote_get( $url, [
+		$request = wp_remote_get( $url, [
 			'timeout'   => 10,
 			'sslverify' => false
 		] );
+
 		$robotsTxtContent = wp_remote_retrieve_body( $request );
 		if ( ! $robotsTxtContent ) {
 			throw new \Exception( esc_html__( 'There was an error importing the robots.txt content from the URL.', 'all-in-one-seo-pack' ) );

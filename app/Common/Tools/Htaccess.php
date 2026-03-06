@@ -71,7 +71,7 @@ class Htaccess {
 			];
 		}
 
-		$response       = wp_remote_get( home_url( '?' . time() ) );
+		$response       = wp_safe_remote_get( home_url( '?' . time() ) );
 		$isValidRequest = wp_remote_retrieve_response_code( $response );
 
 		if (

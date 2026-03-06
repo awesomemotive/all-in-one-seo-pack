@@ -284,16 +284,23 @@ class SiteHealth {
 	 * @return bool Whether the plugin should be updated.
 	 */
 	public function shouldUpdate() {
-		$response = wp_remote_get( 'https://api.wordpress.org/plugins/info/1.0/all-in-one-seo-pack.json' );
-		$body     = wp_remote_retrieve_body( $response );
-		if ( ! $body ) {
-			// Something went wrong.
-			return false;
+		$cacheKey      = 'site_health_latest_version';
+		$latestVersion = aioseo()->core->cache->get( $cacheKey );
+
+		if ( null === $latestVersion ) {
+			$response = aioseo()->helpers->wpRemoteGetExternal( 'https://api.wordpress.org/plugins/info/1.0/all-in-one-seo-pack.json' );
+			$body     = wp_remote_retrieve_body( $response );
+			if ( ! $body ) {
+				return false;
+			}
+
+			$pluginData    = json_decode( $body );
+			$latestVersion = $pluginData->version;
+
+			aioseo()->core->cache->update( $cacheKey, $latestVersion, DAY_IN_SECONDS );
 		}
 
-		$pluginData = json_decode( $body );
-
-		return version_compare( AIOSEO_VERSION, $pluginData->version, '<' );
+		return version_compare( AIOSEO_VERSION, $latestVersion, '<' );
 	}
 
 	/**

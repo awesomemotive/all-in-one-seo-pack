@@ -81,6 +81,10 @@ class DynamicBackup {
 	 * @since 4.1.3
 	 */
 	public function __construct() {
+		if ( ! is_admin() ) {
+			return;
+		}
+
 		add_action( 'wp_loaded', [ $this, 'init' ], 5000 );
 		add_action( 'shutdown', [ $this, 'updateBackup' ] );
 	}

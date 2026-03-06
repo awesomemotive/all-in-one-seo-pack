@@ -78,6 +78,7 @@ class CrawlCleanup {
 
 	/**
 	 * Schedule clearing of the logs.
+	 * This runs when the logs retention option is changed.
 	 *
 	 * @since 4.5.8
 	 *
@@ -85,6 +86,7 @@ class CrawlCleanup {
 	 */
 	public function scheduleClearingLogs() {
 		aioseo()->actionScheduler->unschedule( 'aioseo_crawl_cleanup_clear_logs' );
+
 		$optionLength = json_decode( aioseo()->options->searchAppearance->advanced->blockArgs->logsRetention )->value;
 		if (
 			aioseo()->options->searchAppearance->advanced->blockArgs->enable &&

@@ -122,6 +122,7 @@
 										:disabled="getWeekDay(index).open24h || getWeekDay(index).closed"
 										size="medium"
 										:options="postEditorStore.currentPost.local_seo.openingHours.use24hFormat ? HOURS_24H_FORMAT : HOURS_12H_FORMAT"
+										:preserveOptions="false"
 										:modelValue="getSelectOptions(getWeekDay(index).openTime)"
 										@update:modelValue="value => saveDay(index, 'openTime', value.value)"
 									/>
@@ -130,6 +131,7 @@
 										:disabled="getWeekDay(index).open24h || getWeekDay(index).closed"
 										size="medium"
 										:options="postEditorStore.currentPost.local_seo.openingHours.use24hFormat ? HOURS_24H_FORMAT : HOURS_12H_FORMAT"
+										:preserveOptions="false"
 										:modelValue="getSelectOptions(getWeekDay(index).closeTime)"
 										@update:modelValue="value => saveDay(index, 'closeTime', value.value)"
 									/>

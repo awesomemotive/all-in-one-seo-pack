@@ -24,7 +24,7 @@ class Notices {
 			return;
 		}
 
-		add_action( 'init', [ $this, 'init' ] );
+		add_action( 'admin_init', [ $this, 'init' ] );
 	}
 
 	/**

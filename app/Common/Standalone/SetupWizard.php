@@ -207,8 +207,8 @@ class SetupWizard {
 		wp_print_scripts( 'aioseo-vendors' );
 		wp_print_scripts( 'aioseo-common' );
 		wp_print_scripts( 'aioseo-setup-wizard-script' );
-		do_action( 'admin_footer', '' );
-		do_action( 'admin_print_footer_scripts' );
+		do_action( 'admin_footer', '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'admin_print_footer_scripts' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		// do_action( 'customize_controls_print_footer_scripts' );
 		?>
 		</body>

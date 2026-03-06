@@ -31,13 +31,22 @@ class Cache {
 	private static $cache = [];
 
 	/**
-	 * The Cache Prune class.
+	 * The action for the scheduled cache prune.
 	 *
-	 * @since 4.1.5
+	 * @since 4.9.4.2
 	 *
-	 * @var CachePrune
+	 * @var string
 	 */
-	public $prune;
+	private $pruneAction = 'aioseo_cache_prune';
+
+	/**
+	 * The action for the scheduled old cache clean.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @var string
+	 */
+	private $optionCacheCleanAction = 'aioseo_old_cache_clean';
 
 	/**
 	 * Prefix for this cache.
@@ -49,19 +58,30 @@ class Cache {
 	protected $prefix = '';
 
 	/**
+	 * Whether to use transients as fallback.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @var bool|null
+	 */
+	private $useTransientFallback = null;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.7.7.1
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'checkIfTableExists' ] ); // This needs to run on init because the DB
+		add_action( 'init', [ $this, 'checkIfTableExists' ] ); // This needs to run on init because the DB.
 		// class gets instantiated along with the cache class.
 	}
 
 	/**
 	 * Checks if the cache table exists and creates it if it doesn't.
+	 * Also registers and schedules cache maintenance actions.
 	 *
-	 * @since 4.7.7.1
+	 * @since   4.7.7.1
+	 * @version 4.9.4.2 Absorb prune logic from CachePrune class.
 	 *
 	 * @return void
 	 */
@@ -69,6 +89,15 @@ class Cache {
 		if ( ! aioseo()->core->db->tableExists( $this->table ) ) {
 			aioseo()->preUpdates->createCacheTable();
 		}
+
+		add_action( $this->pruneAction, [ $this, 'prune' ] );
+		add_action( $this->optionCacheCleanAction, [ $this, 'optionCacheClean' ] );
+
+		if ( aioseo()->actionScheduler->isScheduled( $this->pruneAction ) ) {
+			return;
+		}
+
+		aioseo()->actionScheduler->scheduleRecurrent( $this->pruneAction, 0, DAY_IN_SECONDS );
 	}
 
 	/**
@@ -81,18 +110,40 @@ class Cache {
 	 * @return mixed                      The value or null if the cache does not exist.
 	 */
 	public function get( $key, $allowedClasses = false ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+		// In dev mode, bypass Action Scheduler cache records so idle/lock timeouts don't block execution.
+		if ( 0 === strpos( $key, 'as_' ) && aioseo()->helpers->isDev() ) {
+			return null;
+		}
+
 		$key = $this->prepareKey( $key );
-		if ( isset( self::$cache[ $key ] ) ) {
+
+		// Check if we're supposed to do a LIKE get.
+		$isLikeGet = preg_match( '/%/', (string) $key );
+
+		// Check static cache first (only for non-LIKE queries).
+		if ( ! $isLikeGet && isset( self::$cache[ $key ] ) ) {
 			return self::$cache[ $key ];
+		}
+
+		// Check if we should use transients.
+		if ( ! $this->isCacheTableAvailable() ) {
+			if ( $isLikeGet ) {
+				// Use custom query for LIKE patterns.
+				return $this->getTransientLike( $key );
+			}
+
+			$value = $this->getTransient( $key );
+			if ( null !== $value ) {
+				self::$cache[ $key ] = $value;
+			}
+
+			return $value;
 		}
 
 		$result = aioseo()->core->db
 			->start( $this->table )
 			->select( '`key`, `value`, `is_object`' )
 			->whereRaw( '( `expiration` IS NULL OR `expiration` > \'' . aioseo()->helpers->timeToMysql( time() ) . '\' )' );
-
-		// Check if we're supposed to do a LIKE get.
-		$isLikeGet = preg_match( '/%/', (string) $key );
 
 		if ( $isLikeGet ) {
 			$result->whereLike( 'key', $key, true );
@@ -140,10 +191,20 @@ class Cache {
 	 * @return void
 	 */
 	public function update( $key, $value, $expiration = DAY_IN_SECONDS ) {
+		$key = $this->prepareKey( $key );
+
 		// If the value is null we'll convert it and give it a shorter expiration.
 		if ( null === $value ) {
 			$value      = false;
 			$expiration = 10 * MINUTE_IN_SECONDS;
+		}
+
+		// Check if we should use transients.
+		if ( ! $this->isCacheTableAvailable() ) {
+			$this->updateTransient( $key, $value, $expiration );
+			$this->updateStatic( $key, $value );
+
+			return;
 		}
 
 		$isObject   = is_object( $value );
@@ -191,6 +252,14 @@ class Cache {
 	public function delete( $key ) {
 		$key = $this->prepareKey( $key );
 
+		// Check if we should use transients.
+		if ( ! $this->isCacheTableAvailable() ) {
+			$this->deleteTransient( $key );
+			$this->clearStatic( $key );
+
+			return;
+		}
+
 		aioseo()->core->db->delete( $this->table )
 			->where( 'key', $key )
 			->run();
@@ -207,7 +276,7 @@ class Cache {
 	 * @return string      The prepared key.
 	 */
 	private function prepareKey( $key ) {
-		$key = trim( $key );
+		$key = trim( (string) $key );
 		$key = $this->prefix && 0 !== strpos( $key, $this->prefix ) ? $this->prefix . $key : $key;
 
 		if ( aioseo()->helpers->isDev() && 80 < mb_strlen( $key, 'UTF-8' ) ) {
@@ -227,6 +296,15 @@ class Cache {
 	public function clear() {
 		if ( $this->prefix ) {
 			$this->clearPrefix( '' );
+
+			return;
+		}
+
+		// Check if we should use transients.
+		if ( ! $this->isCacheTableAvailable() ) {
+			// Delete all AIOSEO cache transients.
+			$this->deleteAllTransients();
+			$this->clearStatic();
 
 			return;
 		}
@@ -293,6 +371,15 @@ class Cache {
 	public function clearPrefix( $prefix ) {
 		$prefix = $this->prepareKey( $prefix );
 
+		// Check if we should use transients.
+		if ( ! $this->isCacheTableAvailable() ) {
+			// Delete transients by prefix.
+			$this->deleteTransientsByPrefix( $prefix );
+			$this->clearStaticPrefix( $prefix );
+
+			return;
+		}
+
 		aioseo()->core->db->delete( $this->table )
 			->whereLike( 'key', $prefix . '%', true )
 			->run();
@@ -355,6 +442,50 @@ class Cache {
 	}
 
 	/**
+	 * Prunes expired cache rows from the cache table.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @return void
+	 */
+	public function prune() {
+		aioseo()->core->db->delete( $this->getTableName() )
+			->whereRaw( '( `expiration` IS NOT NULL AND expiration <= \'' . aioseo()->helpers->timeToMysql( time() ) . '\' )' )
+			->run();
+	}
+
+	/**
+	 * Cleans legacy cache entries from the wp_options table.
+	 * Processes in batches and self-schedules until all entries are removed.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @return void
+	 */
+	public function optionCacheClean() {
+		$optionCache = aioseo()->core->db->delete( aioseo()->core->db->db->options, true )
+			->whereLike( 'option_name', '_aioseo_cache_%', true )
+			->limit( 10000 )
+			->run();
+
+		// Schedule a new run if we're not done cleaning.
+		if ( 0 !== $optionCache->db->rows_affected ) {
+			aioseo()->actionScheduler->scheduleSingle( $this->optionCacheCleanAction, MINUTE_IN_SECONDS, [], true );
+		}
+	}
+
+	/**
+	 * Returns the action name for the old cache clean.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @return string
+	 */
+	public function getOptionCacheCleanAction() {
+		return $this->optionCacheCleanAction;
+	}
+
+	/**
 	 * Returns the cache table name.
 	 *
 	 * @since 4.1.5
@@ -363,5 +494,251 @@ class Cache {
 	 */
 	public function getTableName() {
 		return $this->table;
+	}
+
+	/**
+	 * Checks if the cache table is available for use.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @return bool True if table exists and is accessible.
+	 */
+	private function isCacheTableAvailable() {
+		if ( null !== $this->useTransientFallback ) {
+			return ! $this->useTransientFallback;
+		}
+
+		// Check transient first to avoid a DB query on every request.
+		if ( get_transient( 'aioseo_cache_table_exists' ) ) {
+			$this->useTransientFallback = false;
+
+			return true;
+		}
+
+		// Transient not set — check the DB directly (avoids circular dependency with Database::tableExists).
+		global $wpdb;
+		$tableName = $wpdb->prefix . $this->table;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$tableExists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $tableName ) );
+
+		if ( ! $tableExists ) {
+			$this->useTransientFallback = true;
+
+			return false;
+		}
+
+		set_transient( 'aioseo_cache_table_exists', 1, WEEK_IN_SECONDS );
+		$this->useTransientFallback = false;
+
+		return true;
+	}
+
+	/**
+	 * Gets the transient name for a cache key.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @param  string $key The cache key.
+	 * @return string      The transient name.
+	 */
+	private function getTransientName( $key ) {
+		// Store the original key to maintain compatibility with LIKE queries.
+		return 'aioseo_cache_' . $key;
+	}
+
+	/**
+	 * Gets a value from transients.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @param  string $key The cache key.
+	 * @return mixed       The cached value or null.
+	 */
+	private function getTransient( $key ) {
+		$transientName = $this->getTransientName( $key );
+		$data          = get_transient( $transientName );
+
+		if ( false === $data ) {
+			return null;
+		}
+
+		// Decode the wrapper structure.
+		$wrapper = json_decode( $data, true );
+		if ( ! is_array( $wrapper ) || ! isset( $wrapper['value'] ) ) {
+			return null;
+		}
+
+		// Decode JSON value using is_object flag (matching database cache behavior).
+		// If is_object is 1 (true), decode to object; if 0 (false), decode to array.
+		$decoded = json_decode( $wrapper['value'], empty( $wrapper['is_object'] ) );
+
+		return $decoded;
+	}
+
+	/**
+	 * Gets multiple transients using a LIKE query.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @param  string $pattern The pattern to match (with % wildcards).
+	 * @return mixed           Array of matching cache entries or null.
+	 */
+	private function getTransientLike( $pattern ) {
+		global $wpdb;
+
+		$transientPattern = $this->getTransientName( $pattern );
+
+		// Query for non-expired transients matching the pattern.
+		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->prepare(
+				"SELECT REPLACE(option_name, '_transient_', '') as `key`, option_value as `value`
+				FROM {$wpdb->options}
+				WHERE option_name LIKE %s
+				AND option_name NOT LIKE %s
+				AND (
+					NOT EXISTS (
+						SELECT 1 FROM {$wpdb->options} timeout
+						WHERE timeout.option_name = CONCAT('_transient_timeout_', REPLACE(option_name, '_transient_', ''))
+						AND CAST(timeout.option_value AS UNSIGNED) > 0
+						AND CAST(timeout.option_value AS UNSIGNED) < UNIX_TIMESTAMP()
+					)
+				)",
+				'_transient_' . implode( '%', array_map( [ $wpdb, 'esc_like' ], explode( '%', $transientPattern ) ) ),
+				'_transient_timeout_%'
+			),
+			ARRAY_A
+		);
+
+		if ( empty( $results ) ) {
+			return null;
+		}
+
+		// Decode JSON values with is_object flag.
+		foreach ( $results as &$result ) {
+			$result['key'] = str_replace( 'aioseo_cache_', '', $result['key'] );
+
+			// Decode the wrapper structure.
+			$wrapper = json_decode( $result['value'], true );
+			if ( is_array( $wrapper ) && isset( $wrapper['value'] ) ) {
+				// Decode JSON value using is_object flag (matching database cache behavior).
+				// If is_object is 1 (true), decode to object; if 0 (false), decode to array.
+				$result['value'] = json_decode( $wrapper['value'], empty( $wrapper['is_object'] ) );
+			} else {
+				// Fallback for malformed data.
+				$result['value'] = null;
+			}
+		}
+
+		return $results;
+	}
+
+	/**
+	 * Updates a transient value.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @param  string $key        The cache key.
+	 * @param  mixed  $value      The value to cache.
+	 * @param  int    $expiration Expiration in seconds.
+	 * @return void
+	 */
+	private function updateTransient( $key, $value, $expiration ) {
+		$transientName = $this->getTransientName( $key );
+
+		// Detect if value is an object to match database cache behavior.
+		$isObject = is_object( $value );
+
+		// Encode as JSON to match database cache behavior.
+		$jsonValue = wp_json_encode( $value );
+
+		if ( false === $jsonValue && JSON_ERROR_NONE !== json_last_error() ) {
+			if ( aioseo()->helpers->isDev() ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				error_log( 'AIOSEO Cache: JSON encode failed for key "' . $key . '" - ' . json_last_error_msg() );
+			}
+
+			return;
+		}
+
+		// Wrap the value with metadata including is_object flag.
+		$wrapper = [
+			'value'     => $jsonValue,
+			'is_object' => $isObject
+		];
+
+		$wrappedValue = wp_json_encode( $wrapper );
+
+		if ( false === $wrappedValue ) {
+			if ( aioseo()->helpers->isDev() ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				error_log( 'AIOSEO Cache: JSON encode failed for wrapper on key "' . $key . '"' );
+			}
+
+			return;
+		}
+
+		set_transient( $transientName, $wrappedValue, $expiration );
+	}
+
+	/**
+	 * Deletes a transient.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @param  string $key The cache key.
+	 * @return void
+	 */
+	private function deleteTransient( $key ) {
+		$transientName = $this->getTransientName( $key );
+		delete_transient( $transientName );
+	}
+
+	/**
+	 * Deletes all transients matching a prefix.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @param  string $prefix The prefix to match.
+	 * @return void
+	 */
+	private function deleteTransientsByPrefix( $prefix ) {
+		global $wpdb;
+
+		$escapedPrefix = $wpdb->esc_like( $this->getTransientName( $prefix ) );
+
+		// Delete both the transient and its timeout.
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options}
+				WHERE option_name LIKE %s
+				OR option_name LIKE %s",
+				'_transient_' . $escapedPrefix . '%',
+				'_transient_timeout_' . $escapedPrefix . '%'
+			)
+		);
+	}
+
+	/**
+	 * Deletes all AIOSEO cache transients.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @return void
+	 */
+	private function deleteAllTransients() {
+		global $wpdb;
+
+		$prefix = 'aioseo_cache_%';
+
+		// Delete both transients and their timeouts.
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options}
+				WHERE option_name LIKE %s
+				OR option_name LIKE %s",
+				'_transient_' . $wpdb->esc_like( $prefix ),
+				'_transient_timeout_' . $wpdb->esc_like( $prefix )
+			)
+		);
 	}
 }

@@ -104,7 +104,7 @@ class Head {
 		add_filter( 'pre_get_document_title', [ $this, 'getTitle' ], 99999 );
 		add_filter( 'wp_title', [ $this, 'getTitle' ], 99999 );
 		if ( ! current_theme_supports( 'title-tag' ) ) {
-			add_action( 'template_redirect', [ $this->title, 'startOutputBuffering' ], 99999 );
+			add_action( 'wp_before_load_template', [ $this->title, 'startOutputBuffering' ], 99999 );
 			add_action( 'wp_head', [ $this->title, 'endOutputBuffering' ], 99999 );
 		}
 	}

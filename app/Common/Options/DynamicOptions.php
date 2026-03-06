@@ -121,7 +121,8 @@ class DynamicOptions {
 	/**
 	 * Sanitizes, then saves the options to the database.
 	 *
-	 * @since 4.1.4
+	 * @since   4.1.4
+	 * @version 4.9.5 Re-runs dynamic defaults to include integrations not loaded during early init.
 	 *
 	 * @param  array $options An array of options to sanitize, then save.
 	 * @return void
@@ -130,6 +131,13 @@ class DynamicOptions {
 		if ( ! is_array( $options ) ) {
 			return;
 		}
+
+		// Re-run dynamic defaults to ensure all post types (including BuddyPress) are in the defaults.
+		// This is necessary because some integrations may not be loaded when the class is first initialized.
+		$this->addDynamicDefaults();
+
+		// Refresh the cached options with the updated defaults.
+		$this->setDbOptions();
 
 		$cachedOptions = aioseo()->core->optionsCache->getOptions( $this->optionsName );
 

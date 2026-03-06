@@ -74,11 +74,12 @@ class Llms {
 	 * @return void
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'scheduleRecurrentGenerationForLlmsTxt' ] );
-		add_action( $this->llmsTxtRecurrentAction, [ $this, 'generateLlmsTxt' ] );
+		add_action( 'admin_init', [ $this, 'scheduleRecurrentGenerationForLlmsTxt' ] );
 
 		add_action( 'wp_insert_post', [ $this, 'scheduleSingleGenerationForLlmsTxt' ] );
 		add_action( 'edited_term', [ $this, 'scheduleSingleGenerationForLlmsTxt' ] );
+
+		add_action( $this->llmsTxtRecurrentAction, [ $this, 'generateLlmsTxt' ] );
 		add_action( $this->llmsTxtSingleAction, [ $this, 'generateLlmsTxt' ] );
 	}
 
@@ -178,7 +179,7 @@ class Llms {
 		}
 
 		$fs   = aioseo()->core->fs;
-		$file = ABSPATH . sanitize_file_name( 'llms.txt' );
+		$file = $this->getFilePath();
 
 		// Generate the full content
 		$this->setSiteInfo();
@@ -421,9 +422,26 @@ class Llms {
 	 */
 	public function deleteLlmsFile() {
 		$fs   = aioseo()->core->fs;
-		$file = ABSPATH . sanitize_file_name( 'llms.txt' );
+		$file = $this->getFilePath();
 		if ( $fs->isWpfsValid() ) {
 			$fs->fs->delete( $file, false, 'f' );
 		}
+	}
+
+	/**
+	 * Gets the file path for the llms.txt or llms-full.txt file.
+	 *
+	 * Uses `dirname( WP_CONTENT_DIR )` instead of `ABSPATH` to support non-standard
+	 * WordPress installations where `ABSPATH` doesn't point to the web root.
+	 *
+	 * @since 4.9.5
+	 *
+	 * @param  bool   $full Whether to get the full version path.
+	 * @return string       The file path.
+	 */
+	public function getFilePath( $full = false ) {
+		$filename = $full ? 'llms-full.txt' : 'llms.txt';
+
+		return trailingslashit( dirname( WP_CONTENT_DIR ) ) . sanitize_file_name( $filename );
 	}
 }

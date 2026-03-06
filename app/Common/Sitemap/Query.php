@@ -85,6 +85,7 @@ class Query {
 			->select( $fields )
 			->leftJoin( 'aioseo_posts as ap', 'ap.post_id = p.ID' )
 			->where( 'p.post_status', 'attachment' === $includedPostTypes ? 'inherit' : 'publish' )
+			->where( 'p.post_password', '' )
 			->whereIn( 'p.post_type', $postTypesArray );
 
 		$homePageId = (int) get_option( 'page_on_front' );
@@ -112,6 +113,9 @@ class Query {
 		if ( $excludedPosts ) {
 			$query->whereRaw( "( `p`.`ID` NOT IN ( $excludedPosts ) OR post_id = $homePageId )" );
 		}
+
+		// Exclude posts with custom canonical URLs pointing to different URLs.
+		$query->whereRaw( "( `ap`.`canonical_url` IS NULL OR `ap`.`canonical_url` = '' )" );
 
 		// Exclude posts assigned to excluded terms.
 		$excludedTerms = aioseo()->sitemap->helpers->excludedTerms();

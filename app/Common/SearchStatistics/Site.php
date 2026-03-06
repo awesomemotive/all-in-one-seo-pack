@@ -24,7 +24,8 @@ class Site {
 	/**
 	 * Class constructor.
 	 *
-	 * @since 4.6.2
+	 * @since   4.6.2
+	 * @version 4.9.4.2 Change admin_init to init to allow frontend scheduling.
 	 */
 	public function __construct() {
 		add_action( 'admin_init', [ $this, 'init' ] );
@@ -32,32 +33,46 @@ class Site {
 	}
 
 	/**
-	 * Initialize the class.
+	 * Initialize the class and schedule the weekly recurring check.
 	 *
-	 * @since 4.6.2
+	 * @since   4.6.2
+	 * @version 4.9.4.2 Switch to weekly recurring action.
 	 *
 	 * @return void
 	 */
 	public function init() {
-		if (
-			! aioseo()->searchStatistics->api->auth->isConnected() ||
-			aioseo()->actionScheduler->isScheduled( $this->action )
-		) {
+		if ( ! aioseo()->searchStatistics->api->auth->isConnected() ) {
 			return;
 		}
 
-		aioseo()->actionScheduler->scheduleAsync( $this->action );
+		if ( aioseo()->actionScheduler->isScheduled( $this->action ) ) {
+			return;
+		}
+
+		aioseo()->actionScheduler->scheduleRecurrent( $this->action, 10, WEEK_IN_SECONDS );
 	}
 
 	/**
 	 * Check whether the site is verified on Google Search Console and verifies it if needed.
 	 *
-	 * @since 4.6.2
+	 * @since   4.6.2
+	 * @version 4.9.4.2 Add runtime lock; remove self-scheduling (now handled by recurring action).
 	 *
 	 * @return void
 	 */
 	public function worker() {
+		// Runtime lock: Prevent concurrent execution of this action.
+		$lockKey = 'as_site_check_running';
+		if ( aioseo()->core->cache->get( $lockKey ) ) {
+			return;
+		}
+
+		// Set lock with a safety timeout in case the action fails mid-execution.
+		aioseo()->core->cache->update( $lockKey, true, 5 * MINUTE_IN_SECONDS );
+
 		if ( ! aioseo()->searchStatistics->api->auth->isConnected() ) {
+			aioseo()->core->cache->delete( $lockKey );
+
 			return;
 		}
 
@@ -66,8 +81,7 @@ class Site {
 			$this->processStatus( $siteStatus );
 		}
 
-		// Schedule a new check for the next week.
-		aioseo()->actionScheduler->scheduleSingle( $this->action, WEEK_IN_SECONDS + wp_rand( 0, 3 * DAY_IN_SECONDS ), [], true );
+		aioseo()->core->cache->delete( $lockKey );
 	}
 
 	/**

@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.9
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 4.9.4.1
+Stable tag: 4.9.5
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -231,6 +231,38 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.9.5**
+
+* Updated: TruSEO analysis content parser for better compatibility.
+* Updated: Added custom field smart tag support to the Schema Review Author field.
+* Updated: Restored the "Download Sample CSV File" link and import instructions on the Redirects Import/Export screen.
+* Updated: Database table information is now included in the System Status tool and system information exports.
+* Updated: Added a size-based log cleanup mechanism to prevent performance issues with large Redirects and 404 log tables.
+* Fixed: SEO Checklist's "Delete Hello World" task no longer suggests deleting repurposed WordPress sample posts.
+* Fixed: Post archive sitemap returning empty content when sitemap indexes are enabled.
+* Fixed: Import/Export now list all sites instead of only 20 on Multisite Networks.
+* Fixed: LLMs.txt button URLs pointing to wrong location on non-standard WordPress installations.
+* Fixed: Bricks Builder ACF Relationship query loops returning no results when AIOSEO is active.
+* Fixed: Improved performance of sitemap taxonomy queries for sites with large numbers of terms.
+* Fixed: Posts with different or external Canonical URLs are now excluded from the sitemap.
+* Fixed: Posts and terms with custom canonical URLs are now excluded from XML sitemaps.
+* Fixed: TOC block triggering "unsaved changes" warning even without any changes.
+* Fixed: Warnings in ProfilePage schema.
+* Fixed: URL count mismatch between root sitemap index and date sitemap.
+* Fixed: Fatal error when editing posts with corrupt breadcrumb settings.
+* Fixed: Local SEO Opening Hours time dropdowns not updating to 24h format when toggling "Use 24h Format".
+* Fixed: Console warning about navigation throttling when using SiteOrigin Page Builder.
+* Fixed: SEO Analyzer database error when focus keywords contain double quotes.
+* Fixed: Rare cases where scheduled actions were duplicated.
+* Fixed: AI access token sometimes failing to be fetched.
+* Fixed: PHP warning when analyzing a one-word title starting with the question word in Headline Analyzer.
+
+**New in Version 4.9.4.2**
+
+* Updated: Improved scheduled action scheduling to prevent duplicate actions.
+* Updated: Improved request handling with concurrency guards and caching to reduce outbound request volume.
+* Updated: Added transient fallback mechanism for caching in case aioseo_cache table doesn't exist.
+
 **New in Version 4.9.4.1**
 
 * Fixed: Smart tags sometimes not inserting into attached text area.
@@ -413,6 +445,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.9.4.1 =
+= 4.9.5 =
 
 This update adds major improvements and bug fixes.

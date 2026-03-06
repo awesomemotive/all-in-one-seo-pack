@@ -76,28 +76,28 @@ class Pointers {
 		wp_enqueue_style( 'wp-pointer' );
 		wp_enqueue_script( 'wp-pointer' );
 
-		// phpcs:disable AIOSEO.Wp.I18n.NonSingularStringLiteralText, Squiz.PHP.EmbeddedPhp, Generic.WhiteSpace.ScopeIndent.IncorrectExact
+		// phpcs:disable Squiz.PHP.EmbeddedPhp, Generic.WhiteSpace.ScopeIndent.IncorrectExact
 		?>
 		<script>
 			jQuery( document ).ready( function( $ ) {
 				const $menuItem = $( '#toplevel_page_aioseo' );
 				const $pointer  = $menuItem.pointer( {
 					content :
-						"<h3><?php esc_html_e( $args['title'], 'all-in-one-seo-pack' ); ?><\/h3>" +
-						"<h4><?php esc_html_e( $args['subtitle'], 'all-in-one-seo-pack' ); ?><\/h4>" +
-						"<p><?php esc_html_e( $args['content'], 'all-in-one-seo-pack' ); ?><\/p>" +
+						"<h3><?php echo esc_html( $args['title'] ); ?><\/h3>" +
+						"<h4><?php echo esc_html( $args['subtitle'] ); ?><\/h4>" +
+						"<p><?php echo esc_html( $args['content'] ); ?><\/p>" +
 						"<?php
 							echo sprintf(
 								'<p><a class=\"button button-primary\" href=\"%s\">%s</a></p>',
 								esc_attr( esc_url( $args['url'] ) ),
-								esc_html_e( $args['button'], 'all-in-one-seo-pack' )
+								esc_html( $args['button'] )
 							);
 						?>",
 					position : {
 						edge  : <?php echo is_rtl() ? "'right'" : "'left'"; ?>,
 						align : 'center'
 					},
-					pointerWidth: 420,
+					pointerWidth : 420,
 					show: function(event, el) {
 						el.pointer.addClass('aioseo-wp-pointer');
 						$menuItem.addClass('aioseo-pointer-active');

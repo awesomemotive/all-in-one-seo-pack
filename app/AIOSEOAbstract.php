@@ -438,15 +438,6 @@ abstract class AIOSEOAbstract {
 	public $cache = null;
 
 	/**
-	 * CachePrune class instance.
-	 *
-	 * @since 4.2.7
-	 *
-	 * @var \AIOSEO\Plugin\Common\Utils\CachePrune
-	 */
-	public $cachePrune = null;
-
-	/**
 	 * Addons class instance.
 	 *
 	 * @since 4.2.7

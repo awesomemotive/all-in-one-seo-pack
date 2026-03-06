@@ -93,7 +93,7 @@ class Helpers {
 		}
 
 		$value = $replaceTags ? $value : aioseo()->tags->replaceTags( $value, $objectId );
-		$value = apply_filters( $this->supportedFilters[ $this->name ], $value );
+		$value = apply_filters( $this->supportedFilters[ $this->name ], $value ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 
 		return $this->sanitize( $value, $objectId, $replaceTags );
 	}

@@ -259,7 +259,7 @@ trait ThirdParty {
 			$in = qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage( $in );
 		}
 
-		return apply_filters( 'localization', $in );
+		return apply_filters( 'localization', $in ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	}
 
 	/**
@@ -295,8 +295,7 @@ trait ThirdParty {
 	 * @return string $url  The filtered URL.
 	 */
 	public function localizedUrl( $path ) {
-		$url = apply_filters( 'wpml_home_url', home_url( '/' ) );
-
+		$url = apply_filters( 'wpml_home_url', home_url( '/' ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		// Remove URL parameters.
 		preg_match_all( '/\?[\s\S]+/', (string) $url, $matches );
 
@@ -600,11 +599,11 @@ trait ThirdParty {
 		}
 
 		if ( empty( $homePages ) ) {
-			$languages  = apply_filters( 'wpml_active_languages', [] );
+			$languages  = apply_filters( 'wpml_active_languages', [] ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$homePageId = (int) get_option( 'page_on_front' );
 			foreach ( $languages as $language ) {
 				$homePages[ $language['code'] ] = [
-					'id'  => apply_filters( 'wpml_object_id', $homePageId, 'page', false, $language['code'] ),
+					'id'  => apply_filters( 'wpml_object_id', $homePageId, 'page', false, $language['code'] ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 					'url' => $sitepress->language_url( $language['code'] )
 				];
 			}
@@ -798,12 +797,12 @@ trait ThirdParty {
 		if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
 			return null;
 		}
-		// phpcs:disable Squiz.NamingConventions.ValidVariableName
+		// phpcs:disable Squiz.NamingConventions.ValidVariableName, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		global $et_pb_rendering_column_content;
 
 		$originalValue                  = $et_pb_rendering_column_content;
 		$et_pb_rendering_column_content = $flag;
-		// phpcs:enable Squiz.NamingConventions.ValidVariableName
+		// phpcs:enable Squiz.NamingConventions.ValidVariableName, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 		return $originalValue;
 	}

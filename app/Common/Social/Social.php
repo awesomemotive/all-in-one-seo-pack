@@ -15,15 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Social {
 	/**
-	 * The name of the action to bust the OG cache.
-	 *
-	 * @since 4.2.0
-	 *
-	 * @var string
-	 */
-	private $bustOgCacheActionName = 'aioseo_og_cache_bust_post';
-
-	/**
 	 * Image class instance.
 	 *
 	 * @since 4.2.7
@@ -81,11 +72,10 @@ class Social {
 	/**
 	 * Registers our hooks.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.9.4.2 Fire OG cache bust directly instead of via Action Scheduler.
 	 */
 	protected function hooks() {
-		add_action( $this->bustOgCacheActionName, [ $this, 'bustOgCachePost' ] );
-
 		// To avoid duplicate sets of meta tags.
 		add_filter( 'jetpack_enable_open_graph', '__return_false' );
 
@@ -96,7 +86,7 @@ class Social {
 		}
 
 		// Forces a refresh of the Facebook cache.
-		add_action( 'post_updated', [ $this, 'scheduleBustOgCachePost' ], 10, 2 );
+		add_action( 'post_updated', [ $this, 'bustOgCachePost' ], 10, 2 );
 	}
 
 	/**
@@ -124,39 +114,19 @@ class Social {
 	}
 
 	/**
-	 * Schedule a ping to bust the OG cache.
+	 * Pings Facebook and asks them to bust the OG cache for a particular post.
+	 * Uses a non-blocking request so it doesn't delay the current page load.
 	 *
-	 * @since 4.2.0
+	 * @since   4.2.0
+	 * @version 4.9.4.2 Fire directly instead of via Action Scheduler.
+	 *
+	 * @see https://developers.facebook.com/docs/sharing/opengraph/using-objects#update
 	 *
 	 * @param  int      $postId The post ID.
 	 * @param  \WP_Post $post   The post object.
 	 * @return void
 	 */
-	public function scheduleBustOgCachePost( $postId, $post = null ) {
-		if ( ! aioseo()->helpers->isSbCustomFacebookFeedActive() || ! aioseo()->helpers->isValidPost( $post ) ) {
-			return;
-		}
-
-		if ( aioseo()->actionScheduler->isScheduled( $this->bustOgCacheActionName, [ 'postId' => $postId ] ) ) {
-			return;
-		}
-
-		// Schedule the new ping.
-		aioseo()->actionScheduler->scheduleAsync( $this->bustOgCacheActionName, [ 'postId' => $postId ] );
-	}
-
-	/**
-	 * Pings Facebook and asks them to bust the OG cache for a particular post.
-	 *
-	 * @since 4.2.0
-	 *
-	 * @see https://developers.facebook.com/docs/sharing/opengraph/using-objects#update
-	 *
-	 * @param  int  $postId The post ID.
-	 * @return void
-	 */
-	public function bustOgCachePost( $postId ) {
-		$post              = get_post( $postId );
+	public function bustOgCachePost( $postId, $post = null ) {
 		$customAccessToken = apply_filters( 'aioseo_facebook_access_token', '' );
 
 		if (
@@ -196,6 +166,9 @@ class Social {
 			)
 		);
 
-		wp_remote_post( $url, [ 'blocking' => false ] );
+		aioseo()->helpers->wpRemotePostExternal( $url, [
+			'blocking'         => false,
+			'aioseo_skip_lock' => true
+		] );
 	}
 }

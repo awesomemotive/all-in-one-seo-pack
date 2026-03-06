@@ -103,16 +103,15 @@ trait Request {
 	 * @return array        The LLMs URL if accessible, null otherwise.
 	 */
 	public function getLlmsUrl( $full = false ) {
-		$isAccessible = false;
-		$filename     = $full ? 'llms-full.txt' : 'llms.txt';
+		$file = aioseo()->llms->getFilePath( $full );
 
-		$fs           = aioseo()->core->fs;
-		$file         = ABSPATH . sanitize_file_name( $filename );
-		$isAccessible = $fs->exists( $file );
+		// Use `dirname` of `WP_CONTENT_URL` to match `dirname` of `WP_CONTENT_DIR` used for file path.
+		// This ensures compatibility with non-standard setups like Bedrock where `site_url()` differs from the document root.
+		$baseUrl = trailingslashit( dirname( content_url() ) );
 
 		return [
-			'url'          => home_url( '/' . $filename ),
-			'isAccessible' => $isAccessible
+			'url'          => $baseUrl . basename( $file ),
+			'isAccessible' => aioseo()->core->fs->exists( $file )
 		];
 	}
 }

@@ -32,7 +32,7 @@ import { getEditorData as getThriveArchitectData } from '@/vue/standalone/page-b
 import { getEditorData as getBricksData } from '@/vue/standalone/page-builders/bricks/helpers'
 import { getEditorData as getOxygenData } from '@/vue/standalone/page-builders/oxygen/helpers'
 
-const base64regex            = /base64,(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)/g
+const base64regex            = /data:[^;]+;base64,[A-Za-z0-9+/=]+/g
 const blockPrefixesToProcess = [ 'acf', 'aioseo', 'core' ]
 
 /**

@@ -64,16 +64,19 @@ export const extendImageBlockToolbar = () => {
 		'aioseo/extend-image-block-toolbar',
 		createHigherOrderComponent(BlockEdit => {
 			return props => {
-				if (
-					'core/image' !== props.name ||
-					 !props.attributes.url
-				) {
-					return html`<${BlockEdit} ...${props} />`
-				}
+				const isImageWithUrl = 'core/image' === props.name && props.attributes?.url
 
 				const wpMedia = useSelect((select) => {
+					if (!isImageWithUrl || !props.attributes?.id) {
+						return null
+					}
+
 					return select('core').getEntityRecord('postType', 'attachment', props.attributes.id) || null
 				}, [ `media-${props.attributes.id}` ])
+
+				if (!isImageWithUrl) {
+					return html`<${BlockEdit} ...${props} />`
+				}
 
 				return html`
 				<${Fragment}>

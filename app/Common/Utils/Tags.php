@@ -279,7 +279,11 @@ class Tags {
 		'schemaReviewAuthor'  => [
 			'author_first_name',
 			'author_last_name',
-			'author_name'
+			'author_name',
+			'author_url',
+			'custom_field',
+			'separator_sa',
+			'site_title'
 		],
 		'searchDescription'   => [
 			'current_date',

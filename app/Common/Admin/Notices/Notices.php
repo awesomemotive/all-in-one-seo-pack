@@ -69,12 +69,23 @@ class Notices {
 	private $conflictingPlugins = null;
 
 	/**
+	 * The action name for the notifications update.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @var string
+	 */
+	private $actionName = 'aioseo_admin_notifications_update';
+
+	/**
 	 * Class Constructor.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.9.4.2 Schedule notifications update as a daily recurring action.
 	 */
 	public function __construct() {
-		add_action( 'aioseo_admin_notifications_update', [ $this, 'update' ] );
+		add_action( 'admin_init', [ $this, 'scheduleNotificationsUpdate' ] );
+		add_action( $this->actionName, [ $this, 'update' ] );
 
 		if ( ! is_admin() ) {
 			return;
@@ -93,6 +104,21 @@ class Notices {
 	}
 
 	/**
+	 * Schedules the daily recurring notifications update.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @return void
+	 */
+	public function scheduleNotificationsUpdate() {
+		if ( aioseo()->actionScheduler->isScheduled( $this->actionName ) ) {
+			return;
+		}
+
+		aioseo()->actionScheduler->scheduleRecurrent( $this->actionName, 0, DAY_IN_SECONDS );
+	}
+
+	/**
 	 * Initialize notifications.
 	 *
 	 * @since 4.0.0
@@ -105,29 +131,8 @@ class Notices {
 			aioseo()->updates->addInitialCustomTablesForV4();
 		}
 
-		$this->maybeUpdate();
 		$this->initInternalNotices();
 		$this->deleteInternalNotices();
-	}
-
-	/**
-	 * Checks if we should update our notifications.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return void
-	 */
-	private function maybeUpdate() {
-		$nextRun = aioseo()->core->networkCache->get( 'admin_notifications_update' );
-		if ( null !== $nextRun && time() < $nextRun ) {
-			return;
-		}
-
-		// Schedule the action.
-		aioseo()->actionScheduler->scheduleAsync( 'aioseo_admin_notifications_update' );
-
-		// Update the cache.
-		aioseo()->core->networkCache->update( 'admin_notifications_update', time() + DAY_IN_SECONDS );
 	}
 
 	/**
@@ -203,6 +208,13 @@ class Notices {
 	 * @return array An array of notifications.
 	 */
 	private function fetch() {
+		$cacheKey = 'notifications_last_fetched';
+		if ( null !== aioseo()->core->cache->get( $cacheKey ) ) {
+			return [];
+		}
+
+		aioseo()->core->cache->update( $cacheKey, true, 12 * HOUR_IN_SECONDS );
+
 		$response = aioseo()->helpers->wpRemoteGet( $this->getUrl() );
 
 		if ( is_wp_error( $response ) ) {
@@ -210,7 +222,6 @@ class Notices {
 		}
 
 		$body = wp_remote_retrieve_body( $response );
-
 		if ( empty( $body ) ) {
 			return [];
 		}

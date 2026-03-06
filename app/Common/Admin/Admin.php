@@ -190,8 +190,7 @@ class Admin {
 			add_action( 'admin_footer', [ $this, 'addAioseoModalPortal' ] );
 		}
 
-		$this->loadTextDomain();
-
+		add_action( 'init', [ $this, 'loadTextDomain' ], 1 );
 		add_action( 'init', [ $this, 'setPages' ] );
 	}
 
@@ -204,6 +203,10 @@ class Admin {
 	 * @return void
 	 */
 	public function setPages() {
+		if ( ! is_user_logged_in() ) {
+			return;
+		}
+
 		$newIndicator = '<span class="aioseo-menu-new-indicator">&nbsp;NEW!</span>';
 
 		$this->pages = [
@@ -1277,6 +1280,10 @@ class Admin {
 	 * @return void
 	 */
 	public function loadTextDomain() {
+		if ( ! is_user_logged_in() ) {
+			return;
+		}
+
 		aioseo()->helpers->loadTextDomain( 'all-in-one-seo-pack' );
 	}
 

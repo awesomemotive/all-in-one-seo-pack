@@ -25,7 +25,9 @@ class Helpers extends CommonUtils\Helpers {
 	 * @return array An array of headers.
 	 */
 	public function getApiHeaders() {
-		return [];
+		return [
+			'Content-Type' => 'application/json'
+		];
 	}
 
 	/**

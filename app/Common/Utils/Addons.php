@@ -118,16 +118,17 @@ class Addons {
 		$addons        = aioseo()->core->cache->get( 'addons' );
 		$defaultAddons = $this->getDefaultAddons();
 		if ( null === $addons || $flushCache ) {
-			$response = aioseo()->helpers->wpRemoteGet( $this->getAddonsUrl() );
-			if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
-				$addons = json_decode( wp_remote_retrieve_body( $response ), true );
+			$lockKey = 'addons_fetch_lock';
+			if ( ! $flushCache && null !== aioseo()->core->cache->get( $lockKey ) ) {
+				$addons = aioseo()->core->cache->get( 'addons' );
 			}
 
-			if ( ! $addons || ! empty( $addons->error ) ) {
-				$addons = $defaultAddons;
+			if ( null === $addons || $flushCache ) {
+				aioseo()->core->cache->update( $lockKey, true, MINUTE_IN_SECONDS );
+				$addons = $this->fetchAddonsFromRemote( $defaultAddons );
+				aioseo()->core->cache->update( 'addons', $addons );
+				aioseo()->core->cache->delete( $lockKey );
 			}
-
-			aioseo()->core->cache->update( 'addons', $addons );
 		}
 
 		// Convert the addons array to objects using JSON. This is essential because we have lots of addons that rely on this to be an object, and changing it to an array would break them.
@@ -161,6 +162,26 @@ class Addons {
 		}
 
 		return $this->sortAddons( $addons );
+	}
+
+	/**
+	 * Fetches addon list from the remote CDN. Used by getAddons() behind a transient lock to avoid duplicate requests.
+	 *
+	 * @since 4.9.4.2
+	 *
+	 * @param  array $defaultAddons Fallback when the request fails or returns non-200.
+	 * @return array Addons array (decoded from JSON or default).
+	 */
+	protected function fetchAddonsFromRemote( $defaultAddons ) {
+		$response = aioseo()->helpers->wpRemoteGet( $this->getAddonsUrl() );
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
+			$addons = json_decode( wp_remote_retrieve_body( $response ), true );
+			if ( $addons && ( ! is_object( $addons ) || empty( $addons->error ) ) ) {
+				return $addons;
+			}
+		}
+
+		return $defaultAddons;
 	}
 
 	/**

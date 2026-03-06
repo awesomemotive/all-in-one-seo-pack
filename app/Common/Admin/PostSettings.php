@@ -51,7 +51,7 @@ class PostSettings {
 		add_action( 'add_meta_boxes', [ $this, 'addPostSettingsMetabox' ] );
 
 		// Add metabox (upsell) to terms on init hook.
-		add_action( 'init', [ $this, 'init' ], 1000 );
+		add_action( 'admin_init', [ $this, 'init' ], 1000 );
 
 		// Save metabox.
 		add_action( 'save_post', [ $this, 'saveSettingsMetabox' ] );

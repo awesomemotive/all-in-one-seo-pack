@@ -78,6 +78,9 @@ class PreUpdates {
 					KEY ndx_aioseo_cache_expiration (`expiration`)
 				) {$charsetCollate};"
 			);
+
+			// Clear the transient so isCacheTableAvailable() re-checks on the next call.
+			delete_transient( 'aioseo_cache_table_exists' );
 		}
 	}
 

@@ -13,7 +13,7 @@ export default function jsonToPhp (files = []) {
 
 				log(`Convert JSON to PHP: ${file.from} → ${file.to}`)
 
-				let phpContents = '<?php\n/* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */\n$manifestJson = \''
+				let phpContents = '<?php\n// phpcs:disable\n/* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */\n$manifestJson = \''
 
 				// Add the PHP data.
 				phpContents += fs.readFileSync(file.from)

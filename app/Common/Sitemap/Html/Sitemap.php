@@ -58,6 +58,7 @@ namespace AIOSEO\Plugin\Common\Sitemap\Html {
 
 			add_action( 'widgets_init', [ $this, 'registerWidget' ] );
 			add_filter( 'aioseo_canonical_url', [ $this, 'getCanonicalUrl' ] );
+			add_filter( 'pre_get_shortlink', [ $this, 'preGetShortlink' ] );
 
 			if ( ! is_admin() || wp_doing_ajax() || wp_doing_cron() ) {
 				add_action( 'template_redirect', [ $this, 'checkForDedicatedPage' ] );
@@ -188,6 +189,29 @@ namespace AIOSEO\Plugin\Common\Sitemap\Html {
 			}
 
 			// Return the current URL of WP.
+			global $wp;
+
+			return home_url( $wp->request );
+		}
+
+		/**
+		 * Pre-get shortlink filter.
+		 *
+		 * @since 4.9.5
+		 *
+		 * @param  string $shortlink The shortlink.
+		 * @return string            The shortlink.
+		 */
+		public function preGetShortlink( $shortlink ) {
+			if ( ! $this->isDedicatedPage ) {
+				return $shortlink;
+			}
+
+			$sitemapOptions = aioseo()->options->sitemap->html;
+			if ( $sitemapOptions->pageUrl ) {
+				return $sitemapOptions->pageUrl;
+			}
+
 			global $wp;
 
 			return home_url( $wp->request );

@@ -1,5 +1,5 @@
 import { h, createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createMemoryHistory } from 'vue-router'
 import { debounce } from '@/vue/utils/debounce'
 import loadPlugins from '@/vue/plugins'
 import loadComponents from '@/vue/components/common'
@@ -25,7 +25,7 @@ const lmdWrapperId     = '#so-live-editor-aioseo-lmd'
 const mountComponent = ({ id, component, name, rootProps, data }) => {
 	// Router placeholder to prevent errors when using router-link.
 	const router = createRouter({
-		history : createWebHistory(),
+		history : createMemoryHistory(),
 		routes  : [
 			{
 				path      : '/:pathMatch(.*)*', // Catch-all keeps Vue Router from warning about the current WP admin URL.

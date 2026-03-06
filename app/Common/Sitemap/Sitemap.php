@@ -321,7 +321,7 @@ class Sitemap extends SitemapAbstract {
 			global $sitepress_settings; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			// Before building the sitemap make sure links aren't translated.
 			// The setting should not be updated in the DB.
-			$sitepress_settings['auto_adjust_ids'] = 0; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+			$sitepress_settings['auto_adjust_ids'] = 0; // phpcs:ignore Squiz.NamingConventions.ValidVariableName, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		}
 
 		// If requested sitemap should be static and doesn't exist, then generate it.

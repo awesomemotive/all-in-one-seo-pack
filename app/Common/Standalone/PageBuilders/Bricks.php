@@ -154,7 +154,7 @@ class Bricks extends Base {
 	 * @return string             The processed content.
 	 */
 	public function processContent( $postId, $rawContent = null ) {
-		if ( ! class_exists( '\Bricks\Database' ) || ! class_exists( '\Bricks\Frontend' ) ) {
+		if ( ! class_exists( '\Bricks\Database' ) || ! class_exists( '\Bricks\Frontend' ) || ! class_exists( '\Bricks\Helpers' ) ) {
 			return '';
 		}
 
@@ -162,13 +162,15 @@ class Bricks extends Base {
 		// This happens when called from the frontend (PHP) where $post->post_content is passed.
 		// Bricks stores its actual content in BRICKS_DB_PAGE_CONTENT post meta, not post_content.
 		if ( empty( $rawContent ) || ! is_array( $rawContent ) ) {
-			$rawContent = \Bricks\Database::get_data( $postId, 'content' );
+			$rawContent = \Bricks\Helpers::get_bricks_data( $postId, 'content' );
 		}
 
 		// If still no content, return empty.
 		if ( empty( $rawContent ) || ! is_array( $rawContent ) ) {
 			return '';
 		}
+
+		$originalPreviewPostId = \Bricks\Database::$page_data['preview_or_post_id'] ?? null;
 
 		\Bricks\Database::$page_data['preview_or_post_id'] = $postId;
 
@@ -181,6 +183,8 @@ class Bricks extends Base {
 			ob_end_clean();
 
 			return '';
+		} finally {
+			\Bricks\Database::$page_data['preview_or_post_id'] = $originalPreviewPostId;
 		}
 	}
 }
