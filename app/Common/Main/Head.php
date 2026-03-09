@@ -104,7 +104,12 @@ class Head {
 		add_filter( 'pre_get_document_title', [ $this, 'getTitle' ], 99999 );
 		add_filter( 'wp_title', [ $this, 'getTitle' ], 99999 );
 		if ( ! current_theme_supports( 'title-tag' ) ) {
-			add_action( 'wp_before_load_template', [ $this->title, 'startOutputBuffering' ], 99999 );
+			// WP 6.9's template enhancement buffer causes a level mismatch with template_redirect; use wp_before_load_template instead.
+			if ( version_compare( get_bloginfo( 'version' ), '6.9', '>=' ) ) {
+				add_action( 'wp_before_load_template', [ $this->title, 'startOutputBuffering' ], 99999 );
+			} else {
+				add_action( 'template_redirect', [ $this->title, 'startOutputBuffering' ], 99999 );
+			}
 			add_action( 'wp_head', [ $this->title, 'endOutputBuffering' ], 99999 );
 		}
 	}

@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.9
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 4.9.5
+Stable tag: 4.9.5.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -231,6 +231,11 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.9.5.1**
+
+* Fixed: Improved title output buffering compatibility with themes that don't declare title-tag support.
+* Fixed: AI credits refresh button now preserves the connection state for manually connected Lite users.
+
 **New in Version 4.9.5**
 
 * Updated: TruSEO analysis content parser for better compatibility.
@@ -445,6 +450,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.9.5 =
+= 4.9.5.1 =
 
 This update adds major improvements and bug fixes.

@@ -116,6 +116,12 @@ class Ai {
 			return;
 		}
 
+		// Don't overwrite manually connected tokens.
+		// Credits can still be refreshed via updateCredits() independently.
+		if ( aioseo()->internalOptions->internal->ai->isManuallyConnected ) {
+			return;
+		}
+
 		if ( aioseo()->core->cache->get( 'ai-access-token-error' ) ) {
 			return;
 		}

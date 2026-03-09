@@ -30,6 +30,11 @@ class Title {
 	 * @return void
 	 */
 	public function startOutputBuffering() {
+		// wp_before_load_template fires per load_template() call; only buffer once.
+		if ( 0 !== $this->bufferLevel ) {
+			return;
+		}
+
 		ob_start();
 
 		$this->bufferLevel = ob_get_level();
