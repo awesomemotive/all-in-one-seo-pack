@@ -173,6 +173,16 @@ class Addons {
 			$addons = $this->getDefaultAddons();
 		}
 
+		$addons = array_values( array_filter( $addons, function( $addon ) {
+			if ( is_object( $addon ) && ! empty( $addon->sku ) && 'aioseo-redirects' === $addon->sku ) {
+				return false;
+			} elseif ( is_array( $addon ) && ! empty( $addon['sku'] ) && 'aioseo-redirects' === $addon['sku'] ) {
+				return false;
+			}
+
+			return true;
+		} ) );
+
 		// Convert the addons array to objects using JSON. This is essential because we have lots of addons that rely on this to be an object, and changing it to an array would break them.
 
 		$addons = json_decode( wp_json_encode( $addons ) );
@@ -181,13 +191,9 @@ class Addons {
 			$addons = json_decode( $addons );
 		}
 
-		$addons = array_filter( $addons, function( $addon ) {
-			return ! is_object( $addon ) || 'aioseo-redirects' !== $addon->sku;
-		} );
-
 		$installedPlugins = array_keys( get_plugins() );
 		foreach ( $addons as $key => $addon ) {
-			if ( ! is_object( $addon ) ) {
+			if ( ! is_object( $addon ) || empty( $addon->sku ) ) {
 				continue;
 			}
 
@@ -366,7 +372,7 @@ class Addons {
 		$addon     = null;
 		$allAddons = $this->getAddons( $flushCache );
 		foreach ( $allAddons as $a ) {
-			if ( $sku === $a->sku ) {
+			if ( is_object( $a ) && $sku === $a->sku ) {
 				$addon = $a;
 			}
 		}
@@ -720,7 +726,7 @@ class Addons {
 	 * @since 4.0.0
 	 *
 	 * @param  string $sku The sku of the addon.
-	 * @return array       An array of addon data.
+	 * @return object      The addon data object.
 	 */
 	public function getDefaultAddon( $sku ) {
 		$addons = $this->getDefaultAddons();
@@ -731,7 +737,7 @@ class Addons {
 			}
 		}
 
-		return $addon;
+		return json_decode( wp_json_encode( $addon ) );
 	}
 
 	/**

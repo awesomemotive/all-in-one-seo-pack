@@ -59,13 +59,13 @@ class CrawlCleanupBlockedArg extends CommonModels\Model {
 	public $regex = null;
 
 	/**
-	 * Field that contains the hash for key+value
+	 * Field that contains the hash for param+value
 	 *
 	 * @since 4.5.8
 	 *
 	 * @var string
 	 */
-	public $key_value_hash = null;
+	public $param_value_hash = null;
 
 	/**
 	 * Separator used to merge key and value string.
@@ -110,7 +110,7 @@ class CrawlCleanupBlockedArg extends CommonModels\Model {
 
 		return aioseo()->core->db
 			->start( 'aioseo_crawl_cleanup_blocked_args' )
-			->where( 'key_value_hash', sha1( $keyValue ) )
+			->where( 'param_value_hash', sha1( $keyValue ) )
 			->run()
 			->model( 'AIOSEO\\Plugin\\Common\\Models\\CrawlCleanupBlockedArg' );
 	}
@@ -185,10 +185,10 @@ class CrawlCleanupBlockedArg extends CommonModels\Model {
 	protected function transform( $data, $set = false ) {
 		$data = parent::transform( $data, $set );
 
-		// Create key+value hash.
-		if ( ! empty( $data['key'] ) ) {
-			$keyValue = self::getKeyValueString( $data['key'], $data['value'] );
-			$data['key_value_hash'] = sha1( $keyValue );
+		// Create param+value hash.
+		if ( ! empty( $data['param'] ) ) {
+			$keyValue = self::getKeyValueString( $data['param'], $data['value'] );
+			$data['param_value_hash'] = sha1( $keyValue );
 		}
 
 		// Case hits number are empty start with 0.

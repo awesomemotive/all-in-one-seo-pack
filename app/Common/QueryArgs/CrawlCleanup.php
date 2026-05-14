@@ -143,13 +143,13 @@ class CrawlCleanup {
 			->start( 'aioseo_crawl_cleanup_logs as logs' )
 			->select( ' logs.id,
 						logs.slug,
-						logs.key,
+						logs.param,
 						logs.value,
 						logs.hits,
 						logs.updated' )
 			->leftJoin( 'aioseo_crawl_cleanup_blocked_args as blocked',
-				'blocked.key_value_hash = sha1(logs.key) OR
-					blocked.key_value_hash = sha1(concat(logs.key, "' . $keyValueSeparator . '", logs.value))' )
+				'blocked.param_value_hash = sha1(logs.param) OR
+					blocked.param_value_hash = sha1(concat(logs.param, "' . $keyValueSeparator . '", logs.value))' )
 			->limit( $limit, $offset );
 
 		if ( ! empty( $searchTerm ) ) {
@@ -175,7 +175,7 @@ class CrawlCleanup {
 		// Test logs (unblocked) to see if have some regex block.
 		$regexMatches = [];
 		foreach ( $rowsUnblocked as $unblocked ) {
-			$blockedRegex = Models\CrawlCleanupBlockedArg::matchRegex( $unblocked->key, $unblocked->value );
+			$blockedRegex = Models\CrawlCleanupBlockedArg::matchRegex( $unblocked->param, $unblocked->value );
 			if ( $blockedRegex->exists() ) {
 				$regexMatches[ $unblocked->id ] = $blockedRegex->regex;
 			}
@@ -184,7 +184,7 @@ class CrawlCleanup {
 		// Query to get Blocked Args and the total.
 		$queryBlocked = aioseo()->core->db
 			->select( ' b.id,
-						b.key,
+						b.param,
 						b.value,
 						b.regex,
 						b.hits,
@@ -201,10 +201,10 @@ class CrawlCleanup {
 			];
 
 			$comparisons = [
-				'b.key',
+				'b.param',
 				'b.value',
 				'b.regex',
-				'CONCAT(b.key, \'' . $keyValueSeparator . '\', IF(b.value, b.value, \'*\'))'
+				'CONCAT(b.param, \'' . $keyValueSeparator . '\', IF(b.value, b.value, \'*\'))'
 			];
 
 			$where = '';
@@ -290,18 +290,18 @@ class CrawlCleanup {
 		try {
 			foreach ( $body as $block ) {
 				if ( $block ) {
-					$blocked = Models\CrawlCleanupBlockedArg::getByKeyValue( $block['key'], $block['value'] );
+					$blocked = Models\CrawlCleanupBlockedArg::getByKeyValue( $block['param'], $block['value'] );
 					if ( ! $blocked->exists() && ! empty( $block['regex'] ) ) {
 						$blocked = Models\CrawlCleanupBlockedArg::getByRegex( $block['regex'] );
 					}
 
 					if ( $blocked->exists() ) {
 						$exists[] = [
-							'key'   => $block['key'],
+							'param' => $block['param'],
 							'value' => $block['value']
 						];
 
-						$keyValue = sha1( Models\CrawlCleanupBlockedArg::getKeyValueString( $block['key'], $block['value'] ) );
+						$keyValue = sha1( Models\CrawlCleanupBlockedArg::getKeyValueString( $block['param'], $block['value'] ) );
 						if ( ! in_array( $keyValue, $listSaved, true ) ) {
 							$return = false;
 							$error  = 1;
@@ -314,7 +314,7 @@ class CrawlCleanup {
 					$blocked->set( $block );
 					$blocked->save();
 
-					$listSaved[] = $blocked->key_value_hash;
+					$listSaved[] = $blocked->param_value_hash; // @phpstan-ignore-line
 				}
 			}
 		} catch ( \Throwable $th ) {

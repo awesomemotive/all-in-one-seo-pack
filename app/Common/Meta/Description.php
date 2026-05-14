@@ -84,7 +84,11 @@ class Description {
 			}
 
 			if ( is_attachment() ) {
-				$post    = empty( $post ) ? aioseo()->helpers->getPost() : $post;
+				$post = empty( $post ) ? aioseo()->helpers->getPost() : $post;
+				if ( empty( $post ) ) {
+					return '';
+				}
+
 				$caption = wp_get_attachment_caption( $post->ID );
 
 				return $caption ? $this->helpers->prepare( $caption ) : $this->helpers->prepare( $post->post_content );

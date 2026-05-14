@@ -210,7 +210,7 @@ class QueryArgs {
 
 		$data = [
 			'slug'  => $slug,
-			'key'   => $key,
+			'param' => $key,
 			'value' => $value
 		];
 

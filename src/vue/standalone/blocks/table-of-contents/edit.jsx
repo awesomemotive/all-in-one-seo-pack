@@ -47,13 +47,13 @@ const getHeadingContent = (headingAttributes) => {
 				 headingAttributes.content || '' // Heading block content WP 6.4 and below.
 }
 
-const isValidHeading = (headingContent, tableOfContentsIndex, headingIndex) => {
+const isValidHeading = (headingContent, tableOfContentsIndex, headingIndex, listAllHeadings = false) => {
 	return 'string' === typeof headingContent &&
 				 '' !== headingContent &&
-				 tableOfContentsIndex <= headingIndex
+				 (listAllHeadings || tableOfContentsIndex <= headingIndex)
 }
 
-const processHeading = (headingAttributes, headingIndex, tableOfContentsIndex, existingHeadings = [], blockClientId) => {
+const processHeading = (headingAttributes, headingIndex, tableOfContentsIndex, existingHeadings = [], blockClientId, listAllHeadings = false, hashPrefix = '') => {
 	const hasAnchor = 'string' === typeof headingAttributes?.anchor && '' !== headingAttributes.anchor
 	const headingLevel = headingAttributes.level || headingAttributes.tagName.replace('h', '')
 
@@ -63,29 +63,30 @@ const processHeading = (headingAttributes, headingIndex, tableOfContentsIndex, e
 
 	let headingContent = getHeadingContent(headingAttributes)
 
-	if (!isValidHeading(headingContent, tableOfContentsIndex, headingIndex)) {
+	if (!isValidHeading(headingContent, tableOfContentsIndex, headingIndex, listAllHeadings)) {
 		return null
 	}
 
 	headingContent = cleanHtml(headingContent.replace(/(<br *\/?>)+/g, ' '), true)
 
+	let anchor = headingAttributes?.anchor || ''
+
 	if (!hasAnchor && !isTyping()) {
-		const rootStore = useRootStore()
-		headingAttributes.anchor = rootStore.aioseo.data.blocks.toc.hashPrefix + cleanForSlug(`${headingContent}-${headingIndex}`)
+		anchor = hashPrefix + cleanForSlug(`${headingContent}-${headingIndex}`)
 	}
 
 	// Find matching existing heading to preserve order and visibility
 	const existingHeading = existingHeadings.find(h =>
 		h.content === headingContent &&
 		h.level === Number(headingLevel) &&
-		h.anchor === (hasAnchor ? headingAttributes.anchor : '')
+		h.anchor === anchor
 	)
 
 	return {
 		id          : headingIndex,
 		content     : headingContent,
 		level       : Number(headingLevel),
-		anchor      : hasAnchor ? headingAttributes.anchor : '',
+		anchor,
 		editedOrder : existingHeading?.editedOrder ?? headingIndex,
 		hidden      : existingHeading?.hidden || false,
 		blockClientId
@@ -94,6 +95,11 @@ const processHeading = (headingAttributes, headingIndex, tableOfContentsIndex, e
 
 const getBlockClientIds = (clientId, allBlockClientIds, tableOfContentsIndex, selectedBlockName, getBlockName) => {
 	const currentBlock = window.wp.data.select(blockEditorStore).getBlockAttributes(clientId)
+
+	// If listing all headings, return all block client IDs
+	if (currentBlock?.listAllHeadings) {
+		return allBlockClientIds.map((blockId) => blockId)
+	}
 
 	// If not in synced mode or not a TOC block, just return headings after this block
 	if ('synced' !== currentBlock?.mode || BLOCK_TYPES.TOC !== selectedBlockName) {
@@ -154,11 +160,15 @@ export const edit = ({ setAttributes, attributes, clientId, className, isSelecte
 	// If we have headings, mount our Vue menu.
 	const targetElementIdForModeSelection = `aioseo-mode-selection-${clientId}`
 
-	// Get post content from the editor
+	// Get post content and typing state from the editor
 	const postContent = useSelect((select) => {
 		const { getEditedPostAttribute } = select('core/editor')
 
 		return getEditedPostAttribute('content')
+	}, [])
+
+	const isCurrentlyTyping = useSelect((select) => {
+		return select(blockEditorStore)?.isTyping?.() || false
 	}, [])
 
 	const getContentHeadings = () => {
@@ -194,7 +204,11 @@ export const edit = ({ setAttributes, attributes, clientId, className, isSelecte
 			getBlockName
 		)
 
+		const rootStore = useRootStore()
+		const hashPrefix = rootStore.aioseo.data.blocks.toc.hashPrefix
+
 		const result = []
+		const anchorUpdates = []
 		relevantBlockClientIds.forEach((blockClientId) => {
 			const blockName = getBlockName(blockClientId)
 
@@ -205,11 +219,23 @@ export const edit = ({ setAttributes, attributes, clientId, className, isSelecte
 			const headingAttributes = getBlockAttributes(blockClientId)
 			const headingIndex = allBlockClientIds.indexOf(blockClientId)
 
-			const heading = processHeading(headingAttributes, headingIndex, tableOfContentsIndex, localHeadings, blockClientId)
+			const heading = processHeading(headingAttributes, headingIndex, tableOfContentsIndex, localHeadings, blockClientId, attributes?.listAllHeadings, hashPrefix)
 			if (heading) {
+				if (heading.anchor && heading.anchor !== (headingAttributes?.anchor || '')) {
+					anchorUpdates.push({ blockClientId, anchor: heading.anchor })
+				}
 				result.push(heading)
 			}
 		})
+
+		if (anchorUpdates.length) {
+			const batch = wp.data.batch || ((fn) => fn())
+			batch(() => {
+				anchorUpdates.forEach(({ blockClientId, anchor }) => {
+					wp.data.dispatch('core/block-editor').updateBlockAttributes(blockClientId, { anchor })
+				})
+			})
+		}
 
 		return result
 	}
@@ -306,7 +332,7 @@ export const edit = ({ setAttributes, attributes, clientId, className, isSelecte
 	const updateHeadings = () => {
 		const newHeadings = parseHeadings()
 
-		if (0 === newHeadings.length) {
+		if (0 === newHeadings.length && 0 === (headings?.length || 0)) {
 			return
 		}
 
@@ -411,7 +437,7 @@ export const edit = ({ setAttributes, attributes, clientId, className, isSelecte
 		}
 
 		updateHeadings()
-	}, [ postContent, attributes ])
+	}, [ postContent, attributes, isCurrentlyTyping ])
 
 	useEffect(() => {
 		renderVueComponents()

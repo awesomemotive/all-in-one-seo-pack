@@ -12,7 +12,7 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 export const Sidebar = (props) => {
 	const {
 		setAttributes,
-		attributes: { listStyle, collapsibleType, collapsedTitle, mode, expandedTitle },
+		attributes: { listStyle, collapsibleType, collapsedTitle, mode, expandedTitle, listAllHeadings },
 		clientId
 	} = props
 
@@ -76,15 +76,28 @@ export const Sidebar = (props) => {
 			)}
 
 			<CheckboxControl
-				label={__('Synced Table of Contents', td)}
-				help={__('Syncing table of contents enables you to build one unified table of contents for documents with multiple sections, even using separate ToC blocks.', td)}
-				checked={'synced' === mode}
+				label={__('List All Headings', td)}
+				help={__('When enabled, this block will list all headings on the page, not just the ones after it.', td)}
+				checked={listAllHeadings}
 				onChange={() => {
-					setAttributes({ mode: 'synced' === mode ? 'standalone' : 'synced' })
+					setAttributes({ listAllHeadings: !listAllHeadings, headings: [], reOrdered: false })
 					window.aioseoBus.$emit('updateToc' + clientId)
 				}}
 				__nextHasNoMarginBottom
 			/>
+
+			{!listAllHeadings && (
+				<CheckboxControl
+					label={__('Synced Table of Contents', td)}
+					help={__('Syncing table of contents enables you to build one unified table of contents for documents with multiple sections, even using separate ToC blocks.', td)}
+					checked={'synced' === mode}
+					onChange={() => {
+						setAttributes({ mode: 'synced' === mode ? 'standalone' : 'synced' })
+						window.aioseoBus.$emit('updateToc' + clientId)
+					}}
+					__nextHasNoMarginBottom
+				/>
+			)}
 		</>
 	)
 }

@@ -337,9 +337,20 @@ class Image {
 		$thirdParty = new ThirdParty( $this->post, $parsedPostContent );
 		$images     = array_merge( $images, $thirdParty->extract() );
 
-		preg_match_all( '#<(amp-)?img[^>]+src="([^">]+)"#', (string) $parsedPostContent, $matches );
-		foreach ( $matches[2] as $url ) {
-			$images[] = aioseo()->helpers->makeUrlAbsolute( $url );
+		// Skip past quoted attribute values so `>` inside them (e.g. `alt="a > b"`) doesn't truncate the tag.
+		preg_match_all( '#<(amp-)?img\b(?:"[^"]*"|\'[^\']*\'|[^>])*>#i', (string) $parsedPostContent, $imgTags );
+		foreach ( $imgTags[0] as $imgTag ) {
+			if (
+				preg_match( '/style\s*=\s*["\'][^"\']*display\s*:\s*none/i', $imgTag ) ||
+				preg_match( '/style\s*=\s*["\'][^"\']*visibility\s*:\s*hidden/i', $imgTag ) ||
+				preg_match( '/\shidden(?:\s*=\s*["\']?(?!until-found)[^"\'\s>]*["\']?)?(?=[\s>])/i', $imgTag )
+			) {
+				continue;
+			}
+
+			if ( preg_match( '/\bsrc\s*=\s*(["\'])([^"\']+)\1/i', $imgTag, $srcMatch ) ) {
+				$images[] = aioseo()->helpers->makeUrlAbsolute( $srcMatch[2] );
+			}
 		}
 
 		return array_unique( $images );

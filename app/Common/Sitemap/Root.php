@@ -372,17 +372,17 @@ class Root {
 			aioseo()->helpers->isWooCommerceActive() &&
 			'product' === $postType
 		) {
+			// Exclude products when excluded from both catalog and search.
 			$whereClause .= " AND p.ID NOT IN (
 				SELECT CONVERT(tr.object_id, unsigned) AS object_id
 				FROM {$termRelationshipsTable} AS tr
 				JOIN {$termTaxonomyTable} AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
 				JOIN {$termsTable} AS t ON tt.term_id = t.term_id
-				WHERE t.name = 'exclude-from-catalog'
+				WHERE t.name IN ('exclude-from-catalog', 'exclude-from-search')
+				GROUP BY tr.object_id
+				HAVING COUNT(DISTINCT t.name) = 2
 			)";
 		}
-
-		// Exclude posts with custom canonical URLs pointing to different URLs.
-		$whereClause .= " AND (ap.canonical_url IS NULL OR ap.canonical_url = '')";
 
 		// Include the blog page in the posts post type unless manually excluded.
 		$blogPageId = (int) get_option( 'page_for_posts' );

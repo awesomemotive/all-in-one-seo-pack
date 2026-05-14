@@ -44,7 +44,8 @@ class Core {
 		'aioseo_seo_analyzer_objects',
 		'aioseo_seo_analyzer_results',
 		'aioseo_writing_assistant_keywords',
-		'aioseo_writing_assistant_posts'
+		'aioseo_writing_assistant_posts',
+		'aioseo_ai_insights_keyword_reports'
 	];
 
 	/**

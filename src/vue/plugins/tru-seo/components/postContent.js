@@ -103,24 +103,24 @@ const getProcessedBlockContent = (content, prefix) => {
 	const blocks = window.wp.data.select('core/block-editor').getBlocks()
 	blocks.forEach(block => {
 		const [ namePrefix, nameSuffix ] = block.name.split('/')
-		if (prefix.includes(namePrefix)) {
-			// Bail if it's a core block that's not a table.
-			if ('core' === namePrefix && 'table' !== nameSuffix) {
-				return
-			}
+		if (!prefix.includes(namePrefix)) {
+			return
+		}
 
-			// Bail if it's an aioseo faq block.
-			if ('aioseo' === namePrefix && 'faq' === nameSuffix) {
-				return
-			}
+		// Bail if it's a core block that's not a table, or an aioseo excluded block.
+		if (
+			('core' === namePrefix && 'table' !== nameSuffix) ||
+			('aioseo' === namePrefix && [ 'faq', 'ai-assistant' ].includes(nameSuffix))
+		) {
+			return
+		}
 
-			const element = editorDoc.getElementById('block-' + block.clientId)
-			if (element && element.innerText) {
-				const blockName = 'core' === namePrefix ? nameSuffix : block.name
-				const pattern = `<!-- wp:${blockName}.*?/wp:${blockName} -->|<!-- wp:${blockName}.*?/-->`
+		const element = editorDoc.getElementById('block-' + block.clientId)
+		if (element && element.innerText) {
+			const blockName = 'core' === namePrefix ? nameSuffix : block.name
+			const pattern = `<!-- wp:${blockName}.*?/wp:${blockName} -->|<!-- wp:${blockName}.*?/-->`
 
-				content = content.replace(new RegExp(pattern, 's'), element.innerText)
-			}
+			content = content.replace(new RegExp(pattern, 's'), element.innerText)
 		}
 	})
 

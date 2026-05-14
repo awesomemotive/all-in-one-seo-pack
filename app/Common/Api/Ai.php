@@ -432,7 +432,7 @@ class Ai {
 		$ch = curl_init();
 
 		curl_setopt_array( $ch, [
-			CURLOPT_URL            => aioseo()->ai->getAiGeneratorApiUrl() . 'text/',
+			CURLOPT_URL            => aioseo()->ai->getAiGeneratorApiUrl( 'v2' ) . 'text/',
 			CURLOPT_POST           => true,
 			CURLOPT_POSTFIELDS     => wp_json_encode( $body ),
 			CURLOPT_TIMEOUT        => 180,

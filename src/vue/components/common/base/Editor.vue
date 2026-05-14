@@ -202,6 +202,10 @@ export default {
 	},
 	watch : {
 		disabled () {
+			if (!QuillEditor[this.$.uid]) {
+				return
+			}
+
 			if (this.disabled) {
 				QuillEditor[this.$.uid].disable()
 			} else {
@@ -216,6 +220,10 @@ export default {
 		'tagsStore.liveTags' : {
 			deep : true,
 			handler () {
+				if (!QuillEditor[this.$.uid]) {
+					return
+				}
+
 				this.localTags = this.getTags()
 
 				const counter = QuillEditor[this.$.uid].getModule('counter')
@@ -393,6 +401,10 @@ export default {
 
 			QuillEditor[this.$.uid] = this.startQuill()
 
+			if (!QuillEditor[this.$.uid]) {
+				return
+			}
+
 			if (reset) {
 				QuillEditor[this.$.uid].setText('')
 			}
@@ -469,6 +481,10 @@ export default {
 			})
 		},
 		startQuill () {
+			if (!this.$refs.quill) {
+				return null
+			}
+
 			return new Quill(this.$refs.quill, {
 				modules : {
 					toolbar     : !this.showToolbar ? [] : [ 'bold', 'italic', 'underline', 'autoLink'/* , { list: 'bullet' }, { list: 'ordered' } */ ],

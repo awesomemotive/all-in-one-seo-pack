@@ -132,7 +132,7 @@ class Image {
 
 		if ( ! $width || ! $height ) {
 			list( $width, $height ) = [ 0, 0 ];
-			$wpImageSize = wp_getimagesize( $upload['file'] );
+			$wpImageSize = wp_getimagesize( $upload['file'] ); // phpcs:ignore
 			if ( $wpImageSize ) {
 				list( $width, $height ) = $wpImageSize;
 			}
@@ -261,7 +261,7 @@ class Image {
 
 		if ( ! $width || ! $height ) {
 			list( $width, $height ) = [ 0, 0 ];
-			$wpImageSize = wp_getimagesize( get_attached_file( $attachmentId ) );
+			$wpImageSize = wp_getimagesize( get_attached_file( $attachmentId ) ); // phpcs:ignore
 			if ( $wpImageSize ) {
 				list( $width, $height ) = $wpImageSize;
 			}

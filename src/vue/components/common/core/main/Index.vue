@@ -213,7 +213,7 @@ export default {
 			return this.showSaveButton
 		},
 		errorSaving () {
-			const url = this.roootStore.isPro ? 'https://aioseo.com/plugin/pro-support' : 'https://aioseo.com/plugin/lite-support'
+			const url = this.rootStore.isPro ? 'https://aioseo.com/plugin/pro-support' : 'https://aioseo.com/plugin/lite-support'
 
 			return sprintf(
 				// Translators: 1 - Opening link tag, 2 - Closing link tag.

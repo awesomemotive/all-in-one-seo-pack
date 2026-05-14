@@ -57,7 +57,10 @@ class Auth {
 			return $this->profile;
 		}
 
-		$this->profile = aioseo()->internalOptions->internal->searchStatistics->profile;
+		$this->profile = [
+			'siteurl'    => aioseo()->internalOptions->internal->searchStatistics->profile->siteurl,
+			'authedsite' => aioseo()->internalOptions->internal->searchStatistics->profile->authedsite
+		];
 
 		return $this->profile;
 	}
@@ -103,10 +106,6 @@ class Auth {
 	 * @return void
 	 */
 	public function setProfile( $data = [] ) {
-		$this->profile = $data;
-
-		aioseo()->internalOptions->internal->searchStatistics->profile = $this->profile;
-
 		// Save sensitive data separately.
 		if ( ! empty( $data['key'] ) ) {
 			aioseo()->sensitiveOptions->set( 'searchStatisticsProfileKey', $data['key'] );
@@ -114,6 +113,17 @@ class Auth {
 		if ( ! empty( $data['token'] ) ) {
 			aioseo()->sensitiveOptions->set( 'searchStatisticsProfileToken', $data['token'] );
 		}
+
+		$siteurl    = ! empty( $data['siteurl'] ) ? (string) $data['siteurl'] : '';
+		$authedsite = ! empty( $data['authedsite'] ) ? (string) $data['authedsite'] : '';
+
+		aioseo()->internalOptions->internal->searchStatistics->profile->siteurl    = $siteurl;
+		aioseo()->internalOptions->internal->searchStatistics->profile->authedsite = $authedsite;
+
+		$this->profile = [
+			'siteurl'    => $siteurl,
+			'authedsite' => $authedsite
+		];
 	}
 
 	/**

@@ -261,6 +261,10 @@ class WpNotices {
 				continue;
 			}
 
+			if ( empty( $notice['message'] ) ) {
+				continue;
+			}
+
 			$status = ! empty( $notice['status'] ) ? $notice['status'] : 'warning';
 			$class  = ! empty( $notice['options']['class'] ) ? $notice['options']['class'] : '';
 			?>

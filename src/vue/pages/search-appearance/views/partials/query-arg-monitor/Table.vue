@@ -406,7 +406,7 @@ export default {
 					return row.regex
 				}
 
-				return '?' + row.key + '=' + (row.value ? row.value : '*')
+				return '?' + row.param + '=' + (row.value ? row.value : '*')
 			}
 
 			return row.slug
@@ -543,7 +543,7 @@ export default {
 					return null
 				}
 				return {
-					key   : r.key,
+					param : r.param,
 					value : 'block-key-value' === this.action ? r.value : null,
 					regex : r.regex
 				}

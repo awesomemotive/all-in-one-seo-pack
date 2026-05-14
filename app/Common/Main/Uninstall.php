@@ -42,9 +42,11 @@ class Uninstall {
 		$this->uninstallCapabilities();
 
 		// Delete data for the addons.
-		aioseo()->addons->doAddonFunction( 'uninstall', 'dropData', [
-			'force' => $force
-		] );
+		if ( ! empty( aioseo()->addons ) ) {
+			aioseo()->addons->doAddonFunction( 'uninstall', 'dropData', [
+				'force' => $force
+			] );
+		}
 	}
 
 	/**
@@ -70,14 +72,25 @@ class Uninstall {
 
 		// Delete all the plugin settings.
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 'aioseo\_%' ) );
-
-		// Remove any transients we've left behind.
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '\_aioseo\_%' ) );
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 'aioseo\_%' ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '%\_aioseo-%' ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '%\_aioseo\_%' ) );
 
 		// Delete all entries from the action scheduler table.
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}actionscheduler_actions WHERE hook LIKE %s", 'aioseo\_%' ) );
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}actionscheduler_groups WHERE slug = %s", 'aioseo' ) );
+
+		// Delete all entries from postmeta table.
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}postmeta WHERE meta_key LIKE %s", '_aioseo\_%' ) );
+
+		// Delete all entries from termmeta table.
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}termmeta WHERE meta_key LIKE %s", '_aioseo\_%' ) );
+
+		// Delete all entries from usermeta table.
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}usermeta WHERE meta_key LIKE %s", '%aioseo\_%' ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}usermeta WHERE meta_key LIKE %s", '%aioseo-%' ) );
+
+		// Delete seoboost access tokens and user options.
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}usermeta WHERE meta_key LIKE %s", 'seoboost_%s' ) );
 		// phpcs:enable
 	}
 
@@ -91,7 +104,7 @@ class Uninstall {
 	private function uninstallCapabilities() {
 		$access             = new Utils\Access();
 		$customCapabilities = $access->getCapabilityList() ?? [];
-		$roles              = aioseo()->helpers->getUserRoles();
+		$roles              = ! empty( aioseo()->helpers ) ? aioseo()->helpers->getUserRoles() : [];
 
 		// Loop through roles and remove custom capabilities.
 		foreach ( $roles as $roleName => $roleInfo ) {

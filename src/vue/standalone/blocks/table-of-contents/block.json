@@ -48,6 +48,10 @@
 		"reOrdered": {
 			"type": "boolean",
 			"default": false
+		},
+		"listAllHeadings": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {

@@ -156,7 +156,7 @@ export default {
 			if (this.regex) {
 				data.push({
 					slug  : this.getSlug(),
-					key   : null,
+					param : null,
 					value : null,
 					regex : this.regexValue
 				})
@@ -165,7 +165,7 @@ export default {
 					this.valuesList.forEach(value => {
 						data.push({
 							slug  : this.getSlug(value.value),
-							key   : this.key,
+							param : this.key,
 							value : value.value,
 							regex : null
 						})
@@ -173,7 +173,7 @@ export default {
 				} else {
 					data.push({
 						slug  : this.getSlug(),
-						key   : this.key,
+						param : this.key,
 						value : null,
 						regex : null
 					})
@@ -189,7 +189,7 @@ export default {
 						this.valuesList = []
 						if (false === body.success && body.exists) {
 							body.exists.forEach(e => {
-								this.key = e.key
+								this.key = e.param
 								this.valuesList.push({
 									label : e.value,
 									value : e.value

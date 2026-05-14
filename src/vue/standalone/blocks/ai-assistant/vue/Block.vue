@@ -4,7 +4,7 @@
 			<div
 				ref="contentElement"
 				class="aioseo-ai-assistant-block__content"
-				v-html="parsedContent"
+				v-html="displayContent.replace(/\{faq:(start|end|q|a)}\s*(<br\s*\/?>)?/g, '')"
 			/>
 		</div>
 
@@ -27,20 +27,6 @@
 					<div class="aioseo-ai-assistant-block__input-col">
 						<div class="aioseo-ai-assistant-block__controls">
 							<base-button
-								v-if="buttonStates.delete.show"
-								size="small"
-								type="gray"
-								class="aioseo-ai-assistant-block__btn"
-								@click.stop.exact="onBtnDeleteClick"
-								:title="strings.delete"
-							>
-								<svg-trash
-									width="18"
-									height="18"
-								/>
-							</base-button>
-
-							<base-button
 								v-if="buttonStates.submit.show"
 								:disabled="buttonStates.submit.disabled"
 								:loading="buttonStates.submit.loading"
@@ -58,6 +44,20 @@
 								 />
 
 								 <span v-else>{{ buttonStates.submit.text }}</span>
+							</base-button>
+
+							<base-button
+								v-if="buttonStates.delete.show"
+								size="small"
+								type="gray"
+								class="aioseo-ai-assistant-block__btn"
+								@click.stop.exact="onBtnDeleteClick"
+								:title="strings.delete"
+							>
+								<svg-trash
+									width="18"
+									height="18"
+								/>
 							</base-button>
 
 							<base-button
@@ -127,7 +127,7 @@ import { getPostEditedContent } from '@/vue/plugins/tru-seo/components/postConte
 import { getPostEditedTitle } from '@/vue/plugins/tru-seo/components/postTitle'
 import { useAiContent } from '@/vue/composables/AiContent'
 
-import { getEditorDocument, getEditorWindow } from '@/vue/utils/editor'
+import { getEditorWindow } from '@/vue/utils/editor'
 import links from '@/vue/utils/links'
 
 import BaseButton from '@/vue/components/common/base/Button'
@@ -151,14 +151,15 @@ const postEditorStore  = usePostEditorStore()
 const contentElement = ref(null)
 const controller     = ref({})
 const inputElement   = ref(null)
-const parsedContent  = ref('')
+const displayContent = ref('')
 const errors         = ref({
 	api : null
 })
 
 // Store event handler references to properly remove only our specific listeners.
-let onTranslateChange = null,
-	onImproveChange   = null
+let onTranslateChange       = null,
+	onImproveChange         = null,
+	onPromptTemplateChange  = null
 
 const app = getCurrentInstance()
 
@@ -183,7 +184,7 @@ const buttonStates = computed(() => {
 	const hasUserPrompt       = !!app.root.data.userPrompt?.trim().length
 	const hasAssistantMessage = !!app.root.data.messages?.length && app.root.data.messages.find(m => 'assistant' === m.role)
 	const isFetching          = !!app.root.data.isFetching
-	const hasContent          = !!parsedContent.value.length
+	const hasContent          = !!displayContent.value.length
 	const submitDisabled      = !hasUserPrompt || !aiAssistantStore.hasPermission || !hasEnoughCredits(aiAssistantStore.generationPrice)
 
 	return {
@@ -227,22 +228,89 @@ const userPromptLengthWarning = computed(() => {
 	return null
 })
 
+const convertBlocksToFaq = (blocks) => {
+	const { createBlock } = window.wp.blocks
+	const result = []
+	let textBuffer = []
+
+	const emitParagraphs = (text) => {
+		for (const line of text.split(/\n+/)) {
+			const content = line.trim()
+			if (content) {
+				result.push(createBlock('core/paragraph', { content }))
+			}
+		}
+	}
+
+	const emitFaqBlocks = (faqBody) => {
+		for (const chunk of faqBody.split('{faq:q}')) {
+			const [ rawQuestion, rawAnswer ] = chunk.split('{faq:a}')
+			const question = rawQuestion?.trim().replace(/<\/?strong>/g, '')
+			if (!question) {
+				continue
+			}
+
+			const answer = rawAnswer?.trim() || ''
+			const innerBlocks = answer
+				? [ createBlock('core/paragraph', { content: answer }) ]
+				: []
+			result.push(createBlock('aioseo/faq', { question }, innerBlocks))
+		}
+	}
+
+	const flushTextBuffer = () => {
+		if (!textBuffer.length) {
+			return
+		}
+
+		const text = textBuffer.join('\n')
+		textBuffer = []
+
+		// split() with a capture group keeps delimited sections at odd indices.
+		const parts = text.split(/(\{faq:start\}[\s\S]*?\{faq:end\})/g)
+		for (let i = 0; i < parts.length; i++) {
+			if (0 === i % 2) {
+				emitParagraphs(parts[i])
+			} else {
+				emitFaqBlocks(parts[i].replace(/^\{faq:start\}|\{faq:end\}$/g, ''))
+			}
+		}
+	}
+
+	for (const block of blocks) {
+		if ('core/paragraph' !== block.name) {
+			flushTextBuffer()
+			result.push(block)
+			continue
+		}
+
+		const content = block.attributes?.content?.originalHTML || block.attributes?.content || ''
+		textBuffer.push(content.replace(/<br\s*\/?>/gi, '\n'))
+	}
+
+	flushTextBuffer()
+
+	return result
+}
+
 const onBtnInsertClick = () => {
-	let blocks = window.wp.blocks.pasteHandler({
-		HTML      : parsedContent.value,
+	const { createBlock, pasteHandler } = window.wp.blocks
+
+	let blocks = pasteHandler({
+		HTML      : displayContent.value,
 		plainText : app.root.data.content,
 		mode      : 'AUTO'
 	})
 
 	if ('string' === typeof blocks) {
-		blocks = window.wp.blocks.createBlock('core/paragraph', {
-			content : blocks
-		})
+		blocks = [ createBlock('core/paragraph', { content: blocks }) ]
 	}
 
-	const { dispatch } = window.wp.data
+	if (Array.isArray(blocks)) {
+		blocks = convertBlocksToFaq(blocks)
+	}
 
-	dispatch('core/block-editor').replaceBlock(blockId.value, blocks)
+	window.wp.data.dispatch('core/block-editor').replaceBlock(blockId.value, blocks)
 }
 
 const onBtnSubmitClick = () => {
@@ -270,8 +338,8 @@ const resizeInput = () => {
 	node.style.height = node.scrollHeight + 'px'
 }
 
-const updateParsedContent = () => {
-	parsedContent.value = marked.parse(app.root.data.content, { breaks: true })
+const updateDisplayContent = async () => {
+	displayContent.value = marked.parse(app.root.data.content, { breaks: true })
 
 	resizeInput()
 }
@@ -315,11 +383,6 @@ const scrollToContentElement = () => {
 const getPostContent = () => {
 	let postContent = ''
 	try {
-		// Hide blocks temporarily to prevent their content from being included in the post content.
-		getEditorDocument().querySelectorAll('.aioseo-ai-assistant-block').forEach($block => {
-			$block.style.visibility = 'hidden'
-		})
-
 		postContent = getPostEditedContent(true)
 
 		// Make sure the current block's content is not included in the post content.
@@ -332,10 +395,6 @@ const getPostContent = () => {
 	} catch (error) {
 		console.warn('Could not retrieve post content for context:', error)
 		postContent = ''
-	} finally {
-		getEditorDocument().querySelectorAll('.aioseo-ai-assistant-block').forEach($block => {
-			$block.style.visibility = 'visible'
-		})
 	}
 
 	return postContent.trim()
@@ -348,7 +407,7 @@ const initFetch = (args = {}) => {
 	app.root.data.isFetching = true
 	app.root.data.content = ''
 
-	updateParsedContent()
+	updateDisplayContent()
 
 	const newMessage = {
 		role : 'user'
@@ -382,7 +441,7 @@ const initFetch = (args = {}) => {
 		cache          : 'no-store',
 		openWhenHidden : true,
 		onclose () {
-			updateParsedContent()
+			updateDisplayContent()
 		},
 		onerror (err) {
 			// Rethrow to stop the operation otherwise it will retry forever.
@@ -396,7 +455,7 @@ const initFetch = (args = {}) => {
 
 			app.root.data.content += json?.content ?? ''
 
-			updateParsedContent()
+			updateDisplayContent()
 		},
 		onopen (response) {
 			if (response.ok) {
@@ -432,13 +491,12 @@ const initFetch = (args = {}) => {
 			app.root.data.isFetching = false
 
 			await nextTick()
-
-			updateParsedContent()
+			await updateDisplayContent()
 		})
 }
 
 onMounted(() => {
-	updateParsedContent()
+	updateDisplayContent()
 
 	onTranslateChange = (payload) => {
 		if (!payload || payload.clientId !== blockId.value || !payload.translate) {
@@ -456,8 +514,21 @@ onMounted(() => {
 		initFetch({ improve: payload.improve })
 	}
 
+	onPromptTemplateChange = (payload) => {
+		if (!payload || payload.clientId !== blockId.value || !payload.template) {
+			return
+		}
+
+		app.root.data.userPrompt = payload.template
+		nextTick(() => {
+			resizeInput()
+			inputElement.value?.focus()
+		})
+	}
+
 	window.aioseoBus.$on('aiAssistantTranslateChange', onTranslateChange)
 	window.aioseoBus.$on('aiAssistantImproveChange', onImproveChange)
+	window.aioseoBus.$on('aiAssistantPromptTemplateChange', onPromptTemplateChange)
 
 	nextTick(() => {
 		inputElement.value?.focus()
@@ -467,5 +538,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	window.aioseoBus.$off('aiAssistantTranslateChange', onTranslateChange)
 	window.aioseoBus.$off('aiAssistantImproveChange', onImproveChange)
+	window.aioseoBus.$off('aiAssistantPromptTemplateChange', onPromptTemplateChange)
 })
 </script>

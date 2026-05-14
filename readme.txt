@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.9
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 4.9.6.2
+Stable tag: 4.9.7.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -231,6 +231,32 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.9.7.1**
+
+* Fixed: Resolved an issue where some sites could experience a fatal error and become inaccessible due to a corrupted internal cache entry.
+* Fixed: Removed outdated database indexes left over from a previous update that could corrupt cache data on certain MariaDB database versions, leading to site errors.
+
+**New in Version 4.9.7**
+
+* Updated: Added a filter to customize Site Audit page scan request arguments.
+* Updated: TOC block now has an option to list all headings, not only the ones after it.
+* Updated: AI Assistant block now converts generated FAQ content into structured AIOSEO FAQ blocks with schema markup.
+* Updated: SEO Analysis now automatically re-scans posts and terms older than 6 months, and detects changes to global settings.
+* Fixed: Third-party plugin imports (Redirection, Rank Math, Yoast SEO, 301 Redirects, WPML) not working correctly.
+* Fixed: A PHP warning caused by getDefaultAddon() returning an array instead of an object when the CDN is unreachable.
+* Fixed: Error message not displaying when settings fail to save.
+* Fixed: "Convert Posts to Markdown" option broke page rendering when URL query parameters contain ".md".
+* Fixed: AI Assistant block no longer includes its own UI text in generated content.
+* Fixed: Date sitemap index fails to update the "Last Modified" timestamps when posts are updated.
+* Fixed: Title output buffering caused broken pages on themes without title-tag support on WordPress 6.9+.
+* Fixed: Fatal error on multisite installations when the AI helper was not initialized during license validation.
+* Fixed: PHP warning related to meta description in attachment pages.
+* Fixed: Console error in Keyword Rank Tracker Groups tab when selecting certain date ranges.
+* Fixed: Image column incorrectly displayed in taxonomy, author, date, and attachment sitemaps.
+* Fixed: Image sitemap scan no longer counts hidden `<img>` elements as sitemap images.
+* Fixed: Fatal error when Lite users with standalone AI credits attempt to use the AI Assistant or Image Generator.
+* Fixed: Plugin translations loading order.
+
 **New in Version 4.9.6.2**
 
 * Updated: Removed deprecated internal option references that could cause error on WooCommerce checkouts for some users.
@@ -327,47 +353,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * New: Page Builder Integrations for Bricks & Oxygen - You can now seamlessly control your SEO settings directly within the visual builders of Bricks and Oxygen and analyze their content with TruSEO.
 * Fixed: Browser alert incorrectly appearing in Classic Editor after page reload when Focus Keyword is set.
 
-**New in Version 4.9.1.1**
-
-* New: Users using AIOSEO, Broken Link Checker and Link Assistant now see their broken links count in the AIOSEO Details post column.
-* Updated: Compatibility with WordPress 6.9.
-* Updated: Various database performance improvements.
-* Updated: Hardened database queries against SQL attacks.
-* Fixed: Redirects would no longer work for AIOSEO Pro users on discontinued plans.
-* Fixed: AI Assistant shortcut no longer shown for paragraph blocks that are nested under a parent block.
-
-**New in Version 4.9.1**
-
-* New: AI Insights - Our new AI-powered Keyword Report tool lets you see which brands are ranking for search queries in AI search results. Now 100% free for a limited time only!
-* New: Basic & Plus plan AIOSEO Pro users can now create redirects and control HTTP headers!
-* Updated: Switched from PHP serialization to JSON for caching to prevent cache misses due to charset mismatches.
-* Updated: Translations are no longer fetched when the site and all users are using the English locale.
-* Updated: Latest available date for Google Search Console data is now fetched in the background.
-* Updated: Improved error handling and performance for Semrush integration.
-* Updated: Added a filter to customize the Site Audit scan interval.
-* Updated: Added new shortcuts to the AI Assistant block to tweak content length, structure and tone.
-* Updated: Improved HTML parsing for Site Audit.
-* Fixed: Smart tag names now correctly refer to the current post type.
-* Fixed: Some multisite network admins were unable to analyze competitor URLs in SEO Analysis.
-* Fixed: Browser "unsaved changes" alert now properly triggers when SEO settings are modified in post editor.
-* Fixed: Styling for breadcrumb separator settings in Thrive Architect page builder.
-* Fixed: Incorrect character count calculation for the Product Short Description smart tag.
-* Fixed: PHP warnings triggered when Search Statistics processed incomplete or malformed data from Google Search Console.
-* Fixed: Conflict with the Pro Mail SMTP plugin causing some AIOSEO fields to be inaccessible.
-* Fixed: TruSEO was not detecting links present in the FAQ Block.
-* Fixed: Video sitemap scan now properly handles numeric post IDs when triggered by WP Cron, preventing posts from being skipped during automated scans.
-* Fixed: PHP warning shown on the custom login page of Theme My Login plugin when AIOSEO was active.
-* Fixed: Scheduled actions for clearing redirect logs failing due to unregistered callbacks.
-* Fixed: Some users not being able to access Redirect menu in Lite.
-
-**New in Version 4.9.0**
-
-* New: Table of Contents Block 2.0 - Our revamped Table of Contents block now supports multiple blocks on the same page, with a standalone or synced mode. We also added accordion support so you can collapse or expand it.
-* New: Recipe Block - Highlight your best recipes with a new block that also comes with schema markup to get your recipes featured in search results.
-* New: Products Block - Showcase your products with granular controls and Product schema markup to drive more organic traffic to your page.
-* Fixed: Rare PHP error when action scheduler arguments are not a JSON object.
-* Fixed: DB lock issue when checking table schema in MariaDB.
-
 **See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=aioseo) for previous releases.**
 
 == Frequently Asked Questions ==
@@ -449,6 +434,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.9.6.2 =
+= 4.9.7.1 =
 
 This update adds major improvements and bug fixes.

@@ -365,11 +365,13 @@ class Database {
 			$globalTables     = $this->db->tables( 'global', true );
 			foreach ( $databaseTableInformation as $table ) {
 				// Only include tables matching the prefix of the current site, this is to prevent displaying all tables on a MS install not relating to the current.
-				if ( is_multisite() && 0 !== strpos( $table->name, $siteTablesPrefix ) && ! in_array( $table->name, $globalTables, true ) ) {
+				// Use stripos for case-insensitive comparison due to MySQL's lower_case_table_names setting which can lowercase table names.
+				if ( is_multisite() && 0 !== stripos( $table->name, $siteTablesPrefix ) && ! in_array( $table->name, $globalTables, true ) ) {
 					continue;
 				}
 
-				$tableType = ( 0 === strpos( $table->name, aioseo()->core->db->prefix . 'aioseo' ) ) ? 'aioseo' : 'other';
+				// Use stripos for case-insensitive comparison due to MySQL's lower_case_table_names setting which can lowercase table names.
+				$tableType = ( 0 === stripos( $table->name, aioseo()->core->db->prefix . 'aioseo' ) ) ? 'aioseo' : 'other';
 
 				$tables[ $tableType ][ $table->name ] = [
 					'data'      => $table->data,
@@ -400,18 +402,23 @@ class Database {
 	 */
 	public function getColumns( $table ) {
 		// Ensure the table name has the DB prefix.
-		if ( 0 !== strpos( $table, $this->prefix ) ) {
+		// Use stripos for case-insensitive comparison due to MySQL's lower_case_table_names setting which can lowercase table names.
+		if ( 0 !== stripos( $table, $this->prefix ) ) {
 			$table = $this->prefix . $table;
 		}
 
 		// If the table is not an AIOSEO one, get it from the DB.
-		if ( 0 !== strpos( $table, $this->prefix . 'aioseo_' ) ) {
+		// Use stripos for case-insensitive comparison due to MySQL's lower_case_table_names setting which can lowercase table names.
+		if ( 0 !== stripos( $table, $this->prefix . 'aioseo_' ) ) {
 			return $this->db->get_col( 'SHOW COLUMNS FROM `' . $table . '`' );
 		}
 
 		$schema = $this->getTablesWithColumns();
 
-		return $schema[ $table ];
+		// Use case-insensitive lookup due to MySQL's lower_case_table_names setting which can lowercase table names.
+		$tableKey = $this->findTableKeyInSchema( $table, $schema );
+
+		return null !== $tableKey ? $schema[ $tableKey ] : [];
 	}
 
 	/**
@@ -425,13 +432,38 @@ class Database {
 	 */
 	public function tableExists( $table ) {
 		// Ensure the table name has the DB prefix.
-		if ( 0 !== strpos( $table, $this->prefix ) ) {
+		// Use stripos for case-insensitive comparison due to MySQL's lower_case_table_names setting which can lowercase table names.
+		if ( 0 !== stripos( $table, $this->prefix ) ) {
 			$table = $this->prefix . $table;
 		}
 
 		$tables = $this->getTablesWithColumns();
 
-		return isset( $tables[ $table ] );
+		// Use case-insensitive lookup due to MySQL's lower_case_table_names setting which can lowercase table names.
+		return null !== $this->findTableKeyInSchema( $table, $tables );
+	}
+
+	/**
+	 * Checks if a third-party (non-AIOSEO) table exists by querying the DB directly.
+	 *
+	 * Unlike tableExists(), which reads from a cache that only contains AIOSEO and
+	 * Action Scheduler tables, this method performs a direct SHOW TABLES query and
+	 * should be used whenever checking for tables owned by external plugins.
+	 *
+	 * @since 4.9.7
+	 *
+	 * @param  string $table The name of the table, with or without the DB prefix.
+	 * @return bool          Whether or not the table exists.
+	 */
+	public function externalTableExists( $table ) {
+		// Ensure the table name has the DB prefix.
+		if ( 0 !== strpos( $table, $this->prefix ) ) {
+			$table = $this->prefix . $table;
+		}
+
+		return (bool) $this->db->get_var(
+			$this->db->prepare( 'SHOW TABLES LIKE %s', $table )
+		);
 	}
 
 	/**
@@ -446,25 +478,33 @@ class Database {
 	 */
 	public function columnExists( $table, $column ) {
 		// Ensure the table name has the DB prefix.
-		if ( 0 !== strpos( $table, $this->prefix ) ) {
+		// Use stripos for case-insensitive comparison due to MySQL's lower_case_table_names setting which can lowercase table names.
+		if ( 0 !== stripos( $table, $this->prefix ) ) {
 			$table = $this->prefix . $table;
 		}
 
 		$tables = $this->getTablesWithColumns();
 
-		return isset( $tables[ $table ] ) && in_array( $column, $tables[ $table ], true );
+		// Use case-insensitive lookup due to MySQL's lower_case_table_names setting which can lowercase table names.
+		$tableKey = $this->findTableKeyInSchema( $table, $tables );
+
+		return null !== $tableKey && in_array( $column, $tables[ $tableKey ], true );
 	}
 
 	/**
 	 * Get all AIOSEO tables with their columns.
 	 *
-	 * @since 4.8.9
+	 * @since   4.8.9
+	 * @version 4.9.7.1 Reject non-array cache values so a corrupted `db_schema` row can't trigger a fatal in {@see findTableKeyInSchema()}.
 	 *
 	 * @return array List of AIOSEO tables with their columns.
 	 */
 	public function getTablesWithColumns() {
 		$tables = aioseo()->core->cache->get( 'db_schema' );
-		if ( ! empty( $tables ) ) {
+		// Guard against a corrupted cache row: anything other than a non-empty array
+		// gets discarded and rebuilt below. Without this, a scalar value (e.g. '31942')
+		// would propagate into findTableKeyInSchema() and fatal on array_keys().
+		if ( is_array( $tables ) && ! empty( $tables ) ) {
 			return $tables;
 		}
 
@@ -509,6 +549,35 @@ class Database {
 		aioseo()->core->cache->update( 'db_schema', $tables, DAY_IN_SECONDS );
 
 		return $tables;
+	}
+
+	/**
+	 * Finds a table key in the schema array using case-insensitive comparison.
+	 *
+	 * This is needed because MySQL's lower_case_table_names setting can cause table names
+	 * to be stored in lowercase in the database, while the WordPress prefix may be uppercase.
+	 *
+	 * @since 4.9.2
+	 *
+	 * @param  string     $table  The table name to find.
+	 * @param  array      $schema The schema array to search in.
+	 * @return string|null        The actual key in the schema array, or null if not found.
+	 */
+	private function findTableKeyInSchema( $table, $schema ) {
+		// First try exact match for performance.
+		if ( isset( $schema[ $table ] ) ) {
+			return $table;
+		}
+
+		// Fall back to case-insensitive search.
+		$tableLower = strtolower( $table );
+		foreach ( array_keys( $schema ) as $key ) {
+			if ( strtolower( $key ) === $tableLower ) {
+				return $key;
+			}
+		}
+
+		return null;
 	}
 
 	/**

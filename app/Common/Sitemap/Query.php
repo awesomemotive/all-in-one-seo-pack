@@ -6,8 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use AIOSEO\Plugin\Common\Utils as CommonUtils;
-
 /**
  * Handles all complex queries for the sitemap.
  *
@@ -113,9 +111,6 @@ class Query {
 		if ( $excludedPosts ) {
 			$query->whereRaw( "( `p`.`ID` NOT IN ( $excludedPosts ) OR post_id = $homePageId )" );
 		}
-
-		// Exclude posts with custom canonical URLs pointing to different URLs.
-		$query->whereRaw( "( `ap`.`canonical_url` IS NULL OR `ap`.`canonical_url` = '' )" );
 
 		// Exclude posts assigned to excluded terms.
 		$excludedTerms = aioseo()->sitemap->helpers->excludedTerms();
@@ -237,14 +232,21 @@ class Query {
 
 		static $hiddenProductIds = null;
 		if ( null === $hiddenProductIds ) {
-			$tempDb         = new CommonUtils\Database();
-			$hiddenProducts = $tempDb->start( 'term_relationships as tr' )
-				->select( 'tr.object_id' )
-				->join( 'term_taxonomy as tt', 'tr.term_taxonomy_id = tt.term_taxonomy_id' )
-				->join( 'terms as t', 'tt.term_id = t.term_id' )
-				->where( 't.name', 'exclude-from-catalog' )
-				->run()
-				->result();
+			$termRelationshipsTable = aioseo()->core->db->db->prefix . 'term_relationships';
+			$termTaxonomyTable      = aioseo()->core->db->db->prefix . 'term_taxonomy';
+			$termsTable             = aioseo()->core->db->db->prefix . 'terms';
+
+			// Exclude products when excluded from both catalog and search.
+			$hiddenProducts = aioseo()->core->db->execute(
+				"SELECT tr.object_id
+				FROM {$termRelationshipsTable} AS tr
+				JOIN {$termTaxonomyTable} AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				JOIN {$termsTable} AS t ON tt.term_id = t.term_id
+				WHERE t.name IN ('exclude-from-catalog', 'exclude-from-search')
+				GROUP BY tr.object_id
+				HAVING COUNT(DISTINCT t.name) = 2",
+				true
+			)->result();
 
 			if ( empty( $hiddenProducts ) ) {
 				return $query;

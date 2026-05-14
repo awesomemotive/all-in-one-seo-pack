@@ -21,7 +21,7 @@ const getFeatures = (type = '') => {
 	const optionsStore          = useOptionsStore()
 	const rootStore             = useRootStore()
 	const sensitiveOptionsStore = useSensitiveOptionsStore()
-	const features              = rootStore.aioseo.data.isNetworkLicensed && !sensitiveOptionsStore.hasLicenseKey
+	const features              = rootStore.aioseo.data.isNetworkLicensed && (rootStore.aioseo.data.isNetworkAdmin || !sensitiveOptionsStore.hasLicenseKey)
 		? optionsStore.internalNetworkOptions.internal.license?.features || []
 		: optionsStore.internalOptions.internal.license?.features || []
 	let allFeatures = getJsonValue(features, [])
@@ -69,7 +69,7 @@ const hasMinimumLevel = (level) => {
 	const optionsStore          = useOptionsStore()
 	const rootStore             = useRootStore()
 	const sensitiveOptionsStore = useSensitiveOptionsStore()
-	const currentLevel          = rootStore.aioseo.data.isNetworkLicensed && !sensitiveOptionsStore.hasLicenseKey
+	const currentLevel          = rootStore.aioseo.data.isNetworkLicensed && (rootStore.aioseo.data.isNetworkAdmin || !sensitiveOptionsStore.hasLicenseKey)
 		? optionsStore.internalNetworkOptions.internal.license?.level
 		: optionsStore.internalOptions.internal.license?.level
 

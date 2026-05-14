@@ -582,7 +582,7 @@ trait Vue {
 
 			foreach ( $postObjects as $post ) {
 				// Intentionally missing the translation domain to use the WordPress core translation.
-				$data = [ 'title' => $post->post_title ?: __( '(no title)' ) ]; // phpcs:ignore AIOSEO.Wp.I18n.MissingArgDomain
+				$data = [ 'title' => $post->post_title ?: __( '(no title)' ) ]; // phpcs:ignore AIOSEO.Wp.I18n.MissingArgDomain, WordPress.WP.I18n.MissingArgDomain
 
 				if ( $isAlt ) {
 					$data['thumbnailUrl'] = wp_get_attachment_image_url( $post->ID, 'thumbnail' );

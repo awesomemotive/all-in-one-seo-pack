@@ -57,7 +57,10 @@ class InternalOptions {
 			'categoryOther'     => [ 'type' => 'string' ],
 			'deprecatedOptions' => [ 'type' => 'array', 'default' => [] ],
 			'searchStatistics'  => [
-				'profile' => [ 'type' => 'array', 'default' => [] ],
+				'profile' => [
+					'siteurl'    => [ 'type' => 'string', 'default' => '' ],
+					'authedsite' => [ 'type' => 'string', 'default' => '' ]
+				],
 				'rolling' => [ 'type' => 'string', 'default' => 'last28Days' ],
 				'site'    => [
 					'verified'  => [ 'type' => 'boolean', 'default' => false ],

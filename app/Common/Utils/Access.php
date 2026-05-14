@@ -239,7 +239,7 @@ class Access {
 	/**
 	 * Returns the capability list.
 	 *
-	 * @return 4.1.3
+	 * @since 4.1.3
 	 *
 	 * @return array An array of capabilities.
 	 */

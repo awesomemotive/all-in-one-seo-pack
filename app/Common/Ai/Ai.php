@@ -61,14 +61,15 @@ class Ai {
 	private $licensingUrl = 'https://licensing.aioseo.com/v1/';
 
 	/**
-	 * The AI Generator API URL.
+	 * The AI Generator API base URL (without version path).
 	 *
 	 * @since   4.8.4
 	 * @version 4.8.8 Moved from {@see \AIOSEO\Plugin\Common\Api\Ai}.
+	 * @version 4.9.7 Stripped version segment; version is now a parameter of {@see getAiGeneratorApiUrl()}.
 	 *
 	 * @var string
 	 */
-	private $aiGeneratorApiUrl = 'https://ai-generator.aioseo.com/v1/';
+	private $aiGeneratorApiBaseUrl = 'https://ai-generator.aioseo.com/';
 
 	/**
 	 * The action name for getting the access token.
@@ -296,7 +297,7 @@ class Ai {
 	 *
 	 * @return array The default request headers.
 	 */
-	protected function getRequestHeaders() {
+	public function getRequestHeaders() {
 		$headers = [
 			'Content-Type'       => 'application/json',
 			'X-AIOSEO-Ai-Token'  => aioseo()->sensitiveOptions->get( 'aiAccessToken' ),
@@ -322,15 +323,21 @@ class Ai {
 	}
 
 	/**
-	 * Returns the AI Generator API URL.
+	 * Returns the AI Generator API URL for the given version.
 	 *
 	 * @since   4.8.4
 	 * @version 4.8.8 Moved from {@see \AIOSEO\Plugin\Common\Api\Ai}.
+	 * @version 4.9.7 Added $version parameter; base URL no longer includes the version segment.
 	 *
-	 * @return string The AI Generator API URL.
+	 * @param  string $version The API version (e.g. 'v1', 'v2'). Defaults to 'v1'.
+	 * @return string          The AI Generator API URL.
 	 */
-	public function getAiGeneratorApiUrl() {
-		return defined( 'AIOSEO_AI_GENERATOR_URL' ) ? AIOSEO_AI_GENERATOR_URL : $this->aiGeneratorApiUrl;
+	public function getAiGeneratorApiUrl( $version = 'v1' ) {
+		if ( defined( 'AIOSEO_AI_GENERATOR_URL' ) ) {
+			return AIOSEO_AI_GENERATOR_URL;
+		}
+
+		return $this->aiGeneratorApiBaseUrl . $version . '/';
 	}
 
 	/**

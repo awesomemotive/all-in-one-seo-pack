@@ -21,6 +21,7 @@ import { maybeDeleteBlockVueApp } from '@/vue/standalone/blocks/utils'
 
 import { TranslateSelectorMenu } from './components/TranslateSelector'
 import { ImproveSelectorMenu } from './components/ImproveSelector'
+import { PromptTemplateSelectorMenu } from './components/PromptTemplateSelector'
 import { ToneSelectorPanel } from './components/ToneSelector'
 import { AudienceSelectorPanel } from './components/AudienceSelector'
 
@@ -192,6 +193,13 @@ export const settings = {
 			})
 		}
 
+		const handlePromptTemplateChange = (template) => {
+			window.aioseoBus.$emit('aiAssistantPromptTemplateChange', {
+				clientId,
+				template
+			})
+		}
+
 		const defaultTone = toneOptions.find(t => t.value === optionsStore.options.aiContent.tone) || toneOptions[0]
 		if (!attributes.tone) {
 			// Mark as non-persistent to avoid corrupting the undo history on block insertion.
@@ -217,6 +225,11 @@ export const settings = {
 					<ImproveSelectorMenu
 						attributes={attributes}
 						onChange={handleImproveChange}
+					/>
+
+					<PromptTemplateSelectorMenu
+						attributes={attributes}
+						onChange={handlePromptTemplateChange}
 					/>
 				</BlockControls>
 

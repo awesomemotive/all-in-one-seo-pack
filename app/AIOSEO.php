@@ -69,6 +69,15 @@ namespace AIOSEO\Plugin {
 		public $uninstall = null;
 
 		/**
+		 * Database schema class instance.
+		 *
+		 * @since 4.9.7
+		 *
+		 * @var Common\Db\Schema|Pro\Db\Schema
+		 */
+		public $dbSchema = null;
+
+		/**
 		 * Main AIOSEO Instance.
 		 *
 		 * Insures that only one instance of AIOSEO exists in memory at any one
@@ -219,7 +228,8 @@ namespace AIOSEO\Plugin {
 		 * @return void
 		 */
 		private function preLoad() {
-			$this->core = new Common\Core\Core();
+			$this->core     = new Common\Core\Core();
+			$this->dbSchema = $this->pro ? new Pro\Db\Schema() : new Common\Db\Schema();
 
 			// Internal Options.
 			$this->helpers                 = $this->pro ? new Pro\Utils\Helpers() : new Lite\Utils\Helpers(); // Needs to load before preUpdates.
@@ -350,7 +360,37 @@ namespace AIOSEO\Plugin {
 		 * @return void
 		 */
 		public function loadAddons() {
+			$this->maybeDeactivateLegacyRedirectsAddon();
+
 			do_action( 'aioseo_loaded' );
+		}
+
+		/**
+		 * Deactivates the legacy Redirects addon since it's now integrated into the core plugin.
+		 *
+		 * Without this, upgrading from older versions while the old addon is still activated
+		 * causes a fatal error because the addon tries to load files that no longer exist.
+		 *
+		 * @since 4.9.7
+		 *
+		 * @return void
+		 */
+		private function maybeDeactivateLegacyRedirectsAddon() {
+			$redirectsPlugin = 'aioseo-redirects/aioseo-redirects.php';
+
+			// Remove the old addon's load callback to prevent fatal errors in this request.
+			if ( function_exists( 'aioseo_redirects_load' ) ) {
+				remove_action( 'aioseo_loaded', 'aioseo_redirects_load' );
+			}
+
+			// Deactivate the plugin to prevent it from loading on future requests.
+			$activePlugins = get_option( 'active_plugins', [] );
+			$key           = array_search( $redirectsPlugin, $activePlugins, true );
+
+			if ( false !== $key ) {
+				unset( $activePlugins[ $key ] );
+				update_option( 'active_plugins', array_values( $activePlugins ) );
+			}
 		}
 	}
 }

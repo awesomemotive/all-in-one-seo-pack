@@ -20,6 +20,7 @@ class BasicIssues {
 					__('The SEO title is %1$d characters long, which is higher than our recommended range of 40-60 characters.', td),
 					result?.length
 				),
+				content     : (result) => result?.value || '',
 				description : __('The SEO title is the title of your page that appears in search results. It should be 40 to 60 characters long, include your focus keyword and incentivize readers to click through to your page.', td),
 				fixActionParams
 			},
@@ -36,6 +37,7 @@ class BasicIssues {
 						result?.length
 					)
 				},
+				content     : (result) => result?.value || '',
 				description : __('The SEO title is the title of your page that appears in search results. It should be 40 to 60 characters long, include your focus keyword and incentivize readers to click through to your page.', td),
 				fixActionParams
 			},
@@ -46,6 +48,7 @@ class BasicIssues {
 					__('The SEO title is %1$d characters long, which is within our recommended range of 40-60 characters.', td),
 					result?.length
 				),
+				content     : (result) => result?.value || '',
 				description : __('The SEO title is the title of your page that appears in search results. It should be 40 to 60 characters long, include your focus keyword and incentivize readers to click through to your page.', td)
 			}
 		}
@@ -68,6 +71,7 @@ class BasicIssues {
 					__('The meta description is %1$d characters long, which is lower than our recommended range of 120-160 characters.', td),
 					result?.length
 				),
+				content     : (result) => result?.value || '',
 				description : __('The meta description is a summary of your page that appears in search results. It should be 120 to 160 characters long, include your focus keyword and incentivize readers to click through to your page.', td),
 				fixActionParams
 			},
@@ -78,6 +82,7 @@ class BasicIssues {
 					__('The meta description is %1$d characters long, which is higher than our recommended range of 120-160 characters.', td),
 					result?.length
 				),
+				content     : (result) => result?.value || '',
 				description : __('The meta description is a summary of your page that appears in search results. It should be 120 to 160 characters long, include your focus keyword and incentivize readers to click through to your page.', td),
 				fixActionParams
 			},
@@ -88,6 +93,7 @@ class BasicIssues {
 					__('The meta description is %1$d characters long, which is within our recommended range of 120-160 characters.', td),
 					result?.length
 				),
+				content : (result) => result?.value || '',
 				tooltip : __('The meta description is a summary of your page that appears in search results.', td)
 			}
 		}

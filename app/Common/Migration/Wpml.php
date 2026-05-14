@@ -19,7 +19,7 @@ class Wpml {
 	 */
 	public function __construct() {
 		// If the tables don't exist (could happen), return early.
-		if ( ! aioseo()->core->db->tableExists( 'icl_strings' ) && ! aioseo()->core->db->tableExists( 'icl_string_translations' ) ) {
+		if ( ! aioseo()->core->db->externalTableExists( 'icl_strings' ) && ! aioseo()->core->db->externalTableExists( 'icl_string_translations' ) ) {
 			return;
 		}
 

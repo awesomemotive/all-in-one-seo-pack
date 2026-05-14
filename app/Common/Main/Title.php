@@ -30,7 +30,7 @@ class Title {
 	 * @return void
 	 */
 	public function startOutputBuffering() {
-		// wp_before_load_template fires per load_template() call; only buffer once.
+		// Guard against multiple invocations (e.g. if hooked to an action that fires more than once).
 		if ( 0 !== $this->bufferLevel ) {
 			return;
 		}
