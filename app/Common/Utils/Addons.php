@@ -154,7 +154,8 @@ class Addons {
 	/**
 	 * Returns our addons.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.9.7.2 Strict null cache-miss check; non-array values fall back to {@see self::getDefaultAddons()} to prevent PHP 8+ array_filter/foreach TypeErrors.
 	 *
 	 * @param  boolean $flushCache Whether or not to flush the cache.
 	 * @return array               An array of addon data.
@@ -164,12 +165,13 @@ class Addons {
 
 		$addons = aioseo()->core->networkCache->get( 'addons' );
 
-		if ( empty( $addons ) || $flushCache ) {
+		if ( null === $addons || $flushCache ) {
 			$addons = $this->fetchAddonsFromRemote();
 			aioseo()->core->networkCache->update( 'addons', $addons );
 		}
 
-		if ( empty( $addons ) ) {
+		// Guard against empty/non-array values (stale cache from older code, malformed CDN response, etc.) — array_filter() throws a TypeError on non-arrays in PHP 8+.
+		if ( empty( $addons ) || ! is_array( $addons ) ) {
 			$addons = $this->getDefaultAddons();
 		}
 
@@ -189,6 +191,11 @@ class Addons {
 
 		if ( is_string( $addons ) ) {
 			$addons = json_decode( $addons );
+		}
+
+		// Guard the foreach/sortAddons call below — round-trip can yield null on encode failure, which would fatal on PHP 8+.
+		if ( empty( $addons ) || ! is_array( $addons ) ) {
+			$addons = $this->getDefaultAddons();
 		}
 
 		$installedPlugins = array_keys( get_plugins() );

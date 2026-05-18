@@ -241,6 +241,13 @@ namespace AIOSEO\Plugin {
 
 			// Run pre-updates.
 			$this->preUpdates = $this->pro ? new Pro\Main\PreUpdates() : new Common\Main\PreUpdates();
+
+			// Run the migration runner. Hosts the new, individually-tracked schema repairs
+			// that don't rely on lastActiveVersion as a "did it run?" signal — verify() is.
+			// Runs after preUpdates so legacy version-gated work has already had its turn.
+			$this->migrationRunner = new Common\Main\Migrations\MigrationRunner();
+			$this->migrationRunner->register( new Common\Main\Migrations\Definitions\DropLegacyCacheIndexes() );
+			$this->migrationRunner->run();
 		}
 
 		/**

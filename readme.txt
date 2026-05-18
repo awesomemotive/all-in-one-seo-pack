@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 6.9
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 4.9.7.1
+Stable tag: 4.9.7.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -231,6 +231,10 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.9.7.2**
+
+* Fixed: Cache table on some sites was left in a corrupted state after the 4.9.7 update due to a race condition during the migration, causing cache writes to silently overwrite unrelated entries. The new migration runner now retries the repair until it verifies the state is clean.
+
 **New in Version 4.9.7.1**
 
 * Fixed: Resolved an issue where some sites could experience a fatal error and become inaccessible due to a corrupted internal cache entry.
@@ -434,6 +438,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.9.7.1 =
+= 4.9.7.2 =
 
 This update adds major improvements and bug fixes.

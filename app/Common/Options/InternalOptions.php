@@ -48,6 +48,7 @@ class InternalOptions {
 		// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 		'internal'     => [
 			'lastActiveVersion' => [ 'type' => 'string', 'default' => '0.0' ],
+			'lastSchemaVersion' => [ 'type' => 'string', 'default' => '0.0' ],
 			'migratedVersion'   => [ 'type' => 'string' ],
 			'headlineAnalysis'  => [
 				'headlines' => [ 'type' => 'array', 'default' => [] ]

@@ -74,6 +74,15 @@ abstract class AIOSEOAbstract {
 	public $preUpdates = null;
 
 	/**
+	 * MigrationRunner class instance.
+	 *
+	 * @since 4.9.7.2
+	 *
+	 * @var \AIOSEO\Plugin\Common\Main\Migrations\MigrationRunner
+	 */
+	public $migrationRunner = null;
+
+	/**
 	 * Db class instance.
 	 * This prop is set for backwards compatibility.
 	 *

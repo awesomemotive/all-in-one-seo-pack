@@ -46,14 +46,16 @@ class PreUpdates {
 			aioseo()->core->cache->delete( 'db_schema' );
 		}
 
-		if ( version_compare( $lastActiveVersion, '4.9.7.1', '<' ) ) {
-			$this->dropLegacyUniqueIndexes();
-
-			// Wipe every cache row on affected sites — the unique-index collision on `key=''`
-			// meant earlier writes have been overwriting the wrong rows. Cleaner to repopulate
-			// from scratch than to leave stale wrong-name-to-value mappings lying around.
-			aioseo()->core->cache->clear();
-		}
+		// The legacy `< 4.9.7.1` block that used to drop ndx_aioseo_cache_key and
+		// ndx_aioseo_crawl_cleanup_blocked_args_key_value_hash lived here. It was
+		// gated on lastActiveVersion, which Updates::updateLatestVersion() bumps
+		// regardless of whether the migration actually completed — leaving a
+		// non-trivial set of sites with the version flag advanced but the legacy
+		// indexes still present, silently corrupting cache writes via ON DUPLICATE
+		// KEY UPDATE collisions on `key=''`. Ownership of that repair moved to
+		// {@see \AIOSEO\Plugin\Common\Main\Migrations\Definitions\DropLegacyCacheIndexes},
+		// where the MigrationRunner uses verify() as the truth signal and keeps
+		// retrying until the indexes are confirmed gone.
 	}
 
 	/**
@@ -436,51 +438,6 @@ class PreUpdates {
 			aioseo()->core->db->execute( "TRUNCATE TABLE {$tableName}" );
 
 			aioseo()->core->db->releaseLock( 'aioseo_add_is_object_column' );
-		}
-	}
-
-	/**
-	 * Drops the legacy unique indexes left behind after the 4.9.7 column renames
-	 * (`aioseo_cache.key` -> `name`, `aioseo_crawl_cleanup_blocked_args.key_value_hash`
-	 * -> `param_value_hash`). The new write path does not set the legacy column, but
-	 * when its post-migration DEFAULT ends up as `''` instead of `NULL` on some
-	 * MariaDB builds, the surviving unique index collides on every INSERT and
-	 * `ON DUPLICATE KEY UPDATE` corrupts an unrelated row.
-	 *
-	 * Idempotent — indexes are only dropped if present.
-	 *
-	 * @since 4.9.7.1
-	 *
-	 * @return void
-	 */
-	public function dropLegacyUniqueIndexes() {
-		$db = aioseo()->core->db->db;
-
-		$indexes = [
-			$db->prefix . 'aioseo_cache'                      => 'ndx_aioseo_cache_key',
-			$db->prefix . 'aioseo_crawl_cleanup_blocked_args' => 'ndx_aioseo_crawl_cleanup_blocked_args_key_value_hash',
-		];
-
-		foreach ( $indexes as $tableName => $indexName ) {
-			$indexExists = $db->get_var(
-				$db->prepare(
-					'SELECT INDEX_NAME
-					FROM INFORMATION_SCHEMA.STATISTICS
-					WHERE TABLE_SCHEMA = DATABASE()
-					AND TABLE_NAME = %s
-					AND INDEX_NAME = %s',
-					$tableName,
-					$indexName
-				)
-			);
-
-			if ( empty( $indexExists ) ) {
-				continue;
-			}
-
-			// Use backticks on identifiers; both names are hardcoded above, no user input
-			// reaches this query.
-			aioseo()->core->db->execute( "ALTER TABLE `{$tableName}` DROP INDEX `{$indexName}`" );
 		}
 	}
 }

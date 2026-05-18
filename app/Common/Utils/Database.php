@@ -2122,8 +2122,15 @@ class Database {
 
 		if ( $acquired ) {
 			// Register a shutdown function to always release the lock even if a fatal error occurs.
+			// Wrap in suppress_errors() — by shutdown time the wpdb connection state may already
+			// be unstable (other plugins' unbuffered queries left mid-result, mid-destructor
+			// teardown, etc.), surfacing as "Commands out of sync" warnings on the RELEASE_LOCK
+			// query. The release is best-effort: MySQL frees the lock when the connection closes
+			// regardless, so logging that benign warning every request only adds debug.log noise.
 			register_shutdown_function( function () use ( $lockName ) {
+				$previous = $this->db->suppress_errors( true );
 				$this->releaseLock( $lockName );
+				$this->db->suppress_errors( $previous );
 			} );
 		}
 
