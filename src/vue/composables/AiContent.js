@@ -61,7 +61,6 @@ export const useAiContent = () => {
 	]
 
 	const imageQualityOptions = [
-		{ label: __('High', td), value: 'high' },
 		{ label: __('Medium', td), value: 'medium' },
 		{ label: __('Low', td), value: 'low' }
 	]
@@ -81,6 +80,24 @@ export const useAiContent = () => {
 		{ label: __('Landscape (3:2)', td), value: 'landscape' },
 		{ label: __('Portrait (2:3)', td), value: 'portrait' },
 		{ label: __('Square (1:1)', td), value: 'square' }
+	]
+
+	const imageModelOptions = [
+		{
+			label           : __('Nano Banana 2', td),
+			value           : 'gemini-3.1-flash-image',
+			description     : __('Google\'s state-of-the-art image model. Excels at photorealism, accurate in-image text, and creative edits.', td),
+			badge           : { text: __('New', td), color: 'green' },
+			supportsQuality : false,
+			flatCost        : 1000
+		},
+		{
+			label           : __('GPT Image 2', td),
+			value           : 'gpt-image-2',
+			description     : __('OpenAI\'s state-of-the-art model with precise text rendering and high-fidelity output.', td),
+			badge           : { text: __('Updated', td), color: 'blue' },
+			supportsQuality : true
+		}
 	]
 
 	const getAspectRatioFromDimensions = (width, height) => {
@@ -133,6 +150,7 @@ export const useAiContent = () => {
 	const strings = {
 		credits    : __('Credits', td),
 		disclaimer : sprintf(
+			// translators: %1$s - A "Learn more" link.
 			__('AI-generated content could be inaccurate or biased. %1$s', td),
 			links.getDocLink(GLOBAL_STRINGS.learnMore, 'aiDisclaimer', true)
 		),
@@ -146,6 +164,7 @@ export const useAiContent = () => {
 		imageQuality     : __('Quality', td),
 		imageStyle       : __('Style', td),
 		imageAspectRatio : __('Aspect Ratio', td),
+		imageModel       : __('Image Model', td),
 		noContentWarning : sprintf(
 			// Translators: 1 - Minimum number of characters.
 			__('Your post is too short to generate AI content. Please add more content. For the best results, we recommend adding at least %1$d characters.', td),
@@ -169,6 +188,7 @@ export const useAiContent = () => {
 		hasEnoughContent,
 		hasEnoughCredits,
 		imageAspectRatioOptions,
+		imageModelOptions,
 		imageQualityOptions,
 		imageStyleOptions,
 		loadingText,

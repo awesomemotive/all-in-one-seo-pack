@@ -27,8 +27,8 @@
 		:close-on-select="closeOnSelect"
 		@search-change="searchChange"
 		@tag="addTag"
-		@open="$emit('open')"
-		@close="$emit('close')"
+		@open="onOpen"
+		@close="onClose"
 		ref="aioseo-select"
 	>
 		<template #singleLabel="{ option }">
@@ -169,6 +169,13 @@ export default {
 			default () {
 				return true
 			}
+		},
+		// When true, the dropdown panel is positioned with `position: fixed` and tracked
+		// against the trigger so it escapes any `overflow: hidden` / scroll-containing
+		// ancestor. Use for selects rendered inside modals or other constrained surfaces.
+		floatDropdown : {
+			type    : Boolean,
+			default : false
 		}
 	},
 	data () {
@@ -267,6 +274,68 @@ export default {
 					}
 				})
 			})
+		},
+		onOpen () {
+			this.$emit('open')
+			if (!this.floatDropdown) {
+				return
+			}
+			this.$nextTick(() => this.positionFloatingDropdown())
+			window.addEventListener('scroll', this.positionFloatingDropdown, true)
+			window.addEventListener('resize', this.positionFloatingDropdown)
+		},
+		onClose () {
+			this.$emit('close')
+			if (!this.floatDropdown) {
+				return
+			}
+			window.removeEventListener('scroll', this.positionFloatingDropdown, true)
+			window.removeEventListener('resize', this.positionFloatingDropdown)
+			// Don't strip the inline positioning here: the panel is still rendered while it
+			// fades out, and reverting to vue-multiselect's base styles mid-fade snaps it
+			// above the trigger (a visible flicker). positionFloatingDropdown() rewrites every
+			// property on the next open, so leaving the stale values behind is harmless.
+		},
+		positionFloatingDropdown () {
+			const el = this.$refs['aioseo-select']?.$el
+			if (!el) {
+				return
+			}
+			const wrapper = el.querySelector('.multiselect__content-wrapper')
+			const trigger = el.querySelector('.multiselect__tags')
+			if (!wrapper || !trigger) {
+				return
+			}
+
+			const rect           = trigger.getBoundingClientRect()
+			const viewportHeight = window.innerHeight
+
+			// vue-multiselect opens the panel with `transition: all 0.15s` (it only means to
+			// fade opacity). That `all` also animates the position/size we set below, so the
+			// panel visibly slides and expands into place — scope it to opacity to kill the jerk.
+			wrapper.style.transition = 'opacity 0.15s ease'
+			// Apply fixed positioning and the final width before measuring height, so the
+			// measurement reflects how the option text wraps. `bottom: auto` neutralizes
+			// vue-multiselect's `.multiselect--above { bottom: 100% }`: without it an
+			// open-above panel is constrained by both top and bottom and collapses to ~1px.
+			wrapper.style.position  = 'fixed'
+			wrapper.style.bottom    = 'auto'
+			wrapper.style.left      = `${rect.left}px`
+			wrapper.style.width     = `${rect.width}px`
+			wrapper.style.maxHeight = '300px'
+			// Above the modal stack — base modals in this app top out around 9999.
+			wrapper.style.zIndex    = '100000'
+
+			const spaceBelow  = viewportHeight - rect.bottom
+			const spaceAbove  = rect.top
+			const panelHeight = wrapper.offsetHeight
+			const openAbove   = panelHeight > spaceBelow && spaceAbove > spaceBelow
+			const maxHeight   = Math.max(120, Math.min(300, (openAbove ? spaceAbove : spaceBelow) - 8))
+
+			wrapper.style.maxHeight = `${maxHeight}px`
+			wrapper.style.top       = openAbove
+				? `${rect.top - Math.min(panelHeight, maxHeight)}px`
+				: `${rect.bottom}px`
 		}
 	},
 	mounted () {
@@ -275,6 +344,12 @@ export default {
 		// Initialize internal options when preserveOptions is enabled
 		if (this.preserveOptions && 0 < this.options.length) {
 			this.internalOptions = [ ...this.options ]
+		}
+	},
+	beforeUnmount () {
+		if (this.floatDropdown) {
+			window.removeEventListener('scroll', this.positionFloatingDropdown, true)
+			window.removeEventListener('resize', this.positionFloatingDropdown)
 		}
 	}
 }

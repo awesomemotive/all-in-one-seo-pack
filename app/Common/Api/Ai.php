@@ -506,6 +506,12 @@ class Ai {
 		$postId          = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
 		$selectedImageId = ! empty( $body['selectedImageId'] ) ? (int) $body['selectedImageId'] : 0;
 
+		$allowedModels = [ 'gemini-3.1-flash-image', 'gpt-image-2' ];
+		$model         = ! empty( $body['model'] ) ? sanitize_text_field( $body['model'] ) : 'gemini-3.1-flash-image';
+		if ( ! in_array( $model, $allowedModels, true ) ) {
+			$model = 'gemini-3.1-flash-image';
+		}
+
 		if ( ! current_user_can( 'edit_post', $postId ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
@@ -533,6 +539,7 @@ class Ai {
 					'quality'     => $quality,
 					'style'       => $style,
 					'aspectRatio' => $aspectRatio,
+					'model'       => $model,
 					'image'       => aioseo()->helpers->getBase64FromAttachment( $selectedImageId )
 				] )
 			] );
@@ -561,6 +568,7 @@ class Ai {
 					'quality'       => $quality,
 					'style'         => $style,
 					'aspectRatio'   => $aspectRatio,
+					'model'         => $model,
 					'parentImageId' => $foundSelectedImage['id'] ?? 0
 				] );
 			} catch ( \Exception $e ) {

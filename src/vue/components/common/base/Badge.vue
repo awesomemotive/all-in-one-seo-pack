@@ -12,7 +12,7 @@ defineProps({
 	color : {
 		type        : String,
 		default     : 'black',
-		description : 'Badge color(green|red|orange|black)'
+		description : 'Badge color(green|red|orange|black|blue)'
 	},
 	text : {
 		type        : [ String, Number ],
@@ -24,6 +24,8 @@ defineProps({
 
 <style lang="scss" scoped>
 .aioseo-badge {
+  border-radius: 10px;
+
   &.black {
     color: $black;
     border: 1px solid $black;
@@ -46,6 +48,12 @@ defineProps({
     color: $orange;
     border: 1px solid $orange;
     background-color: #fffbeb !important;
+  }
+
+  &.blue {
+    color: $blue;
+    border: 1px solid $blue;
+    background-color: #eff6ff !important;
   }
 }
 </style>

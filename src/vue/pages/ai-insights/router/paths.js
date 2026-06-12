@@ -42,5 +42,16 @@ export default [
 			name           : __('AI Content', td),
 			showSaveButton : true
 		}
+	},
+	{
+		path      : '/mcp',
+		name      : 'mcp',
+		component : loadView('Main'),
+		meta      : {
+			access         : 'aioseo_ai_insights_settings',
+			name           : __('MCP', td),
+			showSaveButton : false,
+			label          : 'new'
+		}
 	}
 ]

@@ -44,7 +44,8 @@ class Options {
 			'audience'         => [ 'type' => 'string', 'default' => 'general' ],
 			'imageQuality'     => [ 'type' => 'string', 'default' => 'medium' ],
 			'imageStyle'       => [ 'type' => 'string', 'default' => 'auto' ],
-			'imageAspectRatio' => [ 'type' => 'string', 'default' => 'landscape' ]
+			'imageAspectRatio' => [ 'type' => 'string', 'default' => 'landscape' ],
+			'imageModel'       => [ 'type' => 'string', 'default' => 'gemini-3.1-flash-image' ]
 		],
 		'breadcrumbs'      => [
 			'separator'             => [ 'type' => 'string', 'default' => '&raquo;' ],

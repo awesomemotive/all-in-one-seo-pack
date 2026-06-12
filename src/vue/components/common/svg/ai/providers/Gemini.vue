@@ -12,15 +12,8 @@
 	</svg>
 </template>
 
-<script>
-export default {
-	name : 'GeminiIcon',
-	setup () {
-		// Generate a unique ID per component instance
-		const uniqueId = Math.random().toString(36).substring(2, 11)
-		return {
-			uniqueId
-		}
-	}
-}
+<script setup>
+import { useId } from 'vue'
+
+const uniqueId = useId()
 </script>

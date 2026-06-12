@@ -78,15 +78,6 @@ class Addons {
 	private $newsSitemap = null;
 
 	/**
-	 * The main REST API addon class.
-	 *
-	 * @since 4.4.2
-	 *
-	 * @var \AIOSEO\Plugin\Addon\RestApi\RestApi
-	 */
-	private $restApi = null;
-
-	/**
 	 * The main Video Sitemap addon class.
 	 *
 	 * @since 4.4.2
@@ -156,6 +147,7 @@ class Addons {
 	 *
 	 * @since   4.0.0
 	 * @version 4.9.7.2 Strict null cache-miss check; non-array values fall back to {@see self::getDefaultAddons()} to prevent PHP 8+ array_filter/foreach TypeErrors.
+	 * @version 4.9.8  Also filter out the merged aioseo-rest-api addon.
 	 *
 	 * @param  boolean $flushCache Whether or not to flush the cache.
 	 * @return array               An array of addon data.
@@ -175,10 +167,13 @@ class Addons {
 			$addons = $this->getDefaultAddons();
 		}
 
-		$addons = array_values( array_filter( $addons, function( $addon ) {
-			if ( is_object( $addon ) && ! empty( $addon->sku ) && 'aioseo-redirects' === $addon->sku ) {
+		// Addons that have since been merged into the core plugin and should no longer be listed.
+		$mergedSkus = [ 'aioseo-redirects', 'aioseo-rest-api' ];
+
+		$addons = array_values( array_filter( $addons, function( $addon ) use ( $mergedSkus ) {
+			if ( is_object( $addon ) && ! empty( $addon->sku ) && in_array( $addon->sku, $mergedSkus, true ) ) {
 				return false;
-			} elseif ( is_array( $addon ) && ! empty( $addon['sku'] ) && 'aioseo-redirects' === $addon['sku'] ) {
+			} elseif ( is_array( $addon ) && ! empty( $addon['sku'] ) && in_array( $addon['sku'], $mergedSkus, true ) ) {
 				return false;
 			}
 
@@ -750,7 +745,8 @@ class Addons {
 	/**
 	 * Retrieves a default list of addons if the API cannot be reached.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.9.8 Removed the aioseo-rest-api addon since it was merged into the core plugin.
 	 *
 	 * @return array An array of addons.
 	 */
@@ -954,39 +950,6 @@ class Addons {
 				'canActivate'        => false,
 				'canUpdate'          => false,
 				'capability'         => $this->getManageCapability( 'aioseo-index-now' ),
-				'minimumVersion'     => '0.0.0',
-				'hasMinimumVersion'  => false
-			],
-			[
-				'sku'                => 'aioseo-rest-api',
-				'name'               => 'REST API',
-				'version'            => '1.0.0',
-				'image'              => null,
-				'icon'               => 'svg-code',
-				'levels'             => [
-					'plus',
-					'pro',
-					'elite'
-				],
-				'currentLevels'      => [
-					'plus',
-					'pro',
-					'elite'
-				],
-				'requiresUpgrade'    => true,
-				'description'        => '<p>Manage your post and term SEO meta via the WordPress REST API. This addon also works seamlessly with headless WordPress installs.</p>', // phpcs:ignore Generic.Files.LineLength.MaxExceeded
-				'descriptionVersion' => 0,
-				'downloadUrl'        => '',
-				'productUrl'         => 'https://aioseo.com/feature/rest-api/',
-				'learnMoreUrl'       => 'https://aioseo.com/feature/rest-api/',
-				'manageUrl'          => null,
-				'basename'           => 'aioseo-rest-api/aioseo-rest-api.php',
-				'installed'          => false,
-				'isActive'           => false,
-				'canInstall'         => false,
-				'canActivate'        => false,
-				'canUpdate'          => false,
-				'capability'         => null,
 				'minimumVersion'     => '0.0.0',
 				'hasMinimumVersion'  => false
 			],

@@ -30,13 +30,13 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 				value : null,
 				id    : 'aioseo-ai-image-generator-input-quality'
 			},
-			style : {
-				value : null,
-				id    : 'aioseo-ai-image-generator-input-style'
-			},
 			aspectRatio : {
 				value : null,
 				id    : 'aioseo-ai-image-generator-input-aspect-ratio'
+			},
+			model : {
+				value : null,
+				id    : 'aioseo-ai-image-generator-input-model'
 			},
 			isGenerating          : false,
 			generationElapsedTime : null
@@ -79,10 +79,29 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 			const optionsStore        = useOptionsStore()
 			const costPerFeature      = optionsStore.internalOptions?.internal?.ai?.costPerFeature || {}
 			const imageGeneratorCosts = costPerFeature.imageGenerator || {}
+			const quality             = state.form.quality.value?.value
 
-			const quality = state.form.quality.value?.value
+			// Backend per-model cost wins — keyed by the vendor slug we send on the wire.
+			// Two shapes are accepted: a flat number (flat-cost models like Nano Banana) or
+			// an object of `{ quality: credits }` for models with quality tiers.
+			const modelSlug = state.form.model.value?.value
+			const modelCost = modelSlug ? imageGeneratorCosts[modelSlug] : undefined
+			if ('number' === typeof modelCost || 'string' === typeof modelCost) {
+				return Number(modelCost)
+			}
+			if (modelCost && 'object' === typeof modelCost && quality && modelCost[quality] !== undefined) {
+				return Number(modelCost[quality])
+			}
+
+			// Plugin's flat default for models that don't accept a quality.
+			const flatCost = state.form.model.value?.flatCost
+			if (flatCost) {
+				return Number(flatCost)
+			}
+
 			if (quality && imageGeneratorCosts[quality]) {
-				return imageGeneratorCosts[quality]
+				// Backend can serialize costs as strings — coerce so callers get a consistent Number for .toLocaleString().
+				return Number(imageGeneratorCosts[quality])
 			}
 
 			// Fallback to hardcoded values.
@@ -91,11 +110,21 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 					return 250
 				case 'medium':
 					return 1000
-				case 'high':
-					return 5000
 			}
 
 			return 0
+		},
+		// Single gate for both the generate and regenerate submit buttons: enough credits,
+		// a long-enough prompt, and — when editing a selected image — a prompt that differs
+		// from that image's (no point re-running an identical edit).
+		canGenerate (state) {
+			const optionsStore = useOptionsStore()
+
+			const hasEnoughCredits  = optionsStore.internalOptions.internal.ai.credits.remaining >= this.generationPrice
+			const isPromptValid     = this.formPrompt.length >= state.form.prompt.minlength
+			const isPromptUnchanged = !!this.selectedImage && this.selectedImage.prompt === this.formPrompt
+
+			return hasEnoughCredits && isPromptValid && !isPromptUnchanged
 		},
 		isGenerationTakingTooLong : state => {
 			if (!state.form.isGenerating || !state.form.generationElapsedTime) {
@@ -110,8 +139,8 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 			const {
 				getAspectRatioFromDimensions,
 				imageQualityOptions,
-				imageStyleOptions,
-				imageAspectRatioOptions
+				imageAspectRatioOptions,
+				imageModelOptions
 			} = useAiContent()
 
 			const optionsStore = useOptionsStore()
@@ -119,8 +148,8 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 			this.images.selected = [ image ]
 
 			this.form.prompt.value  = image?.prompt || ''
-			this.form.quality.value = imageQualityOptions.find(o => o.value === image?.quality) || imageQualityOptions.find(o => o.value === optionsStore.options.aiContent.imageQuality)
-			this.form.style.value   = imageStyleOptions.find(o => o.value === image?.style) || imageStyleOptions.find(o => o.value === optionsStore.options.aiContent.imageStyle)
+			this.form.quality.value = imageQualityOptions.find(o => o.value === image?.quality) || imageQualityOptions.find(o => o.value === optionsStore.options.aiContent.imageQuality) || imageQualityOptions[0]
+			this.form.model.value   = imageModelOptions.find(o => o.value === image?.model) || imageModelOptions.find(o => o.value === optionsStore.options.aiContent.imageModel) || imageModelOptions[0]
 
 			const aspectRatioValue = image?.aspectRatio || getAspectRatioFromDimensions(image?.width, image?.height)
 
@@ -142,8 +171,8 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 				.send({
 					prompt          : this.formPrompt,
 					quality         : this.form.quality.value.value,
-					style           : this.form.style.value.label,
 					aspectRatio     : this.form.aspectRatio.value.value,
+					model           : this.form.model.value?.value,
 					selectedImageId : this.selectedImage?.id || null,
 					postId          : postEditorStore.currentPost.id || null
 				})
@@ -221,13 +250,13 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 
 			const {
 				imageQualityOptions,
-				imageStyleOptions,
-				imageAspectRatioOptions
+				imageAspectRatioOptions,
+				imageModelOptions
 			} = useAiContent()
 
-			this.form.quality.value     = imageQualityOptions.find(o => o.value === optionsStore.options.aiContent.imageQuality)
-			this.form.style.value       = imageStyleOptions.find(o => o.value === optionsStore.options.aiContent.imageStyle)
+			this.form.quality.value     = imageQualityOptions.find(o => o.value === optionsStore.options.aiContent.imageQuality) || imageQualityOptions[0]
 			this.form.aspectRatio.value = imageAspectRatioOptions.find(o => o.value === optionsStore.options.aiContent.imageAspectRatio)
+			this.form.model.value       = imageModelOptions.find(o => o.value === optionsStore.options.aiContent.imageModel) || imageModelOptions[0]
 		}
 	}
 })

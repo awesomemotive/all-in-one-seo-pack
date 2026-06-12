@@ -276,6 +276,57 @@ class Access {
 	}
 
 	/**
+	 * Unified access check supporting the same shorthand the AIOSEO REST routes use.
+	 *
+	 * Accepts:
+	 *   - 'all' or 'everyone' — any logged-in user.
+	 *   - 'any'               — any user with at least one AIOSEO capability.
+	 *   - 'options'           — any user with at least one non-page AIOSEO capability
+	 *                           (i.e. excludes per-post `aioseo_page_*` caps).
+	 *   - string capability   — passed through to {@see Access::hasCapability()}.
+	 *   - array of caps       — OR semantics, passed through to {@see Access::hasCapability()}.
+	 *
+	 * Admins/superadmins always pass.
+	 *
+	 * @since 4.9.8
+	 *
+	 * @param  string|array $access The access declaration.
+	 * @return bool
+	 */
+	public function hasAccess( $access ) {
+		if ( $this->isAdmin() ) {
+			return true;
+		}
+
+		if ( 'all' === $access || 'everyone' === $access ) {
+			return is_user_logged_in();
+		}
+
+		if ( 'any' === $access || 'options' === $access ) {
+			if ( ! is_user_logged_in() ) {
+				return false;
+			}
+
+			$aioseoCaps = $this->getCapabilityList();
+			if ( 'options' === $access ) {
+				$aioseoCaps = array_filter( $aioseoCaps, function( $capability ) {
+					return 0 !== strpos( $capability, 'aioseo_page_' );
+				} );
+			}
+
+			foreach ( wp_get_current_user()->get_role_caps() as $capability => $enabled ) {
+				if ( $enabled && in_array( $capability, $aioseoCaps, true ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		return $this->hasCapability( $access );
+	}
+
+	/**
 	 * Check if the passed in role can publish posts.
 	 *
 	 * @since 4.0.9

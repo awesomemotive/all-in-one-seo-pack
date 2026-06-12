@@ -226,7 +226,8 @@ export default {
 				'broken-link-checker',
 				'conversion-tools',
 				'optimized-search-appearance',
-				'sitemaps'
+				'sitemaps',
+				'translation'
 			]
 
 			// Let's preselect some features based on the category set.
@@ -241,18 +242,15 @@ export default {
 					features.push('aioseo-index-now')
 					features.push('aioseo-link-assistant')
 					features.push('aioseo-news-sitemap')
-					features.push('aioseo-rest-api')
 					features.push('aioseo-video-sitemap')
 					break
 				case 'online-store':
 					features.push('aioseo-index-now')
 					features.push('aioseo-link-assistant')
-					features.push('aioseo-rest-api')
 					features.push('aioseo-video-sitemap')
 					break
 				case 'small-offline-business':
 					features.push('aioseo-local-business')
-					features.push('aioseo-rest-api')
 					features.push('aioseo-video-sitemap')
 					break
 				case 'corporation':
@@ -260,7 +258,6 @@ export default {
 					features.push('aioseo-link-assistant')
 					features.push('aioseo-local-business')
 					features.push('aioseo-news-sitemap')
-					features.push('aioseo-rest-api')
 					features.push('aioseo-video-sitemap')
 					break
 			}

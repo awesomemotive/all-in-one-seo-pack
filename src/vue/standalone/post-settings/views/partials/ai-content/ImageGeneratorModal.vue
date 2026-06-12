@@ -90,7 +90,6 @@ const aiImageGeneratorStore = useAiImageGeneratorStore()
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 const {
-	hasEnoughCredits,
 	strings : aiContentStrings
 } = useAiContent()
 
@@ -119,12 +118,10 @@ defineProps({
 })
 
 const buttonStates = computed(() => {
-	const submitDisabled = !hasEnoughCredits(aiImageGeneratorStore.generationPrice) || !aiImageGeneratorStore.formPrompt || aiImageGeneratorStore.formPrompt.length < aiImageGeneratorStore.form.prompt.minlength
-
 	return {
 		submit : {
 			show     : 'generate' === aiImageGeneratorStore.currentScreen && !aiImageGeneratorStore.images.selected.length,
-			disabled : submitDisabled,
+			disabled : !aiImageGeneratorStore.canGenerate,
 			loading  : aiImageGeneratorStore.form.isGenerating,
 			text     : sprintf(
 				// Translators: 1 - Number of credits.

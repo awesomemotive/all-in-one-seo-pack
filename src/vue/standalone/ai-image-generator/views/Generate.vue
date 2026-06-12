@@ -157,7 +157,7 @@ const displayImages = computed(() => {
 		gap: 20px;
 
 		&--one {
-			grid-template-columns: minmax(0, 345px);
+			grid-template-columns: minmax(0, 440px);
 			justify-content: center;
 		}
 	}
@@ -166,7 +166,7 @@ const displayImages = computed(() => {
 		background: #e5e7eb;
 		border-radius: 4px;
 		margin: auto;
-		max-width: 345px;
+		max-width: 440px;
 		position: relative;
 		overflow: hidden;
 

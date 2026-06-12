@@ -381,17 +381,34 @@ trait Strings {
 	/**
 	 * Returns the given JSON formatted data tags as a comma separated list with their values instead.
 	 *
-	 * @since 4.1.0
+	 * @since   4.1.0
+	 * @version 4.9.8 Tolerate scalar tags and invalid JSON instead of throwing a TypeError.
 	 *
 	 * @param  string|array $tags The Array or JSON formatted data tags.
 	 * @return string             The comma separated values.
 	 */
 	public function jsonTagsToCommaSeparatedList( $tags ) {
-		$tags = is_string( $tags ) ? json_decode( $tags ) : $tags;
+		if ( is_string( $tags ) ) {
+			$decoded = json_decode( $tags );
+
+			// If the string isn't valid JSON, it's likely already a plain (comma separated) list.
+			if ( null === $decoded && 'null' !== strtolower( trim( $tags ) ) ) {
+				return $tags;
+			}
+
+			$tags = $decoded;
+		}
 
 		$values = [];
-		foreach ( $tags as $k => $tag ) {
-			$values[ $k ] = is_object( $tag ) ? $tag->value : $tag['value'];
+		foreach ( (array) $tags as $k => $tag ) {
+			if ( is_object( $tag ) ) {
+				$values[ $k ] = $tag->value ?? '';
+			} elseif ( is_array( $tag ) ) {
+				$values[ $k ] = $tag['value'] ?? '';
+			} else {
+				// Plain scalar tags (e.g. a JSON array of strings) are used as-is.
+				$values[ $k ] = (string) $tag;
+			}
 		}
 
 		return implode( ',', $values );

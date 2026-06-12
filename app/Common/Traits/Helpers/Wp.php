@@ -763,12 +763,16 @@ trait Wp {
 	/**
 	 * Returns the post title or a placeholder if there isn't one.
 	 *
-	 * @since 4.3.0
+	 * @since   4.3.0
+	 * @version 4.9.8 Casts $postId to int so a null/empty ID (e.g. a link row with no linked post) doesn't
+	 *                 trigger the "null array offset" deprecation on the static cache.
 	 *
 	 * @param  int    $postId The post ID.
 	 * @return string         The post title.
 	 */
 	public function getPostTitle( $postId ) {
+		$postId = (int) $postId;
+
 		static $titles = [];
 		if ( isset( $titles[ $postId ] ) ) {
 			return $titles[ $postId ];

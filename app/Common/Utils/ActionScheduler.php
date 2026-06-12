@@ -192,8 +192,8 @@ class ActionScheduler {
 			return false;
 		}
 
-		// Set lock for 5 seconds.
-		set_transient( $lockKey, 1, 5 );
+		// Set lock for 60 seconds.
+		set_transient( $lockKey, 1, 60 );
 
 		try {
 			if ( $forceSchedule || ! $this->isScheduled( $actionName, $args ) ) {
@@ -275,8 +275,8 @@ class ActionScheduler {
 			return false;
 		}
 
-		// Set lock for 5 seconds.
-		set_transient( $lockKey, 1, 5 );
+		// Set lock for 60 seconds.
+		set_transient( $lockKey, 1, 60 );
 
 		try {
 			if ( ! $this->isScheduled( $actionName, $args ) ) {
@@ -312,8 +312,8 @@ class ActionScheduler {
 			return;
 		}
 
-		// Set lock for 5 seconds.
-		set_transient( $lockKey, 1, 5 );
+		// Set lock for 60 seconds.
+		set_transient( $lockKey, 1, 60 );
 
 		try {
 			// Only schedule if not already scheduled to prevent duplicate actions.

@@ -1378,7 +1378,6 @@ export const UPSELL_FEATURE_LIST = [
 	__('User Access Control', td),
 	__('SEO for Categories, Tags and Custom Taxonomies', td),
 	__('Social meta for Categories, Tags and Custom Taxonomies', td),
-	__('REST API support', td),
 	__('Ad free (no banner adverts)', td)
 ]
 

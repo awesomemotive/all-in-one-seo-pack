@@ -42,6 +42,8 @@ const getRoute = computed(() => {
 				: defineAsyncComponent(() => import('./keyword-reports/Index.vue'))
 		case 'brand-tracker':
 			return defineAsyncComponent(() => import('./BrandTracker.vue'))
+		case 'mcp':
+			return defineAsyncComponent(() => import('./Mcp.vue'))
 		default:
 			return defineAsyncComponent(() => import('./keyword-reports/Index.vue'))
 	}
@@ -55,6 +57,7 @@ const preloadRouteComponents = () => {
 		import('./keyword-reports/Index.vue')
 		import('./keyword-reports/Report.vue')
 		import('./BrandTracker.vue')
+		import('./Mcp.vue')
 	}
 
 	if ('requestIdleCallback' in window) {

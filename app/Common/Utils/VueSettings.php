@@ -125,6 +125,8 @@ class VueSettings {
 			'llmsSitemap'                  => true,
 			'llmsSitemapAdvancedSettings'  => true,
 			'redirectLogsSettings'         => true,
+			'connectAiAgentsStatus'        => true,
+			'connectAiAgentsClients'       => true,
 		],
 		'toggledRadio'    => [
 			'breadcrumbsShowMoreSeparators' => false,

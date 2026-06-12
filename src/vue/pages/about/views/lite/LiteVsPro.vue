@@ -279,11 +279,12 @@ export default {
 				restApi : {
 					name : __('REST API', td),
 					lite : {
-						title : __('Not Available', td)
+						title       : __('Limited Support', td),
+						description : __('Manage SEO meta for Posts, Pages and custom Post Types via the WordPress REST API. Works seamlessly with headless WordPress installs.', td)
 					},
 					pro : {
-						title       : __('Available as Addon Plugin', td),
-						description : __('Manage your post and term SEO meta via the WordPress REST API. This addon also works seamlessly with headless WordPress installs. (Plus, Pro & Elite plans only)', td)
+						title       : __('Complete Support', td),
+						description : __('Manage SEO meta for Posts, Pages, custom Post Types + Categories, Tags and custom Taxonomies via the WordPress REST API. Works seamlessly with headless WordPress installs.', td)
 					}
 				},
 				support : {

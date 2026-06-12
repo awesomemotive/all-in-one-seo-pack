@@ -1,10 +1,10 @@
 === All in One SEO – Powerful SEO Plugin to Boost SEO Rankings & Increase Traffic ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
-Tested up to: 6.9
+Tested up to: 7.0
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 4.9.7.2
+Stable tag: 4.9.8
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -231,6 +231,14 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.9.8**
+
+* New: AIOSEO now integrates with the WordPress Abilities API, exposing your site's SEO data as abilities that AI agents can read and write.
+* New: AIOSEO now includes an MCP server so AI agents like Claude and Cursor can connect to your site and manage its SEO data directly.
+* New: The AIOSEO REST API addon has been deprecated as the API is now free for all users!
+* New: Added support for Nano Banana 2 and GPT Image 2 to Image Generator.
+* Fixed: AI Assistant icons no longer throw React errors or fail to render in the block editor on WordPress 7.0.
+
 **New in Version 4.9.7.2**
 
 * Fixed: Cache table on some sites was left in a corrupted state after the 4.9.7 update due to a race condition during the migration, causing cache writes to silently overwrite unrelated entries. The new migration runner now retries the repair until it verifies the state is clean.
@@ -438,6 +446,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.9.7.2 =
+= 4.9.8 =
 
 This update adds major improvements and bug fixes.

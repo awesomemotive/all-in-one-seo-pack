@@ -368,6 +368,10 @@ class Wizard {
 		if ( in_array( 'broken-link-checker', $features, true ) && ! $pluginData['brokenLinkChecker']['activated'] ) {
 			self::installBlc( $network );
 		}
+
+		if ( in_array( 'translation', $features, true ) && ! $pluginData['universally']['activated'] ) {
+			self::installUniversally( $network );
+		}
 	}
 
 	/**
@@ -442,6 +446,24 @@ class Wizard {
 		if ( self::installPlugin( $args, $network ) && function_exists( 'aioseoBrokenLinkChecker' ) ) {
 			aioseoBrokenLinkChecker()->core->cache->delete( 'activation_redirect' );
 		}
+	}
+
+	/**
+	 * Installs the Universally plugin.
+	 *
+	 * @since 4.9.8
+	 *
+	 * @param  bool $network Whether to install the plugin on the network.
+	 * @return void
+	 */
+	private static function installUniversally( $network ) {
+		$args = [
+			'id'                => 'universally',
+			'pluginName'        => 'Universally',
+			'notification-name' => 'install-universally'
+		];
+
+		self::installPlugin( $args, $network );
 	}
 
 	/**

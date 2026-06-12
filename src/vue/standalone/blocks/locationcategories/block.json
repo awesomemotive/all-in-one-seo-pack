@@ -5,6 +5,7 @@
 	"description": "Displays location categories.",
 	"category": "aioseo",
 	"textdomain": "all-in-one-seo-pack",
+	"attributes": {},
 	"supports": {
 		"html": false
 	}

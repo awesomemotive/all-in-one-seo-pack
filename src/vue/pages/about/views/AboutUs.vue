@@ -139,7 +139,7 @@ import smtpImg from '@/vue/assets/images/about/plugins/smtp.png'
 import spImg from '@/vue/assets/images/about/plugins/sp.png'
 import swpImg from '@/vue/assets/images/about/plugins/swp.svg'
 import tfImg from '@/vue/assets/images/about/plugins/tf.png'
-import tpImg from '@/vue/assets/images/about/plugins/tp.png'
+import universallyImg from '@/vue/assets/images/about/plugins/universally.svg'
 import wpformsImg from '@/vue/assets/images/about/plugins/wpforms.png'
 import wpspImg from '@/vue/assets/images/about/plugins/wpsp.png'
 import yfImg from '@/vue/assets/images/about/plugins/yf.png'
@@ -314,6 +314,15 @@ export default {
 					activated  : false,
 					loading    : false
 				},
+				universally : {
+					name        : 'Universally',
+					description : __('Translate your WordPress site into 110+ languages with AI. Universally adds multilingual SEO out of the box — translated URLs, hreflang tags, and translated metadata — so every language version of your site ranks in search.', td),
+					icon        : getAssetUrl(universallyImg),
+					installed   : false,
+					canInstall  : false,
+					activated   : false,
+					loading     : false
+				},
 				seedProd : {
 					name        : 'SeedProd Coming Soon',
 					description : __('The fastest drag & drop landing page builder for WordPress. Create custom landing pages without writing code, connect them with your CRM, collect subscribers, and grow your audience. Trusted by 1 million sites.', td),
@@ -330,15 +339,6 @@ export default {
 					canInstall : false,
 					activated  : false,
 					loading    : false
-				},
-				trustPulse : {
-					name        : 'TrustPulse',
-					description : __('Boost your sales and conversions by up to 15% with real-time social proof notifications. TrustPulse helps you show live user activity and purchases to help convince other users to purchase.', td),
-					icon        : getAssetUrl(tpImg),
-					installed   : false,
-					canInstall  : false,
-					activated   : false,
-					loading     : false
 				},
 				rafflePress : {
 					name        : 'RafflePress',
@@ -530,6 +530,10 @@ export default {
 		plugins () {
 			// Get description and logo for premium versions from free versions.
 			Object.keys(this.localPlugins).forEach(pluginName => {
+				// Skip plugins the store knows about but we no longer surface here (e.g. removed entries).
+				if (!this.pluginData[pluginName]) {
+					return
+				}
 				if (this.pluginData[pluginName].free) {
 					this.pluginData[pluginName].description = this.pluginData[this.pluginData[pluginName].free].description
 					this.pluginData[pluginName].icon        = this.pluginData[this.pluginData[pluginName].free].icon
@@ -586,10 +590,23 @@ export default {
 		}
 	},
 	mounted () {
-		this.localPlugins = { ...this.pluginsStore.plugins }
+		// Build localPlugins in the order pluginData declares, not whatever the store
+		// happens to return — so the visible order matches editorial intent.
+		const storePlugins = { ...this.pluginsStore.plugins }
+		this.localPlugins = {}
+		Object.keys(this.pluginData).forEach(pluginName => {
+			if (storePlugins[pluginName]) {
+				this.localPlugins[pluginName] = storePlugins[pluginName]
+			}
+		})
 
 		// Set installation and activation status for each plugin.
 		Object.keys(this.localPlugins).forEach(pluginName => {
+			// Skip plugins the store knows about but we no longer surface here.
+			if (!this.pluginData[pluginName]) {
+				delete this.localPlugins[pluginName]
+				return
+			}
 			this.pluginData[pluginName].installed   = this.localPlugins[pluginName].installed
 			this.pluginData[pluginName].canInstall  = this.localPlugins[pluginName].canInstall
 			this.pluginData[pluginName].canActivate = this.localPlugins[pluginName].canActivate

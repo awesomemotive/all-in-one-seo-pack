@@ -1,11 +1,25 @@
 import { createElement } from '@wordpress/element'
 
-export default createElement(
+/**
+ * AI Assistant icon as a component.
+ *
+ * NOTE: Must be a component, not a pre-built element. @wordpress/components' Icon re-spreads a raw
+ * SVG element's children into a fresh SVG, which throws "Objects are not valid as a React child" (v33+).
+ *
+ * @param {Object} props      Props forwarded by the consuming Icon/Button component.
+ * @param {number} props.size Width and height in pixels.
+ *
+ * @returns {Element} The AI Assistant icon.
+ */
+const AiAssistantIcon = ({ size = 24, ...props }) => createElement(
 	'svg',
 	{
 		className : 'aioseo-ai-content',
 		viewBox   : '0 0 24 24',
-		fill      : 'currentColor'
+		fill      : 'currentColor',
+		width     : size,
+		height    : size,
+		...props
 	},
 	createElement('path', {
 		d : 'M2.33301 14.1785V11.9999H9.95801V14.1785H2.33301ZM2.33301 9.82136V7.64279H14.3152V9.82136H2.33301ZM2.33301 5.46422V3.28564H14.3152V5.46422H2.33301Z'
@@ -17,3 +31,5 @@ export default createElement(
 		d : 'M15.9256 12.1288C16.0431 11.8114 16.492 11.8114 16.6094 12.1288L17.5264 14.6068C17.7233 15.139 18.1429 15.5586 18.6751 15.7555L21.1531 16.6725C21.4705 16.7899 21.4705 17.2388 21.1531 17.3563L18.6751 18.2732C18.1429 18.4701 17.7233 18.8897 17.5264 19.4219L16.6094 21.8999C16.492 22.2173 16.0431 22.2173 15.9256 21.8999L15.0087 19.4219C14.8118 18.8897 14.3922 18.4701 13.86 18.2732L11.382 17.3563C11.0646 17.2388 11.0646 16.7899 11.382 16.6725L13.86 15.7555C14.3922 15.5586 14.8118 15.139 15.0087 14.6068L15.9256 12.1288Z'
 	})
 )
+
+export default AiAssistantIcon

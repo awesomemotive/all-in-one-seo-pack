@@ -147,7 +147,8 @@ export default {
 			return (
 				this.setupWizardStore.features.includes('analytics') ||
 				this.setupWizardStore.features.includes('broken-link-checker') ||
-				this.setupWizardStore.features.includes('conversion-tools')
+				this.setupWizardStore.features.includes('conversion-tools') ||
+				this.setupWizardStore.features.includes('translation')
 			) &&
 			(
 				this.setupWizardStore.features.includes('aioseo-eeat') ||
@@ -156,15 +157,15 @@ export default {
 				this.setupWizardStore.features.includes('aioseo-link-assistant') ||
 				this.setupWizardStore.features.includes('aioseo-local-business') ||
 				this.setupWizardStore.features.includes('aioseo-news-sitemap') ||
-				this.setupWizardStore.features.includes('aioseo-rest-api') ||
 				this.setupWizardStore.features.includes('aioseo-video-sitemap')
 			)
 		},
 		showPluginsAddons () {
 			return (
-				!this.setupWizardStore.features.includes('analytics') ||
-				!this.setupWizardStore.features.includes('broken-link-checker') ||
-				!this.setupWizardStore.features.includes('conversion-tools')
+				!this.setupWizardStore.features.includes('analytics') &&
+				!this.setupWizardStore.features.includes('broken-link-checker') &&
+				!this.setupWizardStore.features.includes('conversion-tools') &&
+				!this.setupWizardStore.features.includes('translation')
 			) &&
 			(
 				this.setupWizardStore.features.includes('aioseo-eeat') ||
@@ -173,7 +174,6 @@ export default {
 				this.setupWizardStore.features.includes('aioseo-link-assistant') ||
 				this.setupWizardStore.features.includes('aioseo-local-business') ||
 				this.setupWizardStore.features.includes('aioseo-news-sitemap') ||
-				this.setupWizardStore.features.includes('aioseo-rest-api') ||
 				this.setupWizardStore.features.includes('aioseo-video-sitemap')
 			)
 		},
@@ -181,7 +181,8 @@ export default {
 			return (
 				this.setupWizardStore.features.includes('analytics') ||
 				this.setupWizardStore.features.includes('broken-link-checker') ||
-				this.setupWizardStore.features.includes('conversion-tools')
+				this.setupWizardStore.features.includes('conversion-tools') ||
+				this.setupWizardStore.features.includes('translation')
 			) &&
 			(
 				!this.setupWizardStore.features.includes('aioseo-eeat') &&
@@ -190,7 +191,6 @@ export default {
 				!this.setupWizardStore.features.includes('aioseo-link-assistant') &&
 				!this.setupWizardStore.features.includes('aioseo-local-business') &&
 				!this.setupWizardStore.features.includes('aioseo-news-sitemap') &&
-				!this.setupWizardStore.features.includes('aioseo-rest-api') &&
 				!this.setupWizardStore.features.includes('aioseo-video-sitemap')
 			)
 		},

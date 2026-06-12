@@ -18,7 +18,7 @@ export const aiFeatures = {
 			buttonSubmit : __('Generate Content', td)
 		},
 		excludedPostTypes : [],
-		isPopular         : true,
+		badge             : { text: __('Popular', td), color: 'orange' },
 		clickCallback     : () => {
 			const { wp } = window
 			const blockEditorSelect   = wp.data.select('core/block-editor')
@@ -69,7 +69,7 @@ export const aiFeatures = {
 			buttonSubmit : __('Generate Image', td)
 		},
 		excludedPostTypes : [],
-		isPopular         : true
+		badge             : { text: __('Updated', td), color: 'blue' }
 	},
 	schemas : {
 		slug    : 'schemas',

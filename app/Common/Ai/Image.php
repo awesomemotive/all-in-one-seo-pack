@@ -80,6 +80,7 @@ class Image {
 		$quality     = trim( $metadata['quality'] ?? '' );
 		$style       = trim( $metadata['style'] ?? '' );
 		$aspectRatio = trim( $metadata['aspectRatio'] ?? '' );
+		$model       = trim( $metadata['model'] ?? '' );
 
 		$filenameContext = substr( $prompt, 0, 25 ) . '-' . $quality . '-' . $style . '-' . $aspectRatio . '-' . date_i18n( 'Ymd-His' );
 		$filename        = 'aioseo-ai-' . aioseo()->helpers->toLowerCase( sanitize_file_name( $filenameContext ) ) . '.' . $format;
@@ -115,7 +116,8 @@ class Image {
 			'prompt'      => $prompt,
 			'quality'     => $quality,
 			'style'       => $style,
-			'aspectRatio' => $aspectRatio
+			'aspectRatio' => $aspectRatio,
+			'model'       => $model
 		] );
 
 		$parentImageId = ! empty( $metadata['parentImageId'] ) ? (int) $metadata['parentImageId'] : 0;
@@ -144,6 +146,7 @@ class Image {
 			'format'        => $format,
 			'height'        => $height,
 			'id'            => $attachmentId,
+			'model'         => $model,
 			'parentImageId' => $parentImageId,
 			'prompt'        => $prompt,
 			'quality'       => $quality,
@@ -273,6 +276,7 @@ class Image {
 			'format'        => $mimeType ? str_replace( 'image/', '', $mimeType ) : '',
 			'height'        => $height,
 			'id'            => $attachmentId,
+			'model'         => $aiData['model'] ?? null,
 			'parentImageId' => ! empty( $aiParent ) ? (int) $aiParent : 0,
 			'prompt'        => $aiData['prompt'] ?? null,
 			'quality'       => $aiData['quality'] ?? null,

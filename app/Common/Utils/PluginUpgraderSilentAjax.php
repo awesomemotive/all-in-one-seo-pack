@@ -33,6 +33,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 */
 	public $pluginLinks = [
 		'brokenLinkChecker'    => 'https://downloads.wordpress.org/plugin/broken-link-checker-seo.zip',
+		'universally'          => 'https://downloads.wordpress.org/plugin/universally-language-translation-multilingual-tool.zip',
 		'optinMonster'         => 'https://downloads.wordpress.org/plugin/optinmonster.zip',
 		'wpForms'              => 'https://downloads.wordpress.org/plugin/wpforms-lite.zip',
 		'miLite'               => 'https://downloads.wordpress.org/plugin/google-analytics-for-wordpress.zip',
@@ -65,6 +66,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 */
 	public $wpPluginLinks = [
 		'brokenLinkChecker' => 'https://wordpress.org/plugins/broken-link-checker-seo/',
+		'universally'       => 'https://wordpress.org/plugins/universally-language-translation-multilingual-tool/',
 		'optinMonster'      => 'https://wordpress.org/plugin/optinmonster/',
 		'wpForms'           => 'https://wordpress.org/plugin/wpforms-lite/',
 		'miLite'            => 'https://wordpress.org/plugin/google-analytics-for-wordpress/',
@@ -96,6 +98,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 */
 	public $pluginSlugs = [
 		'brokenLinkChecker'       => 'broken-link-checker-seo/aioseo-broken-link-checker.php',
+		'universally'             => 'universally-language-translation-multilingual-tool/universally.php',
 		'optinMonster'            => 'optinmonster/optin-monster-wp-api.php',
 		'wpForms'                 => 'wpforms-lite/wpforms.php',
 		'wpFormsPro'              => 'wpforms/wpforms.php',
@@ -142,6 +145,7 @@ class PluginUpgraderSilentAjax extends \Plugin_Upgrader {
 	 */
 	public $pluginAdminUrls = [
 		'brokenLinkChecker'       => 'admin.php?page=broken-link-checker#/settings',
+		'universally'             => 'admin.php?page=universally_settings',
 		'optinMonster'            => 'admin.php?page=optin-monster-api-settings',
 		'wpForms'                 => 'admin.php?page=wpforms-settings',
 		'wpFormsPro'              => 'admin.php?page=wpforms-settings',

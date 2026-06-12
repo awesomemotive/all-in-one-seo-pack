@@ -288,10 +288,6 @@ export default {
 					description : __('Our Google News Sitemap lets you control which content you submit to Google News and only contains articles that were published in the last 48 hours. In order to submit a News Sitemap to Google, you must have added your site to Google’s Publisher Center and had it approved.', td),
 					version     : 0
 				},
-				aioseoRestApi : {
-					description : __('Manage your post and term SEO meta via the WordPress REST API. This addon also works seamlessly with headless WordPress installs.', td),
-					version     : 0
-				},
 				aioseoVideoSitemap : {
 					description : __('The Video Sitemap works in much the same way as the XML Sitemap module, it generates an XML Sitemap specifically for video content on your site. Search engines use this information to display rich snippet information in search results.', td),
 					version     : 0

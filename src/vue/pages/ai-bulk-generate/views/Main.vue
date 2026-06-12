@@ -308,7 +308,11 @@ const strings = computed(() => {
 		pageName      : __('Bulk Generator', td),
 		goToPostsList : isAlt.value
 			? __('Back to Media Library', td)
-			: sprintf(__('Back to %1$s', td), postTypePluralLabel.value),
+			: sprintf(
+				// Translators: 1 - The post type plural label (e.g. "Posts", "Pages").
+				__('Back to %1$s', td),
+				postTypePluralLabel.value
+			),
 		noPostsSelected : isAlt.value
 			? __('No images were selected for bulk generation.', td)
 			: __('No posts were selected for bulk generation.', td),

@@ -41,6 +41,22 @@
 	  </template>
 	</core-settings-row>
 
+	<core-settings-row :name="aiContent.strings.imageModel">
+	  <template #content>
+		<base-select
+			size="medium"
+			:options="aiContent.imageModelOptions"
+			:searchable="false"
+			:modelValue="aiContent.imageModelOptions.find(o => o.value === optionsStore.options.aiContent.imageModel)"
+			@update:modelValue="value => optionsStore.options.aiContent.imageModel = value.value"
+		/>
+
+		<div class="aioseo-description">
+			{{ strings.imageModelDescription }}
+		</div>
+	  </template>
+	</core-settings-row>
+
 	<core-settings-row :name="aiContent.strings.imageQuality">
 	  <template #content>
 		<base-select
@@ -52,21 +68,6 @@
 
 		<div class="aioseo-description">
 			{{ strings.imageQualityDescription }}
-		</div>
-	  </template>
-	</core-settings-row>
-
-	<core-settings-row :name="aiContent.strings.imageStyle">
-	  <template #content>
-		<base-select
-			size="medium"
-			:options="aiContent.imageStyleOptions"
-			:modelValue="aiContent.imageStyleOptions.find(o => o.value === optionsStore.options.aiContent.imageStyle)"
-			@update:modelValue="value => optionsStore.options.aiContent.imageStyle = value.value"
-		/>
-
-		<div class="aioseo-description">
-			{{ strings.imageStyleDescription }}
 		</div>
 	  </template>
 	</core-settings-row>
@@ -131,8 +132,8 @@ export default {
 				toneDescription             : __('The default tone that characterizes your content.', td),
 				audience                    : __('Audience', td),
 				audienceDescription         : __('The default audience that typically reads your content.', td),
+				imageModelDescription       : __('The default AI model that is used by the AI Image Generator.', td),
 				imageQualityDescription     : __('The default image quality that is used by the AI Image Generator.', td),
-				imageStyleDescription       : __('The default image style that is used by the AI Image Generator.', td),
 				imageAspectRatioDescription : __('The default image aspect ratio that is used by the AI Image Generator.', td),
 				connect                     : __('Connect to AIOSEO AI', td)
 			}

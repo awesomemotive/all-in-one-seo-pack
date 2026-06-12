@@ -71,9 +71,12 @@ export const settings = {
 		const generalSidebarName = window.wp.data.useSelect(
 			select => select('core/edit-post').getActiveGeneralSidebarName()
 		)
-		if ('edit-post/block' === generalSidebarName) {
-			'function' !== typeof toggleSelection || toggleSelection(true)
-		}
+
+		useEffect(() => {
+			if ('edit-post/block' === generalSidebarName && 'function' === typeof toggleSelection) {
+				toggleSelection(true)
+			}
+		}, [ generalSidebarName ])
 
 		if (isSelected || $block) {
 			observeElement({
@@ -200,19 +203,23 @@ export const settings = {
 			})
 		}
 
-		const defaultTone = toneOptions.find(t => t.value === optionsStore.options.aiContent.tone) || toneOptions[0]
-		if (!attributes.tone) {
-			// Mark as non-persistent to avoid corrupting the undo history on block insertion.
-			wp.data.dispatch('core/block-editor').__unstableMarkNextChangeAsNotPersistent?.()
-			setAttributes({ tone: defaultTone.value })
-		}
+		// Apply default tone/audience after mount. Doing it during render updates the editor
+		// store mid-render, which trips React's "update a component while rendering" warning.
+		useEffect(() => {
+			if (!attributes.tone) {
+				const defaultTone = toneOptions.find(t => t.value === optionsStore.options.aiContent.tone) || toneOptions[0]
+				// Mark as non-persistent to avoid corrupting the undo history on block insertion.
+				wp.data.dispatch('core/block-editor').__unstableMarkNextChangeAsNotPersistent?.()
+				setAttributes({ tone: defaultTone.value })
+			}
 
-		const defaultAudience = audienceOptions.find(a => a.value === optionsStore.options.aiContent.audience) || audienceOptions[0]
-		if (!attributes.audience) {
-			// Mark as non-persistent to avoid corrupting the undo history on block insertion.
-			wp.data.dispatch('core/block-editor').__unstableMarkNextChangeAsNotPersistent?.()
-			setAttributes({ audience: defaultAudience.value })
-		}
+			if (!attributes.audience) {
+				const defaultAudience = audienceOptions.find(a => a.value === optionsStore.options.aiContent.audience) || audienceOptions[0]
+				// Mark as non-persistent to avoid corrupting the undo history on block insertion.
+				wp.data.dispatch('core/block-editor').__unstableMarkNextChangeAsNotPersistent?.()
+				setAttributes({ audience: defaultAudience.value })
+			}
+		}, [])
 
 		return (
 			<>
@@ -251,7 +258,7 @@ export const settings = {
 					<PanelBody initialOpen={true}>
 						<div
 							id={sidebarAppId}
-							class="aioseo-app"
+							className="aioseo-app"
 						/>
 					</PanelBody>
 				</InspectorControls>

@@ -12,18 +12,19 @@
 				<span class="aioseo-ai-content-feature-card-header-title-text">{{ feature.strings.name }}</span>
 			</div>
 
-			<div
-				v-if="feature.isPopular"
-			    class="popular-badge"
-			>
-				<span v-if="'sidebar' !== parentComponentContext">Popular</span>
+			<base-badge
+				v-if="feature.badge && 'sidebar' !== parentComponentContext"
+				:text="feature.badge.text"
+				:color="feature.badge.color"
+				class="aioseo-ai-content-feature-card-badge"
+			/>
 
-				<svg-star-outline
-					v-else
-					width="15"
-					height="15"
-				/>
-			</div>
+			<svg-star-outline
+				v-else-if="feature.badge"
+				width="15"
+				height="15"
+				class="aioseo-ai-content-feature-card-badge-icon"
+			/>
 		</div>
 
 		<div
@@ -90,6 +91,7 @@ import {
 	useOptionsStore
 } from '@/vue/stores'
 
+import BaseBadge from '@/vue/components/common/base/Badge'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import FaqsModal from './FaqsModal'
 import ImageGeneratorModal from './ImageGeneratorModal'
@@ -121,6 +123,7 @@ export default {
 		}
 	},
 	components : {
+		BaseBadge,
 		CoreTooltip,
 		FaqsModal,
 		ImageGeneratorModal,
@@ -177,7 +180,6 @@ export default {
 		--feature-card-header-title-text-font-size: 14px;
 		--feature-card-header-title-svg-size: 20px;
 		--feature-card-header-justify-content: space-between;
-		--feature-card-popular-badge-padding: 3px 8px;
 		--feature-card-btn-width: auto;
 	}
 
@@ -220,16 +222,12 @@ export default {
 		font-size: 14px;
 	}
 
-	.popular-badge {
-		background: #FEF3C7;
-		border: 1px solid #FBBF24;
-		border-radius: 4px;
-		display: inline-flex;
-		padding: var(--feature-card-popular-badge-padding, 2px);
-		font-weight: 700;
+	.aioseo-ai-content-feature-card-badge {
+		// Tighten the BaseBadge defaults so it sits naturally next to the feature title.
+		padding: 2px 8px;
 		font-size: 12px;
-		line-height: normal;
-		color: #D4790D;
+		line-height: 1.4;
+		font-weight: 700;
 	}
 
 	.aioseo-ai-content-feature-card-btn {

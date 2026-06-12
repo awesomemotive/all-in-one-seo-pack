@@ -327,7 +327,9 @@ namespace AIOSEO\Plugin {
 			$this->thirdParty         = new Common\ThirdParty\ThirdParty();
 			$this->writingAssistant   = new Common\WritingAssistant\WritingAssistant();
 			$this->llms               = $this->pro ? new Pro\Llms\Llms() : new Common\Llms\Llms();
+			$this->abilities          = $this->pro ? new Pro\Abilities\Abilities() : new Common\Abilities\Abilities();
 			$this->redirects          = $this->pro ? new Pro\Redirects\Redirects() : null;
+			$this->restApi            = $this->pro ? new Pro\RestApi\RestApi() : new Common\RestApi\RestApi();
 
 			if ( ! wp_doing_ajax() && ! wp_doing_cron() ) {
 				$this->rss       = new Common\Rss();
@@ -367,36 +369,52 @@ namespace AIOSEO\Plugin {
 		 * @return void
 		 */
 		public function loadAddons() {
-			$this->maybeDeactivateLegacyRedirectsAddon();
+			$this->maybeDeactivateLegacyAddons();
 
 			do_action( 'aioseo_loaded' );
 		}
 
 		/**
-		 * Deactivates the legacy Redirects addon since it's now integrated into the core plugin.
+		 * Deactivates legacy addons that have since been integrated into the core plugin.
 		 *
-		 * Without this, upgrading from older versions while the old addon is still activated
+		 * Without this, upgrading from older versions while an old addon is still activated
 		 * causes a fatal error because the addon tries to load files that no longer exist.
 		 *
-		 * @since 4.9.7
+		 * @since   4.9.7
+		 * @version 4.9.8 Renamed from maybeDeactivateLegacyRedirectsAddon(), generalized to also deactivate the legacy REST API addon and to handle network-activated installs on multisite.
 		 *
 		 * @return void
 		 */
-		private function maybeDeactivateLegacyRedirectsAddon() {
-			$redirectsPlugin = 'aioseo-redirects/aioseo-redirects.php';
+		private function maybeDeactivateLegacyAddons() {
+			$legacyAddons = [
+				'aioseo-redirects/aioseo-redirects.php' => 'aioseo_redirects_load',
+				'aioseo-rest-api/aioseo-rest-api.php'   => 'aioseo_rest_api_load'
+			];
 
-			// Remove the old addon's load callback to prevent fatal errors in this request.
-			if ( function_exists( 'aioseo_redirects_load' ) ) {
-				remove_action( 'aioseo_loaded', 'aioseo_redirects_load' );
-			}
+			foreach ( $legacyAddons as $basename => $loadCallback ) {
+				// Remove the old addon's load callback to prevent fatal errors in this request.
+				if ( function_exists( $loadCallback ) ) {
+					remove_action( 'aioseo_loaded', $loadCallback );
+				}
 
-			// Deactivate the plugin to prevent it from loading on future requests.
-			$activePlugins = get_option( 'active_plugins', [] );
-			$key           = array_search( $redirectsPlugin, $activePlugins, true );
+				// Deactivate the plugin to prevent it from loading on future requests.
+				$activePlugins = get_option( 'active_plugins', [] );
+				$key           = array_search( $basename, $activePlugins, true );
 
-			if ( false !== $key ) {
-				unset( $activePlugins[ $key ] );
-				update_option( 'active_plugins', array_values( $activePlugins ) );
+				if ( false !== $key ) {
+					unset( $activePlugins[ $key ] );
+					update_option( 'active_plugins', array_values( $activePlugins ) );
+				}
+
+				// On multisite, the addon may be network-activated instead.
+				if ( is_multisite() ) {
+					$networkActivePlugins = get_site_option( 'active_sitewide_plugins', [] );
+
+					if ( isset( $networkActivePlugins[ $basename ] ) ) {
+						unset( $networkActivePlugins[ $basename ] );
+						update_site_option( 'active_sitewide_plugins', $networkActivePlugins );
+					}
+				}
 			}
 		}
 	}

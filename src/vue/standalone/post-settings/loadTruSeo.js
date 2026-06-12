@@ -29,9 +29,12 @@ export default (app, populateHiddenField = true) => {
 
 	const postEditorStore = usePostEditorStore()
 	if ('term' === postEditorStore.currentPost.context) {
-		(document.querySelector('#edittag') || {})?.addEventListener('submit', () => {
-			postEditorStore.isDirty = false
-		})
+		const editTagForm = document.querySelector('#edittag')
+		if (editTagForm) {
+			editTagForm.addEventListener('submit', () => {
+				postEditorStore.isDirty = false
+			})
+		}
 
 		maybeUpdateTerm()
 	} else {

@@ -652,4 +652,22 @@ abstract class AIOSEOAbstract {
 	 * @var \AIOSEO\Plugin\Common\SeoChecklist\SeoChecklist|\AIOSEO\Plugin\Pro\SeoChecklist\SeoChecklist
 	 */
 	public $seoChecklist = null;
+
+	/**
+	 * Abilities class instance.
+	 *
+	 * @since 4.9.8
+	 *
+	 * @var \AIOSEO\Plugin\Common\Abilities\Abilities|\AIOSEO\Plugin\Pro\Abilities\Abilities
+	 */
+	public $abilities = null;
+
+	/**
+	 * RestApi class instance.
+	 *
+	 * @since 4.9.8
+	 *
+	 * @var \AIOSEO\Plugin\Common\RestApi\RestApi|\AIOSEO\Plugin\Pro\RestApi\RestApi
+	 */
+	public $restApi = null;
 }

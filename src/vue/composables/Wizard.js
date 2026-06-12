@@ -62,6 +62,16 @@ const features = [
 		upgrade     : false
 	},
 	{
+		value       : 'translation',
+		name        : __('Multilingual SEO', td),
+		pluginName  : __('Universally', td),
+		description : __('Translate your site into 110+ languages with AI and add multilingual SEO — translated URLs, hreflang tags, and metadata — so every language ranks.', td),
+		installs    : __('Installs Universally', td),
+		required    : false,
+		pro         : false,
+		upgrade     : false
+	},
+	{
 		value       : 'aioseo-image-seo',
 		name        : __('Image SEO', td),
 		pluginName  : __('Image SEO', td),
@@ -130,16 +140,6 @@ const features = [
 		required    : false,
 		pro         : true,
 		upgrade     : 'aioseo-index-now'
-	},
-	{
-		value       : 'aioseo-rest-api',
-		name        : __('REST API', td),
-		pluginName  : __('REST API', td),
-		description : __('Manage your post and term SEO meta via the WordPress REST API. This addon also works seamlessly with headless WordPress installs.', td),
-		installs    : __('Installs AIOSEO REST API', td),
-		required    : false,
-		pro         : true,
-		upgrade     : 'aioseo-rest-api'
 	},
 	{
 		value       : 'advanced-schema',
