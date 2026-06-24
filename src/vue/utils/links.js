@@ -116,7 +116,9 @@ const docLinks      = {
 	aiBuyingCredits               : `${marketingSite}docs/buying-and-managing-credits-for-the-aioseo-ai-features/`,
 	llmsTxt                       : `${marketingSite}docs/how-to-create-an-llms-txt-using-all-in-one-seo/`,
 	redirectLogs                  : `${marketingSite}docs/logging-redirects-in-all-in-one-seo/`,
-	redirect404Logs               : `${marketingSite}docs/redirecting-404-content-not-found-using-all-in-one-seo/`
+	redirect404Logs               : `${marketingSite}docs/redirecting-404-content-not-found-using-all-in-one-seo/`,
+	seoAlerts                     : `${marketingSite}docs/seo-alerts/`,
+	seoAlertsSlackWebhook         : `${marketingSite}docs/seo-alerts/#how-to-find-your-slack-webhook-url`
 }
 
 const upsellLinks = {

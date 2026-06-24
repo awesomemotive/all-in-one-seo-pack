@@ -112,7 +112,7 @@ class SiteHealth {
 	public function testCheckSitePublic() {
 		$test = 'aioseo_site_public';
 
-		if ( ! get_option( 'blog_public' ) ) {
+		if ( aioseo()->helpers->isSearchEnginesDiscouraged() ) {
 			return $this->result(
 				$test,
 				'critical',

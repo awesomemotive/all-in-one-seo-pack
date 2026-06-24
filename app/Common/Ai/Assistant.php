@@ -17,18 +17,17 @@ class Assistant {
 	 *
 	 * @since 4.9.1
 	 *
-	 * @param  int|null $objectId The object ID.
-	 * @return array              The data.
+	 * @return array The data.
 	 */
-	public function getVueDataEdit( $objectId = null ) {
-		$objectId = $objectId ?: absint( get_the_ID() );
+	public function getVueDataEdit() {
+		$isEnabled = ! aioseo()->ai->isDisabled();
 
 		return [
-			'extend' => [
-				'block'                     => aioseo()->standalone->standaloneBlocks['aiAssistant']->isEnabled(),
-				'blockEditorInserterButton' => apply_filters( 'aioseo_ai_assistant_extend_block_editor_inserter_button', true, $objectId ),
-				'paragraphPlaceholder'      => apply_filters( 'aioseo_ai_assistant_extend_paragraph_placeholder', true, $objectId )
-			]
+			'extend' => array_fill_keys( [
+				'block',
+				'blockEditorInserterButton',
+				'paragraphPlaceholder'
+			], $isEnabled )
 		];
 	}
 }

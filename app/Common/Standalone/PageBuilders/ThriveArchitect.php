@@ -42,7 +42,7 @@ class ThriveArchitect extends Base {
 	public function init() {
 		add_filter( 'tcb_allowed_ajax_options', [ $this, 'makeSettingsAllowed' ] );
 
-		if ( ! aioseo()->postSettings->canAddPostSettingsMetabox( get_post_type( $this->getPostId() ) ) ) {
+		if ( ! aioseo()->postSettings->canAddPageBuilderMetabox( get_post_type( $this->getPostId() ) ) ) {
 			return;
 		}
 

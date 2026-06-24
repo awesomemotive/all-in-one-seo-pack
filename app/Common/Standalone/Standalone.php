@@ -120,6 +120,7 @@ class Standalone {
 		$this->bbPress          = aioseo()->pro ? new ProStandalone\BbPress\BbPress() : new BbPress\BbPress();
 
 		aioseo()->pro ? new ProStandalone\DetailsColumn() : new DetailsColumn();
+		aioseo()->pro ? new ProStandalone\NpsSurvey() : null;
 
 		new AdminBarNoindexWarning();
 		new LimitModifiedDate();

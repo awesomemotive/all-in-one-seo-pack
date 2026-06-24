@@ -1,4 +1,5 @@
 import { registerBlock } from '../utils'
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 
 import { h, createApp } from 'vue'
 import { observeElement } from '@/vue/utils/helpers'
@@ -220,7 +221,9 @@ export const settings = {
 	}
 }
 
-registerBlock({
-	name,
-	settings
-})
+if (allowed('aioseo_page_local_seo_settings')) {
+	registerBlock({
+		name,
+		settings
+	})
+}

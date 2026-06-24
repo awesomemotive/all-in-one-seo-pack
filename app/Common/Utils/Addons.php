@@ -13,6 +13,7 @@ use AIOSEO\Plugin\Common\Utils;
  *
  * @since 4.0.0
  */
+#[\AllowDynamicProperties]
 class Addons {
 	/**
 	 * Holds our list of loaded addons.

@@ -627,6 +627,15 @@ abstract class AIOSEOAbstract {
 	public $writingAssistant = null;
 
 	/**
+	 * SeoAlerts class instance.
+	 *
+	 * @since 4.9.9
+	 *
+	 * @var \AIOSEO\Plugin\Common\SeoAlerts\SeoAlerts
+	 */
+	public $seoAlerts = null;
+
+	/**
 	 * Llms class instance.
 	 *
 	 * @since 4.8.4

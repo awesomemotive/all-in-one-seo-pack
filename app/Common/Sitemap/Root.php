@@ -265,7 +265,8 @@ class Root {
 	/**
 	 * Builds the author archive indexes.
 	 *
-	 * @since 4.3.1
+	 * @since   4.3.1
+	 * @version 4.9.9 Use getAuthorPostTypes() instead of includedPostTypes() for consistent lastmod with author-sitemap.xml.
 	 *
 	 * @param  integer $amountOfAuthors The amount of author archives.
 	 * @return array                    The indexes.
@@ -275,7 +276,7 @@ class Root {
 			return [];
 		}
 
-		$postTypes = aioseo()->sitemap->helpers->includedPostTypes();
+		$postTypes = aioseo()->sitemap->helpers->getAuthorPostTypes();
 		$filename  = aioseo()->sitemap->filename;
 		$chunks    = $amountOfAuthors / aioseo()->sitemap->linksPerIndex;
 		if ( $chunks < 1 ) {

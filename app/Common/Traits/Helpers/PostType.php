@@ -32,4 +32,38 @@ trait PostType {
 
 		return $postType->$feature;
 	}
+
+	/**
+	 * Returns the URL prefix a non-hierarchical post type's permalinks live under.
+	 *
+	 * NOTE: returns null when the post type has no rewrite registration (e.g., built-in `post`).
+	 *
+	 * @since 4.9.9
+	 *
+	 * @param  string      $postType The post type slug.
+	 * @return string|null           The expected prefix, without leading/trailing slashes.
+	 */
+	public function getPostTypeUrlPrefix( $postType ) {
+		$postTypeObj = get_post_type_object( $postType );
+		if ( ! $postTypeObj || empty( $postTypeObj->rewrite ) ) {
+			return null;
+		}
+
+		$prefix = ! empty( $postTypeObj->rewrite['slug'] )
+			? trim( $postTypeObj->rewrite['slug'], '/' )
+			: $postType;
+
+		$withFront = ! isset( $postTypeObj->rewrite['with_front'] ) || ! empty( $postTypeObj->rewrite['with_front'] );
+		if ( $withFront ) {
+			global $wp_rewrite; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+			if ( $wp_rewrite instanceof \WP_Rewrite ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+				$front = trim( $wp_rewrite->front, '/' ); // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+				if ( '' !== $front ) {
+					$prefix = $front . '/' . $prefix;
+				}
+			}
+		}
+
+		return $prefix;
+	}
 }

@@ -12,6 +12,7 @@ import { defineAsyncComponent } from 'vue'
 import CoreMain from '@/vue/components/common/core/main/Index'
 
 import { __ } from '@/vue/plugins/translations'
+import { preloadOnIdle } from '@/vue/utils/preload'
 import { useRobotsTxt } from '@/vue/composables/RobotsTxt'
 
 useRobotsTxt()
@@ -37,22 +38,15 @@ export default {
 		}
 	},
 	mounted () {
-		// Preload all route components in the background
-		const preloadComponents = () => {
-			import('./Advanced.vue')
-			import('./Archives.vue')
-			import('./AuthorSeo.vue')
-			import('./ContentTypes.vue')
-			import('./GlobalSettings.vue')
-			import('./Media.vue')
-			import('./Taxonomies.vue')
-		}
-
-		if ('requestIdleCallback' in window) {
-			requestIdleCallback(preloadComponents)
-		} else {
-			setTimeout(preloadComponents, 1)
-		}
+		preloadOnIdle([
+			() => import('./Advanced.vue'),
+			() => import('./Archives.vue'),
+			() => import('./AuthorSeo.vue'),
+			() => import('./ContentTypes.vue'),
+			() => import('./GlobalSettings.vue'),
+			() => import('./Media.vue'),
+			() => import('./Taxonomies.vue')
+		])
 	}
 }
 </script>

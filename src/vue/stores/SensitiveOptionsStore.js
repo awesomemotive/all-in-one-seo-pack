@@ -13,6 +13,7 @@ export const useSensitiveOptionsStore = defineStore('SensitiveOptionsStore', {
 		hasSearchStatisticsTrustToken   : false,
 		hasSiteAnalysisConnectToken     : false,
 		hasConnectKey                   : false,
-		hasConnectToken                 : false
+		hasConnectToken                 : false,
+		hasSeoAlertsSlackWebhookUrl     : false
 	})
 })

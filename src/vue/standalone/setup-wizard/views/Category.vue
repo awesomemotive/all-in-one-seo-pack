@@ -64,7 +64,7 @@
 					</base-highlight-toggle>
 				</div>
 
-				<div v-if="loaded" class="site-info">
+				<div v-if="loaded && allowed('aioseo_search_appearance_settings')" class="site-info">
 					<div class="site-title aioseo-settings-row no-border">
 						<div class="settings-name">
 							<div class="name small-margin">{{ strings.siteTitle }}</div>
@@ -131,6 +131,7 @@ import {
 
 import { merge } from 'lodash-es'
 
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { useWizard } from '@/vue/composables/Wizard'
 
 import BaseHighlightToggle from '@/vue/components/common/base/HighlightToggle'
@@ -161,6 +162,7 @@ export default {
 		})
 
 		return {
+			allowed,
 			optionsStore      : useOptionsStore(),
 			rootStore         : useRootStore(),
 			setupWizardStore  : useSetupWizardStore(),

@@ -184,7 +184,7 @@ class Robots {
 		}
 
 		// Because we prevent WordPress Core from outputting a robots tag in disableWpRobotsCore(), we need to noindex/nofollow non-public sites ourselves.
-		if ( ! get_option( 'blog_public' ) ) {
+		if ( aioseo()->helpers->isSearchEnginesDiscouraged() ) {
 			$this->attributes['noindex']  = 'noindex';
 			$this->attributes['nofollow'] = 'nofollow';
 		}

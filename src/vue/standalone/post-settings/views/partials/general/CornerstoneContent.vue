@@ -6,6 +6,7 @@
 			</span>
 
 			<a
+				v-if="hasLinkAssistantPermission"
 				href="#"
 				@click.stop.prevent="$emit('changeTab', {
 					main : 'linkAssistant',
@@ -14,6 +15,13 @@
 			>
 				{{ strings.linkingRecommendations }}
 			</a>
+
+			<span
+				v-else
+				class="cornerstone-content-text-recommendations"
+			>
+				{{ strings.linkingRecommendations }}
+			</span>
 
 			<span v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'cornerstoneContent', true)"></span>
 		</div>
@@ -37,6 +45,7 @@
 
 <script>
 import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import links from '@/vue/utils/links'
 import {
 	useLicenseStore,
@@ -79,6 +88,11 @@ export default {
 				markAsCornerstone : __('Mark as Cornerstone', td)
 			}
 		}
+	},
+	computed : {
+		hasLinkAssistantPermission () {
+			return allowed('aioseo_page_link_assistant_settings')
+		}
 	}
 }
 </script>
@@ -87,8 +101,9 @@ export default {
 	.cornerstone-content-text {
 		margin-bottom: 14px;
 
-		> a {
-			padding-inline: 4px;
+		> a,
+		> .cornerstone-content-text-recommendations {
+			padding-inline: 4px !important;
 		}
 	}
 

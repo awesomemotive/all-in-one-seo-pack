@@ -169,7 +169,8 @@ class Frontend {
 	/**
 	 * Display the breadcrumb in the frontend.
 	 *
-	 * @since 4.1.1
+	 * @since   4.1.1
+	 * @version 4.9.9 Return early when the Tags class isn't initialized yet.
 	 *
 	 * @param  bool        $echo Print out the breadcrumb.
 	 * @return string|void       A html breadcrumb.
@@ -188,6 +189,12 @@ class Frontend {
 
 		// We can only run after this action because we need all post types loaded.
 		if ( ! did_action( 'init' ) ) {
+			return;
+		}
+
+		// `tags` is initialized on `init`:50; bail if breadcrumbs render earlier (e.g. during
+		// another plugin's content scan) so breadcrumbToDisplay() can't call replaceTags() on null.
+		if ( ! aioseo()->breadcrumbs->tags ) {
 			return;
 		}
 

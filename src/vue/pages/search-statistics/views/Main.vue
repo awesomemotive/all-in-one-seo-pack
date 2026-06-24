@@ -92,6 +92,7 @@ import {
 
 import license from '@/vue/utils/license'
 import dayjs from '@/vue/utils/dayjs'
+import { preloadOnIdle } from '@/vue/utils/preload'
 
 import { useGoogleSearchConsole } from '@/vue/composables/GoogleSearchConsole'
 
@@ -295,22 +296,15 @@ export default {
 		this.minDate = dayjs().subtract(16, 'month').toDate()
 		this.maxDate = this.getOriginalMaxDate.toDate()
 
-		// Preload all route components in the background
-		const preloadComponents = () => {
-			import('./ContentRankings.vue')
-			import('./Dashboard.vue')
-			import('./IndexStatus.vue')
-			import('./KeywordRankTracker.vue')
-			import('./AIOSEO_VERSION/PostDetail.vue')
-			import('./SeoStatistics.vue')
-			import('./AIOSEO_VERSION/Settings.vue')
-		}
-
-		if ('requestIdleCallback' in window) {
-			requestIdleCallback(preloadComponents)
-		} else {
-			setTimeout(preloadComponents, 1)
-		}
+		preloadOnIdle([
+			() => import('./ContentRankings.vue'),
+			() => import('./Dashboard.vue'),
+			() => import('./IndexStatus.vue'),
+			() => import('./KeywordRankTracker.vue'),
+			() => import('./AIOSEO_VERSION/PostDetail.vue'),
+			() => import('./SeoStatistics.vue'),
+			() => import('./AIOSEO_VERSION/Settings.vue')
+		])
 	}
 }
 </script>

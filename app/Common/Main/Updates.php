@@ -271,7 +271,8 @@ class Updates {
 	 */
 	private function getRawOptions() {
 		// Options from the DB.
-		$commonOptions = json_decode( get_option( aioseo()->options->optionsName ), true );
+		$rawCommonOptions = get_option( aioseo()->options->optionsName );
+		$commonOptions    = is_string( $rawCommonOptions ) ? json_decode( $rawCommonOptions, true ) : $rawCommonOptions;
 		if ( empty( $commonOptions ) ) {
 			$commonOptions = [];
 		}
@@ -1551,7 +1552,8 @@ class Updates {
 	 */
 	private function getRawInternalOptions() {
 		// Options from the DB.
-		$internalOptions = json_decode( get_option( aioseo()->internalOptions->optionsName ), true );
+		$rawInternalOptions = get_option( aioseo()->internalOptions->optionsName );
+		$internalOptions    = is_string( $rawInternalOptions ) ? json_decode( $rawInternalOptions, true ) : $rawInternalOptions;
 		if ( empty( $internalOptions ) ) {
 			$internalOptions = [];
 		}

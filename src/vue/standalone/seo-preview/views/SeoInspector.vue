@@ -212,7 +212,8 @@ export default {
 			return 'undefined' !== typeof this.rootStore.aioseo.page_analysis.analysis?.[which]?.errors
 		},
 		isCheckEligible () {
-			return 'undefined' !== typeof this.rootStore.aioseo.page_analysis?.analysis
+			return 'undefined' !== typeof this.rootStore.aioseo.page_analysis?.analysis &&
+				this.rootStore.aioseo.aioseoPageAnalysis
 		}
 	}
 }

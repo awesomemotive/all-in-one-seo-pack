@@ -12,6 +12,7 @@ import { defineAsyncComponent } from 'vue'
 import CoreMain from '@/vue/components/common/core/main/Index'
 
 import { __ } from '@/vue/plugins/translations'
+import { preloadOnIdle } from '@/vue/utils/preload'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -33,21 +34,14 @@ export default {
 		}
 	},
 	mounted () {
-		// Preload all route components in the background
-		const preloadComponents = () => {
-			import('./GeneralSitemap.vue')
-			import('./HtmlSitemap.vue')
-			import('./NewsSitemap.vue')
-			import('./RssSitemap.vue')
-			import('./VideoSitemap.vue')
-			import('./LlmsSitemap.vue')
-		}
-
-		if ('requestIdleCallback' in window) {
-			requestIdleCallback(preloadComponents)
-		} else {
-			setTimeout(preloadComponents, 1)
-		}
+		preloadOnIdle([
+			() => import('./GeneralSitemap.vue'),
+			() => import('./HtmlSitemap.vue'),
+			() => import('./NewsSitemap.vue'),
+			() => import('./RssSitemap.vue'),
+			() => import('./VideoSitemap.vue'),
+			() => import('./LlmsSitemap.vue')
+		])
 	}
 }
 </script>

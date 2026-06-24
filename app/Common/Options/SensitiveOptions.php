@@ -60,7 +60,8 @@ class SensitiveOptions {
 		'searchStatisticsProfileKey',
 		'searchStatisticsProfileToken',
 		'searchStatisticsTrustToken',
-		'siteAnalysisConnectToken'
+		'siteAnalysisConnectToken',
+		'seoAlertsSlackWebhookUrl'
 	];
 
 	/**

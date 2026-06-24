@@ -2,7 +2,8 @@
 	<div
 		class="aioseo-ai-content-feature-card"
 		:class="{
-			'aioseo-ai-content-feature-card--metabox': 'metabox' === parentComponentContext
+			'aioseo-ai-content-feature-card--metabox': 'metabox' === parentComponentContext,
+			'aioseo-ai-content-feature-card--sidebar': 'sidebar' === parentComponentContext
 		}"
 	>
 		<div class="aioseo-ai-content-feature-card-header">
@@ -38,8 +39,8 @@
 			<core-tooltip
 				v-if="isAiAssistantHiddenByUser"
 				type="action"
-				placement="top"
-				:offset="'sidebar' === parentComponentContext ? '-80px, 0' : '25px, 0'"
+				:placement="'sidebar' === parentComponentContext ? 'top-end' : 'top'"
+				:offset="'sidebar' === parentComponentContext ? '10px, 0' : '25px, 0'"
 			>
 				<base-button
 					size="small"
@@ -54,6 +55,28 @@
 
 				<template #tooltip>
 					{{ strings.blockHiddenWarning }}
+				</template>
+			</core-tooltip>
+
+			<core-tooltip
+				v-else-if="!hasPermission"
+				type="action"
+				:placement="'sidebar' === parentComponentContext ? 'top-end' : 'top'"
+				:offset="'sidebar' === parentComponentContext ? '10px, 0' : '25px, 0'"
+			>
+				<base-button
+					size="small"
+					type="blue"
+					disabled
+					class="aioseo-ai-content-feature-card-btn"
+				>
+					<span v-if="'sidebar' !== parentComponentContext">{{ feature.strings.buttonSubmit }}</span>
+
+					<span v-else>&rarr;</span>
+				</base-button>
+
+				<template #tooltip>
+					{{ strings.noPermission }}
 				</template>
 			</core-tooltip>
 
@@ -84,6 +107,8 @@
 
 <script>
 import { useAiContent } from '@/vue/composables/AiContent'
+
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 
 import {
 	useAiAssistantStore,
@@ -160,13 +185,17 @@ export default {
 					// Translators: 1 - The word "Preferences" from WordPress core translations.
 					__('Block hidden in %1$s.', td),
 					__('Preferences', td)
-				)
+				),
+				noPermission : __('You don\'t have permission to use this feature.', td)
 			}
 		}
 	},
 	computed : {
 		isAiAssistantHiddenByUser () {
 			return 'ai-assistant' === this.feature.slug && this.aiAssistantStore.isBlockHiddenByUser
+		},
+		hasPermission () {
+			return !this.feature.permission || allowed(this.feature.permission)
 		}
 	}
 }
@@ -236,6 +265,12 @@ export default {
 
 	.aioseo-tooltip {
 		margin: 0;
+	}
+
+	&--sidebar {
+		.popper {
+			max-width: 200px !important;
+		}
 	}
 }
 

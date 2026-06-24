@@ -14,6 +14,7 @@ import { defineAsyncComponent } from 'vue'
 import CoreMain from '@/vue/components/common/core/main/Index'
 
 import { __ } from '@/vue/plugins/translations'
+import { preloadOnIdle } from '@/vue/utils/preload'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -30,16 +31,9 @@ export default {
 		}
 	},
 	mounted () {
-		// Preload component in the background
-		const preloadComponents = () => {
-			import('./FeatureManager.vue')
-		}
-
-		if ('requestIdleCallback' in window) {
-			requestIdleCallback(preloadComponents)
-		} else {
-			setTimeout(preloadComponents, 1)
-		}
+		preloadOnIdle([
+			() => import('./FeatureManager.vue')
+		])
 	}
 }
 </script>

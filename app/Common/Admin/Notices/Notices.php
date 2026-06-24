@@ -460,7 +460,7 @@ class Notices {
 	 */
 	private function blogVisibility() {
 		$notification = Models\Notification::getNotificationByName( 'blog-visibility' );
-		if ( get_option( 'blog_public' ) ) {
+		if ( ! aioseo()->helpers->isSearchEnginesDiscouraged() ) {
 			if ( $notification->exists() ) {
 				Models\Notification::deleteNotificationByName( 'blog-visibility' );
 			}

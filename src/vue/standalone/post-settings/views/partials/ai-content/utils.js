@@ -80,6 +80,7 @@ export const aiFeatures = {
 			buttonSubmit : __('Generate Schema', td)
 		},
 		excludedPostTypes : [],
+		permission        : 'aioseo_page_schema_settings',
 		clickCallback     : async () => {
 			const schemaStore          = useSchemaStore()
 			schemaStore.tabs.generator = 'ai-schema'
@@ -126,7 +127,8 @@ export const aiFeatures = {
 			description  : __('Generate a compelling SEO title for your post to improve click-through rates and search engine visibility.', td),
 			buttonSubmit : __('Generate SEO Titles', td)
 		},
-		excludedPostTypes : []
+		excludedPostTypes : [],
+		permission        : 'aioseo_page_general_settings'
 	},
 	metaDescription : {
 		slug    : 'meta-description',
@@ -136,7 +138,8 @@ export const aiFeatures = {
 			description  : __('Stand out in search results with a meta description that sparks curiosity and drives clicks to your content.', td),
 			buttonSubmit : __('Generate Meta Descriptions', td)
 		},
-		excludedPostTypes : []
+		excludedPostTypes : [],
+		permission        : 'aioseo_page_general_settings'
 	}
 }
 

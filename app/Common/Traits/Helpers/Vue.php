@@ -100,6 +100,7 @@ trait Vue {
 			'urls'               => [
 				'domain'            => $this->getSiteDomain(),
 				'mainSiteUrl'       => $this->getSiteUrl(),
+				'siteFavicon'       => get_site_icon_url(),
 				'siteLogo'          => aioseo()->helpers->getSiteLogoUrl(),
 				'home'              => home_url(),
 				'restUrl'           => aioseo()->helpers->getRestUrl(),
@@ -790,7 +791,7 @@ trait Vue {
 	 */
 	private function setAiAssistantData() {
 		if ( 'post' === $this->args['page'] ) {
-			$this->data['aiAssistant'] = aioseo()->ai->assistant->getVueDataEdit( $this->args['staticPostId'] ?? null );
+			$this->data['aiAssistant'] = aioseo()->ai->assistant->getVueDataEdit();
 		}
 	}
 
@@ -803,7 +804,7 @@ trait Vue {
 	 */
 	private function setAiImageGeneratorData() {
 		if ( 'post' === $this->args['page'] ) {
-			$this->data['aiImageGenerator'] = aioseo()->ai->image->getVueDataEdit( $this->args['staticPostId'] ?? null );
+			$this->data['aiImageGenerator'] = aioseo()->ai->image->getVueDataEdit();
 		}
 	}
 

@@ -37,7 +37,8 @@ const processContent = async () => {
 		fusionBuilderGetContent
 	} = window
 
-	const rawContent      = FusionApp?.getPost('post_content') || fusionBuilderGetContent('content') || ''
+	const fallbackContent = 'function' === typeof fusionBuilderGetContent ? fusionBuilderGetContent('content') : ''
+	const rawContent      = FusionApp?.getPost('post_content') || fallbackContent || ''
 	const postEditorStore = usePostEditorStore()
 
 	postEditorStore.processContent({ content: rawContent }).finally(() => {

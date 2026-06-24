@@ -275,11 +275,20 @@ class Helpers {
 	/**
 	 * Returns the taxonomies that should be included in the sitemap.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.9.9 Return early if the sitemap type has no taxonomies option node.
 	 *
 	 * @return array The included taxonomies.
 	 */
 	public function includedTaxonomies() {
+		if ( ! aioseo()->options->sitemap->has( aioseo()->sitemap->type ) ) {
+			return [];
+		}
+
+		if ( ! aioseo()->options->sitemap->{aioseo()->sitemap->type}->has( 'taxonomies' ) ) {
+			return [];
+		}
+
 		$taxonomies = [];
 		if ( aioseo()->options->sitemap->{aioseo()->sitemap->type}->taxonomies->all ) {
 			$taxonomies = get_taxonomies();

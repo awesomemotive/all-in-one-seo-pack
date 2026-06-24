@@ -90,7 +90,7 @@ class Avada extends Base {
 	 * @return void
 	 */
 	public function enqueue() {
-		if ( ! aioseo()->postSettings->canAddPostSettingsMetabox( get_post_type( $this->getPostId() ) ) ) {
+		if ( ! aioseo()->postSettings->canAddPageBuilderMetabox( get_post_type( $this->getPostId() ) ) ) {
 			return;
 		}
 
@@ -129,5 +129,29 @@ class Avada extends Base {
 		}
 
 		return ! empty( $_REQUEST['query']['aioseo_limit_modified_date'] );
+	}
+
+	/**
+	 * Returns the processed page builder content.
+	 *
+	 * @since 4.9.9
+	 *
+	 * @param  int    $postId  The post id.
+	 * @param  mixed  $content The raw content.
+	 * @return string          The processed content.
+	 */
+	public function processContent( $postId, $content = null ) {
+		$content = parent::processContent( $postId, $content ?? '' );
+
+		// Avada/Fusion Builder content is purely [fusion_*] shortcodes; the parent only expands
+		// them in AJAX/cron/REST, so on front-end views they survive to strip_shortcodes() and
+		// the auto-description comes out empty. Use our shortcode helper (override bypasses the
+		// runShortcodes gate), not a bare do_shortcode(): it strips conflicting shortcodes
+		// (sliders, carts, login forms) and resets postdata instead of executing them.
+		if ( ! is_admin() && ! aioseo()->helpers->isAjaxCronRestRequest() && ! doing_filter( 'the_content' ) ) {
+			$content = aioseo()->helpers->doShortcodes( (string) $content, true, (int) $postId );
+		}
+
+		return $content;
 	}
 }

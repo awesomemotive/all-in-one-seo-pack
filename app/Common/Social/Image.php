@@ -71,7 +71,7 @@ class Image {
 			return $images[ $hash ];
 		}
 
-		if ( 'auto' === $imageSource && aioseo()->helpers->getPostPageBuilderName( $post->ID ) ) {
+		if ( 'auto' === $imageSource && $this->post instanceof \WP_Post && aioseo()->helpers->getPostPageBuilderName( $this->post->ID ) ) {
 			$imageSource = 'default';
 		}
 

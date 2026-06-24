@@ -404,7 +404,17 @@ class Helpers {
 		$body  = wp_remote_retrieve_body( $response );
 		$items = ! empty( $body ) ? json_decode( $body, true ) : [];
 
-		if ( ! is_array( $items ) || empty( $items ) ) {
+		// is_wp_error() above only catches transport-level failures (DNS, etc.); HTTP error
+		// statuses come back as a successful response with a WP REST error body. Treat
+		// anything other than 200 as a failure, and verify the first element is itself an
+		// array (i.e. a post object) so a non-list response like `{"code":"rest_forbidden",...}`
+		// doesn't fatal in the foreach below. See issue #8124.
+		if (
+			200 !== wp_remote_retrieve_response_code( $response ) ||
+			! is_array( $items ) ||
+			empty( $items ) ||
+			! is_array( $items[0] ?? null )
+		) {
 			aioseo()->core->networkCache->update( 'rss_feed', [], HOUR_IN_SECONDS );
 			aioseo()->core->cache->delete( $lockKey );
 

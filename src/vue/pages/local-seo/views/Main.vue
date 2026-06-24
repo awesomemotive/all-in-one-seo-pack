@@ -12,6 +12,7 @@ import { defineAsyncComponent } from 'vue'
 import CoreMain from '@/vue/components/common/core/main/Index'
 
 import { __ } from '@/vue/plugins/translations'
+import { preloadOnIdle } from '@/vue/utils/preload'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -31,19 +32,12 @@ export default {
 		}
 	},
 	mounted () {
-		// Preload all route components in the background
-		const preloadComponents = () => {
-			import('./Locations.vue')
-			import('./Maps.vue')
-			import('./OpeningHours.vue')
-			import('./Import.vue')
-		}
-
-		if ('requestIdleCallback' in window) {
-			requestIdleCallback(preloadComponents)
-		} else {
-			setTimeout(preloadComponents, 1)
-		}
+		preloadOnIdle([
+			() => import('./Locations.vue'),
+			() => import('./Maps.vue'),
+			() => import('./OpeningHours.vue'),
+			() => import('./Import.vue')
+		])
 	}
 }
 </script>

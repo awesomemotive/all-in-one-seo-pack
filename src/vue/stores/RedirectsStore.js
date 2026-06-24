@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 
@@ -76,8 +78,12 @@ export const useRedirectsStore = defineStore('RedirectsStore', {
 			customRules          : [],
 			showAdvancedSettings : false,
 			comment              : ''
-		}
+		},
+		capability : 'aioseo_page_redirects_manage'
 	}),
+	getters : {
+		hasPermission : (state) => allowed(state.capability)
+	},
 	actions : {
 		updateState (value = null) {
 			for (const key in (value || {})) {
@@ -238,6 +244,10 @@ export const useRedirectsStore = defineStore('RedirectsStore', {
 				})
 		},
 		testServerRedirects () {
+			if (!allowed('aioseo_redirects_manage')) {
+				return Promise.resolve()
+			}
+
 			const notificationsStore = useNotificationsStore()
 
 			if (this.server.redirectTest.testing) {
@@ -256,6 +266,10 @@ export const useRedirectsStore = defineStore('RedirectsStore', {
 			})
 		},
 		getPostRedirects () {
+			if (!allowed(this.capability)) {
+				return Promise.resolve()
+			}
+
 			const postEditorStore = usePostEditorStore()
 			return http.get(links.restUrl('redirects/' + postEditorStore.currentPost.context + '/' + postEditorStore.currentPost.id))
 				.then(response => {

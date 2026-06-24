@@ -27,6 +27,7 @@ import { useRequiresUpdate } from '@/vue/composables/RequiresUpdate'
 import CoreMain from '@/vue/components/common/core/main/Index'
 
 import { __ } from '@/vue/plugins/translations'
+import { preloadOnIdle } from '@/vue/utils/preload'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -52,36 +53,15 @@ const getRoute = computed(() => {
 	return defineAsyncComponent(() => import('./Overview.vue'))
 })
 
-// Preload other route components in the background
 const preloadRouteComponents = () => {
-	// Use requestIdleCallback to load during idle time, or setTimeout as fallback
-	const loadComponents = () => {
-		// Get the current route to avoid reloading it
-		const currentRoute = route.name
-
-		// Preload all route components except the current one
-		if ('overview' !== currentRoute) {
-			import('./Overview.vue')
-		}
-		if ('domains-report' !== currentRoute) {
-			import('./AIOSEO_VERSION/DomainsReport.vue')
-		}
-		if ('links-report' !== currentRoute) {
-			import('./AIOSEO_VERSION/LinksReport.vue')
-		}
-		if ('post-report' !== currentRoute) {
-			import('./AIOSEO_VERSION/PostReport.vue')
-		}
-		if ('settings' !== currentRoute) {
-			import('./AIOSEO_VERSION/Settings.vue')
-		}
-	}
-
-	if ('requestIdleCallback' in window) {
-		requestIdleCallback(loadComponents)
-	} else {
-		setTimeout(loadComponents, 1)
-	}
+	const currentRoute = route.name
+	const thunks       = []
+	if ('overview' !== currentRoute) thunks.push(() => import('./Overview.vue'))
+	if ('domains-report' !== currentRoute) thunks.push(() => import('./AIOSEO_VERSION/DomainsReport.vue'))
+	if ('links-report' !== currentRoute) thunks.push(() => import('./AIOSEO_VERSION/LinksReport.vue'))
+	if ('post-report' !== currentRoute) thunks.push(() => import('./AIOSEO_VERSION/PostReport.vue'))
+	if ('settings' !== currentRoute) thunks.push(() => import('./AIOSEO_VERSION/Settings.vue'))
+	preloadOnIdle(thunks)
 }
 
 const {

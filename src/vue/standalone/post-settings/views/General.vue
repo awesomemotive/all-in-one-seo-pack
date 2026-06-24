@@ -155,7 +155,8 @@
 				'metabox' === screenContext &&
 				'post' === postEditorStore.currentPost.context &&
 				!['attachment', 'web-story'].includes(postEditorStore.currentPost.postType) &&
-				!isPageBuilderEditor()
+				!isPageBuilderEditor() &&
+				allowed('aioseo_page_general_settings')
 			"
 			id="aioseo-post-settings-cornerstone-content-row"
 			class="cornerstone-content-row"
@@ -246,7 +247,7 @@
 		</core-settings-row>
 
 		<core-sidebar-card
-			v-if="'sidebar' === screenContext && !isPageBuilderEditor() && 'modal' !== props.parentComponentContext"
+			v-if="'sidebar' === screenContext && !isPageBuilderEditor() && 'modal' !== props.parentComponentContext && allowed('aioseo_page_general_settings')"
 			class="card-cornerstone-content"
 			slug="cornerstoneContent"
 			:header-text="strings.cornerstoneContent"

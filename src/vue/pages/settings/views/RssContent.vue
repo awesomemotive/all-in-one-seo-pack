@@ -54,7 +54,7 @@
 							'site_link',
 							'author_link'
 						]"
-						:disabled="optionsStore.options.searchAppearance.advanced.crawlCleanup.enable && !optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.global"
+						:disabled="!rootStore.aioseo.user.unfilteredHtml || (optionsStore.options.searchAppearance.advanced.crawlCleanup.enable && !optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.global)"
 					/>
 
 					<div class="aioseo-description">
@@ -77,7 +77,7 @@
 							'site_link',
 							'author_link'
 						]"
-						:disabled="optionsStore.options.searchAppearance.advanced.crawlCleanup.enable && !optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.global"
+						:disabled="!rootStore.aioseo.user.unfilteredHtml || (optionsStore.options.searchAppearance.advanced.crawlCleanup.enable && !optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.global)"
 					/>
 
 					<div class="aioseo-description">

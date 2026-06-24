@@ -1,5 +1,5 @@
 <template>
-	<div class="aioseo-app aioseo-post-settings">
+	<div class="aioseo-app aioseo-post-settings" v-if="getTabs.length">
 		<core-main-tabs
 			:tabs="getTabs"
 			:showSaveButton="false"
@@ -132,6 +132,7 @@ import { __ } from '@/vue/plugins/translations'
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { getParams, removeParam } from '@/vue/utils/params'
 import { debounceContext } from '@/vue/utils/debounce'
+import { preloadOnIdle } from '@/vue/utils/preload'
 import { isBlockEditor, isPageBuilderEditor } from '@/vue/utils/context'
 import { maybeUpdateTaxonomies } from '@/vue/plugins/tru-seo/components/taxonomies'
 import {
@@ -267,7 +268,11 @@ const getTabs = computed(() => {
 	if ('term' === postEditorStore.currentPost.context || postEditorStore.currentPost.isWooCommercePageWithoutSchema) {
 		return tabs.value.filter((tab) => {
 			const excludedTabs = [ 'aiContent', 'schema' ]
-			return !excludedTabs.includes(tab.slug) && allowed(getTabPermission(tab.slug), true)
+			if (excludedTabs.includes(tab.slug)) {
+				return false
+			}
+
+			return allowed(getTabPermission(tab.slug), true)
 		})
 	}
 
@@ -287,7 +292,7 @@ const getTabs = computed(() => {
 })
 
 const initTab = computed(() => {
-	return getTabs.value[0].slug
+	return getTabs.value[0]?.slug || null
 })
 
 const turnSlugIntoComponent = (slug) => {
@@ -467,69 +472,67 @@ onBeforeMount(() => {
 	}
 })
 
-onMounted(async () => {
+onMounted(() => {
 	window.aioseoBus.$on('do-post-settings-main-tab-change', ({ name, context }) => {
 		processChangeTab(name, context)
 	})
 
 	if (isBlockEditor()) {
-		const {
-			extendImageBlockToolbar,
-			extendImageBlockPlaceholder,
-			extendFeaturedImageButton
-		} = await import('@/vue/standalone/ai-image-generator/extend-block-editor')
+		// Defer the AI image generator setup to idle so the dynamic import
+		// does not suspend `onMounted` and gate the tab-view `preloadOnIdle` below.
+		const schedule = window.requestIdleCallback || (cb => setTimeout(cb, 1))
+		schedule(async () => {
+			const {
+				extendImageBlockToolbar,
+				extendImageBlockPlaceholder,
+				extendFeaturedImageButton
+			} = await import('@/vue/standalone/ai-image-generator/extend-block-editor')
 
-		const hasAiContentTab = getTabs.value.some(tab => 'aiContent' === tab.slug)
-
-		if (hasAiContentTab) {
-			extendImageBlockToolbar()
-		}
-
-		// Initialize and keep track of user's block visibility preference.
-		aiAssistantStore.updateBlockHiddenByUser()
-
-		if (aiAssistantStore.hasPermission) {
-			extendParagraphPlaceholder({ aiAssistantStore })
-		}
-
-		watchBlockEditor.value = window.wp.data.subscribe(() => {
-			if (!licenseStore.isUnlicensed && !updatingSeoRevisions.value) {
-				updateSeoRevisions()
-			}
+			const hasAiContentTab = getTabs.value.some(tab => 'aiContent' === tab.slug)
 
 			if (hasAiContentTab) {
-				extendImageBlockPlaceholder()
-				extendFeaturedImageButton()
+				extendImageBlockToolbar()
 			}
 
-			// Update hidden state (only triggers reactivity if value changed).
+			// Initialize and keep track of user's block visibility preference.
 			aiAssistantStore.updateBlockHiddenByUser()
 
-			if (aiAssistantStore.isBlockAvailable && aiAssistantStore.hasPermission) {
-				checkAiAssistantShortcut({ aiAssistantStore })
-				extendBlockEditorInserterButton({ aiAssistantStore })
+			if (aiAssistantStore.hasPermission) {
+				extendParagraphPlaceholder({ aiAssistantStore })
 			}
+
+			watchBlockEditor.value = window.wp.data.subscribe(() => {
+				if (!licenseStore.isUnlicensed && !updatingSeoRevisions.value) {
+					updateSeoRevisions()
+				}
+
+				if (hasAiContentTab) {
+					extendImageBlockPlaceholder()
+					extendFeaturedImageButton()
+				}
+
+				// Update hidden state (only triggers reactivity if value changed).
+				aiAssistantStore.updateBlockHiddenByUser()
+
+				if (aiAssistantStore.isBlockAvailable && aiAssistantStore.hasPermission) {
+					checkAiAssistantShortcut({ aiAssistantStore })
+					extendBlockEditorInserterButton({ aiAssistantStore })
+				}
+			})
 		})
 	}
 
-	// Preload tab components in the background after the initial render.
-	const preload = () => {
-		import('./General')
-		import('./Social')
-		import('./Schema')
-		import('./Advanced')
-		import('./AiContent')
-		import('./Links')
-		import('./Redirects')
-		import('./SeoRevisions')
-		import('./KeywordRankTracker')
-	}
-
-	if ('requestIdleCallback' in window) {
-		window.requestIdleCallback(preload)
-	} else {
-		setTimeout(preload, 1000)
-	}
+	preloadOnIdle([
+		() => import('./General'),
+		() => import('./Social'),
+		() => import('./Schema'),
+		() => import('./Advanced'),
+		() => import('./AiContent'),
+		() => import('./Links'),
+		() => import('./Redirects'),
+		() => import('./SeoRevisions'),
+		() => import('./KeywordRankTracker')
+	])
 })
 
 onBeforeUnmount(() => {
@@ -571,13 +574,16 @@ switch (screenContext.value) {
 	case 'sidebar' :
 		activeTab.value = null
 		break
-	default :
-		activeTab.value = getParams()['aioseo-tab'] || settingsStore.metaBoxTabs.main || initTab.value
+	default : {
+		const preferredTab = getParams()['aioseo-tab'] || settingsStore.metaBoxTabs.main
+		const isAccessible = preferredTab && getTabs.value.some(tab => tab.slug === preferredTab)
+		activeTab.value = isAccessible ? preferredTab : initTab.value
 		settingsStore.changeTabSettings({ setting: 'main', value: activeTab.value })
 		setTimeout(() => {
 			removeParam('aioseo-tab')
 		}, 500)
 		break
+	}
 }
 </script>
 

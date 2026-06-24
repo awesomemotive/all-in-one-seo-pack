@@ -69,7 +69,11 @@ class LimitModifiedDate {
 
 		// Only enqueue this script if the post-settings-metabox is already enqueued.
 		if ( wp_script_is( 'aioseo/js/src/vue/standalone/post-settings/main.js', 'enqueued' ) ) {
-			aioseo()->core->assets->load( 'src/vue/standalone/limit-modified-date/main.js' );
+			// Declare wp-editor as a dependency so window.wp.editor is populated before the
+			// blockEditor module reads PluginPostStatusInfo. Without this the fallback chain
+			// `wp.editor?.X || wp.editPost?.X` reaches `wp.editPost.X`, which triggers a
+			// deprecation warning on WP 6.6+. See issue #7927.
+			aioseo()->core->assets->load( 'src/vue/standalone/limit-modified-date/main.js', [ 'wp-editor' ] );
 		}
 	}
 

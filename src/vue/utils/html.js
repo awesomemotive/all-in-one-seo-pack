@@ -123,14 +123,27 @@ export const parseSchemaByType = (type, schemaContent) => {
 }
 
 /**
+ * Retrieves the favicon URL from the DOM.
+ *
+ * @returns {string|null} The favicon URL, or null if not found.
+ */
+const getDomFaviconUrl = () => {
+	const linkElements = Array.from(document.head.getElementsByTagName('link'))
+	const faviconLink  = linkElements.find(link => [ 'icon', 'shortcut icon' ].includes(link.rel))
+
+	return faviconLink ? faviconLink.href : null
+}
+
+/**
  * Extract the Google SERP snippet data from DOM.
  *
  * @since 4.2.8
  *
- * @returns {{url: string, title: string, description: string}} The data.
+ * @returns {{favicon: string, url: string, title: string, description: string}} The data.
  */
 export const getDomGoogleSerpData = () => {
 	return {
+		favicon     : getDomFaviconUrl() || '',
 		url         : window.location.href,
 		title       : document.title || '',
 		description : document.querySelector('meta[name="description"]')?.content || ''

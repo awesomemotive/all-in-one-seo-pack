@@ -13,7 +13,10 @@
 					{{ strings.description }}
 				</div>
 
-				<div class="aioseo-settings-row no-border small-padding">
+				<div
+					v-if="allowed('aioseo_general_settings')"
+					class="aioseo-settings-row no-border small-padding"
+				>
 					<div class="settings-name">
 						<div class="name small-margin">
 							{{ strings.yourEmailAddress }}
@@ -31,7 +34,7 @@
 				</div>
 
 				<div
-					v-if="!rootStore.isPro"
+					v-if="!rootStore.isPro && allowed('aioseo_general_settings')"
 					class="aioseo-settings-row no-border no-margin small-padding"
 				>
 					<div class="settings-name">
@@ -151,6 +154,7 @@
 
 <script>
 import { DISCOUNT_PERCENTAGE } from '@/vue/plugins/constants'
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import links from '@/vue/utils/links'
 import {
 	useRootStore,
@@ -191,6 +195,7 @@ export default {
 		})
 
 		return {
+			allowed,
 			composableStrings : strings,
 			features,
 			getSelectedUpsellFeatures,

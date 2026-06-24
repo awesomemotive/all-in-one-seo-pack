@@ -35,8 +35,7 @@ class AdminBarNoindexWarning {
 			return;
 		}
 
-		$isSitePublic = get_option( 'blog_public' );
-		if ( $isSitePublic ) {
+		if ( ! aioseo()->helpers->isSearchEnginesDiscouraged() ) {
 			return;
 		}
 

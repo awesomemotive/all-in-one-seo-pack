@@ -77,16 +77,27 @@ class PostSettings {
 			aioseo()->helpers->isScreenBase( 'edit-tags' ) ||
 			aioseo()->helpers->isScreenBase( 'site-editor' )
 		) {
-			$page = null;
+			$page         = null;
+			$staticPostId = null;
 			if (
 				aioseo()->helpers->isScreenBase( 'event-espresso' ) ||
 				aioseo()->helpers->isScreenBase( 'post' )
 			) {
 				$page = 'post';
+
+				// Resolve the edited post ID from the request rather than relying on `get_the_ID()`
+				// inside Vue data generation. Third-party plugins (e.g. Breakdance) can run post loops
+				// during admin enqueue and leave the global `$post` pointing at a different post,
+				// which would then surface as the wrong post in `window.aioseo.currentPost`.
+				// phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
+				$requestedPostId = isset( $_GET['post'] ) ? absint( wp_unslash( $_GET['post'] ) ) : 0;
+				if ( $requestedPostId ) {
+					$staticPostId = $requestedPostId;
+				}
 			}
 
-			aioseo()->core->assets->load( 'src/vue/standalone/post-settings/main.js', [], aioseo()->helpers->getVueData( $page ) );
-			aioseo()->core->assets->load( 'src/vue/standalone/link-format/main.js', [], aioseo()->helpers->getVueData( $page ) );
+			aioseo()->core->assets->load( 'src/vue/standalone/post-settings/main.js', [], aioseo()->helpers->getVueData( $page, $staticPostId ) );
+			aioseo()->core->assets->load( 'src/vue/standalone/link-format/main.js', [], aioseo()->helpers->getVueData( $page, $staticPostId ) );
 		}
 
 		$screen = aioseo()->helpers->getCurrentScreen();
@@ -130,6 +141,47 @@ class PostSettings {
 				empty( $schemaSettingsCapability ) &&
 				empty( $aiContentSettingsCapability ) &&
 				empty( $linkAssistantCapability ) &&
+				empty( $redirectsCapability ) &&
+				empty( $advancedSettingsCapability ) &&
+				empty( $seoRevisionsSettingsCapability )
+			)
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check whether or not we can add the metabox in a page builder context.
+	 * Link Assistant is excluded because it does not support page builder integrations.
+	 *
+	 * @since 4.9.9
+	 *
+	 * @param  string  $postType The post type to check.
+	 * @return boolean           Whether or not can add the Metabox.
+	 */
+	public function canAddPageBuilderMetabox( $postType ) {
+		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
+
+		$pageAnalysisSettingsCapability = aioseo()->access->hasCapability( 'aioseo_page_analysis' );
+		$generalSettingsCapability      = aioseo()->access->hasCapability( 'aioseo_page_general_settings' );
+		$socialSettingsCapability       = aioseo()->access->hasCapability( 'aioseo_page_social_settings' );
+		$schemaSettingsCapability       = aioseo()->access->hasCapability( 'aioseo_page_schema_settings' );
+		$aiContentSettingsCapability    = aioseo()->access->hasCapability( 'aioseo_page_ai_content_settings' );
+		$redirectsCapability            = aioseo()->access->hasCapability( 'aioseo_page_redirects_manage' );
+		$advancedSettingsCapability     = aioseo()->access->hasCapability( 'aioseo_page_advanced_settings' );
+		$seoRevisionsSettingsCapability = aioseo()->access->hasCapability( 'aioseo_page_seo_revisions_settings' );
+
+		if (
+			$dynamicOptions->searchAppearance->postTypes->has( $postType ) &&
+			$dynamicOptions->searchAppearance->postTypes->$postType->advanced->showMetaBox &&
+			! (
+				empty( $pageAnalysisSettingsCapability ) &&
+				empty( $generalSettingsCapability ) &&
+				empty( $socialSettingsCapability ) &&
+				empty( $schemaSettingsCapability ) &&
+				empty( $aiContentSettingsCapability ) &&
 				empty( $redirectsCapability ) &&
 				empty( $advancedSettingsCapability ) &&
 				empty( $seoRevisionsSettingsCapability )
@@ -212,7 +264,8 @@ class PostSettings {
 	/**
 	 * Handles metabox saving.
 	 *
-	 * @since 4.0.3
+	 * @since   4.0.3
+	 * @version 4.9.9 Sanitize social posts via {@see \AIOSEO\Plugin\Common\Ai\Ai::sanitizeSocialPosts()}.
 	 *
 	 * @param  int  $postId Post ID.
 	 * @return void
@@ -238,13 +291,26 @@ class PostSettings {
 		}
 
 		$currentPost = json_decode( wp_unslash( ( $_POST['aioseo-post-settings'] ) ), true ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+		// AI social post content can contain newlines and links that the generic
+		// sanitize() helper would strip, so we set it aside and run it through the
+		// dedicated social-post sanitizer after the rest is sanitized.
+		$socialPosts = isset( $currentPost['ai']['socialPosts'] ) ? $currentPost['ai']['socialPosts'] : null;
+		if ( null !== $socialPosts ) {
+			unset( $currentPost['ai']['socialPosts'] );
+		}
+
 		$currentPost = aioseo()->helpers->sanitize( $currentPost );
 
 		// If there is no data, there likely was an error, e.g. if the hidden field wasn't populated on load and the user saved the post without making changes in the metabox.
 		// In that case we should return to prevent a complete reset of the data.
 
-		if ( empty( $currentPost ) ) {
+		if ( empty( $currentPost ) && null === $socialPosts ) {
 			return;
+		}
+
+		if ( null !== $socialPosts ) {
+			$currentPost['ai']['socialPosts'] = aioseo()->ai->sanitizeSocialPosts( $socialPosts );
 		}
 
 		Models\Post::savePost( $postId, $currentPost );

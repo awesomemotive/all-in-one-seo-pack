@@ -57,7 +57,12 @@ class Htaccess {
 			return [
 				'success' => false,
 				'reason'  => 'file-not-writable',
-				'message' => __( 'We were unable to save the .htaccess file because the file was not writable. Please check the file permissions and try again.', 'all-in-one-seo-pack' )
+				'message' => sprintf(
+					// Translators: 1 - The full path to the .htaccess file, 2 - File permission value (e.g. "644").
+					__( 'We couldn\'t save the .htaccess file at %1$s because it isn\'t writable by WordPress. Try changing the file permissions to %2$s (or contact your host), then reload this page and save again.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+					$this->path,
+					'644'
+				)
 			];
 		}
 
@@ -67,7 +72,12 @@ class Htaccess {
 		if ( false === $fileSaved ) {
 			return [
 				'success' => false,
-				'reason'  => 'file-not-saved'
+				'reason'  => 'file-not-saved',
+				'message' => sprintf(
+					// Translators: 1 - The full path to the .htaccess file.
+					__( 'We couldn\'t write to the .htaccess file at %1$s. The file appears writable, but the save operation failed — usually a server-side restriction (disk quota, SELinux, or a security plugin). Check your server logs or contact your host, then try again.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+					$this->path
+				)
 			];
 		}
 
@@ -84,7 +94,7 @@ class Htaccess {
 			return [
 				'success' => false,
 				'reason'  => 'syntax-errors',
-				'message' => __( 'We were unable to save the .htaccess file due to syntax errors. Please check the code below and try again.', 'all-in-one-seo-pack' )
+				'message' => __( 'Your changes were reverted because the new .htaccess content caused the site to stop responding. This usually means an invalid directive, a redirect loop (e.g. a "force HTTPS" rule when HTTPS is already enforced), or conflicting rewrite rules. Review the code below, remove or comment out recent additions, and try again.', 'all-in-one-seo-pack' ) // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 			];
 		}
 

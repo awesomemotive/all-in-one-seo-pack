@@ -16,7 +16,7 @@
 			</div>
 
 		<base-button
-			v-if="!isWpDashboard"
+			v-if="!isWpDashboard && allowed('aioseo_general_settings')"
 			type="blue"
 			size="medium"
 			tag="a"
@@ -26,7 +26,7 @@
 		</base-button>
 
 		<a
-			v-if="isWpDashboard"
+			v-if="isWpDashboard && allowed('aioseo_general_settings')"
 			:href="checklistUrl"
 			class="button button-primary"
 		>
@@ -39,6 +39,7 @@
 </template>
 
 <script setup>
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { useRootStore } from '@/vue/stores'
 
 import BaseButton from '@/vue/components/common/base/Button'

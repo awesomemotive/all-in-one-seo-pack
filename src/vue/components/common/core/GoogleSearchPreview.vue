@@ -7,10 +7,17 @@
 			<div class="aioseo-google-search-preview__favicon">
 				<div class="favicon-wrapper">
 					<img
+						v-if="parseFavicon"
 						:src="parseFavicon"
 						alt="Favicon"
 						loading="lazy"
 						decoding="async"
+						height="18"
+						width="18"
+					/>
+
+					<svg-globe
+						v-else
 						height="18"
 						width="18"
 					/>
@@ -138,6 +145,7 @@ import { escapeRegex } from '@/vue/utils/regex'
 import { getText, truncate } from '@/vue/utils/html'
 import { CURRENCY_LIST } from '@/vue/plugins/constants'
 import SvgCaret from '@/vue/components/common/svg/Caret'
+import SvgGlobe from '@/vue/components/common/svg/Globe'
 
 import { useUrl } from '@/vue/composables/Url'
 
@@ -157,7 +165,8 @@ export default {
 		}
 	},
 	components : {
-		SvgCaret
+		SvgCaret,
+		SvgGlobe
 	},
 	props : {
 		focusKeyphrase : String,
@@ -258,19 +267,12 @@ export default {
 		},
 		parseFavicon () {
 			const rootStore = useRootStore()
-			let faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${rootStore.aioseo.urls.domain}`
 
-			try {
-				const url = new URL(this.favicon || '')
-
-				faviconUrl = url.href
-			} catch (_e) {
-				if (rootStore.aioseo.data?.isDev) {
-					faviconUrl = `${rootStore.aioseo.urls.home}/favicon.ico`
-				}
-			}
-
-			return faviconUrl
+			// The site's real favicon: the prop (rendered <link rel="icon"> on the
+			// front-end) or the WP Site Icon. Returns '' when there's none so the
+			// template renders the inline globe instead of an <img> whose URL would
+			// 404 (Google can't resolve the own host; /favicon.ico often doesn't exist).
+			return this.favicon || rootStore.aioseo.urls?.siteFavicon || ''
 		},
 		parseDescription () {
 			// Since the parseTags function strips tags, we don't need to preserve HTML tags.
@@ -401,7 +403,8 @@ export default {
 			justify-content: center;
 			width: 28px;
 
-			img {
+			img,
+			svg {
 				height: 18px;
 				width: 18px;
 			}

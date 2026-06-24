@@ -1496,6 +1496,9 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/plugins/constants.js:1541
 	__( 'Bachelor Degree', 'all-in-one-seo-pack' ),
 
+	// Reference: /src/vue/standalone/nps-survey/App.vue:44
+	__( 'Back', 'all-in-one-seo-pack' ),
+
 	// Reference: /src/vue/pages/ai-bulk-generate/views/Main.vue:160
 	// Translators: 1 - The post type plural label (e.g. "Posts", "Pages").
 	// Translators: [DUPLICATE] 1 - The previous route name.
@@ -2038,6 +2041,7 @@ $generated_i18n_strings = [
 	__( 'Clicks', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/components/common/core/Help.vue:43
+	// Reference: /src/vue/standalone/nps-survey/App.vue:45
 	__( 'Close', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/composables/Wizard.js:164
@@ -3460,6 +3464,9 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/composables/Image.js:62
 	__( 'Featured Image', 'all-in-one-seo-pack' ),
 
+	// Reference: /src/vue/standalone/nps-survey/App.vue:35
+	__( 'Feedback', 'all-in-one-seo-pack' ),
+
 	// Reference: /src/vue/plugins/constants.js:1448
 	__( 'Feeds', 'all-in-one-seo-pack' ),
 
@@ -4390,6 +4397,9 @@ $generated_i18n_strings = [
 
 	// Reference: /src/vue/pages/settings/views/seo-checklist/info/EnableLlmsTxt.vue:13
 	__( 'How does it work?', 'all-in-one-seo-pack' ),
+
+	// Reference: /src/vue/standalone/nps-survey/App.vue:36
+	__( 'How likely are you to recommend AIOSEO to a friend or colleague?', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/standalone/post-settings/composables/schema.js:49
 	__( 'How To', 'all-in-one-seo-pack' ),
@@ -6175,6 +6185,9 @@ $generated_i18n_strings = [
 
 	// Reference: /src/vue/pages/ai-insights/views/Mcp.vue:637
 	__( 'Not registered', 'all-in-one-seo-pack' ),
+
+	// Reference: /src/vue/standalone/nps-survey/App.vue:37
+	__( 'Not satisfied', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/pages/ai-insights/views/Mcp.vue:645
 	__( 'Not supported:', 'all-in-one-seo-pack' ),
@@ -8363,6 +8376,9 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/composables/Wizard.js:113
 	__( 'Submit articles to Google News that were published in the last 48 hours.', 'all-in-one-seo-pack' ),
 
+	// Reference: /src/vue/standalone/nps-survey/App.vue:42
+	__( 'Submit feedback', 'all-in-one-seo-pack' ),
+
 	// Reference: /src/vue/pages/ai-insights/views/BrandTracker.vue:31
 	__( 'Subscribe', 'all-in-one-seo-pack' ),
 
@@ -8541,6 +8557,9 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/components/common/core/GettingStarted.vue:44
 	// Translators: 1 - The plugin name ("All in One SEO").
 	__( 'Thank you for choosing the best WordPress SEO plugin. %1$s default settings works great out of the box. We created the setup wizard to guide you through some important configuration settings & custom-tailored SEO best practices for your site to help you improve rankings.', 'all-in-one-seo-pack' ),
+
+	// Reference: /src/vue/standalone/nps-survey/App.vue:43
+	__( 'Thank you for your feedback!', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/components/common/notifications/Review.vue:51
 	__( 'That\'s Awesome!', 'all-in-one-seo-pack' ),
@@ -10292,6 +10311,9 @@ $generated_i18n_strings = [
 	// Reference: /src/vue/composables/TruSeoScore.js:16
 	__( 'Very Good!', 'all-in-one-seo-pack' ),
 
+	// Reference: /src/vue/standalone/nps-survey/App.vue:38
+	__( 'Very satisfied', 'all-in-one-seo-pack' ),
+
 	// Reference: /src/vue/composables/AiContent.js:66
 	__( 'Vibrant', 'all-in-one-seo-pack' ),
 
@@ -10584,8 +10606,14 @@ $generated_i18n_strings = [
 	// Reference: /src/app/tru-seo/analyzer/analysis/transitionWords.js:63
 	__( 'Well done!', 'all-in-one-seo-pack' ),
 
+	// Reference: /src/vue/standalone/nps-survey/App.vue:39
+	__( 'What could we do to improve?', 'all-in-one-seo-pack' ),
+
 	// Reference: /src/vue/pages/settings/views/seo-checklist/info/FillKnowledgeGraph.vue:12
 	__( 'What do these settings do?', 'all-in-one-seo-pack' ),
+
+	// Reference: /src/vue/standalone/nps-survey/App.vue:40
+	__( 'What do you love most about AIOSEO?', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/vue/pages/settings/views/seo-checklist/info/InstallBrokenLinkChecker.vue:10
 	__( 'What does Broken Link Checker do?', 'all-in-one-seo-pack' ),
@@ -11168,6 +11196,9 @@ $generated_i18n_strings = [
 
 	// Reference: /src/vue/components/common/core/SocialProfiles.vue:121
 	__( 'Your Facebook URL is invalid. Please check the format and try again.', 'all-in-one-seo-pack' ),
+
+	// Reference: /src/vue/standalone/nps-survey/App.vue:41
+	__( 'Your feedback...', 'all-in-one-seo-pack' ),
 
 	// Reference: /src/app/tru-seo/analyzer/analysis/keyphraseInSubHeadings.js:98
 	__( 'Your H2 and H3 subheadings reflects the topic of your copy. Good job!', 'all-in-one-seo-pack' ),

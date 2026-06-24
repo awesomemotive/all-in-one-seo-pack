@@ -18,7 +18,7 @@
 						md="6"
 					>
 						<core-card
-							v-if="!rootStore.aioseo.setupWizard.isCompleted"
+							v-if="!rootStore.aioseo.setupWizard.isCompleted && allowed('aioseo_setup_wizard')"
 							slug="dashboardSeoSetup"
 							:header-text="strings.seoSetup"
 						>

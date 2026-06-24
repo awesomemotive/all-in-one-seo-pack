@@ -247,6 +247,9 @@ namespace AIOSEO\Plugin {
 			// Runs after preUpdates so legacy version-gated work has already had its turn.
 			$this->migrationRunner = new Common\Main\Migrations\MigrationRunner();
 			$this->migrationRunner->register( new Common\Main\Migrations\Definitions\DropLegacyCacheIndexes() );
+			if ( $this->pro ) {
+				$this->migrationRunner->register( new Pro\Main\Migrations\Definitions\AddUploadFilesCapability() );
+			}
 			$this->migrationRunner->run();
 		}
 
@@ -326,6 +329,7 @@ namespace AIOSEO\Plugin {
 			$this->seoAnalysis        = $this->pro ? new Pro\SeoAnalysis\SeoAnalysis() : new Common\SeoAnalysis\SeoAnalysis();
 			$this->thirdParty         = new Common\ThirdParty\ThirdParty();
 			$this->writingAssistant   = new Common\WritingAssistant\WritingAssistant();
+			$this->seoAlerts          = new Common\SeoAlerts\SeoAlerts();
 			$this->llms               = $this->pro ? new Pro\Llms\Llms() : new Common\Llms\Llms();
 			$this->abilities          = $this->pro ? new Pro\Abilities\Abilities() : new Common\Abilities\Abilities();
 			$this->redirects          = $this->pro ? new Pro\Redirects\Redirects() : null;

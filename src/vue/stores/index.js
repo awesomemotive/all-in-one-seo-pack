@@ -1,6 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia'
 
 import { useAddonsStore } from '@/vue/stores/AddonsStore'
+import { useSeoAlertsStore } from '@/vue/stores/SeoAlertsStore'
 
 import { useAiAssistantStore } from '@/vue/stores/AiAssistantStore'
 import { useAiImageGeneratorStore } from '@/vue/stores/AiImageGeneratorStore'
@@ -282,6 +283,7 @@ export {
 	useSchemaStore,
 	useSearchStatisticsStore,
 	useSensitiveOptionsStore,
+	useSeoAlertsStore,
 	useSeoChecklistStore,
 	useSemrushStore,
 	useSeoPreviewStore,

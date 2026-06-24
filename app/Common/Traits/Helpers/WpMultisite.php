@@ -78,11 +78,14 @@ trait WpMultisite {
 	 * @return array                   An array of sites.
 	 */
 	public function getSites( $limit = 'all', $offset = 0, $searchTerm = null, $filter = 'all', $orderBy = null, $orderDir = 'DESC' ) {
-		$countSites = $this->countSites();
-		$sites      = get_sites( [
+		// Don't filter by `public = 1` — that flag is toggled off when an admin enables the
+		// "Discourage search engines from indexing this site" option on the subsite, and
+		// previously caused those subsites to silently disappear from Network Admin →
+		// AIOSEO → Domain Activation. License activation should be independent of the
+		// subsite's search-engine indexing preference. See issue #7964.
+		$sites = get_sites( [
 			'network_id' => get_current_network_id(),
-			'number'     => $countSites['public'],
-			'public'     => 1
+			'number'     => 0
 		] );
 
 		$allSites = [];

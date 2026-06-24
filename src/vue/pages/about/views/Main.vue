@@ -13,6 +13,7 @@ import { defineAsyncComponent } from 'vue'
 import CoreMain from '@/vue/components/common/core/main/Index'
 
 import { __ } from '@/vue/plugins/translations'
+import { preloadOnIdle } from '@/vue/utils/preload'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -31,18 +32,11 @@ export default {
 		}
 	},
 	mounted () {
-		// Preload all route components in the background
-		const preloadComponents = () => {
-			import('./AboutUs.vue')
-			import('./GettingStarted.vue')
-			import('./AIOSEO_VERSION/LiteVsPro.vue')
-		}
-
-		if ('requestIdleCallback' in window) {
-			requestIdleCallback(preloadComponents)
-		} else {
-			setTimeout(preloadComponents, 1)
-		}
+		preloadOnIdle([
+			() => import('./AboutUs.vue'),
+			() => import('./GettingStarted.vue'),
+			() => import('./AIOSEO_VERSION/LiteVsPro.vue')
+		])
 	}
 }
 </script>

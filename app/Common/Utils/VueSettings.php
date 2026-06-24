@@ -122,6 +122,8 @@ class VueSettings {
 			'aiContentSettings'            => true,
 			'writingAssistantSettings'     => true,
 			'writingAssistantCta'          => true,
+			'seoAlerts'                    => true,
+			'seoAlertsDelivery'            => true,
 			'llmsSitemap'                  => true,
 			'llmsSitemapAdvancedSettings'  => true,
 			'redirectLogsSettings'         => true,

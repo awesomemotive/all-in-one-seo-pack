@@ -14,7 +14,7 @@
 				</div>
 
 				<div
-					v-for="(feature, index) in features"
+					v-for="(feature, index) in filteredFeatures"
 					:key="index"
 					class="feature-grid small-padding medium-margin"
 				>
@@ -83,6 +83,7 @@ import {
 
 import { merge } from 'lodash-es'
 
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { useWizard } from '@/vue/composables/Wizard'
 
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
@@ -143,6 +144,14 @@ export default {
 		}
 	},
 	computed : {
+		filteredFeatures () {
+			return this.features.filter(feature => {
+				if ('email-reports' === feature.value) {
+					return allowed('aioseo_general_settings')
+				}
+				return true
+			})
+		},
 		showPluginsAll () {
 			return (
 				this.setupWizardStore.features.includes('analytics') ||

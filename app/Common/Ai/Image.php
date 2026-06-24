@@ -35,18 +35,17 @@ class Image {
 	 *
 	 * @since 4.8.9
 	 *
-	 * @param  int|null $objectId The object ID.
-	 * @return array              The data.
+	 * @return array The data.
 	 */
-	public function getVueDataEdit( $objectId = null ) {
-		$objectId = $objectId ?: absint( get_the_ID() );
+	public function getVueDataEdit() {
+		$isEnabled = ! aioseo()->ai->isDisabled();
 
 		return [
-			'extend' => [
-				'imageBlockToolbar'     => apply_filters( 'aioseo_ai_image_generator_extend_image_block_toolbar', true, $objectId ),
-				'imageBlockPlaceholder' => apply_filters( 'aioseo_ai_image_generator_extend_image_block_placeholder', true, $objectId ),
-				'featuredImageButton'   => apply_filters( 'aioseo_ai_image_generator_extend_featured_image_button', true, $objectId ),
-			]
+			'extend' => array_fill_keys( [
+				'imageBlockToolbar',
+				'imageBlockPlaceholder',
+				'featuredImageButton'
+			], $isEnabled )
 		];
 	}
 

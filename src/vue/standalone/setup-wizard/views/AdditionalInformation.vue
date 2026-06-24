@@ -10,6 +10,8 @@
 					{{ strings.additionalSiteInformation }}
 				</div>
 
+				<template v-if="allowed('aioseo_search_appearance_settings')">
+
 				<div class="person-or-organization aioseo-settings-row no-border no-margin">
 					<div class="settings-name">
 						<div class="name small-margin">{{ strings.personOrOrganization }}</div>
@@ -164,6 +166,10 @@
 					/>
 				</div>
 
+				</template>
+
+				<template v-if="allowed('aioseo_social_networks_settings')">
+
 				<div
 					class="schema-graph-image aioseo-settings-row"
 				>
@@ -199,6 +205,8 @@
 					</a>
 				</div>
 
+				</template>
+
 				<template #footer>
 					<div class="go-back">
 						<router-link :to="setupWizardStore.getPrevLink" class="no-underline">&larr;</router-link>
@@ -230,6 +238,7 @@ import {
 
 import { merge } from 'lodash-es'
 
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { useWizard } from '@/vue/composables/Wizard'
 import BaseRadioToggle from '@/vue/components/common/base/RadioToggle'
 import CoreHtmlTagsEditor from '@/vue/components/common/core/HtmlTagsEditor'
@@ -254,6 +263,7 @@ export default {
 		})
 
 		return {
+			allowed,
 			optionsStore      : useOptionsStore(),
 			rootStore         : useRootStore(),
 			setupWizardStore  : useSetupWizardStore(),

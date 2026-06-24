@@ -27,6 +27,7 @@ export const useIndexStatus = () => {
 	const strings = {
 		noResultsYetLowercase : __('No results yet', td),
 		inspectOnGsc          : __('Inspect in Google Search Console', td),
+		refreshStatus         : __('Refresh Status', td),
 		testWithGoogle        : __('Test with Google', td)
 	}
 

@@ -365,8 +365,8 @@ class Database {
 			$globalTables     = $this->db->tables( 'global', true );
 			foreach ( $databaseTableInformation as $table ) {
 				// Only include tables matching the prefix of the current site, this is to prevent displaying all tables on a MS install not relating to the current.
-				// Use stripos for case-insensitive comparison due to MySQL's lower_case_table_names setting which can lowercase table names.
-				if ( is_multisite() && 0 !== stripos( $table->name, $siteTablesPrefix ) && ! in_array( $table->name, $globalTables, true ) ) {
+				// Use stripos for case-insensitive prefix check and strtolower for global table lookup to handle MySQL's lower_case_table_names setting.
+				if ( is_multisite() && 0 !== stripos( $table->name, $siteTablesPrefix ) && ! in_array( strtolower( $table->name ), array_map( 'strtolower', $globalTables ), true ) ) {
 					continue;
 				}
 
@@ -567,6 +567,10 @@ class Database {
 		// First try exact match for performance.
 		if ( isset( $schema[ $table ] ) ) {
 			return $table;
+		}
+
+		if ( ! is_array( $schema ) ) {
+			return null;
 		}
 
 		// Fall back to case-insensitive search.

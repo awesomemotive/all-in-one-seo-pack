@@ -852,9 +852,10 @@ trait ThirdParty {
 	 */
 	public function isPluginActive( $slug ) {
 		$mapped = [
-			'buddypress' => 'buddypress/bp-loader.php',
-			'bbpress'    => 'bbpress/bbpress.php',
-			'weglot'     => 'weglot/weglot.php'
+			'buddypress'  => 'buddypress/bp-loader.php',
+			'bbpress'     => 'bbpress/bbpress.php',
+			'weglot'      => 'weglot/weglot.php',
+			'universally' => 'universally-language-translation-multilingual-tool/universally.php'
 		];
 
 		static $output = [];

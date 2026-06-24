@@ -46,6 +46,10 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 			}
 		},
 		delete (id) {
+			if (!this.hasPermission) {
+				return Promise.resolve()
+			}
+
 			return http.delete(links.restUrl(`seo-revisions/${id}`))
 				.then((response) => {
 					this.itemsTotalCount = response.body.itemsTotalCount
@@ -54,6 +58,10 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 				})
 		},
 		fetch (payload = {}, append = false) {
+			if (!this.hasPermission) {
+				return Promise.resolve()
+			}
+
 			const postEditorStore = usePostEditorStore()
 			return http.get(links.restUrl('seo-revisions/' + postEditorStore.currentPost.context + '/' + postEditorStore.currentPost.id))
 				.query(payload)
@@ -71,6 +79,10 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 				})
 		},
 		update ({ id, payload }) {
+			if (!this.hasPermission) {
+				return Promise.resolve()
+			}
+
 			return http.post(links.restUrl(`seo-revisions/${id}/`))
 				.send(payload)
 				.then((response) => {
@@ -78,12 +90,20 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 				})
 		},
 		restore ({ id }) {
+			if (!this.hasPermission) {
+				return Promise.resolve()
+			}
+
 			return http.post(links.restUrl(`seo-revisions/restore/${id}/`))
 				.then((response) => {
 					return response
 				})
 		},
 		fetchDiff (payload) {
+			if (!this.hasPermission) {
+				return Promise.resolve()
+			}
+
 			const cacheKey = payload.fromId + '_' + payload.toId
 
 			return new Promise((resolve) => {

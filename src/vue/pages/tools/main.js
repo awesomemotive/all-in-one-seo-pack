@@ -21,7 +21,8 @@ const router = startRouter(
 	paths
 		.filter(p => 'htaccess-editor' !== p.name || (window.aioseo.data.server.match(/apache|litespeed/) && !window.aioseo.data.isNetworkAdmin))
 		.filter(p => 'debug' !== p.name || window.aioseo.data.isDev)
-		.filter(p => 'system-status' !== p.name || !window.aioseo.data.isNetworkAdmin),
+		.filter(p => 'system-status' !== p.name || !window.aioseo.data.isNetworkAdmin)
+		.filter(p => 'seo-alerts' !== p.name || !window.aioseo.data.isNetworkAdmin),
 	app
 )
 

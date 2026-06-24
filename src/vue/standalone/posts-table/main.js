@@ -13,6 +13,8 @@ import {
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 import App from './App'
 import TermApp from './TermApp'
 
@@ -87,7 +89,7 @@ const addHiddenField = (wrapper) => {
 	wrapper.append(input)
 }
 
-if (window.aioseo.posts && 0 < window.aioseo.posts.length) {
+if (window.aioseo.posts && 0 < window.aioseo.posts.length && (allowed('aioseo_page_general_settings') || allowed('aioseo_page_analysis'))) {
 	http.post(links.restUrl('posts-list/load-details-column'))
 		.send({
 			ids : window.aioseo.posts.map((p) => p.id)
@@ -123,7 +125,7 @@ const loadTermsTable = (term) => {
 	app.mount(`#${term.columnName}-${term.id}`)
 }
 
-if (window.aioseo.terms && 0 < window.aioseo.terms.length && 0 === window.aioseo.posts.length) {
+if (window.aioseo.terms && 0 < window.aioseo.terms.length && 0 === window.aioseo.posts.length && (allowed('aioseo_page_general_settings') || allowed('aioseo_page_analysis'))) {
 	http.post(links.restUrl('terms-list/load-details-column'))
 		.send({
 			ids : window.aioseo.terms.map((t) => t.id)

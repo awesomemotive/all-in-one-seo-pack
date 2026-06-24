@@ -356,7 +356,7 @@ class Cache {
 		$this->clearStatic();
 
 		if ( $activationRedirect ) {
-			$this->update( 'activation_redirect', $activationRedirect, 30 );
+			$this->update( 'activation_redirect', $activationRedirect, HOUR_IN_SECONDS );
 		}
 	}
 

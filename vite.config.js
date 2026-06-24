@@ -65,6 +65,7 @@ const getStandalones = () => {
 		'connect-pro'               : './src/vue/standalone/connect-pro/main.js',
 		'dashboard-widgets'         : './src/vue/standalone/dashboard-widgets/main.js',
 		'flyout-menu'               : './src/vue/standalone/flyout-menu/main.js',
+		'nps-survey'                : './src/vue/standalone/nps-survey/main.js',
 		'footer-links'              : './src/vue/standalone/footer-links/main.js',
 		'headline-analyzer'         : './src/vue/standalone/headline-analyzer/main.js',
 		'limit-modified-date'       : './src/vue/standalone/limit-modified-date/main.js',

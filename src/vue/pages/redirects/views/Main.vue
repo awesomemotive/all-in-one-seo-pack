@@ -5,18 +5,13 @@
 <script setup>
 import { defineAsyncComponent, onMounted } from 'vue'
 
+import { preloadOnIdle } from '@/vue/utils/preload'
+
 const RedirectsMain = defineAsyncComponent(() => import('./AIOSEO_VERSION/Main.vue'))
 
-// Preload the component in the background
 onMounted(() => {
-	const preloadComponents = () => {
-		import('./AIOSEO_VERSION/Main.vue')
-	}
-
-	if ('requestIdleCallback' in window) {
-		requestIdleCallback(preloadComponents)
-	} else {
-		setTimeout(preloadComponents, 1)
-	}
+	preloadOnIdle([
+		() => import('./AIOSEO_VERSION/Main.vue')
+	])
 })
 </script>

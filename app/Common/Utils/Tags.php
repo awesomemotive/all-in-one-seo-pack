@@ -699,6 +699,21 @@ class Tags {
 				'description' => __( 'The title of the primary term, first assigned term or the current term.', 'all-in-one-seo-pack' )
 			]
 		] );
+
+		if ( function_exists( 'tribe_get_start_date' ) && function_exists( 'tribe_get_end_date' ) ) {
+			$this->tags = array_merge( $this->tags, [
+				[
+					'id'          => 'event_start_date',
+					'name'        => __( 'Event Start Date', 'all-in-one-seo-pack' ),
+					'description' => __( 'The start date of The Events Calendar event, localized.', 'all-in-one-seo-pack' )
+				],
+				[
+					'id'          => 'event_end_date',
+					'name'        => __( 'Event End Date', 'all-in-one-seo-pack' ),
+					'description' => __( 'The end date of The Events Calendar event, localized.', 'all-in-one-seo-pack' )
+				]
+			] );
+		}
 	}
 
 	/**
@@ -890,6 +905,18 @@ class Tags {
 
 			if ( $postType['hierarchical'] ) {
 				$context[ $postType['name'] . 'Title' ][] = 'parent_title';
+			}
+
+			if ( 'tribe_events' === $postType['name'] && function_exists( 'tribe_get_start_date' ) ) {
+				$context[ $postType['name'] . 'Title' ][]       = 'event_start_date';
+				$context[ $postType['name'] . 'Title' ][]       = 'event_end_date';
+				$context[ $postType['name'] . 'Description' ][] = 'event_start_date';
+				$context[ $postType['name'] . 'Description' ][] = 'event_end_date';
+
+				asort( $context[ $postType['name'] . 'Title' ] );
+				$context[ $postType['name'] . 'Title' ] = array_values( $context[ $postType['name'] . 'Title' ] );
+				asort( $context[ $postType['name'] . 'Description' ] );
+				$context[ $postType['name'] . 'Description' ] = array_values( $context[ $postType['name'] . 'Description' ] );
 			}
 		}
 
@@ -1087,6 +1114,22 @@ class Tags {
 				$date = $this->formatDateAsI18n( get_the_date( 'U' ) );
 
 				return empty( $date ) && $sampleData ? $this->formatDateAsI18n( date_i18n( 'U' ) ) : $date;
+			case 'event_start_date':
+				if ( ! function_exists( 'tribe_get_start_date' ) || empty( $postId ) ) {
+					return $sampleData ? $this->formatDateAsI18n( date_i18n( 'U' ) ) : '';
+				}
+
+				$timestamp = tribe_get_start_date( $postId, true, 'U' );
+
+				return $timestamp ? $this->formatDateAsI18n( $timestamp ) : '';
+			case 'event_end_date':
+				if ( ! function_exists( 'tribe_get_end_date' ) || empty( $postId ) ) {
+					return $sampleData ? $this->formatDateAsI18n( date_i18n( 'U' ) ) : '';
+				}
+
+				$timestamp = tribe_get_end_date( $postId, true, 'U' );
+
+				return $timestamp ? $this->formatDateAsI18n( $timestamp ) : '';
 			case 'post_date_w3c':
 				$date = is_object( $post ) ? mysql2date( DATE_W3C, $post->post_date, false ) : '';
 

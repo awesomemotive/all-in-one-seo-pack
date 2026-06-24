@@ -1,5 +1,7 @@
 import { __ } from '@/vue/plugins/translations'
 
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 const td       = import.meta.env.VITE_TEXTDOMAIN
 const loadView = view => {
 	return () => import(`../views/${view}.vue`)
@@ -8,7 +10,9 @@ const loadView = view => {
 export default [
 	{
 		path     : '/:pathMatch(.*)*',
-		redirect : '/redirects'
+		redirect : () => {
+			return allowed('aioseo_redirects_manage') ? '/redirects' : '/settings'
+		}
 	},
 	{
 		path      : '/redirects',
@@ -16,6 +20,7 @@ export default [
 		component : loadView('Main'),
 		meta      : {
 			access : 'aioseo_redirects_manage',
+			home   : 'settings',
 			name   : __('Redirects', td)
 		}
 	},
@@ -25,6 +30,7 @@ export default [
 		component : loadView('Main'),
 		meta      : {
 			access : 'aioseo_redirects_manage',
+			home   : 'settings',
 			name   : __('Full Site Redirect', td)
 		}
 	},
@@ -34,6 +40,7 @@ export default [
 		component : loadView('Main'),
 		meta      : {
 			access : 'aioseo_redirects_manage',
+			home   : 'settings',
 			name   : __('HTTP Headers', td)
 		}
 	},
@@ -43,6 +50,7 @@ export default [
 		component : loadView('Main'),
 		meta      : {
 			access : 'aioseo_redirects_manage',
+			home   : 'settings',
 			name   : __('Logs', td)
 		}
 	},
@@ -52,6 +60,7 @@ export default [
 		component : loadView('Main'),
 		meta      : {
 			access : 'aioseo_redirects_settings',
+			home   : 'redirects',
 			name   : __('Import / Export', td)
 		}
 	},
@@ -61,6 +70,7 @@ export default [
 		component : loadView('Main'),
 		meta      : {
 			access : 'aioseo_redirects_settings',
+			home   : 'redirects',
 			name   : __('Settings', td)
 		}
 	}

@@ -17,6 +17,7 @@ import { useRoute } from 'vue-router'
 import CoreMain from '@/vue/components/common/core/main/Index'
 
 import { __ } from '@/vue/plugins/translations'
+import { preloadOnIdle } from '@/vue/utils/preload'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 const route = useRoute()
@@ -49,25 +50,13 @@ const getRoute = computed(() => {
 	}
 })
 
-// Preload other route components in the background
-const preloadRouteComponents = () => {
-	const loadComponents = () => {
-		// Always preload all route views
-		import('./AiContent.vue')
-		import('./keyword-reports/Index.vue')
-		import('./keyword-reports/Report.vue')
-		import('./BrandTracker.vue')
-		import('./Mcp.vue')
-	}
-
-	if ('requestIdleCallback' in window) {
-		requestIdleCallback(loadComponents)
-	} else {
-		setTimeout(loadComponents, 1)
-	}
-}
-
 onMounted(() => {
-	preloadRouteComponents()
+	preloadOnIdle([
+		() => import('./AiContent.vue'),
+		() => import('./keyword-reports/Index.vue'),
+		() => import('./keyword-reports/Report.vue'),
+		() => import('./BrandTracker.vue'),
+		() => import('./Mcp.vue')
+	])
 })
 </script>

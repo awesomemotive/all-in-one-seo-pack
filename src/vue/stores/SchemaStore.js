@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 import {
 	useOptionsStore,
 	usePostEditorStore,
@@ -16,7 +18,8 @@ import { isBlockEditor } from '@/vue/utils/context'
 
 export const useSchemaStore = defineStore('SchemaStore', {
 	state : () => ({
-		custom : {
+		capability : 'aioseo_page_schema_settings',
+		custom     : {
 			graphName : '',
 			schema    : ''
 		},
@@ -92,6 +95,10 @@ export const useSchemaStore = defineStore('SchemaStore', {
 				...this.getCustomObject()
 			}
 
+			if (!allowed(this.capability)) {
+				return
+			}
+
 			const template = {
 				...JSON.parse(JSON.stringify(customObjectGraph)),
 				label : 'Custom Schema - ' + customObjectGraph.graphName
@@ -156,6 +163,10 @@ export const useSchemaStore = defineStore('SchemaStore', {
 				this.graph.label = schema.getGraphObject(this.graph, true)?.label + ' - ' + schema.getGraphObject(this.graph)?.label + ' - ' + this.templateName
 			} else {
 				this.graph.label = schema.getGraphObject(this.graph, true)?.label + ' - ' + this.templateName
+			}
+
+			if (!allowed(this.capability)) {
+				return
 			}
 
 			const template = JSON.parse(JSON.stringify(this.graph))
@@ -255,6 +266,10 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.modalOpen     = false
 		},
 		deleteTemplate (templateIndex) {
+			if (!allowed(this.capability)) {
+				return
+			}
+
 			const templateId   = this.graph.id
 			const optionsStore = useOptionsStore()
 
@@ -401,6 +416,10 @@ export const useSchemaStore = defineStore('SchemaStore', {
 			this.modalOpen     = false
 		},
 		updateSchemaOutput () {
+			if (!allowed(this.capability)) {
+				return
+			}
+
 			const postEditorStore = usePostEditorStore()
 			const licenseStore    = useLicenseStore()
 
@@ -454,6 +473,10 @@ export const useSchemaStore = defineStore('SchemaStore', {
 				})
 		},
 		updateTemplate () {
+			if (!allowed(this.capability)) {
+				return
+			}
+
 			// First, set the name the user entered for the template.
 			this.graph.label = this.graph.graphName + ' - ' + this.templateName
 

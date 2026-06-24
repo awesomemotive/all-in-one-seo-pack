@@ -1,17 +1,19 @@
 <template>
 	<span class="aioseo-writing-assistant-favicon">
-		<img v-if="domain" :src="imageSource" alt="favicon" />
+		<img v-if="imageSource" :src="imageSource" alt="favicon" />
 	</span>
 </template>
 
 <script>
+import { getFaviconUrl } from '@/vue/utils/favicon'
+
 export default {
 	props : {
 		domain : String
 	},
 	computed : {
 		imageSource () {
-			return 'https://www.google.com/s2/favicons?sz=32&domain=' + encodeURI(this.domain)
+			return getFaviconUrl(this.domain)
 		}
 	}
 }

@@ -124,10 +124,14 @@ class Post extends Base {
 	 * @return void
 	 */
 	public function updateMetaData( $metaData, $post, $fieldName ) {
-		$postId = 'product' !== $post->post_type ? $post->ID : $post->id;
+		// $post is a WP_Post on wp/v2 routes but a WC_Product (or other CRUD object) on wc/v3.
+		// Resolve the ID without touching magic getters, which trigger wc_doing_it_wrong on WC objects.
+		$postId   = $post instanceof \WP_Post ? $post->ID : ( is_object( $post ) && method_exists( $post, 'get_id' ) ? $post->get_id() : 0 );
+		$postType = get_post_type( $postId );
 		if (
+			! $postId ||
 			! current_user_can( 'edit_post', $postId ) ||
-			! $this->isAllowedToUpdate( $post->post_type )
+			! $this->isAllowedToUpdate( $postType )
 		) {
 			return;
 		}

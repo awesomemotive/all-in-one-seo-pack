@@ -103,12 +103,18 @@ class PostsTerms {
 					'link'  => get_permalink( $object->ID )
 				];
 			} elseif ( 'terms' === $body['type'] ) {
+				// Always pass the taxonomy so get_term_link() can resolve the term, and coerce
+				// the result to a string — get_term_link() can return WP_Error and the
+				// term_link filter may also return false/null. Without this, the non-string
+				// gets JSON-serialized and the frontend coerces it to "[object Object]" in
+				// the href. See issue #8094.
+				$termLink = get_term_link( (int) $object->term_id, $object->taxonomy );
 				$parsed[] = [
 					'type'  => $object->taxonomy,
 					'value' => (int) $object->term_id,
 					'slug'  => $object->slug,
 					'label' => $object->name,
-					'link'  => get_term_link( $object->term_id )
+					'link'  => is_wp_error( $termLink ) ? '' : (string) $termLink
 				];
 			}
 		}

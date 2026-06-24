@@ -16,6 +16,8 @@
 					:loading="inspectionResultLoading"
 					:viewable="post.isPostVisible"
 					tooltip-offset="-150px,0"
+					refreshable
+					@refresh="refreshInspectionResult"
 				/>
 
 				<core-tooltip
@@ -430,6 +432,10 @@ export default {
 	},
 	methods : {
 		save () {
+			if (!allowed('aioseo_page_general_settings')) {
+				return
+			}
+
 			this.showEditTitle       = false
 			this.showEditDescription = false
 			this.post.title          = this.title
@@ -460,6 +466,10 @@ export default {
 				})
 		},
 		saveColumn () {
+			if (!allowed('aioseo_page_general_settings')) {
+				return
+			}
+
 			this.showEditImageTitle  = false
 			this.showEditImageAltTag = false
 			this.post.title          = this.title
@@ -574,6 +584,22 @@ export default {
 
 			this.inspectionResult        = inspectionResult
 			this.inspectionResultLoading = inspectionResultLoading
+		},
+		async refreshInspectionResult () {
+			this.inspectionResultLoading = true
+
+			try {
+				const response = await this.searchStatisticsStore.getInspectionResult({
+					paths : this.post.page,
+					force : true
+				})
+
+				this.inspectionResult = response?.[this.post.page]
+			} catch (error) {
+				console.error(error)
+			} finally {
+				this.inspectionResultLoading = false
+			}
 		}
 	},
 	mounted () {

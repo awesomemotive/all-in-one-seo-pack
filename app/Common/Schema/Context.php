@@ -112,13 +112,14 @@ class Context {
 	/**
 	 * Returns the context data for the requested term archive.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.9.9 Bail when the queried object is not a WP_Term (e.g. WP_Post_Type on some CPT+taxonomy archives).
 	 *
 	 * @return array The context data.
 	 */
 	public function term() {
 		$term = aioseo()->helpers->getTerm();
-		if ( ! $term ) {
+		if ( ! ( $term instanceof \WP_Term ) ) {
 			return [
 				'name'        => '',
 				'description' => '',

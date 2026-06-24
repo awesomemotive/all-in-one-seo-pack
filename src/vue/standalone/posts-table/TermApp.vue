@@ -130,6 +130,8 @@ import http from '@/vue/utils/http'
 import { merge } from 'lodash-es'
 import tags from '@/vue/utils/tags'
 
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
 
 import { truncate } from '@/vue/utils/html'
@@ -193,6 +195,10 @@ export default {
 	},
 	methods : {
 		save () {
+			if (!allowed('aioseo_page_general_settings')) {
+				return
+			}
+
 			this.showEditTitle       = false
 			this.showEditDescription = false
 			this.term.title          = this.title

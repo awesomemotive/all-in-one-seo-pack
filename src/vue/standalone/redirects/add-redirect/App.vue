@@ -37,6 +37,8 @@ import {
 	useLicenseStore
 } from '@/vue/stores'
 
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 import http from '@/vue/utils/http'
 import { isEmpty } from 'lodash-es'
 import CoreModal from '@/vue/components/common/core/modal/Index'
@@ -103,6 +105,10 @@ export default {
 			this.target.outerHTML = this.strings.redirectAdded
 		},
 		loadRedirect (manualUrlsHash) {
+			if (!allowed('aioseo_redirects_manage')) {
+				return Promise.resolve()
+			}
+
 			this.loading = true
 			http.get(links.restUrl('redirects/manual-redirects/' + manualUrlsHash))
 				.then(response => {

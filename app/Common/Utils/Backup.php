@@ -27,7 +27,8 @@ class Backup {
 	 * @return array An array of backups.
 	 */
 	public function all() {
-		$backups = json_decode( get_option( $this->optionsName ), true );
+		$rawBackups = get_option( $this->optionsName );
+		$backups    = is_string( $rawBackups ) ? json_decode( $rawBackups, true ) : $rawBackups;
 		if ( empty( $backups ) ) {
 			$backups = [];
 		}
@@ -84,7 +85,8 @@ class Backup {
 	 * @return void
 	 */
 	public function restore( $backupTime ) {
-		$backup = json_decode( get_option( $this->optionsName . '_' . $backupTime ), true );
+		$rawBackup = get_option( $this->optionsName . '_' . $backupTime );
+		$backup    = is_string( $rawBackup ) ? json_decode( $rawBackup, true ) : $rawBackup;
 		if ( ! empty( $backup['options']['tools']['robots']['rules'] ) ) {
 			$backup['options']['tools']['robots']['rules'] = array_merge(
 				aioseo()->robotsTxt->extractSearchAppearanceRules(),

@@ -67,7 +67,7 @@ class Divi extends Base {
 			! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ||
 			! version_compare( '4.9.2', ET_BUILDER_PRODUCT_VERSION, '<=' ) ||
 			! ( function_exists( 'et_core_is_fb_enabled' ) && et_core_is_fb_enabled() ) ||
-			! aioseo()->postSettings->canAddPostSettingsMetabox( $postType )
+			! aioseo()->postSettings->canAddPageBuilderMetabox( $postType )
 		) {
 			return;
 		}
@@ -209,7 +209,8 @@ class Divi extends Base {
 	/**
 	 * Returns the processed page builder content.
 	 *
-	 * @since 4.9.6
+	 * @since   4.9.6
+	 * @version 4.9.9 Reset Divi's module order index after the front-end the_content() pass.
 	 *
 	 * @param  int    $postId  The post ID.
 	 * @param  mixed  $content The raw content.
@@ -217,11 +218,43 @@ class Divi extends Base {
 	 */
 	public function processContent( $postId, $content = null ) {
 		$templateVersion = aioseo()->helpers->getThemeVersion( true ) ?? aioseo()->helpers->getThemeVersion();
-		if ( version_compare( (string) $templateVersion, '5.0', '>=' ) && ! doing_filter( 'the_content' ) ) {
-			return apply_filters( 'the_content', (string) $content ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+
+		// Divi 5+ stores content as blocks that only render to text through the_content;
+		// do_blocks() (the parent's safe path) returns empty for them.
+		if (
+			version_compare( (string) $templateVersion, '5.0', '>=' ) &&
+			! doing_filter( 'the_content' )
+		) {
+			return $this->renderDivi5ContentForExtraction( (string) $content );
 		}
 
 		return parent::processContent( $postId, $content );
+	}
+
+	/**
+	 * Renders Divi 5+ block content via the_content for text extraction.
+	 *
+	 * NOTE: On the front end this advances Divi's static-CSS module order index, so we reset it
+	 * afterward to keep the real page render's per-index classes (and cached CSS) intact.
+	 *
+	 * @since 4.9.9
+	 *
+	 * @param  string $content The raw block content.
+	 * @return string          The rendered content.
+	 */
+	private function renderDivi5ContentForExtraction( $content ) {
+		// In AJAX/cron/REST, Divi does not generate cached static CSS, so there is no order-index
+		// side effect to undo. On front-end views there is, so reset it after rendering.
+		$resetOrderIndex = ! aioseo()->helpers->isAjaxCronRestRequest()
+			&& is_callable( [ 'ET_Builder_Module_Order', 'reset_all_indexes' ] );
+
+		try {
+			return apply_filters( 'the_content', $content ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		} finally {
+			if ( $resetOrderIndex ) {
+				\ET_Builder_Module_Order::reset_all_indexes();
+			}
+		}
 	}
 
 	/**

@@ -55,7 +55,7 @@ class Dashboard {
 		if (
 			$this->canShowWidget( 'seoChecklist' ) &&
 			apply_filters( 'aioseo_show_seo_checklist', true ) &&
-			( aioseo()->access->isAdmin() || aioseo()->access->hasCapability( 'aioseo_setup_wizard' ) ) &&
+			( aioseo()->access->isAdmin() || aioseo()->access->hasCapability( 'aioseo_setup_wizard' ) || aioseo()->access->hasCapability( 'aioseo_general_settings' ) ) &&
 			aioseo()->standalone->setupWizard->isCompleted()
 		) {
 			wp_add_dashboard_widget(
@@ -218,7 +218,7 @@ class Dashboard {
 			foreach ( $rssItems as $item ) {
 				?>
 				<li>
-					<a target="_blank" href="<?php echo esc_url( $item['url'] ); ?>" rel="noopener noreferrer">
+					<a target="_blank" href="<?php echo esc_url( aioseo()->helpers->utmUrl( $item['url'], 'rss-feed-dashboard-widget', null, false ) ); ?>" rel="noopener noreferrer">
 						<?php echo esc_html( $item['title'] ); ?>
 					</a>
 					<span><?php echo esc_html( $item['date'] ); ?></span>

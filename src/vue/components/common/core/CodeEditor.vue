@@ -6,9 +6,6 @@
 </template>
 
 <script>
-import { createEditor } from 'prism-code-editor'
-import 'prism-code-editor/prism/languages/json'
-
 export default {
 	emits : [ 'change', 'paste', 'blur' ],
 	props : {
@@ -83,7 +80,12 @@ export default {
 			this.editorInstance.setOptions({ value: newValue })
 		}
 	},
-	mounted () {
+	async mounted () {
+		const [ { createEditor } ] = await Promise.all([
+			import('prism-code-editor'),
+			import('prism-code-editor/prism/languages/json')
+		])
+
 		const parent = document.getElementById(this.editorId)
 		if (!parent) {
 			return

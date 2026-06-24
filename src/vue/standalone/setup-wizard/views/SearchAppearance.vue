@@ -13,6 +13,8 @@
 					{{ strings.description }}
 				</div>
 
+				<template v-if="allowed('aioseo_search_appearance_settings')">
+
 				<div class="aioseo-settings-row no-border">
 					<div class="settings-name">
 						<div class="name small-margin">
@@ -109,7 +111,10 @@
 					</div>
 				</div>
 
+				</template>
+
 				<div
+					v-if="allowed('aioseo_admin')"
 					class="aioseo-settings-row no-border"
 					:class="[
 						{ 'no-margin': setupWizardStore.searchAppearance.underConstruction },
@@ -133,7 +138,7 @@
 				</div>
 
 				<div
-					v-if="!setupWizardStore.searchAppearance.underConstruction"
+					v-if="!setupWizardStore.searchAppearance.underConstruction && allowed('aioseo_search_appearance_settings')"
 					class="aioseo-settings-row no-border post-types"
 				>
 					<base-toggle
@@ -151,7 +156,7 @@
 				</div>
 
 				<div
-					v-if="!setupWizardStore.searchAppearance.underConstruction"
+					v-if="!setupWizardStore.searchAppearance.underConstruction && allowed('aioseo_search_appearance_settings')"
 					class="aioseo-settings-row no-border enable-sitemaps"
 				>
 					<base-checkbox
@@ -166,7 +171,7 @@
 				</div>
 
 				<div
-					v-if="!setupWizardStore.searchAppearance.underConstruction"
+					v-if="!setupWizardStore.searchAppearance.underConstruction && allowed('aioseo_search_appearance_settings')"
 					class="aioseo-settings-row no-border"
 				>
 					<div class="settings-name">
@@ -187,7 +192,7 @@
 				</div>
 
 				<div
-					v-if="!setupWizardStore.searchAppearance.underConstruction"
+					v-if="!setupWizardStore.searchAppearance.underConstruction && allowed('aioseo_search_appearance_settings')"
 					class="aioseo-settings-row no-border"
 				>
 					<div class="settings-name">
@@ -207,7 +212,10 @@
 					/>
 				</div>
 
-				<div class="aioseo-settings-row no-border no-margin small-padding">
+				<div
+					v-if="allowed('aioseo_general_settings')"
+					class="aioseo-settings-row no-border no-margin small-padding"
+				>
 					<div class="settings-name">
 						<div class="name small-margin">
 							{{ strings.emailReports }}
@@ -260,6 +268,7 @@ import { merge } from 'lodash-es'
 
 import { useMaxCounts } from '@/vue/composables/MaxCounts'
 import { useTags } from '@/vue/composables/Tags'
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { useWizard } from '@/vue/composables/Wizard'
 
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
@@ -294,6 +303,7 @@ export default {
 		})
 
 		return {
+			allowed,
 			GLOBAL_STRINGS,
 			composableStrings : strings,
 			maxRecommendedCount,

@@ -24,6 +24,15 @@ class Localization {
 	private static $wpml = null;
 
 	/**
+	 * Cached Universally context for the current request (languages, source hreflang, prefixes, home URL).
+	 *
+	 * @since 4.9.9
+	 *
+	 * @var array|false|null
+	 */
+	private $universallyContext = null;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.2.1
@@ -59,6 +68,15 @@ class Localization {
 			add_filter( 'aioseo_sitemap_archive_entry', [ $this, 'localizeWeglot' ], 10, 4 );
 			add_filter( 'aioseo_sitemap_date_entry', [ $this, 'localizeWeglot' ], 10, 4 );
 			add_filter( 'aioseo_sitemap_product_attributes', [ $this, 'localizeWeglot' ], 10, 4 );
+		}
+
+		if ( aioseo()->helpers->isPluginActive( 'universally' ) && function_exists( 'universally_get_all_languages' ) ) {
+			add_filter( 'aioseo_sitemap_term', [ $this, 'localizeUniversally' ], 10, 4 );
+			add_filter( 'aioseo_sitemap_post', [ $this, 'localizeUniversally' ], 10, 4 );
+			add_filter( 'aioseo_sitemap_author_entry', [ $this, 'localizeUniversally' ], 10, 4 );
+			add_filter( 'aioseo_sitemap_archive_entry', [ $this, 'localizeUniversally' ], 10, 4 );
+			add_filter( 'aioseo_sitemap_date_entry', [ $this, 'localizeUniversally' ], 10, 4 );
+			add_filter( 'aioseo_sitemap_product_attributes', [ $this, 'localizeUniversally' ], 10, 4 );
 		}
 	}
 
@@ -133,6 +151,112 @@ class Localization {
 		}
 
 		return $entry;
+	}
+
+	/**
+	 * Localize the entries for Universally.
+	 *
+	 * @link https://developers.google.com/search/docs/specialty/international/localized-versions#sitemap
+	 *
+	 * @since 4.9.9
+	 *
+	 * @param  array       $entry      The entry.
+	 * @param  mixed       $entryId    The object ID, null or a date object.
+	 * @param  string      $objectName The post type, taxonomy name or date type ('year' or 'month').
+	 * @param  string|null $entryType  Whether the entry represents a post, term, author, archive or date.
+	 * @return array                   The entry.
+	 */
+	public function localizeUniversally( $entry, $entryId, $objectName, $entryType = null ) {
+		if ( ! function_exists( 'universally_get_all_languages' ) ) {
+			return $entry;
+		}
+
+		$context = $this->universallyGetContext();
+		if ( false === $context ) {
+			return $entry;
+		}
+
+		switch ( $entryType ) {
+			case 'post':
+				$permalink = get_permalink( $entryId );
+				break;
+			case 'term':
+				$permalink = get_term_link( $entryId, $objectName );
+				break;
+			case 'author':
+				$permalink = get_author_posts_url( $entryId, $objectName );
+				break;
+			case 'archive':
+				$permalink = get_post_type_archive_link( $objectName );
+				break;
+			case 'date':
+				$permalink = 'year' === $objectName ? get_year_link( $entryId->year ) : get_month_link( $entryId->year, $entryId->month );
+				break;
+			default:
+				$permalink = '';
+		}
+
+		if ( empty( $permalink ) || is_wp_error( $permalink ) ) {
+			return $entry;
+		}
+
+		$path = wp_parse_url( $permalink, PHP_URL_PATH );
+		if ( empty( $path ) ) {
+			return $entry;
+		}
+
+		$basePath = $this->universallyStripLanguagePrefixFromPath( $path, $context['validPrefixes'] );
+
+		// Strip the WP install's subdirectory so `$homeUrl . $basePath` doesn't repeat it (e.g. `/blog/fr/blog/post`).
+		if ( '' !== $context['homePath'] && 0 === strpos( $basePath, $context['homePath'] . '/' ) ) {
+			$basePath = substr( $basePath, strlen( $context['homePath'] ) );
+		} elseif ( '' !== $context['homePath'] && $basePath === $context['homePath'] ) {
+			$basePath = '/';
+		}
+
+		$entry['languages'] = [];
+		foreach ( $context['languages'] as $lang ) {
+			if ( ! is_array( $lang ) ) {
+				continue;
+			}
+
+			if ( ! empty( $lang['isSource'] ) ) {
+				continue;
+			}
+
+			if ( ! empty( $lang['isDisabled'] ) ) {
+				continue;
+			}
+
+			$urlPrefix = ! empty( $lang['urlPrefix'] ) ? (string) $lang['urlPrefix'] : '';
+			if ( '' === $urlPrefix ) {
+				continue;
+			}
+
+			$hreflang = ! empty( $lang['region'] ) ? $lang['region'] : ( $lang['variant'] ?? '' );
+			if ( '' === $hreflang ) {
+				continue;
+			}
+
+			$l10nPermalink = aioseo()->helpers->decodeUrl( $context['homeUrl'] . '/' . $urlPrefix . $basePath );
+			if ( ! empty( $l10nPermalink ) ) {
+				$entry['languages'][] = [
+					'language' => $hreflang,
+					'location' => $l10nPermalink
+				];
+			}
+		}
+
+		if ( ! empty( $entry['languages'] ) ) {
+			$entry['languages'][] = [
+				'language' => $context['sourceHreflang'],
+				'location' => aioseo()->helpers->decodeUrl( $entry['loc'] )
+			];
+		} else {
+			unset( $entry['languages'] );
+		}
+
+		return $this->validateSubentries( $entry );
 	}
 
 	/**
@@ -359,5 +483,85 @@ class Localization {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Strips a leading Universally URL prefix from a path (same rules as universally_get_switcher_urls).
+	 *
+	 * @since 4.9.9
+	 *
+	 * @param  string $path          URL path (e.g. from wp_parse_url).
+	 * @param  array  $validPrefixes Non-empty language URL prefixes.
+	 * @return string                Path with at most one prefix removed.
+	 */
+	private function universallyStripLanguagePrefixFromPath( $path, $validPrefixes ) {
+		foreach ( $validPrefixes as $prefix ) {
+			// Replacement collapses the prefix + optional trailing slash to a single '/' so we never emit '//base'.
+			$pattern = '#^/' . preg_quote( $prefix, '#' ) . '(/|$)#';
+			if ( preg_match( $pattern, $path ) ) {
+				return preg_replace( '#^/' . preg_quote( $prefix, '#' ) . '/?#', '/', $path );
+			}
+		}
+
+		return $path;
+	}
+
+	/**
+	 * Returns the per-request Universally context (languages, source hreflang, valid prefixes, home URL).
+	 *
+	 * Cached on the instance so sitemap renders with thousands of entries don't re-read the transient
+	 * or rebuild the prefix list for each entry.
+	 *
+	 * @since 4.9.9
+	 *
+	 * @return array|false The context array, or false when Universally returned no usable data.
+	 */
+	private function universallyGetContext() {
+		if ( null !== $this->universallyContext ) {
+			return $this->universallyContext;
+		}
+
+		$languages = universally_get_all_languages();
+		if ( empty( $languages ) || ! is_array( $languages ) ) {
+			$this->universallyContext = false;
+
+			return false;
+		}
+
+		$sourceHreflang = '';
+		$validPrefixes  = [];
+		foreach ( $languages as $lang ) {
+			if ( ! is_array( $lang ) ) {
+				continue;
+			}
+
+			if ( ! empty( $lang['isSource'] ) ) {
+				$sourceHreflang = ! empty( $lang['region'] ) ? $lang['region'] : ( $lang['variant'] ?? '' );
+			}
+
+			if ( ! empty( $lang['urlPrefix'] ) ) {
+				$validPrefixes[] = (string) $lang['urlPrefix'];
+			}
+		}
+
+		if ( '' === $sourceHreflang ) {
+			$this->universallyContext = false;
+
+			return false;
+		}
+
+		$homeUrl  = home_url();
+		$homePath = wp_parse_url( $homeUrl, PHP_URL_PATH );
+		$homePath = is_string( $homePath ) ? rtrim( $homePath, '/' ) : '';
+
+		$this->universallyContext = [
+			'languages'      => $languages,
+			'sourceHreflang' => $sourceHreflang,
+			'validPrefixes'  => $validPrefixes,
+			'homeUrl'        => $homeUrl,
+			'homePath'       => $homePath
+		];
+
+		return $this->universallyContext;
 	}
 }

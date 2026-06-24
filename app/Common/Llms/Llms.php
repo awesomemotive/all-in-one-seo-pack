@@ -440,8 +440,10 @@ class Llms {
 	 * @return string       The file path.
 	 */
 	public function getFilePath( $full = false ) {
+		// Use the hardcoded filename to avoid conflicts with other plugins that filter `sanitize_file_name`;
+		// since it's hardcoded, we don't need to sanitize it.
 		$filename = $full ? 'llms-full.txt' : 'llms.txt';
 
-		return trailingslashit( dirname( WP_CONTENT_DIR ) ) . sanitize_file_name( $filename );
+		return trailingslashit( dirname( WP_CONTENT_DIR ) ) . $filename;
 	}
 }

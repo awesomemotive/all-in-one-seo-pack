@@ -52,7 +52,9 @@ class Api {
 			'ai-agents/mcp-adapter/release'               => [ 'callback' => [ 'AiAgents', 'getMcpAdapterRelease' ], 'access' => 'aioseo_ai_insights_settings' ],
 		],
 		'POST'   => [
-			'ai/auth'                                                => [ 'callback' => [ 'Ai', 'storeAccessToken' ], 'access' => 'aioseo_page_ai_content_settings' ],
+			'seo-alerts/test-email'                                  => [ 'callback' => [ 'SeoAlerts', 'sendTestEmail' ], 'access' => 'aioseo_tools_settings' ],
+			'seo-alerts/test-slack'                                  => [ 'callback' => [ 'SeoAlerts', 'sendTestSlack' ], 'access' => 'aioseo_tools_settings' ],
+			'ai/auth'                                                => [ 'callback' => [ 'Ai', 'storeAccessToken' ], 'access' => 'aioseo_general_settings' ],
 			'ai/credits'                                             => [ 'callback' => [ 'Ai', 'getCredits' ], 'access' => 'aioseo_page_ai_content_settings' ],
 			'ai/meta/title'                                          => [ 'callback' => [ 'Ai', 'generateTitles' ], 'access' => 'aioseo_page_ai_content_settings' ],
 			'ai/meta/description'                                    => [ 'callback' => [ 'Ai', 'generateDescriptions' ], 'access' => 'aioseo_page_ai_content_settings' ],
@@ -63,7 +65,7 @@ class Api {
 			'ai/assistant'                                           => [ 'callback' => [ 'Ai', 'generateAssistantCompletion' ], 'access' => 'aioseo_page_ai_content_settings' ],
 			'ai/image/alt'                                           => [ 'callback' => [ 'Ai', 'generateImageAlt' ], 'access' => 'aioseo_page_ai_content_settings' ],
 			'ai/image-generator'                                     => [ 'callback' => [ 'Ai', 'generateImage' ], 'access' => 'aioseo_page_ai_content_settings' ],
-			'ai/deactivate'                                          => [ 'callback' => [ 'Ai', 'deactivate' ], 'access' => 'aioseo_page_ai_content_settings' ],
+			'ai/deactivate'                                          => [ 'callback' => [ 'Ai', 'deactivate' ], 'access' => 'aioseo_general_settings' ],
 			'htaccess'                                               => [ 'callback' => [ 'Tools', 'saveHtaccess' ], 'access' => 'aioseo_tools_settings' ],
 			'post'                                                   => [
 				'callback' => [ 'PostsTerms', 'updatePosts' ],

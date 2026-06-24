@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 let cachedCurrentPost = null
 
 const prepareCachedCurrentPost = (currentPost) => {
@@ -111,13 +113,20 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 			this.currentPost.generalMobilePrev = value
 		},
 		saveCurrentPost (payload) {
+			// Must match PostsTerms::updatePosts (REST) — only aioseo_page_general_settings may persist.
+			if (!allowed('aioseo_page_general_settings')) {
+				return Promise.resolve(false)
+			}
+
 			this.currentPost = payload
 
 			return http.post(links.restUrl('post'))
 				.send(payload)
-				.then(() => {})
+				.then(() => true)
 				.catch((error) => {
 					console.error(`Unable to update the post data: ${error}`)
+
+					return false
 				})
 		},
 		updateState (value) {
@@ -155,16 +164,28 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 			}
 		},
 		disablePrimaryTermEducation () {
+			if (!allowed('aioseo_page_general_settings')) {
+				return Promise.resolve()
+			}
+
 			this.currentPost.options.primaryTerm.productEducationDismissed = true
 
 			return http.post(links.restUrl(`post/${this.currentPost.id}/disable-primary-term-education`))
 		},
 		disableLinkAssistantEducation () {
+			if (!allowed('aioseo_page_general_settings')) {
+				return Promise.resolve()
+			}
+
 			this.currentPost.options.linkFormat.linkAssistantDismissed = true
 
 			return http.post(links.restUrl(`post/${this.currentPost.id}/disable-link-format-education`))
 		},
 		incrementInternalLinkCount () {
+			if (!allowed('aioseo_page_general_settings')) {
+				return Promise.resolve()
+			}
+
 			const count = this.currentPost.options.linkFormat.internalLinkCount || 0
 
 			this.currentPost.options.linkFormat.internalLinkCount = count + 1
@@ -175,10 +196,18 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 				})
 		},
 		getUserImage ({ userId }) {
+			if (!allowed('aioseo_page_social_settings')) {
+				return Promise.resolve('')
+			}
+
 			return http.get(links.restUrl(`user/${userId}/image`))
 				.then(response => 200 === response.statusCode ? response.body.url : '')
 		},
 		getFirstAttachedImage ({ postId }) {
+			if (!allowed('aioseo_page_social_settings')) {
+				return Promise.resolve('')
+			}
+
 			return http.get(links.restUrl(`post/${postId}/first-attached-image`))
 				.then(response => 200 === response.statusCode ? response.body.url : '')
 		},
@@ -187,6 +216,10 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 				.then(response => 200 === response.statusCode ? response.body : {})
 		},
 		processContent ({ content, integration }) {
+			if (!allowed('aioseo_page_general_settings')) {
+				return Promise.resolve()
+			}
+
 			return http.post(links.restUrl(`post/${this.currentPost.id}/process-content`))
 				.send({
 					content,

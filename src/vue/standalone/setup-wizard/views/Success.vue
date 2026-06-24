@@ -70,6 +70,7 @@
 							<svg-circle-exclamation v-if="'join-community' !== item.name" class="warning-icon" />
 							<svg-people-outline v-else />
 						</div>
+
 						<div class="item-content">
 							<div class="item-title">
 								{{ item.title }}
@@ -164,10 +165,31 @@
 				<template #footer>
 					<div class="spacer"></div>
 					<base-button
+						v-if="allowed('aioseo_general_settings')"
 						type="blue"
 						tag="a"
 						:href="checklistUrl"
-					>{{ strings.goToSeoChecklist }}</base-button>
+					>
+						{{ strings.goToSeoChecklist }}
+					</base-button>
+
+					<base-button
+						v-else-if="allowed('aioseo_dashboard')"
+						type="blue"
+						tag="a"
+						:href="rootStore.aioseo.urls.aio.dashboard"
+					>
+						{{ strings.goToDashboard }}
+					</base-button>
+
+					<base-button
+						v-else
+						type="blue"
+						tag="a"
+						:href="wpAdminUrl"
+					>
+						{{ strings.goToWordPressDashboard }}
+					</base-button>
 				</template>
 			</wizard-body>
 
@@ -180,6 +202,7 @@ import {
 	DISCOUNT_PERCENTAGE,
 	UPSELL_FEATURE_LIST
 } from '@/vue/plugins/constants'
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { merge } from 'lodash-es'
 import links from '@/vue/utils/links'
 import {
@@ -307,6 +330,10 @@ const checklistUrl = computed(() => {
 	return `${rootStore.aioseo.urls.aio.settings}#/seo-checklist`
 })
 
+const wpAdminUrl = computed(() => {
+	return rootStore.aioseo.urls.admin.generalSettings.replace('options-general.php', '')
+})
+
 const strings = merge(composableStrings, {
 	congratulations            : __('Initial setup complete! Just a few more tasks to go 🚀', td),
 	yourSeoChecklistProgress   : __('Your SEO Checklist', td),
@@ -324,6 +351,8 @@ const strings = merge(composableStrings, {
 	followOnTwitter            : __('Follow on X', td),
 	followOnYouTube            : __('Follow on YouTube', td),
 	goToSeoChecklist           : __('Go to SEO Checklist', td),
+	goToDashboard              : __('Go to Dashboard', td),
+	goToWordPressDashboard     : __('Go to WordPress Dashboard', td),
 	bonusText                  : sprintf(
 		// Translators: 1 - Opening bold tag, 2 - Closing bold tag, 3 - "Pro", 4 - Opening bold tag, 5 - A discount percentage (e.g. "50%"), 6 - Closing bold tag.
 		__('%1$sBonus:%2$s You can upgrade to the %3$s plan today and %4$ssave %5$s off%6$s (discount auto-applied).', td),

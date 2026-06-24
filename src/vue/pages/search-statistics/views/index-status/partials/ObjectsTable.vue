@@ -59,7 +59,7 @@
 						href="#"
 						@click.prevent.exact="refreshObjectStatus(row)"
 					>
-						{{ strings.refreshStatus }}
+						{{ indexStatusStrings.refreshStatus }}
 					</a>
 				</span>
 			</div>
@@ -408,7 +408,7 @@
 						<tr v-if="row?.richResultsTestLink">
 							<td colspan="3">
 								<a
-									class="button-secondary"
+									class="inner-table__inspection-link button-secondary"
 									:href="row.richResultsTestLink"
 									target="_blank"
 								>
@@ -560,8 +560,7 @@ const strings                = {
 	referringPagesHelp  : __('URLs that link to the inspected URL, directly and indirectly.', td),
 	issues              : __('Issues', td),
 	noIssues            : __('No issues', td),
-	notAvailable        : __('N/A', td),
-	refreshStatus       : __('Refresh Status', td)
+	notAvailable        : __('N/A', td)
 }
 
 const props = defineProps({
@@ -712,6 +711,10 @@ const refreshObjectStatus = async (row) => {
 		try {
 			// When "Refresh Status" runs on multiple rows, fetch objects only after all refreshes complete.
 			if (!loadingRows.value.size) {
+				// Prevent the watch from auto-cascading to other invalid rows: a manual refresh
+				// should only affect the row the user clicked, not consume quota on other rows.
+				props.paginatedRows.rows.forEach(r => fetchedRowIds.value.add(r.id))
+
 				await Promise.all([
 					indexStatusStore.fetchIndexStatusOverview(),
 					indexStatusStore.fetchIndexStatusObjects()

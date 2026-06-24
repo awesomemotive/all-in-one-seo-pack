@@ -44,6 +44,10 @@ abstract class Filters {
 		// This action needs to run on AJAX/cron for scheduled rewritten posts in Yoast Duplicate Post.
 		add_action( 'duplicate_post_after_rewriting', [ $this, 'updateRescheduledPostMeta' ], 10, 2 );
 
+		// These need to run on AJAX/cron too so that scheduled tasks (e.g. LLMs.txt generation) exclude internal CPTs.
+		add_filter( 'aioseo_public_post_types', [ $this, 'removeInvalidPublicPostTypes' ] );
+		add_filter( 'aioseo_public_taxonomies', [ $this, 'removeInvalidPublicTaxonomies' ] );
+
 		if ( wp_doing_ajax() || wp_doing_cron() ) {
 			return;
 		}
@@ -84,9 +88,6 @@ abstract class Filters {
 		// Clear the site authors cache.
 		add_action( 'profile_update', [ $this, 'clearAuthorsCache' ] );
 		add_action( 'user_register', [ $this, 'clearAuthorsCache' ] );
-
-		add_filter( 'aioseo_public_post_types', [ $this, 'removeInvalidPublicPostTypes' ] );
-		add_filter( 'aioseo_public_taxonomies', [ $this, 'removeInvalidPublicTaxonomies' ] );
 
 		add_action( 'admin_print_scripts', [ $this, 'removeEmojiDetectionScripts' ], 0 );
 
@@ -405,6 +406,8 @@ abstract class Filters {
 		$postTypesToRemove = [
 			'fusion_element', // Avada
 			'elementor_library',
+			'e-floating-buttons', // Elementor floating buttons / contact widgets.
+			'elementor_component', // Elementor reusable components.
 			'redirect_rule', // Safe Redirect Manager
 			'seedprod',
 			'tcb_lightbox',

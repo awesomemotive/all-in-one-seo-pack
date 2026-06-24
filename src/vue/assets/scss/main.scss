@@ -211,10 +211,10 @@ body[class*="page_aioseo"] {
 	:after,
 	:before {
 		box-sizing: inherit;
+	}
 
-		*:not(.aioseo-button):not(.aioseo-input) {
-			line-height: 1.4;
-		}
+	*:not(.aioseo-button):not(.aioseo-input) {
+		line-height: 1.4;
 	}
 
 	p {

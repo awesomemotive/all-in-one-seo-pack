@@ -426,7 +426,6 @@ class Admin {
 				'wp-element',
 				'wp-plugins',
 				'wp-components',
-				'wp-edit-post',
 				'wp-api',
 				'wp-editor',
 				'wp-hooks',
@@ -1208,6 +1207,13 @@ class Admin {
 		}
 
 		if ( ! empty( aioseo()->redirects->options ) && aioseo()->redirects->options->monitor->trash ) {
+			return $messages;
+		}
+
+		if (
+			! current_user_can( 'aioseo_redirects_manage' ) &&
+			! current_user_can( 'aioseo_page_redirects_manage' )
+		) {
 			return $messages;
 		}
 

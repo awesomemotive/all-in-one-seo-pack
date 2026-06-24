@@ -15,15 +15,19 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
+import SeoAlerts from './SeoAlerts'
 import CoreMain from '@/vue/components/common/core/main/Index'
 
 import { __ } from '@/vue/plugins/translations'
+import { preloadOnIdle } from '@/vue/utils/preload'
 import { useRobotsTxt } from '@/vue/composables/RobotsTxt'
 
 const rootStore = useRootStore()
 const route  = useRoute()
 const getRoute = computed(() => {
 	switch (route.name) {
+		case 'seo-alerts':
+			return SeoAlerts
 		case 'database-tools':
 			return defineAsyncComponent(() => import('./DatabaseTools.vue'))
 		case 'debug':
@@ -59,42 +63,16 @@ const strings = {
 		: __('Tools', td)
 }
 
-// Preload other route components in the background
-const preloadRouteComponents = () => {
-	const loadComponents = () => {
-		const currentRoute = route.name
-
-		if ('database-tools' !== currentRoute) {
-			import('./DatabaseTools.vue')
-		}
-		if ('debug' !== currentRoute) {
-			import('./AIOSEO_VERSION/Debug.vue')
-		}
-		if ('htaccess-editor' !== currentRoute) {
-			import('./HtaccessEditor.vue')
-		}
-		if ('import-export' !== currentRoute) {
-			import('./ImportExport.vue')
-		}
-		if ('system-status' !== currentRoute) {
-			import('./SystemStatus.vue')
-		}
-		if ('wp-code' !== currentRoute) {
-			import('./WpCode.vue')
-		}
-		if ('robots-editor' !== currentRoute) {
-			import('./RobotsEditor.vue')
-		}
-	}
-
-	if ('requestIdleCallback' in window) {
-		requestIdleCallback(loadComponents)
-	} else {
-		setTimeout(loadComponents, 1)
-	}
-}
-
 onMounted(() => {
-	preloadRouteComponents()
+	const currentRoute = route.name
+	const thunks       = []
+	if ('database-tools' !== currentRoute) thunks.push(() => import('./DatabaseTools.vue'))
+	if ('debug' !== currentRoute) thunks.push(() => import('./AIOSEO_VERSION/Debug.vue'))
+	if ('htaccess-editor' !== currentRoute) thunks.push(() => import('./HtaccessEditor.vue'))
+	if ('import-export' !== currentRoute) thunks.push(() => import('./ImportExport.vue'))
+	if ('system-status' !== currentRoute) thunks.push(() => import('./SystemStatus.vue'))
+	if ('wp-code' !== currentRoute) thunks.push(() => import('./WpCode.vue'))
+	if ('robots-editor' !== currentRoute) thunks.push(() => import('./RobotsEditor.vue'))
+	preloadOnIdle(thunks)
 })
 </script>

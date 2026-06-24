@@ -59,10 +59,13 @@ export const handleEditorSave = (builder = null) => {
 	}
 
 	const saveCurrentPost = () => {
-		// Clear isDirty flag as soon as save is initiated.
-		postEditorStore.isDirty = false
+		postEditorStore.saveCurrentPost(postEditorStore.currentPost).then((saved) => {
+			postEditorStore.isDirty = false
 
-		postEditorStore.saveCurrentPost(postEditorStore.currentPost).then(() => {
+			if (!saved) {
+				return
+			}
+
 			const licenseStore      = useLicenseStore()
 			const seoRevisionsStore = useSeoRevisionsStore()
 			if (!licenseStore.isUnlicensed && seoRevisionsStore.hasPermission) {

@@ -16,6 +16,7 @@ import { defineAsyncComponent } from 'vue'
 import CoreMain from '@/vue/components/common/core/main/Index'
 
 import { __ } from '@/vue/plugins/translations'
+import { preloadOnIdle } from '@/vue/utils/preload'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -46,23 +47,16 @@ export default {
 		}
 	},
 	mounted () {
-		// Preload all route components in the background
-		const preloadComponents = () => {
-			import('./AccessControl.vue')
-			import('./Advanced.vue')
-			import('./Breadcrumbs.vue')
-			import('./GeneralSettings.vue')
-			import('./RssContent.vue')
-			import('./SeoChecklist.vue')
-			import('./WebmasterTools.vue')
-			import('./WritingAssistant.vue')
-		}
-
-		if ('requestIdleCallback' in window) {
-			requestIdleCallback(preloadComponents)
-		} else {
-			setTimeout(preloadComponents, 1)
-		}
+		preloadOnIdle([
+			() => import('./AccessControl.vue'),
+			() => import('./Advanced.vue'),
+			() => import('./Breadcrumbs.vue'),
+			() => import('./GeneralSettings.vue'),
+			() => import('./RssContent.vue'),
+			() => import('./SeoChecklist.vue'),
+			() => import('./WebmasterTools.vue'),
+			() => import('./WritingAssistant.vue')
+		])
 	}
 }
 </script>

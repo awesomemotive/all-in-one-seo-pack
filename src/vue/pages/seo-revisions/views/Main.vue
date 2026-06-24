@@ -14,22 +14,17 @@ import {
 import { defineAsyncComponent, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 
+import { preloadOnIdle } from '@/vue/utils/preload'
+
 const SeoRevisions = defineAsyncComponent(() => import('./AIOSEO_VERSION/Index.vue'))
 const SeoRevisionsLite = defineAsyncComponent(() => import('./lite/Index.vue'))
 
 const { isUnlicensed } = storeToRefs(useLicenseStore())
 
-// Preload both components in the background
 onMounted(() => {
-	const preloadComponents = () => {
-		import('./AIOSEO_VERSION/Index.vue')
-		import('./lite/Index.vue')
-	}
-
-	if ('requestIdleCallback' in window) {
-		requestIdleCallback(preloadComponents)
-	} else {
-		setTimeout(preloadComponents, 1)
-	}
+	preloadOnIdle([
+		() => import('./AIOSEO_VERSION/Index.vue'),
+		() => import('./lite/Index.vue')
+	])
 })
 </script>

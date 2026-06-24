@@ -363,21 +363,7 @@ class Ai {
 			], 400 );
 		}
 
-		$socialPosts = [];
-		foreach ( $responseBody->snippets as $type => $content ) {
-			if ( 'email' === $type ) {
-				$socialPosts[ $type ] = [
-					'subject' => aioseo()->helpers->decodeHtmlEntities( sanitize_text_field( $content->subject ) ),
-					'preview' => aioseo()->helpers->decodeHtmlEntities( sanitize_text_field( $content->preview ) ),
-					'content' => aioseo()->helpers->decodeHtmlEntities( strip_tags( $content->content, '<a>' ) )
-				];
-
-				continue;
-			}
-
-			// Strip all tags except <a>.
-			$socialPosts[ $type ] = aioseo()->helpers->decodeHtmlEntities( strip_tags( $content, '<a>' ) );
-		}
+		$socialPosts = aioseo()->ai->sanitizeSocialPosts( $responseBody->snippets );
 
 		aioseo()->ai->updateAiOptions( $responseBody );
 

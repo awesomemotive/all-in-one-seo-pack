@@ -181,21 +181,21 @@ export default {
 				btnText : ''
 			}
 
-			if ('ViewGoogle' === this.activeTab) {
+			if ('ViewGoogle' === this.activeTab && this.rootStore.aioseo.aioseoPageGeneralSettings) {
 				data.url     = this.rootStore.aioseo.editGoogleSnippetUrl || ''
 				data.btnText = __('Edit Snippet', td)
 
 				return data
 			}
 
-			if ('ViewFacebook' === this.activeTab) {
+			if ('ViewFacebook' === this.activeTab && this.rootStore.aioseo.aioseoPageSocialSettings) {
 				data.url     = this.rootStore.aioseo.editFacebookSnippetUrl || ''
 				data.btnText = __('Edit Facebook Meta Data', td)
 
 				return data
 			}
 
-			if ('ViewTwitter' === this.activeTab) {
+			if ('ViewTwitter' === this.activeTab && this.rootStore.aioseo.aioseoPageSocialSettings) {
 				data.url     = this.rootStore.aioseo.editTwitterSnippetUrl || ''
 				data.btnText = __('Edit X Meta Data', td)
 			}

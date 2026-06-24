@@ -149,6 +149,7 @@
 				</div>
 
 				<core-alert
+					v-if="allowed('aioseo_ai_insights_settings')"
 					class="ai-image-generator__group"
 					type="blue"
 					v-html="aiContentStrings.alertDescription"
@@ -311,6 +312,7 @@ import { computed, onMounted } from 'vue'
 
 import { useAiImageGeneratorStore } from '@/vue/stores'
 
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { __, sprintf } from '@/vue/plugins/translations'
 import { useAiContent } from '@/vue/composables/AiContent'
 

@@ -109,6 +109,61 @@ class Ai {
 	}
 
 	/**
+	 * Returns whether AI features are disabled.
+	 *
+	 * @since 4.9.9
+	 *
+	 * @return bool Whether AI features are disabled.
+	 */
+	public function isDisabled() {
+		static $cached = null;
+		if ( null !== $cached ) {
+			return $cached;
+		}
+
+		if ( (bool) apply_filters( 'aioseo_ai_disabled', false ) ) {
+			$cached = true;
+
+			return true;
+		}
+
+		// Backwards compatibility: each legacy hook used to enable a specific AI UI extension (default `true`).
+		// If an integration filtered any of them to `false`, honor that intent by disabling AI globally.
+		$legacyEnableHooks = [
+			'aioseo_ai_assistant_block_enabled',
+			'aioseo_ai_assistant_extend_block_editor_inserter_button',
+			'aioseo_ai_assistant_extend_paragraph_placeholder',
+			'aioseo_ai_image_generator_extend_image_block_toolbar',
+			'aioseo_ai_image_generator_extend_image_block_placeholder',
+			'aioseo_ai_image_generator_extend_featured_image_button'
+		];
+
+		// In REST/AJAX/CRON the deprecation notice HTML would corrupt the JSON body under WP_DEBUG_DISPLAY,
+		// so skip the notice there but still honor the legacy filter via apply_filters().
+		$canEmitDeprecation = ! aioseo()->helpers->isAjaxCronRestRequest();
+
+		foreach ( $legacyEnableHooks as $hook ) {
+			if ( ! has_filter( $hook ) ) {
+				continue;
+			}
+
+			$value = $canEmitDeprecation
+				? apply_filters_deprecated( $hook, [ true ], '4.9.9', 'aioseo_ai_disabled' )
+				: apply_filters( $hook, true ); // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+
+			if ( ! (bool) $value ) {
+				$cached = true;
+
+				return true;
+			}
+		}
+
+		$cached = false;
+
+		return false;
+	}
+
+	/**
 	 * Schedules the initial access token fetch action if no access token is set.
 	 *
 	 * @since 4.9.1
@@ -193,7 +248,7 @@ class Ai {
 	 * @return void
 	 */
 	public function scheduleCreditFetchAction() {
-		if ( apply_filters( 'aioseo_ai_disabled', false ) ) {
+		if ( $this->isDisabled() ) {
 			aioseo()->actionScheduler->unschedule( $this->creditFetchAction );
 
 			return;
@@ -631,6 +686,71 @@ class Ai {
 		if ( ! empty( $responseBody->costPerFeature ) ) {
 			aioseo()->internalOptions->internal->ai->costPerFeature = json_decode( wp_json_encode( $responseBody->costPerFeature ), true );
 		}
+	}
+
+	/**
+	 * Sanitizes AI social post content, keeping links and preserving newlines.
+	 *
+	 * @since 4.9.9
+	 *
+	 * @param  object|array $socialPosts The social posts keyed by network type.
+	 * @return array                     The sanitized social posts.
+	 */
+	public function sanitizeSocialPosts( $socialPosts ) {
+		$sanitized = [];
+		foreach ( (array) $socialPosts as $type => $content ) {
+			if ( 'email' === $type ) {
+				$content            = (array) $content;
+				$sanitized[ $type ] = [
+					'subject' => $this->sanitizeSocialPostText( $content['subject'] ?? '' ),
+					'preview' => $this->sanitizeSocialPostText( $content['preview'] ?? '' ),
+					'content' => $this->sanitizeSocialPostContent( $content['content'] ?? '' )
+				];
+
+				continue;
+			}
+
+			if ( is_string( $content ) ) {
+				$sanitized[ $type ] = $this->sanitizeSocialPostContent( $content );
+			}
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * Sanitizes a social post body, keeping links and newlines while stripping all other HTML.
+	 *
+	 * NOTE: Entities are decoded before wp_kses() so kses is the final gate — encoded markup can't be reconstructed into a live tag afterwards.
+	 *
+	 * @since 4.9.9
+	 *
+	 * @param  string $content The raw content.
+	 * @return string          The sanitized content.
+	 */
+	private function sanitizeSocialPostContent( $content ) {
+		$allowedHtml = [
+			'a' => [
+				'href'   => true,
+				'title'  => true,
+				'target' => true,
+				'rel'    => true
+			]
+		];
+
+		return wp_kses( aioseo()->helpers->decodeHtmlEntities( (string) $content ), $allowedHtml );
+	}
+
+	/**
+	 * Sanitizes a single-line social post field, such as an email subject, stripping all HTML.
+	 *
+	 * @since 4.9.9
+	 *
+	 * @param  string $text The raw text.
+	 * @return string       The sanitized text.
+	 */
+	private function sanitizeSocialPostText( $text ) {
+		return sanitize_text_field( aioseo()->helpers->decodeHtmlEntities( (string) $text ) );
 	}
 
 	/**

@@ -63,9 +63,13 @@ export default class RedirectsSlugMonitor {
 
 		this.previousPostSlug = postSlug
 		this.previousPostStatus = postStatus
-		this.updatingRedirects = true
 
 		const redirectsStore = useRedirectsStore()
+		if (!redirectsStore.hasPermission) {
+			return
+		}
+
+		this.updatingRedirects = true
 		redirectsStore.getPostRedirects({})
 			.finally(() => {
 				this.updatingRedirects = false

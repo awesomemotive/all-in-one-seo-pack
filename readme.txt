@@ -4,7 +4,7 @@ Tags: SEO, Google Search Console, XML Sitemap, meta description, schema
 Tested up to: 7.0
 Requires at least: 5.7
 Requires PHP: 7.2
-Stable tag: 4.9.8
+Stable tag: 4.9.9
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -231,6 +231,36 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 4.9.9**
+
+- New: SEO Alerts feature to notify site owners of critical SEO issues via email and Slack.
+- New: New `#event_start_date` and `#event_end_date` smart tags for events when The Events Calendar plugin is active.
+- Updated: Sitemap hreflang alternates when using the Universally translation plugin.
+- Updated: .htaccess editor error messages are now clearer and more actionable.
+- Updated: Setup wizard now triggers after bulk plugin activation instead of being skipped.
+- Updated: Improved the posts-list URL Inspection status with clearer messages and a Refresh Status action.
+- Fixed: PHP 8.2+ dynamic property creation deprecation notice when loading addons.
+- Fixed: PHP 8.5 deprecation notice when generating descriptions from classic or freeform post content.
+- Fixed: Elementor's internal post type was included in LLMs.txt by default.
+- Fixed: Primary Category dropdown was clipped when WooCommerce was active.
+- Fixed: PHP warnings on taxonomy archives when get_queried_object() returned a WP_Post_Type.
+- Fixed: Fatal error on the WordPress dashboard when the SEO News widget returned an unexpected response.
+- Fixed: Divi 5+ layouts displaying stray borders, padding, or alignment issues when AIOSEO Pro is active.
+- Fixed: PHP warning in sitemap generation for sitemap types that don't support taxonomies.
+- Fixed: Multisite sub-sites with "Discourage search engines from indexing this site" enabled were missing from the Domain Activation list in Network Admin.
+- Fixed: Console errors in the Avada Frontend Editor during initialization.
+- Fixed: PHP warning in Social Networks image handling on non-singular pages.
+- Fixed: REST API clients can now update the custom canonical using the snake_case field name in addition to the camelCase version.
+- Fixed: WooCommerce Product schema's valueAddedTaxIncluded now reflects the store's actual tax configuration, and is omitted when taxes are disabled.
+- Fixed: Editing a page via the Classic Editor could show another post's content when a third-party page builder ran a post loop on the same page.
+- Fixed: Site Audit scan fatal error on servers where the PHP intl extension is not installed.
+- Fixed: A conflict where third-party plugins filtering could rename the generated llms.txt or llms-full.txt files.
+- Fixed: Opening the redirect modal from the side panel when the Metabox Redirects tab is active.
+- Fixed: Regex redirects no longer produce double slashes mid-path when a capture group matches an empty string.
+- Fixed: Regex redirects for media files.
+- Fixed: Regex redirects producing a double trailing slash when the target URL contains a capture group placeholder.
+- Fixed: Keyword Cannibalization checker was displaying private posts in the results list.
+
 **New in Version 4.9.8**
 
 * New: AIOSEO now integrates with the WordPress Abilities API, exposing your site's SEO data as abilities that AI agents can read and write.
@@ -324,47 +354,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 * Fixed: AI access token sometimes failing to be fetched.
 * Fixed: PHP warning when analyzing a one-word title starting with the question word in Headline Analyzer.
 
-**New in Version 4.9.4.2**
-
-* Updated: Improved scheduled action scheduling to prevent duplicate actions.
-* Updated: Improved request handling with concurrency guards and caching to reduce outbound request volume.
-* Updated: Added transient fallback mechanism for caching in case aioseo_cache table doesn't exist.
-
-**New in Version 4.9.4.1**
-
-* Fixed: Smart tags sometimes not inserting into attached text area.
-
-**New in Version 4.9.4**
-
-* New: SEO Checklist - Our new checklist helps you get your site's SEO properly configured, with prioritized tasks that automatically complete as you configure settings and fix issues.
-* Updated: Menu pages and many other libraries are now lazy-loaded, significantly reducing the initial page load time.
-* Fixed: PHP warning in SEO Analyzer when URL does not have a valid path.
-
-**New in Version 4.9.3**
-
-* Updated: Added a new filter to disable the AI Assistant block and extensions.
-* Updated: Added new filters to customize the LLMs title and description.
-* Updated: Added review support to Book and Event schema types for rich search results.
-* Updated: Hardened API routes to prevent AI access token from being exposed.
-* Updated: Removed the "New feature" alert for Keyword Rank Tracker.
-* Updated: Incorrect link in the Add Focus Keyword button of Site Audit.
-* Updated: Refactored WPBakery page builder integration for improved maintainability.
-* Updated: Table of Contents script now only loads if the TOC block is present on the page.
-* Updated: Added input sanitization for editable fields in the post details column.
-* Fixed: Console errors when trying to edit a template with Site Editor.
-* Fixed: Duplicate entries in the Search Statistics objects table caused by inconsistent path hashing.
-* Fixed: Improved sitemap generation for custom post types and custom taxonomies.
-* Fixed: Javascript TypeError when expanding certain Site Audit issue rows in SEO Analysis.
-* Fixed: AI Image Generator now correctly detects aspect ratio when editing portrait or square images.
-* Fixed: Console errors that occurred when users without proper permissions attempted to publish or update posts.
-* Fixed: PHP fatal error when accessing sitemaps for Custom Post Types with slugs matching internal method names.
-* Fixed: SEO plugin imports (Yoast, Rank Math, SEOPress) now only process posts and terms with existing data, improving performance and preventing unnecessary database growth.
-
-**New in Version 4.9.2**
-
-* New: Page Builder Integrations for Bricks & Oxygen - You can now seamlessly control your SEO settings directly within the visual builders of Bricks and Oxygen and analyze their content with TruSEO.
-* Fixed: Browser alert incorrectly appearing in Classic Editor after page reload when Focus Keyword is set.
-
 **See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=aioseo) for previous releases.**
 
 == Frequently Asked Questions ==
@@ -446,6 +435,6 @@ Additionally, AIOSEO can also provide you with data on the most frequently used 
 
 == Upgrade Notice ==
 
-= 4.9.8 =
+= 4.9.9 =
 
 This update adds major improvements and bug fixes.

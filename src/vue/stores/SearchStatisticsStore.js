@@ -123,6 +123,10 @@ export const useSearchStatisticsStore = defineStore('SearchStatisticsStore', {
 		},
 		shouldShowSampleReports : false
 	}),
+	getters : {
+		// False once URL inspection quota is exhausted.
+		canRefreshUrlInspection : state => !state.quotaExceeded.urlInspection
+	},
 	actions : {
 		getAuthUrl ({ returnTo }) {
 			return http.get(links.restUrl('search-statistics/url/auth'))

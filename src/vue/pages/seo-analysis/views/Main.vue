@@ -19,6 +19,7 @@ import { defineAsyncComponent } from 'vue'
 import CoreMain from '@/vue/components/common/core/main/Index'
 
 import { __ } from '@/vue/plugins/translations'
+import { preloadOnIdle } from '@/vue/utils/preload'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -57,19 +58,12 @@ export default {
 			this.analyzerStore.fetchObjectsScanPercent()
 		}
 
-		// Preload all route components in the background
-		const preloadComponents = () => {
-			import('./AnalyzeCompetitorSite.vue')
-			import('./SeoHomepageAudit.vue')
-			import('./AIOSEO_VERSION/SeoSiteAudit.vue')
-			import('./HeadlineAnalyzer.vue')
-		}
-
-		if ('requestIdleCallback' in window) {
-			requestIdleCallback(preloadComponents)
-		} else {
-			setTimeout(preloadComponents, 1)
-		}
+		preloadOnIdle([
+			() => import('./AnalyzeCompetitorSite.vue'),
+			() => import('./SeoHomepageAudit.vue'),
+			() => import('./AIOSEO_VERSION/SeoSiteAudit.vue'),
+			() => import('./HeadlineAnalyzer.vue')
+		])
 	}
 }
 </script>

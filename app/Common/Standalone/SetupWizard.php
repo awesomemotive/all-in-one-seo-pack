@@ -44,16 +44,22 @@ class SetupWizard {
 			return;
 		}
 
-		// If we are redirecting, clear the transient so it only happens once.
+		// Only do this for single site installs.
+		if ( is_network_admin() ) {
+			return;
+		}
+
+		// If this is a bulk activation, don't redirect immediately.
+		// The activation redirect flag is preserved so the redirect happens on the next admin page load.
+		if ( isset( $_GET['activate-multi'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+
+		// If we are redirecting, clear the flag so it only happens once.
 		aioseo()->core->cache->delete( 'activation_redirect' );
 
 		// Check option to disable welcome redirect.
 		if ( get_option( 'aioseo_activation_redirect', false ) ) {
-			return;
-		}
-
-		// Only do this for single site installs.
-		if ( isset( $_GET['activate-multi'] ) || is_network_admin() ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 

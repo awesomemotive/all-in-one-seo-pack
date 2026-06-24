@@ -117,12 +117,10 @@ class Activate {
 			return;
 		}
 
-		if ( isset( $_GET['activate-multi'] ) ) { // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
-			return;
-		}
-
-		// Sets 30 second transient for welcome screen redirect on activation.
-		aioseo()->core->cache->update( 'activation_redirect', true, 30 );
+		// Sets activation redirect flag.
+		// We use HOUR_IN_SECONDS to ensure the redirect still works after bulk activation,
+		// where the redirect is deferred to the next admin page load.
+		aioseo()->core->cache->update( 'activation_redirect', true, HOUR_IN_SECONDS );
 	}
 
 	/**

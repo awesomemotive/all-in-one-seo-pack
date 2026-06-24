@@ -34,9 +34,10 @@
 				<table-column class="domain">
 					<div class="row">
 						<img
+							v-if="getFaviconUrl(row.name)"
 							alt="Domain Favicon"
 							class="favicon"
-							:src="`https://www.google.com/s2/favicons?sz=32&domain=${row.name}`"
+							:src="getFaviconUrl(row.name)"
 						/>
 						<core-tooltip
 							type="action"
@@ -74,6 +75,7 @@
 
 <script>
 import numbers from '@/vue/utils/numbers'
+import { getFaviconUrl } from '@/vue/utils/favicon'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import CoreDonutChartWithLegend from '@/vue/components/common/core/DonutChartWithLegend'
@@ -186,6 +188,9 @@ export default {
 				}
 			]
 		}
+	},
+	methods : {
+		getFaviconUrl
 	}
 }
 </script>

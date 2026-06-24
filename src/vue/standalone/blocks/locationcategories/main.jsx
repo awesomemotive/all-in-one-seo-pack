@@ -1,4 +1,5 @@
 import { registerBlock } from '../utils'
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 
 import icon from './icon'
 import metadata from './block.json'
@@ -75,7 +76,9 @@ export const settings = {
 	}
 }
 
-registerBlock({
-	name,
-	settings
-})
+if (allowed('aioseo_page_local_seo_settings')) {
+	registerBlock({
+		name,
+		settings
+	})
+}

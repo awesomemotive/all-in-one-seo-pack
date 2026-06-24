@@ -46,7 +46,7 @@ class WPBakery extends Base {
 			add_filter( 'get_post_metadata', [ $this, 'maybeDisableWpBakeryMetaTags' ], 10, 3 );
 		}
 
-		if ( ! aioseo()->postSettings->canAddPostSettingsMetabox( get_post_type( $this->getPostId() ) ) ) {
+		if ( ! aioseo()->postSettings->canAddPageBuilderMetabox( get_post_type( $this->getPostId() ) ) ) {
 			return;
 		}
 
@@ -141,7 +141,8 @@ class WPBakery extends Base {
 	/**
 	 * Returns the processed page builder content.
 	 *
-	 * @since 4.5.2
+	 * @since   4.5.2
+	 * @version 4.9.9 Render shortcodes on front-end views too, not just AJAX/cron/REST.
 	 *
 	 * @param  int    $postId  The post id.
 	 * @param  mixed  $content The raw content.
@@ -152,6 +153,17 @@ class WPBakery extends Base {
 			\WPBMap::addAllMappedShortcodes();
 		}
 
-		return parent::processContent( $postId, $content ?? '' );
+		$content = parent::processContent( $postId, $content ?? '' );
+
+		// WPBakery content is purely [vc_*] shortcodes; the parent only expands them in
+		// AJAX/cron/REST, so on front-end views they survive to strip_shortcodes() and the
+		// auto-description comes out empty. Use our shortcode helper (override bypasses the
+		// runShortcodes gate), not a bare do_shortcode(): it strips conflicting shortcodes
+		// (sliders, carts, login forms) and resets postdata instead of executing them.
+		if ( ! is_admin() && ! aioseo()->helpers->isAjaxCronRestRequest() && ! doing_filter( 'the_content' ) ) {
+			$content = aioseo()->helpers->doShortcodes( (string) $content, true, (int) $postId );
+		}
+
+		return $content;
 	}
 }

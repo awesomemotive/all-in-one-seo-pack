@@ -11,6 +11,8 @@ import {
 	useSetupWizardStore
 } from '@/vue/stores'
 
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 import AdditionalInformation from './AdditionalInformation'
 import Category from './Category'
 import Features from './Features'
@@ -67,11 +69,34 @@ export default {
 			this.deleteStage('import')
 		}
 
+		if (!allowed('aioseo_search_appearance_settings')) {
+			this.deleteStage('category')
+		}
+
+		if (!allowed('aioseo_search_appearance_settings') && !allowed('aioseo_social_networks_settings')) {
+			this.deleteStage('additional-information')
+		}
+
+		if (!allowed('aioseo_feature_manager_settings')) {
+			this.deleteStage('features')
+		}
+
+		if (!allowed('aioseo_search_appearance_settings') && !allowed('aioseo_general_settings')) {
+			this.deleteStage('search-appearance')
+		}
+
 		if (!this.licenseStore.isUnlicensed) {
 			this.deleteStage('license-key')
 		}
 
-		if (this.searchStatisticsStore.isConnected) {
+		if (
+			this.searchStatisticsStore.isConnected ||
+			(
+				!allowed('aioseo_general_settings') &&
+				!allowed('aioseo_sitemap_settings') &&
+				!allowed('aioseo_search_statistics_settings')
+			)
+		) {
 			this.deleteStage('search-console')
 		}
 

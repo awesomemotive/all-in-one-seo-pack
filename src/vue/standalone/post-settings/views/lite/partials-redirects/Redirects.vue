@@ -9,8 +9,9 @@
 			/>
 
 			<core-modal
+				v-if="'sidebar' === $root.$data.screenContext"
 				modal-name="post-settings-sidebar-redirects"
-				:show="postEditorStore.currentPost.redirects.modalOpen && 'sidebar' === $root.$data.screenContext"
+				:show="postEditorStore.currentPost.redirects.modalOpen"
 				:classes="[ 'aioseo-redirects' ]"
 				@close="postEditorStore.currentPost.redirects.modalOpen = false"
 			>
@@ -55,8 +56,9 @@
 			</div>
 
 			<core-modal
+				v-if="'sidebar' === $root.$data.screenContext"
 				modal-name="post-settings-sidebar-redirects"
-				:show="postEditorStore.currentPost.redirects.modalOpen && 'sidebar' === $root.$data.screenContext"
+				:show="postEditorStore.currentPost.redirects.modalOpen"
 				:classes="[ 'aioseo-redirects' ]"
 				@close="postEditorStore.currentPost.redirects.modalOpen = false"
 				allow-overflow

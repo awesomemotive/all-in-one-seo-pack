@@ -174,6 +174,14 @@ class DeactivationSurvey {
 				});
 			});
 
+			overlay.addEventListener('click', function(event) {
+				if (formOpen && !form.contains(event.target)) {
+					overlay.style.display = 'none';
+					formOpen = false;
+					deactivateLink.focus();
+				}
+			});
+
 			document.addEventListener('keyup', function(event) {
 				if (27 === event.keyCode && formOpen) {
 					overlay.style.display = 'none';

@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 
+import { allowed } from '@/vue/utils/AIOSEO_VERSION'
+
 import {
 	useDirtyOptionsStore,
 	useOptionsStore,
@@ -94,7 +96,7 @@ export const useSetupWizardStore = defineStore('SetupWizardStore', {
 	getters : {
 		shouldShowImportStep : () => {
 			const rootStore = useRootStore()
-			return rootStore.aioseo.importers.filter(plugin => plugin.canImport).length
+			return allowed('aioseo_tools_settings') && rootStore.aioseo.importers.filter(plugin => plugin.canImport).length
 		},
 		getNextLink : state => {
 			const link  = { name: state.stages[0] }

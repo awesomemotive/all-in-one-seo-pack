@@ -45,7 +45,7 @@ class SiteOrigin extends Base {
 			$postType = ! empty( $_GET['post_type'] ) ? sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) : 'post'; // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended, Generic.Files.LineLength.MaxExceeded
 		}
 
-		if ( ! aioseo()->postSettings->canAddPostSettingsMetabox( $postType ) ) {
+		if ( ! aioseo()->postSettings->canAddPageBuilderMetabox( $postType ) ) {
 			return;
 		}
 

@@ -40,7 +40,13 @@ const getSlug = () => {
 const getPermalink = () => {
 	const { FusionApp } = window
 
-	return FusionApp?.getPost('post_permalink').replace('?fb-edit=1', '') || document.querySelector('#sample-permalink a')?.href || ''
+	// FusionApp can return a non-string (e.g. false) before the post is ready,
+	// and optional chaining wouldn't guard a .replace() call on it.
+	const permalink = FusionApp?.getPost('post_permalink')
+
+	return ('string' === typeof permalink ? permalink.replace('?fb-edit=1', '') : '') ||
+		document.querySelector('#sample-permalink a')?.href ||
+		''
 }
 
 /**
@@ -51,7 +57,7 @@ const getPermalink = () => {
 const getFeaturedImage = async () => {
 	const { wp, FusionApp } = window
 
-	if (!wp || !FusionApp || !FusionApp.getDynamicPost('post_meta')._thumbnail_id) {
+	if (!wp || !FusionApp || !FusionApp.getDynamicPost('post_meta')?._thumbnail_id) {
 		return ''
 	}
 

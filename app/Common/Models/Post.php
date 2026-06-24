@@ -456,8 +456,8 @@ class Post extends Model {
 	 *   - `default`   Optional. Value to write when the input value is empty (for `text`/`url`/`helper`/`raw`).
 	 *                 Booleans + int_neg1 ignore this — they always have a deterministic mapping.
 	 *
-	 * Fields that need bespoke logic (keyphrases, schema, ai, priority, breadcrumb_settings) live
-	 * outside this map and are handled directly in sanitizeAndSetDefaults().
+	 * Fields that need bespoke logic (canonical_url, keyphrases, schema, ai, priority, breadcrumb_settings)
+	 * live outside this map and are handled directly in sanitizeAndSetDefaults().
 	 *
 	 * @since 4.9.8
 	 *
@@ -472,10 +472,6 @@ class Post extends Model {
 			],
 			'description'                 => [
 				'column'   => 'description',
-				'sanitize' => 'text'
-			],
-			'canonicalUrl'                => [
-				'column'   => 'canonical_url',
 				'sanitize' => 'text'
 			],
 			'keywords'                    => [
@@ -697,6 +693,11 @@ class Post extends Model {
 
 		// Custom fields — those that need a per-field callable or model-specific logic don't
 		// fit the generic map. Each guards on array_key_exists so partial updates stay safe.
+		if ( array_key_exists( 'canonicalUrl', $data ) || array_key_exists( 'canonical_url', $data ) ) {
+			// camelCase takes precedence; an explicit empty camelCase value clears the field even if snake_case is present.
+			$canonicalUrl           = $data['canonicalUrl'] ?? $data['canonical_url'] ?? null;
+			$thePost->canonical_url = ! empty( $canonicalUrl ) ? esc_url_raw( $canonicalUrl ) : null;
+		}
 		if ( array_key_exists( 'keyphrases', $data ) ) {
 			$thePost->keyphrases = ! empty( $data['keyphrases'] ) ? self::sanitizeKeyphrases( $data['keyphrases'] ) : null;
 		}

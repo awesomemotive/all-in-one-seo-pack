@@ -22,6 +22,15 @@ class BulkActions {
 	const REQUIRED_CAPABILITY = 'aioseo_page_ai_content_settings';
 
 	/**
+	 * The additional capability required to save bulk generated content.
+	 *
+	 * @since 4.9.9
+	 *
+	 * @var string
+	 */
+	const REQUIRED_SAVE_CAPABILITY = 'aioseo_page_general_settings';
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.9.6
@@ -81,7 +90,7 @@ class BulkActions {
 	 * @return array              The modified bulk actions.
 	 */
 	public function addBulkAction( $bulkActions ) {
-		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) || $this->isTrashView() ) {
+		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) || ! aioseo()->access->hasCapability( self::REQUIRED_SAVE_CAPABILITY ) || $this->isTrashView() ) {
 			return $bulkActions;
 		}
 
@@ -101,7 +110,7 @@ class BulkActions {
 	 * @return array              The modified bulk actions.
 	 */
 	public function addMediaBulkAction( $bulkActions ) {
-		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) || $this->isTrashView() ) {
+		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) || ! aioseo()->access->hasCapability( self::REQUIRED_SAVE_CAPABILITY ) || $this->isTrashView() ) {
 			return $bulkActions;
 		}
 
@@ -128,7 +137,7 @@ class BulkActions {
 	 * @return string             The redirect URL.
 	 */
 	public function handleBulkAction( $redirectTo, $doAction, $postIds ) {
-		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) ) {
+		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) || ! aioseo()->access->hasCapability( self::REQUIRED_SAVE_CAPABILITY ) ) {
 			return $redirectTo;
 		}
 
@@ -151,7 +160,7 @@ class BulkActions {
 	 * @return string             The redirect URL.
 	 */
 	public function handleMediaBulkAction( $redirectTo, $doAction, $postIds ) {
-		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) ) {
+		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) || ! aioseo()->access->hasCapability( self::REQUIRED_SAVE_CAPABILITY ) ) {
 			return $redirectTo;
 		}
 
@@ -175,6 +184,7 @@ class BulkActions {
 	public function addMediaRowAction( $actions, $post ) {
 		if (
 			! current_user_can( self::REQUIRED_CAPABILITY ) ||
+			! aioseo()->access->hasCapability( self::REQUIRED_SAVE_CAPABILITY ) ||
 			! current_user_can( 'edit_post', $post->ID ) ||
 			! aioseo()->helpers->attachmentIs( 'image', $post->ID ) ||
 			! aioseo()->addons->getLoadedAddon( 'imageSeo' )

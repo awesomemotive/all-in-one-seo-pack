@@ -218,9 +218,8 @@ export const useTruSeoHighlighter = () => {
 			// Forward wheel events from the popover to the iframe so scrolling works when hovering over it.
 			const iframeElement = isClassicEditor ? editorWrapper : getEditorIframe()
 			node.addEventListener('wheel', (e) => {
-				e.preventDefault()
 				iframeElement.contentWindow.scrollBy(0, e.deltaY)
-			}, { passive: false })
+			}, { passive: true })
 		}
 
 		repositionHighlightPopover()

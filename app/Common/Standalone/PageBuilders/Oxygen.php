@@ -121,7 +121,7 @@ class Oxygen extends Base {
 	 */
 	public function maybeRun() {
 		$postId = $this->getPostId();
-		if ( ! aioseo()->postSettings->canAddPostSettingsMetabox( get_post_type( $postId ) ) ) {
+		if ( ! aioseo()->postSettings->canAddPageBuilderMetabox( get_post_type( $postId ) ) ) {
 			return;
 		}
 

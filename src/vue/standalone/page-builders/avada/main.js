@@ -78,6 +78,12 @@ const initFrontEndView = () => {
  * @returns {void}
  */
 const init = () => {
+	// The watcher reads hydrated Pinia stores immediately, but the sidebar mount
+	// that loads them is deferred to fusion-app-setup. Load the shared stores
+	// first so the watcher's initial processContent() has them. The later mount
+	// short-circuits on the rootStore.loaded guard.
+	loadPiniaStores()
+
 	// Init the view for the front-end page builder.
 	initFrontEndView()
 

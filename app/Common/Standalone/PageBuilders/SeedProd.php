@@ -43,7 +43,7 @@ class SeedProd extends Base {
 	public function init() {
 		$postType = get_post_type( $this->getPostId() );
 
-		if ( ! aioseo()->postSettings->canAddPostSettingsMetabox( $postType ) ) {
+		if ( ! aioseo()->postSettings->canAddPageBuilderMetabox( $postType ) ) {
 			return;
 		}
 

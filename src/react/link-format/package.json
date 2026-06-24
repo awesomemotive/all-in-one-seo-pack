@@ -10,7 +10,7 @@
 		"dev-webpack-pro": "dotenv -e .env.pro -- wp-scripts build --watch"
 	},
 	"devDependencies": {
-		"@wordpress/icons": "1.2.0",
+		"@wordpress/icons": "14.0.1",
 		"@wordpress/scripts": "32.1.0",
 		"classnames": "2.2.6",
 		"css-loader": "^5.2.6",

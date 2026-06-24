@@ -44,7 +44,7 @@ class Elementor extends Base {
 	 * @return void
 	 */
 	public function init() {
-		if ( ! aioseo()->postSettings->canAddPostSettingsMetabox( get_post_type( $this->getPostId() ) ) ) {
+		if ( ! aioseo()->postSettings->canAddPageBuilderMetabox( get_post_type( $this->getPostId() ) ) ) {
 			return;
 		}
 

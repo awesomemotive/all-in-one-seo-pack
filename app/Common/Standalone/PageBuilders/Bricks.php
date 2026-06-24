@@ -84,7 +84,7 @@ class Bricks extends Base {
 	 */
 	public function maybeRun() {
 		if (
-			aioseo()->postSettings->canAddPostSettingsMetabox( get_post_type( $this->getPostId() ) ) &&
+			aioseo()->postSettings->canAddPageBuilderMetabox( get_post_type( $this->getPostId() ) ) &&
 			aioseo()->helpers->callFunc( 'bricks_is_builder_main' )
 		) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 20 );

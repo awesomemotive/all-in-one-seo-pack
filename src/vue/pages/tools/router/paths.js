@@ -47,6 +47,16 @@ export default [
 		}
 	},
 	{
+		path      : '/seo-alerts',
+		name      : 'seo-alerts',
+		component : loadView('Main'),
+		meta      : {
+			access : 'aioseo_tools_settings',
+			name   : __('SEO Alerts', td),
+			label  : 'new'
+		}
+	},
+	{
 		path      : '/system-status',
 		name      : 'system-status',
 		component : loadView('Main'),

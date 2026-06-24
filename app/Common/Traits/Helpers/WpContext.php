@@ -119,22 +119,36 @@ trait WpContext {
 	/**
 	 * Checks whether the current page is the static homepage.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.9.9 Replaced one-shot static cache with per-post-ID cache so each call respects its $post argument.
 	 *
 	 * @param  mixed $post Pass in an optional post to check if its the static home page.
 	 * @return bool        Whether the current page is the static homepage.
 	 */
 	public function isStaticHomePage( $post = null ) {
-		static $isHomePage = null;
-		if ( null !== $isHomePage ) {
-			return $isHomePage;
+		static $cache = [];
+
+		$key = null;
+		if ( is_numeric( $post ) ) {
+			$key = (int) $post;
+		} elseif ( is_object( $post ) && ! empty( $post->ID ) ) {
+			$key = (int) $post->ID;
+		}
+
+		if ( null !== $key && array_key_exists( $key, $cache ) ) {
+			return $cache[ $key ];
 		}
 
 		$post = aioseo()->helpers->getPost( $post );
+		$key  = ! empty( $post->ID ) ? (int) $post->ID : 0;
 
-		$isHomePage = ( 'page' === get_option( 'show_on_front' ) && ! empty( $post->ID ) && (int) get_option( 'page_on_front' ) === $post->ID );
+		if ( array_key_exists( $key, $cache ) ) {
+			return $cache[ $key ];
+		}
 
-		return $isHomePage;
+		$cache[ $key ] = ( 'page' === get_option( 'show_on_front' ) && ! empty( $post->ID ) && (int) get_option( 'page_on_front' ) === $post->ID );
+
+		return $cache[ $key ];
 	}
 
 	/**
@@ -151,24 +165,39 @@ trait WpContext {
 	/**
 	 * Checks whether the current page is the static posts page.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.9.9 Replaced one-shot static cache with per-post-ID cache so each call respects its $post argument.
 	 *
-	 * @return bool Whether the current page is the static posts page.
+	 * @param  mixed $post Pass in an optional post to check if its the static posts page.
+	 * @return bool        Whether the current page is the static posts page.
 	 */
 	public function isStaticPostsPage( $post = null ) {
-		static $isStaticPostsPage = null;
-		if ( null !== $isStaticPostsPage ) {
-			return $isStaticPostsPage;
+		static $cache = [];
+
+		$key = null;
+		if ( is_numeric( $post ) ) {
+			$key = (int) $post;
+		} elseif ( is_object( $post ) && ! empty( $post->ID ) ) {
+			$key = (int) $post->ID;
+		}
+
+		if ( null !== $key && array_key_exists( $key, $cache ) ) {
+			return $cache[ $key ];
 		}
 
 		$post = aioseo()->helpers->getPost( $post );
+		$key  = ! empty( $post->ID ) ? (int) $post->ID : 0;
 
-		$isStaticPostsPage = (
+		if ( array_key_exists( $key, $cache ) ) {
+			return $cache[ $key ];
+		}
+
+		$cache[ $key ] = (
 			( is_home() && ( 0 !== (int) get_option( 'page_for_posts' ) ) ) ||
 			( ! empty( $post->ID ) && (int) get_option( 'page_for_posts' ) === $post->ID )
 		);
 
-		return $isStaticPostsPage;
+		return $cache[ $key ];
 	}
 
 	/**
@@ -1133,6 +1162,17 @@ trait WpContext {
 		return aioseo()->options->searchAppearance->global->schema->websiteName
 			? aioseo()->tags->replaceTags( aioseo()->options->searchAppearance->global->schema->websiteName )
 			: aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
+	}
+
+	/**
+	 * Checks if WordPress is set to discourage search engines from indexing the site.
+	 *
+	 * @since 4.9.9
+	 *
+	 * @return boolean Whether search engines are discouraged from indexing the site.
+	 */
+	public function isSearchEnginesDiscouraged() {
+		return ! get_option( 'blog_public' );
 	}
 
 	/**
