@@ -73,10 +73,11 @@ trait Shortcodes {
 	}
 
 	/**
-	 * Returns the content with only the allowed shortcodes and wildcards replaced.
+	 * Returns the content with only the allowed shortcodes replaced.
 	 *
 	 * @since   4.1.2
 	 * @version 4.6.6 Added the $allowedTags parameter.
+	 * @version 5.0.2.1 Expand only the allowed tags instead of removing every other one.
 	 *
 	 * @param  string $content     The content.
 	 * @param  int    $postId      The post ID (optional).
@@ -84,24 +85,55 @@ trait Shortcodes {
 	 * @return string              The content with shortcodes replaced.
 	 */
 	public function doAllowedShortcodes( $content, $postId = null, $allowedTags = [] ) {
-		// Extract list of shortcodes from the post content.
-		$tags = $this->getShortcodeTags( $content );
-		if ( ! count( $tags ) ) {
+		$allowedTags = apply_filters( 'aioseo_allowed_shortcode_tags', $allowedTags );
+		foreach ( $allowedTags as $index => $allowedTag ) {
+			$allowedTags[ $index ] = str_replace( [ '[', ']' ], '', $allowedTag );
+		}
+
+		// Nothing is allowed, so there is nothing to expand.
+		if ( ! $allowedTags ) {
 			return $content;
 		}
 
-		$allowedTags  = apply_filters( 'aioseo_allowed_shortcode_tags', $allowedTags );
-		$tagsToRemove = array_diff( $tags, $allowedTags );
+		global $shortcode_tags; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 
-		$content = $this->doShortcodesHelper( $content, $tagsToRemove, $postId );
+		// Narrow the registry to the allowed tags rather than unregistering every other one. Removing
+		// the complement only works if we tokenize the content exactly as core does, and we cannot.
+		$registered   = $shortcode_tags; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		$fullRegistry = array_diff_key( $registered, array_flip( $this->getConflictingShortcodeTags() ) );
 
-		return $content;
+		$narrowed = [];
+		foreach ( array_intersect_key( $registered, array_flip( $allowedTags ) ) as $tag => $callback ) {
+			// The narrowing only guards the content we were given. An allowed callback that expands
+			// shortcodes of its own (e.g. a SiteOrigin widget) needs the full registry for them.
+			$narrowed[ $tag ] = function ( $attributes, $content, $shortcodeTag ) use ( $callback, $fullRegistry ) {
+				global $shortcode_tags; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+
+				$outer          = $shortcode_tags; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+				$shortcode_tags = $fullRegistry; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+
+				try {
+					return call_user_func( $callback, $attributes, $content, $shortcodeTag );
+				} finally {
+					$shortcode_tags = $outer; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+				}
+			};
+		}
+
+		$shortcode_tags = $narrowed; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+
+		try {
+			return $this->doShortcodesHelper( $content, [], $postId );
+		} finally {
+			$shortcode_tags = $registered; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		}
 	}
 
 	/**
-	 * Returns the content with only the allowed shortcodes and wildcards replaced.
+	 * Replaces the shortcodes in the content, minus the conflicting ones.
 	 *
-	 * @since 4.1.2
+	 * @since   4.1.2
+	 * @version 5.0.2.1 Restore the registry, Divi flag and post data even if a callback throws.
 	 *
 	 * @param  string $content      The content.
 	 * @param  array  $tagsToRemove The shortcode tags to remove (optional).
@@ -110,76 +142,93 @@ trait Shortcodes {
 	 */
 	private function doShortcodesHelper( $content, $tagsToRemove = [], $postId = 0 ) {
 		global $shortcode_tags; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
-		$conflictingShortcodes = array_merge( $tagsToRemove, $this->conflictingShortcodes );
-		$conflictingShortcodes = apply_filters( 'aioseo_conflicting_shortcodes', $conflictingShortcodes );
 
-		$tagsToRemove = [];
-		foreach ( $conflictingShortcodes as $shortcode ) {
-			$shortcodeTag = str_replace( [ '[', ']' ], '', $shortcode );
+		$conflictingTags = $this->getConflictingShortcodeTags( $tagsToRemove );
+		$tagsToRemove    = [];
+		foreach ( $conflictingTags as $shortcodeTag ) {
 			if ( array_key_exists( $shortcodeTag, $shortcode_tags ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 				$tagsToRemove[ $shortcodeTag ] = $shortcode_tags[ $shortcodeTag ]; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
 			}
 		}
 
-		// Remove all conflicting shortcodes before parsing the content.
-		foreach ( $tagsToRemove as $shortcodeTag => $shortcodeCallback ) {
-			remove_shortcode( $shortcodeTag );
-		}
+		$default     = null;
+		$diviFlagSet = false;
 
-		if ( $postId ) {
-			global $post;
-			$post = get_post( $postId );
-			if ( is_a( $post, 'WP_Post' ) ) {
-				// Add the current post to the loop so that shortcodes can use it if needed.
-				setup_postdata( $post );
+		try {
+			// Remove all conflicting shortcodes before parsing the content.
+			foreach ( $tagsToRemove as $shortcodeTag => $shortcodeCallback ) {
+				remove_shortcode( $shortcodeTag );
+			}
+
+			if ( $postId ) {
+				global $post;
+				$post = get_post( $postId );
+				if ( is_a( $post, 'WP_Post' ) ) {
+					// Add the current post to the loop so that shortcodes can use it if needed.
+					setup_postdata( $post );
+				}
+			}
+
+			// Set a flag to indicate Divi that it's processing internal content.
+
+			$default     = aioseo()->helpers->setDiviInternalRendering( true );
+			$diviFlagSet = true;
+
+			return do_shortcode( $content );
+		} finally {
+			// Reset the Divi flag to its default value. That value is null on the first call of a
+			// request, so it cannot double as the "was it set" check.
+			if ( $diviFlagSet ) {
+				aioseo()->helpers->setDiviInternalRendering( $default );
+			}
+
+			if ( $postId ) {
+				wp_reset_postdata();
+			}
+
+			// Add back shortcodes as remove_shortcode() disables them site-wide.
+			foreach ( $tagsToRemove as $shortcodeTag => $shortcodeCallback ) {
+				add_shortcode( $shortcodeTag, $shortcodeCallback );
 			}
 		}
-
-		// Set a flag to indicate Divi that it's processing internal content.
-
-		$default = aioseo()->helpers->setDiviInternalRendering( true );
-
-		$content = do_shortcode( $content );
-
-		// Reset the Divi flag to its default value.
-		aioseo()->helpers->setDiviInternalRendering( $default );
-
-		if ( $postId ) {
-			wp_reset_postdata();
-		}
-
-		// Add back shortcodes as remove_shortcode() disables them site-wide.
-		foreach ( $tagsToRemove as $shortcodeTag => $shortcodeCallback ) {
-			add_shortcode( $shortcodeTag, $shortcodeCallback );
-		}
-
-		return $content;
 	}
 
 	/**
-	 * Extracts the shortcode tags from the content.
+	 * Returns the tags of the shortcodes known to conflict with AIOSEO.
 	 *
-	 * @since 4.1.2
+	 * @since 5.0.2.1
 	 *
-	 * @param  string $content The content.
-	 * @return array  $tags    The shortcode tags.
+	 * @param  array $tagsToRemove Additional shortcode tags to treat as conflicting (optional).
+	 * @return array               The shortcode tags.
 	 */
-	private function getShortcodeTags( $content ) {
-		$tags    = [];
-		$pattern = '\\[(\\[?)([^\s]*)(?![\\w-])([^\\]\\/]*(?:\\/(?!\\])[^\\]\\/]*)*?)(?:(\\/)\\]|\\](?:([^\\[]*+(?:\\[(?!\\/\\2\\])[^\\[]*+)*+)\\[\\/\\2\\])?)(\\]?)';
-		if ( preg_match_all( "#$pattern#s", (string) $content, $matches ) && array_key_exists( 2, $matches ) ) {
-			$tags = array_unique( $matches[2] );
-		}
+	private function getConflictingShortcodeTags( $tagsToRemove = [] ) {
+		$conflictingShortcodes = array_merge( $tagsToRemove, $this->conflictingShortcodes );
+		$conflictingShortcodes = apply_filters( 'aioseo_conflicting_shortcodes', $conflictingShortcodes );
 
-		if ( ! count( $tags ) ) {
-			return $tags;
-		}
+		return array_map( function ( $shortcode ) {
+			return str_replace( [ '[', ']' ], '', $shortcode );
+		}, (array) $conflictingShortcodes );
+	}
 
-		// Extract nested shortcodes.
-		foreach ( $matches[5] as $innerContent ) {
-			$tags = array_merge( $tags, $this->getShortcodeTags( $innerContent ) );
-		}
+	/**
+	 * Returns visitor input decoded and without square brackets, so it can never form a shortcode.
+	 * NOTE: The result is decoded text, so escape it for the context it is output in.
+	 *
+	 * @since 5.0.2.1
+	 *
+	 * @param  string $string The visitor input.
+	 * @return string         The input without square brackets.
+	 */
+	public function removeShortcodeBrackets( $string ) {
+		$string = (string) $string;
 
-		return $tags;
+		// Decode until nothing changes. Any entity left over could still decode to a bracket
+		// further down the line, so a fixed number of passes is not enough.
+		do {
+			$previous = $string;
+			$string   = $this->decodeHtmlEntities( $string );
+		} while ( $previous !== $string );
+
+		return str_replace( [ '[', ']' ], '', $string );
 	}
 }

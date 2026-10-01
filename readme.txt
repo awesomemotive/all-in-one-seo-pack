@@ -4,7 +4,7 @@ Tags: SEO, AI, schema, XML Sitemap, redirect
 Tested up to: 7.1.2
 Requires at least: 5.7
 Requires PHP: 7.4
-Stable tag: 5.0.2
+Stable tag: 5.0.2.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -192,6 +192,11 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 5.0.2.1**
+
+- Fixed: Improved security protections for shortcodes on search pages.
+- Fixed: The Elementor editor could get stuck on "Loading" on some hosts, such as GoDaddy Managed WordPress, when Redirects was active.
+
 **New in Version 5.0.2**
 
 - Updated: The minimum required PHP version is now 7.4.
@@ -270,12 +275,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 - Fixed: Added a warning when a redirect's destination URL contains invalid characters in the domain.
 - Fixed: Redirects from child pages to parent pages not working for smart 404 redirects.
 
-**New in Version 5.0.0.1**
-
-- Updated: Made Search Appearance and Social Appearance cards in metabox collapsible.
-- Fixed: Focus keyword and additional keywords sometimes not appearing in TruSEO after 5.0.0 update.
-- Fixed: Resurfaced missing product ID, SKU and image alt text checks in TruSEO.
-
 **See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=aioseo) for previous releases.**
 
 == Frequently Asked Questions ==
@@ -351,6 +350,6 @@ AIOSEO can easily help you get your sitemaps listed inside Google Search Console
 
 == Upgrade Notice ==
 
-= 5.0.2 =
+= 5.0.2.1 =
 
 This update adds major improvements and bug fixes.

@@ -24,6 +24,15 @@ class Frontend {
 	public $breadcrumbs = [];
 
 	/**
+	 * Whether we are already rendering breadcrumbs.
+	 *
+	 * @since 5.0.2.1
+	 *
+	 * @var bool
+	 */
+	private $isRendering = false;
+
+	/**
 	 * Gets the current page's breadcrumbs.
 	 *
 	 * @since   4.1.1
@@ -101,8 +110,12 @@ class Frontend {
 			}
 
 			if ( is_search() ) {
-				$type      = 'search';
-				$reference = htmlspecialchars( sanitize_text_field( get_search_query() ), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 );
+				$type = 'search';
+				// The search query ends up in the crumb that breadcrumbToDisplay() runs do_shortcode() on.
+				// It comes back decoded, so it is escaped for html here and again for the decode the crumb
+				// template does before output.
+				$reference = aioseo()->helpers->removeShortcodeBrackets( sanitize_text_field( get_search_query() ) );
+				$reference = htmlspecialchars( esc_html( $reference ), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 );
 			}
 
 			if ( is_404() ) {
@@ -201,11 +214,18 @@ class Frontend {
 	 *
 	 * @since   4.1.1
 	 * @version 4.9.9 Return early when the Tags class isn't initialized yet.
+	 * @version 5.0.2.1 Return early when already rendering; encode leftover square brackets.
 	 *
 	 * @param  bool        $echo Print out the breadcrumb.
 	 * @return string|void       A html breadcrumb.
 	 */
 	public function display( $echo = true ) {
+		// breadcrumbToDisplay() runs do_shortcode() on the finished crumb, so [aioseo_breadcrumbs] in a
+		// template or label would land back here and exhaust the stack.
+		if ( $this->isRendering ) {
+			return;
+		}
+
 		if (
 			in_array( 'breadcrumbsEnable', aioseo()->internalOptions->deprecatedOptions, true ) &&
 			! aioseo()->options->deprecated->breadcrumbs->enable
@@ -228,45 +248,55 @@ class Frontend {
 			return;
 		}
 
-		$breadcrumbs = $this->getBreadcrumbs();
-		if ( empty( $breadcrumbs ) ) {
-			return;
-		}
+		$this->isRendering = true;
 
-		$breadcrumbsCount = count( $breadcrumbs );
-
-		$display = '<div class="aioseo-breadcrumbs">';
-		foreach ( $breadcrumbs as $breadcrumb ) {
-			--$breadcrumbsCount;
-
-			$breadcrumbDisplay = $this->breadcrumbToDisplay( $breadcrumb );
-
-			// Strip link from Last crumb.
-			if (
-				0 === $breadcrumbsCount &&
-				aioseo()->breadcrumbs->showCurrentItem() &&
-				! $this->linkCurrentItem() &&
-				'default' === $breadcrumbDisplay['templateType']
-			) {
-				$breadcrumbDisplay['template'] = $this->stripLink( $breadcrumbDisplay['template'] );
+		try {
+			$breadcrumbs = $this->getBreadcrumbs();
+			if ( empty( $breadcrumbs ) ) {
+				return;
 			}
 
-			$display .= $breadcrumbDisplay['template'];
+			$breadcrumbsCount = count( $breadcrumbs );
 
-			if ( 0 < $breadcrumbsCount ) {
-				$display .= $this->getSeparator();
+			$display = '<div class="aioseo-breadcrumbs">';
+			foreach ( $breadcrumbs as $breadcrumb ) {
+				--$breadcrumbsCount;
+
+				$breadcrumbDisplay = $this->breadcrumbToDisplay( $breadcrumb );
+
+				// Strip link from Last crumb.
+				if (
+					0 === $breadcrumbsCount &&
+					aioseo()->breadcrumbs->showCurrentItem() &&
+					! $this->linkCurrentItem() &&
+					'default' === $breadcrumbDisplay['templateType']
+				) {
+					$breadcrumbDisplay['template'] = $this->stripLink( $breadcrumbDisplay['template'] );
+				}
+
+				$display .= $breadcrumbDisplay['template'];
+
+				if ( 0 < $breadcrumbsCount ) {
+					$display .= $this->getSeparator();
+				}
 			}
+			$display .= '</div>';
+
+			// Final security cleaning.
+			$display = wp_kses_post( $display );
+
+			// Our shortcodes have run. Encode what is left so a later pass (e.g. the_content or a block
+			// widget running do_shortcode() on our output) cannot expand it.
+			$display = str_replace( [ '[', ']' ], [ '&#91;', '&#93;' ], $display );
+
+			if ( $echo ) {
+				echo $display; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
+
+			return $display;
+		} finally {
+			$this->isRendering = false;
 		}
-		$display .= '</div>';
-
-		// Final security cleaning.
-		$display = wp_kses_post( $display );
-
-		if ( $echo ) {
-			echo $display; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		}
-
-		return $display;
 	}
 
 	/**

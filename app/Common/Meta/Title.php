@@ -44,6 +44,8 @@ class Title {
 	public function filterPageTitle( $wpTitle = '' ) {
 		$title = $this->getTitle();
 
+		// Load-bearing: core echoes the title unescaped and sanitize()'s entity decoding is capped,
+		// so this encode is all that separates a query-derived title from stored XSS.
 		return ! empty( $title ) ? aioseo()->helpers->encodeOutputHtml( $title ) : $wpTitle;
 	}
 

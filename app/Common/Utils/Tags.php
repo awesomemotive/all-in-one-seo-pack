@@ -1209,9 +1209,11 @@ class Tags {
 
 				return empty( $year ) && $sampleData ? date_i18n( 'Y' ) : $year;
 			case 'search_term':
-				$search = get_search_query();
+				// Query string input must never be expanded by doShortcodes(), whatever the runShortcodes
+				// option is set to. strip_shortcodes() is not enough: removing one tag can form another.
+				$search = aioseo()->helpers->removeShortcodeBrackets( stripslashes( get_search_query() ) );
 
-				return empty( $search ) && $sampleData ? __( 'Example search string', 'all-in-one-seo-pack' ) : esc_attr( stripslashes( $search ) );
+				return empty( $search ) && $sampleData ? __( 'Example search string', 'all-in-one-seo-pack' ) : esc_attr( $search );
 			case 'separator_sa':
 				return aioseo()->helpers->decodeHtmlEntities( aioseo()->options->searchAppearance->global->separator );
 			case 'site_link':
