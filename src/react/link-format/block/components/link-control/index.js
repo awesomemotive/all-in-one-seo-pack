@@ -99,7 +99,6 @@ const makeCancelable = (promise) => {
  *
  * @typedef {{[setting:string]:any}} WPLinkControlSettingsValue
  */
-/* eslint-enable */
 
 /**
  * Custom settings values associated with a link.
@@ -116,7 +115,6 @@ const makeCancelable = (promise) => {
  *
  * @typedef {WPLinkControlDefaultValue&WPLinkControlSettingsValue} WPLinkControlValue
  */
-/* eslint-enable */
 
 /** @typedef {(nextValue:WPLinkControlValue)=>void} WPLinkControlOnChangeProp */
 

@@ -680,7 +680,8 @@ trait Vue {
 	/**
 	 * Set Vue AI bulk generate data.
 	 *
-	 * @since 4.9.6
+	 * @since   4.9.6
+	 * @version 5.0.3 Added the returnUrl key.
 	 *
 	 * @return void
 	 */
@@ -691,13 +692,27 @@ trait Vue {
 
 		// phpcs:disable HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 		$ids = [];
-		if ( ! empty( $_GET['ids'] ) ) {
+		if ( ! empty( $_GET['ids'] ) && is_string( $_GET['ids'] ) ) {
 			$ids = array_map( 'intval', explode( ',', sanitize_text_field( wp_unslash( $_GET['ids'] ) ) ) );
+			$ids = array_values( array_filter( $ids, function ( $id ) {
+				return 0 < $id;
+			} ) );
 		}
 
 		$type = 'title';
 		if ( ! empty( $_GET['type'] ) && in_array( $_GET['type'], [ 'title', 'description', 'alt' ], true ) ) {
 			$type = sanitize_text_field( wp_unslash( $_GET['type'] ) );
+		}
+
+		$returnUrl = '';
+		if ( ! empty( $_GET['return'] ) && is_string( $_GET['return'] ) ) {
+			$requested = wp_unslash( $_GET['return'] ); // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
+
+			// Reject rather than repair: the value is interpolated into an HTML attribute without
+			// escaping, so anything that does not survive both sanitizers byte for byte is dropped.
+			if ( aioseo()->helpers->isUrl( $requested ) && wp_validate_redirect( $requested, '' ) === $requested ) {
+				$returnUrl = $requested;
+			}
 		}
 		// phpcs:enable HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 
@@ -737,10 +752,11 @@ trait Vue {
 		}
 
 		$this->data['aiBulkGenerate'] = [
-			'ids'      => $ids,
-			'type'     => $type,
-			'postType' => $postType,
-			'posts'    => $posts
+			'ids'       => $ids,
+			'type'      => $type,
+			'postType'  => $postType,
+			'posts'     => $posts,
+			'returnUrl' => $returnUrl
 		];
 	}
 
@@ -988,6 +1004,7 @@ trait Vue {
 	 *
 	 * @since   4.9.1
 	 * @version 4.9.8 Added the `mcp` sub-array with server-side status data for the AIOSEO MCP tab.
+	 * @version 5.0.3 `mcpAdapterActive` reports the adapter plugin's state; added `mcpServerRegistered`.
 	 *
 	 * @return void
 	 */
@@ -996,7 +1013,12 @@ trait Vue {
 			return;
 		}
 
-		$rateLimit = aioseo()->core->cache->get( 'ai_insights_rate_limit' );
+		$rateLimit        = aioseo()->core->cache->get( 'ai_insights_rate_limit' );
+		$mcpAdapterActive = '' !== \AIOSEO\Plugin\Common\Api\AiAgents::getActiveMcpAdapterFile();
+
+		// A plugin vendoring the adapter (WooCommerce's MCP feature) registers the server with no adapter plugin.
+		// Runs before wp_get_abilities(): the default server hooks its own abilities in from `rest_api_init`.
+		$mcpServerRegistered = ! $mcpAdapterActive && \AIOSEO\Plugin\Common\Api\AiAgents::isMcpServerRegistered();
 
 		$this->data['aiInsights'] = [
 			'rateLimit' => ! empty( $rateLimit ) ? $rateLimit : null,
@@ -1005,7 +1027,8 @@ trait Vue {
 				// Total across all plugins; 0 on WP 6.9+ means the Abilities API is being suppressed
 				// since Core always registers its own abilities.
 				'totalAbilities'        => function_exists( 'wp_get_abilities' ) ? count( wp_get_abilities() ) : 0,
-				'mcpAdapterActive'      => class_exists( '\\WP\\MCP\\Core\\McpAdapter' ),
+				'mcpAdapterActive'      => $mcpAdapterActive,
+				'mcpServerRegistered'   => $mcpServerRegistered,
 				'mcpAdapterInstalled'   => '' !== \AIOSEO\Plugin\Common\Api\AiAgents::getInstalledMcpAdapterFile(),
 				'hasAppPassword'        => $this->currentUserHasMcpAppPassword(),
 				// `supported` is core's HTTPS/local-env gate (replicated inline — the core helper

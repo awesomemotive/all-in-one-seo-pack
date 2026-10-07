@@ -28,7 +28,8 @@ class WebPage extends Graphs\Graph {
 	/**
 	 * Returns the graph data.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 about now follows {@see isHomePage()} instead of is_front_page().
 	 *
 	 * @return array $data The graph data.
 	 */
@@ -90,7 +91,7 @@ class WebPage extends Graphs\Graph {
 			return $this->getAddonData( $data, 'webPage' );
 		}
 
-		if ( is_front_page() ) {
+		if ( aioseo()->helpers->isHomePage() ) {
 			$data['about'] = [ '@id' => trailingslashit( home_url() ) . '#' . aioseo()->options->searchAppearance->global->schema->siteRepresents ];
 		}
 

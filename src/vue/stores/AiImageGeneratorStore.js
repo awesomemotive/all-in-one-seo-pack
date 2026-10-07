@@ -13,8 +13,9 @@ import { useAiContent } from '@/vue/composables/AiContent'
 
 export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 	state : () => ({
-		currentScreen : 'generate',
-		extend        : {
+		currentScreen  : 'generate',
+		canUploadFiles : true,
+		extend         : {
 			imageBlockToolbar     : true,
 			imageBlockPlaceholder : true,
 			featuredImageButton   : true

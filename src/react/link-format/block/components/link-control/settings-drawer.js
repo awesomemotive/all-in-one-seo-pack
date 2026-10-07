@@ -80,12 +80,6 @@ class LinkControlSettingsDrawer extends Component {
 		}
 
 		const handleTitleChange = (event, setting) => {
-			// This prevents the link drawer from crashing if no URL is set.
-			if (!value.url) {
-				this.setState({ textValue: event.target.value })
-				return
-			}
-
 			onChange({
 				...value,
 				[setting.id] : event.target.value

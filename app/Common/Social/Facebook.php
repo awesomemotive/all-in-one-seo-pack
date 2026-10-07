@@ -19,14 +19,15 @@ class Facebook {
 	/**
 	 * Returns the Open Graph image URL.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @param  int    $postId The post ID (optional).
 	 * @return string         The image URL.
 	 */
 	public function getImage( $postId = null ) {
 		$post = aioseo()->helpers->getPost( $postId );
-		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$image = aioseo()->options->social->facebook->homePage->image;
 			if ( empty( $image ) ) {
 				$image = aioseo()->social->image->getImage( 'facebook', aioseo()->options->social->facebook->general->defaultImageSourcePosts, $post );
@@ -69,12 +70,13 @@ class Facebook {
 	/**
 	 * Returns the width of the Open Graph image.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @return string The image width.
 	 */
 	public function getImageWidth() {
-		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$width = aioseo()->options->social->facebook->homePage->imageWidth;
 
 			return $width ? $width : aioseo()->options->social->facebook->general->defaultImagePostsWidth;
@@ -96,12 +98,13 @@ class Facebook {
 	/**
 	 * Returns the height of the Open Graph image.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @return string The image height.
 	 */
 	public function getImageHeight() {
-		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$height = aioseo()->options->social->facebook->homePage->imageHeight;
 
 			return $height ? $height : aioseo()->options->social->facebook->general->defaultImagePostsHeight;
@@ -178,12 +181,13 @@ class Facebook {
 	/**
 	 * Returns the Open Graph object type.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @return string The object type.
 	 */
 	public function getObjectType() {
-		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$type = aioseo()->options->social->facebook->homePage->objectType;
 
 			return $type ? $type : 'website';
@@ -211,13 +215,14 @@ class Facebook {
 	/**
 	 * Returns the Open Graph title for the current page.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @param  \WP_Post|integer $post The post object or ID (optional).
 	 * @return string                 The Open Graph title.
 	 */
 	public function getTitle( $post = null ) {
-		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$title = aioseo()->meta->title->helpers->prepare( aioseo()->options->social->facebook->homePage->title );
 
 			return $title ? $title : aioseo()->meta->title->getTitle();
@@ -253,13 +258,14 @@ class Facebook {
 	/**
 	 * Returns the Open Graph description.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @param  \WP_Post|integer $post The post object or ID (optional).
 	 * @return string                 The Open Graph description.
 	 */
 	public function getDescription( $post = null ) {
-		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$description = aioseo()->meta->description->helpers->prepare( aioseo()->options->social->facebook->homePage->description );
 
 			return $description ? $description : aioseo()->meta->description->getDescription();

@@ -22,7 +22,8 @@ export default {
 	},
 	data () {
 		return {
-			animatedNumber : 0
+			animatedNumber : 0,
+			animation      : null
 		}
 	},
 	watch : {
@@ -37,16 +38,35 @@ export default {
 	},
 	methods : {
 		animateNumber () {
-			const promise = numbers.animateNumbers(this.fromNumber, this.number, value => (this.animatedNumber = value))
+			// A number that changes again mid-tween would otherwise leave the first one running.
+			this.cancelAnimation()
 
-			window.addEventListener('blur', () => {
-				promise.cancel()
-				this.animatedNumber = this.number
-			})
+			this.animation = numbers.animateNumbers(this.fromNumber, this.number, value => (this.animatedNumber = value))
+		},
+		cancelAnimation () {
+			if (this.animation) {
+				this.animation.cancel()
+				this.animation = null
+			}
+		},
+		// Leaving the tab pauses requestAnimationFrame, so settle on the target rather than resuming a
+		// tween whose elapsed time has run far past its duration.
+		onBlur () {
+			this.cancelAnimation()
+
+			this.animatedNumber = this.number
 		}
 	},
 	mounted () {
+		// Bound once: this was adding a listener per animation, so a long scan left one per tick.
+		window.addEventListener('blur', this.onBlur)
+
 		this.animateNumber()
+	},
+	beforeUnmount () {
+		window.removeEventListener('blur', this.onBlur)
+
+		this.cancelAnimation()
 	}
 }
 </script>

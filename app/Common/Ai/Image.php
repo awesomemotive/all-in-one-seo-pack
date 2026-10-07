@@ -33,15 +33,21 @@ class Image {
 	/**
 	 * Returns the data for Vue.
 	 *
-	 * @since 4.8.9
+	 * @since   4.8.9
+	 * @version 5.0.3 Gate the extension points on the upload_files capability; added canUploadFiles.
 	 *
 	 * @return array The data.
 	 */
 	public function getVueDataEdit() {
-		$isEnabled = ! aioseo()->ai->isDisabled();
+		// Every entry point ends in a new attachment, so mirror the capability
+		// {@see \AIOSEO\Plugin\Common\Api\Ai::generateImage()} requires.
+		// Resolved here because Lite's client-side `allowed()` short-circuits on `canManage`.
+		$canUploadFiles = current_user_can( 'upload_files' );
+		$isEnabled      = ! aioseo()->ai->isDisabled() && $canUploadFiles;
 
 		return [
-			'extend' => array_fill_keys( [
+			'canUploadFiles' => $canUploadFiles,
+			'extend'         => array_fill_keys( [
 				'imageBlockToolbar',
 				'imageBlockPlaceholder',
 				'featuredImageButton'

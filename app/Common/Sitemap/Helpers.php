@@ -100,15 +100,29 @@ class Helpers {
 	}
 
 	/**
+	 * Returns whether the homepage needs its own entry in the additional pages sitemap.
+	 *
+	 * NOTE: The page sitemap carries a static homepage. No file carries it when show_on_front is 'page' with no page_on_front.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return bool Whether the homepage needs its own entry.
+	 */
+	public function shouldIncludeHomepage() {
+		return 'page' !== get_option( 'show_on_front' ) || ! in_array( 'page', $this->includedPostTypes(), true );
+	}
+
+	/**
 	 * Returns the timestamp of the last modified additional page.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage entry now follows {@see shouldIncludeHomepage()}.
 	 *
 	 * @return string Formatted date string (ISO 8601).
 	 */
 	public function lastModifiedAdditionalPagesTime() {
 		$pages = [];
-		if ( 'posts' === get_option( 'show_on_front' ) || ! in_array( 'page', $this->includedPostTypes(), true ) ) {
+		if ( $this->shouldIncludeHomepage() ) {
 			$frontPageId = (int) get_option( 'page_on_front' );
 			$post        = aioseo()->helpers->getPost( $frontPageId );
 			$pages[]     = $post ? strtotime( $post->post_modified_gmt ) : strtotime( aioseo()->sitemap->helpers->lastModifiedPostTime() );
@@ -659,6 +673,20 @@ class Helpers {
 			$urls = array_merge( $urls, $addonUrls );
 		}
 
+		$urls = array_merge( $urls, $this->getCoreSitemapUrls() );
+
+		return $urls;
+	}
+
+	/**
+	 * Returns the URLs of the active General and RSS sitemaps.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return array The sitemap URLs.
+	 */
+	private function getCoreSitemapUrls() {
+		$urls = [];
 		if ( aioseo()->options->sitemap->general->enable ) {
 			$urls[] = $this->getUrl( 'general' );
 		}
@@ -684,6 +712,40 @@ class Helpers {
 		}
 
 		return $urls;
+	}
+
+	/**
+	 * Returns the URLs of the active sitemaps for the blog switched to, with the 'Sitemap: ' prefix.
+	 *
+	 * NOTE: Addons stay loaded for the blog the request started on, so only those active on this blog count. Also
+	 * skips the static cache in {@see getSitemapUrls()}, which holds the original blog's URLs. The caller must
+	 * re-read the internal and sensitive options for this blog, since the license check reads them.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return array The sitemap URLs.
+	 */
+	public function getSitemapUrlsPrefixedForCurrentBlog() {
+		$urls = [];
+		foreach ( aioseo()->addons->getLoadedAddons() as $slug => $addon ) {
+			if ( ! isset( $addon->helpers ) || ! method_exists( $addon->helpers, 'getSitemapUrls' ) ) {
+				continue;
+			}
+
+			$sku = 'aioseo-' . str_replace( '_', '-', aioseo()->helpers->toSnakeCase( $slug ) );
+			// An addon only loads where it's active and that site's license includes it.
+			if ( ! is_plugin_active( aioseo()->addons->getAddonBasename( $sku ) ) || ! aioseo()->license->isAddonAllowed( $sku ) ) {
+				continue;
+			}
+
+			$urls = array_merge( $urls, array_filter( (array) $addon->helpers->getSitemapUrls() ) );
+		}
+
+		$urls = array_merge( $urls, $this->getCoreSitemapUrls() );
+
+		return array_map( function ( $url ) {
+			return 'Sitemap: ' . $url;
+		}, $urls );
 	}
 
 	/**

@@ -72,7 +72,8 @@ class Ai {
 	/**
 	 * Generates title suggestions based on the provided content and options.
 	 *
-	 * @since 4.8.4
+	 * @since   4.8.4
+	 * @version 5.0.3 Forwards the error code of a failed generation.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
@@ -88,7 +89,7 @@ class Ai {
 			$options      = $body['options'] ?? [];
 
 			if ( ! current_user_can( 'edit_post', $postId ) ) {
-				throw new ApiException( 'unauthorized', 'Unauthorized.', 401 );
+				throw new ApiException( 'unauthorized', 'Unauthorized.', 403 );
 			}
 
 			$wpObject = $postId ? aioseo()->helpers->getPost( $postId ) : null;
@@ -132,7 +133,7 @@ class Ai {
 			] );
 
 			if ( ! $result['success'] ) {
-				throw new ApiException( 'generation_failed', esc_html( $result['message'] ) );
+				throw new ApiException( $result['code'] ?? 'generation_failed', esc_html( $result['message'] ) );
 			}
 
 			return new \WP_REST_Response( [
@@ -152,7 +153,8 @@ class Ai {
 	/**
 	 * Generates description suggestions based on the provided content and options.
 	 *
-	 * @since 4.8.4
+	 * @since   4.8.4
+	 * @version 5.0.3 Forwards the error code of a failed generation.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
@@ -168,7 +170,7 @@ class Ai {
 			$options      = $body['options'] ?? [];
 
 			if ( ! current_user_can( 'edit_post', $postId ) ) {
-				throw new ApiException( 'unauthorized', 'Unauthorized.', 401 );
+				throw new ApiException( 'unauthorized', 'Unauthorized.', 403 );
 			}
 
 			$wpObject = $postId ? aioseo()->helpers->getPost( $postId ) : null;
@@ -212,7 +214,7 @@ class Ai {
 			] );
 
 			if ( ! $result['success'] ) {
-				throw new ApiException( 'generation_failed', esc_html( $result['message'] ) );
+				throw new ApiException( $result['code'] ?? 'generation_failed', esc_html( $result['message'] ) );
 			}
 
 			return new \WP_REST_Response( [
@@ -247,7 +249,7 @@ class Ai {
 			}
 
 			if ( ! current_user_can( 'edit_post', $attachmentId ) ) {
-				throw new ApiException( 'unauthorized', 'Unauthorized.', 401 );
+				throw new ApiException( 'unauthorized', 'Unauthorized.', 403 );
 			}
 
 			$attachment = get_post( $attachmentId );
@@ -310,7 +312,7 @@ class Ai {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		$options = array_map( [ aioseo()->helpers, 'sanitizeOption' ], $options );
@@ -480,7 +482,8 @@ class Ai {
 	/**
 	 * Generates an image based on the provided prompt and other options.
 	 *
-	 * @since 4.8.8
+	 * @since   4.8.8
+	 * @version 5.0.3 Require the upload_files capability and authorize the seed image.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
@@ -500,11 +503,11 @@ class Ai {
 			$model = 'gemini-3.1-flash-image';
 		}
 
-		if ( ! current_user_can( 'edit_post', $postId ) ) {
+		if ( ! current_user_can( 'edit_post', $postId ) || ! current_user_can( 'upload_files' ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		try {
@@ -516,7 +519,24 @@ class Ai {
 			$foundSelectedImage = [];
 
 			if ( ! empty( $selectedImageId ) ) {
-				$foundSelectedImage = wp_list_filter( $postImages, [ 'id' => $selectedImageId ] )[0] ?? $foundSelectedImage;
+				// `wp_list_filter()` keeps the original keys, so the match is rarely at index 0.
+				$foundSelectedImage = array_values( wp_list_filter( $postImages, [ 'id' => $selectedImageId ] ) )[0] ?? $foundSelectedImage;
+
+				// A seed is either one of this post's own AI images, which `edit_post` above already
+				// covers, or an attachment the caller could pick in the media modal. `read_post`
+				// matches what that modal offers a `upload_files` holder; `edit_post` would reject
+				// library images the caller didn't upload themselves.
+				if ( empty( $foundSelectedImage ) && ! current_user_can( 'read_post', $selectedImageId ) ) {
+					return new \WP_REST_Response( [
+						'success' => false,
+						'message' => 'Unauthorized.'
+					], 403 );
+				}
+
+				// Without this, any attached file would be base64'd and sent to the AI service.
+				if ( ! aioseo()->helpers->attachmentIs( 'image', $selectedImageId ) ) {
+					throw new \Exception( 'The selected image is not an image attachment.' );
+				}
 			}
 
 			$response = aioseo()->helpers->wpRemotePost( aioseo()->ai->getAiGeneratorApiUrl() . 'image/', [
@@ -600,7 +620,7 @@ class Ai {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		$images = aioseo()->ai->image->getByPostId( $postId );
@@ -649,7 +669,7 @@ class Ai {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		aioseo()->ai->image->deleteImages( $authorizedIds );
@@ -694,7 +714,7 @@ class Ai {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		foreach ( $options as $k => $option ) {
@@ -781,7 +801,8 @@ class Ai {
 	/**
 	 * Generates schema markup based on the provided content.
 	 *
-	 * @since 4.9.6
+	 * @since   4.9.6
+	 * @version 5.0.3 Forwards the error code of a failed generation.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
@@ -793,7 +814,7 @@ class Ai {
 			$postContent = ! empty( $body['postContent'] ) ? $body['postContent'] : '';
 
 			if ( ! current_user_can( 'edit_post', $postId ) ) {
-				throw new ApiException( 'unauthorized', 'Unauthorized.', 401 );
+				throw new ApiException( 'unauthorized', 'Unauthorized.', 403 );
 			}
 
 			$wpObject = $postId ? aioseo()->helpers->getPost( $postId ) : null;
@@ -813,7 +834,7 @@ class Ai {
 			$result = aioseo()->ai->generateSchemas( $body );
 
 			if ( ! $result['success'] ) {
-				throw new ApiException( 'generation_failed', esc_html( $result['message'] ) );
+				throw new ApiException( $result['code'] ?? 'generation_failed', esc_html( $result['message'] ) );
 			}
 
 			return new \WP_REST_Response( [
@@ -864,7 +885,7 @@ class Ai {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		foreach ( $options as $k => $option ) {
@@ -1068,7 +1089,7 @@ class Ai {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		// Sanitize options.
@@ -1232,7 +1253,7 @@ class Ai {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		foreach ( $options as $k => $option ) {
@@ -1321,7 +1342,7 @@ class Ai {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		foreach ( $options as $k => $option ) {

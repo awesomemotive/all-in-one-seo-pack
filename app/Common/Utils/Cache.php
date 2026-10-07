@@ -108,7 +108,8 @@ class Cache {
 		}
 		self::$tableChecked[ $resolvedTable ] = true;
 
-		if ( ! aioseo()->core->db->tableExists( $this->table ) ) {
+		// preUpdates isn't loaded during an uninstall, which must not recreate the table anyway.
+		if ( ! empty( aioseo()->preUpdates ) && ! aioseo()->core->db->tableExists( $this->table ) ) {
 			aioseo()->preUpdates->createCacheTable();
 		}
 

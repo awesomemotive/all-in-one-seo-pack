@@ -114,7 +114,7 @@ class Robots {
 			return $this->metaHelper();
 		}
 
-		if ( is_home() && 'page' !== get_option( 'show_on_front' ) ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$this->globalValues();
 
 			return $this->metaHelper();
@@ -155,7 +155,8 @@ class Robots {
 	 *
 	 * Acts as a helper for meta().
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage guardrail now follows {@see isHomePage()}.
 	 *
 	 * @param  bool         $array Whether or not to return the value as an array.
 	 * @return array|string        The robots meta tag value.
@@ -179,7 +180,7 @@ class Robots {
 		}
 
 		// Never allow users to noindex the first page of the homepage.
-		if ( is_front_page() && 1 === $pageNumber ) {
+		if ( aioseo()->helpers->isHomePage() && 1 === $pageNumber ) {
 			$this->attributes['noindex'] = '';
 		}
 

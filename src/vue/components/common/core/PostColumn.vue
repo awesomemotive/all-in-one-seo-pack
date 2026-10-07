@@ -194,6 +194,13 @@
 			</div>
 
 			<div
+				v-if="isMediaScreen && post.showMedia && altError && !showEditImageAltTag && !generatingAlt"
+				class="aioseo-details-column__error"
+			>
+				{{ altError }}
+			</div>
+
+			<div
 				v-if="showEditImageAltTag"
 				class="edit-row"
 			>
@@ -324,11 +331,14 @@ export default {
 			loadingField            : null,
 			truSeoScanning          : false,
 			generatingAlt           : false,
+			altError                : '',
 			strings                 : merge(this.composableStrings, {
 				title              : __('SEO Title', td),
 				description        : __('Meta Description', td),
 				imageTitle         : __('Image Title', td),
 				imageAltTag        : __('Image Alt Tag', td),
+				noCredits          : __('Insufficient AI credits.', td),
+				altNotGenerated    : __('The alt text could not be generated. Please try again.', td),
 				saveChanges        : __('Save', td),
 				discardChanges     : __('Cancel', td),
 				customTitle        : __('Custom SEO title written for this post', td),
@@ -503,6 +513,12 @@ export default {
 			if ('imageAltTag' === field) {
 				this.post.imageAltTag    = this.imageAltTag
 				this.showEditImageAltTag = false
+
+				// An alt text typed by hand replaces the one AI couldn't generate, so its error no longer applies.
+				// Saving an empty one leaves the image without alt text, so the error stays.
+				if (String(this.imageAltTag || '').trim()) {
+					this.altError = ''
+				}
 			}
 
 			http.post(links.restUrl('posts-list/update-details-column'))
@@ -596,6 +612,7 @@ export default {
 			}
 
 			this.generatingAlt = true
+			this.altError      = ''
 			this.setRowActionGenerating(true)
 
 			try {
@@ -617,6 +634,10 @@ export default {
 				this.post.imageAltTag = altText
 			} catch (error) {
 				console.error('Failed to generate alt text:', error)
+
+				this.altError = 'insufficient_credits' === error.response?.body?.code
+					? this.strings.noCredits
+					: this.strings.altNotGenerated
 			} finally {
 				this.generatingAlt = false
 				this.setRowActionGenerating(false)
@@ -836,6 +857,11 @@ export default {
 			align-self: start;
 			margin-top: 2px;
 		}
+	}
+
+	&__error {
+		font-size: 12px;
+		color: $red;
 	}
 
 	&__flabel {

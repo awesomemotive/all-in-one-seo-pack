@@ -383,12 +383,12 @@ class Component {
 	/**
 	 * Determines the schema type for the current component.
 	 *
-	 * @since 4.7.6
+	 * @since   4.7.6
+	 * @version 5.0.3 Removed the $contextInstance parameter.
 	 *
-	 * @param  \AIOSEO\Plugin\Common\Schema\Context $contextInstance The Context class instance.
 	 * @return void
 	 */
-	public function determineSchemaGraphsAndContext( $contextInstance ) {
+	public function determineSchemaGraphsAndContext() {
 		list( $postType ) = explode( '_', $this->templateType );
 
 		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
@@ -428,8 +428,7 @@ class Component {
 			case 'bp-member_archive':
 				list( , $component ) = explode( '-', $postType );
 
-				$contextUrl     = BuddyPressIntegration::getComponentArchiveUrl( $component );
-				$breadcrumbType = 'CollectionPage';
+				$contextUrl = BuddyPressIntegration::getComponentArchiveUrl( $component );
 
 				break;
 			default:
@@ -443,23 +442,10 @@ class Component {
 		}
 
 		if ( ! empty( $contextUrl ) ) {
-			$name                = aioseo()->meta->title->getTitle();
-			$description         = aioseo()->meta->description->getDescription();
-			$breadcrumbPositions = [
-				'name'        => $name,
-				'description' => $description,
-				'url'         => $contextUrl,
-			];
-
-			if ( ! empty( $breadcrumbType ) ) {
-				$breadcrumbPositions['type'] = $breadcrumbType;
-			}
-
 			aioseo()->schema->context = [
-				'name'        => $name,
-				'description' => $description,
-				'url'         => $contextUrl,
-				'breadcrumb'  => $contextInstance->breadcrumb->setPositions( $breadcrumbPositions ),
+				'name'        => aioseo()->meta->title->getTitle(),
+				'description' => aioseo()->meta->description->getDescription(),
+				'url'         => $contextUrl
 			];
 		}
 	}

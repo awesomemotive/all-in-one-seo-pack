@@ -163,7 +163,8 @@ class Root {
 	/**
 	 * Returns the additional page indexes.
 	 *
-	 * @since 4.2.1
+	 * @since   4.2.1
+	 * @version 5.0.3 Homepage entry now follows {@see Helpers::shouldIncludeHomepage()}.
 	 *
 	 * @return array
 	 */
@@ -191,8 +192,7 @@ class Root {
 			$entries = apply_filters( 'aioseo_sitemap_additional_pages', $entries );
 		}
 
-		$postTypes             = aioseo()->sitemap->helpers->includedPostTypes();
-		$shouldIncludeHomepage = 'posts' === get_option( 'show_on_front' ) || ! in_array( 'page', $postTypes, true );
+		$shouldIncludeHomepage = aioseo()->sitemap->helpers->shouldIncludeHomepage();
 		if ( ! $shouldIncludeHomepage && ! count( $entries ) ) {
 			return [];
 		}

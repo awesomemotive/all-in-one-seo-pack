@@ -26,7 +26,8 @@ class File {
 	/**
 	 * Generates the static sitemap files.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage entry now follows {@see Helpers::shouldIncludeHomepage()}.
 	 *
 	 * @param  boolean $force Whether or not to force it through.
 	 * @return void
@@ -73,14 +74,9 @@ class File {
 			}
 		}
 
-		$postTypes       = aioseo()->sitemap->helpers->includedPostTypes();
 		$additionalPages = apply_filters( 'aioseo_sitemap_additional_pages', $additionalPages );
 
-		if (
-			'posts' === get_option( 'show_on_front' ) ||
-			count( $additionalPages ) ||
-			! in_array( 'page', $postTypes, true )
-		) {
+		if ( aioseo()->sitemap->helpers->shouldIncludeHomepage() || count( $additionalPages ) ) {
 			$entries            = aioseo()->sitemap->content->addl( false );
 			$filename           = "addl-$sitemapName.xml";
 			$files[ $filename ] = [

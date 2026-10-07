@@ -331,15 +331,21 @@ class SeoAlerts {
 				continue;
 			}
 
-			$responseCode = wp_remote_retrieve_response_code( $response );
+			$responseCode = (int) wp_remote_retrieve_response_code( $response );
 
-			// Response code should be 200 for a valid sitemap.
-			if ( 200 !== $responseCode ) {
+			// Any 2xx is a valid response. A sitemap with no entries (e.g. a news sitemap with no
+			// posts in the last 24h) legitimately returns 204 No Content, so it must not be flagged.
+			if ( $responseCode < 200 || $responseCode >= 300 ) {
 				$errors[ $sitemapUrl ] = [
 					'code'    => $responseCode,
 					'message' => wp_remote_retrieve_response_message( $response )
 				];
 
+				continue;
+			}
+
+			// 204 No Content has no body to validate, so skip the XML check.
+			if ( 204 === $responseCode ) {
 				continue;
 			}
 

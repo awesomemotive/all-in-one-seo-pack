@@ -19,6 +19,7 @@ class Keywords {
 	 *
 	 * @since   4.0.0
 	 * @version 5.0.2 Fall back to the configured keywords when generation yields none.
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @return string The keywords as a string.
 	 */
@@ -44,7 +45,7 @@ class Keywords {
 			}
 		}
 
-		if ( is_front_page() && ! aioseo()->helpers->isStaticHomePage() ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$keywords = $this->extractMetaKeywords( aioseo()->options->searchAppearance->global->keywords );
 
 			return $this->prepareKeywords( $keywords );
@@ -111,7 +112,8 @@ class Keywords {
 	/**
 	 * Get generated keywords for an archive page.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @return array An array of generated keywords.
 	 */
@@ -122,7 +124,7 @@ class Keywords {
 		$isStaticArchive = aioseo()->helpers->isWooCommerceShopPage() || aioseo()->helpers->isStaticPostsPage();
 		if ( $isStaticArchive ) {
 			$keywords = $this->getAllKeywords();
-		} elseif ( is_front_page() && ! aioseo()->helpers->isStaticHomePage() ) {
+		} elseif ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$keywords = $this->extractMetaKeywords( aioseo()->options->searchAppearance->global->keywords );
 		} elseif ( is_category() || is_tag() || is_tax() ) {
 			$metaData = aioseo()->meta->metaData->getMetaData();

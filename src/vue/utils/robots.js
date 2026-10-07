@@ -28,6 +28,16 @@ export const stringifyRuleset = ruleset => {
 }
 
 /**
+ * Whether a rule field holds a usable value.
+ *
+ * NOTE: not truthiness ('0' and 0 count); must classify exactly like the PHP mirror in `Common\Tools\RobotsTxt`.
+ *
+ * @param 	{*} 	  value The field value to test.
+ * @returns {boolean} 		Whether the value is a non-empty string or a number.
+ */
+const isRuleValueFilled = value => ('string' === typeof value || 'number' === typeof value) && '' !== String(value)
+
+/**
  * Groups robots.txt rules by User-agent.
  *
  * @param 	{Array}  rules An array of rules.
@@ -38,6 +48,11 @@ export const groupRulesByUserAgent = rules => {
 	rules.forEach(rule => {
 		const r = getJsonValue(rule)
 		if (!r?.userAgent || !r?.fieldValue) {
+			return
+		}
+
+		// Mirror of the PHP grouping: it skips a rule the served file can't print, so the preview must too.
+		if (!isRuleValueFilled(r.userAgent) || !isRuleValueFilled(r.directive) || !isRuleValueFilled(r.fieldValue)) {
 			return
 		}
 

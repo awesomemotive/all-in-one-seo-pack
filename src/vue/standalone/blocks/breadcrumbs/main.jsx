@@ -71,9 +71,12 @@ export const settings = {
 		const hasRenderedRef = useRef(false)
 		const blockProps = useBlockProps({ ref: blockRef })
 
-		const postTitle = useSelect((select) =>
-			select('core/editor').getEditedPostAttribute('title')
-		)
+		// The core/editor store is absent in the Widgets/Customizer editor, so guard against an undefined select.
+		const postTitle = useSelect((select) => {
+			const editor = select('core/editor')
+
+			return editor ? editor.getEditedPostAttribute('title') : null
+		}, [])
 
 		window.aioseoBus.$on('standalone-update-post', (param) => {
 			if (!param?.primary_term && !param?.breadcrumb_settings) {

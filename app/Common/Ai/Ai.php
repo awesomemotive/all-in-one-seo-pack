@@ -381,7 +381,7 @@ class Ai {
 			'audience'     => $options['audience'],
 			'rephrase'     => $rephrase,
 			'titles'       => $titles
-		], 'titles' );
+		], 'titles', [ 'feature' => $rephrase ? 'rephrase' : 'titles' ] );
 
 		if ( ! $result['success'] ) {
 			return $result;
@@ -427,7 +427,7 @@ class Ai {
 			'audience'     => $options['audience'],
 			'rephrase'     => $rephrase,
 			'descriptions' => $descriptions
-		], 'descriptions' );
+		], 'descriptions', [ 'feature' => $rephrase ? 'rephrase' : 'descriptions' ] );
 
 		if ( ! $result['success'] ) {
 			return $result;
@@ -446,13 +446,15 @@ class Ai {
 	/**
 	 * Generates ALT text for an image using the AI service.
 	 *
-	 * @since 4.9.6
+	 * @since   4.9.6
+	 * @version 5.0.3 Checks cached credits before encoding the image.
 	 *
 	 * @param  array $data The data array containing attachmentId.
 	 * @return array       The result array.
 	 */
 	public function generateImageAlt( $data ) {
 		$attachmentId = (int) ( $data['attachmentId'] ?? 0 );
+		$feature      = 'imageAltText';
 
 		if ( ! aioseo()->helpers->attachmentIs( 'image', $attachmentId ) ) {
 			return [
@@ -460,6 +462,11 @@ class Ai {
 				'code'    => 'not_an_image',
 				'message' => "The attachment is not an image. (Attachment #$attachmentId)"
 			];
+		}
+
+		// Bail before the costly base64 encoding when the cached balance already rules the call out.
+		if ( ! $this->hasCreditsForFeature( $feature ) ) {
+			return $this->getInsufficientCreditsError();
 		}
 
 		$image = aioseo()->helpers->getBase64FromAttachment( $attachmentId );
@@ -473,7 +480,7 @@ class Ai {
 
 		$result = $this->callAiService( 'image/alt-text/', [
 			'image' => $image
-		], 'altTexts' );
+		], 'altTexts', [ 'feature' => $feature ] );
 
 		if ( ! $result['success'] ) {
 			return $result;
@@ -496,7 +503,8 @@ class Ai {
 		$postId = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
 		$result = $this->callAiService( 'schema/', $body, 'schemas', [
 			'timeout'  => 90,
-			'sanitize' => false
+			'sanitize' => false,
+			'feature'  => 'schemas'
 		] );
 
 		if ( ! $result['success'] ) {
@@ -543,20 +551,68 @@ class Ai {
 	}
 
 	/**
+	 * Checks the locally cached credit balance against the cached cost of the given feature.
+	 *
+	 * NOTE: Fails open when the cost or balance was never synced; the service remains the source of truth.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @param  string $feature The feature key as stored in the costPerFeature internal option.
+	 * @return bool            Whether the cached balance covers the feature's cost.
+	 */
+	public function hasCreditsForFeature( $feature ) {
+		$costPerFeature = aioseo()->internalOptions->internal->ai->costPerFeature;
+		$cost           = isset( $costPerFeature[ $feature ] ) && is_numeric( $costPerFeature[ $feature ] )
+			? (int) $costPerFeature[ $feature ]
+			: 0;
+
+		$total     = (int) aioseo()->internalOptions->internal->ai->credits->total;
+		$remaining = (int) aioseo()->internalOptions->internal->ai->credits->remaining;
+
+		// A zero credit total means the credits were never synced.
+		if ( $cost <= 0 || $total <= 0 ) {
+			return true;
+		}
+
+		return $remaining >= $cost;
+	}
+
+	/**
+	 * Returns the failure result for a request blocked by an insufficient credit balance.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return array The failure result array.
+	 */
+	private function getInsufficientCreditsError() {
+		return [
+			'success' => false,
+			'code'    => 'insufficient_credits',
+			'message' => 'Not enough credits'
+		];
+	}
+
+	/**
 	 * Calls the AI Generator service, handles errors, credits and sanitization.
 	 *
 	 * @since   4.9.6
 	 * @version 4.9.6 Added $options parameter.
+	 * @version 5.0.3 Added 'feature' option; checks cached credits before calling the service.
 	 *
 	 * @param  string $endpoint  The endpoint path relative to the AI Generator API URL.
 	 * @param  array  $body      The request body.
 	 * @param  string $resultKey The key that holds the generated results in the response (e.g. 'titles', 'descriptions', 'altTexts').
-	 * @param  array  $options   Optional. 'timeout' (int, default 60) and 'sanitize' (bool, default true).
-	 * @return array             Success: [ 'success' => true, $resultKey => [...] ]. Failure: [ 'success' => false, 'message' => '...' ].
+	 * @param  array  $options   Optional. 'timeout' (int, default 60), 'sanitize' (bool, default true) and 'feature' (string, costPerFeature key for the credit check).
+	 * @return array             Success: [ 'success' => true, $resultKey => [...] ]. Failure: [ 'success' => false, 'message' => '...' ], plus 'code' when credits run out.
 	 */
 	protected function callAiService( $endpoint, $body, $resultKey, $options = [] ) {
 		$timeout  = ! empty( $options['timeout'] ) ? (int) $options['timeout'] : 60;
 		$sanitize = ! isset( $options['sanitize'] ) || $options['sanitize'];
+		$feature  = ! empty( $options['feature'] ) ? (string) $options['feature'] : '';
+
+		if ( $feature && ! $this->hasCreditsForFeature( $feature ) ) {
+			return $this->getInsufficientCreditsError();
+		}
 
 		$response = aioseo()->helpers->wpRemotePost( $this->getAiGeneratorApiUrl() . $endpoint, [
 			'timeout' => $timeout,
@@ -582,6 +638,7 @@ class Ai {
 
 			return [
 				'success' => false,
+				'code'    => 'insufficient_credits',
 				'message' => implode( ' | ', $errorDetails )
 			];
 		}

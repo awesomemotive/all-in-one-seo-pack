@@ -251,6 +251,8 @@ trait WpUri {
 	* @since   4.1.4
 	* @version 4.9.9 Validate URL prefix against the post type's rewrite slug.
 	*
+	* NOTE: Expects a path relative to the home URL; on subdirectory installs the caller strips the home path.
+	*
 	* @param  string       $path     The path.
 	* @param  string       $output   The output type. OBJECT, ARRAY_A, or ARRAY_N.
 	* @param  string|array $postType The post type(s) to check against.
@@ -276,8 +278,9 @@ trait WpUri {
 			return get_post( $cached, $output );
 		}
 
-		$path          = rawurlencode( urldecode( $path ) );
-		$path          = str_replace( '%2F', '/', $path );
+		// post_name is stored lowercase while rawurlencode() emits uppercase hex, so percent-encoded (non-Latin) slugs need the lowercase.
+		$path          = strtolower( rawurlencode( urldecode( $path ) ) );
+		$path          = str_replace( '%2f', '/', $path );
 		$path          = str_replace( '%20', ' ', $path );
 		$parts         = explode( '/', trim( $path, '/' ) );
 		$reversedParts = array_reverse( $parts );
@@ -324,7 +327,7 @@ trait WpUri {
 
 				if (
 					0 === (int) $p->post_parent &&
-					$this->urlPathMatchesPostType( $p->post_type, $reversedParts, $count ) &&
+					$this->urlPathMatchesPostType( $post, $reversedParts, $count ) &&
 					$p->post_name === $reversedParts[ $count ]
 				) {
 					$foundId = $post->ID;
@@ -348,27 +351,37 @@ trait WpUri {
 	}
 
 	/**
-	 * Checks that the URL prefix preceding the matched slug is compatible with the candidate's post type.
+	 * Checks that a candidate post's real permalink matches the requested URL path.
 	 *
-	 * @since 4.9.9
+	 * Validating against the candidate's own permalink — rather than a type-level prefix — is correct
+	 * under every permalink structure, including date/category fronts where a post's prefix is per-post,
+	 * while still preventing a built-in Post from shadowing a CPT that shares its slug.
 	 *
-	 * @param  string $postType      The candidate's post type.
-	 * @param  array  $reversedParts The path segments in reverse order.
-	 * @param  int    $count         The ancestry depth already consumed.
-	 * @return bool                  True if the URL path is compatible with the post type.
+	 * @since   4.9.9
+	 * @version 5.0.3 Validate against the candidate's real permalink instead of a type-level prefix.
+	 *
+	 * @param  \WP_Post|object $post          The candidate post.
+	 * @param  array           $reversedParts The path segments in reverse order.
+	 * @param  int             $count         The ancestry depth already consumed.
+	 * @return bool                           True if the URL path resolves to the candidate.
 	 */
-	private function urlPathMatchesPostType( $postType, $reversedParts, $count ) {
-		static $expectedPrefixes = [];
+	private function urlPathMatchesPostType( $post, $reversedParts, $count ) {
+		$permalink = get_permalink( $post->ID );
 
-		if ( ! array_key_exists( $postType, $expectedPrefixes ) ) {
-			$expectedPrefixes[ $postType ] = $this->getPostTypeUrlPrefix( $postType );
+		// Pretty permalinks: compare the candidate's own permalink path to the requested path.
+		if ( false === strpos( (string) $permalink, '?' ) ) {
+			$permalinkPath = $this->decodeUrl( trim( str_replace( home_url(), '', $permalink ), '/' ) );
+			$requestedPath = $this->decodeUrl( implode( '/', array_reverse( $reversedParts ) ) );
+
+			return $permalinkPath === $requestedPath;
 		}
 
-		$expectedPrefix = $expectedPrefixes[ $postType ];
+		// Plain permalinks (e.g. `?p=123`) expose no pretty path; fall back to the type-level prefix.
+		$expectedPrefix = $this->getPostTypeUrlPrefix( $post->post_type );
 
-		// No rewrite registration (e.g. built-in `post`/`page`): keep historical behavior.
+		// Not served from a pretty path (e.g. built-in `page`, rewrite-less CPTs): keep historical behavior.
 		if ( null === $expectedPrefix ) {
-			return is_post_type_hierarchical( $postType )
+			return is_post_type_hierarchical( $post->post_type )
 				? count( $reversedParts ) === $count + 1
 				: true;
 		}
@@ -547,12 +560,17 @@ trait WpUri {
 	 *
 	 * @since   1.2.3 Moved from aioseo-redirects.
 	 * @version 4.5.8
+	 * @version 5.0.3 Added $ignoreCase and $homePath parameters; the home path is now regex-escaped.
 	 *
-	 * @param  string $path The original path.
-	 * @return string       The path without WP's home path.
+	 * @param  string      $path       The original path.
+	 * @param  bool        $ignoreCase Whether to match the home path ignoring case, as WP::parse_request() does.
+	 * @param  string|null $homePath   The home path to remove. Defaults to {@see getHomePath()}.
+	 * @return string                  The path without WP's home path.
 	 */
-	public function excludeHomePath( $path ) {
-		return preg_replace( '@^' . $this->getHomePath() . '@', '/', (string) $path );
+	public function excludeHomePath( $path, $ignoreCase = false, $homePath = null ) {
+		$homePath = null === $homePath ? $this->getHomePath() : $homePath;
+
+		return preg_replace( '@^' . preg_quote( $homePath, '@' ) . '@' . ( $ignoreCase ? 'i' : '' ), '/', (string) $path );
 	}
 
 	/**

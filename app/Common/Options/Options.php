@@ -775,6 +775,12 @@ class Options {
 				aioseo()->actionScheduler->unschedule( aioseo()->llms->llmsTxtSingleAction );
 				aioseo()->actionScheduler->unschedule( aioseo()->llms->llmsTxtRecurrentAction );
 				aioseo()->llms->deleteLlmsFile();
+
+				// Lite has no enableFull toggle, so clear any llms-full.txt (and its leftover
+				// actions) a prior Pro install left behind. On Pro the enableFull branch handles it.
+				if ( ! aioseo()->pro ) {
+					aioseo()->llms->cleanupLlmsFullTxt();
+				}
 			}
 		}
 

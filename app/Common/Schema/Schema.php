@@ -222,9 +222,10 @@ class Schema {
 	}
 
 	/**
-	 * Determines the smart graphs that need to be output by default, as well as the current context for the breadcrumbs.
+	 * Determines the smart graphs that need to be output by default, as well as the current context.
 	 *
-	 * @since 4.2.5
+	 * @since   4.2.5
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @return void
 	 */
@@ -235,7 +236,7 @@ class Schema {
 		$this->context   = $contextInstance->defaults();
 
 		if ( BuddyPressIntegration::isComponentPage() ) {
-			aioseo()->standalone->buddyPress->component->determineSchemaGraphsAndContext( $contextInstance );
+			aioseo()->standalone->buddyPress->component->determineSchemaGraphsAndContext();
 
 			return;
 		}
@@ -246,7 +247,7 @@ class Schema {
 			return;
 		}
 
-		if ( aioseo()->helpers->isDynamicHomePage() ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$this->graphs[] = 'CollectionPage';
 			$this->context  = $contextInstance->home();
 

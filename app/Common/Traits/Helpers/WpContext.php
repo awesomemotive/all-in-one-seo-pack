@@ -163,6 +163,32 @@ trait WpContext {
 	}
 
 	/**
+	 * Checks whether the current page is the blog index shown at the site root.
+	 *
+	 * NOTE: Unlike {@see isDynamicHomePage()}, this covers a theme's own show_on_front value, and every page of the index.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return bool Whether the current page is the blog index shown at the site root.
+	 */
+	public function isBlogIndexHomePage() {
+		return is_home() && 'page' !== get_option( 'show_on_front' );
+	}
+
+	/**
+	 * Checks whether the current page is the homepage.
+	 *
+	 * NOTE: False at the site root when show_on_front is 'page' with no page_on_front set.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return bool Whether the current page is the homepage.
+	 */
+	public function isHomePage() {
+		return is_front_page() || $this->isBlogIndexHomePage();
+	}
+
+	/**
 	 * Checks whether the current page is the static posts page.
 	 *
 	 * @since   4.0.0
@@ -1210,7 +1236,8 @@ trait WpContext {
 	 *
 	 * @link https://developer.wordpress.org/themes/basics/template-hierarchy/#filter-hierarchy
 	 *
-	 * @since 4.2.8
+	 * @since   4.2.8
+	 * @version 5.0.3 dynamic_home now covers any show_on_front value that is not 'page'.
 	 *
 	 * @return string|null The template type or `null` if no match.
 	 */
@@ -1243,7 +1270,7 @@ trait WpContext {
 			$type = 'date';
 		} elseif ( is_archive() ) {
 			$type = 'archive';
-		} elseif ( is_home() && is_front_page() ) {
+		} elseif ( $this->isBlogIndexHomePage() ) {
 			$type = 'dynamic_home';
 		} elseif ( is_search() ) {
 			$type = 'search';
@@ -1255,7 +1282,9 @@ trait WpContext {
 	/**
 	 * Sets the given post as the queried object of the main query.
 	 *
-	 * @since 4.3.0
+	 * @since   4.3.0
+	 * @version 5.0.3 Clears the 404 flag; sets queried_object_id instead of get_queried_object_id.
+	 * @version 5.0.3 Sets is_page or is_single by post type, never both; clears is_home.
 	 *
 	 * @param  \WP_Post|int $wpPost The post object or ID.
 	 * @return void
@@ -1270,14 +1299,15 @@ trait WpContext {
 		$wp_query->posts                 = [ $wpPost ];
 		$wp_query->post                  = $wpPost;
 		$wp_query->post_count            = 1;
-		$wp_query->get_queried_object_id = (int) $wpPost->ID;
+		$wp_query->queried_object_id     = (int) $wpPost->ID;
 		$wp_query->queried_object        = $wpPost;
-		$wp_query->is_single             = true;
 		$wp_query->is_singular           = true;
+		$wp_query->is_404                = false;
 
-		if ( 'page' === $wpPost->post_type ) {
-			$wp_query->is_page = true;
-		}
+		// Match a real request: pages are never is_single, and is_front_page() is left to resolve from page_on_front.
+		$wp_query->is_page   = 'page' === $wpPost->post_type;
+		$wp_query->is_single = ! $wp_query->is_page;
+		$wp_query->is_home   = false;
 		// phpcs:enable Squiz.NamingConventions.ValidVariableName
 
 		$post = $wpPost;

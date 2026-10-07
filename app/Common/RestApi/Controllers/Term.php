@@ -80,10 +80,37 @@ class Term extends Base {
 	protected function registerDeprecatedUpdateFields( $taxonomy ) {} // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 
 	/**
+	 * Checks whether the user is allowed to update meta data for the given taxonomy.
+	 *
+	 * @since   4.9.8
+	 * @version 5.0.3 Moved the aioseo_rest_api_allow_update check to updateMetaData(); moved from {@see \AIOSEO\Plugin\Pro\RestApi\Controllers\Term}.
+	 *
+	 * @param  string $taxonomy The taxonomy name.
+	 * @return bool             Whether the user is allowed to update meta data for the taxonomy.
+	 */
+	protected function isAllowedToUpdate( $taxonomy ) {
+		return aioseo()->helpers->canEditTaxonomy( $this->getObjectName( $taxonomy ) ) && $this->canEditMetaData();
+	}
+
+	/**
+	 * Returns the taxonomy name for the given REST object type.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @param  string $objectType The REST object type.
+	 * @return string             The taxonomy name.
+	 */
+	protected function getObjectName( $objectType ) {
+		// The tags controller names its object type "tag" instead of the taxonomy.
+		return 'tag' === $objectType ? 'post_tag' : $objectType;
+	}
+
+	/**
 	 * Sets the given term as the queried object of the main query.
 	 *
 	 * @since   4.9.8
 	 * @version 5.0.2 Bail when the term ID no longer resolves to a WP_Term.
+	 * @version 5.0.3 Sets queried_object_id instead of get_queried_object_id.
 	 *
 	 * @param  array $termArr The term object.
 	 * @return void
@@ -98,7 +125,7 @@ class Term extends Base {
 			return;
 		}
 
-		$wp_query->get_queried_object_id = (int) $term->term_id;
+		$wp_query->queried_object_id     = (int) $term->term_id;
 		$wp_query->queried_object        = $term;
 		$wp_query->is_tax                = true;
 

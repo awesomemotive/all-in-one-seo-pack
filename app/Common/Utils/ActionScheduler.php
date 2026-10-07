@@ -25,10 +25,12 @@ class ActionScheduler {
 	/**
 	 * Class constructor.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Cancel orphaned actions before Action Scheduler executes them.
 	 */
 	public function __construct() {
 		add_action( 'action_scheduler_after_execute', [ $this, 'cleanup' ], 1000, 2 );
+		add_action( 'action_scheduler_before_execute', [ $this, 'maybeCancelOrphanedAction' ] );
 
 		// Note: \ActionScheduler is first loaded on `plugins_loaded` action hook.
 		add_action( 'plugins_loaded', [ $this, 'maybeRecreateTables' ] );
@@ -87,6 +89,43 @@ class ActionScheduler {
 				break;
 			}
 		}
+	}
+
+	/**
+	 * Cancels one of our scheduled actions when nothing is listening to its hook.
+	 * Hooked into `action_scheduler_before_execute` action hook.
+	 *
+	 * NOTE: It has to cancel rather than let the action fail - a failed recurring action is still rescheduled.
+	 * NOTE: Anything we schedule must register its callback unconditionally - the queue runners execute actions
+	 * over admin-ajax and WP-Cron, so a callback registered only outside those contexts reads as orphaned.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @param  int $actionId The ID of the action that is about to run.
+	 * @return void
+	 */
+	public function maybeCancelOrphanedAction( $actionId ) {
+		if ( ! class_exists( 'ActionScheduler' ) ) {
+			return;
+		}
+
+		try {
+			$action = \ActionScheduler::store()->fetch_action( $actionId );
+		} catch ( \Exception $e ) {
+			return;
+		}
+
+		if ( $this->actionSchedulerGroup !== $action->get_group() ) {
+			return;
+		}
+
+		// An addon whose license gate is closed never boots, so it never registers its callbacks, but the recurring
+		// actions it scheduled while it was running are still there. Without this they'd fail and reschedule forever.
+		if ( has_action( $action->get_hook() ) ) {
+			return;
+		}
+
+		$this->unschedule( $action->get_hook(), $action->get_args() );
 	}
 
 	/**

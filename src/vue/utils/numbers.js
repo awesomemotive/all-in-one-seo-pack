@@ -1,4 +1,8 @@
-import animate from 'animate-vanilla-js'
+import animateModule from 'animate-vanilla-js'
+
+// The package ships a UMD build already carrying __esModule and its own default, which Rolldown
+// wraps a second time - so Vite 8 hands us { default: fn } where Rollup hands us the function.
+const animate = animateModule.default || animateModule
 
 const numberFormat = (number, decimals = 2) => {
 	number = parseFloat(number).toFixed(decimals)
@@ -46,12 +50,21 @@ const getDuration = (from, to) => {
 }
 
 const animateNumbers = (from, to, callback, duration = null) => {
+	const lowest  = Math.min(from, to)
+	const highest = Math.max(from, to)
+
 	return animate(
 		from,
 		to,
 		duration || getDuration(0, to),
 		'easeInOutQuad',
-		value => callback instanceof Function ? callback(value.toFixed(0)) : (callback = value.toFixed(0))
+		value => {
+			// A background tab throttles requestAnimationFrame, so the first frame back can carry an
+			// elapsed time far past the duration and the easing extrapolates well beyond the endpoints.
+			const clamped = Math.min(highest, Math.max(lowest, value)).toFixed(0)
+
+			return callback instanceof Function ? callback(clamped) : (callback = clamped)
+		}
 	)
 }
 

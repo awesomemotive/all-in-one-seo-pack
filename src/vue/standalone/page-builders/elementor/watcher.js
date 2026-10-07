@@ -2,7 +2,7 @@ import emitter from 'tiny-emitter/instance'
 import { isEqual } from 'lodash-es'
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
 import { registerElementorUIHookAfter, registerElementorDataHookAfter } from './hooks'
-import { getEditorData } from './helpers'
+import { getEditorData, isAioseoDocument } from './helpers'
 import { handleEditorSave } from '@/vue/standalone/page-builders/helpers'
 
 let editorData = {},
@@ -14,13 +14,8 @@ let editorData = {},
  * @returns {void}.
  */
 const handleEditorChange = () => {
-	const currentDocument = window.elementor.documents.getCurrent()
-
-	/*
-	Quit early if the change was caused by switching out of the wp-post/page document.
-	This can happen when users go to Site Settings, for example.
-	*/
-	if (![ 'wp-post', 'wp-page' ].includes(currentDocument.config.type)) {
+	// The change can come from another document, e.g. when users go to Site Settings.
+	if (!isAioseoDocument()) {
 		return
 	}
 

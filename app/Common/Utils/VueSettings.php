@@ -147,7 +147,8 @@ class VueSettings {
 		'dismissedAlerts' => [
 			'searchStatisticsContentRankings' => false,
 			'searchConsoleNotConnected'       => false,
-			'searchConsoleSitemapErrors'      => false
+			'searchConsoleSitemapErrors'      => false,
+			'redirects404LinkedFrom'          => false
 		],
 		'internalTabs'    => [
 			'authorArchives' => 'title-description',

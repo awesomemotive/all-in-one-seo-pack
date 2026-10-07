@@ -170,7 +170,7 @@ const getUpsellLink = (medium, content, text, link, addArrow = false) => {
 }
 
 const getPlainLink = (text, url, addArrow = false, openInNewTab = true) => {
-	const target = openInNewTab ? 'target="_blank"' : '_self'
+	const target = openInNewTab ? '_blank' : '_self'
 
 	const mainLink = sprintf(
 		`<a href="%1$s" target="${target}">%2$s</a>`,

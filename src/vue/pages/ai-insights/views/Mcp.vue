@@ -172,7 +172,7 @@
 						<p v-if="mcpAdapterInstalled && !mcpAdapterDetected">
 							{{ strings.steps.mcpAdapterActivateDescription }}
 						</p>
-						<p v-else>
+						<p v-else-if="!mcpAdapterDetected">
 							{{ strings.steps.mcpAdapterInstallDescription }}
 						</p>
 						<div
@@ -415,7 +415,7 @@ const mcpData = computed(() => (rootStore.aioseo.aiInsights && rootStore.aioseo.
 
 const abilities             = computed(() => mcpData.value.abilities || [])
 const abilitiesApiAvailable = computed(() => true === mcpData.value.abilitiesApiAvailable)
-const mcpAdapterDetected    = ref(true === mcpData.value.mcpAdapterActive)
+const mcpAdapterDetected    = ref(true === mcpData.value.mcpAdapterActive || true === mcpData.value.mcpServerRegistered)
 const mcpAdapterInstalled   = computed(() => true === mcpData.value.mcpAdapterInstalled)
 
 const refreshedCount = ref(null)
@@ -724,7 +724,7 @@ const appPasswordDescription = computed(() => sprintf(
 	'</strong>'
 ))
 
-// Step machine — drives the numbered stepper, pill colours, and which one auto-expands.
+// Step machine — drives the numbered stepper and which step auto-expands.
 const expandedKey = ref(null)
 
 const steps = computed(() => {
@@ -737,23 +737,15 @@ const steps = computed(() => {
 				__('%d SEO abilities registered with the WordPress Abilities API', td),
 				abilitiesCount.value
 			),
-			done      : abilitiesApiAvailable.value && 0 < abilitiesCount.value,
-			pillLabel : abilitiesApiAvailable.value && 0 < abilitiesCount.value
-				? strings.steps.ready
-				: (!abilitiesApiAvailable.value ? strings.steps.upgradeWp : strings.steps.noAbilities),
-			pillClass : abilitiesApiAvailable.value && 0 < abilitiesCount.value ? 'green' : 'red',
-			blocking  : !abilitiesApiAvailable.value
+			done     : abilitiesApiAvailable.value && 0 < abilitiesCount.value,
+			blocking : !abilitiesApiAvailable.value
 		},
 		{
-			key       : 'mcpAdapter',
-			title     : strings.steps.mcpAdapterTitle,
-			subtitle  : strings.steps.mcpAdapterSubtitle,
-			done      : mcpAdapterDetected.value,
-			pillLabel : mcpAdapterDetected.value
-				? strings.steps.active
-				: (mcpAdapterInstalled.value ? strings.steps.actionNeeded : strings.steps.actionNeeded),
-			pillClass : mcpAdapterDetected.value ? 'green' : 'orange',
-			blocking  : !mcpAdapterDetected.value
+			key      : 'mcpAdapter',
+			title    : strings.steps.mcpAdapterTitle,
+			subtitle : strings.steps.mcpAdapterSubtitle,
+			done     : mcpAdapterDetected.value,
+			blocking : !mcpAdapterDetected.value
 		},
 		{
 			key      : 'appPassword',
@@ -765,13 +757,7 @@ const steps = computed(() => {
 					'<strong>' + currentUsername.value + '</strong>'
 				)
 				: (appPasswordsAvailable.value ? strings.steps.appPasswordSubtitle : strings.steps.appPasswordDisabledSubtitle),
-			done      : hasAppPassword.value,
-			pillLabel : hasAppPassword.value
-				? strings.steps.generated
-				: (appPasswordsAvailable.value ? strings.steps.actionNeeded : strings.steps.disabled),
-			pillClass : hasAppPassword.value
-				? 'green'
-				: (appPasswordsAvailable.value ? 'orange' : 'red'),
+			done     : hasAppPassword.value,
 			blocking : !hasAppPassword.value
 		},
 		{
@@ -782,10 +768,8 @@ const steps = computed(() => {
 			subtitle : testResult.value
 				? (testResult.value.ok ? strings.steps.testJustRan : strings.steps.testSubtitle)
 				: (verified.value ? strings.steps.testVerifiedSubtitle : strings.steps.testSubtitle),
-			done      : verified.value,
-			pillLabel : verified.value ? strings.steps.verified : (testResult.value ? strings.steps.actionNeeded : strings.steps.pending),
-			pillClass : verified.value ? 'green' : (testResult.value ? 'orange' : 'gray'),
-			blocking  : false
+			done     : verified.value,
+			blocking : false
 		}
 	]
 
@@ -800,13 +784,18 @@ const steps = computed(() => {
 		// Generating the password flips this step to "done", which would move focus on and collapse it — but the
 		// one-time secret is only shown once, so keep it expanded for as long as we still hold the plaintext.
 		const credsShown    = 'appPassword' === step.key && generatedAppPassword.value
+		// A successful install or activation flips this step to "done" too, which would collapse it and unmount the
+		// confirmation in the same tick that created it. Hold the step open for as long as the message stands.
+		const installShown  = 'mcpAdapter' === step.key && mcpAdapterInstallMessage.value
 		const isFocus       = expandedKey.value === step.key ||
 			(null === expandedKey.value && step === (firstBlocking || firstPending)) ||
 			abilitiesOpen ||
 			credsShown ||
+			installShown ||
 			testShown
 		const hasBody       = !step.done ||
 			credsShown ||
+			installShown ||
 			('test' === step.key && serverVerified.value && !canRunLiveTest.value) ||
 			abilitiesOpen ||
 			testShown
@@ -814,8 +803,10 @@ const steps = computed(() => {
 			...step,
 			number,
 			blocking   : !step.done && step === firstBlocking,
-			toggleable : hasBody,
-			expanded   : isFocus && hasBody
+			// Coerced: the hold-open flags carry values, not booleans, and transition-slide declares
+			// `active` a Boolean prop and renders it straight into `aria-expanded`.
+			toggleable : !!hasBody,
+			expanded   : !!(isFocus && hasBody)
 		}
 	})
 })
@@ -1082,16 +1073,7 @@ const strings = {
 		testConnection                : __('Test connection', td),
 		testAgain                     : __('Test again', td),
 		testSuccess                   : __('Connection successful', td),
-		testFailure                   : __('Connection unsuccessful', td),
-		ready                         : __('Ready', td),
-		active                        : __('Active', td),
-		actionNeeded                  : __('Action needed', td),
-		disabled                      : __('Disabled', td),
-		generated                     : __('Generated', td),
-		verified                      : __('Verified', td),
-		pending                       : __('Pending', td),
-		upgradeWp                     : __('Requires WP 6.9+', td),
-		noAbilities                   : __('Not registered', td)
+		testFailure                   : __('Connection unsuccessful', td)
 	},
 	clients : {
 		heading           : __('Connect to AI Client', td),
@@ -1258,39 +1240,6 @@ const strings = {
 		gap: 10px;
 		flex-shrink: 0;
 		margin-left: auto;
-	}
-
-	.mcp-v2-pill {
-		display: inline-flex;
-		align-items: center;
-		gap: 5px;
-		padding: 3px 10px;
-		border-radius: 999px;
-		font-size: 12px;
-		font-weight: $font-bold;
-		line-height: 1.5;
-
-		svg {
-			width: 13px;
-			height: 13px;
-		}
-
-		&.green {
-			background: rgba($green, 0.12);
-			color: $green;
-		}
-		&.orange {
-			background: rgba($orange, 0.15);
-			color: color.adjust($orange, $lightness: -5%);
-		}
-		&.red {
-			background: rgba($red, 0.12);
-			color: $red;
-		}
-		&.gray {
-			background: $box-background;
-			color: $placeholder-color;
-		}
 	}
 
 	.mcp-v2-link {

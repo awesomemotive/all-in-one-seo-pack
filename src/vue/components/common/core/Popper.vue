@@ -350,22 +350,18 @@ export default {
 </script>
 
 <style>
+/*
+ * Geometry only. The look lives in `scss/app/_popper.scss`, and this block used to restate it with the
+ * upstream library's defaults — two global `.popper` rules at the same specificity, so whichever
+ * stylesheet the build happened to emit last won. That is how the tooltip turned grey and lost its
+ * padding wherever the chunk order differed.
+ */
 .popper {
 	width: auto;
-	background-color: #fafafa;
 	color: #212121;
-	text-align: center;
-	padding: 2px;
 	display: inline-block;
-	border-radius: 3px;
 	position: absolute;
-	font-size: 14px;
 	font-weight: normal;
-	border: 1px #ebebeb solid;
-	z-index: 200000;
-	-moz-box-shadow: rgb(58, 58, 58) 0 0 6px 0;
-	-webkit-box-shadow: rgb(58, 58, 58) 0 0 6px 0;
-	box-shadow: rgb(58, 58, 58) 0 0 6px 0;
 }
 .popper .popper__arrow {
 	width: 0;
@@ -379,7 +375,7 @@ export default {
 }
 .popper[x-placement^="top"] .popper__arrow {
 	border-width: 5px 5px 0 5px;
-	border-color: #fafafa transparent transparent transparent;
+	border-color: #fff transparent transparent transparent;
 	bottom: -5px;
 	left: calc(50% - 5px);
 	margin-top: 0;
@@ -390,7 +386,7 @@ export default {
 }
 .popper[x-placement^="bottom"] .popper__arrow {
 	border-width: 0 5px 5px 5px;
-	border-color: transparent transparent #fafafa transparent;
+	border-color: transparent transparent #fff transparent;
 	top: -5px;
 	left: calc(50% - 5px);
 	margin-top: 0;
@@ -401,7 +397,7 @@ export default {
 }
 .popper[x-placement^="right"] .popper__arrow {
 	border-width: 5px 5px 5px 0;
-	border-color: transparent #fafafa transparent transparent;
+	border-color: transparent #fff transparent transparent;
 	left: -5px;
 	top: calc(50% - 5px);
 	margin-left: 0;
@@ -412,7 +408,7 @@ export default {
 }
 .popper[x-placement^="left"] .popper__arrow {
 	border-width: 5px 0 5px 5px;
-	border-color: transparent transparent transparent #fafafa;
+	border-color: transparent transparent transparent #fff;
 	right: -5px;
 	top: calc(50% - 5px);
 	margin-left: 0;

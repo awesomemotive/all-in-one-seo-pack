@@ -1,10 +1,10 @@
 === All in One SEO – AI SEO Plugin to Boost SEO Rankings & Traffic (Schema, Local SEO, Sitemap & SEO Insights) ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, AI, schema, XML Sitemap, redirect
-Tested up to: 7.1.2
+Tested up to: 7.1.3
 Requires at least: 5.7
 Requires PHP: 7.4
-Stable tag: 5.0.2.1
+Stable tag: 5.0.3
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -192,6 +192,42 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 5.0.3**
+
+- Updated: SEO Revisions comparisons now show the current value of a smart tag when you hover over it, including Custom Field and Taxonomy Name tags.
+- Updated: Removed unused breadcrumb schema code that ran on every page load.
+- Fixed: AI features now check your available credits before sending a request, and AI schema generation always uses the schema credit cost.
+- Fixed: The AI Bulk Generator and the Media Library's Generate Alt Text with AI action now tell you when generation fails, for example when you're out of AI credits.
+- Fixed: Improved security and access protections in the AI Image Generator, Markdown (.md) versions of posts, and shortcodes on search pages.
+- Fixed: Regenerating an image from an earlier result in the AI Image Generator now works for everyone who can edit the post, and AI permission errors in the REST API return the correct status code.
+- Fixed: The AI Suite MCP setup could show as complete on sites where another plugin bundles the MCP Adapter library.
+- Fixed: The Back to Posts link in the AI Bulk Generator now returns you to the same list view, and some links in the plugin interface now open in a new tab.
+- Fixed: Homepage SEO data could be incomplete or incorrect when a theme uses a custom homepage layout.
+- Fixed: The AIOSEO editor now works when editing a WooCommerce product in Elementor, and the AIOSEO button no longer stays on screen when editing a theme template or Site Settings.
+- Fixed: WPBakery and Avada elements could run twice on the front end and break layouts, tabs and forms.
+- Fixed: Auto-generated descriptions could miss or mix up text from WPBakery and Avada elements.
+- Fixed: Markdown (.md) versions of posts and llms-full.txt could show content from the wrong post, or breadcrumbs and other content from the 404 page.
+- Fixed: Markdown (.md) versions of posts and llms-full.txt now keep tables and code samples, and no longer include XML declarations, embedded icon data or HTML tags.
+- Fixed: Markdown (.md) URLs could return a 404 or the wrong post for posts with non-Latin slugs, on subdirectory installs, on sites with more than 50 posts, or when a post shares its slug with a custom post type item.
+- Fixed: The Markdown (.md) version of a post could fail to generate when a link contained many inline SVG icons, and Divi 5 posts were processed twice.
+- Fixed: llms.txt now shows the site description as a blockquote with HTML entities decoded, and descriptions from legacy Divi builder content no longer include shortcode tags or encoded characters.
+- Fixed: The llms.txt and llms-full.txt files could be left behind after uninstalling AIOSEO, turning off LLMs.txt or resetting settings, and llms-full.txt could be generated again after being turned off.
+- Fixed: Breadcrumb fields in the REST API now respect per-term breadcrumb settings, and a breadcrumb template with a page-number or search tag no longer causes an error.
+- Fixed: The AIOSEO Breadcrumbs and Table of Contents blocks could fail to load in the Widgets and Customizer editors.
+- Fixed: The Link Format options in the block editor now work on WordPress 6.5 and earlier, and typing a link title before the URL no longer stops the editor from working.
+- Fixed: The Network Admin Robots.txt Editor now previews each site's own rules and sitemaps, and no longer removes a site's custom rules when you save while they're loading.
+- Fixed: Managing settings backups for another site in Network Tools could affect the wrong site's settings.
+- Fixed: robots.txt could return an error when a saved rule had an invalid value; that rule is now skipped.
+- Fixed: The REST API now returns an error instead of silently ignoring SEO changes from users without SEO permissions, or saving "Array" when the legacy `_aioseop_title` and `_aioseop_description` fields get a value that isn't text.
+- Fixed: Redirects created automatically for trashed or deleted posts could point to the homepage or replace a redirect you had already set up, and restoring a post from the trash could remove its redirect.
+- Fixed: SEO Analysis could get stuck on, or report false issues for, pages with an empty response or no visible content.
+- Fixed: Scheduled SEO Analysis scans could keep failing in the background, and scans now run on network-licensed multisites.
+- Fixed: Uninstalling AIOSEO now also removes capabilities added by older versions, and deleting Lite and Pro together no longer leaves empty tables and options behind.
+- Fixed: SEO Alerts no longer flags an empty sitemap, such as a News Sitemap with no recent posts, as an error, and sitemaps that don't exist, are disabled or are past their last page now return a 404.
+- Fixed: Background "Unescape data" tasks could be cancelled on AIOSEO Lite.
+- Fixed: Link Assistant domain icons now show a fallback icon instead of a broken image when a site's icon can't be loaded.
+- Fixed: Display issues in the Search Statistics Index Status chart.
+
 **New in Version 5.0.2.1**
 
 - Fixed: Improved security protections for shortcodes on search pages.
@@ -262,18 +298,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 - Fixed: SeedProd page detection no longer treats a post as page-builder content after SeedProd is deactivated.
 - Fixed: The Facebook image could appear in the Twitter preview, and vice versa, in the Social snippet preview.
 - Fixed: Improved security and access protections in SEO Revisions, SEO Analysis and the SEO Preview.
-
-**New in Version 5.0.1**
-
-- New: TruSEO content analysis for taxonomy terms, starting with WooCommerce product categories.
-- Fixed: SEO Analysis now shows a clear "Preview unavailable" message when a firewall blocks the homepage or competitor screenshot.
-- Fixed: Sitemap image URLs being duplicated on WordPress subdirectory installations.
-- Fixed: Redirects no longer create cache entries on sites that don't use the Redirects feature.
-- Fixed: Overlapping redirects now apply in the correct order.
-- Fixed: A textdomain loading notice that could appear when checking for addon updates on WordPress 6.7 and later.
-- Fixed: Table of Contents block sometimes reset custom heading text and pointed to incorrect links.
-- Fixed: Added a warning when a redirect's destination URL contains invalid characters in the domain.
-- Fixed: Redirects from child pages to parent pages not working for smart 404 redirects.
 
 **See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=aioseo) for previous releases.**
 
@@ -350,6 +374,6 @@ AIOSEO can easily help you get your sitemaps listed inside Google Search Console
 
 == Upgrade Notice ==
 
-= 5.0.2.1 =
+= 5.0.3 =
 
 This update adds major improvements and bug fixes.

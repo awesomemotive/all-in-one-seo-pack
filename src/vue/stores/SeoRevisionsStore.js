@@ -17,17 +17,19 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 			avatar       : null,
 			display_name : null
 		},
-		itemFrom              : {},
-		itemTo                : {},
-		itemContext           : '',
-		noteMaxLength         : 0,
-		itemsLimit            : 0,
-		itemsTotalCount       : 0,
-		seoRevisionsDiff      : [],
-		seoRevisionsDiffCache : {},
-		modalOpenSidebar      : false,
-		error                 : null,
-		capability            : 'aioseo_page_seo_revisions_settings'
+		itemFrom                  : {},
+		itemTo                    : {},
+		itemContext               : '',
+		noteMaxLength             : 0,
+		itemsLimit                : 0,
+		itemsTotalCount           : 0,
+		seoRevisionsDiff          : [],
+		seoRevisionsDiffCache     : {},
+		// Smart tag ID => the value it resolves to for the compared object.
+		seoRevisionsDiffTagValues : {},
+		modalOpenSidebar          : false,
+		error                     : null,
+		capability                : 'aioseo_page_seo_revisions_settings'
 	}),
 	getters : {
 		hasPermission : (state) => allowed(state.capability),
@@ -108,15 +110,21 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 
 			return new Promise((resolve) => {
 				if (this.seoRevisionsDiffCache[cacheKey]) {
-					this.seoRevisionsDiff = this.seoRevisionsDiffCache[cacheKey]
+					this.seoRevisionsDiff          = this.seoRevisionsDiffCache[cacheKey].diff
+					this.seoRevisionsDiffTagValues = this.seoRevisionsDiffCache[cacheKey].tagValues
 
 					resolve({})
 				} else {
 					http.get(links.restUrl('seo-revisions/diff'))
 						.query(payload)
 						.then((response) => {
-							this.seoRevisionsDiff = response.body.diff
-							this.seoRevisionsDiffCache[cacheKey] = response.body.diff
+							this.seoRevisionsDiff          = response.body.diff
+							this.seoRevisionsDiffTagValues = response.body.tagValues || {}
+
+							this.seoRevisionsDiffCache[cacheKey] = {
+								diff      : this.seoRevisionsDiff,
+								tagValues : this.seoRevisionsDiffTagValues
+							}
 
 							resolve(response)
 						})

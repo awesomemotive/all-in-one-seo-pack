@@ -38,12 +38,13 @@ class Twitter {
 	/**
 	 * Returns the Twitter card type.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @return string $card The card type.
 	 */
 	public function getCardType() {
-		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			return aioseo()->options->social->twitter->homePage->cardType;
 		}
 
@@ -87,14 +88,15 @@ class Twitter {
 	/**
 	 * Returns the Twitter image URL.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @param  int    $postId The post ID (optional).
 	 * @return string         The image URL.
 	 */
 	public function getImage( $postId = null ) {
 		$post = aioseo()->helpers->getPost( $postId );
-		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$image = aioseo()->options->social->twitter->homePage->image;
 			if ( empty( $image ) ) {
 				$image = aioseo()->options->social->facebook->homePage->image;
@@ -127,13 +129,14 @@ class Twitter {
 	/**
 	 * Returns the Twitter title for the current page.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @param  \WP_Post|integer $post The post object or ID (optional).
 	 * @return string                 The Twitter title.
 	 */
 	public function getTitle( $post = null ) {
-		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$title = aioseo()->meta->title->helpers->prepare( aioseo()->options->social->twitter->homePage->title );
 
 			return $title ? $title : aioseo()->social->facebook->getTitle( $post );
@@ -157,13 +160,14 @@ class Twitter {
 	/**
 	 * Returns the Twitter description for the current page.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
 	 *
 	 * @param  \WP_Post|integer $post The post object or ID (optional).
 	 * @return string                 The Twitter description.
 	 */
 	public function getDescription( $post = null ) {
-		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
+		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$description = aioseo()->meta->description->helpers->prepare( aioseo()->options->social->twitter->homePage->description );
 
 			return $description ? $description : aioseo()->social->facebook->getDescription( $post );

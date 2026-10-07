@@ -42,6 +42,24 @@ class Divi extends Base {
 	public $integrationSlug = 'divi';
 
 	/**
+	 * The prefix shared by the builder's shortcode tags.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @var string
+	 */
+	protected $shortcodePrefix = 'et_pb_';
+
+	/**
+	 * Opening-tag attributes that hold visible copy, e.g. a module title.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @var array
+	 */
+	protected $textAttributes = [ 'title', 'subhead', 'heading', 'button_text', 'button_one_text', 'button_two_text' ];
+
+	/**
 	 * Init the integration.
 	 *
 	 * @since 4.1.7
@@ -207,11 +225,41 @@ class Divi extends Base {
 	}
 
 	/**
+	 * Returns whether the integration extracts text instead of rendering on front-end views.
+	 *
+	 * NOTE: The prefix only feeds {@see extractShortcodeText()} inside {@see extractDivi5Text()}, whose
+	 * front-end output must never be followed by a the_content() pass.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return bool Always false.
+	 */
+	public function extractsTextOnFrontEnd() {
+		return false;
+	}
+
+	/**
+	 * Returns the given attribute value with Divi's encoding undone.
+	 *
+	 * NOTE: Divi stores `"`, `\`, `[` and `]` in attribute values as %22, %92, %91 and %93.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @param  string $value The raw attribute value.
+	 * @return string        The decoded value.
+	 */
+	protected function decodeAttributeValue( $value ) {
+		return str_replace( [ '%22', '%92', '%91', '%93' ], [ '"', '\\', '&#91;', '&#93;' ], $value );
+	}
+
+	/**
 	 * Returns the processed page builder content.
 	 *
 	 * @since   4.9.6
-	 * @version 4.9.9  Reset Divi's module order index after the front-end the_content() pass.
+	 * @version 4.9.9 Reset Divi's module order index after the front-end the_content() pass.
 	 * @version 5.0.2 Extract Divi 5 text from the raw block markup on front-end requests instead of rendering it.
+	 * @version 5.0.3 Reduce legacy et_pb tags to text with {@see extractShortcodeText()} when Divi cannot render them;
+	 *                return an empty string when no text is left.
 	 *
 	 * @param  int    $postId  The post ID.
 	 * @param  mixed  $content The raw content.
@@ -239,6 +287,20 @@ class Divi extends Base {
 			// off-loop renders at its 10000 offset and caches their static CSS (e.g. et_pb_blurb_10000) into the
 			// shared et-cache, which pollutes the real page render.
 			return $this->extractDivi5Text( $content );
+		}
+
+		$content = $this->getRawContent( $postId, $content );
+
+		// Legacy shortcode content cannot render where Divi registers no et_pb shortcodes (observed in WP-CLI
+		// and wp-cron), so the tags would survive as-is. Reduce them to their copy before the parent's the_content
+		// pass texturizes the attribute quotes, after which that copy can no longer be lifted.
+		if ( ! shortcode_exists( 'et_pb_section' ) ) {
+			$content = $this->extractShortcodeText( $content );
+
+			// Nothing to pass on: the parent reads empty content as "none given" and reloads the raw tags.
+			if ( '' === $content ) {
+				return '';
+			}
 		}
 
 		return parent::processContent( $postId, $content );
@@ -289,7 +351,7 @@ class Divi extends Base {
 				// shortcode string. Returning it verbatim would let the downstream strip_shortcodes()
 				// delete the enclosed copy and empty the description, so reduce it to plain text here.
 				if ( false !== strpos( $innerHtml, '[et_pb_' ) ) {
-					$innerHtml = $this->extractDivi5ShortcodeText( $innerHtml );
+					$innerHtml = $this->extractShortcodeText( $innerHtml );
 				}
 
 				if ( '' !== $innerHtml ) {
@@ -303,56 +365,6 @@ class Divi extends Base {
 		}
 
 		return implode( "\n", array_filter( $parts ) );
-	}
-
-	/**
-	 * Reduces raw Divi 4 shortcode markup to plain readable text without rendering it.
-	 *
-	 * Drops only Divi (`et_pb_*`) tags - keeping the text enclosed between them plus the text-bearing
-	 * attributes on their opening tags (e.g. Blurb/CTA titles) - so the downstream strip_shortcodes()
-	 * cannot delete that copy. Bracket literals ([2023]) and non-Divi shortcodes are left untouched.
-	 * Quoted attribute values are treated as opaque, so an inner "]" does not truncate a tag.
-	 *
-	 * NOTE: Pure text extraction on purpose. We must never run this through the_content/do_shortcode
-	 * on the front end - that is the render pass whose side effects break Divi's static CSS.
-	 *
-	 * @since 5.0.2
-	 *
-	 * @param  string $content The raw shortcode content.
-	 * @return string          The extracted text.
-	 */
-	private function extractDivi5ShortcodeText( $content ) {
-		// Match a Divi shortcode tag, treating quoted attribute values as opaque so an inner "]"
-		// (e.g. title="See [PDF] guide") does not terminate the tag early.
-		$tagPattern = '/\[\/?et_pb_(?:[^\]"\']|"[^"]*"|\'[^\']*\')*\]/is';
-
-		// Replace each Divi tag with the visible copy from its opening-tag attributes and drop the tag
-		// itself; leave everything else - enclosed body text, bracket literals like [2023], and any
-		// non-Divi shortcodes - in place, in document order, for the downstream sanitizer.
-		$text = preg_replace_callback(
-			$tagPattern,
-			function ( $matches ) {
-				$tag = $matches[0];
-				if ( 0 === strpos( $tag, '[/' ) ) {
-					return ' ';
-				}
-
-				$parts = [];
-				if ( preg_match_all( '/\b(?:title|subhead|button_text)=(["\'])(.*?)\1/is', $tag, $attributes ) ) {
-					foreach ( $attributes[2] as $value ) {
-						$value = trim( $value );
-						if ( '' !== $value ) {
-							$parts[] = $value;
-						}
-					}
-				}
-
-				return [] === $parts ? ' ' : ' ' . implode( ' ', $parts ) . ' ';
-			},
-			(string) $content
-		);
-
-		return trim( (string) preg_replace( '/\s+/', ' ', (string) $text ) );
 	}
 
 	/**

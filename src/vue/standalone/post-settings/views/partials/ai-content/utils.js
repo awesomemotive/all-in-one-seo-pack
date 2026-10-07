@@ -2,6 +2,7 @@ import { isBlockEditor, isClassicEditor } from '@/vue/utils/context'
 import { truSeoShouldAnalyze } from '@/vue/utils/postData/helpers'
 import {
 	useAiAssistantStore,
+	useAiImageGeneratorStore,
 	usePostEditorStore,
 	useSchemaStore,
 	useTruSeoHighlighterStore
@@ -119,6 +120,9 @@ export const aiFeatures = {
 			buttonSubmit : __('Generate Image', td)
 		},
 		excludedPostTypes : [],
+		// The generated image is stored as an attachment. Not `permission`: Lite's `allowed()`
+		// returns true for any `canManage` user, even one denied `upload_files`.
+		isAllowed         : () => useAiImageGeneratorStore().canUploadFiles,
 		// Priced per model and quality, so its cost is only ever a floor.
 		costIsMinimum     : true,
 		badge             : { text: __('Updated', td), color: 'blue' }

@@ -27,7 +27,6 @@ class Content {
 		'author',
 		'date',
 		'postArchive',
-		'rss',
 		'bpActivity',
 		'bpGroup',
 		'bpMember'
@@ -99,6 +98,38 @@ class Content {
 		}
 
 		return [];
+	}
+
+	/**
+	 * Checks whether the requested sitemap is one that exists, even when it has no entries right now.
+	 *
+	 * NOTE: Only the first page of the root index or of a public post type or taxonomy (even an excluded one)
+	 * exists while empty. Dedicated indexes (author, date, …) are only listed when they have entries.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return bool Whether the requested sitemap exists.
+	 */
+	public function isKnownIndex() {
+		$indexName = aioseo()->sitemap->indexName;
+		if ( 0 < aioseo()->sitemap->pageNumber ) {
+			return false;
+		}
+
+		if ( 'root' === $indexName ) {
+			return true;
+		}
+
+		if ( ! aioseo()->sitemap->indexes ) {
+			return false;
+		}
+
+		if ( 'product_attributes' === $indexName ) {
+			return 'general' === aioseo()->sitemap->type && aioseo()->helpers->isWooCommerceActive();
+		}
+
+		return in_array( $indexName, aioseo()->helpers->getPublicPostTypes( true ), true ) ||
+			in_array( $indexName, aioseo()->helpers->getPublicTaxonomies( true ), true );
 	}
 
 	/**
@@ -185,7 +216,8 @@ class Content {
 	/**
 	 * Returns all sitemap entries if indexing is disabled.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage entry now follows {@see Helpers::shouldIncludeHomepage()}.
 	 *
 	 * @return array $entries The sitemap entries.
 	 */
@@ -194,7 +226,7 @@ class Content {
 		$postTypes        = aioseo()->sitemap->helpers->includedPostTypes();
 		$isStaticHomepage = 'page' === get_option( 'show_on_front' );
 		$blogPageEntry    = [];
-		$homePageEntry    = ! $isStaticHomepage ? [ array_shift( $additional ) ] : [];
+		$homePageEntry    = $additional && aioseo()->sitemap->helpers->shouldIncludeHomepage() ? [ array_shift( $additional ) ] : [];
 		$entries          = array_merge( $additional, $this->author(), $this->date(), $this->postArchive() );
 
 		if ( $postTypes ) {
@@ -454,7 +486,8 @@ class Content {
 	/**
 	 * Returns all additional pages.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Homepage entry now follows {@see Helpers::shouldIncludeHomepage()}.
 	 *
 	 * @param  bool  $shouldChunk Whether the entries should be chuncked. Is set to false when the static sitemap is generated.
 	 * @return array              The sitemap entries.
@@ -479,9 +512,7 @@ class Content {
 			];
 		}
 
-		$postTypes             = aioseo()->sitemap->helpers->includedPostTypes();
-		$shouldIncludeHomepage = 'posts' === get_option( 'show_on_front' ) || ! in_array( 'page', $postTypes, true );
-		if ( $shouldIncludeHomepage ) {
+		if ( aioseo()->sitemap->helpers->shouldIncludeHomepage() ) {
 			$frontPageId  = (int) get_option( 'page_on_front' );
 			$frontPageUrl = aioseo()->helpers->localizedUrl( '/' );
 			$post         = aioseo()->helpers->getPost( $frontPageId );

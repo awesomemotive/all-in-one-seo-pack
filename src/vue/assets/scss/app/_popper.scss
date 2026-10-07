@@ -15,6 +15,20 @@
 	line-height: 1.4;
 	white-space: normal;
 
+	// An action offered by the tooltip rather than a URL it is reporting. Global for the same reason
+	// a.tooltip-url is: the content is teleported into the body portal.
+	a.tooltip-link {
+		display: inline-block;
+		margin-top: 8px;
+		color: $blue;
+		font-weight: 600;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
 	&.action {
 		padding: 8px 12px;
 		background-color: $black;

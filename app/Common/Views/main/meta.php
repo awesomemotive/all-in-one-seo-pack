@@ -55,8 +55,10 @@ endif;
 <?php if ( ! empty( $links['next'] ) ) : ?>
 	<link rel="next" href="<?php echo esc_url( $links['next'] ); ?>" />
 <?php endif; ?>
-<?php // Add our generator output. ?>
+<?php if ( ! apply_filters( 'aioseo_hide_generator_tag', false ) ) : ?>
+	<?php // Add our generator output. ?>
 	<meta name="generator" content="<?php echo trim( sprintf( '%1$s (%2$s) %3$s', esc_html( AIOSEO_PLUGIN_NAME ), esc_html( AIOSEO_PLUGIN_SHORT_NAME ), aioseo()->helpers->getAioseoVersion() ) ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, Generic.Files.LineLength.MaxExceeded ?>" />
+<?php endif; ?>
 <?php
 
 // This adds the miscellaneous verification to the head tag inside our comments.

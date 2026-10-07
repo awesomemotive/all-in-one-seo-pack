@@ -84,24 +84,29 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useRootStore } from '@/vue/stores'
 import { __ } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 defineEmits([ 'close' ])
 
-defineProps({
+// Presentational on purpose: the feed lives on a different root store in each plugin, and
+// reaching for AIOSEO's from here would pull its store into builds that can't construct it.
+const props = defineProps({
 	show : {
 		type     : Boolean,
 		required : true
+	},
+	newsroom : {
+		type : Object,
+		default () {
+			return {}
+		}
 	}
 })
 
-const rootStore = useRootStore()
-
-const items      = computed(() => rootStore.aioseo.newsroom?.items || [])
-const archiveUrl = computed(() => rootStore.aioseo.newsroom?.archiveUrl || '')
+const items      = computed(() => props.newsroom?.items || [])
+const archiveUrl = computed(() => props.newsroom?.archiveUrl || '')
 
 const strings = computed(() => ({
 	title     : __('What\'s New', td),

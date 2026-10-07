@@ -107,6 +107,18 @@ export const useOptionsStore = defineStore('OptionsStore', {
 			const networkStore 		= useNetworkStore()
 			const rootStore 		= useRootStore()
 
+			// Until the site's rules have loaded, the table holds an empty set, and saving it would delete them.
+			if (networkStore.networkRobots.loading) {
+				return networkStore.waitForSiteRobots().then(() => this.saveNetworkRobots())
+			}
+
+			// Saving would replace the site's rules with the empty set that is all we have.
+			if (networkStore.networkRobots.loadFailed) {
+				networkStore.networkRobots.saveBlocked = true
+
+				return Promise.resolve()
+			}
+
 			const isNetwork = 'network' === networkStore.currentSite?.blog_id
 			const getOptions = isNetwork ? this.networkOptions : this.options
 

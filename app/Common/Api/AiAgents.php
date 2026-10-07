@@ -79,19 +79,60 @@ class AiAgents {
 	}
 
 	/**
-	 * Returns the plugin file of an installed MCP Adapter plugin, if any.
+	 * Returns the plugin files of every installed copy of the MCP Adapter plugin.
 	 *
-	 * @since 4.9.8
+	 * @since 5.0.3
 	 *
-	 * @return string The plugin file relative to the plugins directory, or an empty string if not installed.
+	 * @return string[] The plugin files relative to the plugins directory.
 	 */
-	public static function getInstalledMcpAdapterFile() {
+	private static function getMcpAdapterFiles() {
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		foreach ( array_keys( get_plugins() ) as $pluginFile ) {
-			if ( 0 === strpos( $pluginFile, 'mcp-adapter/' ) ) {
+		$pluginFiles = [];
+		foreach ( get_plugins() as $pluginFile => $pluginData ) {
+			// A hand-renamed copy lands outside `mcp-adapter/`; upstream's `mcp-adapter` text domain stays.
+			$isAdapter = 0 === strpos( $pluginFile, 'mcp-adapter/' ) ||
+				( ! empty( $pluginData['TextDomain'] ) && 'mcp-adapter' === $pluginData['TextDomain'] );
+
+			if ( $isAdapter ) {
+				$pluginFiles[] = $pluginFile;
+			}
+		}
+
+		return $pluginFiles;
+	}
+
+	/**
+	 * Returns the plugin file of an installed MCP Adapter plugin, if any.
+	 *
+	 * @since   4.9.8
+	 * @version 5.0.3 Also match a copy whose folder was renamed, via its text domain.
+	 *
+	 * @return string The plugin file relative to the plugins directory, or an empty string if not installed.
+	 */
+	public static function getInstalledMcpAdapterFile() {
+		$pluginFiles = self::getMcpAdapterFiles();
+
+		return $pluginFiles ? reset( $pluginFiles ) : '';
+	}
+
+	/**
+	 * Returns the plugin file of an active MCP Adapter plugin, if any.
+	 *
+	 * NOTE: a class lookup also matches a copy vendored by another plugin, and the adapter's own
+	 * server registry only fills from `rest_api_init` onward.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return string The plugin file relative to the plugins directory, or an empty string if none is active.
+	 */
+	public static function getActiveMcpAdapterFile() {
+		// Any active copy short-circuits the install: activating a second one redeclares the
+		// library's bootstrap functions and takes the request down with a fatal.
+		foreach ( self::getMcpAdapterFiles() as $pluginFile ) {
+			if ( is_plugin_active( $pluginFile ) ) {
 				return $pluginFile;
 			}
 		}
@@ -100,13 +141,23 @@ class AiAgents {
 	}
 
 	/**
+	 * Returns whether the MCP Adapter's default server route is registered.
+	 *
+	 * NOTE: outside a REST request this builds the REST server, which fires `rest_api_init`.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return bool Whether the default server route is registered.
+	 */
+	public static function isMcpServerRegistered() {
+		return array_key_exists( '/mcp/mcp-adapter-default-server', rest_get_server()->get_routes( 'mcp' ) );
+	}
+
+	/**
 	 * Installs the MCP Adapter plugin from its GitHub release zip and activates it.
 	 *
-	 * Detects pre-existing installs via `WP\MCP\Core\McpAdapter` class lookup so we don't
-	 * trigger the `duplicate_server_id` bug (mcp-adapter issue #172) when WooCommerce or
-	 * another plugin already shipped it as a Composer dep.
-	 *
-	 * @since 4.9.8
+	 * @since   4.9.8
+	 * @version 5.0.3 Key the already-active check on the adapter plugin's state.
 	 *
 	 * @return \WP_REST_Response
 	 */
@@ -118,7 +169,7 @@ class AiAgents {
 			], 403 );
 		}
 
-		if ( class_exists( '\\WP\\MCP\\Core\\McpAdapter' ) ) {
+		if ( '' !== self::getActiveMcpAdapterFile() ) {
 			return new \WP_REST_Response( [
 				'success'         => true,
 				'already_present' => true,

@@ -129,7 +129,8 @@ class BulkActions {
 	/**
 	 * Handle a post list bulk action when triggered.
 	 *
-	 * @since 4.9.6
+	 * @since   4.9.6
+	 * @version 5.0.3 Carries the originating list URL into the redirect.
 	 *
 	 * @param  string $redirectTo The redirect URL.
 	 * @param  string $doAction   The action being taken.
@@ -146,13 +147,14 @@ class BulkActions {
 			return $redirectTo;
 		}
 
-		return $this->buildRedirectUrl( $postIds, $actions[ $doAction ]['type'] );
+		return $this->buildRedirectUrl( $postIds, $actions[ $doAction ]['type'], $redirectTo );
 	}
 
 	/**
 	 * Handle the Media Library bulk action when triggered.
 	 *
-	 * @since 4.9.6
+	 * @since   4.9.6
+	 * @version 5.0.3 Carries the originating list URL into the redirect.
 	 *
 	 * @param  string $redirectTo The redirect URL.
 	 * @param  string $doAction   The action being taken.
@@ -169,7 +171,7 @@ class BulkActions {
 			return $redirectTo;
 		}
 
-		return $this->buildRedirectUrl( $postIds, $actions[ $doAction ]['type'] );
+		return $this->buildRedirectUrl( $postIds, $actions[ $doAction ]['type'], $redirectTo );
 	}
 
 	/**
@@ -258,19 +260,25 @@ class BulkActions {
 	/**
 	 * Build the redirect URL for the AI bulk generate page.
 	 *
-	 * @since 4.9.6
+	 * @since   4.9.6
+	 * @version 5.0.3 Added the $returnUrl parameter.
 	 *
-	 * @param  array  $postIds The array of post IDs.
-	 * @param  string $type    The generation type (title, description, alt).
-	 * @return string          The redirect URL.
+	 * @param  array  $postIds   The array of post IDs.
+	 * @param  string $type      The generation type (title, description, alt).
+	 * @param  string $returnUrl The list URL the bulk action was triggered from.
+	 * @return string            The redirect URL.
 	 */
-	private function buildRedirectUrl( $postIds, $type ) {
-		return add_query_arg(
-			[
-				'ids'  => implode( ',', array_map( 'intval', $postIds ) ),
-				'type' => $type
-			],
-			admin_url( 'admin.php?page=aioseo-ai-bulk-generate' )
-		);
+	private function buildRedirectUrl( $postIds, $type, $returnUrl = '' ) {
+		$args = [
+			'ids'  => implode( ',', array_map( 'intval', $postIds ) ),
+			'type' => $type
+		];
+
+		if ( ! empty( $returnUrl ) ) {
+			// add_query_arg() does not encode the args it is handed, and this one is a URL of its own.
+			$args['return'] = rawurlencode( $returnUrl );
+		}
+
+		return add_query_arg( $args, admin_url( 'admin.php?page=aioseo-ai-bulk-generate' ) );
 	}
 }

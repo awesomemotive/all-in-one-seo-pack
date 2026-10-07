@@ -148,7 +148,10 @@ export default {
 				return this.strings.blockHiddenWarning
 			}
 
-			if (this.feature.permission && !allowed(this.feature.permission)) {
+			if (
+				(this.feature.permission && !allowed(this.feature.permission)) ||
+				(this.feature.isAllowed && !this.feature.isAllowed())
+			) {
 				return this.strings.noPermission
 			}
 

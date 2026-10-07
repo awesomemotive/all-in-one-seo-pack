@@ -239,6 +239,12 @@ namespace AIOSEO\Plugin {
 			$this->networkSensitiveOptions = ( $this->pro && $this->helpers->isPluginNetworkActivated() ) ? new Pro\Options\NetworkSensitiveOptions() : null;
 			$this->uninstall               = new Common\Main\Uninstall();
 
+			// Updates and migrations would recreate the tables and options an uninstall is about to remove, or, when
+			// Lite and Pro are deleted together, the ones the first plugin's uninstall already removed.
+			if ( $this->core->isUninstalling() ) {
+				return;
+			}
+
 			// Run pre-updates.
 			$this->preUpdates = $this->pro ? new Pro\Main\PreUpdates() : new Common\Main\PreUpdates();
 

@@ -80,8 +80,15 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 			suggestionsInbound  : { rows: [], totals: { page: 1, pages: 1, total: 0 } },
 			suggestionsOutbound : { rows: [], totals: { page: 1, pages: 1, total: 0 } }
 		},
+		linksScan : {
+			percent : null,
+			done    : null,
+			total   : null
+		},
 		suggestionsScan : {
-			percent             : 0,
+			percent             : null,
+			done                : null,
+			total               : null,
 			showProcessingPopup : false
 		},
 		skipNextPostSettingsUpdate : false
@@ -457,6 +464,29 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 					}
 				})
 		},
+		pollLinksScan () {
+			return http.get(linksUtil.restUrl('link-assistant/data/links-scan-percent'))
+				.then(response => {
+					if (!response.body || !('percent' in response.body)) {
+						return
+					}
+
+					this.linksScan.percent = response.body.percent
+					this.linksScan.done    = 'done' in response.body ? response.body.done : null
+					this.linksScan.total   = 'total' in response.body ? response.body.total : null
+
+					if (100 !== response.body.percent) {
+						setTimeout(() => {
+							this.pollLinksScan()
+						}, 10000)
+
+						return
+					}
+
+					// The second phase only becomes meaningful once the first has finished.
+					this.pollSuggestionsScan()
+				})
+		},
 		pollSuggestionsScan () {
 			return http.get(linksUtil.restUrl('link-assistant/data/suggestions-scan-percent'))
 				.then(response => {
@@ -467,6 +497,8 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 						}
 
 						this.suggestionsScan.percent = response.body.percent
+						this.suggestionsScan.done    = 'done' in response.body ? response.body.done : null
+						this.suggestionsScan.total   = 'total' in response.body ? response.body.total : null
 
 						if (100 !== response.body.percent) {
 							setTimeout(() => {

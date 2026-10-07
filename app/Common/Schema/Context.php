@@ -13,27 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Context {
 	/**
-	 * Breadcrumb class instance.
-	 *
-	 * @since 4.2.7
-	 *
-	 * @var Breadcrumb
-	 */
-	public $breadcrumb = null;
-
-	/**
-	 * Class constructor.
-	 *
-	 * @since 4.0.0
-	 */
-	public function __construct() {
-		$this->breadcrumb = new Breadcrumb();
-	}
-
-	/**
 	 * Returns the default context data.
 	 *
-	 * @since 4.3.0
+	 * @since   4.3.0
+	 * @version 5.0.3 No longer returns the breadcrumb key.
 	 *
 	 * @return array The context data.
 	 */
@@ -41,51 +24,31 @@ class Context {
 		return [
 			'name'        => aioseo()->meta->title->getTitle(),
 			'description' => aioseo()->meta->description->getDescription(),
-			'url'         => aioseo()->helpers->getUrl(),
-			'breadcrumb'  => []
+			'url'         => aioseo()->helpers->getUrl()
 		];
 	}
 
 	/**
-	 * Returns the context data for the homepage.
+	 * Returns the context data for the blog index shown at the site root.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 No longer returns a static homepage context or the breadcrumb key.
 	 *
-	 * @return array $context The context data.
+	 * @return array The context data.
 	 */
 	public function home() {
-		$context = [
+		return [
 			'url'         => aioseo()->helpers->getUrl(),
-			'breadcrumb'  => $this->breadcrumb->home(),
 			'name'        => aioseo()->meta->title->getTitle(),
 			'description' => aioseo()->meta->description->getDescription()
 		];
-
-		// Homepage set to show latest posts.
-		if ( 'posts' === get_option( 'show_on_front' ) && is_home() ) {
-			return $context;
-		}
-
-		// Homepage set to static page.
-		$post = aioseo()->helpers->getPost();
-		if ( ! $post ) {
-			return [
-				'name'        => '',
-				'description' => '',
-				'url'         => aioseo()->helpers->getUrl(),
-				'breadcrumb'  => [],
-			];
-		}
-
-		$context['object'] = $post;
-
-		return $context;
 	}
 
 	/**
 	 * Returns the context data for the requested post.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 No longer returns the breadcrumb key.
 	 *
 	 * @return array The context data.
 	 */
@@ -95,8 +58,7 @@ class Context {
 			return [
 				'name'        => '',
 				'description' => '',
-				'url'         => aioseo()->helpers->getUrl(),
-				'breadcrumb'  => [],
+				'url'         => aioseo()->helpers->getUrl()
 			];
 		}
 
@@ -104,7 +66,6 @@ class Context {
 			'name'        => aioseo()->meta->title->getTitle( $post ),
 			'description' => aioseo()->meta->description->getDescription( $post ),
 			'url'         => aioseo()->helpers->getUrl(),
-			'breadcrumb'  => $this->breadcrumb->post( $post ),
 			'object'      => $post,
 		];
 	}
@@ -114,6 +75,7 @@ class Context {
 	 *
 	 * @since   4.0.0
 	 * @version 4.9.9 Bail when the queried object is not a WP_Term (e.g. WP_Post_Type on some CPT+taxonomy archives).
+	 * @version 5.0.3 No longer returns the breadcrumb key.
 	 *
 	 * @return array The context data.
 	 */
@@ -123,23 +85,22 @@ class Context {
 			return [
 				'name'        => '',
 				'description' => '',
-				'url'         => aioseo()->helpers->getUrl(),
-				'breadcrumb'  => [],
+				'url'         => aioseo()->helpers->getUrl()
 			];
 		}
 
 		return [
 			'name'        => aioseo()->meta->title->getTitle(),
 			'description' => aioseo()->meta->description->getDescription(),
-			'url'         => aioseo()->helpers->getUrl(),
-			'breadcrumb'  => $this->breadcrumb->term( $term )
+			'url'         => aioseo()->helpers->getUrl()
 		];
 	}
 
 	/**
 	 * Returns the context data for the requested author archive.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 No longer returns the breadcrumb key.
 	 *
 	 * @return array The context data.
 	 */
@@ -149,8 +110,7 @@ class Context {
 			return [
 				'name'        => '',
 				'description' => '',
-				'url'         => aioseo()->helpers->getUrl(),
-				'breadcrumb'  => [],
+				'url'         => aioseo()->helpers->getUrl()
 			];
 		}
 
@@ -165,20 +125,15 @@ class Context {
 		return [
 			'name'        => $title,
 			'description' => $description,
-			'url'         => $url,
-			'breadcrumb'  => $this->breadcrumb->setPositions( [
-				'name'        => get_the_author_meta( 'display_name', $author->ID ),
-				'description' => $description,
-				'url'         => $url,
-				'type'        => 'CollectionPage'
-			] )
+			'url'         => $url
 		];
 	}
 
 	/**
 	 * Returns the context data for the requested post archive.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 No longer returns the breadcrumb key.
 	 *
 	 * @return array The context data.
 	 */
@@ -188,94 +143,62 @@ class Context {
 			return [
 				'name'        => '',
 				'description' => '',
-				'url'         => aioseo()->helpers->getUrl(),
-				'breadcrumb'  => [],
+				'url'         => aioseo()->helpers->getUrl()
 			];
 		}
 
-		$title       = aioseo()->meta->title->getTitle();
-		$description = aioseo()->meta->description->getDescription();
-		$url         = aioseo()->helpers->getUrl();
-
 		return [
-			'name'        => $title,
-			'description' => $description,
-			'url'         => $url,
-			'breadcrumb'  => $this->breadcrumb->setPositions( [
-				'name'        => $postType->label,
-				'description' => $description,
-				'url'         => $url,
-				'type'        => 'CollectionPage'
-			] )
+			'name'        => aioseo()->meta->title->getTitle(),
+			'description' => aioseo()->meta->description->getDescription(),
+			'url'         => aioseo()->helpers->getUrl()
 		];
 	}
 
 	/**
 	 * Returns the context data for the requested data archive.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 No longer returns the breadcrumb key.
 	 *
-	 * @return array $context The context data.
+	 * @return array The context data.
 	 */
 	public function date() {
-		$context = [
+		return [
 			'name'        => aioseo()->meta->title->getTitle(),
 			'description' => aioseo()->meta->description->getDescription(),
 			'url'         => aioseo()->helpers->getUrl()
 		];
-
-		$context['breadcrumb'] = $this->breadcrumb->date();
-
-		return $context;
 	}
 
 	/**
 	 * Returns the context data for the search page.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 No longer returns the breadcrumb key.
 	 *
 	 * @return array The context data.
 	 */
 	public function search() {
-		global $s;
-		$title       = aioseo()->meta->title->getTitle();
-		$description = aioseo()->meta->description->getDescription();
-		$url         = aioseo()->helpers->getUrl();
-
 		return [
-			'name'        => $title,
-			'description' => $description,
-			'url'         => $url,
-			'breadcrumb'  => $this->breadcrumb->setPositions( [
-				'name'        => $s ? $s : $title,
-				'description' => $description,
-				'url'         => $url,
-				'type'        => 'SearchResultsPage'
-			] )
+			'name'        => aioseo()->meta->title->getTitle(),
+			'description' => aioseo()->meta->description->getDescription(),
+			'url'         => aioseo()->helpers->getUrl()
 		];
 	}
 
 	/**
 	 * Returns the context data for the 404 Not Found page.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 No longer returns the breadcrumb key.
 	 *
 	 * @return array The context data.
 	 */
 	public function notFound() {
-		$title       = aioseo()->meta->title->getTitle();
-		$description = aioseo()->meta->description->getDescription();
-		$url         = aioseo()->helpers->getUrl();
-
 		return [
-			'name'        => $title,
-			'description' => $description,
-			'url'         => $url,
-			'breadcrumb'  => $this->breadcrumb->setPositions( [
-				'name'        => __( 'Not Found', 'all-in-one-seo-pack' ),
-				'description' => $description,
-				'url'         => $url
-			] )
+			'name'        => aioseo()->meta->title->getTitle(),
+			'description' => aioseo()->meta->description->getDescription(),
+			'url'         => aioseo()->helpers->getUrl()
 		];
 	}
 }

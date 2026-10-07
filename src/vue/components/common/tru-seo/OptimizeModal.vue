@@ -822,7 +822,7 @@ const nextSteps = computed(() => {
 			title            : item.title,
 			text             : item.text,
 			points           : potentialSeoScoreGain(general, item.score ?? 0),
-			canGenerateImage : 'images' === id
+			canGenerateImage : 'images' === id && aiImageGeneratorStore.canUploadFiles
 		}))
 })
 const visibleNextSteps = computed(() => nextSteps.value.slice(0, MAX_VISIBLE_CHECKS))

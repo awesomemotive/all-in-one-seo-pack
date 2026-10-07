@@ -101,7 +101,7 @@ onMounted(() => {
 		!addons.requiresUpgrade('aioseo-link-assistant') &&
 		addons.hasMinimumVersion('aioseo-link-assistant')
 	) {
-		linkAssistantStore.pollSuggestionsScan()
+		linkAssistantStore.pollLinksScan()
 	}
 
 	// Preload other routes after initial render

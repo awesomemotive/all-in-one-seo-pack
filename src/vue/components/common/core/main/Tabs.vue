@@ -6,7 +6,7 @@
 	>
 		<div
 			class="tabs-scroller"
-			:class="{ 'visually-hidden': showMobileMenu }"
+			:class="{ 'visually-hidden': showMobileMenu, 'is-scrolling': showScrollingTabs }"
 			ref="tabs-scroller"
 		>
 			<var-tabs
@@ -102,9 +102,11 @@
 					>
 						<component
 							:is="!active ? 'router-link' : 'a'"
-							v-for="(tab, index) in filteredTabs"
+							v-for="(tab, index) in tabs"
 							:key="index"
 							:to="tab.url"
+							class="tab-link"
+							:class="{ current: tab.slug === activeTab }"
 							@click.native="showMobileTabs = false"
 						>
 							{{ tab.name }}
@@ -123,8 +125,10 @@
 					>
 						<a
 							href="#"
-							v-for="(tab, index) in filteredTabs"
+							v-for="(tab, index) in tabs"
 							:key="index"
+							class="tab-link"
+							:class="{ current: tab.slug === activeTab }"
 							@click.prevent="clickMobileTabs(tab.slug)"
 						>
 							{{ tab.name }}
@@ -136,6 +140,7 @@
 
 		<div
 			class="button-right"
+			:class="{ 'has-custom-button': !!$slots.button }"
 			v-if="showSaveButton"
 			ref="tabs-button"
 		>
@@ -230,10 +235,11 @@ export default {
 	},
 	data () {
 		return {
-			buttonLoading  : false,
-			showMobileMenu : false,
-			showMobileTabs : false,
-			strings        : {
+			buttonLoading     : false,
+			showMobileMenu    : false,
+			showScrollingTabs : false,
+			showMobileTabs    : false,
+			strings           : {
 				saveChanges : __('Save Changes', td),
 				new         : __('NEW!', td),
 				beta        : __('BETA!', td),
@@ -257,9 +263,6 @@ export default {
 			}
 
 			return this.tabs[0]?.slug
-		},
-		filteredTabs () {
-			return this.tabs.filter(t => t.slug !== (this.active ? this.active : (this.route && this.route.name ? this.route.name : '')))
 		}
 	},
 	methods : {
@@ -297,7 +300,9 @@ export default {
 			}
 
 			if (window.matchMedia('(max-width: 782px)').matches) {
-				this.showMobileMenu = true
+				this.showMobileMenu    = true
+				this.showScrollingTabs = false
+
 				return
 			}
 
@@ -307,8 +312,7 @@ export default {
 				return
 			}
 
-			// Get the full content width using scrollWidth (works even when clipped).
-			const tabsWidth = tabsScroller.scrollWidth
+			const tabsWidth = this.measureTabsWidth(tabsScroller)
 
 			let buttonWidth = 0,
 				extraWidth  = 0
@@ -330,7 +334,29 @@ export default {
 			const totalNeeded    = tabsWidth + buttonWidth + extraWidth
 			const availableWidth = tabsContainer.offsetWidth
 
-			this.showMobileMenu = totalNeeded > availableWidth
+			// Tabs that do not fit are scrolled rather than hidden. Above the mobile breakpoint there is a
+			// pointer to scroll with, and putting eight tabs behind a dropdown on a laptop is a downgrade
+			// from tabs; below it, the list is the only thing that works, which the branch above handles.
+			this.showMobileMenu    = false
+			this.showScrollingTabs = totalNeeded > availableWidth
+		},
+		measureTabsWidth (scroller) {
+			// The scroller itself is overflow: clip with min-width: 0, so its own scrollWidth can never
+			// exceed its clientWidth - which is why the old comparison against its parent never fired.
+			const wrap = scroller.querySelector('.var-tabs__tab-wrap')
+			if (wrap && wrap.scrollWidth) {
+				return wrap.scrollWidth
+			}
+
+			const tabs = scroller.querySelectorAll('.var-tab')
+			if (!tabs.length) {
+				return scroller.scrollWidth
+			}
+
+			let sum = 0
+			tabs.forEach(tab => (sum += tab.offsetWidth))
+
+			return sum
 		},
 		createRipple (event) {
 			const button   = event.currentTarget
@@ -519,12 +545,60 @@ export default {
 				position: absolute;
 				pointer-events: none;
 			}
+
+			// The state between "they all fit" and "hide them in a menu". The tabs could always be
+			// scrolled here - Varlet's own wrapper handles that - but nothing said so, which is the
+			// actual bug. A slim scrollbar is both the signal and the control.
+			&.is-scrolling {
+				overflow: visible;
+
+				.var-tabs__tab-wrap {
+					scrollbar-width: thin;
+					scrollbar-color: $gray2 transparent;
+					padding-bottom: 3px;
+
+					&::-webkit-scrollbar {
+						height: 3px;
+					}
+
+					&::-webkit-scrollbar-thumb {
+						border-radius: 3px;
+						background: $gray2;
+					}
+
+					&::-webkit-scrollbar-track {
+						background: transparent;
+					}
+				}
+			}
+		}
+
+		// Fades the trailing edge so a cut-off tab reads as "there is more" rather than as the end of the
+		// list. Takes no pointer events, so scrolling still works through it.
+		&:has(.tabs-scroller.is-scrolling)::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 1px;
+			width: 40px;
+			background: linear-gradient(to right, rgba(255, 255, 255, 0), #fff);
+			pointer-events: none;
 		}
 
 		.button-right,
 		.tabs-extra {
 			position: absolute;
 			right: 0;
+		}
+
+		// The mobile tab picker spans the full width, and these sit on top of it. The save button at the
+		// foot of the page is unaffected, so nothing becomes unreachable. A consumer that fills the slot
+		// is left alone: its buttons have no equivalent anywhere else on the screen.
+		@media screen and (max-width: 782px) {
+			.button-right:not(.has-custom-button) {
+				display: none;
+			}
 		}
 
 		.tab-score {
@@ -563,51 +637,60 @@ export default {
 	.aioseo-mobile-tabs {
 		--mobile-font-size: 14px;
 
-		height: 40px;
 		position: relative;
 		user-select: none;
 		width: 100%;
 
 		.active-tab {
-			--spacing-x: 20px;
+			--spacing-x: 14px;
 
 			align-items: center;
-			color: $blue;
+			border: 1px solid $input-border;
+			border-radius: 4px;
+			background: #fff;
+			color: $black;
 			cursor: pointer;
-			display: inline-flex;
-			min-height: 100%;
-			padding-left: var(--spacing-x);
+			display: flex;
+			justify-content: space-between;
+			min-height: 46px;
+			padding: 0 var(--spacing-x);
 			position: relative;
 
 			div {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				width: 100%;
 				font-size: var(--mobile-font-size);
+				font-weight: 600;
 
-				span {
-					background-color: $blue;
-					bottom: -2px;
-					height: 2px;
-					left: 0;
-					position: absolute;
-					right: calc(var(--spacing-x) * -2);
-					z-index: 10;
+				// The underline belonged to the old tab-shaped trigger; a field does not carry one.
+				span.tab-indicator {
+					display: none;
 				}
 			}
 
 			svg.aioseo-caret {
-				--caret-size: 24px;
+				--caret-size: 20px;
 
+				flex: 0 0 auto;
 				height: var(--caret-size);
-				left: 100%;
-				position: absolute;
-				top: calc(50% - var(--caret-size) / 2);
+				position: static;
 				transform: rotate(180deg);
 				transition: transform 0.3s;
 				width: var(--caret-size);
+				color: $placeholder-color;
 
 				&.rotated {
 					transform: rotate(0);
 				}
 			}
+		}
+
+		.tab-dropdown {
+			position: relative;
+			z-index: 3;
+			margin-top: 6px;
 		}
 
 		.tab-links {
@@ -616,7 +699,9 @@ export default {
 			border-top: none;
 			position: relative;
 			z-index: 3;
-			padding: 8px;
+			border-radius: 4px;
+			box-shadow: 0 10px 26px -14px rgba(20, 27, 56, .3);
+			overflow: hidden;
 			width: 100%;
 			max-width: 300px;
 
@@ -626,12 +711,28 @@ export default {
 
 			a {
 				font-size: var(--mobile-font-size);
-				padding: 10px;
-				display: block;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				min-height: 46px;
+				padding: 10px 14px;
+				border-top: 1px solid $gray2;
 				color: $black;
 				text-decoration: none;
 
+				&:first-child {
+					border-top: 0;
+				}
+
 				&:hover {
+					background: $blue4;
+					color: $blue;
+				}
+
+				// Where you are, said in the list rather than only in the trigger.
+				&.current {
+					background: $blue4;
+					font-weight: 700;
 					color: $blue;
 				}
 

@@ -74,6 +74,33 @@ class Admin {
 	];
 
 	/**
+	 * The handles each Block Editor link format bundle reads off the `wp` global.
+	 *
+	 * NOTE: Webpack cannot see a global read, so these never reach the generated asset manifest.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @var array
+	 */
+	protected $linkFormatGlobalHandles = [
+		'block'     => [ 'wp-editor' ],
+		'block-old' => [
+			'wp-api-fetch',
+			'wp-block-editor',
+			'wp-components',
+			'wp-compose',
+			'wp-data',
+			'wp-dom',
+			'wp-element',
+			'wp-html-entities',
+			'wp-i18n',
+			'wp-keycodes',
+			'wp-rich-text',
+			'wp-url'
+		]
+	];
+
+	/**
 	 * Connect class instance.
 	 *
 	 * @since 4.4.3
@@ -397,7 +424,8 @@ class Admin {
 	/**
 	 * Registers our link format for the Block Editor.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Reads the script dependencies from the generated asset manifest.
 	 *
 	 * @return void
 	 */
@@ -418,22 +446,34 @@ class Admin {
 			}
 		}
 
+		$asset = "link-format/link-format-$linkFormat";
+
+		$dependencies = aioseo()->core->assets->getAssetDependencies( $asset, [
+			// Only reached when a build left no manifest behind. Copied from the block manifest,
+			// whose handles cover both bundles. `react` carries the bundled JSX runtime.
+			'lodash',
+			'react',
+			'wp-block-editor',
+			'wp-components',
+			'wp-compose',
+			'wp-data',
+			'wp-dom',
+			'wp-element',
+			'wp-hooks',
+			'wp-html-entities',
+			'wp-i18n',
+			'wp-polyfill',
+			'wp-primitives',
+			'wp-rich-text',
+			'wp-url'
+		] );
+
+		$dependencies = array_merge( $dependencies, $this->linkFormatGlobalHandles[ $linkFormat ] );
+
 		wp_register_script(
 			'aioseo-link-format',
-			aioseo()->core->assets->getAssetsPath( false ) . "link-format/link-format-$linkFormat.js",
-			[
-				'wp-blocks',
-				'wp-i18n',
-				'wp-element',
-				'wp-plugins',
-				'wp-components',
-				'wp-api',
-				'wp-editor',
-				'wp-hooks',
-				'lodash',
-				// The bundled JSX runtime reads the React global directly.
-				'react'
-			],
+			aioseo()->core->assets->getAssetsPath( false ) . "$asset.js",
+			array_values( array_unique( $dependencies ) ),
 			aioseo()->version,
 			true
 		);
@@ -1200,7 +1240,8 @@ class Admin {
 	/**
 	 * Appends a message to the default WordPress "trashed" message.
 	 *
-	 * @since 4.1.2
+	 * @since   4.1.2
+	 * @version 5.0.3 Offer the redirect without a prefilled target.
 	 *
 	 * @param  array $messages The original messages.
 	 * @return array           The modified messages.
@@ -1245,7 +1286,7 @@ class Admin {
 
 			$posts[] = [
 				'url'    => str_replace( '__trashed', '', get_permalink( $post ) ),
-				'target' => '/',
+				'target' => '',
 				'type'   => 301
 			];
 		}

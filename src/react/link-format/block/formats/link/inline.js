@@ -114,19 +114,15 @@ function InlineLinkUI ({
 			) &&
 			linkValue.url === nextValue.url
 
-		// If change handler was called as a result of a settings change during
-		// link insertion, it must be held in state until the link is ready to
-		// be applied.
-		const didToggleSettingForNewLink =
-			didToggleSetting && nextValue.url === undefined
-
-		// If link will be assigned, the state value can be considered flushed.
-		// Otherwise, persist the pending changes.
-		setNextLinkValue(didToggleSettingForNewLink ? nextValue : undefined)
-
-		if (didToggleSettingForNewLink) {
+		// Nothing can be applied before the URL is submitted, and a format built without an
+		// href crashes the editor once the block is serialized, so hold every pending value.
+		if (undefined === nextValue.url) {
+			setNextLinkValue(nextValue)
 			return
 		}
+
+		// The link is about to be assigned, so the pending values are flushed.
+		setNextLinkValue(undefined)
 
 		const newUrl = prependHTTP(nextValue.url)
 		const format = createLinkFormat({
@@ -140,7 +136,7 @@ function InlineLinkUI ({
 
 		if (isCollapsed(value) && !isActive) {
 			// A picked suggestion supplies its own label; the title attribute is not a label.
-			const newText = nextValue.suggestionLabel || nextValue.title || newUrl
+			const newText = nextValue.suggestionLabel || newUrl
 			const toInsert = applyFormat(
 				create({ text: newText }),
 				format,
@@ -173,31 +169,32 @@ function InlineLinkUI ({
 		}
 	}
 
-	// eslint-disable-next-line one-var
-	let anchorValue = undefined
-	if (versionCompare(window.aioseo.wpVersion, '6.1', '>=')) {
-		anchorValue = anchorRef
-	}
-	if (versionCompare(window.aioseo.wpVersion, '6.6', '>=')) {
-		let anchor = null
-		if (useAnchor) {
-			anchor = useAnchor({
-				editableContentElement : contentRef.current,
-				settings               : {
-					...linkSettings,
-					isActive
-				}
-			})
+	// From 6.1 on, anchor and place the popover the way core's own link format does. A raw
+	// selection range misplaces it once the selection leaves the editable, which core's
+	// anchor guards against. Only 6.1/6.2 read `value`.
+	const isFloatingPopover = versionCompare(window.aioseo.wpVersion, '6.1', '>=')
 
-			anchorValue = anchor ?? anchorValue
-		}
+	let anchorValue = anchorRef
+	if (isFloatingPopover && useAnchor) {
+		anchorValue = useAnchor({
+			editableContentElement : contentRef.current,
+			value,
+			settings               : {
+				...linkSettings,
+				isActive
+			}
+		}) ?? anchorRef
 	}
+
+	// The legacy Popover below 6.1 reads only `anchorRef` and `position`; any other prop lands on its DOM node.
+	const popoverProps = isFloatingPopover
+		? { anchor: anchorValue, placement: 'bottom', shift: true }
+		: { anchorRef, position: 'bottom center' }
 
 	return (
 		<Popover
 			key={mountingKey}
-			anchor={ versionCompare(window.aioseo.wpVersion, '6.1', '>=') ? anchorValue : undefined }
-			anchorRef={ versionCompare(window.aioseo.wpVersion, '6.1', '<') ? anchorValue : undefined }
+			{ ...popoverProps }
 			focusOnMount={addingLink ? 'firstElement' : false}
 			onClose={stopAddingLink}
 		>

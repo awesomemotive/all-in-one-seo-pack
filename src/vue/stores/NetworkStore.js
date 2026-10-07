@@ -8,12 +8,21 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
+// The site's load in progress, kept out of the state: a save waits on it rather than sending an unloaded site's rules.
+let siteRobotsRequest = null
+
 export const useNetworkStore = defineStore('NetworkStore', {
 	state : () => ({
 		activeSites   : [],
 		networkData   : {},
 		networkRobots : {
-			rules : []
+			rules        : [],
+			defaultRules : null,
+			sitemapUrls  : null,
+			isMainSite   : false,
+			loading      : false,
+			loadFailed   : false,
+			saveBlocked  : false
 		},
 		currentSite : {}
 	}),
@@ -49,11 +58,37 @@ export const useNetworkStore = defineStore('NetworkStore', {
 				})
 		},
 		fetchSiteRobots (blogId) {
-			return http.get(links.restUrl(`network-robots/${blogId}`))
+			// The previous site's data must not stay on screen, or be saved, under this site's name.
+			this.networkRobots.rules        = []
+			this.networkRobots.defaultRules = null
+			this.networkRobots.sitemapUrls  = null
+			this.networkRobots.isMainSite   = false
+			this.networkRobots.loading      = true
+			this.networkRobots.loadFailed   = false
+			this.networkRobots.saveBlocked  = false
+
+			siteRobotsRequest = http.get(links.restUrl(`network-robots/${blogId}`))
 				.then(response => {
 					// Normalize at the store's entry point — the table's row indices have to line up with the store.
-					this.networkRobots.rules = normalizeRules(response.body.rules)
+					this.networkRobots.rules        = normalizeRules(response.body?.rules)
+					this.networkRobots.defaultRules = response.body?.defaultRules ?? null
+					this.networkRobots.sitemapUrls  = response.body?.sitemapUrls ?? null
+					this.networkRobots.isMainSite   = !!response.body?.isMainSite
 				})
+				.catch(error => {
+					this.networkRobots.loadFailed = true
+
+					throw error
+				})
+				.finally(() => {
+					this.networkRobots.loading = false
+				})
+
+			return siteRobotsRequest
+		},
+		waitForSiteRobots () {
+			// Settles either way; the caller reads loadFailed afterwards.
+			return siteRobotsRequest ? siteRobotsRequest.catch(() => {}) : Promise.resolve()
 		},
 		getActiveSites (domains) {
 			return http.post(links.restUrl('activated'))

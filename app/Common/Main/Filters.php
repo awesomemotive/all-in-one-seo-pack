@@ -458,6 +458,7 @@ abstract class Filters {
 			'tcb_lightbox',
 			'bricks_template', // Bricks Builder
 			'_et_pb_speculation', // Divi Visual Builder prerender post type.
+			'et_pb_layout', // Divi Library layouts, which Extra makes public.
 
 			// Thrive Themes internal post types.
 			'tva_module',

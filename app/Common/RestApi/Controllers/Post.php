@@ -58,12 +58,16 @@ class Post extends Base {
 	 * @return void
 	 */
 	private function registerMetaDataField( $postType ) {
-		$callbacks = [
+		register_rest_field( $postType, 'aioseo_meta_data', [
 			'get_callback'    => [ $this, 'getMetaData' ],
-			'update_callback' => [ $this, 'updateMetaData' ]
-		];
-
-		register_rest_field( $postType, 'aioseo_meta_data', $callbacks );
+			'update_callback' => [ $this, 'updateMetaData' ],
+			'schema'          => [
+				'type'        => 'object',
+				'arg_options' => [
+					'validate_callback' => [ $this, 'validateMetaData' ]
+				]
+			]
+		] );
 	}
 
 	/**
@@ -77,7 +81,11 @@ class Post extends Base {
 	private function registerDeprecatedUpdateFields( $postType ) {
 		foreach ( $this->deprecatedFields as $oldKey => $newKey ) {
 			register_rest_field( $postType, $oldKey, [
-				'update_callback' => [ $this, 'updateMetaData' ]
+				'update_callback' => [ $this, 'updateMetaData' ],
+				// Without a type, a list or an object reached the model and was saved as the text "Array".
+				'schema'          => [
+					'type' => 'string'
+				]
 			] );
 		}
 	}
@@ -85,15 +93,14 @@ class Post extends Base {
 	/**
 	 * Checks whether the user is allowed to update meta data for the given post type.
 	 *
-	 * @since 4.9.8
+	 * @since   4.9.8
+	 * @version 5.0.3 Moved the aioseo_rest_api_allow_update check to updateMetaData(); made protected.
 	 *
 	 * @param  string $postType The post type name.
 	 * @return bool             Whether the user is allowed to update meta data for the post type.
 	 */
-	private function isAllowedToUpdate( $postType ) {
-		return apply_filters( 'aioseo_rest_api_allow_update', true, $postType ) &&
-			aioseo()->helpers->canEditPostType( $postType ) &&
-			$this->canEditMetaData();
+	protected function isAllowedToUpdate( $postType ) {
+		return aioseo()->helpers->canEditPostType( $postType ) && $this->canEditMetaData();
 	}
 
 	/**
@@ -116,14 +123,16 @@ class Post extends Base {
 	/**
 	 * Allows users to update the meta data of the given post.
 	 *
-	 * @since 4.9.8
+	 * @since   4.9.8
+	 * @version 5.0.3 Added $request.
 	 *
-	 * @param  array    $metaData  The new meta data.
-	 * @param  \WP_Post $post      The post object.
-	 * @param  string   $fieldName The field name.
+	 * @param  array            $metaData  The new meta data.
+	 * @param  \WP_Post         $post      The post object.
+	 * @param  string           $fieldName The field name.
+	 * @param  \WP_REST_Request $request   The request.
 	 * @return void
 	 */
-	public function updateMetaData( $metaData, $post, $fieldName ) {
+	public function updateMetaData( $metaData, $post, $fieldName, $request ) {
 		// $post is a WP_Post on wp/v2 routes but a WC_Product (or other CRUD object) on wc/v3.
 		// Resolve the ID without touching magic getters, which trigger wc_doing_it_wrong on WC objects.
 		$postId   = $post instanceof \WP_Post ? $post->ID : ( is_object( $post ) && method_exists( $post, 'get_id' ) ? $post->get_id() : 0 );
@@ -131,8 +140,19 @@ class Post extends Base {
 		if (
 			! $postId ||
 			! current_user_can( 'edit_post', $postId ) ||
-			! $this->isAllowedToUpdate( $postType )
+			! apply_filters( 'aioseo_rest_api_allow_update', true, $postType )
 		) {
+			return;
+		}
+
+		// WooCommerce runs its batch items without the schema validation, so the types are checked here too.
+		$invalidField = $this->getInvalidField( $request );
+		if ( null !== $invalidField ) {
+			// Only the invalid field reports it, so the item gets the error once, and none of its fields is saved.
+			if ( $invalidField[0] === $fieldName ) {
+				$this->rejectMetaDataUpdate( $request, $postId, $fieldName, $invalidField[1] );
+			}
+
 			return;
 		}
 
@@ -145,7 +165,14 @@ class Post extends Base {
 		// Prevent the user from overriding the post ID.
 		unset( $metaData['post_id'] );
 
+		// A payload with nothing left to write was never going to be saved, so it isn't an error.
 		if ( empty( $metaData ) ) {
+			return;
+		}
+
+		if ( ! $this->isAllowedToUpdate( $postType ) ) {
+			$this->rejectMetaDataUpdate( $request, $postId, $fieldName, $this->getMetaDataPermissionError() );
+
 			return;
 		}
 
@@ -165,7 +192,8 @@ class Post extends Base {
 	/**
 	 * Sets the given post as the queried object of the main query.
 	 *
-	 * @since 4.9.8
+	 * @since   4.9.8
+	 * @version 5.0.3 Sets queried_object_id instead of get_queried_object_id.
 	 *
 	 * @param  array $postArr The post array.
 	 * @return void
@@ -180,7 +208,7 @@ class Post extends Base {
 		$wp_query->posts                 = [ $post ];
 		$wp_query->post                  = $post;
 		$wp_query->post_count            = 1;
-		$wp_query->get_queried_object_id = (int) $post->ID;
+		$wp_query->queried_object_id     = (int) $post->ID;
 		$wp_query->queried_object        = $post;
 		$wp_query->is_single             = true;
 		$wp_query->is_singular           = true;

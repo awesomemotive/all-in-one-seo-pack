@@ -270,6 +270,9 @@ class Updates {
 
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
 
+		// The LLMs files are static, so without this they keep the previous version's output until the next daily run.
+		aioseo()->llms->scheduleRegeneration();
+
 		// Always clear the cache if the last active version is different from our current.
 
 		if ( version_compare( $lastActiveVersion, AIOSEO_VERSION, '<' ) ) {

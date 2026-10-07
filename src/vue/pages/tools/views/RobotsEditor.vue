@@ -110,6 +110,25 @@
 					</template>
 				</core-settings-row>
 
+				<div
+					v-if="isNetworkAdminSitePreview"
+					class="aioseo-settings-row"
+				>
+					<core-alert
+						v-if="networkStore.networkRobots.loadFailed"
+						type="red"
+					>
+						{{ networkStore.networkRobots.saveBlocked ? strings.siteNotSaved : strings.siteLoadFailed }}
+					</core-alert>
+
+					<p
+						v-if="showNetworkPreviewNote"
+						class="description"
+					>
+						{{ strings.networkPreviewNote }}
+					</p>
+				</div>
+
 				<core-settings-row
 					:name="strings.enableCustomRobots"
 					class="no-border no-margin"
@@ -523,7 +542,6 @@ export default {
 	},
 	data () {
 		return {
-			defaultRules     : this.rootStore.aioseo.data.robots?.defaultRules || {},
 			directiveOptions : [
 				{ value: 'allow', label: 'Allow' },
 				{ value: 'disallow', label: 'Disallow' },
@@ -571,6 +589,9 @@ export default {
 					__('Just like WordPress, %1$s generates a dynamic file so there is no static file to be found on your server.  The content of the robots.txt file is stored in your WordPress database.', td),
 					import.meta.env.VITE_NAME
 				),
+				siteNotSaved        : __('Your changes were not saved, because the robots.txt rules for this site could not be loaded. Reload the page and try again.', td),
+				siteLoadFailed      : __('The robots.txt rules for this site could not be loaded, so they can\'t be edited or saved. Reload the page and try again.', td),
+				networkPreviewNote  : __('In Network Admin, this preview can\'t include rules from plugins that are active only on the selected site, such as WooCommerce. They still appear in the live robots.txt file. Use Open Robots.txt above to view them.', td),
 				directive           : __('Directive', td),
 				disallow            : __('Disallow', td),
 				enableCustomRobots  : __('Enable Custom Robots.txt', td),
@@ -618,6 +639,14 @@ export default {
 		}
 	},
 	computed : {
+		defaultRules () {
+			// When previewing a specific site from Network Admin, use the default rules the API returns for it.
+			if (this.isNetworkAdminSitePreview) {
+				return this.networkStore.networkRobots.defaultRules || {}
+			}
+
+			return this.rootStore.aioseo.data.robots?.defaultRules || {}
+		},
 		btnImportRobotsTxtDisabled () {
 			if (!this.inputImportRobotsTxtFromUrl && !this.inputPasteRobotsTxtText) {
 				return true
@@ -630,7 +659,11 @@ export default {
 		},
 		inputCustomRobotsTxtPreview () {
 			let output = null
-			const sitemapUrls  = '\r\n' + this.rootStore.aioseo.data.robots.sitemapUrls.filter(url => 0 < url.length).join('\r\n')
+			// A site picked in Network Admin lists its own sitemaps; the page loaded with the main site's.
+			const siteSitemapUrls = this.isNetworkAdminSitePreview
+				? (this.networkStore.networkRobots.sitemapUrls || [])
+				: this.rootStore.aioseo.data.robots.sitemapUrls
+			const sitemapUrls  = '\r\n' + siteSitemapUrls.filter(url => 0 < url.length).join('\r\n')
 			const networkRules = groupRulesByUserAgent(this.normalizedNetworkRules)
 
 			output = this.getOptions.enable
@@ -640,6 +673,16 @@ export default {
 			output = stringifyRuleset(output) + sitemapUrls
 
 			return output.replace(/<[^>]*>/g, '')
+		},
+		isNetworkAdminSitePreview () {
+			// isNetworkSite is also true on a site's own editor, where no site is ever fetched.
+			return this.rootStore.aioseo.data.isNetworkAdmin && this.isNetworkSite
+		},
+		showNetworkPreviewNote () {
+			// isMainSite is unknown until the site has loaded, and the main site's preview includes plugin rules.
+			const { loading, loadFailed, isMainSite } = this.networkStore.networkRobots
+
+			return !loading && !loadFailed && !isMainSite
 		},
 		isNetworkSite () {
 			return this.rootStore.aioseo.data.isMultisite && 'network' !== this.networkStore.currentSite?.blog_id

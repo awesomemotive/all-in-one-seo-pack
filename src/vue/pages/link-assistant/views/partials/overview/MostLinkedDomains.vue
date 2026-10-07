@@ -33,11 +33,9 @@
 			>
 				<table-column class="domain">
 					<div class="row">
-						<img
-							v-if="getFaviconUrl(row.name)"
-							alt="Domain Favicon"
+						<domain-favicon
 							class="favicon"
-							:src="getFaviconUrl(row.name)"
+							:domain="row.name"
 						/>
 						<core-tooltip
 							type="action"
@@ -75,8 +73,8 @@
 
 <script>
 import numbers from '@/vue/utils/numbers'
-import { getFaviconUrl } from '@/vue/utils/favicon'
 import CoreCard from '@/vue/components/common/core/Card'
+import DomainFavicon from '@/vue/components/common/core/DomainFavicon'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import CoreDonutChartWithLegend from '@/vue/components/common/core/DonutChartWithLegend'
 import TableColumn from '@/vue/components/common/table/Column'
@@ -89,6 +87,7 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 export default {
 	components : {
 		CoreCard,
+		DomainFavicon,
 		CoreTooltip,
 		CoreDonutChartWithLegend,
 		TableColumn,
@@ -188,9 +187,6 @@ export default {
 				}
 			]
 		}
-	},
-	methods : {
-		getFaviconUrl
 	}
 }
 </script>
@@ -205,8 +201,17 @@ export default {
 			align-items: center;
 
 			.favicon {
+				display: inline-flex;
+				flex-shrink: 0;
 				width: 15px;
+				height: 15px;
 				margin: 0 10px 0 0;
+
+				img,
+				svg {
+					width: 15px;
+					height: 15px;
+				}
 			}
 
 			.domain-name {

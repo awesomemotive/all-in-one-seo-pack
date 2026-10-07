@@ -30,8 +30,15 @@ if ( class_exists( 'ActionScheduler_QueueRunner' ) ) {
 	ActionScheduler_QueueRunner::instance()->unhook_dispatch_async_request();
 }
 
+// Decide whether to remove all data BEFORE dropData() runs - its uninstallDb() deletes the
+// aioseo_options row, so deciding afterwards would depend on a stale object cache.
+$removeAllData = aioseo()->uninstall->shouldDropData();
+
 // Drop our custom tables and data.
 aioseo()->uninstall->dropData();
+
+// Drop data left by true addons that can't clean up themselves during a genuine uninstall.
+aioseo()->uninstall->dropAddonData( $removeAllData );
 
 // Remove translation files.
 global $wp_filesystem;

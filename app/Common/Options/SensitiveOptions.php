@@ -92,6 +92,21 @@ class SensitiveOptions {
 	}
 
 	/**
+	 * Re-reads the options from the database, e.g. after switching blogs.
+	 *
+	 * NOTE: Discards unsaved changes.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return void
+	 */
+	public function refresh() {
+		$this->init();
+
+		$this->shouldSave = false;
+	}
+
+	/**
 	 * Reads the raw option values from the database.
 	 *
 	 * Subclasses can override this to change the storage mechanism

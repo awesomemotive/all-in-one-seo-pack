@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIOSEO\Plugin\Common\Newsroom\Newsroom;
+
 /**
  * Class that holds our dashboard widget.
  *
@@ -188,6 +190,81 @@ class Dashboard {
 	}
 
 	/**
+	 * Returns the items the newsroom widget shows.
+	 *
+	 * NOTE: One slot is held for the newest item of every other product that has any. AIOSEO posts far
+	 * more often than the addons do, so on dates alone their news never reaches the four rows on show —
+	 * which is the whole reason it was invisible here.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @param  int   $limit How many items to return.
+	 * @return array        The items, newest first.
+	 */
+	private function getNewsroomWidgetItems( $limit = 4 ) {
+		// Other products add their own items here; each carries the badge and label the rows render.
+		$items = apply_filters( 'aioseo_newsroom_dashboard_items', aioseo()->newsroom->getItems(), Newsroom::PRODUCT );
+		if ( ! is_array( $items ) || ! $items ) {
+			return [];
+		}
+
+		$byId = [];
+		foreach ( $items as $item ) {
+			if ( empty( $item['url'] ) || empty( $item['title'] ) ) {
+				continue;
+			}
+
+			// An item cross-posted into more than one feed is still one item.
+			$key = ! empty( $item['id'] ) ? (string) $item['id'] : (string) $item['url'];
+			if ( ! isset( $byId[ $key ] ) ) {
+				$byId[ $key ] = $item;
+			}
+		}
+
+		$items = array_values( $byId );
+		usort( $items, function ( $a, $b ) {
+			return strtotime( $b['date'] ?? '' ) <=> strtotime( $a['date'] ?? '' );
+		} );
+
+		$reserved = [];
+		foreach ( $items as $item ) {
+			$product = (string) ( $item['product'] ?? '' );
+			if ( '' === $product || Newsroom::PRODUCT === $product || isset( $reserved[ $product ] ) ) {
+				continue;
+			}
+
+			$reserved[ $product ] = $item;
+		}
+
+		// Leave room for the reserved items, then fill what is left with the newest of everything.
+		$reserved  = array_slice( array_values( $reserved ), 0, max( 0, $limit - 1 ) );
+		$reservedKeys = [];
+		foreach ( $reserved as $item ) {
+			$reservedKeys[] = ! empty( $item['id'] ) ? (string) $item['id'] : (string) $item['url'];
+		}
+
+		$filled = [];
+		foreach ( $items as $item ) {
+			$key = ! empty( $item['id'] ) ? (string) $item['id'] : (string) $item['url'];
+			if ( in_array( $key, $reservedKeys, true ) ) {
+				continue;
+			}
+
+			$filled[] = $item;
+			if ( count( $filled ) >= $limit - count( $reserved ) ) {
+				break;
+			}
+		}
+
+		$shown = array_merge( $filled, $reserved );
+		usort( $shown, function ( $a, $b ) {
+			return strtotime( $b['date'] ?? '' ) <=> strtotime( $a['date'] ?? '' );
+		} );
+
+		return array_slice( $shown, 0, $limit );
+	}
+
+	/**
 	 * Display RSS Dashboard Widget
 	 *
 	 * @since 4.0.0
@@ -206,7 +283,7 @@ class Dashboard {
 			return;
 		}
 
-		$items = array_slice( aioseo()->newsroom->getItems(), 0, 4 );
+		$items = $this->getNewsroomWidgetItems();
 		if ( ! $items ) {
 			esc_html_e( 'Temporarily unable to load feed.', 'all-in-one-seo-pack' );
 

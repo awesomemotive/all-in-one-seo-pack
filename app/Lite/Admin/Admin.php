@@ -29,9 +29,8 @@ class Admin extends CommonAdmin\Admin {
 	 * @since 4.0.0
 	 */
 	public function __construct() {
-		if ( ! wp_doing_cron() ) {
-			parent::__construct();
-		}
+		// The parent registers the Action Scheduler callbacks WP-Cron runs, and returns early for cron itself.
+		parent::__construct();
 
 		$this->connect = new Connect();
 	}

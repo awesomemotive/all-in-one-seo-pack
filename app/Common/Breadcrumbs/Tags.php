@@ -72,7 +72,8 @@ class Tags {
 	/**
 	 * Get the value of the tag to replace.
 	 *
-	 * @since 4.1.1
+	 * @since   4.1.1
+	 * @version 5.0.3 Return an empty value when the crumb isn't of the tag's kind.
 	 *
 	 * @param  string $tag  The tag to look for.
 	 * @param  int    $item The crumb array.
@@ -98,16 +99,17 @@ class Tags {
 				return $product ? $product->get_sku() : '';
 			case 'breadcrumb_wc_product_brand':
 				return $product ? aioseo()->helpers->getWooCommerceBrand( $product->get_id() ) : '';
+			// A template can use any tag on any crumb, so each one only applies to crumbs of its own kind.
 			case 'breadcrumb_author_first_name':
-				return $item['reference']->first_name;
+				return is_a( $item['reference'], 'WP_User' ) ? $item['reference']->first_name : '';
 			case 'breadcrumb_author_last_name':
-				return $item['reference']->last_name;
+				return is_a( $item['reference'], 'WP_User' ) ? $item['reference']->last_name : '';
 			case 'breadcrumb_archive_post_type_name':
-				return $item['reference']->label;
+				return is_a( $item['reference'], 'WP_Post_Type' ) ? $item['reference']->label : '';
 			case 'breadcrumb_search_string':
-				return $item['reference'];
+				return is_scalar( $item['reference'] ) ? (string) $item['reference'] : '';
 			case 'breadcrumb_format_page_number':
-				return $item['reference']['paged'];
+				return is_array( $item['reference'] ) && isset( $item['reference']['paged'] ) ? $item['reference']['paged'] : '';
 			default:
 				return $item['label'];
 		}

@@ -35,6 +35,13 @@
 					<slot name="description" />
 				</template>
 
+				<template
+					v-if="$slots.actions"
+					#actions
+				>
+					<slot name="actions" />
+				</template>
+
 				<template #actions-divider>
 					<slot name="actions-divider" />
 				</template>

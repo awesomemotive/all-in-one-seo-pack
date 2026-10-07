@@ -646,11 +646,23 @@ class SeoChecklist {
 	/**
 	 * Check if Broken Link Checker is installed.
 	 *
-	 * @since 4.9.4
+	 * NOTE: A running plugin answers this on its own. {@see \AIOSEO\Plugin\Common\Utils\Helpers
+	 * ::getPluginData()} identifies plugins by their WordPress.org directory, so a copy installed
+	 * anywhere else — a Composer-managed site, a manual install into a renamed folder — reports as
+	 * missing while it is active, and the checklist then asks the reader to install what they are
+	 * already running. It still answers for a copy that is present but not activated, which is the
+	 * one state the function cannot see.
+	 *
+	 * @since   4.9.4
+	 * @version 5.0.3 Treats an active plugin as installed, whatever directory it sits in.
 	 *
 	 * @return bool True if BLC is installed.
 	 */
 	protected function checkBrokenLinkCheckerInstalled() {
+		if ( $this->isBrokenLinkCheckerActive() ) {
+			return true;
+		}
+
 		$pluginData = aioseo()->helpers->getPluginData();
 
 		return ! empty( $pluginData['brokenLinkChecker']['installed'] );

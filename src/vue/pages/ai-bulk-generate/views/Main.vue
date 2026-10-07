@@ -272,6 +272,12 @@ const postTypePluralLabel = computed(() => {
 })
 
 const postsListUrl = computed(() => {
+	// Empty when no return URL was passed, or when the one passed failed validation.
+	const returnUrl = rootStore.aioseo?.aiBulkGenerate?.returnUrl
+	if (returnUrl) {
+		return returnUrl
+	}
+
 	const baseUrl = rootStore.aioseo.urls.editScreen
 
 	// For attachments, link back to the Media Library.
@@ -314,11 +320,7 @@ const strings = computed(() => {
 			? __('No images were selected for bulk generation.', td)
 			: __('No posts were selected for bulk generation.', td),
 		description : isComplete.value
-			? sprintf(
-				// Translators: 1 - The type being generated (e.g. "SEO titles", "meta descriptions", "alt texts").
-				__('All done! Your %1$s have been generated.', td),
-				config.strings.typeName
-			)
+			? getCompleteDescription(config.strings.typeName)
 			: sprintf(
 				// Translators: 1 - The type being generated (e.g. "SEO titles", "meta descriptions", "alt texts").
 				__('Your %1$s are now being generated. Please wait a moment.', td),
@@ -336,11 +338,12 @@ const strings = computed(() => {
 		errorGeneration : config.strings.errorGeneration,
 		errorSaving     : config.strings.errorSaving,
 		errorByCode     : {
-			no_content        : __('This post has no content. Add content and try again.', td),
-			content_too_short : __('This post is too short. Add more content and try again.', td),
-			post_not_found    : __('This post could not be found. It may have been deleted.', td),
-			unauthorized      : __('You don\'t have permission to edit this post.', td),
-			not_an_image      : __('The attachment is not an image.', td)
+			no_content           : __('This post has no content. Add content and try again.', td),
+			content_too_short    : __('This post is too short. Add more content and try again.', td),
+			post_not_found       : __('This post could not be found. It may have been deleted.', td),
+			unauthorized         : __('You don\'t have permission to edit this post.', td),
+			not_an_image         : __('The attachment is not an image.', td),
+			insufficient_credits : __('Insufficient AI credits.', td)
 		}
 	}
 })
@@ -380,13 +383,50 @@ const generateAiContent = async (postId) => {
 	return config.extractAllValues(response.body)
 }
 
+const getCompleteDescription = (typeName) => {
+	const total     = bulkItems.value.length
+	const succeeded = bulkItems.value.filter(item => 'success' === item.status).length
+	if (total === succeeded) {
+		return sprintf(
+			// Translators: 1 - The type being generated (e.g. "SEO titles", "meta descriptions", "alt texts").
+			__('All done! Your %1$s have been generated.', td),
+			typeName
+		)
+	}
+
+	if (0 < succeeded) {
+		return sprintf(
+			// Translators: 1 - The number of items generated, 2 - The number of items selected, 3 - The type being generated (e.g. "SEO titles").
+			__('%1$s of %2$s %3$s were generated. Check the rows below for the errors.', td),
+			succeeded,
+			total,
+			typeName
+		)
+	}
+
+	if (bulkItems.value.every(item => 'insufficient_credits' === item.errorCode)) {
+		return sprintf(
+			// Translators: 1 - The type being generated (e.g. "SEO titles", "meta descriptions", "alt texts").
+			__('No %1$s were generated because there are not enough AI credits.', td),
+			typeName
+		)
+	}
+
+	return sprintf(
+		// Translators: 1 - The type being generated (e.g. "SEO titles", "meta descriptions", "alt texts").
+		__('No %1$s were generated. Check the rows below for the errors.', td),
+		typeName
+	)
+}
+
 const processAllItems = async () => {
 	const featureCost = getFeatureCost(activeTypeConfig.value.featureCostName)
 
 	for (const item of bulkItems.value) {
 		if (!hasEnoughCredits(featureCost)) {
-			item.status = 'error'
-			item.error  = strings.value.noCredits
+			item.status    = 'error'
+			item.error     = strings.value.noCredits
+			item.errorCode = 'insufficient_credits'
 
 			continue
 		}
@@ -402,8 +442,9 @@ const processAllItems = async () => {
 
 			const errorCode = error.response?.body?.code
 
-			item.status = 'error'
-			item.error  = strings.value.errorByCode[errorCode] || strings.value.errorGeneration
+			item.status    = 'error'
+			item.error     = strings.value.errorByCode[errorCode] || strings.value.errorGeneration
+			item.errorCode = errorCode
 
 			continue
 		}
@@ -454,6 +495,7 @@ onMounted(() => {
 		selectedIndex   : 0,
 		showSuggestions : false,
 		error           : null,
+		errorCode       : null,
 		object          : postsData.value[id] || null
 	}))
 

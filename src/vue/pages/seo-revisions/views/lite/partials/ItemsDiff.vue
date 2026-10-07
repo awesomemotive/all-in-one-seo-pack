@@ -10,10 +10,19 @@
 							aria-hidden="true"
 							class="dashicons dashicons-minus"
 						/>
-						<span class="tag">Post Title</span>
-						<span class="tag">Separator</span>
+						<span
+							class="tag"
+							title="Current value: A Day at the Beach"
+						>Post Title</span>
+						<span
+							class="tag"
+							title="Current value: -"
+						>Separator</span>
 						<del>
-							<span class="tag">Site Title</span>
+							<span
+								class="tag"
+								title="Current value: My Website"
+							>Site Title</span>
 						</del>
 					</td>
 					<td class="diff-addedline">
@@ -21,10 +30,19 @@
 							aria-hidden="true"
 							class="dashicons dashicons-plus"
 						/>
-						<span class="tag">Post Title</span>
-						<span class="tag">Separator</span>
+						<span
+							class="tag"
+							title="Current value: A Day at the Beach"
+						>Post Title</span>
+						<span
+							class="tag"
+							title="Current value: -"
+						>Separator</span>
 						<ins>
-							<span class="tag">Tagline</span>
+							<span
+								class="tag"
+								title="Current value: Just another WordPress site"
+							>Tagline</span>
 						</ins>
 					</td>
 				</tr>
@@ -174,6 +192,10 @@
 			line-height: normal;
 			margin-right: 5px;
 			padding: 3px 6px;
+
+			&[title] {
+				cursor: help;
+			}
 		}
 
 		del {

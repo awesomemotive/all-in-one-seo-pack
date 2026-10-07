@@ -196,7 +196,7 @@ class PostsTerms {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		// Disable the cache.
@@ -616,7 +616,7 @@ class PostsTerms {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		$thePost = Models\Post::getPost( $args['postId'] );
@@ -650,7 +650,7 @@ class PostsTerms {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		$thePost = Models\Post::getPost( $args['postId'] );
@@ -686,7 +686,7 @@ class PostsTerms {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		$thePost = Models\Post::getPost( $args['postId'] );
@@ -721,7 +721,7 @@ class PostsTerms {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		$thePost = Models\Post::getPost( $args['postId'] );
@@ -757,7 +757,7 @@ class PostsTerms {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Unauthorized.'
-			], 401 );
+			], 403 );
 		}
 
 		// Check if we can process it using a page builder integration.

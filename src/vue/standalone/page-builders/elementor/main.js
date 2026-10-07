@@ -17,6 +17,7 @@ import initWatcher from './watcher'
 import initIntroduction from './introduction'
 import initLimitModifiedDate from './limit-modified-date'
 import { registerElementorUIHookAfter } from './hooks'
+import { isAioseoDocument } from './helpers'
 
 import { maybeUpdatePost as updatePostData } from '@/vue/plugins/tru-seo/components/helpers'
 
@@ -25,6 +26,8 @@ import Button from './components/Button'
 
 let aioseoApp = null,
 	preload   = false
+
+const scoreButtonId = 'aioseo-elementor-toolbar-button'
 
 /**
  * Adds body class for Elementor color scheme (dark/light).
@@ -44,16 +47,6 @@ const addBodyClass = () => {
 	})
 
 	document.body.classList.add('aioseo-elementor-' + theme)
-}
-
-/**
- * Checks if the current document is a post or page (not Site Settings, etc.).
- *
- * @returns {boolean} True if editing a post or page.
- */
-const isPostOrPage = () => {
-	const currentDocument = window.elementor?.documents?.getCurrent()
-	return [ 'wp-post', 'wp-page' ].includes(currentDocument?.config?.type)
 }
 
 /**
@@ -79,7 +72,7 @@ const registerAioseoTab = ($e) => {
  * @returns {void}
  */
 const runAioseoRoute = ({ $e }) => {
-	if (!isPostOrPage()) {
+	if (!isAioseoDocument()) {
 		return
 	}
 
@@ -103,7 +96,7 @@ const initAioseoButton = async () => {
 				$wrapper   : document.querySelector('#elementor-editor-wrapper-v2 .MuiGrid-container:first-child .MuiStack-root:last-child'),
 				tag        : 'span',
 				attributes : {
-					id    : 'aioseo-elementor-toolbar-button',
+					id    : scoreButtonId,
 					style : 'cursor: pointer;',
 					role  : 'button'
 				}
@@ -133,6 +126,19 @@ const initElementorHooks = ({ elementor, $e, Marionette }) => {
 		}
 	})
 
+	// The button is mounted once and survives document switches. `attach-preview` skips a document that is already
+	// attached, so returning to the initial one would leave the button hidden.
+	$e.commands.on('run:after', (_component, command) => {
+		if ('editor/documents/open' !== command) {
+			return
+		}
+
+		const $scoreButton = document.getElementById(scoreButtonId)
+		if ($scoreButton) {
+			$scoreButton.hidden = !isAioseoDocument()
+		}
+	})
+
 	elementor.modules.layouts.panel.pages.menu.Menu.addItem({
 		name     : 'aioseo',
 		icon     : 'aioseo aioseo-element-menu-icon aioseo-element-menu-icon-' + elementor.getPreferences('ui_theme'),
@@ -149,7 +155,7 @@ const initElementorHooks = ({ elementor, $e, Marionette }) => {
 
 	// Re-register the tab after returning from Site Settings.
 	registerElementorUIHookAfter('editor/documents/attach-preview', 'aioseo-register-tab-on-document-switch', () => {
-		if (isPostOrPage()) {
+		if (isAioseoDocument()) {
 			registerAioseoTab($e)
 		}
 	})
@@ -165,6 +171,10 @@ const initElementorHooks = ({ elementor, $e, Marionette }) => {
 					document.getElementById('elementor-panel-elements-search-area').hidden = true
 				},
 				onShow () {
+					if (!isAioseoDocument()) {
+						return
+					}
+
 					aioseoApp?.unmount()
 					aioseoApp = initAioseoEditor('#elementor-panel-aioseo')
 				},

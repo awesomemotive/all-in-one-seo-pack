@@ -2,7 +2,7 @@ const version = process.env.AIOSEO_VERSION
 
 // Picks which product's dist dir the bundles land in. Defaulting it put the Lite build in
 // dist/Pro, where the Pro build then deleted it — a green build shipping Lite with no link format.
-if (!['Lite', 'Pro'].includes(version)) {
+if (![ 'Lite', 'Pro' ].includes(version)) {
 	throw new Error(`AIOSEO_VERSION must be 'Lite' or 'Pro', got ${JSON.stringify(version)}. Run this via the main plugin's build:link-format-lite / build:link-format-pro.`)
 }
 
@@ -106,6 +106,9 @@ const config = {
 		process.env.WP_BUNDLE_ANALYZER && new BundleAnalyzerPlugin(),
 		new DependencyExtractionWebpackPlugin({
 			injectPolyfill : true,
+			// A JSON manifest keeps executable PHP out of the build output, so reading it
+			// needs no include.
+			outputFormat   : 'json',
 			// WordPress only registers the `react-jsx-runtime` handle from 6.6 on, so
 			// externalizing it breaks every supported version below that. Our JSX and
 			// pre-compiled dependencies such as @wordpress/icons both import it.

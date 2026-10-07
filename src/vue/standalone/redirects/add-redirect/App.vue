@@ -18,7 +18,7 @@
 					<core-add-redirection
 						v-if="!loading"
 						:urls="urls"
-						:target="urls[0]?.target ? urls[0]?.target : '/'"
+						:target="urls[0]?.target || ''"
 						:disableSource="true"
 						@added-redirect="reload"
 					/>

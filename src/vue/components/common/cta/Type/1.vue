@@ -33,30 +33,32 @@
 		/>
 
 		<div class="actions">
-			<base-button
-				v-if="ctaButtonVisible"
-				type="green"
-				tag="a"
-				:href="ctaLink"
-				:target="target"
-				@click.native="ctaButtonClick"
-				:loading="ctaButtonLoading"
-			>
-				{{ buttonText }}
-			</base-button>
+			<slot name="actions">
+				<base-button
+					v-if="ctaButtonVisible"
+					type="green"
+					tag="a"
+					:href="ctaLink"
+					:target="target"
+					@click.native="ctaButtonClick"
+					:loading="ctaButtonLoading"
+				>
+					{{ buttonText }}
+				</base-button>
 
-			<base-button
-				v-if="ctaSecondButtonVisible"
-				type="blue"
-				tag="a"
-				:href="ctaSecondLink"
-				:target="target"
-				@click.native="ctaSecondButtonClick"
-				:loading="ctaSecondButtonLoading"
-				:new-badge="ctaSecondButtonNewBadge"
-			>
-				{{ secondButtonText }}
-			</base-button>
+				<base-button
+					v-if="ctaSecondButtonVisible"
+					type="blue"
+					tag="a"
+					:href="ctaSecondLink"
+					:target="target"
+					@click.native="ctaSecondButtonClick"
+					:loading="ctaSecondButtonLoading"
+					:new-badge="ctaSecondButtonNewBadge"
+				>
+					{{ secondButtonText }}
+				</base-button>
+			</slot>
 
 			<a
 				v-if="showLink"

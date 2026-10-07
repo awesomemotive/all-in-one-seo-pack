@@ -67,6 +67,26 @@ class Llms {
 	public $llmsTxtSingleAction = 'aioseo_generate_llms_txt_single';
 
 	/**
+	 * LLMS-full.txt file recurrent action name.
+	 *
+	 * @since   4.8.8
+	 * @version 5.0.3 Moved from {@see \AIOSEO\Plugin\Pro\Llms\Llms} so Lite can unschedule stale actions.
+	 *
+	 * @var string
+	 */
+	public $llmsFullTxtRecurrentAction = 'aioseo_generate_llms_full_txt';
+
+	/**
+	 * LLMS-full.txt file single action name.
+	 *
+	 * @since   4.8.8
+	 * @version 5.0.3 Moved from {@see \AIOSEO\Plugin\Pro\Llms\Llms} so Lite can unschedule stale actions.
+	 *
+	 * @var string
+	 */
+	public $llmsFullTxtSingleAction = 'aioseo_generate_llms_full_txt_single';
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.8.8
@@ -81,6 +101,9 @@ class Llms {
 
 		add_action( $this->llmsTxtRecurrentAction, [ $this, 'generateLlmsTxt' ] );
 		add_action( $this->llmsTxtSingleAction, [ $this, 'generateLlmsTxt' ] );
+
+		// On Lite, heal a stale llms-full.txt a prior Pro install may have left behind.
+		add_action( 'admin_init', [ $this, 'maybeCleanupStaleLlmsFullTxt' ] );
 	}
 
 	/**
@@ -117,6 +140,17 @@ class Llms {
 		}
 
 		aioseo()->actionScheduler->scheduleSingle( $this->llmsTxtSingleAction, 10 );
+	}
+
+	/**
+	 * Schedules a single regeneration of every static LLMs file.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return void
+	 */
+	public function scheduleRegeneration() {
+		$this->scheduleSingleGenerationForLlmsTxt();
 	}
 
 	/**
@@ -170,7 +204,16 @@ class Llms {
 	 * @return void
 	 */
 	public function generateLlmsTxt() {
-		if ( isset( aioseo()->options->sitemap->llms->enable ) && ! aioseo()->options->sitemap->llms->enable ) {
+		// On Lite, remove any stale llms-full.txt (and its leftover actions) a prior Pro install
+		// left behind, so the generation cron heals it without needing a settings change.
+		$this->maybeCleanupStaleLlmsFullTxt();
+
+		// Disabled: remove the static file and stop. Read via all() (empty() on the magic option
+		// property misreports - the options __isset() returns value-truthiness, so the original
+		// isset() guard was dead code) and null-check $sitemap, which reads null mid-reset.
+		$sitemap  = aioseo()->options->sitemap;
+		$llmsOpts = $sitemap ? $sitemap->llms->all() : [];
+		if ( empty( $llmsOpts['enable'] ) ) {
 			aioseo()->actionScheduler->unschedule( $this->llmsTxtSingleAction );
 			aioseo()->actionScheduler->unschedule( $this->llmsTxtRecurrentAction );
 			$this->deleteLlmsFile();
@@ -184,7 +227,6 @@ class Llms {
 		// Generate the full content
 		$this->setSiteInfo();
 		$content  = $this->getHeader();
-		$content .= $this->getSiteDescription();
 		$content .= $this->getSitemapUrl();
 		$content .= $this->getContent();
 
@@ -199,6 +241,7 @@ class Llms {
 	 * @since   4.8.4
 	 * @version 5.0.2 Emit the H1 first and move the attribution into a blockquote below it (llms.txt spec).
 	 * @version 5.0.2 Decode the title instead of HTML-escaping it; this is a plain-text file.
+	 * @version 5.0.3 Include the site description between the H1 and the attribution.
 	 *
 	 * @return string
 	 */
@@ -213,12 +256,13 @@ class Llms {
 			esc_html( $fileName )
 		);
 
-		// The spec requires the file to begin with the H1, so the title comes before the attribution.
+		// The spec requires the file to begin with the H1, and the summary blockquote directly below it.
 		$header = '';
 		if ( $this->title ) {
 			$header .= '# ' . aioseo()->helpers->decodeHtmlEntities( $this->title ) . "\n\n";
 		}
 
+		$header .= $this->getSiteDescription();
 		$header .= "> {$generatedBy}\n\n";
 
 		return $header;
@@ -229,15 +273,19 @@ class Llms {
 	 *
 	 * @since   4.8.4
 	 * @version 5.0.2 Decode HTML entities in the description; this is a plain-text file.
+	 * @version 5.0.3 Strip only a `>` followed by whitespace as the user's blockquote marker.
 	 *
 	 * @return string
 	 */
 	protected function getSiteDescription() {
-		if ( $this->description ) {
-			return aioseo()->helpers->decodeHtmlEntities( $this->description ) . "\n\n";
+		// The spec puts the summary in a blockquote; a marker the user typed themselves must not nest a second one.
+		// Only a `>` followed by whitespace reads as that marker; one glued to the text (`>50%`) is content.
+		$description = preg_replace( '/^>\s+/', '', trim( aioseo()->helpers->decodeHtmlEntities( $this->description ) ) );
+		if ( ! $description ) {
+			return '';
 		}
 
-		return '';
+		return "> {$description}\n\n";
 	}
 
 	/**
@@ -444,6 +492,53 @@ class Llms {
 		if ( $fs->isWpfsValid() ) {
 			$fs->fs->delete( $file, false, 'f' );
 		}
+	}
+
+	/**
+	 * Deletes the LLMS-full.txt file.
+	 *
+	 * @since   4.8.8
+	 * @version 5.0.3 Moved from {@see \AIOSEO\Plugin\Pro\Llms\Llms}.
+	 *
+	 * @return void
+	 */
+	public function deleteLlmsFullTxt() {
+		$fs   = aioseo()->core->fs;
+		$file = $this->getFilePath( true );
+		if ( $fs->isWpfsValid() ) {
+			$fs->fs->delete( $file, false, 'f' );
+		}
+	}
+
+	/**
+	 * Unschedules the llms-full.txt generation actions and deletes the static file.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return void
+	 */
+	public function cleanupLlmsFullTxt() {
+		aioseo()->actionScheduler->unschedule( $this->llmsFullTxtSingleAction );
+		aioseo()->actionScheduler->unschedule( $this->llmsFullTxtRecurrentAction );
+		$this->deleteLlmsFullTxt();
+	}
+
+	/**
+	 * Removes a stale llms-full.txt on Lite (e.g. left by a prior Pro install after an in-place
+	 * downgrade). Heals the steady states the disable/reset/uninstall transitions don't reach.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @return void
+	 */
+	public function maybeCleanupStaleLlmsFullTxt() {
+		// Lite never generates llms-full.txt, so any file present is stale. Gate on existence so
+		// normal Lite sites pay only a single stat and downgrade-affected sites clean up once.
+		if ( aioseo()->pro || ! file_exists( $this->getFilePath( true ) ) ) {
+			return;
+		}
+
+		$this->cleanupLlmsFullTxt();
 	}
 
 	/**

@@ -88,6 +88,9 @@ const parseParts = computed(() => {
 		return []
 	}
 
+	// The currently applied "Post Index Status" filter, used to highlight its matching legend entry.
+	const activeStatus = indexStatusStore.objects.paginated.additionalFilters?.status || ''
+
 	// Get relevant options from the store.
 	const statusOptions = indexStatusStore.options.table.additionalFilters.statusOptions.options
 		.filter(option => !!option?.value)
@@ -96,7 +99,8 @@ const parseParts = computed(() => {
 			regex     : new RegExp(option.value, 'i'),
 			name      : option.label,
 			emitValue : option.value,
-			link      : '#'
+			link      : '#',
+			active    : '' !== activeStatus && option.value === activeStatus
 		}))
 
 	// Track counted posts for calculating the remainder later.

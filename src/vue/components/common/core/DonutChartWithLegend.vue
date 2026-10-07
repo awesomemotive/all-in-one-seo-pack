@@ -27,35 +27,38 @@
 		</div>
 
 		<div class="chart-right">
-			<div
-				class="legend"
-				v-for="(part, index) in sortedParts"
-				:key="index"
-			>
-				<div class="legend-bullet"
-					:style="`background-color: ${part.color}`"
-				/>
-				<span class="legend-amount">
-					<util-animated-number
-						v-if="animatedNumber"
-						:number="parseInt(part.count)"
-					/>
-
-					<div
-						v-else
-						v-html="parseInt(part.count)"
-					/>
-				</span>
-
-				<component
-					:is="part.link ? 'a' : 'span'"
-					:href="part.link || null"
-					class="legend-label"
-					:class="{'is-link': part.link}"
-					@click="handleLabelClick($event, part)"
+			<div class="legend-grid">
+				<div
+					class="legend"
+					:class="{ 'is-active': part.active }"
+					v-for="(part, index) in sortedParts"
+					:key="index"
 				>
-					{{ part.name }}
-				</component>
+					<div class="legend-bullet"
+						:style="`background-color: ${part.color}`"
+					/>
+					<span class="legend-amount">
+						<util-animated-number
+							v-if="animatedNumber"
+							:number="parseInt(part.count)"
+						/>
+
+						<div
+							v-else
+							v-html="parseInt(part.count)"
+						/>
+					</span>
+
+					<component
+						:is="part.link ? 'a' : 'span'"
+						:href="part.link || null"
+						class="legend-label"
+						:class="{'is-link': part.link}"
+						@click="handleLabelClick($event, part)"
+					>
+						{{ part.name }}
+					</component>
+				</div>
 			</div>
 
 			<div
@@ -166,12 +169,27 @@ export default {
 		margin-top: auto;
 		margin-bottom: auto;
 
-		.legend {
-			display: flex;
+		.legend-grid {
+			display: grid;
+			grid-template-columns: auto auto 1fr;
 			align-items: center;
+			column-gap: 8px;
+			row-gap: 12px;
+			// Reset any inherited centering (the Index Status wrapper centers the chart block) so labels stay left-aligned.
+			text-align: left;
+		}
 
-			+ .legend {
-				margin-top: 12px;
+		.legend {
+			// Cells flow into the shared grid so the number column auto-sizes to the widest value and all labels line up.
+			display: contents;
+
+			// The active filter's entry: labels are normally blue links, so the active one switches to
+			// dark navy to stand out by contrast (no size/weight change).
+			&.is-active {
+				.legend-amount,
+				.legend-label {
+					color: $black;
+				}
 			}
 
 			span {
@@ -183,13 +201,10 @@ export default {
 				height: 12px;
 				min-width: 12px;
 				border-radius: 50%;
-				margin-right: 8px;
 			}
 
 			.legend-amount {
 				font-weight: bold;
-				margin-right: 8px;
-				min-width: 30px;
 				text-align: left;
 			}
 

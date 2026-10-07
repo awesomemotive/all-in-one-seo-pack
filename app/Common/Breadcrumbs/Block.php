@@ -89,19 +89,35 @@ class Block {
 	/**
 	 * Renders the block.
 	 *
-	 * @since 4.1.1
+	 * @since   4.1.1
+	 * @version 5.0.3 Clears the breadcrumb override after rendering.
 	 *
 	 * @param  array  $blockAttributes The block attributes.
 	 * @return string                  The output from the output buffering.
 	 */
-	public function render( $blockAttributes ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+	public function render( $blockAttributes ) {
+		// The override is request-wide, so the block's settings would leak into whatever renders next.
+		try {
+			return $this->renderBreadcrumbs( $blockAttributes );
+		} finally {
+			aioseo()->breadcrumbs->setOverride( [] );
+		}
+	}
+
+	/**
+	 * Renders the block's breadcrumbs with its overrides applied.
+	 *
+	 * @since 5.0.3
+	 *
+	 * @param  array  $blockAttributes The block attributes.
+	 * @return string                  The breadcrumbs HTML.
+	 */
+	private function renderBreadcrumbs( $blockAttributes ) {
 		// phpcs:disable HM.Security.ValidatedSanitizedInput.InputNotSanitized, HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 		$postId = ! empty( $_GET['post_id'] ) ? (int) sanitize_text_field( wp_unslash( $_GET['post_id'] ) ) : false;
 		// phpcs:enable
 
-		if ( ! empty( $blockAttributes['primaryTerm'] ) ) {
-			$this->primaryTerm = json_decode( $blockAttributes['primaryTerm'], true );
-		}
+		$this->primaryTerm = ! empty( $blockAttributes['primaryTerm'] ) ? json_decode( $blockAttributes['primaryTerm'], true ) : [];
 
 		$this->postTitle = $blockAttributes['postTitle'] ?? null;
 

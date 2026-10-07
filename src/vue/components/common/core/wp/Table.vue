@@ -100,6 +100,8 @@
 					</base-button>
 				</span>
 
+				<slot name="tablenav-export" />
+
 				<div
 					v-if="$slots.filters && filters.length"
 					class="alignleft"
@@ -925,6 +927,24 @@ export default {
 	}
 
 	.tablenav-pages {
+		// The app-wide `line-height: 1.4` is declared after WP's own 1.875 for these controls and wins on
+		// order, leaving the arrow riding high in a 32px button. Centring with flex rather than restating a
+		// line-height, because that declaration would lose to the same rule this is working around.
+		.button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			vertical-align: middle;
+		}
+
+		// These sit beside 32px controls, so they line up with the middle of them rather than the baseline.
+		.displaying-num,
+		.paging-input,
+		.tablenav-paging-text,
+		.current-page {
+			vertical-align: middle;
+		}
+
 		.current-page {
 			padding: 0 0 0 4px;
 		}

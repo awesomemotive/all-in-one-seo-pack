@@ -552,6 +552,12 @@ trait Options {
 		aioseo()->actionScheduler->unschedule( aioseo()->llms->llmsTxtSingleAction );
 		aioseo()->actionScheduler->unschedule( aioseo()->llms->llmsTxtRecurrentAction );
 
+		// llms-full.txt is Pro-only, but a Pro->Lite downgrade can leave it (and its scheduled
+		// actions) behind. On Lite clean them up here; on Pro the override handles it.
+		if ( ! aioseo()->pro ) {
+			aioseo()->llms->cleanupLlmsFullTxt();
+		}
+
 		// Regenerate the LLMS files after reset
 		aioseo()->llms->generateLlmsTxt();
 	}
@@ -1059,7 +1065,8 @@ trait Options {
 	/**
 	 * Returns the DB options.
 	 *
-	 * @since 4.1.4
+	 * @since   4.1.4
+	 * @version 5.0.3 Don't recreate a missing row during an uninstall.
 	 *
 	 * @param  string $optionsName The options name.
 	 * @return array               The options.
@@ -1077,8 +1084,12 @@ trait Options {
 				// external tool: WP-CLI `--format=json`, site migration plugin, etc.).
 				// Use the data as-is and mark the instance dirty so the shutdown save
 				// rewrites the row as JSON — self-heals the corrupted storage.
-				$options          = is_array( $dbOptions ) ? $dbOptions : [];
-				$this->shouldSave = true;
+				$options = is_array( $dbOptions ) ? $dbOptions : [];
+
+				// A row missing during an uninstall was just removed by it, so it isn't written back on shutdown.
+				if ( false !== $dbOptions || ! aioseo()->core->isUninstalling() ) {
+					$this->shouldSave = true;
+				}
 			}
 			$options = ! empty( $options ) ? $options : [];
 

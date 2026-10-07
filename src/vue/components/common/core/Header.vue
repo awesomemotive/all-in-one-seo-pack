@@ -42,8 +42,11 @@
 			>
 					<transition name="fade-percent-circle">
 						<core-percent-circle
-							v-if="activeScan && 100 !== percentage"
+							v-if="activeScan && null !== percentage"
 							:percentage="percentage"
+							:done="scanCounts.done"
+							:total="scanCounts.total"
+							:label="scanLabel"
 							@click.native="toggleCirclePopup"
 						/>
 					</transition>
@@ -55,6 +58,11 @@
 							v-if="showPopup"
 							:strings="popupStrings"
 							:percentage="percentage"
+							:done="scanCounts.done"
+							:total="scanCounts.total"
+							:unit="scanUnit"
+							:phases="scanPhases"
+							:phase="scanPhase"
 							@close="toggleCirclePopup"
 						/>
 					</transition>
@@ -102,13 +110,14 @@
 
 		<core-newsroom-drawer
 			:show="showNewsroom"
+			:newsroom="rootStore.aioseo.newsroom"
 			@close="showNewsroom = false"
 		/>
 	</div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import {
@@ -205,11 +214,18 @@ defineProps({
 const activeScan = ref(null)
 
 const strings = {
-	openNotifications  : __('Open Notification Center', td),
-	openNewsroom       : __('Open Newsroom', td),
-	openHelp           : __('Open Help Center', td),
+	openNotifications : __('Open Notification Center', td),
+	openNewsroom      : __('Open Newsroom', td),
+	openHelp          : __('Open Help Center', td),
+	laPhases          : {
+		links       : __('Finding links', td),
+		suggestions : __('Suggesting links', td)
+	},
+	laUnit             : __('posts scanned', td),
+	scanDone           : __('Up to date', td),
 	linkAssistantPopup : {
 		header      : __('Link suggestions are being processed.', td),
+		headerDone  : __('Your link suggestions are up to date.', td),
 		description : __('Depending on the number of posts being scanned, this process can take some time. You can safely leave this page and check back later.', td)
 	},
 	searchStatisticsPopup : {
@@ -218,14 +234,23 @@ const strings = {
 	},
 	seoAnalyzerPopup : {
 		header      : __('Site Audit is being processed.', td),
+		headerDone  : __('Your Site Audit is up to date.', td),
 		description : __('Depending on the amount of content on your site, this process can take some time. You can safely leave this page and check back later.', td)
 	}
 }
 
+// Link Assistant runs its links scan before its suggestions scan, and the second has nothing to work
+// from until the first finishes - so they are one process shown as two steps.
+const linkAssistantPhase = computed(() => 100 === linkAssistantStore.linksScan.percent ? 'suggestions' : 'links')
+
+const linkAssistantScan = computed(() => 'links' === linkAssistantPhase.value
+	? linkAssistantStore.linksScan
+	: linkAssistantStore.suggestionsScan)
+
 const percentage = computed(() => {
 	switch (activeScan.value) {
 		case 'linkAssistant':
-			return linkAssistantStore.suggestionsScan.percent
+			return linkAssistantScan.value.percent
 		case 'seoAnalyzer':
 			return analyzerStore.objectsScan.percent
 		default:
@@ -236,12 +261,47 @@ const percentage = computed(() => {
 const showPopup = computed(() => {
 	switch (activeScan.value) {
 		case 'linkAssistant':
-			return linkAssistantStore.suggestionsScan.showProcessingPopup && 100 !== linkAssistantStore.suggestionsScan.percent
+			return linkAssistantStore.suggestionsScan.showProcessingPopup
 		case 'seoAnalyzer':
-			return analyzerStore.objectsScan.showProcessingPopup && 100 !== analyzerStore.objectsScan.percent
+			return analyzerStore.objectsScan.showProcessingPopup
 		default:
 			return null
 	}
+})
+
+const scanCounts = computed(() => {
+	if ('linkAssistant' === activeScan.value) {
+		return { done: linkAssistantScan.value.done, total: linkAssistantScan.value.total }
+	}
+
+	return { done: null, total: null }
+})
+
+const scanPhases = computed(() => {
+	if ('linkAssistant' !== activeScan.value) {
+		return []
+	}
+
+	return [
+		{ key: 'links', label: strings.laPhases.links },
+		{ key: 'suggestions', label: strings.laPhases.suggestions }
+	]
+})
+
+const scanPhase = computed(() => 'linkAssistant' === activeScan.value ? linkAssistantPhase.value : '')
+
+const scanUnit = computed(() => 'linkAssistant' === activeScan.value ? strings.laUnit : '')
+
+const scanLabel = computed(() => {
+	if (100 === percentage.value) {
+		return strings.scanDone
+	}
+
+	if ('linkAssistant' !== activeScan.value) {
+		return ''
+	}
+
+	return 'links' === linkAssistantPhase.value ? strings.laPhases.links : strings.laPhases.suggestions
 })
 
 const popupStrings = computed(() => {
@@ -278,14 +338,15 @@ const toggleModal = () => {
 }
 
 const route = useRoute()
+// Eligibility only: the control stays in the bar once a scan is done, so the percentage does not decide
+// whether there is a scan to show.
 const checkForActiveScan = () => {
 	if (
 		'link-assistant' === rootStore.aioseo.page &&
 		addons.isActive('aioseo-link-assistant') &&
 		!addons.requiresUpgrade('aioseo-link-assistant') &&
 		addons.hasMinimumVersion('aioseo-link-assistant') &&
-		('links-report' === route.name || 'overview' === route.name) &&
-		100 !== linkAssistantStore.suggestionsScan.percent
+		('links-report' === route.name || 'overview' === route.name)
 	) {
 		activeScan.value = 'linkAssistant'
 	}
@@ -293,8 +354,7 @@ const checkForActiveScan = () => {
 	if (
 		'seo-analysis' === rootStore.aioseo.page &&
 		rootStore.isPro &&
-		!licenseStore.isUnlicensed &&
-		100 !== analyzerStore.objectsScan.percent
+		!licenseStore.isUnlicensed
 	) {
 		activeScan.value = 'seoAnalyzer'
 	}
@@ -311,11 +371,13 @@ const toggleCirclePopup = () => {
 	}
 }
 
+// Watched rather than checked once on mount: the router resolves its first route asynchronously, so at
+// mount the name the Link Assistant branch reads is still unset.
+watch(() => route.name, () => checkForActiveScan(), { immediate: true })
+
 onMounted(() => {
 	storeScroll()
 	document.addEventListener('scroll', debounce(storeScroll), { passive: true })
-
-	checkForActiveScan()
 })
 </script>
 
@@ -376,6 +438,8 @@ html:not([data-scroll='0']) {
 		}
 
 		.header-actions {
+		// The panel hangs off this, so it needs to be the offset parent.
+		position: relative;
 			display: flex;
 
 			.round {

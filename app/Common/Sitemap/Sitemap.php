@@ -303,7 +303,8 @@ class Sitemap extends SitemapAbstract {
 	/**
 	 * Generates the requested sitemap.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.3 Answer 200 for an existing sitemap with no entries, and 404 for one that doesn't exist.
 	 *
 	 * @return void
 	 */
@@ -349,8 +350,16 @@ class Sitemap extends SitemapAbstract {
 			}
 		}
 
-		if ( 0 === $total && empty( $entries ) ) {
-			status_header( 404 );
+		// Key this off the rendered entries rather than $total — the latter comes from a separate
+		// count query that skips filtering (e.g. attachments attached to unpublished parents), so it
+		// can be non-zero while there's nothing to output. A sitemap that exists but has no entries
+		// right now (e.g. a news sitemap with no posts in the last 24h) still answers 200, so browsers
+		// show its empty page and SEO Alerts read it as valid; a 204 would carry no page at all. One
+		// that doesn't exist (e.g. a disabled addon's URL falling through to here) is a 404.
+		if ( empty( $entries ) && ! aioseo()->sitemap->content->isKnownIndex() ) {
+			aioseo()->helpers->notFoundPage();
+
+			return;
 		}
 
 		$this->xsl->saveXslData(

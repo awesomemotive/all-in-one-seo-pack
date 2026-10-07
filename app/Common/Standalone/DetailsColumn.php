@@ -482,6 +482,11 @@ class DetailsColumn {
 		) {
 			$brokenCount                 = \AIOSEO\BrokenLinkChecker\Models\LinkStatus::getBrokenCountByPostId( $postId );
 			$postData['brokenLinkCount'] = (int) $brokenCount ?? 0;
+
+			// Older versions of the plugin report the count but can't scope their report to a post.
+			if ( method_exists( '\AIOSEO\BrokenLinkChecker\Models\LinkStatus', 'getBrokenReportUrl' ) ) {
+				$postData['brokenLinkUrl'] = \AIOSEO\BrokenLinkChecker\Models\LinkStatus::getBrokenReportUrl( $postId );
+			}
 		}
 
 		$posts[]       = $postData;

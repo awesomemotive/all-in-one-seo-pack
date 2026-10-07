@@ -25,35 +25,20 @@
 			xmlns="http://www.w3.org/2000/svg"
 			v-if="0 < total"
 		>
-			<template
-				v-for="(part, index) in parts"
+			<circle
+				v-for="(segment, index) in segments"
 				:key="index"
-			>
-				<circle
-					v-if="Math.round(part.ratio) && 0 !== index"
-					class="aioseo-donut-chart-score__circle"
-					stroke="#FFFFFF"
-					:stroke-dasharray="`${Math.round(part.ratio)} ${parseFloat(99 - Math.round(part.ratio))}`"
-					stroke-linecap="round"
-					:stroke-width="2.5"
-					fill="none"
-					cx="16.91549431"
-					cy="16.91549431"
-					r="15.91549431"
-				/>
-				<circle
-					v-if="Math.round(part.ratio)"
-					class="aioseo-donut-chart-score__circle"
-					:stroke="part.color"
-					:stroke-dasharray="`${100 === Math.round(part.ratio) ? 100 : Math.round(part.ratio) - 1} 100`"
-					stroke-linecap="round"
-					:stroke-width="2"
-					fill="none"
-					cx="16.91549431"
-					cy="16.91549431"
-					r="15.91549431"
-				/>
-			</template>
+				class="aioseo-donut-chart-score__circle"
+				:stroke="segment.color"
+				:stroke-dasharray="segment.dashArray"
+				:stroke-dashoffset="segment.dashOffset"
+				stroke-linecap="round"
+				:stroke-width="strokeWidth"
+				fill="none"
+				cx="16.91549431"
+				cy="16.91549431"
+				r="15.91549431"
+			/>
 		</svg>
 
 		<div class="total-amount-wrapper">
@@ -127,7 +112,80 @@ export default {
 			}
 		}
 	},
+	data () {
+		return {
+			// The radius (r=15.915...) is chosen so the circumference ≈ 100, mapping ratios straight to lengths.
+			circumference : 100,
+			strokeWidth   : 2,
+			// Constant gap between segments, in circumference units. Held fixed so gaps stay even at any segment size.
+			segmentGap    : 2
+		}
+	},
 	computed : {
+		segments () {
+			if (0 >= this.total || !this.parts?.length) {
+				return []
+			}
+
+			// Each part carries a cumulative ratio (its own share plus every following segment's share).
+			// Recover each segment's own share by differencing consecutive parts, then drop empty ones.
+			const ownSegments = this.parts
+				.map((part, index) => {
+					const next = this.parts[index + 1]
+					const own  = part.ratio - (next ? next.ratio : 0)
+
+					return {
+						color : part.color,
+						ratio : 0 < own ? own : 0
+					}
+				})
+				.filter(segment => 0 < segment.ratio)
+
+			if (!ownSegments.length) {
+				return []
+			}
+
+			// A single segment fills the whole ring; no gaps to draw.
+			if (1 === ownSegments.length) {
+				return [ {
+					color      : ownSegments[0].color,
+					dashArray  : `${this.circumference} 0`,
+					dashOffset : 0
+				} ]
+			}
+
+			// Reserve one constant gap per segment; share the rest proportionally.
+			const totalGaps = this.segmentGap * ownSegments.length
+			const drawable  = this.circumference - totalGaps
+			const gap       = 0 < drawable ? this.segmentGap : 0
+			const available = 0 < drawable ? drawable : this.circumference
+
+			const segments = []
+			let cursor = 0
+
+			ownSegments.forEach(segment => {
+				const arc      = (segment.ratio / 100) * available
+				const arcStart = cursor + (gap / 2)
+
+				// Round caps extend each end by half the stroke; subtract a full stroke so the visible arc
+				// (caps included) matches its share and gaps stay even. Segments thinner than the caps
+				// collapse to a dot (dash length 0) instead of disappearing.
+				const dashLength = Math.max(0, arc - this.strokeWidth)
+				const dashStart  = 0 < dashLength
+					? arcStart + (this.strokeWidth / 2)
+					: arcStart + (arc / 2)
+
+				segments.push({
+					color      : segment.color,
+					dashArray  : `${dashLength} ${this.circumference - dashLength}`,
+					dashOffset : -dashStart
+				})
+
+				cursor = arcStart + arc + (gap / 2)
+			})
+
+			return segments
+		},
 		getColorClass () {
 			if (!this.maxTotal) {
 				return ''

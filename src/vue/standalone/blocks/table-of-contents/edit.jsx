@@ -180,10 +180,11 @@ export const edit = ({ setAttributes, attributes, clientId, isSelected }) => {
 	const targetElementIdForModeSelection = `aioseo-mode-selection-${clientId}`
 
 	// Get post content and typing state from the editor
+	// The core/editor store is absent in the Widgets/Customizer editor, so guard against an undefined select.
 	const postContent = useSelect((select) => {
-		const { getEditedPostAttribute } = select('core/editor')
+		const editor = select('core/editor')
 
-		return getEditedPostAttribute('content')
+		return editor ? editor.getEditedPostAttribute('content') : ''
 	}, [])
 
 	const isCurrentlyTyping = useSelect((select) => {
