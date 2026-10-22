@@ -3,6 +3,7 @@ import { debounce } from '@/vue/utils/debounce'
 import { getDivi5AppWindow, refreshDivi5Content, isRefreshingDivi5Content } from './divi5-helpers'
 import { getEditorData, getFeaturedImageId, isDivi5 } from './helpers'
 import { handleEditorSave, createEditorChangeHandler } from '@/vue/standalone/page-builders/helpers'
+import { resolveAdapter } from '@/vue/plugins/tru-seo/editors'
 
 let hasUnsavedChanges = false
 
@@ -13,6 +14,17 @@ const markAsSaved = () => {
 }
 
 const editorChangeHandler = createEditorChangeHandler()
+
+/**
+ * Hides stale highlight UI at the edit itself.
+ * NOTE: The hide can't ride the delayed content read -- it lands after the spelling popover has
+ * already advanced to the next issue, and closes it.
+ *
+ * @returns {void}
+ */
+const handleEditorModified = () => {
+	window.aioseoBus.$emit('aioseo-content-changing')
+}
 
 /**
  * Handle editor changes.
@@ -34,7 +46,7 @@ const handleEditorChange = async () => {
 		featuredImage : getFeaturedImageId()
 	}
 
-	editorChangeHandler({ editorData })
+	editorChangeHandler({ editorData, notifyContentChanging: false })
 }
 
 /**
@@ -49,7 +61,9 @@ const initDivi5Watcher = () => {
 	}
 
 	const restStore = diviData.select('divi/rest')
-	let wasSaving   = false
+	const editPost  = diviData.select('divi/edit-post')
+	let wasSaving   = false,
+		lastContent = editPost.getContent?.()
 
 	diviData.subscribe(() => {
 		const isSaving = restStore.isInProgress('sync-to-server')
@@ -58,6 +72,13 @@ const initDivi5Watcher = () => {
 		}
 
 		wasSaving = isSaving
+
+		// Hover and selection notify too; only a new content object is an edit.
+		const content = editPost.getContent?.()
+		if (content !== lastContent) {
+			lastContent = content
+			handleEditorModified()
+		}
 
 		// Skip content change detection during our own view switches.
 		if (!isRefreshingDivi5Content()) {
@@ -76,12 +97,28 @@ const initDivi5Watcher = () => {
 const initLegacyWatcher = (wp, addEventListener) => {
 	handleEditorChange()
 
+	// Divi also posts the change message when a click only opens a module's inline editor, so the
+	// module texts decide whether it was an edit. Null without an adapter: every message counts then.
+	const getModuleTexts = () => {
+		const units = resolveAdapter()?.getContentUnits?.()
+
+		return units?.length ? units.map(unit => unit.html).join('\n') : null
+	}
+
+	let lastModuleTexts = getModuleTexts()
+
 	addEventListener('message', (event) => {
 		if (event.origin !== window.location.origin) {
 			return
 		}
 
 		if ('et_fb_section_content_change' === event.data.eventType) {
+			const moduleTexts = getModuleTexts()
+			if (null === moduleTexts || moduleTexts !== lastModuleTexts) {
+				lastModuleTexts = moduleTexts
+				handleEditorModified()
+			}
+
 			debounce(handleEditorChange, 1000)
 
 			hasUnsavedChanges = true
@@ -115,6 +152,7 @@ const initLegacyWatcher = (wp, addEventListener) => {
 		}
 
 		if (shouldTriggerChange) {
+			handleEditorModified()
 			debounce(handleEditorChange, 1000)
 		}
 

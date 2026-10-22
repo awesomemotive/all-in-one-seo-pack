@@ -10,6 +10,16 @@ import {
 	usePostEditorStore
 } from '@/vue/stores'
 
+// Identifies the newest list refresh, so responses that have been superseded can be discarded.
+let refreshToken   = 0,
+	pendingRefresh = Promise.resolve()
+
+const waitForPendingRefresh = () => {
+	const current = pendingRefresh
+
+	return current.then(() => (current === pendingRefresh ? undefined : waitForPendingRefresh()))
+}
+
 export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 	state : () => ({
 		items       : [],
@@ -64,10 +74,31 @@ export const useSeoRevisionsStore = defineStore('SeoRevisionsStore', {
 				return Promise.resolve()
 			}
 
+			// A refresh still in flight is about to replace the list, so an offset measured now would
+			// skip rows. Appends wait for it and measure the offset against the list that replaced it.
+			if (append) {
+				return waitForPendingRefresh().then(() => this.request({ ...payload, offset: this.items.length }, true))
+			}
+
+			const request = this.request(payload, false)
+			pendingRefresh = request.catch(() => {})
+
+			return request
+		},
+		request (payload, append) {
+			// Saving twice in a row leaves two refreshes in flight, and they can resolve out of order —
+			// the earlier one landing last would overwrite the newer list. Each refresh takes a token
+			// and drops its response if a later one has started since; an append is dropped likewise.
+			const token = append ? refreshToken : ++refreshToken
+
 			const postEditorStore = usePostEditorStore()
 			return http.get(links.restUrl('seo-revisions/' + postEditorStore.currentPost.context + '/' + postEditorStore.currentPost.id))
 				.query(payload)
 				.then(response => {
+					if (token !== refreshToken) {
+						return response
+					}
+
 					this.itemsTotalCount = response.body.itemsTotalCount
 					if (append) {
 						for (const item of response.body.items) {

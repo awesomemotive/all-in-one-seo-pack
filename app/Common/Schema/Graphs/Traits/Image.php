@@ -62,12 +62,13 @@ trait Image {
 	 * @return string               The caption.
 	 */
 	private function getImageCaption( $attachmentId ) {
+		// The uploader sets these, but the schema parses them against whichever post shows the image.
 		$caption = wp_get_attachment_caption( $attachmentId );
 		if ( ! empty( $caption ) ) {
-			return $caption;
+			return aioseo()->tags->escapeTags( $caption );
 		}
 
-		return get_post_meta( $attachmentId, '_wp_attachment_image_alt', true );
+		return aioseo()->tags->escapeTags( get_post_meta( $attachmentId, '_wp_attachment_image_alt', true ) );
 	}
 
 	/**
@@ -95,7 +96,7 @@ trait Image {
 			'url'     => $avatar['url'],
 			'width'   => $avatar['width'],
 			'height'  => $avatar['height'],
-			'caption' => get_the_author_meta( 'display_name', $userId )
+			'caption' => aioseo()->tags->escapeTags( get_the_author_meta( 'display_name', $userId ) )
 		] );
 	}
 

@@ -1,10 +1,7 @@
 import {
-	useOptionsStore,
 	usePostEditorStore,
 	useRootStore
 } from '@/vue/stores'
-
-import { shouldShowMetaBox } from '@/vue/utils/metabox'
 
 export const truSeoShouldAnalyze = () => {
 	const postEditorStore = usePostEditorStore()
@@ -23,19 +20,13 @@ export const supportsPageAnalysis = () => {
 	return !!postEditorStore?.currentPost?.supportsPageAnalysis
 }
 
+// Resolved server-side and localized with the list payload: the site options this used to read
+// are stripped for users who cannot manage AIOSEO, so they read as "TruSEO is off".
+// {@see \AIOSEO\Plugin\Common\Standalone\DetailsColumn::isTruSeoScoreEnabled()}
 export const shouldShowTruSeoScore = () => {
 	const rootStore = useRootStore()
-	if (!rootStore.aioseo.screen?.postType || 'web-story' === rootStore.aioseo.screen?.postType) {
-		return false
-	}
 
-	const postEditorStore = usePostEditorStore()
-	const optionsStore    = useOptionsStore()
-	return !!(
-		optionsStore.options.advanced?.truSeo &&
-		shouldShowMetaBox(rootStore.aioseo.screen.postType) &&
-		!postEditorStore.currentPost.isStaticPostsPage
-	)
+	return !!rootStore.aioseo.truSeoScoreEnabled
 }
 
 /**
@@ -66,12 +57,18 @@ export const reverseWindowSelection = (selection) => {
  * @param   {string} string The string.
  * @returns {string}        The normalized string.
  */
+// U+200B and U+FEFF are formatting an editor leaves inside words (Elementor's inline pen keeps a
+// U+200B), and a word carrying one fails the spell check. Only these two: U+200C and U+200D are
+// part of words in Persian, Arabic and Indic scripts, and of emoji sequences.
+const ZERO_WIDTH_FORMATTING = /[\u200B\uFEFF]/g
+
 export const normalizeWhitespaces = (string) => {
 	const NBSP = new RegExp(String.fromCharCode(160), 'g')
 
 	return string
 		.replace(/&nbsp;/g, ' ')
 		.replace(NBSP, ' ')
+		.replace(ZERO_WIDTH_FORMATTING, '')
 }
 
 /**

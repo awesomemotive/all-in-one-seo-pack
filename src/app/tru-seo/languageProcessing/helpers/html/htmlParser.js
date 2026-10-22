@@ -3,6 +3,7 @@
  * We use a (simpler) external library, which can be found here: https://github.com/fb55/htmlparser2.
  */
 import { Parser } from 'htmlparser2'
+import { IGNORED_CLASSES, IGNORED_TAGS } from './ignoredElements'
 
 /**
  * The array containing the text parts without ignored HTML blocks.
@@ -21,36 +22,10 @@ let textArray = [],
 	ignoreStack = []
 
 /**
- * The HTML tags that should be ignored.
- * @type {string[]}
- */
-const IGNORED_TAGS = [ 'script', 'style', 'code', 'pre', 'blockquote', 'textarea' ]
-
-/**
  * The attributes that should be allowed.
  * @type {string[]}
  */
 const ALLOWED_ATTRIBUTES = [ 'src', 'alt', 'href' ]
-
-/**
- * The classes of HTML elements that should be ignored.
- * @type {string[]}
- */
-const IGNORED_CLASSES = [
-	'elementor-button-wrapper',
-	'elementor-divider',
-	'elementor-spacer',
-	'elementor-custom-embed',
-	'elementor-icon-wrapper',
-	'elementor-icon-box-wrapper',
-	'elementor-counter',
-	'elementor-progress-wrapper',
-	'elementor-alert',
-	'elementor-soundcloud-wrapper',
-	'elementor-shortcode',
-	'elementor-menu-anchor',
-	'elementor-title'
-]
 
 /**
  * Parses the text.

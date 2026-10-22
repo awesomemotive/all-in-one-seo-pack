@@ -225,6 +225,27 @@ class Divi extends Base {
 	}
 
 	/**
+	 * Returns Divi's own builder version, which is not the theme's.
+	 *
+	 * The Divi Builder PLUGIN runs the builder under any theme, so the theme version is wrong for
+	 * that packaging -- a third-party theme at 5.x would answer "Divi 5" while a 4.x builder is
+	 * running, and the caller would take the Divi 5 path. `ET_BUILDER_PRODUCT_VERSION` is defined
+	 * by the theme and the plugin alike, so it answers for the builder itself; the theme version
+	 * stays as a fallback for a release that stops defining it.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @return string The builder version.
+	 */
+	private function getBuilderVersion() {
+		if ( defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
+			return (string) ET_BUILDER_PRODUCT_VERSION;
+		}
+
+		return (string) ( aioseo()->helpers->getThemeVersion( true ) ?? aioseo()->helpers->getThemeVersion() );
+	}
+
+	/**
 	 * Returns whether the integration extracts text instead of rendering on front-end views.
 	 *
 	 * NOTE: The prefix only feeds {@see extractShortcodeText()} inside {@see extractDivi5Text()}, whose
@@ -260,18 +281,17 @@ class Divi extends Base {
 	 * @version 5.0.2 Extract Divi 5 text from the raw block markup on front-end requests instead of rendering it.
 	 * @version 5.0.3 Reduce legacy et_pb tags to text with {@see extractShortcodeText()} when Divi cannot render them;
 	 *                return an empty string when no text is left.
+	 * @version 5.0.4 Version gate reads the builder version, not the theme's.
 	 *
 	 * @param  int    $postId  The post ID.
 	 * @param  mixed  $content The raw content.
 	 * @return string          The processed content.
 	 */
 	public function processContent( $postId, $content = null ) {
-		$templateVersion = aioseo()->helpers->getThemeVersion( true ) ?? aioseo()->helpers->getThemeVersion();
-
 		// Divi 5+ stores content as blocks whose text lives in block attributes; do_blocks()
 		// (the parent's safe path) does not reliably render them across Divi 5 versions.
 		if (
-			version_compare( (string) $templateVersion, '5.0', '>=' ) &&
+			version_compare( $this->getBuilderVersion(), '5.0', '>=' ) &&
 			! doing_filter( 'the_content' )
 		) {
 			$content = $this->getRawContent( $postId, $content );
@@ -342,7 +362,7 @@ class Divi extends Base {
 		$parts = [];
 		foreach ( $blocks as $block ) {
 			if ( ! empty( $block['attrs'] ) && is_array( $block['attrs'] ) ) {
-				$this->collectDivi5InnerContentText( $block['attrs'], $parts );
+				$this->collectDivi5InnerContentText( $block['attrs'], $parts, (string) ( $block['blockName'] ?? '' ) );
 			}
 
 			$innerHtml = trim( (string) ( $block['innerHTML'] ?? '' ) );
@@ -374,20 +394,33 @@ class Divi extends Base {
 	 * an HTML/text string or an object with a `text` key (e.g. Blurb titles). Only the desktop
 	 * breakpoint is read since the other breakpoints repeat the same content responsively.
 	 *
-	 * @since 5.0.2
+	 * @since   5.0.2
+	 * @version 5.0.4 Added $blockName and $attrName; skips setting-only attributes, dynamic tokens and Pricing markers.
 	 *
-	 * @param  array $attrs The block attributes (sub)tree.
-	 * @param  array $parts The collected text parts, passed by reference.
+	 * @param  array  $attrs     The block attributes (sub)tree.
+	 * @param  array  $parts     The collected text parts, passed by reference.
+	 * @param  string $blockName The block's name, e.g. `divi/text`.
+	 * @param  string $attrName  The top-level attribute the subtree belongs to.
 	 * @return void
 	 */
-	private function collectDivi5InnerContentText( $attrs, &$parts ) {
+	private function collectDivi5InnerContentText( $attrs, &$parts, $blockName = '', $attrName = '' ) {
+		// Strings stored under `innerContent` that are settings, not page content.
+		$settingAttrs = [
+			'divi/contact-form' => [ 'email', 'redirect' ],
+			'divi/search'       => [ 'searchPlaceholder' ]
+		];
+
 		foreach ( $attrs as $key => $value ) {
 			if ( ! is_array( $value ) ) {
 				continue;
 			}
 
+			if ( '' === $attrName && in_array( $key, $settingAttrs[ $blockName ] ?? [], true ) ) {
+				continue;
+			}
+
 			if ( 'innerContent' !== $key ) {
-				$this->collectDivi5InnerContentText( $value, $parts );
+				$this->collectDivi5InnerContentText( $value, $parts, $blockName, '' === $attrName ? (string) $key : $attrName );
 				continue;
 			}
 
@@ -400,10 +433,15 @@ class Divi extends Base {
 				continue;
 			}
 
-			$desktopValue = trim( $desktopValue );
-
 			// Dynamic content placeholders (e.g. "$variable({...})$") only resolve during a real render.
-			if ( '' === $desktopValue || 0 === strpos( $desktopValue, '$variable(' ) ) {
+			$desktopValue = trim( (string) preg_replace( '/\$variable\(.*?\)\$/s', '', $desktopValue ) );
+
+			// Divi strips a Pricing Table line's leading `+`/`-`, which only picks the line's style.
+			if ( 'divi/pricing-table' === $blockName && 'content' === $attrName ) {
+				$desktopValue = (string) preg_replace( '/(^|\n|<(?:p|br|li)\b[^>]*>)(\s*)[+-]/i', '$1$2', $desktopValue );
+			}
+
+			if ( '' === $desktopValue ) {
 				continue;
 			}
 
@@ -416,14 +454,13 @@ class Divi extends Base {
 	 *
 	 * @since   4.5.2
 	 * @version 4.9.6 Refactored to separate Divi 5+ and Divi 4.x logic.
+	 * @version 5.0.4 Version gate reads the builder version, not the theme's.
 	 *
 	 * @param  int  $postId The Post ID.
 	 * @return bool         Whether or not we should prevent the date from being modified.
 	 */
 	public function limitModifiedDate( $postId ) {
-		$templateVersion = aioseo()->helpers->getThemeVersion( true ) ?? aioseo()->helpers->getThemeVersion();
-
-		return version_compare( $templateVersion, '5.0', '>=' )
+		return version_compare( $this->getBuilderVersion(), '5.0', '>=' )
 			? $this->limitModifiedDateDivi5( $postId )
 			: $this->limitModifiedDateLegacy( $postId );
 	}

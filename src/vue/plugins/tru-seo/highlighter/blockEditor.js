@@ -11,9 +11,12 @@ import {
 	buildHighlightStateCss
 } from './tinymce'
 
-import { getOuterText } from '@/vue/utils/html'
-import { normalizeWhitespaces } from '@/vue/utils/postData/helpers'
+import { overlapsSkipped } from './textStream'
+import { BLOCK_TEXT_ATTRIBUTES, ZERO_WIDTH, getNativeBlockSkipped, getNativeBlockText, getRawBlockText } from './blockText'
+
 import { escapeRegex, wordBoundaryPattern } from '@/vue/utils/regex'
+
+export { getNativeBlockSkipped, getNativeBlockText, isAnalyzerSkippedBlock } from './blockText'
 
 /**
  * Builds a CSS rule for Block Editor custom format marks.
@@ -27,13 +30,35 @@ export const buildBlockFormatCss = (className, color) => {
 }
 
 /**
+ * Returns a Classic block's own TinyMCE, the only place its text can be marked.
+ *
+ * NOTE: it boots lazily, and an iframed canvas only shows a static preview.
+ *
+ * @param {Object} block The Gutenberg block object.
+ * @returns {Object|null} The TinyMCE editor, or null while it isn't ready.
+ */
+export const getFreeformEditor = (block) => {
+	try {
+		const editor = window.tinymce?.get(`editor-${block?.clientId}`)
+
+		return 'function' === typeof editor?.getBody ? editor : null
+	} catch (_e) {
+		return null
+	}
+}
+
+/**
  * Determines which RichText attribute identifier a block uses for its
  * primary text content.
  *
  * @param {Object} block The Gutenberg block object.
- * @returns {string} The RichText identifier ('content', 'caption', 'value', or 'citation').
+ * @returns {string} The RichText identifier ('content', 'caption', 'value', 'citation', or a {@see BLOCK_TEXT_ATTRIBUTES} one).
  */
 export const getRichTextIdentifier = (block) => {
+	if (BLOCK_TEXT_ATTRIBUTES[block?.name]) {
+		return BLOCK_TEXT_ATTRIBUTES[block.name]
+	}
+
 	if (block?.attributes?.caption) {
 		return 'caption'
 	}
@@ -50,35 +75,34 @@ export const getRichTextIdentifier = (block) => {
 }
 
 /**
- * Plain-text projection of a native block's rich text, in the same coordinate
- * space the highlight ranges are measured against (mirrors the block branch of
- * the highlighter composable's `formatBlockContent`).
+ * Maps offsets in getNativeBlockText()'s space back to the block's rich text.
+ *
+ * NOTE: normalizeWhitespaces deletes U+200B/U+FEFF, so without this every range after one lands
+ * a character early per deleted character.
  *
  * @param {Object} block The Gutenberg block object.
- * @returns {string} The normalized plain text, or '' when unavailable.
+ * @returns {Function} Maps a `{ start, end }` range to rich-text offsets.
  */
-export const getNativeBlockText = (block) => {
-	try {
-		let content = block?.attributes?.content || block?.attributes?.caption || block?.attributes?.value || block?.attributes?.citation || ''
-		if ('core/table' === block?.name) {
-			content = block?.originalContent || ''
-		}
-
-		// Newer WP stores rich text as a RichTextData object rather than a string.
-		if (content && 'object' === typeof content && 'function' === typeof content.toHTMLString) {
-			content = content.toHTMLString()
-		}
-
-		// Keep line breaks otherwise `getOuterText()` doesn't recognize them.
-		content = String(content).replace(/<br[^>]*>/gi, '\n')
-
-		// Don't trim: these offsets are applied in wp.richText's coordinate space,
-		// which counts a leading `<br>` as one "\n". Dropping it shifts every range
-		// in the block left, silently voiding `replaceInBlockEditor`'s exact match.
-		return normalizeWhitespaces(getOuterText(content, false))
-	} catch (_e) {
-		return ''
+const getRichTextRangeMapper = (block) => {
+	const raw = getRawBlockText(block)
+	if (!ZERO_WIDTH.test(raw)) {
+		return (range) => range
 	}
+
+	// kept[i] is the raw index of the i-th character that survives normalization.
+	const kept = []
+	for (let i = 0; i < raw.length; i++) {
+		if (!ZERO_WIDTH.test(raw[i])) {
+			kept.push(i)
+		}
+	}
+
+	const toRaw = (offset) => (offset < kept.length ? kept[offset] : raw.length)
+
+	return ({ start, end }) => ({
+		start : toRaw(start),
+		end   : 0 < end ? toRaw(end - 1) + 1 : toRaw(end)
+	})
 }
 
 /**
@@ -86,26 +110,35 @@ export const getNativeBlockText = (block) => {
  * Mirrors the matching used when marks are first built, so a re-anchored range
  * lands exactly where the original one did.
  *
- * @param {string} content  The block's plain text.
- * @param {string} sentence The flagged sentence (or single word).
+ * NOTE: a local copy of {@see utils/regex.js}'s `sentencePattern`; keep the two in step.
+ *
+ * @param {string} content   The block's plain text.
+ * @param {string} sentence  The flagged sentence (or single word).
+ * @param {Array}  [skipped] Ranges of `content` the analyzer drops ({@see getNativeBlockSkipped}).
  * @returns {{start: number, end: number}|null} The range, or null when not found.
  */
-export const findSentenceRange = (content, sentence) => {
+export const findSentenceRange = (content, sentence, skipped = []) => {
 	if (!content || !sentence) {
 		return null
 	}
 
 	const isSingleWord = !sentence.includes(' ')
 	const pattern = isSingleWord ? wordBoundaryPattern(sentence) : escapeRegex(sentence)
-	const match = new RegExp(pattern, isSingleWord ? 'u' : '').exec(content)
-	if (!match) {
-		return null
+	const regex   = new RegExp(pattern, isSingleWord ? 'gu' : 'g')
+	let match
+
+	while (null !== (match = regex.exec(content))) {
+		const range = {
+			start : match.index,
+			end   : (match.index + match[0].length) || 1
+		}
+
+		if (!overlapsSkipped(range, skipped)) {
+			return range
+		}
 	}
 
-	return {
-		start : match.index,
-		end   : (match.index + match[0].length) || 1
-	}
+	return null
 }
 
 /**
@@ -139,7 +172,7 @@ export const recomputeNativeBlockMarkRanges = (marks) => {
 			continue
 		}
 
-		const range = findSentenceRange(getNativeBlockText(block), hm.sentence)
+		const range = findSentenceRange(getNativeBlockText(block), hm.sentence, getNativeBlockSkipped(block))
 		if (range) {
 			hm.range = range
 		}
@@ -161,13 +194,24 @@ export const dispatchBlockHighlights = (marks) => {
 		return
 	}
 
+	// Page builders can load wp.data without the block editor that registers this store.
 	const dispatch = window.wp.data.dispatch(HIGHLIGHT_STORE_NAME)
+	if (!dispatch) {
+		return
+	}
+
 	dispatch.clearAll()
 
+	const select     = window.wp.data.select?.('core/block-editor')
+	const mappers    = new Map()
 	const marksByKey = {}
 	for (const hm of marks) {
 		if (!hm.block || 'core/freeform' === hm.block.name) {
 			continue
+		}
+
+		if (!mappers.has(hm.block.clientId)) {
+			mappers.set(hm.block.clientId, getRichTextRangeMapper(select?.getBlock?.(hm.block.clientId) || hm.block))
 		}
 
 		const identifier = getRichTextIdentifier(hm.block)
@@ -183,9 +227,8 @@ export const dispatchBlockHighlights = (marks) => {
 		}
 
 		marksByKey[key].ranges.push({
-			id    : hm.id,
-			start : hm.range.start,
-			end   : hm.range.end
+			id : hm.id,
+			...mappers.get(hm.block.clientId)(hm.range)
 		})
 	}
 
@@ -282,12 +325,10 @@ export const pollForBlockHighlightNodes = (marks, onMarksReady, attempt = 0) => 
 export const highlightBlockEditor = ({ blocks, store, sourcePrefix, registeredAnnotators, setHighlightMarks, observeMarkParent, onMarksReady, streamCache }) => {
 	for (const block of (blocks || [])) {
 		if ('core/freeform' === block.name) {
-			const editor = window.tinymce.get(`editor-${block.clientId}`)
-			// Freeform's nested TinyMCE instance boots lazily; skip until
-			// it's ready. A subsequent reset (triggered by the editor
-			// becoming available, or by the next analyzer update) will
-			// pick it up.
-			if (!editor || 'function' !== typeof editor.getBody) {
+			// A subsequent reset (triggered by the editor becoming available, or by the next
+			// analyzer update) picks it up once it boots.
+			const editor = getFreeformEditor(block)
+			if (!editor) {
 				continue
 			}
 

@@ -136,7 +136,7 @@ class Frontend {
 			global $wp;
 			$paged = [
 				'paged' => get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' ),
-				'link'  => home_url( $wp->request )
+				'link'  => home_url( str_replace( '#', '%23', (string) $wp->request ) )
 			];
 		}
 

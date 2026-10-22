@@ -106,8 +106,12 @@ export default {
 	},
 	methods : {
 		toPage (page) {
+			// The input's min/max only apply to its spinner, so a typed value can still fall outside them.
+			const lastPage = this.totals.pages || 1
+			page = Math.min(Math.max(parseInt(page) || 1, 1), lastPage)
+
 			this.pageNumber = page
-			this.$emit('paginate', parseInt(page))
+			this.$emit('paginate', page)
 		}
 	},
 	created () {
@@ -115,3 +119,14 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss">
+.aioseo-app {
+	.tablenav-pages .button {
+		// WP core centers the arrow glyph with a line-height that the global `.aioseo-app` reset outranks.
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+</style>

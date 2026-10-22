@@ -1,6 +1,9 @@
 import { escapeRegex } from '@/vue/utils/regex'
 import { getJsonValue } from '@/vue/utils/json'
 
+// Mirrors RobotsService::MAX_CLEAN_PARAM_LENGTH.
+const MAX_CLEAN_PARAM_LENGTH = 500
+
 /**
  * Converts an array of robots.txt rules into a string.
  *
@@ -112,7 +115,6 @@ export const normalizeRules = rules => {
  */
 export const validateRuleset = (ruleset) => {
 	const overriddenIndexes = []
-	const pathPattern = /^\/.*$/
 
 	const fillErrors = (previousErrors, type, message, rule, args = {}) => {
 		const hash = `${rule.tableIndex}${rule.userAgent}${rule.directive}${rule.fieldValue}`
@@ -221,16 +223,16 @@ export const validateRuleset = (ruleset) => {
 			previewIndex = savePreviewIndex
 
 			if (directive.match(/^clean-param/i)) {
-				// Clean-param needs to have at least one param, path is optional.
-				const [ param, path ] = value.split(/\s+/).map(v => v.trim())
-				if (!param || param.match(pathPattern) || (path && !path.match(pathPattern))) {
+				// Yandex's syntax is `p0[&p1&…&pn] [path]`: non-empty params joined by "&", then at most one path.
+				const cleanParam = value.trim()
+				if (MAX_CLEAN_PARAM_LENGTH < cleanParam.length || !cleanParam.match(/^(?!\/)[^&\s]+(&[^&\s]+)*(\s+\/\S*)?$/)) {
 					errors = fillErrors(errors, 'red', 'invalidCleanParam', rule, { previewIndex })
 				}
 			}
 
 			if (directive.match(/^crawl-delay/i)) {
-				// Crawl-delay must be a number greater than 0.
-				const delay = Number(value)
+				// A plain decimal only: Number() also takes exponents and hex, which crawlers don't read.
+				const delay = value.trim().match(/^\d+(\.\d+)?$/) ? Number(value) : NaN
 				if (isNaN(delay) || 1 > delay) {
 					errors = fillErrors(errors, 'red', 'invalidCrawlDelay', rule, { previewIndex })
 				}

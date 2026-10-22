@@ -163,12 +163,13 @@ import {
 import { __ } from '@/vue/plugins/translations'
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { getParams, removeParam } from '@/vue/utils/params'
+import { useMainSidebarIntent } from '../composables/MainSidebarIntent'
 import { useScrollTo } from '@/vue/composables/ScrollTo'
 import { useTruSeoHighlighter } from '@/vue/composables/TruSeoHighlighter'
 import { useHeadlineAnalyzer } from '@/vue/composables/HeadlineAnalyzer'
 import { createDebounce, debounceContext } from '@/vue/utils/debounce'
 import { preloadOnIdle } from '@/vue/utils/preload'
-import { isBlockEditor, isPageBuilderEditor } from '@/vue/utils/context'
+import { isBlockEditor, isElementorEditor, isPageBuilderEditor } from '@/vue/utils/context'
 import { truSeoShouldAnalyze, supportsPageAnalysis } from '@/vue/utils/postData/helpers'
 import { maybeUpdateTaxonomies } from '@/vue/plugins/tru-seo/components/taxonomies'
 import {
@@ -224,6 +225,7 @@ const truSeoHighlighterStore  = useTruSeoHighlighterStore()
 
 const { scrollTo } = useScrollTo()
 const { headlineAnalyzerEnabled, headlineAnalyzerOpen, closeHeadlineAnalyzer } = useHeadlineAnalyzer()
+const { getIntent: getMainSidebarIntent, clearIntent: clearMainSidebarIntent } = useMainSidebarIntent()
 
 // Mirror Analysis.vue's readiness gate so the tab-header score only appears once
 // real TruSEO analysis data exists.
@@ -240,12 +242,15 @@ const isTruSeoDataReady = computed(() => {
 
 // The highlighter must work regardless of the active tab, so its highlight-sentence
 // watcher lives here (Main is always mounted) rather than in the Optimization tab,
-// which unmounts when another tab is active.
-const { watchHighlightSentences } = useTruSeoHighlighter()
-const debouncedWatchHighlightSentences = createDebounce((value, oldValue) => watchHighlightSentences(value, oldValue), 300)
-watch(() => truSeoHighlighterStore.allHighlightSentences, (value, oldValue) => {
-	debouncedWatchHighlightSentences(value, oldValue)
-}, { deep: true, immediate: true })
+// which unmounts when another tab is active. Elementor mounts its own host at load
+// ({@see HighlighterHost}), and a second instance would repaint every mark twice.
+if (!isElementorEditor()) {
+	const { watchHighlightSentences } = useTruSeoHighlighter()
+	const debouncedWatchHighlightSentences = createDebounce((value, oldValue) => watchHighlightSentences(value, oldValue), 300)
+	watch(() => truSeoHighlighterStore.allHighlightSentences, (value, oldValue) => {
+		debouncedWatchHighlightSentences(value, oldValue)
+	}, { deep: true, immediate: true })
+}
 
 // Seed the painted analyzer set as soon as analysis lands, regardless of the
 // active tab, so highlights show on page load when highlighting is on instead
@@ -257,10 +262,8 @@ watch(() => truSeoHighlighterStore.availableHighlightAnalyzers, () => {
 	truSeoHighlighterStore.ensureSpellingHighlightPainted()
 }, { immediate: true })
 
-const updatingSeoRevisions = ref(false)
 const activeTab            = ref('general')
 const modal                = ref(false)
-const activeMainSidebarTab = ref('')
 const watchBlockEditor     = ref(null)
 
 const strings = {
@@ -414,22 +417,6 @@ const turnSlugIntoComponent = (slug) => {
 	return map[slug]
 }
 
-const updateSeoRevisions = () => {
-	if (
-		window.wp.data.select('core/editor').isSavingPost() &&
-		!window.wp.data.select('core/editor').isAutosavingPost() &&
-		seoRevisionsStore.hasPermission
-	) {
-		updatingSeoRevisions.value = true
-
-		setTimeout(() => {
-			seoRevisionsStore.fetch().finally(() => {
-				updatingSeoRevisions.value = false
-			})
-		}, 2500)
-	}
-}
-
 const processChangeTab = async (newTabValue, contextOverride = null) => {
 	// We need to check for null here explicitly because null values identify themselves as objects.
 	if (null !== newTabValue && 'object' === typeof newTabValue) {
@@ -571,19 +558,42 @@ watch(() => truSeoHighlighterStore.optimizePhase, async (phase) => {
 	}, 500)
 })
 
-watch(() => settingsStore.metaBoxTabs.mainSidebar, (mainSidebar) => {
-	if ('sidebar' !== screenContext.value) {
+const applyMainSidebarIntent = () => {
+	const intent = getMainSidebarIntent()
+
+	if ('sidebar' !== screenContext.value || !intent.tab) {
 		return
 	}
 
-	if (activeMainSidebarTab.value === mainSidebar.tab) {
-		return
+	processChangeTab(intent.tab)
+
+	// The Optimization tab clears intents that also carry a section, once it has scrolled there.
+	if (!intent.section) {
+		clearMainSidebarIntent()
 	}
+}
 
-	activeMainSidebarTab.value = mainSidebar.tab
+watch(() => settingsStore.metaBoxTabs.mainSidebar, applyMainSidebarIntent, { deep: true })
 
-	processChangeTab(mainSidebar.tab)
-}, { deep: true })
+const isAioseoSidebarOpen = () => 'aioseo-post-settings-sidebar/aioseo-post-settings-sidebar' ===
+	window.wp.data.select('core/interface')?.getActiveComplementaryArea?.('core')
+
+// Re-opening the sidebar before its close animation ends hands back this app's DOM instead of a
+// fresh mount, so land on the tab list here. A Fix click sets its intent after this runs.
+const watchSidebarReopen = () => {
+	let wasOpen = isAioseoSidebarOpen()
+
+	return window.wp.data.subscribe(() => {
+		const isOpen = isAioseoSidebarOpen()
+		if (isOpen && !wasOpen) {
+			processChangeTab(null)
+		}
+
+		wasOpen = isOpen
+	})
+}
+
+let unwatchSidebarReopen = null
 
 onBeforeMount(() => {
 	/**
@@ -600,6 +610,10 @@ onMounted(() => {
 	window.aioseoBus.$on('do-post-settings-main-tab-change', ({ name, context }) => {
 		processChangeTab(name, context)
 	})
+
+	if (isBlockEditor() && 'sidebar' === screenContext.value) {
+		unwatchSidebarReopen = watchSidebarReopen()
+	}
 
 	if (isBlockEditor()) {
 		// Defer the AI image generator setup to idle so the dynamic import
@@ -626,10 +640,6 @@ onMounted(() => {
 			}
 
 			watchBlockEditor.value = window.wp.data.subscribe(() => {
-				if (!licenseStore.isUnlicensed && !updatingSeoRevisions.value) {
-					updateSeoRevisions()
-				}
-
 				if (hasAiContentTab) {
 					extendImageBlockPlaceholder()
 					extendFeaturedImageButton()
@@ -662,6 +672,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	window.aioseoBus.$off('do-post-settings-main-tab-change')
 
+	unwatchSidebarReopen?.()
+
 	if (null !== watchBlockEditor.value) {
 		watchBlockEditor.value()
 	}
@@ -678,11 +690,8 @@ if (modal.value) {
 	}, 500)
 }
 
-nextTick(() => {
-	if (settingsStore.metaBoxTabs.mainSidebar.tab) {
-		processChangeTab(settingsStore.metaBoxTabs.mainSidebar.tab)
-	}
-})
+// The intent is set before the sidebar app mounts, so the watcher above never sees it.
+nextTick(applyMainSidebarIntent)
 
 window.aioseoBus.$on('standalone-update-post', (param) => {
 	Object.keys(param).forEach(option => {

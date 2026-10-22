@@ -33,6 +33,16 @@
 		<template v-else>
 			<dictionary-download-bar />
 
+			<core-alert
+				v-if="fixFeedback"
+				ref="fixFeedbackAlert"
+				:type="fixFeedback.type"
+				show-close
+				@close-alert="fixFeedback = null"
+			>
+				{{ fixFeedback.message }}
+			</core-alert>
+
 			<template v-if="words.length">
 				<div class="aioseo-spelling-analysis__list">
 					<div
@@ -55,6 +65,8 @@
 								<svg-right-arrow-short class="aioseo-spelling-analysis__jump-arrow" />
 							</button>
 						</div>
+
+						<hidden-in-view-note :count="hiddenCounts.get(word.word) || 0" />
 
 						<div class="aioseo-spelling-analysis__actions">
 							<template v-if="isLoading(word.word)">
@@ -79,6 +91,13 @@
 									{{ strings.noSuggestions }}
 								</span>
 							</template>
+
+							<span
+								v-if="fixesRequireMarkClick() && !isLoading(word.word)"
+								class="aioseo-spelling-analysis__no-suggestions"
+							>
+								{{ strings.fixFromHighlight }}
+							</span>
 
 							<button
 								type="button"
@@ -132,7 +151,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, ref, watch, watchEffect } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch, watchEffect } from 'vue'
 
 import {
 	usePostEditorStore,
@@ -142,12 +161,16 @@ import {
 
 import { __, sprintf } from '@/vue/plugins/translations'
 import { wordBoundaryPattern } from '@/vue/utils/regex'
-import { replaceWordInContent } from '@/vue/plugins/tru-seo/highlighter/spellingReplace'
+import { announceEditorJump, findWordInEditorContent, getEditorStickyOffset, getVisibleAnchor, revealInEditor } from '@/vue/plugins/tru-seo/highlighter/spellingJump'
+import { consumeWriteRefusal, replaceWordInContent } from '@/vue/plugins/tru-seo/highlighter/spellingReplace'
 import { getFormatClassName } from '@/vue/plugins/tru-seo/highlighter/wpDataStore'
 import { useEditorMode } from '@/vue/composables/EditorMode'
+import { countHiddenSentences } from '@/vue/plugins/tru-seo/highlighter/sentences'
+import { resolveAdapter } from '@/vue/plugins/tru-seo/editors'
 
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import DictionaryDownloadBar from '@/vue/components/common/tru-seo/DictionaryDownloadBar'
+import HiddenInViewNote from './HiddenInViewNote'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgPlus from '@/vue/components/common/svg/Plus'
 import SvgRightArrowShort from '@/vue/components/common/svg/right-arrow/Short'
@@ -192,7 +215,71 @@ const strings = {
 		// Translators: 1 - The misspelled word.
 		__('Jump to the first instance of “%1$s” in the editor', td),
 		word
+	),
+	// No placeholder, so no translator comment is needed (and one here would be dropped anyway).
+	fixFromHighlight : __('Click the highlighted word in the builder to fix it.', td),
+
+	fixFromHighlightOnly : (word) => sprintf(
+		// Translators: 1 - The misspelled word.
+		__('AIOSEO can\'t fix “%1$s” from here. Click the highlighted word in the builder and pick the suggestion there.', td),
+		word
+	),
+
+	fixFailed : (word) => sprintf(
+		// Translators: 1 - The misspelled word.
+		__('AIOSEO couldn\'t fix “%1$s” here. Try editing it directly in the content.', td),
+		word
+	),
+	fixFailedDynamic : (word) => sprintf(
+		// Translators: 1 - The misspelled word.
+		__('AIOSEO couldn\'t fix “%1$s” here. This text comes from a dynamic field, so it has to be changed at its source.', td),
+		word
+	),
+	fixFailedShortcode : (word) => sprintf(
+		// Translators: 1 - The misspelled word.
+		__('AIOSEO couldn\'t fix “%1$s” here. This text is produced by a shortcode, so it has to be changed where the shortcode gets it from.', td),
+		word
+	),
+	fixFailedEditorOpen : (word) => sprintf(
+		// Translators: 1 - The misspelled word.
+		__('AIOSEO couldn\'t fix “%1$s” while its element\'s settings panel is open. Close the panel and try again.', td),
+		word
+	),
+	fixFailedLocked : (word) => sprintf(
+		// Translators: 1 - The misspelled word.
+		__('AIOSEO couldn\'t fix “%1$s” because its module is locked in the builder. Unlock the module and try again.', td),
+		word
+	),
+	fixFailedNoEditor : (word) => sprintf(
+		// Translators: 1 - The misspelled word.
+		__('AIOSEO couldn\'t fix “%1$s” because its module isn\'t open for editing. Click the highlighted word in the builder and pick the suggestion there.', td),
+		word
+	),
+	fixFailedPostTitle : (word) => sprintf(
+		// Translators: 1 - The misspelled word.
+		__('AIOSEO couldn\'t fix “%1$s” here. This heading shows the post title, so change the title to fix it.', td),
+		word
+	),
+	fixFailedNotEditable : (word) => sprintf(
+		// Translators: 1 - The misspelled word.
+		__('AIOSEO can\'t fix “%1$s” for you because it\'s in an element AIOSEO can\'t edit, such as an image caption or an HTML widget. Select that element in Elementor and correct the word in its settings. If the text comes from somewhere else, like a sidebar or a list of recent posts, correct it there.', td),
+		word
 	)
+}
+
+// The reasons the generic advice is false for, split the same way as the popover's
+// ({@see components/common/tru-seo/HighlightPopover.vue}). `not-editable` and `post-title` are
+// panel-only: neither text is ever painted, so the popover meets them only on a stale mark.
+// `needs-inline-editor` belongs to the editor whose chips answer before any write; it is mapped
+// so the write path says the same thing should it ever be reached there.
+const REFUSAL_MESSAGES = {
+	dynamic               : 'fixFailedDynamic',
+	'shortcode-output'    : 'fixFailedShortcode',
+	'editor-open'         : 'fixFailedEditorOpen',
+	'locked-module'       : 'fixFailedLocked',
+	'post-title'          : 'fixFailedPostTitle',
+	'not-editable'        : 'fixFailedNotEditable',
+	'needs-inline-editor' : 'fixFailedNoEditor'
 }
 
 // Each misspelled occurrence is a separate highlightSentence entry, so group by
@@ -211,6 +298,20 @@ const words = computed(() => {
 	}
 
 	return Array.from(counts, ([ word, count ]) => ({ word, count }))
+})
+
+// Per word, how many occurrences are in text the editor's view doesn't show, so they never paint.
+const hiddenCounts = computed(() => {
+	const units  = resolveAdapter()?.getContentUnits?.() || []
+	const counts = new Map()
+
+	if (units.some(unit => unit.hiddenInView)) {
+		for (const { word, count } of words.value) {
+			counts.set(word, countHiddenSentences(Array(count).fill(word), units))
+		}
+	}
+
+	return counts
 })
 
 const PER_PAGE = 10
@@ -238,11 +339,31 @@ const pagerLabel = computed(() => {
 	)
 })
 
+// Words this panel already fixed. The row outlives the fix until re-analysis reads the new
+// content, so a repeat click finds nothing left to replace.
+const fixedWords = new Set()
+
+// Fixed words whose re-analysis is still running. Until it lands, a repeat click also finds the
+// word gone from every widget, which reads as `not-editable`.
+const reanalysingWords = new Set()
+
+// After the re-analysis, a fixed word still listed has an occurrence no write could reach.
+const isLandedFixEcho = (refusal, word) => ('not-found' === refusal && fixedWords.has(word)) ||
+	('not-editable' === refusal && reanalysingWords.has(word))
+
 // The list shrinks as words are fixed or added to the dictionary; keep the
 // current page in range so it never lands on an empty page.
 watch(words, () => {
 	if (page.value > totalPages.value) {
 		page.value = totalPages.value
+	}
+
+	// Forget a fixed word once it leaves the list, so a later re-typed misspelling reports normally.
+	const listed = new Set(words.value.map(({ word }) => word))
+	for (const word of fixedWords) {
+		if (!listed.has(word)) {
+			fixedWords.delete(word)
+		}
 	}
 })
 
@@ -250,9 +371,11 @@ watch(words, () => {
 const getTermDescription = () => document.querySelector('#edittag textarea#description')
 
 // Jump is marks-independent (it can find the word in the raw editor content), but on a post it is
-// only offered alongside highlighting. A term has no highlighting at all, and its textarea can
-// always be searched, so it gets the action unconditionally.
-const canJump = computed(() => !!getTermDescription() || truSeoHighlighterStore.highlightingEnabled)
+// only offered where highlighting is actually live — `highlightingEnabled` alone stays true on a
+// builder whose adapter owns no canvas, so the button would render and have nothing to scroll to.
+// A term has no highlighting at all, and its textarea can always be searched, so it gets the
+// action unconditionally.
+const canJump = computed(() => !!getTermDescription() || truSeoHighlighterStore.highlightingActive)
 
 const suggestionsFor = (word) => truSeoHighlighterStore.suggestionsCache[word] || []
 
@@ -262,11 +385,10 @@ const isLoading = (word) => truSeoHighlighterStore.suggestionsLoadingFor === wor
 
 const addingWords = computed(() => truSeoHighlighterStore.addToSafeWordsLoadingFor)
 
-// Prefetch suggestions for every misspelled word so the chips are ready inline
-// without waiting on hover, matching the popover behavior. The shared worker is
-// registered by TruSeoWrapper shortly after init; before then requestSpelling-
-// Suggestions returns [] and fetchSpellingSuggestions would cache that empty
-// result permanently, so wait for the worker instead of poisoning the cache.
+// Prefetch suggestions for the words on the current page so the chips are ready
+// inline without waiting on hover, matching the popover behavior. Only that page:
+// every request shares the analysis worker's one queue with the re-analysis that
+// clears a fixed word.
 let prefetchRetry   = null,
 	prefetchRetries = 0
 
@@ -295,7 +417,7 @@ const prefetchSuggestions = () => {
 
 	prefetchRetries = 0
 
-	for (const { word } of words.value) {
+	for (const { word } of pagedWords.value) {
 		if (!(word in truSeoHighlighterStore.suggestionsCache)) {
 			truSeoHighlighterStore.fetchSpellingSuggestions(word)
 		}
@@ -306,21 +428,90 @@ const marksForWord = (word) => truSeoHighlighterStore.highlightMarks.filter(
 	hm => 'spellingChecker' === hm.analyzer && hm.sentence === word
 )
 
+const fixFeedback      = ref(null)
+const fixFeedbackAlert = ref(null)
+
+// The alert renders above the list, so a click on a lower row would show it out of view.
+const showFixFeedback = async (feedback) => {
+	fixFeedback.value = feedback
+
+	await nextTick()
+
+	const alert = fixFeedbackAlert.value?.$el
+	if (!alert) {
+		return
+	}
+
+	// The sidebar's tab title is sticky, so `nearest` alone would tuck the alert's top beneath it.
+	const stickyTitle = alert.closest('.aioseo-tab')?.querySelector(':scope > .aioseo-tab-title')
+
+	alert.style.scrollMarginTop = `${(stickyTitle?.offsetHeight || 0) + 12}px`
+
+	// Elementor's panel scrolls through perfect-scrollbar (`.ps`), which writes scrollTop on every
+	// scroll event and cuts a smooth scroll short, leaving the alert half under the title.
+	alert.scrollIntoView({ behavior: alert.closest('.ps') ? 'auto' : 'smooth', block: 'nearest' })
+}
+
+// Whether this editor can only apply a fix through a mark's own popover
+// ({@see plugins/tru-seo/editors/divi4.js} for why Divi 4 can). The list still shows the
+// suggestions, but a click on one answers with the notice pointing at the mark instead of a write.
+// A function, not a computed: the adapter is not a reactive source, so a computed would keep
+// whatever the first render saw.
+const fixesRequireMarkClick = () => true === resolveAdapter()?.fixesRequireMarkClick
+
 const applySuggestion = async (word, suggestion) => {
+	fixFeedback.value = null
+
+	// No write is attempted: the click that reached this panel has already closed the builder's
+	// editor, so a write could only refuse, and the refusal it would record names whichever module
+	// the document-wide pass visited last rather than this one.
+	if (fixesRequireMarkClick()) {
+		showFixFeedback({
+			type    : 'red',
+			message : strings.fixFromHighlightOnly(word.word)
+		})
+
+		return
+	}
+
 	// Replace straight from the editor content — the list is built from the
 	// assessment, not painted marks, so the fix must work whether or not spelling
 	// highlighting is toggled on (with it off, no marks exist and the old
 	// marks-based path silently no-opped).
-	const success = replaceWordInContent(word.word, suggestion)
-	if (!success) {
+	const fixedCount = await replaceWordInContent(word.word, suggestion)
+	if (!fixedCount) {
+		// Alert only on a reason: a bare zero is common in block and classic and would cry wolf
+		// ({@see spellingReplace.js}).
+		const refusal = consumeWriteRefusal()
+		// A miss on a word this panel already fixed is the fix having landed, not a failure.
+		if (refusal && !isLandedFixEcho(refusal, word.word)) {
+			// The reasons naming text that is not in the widget's stored value: a dynamic-bound
+			// setting stores an `[elementor-tag …]` call and the canvas renders the tag's RESOLVED
+			// text, a `shortcode-output` word was produced by `do_shortcode` during the render, and a
+			// `not-editable` one sits in markup no editable setting renders. For all three, the
+			// generic "edit it in the content" names nothing the user can find.
+			showFixFeedback({
+				type    : 'red',
+				message : strings[REFUSAL_MESSAGES[refusal] || 'fixFailed'](word.word)
+			})
+		}
+
 		return
 	}
+
+	fixedWords.add(word.word)
+	reanalysingWords.add(word.word)
 
 	// Drop the fixed word's marks immediately for snappy feedback, then run one
 	// canonical re-analysis so the list loses the word deterministically instead
 	// of waiting on the race-prone ambient re-analysis.
 	truSeoHighlighterStore.dismissAfterFix({ analyzer: 'spellingChecker', sentence: word.word })
-	await truSeoHighlighterStore.reanalyzeNow()
+
+	try {
+		await truSeoHighlighterStore.reanalyzeNow()
+	} finally {
+		reanalysingWords.delete(word.word)
+	}
 }
 
 const addWord = async (word) => {
@@ -396,57 +587,13 @@ const findScrollTarget = (word) => {
 	return findWordInEditorContent(word)
 }
 
-// The editor's content root(s). Scoped to the editor — never the panel — so a
-// text search here can't match the same word shown in this list. Covers the
-// iframed Block editor (WP 6.3+), the non-iframed Block editor, and Classic.
-const getEditorContentRoots = () => {
-	const roots = []
-
-	const canvas = document.querySelector('iframe[name="editor-canvas"]')
-	if (canvas?.contentDocument?.body) {
-		roots.push(canvas.contentDocument.body)
-	} else {
-		const blockRoot = document.querySelector('.editor-styles-wrapper .is-root-container')
-		if (blockRoot) {
-			roots.push(blockRoot)
-		}
-	}
-
-	const classicFrame = document.getElementById('content_ifr')
-	if (classicFrame?.contentDocument?.body) {
-		roots.push(classicFrame.contentDocument.body)
-	}
-
-	return roots
-}
-
-// Locates the first whole-word occurrence of `word` in the editor content and
-// returns the element to scroll to. Marks-independent, so jump works with
-// spelling highlighting off.
-const findWordInEditorContent = (word) => {
-	const regex = new RegExp(wordBoundaryPattern(word), 'u')
-
-	for (const root of getEditorContentRoots()) {
-		const doc = root.ownerDocument || document
-		const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT)
-		let node
-
-		while (null !== (node = walker.nextNode())) {
-			if (regex.test(node.nodeValue || '')) {
-				return node.parentElement
-			}
-		}
-	}
-
-	return null
-}
-
 // Extra top gap so a jump target isn't hidden behind (or flush against) the
 // editor's sticky chrome. The Classic editor pins its media/Visual-Code bar and
 // format toolbar over the content, so add their heights (stable whether or not
 // currently pinned); the Block editor's canvas already renders below its fixed
-// header, so the trailing gap alone suffices there. The fixed WP admin bar is
-// handled separately by WP's `scroll-padding-top` on the document.
+// header, so the trailing gap alone suffices there. A builder canvas adds the theme
+// header it renders fixed inside itself. The fixed WP admin bar is handled
+// separately by WP's `scroll-padding-top` on the document.
 const getStickyEditorOffset = () => {
 	let height = 0
 	for (const selector of [ '.wp-editor-tools', '.mce-toolbar-grp' ]) {
@@ -456,7 +603,7 @@ const getStickyEditorOffset = () => {
 		}
 	}
 
-	return Math.round(height) + 16
+	return Math.round(height) + getEditorStickyOffset() + 16
 }
 
 // A term's description is a plain textarea, so there is no <mark> to scroll to. Selecting the word
@@ -496,8 +643,13 @@ const jumpToWord = (word) => {
 	// The Classic editor's TinyMCE toolbar sticks over the content though, and
 	// scroll-padding doesn't know about it — so offset the target by the toolbar's
 	// live height, or `block: 'start'` lands the word hidden just beneath it.
-	node.style.scrollMarginTop = `${getStickyEditorOffset()}px`
-	node.scrollIntoView({ behavior: 'smooth', block: 'start' })
+	revealInEditor(node)
+
+	const target = getVisibleAnchor(node)
+	target.style.scrollMarginTop = `${getStickyEditorOffset()}px`
+	target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+	announceEditorJump(target)
 }
 
 watchEffect(prefetchSuggestions)

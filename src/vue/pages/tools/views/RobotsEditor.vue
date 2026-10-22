@@ -1017,7 +1017,16 @@ export default {
 
 			await this.$nextTick()
 
+			const previousDirective = rule.directive
+
 			rule[type] = this.sanitizeDirectiveValue(rule, type, value)
+
+			// The value was sanitized for the previous directive, so redo it for the new one.
+			if ('directive' === type && rule.fieldValue) {
+				rule.fieldValue = previousDirective.match(/allow|disallow/) && !rule.directive.match(/allow|disallow/)
+					? rule.fieldValue.replace(/^\/+/, '')
+					: this.sanitizeDirectiveValue(rule, 'fieldValue', rule.fieldValue)
+			}
 
 			this.networkStore.networkRobots.rules.splice(index, 1, JSON.stringify(rule))
 		},

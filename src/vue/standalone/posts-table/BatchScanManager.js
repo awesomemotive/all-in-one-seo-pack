@@ -1,4 +1,5 @@
 import { buildDatabaseResults } from '@/vue/plugins/tru-seo/helpers/resultsHelper'
+import { withoutEphemeralAnalysisData } from '@/vue/utils/postData/analysisPayload'
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 import { __, sprintf } from '@/vue/plugins/translations'
@@ -351,12 +352,12 @@ export default class BatchScanManager {
 	async saveResults (postId, results) {
 		const route = 'term' === this.objectType ? 'truseo/terms' : 'truseo/posts'
 		await http.post(links.restUrl(`${route}/${postId}`))
-			.send({
+			.send(withoutEphemeralAnalysisData({
 				truseo              : results.truseo,
 				seo_score           : results.seo_score,
 				focus_keyword       : results.focus_keyword,
 				additional_keywords : results.additional_keywords
-			})
+			}))
 	}
 
 	/**

@@ -562,7 +562,8 @@ export default {
 			if (oldVal && !newVal) {
 				this.$nextTick(() => {
 					if (0 === this.rows.length && this.totals && 0 < this.totals.total && 1 < this.pageNumber) {
-						this.processPaginate(this.pageNumber - 1)
+						// Jump to the last page in one go rather than stepping back a page per request.
+						this.processPaginate(Math.min(this.pageNumber - 1, this.totals.pages || this.pageNumber - 1))
 					}
 				})
 			}

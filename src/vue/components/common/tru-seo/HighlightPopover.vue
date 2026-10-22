@@ -1,5 +1,6 @@
 <template>
 	<div
+		v-if="hasMark"
 		class="tru-seo-highlight-popover"
 		:data-placement="placement"
 	>
@@ -48,6 +49,8 @@
 					<button
 						v-if="showSuggestFixButton"
 						class="tru-seo-highlight-popover__suggest-fix"
+						:disabled="aiBusy"
+						:title="aiBusy ? strings.waitForSuggestions : null"
 						@click="requestSuggestions"
 					>
 						<SvgAiContent
@@ -83,6 +86,15 @@
 				{{ addToSafeWordsError }}
 			</div>
 
+			<div
+				v-if="showBusyHint && !showFooter"
+				class="tru-seo-highlight-popover__busy-hint"
+				role="status"
+			>
+				<span class="tru-seo-highlight-popover__busy-icon" />
+				{{ strings.waitForSuggestions }}
+			</div>
+
 			<hr
 				v-if="spellingSuggestions.length || aiSuggestions.length"
 				class="tru-seo-highlight-popover__separator"
@@ -109,6 +121,8 @@
 			{{ aiError }}
 			<button
 				class="tru-seo-highlight-popover__retry"
+				:disabled="aiBusy"
+				:title="aiBusy ? strings.waitForSuggestions : null"
 				@click="requestSuggestions"
 			>
 				{{ strings.retry }}
@@ -125,7 +139,8 @@
 					:key="index"
 					type="button"
 					class="tru-seo-highlight-popover__suggestion"
-					@click.prevent.stop="applySpellingSuggestion(suggestion)"
+					@mousedown="onFixPointerDown(() => applySpellingSuggestion(suggestion))"
+					@click.prevent.stop="onFixClick(() => applySpellingSuggestion(suggestion))"
 				>
 					{{ suggestion }}
 				</button>
@@ -148,7 +163,8 @@
 					v-for="(suggestion, index) in aiSuggestions"
 					:key="index"
 					class="tru-seo-highlight-popover__suggestion tru-seo-highlight-popover__suggestion--ai"
-					@click="applyAiSuggestion(suggestion)"
+					@mousedown="onFixPointerDown(() => applyAiSuggestion(suggestion))"
+					@click="onFixClick(() => applyAiSuggestion(suggestion))"
 				>
 					<span
 						class="tru-seo-highlight-popover__suggestion-text"
@@ -172,20 +188,39 @@
 		</div>
 
 		<div
-			v-if="isAiSuggestable && hasCachedAiSuggestions && !suggestionsLoading"
+			v-if="showFooter"
 			class="tru-seo-highlight-popover__footer"
 		>
 			<hr class="tru-seo-highlight-popover__separator">
 
 			<div class="tru-seo-highlight-popover__footer-content">
+				<div
+					v-if="showBusyHint"
+					class="tru-seo-highlight-popover__busy-hint tru-seo-highlight-popover__busy-hint--inline"
+					role="status"
+				>
+					<span class="tru-seo-highlight-popover__busy-icon" />
+					{{ strings.waitForSuggestions }}
+				</div>
+
 				<button
 					class="tru-seo-highlight-popover__regenerate"
+					:disabled="aiBusy"
+					:title="aiBusy ? strings.waitForSuggestions : null"
 					@click="regenerateAiSuggestions"
 				>
 					<SvgAiContent class="tru-seo-highlight-popover__regenerate-icon" />
 					{{ regenerateLabel }}
 				</button>
 			</div>
+		</div>
+
+		<div
+			v-if="fixRefusal"
+			class="tru-seo-highlight-popover__error"
+			role="alert"
+		>
+			{{ fixRefusalMessage }}
 		</div>
 
 		<div class="tru-seo-highlight-popover__manage">
@@ -215,15 +250,19 @@ import {
 } from '@/vue/stores'
 
 import {
-	AI_SUGGESTABLE_ANALYZERS
+	AI_SUGGESTABLE_ANALYZERS,
+	ANALYZER_SCOPE_MAP
 } from '@/vue/stores/TruSeoHighlighterStore'
+
+import { resolveAdapter } from '@/vue/plugins/tru-seo/editors'
 
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
 import { getAssessmentColor, getAssessmentName } from '@/vue/plugins/tru-seo/helpers/assessmentColors'
-import { replaceBlockText, replaceText, replaceWordInContent } from '@/vue/plugins/tru-seo/highlighter/spellingReplace'
+import { consumeWriteRefusal, replaceBlockText, replaceText, replaceWordInContent } from '@/vue/plugins/tru-seo/highlighter/spellingReplace'
 import { useAiContent } from '@/vue/composables/AiContent'
+import { usePointerDownFix } from '@/vue/composables/PointerDownFix'
 
 import OutOfCreditsModal from '@/vue/components/common/ai/OutOfCreditsModal'
 import SvgAiContent from '@/vue/components/common/svg/ai/AiContent'
@@ -263,21 +302,34 @@ const upsellFeature = {
 const contentOptimizationUrl = (rootStore.aioseo?.urls?.aio?.settings || '#') + '#/content-optimization'
 
 const strings = {
-	noSuggestions      : __('No suggestions yet. Try editing the word and re-running the check.', td),
-	suggestFix         : __('Suggest a fix', td),
-	regenerate         : __('Regenerate', td),
-	retry              : __('Retry', td),
-	addToDictionary    : __('Add to dictionary', td),
-	addingToDictionary : __('Adding…', td),
-	previousIssue      : __('Previous issue', td),
-	nextIssue          : __('Next issue', td),
-	dontWantToSee      : sprintf(
+	noSuggestions       : __('No suggestions yet. Try editing the word and re-running the check.', td),
+	suggestFix          : __('Suggest a fix', td),
+	regenerate          : __('Regenerate', td),
+	retry               : __('Retry', td),
+	waitForSuggestions  : __('Another suggestion is being generated. Try again when it\'s done.', td),
+	addToDictionary     : __('Add to dictionary', td),
+	addingToDictionary  : __('Adding…', td),
+	previousIssue       : __('Previous issue', td),
+	nextIssue           : __('Next issue', td),
+	fixFailed           : __('AIOSEO couldn\'t apply this fix here. Try editing the text directly in the content.', td),
+	fixFailedDynamic    : __('AIOSEO couldn\'t apply this fix here. This text comes from a dynamic field, so it has to be changed at its source.', td),
+	fixFailedShortcode  : __('AIOSEO couldn\'t apply this fix here. This text is produced by a shortcode, so it has to be changed where the shortcode gets it from.', td),
+	fixFailedEditorOpen : __('AIOSEO couldn\'t apply this fix while this element\'s settings panel is open. Close the panel and try again.', td),
+	fixFailedLocked     : __('AIOSEO couldn\'t apply this fix because this module is locked in the builder. Unlock the module and try again.', td),
+	fixFailedNoEditor   : __('AIOSEO couldn\'t apply this fix because the module isn\'t open for editing. Click the highlighted word in the builder again, then pick the suggestion.', td),
+	dontWantToSee       : sprintf(
 		// Translators: 1 - "Disable for this post" action link, 2 - "Content Optimization" settings link.
 		__('Don\'t want to see this? %1$s or under %2$s settings for all posts.', td),
 		'<a href="#" class="tru-seo-highlight-popover__manage-link" data-aioseo-highlight-disable="1">' + __('Disable the highlighter for this post', td) + '</a>',
 		'<a href="' + contentOptimizationUrl + '" class="tru-seo-highlight-popover__manage-link" target="_blank" rel="noopener noreferrer">' + __('Content Optimization', td) + '</a>'
 	)
 }
+
+// Renders only while the store can still resolve the mark. Elementor's inline pen replaces the
+// editing area's innerHTML when it opens, which drops the mark's `node` and would leave an empty
+// box. Gated here rather than closed from the composable, whose `popoverPinned` is per-instance
+// while the store is shared.
+const hasMark = computed(() => !!truSeoHighlighterStore.hoveredMark)
 
 const assessmentColor = computed(() => {
 	const analyzer = truSeoHighlighterStore.hoveredMark?.analyzer
@@ -297,8 +349,13 @@ const pagerPosition = computed(() => {
 	return truSeoHighlighterStore.hoveredMarkPosition
 })
 
+// Whether a fix needs the user's own click on the mark first ({@see plugins/tru-seo/editors/divi4.js}).
+// The pager and the advance-after-fix both re-open the popover on a mark nobody clicked, so every
+// suggestion offered there could only refuse; such an editor gets neither.
+const fixesRequireMarkClick = computed(() => true === resolveAdapter()?.fixesRequireMarkClick)
+
 const showPager = computed(() => {
-	return 1 < pagerPosition.value.total
+	return 1 < pagerPosition.value.total && !fixesRequireMarkClick.value
 })
 
 const hasPreviousSibling = computed(() => {
@@ -322,9 +379,27 @@ const isSpellingSuggestable = computed(() => {
 	return !!analyzer && SPELLING_ANALYZERS.includes(analyzer)
 })
 
+// Scopes whose answer is several paragraphs, so an editor may be unable to store it at all
+// ({@see stores/TruSeoHighlighterStore.js:ANALYZER_SCOPE_MAP}).
+const BLOCK_SCOPES = [ 'paragraph', 'section' ]
+
+// Gated on the editor too, because the request is billed on click: a target that cannot hold
+// blocks (an Elementor heading title, a V4 atomic prop) refuses any multi-part answer.
+// NOTE: fails open — an adapter without the probe keeps the button.
 const isAiSuggestable = computed(() => {
-	const analyzer = truSeoHighlighterStore.hoveredMark?.analyzer
-	return !!analyzer && AI_SUGGESTABLE_ANALYZERS.includes(analyzer)
+	const mark     = truSeoHighlighterStore.hoveredMark
+	const analyzer = mark?.analyzer
+
+	if (!analyzer || !AI_SUGGESTABLE_ANALYZERS.includes(analyzer)) {
+		return false
+	}
+
+	if (!BLOCK_SCOPES.includes(ANALYZER_SCOPE_MAP[analyzer])) {
+		return true
+	}
+
+	// Only re-evaluated when `hoveredMark` changes: the probe reads editor state Vue can't track.
+	return false !== resolveAdapter()?.canReplaceMarkBlocks?.(mark)
 })
 
 const canGetSuggestions = computed(() => {
@@ -380,6 +455,14 @@ const showDescription = computed(() => {
 		!hasCachedAiSuggestions.value
 })
 
+// Another issue's suggestions are generating; only one request runs at a time.
+const aiBusy = computed(() => truSeoHighlighterStore.aiSuggestionsBusy)
+
+// Says why Suggest a fix, Regenerate and Retry are disabled, so it doesn't read as a credits problem.
+const showBusyHint = computed(() => isAiSuggestable.value && aiBusy.value && !suggestionsLoading.value)
+
+const showFooter = computed(() => isAiSuggestable.value && hasCachedAiSuggestions.value && !suggestionsLoading.value)
+
 const aiError = computed(() => {
 	return truSeoHighlighterStore.aiSuggestionsError
 })
@@ -391,6 +474,24 @@ const addToSafeWordsLoading = computed(() => {
 const addToSafeWordsError = computed(() => {
 	return truSeoHighlighterStore.addToSafeWordsError
 })
+
+// Why the last fix on this mark refused, or null. Holds the reason, not the message.
+const fixRefusal = ref(null)
+
+// The only reasons where the text is not in the stored content (a dynamic tag's resolved text, or
+// a shortcode's output), where retrying is the fix (an open settings panel overwrites the write),
+// where editing is exactly what the builder blocks (a locked module), or where the module's editor
+// has to be opened by a click on the mark first (Divi 4), so the generic "edit it in the content"
+// advice would mislead. Every other refusal, `shortcode` included, describes text the user can edit.
+const REFUSAL_MESSAGES = {
+	dynamic               : 'fixFailedDynamic',
+	'shortcode-output'    : 'fixFailedShortcode',
+	'editor-open'         : 'fixFailedEditorOpen',
+	'locked-module'       : 'fixFailedLocked',
+	'needs-inline-editor' : 'fixFailedNoEditor'
+}
+
+const fixRefusalMessage = computed(() => strings[REFUSAL_MESSAGES[fixRefusal.value] || 'fixFailed'])
 
 const showSuggestFixButton = computed(() => {
 	if (!isAiSuggestable.value) {
@@ -454,6 +555,9 @@ const formatSuggestionText = (text) => {
 	return DOMPurify.sanitize(marked.parse(String(text), { async: false }))
 }
 
+// Close after the fix instead of advancing where the next mark would need its own click first.
+const nextIssueKeys = (mark) => fixesRequireMarkClick.value ? [] : truSeoHighlighterStore.nextIssueAdvanceKeys(mark)
+
 const addToDictionary = async () => {
 	const mark = truSeoHighlighterStore.hoveredMark
 	if (!mark?.sentence || addToSafeWordsLoading.value) {
@@ -462,7 +566,7 @@ const addToDictionary = async () => {
 
 	// Capture the next issues and arm the advance before the fix — addToSafeWords
 	// re-analyzes and rebuilds every mark, so a mark reference can't survive it.
-	const nextKeys = truSeoHighlighterStore.nextIssueAdvanceKeys(mark)
+	const nextKeys = nextIssueKeys(mark)
 	if (nextKeys.length) {
 		truSeoHighlighterStore.armAdvance(nextKeys)
 	}
@@ -482,21 +586,29 @@ const addToDictionary = async () => {
 	}
 }
 
+const { onFixClick, onFixPointerDown } = usePointerDownFix()
+
 const applySpellingSuggestion = async (suggestion) => {
 	const mark = truSeoHighlighterStore.hoveredMark
 	if (!mark) {
 		return
 	}
 
-	const nextKeys = truSeoHighlighterStore.nextIssueAdvanceKeys(mark)
+	fixRefusal.value = null
+
+	const nextKeys = nextIssueKeys(mark)
 
 	// Fix every occurrence of the word across the whole post — not just the painted
 	// marks — so the same misspelling is never left flagged elsewhere in the content.
 	// Pass triggerReanalysis=false; the advance flow's own reanalyzeNow() rebuilds
 	// the marks, and a second (debounced) re-analysis would tear down the popover.
-	const success = replaceWordInContent(mark.sentence, suggestion, false)
+	const success = await replaceWordInContent(mark.sentence, suggestion, false)
 
 	if (!success) {
+		// Only an editor that knows why it refused supplies a reason, so block and classic stay
+		// silent without a branch ({@see spellingReplace.js:consumeWriteRefusal}).
+		fixRefusal.value = consumeWriteRefusal()
+
 		return
 	}
 
@@ -514,18 +626,25 @@ const applyAiSuggestion = async (suggestion) => {
 		return
 	}
 
-	const nextKeys = truSeoHighlighterStore.nextIssueAdvanceKeys(mark)
+	fixRefusal.value = null
+
+	const nextKeys = nextIssueKeys(mark)
 
 	const strategy = suggestion.replaceStrategy
 	let applied = false
 
+	// Awaited: an unawaited promise is always truthy and would advance past a fix that failed.
 	if ('paragraph' === strategy || 'section' === strategy) {
-		applied = replaceBlockText(mark, suggestion.text)
+		applied = await replaceBlockText(mark, suggestion.text)
 	} else {
-		applied = replaceText(mark, suggestion.text)
+		applied = await replaceText(mark, suggestion.text)
 	}
 
 	if (!applied) {
+		// The only route to `ambiguous` and `shortcode`, neither visible in the canvas
+		// ({@see spellingReplace.js:consumeWriteRefusal}).
+		fixRefusal.value = consumeWriteRefusal()
+
 		return
 	}
 
@@ -577,6 +696,7 @@ watch(
 		// A fresh mark gets a fresh popover — never carry a previous mark's AI error
 		// (it would also suppress this mark's "Suggest a fix" button).
 		truSeoHighlighterStore.clearAiSuggestionsError()
+		fixRefusal.value = null
 
 		if (!mark?.sentence || !SPELLING_ANALYZERS.includes(mark.analyzer)) {
 			return
@@ -806,6 +926,33 @@ watch(
 		}
 	}
 
+	&__busy-hint {
+		align-items: flex-start;
+		color: $orange3;
+		display: flex;
+		font-size: $font-sm;
+		gap: 6px;
+		line-height: 1.5;
+		margin-top: 4px;
+
+		&--inline {
+			margin-top: 0;
+			min-width: 0;
+		}
+	}
+
+	&__busy-icon {
+		animation: tru-seo-popover-spin 0.8s linear infinite;
+		border: 1.5px solid currentColor;
+		border-radius: 50%;
+		border-right-color: transparent;
+		box-sizing: border-box;
+		flex-shrink: 0;
+		height: 12px;
+		margin-top: 3px;
+		width: 12px;
+	}
+
 	&__error {
 		align-items: center;
 		color: $red;
@@ -827,6 +974,11 @@ watch(
 
 		&:hover {
 			color: $blue3;
+		}
+
+		&:disabled {
+			color: $placeholder-color;
+			cursor: not-allowed;
 		}
 	}
 
@@ -979,6 +1131,7 @@ watch(
 		&-content {
 			display: flex;
 			align-items: center;
+			gap: 16px;
 			justify-content: flex-end;
 		}
 	}
@@ -994,7 +1147,9 @@ watch(
 		line-height: 1.5;
 
 		:deep(a) {
-			color: inherit;
+			// main.scss's `.aioseo-app a` ties with this rule, so without the override the color
+			// follows stylesheet load order (blue in the block editor, grey in WPBakery).
+			color: $blue !important;
 			font-weight: inherit;
 			text-decoration: underline;
 			cursor: pointer;
@@ -1014,7 +1169,9 @@ watch(
 		display: inline-flex;
 		font-size: $font-sm;
 		font-weight: $font-bold;
+		flex-shrink: 0;
 		gap: 6px;
+		margin-left: auto;
 		padding: 2px 4px;
 
 		&:hover {

@@ -16,6 +16,16 @@ use AIOSEO\Plugin\Common\Models;
  */
 class Ai {
 	/**
+	 * The maximum number of characters of post content we send to the AI Generator service.
+	 * NOTE: Keep in step with the AI Assistant block's client-side cap.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @var int
+	 */
+	const MAX_POST_CONTENT_LENGTH = 10000;
+
+	/**
 	 * The assistant class.
 	 *
 	 * @since 4.9.1
@@ -551,6 +561,91 @@ class Ai {
 	}
 
 	/**
+	 * Truncates post content to the maximum length we send to the AI Generator service.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  string $postContent The post content.
+	 * @return string              The post content, at most self::MAX_POST_CONTENT_LENGTH characters.
+	 */
+	public function truncatePostContent( $postContent ) {
+		if ( ! is_string( $postContent ) ) {
+			return '';
+		}
+
+		// Fast path: a UTF-8 string never has fewer bytes than characters.
+		if ( self::MAX_POST_CONTENT_LENGTH >= strlen( $postContent ) ) {
+			return $postContent;
+		}
+
+		// Over the cap, markup would spend characters the text needs, so shed it before cutting:
+		// block delimiters and other comments first, then the tags themselves.
+		if ( self::MAX_POST_CONTENT_LENGTH < aioseo()->helpers->stringLength( $postContent ) ) {
+			$postContent = preg_replace( '/<!--.*?-->/s', '', $postContent ) ?? $postContent;
+		}
+
+		if ( self::MAX_POST_CONTENT_LENGTH < aioseo()->helpers->stringLength( $postContent ) ) {
+			$stripped = $this->stripMarkup( $postContent );
+
+			// Content that is all markup (or broken markup) is still better sent cut than empty.
+			if ( '' !== trim( $stripped ) ) {
+				$postContent = $stripped;
+			}
+		}
+
+		$truncated = aioseo()->helpers->substring( $postContent, 0, self::MAX_POST_CONTENT_LENGTH );
+
+		// Over the cap in bytes but not in characters (multibyte scripts): nothing was cut, so
+		// don't rewind. This also keeps the function idempotent.
+		if ( $truncated === $postContent ) {
+			return $postContent;
+		}
+
+		// Rewind past the half word the cap cut, unless that would drop most of the payload (one
+		// unbroken token such as a data URI). A literal class, not `\s`, on a byte string.
+		if (
+			preg_match( '/^(.*)[ \t\r\n][^ \t\r\n]*$/s', $truncated, $matches ) &&
+			strlen( $matches[1] ) > ( strlen( $truncated ) / 2 )
+		) {
+			$truncated = $matches[1];
+		}
+
+		// Without mbstring, `substring()` cuts bytes and can split a character, and an invalid
+		// tail makes `wp_json_encode()` fail for the whole body. Drop at most three bytes (a UTF-8
+		// character is at most four); content still invalid after that arrived invalid.
+		for ( $i = 0; 3 > $i && '' !== $truncated && 1 !== preg_match( '//u', $truncated ); $i++ ) {
+			$truncated = substr( $truncated, 0, -1 );
+		}
+
+		return $truncated;
+	}
+
+	/**
+	 * Strips HTML from post content while keeping block-level elements on separate lines.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  string $postContent The post content.
+	 * @return string              The plain-text post content.
+	 */
+	private function stripMarkup( $postContent ) {
+		// `strip_tags()` discards everything after an unclosed comment opener.
+		$postContent = str_replace( '<!--', '', $postContent );
+
+		// Without the line break, `<p>One</p><p>Two</p>` would reach the service as "OneTwo". Opening
+		// tags break too, so `<li>One<ul><li>Two` doesn't run together either.
+		$blockTags = 'address|article|aside|blockquote|caption|dd|details|dialog|div|dl|dt|fieldset|figcaption|figure|footer|form|' .
+			'h[1-6]|header|hgroup|hr|label|legend|li|main|nav|ol|p|pre|section|summary|table|tbody|td|tfoot|th|thead|tr|ul';
+
+		$postContent = preg_replace( '#</?(?:' . $blockTags . ')(?:[\s/][^>]*)?>#i', "\n$0\n", $postContent ) ?? $postContent;
+		$postContent = preg_replace( '#<br\s*/?>#i', "$0\n", $postContent ) ?? $postContent;
+		$postContent = wp_strip_all_tags( $postContent );
+		$postContent = preg_replace( '/[ \t]+/', ' ', $postContent ) ?? $postContent;
+
+		return preg_replace( '/[ \t\r]*\n(?:[ \t\r]*\n)+[ \t\r]*/', "\n\n", $postContent ) ?? $postContent;
+	}
+
+	/**
 	 * Checks the locally cached credit balance against the cached cost of the given feature.
 	 *
 	 * NOTE: Fails open when the cost or balance was never synced; the service remains the source of truth.
@@ -612,6 +707,12 @@ class Ai {
 
 		if ( $feature && ! $this->hasCreditsForFeature( $feature ) ) {
 			return $this->getInsufficientCreditsError();
+		}
+
+		// Bounded here rather than at each caller because `generateSchemas()` forwards the REST
+		// body verbatim — a cap applied to a caller's own local copy would never reach it.
+		if ( ! empty( $body['postContent'] ) ) {
+			$body['postContent'] = $this->truncatePostContent( $body['postContent'] );
 		}
 
 		$response = aioseo()->helpers->wpRemotePost( $this->getAiGeneratorApiUrl() . $endpoint, [
@@ -784,7 +885,8 @@ class Ai {
 	 */
 	private function setOptions() {
 		$this->options = [
-			'minContentLength' => 200
+			'minContentLength'       => 200,
+			'maxOptimizeBlockLength' => \AIOSEO\Plugin\Common\Api\Ai::MAX_OPTIMIZE_BLOCK_LENGTH
 		];
 	}
 }

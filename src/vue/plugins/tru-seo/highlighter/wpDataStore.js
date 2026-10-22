@@ -25,6 +25,9 @@ export const getFormatName = (analyzer) => {
 	return `aioseo/highlight-${analyzerToSlug(analyzer)}`
 }
 
+// The class prefix of every painted mark, shared with the DOM walks that skip our decoration.
+export const HIGHLIGHT_CLASS_PREFIX = 'aioseo-highlight-'
+
 /**
  * Builds the CSS class name for a given analyzer.
  *
@@ -32,7 +35,7 @@ export const getFormatName = (analyzer) => {
  * @returns {string} The class name (e.g. 'aioseo-highlight-keyphrase-in-introduction').
  */
 export const getFormatClassName = (analyzer) => {
-	return `aioseo-highlight-${analyzerToSlug(analyzer)}`
+	return `${HIGHLIGHT_CLASS_PREFIX}${analyzerToSlug(analyzer)}`
 }
 
 const actions = {

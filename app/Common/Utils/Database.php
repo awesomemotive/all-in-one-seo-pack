@@ -817,6 +817,19 @@ class Database {
 	}
 
 	/**
+	 * Shortcut method to return the query string, resolved and ready to be passed to execute().
+	 *
+	 * NOTE: {@see query()} escapes literal percent signs, which only unwind through wpdb::prepare().
+	 *
+	 * @since 5.0.4
+	 *
+	 * @return string The prepared query string.
+	 */
+	public function preparedQuery() {
+		return trim( $this->db->prepare( $this->query(), 1, 1 ) );
+	}
+
+	/**
 	 * Start a new Database Query.
 	 *
 	 * @since 4.0.0

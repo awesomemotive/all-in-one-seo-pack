@@ -238,6 +238,14 @@
 						</p>
 					</div>
 
+					<core-alert
+						v-if="skippedBlocksText"
+						class="aioseo-optimize-modal__skipped"
+						type="yellow"
+					>
+						{{ skippedBlocksText }}
+					</core-alert>
+
 					<div
 						v-if="resolvedItems.length"
 						class="aioseo-optimize-modal__resolved"
@@ -793,6 +801,18 @@ const resolvedItems = computed(() => {
 })
 const visibleResolved     = computed(() => resolvedItems.value.slice(0, MAX_VISIBLE_CHECKS))
 const hiddenResolvedCount = computed(() => Math.max(0, resolvedItems.value.length - MAX_VISIBLE_CHECKS))
+const skippedBlocksText   = computed(() => {
+	const skipped = result.value.skippedBlocks || 0
+	if (!skipped) {
+		return ''
+	}
+
+	return sprintf(
+		// Translators: %1$d - The number of paragraphs and headings left out of the optimization.
+		_n('%1$d paragraph or heading was too long to optimize and was left as written. Split it into shorter ones to include it next time.', '%1$d paragraphs or headings were too long to optimize and were left as written. Split them into shorter ones to include them next time.', skipped, td),
+		skipped
+	)
+})
 const moreChecksText      = computed(() => sprintf(
 	// Translators: %1$d - The number of additional resolved improvements not shown.
 	_n('+%1$d more', '+%1$d more', hiddenResolvedCount.value, td),
@@ -1232,7 +1252,8 @@ onBeforeUnmount(() => {
 		margin: 0 0 24px;
 	}
 
-	&__error {
+	&__error,
+	&__skipped {
 		text-align: left;
 		margin-bottom: 20px;
 	}

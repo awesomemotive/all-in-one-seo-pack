@@ -187,7 +187,7 @@
 					<!-- Step 3: app password detail -->
 					<template v-if="'appPassword' === step.key">
 						<div
-							v-if="appPasswordsDisabledNotice && !hasAppPassword"
+							v-if="appPasswordsDisabledNotice"
 							class="mcp-v2-inline-message error"
 							v-html="appPasswordsDisabledNotice"
 						/>
@@ -405,6 +405,7 @@ import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation
 import TransitionSlide from '@/vue/components/common/transition/Slide'
 
 import links from '@/vue/utils/links'
+import { escapeHtml } from '@/vue/utils/strings'
 
 import { __, sprintf } from '@/vue/plugins/translations'
 
@@ -500,17 +501,39 @@ const appPasswordError      = ref('')
 
 const hasAppPassword = computed(() => true === mcpData.value.hasAppPassword || null !== generatedAppPassword.value)
 
-// Default to available when the flag is absent (older payload) so we never warn on a false positive.
-const appPasswordsSupported = computed(() => false !== mcpData.value.appPasswordsSupported)
-const appPasswordsAvailable = computed(() => false !== mcpData.value.appPasswordsAvailable)
+// Default to available when the status is absent (older payload) so we never warn on a false positive.
+const appPasswords          = computed(() => mcpData.value.appPasswords || {})
+const appPasswordsAvailable = computed(() => false !== appPasswords.value.available)
 
-// Advises the user when they can't generate a credential, with cause-specific guidance.
+// A saved password stops working once the feature is disabled, so it only counts while they're available.
+const appPasswordReady = computed(() => hasAppPassword.value && appPasswordsAvailable.value)
+
+// A site-wide block is self-serviceable; one scoped to this user alone is not.
+const appPasswordDisabledSubtitle = computed(() => 'user' === appPasswords.value.scope
+	? strings.steps.appPasswordDisabledForUser
+	: strings.steps.appPasswordDisabledSubtitle)
+
+// Advises the user when they can't generate a credential, naming the blocker when we can identify it.
 const appPasswordsDisabledNotice = computed(() => {
 	if (appPasswordsAvailable.value) {
 		return ''
 	}
 
-	if (!appPasswordsSupported.value) {
+	const { cause, scope, plugin, canManage, networkAdmin } = appPasswords.value
+	// The name is read from the plugin's own header, and the notice is rendered as HTML.
+	const pluginName  = escapeHtml(appPasswords.value.pluginName)
+	const settingsUrl = escapeHtml(appPasswords.value.settingsUrl)
+
+	if ('unsupported' === cause) {
+		return sprintf(
+			// Translators: 1 - Opening link tag, 2 - Closing link tag.
+			__('This version of WordPress doesn\'t support Application Passwords. %1$sUpdate WordPress%2$s, then revisit this page.', td),
+			'<a href="' + wpUpdateUrl.value + '">',
+			'</a>'
+		)
+	}
+
+	if ('https' === cause) {
 		return sprintf(
 			// Translators: 1 - Opening link tag, 2 - Closing link tag.
 			__('Application Passwords are disabled because this site isn\'t served over HTTPS. Switch your site to HTTPS to enable them, or see %1$sthe WordPress documentation%2$s for details.', td),
@@ -519,7 +542,98 @@ const appPasswordsDisabledNotice = computed(() => {
 		)
 	}
 
-	return __('Application Passwords are disabled on this site, so a credential can\'t be generated here. A security plugin or a constant/filter in your site\'s code is most likely turning the feature off. Re-enable Application Passwords (check your security plugin\'s settings or remove the override), then reload this page.', td)
+	// A per-user block leaves the feature enabled site-wide, so the user can't clear it themselves.
+	if ('user' === scope) {
+		if (pluginName && networkAdmin && !canManage) {
+			return sprintf(
+				// Translators: 1 - A plugin name, e.g. "Solid Security".
+				__('Application Passwords are enabled on this site but disabled for your account by %1$s. Ask a network administrator to allow your account to use Application Passwords in the %1$s settings.', td),
+				pluginName
+			)
+		}
+
+		if (pluginName) {
+			return sprintf(
+				// Translators: 1 - A plugin name, e.g. "Solid Security".
+				__('Application Passwords are enabled on this site but disabled for your account by %1$s. Allow your account to use Application Passwords in the %1$s settings, or ask an administrator to do it.', td),
+				pluginName
+			)
+		}
+
+		return __('Application Passwords are enabled on this site but disabled for your account. Security and two-factor plugins can restrict which users may create them. Ask an administrator to allow Application Passwords for your account.', td)
+	}
+
+	// The blocker is managed from the Network Admin, so a site administrator can't lift it either.
+	if (!canManage && networkAdmin) {
+		if ('disableApplicationPasswords' === plugin) {
+			return sprintf(
+				// Translators: 1 - A plugin name, e.g. "Disable Application Passwords".
+				__('Application Passwords are disabled by the %1$s plugin. Ask a network administrator to deactivate it, then reload this page.', td),
+				pluginName
+			)
+		}
+
+		return sprintf(
+			// Translators: 1 - A plugin name, e.g. "Wordfence Security".
+			__('Application Passwords appear to be disabled by %1$s. Ask a network administrator to re-enable Application Passwords in the %1$s settings, then reload this page.', td),
+			pluginName
+		)
+	}
+
+	// Lifting a site-wide block means deactivating or reconfiguring a plugin, which this user can't do.
+	if (!canManage) {
+		if ('disableApplicationPasswords' === plugin) {
+			return sprintf(
+				// Translators: 1 - A plugin name, e.g. "Disable Application Passwords".
+				__('Application Passwords are disabled by the %1$s plugin. Ask an administrator to deactivate it, then reload this page.', td),
+				pluginName
+			)
+		}
+
+		if (pluginName) {
+			return sprintf(
+				// Translators: 1 - A plugin name, e.g. "Wordfence Security".
+				__('Application Passwords appear to be disabled by %1$s. Ask an administrator to re-enable Application Passwords in the %1$s settings, then reload this page.', td),
+				pluginName
+			)
+		}
+
+		return __('Application Passwords are disabled on this site, so a credential can\'t be generated here. Security plugins commonly turn this feature off. Ask an administrator to re-enable Application Passwords, then reload this page.', td)
+	}
+
+	if ('disableApplicationPasswords' === plugin) {
+		return sprintf(
+			// Translators: 1 - A plugin name, e.g. "Disable Application Passwords".
+			__('Application Passwords are disabled by the %1$s plugin. Deactivate it to re-enable them, then reload this page.', td),
+			pluginName
+		)
+	}
+
+	// Wordfence exposes the exact option we can link to; its own notice uses this same deep link.
+	if ('wordfence' === plugin && settingsUrl) {
+		return sprintf(
+			// Translators: 1 - A plugin name, e.g. "Wordfence Security", 2 - Opening link tag, 3 - Closing link tag.
+			__('Application Passwords have been disabled by %1$s. %2$sOpen its firewall options%3$s and uncheck "Disable WordPress application passwords", then reload this page.', td),
+			pluginName,
+			'<a href="' + settingsUrl + '">',
+			'</a>'
+		)
+	}
+
+	if (pluginName) {
+		return sprintf(
+			// Translators: 1 - A plugin name, e.g. "Kadence Security".
+			__('Application Passwords appear to be disabled by %1$s. Re-enable Application Passwords in the %1$s settings, then reload this page.', td),
+			pluginName
+		)
+	}
+
+	return sprintf(
+		// Translators: 1 - Opening link tag, 2 - Closing link tag.
+		__('Application Passwords are disabled on this site, so a credential can\'t be generated here. Security plugins commonly turn this feature off. Re-enable Application Passwords — check your security plugin\'s settings, or remove the filter or constant overriding it — then reload this page. %1$sLearn more%2$s.', td),
+		'<a href="' + links.getDocUrl('mcpAppPasswordsDisabled') + '" target="_blank" rel="noopener">',
+		'</a>'
+	)
 })
 
 const restNonce             = computed(() => (rootStore.aioseo && rootStore.aioseo.nonce) || '')
@@ -625,7 +739,7 @@ const generateAppPassword = async () => {
 // Connection readiness is derived from the server-rendered preconditions on every page load — never persisted
 // client-side. localStorage is origin-scoped, so a stored flag leaks across every subsite of a subdirectory
 // multisite and survives an Application Password revocation; reading the per-site/per-load server facts avoids both.
-const serverVerified = computed(() => abilitiesApiAvailable.value && 0 < abilitiesCount.value && mcpAdapterDetected.value && hasAppPassword.value)
+const serverVerified = computed(() => abilitiesApiAvailable.value && 0 < abilitiesCount.value && mcpAdapterDetected.value && appPasswordReady.value)
 
 // A live test signs in with the Application Password itself, so it can only run while we still hold the plaintext
 // in memory (right after generation) — WordPress exposes the password only once and stores nothing but a hash.
@@ -750,15 +864,15 @@ const steps = computed(() => {
 		{
 			key      : 'appPassword',
 			title    : strings.steps.appPasswordTitle,
-			subtitle : hasAppPassword.value
+			subtitle : appPasswordReady.value
 				? sprintf(
 					// Translators: %s - The current user's username.
 					__('Generated for %s', td),
 					'<strong>' + currentUsername.value + '</strong>'
 				)
-				: (appPasswordsAvailable.value ? strings.steps.appPasswordSubtitle : strings.steps.appPasswordDisabledSubtitle),
-			done     : hasAppPassword.value,
-			blocking : !hasAppPassword.value
+				: (appPasswordsAvailable.value ? strings.steps.appPasswordSubtitle : appPasswordDisabledSubtitle.value),
+			done     : appPasswordReady.value,
+			blocking : !appPasswordReady.value
 		},
 		{
 			key   : 'test',
@@ -1054,6 +1168,7 @@ const strings = {
 		appPasswordTitle              : __('Application password generated', td),
 		appPasswordSubtitle           : __('Generate a password so an AI client can sign in to your site', td),
 		appPasswordDisabledSubtitle   : __('Application Passwords are disabled on this site', td),
+		appPasswordDisabledForUser    : __('Application Passwords are disabled for your account', td),
 		appPasswordShownOnce          : __('This password will not be shown again. Copy it now.', td),
 		appPasswordSessionHint        : __('We\'ve also pre-filled it into the configuration snippets below for this session. Once you leave the page, the snippets will show a placeholder instead.', td),
 		generateAppPassword           : __('Generate Application Password', td),

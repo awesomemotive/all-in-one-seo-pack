@@ -199,6 +199,27 @@ const isModalOpen = () => {
 }
 
 /**
+ * Close the AIOSEO modal.
+ *
+ * @returns {void}
+ */
+const closeModal = () => {
+	document.dispatchEvent(new Event('aioseo-pagebuilder-toggle-modal', { open: false }))
+}
+
+/**
+ * Hide the modal when a highlight jump scrolls the canvas.
+ * NOTE: The panel is drawn over the canvas, so the word a jump lands on would sit under it.
+ *
+ * @returns {void}
+ */
+const hideModalOnEditorJump = () => {
+	if (isModalOpen()) {
+		closeModal()
+	}
+}
+
+/**
  * Hide the modal when clicking outside.
  *
  * @param   {Event} event The click event.
@@ -225,7 +246,7 @@ const hideModalOnOutsideClick = (event) => {
 		target.classList?.contains('aioseo')
 
 	if (!isSafe) {
-		document.dispatchEvent(new Event('aioseo-pagebuilder-toggle-modal', { open: false }))
+		closeModal()
 	}
 }
 
@@ -260,6 +281,7 @@ export default () => {
 
 	document.addEventListener('click', hideModalOnOutsideClick)
 	iframeRef('et-fb-app-frame')?.addEventListener('click', hideModalOnOutsideClick)
+	document.addEventListener('aioseo-truseo-editor-jump', hideModalOnEditorJump)
 
 	settingsBarRoot.addEventListener('click', () => {
 		document.dispatchEvent(new Event('aioseo-pagebuilder-toggle-modal'))

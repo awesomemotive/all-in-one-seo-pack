@@ -10,6 +10,19 @@
 			}
 		}
 	}
+
+	// Bricks' frontend reset clamps every SVG that carries no width/height attribute
+	// to `min-width: 1em` / `min-height: 1em`. Our icons are sized in CSS, so anything
+	// smaller than the current font size gets inflated past its box — the alert's
+	// dismiss icon spills out of its 18px round button, checkmarks out of checkboxes.
+	// Mirror their selectors so icons that do carry the attributes keep their own min.
+	svg:not([width]) {
+		min-width: 0;
+	}
+
+	svg:not([height]) {
+		min-height: 0;
+	}
 }
 
 // Override modal, datepicker and tooltip z-index for Bricks Builder.

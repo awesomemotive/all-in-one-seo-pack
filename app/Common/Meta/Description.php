@@ -109,7 +109,7 @@ class Description {
 
 			$author = get_queried_object();
 
-			return $author ? $this->helpers->prepare( get_the_author_meta( 'description', $author->ID ) ) : '';
+			return $author ? $this->helpers->prepare( aioseo()->tags->escapeTags( get_the_author_meta( 'description', $author->ID ) ) ) : '';
 		}
 
 		if ( is_date() ) {

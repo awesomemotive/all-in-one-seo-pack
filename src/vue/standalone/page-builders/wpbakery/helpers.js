@@ -1,13 +1,88 @@
 import { usePostEditorStore } from '@/vue/stores'
 import { cleanForSlug } from '@/vue/utils/cleanForSlug'
+import { projectUnitContribution } from '@/vue/plugins/tru-seo/editors/wpbakery'
+import { escapeText } from '@/vue/plugins/tru-seo/highlighter/textStream'
+import { resolveAdapter } from '@/vue/plugins/tru-seo/editors'
+
+/**
+ * Parses the server-rendered content.
+ *
+ * @returns {?Document} The parsed document, or null when there is no content yet.
+ */
+const parseProcessedContent = () => {
+	const processedContent = usePostEditorStore().currentPost.processedContent
+	if (!processedContent) {
+		return null
+	}
+
+	try {
+		return new DOMParser().parseFromString(processedContent, 'text/html')
+	} catch (_e) {
+		return null
+	}
+}
+
+/**
+ * Gets the markup of every image, iframe and video in the server-rendered content.
+ * NOTE: The unit projection drops media ({@see highlighter/textStream.js:MEDIA_TAGS}), and the back-end
+ * builder only previews thumbnails, so the rendered content is the one source that has the real tags.
+ *
+ * @returns {string[]} The outerHTML of each media element.
+ */
+const getMediaMarkup = () => {
+	const doc = parseProcessedContent()
+
+	return doc ? [ ...doc.body.querySelectorAll('img, iframe, video') ].map(node => node.outerHTML) : []
+}
+
+/**
+ * Gets each Single Image caption in the server-rendered content, as a paragraph.
+ * NOTE: the caption comes from the attachment rather than a param, so no unit carries it, and the
+ * back-end builder never renders it at all.
+ *
+ * @returns {string[]} One paragraph per non-empty caption.
+ */
+const getCaptionMarkup = () => {
+	const doc = parseProcessedContent()
+	if (!doc) {
+		return []
+	}
+
+	return [ ...doc.body.querySelectorAll('.vc_figure-caption') ]
+		.map(node => node.textContent.trim())
+		.filter(Boolean)
+		.map(text => `<p>${escapeText(text)}</p>`)
+}
 
 /**
  * Gets the post content.
  *
+ * TWO SOURCES, and which one is used decides whether a mark can be placed at all. A mark's range is
+ * measured against its unit's projection, so when the builder owns the page the analyzed string has
+ * to be the join of those same projections -- feeding the server-rendered shortcode output instead
+ * would leave every offset pointing into a string no unit shares.
+ *
+ * The server-rendered content stays the source everywhere else: Classic Mode has no paintable units
+ * (the user is editing raw shortcodes), and a frontend editor whose iframe has not finished loading
+ * has none yet either. Both keep the score they have always had.
+ *
  * @returns {string} The post content.
  */
 const getContent = () => {
+	const adapter = resolveAdapter()
+
+	if ('wpbakery' === adapter?.id) {
+		const contributions = (adapter.getContentUnits() || [])
+			.map(unit => projectUnitContribution(unit))
+			.filter(Boolean)
+
+		if (contributions.length) {
+			return [ ...contributions, ...getCaptionMarkup(), ...getMediaMarkup() ].join('\n')
+		}
+	}
+
 	const postEditorStore = usePostEditorStore()
+
 	return postEditorStore.currentPost.processedContent
 }
 

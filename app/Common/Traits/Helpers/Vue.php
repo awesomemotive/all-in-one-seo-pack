@@ -289,6 +289,14 @@ trait Vue {
 				'sitemaps' => []
 			],
 			'integration'        => $this->args['integration'],
+			// Divi's BUILDER version, which is not the theme version. The Divi Builder plugin runs
+			// the builder under any theme, so `theme.templateVersion` reports that theme instead --
+			// a third-party theme at 5.x would read as Divi 5 while a Divi 4 builder is running.
+			// This constant is defined by the theme AND the plugin, so it is the only signal that
+			// says which builder is actually present.
+			'diviBuilderVersion' => defined( 'ET_BUILDER_PRODUCT_VERSION' ) ? ET_BUILDER_PRODUCT_VERSION : null,
+			// Extra bundles the Divi builder, so ET_BUILDER_PRODUCT_VERSION alone can't tell them apart.
+			'isExtraTheme'       => defined( 'EXTRA_LAYOUT_POST_TYPE' ),
 			'theme'              => [
 				'features'        => aioseo()->helpers->getThemeFeatures(),
 				'version'         => $themeVersion, // The active skin/child version
@@ -437,7 +445,7 @@ trait Vue {
 			'truseo'                         => Models\Post::getTruseoDefaults( $post->truseo ?? null ),
 			'focus_keyword'                  => $keywordColumns['focus_keyword'],
 			'additional_keywords'            => $keywordColumns['additional_keywords'],
-			'truseo_locale'                  => $post->truseo_locale,
+			'truseo_locale'                  => $post->truseo_locale ?? null,
 			'wooProduct'                     => aioseo()->helpers->getWooCommerceProductData( $postId ),
 			'loading'                        => [
 				'focus'      => false,
@@ -1031,11 +1039,8 @@ trait Vue {
 				'mcpServerRegistered'   => $mcpServerRegistered,
 				'mcpAdapterInstalled'   => '' !== \AIOSEO\Plugin\Common\Api\AiAgents::getInstalledMcpAdapterFile(),
 				'hasAppPassword'        => $this->currentUserHasMcpAppPassword(),
-				// `supported` is core's HTTPS/local-env gate (replicated inline — the core helper
-				// is WP 5.9+); `available` also accounts for a security plugin or filter/constant
-				// disabling the feature. Each false-by-cause drives distinct guidance in the UI.
-				'appPasswordsSupported' => is_ssl() || 'local' === wp_get_environment_type(),
-				'appPasswordsAvailable' => $this->applicationPasswordsAvailable(),
+				// Each cause drives distinct guidance in the UI, so the whole status is passed through.
+				'appPasswords'          => aioseo()->helpers->applicationPasswordsStatus(),
 				'abilities'             => $this->getRegisteredMcpAbilities()
 			]
 		];
@@ -1078,30 +1083,6 @@ trait Vue {
 		}
 
 		return $abilities;
-	}
-
-	/**
-	 * Checks whether Application Passwords can be generated for the current user.
-	 *
-	 * Returns false when the feature is disabled — by the HTTPS/local-env gate, a security
-	 * plugin, or the `wp_is_application_passwords_available[_for_user]` filter/constant.
-	 * The per-user core function internally calls the global one, so this covers every cause.
-	 *
-	 * @since 4.9.10
-	 *
-	 * @return bool
-	 */
-	private function applicationPasswordsAvailable() {
-		if ( ! function_exists( 'wp_is_application_passwords_available' ) ) {
-			return false;
-		}
-
-		$userId = get_current_user_id();
-		if ( $userId && function_exists( 'wp_is_application_passwords_available_for_user' ) ) {
-			return wp_is_application_passwords_available_for_user( $userId );
-		}
-
-		return wp_is_application_passwords_available();
 	}
 
 	/**

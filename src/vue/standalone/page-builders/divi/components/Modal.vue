@@ -2,7 +2,7 @@
 	<core-modal
 		:show="modalOpen"
 		@close="modalOpen = false"
-		:classes="[ 'aioseo-divi-modal' ]"
+		:classes="[ 'aioseo-divi-modal', { 'aioseo-divi-modal--minimized': minimized } ]"
 	>
 		<template #headerTitle>
 			<div class="modal-header__title">
@@ -41,6 +41,8 @@ import {
 	usePostEditorStore
 } from '@/vue/stores'
 
+import { isDivi5Wireframe } from '../divi5-helpers'
+
 import CoreModal from '@/vue/components/common/core/modal/Index'
 import CoreScoreButton from '@/vue/components/common/core/ScoreButton'
 import PostSettings from '@/vue/standalone/post-settings/App'
@@ -59,16 +61,39 @@ const strings = {
 
 const modalOpen = ref(false)
 
+// The modal sits over the canvas, right where a jump lands, so a jump hides it. Hidden rather than
+// closed: closing unmounts the panel, and reopening would start over on the first tab.
+const minimized = ref(false)
+
 const toggleModal = () => {
+	if (minimized.value) {
+		minimized.value = false
+
+		return
+	}
+
 	modalOpen.value = !modalOpen.value
 }
 
+const minimizeModal = () => {
+	// Wireframe modules render no text, so the jump has nothing to show behind the modal.
+	if (modalOpen.value && !isDivi5Wireframe()) {
+		minimized.value = true
+	}
+}
+
 watch(modalOpen, (isOpen) => {
+	if (!isOpen) {
+		minimized.value = false
+	}
+})
+
+watch(() => modalOpen.value && !minimized.value, (isOpen) => {
 	document.dispatchEvent(new CustomEvent('aioseo-pagebuilder-modal-state', { detail: { isOpen } }))
 })
 
 const handleClickOutside = (event) => {
-	if (!modalOpen.value) {
+	if (!modalOpen.value || minimized.value) {
 		return
 	}
 
@@ -96,17 +121,23 @@ const handleClickOutside = (event) => {
 
 onMounted(() => {
 	document.addEventListener('aioseo-pagebuilder-toggle-modal', toggleModal)
+	document.addEventListener('aioseo-truseo-editor-jump', minimizeModal)
 	document.addEventListener('click', handleClickOutside)
 })
 
 onBeforeUnmount(() => {
 	document.removeEventListener('aioseo-pagebuilder-toggle-modal', toggleModal)
+	document.removeEventListener('aioseo-truseo-editor-jump', minimizeModal)
 	document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
 <style lang="scss">
 .aioseo-divi-modal {
+	&--minimized {
+		display: none;
+	}
+
 	.modal-body {
 		min-height: min(60vh, 500px);
 	}

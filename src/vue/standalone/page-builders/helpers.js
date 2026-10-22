@@ -27,21 +27,22 @@ export const iframeRef = iframeId => {
 /**
  * Handler function for the editor.
  *
- * @returns {Function} An asynchronous handler function that takes an object with `editorData` as an argument.
+ * @returns {Function} An asynchronous handler function that takes an object with `editorData` (and
+ *                     optionally `notifyContentChanging`, default true) as an argument.
  */
 export const createEditorChangeHandler = () => {
 	// This variable is private to the closure.
 	let previousEditorData = null
 
 	// Return the actual handler function that has access to previousEditorData.
-	return async ({ editorData }) => {
+	return async ({ editorData, notifyContentChanging = true }) => {
 		try {
 			// Compare the stored previous data with current data.
 			if (
 				null === previousEditorData ||
 				!isEqual(previousEditorData, editorData)
 			) {
-				await maybeUpdatePost()
+				await maybeUpdatePost(900, true, notifyContentChanging)
 			}
 
 			// Update the stored data for the next call with a deep clone.

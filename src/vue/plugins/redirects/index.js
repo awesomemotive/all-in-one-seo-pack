@@ -14,7 +14,7 @@ export default class RedirectsSlugMonitor {
 	updatingRedirects = false
 
 	constructor () {
-		if (!window.aioseo.currentPost && !window.aioseo.redirects) {
+		if (!window.aioseo.currentPost || !window.aioseo.redirects) {
 			return
 		}
 

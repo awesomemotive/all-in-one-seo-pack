@@ -39,7 +39,7 @@ class WebPage extends Graphs\Graph {
 			'@type'       => $this->type,
 			'@id'         => aioseo()->schema->context['url'] . '#' . strtolower( $this->type ),
 			'url'         => aioseo()->schema->context['url'],
-			'name'        => aioseo()->meta->title->getTitle(),
+			'name'        => aioseo()->tags->escapeTags( aioseo()->meta->title->getTitle() ),
 			'description' => aioseo()->schema->context['description'],
 			'inLanguage'  => aioseo()->helpers->currentLanguageCodeBCP47(),
 			'isPartOf'    => [ '@id' => $homeUrl . '#website' ]

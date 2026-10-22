@@ -15,6 +15,18 @@ use AIOSEO\Plugin\Common\Models;
  */
 class Ai {
 	/**
+	 * The longest single block optimize-post will send.
+	 *
+	 * NOTE: a longer block is skipped rather than shortened, because the client replaces the whole
+	 * block with the result ({@see \AIOSEO\Plugin\Common\Api\Ai::sanitizeOptimizePostContent}).
+	 *
+	 * @since 5.0.4
+	 *
+	 * @var int
+	 */
+	const MAX_OPTIMIZE_BLOCK_LENGTH = 10000;
+
+	/**
 	 * Stores the access token.
 	 *
 	 * @since 4.8.4
@@ -301,7 +313,7 @@ class Ai {
 			], 400 );
 		}
 
-		if ( strlen( $postContent ) < aioseo()->ai->options['minContentLength'] ) {
+		if ( strlen( wp_strip_all_tags( $postContent ) ) < aioseo()->ai->options['minContentLength'] ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Post content is too short to generate AI content.'
@@ -321,7 +333,8 @@ class Ai {
 			'timeout' => 60,
 			'headers' => aioseo()->ai->getRequestHeaders(),
 			'body'    => wp_json_encode( [
-				'postContent' => $postContent,
+				// Bounded at the wire, after the floor above measured the whole content.
+				'postContent' => aioseo()->ai->truncatePostContent( $postContent ),
 				'url'         => $permalink,
 				'tone'        => $options['tone'],
 				'audience'    => $options['audience'],
@@ -703,7 +716,7 @@ class Ai {
 			], 400 );
 		}
 
-		if ( strlen( $postContent ) < aioseo()->ai->options['minContentLength'] ) {
+		if ( strlen( wp_strip_all_tags( $postContent ) ) < aioseo()->ai->options['minContentLength'] ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Post content is too short to generate AI content.'
@@ -730,7 +743,8 @@ class Ai {
 			'timeout' => 60,
 			'headers' => aioseo()->ai->getRequestHeaders(),
 			'body'    => wp_json_encode( [
-				'postContent' => $postContent,
+				// Bounded at the wire, after the floor above measured the whole content.
+				'postContent' => aioseo()->ai->truncatePostContent( $postContent ),
 				'tone'        => $options['tone'],
 				'audience'    => $options['audience'],
 				'rephrase'    => $rephrase,
@@ -874,7 +888,7 @@ class Ai {
 			], 400 );
 		}
 
-		if ( strlen( $postContent ) < aioseo()->ai->options['minContentLength'] ) {
+		if ( strlen( wp_strip_all_tags( $postContent ) ) < aioseo()->ai->options['minContentLength'] ) {
 			return new \WP_REST_Response( [
 				'success' => false,
 				'message' => 'Post content is too short to generate AI content.'
@@ -901,7 +915,8 @@ class Ai {
 			'timeout' => 60,
 			'headers' => aioseo()->ai->getRequestHeaders(),
 			'body'    => wp_json_encode( [
-				'postContent' => $postContent,
+				// Bounded at the wire, after the floor above measured the whole content.
+				'postContent' => aioseo()->ai->truncatePostContent( $postContent ),
 				'tone'        => $options['tone'],
 				'audience'    => $options['audience'],
 				'rephrase'    => $rephrase,
@@ -1260,19 +1275,31 @@ class Ai {
 			$options[ $k ] = aioseo()->helpers->sanitizeOption( $option );
 		}
 
-		$response = aioseo()->helpers->wpRemotePost( untrailingslashit( aioseo()->ai->getAiGeneratorApiUrl() ) . '/truseo/optimize-post/', [
-			'timeout' => 60,
-			'headers' => aioseo()->ai->getRequestHeaders(),
-			'body'    => wp_json_encode( [
-				'seo_title'       => $seoTitle,
-				'seo_description' => $seoDescription,
-				'focus_keyword'   => $focusKeyword,
-				'post_title'      => $postTitle,
-				'locale'          => $locale,
-				'options'         => $options,
-				'content'         => $content
-			] )
+		$requestBody = wp_json_encode( [
+			'seo_title'       => $seoTitle,
+			'seo_description' => $seoDescription,
+			'focus_keyword'   => $focusKeyword,
+			'post_title'      => $postTitle,
+			'locale'          => $locale,
+			'options'         => $options,
+			'content'         => $content
 		] );
+
+		$response = aioseo()->helpers->wpRemotePost( untrailingslashit( aioseo()->ai->getAiGeneratorApiUrl() ) . '/truseo/optimize-post/', [
+			'timeout' => 90,
+			'headers' => array_merge( aioseo()->ai->getRequestHeaders(), [
+				'X-AIOSEO-Request-Key' => md5( $postId . '|' . $requestBody )
+			] ),
+			'body'    => $requestBody
+		] );
+
+		if ( is_wp_error( $response ) && false !== strpos( $response->get_error_message(), 'cURL error 28' ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'code'    => 'request_timeout',
+				'message' => 'Optimizing this post is taking longer than usual. Please wait a few minutes before trying again.'
+			], 504 );
+		}
 
 		$responseCode = wp_remote_retrieve_response_code( $response );
 		$responseBody = json_decode( wp_remote_retrieve_body( $response ) );
@@ -1481,6 +1508,11 @@ class Ai {
 				continue;
 			}
 
+			// Skipped, not shortened: the client replaces the whole block with the rewrite.
+			if ( self::MAX_OPTIMIZE_BLOCK_LENGTH < aioseo()->helpers->stringLength( $text ) ) {
+				continue;
+			}
+
 			$type  = 'heading' === ( $item['type'] ?? '' ) ? 'heading' : 'paragraph';
 			$level = (int) ( $item['level'] ?? 0 );
 
@@ -1488,7 +1520,7 @@ class Ai {
 				'id'    => $id,
 				'type'  => $type,
 				'level' => 'heading' === $type ? min( 4, max( 2, $level ) ) : 0,
-				'text'  => mb_substr( $text, 0, 10000 )
+				'text'  => $text
 			];
 		}
 

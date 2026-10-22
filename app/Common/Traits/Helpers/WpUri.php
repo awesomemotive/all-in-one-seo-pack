@@ -71,8 +71,9 @@ trait WpUri {
 		}
 
 		global $wp;
-		// Permalink url without the query string.
-		$url = user_trailingslashit( home_url( $wp->request ) );
+		// Permalink url without the query string. A raw "#" from the request line can't be a
+		// fragment here, and left as is it would start a smart tag when the schema is parsed.
+		$url = user_trailingslashit( home_url( str_replace( '#', '%23', (string) $wp->request ) ) );
 
 		// If permalinks are not being used we need to append the query string to the home url.
 		if ( ! $this->usingPermalinks() ) {

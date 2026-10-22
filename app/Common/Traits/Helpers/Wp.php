@@ -1061,4 +1061,392 @@ trait Wp {
 
 		return $userData;
 	}
+
+	/**
+	 * Returns whether Application Passwords can be used and, if not, what is blocking them.
+	 *
+	 * NOTE: `scope` separates a site-wide block from one that only applies to the given user,
+	 * since the two need different advice — the latter can't be solved by the user themselves.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  int|null $userId The user to check. Defaults to the current user. Pass 0 to check the site only.
+	 * @return array            Keys: `available`, `supported`, `scope`, `cause`, `plugin`, `pluginName`, `settingsUrl`, `networkAdmin`, `canManage`.
+	 */
+	public function applicationPasswordsStatus( $userId = null ) {
+		$status = [
+			'available'    => false,
+			'supported'    => false,
+			'scope'        => '',
+			'cause'        => '',
+			'plugin'       => '',
+			'pluginName'   => '',
+			'settingsUrl'  => '',
+			// Whether only a network administrator can lift the block.
+			'networkAdmin' => false,
+			// Whether the current user can lift a site-wide block themselves (deactivate or reconfigure the blocker).
+			'canManage'    => aioseo()->addons->canActivate()
+		];
+
+		if ( ! class_exists( '\WP_Application_Passwords' ) || ! function_exists( 'wp_is_application_passwords_available' ) ) {
+			$status['cause'] = 'unsupported';
+
+			return $status;
+		}
+
+		// Core's HTTPS/local-env gate, replicated inline — the core helper is WP 5.9+.
+		$status['supported'] = is_ssl() || 'local' === wp_get_environment_type();
+
+		if ( ! wp_is_application_passwords_available() ) {
+			$status['scope'] = 'site';
+
+			// Core feeds the HTTPS gate in as the filter's default, so an unsupported site is off
+			// for that reason unless a plugin forced it back on — report HTTPS before looking further.
+			if ( ! $status['supported'] ) {
+				$status['cause'] = 'https';
+
+				return $status;
+			}
+
+			$status = $this->mergeApplicationPasswordsBlocker( $status, $this->getApplicationPasswordsBlocker( 'wp_is_application_passwords_available', 0 ) );
+			if ( ! $status['canManage'] ) {
+				$status['settingsUrl'] = '';
+			}
+
+			return $status;
+		}
+
+		$userId = null === $userId ? get_current_user_id() : (int) $userId;
+		if ( ! $userId ) {
+			$status['available'] = true;
+
+			return $status;
+		}
+
+		if ( wp_is_application_passwords_available_for_user( $userId ) ) {
+			$status['available'] = true;
+
+			return $status;
+		}
+
+		$status['scope'] = 'user';
+
+		return $this->mergeApplicationPasswordsBlocker( $status, $this->getApplicationPasswordsBlocker( 'wp_is_application_passwords_available_for_user', $userId ) );
+	}
+
+	/**
+	 * Merges the blocker into the status, narrowing `canManage` to network administrators when only they can lift it.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  array $status  The status from {@see applicationPasswordsStatus()}.
+	 * @param  array $blocker The blocker from {@see getApplicationPasswordsBlocker()}.
+	 * @return array          The merged status.
+	 */
+	private function mergeApplicationPasswordsBlocker( $status, $blocker ) {
+		$status = array_merge( $status, $blocker );
+		if ( $status['networkAdmin'] ) {
+			$status['canManage'] = current_user_can( 'manage_network_plugins' );
+		}
+
+		return $status;
+	}
+
+	/**
+	 * Checks whether only a network administrator can deactivate or reconfigure the given plugin.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  string $slug The plugin directory slug.
+	 * @return bool         Whether the plugin is managed at the network level.
+	 */
+	private function isNetworkManagedPlugin( $slug ) {
+		if ( ! is_multisite() || ! $slug ) {
+			return false;
+		}
+
+		foreach ( array_keys( (array) get_site_option( 'active_sitewide_plugins', [] ) ) as $basename ) {
+			if ( 0 === strpos( $basename, $slug . '/' ) ) {
+				return true;
+			}
+		}
+
+		// Without the network's Plugins menu, site administrators can't deactivate plugins either.
+		$menuItems = (array) get_site_option( 'menu_items', [] );
+
+		return empty( $menuItems['plugins'] );
+	}
+
+	/**
+	 * Identifies which known security plugin is blocking the given Application Passwords filter.
+	 *
+	 * Disabling the feature is only possible through these filters, so whoever is hooked is the
+	 * only candidate. The `cause` stays generic when no plugin we have advice for is found.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  string $hook   The filter name to inspect.
+	 * @param  int    $userId The user being checked, or 0 for the site-wide filter.
+	 * @return array          The `cause`, `plugin`, `pluginName`, `settingsUrl` and `networkAdmin` describing the blocker.
+	 */
+	private function getApplicationPasswordsBlocker( $hook, $userId ) {
+		$unknown = [
+			'cause'        => 'unknown',
+			'plugin'       => '',
+			'pluginName'   => '',
+			'settingsUrl'  => '',
+			'networkAdmin' => false
+		];
+
+		// Plugins that hook `__return_false` leave no trace in the callback, so ask them directly first.
+		if ( 'wp_is_application_passwords_available' === $hook ) {
+			$probed = $this->probeApplicationPasswordsPlugins();
+			if ( $probed ) {
+				return $probed;
+			}
+		}
+
+		global $wp_filter; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		if ( empty( $wp_filter[ $hook ]->callbacks ) ) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+			return $unknown;
+		}
+
+		// Keyed off the callback's own class rather than a directory name: the Solid Security
+		// codebase ships under several slugs (better-wp-security, plus the Pro variants) and has
+		// been rebranded more than once, but these class prefixes are stable across all of them.
+		$classPrefixes = [ 'iThemesSecurity\\', 'ITSEC_' ];
+
+		// Copied because a callback may remove and re-add itself when we invoke it below.
+		$priorities = $wp_filter[ $hook ]->callbacks; // phpcs:ignore Squiz.NamingConventions.ValidVariableName
+		foreach ( $priorities as $callbacks ) {
+			if ( ! is_array( $callbacks ) ) {
+				continue;
+			}
+
+			foreach ( $callbacks as $callback ) {
+				if ( ! isset( $callback['function'] ) ) {
+					continue;
+				}
+
+				$class = $this->getCallbackClassName( $callback['function'] );
+				foreach ( $classPrefixes as $prefix ) {
+					if ( 0 !== strpos( $class, $prefix ) ) {
+						continue;
+					}
+
+					// These plugins hook the filter even for users they allow, so only blame one that denies.
+					if ( ! $this->callbackDeniesApplicationPasswords( $callback, $userId ) ) {
+						break;
+					}
+
+					$slug = $this->getPluginSlugFromCallback( $callback['function'] );
+
+					return [
+						'cause'        => 'plugin',
+						'plugin'       => 'solidSecurity',
+						'pluginName'   => $this->getPluginNameFromSlug( $slug, 'Solid Security' ),
+						'settingsUrl'  => '',
+						'networkAdmin' => $this->isNetworkManagedPlugin( $slug )
+					];
+				}
+			}
+		}
+
+		return $unknown;
+	}
+
+	/**
+	 * Checks whether a hooked availability callback returns false on its own for the given user.
+	 *
+	 * NOTE: The callback is fed `true` so a false result can only come from the callback itself.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  array $callback The hooked callback, as stored by `WP_Hook`.
+	 * @param  int   $userId   The user being checked, or 0 for the site-wide filter.
+	 * @return bool            Whether the callback disables Application Passwords.
+	 */
+	private function callbackDeniesApplicationPasswords( $callback, $userId ) {
+		$args = [ true ];
+		if ( $userId ) {
+			$user = get_userdata( $userId );
+			if ( ! $user ) {
+				return false;
+			}
+
+			$args[] = $user;
+		}
+
+		$acceptedArgs = isset( $callback['accepted_args'] ) ? (int) $callback['accepted_args'] : 1;
+
+		try {
+			return ! call_user_func_array( $callback['function'], array_slice( $args, 0, max( 1, $acceptedArgs ) ) );
+		} catch ( \Throwable $e ) {
+			return false;
+		}
+	}
+
+	/**
+	 * Asks the known site-wide blockers directly whether they are the ones disabling the feature.
+	 *
+	 * NOTE: Both plugins hook `__return_false`, which reflects to WordPress core rather than to
+	 * them, so the callback carries no identity and their own state is the only signal left.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @return array The `cause`, `plugin`, `pluginName`, `settingsUrl` and `networkAdmin` of the blocker, or an empty array if neither is.
+	 */
+	private function probeApplicationPasswordsPlugins() {
+		// Wordfence registers the filter only while this option is on, so it is a definitive answer.
+		if ( class_exists( 'wfConfig' ) ) {
+			$disabled = aioseo()->helpers->callFunc( [ 'wfConfig', 'get' ], 'loginSec_disableApplicationPasswords' );
+			if ( $disabled ) {
+				// Wordfence reads `#<option>#<section>` to expand the collapsed Brute Force section and scroll to the option.
+				$optionUrl = 'admin.php?page=WordfenceWAF&subpage=waf_options#wf-option-loginSec-disableApplicationPasswords#waf-options-bruteforce';
+
+				return [
+					'cause'        => 'plugin',
+					'plugin'       => 'wordfence',
+					'pluginName'   => $this->getPluginNameFromSlug( 'wordfence', 'Wordfence' ),
+					'settingsUrl'  => is_multisite() ? network_admin_url( $optionUrl ) : admin_url( $optionUrl ),
+					// Wordfence keeps its settings in the Network Admin on multisite.
+					'networkAdmin' => is_multisite()
+				];
+			}
+		}
+
+		// This plugin's only job is disabling the feature, so being active is a definitive answer.
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		if ( aioseo()->helpers->isPluginActive( 'disable-application-passwords/disable-application-passwords.php' ) ) {
+			return [
+				'cause'        => 'plugin',
+				'plugin'       => 'disableApplicationPasswords',
+				'pluginName'   => $this->getPluginNameFromSlug(
+					'disable-application-passwords',
+					'Disable Application Passwords'
+				),
+				'settingsUrl'  => '',
+				'networkAdmin' => $this->isNetworkManagedPlugin( 'disable-application-passwords' )
+			];
+		}
+
+		return [];
+	}
+
+	/**
+	 * Returns the installed plugin's own name for the given plugin directory slug.
+	 *
+	 * NOTE: Reading the header keeps the message accurate across rebrands and Pro/Basic variants —
+	 * the `better-wp-security` slug has shipped as iThemes Security, Solid Security and Kadence
+	 * Security, and naming a plugin the user can't find in their list is worse than not naming one.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  string $slug     The plugin directory slug.
+	 * @param  string $fallback The name to fall back to when the header can't be read.
+	 * @return string           The plugin's own name, or the fallback.
+	 */
+	private function getPluginNameFromSlug( $slug, $fallback ) {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		foreach ( get_plugins() as $pluginFile => $data ) {
+			if ( 0 === strpos( $pluginFile, $slug . '/' ) && ! empty( $data['Name'] ) ) {
+				return $data['Name'];
+			}
+		}
+
+		return $fallback;
+	}
+
+	/**
+	 * Returns the class name a hooked callback belongs to.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  callable $callback The hooked callback.
+	 * @return string             The class name, or an empty string for plain functions.
+	 */
+	private function getCallbackClassName( $callback ) {
+		if ( is_array( $callback ) && 2 === count( $callback ) ) {
+			return is_object( $callback[0] ) ? get_class( $callback[0] ) : (string) $callback[0];
+		}
+
+		if ( is_string( $callback ) && false !== strpos( $callback, '::' ) ) {
+			return strstr( $callback, '::', true );
+		}
+
+		if ( $callback instanceof \Closure ) {
+			try {
+				$scope = ( new \ReflectionFunction( $callback ) )->getClosureScopeClass();
+			} catch ( \ReflectionException $e ) {
+				return '';
+			}
+
+			return $scope ? $scope->getName() : '';
+		}
+
+		if ( is_object( $callback ) ) {
+			return get_class( $callback );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Returns the plugin directory slug that declared the given callback.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  callable $callback The hooked callback.
+	 * @return string             The plugin directory slug, or an empty string if it isn't a plugin's.
+	 */
+	private function getPluginSlugFromCallback( $callback ) {
+		$file = '';
+		try {
+			if ( $callback instanceof \Closure ) {
+				$file = ( new \ReflectionFunction( $callback ) )->getFileName();
+			} elseif ( is_string( $callback ) && false !== strpos( $callback, '::' ) ) {
+				list( $class, $method ) = explode( '::', $callback, 2 );
+				$file                   = ( new \ReflectionMethod( $class, $method ) )->getFileName();
+			} elseif ( is_string( $callback ) ) {
+				$file = function_exists( $callback ) ? ( new \ReflectionFunction( $callback ) )->getFileName() : '';
+			} elseif ( is_array( $callback ) && 2 === count( $callback ) ) {
+				$file = ( new \ReflectionMethod( $callback[0], $callback[1] ) )->getFileName();
+			} elseif ( is_object( $callback ) && method_exists( $callback, '__invoke' ) ) {
+				$file = ( new \ReflectionMethod( $callback, '__invoke' ) )->getFileName();
+			}
+		} catch ( \ReflectionException $e ) {
+			return '';
+		}
+
+		$file = wp_normalize_path( (string) $file );
+		if ( '' === $file ) {
+			return '';
+		}
+
+		// A symlinked plugin root resolves to its target, so match the real path too.
+		$roots = [ wp_normalize_path( WP_PLUGIN_DIR ) ];
+		$real  = realpath( WP_PLUGIN_DIR );
+		if ( $real ) {
+			$roots[] = wp_normalize_path( $real );
+		}
+
+		foreach ( array_unique( $roots ) as $root ) {
+			$root = trailingslashit( $root );
+			if ( 0 !== strpos( $file, $root ) ) {
+				continue;
+			}
+
+			$parts = explode( '/', substr( $file, strlen( $root ) ) );
+
+			return isset( $parts[1] ) ? $parts[0] : '';
+		}
+
+		return '';
+	}
 }

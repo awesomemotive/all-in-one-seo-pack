@@ -30,6 +30,8 @@ const permanentFilters = [
 	elementHasClass('elementor-soundcloud-wrapper'),
 	elementHasClass('elementor-shortcode'),
 	elementHasClass('elementor-menu-anchor'),
+	// Visually hidden screen-reader text, e.g. a Social Icons network name.
+	elementHasClass('elementor-screen-only'),
 	elementHasClass('e-rating'),
 	// Filters out HTML elements.
 	/* Elements are filtered out when: they contain content outside of the author's control (incl. quotes and embedded

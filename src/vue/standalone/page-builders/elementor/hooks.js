@@ -40,11 +40,14 @@ class ElementorUIHook extends window.$e.modules.hookUI.Base {
 	/**
 	 * This function is called when the hook is fired.
 	 *
-	 * @returns {*} The callback result.
+	 * @returns {boolean} True, always.
 	 */
 	apply () {
-		// Give some milliseconds to ensure the UI has been updated.
-		return this.callback()
+		this.callback()
+
+		// Never the callback's own return value: Elementor's runCallbacks() logs a falsy hook result
+		// as "Callback failed", and these callbacks have nothing to report.
+		return true
 	}
 }
 
@@ -90,11 +93,14 @@ class ElementorDataHook extends window.$e.modules.hookData.Base {
 	/**
 	 * This function is called when the hook is fired.
 	 *
-	 * @returns {*} The callback result.
+	 * @returns {boolean} True, always.
 	 */
 	apply () {
-		// Give some milliseconds to ensure the UI has been updated.
-		return this.callback()
+		this.callback()
+
+		// The UI hook's reasoning above applies unchanged: the save callback returns nothing
+		// either, so every Update logged a failed data callback.
+		return true
 	}
 }
 

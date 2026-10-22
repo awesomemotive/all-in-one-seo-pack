@@ -443,8 +443,8 @@ class Component {
 
 		if ( ! empty( $contextUrl ) ) {
 			aioseo()->schema->context = [
-				'name'        => aioseo()->meta->title->getTitle(),
-				'description' => aioseo()->meta->description->getDescription(),
+				'name'        => aioseo()->tags->escapeTags( aioseo()->meta->title->getTitle() ),
+				'description' => aioseo()->tags->escapeTags( aioseo()->meta->description->getDescription() ),
 				'url'         => $contextUrl
 			];
 		}

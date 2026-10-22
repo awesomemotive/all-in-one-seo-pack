@@ -968,6 +968,30 @@ class Tags {
 	}
 
 	/**
+	 * Encodes the denotation char so the string can't introduce smart tags when it is parsed again.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  string $string The string.
+	 * @return string         The string with the denotation char encoded.
+	 */
+	public function escapeTags( $string ) {
+		return str_replace( $this->denotationChar, '&#35;', (string) $string );
+	}
+
+	/**
+	 * Decodes the denotation char that {@see escapeTags()} encoded.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  string $string The string.
+	 * @return string         The string with the denotation char decoded.
+	 */
+	public function unescapeTags( $string ) {
+		return str_replace( '&#35;', $this->denotationChar, (string) $string );
+	}
+
+	/**
 	 * Replaces the term tags in the string provided with the given term's own values.
 	 *
 	 * NOTE: These tags resolve from the queried object, which only exists on the term's own
@@ -1213,7 +1237,9 @@ class Tags {
 				// option is set to. strip_shortcodes() is not enough: removing one tag can form another.
 				$search = aioseo()->helpers->removeShortcodeBrackets( stripslashes( get_search_query() ) );
 
-				return empty( $search ) && $sampleData ? __( 'Example search string', 'all-in-one-seo-pack' ) : esc_attr( $search );
+				// Nor can it add smart tags: the substituted string is parsed again (custom fields, the
+				// second pass in sanitize()). The entity outlives those passes and decodes back to "#".
+				return empty( $search ) && $sampleData ? __( 'Example search string', 'all-in-one-seo-pack' ) : $this->escapeTags( esc_attr( $search ) );
 			case 'separator_sa':
 				return aioseo()->helpers->decodeHtmlEntities( aioseo()->options->searchAppearance->global->separator );
 			case 'site_link':

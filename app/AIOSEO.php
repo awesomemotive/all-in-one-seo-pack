@@ -254,6 +254,7 @@ namespace AIOSEO\Plugin {
 			$this->migrationRunner = new Common\Main\Migrations\MigrationRunner();
 			$this->migrationRunner->register( new Common\Main\Migrations\Definitions\DropLegacyCacheIndexes() );
 			$this->migrationRunner->register( new Common\Main\Migrations\Definitions\UnscheduleAiCreditFetch() );
+			$this->migrationRunner->register( new Common\Main\Migrations\Definitions\DropLegacyOgImageDimensionColumns() );
 			if ( $this->pro ) {
 				$this->migrationRunner->register( new Pro\Main\Migrations\Definitions\AddUploadFilesCapability() );
 				$this->migrationRunner->register( new Pro\Main\Migrations\Definitions\AddTruSeoTermColumns() );

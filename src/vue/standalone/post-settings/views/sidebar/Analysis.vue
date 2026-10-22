@@ -356,10 +356,11 @@ import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { merge } from 'lodash-es'
 import { useHeadlineAnalyzer } from '@/vue/composables/HeadlineAnalyzer'
 import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
+import { useMainSidebarIntent } from '../../composables/MainSidebarIntent'
 import { useTruSeoLocale } from '../../composables/TruSeoLocale'
 import { truSeoShouldAnalyze, supportsPageAnalysis } from '@/vue/plugins/tru-seo/components/helpers'
 import { isOptimizeSupported } from '@/vue/plugins/tru-seo/optimize-post/editorAdapter'
-import { isPageBuilderEditor } from '@/vue/utils/context'
+import { isAnalyzeCapableEditor } from '@/vue/plugins/tru-seo/editors'
 
 import BaseButton from '@/vue/components/common/base/Button'
 import CoreSidebarCard from '@/vue/components/common/core/SidebarCard'
@@ -399,6 +400,7 @@ const {
 	openHeadlineAnalyzer
 } = useHeadlineAnalyzer()
 const { getSelectedOption } = useTruSeoLocale()
+const { getIntent, clearIntent } = useMainSidebarIntent()
 
 const strings = merge(composableStrings, {
 	contentAnalysisTooltip : __('Analyze your content for keyword usage, readability and on-page SEO best practices.', td),
@@ -436,15 +438,14 @@ const sectionSelectors = {
 }
 
 // Deep-link target for the pre-publish panel's fix rows: expand + scroll to the
-// requested section, and expand the focus-keyword row. One-shot — the intent is
-// cleared once applied so re-opening the tab later doesn't re-scroll.
+// requested section, and expand the focus-keyword row.
 const applyPendingSection = () => {
-	const mainSidebar = settingsStore.metaBoxTabs.mainSidebar
-	if (!mainSidebar || 'analysis' !== mainSidebar.tab || !mainSidebar.section) {
+	const intent = getIntent()
+	if ('analysis' !== intent.tab || !intent.section) {
 		return
 	}
 
-	const { section, expandKeyword } = mainSidebar
+	const { section, expandKeyword } = intent
 
 	if (undefined !== sections.value[section]) {
 		sections.value[section] = true
@@ -461,12 +462,12 @@ const applyPendingSection = () => {
 		}
 	})
 
-	settingsStore.changeTabSettings({ setting: 'mainSidebar', value: { tab: mainSidebar.tab } })
+	clearIntent()
 }
 
 watch(() => settingsStore.metaBoxTabs.mainSidebar, applyPendingSection, { deep: true })
 
-const spellCheckerEnabled = computed(() => !!window.aioseo?.spellChecker?.enabled && !isPageBuilderEditor())
+const spellCheckerEnabled = computed(() => !!window.aioseo?.spellChecker?.enabled && isAnalyzeCapableEditor())
 
 // Also require a dictionary for the selected analysis language — some supported
 // languages (e.g. Arabic, Japanese) have no spell-check dictionary.

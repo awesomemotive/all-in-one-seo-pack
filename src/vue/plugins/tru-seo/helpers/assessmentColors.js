@@ -26,7 +26,7 @@ export const assessmentAccentColors = Object.freeze({
 	sentenceBeginnings   : '#EAB308',
 	spellingChecker      : '#EF4444',
 	textSentenceLength   : '#3B82F6',
-	subheadingsTooLong   : '#64748B',
+	subheadingsTooLong   : '#14B8A6',
 	textAlignment        : '#D946EF',
 	textPresence         : '#10B981',
 	textTransitionWords  : '#06B6D4',

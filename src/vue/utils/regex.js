@@ -17,6 +17,60 @@ const WORD_CHARACTER = '\\p{L}\\p{N}\\p{M}_'
 export const wordBoundaryPattern = (word) => {
 	return `(?<![${WORD_CHARACTER}])${escapeRegex(word)}(?![${WORD_CHARACTER}])`
 }
+
+// Applies the case pattern of replaced text to its replacement, per occurrence, since dictionary
+// suggestions come back lowercase. A single letter never reads as all-caps, so a lone "I" doesn't
+// upper-case a whole replacement; caseless scripts keep the dictionary's form.
+export const matchCase = (original, replacement) => {
+	if (!original || !replacement) {
+		return replacement
+	}
+
+	const isAllCaps = 1 < original.length &&
+		original === original.toUpperCase() &&
+		original !== original.toLowerCase()
+
+	if (isAllCaps) {
+		return replacement.toUpperCase()
+	}
+
+	const first = original.charAt(0)
+	if (first === first.toUpperCase() && first !== first.toLowerCase()) {
+		return replacement.charAt(0).toUpperCase() + replacement.slice(1)
+	}
+
+	return replacement
+}
+// The one rule for where a flagged sentence occurs: a single word on Unicode word boundaries, a
+// phrase verbatim. Shared so paint and write agree on the occurrence; a bare indexOf would find
+// 'cat' in 'concatenate'.
+export const sentencePattern = (sentence) => {
+	const isSingleWord = !sentence.includes(' ')
+
+	return new RegExp(
+		isSingleWord ? wordBoundaryPattern(sentence) : escapeRegex(sentence),
+		isSingleWord ? 'gu' : 'g'
+	)
+}
+
+// Every occurrence of `sentence` in `text`, as `[start, end)` ranges in document order.
+// NOTE: an empty sentence would match zero-length everywhere and loop forever.
+export const findSentenceRanges = (text, sentence) => {
+	const ranges = []
+	if (!text || !sentence) {
+		return ranges
+	}
+
+	const regex = sentencePattern(sentence)
+	let match
+
+	while (null !== (match = regex.exec(text))) {
+		ranges.push({ start: match.index, end: match.index + match[0].length })
+	}
+
+	return ranges
+}
+
 export const isRegexValid = (string) => {
 	try {
 		new RegExp(string)

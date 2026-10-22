@@ -13,16 +13,28 @@ let editorData = {}
 /**
  * Run TruSEO analysis when content updates.
  *
+ * @param   {boolean} notifyContentChanging Whether to emit the content-changing event.
  * @returns {void}.
  */
-const handleEditorChange = () => {
+const handleEditorChange = (notifyContentChanging = true) => {
 	const oldData = { ...editorData }
 	const data = getEditorData()
 
 	if (!isEqual(oldData, data)) {
 		editorData = data
-		updatePostData()
+		updatePostData(900, true, notifyContentChanging)
 	}
+}
+
+/**
+ * Hides stale highlight UI at the edit itself.
+ * NOTE: the hide can't ride the delayed content read — it lands after the spelling popover has
+ * already advanced to the next issue, and closes it.
+ *
+ * @returns {void}.
+ */
+const handleEditorModified = () => {
+	window.aioseoBus.$emit('aioseo-content-changing')
 }
 
 /**
@@ -51,15 +63,24 @@ const getRawContent = () => {
 const processContent = async () => {
 	const postEditorStore = usePostEditorStore()
 	postEditorStore.processContent({ content: getRawContent() }).finally(() => {
-		handleEditorChange()
+		handleEditorChange(false)
 	})
 }
 
 export default ({ vc }) => {
 	processContent()
 
+	// The edit moment in both editors; the frontend's `shortcodeView:updated` only follows the re-render.
+	vc.shortcodes.on('change:params', handleEditorModified)
+	vc.events.on('shortcodes:add shortcodes:destroy', handleEditorModified)
+
 	// Listen for changes to the front-end editor.
 	vc.events.on('shortcodeView:updated', () => {
+		debounce(processContent, 1000)
+	})
+
+	// Adding or deleting an element fires neither event above, which left media stale.
+	vc.events.on('shortcodes:add shortcodes:destroy', () => {
 		debounce(processContent, 1000)
 	})
 

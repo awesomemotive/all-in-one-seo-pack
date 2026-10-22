@@ -1,8 +1,10 @@
 import {
-	useRedirectsStore
+	useRedirectsStore,
+	useRootStore
 } from '@/vue/stores'
 
 import { sanitizeString } from '@/vue/utils/strings'
+import { getPathRelativeToHome } from '@/vue/utils/urls'
 import links from '@/vue/utils/links'
 
 import { __ } from '@/vue/plugins/translations'
@@ -53,16 +55,16 @@ export const useRedirect = () => {
 
 		// Loop detection.
 		if (redirect.url.url && redirect.url.url.length && redirect.targetUrl && redirect.targetUrl.length) {
-			let compareSource = redirect.url.ignoreSlash ? links.unTrailingSlashIt(redirect.url.url) : redirect.url.url,
-				compareTarget = redirect.url.ignoreSlash ? links.unTrailingSlashIt(redirect.targetUrl) : redirect.targetUrl
+			// Sources are always relative to the home URL, so a target on our own domain has to be relativized to be comparable.
+			const relativeTarget = getPathRelativeToHome(redirect.targetUrl, useRootStore().aioseo.urls.home)
+
+			// Remove the hash first, so Ignore Slash sees the slash in front of it.
+			let compareSource = redirect.url.regex ? redirect.url.url : redirect.url.url.replace(/#.*?$/, ''),
+				compareTarget = relativeTarget.replace(/#.*?$/, '')
+			compareSource = redirect.url.ignoreSlash ? links.unTrailingSlashIt(compareSource) : compareSource
+			compareTarget = redirect.url.ignoreSlash ? links.unTrailingSlashIt(compareTarget) : compareTarget
 			compareSource = redirect.url.ignoreCase ? compareSource.toLowerCase() : compareSource
 			compareTarget = redirect.url.ignoreCase ? compareTarget.toLowerCase() : compareTarget
-
-			// Remove hash from the URL.
-			if (!redirect.url.regex) {
-				compareSource = compareSource.replace(/#.*?$/, '')
-			}
-			compareTarget = compareTarget.replace(/#.*?$/, '')
 
 			if (compareSource === compareTarget ||
 				(

@@ -14,11 +14,13 @@ export default function (anchor, siteUrlOrDomain) {
 	const anchorUrl = urlHelper.getFromAnchorTag(anchor)
 	/**
 	 * A link is "Other" if:
+	 * - It has no URL (no `href`, or an empty one), because it doesn't navigate anywhere.
 	 * - The protocol is neither null, nor http, nor https.
 	 * - The link is a relative fragment URL (starts with #), because it won't navigate to another page.
 	 */
 	const protocol = urlHelper.getProtocol(anchorUrl)
-	if ((protocol && !urlHelper.protocolIsHttpScheme(protocol)) ||
+	if (!anchorUrl.trim() ||
+		(protocol && !urlHelper.protocolIsHttpScheme(protocol)) ||
 		urlHelper.isRelativeFragmentURL(anchorUrl)) {
 		return 'other'
 	}

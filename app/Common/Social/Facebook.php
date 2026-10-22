@@ -72,22 +72,24 @@ class Facebook {
 	 *
 	 * @since   4.0.0
 	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
+	 * @version 5.0.4 Added the $postId parameter.
 	 *
-	 * @return string The image width.
+	 * @param  int    $postId The post ID (optional).
+	 * @return string         The image width.
 	 */
-	public function getImageWidth() {
+	public function getImageWidth( $postId = null ) {
 		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$width = aioseo()->options->social->facebook->homePage->imageWidth;
 
 			return $width ? $width : aioseo()->options->social->facebook->general->defaultImagePostsWidth;
 		}
 
-		$metaData = aioseo()->meta->metaData->getMetaData();
+		$metaData = aioseo()->meta->metaData->getMetaData( $postId );
 		if ( ! empty( $metaData->og_custom_image_width ) ) {
 			return $metaData->og_custom_image_width;
 		}
 
-		$image = $this->getImage();
+		$image = $this->getImage( $postId );
 		if ( is_array( $image ) ) {
 			return $image[1];
 		}
@@ -100,22 +102,24 @@ class Facebook {
 	 *
 	 * @since   4.0.0
 	 * @version 5.0.3 Homepage branch now runs whenever show_on_front is not 'page'.
+	 * @version 5.0.4 Added the $postId parameter.
 	 *
-	 * @return string The image height.
+	 * @param  int    $postId The post ID (optional).
+	 * @return string         The image height.
 	 */
-	public function getImageHeight() {
+	public function getImageHeight( $postId = null ) {
 		if ( aioseo()->helpers->isBlogIndexHomePage() ) {
 			$height = aioseo()->options->social->facebook->homePage->imageHeight;
 
 			return $height ? $height : aioseo()->options->social->facebook->general->defaultImagePostsHeight;
 		}
 
-		$metaData = aioseo()->meta->metaData->getMetaData();
+		$metaData = aioseo()->meta->metaData->getMetaData( $postId );
 		if ( ! empty( $metaData->og_custom_image_height ) ) {
 			return $metaData->og_custom_image_height;
 		}
 
-		$image = $this->getImage();
+		$image = $this->getImage( $postId );
 		if ( is_array( $image ) ) {
 			return $image[2];
 		}

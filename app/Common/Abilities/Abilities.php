@@ -369,7 +369,8 @@ class Abilities {
 	/**
 	 * Registers robots.txt abilities (output + rules CRUD).
 	 *
-	 * @since 4.9.8
+	 * @since   4.9.8
+	 * @version 5.0.4 Rule inputs accept every supported directive.
 	 *
 	 * @return void
 	 */
@@ -390,7 +391,7 @@ class Abilities {
 
 		wp_register_ability( 'aioseo-robots/rules-list', [
 			'label'               => __( 'List Robots.txt Rules', 'all-in-one-seo-pack' ),
-			'description'         => __( 'Lists AIOSEO\'s custom robots.txt rules. Each rule has a stable id usable with update/delete.', 'all-in-one-seo-pack' ),
+			'description'         => __( 'Lists AIOSEO\'s custom robots.txt rules. Each rule has a stable id usable with update/delete. Rules managed by Search Appearance (Crawl Cleanup, Unwanted Bots) are not listed and cannot be changed here.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 			'category'            => 'aioseo-robots',
 			'input_schema'        => $this->noInputSchema(),
 			'output_schema'       => [
@@ -409,7 +410,7 @@ class Abilities {
 
 		wp_register_ability( 'aioseo-robots/rules-add', [
 			'label'               => __( 'Add Robots.txt Rule', 'all-in-one-seo-pack' ),
-			'description'         => __( 'Adds a new custom robots.txt rule for a given user agent. Directive must be "allow" or "disallow".', 'all-in-one-seo-pack' ),
+			'description'         => __( 'Adds a new custom robots.txt rule for a given user agent.', 'all-in-one-seo-pack' ),
 			'category'            => 'aioseo-robots',
 			'input_schema'        => [
 				'type'                 => 'object',
@@ -420,11 +421,11 @@ class Abilities {
 					],
 					'directive'   => [
 						'type' => 'string',
-						'enum' => [ 'allow', 'disallow' ]
+						'enum' => RobotsService::ALLOWED_DIRECTIVES
 					],
 					'field_value' => [
 						'type'        => 'string',
-						'description' => __( 'Path or pattern the directive applies to (e.g. "/private/").', 'all-in-one-seo-pack' )
+						'description' => __( 'The directive value: a path or pattern (e.g. "/private/"), a delay in seconds for "crawl-delay", or params optionally followed by a path for "clean-param".', 'all-in-one-seo-pack' ) // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 					]
 				],
 				'required'             => [ 'user_agent', 'directive', 'field_value' ],
@@ -456,7 +457,7 @@ class Abilities {
 					'user_agent'  => [ 'type' => 'string' ],
 					'directive'   => [
 						'type' => 'string',
-						'enum' => [ 'allow', 'disallow' ]
+						'enum' => RobotsService::ALLOWED_DIRECTIVES
 					],
 					'field_value' => [ 'type' => 'string' ]
 				],
@@ -1017,7 +1018,8 @@ class Abilities {
 	/**
 	 * Output schema for a single robots.txt rule.
 	 *
-	 * @since 4.9.8
+	 * @since   4.9.8
+	 * @version 5.0.4 Directive is no longer an enum.
 	 *
 	 * @return array
 	 */
@@ -1027,10 +1029,8 @@ class Abilities {
 			'properties' => [
 				'id'          => [ 'type' => 'string' ],
 				'user_agent'  => [ 'type' => 'string' ],
-				'directive'   => [
-					'type' => 'string',
-					'enum' => [ 'allow', 'disallow' ]
-				],
+				// Not an enum: one stored rule with an unexpected directive must not fail the whole listing.
+				'directive'   => [ 'type' => 'string' ],
 				'field_value' => [ 'type' => 'string' ]
 			]
 		];

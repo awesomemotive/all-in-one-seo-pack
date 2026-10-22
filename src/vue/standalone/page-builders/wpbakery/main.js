@@ -7,6 +7,8 @@ import loadComponents from '@/vue/components/common'
 
 import { loadPiniaStores } from '@/vue/stores'
 
+import { resetAdapter } from '@/vue/plugins/tru-seo/editors'
+
 import initWatcher from './watcher'
 import initLimitModifiedDate from './limit-modified-date'
 import App from './App'
@@ -59,6 +61,14 @@ const mountPostSettings = () => {
  * @returns {void}
  */
 const init = () => {
+	// BEFORE anything reads the adapter. Adapter resolution is memoised for the page's lifetime,
+	// and on a back-end builder screen the first read happens while `window.vc` is still undefined
+	// -- so WPBakery's own page resolves to the CLASSIC editor underneath it and keeps that answer,
+	// leaving the builder analysed as raw shortcodes and unpainted. This runs from WPBakery's
+	// `app.render`, by which point `vc` exists, which is exactly the post-boot staleness
+	// resetAdapter() documents itself for.
+	resetAdapter()
+
 	// Mount our Vue components in the WP Bakery bar.
 	mountPostSettings()
 

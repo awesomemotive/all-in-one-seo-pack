@@ -250,7 +250,7 @@ import { useTruSeoScore } from '@/vue/composables/TruSeoScore'
 import { useTruSeoLocale } from '../../composables/TruSeoLocale'
 import { truSeoShouldAnalyze, supportsPageAnalysis } from '@/vue/plugins/tru-seo/components/helpers'
 import { isOptimizeSupported } from '@/vue/plugins/tru-seo/optimize-post/editorAdapter'
-import { isPageBuilderEditor } from '@/vue/utils/context'
+import { isAnalyzeCapableEditor } from '@/vue/plugins/tru-seo/editors'
 
 import BaseButton from '@/vue/components/common/base/Button'
 import BaseScoreBadge from '@/vue/components/common/base/ScoreBadge'
@@ -327,7 +327,7 @@ const strings = merge(composableStrings, {
 	goToAdvancedTab        : __('Go to the Advanced tab to add/edit meta keywords', td)
 })
 
-const spellCheckerEnabled = computed(() => !!window.aioseo?.spellChecker?.enabled && !isPageBuilderEditor())
+const spellCheckerEnabled = computed(() => !!window.aioseo?.spellChecker?.enabled && isAnalyzeCapableEditor())
 
 // Also require a dictionary for the selected analysis language — some supported
 // languages (e.g. Arabic, Japanese) have no spell-check dictionary.

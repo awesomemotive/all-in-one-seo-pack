@@ -1,7 +1,33 @@
-import { wordBoundaryPattern } from '@/vue/utils/regex'
+import { matchCase, wordBoundaryPattern } from '@/vue/utils/regex'
 import { getRichTextIdentifier } from './blockEditor'
+import { isAnalyzerSkippedBlock } from './blockText'
 import { requestPostUpdate } from '@/vue/plugins/tru-seo/spellingSuggestions'
 import { normalizeWhitespaces } from '@/vue/utils/postData/helpers'
+import { resolveAdapter } from '@/vue/plugins/tru-seo/editors'
+import { buildStructuredMarkup, parseStructuredReplacement } from './structuredMarkup'
+import { IGNORED_TAGS } from '@/app/tru-seo/languageProcessing/helpers/html/ignoredElements'
+
+// Elements whose text the analyzer drops ({@see htmlParser.js}), so a fix must never write there.
+const ANALYZER_SKIPPED_SELECTOR = IGNORED_TAGS.join(',')
+
+// Why the last write refused, when the adapter that refused knew why. Block and classic never
+// set it: a no-op fix is common there (button labels, table cells) and alerting would cry wolf.
+let lastWriteRefusal = null
+
+/**
+ * Reads and clears why the last write refused.
+ *
+ * NOTE: valid only immediately after a write; every entry point below clears it on the way in.
+ *
+ * @returns {?string} The refusal reason, or null when the write landed or the editor gave none.
+ */
+export const consumeWriteRefusal = () => {
+	const reason = lastWriteRefusal
+
+	lastWriteRefusal = null
+
+	return reason
+}
 
 /**
  * Finds the character offset of the mark's node within its closest
@@ -39,6 +65,36 @@ function getCharacterOffset (container, markNode) {
 	}
 
 	return -1
+}
+
+/**
+ * Builds the rich-text value to insert, carrying the formats every replaced character shares.
+ *
+ * NOTE: a bare `create({ text })` has no formats, so inserting it cut links and inline code in two.
+ *
+ * @param {Object} value       The rich-text value being edited.
+ * @param {number} start       The start offset of the replaced range.
+ * @param {number} end         The end offset of the replaced range.
+ * @param {string} replacement The replacement text.
+ * @returns {Object}           The rich-text value to insert.
+ */
+function createReplacementValue (value, start, end, replacement) {
+	const replacementValue = window.wp.richText.create({ text: replacement })
+	const sharedFormats    = (value.formats[start] || []).filter((format) => {
+		for (let i = start + 1; i < end; i++) {
+			if (!(value.formats[i] || []).includes(format)) {
+				return false
+			}
+		}
+
+		return true
+	})
+
+	if (sharedFormats.length) {
+		replacementValue.formats = Array.from(replacementValue.text, () => sharedFormats)
+	}
+
+	return replacementValue
 }
 
 /**
@@ -106,7 +162,7 @@ export function replaceInBlockEditor (mark, replacement) {
 
 	const newValue = insert(
 		richTextValue,
-		create({ text: replacement }),
+		createReplacementValue(richTextValue, charOffset, charOffset + word.length, replacement),
 		charOffset,
 		charOffset + word.length
 	)
@@ -167,6 +223,39 @@ export function replaceInClassicEditor (mark, replacement) {
 }
 
 /**
+ * Replaces the mark with real block markup in the Classic Editor (TinyMCE).
+ *
+ * NOTE: uses `insertContent`, which splits the surrounding block itself; the mark is selected
+ * first so the insert replaces it.
+ *
+ * @param {Object} mark  The highlight mark object.
+ * @param {Array}  parts Parts from `parseStructuredReplacement`.
+ * @returns {boolean} Whether the replacement was successful.
+ */
+export function replaceBlocksInClassicEditor (mark, parts) {
+	const editor = window.tinymce?.get('content')
+	if (!editor || !mark?.node?.parentNode || !parts?.length) {
+		return false
+	}
+
+	if ('function' !== typeof editor.insertContent || 'function' !== typeof editor.selection?.select) {
+		return false
+	}
+
+	editor.selection.select(mark.node)
+	editor.insertContent(buildStructuredMarkup(parts))
+
+	editor.undoManager.add()
+	editor.setDirty(true)
+
+	// Programmatic DOM edits don't fire the keyup/paste events that drive the Classic editor's
+	// re-analysis, the same reason `replaceInClassicEditor` asks for one.
+	requestPostUpdate(500)
+
+	return true
+}
+
+/**
  * Detects if the current editor is the Block Editor.
  *
  * @since 5.0.0
@@ -180,13 +269,30 @@ export function isBlockEditor () {
 /**
  * Replaces a misspelled word with a suggestion in the active editor.
  *
+ * NOTE: the owning adapter writes; the block/classic branches are the fallback for a page no
+ * adapter claims.
+ *
  * @since 5.0.0
  *
  * @param {Object} mark        The highlight mark object.
  * @param {string} replacement The replacement word.
- * @returns {boolean}          Whether the replacement was successful.
+ * @returns {Promise<boolean>} Whether the replacement was successful.
  */
-export function replaceWord (mark, replacement) {
+export async function replaceWord (mark, replacement) {
+	lastWriteRefusal = null
+
+	const adapter = resolveAdapter()
+	if ('function' === typeof adapter?.replaceMark) {
+		const written = !!await adapter.replaceMark(mark, replacement)
+		if (!written) {
+			// Asked of the adapter rather than inferred here: only the editor that refused knows
+			// why, and one that cannot say supplies nothing.
+			lastWriteRefusal = adapter.consumeWriteRefusal?.() || null
+		}
+
+		return written
+	}
+
 	if (isBlockEditor()) {
 		return replaceInBlockEditor(mark, replacement)
 	}
@@ -205,65 +311,38 @@ export function replaceWord (mark, replacement) {
  *
  * @param {Object} mark    The highlight mark object.
  * @param {string} newText The replacement text.
- * @returns {boolean}      Whether the replacement was successful.
+ * @returns {Promise<boolean>} Whether the replacement was successful.
  */
 export function replaceText (mark, newText) {
 	return replaceWord(mark, newText)
 }
 
 /**
- * Parses a remote suggestion string into a list of structural parts suitable
- * for building block editor blocks.
- *
- * Lines starting with `## ` become H2 heading parts. Lines starting with
- * `### ` become H3 heading parts. Text separated by blank lines becomes
- * separate paragraph parts.
- *
- * @since 5.0.0
- *
- * @param {string} text The replacement text from the AI Generator.
- * @returns {Array} An array of part objects, each with a `type`, optional `level`, and `content`.
- */
-function parseStructuredReplacement (text) {
-	const parts = []
-	const chunks = String(text).split(/\n{2,}/).map(c => c.trim()).filter(Boolean)
-
-	for (const chunk of chunks) {
-		if (chunk.startsWith('### ')) {
-			parts.push({ type: 'heading', level: 3, content: chunk.slice(4).trim() })
-			continue
-		}
-
-		if (chunk.startsWith('## ')) {
-			parts.push({ type: 'heading', level: 2, content: chunk.slice(3).trim() })
-			continue
-		}
-
-		parts.push({ type: 'paragraph', content: chunk })
-	}
-
-	return parts
-}
-
-/**
  * Replaces the block containing the mark with multiple paragraph/heading blocks
  * built from a structured AI replacement. Used by paragraph and section scope.
  *
- * Falls back to in-place text replacement for Classic Editor (TinyMCE).
+ * NOTE: the writer depends on what the target can hold — block editor blocks, an adapter's
+ * `replaceMarkBlocks` markup, or the plain-text write for a single part. Never flatten parts into
+ * one string: html collapses the newlines and the paragraph breaks vanish.
  *
  * @since 5.0.0
  *
  * @param {Object} mark    The highlight mark object.
  * @param {string} newText The replacement text (may contain `\n\n` and `## `/`### ` markers).
- * @returns {boolean}      Whether the replacement was successful.
+ * @returns {Promise<boolean>} Whether the replacement was successful.
  */
-export function replaceBlockText (mark, newText) {
+export async function replaceBlockText (mark, newText) {
+	// Its block arm returns without ever reaching an adapter, so without this the channel would
+	// still hold whatever the previous write left — and the popover reads it after this call.
+	lastWriteRefusal = null
+
+	const parts = parseStructuredReplacement(newText)
+
 	if (isBlockEditor()) {
 		if (!mark?.block?.clientId || !window?.wp?.data || !window?.wp?.blocks) {
 			return false
 		}
 
-		const parts = parseStructuredReplacement(newText)
 		if (!parts.length) {
 			return false
 		}
@@ -282,51 +361,31 @@ export function replaceBlockText (mark, newText) {
 		return true
 	}
 
-	// Classic Editor: fall back to plain-text replacement with literal paragraph breaks.
-	const flattened = String(newText)
-		.replace(/^#{2,3} /gm, '')
-		.replace(/\n{2,}/g, '\n\n')
+	if (1 < parts.length) {
+		const adapter = resolveAdapter()
 
-	return replaceInClassicEditor(mark, flattened)
-}
+		if ('function' === typeof adapter?.replaceMarkBlocks) {
+			const written = !!await adapter.replaceMarkBlocks(mark, parts)
+			if (!written) {
+				lastWriteRefusal = adapter.consumeWriteRefusal?.() || null
+			}
 
-/**
- * Applies the case pattern of the replaced text to its replacement.
- *
- * Dictionary suggestions come back lowercase, so accepting one for "Recieve" at the start of a
- * sentence would fix the spelling and introduce a capitalisation error in its place. Matched per
- * occurrence, so the same word capitalised in one sentence and lowercase in another each keep their
- * own form.
- *
- * NOTE: Scripts without letter case (the spell checker supports many) compare equal upper and lower,
- * so they fall through and keep the suggestion exactly as the dictionary supplied it.
- *
- * @since 5.0.1
- *
- * @param {string} original    The text being replaced.
- * @param {string} replacement The replacement word.
- * @returns {string}           The replacement, cased like the original.
- */
-export function matchCase (original, replacement) {
-	if (!original || !replacement) {
-		return replacement
+			return written
+		}
+
+		// Fallback for a page no adapter claims. Without TinyMCE this answers false rather than
+		// handing a plain-text writer a string with newlines in it.
+		return replaceBlocksInClassicEditor(mark, parts)
 	}
 
-	// Require more than one letter so a lone "I" isn't read as an all-caps word.
-	const isAllCaps = 1 < original.length &&
-		original === original.toUpperCase() &&
-		original !== original.toLowerCase()
-
-	if (isAllCaps) {
-		return replacement.toUpperCase()
+	// Whitespace-only suggestion. Refused, because `'\n\n'` is truthy and would reach a writer.
+	if (!parts.length) {
+		return false
 	}
 
-	const first = original.charAt(0)
-	if (first === first.toUpperCase() && first !== first.toLowerCase()) {
-		return replacement.charAt(0).toUpperCase() + replacement.slice(1)
-	}
-
-	return replacement
+	// ONE part, so there is no structure for a block write to carry: the plain-text write is the
+	// whole answer, and every one-part suggestion keeps exactly the behaviour it shipped with.
+	return replaceWord(mark, parts[0].content)
 }
 
 /**
@@ -343,23 +402,27 @@ export function matchCase (original, replacement) {
  * @param {string} clientId    The Gutenberg block client ID.
  * @param {string} word        The misspelled word to replace.
  * @param {string} replacement The replacement word.
- * @returns {boolean}          Whether the replacement was successful.
+ * @returns {number}           The count of occurrences replaced in this block (0 means none).
  */
 export function replaceAllInBlockEditor (clientId, word, replacement) {
 	if (!clientId || !window?.wp?.data || !window?.wp?.richText) {
-		return false
+		return 0
 	}
 
 	const { select, dispatch } = window.wp.data
 	const block = select('core/block-editor').getBlock(clientId)
 	if (!block) {
-		return false
+		return 0
 	}
 
 	const attributeId = getRichTextIdentifier(block)
 	const content = block.attributes[attributeId]
 	if (!content) {
-		return false
+		return 0
+	}
+
+	if (isAnalyzerSkippedBlock(clientId)) {
+		return 0
 	}
 
 	const isRichTextData = 'object' === typeof content && 'function' === typeof content.toHTMLString
@@ -372,17 +435,29 @@ export function replaceAllInBlockEditor (clientId, word, replacement) {
 	 match
 
 	while (null !== (match = wordRegex.exec(richTextValue.text))) {
+		const formats = richTextValue.formats.slice(match.index, match.index + match[0].length)
+
+		// Inline `<code>` is a format here, not an element, and the analyzer drops its text.
+		if (formats.some(charFormats => charFormats?.some(format => 'core/code' === format?.type))) {
+			continue
+		}
+
 		positions.push({ start: match.index, end: match.index + match[0].length, matched: match[0] })
 	}
 
 	if (!positions.length) {
-		return false
+		return 0
 	}
 
 	for (let i = positions.length - 1; 0 <= i; i--) {
 		richTextValue = insert(
 			richTextValue,
-			create({ text: matchCase(positions[i].matched, replacement) }),
+			createReplacementValue(
+				richTextValue,
+				positions[i].start,
+				positions[i].end,
+				matchCase(positions[i].matched, replacement)
+			),
 			positions[i].start,
 			positions[i].end
 		)
@@ -399,7 +474,7 @@ export function replaceAllInBlockEditor (clientId, word, replacement) {
 		[attributeId] : newContent
 	})
 
-	return true
+	return positions.length
 }
 
 /**
@@ -452,23 +527,29 @@ export function replaceAllWordInTermDescription (textarea, word, replacement, tr
  *
  * @param {string}  word              The misspelled word to replace.
  * @param {string}  replacement       The replacement word.
- * @param {boolean} triggerReanalysis Re-run analysis after editing.
- * @returns {boolean}                 Whether any occurrence was replaced.
+ * @param {boolean} triggerReanalysis Re-run analysis after editing. Pass false when the caller re-analyzes itself.
+ * @returns {number}                  The count of occurrences replaced (0 means none).
  */
 export function replaceAllWordInClassicEditor (word, replacement, triggerReanalysis = true) {
 	const editor = window.tinymce?.get('content')
 	const body   = editor?.getBody?.()
 	if (!editor || !body) {
-		return false
+		return 0
 	}
 
 	const doc       = editor.getDoc?.() || body.ownerDocument || document
 	const wordRegex = new RegExp(wordBoundaryPattern(word), 'gu')
 	const walker    = doc.createTreeWalker(body, NodeFilter.SHOW_TEXT)
 	const targets   = []
-	let node
+	let node,
+		count = 0
 
 	while (null !== (node = walker.nextNode())) {
+		// The analyzer drops this text, so it was never flagged.
+		if (node.parentElement?.closest(ANALYZER_SKIPPED_SELECTOR)) {
+			continue
+		}
+
 		wordRegex.lastIndex = 0
 		if (wordRegex.test(node.nodeValue || '')) {
 			targets.push(node)
@@ -476,14 +557,19 @@ export function replaceAllWordInClassicEditor (word, replacement, triggerReanaly
 	}
 
 	if (!targets.length) {
-		return false
+		return 0
 	}
 
 	for (const textNode of targets) {
 		wordRegex.lastIndex = 0
 		// Function replacer so `$` sequences in the replacement (e.g. "$&") aren't
-		// treated as special patterns by String.prototype.replace.
-		textNode.nodeValue = textNode.nodeValue.replace(wordRegex, match => matchCase(match, replacement))
+		// treated as special patterns by String.prototype.replace, and so each match
+		// can be tallied into the returned count while keeping its own capitalisation.
+		textNode.nodeValue = textNode.nodeValue.replace(wordRegex, match => {
+			count++
+
+			return matchCase(match, replacement)
+		})
 	}
 
 	// Merge annotation-split siblings so TinyMCE's serializer stays clean, then
@@ -495,7 +581,7 @@ export function replaceAllWordInClassicEditor (word, replacement, triggerReanaly
 		requestPostUpdate(500)
 	}
 
-	return true
+	return count
 }
 
 /**
@@ -504,20 +590,30 @@ export function replaceAllWordInClassicEditor (word, replacement, triggerReanaly
  *
  * The Spelling tab's word list is built from the assessment, not the editor's
  * highlight marks, so its fix action must work even when spelling highlighting
- * is toggled off (no marks exist). Block editor: walks every block and reuses the
- * position-aware {@see replaceAllInBlockEditor} (a no-op on blocks without the
- * word). Classic editor: rewrites matching text nodes in the TinyMCE body.
+ * is toggled off (no marks exist).
  *
  * @since 5.0.0
  *
  * @param {string}  word              The misspelled word to replace.
  * @param {string}  replacement       The replacement word.
  * @param {boolean} triggerReanalysis Re-run analysis after editing. Pass false when the caller re-analyzes itself.
- * @returns {boolean}                 Whether any occurrence was replaced.
+ * @returns {Promise<number>}         The count of occurrences replaced across the document (0 means none).
  */
-export function replaceWordInContent (word, replacement, triggerReanalysis = true) {
+export async function replaceWordInContent (word, replacement, triggerReanalysis = true) {
+	lastWriteRefusal = null
+
 	if (!word || !replacement) {
-		return false
+		return 0
+	}
+
+	const adapter = resolveAdapter()
+	if ('function' === typeof adapter?.replaceAllOccurrences) {
+		const count = await adapter.replaceAllOccurrences(word, replacement, { triggerReanalysis })
+		if (!count) {
+			lastWriteRefusal = adapter.consumeWriteRefusal?.() || null
+		}
+
+		return count
 	}
 
 	// A term has no editor — its description textarea is the analysed content.
@@ -532,15 +628,13 @@ export function replaceWordInContent (word, replacement, triggerReanalysis = tru
 
 	const blocks = window.wp?.data?.select?.('core/block-editor')?.getBlocks?.() || []
 	if (!blocks.length) {
-		return false
+		return 0
 	}
 
-	let replaced = false
+	let totalCount = 0
 	const walk = (list) => {
 		for (const block of list) {
-			if (replaceAllInBlockEditor(block.clientId, word, replacement)) {
-				replaced = true
-			}
+			totalCount += replaceAllInBlockEditor(block.clientId, word, replacement)
 
 			if (block.innerBlocks?.length) {
 				walk(block.innerBlocks)
@@ -549,5 +643,5 @@ export function replaceWordInContent (word, replacement, triggerReanalysis = tru
 	}
 	walk(blocks)
 
-	return replaced
+	return totalCount
 }

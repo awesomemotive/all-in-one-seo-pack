@@ -55,6 +55,7 @@ class Helpers {
 				}
 
 				$v = $replaceTags ? aioseo()->tags->replaceTags( $v, get_the_ID() ) : $v;
+				$v = aioseo()->tags->unescapeTags( $v );
 			}
 
 			if ( empty( $v ) && ! in_array( $k, aioseo()->schema->nullableFields, true ) ) {

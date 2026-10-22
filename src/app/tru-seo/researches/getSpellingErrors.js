@@ -15,6 +15,28 @@ import { normalizeSingle } from '@/app/tru-seo/languageProcessing/helpers/saniti
 const wordRegex = /[^\s.,;:!?"()[\]{}<>/\\…—–\u201C\u201D\u00AB\u00BB]+/g
 
 /**
+ * Matches a hyphen-minus or a Unicode hyphen pasted in its place (U+2010,
+ * U+2011, U+FE63, U+FF0D).
+ *
+ * @type {RegExp}
+ */
+const hyphenRegex = /[-\u2010\u2011\uFE63\uFF0D]/
+
+/**
+ * Matches a run of two or more hyphens, typed as a dash ("wait--what").
+ *
+ * @type {RegExp}
+ */
+const dashRegex = /[-\u2010\u2011\uFE63\uFF0D]{2,}/g
+
+/**
+ * Matches the Unicode hyphens only.
+ *
+ * @type {RegExp}
+ */
+const unicodeHyphenRegex = /[\u2010\u2011\uFE63\uFF0D]/g
+
+/**
  * Matches a single emoji, pictographic symbol, or emoji-sequence joiner
  * (variation selectors, skin-tone modifiers, regional indicators, ZWJ, tags).
  *
@@ -74,6 +96,20 @@ function neutralizeUrls (text) {
 }
 
 /**
+ * Replaces every dash typed as hyphens with an equal-length run of spaces.
+ *
+ * A dash separates words, like the "—" and "–" the tokenizer already splits on.
+ * Left in, the compound split drops the words beside it as affixes and hides
+ * their typos. No shipped dictionary holds an entry with a doubled hyphen.
+ *
+ * @param {string} text The text to process.
+ * @returns {string}    The text with dashes replaced by spaces.
+ */
+function neutralizeDashes (text) {
+	return text.replace(dashRegex, match => ' '.repeat(match.length))
+}
+
+/**
  * Checks if a word should be skipped during spell checking.
  *
  * @param {string}  word The word to check.
@@ -92,6 +128,18 @@ function shouldSkipWord (word) {
 
 	// camelCase / intercaps brand & technical terms (eCommerce, iPhone, WordPress, macOS).
 	if (/\p{Ll}\p{Lu}/u.test(word)) {
+		return true
+	}
+
+	// All-caps acronyms, optionally pluralised or possessive (SEO, TCG, RPGs, PDF'S).
+	// Which ones the dictionary holds is arbitrary (AI is in, SEO is not), so short
+	// all-caps runs go unchecked. Capped at 6 because 44 of the 45 acronyms our
+	// en_US misses fit within 6, while a longer all-caps run reads as a shouted
+	// misspelling (RECIEVE, CONCLUSHON) and stays checked. All-caps only: a merely
+	// capitalized word is indistinguishable from a typo opening a sentence. An
+	// uppercase S needs the apostrophe (PDF'S): bare, it is part of a shouted
+	// word, and BUSINES is no acronym.
+	if (/^\p{Lu}{2,6}(?:['\u2019][sS]|s)?$/u.test(word)) {
 		return true
 	}
 
@@ -119,6 +167,84 @@ function shouldSkipWord (word) {
 }
 
 /**
+ * Splits a hyphenated token into the parts that are worth checking on their own.
+ *
+ * Hunspell breaks a word on the hyphen and our en_US holds no hyphenated entry
+ * at all, so a compound only ever passes because every one of its parts passes.
+ * Mirroring that split is what lets the skip rules reach a part: without it an
+ * acronym loses its skip the moment it joins a compound ("SEO-friendly"), and a
+ * mark covers the whole compound instead of the part that is actually wrong.
+ *
+ * A fragment before a trailing hyphen is dropped rather than checked. It is
+ * half of a suspended compound ("pre- and post-launch"), so it is an affix
+ * rather than a word and no dictionary can judge it. A leading hyphen forms no
+ * such compound in English ("-recieve the file" is a list item), so a token
+ * that opens with one is checked in full.
+ *
+ * @param {string} word  The hyphenated token.
+ * @param {number} start The token's start offset in the text.
+ * @returns {Array<{word: string, start: number, end: number}>} The checkable parts.
+ */
+function splitHyphenatedParts (word, start) {
+	const fragments = word.split(hyphenRegex)
+	const parts     = []
+	let offset      = 0
+
+	fragments.forEach((fragment, index) => {
+		const suspendedPrefix = '' !== fragments[0] && '' === fragments[index + 1]
+
+		if (fragment.length && !suspendedPrefix) {
+			parts.push({
+				word  : fragment,
+				start : start + offset,
+				end   : start + offset + fragment.length
+			})
+		}
+
+		// The hyphen the split consumed still occupies a character in the source.
+		offset += fragment.length + 1
+	})
+
+	return parts
+}
+
+/**
+ * Reports whether a word is accepted, either by a skip rule or by the dictionary.
+ *
+ * @param {string} word The word to check.
+ * @returns {boolean}   True if the word must not be flagged.
+ */
+function isAccepted (word) {
+	if (shouldSkipWord(word)) {
+		return true
+	}
+
+	// Hunspell dictionaries store contractions with the straight apostrophe and
+	// compounds with the hyphen-minus, so normalize both before lookup while
+	// preserving the original word for downstream highlight/replace matching
+	// against the source text.
+	const normalized = normalizeSingle(word).replace(unicodeHyphenRegex, '-')
+
+	// Match-case ("strict") safe words are accepted only in their exact
+	// casing and are intentionally absent from Hunspell, so check them here
+	// before the case-insensitive Hunspell lookup. Normalize apostrophes the
+	// same way as the Hunspell path so strict words with apostrophes match.
+	if (spellChecker.hasSafeWordStrict(normalized)) {
+		return true
+	}
+
+	if (spellChecker.check(normalized)) {
+		return true
+	}
+
+	// Non-strict ("match case off") safe words are meant to be accepted in any
+	// casing, but Hunspell only accepts case variants of a lowercase entry — a
+	// capitalized or all-caps custom word ("Cuple"/"CUPLE") won't accept the
+	// lowercase form. Match those case-insensitively before flagging.
+	return spellChecker.hasSafeWordLoose(normalized)
+}
+
+/**
  * Tokenizes text into words with their positions.
  *
  * @param {string} text The text to tokenize.
@@ -133,7 +259,8 @@ function tokenizeWithPositions (text) {
 		const word = match[0]
 
 		// Strip leading/trailing punctuation that may have been captured (e.g. quotes around words).
-		const stripped = word.replace(/^[''""'"`]+|[''""'"`.,;:!?]+$/g, '')
+		// Escaped so an editor can't flatten the curly quotes, which wordRegex doesn't split on.
+		const stripped = word.replace(/^['`‘’]+|['`‘’.,;:!?]+$/g, '')
 		if (stripped.length) {
 			const offset = word.indexOf(stripped)
 			words.push({
@@ -173,6 +300,7 @@ export default function getSpellingErrors (paper, _researcher) { // eslint-disab
 	text = stripFullTags(text)
 	text = neutralizeUrls(text)
 	text = neutralizeEmoji(text)
+	text = neutralizeDashes(text)
 
 	if (!text) {
 		return {
@@ -186,32 +314,19 @@ export default function getSpellingErrors (paper, _researcher) { // eslint-disab
 	const errors = []
 
 	for (const { word, start, end } of words) {
-		if (shouldSkipWord(word)) {
+		if (isAccepted(word)) {
 			continue
 		}
 
-		// Hunspell dictionaries store contractions with the straight apostrophe,
-		// so normalize curly singles before lookup while preserving the original
-		// word for downstream highlight/replace matching against the source text.
-		const normalized = normalizeSingle(word)
+		// A rejected compound is rejected because one of its parts is, so re-check
+		// the parts and flag only those. The whole token never becomes an error.
+		if (hyphenRegex.test(word)) {
+			for (const part of splitHyphenatedParts(word, start)) {
+				if (!isAccepted(part.word)) {
+					errors.push(part)
+				}
+			}
 
-		// Match-case ("strict") safe words are accepted only in their exact
-		// casing and are intentionally absent from Hunspell, so check them here
-		// before the case-insensitive Hunspell lookup. Normalize apostrophes the
-		// same way as the Hunspell path so strict words with apostrophes match.
-		if (spellChecker.hasSafeWordStrict(normalized)) {
-			continue
-		}
-
-		if (spellChecker.check(normalized)) {
-			continue
-		}
-
-		// Non-strict ("match case off") safe words are meant to be accepted in any
-		// casing, but Hunspell only accepts case variants of a lowercase entry — a
-		// capitalized or all-caps custom word ("Cuple"/"CUPLE") won't accept the
-		// lowercase form. Match those case-insensitively before flagging.
-		if (spellChecker.hasSafeWordLoose(normalized)) {
 			continue
 		}
 

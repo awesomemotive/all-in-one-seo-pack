@@ -126,6 +126,10 @@ class PostSettings extends CommonAdmin\PostSettings {
 				min-width: auto;
 				overflow: hidden;
 			}
+			.aioseo-taxonomy-upsell .aioseo-app > .aioseo-blur {
+				max-height: 600px;
+				overflow: hidden;
+			}
 			.aioseo-taxonomy-upsell-loading { visibility: hidden; }
 		</style>
 		<div id="poststuff" class="aioseo-taxonomy-upsell aioseo-taxonomy-upsell-loading" style="margin-top:30px;max-width: 800px;">

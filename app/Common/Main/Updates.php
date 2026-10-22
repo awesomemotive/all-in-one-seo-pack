@@ -611,25 +611,8 @@ class Updates {
 				);
 			}
 
-			if ( aioseo()->core->db->columnExists( 'aioseo_posts', 'og_custom_image_height' ) ) {
-				aioseo()->core->db->execute(
-					"ALTER TABLE {$tableName} CHANGE COLUMN og_custom_image_height og_image_height int(11) DEFAULT NULL AFTER og_image_url"
-				);
-			} elseif ( ! aioseo()->core->db->columnExists( 'aioseo_posts', 'og_image_height' ) ) {
-				aioseo()->core->db->execute(
-					"ALTER TABLE {$tableName} ADD og_image_height int(11) DEFAULT NULL AFTER og_image_url"
-				);
-			}
-
-			if ( aioseo()->core->db->columnExists( 'aioseo_posts', 'og_custom_image_width' ) ) {
-				aioseo()->core->db->execute(
-					"ALTER TABLE {$tableName} CHANGE COLUMN og_custom_image_width og_image_width int(11) DEFAULT NULL AFTER og_image_url"
-				);
-			} elseif ( ! aioseo()->core->db->columnExists( 'aioseo_posts', 'og_image_width' ) ) {
-				aioseo()->core->db->execute(
-					"ALTER TABLE {$tableName} ADD og_image_width int(11) DEFAULT NULL AFTER og_image_url"
-				);
-			}
+			$this->migrateOgImageDimensionColumn( 'aioseo_posts', 'og_custom_image_height', 'og_image_height' );
+			$this->migrateOgImageDimensionColumn( 'aioseo_posts', 'og_custom_image_width', 'og_image_width' );
 
 			// Twitter image url columnn.
 			if ( ! aioseo()->core->db->columnExists( 'aioseo_posts', 'twitter_image_url' ) ) {
@@ -640,6 +623,30 @@ class Updates {
 
 			// Reset the cache for the installed tables.
 			aioseo()->core->cache->delete( 'db_schema' );
+		}
+	}
+
+	/**
+	 * Folds a legacy OG image dimension column into its replacement, or adds the replacement if neither exists.
+	 *
+	 * NOTE: dbDelta runs first and adds the new column without dropping the legacy one, so both usually
+	 * coexist here; the legacy values are copied across where the new column is empty before the drop.
+	 *
+	 * @since 4.1.6
+	 *
+	 * @param  string $table        The table name, without the DB prefix.
+	 * @param  string $legacyColumn The legacy column name.
+	 * @param  string $newColumn    The new column name.
+	 * @return void
+	 */
+	protected function migrateOgImageDimensionColumn( $table, $legacyColumn, $newColumn ) {
+		( new Migrations\Definitions\DropLegacyOgImageDimensionColumns() )->migrateColumn( $table, $legacyColumn, $newColumn );
+
+		if ( ! aioseo()->core->db->columnExists( $table, $newColumn ) ) {
+			$tableName = aioseo()->core->db->db->prefix . $table;
+			aioseo()->core->db->execute(
+				"ALTER TABLE {$tableName} ADD {$newColumn} int(11) DEFAULT NULL AFTER og_image_url"
+			);
 		}
 	}
 

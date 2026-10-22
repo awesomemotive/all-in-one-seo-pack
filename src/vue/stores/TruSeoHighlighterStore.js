@@ -1,4 +1,5 @@
 import {
+	useAiStore,
 	useOptionsStore,
 	usePostEditorStore,
 	useSpellCheckerDictionaryStore
@@ -13,7 +14,6 @@ import links from '@/vue/utils/links'
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { cyrb53 } from '@/app/tru-seo/helpers/hash'
 
-import { getOuterText } from '@/vue/utils/html'
 import { normalizeWhitespaces } from '@/vue/utils/postData/helpers'
 import {
 	getSharedWorker,
@@ -35,6 +35,7 @@ import {
 	clearTinyMceAnnotations
 } from '@/vue/plugins/tru-seo/highlighter/tinymce'
 import { dispatchBlockHighlights, recomputeNativeBlockMarkRanges } from '@/vue/plugins/tru-seo/highlighter/blockEditor'
+import { toHighlightTexts } from '@/vue/plugins/tru-seo/highlighter/sentences'
 import { useTags } from '@/vue/composables/Tags'
 import { getFeatureCost } from '@/vue/composables/AiContent'
 import { useHeadlineAnalyzer } from '@/vue/composables/HeadlineAnalyzer'
@@ -357,10 +358,21 @@ const countContentWords = (blocks) => {
 // The ready timer flips it anyway against the current (already prune-updated) marks;
 // the expiry timer drops a never-resolved advance so a later unrelated rebuild can't
 // reopen the popover on it. Module-scoped — there is a single store instance.
+//
+// `advanceResume` keeps a resolved advance for as long as its popover stays on that issue. A fix
+// is followed by more than one rebuild — a second highlighter instance, or the debounced content
+// analysis once a builder's canvas finishes re-rendering — and each would otherwise drop the
+// reopened popover. Untimed: how late that rebuild lands depends on the page.
 let advanceReadyTimer = null,
-	advanceExpiryTimer = null
+	advanceExpiryTimer = null,
+	advanceResume = null
 const ADVANCE_READY_FALLBACK_MS = 600
 const ADVANCE_EXPIRY_MS         = 4000
+
+// Spelling-suggestion requests in flight, by word. The analysis worker answers one message at a
+// time, so a duplicate request queues ahead of the re-analysis that follows a fix. Non-reactive on
+// purpose: the Spelling tab's prefetch effect must only re-run on cache writes.
+const spellingSuggestionRequests = new Map()
 
 const clearAdvanceTimers = () => {
 	if (advanceReadyTimer) {
@@ -398,14 +410,22 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 		advanceReady                 : false,
 		suggestionsCache             : {},
 		suggestionsLoadingFor        : null,
+		// Set for the length of a language switch: until the new locale's dictionary is loaded,
+		// the worker answers suggestion requests from the previous one.
+		suggestionsPaused            : false,
+		languageSwitchId             : 0,
 		aiSuggestionsCache           : {},
 		aiSuggestionsLoadingKeys     : {},
 		aiSuggestionsError           : null,
 		addToSafeWordsLoadingFor     : [],
 		addToSafeWordsError          : null,
 		safeWordsModalOpen           : false,
-		wpBodyContentObserver        : null,
 		editorModeUnsubscribe        : null,
+		// Which composable instance holds `editorModeUnsubscribe`. It lives HERE, beside the
+		// handle, because the slot is shared between the metabox and sidebar instances and a
+		// per-instance mirror cannot be kept honest: the instance that takes the slot over has
+		// no way to clear the claim held in the closure of the one it took it from.
+		editorModeOwner              : null,
 		editorModeSuspended          : null,
 		awaitingFreshHighlights      : false,
 		optimizePhase                : 'idle',
@@ -433,6 +453,11 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 		optimizeCreditCost () {
 			return getFeatureCost('truseoOptimizePost') +
 				(this.optimizeIncludesSpelling ? getFeatureCost('truseoSpelling') : 0)
+		},
+		// `highlightingEnabled` is only the user's preference and stays true where `enabled` is
+		// forced off (a builder without its own adapter), so live highlighting needs both.
+		highlightingActive () {
+			return this.enabled && this.highlightingEnabled
 		},
 		availableHighlightAnalyzers () {
 			// Merge readability + spelling groups: both surfaces (readability tab
@@ -470,15 +495,7 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 					continue
 				}
 
-				const sentences = assessment.highlightSentences.flat()
-					.map(s => {
-						s = s.replace(/&[a-zA-Z0-9#]{2,};$/, '')
-						s = s.replace(/<br[^>]*>/gi, '\n')
-						s = normalizeWhitespaces(s)
-
-						return getOuterText(s)
-					})
-					.filter(s => !!s.trim())
+				const sentences = toHighlightTexts(assessment.highlightSentences)
 
 				if (sentences.length) {
 					result[analyzer] = sentences
@@ -554,6 +571,10 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 		aiSuggestionsLoading () {
 			const key = this.hoveredMarkAiCacheKey
 			return !!key && !!this.aiSuggestionsLoadingKeys[key]
+		},
+		// Whether any suggestion request is running, for any analyzer.
+		aiSuggestionsBusy () {
+			return 0 < Object.keys(this.aiSuggestionsLoadingKeys).length
 		},
 		// Painted marks of the same type as the open one, in reading order, so the
 		// popover's prev/next pager can step between issues of that analyzer.
@@ -638,19 +659,31 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 			this.highlightMarks = []
 		},
 		clearAll () {
-			// The first re-analysis rebuild after arming an advance-after-fix flips it
-			// ready, so pendingAdvanceMark resolves against the fresh marks rather than
-			// the stale pre-rebuild ones. A coalesced/skipped rebuild is covered by the
-			// armAdvance ready-fallback timer, and a never-resolved advance by its
-			// expiry timer — so clearAll no longer drops the advance itself (that drop
-			// used to strand advances when one fix triggered two rebuilds).
+			// The first rebuild after arming an advance flips it ready, so pendingAdvanceMark
+			// resolves against fresh marks. Skipped rebuilds and never-resolved advances are
+			// covered by armAdvance's timers, so clearAll doesn't drop the advance itself.
 			if (this.advanceToKeys.length && !this.advanceReady) {
 				this.advanceReady = true
 			}
 
+			// A rebuild while the popover is still on the issue an advance resolved to re-arms it.
+			if (!this.advanceToKeys.length && advanceResume && advanceResume.key === advanceMatchKey(this.hoveredMark)) {
+				this.advanceToKeys = [ advanceResume.key ]
+				this.advanceReady  = true
+
+				advanceExpiryTimer = setTimeout(() => {
+					advanceExpiryTimer = null
+					this.cancelAdvance()
+				}, ADVANCE_EXPIRY_MS)
+			}
+
+			advanceResume = null
+
 			this.hoveredMarkId = null
 			this.suggestionsLoadingFor = null
-			this.aiSuggestionsLoadingKeys = {}
+			// Not the AI loading keys: they are content-based, so they still name the marks a rebuild
+			// repaints, and the request clears them itself. Dropping them here let a second request
+			// start while the first was still running.
 			this.aiSuggestionsError = null
 			this.pruneSuggestionsCache()
 			this.clearHighlightPopover()
@@ -713,6 +746,7 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 		// Called only when there IS a next issue; otherwise the caller closes as before.
 		armAdvance (nextKeys) {
 			clearAdvanceTimers()
+			advanceResume = null
 			this.advanceToKeys = Array.isArray(nextKeys) ? nextKeys : (nextKeys ? [ nextKeys ] : [])
 			this.advanceReady = false
 
@@ -741,7 +775,10 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 		// Completes a pending advance: points the popover at the repainted target
 		// mark and signals the composable to (re)open and re-anchor it.
 		resolveAdvance (markId) {
+			const mark = this.highlightMarks.find(hm => hm.id === markId)
+
 			clearAdvanceTimers()
+			advanceResume = mark ? { key: advanceMatchKey(mark) } : null
 			this.advanceToKeys = []
 			this.advanceReady = false
 			this.hoveredMarkId = markId
@@ -751,6 +788,7 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 		// popover before the rebuild finished), so it doesn't reopen unexpectedly.
 		cancelAdvance () {
 			clearAdvanceTimers()
+			advanceResume = null
 			this.advanceToKeys = []
 			this.advanceReady = false
 		},
@@ -795,6 +833,7 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 		// the marks for the just-fixed issue and closes the popover.
 		dismissAfterFix (appliedMark) {
 			clearAdvanceTimers()
+			advanceResume = null
 			this.advanceToKeys = []
 			this.advanceReady = false
 			this.hoveredMarkId = null
@@ -814,11 +853,17 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 				return
 			}
 
-			const activeWords = new Set(
-				this.highlightMarks
+			// Keep every word the Spelling tab still lists, not only the painted ones: a
+			// listed word can have no mark (e.g. text a page builder doesn't let us paint),
+			// and dropping its suggestions blanks its row and refetches the whole list.
+			const postEditorStore = usePostEditorStore()
+			const listedWords     = postEditorStore.truseoData?.truseo?.general?.spelling?.spellingChecker?.highlightSentences || []
+			const activeWords     = new Set([
+				...listedWords.map(word => (word || '').trim()),
+				...this.highlightMarks
 					.filter(hm => 'spellingChecker' === hm.analyzer)
 					.map(hm => hm.sentence)
-			)
+			])
 
 			for (const word of Object.keys(this.suggestionsCache)) {
 				if (!activeWords.has(word)) {
@@ -865,26 +910,42 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 				return
 			}
 
-			if (word in this.suggestionsCache) {
+			if (word in this.suggestionsCache || this.suggestionsPaused) {
 				return
+			}
+
+			if (spellingSuggestionRequests.has(word)) {
+				return spellingSuggestionRequests.get(word)
 			}
 
 			this.suggestionsLoadingFor = word
 
-			const [ suggestions ] = await Promise.all([
-				requestSpellingSuggestions(word),
-				new Promise(resolve => setTimeout(resolve, 300))
-			])
+			const request = (async () => {
+				const [ suggestions ] = await Promise.all([
+					requestSpellingSuggestions(word),
+					new Promise(resolve => setTimeout(resolve, 300))
+				])
 
-			this.suggestionsCache[word] = suggestions
+				// A request dropped by an invalidation or a language switch must not refill the cache.
+				if (spellingSuggestionRequests.get(word) === request) {
+					spellingSuggestionRequests.delete(word)
+					this.suggestionsCache[word] = suggestions
+				}
 
-			// Clear loading state only if still loading for this word.
-			if (this.suggestionsLoadingFor === word) {
-				this.suggestionsLoadingFor = null
-			}
+				// Clear loading state only if still loading for this word.
+				if (this.suggestionsLoadingFor === word) {
+					this.suggestionsLoadingFor = null
+				}
+			})()
+
+			spellingSuggestionRequests.set(word, request)
+
+			return request
 		},
 		async fetchAiSuggestionsForType (analyzer, { rephrase = false, marks = null } = {}) {
-			if (!analyzer || !AI_SUGGESTABLE_ANALYZERS.includes(analyzer)) {
+			// One request at a time: each one bills credits, and parallel ones raced to fill the same
+			// popover.
+			if (!analyzer || !AI_SUGGESTABLE_ANALYZERS.includes(analyzer) || this.aiSuggestionsBusy) {
 				return
 			}
 
@@ -1083,11 +1144,22 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 			// The body is sent as an ordered list of text blocks, each keyed by its
 			// clientId. The optimizer rewrites the blocks that need work and returns
 			// the replacement block(s) per id, which we apply back below.
-			const content = getPostContentBlocks()
-			if (!content.length) {
+			const allBlocks = getPostContentBlocks()
+			if (!allBlocks.length) {
 				// Reachable from the intro CTA when the post has a title/meta but no
 				// optimizable body blocks — surface it in the intro's inline alert.
 				this.optimizePostError = __('Add some content to this post before optimizing.', td)
+
+				return
+			}
+
+			// Left out rather than cut: the rewrite replaces the whole block, so a cut block
+			// would lose everything past the cut. The server applies the same limit.
+			const maxBlockLength = useAiStore().options?.maxOptimizeBlockLength || 10000
+			const content        = allBlocks.filter(block => [ ...block.text ].length <= maxBlockLength)
+			const skippedBlocks  = allBlocks.length - content.length
+			if (!content.length) {
+				this.optimizePostError = __('Every paragraph and heading in this post is too long to optimize. Split them into shorter ones and try again.', td)
 
 				return
 			}
@@ -1105,7 +1177,7 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 			// completion modal can show an accurate before/after diff.
 			const beforeSeoTitle       = parseTags(postEditorStore.currentPost?.title || postEditorStore.currentPost?.tags?.title || '')
 			const beforeSeoDescription = parseTags(postEditorStore.currentPost?.description || postEditorStore.currentPost?.tags?.description || '')
-			const wordsBefore          = countContentWords(content)
+			const wordsBefore          = countContentWords(allBlocks)
 
 			// Hold the full pre-optimize block tree so the done view can revert the body
 			// wholesale. markRaw keeps Vue from proxying the raw WP block objects.
@@ -1289,6 +1361,7 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 						metaDescription : canOptimizeMeta ? { before: beforeSeoDescription, after: response.body.seo_description || '' } : null,
 						headline        : headlineApplied ? { before: sentTitle, after: response.body.headline } : null,
 						blocksRewritten,
+						skippedBlocks,
 						score           : { before: scoreBefore, after: scoreAfter },
 						words           : { before: wordsBefore, after: wordsAfter },
 						contentBlocks,
@@ -1610,6 +1683,12 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 					delete this.suggestionsCache[cached]
 				}
 			}
+
+			for (const pending of [ ...spellingSuggestionRequests.keys() ]) {
+				if (pending.toLowerCase() === lower) {
+					spellingSuggestionRequests.delete(pending)
+				}
+			}
 		},
 		clearAddToSafeWordsError () {
 			this.addToSafeWordsError = null
@@ -1813,15 +1892,41 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 		 *
 		 * @since 5.0.0
 		 *
-		 * @returns {void}
+		 * @returns {number} The switch's id, to pass to {@see endLanguageSwitch}.
 		 */
 		beginLanguageSwitch () {
+			this.languageSwitchId++
+			this.suggestionsPaused            = true
+			this.suggestionsLoadingFor        = null
 			this.awaitingFreshHighlights      = true
 			this.rememberedHighlightAnalyzers = null
 			this.deselectedHighlightAnalyzers = []
 			this.highlightAnalyzers           = []
 			this.highlightingEnabled          = false
+			// Suggestions came from the previous locale's dictionary.
+			this.suggestionsCache             = {}
+			spellingSuggestionRequests.clear()
 			this.clearAnnotations()
+
+			return this.languageSwitchId
+		},
+
+		/**
+		 * Lets spelling suggestions be fetched again once the new locale's dictionary is loaded.
+		 *
+		 * NOTE: a no-op for a switch a later one has superseded, which is still in progress.
+		 *
+		 * @param {number} languageSwitchId The id {@see beginLanguageSwitch} returned.
+		 * @returns {void}
+		 */
+		endLanguageSwitch (languageSwitchId) {
+			if (languageSwitchId !== this.languageSwitchId) {
+				return
+			}
+
+			this.suggestionsPaused = false
+			// A fresh object, so the Spelling tab's prefetch runs again for every listed word.
+			this.suggestionsCache  = {}
 		},
 
 		/**

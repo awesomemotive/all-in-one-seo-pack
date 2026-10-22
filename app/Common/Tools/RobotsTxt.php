@@ -10,13 +10,22 @@ use AIOSEO\Plugin\Common\Models;
 
 class RobotsTxt {
 	/**
+	 * The directives a custom rule can use.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @var string[]
+	 */
+	const RULE_DIRECTIVES = [ 'allow', 'disallow', 'clean-param', 'crawl-delay' ];
+
+	/**
 	 * Which directives are allowed to be extracted.
 	 *
 	 * @since 4.4.2
 	 *
 	 * @var array
 	 */
-	private $allowedDirectives = [ 'user-agent', 'allow', 'disallow', 'clean-param', 'crawl-delay' ];
+	private $allowedDirectives = [];
 
 	/**
 	 * Class constructor.
@@ -24,6 +33,8 @@ class RobotsTxt {
 	 * @since 4.0.0
 	 */
 	public function __construct() {
+		$this->allowedDirectives = array_merge( [ 'user-agent' ], self::RULE_DIRECTIVES );
+
 		add_filter( 'robots_txt', [ $this, 'buildRules' ], 10000 );
 
 		if ( ! is_admin() || wp_doing_ajax() || wp_doing_cron() ) {

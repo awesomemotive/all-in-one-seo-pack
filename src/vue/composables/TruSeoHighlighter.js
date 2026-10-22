@@ -1,18 +1,17 @@
-import { ref, watch, nextTick, createApp, h, onMounted, onBeforeMount } from 'vue'
+import { ref, watch, nextTick, createApp, h, onMounted, onBeforeMount, onUnmounted } from 'vue'
 
 import {
 	useTruSeoHighlighterStore
 } from '@/vue/stores'
 
 import { debounce, random } from 'lodash-es'
-import { escapeRegex, wordBoundaryPattern } from '@/vue/utils/regex'
+import { claimSentenceRanges, isMarkableUnit } from '@/vue/plugins/tru-seo/highlighter/sentences'
 import { getAssessmentColor } from '@/vue/plugins/tru-seo/helpers/assessmentColors'
 
-import {
-	isBlockEditor as isBlockEditorFunc,
-	isClassicEditor as isClassicEditorFunc,
-	isPageBuilderEditor
-} from '@/vue/utils/context'
+import { isPageBuilderEditor } from '@/vue/utils/context'
+
+import { getAdapterGeneration, resolveAdapter } from '@/vue/plugins/tru-seo/editors'
+import { HIGHLIGHT_CLASS_PREFIX } from '@/vue/plugins/tru-seo/highlighter/wpDataStore'
 
 import {
 	getEditorIframe,
@@ -27,16 +26,13 @@ import {
 
 import TruSeoHighlightPopover from '@/vue/components/common/tru-seo/HighlightPopover'
 
-import { registerHighlightFormats } from '@/vue/plugins/tru-seo/highlighter/blockFormats'
-
 import {
 	buildTinyMceCss,
-	suppressTinyMceEvents,
-	restoreTinyMceEvents,
 	HIGHLIGHT_ACTIVE_CLASS
 } from '@/vue/plugins/tru-seo/highlighter/tinymce'
 
 import { buildTextStream } from '@/vue/plugins/tru-seo/highlighter/textStream'
+import { getVisibleAnchor, revealInEditor } from '@/vue/plugins/tru-seo/highlighter/spellingJump'
 
 import {
 	initTinymceEditor,
@@ -49,6 +45,9 @@ import {
 	getNativeBlockText,
 	highlightBlockEditor as highlightBlock
 } from '@/vue/plugins/tru-seo/highlighter/blockEditor'
+import { getNativeBlockSkipped } from '@/vue/plugins/tru-seo/highlighter/blockText'
+
+const SUSPENSION_SLOT_RELEASED = 'aioseo-truseo-suspension-slot-released'
 
 /**
  * Composable that orchestrates TruSeo readability/SEO highlight
@@ -65,34 +64,103 @@ import {
  */
 export const useTruSeoHighlighter = () => {
 	const editorObserver    = ref(null)
-	const isBlockEditor     = isBlockEditorFunc()
-	const isClassicEditor   = isClassicEditorFunc()
 	const isIframed         = ref(false)
-	const selectBlockEditor = window?.wp?.data?.select('core/block-editor')
-	const selectEditPost    = window?.wp?.data?.select('core/edit-post')
+	// Resolved on call, never captured. `select()` answers undefined for a store that is not
+	// registered yet, and this composable can be constructed before the block editor's own
+	// scripts have run -- so a handle taken at setup could be undefined for the page's whole
+	// lifetime, and every paint would throw on it.
+	const selectBlockEditor = () => window?.wp?.data?.select('core/block-editor')
 	const tinymceEditor              = ref(null)
 	const injectedStyleEl            = ref(null)
 	const registeredTinyMceAnnotators = new Set()
 	// Per-parent text-stream cache: `Map<parentNode, {text, segments}>`.
 	// Populated during `formatBlockContent` for the node path and consumed
 	// by `annotateTinyMce` to resolve regex offsets to DOM ranges without
-	// re-walking text nodes or relying on `outerText` (which inserts
-	// synthetic `\n` between block-level children and drifts offsets).
+	// re-walking text nodes. Never `outerText`, which is CSS-aware, forces a
+	// layout reflow, and hands back characters with no segment behind them.
 	const streamCache                = new Map()
-	let resetInProgress               = false,
+	// `adapter` is a `let` for the whole of syncAdapter()'s sake: the answer captured here can
+	// be WRONG rather than merely absent, and reassigning the binding is what reaches all of
+	// this closure's readers without every one of them re-probing.
+	let adapter                       = resolveAdapter(),
+		adapterGeneration             = getAdapterGeneration(),
+		resetInProgress               = false,
 		popoverPinned                 = false,
 		clickOutsideHandler           = null,
 		escapeKeyHandler              = null,
-		repositionRafId               = null
+		repositionRafId               = null,
+		revealWaitRafId               = null,
+		wrapperPollIntervalId         = null,
+		invalidationUnsubscribe       = null,
+		invalidationDebounced         = null,
+		// The highlight sentences this instance last reset for ({@see watchHighlightSentences}).
+		lastSentences                 = null,
+		// onMounted runs ONCE. Everything it wires sits behind the `enabled` gate, so an instance
+		// that mounts gated off wires nothing -- and since a rebind can now open that gate, these
+		// two are what let the wiring happen late instead of never.
+		isMounted                     = false,
+		mountedChannelsWired          = false,
+		// The debounced suspension callback, owned here so a rebind can re-subscribe with the
+		// same one. Null until watchEditorMode() has run, which the wrapper poll can defer for
+		// seconds -- a rebind before that has nothing to re-take and must not invent one.
+		suspensionSync                = null,
+		isDisposed                    = false
 
 	const truSeoHighlighterStore = useTruSeoHighlighterStore()
+
+	// This instance's identity, compared against `editorModeOwner` in the store. The claim is
+	// recorded THERE rather than here for the reason that broke the per-instance version: the
+	// instance taking the slot over cannot reach into the closure of the one it took it from, so
+	// a local mirror goes stale from that moment on and both believe they own it.
+	const instanceToken = Symbol('aioseo-truseo-highlighter')
+
+	// Whether this editor paints through the contract rather than a built-in paint module.
+	// NOTE: an explicit opt-in, never `decorate` being present — every adapter declares one (classic's
+	// is a stub), and a contract painter runs no MutationObserver, relying on onInvalidated alone.
+	const usesAdapterPaint = () => !!adapter?.paintsViaContract && 'function' === typeof adapter.decorate
+
+	// The canvas document a contract painter's marks live in (Elementor's preview iframe), so the
+	// delegated mousedown reaches them. Contract painters only: classic keeps the main document.
+	const getAdapterDocument = () => {
+		if (!usesAdapterPaint()) {
+			return null
+		}
+
+		try {
+			const doc = adapter.getDocument?.()
+
+			// nodeType, never instanceof: a canvas document belongs to another realm, where
+			// `instanceof Document` is false against this window's constructor.
+			return 9 === doc?.nodeType ? doc : null
+		} catch (_e) {
+			return null
+		}
+	}
+
+	const getAdapterWindow = () => {
+		if (!usesAdapterPaint()) {
+			return null
+		}
+
+		try {
+			const win = adapter.getWindow?.()
+
+			// A Window's self-reference, for the same cross-realm reason the document test
+			// reads nodeType. NOT `typeof win.addEventListener` — Document carries that too,
+			// so an adapter answering its document here would be accepted and mostly work
+			// (`document.getSelection()` exists), failing only where a real Window is needed.
+			return !!win && win.window === win ? win : null
+		} catch (_e) {
+			return null
+		}
+	}
 
 	const getEditorDocument = () => {
 		if (isIframed.value) {
 			return getEditorIframe()?.contentDocument || document
 		}
 
-		return document
+		return getAdapterDocument() || document
 	}
 
 	const getEditorWindow = () => {
@@ -100,48 +168,49 @@ export const useTruSeoHighlighter = () => {
 			return getEditorIframe()?.contentWindow || window
 		}
 
-		return window
+		return getAdapterWindow() || window
 	}
 
-	// Flips `isIframed` once the block editor iframe (WP 6.3+) exists and its
-	// document is usable. Returns true only on the transition so the caller can
-	// react (inject the iframe stylesheet). Called both by the async detection
-	// interval and synchronously before every paint in `reset()`.
+	// Keeps `isIframed` matching whether the block editor iframe (WP 6.3+) exists, in both
+	// directions, since Gutenberg can remove and recreate it without this instance unmounting.
+	// Returns true only on a flip into iframed mode, so the caller can inject the stylesheet.
 	const syncIframeState = () => {
-		if (isIframed.value) {
+		const iframed = isIframedEditor() && !!getEditorIframe()?.contentDocument?.head
+
+		if (iframed === isIframed.value) {
 			return false
 		}
 
-		if (!isIframedEditor() || !getEditorIframe()?.contentDocument?.head) {
-			return false
-		}
+		isIframed.value = iframed
 
-		isIframed.value = true
-
-		return true
+		return iframed
 	}
 
-	const BLOCK_HIGHLIGHT_PREFIX = 'aioseo-highlight-'
+	// Every event of one click gesture, so an editor's own selection never sees a click on a mark.
+	const SHIELDED_POINTER_EVENTS = [ 'pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click' ]
 
 	// Mark click delegation: one mousedown listener per editor document
-	// (`Map<Document, handler>`), not one per mark node. Block-editor marks
+	// (`Map<Document, {listener, capture}>`), not one per mark node. Block-editor marks
 	// are re-rendered — and their DOM nodes replaced — by Gutenberg on every
 	// analyzer toggle or re-analysis, which stranded per-node listeners on
 	// detached nodes and made re-rendered marks unclickable.
 	const delegatedListenerMap = new Map()
 	const popoverPlacement = ref('above')
-	const scrollListenerTarget = ref(null)
+	const scrollListenerDocs = new Set()
 
 	const getSourceForAnalyzer = (analyzer) => {
 		return `${truSeoHighlighterStore.source}-${analyzer}`
 	}
 
+	// The prefix is IMPORTED, not restated. The markup projection recognises our own decoration by
+	// the same prefix ({@see highlighter/textStream.js:isOwnDecoration}), so a second literal drifting
+	// from this one would put the highlighter's own marks back into the analysed string.
 	const isHighlightClass = (className) => {
 		if (className.includes(truSeoHighlighterStore.source)) {
 			return true
 		}
 
-		return className.startsWith(BLOCK_HIGHLIGHT_PREFIX)
+		return className.startsWith(HIGHLIGHT_CLASS_PREFIX)
 	}
 
 	const injectHighlightStyles = () => {
@@ -234,6 +303,42 @@ export const useTruSeoHighlighter = () => {
 		return fallbackMark
 	}
 
+	// Whether the mark is what the pointer sees at a point, rather than something drawn over it, such
+	// as a fixed site header. The adapter names its own transparent click overlay.
+	const isMarkTopmostAt = (doc, x, y, node) => {
+		const top = doc.elementFromPoint?.(x, y)
+		if (!top) {
+			return true
+		}
+
+		return top === node || node.contains(top) || top.contains(node) || !!adapter?.isPointerOverlay?.(top, node)
+	}
+
+	// Resolves the mark painted under a point, innermost first, for editors whose marks never
+	// receive the pointer themselves ({@see editors/divi5.js} `marksIgnorePointer`).
+	const findMarkAtPoint = (doc, x, y) => {
+		let best     = null,
+			bestArea = Infinity
+
+		for (const node of doc.querySelectorAll('mark')) {
+			for (const rect of node.getClientRects()) {
+				if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+					continue
+				}
+
+				// An outer mark is painted one fragment per text node, so the fragment around a nested
+				// word is exactly as large as the word's own mark; the tie goes to the descendant.
+				const area = rect.width * rect.height
+				if (area < bestArea || (area === bestArea && best?.contains(node))) {
+					best     = node
+					bestArea = area
+				}
+			}
+		}
+
+		return best && isMarkTopmostAt(doc, x, y, best) ? findMarkFromElement(best, null) : null
+	}
+
 	// Resolves a mark's current on-screen node, re-querying the live editor
 	// documents when the cached reference has been detached. Gutenberg replaces
 	// a native block's highlight `<mark>` elements on every re-render (analyzer
@@ -263,6 +368,16 @@ export const useTruSeoHighlighter = () => {
 	}
 
 	const attachMarkClickListeners = () => {
+		// Reached from deferred/async work (reset()'s nextTick() continuation,
+		// the real blockEditor.js module's onMarksReady callback, and
+		// observeMarkParent()'s one-shot MutationObserver) that can still be
+		// pending when the component unmounts. Guarding here -- not just at
+		// each caller -- stops every one of them from re-attaching the listener
+		// this same onUnmounted just removed.
+		if (isDisposed) {
+			return
+		}
+
 		for (const doc of getListenerDocuments()) {
 			if (delegatedListenerMap.has(doc)) {
 				continue
@@ -278,6 +393,87 @@ export const useTruSeoHighlighter = () => {
 			// the mark's DOM node. `findMarkFromElement` walks up from the target to
 			// the innermost enclosing mark, so overlapping (nested) analyzer marks
 			// resolve to the one the user is actually pointing at.
+			// A builder pen that replaces the editing area's innerHTML (Elementor's startEditing)
+			// would destroy the mark the click just opened, so the first click inspects and the
+			// second edits. Capture phase on the document so it runs before the pen's handler; one
+			// shot plus a timer, since a drag never produces the click.
+			const suppressNextEditingClick = (doc) => {
+				if (!usesAdapterPaint()) {
+					return
+				}
+
+				// An adapter can decline, and Divi 4 does. Swallowing the click is only right for
+				// an editor whose inline surface DESTROYS the mark and whose writes go somewhere
+				// else (Elementor's widget settings). Divi 4 has no store: a module's own inline
+				// editor is the write path, and it only becomes writable through the very click
+				// this would swallow -- so suppressing it leaves every fix refusing. Painting into
+				// that open editor is safe there because a serializer guard strips our marks from
+				// anything it writes ({@see editors/divi4.js:ensureSerializerGuards}).
+				if (false === adapter?.suppressesEditingClick) {
+					return
+				}
+
+				const swallow = (event) => {
+					doc.removeEventListener('click', swallow, true)
+					event.stopPropagation()
+
+					// Stopping it also starves the builder's own link guard (Elementor cancels
+					// navigation from a bubble listener on this document), so a mark inside a
+					// link would follow it.
+					event.preventDefault()
+				}
+
+				// The adapter's own capture listener runs first, so it has to be told not to arm, or
+				// it repaints for a pen that never opens and every highlight flashes.
+				adapter?.suppressNextPenArm?.()
+
+				doc.addEventListener('click', swallow, true)
+				setTimeout(() => doc.removeEventListener('click', swallow, true), 500)
+			}
+
+			// A builder that re-renders the clicked module from its OWN handler orphans the node the
+			// mark was resolved from before this listener ever runs, so the click reads as "not on
+			// a mark" and nothing opens. Measured on Divi 4: it happens exactly when the module's
+			// inline editor does not exist yet, because activating one re-renders the module --
+			// click a mark on a fresh page and the first click is lost, the second works.
+			//
+			// Re-resolved from the POINTER POSITION rather than the dead node: once the re-render
+			// lands, a freshly painted mark stands at the same point. Only for adapters that let
+			// the builder act on this click; nothing else can be in this state.
+			// Spread PAST the repaint, not just past the re-render: the fresh mark only exists once
+			// this composable has repainted, which its own invalidation debounce puts 250 ms after
+			// the builder's DOM settles. Measured with a 220 ms ceiling, every attempt landed on
+			// bare text. The last attempt is the bound on how late a popover may still appear.
+			const MARK_CLICK_RETRY_DELAYS = [ 0, 120, 300, 550, 850 ]
+
+			const retryMarkClickAfterRerender = (doc, event) => {
+				if (false !== adapter?.suppressesEditingClick) {
+					return
+				}
+
+				const { clientX, clientY } = event
+
+				for (const delay of MARK_CLICK_RETRY_DELAYS) {
+					setTimeout(() => {
+						// Another attempt already opened one, or the user moved on.
+						if (isDisposed || null !== truSeoHighlighterStore.hoveredMarkId) {
+							return
+						}
+
+						const element = doc.elementFromPoint?.(clientX, clientY)
+						const target  = element ? findMarkFromElement(element, null) : null
+
+						if (!target || !truSeoHighlighterStore.highlightMarks.some(hm => hm.id === target.id && hm.node)) {
+							return
+						}
+
+						truSeoHighlighterStore.hoveredMarkId = target.id
+						popoverPinned = true
+						showPopover()
+					}, delay)
+				}
+			}
+
 			const down = (e) => {
 				// Two composable instances (the always-present metabox and the
 				// on-demand sidebar) each attach this delegated listener to the same
@@ -290,25 +486,71 @@ export const useTruSeoHighlighter = () => {
 					return
 				}
 
-				const target = findMarkFromElement(e.target, null)
+				const target = findMarkFromElement(e.target, null) ||
+					(adapter?.marksIgnorePointer ? findMarkAtPoint(doc, e.clientX, e.clientY) : null)
 				if (!target) {
+					retryMarkClickAfterRerender(doc, e)
+
 					return
 				}
 
 				e.aioseoTruseoMarkClickHandled = true
 
+				// The second click on the same mark: close the popover and let the click through,
+				// so the editor does what it always did.
 				if (popoverPinned && truSeoHighlighterStore.hoveredMarkId === target.id) {
 					hidePopover()
 					return
 				}
+
+				suppressNextEditingClick(doc)
 
 				truSeoHighlighterStore.hoveredMarkId = target.id
 				popoverPinned = true
 				showPopover()
 			}
 
-			doc.addEventListener('mousedown', down)
-			delegatedListenerMap.set(doc, down)
+			// An editor whose marks never take the pointer selects the module under them from its own
+			// pointer handlers, which run before a bubble listener here. So the gesture that opens a
+			// mark is taken in CAPTURE and kept from the editor; the close-on-click-outside handler
+			// already ignores a point over a mark, so it cannot undo this. The second click on the
+			// open mark is left to the editor, as `down` does.
+			let shieldedUntil = 0
+
+			const shield = (e) => {
+				if ('pointerdown' === e.type) {
+					const target = findMarkAtPoint(doc, e.clientX, e.clientY)
+
+					shieldedUntil = target && !(popoverPinned && truSeoHighlighterStore.hoveredMarkId === target.id) ? Date.now() + 1000 : 0
+				}
+
+				if (Date.now() > shieldedUntil) {
+					return
+				}
+
+				e.stopPropagation()
+
+				if ('mousedown' === e.type) {
+					down(e)
+				}
+
+				if ('click' === e.type) {
+					shieldedUntil = 0
+				}
+			}
+
+			const listener = adapter?.marksIgnorePointer ? shield : down
+			const capture  = listener === shield
+
+			for (const type of capture ? SHIELDED_POINTER_EVENTS : [ 'mousedown' ]) {
+				// BUBBLE otherwise, deliberately. The close-on-click-outside handler is registered in
+				// CAPTURE on these same documents, so a capture-phase listener here opens the popover
+				// and has that handler close it again in the same dispatch -- measured on Divi 4,
+				// where it looked exactly like the click never registering.
+				doc.addEventListener(type, listener, capture)
+			}
+
+			delegatedListenerMap.set(doc, { listener, capture })
 		}
 
 		attachScrollListener()
@@ -320,8 +562,10 @@ export const useTruSeoHighlighter = () => {
 	 * @returns {void}
 	 */
 	const detachMarkClickListeners = () => {
-		for (const [ doc, down ] of delegatedListenerMap) {
-			doc.removeEventListener('mousedown', down)
+		for (const [ doc, { listener, capture } ] of delegatedListenerMap) {
+			for (const type of capture ? SHIELDED_POINTER_EVENTS : [ 'mousedown' ]) {
+				doc.removeEventListener(type, listener, capture)
+			}
 		}
 		delegatedListenerMap.clear()
 
@@ -341,6 +585,11 @@ export const useTruSeoHighlighter = () => {
 
 		repositionRafId = requestAnimationFrame(() => {
 			repositionRafId = null
+
+			if (isDisposed) {
+				return
+			}
+
 			repositionHoverPopover()
 		})
 	}
@@ -357,25 +606,39 @@ export const useTruSeoHighlighter = () => {
 		}
 	}
 
+	// Captured on whole documents rather than on a guessed scroller: a scroll event never bubbles,
+	// but every one passes through its document's capture phase, and the viewport's own scroll
+	// targets the document. The guess picked the nearest `overflow-y: auto` ancestor, and a theme's
+	// `body { overflow-x: hidden }` alone computes that on a body that never scrolls -- so after a
+	// smooth jump the popover stayed hidden where the scroll began.
+	const SCROLL_LISTENER_OPTIONS = { capture: true, passive: true }
+
 	/**
-	 * Listens for scroll on the editor's scrollable ancestor (or its window)
-	 * and on the main window, so the popover can follow its mark.
+	 * Listens for scroll anywhere in every document a mark can live in, so the popover can follow
+	 * its mark.
+	 *
+	 * NOTE: a document no longer listed (a builder preview reload) is dropped here.
 	 *
 	 * @returns {void}
 	 */
 	const attachScrollListener = () => {
-		if (scrollListenerTarget.value) {
-			return
+		// The same documents as the mark clicks: a classic TinyMCE canvas scrolls inside its own
+		// iframe when the full-height editor is off, and that scroll never reaches the main one.
+		const docs = getListenerDocuments()
+
+		for (const doc of scrollListenerDocs) {
+			if (!docs.includes(doc)) {
+				doc.removeEventListener('scroll', onEditorScroll, SCROLL_LISTENER_OPTIONS)
+				scrollListenerDocs.delete(doc)
+			}
 		}
 
-		const scrollable = getEditorNode('navigable')
-		const editorWin = getEditorWindow()
-		scrollListenerTarget.value = scrollable && !scrollable.isEqualNode(getEditorDocument().documentElement)
-			? scrollable
-			: editorWin
-
-		scrollListenerTarget.value?.addEventListener('scroll', onEditorScroll, { passive: true })
-		window.addEventListener('scroll', onEditorScroll, { passive: true })
+		for (const doc of docs) {
+			if (!scrollListenerDocs.has(doc)) {
+				doc.addEventListener('scroll', onEditorScroll, SCROLL_LISTENER_OPTIONS)
+				scrollListenerDocs.add(doc)
+			}
+		}
 	}
 
 	/**
@@ -389,9 +652,10 @@ export const useTruSeoHighlighter = () => {
 			repositionRafId = null
 		}
 
-		scrollListenerTarget.value?.removeEventListener('scroll', onEditorScroll)
-		scrollListenerTarget.value = null
-		window.removeEventListener('scroll', onEditorScroll)
+		for (const doc of scrollListenerDocs) {
+			doc.removeEventListener('scroll', onEditorScroll, SCROLL_LISTENER_OPTIONS)
+		}
+		scrollListenerDocs.clear()
 	}
 
 	/**
@@ -436,11 +700,18 @@ export const useTruSeoHighlighter = () => {
 
 	/**
 	 * Returns the set of documents that should receive global listeners
-	 * (click-outside, Escape). Covers the main document, the iframed block
-	 * editor's `editor-canvas` document (WP 6.3+), and every active TinyMCE
-	 * editor's iframe document — Classic Editor (`content_ifr`) and Classic
-	 * blocks inside the Block Editor (`editor-*_ifr`) both render inside
-	 * their own iframes, so events there never reach the main document.
+	 * (click-outside, Escape, and the delegated mark click). Covers the main
+	 * document, whatever `getEditorDocument()` resolves — the iframed block
+	 * editor's `editor-canvas` document (WP 6.3+), or a contract painter's own
+	 * canvas — and every active TinyMCE editor's iframe document: Classic Editor
+	 * (`content_ifr`) and Classic blocks inside the Block Editor (`editor-*_ifr`)
+	 * both render inside their own iframes, so events there never reach the main
+	 * document.
+	 *
+	 * Re-resolved on every call rather than cached, because a builder can replace
+	 * its canvas document mid-session (Elementor's `reloadPreview()`); the
+	 * delegated listener map is keyed by document, so the fresh one is picked up
+	 * on the next paint.
 	 *
 	 * @returns {Document[]} Documents to attach listeners to.
 	 */
@@ -570,6 +841,12 @@ export const useTruSeoHighlighter = () => {
 				el = el.parentElement
 			}
 
+			// Such an editor never makes the mark the target, so the point decides whether it was clicked.
+			const doc = e.target?.ownerDocument
+			if (adapter?.marksIgnorePointer && doc && findMarkAtPoint(doc, e.clientX, e.clientY)) {
+				return
+			}
+
 			// Explicit user dismissal — drop any queued advance-to-next-word so it
 			// doesn't reopen after the rebuild finishes.
 			truSeoHighlighterStore.cancelAdvance()
@@ -635,6 +912,19 @@ export const useTruSeoHighlighter = () => {
 	}
 
 	/**
+	 * Whether marks are measured in a different rect space than the popover's own —
+	 * i.e. they live in an editor iframe (classic's TinyMCE body, the block editor's
+	 * canvas). A non-zero offset is how an adapter says so.
+	 *
+	 * @returns {boolean} True when the popover is layered over an iframe.
+	 */
+	const hasMarkRectOffset = () => {
+		const offset = adapter?.getMarkRectOffset?.() || { top: 0, left: 0 }
+
+		return 0 !== offset.top || 0 !== offset.left
+	}
+
+	/**
 	 * Creates the popover Vue app and mounts it to the DOM.
 	 *
 	 * @returns {boolean} False if editor wrapper is not found.
@@ -663,24 +953,19 @@ export const useTruSeoHighlighter = () => {
 			return false
 		}
 
-		if (isClassicEditor) {
-			// Mount outside TinyMCE's `.mce-edit-area` so its DOM churn on
-			// caret/selection changes can't remove the popover.
-			getClassicPopoverContainer().appendChild(node)
-		} else {
-			// Append to <body> so the fixed popover escapes the editor canvas's
-			// containing block/overflow clip. It stays in the main document, so its
-			// scoped styles still apply; `repositionHoverPopover` keeps it clear of
-			// the surrounding chrome (admin bar, header, meta boxes).
-			document.body.appendChild(node)
-		}
+		adapter?.getPopoverHost?.()?.appendChild(node)
+
+		// Claimed before mounting: mounting flushes the other instance's pending watchers, and one
+		// that finds the slot still empty mounts a second popover nothing ever removes.
+		truSeoHighlighterStore.highlightPopover.app  = app
+		truSeoHighlighterStore.highlightPopover.node = node
 
 		app.mount(node)
 
 		attachClickOutsideHandler(node)
 		attachEscapeKeyHandler()
 
-		if (isClassicEditor || isIframed.value) {
+		if (hasMarkRectOffset()) {
 			// The popover is mounted in the main document, layered over the editor.
 			// Trap wheel events so they scroll the popover's own scrollable region
 			// (the suggestions list) rather than the editor/page behind it. When
@@ -693,9 +978,6 @@ export const useTruSeoHighlighter = () => {
 			}, { passive: false })
 		}
 
-		truSeoHighlighterStore.highlightPopover.app  = app
-		truSeoHighlighterStore.highlightPopover.node = node
-
 		repositionHoverPopover()
 	}
 
@@ -704,12 +986,12 @@ export const useTruSeoHighlighter = () => {
 			let content = ''
 			if (node) {
 				// Build a canonical text stream from the node's text nodes
-				// in document order. The returned `text` is exactly what a
-				// `SHOW_TEXT` TreeWalker would visit, so regex offsets into
-				// `text` map 1:1 to DOM ranges via the cached `segments`.
-				// This avoids `outerText`'s synthetic `\n` between block
-				// children (e.g. `<li>`) — which previously caused offset
-				// drift for matches in later list items.
+				// in document order, plus one `\n` per block-level child
+				// ({@see buildTextStream}). Every character is covered by a
+				// segment, so a regex offset into `text` resolves to a DOM
+				// range through the cached `segments` — which is what
+				// `outerText` cannot offer for the `\n`s it inserts, on top
+				// of being CSS-aware and forcing a reflow.
 				const stream = buildTextStream(node)
 				streamCache.set(node, stream)
 				content = stream.text
@@ -726,53 +1008,19 @@ export const useTruSeoHighlighter = () => {
 	}
 
 	const getEditorNode = (which) => {
-		if ('closest-relative' === which) {
-			return getClosestNodeByPropertyValue({
-				element  : getEditorNode('wrapper')?.parentElement,
-				property : 'position',
-				value    : 'relative'
-			})
+		if ('wrapper' === which) {
+			return adapter?.getRootNode?.()
 		}
 
-		if ('navigable' === which) {
-			return getClosestNodeByPropertyValue({
-				element  : getEditorNode('wrapper')?.parentElement,
-				property : 'overflow-y',
-				value    : 'auto'
-			})
+		if ('first-block' === which) {
+			// Prefer this composable's own TinyMCE handle, the instance that was painted; an adapter
+			// resolves TinyMCE live and can answer with a newer one.
+			if (tinymceEditor.value) {
+				return tinymceEditor.value.getBody()?.firstElementChild || {}
+			}
+
+			return adapter?.getFirstUnitNode?.()
 		}
-
-		if (isClassicEditor) {
-			if ('wrapper' === which) {
-				return document.getElementById('content_ifr')
-			}
-
-			if ('first-block' === which) {
-				return tinymceEditor.value?.getBody()?.firstElementChild || {}
-			}
-		}
-
-		if (isBlockEditor) {
-			if ('wrapper' === which) {
-				return getEditorDocument().querySelector('.editor-styles-wrapper .is-root-container')
-			}
-
-			if ('first-block' === which) {
-				const firstBlock = selectBlockEditor.getBlocks()[0]
-
-				return getEditorDocument().getElementById(`block-${firstBlock?.clientId}`) || {}
-			}
-		}
-	}
-
-	// The Classic popover mounts and positions against this element: the
-	// WordPress-owned, position:relative editor container that sits OUTSIDE
-	// TinyMCE's `.mce-edit-area`. TinyMCE redraws its own edit area on caret
-	// and selection changes, which would tear an in-area popover down; this
-	// container is never touched by TinyMCE. Falls back to the closest
-	// positioned ancestor if the WordPress wrapper isn't found.
-	const getClassicPopoverContainer = () => {
-		return getEditorNode('wrapper')?.closest('.wp-editor-container') || getEditorNode('closest-relative')
 	}
 
 	const highlightClassicEditor = () => {
@@ -804,9 +1052,179 @@ export const useTruSeoHighlighter = () => {
 		attachMarkClickListeners()
 	}
 
+	// Paint for adapters that decorate their own canvas; block and classic keep their own paths.
+	//
+	// Marks come from the adapter's own content units, whose `html` is the coordinate space
+	// its `decorate` aligns against — the same source `getContent()` analyses, so a sentence
+	// the analyzer found is measured against the string it was found in.
+	const highlightAdapterEditor = () => {
+		for (const unit of (adapter?.getContentUnits?.() || [])) {
+			// Sentence keys go to the first unit that matches, so a skipped unit must not claim one.
+			if (!isMarkableUnit(unit)) {
+				continue
+			}
+
+			setHighlightMarks({ block: null, node: null, unit })
+		}
+
+		// Once, with the whole set: `decorate` is document-scoped, and calling it per unit would
+		// have each call clear the previous unit's paint.
+		adapter.decorate(truSeoHighlighterStore.highlightMarks)
+
+		// The adapter wraps every mark synchronously and assigns `mark.node`, so there is nothing to
+		// poll for.
+		attachMarkClickListeners()
+	}
+
+	// The invalidation arm: repaint what is already in the store, never rebuild it, because
+	// `getContentUnits()` is quadratic in element count.
+	// NOTE: marks whose text a re-render changed are dropped by `decorate` and return with the
+	// next analysis.
+	const repaintDecorations = () => {
+		// A reset already clears and repaints, and it owns the store while it runs.
+		if (isDisposed || resetInProgress || !usesAdapterPaint()) {
+			return
+		}
+
+		try {
+			adapter.clearDecorations?.()
+			adapter.decorate(truSeoHighlighterStore.highlightMarks)
+			attachMarkClickListeners()
+
+			// The paint replaced every mark node, so an open popover is anchored to a box that
+			// no longer exists. Unconditional because every close path nulls `hoveredMarkId`
+			// (`hidePopover`, `clearAll`, `dismissAfterFix`) and this returns early without one
+			// — so it cannot re-reveal a popover the user closed.
+			repositionHoverPopover()
+		} catch (error) {
+			// Same reasoning as reset()'s catch: an editor exception must not poison the paint
+			// path for the rest of the session.
+			console.warn('[AIOSEO TruSEO highlighter] repaint failed:', error)
+		}
+	}
+
+	// Content invalidation, for adapter-painted editors only: a builder wipes its marks on every
+	// element re-render. Debounced here because an adapter can fire once per element rendered.
+	// Self-releasing so a rebind can re-take it, and wrapped because reset() reaches it before its
+	// own try.
+	const subscribeInvalidation = () => {
+		try {
+			invalidationDebounced?.cancel?.()
+			invalidationDebounced = null
+
+			if (invalidationUnsubscribe) {
+				invalidationUnsubscribe()
+				invalidationUnsubscribe = null
+			}
+
+			if (usesAdapterPaint()) {
+				invalidationDebounced   = debounce(repaintDecorations, 250)
+				invalidationUnsubscribe = adapter.onInvalidated?.(invalidationDebounced) || null
+			}
+		} catch (_e) {
+			// Best-effort: a repaint channel that cannot be taken must not cost us the paint.
+		}
+	}
+
+	// The suspension channel's counterpart. The handle lives in the store's shared slot, so this
+	// releases before assigning; wrapped because reset() reaches it before its own try.
+	const releaseSuspensionSlot = () => {
+		try {
+			truSeoHighlighterStore.editorModeUnsubscribe?.()
+		} catch (_e) {
+			// A subscription whose editor is already gone must not cost us the paint.
+		}
+
+		truSeoHighlighterStore.editorModeUnsubscribe = null
+		truSeoHighlighterStore.editorModeOwner       = null
+	}
+
+	const subscribeSuspension = () => {
+		// Null until watchEditorMode() has run, which the wrapper poll can defer for seconds --
+		// a rebind before that has nothing to re-take and must not invent a subscription.
+		if (!suspensionSync) {
+			return
+		}
+
+		// A disabled instance must never hold it. Belt to wireMountedChannels' braces, and the
+		// one that matters for the wrapper poll, which can fire after the gate has closed.
+		if (!truSeoHighlighterStore.enabled) {
+			return
+		}
+
+		// Only the holder may re-take. A rebind reaches every live instance, and without this the
+		// last one to run would win the slot regardless of who handed it over.
+		const owner = truSeoHighlighterStore.editorModeOwner
+		if (owner && owner !== instanceToken) {
+			return
+		}
+
+		// `suspensionSync`'s own pending debounce is deliberately NOT cancelled, unlike the
+		// invalidation one: it is the same debounce instance across re-subscribes, and
+		// syncHighlightingAllowed() recomputes from live state, so a trailing call is a redundant
+		// recompute rather than a stale one.
+		releaseSuspensionSlot()
+
+		try {
+			truSeoHighlighterStore.editorModeUnsubscribe = adapter?.onSuspensionChange?.(suspensionSync) || null
+			truSeoHighlighterStore.editorModeOwner       = truSeoHighlighterStore.editorModeUnsubscribe ? instanceToken : null
+		} catch (_e) {
+			// Same reason as subscribeInvalidation's: this runs ahead of reset()'s own try.
+		}
+	}
+
+	// Whether a highlightable editor owns this page. A builder without its own adapter runs over a
+	// block/classic editor the user isn't looking at, so only the builder's own adapter qualifies.
+	// Coerced to a boolean because `enabled` is a v-if.
+	const isHighlightableEditor = () => !!adapter &&
+		(!isPageBuilderEditor() || !!(adapter.ownsPageBuilder && !adapter.analyzeOnly))
+
+	// Points `enabled` at whether the user can highlight right now, gated on capability alone
+	// (`isSupported`, default true). isHighlightableEditor() must run first: it short-circuits
+	// before `adapter` is dereferenced.
+	const syncHighlightingEnabled = () => {
+		truSeoHighlighterStore.enabled = isHighlightableEditor() && (adapter.isSupported?.() ?? true)
+
+		return truSeoHighlighterStore.enabled
+	}
+
+	// Re-reads the adapter when the memoised answer was invalidated after this instance captured it
+	// ({@see editors/index.js:resetAdapter}): an early read can resolve the editor underneath a
+	// builder whose globals haven't loaded yet.
+	// NOTE: never short-circuit on an unchanged adapter; `enabled` and the subscriptions are
+	// re-derived here too.
+	const syncAdapter = () => {
+		if (adapterGeneration === getAdapterGeneration()) {
+			return false
+		}
+
+		adapterGeneration = getAdapterGeneration()
+		adapter           = resolveAdapter()
+
+		// Documented idempotent on every adapter, so the initial call in onBeforeMount and this
+		// one cannot conflict.
+		try {
+			adapter?.init?.()
+		} catch (_e) {
+			// Registration is best-effort; a failure must not stop the rebind.
+		}
+
+		syncHighlightingEnabled()
+
+		// Not "has onMounted run" -- that is what left a newly-enabled instance hollow. This asks
+		// the question that actually decides it: is this instance mounted and enabled NOW.
+		//
+		// BOTH channels go through it, and nothing subscribes outside it. An earlier shape shed the
+		// suspension slot inside it and re-took it on the next line, which made the disable
+		// direction a no-op while the enable direction worked.
+		wireMountedChannels()
+
+		return true
+	}
+
 	const highlightBlockEditor = () => {
 		highlightBlock({
-			blocks               : selectBlockEditor.getBlocks(),
+			blocks               : selectBlockEditor()?.getBlocks() || [],
 			store                : truSeoHighlighterStore,
 			sourcePrefix         : truSeoHighlighterStore.source,
 			registeredAnnotators : registeredTinyMceAnnotators,
@@ -829,7 +1247,7 @@ export const useTruSeoHighlighter = () => {
 		}
 
 		const text = event.clipboardData?.getData('text/html') || ''
-		if (text && (text.includes(truSeoHighlighterStore.source) || text.includes(BLOCK_HIGHLIGHT_PREFIX))) {
+		if (text && (text.includes(truSeoHighlighterStore.source) || text.includes(HIGHLIGHT_CLASS_PREFIX))) {
 			modifyData()
 
 			return false
@@ -870,8 +1288,18 @@ export const useTruSeoHighlighter = () => {
 	}
 
 	const observeEditor = () => {
+		// Not for a contract painter: this callback is an undebounced full reset(), quadratic in
+		// element count. The editor's own signals already cover it — `onInvalidated` for the
+		// repaint (render and destroy events) and `document/save/set-is-modified` for the rebuild.
+		if (usesAdapterPaint()) {
+			return false
+		}
+
 		editorObserver.value = new MutationObserver((list) => {
-			if (resetInProgress) {
+			// `onUnmounted` disconnects this observer, but a mutation record
+			// already queued by the browser before that call can still be
+			// delivered afterward -- the guard is belt, the disconnect is braces.
+			if (isDisposed || resetInProgress) {
 				return
 			}
 
@@ -919,6 +1347,13 @@ export const useTruSeoHighlighter = () => {
 		const mutationCallback = (list, obs) => {
 			obs.disconnect()
 
+			// A one-shot observer that can still be waiting on its first
+			// mutation when the component unmounts; a later, unrelated mutation
+			// on the same parent must not resume work for a torn-down instance.
+			if (isDisposed) {
+				return
+			}
+
 			for (const mutation of list) {
 				if (mutation?.target?.classList.contains('is-hovered')) {
 					break
@@ -956,10 +1391,8 @@ export const useTruSeoHighlighter = () => {
 	}
 
 	// Whether highlighting is currently allowed, from the editor's visibility
-	// and mode. Pure read — mirrors the checks that used to run inside the
-	// #wpbody-content mutation callback, but evaluated once on demand instead
-	// of once per DOM mutation (the per-mutation computed-style walk below was
-	// the source of the long-running-handler warnings).
+	// and mode. Pure read, evaluated on demand rather than per DOM mutation: the
+	// computed-style walk below is too slow to run in a mutation callback.
 	const evaluateHighlightingAllowed = () => {
 		const editorWrapper = getEditorNode('wrapper')
 		if (!editorWrapper) {
@@ -977,18 +1410,11 @@ export const useTruSeoHighlighter = () => {
 			return false
 		}
 
-		if (isBlockEditor) {
-			// The user switched to the "Code editor", or is editing the
-			// selected block as HTML.
-			if (
-				'visual' !== selectEditPost.getEditorMode() ||
-				'html' === selectBlockEditor.getBlockMode(selectBlockEditor.getSelectedBlock()?.clientId)
-			) {
-				return false
-			}
-		}
-
-		if (isClassicEditor) {
+		// Retained over the classic adapter's own isSuspended(), which reads
+		// #wp-content-wrap's `html-active` class — a different signal than the raw
+		// textarea's visibility. The branch also seeds the TinyMCE handle the
+		// classic paint path consumes, and that has no capability channel.
+		if ('classic-editor' === adapter?.id) {
 			setTinymceEditor()
 
 			// The user switched to the "Text" tab (the raw textarea is visible).
@@ -998,6 +1424,20 @@ export const useTruSeoHighlighter = () => {
 			) {
 				return false
 			}
+		}
+
+		// Whole-editor mode: the block editor's "Code editor", classic's "Text" tab.
+		if (adapter?.isSuspended?.()) {
+			return false
+		}
+
+		// Per-element suspension: a single block switched to "Edit as HTML" is as
+		// unsafe to highlight as the whole-editor code view, and no adapter's
+		// isSuspended() covers it yet ({@see EditorAdapter}). Reads as "no block in
+		// HTML mode" wherever the block-editor store isn't live.
+		const blockEditorStore = selectBlockEditor()
+		if ('html' === blockEditorStore?.getBlockMode?.(blockEditorStore?.getSelectedBlock?.()?.clientId)) {
+			return false
 		}
 
 		return true
@@ -1026,71 +1466,14 @@ export const useTruSeoHighlighter = () => {
 	// Block Editor's data store, and the Classic editor's single
 	// `tmce-active`/`html-active` class toggle on #wp-content-wrap.
 	const watchEditorMode = () => {
-		const sync = debounce(syncHighlightingAllowed, 250)
+		// Debounced before it ever reaches the adapter: onSuspensionChange subscribes
+		// with whatever it is given, and the block editor's signal is every wp.data
+		// dispatch.
+		suspensionSync = debounce(syncHighlightingAllowed, 250)
 
-		if (isBlockEditor && window.wp?.data?.subscribe) {
-			truSeoHighlighterStore.editorModeUnsubscribe = window.wp.data.subscribe(sync)
-		}
-
-		if (isClassicEditor) {
-			const contentWrap = document.getElementById('wp-content-wrap')
-			if (contentWrap) {
-				truSeoHighlighterStore.wpBodyContentObserver = new MutationObserver(sync)
-				truSeoHighlighterStore.wpBodyContentObserver.observe(contentWrap, {
-					attributes      : true,
-					attributeFilter : [ 'class' ],
-					subtree         : false
-				})
-			}
-		}
+		subscribeSuspension()
 
 		syncHighlightingAllowed()
-	}
-
-	/**
-	 * Visible vertical bounds (main-viewport coords) the fixed popover must stay
-	 * within, so it never paints over the WP admin bar / editor header above or
-	 * the meta boxes below.
-	 *
-	 * @returns {{top: number, bottom: number}} Safe top and bottom edges.
-	 */
-	const getPopoverViewportBounds = () => {
-		const viewportBottom = window.innerHeight
-
-		if (isBlockEditor) {
-			// The block editor's scroll region already sits below the admin bar and
-			// header; its top is the highest the popover may go.
-			const content = document.querySelector('.interface-interface-skeleton__content')
-			if (content) {
-				const contentRect = content.getBoundingClientRect()
-				let bottom = contentRect.bottom
-
-				// Meta boxes render below the canvas inside that same scroll region —
-				// clamp to their top so the popover can't spill onto them.
-				const metaboxes = document.querySelector('.edit-post-layout__metaboxes')
-				if (metaboxes) {
-					const mbRect = metaboxes.getBoundingClientRect()
-					if (0 < mbRect.height && mbRect.top < bottom) {
-						bottom = mbRect.top
-					}
-				}
-
-				return {
-					top    : Math.max(0, contentRect.top),
-					bottom : Math.min(viewportBottom, bottom)
-				}
-			}
-		}
-
-		// Classic editor / page builders / fallback: at minimum stay clear of the
-		// fixed WP admin bar at the top.
-		const adminBar = document.getElementById('wpadminbar')
-		const adminBarBottom = adminBar ? adminBar.getBoundingClientRect().bottom : 0
-
-		return {
-			top    : Math.max(0, adminBarBottom),
-			bottom : viewportBottom
-		}
 	}
 
 	/**
@@ -1107,46 +1490,48 @@ export const useTruSeoHighlighter = () => {
 			return false
 		}
 
-		const markRect = markNode.getBoundingClientRect()
+		const markRect = getVisibleAnchor(markNode).getBoundingClientRect()
 		const popoverNode = truSeoHighlighterStore.highlightPopover.node
 		const popoverHeight = popoverNode.offsetHeight || 80
 		const popoverWidth = popoverNode.offsetWidth || 320
 		const gap = 8
 
-		// The popover is position:fixed in the main document, so anchor it to the
-		// mark's main-viewport box. Marks inside an editor iframe (block or classic)
-		// need the iframe's own viewport offset added; non-iframed marks are already
-		// in main-document viewport coordinates.
-		let anchorTop, anchorBottom, anchorCenterX, placement
+		// A mark measured inside an editor frame (the block editor's canvas, classic's
+		// TinyMCE body) is only positionable while that frame is still in the main
+		// document. It can be removed out from under a live, still-mounted instance —
+		// device-preview switch, code-editor toggle, distraction-free mode, a TinyMCE
+		// re-init — and `getMarkRectOffset()` answers {0, 0} for a vanished frame just
+		// as it does for "no offset needed", so the missing frame has to be spotted
+		// here. Hide rather than paint at a stale position.
+		const markDocument = markNode.ownerDocument
+		if (markDocument && markDocument !== document && !markDocument.defaultView?.frameElement?.isConnected) {
+			popoverNode.style.visibility = 'hidden'
 
-		if (isIframed.value) {
-			const iframeRect = getEditorIframe().getBoundingClientRect()
-
-			anchorTop     = iframeRect.top + markRect.top
-			anchorBottom  = iframeRect.top + markRect.bottom
-			anchorCenterX = iframeRect.left + markRect.left + (markRect.width / 2)
-		} else if (isClassicEditor) {
-			// Classic marks are in TinyMCE iframe space; lift them into the main
-			// viewport with the editor wrapper's offset.
-			const editorNodePos = getEditorNode('wrapper').getBoundingClientRect()
-
-			anchorTop     = editorNodePos.top + markRect.top
-			anchorBottom  = editorNodePos.top + markRect.bottom
-			anchorCenterX = editorNodePos.left + markRect.left + (markRect.width / 2)
-		} else {
-			anchorTop     = markRect.top
-			anchorBottom  = markRect.bottom
-			anchorCenterX = markRect.left + (markRect.width / 2)
+			return
 		}
+
+		// The popover is position:fixed in the main document, so anchor it to the
+		// mark's main-viewport box: the offset lifts marks out of their frame's
+		// coordinate space, and is {0, 0} for marks already in the main document.
+		const markOffset = adapter?.getMarkRectOffset?.() || { top: 0, left: 0 }
+
+		const anchorTop     = markOffset.top + markRect.top
+		const anchorBottom  = markOffset.top + markRect.bottom
+		const anchorCenterX = markOffset.left + markRect.left + (markRect.width / 2)
+		let placement
 
 		// Constrain the popover to the editor's visible content region so it can't
 		// paint over the admin bar/header above or the meta boxes below.
-		const bounds = getPopoverViewportBounds()
+		const bounds = adapter?.getViewportBounds?.() || { top: 0, bottom: window.innerHeight }
 
 		// Hide (but keep mounted) while the anchored mark is scrolled out of the
 		// safe region — a popover pinned to the edge with no mark in view reads as
-		// broken. It reappears when the mark scrolls back in.
-		if (anchorBottom <= bounds.top || anchorTop >= bounds.bottom) {
+		// broken. It reappears when the mark scrolls back in. A frame that scrolls on its
+		// own (classic's TinyMCE body when not full-height) clips the mark while it is still
+		// inside the safe region, so the frame's own viewport counts too.
+		const frameHeight    = markDocument && markDocument !== document ? markDocument.defaultView?.innerHeight : null
+		const clippedByFrame = !!frameHeight && (0 >= markRect.bottom || markRect.top >= frameHeight)
+		if (clippedByFrame || anchorBottom <= bounds.top || anchorTop >= bounds.bottom) {
 			popoverNode.style.visibility = 'hidden'
 
 			return
@@ -1195,9 +1580,17 @@ export const useTruSeoHighlighter = () => {
 	 * @returns {void}
 	 */
 	const reset = () => {
-		if (resetInProgress) {
+		// A torn-down instance's own leftover subscriptions/observers (e.g. a
+		// queued mutation record) can still call this after unmount.
+		if (isDisposed || resetInProgress) {
 			return
 		}
+
+		// AFTER the two guards above and before the id test below. Above them it would rebind
+		// under a paint already in flight -- that pass captured its `beginPaint` token from the
+		// previous adapter and would hand it back to the new one in its `finally` -- and it would
+		// mutate a torn-down instance's state.
+		syncAdapter()
 
 		// TinyMCE boots asynchronously. If an upstream watcher (e.g. the
 		// analyzer's `watchHighlightSentences`) fires before the editor
@@ -1206,7 +1599,7 @@ export const useTruSeoHighlighter = () => {
 		// ref transitions to non-null, so no work is lost. Without this
 		// guard, `highlightClassicEditor` would throw on `editor.getBody()`
 		// and leave `resetInProgress` stuck — blocking every later reset.
-		if (isClassicEditor && !tinymceEditor.value) {
+		if ('classic-editor' === adapter?.id && !tinymceEditor.value) {
 			return
 		}
 
@@ -1228,15 +1621,32 @@ export const useTruSeoHighlighter = () => {
 		editorObserver.value?.disconnect()
 
 		nextTick().then(() => {
-			const editor = isClassicEditor ? tinymceEditor.value : null
-			let originalFire = null
-
-			if (editor) {
-				originalFire = suppressTinyMceEvents(editor)
+			// This continuation is a plain microtask, not bound to the component
+			// instance -- unmount can land after the synchronous prefix above
+			// (which already detached listeners) but before this resolves. Left
+			// unguarded, it would re-attach the very listeners onUnmounted just
+			// removed (via highlightClassicEditor()/highlightBlockEditor() ->
+			// attachMarkClickListeners()).
+			if (isDisposed) {
+				return
 			}
+
+			// Hands over the handle this pass is about to paint with, for the same
+			// reason getEditorNode('first-block') prefers it: an adapter that
+			// resolves its target live can answer with a newer instance than the
+			// one being painted, leaving the painted instance's events unsuppressed
+			// and restoring a different instance's on the way out.
+			const paintToken = adapter?.beginPaint?.(tinymceEditor.value)
 
 			try {
 				truSeoHighlighterStore.clearAll()
+
+				// An adapter that paints its own DOM has to clear it itself. Gated so the block editor
+				// isn't sent a second clearAll.
+				if (usesAdapterPaint()) {
+					adapter.clearDecorations?.()
+				}
+
 				// The cache references DOM nodes whose text content (and even
 				// existence) may change between resets. Drop it here so the
 				// upcoming `setHighlightMarks` pass rebuilds fresh streams.
@@ -1251,12 +1661,15 @@ export const useTruSeoHighlighter = () => {
 
 				injectHighlightStyles()
 
-				if (isBlockEditor) {
+				// Mutually exclusive by construction — `adapter.id` is one string — but written
+				// as a chain so the capability arm cannot also run for block or classic, whose
+				// paints already own their DOM.
+				if ('block-editor' === adapter?.id) {
 					highlightBlockEditor()
-				}
-
-				if (isClassicEditor) {
+				} else if ('classic-editor' === adapter?.id) {
 					highlightClassicEditor()
+				} else if (usesAdapterPaint()) {
+					highlightAdapterEditor()
 				}
 
 				observeEditor()
@@ -1271,14 +1684,16 @@ export const useTruSeoHighlighter = () => {
 				// the warning gives us breadcrumbs without breaking the user.
 				console.warn('[AIOSEO TruSEO highlighter] reset failed:', error)
 			} finally {
-				if (editor && originalFire) {
-					restoreTinyMceEvents(editor, originalFire)
-				}
+				adapter?.endPaint?.(paintToken)
 
 				// Wait for Vue flush + browser paint before allowing the observer to react,
 				// preventing async TinyMCE DOM normalization from triggering a cascading reset.
 				nextTick().then(() => {
 					requestAnimationFrame(() => {
+						if (isDisposed) {
+							return
+						}
+
 						resetInProgress = false
 					})
 				})
@@ -1334,55 +1749,59 @@ export const useTruSeoHighlighter = () => {
 	 * @param {Object}      options       The options object.
 	 * @param {Object|null} options.block The Gutenberg block (null for Classic Editor).
 	 * @param {HTMLElement|null} options.node The DOM node (null for Block Editor).
+	 * @param {Object|null} [options.unit] An adapter ContentUnit (null for block/classic).
 	 * @returns {void}
 	 */
-	const setHighlightMarks = ({ block, node }) => {
-		const content = formatBlockContent({ block, node })
+	const setHighlightMarks = ({ block, node, unit }) => {
+		// A unit's `html` is taken VERBATIM, never re-normalized: it is the coordinate space
+		// the adapter's own `decorate` aligns against, so any transform here would shift every
+		// range by the difference and paint the wrong words. A Classic block is marked only through
+		// its TinyMCE's nodes ({@see highlighter/blockEditor.js:getFreeformEditor}).
+		const isFreeformWithoutNode = 'core/freeform' === block?.name && !node
+		const content               = unit ? unit.html : (isFreeformWithoutNode ? '' : formatBlockContent({ block, node }))
 		if (content) {
+			// What the analyzer drops in this content, so no mark claims a copy of a word in `<code>`.
+			const skipped = unit ? unit.skipped : (node ? streamCache.get(node)?.skipped : getNativeBlockSkipped(block))
+
+			// A unit is identified by its own id, never by its parent node: a builder unit's node can
+			// be null (element not rendered yet), and two units of the same element resolve to the
+			// SAME node.
+			const isSameSource = (hm) => {
+				if (unit) {
+					return hm.unitId === unit.unitId
+				}
+
+				return node ? hm.parent?.isSameNode(node) : hm.block?.clientId === block.clientId
+			}
+
 			const existingSentenceKeys = new Set(
 				truSeoHighlighterStore.highlightMarks.map(hm => hm.sentenceIndex)
 			)
 
 			const allSentences = truSeoHighlighterStore.allHighlightSentences
 			for (const [ analyzer, sentences ] of Object.entries(allSentences)) {
-				for (const [ index, sentence ] of Object.entries(sentences)) {
-					const sentenceKey = `${analyzer}-${index}`
-					const isSingleWord = !sentence.includes(' ')
-					const pattern = isSingleWord ? wordBoundaryPattern(sentence) : escapeRegex(sentence)
-					const regex = new RegExp(pattern, isSingleWord ? 'gu' : 'g')
-					let match
-					while (null !== (match = regex.exec(content))) {
-						if (existingSentenceKeys.has(sentenceKey)) {
-							break
-						}
+				const claimed = new Set(
+					sentences.map((_, index) => index).filter(index => existingSentenceKeys.has(`${analyzer}-${index}`))
+				)
+				const taken = truSeoHighlighterStore.highlightMarks
+					.filter(hm => hm.analyzer === analyzer && isSameSource(hm))
+					.map(hm => hm.range)
 
-						const range = {
-							start : match.index,
-							end   : (match.index + match[0].length) || 1
-						}
-						const highlightMarkExists = truSeoHighlighterStore.highlightMarks.find(hm => {
-							return node
-								? hm.analyzer === analyzer && (hm.range.start === range.start && hm.range.end === range.end) && hm.parent.isSameNode(node)
-								: hm.analyzer === analyzer && (hm.range.start === range.start && hm.range.end === range.end) && hm.block.clientId === block.clientId
-						})
-						if (highlightMarkExists) {
-							continue
-						}
-
-						truSeoHighlighterStore.highlightMarks.push({
-							id            : random(1, 999999999),
-							range         : range,
-							block         : block,
-							parent        : node || getEditorDocument().getElementById(`block-${block.clientId}`),
-							active        : 0 === truSeoHighlighterStore.highlightMarks.length,
-							sentenceIndex : sentenceKey,
-							sentence      : sentence,
-							analyzer      : analyzer,
-							node          : null
-						})
-
-						existingSentenceKeys.add(sentenceKey)
-					}
+				// Through the shared rule, so "N found" counts exactly the marks built here
+				// ({@see highlighter/sentences.js:countLocatableSentences}).
+				for (const { index, range } of claimSentenceRanges(content, sentences, claimed, taken, skipped)) {
+					truSeoHighlighterStore.highlightMarks.push({
+						id            : random(1, 999999999),
+						range         : range,
+						block         : block,
+						parent        : unit ? (unit.getNode?.() || null) : (node || getEditorDocument().getElementById(`block-${block.clientId}`)),
+						unitId        : unit?.unitId || null,
+						active        : 0 === truSeoHighlighterStore.highlightMarks.length,
+						sentenceIndex : `${analyzer}-${index}`,
+						sentence      : sentences[index],
+						analyzer      : analyzer,
+						node          : null
+					})
 				}
 			}
 		}
@@ -1404,10 +1823,13 @@ export const useTruSeoHighlighter = () => {
 		})
 	}
 
-	const watchHighlightSentences = (value, oldValue) => {
+	// Compared with what this instance last saw, not the watcher's `oldValue`: callers debounce,
+	// and a debounce keeps only the LAST call of a burst, whose `oldValue` already holds the new
+	// sentences -- so a second, identical analysis landing inside the window lost the paint.
+	const watchHighlightSentences = (value) => {
 		const parsedValue = JSON.stringify(value)
-		const parsedOldValue = JSON.stringify(oldValue)
-		if (parsedValue !== parsedOldValue) {
+		if (parsedValue !== lastSentences) {
+			lastSentences = parsedValue
 			reset()
 		}
 	}
@@ -1435,10 +1857,18 @@ export const useTruSeoHighlighter = () => {
 
 		setActiveMark(truSeoHighlighterStore.hoveredMarkId)
 
+		// The fix's hidePopover() unpinned it, and an unpinned popover ignores scroll -- under a
+		// smooth-scrolling canvas it stayed hidden where the scroll started.
+		popoverPinned = true
+
+		revealInEditor(markNode)
+
+		const scrollTarget = getVisibleAnchor(markNode)
+
 		try {
-			markNode.scrollIntoView({ block: 'center', inline: 'nearest' })
+			scrollTarget.scrollIntoView({ block: 'center', inline: 'nearest' })
 		} catch (_e) {
-			markNode.scrollIntoView()
+			scrollTarget.scrollIntoView()
 		}
 
 		// showPopover mounts the popover when advancing after a fix (the fix's
@@ -1447,7 +1877,43 @@ export const useTruSeoHighlighter = () => {
 		// smooth-scroll settle or iframe reflow.
 		showPopover()
 		scheduleReposition()
+
+		if (scrollTarget !== markNode) {
+			reanchorOnceVisible(markNode, truSeoHighlighterStore.hoveredMarkId)
+		}
 	})
+
+	// A reveal can open its container a few frames late (Elementor's atomic Tabs render through
+	// Alpine), after the jump already settled on the closed container's box.
+	const REVEAL_WAIT_FRAMES = 60
+
+	const reanchorOnceVisible = (markNode, markId, framesLeft = REVEAL_WAIT_FRAMES) => {
+		cancelAnimationFrame(revealWaitRafId)
+
+		revealWaitRafId = requestAnimationFrame(() => {
+			revealWaitRafId = null
+
+			if (isDisposed || markId !== truSeoHighlighterStore.hoveredMarkId || !markNode.isConnected) {
+				return
+			}
+
+			if (!markNode.getClientRects().length) {
+				if (1 < framesLeft) {
+					reanchorOnceVisible(markNode, markId, framesLeft - 1)
+				}
+
+				return
+			}
+
+			try {
+				markNode.scrollIntoView({ block: 'center', inline: 'nearest' })
+			} catch (_e) {
+				markNode.scrollIntoView()
+			}
+
+			scheduleReposition()
+		})
+	}
 
 	// Advance-after-fix: once the re-analysis rebuild repaints the target issue,
 	// re-open the popover on it. If it never repaints (e.g. the issue is no longer
@@ -1464,66 +1930,160 @@ export const useTruSeoHighlighter = () => {
 		hidePopover()
 	})
 
-	onMounted(() => {
-		if (!truSeoHighlighterStore.enabled) {
+	// Everything onMounted does behind the `enabled` gate, so a rebind that enables the instance
+	// later can wire it too. Idempotent.
+	const wireMountedChannels = () => {
+		// `isDisposed` as well as `isMounted`: a torn-down instance is still "mounted" by the flag
+		// alone, and reset()'s own guard is the only thing keeping this unreachable today.
+		if (!isMounted || isDisposed) {
 			return
 		}
 
-		// Hide the popover the moment content starts changing so it
-		// doesn't linger with stale analysis data during the debounce
-		// window before the analysis re-runs.
-		window.aioseoBus.$on('aioseo-content-changing', hidePopover)
+		// A rebind can also close the gate. Shed rather than leave a disabled instance holding
+		// a live repaint channel -- repaintDecorations() does not consult `enabled`.
+		if (!truSeoHighlighterStore.enabled) {
+			invalidationDebounced?.cancel?.()
+			invalidationDebounced = null
 
-		if (truSeoHighlighterStore.wpBodyContentObserver) {
-			truSeoHighlighterStore.wpBodyContentObserver?.disconnect()
-		}
+			try {
+				invalidationUnsubscribe?.()
+			} catch (_e) {
+				// An adapter that throws on unsubscribe must not abort the reset this is inside.
+			}
+			invalidationUnsubscribe = null
 
-		if (truSeoHighlighterStore.editorModeUnsubscribe) {
-			truSeoHighlighterStore.editorModeUnsubscribe()
-			truSeoHighlighterStore.editorModeUnsubscribe = null
-		}
-
-		const interval = window.setInterval(() => {
-			if (syncIframeState()) {
-				injectHighlightStyles()
+			if (truSeoHighlighterStore.editorModeOwner === instanceToken) {
+				releaseSuspensionSlot()
 			}
 
-			if (null !== getEditorNode('wrapper')) {
-				window.clearInterval(interval)
-
-				watchEditorMode()
+			// Otherwise it keeps waking every second for an instance that will not paint -- and it
+			// is the other route into a disabled instance taking the slot, since it is what reaches
+			// watchEditorMode().
+			if (wrapperPollIntervalId) {
+				window.clearInterval(wrapperPollIntervalId)
+				wrapperPollIntervalId = null
 			}
-		}, 1000)
+
+			return
+		}
+
+		// The one-time half: a second `$on` would double the handler, and a second poll would
+		// leave an interval nobody clears.
+		if (!mountedChannelsWired) {
+			mountedChannelsWired = true
+
+			// Hide the popover the moment content starts changing so it
+			// doesn't linger with stale analysis data during the debounce
+			// window before the analysis re-runs.
+			window.aioseoBus.$on('aioseo-content-changing', hidePopover)
+
+			// An unmounting owner frees the slot; a live instance has to take it, or mode changes
+			// reach nobody.
+			window.aioseoBus.$on(SUSPENSION_SLOT_RELEASED, subscribeSuspension)
+
+			// Hands the previous instance's mode subscription back before this one subscribes: the
+			// classic editor's observer lives behind the same unsubscribe as the block editor's
+			// wp.data subscription. Through the shared release so the CLAIM moves with the handle --
+			// clearing one without the other is what let two instances both believe they held it.
+			releaseSuspensionSlot()
+
+			wrapperPollIntervalId = window.setInterval(() => {
+				if (syncIframeState()) {
+					injectHighlightStyles()
+				}
+
+				if (null !== getEditorNode('wrapper')) {
+					window.clearInterval(wrapperPollIntervalId)
+					wrapperPollIntervalId = null
+
+					watchEditorMode()
+				}
+			}, 1000)
+		}
+
+		// Both self-releasing, so calling them on every rebind is correct rather than merely safe.
+		subscribeInvalidation()
+		subscribeSuspension()
+	}
+
+	onMounted(() => {
+		isMounted = true
+
+		// Ahead of the wiring: a rebind can change the answer the gate was given in
+		// onBeforeMount, and syncAdapter() recomputes it -- and then wires through the very
+		// function below, so the two paths cannot diverge.
+		syncAdapter()
+
+		wireMountedChannels()
 	})
 
 	onBeforeMount(() => {
 		truSeoHighlighterStore.initTruSeoHighlighting()
 
-		if (
-			isPageBuilderEditor() ||
-			(
-				!isBlockEditor &&
-				!isClassicEditor
-			)
-		) {
-			truSeoHighlighterStore.enabled = false
+		syncHighlightingEnabled()
+
+		// Safety net for editor contexts not covered by the eager entry
+		// registration; every adapter's init() is idempotent, so a double-call
+		// here is a no-op.
+		adapter?.init?.()
+	})
+
+	onUnmounted(() => {
+		// Flipped first: every guard added for this composable's async
+		// continuations and observer callbacks (reset() and its nextTick()
+		// continuations, attachMarkClickListeners(), observeMarkParent(),
+		// observeEditor(), scheduleReposition()'s rAF) reads this, so nothing
+		// below can resurrect work for a torn-down instance.
+		isDisposed = true
+		isMounted  = false
+
+		// `hidePopover` is a fresh closure per instance, so without this every
+		// sidebar mount (it remounts on each visibility trigger and Headline
+		// Analyzer toggle) adds a permanent subscriber that never goes away.
+		window.aioseoBus.$off('aioseo-content-changing', hidePopover)
+		window.aioseoBus.$off(SUSPENSION_SLOT_RELEASED, subscribeSuspension)
+
+		// `detachMarkClickListeners` removes the delegated mark-click listeners
+		// (a click on a still-present mark after teardown would otherwise reach
+		// `showPopover()` -> `repositionHoverPopover()` synchronously, no rAF
+		// involved) and, via its own call to `detachScrollListener`, cancels any
+		// pending reposition frame and removes the scroll listeners that would
+		// otherwise arm a fresh one -- `popoverPinned` and the store's popover
+		// node both survive in this dead closure, so neither guard alone stops it.
+		detachMarkClickListeners()
+
+		// Belt and braces alongside the `isDisposed` guard in its callback: a
+		// mutation record queued before this call can still be delivered after
+		// it, but only disconnecting stops the observer from firing at all.
+		editorObserver.value?.disconnect()
+		editorObserver.value = null
+
+		// `onMounted`'s wrapper-poll interval only clears itself once
+		// `getEditorNode('wrapper')` resolves, so it runs for the page's
+		// lifetime if the wrapper never appears (page builder, torn-down editor).
+		if (wrapperPollIntervalId) {
+			window.clearInterval(wrapperPollIntervalId)
+			wrapperPollIntervalId = null
 		}
 
-		if (
-			isBlockEditor &&
-			(
-				!window?.wp?.richText?.registerFormatType ||
-				!selectBlockEditor ||
-				!selectEditPost
-			)
-		) {
-			truSeoHighlighterStore.enabled = false
+		// The invalidation subscriber holds this dead closure's `reset`, and its source is the
+		// editor's own render events — which keep firing long after this instance is gone. The
+		// debounce is cancelled too: releasing the subscription does not un-schedule a repaint
+		// the adapter already delivered.
+		invalidationDebounced?.cancel?.()
+		invalidationDebounced = null
+
+		if (invalidationUnsubscribe) {
+			invalidationUnsubscribe()
+			invalidationUnsubscribe = null
 		}
 
-		if (isBlockEditor) {
-			// Safety net for editor contexts not covered by the eager entry
-			// registration; idempotent, so a double-call here is a no-op.
-			registerHighlightFormats()
+		// subscribeSuspension() lets only the owner re-take the slot, so an owner that leaves
+		// without releasing it locks every other instance out.
+		if (truSeoHighlighterStore.editorModeOwner === instanceToken) {
+			suspensionSync?.cancel?.()
+			releaseSuspensionSlot()
+			window.aioseoBus.$emit(SUSPENSION_SLOT_RELEASED)
 		}
 	})
 

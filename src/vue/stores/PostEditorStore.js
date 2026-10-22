@@ -3,6 +3,7 @@ import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
 import { getAllResultsGrouped, KEYWORD_ASSESSMENT_IDS } from '@/app/tru-seo/helpers/resultsFilter'
 import { decodeSpecialChars } from '@/vue/utils/helpers'
+import { withoutEphemeralAnalysisData } from '@/vue/utils/postData/analysisPayload'
 
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 
@@ -204,7 +205,7 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 			this.currentPost = payload
 
 			return http.post(links.restUrl('post'))
-				.send(payload)
+				.send(withoutEphemeralAnalysisData(payload))
 				.then(() => true)
 				.catch((error) => {
 					console.error(`Unable to update the post data: ${error}`)
@@ -236,13 +237,19 @@ export const usePostEditorStore = defineStore('PostEditorStore', {
 			}
 
 			const postField = document.querySelector('#aioseo-post-settings')
-			if (postField) {
-				postField.value = JSON.stringify(this.currentPost)
-			}
-			if ('term' === this.currentPost.context) {
-				const termField = document.querySelector('#aioseo-term-settings')
+			const termField = 'term' === this.currentPost.context
+				? document.querySelector('#aioseo-term-settings')
+				: null
+
+			if (postField || termField) {
+				const fieldValue = JSON.stringify(withoutEphemeralAnalysisData(this.currentPost))
+
+				if (postField) {
+					postField.value = fieldValue
+				}
+
 				if (termField) {
-					termField.value = JSON.stringify(this.currentPost)
+					termField.value = fieldValue
 				}
 			}
 		},

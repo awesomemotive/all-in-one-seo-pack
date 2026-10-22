@@ -6,6 +6,7 @@ export const useSettingsStore = defineStore('SettingsStore', {
 	state : () => ({
 		settings    : {},
 		metaBoxTabs : {
+			// A one-shot deep-link intent, not the open tab — its consumers clear it.
 			mainSidebar   : {},
 			main          : 'general',
 			modal         : 'general',

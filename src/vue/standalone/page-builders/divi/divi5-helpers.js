@@ -48,6 +48,13 @@ export const getDivi5SettingsStoreSetting = (path) => getDivi5Data()?.select('di
 export const isDivi5Ready = () => !!getDivi5Data()?.select('divi/page-settings')
 
 /**
+ * Check if the Divi 5 builder shows the Wireframe view, where modules render no content.
+ *
+ * @returns {boolean} True in Wireframe view.
+ */
+export const isDivi5Wireframe = () => 'wireframe' === getDivi5Data()?.select('divi/app-ui')?.getView()
+
+/**
  * Get the Divi 5 featured image ID.
  *
  * @returns {number} The image ID.
@@ -115,7 +122,7 @@ export const getDivi5PostStatus = () => getDivi5SettingsStoreSetting([ 'post', '
  * @returns {string} The rendered HTML content.
  */
 export const getDivi5Content = () => {
-	if ('wireframe' !== getDivi5Data()?.select('divi/app-ui')?.getView()) {
+	if (!isDivi5Wireframe()) {
 		return getScrapedContent()
 	}
 

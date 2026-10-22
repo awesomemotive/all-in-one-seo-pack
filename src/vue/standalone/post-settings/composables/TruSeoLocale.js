@@ -100,7 +100,7 @@ export function useTruSeoLocale () {
 		// Wipe stale highlight marks from the previous locale and arm the
 		// auto-enable flag so the first analysis to land re-enables highlighting
 		// with every available analyzer checked.
-		truSeoHighlighterStore.beginLanguageSwitch()
+		const languageSwitchId = truSeoHighlighterStore.beginLanguageSwitch()
 
 		// Resolve the effective locale (empty value = inherit the site default).
 		const effectiveLocale = newLocale || userResolvedLocale.value
@@ -117,6 +117,7 @@ export function useTruSeoLocale () {
 			await runAnalysis({ postId: postEditorStore.currentPost.id })
 		} finally {
 			postEditorStore.currentPost.loading.score = false
+			truSeoHighlighterStore.endLanguageSwitch(languageSwitchId)
 		}
 
 		// Enable highlight + check every analyzer that already has sentences.

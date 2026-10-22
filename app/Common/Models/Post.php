@@ -899,8 +899,8 @@ class Post extends Model {
 			// Set the image details.
 			$ogImage                  = aioseo()->social->facebook->getImage( $thePost->post_id );
 			$thePost->og_image_url    = is_array( $ogImage ) ? $ogImage[0] : $ogImage;
-			$thePost->og_image_width  = aioseo()->social->facebook->getImageWidth();
-			$thePost->og_image_height = aioseo()->social->facebook->getImageHeight();
+			$thePost->og_image_width  = aioseo()->social->facebook->getImageWidth( $thePost->post_id );
+			$thePost->og_image_height = aioseo()->social->facebook->getImageHeight( $thePost->post_id );
 
 			// Reset the cache property.
 			aioseo()->social->image->useCache = true;

@@ -25,7 +25,10 @@ if ( 'xml-sitemap' !== $data['utmMedium'] ) {
 	if ( ! empty( $data['items'] ) ) {
 		aioseo()->templates->getTemplate(
 			'sitemap/xsl/partials/breadcrumb.php',
-			[ 'items' => $data['items'] ]
+			[
+				'index' => ! empty( $data['index'] ),
+				'items' => $data['items']
+			]
 		);
 	}
 	?>

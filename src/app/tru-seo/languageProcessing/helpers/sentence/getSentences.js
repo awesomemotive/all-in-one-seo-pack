@@ -1,7 +1,7 @@
 /* eslint-disable one-var */
 
 // Lodash imports.
-import { filter, flatMap, isEmpty, negate } from 'lodash-es'
+import { filter, flatMap, isEmpty } from 'lodash-es'
 
 // Internal dependencies.
 import { getBlocks } from '../html/html.js'
@@ -16,6 +16,16 @@ const newLines = '\n\r|\n|\r'
 // Regular expressions.
 const newLineRegex = new RegExp(newLines)
 const paragraphTagsRegex = /^(<p>|<\/p>)$/
+const tagOrEntityRegex = /<[^>]*>|&[a-z0-9#]+;/gi
+const wordCharacterRegex = /[\p{L}\p{N}]/u
+
+/**
+ * Checks whether a sentence has any letter or digit outside its tags and entities.
+ *
+ * @param {string} sentence The sentence.
+ * @returns {boolean} Whether it has a word.
+ */
+const hasWord = (sentence) => wordCharacterRegex.test(sentence.replace(tagOrEntityRegex, ''))
 
 /**
  * Returns sentences in a string.
@@ -63,5 +73,10 @@ export default function (text, memoizedTokenizer = defaultSentenceTokenizer) {
 	 */
 	sentences = sentences.map(sentence => stripBlockTagsAtStartEnd(sentence).trim())
 
-	return filter(sentences, negate(isEmpty))
+	/*
+	 * Drop pieces with no word in them. Markup left alone on a line (an empty icon element, a link
+	 * around a removed image, a builder template's indentation) is not a sentence, and counting it
+	 * skews every percentage-based check.
+	 */
+	return filter(sentences, sentence => !isEmpty(sentence) && hasWord(sentence))
 }

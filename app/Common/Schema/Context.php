@@ -13,6 +13,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Context {
 	/**
+	 * Returns the meta title, escaped so the schema output can't parse smart tags in it again.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  \WP_Post|null $post The post object (optional).
+	 * @return string              The escaped meta title.
+	 */
+	private function getTitle( $post = null ) {
+		return aioseo()->tags->escapeTags( aioseo()->meta->title->getTitle( $post ) );
+	}
+
+	/**
+	 * Returns the meta description, escaped so the schema output can't parse smart tags in it again.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  \WP_Post|null $post The post object (optional).
+	 * @return string              The escaped meta description.
+	 */
+	private function getDescription( $post = null ) {
+		return aioseo()->tags->escapeTags( aioseo()->meta->description->getDescription( $post ) );
+	}
+
+	/**
 	 * Returns the default context data.
 	 *
 	 * @since   4.3.0
@@ -22,8 +46,8 @@ class Context {
 	 */
 	public function defaults() {
 		return [
-			'name'        => aioseo()->meta->title->getTitle(),
-			'description' => aioseo()->meta->description->getDescription(),
+			'name'        => $this->getTitle(),
+			'description' => $this->getDescription(),
 			'url'         => aioseo()->helpers->getUrl()
 		];
 	}
@@ -39,8 +63,8 @@ class Context {
 	public function home() {
 		return [
 			'url'         => aioseo()->helpers->getUrl(),
-			'name'        => aioseo()->meta->title->getTitle(),
-			'description' => aioseo()->meta->description->getDescription()
+			'name'        => $this->getTitle(),
+			'description' => $this->getDescription()
 		];
 	}
 
@@ -63,8 +87,8 @@ class Context {
 		}
 
 		return [
-			'name'        => aioseo()->meta->title->getTitle( $post ),
-			'description' => aioseo()->meta->description->getDescription( $post ),
+			'name'        => $this->getTitle( $post ),
+			'description' => $this->getDescription( $post ),
 			'url'         => aioseo()->helpers->getUrl(),
 			'object'      => $post,
 		];
@@ -90,8 +114,8 @@ class Context {
 		}
 
 		return [
-			'name'        => aioseo()->meta->title->getTitle(),
-			'description' => aioseo()->meta->description->getDescription(),
+			'name'        => $this->getTitle(),
+			'description' => $this->getDescription(),
 			'url'         => aioseo()->helpers->getUrl()
 		];
 	}
@@ -114,12 +138,12 @@ class Context {
 			];
 		}
 
-		$title       = aioseo()->meta->title->getTitle();
-		$description = aioseo()->meta->description->getDescription();
+		$title       = $this->getTitle();
+		$description = $this->getDescription();
 		$url         = aioseo()->helpers->getUrl();
 
 		if ( ! $description ) {
-			$description = get_the_author_meta( 'description', $author->ID );
+			$description = aioseo()->tags->escapeTags( get_the_author_meta( 'description', $author->ID ) );
 		}
 
 		return [
@@ -148,8 +172,8 @@ class Context {
 		}
 
 		return [
-			'name'        => aioseo()->meta->title->getTitle(),
-			'description' => aioseo()->meta->description->getDescription(),
+			'name'        => $this->getTitle(),
+			'description' => $this->getDescription(),
 			'url'         => aioseo()->helpers->getUrl()
 		];
 	}
@@ -164,8 +188,8 @@ class Context {
 	 */
 	public function date() {
 		return [
-			'name'        => aioseo()->meta->title->getTitle(),
-			'description' => aioseo()->meta->description->getDescription(),
+			'name'        => $this->getTitle(),
+			'description' => $this->getDescription(),
 			'url'         => aioseo()->helpers->getUrl()
 		];
 	}
@@ -180,8 +204,8 @@ class Context {
 	 */
 	public function search() {
 		return [
-			'name'        => aioseo()->meta->title->getTitle(),
-			'description' => aioseo()->meta->description->getDescription(),
+			'name'        => $this->getTitle(),
+			'description' => $this->getDescription(),
 			'url'         => aioseo()->helpers->getUrl()
 		];
 	}
@@ -196,8 +220,8 @@ class Context {
 	 */
 	public function notFound() {
 		return [
-			'name'        => aioseo()->meta->title->getTitle(),
-			'description' => aioseo()->meta->description->getDescription(),
+			'name'        => $this->getTitle(),
+			'description' => $this->getDescription(),
 			'url'         => aioseo()->helpers->getUrl()
 		];
 	}

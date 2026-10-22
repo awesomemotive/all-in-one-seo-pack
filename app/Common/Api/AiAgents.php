@@ -162,13 +162,6 @@ class AiAgents {
 	 * @return \WP_REST_Response
 	 */
 	public static function installMcpAdapter() {
-		if ( ! current_user_can( 'install_plugins' ) || ! current_user_can( 'activate_plugins' ) ) {
-			return new \WP_REST_Response( [
-				'success' => false,
-				'message' => __( 'You do not have permission to install plugins.', 'all-in-one-seo-pack' )
-			], 403 );
-		}
-
 		if ( '' !== self::getActiveMcpAdapterFile() ) {
 			return new \WP_REST_Response( [
 				'success'         => true,
@@ -177,25 +170,47 @@ class AiAgents {
 			], 200 );
 		}
 
-		// If the plugin is already installed but inactive, just activate it instead of reinstalling
-		// (the upgrader would otherwise fail because the destination folder already exists).
-		$installedPlugin = self::getInstalledMcpAdapterFile();
-		if ( $installedPlugin ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-			$activated = activate_plugin( $installedPlugin );
+		// On multisite the plugins directory is shared across the whole network, so the adapter
+		// only needs to be downloaded once. If the files are already present — installed or
+		// network-activated from another site — we just activate them here. Re-installing would
+		// fail because the destination folder already exists.
+		$installedFile = self::getInstalledMcpAdapterFile();
+		if ( $installedFile ) {
+			if ( ! current_user_can( 'activate_plugins' ) ) {
+				return new \WP_REST_Response( [
+					'success' => false,
+					'message' => is_multisite()
+						? __( 'The MCP Adapter is installed but not active on this site. Ask a network administrator to network-activate it.', 'all-in-one-seo-pack' )
+						: __( 'You do not have permission to activate plugins.', 'all-in-one-seo-pack' )
+				], 403 );
+			}
+
+			$activated = activate_plugin( $installedFile );
 			if ( is_wp_error( $activated ) ) {
 				return new \WP_REST_Response( [
 					'success' => false,
-					'message' => $activated->get_error_message()
+					'message' => self::getPlainErrorMessage( $activated )
 				], 500 );
 			}
 
 			return new \WP_REST_Response( [
 				'success' => true,
-				'plugin'  => $installedPlugin,
-				'message' => __( 'MCP Adapter activated.', 'all-in-one-seo-pack' )
+				'plugin'  => $installedFile,
+				'message' => __( 'MCP Adapter activated on this site.', 'all-in-one-seo-pack' )
 			], 200 );
+		}
+
+		// Not on disk yet — downloading and installing plugin files is a network-level operation
+		// on multisite, available only to network administrators.
+		if ( ! current_user_can( 'install_plugins' ) || ! current_user_can( 'activate_plugins' ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => is_multisite()
+					? __( 'On multisite, the MCP Adapter must be installed and network-activated by a network administrator before it is available on this site.', 'all-in-one-seo-pack' )
+					: __( 'You do not have permission to install plugins.', 'all-in-one-seo-pack' )
+			], 403 );
 		}
 
 		$release = self::getMcpAdapterRelease();
@@ -219,7 +234,7 @@ class AiAgents {
 		if ( is_wp_error( $result ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
-				'message' => $result->get_error_message()
+				'message' => self::getPlainErrorMessage( $result )
 			], 500 );
 		}
 		if ( false === $result || ! $upgrader->plugin_info() ) {
@@ -234,7 +249,7 @@ class AiAgents {
 		if ( is_wp_error( $activated ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
-				'message' => $activated->get_error_message()
+				'message' => self::getPlainErrorMessage( $activated )
 			], 500 );
 		}
 
@@ -278,10 +293,11 @@ class AiAgents {
 		// Honour the same per-user availability gate WP core's Application Passwords REST
 		// controller enforces — 2FA/security plugins use it to disable Application Passwords
 		// for specific users, and we must not provide a way around that.
-		if ( ! wp_is_application_passwords_available_for_user( $userId ) ) {
+		$status = aioseo()->helpers->applicationPasswordsStatus( $userId );
+		if ( empty( $status['available'] ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
-				'message' => __( 'Application Passwords are not available for your account. Please contact a site administrator.', 'all-in-one-seo-pack' )
+				'message' => self::getAppPasswordsUnavailableMessage( $status )
 			], 403 );
 		}
 
@@ -306,5 +322,113 @@ class AiAgents {
 			'name'     => 'AIOSEO AI Agents',
 			'message'  => __( 'Application Password generated. Copy it now — it will not be shown again.', 'all-in-one-seo-pack' )
 		], 200 );
+	}
+
+	/**
+	 * Returns a WP_Error's message as plain text.
+	 *
+	 * NOTE: activate_plugin() and the upgrader return HTML (e.g. `<p><strong>Error:</strong> …</p>`), which the MCP tab prints as text.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  \WP_Error $error The error.
+	 * @return string           The message without markup.
+	 */
+	private static function getPlainErrorMessage( $error ) {
+		// Keep paragraphs apart once their tags are gone.
+		$message = str_ireplace( '</p>', ' </p>', $error->get_error_message() );
+
+		return trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $message ) ) );
+	}
+
+	/**
+	 * Returns an actionable message explaining why an Application Password can't be generated.
+	 *
+	 * NOTE: The admin UI renders its own guidance on load, so this mostly surfaces to direct API
+	 * callers, or when the feature was disabled after the page loaded.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  array  $status The status from {@see \AIOSEO\Plugin\Common\Utils\Helpers::applicationPasswordsStatus()}.
+	 * @return string         The message to return to the caller.
+	 */
+	private static function getAppPasswordsUnavailableMessage( $status ) {
+		if ( 'https' === $status['cause'] ) {
+			return __( 'Application Passwords are disabled because this site isn\'t served over HTTPS. Switch your site to HTTPS to enable them.', 'all-in-one-seo-pack' ); // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+		}
+
+		if ( 'user' === $status['scope'] ) {
+			if ( ! empty( $status['pluginName'] ) && ! empty( $status['networkAdmin'] ) && empty( $status['canManage'] ) ) {
+				return sprintf(
+					// Translators: 1 - A plugin name, e.g. "Solid Security".
+					__( 'Application Passwords are disabled for your account by %1$s. Ask a network administrator to allow your account to use them in the %1$s settings.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+					$status['pluginName']
+				);
+			}
+
+			if ( ! empty( $status['pluginName'] ) ) {
+				return sprintf(
+					// Translators: 1 - A plugin name, e.g. "Solid Security".
+					__( 'Application Passwords are disabled for your account by %1$s. Allow your account to use them in the %1$s settings, or ask an administrator to do it.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+					$status['pluginName']
+				);
+			}
+
+			return __( 'Application Passwords are disabled for your account, most likely by a security or two-factor plugin. Ask an administrator to allow them for your account.', 'all-in-one-seo-pack' ); // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+		}
+
+		if ( empty( $status['canManage'] ) && ! empty( $status['networkAdmin'] ) ) {
+			if ( 'disableApplicationPasswords' === $status['plugin'] ) {
+				return sprintf(
+					// Translators: 1 - A plugin name, e.g. "Disable Application Passwords".
+					__( 'Application Passwords are disabled by the %1$s plugin. Ask a network administrator to deactivate it.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+					$status['pluginName']
+				);
+			}
+
+			return sprintf(
+				// Translators: 1 - A plugin name, e.g. "Wordfence".
+				__( 'Application Passwords appear to be disabled by %1$s. Ask a network administrator to re-enable them in the %1$s settings.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+				$status['pluginName']
+			);
+		}
+
+		if ( empty( $status['canManage'] ) ) {
+			if ( 'disableApplicationPasswords' === $status['plugin'] ) {
+				return sprintf(
+					// Translators: 1 - A plugin name, e.g. "Disable Application Passwords".
+					__( 'Application Passwords are disabled by the %1$s plugin. Ask an administrator to deactivate it.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+					$status['pluginName']
+				);
+			}
+
+			if ( ! empty( $status['pluginName'] ) ) {
+				return sprintf(
+					// Translators: 1 - A plugin name, e.g. "Wordfence".
+					__( 'Application Passwords appear to be disabled by %1$s. Ask an administrator to re-enable them in the %1$s settings.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+					$status['pluginName']
+				);
+			}
+
+			return __( 'Application Passwords are disabled on this site, most likely by a security plugin. Ask an administrator to re-enable them.', 'all-in-one-seo-pack' ); // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+		}
+
+		if ( 'disableApplicationPasswords' === $status['plugin'] ) {
+			return sprintf(
+				// Translators: 1 - A plugin name, e.g. "Disable Application Passwords".
+				__( 'Application Passwords are disabled by the %1$s plugin. Deactivate it to re-enable them, then try again.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+				$status['pluginName']
+			);
+		}
+
+		if ( ! empty( $status['pluginName'] ) ) {
+			return sprintf(
+				// Translators: 1 - A plugin name, e.g. "Wordfence".
+				__( 'Application Passwords appear to be disabled by %1$s. Re-enable them in the %1$s settings and try again.', 'all-in-one-seo-pack' ), // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+				$status['pluginName']
+			);
+		}
+
+		return __( 'Application Passwords are disabled on this site. Security plugins commonly turn this feature off — check your security plugin\'s settings, or remove any filter or constant overriding it.', 'all-in-one-seo-pack' ); // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 	}
 }

@@ -492,9 +492,12 @@ export default class TruSeoWrapper {
 			// keyphrase-in-description assessments score the real values.
 			// `separator: undefined` lets parseTags resolve #separator_sa from
 			// the tags store, matching the SEO preview.
+			// Collapse and trim whitespace like the server's Meta\Helpers::sanitize(),
+			// so empty smart tags don't widen the title past what the batch scan measures.
 			const { parseTags } = useTags({ separator: undefined })
-			const metaTitle = parseTags(currentPost.title || currentPost.tags?.title || '#post_title #separator_sa #site_title') || ''
-			const metaDescription = parseTags(currentPost.description || currentPost.tags?.description || '#post_content') || ''
+			const normalizeMeta = (value) => (value || '').replace(/\s+/g, ' ').trim()
+			const metaTitle = normalizeMeta(parseTags(currentPost.title || currentPost.tags?.title || '#post_title #separator_sa #site_title'))
+			const metaDescription = normalizeMeta(parseTags(currentPost.description || currentPost.tags?.description || '#post_content'))
 
 			const paper = {
 				text               : analysisContent,

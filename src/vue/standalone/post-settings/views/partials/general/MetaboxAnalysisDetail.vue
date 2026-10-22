@@ -82,6 +82,11 @@
 
 								</div>
 
+								<hidden-in-view-note
+									class="analysis-item__hidden-in-view"
+									:count="getHiddenCount(item)"
+								/>
+
 								<p class="analysis-item__description">{{ item.text }}</p>
 							</div>
 						</div>
@@ -174,10 +179,13 @@ import SvgCircleExclamation from '@/vue/components/common/svg/circle/Exclamation
 import SvgCircleQuestionMark from '@/vue/components/common/svg/circle/QuestionMark'
 import SvgRightArrowShort from '@/vue/components/common/svg/right-arrow/Short'
 import TransitionSlide from '@/vue/components/common/transition/Slide'
+import HiddenInViewNote from './tru-seo/HiddenInViewNote'
 import TruSeoToggleHighlighter from './tru-seo/ToggleHighlighter'
 import { isBadResult } from '@/app/tru-seo/scoring/interpreters'
+import { announceEditorJump, findPageBuilderUnitNode, getEditorStickyOffset, getVisibleAnchor, revealInEditor } from '@/vue/plugins/tru-seo/highlighter/spellingJump'
 import { getFormatClassName } from '@/vue/plugins/tru-seo/highlighter/wpDataStore'
-import { isPageBuilderEditor } from '@/vue/utils/context'
+import { countLocatableSentences, countHiddenSentences } from '@/vue/plugins/tru-seo/highlighter/sentences'
+import { resolveAdapter } from '@/vue/plugins/tru-seo/editors'
 
 const td      = import.meta.env.VITE_TEXTDOMAIN
 const strings = {
@@ -223,13 +231,12 @@ const props = defineProps({
 
 const isReadabilityTab = computed(() => 'readability' === props.tab)
 
-// The highlighter annotates the block/classic editor DOM directly. Page builders
-// (Elementor, Divi, ...) keep the content outside it, so the jump link and
-// checkbox would target nothing — show the plain status dot there instead.
+// The controls only mean something where marks paint: `highlightingActive` is the store's
+// `enabled` and the user's toggle. Not `isPageBuilderEditor()`, which would hide them on builders
+// that paint into their own canvas.
 const showHighlightControls = computed(() =>
 	isReadabilityTab.value &&
-	truSeoHighlighterStore.highlightingEnabled &&
-	!isPageBuilderEditor()
+	truSeoHighlighterStore.highlightingActive
 )
 
 const goodCollapsed = ref(true)
@@ -264,18 +271,53 @@ watch(
 	{ immediate: true }
 )
 
+// Also needs a mark to jump to: a builder analyzes text it can't highlight (button labels, tab
+// titles), so a check can count instances that never paint.
 const isCountClickable = (item) => {
 	return truSeoHighlighterStore.highlightingEnabled &&
-		truSeoHighlighterStore.highlightAnalyzers.includes(item.key)
+		truSeoHighlighterStore.highlightAnalyzers.includes(item.key) &&
+		truSeoHighlighterStore.highlightMarks.some(hm => hm.analyzer === item.key)
 }
 
-// The "N found" count reflects how many instances this check flagged, read
-// straight from the assessment. It must not depend on the highlight checkbox:
-// the checkbox only paints marks in the editor, it doesn't change what the
-// analyzer found. Deriving the count from the painted marks (as before) made
-// the number differ between the checked and unchecked states, and flicker as
-// marks painted in asynchronously right after toggling.
-const getInstanceCount = (item) => item.highlightSentences?.length || 0
+// "N found" counts the marks the flagged sentences get, through the rule that builds them, so it
+// equals the popover's total. It must not depend on the highlight checkbox or the painted marks, or
+// the number changes between the checked and unchecked states and flickers as marks paint in.
+const instanceCounts = computed(() => {
+	const adapter = resolveAdapter()
+	const units   = adapter?.getContentUnits?.() || []
+	const counts  = new Map()
+
+	// An editor not ready yet has nothing to match, which is not nothing found. A ready one can
+	// have no units at all, e.g. a block post that is a single Classic block shown as a preview.
+	const canMatch = 'function' === typeof adapter?.isReady ? adapter.isReady() : 0 < units.length
+
+	for (const item of issueItems.value) {
+		const sentences = item.highlightSentences || []
+
+		counts.set(item.key, canMatch ? countLocatableSentences(sentences, units) : sentences.length)
+	}
+
+	return counts
+})
+
+const getInstanceCount = (item) => instanceCounts.value.get(item.key) || 0
+
+// How many of those instances are in text the editor's view doesn't show, so they never paint.
+// Recomputed with the issues, like the counts above.
+const hiddenCounts = computed(() => {
+	const units  = resolveAdapter()?.getContentUnits?.() || []
+	const counts = new Map()
+
+	if (units.some(unit => unit.hiddenInView)) {
+		for (const item of issueItems.value) {
+			counts.set(item.key, countHiddenSentences(item.highlightSentences || [], units))
+		}
+	}
+
+	return counts
+})
+
+const getHiddenCount = (item) => hiddenCounts.value.get(item.key) || 0
 
 // Resolves a highlight mark's DOM node, falling back to a live DOM query when
 // `pollForBlockHighlightNodes` hasn't linked nodes yet (race window right
@@ -319,6 +361,14 @@ const findScrollTarget = (analyzerKey) => {
 		}
 	}
 
+	// A builder can leave a mark that neither painted nor kept its `parent`, so re-resolve the
+	// unit id through the adapter. Last and gated on ownership, as in
+	// {@see spellingJump.js:getEditorContentRoots}.
+	const unitNode = findPageBuilderUnitNode(marks.map(hm => hm.unitId).filter(Boolean))
+	if (unitNode) {
+		return unitNode
+	}
+
 	const withParent = marks.find(hm => hm.parent && hm.parent.isConnected)
 	return withParent?.parent || null
 }
@@ -327,8 +377,9 @@ const findScrollTarget = (analyzerKey) => {
 // editor's sticky chrome. The Classic editor pins its media/Visual-Code bar and
 // format toolbar over the content, so add their heights (stable whether or not
 // currently pinned); the Block editor's canvas already renders below its fixed
-// header, so the trailing gap alone suffices there. The fixed WP admin bar is
-// handled separately by WP's `scroll-padding-top` on the document.
+// header, so the trailing gap alone suffices there. A builder canvas adds the theme
+// header it renders fixed inside itself. The fixed WP admin bar is handled
+// separately by WP's `scroll-padding-top` on the document.
 const getStickyEditorOffset = () => {
 	let height = 0
 	for (const selector of [ '.wp-editor-tools', '.mce-toolbar-grp' ]) {
@@ -338,7 +389,7 @@ const getStickyEditorOffset = () => {
 		}
 	}
 
-	return Math.round(height) + 16
+	return Math.round(height) + getEditorStickyOffset() + 16
 }
 
 const scrollToFirstInstance = (analyzerKey) => {
@@ -352,8 +403,13 @@ const scrollToFirstInstance = (analyzerKey) => {
 	// The Classic editor's TinyMCE toolbar sticks over the content though, and
 	// scroll-padding doesn't know about it — so offset the target by the toolbar's
 	// live height, or `block: 'start'` lands the mark hidden just beneath it.
-	node.style.scrollMarginTop = `${getStickyEditorOffset()}px`
-	node.scrollIntoView({ behavior: 'smooth', block: 'start' })
+	revealInEditor(node)
+
+	const target = getVisibleAnchor(node)
+	target.style.scrollMarginTop = `${getStickyEditorOffset()}px`
+	target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+	announceEditorJump(target)
 }
 
 </script>
@@ -444,7 +500,7 @@ const scrollToFirstInstance = (analyzerKey) => {
 		}
 
 		// The height slide is handled by <transition-slide>; this carries the
-		// column layout the items used to get straight from .section-content.
+		// items' column layout.
 		&__inner {
 			display: flex;
 			flex-direction: column;
@@ -536,6 +592,10 @@ const scrollToFirstInstance = (analyzerKey) => {
 			svg {
 				color: #e8730c !important;
 			}
+		}
+
+		&__hidden-in-view {
+			padding-left: 16px;
 		}
 
 		&__description {
@@ -649,6 +709,10 @@ const scrollToFirstInstance = (analyzerKey) => {
 
 		&__title {
 			font-size: 13px;
+		}
+
+		&__hidden-in-view {
+			padding: 0;
 		}
 
 		&__description {

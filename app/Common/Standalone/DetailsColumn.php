@@ -256,6 +256,7 @@ class DetailsColumn {
 	 * @since   4.0.0
 	 * @version 4.9.10 Strip site-global configuration for users who cannot manage AIOSEO.
 	 * @version 5.0.2 Resolves the batch scan gate through {@see isBatchScanEnabled()}.
+	 * @version 5.0.4 Resolve the TruSEO score gate server-side.
 	 *
 	 * @return void
 	 */
@@ -270,6 +271,10 @@ class DetailsColumn {
 		// Lets Quick Edit recompute the column's noindex badge after a save without a
 		// round trip: a post on defaults resolves the same way for its whole post type.
 		$data['postTypeIsNoindexed'] = $postType ? $this->isPostTypeNoindexed( $postType ) : false;
+
+		// Resolved here because filterPrivilegedVueData() drops the options this depends on for
+		// users who cannot manage AIOSEO, which would otherwise read as "TruSEO is off".
+		$data['truSeoScoreEnabled'] = $this->isTruSeoScoreEnabled( $postType );
 
 		// Nouns for anything on the list that names what it is working on, e.g. the batch scan's
 		// "Successfully analyzed 3 categories." Taken from the registered labels so a term list
@@ -564,6 +569,31 @@ class DetailsColumn {
 		}
 
 		return $this->isPostTypeNoindexed( $postType );
+	}
+
+	/**
+	 * Returns whether the column should show the TruSEO score for a post type.
+	 *
+	 * @since 5.0.4
+	 *
+	 * @param  string $postType The post type.
+	 * @return bool             Whether the score should be shown.
+	 */
+	private function isTruSeoScoreEnabled( $postType ) {
+		if ( empty( $postType ) || 'web-story' === $postType ) {
+			return false;
+		}
+
+		if ( ! aioseo()->options->advanced->truSeo ) {
+			return false;
+		}
+
+		// Read the flattened options instead of traversing the group objects: an addon-registered
+		// post type (e.g. aioseo-location) only resolves its `advanced` group once all() has
+		// merged the defaults in, and the traversal would report the metabox as hidden.
+		$dynamicOptions = aioseo()->dynamicOptions->all();
+
+		return ! empty( $dynamicOptions['searchAppearance']['postTypes'][ $postType ]['advanced']['showMetaBox'] );
 	}
 
 	/**

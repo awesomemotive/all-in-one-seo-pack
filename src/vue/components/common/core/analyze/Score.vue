@@ -31,13 +31,16 @@ export default {
 
 <style lang="scss">
 .aioseo-analyze-score {
+	// A line-height can't center the score here — the global `.aioseo-app` reset outranks it.
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	border: 1px solid $green;
 	border-radius: 3px;
 	color: $green;
 	font-size: 14px;
 	padding: 0 8px;
 	height: 26px;
-	line-height: 26px;
 	margin-right: 12px;
 
 	&.red {

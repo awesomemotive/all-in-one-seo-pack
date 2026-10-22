@@ -217,13 +217,20 @@ class PostsTerms {
 	/**
 	 * Returns the posts custom fields.
 	 *
-	 * @since 4.0.6
+	 * @since   4.0.6
+	 * @version 5.0.4 Reads page builder posts from their integration's getAnalysisContent(), if any.
 	 *
 	 * @param  \WP_Post|int $post The post.
 	 * @return string             The custom field content.
 	 */
 	private static function getAnalysisContent( $post = null ) {
-		$analysisContent = apply_filters( 'aioseo_analysis_content', aioseo()->helpers->getPostContent( $post ) );
+		$pageBuilder = aioseo()->helpers->getPostPageBuilderName( $post->ID );
+		$integration = $pageBuilder ? ( aioseo()->standalone->pageBuilderIntegrations[ $pageBuilder ] ?? null ) : null;
+		$content     = $integration && method_exists( $integration, 'getAnalysisContent' )
+			? $integration->getAnalysisContent( $post )
+			: aioseo()->helpers->getPostContent( $post );
+
+		$analysisContent = apply_filters( 'aioseo_analysis_content', $content );
 
 		return sanitize_post_field( 'post_content', $analysisContent, $post->ID, 'display' );
 	}

@@ -500,5 +500,94 @@ watch(() => props.show, (isOpen) => {
 			pointer-events: none;
 		}
 	}
+
+	// Page builders like Elementor and Divi don't load WP core's list-table, form and button styles,
+	// so the footer controls can't rely on them for layout.
+	.aioseo-wp-table .tablenav.bottom {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		height: auto;
+
+		.alignleft.actions:empty,
+		br.clear {
+			display: none;
+		}
+
+		.aioseo-wp-items-per-page {
+			float: none;
+
+			label {
+				gap: 8px;
+			}
+
+			select {
+				width: auto;
+				min-height: 32px;
+				margin: 0;
+				padding: 0 24px 0 8px;
+				border: 1px solid $input-border;
+				border-radius: 3px;
+				background-color: #fff;
+				font-size: 13px;
+			}
+		}
+
+		.tablenav-pages {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			float: none;
+			margin: 0 0 0 auto;
+		}
+
+		.pagination-links,
+		.paging-input {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+		}
+
+		// Restated here because the shared table rule only ties with WP core's `list-tables.css`
+		// `inline-block`, and where core loads later (WPBakery's frontend editor) the arrow glyph
+		// sat at the top of the 32px button.
+		.button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			box-sizing: border-box;
+			min-width: 32px;
+			min-height: 32px;
+			margin: 0;
+			padding: 0 4px;
+			border: 1px solid $blue;
+			border-radius: 3px;
+			background: #fff;
+			color: $blue;
+			font-size: 16px;
+			line-height: 1;
+			text-decoration: none;
+
+			&.disabled {
+				border-color: $gray;
+				color: $placeholder-color;
+				cursor: default;
+			}
+		}
+
+		.current-page {
+			box-sizing: border-box;
+			width: 48px;
+			min-height: 32px;
+			margin: 0;
+			padding: 0 0 0 4px;
+			border: 1px solid $input-border;
+			border-radius: 3px;
+			font-size: 13px;
+			text-align: center;
+		}
+	}
 }
 </style>
