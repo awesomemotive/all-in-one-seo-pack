@@ -105,10 +105,9 @@ export default {
 	watch : {
 		value () {
 			if (this.value) {
+				// Whitespace is left alone here: it's encoded server-side on save. Encoding it in this
+				// watcher would ping-pong against the decoded value we emit to the parent.
 				this.value = this.value.replace(/(https?:\/)(\/)+|(\/)+/g, '$1$2$3')
-				if (this.value.startsWith('/')) {
-					this.value = this.value.replace(/\s+/g, '')
-				}
 			}
 		},
 		url : {

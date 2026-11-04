@@ -372,7 +372,8 @@ class Settings {
 	/**
 	 * Import settings from external file.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.5 Return a 400 when the settings or robots rules are not arrays.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request.
 	 * @return \WP_REST_Response          The response.
@@ -421,6 +422,19 @@ class Settings {
 
 		// Import settings.
 		if ( ! empty( self::$importFile['settings'] ) ) {
+			if (
+				! is_array( self::$importFile['settings'] ) ||
+				(
+					isset( self::$importFile['settings']['tools']['robots']['rules'] ) &&
+					! is_array( self::$importFile['settings']['tools']['robots']['rules'] )
+				)
+			) {
+				return new \WP_REST_Response( [
+					'success' => false,
+					'message' => 'The import file contains settings in an invalid format.'
+				], 400 );
+			}
+
 			self::importSettingsFromFile( self::$importFile['settings'] );
 		}
 

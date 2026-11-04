@@ -172,6 +172,7 @@
 			>
 				<template #content>
 					<base-select
+						float-dropdown
 						multiple
 						taggable
 						:options="postEditorStore.currentPost.og_article_tags || []"

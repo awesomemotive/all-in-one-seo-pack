@@ -98,6 +98,7 @@
 			>
 				<template #content>
 					<base-select
+						float-dropdown
 						size="medium"
 						:options="imageSourceOptionsFiltered"
 						:modelValue="getImageSourceOptionFiltered(postEditorStore.currentPost.twitter_image_type)"

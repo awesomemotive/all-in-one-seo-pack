@@ -196,6 +196,16 @@ export const useAiImageGeneratorStore = defineStore('AiImageGeneratorStore', {
 					aiStore.getCredits(true)
 				})
 		},
+		setApiError (error) {
+			const { strings } = useAiContent()
+
+			const messages = {
+				ai_disabled          : strings.aiDisabled,
+				seed_image_forbidden : strings.seedImageForbidden
+			}
+
+			this.errors.api = messages[error?.response?.body?.code] || strings.somethingWrong
+		},
 		fetchImages () {
 			this.images.isFetching = true
 

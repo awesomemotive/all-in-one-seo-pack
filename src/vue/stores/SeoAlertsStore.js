@@ -37,6 +37,7 @@ export const useSeoAlertsStore = defineStore('seoAlerts', {
 		updateRecipient (index, email) {
 			if (this.recipients[index]) {
 				this.recipients[index].email = email
+				this.saveSettings()
 			}
 		},
 		deleteRecipient (index) {

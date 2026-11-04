@@ -144,6 +144,7 @@
 				<span class="redirect-options__label">{{ strings.redirectType }}</span>
 
 				<base-select
+					float-dropdown
 					:options="REDIRECT_TYPES"
 					v-model="redirectType"
 					size="medium"
@@ -167,6 +168,7 @@
 				</div>
 
 				<base-select
+					float-dropdown
 					:options="redirectQueryParams"
 					v-model="queryParam"
 					size="medium"
@@ -672,6 +674,11 @@ function addRedirects () {
 	}
 
 	sourceUrls.value.map(url => {
+		// Trim before adding the leading slash, or leading spaces end up inside the path.
+		if (!url.regex && 'string' === typeof url.url) {
+			url.url = url.url.trim()
+		}
+
 		if ('http' !== url.url.substr(0, 4) && '/' !== url.url.substr(0, 1) && 0 < url.url.length && !url.regex) {
 			url.url = '/' + url.url
 		}
@@ -703,6 +710,11 @@ function addRedirects () {
 function saveChanges () {
 	genericError.value   = false
 	addingRedirect.value = true
+
+	// Trim before adding the leading slash, or leading spaces end up inside the path.
+	if (!sourceUrls.value[0].regex && 'string' === typeof sourceUrls.value[0].url) {
+		sourceUrls.value[0].url = sourceUrls.value[0].url.trim()
+	}
 
 	if ('http' !== sourceUrls.value[0].url.substr(0, 4) && '/' !== sourceUrls.value[0].url.substr(0, 1) && 0 < sourceUrls.value[0].url.length && !sourceUrls.value[0].regex) {
 		sourceUrls.value[0].url = '/' + sourceUrls.value[0].url
@@ -1237,14 +1249,6 @@ onMounted(() => {
 			margin-left: 10px;
 			@media(min-width: 1200px) {
 				margin-left: 16px;
-			}
-		}
-	}
-
-	.aioseo-modal & {
-		.aioseo-select {
-			.multiselect__content-wrapper {
-				max-height: 200px !important;
 			}
 		}
 	}

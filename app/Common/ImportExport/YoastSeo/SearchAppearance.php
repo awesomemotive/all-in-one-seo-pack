@@ -11,7 +11,8 @@ use AIOSEO\Plugin\Common\ImportExport;
 // phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 
 /**
- * Migrates the Search Appearance settings.
+ * Migrates settings stored in the Yoast `wpseo_titles` option.
+ * NOTE: The class name reflects the Yoast source, not the AIOSEO destination; these migrations write to many AIOSEO areas.
  *
  * @since 4.0.0
  */
@@ -55,6 +56,7 @@ class SearchAppearance {
 		$this->migrateKnowledgeGraphSettings();
 		$this->migrateRssContentSettings();
 		$this->migrateStripCategoryBase();
+		$this->migrateBreadcrumbsSettings();
 		$this->migrateHomepageSocialSettings();
 	}
 
@@ -279,7 +281,8 @@ class SearchAppearance {
 	/**
 	 * Migrates the Knowledge Graph settings.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.5 Added website_name/alternate_website_name mappings; org-number-employees ranges normalized to arrays.
 	 *
 	 * @return void
 	 */
@@ -290,6 +293,8 @@ class SearchAppearance {
 		}
 
 		$settings = [
+			'website_name'              => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'websiteName' ] ],
+			'alternate_website_name'    => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'websiteAlternateName' ] ],
 			'company_or_person_user_id' => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'person' ] ],
 			'person_logo'               => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'personLogo' ] ],
 			'person_name'               => [ 'type' => 'string', 'newOption' => [ 'searchAppearance', 'global', 'schema', 'personName' ] ],
@@ -307,12 +312,25 @@ class SearchAppearance {
 		// Reset data
 		aioseo()->options->noConflict()->searchAppearance->global->schema->numberOfEmployees->reset();
 
-		$numberOfEmployees = $this->options['org-number-employees'];
-		if ( ! empty( $numberOfEmployees ) ) {
-			$num1 = is_array( $numberOfEmployees ) && isset( $numberOfEmployees[0] ) ? $numberOfEmployees[0] : $numberOfEmployees;
-			$num2 = is_array( $numberOfEmployees ) && isset( $numberOfEmployees[1] ) ? $numberOfEmployees[1] : 0;
+		$rawEmployees = $this->options['org-number-employees'] ?? null;
 
-			if ( $num2 ) {
+		// Yoast stores the range either as the hyphen-delimited string "501-1000" or as an array [501, 1000].
+		// Anything else (object, bool, etc.) is treated as no value.
+		if ( is_string( $rawEmployees ) && false !== strpos( $rawEmployees, '-' ) ) {
+			$rawEmployees = explode( '-', $rawEmployees, 2 );
+		}
+
+		$yoastHelpers = aioseo()->importExport->yoastSeo->helpers;
+		if ( is_array( $rawEmployees ) ) {
+			$num1 = $yoastHelpers->sanitizeStringValue( $rawEmployees[0] ?? null );
+			$num2 = $yoastHelpers->sanitizeStringValue( $rawEmployees[1] ?? null );
+		} else {
+			$num1 = $yoastHelpers->sanitizeStringValue( $rawEmployees );
+			$num2 = null;
+		}
+
+		if ( ! empty( $num1 ) ) {
+			if ( ! empty( $num2 ) ) {
 				aioseo()->options->noConflict()->searchAppearance->global->schema->numberOfEmployees->isRange = true;
 				aioseo()->options->noConflict()->searchAppearance->global->schema->numberOfEmployees->from    = (int) $num1;
 				aioseo()->options->noConflict()->searchAppearance->global->schema->numberOfEmployees->to      = (int) $num2;
@@ -359,6 +377,52 @@ class SearchAppearance {
 	 */
 	private function migrateStripCategoryBase() {
 		aioseo()->options->searchAppearance->advanced->removeCategoryBase = empty( $this->options['stripcategorybase'] ) ? false : true;
+	}
+
+	/**
+	 * Migrates the breadcrumbs settings.
+	 * NOTE: Archive/search prefixes get the matching AIOSEO smart tag appended so the dynamic portion of the breadcrumb survives the move.
+	 *
+	 * @since 5.0.5
+	 *
+	 * @return void
+	 */
+	private function migrateBreadcrumbsSettings() {
+		$yoastHelpers = aioseo()->importExport->yoastSeo->helpers;
+
+		$separator = $yoastHelpers->sanitizeStringValue( $this->options['breadcrumbs-sep'] ?? null );
+		if ( null !== $separator ) {
+			aioseo()->options->breadcrumbs->separator = aioseo()->helpers->sanitizeOption( $separator );
+		}
+
+		$homepageLabel = $yoastHelpers->sanitizeStringValue( $this->options['breadcrumbs-home'] ?? null );
+		if ( null !== $homepageLabel ) {
+			aioseo()->options->breadcrumbs->homepageLabel = aioseo()->helpers->sanitizeOption( $homepageLabel );
+		}
+
+		$breadcrumbPrefix = $yoastHelpers->sanitizeStringValue( $this->options['breadcrumbs-prefix'] ?? null );
+		if ( null !== $breadcrumbPrefix ) {
+			aioseo()->options->breadcrumbs->breadcrumbPrefix = aioseo()->helpers->sanitizeOption( $breadcrumbPrefix );
+		}
+
+		$archivePrefix = $yoastHelpers->sanitizeStringValue( $this->options['breadcrumbs-archiveprefix'] ?? null );
+		if ( null !== $archivePrefix ) {
+			aioseo()->options->breadcrumbs->archiveFormat = trim( rtrim( aioseo()->helpers->sanitizeOption( $archivePrefix ) ) . ' #breadcrumb_archive_post_type_name' );
+		}
+
+		$searchPrefix = $yoastHelpers->sanitizeStringValue( $this->options['breadcrumbs-searchprefix'] ?? null );
+		if ( null !== $searchPrefix ) {
+			aioseo()->options->breadcrumbs->searchResultFormat = trim( rtrim( aioseo()->helpers->sanitizeOption( $searchPrefix ) ) . " '#breadcrumb_search_string'" );
+		}
+
+		$errorFormat404 = $yoastHelpers->sanitizeStringValue( $this->options['breadcrumbs-404crumb'] ?? null );
+		if ( null !== $errorFormat404 ) {
+			aioseo()->options->breadcrumbs->errorFormat404 = aioseo()->helpers->sanitizeOption( $errorFormat404 );
+		}
+
+		if ( isset( $this->options['breadcrumbs-display-blog-page'] ) ) {
+			aioseo()->options->breadcrumbs->showBlogHome = (bool) $this->options['breadcrumbs-display-blog-page'];
+		}
 	}
 
 	/**

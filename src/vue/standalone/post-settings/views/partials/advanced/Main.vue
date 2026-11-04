@@ -56,6 +56,7 @@
 					<div class="select">
 						<span>{{ strings.priority }}</span>
 						<base-select
+							float-dropdown
 							:disabled="licenseStore.isUnlicensed"
 							size="medium"
 							:options="getPriorityOptions"
@@ -70,6 +71,7 @@
 					<div class="select">
 						<span>{{ strings.frequency }}</span>
 						<base-select
+							float-dropdown
 							:disabled="licenseStore.isUnlicensed"
 							size="medium"
 							:options="getFrequencyOptions"
@@ -96,6 +98,7 @@
 		>
 			<template #content>
 				<base-select
+					float-dropdown
 					multiple
 					taggable
 					:options="postEditorStore.currentPost.keywords || []"

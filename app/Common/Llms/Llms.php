@@ -433,7 +433,8 @@ class Llms {
 	/**
 	 * Gets the post content section of the llms.txt file.
 	 *
-	 * @since 4.8.8
+	 * @since   4.8.8
+	 * @version 5.0.5 Sanitize the link text via {@see self::sanitizeMarkdownLinkText()}.
 	 *
 	 * @param  \WP_Post $post     The post object.
 	 * @param  bool     $llmsFull Whether to include the llms-full.txt file.
@@ -441,7 +442,7 @@ class Llms {
 	 */
 	protected function getPostContent( $post, $llmsFull = false ) { // phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		$title   = apply_filters( 'aioseo_llms_post_title', $post->post_title, $post );
-		$content = '- [' . aioseo()->helpers->decodeHtmlEntities( $title ) . '](' . aioseo()->helpers->decodeUrl( get_permalink( $post ) ) . ')';
+		$content = '- [' . $this->sanitizeMarkdownLinkText( aioseo()->helpers->decodeHtmlEntities( $title ) ) . '](' . aioseo()->helpers->decodeUrl( get_permalink( $post ) ) . ')';
 
 		$description = aioseo()->meta->description->getPostDescription( $post );
 		$description = apply_filters( 'aioseo_llms_post_description', $description, $post );
@@ -457,7 +458,8 @@ class Llms {
 	/**
 	 * Gets the term content section of the llms.txt file.
 	 *
-	 * @since 4.9.3
+	 * @since   4.9.3
+	 * @version 5.0.5 Sanitize the link text via {@see self::sanitizeMarkdownLinkText()}.
 	 *
 	 * @param  \WP_Term $term     The term object.
 	 * @param  string   $taxonomy The taxonomy name.
@@ -466,7 +468,7 @@ class Llms {
 	 */
 	protected function getTermContent( $term, $taxonomy, $llmsFull = false ) { // phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		$title   = apply_filters( 'aioseo_llms_term_title', $term->name, $term );
-		$content = '- [' . aioseo()->helpers->decodeHtmlEntities( $title ) . '](' . aioseo()->helpers->decodeUrl( get_term_link( $term, $taxonomy ) ) . ')';
+		$content = '- [' . $this->sanitizeMarkdownLinkText( aioseo()->helpers->decodeHtmlEntities( $title ) ) . '](' . aioseo()->helpers->decodeUrl( get_term_link( $term, $taxonomy ) ) . ')';
 
 		$description = aioseo()->meta->description->getTermDescription( $term );
 		$description = apply_filters( 'aioseo_llms_term_description', $description, $term );
@@ -477,6 +479,24 @@ class Llms {
 		$content .= "\n";
 
 		return $content;
+	}
+
+	/**
+	 * Makes a title safe to use as the text portion of a Markdown link.
+	 *
+	 * NOTE: Brackets become parentheses rather than backslash escapes — regex-based llms.txt readers
+	 * match the link text as `[^]]+` and skip any entry holding a closing bracket, escaped or not.
+	 *
+	 * @since 5.0.5
+	 *
+	 * @param  string $text The link text.
+	 * @return string       The sanitized link text.
+	 */
+	protected function sanitizeMarkdownLinkText( $text ) {
+		// A backslash right before the closing bracket would escape it and swallow the link.
+		$text = str_replace( '\\', '\\\\', (string) $text );
+
+		return str_replace( [ '[', ']' ], [ '(', ')' ], $text );
 	}
 
 	/**

@@ -65,6 +65,27 @@ class Helpers extends ImportExport\Helpers {
 	}
 
 	/**
+	 * Returns a Yoast option value as a usable string, or null if the value isn't string-coercible.
+	 * NOTE: Old or corrupted installs can store unexpected types that emit warnings when coerced via PHP string functions.
+	 *
+	 * @since 5.0.5
+	 *
+	 * @param  mixed       $value The raw Yoast option value.
+	 * @return string|null        The value as a string, or null if not string-coercible.
+	 */
+	public function sanitizeStringValue( $value ) {
+		if ( is_string( $value ) ) {
+			return $value;
+		}
+
+		if ( is_int( $value ) || is_float( $value ) ) {
+			return (string) $value;
+		}
+
+		return null;
+	}
+
+	/**
 	 * Returns the macro mappings.
 	 *
 	 * @since 4.1.1

@@ -1238,6 +1238,7 @@ trait WpContext {
 	 *
 	 * @since   4.2.8
 	 * @version 5.0.3 dynamic_home now covers any show_on_front value that is not 'page'.
+	 * @version 5.0.5 Ignores page_for_posts unless show_on_front is 'page'.
 	 *
 	 * @return string|null The template type or `null` if no match.
 	 */
@@ -1254,7 +1255,8 @@ trait WpContext {
 			$type = 'single';
 		} elseif (
 			is_page() ||
-			$this->isStaticPostsPage() ||
+			// A saved page_for_posts outlives a switch away from show_on_front 'page'.
+			( $this->isStaticPostsPage() && ! $this->isBlogIndexHomePage() ) ||
 			$this->isWooCommerceShopPage()
 		) {
 			$type = 'page';

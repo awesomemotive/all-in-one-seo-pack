@@ -497,6 +497,7 @@ class Ai {
 	 *
 	 * @since   4.8.8
 	 * @version 5.0.3 Require the upload_files capability and authorize the seed image.
+	 * @version 5.0.5 Refuse when AI is disabled; added error codes to the refusals.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
@@ -523,6 +524,14 @@ class Ai {
 			], 403 );
 		}
 
+		if ( aioseo()->ai->isDisabled() ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'code'    => 'ai_disabled',
+				'message' => 'AI features are disabled.'
+			], 403 );
+		}
+
 		try {
 			if ( ! $prompt || ! $postId ) {
 				throw new \Exception( 'Missing prompt or post ID.' );
@@ -542,7 +551,8 @@ class Ai {
 				if ( empty( $foundSelectedImage ) && ! current_user_can( 'read_post', $selectedImageId ) ) {
 					return new \WP_REST_Response( [
 						'success' => false,
-						'message' => 'Unauthorized.'
+						'code'    => 'seed_image_forbidden',
+						'message' => 'You are not allowed to use the selected image.'
 					], 403 );
 				}
 
@@ -650,7 +660,8 @@ class Ai {
 	/**
 	 * Deletes the images generated for a post.
 	 *
-	 * @since 4.8.8
+	 * @since   4.8.8
+	 * @version 5.0.5 Only deletes AI-generated attachments; other IDs are returned in failedIds.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
@@ -666,12 +677,12 @@ class Ai {
 			], 400 );
 		}
 
-		// Filter to only IDs the user can delete.
+		// Filter to only AI-generated IDs the user can delete; this force-deletes, so ordinary uploads must never pass.
 		$authorizedIds   = [];
 		$unauthorizedIds = [];
 		foreach ( $ids as $id ) {
 			$id = (int) $id;
-			if ( current_user_can( 'delete_post', $id ) ) {
+			if ( aioseo()->ai->image->isAiGenerated( $id ) && current_user_can( 'delete_post', $id ) ) {
 				$authorizedIds[] = $id;
 			} else {
 				$unauthorizedIds[] = $id;

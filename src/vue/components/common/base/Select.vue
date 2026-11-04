@@ -21,6 +21,8 @@
 		:loading="isLoading"
 		:searchable="searchable"
 		:open-direction="openDirection"
+		:use-teleport="floatDropdown"
+		:content-wrapper-class="floatDropdown ? contentWrapperClasses : ''"
 		:group-values="groupValues"
 		:group-label="groupLabel"
 		:disabled="disabled"
@@ -87,6 +89,7 @@
 </template>
 
 <script>
+import { createPopper } from '@popperjs/core'
 import { debounce } from '@/vue/utils/debounce'
 import 'vue-multiselect/dist/vue-multiselect.css'
 import Multiselect from 'vue-multiselect'
@@ -181,6 +184,9 @@ export default {
 		return {
 			isLoading       : false,
 			internalOptions : [],
+			popperInstance  : null,
+			popperRaf       : null,
+			popperObserver  : null,
 			strings         : {
 				searchPlaceholder : __('Type to search...', td)
 			}
@@ -192,6 +198,14 @@ export default {
 		}
 	},
 	computed : {
+		contentWrapperClasses () {
+			const classes = [ 'aioseo-select__dropdown' ]
+			if (this.size) {
+				classes.push(`aioseo-select__dropdown--${this.size}`)
+			}
+
+			return classes.join(' ')
+		},
 		effectiveOptions () {
 			if (this.preserveOptions) {
 				// Combine internal options with current options
@@ -279,62 +293,69 @@ export default {
 			if (!this.floatDropdown) {
 				return
 			}
-			this.$nextTick(() => this.positionFloatingDropdown())
-			window.addEventListener('scroll', this.positionFloatingDropdown, true)
-			window.addEventListener('resize', this.positionFloatingDropdown)
+			this.popperRaf = requestAnimationFrame(() => this.createDropdownPopper())
 		},
 		onClose () {
 			this.$emit('close')
-			if (!this.floatDropdown) {
-				return
-			}
-			window.removeEventListener('scroll', this.positionFloatingDropdown, true)
-			window.removeEventListener('resize', this.positionFloatingDropdown)
-			// Don't strip the inline positioning here: the panel is still rendered while it
-			// fades out, and reverting to vue-multiselect's base styles mid-fade snaps it
-			// above the trigger (a visible flicker). positionFloatingDropdown() rewrites every
-			// property on the next open, so leaving the stale values behind is harmless.
+			this.destroyDropdownPopper()
 		},
-		positionFloatingDropdown () {
-			const el = this.$refs['aioseo-select']?.$el
-			if (!el) {
-				return
-			}
-			const wrapper = el.querySelector('.multiselect__content-wrapper')
-			const trigger = el.querySelector('.multiselect__tags')
-			if (!wrapper || !trigger) {
+		createDropdownPopper () {
+			const select    = this.$refs['aioseo-select']
+			const reference = select?.$el?.querySelector('.multiselect__tags')
+			const floating  = select?.$refs?.list
+			if (!reference || !floating) {
 				return
 			}
 
-			const rect           = trigger.getBoundingClientRect()
-			const viewportHeight = window.innerHeight
+			this.popperInstance = createPopper(reference, floating, {
+				placement : 'bottom-start',
+				strategy  : 'fixed',
+				modifiers : [
+					{ name: 'offset', options: { offset: [ 0, 0 ] } },
+					{ name: 'flip', options: { fallbackPlacements: [ 'top-start' ], padding: 8 } },
+					{ name: 'preventOverflow', options: { padding: 8, altAxis: true } },
+					{ name: 'computeStyles', options: { gpuAcceleration: false, adaptive: true } },
+					{ name: 'eventListeners', options: { scroll: true, resize: true } },
+					{ name: 'hide' },
+					{ name: 'applyStyles', enabled: false },
+					{
+						name     : 'writeDropdownStyles',
+						enabled  : true,
+						phase    : 'write',
+						requires : [ 'computeStyles' ],
+						fn ({ state }) {
+							// The panel lives in <body>, so it would otherwise keep following a field scrolled out of its container.
+							if (state.modifiersData.hide?.isReferenceHidden) {
+								select.deactivate()
+								return
+							}
 
-			// vue-multiselect opens the panel with `transition: all 0.15s` (it only means to
-			// fade opacity). That `all` also animates the position/size we set below, so the
-			// panel visibly slides and expands into place — scope it to opacity to kill the jerk.
-			wrapper.style.transition = 'opacity 0.15s ease'
-			// Apply fixed positioning and the final width before measuring height, so the
-			// measurement reflects how the option text wraps. `bottom: auto` neutralizes
-			// vue-multiselect's `.multiselect--above { bottom: 100% }`: without it an
-			// open-above panel is constrained by both top and bottom and collapses to ~1px.
-			wrapper.style.position  = 'fixed'
-			wrapper.style.bottom    = 'auto'
-			wrapper.style.left      = `${rect.left}px`
-			wrapper.style.width     = `${rect.width}px`
-			wrapper.style.maxHeight = '300px'
-			// Above the modal stack — base modals in this app top out around 9999.
-			wrapper.style.zIndex    = '100000'
+							state.elements.popper.setAttribute('data-popper-placement', state.placement)
+							select.dropdownStyles = {
+								...state.styles.popper,
+								width : `${state.rects.reference.width}px`
+							}
+						}
+					}
+				]
+			})
 
-			const spaceBelow  = viewportHeight - rect.bottom
-			const spaceAbove  = rect.top
-			const panelHeight = wrapper.offsetHeight
-			const openAbove   = panelHeight > spaceBelow && spaceAbove > spaceBelow
-			const maxHeight   = Math.max(120, Math.min(300, (openAbove ? spaceAbove : spaceBelow) - 8))
-
-			wrapper.style.maxHeight = `${maxHeight}px`
-			wrapper.style.top       = openAbove
-				? `${rect.top - Math.min(panelHeight, maxHeight)}px`
-				: `${rect.bottom}px`
+			this.popperObserver = new ResizeObserver(() => this.popperInstance?.update())
+			this.popperObserver.observe(reference)
+		},
+		destroyDropdownPopper () {
+			if (this.popperRaf) {
+				cancelAnimationFrame(this.popperRaf)
+				this.popperRaf = null
+			}
+			if (this.popperObserver) {
+				this.popperObserver.disconnect()
+				this.popperObserver = null
+			}
+			if (this.popperInstance) {
+				this.popperInstance.destroy()
+				this.popperInstance = null
+			}
 		}
 	},
 	mounted () {
@@ -346,15 +367,81 @@ export default {
 		}
 	},
 	beforeUnmount () {
-		if (this.floatDropdown) {
-			window.removeEventListener('scroll', this.positionFloatingDropdown, true)
-			window.removeEventListener('resize', this.positionFloatingDropdown)
-		}
+		this.destroyDropdownPopper()
 	}
 }
 </script>
 
 <style lang="scss">
+@mixin aioseo-select-dropdown-content {
+	border: 1px solid $input-border;
+	border-top: none;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	z-index: 50;
+	-webkit-overflow-scrolling: touch;
+
+	.multiselect__content {
+		max-width: 100%;
+	}
+
+	li.multiselect__element {
+		margin: 0;
+		border-bottom: 1px solid $border;
+
+		&.last {
+			border-bottom: none;
+		}
+
+		.multiselect__option {
+			color: $black;
+			font-weight: 400;
+			font-size: $font-md;
+			white-space: normal;
+			line-height: 22px;
+			padding: 8px;
+			min-height: 38px;
+
+			&[data-select='']::after {
+				content: none;
+			}
+
+			&--highlight {
+				background-color: $inline-background;
+
+				&:after {
+					background-color: $blue;
+					color: #fff;
+					font-size: 12px;
+				}
+			}
+
+			&--selected {
+				background-color: $inline-background;
+			}
+
+			&--disabled {
+				font-weight: initial;
+				background-color: #fff !important;
+				color: $placeholder-color;
+			}
+
+			.docLink {
+				font-size: 13px;
+				float: right;
+			}
+		}
+	}
+}
+
+@mixin aioseo-select-dropdown-small {
+	li.multiselect__element .multiselect__option {
+		font-size: 14px;
+		padding: 8px;
+		min-height: 30px;
+	}
+}
+
 .aioseo-select {
 	height: 48px;
 
@@ -537,10 +624,8 @@ export default {
 			font-size: 14px;
 		}
 
-		.multiselect__content-wrapper li.multiselect__element .multiselect__option {
-			font-size: 14px;
-			padding: 8px;
-			min-height: 30px;
+		.multiselect__content-wrapper {
+			@include aioseo-select-dropdown-small;
 		}
 	}
 
@@ -577,60 +662,34 @@ export default {
 	}
 
 	.multiselect__content-wrapper {
-		border: 1px solid $input-border;
-		border-top: none;
-		border-bottom-left-radius: 3px;
-		border-bottom-right-radius: 3px;
-		z-index: 50;
-		-webkit-overflow-scrolling: touch;
+		@include aioseo-select-dropdown-content;
+	}
+}
 
-		.multiselect__content {
-			max-width: 100%;
-		}
+.multiselect__content-wrapper.aioseo-select__dropdown {
+	box-sizing: border-box;
 
-		li.multiselect__element {
-			margin: 0;
-			border-bottom: 1px solid $border;
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
 
-			&.last {
-				border-bottom: none;
-			}
+	@include aioseo-select-dropdown-content;
 
-			.multiselect__option {
-				color: $black;
-				font-weight: 400;
-				font-size: $font-md;
-				white-space: normal;
-				line-height: 22px;
-				padding: 8px;
-				min-height: 38px;
+	z-index: var(--aioseo-select-dropdown-z-index, 100000);
 
-				&--highlight {
-					background-color: $inline-background;
+	&[data-popper-placement^="top"] {
+		border-top: 1px solid $input-border;
+		border-bottom: none;
+		border-top-left-radius: 3px;
+		border-top-right-radius: 3px;
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
 
-					&:after {
-						background-color: $blue;
-						color: #fff;
-						font-size: 12px;
-					}
-				}
-
-				&--selected {
-					background-color: $inline-background;
-				}
-
-				&--disabled {
-					font-weight: initial;
-					background-color: #fff !important;
-					color: $placeholder-color;
-				}
-
-				.docLink {
-					font-size: 13px;
-					float: right;
-				}
-			}
-		}
+	&.aioseo-select__dropdown--small {
+		@include aioseo-select-dropdown-small;
 	}
 }
 </style>

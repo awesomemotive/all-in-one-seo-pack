@@ -38,7 +38,7 @@ class PostSeoService {
 		// Resolve the WordPress post first: a missing id should report not_found rather than a
 		// misleading permission error ( current_user_can( 'edit_post', <missing id> ) is always false ).
 		// The per-post edit_post gate below still protects existing posts the caller cannot edit (IDOR).
-		if ( ! get_post( $postId ) ) {
+		if ( ! $this->isSupportedPost( $postId ) ) {
 			return new \WP_Error( 'not_found', __( 'Post not found.', 'all-in-one-seo-pack' ), [ 'status' => 404 ] );
 		}
 
@@ -46,10 +46,8 @@ class PostSeoService {
 			return new \WP_Error( 'forbidden', __( 'You do not have permission to view this post.', 'all-in-one-seo-pack' ), [ 'status' => 403 ] );
 		}
 
+		// Posts without an aioseo_posts row fall back to the model defaults.
 		$post = Models\Post::getPost( $postId );
-		if ( ! $post->exists() ) {
-			return new \WP_Error( 'not_found', __( 'Post not found.', 'all-in-one-seo-pack' ), [ 'status' => 404 ] );
-		}
 
 		$response = $this->serialize( $post );
 
@@ -79,7 +77,7 @@ class PostSeoService {
 		// Resolve the WordPress post first: a missing id should report not_found rather than a
 		// misleading permission error ( current_user_can( 'edit_post', <missing id> ) is always false ).
 		// The per-post edit_post gate below still protects existing posts the caller cannot edit (IDOR).
-		if ( ! get_post( $postId ) ) {
+		if ( ! $this->isSupportedPost( $postId ) ) {
 			return new \WP_Error( 'not_found', __( 'Post not found.', 'all-in-one-seo-pack' ), [ 'status' => 404 ] );
 		}
 
@@ -87,10 +85,8 @@ class PostSeoService {
 			return new \WP_Error( 'forbidden', __( 'You do not have permission to edit this post.', 'all-in-one-seo-pack' ), [ 'status' => 403 ] );
 		}
 
+		// Posts without an aioseo_posts row get the model defaults; savePost() creates the row.
 		$post = Models\Post::getPost( $postId );
-		if ( ! $post->exists() ) {
-			return new \WP_Error( 'not_found', __( 'Post not found.', 'all-in-one-seo-pack' ), [ 'status' => 404 ] );
-		}
 
 		$fields = is_array( $fields ) ? $fields : [];
 
@@ -116,6 +112,21 @@ class PostSeoService {
 			'updated' => true,
 			'post'    => $this->serialize( Models\Post::getPost( $postId ) )
 		];
+	}
+
+	/**
+	 * Checks whether the post exists and belongs to a post type that has SEO data.
+	 *
+	 * @since 5.0.5
+	 *
+	 * @param  int  $postId The post ID.
+	 * @return bool         Whether the post is supported.
+	 */
+	private function isSupportedPost( $postId ) {
+		$wpPost = get_post( $postId );
+
+		// Revisions, reusable blocks, menu items etc. have no page that reads their SEO data.
+		return $wpPost && in_array( $wpPost->post_type, aioseo()->helpers->getPublicPostTypes( true ), true );
 	}
 
 	/**
@@ -168,9 +179,10 @@ class PostSeoService {
 		// so we rebuild rather than clone.
 		$buildQuery = function() use ( $postTypes, $statuses, $missingClauses ) {
 			$query = aioseo()->core->db
-				->start( 'aioseo_posts as ap' )
-				->select( 'ap.post_id, ap.title, ap.description, ap.keyphrases, ap.seo_score, p.post_title, p.post_type, p.post_status' )
-				->join( 'posts as p', 'p.ID = ap.post_id' )
+				->start( 'posts as p' )
+				->select( 'p.ID as post_id, ap.title, ap.description, ap.keyphrases, ap.seo_score, p.post_title, p.post_type, p.post_status' )
+				// A post with no aioseo_posts row yet has every SEO field missing.
+				->leftJoin( 'aioseo_posts as ap', 'ap.post_id = p.ID' )
 				->whereIn( 'p.post_type', $postTypes )
 				->whereIn( 'p.post_status', $statuses );
 

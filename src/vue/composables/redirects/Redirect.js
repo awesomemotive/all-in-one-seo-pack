@@ -4,12 +4,33 @@ import {
 } from '@/vue/stores'
 
 import { sanitizeString } from '@/vue/utils/strings'
-import { getPathRelativeToHome } from '@/vue/utils/urls'
+import { decodeUrlWhitespace, encodeUrlWhitespace, getPathRelativeToHome } from '@/vue/utils/urls'
 import links from '@/vue/utils/links'
 
 import { __ } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
+
+// The characters PHP's trim() strips. Unlike String.prototype.trim(), it keeps non-breaking and other Unicode spaces.
+const phpTrimCharacters = [ ' ', '\t', '\n', '\r', '\0', '\x0B' ]
+
+const phpLtrim = (string) => {
+	let start = 0
+	while (start < string.length && phpTrimCharacters.includes(string[start])) {
+		start++
+	}
+
+	return string.slice(start)
+}
+
+const phpTrim = (string) => {
+	let end = string.length
+	while (0 < end && phpTrimCharacters.includes(string[end - 1])) {
+		end--
+	}
+
+	return phpLtrim(string.slice(0, end))
+}
 
 export const useRedirect = () => {
 	const redirectHasUnPublishedPost = (redirect) => {
@@ -61,6 +82,12 @@ export const useRedirect = () => {
 			// Remove the hash first, so Ignore Slash sees the slash in front of it.
 			let compareSource = redirect.url.regex ? redirect.url.url : redirect.url.url.replace(/#.*?$/, ''),
 				compareTarget = relativeTarget.replace(/#.*?$/, '')
+			if (!redirect.url.regex) {
+				// The source field holds whitespace encoded and the target field holds it raw.
+				// Trim each the way it's saved: PHP's trim() for the source, esc_url_raw()'s ltrim() for the target.
+				compareSource = encodeUrlWhitespace(phpTrim(decodeUrlWhitespace(compareSource)))
+				compareTarget = encodeUrlWhitespace(phpLtrim(compareTarget))
+			}
 			compareSource = redirect.url.ignoreSlash ? links.unTrailingSlashIt(compareSource) : compareSource
 			compareTarget = redirect.url.ignoreSlash ? links.unTrailingSlashIt(compareTarget) : compareTarget
 			compareSource = redirect.url.ignoreCase ? compareSource.toLowerCase() : compareSource

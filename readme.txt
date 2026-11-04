@@ -1,10 +1,10 @@
 === All in One SEO – AI SEO Plugin to Boost SEO Rankings & Traffic (Schema, Local SEO, Sitemap & SEO Insights) ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, AI, schema, XML Sitemap, redirect
-Tested up to: 7.1.3
+Tested up to: 7.1.4
 Requires at least: 5.7
 Requires PHP: 7.4
-Stable tag: 5.0.4
+Stable tag: 5.0.5
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -192,6 +192,25 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 5.0.5**
+
+- Fixed: Visiting a WooCommerce product page could open the slide cart, add the product to the cart or redirect to checkout when FunnelKit Cart, Funnel Builder or CartHopper Skip Cart was active.
+- Fixed: A database update that kept failing could be retried on every page load.
+- Fixed: Robots.txt rules containing colons, line breaks, special characters or a "0" value could look different in the editor preview than in the served file.
+- Fixed: Malformed imported robots.txt rules could break the robots.txt editor or the settings import.
+- Fixed: Improved access protections in the AI Image Generator: it now only deletes AI-generated images and respects the AI off-switch.
+- Fixed: The AI Image Generator now explains why a selected image can't be edited.
+- Fixed: The Edit Snippet button in the SEO Preview could be missing on a homepage that uses the theme's layout when a Posts page was still set in Settings > Reading.
+- Fixed: Post and term titles containing square brackets could break their links in llms.txt and llms-full.txt.
+- Fixed: Some dropdowns in the Local SEO and AIOSEO metaboxes, such as Payment Info, Country, Article Tags, Priority Score, Keywords and Redirects, were cut off by the metabox container.
+- Fixed: An empty coloured block could appear over the highlighted option in AIOSEO dropdowns.
+- Fixed: Focus keywords set on taxonomy terms were missing from the Keyword Rank Tracker's Import Keywords list.
+- Fixed: The Keyword Rank Tracker's Import Keywords list was capped at 50 keywords and could miss some posts' focus keywords.
+- Fixed: Recipient email addresses in the SEO Alerts settings weren't saved.
+- Fixed: Several settings weren't imported correctly from Yoast SEO Premium, including breadcrumbs, website name, number of employees, term meta and crawl optimization settings (with their robots.txt rules and the taxonomy feed setting).
+- Fixed: Redirects created from a 404 log entry with a space (%20) in the URL could lose the space, so the redirect didn't match.
+- Fixed: AI agents using AIOSEO's abilities couldn't read or update SEO data on posts that hadn't been opened in AIOSEO yet.
+
 **New in Version 5.0.4**
 
 - New: TruSEO now fully supports Elementor, Divi and WPBakery Page Builder: see issues highlighted right in your layout, jump straight to them, fix spelling mistakes in one click and get AI suggestions without leaving the builder.
@@ -256,11 +275,6 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 - Fixed: Background "Unescape data" tasks could be cancelled on AIOSEO Lite.
 - Fixed: Link Assistant domain icons now show a fallback icon instead of a broken image when a site's icon can't be loaded.
 - Fixed: Display issues in the Search Statistics Index Status chart.
-
-**New in Version 5.0.2.1**
-
-- Fixed: Improved security protections for shortcodes on search pages.
-- Fixed: The Elementor editor could get stuck on "Loading" on some hosts, such as GoDaddy Managed WordPress, when Redirects was active.
 
 **See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=aioseo) for previous releases.**
 
@@ -337,6 +351,6 @@ AIOSEO can easily help you get your sitemaps listed inside Google Search Console
 
 == Upgrade Notice ==
 
-= 5.0.4 =
+= 5.0.5 =
 
 This update adds major improvements and bug fixes.

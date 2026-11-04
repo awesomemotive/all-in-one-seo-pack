@@ -205,6 +205,8 @@ export const useAiContent = () => {
 			minContentLength
 		),
 		rephrase            : __('Regenerate', td),
+		aiDisabled          : __('AI features have been disabled on this site.', td),
+		seedImageForbidden  : __('You don\'t have permission to edit the selected image with AI. It may be attached to a post you can\'t access.', td),
 		somethingWrong      : __('We ran into an error. Please try again or contact support if it persists.', td),
 		viewPreviousResults : __('View Previous Results', td)
 	}

@@ -34,6 +34,7 @@
 						<div class="rule-row">
 							<div class="rule-option">
 								<base-select
+									float-dropdown
 									:options="filteredTypes"
 									size="medium"
 									:placeholder="strings.selectMatchRule"
@@ -42,6 +43,7 @@
 								/>
 
 								<base-select
+									float-dropdown
 									v-if="getType(index, 'options') || getType(index, 'taggable')"
 									:key="`rule-${index}-${getRuleValue('type', index)?.value || 'no-type'}`"
 									:options="getType(index, 'options') || []"

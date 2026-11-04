@@ -119,7 +119,7 @@ import {
 } from '@/vue/stores'
 
 import { sanitizeString } from '@/vue/utils/strings'
-import { makeUrlRelative } from '@/vue/utils/urls'
+import { decodeUrlWhitespace, encodeUrlWhitespace, makeUrlRelative } from '@/vue/utils/urls'
 
 import { useRedirect } from '@/vue/composables/redirects/Redirect'
 import { useUrl } from '@/vue/composables/Url'
@@ -302,9 +302,12 @@ export default {
 					value = value.replace(/(https?:\/)(\/)+|(\/)+/g, '$1$2$3')
 				}
 
-				// Remove white space from the url if it's not a regex.
+				// Encode white space in the url if it's not a regex. A regex is matched against the decoded
+				// request path, so undo the encoding in case the value was typed before Regex was ticked.
 				if (!this.url.regex && value.startsWith('/')) {
-					value = value.replace(/\s+/g, '')
+					value = encodeUrlWhitespace(value)
+				} else if (this.url.regex) {
+					value = decodeUrlWhitespace(value)
 				}
 
 				// Remove the home url.

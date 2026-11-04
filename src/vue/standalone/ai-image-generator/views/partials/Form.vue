@@ -28,7 +28,6 @@
 						:searchable="false"
 						float-dropdown
 						size="medium"
-						class="ai-image-generator__model-select"
 					>
 						<template #singleLabel="{ option }">
 							<div class="ai-image-generator__model-row">
@@ -185,7 +184,6 @@
 						:searchable="false"
 						float-dropdown
 						size="medium"
-						class="ai-image-generator__model-select"
 					>
 						<template #singleLabel="{ option }">
 							<div class="ai-image-generator__model-row">
@@ -381,7 +379,7 @@ const regenerate = async () => {
 	} catch (error) {
 		console.error(error)
 
-		aiImageGeneratorStore.errors.api = aiContentStrings.somethingWrong
+		aiImageGeneratorStore.setApiError(error)
 	}
 }
 
@@ -409,14 +407,6 @@ onMounted(() => {
 		font-size: 13px;
 		line-height: 1.5;
 		margin-top: 5px;
-	}
-
-	&__model-select {
-		// vue-multiselect paints a solid blue rectangle in the option's top-right corner
-		// (intended as a "press enter" hint). It collides with our New badge — hide it here.
-		:deep(.multiselect__option::after) {
-			content: none;
-		}
 	}
 
 	&__model-row {

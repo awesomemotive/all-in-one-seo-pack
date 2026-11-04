@@ -78,7 +78,6 @@ import {
 	useAiImageGeneratorStore
 } from '@/vue/stores'
 
-import { useAiContent } from '@/vue/composables/AiContent'
 import { isBlockEditor, isClassicEditor } from '@/vue/utils/context'
 import { __ } from '@/vue/plugins/translations'
 
@@ -91,10 +90,6 @@ import SvgImageGenerator from '@/vue/components/common/svg/ai/ImageGenerator'
 
 const aiImageGeneratorStore = useAiImageGeneratorStore()
 const td = import.meta.env.VITE_TEXTDOMAIN
-
-const {
-	strings : aiContentStrings
-} = useAiContent()
 
 const strings = {
 	showPreviousResults : __('Show Previous Results', td),
@@ -156,7 +151,7 @@ const generate = async () => {
 	} catch (error) {
 		console.error(error)
 
-		aiImageGeneratorStore.errors.api = aiContentStrings.somethingWrong
+		aiImageGeneratorStore.setApiError(error)
 	}
 }
 

@@ -27,6 +27,10 @@
 		--aioseo-popper-z-index: 999999;
 	}
 
+	.multiselect__content-wrapper.aioseo-select__dropdown {
+		--aioseo-select-dropdown-z-index: 999999;
+	}
+
 	.aioseo-site-origin-sidebar__content {
 		overflow: visible;
 	}

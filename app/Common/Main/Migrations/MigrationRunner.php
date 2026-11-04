@@ -57,6 +57,24 @@ class MigrationRunner {
 	private $lockName = 'aioseo_run_updates_lock';
 
 	/**
+	 * Seconds to wait after the first failed attempt. Doubles with each attempt, up to {@see MAX_RETRY_DELAY}.
+	 *
+	 * @since 5.0.5
+	 *
+	 * @var int
+	 */
+	const RETRY_DELAY = MINUTE_IN_SECONDS;
+
+	/**
+	 * The longest wait between attempts at a failing migration.
+	 *
+	 * @since 5.0.5
+	 *
+	 * @var int
+	 */
+	const MAX_RETRY_DELAY = DAY_IN_SECONDS;
+
+	/**
 	 * @since 4.9.7.2
 	 */
 	public function __construct() {
@@ -85,7 +103,8 @@ class MigrationRunner {
 	 * future-bumped lastSchemaVersion can't strand work the way 4.9.7.1's
 	 * lastActiveVersion bump did.
 	 *
-	 * @since 4.9.7.2
+	 * @since   4.9.7.2
+	 * @version 5.0.5 Back off between attempts at a failing migration; skip the log write when nothing changed.
 	 *
 	 * @return void
 	 */
@@ -106,6 +125,7 @@ class MigrationRunner {
 
 		try {
 			$log     = $this->log->read();
+			$oldLog  = $log;
 			$allDone = true;
 
 			foreach ( $this->migrations as $migration ) {
@@ -115,6 +135,12 @@ class MigrationRunner {
 					if ( ! isset( $log[ $name ] ) || 1 !== ( $log[ $name ]['status'] ?? 0 ) ) {
 						$log[ $name ] = $this->successEntry( $migration, $log );
 					}
+					continue;
+				}
+
+				// A persistent failure (e.g. a DB user without ALTER) would otherwise rerun up() on every request.
+				if ( $this->isWaitingToRetry( $log[ $name ] ?? null ) ) {
+					$allDone = false;
 					continue;
 				}
 
@@ -135,7 +161,9 @@ class MigrationRunner {
 				}
 			}
 
-			$this->log->write( $log );
+			if ( $log !== $oldLog ) {
+				$this->log->write( $log );
+			}
 
 			if ( $allDone ) {
 				aioseo()->internalOptions->internal->lastSchemaVersion = aioseo()->version;
@@ -167,6 +195,33 @@ class MigrationRunner {
 	}
 
 	/**
+	 * Whether a failed migration's last attempt is too recent to try again.
+	 *
+	 * NOTE: a plugin update retries right away, since it may ship the fix.
+	 *
+	 * @since 5.0.5
+	 *
+	 * @param  array|null $entry The migration's log entry.
+	 * @return bool
+	 */
+	private function isWaitingToRetry( $entry ) {
+		if (
+			! is_array( $entry ) ||
+			1 === ( $entry['status'] ?? 0 ) ||
+			empty( $entry['ran_at'] ) ||
+			( $entry['plugin_version'] ?? '' ) !== aioseo()->version
+		) {
+			return false;
+		}
+
+		$attempts = max( 1, (int) ( $entry['attempts'] ?? 1 ) );
+		$delay    = min( self::RETRY_DELAY * pow( 2, min( $attempts - 1, 20 ) ), self::MAX_RETRY_DELAY );
+
+		// UTC, since a plugin can change PHP's default time zone between the write and this read.
+		return time() < strtotime( $entry['ran_at'] . ' UTC' ) + $delay;
+	}
+
+	/**
 	 * Build a success log entry, preserving the prior attempts counter so
 	 * support can see how many retries it took to land.
 	 *
@@ -182,7 +237,7 @@ class MigrationRunner {
 
 		return [
 			'version'    => $migration->version(),
-			'ran_at'     => aioseo()->helpers->timeToMysql( time() ),
+			'ran_at'     => gmdate( 'Y-m-d H:i:s' ),
 			'status'     => 1,
 			'attempts'   => $attempts + 1,
 			'last_error' => null
@@ -193,7 +248,8 @@ class MigrationRunner {
 	 * Build a failure log entry, incrementing attempts so retry pressure is
 	 * visible in the log.
 	 *
-	 * @since 4.9.7.2
+	 * @since   4.9.7.2
+	 * @version 5.0.5 Records the plugin version, so an update retries right away.
 	 *
 	 * @param  Migration $migration The migration.
 	 * @param  array     $log       The current log state.
@@ -205,11 +261,12 @@ class MigrationRunner {
 		$attempts = isset( $log[ $name ]['attempts'] ) ? (int) $log[ $name ]['attempts'] : 0;
 
 		return [
-			'version'    => $migration->version(),
-			'ran_at'     => aioseo()->helpers->timeToMysql( time() ),
-			'status'     => 0,
-			'attempts'   => $attempts + 1,
-			'last_error' => $error
+			'version'        => $migration->version(),
+			'ran_at'         => gmdate( 'Y-m-d H:i:s' ),
+			'status'         => 0,
+			'attempts'       => $attempts + 1,
+			'last_error'     => $error,
+			'plugin_version' => aioseo()->version
 		];
 	}
 }

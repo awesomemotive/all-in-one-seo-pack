@@ -20,7 +20,11 @@ export const stringifyRuleset = ruleset => {
 		rules.push(`User-agent: ${userAgent}`)
 
 		Object.keys(ruleset[userAgent]).forEach(index => {
-			const [ directive, value ] = ruleset[userAgent][index].split(':').map(v => v.trim())
+			// Split on the first colon only: a value such as `/page:2/` holds colons of its own.
+			const rule      = ruleset[userAgent][index]
+			const separator = rule.indexOf(':')
+			const directive = rule.slice(0, separator).trim()
+			const value     = rule.slice(separator + 1).trim()
 			rules.push(`${directive.charAt(0).toUpperCase() + directive.slice(1)}: ${value}`)
 		})
 
@@ -50,7 +54,7 @@ export const groupRulesByUserAgent = rules => {
 	const groups = {}
 	rules.forEach(rule => {
 		const r = getJsonValue(rule)
-		if (!r?.userAgent || !r?.fieldValue) {
+		if (!r?.userAgent) {
 			return
 		}
 
@@ -59,13 +63,19 @@ export const groupRulesByUserAgent = rules => {
 			return
 		}
 
-		if (!groups[r.userAgent]) {
-			groups[r.userAgent] = [ `${r.directive}: ${r.fieldValue}` ]
+		// A line break inside a field would print the rest of it as a separate, forged directive line.
+		const [ userAgent, directive, fieldValue ] = [ r.userAgent, r.directive, r.fieldValue ].map(v => String(v).replace(/[\r\n]/g, ''))
+		if (!userAgent || !directive || !fieldValue) {
+			return
+		}
+
+		if (!groups[userAgent]) {
+			groups[userAgent] = [ `${directive}: ${fieldValue}` ]
 
 			return
 		}
 
-		groups[r.userAgent].push(`${r.directive}: ${r.fieldValue}`)
+		groups[userAgent].push(`${directive}: ${fieldValue}`)
 	})
 
 	return groups
@@ -148,18 +158,22 @@ export const validateRuleset = (ruleset) => {
 		previewIndex = incPreviewIndex(previewIndex, 2)
 
 		for (const [ index, rule ] of Object.entries(ruleset[userAgent])) {
-			const [ directive, value ] = [ rule.directive, rule.fieldValue ]
-			if (!directive || !value) {
+			// An import can store any JSON type; a rule the preview skips has nothing to validate.
+			if (!isRuleValueFilled(rule.directive) || !isRuleValueFilled(rule.fieldValue)) {
 				continue
 			}
+
+			const [ directive, value ] = [ String(rule.directive), String(rule.fieldValue) ]
 
 			let savePreviewIndex = previewIndex
 			// Compare all rules with each other, with the benefit of not making a comparison twice.
 			for (let nextIndex = parseInt(index) + 1; nextIndex < ruleset[userAgent].length; nextIndex++) {
-				const [ nextDirective, nextValue ] = [ ruleset[userAgent][nextIndex].directive, ruleset[userAgent][nextIndex].fieldValue ]
-				if (!nextDirective || !nextValue) {
+				const nextRule = ruleset[userAgent][nextIndex]
+				if (!isRuleValueFilled(nextRule.directive) || !isRuleValueFilled(nextRule.fieldValue)) {
 					continue
 				}
+
+				const [ nextDirective, nextValue ] = [ String(nextRule.directive), String(nextRule.fieldValue) ]
 
 				// Valueless or directiveless rules are not previewed, so we increment the `previewIndex` only if they are not empty.
 				previewIndex = incPreviewIndex(previewIndex, 1)

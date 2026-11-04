@@ -129,6 +129,7 @@ class RobotsTxt {
 	 *
 	 * @since   4.1.2
 	 * @version 4.4.2
+	 * @version 5.0.5 Escape the rule value with preg_quote() in the match pattern.
 	 *
 	 * @param  string $directive       The directive (allow/disallow).
 	 * @param  string $userAgent       The user agent.
@@ -152,7 +153,7 @@ class RobotsTxt {
 				}
 			}
 
-			$pattern = str_replace( [ '.', '*', '?', '$' ], [ '\.', '(.*)', '\?', '\$' ], $ruleValue );
+			$pattern = str_replace( '\*', '(.*)', preg_quote( $ruleValue, '#' ) );
 
 			foreach ( $rules1[ $userAgent ] as $rule1 ) {
 				$matches = [];
@@ -186,6 +187,7 @@ class RobotsTxt {
 	 *
 	 * @since   4.0.0
 	 * @version 4.4.2
+	 * @version 5.0.5 Print a rule whose value is '0'.
 	 *
 	 * @param  array  $allRules The rules array.
 	 * @return string           The stringified rules.
@@ -200,7 +202,7 @@ class RobotsTxt {
 			$robots[] = "\r\nUser-agent: $userAgent";
 			foreach ( $rules as $rule ) {
 				list( $directive, $value ) = $this->parseRule( $rule );
-				if ( empty( $directive ) || empty( $value ) ) {
+				if ( empty( $directive ) || '' === $value ) {
 					continue;
 				}
 
@@ -398,6 +400,7 @@ class RobotsTxt {
 	 * @version 4.4.2
 	 * @version 5.0.2 Guard against a non-array rules value; decode via {@see decodeStoredRule()}.
 	 * @version 5.0.3 Skip a rule whose user agent, directive or value is not a string or number.
+	 * @version 5.0.5 Keep a '0' value; strip line breaks from every field.
 	 *
 	 * @param  array $rules An array of rules.
 	 * @return array        The rules grouped by user agent.
@@ -410,7 +413,7 @@ class RobotsTxt {
 		$groups = [];
 		foreach ( $rules as $rule ) {
 			$r = $this->decodeStoredRule( $rule );
-			if ( empty( $r['userAgent'] ) || empty( $r['fieldValue'] ) ) {
+			if ( empty( $r['userAgent'] ) ) {
 				continue;
 			}
 
@@ -418,18 +421,25 @@ class RobotsTxt {
 			if (
 				! $this->isRuleValueFilled( $r['userAgent'] ) ||
 				! $this->isRuleValueFilled( $r['directive'] ?? null ) ||
-				! $this->isRuleValueFilled( $r['fieldValue'] )
+				! $this->isRuleValueFilled( $r['fieldValue'] ?? null )
 			) {
 				continue;
 			}
 
+			// A line break inside a field would print the rest of it as a separate, forged directive line.
 			// A float key would be truncated to an int; the string keeps it apart, as the JS preview does.
-			$userAgent = (string) $r['userAgent'];
+			$userAgent  = str_replace( [ "\r", "\n" ], '', (string) $r['userAgent'] );
+			$directive  = str_replace( [ "\r", "\n" ], '', (string) $r['directive'] );
+			$fieldValue = str_replace( [ "\r", "\n" ], '', (string) $r['fieldValue'] );
+			if ( '' === $userAgent || '' === $directive || '' === $fieldValue ) {
+				continue;
+			}
+
 			if ( empty( $groups[ $userAgent ] ) ) {
 				$groups[ $userAgent ] = [];
 			}
 
-			$groups[ $userAgent ][] = "{$r['directive']}: {$r['fieldValue']}";
+			$groups[ $userAgent ][] = "$directive: $fieldValue";
 		}
 
 		return $groups;
@@ -972,5 +982,55 @@ class RobotsTxt {
 		}
 
 		aioseo()->options->tools->robots->rules = $newRules;
+	}
+
+	/**
+	 * Rebuilds the Search Appearance related rules from the current option values.
+	 * NOTE: PHP counterpart to the RobotsTxt.js watchers for code that changes these options outside the admin UI (e.g. importers).
+	 *
+	 * @since 5.0.5
+	 *
+	 * @return void
+	 */
+	public function syncSearchAppearanceRules() {
+		$this->resetSearchAppearanceRules();
+
+		$newRules = [];
+
+		$unwantedBots  = aioseo()->options->searchAppearance->advanced->unwantedBots->all();
+		$botUserAgents = [
+			'AdsBot'          => 'googleAdsBot',
+			'Google-Extended' => 'googleGeminiVertexAiBots',
+			'GPTBot'          => 'openAiGptBot',
+			'CCBot'           => 'commonCrawlCcBot'
+		];
+
+		foreach ( $botUserAgents as $userAgent => $optionName ) {
+			if ( empty( $unwantedBots['all'] ) && empty( $unwantedBots['settings'][ $optionName ] ) ) {
+				continue;
+			}
+
+			$newRules[] = $this->encodeRule( [
+				'userAgent'  => $userAgent,
+				'directive'  => 'disallow',
+				'fieldValue' => '/',
+				'readOnly'   => true,
+				'bot'        => true
+			] );
+		}
+
+		if ( aioseo()->options->searchAppearance->advanced->searchCleanup->settings->preventCrawling ) {
+			foreach ( [ '/?s=', '/page/*/?s=', '/search/' ] as $fieldValue ) {
+				$newRules[] = $this->encodeRule( [
+					'userAgent'       => '*',
+					'directive'       => 'disallow',
+					'fieldValue'      => $fieldValue,
+					'readOnly'        => true,
+					'preventCrawling' => true
+				] );
+			}
+		}
+
+		aioseo()->options->tools->robots->rules = $this->uniqueRules( array_merge( $newRules, aioseo()->options->tools->robots->rules ) );
 	}
 }

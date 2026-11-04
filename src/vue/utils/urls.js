@@ -7,6 +7,44 @@ export const makeUrlRelative = function (url, baseUrl) {
 	return url.replace(pattern, '')
 }
 
+// Whitespace is part of the path, so it has to be encoded rather than dropped - dropping it points
+// the redirect at a different path than the one requested (e.g. a `/a%20b` request logs as `/a b`
+// and would be saved as `/ab`, which matches nothing).
+// NOTE: deliberately does not trim, so a trailing space stays typeable. `Utils\Request::normalizeUrl()`
+// trims on save.
+export const encodeUrlWhitespace = function (url) {
+	if ('string' !== typeof url) {
+		return url
+	}
+
+	return url.replace(/\s/g, character => encodeURIComponent(character))
+}
+
+/**
+ * Reverts {@link encodeUrlWhitespace}: decodes percent-encoded whitespace and leaves every other escape alone.
+ *
+ * @param   {string} url The URL.
+ * @returns {string}     The URL with its whitespace decoded.
+ */
+export const decodeUrlWhitespace = function (url) {
+	if ('string' !== typeof url) {
+		return url
+	}
+
+	// One match per UTF-8 encoded character, so neighbouring escapes are left alone.
+	const encodedCharacter = /%[0-7][0-9a-f]|%[c-d][0-9a-f]%[89ab][0-9a-f]|%e[0-9a-f](?:%[89ab][0-9a-f]){2}|%f[0-7](?:%[89ab][0-9a-f]){3}/gi
+
+	return url.replace(encodedCharacter, sequence => {
+		try {
+			const decoded = decodeURIComponent(sequence)
+
+			return /^\s$/.test(decoded) ? decoded : sequence
+		} catch {
+			return sequence
+		}
+	})
+}
+
 // Also drops a trailing dot on the host, since `SITE.` is the same host as `SITE`.
 const toSchemeAndWwwAgnostic = url => url
 	.replace(/^(?:https?:)?\/\/(?:www\.)?/i, '//')

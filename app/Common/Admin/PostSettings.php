@@ -450,10 +450,10 @@ class PostSettings {
 				$whereClause = ' AND ( aioseo_p.seo_score > 0 AND aioseo_p.seo_score < 50 ) ';
 				break;
 			case 'okay':
-				$whereClause = ' AND aioseo_p.seo_score BETWEEN 50 AND 80 ';
+				$whereClause = ' AND aioseo_p.seo_score BETWEEN 50 AND 79 ';
 				break;
 			case 'good':
-				$whereClause = ' AND aioseo_p.seo_score > 80 ';
+				$whereClause = ' AND aioseo_p.seo_score >= 80 ';
 				break;
 		}
 

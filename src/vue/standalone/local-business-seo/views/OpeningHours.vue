@@ -124,6 +124,7 @@
 									</div>
 									<div class="aioseo-col-hours text-xs-left">
 										<base-select
+											float-dropdown
 											:disabled="getWeekDay(index).open24h || getWeekDay(index).closed"
 											size="medium"
 											:options="postEditorStore.currentPost.local_seo.openingHours.use24hFormat ? HOURS_24H_FORMAT : HOURS_12H_FORMAT"
@@ -133,6 +134,7 @@
 										/>
 										<span class="separator">-</span>
 										<base-select
+											float-dropdown
 											:disabled="getWeekDay(index).open24h || getWeekDay(index).closed"
 											size="medium"
 											:options="postEditorStore.currentPost.local_seo.openingHours.use24hFormat ? HOURS_24H_FORMAT : HOURS_12H_FORMAT"
