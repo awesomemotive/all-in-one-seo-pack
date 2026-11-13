@@ -112,10 +112,7 @@ class Frontend {
 			if ( is_search() ) {
 				$type = 'search';
 				// The search query ends up in the crumb that breadcrumbToDisplay() runs do_shortcode() on.
-				// It comes back decoded, so it is escaped for html here and again for the decode the crumb
-				// template does before output.
-				$reference = aioseo()->helpers->removeShortcodeBrackets( sanitize_text_field( get_search_query() ) );
-				$reference = htmlspecialchars( esc_html( $reference ), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 );
+				$reference = esc_html( aioseo()->helpers->removeShortcodeBrackets( sanitize_text_field( get_search_query() ) ) );
 			}
 
 			if ( is_404() ) {
@@ -382,13 +379,14 @@ class Frontend {
 	/**
 	 * Helper function to strip a html link from the crumb.
 	 *
-	 * @since 4.1.1
+	 * @since   4.1.1
+	 * @version 5.0.5.1 Match every anchor start tag, not only ones followed by whitespace.
 	 *
 	 * @param  string $html The crumb's html.
 	 * @return string       A crumb html without links.
 	 */
 	public function stripLink( $html ) {
-		return preg_replace( '/<a\s.*?>|<\/a>/is', '', (string) $html );
+		return preg_replace( '/<a(?![a-z0-9-])[^>]*>|<\/a>/i', '', (string) $html );
 	}
 
 	/**

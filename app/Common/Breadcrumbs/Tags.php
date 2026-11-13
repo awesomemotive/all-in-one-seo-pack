@@ -25,7 +25,8 @@ class Tags {
 	/**
 	 * Replace the tags in the string provided.
 	 *
-	 * @since 4.1.1
+	 * @since   4.1.1
+	 * @version 5.0.5.1 Escape the tag values and stop decoding the whole string.
 	 *
 	 * @param  string  $string           The string with tags.
 	 * @param  array   $item             The breadcrumb item.
@@ -46,7 +47,7 @@ class Tags {
 			$tagId   = aioseo()->tags->denotationChar . $tag['id'];
 			$pattern = "/$tagId(?![a-zA-Z0-9_])/im";
 			if ( preg_match( $pattern, (string) $string ) ) {
-				$tagValue = str_replace( '$', '\$', (string) $this->getTagValue( $tag, $item ) );
+				$tagValue = str_replace( '$', '\$', $this->escapeTagValue( $tag['id'], $this->getTagValue( $tag, $item ) ) );
 				$string   = preg_replace( $pattern, $tagValue, (string) $string );
 			}
 		}
@@ -56,17 +57,43 @@ class Tags {
 		}
 
 		// Remove any remaining tags from the title attribute.
+		// Only the title is decoded: decoding the whole string would turn encoded tag values into live markup.
 		$string = preg_replace_callback( '/title="([^"]*)"/i', function ( $matches ) {
 			$sanitizedTitle = wp_strip_all_tags( aioseo()->helpers->decodeHtmlEntities( $matches[1] ) );
 
 			return 'title="' . esc_attr( $sanitizedTitle ) . '"';
-		}, aioseo()->helpers->decodeHtmlEntities( $string ) );
+		}, (string) $string );
 
 		return preg_replace(
 			'/>thisisjustarandomplaceholder<(?![a-zA-Z0-9_])/im',
 			aioseo()->helpers->decodeHtmlEntities( aioseo()->options->searchAppearance->global->separator ),
 			(string) $string
 		);
+	}
+
+	/**
+	 * Escapes a tag value for the crumb's HTML.
+	 *
+	 * @since 5.0.5.1
+	 *
+	 * @param  string $tagId The tag ID.
+	 * @param  mixed  $value The tag value.
+	 * @return string        The escaped tag value.
+	 */
+	protected function escapeTagValue( $tagId, $value ) {
+		$value = (string) $value;
+
+		switch ( $tagId ) {
+			case 'breadcrumb_link':
+				return esc_url( $value );
+			// These return markup.
+			case 'breadcrumb_separator':
+			case 'breadcrumb_wc_product_price':
+				return $value;
+			default:
+				// Decoded first so the entities WordPress already stored aren't double-encoded.
+				return esc_html( aioseo()->helpers->decodeHtmlEntities( $value ) );
+		}
 	}
 
 	/**
