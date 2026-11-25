@@ -22,7 +22,12 @@
 						<template v-if="isConnected">
 							<div class="google-search-console-settings__content-title">{{ strings.connected }}</div>
 
-							<div class="google-search-console-settings__content-text">{{ strings.syncYourSiteWithGsc }}</div>
+							<div
+								v-if="hasSearchStatistics"
+								class="google-search-console-settings__content-text"
+								v-safe-html="strings.connectedDescription"
+							/>
+							<div v-else class="google-search-console-settings__content-text">{{ strings.syncYourSiteWithGsc }}</div>
 
 							<base-button
 								size="medium"
@@ -45,7 +50,7 @@
 						</template>
 
 						<template v-if="!isConnected">
-							<div v-if="showUpgradeCta" class="google-search-console-settings__content-text">{{ strings.connectText }}</div>
+							<div class="google-search-console-settings__content-text">{{ strings.connectText }}</div>
 
 							<base-button
 								v-if="showUpgradeCta"
@@ -58,7 +63,7 @@
 								{{ strings.connectToGoogleSearchConsole }}&nbsp;&rarr;
 							</base-button>
 
-							<div class="google-search-console-settings__content-text">{{ strings.syncYourSiteWithGsc }}</div>
+							<div v-if="showUpgradeCta" class="google-search-console-settings__content-text">{{ strings.syncYourSiteWithGsc }}</div>
 
 							<ul class="google-search-console-settings__content-list">
 								<li>
@@ -124,6 +129,7 @@ import {
 
 import license from '@/vue/utils/license'
 import links from '@/vue/utils/links'
+import { escapeHtml, sanitizeUrl } from '@/vue/utils/strings'
 import { merge } from 'lodash-es'
 
 import { useGoogleSearchConsole } from '@/vue/composables/GoogleSearchConsole'
@@ -134,7 +140,7 @@ import DisconnectModal from '@/vue/pages/search-statistics/views/partials/Discon
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgConnectGoogleSearchConsole from '@/vue/components/common/svg/ConnectGoogleSearchConsole'
 
-import { __ } from '@/vue/plugins/translations'
+import { __, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -167,16 +173,26 @@ const props = defineProps({
 })
 
 const strings = merge(composableStrings, {
-	connectYourSite : __('Connect Your Site to Google Search Console', td),
-	connected       : __('Google Search Console is Connected.', td),
-	reconnect       : __('Reconnect', td),
-	disconnect      : __('Disconnect', td),
-	connectText     : __('Quickly verify ownership in Google Search Console and automatically submit sitemaps with one click. Speed up indexing, increase visibility and optimize your site\'s performance to effortlessly attract more organic traffic.', td),
-	upgradeButton   : __('Unlock Search Statistics', td)
+	connectYourSite      : __('Connect Your Site to Google Search Console', td),
+	connected            : __('Google Search Console is Connected.', td),
+	reconnect            : __('Reconnect', td),
+	disconnect           : __('Disconnect', td),
+	upgradeButton        : __('Unlock Search Statistics', td),
+	// Rendered as HTML, so every part except the link markup is escaped.
+	connectedDescription : sprintf(
+		escapeHtml(
+			// Translators: 1 - The plugin short name ("AIOSEO"), 2 - A link to the Search Statistics page.
+			__('Your site is verified with Google Search Console, and %1$s keeps your sitemaps in sync. See your keyword rankings, search traffic and content performance in %2$s.', td)
+		),
+		escapeHtml(import.meta.env.VITE_SHORT_NAME),
+		links.getPlainLink(escapeHtml(__('Search Statistics', td)), sanitizeUrl(rootStore.aioseo.urls.aio.searchStatistics))
+	)
 })
 
+const hasSearchStatistics = computed(() => license.hasCoreFeature('search-statistics'))
+
 const showUpgradeCta = computed(() => {
-	return !license.hasCoreFeature('search-statistics') && !props.isConnected
+	return !hasSearchStatistics.value && !props.isConnected
 })
 </script>
 

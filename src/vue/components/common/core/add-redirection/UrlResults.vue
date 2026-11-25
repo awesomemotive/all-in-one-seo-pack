@@ -10,7 +10,7 @@
 					<div class="option">
 						<div class="option-title">
 							<div
-								v-html="getOptionTitle(result.label)"
+								v-safe-html="getOptionTitle(result.label)"
 							/>
 
 							<core-pro-badge
@@ -27,7 +27,7 @@
 
 					<a
 						class="option-permalink"
-						:href="result.link"
+						v-safe-href="result.link"
 						target="_blank"
 						@click.stop="() => {}"
 					>
@@ -41,7 +41,7 @@
 
 <script>
 import { escapeRegExp } from 'lodash-es'
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 import CoreProBadge from '@/vue/components/common/core/ProBadge'
 import SvgExternal from '@/vue/components/common/svg/External'
 
@@ -73,9 +73,9 @@ export default {
 	},
 	methods : {
 		getOptionTitle (title) {
-			// First, sanitize the title and URL. We must do this as we'll be using the result of this method in a v-html directive.
-			title     = sanitizeString(title)
-			const url = sanitizeString(this.url)
+			// First, sanitize the title and URL. We must do this as we'll be using the result of this method in a v-safe-html directive.
+			title     = stripMarkup(title)
+			const url = stripMarkup(this.url)
 
 			const regex = new RegExp(`(${escapeRegExp(url)})`, 'gi')
 			return title.replace(regex, '<span class="search-term">$1</span>')

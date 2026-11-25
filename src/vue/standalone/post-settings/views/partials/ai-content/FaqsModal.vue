@@ -184,6 +184,7 @@ import SvgFaq from '@/vue/components/common/svg/ai/Faq'
 import SvgRephrase from '@/vue/components/common/svg/ai/Rephrase'
 
 import { __, _n } from '@/vue/plugins/translations'
+import { escapeHtml } from '@/vue/utils/strings'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
@@ -224,7 +225,7 @@ export default {
 					.join('\n\n')
 			} else {
 				content = faqsToCopy
-					.map(faq => `<h3><strong>${faq.question}</strong></h3>\n<p>${faq.answer}</p>`)
+					.map(faq => `<h3><strong>${escapeHtml(faq.question)}</strong></h3>\n<p>${escapeHtml(faq.answer)}</p>`)
 					.join('\n\n')
 			}
 

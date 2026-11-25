@@ -501,7 +501,7 @@ import { getTruSeoInstance } from '@/vue/plugins/tru-seo/TruSeoSingleton'
 import { useAiContent } from '@/vue/composables/AiContent'
 import { __, _n, sprintf } from '@/vue/plugins/translations'
 import { measureTextWidth } from '@/vue/utils/measureTextWidth'
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 import { diffWords } from '@/vue/utils/wordDiff'
 import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 
@@ -700,7 +700,7 @@ const charMetric = (before, after) => sprintf(
 
 // The AI response and stored SEO fields can carry HTML entities (&amp;, &#039;,
 // …); render them as their characters so the diff never shows encoded junk.
-const decodeText = value => sanitizeString(value, true)
+const decodeText = value => stripMarkup(value, true)
 
 const contentDiff = computed(() => {
 	const blocks = result.value.contentBlocks || []

@@ -9,7 +9,7 @@
 				<core-alert
 					class="facebook-disabled-warning"
 					v-if="!optionsStore.options.social.facebook.general.enable"
-					v-html="strings.facebookDisabled"
+					v-safe-html="strings.facebookDisabled"
 					type="red"
 				/>
 
@@ -44,7 +44,7 @@
 					</core-html-tags-editor>
 
 					<div class="max-recommended-count"
-						v-html="maxRecommendedCount(titleCount, 95)"
+						v-safe-html="maxRecommendedCount(titleCount, 95)"
 					/>
 				</template>
 			</core-settings-row>
@@ -70,7 +70,7 @@
 					</core-html-tags-editor>
 
 					<div class="max-recommended-count"
-						v-html="maxRecommendedCount(descriptionCount, 200)"
+						v-safe-html="maxRecommendedCount(descriptionCount, 200)"
 					/>
 				</template>
 			</core-settings-row>

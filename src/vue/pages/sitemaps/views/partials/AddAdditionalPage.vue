@@ -143,7 +143,7 @@
 			<template #body >
 				<div class="aioseo-modal-body import-additional-pages">
 					<div class="alert">
-						<p v-html="strings.modalDescription" />
+						<p v-safe-html="strings.modalDescription" />
 
 						<a
 							@click.stop="downloadSampleCSV"

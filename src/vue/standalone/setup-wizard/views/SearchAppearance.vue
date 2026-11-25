@@ -80,7 +80,7 @@
 
 						<div
 							class="max-recommended-count"
-							v-html="maxRecommendedCount(titleCount, 60)"
+							v-safe-html="maxRecommendedCount(titleCount, 60)"
 						/>
 					</div>
 
@@ -106,7 +106,7 @@
 
 						<div
 							class="max-recommended-count"
-							v-html="maxRecommendedCount(descriptionCount, 160)"
+							v-safe-html="maxRecommendedCount(descriptionCount, 160)"
 						/>
 					</div>
 				</div>

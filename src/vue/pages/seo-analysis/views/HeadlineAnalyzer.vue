@@ -18,7 +18,7 @@
 					<div
 						class="analyze-errors aioseo-description aioseo-error"
 						v-if="'headline' === analyzerStore.analyzer && analyzerStore.analyzeError"
-						v-html="analyzerStore.analyzeError"
+						v-safe-html="sanitizeRemoteMarkup(analyzerStore.analyzeError)"
 					/>
 				</template>
 			</core-analyze>
@@ -76,6 +76,8 @@ import SvgTrash from '@/vue/components/common/svg/Trash'
 
 import { __, sprintf } from '@/vue/plugins/translations'
 
+import { sanitizeRemoteMarkup } from '@/vue/utils/strings'
+
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
@@ -85,7 +87,8 @@ export default {
 		return {
 			analyzerStore : useAnalyzerStore(),
 			settingsStore : useSettingsStore(),
-			scrollTo
+			scrollTo,
+			sanitizeRemoteMarkup
 		}
 	},
 	components : {

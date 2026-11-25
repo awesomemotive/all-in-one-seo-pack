@@ -37,7 +37,7 @@
 						<svg-book />
 						<a
 							class="text-white"
-							:href="links.getDocUrl('quickStartGuide')"
+							v-safe-href="links.getDocUrl('quickStartGuide')"
 							target="_blank"
 						>
 							{{ strings.readSetupGuide }}

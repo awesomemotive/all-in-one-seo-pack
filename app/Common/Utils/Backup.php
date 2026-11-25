@@ -22,6 +22,15 @@ class Backup {
 	private $optionsName = 'aioseo_settings_backup';
 
 	/**
+	 * The database lock that serializes writes to the backup list.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @var string
+	 */
+	private $lockName = 'aioseo_settings_backup_lock';
+
+	/**
 	 * Get all backups.
 	 *
 	 * @return array An array of backups.
@@ -44,16 +53,29 @@ class Backup {
 	 * @return void
 	 */
 	public function create() {
-		$backupTime = time();
-		$options    = $this->getOptions();
+		// Concurrent requests would otherwise read the same list and pick the same free timestamp.
+		$locked = aioseo()->core->db->acquireLock( $this->lockName, 10 );
 
-		update_option( $this->optionsName . '_' . $backupTime, wp_json_encode( $options ), 'no' );
+		try {
+			$backups    = $this->all();
+			$backupTime = time();
+			$options    = $this->getOptions();
 
-		$backups = $this->all();
+			// Backups are keyed on their timestamp, so a same-second backup would overwrite the previous one.
+			while ( in_array( $backupTime, $backups, true ) ) {
+				$backupTime++;
+			}
 
-		$backups[] = $backupTime;
+			update_option( $this->optionsName . '_' . $backupTime, wp_json_encode( $options ), 'no' );
 
-		update_option( $this->optionsName, wp_json_encode( $backups ), 'no' );
+			$backups[] = $backupTime;
+
+			update_option( $this->optionsName, wp_json_encode( $backups ), 'no' );
+		} finally {
+			if ( $locked ) {
+				aioseo()->core->db->releaseLock( $this->lockName );
+			}
+		}
 	}
 
 	/**
@@ -64,29 +86,54 @@ class Backup {
 	 * @return void
 	 */
 	public function delete( $backupTime ) {
-		delete_option( $this->optionsName . '_' . $backupTime );
+		$locked = aioseo()->core->db->acquireLock( $this->lockName, 10 );
 
-		$backups = $this->all();
+		try {
+			delete_option( $this->optionsName . '_' . $backupTime );
 
-		foreach ( $backups as $key => $backup ) {
-			if ( $backup === $backupTime ) {
-				unset( $backups[ $key ] );
+			$backups = $this->all();
+
+			foreach ( $backups as $key => $backup ) {
+				if ( (int) $backup === (int) $backupTime ) {
+					unset( $backups[ $key ] );
+				}
+			}
+
+			update_option( $this->optionsName, wp_json_encode( array_values( $backups ) ), 'no' );
+		} finally {
+			if ( $locked ) {
+				aioseo()->core->db->releaseLock( $this->lockName );
 			}
 		}
+	}
 
-		update_option( $this->optionsName, wp_json_encode( array_values( $backups ) ), 'no' );
+	/**
+	 * Checks whether a backup is in the list of backups.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  int  $backupTime The backup timestamp.
+	 * @return bool             Whether the backup exists.
+	 */
+	public function exists( $backupTime ) {
+		return in_array( (int) $backupTime, array_map( 'intval', $this->all() ), true );
 	}
 
 	/**
 	 * Restores a backup of the settings.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Returns whether the backup was restored.
 	 *
-	 * @return void
+	 * @return bool Whether the backup was restored.
 	 */
 	public function restore( $backupTime ) {
 		$rawBackup = get_option( $this->optionsName . '_' . $backupTime );
 		$backup    = is_string( $rawBackup ) ? json_decode( $rawBackup, true ) : $rawBackup;
+		if ( ! is_array( $backup ) || ! is_array( $backup['options'] ?? null ) || ! is_array( $backup['internalOptions'] ?? null ) ) {
+			return false;
+		}
+
 		if ( ! empty( $backup['options']['tools']['robots']['rules'] ) ) {
 			$backup['options']['tools']['robots']['rules'] = array_merge(
 				aioseo()->robotsTxt->extractSearchAppearanceRules(),
@@ -96,6 +143,8 @@ class Backup {
 
 		aioseo()->options->sanitizeAndSave( $backup['options'] );
 		aioseo()->internalOptions->sanitizeAndSave( $backup['internalOptions'] );
+
+		return true;
 	}
 
 	/**

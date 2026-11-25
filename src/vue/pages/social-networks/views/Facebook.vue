@@ -9,7 +9,7 @@
 			>
 				{{ strings.description }}
 				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'facebook', true)"
+					v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'facebook', true)"
 				/>
 			</div>
 
@@ -95,7 +95,7 @@
 						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
-						<div v-html="strings.defaultTermImageSourceUpsell" />
+						<div v-safe-html="strings.defaultTermImageSourceUpsell" />
 					</core-alert>
 				</template>
 			</core-settings-row>
@@ -199,7 +199,7 @@
 						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
-						<div v-html="strings.taxonomyObjectTypesUpsell" />
+						<div v-safe-html="strings.taxonomyObjectTypesUpsell" />
 					</core-alert>
 				</template>
 			</core-settings-row>
@@ -247,7 +247,7 @@
 
 					<div
 						class="max-recommended-count"
-						v-html="maxRecommendedCount(siteNameCount, 95)"
+						v-safe-html="maxRecommendedCount(siteNameCount, 95)"
 					/>
 				</template>
 			</core-settings-row>
@@ -262,10 +262,10 @@
 				v-if="rootStore.aioseo.data.staticHomePage"
 				class="aioseo-settings-row aioseo-section-description"
 			>
-				<span v-html="strings.homePageDisabledDescription" />
+				<span v-safe-html="strings.homePageDisabledDescription" />
 				&nbsp;
 				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'staticHomePageFacebook', true)"
+					v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'staticHomePageFacebook', true)"
 				/>
 			</div>
 
@@ -320,7 +320,7 @@
 
 					<div
 						class="max-recommended-count"
-						v-html="maxRecommendedCount(titleCount, 95)"
+						v-safe-html="maxRecommendedCount(titleCount, 95)"
 					/>
 				</template>
 			</core-settings-row>
@@ -350,7 +350,7 @@
 
 					<div
 						class="max-recommended-count"
-						v-html="maxRecommendedCount(descriptionCount, 200)"
+						v-safe-html="maxRecommendedCount(descriptionCount, 200)"
 					/>
 				</template>
 			</core-settings-row>
@@ -404,13 +404,13 @@
 					<div class="aioseo-description how-to">
 						<a
 							class="no-underline"
-							:href="links.getDocUrl('facebookAdminId')"
+							v-safe-href="links.getDocUrl('facebookAdminId')"
 							target="_blank"
 						>
 							<svg-book />
 						</a>
 						<a
-							:href="links.getDocUrl('facebookAdminId')"
+							v-safe-href="links.getDocUrl('facebookAdminId')"
 							target="_blank"
 						>
 							{{ strings.howToGetAdminId }}
@@ -436,13 +436,13 @@
 					<div class="aioseo-description how-to">
 						<a
 							class="no-underline"
-							:href="links.getDocUrl('facebookAppId')"
+							v-safe-href="links.getDocUrl('facebookAppId')"
 							target="_blank"
 						>
 							<svg-book />
 						</a>
 						<a
-							:href="links.getDocUrl('facebookAppId')"
+							v-safe-href="links.getDocUrl('facebookAppId')"
 							target="_blank"
 						>
 							{{ strings.howToGetAppId }}
@@ -468,13 +468,13 @@
 					<div class="aioseo-description how-to">
 						<a
 							class="no-underline"
-							:href="links.getDocUrl('facebookAuthorUrl')"
+							v-safe-href="links.getDocUrl('facebookAuthorUrl')"
 							target="_blank"
 						>
 							<svg-book />
 						</a>
 						<a
-							:href="links.getDocUrl('facebookAuthorUrl')"
+							v-safe-href="links.getDocUrl('facebookAuthorUrl')"
 							target="_blank"
 						>
 							{{ strings.howToGetAuthorUrl }}

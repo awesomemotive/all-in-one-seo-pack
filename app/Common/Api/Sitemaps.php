@@ -22,29 +22,7 @@ class Sitemaps {
 	 * @return \WP_REST_Response The response.
 	 */
 	public static function deleteStaticFiles() {
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		$files = list_files( get_home_path(), 1 );
-		if ( ! count( $files ) ) {
-			return;
-		}
-
-		$isGeneralSitemapStatic = aioseo()->options->sitemap->general->advancedSettings->enable &&
-			in_array( 'staticSitemap', aioseo()->internalOptions->internal->deprecatedOptions, true ) &&
-			! aioseo()->options->deprecated->sitemap->general->advancedSettings->dynamic;
-
-		$detectedFiles = [];
-		if ( ! $isGeneralSitemapStatic ) {
-			foreach ( $files as $filename ) {
-				if ( preg_match( '#.*sitemap.*#', (string) $filename ) ) {
-					// We don't want to delete the video sitemap here at all.
-					$isVideoSitemap = preg_match( '#.*video.*#', (string) $filename ) ? true : false;
-					if ( ! $isVideoSitemap ) {
-						$detectedFiles[] = $filename;
-					}
-				}
-			}
-		}
-
+		$detectedFiles = aioseo()->sitemap->helpers->getStaticSitemapFiles();
 		if ( ! count( $detectedFiles ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,

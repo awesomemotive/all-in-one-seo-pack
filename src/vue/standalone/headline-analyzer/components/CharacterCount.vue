@@ -16,7 +16,7 @@
 				<span
 					class="aioseo-headline-analyzer-character-length"
 					:class="classOnLength"
-					v-html="characterDisplay"
+					v-safe-html="characterDisplay"
 				/>
 			</div>
 			<p>{{ descOnCharLength }}</p>

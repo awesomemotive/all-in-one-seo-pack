@@ -15,7 +15,7 @@
 			/>
 
 			<div class="aioseo-description">
-				<div v-html="strings.preventCrawlingDescription"></div>
+				<div v-safe-html="strings.preventCrawlingDescription"></div>
 			</div>
 
 			<robots-alert

@@ -10,7 +10,7 @@
 			<div class="aioseo-settings-row aioseo-section-description">
 				{{ strings.description }}
 				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'htmlSitemap', true)"
+					v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'htmlSitemap', true)"
 				/>
 			</div>
 
@@ -169,7 +169,7 @@
 
 					<div
 						class="aioseo-description"
-						v-html="strings.compactArchivesDescription"
+						v-safe-html="strings.compactArchivesDescription"
 					/>
 				</template>
 			</core-settings-row>

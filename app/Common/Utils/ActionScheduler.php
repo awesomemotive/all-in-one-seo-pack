@@ -273,6 +273,62 @@ class ActionScheduler {
 	}
 
 	/**
+	 * Returns the due times of an action's pending instances, keyed by action ID.
+	 *
+	 * NOTE: Unlike as_next_scheduled_action(), a running instance doesn't hide the pending ones.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $actionName The action name.
+	 * @param  array  $args       Args passed down to the action.
+	 * @return int[]              The Unix timestamps, keyed by action ID.
+	 */
+	public function getPendingTimestamps( $actionName, $args = [] ) {
+		$timestamps = [];
+
+		try {
+			$actions = as_get_scheduled_actions( [
+				'hook'     => $actionName,
+				'args'     => $args,
+				'group'    => $this->actionSchedulerGroup,
+				'status'   => \ActionScheduler_Store::STATUS_PENDING,
+				'per_page' => -1
+			] );
+
+			foreach ( $actions as $actionId => $action ) {
+				$date = $action->get_schedule()->get_date();
+
+				// An async action has no date and runs as soon as possible.
+				$timestamps[ $actionId ] = $date ? (int) $date->format( 'U' ) : time();
+			}
+		} catch ( \Exception $e ) {
+			// Do nothing.
+		}
+
+		return $timestamps;
+	}
+
+	/**
+	 * Cancels a single pending action by its ID.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  int  $actionId The action ID.
+	 * @return void
+	 */
+	public function cancel( $actionId ) {
+		if ( ! class_exists( 'ActionScheduler' ) ) {
+			return;
+		}
+
+		try {
+			\ActionScheduler::store()->cancel_action( $actionId );
+		} catch ( \Exception $e ) {
+			// Do nothing.
+		}
+	}
+
+	/**
 	 * Unschedule all pending instances of an action.
 	 *
 	 * Uses as_unschedule_all_actions() to ensure recurring actions are fully stopped,
@@ -338,12 +394,14 @@ class ActionScheduler {
 	 *
 	 * @since   4.1.6
 	 * @version 4.9.4.2 Added check for duplicates.
+	 * @version 5.0.6 Added $ignoreRunning parameter.
 	 *
-	 * @param  string $actionName The name of the action.
-	 * @param  array  $args       Any relevant arguments.
+	 * @param  string $actionName    The name of the action.
+	 * @param  array  $args          Any relevant arguments.
+	 * @param  bool   $ignoreRunning Whether to queue the action even when an instance is running.
 	 * @return void
 	 */
-	public function scheduleAsync( $actionName, $args = [] ) {
+	public function scheduleAsync( $actionName, $args = [], $ignoreRunning = false ) {
 		$lockKey = $this->getLockKey( $actionName, $args );
 
 		// Skip if another request is currently scheduling this action.
@@ -356,7 +414,11 @@ class ActionScheduler {
 
 		try {
 			// Only schedule if not already scheduled to prevent duplicate actions.
-			if ( ! $this->isScheduled( $actionName, $args ) ) {
+			$isQueued = $ignoreRunning
+				? ! empty( $this->getPendingTimestamps( $actionName, $args ) )
+				: $this->isScheduled( $actionName, $args );
+
+			if ( ! $isQueued ) {
 				// Run the task immediately using an async action.
 				as_enqueue_async_action( $actionName, $args, $this->actionSchedulerGroup );
 			}

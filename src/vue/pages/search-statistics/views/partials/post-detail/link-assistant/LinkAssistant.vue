@@ -34,8 +34,8 @@
 
 		<div class="aioseo-card-footer">
 			<a
-				:href="rootStore.aioseo.urls.aio.linkAssistant"
-				v-html="strings.linkOpportunities"
+				v-safe-href="rootStore.aioseo.urls.aio.linkAssistant"
+				v-safe-html="strings.linkOpportunities"
 			/>
 		</div>
 	</div>

@@ -28,14 +28,14 @@
 				<div class="keyword">
 					<template v-if="topWinning[i-1]">
 						<core-tooltip v-if="shouldLimitText(topWinning[i-1].keyword)">
-							<span class="limit-line">{{ sanitizeString(topWinning[i-1].keyword) }}</span>
+							<span class="limit-line">{{ stripMarkup(topWinning[i-1].keyword) }}</span>
 
 							<template #tooltip>
-								{{ sanitizeString(topWinning[i-1].keyword) }}
+								{{ stripMarkup(topWinning[i-1].keyword) }}
 							</template>
 						</core-tooltip>
 
-						<span v-else>{{ sanitizeString(topWinning[i-1].keyword) }}</span>
+						<span v-else>{{ stripMarkup(topWinning[i-1].keyword) }}</span>
 
 						<statistic
 							type="decay"
@@ -48,14 +48,14 @@
 				<div class="keyword">
 					<template v-if="topLosing[i-1]">
 						<core-tooltip v-if="shouldLimitText(topLosing[i-1].keyword)">
-							<span class="limit-line">{{ sanitizeString(topLosing[i-1].keyword) }}</span>
+							<span class="limit-line">{{ stripMarkup(topLosing[i-1].keyword) }}</span>
 
 							<template #tooltip>
-								{{ sanitizeString(topLosing[i-1].keyword) }}
+								{{ stripMarkup(topLosing[i-1].keyword) }}
 							</template>
 						</core-tooltip>
 
-						<span v-else>{{ sanitizeString(topLosing[i-1].keyword) }}</span>
+						<span v-else>{{ stripMarkup(topLosing[i-1].keyword) }}</span>
 
 						<statistic
 							type="decay"
@@ -76,7 +76,7 @@ import {
 	useSearchStatisticsStore
 } from '@/vue/stores'
 
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import Statistic from './Statistic'
@@ -126,9 +126,9 @@ export default {
 		}
 	},
 	methods : {
-		sanitizeString,
+		stripMarkup,
 		shouldLimitText (line) {
-			return 60 < sanitizeString(line).length
+			return 60 < stripMarkup(line).length
 		}
 	}
 }

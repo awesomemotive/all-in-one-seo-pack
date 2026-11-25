@@ -36,7 +36,7 @@
 					/>
 
 					<div class="aioseo-description source-description">
-						<span v-html="strings.sourceUrlDescription" />
+						<span v-safe-html="strings.sourceUrlDescription" />
 
 						{{ ' ' }}<span v-if="!edit && !log404 && !sourceDisabled">
 							{{ strings.youCanAlso }}
@@ -89,7 +89,7 @@
 									class="target-url-error"
 									type="red"
 									size="small"
-									v-html="error"
+									v-safe-html="error"
 								/>
 							</div>
 						</transition-slide>
@@ -104,7 +104,7 @@
 									class="target-url-warning"
 									type="yellow"
 									size="small"
-									v-html="warning"
+									v-safe-html="warning"
 								/>
 							</div>
 						</transition-slide>
@@ -120,7 +120,7 @@
 				<div class="source">
 					<div
 						class="aioseo-description source-description"
-						v-html="strings.sourceUrlDescription"
+						v-safe-html="strings.sourceUrlDescription"
 					/>
 				</div>
 				<div class="url-arrow" />
@@ -234,7 +234,7 @@ import {
 
 import links from '@/vue/utils/links'
 import { debounce } from '@/vue/utils/debounce'
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 import { isBlockEditor } from '@/vue/utils/context'
 
 import { useJsonValues } from '@/vue/composables/JsonValues'
@@ -277,7 +277,11 @@ const props = defineProps({
 	},
 	postId          : Number,
 	postStatus      : String,
-	redirectComment : String
+	redirectComment : String,
+	awaitsSource    : {
+		type    : Boolean,
+		default : undefined
+	}
 })
 
 const emit = defineEmits([ 'cancel', 'added-redirect' ])
@@ -446,7 +450,7 @@ const hasTargetUrlErrors = computed(() => {
 	}
 
 	const errors = []
-	const sanitizedTargetUrl = sanitizeString(targetUrl.value)
+	const sanitizedTargetUrl = stripMarkup(targetUrl.value)
 
 	if (!sanitizedTargetUrl) {
 		errors.push(__('Your target URL is not valid.', td))
@@ -479,7 +483,7 @@ const hasTargetUrlErrors = computed(() => {
 })
 
 const hasTargetUrlWarnings = computed(() => {
-	if (!sanitizeString(targetUrl.value)) {
+	if (!stripMarkup(targetUrl.value)) {
 		return []
 	}
 
@@ -567,7 +571,7 @@ const redirectQueryParams = computed(() => {
 })
 
 const unPublishedPost = computed(() => {
-	return redirectHasUnPublishedPost({ post_id: props.postId, postStatus: props.postStatus })
+	return redirectHasUnPublishedPost({ post_id: props.postId, postStatus: props.postStatus, awaitsSource: props.awaitsSource, url: props.url?.url })
 })
 
 // Watchers
@@ -637,15 +641,15 @@ function getDomainTypoWarning (url) {
 		return sprintf(
 			// Translators: 1 - The entered domain with invalid characters.
 			__('Your URL appears to contain invalid characters in the domain %1$s. Please enter a valid domain.', td),
-			'<code>' + sanitizeString(domain) + '</code>'
+			'<code>' + stripMarkup(domain) + '</code>'
 		)
 	}
 
 	return sprintf(
 		// Translators: 1 - The entered domain with invalid characters, 2 - The suggested corrected domain.
 		__('Your URL appears to contain invalid characters in the domain %1$s. Did you mean %2$s?', td),
-		'<code>' + sanitizeString(domain) + '</code>',
-		'<code>' + sanitizeString(fixedDomain) + '</code>'
+		'<code>' + stripMarkup(domain) + '</code>',
+		'<code>' + stripMarkup(fixedDomain) + '</code>'
 	)
 }
 

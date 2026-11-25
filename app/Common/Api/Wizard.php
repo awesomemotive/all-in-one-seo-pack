@@ -341,7 +341,7 @@ class Wizard {
 
 		return new \WP_REST_Response( [
 			'success' => true,
-			'options' => aioseo()->options->all()
+			'options' => aioseo()->options->removeNotAllowedSensitiveData( aioseo()->options->all() )
 		], 200 );
 	}
 

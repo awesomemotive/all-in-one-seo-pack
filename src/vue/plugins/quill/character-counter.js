@@ -1,6 +1,6 @@
 import Quill from 'quill'
 import { decode } from 'he'
-import { getText } from '@/vue/utils/html'
+import { getText, stripSvgs } from '@/vue/utils/html'
 
 class Counter {
 	constructor (quill, options) {
@@ -31,7 +31,8 @@ class Counter {
 					const aioTag  = n.querySelector('.aioseo-tag .tag-name')
 					if (aioTag) {
 						const tag     = this.options.tags.find(t => t.name === aioTag.textContent)
-						let value     = 'string' === typeof tag.valueText ? decode(tag.valueText) : tag.valueText
+						// Strip SVGs before decoding, so encoded SVG markup in a code sample stays text.
+						let value     = 'string' === typeof tag.valueText ? decode(stripSvgs(tag.valueText)) : tag.valueText
 						// Strip HTML tags from the value to get accurate character count.
 						value         = getText(value, false)
 						const newNode = document.createTextNode(value)

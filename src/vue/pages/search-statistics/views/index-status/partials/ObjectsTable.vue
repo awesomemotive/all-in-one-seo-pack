@@ -42,14 +42,14 @@
 			>
 				<span class="edit">
 					<a
-						:href="row?.permalink || '#'"
+						v-safe-href="row?.permalink || '#'"
 						target="_blank"
 					>
 						{{ viewPost(row?.postTypeLabels?.singular || null) }}
 					</a> |
 
 					<a
-						:href="row?.editLink || '#'"
+						v-safe-href="row?.editLink || '#'"
 						target="_blank"
 					>
 						{{ editPost(row?.postTypeLabels?.singular || null) }}
@@ -89,7 +89,7 @@
 							<a
 								v-if="row?.inspectionResultLink"
 								class="inner-table__inspection-link"
-								:href="row.inspectionResultLink"
+								v-safe-href="row.inspectionResultLink"
 								target="_blank"
 							>
 								{{ indexStatusStrings.inspectOnGsc }}
@@ -142,7 +142,7 @@
 										height="20"
 									/>
 
-									<div v-html="parseInnerRowValue(row, 'indexingState')"/>
+									<div v-safe-html="parseInnerRowValue(row, 'indexingState')"/>
 								</div>
 							</td>
 
@@ -171,7 +171,7 @@
 										height="20"
 									/>
 
-									<div v-html="parseInnerRowValue(row, 'verdict')"/>
+									<div v-safe-html="parseInnerRowValue(row, 'verdict')"/>
 								</div>
 							</td>
 
@@ -185,7 +185,7 @@
 										color="#8C8F9A"
 									/>
 
-									<span v-html="indexStatusItems.googleCanonical.parseValue(row.googleCanonical).value"/>
+									<span v-safe-html="indexStatusItems.googleCanonical.parseValue(row.googleCanonical).value"/>
 								</div>
 							</td>
 						</tr>
@@ -200,7 +200,7 @@
 										height="20"
 									/>
 
-									<div v-html="parseInnerRowValue(row, 'robotsTxtState')"/>
+									<div v-safe-html="parseInnerRowValue(row, 'robotsTxtState')"/>
 								</div>
 							</td>
 
@@ -214,7 +214,7 @@
 										color="#8C8F9A"
 									/>
 
-									<span v-html="indexStatusItems.userCanonical.parseValue(row.userCanonical).value"/>
+									<span v-safe-html="indexStatusItems.userCanonical.parseValue(row.userCanonical).value"/>
 								</div>
 							</td>
 						</tr>
@@ -223,7 +223,7 @@
 							<td colspan="4">
 								<a
 									class="inner-table__inspection-link button-secondary"
-									:href="row.inspectionResultLink"
+									v-safe-href="row.inspectionResultLink"
 									target="_blank"
 								>
 									{{ indexStatusStrings.inspectOnGsc }}
@@ -264,7 +264,7 @@
 									/>
 
 									<a
-										:href="sitemap"
+										v-safe-href="sitemap"
 										target="_blank"
 									>
 										{{ sitemap }}
@@ -306,7 +306,7 @@
 									/>
 
 									<a
-										:href="url"
+										v-safe-href="url"
 										target="_blank"
 									>
 										{{ url }}
@@ -409,7 +409,7 @@
 							<td colspan="3">
 								<a
 									class="inner-table__inspection-link button-secondary"
-									:href="row.richResultsTestLink"
+									v-safe-href="row.richResultsTestLink"
 									target="_blank"
 								>
 									{{ indexStatusStrings.testWithGoogle }}
@@ -530,6 +530,8 @@ import {
 
 import { debounce } from 'lodash-es'
 import { __ } from '@/vue/plugins/translations'
+
+import { escapeHtml } from '@/vue/utils/strings'
 import { useIndexStatus } from '@/vue/composables/IndexStatus'
 import { usePostTypes } from '@/vue/composables/PostTypes'
 import { useWpTable } from '@/vue/composables/WpTable'
@@ -690,7 +692,8 @@ const parseInnerRowValue = (row, key) => {
 		return `${parsed.value}`
 	}
 
-	return `${parsed.value} <div class="inner-row__desc">${description}</div>`
+	// parsed.value is markup built by parseValue(); description can be raw API text, so escape it.
+	return `${parsed.value} <div class="inner-row__desc">${escapeHtml(description)}</div>`
 }
 
 const refreshObjectStatus = async (row) => {

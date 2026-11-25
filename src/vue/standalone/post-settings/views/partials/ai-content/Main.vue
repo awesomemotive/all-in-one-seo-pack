@@ -29,7 +29,7 @@
 			<p
 				v-if="isTrial"
 				class="aioseo-ai-content-trial-note"
-				v-html="strings.trialNote"
+				v-safe-html="strings.trialNote"
 			/>
 
 			<div

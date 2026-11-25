@@ -57,7 +57,7 @@
 					<span
 						v-if="step.subtitle"
 						class="subtle"
-						v-html="step.subtitle"
+						v-safe-html="step.subtitle"
 					/>
 				</div>
 
@@ -98,7 +98,7 @@
 					</base-button>
 					<a
 						v-if="'appPassword' === step.key && hasAppPassword"
-						:href="appPasswordUrl"
+						v-safe-href="appPasswordUrl"
 						target="_blank"
 						rel="noopener"
 						class="mcp-v2-link"
@@ -125,7 +125,7 @@
 					<template v-if="'abilities' === step.key">
 						<p
 							v-if="abilitiesActionPlan"
-							v-html="abilitiesActionPlan"
+							v-safe-html="abilitiesActionPlan"
 						/>
 						<transition-slide :active="showAbilities">
 							<div class="mcp-v2-abilities">
@@ -189,11 +189,11 @@
 						<div
 							v-if="appPasswordsDisabledNotice"
 							class="mcp-v2-inline-message error"
-							v-html="appPasswordsDisabledNotice"
+							v-safe-html="appPasswordsDisabledNotice"
 						/>
 						<p
 							v-else
-							v-html="appPasswordDescription"
+							v-safe-html="appPasswordDescription"
 						/>
 
 						<div
@@ -384,7 +384,7 @@
 					<li
 						v-for="(instruction, idx) in activeClientObj.instructions"
 						:key="idx"
-						v-html="instruction"
+						v-safe-html="instruction"
 					/>
 				</ol>
 			</template>

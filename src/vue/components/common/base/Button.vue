@@ -4,6 +4,7 @@
 		:type="tag === 'button' ? nativeType : ''"
 		:disabled="disabled || loading"
 		:to="tag === 'router-link' ? to : ''"
+		v-bind="hrefAttr"
 		@mouseenter="$emit('mouseenter', $event)"
 		@mouseleave="$emit('mouseleave', $event)"
 		class="aioseo-button"
@@ -35,12 +36,16 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 import CoreLoader from '@/vue/components/common/core/Loader'
+
+import { sanitizeUrl } from '@/vue/utils/strings'
 import { __ } from '@wordpress/i18n'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
-defineProps({
+const props = defineProps({
 	color : String,
 	tag   : {
 		type        : String,
@@ -60,6 +65,10 @@ defineProps({
 		type        : String,
 		default     : 'button',
 		description : 'Button native type (e.g button, input etc)'
+	},
+	href : {
+		type        : String,
+		description : 'Link target. Sanitized here, since callers cannot use v-safe-href on a component.'
 	},
 	size : {
 		type        : String,
@@ -83,6 +92,9 @@ defineProps({
 const strings = {
 	newBadge : __('NEW!', td)
 }
+
+// Left out entirely when unset: even a null href falls through onto RouterLink's own <a> and replaces the one it builds.
+const hrefAttr = computed(() => props.href && 'router-link' !== props.tag ? { href: sanitizeUrl(props.href) } : {})
 </script>
 
 <style lang="scss">

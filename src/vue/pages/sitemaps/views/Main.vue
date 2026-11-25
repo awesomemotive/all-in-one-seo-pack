@@ -48,8 +48,7 @@ export default {
 
 <style lang="scss">
 .aioseo-app {
-	.index-notice,
-	.static-regeneration-notice {
+	.index-notice {
 		margin-top: 10px;
 	}
 }

@@ -31,7 +31,7 @@
 				>
 					<pre>
 						<code
-							v-html="softSanitizeHtml(getBody.code.trim())"
+							v-safe-html="sanitizeMarkup(getBody.code.trim())"
 						/>
 					</pre>
 				</div>
@@ -41,14 +41,14 @@
 					class="result-code-alt"
 				>
 					<pre>
-						<code>{{ softSanitizeHtml(getBody.codeAlt.trim()) }}</code>
+						<code>{{ sanitizeMarkup(getBody.codeAlt.trim()) }}</code>
 					</pre>
 				</div>
 
 				<div
 					v-if="getBody.message && showInstructions"
 					class="result-message"
-					v-html="getBody.message"
+					v-safe-html="getBody.message"
 				/>
 
 				<div
@@ -73,7 +73,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { softSanitizeHtml } from '@/vue/utils/strings'
+import { sanitizeMarkup } from '@/vue/utils/strings'
 
 import { useRootStore } from '@/vue/stores'
 

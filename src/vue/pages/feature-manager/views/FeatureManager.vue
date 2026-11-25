@@ -86,7 +86,7 @@
 						</template>
 
 						<template #description>
-							<div v-html="getAddonDescription(addon)" />
+							<div v-safe-html="getAddonDescription(addon)" />
 						</template>
 					</core-feature-card>
 				</grid-column>

@@ -4,7 +4,7 @@
 	  <span class="description">
 		{{ strings.description }}
 
-		<span v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'aiBuyingCredits', true)" />
+		<span v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'aiBuyingCredits', true)" />
 	  </span>
 	</div>
 

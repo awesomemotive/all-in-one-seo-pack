@@ -67,7 +67,7 @@
 
 						<p
 							class="aioseo-description"
-							v-html="setting.description"
+							v-safe-html="setting.description"
 						/>
 
 						<br>
@@ -78,12 +78,12 @@
 						>
 							<div
 								v-if="prefersEm"
-								v-html="emPromo"
+								v-safe-html="emPromo"
 							/>
 
 							<div
 								v-else
-								v-html="miPromo"
+								v-safe-html="miPromo"
 							/>
 
 							<br>

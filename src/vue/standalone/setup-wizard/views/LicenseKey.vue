@@ -12,11 +12,11 @@
 				<div
 					v-if="!rootStore.isPro"
 					class="description"
-					v-html="noLicenseNeeded"
+					v-safe-html="noLicenseNeeded"
 				/>
 
 				<div class="license-cta-box">
-					<div v-html="tooltipText" />
+					<div v-safe-html="tooltipText" />
 
 					<grid-row>
 						<grid-column
@@ -32,7 +32,7 @@
 
 				<div
 					v-if="!rootStore.isPro"
-					v-html="alreadyPurchased"
+					v-safe-html="alreadyPurchased"
 				/>
 
 				<form class="license-key">
@@ -58,7 +58,7 @@
 					class="license-key-error"
 					v-if="error"
 					type="red"
-					v-html="error"
+					v-safe-html="error"
 				/>
 
 				<template #footer>

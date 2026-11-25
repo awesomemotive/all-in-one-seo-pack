@@ -6,7 +6,7 @@
 			:show-save-button="false"
 		>
 			<div>
-				<div v-html="backLink"></div>
+				<div v-safe-html="backLink"></div>
 
 				<div
 					v-if="!postIds.length"
@@ -22,7 +22,7 @@
 					<div class="aioseo-ai-bulk-generate__header">
 						<span
 							class="aioseo-ai-bulk-generate__description"
-							v-html="strings.description"
+							v-safe-html="strings.description"
 						/>
 
 						<credit-counter tooltip-placement="left" />
@@ -93,14 +93,14 @@
 											<div class="row-actions">
 												<span>
 													<a
-														:href="getEditLink(item.id)"
+														v-safe-href="getEditLink(item.id)"
 														target="_blank"
 													>{{ editPost(postTypeSingularLabel) }}</a> |
 												</span>
 
 												<span>
 													<a
-														:href="getViewLink(item.id)"
+														v-safe-href="getViewLink(item.id)"
 														target="_blank"
 													>{{ viewPost(postTypeSingularLabel) }}</a>
 												</span>

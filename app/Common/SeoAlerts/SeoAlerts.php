@@ -100,7 +100,7 @@ class SeoAlerts {
 			return false;
 		}
 
-		$emails       = array_filter( array_map( 'trim', array_column( (array) aioseo()->options->tools->seoAlerts->recipients, 'email' ) ) );
+		$emails       = array_filter( array_map( 'trim', array_column( (array) aioseo()->options->tools->seoAlerts->recipients, 'email' ) ), 'is_email' );
 		$hasRecipient = ! empty( $emails );
 		$hasWebhook   = aioseo()->sensitiveOptions->hasValue( 'seoAlertsSlackWebhookUrl' );
 

@@ -23,7 +23,7 @@
 				{{ strings.linkingRecommendations }}
 			</span>
 
-			<span v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'cornerstoneContent', true)"></span>
+			<span v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'cornerstoneContent', true)"></span>
 		</div>
 
 		<base-toggle
@@ -38,7 +38,7 @@
 			v-if="licenseStore.isUnlicensed || !hasRequiredFeature"
 			type="blue"
 		>
-			<div v-html="strings.upsell" />
+			<div v-safe-html="strings.upsell" />
 		</core-alert>
 	</div>
 </template>

@@ -1,0 +1,274 @@
+/*
+ * Styles for the AIOSEO sitemaps when opened in a browser.
+ *
+ * sitemap.js replaces the sitemap XML with an XHTML view, styled by the first part of this file.
+ * Without JavaScript, the second part lays out the raw XML as a readable list.
+ * Unprefixed type selectors only match XHTML elements (SVG icons need *|svg), so neither part leaks into the other.
+ */
+@namespace url(http://www.w3.org/1999/xhtml);
+@namespace sitemap url(http://www.sitemaps.org/schemas/sitemap/0.9);
+
+/* XHTML view. */
+body {
+	margin: 0;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 68.5%;
+	background-color: #fff;
+	color: #000;
+}
+#content-head {
+	background-color: #141B38;
+	padding: 20px 40px;
+}
+#content-head h1,
+#content-head p,
+#content-head a {
+	color: #fff;
+	font-size: 1.2em;
+}
+#content-head h1 {
+	font-size: 2em;
+}
+table {
+	margin: 20px 40px;
+	border: none;
+	border-collapse: collapse;
+	font-size: 1em;
+	width: 75%;
+}
+th {
+	border-bottom: 1px solid #ccc;
+	text-align: left;
+	padding: 15px 5px;
+	font-size: 14px;
+}
+td {
+	padding: 10px 5px;
+	border-left: 3px solid #fff;
+}
+tr.stripe {
+	background-color: #f7f7f7;
+}
+table td a:not(.localized) {
+	display: block;
+}
+table td a img {
+	max-height: 30px;
+	margin: 6px 3px;
+}
+.empty-sitemap {
+	margin: 20px 40px;
+	width: 75%;
+}
+.empty-sitemap__title {
+	font-size: 18px;
+	line-height: 125%;
+	margin: 12px 0;
+}
+.empty-sitemap__buttons {
+	margin-bottom: 30px;
+}
+.empty-sitemap__buttons .button {
+	margin-right: 5px;
+}
+.breadcrumb {
+	margin: 20px 40px;
+	width: 75%;
+	display: flex;
+	align-items: center;
+	font-size: 12px;
+	font-weight: 600;
+}
+.breadcrumb a {
+	color: #141B38;
+	text-decoration: none;
+}
+.breadcrumb *|svg {
+	margin: 0 10px;
+}
+@media (max-width: 1023px) {
+	.breadcrumb *|svg:not(.back),
+	.breadcrumb a:not(:last-of-type),
+	.breadcrumb span {
+		display: none;
+	}
+	.breadcrumb a:last-of-type::before {
+		content: attr(data-back);
+	}
+}
+@media (min-width: 1024px) {
+	.breadcrumb {
+		font-size: 14px;
+	}
+	.breadcrumb a {
+		font-weight: 400;
+	}
+	.breadcrumb *|svg.back {
+		display: none;
+	}
+}
+
+/* Video sitemap thumbnails and modal. */
+.modal-window {
+	position: fixed;
+	background-color: rgba(20, 27, 56, 0.3);
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 999;
+	visibility: hidden;
+	opacity: 0;
+	pointer-events: none;
+	transition: all 0.3s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.modal-window .title {
+	font-weight: bold;
+	font-size: 18px;
+	line-height: 120%;
+	color: #141B38;
+	max-width: 80%;
+	margin: 0 auto 10px;
+}
+.modal-window .link {
+	font-weight: 600;
+	font-size: 14px;
+	color: #005AE0;
+	text-decoration-line: underline;
+}
+.modal-window:target {
+	visibility: visible;
+	opacity: 1;
+	pointer-events: auto;
+}
+.modal-window .modal-content {
+	position: relative;
+	width: 80%;
+	max-width: 700px;
+	padding: 24px;
+	background: #FFFFFF;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+.modal-close {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	text-decoration: none;
+	padding: 15px;
+	transition: opacity .2s ease-in-out;
+}
+.modal-close:hover {
+	opacity: 0.7;
+}
+.videos-column {
+	display: flex;
+	align-items: center;
+}
+.videos-column .open-modal {
+	color: #141B38;
+	font-size: 13px;
+}
+.videos {
+	display: flex;
+	align-items: center;
+}
+.videos img {
+	max-width: 48px;
+	max-height: 100%;
+	margin-right: 8px;
+	margin-left: 0;
+}
+.modal-window .videos {
+	margin-top: 32px;
+	display: grid;
+	grid-gap: 8px;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	overflow-y: auto;
+	max-height: 50vh;
+}
+.modal-window .videos img {
+	max-width: 100%;
+	margin-right: 0;
+}
+@media (min-width: 1024px) {
+	.modal-window .title {
+		max-width: 100%;
+		font-size: 20px;
+	}
+	.modal-close {
+		right: 20px;
+		top: 20px;
+		padding: 20px;
+	}
+	.modal-window .link {
+		font-size: 16px;
+	}
+	.modal-window .modal-content {
+		padding: 40px;
+	}
+	.modal-window .videos {
+		grid-gap: 24px;
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+		overflow-y: hidden;
+		max-height: initial;
+	}
+}
+
+/* Raw XML fallback, shown until the view renders or when JavaScript is off. */
+sitemap|urlset,
+sitemap|sitemapindex,
+|rss {
+	display: block;
+	margin: 20px 40px;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.4;
+	color: #141B38;
+	background-color: #fff;
+}
+sitemap|url,
+sitemap|sitemap,
+|item {
+	display: block;
+	padding: 10px 5px;
+	border-bottom: 1px solid #ccc;
+}
+sitemap|url:nth-of-type(odd),
+sitemap|sitemap:nth-of-type(odd),
+|item:nth-of-type(odd) {
+	background-color: #f7f7f7;
+}
+sitemap|url > *|*,
+sitemap|sitemap > *|*,
+|channel > *|*,
+|item > *|*,
+script {
+	display: none;
+}
+sitemap|url > sitemap|loc,
+sitemap|sitemap > sitemap|loc,
+|channel > |item,
+|item > |link {
+	display: block;
+	word-break: break-all;
+}
+/* An empty sitemap shows the translated text the script element carries. */
+sitemap|urlset:not(:has(> sitemap|url)) > script,
+sitemap|sitemapindex:not(:has(> sitemap|sitemap)) > script,
+|channel:not(:has(> |item)) > script {
+	display: block;
+}
+script::before {
+	content: attr(data-empty);
+	font-size: 18px;
+}
+sitemap|url > sitemap|lastmod,
+sitemap|sitemap > sitemap|lastmod,
+|item > |pubDate {
+	display: block;
+	color: #646970;
+	font-size: 12px;
+}

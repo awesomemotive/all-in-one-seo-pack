@@ -86,7 +86,7 @@
 					v-if="licenseStore.isUnlicensed"
 					type="blue"
 				>
-					<div v-html="strings.priorityFrequencyUpsell" />
+					<div v-safe-html="strings.priorityFrequencyUpsell" />
 				</core-alert>
 			</template>
 		</core-settings-row>

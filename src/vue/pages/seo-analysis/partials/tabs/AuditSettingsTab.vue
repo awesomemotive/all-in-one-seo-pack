@@ -14,7 +14,7 @@
 				{{ strings.headerDescription }}
 
 				<span
-					v-html="links.getDocLink(globalStrings.learnMore, 'seoAnalyzer', true)"
+					v-safe-html="links.getDocLink(globalStrings.learnMore, 'seoAnalyzer', true)"
 				/>
 			</div>
 

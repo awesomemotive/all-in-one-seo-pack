@@ -118,7 +118,7 @@
 
 					<div class="aioseo-description">
 						{{ strings.slackDescription }}
-						<a :href="strings.slackWebhookUrlLink" target="_blank" rel="noopener noreferrer">
+						<a v-safe-href="strings.slackWebhookUrlLink" target="_blank" rel="noopener noreferrer">
 							{{ strings.slackWebhookUrlLinkText }}
 							<svg-external
 								width="14"

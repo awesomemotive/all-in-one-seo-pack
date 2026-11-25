@@ -387,8 +387,8 @@ class Ai {
 		$result = $this->callAiService( 'meta/title/', [
 			'postContent'  => $postContent,
 			'focusKeyword' => $focusKeyword,
-			'tone'         => $options['tone'],
-			'audience'     => $options['audience'],
+			'tone'         => $options['tone'] ?? '',
+			'audience'     => $options['audience'] ?? '',
 			'rephrase'     => $rephrase,
 			'titles'       => $titles
 		], 'titles', [ 'feature' => $rephrase ? 'rephrase' : 'titles' ] );
@@ -433,8 +433,8 @@ class Ai {
 		$result = $this->callAiService( 'meta/description/', [
 			'postContent'  => $postContent,
 			'focusKeyword' => $focusKeyword,
-			'tone'         => $options['tone'],
-			'audience'     => $options['audience'],
+			'tone'         => $options['tone'] ?? '',
+			'audience'     => $options['audience'] ?? '',
 			'rephrase'     => $rephrase,
 			'descriptions' => $descriptions
 		], 'descriptions', [ 'feature' => $rephrase ? 'rephrase' : 'descriptions' ] );
@@ -458,6 +458,7 @@ class Ai {
 	 *
 	 * @since   4.9.6
 	 * @version 5.0.3 Checks cached credits before encoding the image.
+	 * @version 5.0.6 Sends the site locale to the AI service.
 	 *
 	 * @param  array $data The data array containing attachmentId.
 	 * @return array       The result array.
@@ -489,7 +490,8 @@ class Ai {
 		}
 
 		$result = $this->callAiService( 'image/alt-text/', [
-			'image' => $image
+			'image'  => $image,
+			'locale' => get_locale()
 		], 'altTexts', [ 'feature' => $feature ] );
 
 		if ( ! $result['success'] ) {

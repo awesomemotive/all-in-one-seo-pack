@@ -17,7 +17,7 @@
 				<h3>{{ areYouSure }}</h3>
 
 				<div class="reset-description"
-					v-html="strings.actionCannotBeUndone"
+					v-safe-html="strings.actionCannotBeUndone"
 				/>
 
 				<base-button

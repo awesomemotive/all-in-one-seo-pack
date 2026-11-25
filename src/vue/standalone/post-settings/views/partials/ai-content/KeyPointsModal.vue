@@ -184,6 +184,7 @@ import SvgRephrase from '@/vue/components/common/svg/ai/Rephrase'
 import SvgArrowBack from '@/vue/components/common/svg/ArrowBack'
 
 import { __, _n } from '@/vue/plugins/translations'
+import { escapeHtml } from '@/vue/utils/strings'
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
@@ -225,7 +226,7 @@ export default {
 			} else {
 				const html = [ '<ul>' ]
 				keyPointsToCopy.forEach(keyPoint => {
-					html.push(`<li><strong>${keyPoint.title}:</strong> ${keyPoint.explanation}</li>`)
+					html.push(`<li><strong>${escapeHtml(keyPoint.title)}:</strong> ${escapeHtml(keyPoint.explanation)}</li>`)
 				})
 				html.push('</ul>')
 				content = html.join('\n')
@@ -272,7 +273,7 @@ export default {
 			selected.value.forEach(keyPoint => {
 				const { explanation, title } = keyPoint
 				const listItem = window.wp.blocks.createBlock('core/list-item', {
-					content : `<strong>${title}:</strong> ${explanation}`
+					content : `<strong>${escapeHtml(title)}:</strong> ${escapeHtml(explanation)}`
 				})
 
 				items.push(listItem)
@@ -291,7 +292,7 @@ export default {
 			const items = []
 			selected.value.forEach(keyPoint => {
 				const { explanation, title } = keyPoint
-				items.push(`<li><strong>${title}:</strong> ${explanation}</li>`)
+				items.push(`<li><strong>${escapeHtml(title)}:</strong> ${escapeHtml(explanation)}</li>`)
 			})
 
 			const listBlock = window.wp.blocks.createBlock('core/list', {

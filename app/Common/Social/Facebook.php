@@ -318,20 +318,22 @@ class Facebook {
 	/**
 	 * Returns the Open Graph publisher URL.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Falls back to the saved URL when Facebook is excluded from the shared username.
 	 *
 	 * @return string The Open Graph publisher URL.
 	 */
 	public function getPublisher() {
-		if ( ! aioseo()->options->social->profiles->sameUsername->enable ) {
-			return aioseo()->options->social->profiles->urls->facebookPageUrl;
+		if (
+			aioseo()->options->social->profiles->sameUsername->enable &&
+			in_array( 'facebookPageUrl', aioseo()->options->social->profiles->sameUsername->included, true )
+		) {
+			$username = aioseo()->options->social->profiles->sameUsername->username;
+
+			return $username ? 'https://facebook.com/' . $username : '';
 		}
 
-		$username = aioseo()->options->social->profiles->sameUsername->username;
-
-		return ( $username && in_array( 'facebookPageUrl', aioseo()->options->social->profiles->sameUsername->included, true ) )
-			? 'https://facebook.com/' . $username
-			: '';
+		return aioseo()->options->social->profiles->urls->facebookPageUrl;
 	}
 
 	/**

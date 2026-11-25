@@ -112,7 +112,7 @@ export const useLinks = (params = {}) => {
 		showModal.value    = true
 	}
 
-	const doBulkAction = () => {
+	const doBulkAction = async () => {
 		showModal.value = false
 		if (!selectedRows.value.length) {
 			return
@@ -125,9 +125,27 @@ export const useLinks = (params = {}) => {
 
 		if (metabox && 'inboundInternal' !== linkType) {
 			const indexes = idsToIndexes(selectedRows.value)
-			indexes.forEach((index) => {
-				editorRemoveLink(index)
-			})
+			window.aioseoBus.$emit('updatingLinks', true)
+			for (const index of indexes) {
+				await editorRemoveLink(index, false)
+			}
+
+			// Re-index once with the final content; per-link requests race on the server and corrupt the index.
+			if (isBlockEditor()) {
+				await linkAssistantStore.postSettingsUpdate({
+					postContent : window.wp.data.select('core/editor').getEditedPostContent(),
+					skipNextRun : true
+				})
+			} else if (isClassicEditor()) {
+				const postContent = getClassicEditorContent().postContent
+				if (postContent) {
+					await linkAssistantStore.postSettingsUpdate({ postContent })
+				}
+			}
+
+			window.aioseoBus.$emit('updatingLinks', false)
+			emit('linksUpdated')
+			refreshTable()
 			return
 		}
 
@@ -172,17 +190,14 @@ export const useLinks = (params = {}) => {
 		})
 	}
 
-	const editorRemoveLink = (rowIndex) => {
+	const editorRemoveLink = (rowIndex, reindex = true) => {
 		if (isBlockEditor()) {
 			window.aioseoBus.$emit('updatingLinks', false)
-			blockEditorRemoveLink(rowIndex)
-			window.aioseoBus.$emit('updatingLinks', false)
-			return
+			return blockEditorRemoveLink(rowIndex, reindex)
 		}
 
 		if (isClassicEditor()) {
-			classicEditorRemoveLink(rowIndex)
-			return
+			return classicEditorRemoveLink(rowIndex, reindex)
 		}
 
 		// Inside a page builder's own editor neither branch can reach the content, so say so.
@@ -190,10 +205,10 @@ export const useLinks = (params = {}) => {
 		useCommon().notifyPhraseNotFound(link ? link.phrase_html.trim() : '')
 	}
 
-	const blockEditorRemoveLink = (rowIndex) => {
+	const blockEditorRemoveLink = (rowIndex, reindex = true) => {
 		const link = postEditorStore.currentPost.linkAssistant.links[linkType].rows[rowIndex]
 		if (!link) {
-			return
+			return Promise.resolve()
 		}
 
 		window.aioseoBus.$emit('updatingLinks', true)
@@ -209,21 +224,21 @@ export const useLinks = (params = {}) => {
 		if (!targetBlockId) {
 			notifyPhraseNotFound(phraseHtml)
 			window.aioseoBus.$emit('updatingLinks', false)
-			return
+			return Promise.resolve()
 		}
 
 		const targetBlock = window.wp.data.select('core/block-editor').getBlock(targetBlockId)
 		if (!targetBlock) {
 			notifyPhraseNotFound(phraseHtml)
 			window.aioseoBus.$emit('updatingLinks', false)
-			return
+			return Promise.resolve()
 		}
 
 		const anchorPattern = new RegExp(`(<t?a[^<>]*>)(.*)?(${escapedAnchor})(.*)?(</t?a[^<>]*>)`, 'i')
 		const newPhraseHtml = phraseHtml.replace(anchorPattern, '$2$3$4')
 
 		// The phrase can hold `$` sequences (prices), which a replacement string would read as backreferences.
-		window.wp.data.dispatch('core/block-editor').updateBlockAttributes(targetBlockId, {
+		return window.wp.data.dispatch('core/block-editor').updateBlockAttributes(targetBlockId, {
 			content : getBlockContent(targetBlock).replace(phrasePattern(phraseHtml), () => newPhraseHtml)
 		}).then(() => {
 			post.links[linkType].rows.splice(rowIndex, 1)
@@ -234,6 +249,10 @@ export const useLinks = (params = {}) => {
 		}).catch((error) => {
 			console.error(`Couldn\t delete link with type "${linkType}" and index ${rowIndex}:`, error)
 		}).finally(() => {
+			if (!reindex) {
+				return
+			}
+
 			window.aioseoBus.$emit('updatingLinks', false)
 			emit('linksUpdated')
 
@@ -245,28 +264,32 @@ export const useLinks = (params = {}) => {
 		})
 	}
 
-	const classicEditorRemoveLink = (rowIndex) => {
+	const getClassicEditorContent = () => {
+		if (document.querySelector('#wp-content-wrap.tmce-active')) {
+			const editor = window.tinyMCE.get('content')
+
+			return { postContent: editor.getContent({ format: 'raw' }), editor, textEditor: null }
+		}
+
+		const textEditor = document.querySelector('textarea#content')
+
+		return { postContent: textEditor ? textEditor.value : '', editor: null, textEditor }
+	}
+
+	const classicEditorRemoveLink = (rowIndex, reindex = true) => {
 		const link = postEditorStore.currentPost.linkAssistant.links[linkType].rows[rowIndex]
 		if (!link || !window.tinyMCE) {
-			return
+			return Promise.resolve()
 		}
 
 		window.aioseoBus.$emit('updatingLinks', true)
 
-		let postContent = '',
-		 editor         = null,
-		 textEditor     = null
-		if (document.querySelector('#wp-content-wrap.tmce-active')) {
-			editor      = window.tinyMCE.get('content')
-			postContent = editor.getContent({ format: 'raw' })
-		} else {
-			textEditor = document.querySelector('textarea#content')
-			postContent = textEditor ? textEditor.value : ''
-		}
+		const { editor, textEditor, ...content } = getClassicEditorContent()
+		let postContent                          = content.postContent
 
 		if (!postContent) {
 			window.aioseoBus.$emit('updatingLinks', false)
-			return
+			return Promise.resolve()
 		}
 
 		// eslint-disable-next-line one-var
@@ -286,7 +309,7 @@ export const useLinks = (params = {}) => {
 		if (!pattern.test(postContent)) {
 			notifyPhraseNotFound(phraseHtml)
 			window.aioseoBus.$emit('updatingLinks', false)
-			return
+			return Promise.resolve()
 		}
 
 		// The phrase can hold `$` sequences (prices), which a replacement string would read as backreferences.
@@ -304,10 +327,21 @@ export const useLinks = (params = {}) => {
 			post.links[linkType].totals.total--
 		}
 
-		linkAssistantStore.postSettingsUpdate({ postContent: postContent })?.finally(() => {
-			window.aioseoBus.$emit('updatingLinks', false)
-			emit('linksUpdated')
-		})
+		if (!reindex) {
+			return Promise.resolve()
+		}
+
+		const updatePromise = linkAssistantStore.postSettingsUpdate({ postContent: postContent })
+		if (updatePromise) {
+			return updatePromise.finally(() => {
+				window.aioseoBus.$emit('updatingLinks', false)
+				emit('linksUpdated')
+			})
+		}
+
+		window.aioseoBus.$emit('updatingLinks', false)
+		emit('linksUpdated')
+		return Promise.resolve()
 	}
 
 	const idsToIndexes = (indexedSelectedRows) => {

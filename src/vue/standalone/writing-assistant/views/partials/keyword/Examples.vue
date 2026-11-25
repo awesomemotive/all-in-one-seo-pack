@@ -10,7 +10,7 @@
 		>
 			<div class="aioseo-writing-assistant__keyword-examples-competitor-info">
 				<div class="aioseo-writing-assistant__keyword-examples-competitor-info-title">
-					<a :href="competitors[competitorUrlHash]['url']" target="_blank" rel="noopener">
+					<a v-safe-href="competitors[competitorUrlHash]['url']" target="_blank" rel="noopener">
 						{{ getCompetitorTitle(competitors[competitorUrlHash]) }}
 					</a>
 				</div>
@@ -44,7 +44,7 @@
 					class="aioseo-writing-assistant__keyword-examples-competitor-phrases-phrase"
 					v-for="(phrase, key) in competitorPhrases"
 					:key="key"
-					v-html="phrase"
+					v-safe-html="sanitizeRemoteMarkup(phrase)"
 				/>
 			</div>
 		</div>
@@ -58,11 +58,14 @@ import GradeRound from '../GradeRound'
 
 import { __ } from '@/vue/plugins/translations'
 
+import { sanitizeRemoteMarkup } from '@/vue/utils/strings'
+
 const td = import.meta.env.VITE_TEXTDOMAIN
 
 export default {
 	setup () {
 		return {
+			sanitizeRemoteMarkup,
 			writingAssistantStore : useWritingAssistantStore()
 		}
 	},

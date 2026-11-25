@@ -29,7 +29,7 @@
 		<core-alert
 			v-if="!ctaButtonVisible && ctaButtonVisibleWarning"
 			type="yellow"
-			v-html="ctaButtonVisibleWarning"
+			v-safe-html="ctaButtonVisibleWarning"
 		/>
 
 		<div class="actions">
@@ -63,7 +63,7 @@
 			<a
 				v-if="showLink"
 				class="learn-more"
-				:href="learnMoreLink"
+				v-safe-href="learnMoreLink"
 				target="_blank"
 			>
 				<slot name="learn-more-text">
@@ -77,7 +77,7 @@
 			class="bonus-alert"
 			type="yellow"
 		>
-			🎁 <span v-html="bonus" />
+			🎁 <span v-safe-html="bonus" />
 		</core-alert>
 	</div>
 </template>

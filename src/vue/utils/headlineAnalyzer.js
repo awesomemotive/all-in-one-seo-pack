@@ -1,5 +1,6 @@
 import { useOptionsStore, usePostEditorStore } from '@/vue/stores'
 import { isBlockEditor, isClassicEditor, isClassicNoEditor } from '@/vue/utils/context'
+import { getTruSeoDefaultLocale } from '@/vue/utils/truSeoLocale'
 
 // Extracts the language subtag from a locale string (en_GB -> en).
 const languageOf = (locale) => String(locale || '').toLowerCase().split(/[-_]/)[0]
@@ -17,10 +18,7 @@ export const supportsHeadlinePostType = (postType) => 'product' !== postType
 export const getHeadlineAnalysisLocale = () => {
 	const postEditorStore = usePostEditorStore()
 
-	return postEditorStore.currentPost?.truseo_locale ||
-		window.aioseo?.spellChecker?.userLocale ||
-		window.aioseo?.user?.locale ||
-		'en_US'
+	return postEditorStore.currentPost?.truseo_locale || getTruSeoDefaultLocale()
 }
 
 // Single source of truth for whether the Headline Analyzer applies to the post being

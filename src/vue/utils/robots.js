@@ -5,6 +5,42 @@ import { getJsonValue } from '@/vue/utils/json'
 const MAX_CLEAN_PARAM_LENGTH = 500
 
 /**
+ * Decodes and cleans a rule value the way the server does, leaving undecodable sequences as typed.
+ *
+ * NOTE: "%25" stays encoded, so decoding twice gives the same value, as on the server.
+ *
+ * @param   {string} value The rule value.
+ * @returns {string}       The decoded value.
+ */
+export const decodeRuleValue = value => String(value)
+	.replace(/%3[ce]/gi, '')
+	.replace(/(%(?!25)[0-9a-f]{2})+/gi, sequence => {
+		try {
+			return decodeURIComponent(sequence)
+		} catch {
+			return sequence
+		}
+	})
+	// eslint-disable-next-line no-control-regex
+	.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+	.replace(/[\r\n\t ]+/g, ' ')
+	.trim()
+
+/**
+ * Whether decoding a rule value left nothing but slashes and wildcards of it, as with "/%00".
+ *
+ * NOTE: must classify exactly like `sanitizeRuleValue()` in `Common\Tools\RobotsTxt`, which rejects these values.
+ *
+ * @param   {string}  value The rule value, as typed.
+ * @returns {boolean}       Whether the decoded value is emptied.
+ */
+export const isEmptiedByDecoding = value => {
+	const onlySlashes = v => /^[/*]*$/.test(v)
+
+	return onlySlashes(decodeRuleValue(value)) && !onlySlashes(String(value).trim())
+}
+
+/**
  * Converts an array of robots.txt rules into a string.
  *
  * @param 	{Object[]} ruleset An object of robots.txt rules grouped by User-agent.
@@ -163,7 +199,8 @@ export const validateRuleset = (ruleset) => {
 				continue
 			}
 
-			const [ directive, value ] = [ String(rule.directive), String(rule.fieldValue) ]
+			// Rules from other plugins are shown percent-encoded, as they are served, so values are compared decoded.
+			const [ directive, value ] = [ String(rule.directive), decodeRuleValue(rule.fieldValue) ]
 
 			let savePreviewIndex = previewIndex
 			// Compare all rules with each other, with the benefit of not making a comparison twice.
@@ -173,7 +210,7 @@ export const validateRuleset = (ruleset) => {
 					continue
 				}
 
-				const [ nextDirective, nextValue ] = [ String(nextRule.directive), String(nextRule.fieldValue) ]
+				const [ nextDirective, nextValue ] = [ String(nextRule.directive), decodeRuleValue(nextRule.fieldValue) ]
 
 				// Valueless or directiveless rules are not previewed, so we increment the `previewIndex` only if they are not empty.
 				previewIndex = incPreviewIndex(previewIndex, 1)
@@ -242,6 +279,13 @@ export const validateRuleset = (ruleset) => {
 				if (MAX_CLEAN_PARAM_LENGTH < cleanParam.length || !cleanParam.match(/^(?!\/)[^&\s]+(&[^&\s]+)*(\s+\/\S*)?$/)) {
 					errors = fillErrors(errors, 'red', 'invalidCleanParam', rule, { previewIndex })
 				}
+			}
+
+			// The server drops these values on save; other plugins' rules are served as they wrote them.
+			if (!rule.default && isEmptiedByDecoding(rule.fieldValue)) {
+				errors = fillErrors(errors, 'red', 'emptiedByDecoding', rule, { previewIndex })
+			} else if (!rule.default && /%(?!25)[0-9a-f]{2}/i.test(value)) {
+				errors = fillErrors(errors, 'red', 'invalidEncoding', rule, { previewIndex })
 			}
 
 			if (directive.match(/^crawl-delay/i)) {

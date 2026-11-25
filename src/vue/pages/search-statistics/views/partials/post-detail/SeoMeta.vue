@@ -14,7 +14,7 @@
 		</li>
 		<li v-if="meta.canonicalUrl">
 			<div class="meta-title">{{strings.canonicalUrl}}:</div>
-			<div class="meta-content meta-container"><a :href="meta.canonicalUrl" target="_blank">{{meta.canonicalUrl}}</a></div>
+			<div class="meta-content meta-container"><a v-safe-href="meta.canonicalUrl" target="_blank">{{meta.canonicalUrl}}</a></div>
 		</li>
 		<li v-if="meta.robots">
 			<div class="meta-title">{{strings.robots}}:</div>

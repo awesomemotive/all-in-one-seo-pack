@@ -11,7 +11,7 @@
 
 				<dd>
 					<a v-if="isUrl(item.value)"
-						:href="item.value"
+						v-safe-href="item.value"
 						target="_blank"
 					>
 						{{ decodeUrl(item.value) }}

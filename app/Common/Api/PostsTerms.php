@@ -238,7 +238,8 @@ class PostsTerms {
 	/**
 	 * Update post settings.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Keeps the fields missing from the request, or of the wrong type.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
@@ -261,16 +262,9 @@ class PostsTerms {
 			], 403 );
 		}
 
-		$body['id']                  = $postId;
-		$body['title']               = ! empty( $body['title'] ) ? sanitize_text_field( $body['title'] ) : null;
-		$body['description']         = ! empty( $body['description'] ) ? sanitize_text_field( $body['description'] ) : null;
-		$body['keywords']            = ! empty( $body['keywords'] ) ? aioseo()->helpers->sanitize( $body['keywords'] ) : null;
-		$body['og_title']            = ! empty( $body['og_title'] ) ? sanitize_text_field( $body['og_title'] ) : null;
-		$body['og_description']      = ! empty( $body['og_description'] ) ? sanitize_text_field( $body['og_description'] ) : null;
-		$body['og_article_section']  = ! empty( $body['og_article_section'] ) ? sanitize_text_field( $body['og_article_section'] ) : null;
-		$body['og_article_tags']     = ! empty( $body['og_article_tags'] ) ? aioseo()->helpers->sanitize( $body['og_article_tags'] ) : null;
-		$body['twitter_title']       = ! empty( $body['twitter_title'] ) ? sanitize_text_field( $body['twitter_title'] ) : null;
-		$body['twitter_description'] = ! empty( $body['twitter_description'] ) ? sanitize_text_field( $body['twitter_description'] ) : null;
+		$body['id'] = $postId;
+
+		$body = self::sanitizeSeoFields( $body );
 
 		$error = Models\Post::savePost( $postId, $body );
 
@@ -285,6 +279,32 @@ class PostsTerms {
 			'success' => true,
 			'posts'   => $postId
 		], 200 );
+	}
+
+	/**
+	 * Sanitizes the SEO fields of a post settings request.
+	 *
+	 * NOTE: A missing field stays missing, and a text field of the wrong type is left for savePost() to drop, so both keep their saved value.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  array $body The request body.
+	 * @return array       The request body with its SEO fields sanitized.
+	 */
+	protected static function sanitizeSeoFields( $body ) {
+		foreach ( [ 'title', 'description', 'og_title', 'og_description', 'og_article_section', 'twitter_title', 'twitter_description' ] as $field ) {
+			if ( isset( $body[ $field ] ) && is_scalar( $body[ $field ] ) ) {
+				$body[ $field ] = ! empty( $body[ $field ] ) ? sanitize_text_field( $body[ $field ] ) : null;
+			}
+		}
+
+		foreach ( [ 'keywords', 'og_article_tags' ] as $field ) {
+			if ( array_key_exists( $field, $body ) ) {
+				$body[ $field ] = ! empty( $body[ $field ] ) ? aioseo()->helpers->sanitize( $body[ $field ] ) : null;
+			}
+		}
+
+		return $body;
 	}
 
 	/**
@@ -489,6 +509,12 @@ class PostsTerms {
 			$columns                      = Models\Post::getKeywordColumnsFromKeyphrases( $thePost->keyphrases );
 			$thePost->focus_keyword       = $columns['focus_keyword'];
 			$thePost->additional_keywords = $columns['additional_keywords'];
+
+			// Mirror to post meta, which is the only surface multilingual plugins can translate.
+			Models\Post::updatePostMeta( $postId, [
+				'focus_keyword'       => $thePost->focus_keyword,
+				'additional_keywords' => $thePost->additional_keywords
+			] );
 		}
 
 		if ( ! empty( $body['page_analysis'] ) ) {
@@ -583,6 +609,19 @@ class PostsTerms {
 				$thePost->keyphrases,
 				$thePost->truseo
 			);
+
+			// Mirror to post meta, which is the only surface multilingual plugins can translate.
+			// Only the keys this request sent, so a partial save can't wipe the other one's meta.
+			$keywordData = [];
+			if ( array_key_exists( 'focus_keyword', $body ) ) {
+				$keywordData['focus_keyword'] = $thePost->focus_keyword;
+			}
+
+			if ( array_key_exists( 'additional_keywords', $body ) ) {
+				$keywordData['additional_keywords'] = $thePost->additional_keywords;
+			}
+
+			Models\Post::updatePostMeta( $postId, $keywordData );
 		}
 
 		$thePost->updated = gmdate( self::MYSQL_DATETIME_FORMAT );
@@ -861,7 +900,7 @@ class PostsTerms {
 			'additionalKeywords'   => $additionalKeywords,
 			'cornerstone'          => ! empty( $aioseoPost->pillar_content ) ? (bool) $aioseoPost->pillar_content : false,
 			'customAnalysisType'   => $customAnalysisType,
-			'locale'               => get_locale()
+			'locale'               => aioseo()->helpers->getTruSeoLocale( $wpPost, $aioseoPost->truseo_locale )
 		];
 	}
 }

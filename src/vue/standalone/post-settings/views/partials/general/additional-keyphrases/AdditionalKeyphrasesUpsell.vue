@@ -8,7 +8,7 @@
 			class="inline-upsell"
 			type="blue"
 		>
-			<div v-html="strings.upsell" />
+			<div v-safe-html="strings.upsell" />
 		</core-alert>
 	</div>
 </template>

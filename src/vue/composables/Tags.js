@@ -5,7 +5,7 @@ import {
 } from '@/vue/stores'
 
 import { customFieldValue } from '@/vue/utils/postData/customFields'
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 
 export const useTags = ({ separator: defaultSeparator }) => {
 	const separator = ref(defaultSeparator)
@@ -67,7 +67,7 @@ export const useTags = ({ separator: defaultSeparator }) => {
 		string = string.replace(/%\|%/g, '')
 
 		// Sanitize the string to prevent JS from being injected.
-		return sanitizeString(string, true)
+		return stripMarkup(string, true)
 	}
 
 	return {

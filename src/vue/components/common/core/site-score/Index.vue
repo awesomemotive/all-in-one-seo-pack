@@ -22,7 +22,7 @@
 			<div
 				v-if="!loading"
 				class="score-description"
-				v-html="description"
+				v-safe-html="description"
 			/>
 
 			<div

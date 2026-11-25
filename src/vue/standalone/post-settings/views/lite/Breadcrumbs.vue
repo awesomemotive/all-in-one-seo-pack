@@ -4,7 +4,7 @@
     v-if="licenseStore.isUnlicensed"
     type="blue"
   >
-    <div v-html="strings.breadcrumbsUpsell" />
+    <div v-safe-html="strings.breadcrumbsUpsell" />
   </core-alert>
 </template>
 

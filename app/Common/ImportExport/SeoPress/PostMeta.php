@@ -46,12 +46,14 @@ class PostMeta {
 	/**
 	 * Class constructor.
 	 *
-	 * @since 4.1.4
+	 * @since   4.1.4
+	 * @version 5.0.6 Record the start time one second ahead.
 	 */
 	public function scheduleImport() {
 		if ( aioseo()->actionScheduler->scheduleSingle( aioseo()->importExport->seoPress->postActionName, 0 ) ) {
 			if ( ! aioseo()->core->cache->get( 'import_post_meta_seopress' ) ) {
-				aioseo()->core->cache->update( 'import_post_meta_seopress', time(), WEEK_IN_SECONDS );
+				// A scan can still save a row in this second, so a row updated in it must count as not imported yet.
+				aioseo()->core->cache->update( 'import_post_meta_seopress', time() + 1, WEEK_IN_SECONDS );
 			}
 		}
 	}

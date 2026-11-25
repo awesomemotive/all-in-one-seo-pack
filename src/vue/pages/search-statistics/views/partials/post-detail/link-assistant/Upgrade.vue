@@ -4,7 +4,7 @@
 
 		<cta :type="4">
 			<template #header-text>
-				<span v-html="strings.ctaHeader" />
+				<span v-safe-html="strings.ctaHeader" />
 			</template>
 			<template #description>
 				{{ strings.ctaDescription }}

@@ -7,7 +7,7 @@
 
 		<span
 			@click.stop="disabled = true"
-			v-html="strings.upsell"
+			v-safe-html="strings.upsell"
 		/>
 
 		<svg-close

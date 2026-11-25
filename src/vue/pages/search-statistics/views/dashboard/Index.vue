@@ -37,7 +37,7 @@
 					</template>
 
 					<template #tooltip>
-						<span v-html="strings.keywordsTooltip" />
+						<span v-safe-html="strings.keywordsTooltip" />
 					</template>
 
 					<template #tabs>
@@ -74,7 +74,7 @@
 					</template>
 
 					<template #tooltip>
-						<span v-html="strings.keywordPositionsTooltip" />
+						<span v-safe-html="strings.keywordPositionsTooltip" />
 					</template>
 
 					<keywords-graph legend-style="simple" />

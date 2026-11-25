@@ -34,7 +34,13 @@ class Tags {
 	 * @return string                    The string with tags replaced.
 	 */
 	public function replaceTags( $string, $item, $stripPunctuation = false ) {
-		if ( ! $string || ! preg_match( '/#/', (string) $string ) ) {
+		if ( ! $string ) {
+			return $string;
+		}
+
+		// Pro custom templates arrive encoded. Decoding happens before any tag value goes in, so only the template's own markup is restored.
+		$string = aioseo()->helpers->decodeHtmlEntities( (string) $string );
+		if ( ! preg_match( '/#/', $string ) ) {
 			return $string;
 		}
 
@@ -47,7 +53,7 @@ class Tags {
 			$tagId   = aioseo()->tags->denotationChar . $tag['id'];
 			$pattern = "/$tagId(?![a-zA-Z0-9_])/im";
 			if ( preg_match( $pattern, (string) $string ) ) {
-				$tagValue = str_replace( '$', '\$', $this->escapeTagValue( $tag['id'], $this->getTagValue( $tag, $item ) ) );
+				$tagValue = str_replace( '$', '\$', $this->escapeTagValue( $tag['id'], $this->getTagValue( $tag, $item ), $item ) );
 				$string   = preg_replace( $pattern, $tagValue, (string) $string );
 			}
 		}
@@ -74,13 +80,15 @@ class Tags {
 	/**
 	 * Escapes a tag value for the crumb's HTML.
 	 *
-	 * @since 5.0.5.1
+	 * @since   5.0.5.1
+	 * @version 5.0.6 Added the $item parameter; keep attribute-less inline formatting in text values.
 	 *
 	 * @param  string $tagId The tag ID.
 	 * @param  mixed  $value The tag value.
+	 * @param  array  $item  The breadcrumb item.
 	 * @return string        The escaped tag value.
 	 */
-	protected function escapeTagValue( $tagId, $value ) {
+	protected function escapeTagValue( $tagId, $value, $item = [] ) {
 		$value = (string) $value;
 
 		switch ( $tagId ) {
@@ -90,10 +98,39 @@ class Tags {
 			case 'breadcrumb_separator':
 			case 'breadcrumb_wc_product_price':
 				return $value;
-			default:
-				// Decoded first so the entities WordPress already stored aren't double-encoded.
-				return esc_html( aioseo()->helpers->decodeHtmlEntities( $value ) );
 		}
+
+		// Decoded first so the entities WordPress already stored aren't double-encoded.
+		$value = aioseo()->helpers->decodeHtmlEntities( $value );
+
+		// The search crumb comes from the URL, so it never renders markup.
+		if ( ! empty( $item['type'] ) && 'search' === $item['type'] ) {
+			return esc_html( $value );
+		}
+
+		// Titles may use simple inline formatting. With every attribute stripped and the quotes encoded,
+		// the value can't add attributes to the crumb's own tags or break out of the title="" attribute.
+		// A "<" that doesn't open a tag in the browser is text, but wp_kses() would still read "a < b >" as a <b> tag.
+		$value = preg_replace( '/<(?![a-z\/])/i', '&lt;', $value );
+		$value = wp_kses( $value, $this->getAllowedInlineTags() );
+
+		return str_replace( [ '"', "'" ], [ '&quot;', '&#039;' ], $value );
+	}
+
+	/**
+	 * Returns the inline tags a text tag value may keep, without attributes.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return array The allowed tags for wp_kses().
+	 */
+	private function getAllowedInlineTags() {
+		return [
+			'b'      => [],
+			'em'     => [],
+			'i'      => [],
+			'strong' => []
+		];
 	}
 
 	/**

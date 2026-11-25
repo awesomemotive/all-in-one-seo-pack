@@ -340,6 +340,16 @@ const initAioseoEditor = (selector) => {
 
 	app.mount(`${selector} > div`)
 
+	const collapseGuard = wrapper.querySelector('#main-settings-cont')?.parentElement
+	if (collapseGuard && !collapseGuard.dataset.aioseoCollapseGuard) {
+		collapseGuard.dataset.aioseoCollapseGuard = '1'
+		collapseGuard.addEventListener('click', event => {
+			if (!event.target.closest('#main-settings-cont')) {
+				event.stopPropagation()
+			}
+		}, true)
+	}
+
 	// Only for a document the load-time analysis has not covered, e.g. one attach-preview never
 	// reached. Joins the sync onBeforeMount started, so it never scores the previous post's data.
 	if (analyzedDocumentId !== (window.elementor?.config?.document?.id ?? null)) {

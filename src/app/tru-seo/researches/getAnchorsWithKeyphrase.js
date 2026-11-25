@@ -6,6 +6,7 @@ import matchTextWithArray from '@/app/tru-seo/languageProcessing/helpers/match/m
 import parseSynonyms from '@/app/tru-seo/languageProcessing/helpers/sanitize/parseSynonyms'
 import processExactMatchRequest from '@/app/tru-seo/languageProcessing/helpers/match/processExactMatchRequest'
 import urlHelper from '@/app/tru-seo/languageProcessing/helpers/url/url.js'
+import { isNofollowRel } from '@/app/tru-seo/languageProcessing/helpers/link/checkNofollow.js'
 import { WORD_BOUNDARY_WITH_HYPHEN, WORD_BOUNDARY_WITHOUT_HYPHEN } from '@/app/tru-seo/config/wordBoundariesWithoutPunctuation'
 
 let functionWords = []
@@ -39,6 +40,18 @@ function getAnchorsLinkingToSelf (anchors, siteUrlOrDomain) {
 	})
 
 	return  anchors.filter((_anchor, index) => !anchorsLinkingToSelf[index])
+}
+
+/**
+ * Gets the anchors whose link can still pass anchor text signal to its target.
+ * A link marked nofollow, sponsored or ugc cannot, so it cannot compete with this page either.
+ *
+ * @param {Array} anchors An array with all anchors from the paper.
+ *
+ * @returns {Array} The array of all anchors that can pass anchor text signal.
+ */
+function getFollowedAnchors (anchors) {
+	return anchors.filter(anchor => !isNofollowRel(anchor.attributes.rel))
 }
 
 /**
@@ -83,10 +96,7 @@ function getAnchorsWithSameTextAsTopic (anchors, topicForms, locale, customHelpe
 	const synonymsForms = topicForms.synonymsForms
 	synonymsForms.forEach(form => keyphraseAndSynonymsWords.push(flatten(form)))
 
-	// The variable that will save all the anchors with text that has the same content words as the keyphrase/synonyms.
-	const anchorsContainedInTopic = []
-
-	anchors.forEach(function (currentAnchor) {
+	return anchors.filter(function (currentAnchor) {
 		const currentAnchorText = currentAnchor.innerText()
 
 		/*
@@ -116,27 +126,21 @@ function getAnchorsWithSameTextAsTopic (anchors, topicForms, locale, customHelpe
 			anchorWords = filteredAnchorWords
 		}
 
-		exactMatchRequest.forEach(request => {
-			/*
-			 * Check a) if the exact match is requested for the keyphrase, and
-			 * b) if every content word in the anchor text is included in the keyphrase or synonym.
-			 */
-			if (request.exactMatchRequested &&
-				anchorWords.every(anchorWord => request.keyphrase.toLowerCase().includes(anchorWord.toLowerCase()))) {
-				anchorsContainedInTopic.push(true)
-			}
-		})
+		/*
+		 * Check a) if the exact match is requested for the keyphrase, and
+		 * b) if every content word in the anchor text is included in the keyphrase or synonym.
+		 */
+		const matchesExactMatchRequest = exactMatchRequest.some(request => request.exactMatchRequested &&
+			anchorWords.every(anchorWord => request.keyphrase.toLowerCase().includes(anchorWord.toLowerCase())))
+
+		if (matchesExactMatchRequest) {
+			return true
+		}
 
 		// Check if every word in the anchor text is also present in the keyphrase/synonym.
-		for (const topicForm of keyphraseAndSynonymsWords) {
-			if (anchorWords.every(anchorWord => 0 < matchTextWithArray(anchorWord, topicForm, locale, matchWordCustomHelper).count)) {
-				anchorsContainedInTopic.push(true)
-				break
-			}
-		}
+		return keyphraseAndSynonymsWords.some(topicForm =>
+			anchorWords.every(anchorWord => 0 < matchTextWithArray(anchorWord, topicForm, locale, matchWordCustomHelper).count))
 	})
-
-	return anchors.filter((_anchor, index) => anchorsContainedInTopic[index])
 }
 
 /**
@@ -192,6 +196,12 @@ export default function (paper, researcher) {
 	// Get the anchors with urls that are not linking to the current site url/domain.
 	anchors = getAnchorsLinkingToSelf(anchors, siteUrlOrDomain)
 	// If all anchor urls are linking to the current site url/domain, return empty result.
+	if (0 === anchors.length) {
+		return result
+	}
+
+	// Drop the links that cannot pass anchor text signal, so they cannot compete with this page.
+	anchors = getFollowedAnchors(anchors)
 	if (0 === anchors.length) {
 		return result
 	}

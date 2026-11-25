@@ -105,7 +105,7 @@
 
 					<core-alert
 						v-if="rootStore.aioseo.editObjectBtnText && editFocusKeyphraseUrl"
-						v-html="`${strings.visitAdmin} <a style='display: inline-flex' href='${editFocusKeyphraseUrl}'>${rootStore.aioseo.editObjectBtnText} &rarr;</a>`"
+						v-safe-html="`${strings.visitAdmin} <a style='display: inline-flex' href='${editFocusKeyphraseUrl}'>${rootStore.aioseo.editObjectBtnText} &rarr;</a>`"
 						size="small"
 					/>
 				</div>

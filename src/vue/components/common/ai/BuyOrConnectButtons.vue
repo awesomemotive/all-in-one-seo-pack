@@ -15,18 +15,18 @@
 				{{ strings.creditsDescription }}
 				<template v-if="licenseStore.license.isActive">
 					<a
-						:href="purchaseCreditsUrl"
+						v-safe-href="purchaseCreditsUrl"
 						target="_blank"
 					>{{ strings.purchaseCredits }}</a>
 				</template>
 				<template v-else>
 					<a
-						:href="upgradeUrl"
+						v-safe-href="upgradeUrl"
 						target="_blank"
 					>{{ strings.upgradeToPro }}</a>
 					{{ strings.or }}
 					<a
-						:href="purchaseCreditsUrl"
+						v-safe-href="purchaseCreditsUrl"
 						target="_blank"
 					>{{ strings.buyBundle }}</a>
 				</template>
@@ -106,7 +106,7 @@
 				class="license-key-error"
 				v-if="error"
 				type="red"
-				v-html="error"
+				v-safe-html="error"
 			/>
 		</div>
 	</div>

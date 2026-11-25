@@ -16,7 +16,7 @@
 			<div class="logo">
 				<a
 					v-if="licenseStore.isUnlicensed"
-					:href="links.utmUrl('header-logo')"
+					v-safe-href="links.utmUrl('header-logo')"
 					target="_blank"
 
 				>
@@ -55,7 +55,7 @@
 						:key="index"
 					>
 						<span class="icon"><svg-description /></span>
-						<a :href="links.utmUrl('help-panel-doc', '', doc.url)" rel="noopener noreferrer" target="_blank">{{ doc.title }}</a>
+						<a v-safe-href="links.utmUrl('help-panel-doc', '', doc.url)" rel="noopener noreferrer" target="_blank">{{ doc.title }}</a>
 					</li>
 				</ul>
 			</div>
@@ -78,7 +78,7 @@
 								:key="index"
 							>
 								<span class="icon"><svg-description /></span>
-								<a :href="links.utmUrl('help-panel-doc', '', doc.url)" rel="noopener noreferrer" target="_blank">{{ doc.title }}</a>
+								<a v-safe-href="links.utmUrl('help-panel-doc', '', doc.url)" rel="noopener noreferrer" target="_blank">{{ doc.title }}</a>
 							</li>
 							<div class="aioseo-help-additional-docs">
 								<li
@@ -86,7 +86,7 @@
 									:key="index"
 								>
 									<span class="icon"><svg-description /></span>
-									<a :href="links.utmUrl('help-panel-doc', '', doc.url)" rel="noopener noreferrer" target="_blank">{{ doc.title }}</a>
+									<a v-safe-href="links.utmUrl('help-panel-doc', '', doc.url)" rel="noopener noreferrer" target="_blank">{{ doc.title }}</a>
 								</li>
 							</div>
 							<base-button
@@ -102,7 +102,7 @@
 			</div>
 			<div id="aioseo-help-footer">
 				<div class="aioseo-help-footer-block">
-					<a :href="links.utmUrl('help-panel-all-docs', '', 'https://aioseo.com/docs/')" rel="noopener noreferrer" target="_blank">
+					<a v-safe-href="links.utmUrl('help-panel-all-docs', '', 'https://aioseo.com/docs/')" rel="noopener noreferrer" target="_blank">
 						<svg-description />
 						<h3>{{ strings.viewDocumentation }}</h3>
 						<p>{{ strings.browseDocumentation }}</p>
@@ -116,7 +116,7 @@
 
 				<div class="aioseo-help-footer-block">
 					<a
-						:href="!rootStore.isPro || !licenseStore.license.isActive
+						v-safe-href="!rootStore.isPro || !licenseStore.license.isActive
 							? links.getUpsellUrl('help-panel', 'get-support', 'liteUpgrade')
 							: links.utmUrl('help-panel-support', '', 'https://aioseo.com/account/support/')
 						"

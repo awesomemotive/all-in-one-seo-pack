@@ -4,7 +4,7 @@
 		class="aioseo-card-footer"
 	>
 		<router-link :to="{ name : buttonTarget, query : query }">
-			<span v-html="strings.openReport" />
+			<span v-safe-html="strings.openReport" />
 		</router-link>
 	</div>
 </template>

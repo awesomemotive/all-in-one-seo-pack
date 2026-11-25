@@ -11,7 +11,7 @@
 					v-if="optionsStore.saveError"
 					type="red"
 				>
-					<div v-html="errorSaving"></div>
+					<div v-safe-html="errorSaving"></div>
 				</core-alert>
 
 				<core-main-tabs

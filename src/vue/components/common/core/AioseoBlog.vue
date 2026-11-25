@@ -7,14 +7,14 @@
 				class="aioseo-blog-list-item"
 			>
 				<a
-					:href="post.url"
+					v-safe-href="post.url"
 					target="_blank"
 				>{{ post.title }}</a>
 				<span>{{ post.date }}</span>
 			</li>
 		</ul>
 		<a
-			:href="links.utmUrl(medium, null, 'blog/')"
+			v-safe-href="links.utmUrl(medium, null, 'blog/')"
 			class="aioseo-blog-read-more"
 			target="_blank"
 		>

@@ -1,47 +1,18 @@
 // Import each assessment from its own module rather than through a barrel, so the worker bundle
-// only pulls in the five it registers.
-import WordComplexityAssessment from '@/app/tru-seo/scoring/assessments/readability/WordComplexityAssessment'
+// only pulls in the four it registers.
 import SpellingCheckerAssessment from '@/app/tru-seo/scoring/assessments/readability/SpellingCheckerAssessment'
 import TextAlignmentAssessment from '@/app/tru-seo/scoring/assessments/readability/TextAlignmentAssessment'
 import KeyphraseDistributionAssessment from '@/app/tru-seo/scoring/assessments/seo/KeyphraseDistributionAssessment'
 import KeywordCannibalizationAssessment from '@/app/tru-seo/scoring/assessments/seo/KeywordCannibalizationAssessment'
-import { getLanguagesWithWordComplexity, getWordComplexityConfig, getWordComplexityHelper } from '@/app/tru-seo/helpers'
 import { researches as languageProcessingResearches } from '@/app/tru-seo/languageProcessing'
 import getSpellingErrors from '@/app/tru-seo/researches/getSpellingErrors'
 
-const { getLongCenterAlignedTexts, wordComplexity, keyphraseDistribution: keyPhraseDistribution } = languageProcessingResearches
+const { getLongCenterAlignedTexts, keyphraseDistribution: keyPhraseDistribution } = languageProcessingResearches
 const pluginName = 'AIOSEO'
 
-export default function (worker, language) {
-	if (getLanguagesWithWordComplexity().includes(language)) {
-		// Get the word complexity config for the specific language.
-		const wordComplexityConfig = getWordComplexityConfig(language)
-		// Get the word complexity helper for the specific language.
-		const wordComplexityHelper = getWordComplexityHelper(language)
-		// Initialize the assessment for regular content.
-		const wordComplexityAssessment = new WordComplexityAssessment()
-		// Initialize the assessment for cornerstone content.
-		const wordComplexityAssessmentCornerstone = new WordComplexityAssessment({
-			scores : {
-				acceptableAmount : 3
-			}
-		})
-
-		// Register the word complexity config.
-		worker.registerResearcherConfig('wordComplexity', wordComplexityConfig)
-
-		// Register the word complexity helper.
-		worker.registerHelper('checkIfWordIsComplex', wordComplexityHelper)
-
-		// Register the word complexity research.
-		worker.registerResearch('wordComplexity', wordComplexity)
-
-		// Register the word complexity assessment for regular content.
-		worker.registerAssessment('wordComplexity', wordComplexityAssessment, pluginName, 'readability')
-
-		// Register the word complexity assessment for cornerstone content.
-		worker.registerAssessment('wordComplexity', wordComplexityAssessmentCornerstone, pluginName, 'cornerstoneReadability')
-	}
+export default function (worker) {
+	// Word complexity is not registered: it needs word-frequency data we don't ship, so it would
+	// always pass and inflate every readability score.
 
 	const keyphraseDistributionAssessment = new KeyphraseDistributionAssessment()
 	worker.registerResearch('keyphraseDistribution', keyPhraseDistribution)

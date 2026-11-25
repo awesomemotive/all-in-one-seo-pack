@@ -119,6 +119,13 @@
 		>
 			{{ strings.import }}
 		</base-button>
+
+		<confirmation-modal
+			:show="showClearWarning"
+			:strings="clearWarningStrings"
+			@doAction="confirmImport"
+			@closeModal="cancelImport"
+		/>
 	</core-card>
 </template>
 
@@ -129,6 +136,7 @@ import {
 } from '@/vue/stores'
 
 import BaseCheckbox from '@/vue/components/common/base/Checkbox'
+import ConfirmationModal from '@/vue/components/common/core/modal/ConfirmationModal'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
 import CoreNetworkSiteSelector from '@/vue/components/common/core/NetworkSiteSelector'
@@ -149,6 +157,7 @@ export default {
 	},
 	components : {
 		BaseCheckbox,
+		ConfirmationModal,
 		CoreAlert,
 		CoreCard,
 		CoreNetworkSiteSelector,
@@ -158,13 +167,15 @@ export default {
 	},
 	data () {
 		return {
-			site          : null,
-			importSuccess : false,
-			importError   : false,
-			options       : {},
-			plugin        : null,
-			loading       : false,
-			strings       : {
+			site             : null,
+			importSuccess    : false,
+			importError      : false,
+			options          : {},
+			plugin           : null,
+			loading          : false,
+			showClearWarning : false,
+			pendingSettings  : [],
+			strings          : {
 				selectSite                     : __('Select Site', td),
 				importSettingsFromOtherPlugins : __('Import Settings From Other Plugins', td),
 				importOthersDescription        : sprintf(
@@ -172,10 +183,22 @@ export default {
 					__('Choose a plugin to import SEO data directly into %1$s.', td),
 					import.meta.env.VITE_SHORT_NAME
 				),
-				selectPlugin : __('Select a plugin...', td),
-				import       : __('Import', td),
-				allSettings  : __('All Settings', td),
-				notInstalled : __('not installed', td)
+				selectPlugin      : __('Select a plugin...', td),
+				import            : __('Import', td),
+				allSettings       : __('All Settings', td),
+				notInstalled      : __('not installed', td),
+				clearWarningTitle : sprintf(
+					// Translators: 1 - The plugin short name ("AIOSEO").
+					__('Existing %1$s data will be overwritten', td),
+					import.meta.env.VITE_SHORT_NAME
+				),
+				clearWarningDescription : sprintf(
+					// Translators: 1 - The plugin short name ("AIOSEO").
+					__('Importing Post Meta or Term Meta will overwrite your existing %1$s SEO data (titles, descriptions and other meta) for every post and term that Yoast SEO manages. Anything left on a Yoast default will fall back to your default settings. This cannot be undone.', td),
+					import.meta.env.VITE_SHORT_NAME
+				),
+				clearWarningConfirm : __('Yes, overwrite and import', td),
+				clearWarningCancel  : __('Cancel', td)
 			}
 		}
 	},
@@ -237,14 +260,22 @@ export default {
 				__('An error occurred while importing %1$s. Please try again.', td),
 				this.plugin.label
 			)
+		},
+		clearWarningStrings () {
+			return {
+				areYouSure           : this.strings.clearWarningTitle,
+				actionCannotBeUndone : this.strings.clearWarningDescription,
+				confirmation         : this.strings.clearWarningConfirm,
+				noChangedMind        : this.strings.clearWarningCancel
+			}
 		}
 	},
 	methods : {
 		processImportPlugin () {
 			this.importSuccess = false
 			this.importError   = false
-			this.loading       = true
-			const settings     = []
+
+			const settings = []
 			if (this.options.all) {
 				this.settings
 					.filter(setting => 'all' !== setting.value)
@@ -258,6 +289,29 @@ export default {
 					}
 				})
 			}
+
+			// Only Yoast clears existing data before importing, so confirm first for its post/term meta.
+			const isYoastImport = [ 'yoast-seo', 'yoast-seo-premium' ].includes(this.plugin.value)
+			if (isYoastImport && (settings.includes('postMeta') || settings.includes('termMeta'))) {
+				this.pendingSettings  = settings
+				this.showClearWarning = true
+
+				return
+			}
+
+			this.runImport(settings)
+		},
+		confirmImport () {
+			this.showClearWarning = false
+			this.runImport(this.pendingSettings)
+			this.pendingSettings = []
+		},
+		cancelImport () {
+			this.showClearWarning = false
+			this.pendingSettings  = []
+		},
+		runImport (settings) {
+			this.loading = true
 
 			this.toolsStore.importPlugins({
 				plugins : [ {

@@ -87,7 +87,7 @@
 						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
-						<div v-html="strings.truSeoTaxonomiesUpsell" />
+						<div v-safe-html="strings.truSeoTaxonomiesUpsell" />
 					</core-alert>
 				</template>
 			</core-settings-row>
@@ -184,7 +184,7 @@
 				{{ strings.description }}
 
 				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'writingAssistantHowToUse', true)"
+					v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'writingAssistantHowToUse', true)"
 				/>
 
 			</div>

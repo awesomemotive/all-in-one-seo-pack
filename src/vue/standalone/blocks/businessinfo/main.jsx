@@ -7,7 +7,7 @@ import { observeElement } from '@/vue/utils/helpers'
 import icon from './icon'
 import metadata from './block.json'
 
-import { maybeDeleteBlockVueApp, panelBodyMountTarget, useBlockSettingsRemount } from '@/vue/standalone/blocks/utils'
+import { getBlockLocation, maybeDeleteBlockVueApp, panelBodyMountTarget, useBlockSettingsRemount } from '@/vue/standalone/blocks/utils'
 
 import loadPlugins from '@/vue/plugins'
 import {
@@ -27,7 +27,8 @@ const {
 	description,
 	category,
 	supports,
-	attributes
+	attributes,
+	usesContext
 } = metadata
 export { metadata, name }
 
@@ -48,6 +49,7 @@ export const settings = {
 	supports,
 	attributes,
 	icon,
+	usesContext,
 	edit : withSelect(function (select) {
 		const rootStore = useRootStore()
 		const locations = select('core').getEntityRecords('postType', rootStore.aioseo.localBusiness.postTypeName, { per_page: 100 })
@@ -60,7 +62,7 @@ export const settings = {
 		const optionsStore      = useOptionsStore()
 		const postEditorStore   = usePostEditorStore()
 		const multipleLocations = optionsStore.options.localBusiness?.locations.general.multiple
-		const { setAttributes, attributes, clientId, isSelected, toggleSelection } = props
+		const { setAttributes, attributes, context, clientId, isSelected, toggleSelection } = props
 		let { locations } = props
 		const vueAioseoId   = 'aioseo-' + clientId
 
@@ -73,10 +75,14 @@ export const settings = {
 		attributes.emailLabel = attributes.emailLabel || __('Email', td)
 		attributes.updated = attributes.updated || Date.now()
 
+		const isLocationPostType = postEditorStore.currentPost.postType === rootStore.aioseo.localBusiness.postTypeName
+
+		// A block shows its own Location, or the one it renders for. Derived, not saved: the server falls back the same way.
+		const { locationId, isCurrentLocation } = getBlockLocation(attributes, context)
+
 		// Snapshot of the location's current settings, so the preview reflects unsaved changes.
 		// Deliberately kept out of `attributes` — persisting it would freeze the front-end output.
-		const isLocationPostType = postEditorStore.currentPost.postType === rootStore.aioseo.localBusiness.postTypeName
-		const dataObject         = isLocationPostType ? JSON.stringify(postEditorStore.currentPost.local_seo.locations.business) : null
+		const dataObject = isCurrentLocation ? JSON.stringify(postEditorStore.currentPost.local_seo.locations.business) : null
 
 		// This is a React component, so it is blind to the Pinia mutations the metabox makes. Without
 		// a nudge the preview keeps rendering the snapshot taken when the block last rendered.
@@ -119,9 +125,6 @@ export const settings = {
 			)
 		}
 
-		// Force locationId if we're in the local-business post type.
-		attributes.locationId = (!attributes.locationId && isLocationPostType) ? postEditorStore.currentPost.id : attributes.locationId
-
 		const observeElementArgs = {
 			id      : vueAioseoId,
 			parent  : document.querySelector('.block-editor'),
@@ -163,11 +166,13 @@ export const settings = {
 				initialBlockState[clientId][key] = attributes[key]
 			})
 			initialBlockState[clientId].locations = locations
+			// A Location the block follows without one saved, e.g. its Query Loop row's.
+			initialBlockState[clientId].derivedLocationId = attributes.locationId ? 0 : locationId
 
 			observeElement(observeElementArgs)
 		}
 
-		if (multipleLocations && !attributes.locationId) {
+		if (multipleLocations && !locationId) {
 			return (
 				<>
 					<InspectorControls>
@@ -194,7 +199,7 @@ export const settings = {
 				<div {...blockProps}>
 					<ServerSideRender
 						block={name}
-						attributes={{ ...attributes, dataObject }}
+						attributes={{ ...attributes, locationId, dataObject }}
 					/>
 				</div>
 			</>

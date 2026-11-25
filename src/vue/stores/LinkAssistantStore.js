@@ -60,17 +60,7 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 				pages : 1,
 				total : 1
 			},
-			prioritizedPosts : [],
-			counts           : [
-				{
-					inboundInternal     : 0,
-					outboundInternal    : 0,
-					affiliate           : 0,
-					external            : 0,
-					suggestionsInbound  : 0,
-					suggestionsOutbound : 0
-				}
-			]
+			prioritizedPosts : []
 		},
 		postReport : {
 			inboundInternal     : { rows: [], totals: { page: 1, pages: 1, total: 0 } },
@@ -93,6 +83,16 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 		},
 		skipNextPostSettingsUpdate : false
 	}),
+	getters : {
+		linksReportCounts : state => state.linksReport.rows.map(row => ({
+			inboundInternal     : row.links.inboundInternal.totals.total,
+			outboundInternal    : row.links.outboundInternal.totals.total,
+			affiliate           : row.links.affiliate.totals.total,
+			external            : row.links.external.totals.total,
+			suggestionsInbound  : row.links.suggestionsInbound.totals.total,
+			suggestionsOutbound : row.links.suggestionsOutbound.totals.total
+		}))
+	},
 	actions : {
 		linkDelete ({ postId, linkId, linksReport, postReport }) {
 			const slug = linksReport ? 'links-report-inner' : (postReport ? 'post-report' : 'post-settings')
@@ -114,14 +114,6 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 					}
 
 					this.getOverviewData()
-
-					if (postReport) {
-						return
-					}
-
-					if (linksReport) {
-						this.setLinksReportCounts()
-					}
 				})
 		},
 		linksBulk ({ postId, action, linkType, linkIds, linksReport, postReport }) {
@@ -146,14 +138,6 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 					}
 
 					this.getOverviewData()
-
-					if (postReport) {
-						return
-					}
-
-					if (linksReport) {
-						this.setLinksReportCounts()
-					}
 				})
 		},
 		linksRefresh ({ postId, linksReport, postReport }) {
@@ -163,10 +147,6 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 					postId : postId
 				}).then(() => {
 					this.linksReport.prioritizedPosts.push(postId)
-
-					if (linksReport) {
-						this.setLinksReportCounts()
-					}
 
 					this.pollSuggestionsScan()
 					// Don't need to get the overview data here since the poll does it for us.
@@ -204,7 +184,6 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 						}
 
 						this.getOverviewData()
-						this.setLinksReportCounts()
 					}
 				})
 		},
@@ -230,13 +209,6 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 					}
 
 					this.getOverviewData()
-
-					if (postReport) {
-						return
-					}
-					if (linksReport) {
-						this.setLinksReportCounts()
-					}
 				})
 		},
 		fetchLinksReport ({ orderBy, orderDir, limit, offset, searchTerm, filter, additionalFilters }) {
@@ -253,7 +225,6 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 					this.linksReport = response.body.linksReport
 
 					this.getOverviewData()
-					this.setLinksReportCounts()
 				})
 		},
 		fetchLinksReportInner ({ filter, additionalFilters }) {
@@ -265,9 +236,6 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 					const postIndex = additionalFilters?.postIndex
 					if (response.body?.links && (postIndex || 0 === postIndex)) {
 						this.linksReport.rows[postIndex].links = response.body.links
-
-						// The tab labels read from the counts, so they have to follow the row we just refreshed.
-						this.setLinksReportCounts()
 					}
 
 					this.getOverviewData()
@@ -507,21 +475,6 @@ export const useLinkAssistantStore = defineStore('LinkAssistantStore', {
 						}
 					}
 				})
-		},
-		setLinksReportCounts () {
-			const counts = []
-			this.linksReport.rows.forEach((row, index) => {
-				counts[index] = {
-					inboundInternal     : row.links.inboundInternal.totals.total,
-					outboundInternal    : row.links.outboundInternal.totals.total,
-					affiliate           : row.links.affiliate.totals.total,
-					external            : row.links.external.totals.total,
-					suggestionsInbound  : row.links.suggestionsInbound.totals.total,
-					suggestionsOutbound : row.links.suggestionsOutbound.totals.total
-				}
-			})
-
-			this.linksReport.counts = counts
 		},
 		resetState (data) {
 			if (data.options) {

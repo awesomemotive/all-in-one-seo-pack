@@ -18,6 +18,54 @@ class SeoChecklist {
 	 */
 	public function __construct() {
 		add_action( 'update_option_blog_public', [ $this, 'onBlogPublicUpdate' ], 10, 2 );
+		add_action( 'update_option_blogname', [ $this, 'onSiteTitleUpdate' ] );
+		add_action( 'update_option_blogdescription', [ $this, 'onTaglineUpdate' ] );
+	}
+
+	/**
+	 * Re-opens the site title and tagline check when the site title is cleared.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return void
+	 */
+	public function onSiteTitleUpdate() {
+		if ( ! $this->checkSiteTitle() ) {
+			$this->reopenSiteTitleAndTaglineCheck();
+		}
+	}
+
+	/**
+	 * Re-opens the site title and tagline check when the tagline is cleared or reset to the default.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return void
+	 */
+	public function onTaglineUpdate() {
+		if ( ! $this->checkTagline() ) {
+			$this->reopenSiteTitleAndTaglineCheck();
+		}
+	}
+
+	/**
+	 * Removes the site title and tagline check from the completed checks.
+	 *
+	 * NOTE: Skips the capability check, since WP-CLI, cron and importers change these options as user 0.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return void
+	 */
+	protected function reopenSiteTitleAndTaglineCheck() {
+		// Inside switch_to_blog() the in-memory options still belong to the request's site, not the switched-to one.
+		if ( is_multisite() && ms_is_switched() ) {
+			return;
+		}
+
+		$completedChecks = aioseo()->internalOptions->internal->seoChecklist->completed;
+
+		aioseo()->internalOptions->internal->seoChecklist->completed = array_values( array_diff( $completedChecks, [ 'setSiteTitleAndTagline' ] ) );
 	}
 
 	/**
@@ -563,16 +611,22 @@ class SeoChecklist {
 	}
 
 	/**
-	 * Check if Tagline is set.
+	 * Check if Tagline is set to a non-default value.
 	 *
-	 * @since 4.9.4
+	 * @since   4.9.4
+	 * @version 5.0.6 Also treat the default tagline in any installed language as unset.
 	 *
-	 * @return bool True if Tagline is set.
+	 * @return bool True if the Tagline is set and is not the default WordPress tagline.
 	 */
 	protected function checkTagline() {
 		$tagline = get_option( 'blogdescription' );
 
-		return ! empty( $tagline );
+		if ( empty( $tagline ) ) {
+			return false;
+		}
+
+		// The default WordPress tagline is boilerplate that leaks into titles and meta, so treat it as unset.
+		return ! aioseo()->helpers->isDefaultTagline( $tagline );
 	}
 
 	/**

@@ -5,9 +5,15 @@ import {
 import { isWooCommerceProduct } from '@/vue/utils/context'
 import { maybeUpdateTaxonomies } from '@/vue/plugins/tru-seo/components/taxonomies'
 
-export const watchClassicEditor = () => {
-	let isAnalyzing = false
+// `change` fires when TinyMCE adds an undo level, which covers toolbar commands that fire neither keyup nor paste.
+// The toolbar Undo/Redo buttons fire only `undo`/`redo`, and a highlight repaint can clear the dirty flag first.
+const watchTinyMce = (editor) => {
+	editor.on('keyup paste change undo redo', () => {
+		maybeUpdatePost(500)
+	})
+}
 
+export const watchClassicEditor = () => {
 	if (document.querySelector('#wp-content-wrap.tmce-active')) {
 		// Run Analysis once tinyMCE loads.
 		const mceActiveInterval = window.setInterval(() => {
@@ -16,12 +22,7 @@ export const watchClassicEditor = () => {
 			}
 			window.clearInterval(mceActiveInterval)
 			maybeUpdatePost()
-			window.tinyMCE.get('content').on('keyup', () => {
-				maybeUpdatePost(500)
-			})
-			window.tinyMCE.get('content').on('paste', () => {
-				maybeUpdatePost(500)
-			})
+			watchTinyMce(window.tinyMCE.get('content'))
 		}, 50)
 	} else {
 		// No TinyMCE. Look for a proper #content textarea.
@@ -89,12 +90,7 @@ export const watchClassicEditor = () => {
 					if (!window.tinyMCE) {
 						return
 					}
-					window.tinyMCE.get('content').on('keyup', () => {
-						maybeUpdatePost(500)
-					})
-					window.tinyMCE.get('content').on('paste', () => {
-						maybeUpdatePost(500)
-					})
+					watchTinyMce(window.tinyMCE.get('content'))
 				}
 				const textEditor = document.querySelector('#content')
 				if (textEditor) {
@@ -120,30 +116,27 @@ export const watchClassicEditor = () => {
 	if (excerptWrap) {
 		mutationObserver.observe(excerptWrap, { attributes: true })
 	}
-	setInterval(() => {
-		if (isAnalyzing) {
-			isAnalyzing = false
-		}
-	}, 500)
-
 	// Run Analysis on load and content change
 	if (truSeoShouldAnalyze() && !isWooCommerceProduct()) {
-		isAnalyzing = true
+		let lastContent = null
 		setInterval(() => {
-			if (
-				window.tinyMCE &&
-				window.tinyMCE.activeEditor &&
-				window.tinyMCE.activeEditor.isDirty() &&
-				!isAnalyzing
-			) {
-				isAnalyzing = true
+			const editor = window.tinyMCE?.activeEditor
+			if (!editor || !editor.isDirty()) {
+				return
+			}
+
+			// The editor stays dirty until it's saved. Re-triggering while nothing changed would restart the
+			// debounce on every tick, so the update would never run.
+			const content = editor.getBody()?.innerHTML
+			if (content !== lastContent) {
+				lastContent = content
 
 				// Re-analyze silently. This is a background dirty-check, not a
 				// user edit — TinyMCE reports "dirty" for transient DOM churn
 				// (e.g. caret placement when clicking a highlight), so emitting
 				// `aioseo-content-changing` here would close the highlight
 				// popover the instant it opens. Real edits still notify via the
-				// keyup/paste handlers above.
+				// keyup/paste/change handlers above.
 				maybeUpdatePost(900, true, false)
 			}
 		}, 500)

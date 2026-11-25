@@ -1,4 +1,4 @@
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 
 export const useDirtyOptions = () => {
 	const replacer = (key, value) => {
@@ -12,7 +12,7 @@ export const useDirtyOptions = () => {
 		}
 
 		if ('separator' === key) {
-			value = sanitizeString(value)
+			value = stripMarkup(value)
 		}
 
 		return null === value ? '' : value

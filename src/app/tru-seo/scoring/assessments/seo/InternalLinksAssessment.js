@@ -39,7 +39,7 @@ export default class InternalLinksAssessment extends Assessment {
 			scores : {
 				allInternalFollow  : 9,
 				someInternalFollow : 8,
-				noneInternalFollow : 7,
+				noneInternalFollow : 6,
 				noInternal         : 3
 			}
 		}

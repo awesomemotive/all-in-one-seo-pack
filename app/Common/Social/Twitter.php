@@ -19,20 +19,22 @@ class Twitter {
 	/**
 	 * Returns the Twitter URL for the site.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Falls back to the saved URL when X is excluded from the shared username.
 	 *
 	 * @return string The Twitter URL.
 	 */
 	public function getTwitterUrl() {
-		if ( ! aioseo()->options->social->profiles->sameUsername->enable ) {
-			return aioseo()->options->social->profiles->urls->twitterUrl;
+		if (
+			aioseo()->options->social->profiles->sameUsername->enable &&
+			in_array( 'twitterUrl', aioseo()->options->social->profiles->sameUsername->included, true )
+		) {
+			$userName = aioseo()->options->social->profiles->sameUsername->username;
+
+			return $userName ? 'https://x.com/' . $userName : '';
 		}
 
-		$userName = aioseo()->options->social->profiles->sameUsername->username;
-
-		return ( $userName && in_array( 'twitterUrl', aioseo()->options->social->profiles->sameUsername->included, true ) )
-			? 'https://x.com/' . $userName
-			: '';
+		return aioseo()->options->social->profiles->urls->twitterUrl;
 	}
 
 	/**
@@ -220,9 +222,9 @@ class Twitter {
 			// Extract the twitter username from the URL.
 			$parsedTwitterProfile = wp_parse_url( $profile );
 
-			$path      = $parsedTwitterProfile['path'];
+			$path      = $parsedTwitterProfile['path'] ?? '';
 			$pathParts = explode( '/', $path );
-			$profile   = $pathParts[1];
+			$profile   = $pathParts[1] ?? '';
 
 			if ( $profile ) {
 				if ( '@' !== $profile[0] && $includeAt ) {

@@ -16,7 +16,7 @@
 				<span
 					class="aioseo-headline-analyzer-word-length"
 					:class="classOnLength"
-					v-html="wordCountDisplay"
+					v-safe-html="wordCountDisplay"
 				/>
 			</div>
 			<p>{{ descOnWordLength }}</p>

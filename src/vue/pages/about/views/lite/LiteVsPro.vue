@@ -71,7 +71,7 @@
 				class="cta-text bonus-alert"
 				type="yellow"
 			>
-				🎁 <span v-html="strings.cta.bonus" />
+				🎁 <span v-safe-html="strings.cta.bonus" />
 			</core-alert>
 		</div>
 	</div>

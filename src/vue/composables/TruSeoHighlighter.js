@@ -1,5 +1,7 @@
 import { ref, watch, nextTick, createApp, h, onMounted, onBeforeMount, onUnmounted } from 'vue'
 
+import loadDirectives from '@/vue/directives'
+
 import {
 	useTruSeoHighlighterStore
 } from '@/vue/stores'
@@ -954,6 +956,8 @@ export const useTruSeoHighlighter = () => {
 		}
 
 		adapter?.getPopoverHost?.()?.appendChild(node)
+
+		loadDirectives(app)
 
 		// Claimed before mounting: mounting flushes the other instance's pending watchers, and one
 		// that finds the slot still empty mounts a second popover nothing ever removes.

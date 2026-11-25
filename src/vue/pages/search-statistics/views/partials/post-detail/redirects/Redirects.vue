@@ -10,7 +10,7 @@
 					v-for="(redirect, index) in redirects.from"
 					:key="index"
 				>
-					<a :href="redirect" target="_blank">{{ redirect }}</a>
+					<a v-safe-href="redirect" target="_blank">{{ redirect }}</a>
 				</li>
 			</ul>
 		</div>
@@ -22,7 +22,7 @@
 			<div class="title">{{ redirectsToString }}</div>
 			<ul>
 				<li>
-					<a :href="redirects.to" target="_blank">{{ redirects.to }}</a>
+					<a v-safe-href="redirects.to" target="_blank">{{ redirects.to }}</a>
 				</li>
 			</ul>
 		</div>
@@ -32,8 +32,8 @@
 			v-if="(redirects?.from?.length || redirects.to)"
 		>
 			<a
-				:href="rootStore.aioseo.urls.aio.redirects"
-				v-html="strings.manageRedirects"
+				v-safe-href="rootStore.aioseo.urls.aio.redirects"
+				v-safe-html="strings.manageRedirects"
 			/>
 		</div>
 

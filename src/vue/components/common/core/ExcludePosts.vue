@@ -34,7 +34,7 @@
 			<template #option="{ option, search }">
 				<div class="option">
 					<div class="option-title"
-						v-html="getOptionTitle(option.label, search)"
+						v-safe-html="getOptionTitle(option.label, search)"
 					/>
 
 					<div class="option-details">
@@ -45,7 +45,7 @@
 
 				<a
 					class="option-permalink"
-					:href="option.link"
+					v-safe-href="option.link"
 					target="_blank"
 					@click.stop="() => {}"
 				>
@@ -94,6 +94,8 @@ import SvgClose from '@/vue/components/common/svg/Close'
 import SvgExternal from '@/vue/components/common/svg/External'
 
 import { __ } from '@/vue/plugins/translations'
+
+import { highlightSearchTerm } from '@/vue/utils/strings'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -169,12 +171,7 @@ export default {
 				})
 		},
 		getOptionTitle (title, search) {
-			// First, sanitize the title and search term. We must do this as we'll be using the result of this method in a v-html directive.
-			title  = title.replace(/<\/?[^>]+(>|$)/g, '')
-			search = search.replace(/<\/?[^>]+(>|$)/g, '')
-
-			const regex = new RegExp(`(${search})`, 'gi')
-			return title.replace(regex, '<span class="search-term">$1</span>')
+			return highlightSearchTerm(title, search)
 		},
 		searchableLabel ({ value, label, slug }) {
 			return `${value} ${label} ${slug}`

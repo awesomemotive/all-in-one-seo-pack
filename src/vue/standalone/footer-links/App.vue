@@ -4,15 +4,15 @@
 
 		<div>
 			<support-link /><span>/</span>
-			<a :href="getUtmLink('https://aioseo.com/docs/', 'docs')" target="_blank" rel="noreferrer noopener">{{strings.docs}}</a><span>/</span>
-			<a :href="rootStore.aioseo.urls.aio.about" rel="noreferrer noopener">{{strings.freePlugins}}</a>
+			<a v-safe-href="getUtmLink('https://aioseo.com/docs/', 'docs')" target="_blank" rel="noreferrer noopener">{{strings.docs}}</a><span>/</span>
+			<a v-safe-href="rootStore.aioseo.urls.aio.about" rel="noreferrer noopener">{{strings.freePlugins}}</a>
 		</div>
 
 		<div class="social-icons">
-			<a :href="getUtmLink('https://aioseo.com/plugin/facebook', 'facebook')" target="_blank" rel="noreferrer noopener"><facebook-svg /></a>
-			<a :href="getUtmLink('https://aioseo.com/plugin/linkedin', 'linkedin')" target="_blank" rel="noreferrer noopener"><linked-in-svg /></a>
-			<a :href="getUtmLink('https://aioseo.com/plugin/twitter', 'twitter')"  target="_blank" rel="noreferrer noopener"><twitter-svg /></a>
-			<a :href="getUtmLink('https://aioseo.com/plugin/youtube', 'youtube')"  target="_blank" rel="noreferrer noopener"><you-tube-svg /></a>
+			<a v-safe-href="getUtmLink('https://aioseo.com/plugin/facebook', 'facebook')" target="_blank" rel="noreferrer noopener"><facebook-svg /></a>
+			<a v-safe-href="getUtmLink('https://aioseo.com/plugin/linkedin', 'linkedin')" target="_blank" rel="noreferrer noopener"><linked-in-svg /></a>
+			<a v-safe-href="getUtmLink('https://aioseo.com/plugin/twitter', 'twitter')"  target="_blank" rel="noreferrer noopener"><twitter-svg /></a>
+			<a v-safe-href="getUtmLink('https://aioseo.com/plugin/youtube', 'youtube')"  target="_blank" rel="noreferrer noopener"><you-tube-svg /></a>
 		</div>
 
 		<core-additional-js />

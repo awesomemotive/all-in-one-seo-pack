@@ -9,7 +9,7 @@
 			<div class="aioseo-settings-row aioseo-section-description">
 				{{ strings.description }}
 				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'rssSitemaps', true)"
+					v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'rssSitemaps', true)"
 				/>
 			</div>
 
@@ -48,7 +48,7 @@
 						{{ strings.doYou404 }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
 						/>
 					</div>
 				</template>
@@ -77,7 +77,7 @@
 						{{ strings.maxLinks }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'maxLinksRss', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'maxLinksRss', true)"
 						/>
 					</div>
 				</template>
@@ -106,7 +106,7 @@
 						{{ strings.selectPostTypes }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypesRss', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypesRss', true)"
 						/>
 					</div>
 

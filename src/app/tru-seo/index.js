@@ -93,7 +93,7 @@ self.onmessage = async ({ data }) => {
 
 		// Register premium assessments.
 		try {
-			registerPremiumAssessments(workerInstance, Language.code)
+			registerPremiumAssessments(workerInstance)
 		} catch (error) {
 			console.error('Error registering premium assessments:', error)
 		}

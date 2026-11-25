@@ -64,6 +64,10 @@ trait NetworkOptions {
 
 		$this->init();
 
+		if ( isset( $newOptions['tools']['robots']['rules'] ) && is_array( $newOptions['tools']['robots']['rules'] ) ) {
+			$newOptions['tools']['robots']['rules'] = aioseo()->robotsTxt->sanitizeRuleValues( $newOptions['tools']['robots']['rules'] );
+		}
+
 		aioseo()->helpers->switchToBlog( $this->helpers->getNetworkId() );
 
 		$cachedOptions = aioseo()->core->optionsCache->getOptions( $this->optionsName );

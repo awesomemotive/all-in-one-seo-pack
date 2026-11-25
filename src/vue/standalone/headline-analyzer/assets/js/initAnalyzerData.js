@@ -1,5 +1,5 @@
 import { http, restUrl } from './functions'
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 import { getPostEditedTitle } from '@/vue/utils/postData/postTitle'
 
 let timeout
@@ -17,7 +17,7 @@ export const fetchData = async (newHeadline = null) => {
 	let headline = newHeadline || getPostEditedTitle()
 
 	// Trim headline from whitespaces.
-	headline = sanitizeString((headline || '').trim())
+	headline = stripMarkup((headline || '').trim())
 
 	if (!headline) {
 		return null

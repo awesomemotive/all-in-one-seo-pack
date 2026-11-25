@@ -94,7 +94,7 @@ import {
 	useSettingsStore
 } from '@/vue/stores'
 
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 import GridColumn from '@/vue/components/common/grid/Column'
 import GridRow from '@/vue/components/common/grid/Row'
 
@@ -169,7 +169,7 @@ export default {
 				return
 			}
 
-			this.$emit('update:separator', sanitizeString(newVal))
+			this.$emit('update:separator', stripMarkup(newVal))
 		}
 	},
 	computed : {
@@ -178,19 +178,19 @@ export default {
 				return null
 			}
 
-			const decodedCustomSeparator = this.customSeparator ? sanitizeString(this.customSeparator) : null
+			const decodedCustomSeparator = this.customSeparator ? stripMarkup(this.customSeparator) : null
 			return this.optionsSeparator === decodedCustomSeparator || this.decodedMoreSeparators.includes(this.optionsSeparator)
 				? this.optionsSeparator
 				: null
 		},
 		decodedSeparators () {
-			return this.separators.map(separator => sanitizeString(separator))
+			return this.separators.map(separator => stripMarkup(separator))
 		},
 		decodedMoreSeparators () {
-			return this.moreSeparators.map(separator => sanitizeString(separator))
+			return this.moreSeparators.map(separator => stripMarkup(separator))
 		},
 		decodedCustomSeparator () {
-			return sanitizeString(this.hiddenSeparator, true)
+			return stripMarkup(this.hiddenSeparator, true)
 		}
 	},
 	methods : {

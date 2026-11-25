@@ -25,7 +25,7 @@
 						{{ strings.selectPostTypes }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypesColumns', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypesColumns', true)"
 						/>
 					</div>
 				</template>
@@ -66,7 +66,7 @@
 						{{ strings.selectTaxonomies }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectTaxonomiesColumns', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectTaxonomiesColumns', true)"
 						/>
 					</div>
 
@@ -75,7 +75,7 @@
 						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
-						<div v-html="strings.taxonomyColumnsUpsell" />
+						<div v-safe-html="strings.taxonomyColumnsUpsell" />
 					</core-alert>
 				</template>
 			</core-settings-row>
@@ -108,7 +108,7 @@
 						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
-						<div v-html="strings.adminBarMenuUpsell" />
+						<div v-safe-html="strings.adminBarMenuUpsell" />
 					</core-alert>
 				</template>
 			</core-settings-row>
@@ -153,7 +153,7 @@
 						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
-						<div v-html="strings.dashboardWidgetsUpsell" />
+						<div v-safe-html="strings.dashboardWidgetsUpsell" />
 					</core-alert>
 				</template>
 			</core-settings-row>
@@ -220,7 +220,7 @@
 						<svg-circle-question-mark />
 
 						<template #tooltip>
-							<div v-html="strings.usageTrackingTooltip" />
+							<div v-safe-html="strings.usageTrackingTooltip" />
 						</template>
 					</core-tooltip>
 				</template>

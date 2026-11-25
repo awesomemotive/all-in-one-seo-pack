@@ -9,7 +9,7 @@
 		<h4>{{ strings.isFree }}</h4>
 		<p>{{ strings.freeDescription }}</p>
 
-		<p v-html="learnMoreLink" />
+		<p v-safe-html="learnMoreLink" />
 	</div>
 </template>
 

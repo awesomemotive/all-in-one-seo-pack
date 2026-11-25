@@ -61,7 +61,7 @@
 					<span>
 						<a
 							class="view"
-							:href="row.context.permalink"
+							v-safe-href="row.context.permalink"
 							target="_blank"
 						>
 							<span>{{ viewPost(row.context.postType?.singular) }}</span>
@@ -71,7 +71,7 @@
 					<span>
 						<a
 							class="edit"
-							:href="row.context.editLink"
+							v-safe-href="row.context.editLink"
 							target="_blank"
 						>
 							<span>{{ editPost(row.context.postType?.singular) }}</span>

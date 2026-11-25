@@ -37,7 +37,7 @@
 			</template>
 
 			<template #description>
-				<div v-html="strings.ctaDescription"></div>
+				<div v-safe-html="strings.ctaDescription"></div>
 			</template>
 		</cta>
 	</div>

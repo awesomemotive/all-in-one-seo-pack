@@ -37,7 +37,7 @@
 
 		<div
 			class="aioseo-description"
-			v-html="description || strings.description"
+			v-safe-html="description || strings.description"
 		/>
 
 		<base-img

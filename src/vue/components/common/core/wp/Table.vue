@@ -190,7 +190,7 @@
 							<td :colspan="filteredColumns.length + 1">
 								<core-alert
 									:type="row.alert.color || 'blue'"
-									v-html="row.alert.description"
+									v-safe-html="row.alert.description"
 								/>
 							</td>
 						</tr>
@@ -274,7 +274,7 @@
 							<td :colspan="filteredColumns.length + 1">
 								<core-alert
 									:type="row.alert.color || 'blue'"
-									v-html="row.alert.description"
+									v-safe-html="row.alert.description"
 								/>
 							</td>
 						</tr>

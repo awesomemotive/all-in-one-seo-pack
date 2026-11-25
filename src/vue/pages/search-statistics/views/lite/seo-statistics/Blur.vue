@@ -11,7 +11,7 @@
 						no-slide
 					>
 						<template #tooltip>
-							<span v-html="strings.seoStatisticsTooltip" />
+							<span v-safe-html="strings.seoStatisticsTooltip" />
 						</template>
 
 						<seo-statistics-overview

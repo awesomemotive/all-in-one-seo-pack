@@ -464,6 +464,97 @@ trait Strings {
 	}
 
 	/**
+	 * Returns the given comma separated list as JSON formatted data tags.
+	 *
+	 * NOTE: Blank entries are dropped so a trailing separator doesn't yield an empty tag.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $list The comma separated values.
+	 * @return string       The JSON formatted data tags.
+	 */
+	public function commaSeparatedListToJsonTags( $list ) {
+		$tags = [];
+		foreach ( explode( ',', (string) $list ) as $value ) {
+			// Sanitized before the check, so a value that sanitizes away doesn't become a blank tag.
+			$value = trim( sanitize_text_field( $value ) );
+			if ( '' === $value ) {
+				continue;
+			}
+
+			$tags[] = [
+				'label' => $value,
+				'value' => $value
+			];
+		}
+
+		return (string) wp_json_encode( $tags );
+	}
+
+	/**
+	 * Returns the given keyword objects as a list of their words, one per line.
+	 *
+	 * NOTE: The additional keywords column holds `{ word, score }` entries, not `{ label, value }`.
+	 * A keyphrase can contain a comma but never a line break, so a line is the only safe separator.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string|array $keywords The Array or JSON formatted keywords.
+	 * @return string                 The words, one per line.
+	 */
+	public function jsonKeywordsToLineSeparatedList( $keywords ) {
+		if ( is_string( $keywords ) ) {
+			$keywords = json_decode( $keywords );
+		}
+
+		$words = [];
+		foreach ( (array) $keywords as $keyword ) {
+			$word = '';
+			if ( is_object( $keyword ) ) {
+				$word = $keyword->word ?? '';
+			} elseif ( is_array( $keyword ) ) {
+				$word = $keyword['word'] ?? '';
+			} elseif ( is_scalar( $keyword ) ) {
+				$word = (string) $keyword;
+			}
+
+			$word = trim( (string) $word );
+			if ( '' !== $word ) {
+				$words[] = $word;
+			}
+		}
+
+		return implode( "\n", $words );
+	}
+
+	/**
+	 * Returns the given list of words, one per line, as JSON formatted keyword objects.
+	 *
+	 * NOTE: Scores start at 0 - the words are new, so nothing has analyzed them yet.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $list The words, one per line.
+	 * @return string       The JSON formatted keywords.
+	 */
+	public function lineSeparatedListToJsonKeywords( $list ) {
+		$keywords = [];
+		foreach ( (array) preg_split( '/\R/', (string) $list ) as $word ) {
+			$word = trim( sanitize_text_field( $word ) );
+			if ( '' === $word ) {
+				continue;
+			}
+
+			$keywords[] = [
+				'word'  => $word,
+				'score' => 0
+			];
+		}
+
+		return (string) wp_json_encode( $keywords );
+	}
+
+	/**
 	 * Returns the character length of the given string.
 	 *
 	 * @since 4.1.6

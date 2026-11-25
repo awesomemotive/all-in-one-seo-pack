@@ -137,7 +137,6 @@ class Updates {
 
 			// Refresh with new Redirects capability.
 			$this->accessControlNewCapabilities();
-			aioseo()->sitemap->regenerateStaticSitemap();
 		}
 
 		if ( version_compare( $lastActiveVersion, '4.1.6', '<' ) ) {

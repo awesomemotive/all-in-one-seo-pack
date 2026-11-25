@@ -27,7 +27,7 @@
 							<svg-circle-question-mark />
 
 							<template #tooltip>
-								<div v-html="item.help" />
+								<div v-safe-html="item.help" />
 							</template>
 						</core-tooltip>
 					</div>
@@ -154,7 +154,7 @@
 					{{ headlineTypes.result }}
 				</strong>
 				<p
-					v-html="headlineTypes.guideline"
+					v-safe-html="headlineTypes.guideline"
 					class="box-guideline"
 				/>
 			</div>

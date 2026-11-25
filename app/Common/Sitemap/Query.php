@@ -13,18 +13,48 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Query {
 	/**
-	 * Returns all eligble sitemap entries for a given post type.
+	 * Returns the eligible sitemap posts of the given post type(s), or their count.
 	 *
-	 * @since   4.0.0
-	 * @version 5.0.2 Order default-priority posts by their resolved default value.
-	 * @version 5.0.2 Match excluded term IDs through term_taxonomy.
-	 * @version 5.0.2 Only exempt the front page from the robots filter while it is in effect.
+	 * @since 4.0.0
 	 *
-	 * @param  mixed            $postTypes      The post type(s). Either a singular string or an array of strings.
-	 * @param  array            $additionalArgs Any additional arguments for the post query.
-	 * @return array[object|int]                The post objects or the post count.
+	 * @param  string|string[] $postTypes      The post type, or an array of post types.
+	 * @param  array           $additionalArgs Overrides for the query defaults (e.g. `orderBy`, `maxAge`), plus the
+	 *                                         `root` (index fields, no paging) and `count` flags.
+	 * @return object[]|int                    The posts, or their count when `count` is set.
 	 */
 	public function posts( $postTypes, $additionalArgs = [] ) {
+		$query = $this->postsQuery( $postTypes, $additionalArgs );
+		if ( ! $query ) {
+			return [];
+		}
+
+		// Return the total if we are just counting the posts.
+		if ( ! empty( $additionalArgs['count'] ) ) {
+			return (int) $query->run( true, 'var' )
+				->result();
+		}
+
+		$posts = $query->run()
+			->result();
+
+		// Convert ID from string to int.
+		foreach ( $posts as $post ) {
+			$post->ID = (int) $post->ID;
+		}
+
+		return $this->filterPosts( $posts );
+	}
+
+	/**
+	 * Returns the unexecuted query behind {@see posts()}.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string|string[]                           $postTypes      The post type, or an array of post types.
+	 * @param  array                                     $additionalArgs Query overrides, as in {@see posts()}.
+	 * @return \AIOSEO\Plugin\Common\Utils\Database|null                 The query, or null if there is nothing to query.
+	 */
+	public function postsQuery( $postTypes, $additionalArgs = [] ) {
 		$includedPostTypes = $postTypes;
 		$postTypesArray    = ! is_array( $postTypes ) ? [ $postTypes ] : $postTypes;
 		if ( is_array( $postTypes ) ) {
@@ -35,7 +65,7 @@ class Query {
 			empty( $includedPostTypes ) ||
 			( 'attachment' === $includedPostTypes && 'disabled' !== aioseo()->dynamicOptions->searchAppearance->postTypes->attachment->redirectAttachmentUrls )
 		) {
-			return [];
+			return null;
 		}
 
 		// Set defaults.
@@ -66,7 +96,8 @@ class Query {
 		// default priority; otherwise NULL sorts last and pushes them out of order.
 		$priorityColumn = is_array( $postTypes ) ? 'ap.priority' : $this->priorityOrderColumn( $includedPostTypes );
 
-		$orderBy = $priorityColumn . ' DESC, p.post_modified_gmt DESC';
+		// The ID breaks ties so that every page of a sub-sitemap, and the index built from it, sees the same order.
+		$orderBy = $priorityColumn . ' DESC, p.post_modified_gmt DESC, p.ID DESC';
 
 		// For llms sitemap type, prioritize posts with pillar_content = 1
 		if ( 'llms' === aioseo()->sitemap->type ) {
@@ -78,7 +109,7 @@ class Query {
 			// Attachments need to be fetched with all their fields because we need to get their post parent further down the line.
 			$$name = esc_sql( $value );
 			if ( 'root' === $name && $value && 'attachment' !== $includedPostTypes ) {
-				$fields = 'p.ID, p.post_type';
+				$fields = 'p.ID, p.post_type, p.post_date_gmt, p.post_modified_gmt';
 			}
 			if ( 'count' === $name && $value ) {
 				$fields = 'count(p.ID) as total';
@@ -189,23 +220,8 @@ class Query {
 		}
 
 		$query->orderByRaw( $orderBy );
-		$query = $this->filterPostQuery( $query, $postTypes );
 
-		// Return the total if we are just counting the posts.
-		if ( ! empty( $additionalArgs['count'] ) ) {
-			return (int) $query->run( true, 'var' )
-				->result();
-		}
-
-		$posts = $query->run()
-			->result();
-
-		// Convert ID from string to int.
-		foreach ( $posts as $post ) {
-			$post->ID = (int) $post->ID;
-		}
-
-		return $this->filterPosts( $posts );
+		return $this->filterPostQuery( $query, $postTypes );
 	}
 
 	/**
@@ -281,18 +297,14 @@ class Query {
 				true
 			)->result();
 
-			if ( empty( $hiddenProducts ) ) {
-				return $query;
-			}
-
 			$hiddenProductIds = [];
 			foreach ( $hiddenProducts as $hiddenProduct ) {
 				$hiddenProductIds[] = (int) $hiddenProduct->object_id;
 			}
+		}
 
-			if ( ! empty( $hiddenProductIds ) ) {
-				$query->whereNotIn( 'p.ID', $hiddenProductIds );
-			}
+		if ( ! empty( $hiddenProductIds ) ) {
+			$query->whereNotIn( 'p.ID', $hiddenProductIds );
 		}
 
 		return $query;

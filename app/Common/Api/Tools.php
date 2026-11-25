@@ -29,7 +29,8 @@ class Tools {
 		$body   = $request->get_json_params();
 		$blogId = ! empty( $body['blogId'] ) ? $body['blogId'] : 0;
 		$source = ! empty( $body['source'] ) ? $body['source'] : '';
-		$text   = ! empty( $body['text'] ) ? sanitize_textarea_field( $body['text'] ) : '';
+		// Sanitizing the whole text would strip the %XX octets that extractRules() decodes.
+		$text   = ! empty( $body['text'] ) && is_string( $body['text'] ) ? $body['text'] : '';
 		$url    = ! empty( $body['url'] ) ? sanitize_url( $body['url'], [ 'http', 'https' ] ) : '';
 
 		// The route's capability is checked on the current site only, so writing elsewhere needs a super admin.
@@ -182,7 +183,8 @@ class Tools {
 	/**
 	 * Restore a settings backup.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Returns a 404 when the backup can't be restored.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
@@ -197,7 +199,12 @@ class Tools {
 			], 400 );
 		}
 
-		aioseo()->backup->restore( $backup );
+		if ( ! aioseo()->backup->restore( $backup ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'backups' => array_reverse( aioseo()->backup->all() )
+			], 404 );
+		}
 
 		return new \WP_REST_Response( [
 			'success'         => true,
@@ -210,7 +217,8 @@ class Tools {
 	/**
 	 * Delete a settings backup.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Returns a 404 when the backup doesn't exist.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
@@ -223,6 +231,13 @@ class Tools {
 				'success' => false,
 				'backups' => array_reverse( aioseo()->backup->all() )
 			], 400 );
+		}
+
+		if ( ! aioseo()->backup->exists( $backup ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'backups' => array_reverse( aioseo()->backup->all() )
+			], 404 );
 		}
 
 		aioseo()->backup->delete( $backup );

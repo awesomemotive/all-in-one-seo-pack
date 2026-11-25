@@ -68,7 +68,8 @@ class RobotsTxt {
 			$networkRules          = aioseo()->networkOptions->tools->robots->enable ? aioseo()->networkOptions->tools->robots->rules : [];
 		}
 
-		$originalRules = $this->extractRules( $original );
+		// Rules from core and other plugins are served as they wrote them.
+		$originalRules = $this->extractRules( $original, false );
 		$ruleset       = $this->mergeRules( $originalRules, $this->groupRulesByUserAgent( $searchAppearanceRules ) );
 		if ( ! aioseo()->options->tools->robots->enable ) {
 			$ruleset = $this->mergeRules( $ruleset, $this->groupRulesByUserAgent( $networkRules ) );
@@ -142,12 +143,20 @@ class RobotsTxt {
 	 */
 	private function mergeRulesHelper( $directive, $userAgent, $rules, $rules1, $rules2, $allowDuplicates, $allowOverride ) {
 		$otherDirective = ( 'allow' === $directive ) ? 'disallow' : 'allow';
+		// Rules from other plugins are kept percent-encoded, so values are compared decoded.
+		$decodedRules1 = array_map( function ( $rule1 ) {
+			list( $directive1, $value1 ) = $this->parseRule( (string) $rule1 );
+
+			return "$directive1: " . $this->decodeRuleValue( $value1 );
+		}, $rules1[ $userAgent ] );
+
 		foreach ( $rules as $index1 => $rule ) {
 			list( , $ruleValue ) = $this->parseRule( $rule );
-			$index2 = array_search( "$otherDirective: $ruleValue", $rules1[ $userAgent ], true );
+			$ruleValue = $this->decodeRuleValue( $ruleValue );
+			$index2    = array_search( "$otherDirective: $ruleValue", $decodedRules1, true );
 			if ( false !== $index2 && ! $allowDuplicates ) {
 				if ( $allowOverride ) {
-					unset( $rules1[ $userAgent ][ $index2 ] );
+					unset( $rules1[ $userAgent ][ $index2 ], $decodedRules1[ $index2 ] );
 				} else {
 					unset( $rules2[ $userAgent ][ $index1 ] );
 				}
@@ -155,7 +164,7 @@ class RobotsTxt {
 
 			$pattern = str_replace( '\*', '(.*)', preg_quote( $ruleValue, '#' ) );
 
-			foreach ( $rules1[ $userAgent ] as $rule1 ) {
+			foreach ( $decodedRules1 as $rule1 ) {
 				$matches = [];
 				preg_match( "#^$otherDirective: $pattern$#", (string) $rule1, $matches );
 			}
@@ -308,15 +317,114 @@ class RobotsTxt {
 	/**
 	 * Encodes a rule into its canonical stored form.
 	 *
-	 * NOTE: slashes stay unescaped so a repaired rule matches what the editor's JSON.stringify() writes.
+	 * NOTE: slashes stay unescaped so a repaired rule matches what the editor's JSON.stringify() writes. "%" is
+	 * escaped, or the options sanitizer would strip a "%25" from the stored string.
 	 *
-	 * @since 5.0.2
+	 * @since   5.0.2
+	 * @version 5.0.6 Escapes "%" as "\u0025".
 	 *
 	 * @param  array        $rule The rule to encode.
 	 * @return string|false       The canonical JSON string, or false if it can't be encoded.
 	 */
 	public function encodeRule( $rule ) {
-		return wp_json_encode( $rule, JSON_UNESCAPED_SLASHES );
+		$encoded = wp_json_encode( $rule, JSON_UNESCAPED_SLASHES );
+
+		return is_string( $encoded ) ? str_replace( '%', '\\u0025', $encoded ) : $encoded;
+	}
+
+	/**
+	 * Decodes the percent-encoding in a rule value, dropping encoded angle brackets and control characters.
+	 *
+	 * NOTE: Must run before sanitize_text_field(), which strips every %XX octet. "%25" stays encoded, so decoding
+	 * twice gives the same value ("/a%2541" would otherwise become "/a%41", then "/aA").
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $value The rule value.
+	 * @return string        The decoded value.
+	 */
+	public function decodeRuleValue( $value ) {
+		$value = preg_replace( [ '/%3[ce]/i', '/%25/' ], [ '', '%2525' ], (string) $value );
+
+		return preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', rawurldecode( $value ) );
+	}
+
+	/**
+	 * Decodes and sanitizes a rule value.
+	 *
+	 * NOTE: Returns false for a value that can't be decoded ("/%E6"), and '' for one that cleans up to nothing
+	 * but slashes and wildcards ("/%00"), which would otherwise be served as "Disallow: /". "%25" is kept.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string       $value The raw rule value.
+	 * @return string|false        The sanitized value, '' if nothing is left of it, or false if it can't be decoded.
+	 */
+	public function sanitizeRuleValue( $value ) {
+		$value   = trim( (string) $value );
+		$decoded = $this->decodeRuleValue( $value );
+		if ( preg_match( '/%(?!25)[a-f0-9]{2}/i', $decoded ) || ( '' !== $decoded && '' === wp_check_invalid_utf8( $decoded ) ) ) {
+			return false;
+		}
+
+		// A decoded line break would otherwise start a new robots.txt line. "%25" is swapped for a control
+		// character, which decoding already removed from the value, or sanitize_text_field() would strip it.
+		$sanitized = sanitize_text_field( preg_replace( '/[><]/', '', str_replace( '%25', "\x01", $decoded ) ) );
+		$sanitized = str_replace( "\x01", '%25', $sanitized );
+
+		return '' === trim( $sanitized, '/*' ) && '' !== trim( $value, '/*' ) ? '' : $sanitized;
+	}
+
+	/**
+	 * Sanitizes each field of the rules, dropping rules whose value can't be kept.
+	 *
+	 * NOTE: Sanitizing the JSON string as a whole would let an escaped line break through. A rule sent as an array
+	 * is encoded here, or the options sanitizer would strip its %XX octets field by field.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  array $rules The rules, JSON-encoded or as arrays.
+	 * @return array        The sanitized JSON-encoded rules.
+	 */
+	public function sanitizeRuleValues( $rules ) {
+		$hasDropped = false;
+		foreach ( $rules as $index => $rule ) {
+			$decoded = $this->decodeStoredRule( $rule );
+			if ( ! is_array( $decoded ) ) {
+				continue;
+			}
+
+			$sanitized = $decoded;
+			foreach ( [ 'userAgent', 'directive' ] as $field ) {
+				if ( isset( $sanitized[ $field ] ) && is_string( $sanitized[ $field ] ) ) {
+					$sanitized[ $field ] = sanitize_text_field( $sanitized[ $field ] );
+				}
+			}
+
+			if ( isset( $sanitized['fieldValue'] ) && is_string( $sanitized['fieldValue'] ) ) {
+				$fieldValue = $this->sanitizeRuleValue( $sanitized['fieldValue'] );
+				// An empty value is a row the user hasn't filled in yet; only a value that was rejected is dropped.
+				if ( ! is_string( $fieldValue ) || ( '' === $fieldValue && '' !== trim( $sanitized['fieldValue'] ) ) ) {
+					unset( $rules[ $index ] );
+					$hasDropped = true;
+
+					continue;
+				}
+
+				$sanitized['fieldValue'] = $fieldValue;
+			}
+
+			if ( $sanitized === $decoded && is_string( $rule ) && false === strpos( $rule, '%' ) ) {
+				continue;
+			}
+
+			$encoded = $this->encodeRule( $sanitized );
+			if ( is_string( $encoded ) ) {
+				$rules[ $index ] = $encoded;
+			}
+		}
+
+		return $hasDropped ? array_values( $rules ) : $rules;
 	}
 
 	/**
@@ -450,12 +558,15 @@ class RobotsTxt {
 	 *
 	 * @since   4.0.0
 	 * @version 4.4.2
+	 * @version 5.0.6 Added the $sanitize parameter.
 	 *
-	 * @param  string $lines The lines to extract from.
-	 * @return array         An array of extracted rules.
+	 * @param  string $lines    The lines to extract from.
+	 * @param  bool   $sanitize Whether to decode and sanitize each value.
+	 * @return array            An array of extracted rules.
 	 */
-	public function extractRules( $lines ) {
-		$lines              = array_filter( array_map( 'trim', explode( "\n", (string) $lines ) ) );
+	public function extractRules( $lines, $sanitize = true ) {
+		$lines              = preg_replace( '/^\xEF\xBB\xBF/', '', (string) $lines );
+		$lines              = array_filter( array_map( 'trim', explode( "\n", $lines ) ) );
 		$rules              = [];
 		$userAgent          = null;
 		$prevDirective      = null;
@@ -472,7 +583,7 @@ class RobotsTxt {
 				continue;
 			}
 
-			$value = $this->sanitizeDirectiveValue( $directive, $value );
+			$value = $sanitize ? $this->sanitizeDirectiveValue( $directive, $value ) : $value;
 			if ( ! $value ) {
 				continue;
 			}
@@ -532,19 +643,17 @@ class RobotsTxt {
 	 *
 	 * @since   4.0.0
 	 * @version 4.4.2
+	 * @version 5.0.6 Decodes via {@see sanitizeRuleValue()}; drops values it rejects.
 	 *
 	 * @param  string $directive The directive.
 	 * @param  string $value     The value.
 	 * @return string            The directive value.
 	 */
 	private function sanitizeDirectiveValue( $directive, $value ) {
-		// Percent-encoded characters are stripped from our option values, so we decode.
-		$value = rawurldecode( trim( $value ) );
+		$value = $this->sanitizeRuleValue( $value );
 		if ( ! $value ) {
-			return $value;
+			return '';
 		}
-
-		$value = preg_replace( '/[><]/', '', (string) $value );
 
 		if ( 'user-agent' === $directive ) {
 			$value = preg_replace( '/[^a-z0-9\-_*,.\s]/i', '', (string) $value );
@@ -854,7 +963,7 @@ class RobotsTxt {
 		}
 
 		try {
-			$rules = $this->extractRules( $this->getDefaultRobotsTxtContent() );
+			$rules = $this->extractRules( $this->getDefaultRobotsTxtContent(), false );
 		} finally {
 			if ( null !== $contentType && ! headers_sent() ) {
 				header( $contentType );

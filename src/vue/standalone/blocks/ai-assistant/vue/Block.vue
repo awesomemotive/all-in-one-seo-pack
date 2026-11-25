@@ -4,7 +4,7 @@
 			<div
 				ref="contentElement"
 				class="aioseo-ai-assistant-block__content"
-				v-html="displayContent.replace(/\{faq:(start|end|q|a)}\s*(<br\s*\/?>)?/g, '')"
+				v-safe-html="displayContent.replace(/\{faq:(start|end|q|a)}\s*(<br\s*\/?>)?/g, '')"
 			/>
 		</div>
 
@@ -85,7 +85,7 @@
 
 				<div class="aioseo-ai-assistant-block__input-row aioseo-ai-assistant-block__input-row--gray">
 					<div class="aioseo-ai-assistant-block__input-col aioseo-ai-assistant-block__input-col--disclaimer">
-						<span v-html="aiContentStrings.disclaimer" />
+						<span v-safe-html="aiContentStrings.disclaimer" />
 					</div>
 				</div>
 			</div>
@@ -93,7 +93,7 @@
 			<div class="aioseo-ai-assistant-block__error-container">
 				<core-alert
 					v-if="!!error"
-					v-html="error"
+					v-safe-html="error"
 					type="red"
 					size="small"
 					style="margin-top: 10px;"
@@ -101,7 +101,7 @@
 
 				<core-alert
 					v-if="!!userPromptLengthWarning"
-					v-html="userPromptLengthWarning"
+					v-safe-html="userPromptLengthWarning"
 					type="yellow"
 					size="small"
 					style="margin-top: 10px;"

@@ -32,14 +32,14 @@
 			>
 				<span class="edit">
 					<a
-						:href="row.context.permalink"
+						v-safe-href="row.context.permalink"
 						target="_blank"
 					>
 						{{ viewPost(row.context.postType.singular) }}
 					</a> |
 
 					<a
-						:href="row.context.editLink"
+						v-safe-href="row.context.editLink"
 						target="_blank"
 					>
 						{{ editPost(row.context.postType.singular) }}

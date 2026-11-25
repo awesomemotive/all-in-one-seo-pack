@@ -62,8 +62,8 @@ export function getReadabilityResults (results, excludeIds = new Set()) {
 		'subheadingsTooLong',
 		'textAlignment',
 		'textPresence',
-		'textTransitionWords',
-		'wordComplexity'
+		// Leaves out 'wordComplexity', so a result stored before the check was unregistered isn't shown.
+		'textTransitionWords'
 	]
 
 	return getResultsByIdentifiers(identifiers, results, excludeIds)

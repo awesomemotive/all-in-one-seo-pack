@@ -26,7 +26,7 @@
 							{{ strings.authorBioInjectionDescription }}
 
 							<span
-								v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'eeatAuthorBioInjection', true)"
+								v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'eeatAuthorBioInjection', true)"
 							/>
 						</div>
 					</template>
@@ -58,7 +58,7 @@
 			>
 				<div
 					class="aioseo-settings-row aioseo-section-description"
-					v-html="strings.experienceTopicsDescription"
+					v-safe-html="strings.experienceTopicsDescription"
 				/>
 
 				<table class="topics-table">

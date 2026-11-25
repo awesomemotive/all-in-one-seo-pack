@@ -96,7 +96,7 @@
 
 											<a
 												class="aioseo-ai-credit-counter__footer-link"
-												:href="creditsUrl"
+												v-safe-href="creditsUrl"
 												target="_blank"
 											>{{ strings.buyBundle }}</a>
 										</div>
@@ -127,7 +127,7 @@
 			v-if="isSettingsPage"
 			class="purchase-credits"
 		>
-			<p v-html="getCreditsLinks" />
+			<p v-safe-html="getCreditsLinks" />
 		</div>
 	</div>
 </template>

@@ -320,11 +320,12 @@ class ImportExport {
 	/**
 	 * Starts an import.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Returns whether an importer was found for the plugin.
 	 *
 	 * @param  string $plugin  The slug of the plugin to import.
 	 * @param  array $settings Which settings to import.
-	 * @return void
+	 * @return bool            Whether an importer was found and run.
 	 */
 	public function startImport( $plugin, $settings ) {
 		// First cancel any scans running that might interfere with our import.
@@ -334,9 +335,11 @@ class ImportExport {
 			if ( $pluginData['slug'] === $plugin ) {
 				$pluginData['class']->doImport( $settings );
 
-				return;
+				return true;
 			}
 		}
+
+		return false;
 	}
 
 	/**
@@ -355,19 +358,44 @@ class ImportExport {
 	/**
 	 * Checks if an import is currently running.
 	 *
-	 * @since 4.1.4
+	 * @since   4.1.4
+	 * @version 5.0.6 No longer caches the result for the rest of the request; also requires a pending or running import job.
 	 *
 	 * @return boolean True if an import is currently running.
 	 */
 	public function isImportRunning() {
-		static $importsRunning = null;
-		if ( null !== $importsRunning ) {
-			return $importsRunning;
+		// Not cached: an import can start or finish within the same request (e.g. an Action Scheduler batch).
+		if ( ! aioseo()->core->cache->get( 'import_%_meta_%' ) ) {
+			return false;
 		}
 
-		$importsRunning = aioseo()->core->cache->get( 'import_%_meta_%' ) ?? false;
+		// Before Action Scheduler is ready, the flag is all we have.
+		if (
+			! function_exists( 'as_has_scheduled_action' ) ||
+			! class_exists( 'ActionScheduler' ) ||
+			! \ActionScheduler::is_initialized()
+		) {
+			return true;
+		}
 
-		return $importsRunning;
+		// A crashed batch leaves its flag behind for a week, so only a queued or running job means the import is still going.
+		$hooks = [
+			'aioseo_import_post_meta_yoast_seo',
+			'aioseo_import_term_meta_yoast_seo',
+			'aioseo_import_user_meta_yoast_seo',
+			'aioseo_import_post_meta_rank_math',
+			'aioseo_import_term_meta_rank_math',
+			'aioseo_import_post_meta_seopress',
+			'aioseo_import_term_meta_seopress'
+		];
+
+		foreach ( $hooks as $hook ) {
+			if ( as_has_scheduled_action( $hook, null, 'aioseo' ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

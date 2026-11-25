@@ -1,6 +1,6 @@
 <template>
 	<div class="aioseo-divi-seo-admin-notice-container">
-		<core-alert v-html="strings.alert" />
+		<core-alert v-safe-html="strings.alert" />
 	</div>
 </template>
 

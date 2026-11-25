@@ -1449,4 +1449,81 @@ trait Wp {
 
 		return '';
 	}
+
+	/**
+	 * Checks whether a tagline is the WordPress default in English or any installed language.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $tagline The tagline, as stored.
+	 * @return bool            Whether it's the default.
+	 */
+	public function isDefaultTagline( $tagline ) {
+		// The stored tagline is HTML-escaped, while the translations are raw.
+		$tagline = wp_specialchars_decode( (string) $tagline, ENT_QUOTES );
+
+		return in_array( $tagline, $this->getWordPressDefaultVariants( 'Just another WordPress site' ), true );
+	}
+
+	/**
+	 * Returns a WordPress install default along with its translations in every installed language.
+	 *
+	 * NOTE: Defaults are written in the install language, which can differ from the current site and user languages.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $text    The untranslated core string.
+	 * @param  string $context The gettext context, if the string has one.
+	 * @return array           The unique variants, English first.
+	 */
+	public function getWordPressDefaultVariants( $text, $context = '' ) {
+		$variants = [ $text ];
+		$locales  = array_unique( array_merge( [ get_locale() ], get_available_languages() ) );
+		foreach ( $locales as $locale ) {
+			$domain = $this->loadCoreTranslations( $locale );
+			if ( ! $domain ) {
+				continue;
+			}
+
+			// phpcs:disable WordPress.WP.I18n, AIOSEO.Wp.I18n
+			$variants[] = $context
+				? translate_with_gettext_context( $text, $context, $domain )
+				: translate( $text, $domain );
+			// phpcs:enable
+		}
+
+		return array_values( array_unique( $variants ) );
+	}
+
+	/**
+	 * Loads WordPress core's translations for a locale into a private text domain.
+	 *
+	 * NOTE: A private domain keeps another language out of 'default', which the admin UI itself uses.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string       $locale The locale.
+	 * @return string|false         The text domain, or false if there are no translations to load.
+	 */
+	public function loadCoreTranslations( $locale ) {
+		static $domains = [];
+		if ( isset( $domains[ $locale ] ) ) {
+			return $domains[ $locale ];
+		}
+
+		$domains[ $locale ] = false;
+		if ( empty( $locale ) || 'en_US' === $locale ) {
+			return false;
+		}
+
+		// Install defaults live in the admin catalog, which isn't loaded during REST requests.
+		$domain = 'aioseo-wp-core-' . $locale;
+		foreach ( [ "admin-{$locale}.mo", "{$locale}.mo" ] as $file ) {
+			if ( load_textdomain( $domain, WP_LANG_DIR . '/' . $file ) ) {
+				$domains[ $locale ] = $domain;
+			}
+		}
+
+		return $domains[ $locale ];
+	}
 }

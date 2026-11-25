@@ -43,9 +43,10 @@ class Email {
 	}
 
 	/**
-	 * Get the list of valid recipient email addresses.
+	 * Get the list of valid, unique recipient email addresses.
 	 *
-	 * @since 4.9.9
+	 * @since   4.9.9
+	 * @version 5.0.6 Drops duplicate addresses (case-insensitive).
 	 *
 	 * @param  array      $recipients The recipients array.
 	 * @throws \Exception            If no valid recipient was set for the email.
@@ -57,6 +58,7 @@ class Email {
 		}, $recipients );
 
 		$emails = array_filter( $emails, 'is_email' );
+		$emails = array_intersect_key( $emails, array_unique( array_map( 'strtolower', $emails ) ) );
 
 		if ( empty( $emails ) ) {
 			throw new \Exception( 'No valid recipient was set for the email.' );

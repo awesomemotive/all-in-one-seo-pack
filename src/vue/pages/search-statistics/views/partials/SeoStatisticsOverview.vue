@@ -24,7 +24,7 @@
 						<svg-circle-question-mark />
 
 						<template #tooltip>
-							<span v-html="statistics.tooltip" />
+							<span v-safe-html="statistics.tooltip" />
 						</template>
 					</core-tooltip>
 				</div>
@@ -192,22 +192,12 @@ export default {
 			return statistics
 		},
 		style () {
-			const styles = []
-			switch (this.view) {
-				case 'side-by-side':
-					styles.push({
-						'grid-template-columns' : `repeat(${this.statistics.length}, 1fr)`
-					})
-					break
-				case 'grid':
-					styles.push({
-						'grid-template-columns' : `repeat(${Math.ceil(this.statistics.length / 2)}, 1fr)`,
-						'grid-template-rows'    : `repeat(${Math.ceil(this.statistics.length / 2)}, 1fr)`
-					})
-					break
-			}
+			// Only the count is inline. The track template lives in CSS so media queries can still override it.
+			const columns = 'grid' === this.view
+				? Math.ceil(this.statistics.length / 2)
+				: this.statistics.length
 
-			return styles
+			return { '--columns': columns }
 		}
 	},
 	methods : {
@@ -243,6 +233,7 @@ export default {
 .aioseo-seo-statistics-overview {
 	max-width: 1000px;
 	margin: 0 auto;
+	grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
 
 	.statistics {
 		position: relative;
@@ -256,7 +247,9 @@ export default {
 
 		&-current {
 			display: flex;
+			flex-wrap: wrap;
 			align-items: center;
+			row-gap: 4px;
 			font-weight: 700;
 			font-size: 28px;
 			color: $black2-hover;
@@ -313,6 +306,7 @@ export default {
 		background-color: $border;
 		grid-gap: 1px;
 		display: grid;
+		grid-auto-rows: 1fr;
 		$gapSize: 15px;
 
 		.statistics {
@@ -374,7 +368,7 @@ export default {
 		}
 
 		@media (max-width: 1024px) {
-			grid-template-columns: repeat(2, 1fr);
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 
 			.statistics {
 				&::after {

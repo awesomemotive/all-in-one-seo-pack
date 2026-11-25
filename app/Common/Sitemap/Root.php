@@ -316,168 +316,40 @@ class Root {
 	/**
 	 * Builds indexes for all eligible posts of a given post type.
 	 *
-	 * @since   4.0.0
-	 * @version 5.0.2 Order default-priority posts by their resolved default value.
-	 * @version 5.0.2 Match excluded term IDs through term_taxonomy.
+	 * @since 4.0.0
 	 *
 	 * @param  string $postType The post type.
 	 * @return array            The indexes.
 	 */
 	private function buildIndexesPostType( $postType ) {
-		$prefix                 = aioseo()->core->db->prefix;
-		$postsTable             = $prefix . 'posts';
-		$aioseoPostsTable       = $prefix . 'aioseo_posts';
-		$termRelationshipsTable = $prefix . 'term_relationships';
-		$termTaxonomyTable      = $prefix . 'term_taxonomy';
-		$termsTable             = $prefix . 'terms';
-		$linksPerIndex          = aioseo()->sitemap->linksPerIndex;
-
 		if ( 'attachment' === $postType && 'disabled' !== aioseo()->dynamicOptions->searchAppearance->postTypes->attachment->redirectAttachmentUrls ) {
 			return [];
 		}
 
-		$excludedPostIds = [];
-		$excludedTermIds = aioseo()->sitemap->helpers->excludedTerms();
-		if ( ! empty( $excludedTermIds ) ) {
-			$excludedTermIds = explode( ', ', $excludedTermIds );
-			$excludedPostIds = aioseo()->core->db->start( 'term_relationships as tr' )
-				->select( 'tr.object_id' )
-				->join( 'term_taxonomy as tt', '`tt`.`term_taxonomy_id` = `tr`.`term_taxonomy_id`', 'INNER' )
-				->whereIn( 'tt.term_id', $excludedTermIds )
-				->run()
-				->result();
-
-			$excludedPostIds = array_map( function( $post ) {
-				return $post->object_id;
-			}, $excludedPostIds );
-		}
-
-		if ( 'page' === $postType ) {
-			$isStaticHomepage = 'page' === get_option( 'show_on_front' );
-			if ( $isStaticHomepage ) {
-				$blogPageId = (int) get_option( 'page_for_posts' );
-				$excludedPostIds[] = $blogPageId;
-			}
-		}
-
-		$whereClause         = '';
-		$excludedPostsString = aioseo()->sitemap->helpers->excludedPosts();
-		if ( ! empty( $excludedPostsString ) ) {
-			$excludedPostIds = array_merge( $excludedPostIds, explode( ', ', $excludedPostsString ) );
-		}
-
-		if ( ! empty( $excludedPostIds ) ) {
-			$implodedPostIds = aioseo()->helpers->implodeWhereIn( $excludedPostIds, true );
-			$whereClause     = "AND p.ID NOT IN ( $implodedPostIds )";
-		}
-
-		if (
-			apply_filters( 'aioseo_sitemap_woocommerce_exclude_hidden_products', true ) &&
-			aioseo()->helpers->isWooCommerceActive() &&
-			'product' === $postType
-		) {
-			// Exclude products when excluded from both catalog and search.
-			$whereClause .= " AND p.ID NOT IN (
-				SELECT CONVERT(tr.object_id, unsigned) AS object_id
-				FROM {$termRelationshipsTable} AS tr
-				JOIN {$termTaxonomyTable} AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-				JOIN {$termsTable} AS t ON tt.term_id = t.term_id
-				WHERE t.name IN ('exclude-from-catalog', 'exclude-from-search')
-				GROUP BY tr.object_id
-				HAVING COUNT(DISTINCT t.name) = 2
-			)";
-		}
-
-		// Include the blog page in the posts post type unless manually excluded.
-		$blogPageId = (int) get_option( 'page_for_posts' );
-		if (
-			$blogPageId &&
-			! in_array( $blogPageId, $excludedPostIds, true ) &&
-			'post' === $postType
-		) {
-			$whereClause .= " OR `p`.`ID` = $blogPageId ";
-		}
-
-		// Keep this ordering in sync with the content query in Query::posts() so the index
-		// page boundaries match the posts that actually land on each sub-sitemap page.
-		$priorityColumn = aioseo()->sitemap->query->priorityOrderColumn( $postType );
-
-		$posts = aioseo()->core->db->execute(
-			aioseo()->core->db->db->prepare(
-				"SELECT ID, post_modified_gmt
-				FROM (
-					SELECT @row := @row + 1 AS rownum, ID, post_modified_gmt
-					FROM (
-						SELECT p.ID, ap.priority, p.post_modified_gmt
-						FROM {$postsTable} AS p
-						LEFT JOIN {$aioseoPostsTable} AS ap ON p.ID = ap.post_id
-						WHERE p.post_status = %s
-							AND p.post_type = %s
-							AND p.post_password = ''
-							AND (ap.robots_noindex IS NULL OR ap.robots_default = 1 OR ap.robots_noindex = 0)
-							{$whereClause}
-						ORDER BY {$priorityColumn} DESC, p.post_modified_gmt DESC
-					) AS x
-					CROSS JOIN (SELECT @row := 0) AS vars
-					ORDER BY post_modified_gmt DESC
-				) AS y
-				WHERE rownum = 1 OR rownum % %d = 1;",
-				[
-					'attachment' === $postType ? 'inherit' : 'publish',
-					$postType,
-					$linksPerIndex
-				]
-			),
-			true
-		)->result();
-
-		$totalPosts = aioseo()->core->db->execute(
-			aioseo()->core->db->db->prepare(
-				"SELECT COUNT(*) as count
-				FROM {$postsTable} as p
-				LEFT JOIN {$aioseoPostsTable} as ap ON p.ID = ap.post_id
-				WHERE p.post_status = %s
-					AND p.post_type = %s
-					AND p.post_password = ''
-					AND (ap.robots_noindex IS NULL OR ap.robots_default = 1 OR ap.robots_noindex = 0)
-					{$whereClause}
-				",
-				[
-					'attachment' === $postType ? 'inherit' : 'publish',
-					$postType
-				]
-			),
-			true
-		)->result();
-
-		if ( $posts ) {
+		$pages = $this->postTypePages( $postType );
+		if ( $pages ) {
 			$indexes   = [];
 			$filename  = aioseo()->sitemap->filename;
-			$postCount = count( $posts );
-			for ( $i = 0; $i < $postCount; $i++ ) {
-				$indexNumber = 0 !== $i && 1 < $postCount ? $i + 1 : '';
+			$pageCount = count( $pages );
+			foreach ( $pages as $i => $page ) {
+				$indexNumber = 0 !== $i && 1 < $pageCount ? $i + 1 : '';
 
 				$indexes[] = [
 					'loc'     => aioseo()->helpers->localizedUrl( "/$postType-$filename$indexNumber.xml" ),
-					'lastmod' => aioseo()->helpers->dateTimeToIso8601( $posts[ $i ]->post_modified_gmt ),
-					'count'   => $linksPerIndex
+					'lastmod' => aioseo()->helpers->dateTimeToIso8601( $page->lastmod ),
+					'count'   => (int) $page->total
 				];
 			}
-
-			// We need to update the count of the last index since it won't necessarily be the same as the links per index.
-			$indexes[ count( $indexes ) - 1 ]['count'] = $totalPosts[0]->count - ( $linksPerIndex * ( $postCount - 1 ) );
 
 			return $indexes;
 		}
 
-		if ( ! $posts ) {
-			$addonsPosts = aioseo()->addons->doAddonFunction( 'root', 'buildIndexesPostType', [ $postType ] );
-
-			foreach ( $addonsPosts as $addonPosts ) {
-				if ( $addonPosts ) {
-					$posts = $addonPosts;
-					break;
-				}
+		$posts       = [];
+		$addonsPosts = aioseo()->addons->doAddonFunction( 'root', 'buildIndexesPostType', [ $postType ] );
+		foreach ( $addonsPosts as $addonPosts ) {
+			if ( $addonPosts ) {
+				$posts = $addonPosts;
+				break;
 			}
 		}
 
@@ -486,6 +358,39 @@ class Root {
 		}
 
 		return $this->buildIndexes( $postType, $posts );
+	}
+
+	/**
+	 * Returns the newest lastmod and the post count of each sub-sitemap page of a post type.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string   $postType The post type.
+	 * @return object[]           One row per page, in page order.
+	 */
+	private function postTypePages( $postType ) {
+		$query = aioseo()->sitemap->query->postsQuery( $postType, [ 'root' => true ] );
+		if ( ! $query ) {
+			return [];
+		}
+
+		// Number the rows of the exact query the sub-sitemaps page through, so the page boundaries can't drift
+		// from it. The LIMIT keeps the subquery materialized; without it, MariaDB merges it and drops its ORDER BY.
+		$postsQuery    = $query->limit( PHP_INT_MAX )->preparedQuery();
+		$linksPerIndex = (int) aioseo()->sitemap->linksPerIndex;
+
+		// GREATEST() mirrors Content::getLastModified(), which the sub-sitemap entries use.
+		return aioseo()->core->db->execute(
+			"SELECT MAX(lastmod) AS lastmod, COUNT(*) AS total
+			FROM (
+				SELECT @row := @row + 1 AS rownum, GREATEST(x.post_modified_gmt, x.post_date_gmt) AS lastmod
+				FROM ( {$postsQuery} ) AS x
+				CROSS JOIN (SELECT @row := 0) AS vars
+			) AS y
+			GROUP BY CEIL(rownum / {$linksPerIndex})
+			ORDER BY CEIL(rownum / {$linksPerIndex})",
+			true
+		)->result();
 	}
 
 	/**
@@ -578,6 +483,7 @@ class Root {
 				$lastModified = aioseo()->core->db
 					->start( aioseo()->core->db->db->posts . ' as p', true )
 					->select( 'MAX(`p`.`post_modified_gmt`) as last_modified' )
+					->where( 'p.post_status', 'publish' )
 					->whereRaw( "
 					( `p`.`ID` IN
 						(

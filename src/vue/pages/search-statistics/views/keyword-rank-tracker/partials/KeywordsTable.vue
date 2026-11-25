@@ -61,14 +61,14 @@
 					href="#"
 					@click.prevent.exact="toggleRow(index, row, editRow)"
 				>
-					{{ row.name }}
+					{{ decodeHTMLEntities(row.name) }}
 				</a>
 			</div>
 
 			<div class="row-actions">
 				<span class="edit">
 					<a
-						:href="viewInGoogleLink(row.name)"
+						v-safe-href="viewInGoogleLink(row.name)"
 						target="_blank"
 					>
 						{{ strings.viewInGoogle }}
@@ -229,6 +229,7 @@ import { __ } from '@/vue/plugins/translations'
 import { useWpTable } from '@/vue/composables/WpTable'
 
 import numbers from '@/vue/utils/numbers'
+import { decodeHTMLEntities } from '@/vue/utils/helpers'
 
 import CoreLoader from '@/vue/components/common/core/Loader'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
@@ -509,7 +510,7 @@ const toggleFavorite = async (row, index) => {
 }
 
 const viewInGoogleLink = (keyword) => {
-	return `https://www.google.com/search?q=${encodeURIComponent(keyword)}`
+	return `https://www.google.com/search?q=${encodeURIComponent(decodeHTMLEntities(keyword))}`
 }
 
 const setInnerTableComponent = async (component, row) => {

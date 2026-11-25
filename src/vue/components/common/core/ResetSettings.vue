@@ -87,7 +87,7 @@
 
 					<h3>{{ strings.areYouSureReset }}</h3>
 					<div class="reset-description"
-						v-html="strings.actionCannotBeUndone"
+						v-safe-html="strings.actionCannotBeUndone"
 					/>
 
 					<base-button

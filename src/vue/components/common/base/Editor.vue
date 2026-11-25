@@ -106,7 +106,7 @@
 		<div
 			v-show="false"
 			ref="documentation-div"
-			v-html="links.getDocLink(strings.learnMoreSmartTags, 'smartTags', true)"
+			v-safe-html="links.getDocLink(strings.learnMoreSmartTags, 'smartTags', true)"
 		/>
 	</div>
 </template>

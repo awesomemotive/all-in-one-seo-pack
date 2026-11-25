@@ -1,7 +1,7 @@
 <template>
 	<a
 		class="aioseo-link-count"
-		:href="getLink"
+		v-safe-href="getLink"
 	>
 		<div class="aioseo-link-count-top">
 			<component

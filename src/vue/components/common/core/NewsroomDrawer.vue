@@ -41,7 +41,7 @@
 
 						<a
 							class="newsroom-item__title"
-							:href="item.url"
+							v-safe-href="item.url"
 							target="_blank"
 							rel="noopener noreferrer"
 						>{{ item.title }}</a>
@@ -60,7 +60,7 @@
 
 				<a
 					class="newsroom-see-all"
-					:href="archiveUrl"
+					v-safe-href="archiveUrl"
 					target="_blank"
 					rel="noopener noreferrer"
 				>

@@ -5,8 +5,8 @@
 			height="15"
 		/>
 
-		<p v-html="strings.didYouKnow" />
-		<p v-html="strings.learnMoreLink" />
+		<p v-safe-html="strings.didYouKnow" />
+		<p v-safe-html="strings.learnMoreLink" />
 
 		<svg-close @click.native.stop="postEditorStore.disablePrimaryTermEducation" />
 	</div>

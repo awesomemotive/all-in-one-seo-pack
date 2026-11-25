@@ -8,7 +8,7 @@
 			</div>
 			<div class="aioseo-writing-assistant__sidebar-competitor-title">
 				<a
-					:href="props.competitor.url"
+					v-safe-href="props.competitor.url"
 					target="_blank"
 					:title="props.competitor.url"
 				>

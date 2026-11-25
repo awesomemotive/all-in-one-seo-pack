@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  // phpcs:disable
 ?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<?php aioseo()->sitemap->xsl->printScript(); ?>
 <?php foreach ( $entries as $entry ) {
 	if ( empty( $entry['loc'] ) ) {
 		continue;

@@ -1,4 +1,6 @@
 import { createApp } from 'vue'
+
+import loadDirectives from '@/vue/directives'
 import { createRouter, createWebHistory } from 'vue-router'
 
 import {
@@ -52,5 +54,7 @@ if (false !== import.meta.env.PROD) {
 } else {
 	document.body.appendChild(elemDiv)
 }
+
+loadDirectives(app)
 
 app.mount(elemDiv)

@@ -21,7 +21,7 @@ export const useJsonValues = () => {
 	}
 
 	const getJsonValues = (values) => {
-		return values.map(v => JSON.parse(v))
+		return values.map(v => getJsonValue(v)).filter(v => null !== v)
 	}
 
 	const setJsonValues = (values) => {

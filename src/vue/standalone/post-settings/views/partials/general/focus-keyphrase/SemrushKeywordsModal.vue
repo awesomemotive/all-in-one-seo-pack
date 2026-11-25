@@ -13,7 +13,7 @@
 				<core-alert
 					v-if="isUnlicensed"
 					type="blue"
-					v-html="strings.upsell"
+					v-safe-html="strings.upsell"
 				/>
 
 				<div class="aioseo-settings-row">

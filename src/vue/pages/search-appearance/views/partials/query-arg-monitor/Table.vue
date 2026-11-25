@@ -4,7 +4,7 @@
 			v-if="showAlert"
 			:type="alertType"
 			size="medium"
-			v-html="alertDescription"
+			v-safe-html="alertDescription"
 		/>
 
 		<core-wp-table

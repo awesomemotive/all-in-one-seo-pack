@@ -12,13 +12,13 @@
 				{{ strings.description }}
 
 				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'rssContent', true)"
+					v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'rssContent', true)"
 				/>
 
 				<core-alert
 					v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.enable && !optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.global"
 					type="red"
-					v-html="strings.rssFeedDisabled"
+					v-safe-html="strings.rssFeedDisabled"
 				/>
 			</div>
 

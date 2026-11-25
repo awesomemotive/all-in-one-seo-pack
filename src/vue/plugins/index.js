@@ -1,5 +1,6 @@
 import emitter from 'tiny-emitter/instance'
 
+import loadDirectives from '@/vue/directives'
 import VueClipboard from './vue-clipboard'
 
 import './emoji'
@@ -20,6 +21,7 @@ if (import.meta.env.PROD) {
 
 export default app => {
 	app.use(VueClipboard)
+	loadDirectives(app)
 
 	return app
 }

@@ -2,7 +2,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { sprintf } from '@/vue/plugins/translations'
+import { htmlSprintf, raw } from '@/vue/utils/strings'
 const marketingSite = 'https://aioseo.com/'
 const docLinks      = {
 	home                          : `${marketingSite}docs/`,
@@ -35,8 +35,6 @@ const docLinks      = {
 	selectTaxonomiesVideo         : `${marketingSite}docs/how-to-create-a-video-sitemap/#configuring-the-video-sitemap`,
 	includeArchivePages           : `${marketingSite}docs/including-date-and-author-archives-in-your-xml-sitemap/`,
 	excludeImages                 : `${marketingSite}docs/excluding-images-from-the-xml-sitemap/`,
-	dynamicallyGenerate           : `${marketingSite}docs/what-is-a-dynamically-generated-sitemap-and-why-is-it-better-to-use/`,
-	dynamicallyGenerateVideo      : `${marketingSite}docs/what-is-a-dynamically-generated-sitemap-and-why-is-it-better-to-use/`,
 	videoSitemaps                 : `${marketingSite}docs/how-to-create-a-video-sitemap/`,
 	includeCustomFields           : `${marketingSite}docs/including-videos-in-custom-fields-in-your-video-sitemap/`,
 	newsSitemaps                  : `${marketingSite}docs/how-to-create-a-google-news-sitemap/`,
@@ -157,37 +155,37 @@ const getDocUrl = (link) => {
 
 const getUpsellLink = (medium, content, text, link, addArrow = false) => {
 	const arrow = addArrow
-		? sprintf(
+		? htmlSprintf(
 			'<a href="%1$s" class="no-underline" target="_blank">&nbsp;&rarr;</a>',
 			getUpsellUrl(medium, content, link)
 		)
 		: ''
-	return sprintf(
+	return htmlSprintf(
 		'<a href="%1$s" class="underline" target="_blank">%2$s</a>%3$s',
 		getUpsellUrl(medium, content, link),
 		text,
-		arrow
+		raw(arrow)
 	)
 }
 
 const getPlainLink = (text, url, addArrow = false, openInNewTab = true) => {
 	const target = openInNewTab ? '_blank' : '_self'
 
-	const mainLink = sprintf(
+	const mainLink = htmlSprintf(
 		`<a href="%1$s" target="${target}">%2$s</a>`,
 		url,
 		text
 	)
 
 	if ('back' === addArrow) {
-		return sprintf(
+		return htmlSprintf(
 			`<a href="%1$s" class="no-underline" target="${target}">&larr;&nbsp;</a>`,
 			url
 		) + mainLink
 	}
 
 	if (addArrow) {
-		return mainLink + sprintf(
+		return mainLink + htmlSprintf(
 			`<a href="%1$s" class="no-underline" target="${target}">&nbsp;&rarr;</a>`,
 			url
 		)
@@ -198,16 +196,16 @@ const getPlainLink = (text, url, addArrow = false, openInNewTab = true) => {
 
 const getDocLink = (text, link, addArrow = false) => {
 	const arrow = addArrow
-		? sprintf(
+		? htmlSprintf(
 			'<a href="%1$s" class="no-underline" target="_blank">&nbsp;&rarr;</a>',
 			utmUrl('documentation', link, docLinks[link])
 		)
 		: ''
-	return sprintf(
+	return htmlSprintf(
 		'<a href="%1$s" target="_blank">%2$s</a>%3$s',
 		utmUrl('documentation', link, docLinks[link]),
 		text,
-		arrow
+		raw(arrow)
 	)
 }
 

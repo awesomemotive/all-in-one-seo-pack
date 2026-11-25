@@ -53,12 +53,12 @@
 				:animatedNumber="!isWpDashboard"
 			/>
 
-			<p v-html="withoutFocusKeyword" />
+			<p v-safe-html="withoutFocusKeyword" />
 
 			<core-alert
 				v-if="!toHide.includes('upgradeAlert') && !rootStore.isPro"
 				type="yellow"
-				v-html="strings.upgradeToPro"
+				v-safe-html="strings.upgradeToPro"
 			/>
 		</template>
 
@@ -80,7 +80,7 @@
 
 				<a
 					v-if="isWpDashboard"
-					:href="searchAppearanceUrl"
+					v-safe-href="searchAppearanceUrl"
 					class="button button-primary"
 				>
 					<svg-edit-paper /> {{ strings.invalidButton }}

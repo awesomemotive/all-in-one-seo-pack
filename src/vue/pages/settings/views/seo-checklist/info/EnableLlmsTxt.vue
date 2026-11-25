@@ -16,7 +16,7 @@
 		<h4>{{ strings.howWorks }}</h4>
 		<p>{{ strings.howWorksDescription }}</p>
 
-		<p v-html="learnMoreLink" />
+		<p v-safe-html="learnMoreLink" />
 	</div>
 </template>
 

@@ -83,7 +83,7 @@ export default class MainThreadAnalysisRunner {
 
 		// Register premium assessments.
 		try {
-			registerPremiumAssessments(this._worker, Language.code)
+			registerPremiumAssessments(this._worker)
 		} catch (error) {
 			console.error('Error registering premium assessments:', error)
 		}

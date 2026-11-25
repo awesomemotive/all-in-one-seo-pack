@@ -12,19 +12,19 @@
 				class="aioseo-breadcrumb-separator"
 				v-if="1 < previewLength && index > 0 && index < previewLength"
 			>
-				{{ sanitizeString(optionsStore.options.breadcrumbs.separator, true) }}
+				{{ stripMarkup(optionsStore.options.breadcrumbs.separator, true) }}
 			</span>
 
 			<span
 				:class="{ 'aioseo-breadcrumb' : !item.match(/aioseo-breadcrumb/),  link : item !== optionsStore.options.breadcrumbs.breadcrumbPrefix && !item.match(/<a /) }"
 				v-if="index < (previewLength -1)"
-				v-html="item"
+				v-safe-html="item"
 			/>
 
 			<span
 				v-if="index === (previewLength -1)"
 				:class="{ last : true, link: optionsStore.options.breadcrumbs.linkCurrentItem && useDefaultTemplate && !item.match(/<a /), noLink : !optionsStore.options.breadcrumbs.linkCurrentItem && useDefaultTemplate, 'aioseo-breadcrumb' : !item.match(/aioseo-breadcrumb/) }"
-				v-html="item"
+				v-safe-html="item"
 			/>
 		</template>
 	</div>
@@ -36,7 +36,7 @@ import {
 } from '@/vue/stores'
 
 import { decode } from 'he'
-import { sanitizeString, softSanitizeHtml } from '@/vue/utils/strings'
+import { stripMarkup, sanitizeMarkup } from '@/vue/utils/strings'
 
 export default {
 	setup () {
@@ -62,13 +62,13 @@ export default {
 	},
 	methods : {
 		getPreviewData () {
-			let crumbs = this.previewData.filter(item => !!item).map(item => decode(softSanitizeHtml(item)).replace(/#breadcrumb_separator/g, '<span class="aioseo-breadcrumb-separator">' + this.optionsStore.options.breadcrumbs.separator + '</span>').replace(/#breadcrumb_link/g, 'Permalink'))
+			let crumbs = this.previewData.filter(item => !!item).map(item => decode(sanitizeMarkup(item)).replace(/#breadcrumb_separator/g, '<span class="aioseo-breadcrumb-separator">' + this.optionsStore.options.breadcrumbs.separator + '</span>').replace(/#breadcrumb_link/g, 'Permalink'))
 			if (this.useDefaultTemplate && !this.optionsStore.options.breadcrumbs.showCurrentItem) {
 				crumbs = crumbs.slice(0, crumbs.length - 1)
 			}
 			return crumbs
 		},
-		sanitizeString
+		stripMarkup
 	}
 }
 </script>

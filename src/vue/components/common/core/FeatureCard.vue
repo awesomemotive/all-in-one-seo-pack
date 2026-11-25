@@ -16,11 +16,11 @@
 					class="learn-more"
 				>
 					<a
-						:href="links.utmUrl('feature-manager-addon-link', addon.sku, addon.learnMoreUrl)"
+						v-safe-href="links.utmUrl('feature-manager-addon-link', addon.sku, addon.learnMoreUrl)"
 						target="_blank"
 					>{{ GLOBAL_STRINGS.learnMore }}</a>
 					<a
-						:href="links.utmUrl('feature-manager-addon-link', addon.sku, addon.learnMoreUrl)"
+						v-safe-href="links.utmUrl('feature-manager-addon-link', addon.sku, addon.learnMoreUrl)"
 						class="no-underline"
 						target="_blank"
 					>&nbsp;&rarr;</a>
@@ -30,9 +30,9 @@
 					v-if="addon.manageUrl && ((addon.isActive && !addon.requiresUpgrade) || staticCard) && canManage"
 					class="learn-more"
 				>
-					<a :href="getHref(addon.manageUrl)">{{ strings.manage }}</a>
+					<a v-safe-href="getHref(addon.manageUrl)">{{ strings.manage }}</a>
 					<a
-						:href="getHref(addon.manageUrl)"
+						v-safe-href="getHref(addon.manageUrl)"
 						class="no-underline"
 					>
 						&rarr;

@@ -43,7 +43,7 @@
 			<template #title="{ row }">
 				<div class="aioseo-seo-site-analysis-all-urls-results__object-title">
 					<button type="button">
-						<span v-html="softSanitizeHtml(row.title)" />
+						<span v-safe-html="sanitizeMarkup(row.title)" />
 					</button>
 
 					<post-status-badge
@@ -59,7 +59,7 @@
 					<span v-if="row.permalink">
 						<a
 							class="view"
-							:href="row.permalink"
+							v-safe-href="row.permalink"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
@@ -102,7 +102,7 @@ import SiteAuditUrlDetails from '@/vue/pages/seo-analysis/partials/pro/SiteAudit
 import SiteAuditUrlKeywordCell from '@/vue/pages/seo-analysis/partials/pro/SiteAuditUrlKeywordCell'
 import SvgCaret from '@/vue/components/common/svg/Caret'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
-import { softSanitizeHtml } from '@/vue/utils/strings'
+import { sanitizeMarkup } from '@/vue/utils/strings'
 
 import { __ } from '@/vue/plugins/translations'
 const td = import.meta.env.VITE_TEXTDOMAIN

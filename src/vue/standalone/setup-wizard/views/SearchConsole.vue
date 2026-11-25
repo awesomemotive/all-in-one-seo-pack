@@ -15,7 +15,8 @@
 					</div>
 
 					<div class="aioseo-wizard-search-console__content">
-						<div class="aioseo-wizard-search-console__content-text">{{ strings.syncYourSiteWithGsc }}</div>
+						<div v-if="hasSearchStatistics" class="aioseo-wizard-search-console__content-text">{{ strings.connectText }}</div>
+						<div v-else class="aioseo-wizard-search-console__content-text">{{ strings.syncYourSiteWithGsc }}</div>
 
 						<ul class="aioseo-wizard-search-console__content-list">
 							<li>
@@ -68,6 +69,7 @@ import {
 	useSetupWizardStore
 } from '@/vue/stores'
 
+import license from '@/vue/utils/license'
 import { merge } from 'lodash-es'
 
 import { useGoogleSearchConsole } from '@/vue/composables/GoogleSearchConsole'
@@ -113,6 +115,11 @@ export default {
 	data () {
 		return {
 			strings : merge(this.composableStrings, {})
+		}
+	},
+	computed : {
+		hasSearchStatistics () {
+			return license.hasCoreFeature('search-statistics')
 		}
 	},
 	methods : {

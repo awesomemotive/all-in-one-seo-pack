@@ -9,7 +9,7 @@
 					<div
 						class="aioseo-description"
 						v-if="item.desc"
-						v-html="item.desc"
+						v-safe-html="item.desc"
 					/>
 
 					<core-copy-block

@@ -37,7 +37,7 @@
 					<svg-circle-question-mark />
 
 					<template #tooltip>
-						<span v-html="strings.cardDescription"/>
+						<span v-safe-html="strings.cardDescription"/>
 					</template>
 				</core-tooltip>
 			</template>

@@ -12,6 +12,8 @@ import {
 	maybeUpdatePost
 } from '@/vue/plugins/tru-seo/components/helpers'
 
+import { escapeHtml } from '@/vue/utils/strings'
+
 // Re-export from utils for backward compatibility.
 export { customFieldValue } from '@/vue/utils/postData/customFields'
 
@@ -167,12 +169,12 @@ export const customFieldsContent = () => {
 		}
 
 		if ('IMG' === field.tagName && field.src) {
-			const alt = field.alt ? `alt="${field.alt}"` : ''
-			content = `<img src="${field.src}" ${alt}>`
+			const alt = field.alt ? `alt="${escapeHtml(field.alt)}"` : ''
+			content = `<img src="${escapeHtml(field.src)}" ${alt}>`
 		}
 
 		if (field.value && field.type && 'url' === field.type) {
-			content = `<a href="${content}">${content}</a>`
+			content = `<a href="${escapeHtml(content)}">${escapeHtml(content)}</a>`
 		}
 
 		if (content) {

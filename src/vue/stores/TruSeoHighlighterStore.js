@@ -15,6 +15,7 @@ import { allowed } from '@/vue/utils/AIOSEO_VERSION'
 import { cyrb53 } from '@/app/tru-seo/helpers/hash'
 
 import { normalizeWhitespaces } from '@/vue/utils/postData/helpers'
+import { getTruSeoDefaultLocale } from '@/vue/utils/truSeoLocale'
 import {
 	getSharedWorker,
 	requestAddSafeWord,
@@ -157,7 +158,7 @@ const buildAiBatchPayload = (marks, { rephrase = false } = {}) => {
 	const analyzer  = marks[0]?.analyzer
 	const focusKeyphrase = postEditorStore.truseoData?.focusKeyword || ''
 	const focusSynonyms  = postEditorStore.truseoData?.focusKeywordSynonyms || ''
-	const locale    = postEditorStore.currentPost?.truseo_locale || window.aioseo?.user?.locale || 'en_US'
+	const locale    = postEditorStore.currentPost?.truseo_locale || getTruSeoDefaultLocale()
 	const tone      = optionsStore.options?.aiContent?.tone || ''
 	const audience  = optionsStore.options?.aiContent?.audience || ''
 
@@ -209,7 +210,7 @@ const getMarkAiCacheKey = (mark) => {
 		postEditorStore.truseoData?.focusKeywordSynonyms || '',
 		optionsStore.options?.aiContent?.tone || '',
 		optionsStore.options?.aiContent?.audience || '',
-		postEditorStore.currentPost?.truseo_locale || window.aioseo?.user?.locale || 'en_US',
+		postEditorStore.currentPost?.truseo_locale || getTruSeoDefaultLocale(),
 		JSON.stringify(buildAiMetadata(mark)),
 		CONTEXT_DEPENDENT_ANALYZERS.includes(mark.analyzer) ? getContextForMark(mark) : ''
 	].join('\x1f')
@@ -252,13 +253,14 @@ const findAiCacheEntry = (cache, mark) => {
 // Identity of a mark for sibling navigation. Spelling paints one mark per
 // occurrence of a word; since a fix replaces every occurrence at once, all
 // occurrences of a word share one key so navigation treats them as one issue.
+// Case-sensitive, like the fix and the Spelling list: `Recieve` is its own issue.
 const markSiblingKey = (mark) => {
 	if (!mark) {
 		return null
 	}
 
 	return 'spellingChecker' === mark.analyzer
-		? `w:${(mark.sentence || '').toLowerCase()}`
+		? `w:${mark.sentence || ''}`
 		: `id:${mark.id}`
 }
 
@@ -272,7 +274,7 @@ const advanceMatchKey = (mark) => {
 	}
 
 	if ('spellingChecker' === mark.analyzer) {
-		return `w:${(mark.sentence || '').toLowerCase()}`
+		return `w:${mark.sentence || ''}`
 	}
 
 	return `a:${mark.analyzer}|b:${mark.block?.clientId || ''}|s:${mark.sentence || ''}`
@@ -1203,7 +1205,7 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 				seo_title       : parseTags(postEditorStore.currentPost?.title || postEditorStore.currentPost?.tags?.title || ''),
 				seo_description : parseTags(postEditorStore.currentPost?.description || postEditorStore.currentPost?.tags?.description || ''),
 				focus_keyword   : providedKeyword,
-				locale          : postEditorStore.currentPost?.truseo_locale || window.aioseo?.user?.locale || 'en_US',
+				locale          : postEditorStore.currentPost?.truseo_locale || getTruSeoDefaultLocale(),
 				options         : {
 					tone     : optionsStore.options?.aiContent?.tone || '',
 					audience : optionsStore.options?.aiContent?.audience || ''
@@ -1447,7 +1449,7 @@ export const useTruSeoHighlighterStore = defineStore('TruSeoHighlighterStore', {
 			}
 
 			const postEditorStore = usePostEditorStore()
-			const locale          = postEditorStore.currentPost?.truseo_locale || window.aioseo?.user?.locale || 'en_US'
+			const locale          = postEditorStore.currentPost?.truseo_locale || getTruSeoDefaultLocale()
 
 			return useSpellCheckerDictionaryStore().isLocaleSpellCheckable(locale)
 		},

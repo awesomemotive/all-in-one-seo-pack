@@ -4,7 +4,7 @@
 		class="aioseo-page-builder-notice"
 		type="yellow"
 	>
-		<span v-html="notice" />
+		<span v-safe-html="notice" />
 	</core-alert>
 </template>
 

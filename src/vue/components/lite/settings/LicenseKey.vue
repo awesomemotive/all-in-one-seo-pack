@@ -8,15 +8,15 @@
 		</template>
 
 		<template #content>
-			<div v-html="noLicenseNeeded" />
+			<div v-safe-html="noLicenseNeeded" />
 
 			<div class="license-cta-box">
-				<div v-html="tooltipText"></div>
+				<div v-safe-html="tooltipText"></div>
 
-				<span v-html="moreToolTipText" />
+				<span v-safe-html="moreToolTipText" />
 			</div>
 
-			<div v-html="alreadyPurchased" />
+			<div v-safe-html="alreadyPurchased" />
 
 			<form class="license-key">
 				<input type="text" name="username" autocomplete="username" style="display:none;" />

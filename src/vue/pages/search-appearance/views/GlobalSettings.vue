@@ -37,10 +37,10 @@
 				v-if="rootStore.aioseo.data.staticHomePage"
 				class="aioseo-settings-row aioseo-section-description"
 			>
-				<span v-html="strings.homePageDisabledDescription" />
+				<span v-safe-html="strings.homePageDisabledDescription" />
 				&nbsp;
 				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'staticHomePage', true)"
+					v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'staticHomePage', true)"
 				/>
 			</div>
 
@@ -87,7 +87,7 @@
 
 					<div
 						class="max-recommended-count"
-						v-html="maxRecommendedCount(titleCount, 60)"
+						v-safe-html="maxRecommendedCount(titleCount, 60)"
 					/>
 				</template>
 			</core-settings-row>
@@ -117,7 +117,7 @@
 
 					<div
 						class="max-recommended-count"
-						v-html="maxRecommendedCount(descriptionCount, 160)"
+						v-safe-html="maxRecommendedCount(descriptionCount, 160)"
 					/>
 				</template>
 			</core-settings-row>
@@ -338,7 +338,7 @@
 						v-model="optionsStore.options.searchAppearance.global.schema.phone"
 					/>
 
-					<div class="aioseo-description" v-html="strings.phoneDescription"/>
+					<div class="aioseo-description" v-safe-html="strings.phoneDescription"/>
 				</template>
 			</core-settings-row>
 
@@ -434,7 +434,7 @@
 			<div class="aioseo-settings-row local-seo">
 				<svg-local-seo />
 				<div class="local-seo-text">
-					<div v-html="strings.goToLocalSeo" />
+					<div v-safe-html="strings.goToLocalSeo" />
 
 					<base-button
 						v-if="!licenseStore.isUnlicensed && !addons.requiresUpgrade('aioseo-local-business')"

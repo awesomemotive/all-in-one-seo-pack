@@ -122,7 +122,7 @@ export default {
 			let selected = this.locationsList.find(u => u.value === option)
 
 			// Default to the first location in the list.
-			if (!selected && !this.isLocationPostType()) {
+			if (!selected && !this.isLocationPostType() && !this.$root.$data.derivedLocationId) {
 				selected = this.locationsList.find(u => !!u)
 				if (selected) {
 					this.$root.$data.locationId = selected.value

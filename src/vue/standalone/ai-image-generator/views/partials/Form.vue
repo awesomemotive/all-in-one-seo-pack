@@ -151,7 +151,7 @@
 					v-if="allowed('aioseo_ai_insights_settings')"
 					class="ai-image-generator__group"
 					type="blue"
-					v-html="aiContentStrings.alertDescription"
+					v-safe-html="aiContentStrings.alertDescription"
 				/>
 			</template>
 		</template>

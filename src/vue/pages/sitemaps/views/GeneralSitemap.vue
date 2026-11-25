@@ -9,7 +9,7 @@
 			<div class="aioseo-settings-row aioseo-section-description">
 				{{ strings.description }}
 				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'xmlSitemaps', true)"
+					v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'xmlSitemaps', true)"
 				/>
 			</div>
 
@@ -48,17 +48,9 @@
 						{{ strings.doYou404 }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
 						/>
 					</div>
-
-					<core-alert
-						class="static-regeneration-notice"
-						v-if="!optionsStore.options.deprecated.sitemap.general.advancedSettings.dynamic && rootStore.aioseo.scheduledActions && rootStore.aioseo.scheduledActions.sitemap && rootStore.aioseo.scheduledActions.sitemap.includes('staticSitemapRegeneration')"
-						type="blue"
-					>
-						{{ strings.warningStaticRegeneration }}
-					</core-alert>
 				</template>
 			</core-settings-row>
 		</core-card>
@@ -85,7 +77,7 @@
 						{{ strings.sitemapIndexes }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'sitemapIndexes', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'sitemapIndexes', true)"
 						/>
 					</div>
 				</template>
@@ -109,7 +101,7 @@
 						{{ strings.maxLinks }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'maxLinks', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'maxLinks', true)"
 						/>
 					</div>
 
@@ -145,7 +137,7 @@
 						{{ strings.selectPostTypes }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypes', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypes', true)"
 						/>
 					</div>
 
@@ -178,7 +170,7 @@
 						{{ strings.selectTaxonomies }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypes', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'selectPostTypes', true)"
 						/>
 					</div>
 
@@ -208,7 +200,7 @@
 						{{ strings.includeDateArchives }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'includeArchivePages', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'includeArchivePages', true)"
 						/>
 					</div>
 
@@ -239,7 +231,7 @@
 						{{ strings.includeAuthorArchives }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'includeArchivePages', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'includeArchivePages', true)"
 						/>
 					</div>
 
@@ -364,30 +356,6 @@
 			</core-settings-row>
 
 			<core-settings-row
-				:name="strings.dynamicallyGenerate"
-				v-if="optionsStore.internalOptions.internal.deprecatedOptions.includes('staticSitemap')"
-			>
-				<template #content>
-					<base-radio-toggle
-						v-model="optionsStore.options.deprecated.sitemap.general.advancedSettings.dynamic"
-						name="dynamic"
-						:options="[
-							{ label: GLOBAL_STRINGS.no, value: false, activeClass: 'dark' },
-							{ label: GLOBAL_STRINGS.yes, value: true }
-						]"
-					/>
-
-					<div class="aioseo-description">
-						{{ strings.dynamicallyGenerateDescription }}
-
-						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'dynamicallyGenerate', true)"
-						/>
-					</div>
-				</template>
-			</core-settings-row>
-
-			<core-settings-row
 				:name="strings.excludeImages"
 			>
 				<template #content>
@@ -404,7 +372,7 @@
 						{{ strings.excludeImagesDescription }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'excludeImages', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'excludeImages', true)"
 						/>
 					</div>
 				</template>
@@ -518,10 +486,7 @@ export default {
 				priorityScoreTaxonomies        : __('Taxonomy Priority Score', td),
 				excludeImages                  : __('Exclude Images', td),
 				excludeImagesDescription       : __('Exclude Images from your sitemap.', td),
-				dynamicallyGenerate            : __('Dynamically Generate', td),
-				dynamicallyGenerateDescription : __('Dynamically creates the XML Sitemap instead of using a static file.', td),
-				warningLinksPerSitemap         : __('We recommend setting the amount of URLs per sitemap index to 1,000 or less. The more links, the longer it will take for the sitemap to load.', td),
-				warningStaticRegeneration      : __('Your static sitemap is currently being regenerated. This may take some time based on the size of your site. This may also cause the sitemap content to look outdated.', td)
+				warningLinksPerSitemap         : __('We recommend setting the amount of URLs per sitemap index to 1,000 or less. The more links, the longer it will take for the sitemap to load.', td)
 			}
 		}
 	},

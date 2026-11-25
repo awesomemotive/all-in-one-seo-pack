@@ -10,7 +10,7 @@
 
 			<div class="aioseo-settings-row aioseo-section-description">
 				{{ strings.description }}
-				<span v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'breadcrumbsDisplay', true)"/>
+				<span v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'breadcrumbsDisplay', true)"/>
 			</div>
 
 			<core-settings-row
@@ -89,8 +89,8 @@
 
 							<base-input
 								size="medium"
-								:modelValue="sanitizeString(optionsStore.options.breadcrumbs.homepageLabel)"
-								@update:modelValue="value => optionsStore.options.breadcrumbs.homepageLabel = sanitizeString(value)"
+								:modelValue="stripMarkup(optionsStore.options.breadcrumbs.homepageLabel)"
+								@update:modelValue="value => optionsStore.options.breadcrumbs.homepageLabel = stripMarkup(value)"
 								v-model="optionsStore.options.breadcrumbs.homepageLabel"
 							/>
 						</div>
@@ -107,8 +107,8 @@
 			>
 				<template #content>
 					<base-input
-						:modelValue="sanitizeString(optionsStore.options.breadcrumbs.breadcrumbPrefix)"
-						@update:modelValue="value => optionsStore.options.breadcrumbs.breadcrumbPrefix = sanitizeString(value)"
+						:modelValue="stripMarkup(optionsStore.options.breadcrumbs.breadcrumbPrefix)"
+						@update:modelValue="value => optionsStore.options.breadcrumbs.breadcrumbPrefix = stripMarkup(value)"
 						size="medium"
 					/>
 
@@ -139,8 +139,8 @@
 			>
 				<template #content>
 					<core-html-tags-editor
-						:modelValue="sanitizeString(optionsStore.options.breadcrumbs.archiveFormat)"
-						@update:modelValue="value => optionsStore.options.breadcrumbs.archiveFormat = sanitizeString(value)"
+						:modelValue="stripMarkup(optionsStore.options.breadcrumbs.archiveFormat)"
+						@update:modelValue="value => optionsStore.options.breadcrumbs.archiveFormat = stripMarkup(value)"
 						:line-numbers="false"
 						single
 						checkUnfilteredHtml
@@ -164,8 +164,8 @@
 			>
 				<template #content>
 					<core-html-tags-editor
-						:modelValue="sanitizeString(optionsStore.options.breadcrumbs.searchResultFormat)"
-						@update:modelValue="value => optionsStore.options.breadcrumbs.searchResultFormat = sanitizeString(value)"
+						:modelValue="stripMarkup(optionsStore.options.breadcrumbs.searchResultFormat)"
+						@update:modelValue="value => optionsStore.options.breadcrumbs.searchResultFormat = stripMarkup(value)"
 						:line-numbers="false"
 						single
 						checkUnfilteredHtml
@@ -189,8 +189,8 @@
 			>
 				<template #content>
 					<core-html-tags-editor
-						:modelValue="sanitizeString(optionsStore.options.breadcrumbs.errorFormat404)"
-						@update:modelValue="value => optionsStore.options.breadcrumbs.errorFormat404 = sanitizeString(value)"
+						:modelValue="stripMarkup(optionsStore.options.breadcrumbs.errorFormat404)"
+						@update:modelValue="value => optionsStore.options.breadcrumbs.errorFormat404 = stripMarkup(value)"
 						:line-numbers="false"
 						:allowTags="false"
 						:disableEmoji="false"
@@ -248,7 +248,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 
 import { useWidgets } from '@/vue/composables/Widgets'
 
@@ -400,31 +400,31 @@ export default {
 			return [
 				this.optionsStore.options.breadcrumbs.breadcrumbPrefix ? this.optionsStore.options.breadcrumbs.breadcrumbPrefix : '',
 				this.optionsStore.options.breadcrumbs.homepageLink ? homepageLabel : ''
-			].filter(item => !!item).map(item => sanitizeString(item))
+			].filter(item => !!item).map(item => stripMarkup(item))
 		},
 		getPostPreview () {
 			return [ ...this.getRootPreview(), ...[
 				this.optionsStore.options.breadcrumbs.showBlogHome && this.hasStaticBlogHome ? 'Blog Home' : '',
 				this.strings.category,
 				this.strings.articleTitle
-			] ].filter(item => !!item).map(item => sanitizeString(item))
+			] ].filter(item => !!item).map(item => stripMarkup(item))
 		},
 		getArchivePreview () {
 			return [ ...this.getRootPreview(), ...[
 				this.getArchivesOfText
-			] ].filter(item => !!item).map(item => sanitizeString(item))
+			] ].filter(item => !!item).map(item => stripMarkup(item))
 		},
 		getSearchPreview () {
 			return [ ...this.getRootPreview(), ...[
 				this.getSearchForText
-			] ].filter(item => !!item).map(item => sanitizeString(item))
+			] ].filter(item => !!item).map(item => stripMarkup(item))
 		},
 		get404Preview () {
 			return [ ...this.getRootPreview(), ...[
 				this.optionsStore.options.breadcrumbs.errorFormat404
-			] ].filter(item => !!item).map(item => sanitizeString(item))
+			] ].filter(item => !!item).map(item => stripMarkup(item))
 		},
-		sanitizeString
+		stripMarkup
 	}
 }
 </script>

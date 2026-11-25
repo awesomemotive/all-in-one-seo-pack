@@ -133,7 +133,9 @@ class RequestParser {
 	}
 
 	/**
-	 * Checks if we need to serve a stylesheet.
+	 * Checks if we need to serve the sitemap view data or the placeholder stylesheet.
+	 *
+	 * NOTE: The Video and News addons serve the view data of their own sitemaps.
 	 *
 	 * @since 4.2.1
 	 *
@@ -142,8 +144,16 @@ class RequestParser {
 	protected function checkForXsl() {
 		// Trim off the URL params.
 		$newSlug = preg_replace( '/\?.*$/', '', (string) $this->slug );
-		if ( preg_match( '/^default-sitemap\.xsl$/i', (string) $newSlug ) ) {
-			aioseo()->sitemap->xsl->generate();
+		if ( ! preg_match( '/^(default|video|news)-sitemap\.xsl$/i', (string) $newSlug, $match ) ) {
+			return;
+		}
+
+		if ( ! aioseo()->sitemap->xsl->isViewDataRequest() ) {
+			aioseo()->sitemap->xsl->outputPlaceholderStylesheet();
+		}
+
+		if ( 'default' === strtolower( $match[1] ) ) {
+			aioseo()->sitemap->xsl->outputViewData();
 		}
 	}
 
@@ -160,15 +170,19 @@ class RequestParser {
 	 */
 	public function setContext( $type, $fileName = 'sitemap', $indexName = 'root', $pageNumber = 0 ) {
 		$indexesEnabled = aioseo()->options->sitemap->{$type}->indexes;
+		$linksPerIndex  = (int) aioseo()->options->sitemap->{$type}->linksPerIndex;
+		if ( $linksPerIndex < 1 ) {
+			// REST, WP-CLI and imports can store values the settings field rejects.
+			$linksPerIndex = (int) aioseo()->options->sitemap->{$type}->getDefault( 'linksPerIndex' ) ?: 1000;
+		}
 
 		aioseo()->sitemap->type          = $type;
 		aioseo()->sitemap->filename      = $fileName;
 		aioseo()->sitemap->indexes       = $indexesEnabled;
 		aioseo()->sitemap->indexName     = $indexName;
-		aioseo()->sitemap->linksPerIndex = aioseo()->options->sitemap->{$type}->linksPerIndex <= 50000 ? aioseo()->options->sitemap->{$type}->linksPerIndex : 50000;
+		aioseo()->sitemap->linksPerIndex = min( $linksPerIndex, 50000 );
 		aioseo()->sitemap->pageNumber    = $pageNumber >= 1 ? $pageNumber - 1 : 0;
 		aioseo()->sitemap->offset        = aioseo()->sitemap->linksPerIndex * aioseo()->sitemap->pageNumber;
-		aioseo()->sitemap->isStatic      = false;
 	}
 
 	/**

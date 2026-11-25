@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 
+import loadDirectives from '@/vue/directives'
+
 import {
 	loadPiniaStores,
 	useRootStore,
@@ -450,6 +452,7 @@ export const edit = ({ setAttributes, attributes, clientId, isSelected }) => {
 
 					// Use the pinia store.
 					loadPiniaStores(mainApp)
+					loadDirectives(mainApp)
 
 					mainApp.mount(el)
 
@@ -492,6 +495,8 @@ export const edit = ({ setAttributes, attributes, clientId, isSelected }) => {
 				}, {
 					clientId
 				})
+				loadDirectives(selectedModeApp)
+
 				selectedModeApp.mount(el)
 
 				appInstances.set(clientId, selectedModeApp)

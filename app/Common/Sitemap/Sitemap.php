@@ -69,15 +69,6 @@ class Sitemap extends SitemapAbstract {
 	public $offset = 0;
 
 	/**
-	 * Whether the sitemap is static.
-	 *
-	 * @since 4.4.2
-	 *
-	 * @var bool
-	 */
-	public $isStatic = false;
-
-	/**
 	 * Class constructor.
 	 *
 	 * @since 4.0.0
@@ -86,7 +77,6 @@ class Sitemap extends SitemapAbstract {
 		$this->content       = new Content();
 		$this->root          = new Root();
 		$this->query         = new Query();
-		$this->file          = new File();
 		$this->image         = new Image\Image();
 		$this->priority      = new Priority();
 		$this->output        = new Output();
@@ -108,12 +98,6 @@ class Sitemap extends SitemapAbstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'aioseo_static_sitemap_regeneration', [ $this, 'regenerateStaticSitemap' ] );
-
-		// Check if static files need to be updated.
-		add_action( 'wp_insert_post', [ $this, 'regenerateOnUpdate' ] );
-		add_action( 'edited_term', [ $this, 'regenerateStaticSitemap' ] );
-
 		add_action( 'admin_init', [ $this, 'detectStatic' ] );
 
 		$this->maybeAddHtaccessRewriteRules();
@@ -184,36 +168,7 @@ class Sitemap extends SitemapAbstract {
 	 * @return void
 	 */
 	public function detectStatic() {
-		$isGeneralSitemapStatic = aioseo()->options->sitemap->general->advancedSettings->enable &&
-			in_array( 'staticSitemap', aioseo()->internalOptions->internal->deprecatedOptions, true ) &&
-			! aioseo()->options->deprecated->sitemap->general->advancedSettings->dynamic;
-
-		if ( $isGeneralSitemapStatic ) {
-			Models\Notification::deleteNotificationByName( 'sitemap-static-files' );
-
-			return;
-		}
-
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		$files = list_files( get_home_path(), 1 );
-		if ( ! count( $files ) ) {
-			return;
-		}
-
-		$detectedFiles = [];
-		if ( ! $isGeneralSitemapStatic ) {
-			foreach ( $files as $filename ) {
-				if ( preg_match( '#.*sitemap.*#', (string) $filename ) ) {
-					// We don't want to delete the video sitemap here at all.
-					$isVideoSitemap = preg_match( '#.*video.*#', (string) $filename ) ? true : false;
-					if ( ! $isVideoSitemap ) {
-						$detectedFiles[] = $filename;
-					}
-				}
-			}
-		}
-
-		$this->maybeShowStaticSitemapNotification( $detectedFiles );
+		$this->maybeShowStaticSitemapNotification( $this->helpers->getStaticSitemapFiles() );
 	}
 
 	/**
@@ -256,51 +211,6 @@ class Sitemap extends SitemapAbstract {
 	}
 
 	/**
-	 * Regenerates the static sitemap files when a post is updated.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  integer $postId The post ID.
-	 * @return void
-	 */
-	public function regenerateOnUpdate( $postId ) {
-		if ( aioseo()->helpers->isValidPost( $postId ) ) {
-			$this->scheduleRegeneration();
-		}
-	}
-
-	/**
-	 * Schedules an action to regenerate the static sitemap files.
-	 *
-	 * @since 4.0.5
-	 *
-	 * @return void
-	 */
-	public function scheduleRegeneration() {
-		try {
-			if (
-				! aioseo()->options->deprecated->sitemap->general->advancedSettings->dynamic &&
-				! as_next_scheduled_action( 'aioseo_static_sitemap_regeneration' )
-			) {
-				as_schedule_single_action( time() + 60, 'aioseo_static_sitemap_regeneration', [], 'aioseo' );
-			}
-		} catch ( \Exception $e ) {
-			// Do nothing.
-		}
-	}
-
-	/**
-	 * Regenerates the static sitemap files.
-	 *
-	 * @since 4.0.5
-	 *
-	 * @return void
-	 */
-	public function regenerateStaticSitemap() {
-		aioseo()->sitemap->file->generate();
-	}
-
-	/**
 	 * Generates the requested sitemap.
 	 *
 	 * @since   4.0.0
@@ -324,10 +234,6 @@ class Sitemap extends SitemapAbstract {
 			// The setting should not be updated in the DB.
 			$sitepress_settings['auto_adjust_ids'] = 0; // phpcs:ignore Squiz.NamingConventions.ValidVariableName, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		}
-
-		// If requested sitemap should be static and doesn't exist, then generate it.
-		// We'll then serve it dynamically for the current request so that we don't serve a blank page.
-		$this->doesFileExist();
 
 		$options = aioseo()->options->noConflict();
 		if ( ! $options->sitemap->{aioseo()->sitemap->type}->enable ) {
@@ -369,37 +275,11 @@ class Sitemap extends SitemapAbstract {
 		);
 
 		$this->headers();
+		aioseo()->sitemap->xsl->sendViewHeaders();
 		aioseo()->sitemap->output->output( $entries );
 		aioseo()->addons->doAddonFunction( 'output', 'output', [ $entries ] );
 
 		exit;
-	}
-
-	/**
-	 * Checks if static file should be served and generates it if it doesn't exist.
-	 *
-	 * This essentially acts as a safety net in case a file doesn't exist yet or has been deleted.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return void
-	 */
-	protected function doesFileExist() {
-		aioseo()->addons->doAddonFunction( 'sitemap', 'doesFileExist' );
-
-		if (
-			'general' !== $this->type ||
-			! aioseo()->options->sitemap->general->advancedSettings->enable ||
-			! in_array( 'staticSitemap', aioseo()->internalOptions->internal->deprecatedOptions, true ) ||
-			aioseo()->options->sitemap->general->advancedSettings->dynamic
-		) {
-			return;
-		}
-
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		if ( isset( $_SERVER['REQUEST_URI'] ) && ! aioseo()->core->fs->exists( get_home_path() . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) ) {
-			$this->scheduleRegeneration();
-		}
 	}
 
 	/**

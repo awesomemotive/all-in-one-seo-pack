@@ -39,6 +39,7 @@ class Settings {
 	 *
 	 * @since   4.0.0
 	 * @version 5.0.2 Restore the current blog and refresh the options before returning.
+	 * @version 5.0.6 Strips the SEO Alerts contacts for users without Tools access.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request.
 	 * @return \WP_REST_Response          The response containing all plugin options.
@@ -66,7 +67,7 @@ class Settings {
 				// Re-initialize the options for this site.
 				aioseo()->options->init();
 
-				$options = aioseo()->options->all();
+				$options = aioseo()->options->removeNotAllowedSensitiveData( aioseo()->options->all() );
 			} finally {
 				aioseo()->options->refreshAfterRestore();
 			}
@@ -79,7 +80,7 @@ class Settings {
 
 		return new \WP_REST_Response([
 			'success' => true,
-			'options' => aioseo()->options->all()
+			'options' => aioseo()->options->removeNotAllowedSensitiveData( aioseo()->options->all() )
 		], 200);
 	}
 
@@ -242,6 +243,7 @@ class Settings {
 	 *
 	 * @since   4.0.0
 	 * @version 4.9.10 Strip option groups the caller cannot manage and gate the network-wide write.
+	 * @version 5.0.6 Returns the saved Email Reports recipients.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
@@ -288,10 +290,17 @@ class Settings {
 		// Re-initialize notices.
 		aioseo()->notices->init();
 
-		return new \WP_REST_Response( [
+		$response = [
 			'success'       => true,
 			'notifications' => Models\Notification::getNotifications()
-		], 200 );
+		];
+
+		// The recipients are deduplicated and validated on save, so send back what was stored.
+		if ( ! $network && isset( $options['advanced']['emailSummary']['recipients'] ) ) {
+			$response['emailSummaryRecipients'] = aioseo()->options->advanced->emailSummary->recipients;
+		}
+
+		return new \WP_REST_Response( $response, 200 );
 	}
 
 	/**
@@ -861,7 +870,8 @@ class Settings {
 	/**
 	 * Import other plugin settings.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Returns an error response when an import fails or no importer matches.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
@@ -870,8 +880,31 @@ class Settings {
 		$body    = $request->get_json_params();
 		$plugins = ! empty( $body['plugins'] ) ? $body['plugins'] : [];
 
+		if ( empty( $plugins ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => 'No plugins were provided to import.'
+			], 400 );
+		}
+
 		foreach ( $plugins as $plugin ) {
-			aioseo()->importExport->startImport( $plugin['plugin'], $plugin['settings'] );
+			$slug = ! empty( $plugin['plugin'] ) ? sanitize_text_field( $plugin['plugin'] ) : '';
+
+			try {
+				$imported = aioseo()->importExport->startImport( $slug, ! empty( $plugin['settings'] ) ? $plugin['settings'] : [] );
+			} catch ( \Throwable $e ) {
+				return new \WP_REST_Response( [
+					'success' => false,
+					'message' => $e->getMessage()
+				], 500 );
+			}
+
+			if ( ! $imported ) {
+				return new \WP_REST_Response( [
+					'success' => false,
+					'message' => 'No importer was found for plugin: ' . $slug
+				], 400 );
+			}
 		}
 
 		return new \WP_REST_Response( [
@@ -934,7 +967,6 @@ class Settings {
 				break;
 			case 'reset-data':
 				aioseo()->uninstall->dropData( true );
-				aioseo()->core->cache->delete( 'db_schema' );
 				aioseo()->internalOptions->internal->lastActiveVersion = '4.0.0';
 				aioseo()->internalOptions->save( true );
 				aioseo()->updates->addInitialCustomTablesForV4();

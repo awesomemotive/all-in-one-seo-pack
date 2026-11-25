@@ -6,6 +6,7 @@ import AssessmentResult from '../../../values/AssessmentResult'
 
 import { getLanguagesWithSpellChecker } from '@/app/tru-seo/helpers'
 import { __, sprintf } from '@/vue/plugins/translations'
+import { escapeHtml } from '@/vue/utils/strings'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -144,7 +145,7 @@ export default class SpellingCheckerAssessment extends Assessment {
 
 		return errors.map(error => new Mark({
 			original : error.word,
-			marked   : `<truseomark class='truseo-text-mark'>${error.word}</truseomark>`,
+			marked   : `<truseomark class='truseo-text-mark'>${escapeHtml(error.word)}</truseomark>`,
 			position : {
 				startOffset : error.start,
 				endOffset   : error.end

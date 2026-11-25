@@ -57,6 +57,11 @@ trait Shortcodes {
 			return $content;
 		}
 
+		// Skip while Divi's Visual Builder is loading: rendering a shortcode that calls wp_editor() here injects a second TinyMCE that breaks the builder.
+		if ( ! $override && function_exists( 'et_core_is_fb_enabled' ) && et_core_is_fb_enabled() ) {
+			return $content;
+		}
+
 		if ( ! wp_doing_cron() && ! wp_doing_ajax() ) {
 			if ( ! $override && apply_filters( 'aioseo_disable_shortcode_parsing', false ) ) {
 				return $content;

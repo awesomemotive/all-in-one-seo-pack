@@ -1,5 +1,7 @@
 import { __, sprintf } from '@/vue/plugins/translations'
 
+import { escapeHtml, sanitizeUrl } from '@/vue/utils/strings'
+
 import SvgCalendar from '@/vue/components/common/svg/Calendar'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
 import SvgCircleClose from '@/vue/components/common/svg/circle/Close'
@@ -277,7 +279,7 @@ export const useIndexStatus = () => {
 			getIcon     : () => SvgLink,
 			parseValue  : (value) => !value
 				? { value: __('None', td) }
-				: { value: `<a href="${value}" target="_blank">${value}</a>` }
+				: { value: `<a href="${escapeHtml(sanitizeUrl(value))}" target="_blank" rel="noopener noreferrer">${escapeHtml(value)}</a>` }
 		},
 		googleCanonical : {
 			title       : __('Google-Selected Canonical', td),
@@ -286,7 +288,7 @@ export const useIndexStatus = () => {
 			getIcon     : () => SvgLink,
 			parseValue  : (value) => !value
 				? { value: __('None', td) }
-				: { value: `<a href="${value}" target="_blank" title=${value}>${value}</a>` }
+				: { value: `<a href="${escapeHtml(sanitizeUrl(value))}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(value)}">${escapeHtml(value)}</a>` }
 		}
 	}
 

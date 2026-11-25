@@ -13,11 +13,11 @@
 
 		<div class="aioseo-out-of-credits__meter">
 			<template v-if="cost">
-				<span v-html="costLabel" />
+				<span v-safe-html="costLabel" />
 				<span class="aioseo-out-of-credits__meter-divider">&middot;</span>
 			</template>
 
-			<span v-html="remainingLabel" />
+			<span v-safe-html="remainingLabel" />
 		</div>
 
 		<ul class="aioseo-out-of-credits__benefits">
@@ -26,7 +26,7 @@
 				:key="index"
 			>
 				<svg-circle-check />
-				<span v-html="benefit" />
+				<span v-safe-html="benefit" />
 			</li>
 		</ul>
 
@@ -44,7 +44,7 @@
 			<a
 				v-if="!isElite"
 				class="aioseo-out-of-credits__secondary"
-				:href="creditsUrl"
+				v-safe-href="creditsUrl"
 				target="_blank"
 			>
 				{{ strings.buyBundle }}

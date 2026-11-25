@@ -13,7 +13,7 @@
 					<svg-circle-question-mark/>
 
 					<template #tooltip>
-						<span v-html="strings.keywordPositionsTooltip"/>
+						<span v-safe-html="strings.keywordPositionsTooltip"/>
 					</template>
 				</core-tooltip>
 			</template>
@@ -52,7 +52,7 @@
 					<svg-circle-question-mark/>
 
 					<template #tooltip>
-						<span v-html="strings.keywordPerformanceTooltip"/>
+						<span v-safe-html="strings.keywordPerformanceTooltip"/>
 					</template>
 				</core-tooltip>
 			</template>

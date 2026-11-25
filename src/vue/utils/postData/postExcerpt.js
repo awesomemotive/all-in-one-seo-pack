@@ -27,7 +27,7 @@ import { getEditorData as getSiteOriginData } from '@/vue/standalone/page-builde
 import { getEditorData as getThriveArchitectData } from '@/vue/standalone/page-builders/thrive-architect/helpers'
 import { getEditorData as getBricksData } from '@/vue/standalone/page-builders/bricks/helpers'
 import { getEditorData as getOxygenData } from '@/vue/standalone/page-builders/oxygen/helpers'
-import { getText } from '@/vue/utils/html'
+import { getText, stripSvgs } from '@/vue/utils/html'
 
 /**
  * Retrieves the excerpt from the given content.
@@ -49,6 +49,7 @@ const excerptFromContent = (content) => {
 	}
 
 	content = content.replaceAll(/\n\n/g, ' ')
+	content = stripSvgs(content)
 	content = getText(content, false, 'innerText') // Get the visible text from the content.
 	content = content.replace(/\[.*?]/g, '') // Remove WordPress shortcode tags.
 	content = content.trim()

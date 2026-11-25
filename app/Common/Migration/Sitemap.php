@@ -35,13 +35,11 @@ class Sitemap {
 			return;
 		}
 
-		$this->checkIfStatic();
 		$this->migrateLinksPerIndex();
 		$this->migrateIncludedObjects();
 		$this->migratePrioFreq();
 		$this->migrateAdditionalPages();
 		$this->migrateExcludedPages();
-		$this->regenerateSitemap();
 
 		$settings = [
 			'aiosp_sitemap_indexes'          => [ 'type' => 'boolean', 'newOption' => [ 'sitemap', 'general', 'indexes' ] ],
@@ -50,8 +48,7 @@ class Sitemap {
 			'aiosp_sitemap_images'           => [ 'type' => 'boolean', 'newOption' => [ 'sitemap', 'general', 'advancedSettings', 'excludeImages' ] ],
 			'aiosp_sitemap_rss_sitemap'      => [ 'type' => 'boolean', 'newOption' => [ 'sitemap', 'rss', 'enable' ] ],
 			'aiosp_sitemap_filename'         => [ 'type' => 'string', 'newOption' => [ 'sitemap', 'general', 'filename' ] ],
-			'aiosp_sitemap_publication_name' => [ 'type' => 'boolean', 'newOption' => [ 'sitemap', 'news', 'publicationName' ] ],
-			'aiosp_sitemap_rewrite'          => [ 'type' => 'boolean', 'newOption' => [ 'deprecated', 'sitemap', 'general', 'advancedSettings', 'dynamic' ] ]
+			'aiosp_sitemap_publication_name' => [ 'type' => 'boolean', 'newOption' => [ 'sitemap', 'news', 'publicationName' ] ]
 		];
 
 		aioseo()->migration->helpers->mapOldToNew( $settings, $this->oldOptions['modules']['aiosp_sitemap_options'] );
@@ -59,30 +56,9 @@ class Sitemap {
 		if (
 			aioseo()->options->sitemap->general->advancedSettings->excludePosts ||
 			aioseo()->options->sitemap->general->advancedSettings->excludeTerms ||
-			aioseo()->options->sitemap->general->advancedSettings->excludeImages ||
-			( in_array( 'staticSitemap', aioseo()->internalOptions->internal->deprecatedOptions, true ) && ! aioseo()->options->deprecated->sitemap->general->advancedSettings->dynamic )
+			aioseo()->options->sitemap->general->advancedSettings->excludeImages
 		) {
 			aioseo()->options->sitemap->general->advancedSettings->enable = true;
-		}
-	}
-
-	/**
-	 * Check if the sitemap is statically generated.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return void
-	 */
-	private function checkIfStatic() {
-		if (
-			isset( $this->oldOptions['modules']['aiosp_sitemap_options']['aiosp_sitemap_rewrite'] ) &&
-			empty( $this->oldOptions['modules']['aiosp_sitemap_options']['aiosp_sitemap_rewrite'] )
-		) {
-			$deprecatedOptions = aioseo()->internalOptions->internal->deprecatedOptions;
-			array_push( $deprecatedOptions, 'staticSitemap' );
-			aioseo()->internalOptions->internal->deprecatedOptions = $deprecatedOptions;
-
-			aioseo()->options->deprecated->sitemap->general->advancedSettings->dynamic = false;
 		}
 	}
 
@@ -374,41 +350,6 @@ class Sitemap {
 
 		if ( count( $settings ) ) {
 			$mainOptions->sitemap->general->advancedSettings->enable = true;
-		}
-	}
-
-	/**
-	 * Regenerates the sitemap if it is static.
-	 *
-	 * We need to do this since the stylesheet URLs have changed.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return void
-	 */
-	private function regenerateSitemap() {
-		if (
-			isset( $this->oldOptions['modules']['aiosp_sitemap_options']['aiosp_sitemap_rewrite'] ) &&
-			empty( $this->oldOptions['modules']['aiosp_sitemap_options']['aiosp_sitemap_rewrite'] )
-		) {
-			$files         = aioseo()->sitemap->file->files();
-			$detectedFiles = [];
-			foreach ( $files as $filename ) {
-				// We don't want to delete the video sitemap here at all.
-				$isVideoSitemap = preg_match( '#.*video.*#', (string) $filename ) ? true : false;
-				if ( ! $isVideoSitemap ) {
-					$detectedFiles[] = $filename;
-				}
-			}
-
-			$fs = aioseo()->core->fs;
-			if ( count( $detectedFiles ) && $fs->isWpfsValid() ) {
-				foreach ( $detectedFiles as $file ) {
-					$fs->fs->delete( $file, false, 'f' );
-				}
-			}
-
-			aioseo()->sitemap->file->generate( true );
 		}
 	}
 }

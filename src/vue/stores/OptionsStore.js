@@ -64,6 +64,10 @@ export const useOptionsStore = defineStore('OptionsStore', {
 				.then(response => {
 					notificationsStore.updateNotifications(response.body.notifications)
 
+					if (Array.isArray(response.body.emailSummaryRecipients) && this.options.advanced?.emailSummary) {
+						this.options.advanced.emailSummary.recipients = response.body.emailSummaryRecipients
+					}
+
 					dirtyOptionsStore.updateOriginalOptions('options', this.options)
 					dirtyOptionsStore.updateOriginalOptions('dynamicOptions', this.dynamicOptions)
 

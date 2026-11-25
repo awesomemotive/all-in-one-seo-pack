@@ -10,11 +10,11 @@
 		</div>
 		<div
 			class="aioseo-headline-score-overall"
-			v-html="strings.overallScore"
+			v-safe-html="strings.overallScore"
 		/>
 		<div
 			class="aioseo-headline-score-recommendations"
-			v-html="`${strings.veryGoodScore} ${strings.forBestResults}`"
+			v-safe-html="`${strings.veryGoodScore} ${strings.forBestResults}`"
 		/>
 	</div>
 </template>

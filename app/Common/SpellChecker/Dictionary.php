@@ -28,47 +28,87 @@ class Dictionary {
 	private $dictionariesBaseUrl = 'https://aioseo-spell-checker.nyc3.cdn.digitaloceanspaces.com';
 
 	/**
-	 * Per-instance cache for getSupportedLanguages().
+	 * Cache key prefix for the persisted install state.
 	 *
-	 * @since 5.0.0
+	 * @since 5.0.6
 	 *
-	 * @var array|null
+	 * @var string
 	 */
-	private $supportedLanguagesCache = null;
+	private $installStateCachePrefix = 'spell_checker_dictionary_install_state_';
 
 	/**
-	 * Per-instance cache for getInstalledLocales().
+	 * The dictionary directory the per-request caches were built for.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @var string|null
+	 */
+	private static $installStateDir = null;
+
+	/**
+	 * Per-request cache of the locale => installed map.
+	 *
+	 * Shared across instances because a single admin page can build the Vue
+	 * payload more than once (the post editor builds it as both ('post', $postId)
+	 * and ('post', null)), and each build makes its own Dictionary.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @var array|null
+	 */
+	private static $installState = null;
+
+	/**
+	 * Per-request cache for getSupportedLanguages().
 	 *
 	 * @since 5.0.0
 	 *
 	 * @var array|null
 	 */
-	private $installedLocalesCache = null;
+	private static $supportedLanguagesCache = null;
+
+	/**
+	 * Per-request cache for getInstalledLocales().
+	 *
+	 * @since 5.0.0
+	 *
+	 * @var array|null
+	 */
+	private static $installedLocalesCache = null;
 
 	/**
 	 * Returns the local filesystem base directory for dictionaries.
 	 *
-	 * @since 5.0.0
+	 * @since   5.0.0
+	 * @version 5.0.6 Added the aioseo_spell_checker_dictionary_dir filter.
 	 *
 	 * @return string The absolute path to the dictionaries directory.
 	 */
 	public function getDictionaryDir() {
 		$uploadDir = wp_upload_dir();
 
-		return trailingslashit( $uploadDir['basedir'] ) . 'aioseo/dictionaries';
+		// Sites whose uploads are a remote stream wrapper can move these read-only
+		// assets to local disk. Filter getDictionaryBaseUrl() to match, or the
+		// browser can no longer fetch them.
+		return untrailingslashit(
+			apply_filters( 'aioseo_spell_checker_dictionary_dir', trailingslashit( $uploadDir['basedir'] ) . 'aioseo/dictionaries' )
+		);
 	}
 
 	/**
 	 * Returns the base URL for the dictionaries directory.
 	 *
-	 * @since 5.0.0
+	 * @since   5.0.0
+	 * @version 5.0.6 Added the aioseo_spell_checker_dictionary_base_url filter.
 	 *
 	 * @return string The base URL for dictionary files.
 	 */
 	public function getDictionaryBaseUrl() {
 		$uploadDir = wp_upload_dir();
 
-		return trailingslashit( $uploadDir['baseurl'] ) . 'aioseo/dictionaries';
+		return untrailingslashit(
+			apply_filters( 'aioseo_spell_checker_dictionary_base_url', trailingslashit( $uploadDir['baseurl'] ) . 'aioseo/dictionaries' )
+		);
 	}
 
 	/**
@@ -86,18 +126,122 @@ class Dictionary {
 	/**
 	 * Checks whether the dictionary files for a locale need to be downloaded.
 	 *
-	 * @since 5.0.0
+	 * Answers from the persisted install state so the common path never touches
+	 * the dictionary filesystem, which on sites with offloaded uploads is a
+	 * network round trip. Pass $fresh where the answer must be authoritative —
+	 * before writing files, and to verify a download landed.
+	 *
+	 * @since   5.0.0
+	 * @version 5.0.6 Added $fresh; reads the persisted install state otherwise.
 	 *
 	 * @param  string $locale The locale (e.g. 'en_US').
+	 * @param  bool   $fresh  Whether to probe the filesystem instead of the cached state.
 	 * @return bool           True if either .aff or .dic file is missing.
 	 */
-	public function needsDownload( $locale ) {
-		$code = $this->getLanguageCode( $locale );
-		$dir  = $this->getDictionaryDir() . '/' . $code;
-		$fs   = aioseo()->core->fs;
+	public function needsDownload( $locale, $fresh = false ) {
+		if ( empty( $locale ) ) {
+			return true;
+		}
 
-		return ! $fs->exists( $dir . '/' . $locale . '.aff' )
-			|| ! $fs->exists( $dir . '/' . $locale . '.dic' );
+		$state = $this->getInstallState();
+
+		if ( ! $fresh && array_key_exists( $locale, $state ) ) {
+			return ! $state[ $locale ];
+		}
+
+		$installed = $this->probeInstalled( $locale );
+
+		$this->rememberInstallState( $locale, $installed );
+
+		return ! $installed;
+	}
+
+	/**
+	 * Probes the filesystem for a locale's dictionary files.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $locale The locale (e.g. 'en_US').
+	 * @return bool           True if both the .aff and .dic files are present.
+	 */
+	private function probeInstalled( $locale ) {
+		$dir = $this->getDictionaryDir() . '/' . $this->getLanguageCode( $locale );
+		$fs  = aioseo()->core->fs;
+
+		return $fs->exists( $dir . '/' . $locale . '.aff' )
+			&& $fs->exists( $dir . '/' . $locale . '.dic' );
+	}
+
+	/**
+	 * Returns the persisted locale => installed map.
+	 *
+	 * Filled lazily: a locale appears once it has been probed or downloaded, so
+	 * an absent locale means "not known to be installed", not "missing".
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return array<string,bool> The install state, keyed by locale.
+	 */
+	private function getInstallState() {
+		// Keyed by directory so moving it (the directory filter, a new uploads path)
+		// starts from an empty map instead of trusting files at the old location.
+		$dir = $this->getDictionaryDir();
+		if ( $dir !== self::$installStateDir ) {
+			self::$installStateDir         = $dir;
+			self::$installState            = null;
+			self::$supportedLanguagesCache = null;
+			self::$installedLocalesCache   = null;
+		}
+
+		if ( null !== self::$installState ) {
+			return self::$installState;
+		}
+
+		$state = aioseo()->core->cache->get( $this->getInstallStateCacheKey() );
+
+		self::$installState = is_array( $state ) ? array_map( 'boolval', $state ) : [];
+
+		return self::$installState;
+	}
+
+	/**
+	 * Records a locale's install state and drops the state-derived caches.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $locale    The locale (e.g. 'en_US').
+	 * @param  bool   $installed Whether its dictionary files are on disk.
+	 * @return void
+	 */
+	private function rememberInstallState( $locale, $installed ) {
+		$state     = $this->getInstallState();
+		$installed = (bool) $installed;
+
+		if ( array_key_exists( $locale, $state ) && $installed === $state[ $locale ] ) {
+			return;
+		}
+
+		$state[ $locale ]              = $installed;
+		self::$installState            = $state;
+		self::$supportedLanguagesCache = null;
+		self::$installedLocalesCache   = null;
+
+		// Every in-plugin change to the files goes through here, so the map is
+		// accurate by construction. The expiration only bounds how long an
+		// out-of-band change (a migration that drops uploads, a cleanup plugin)
+		// can leave it lying.
+		aioseo()->core->cache->update( $this->getInstallStateCacheKey(), $state, DAY_IN_SECONDS );
+	}
+
+	/**
+	 * Returns the install state cache key for the current dictionary directory.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return string The cache key.
+	 */
+	private function getInstallStateCacheKey() {
+		return $this->installStateCachePrefix . md5( $this->getDictionaryDir() );
 	}
 
 	/**
@@ -113,7 +257,10 @@ class Dictionary {
 	 * @return true|\WP_Error         True on success, WP_Error on failure.
 	 */
 	public function downloadForLocale( $locale ) {
-		if ( ! $this->needsDownload( $locale ) ) {
+		// Probe rather than trust the cached state: this is the one path that
+		// writes files, and a stale "already installed" would make the dictionary
+		// impossible to re-download.
+		if ( ! $this->needsDownload( $locale, true ) ) {
 			return true;
 		}
 
@@ -190,14 +337,11 @@ class Dictionary {
 
 		aioseo()->core->cache->delete( $lockKey );
 
-		if ( $this->needsDownload( $locale ) ) {
+		// Files on disk just changed, so verify against the filesystem. This also
+		// records the new state, which drops the state-derived caches.
+		if ( $this->needsDownload( $locale, true ) ) {
 			return new \WP_Error( 'download_failed', "Dictionary files for {$locale} were missing from {$code}.zip. Try again later." );
 		}
-
-		// Files on disk just changed — drop the per-instance caches so any
-		// follow-up call in the same request sees the new install state.
-		$this->supportedLanguagesCache = null;
-		$this->installedLocalesCache   = null;
 
 		return true;
 	}
@@ -208,7 +352,8 @@ class Dictionary {
 	 * Each entry carries a `hasSpellChecker` flag — most also have a Hunspell
 	 * dictionary (those drive the spell-check assessment), but a few (e.g.
 	 * Arabic, Indonesian, Japanese, Persian) are analysis-only and never download.
-	 * `exists` reflects on-disk install state and is only meaningful when
+	 * `exists` reports the persisted install state, so it is a "known installed"
+	 * flag rather than a filesystem read, and is only meaningful when
 	 * `hasSpellChecker` is true.
 	 *
 	 * Languages with regional spelling standards (en, es, pt, de) also carry a
@@ -216,13 +361,17 @@ class Dictionary {
 	 * `shortLabel` and `exists`); the default dialect is listed first and equals
 	 * the primary `locale`. Analysis is unaffected — it keys off the 2-letter code.
 	 *
-	 * @since 5.0.0
+	 * @since   5.0.0
+	 * @version 5.0.6 `exists` reads the persisted install state instead of probing each locale.
 	 *
 	 * @return array<array{code: string, locale: string, label: string, nativeLabel: string, hasSpellChecker: bool, exists: bool, variants?: array}>
 	 */
 	public function getSupportedLanguages() {
-		if ( null !== $this->supportedLanguagesCache ) {
-			return $this->supportedLanguagesCache;
+		// Read first: it drops the derived caches if the dictionary directory moved.
+		$state = $this->getInstallState();
+
+		if ( null !== self::$supportedLanguagesCache ) {
+			return self::$supportedLanguagesCache;
 		}
 
 		$languages = [
@@ -425,26 +574,26 @@ class Dictionary {
 			]
 		];
 
-		$this->supportedLanguagesCache = array_values( array_map( function( $code, $data ) {
+		self::$supportedLanguagesCache = array_values( array_map( function( $code, $data ) use ( $state ) {
 			$entry = [
 				'code'            => $code,
 				'locale'          => $data['locale'],
 				'label'           => $data['label'],
 				'nativeLabel'     => $data['nativeLabel'],
 				'hasSpellChecker' => $data['hasSpellChecker'],
-				'exists'          => $data['hasSpellChecker'] && ! $this->needsDownload( $data['locale'] )
+				'exists'          => $data['hasSpellChecker'] && ! empty( $state[ $data['locale'] ] )
 			];
 
 			// Regional dialect variants share the language's analyzer (keyed by the
 			// 2-letter code) but each ships its own Hunspell dictionary. The default
 			// dialect is listed first and matches the primary `locale` above.
 			if ( ! empty( $data['variants'] ) ) {
-				$entry['variants'] = array_map( function( $variant ) use ( $data ) {
+				$entry['variants'] = array_map( function( $variant ) use ( $data, $state ) {
 					return [
 						'locale'     => $variant['locale'],
 						'label'      => $variant['label'],
 						'shortLabel' => $variant['shortLabel'],
-						'exists'     => $data['hasSpellChecker'] && ! $this->needsDownload( $variant['locale'] )
+						'exists'     => $data['hasSpellChecker'] && ! empty( $state[ $variant['locale'] ] )
 					];
 				}, $data['variants'] );
 			}
@@ -452,19 +601,28 @@ class Dictionary {
 			return $entry;
 		}, array_keys( $languages ), array_values( $languages ) ) );
 
-		return $this->supportedLanguagesCache;
+		return self::$supportedLanguagesCache;
 	}
 
 	/**
-	 * Returns the locales whose dictionary files already exist on disk.
+	 * Returns the locales whose dictionary files are known to be installed.
 	 *
-	 * @since 5.0.0
+	 * Reads the persisted install state rather than the filesystem, so a locale
+	 * that has never been probed is absent even when its files are on disk. The
+	 * client only uses this to skip a redundant download request, and the request
+	 * it does make short-circuits server-side against the real filesystem.
+	 *
+	 * @since   5.0.0
+	 * @version 5.0.6 Reads the persisted install state instead of the filesystem.
 	 *
 	 * @return string[] Locale strings (e.g. ['en_US', 'fr_FR']).
 	 */
 	public function getInstalledLocales() {
-		if ( null !== $this->installedLocalesCache ) {
-			return $this->installedLocalesCache;
+		// Read first: it drops the derived caches if the dictionary directory moved.
+		$this->getInstallState();
+
+		if ( null !== self::$installedLocalesCache ) {
+			return self::$installedLocalesCache;
 		}
 
 		$installed = [];
@@ -489,9 +647,9 @@ class Dictionary {
 		}
 
 		// The default dialect duplicates the primary locale, so drop repeats.
-		$this->installedLocalesCache = array_values( array_unique( $installed ) );
+		self::$installedLocalesCache = array_values( array_unique( $installed ) );
 
-		return $this->installedLocalesCache;
+		return self::$installedLocalesCache;
 	}
 
 	/**
@@ -542,7 +700,11 @@ class Dictionary {
 	 * only when no entry matches at all — non-Hunspell analysis languages (e.g.
 	 * Japanese) still resolve, just with `hasSpellChecker=false`.
 	 *
-	 * @since 5.0.0
+	 * `needsDownload` reports the persisted install state, so treat it as a hint.
+	 * Call needsDownload( $locale, true ) where the answer has to be authoritative.
+	 *
+	 * @since   5.0.0
+	 * @version 5.0.6 `needsDownload` reads the persisted install state instead of probing.
 	 *
 	 * @param  string $userLocale The WordPress user locale (e.g. 'en_US', 'en_GB', 'pt_PT').
 	 * @return array              Keys: locale, label, nativeLabel, supported, hasSpellChecker, needsDownload.

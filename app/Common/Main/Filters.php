@@ -59,13 +59,13 @@ abstract class Filters {
 		add_filter( 'genesis_detect_seo_plugins', [ $this, 'genesisTheme' ] );
 
 		// WeGlot compatibility.
-		if ( isset( $_SERVER['REQUEST_URI'] ) && preg_match( '#(/default-sitemap\.xsl)$#i', (string) sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) ) {
+		if ( isset( $_SERVER['REQUEST_URI'] ) && preg_match( '#/(default|video|news)-sitemap\.xsl(\?.*)?$#i', (string) sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) ) {
 			add_filter( 'weglot_active_translation_before_treat_page', '__return_false' );
 		}
 
 		add_filter( 'wpml_tm_adjust_translation_fields', [ $this, 'defineMetaFieldsForWpml' ] );
 
-		if ( isset( $_SERVER['REQUEST_URI'] ) && preg_match( '#(\.xml)$#i', (string) sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) ) {
+		if ( isset( $_SERVER['REQUEST_URI'] ) && preg_match( '#\.(xml|rss)(\?.*)?$#i', (string) sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) ) {
 			add_filter( 'jetpack_boost_should_defer_js', '__return_false' );
 		}
 
@@ -193,8 +193,8 @@ abstract class Filters {
 
 		$columns = $sourceAioseoPost->getColumns();
 		foreach ( $columns as $column => $value ) {
-			// Skip the ID column.
-			if ( 'id' === $column ) {
+			// save() sets the timestamps, and an unsaved source model doesn't have them.
+			if ( in_array( $column, [ 'id', 'created', 'updated' ], true ) ) {
 				continue;
 			}
 
@@ -214,8 +214,10 @@ abstract class Filters {
 	 *
 	 * A copy of a published post is duplicate content: without a canonical, both posts tell search
 	 * engines they are the version to index, and the original is the one with the history.
+	 * NOTE: Opt-in via the `aioseo_set_duplicate_canonical_url` filter, as most clones become new content.
 	 *
 	 * @since   5.0.2
+	 * @version 5.0.6 Made opt-in: `aioseo_set_duplicate_canonical_url` now defaults to false.
 	 *
 	 * @param  int           $targetPostId The ID of the copy.
 	 * @param  \WP_Post|int  $sourcePost   The post it was copied from.
@@ -227,7 +229,7 @@ abstract class Filters {
 			return;
 		}
 
-		if ( ! apply_filters( 'aioseo_set_duplicate_canonical_url', true, $targetPostId, $sourcePost ) ) {
+		if ( ! apply_filters( 'aioseo_set_duplicate_canonical_url', false, $targetPostId, $sourcePost ) ) {
 			return;
 		}
 

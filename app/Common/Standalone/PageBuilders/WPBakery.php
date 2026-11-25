@@ -276,6 +276,17 @@ class WPBakery extends Base {
 	}
 
 	/**
+	 * Returns whether the current request is rendering inside WPBakery's front-end editor.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return bool Whether WPBakery's front-end editor is rendering the request.
+	 */
+	public function isFrontendEditorRequest() {
+		return function_exists( 'vc_is_page_editable' ) && vc_is_page_editable();
+	}
+
+	/**
 	 * Returns whether or not the given Post ID was built with WPBakery.
 	 *
 	 * @since 4.5.2

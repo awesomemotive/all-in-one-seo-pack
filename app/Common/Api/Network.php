@@ -49,7 +49,8 @@ class Network {
 		}
 
 		if ( isset( $body['rules'] ) && is_array( $body['rules'] ) ) {
-			$robots['rules'] = array_map( 'sanitize_text_field', $body['rules'] );
+			// Sanitized by sanitizeAndSave(), which has to decode each rule value first.
+			$robots['rules'] = $body['rules'];
 		}
 
 		$newOptions = [];

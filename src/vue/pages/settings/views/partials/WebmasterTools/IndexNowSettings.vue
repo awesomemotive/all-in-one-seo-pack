@@ -34,7 +34,7 @@
 					<p
 						v-if="isIndexNowEnabled"
 						class="aioseo-description"
-						v-html="setting.description"
+						v-safe-html="setting.description"
 					/>
 
 					<core-alert
@@ -45,7 +45,7 @@
 					>
 						<div
 							v-if="isIndexNowLite"
-							v-html="strings.upsell"
+							v-safe-html="strings.upsell"
 						/>
 
 						<template

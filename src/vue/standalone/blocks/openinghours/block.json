@@ -64,6 +64,7 @@
 		}
 	},
 	"textdomain": "all-in-one-seo-pack",
+	"usesContext": [ "postId", "postType" ],
 	"supports": {
 		"html": false
 	}

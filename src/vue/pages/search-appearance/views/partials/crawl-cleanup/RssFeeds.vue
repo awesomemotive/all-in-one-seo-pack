@@ -8,7 +8,7 @@
 			align
 		>
 			<template #description>
-				<div v-html="strings.rssTopDescriptionText"></div>
+				<div v-safe-html="strings.rssTopDescriptionText"></div>
 			</template>
 		</core-settings-row>
 
@@ -36,13 +36,13 @@
 
 					<div class="rss-link">
 						<a
-							:href="rootStore.aioseo.urls.feeds.global"
+							v-safe-href="rootStore.aioseo.urls.feeds.global"
 							target="_blank"
 						>{{ strings.openYourRssFeed }}</a>
 
 						<a
 							class="no-underline"
-							:href="rootStore.aioseo.urls.feeds.global"
+							v-safe-href="rootStore.aioseo.urls.feeds.global"
 							target="_blank"
 						>&nbsp;<svg-external /></a>
 					</div>
@@ -79,12 +79,12 @@
 					v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.globalComments"
 				>
 					<a
-						:href="rootStore.aioseo.urls.feeds.globalComments"
+						v-safe-href="rootStore.aioseo.urls.feeds.globalComments"
 						target="_blank"
 					>{{ strings.openYourCommentsRssFeed }}</a>
 					<a
 						class="no-underline"
-						:href="rootStore.aioseo.urls.feeds.globalComments"
+						v-safe-href="rootStore.aioseo.urls.feeds.globalComments"
 						target="_blank"
 					>&nbsp;<svg-external /></a>
 				</div>
@@ -114,13 +114,13 @@
 					v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.staticBlogPage"
 				>
 					<a
-						:href="rootStore.aioseo.urls.feeds.staticBlogPage"
+						v-safe-href="rootStore.aioseo.urls.feeds.staticBlogPage"
 						target="_blank"
 					>{{ strings.openYourStaticBlogPageFeed }}</a>
 
 					<a
 						class="no-underline"
-						:href="rootStore.aioseo.urls.feeds.staticBlogPage"
+						v-safe-href="rootStore.aioseo.urls.feeds.staticBlogPage"
 						target="_blank"
 					>&nbsp;<svg-external /></a>
 				</div>
@@ -290,19 +290,19 @@
 				/>
 
 				<div class="aioseo-description"
-					v-html="strings.atomFeedDescription"
+					v-safe-html="strings.atomFeedDescription"
 				/>
 
 				<div class="aioseo-description"
 					v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.atom"
 				>
 					<a
-						:href="rootStore.aioseo.urls.feeds.atom"
+						v-safe-href="rootStore.aioseo.urls.feeds.atom"
 						target="_blank"
 					>{{ strings.openYourAtomFeed }}</a>
 					<a
 						class="no-underline"
-						:href="rootStore.aioseo.urls.feeds.atom"
+						v-safe-href="rootStore.aioseo.urls.feeds.atom"
 						target="_blank"
 					>&nbsp;<svg-external /></a>
 				</div>
@@ -324,19 +324,19 @@
 				/>
 
 				<div class="aioseo-description"
-					v-html="strings.rdfFeedDescription"
+					v-safe-html="strings.rdfFeedDescription"
 				/>
 
 				<div class="aioseo-description"
 					v-if="optionsStore.options.searchAppearance.advanced.crawlCleanup.feeds.rdf"
 				>
 					<a
-						:href="rootStore.aioseo.urls.feeds.rdf"
+						v-safe-href="rootStore.aioseo.urls.feeds.rdf"
 						target="_blank"
 					>{{ strings.openYourRdfFeed }}</a>
 					<a
 						class="no-underline"
-						:href="rootStore.aioseo.urls.feeds.rdf"
+						v-safe-href="rootStore.aioseo.urls.feeds.rdf"
 						target="_blank"
 					>&nbsp;<svg-external /></a>
 				</div>

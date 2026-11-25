@@ -63,7 +63,7 @@
 
 				<span class="docLink"
 					v-if="option.docLink"
-					v-html="option.docLink"
+					v-safe-html="option.docLink"
 				/>
 			</slot>
 		</template>

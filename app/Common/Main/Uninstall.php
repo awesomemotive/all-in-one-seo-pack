@@ -15,6 +15,20 @@ use AIOSEO\Plugin\Common\Utils;
  */
 class Uninstall {
 	/**
+	 * Key prefixes of our standalone plugins that share the `aioseo_` prefix.
+	 *
+	 * NOTE: Their rows must survive an AIOSEO uninstall while they stay installed. Each one's own uninstall removes them.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @var array
+	 */
+	private $standalonePluginPrefixes = [
+		'aioseo_blc_',       // Broken Link Checker.
+		'aioseo_404_to_301_' // 404 to 301.
+	];
+
+	/**
 	 * Removes all data.
 	 *
 	 * @since 4.8.1
@@ -90,27 +104,51 @@ class Uninstall {
 		$wpdb->delete( $wpdb->term_taxonomy, [ 'taxonomy' => 'aioseo-location-category' ], [ '%s' ] );
 
 		// Delete all the plugin settings.
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 'aioseo\_%' ) );
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '%\_aioseo-%' ) );
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '%\_aioseo\_%' ) );
+		$this->deleteMatching( $wpdb->options, 'option_name', 'aioseo\_%' );
+		$this->deleteMatching( $wpdb->options, 'option_name', '%\_aioseo-%' );
+		$this->deleteMatching( $wpdb->options, 'option_name', '%\_aioseo\_%' );
 
 		// Delete all entries from the action scheduler table.
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}actionscheduler_actions WHERE hook LIKE %s", 'aioseo\_%' ) );
+		$this->deleteMatching( $wpdb->prefix . 'actionscheduler_actions', 'hook', 'aioseo\_%' );
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}actionscheduler_groups WHERE slug = %s", 'aioseo' ) );
 
 		// Delete all entries from postmeta table.
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}postmeta WHERE meta_key LIKE %s", '_aioseo\_%' ) );
+		$this->deleteMatching( $wpdb->postmeta, 'meta_key', '_aioseo\_%' );
 
 		// Delete all entries from termmeta table.
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}termmeta WHERE meta_key LIKE %s", '_aioseo\_%' ) );
+		$this->deleteMatching( $wpdb->termmeta, 'meta_key', '_aioseo\_%' );
 
 		// Delete all entries from usermeta table.
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}usermeta WHERE meta_key LIKE %s", '%aioseo\_%' ) );
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}usermeta WHERE meta_key LIKE %s", '%aioseo-%' ) );
+		$this->deleteMatching( $wpdb->usermeta, 'meta_key', '%aioseo\_%' );
+		$this->deleteMatching( $wpdb->usermeta, 'meta_key', '%aioseo-%' );
 
 		// Delete seoboost access tokens and user options.
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}usermeta WHERE meta_key LIKE %s", 'seoboost_%s' ) );
 		// phpcs:enable
+	}
+
+	/**
+	 * Deletes the rows whose column matches the LIKE pattern, except those of our standalone plugins.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $table   The full table name.
+	 * @param  string $column  The column to match.
+	 * @param  string $pattern The LIKE pattern, already escaped.
+	 * @return void
+	 */
+	private function deleteMatching( $table, $column, $pattern ) {
+		global $wpdb;
+
+		$exclusions = [];
+		foreach ( $this->standalonePluginPrefixes as $prefix ) {
+			$exclusions[] = '%' . $wpdb->esc_like( $prefix ) . '%';
+		}
+
+		$notLike = str_repeat( " AND `{$column}` NOT LIKE %s", count( $exclusions ) );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( $wpdb->prepare( "DELETE FROM `{$table}` WHERE `{$column}` LIKE %s{$notLike}", array_merge( [ $pattern ], $exclusions ) ) );
 	}
 
 	/**

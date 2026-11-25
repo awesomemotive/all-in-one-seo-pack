@@ -44,7 +44,7 @@
 			<core-alert
 				v-if="!ctaButtonVisible && ctaButtonVisibleWarning"
 				type="yellow"
-				v-html="ctaButtonVisibleWarning"
+				v-safe-html="ctaButtonVisibleWarning"
 			/>
 
 			<base-button
@@ -65,7 +65,7 @@
 			<a
 				v-if="showLink"
 				class="learn-more"
-				:href="learnMoreLink"
+				v-safe-href="learnMoreLink"
 				target="_blank"
 			>
 				<slot name="learn-more-text">

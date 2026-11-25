@@ -23,9 +23,11 @@ let textArray = [],
 
 /**
  * The attributes that should be allowed.
+ * NOTE: `rel` is needed downstream to tell a link that passes anchor text signal from one that doesn't,
+ * and `class` and `style` must survive, since some researches read them (e.g. center alignment).
  * @type {string[]}
  */
-const ALLOWED_ATTRIBUTES = [ 'src', 'alt', 'href' ]
+const ALLOWED_ATTRIBUTES = [ 'src', 'alt', 'href', 'rel', 'class', 'style' ]
 
 /**
  * Parses the text.
@@ -60,8 +62,9 @@ const parser = new Parser({
 		let nodeValueString = ''
 
 		nodeValueType.forEach(function (node) {
-			// Build the tag again.
-			nodeValueString += ' ' + node + '=\'' + nodeValue[node] + '\''
+			// Build the tag again. The values are decoded, so a `>` would end the tag early and leak the rest as text.
+			const value = String(nodeValue[node]).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;')
+			nodeValueString += ' ' + node + '=\'' + value + '\''
 		})
 
 		textArray.push('<' + tagName + nodeValueString + '>')

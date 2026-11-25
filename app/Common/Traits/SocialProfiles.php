@@ -72,7 +72,7 @@ trait SocialProfiles {
 					continue;
 				}
 
-				$socialProfiles[ $platformKey ] = $baseUrl . $username;
+				$socialProfiles[ $platformKey ] = $username ? $baseUrl . $username : '';
 			}
 		}
 

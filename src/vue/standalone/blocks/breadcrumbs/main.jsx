@@ -1,5 +1,7 @@
 import { getSelectedTerms } from '@/vue/standalone/primary-term/helpers'
 import { createApp } from 'vue'
+
+import loadDirectives from '@/vue/directives'
 import {
 	useRootStore,
 	usePostEditorStore,
@@ -211,6 +213,7 @@ export const settings = {
 
 const app = createApp({})
 loadPiniaStores(app)
+loadDirectives(app)
 registerBlock({
 	name,
 	settings

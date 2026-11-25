@@ -17,13 +17,22 @@ class Robots {
 	/**
 	 * The robots meta tag attributes.
 	 *
-	 * We'll already set the keys on construction so that we always output the attributes in the same order.
-	 *
 	 * @since 4.0.0
 	 *
 	 * @var array
 	 */
-	protected $attributes = [
+	protected $attributes = [];
+
+	/**
+	 * The attributes every evaluation starts from.
+	 *
+	 * NOTE: The keys are preset so that we always output the attributes in the same order.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @var array
+	 */
+	protected $defaultAttributes = [
 		'noindex'           => '',
 		'nofollow'          => '',
 		'noarchive'         => '',
@@ -42,6 +51,8 @@ class Robots {
 	 * @since 4.0.16
 	 */
 	public function __construct() {
+		$this->resetAttributes();
+
 		add_action( 'wp_loaded', [ $this, 'unregisterWooCommerceNoindex' ] );
 		add_action( 'template_redirect', [ $this, 'noindexFeed' ] );
 		add_action( 'wp_head', [ $this, 'disableWpRobotsCore' ], -1 );
@@ -90,13 +101,27 @@ class Robots {
 	}
 
 	/**
+	 * Clears the attributes left over from a previous evaluation.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return void
+	 */
+	protected function resetAttributes() {
+		$this->attributes = $this->defaultAttributes;
+	}
+
+	/**
 	 * Returns the robots meta tag value.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Resets the attributes before evaluating.
 	 *
 	 * @return mixed The robots meta tag value or false.
 	 */
 	public function meta() {
+		$this->resetAttributes();
+
 		// We need this check to happen first as spammers can attempt to make the page appear like a post or term by using URL params e.g. "cat=".
 		if ( is_search() ) {
 			$this->globalValues( [ 'archives', 'search' ] );
@@ -157,6 +182,7 @@ class Robots {
 	 *
 	 * @since   4.0.0
 	 * @version 5.0.3 Homepage guardrail now follows {@see isHomePage()}.
+	 * @version 5.0.6 Resets the attributes after building the value.
 	 *
 	 * @param  bool         $array Whether or not to return the value as an array.
 	 * @return array|string        The robots meta tag value.
@@ -190,20 +216,26 @@ class Robots {
 			$this->attributes['nofollow'] = 'nofollow';
 		}
 
-		$this->attributes = array_filter( (array) apply_filters( 'aioseo_robots_meta', $this->attributes ) );
+		$attributes = array_filter( (array) apply_filters( 'aioseo_robots_meta', $this->attributes ) );
 
-		return $array ? $this->attributes : implode( ', ', $this->attributes );
+		// This object is shared for the whole request, so the next post or term (e.g. in a REST collection) has to start clean.
+		$this->resetAttributes();
+
+		return $array ? $attributes : implode( ', ', $attributes );
 	}
 
 	/**
 	 * Sets the attributes for the current post.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Resets the attributes before evaluating.
 	 *
 	 * @param  \WP_Post|null $post The post object.
 	 * @return void
 	 */
 	public function post( $post = null ) {
+		$this->resetAttributes();
+
 		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
 		$post           = aioseo()->helpers->getPost( $post );
 		$metaData       = aioseo()->meta->metaData->getMetaData( $post );
@@ -222,12 +254,15 @@ class Robots {
 	/**
 	 * Returns the robots meta tag value for the current term.
 	 *
-	 * @since 4.0.6
+	 * @since   4.0.6
+	 * @version 5.0.6 Resets the attributes before evaluating.
 	 *
 	 * @param  \WP_Term|null $term The term object if any.
 	 * @return void
 	 */
 	public function term( $term = null ) {
+		$this->resetAttributes();
+
 		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
 		$term           = is_a( $term, 'WP_Term' ) ? $term : aioseo()->helpers->getTerm();
 

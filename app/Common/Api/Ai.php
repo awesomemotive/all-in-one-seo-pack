@@ -86,11 +86,17 @@ class Ai {
 	 *
 	 * @since   4.8.4
 	 * @version 5.0.3 Forwards the error code of a failed generation.
+	 * @version 5.0.6 Refuse when AI is disabled.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function generateTitles( $request ) {
+		$aiDisabledResponse = self::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		try {
 			$body         = $request->get_json_params();
 			$postId       = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
@@ -167,11 +173,17 @@ class Ai {
 	 *
 	 * @since   4.8.4
 	 * @version 5.0.3 Forwards the error code of a failed generation.
+	 * @version 5.0.6 Refuse when AI is disabled.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function generateDescriptions( $request ) {
+		$aiDisabledResponse = self::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		try {
 			$body         = $request->get_json_params();
 			$postId       = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
@@ -246,12 +258,18 @@ class Ai {
 	/**
 	 * Generates ALT text for an image attachment.
 	 *
-	 * @since 4.9.6
+	 * @since   4.9.6
+	 * @version 5.0.6 Refuse when AI is disabled.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function generateImageAlt( $request ) {
+		$aiDisabledResponse = self::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		try {
 			$body         = $request->get_json_params();
 			$attachmentId = ! empty( $body['attachmentId'] ) ? (int) $body['attachmentId'] : 0;
@@ -294,12 +312,18 @@ class Ai {
 	/**
 	 * Generates social posts based on the provided content and options.
 	 *
-	 * @since 4.8.4
+	 * @since   4.8.4
+	 * @version 5.0.6 Refuse when AI is disabled.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function generateSocialPosts( $request ) {
+		$aiDisabledResponse = self::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		$body        = $request->get_json_params();
 		$postId      = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
 		$postContent = ! empty( $body['postContent'] ) ? $body['postContent'] : '';
@@ -405,7 +429,8 @@ class Ai {
 	/**
 	 * Generates a completion for the assistant.
 	 *
-	 * @since 4.8.8
+	 * @since   4.8.8
+	 * @version 5.0.6 Refuse when AI is disabled.
 	 *
 	 * @param  \WP_REST_Request $request The REST Request
 	 * @return void
@@ -425,6 +450,13 @@ class Ai {
 		if ( ! current_user_can( 'edit_post', $postId ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SSE format with JSON-encoded data.
 			echo $sseDataPrefix . wp_json_encode( [ 'error' => 'Unauthorized.' ] ) . "\n\n";
+			flush();
+			exit;
+		}
+
+		if ( aioseo()->ai->isDisabled() ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SSE format with JSON-encoded data.
+			echo $sseDataPrefix . wp_json_encode( [ 'error' => 'AI features are disabled.' ] ) . "\n\n";
 			flush();
 			exit;
 		}
@@ -524,12 +556,9 @@ class Ai {
 			], 403 );
 		}
 
-		if ( aioseo()->ai->isDisabled() ) {
-			return new \WP_REST_Response( [
-				'success' => false,
-				'code'    => 'ai_disabled',
-				'message' => 'AI features are disabled.'
-			], 403 );
+		$aiDisabledResponse = self::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
 		}
 
 		try {
@@ -707,12 +736,18 @@ class Ai {
 	/**
 	 * Generates FAQs based on the provided content and options.
 	 *
-	 * @since 4.8.4
+	 * @since   4.8.4
+	 * @version 5.0.6 Refuse when AI is disabled.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function generateFaqs( $request ) {
+		$aiDisabledResponse = self::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		$body        = $request->get_json_params();
 		$postId      = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
 		$postContent = ! empty( $body['postContent'] ) ? $body['postContent'] : '';
@@ -828,11 +863,17 @@ class Ai {
 	 *
 	 * @since   4.9.6
 	 * @version 5.0.3 Forwards the error code of a failed generation.
+	 * @version 5.0.6 Refuse when AI is disabled.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function generateSchemas( $request ) {
+		$aiDisabledResponse = self::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		try {
 			$body        = $request->get_json_params();
 			$postId      = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
@@ -879,12 +920,18 @@ class Ai {
 	/**
 	 * Generates key points based on the provided content and options.
 	 *
-	 * @since 4.8.4
+	 * @since   4.8.4
+	 * @version 5.0.6 Refuse when AI is disabled.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function generateKeyPoints( $request ) {
+		$aiDisabledResponse = self::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		$body        = $request->get_json_params();
 		$postId      = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
 		$postContent = ! empty( $body['postContent'] ) ? $body['postContent'] : '';
@@ -1054,12 +1101,18 @@ class Ai {
 	 * the per-analyzer prompt construction and returns a `results` envelope keyed by issue
 	 * id that the frontend fans out into its per-item suggestion cache.
 	 *
-	 * @since 5.0.0
+	 * @since   5.0.0
+	 * @version 5.0.6 Refuse when AI is disabled.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request.
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function generateTruSeoSuggestion( $request ) {
+		$aiDisabledResponse = self::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		$body           = $request->get_json_params();
 		$postId         = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
 		$analyzer       = ! empty( $body['analyzer'] ) ? sanitize_text_field( $body['analyzer'] ) : '';
@@ -1252,12 +1305,18 @@ class Ai {
 	 * blocks that need work and returns the replacement block(s) per id. This proxies the request,
 	 * syncs credits, and returns the optimized fields plus the per-block content changes.
 	 *
-	 * @since 5.0.0
+	 * @since   5.0.0
+	 * @version 5.0.6 Refuse when AI is disabled.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request.
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function generateTruSeoOptimizePost( $request ) {
+		$aiDisabledResponse = self::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		$body           = $request->get_json_params();
 		$postId         = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
 		$seoTitle       = isset( $body['seo_title'] ) ? sanitize_text_field( (string) $body['seo_title'] ) : '';
@@ -1357,12 +1416,18 @@ class Ai {
 	 * the request, syncs credits, handles `insufficient_credits`, and returns the sanitized
 	 * results. An empty `correction` with `addToDictionary` false means leave the word as-is.
 	 *
-	 * @since 5.0.0
+	 * @since   5.0.0
+	 * @version 5.0.6 Refuse when AI is disabled.
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request.
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function generateTruSeoSpelling( $request ) {
+		$aiDisabledResponse = self::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		$body    = $request->get_json_params();
 		$postId  = ! empty( $body['postId'] ) ? (int) $body['postId'] : 0;
 		$locale  = ! empty( $body['locale'] ) ? sanitize_text_field( $body['locale'] ) : get_locale();
@@ -1585,5 +1650,24 @@ class Ai {
 		}
 
 		return $results;
+	}
+
+	/**
+	 * Returns the refusal for AI generation routes while AI is disabled, or null when it's enabled.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return \WP_REST_Response|null The refusal, or null.
+	 */
+	public static function getAiDisabledResponse() {
+		if ( ! aioseo()->ai->isDisabled() ) {
+			return null;
+		}
+
+		return new \WP_REST_Response( [
+			'success' => false,
+			'code'    => 'ai_disabled',
+			'message' => 'AI features are disabled.'
+		], 403 );
 	}
 }

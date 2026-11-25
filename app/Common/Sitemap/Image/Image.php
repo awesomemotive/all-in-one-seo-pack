@@ -102,10 +102,16 @@ class Image {
 	 *
 	 * @since   4.0.5
 	 * @version 4.9.4.2 Use recurring action with runtime lock and idle state.
+	 * @version 5.0.6   Bail while an SEO plugin import is running.
 	 *
 	 * @return void
 	 */
 	public function scanPosts() {
+		// The importers skip rows updated after the import started, so saving the scan date would make them skip this one.
+		if ( aioseo()->importExport->isImportRunning() ) {
+			return;
+		}
+
 		// Runtime lock: Prevent concurrent execution of this action.
 		$lockKey = 'as_image_scan_running';
 		if ( aioseo()->core->cache->get( $lockKey ) ) {

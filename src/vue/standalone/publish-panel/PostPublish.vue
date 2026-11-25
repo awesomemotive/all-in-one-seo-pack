@@ -42,7 +42,7 @@
 				class="aioseo-post-publish__network"
 				target="_blank"
 				rel="noopener noreferrer"
-				:href="network.link"
+				v-safe-href="network.link"
 				:aria-label="network.label"
 			>
 				<component :is="network.icon" />

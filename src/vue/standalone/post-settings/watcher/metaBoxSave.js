@@ -1,8 +1,15 @@
 import { isBlockEditor } from '@/vue/utils/context'
 
 const drain = response => {
-	if ('function' === typeof response?.clone) {
+	// Another middleware may have read the body already, and clone() throws on a used body.
+	if ('function' !== typeof response?.clone || response.bodyUsed) {
+		return
+	}
+
+	try {
 		response.clone().arrayBuffer().catch(() => {})
+	} catch {
+		// Nothing left to read.
 	}
 }
 

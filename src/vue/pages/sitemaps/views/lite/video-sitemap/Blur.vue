@@ -3,7 +3,7 @@
 		<div class="aioseo-settings-row aioseo-section-description">
 			{{ strings.extendedDescription }}
 			<span
-				v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'videoSitemaps', true)"
+				v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'videoSitemaps', true)"
 			/>
 		</div>
 
@@ -37,7 +37,7 @@
 					{{ strings.doYou404 }}
 
 					<span
-						v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
+						v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'blankSitemap', true)"
 					/>
 				</div>
 			</template>
@@ -59,7 +59,7 @@
 					{{ strings.sitemapIndexes }}
 
 					<span
-						v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'sitemapIndexes', true)"
+						v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'sitemapIndexes', true)"
 					/>
 				</div>
 			</template>
@@ -81,7 +81,7 @@
 					{{ strings.maxLinks }}
 
 					<span
-						v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'maxLinks', true)"
+						v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'maxLinks', true)"
 					/>
 				</div>
 			</template>

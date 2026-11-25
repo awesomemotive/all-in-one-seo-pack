@@ -7,7 +7,7 @@
 
 		<a
 			v-if="url"
-			:href="url"
+			v-safe-href="url"
 		>
 			{{ strings.openFullView }}
 		</a>
@@ -19,7 +19,6 @@ import { computed } from 'vue'
 
 import { __, _n, sprintf } from '@/vue/plugins/translations'
 import { resolveAdapter } from '@/vue/plugins/tru-seo/editors'
-import { sanitizeUrl } from '@/vue/utils/strings'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 
@@ -49,7 +48,7 @@ const url = computed(() => {
 
 	const fullViewUrl = resolveAdapter()?.getFullViewUrl?.()
 
-	return fullViewUrl ? sanitizeUrl(fullViewUrl) : null
+	return fullViewUrl || null
 })
 </script>
 

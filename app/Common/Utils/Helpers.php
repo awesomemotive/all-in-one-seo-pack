@@ -320,7 +320,8 @@ class Helpers {
 	/**
 	 * Sanitizes a given variable
 	 *
-	 * @since 4.5.6
+	 * @since   4.5.6
+	 * @version 5.0.6 Null is preserved instead of being cast to false.
 	 *
 	 * @param  mixed $variable             The variable.
 	 * @param  bool  $preserveHtml         Whether or not to preserve HTML for ALL fields.
@@ -351,6 +352,10 @@ class Helpers {
 				}
 
 				return $array;
+			case 'NULL':
+				// Callers use null as a "never set" sentinel and tell it apart from an
+				// explicit false with isset(); casting it would silently set the value.
+				return null;
 			default:
 				return false;
 		}

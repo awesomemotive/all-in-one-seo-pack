@@ -27,7 +27,7 @@
 						<template #links>
 							<a
 								v-if="rootStore.isPro || optionsStore.options.advanced.usageTracking"
-								:href="rootStore.aioseo.urls.aio.dashboard"
+								v-safe-href="rootStore.aioseo.urls.aio.dashboard"
 								class="no-underline"
 							>&larr;</a>
 							<a
@@ -39,7 +39,7 @@
 							&nbsp;
 							<a
 								v-if="rootStore.isPro || optionsStore.options.advanced.usageTracking"
-								:href="rootStore.aioseo.urls.aio.dashboard"
+								v-safe-href="rootStore.aioseo.urls.aio.dashboard"
 							>
 								{{ strings.goBack }}
 							</a>

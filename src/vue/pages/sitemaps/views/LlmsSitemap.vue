@@ -11,7 +11,7 @@
 			<div class="aioseo-settings-row aioseo-section-description">
 				{{ strings.description }}
 				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'llmsTxt', true)"
+					v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'llmsTxt', true)"
 				/>
 			</div>
 
@@ -128,7 +128,7 @@
 					<core-alert
 						v-if="licenseStore.isUnlicensed"
 						type="blue"
-						v-html="strings.llmsFullTxtUpsell"
+						v-safe-html="strings.llmsFullTxtUpsell"
 					/>
 				</template>
 			</core-settings-row>
@@ -149,7 +149,7 @@
 					/>
 
 					<div class="aioseo-description aioseo-llms-txt-description">
-						<div v-html="strings.llmsTxtConvertToMdDescription"></div>
+						<div v-safe-html="strings.llmsTxtConvertToMdDescription"></div>
 					</div>
 
 					<core-alert
@@ -157,7 +157,7 @@
 						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
-						<div v-html="strings.llmsTxtConvertToMdUpsell" />
+						<div v-safe-html="strings.llmsTxtConvertToMdUpsell" />
 					</core-alert>
 				</template>
 			</core-settings-row>
@@ -197,7 +197,7 @@
 
 						<div
 							class="max-recommended-count"
-							v-html="maxRecommendedCount(titleCount, 95)"
+							v-safe-html="maxRecommendedCount(titleCount, 95)"
 						/>
 					</template>
 				</core-settings-row>
@@ -226,7 +226,7 @@
 
 						<div
 							class="max-recommended-count"
-							v-html="maxRecommendedCount(descriptionCount, 200)"
+							v-safe-html="maxRecommendedCount(descriptionCount, 200)"
 						/>
 					</template>
 				</core-settings-row>
@@ -248,7 +248,7 @@
 							{{ strings.llmsAdvancedSettingsLinksPerPostTaxDescription }}
 
 							<span
-								v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'llmsTxt', true)"
+								v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'llmsTxt', true)"
 							/>
 						</div>
 					</template>
@@ -277,7 +277,7 @@
 							{{ strings.llmsAdvancedSettingsSelectPostTypes }}
 
 							<span
-								v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'llmsTxt', true)"
+								v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'llmsTxt', true)"
 							/>
 						</div>
 
@@ -312,7 +312,7 @@
 							{{ strings.llmsAdvancedSettingsSelectTaxonomies }}
 
 							<span
-								v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'llmsTxt', true)"
+								v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'llmsTxt', true)"
 							/>
 						</div>
 

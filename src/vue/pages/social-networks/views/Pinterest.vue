@@ -8,7 +8,7 @@
 				{{ strings.description }}
 
 				<span
-					v-html="links.getDocLink(strings.learnHowToGetPinterestTag, 'pinterestSiteVerification', true)"
+					v-safe-html="links.getDocLink(strings.learnHowToGetPinterestTag, 'pinterestSiteVerification', true)"
 				/>
 
 				<br>

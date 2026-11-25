@@ -510,8 +510,14 @@ trait WpContext {
 
 		$postContent = $this->getPostContent( $post );
 
+		// An SVG's `<title>`/`<desc>` is announced by a screen reader but never rendered as prose, and it
+		// carries no whitespace, so it would run into the sentences on either side of it.
+		$postContent = $this->stripInlineSvgs( $postContent );
+
 		// Strip images, captions and WP oembed wrappers (e.g. YouTube URLs) from the post content.
-		$postContent          = preg_replace( '/(<figure.*?\/figure>|<img.*?\/>|<div.*?class="wp-block-embed__wrapper".*?>.*?<\/div>)/s', '', (string) $postContent );
+		// The image part stops at its own `>`, so an `<img>` written without `/>` doesn't take the text after it.
+		$strip                = '/(<figure.*?\/figure>|<img\b(?:[^>"\']++|"[^"]*+"|\'[^\']*+\')*+>|<div.*?class="wp-block-embed__wrapper".*?>.*?<\/div>)/s';
+		$postContent          = preg_replace( $strip, '', $postContent ) ?? $postContent;
 		$postContent          = str_replace( ']]>', ']]&gt;', (string) $postContent );
 		$postContent          = trim( wp_strip_all_tags( strip_shortcodes( (string) $postContent ) ) );
 		$content[ $post->ID ] = wp_trim_words( (string) $postContent, 55, '' );

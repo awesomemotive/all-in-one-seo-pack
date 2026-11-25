@@ -509,13 +509,6 @@ class Options {
 					'excludeTerms'                           => [ 'type' => 'array', 'default' => [] ],
 					'noPaginationForCanonical'               => [ 'type' => 'boolean', 'default' => true ]
 				]
-			],
-			'sitemap'          => [
-				'general' => [
-					'advancedSettings' => [
-						'dynamic' => [ 'type' => 'boolean', 'default' => true ]
-					]
-				]
 			]
 		],
 		'writingAssistant' => [
@@ -652,16 +645,10 @@ class Options {
 	 * @return void
 	 */
 	public function sanitizeAndSave( $options ) {
-		$sitemapOptions                  = ! empty( $options['sitemap'] ) ? $options['sitemap'] : null;
-		$oldSitemapOptions               = aioseo()->options->sitemap->all();
-		$generalSitemapOptions           = ! empty( $options['sitemap']['general'] ) ? $options['sitemap']['general'] : null;
-		$oldGeneralSitemapOptions        = aioseo()->options->sitemap->general->all();
-		$deprecatedGeneralSitemapOptions = ! empty( $options['deprecated']['sitemap']['general'] )
-				? $options['deprecated']['sitemap']['general']
-				: null;
-		$oldDeprecatedGeneralSitemapOptions = aioseo()->options->deprecated->sitemap->general->all();
-		$oldPhoneOption                     = aioseo()->options->searchAppearance->global->schema->phone;
-		$phoneNumberOptions                 = isset( $options['searchAppearance']['global']['schema']['phone'] )
+		$sitemapOptions     = ! empty( $options['sitemap'] ) ? $options['sitemap'] : null;
+		$oldSitemapOptions  = aioseo()->options->sitemap->all();
+		$oldPhoneOption     = aioseo()->options->searchAppearance->global->schema->phone;
+		$phoneNumberOptions = isset( $options['searchAppearance']['global']['schema']['phone'] )
 				? $options['searchAppearance']['global']['schema']['phone']
 				: null;
 		$oldHtmlSitemapUrl = aioseo()->options->sitemap->html->pageUrl;
@@ -685,6 +672,7 @@ class Options {
 
 		$this->sanitizeEmailSummary( $options );
 		$this->sanitizeSeoAlerts( $options );
+		$this->sanitizeRobotsRules( $options );
 
 		// First, recursively replace the new options into the cached state.
 		// It's important we use the helper method since we want to replace populated arrays with empty ones if needed (when a setting was cleared out).
@@ -742,23 +730,6 @@ class Options {
 			}
 		}
 
-		// If sitemap settings were changed, static files need to be regenerated.
-		if (
-			! empty( $deprecatedGeneralSitemapOptions ) &&
-			! empty( $generalSitemapOptions )
-		) {
-			if (
-				(
-					aioseo()->helpers->arraysDifferent( $oldGeneralSitemapOptions, $generalSitemapOptions ) ||
-					aioseo()->helpers->arraysDifferent( $oldDeprecatedGeneralSitemapOptions, $deprecatedGeneralSitemapOptions )
-				) &&
-				$generalSitemapOptions['advancedSettings']['enable'] &&
-				! $deprecatedGeneralSitemapOptions['advancedSettings']['dynamic']
-			) {
-				aioseo()->sitemap->scheduleRegeneration();
-			}
-		}
-
 		if (
 			! empty( $llmsOptions ) &&
 			aioseo()->helpers->arraysDifferent( $oldLlmsOptions, $llmsOptions )
@@ -813,35 +784,48 @@ class Options {
 	 * @return void
 	 */
 	private function sanitizeEmailSummary( &$options ) {
-		foreach ( ( $options['advanced']['emailSummary']['recipients'] ?? [] ) as $k => &$recipient ) {
-			$recipient['email'] = is_email( $recipient['email'] );
+		if ( ! isset( $options['advanced']['emailSummary']['recipients'] ) || ! is_array( $options['advanced']['emailSummary']['recipients'] ) ) {
+			return;
+		}
 
-			// Remove empty emails.
-			if ( empty( $recipient['email'] ) ) {
-				unset( $options['advanced']['emailSummary']['recipients'][ $k ] );
-
+		$recipients = [];
+		foreach ( $options['advanced']['emailSummary']['recipients'] as $recipient ) {
+			$email = is_array( $recipient ) && is_string( $recipient['email'] ?? null ) ? trim( $recipient['email'] ) : '';
+			if ( ! is_email( $email ) ) {
 				continue;
 			}
 
-			// Remove duplicate emails with the same frequency.
-			foreach ( $options['advanced']['emailSummary']['recipients'] as $k2 => $recipient2 ) {
-				if (
-					$k !== $k2 &&
-					$recipient['email'] === $recipient2['email'] &&
-					$recipient['frequency'] === $recipient2['frequency']
-				) {
-					unset( $options['advanced']['emailSummary']['recipients'][ $k ] );
-
-					break;
-				}
+			// The same address may get several frequencies, but each one only once. Mailboxes are case-insensitive in practice.
+			$frequency = is_string( $recipient['frequency'] ?? null ) ? $recipient['frequency'] : '';
+			$key       = strtolower( $email ) . '|' . $frequency;
+			if ( isset( $recipients[ $key ] ) ) {
+				continue;
 			}
+
+			$recipients[ $key ] = array_merge( $recipient, [ 'email' => $email ] );
+		}
+
+		$options['advanced']['emailSummary']['recipients'] = array_values( $recipients );
+	}
+
+	/**
+	 * Sanitizes the robots.txt rules.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  array $options All options, passed by reference.
+	 * @return void
+	 */
+	private function sanitizeRobotsRules( &$options ) {
+		if ( isset( $options['tools']['robots']['rules'] ) && is_array( $options['tools']['robots']['rules'] ) ) {
+			$options['tools']['robots']['rules'] = aioseo()->robotsTxt->sanitizeRuleValues( $options['tools']['robots']['rules'] );
 		}
 	}
 
 	/**
 	 * Sanitizes the SEO Alerts options.
 	 *
-	 * NOTE: Drops empty email recipients, and routes the Slack webhook URL to sensitive options
+	 * NOTE: Drops invalid and duplicate email recipients, and routes the Slack webhook URL to sensitive options
 	 * so it isn't exposed through the readable options endpoint. The webhook is only touched when
 	 * the key is present (the user changed it); a non-empty but invalid URL is left unchanged.
 	 *
@@ -855,14 +839,24 @@ class Options {
 			return;
 		}
 
-		// Remove empty email recipients before saving.
 		if ( isset( $options['tools']['seoAlerts']['recipients'] ) && is_array( $options['tools']['seoAlerts']['recipients'] ) ) {
-			$options['tools']['seoAlerts']['recipients'] = array_values( array_filter(
-				$options['tools']['seoAlerts']['recipients'],
-				function( $recipient ) {
-					return is_array( $recipient ) && '' !== trim( (string) ( $recipient['email'] ?? '' ) );
+			$recipients = [];
+			foreach ( $options['tools']['seoAlerts']['recipients'] as $recipient ) {
+				$email = is_array( $recipient ) && is_string( $recipient['email'] ?? null ) ? trim( $recipient['email'] ) : '';
+				if ( ! is_email( $email ) ) {
+					continue;
 				}
-			) );
+
+				// Mailboxes are case-insensitive in practice, so "A@x.com" and "a@x.com" would get the alert twice.
+				$key = strtolower( $email );
+				if ( isset( $recipients[ $key ] ) ) {
+					continue;
+				}
+
+				$recipients[ $key ] = array_merge( $recipient, [ 'email' => $email ] );
+			}
+
+			$options['tools']['seoAlerts']['recipients'] = array_values( $recipients );
 		}
 
 		if ( ! isset( $options['tools']['seoAlerts']['slackWebhookUrl'] ) ) {
@@ -941,5 +935,27 @@ class Options {
 			flush_rewrite_rules();
 			delete_option( 'aioseo_flush_rewrite_rules_flag' );
 		}
+	}
+
+	/**
+	 * Strips the SEO Alerts contacts from the given options when the current user can't manage Tools.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  array $options All options.
+	 * @return array          The options, safe to send to the current user.
+	 */
+	public function removeNotAllowedSensitiveData( $options ) {
+		if (
+			! isset( $options['tools']['seoAlerts'] ) ||
+			! in_array( 'tools', aioseo()->access->getNotAllowedOptions(), true )
+		) {
+			return $options;
+		}
+
+		$options['tools']['seoAlerts']['recipients']     = [];
+		$options['tools']['seoAlerts']['slackMemberIds'] = [];
+
+		return $options;
 	}
 }

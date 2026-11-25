@@ -80,6 +80,20 @@ class Term extends Base {
 	protected function registerDeprecatedUpdateFields( $taxonomy ) {} // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 
 	/**
+	 * Returns the type each meta data field must have.
+	 *
+	 * Term SEO meta requires the Pro Term model, so there are none in Lite.
+	 * Overridden in {@see \AIOSEO\Plugin\Pro\RestApi\Controllers\Term}.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return array<string, string> The field types, keyed by field name.
+	 */
+	protected function getMetaDataFieldTypes() {
+		return [];
+	}
+
+	/**
 	 * Checks whether the user is allowed to update meta data for the given taxonomy.
 	 *
 	 * @since   4.9.8

@@ -1,6 +1,6 @@
 <template>
 	<a
-		:href="getUtmLink('https://aioseo.com/plugin/lite-support', 'support')"
+		v-safe-href="getUtmLink('https://aioseo.com/plugin/lite-support', 'support')"
 		target="_blank"
 		rel="noreferrer noopener"
 	>

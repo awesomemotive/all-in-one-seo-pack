@@ -20,7 +20,7 @@
 					<em>
 						<a
 							v-if="group.objectsAreLinks"
-							:href="object.url"
+							v-safe-href="object.url"
 						>{{ object.label }}</a>
 
 						<template v-else>{{ object.label }}</template>
@@ -29,7 +29,7 @@
 			</p>
 
 			<p v-if="group.groupUrl">
-				<a :href="group.groupUrl">{{ strings.globalRobotsMetaLink }}</a>
+				<a v-safe-href="group.groupUrl">{{ strings.globalRobotsMetaLink }}</a>
 			</p>
 
 			<p v-if="group.escapableByObject">

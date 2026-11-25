@@ -14,7 +14,7 @@
 
 			<div class="body">
 				<div class="title">
-					<div>{{ sanitizeString(notification.title) }}</div>
+					<div>{{ stripMarkup(notification.title) }}</div>
 					<div class="date">
 						{{ getDate }}
 					</div>
@@ -22,7 +22,7 @@
 
 				<div
 					class="notification-content"
-					v-html="notification.content"
+					v-safe-html="sanitizeRemoteMarkup(notification.content)"
 				/>
 
 				<div class="actions">
@@ -76,7 +76,7 @@ import {
 } from '@/vue/utils/date'
 
 import { useUrl } from '@/vue/composables/Url'
-import { sanitizeString } from '@/vue/utils/strings'
+import { sanitizeRemoteMarkup, stripMarkup } from '@/vue/utils/strings'
 
 import BaseButton from '@/vue/components/common/base/Button'
 import SvgCircleCheck from '@/vue/components/common/svg/circle/Check'
@@ -109,7 +109,8 @@ export default {
 			getTarget,
 			notificationsStore : useNotificationsStore(),
 			processButtonClick,
-			sanitizeString
+			sanitizeRemoteMarkup,
+			stripMarkup
 		}
 	},
 	components : {

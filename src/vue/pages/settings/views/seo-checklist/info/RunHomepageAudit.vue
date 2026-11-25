@@ -16,7 +16,7 @@
 			</li>
 		</ul>
 
-		<p v-html="learnMoreLink" />
+		<p v-safe-html="learnMoreLink" />
 	</div>
 </template>
 

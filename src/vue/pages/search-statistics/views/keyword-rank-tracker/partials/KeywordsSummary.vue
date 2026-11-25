@@ -12,7 +12,7 @@
 					<svg-circle-question-mark/>
 
 					<template #tooltip>
-						<span v-html="vision.tooltip"/>
+						<span v-safe-html="vision.tooltip"/>
 					</template>
 				</core-tooltip>
 			</div>

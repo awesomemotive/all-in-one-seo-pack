@@ -38,6 +38,13 @@
 			{{ strings.backupSuccessfullyRestored }}
 		</core-alert>
 
+		<core-alert
+			v-if="backupError"
+			type="red"
+		>
+			{{ backupError }}
+		</core-alert>
+
 		<div
 			v-if="!getBackups.length"
 			class="aioseo-section-description"
@@ -58,7 +65,7 @@
 					>
 						<div
 							class="backup-name"
-							v-html="getBackupName(backup)"
+							v-safe-html="getBackupName(backup)"
 						/>
 
 						<div class="backup-actions">
@@ -119,7 +126,7 @@
 
 					<h3>{{ areYouSure }}</h3>
 					<div class="reset-description"
-						v-html="strings.actionCannotBeUndone"
+						v-safe-html="strings.actionCannotBeUndone"
 					/>
 
 					<base-button
@@ -193,6 +200,7 @@ export default {
 			backupsDeleteSuccess  : false,
 			showModal             : false,
 			backupsRestoreSuccess : false,
+			backupError           : '',
 			loading               : false,
 			strings               : {
 				backupSettings             : __('Backup Settings', td),
@@ -207,7 +215,9 @@ export default {
 				restore                    : __('Restore', td),
 				delete                     : __('Delete', td),
 				backupSuccessfullyDeleted  : __('Success! The backup was deleted.', td),
-				backupSuccessfullyRestored : __('Success! The backup was restored.', td)
+				backupSuccessfullyRestored : __('Success! The backup was restored.', td),
+				backupNotFound             : __('The backup couldn\'t be found. It may have been deleted.', td),
+				backupFailed               : __('An unknown error occurred, please try again later.', td)
 			}
 		}
 	},
@@ -253,14 +263,18 @@ export default {
 			})
 				.then(() => {
 					clearTimeout(this.timeout)
+					this.hideAlerts()
 					this.loading              = false
 					this.showModal            = false
 					this.backupToDelete       = null
 					this.backupsDeleteSuccess = true
-					this.timeout = setTimeout(() => {
-						this.backupsDeleteSuccess  = false
-						this.backupsRestoreSuccess = false
-					}, 3000)
+					this.timeout = setTimeout(this.hideAlerts, 3000)
+				})
+				.catch((error) => {
+					this.loading        = false
+					this.showModal      = false
+					this.backupToDelete = null
+					this.showBackupError(error)
 				})
 		},
 		processRestoreBackup () {
@@ -271,15 +285,30 @@ export default {
 			})
 				.then(() => {
 					clearTimeout(this.timeout)
+					this.hideAlerts()
 					this.loading              = false
 					this.showModal            = false
 					this.backupToRestore      = null
 					this.backupsRestoreSuccess = true
-					this.timeout = setTimeout(() => {
-						this.backupsDeleteSuccess  = false
-						this.backupsRestoreSuccess = false
-					}, 3000)
+					this.timeout = setTimeout(this.hideAlerts, 3000)
 				})
+				.catch((error) => {
+					this.loading         = false
+					this.showModal       = false
+					this.backupToRestore = null
+					this.showBackupError(error)
+				})
+		},
+		showBackupError (error) {
+			clearTimeout(this.timeout)
+			this.hideAlerts()
+			this.backupError = 404 === error?.response?.status ? this.strings.backupNotFound : this.strings.backupFailed
+			this.timeout     = setTimeout(this.hideAlerts, 3000)
+		},
+		hideAlerts () {
+			this.backupsDeleteSuccess  = false
+			this.backupsRestoreSuccess = false
+			this.backupError           = ''
 		},
 		getBackupName (backup) {
 			const date = dayjs(backup * 1000).tz(dayjs.tz.guess())

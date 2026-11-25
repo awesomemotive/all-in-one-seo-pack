@@ -4,7 +4,7 @@
 			className
 		]"
 	>
-		<p v-html="content"/>
+		<p v-safe-html="content"/>
 	</div>
 </template>
 
@@ -14,13 +14,13 @@ import {
 	usePostEditorStore
 } from '@/vue/stores'
 
-import { softSanitizeHtml } from '@/vue/utils/strings'
+import { sanitizeMarkup } from '@/vue/utils/strings'
 
 export default {
 	setup () {
 		return {
 			postEditorStore : usePostEditorStore(),
-			softSanitizeHtml
+			sanitizeMarkup
 		}
 	},
 	props : {
@@ -31,7 +31,7 @@ export default {
 	},
 	computed : {
 		content () {
-			return softSanitizeHtml(this.postEditorStore.currentPost.ai.socialPosts[this.slug]?.replace(/\n/g, '<br />'))
+			return sanitizeMarkup(this.postEditorStore.currentPost.ai.socialPosts[this.slug]?.replace(/\n/g, '<br />'))
 		},
 		className () {
 			return `aioseo-ai-content-${this.slug}`

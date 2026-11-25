@@ -40,15 +40,6 @@ abstract class SitemapAbstract {
 	public $query = null;
 
 	/**
-	 * File class instance.
-	 *
-	 * @since 4.2.7
-	 *
-	 * @var File
-	 */
-	public $file = null;
-
-	/**
 	 * Image class instance.
 	 *
 	 * @since 4.2.7
@@ -155,15 +146,6 @@ abstract class SitemapAbstract {
 	 * @var int
 	 */
 	public $linksPerIndex = PHP_INT_MAX;
-
-	/**
-	 * Is static.
-	 *
-	 * @since 4.4.3
-	 *
-	 * @var bool
-	 */
-	public $isStatic = false;
 
 	/**
 	 * Filename.

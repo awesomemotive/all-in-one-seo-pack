@@ -156,6 +156,7 @@ class RobotsService {
 		if ( isset( $rule['directive'] ) ) {
 			$merged['directive'] = (string) $rule['directive'];
 		}
+		// Not sanitized here: validateRule() has to decode the value before sanitizing it.
 		if ( isset( $rule['field_value'] ) ) {
 			$merged['fieldValue'] = (string) $rule['field_value'];
 		}
@@ -419,6 +420,7 @@ class RobotsService {
 	 * @since   4.9.8
 	 * @version 5.0.2 Sanitize the user agent and field value before validating them.
 	 * @version 5.0.4 Validate crawl-delay and clean-param values; reject control characters.
+	 * @version 5.0.6 Decode the field value before sanitizing it.
 	 *
 	 * @param  array $rule The raw rule input.
 	 * @return array|\WP_Error Normalised rule (userAgent/directive/fieldValue) on success.
@@ -436,7 +438,15 @@ class RobotsService {
 
 		$userAgent  = isset( $rule['user_agent'] ) ? sanitize_text_field( (string) $rule['user_agent'] ) : '';
 		$directive  = isset( $rule['directive'] ) ? strtolower( trim( (string) $rule['directive'] ) ) : '';
-		$fieldValue = isset( $rule['field_value'] ) ? sanitize_text_field( (string) $rule['field_value'] ) : '';
+		$fieldValue = isset( $rule['field_value'] ) ? aioseo()->robotsTxt->sanitizeRuleValue( $rule['field_value'] ) : '';
+
+		if ( false === $fieldValue ) {
+			return new \WP_Error(
+				'invalid_field_value',
+				__( 'Field value contains percent-encoded characters that cannot be decoded.', 'all-in-one-seo-pack' ),
+				[ 'status' => 400 ]
+			);
+		}
 
 		if ( '' === $userAgent ) {
 			return new \WP_Error( 'invalid_user_agent', __( 'User agent cannot be empty.', 'all-in-one-seo-pack' ), [ 'status' => 400 ] );

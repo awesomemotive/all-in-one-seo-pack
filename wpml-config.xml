@@ -3,6 +3,8 @@
 		<custom-field action="translate">_aioseo_title</custom-field>
 		<custom-field action="translate">_aioseo_description</custom-field>
 		<custom-field action="translate">_aioseo_keywords</custom-field>
+		<custom-field action="translate">_aioseo_focus_keyword</custom-field>
+		<custom-field action="translate">_aioseo_additional_keywords</custom-field>
 		<custom-field action="translate">_aioseo_og_title</custom-field>
 		<custom-field action="translate">_aioseo_og_description</custom-field>
 		<custom-field action="translate">_aioseo_og_article_section</custom-field>
@@ -11,8 +13,25 @@
 		<custom-field action="translate">_aioseo_twitter_description</custom-field>
 	</custom-fields>
 
+	<custom-term-fields>
+		<custom-term-field action="translate">_aioseo_title</custom-term-field>
+		<custom-term-field action="translate">_aioseo_description</custom-term-field>
+		<custom-term-field action="translate">_aioseo_keywords</custom-term-field>
+		<custom-term-field action="translate">_aioseo_focus_keyword</custom-term-field>
+		<custom-term-field action="translate">_aioseo_additional_keywords</custom-term-field>
+		<custom-term-field action="translate">_aioseo_og_title</custom-term-field>
+		<custom-term-field action="translate">_aioseo_og_description</custom-term-field>
+		<custom-term-field action="translate">_aioseo_og_article_section</custom-term-field>
+		<custom-term-field action="translate">_aioseo_og_article_tags</custom-term-field>
+		<custom-term-field action="translate">_aioseo_twitter_title</custom-term-field>
+		<custom-term-field action="translate">_aioseo_twitter_description</custom-term-field>
+	</custom-term-fields>
+
 	<admin-texts>
 		<key name="aioseo_options_localized">
+			<key name="*" />
+		</key>
+		<key name="aioseo_options_dynamic_localized">
 			<key name="*" />
 		</key>
 	</admin-texts>

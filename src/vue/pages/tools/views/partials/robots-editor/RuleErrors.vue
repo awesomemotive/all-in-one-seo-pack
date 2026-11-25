@@ -44,6 +44,8 @@ export default {
 				fromTheNetwork             : __('from the network level', td),
 				invalidCleanParam          : __('Clean-param must start with at least one param which is optionally followed by one path.', td),
 				invalidCrawlDelay          : __('Crawl-delay must be a number starting from 1.', td),
+				invalidEncoding            : __('This value contains percent-encoded characters that cannot be decoded.', td),
+				emptiedByDecoding          : __('Nothing is left of this value once it is decoded, so it will not be saved.', td),
 				conflictingCrawlDelay      : __('For some crawlers, encountering conflicting "Crawl-delay" might lead to unpredictable behavior.', td),
 				networkRuleTakesPrecedence : __('The network rule takes precedence.', td)
 			}

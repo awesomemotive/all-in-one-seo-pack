@@ -115,7 +115,7 @@
 
 					<h3>{{ areYouSureDeleteMessage }}</h3>
 
-					<div class="reset-description" v-html="strings.actionCannotBeUndone" />
+					<div class="reset-description" v-safe-html="strings.actionCannotBeUndone" />
 
 					<base-button
 						type="blue"

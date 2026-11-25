@@ -1,10 +1,10 @@
 === All in One SEO – AI SEO Plugin to Boost SEO Rankings & Traffic (Schema, Local SEO, Sitemap & SEO Insights) ===
 Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, AI, schema, XML Sitemap, redirect
-Tested up to: 7.1.4
+Tested up to: 7.2
 Requires at least: 5.7
 Requires PHP: 7.4
-Stable tag: 5.0.5.1
+Stable tag: 5.0.6.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -192,58 +192,61 @@ AIOSEO&reg; is a registered trademark of Semper Plugins LLC. When writing about 
 
 == Changelog ==
 
+**New in Version 5.0.6.1**
+
+- Fixed: Google Search Console no longer reports an "Invalid XML tag" error for sitemaps.
+
+**New in Version 5.0.6**
+
+- Updated: Sitemaps keep their styled, readable browser view now that Chrome is removing XSLT support, and no longer trigger Chrome's XSLT warning.
+- Updated: The deprecated static sitemap option has been removed, so all sitemaps are now generated dynamically, and "Delete Static Files" now only removes AIOSEO's own sitemap files.
+- Updated: Importing post and term meta from Yoast SEO now resets AIOSEO fields that were left on Yoast's defaults (after a confirmation prompt), so they match Yoast.
+- Updated: AI-generated image alt text now uses your site language.
+- Updated: Removed the TruSEO Word complexity check, which always passed and inflated readability scores.
+- Fixed: Yoast SEO imports now apply Yoast's page and article schema types, and imports from other SEO plugins no longer report success when they fail.
+- Fixed: The TruSEO Text alignment check now works in the block editor and detects centered paragraphs in the Classic Editor.
+- Fixed: The TruSEO highlighter could turn itself off after publishing a post or saving it in the Classic Editor.
+- Fixed: The TruSEO spelling popover now treats words that differ only in capital letters as separate issues.
+- Fixed: The spell checker now uses the Site Language instead of the editor's profile language, and no longer slows down admin pages by checking dictionary files on every load.
+- Fixed: TruSEO's link checks now handle nofollow, sponsored and ugc links correctly, and "Competing links" no longer blames internal links for an outbound keyword anchor.
+- Fixed: SEO Analysis now runs focus keyword checks on taxonomy terms, matches keyphrases that contain apostrophes or quotes, and only checks the post's own slug in the URL check.
+- Fixed: The posts list TruSEO score now respects the post's language, and SEO Analysis no longer skips pages with very large script or style blocks.
+- Fixed: The "Reset SEO Analysis Data" tool now confirms that it ran, and the SEO Analysis scan progress no longer counts unscanned pages as complete.
+- Fixed: The sitemap index now shows the correct last modified date and URL count for each sub-sitemap, without future dates from scheduled, draft or private posts.
+- Fixed: Sitemaps could fail to load when an excluded post or term entry was malformed.
+- Fixed: Child sitemaps could be empty on WPML sites with a hidden language.
+- Fixed: With sitemap indexes disabled, the sitemap breadcrumb no longer links to the page you're already on.
+- Fixed: Breadcrumb custom templates no longer show their HTML as text, and formatting such as italics in post titles shows again in breadcrumbs.
+- Fixed: Redirects with Ignore Case or a regex source that pointed back to the same URL could cause a redirect loop, and relative Target URLs could be saved with a leading double slash.
+- Fixed: Redirects tied to a post stopped working while the post was Private, and source URLs could be rejected as protected paths when the login URL had no path.
+- Fixed: Double-encoded redirect source URLs are now repaired on every site without losing spaces, the Redirects and Logs lists load without a page limit, and Redirects and Search Statistics no longer hit database errors when MySQL uses ANSI_QUOTES mode.
+- Fixed: Robots.txt rules with percent-encoded paths could be saved as "/", blocking more of the site than intended.
+- Fixed: Robots settings such as No Index could carry over between posts in REST API responses.
+- Fixed: The REST API no longer saves "Array" or fails when a list is sent for a single-value SEO field, and WooCommerce product webhooks could fail in some cases.
+- Fixed: Product schema now keeps each WooCommerce variation's own GTIN, including GTINs from the WooCommerce UPC, EAN, and ISBN plugin.
+- Fixed: Formidable rich text fields could break the Divi Visual Builder, and the AIOSEO panel in Elementor could collapse when clicking blank space.
+- Fixed: Improved WPML compatibility: the Focus Keyphrase, title formats and other fields can now be translated, translations no longer inherit the original's custom canonical URL, duplicated posts show their SEO data, and Remove Category Base no longer causes 404s on multilingual sites.
+- Fixed: Duplicated posts no longer keep the original's canonical URL (copies made since 5.0.2 are repaired on update), and cloning a post without AIOSEO data no longer logs PHP warnings.
+- Fixed: Social networks unchecked from "Use the same username" no longer drop their X (Twitter) and Facebook meta tags.
+- Fixed: Text from inline SVG images no longer appears in auto-generated descriptions or the search preview.
+- Fixed: AI features now stay off when AI is disabled, and the AI Image Generator and Media Library show an error when an image edit, delete or alt text save fails.
+- Fixed: The SEO Statistics graphs no longer overflow their card, and Elite users no longer see an Upgrade to Pro prompt in the Google Search Console settings.
+- Fixed: The Keyword Rank Tracker Import Keywords list now shows every untracked focus keyword, no longer re-offers long keywords after they're tracked, and displays special characters correctly.
+- Fixed: IndexNow could skip pinging posts and terms saved after a noindexed one in the same request.
+- Fixed: llms.txt no longer rebuilds on every post save, which could use a lot of memory on large sites. Rebuilds are now batched and only run for included post types.
+- Fixed: SEO Alerts no longer saves invalid or duplicate recipients, and recipient emails are hidden from users without access to Tools.
+- Fixed: Settings backups made in the same second are now kept separately, restoring or deleting a missing backup no longer reports success, and the Debug "Reset Data" tool no longer shows a false error.
+- Fixed: Uninstalling AIOSEO with the remove-data option enabled could also remove the settings of Broken Link Checker and 404 to 301.
+- Fixed: The SEO Setup Checklist no longer completes the site title & tagline task while the tagline is still the WordPress default.
+- Fixed: The block editor could get stuck on "Updating…" when another plugin read the AIOSEO save response first.
+- Fixed: The Link Assistant Link Report could show a blank page when opened right after saving Settings.
+- Fixed: "Learn More" links in the admin now open in a new tab.
+- Fixed: Improved security protections in the admin interface and the AI bulk content generator.
+
 **New in Version 5.0.5.1**
 
 - Fixed: Improved security protections for breadcrumb labels.
 - Fixed: Improved security protections for the redirect log search in the Abilities API.
-
-**New in Version 5.0.5**
-
-- Fixed: Visiting a WooCommerce product page could open the slide cart, add the product to the cart or redirect to checkout when FunnelKit Cart, Funnel Builder or CartHopper Skip Cart was active.
-- Fixed: A database update that kept failing could be retried on every page load.
-- Fixed: Robots.txt rules containing colons, line breaks, special characters or a "0" value could look different in the editor preview than in the served file.
-- Fixed: Malformed imported robots.txt rules could break the robots.txt editor or the settings import.
-- Fixed: Improved access protections in the AI Image Generator: it now only deletes AI-generated images and respects the AI off-switch.
-- Fixed: The AI Image Generator now explains why a selected image can't be edited.
-- Fixed: The Edit Snippet button in the SEO Preview could be missing on a homepage that uses the theme's layout when a Posts page was still set in Settings > Reading.
-- Fixed: Post and term titles containing square brackets could break their links in llms.txt and llms-full.txt.
-- Fixed: Some dropdowns in the Local SEO and AIOSEO metaboxes, such as Payment Info, Country, Article Tags, Priority Score, Keywords and Redirects, were cut off by the metabox container.
-- Fixed: An empty coloured block could appear over the highlighted option in AIOSEO dropdowns.
-- Fixed: Focus keywords set on taxonomy terms were missing from the Keyword Rank Tracker's Import Keywords list.
-- Fixed: The Keyword Rank Tracker's Import Keywords list was capped at 50 keywords and could miss some posts' focus keywords.
-- Fixed: Recipient email addresses in the SEO Alerts settings weren't saved.
-- Fixed: Several settings weren't imported correctly from Yoast SEO Premium, including breadcrumbs, website name, number of employees, term meta and crawl optimization settings (with their robots.txt rules and the taxonomy feed setting).
-- Fixed: Redirects created from a 404 log entry with a space (%20) in the URL could lose the space, so the redirect didn't match.
-- Fixed: AI agents using AIOSEO's abilities couldn't read or update SEO data on posts that hadn't been opened in AIOSEO yet.
-
-**New in Version 5.0.4**
-
-- New: TruSEO now fully supports Elementor, Divi and WPBakery Page Builder: see issues highlighted right in your layout, jump straight to them, fix spelling mistakes in one click and get AI suggestions without leaving the builder.
-- Updated: The AI Suite MCP setup now tells you which security plugin or setting is blocking Application Passwords, and how to turn them back on.
-- Fixed: Page updates could fail and redirect to a 404 page on some sites when TruSEO analysis data grew too large.
-- Fixed: Regex redirects could carry the request's query string into the target URL regardless of the Query Param setting, and encoded characters in the request weren't always handled correctly.
-- Fixed: An asterisk in a regex redirect couldn't be used as a quantifier, so patterns such as \d* matched more than intended.
-- Fixed: Regex redirects now correctly replace capture group placeholders $10 and above.
-- Fixed: Redirects now warns about redirect loops when the target URL includes your site's full domain.
-- Fixed: The Lite post editor could request a Pro-only Redirects endpoint when a post's slug or status changed, causing occasional errors.
-- Fixed: The AI Suite (MCP) robots.txt abilities could fail on sites using Crawl-delay or Clean-param rules, and couldn't create those rules.
-- Fixed: Installing the MCP Adapter could fail on multisite subsites.
-- Fixed: MCP Adapter install and activation errors in AI Suite showed raw HTML tags.
-- Fixed: The Spell Checker flagged all-caps acronyms such as SEO as misspellings, including in words like SEO-friendly.
-- Fixed: The TruSEO score was missing from the AIOSEO Details column for users who can't manage AIOSEO settings.
-- Fixed: Optimize with AI could time out on longer posts before the optimization finished.
-- Fixed: A PHP warning could appear in the editor on sites where the 5.0.0 database update hadn't fully completed.
-- Fixed: AIOSEO could interfere with themes and plugins that detect the Block Editor when the Classic Editor was in use.
-- Fixed: Re-opening the AIOSEO sidebar in the block editor could land on the tab last opened from the pre-publish panel's Fix link.
-- Fixed: The post editor sent duplicate SEO Revisions requests when saving a post.
-- Fixed: Site Audit could fail to load on WordPress 5.7 and on sites with debugging enabled.
-- Fixed: Typing a page number past the last page in an AIOSEO table loaded one page at a time instead of going straight to the last page.
-- Fixed: The Open Graph image database update could fail to finish on some sites.
-- Fixed: Empty category archives are now set to noindex when the "No Index Empty Categories" option is enabled.
-- Fixed: The sitemap breadcrumb now links to the sitemap index instead of the homepage.
-- Fixed: Layout issues with the upgrade prompt in the category and tag editor.
-- Fixed: The dismiss button on the meta keywords notice looked broken in the Bricks editor.
-- Fixed: The table pagination arrows and the score badge on the SEO Analysis page weren't vertically centered.
 
 **See our [changelog on aioseo.com](https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=aioseo) for previous releases.**
 
@@ -320,6 +323,6 @@ AIOSEO can easily help you get your sitemaps listed inside Google Search Console
 
 == Upgrade Notice ==
 
-= 5.0.5.1 =
+= 5.0.6.1 =
 
 This update adds major improvements and bug fixes.

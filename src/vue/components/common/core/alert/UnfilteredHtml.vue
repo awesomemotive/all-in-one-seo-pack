@@ -3,7 +3,7 @@
 		class="no-access"
 		v-if="!rootStore.aioseo.user.unfilteredHtml"
 		type="red"
-		v-html="strings.unfilteredHtmlError"
+		v-safe-html="strings.unfilteredHtmlError"
 	/>
 </template>
 

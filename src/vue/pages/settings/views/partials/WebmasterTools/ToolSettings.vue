@@ -23,7 +23,7 @@
 
 					<p
 						class="aioseo-description"
-						v-html="setting.description"
+						v-safe-html="setting.description"
 					/>
 				</template>
 			</core-settings-row>

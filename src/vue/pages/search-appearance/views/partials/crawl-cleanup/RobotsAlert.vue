@@ -2,7 +2,7 @@
 	<core-alert
 		id="bots-alert"
 		type="yellow"
-		v-html="strings.robotsAlert"
+		v-safe-html="strings.robotsAlert"
 	/>
 </template>
 

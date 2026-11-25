@@ -48,7 +48,7 @@
 					md="6"
 				>
 					<a
-						:href="strings.videos.linkUrl"
+						v-safe-href="strings.videos.linkUrl"
 						target="_blank"
 					>
 						{{ strings.videos.linkText }} →
@@ -66,7 +66,7 @@
 					<a
 						class="video"
 						target="_blank"
-						:href="video.url"
+						v-safe-href="video.url"
 						:title="video.title"
 					>
 						<img
@@ -94,7 +94,7 @@
 					class="header-link"
 				>
 					<a
-						:href="strings.documentation.linkUrl"
+						v-safe-href="strings.documentation.linkUrl"
 						target="_blank"
 					>
 						{{ strings.documentation.linkText }} →
@@ -113,7 +113,7 @@
 					<div class="d-flex">
 						<svg-book />
 						<a
-							:href="doc.url"
+							v-safe-href="doc.url"
 							target="_blank"
 						>
 							{{ doc.title }}

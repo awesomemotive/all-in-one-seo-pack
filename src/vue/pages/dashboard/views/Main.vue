@@ -78,9 +78,9 @@
 											v-if="link.manageUrl && allowed(link.access)"
 											class="learn-more"
 										>
-											<a :href="getHref(link.manageUrl)">{{ strings.manage }}</a>
+											<a v-safe-href="getHref(link.manageUrl)">{{ strings.manage }}</a>
 											<a
-												:href="getHref(link.manageUrl)"
+												v-safe-href="getHref(link.manageUrl)"
 												class="no-underline"
 											>
 												&rarr;
@@ -177,7 +177,7 @@
 								class="aioseo-settings-row"
 							>
 								<a
-									:href="option.link"
+									v-safe-href="option.link"
 									:target="option.blank ? '_blank' : null"
 								>
 									<component

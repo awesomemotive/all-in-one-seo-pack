@@ -16,7 +16,7 @@
 						<div
 							class="aioseo-description"
 							v-if="item.desc"
-							v-html="item.desc"
+							v-safe-html="item.desc"
 						/>
 					</div>
 
@@ -97,7 +97,7 @@
 						size="medium"
 					>
 						<span
-							v-html="dedicatedPageDisabled ? strings.errorMessageDisabled : strings.errorMessage"
+							v-safe-html="dedicatedPageDisabled ? strings.errorMessageDisabled : strings.errorMessage"
 						/>
 					</core-alert>
 				</div>

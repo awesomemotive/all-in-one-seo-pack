@@ -7,6 +7,8 @@ import {
 } from './mention-utils'
 import './mention-blot'
 
+import { escapeHtml, sanitizeUrl } from '@/vue/utils/strings'
+
 const Keys = {
 	TAB       : 'Tab',
 	ENTER     : 'Enter',
@@ -527,7 +529,7 @@ class Mention {
 		if (hasLinkValue) {
 			this.mentionList.childNodes[
 				this.itemIndex
-			].dataset.value = `<a href="${link}" target=${itemTarget || this.options.linkTarget}>${
+			].dataset.value = `<a href="${escapeHtml(sanitizeUrl(link))}" target="${escapeHtml(itemTarget || this.options.linkTarget)}">${
 				this.mentionList.childNodes[this.itemIndex].dataset.value
 			}`
 		}

@@ -24,7 +24,7 @@
 			<core-alert
 				v-if="allowed('aioseo_ai_insights_settings')"
 				type="blue"
-				v-html="aiContent.strings.alertDescription"
+				v-safe-html="aiContent.strings.alertDescription"
 			/>
 		</div>
 	</div>

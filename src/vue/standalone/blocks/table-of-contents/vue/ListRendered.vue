@@ -9,7 +9,7 @@
 				v-for="(heading, index) in visibleHeadings"
 				:key="index"
 			>
-				<a :href="`#${heading.anchor}`">{{ heading.editedContent || heading.content }}</a>
+				<a v-safe-href="`#${heading.anchor}`">{{ heading.editedContent || heading.content }}</a>
 
 				<ListRendered
 					class="aioseo-toc-list-nested--rendered"

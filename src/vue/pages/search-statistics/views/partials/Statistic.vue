@@ -35,7 +35,7 @@
 			</span>
 
 			<template #tooltip>
-				<span v-html="compareDescription(Math.abs(differenceRounded), 0 < differenceRounded ? 'up' : 'down')" />
+				<span v-safe-html="compareDescription(Math.abs(differenceRounded), 0 < differenceRounded ? 'up' : 'down')" />
 			</template>
 		</core-tooltip>
 	</div>

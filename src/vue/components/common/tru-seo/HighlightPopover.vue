@@ -110,7 +110,7 @@
 			<div class="tru-seo-highlight-popover__description-body">
 				<SvgInfo class="tru-seo-highlight-popover__hint-icon" />
 
-				<span v-html="assessmentText" />
+				<span v-safe-html="assessmentText" />
 			</div>
 		</div>
 
@@ -168,7 +168,7 @@
 				>
 					<span
 						class="tru-seo-highlight-popover__suggestion-text"
-						v-html="formatSuggestionText(suggestion.text)"
+						v-safe-html="formatSuggestionText(suggestion.text)"
 					/>
 					<span
 						v-if="suggestion.rationale"
@@ -229,7 +229,7 @@
 			<div
 				class="tru-seo-highlight-popover__manage-text"
 				@click="onManageClick"
-				v-html="strings.dontWantToSee"
+				v-safe-html="strings.dontWantToSee"
 			/>
 		</div>
 		<out-of-credits-modal

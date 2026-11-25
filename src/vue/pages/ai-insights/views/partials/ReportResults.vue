@@ -74,7 +74,7 @@
 							<div
 								v-if="provider.data.overview"
 								class="provider-overview"
-								v-html="provider.data.overview"
+								v-safe-html="sanitizeRemoteMarkup(provider.data.overview)"
 							/>
 
 							<div
@@ -96,7 +96,7 @@
 									<a
 										v-for="(source, index) in provider.data.sources"
 										:key="index"
-										:href="source.url"
+										v-safe-href="source.url"
 										target="_blank"
 										rel="noopener noreferrer"
 										class="source-entry"
@@ -138,6 +138,8 @@ import SvgGemini from '@/vue/components/common/svg/ai/providers/Gemini'
 import SvgOpenAI from '@/vue/components/common/svg/ai/providers/OpenAI'
 
 import { __, sprintf } from '@/vue/plugins/translations'
+
+import { sanitizeRemoteMarkup } from '@/vue/utils/strings'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
 

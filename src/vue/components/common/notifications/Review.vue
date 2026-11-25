@@ -15,7 +15,7 @@
 
 				<div
 					class="notification-content"
-					v-html="content"
+					v-safe-html="content"
 				/>
 
 				<div class="actions">

@@ -96,7 +96,8 @@ class Llms {
 	public function __construct() {
 		add_action( 'admin_init', [ $this, 'scheduleRecurrentGenerationForLlmsTxt' ] );
 
-		add_action( 'wp_insert_post', [ $this, 'scheduleSingleGenerationForLlmsTxt' ] );
+		add_action( 'transition_post_status', [ $this, 'maybeScheduleSingleGenerationForPost' ], 10, 3 );
+		add_action( 'post_updated', [ $this, 'maybeScheduleSingleGenerationForPostTypeChange' ], 10, 3 );
 		add_action( 'edited_term', [ $this, 'scheduleSingleGenerationForLlmsTxt' ] );
 
 		add_action( $this->llmsTxtRecurrentAction, [ $this, 'generateLlmsTxt' ] );
@@ -132,14 +133,120 @@ class Llms {
 	 * @return void
 	 */
 	public function scheduleSingleGenerationForLlmsTxt() {
-		if (
-			! aioseo()->options->sitemap->llms->enable ||
-			aioseo()->actionScheduler->isScheduled( $this->llmsTxtSingleAction )
-		) {
+		if ( ! aioseo()->options->sitemap->llms->enable ) {
 			return;
 		}
 
-		aioseo()->actionScheduler->scheduleSingle( $this->llmsTxtSingleAction, 10 );
+		$this->scheduleSingleGeneration( $this->llmsTxtSingleAction, 10 );
+	}
+
+	/**
+	 * Schedules a single run of the given generation action, due within the given delay.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $actionName The action name.
+	 * @param  int    $delay      The maximum number of seconds until the run.
+	 * @return void
+	 */
+	protected function scheduleSingleGeneration( $actionName, $delay ) {
+		// Only pending runs count: a running one may already have read the content.
+		$pending = aioseo()->actionScheduler->getPendingTimestamps( $actionName );
+		if ( $pending && min( $pending ) <= time() + $delay ) {
+			return;
+		}
+
+		if ( ! aioseo()->actionScheduler->scheduleSingle( $actionName, $delay, [], true ) ) {
+			return;
+		}
+
+		// Drop the later runs only once the earlier one is queued, so a failed schedule keeps them.
+		foreach ( array_keys( $pending ) as $actionId ) {
+			aioseo()->actionScheduler->cancel( $actionId );
+		}
+	}
+
+	/**
+	 * Schedules a debounced LLMS file generation when a published post of an included type changes.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string   $newStatus The new post status.
+	 * @param  string   $oldStatus The old post status.
+	 * @param  \WP_Post $post      The post object.
+	 * @return void
+	 */
+	public function maybeScheduleSingleGenerationForPost( $newStatus, $oldStatus, $post ) {
+		if ( ! $this->isRelevantPostChange( $newStatus, $oldStatus, $post ) ) {
+			return;
+		}
+
+		if ( ! aioseo()->options->sitemap->llms->enable ) {
+			return;
+		}
+
+		// Saves within the window collapse into one rebuild instead of one per save.
+		$this->scheduleSingleGeneration( $this->llmsTxtSingleAction, 5 * MINUTE_IN_SECONDS );
+	}
+
+	/**
+	 * Schedules a debounced LLMS file generation when a published post leaves an included post type.
+	 *
+	 * NOTE: transition_post_status only sees the new post type, so it can't catch this.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  int      $postId     The post ID.
+	 * @param  \WP_Post $postAfter  The post object after the update.
+	 * @param  \WP_Post $postBefore The post object before the update.
+	 * @return void
+	 */
+	public function maybeScheduleSingleGenerationForPostTypeChange( $postId, $postAfter, $postBefore ) {
+		if ( $postAfter->post_type === $postBefore->post_type ) {
+			return;
+		}
+
+		$this->maybeScheduleSingleGenerationForPost( $postAfter->post_status, $postBefore->post_status, $postBefore );
+	}
+
+	/**
+	 * Checks whether a post status transition can change the content of the LLMS files.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string   $newStatus The new post status.
+	 * @param  string   $oldStatus The old post status.
+	 * @param  \WP_Post $post      The post object.
+	 * @return bool                 Whether the transition is relevant.
+	 */
+	protected function isRelevantPostChange( $newStatus, $oldStatus, $post ) {
+		// Unpublishing must still trigger a rebuild so the post is removed from the files.
+		if ( 'publish' !== $newStatus && 'publish' !== $oldStatus ) {
+			return false;
+		}
+
+		return aioseo()->helpers->isValidPost( $post, [ 'all' ] ) &&
+			in_array( $post->post_type, $this->getIncludedPostTypes(), true );
+	}
+
+	/**
+	 * Returns the post types selected in the LLMs.txt settings, attachments excluded.
+	 *
+	 * NOTE: the robots tiers are left to {@see getContent()}: a post's robots settings are saved
+	 * after its status transition, so checking them here could skip a needed rebuild.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return string[] The post type names.
+	 */
+	protected function getIncludedPostTypes() {
+		$postTypes = aioseo()->options->sitemap->llms->advancedSettings->postTypes->all
+			? aioseo()->helpers->getPublicPostTypes( true )
+			: aioseo()->options->sitemap->llms->advancedSettings->postTypes->included;
+
+		return array_values( array_filter( $postTypes, function( $type ) {
+			return 'attachment' !== $type;
+		} ) );
 	}
 
 	/**
@@ -242,19 +349,12 @@ class Llms {
 	 * @version 5.0.2 Emit the H1 first and move the attribution into a blockquote below it (llms.txt spec).
 	 * @version 5.0.2 Decode the title instead of HTML-escaping it; this is a plain-text file.
 	 * @version 5.0.3 Include the site description between the H1 and the attribution.
+	 * @version 5.0.6 Added the `aioseo_llms_hide_credits` filter to hide the attribution.
 	 *
 	 * @return string
 	 */
 	protected function getHeader( $llmsFull = false ) {
 		$fileName = $llmsFull ? 'llms-full.txt' : 'llms.txt';
-
-		$generatedBy = sprintf(
-			/* Translators: 1 - The plugin name ("All in One SEO"), 2 - The version number, 3 - The file name. */
-			esc_html__( 'Generated by %1$s v%2$s, this is an %3$s file, used by LLMs to index the site.', 'all-in-one-seo-pack' ),
-			esc_html( AIOSEO_PLUGIN_NAME ),
-			esc_html( aioseo()->version ),
-			esc_html( $fileName )
-		);
 
 		// The spec requires the file to begin with the H1, and the summary blockquote directly below it.
 		$header = '';
@@ -263,7 +363,18 @@ class Llms {
 		}
 
 		$header .= $this->getSiteDescription();
-		$header .= "> {$generatedBy}\n\n";
+
+		if ( ! apply_filters( 'aioseo_llms_hide_credits', false, $fileName ) ) {
+			$generatedBy = sprintf(
+				/* Translators: 1 - The plugin name ("All in One SEO"), 2 - The version number, 3 - The file name. */
+				esc_html__( 'Generated by %1$s v%2$s, this is an %3$s file, used by LLMs to index the site.', 'all-in-one-seo-pack' ),
+				esc_html( AIOSEO_PLUGIN_NAME ),
+				esc_html( aioseo()->version ),
+				esc_html( $fileName )
+			);
+
+			$header .= "> {$generatedBy}\n\n";
+		}
 
 		return $header;
 	}
@@ -315,24 +426,10 @@ class Llms {
 	 * @return string           The content of the llms.txt file.
 	 */
 	protected function getContent( $llmsFull = false ) {
-		// Get LLMS post types settings
-		$includeAllPostTypes   = aioseo()->options->sitemap->llms->advancedSettings->postTypes->all;
-		$includedPostTypes     = aioseo()->options->sitemap->llms->advancedSettings->postTypes->included;
-		$includeAllTaxonomies  = aioseo()->options->sitemap->llms->advancedSettings->taxonomies->all;
-		$includedTaxonomies    = aioseo()->options->sitemap->llms->advancedSettings->taxonomies->included;
+		$includeAllTaxonomies = aioseo()->options->sitemap->llms->advancedSettings->taxonomies->all;
+		$includedTaxonomies   = aioseo()->options->sitemap->llms->advancedSettings->taxonomies->included;
 
-		// Determine which post types to include
-		if ( $includeAllPostTypes ) {
-			// Include all public post types except attachments
-			$postTypes = array_filter( aioseo()->helpers->getPublicPostTypes( true ), function( $type ) {
-				return 'attachment' !== $type;
-			} );
-		} else {
-			// Only include the specifically selected post types, but still exclude attachments
-			$postTypes = array_filter( $includedPostTypes, function( $type ) {
-				return 'attachment' !== $type;
-			} );
-		}
+		$postTypes = $this->getIncludedPostTypes();
 		if ( $includeAllTaxonomies ) {
 			$taxonomies = aioseo()->helpers->getPublicTaxonomies( true );
 		} else {

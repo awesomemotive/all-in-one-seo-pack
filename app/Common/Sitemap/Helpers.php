@@ -40,6 +40,58 @@ class Helpers {
 	}
 
 	/**
+	 * Returns the static sitemap files in the root folder of the site.
+	 *
+	 * NOTE: Only the file name is matched, and only against the names of the sitemaps we used to write.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return array The absolute paths of the static sitemap files.
+	 */
+	public function getStaticSitemapFiles() {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		$files = list_files( get_home_path(), 1 );
+		if ( empty( $files ) ) {
+			return [];
+		}
+
+		$names = [ 'sitemap', 'video-sitemap', $this->filename( 'general' ) ];
+		if ( aioseo()->pro ) {
+			$names[] = $this->filename( 'video' );
+		}
+
+		// Every public object, not only the included ones, so files left behind by a since-excluded type still match.
+		$prefixes = array_merge(
+			[ 'addl', 'author', 'date', 'product_attributes' ],
+			aioseo()->helpers->getPublicPostTypes( true ),
+			array_filter( get_taxonomies(), 'is_taxonomy_viewable' )
+		);
+
+		$quote = function ( $values ) {
+			return implode( '|', array_map( function ( $value ) {
+				return preg_quote( (string) $value, '#' );
+			}, array_unique( array_filter( $values ) ) ) );
+		};
+
+		$names    = $quote( $names );
+		$prefixes = $quote( $prefixes );
+
+		// The index, then "{object}-{name}{page}", e.g. "post-sitemap2.xml" or "post-video-sitemap.xml".
+		$xmlPattern = "#^(?:(?:$names|news-sitemap)|(?:$prefixes)-(?:$names)\d*)\.xml(?:\.gz)?$#";
+		$rssPattern = '#^sitemap(?:\.latest)?\.rss$#';
+
+		$staticFiles = [];
+		foreach ( $files as $file ) {
+			$basename = basename( (string) $file );
+			if ( is_file( $file ) && ( preg_match( $xmlPattern, $basename ) || preg_match( $rssPattern, $basename ) ) ) {
+				$staticFiles[] = $file;
+			}
+		}
+
+		return $staticFiles;
+	}
+
+	/**
 	 * Returns the last modified post.
 	 *
 	 * @since 4.0.0
@@ -550,18 +602,7 @@ class Helpers {
 				return '';
 			}
 
-			$ids = [];
-			foreach ( $excluded as $object ) {
-				if ( is_int( $object ) ) {
-					$ids[] = (int) $object;
-					continue;
-				}
-
-				$object = json_decode( $object );
-				if ( is_int( $object->value ) ) {
-					$ids[] = $object->value;
-				}
-			}
+			$ids = $this->parseExcludedObjectIds( $excluded );
 
 			return count( $ids ) ? esc_sql( implode( ', ', $ids ) ) : '';
 		}
@@ -571,19 +612,24 @@ class Helpers {
 		if ( aioseo()->helpers->isWpmlActive() ) {
 			$hiddenLanguages = apply_filters( 'wpml_setting', [], 'hidden_languages' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			foreach ( $hiddenLanguages as $language ) {
+				// Every public type, not only the ones the settings include: an HTML sitemap embed can list
+				// any public type, and the result is cached for every sitemap built in the request.
 				$objectTypes = [];
 				if ( 'excludePosts' === $option ) {
-					$objectTypes = aioseo()->sitemap->helpers->includedPostTypes();
 					$objectTypes = array_map( function( $postType ) {
 						return "post_{$postType}";
-					}, $objectTypes );
+					}, aioseo()->helpers->getPublicPostTypes( true ) );
 				}
 
 				if ( 'excludeTerms' === $option ) {
-					$objectTypes = aioseo()->sitemap->helpers->includedTaxonomies();
 					$objectTypes = array_map( function( $taxonomy ) {
 						return "tax_{$taxonomy}";
-					}, $objectTypes );
+					}, aioseo()->helpers->getPublicTaxonomies( true ) );
+				}
+
+				// whereIn() drops an empty list, which would pull every hidden-language row regardless of type.
+				if ( empty( $objectTypes ) ) {
+					continue;
 				}
 
 				$dbNoConflict = aioseo()->core->db->noConflict();
@@ -605,7 +651,7 @@ class Helpers {
 			// but this method returns term IDs. Normalise before they get merged with the option values, or the
 			// list carries two ID spaces at once and every consumer is wrong about half of it.
 			if ( 'excludeTerms' === $option && $hiddenObjectIds ) {
-				$hiddenTerms = aioseo()->core->db->start( 'term_taxonomy' )
+				$hiddenTerms = aioseo()->core->db->noConflict()->start( 'term_taxonomy' )
 					->select( 'term_id' )
 					->whereIn( 'term_taxonomy_id', $hiddenObjectIds )
 					->run()
@@ -629,18 +675,7 @@ class Helpers {
 			return '';
 		}
 
-		$ids = [];
-		foreach ( $excluded as $object ) {
-			if ( is_numeric( $object ) ) {
-				$ids[] = (int) $object;
-				continue;
-			}
-
-			$object = json_decode( $object );
-			if ( is_int( $object->value ) ) {
-				$ids[] = $object->value;
-			}
-		}
+		$ids = $this->parseExcludedObjectIds( $excluded );
 
 		if ( 'excludePosts' === $option ) {
 			$ids = apply_filters( 'aioseo_sitemap_exclude_posts', $ids, $type );
@@ -651,6 +686,41 @@ class Helpers {
 		}
 
 		return count( $ids ) ? esc_sql( implode( ', ', $ids ) ) : '';
+	}
+
+	/**
+	 * Returns the object IDs from a list of excluded post/term entries.
+	 *
+	 * NOTE: Entries are normally JSON strings, but external writers can store them as arrays or with a string ID.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  array $excluded The excluded entries.
+	 * @return int[]           The object IDs.
+	 */
+	private function parseExcludedObjectIds( $excluded ) {
+		$ids = [];
+		foreach ( (array) $excluded as $object ) {
+			if ( is_numeric( $object ) ) {
+				$ids[] = (int) $object;
+				continue;
+			}
+
+			if ( is_string( $object ) ) {
+				$object = json_decode( $object, true );
+			}
+
+			if ( is_object( $object ) ) {
+				$object = (array) $object;
+			}
+
+			$value = is_array( $object ) && isset( $object['value'] ) ? $object['value'] : null;
+			if ( is_numeric( $value ) ) {
+				$ids[] = (int) $value;
+			}
+		}
+
+		return $ids;
 	}
 
 	/**

@@ -103,7 +103,7 @@
 
 					<p
 						class="aioseo-description"
-						v-html="strings.miscellaneousVerificationDescription"
+						v-safe-html="strings.miscellaneousVerificationDescription"
 					/>
 				</template>
 			</core-settings-row>

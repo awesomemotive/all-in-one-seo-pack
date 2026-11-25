@@ -40,7 +40,7 @@
 
 			<div
 				class="aioseo-google-search-preview__description"
-				v-html="parseDescription"
+				v-safe-html="parseDescription"
 			/>
 		</div>
 
@@ -119,7 +119,7 @@
 				>
 					<span
 						class="text-truncate"
-						v-html="truncate(sanitizeString(item.question), 60)"
+						v-safe-html="truncate(stripMarkup(item.question), 60)"
 					/>
 
 					<svg-caret width="20"/>
@@ -127,7 +127,7 @@
 
 				<span
 					class="aioseo-google-search-preview__faq__answer"
-					v-html="sanitizeString(item.answer)"
+					v-safe-html="stripMarkup(item.answer)"
 				/>
 			</details>
 		</div>
@@ -139,7 +139,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 import { escapeRegex } from '@/vue/utils/regex'
 import { getText, truncate } from '@/vue/utils/html'
 import { CURRENCY_LIST } from '@/vue/plugins/constants'
@@ -160,7 +160,7 @@ export default {
 
 		return {
 			decodeUrl,
-			sanitizeString
+			stripMarkup
 		}
 	},
 	components : {
@@ -278,7 +278,7 @@ export default {
 		parseDescription () {
 			// Since the parseTags function strips tags, we don't need to preserve HTML tags.
 			// In the server-side Description class, we also strip tags, so we need to do the same here to keep things consistent.
-			const output = sanitizeString(getText(this.description.substring(0, 160).trim() + (160 < this.description.length ? ' ...' : ''), false))
+			const output = stripMarkup(getText(this.description.substring(0, 160).trim() + (160 < this.description.length ? ' ...' : ''), false))
 			if (!this.focusKeyphrase) {
 				return output
 			}

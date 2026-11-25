@@ -33,7 +33,7 @@
 			</core-alert>
 
 			<div>
-				<span>{{ strings.withAioseo }}</span> <span v-html="learnMoreLink"/>
+				<span>{{ strings.withAioseo }}</span> <span v-safe-html="learnMoreLink"/>
 			</div>
 
 			<div class="keyword-rank-tracker-container__card">
@@ -64,7 +64,7 @@
 		<template v-else>
 			<core-blur class="keyword-rank-tracker-container">
 				<div>
-					<span>{{ strings.withAioseo }}</span> <span v-html="learnMoreLink"/>
+					<span>{{ strings.withAioseo }}</span> <span v-safe-html="learnMoreLink"/>
 				</div>
 
 				<div class="keyword-rank-tracker-container__card">

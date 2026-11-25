@@ -35,7 +35,7 @@
 					/>
 				</svg>
 
-				<p v-html="strings.description" />
+				<p v-safe-html="strings.description" />
 			</div>
 		</div>
 	</div>

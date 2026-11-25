@@ -36,7 +36,7 @@
 									<component :is="column.tooltipIcon"></component>
 
 									<template #tooltip>
-										<span v-html="column.label" />
+										<span v-safe-html="column.label" />
 									</template>
 								</core-tooltip>
 							</div>
@@ -69,7 +69,7 @@
 								<template #tooltip>
 									<a
 										class="tooltip-url"
-										:href="row.permalink"
+										v-safe-href="row.permalink"
 										target="_blank"
 									>
 										{{ row.postTitle }}
@@ -108,7 +108,7 @@
 			<div class="links-report-link"
 				v-if="opportunities?.length"
 			>
-				<span v-html="link" />
+				<span v-safe-html="link" />
 			</div>
 		</div>
 	</core-card>

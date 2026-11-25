@@ -104,6 +104,17 @@ class Post extends Base {
 	}
 
 	/**
+	 * Returns the type each meta data field must have.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return array<string, string> The field types, keyed by field name.
+	 */
+	protected function getMetaDataFieldTypes() {
+		return Models\Post::getFieldTypes();
+	}
+
+	/**
 	 * Returns the meta data for the given post.
 	 *
 	 * @since 4.9.8

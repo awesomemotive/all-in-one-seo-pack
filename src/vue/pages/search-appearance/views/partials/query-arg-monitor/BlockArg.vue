@@ -79,7 +79,7 @@
 				class="regex-warning"
 				type="yellow"
 				size="medium"
-				v-html="warning"
+				v-safe-html="warning"
 			/>
 		</div>
 	</div>
@@ -88,7 +88,7 @@
 <script>
 import http from '@/vue/utils/http'
 import links from '@/vue/utils/links'
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 import { isRegexValid } from '@/vue/utils/regex'
 import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreCard from '@/vue/components/common/core/Card'
@@ -216,7 +216,7 @@ export default {
 					warnings.push(sprintf(
 						// Translators: 1 - To prevent a greedy regular expression you can use <code>^/</code>, 2 - to anchor it to the start of the Query Arg. For example: <code>^</code>.
 						__('To prevent a greedy regular expression you can use %1$s to anchor it to the start of the Query Arg. For example: %2$s', td),
-						'<code>^/</code>', '<code>^' + sanitizeString(this.regexValue.replace(/^\//, '')) + '</code>'
+						'<code>^/</code>', '<code>^' + stripMarkup(this.regexValue.replace(/^\//, '')) + '</code>'
 					))
 				}
 
@@ -225,7 +225,7 @@ export default {
 						// Translators: 1 - Adds a html tag with an option like: <code>^</code>, 2 - Adds a html tag with an option like: <code>^</code>.
 						__('The caret %1$s should be at the start. For example: %2$s', td),
 						'<code>^</code>',
-						'<code>^' + sanitizeString(this.regexValue.replace('^', '').replace(/^\//, '')) + '</code>'
+						'<code>^' + stripMarkup(this.regexValue.replace('^', '').replace(/^\//, '')) + '</code>'
 					))
 				}
 
@@ -234,7 +234,7 @@ export default {
 						// Translators: 1 - The dollar symbol, 2 - Dollar symbol example.
 						__('The dollar symbol %1$s should be at the end. For example: %2$s', td),
 						'<code>$</code>',
-						'<code>' + sanitizeString(this.regexValue.replace(/\$/g, '')) + '$</code>'
+						'<code>' + stripMarkup(this.regexValue.replace(/\$/g, '')) + '$</code>'
 					))
 				}
 			}

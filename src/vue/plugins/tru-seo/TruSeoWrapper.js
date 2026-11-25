@@ -11,6 +11,7 @@ import { useTags } from '@/vue/composables/Tags'
 import { getPostEditedContentForAnalysis } from './components/postContent'
 import { getPostEditedSlug } from './components/postSlug'
 import { getPostEditedTitle } from '@/vue/utils/postData/postTitle'
+import { getTruSeoDefaultLocale } from '@/vue/utils/truSeoLocale'
 import { getCustomAnalysisType } from './utils/customAnalysisType'
 import { getWooProductData } from './utils/wooProductData'
 import TruSeoWorkerModule from '@/app/tru-seo/index.js?worker'
@@ -102,7 +103,7 @@ export default class TruSeoWrapper {
 			try {
 				const postEditorStore = usePostEditorStore()
 				const rootStore = useRootStore()
-				const locale = postEditorStore.currentPost?.truseo_locale || window.aioseo?.user?.locale || 'en_US'
+				const locale = postEditorStore.currentPost?.truseo_locale || getTruSeoDefaultLocale()
 
 				// Detect the custom analysis type based on context
 				const customAnalysisType = getCustomAnalysisType(
@@ -259,7 +260,7 @@ export default class TruSeoWrapper {
 		try {
 			// For dedicated workers (batch scanning), use explicit config or simple defaults
 			// Do NOT fall back to stores - config comes from API
-			const locale = this.locale || window.aioseo?.user?.locale || 'en_US'
+			const locale = this.locale || getTruSeoDefaultLocale()
 			const customAnalysisType = this.customAnalysisType || '' // Empty string default
 			const useCornerstone = this.useCornerstone || false // False default
 			const useTaxonomy = this.useTaxonomy || false // False default
@@ -395,7 +396,7 @@ export default class TruSeoWrapper {
 		await useSpellCheckerDictionaryStore().ensureDownloaded()
 
 		const postEditorStore = usePostEditorStore()
-		const locale = postEditorStore.currentPost?.truseo_locale || window.aioseo?.user?.locale || 'en_US'
+		const locale = postEditorStore.currentPost?.truseo_locale || getTruSeoDefaultLocale()
 
 		// Re-initialize the worker when the locale changes.
 		// The worker's Researcher is language-specific (morphology, function words, etc.)

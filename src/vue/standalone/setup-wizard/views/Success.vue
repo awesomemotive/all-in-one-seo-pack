@@ -157,7 +157,7 @@
 							class="bonus-alert"
 							type="yellow"
 						>
-							🎁 <span v-html="strings.bonusText" />
+							🎁 <span v-safe-html="strings.bonusText" />
 						</core-alert>
 					</div>
 				</template>

@@ -20,7 +20,8 @@ class PostMeta {
 	/**
 	 * Class constructor.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Record the start time one second ahead.
 	 */
 	public function scheduleImport() {
 		try {
@@ -29,7 +30,8 @@ class PostMeta {
 			}
 
 			if ( ! aioseo()->core->cache->get( 'import_post_meta_yoast_seo' ) ) {
-				aioseo()->core->cache->update( 'import_post_meta_yoast_seo', time(), WEEK_IN_SECONDS );
+				// A scan can still save a row in this second, so a row updated in it must count as not imported yet.
+				aioseo()->core->cache->update( 'import_post_meta_yoast_seo', time() + 1, WEEK_IN_SECONDS );
 			}
 
 			as_schedule_single_action( time(), aioseo()->importExport->yoastSeo->postActionName, [], 'aioseo' );
@@ -41,7 +43,8 @@ class PostMeta {
 	/**
 	 * Imports the post meta.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Also imports posts left on Yoast's defaults; writes schema types to `schema`.
 	 *
 	 * @return void
 	 */
@@ -50,14 +53,26 @@ class PostMeta {
 		$publicPostTypes = aioseo()->helpers->getPublicPostTypes( true );
 		$timeStarted     = esc_sql( gmdate( 'Y-m-d H:i:s', aioseo()->core->cache->get( 'import_post_meta_yoast_seo' ) ) );
 
-		$posts = aioseo()->core->db
+		$query = aioseo()->core->db
 			->start( 'posts' . ' as p' )
 			->select( 'p.ID, p.post_type' )
 			->leftJoin( 'aioseo_posts as ap', '`p`.`ID` = `ap`.`post_id`' )
-			->join( 'postmeta as pm', '`p`.`ID` = `pm`.`post_id`' )
+			->leftJoin( 'postmeta as pm', "`p`.`ID` = `pm`.`post_id` AND `pm`.`meta_key` LIKE '_yoast_wpseo_%'" )
 			->whereIn( 'p.post_type', $publicPostTypes )
-			->whereRaw( "( ap.post_id IS NULL OR ap.updated < '$timeStarted' )" )
-			->whereLike( 'pm.meta_key', '_yoast_wpseo_%', true )
+			->whereRaw( "( ap.post_id IS NULL OR ap.updated < '$timeStarted' )" );
+
+		// Yoast only stores post meta for values that deviate from its defaults, so a post left on
+		// those defaults is invisible here and any stale AIOSEO data on it would survive the import.
+		// Its indexable table is the only record of which posts it actually manages.
+		if ( aioseo()->core->db->externalTableExists( 'yoast_indexable' ) ) {
+			$query
+				->leftJoin( 'yoast_indexable as yi', "`p`.`ID` = `yi`.`object_id` AND `yi`.`object_type` = 'post'" )
+				->whereRaw( '( pm.post_id IS NOT NULL OR ( yi.object_id IS NOT NULL AND ap.post_id IS NOT NULL ) )' );
+		} else {
+			$query->whereRaw( 'pm.post_id IS NOT NULL' );
+		}
+
+		$posts = $query
 			->groupBy( 'p.ID' )
 			->orderBy( 'p.ID DESC' )
 			->limit( $postsPerAction )
@@ -99,10 +114,7 @@ class PostMeta {
 				->run()
 				->result();
 
-			if ( ! $postMeta || ! count( $postMeta ) ) {
-				// Skip posts with no Yoast meta (shouldn't happen with our query filter, but defensive check).
-				continue;
-			}
+			$postMeta = $postMeta ? $postMeta : [];
 
 			$featuredImage = get_the_post_thumbnail_url( $post->ID );
 			$meta          = [
@@ -126,7 +138,11 @@ class PostMeta {
 				'twitter_title'            => '',
 				'twitter_description'      => '',
 				'twitter_image_custom_url' => '',
-				'twitter_image_type'       => 'default'
+				'twitter_image_type'       => 'default',
+				'keyphrases'               => null,
+				'primary_term'             => null,
+				'schema_type'              => 'default',
+				'schema_type_options'      => null
 			];
 
 			$title = '';
@@ -197,16 +213,20 @@ class PostMeta {
 							break;
 						}
 
-						if ( ! in_array( $value, ImportExport\SearchAppearance::$supportedWebPageGraphs, true ) ) {
+						// AIOSEO's FAQ Page graph outputs nothing without questions, and Yoast keeps those in its blocks, not in meta.
+						if ( 'FAQPage' === $value || ! in_array( $value, ImportExport\SearchAppearance::$supportedWebPageGraphs, true ) ) {
 							break;
 						}
 
-						$meta[ $mappedMeta[ $name ] ] = 'WebPage';
-						$meta['schema_type_options']  = wp_json_encode( [
-							'webPage' => [
-								'webPageType' => $value
-							]
-						] );
+						$options = new \stdClass();
+						if ( isset( $meta['schema_type_options'] ) ) {
+							$options = json_decode( $meta['schema_type_options'] );
+						}
+
+						$options->webPage = [ 'webPageType' => $value ];
+
+						$meta['schema_type']         = 'WebPage';
+						$meta['schema_type_options'] = wp_json_encode( $options );
 						break;
 					case '_yoast_wpseo_schema_article_type':
 						$value = aioseo()->helpers->pregReplace( '#\s#', '', $value );
@@ -314,13 +334,17 @@ class PostMeta {
 				$meta['twitter_title']  = $title;
 			}
 
-			if ( isset( $meta['keyphrases'] ) ) {
-				// The keyphrases column is only kept for backwards compatibility; the post editor reads the keyword columns.
-				$meta = array_merge( $meta, Models\Post::getKeywordColumnsFromKeyphrases( $meta['keyphrases'] ) );
-			}
+			// The keyphrases column is only kept for backwards compatibility; the post editor reads the keyword columns.
+			$meta = array_merge( $meta, Models\Post::getKeywordColumnsFromKeyphrases( $meta['keyphrases'] ) );
 
 			$aioseoPost = Models\Post::getPost( (int) $post->ID );
 			$aioseoPost->set( $meta );
+
+			// The legacy schema_type columns only reach the schema column when it is empty, so apply the Yoast types to it directly.
+			$schema = $this->applySchemaTypes( $aioseoPost->schema, $meta['schema_type_options'], get_post( $post->ID ) );
+			if ( null !== $schema ) {
+				$aioseoPost->schema = $schema;
+			}
 			$aioseoPost->save();
 
 			aioseo()->migration->meta->migrateAdditionalPostMeta( $post->ID );
@@ -338,5 +362,183 @@ class PostMeta {
 		} else {
 			aioseo()->core->cache->delete( 'import_post_meta_yoast_seo' );
 		}
+	}
+
+	/**
+	 * Applies the imported Yoast page/article types to the post's schema.
+	 *
+	 * NOTE: Once Yoast is back on its default type, a re-import reverts what an earlier import changed.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  object|string|null $schema            The post's current schema.
+	 * @param  string|null        $schemaTypeOptions The JSON-encoded legacy schema type options.
+	 * @param  \WP_Post|null      $post              The post.
+	 * @return object|null                           The updated schema, or null if it doesn't change.
+	 */
+	private function applySchemaTypes( $schema, $schemaTypeOptions, $post ) {
+		$schemaTypeOptions = json_decode( (string) $schemaTypeOptions );
+		$types             = [
+			'WebPage' => ! empty( $schemaTypeOptions->webPage->webPageType ) ? $schemaTypeOptions->webPage->webPageType : '',
+			'Article' => ! empty( $schemaTypeOptions->article->articleType ) ? $schemaTypeOptions->article->articleType : ''
+		];
+
+		$graphs      = is_object( $schema ) && ! empty( $schema->graphs ) && is_array( $schema->graphs ) ? $schema->graphs : [];
+		$hasImported = false;
+		foreach ( $graphs as $graph ) {
+			if ( $this->isImportedGraph( $graph ) || isset( $graph->importedOriginalType ) ) {
+				$hasImported = true;
+				break;
+			}
+		}
+
+		if ( ! $hasImported && ! array_filter( $types ) ) {
+			return null;
+		}
+
+		$schema         = Models\Post::getDefaultSchemaOptions( $schema, $post );
+		$graphs         = is_array( $schema->graphs ) ? array_values( $schema->graphs ) : [];
+		$defaultEnabled = ! empty( $schema->default->isEnabled );
+		$replaced       = false;
+		$restoreDefault = false;
+		foreach ( $types as $graphName => $type ) {
+			$imported = [];
+			$existing = null;
+			foreach ( $graphs as $index => $graph ) {
+				if ( ! is_object( $graph ) || ! isset( $graph->graphName ) || $graphName !== $graph->graphName || ! isset( $graph->properties ) ) {
+					continue;
+				}
+
+				if ( $this->isImportedGraph( $graph ) ) {
+					$imported[] = $index;
+				} elseif ( null === $existing ) {
+					$existing = $graph;
+				}
+
+				// A graph of the user's that an earlier import retyped goes back to its own type.
+				if ( ! $type && isset( $graph->importedOriginalType ) ) {
+					$graph->properties->type = $graph->importedOriginalType;
+					$restoreDefault          = $restoreDefault || ! empty( $graph->replacedDefault );
+					unset( $graph->importedOriginalType, $graph->replacedDefault );
+				}
+			}
+
+			if ( ! $type ) {
+				foreach ( $imported as $index ) {
+					$restoreDefault = $restoreDefault || ! empty( $graphs[ $index ]->replacedDefault );
+					unset( $graphs[ $index ] );
+				}
+
+				continue;
+			}
+
+			if ( $imported ) {
+				$graphs[ array_shift( $imported ) ]->properties->type = $type;
+				foreach ( $imported as $index ) {
+					unset( $graphs[ $index ] );
+				}
+
+				continue;
+			}
+
+			// Yoast only supplies the type, so keep everything else the user configured on a matching graph.
+			/** @var \stdClass|null $existing */
+			if ( null !== $existing ) {
+				if ( ! isset( $existing->importedOriginalType ) ) {
+					$existing->importedOriginalType = isset( $existing->properties->type ) ? $existing->properties->type : '';
+					$existing->replacedDefault      = $defaultEnabled;
+				}
+
+				$existing->properties->type = $type;
+				$replaced                   = true;
+
+				continue;
+			}
+
+			$graph                  = json_decode( (string) wp_json_encode( $this->getSchemaGraph( $graphName, $type ) ) );
+			$graph->replacedDefault = $defaultEnabled;
+			$graphs[]               = $graph;
+			$replaced               = true;
+		}
+
+		$schema->graphs = array_values( $graphs );
+		if ( $replaced ) {
+			$schema->default->isEnabled = false;
+		}
+
+		// The default graph comes back once no imported or retyped graph is left in its place.
+		if ( $restoreDefault ) {
+			$hasImported = false;
+			foreach ( $schema->graphs as $graph ) {
+				$hasImported = $hasImported || $this->isImportedGraph( $graph ) || isset( $graph->importedOriginalType );
+			}
+
+			$schema->default->isEnabled = ! $hasImported;
+		}
+
+		return $schema;
+	}
+
+	/**
+	 * Checks whether the given schema graph was added by this importer.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  mixed $graph The schema graph.
+	 * @return bool         Whether the graph was added by this importer.
+	 */
+	private function isImportedGraph( $graph ) {
+		return is_object( $graph ) && isset( $graph->importedFrom ) && 'yoastSeo' === $graph->importedFrom;
+	}
+
+	/**
+	 * Returns a new schema graph for the given Yoast type, shaped like the ones the legacy schema migration creates.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $graphName The graph name (WebPage or Article).
+	 * @param  string $type      The graph subtype.
+	 * @return array             The graph.
+	 */
+	private function getSchemaGraph( $graphName, $type ) {
+		if ( 'Article' === $graphName ) {
+			return [
+				'id'           => '#aioseo-article-' . uniqid(),
+				'slug'         => 'article',
+				'graphName'    => 'Article',
+				'label'        => __( 'Article', 'all-in-one-seo-pack' ),
+				'importedFrom' => 'yoastSeo',
+				'properties'   => [
+					'type'        => $type,
+					'name'        => '#post_title',
+					'headline'    => '#post_title',
+					'description' => '#post_excerpt',
+					'image'       => '',
+					'keywords'    => '',
+					'author'      => [
+						'name' => '#author_name',
+						'url'  => '#author_url'
+					],
+					'dates'       => [
+						'include'       => true,
+						'datePublished' => '',
+						'dateModified'  => ''
+					]
+				]
+			];
+		}
+
+		return [
+			'id'           => '#aioseo-web-page-' . uniqid(),
+			'slug'         => 'web-page',
+			'graphName'    => 'WebPage',
+			'label'        => __( 'Web Page', 'all-in-one-seo-pack' ),
+			'importedFrom' => 'yoastSeo',
+			'properties'   => [
+				'type'        => $type,
+				'name'        => '',
+				'description' => ''
+			]
+		];
 	}
 }

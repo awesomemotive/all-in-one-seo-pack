@@ -57,7 +57,7 @@
 
 			<span
 				class="aioseo-discover-keywords__msg aioseo-discover-keywords__msg--upsell"
-				v-html="strings.liteUpsell"
+				v-safe-html="strings.liteUpsell"
 			/>
 		</template>
 	</div>
@@ -77,7 +77,7 @@
 				<core-alert
 					v-if="licenseStore.isUnlicensed"
 					type="blue"
-					v-html="strings.upsell"
+					v-safe-html="strings.upsell"
 				/>
 
 				<div class="aioseo-settings-row">
@@ -240,12 +240,12 @@
 												</div>
 												<div class="semrush-upsell">
 													<span>
-														<strong v-html="strings.youHaveExceededSemrush" />
+														<strong v-safe-html="strings.youHaveExceededSemrush" />
 													</span>
 
 													{{ ' ' }}
 
-													<span v-html="strings.inOrderToUpgradeSemrush" />
+													<span v-safe-html="strings.inOrderToUpgradeSemrush" />
 												</div>
 											</template>
 										</div>

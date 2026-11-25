@@ -13,7 +13,7 @@
 				<core-alert
 					class="twitter-disabled-warning"
 					v-if="!optionsStore.options.social.twitter.general.enable"
-					v-html="strings.twitterDisabled"
+					v-safe-html="strings.twitterDisabled"
 					type="red"
 				/>
 
@@ -57,7 +57,7 @@
 
 					<div
 						class="max-recommended-count"
-						v-html="maxRecommendedCount(titleCount, 70)"
+						v-safe-html="maxRecommendedCount(titleCount, 70)"
 					/>
 				</template>
 			</core-settings-row>
@@ -85,7 +85,7 @@
 
 					<div
 						class="max-recommended-count"
-						v-html="maxRecommendedCount(descriptionCount, 200)"
+						v-safe-html="maxRecommendedCount(descriptionCount, 200)"
 					/>
 				</template>
 			</core-settings-row>

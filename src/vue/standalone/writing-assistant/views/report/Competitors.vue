@@ -30,7 +30,7 @@
 						<div class="aioseo-writing-assistant__competitors-title">{{ row.title || row.url }}</div>
 						<div class="aioseo-writing-assistant__competitors-url">
 							<a
-								:href="row.url"
+								v-safe-href="row.url"
 								:title="row.url"
 								target="_blank"
 							>

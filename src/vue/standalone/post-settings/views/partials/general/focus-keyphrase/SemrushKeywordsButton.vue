@@ -10,7 +10,7 @@
 			</div>
 
 			<template #tooltip>
-				<span v-html="strings.semrushTooltipLicenseKey" />
+				<span v-safe-html="strings.semrushTooltipLicenseKey" />
 			</template>
 		</core-tooltip>
 

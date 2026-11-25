@@ -60,7 +60,7 @@
 			>
 				<svg-info />
 
-				<span v-html="strings.snapshotBlockedNotice" />
+				<span v-safe-html="strings.snapshotBlockedNotice" />
 			</div>
 		</div>
 	</div>

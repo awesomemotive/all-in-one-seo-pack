@@ -15,7 +15,7 @@
 
 				<div
 					class="notification-content"
-					v-html="content"
+					v-safe-html="content"
 				/>
 
 				<div class="actions">
@@ -38,6 +38,8 @@
 import { ref, computed } from 'vue'
 
 import links from '@/vue/utils/links'
+
+import { sanitizeRemoteMarkup, stripMarkup } from '@/vue/utils/strings'
 import {
 	useRootStore
 } from '@/vue/stores'
@@ -73,10 +75,10 @@ const strings = {
 const content = computed(() => {
 	let addonsList = '<ul>'
 	props.notification.addons.forEach(addon => {
-		addonsList += '<li><strong>' + import.meta.env.VITE_SHORT_NAME + ' - ' + addon.name + '</strong></li>'
+		addonsList += '<li><strong>' + import.meta.env.VITE_SHORT_NAME + ' - ' + stripMarkup(addon.name) + '</strong></li>'
 	})
 	addonsList += '</ul>'
-	return props.notification.message + addonsList
+	return sanitizeRemoteMarkup(props.notification.message) + addonsList
 })
 </script>
 

@@ -3,7 +3,7 @@
 		<slot name="links">
 			<a
 				v-if="rootStore.isPro || optionsStore.options.advanced.usageTracking"
-				:href="rootStore.aioseo.urls.aio.dashboard"
+				v-safe-href="rootStore.aioseo.urls.aio.dashboard"
 			>
 				{{ strings.closeAndExit }}
 			</a>
@@ -36,7 +36,7 @@
 			<template #body >
 				<div class="aioseo-modal-body">
 					<div class="reset-description"
-						v-html="strings.getImprovedFeatures"
+						v-safe-html="strings.getImprovedFeatures"
 					/>
 
 					<div class="actions">

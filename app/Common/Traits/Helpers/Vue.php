@@ -137,7 +137,7 @@ trait Vue {
 				'new'         => isset( $screen->action ) && 'add' === $screen->action
 			],
 			'internalOptions'    => aioseo()->internalOptions->all(),
-			'options'            => aioseo()->options->all(),
+			'options'            => aioseo()->options->removeNotAllowedSensitiveData( aioseo()->options->all() ),
 			'sensitiveOptions'   => array_merge(
 				aioseo()->sensitiveOptions->allHas(),
 				! empty( aioseo()->networkSensitiveOptions ) ? aioseo()->networkSensitiveOptions->allHas() : []
@@ -332,23 +332,44 @@ trait Vue {
 			'canManage'      => aioseo()->access->canManage()
 		];
 
-		$dictionary                 = new Dictionary();
-		$safeWords                  = new SafeWords();
+		$dictionary          = new Dictionary();
+		$spellCheckerEnabled = (bool) aioseo()->options->advanced->spellChecker;
 		// TruSEO analyzes the post content, which is in the site language — not the
 		// editor's per-user admin locale. Resolve from get_locale() so the "Default"
 		// option matches the content and the backend pre-download in Activate/Updates.
-		$userLocaleResolved         = $dictionary->resolveUserLocale( get_locale() );
+		$userLocaleResolved = $dictionary->resolveUserLocale( get_locale() );
+
+		// The dictionary directory lives under uploads, which on offloaded sites is a
+		// remote stream wrapper where every lookup is a network round trip. Nothing
+		// below reads it unless the feature is on, and even then only for the site's
+		// own dictionary — every other locale resolves from the persisted install
+		// state. Ask before getSupportedLanguages()/getInstalledLocales() below so a
+		// probe that lands is reflected in the same payload.
+		$userLocaleNeedsDownload = false;
+		$safeWordsUrl            = '';
+		$safeWordsMetaUrl        = '';
+		if ( $spellCheckerEnabled ) {
+			if ( $userLocaleResolved['hasSpellChecker'] ) {
+				$userLocaleNeedsDownload = $dictionary->needsDownload( $userLocaleResolved['locale'] );
+			}
+
+			$safeWords        = new SafeWords();
+			$safeWordsUrl     = $safeWords->exists() ? $safeWords->getSafeWordsUrl() : '';
+			$safeWordsMetaUrl = $safeWords->matchCaseExists() ? $safeWords->getMatchCaseUrl() : '';
+		}
+
 		$this->data['spellChecker'] = [
-			'enabled'                 => (bool) aioseo()->options->advanced->spellChecker,
+			'enabled'                 => $spellCheckerEnabled,
 			'dictionaryBaseUrl'       => $dictionary->getDictionaryBaseUrl(),
-			'safeWordsUrl'            => $safeWords->exists() ? $safeWords->getSafeWordsUrl() : '',
-			'safeWordsMetaUrl'        => $safeWords->matchCaseExists() ? $safeWords->getMatchCaseUrl() : '',
+			'safeWordsUrl'            => $safeWordsUrl,
+			'safeWordsMetaUrl'        => $safeWordsMetaUrl,
 			'settingsUrl'             => admin_url( $settingsPagePath ) . '#/advanced',
 			'userLocale'              => $userLocaleResolved['locale'],
+			'siteLocale'              => get_locale(),
 			'userLanguageLabel'       => $userLocaleResolved['nativeLabel'] ?: $userLocaleResolved['label'],
 			'userLocaleSupported'     => $userLocaleResolved['supported'],
 			'userLocaleHasSpellCheck' => $userLocaleResolved['hasSpellChecker'],
-			'userLocaleNeedsDownload' => $userLocaleResolved['needsDownload'],
+			'userLocaleNeedsDownload' => $userLocaleNeedsDownload,
 			'supportedLanguages'      => $dictionary->getSupportedLanguages(),
 			'installedLocales'        => $dictionary->getInstalledLocales()
 		];
@@ -445,7 +466,8 @@ trait Vue {
 			'truseo'                         => Models\Post::getTruseoDefaults( $post->truseo ?? null ),
 			'focus_keyword'                  => $keywordColumns['focus_keyword'],
 			'additional_keywords'            => $keywordColumns['additional_keywords'],
-			'truseo_locale'                  => $post->truseo_locale ?? null,
+			// A translation without a picked locale is analyzed in its own language, not the site's.
+			'truseo_locale'                  => ! empty( $post->truseo_locale ) ? $post->truseo_locale : ( aioseo()->helpers->getTruSeoObjectLocale( $wpPost ) ?: null ),
 			'wooProduct'                     => aioseo()->helpers->getWooCommerceProductData( $postId ),
 			'loading'                        => [
 				'focus'      => false,
@@ -588,14 +610,6 @@ trait Vue {
 		}
 
 		$this->data['data']['sitemapUrls'] = aioseo()->sitemap->helpers->getSitemapUrls();
-
-		try {
-			if ( as_next_scheduled_action( 'aioseo_static_sitemap_regeneration' ) ) {
-				$this->data['scheduledActions']['sitemap'][] = 'staticSitemapRegeneration';
-			}
-		} catch ( \Exception $e ) {
-			// Do nothing.
-		}
 	}
 
 	/**
@@ -690,6 +704,7 @@ trait Vue {
 	 *
 	 * @since   4.9.6
 	 * @version 5.0.3 Added the returnUrl key.
+	 * @version 5.0.6 Ignores the ids without a valid nonce; drops ids the user can't edit.
 	 *
 	 * @return void
 	 */
@@ -700,10 +715,16 @@ trait Vue {
 
 		// phpcs:disable HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 		$ids = [];
-		if ( ! empty( $_GET['ids'] ) && is_string( $_GET['ids'] ) ) {
+		if (
+			! empty( $_GET['ids'] ) &&
+			is_string( $_GET['ids'] ) &&
+			! empty( $_GET['_wpnonce'] ) &&
+			is_string( $_GET['_wpnonce'] ) &&
+			wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), \AIOSEO\Plugin\Common\Ai\BulkActions::NONCE_ACTION )
+		) {
 			$ids = array_map( 'intval', explode( ',', sanitize_text_field( wp_unslash( $_GET['ids'] ) ) ) );
 			$ids = array_values( array_filter( $ids, function ( $id ) {
-				return 0 < $id;
+				return 0 < $id && current_user_can( 'edit_post', $id );
 			} ) );
 		}
 
@@ -787,7 +808,7 @@ trait Vue {
 			$this->data['backups']                = array_reverse( aioseo()->backup->all() );
 			$this->data['importers']              = aioseo()->importExport->plugins();
 			$this->data['data']['robots']         = [
-				'defaultRules'      => $this->args['page'] ? aioseo()->robotsTxt->extractRules( aioseo()->robotsTxt->getDefaultRobotsTxtContent() ) : [],
+				'defaultRules'      => $this->args['page'] ? aioseo()->robotsTxt->extractRules( aioseo()->robotsTxt->getDefaultRobotsTxtContent(), false ) : [],
 				'hasPhysicalRobots' => aioseo()->robotsTxt->hasPhysicalRobotsTxt(),
 				'rewriteExists'     => aioseo()->robotsTxt->rewriteRulesExist(),
 				'sitemapUrls'       => array_merge( aioseo()->sitemap->helpers->getSitemapUrlsPrefixed(), aioseo()->sitemap->helpers->extractSitemapUrlsFromRobotsTxt() )

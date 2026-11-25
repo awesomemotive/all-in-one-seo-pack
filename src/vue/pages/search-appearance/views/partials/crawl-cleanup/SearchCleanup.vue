@@ -117,8 +117,8 @@
 				/>
 
 				<div class="aioseo-description">
-					<div v-html="strings.redirectPrettyUrlsDescription"></div>
-					<div v-html="strings.redirectPrettyUrlsExample"></div>
+					<div v-safe-html="strings.redirectPrettyUrlsDescription"></div>
+					<div v-safe-html="strings.redirectPrettyUrlsExample"></div>
 				</div>
 			</template>
 		</core-settings-row>

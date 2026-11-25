@@ -146,7 +146,7 @@
 					class="inline-upsell"
 					v-if="licenseStore.isUnlicensed"
 				>
-					<div v-html="strings.upsell"/>
+					<div v-safe-html="strings.upsell"/>
 				</core-alert>
 			</div>
 		</div>
@@ -255,8 +255,12 @@ export default {
 				parsed.push(recipient)
 			})
 
+			// Show a blank row without adding it to the options, so an empty list doesn't count as an unsaved change.
 			if (0 === parsed.length) {
-				this.addRecipient()
+				parsed.push({
+					email     : '',
+					frequency : this.defaultFrequencyValue
+				})
 			}
 
 			return parsed
@@ -279,7 +283,17 @@ export default {
 			)
 		},
 		addRecipient (data = {}) {
-			this.optionsStore.options.advanced.emailSummary.recipients.push({
+			const recipients = this.optionsStore.options.advanced.emailSummary.recipients
+
+			// The blank row shown for an empty list isn't stored, so store it before adding another one below it.
+			if (!recipients.length && !data?.email) {
+				recipients.push({
+					email     : '',
+					frequency : this.defaultFrequencyValue
+				})
+			}
+
+			recipients.push({
 				email     : data?.email ?? '',
 				frequency : this.defaultFrequencyValue
 			})

@@ -3,7 +3,7 @@
 		<div class="upgrade-text">
 			<svg-aioseo-logo-gear />
 
-			<div v-html="upgradeText" />
+			<div v-safe-html="upgradeText" />
 		</div>
 
 		<svg-close

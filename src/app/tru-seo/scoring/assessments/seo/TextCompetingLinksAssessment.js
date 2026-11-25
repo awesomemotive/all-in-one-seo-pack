@@ -13,6 +13,7 @@ const td = import.meta.env.VITE_TEXTDOMAIN
 
 /**
  * Assessment to check whether there are links which use the keyphrase or its synonym as their anchor text.
+ * Links pointing at this page and links that cannot pass anchor text signal (nofollow, sponsored, ugc) are not counted.
  */
 export default class TextCompetingLinksAssessment extends Assessment {
 	/**
@@ -77,7 +78,7 @@ export default class TextCompetingLinksAssessment extends Assessment {
 				score       : this._config.scores.good,
 				resultTitle : __('Competing links', td),
 				resultText  : __(
-					'No internal links use your keyword as link text.',
+					'No links in your content use your keyword as link text.',
 					td
 				)
 			}
@@ -87,7 +88,7 @@ export default class TextCompetingLinksAssessment extends Assessment {
 				score       : this._config.scores.bad,
 				resultTitle : __('Competing links', td),
 				resultText  : __(
-					'One of your internal links uses your keyword as link text. That link can compete with this post in search — change the link text to something else.',
+					'One of your links uses your keyword as link text. That link can compete with this post in search — change the link text to something else.',
 					td
 				)
 			}

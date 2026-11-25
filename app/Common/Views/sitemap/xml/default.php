@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
 <?php endif; ?>
 >
+<?php aioseo()->sitemap->xsl->printScript(); ?>
 <?php foreach ( $entries as $entry ) {
 	if ( empty( $entry['loc'] ) ) {
 		continue;

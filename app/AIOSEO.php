@@ -255,9 +255,12 @@ namespace AIOSEO\Plugin {
 			$this->migrationRunner->register( new Common\Main\Migrations\Definitions\DropLegacyCacheIndexes() );
 			$this->migrationRunner->register( new Common\Main\Migrations\Definitions\UnscheduleAiCreditFetch() );
 			$this->migrationRunner->register( new Common\Main\Migrations\Definitions\DropLegacyOgImageDimensionColumns() );
+			$this->migrationRunner->register( new Common\Main\Migrations\Definitions\ClearDuplicateCanonicalUrls() );
+			$this->migrationRunner->register( new Common\Main\Migrations\Definitions\ReopenDefaultTaglineCheck() );
 			if ( $this->pro ) {
 				$this->migrationRunner->register( new Pro\Main\Migrations\Definitions\AddUploadFilesCapability() );
 				$this->migrationRunner->register( new Pro\Main\Migrations\Definitions\AddTruSeoTermColumns() );
+				$this->migrationRunner->register( new Pro\Main\Migrations\Definitions\FixDoubleEncodedSourceUrlMatch() );
 			}
 			$this->migrationRunner->run();
 		}

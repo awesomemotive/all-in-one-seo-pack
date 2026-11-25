@@ -2,12 +2,12 @@
 	<div class="analyze-main">
 		<div
 			class="analyze-header"
-			v-html="header"
+			v-safe-html="header"
 		/>
 
 		<div
 			class="analyze-description"
-			v-html="description"
+			v-safe-html="description"
 		/>
 
 		<div class="analyze-input">

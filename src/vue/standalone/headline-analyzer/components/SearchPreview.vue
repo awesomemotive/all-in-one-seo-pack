@@ -6,7 +6,7 @@
 		<div class="aioseo-headline-analyzer-panel-first-block">
 			<div class="aioseo-headline-analyzer-search-prevew-wrap">
 				<p class="aioseo-headline-analyzer-post-url">
-					<a :href="encodedPostUrl" target="_blank">
+					<a v-safe-href="encodedPostUrl" target="_blank">
 						{{ postUrl }}
 					</a>
 				</p>

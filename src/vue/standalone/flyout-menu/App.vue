@@ -11,7 +11,7 @@
 			<a
 				v-for="(item, index) in items"
 				:key="index"
-				:href="item.url"
+				v-safe-href="item.url"
 				target="_blank"
 				:style="{ transitionDelay: `${items.length - index}00ms` }"
 				@mouseover="hovering = index"

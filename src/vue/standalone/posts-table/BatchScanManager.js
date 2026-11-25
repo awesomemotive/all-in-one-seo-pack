@@ -5,6 +5,7 @@ import links from '@/vue/utils/links'
 import { __, sprintf } from '@/vue/plugins/translations'
 import { td } from '@/vue/plugins/constants'
 import { useSpellCheckerDictionaryStore } from '@/vue/stores'
+import { getTruSeoDefaultLocale } from '@/vue/utils/truSeoLocale'
 
 /**
  * Manages batch TruSEO scanning for posts in the admin list table.
@@ -131,7 +132,7 @@ export default class BatchScanManager {
 		const wrapper = new TruSeoWrapper({
 			debounceDelay      : 0, // No debouncing for batch scanning
 			useSharedWorker    : false, // Dedicated worker
-			locale             : config.locale || window.aioseo?.user?.locale || 'en_US',
+			locale             : config.locale || getTruSeoDefaultLocale(),
 			customAnalysisType : config.customAnalysisType || '',
 			useCornerstone     : config.useCornerstone || false,
 			// Without this a term is scored by the post assessor, which runs checks a term can

@@ -115,7 +115,7 @@
 								</a>
 								<a
 									v-else-if="action.url"
-									:href="action.url"
+									v-safe-href="action.url"
 									target="_blank"
 									class="action-link"
 									:class="{ 'has-separator': actionIndex < row.actions.length - 1 }"
@@ -177,7 +177,7 @@
 									</a>
 									<a
 										v-else-if="action.url"
-										:href="action.url"
+										v-safe-href="action.url"
 										target="_blank"
 										class="action-link"
 										:class="{ 'has-separator': actionIndex < row.actionAfterCompletion.length - 1 }"
@@ -226,7 +226,7 @@
 						<div
 							v-else-if="row.info"
 							class="checklist-info"
-							v-html="row.info"
+							v-safe-html="row.info"
 						/>
 					</div>
 				</template>

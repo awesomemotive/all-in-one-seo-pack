@@ -339,6 +339,7 @@ export default {
 				imageAltTag        : __('Image Alt Tag', td),
 				noCredits          : __('Insufficient AI credits.', td),
 				altNotGenerated    : __('The alt text could not be generated. Please try again.', td),
+				altNotSaved        : __('The alt text could not be saved. Please try again.', td),
 				saveChanges        : __('Save', td),
 				discardChanges     : __('Cancel', td),
 				customTitle        : __('Custom SEO title written for this post', td),
@@ -510,15 +511,11 @@ export default {
 				this.showEditImageTitle = false
 			}
 
+			// Committed before the request so a title save sent meanwhile carries the new alt; rolled back if the save fails.
+			const previousAltTag = this.post.imageAltTag
 			if ('imageAltTag' === field) {
 				this.post.imageAltTag    = this.imageAltTag
 				this.showEditImageAltTag = false
-
-				// An alt text typed by hand replaces the one AI couldn't generate, so its error no longer applies.
-				// Saving an empty one leaves the image without alt text, so the error stays.
-				if (String(this.imageAltTag || '').trim()) {
-					this.altError = ''
-				}
 			}
 
 			http.post(links.restUrl('posts-list/update-details-column'))
@@ -532,9 +529,21 @@ export default {
 				})
 				.then(() => {
 					this.updatePostTitle(this.post.id, this.post.imageTitle)
+
+					// An alt text typed by hand replaces the one AI couldn't generate, so its error no longer applies.
+					// Saving an empty one leaves the image without alt text, so the error stays.
+					if ('imageAltTag' === field && String(this.post.imageAltTag || '').trim()) {
+						this.altError = ''
+					}
 				})
 				.catch(error => {
 					console.error(`Unable to update attachment with ID ${this.post.id}: ${error}`)
+
+					if ('imageAltTag' === field) {
+						this.post.imageAltTag = previousAltTag
+						this.imageAltTag      = previousAltTag
+						this.altError         = this.strings.altNotSaved
+					}
 				})
 		},
 		cancel (field) {

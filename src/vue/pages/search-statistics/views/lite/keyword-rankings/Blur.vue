@@ -10,7 +10,7 @@
 						no-slide
 					>
 						<template #tooltip>
-							<span v-html="strings.keywordPositionsTooltip" />
+							<span v-safe-html="strings.keywordPositionsTooltip" />
 						</template>
 
 						<seo-statistics-overview
@@ -37,7 +37,7 @@
 						no-slide
 					>
 						<template #tooltip>
-							<span v-html="strings.keywordPerformanceTooltip" />
+							<span v-safe-html="strings.keywordPerformanceTooltip" />
 						</template>
 
 						<keywords-table

@@ -14,6 +14,7 @@ export const useGoogleSearchConsole = (params = {}) => {
 		returnTo: defaultReturnTo = 'search-statistics'
 	} = params
 
+	const rootStore    = useRootStore()
 	const alertMessage = ref('')
 	const loading      = ref(false)
 	const returnTo     = ref(defaultReturnTo)
@@ -63,9 +64,12 @@ export const useGoogleSearchConsole = (params = {}) => {
 			__('%1$s can now verify whether your site is correctly verified with Google Search Console and that your sitemaps have been submitted correctly. Connect with Google Search Console now to ensure your content is being added to Google as soon as possible for increased rankings.', td),
 			import.meta.env.VITE_SHORT_NAME
 		),
-		connectToGoogleSearchConsole       : __('Connect to Google Search Console', td),
-		connectToGoogleToAddSitemaps       : __('Connect to Google to automatically add sitemaps and keep them in sync.', td),
-		syncYourSiteWithGsc                : __('Upgrade to Pro to unlock Search Statistics and sync your site with Google Search Console. Get valuable insights right inside your WordPress dashboard, track keyword rankings and search performance for individual posts with actionable insights to help you rank higher in search results!', td),
+		connectToGoogleSearchConsole : __('Connect to Google Search Console', td),
+		connectToGoogleToAddSitemaps : __('Connect to Google to automatically add sitemaps and keep them in sync.', td),
+		connectText                  : __('Quickly verify ownership in Google Search Console and automatically submit sitemaps with one click. Speed up indexing, increase visibility and optimize your site\'s performance to effortlessly attract more organic traffic.', td),
+		syncYourSiteWithGsc          : rootStore.isPro
+			? __('Upgrade to Elite to unlock Search Statistics and sync your site with Google Search Console. Get valuable insights right inside your WordPress dashboard, track keyword rankings and search performance for individual posts with actionable insights to help you rank higher in search results!', td)
+			: __('Upgrade to Pro to unlock Search Statistics and sync your site with Google Search Console. Get valuable insights right inside your WordPress dashboard, track keyword rankings and search performance for individual posts with actionable insights to help you rank higher in search results!', td),
 		fixSitemapErrors                   : __('Fix Errors', td),
 		aioseoHasFoundSomeErrorsInSitemaps : sprintf(
 			// Translators: 1 - The plugin short name ("AIOSEO").
@@ -80,7 +84,6 @@ export const useGoogleSearchConsole = (params = {}) => {
 	}
 
 	const redirectToGscSettings = () => {
-		const rootStore      = useRootStore()
 		window.location.href = `${rootStore.aioseo.urls.aio.settings}&aioseo-scroll=google-search-console-settings&aioseo-highlight=google-search-console-settings#/webmaster-tools?activetool=googleSearchConsole`
 	}
 

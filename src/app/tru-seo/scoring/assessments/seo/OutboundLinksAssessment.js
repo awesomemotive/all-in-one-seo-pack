@@ -28,7 +28,7 @@ export default class OutboundLinksAssessment extends Assessment {
 		const defaultConfig = {
 			scores : {
 				noLinks        : 3,
-				allNofollowed  : 7,
+				allNofollowed  : 6,
 				someNoFollowed : 8,
 				allFollowed    : 9
 			}

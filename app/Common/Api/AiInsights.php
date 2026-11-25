@@ -34,6 +34,11 @@ class AiInsights {
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function createReport( $request ) {
+		$aiDisabledResponse = Ai::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		$keyword = ! empty( $request['keyword'] ) ? sanitize_text_field( $request['keyword'] ) : '';
 
 		if ( empty( $keyword ) ) {
@@ -265,6 +270,11 @@ class AiInsights {
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function regenerateReport( $request ) {
+		$aiDisabledResponse = Ai::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		$uuid = ! empty( $request['uuid'] ) ? sanitize_text_field( $request['uuid'] ) : '';
 
 		if ( empty( $uuid ) ) {
@@ -413,6 +423,11 @@ class AiInsights {
 	 * @return \WP_REST_Response          The response.
 	 */
 	public static function subscribeBrandTracker( $request ) {
+		$aiDisabledResponse = Ai::getAiDisabledResponse();
+		if ( $aiDisabledResponse ) {
+			return $aiDisabledResponse;
+		}
+
 		$email = ! empty( $request['email'] ) ? sanitize_email( $request['email'] ) : '';
 
 		if ( empty( $email ) ) {

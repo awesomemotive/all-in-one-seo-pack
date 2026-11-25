@@ -10,7 +10,7 @@
 
 						<p
 							class="description"
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'schema', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'schema', true)"
 						/>
 					</div>
 
@@ -28,7 +28,7 @@
 								</base-button>
 
 								<template #tooltip>
-									<span v-html="strings.defaultGraphTooltip" />
+									<span v-safe-html="strings.defaultGraphTooltip" />
 								</template>
 							</core-tooltip>
 						</template>

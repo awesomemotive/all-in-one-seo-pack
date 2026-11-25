@@ -21,6 +21,13 @@
 						alt=""
 					/>
 				</template>
+
+				<core-alert
+					v-if="deleteError"
+					type="red"
+				>
+					{{ deleteError }}
+				</core-alert>
 			</div>
 		</template>
 
@@ -50,12 +57,13 @@
 <script setup>
 import { GLOBAL_STRINGS } from '@/vue/plugins/constants'
 
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 import {
 	useAiImageGeneratorStore
 } from '@/vue/stores'
 
+import CoreAlert from '@/vue/components/common/core/alert/Index'
 import CoreModal from '@/vue/components/common/core/modal/Index'
 
 import { __ } from '@/vue/plugins/translations'
@@ -66,32 +74,57 @@ const aiImageGeneratorStore = useAiImageGeneratorStore()
 
 const emit = defineEmits([ 'update:modalOpen' ])
 
-defineProps({
+const props = defineProps({
 	modalOpen : Boolean
 })
 
 const btnDeleteLoading = ref(false)
+const deleteError      = ref(null)
 
 const strings = {
-	headerTitle : __('Delete Image', td),
-	areYouSure  : __('Are you sure you want to permanently delete the following image?', td)
+	headerTitle     : __('Delete Image', td),
+	areYouSure      : __('Are you sure you want to permanently delete the following image?', td),
+	deleteForbidden : __('You don\'t have permission to delete this image.', td),
+	deleteFailed    : __('The image could not be deleted. Please try again.', td)
 }
+
+watch(() => props.modalOpen, open => {
+	if (open) {
+		deleteError.value = null
+	}
+})
 
 const initDelete = async () => {
 	btnDeleteLoading.value = true
+	deleteError.value      = null
+
+	const ids = aiImageGeneratorStore.images.selected.map(image => image.id)
 
 	try {
-		await aiImageGeneratorStore.deleteImages(aiImageGeneratorStore.images.selected.map(image => image.id))
-		await aiImageGeneratorStore.fetchImages()
-
-		aiImageGeneratorStore.images.selected = []
-
-		emit('update:modalOpen', false)
+		await aiImageGeneratorStore.deleteImages(ids)
 	} catch (error) {
 		console.error(error)
-	} finally {
+
+		deleteError.value      = 403 === error?.response?.status ? strings.deleteForbidden : strings.deleteFailed
 		btnDeleteLoading.value = false
+
+		return
 	}
+
+	try {
+		await aiImageGeneratorStore.fetchImages()
+	} catch (error) {
+		console.error(error)
+
+		// The images are gone even though the list couldn't be reloaded, so don't leave them clickable.
+		aiImageGeneratorStore.images.all.rows = aiImageGeneratorStore.images.all.rows.filter(image => !ids.includes(image.id))
+		aiImageGeneratorStore.images.count    = aiImageGeneratorStore.images.all.rows.length
+	}
+
+	aiImageGeneratorStore.images.selected = []
+	btnDeleteLoading.value                = false
+
+	emit('update:modalOpen', false)
 }
 </script>
 

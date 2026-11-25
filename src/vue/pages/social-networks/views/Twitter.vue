@@ -7,7 +7,7 @@
 			<div class="aioseo-settings-row aioseo-section-description">
 				{{ strings.description }}
 				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'twitter', true)"
+					v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'twitter', true)"
 				/>
 			</div>
 
@@ -108,7 +108,7 @@
 						v-if="licenseStore.isUnlicensed"
 						type="blue"
 					>
-						<div v-html="strings.defaultTermImageSourceUpsell" />
+						<div v-safe-html="strings.defaultTermImageSourceUpsell" />
 					</core-alert>
 				</template>
 			</core-settings-row>
@@ -208,10 +208,10 @@
 				v-if="rootStore.aioseo.data.staticHomePage"
 				class="aioseo-settings-row aioseo-section-description"
 			>
-				<span v-html="strings.homePageDisabledDescription" />
+				<span v-safe-html="strings.homePageDisabledDescription" />
 				&nbsp;
 				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'staticHomePageTwitter', true)"
+					v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'staticHomePageTwitter', true)"
 				/>
 			</div>
 
@@ -287,7 +287,7 @@
 
 					<div
 						class="max-recommended-count"
-						v-html="maxRecommendedCount(titleCount, 70)"
+						v-safe-html="maxRecommendedCount(titleCount, 70)"
 					/>
 				</template>
 			</core-settings-row>
@@ -316,7 +316,7 @@
 
 					<div
 						class="max-recommended-count"
-						v-html="maxRecommendedCount(descriptionCount, 200)"
+						v-safe-html="maxRecommendedCount(descriptionCount, 200)"
 					/>
 				</template>
 			</core-settings-row>

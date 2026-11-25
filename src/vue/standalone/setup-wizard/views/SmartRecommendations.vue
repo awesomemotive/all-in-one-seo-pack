@@ -44,7 +44,7 @@
 								<svg-circle-question-mark />
 
 								<template #tooltip>
-									<div v-html="strings.usageTrackingTooltip" />
+									<div v-safe-html="strings.usageTrackingTooltip" />
 								</template>
 							</core-tooltip>
 						</div>
@@ -92,7 +92,7 @@
 				<div class="aioseo-modal-body">
 					<div
 						class="available-features"
-						v-html="strings.theseFeaturesAreAvailable"
+						v-safe-html="strings.theseFeaturesAreAvailable"
 					/>
 
 					<div
@@ -125,7 +125,7 @@
 					</div>
 
 					<div class="available-features no-access"
-						v-html="strings.youWontHaveAccess"
+						v-safe-html="strings.youWontHaveAccess"
 					/>
 
 					<div class="actions">
@@ -144,7 +144,7 @@
 						class="bonus-alert"
 						type="yellow"
 					>
-						🎁 <span v-html="strings.bonusText" />
+						🎁 <span v-safe-html="strings.bonusText" />
 					</core-alert>
 				</div>
 			</template>

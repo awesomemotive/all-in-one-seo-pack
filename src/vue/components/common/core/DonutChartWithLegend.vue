@@ -45,13 +45,13 @@
 
 						<div
 							v-else
-							v-html="parseInt(part.count)"
+							v-safe-html="parseInt(part.count)"
 						/>
 					</span>
 
 					<component
 						:is="part.link ? 'a' : 'span'"
-						:href="part.link || null"
+						v-safe-href="part.link || null"
 						class="legend-label"
 						:class="{'is-link': part.link}"
 						@click="handleLabelClick($event, part)"
@@ -65,7 +65,7 @@
 				class="chart-more"
 				v-if="link && total > 0"
 			>
-				<span v-html="link" />
+				<span v-safe-html="link" />
 			</div>
 		</div>
 	</div>

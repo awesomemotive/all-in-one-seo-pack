@@ -23,22 +23,22 @@
 
 					<p
 						class="aioseo-description"
-						v-html="setting.description"
+						v-safe-html="setting.description"
 					/>
 
 					<div
 						class="aioseo-description"
 						v-if="isConnected"
 					>
-						<a target="_blank" :href="clarityDashboardUrl(optionsStore.options.webmasterTools[setting.option])">{{ strings.dashboard }}</a> |
-						<a target="_blank" :href="claritySettingsUrl(optionsStore.options.webmasterTools[setting.option])">{{ strings.settings }}</a>
+						<a target="_blank" v-safe-href="clarityDashboardUrl(optionsStore.options.webmasterTools[setting.option])">{{ strings.dashboard }}</a> |
+						<a target="_blank" v-safe-href="claritySettingsUrl(optionsStore.options.webmasterTools[setting.option])">{{ strings.settings }}</a>
 					</div>
 
 					<br>
 
 					<core-alert
 						v-if="!isConnected"
-						v-html="strings.description"
+						v-safe-html="strings.description"
 					/>
 
 					<core-alert
@@ -46,7 +46,7 @@
 						:key="promoKey"
 						type="blue"
 					>
-						<div v-html="strings.miPromo" />
+						<div v-safe-html="strings.miPromo" />
 						<br>
 						<base-button
 							v-if="!pluginsStore.plugins.miLite.canInstall"
@@ -79,7 +79,7 @@
 						v-if="isConnected && !gaActivated && !showMiPromo && miInstalled"
 						type="blue"
 					>
-						<div v-html="strings.useMi" />
+						<div v-safe-html="strings.useMi" />
 						<br>
 						<base-button
 							type="blue"

@@ -3,7 +3,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 import { decodeUrlWhitespace, encodeUrlWhitespace, getPathRelativeToHome } from '@/vue/utils/urls'
 import links from '@/vue/utils/links'
 
@@ -34,7 +34,28 @@ const phpTrim = (string) => {
 
 export const useRedirect = () => {
 	const redirectHasUnPublishedPost = (redirect) => {
-		return redirect.post_id && 'publish' !== redirect.postStatus
+		if (!redirect.post_id) {
+			return false
+		}
+
+		// Rows carry the server's answer, based on the stored source.
+		if ('boolean' === typeof redirect.awaitsSource) {
+			return redirect.awaitsSource
+		}
+
+		if ('publish' === redirect.postStatus) {
+			return false
+		}
+
+		// With plain permalinks a private post has no URL of its own yet.
+		if ('private' !== redirect.postStatus || !useRootStore().aioseo.data.usingPermalinks) {
+			return true
+		}
+
+		// Mirrors the server: a path that's only the home path (e.g. a post type without rewrites) isn't a source.
+		const path = 'string' === typeof redirect.url ? redirect.url.split('?')[0] : null
+
+		return '' === path || '/' === path
 	}
 
 	const validateRedirect = (redirect) => {
@@ -54,7 +75,7 @@ export const useRedirect = () => {
 			}
 		}
 
-		if (!redirect.url.regex && !sanitizeString(redirect.url.url)) {
+		if (!redirect.url.regex && !stripMarkup(redirect.url.url)) {
 			errors.push(__('Your URL is invalid.', td))
 			return errors
 		}

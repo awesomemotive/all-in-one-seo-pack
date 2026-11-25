@@ -67,12 +67,12 @@
 									</div>
 									<div class="semrush-upsell">
 										<span>
-											<strong v-html="strings.youHaveExceededSemrush" />
+											<strong v-safe-html="strings.youHaveExceededSemrush" />
 										</span>
 
 										{{ ' ' }}
 
-										<span v-html="strings.inOrderToUpgradeSemrush" />
+										<span v-safe-html="strings.inOrderToUpgradeSemrush" />
 									</div>
 								</template>
 							</div>

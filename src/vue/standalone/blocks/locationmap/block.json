@@ -44,6 +44,7 @@
 			"default" : null
 		}
 	},
+	"usesContext": [ "postId", "postType" ],
 	"supports": {
 		"html": false
 	}

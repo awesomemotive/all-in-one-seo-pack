@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use AIOSEO\Plugin\Common\Meta;
+use AIOSEO\Plugin\Common\Models;
 
 /**
  * Base class for the post/term controller.
@@ -129,13 +130,19 @@ abstract class Base {
 	/**
 	 * Returns the raw data that we would output in the HEAD for the given object.
 	 *
-	 * @since 4.9.8
+	 * @since   4.9.8
+	 * @version 5.0.6 Returns an empty string when aioseo()->head is unavailable.
 	 *
 	 * @param  array  $object The object (post type or taxonomy).
 	 * @return string         The raw HEAD data.
 	 */
 	public function getHead( $object ) {
 		if ( apply_filters( 'aioseo_rest_api_disable', false, $object ) ) {
+			return '';
+		}
+
+		// head is not instantiated in AJAX/cron contexts, e.g. Action Scheduler webhook delivery.
+		if ( ! is_object( aioseo()->head ) ) {
 			return '';
 		}
 
@@ -157,13 +164,18 @@ abstract class Base {
 	/**
 	 * Returns the data that we would output in the HEAD for the given object, but as JSON.
 	 *
-	 * @since 4.9.8
+	 * @since   4.9.8
+	 * @version 5.0.6 Returns an empty array when aioseo()->head is unavailable.
 	 *
 	 * @param  array $object The object (post type or taxonomy).
 	 * @return array         The data (will be JSONified by the WP REST API class).
 	 */
 	public function getHeadJson( $object ) {
 		if ( apply_filters( 'aioseo_rest_api_disable', false, $object ) ) {
+			return [];
+		}
+
+		if ( ! is_object( aioseo()->head ) ) {
 			return [];
 		}
 
@@ -283,13 +295,49 @@ abstract class Base {
 			return $valid;
 		}
 
-		// The object schema type also accepts an empty string and a list.
-		if ( ! $value instanceof \stdClass && ! $this->isMetaDataObject( $value ) ) {
+		// The object schema type also accepts an empty string, a list and a stdClass, which updateMetaData() can't save.
+		if ( ! $this->isMetaDataObject( $value ) ) {
 			return $this->getInvalidMetaDataError( $param );
+		}
+
+		$fieldError = $this->getInvalidMetaDataFieldError( $value, $param );
+		if ( null !== $fieldError ) {
+			return $fieldError;
 		}
 
 		return true;
 	}
+
+	/**
+	 * Returns the error for the first meta data field whose value doesn't have the type of the field.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  array          $metaData The meta data.
+	 * @param  string         $param    The parameter name.
+	 * @return \WP_Error|null           The error, or null when every field is valid.
+	 */
+	protected function getInvalidMetaDataFieldError( $metaData, $param ) {
+		$invalidFields = Models\Post::getInvalidFields( $metaData, $this->getMetaDataFieldTypes() );
+		if ( empty( $invalidFields ) ) {
+			return null;
+		}
+
+		$field = array_key_first( $invalidFields );
+
+		return 'array' === $invalidFields[ $field ]
+			? $this->getNotArrayError( "{$param}[{$field}]" )
+			: $this->getNotStringError( "{$param}[{$field}]" );
+	}
+
+	/**
+	 * Returns the type each meta data field must have (see {@see Models\Post::getFieldTypes()}).
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return array<string, string> The field types, keyed by field name.
+	 */
+	abstract protected function getMetaDataFieldTypes();
 
 	/**
 	 * Checks whether the given meta data is an object, which is an empty or associative array.
@@ -335,13 +383,21 @@ abstract class Base {
 	 * @return array|null                The field name and its error, or null when every field is valid.
 	 */
 	protected function getInvalidField( $request ) {
-		if ( $request->has_param( 'aioseo_meta_data' ) && ! $this->isMetaDataObject( $request['aioseo_meta_data'] ) ) {
-			return [ 'aioseo_meta_data', $this->getInvalidMetaDataError( 'aioseo_meta_data' ) ];
+		if ( $request->has_param( 'aioseo_meta_data' ) ) {
+			$metaData = $request['aioseo_meta_data'];
+			if ( ! $this->isMetaDataObject( $metaData ) ) {
+				return [ 'aioseo_meta_data', $this->getInvalidMetaDataError( 'aioseo_meta_data' ) ];
+			}
+
+			$fieldError = $this->getInvalidMetaDataFieldError( $metaData, 'aioseo_meta_data' );
+			if ( null !== $fieldError ) {
+				return [ 'aioseo_meta_data', $fieldError ];
+			}
 		}
 
 		foreach ( array_keys( $this->deprecatedFields ) as $legacyField ) {
 			if ( $request->has_param( $legacyField ) && ! is_string( $request[ $legacyField ] ) ) {
-				return [ $legacyField, $this->getInvalidLegacyFieldError( $legacyField ) ];
+				return [ $legacyField, $this->getNotStringError( $legacyField ) ];
 			}
 		}
 
@@ -349,14 +405,34 @@ abstract class Base {
 	}
 
 	/**
-	 * Returns the error for a legacy single value field that isn't a string.
+	 * Returns the error for a field that takes an object or a list but got a single value.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string    $param The parameter name.
+	 * @return \WP_Error        The error.
+	 */
+	protected function getNotArrayError( $param ) {
+		return new \WP_Error(
+			'rest_invalid_param',
+			sprintf(
+				// Translators: 1 - The name of a REST API field.
+				__( '%1$s must be an object or a list.', 'all-in-one-seo-pack' ),
+				$param
+			),
+			[ 'status' => 400 ]
+		);
+	}
+
+	/**
+	 * Returns the error for a single value field that got an array or an object instead of a string.
 	 *
 	 * @since 5.0.3
 	 *
 	 * @param  string    $param The parameter name.
 	 * @return \WP_Error        The error.
 	 */
-	protected function getInvalidLegacyFieldError( $param ) {
+	protected function getNotStringError( $param ) {
 		return new \WP_Error(
 			'rest_invalid_param',
 			sprintf(

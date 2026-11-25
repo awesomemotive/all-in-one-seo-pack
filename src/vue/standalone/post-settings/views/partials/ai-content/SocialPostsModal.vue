@@ -172,7 +172,7 @@ import {
 } from '@/vue/stores'
 
 import { useAiContent } from '@/vue/composables/AiContent'
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 
 import BaseHighlightToggle from '@/vue/components/common/base/HighlightToggle'
 import CoreMainTabs from '@/vue/components/common/core/main/Tabs'
@@ -267,7 +267,7 @@ export default {
 			const activeTabObject = getActiveTabObject()
 			const content         = 'email' === activeTabObject.slug ? postEditorStore.currentPost.ai.socialPosts?.email.content : postEditorStore.currentPost.ai.socialPosts[activeTabObject.slug]
 
-			return sanitizeString(content, true)
+			return stripMarkup(content, true)
 		})
 
 		const onCopy = () => {

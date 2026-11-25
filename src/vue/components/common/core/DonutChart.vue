@@ -53,7 +53,7 @@
 						:class="getClass"
 					>
 						<util-animated-number v-if="animatedNumber" :number="parseInt(total)" />
-						<div v-else v-html="parseInt(total)" />
+						<div v-else v-safe-html="parseInt(total)" />
 
 						<span
 							v-if="maxTotal"
@@ -67,7 +67,7 @@
 				<div
 					class="label"
 					:class="{ [getColorClass] : isLabelColored }"
-					v-html="label"
+					v-safe-html="label"
 				/>
 			</div>
 		</div>

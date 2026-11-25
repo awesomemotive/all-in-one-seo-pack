@@ -14,13 +14,13 @@
 				v-if="!rootStore.isPro"
 				#tooltip
 			>
-				<div v-html="tooltipText" />
+				<div v-safe-html="tooltipText" />
 
 				<br>
 
 				<div
 					class="more-tooltip-text"
-					v-html="moreToolTipText"
+					v-safe-html="moreToolTipText"
 				/>
 			</template>
 

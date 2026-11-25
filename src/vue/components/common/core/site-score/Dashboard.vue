@@ -19,7 +19,7 @@
 
 			<p class="error-title">{{ strings.anErrorOccurred }}</p>
 
-			<p v-if="errorObject?.description" class="error-description" v-html="errorObject.description"/>
+			<p v-if="errorObject?.description" class="error-description" v-safe-html="errorObject.description"/>
 
 			<div v-if="errorObject?.buttons" class="error-action-buttons">
 				<base-button

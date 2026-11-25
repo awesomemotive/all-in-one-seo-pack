@@ -15,7 +15,7 @@
 					v-for="(option, index) in filter.options"
 					:key="index"
 					:value="option.value"
-					v-html="option.label"
+					v-safe-html="option.label"
 				/>
 			</select>
 		</template>

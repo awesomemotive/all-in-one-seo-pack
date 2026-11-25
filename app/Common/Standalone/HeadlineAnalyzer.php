@@ -118,7 +118,7 @@ class HeadlineAnalyzer {
 		}
 
 		$aioseoPost = $aioseoPost ? $aioseoPost : Models\Post::getPost( $postId );
-		$locale     = ! empty( $aioseoPost->truseo_locale ) ? $aioseoPost->truseo_locale : get_locale();
+		$locale     = aioseo()->helpers->getTruSeoLocale( get_post( $postId ), $aioseoPost->truseo_locale );
 		if ( ! $this->supportsLocale( $locale ) ) {
 			return null;
 		}

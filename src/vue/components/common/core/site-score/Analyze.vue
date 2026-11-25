@@ -32,18 +32,18 @@
 			<span v-if="rootStore?.aioseo?.urls?.home"
 				class="seo-analysis-homepage-url"
 			>
-				<a target="_blank" :href="rootStore.aioseo.urls.home">{{ rootStore.aioseo.urls.home }}</a>
+				<a target="_blank" v-safe-href="rootStore.aioseo.urls.home">{{ rootStore.aioseo.urls.home }}</a>
 			</span>
 
-			<div v-html="strings.goodResult" />
+			<div v-safe-html="strings.goodResult" />
 
-			<div v-html="strings.forBestResults" />
+			<div v-safe-html="strings.forBestResults" />
 
 			<div class="d-flex">
 				<svg-book />
 
 				<a
-					:href="links.getDocUrl('ultimateGuide')"
+					v-safe-href="links.getDocUrl('ultimateGuide')"
 					target="_blank"
 				>{{ strings.readUltimateSeoGuide }}</a>
 			</div>
@@ -84,7 +84,7 @@
 			>
 				<svg-info />
 
-				<span v-html="strings.snapshotBlockedNotice" />
+				<span v-safe-html="strings.snapshotBlockedNotice" />
 			</div>
 		</div>
 
@@ -96,7 +96,7 @@
 
 			<p class="error-title">{{ strings.anErrorOccurred }}</p>
 
-			<p class="error-description" v-html="errorObject.description"/>
+			<p class="error-description" v-safe-html="errorObject.description"/>
 
 			<div class="error-action-buttons">
 				<base-button

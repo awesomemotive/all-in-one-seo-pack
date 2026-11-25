@@ -396,6 +396,9 @@ class Post extends Model {
 		$thePost = self::getPost( $postId );
 		$data    = apply_filters( 'aioseo_save_post', $data, $thePost );
 
+		// A value of the wrong type would crash the sanitizers or be saved as the text "Array", so it keeps the saved value.
+		$data = array_diff_key( $data, self::getInvalidFields( $data, self::getFieldTypes() ) );
+
 		// Before setting the data, we check if the title/description are the same as the defaults and clear them if so.
 		$data    = self::checkForDefaultFormat( $postId, $thePost, $data );
 		$thePost = self::sanitizeAndSetDefaults( $postId, $thePost, $data );
@@ -784,6 +787,84 @@ class Post extends Model {
 	}
 
 	/**
+	 * Returns the type each field must have to be saved: `scalar`, `url` or `array`.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return array<string, string> The field types, keyed by field name.
+	 */
+	public static function getFieldTypes() {
+		return self::getFieldTypesFromMap( self::getSanitizeFieldMap(), [ 'schema', 'ai', 'additional_keywords', 'keyphrases' ] );
+	}
+
+	/**
+	 * Returns the type each field of the given field map must have, plus the custom fields both models share.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  array                 $map         The field map (see getSanitizeFieldMap()).
+	 * @param  string[]              $arrayFields The custom fields that take an object or a list.
+	 * @return array<string, string>              The field types, keyed by field name.
+	 */
+	public static function getFieldTypesFromMap( $map, $arrayFields ) {
+		$sanitizeTypes = [
+			'text'     => 'scalar',
+			'url'      => 'url',
+			'bool'     => 'scalar',
+			'int_neg1' => 'scalar'
+		];
+
+		$fieldTypes = [
+			'canonical_url' => 'url',
+			'canonicalUrl'  => 'url',
+			'focus_keyword' => 'scalar',
+			'priority'      => 'scalar',
+			'truseo_locale' => 'scalar'
+		];
+
+		foreach ( $map as $key => $spec ) {
+			if ( isset( $sanitizeTypes[ $spec['sanitize'] ] ) ) {
+				$fieldTypes[ $key ] = $sanitizeTypes[ $spec['sanitize'] ];
+			}
+		}
+
+		return array_merge( $fieldTypes, array_fill_keys( $arrayFields, 'array' ) );
+	}
+
+	/**
+	 * Returns the fields of the data whose value doesn't have the type of the field.
+	 *
+	 * NOTE: Null always passes, and so does an empty `url` or `array` value, since those clear the field.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  array                 $data       The data.
+	 * @param  array<string, string> $fieldTypes The field types (see getFieldTypes()).
+	 * @return array<string, string>             The type of each invalid field, keyed by field name.
+	 */
+	public static function getInvalidFields( $data, $fieldTypes ) {
+		$invalidFields = [];
+		foreach ( $fieldTypes as $field => $type ) {
+			if ( ! isset( $data[ $field ] ) ) {
+				continue;
+			}
+
+			$value = $data[ $field ];
+			if (
+				// Even an empty array, since the title and description are cast to a string.
+				( 'scalar' === $type && ! is_scalar( $value ) ) ||
+				// A number or a boolean would be saved as a bogus URL.
+				( 'url' === $type && ! empty( $value ) && ! is_string( $value ) ) ||
+				( 'array' === $type && ! empty( $value ) && ! is_array( $value ) && ! is_object( $value ) )
+			) {
+				$invalidFields[ $field ] = $type;
+			}
+		}
+
+		return $invalidFields;
+	}
+
+	/**
 	 * Sanitizes the post data and sets it (or the default value) to the Post object.
 	 *
 	 * @since 4.1.5
@@ -833,7 +914,7 @@ class Post extends Model {
 			$thePost->options->truSeo->highlightingEnabled = (bool) $data['options']['truSeo']['highlightingEnabled'];
 		}
 		if ( array_key_exists( 'priority', $data ) ) {
-			$thePost->priority = 'default' === sanitize_text_field( (string) $data['priority'] ) ? null : (float) $data['priority'];
+			$thePost->priority = is_numeric( $data['priority'] ) ? (float) $data['priority'] : null;
 		}
 		if ( array_key_exists( 'schema', $data ) ) {
 			$thePost->schema = ! empty( $data['schema'] ) ? self::getDefaultSchemaOptions( $data['schema'] ) : null;
@@ -932,11 +1013,132 @@ class Post extends Model {
 	}
 
 	/**
+	 * Returns the columns that are mirrored to post meta for localization, keyed by their meta key.
+	 *
+	 * NOTE: Translation plugins read and write the meta, so a column missing here cannot be translated.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return array The meta key per column.
+	 */
+	public static function getLocalizedMetaMap() {
+		return [
+			'title'               => '_aioseo_title',
+			'description'         => '_aioseo_description',
+			'keywords'            => '_aioseo_keywords',
+			'focus_keyword'       => '_aioseo_focus_keyword',
+			'additional_keywords' => '_aioseo_additional_keywords',
+			'og_title'            => '_aioseo_og_title',
+			'og_description'      => '_aioseo_og_description',
+			'og_article_section'  => '_aioseo_og_article_section',
+			'og_article_tags'     => '_aioseo_og_article_tags',
+			'twitter_title'       => '_aioseo_twitter_title',
+			'twitter_description' => '_aioseo_twitter_description'
+		];
+	}
+
+	/**
+	 * Returns the localized columns that hold JSON tags instead of a plain string.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return string[] The column names.
+	 */
+	public static function getLocalizedTagColumns() {
+		return [
+			'keywords',
+			'og_article_tags'
+		];
+	}
+
+	/**
+	 * Returns the localized columns that hold JSON keyword objects instead of a plain string.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return string[] The column names.
+	 */
+	public static function getLocalizedKeywordColumns() {
+		return [
+			'additional_keywords'
+		];
+	}
+
+	/**
+	 * Returns the given column's value as it is mirrored to meta.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $column The column name.
+	 * @param  mixed  $value  The column value.
+	 * @return mixed          The value to store as meta.
+	 */
+	public static function localizedValueToMeta( $column, $value ) {
+		if ( in_array( $column, self::getLocalizedTagColumns(), true ) ) {
+			return ! empty( $value ) ? aioseo()->helpers->jsonTagsToCommaSeparatedList( $value ) : [];
+		}
+
+		if ( in_array( $column, self::getLocalizedKeywordColumns(), true ) ) {
+			return ! empty( $value ) ? aioseo()->helpers->jsonKeywordsToLineSeparatedList( $value ) : '';
+		}
+
+		if ( 'focus_keyword' === $column ) {
+			return self::sanitizeFocusKeyword( $value );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Returns the given meta value as it is stored in its column.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  string $column The column name.
+	 * @param  mixed  $value  The meta value.
+	 * @return mixed          The value to store in the column.
+	 */
+	public static function localizedValueFromMeta( $column, $value ) {
+		if ( in_array( $column, self::getLocalizedTagColumns(), true ) ) {
+			return aioseo()->helpers->commaSeparatedListToJsonTags( $value );
+		}
+
+		if ( in_array( $column, self::getLocalizedKeywordColumns(), true ) ) {
+			return aioseo()->helpers->lineSeparatedListToJsonKeywords( $value );
+		}
+
+		if ( 'focus_keyword' === $column ) {
+			return self::sanitizeFocusKeyword( $value );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Returns the given focus keyphrase as the column holds it: sanitized and cut to its 255 characters.
+	 *
+	 * NOTE: A strict mode save would reject a longer value rather than truncate it.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @param  mixed  $value The focus keyphrase.
+	 * @return string       The sanitized keyphrase.
+	 */
+	public static function sanitizeFocusKeyword( $value ) {
+		if ( ! is_string( $value ) ) {
+			return '';
+		}
+
+		return aioseo()->helpers->substring( sanitize_text_field( $value ), 0, 255 );
+	}
+
+	/**
 	 * Saves some of the data as post meta so that it can be used for localization.
 	 *
 	 * @since   4.1.5
 	 * @version 4.9.8 Patch-aware: only syncs meta for keys present in $data, so partial saves
 	 *                 (e.g. the Abilities API) don't warn on, or wipe, fields they didn't touch.
+	 * @version 5.0.6 Reads the columns from {@see getLocalizedMetaMap()}.
 	 *
 	 * @param  int   $postId The post ID.
 	 * @param  array $data   The data.
@@ -945,28 +1147,12 @@ class Post extends Model {
 	public static function updatePostMeta( $postId, $data ) {
 		// Update the post meta as well for localization. Only the keys actually present in $data are
 		// synced — missing keys keep their existing meta, mirroring sanitizeAndSetDefaults()'s patch semantics.
-		$metaMap = [
-			'title'               => '_aioseo_title',
-			'description'         => '_aioseo_description',
-			'og_title'            => '_aioseo_og_title',
-			'og_description'      => '_aioseo_og_description',
-			'og_article_section'  => '_aioseo_og_article_section',
-			'twitter_title'       => '_aioseo_twitter_title',
-			'twitter_description' => '_aioseo_twitter_description'
-		];
-		foreach ( $metaMap as $key => $metaKey ) {
-			if ( array_key_exists( $key, $data ) ) {
-				update_post_meta( $postId, $metaKey, $data[ $key ] );
+		foreach ( self::getLocalizedMetaMap() as $column => $metaKey ) {
+			if ( ! array_key_exists( $column, $data ) ) {
+				continue;
 			}
-		}
 
-		if ( array_key_exists( 'keywords', $data ) ) {
-			$keywords = ! empty( $data['keywords'] ) ? aioseo()->helpers->jsonTagsToCommaSeparatedList( $data['keywords'] ) : [];
-			update_post_meta( $postId, '_aioseo_keywords', $keywords );
-		}
-		if ( array_key_exists( 'og_article_tags', $data ) ) {
-			$ogArticleTags = ! empty( $data['og_article_tags'] ) ? aioseo()->helpers->jsonTagsToCommaSeparatedList( $data['og_article_tags'] ) : [];
-			update_post_meta( $postId, '_aioseo_og_article_tags', $ogArticleTags );
+			update_post_meta( $postId, $metaKey, self::localizedValueToMeta( $column, $data[ $column ] ) );
 		}
 	}
 
@@ -1074,10 +1260,11 @@ class Post extends Model {
 	/**
 	 * Returns the defaults for the keyphrases column.
 	 *
-	 * @since 4.1.7
+	 * @since   4.1.7
+	 * @version 5.0.6 A non-object value returns the defaults.
 	 *
-	 * @param  null|object $keyphrases The database keyphrases.
-	 * @return object                  The defaults.
+	 * @param  mixed  $keyphrases The database keyphrases.
+	 * @return object             The defaults.
 	 */
 	public static function getKeyphrasesDefaults( $keyphrases = null ) {
 		$defaults = [
@@ -1095,7 +1282,7 @@ class Post extends Model {
 			'additional' => []
 		];
 
-		if ( empty( $keyphrases ) ) {
+		if ( empty( $keyphrases ) || ! is_object( $keyphrases ) ) {
 			return json_decode( wp_json_encode( $defaults ) );
 		}
 

@@ -6,7 +6,7 @@
 	>
 		<div class="aioseo-headline-analyzer-words-block">
 			<h4 class="blue">{{ headlineTypes }}</h4>
-			<p v-html="typeLinkText"/>
+			<p v-safe-html="typeLinkText"/>
 		</div>
 
 		<template v-slot:extraTxt>

@@ -40,12 +40,12 @@
 						<core-tooltip
 							type="action"
 						>
-							<a class="domain-name" :href="`#/domains-report?hostname=${row.name}`">{{ row.name }}</a>
+							<a class="domain-name" v-safe-href="`#/domains-report?hostname=${row.name}`">{{ row.name }}</a>
 
 							<template #tooltip>
 								<a
 									class="tooltip-url"
-									:href="`https://${row.name}`"
+									v-safe-href="`https://${row.name}`"
 									target="_blank">
 										{{ row.name }}
 								</a>

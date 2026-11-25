@@ -64,7 +64,8 @@ class PostMeta {
 	/**
 	 * Schedules the post meta import.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 5.0.6 Record the start time one second ahead.
 	 *
 	 * @return void
 	 */
@@ -75,7 +76,8 @@ class PostMeta {
 			}
 
 			if ( ! aioseo()->core->cache->get( 'import_post_meta_rank_math' ) ) {
-				aioseo()->core->cache->update( 'import_post_meta_rank_math', time(), WEEK_IN_SECONDS );
+				// A scan can still save a row in this second, so a row updated in it must count as not imported yet.
+				aioseo()->core->cache->update( 'import_post_meta_rank_math', time() + 1, WEEK_IN_SECONDS );
 			}
 
 			as_schedule_single_action( time(), $this->postActionName, [], 'aioseo' );

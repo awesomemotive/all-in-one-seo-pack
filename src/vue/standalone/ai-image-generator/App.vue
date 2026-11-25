@@ -46,13 +46,8 @@ onMounted(() => {
 			return
 		}
 
-		// Bail if the current image being edited doesn't exist anymore.
-		if (!aiImageGeneratorStore.initiator.wpMedia) {
-			aiImageGeneratorStore.resetInitiator()
-
-			return
-		}
-
+		// Keep the image even when the editor can't load it (e.g. a 403), so the server refuses the
+		// edit with `seed_image_forbidden` instead of generating an unrelated, unseeded image.
 		const selectedImage = aiImageGeneratorStore.images.all.rows.find(image => image.id === imageId) || {
 			id     : imageId,
 			url    : attributes.url,

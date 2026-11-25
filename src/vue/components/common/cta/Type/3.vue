@@ -26,7 +26,7 @@
 		<core-alert
 			v-if="!ctaButtonVisible && ctaButtonVisibleWarning"
 			type="yellow"
-			v-html="ctaButtonVisibleWarning"
+			v-safe-html="ctaButtonVisibleWarning"
 		/>
 
 		<base-button

@@ -1,5 +1,5 @@
 import htm from 'htm'
-import { useTagsStore } from '@/vue/stores'
+import { usePostEditorStore, useRootStore, useTagsStore } from '@/vue/stores'
 import { customFieldValue } from '@/vue/utils/postData/customFields'
 import { canLoadBlocks } from '@/vue/utils/context'
 import { decodeHTMLEntities } from '@/vue/utils/helpers'
@@ -286,6 +286,39 @@ const {
 	registerBlockCollection,
 	registerBlockType
 } = window.wp.blocks
+
+/**
+ * Returns the Location a Local SEO block previews, resolved like the server's Locations::getBlockLocationId().
+ *
+ * @param   {Object} attributes The block attributes.
+ * @param   {Object} context    The block context (postId, postType).
+ * @returns {Object}            The Location ID (0 if none), and whether it is the post being edited.
+ */
+export const getBlockLocation = (attributes, context = {}) => {
+	const postEditorStore    = usePostEditorStore()
+	const currentPost        = postEditorStore.currentPost
+	const locationPostType   = useRootStore().aioseo.localBusiness.postTypeName
+	const isLocationPostType = currentPost.postType === locationPostType
+
+	let locationId = attributes.locationId
+	if (!locationId) {
+		// The server follows the current post only inside a post's content, where a Query Loop row
+		// is the current post. Templates and widget areas pass a row as context too, but render nothing.
+		const editedPostType = window.wp.data.select('core/editor')?.getCurrentPostType?.()
+		const inPostContent  = !!editedPostType && ![ 'wp_template', 'wp_template_part' ].includes(editedPostType)
+
+		if (inPostContent && context.postId) {
+			locationId = locationPostType === context.postType ? context.postId : 0
+		} else {
+			locationId = isLocationPostType ? currentPost.id : 0
+		}
+	}
+
+	return {
+		locationId,
+		isCurrentLocation : isLocationPostType && locationId === currentPost.id
+	}
+}
 
 export const useBlockProps     = window.wp.blockEditor?.useBlockProps || (() => ({}))
 export const useBlockPropsSave = window.wp.blockEditor?.useBlockProps?.save || (() => ({}))

@@ -57,7 +57,7 @@
 				v-if="aiImageGeneratorStore.error?.message"
 			>
 				<core-alert
-					v-html="aiImageGeneratorStore.error.message"
+					v-safe-html="aiImageGeneratorStore.error.message"
 					:type="aiImageGeneratorStore.error.type"
 				/>
 			</div>

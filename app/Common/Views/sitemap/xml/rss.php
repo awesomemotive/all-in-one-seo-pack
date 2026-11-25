@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-	<channel><?php
+	<channel>
+<?php aioseo()->sitemap->xsl->printScript(); ?><?php
 	// Yandex doesn't support some tags so we need to check the user agent.
 	if ( ! aioseo()->helpers->isYandexUserAgent() ) {
 		?>
@@ -28,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?><lastBuildDate><?php aioseo()->sitemap->output->escapeAndEcho( $entries[0]['pubDate'] ); ?></lastBuildDate>
 		<?php }
 		?><docs>https://validator.w3.org/feed/docs/rss2.html</docs>
-		<atom:link href="<?php echo aioseo()->sitemap->helpers->getUrl( 'rss' ); ?>" rel="self" type="application/rss+xml" />
+		<atom:link href="<?php echo esc_url( aioseo()->sitemap->helpers->getUrl( 'rss' ) ); ?>" rel="self" type="application/rss+xml" />
 		<ttl><?php aioseo()->sitemap->output->escapeAndEcho( $ttl ); ?></ttl>
 
 <?php }

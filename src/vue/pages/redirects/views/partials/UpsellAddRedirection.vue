@@ -59,7 +59,7 @@
 			<div class="source">
 				<div
 					class="aioseo-description source-description"
-					v-html="softSanitizeHtml(strings.sourceUrlDescription)"
+					v-safe-html="sanitizeMarkup(strings.sourceUrlDescription)"
 				/>
 			</div>
 			<div class="url-arrow" />
@@ -110,7 +110,7 @@ import CoreAddRedirectionUrl from '@/vue/components/common/core/add-redirection/
 import CoreAddRedirectionTargetUrl from '@/vue/components/common/core/add-redirection/TargetUrl'
 import SvgRightArrow from '@/vue/components/common/svg/right-arrow/Index'
 
-import { softSanitizeHtml } from '@/vue/utils/strings'
+import { sanitizeMarkup } from '@/vue/utils/strings'
 import { __, sprintf } from '@/vue/plugins/translations'
 
 const td = import.meta.env.VITE_TEXTDOMAIN
@@ -120,7 +120,7 @@ export default {
 		return {
 			license,
 			links,
-			softSanitizeHtml,
+			sanitizeMarkup,
 			redirectsStore : useRedirectsStore(),
 			rootStore      : useRootStore(),
 			licenseStore   : useLicenseStore()

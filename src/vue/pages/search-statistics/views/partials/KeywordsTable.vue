@@ -34,11 +34,11 @@
 							href="#"
 							@click.prevent="editRow(index); toggleRow(index)"
 						>
-							{{ sanitizeString(row.keyword) }}
+							{{ stripMarkup(row.keyword) }}
 						</a>
 
 						<template #tooltip>
-							{{ sanitizeString(row.keyword) }}
+							{{ stripMarkup(row.keyword) }}
 						</template>
 					</core-tooltip>
 
@@ -47,14 +47,14 @@
 						href="#"
 						@click.prevent="editRow(index); toggleRow(index)"
 					>
-						{{ sanitizeString(row.keyword) }}
+						{{ stripMarkup(row.keyword) }}
 					</a>
 				</div>
 
 				<div class="row-actions">
 					<span class="edit">
 						<a
-							:href="viewInGoogleLink(row.keyword)"
+							v-safe-href="viewInGoogleLink(row.keyword)"
 							target="_blank"
 						>
 							{{ strings.viewInGoogle }}
@@ -184,7 +184,7 @@ import { clone } from 'lodash-es'
 import { useTable } from '@/vue/pages/search-statistics/composables/Table'
 import { useWpTable } from '@/vue/composables/WpTable'
 
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 import CoreTooltip from '@/vue/components/common/core/Tooltip'
 import CoreWpTable from '@/vue/components/common/core/wp/Table'
 import Cta from '@/vue/components/common/cta/Index'
@@ -451,7 +451,7 @@ export default {
 		isTrackingKeyword (row) {
 			return this.keywordRankTrackerStore.keywords.all.rows.find(r => r.name === row.keyword)
 		},
-		sanitizeString,
+		stripMarkup,
 		isRowActive (index) {
 			return index === this.activeRow
 		},
@@ -466,7 +466,7 @@ export default {
 			return !!this.$slots[name]
 		},
 		shouldLimitText (line) {
-			return 120 < sanitizeString(line).length
+			return 120 < stripMarkup(line).length
 		},
 		maybeTrackKeyword (row) {
 			this.keywordRankTrackerStore.parentActiveTab = 'rank-tracker'

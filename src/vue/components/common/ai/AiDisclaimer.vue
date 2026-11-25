@@ -4,7 +4,7 @@
 			<svg-sparkles />
 		</span>
 
-		<span v-html="disclaimerMessage" />
+		<span v-safe-html="disclaimerMessage" />
 	</div>
 </template>
 

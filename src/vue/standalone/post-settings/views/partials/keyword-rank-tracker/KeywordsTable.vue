@@ -101,7 +101,7 @@
 				v-if="!!row.id"
 			>
 				<a
-					:href="viewUrl(row)"
+					v-safe-href="viewUrl(row)"
 					target="_blank"
 				>
 					<core-tooltip

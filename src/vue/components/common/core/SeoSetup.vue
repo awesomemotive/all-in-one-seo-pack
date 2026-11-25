@@ -7,7 +7,7 @@
 			<div class="progress">
 				<svg-progress-circle :percent="percent" />
 
-				<span v-html="steps" />
+				<span v-safe-html="steps" />
 			</div>
 
 			<p class="description">{{ strings.description }}</p>
@@ -24,7 +24,7 @@
 
 			<a
 				v-if="isWpDashboard"
-				:href="wizardUrl"
+				v-safe-href="wizardUrl"
 				class="button button-primary"
 			>
 				<svg-rocket /> {{ strings.improveSeo }}

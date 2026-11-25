@@ -37,7 +37,7 @@
 				<p class="description">
 					{{ strings.description2 }}
 
-					<span v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'robotsEditor', true)"/>
+					<span v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'robotsEditor', true)"/>
 				</p>
 			</div>
 
@@ -89,7 +89,7 @@
 			>
 				<core-alert
 					type="red"
-					v-html="missingRewriteRules"
+					v-safe-html="missingRewriteRules"
 				/>
 			</div>
 
@@ -344,7 +344,7 @@
 			</template>
 
 			<template v-else>
-				<core-alert v-html="subdirectoryAlert"/>
+				<core-alert v-safe-html="subdirectoryAlert"/>
 			</template>
 
 			<core-modal
@@ -474,7 +474,7 @@ import {
 import license from '@/vue/utils/license'
 import { arrayColumn, arrayUnique } from '@/vue/utils/helpers'
 import { getJsonValue } from '@/vue/utils/json'
-import { groupRulesByUserAgent, normalizeRules, stringifyRuleset, validateRuleset } from '@/vue/utils/robots'
+import { decodeRuleValue, groupRulesByUserAgent, isEmptiedByDecoding, normalizeRules, stringifyRuleset, validateRuleset } from '@/vue/utils/robots'
 
 import { useNetwork } from '@/vue/composables/Network'
 
@@ -918,7 +918,12 @@ export default {
 					const [ directive, value ] = rule.split(':').map(v => v.trim())
 					if (directive.match(/disallow|allow/i)) {
 						const otherDirective = 'disallow' === directive ? 'allow' : 'disallow'
-						const conflictingIndex = merged[userAgent].indexOf(`${otherDirective}: ${value}`)
+						// Rules from other plugins are kept percent-encoded, so values are compared decoded.
+						const conflictingIndex = merged[userAgent].findIndex(r => {
+							const [ d, v ] = r.split(':').map(p => p.trim())
+
+							return otherDirective === d && decodeRuleValue(value) === decodeRuleValue(v)
+						})
 						if (-1 !== conflictingIndex) {
 							if (allowOverride) {
 								merged[userAgent] = merged[userAgent].filter((_v, i) => i !== conflictingIndex)
@@ -993,7 +998,12 @@ export default {
 		},
 		sanitizeDirectiveValue (rule, type, value) {
 			// Percent-encoded characters are stripped from our option values, so we decode.
-			value = decodeURIComponent(value.trim())
+			if ('fieldValue' === type && isEmptiedByDecoding(value)) {
+				// Kept as typed, so the row shows why it won't be saved instead of turning into "/".
+				return value.trim()
+			}
+
+			value = decodeRuleValue(value.trim())
 			if (!value) {
 				return value
 			}

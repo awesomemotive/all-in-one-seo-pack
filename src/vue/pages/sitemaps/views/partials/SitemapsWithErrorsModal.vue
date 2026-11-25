@@ -30,7 +30,7 @@
 						@process-bulk-action="processBulkAction"
 					>
 						<template #sitemap="{ row }">
-							<a :href="escUrl(row.path)" target="_blank" rel="noopener">{{ row.path }}</a>
+							<a v-safe-href="escUrl(row.path)" target="_blank" rel="noopener">{{ row.path }}</a>
 						</template>
 
 						<template #actions="{ row }">
@@ -43,7 +43,7 @@
 
 							<template v-if="row.detailsUrl !== ''"> |
 								<a
-									:href="escUrl(row.detailsUrl)"
+									v-safe-href="escUrl(row.detailsUrl)"
 									target="_blank"
 									rel="noopener"
 								>

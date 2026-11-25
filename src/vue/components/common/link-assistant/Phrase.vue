@@ -22,7 +22,7 @@
 				>{{ linkAnchor }}</span>
 
 				<template #tooltip>
-					<a class="tooltip-url" :href="url" target="_blank">{{ url }}</a>
+					<a class="tooltip-url" v-safe-href="url" target="_blank">{{ url }}</a>
 				</template>
 			</core-tooltip>
 

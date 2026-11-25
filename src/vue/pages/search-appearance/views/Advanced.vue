@@ -205,12 +205,12 @@
 						class="run-shortcodes-alert"
 						v-if="optionsStore.options.searchAppearance.advanced.runShortcodes"
 						type="yellow"
-						v-html="strings.runShortcodesWarning"
+						v-safe-html="strings.runShortcodesWarning"
 					/>
 
 					<div
 						class="aioseo-description"
-						v-html="strings.runShortcodesDescription"
+						v-safe-html="strings.runShortcodesDescription"
 					/>
 				</template>
 			</core-settings-row>
@@ -293,7 +293,7 @@
 						{{ strings.crawlCleanupDescription }}
 
 						<span
-							v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'crawlCleanup', true)"
+							v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'crawlCleanup', true)"
 						/>
 					</template>
 				</core-tooltip>
@@ -334,7 +334,7 @@
 				{{ strings.queryArgMonitorDescription }}
 
 				<span
-					v-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'queryArgMonitor', true)"
+					v-safe-html="links.getDocLink(GLOBAL_STRINGS.learnMore, 'queryArgMonitor', true)"
 				/>
 			</div>
 
@@ -354,7 +354,7 @@
 					/>
 
 					<div class="aioseo-description">
-						<div v-html="strings.optimizeUtmParametersDescription"></div>
+						<div v-safe-html="strings.optimizeUtmParametersDescription"></div>
 					</div>
 				</template>
 			</core-settings-row>

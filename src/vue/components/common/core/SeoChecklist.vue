@@ -27,7 +27,7 @@
 
 		<a
 			v-if="isWpDashboard && allowed('aioseo_general_settings')"
-			:href="checklistUrl"
+			v-safe-href="checklistUrl"
 			class="button button-primary"
 		>
 			{{ strings.goToChecklist }}

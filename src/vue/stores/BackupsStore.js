@@ -48,6 +48,11 @@ export const useBackupsStore = defineStore('BackupsStore', {
 
 					this.backups = response.body.backups
 				})
+				.catch(error => {
+					this.syncBackups(payload, error)
+
+					throw error
+				})
 		},
 		deleteBackup (payload) {
 			return http.delete(links.restUrl('backup'))
@@ -60,6 +65,24 @@ export const useBackupsStore = defineStore('BackupsStore', {
 
 					this.backups = response.body.backups
 				})
+				.catch(error => {
+					this.syncBackups(payload, error)
+
+					throw error
+				})
+		},
+		syncBackups (payload, error) {
+			const backups = error?.response?.body?.backups
+			if (!Array.isArray(backups)) {
+				return
+			}
+
+			if (payload.siteId) {
+				this.networkBackups[payload.siteId] = backups
+				return
+			}
+
+			this.backups = backups
 		}
 	}
 })

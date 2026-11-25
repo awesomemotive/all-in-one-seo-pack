@@ -93,7 +93,7 @@
 				class="source-url-error"
 				type="red"
 				size="small"
-				v-html="error"
+				v-safe-html="error"
 			/>
 		</transition-slide>
 
@@ -106,7 +106,7 @@
 				class="source-url-warning"
 				type="yellow"
 				size="small"
-				v-html="warning"
+				v-safe-html="warning"
 			/>
 		</transition-slide>
 	</div>
@@ -118,7 +118,7 @@ import {
 	useRootStore
 } from '@/vue/stores'
 
-import { sanitizeString } from '@/vue/utils/strings'
+import { stripMarkup } from '@/vue/utils/strings'
 import { decodeUrlWhitespace, encodeUrlWhitespace, makeUrlRelative } from '@/vue/utils/urls'
 
 import { useRedirect } from '@/vue/composables/redirects/Redirect'
@@ -252,7 +252,7 @@ export default {
 					warnings.push(sprintf(
 						// Translators: 1 - Adds a html tag with an option like: <code>^</code>, 2 - Adds a html tag with an option like: <code>^</code>.
 						__('To prevent a greedy regular expression you can use %1$s to anchor it to the start of the URL. For example: %2$s', td),
-						'<code>^/</code>', '<code>^/' + sanitizeString(this.url.url.replace(/^\//, '')) + '</code>'
+						'<code>^/</code>', '<code>^/' + stripMarkup(this.url.url.replace(/^\//, '')) + '</code>'
 					))
 				}
 
@@ -261,7 +261,7 @@ export default {
 						// Translators: 1 - Adds a html tag with an option like: <code>^</code>, 2 - Adds a html tag with an option like: <code>^</code>.
 						__('The caret %1$s should be at the start. For example: %2$s', td),
 						'<code>^/</code>',
-						'<code>^/' + sanitizeString(this.url.url.replace('^', '').replace(/^\//, '')) + '</code>'
+						'<code>^/' + stripMarkup(this.url.url.replace('^', '').replace(/^\//, '')) + '</code>'
 					))
 				}
 
@@ -278,7 +278,7 @@ export default {
 						// Translators: 1 - The dollar symbol, 2 - Dollar symbol example.
 						__('The dollar symbol %1$s should be at the end. For example: %2$s', td),
 						'<code>$</code>',
-						'<code>' + sanitizeString(this.url.url.replace(/\$/g, '')) + '$</code>'
+						'<code>' + stripMarkup(this.url.url.replace(/\$/g, '')) + '$</code>'
 					))
 				}
 			}

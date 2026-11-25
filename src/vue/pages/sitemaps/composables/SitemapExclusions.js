@@ -44,8 +44,8 @@ const isGlobalTierEscapableByObject = kind => 'archives' !== kind
  * Sitemap\Root, Sitemap\Helpers and Sitemap\Query, which this mirrors.
  */
 export const useSitemapExclusions = () => {
-	const optionsStore = useOptionsStore()
-	const rootStore    = useRootStore()
+	// Stores are resolved inside each function, never up here: addons bundle shared components that
+	// call this without installing the main plugin's Pinia, so resolving them eagerly throws there.
 
 	// Whether an individual post/term can still pull an object into a surface after the object itself
 	// was excluded from search results. Sits in here rather than beside the other two tier predicates
@@ -60,15 +60,15 @@ export const useSitemapExclusions = () => {
 			return true
 		}
 
-		return 'taxonomies' === kind && rootStore.isPro
+		return 'taxonomies' === kind && useRootStore().isPro
 	}
 
 	const getObjectOptions = (kind, name) => {
 		if ('archives' === kind) {
-			return optionsStore.options.searchAppearance.archives?.[name]
+			return useOptionsStore().options.searchAppearance.archives?.[name]
 		}
 
-		const group = optionsStore.dynamicOptions.searchAppearance?.[kind]
+		const group = useOptionsStore().dynamicOptions.searchAppearance?.[kind]
 		if (!group) {
 			return null
 		}
@@ -99,7 +99,7 @@ export const useSitemapExclusions = () => {
 		// that leaf directly). Every surface applies it, including llms.txt, which builds its own
 		// object lists but runs them through the same Sitemap\Helpers::isTaxonomyIncludable().
 		// All three then drop out of the sitemap.
-		const globalRobotsMeta = optionsStore.options.searchAppearance.advanced.globalRobotsMeta
+		const globalRobotsMeta = useOptionsStore().options.searchAppearance.advanced.globalRobotsMeta
 		const inheritsGlobal   = 'archives' === kind || !!robotsMeta?.default
 
 		return inheritsGlobal && !globalRobotsMeta.default && globalRobotsMeta.noindex
@@ -119,7 +119,7 @@ export const useSitemapExclusions = () => {
 			? 'media'
 			: searchAppearanceRoutes[kind]
 
-		return `${rootStore.aioseo.urls.aio.searchAppearance}&aioseo-scroll=${cardId}&aioseo-highlight=${cardId}#/${route}`
+		return `${useRootStore().aioseo.urls.aio.searchAppearance}&aioseo-scroll=${cardId}&aioseo-highlight=${cardId}#/${route}`
 	}
 
 	// The global robots meta lives on one row of one screen, so a global exclusion gets a single
@@ -127,7 +127,7 @@ export const useSitemapExclusions = () => {
 	const getGlobalRobotsMetaUrl = () => {
 		const rowId = 'aioseo-global-robots-meta-row'
 
-		return `${rootStore.aioseo.urls.aio.searchAppearance}&aioseo-scroll=${rowId}&aioseo-highlight=${rowId}#/advanced`
+		return `${useRootStore().aioseo.urls.aio.searchAppearance}&aioseo-scroll=${rowId}&aioseo-highlight=${rowId}#/advanced`
 	}
 
 	const getRegisteredObjects = kind => {
@@ -135,7 +135,7 @@ export const useSitemapExclusions = () => {
 			return builtInArchives()
 		}
 
-		return rootStore.aioseo.postData?.[kind] || []
+		return useRootStore().aioseo.postData?.[kind] || []
 	}
 
 	/**

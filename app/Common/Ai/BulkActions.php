@@ -31,6 +31,15 @@ class BulkActions {
 	const REQUIRED_SAVE_CAPABILITY = 'aioseo_page_general_settings';
 
 	/**
+	 * The nonce action that authorizes the bulk generate page to load the post IDs from its URL.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @var string
+	 */
+	const NONCE_ACTION = 'aioseo-ai-bulk-generate';
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.9.6
@@ -90,7 +99,7 @@ class BulkActions {
 	 * @return array              The modified bulk actions.
 	 */
 	public function addBulkAction( $bulkActions ) {
-		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) || ! aioseo()->access->hasCapability( self::REQUIRED_SAVE_CAPABILITY ) || $this->isTrashView() ) {
+		if ( ! $this->canUseBulkPage() || $this->isTrashView() ) {
 			return $bulkActions;
 		}
 
@@ -110,7 +119,7 @@ class BulkActions {
 	 * @return array              The modified bulk actions.
 	 */
 	public function addMediaBulkAction( $bulkActions ) {
-		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) || ! aioseo()->access->hasCapability( self::REQUIRED_SAVE_CAPABILITY ) || $this->isTrashView() ) {
+		if ( ! $this->canUseBulkPage() || $this->isTrashView() ) {
 			return $bulkActions;
 		}
 
@@ -138,7 +147,7 @@ class BulkActions {
 	 * @return string             The redirect URL.
 	 */
 	public function handleBulkAction( $redirectTo, $doAction, $postIds ) {
-		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) || ! aioseo()->access->hasCapability( self::REQUIRED_SAVE_CAPABILITY ) ) {
+		if ( ! $this->canUseBulkPage() ) {
 			return $redirectTo;
 		}
 
@@ -162,7 +171,7 @@ class BulkActions {
 	 * @return string             The redirect URL.
 	 */
 	public function handleMediaBulkAction( $redirectTo, $doAction, $postIds ) {
-		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) || ! aioseo()->access->hasCapability( self::REQUIRED_SAVE_CAPABILITY ) ) {
+		if ( ! $this->canUseBulkPage() ) {
 			return $redirectTo;
 		}
 
@@ -206,6 +215,19 @@ class BulkActions {
 		);
 
 		return $actions;
+	}
+
+	/**
+	 * Whether the current user can open the bulk generate page and save its results.
+	 * NOTE: Lite gates the page behind aioseo_manage_seo, not the per-post AI capability.
+	 *
+	 * @since 5.0.6
+	 *
+	 * @return bool
+	 */
+	private function canUseBulkPage() {
+		return current_user_can( aioseo()->admin->getPageRequiredCapability( 'aioseo-ai-bulk-generate' ) ) &&
+			aioseo()->access->hasCapability( self::REQUIRED_SAVE_CAPABILITY );
 	}
 
 	/**
@@ -262,6 +284,7 @@ class BulkActions {
 	 *
 	 * @since   4.9.6
 	 * @version 5.0.3 Added the $returnUrl parameter.
+	 * @version 5.0.6 Adds a nonce to the URL.
 	 *
 	 * @param  array  $postIds   The array of post IDs.
 	 * @param  string $type      The generation type (title, description, alt).
@@ -270,8 +293,9 @@ class BulkActions {
 	 */
 	private function buildRedirectUrl( $postIds, $type, $returnUrl = '' ) {
 		$args = [
-			'ids'  => implode( ',', array_map( 'intval', $postIds ) ),
-			'type' => $type
+			'ids'      => implode( ',', array_map( 'intval', $postIds ) ),
+			'type'     => $type,
+			'_wpnonce' => wp_create_nonce( self::NONCE_ACTION )
 		];
 
 		if ( ! empty( $returnUrl ) ) {

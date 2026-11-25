@@ -339,11 +339,11 @@ class Frontend {
 				);
 			}
 
-			$li .= sprintf( '%s', esc_attr( $object['title'] ) );
+			$li .= sprintf( '%s', esc_html( $object['title'] ) );
 
 			// add publication date on the list item.
 			if ( ! empty( $object['date'] ) && filter_var( $this->attributes['publication_date'], FILTER_VALIDATE_BOOLEAN ) ) {
-				$li .= sprintf( ' (%s)', esc_attr( $object['date'] ) );
+				$li .= sprintf( ' (%s)', esc_html( $object['date'] ) );
 			}
 
 			$li .= '</a>';

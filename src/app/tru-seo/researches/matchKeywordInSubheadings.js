@@ -1,4 +1,4 @@
-import { getSubheadingContentsAll } from '@/app/tru-seo/languageProcessing/helpers/html/getSubheadings'
+import { getSubheadingsAll } from '@/app/tru-seo/languageProcessing/helpers/html/getSubheadings'
 import stripSomeTags from '@/app/tru-seo/languageProcessing/helpers/sanitize/stripNonTextTags'
 import { findTopicFormsInString } from '@/app/tru-seo/languageProcessing/helpers/match/findKeywordFormsInString'
 import removeHtmlBlocks from '@/app/tru-seo/languageProcessing/helpers/html/htmlParser'
@@ -72,7 +72,8 @@ export default function matchKeywordInSubheadings (paper, researcher) {
 		textLength             : customCountLength ? customCountLength(text) : getWords(text).length
 	}
 	const useSynonyms = true
-	const subheadings = getSubheadingContentsAll(text)
+	// Match the inner text only, so the heading tag's attributes (e.g. its classes) can't match the keyphrase.
+	const subheadings = getSubheadingsAll(text).map(subheading => subheading[2])
 
 	if (0 !== subheadings.length) {
 		result.count = subheadings.length

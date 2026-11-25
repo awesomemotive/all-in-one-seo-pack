@@ -5,7 +5,7 @@
 			:header-text="strings.htaccessEditor"
 		>
 			<div class="aioseo-settings-row aioseo-section-description"
-				v-html="strings.description"
+				v-safe-html="strings.description"
 			/>
 
 			<core-settings-row

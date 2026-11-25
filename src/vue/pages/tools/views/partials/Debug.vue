@@ -21,7 +21,14 @@
 			<core-alert type="yellow">
 				<div>{{ strings.alertWarning }}</div>
 
-				<div v-html="alertLink" />
+				<div v-safe-html="alertLink" />
+			</core-alert>
+
+			<core-alert
+				v-if="actionResult"
+				:type="actionResult.type"
+			>
+				{{ actionResult.message }}
 			</core-alert>
 
 			<core-main-tabs
@@ -65,11 +72,11 @@
 					</base-button>
 
 					<div class="aioseo-description"
-						v-html="action.shortDescription"
+						v-safe-html="action.shortDescription"
 					/>
 
 					<div class="aioseo-description"
-						v-html="action.longDescription"
+						v-safe-html="action.longDescription"
 					/>
 
 					<template
@@ -95,11 +102,11 @@
 							<svg-close @click="showAreYouSureModal = false" />
 						</button>
 
-						<h3 v-html="areYouSureTitle"></h3>
+						<h3 v-safe-html="areYouSureTitle"></h3>
 
 						<div
 							class="description"
-							v-html="strings.cannotBeUndone"
+							v-safe-html="strings.cannotBeUndone"
 						/>
 
 						<base-button
@@ -174,6 +181,7 @@ export default {
 	data () {
 		return {
 			site                : {},
+			actionResult        : null,
 			tabsKey             : 0,
 			doingActionKey      : 0,
 			activeTab           : 'general',
@@ -183,14 +191,16 @@ export default {
 			doingAction         : [],
 			selectedAddonsNames : [],
 			strings             : {
-				selectSite     : 'Select Site',
-				cardLabel      : 'Debug',
-				selectLabel    : 'Select a Debug Action:',
-				buttonLabel    : 'Run Action',
-				alertWarning   : 'Before you run any action, please make sure that you have fully read the description and understand the consequences as these cannot be reverted.',
-				cannotBeUndone : 'This action cannot be undone.',
-				yesDoAction    : 'Yes, run this action',
-				noChangedMind  : 'No, I changed my mind'
+				selectSite      : 'Select Site',
+				cardLabel       : 'Debug',
+				selectLabel     : 'Select a Debug Action:',
+				buttonLabel     : 'Run Action',
+				alertWarning    : 'Before you run any action, please make sure that you have fully read the description and understand the consequences as these cannot be reverted.',
+				cannotBeUndone  : 'This action cannot be undone.',
+				yesDoAction     : 'Yes, run this action',
+				noChangedMind   : 'No, I changed my mind',
+				actionCompleted : 'The "%1$s" action has been completed.',
+				actionFailed    : 'The "%1$s" action could not be completed.'
 			},
 			alertLink : links.getPlainLink('Click here to open to the Scheduled Actions panel', this.rootStore.aioseo.urls.admin.scheduledActions, true)
 		}
@@ -389,6 +399,9 @@ export default {
 		doAction (data) {
 			this.doingAction[this.currentAction.slug] = true
 			this.showAreYouSureModal                  = false
+			this.actionResult                         = null
+
+			const label = this.currentAction.label
 
 			this.doingActionKey++
 			this.toolsStore.doTask({
@@ -396,9 +409,17 @@ export default {
 				siteId : this.site.blog_id || this.rootStore.aioseo.data.currentBlogId,
 				data
 			}).then(() => {
-				console.log(`Action "${this.currentAction.label}" has been completed.`)
+				this.actionResult = {
+					type    : 'green',
+					message : sprintf(this.strings.actionCompleted, label)
+				}
 			}).catch((error) => {
-				console.error(`Action "${this.currentAction.label}" could not be completed: `, error)
+				console.error(`Action "${label}" could not be completed: `, error)
+
+				this.actionResult = {
+					type    : 'red',
+					message : error?.response?.body?.message || sprintf(this.strings.actionFailed, label)
+				}
 			}).finally(() => {
 				this.doingAction[this.currentAction.slug] = false
 				this.doingActionKey++
@@ -453,6 +474,10 @@ export default {
 	.aioseo-alert {
 		div:first-of-type {
 			margin-bottom: 10px;
+		}
+
+		+ .aioseo-alert {
+			margin-top: 12px;
 		}
 	}
 
